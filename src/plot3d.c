@@ -2388,6 +2388,14 @@ plRotationShear(PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear)
   }
 
   *shear = -asin(xFormMatrix[0]*xFormMatrix[1] +
-		 xFormMatrix[2]*xFormMatrix[3]);  
+		 xFormMatrix[2]*xFormMatrix[3]);
+
+  // Compute the cross product of the vectors [1,0] and [0,1] to 
+  // determine if we need to make a "quadrant 3,4" adjustment
+  // to the shear angle.
+
+  if(xFormMatrix[0]*xFormMatrix[3] - xFormMatrix[1]*xFormMatrix[2] < 0.0){
+    *shear = -(M_PI + *shear);
+  }
 }
 

@@ -1619,12 +1619,10 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
   //
   // Compute the dot product of the vector d and the vector s to
   // determine the angle between them (acos(t) = d . s / |d| |s|).
-  // Then, because the vector s could go "down" from the text
-  // baseline rather than "up", compute the cross product and
-  // if this is negative use 180 minus the angle instead, as this
-  // is the angle between the "up" vector and the text baseline.
-  // Finally we subtract the angle from 90 as shear is specified
-  // relative to a line that is perpendicular to the text baseline.
+  // Then because acos will return a number from 0.0 to PI, i.e.
+  // only in quadrants 1 or 2, compute the cross product of the
+  // two vectors. If this is negative then the angle is adjusted
+  // 0.0 to -PI.
   
   if((sx == 0.0) && (sy == 0.0) && (sz == 0.0)){
     phi = 0.0;
@@ -1635,7 +1633,7 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
     ls = sqrt((xpc - xspc) * (xpc - xspc) + (ypc - yspc) * (ypc - yspc));
     phi = acos(((xdpc - xpc) * (xspc - xpc) + (ydpc - ypc) * (yspc - ypc))/(ld * ls));
     cp = (xdpc - xpc) * (yspc - ypc) - (ydpc - ypc) * (xspc - xpc);
-    if(cp < 0.0){ phi = 3.14159 - phi; }
+    if(cp < 0.0){ phi = -phi; }
     phi = 1.570796 - phi;
   }
   
