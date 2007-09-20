@@ -1,4 +1,4 @@
--- $Id: x10a.adb 7703 2007-06-02 02:37:18Z airwin $
+-- $Id$
 
 -- 	Window positioning demo
 

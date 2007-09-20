@@ -1,4 +1,4 @@
--- $Id: xthick02a.adb xxxxx $
+-- $Id$
 
 -- Multiple window and color map 0 demo.
 

@@ -1,4 +1,4 @@
--- $Id: xthick04c.c xxxxxx $
+-- $Id$
 --
 --	Log plot demo.
 

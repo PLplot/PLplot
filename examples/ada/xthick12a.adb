@@ -1,4 +1,4 @@
--- $Id: xt12a.adb xxxxxxxxx airwin $
+-- $Id$
 
 -- Bar chart demo
 

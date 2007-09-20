@@ -1,4 +1,4 @@
--- $Id: x04c.c xxxxxx $
+-- $Id$
 --
 --	Log plot demo.
 
