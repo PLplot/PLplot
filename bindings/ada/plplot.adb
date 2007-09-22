@@ -1,3 +1,25 @@
+-- $Id$
+
+-- Thick Ada binding to PLplot
+
+-- Copyright (C) 2006-2007  Jerry Bauck
+
+-- This file is part of PLplot.
+
+-- PLplot is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Library Public License as published
+-- by the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+
+-- PLplot is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU Library General Public License for more details.
+
+-- You should have received a copy of the GNU Library General Public License
+-- along with PLplot; if not, write to the Free Software
+-- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
 with
     PLplot_Thin,
     PLplot_Auxiliary,
@@ -2028,7 +2050,7 @@ package body PLplot is
     procedure Write_Text_World
        (x, y             : Long_Float;
         Delta_X, Delta_Y : Long_Float;
-        Justification    : Long_Float_0_1_Type;
+        Justification    : Long_Float;
         The_Text         : String) is
     begin
         plptex(x, y, Delta_X, Delta_Y, Justification, To_C(The_Text, True));

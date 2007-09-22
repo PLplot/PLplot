@@ -1,3 +1,25 @@
+-- $Id$
+
+-- Ada binding to PLplot using the traditional PLplot subprogram names
+
+-- Copyright (C) 2006-2007  Jerry Bauck
+
+-- This file is part of PLplot.
+
+-- PLplot is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Library Public License as published
+-- by the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+
+-- PLplot is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU Library General Public License for more details.
+
+-- You should have received a copy of the GNU Library General Public License
+-- along with PLplot; if not, write to the Free Software
+-- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
 with
     PLplot_Thin,
     PLplot_Auxiliary,
@@ -209,6 +231,22 @@ package PLplot_Traditional is
     GRID_NNIDW  : constant Gridding_Algorithm_Type := 4;
     GRID_NNLI   : constant Gridding_Algorithm_Type := 5;
     GRID_NNAIDW : constant Gridding_Algorithm_Type := 6;
+--------------------------------------------------------------------------------
+
+
+    -- Flags for the opt argument in plhist                                   --
+    Histogram_Default         : constant Integer := 0;
+    Histogram_Noscaling       : constant Integer := 1;
+    Histogram_Ignore_Outliers : constant Integer := 2;
+    Histogram_Noexpand        : constant Integer := 8;
+    Histogram_Noempty         : constant Integer := 16;
+
+
+    -- Flags for the opt argument in plbin                                    --
+    Bin_Default  : constant Integer := 0;
+    Bin_Centred  : constant Integer := 1;
+    Bin_Noexpand : constant Integer := 2;
+    Bin_Noempty  : constant Integer := 4;
 
 
 --------------------------------------------------------------------------------
@@ -1012,7 +1050,7 @@ package PLplot_Traditional is
     procedure plptex
        (x, y             : Long_Float;
         Delta_X, Delta_Y : Long_Float;
-        Justification    : Long_Float_0_1_Type;
+        Justification    : Long_Float;
         The_Text         : String);
 
 

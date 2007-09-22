@@ -1,26 +1,26 @@
-    --  Copyright (C) 1992  Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
-    --  Copyright (C) 2004  Alan W. Irwin
-    --  Copyright (C) 2004  Rafael Laboissiere
-    --  Copyright (C) 2004  Andrew Ross
+-- $Id$
 
-    --  This file is part of PLplot.
+-- Thin Ada binding to PLplot
 
-    --  PLplot is free software; you can redistribute it and/or modify
-    --  it under the terms of the GNU Library General Public License as published
-    --  by the Free Software Foundation; either version 2 of the License, or
-    --  (at your option) any later version.
+-- Copyright (C) 2006-2007  Jerry Bauck
 
-    --  PLplot is distributed in the hope that it will be useful,
-    --  but WITHOUT ANY WARRANTY; without even the implied warranty of
-    --  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    --  GNU Library General Public License for more details.
+-- This file is part of PLplot.
 
-    --  You should have received a copy of the GNU Library General Public License
-    --  along with PLplot; if not, write to the Free Software
-    --  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+-- PLplot is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Library Public License as published
+-- by the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
 
-    ----------------------------------------------------------------------------
- 
+-- PLplot is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU Library General Public License for more details.
+
+-- You should have received a copy of the GNU Library General Public License
+-- along with PLplot; if not, write to the Free Software
+-- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+--------------------------------------------------------------------------------
 
 -- SOME NOTES ABOUT THE ADA BINDINGS (JB)
 -- Some C-arguments of the form PLINT *a are supposed to point at 8-bit unsigned chars
@@ -451,6 +451,12 @@ package PLplot_Thin is
 
     -- Plot a histogram using x to store data values and y to store frequencies 
 
+    -- Flags for the opt argument in plbin
+    PL_Bin_Default  : constant Integer := 0;
+    PL_Bin_Centred  : constant Integer := 1;
+    PL_Bin_Noexpand : constant Integer := 2;
+    PL_Bin_Noempty  : constant Integer := 4;
+    
     procedure
     plbin(nbin : PLINT; x : PL_Float_Array; y : PL_Float_Array; center : PLINT);
     pragma Import(C, plbin, "c_plbin");
@@ -832,6 +838,13 @@ package PLplot_Thin is
 
 
     -- Draws a histogram of n values of a variable in array data[0..n-1] 
+
+    -- Flags for the opt argument in plhist
+    PL_Hist_Default         : constant Integer := 0;
+    PL_Hist_Noscaling       : constant Integer := 1;
+    PL_Hist_Ignore_Outliers : constant Integer := 2;
+    PL_Hist_Noexpand        : constant Integer := 8;
+    PL_Hist_Noempty         : constant Integer := 16;
 
     procedure
     plhist(n : PLINT; data : PL_Float_Array; datmin : PLFLT; datmax : PLFLT;
