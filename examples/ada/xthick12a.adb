@@ -1,8 +1,8 @@
 -- $Id$
 
--- Bar chart demo
+-- Bar chart demo.
 
--- Copyright (C) 2006  Jerry Bauck
+-- Copyright (C) 2006 Jerry Bauck
 
 -- This file is part of PLplot.
 

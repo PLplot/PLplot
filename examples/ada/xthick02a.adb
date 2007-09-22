@@ -2,7 +2,7 @@
 
 -- Multiple window and color map 0 demo.
 
--- Copyright (C) 2007  Alan W. Irwin
+-- Copyright (C) 2007 Alan W. Irwin
 
 -- This file is part of PLplot.
 

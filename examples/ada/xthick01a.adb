@@ -1,8 +1,8 @@
 -- $Id$
 
--- Simple line plot and multiple windows demo
+-- Simple line plot and multiple windows demo.
 
--- Copyright (C) 2006  Jerry Bauck
+-- Copyright (C) 2007 Jerry Bauck
 
 -- This file is part of PLplot.
 
