@@ -140,4 +140,5 @@ int main(int argc, char *argv[])
    free((void *) y);
    plFree2dGrid(z, XPTS, YPTS);
    plend();
+   exit(0);
 }
