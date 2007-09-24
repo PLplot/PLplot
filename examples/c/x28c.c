@@ -28,6 +28,11 @@ int main(int argc, char *argv[])
      x_shear, y_shear, z_shear,
      omega, sin_omega, cos_omega, domega;
    int i,j;
+   PLFLT radius, pitch, xpos, ypos, zpos;
+   /* p1string must be exactly one character + the null termination 
+    * character. */
+   char p1string[] = "O",
+     *pstring = "The future of our civilization depends on software freedom.";
    /* Allocate and define the minimal x, y, and z to insure 3D box */
    x = (PLFLT *) calloc(XPTS, sizeof(PLFLT));
    y = (PLFLT *) calloc(YPTS, sizeof(PLFLT));
@@ -52,7 +57,7 @@ int main(int argc, char *argv[])
    
    plinit();
 
-   /* Demonstrate inclination and shear capability pattern. */
+   /* Page 1: Demonstrate inclination and shear capability pattern. */
    
    pladv(0);
    plvpor(-0.15, 1.15, -0.05, 1.05);
@@ -121,11 +126,10 @@ int main(int argc, char *argv[])
 	      x_shear, y_shear, z_shear, 
 	      0.0, "  revolution");
    }
-
    /* Draw minimal 3D grid to finish defining the 3D box. */
    plmesh(x, y, z, XPTS, YPTS, DRAW_LINEXY);
 
-   /* Demonstrate rotation of string around its axis. */
+   /* Page 2: Demonstrate rotation of string around its axis. */
    pladv(0);
    plvpor(-0.15, 1.15, -0.05, 1.05);
    plwind(-1.2, 1.2, -0.8, 1.5);
@@ -193,11 +197,10 @@ int main(int argc, char *argv[])
 	      x_shear, y_shear, z_shear,
 	      0.5, "rotation for z = z#dmin#u");
    }
-
    /* Draw minimal 3D grid to finish defining the 3D box. */
    plmesh(x, y, z, XPTS, YPTS, DRAW_LINEXY);
 
-   /* Demonstrate shear of string along its axis. */
+   /* Page 3: Demonstrate shear of string along its axis. */
    /* Work around xcairo and pngcairo (but not pscairo) problems for 
     * shear vector too close to axis of string. (N.B. no workaround
     * would be domega = 0.) */
@@ -269,11 +272,60 @@ int main(int argc, char *argv[])
 	      x_shear, y_shear, z_shear,
 	      0.5, "shear for z = z#dmin#u");
    }
-
    /* Draw minimal 3D grid to finish defining the 3D box. */
    plmesh(x, y, z, XPTS, YPTS, DRAW_LINEXY);
 
-   /* Demonstrate plmtex3 axis labelling capability */
+   /* Page 4: Demonstrate drawing a string on a 3D path. */
+   pladv(0);
+   plvpor(-0.15, 1.15, -0.05, 1.05);
+   plwind(-1.2, 1.2, -0.8, 1.5);
+   plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 
+	 40., -30.);
+   
+   plcol0(2);
+   plbox3("b", "", xmax-xmin, 0,
+	  "b", "", ymax-ymin, 0,
+	  "bcd", "", zmax-zmin, 0);
+
+   plschr(0., 1.2);
+   /* domega controls the spacing between the various characters of the
+    * string and also the maximum value of omega for the given number
+    * of characters in *pstring. */
+   domega = 2.*M_PI/strlen(pstring);
+   omega = 0.;
+   /* 3D function is a helix of the given radius and pitch */
+   radius = 0.5;
+   pitch = 1./(2.*M_PI);
+   while(*pstring) {
+      sin_omega = sin(omega);
+      cos_omega = cos(omega);
+      xpos = xmid + radius*sin_omega;
+      ypos = ymid - radius*cos_omega;
+      zpos = zmin + pitch*omega;
+      /* In general, the inclination is proportional to the derivative of 
+       * the position wrt theta. */
+      x_inclination = radius*cos_omega;;
+      y_inclination = radius*sin_omega;
+      z_inclination = pitch;
+      /* The shear vector should be perpendicular to the 3D line with Z
+       * component maximized, but for low pitch a good approximation is
+       * a constant vector that is parallel to the Z axis. */
+      x_shear = 0.;
+      y_shear = 0.;
+      z_shear = 1.;
+      *p1string = *pstring;
+      plptex3(
+	      xpos, ypos, zpos,
+	      x_inclination, y_inclination, z_inclination,
+	      x_shear, y_shear, z_shear,
+	      0.5, p1string);
+      pstring++;
+      omega += domega;
+   }
+   /* Draw minimal 3D grid to finish defining the 3D box. */
+   plmesh(x, y, z, XPTS, YPTS, DRAW_LINEXY);
+
+   /* Page 5: Demonstrate plmtex3 axis labelling capability */
    pladv(0);
    plvpor(-0.15, 1.15, -0.05, 1.05);
    plwind(-1.2, 1.2, -0.8, 1.5);
