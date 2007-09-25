@@ -6,7 +6,7 @@ function demo_page ($demo, $nfigs, $language, $credits) {
 
   $demo_str = sprintf ("%02d", $demo);
   $demo_dir = "../examples-data/demo$demo_str";
-  $demos = array_merge (range (1, 13), array (15, 16), range (18, 25));
+  $demos = array_merge (range (1, 13), array (15, 16), range (18, 28));
 
   print <<<END
 <div ALIGN="CENTER"><b>Select to see the example $demo source code</b></div>
@@ -17,6 +17,8 @@ function demo_page ($demo, $nfigs, $language, $credits) {
 <input TYPE="submit" NAME="lbind" VALUE="C">
 <input TYPE="submit" NAME="lbind" VALUE="C++">
 <input TYPE="submit" NAME="lbind" VALUE="F77">
+<input TYPE="submit" NAME="lbind" VALUE="F95">
+<input TYPE="submit" NAME="lbind" VALUE="Ada">
 <input TYPE="submit" NAME="lbind" VALUE="Tcl">
 <input TYPE="submit" NAME="lbind" VALUE="Java">
 <input TYPE="submit" NAME="lbind" VALUE="Python">
@@ -37,6 +39,12 @@ END;
     break;
   case ("F77"):
     $fname = "x" . $demo_str . "f.f-";
+    break;
+  case ("F95"):
+    $fname = "x" . $demo_str . "f.f90-";
+    break;
+  case ("Ada"):
+    $fname = "x" . $demo_str . "a.adb-";
     break;
   case ("Tcl"):
     $fname = "x" . $demo_str . ".tcl-";
