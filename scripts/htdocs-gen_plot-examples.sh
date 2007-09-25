@@ -56,31 +56,15 @@ popd
 # hack, x20c needs lena in the current directory
 cp examples/c/lena.pgm .
 
-for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24 25; do
+for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
+23 24 25 26 27 28; do
 
     echo Working on example ${exe}
 
     # generate standard and preview size images
-    if test $exe != 24 ; then
-        if test $exe = 02 ; then
-            SMOOTH=0
-	else
-	    SMOOTH=1
-	fi
-        $cexamples_dir/x${exe}c -dev png -drvopt text,smooth=$SMOOTH \
-	    -o x${exe} -fam -fflen 2;
-        $cexamples_dir/x${exe}c -dev png -drvopt text,smooth=$SMOOTH \
-	    -o prev-x${exe} -fam -fflen 2 -geometry 200x150;
-    else
-      $cexamples_dir/x24c -dev psttfc -o test.ps
-      convert -rotate 90 test.ps -geometry 800x600 x24.01.png
-      convert -rotate 90 test.ps -geometry 200x150 prev-x24.01.png
-      rm test.ps
-      # convert command needs the png suffix, but now take it off to
-      # be consistent with script below which puts it back on again.
-      mv x24.01.png x24.01
-      mv prev-x24.01.png prev-x24.01
-    fi
+    $cexamples_dir/x${exe}c -dev pngcairo -o x${exe} -fam -fflen 2
+    $cexamples_dir/x${exe}c -dev pngcairo -o prev-x${exe} -fam -fflen 2 \
+    -geometry 200x150
 
     # give png extension
     for i in `ls x${exe}.?? prev-x${exe}.??`; do
@@ -93,10 +77,15 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24 25;
     mkdir -p $EXDIR/demo${exe}
     mv *${exe}.??.png $EXDIR/demo${exe}
     # Note fortran 77 examples grabbed from installed examples.
-    for f in examples/c/x${exe}c.c examples/tcl/x${exe}.tcl		\
-             examples/java/x${exe}.java cexamples_dir/../f77/x${exe}f.f		\
-             bindings/octave/demos/x${exe}c.m				\
-             examples/python/xw${exe}.py examples/c++/x${exe}.cc	\
+    for f in examples/c/x${exe}c.c \
+             examples/tcl/x${exe}.tcl \
+             examples/java/x${exe}.java \
+	     cexamples_dir/../f77/x${exe}f.f \
+	     examples/f95/x${exe}f.f90 \
+	     examples/ada/x${exe}a.adb \
+             bindings/octave/demos/x${exe}c.m \
+             examples/python/xw${exe}.py \
+	     examples/c++/x${exe}.cc \
              examples/perl/x${exe}.pl ; do
         if test -f $f ; then
             cp $f $EXDIR/demo${exe}
@@ -109,7 +98,7 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24 25;
     # rename executables, to avoid browsers trying to execute files
     # instead of showing them.
     (cd  $EXDIR/demo${exe};
-    for j in *.c *.cc *.f *.m *.tcl *.java *.py *.pl; do
+    for j in *.c *.cc *.f *.f90 *.adb *.m *.tcl *.java *.py *.pl; do
 	    mv $j $j-
     done
     )
@@ -146,4 +135,3 @@ echo Changing group permissions of the remote examples directory
 ssh $WWW_HOST chmod -R g=u $WWW_DIR/$EXDIR
 echo Removing the remote tarball
 ssh $WWW_HOST rm -f $WWW_DIR/$TARBALL
- 
