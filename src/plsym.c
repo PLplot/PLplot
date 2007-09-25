@@ -253,7 +253,9 @@ PLUNICODE unicode_char;
 	  char esc;
           args.unicode_char=unicode_char;
           args.font_face=hershey_to_unicode_lookup_table[idx].Font;
-          args.base = 1;
+          /* Comment out to fix problem with ps, psttf drivers */
+          /*args.base = 1;*/
+          args.base = 0;
           args.just = .5;
           args.xform = 0;
           args.x = x;
