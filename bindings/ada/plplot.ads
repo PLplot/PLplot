@@ -2,7 +2,7 @@
 
 -- Thick Ada binding to PLplot
 
--- Copyright (C) 2006-2007  Jerry Bauck
+-- Copyright (C) 2006-2007 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -1045,7 +1045,7 @@ package PLplot is
        (Side                : String;
         Position_From_Edge  : Long_Float;
         Position_Along_Edge : Long_Float;
-        Justification       : Long_Float_0_1_Type;
+        Justification       : Long_Float;
         The_Text            : String);
 
 
@@ -1450,7 +1450,7 @@ package PLplot is
         x_Min, x_Max                         : Long_Float;
         x_Jump                               : Long_Float;
         y_Min, y_Max                         : Long_Float;
-        x_Legend_Position, y_Legend_Position : Long_Float_0_1_Type;
+        x_Legend_Position, y_Legend_Position : Long_Float;
         Autoscale_Y                          : Boolean;
         Accumulate                           : Boolean; --Accumulate or slide
         Box_Color, Legend_Color              : Plot_Color_Type;

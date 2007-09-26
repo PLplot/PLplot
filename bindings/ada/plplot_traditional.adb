@@ -2,7 +2,7 @@
 
 -- Ada binding to PLplot using the traditional PLplot subprogram names
 
--- Copyright (C) 2006-2007  Jerry Bauck
+-- Copyright (C) 2006-2007 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -1841,7 +1841,7 @@ package body PLplot_Traditional is
        (Side : String;
         Position_From_Edge : Long_Float;
         Position_Along_Edge : Long_Float;
-        Justification : Long_Float_0_1_Type;
+        Justification : Long_Float;
         The_Text : String) is
     begin
         PLplot_Thin.plmtex(To_C(Side, True), Position_From_Edge, Position_Along_Edge, Justification, To_C(The_Text, True));
@@ -2494,7 +2494,7 @@ package body PLplot_Traditional is
         x_Min, x_Max                         : Long_Float;
         x_Jump                               : Long_Float;
         y_Min, y_Max                         : Long_Float;
-        x_Legend_Position, y_Legend_Position : Long_Float_0_1_Type;
+        x_Legend_Position, y_Legend_Position : Long_Float;
         Autoscale_Y                          : Boolean;
         Accumulate                           : Boolean; --Accumulate or slide
         Box_Color, Legend_Color              : Plot_Color_Type;
@@ -2506,8 +2506,8 @@ package body PLplot_Traditional is
         PL_Autoscale_Y, PL_Accumulate : PLBOOL;
         PL_Pen_Labels : Stripchart_String_Array;
         
-        x_LP : Long_Float_0_1_Type renames x_Legend_Position;
-        y_LP : Long_Float_0_1_Type renames y_Legend_Position;
+        x_LP : Long_Float renames x_Legend_Position;
+        y_LP : Long_Float renames y_Legend_Position;
         
     begin
         if Autoscale_Y then
