@@ -2,7 +2,7 @@
 
 -- Thin Ada binding to PLplot
 
--- Copyright (C) 2006-2007  Jerry Bauck
+-- Copyright (C) 2006-2007 Jerry Bauck
 
 -- This file is part of PLplot.
 
