@@ -48,6 +48,7 @@ set(java_STRING_INDICES
 "24"
 "25"
 "26"
+"28"
 )
 
 # This information is duplicated from bindings/java/CMakeLists.txt

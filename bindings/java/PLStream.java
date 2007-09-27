@@ -446,6 +446,11 @@ public void mtex(String side, double disp, double pos, double just, String text)
     plplotjavac.plmtex(side, disp, pos, just, text);
 }
 
+public void mtex3(String side, double disp, double pos, double just, String text) {
+    if (set_stream() == -1) return;
+    plplotjavac.plmtex3(side, disp, pos, just, text);
+}
+
 public void plot3d(double[] x, double[] y, double[][] z, int opt, boolean side) {
     if (set_stream() == -1) return;
     plplotjavac.plot3d(x, y, z, opt, side);
@@ -511,6 +516,11 @@ public void psty(int patt) {
 public void ptex(double x, double y, double dx, double dy, double just, String text) {
     if (set_stream() == -1) return;
     plplotjavac.plptex(x, y, dx, dy, just, text);
+}
+
+public void ptex3(double x, double y, double z, double dx, double dy, double dz, double sx, double sy, double sz, double just, String text) {
+    if (set_stream() == -1) return;
+    plplotjavac.plptex3(x, y, z, dx, dy, dz, sx, sy, sz, just, text);
 }
 
 public void replot() {

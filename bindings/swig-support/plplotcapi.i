@@ -475,6 +475,11 @@ void
 plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	 const char *text);
 
+%feature("autodoc", "Print \"text\" at specified position relative to viewport.") plmtex3;
+void
+plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
+	 const char *text);
+
 %feature("autodoc", "Plot a 3-d representation of the function z[x][y].") plot3d;
 void
 plot3d(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
@@ -534,6 +539,10 @@ plpsty(PLINT patt);
 %feature("autodoc", "Print \"text\" at world cooordinate (x,y).") plptex;
 void
 plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text);
+
+%feature("autodoc", "Print \"text\" at world cooordinate (x,y).") plptex3;
+void
+plptex3(PLFLT x, PLFLT y, PLFLT z, PLFLT dx, PLFLT dy, PLFLT dz, PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text);
 
 %feature("autodoc", "Replay contents of plot buffer to current device/file.") plreplot;
 void
