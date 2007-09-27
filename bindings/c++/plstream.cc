@@ -994,6 +994,16 @@ void plstream::mtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
     plmtex(side,disp,pos,just,text);
 }
 
+/* Prints out "text" at specified position relative to viewport (3D) */
+
+void plstream::mtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
+		     const char *text )
+{
+    set_stream();
+
+    plmtex3(side,disp,pos,just,text);
+}
+
 /* Plots a 3-d shaded representation of the function z[x][y]. */
 
 void plstream::surf3d( PLFLT *x, PLFLT *y, PLFLT **z,
@@ -1156,6 +1166,16 @@ void plstream::ptex( PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just,
     set_stream();
 
     plptex(x,y,dx,dy,just,text);
+}
+
+/* Prints out "text" at world cooordinate (x,y). */
+
+void plstream::ptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, 
+		      PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text)
+{
+    set_stream();
+
+    plptex3(wx,wy,wz,dx,dy,dz,sx,sy,sz,just,text);
 }
 
 /* Replays contents of plot buffer to current device/file. */

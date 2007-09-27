@@ -427,6 +427,11 @@ class PLDLLIMPEXP plstream {
     void mtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	       const char *text );
 
+/* Prints out "text" at specified position relative to viewport (3D) */
+
+    void mtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
+	       const char *text );
+
 /* Plots a 3-d representation of the function z[x][y]. */
 
     void plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
@@ -494,6 +499,11 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 
     void ptex( PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just,
 	       const char *text );
+
+/* Prints out "text" at world cooordinate (x,y,z). */
+
+    void ptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, 
+	     PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text);
 
 /* Replays contents of plot buffer to current device/file. */
 
