@@ -57,12 +57,20 @@ cp examples/c/lena.pgm .
 for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
 23 24 25 26 27 28; do
 
-    echo Working on example ${exe}
+    if test $exe = 08 -o $exe = 16 -o $exe = 20; then
+      # No cairo graphics AA (Yep, 1 turns it off).
+      DRIVEROPT='-drvopt graphics_anti_aliasing=1'
+    else
+      # Otherwise use default graphics AA which is full AA 
+      DRIVEROPT=
+    fi
+    echo Working on example ${exe} using DRIVEROPT of $DRIVEROPT
 
     # generate standard and preview size images
-    $cexamples_dir/x${exe}c -dev pngcairo -o x${exe} -fam -fflen 2
+    $cexamples_dir/x${exe}c -dev pngcairo -o x${exe} -fam -fflen 2 \
+    $DRIVEROPT
     $cexamples_dir/x${exe}c -dev pngcairo -o prev-x${exe} -fam -fflen 2 \
-    -geometry 200x150
+    $DRIVEROPT -geometry 200x150
 
     # give png extension
     for i in `ls x${exe}.?? prev-x${exe}.??`; do
