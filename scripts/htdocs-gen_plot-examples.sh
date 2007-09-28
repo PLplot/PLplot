@@ -37,11 +37,8 @@ if test "$build" = true; then
     cd htdocsgen/build_dir
     # Specifically enable f77 so that examples will be generated.
     cmake -DCMAKE_INSTALL_PREFIX=`pwd`/../install \
-    -DENABLE_cxx=OFF -DENABLE_f77=ON -DENABLE_f95=OFF \
-    -DENABLE_python=OFF -DENABLE_java=OFF \
-    -DENABLE_tcl=OFF -DENABLE_octave=OFF \
-    -DDEFAULT_NO_DEVICES=ON -DPLD_png=ON -DPLD_psttf=ON \
-    -DPLD_pngcairo=ON \
+    -DDEFAULT_NO_BINDINGS=ON -DENABLE_f77=ON \
+    -DDEFAULT_NO_DEVICES=ON -DPLD_pngcairo=ON \
     ../../
     make
     make install
