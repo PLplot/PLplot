@@ -41,6 +41,7 @@ if test "$build" = true; then
     -DENABLE_python=OFF -DENABLE_java=OFF \
     -DENABLE_tcl=OFF -DENABLE_octave=OFF \
     -DDEFAULT_NO_DEVICES=ON -DPLD_png=ON -DPLD_psttf=ON \
+    -DPLD_pngcairo=ON \
     ../../
     make
     make install
