@@ -1,4 +1,4 @@
-// $Id:$
+// $Id$
 //
 //	plmtex3, plptex3 demo.
 //
@@ -57,9 +57,8 @@ x28::x28(int argc, char *argv[])
    pls = new plstream();
 
    /* Allocate and define the minimal x, y, and z to insure 3D box */
-   x = new PLFLT(XPTS);
-   y = new PLFLT(YPTS);
-
+   x = new PLFLT[ XPTS ];
+   y = new PLFLT[ YPTS ];
    pls->Alloc2dGrid(&z, XPTS, YPTS);
    for (i = 0; i < XPTS; i++) {
       x[i] = xmin + (double) i * (xmax-xmin)/ (double) (XPTS-1);
@@ -390,4 +389,3 @@ int main( int argc, char **argv )
 
   delete x;
 }
-
