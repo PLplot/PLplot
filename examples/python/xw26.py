@@ -23,15 +23,14 @@
 #  along with PLplot; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
-#  This example designed just for the psttf-related devices 
-# (i.e., -dev psttfc and -dev psttf).  No other devices will work.  These devices
-#  use liblasi (version 1.0.5 or later!) to render the fonts.  liblasi uses
-#  libpango to deal with CTL issues, and libfontconfig to deal with font selection.
-#  Because of libfontconfig, the best choice of glyph is automatically rendered 
-#  for each unicode character in this example.
-#  Of course, you must have the appropriate TrueType fonts installed to have access
-#  to all the glyphs.
-
+#  This example designed just for devices (e.g., psttfc and the
+#  cairo-related devices) that use the pango and fontconfig libraries. The
+#  best choice of glyph is selected by fontconfig and automatically rendered
+#  by pango in way that is sensitive to complex text layout (CTL) language
+#  issues for each unicode character in this example. Of course, you must
+#  have the appropriate TrueType fonts installed to have access to all the
+#  required glyphs.
+#
 #  Translation instructions: The strings to be translated are given by
 #  x_label, y_label, alty_label, title_label, and line_label below.  The encoding
 #  used must be UTF-8.  
