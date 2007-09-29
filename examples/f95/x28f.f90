@@ -1,4 +1,4 @@
-!  $Id: x28c.c 7884 2007-09-24 18:26:17Z airwin $
+!  $Id$
 !
 !   Demonstrates plotting text in 3D (plmtex3, plptex3)
 !
