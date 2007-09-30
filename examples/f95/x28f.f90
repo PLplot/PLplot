@@ -21,7 +21,7 @@
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
 
-   program x29f95
+   program x28f95
    use plplot, PI => PL_PI
 
    implicit none
@@ -236,7 +236,7 @@
       omega = domega + 2.*PI*((i-1)/(PLFLT)NSHEAR)
       sin_omega = sin(omega)
       cos_omega = cos(omega)
-      x_shear = 0.5*yrange*sin_omega
+      x_shear = 0.5*xrange*sin_omega
       z_shear = 0.5*zrange*cos_omega
       call plptex3( &
          xmid, ymax, zmax -(zmax-0.2)*((PLFLT)i/(PLFLT)(NSHEAR-1)), &
@@ -255,7 +255,7 @@
       omega = domega + 2.*PI*((i-1)/(PLFLT)NSHEAR)
       sin_omega = sin(omega)
       cos_omega = cos(omega)
-      y_shear = -0.5*xrange*sin_omega
+      y_shear = -0.5*yrange*sin_omega
       z_shear = 0.5*zrange*cos_omega
       call plptex3(
          xmax, ymid, zmax -(zmax-0.2)*((i-1)/(PLFLT)(NSHEAR-1)),
@@ -275,7 +275,7 @@
       sin_omega = sin(omega)
       cos_omega = cos(omega)
       y_shear = 0.5*yrange*cos_omega
-      x_shear = 0.5*zrange*sin_omega
+      x_shear = 0.5*xrange*sin_omega
       call plptex3( &
          xmid, ymax -(ymax-0.2)*((PLFLT)i/(PLFLT)(NSHEAR-1)), zmin, &
          x_inclination, y_inclination, z_inclination, &
