@@ -6569,23 +6569,11 @@ default
     </variablelist>
 
     <para>
-      Redacted form: 
-      <itemizedlist>
-        <listitem>
-          <para>
-	  General: <function>plmtex3(side, disp, pos, just, text)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-	  F95, Java, Perl/PDL, Python: <function>Not implemented.</function>
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plmtex3(side, disp, pos, just, text)</function>
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 28.
     </para>
 
   </sect1>
@@ -7795,29 +7783,15 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
     </variablelist>
 
     <para>
-      Redacted form: 
-      <itemizedlist>
-        <listitem>
-          <para>
-	  General: <function>plptex3(x, y, z, dx, dy, dz, sx, sy, sz, 
-	  just, text)
-	  </function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-	  F95, Java, Perl/PDL, Python: <function>Not implemented.</function>
-          </para>
-        </listitem>
-      </itemizedlist>
+      Redacted form: <function>plptex3(x, y, z, dx, dy, dz, sx, sy, sz, 
+      just, text)</function>
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 28.
     </para>
 
   </sect1>
-
 
   <sect1 id="plreplot" renderas="sect3">
     <title>
