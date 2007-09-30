@@ -527,6 +527,23 @@
 
 !***********************************************************************
 
+      subroutine plmtex3(side,disp,pos,xjust,text)
+
+      implicit none
+      real*8 disp, pos, xjust
+      character*(*) side, text
+
+      include 'sfstubs.h'
+
+      call plstrf2c(side, string1, maxlen)
+      call plstrf2c(text, string2, maxlen)
+
+      call plmtex37(s1,disp,pos,xjust,s2)
+
+      end
+
+!***********************************************************************
+
       subroutine plptex(x,y,dx,dy,xjust,text)
 
       implicit none
@@ -538,6 +555,22 @@
       call plstrf2c(text, string1, maxlen)
 
       call plptex7(x,y,dx,dy,xjust,s1)
+
+      end
+
+!***********************************************************************
+
+      subroutine plptex3(x,y,z,dx,dy,dz,sx,sy,sz,xjust,text)
+
+      implicit none
+      real*8 x, y, z, dx, dy, dz, sx, sy, sz, xjust
+      character*(*) text
+
+      include 'sfstubs.h'
+
+      call plstrf2c(text, string1, maxlen)
+
+      call plptex37(x,y,z,dx,dy,dz,sx,sy,sz,xjust,s1)
 
       end
 
