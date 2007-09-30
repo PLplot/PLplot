@@ -249,7 +249,7 @@ class x28 {
 	    omega = domega + 2.*Math.PI*((double)i/(double)NSHEAR);
 	    sin_omega = Math.sin(omega);
 	    cos_omega = Math.cos(omega);
-	    x_shear = 0.5*yrange*sin_omega;
+	    x_shear = 0.5*xrange*sin_omega;
 	    z_shear = 0.5*zrange*cos_omega;
 	    pls.ptex3(
 		       xmid, ymax, zmax -(zmax-0.2)*((double)i/(double)(NSHEAR-1)),
@@ -268,7 +268,7 @@ class x28 {
 	    omega = domega + 2.*Math.PI*((double)i/(double)NSHEAR);
 	    sin_omega = Math.sin(omega);
 	    cos_omega = Math.cos(omega);
-	    y_shear = -0.5*xrange*sin_omega;
+	    y_shear = -0.5*yrange*sin_omega;
 	    z_shear = 0.5*zrange*cos_omega;
 	    pls.ptex3(
 		       xmax, ymid, zmax -(zmax-0.2)*((double)i/(double)(NSHEAR-1)),
@@ -288,7 +288,7 @@ class x28 {
 	    sin_omega = Math.sin(omega);
 	    cos_omega = Math.cos(omega);
 	    y_shear = 0.5*yrange*cos_omega;
-	    x_shear = 0.5*zrange*sin_omega;
+	    x_shear = 0.5*xrange*sin_omega;
 	    pls.ptex3(
 		       xmid, ymax -(ymax-0.2)*((double)i/(double)(NSHEAR-1)), zmin,
 		       x_inclination, y_inclination, z_inclination,

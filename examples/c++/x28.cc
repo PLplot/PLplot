@@ -267,7 +267,7 @@ x28::x28(int argc, char *argv[])
       omega = domega + 2.*M_PI*((PLFLT)i/(PLFLT)NSHEAR);
       sin_omega = sin(omega);
       cos_omega = cos(omega);
-      x_shear = 0.5*yrange*sin_omega;
+      x_shear = 0.5*xrange*sin_omega;
       z_shear = 0.5*zrange*cos_omega;
       pls->ptex3(
 	      xmid, ymax, zmax -(zmax-0.2)*((PLFLT)i/(PLFLT)(NSHEAR-1)),
@@ -286,7 +286,7 @@ x28::x28(int argc, char *argv[])
       omega = domega + 2.*M_PI*((PLFLT)i/(PLFLT)NSHEAR);
       sin_omega = sin(omega);
       cos_omega = cos(omega);
-      y_shear = -0.5*xrange*sin_omega;
+      y_shear = -0.5*yrange*sin_omega;
       z_shear = 0.5*zrange*cos_omega;
       pls->ptex3(
 	      xmax, ymid, zmax -(zmax-0.2)*((PLFLT)i/(PLFLT)(NSHEAR-1)),
@@ -306,7 +306,7 @@ x28::x28(int argc, char *argv[])
       sin_omega = sin(omega);
       cos_omega = cos(omega);
       y_shear = 0.5*yrange*cos_omega;
-      x_shear = 0.5*zrange*sin_omega;
+      x_shear = 0.5*xrange*sin_omega;
       pls->ptex3(
 	      xmid, ymax -(ymax-0.2)*((PLFLT)i/(PLFLT)(NSHEAR-1)), zmin,
 	      x_inclination, y_inclination, z_inclination,
