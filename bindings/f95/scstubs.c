@@ -450,6 +450,12 @@ PLMTEX7(char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, char *text)
 }
 
 void
+PLMTEX37(char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, char *text)
+{
+    c_plmtex3(side, *disp, *pos, *just, text);
+}
+
+void
 PLPARSEOPTS7(int *numargs, char *iargs, PLINT *mode, PLINT *maxindex)
 {
 /* Same as in plparseopts fortran subroutine that calls this one. */
@@ -506,6 +512,16 @@ void
 PLPTEX7(PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, char *text)
 {
     c_plptex(*x, *y, *dx, *dy, *just, text);
+}
+
+void
+PLPTEX37(
+	 PLFLT *x, PLFLT *y, PLFLT *z, 
+	 PLFLT *dx, PLFLT *dy, PLFLT *dz,
+	 PLFLT *sx, PLFLT *sy, PLFLT *sz,
+	 PLFLT *just, char *text)
+{
+    c_plptex3(*x, *y, *z, *dx, *dy, *dz, *sx, *sy, *sz, *just, text);
 }
 
 void

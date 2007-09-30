@@ -215,6 +215,7 @@
 #define    PLMESHC	FNAME(PLMESHCF77,plmeshcf77)
 #define    PLMKSTRM	FNAME(PLMKSTRM,plmkstrm)
 #define    PLMTEX7	FNAME(PLMTEX7,plmtex7)
+#define    PLMTEX37	FNAME(PLMTEX37,plmtex37)
 #define    PLOT3D	FNAME(PLOT3DF77,plot3df77)
 #define    PLOT3DC	FNAME(PLOT3DCF77,plot3dcf77)
 
@@ -232,6 +233,7 @@
 #define    PLPREC	FNAME(PLPREC,plprec)
 #define    PLPSTY	FNAME(PLPSTY,plpsty)
 #define    PLPTEX7	FNAME(PLPTEX7,plptex7)
+#define    PLPTEX37	FNAME(PLPTEX37,plptex37)
 #define    PLREPLOT	FNAME(PLREPLOT,plreplot)
 #define    PLRGB	FNAME(PLRGB,plrgb)
 #define    PLRGB1	FNAME(PLRGB1,plrgb1)

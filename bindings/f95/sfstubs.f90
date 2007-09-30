@@ -614,6 +614,25 @@
 
 !***********************************************************************
 
+      subroutine plmtex3(side,disp,pos,xjust,text)
+
+      implicit none
+      real(kind=plflt) disp, pos, xjust
+      character*(*) side, text
+
+      include 'sfstubs.h'
+
+      call plstrf2c(side, string1, maxlen)
+      call plstrf2c(text, string2, maxlen)
+
+      s1 = transfer( string1, s1 )
+      s2 = transfer( string2, s2 )
+      call plmtex37(s1,disp,pos,xjust,s2)
+
+      end subroutine
+
+!***********************************************************************
+
       subroutine plptex(x,y,dx,dy,xjust,text)
 
       implicit none
@@ -626,6 +645,23 @@
 
       s1 = transfer( string1, s1 )
       call plptex7(x,y,dx,dy,xjust,s1)
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plptex3(x,y,z,dx,dy,dz,sx,sy,sz,xjust,text)
+
+      implicit none
+      real(kind=plflt) x, y, z, dx, dy, dz, sx, sy, sz, xjust
+      character*(*) text
+
+      include 'sfstubs.h'
+
+      call plstrf2c(text, string1, maxlen)
+
+      s1 = transfer( string1, s1 )
+      call plptex37(x,y,z,dx,dy,dz,sx,sy,sz,xjust,s1)
 
       end subroutine
 
