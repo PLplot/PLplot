@@ -28,11 +28,6 @@ EXEEXT = @EXEEXT@
 @pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 @pkg_config_true@RPATHCMD = @RPATHCMD@
 
-# x19f excluded from this list because the plmap and plmeridians fortran
-# API is not implemented as part of the common API (and probably won't be
-# for a long time because of having to work around the mapform type of
-# argument for these functions).
-
 EXECUTABLES_list = \
 		 x01f$(EXEEXT) \
 		 x02f$(EXEEXT) \
@@ -55,7 +50,8 @@ EXECUTABLES_list = \
 		 x18f$(EXEEXT) \
 		 x19f$(EXEEXT) \
 		 x22f$(EXEEXT) \
-		 x23f$(EXEEXT) 
+		 x23f$(EXEEXT) \
+		 x28f$(EXEEXT) 
 
 all: $(EXECUTABLES_list)
 

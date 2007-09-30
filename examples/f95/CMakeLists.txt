@@ -43,6 +43,7 @@ set(f95_STRING_INDICES
 "19"
 "22"
 "23"
+"28"
 )
 
 if(BUILD_TEST)
