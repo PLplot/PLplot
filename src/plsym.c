@@ -1644,8 +1644,8 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
   ypc = plP_dcmmy(plP_pcdcy(ypc));
   
   shift = plstrl(text) * just;
-  xrefpc = xpc + cos(theta) * shift;
-  yrefpc = ypc + sin(theta) * shift;
+  xrefpc = xpc - cos(theta) * shift;
+  yrefpc = ypc - sin(theta) * shift;
   
   xpc = plP_mmpcx(xpc);
   ypc = plP_mmpcy(ypc);
