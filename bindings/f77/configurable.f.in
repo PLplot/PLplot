@@ -22,7 +22,7 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       implicit none
       include 'sfstubs.h'
       integer mode
-      integer maxargs, iargs, numargs, index, maxindex, iargc
+      integer maxargs, iargs, numargs, index, maxindex, iargc, islen
       parameter(maxindex = maxlen/4)
       parameter (maxargs=20)
       character*(maxlen) arg
@@ -41,7 +41,7 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
 @HAVE_F77PARSE_CL_TRUE@      endif
 @HAVE_F77PARSE_CL_TRUE@      do 10 iargs = 0, numargs
 @HAVE_F77PARSE_CL_TRUE@        call getarg(iargs, arg)
-@HAVE_F77PARSE_CL_TRUE@        call plstrf2c(arg, string1, maxlen)
+@HAVE_F77PARSE_CL_TRUE@        call plstrf2c(arg(:islen(arg)), string1, maxlen)
 @HAVE_F77PARSE_CL_TRUE@        do 5 index = 1, maxindex
 @HAVE_F77PARSE_CL_TRUE@          iargsarr(index, iargs+1) = s1(index)
 @HAVE_F77PARSE_CL_TRUE@    5     continue
