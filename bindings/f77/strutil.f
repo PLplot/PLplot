@@ -21,10 +21,10 @@
       subroutine plstrf2c(string1, string2, maxlen)
 
       integer*4 maxlen
+      integer islen
       character*(*) string1, string2
 
-      integer*4 limit, islen
-      external islen
+      integer*4 limit
 
       limit = min0(islen(string1),maxlen-1)
       do 100 i = 1,limit
@@ -70,7 +70,12 @@
          endif
  100  continue
 
-C      If string is blank or length 0, return length 0
-      islen = 0
+      if(len(string).eq.0) then
+C        If string is length 0, return length 0
+        islen = 0
+      else
+C        If string is blank, return length of 1
+        islen = 1
+      endif
       return
       end
