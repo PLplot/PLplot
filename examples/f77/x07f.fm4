@@ -64,7 +64,15 @@ C        Write the digits below the frame
 
 C          Write the digits to the left of the frame
 
-          write (text,'(i4)') base(l)+10*i
+          if(base(l)+10*i.eq.0) then
+            write (text,'(i1)') base(l)+10*i
+          elseif(base(l)+10*i.lt.100) then
+            write (text,'(i2)') base(l)+10*i
+          elseif(base(l)+10*i.lt.1000) then
+            write (text,'(i3)') base(l)+10*i
+          else
+            write (text,'(i4)') base(l)+10*i
+	  endif
           call plmtex('lv', 1.0d0, (0.95d0-0.1d0*i),
      &      1.0d0, text)
           do j=0,9

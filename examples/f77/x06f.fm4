@@ -58,7 +58,13 @@ C      Write the digits below the frame
 
 C        Write the digits to the left of the frame
 
-        write (text,'(i3)') 10*i
+        if(i.eq.0) then
+	  write (text,'(i1)') 10*i
+        elseif(i.le.9) then
+	  write (text,'(i2)') 10*i
+	else
+	  write (text,'(i3)') 10*i
+	endif
         call plmtex('lv', 1.0d0, (1.0d0-(2*i+1)/26.0d0),
      &    1.0d0, text)
         do j=0,9
