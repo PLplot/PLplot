@@ -74,7 +74,7 @@
 !        If string is length 0, return length 0
         islen = 0
       else
-!C        If string is blank, return length of 1
+!        If string is blank, return length of 1
         islen = 1
       endif
       return
