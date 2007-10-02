@@ -184,11 +184,11 @@
       call plstrf2c(zlabel, string6, maxlen)
 
       s1 = transfer( string1, s1 )
-      s2 = transfer( string1, s2 )
-      s3 = transfer( string1, s3 )
-      s4 = transfer( string1, s4 )
-      s5 = transfer( string1, s5 )
-      s6 = transfer( string1, s6 )
+      s2 = transfer( string2, s2 )
+      s3 = transfer( string3, s3 )
+      s4 = transfer( string4, s4 )
+      s5 = transfer( string5, s5 )
+      s6 = transfer( string6, s6 )
       call plbox37(s1,s2,xtick,nxsub, &
         s3,s4,ytick,nysub, &
         s5,s6,ztick,nzsub)
