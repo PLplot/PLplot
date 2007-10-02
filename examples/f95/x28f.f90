@@ -221,7 +221,7 @@
       y_shear = 0.5*yrange*cos_omega
       z_shear = 0.5*zrange*sin_omega
       call plptex3( &
-         xmid, ymax -(ymax-0.2)*(dble(i)/dble(NROTATION-1)), zmin, &
+         xmid, ymax -(ymax-0.2)*(dble(i-1)/dble(NROTATION-1)), zmin, &
          x_inclination, y_inclination, z_inclination, &
          x_shear, y_shear, z_shear, &
          0.5_plflt, "rotation for z = z#dmin#u")
@@ -258,7 +258,7 @@
       x_shear = 0.5*xrange*sin_omega
       z_shear = 0.5*zrange*cos_omega
       call plptex3( &
-         xmid, ymax, zmax -(zmax-0.2)*(dble(i)/dble(NSHEAR-1)), &
+         xmid, ymax, zmax -(zmax-0.2)*(dble(i-1)/dble(NSHEAR-1)), &
          x_inclination, y_inclination, z_inclination, &
          x_shear, y_shear, z_shear, &
          0.5_plflt, "shear for y = y#dmax#u")
@@ -296,7 +296,7 @@
       y_shear = 0.5*yrange*cos_omega
       x_shear = 0.5*xrange*sin_omega
       call plptex3( &
-         xmid, ymax -(ymax-0.2)*(dble(i)/dble(NSHEAR-1)), zmin, &
+         xmid, ymax -(ymax-0.2)*(dble(i-1)/dble(NSHEAR-1)), zmin, &
          x_inclination, y_inclination, z_inclination, &
          x_shear, y_shear, z_shear, &
          0.5_plflt, "shear for z = z#dmin#u")
