@@ -80,7 +80,7 @@ function x13c
       just = 1.;
     endif
     plptex((x((j / 2) +1) + dx), (y((j / 2) +1) + dy), 1.0, 0.0, just, deblank(text(i+1,:)));
-    theta0 = theta;
+    theta0 = theta1;
   endfor
   plfont(2);
   plschr(0., 1.3);
