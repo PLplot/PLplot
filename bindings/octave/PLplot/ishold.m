@@ -1,5 +1,5 @@
-## Copyright (C) 1998-2003 Joao Cardoso.
-##
+## Copyright (C) 2007 Andrew Ross.
+## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 2, or (at your option)
@@ -12,36 +12,17 @@
 ##
 ## This file is part of plplot_octave.
 
-## usage: zlabel (text)
+## usage: ishold 
 ##
-## Defines a label for the z-axis of the next plots
+## Return 1 if the next line will be added to the current plot, or 0 if
+## the plot device will be cleared before drawing the next line.
 ##
-## See also: xlabel, ylabel, zlabel
 
-function text = zlabel (text)
+
+function a = ishold()
 
   global __pl
 
-  strm =__pl_init;
-
-  if (nargin > 1)
-    usage ("zlable (text)");
-  endif
-  
-  if (isempty(text))
-    text = " ";
-  endif
-  
-  if (nargin == 0)
-    text = __pl.zlabel(strm,:);
-  else
-    __pl.zlabel = __pl_matstr(__pl.zlabel, text, strm);
-  endif
-
-  if (exist("automatic_replot"))
-    if (automatic_replot)
-      __pl_plotit;
-    endif
-  endif
+  a = __pl.hold(plgstrm+1);
 
 endfunction

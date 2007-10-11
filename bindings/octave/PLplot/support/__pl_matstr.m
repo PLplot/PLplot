@@ -20,8 +20,7 @@
 function out = __pl_matstr(mat, str, n)
 
   ## Octave damned string arrays are defective!
-
-  if (isstr(str) & isstr(mat) & rows(str) == 1)
+  if (ischar(str) & ischar(mat) & rows(str) == 1)
     if (isempty(mat))
       out(n,:) = str;
     else
@@ -35,10 +34,18 @@ function out = __pl_matstr(mat, str, n)
 	out(nn,:) = "";
       endif
     endif
-    old_dofi = warn_fortran_indexing;
-    warn_fortran_indexing = 0;
-    out(toascii (out) == 0) = " ";
-    warn_fortran_indexing = old_dofi;
+    if (exist("warn_fortran_indexing"))
+      old_dofi = warn_fortran_indexing;
+      warn_fortran_indexing = 0;
+      out(toascii (out) == 0) = " ";
+      warn_fortran_indexing = old_dofi;
+    else
+      old_dofi = warning("query","Octave:fortran-indexing");
+      warning("off","Octave:fortran-indexing");
+      out(toascii (out) == 0) = " ";
+      warning(old_dofi.state,"Octave:fortran-indexing");
+    endif
+
   else
     help __pl_matstr
   endif

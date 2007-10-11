@@ -14,8 +14,10 @@
 
 function p11
 
-  t = automatic_replot;
-  automatic_replot = 0;
+  if (exist("automatic_replot"))
+    t = automatic_replot;
+    automatic_replot = 0;
+  endif
 
   title("Stripchart demo 1 (sliding)");
   xlabel("Time");
@@ -48,6 +50,8 @@ function p11
   ## Destroy strip chart and it's memory */
 
   stripc_del(id1);
-  automatic_replot = t; 
+  if (exist("automatic_replot"))
+    automatic_replot = t; 
+  endif
 
 endfunction

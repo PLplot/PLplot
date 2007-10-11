@@ -61,7 +61,7 @@ function label_plot( data, label, class, names)
 
     cla = create_set(label);
 
-    if (nargin == 3 && isstr(class))
+    if (nargin == 3 && ischar(class))
       names = setstr(ones(max(cla),columns(class))*32);
       t=1;for i=cla; names(i,:) = class(t++,:); endfor
     elseif (nargin <= 3)
@@ -84,7 +84,7 @@ function label_plot( data, label, class, names)
     ## else
     item = class';
     ## endif
-  elseif (nargin == 3 && is_matrix(class) && !isstr(class))
+  elseif (nargin == 3 && is_matrix(class) && !ischar(class))
     item = []; ct = rows(class);
     if (nc != columns(class))
       error("label_plot: `data' and `class' must have the same number of columns\n");

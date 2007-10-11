@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2003 Joao Cardoso.
+## Copyright (C) 2007 Andrew Ross
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
@@ -12,36 +12,27 @@
 ##
 ## This file is part of plplot_octave.
 
-## usage: xlabel (text)
+## usage: hold on | off
+## Tell Octave to `hold' the current data on the plot when executing
+## subsequent plotting commands.  This allows you to execute a series of
+## plot commands and have all the lines end up on the same figure.  The
+## default is for each new plot command to clear the plot device first.
 ##
-## Defines a label for the x-axis of the next plots
-##
-## See also: title, xlabel, ylabel, zlabel
 
-function text = xlabel (text)
+function hold (arg)
 
   global __pl
 
-  strm = __pl_init;
+  if (nargin ~= 1) 
+    usage("hold on|off");
+  end
 
-  if (nargin > 1)
-    usage ("xlable (text)");
-  endif
-  
-  if (nargin == 1 && isempty(text))
-    text = " ";
-  endif
-  
-  if (nargin == 0)
-    text = __pl.xlabel(strm,:);
+  if (strcmpi(arg,"on") == 1) 
+    __pl.hold(plgstrm+1) = 1;
+  elseif (strcmpi(arg,"off") == 1)
+    __pl.hold(plgstrm+1) = 0;
   else
-    __pl.xlabel = __pl_matstr(__pl.xlabel, text, strm);
-  endif
-
-  if (exist("automatic_replot"))
-    if (automatic_replot)
-      __pl_plotit;
-    endif
-  endif
+    usage("hold on|off");
+  end
 
 endfunction

@@ -80,7 +80,7 @@ function ret = plsetopt(option, value)
 
   ret = "";
 
-  if (nargin == 0 || (nargin >= 1 && !isstr(option)) || (nargin == 2 && !isstr(value)))
+  if (nargin == 0 || (nargin >= 1 && !ischar(option)) || (nargin == 2 && !ischar(value)))
     help "plsetopt"
     return
   endif

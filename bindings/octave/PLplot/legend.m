@@ -39,11 +39,11 @@ function st = legend (x, xpos, varargin)
   elseif (nargin == 1 && is_scalar(x) && x >=0 && x <= 2)
     __pl.legend(strm) = x;
 
-  elseif (nargin == 2 && !isstr(x) && !isstr(xpos))
+  elseif (nargin == 2 && !ischar(x) && !ischar(xpos))
     __pl.legend_xpos(strm) = x;
     __pl.legend_ypos(strm) = xpos;
 
-  elseif (nargin >= 1 && isstr (x))
+  elseif (nargin >= 1 && ischar (x))
     if (strcmp ("off", x))
       __pl.legend(strm) = 0;
     elseif (strcmp ("on", x) || strcmp ("transparent", x))
@@ -52,7 +52,7 @@ function st = legend (x, xpos, varargin)
       __pl.legend(strm) = 2;
 
     elseif (strcmp ("set", x))
-      if (nargin >= 2 && isstr(xpos))
+      if (nargin >= 2 && ischar(xpos))
 	__pl.fmt{1,1} = xpos;
 	i=2;
 	while (--nargin > 1)
@@ -66,8 +66,10 @@ function st = legend (x, xpos, varargin)
     help "legend"
   endif
 
-  if (automatic_replot)
-    __pl_plotit;
+  if (exist("automatic_replot"))
+    if (automatic_replot)
+      __pl_plotit;
+    endif
   endif
 
 endfunction

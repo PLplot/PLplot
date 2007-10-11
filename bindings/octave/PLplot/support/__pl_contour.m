@@ -19,18 +19,22 @@ function __pl_contour(x, y, z, n)
 
   strm = plgstrm+1;
 
-  old_empty_list_elements_ok = warn_empty_list_elements;
-
   unwind_protect
     
+  if (exist("warn_empty_list_elements"))
+    old_empty_list_elements_ok = warn_empty_list_elements;
   warn_empty_list_elements = 0;
+  else
+    old_empty_list_elements_ok = warning("query","Octave:empty-list-elements");
+    warning("off","Octave:empty-list-elements");
+  endif
 
   grid = 0;
   if (__pl.grid(strm))
     grid = 2;
   endif
 
-  if (ishold == 0)
+  if (ishold== 0)
     xm = min(min(x)); xM = max(max(x));
     ym = min(min(y)); yM = max(max(y));
     zm = min(min(z)); zM = max(max(z));
@@ -113,7 +117,11 @@ function __pl_contour(x, y, z, n)
 
   unwind_protect_cleanup  
   
-  warn_empty_list_elements = old_empty_list_elements_ok;
+  if (exist("warn_empty_list_elements"))
+    warn_empty_list_elements = old_empty_list_elements_ok;
+  else
+    warning(old_empty_list_elements_ok.state,"Octave:empty-list-elements");
+  endif
 
   end_unwind_protect  
 

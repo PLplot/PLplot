@@ -46,7 +46,7 @@ function __plt__ (caller, varargin)
 
   elseif (nargin > 2)
     
-    hold_state = ishold ();
+    hold_state = ishold;
 
     unwind_protect
 
@@ -63,7 +63,7 @@ function __plt__ (caller, varargin)
 	fmt = "";
 	new = varargin{k++};
 
-	if (isstr (new))
+	if (ischar (new))
 	  if (! x_set)
 	    error ("plot: no data to plot");
 	  endif

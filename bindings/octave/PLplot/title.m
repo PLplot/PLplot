@@ -57,8 +57,10 @@ function text = title (text)
     __pl.tlabel = __pl_matstr(__pl.tlabel, text, strm);
   endif
 
-  if (automatic_replot)
-    __pl_plotit;
+  if (exist("automatic_replot"))
+    if (automatic_replot)
+      __pl_plotit;
+    endif
   endif
 
 endfunction

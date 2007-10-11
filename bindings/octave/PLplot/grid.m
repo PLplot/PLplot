@@ -30,7 +30,7 @@ function st = grid (x)
   if (nargin == 0)
     __pl.grid(strm) = 1;
   elseif (nargin == 1)
-    if (isstr (x))
+    if (ischar (x))
       switch (x)
 	case "off"
           __pl.grid(strm) = 0;
@@ -57,8 +57,10 @@ function st = grid (x)
     help grid
   endif
 
-  if (automatic_replot)
-    __pl_plotit;
+  if (exist("automatic_replot"))
+    if (automatic_replot)
+      __pl_plotit;
+    endif
   endif
 
 endfunction

@@ -67,7 +67,7 @@ function curr_axis = axis (ax, opt)
     __pl.axis_st(strm) = 0;
     __pl.aspect(strm) = 0;
     curr_axis = __pl.axis(strm,:);
-  elseif (nargin == 1 && isstr (ax))
+  elseif (nargin == 1 && ischar (ax))
     opt = ax; ax = [];
   elseif (nargin == 1 && is_vector (ax))
     opt = "";
@@ -193,8 +193,10 @@ function curr_axis = axis (ax, opt)
     endswitch
   endif
 
-  if (automatic_replot)
-    __pl_plotit;
+  if (exist("automatic_replot"))
+    if (automatic_replot)
+      __pl_plotit;
+    endif
   endif
 
 endfunction

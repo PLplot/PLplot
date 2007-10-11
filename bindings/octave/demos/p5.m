@@ -14,8 +14,10 @@
 
 function p5
 
-  t = automatic_replot;
-  automatic_replot = 0;
+  if (exist("automatic_replot"))
+    t = automatic_replot;
+    automatic_replot = 0;
+  endif
 
   x=-pi:0.01:pi;
   y=sin(x).+cos(3*x);
@@ -25,6 +27,8 @@ function p5
   polar(x,y,'y')
   grid (og);
 
-  automatic_replot = t;
+  if (exist("automatic_replot"))
+    automatic_replot = t;
+  endif
 
 endfunction

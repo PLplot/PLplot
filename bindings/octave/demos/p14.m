@@ -17,8 +17,10 @@ function p14(fg)
 
   ## And now, in the Theatre near you, "Octave, the movie"
 
-  t = automatic_replot;
-  automatic_replot = 0;
+  if (exist("automatic_replot"))
+    t = automatic_replot;
+    automatic_replot = 0;
+  endif
 
   if (!nargin)
     plsetopt "db";
@@ -62,8 +64,10 @@ function p14(fg)
     closefig; # the "db" option has negative side effects on other plots.
     plsetopt "reset"; # reset options
   endif
-  automatic_replot = t;
-  
+  if (exist("automatic_replot"))
+    automatic_replot = t;
+  endif
+
 endfunction
 
 

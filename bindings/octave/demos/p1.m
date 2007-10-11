@@ -15,8 +15,10 @@
 
 function p1
     
-  t = automatic_replot;
-  automatic_replot = 0;
+  if (exist("automatic_replot"))
+    t = automatic_replot;
+    automatic_replot = 0;
+  endif
 
   xscale = 6.;
   yscale = 1.;
@@ -39,7 +41,9 @@ function p1
 
   plot(x, y, xs, ys, 'og; ;');
 
-  automatic_replot = t;
+  if (exist("automatic_replot"))
+    automatic_replot = t;
+  endif
   
 endfunction
 

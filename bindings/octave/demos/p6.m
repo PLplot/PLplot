@@ -16,8 +16,10 @@ function p6
 
   [x y z] = rosenbrock; z = log(z);
 
-  t = automatic_replot;
-  automatic_replot = 0;
+  if (exist("automatic_replot"))
+    t = automatic_replot;
+    automatic_replot = 0;
+  endif
 
   as = autostyle;
   autostyle "off";
@@ -26,6 +28,8 @@ function p6
   contour(x,y,z)
 
   autostyle(as);
-  automatic_replot = t;
+  if (exist("automatic_replot"))
+    automatic_replot = t;
+  endif
 
 endfunction

@@ -65,10 +65,12 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 
     __pl.inited = 1;
 
-    if (automatic_replot == 0)
-      warning("It is recommended that you set 'automatic_replot=1' \n\
-               in your ~/.octaverc file.");
-      ##automatic_replot = 1;
+    if (exist("automatic_replot"))
+      if (automatic_replot == 0)
+        warning("It is recommended that you set 'automatic_replot=1' \n\
+                 in your ~/.octaverc file.");
+        ##automatic_replot = 1;
+      endif
     endif
   endif
 
@@ -82,7 +84,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
   endif
 
   if (nargin != 0 || plglevel == 0)
-    __pl.hold(plgstrm+1) = ishold; # save current hold state
+    #__pl.hold(plgstrm+1) = ishold; # save current hold state
     plsstrm(n);
     n = plgstrm;
     strm = n+1;
@@ -98,7 +100,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       endif
 
       if (nargin >= 2 )
-	if (isstr(device))
+	if (ischar(device))
 	  plsdev(device);
 	else
 	  error("figure: `device' must be a string");
@@ -153,7 +155,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       __pl.grid(strm) = 0;	   # grid state
 
       if (!struct_contains(__pl, "lab_str"))
-	__pl.lab_str(strm) = "";	# label string
+	__pl.lab_str = "";	# label string
       endif
 
       if (struct_contains(__pl, "xlabel"))

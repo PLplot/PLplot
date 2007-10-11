@@ -15,8 +15,10 @@
     
 function p15
 
-  t = automatic_replot;
-  automatic_replot = 0;
+  if (exist("automatic_replot"))
+    t = automatic_replot;
+    automatic_replot = 0;
+  endif
 
   title "Lighted and shaded surface";
   xlabel "";
@@ -33,7 +35,9 @@ function p15
   surf(x, y, z);
   colormap('default');
 
-  automatic_replot = t;
+  if (exist("automatic_replot"))
+    automatic_replot = t;
+  endif
 
 endfunction
 

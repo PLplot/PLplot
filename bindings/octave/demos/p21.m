@@ -20,8 +20,10 @@ function p21
   ##ocmap = colormap;
   colormap(bgr);
 
-  t = automatic_replot;
-  automatic_replot = 0;
+  if (exist("automatic_replot"))
+    t = automatic_replot;
+    automatic_replot = 0;
+  endif
 
   gx = 30;
   gy = 40;
@@ -57,7 +59,9 @@ function p21
     meshc(xg, yg, zg');
   endfor
 
-  automatic_replot = t;
+  if (exist("automatic_replot"))
+    automatic_replot = t;
+  endif
   ##colormap(ocmap);
 
 endfunction

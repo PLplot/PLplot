@@ -26,11 +26,15 @@ function __pl_plotit
     return
   endif
 
-  old_empty_list_elements_ok = warn_empty_list_elements;
-
   unwind_protect
     
-  warn_empty_list_elements = 0;
+  if (exist("warn_empty_list_elements"))
+    old_empty_list_elements_ok = warn_empty_list_elements;
+    warn_empty_list_elements = 0;
+  else
+    old_empty_list_elements_ok = warning("query","Octave:empty-list-elements");
+    warning("off","Octave:empty-list-elements");
+  endif
 
   if (__pl.type(strm) >= 100 && __pl.type(strm) < 200)
     __pl_meshplotit;
@@ -281,8 +285,12 @@ function __pl_plotit
   plflush;
 
   unwind_protect_cleanup  
-  
-  warn_empty_list_elements = old_empty_list_elements_ok;
+
+  if (exist("warn_empty_list_elements"))
+    warn_empty_list_elements = old_empty_list_elements_ok;
+  else
+    warning(old_empty_list_elements_ok.state,"Octave:empty-list-elements");
+  endif
 
   end_unwind_protect  
 

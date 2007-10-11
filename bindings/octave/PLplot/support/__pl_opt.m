@@ -131,7 +131,7 @@ function [style, color, symbol, key_title] = __pl_opt (opt)
     usage ("__pl_opt (opt)");
   endif
 
-  if (! isstr (opt))
+  if (! ischar (opt))
     error ("__pl_opt: argument must be a string");
   endif
 

@@ -42,7 +42,7 @@ function ccmap = colormap(map)
     return
   endif
 
-  if (nargin == 1 && isstr(map) && strcmp(map, 'default'))
+  if (nargin == 1 && ischar(map) && strcmp(map, 'default'))
     plscmap1n(0);
     n = 64;
     r = [zeros(n/2,1); linspace(0,1,n/2)'];
@@ -68,9 +68,11 @@ function ccmap = colormap(map)
   plscmap1(map(:,1), map(:,2), map(:,3));
   plflush;#pleop;
   
-  if (automatic_replot)
-    ## can cause problems on plot scripts that dont support automatic _replot
-    __pl_plotit; 
+  if (exist("automatic_replot"))
+    if (automatic_replot)
+      ## can cause problems on plot scripts that dont support automatic _replot
+      __pl_plotit; 
+    endif
   endif
 
   if (nargout)

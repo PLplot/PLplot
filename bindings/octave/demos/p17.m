@@ -14,8 +14,10 @@
 
 function p17(fg)
 
-  t = automatic_replot;
-  automatic_replot = 0;
+  if (exist("automatic_replot"))
+    t = automatic_replot;
+    automatic_replot = 0;
+  endif
 
   title "Click and Drag button 1 to select";
   xlabel "Button 2 to restart and button 3 to finish";
@@ -30,6 +32,8 @@ function p17(fg)
     plimage (img, x1, x2, y1, y2);
   endif
 
-  automatic_replot = t;
-  
+  if (exist("automatic_replot"))
+    automatic_replot = t;
+  endif
+
 endfunction

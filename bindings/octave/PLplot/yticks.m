@@ -55,8 +55,10 @@ function yticks (int, num)
     endif
   endif
 
-  if (automatic_replot)
-    __pl_plotit;
+  if (exist("automatic_replot"))
+    if (automatic_replot)
+      __pl_plotit;
+    endif
   endif
 
 endfunction

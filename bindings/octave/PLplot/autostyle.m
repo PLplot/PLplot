@@ -24,7 +24,7 @@ function st = autostyle(x)
   strm = __pl_init;
 
   if (nargin == 1)
-    if (isstr (x))
+    if (ischar (x))
       if (strcmp ("off", x))
         __pl.line_style(strm) = 0;
       elseif (strcmp ("on", x))
@@ -49,8 +49,10 @@ function st = autostyle(x)
 
   st = __pl.line_style(strm);
 
-  if (automatic_replot)
-    __pl_plotit;
+  if (exist("automatic_replot"))
+    if (automatic_replot)
+      __pl_plotit;
+    endif
   endif
 
 endfunction

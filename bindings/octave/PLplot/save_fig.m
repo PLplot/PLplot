@@ -88,7 +88,7 @@ function save_fig(file, device, rev)
 
   device = dev;
 
-  if (nargin >= 1 && isstr(device) & isstr(file))
+  if (nargin >= 1 && ischar(device) & ischar(file))
     
     to_prt = 0;
     if (strcmp(file,"|lp"))	# special output file, printer!

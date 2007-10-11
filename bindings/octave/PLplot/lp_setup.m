@@ -26,7 +26,7 @@ function out = lp_setup(command)
     __pl.lp_options = "lpr";
   endif
 
-  if (nargin == 1 && isstr(command))
+  if (nargin == 1 && ischar(command))
     __pl.lp_options = command;
   endif
 

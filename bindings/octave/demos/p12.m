@@ -14,8 +14,10 @@
 
 function p12
 
-  t = automatic_replot;
-  automatic_replot = 0;
+  if (exist("automatic_replot"))
+    t = automatic_replot;
+    automatic_replot = 0;
+  endif
 
   title("War Game");
   legend("off");
@@ -30,6 +32,8 @@ function p12
   endif
   legend("on");
 
-  automatic_replot = t;
+  if (exist("automatic_replot"))
+    automatic_replot = t;
+  endif
 
 endfunction

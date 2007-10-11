@@ -42,11 +42,11 @@ function set_view (alt, az, varargin)
 
   callback = 0;
 
-  if (nargin == 2 && !isstr(alt))
+  if (nargin == 2 && !ischar(alt))
     __pl.az(strm) = az;
     __pl.alt(strm) = alt;
     return
-  elseif (nargin >= 2 && isstr(alt))
+  elseif (nargin >= 2 && ischar(alt))
     cmd = alt;
     arg1 = az;	
     callback = 1;

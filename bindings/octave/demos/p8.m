@@ -14,8 +14,10 @@
 
 function p8
 
-  t = automatic_replot;
-  automatic_replot = 0;
+  if (exist("automatic_replot"))
+    t = automatic_replot;
+    automatic_replot = 0;
+  endif
 
   xlabel("X"); ylabel("Y");
   title("Mesh example");
@@ -25,7 +27,9 @@ function p8
   pause(1);
   meshc(x,y,z)
 
-  automatic_replot = t;
+  if (exist("automatic_replot"))
+    automatic_replot = t;
+  endif
 
 endfunction
 

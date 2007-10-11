@@ -38,8 +38,10 @@ function text = ylabel (text)
     __pl.ylabel = __pl_matstr(__pl.ylabel, text, strm);
   endif
 
-  if (automatic_replot)
-    __pl_plotit;
+  if (exist("automatic_replot"))
+    if (automatic_replot)
+      __pl_plotit;
+    endif
   endif
 
 endfunction

@@ -14,8 +14,10 @@
 
 function p9
 
-  t = automatic_replot;
-  automatic_replot = 0;
+  if (exist("automatic_replot"))
+    t = automatic_replot;
+    automatic_replot = 0;
+  endif
 
   as = autostyle;
   autostyle ("off");
@@ -38,6 +40,8 @@ function p9
 
   legend(ls);
   autostyle(as); 
-  automatic_replot = t;
+  if (exist("automatic_replot"))
+    automatic_replot = t;
+  endif
 
 endfunction

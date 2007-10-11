@@ -55,7 +55,7 @@ function __pl_fill(x, y, c)
       __pl_plenv(min(x), max(x), min(y), max(y), 0, -1);
     endif
     
-    if (isstr(c) & length(c) == 1)
+    if (ischar(c) & length(c) == 1)
       ## map to plplot color
       coln = ['r','g','b','c','m','y','w','k'];
       coli = [2, 4, 10, 12, 14, 3, 16, 1];

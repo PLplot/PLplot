@@ -26,7 +26,7 @@ function t = tdeblank (s)
     usage ("tdeblank (s)");
   endif
 
-  if (isstr (s))
+  if (ischar (s))
 
     [nr, nc] = size (s);
     len = nr * nc;
