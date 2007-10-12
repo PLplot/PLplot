@@ -55,8 +55,10 @@ grid.m
 griddata.m
 gtext.m
 hls2rgb.m
+hold.m
 hot.m
 hsv.m
+ishold.m
 label_plot.m
 legend.m
 loglog.m

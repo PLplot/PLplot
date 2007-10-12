@@ -32,17 +32,33 @@ else
 endif
 
 use_plplot_path = plplot_octave_path;
-use_plplot_i = findstr (LOADPATH, use_plplot_path);
-if (!isempty (use_plplot_i))
-  LOADPATH (use_plplot_i(1):use_plplot_i(1)+length(use_plplot_path)-1)= "";
-  LOADPATH = strrep (LOADPATH, "::", ":");
+# Strip of trailing // for octave >= 2.9
+if (!exist("LOADPATH"))
+  use_plplot_path = use_plplot_path(1:end-2);
+endif
+if (exist("LOADPATH"))
+  use_plplot_i = findstr (LOADPATH, use_plplot_path);
+  if (!isempty (use_plplot_i))
+    LOADPATH (use_plplot_i(1):use_plplot_i(1)+length(use_plplot_path)-1)= "";
+    LOADPATH = strrep (LOADPATH, "::", ":");
+  endif
+else
+  rmpath(genpath(use_plplot_path));
 endif
 
 if (strcmp (use_plplot_state, "on"))
-  LOADPATH = [use_plplot_path, ":", LOADPATH];
+  if (exist("LOADPATH"))
+    LOADPATH = [use_plplot_path, ":", LOADPATH];
+  else
+    addpath(genpath(use_plplot_path));
+  endif
   plplot_stub;
 elseif (strcmp (use_plplot_state, "off"))
-  LOADPATH = [LOADPATH, ":", use_plplot_path];
+  if (exist("LOADPATH"))
+    LOADPATH = [LOADPATH, ":", use_plplot_path];
+  else
+    addpath(genpath(use_plplot_path),"-end");
+  endif
 endif
 
 use_plplot_lcd = pwd;
