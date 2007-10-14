@@ -39,7 +39,7 @@ if(BUILD_TEST)
   remove_definitions("-DHAVE_CONFIG_H")
   include_directories(
   ${CMAKE_SOURCE_DIR}/examples/ada
-  ${CMAKE_SOURCE_DIR}/bindings/ada
+  ${CMAKE_BINARY_DIR}/bindings/ada
   )
 endif(BUILD_TEST)
 foreach(STRING_INDEX ${ada_STRING_INDICES})
@@ -71,7 +71,7 @@ foreach(STRING_INDEX ${ada_STRING_INDICES})
     set_target_properties(x${STRING_INDEX}a
     PROPERTIES
     LINK_FLAGS
-    "-aI${CMAKE_SOURCE_DIR}/examples/ada -aI${CMAKE_SOURCE_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada${LIB_TAG}.dir"
+    "-aI${CMAKE_SOURCE_DIR}/examples/ada -aI${CMAKE_BINARY_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada${LIB_TAG}.dir"
     )
     target_link_libraries(x${STRING_INDEX}a plplotada${LIB_TAG})
   endif(BUILD_TEST)

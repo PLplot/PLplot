@@ -34,6 +34,7 @@ package PLplot_Auxiliary is
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
+@Ada_Is_2007_with_and_use_Numerics@
 
 --------------------------------------------------------------------------------
 --           Utility type declarations used by the bindings                   --
@@ -47,8 +48,9 @@ package PLplot_Auxiliary is
     -- ALSO, YOU WILL NEED TO MAKE A SINGLE-LINE EDIT TO THESE BINDING FILES: 
     -- plplot.ads, plplot.adb, plplot_traditional.ads, plplot_traditional.adb, 
     -- and plplot_thin.ads.
-    type Real_Vector is array (Integer range <>) of Long_Float;
-    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
+--    type Real_Vector is array (Integer range <>) of Long_Float;
+--    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
+@Ada_Is_Not_2007_Vector_Matrix_Declarations@
 
     -- Other array types for the bindings.
     type Boolean_Array_1D is array (Integer range <>) of Boolean;

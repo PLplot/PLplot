@@ -20,16 +20,28 @@
 
 if(ENABLE_ada)
 
-  set(plplotada${LIB_TAG}_LIB_SRCS
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplot.adb
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ads
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_thin.adb
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_thin.ads
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_traditional.adb
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_traditional.ads
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_auxiliary.adb
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_auxiliary.ads
+  set(SOURCE_LIST
+  plplot.adb
+  plplot.ads
+  plplot_thin.adb
+  plplot_thin.ads
+  plplot_traditional.adb
+  plplot_traditional.ads
+  plplot_auxiliary.adb
+  plplot_auxiliary.ads
   )
+
+  set(plplotada${LIB_TAG}_LIB_SRCS)
+  foreach(SOURCE_FILE ${SOURCE_LIST})
+    configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
+    ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+    )
+    set(plplotada${LIB_TAG}_LIB_SRCS
+    ${plplotada${LIB_TAG}_LIB_SRCS}
+    ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+    )
+  endforeach(SOURCE_FILE ${SOURCE_LIST})
 
   add_library(plplotada${LIB_TAG} ${plplotada${LIB_TAG}_LIB_SRCS})
 

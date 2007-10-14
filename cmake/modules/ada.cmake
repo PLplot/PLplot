@@ -39,3 +39,15 @@ endif(ENABLE_ada)
 if(ENABLE_ada)
   enable_language(Ada)
 endif(ENABLE_ada)
+
+
+
+# New stuff by Jerry for source modifications for Ada 2007 or not Ada 2007.
+option(HAVE_ADA_2007 "Ada 2007?" OFF)
+
+if(HAVE_ADA_2007)
+  set(Ada_Is_2007_With_and_Use_Numerics "    with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;")
+else(HAVE_ADA_2007)
+  # Is there some way to put a line ending after the first semicolon in the quoted string? Not essential.
+  set(Ada_Is_Not_2007_Vector_Matrix_Declarations "    type Real_Vector is array (Integer range <>) of Long_Float;    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;")
+endif(HAVE_ADA_2007)
