@@ -170,8 +170,8 @@ use is demonstrated by example 28.
     and should be generated automatically if you have an ADA compiler and
     you specify the cmake option -DENABLE_ada=ON. The ADA bindings are now
     considered complete and the current focus is on implementing all of the
-    examples in ADA to help test the bindings.
-
+    examples in ADA to help test the bindings.  Until that work is completed
+    these bindings should be considered experimental.
 
   2.8.2 wxwidgets applications bindings
        The wxWidgets bindings provide an interface to the PLplot API and a
