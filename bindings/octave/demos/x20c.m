@@ -178,9 +178,10 @@ function [status, img_f, width, height, num_col] = read_img(fname)
   endwhile
   fseek(fp,-1,SEEK_CUR);
 
-  width = fscanf(fp,"%d",1); ## width
-  height = fscanf(fp,"%d",1); ## height
-  num_col = fscanf(fp,"%d\n",1); ## num colors
+  str = fgetl(fp);
+  [width,height] = sscanf(str,"%d %d","C"); ## width and height
+  str = fgetl(fp);
+  num_col = sscanf(str,"%d","C"); ## num colors
 
   img = fread(fp, [width,height],"uchar");
   fclose(fp);
