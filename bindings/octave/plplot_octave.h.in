@@ -490,6 +490,7 @@ typedef struct {
 #define    plmeshc	c_plmeshc
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
+#define    plmtex3	c_plmtex3
 #define    plot3d	c_plot3d
 #define    plot3dc	c_plot3dc
 #define    plparseopts  c_plparseopts
@@ -501,6 +502,7 @@ typedef struct {
 #define    plprec	c_plprec
 #define    plpsty	c_plpsty
 #define    plptex	c_plptex
+#define    plptex3	c_plptex3
 #define    plreplot	c_plreplot
 #define    plrgb	c_plrgb
 #define    plrgb1	c_plrgb1
@@ -986,6 +988,11 @@ void c_plmkstrm(PLINT *p_strm); //%name plmkstrm //%output p_strm
 void c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	 const char *text); //%name plmtex
 
+/* Prints out "text" at specified position relative to viewport (3D) */
+
+void c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
+	 const char *text); //%name plmtex3
+
 /* Plots a 3-d representation of the function z[x][y]. */
 
 void c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
@@ -1051,6 +1058,10 @@ void c_plpsty(PLINT patt); //%name plpsty
 /* Prints out "text" at world cooordinate (x,y). */
 
 void c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text); //%name plptex
+
+/* Prints out "text" at world cooordinate (x,y,z). */
+
+void c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text); //%name plptex3
 
 /* Replays contents of plot buffer to current device/file. */
 
