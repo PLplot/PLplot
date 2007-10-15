@@ -39,6 +39,7 @@ INDEX
     1.1.2 plmeta/plrender
   1.2 Fortran 95 bindings
   1.3 plmtex3/plptex3
+  1.4 Octave 2.9
   
 2. Changes relative to PLplot 5.6.1
   2.1 CVS to Subversion conversion
@@ -105,8 +106,19 @@ INDEX
 
     These two functions, which were added in release 5.7.3, had a number
     of bugs. These have hopefully been cleaned up. Example 28 demonstrates
-    how to use these functions.
+    how to use these functions. The functions and the example have now been
+    implemented for most language bindings.
 
+1.4 Octave 2.9
+  
+    Octave 2.9 has a number of significant differences from version 2.1. 
+    The octave language bindings have been updated to work with this new 
+    version since the latest 2.9.x release is now the "recommended" choice 
+    by the octave developers. Note that all the low-level plplot functions 
+    work as expected. The higher level functions which replace the default
+    octave / gnuplot plotting commands mostly work as for version 2.1. They 
+    do not (yet) replicate the new and more Matlab-like functionality in 
+    the latest 2.9.x releases of Octave.
 
 2. Changes relative to PLplot 5.6.1 (the previous stable release)
 
