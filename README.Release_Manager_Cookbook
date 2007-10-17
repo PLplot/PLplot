@@ -1,7 +1,8 @@
 INDEX
 (1) GNU Privacy Guard (gpg).
 (2) A Note on Autotools.
-(3) Creating a PLplot Release.
+(3) Installing a Local Copy of the PLplot Webpage.
+(4) Creating a PLplot Release.
 
 
 (1) GNU Privacy Guard (gpg)
@@ -37,7 +38,28 @@ automake (GNU automake) 1.9.6
 ltmain.sh (GNU libtool) 1.5.22
 
 
-(3) Creating a PLplot Release
+(3) Installing a Local Copy of the PLplot Webpage.
+
+It can be convenient for testing purposes to install a local copy of the 
+PLplot webpage (http://plplot.sourceforge.net/index.html) on your machine.
+The first step is to install Apache and PHP (if you don't already have 
+them). You will also need to be able to build PLplot with the cairo device 
+driver. After you have installed these items do the following:
+
+  1. In the root directory of a working copy of PLplot (say plplot-www)
+     execute the following command:
+    WWW_USER=username WWW_GROUP=group WWW_HOST=localhost WWW_DIR=/var/www/plplot ./scripts/htdocs-gen_plot-examples.sh
+  2. Then, in plplot-www/www execute the following command:
+    make WWW_USER=username WWW_GROUP=group WWW_HOST=localhost WWW_DIR=/var/www/plplot/htdocs
+
+Where username and group are your username and group.
+
+If everything works as it should, you should be able to browse the local
+site at:
+http://127.0.0.1/plplot/htdocs/index.html
+
+
+(4) Creating a PLplot Release
 
 Update the docbook documentation to reflect any new drivers or new 
 functionality that has been added to PLplot. Or alternatively, press those
