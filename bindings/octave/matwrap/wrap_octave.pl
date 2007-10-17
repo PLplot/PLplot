@@ -11,9 +11,12 @@
 # perl artistic license (http://language.perl.com/misc/Artistic.html).
 #
 # Modifications 2007 Andrew Ross 
-# This version contains two local fixes for plplot
+# This version contains three local fixes for plplot
 # 1) Change _dim function to allow a zero length array (required by plstyl)
 # 2) Alter string to std::string for compatibility with gcc3.2 and later
+# 3) Add octave version checking - the syntax of print_usage has changed
+#    from v2.1 to v2.9. This requires a file octave_version.pl which defines
+#    the variable octave_version.
 #
 
 package octave;			# Everything should be in this package.
@@ -122,6 +125,10 @@ DEFUN_DLD($octave_output_file, args, nargout, "See $stub_file for documentation"
 # 1) The %function_def array.
 #
 sub function_start {
+
+  require "octave_version.pl";
+  our $octave_version;
+
   my $faa = $_[0];		# Access the argument.
 
   my $retstr;
@@ -150,11 +157,21 @@ sub function_start {
     unless (@{$faa->{outputs}}+@{$faa->{modifies}}) <= 1;
 				# Permissible not to specify output args
 				# if there is only one.
-  $retstr .= (")\n" .
+  @ver = split(/\./,$octave_version);
+  if ($ver[0] >= 2 && $ver[1] >= 9) {
+    $retstr .= (")\n" .
+	      "  {\n" .
+	      "    print_usage();\n" . # Give an error.
+	      "    return retval;\n" . # Quit now.
+	      "  }\n\n");
+  }
+  else {
+    $retstr .= (")\n" .
 	      "  {\n" .
 	      "    print_usage(\"$fname\");\n" . # Give an error.
 	      "    return retval;\n" . # Quit now.
 	      "  }\n\n");
+  }
 #
 # Now go through and store the octave expression to get each argument, so
 # we can access them later:
