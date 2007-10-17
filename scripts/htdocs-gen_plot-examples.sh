@@ -61,7 +61,7 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
       # No cairo graphics AA (Yep, 1 turns it off).
       DRIVEROPT='-drvopt graphics_anti_aliasing=1'
     else
-      if test $exe = 09; then
+      if test $exe = 09 -o $exe = 21; then
         # Text clipping.
         DRIVEROPT='-drvopt text_clipping=1'
       else
