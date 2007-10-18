@@ -33,13 +33,14 @@ CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DBUILD_DOC=ON -DCMAKE_INSTALL_PREFIX=/usr \
 	-DCMAKE_Java_RUNTIME=$(JAVA_HOME)/bin/java \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
-	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar
+	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar \
+	-DUSE_RPATH=OFF
 
 BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
 
 config: config-stamp
-config-stamp: 
+config-stamp:
 	mkdir $(BUILD_DIR)
 	(cd $(BUILD_DIR) ; \
 	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
