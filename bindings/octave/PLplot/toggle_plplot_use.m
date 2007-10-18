@@ -23,6 +23,13 @@
 if ! exist ("use_plplot_state")
   global use_plplot_state
   use_plplot_state = "on";
+  # Warn user about spurious warnings with octave 2.9
+  ver = str2num(split(version,"."));
+  if ((ver(1) == 2 && ver(2) == 9) || (ver(1) >= 3)) 
+    if (warning("query","Octave:built-in-variable-assignment").state == "on")
+      warning("You may want to call\n  warning(\"off\",\"Octave:built-in-variable-assignment\");\nto prevent spurious warnings from the plplot code for compatability with octave 2.0/2.1.\n");
+    endif
+  endif
 else
   if strcmp (use_plplot_state, "on")
     use_plplot_state = "off";
@@ -43,7 +50,12 @@ if (exist("LOADPATH"))
     LOADPATH = strrep (LOADPATH, "::", ":");
   endif
 else
-  rmpath(genpath(use_plplot_path));
+  plplot_path_to_remove = split(genpath(use_plplot_path),pathsep);
+  for i=1:size(plplot_path_to_remove)(1)
+    if (findstr(path,deblank(plplot_path_to_remove(i,:))) > 0)
+      rmpath(deblank(plplot_path_to_remove(i,:)));
+    endif
+  endfor
 endif
 
 if (strcmp (use_plplot_state, "on"))
@@ -68,7 +80,7 @@ for  use_plplot_i = [ char(glob("*.m ")); char(glob("support/*.m ")) ]'
 end
 cd (use_plplot_lcd);
 
-clear use_plplot_path use_plplot_lcd use_plplot_i
+clear use_plplot_path use_plplot_lcd use_plplot_i plplot_path_to_remove
 
 printf ("Use PLplot: %s\n", use_plplot_state);
 
