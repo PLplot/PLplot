@@ -1,8 +1,13 @@
 plplot (5.7.4-1) UNRELEASED; urgency=low
 
+  [ Andrew Ross ]
   * New upstream release.
   * debian/control, debian/rules: Fix python settings to work with
     numpy rather than Numeric.
+
+  [ Rafael Laboissiere ]
+  * debian/control: Replaced the deprecated variable ${Source-Version} by
+    ${binary:Version}
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 14 Aug 2007 15:32:07 +0100
 
