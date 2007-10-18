@@ -8,8 +8,11 @@ plplot (5.7.4-1) UNRELEASED; urgency=low
   [ Rafael Laboissiere ]
   * debian/control: Replaced the deprecated variable ${Source-Version} by
     ${binary:Version}
-  * debian/rules: Do not set the RPATH when building shared libraries,
-    complying with the Debian Policy
+  * debian/rules:
+    + Do not set the RPATH when building shared libraries, complying with
+      the Debian Policy
+    + Remove tclIndex and x*.tcl files in clean rule (this should be done
+      upstream)
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 14 Aug 2007 15:32:07 +0100
 
