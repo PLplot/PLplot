@@ -120,6 +120,14 @@ INDEX
     do not (yet) replicate the new and more Matlab-like functionality in 
     the latest 2.9.x releases of Octave.
 
+    Note: As a result of the compatibilty code for octave 2.1 and lower the
+    octave bindings will generate spurious warnings about obsolete built-in 
+    variables when using octave 2.9. These can be silenced using the command
+        warning("off","Octave:built-in-variable-assignment");
+    before using the plplot bindings. This is not enabled by default as it 
+    would also turn off genuine warnings in your own code which you might 
+    want to fix. 
+
 2. Changes relative to PLplot 5.6.1 (the previous stable release)
 
 2.1 CVS to Subversion conversion
