@@ -60,14 +60,10 @@ endforeach(STRING_INDEX ${tcl_STRING_INDICES})
 install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
 install(PROGRAMS ${tcl_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
 
-set(tclIndex_DEPENDS ${tcl_FILES} ${tcl_SCRIPTS})
-set(tclIndex_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-if(BUILD_TEST AND
-NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
-)
-  # equivalent to install commands but at "make" time rather than
-  # "make install" time, to the build tree if different than the source
-  # tree.
+# Copy file and scripts to the binary directory if different to the 
+# source directory. Needed for ctest, but also so the tclIndex file
+# is generated in the binary tree not the source tree.
+if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   set(tclIndex_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   set(tclIndex_DEPENDS)
   foreach(file ${tcl_SCRIPTS} ${tcl_FILES})
@@ -84,11 +80,13 @@ NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
     )
   endforeach(file ${tcl_SCRIPTS} ${tcl_FILES})
   add_custom_target(tcl_examples ALL DEPENDS ${tclIndex_DEPENDS})
-endif(BUILD_TEST AND
-NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
-)
+else(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+  set(tclIndex_DEPENDS ${tcl_FILES} ${tcl_SCRIPTS})
+  set(tclIndex_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 
-add_custom_target(tclIndex_examples_tcl ALL
+add_custom_command(
+OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
 COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
 DEPENDS ${tclIndex_DEPENDS}
 WORKING_DIRECTORY ${tclIndex_WORKING_DIRECTORY}
@@ -97,4 +95,8 @@ WORKING_DIRECTORY ${tclIndex_WORKING_DIRECTORY}
 install(
 FILES ${tclIndex_WORKING_DIRECTORY}/tclIndex
 DESTINATION ${DATA_DIR}/examples/tcl
+)
+
+add_custom_target(tclIndex_examples_tcl ALL
+  DEPENDS ${tclIndex_DEPENDS} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
 )

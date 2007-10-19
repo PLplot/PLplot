@@ -18,7 +18,9 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-set(tk_FILES
+set(tk_FILES)
+
+set(tk_SRC_FILES
 README.tkdemos
 runAllDemos.tcl
 runExtendedDemos.tcl
@@ -48,28 +50,45 @@ set(tk_STRING_INDICES
 "22"
 )
 
+# Copy files to the binary directory (if different) for generating tclIndex
+# This ensures no files are created in the source tree.
+if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+foreach(_file ${tk_SRC_FILES})
+  add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_file}
+  COMMAND ${CMAKE_COMMAND}
+  -E copy
+  ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
+  ${CMAKE_CURRENT_BINARY_DIR}/${_file}
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
+  )
+  set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${_file})
+endforeach(_file ${tk_SRC_FILES})
+endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")  
+
 foreach(STRING_INDEX ${tk_STRING_INDICES})
   set(_file x${STRING_INDEX}.tcl)
   add_custom_command(
-  OUTPUT ${_file}
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_file}
   COMMAND ${CMAKE_COMMAND}
   -E copy
   ${CMAKE_SOURCE_DIR}/examples/tcl/${_file}
-  ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
+  ${CMAKE_CURRENT_BINARY_DIR}/${_file}
   DEPENDS ${CMAKE_SOURCE_DIR}/examples/tcl/${_file}
   )
-  set(tk_FILES ${tk_FILES} ${_file})
+  set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${_file})
 endforeach(STRING_INDEX ${tk_STRING_INDICES})
 
 install(FILES ${tk_FILES} DESTINATION ${DATA_DIR}/examples/tk)
 
-add_custom_target(tclIndex_examples_tk ALL
+add_custom_command(
+OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
 COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
 DEPENDS ${tk_FILES}
-WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-install(FILES tclIndex DESTINATION ${DATA_DIR}/examples/tk)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex DESTINATION ${DATA_DIR}/examples/tk)
 
 set(tk_SCRIPTS
 tk01
@@ -89,6 +108,7 @@ xtk04.c
 install(FILES ${tk_SRC} DESTINATION ${DATA_DIR}/examples/tk)
 
 set(CC ${CMAKE_C_COMPILER})
+
 configure_file(
 ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
 ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
@@ -99,3 +119,6 @@ DESTINATION ${DATA_DIR}/examples/tk
 RENAME Makefile
 )
 
+add_custom_target(tclIndex_examples_tk ALL
+  DEPENDS ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+)
