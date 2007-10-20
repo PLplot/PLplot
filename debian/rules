@@ -68,8 +68,6 @@ clean: unpatch
               patch-stamp debian/files
 	rm -rf $(BUILD_DIR)
 	rm -rf $(debbase)/$(libpkg)
-	# FIXME: this should be fixed upstream!
-	rm -f bindings/tk/tclIndex examples/tk/x*.tcl examples/tk/tclIndex
 	dh_clean
 
 install: install-stamp install-python
