@@ -1,0 +1,140 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 03_clean-source-tree.dpatch by Rafael Laboissiere <rafael@debian.org>
+##
+## DP: This patch is taken from the upstream SVN repository and relates
+## DP: to the following change:
+## DP:
+## DP: Tidy up build for tcl and tk examples. Ensures that tclIndex is created 
+## DP: in the binary tree and no files are created in the source tree. Also 
+## DP: make tclIndex a command output so it is only recreated when needed and 
+## DP: is deleted by "make clean".
+
+@DPATCH@
+
+--- plplot-5.7.4.orig/examples/tcl/CMakeLists.txt
++++ plplot-5.7.4/examples/tcl/CMakeLists.txt
+@@ -60,14 +60,10 @@
+ install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
+ install(PROGRAMS ${tcl_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
+ 
+-set(tclIndex_DEPENDS ${tcl_FILES} ${tcl_SCRIPTS})
+-set(tclIndex_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+-if(BUILD_TEST AND
+-NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
+-)
+-  # equivalent to install commands but at "make" time rather than
+-  # "make install" time, to the build tree if different than the source
+-  # tree.
++# Copy file and scripts to the binary directory if different to the 
++# source directory. Needed for ctest, but also so the tclIndex file
++# is generated in the binary tree not the source tree.
++if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+   set(tclIndex_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+   set(tclIndex_DEPENDS)
+   foreach(file ${tcl_SCRIPTS} ${tcl_FILES})
+@@ -84,11 +80,13 @@
+     )
+   endforeach(file ${tcl_SCRIPTS} ${tcl_FILES})
+   add_custom_target(tcl_examples ALL DEPENDS ${tclIndex_DEPENDS})
+-endif(BUILD_TEST AND
+-NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
+-)
++else(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
++  set(tclIndex_DEPENDS ${tcl_FILES} ${tcl_SCRIPTS})
++  set(tclIndex_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
++endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+ 
+-add_custom_target(tclIndex_examples_tcl ALL
++add_custom_command(
++OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+ COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+ DEPENDS ${tclIndex_DEPENDS}
+ WORKING_DIRECTORY ${tclIndex_WORKING_DIRECTORY}
+@@ -98,3 +96,7 @@
+ FILES ${tclIndex_WORKING_DIRECTORY}/tclIndex
+ DESTINATION ${DATA_DIR}/examples/tcl
+ )
++
++add_custom_target(tclIndex_examples_tcl ALL
++  DEPENDS ${tclIndex_DEPENDS} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
++)
+--- plplot-5.7.4.orig/examples/tk/CMakeLists.txt
++++ plplot-5.7.4/examples/tk/CMakeLists.txt
+@@ -18,7 +18,9 @@
+ # along with PLplot; if not, write to the Free Software
+ # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ 
+-set(tk_FILES
++set(tk_FILES)
++
++set(tk_SRC_FILES
+ README.tkdemos
+ runAllDemos.tcl
+ runExtendedDemos.tcl
+@@ -48,28 +50,45 @@
+ "22"
+ )
+ 
++# Copy files to the binary directory (if different) for generating tclIndex
++# This ensures no files are created in the source tree.
++if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
++foreach(_file ${tk_SRC_FILES})
++  add_custom_command(
++  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_file}
++  COMMAND ${CMAKE_COMMAND}
++  -E copy
++  ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
++  ${CMAKE_CURRENT_BINARY_DIR}/${_file}
++  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
++  )
++  set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${_file})
++endforeach(_file ${tk_SRC_FILES})
++endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")  
++
+ foreach(STRING_INDEX ${tk_STRING_INDICES})
+   set(_file x${STRING_INDEX}.tcl)
+   add_custom_command(
+-  OUTPUT ${_file}
++  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_file}
+   COMMAND ${CMAKE_COMMAND}
+   -E copy
+   ${CMAKE_SOURCE_DIR}/examples/tcl/${_file}
+-  ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
++  ${CMAKE_CURRENT_BINARY_DIR}/${_file}
+   DEPENDS ${CMAKE_SOURCE_DIR}/examples/tcl/${_file}
+   )
+-  set(tk_FILES ${tk_FILES} ${_file})
++  set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${_file})
+ endforeach(STRING_INDEX ${tk_STRING_INDICES})
+ 
+ install(FILES ${tk_FILES} DESTINATION ${DATA_DIR}/examples/tk)
+ 
+-add_custom_target(tclIndex_examples_tk ALL
++add_custom_command(
++OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+ COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+ DEPENDS ${tk_FILES}
+-WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
++WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+ )
+ 
+-install(FILES tclIndex DESTINATION ${DATA_DIR}/examples/tk)
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex DESTINATION ${DATA_DIR}/examples/tk)
+ 
+ set(tk_SCRIPTS
+ tk01
+@@ -89,6 +108,7 @@
+ install(FILES ${tk_SRC} DESTINATION ${DATA_DIR}/examples/tk)
+ 
+ set(CC ${CMAKE_C_COMPILER})
++
+ configure_file(
+ ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+ ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+@@ -99,3 +119,6 @@
+ RENAME Makefile
+ )
+ 
++add_custom_target(tclIndex_examples_tk ALL
++  DEPENDS ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
++)

@@ -1,2 +1,4 @@
 01_check-for-octave2.1
 02_unset-python-path
+03_clean-source-tree
+04_python-scripts-perms

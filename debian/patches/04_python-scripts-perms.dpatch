@@ -1,0 +1,32 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 04_python-scripts-perms.dpatch by Rafael Laboissiere <rafael@debian.org>
+##
+## DP: This patch is taken from the upstream SVN repository and relates
+## DP: to the following change:
+## DP: 
+## DP: plplot.py, plplotc.py and plplotcanvas.py are not scripts which should 
+## DP: be executed and therefore they do not need the executable permission
+## DP: bit set.
+
+@DPATCH@
+
+--- plplot-5.7.4.orig/bindings/python/CMakeLists.txt
++++ plplot-5.7.4/bindings/python/CMakeLists.txt
+@@ -95,7 +95,6 @@
+ install(
+ FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
+ DESTINATION ${PYTHON_INSTDIR}
+-PERMISSIONS ${PERM_SCRIPTS}
+ )
+ 
+ endif(ENABLE_python)
+--- plplot-5.7.4.orig/bindings/gnome2/python/CMakeLists.txt
++++ plplot-5.7.4/bindings/gnome2/python/CMakeLists.txt
+@@ -184,7 +184,6 @@
+ install(
+ FILES plplotcanvas.py
+ DESTINATION ${PYTHON_INSTDIR}
+-PERMISSIONS ${PERM_SCRIPTS}
+ )
+ 
+ endif(ENABLE_pygcw)
