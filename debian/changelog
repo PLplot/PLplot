@@ -6,8 +6,10 @@ plplot (5.7.4-1) UNRELEASED; urgency=low
     numpy rather than Numeric.
 
   [ Rafael Laboissiere ]
-  * debian/control: Replaced the deprecated variable ${Source-Version} by
-    ${binary:Version}
+  * debian/control:
+    + Replaced the deprecated variable ${Source-Version} by
+      ${binary:Version}
+    + Added Homepage, XS-Vcs-Svn, and XS-Vcs-Browser fields
   * debian/rules:
     + Do not set the RPATH when building shared libraries, complying with
       the Debian Policy

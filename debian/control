@@ -18,6 +18,9 @@ Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38),
  opensp, jadetex, jikes-kaffe, kaffe-dev, fastjar, swig
 Build-Conflicts: libplplot5
 XS-Python-Version: all
+Homepage: http://www.plplot.org
+XS-Vcs-Svn: https://plplot.svn.sourceforge.net/svnroot/plplot/trunk/debian
+XS-Vcs-Browser: http://plplot.svn.sourceforge.net/viewvc/plplot/trunk/debian/
 
 Package: libplplot9
 Architecture: any
