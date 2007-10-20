@@ -1,5 +1,5 @@
 #! /bin/sh /usr/share/dpatch/dpatch-run
-## 60_unset-python-path.dpatch by  <andrewross@users.sourceforge.net>
+## 02_unset-python-path.dpatch by  <andrewross@users.sourceforge.net>
 ##
 ## DP: No need to explicitly set python path with debian since the
 ## DP: default path is correct. This ensure the examples work with
