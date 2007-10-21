@@ -244,20 +244,6 @@ the link to the release notes correct (none of the other links need to be
 changed).
 Click on submit.
 
-Edit the platform-specific download pages to point to the new release:
-Return the PLplot project page Select Admin -> File Releases -> Create /
-Edit Download Page This page is a little confusing, but basically you have
-the choice of editing any one of a number of different download platforms.
-Pick the Default platform.  Then click on the pencil icons to change the
-primary download file, and the corresponding armored ascii signature file.
-(I would leave the references to the previous 5.6.1 files and the historical
-cd release as is.) Then preview and once you are satisfied with the Default
-platform, then save it.  At this stage, I don't think there is any necessity
-of copying information to platform-specific download pages. N.B. I could not
-get any of this functionality to work with my usual browser (konqueror) or
-an old version of firefox.  But a modern version (Ubuntu Dapper) of firefox
-worked.
-
 Update the project web page, including the examples:
 edit www/index.html to include a link to the latest release.
 edit www/examples/index.html.in to reflect the current release number.
