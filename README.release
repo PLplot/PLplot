@@ -53,7 +53,8 @@ INDEX
     2.8.1 ADA language binding
     2.8.2 wxwidgets applications bindings
     2.8.3 Python bindings
-    2.8.4 f95 bindings
+    2.8.4 Fortran 95 bindings
+    2.8.5 Octave 2.9
   2.9 Updated examples
   2.10 Drivers
     2.10.1 psttf
@@ -127,6 +128,7 @@ INDEX
     before using the plplot bindings. This is not enabled by default as it 
     would also turn off genuine warnings in your own code which you might 
     want to fix. 
+
 
 2. Changes relative to PLplot 5.6.1 (the previous stable release)
 
@@ -213,7 +215,25 @@ use is demonstrated by example 28.
     minimum version requirement for gfortran now if you attempt to build
     the f95 bindings.  Note, earlier versions of gfortran build the f77
     bindings with no problems.
-    
+  
+  2.8.5 Octave 2.9
+    Octave 2.9 has a number of significant differences from version 2.1. 
+    The octave language bindings have been updated to work with this new 
+    version since the latest 2.9.x release is now the "recommended" choice 
+    by the octave developers. Note that all the low-level plplot functions 
+    work as expected. The higher level functions which replace the default
+    octave / gnuplot plotting commands mostly work as for version 2.1. They 
+    do not (yet) replicate the new and more Matlab-like functionality in 
+    the latest 2.9.x releases of Octave.
+
+    Note: As a result of the compatibilty code for octave 2.1 and lower the
+    octave bindings will generate spurious warnings about obsolete built-in 
+    variables when using octave 2.9. These can be silenced using the command
+        warning("off","Octave:built-in-variable-assignment");
+    before using the plplot bindings. This is not enabled by default as it 
+    would also turn off genuine warnings in your own code which you might 
+    want to fix. 
+
 2.9 Updated examples
 
    The examples have been checked over to make sure that they all work
