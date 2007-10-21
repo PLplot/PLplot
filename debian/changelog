@@ -39,6 +39,31 @@ plplot (5.7.4.svn.20070523-1) unstable; urgency=low
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 23 May 2007 13:35:43 +0100
 
+plplot (5.6.1-12) unstable; urgency=low
+
+  * QA upload.
+  * Fix missing section on the plplot-bin package, causing build failures on
+    some (!) architectures.
+
+ -- Steve Langasek <vorlon@debian.org>  Wed, 03 Oct 2007 11:32:21 -0700
+
+plplot (5.6.1-11) unstable; urgency=low
+
+  * QA upload.
+  * debian/patches/51_remove-no-force-mem.dpatch: Remove `-fno-force-mem',
+    which is a no-op with GCC 4.1+, and unsupported with GCC 4.3.
+    Closes: #415278.
+  * debian/watch: Update upstream URL.
+
+ -- Matej Vela <vela@debian.org>  Sun, 15 Apr 2007 21:57:03 +0200
+
+plplot (5.6.1-10) unstable; urgency=low
+
+  * Orphaning the package
+  * debian/control: Changed the maintainer to the Debian QA Group
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sat,  4 Nov 2006 10:19:34 +0100
+
 plplot (5.6.1-9) unstable; urgency=low
 
   * debian/control: Applied patch from Tomas Pospisek tomake list in
