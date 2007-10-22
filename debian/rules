@@ -34,6 +34,7 @@ CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DCMAKE_Java_RUNTIME=$(JAVA_HOME)/bin/java \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
 	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar \
+	-DOCTAVE_OCT_DIR=${OCTDIR} \
 	-DUSE_RPATH=OFF
 
 BUILD_DIR = $(debbase)/build_tmp
@@ -84,7 +85,7 @@ install-stamp: build-stamp
 	dh_testroot
 
 	( cd $(BUILD_DIR) ; \
-	  $(MAKE) DESTDIR=$(debtmp) OCTAVE_OCT_DIR=$(OCTDIR) install )
+	  $(MAKE) DESTDIR=$(debtmp) install )
 
 	rm -f $(debtmp)/usr/bin/plplot-config
 
