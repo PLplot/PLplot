@@ -55,6 +55,8 @@ if(ENABLE_DYNDRIVERS)
   INSTALL_RPATH "${get-drv-info_RPATH}"
   BUILD_WITH_INSTALL_RPATH ON
   )
+  
+  get_target_property(get-drv-info_LOCATION get-drv-info LOCATION)
 
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
@@ -103,31 +105,26 @@ if(ENABLE_DYNDRIVERS)
       SUFFIX ".so"
       )
     endif(USE_RPATH)
-# This is a clumsy way to do it since we have to put in dependencies on
-# get-drv-info so it will always be built first, but the better 
-# alternative below does not work (probably a bug in 2.4.2).
-    add_dependencies(${SOURCE_ROOT_NAME} get-drv-info)
+    get_target_property(
+    ${SOURCE_ROOT_NAME}_LOCATION
+    ${SOURCE_ROOT_NAME} 
+    LOCATION
+    )
     add_custom_command(
-    TARGET
-    ${SOURCE_ROOT_NAME}
-    POST_BUILD
-    COMMAND
-    ${CMAKE_CURRENT_BINARY_DIR}/get-drv-info
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+    COMMAND ${get-drv-info_LOCATION}
     ${SOURCE_ROOT_NAME}
     > ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+    DEPENDS
+    ${get-drv-info_LOCATION}
+    ${${SOURCE_ROOT_NAME}_LOCATION}
     )
-# Should work, but does not (for cmake 2.4.2, at least) so comment out.
-#    add_custom_command(
-#    OUTPUT 
-#    ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
-#    COMMAND
-#    ${CMAKE_CURRENT_BINARY_DIR}/get-drv-info
-#    ${SOURCE_ROOT_NAME}
-#    > ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
-#    DEPENDS
-#    ${CMAKE_CURRENT_BINARY_DIR}/get-drv-info 
-#    ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.so
-#    )
+    add_custom_target(
+    ${SOURCE_ROOT_NAME}_CHECK ALL
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+    )
+    
     install(TARGETS ${SOURCE_ROOT_NAME} DESTINATION ${DRV_DIR})
     install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc 
