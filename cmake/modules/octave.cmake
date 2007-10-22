@@ -181,6 +181,7 @@ if(ENABLE_octave)
     )
     #message(STATUS "_OCTAVE_M_DIR = ${_OCTAVE_M_DIR}")    
     #OCTAVE_OCT_DIR
+    if(NOT DEFINED OCTAVE_OCT_DIR)
     file(WRITE ${CMAKE_BINARY_DIR}/octave_command
     "printf(octave_config_info(\"localoctfilepath\"));"
     )
@@ -196,6 +197,7 @@ if(ENABLE_octave)
     OCTAVE_OCT_DIR
     ${_OCTAVE_OCT_DIR}
     )
+    endif(NOT DEFINED OCTAVE_OCT_DIR)
     #message(STATUS "OCTAVE_OCT_DIR = ${OCTAVE_OCT_DIR}")    
   else(
    NUMERICAL_OCTAVE_VERSION
@@ -213,6 +215,7 @@ if(ENABLE_octave)
     OUTPUT_VARIABLE _OCTAVE_M_DIR
     )
     #OCTAVE_OCT_DIR
+    if(NOT DEFINED OCTAVE_OCT_DIR)
     file(WRITE ${CMAKE_BINARY_DIR}/octave_command
     "printf(octave_config_info(\"localoctfiledir\"));"
     )
@@ -221,6 +224,7 @@ if(ENABLE_octave)
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     OUTPUT_VARIABLE OCTAVE_OCT_DIR
     )
+    endif(NOT DEFINED OCTAVE_OCT_DIR)
   endif(
    NUMERICAL_OCTAVE_VERSION
    LESS
