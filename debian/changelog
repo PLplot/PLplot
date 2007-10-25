@@ -2,6 +2,7 @@ plplot (5.7.4-1) UNRELEASED; urgency=low
 
   [ Andrew Ross ]
   * New upstream release.
+  * New maintainer (closes: #396999)
   * debian/control, debian/rules: Fix python settings to work with
     numpy rather than Numeric.
 
