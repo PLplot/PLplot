@@ -14,10 +14,6 @@ plplot (5.8.0~RC1-1) UNRELEASED; urgency=low
   * debian/rules:
     + Do not set the RPATH when building shared libraries, complying with
       the Debian Policy
-  * Added dpatches (taken from the SVN upstream repository):
-    + 03_clean-source-tree: Prevent Tcl/Tk files from been left in the
-      source tree after "make clean"
-    + 04_python-scripts-perms: Fix permission for Python scripts
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 14 Aug 2007 15:32:07 +0100
 
