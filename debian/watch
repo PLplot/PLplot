@@ -1,2 +1,3 @@
 version=3
-http://sf.net/plplot/plplot-(.*)\.tar\.gz
+opts="uversionmangle=s/-/~/" \
+  http://sf.net/plplot/plplot-(.*)\.tar\.gz
