@@ -1,13 +1,16 @@
 plplot (5.8.0~RC1-1) UNRELEASED; urgency=low
 
   [ Andrew Ross ]
-  * New upstream release.
+  * New upstream release. The pstex driver is not support anymore
+    (closes: #415303).
   * New maintainer (closes: #396999)
   * debian/control, debian/rules: Fix python settings to work with
     numpy rather than Numeric.
 
   [ Rafael Laboissiere ]
   * debian/control:
+    + Updated description of plplot-bin package, since support for plmeta
+      and pstex is not enabled by default
     + Replaced the deprecated variable ${Source-Version} by
       ${binary:Version}
     + Added Homepage, XS-Vcs-Svn, and XS-Vcs-Browser fields

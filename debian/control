@@ -116,11 +116,9 @@ Description: Scientific plotting library (utilities)
  This package contains the following utilities associated with PLplot,
  a scientific plotting library:
  .
-  * plrender - render a PLplot metafile
   * pltek - review a Tektronix vector file
   * plm2gif - converts PLplot metafiles to GIF files
   * plpr - converts PLplot metafile to something the printer will understand
-  * pstex2eps - Generate EPS file from PLplot pstex driver
  .
   Homepage: http://www.plplot.org
 
