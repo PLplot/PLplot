@@ -2,6 +2,7 @@ Source: plplot
 Section: math
 Priority: optional
 Maintainer: Andrew Ross <andrewross@users.sourceforge.net>
+Uploaders: Rafael Laboissiere <rafael@debian.org>
 Standards-Version: 3.7.2
 Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38),
  tcl8.4-dev, tk8.4-dev, itcl3-dev, libx11-dev, libxext-dev,

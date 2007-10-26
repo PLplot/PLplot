@@ -14,11 +14,10 @@ plplot (5.8.0~RC1-1) UNRELEASED; urgency=low
     + Replaced the deprecated variable ${Source-Version} by
       ${binary:Version}
     + Added Homepage, XS-Vcs-Svn, and XS-Vcs-Browser fields
-  * debian/rules:
-    + Do not set the RPATH when building shared libraries, complying with
-      the Debian Policy
+    + Added me as an uploader
+  * debian/rules: Do not set the RPATH when building shared libraries
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 14 Aug 2007 15:32:07 +0100
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 26 Oct 2007 14:38:36 +0200
 
 plplot (5.7.4.svn.20070523-2) unstable; urgency=low
 
