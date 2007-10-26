@@ -44,12 +44,14 @@
 # tkwin_SOURCE		  - list of source files other than tkwin.c
 
 if(NOT ENABLE_tk)
-  message(STATUS 
-  "WARNING: ENABLE_tk OFF.  Setting PLD_tk, PLD_ntk, and PLD_tkwin OFF."
-  )
-  set(PLD_tk OFF CACHE BOOL "Enable tk device" FORCE)
-  set(PLD_ntk OFF CACHE BOOL "Enable ntk device" FORCE)
-  set(PLD_tkwin OFF CACHE BOOL "Enable tkwin device" FORCE)
+  if(PLD_tk OR PLD_ntk OR PLD_tkwin)
+    message(STATUS 
+    "WARNING: ENABLE_tk OFF.  Setting PLD_tk, PLD_ntk, and PLD_tkwin OFF."
+    )
+    set(PLD_tk OFF CACHE BOOL "Enable tk device" FORCE)
+    set(PLD_ntk OFF CACHE BOOL "Enable ntk device" FORCE)
+    set(PLD_tkwin OFF CACHE BOOL "Enable tkwin device" FORCE)
+  endif(PLD_tk OR PLD_ntk OR PLD_tkwin)
 endif(NOT ENABLE_tk)
 
 # Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
