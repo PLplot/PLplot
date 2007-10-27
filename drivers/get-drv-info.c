@@ -21,11 +21,11 @@
  * MA 02110-1301, USA.
  */
 
+#include "plplotP.h"
 #include <ltdl.h>
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
-#include "plConfig.h"
 
 /* SEGV signal handler */
 RETSIGTYPE
@@ -41,16 +41,18 @@ main (int argc, char* argv[])
   lt_dlhandle dlhand;
   char sym[300];
   char* drvnam = argv[1];
+  char drvspec[ 400 ];
   char** info;
 
   /* Establish a handler for SIGSEGV signals. */
   signal (SIGSEGV, catch_segv);
 
   lt_dlinit ();
-  dlhand = lt_dlopenext (drvnam);
+  sprintf( drvspec, "%s/%s", plGetDrvDir (), drvnam );
+  dlhand = lt_dlopenext (drvspec);
   if (dlhand == NULL) {
     fprintf (stderr, "Could not open driver module %s\n"
-                     "libltdl error: %s\n", drvnam, lt_dlerror ());
+                     "libltdl error: %s\n", drvspec, lt_dlerror ());
     return 1;
   }
   sprintf (sym, "plD_DEVICE_INFO_%s", drvnam);
@@ -61,7 +63,7 @@ main (int argc, char* argv[])
   }
   else {
     fprintf (stderr, "Could not read symbol %s in driver module %s\n"
-                     "libltdl error: %s\n", sym, drvnam, lt_dlerror ());
+                     "libltdl error: %s\n", sym, drvspec, lt_dlerror ());
     return 1;
   }
 }
