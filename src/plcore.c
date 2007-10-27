@@ -2130,7 +2130,7 @@ int PLDLLIMPEXP plInBuildTree()
 
 #ifdef ENABLE_DYNDRIVERS
 
-static char*
+char*
 plGetDrvDir ()
 {
     char* drvdir;

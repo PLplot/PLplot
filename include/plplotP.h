@@ -1010,6 +1010,13 @@ plio_fread(void *, size_t, size_t, FILE *);
 
 void
 plio_fgets(char *, int, FILE *);
+   
+/* get drivers directory */
+   
+#ifdef ENABLE_DYNDRIVERS
+char*
+plGetDrvDir (void);
+#endif
 
 #ifdef __cplusplus
 }
