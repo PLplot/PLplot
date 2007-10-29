@@ -57,6 +57,29 @@ cmap1c.pal
 cmap1d.pal
 )
 
+# Ugly hack to copy all .tcl files to the build tree so that tclIndex 
+# can be generated there. This is a limitation is tcl's auto_mkindex which 
+# always generates the index in the directory with the files.
+if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+  set(tclIndex_DEPENDS)
+  foreach(file ${tcldata} ${itkdata})
+    set(
+    tclIndex_DEPENDS
+    ${tclIndex_DEPENDS}
+    ${CMAKE_CURRENT_BINARY_DIR}/${file}
+    )
+    add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    )
+  endforeach(file ${tcldata} ${itkdata})
+  add_custom_target(tcl_files ALL DEPENDS ${tclIndex_DEPENDS})
+else(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+  set(tclIndex_DEPENDS ${tcldata} ${itkdata})
+endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+
 install(
 FILES ${tcldata} ${itkdata} ${paldata}
 DESTINATION ${TCL_DIR}
@@ -86,13 +109,18 @@ endif(USE_RPATH)
 install(TARGETS plserver DESTINATION ${BIN_DIR})
 
 add_custom_target(tclIndex_tk ALL
+  DEPENDS ${tclIndex_DEPENDS} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+)
+
+add_custom_command(
+OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
 COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
-DEPENDS ${tcldata} ${itkdata}
-WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+DEPENDS ${tclIndex_DEPENDS}
+WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 install(
-FILES ${CMAKE_CURRENT_SOURCE_DIR}/tclIndex
+FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
 DESTINATION ${TCL_DIR}
 )
 
