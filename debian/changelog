@@ -15,7 +15,7 @@ plplot (5.8.0~RC1-1) UNRELEASED; urgency=low
       and pstex is not enabled by default
     + Replaced the deprecated variable ${Source-Version} by
       ${binary:Version}
-    + Added Homepage, XS-Vcs-Svn, and XS-Vcs-Browser fields
+    + Added Homepage, Vcs-Svn, and Vcs-Browser fields
     + Added me as an uploader
   * debian/rules: Do not set the RPATH when building shared libraries
   * Added dpatches:
