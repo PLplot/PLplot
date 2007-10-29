@@ -70,7 +70,7 @@ clean: unpatch
 	rm -rf $(BUILD_DIR)
 	rm -rf $(debbase)/$(libpkg)
 	# FIXME: this should be fixed upstream
-	rm -rf bindings/tk/tclIndex CMakeFiles
+	rm -rf CMakeFiles
 	dh_clean
 
 install: install-stamp install-python
