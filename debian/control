@@ -221,7 +221,7 @@ Description: Python support for PLplot, a plotting library
 Package: octave-plplot
 Architecture: any
 Priority: extra
-Depends: ${shlibs:Depends}, ${octave:Depends}
+Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends}, ${octave:Depends}
 Description: Octave support for PLplot, a plotting library
  This package contains the Octave bindings for PLplot, a scientific plotting
  library.  It provides an almost drop-in replacement for the traditional

@@ -9,6 +9,8 @@ plplot (5.8.0~RC1-1) UNRELEASED; urgency=low
 
   [ Rafael Laboissiere ]
   * debian/control:
+    + Made octave-plplot depend on libplplot9, otherwise a broken symlink
+      may show up in /usr/share/doc
     + Updated description of plplot-bin package, since support for plmeta
       and pstex is not enabled by default
     + Replaced the deprecated variable ${Source-Version} by
