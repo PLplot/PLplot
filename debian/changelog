@@ -18,9 +18,11 @@ plplot (5.8.0~RC1-1) UNRELEASED; urgency=low
     + Added Homepage, XS-Vcs-Svn, and XS-Vcs-Browser fields
     + Added me as an uploader
   * debian/rules: Do not set the RPATH when building shared libraries
-  * debian/patches/03_tclIndex-src-tree.dpatch: Added patch from the
-    upstream SVN repository to ensure tk/tclIndex is generated in the
-    build tree and not in the source tree.
+  * Added dpatches:
+    + 03_tclIndex-src-tree.dpatch: Ensure tk/tclIndex is generated in the
+      build tree and not in the source tree
+    + 04_use-mkoctfile: Build plplot_octave.oct using mkoctfile and not as
+      a shared library
 
  -- Rafael Laboissiere <rafael@debian.org>  Mon, 29 Oct 2007 17:06:13 +0100
 
