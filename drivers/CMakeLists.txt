@@ -85,15 +85,24 @@ if(ENABLE_DYNDRIVERS)
     )
     # Our implementation of dynamic loading using libltdl assumes
     # the prefix should always be nothing (rather than lib) and the suffix
-    # should always be ".so" regardless of platform so that libltdl can
-    # always find the result.
+    # should be set in a platform-dependent manner in order for libltdl
+    # to find the dynamic device.
+    if(CYGWIN)
+      # strace showed that .dll was a must for libltdl on Cygwin.
+      set(DYNAMIC_SUFFIX ".dll")
+    else(CYGWIN)
+      # So far this works on all non-Cygwin systems, but only Linux and
+      # Mac OS X have been tested so far.
+      set(DYNAMIC_SUFFIX ".so")
+    endif(CYGWIN)
+    
     #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
     if(USE_RPATH)
       set_target_properties(
       ${SOURCE_ROOT_NAME}
       PROPERTIES
       PREFIX ""
-      SUFFIX ".so"
+      SUFFIX ${DYNAMIC_SUFFIX}
       INSTALL_RPATH
       "${${SOURCE_ROOT_NAME}_RPATH}"
       )
@@ -102,7 +111,7 @@ if(ENABLE_DYNDRIVERS)
       ${SOURCE_ROOT_NAME}
       PROPERTIES
       PREFIX ""
-      SUFFIX ".so"
+      SUFFIX ${DYNAMIC_SUFFIX}
       )
     endif(USE_RPATH)
     get_target_property(
