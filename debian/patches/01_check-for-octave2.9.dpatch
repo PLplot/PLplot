@@ -11,7 +11,7 @@
  
  1;
  
-+## Abort if not using Octave 2.1
++## Abort if not using Octave 2.9
 +if (split (version , '.') (1, 1) != '2' || split (version , '.') (2, 1) != '9')
 +  error ("This version of octave-plplot only works with Octave 2.9\n");
 +endif
