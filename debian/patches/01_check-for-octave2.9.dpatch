@@ -1,7 +1,7 @@
 #! /bin/sh /usr/share/dpatch/dpatch-run
-## 01_check-for-octave2.1.dpatch by Rafael Laboissiere <rafael@debian.org>
+## 01_check-for-octave2.9.dpatch by Rafael Laboissiere <rafael@debian.org>
 ##
-## DP: Abort toggle_plplot_use if not using Octave 2.1
+## DP: Abort toggle_plplot_use if not using Octave 2.9
 
 @DPATCH@
 
@@ -12,8 +12,8 @@
  1;
  
 +## Abort if not using Octave 2.1
-+if (split (version , '.') (1, 1) != '2' || split (version , '.') (2, 1) != '1')
-+  error ("This version of octave-plplot only works with Octave 2.1\n");
++if (split (version , '.') (1, 1) != '2' || split (version , '.') (2, 1) != '9')
++  error ("This version of octave-plplot only works with Octave 2.9\n");
 +endif
 +
  if ! exist ("use_plplot_state")
