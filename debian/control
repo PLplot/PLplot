@@ -6,7 +6,7 @@ Uploaders: Rafael Laboissiere <rafael@debian.org>
 Standards-Version: 3.7.2
 Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38),
  tcl8.4-dev, tk8.4-dev, itcl3-dev, libx11-dev, libxext-dev,
- libxi-dev, gfortran, itk3-dev, octave2.1-headers (>= 2.1.65),
+ libxi-dev, gfortran, itk3-dev, octave2.9-headers,
  libgd2-noxpm-dev | libgd2-xpm-dev, libgnome2-dev,
  libgnomeprintui2.2-dev, libgnomeui-dev, liblasi-dev (>= 1.0.6),
  m4, libqhull-dev, libxml-parser-perl, libxml-dom-perl,
@@ -17,7 +17,7 @@ Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38),
  python-numpy, ttf-freefont,
  docbook-xml, docbook, docbook-dsssl, docbook-xsl, docbook2x,
  opensp, jadetex, jikes-kaffe, kaffe-dev, fastjar, swig
-Build-Conflicts: libplplot5
+Build-Conflicts: libplplot5,  octave2.1-headers
 XS-Python-Version: all
 Homepage: http://www.plplot.org
 Vcs-Svn: https://plplot.svn.sourceforge.net/svnroot/plplot/trunk/debian
