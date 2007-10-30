@@ -193,7 +193,7 @@ Generic Unix instructions for our CBS
    ---------------------------------------------------------------------------
 
    No changes from the generic Unix instructions.
-   
+
    Things to be aware of on OS-X are the following:
    1. The wxWidgets driver should be off as the version of wxWidgets that
       OS-X (10.4) ships with is not a recent enough version.
@@ -310,6 +310,43 @@ Visual C++ 2005
 * run cmake with your options
 
 
+------------------------------------------------------------------------------
+Cygwin instructions for our CBS
+------------------------------------------------------------------------------
+
+* Building and installing PLplot under Cygwin is done in the same way as
+  under UNIX or Linux. There is one caveat, however, that has to do with
+  the way the Windows platform finds dynamic libraries:
+
+  In contrast to UNIX and Linux, there is no facility to build
+  into an executable the path to the dynamic libraries (DLLs) it
+  requires. Under UNIX and Linux this facility is called the "rpath"
+  option. Under Windows and - therefore - under Cygwin there is no such
+  option at all. Nor is there is a search path via an environment
+  variable like LD_LIBRARY_PATH.
+
+  Instead, programs find their libraries exclusively via the PATH
+  environment variable.
+
+  So, when you have built PLplot and installed it, you must add the
+  install directory to your PATH before the examples can run
+  successfully.
+
+* This lack of an rpath option is important at build time too, when
+  you use dynamic drivers: before building PLplot, add the following
+  directories to your path:
+
+  + <build>/src
+  + <build>/lib/csa
+
+  where "build" points to the directory in which you build PLplot.
+  This is the easiest way to do so:
+
+  export PATH=`pwd`/src:`pwd`/libcsa:$PATH
+  cmake ...
+
+
+=========================================================================
 (Deprecated.) PLplot installation notes for our traditional ABS
 (automake build system).
 =========================================================================
