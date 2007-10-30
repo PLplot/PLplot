@@ -6,6 +6,8 @@ plplot (5.8.0~RC1-1) UNRELEASED; urgency=low
   * New maintainer (closes: #396999)
   * debian/control, debian/rules: Fix python settings to work with
     numpy rather than Numeric.
+  * debian/patches/01_check-for-octave2.9.dpatch: Renamed from
+    01_check-for-octave2.1 and adapted for octave2.9
 
   [ Rafael Laboissiere ]
   * debian/control:
