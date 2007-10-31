@@ -21,7 +21,10 @@ plplot (5.8.0~RC1-1) UNRELEASED; urgency=low
       ${binary:Version}
     + Added Homepage, Vcs-Svn, and Vcs-Browser fields
     + Added me as an uploader
-  * debian/rules: Do not set the RPATH when building shared libraries
+  * debian/rules:
+    + Do not set the RPATH when building shared libraries
+    + Set the environment variable ITCL_LIBRARY when calling ctest, such
+      that the examples_tcl test passes
   * Added dpatches:
     + 03_tclIndex-src-tree.dpatch: Ensure tk/tclIndex is generated in the
       build tree and not in the source tree
