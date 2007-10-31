@@ -30,6 +30,8 @@ plplot (5.8.0~RC1-1) UNRELEASED; urgency=low
       build tree and not in the source tree
     + 04_use-mkoctfile: Build plplot_octave.oct using mkoctfile and not as
       a shared library
+  * debian/plplot9-driver-wxwidgets.files: Move libplplotwxwidgetsd.so*
+    into the plplot9-driver-wxwidgets package
 
  -- Rafael Laboissiere <rafael@debian.org>  Mon, 29 Oct 2007 17:06:13 +0100
 
