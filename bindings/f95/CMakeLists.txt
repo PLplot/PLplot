@@ -119,6 +119,16 @@ else(USE_RPATH)
   )
 endif(USE_RPATH)
 
+# Set the path and the suffix for the (shared) libraries
+if(CYGWIN)
+  if(BUILD_SHARED_LIBS)
+    set(SHLIB_DIR "${BIN_DIR}")
+  endif(BUILD_SHARED_LIBS)
+  set(VERSION_SUFFIX "-${plplotf95_VERSION}")
+else(CYGWIN)
+  set(VERSION_SUFFIX "")
+endif(CYGWIN)
+
 install(TARGETS plplotf95${LIB_TAG}
 ARCHIVE DESTINATION ${LIB_DIR}
 LIBRARY DESTINATION ${LIB_DIR}
@@ -155,7 +165,7 @@ if(PKG_CONFIG_EXECUTABLE)
   #                         Also used to determine PC_LINK_FLAGS and
   #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
   #			    fields.
-  set(PC_DATA "f95:F95:F95 bindings, :plplotf95${LIB_TAG}")
+  set(PC_DATA "f95:F95:F95 bindings, :plplotf95${LIB_TAG}${VERSION_SUFFIX}")
 
   string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
   set(PC_FILE_SUFFIX "-${BINDING}")
@@ -166,7 +176,7 @@ if(PKG_CONFIG_EXECUTABLE)
   set(PC_LINK_FLAGS "${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
   set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
   set(PC_LINK_FLAGS
-  "-l${PC_LIBRARY_NAME} -lplplotf95c${LIB_TAG} ${PC_LINK_FLAGS}"
+  "-l${PC_LIBRARY_NAME} -lplplotf95c${LIB_TAG}${VERSION_SUFFIX} ${PC_LINK_FLAGS}"
   )
   set(PC_COMPILE_FLAGS "-I${F95_MOD_DIR} ${PC_COMPILE_FLAGS}")
   set(PC_CONFIGURED_FILE

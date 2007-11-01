@@ -1,4 +1,4 @@
-libdir=@LIB_DIR@
+libdir=@SHLIB_DIR@
 includedir=@INCLUDE_DIR@
 drvdir=@LIB_DIR@/plplot@VERSION@/drivers@LIB_TAG@
 
@@ -7,4 +7,4 @@ Description: Scientific plotting library (@PC_LONG_NAME@@PC_PRECISION@ precision
 Requires: @PC_REQUIRES@
 Version: @VERSION@
 Libs: -L${libdir} @PC_LINK_FLAGS@
-Cflags: -I${includedir} @PC_COMPILE_FLAGS@ 
+Cflags: -I${includedir} @PC_COMPILE_FLAGS@

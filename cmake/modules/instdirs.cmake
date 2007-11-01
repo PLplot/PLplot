@@ -30,7 +30,7 @@
 # install locations).
 
 set(
-CMAKE_INSTALL_EXEC_PREFIX 
+CMAKE_INSTALL_EXEC_PREFIX
 ${CMAKE_INSTALL_PREFIX}
 CACHE PATH "install location for architecture-dependent files"
 )
@@ -86,6 +86,9 @@ set(INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE})
 # Binaries.
 set(BIN_DIR ${CMAKE_INSTALL_BINDIR})
 
+# Shared library path.
+set(SHLIB_DIR ${CMAKE_INSTALL_LIBDIR})
+
 # Tcl files.
 set(TCL_DIR ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${VERSION}/tcl)
 
@@ -106,7 +109,7 @@ set(MAN_DIR ${CMAKE_INSTALL_MANDIR})
 # Absolute path of top-level build directory.
 set(BUILD_DIR ${CMAKE_BINARY_DIR})
 
-# The following *_CMD variables are needed in 
+# The following *_CMD variables are needed in
 # examples/*/Makefile.examples.cmake
 
 set(LIB_DIR_CMD "-L${LIB_DIR}")
