@@ -35,7 +35,7 @@ CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
 	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
-	-DUSE_RPATH=OFF
+	-DUSE_RPATH=OFF -DPLD_psttf=OFF
 
 BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
@@ -104,7 +104,7 @@ install-stamp: build-stamp
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
 		python-plplot plplot-bin libplplot-c++9c2 		\
 		plplot9-driver-gnome2 plplot9-driver-wxwidgets		\
-		plplot9-driver-psttf libplplot-fortran9			\
+		plplot9-driver-cairo libplplot-fortran9			\
 		libplplot9-java; do					\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done

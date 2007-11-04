@@ -8,7 +8,7 @@ Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38),
  tcl8.4-dev, tk8.4-dev, itcl3-dev, libx11-dev, libxext-dev,
  libxi-dev, gfortran, itk3-dev, octave2.9-headers,
  libgd2-noxpm-dev | libgd2-xpm-dev, libgnome2-dev,
- libgnomeprintui2.2-dev, libgnomeui-dev, liblasi-dev (>= 1.0.6),
+ libgnomeprintui2.2-dev, libgnomeui-dev,
  m4, libqhull-dev, libxml-parser-perl, libxml-dom-perl,
  libltdl3-dev, pkg-config, dpatch, atlas3-base-dev
  [!arm !m68k], refblas3-dev [arm m68k], lapack3-dev [arm m68k],
@@ -29,7 +29,7 @@ Section: libs
 Conflicts: libplplot5, plplot (<< 5)
 Depends: ${shlibs:Depends}
 Suggests: plplot9-driver-xwin, plplot9-driver-gnome2, plplot9-driver-gd,
- plplot-driver-psttf, plplot-driver-wxwidgets, plplot-tcl
+ plplot-driver-cairo, plplot-driver-wxwidgets, plplot-tcl
 Description: Scientific plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -147,16 +147,6 @@ Description: Scientific plotting library (Gnome Canvas Widget driver)
  .
   Homepage: http://www.plplot.org
 
-Package: plplot9-driver-psttf
-Architecture: any
-Section: libs
-Depends: libplplot9, ${shlibs:Depends}
-Description: Scientific plotting library (PostScript with Unicode support)
- This package provides the PostScript driver module with Unicode
- support for PLplot, a scientific plotting library.
- .
-  Homepage: http://www.plplot.org
-
 Package: plplot9-driver-wxwidgets
 Architecture: any
 Section: libs
@@ -201,6 +191,20 @@ Description: Scientific plotting library (GD driver)
  This package provides the GD driver module for PLplot, a scientific plotting
  library.  It allows the generation of PNG and JPEG files directly from
  PLplot programs.
+ .
+  Homepage: http://www.plplot.org
+
+Package: plplot9-driver-cairo
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}
+Conflicts: plplot9-driver-psttf
+Replaces: plplot9-driver-psttf
+Description: Scientific plotting library (Cairo driver)
+ This package provides the Cairo driver module for PLplot, a
+ scientific plotting library.  It is based on the Cairo 2D
+ graphics library with supportting multiple output devices (X-Window,
+ PDF, PostScript, and PNG).
  .
   Homepage: http://www.plplot.org
 
