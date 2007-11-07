@@ -36,6 +36,7 @@ ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 ${CMAKE_CURRENT_BINARY_DIR}
 ${PYTHON_INCLUDE_PATH}
+${TCL_INCLUDE_PATH}
 ${CMAKE_SOURCE_DIR}/bindings/swig-support
 )
 include_directories(${python_interface_INCLUDE_PATHS})
@@ -48,7 +49,8 @@ set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 # N.B. the python target has an underscore prepended automatically.
 swig_add_module(plplotcmodule python plplotcmodule.i)
 
-swig_link_libraries(plplotcmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
+#swig_link_libraries(plplotcmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
+swig_link_libraries(plplotcmodule plplot${LIB_TAG})
 
 if(USE_RPATH)
   get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
@@ -61,7 +63,8 @@ endif(USE_RPATH)
 
 add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
 set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
-target_link_libraries(plplot_widgetmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
+#target_link_libraries(plplot_widgetmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
+target_link_libraries(plplot_widgetmodule plplot${LIB_TAG} plplottcltk${LIB_TAG})
 if(USE_RPATH)
   set_target_properties(
   plplot_widgetmodule
@@ -94,6 +97,7 @@ WORLD_EXECUTE
 )
 install(
 FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
+Plframe.py TclSup.py
 DESTINATION ${PYTHON_INSTDIR}
 )
 
