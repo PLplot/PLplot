@@ -1,6 +1,6 @@
 from Tkinter import *
-from pl import *
-
+#from pl import *
+from plplot import *
 from TclSup import *
 
 from string import *
@@ -236,25 +236,32 @@ class PlXframe(Frame):
 	devnamlst = TclList2Py( devnames )
 	devkeylst = TclList2Py( devkeys )
 
-	for i in range( len(devnamlst) ):
-	    devnam = devnamlst[i]
-	    devkey = devkeylst[i]
+        print "devnamlst = ", devnamlst
+        print "devkeylst = ", devkeylst
 
-	    m.sdev.add( "radio", label=devnam, variable=s.saveopt_dev,
-			value=devkey )
+        print "len(devnamlst) = ", len(devnamlst)
+
+## 	for i in range( len(devnamlst) ):
+## 	    devnam = devnamlst[i]
+## 	    devkey = devkeylst[i]
+## 
+##             print "i=",i, " devnam=", devnam, " devkey=", devkey
+## 
+## 	    m.sdev.add( "radio", label=devnam, variable=s.saveopt_dev,
+## 			value=devkey )
 
 	# Now get the ball rolling by preinvoking one of these.
 	# Default to the first one, whatever it is, but use psc
 	# (Postscript color), if we can find it in the list of
 	# available devices.
 
-	ivk = 1
-	for i in range( len(devnamlst) ):
-	    if devkeylst[i] == "psc":
-		ivk = i+1
-		break
-
-	m.sdev.invoke( ivk )
+## 	ivk = 1
+## 	for i in range( len(devnamlst) ):
+## 	    if devkeylst[i] == "psc":
+## 		ivk = i+1
+## 		break
+## 
+## 	m.sdev.invoke( ivk )
 
 	# Save - Set file type.. (another cascade)
 
@@ -1150,8 +1157,8 @@ class PlXframe(Frame):
 	plsstrm( s.strm )
 	plhist( data, datmin, datmax, nbin, oldwin )
 
-    def plhls( s, h, l, s ):
-	s.cmd( 'plhls', h, l, s )
+    def plhls( s, h, l, sat ):
+	s.cmd( 'plhls', h, l, sat )
 
     def pljoin( s, x1, y1, x2, y2 ):
 	s.cmd( 'pljoin', x1, y1, x2, y2 )
