@@ -1,10 +1,13 @@
-#!python
+#!/usr/bin/env python
 # -*-python-*-
 # Geoffrey Furnish
 #
 # A Python/Tk script to interactively run the various Python demos.
 
 from Tkinter import *
+
+from plplot import *
+from plplot_widget import *
 
 import Plframe
 from Plframe import *
@@ -22,12 +25,12 @@ import x10
 import x11
 import x12
 import x13
-##import x14
-##import x15
+# ##import x14
+# ##import x15
 import x16
-##import x17
-##import x18
-##import x19
+# ##import x17
+# ##import x18
+# ##import x19
 
 class DemoApp(Frame):
 
@@ -38,13 +41,18 @@ class DemoApp(Frame):
 	s.create_widgets()
 	s.pack( expand=1, fill=BOTH )
 
-	plspause(1)
+	#plspause(1)
 
     def create_widgets(s):
 	s.f = Frame(s)
 	s.make_demo_bar( s.f )
 
+        print "Time to register the plframe with the interp..."
+        Pltk_init( s.tk.interpaddr() );
+
 	s.plf = PlXframe(s, width="17c", height="17c" )
+	#s.plf = Plframe(s, width="17c", height="17c" )
+	#s.plf = Frame(s, width="17c", height="17c", background="black" )
 
 	s.f2 = Frame(s)
 	s.f2.clone = Button( s.f2, text="Clone", command=s.clone )
