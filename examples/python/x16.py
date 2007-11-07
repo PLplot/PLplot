@@ -8,7 +8,7 @@
 
 # plshade demo, using color fill.
 
-from Numeric import *
+from numpy import *
 from math import *
 
 def main(w):

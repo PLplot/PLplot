@@ -4,7 +4,7 @@
 #
 #	Polar plot demo.
 
-from Numeric import *
+from numpy import *
 import math
 #import pl
 import sys

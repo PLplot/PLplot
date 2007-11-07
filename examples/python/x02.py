@@ -19,6 +19,7 @@ sys.path.insert (0, module_dir)
 
 def main(w):
 
+    w.plbop()
     # Divide screen into 16 regions
 
     w.plssub(4, 4)

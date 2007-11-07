@@ -4,7 +4,6 @@
 #
 #	Bar chart demo.
 
-import pl
 import sys
 import os
 
