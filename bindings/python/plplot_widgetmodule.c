@@ -7,6 +7,10 @@
 #include <arrayobject.h>
 #include "plplot.h"
 #include "plplotP.h"
+#include "plplot/pltk.h"
+
+#include <tcl.h>
+
 #define TRY(E) if(! (E)) return NULL
 
 /* ##############################################################################*/
@@ -72,6 +76,41 @@ static PyObject * pl_expose(PyObject *self, PyObject *args)
  
 }
 
+#ifdef ENABLE_tk
+static char doc_Pltk_init[]="Initialize the Pltk Tcl extension.";
+
+static PyObject *pl_Pltk_init(PyObject *self, PyObject *args)
+{
+    printf( "in pl_Pltk_init()\n" );
+    long x=0;
+
+    TRY( PyArg_ParseTuple(args, "l", &x) );
+
+    if (!x)
+    {
+        printf( "Something went wrong...\n" );
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
+    Tcl_Interp *interp = (Tcl_Interp *) x;
+
+    printf( "Tcl_Interp * = %ld \n", x );
+
+    if (Pltk_Init(interp) == TCL_ERROR)
+    {
+        printf( "Initizlization of Pltk Tcl extension failed!\n" );
+        return NULL;
+    }
+
+    printf( "plframe has been installed into the Tcl interpreter.\n" );
+
+    Py_INCREF(Py_None);
+    return Py_None;
+ 
+}
+#endif
+
 /* ##############################################################################*/
 
 static PyMethodDef plplot_widget_methods[] = {
@@ -87,6 +126,11 @@ static PyMethodDef plplot_widget_methods[] = {
 
     {"plresize",	pl_resize, METH_VARARGS, doc_resize},
     {"plexpose",	pl_expose, METH_VARARGS, doc_expose},
+
+#ifdef ENABLE_tk
+    {"Pltk_init",	pl_Pltk_init, METH_VARARGS, doc_Pltk_init},
+#endif
+
     {NULL, NULL, 0, NULL}
 };
 
