@@ -7,7 +7,7 @@
 #include <arrayobject.h>
 #include "plplot.h"
 #include "plplotP.h"
-#include "plplot/pltk.h"
+#include "pltk.h"
 
 #include <tcl.h>
 

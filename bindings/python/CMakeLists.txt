@@ -32,6 +32,8 @@ endif (HAVE_NUMPY)
 # the Python headers. Not particular pretty...
 set(python_interface_INCLUDE_PATHS
 ${CMAKE_SOURCE_DIR}/include
+${CMAKE_SOURCE_DIR}/bindings/tcl
+${CMAKE_SOURCE_DIR}/bindings/tk
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 ${CMAKE_CURRENT_BINARY_DIR}
