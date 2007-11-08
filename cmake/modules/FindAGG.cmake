@@ -31,7 +31,14 @@ else (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
     /usr/local/include
   )
   
-  FIND_LIBRARY(AGG_LIBRARIES NAMES agg
+  # Prefer _pic variant of library name for shared libraries case, and
+  # plain name for static libraries case.
+  if(BUILD_SHARED_LIBS)
+    set(AGGLIB_NAMES = "agg_pic;agg")
+  else(BUILD_SHARED_LIBS)
+    set(AGGLIB_NAMES = "agg;agg_pic")
+  endif(BUILD_SHARED_LIBS)
+  FIND_LIBRARY(AGG_LIBRARIES NAMES ${AGGLIB_NAMES}
     PATHS
     ${_AGGLinkDir}
     /usr/lib
