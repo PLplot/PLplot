@@ -219,6 +219,6 @@ if(ENABLE_pygcw)
     message(STATUS "WARNING: pygtk-2.0 not found.  "
     "Setting ENABLE_pygcw to OFF"
     )
-    set(ENABLE_pygcw OFF)
+    set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
   endif(linkflags)
 endif(ENABLE_pygcw)
