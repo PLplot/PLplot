@@ -1,4 +1,4 @@
-plplot (5.8.0~RC1-2) UNRELEASED; urgency=low
+plplot (5.8.0~RC1-2) unstable; urgency=low
 
   * Added Cairo driver and dropped psttf driver, making the former
     replace/conflict with the later
