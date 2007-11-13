@@ -38,15 +38,23 @@ set(ada_STRING_INDICES
 if(BUILD_TEST)
   remove_definitions("-DHAVE_CONFIG_H")
   include_directories(
-  ${CMAKE_SOURCE_DIR}/examples/ada
+  ${CMAKE_BINARY_DIR}/examples/ada
   ${CMAKE_BINARY_DIR}/bindings/ada
   )
 endif(BUILD_TEST)
 foreach(STRING_INDEX ${ada_STRING_INDICES})
+  set(TARGET_NAME x${STRING_INDEX}a)
+  set(SOURCE_FILE x${STRING_INDEX}a.adb)
+  configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
+  ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+  )
+  # Build up list of full-path examples source names to be used (eventually
+  # but not until this interface has matured) for installation.
   set(
   ada_SRCS
   ${ada_SRCS}
-  x${STRING_INDEX}a.adb
+  ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
   )
   if(BUILD_TEST)
     # Note due to limitations of the Ada language support for CMake, the the
@@ -58,8 +66,8 @@ foreach(STRING_INDEX ${ada_STRING_INDICES})
     # be specified from this construction (don't ask), you must specify the
     # directory of <TARGET>.adb with a -aI option (see below).
     add_executable(
-    x${STRING_INDEX}a
-    ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}a.adb
+    ${TARGET_NAME}
+    ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
     )
   
     # The first -aI option is required to find <TARGET>.adb (see above
@@ -68,11 +76,12 @@ foreach(STRING_INDEX ${ada_STRING_INDICES})
     # (That location currently works but is probably not guaranteed
     # indefinitely for future versions of CMake.)
  
-    set_target_properties(x${STRING_INDEX}a
+    set_target_properties(
+    ${TARGET_NAME}
     PROPERTIES
     LINK_FLAGS
-    "-aI${CMAKE_SOURCE_DIR}/examples/ada -aI${CMAKE_BINARY_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada${LIB_TAG}.dir"
+    "-aI${CMAKE_BINARY_DIR}/examples/ada -aI${CMAKE_BINARY_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada${LIB_TAG}.dir"
     )
-    target_link_libraries(x${STRING_INDEX}a plplotada${LIB_TAG})
+    target_link_libraries(${TARGET_NAME} plplotada${LIB_TAG})
   endif(BUILD_TEST)
 endforeach(STRING_INDEX ${ada_STRING_INDICES})
