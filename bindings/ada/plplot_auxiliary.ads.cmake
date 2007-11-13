@@ -29,12 +29,12 @@ use
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;
 
-package PLplot_Auxiliary is
-
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
-@Ada_Is_2007_with_and_use_Numerics@
+@Ada_Is_2007_With_and_Use_Numerics@
+
+package PLplot_Auxiliary is
 
 --------------------------------------------------------------------------------
 --           Utility type declarations used by the bindings                   --
