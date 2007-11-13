@@ -46,7 +46,7 @@ foreach(STRING_INDEX ${ada_STRING_INDICES})
   set(TARGET_NAME x${STRING_INDEX}a)
   set(SOURCE_FILE x${STRING_INDEX}a.adb)
   configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
+  ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
   )
   # Build up list of full-path examples source names to be used (eventually
