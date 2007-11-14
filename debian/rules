@@ -26,7 +26,7 @@ debdoc		:= $(debshr)/doc
 debinfo		:= $(debshr)/info
 debex		:= $(debshr)/plplot$(version)/examples
 
-JAVA_HOME = /usr/lib/kaffe
+JAVA_HOME = /usr/lib/jvm/java-gcj
 
 PYVERS = $(shell pyversions -vr)
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \

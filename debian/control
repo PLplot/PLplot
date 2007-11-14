@@ -16,7 +16,7 @@ Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38),
  python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6),
  python-numpy, ttf-freefont,
  docbook-xml, docbook, docbook-dsssl, docbook-xsl, docbook2x,
- opensp, jadetex, jikes-kaffe, kaffe-dev, fastjar, swig
+ opensp, jadetex, java-gcj-compat-dev, fastjar, swig
 Build-Conflicts: libplplot5,  octave2.1-headers
 XS-Python-Version: all
 Homepage: http://www.plplot.org
@@ -84,7 +84,7 @@ Description: Scientific plotting library
 Package: libplplot9-java
 Architecture: any
 Section: libs
-Depends: java-runtime, ${shlibs:Depends}
+Depends: java-gcj-compat, ${shlibs:Depends}
 Description: Scientific plotting library
  This packages contains the Java bindings for PLplot, a scientific
  plotting library.
