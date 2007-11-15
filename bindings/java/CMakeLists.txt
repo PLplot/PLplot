@@ -113,6 +113,16 @@ else(USE_RPATH)
   )
 endif(USE_RPATH)
 
+# Ensure we get the correct suffix for OS-X 
+if(APPLE)
+  set_target_properties(
+  plplotjavac_wrap
+  PROPERTIES
+  SUFFIX ".dynlib"
+  )
+endif(APPLE)
+
+
 install(TARGETS plplotjavac_wrap LIBRARY DESTINATION ${JAVAWRAPPER_HARDDIR})
 
 foreach( srcfile ${JAVA_FILES_FULL} )
