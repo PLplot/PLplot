@@ -1,8 +1,9 @@
-plplot (5.8.0~RC1-3) UNRELEASED; urgency=low
+plplot (5.8.0~RC1-3) unstable; urgency=low
 
   * debian/control: Build-depends on java-gcj-compat-dev and make the
     libplplot9-java package depend on java-gcj-compat.  It seems that the
-    Java binding only work well with gcj/gij.
+    Java binding only work well with gcj/gij.  This should fix the
+    autobuild failures related to the Java binding (closes: #451103)
   * debian/rules: Set the appropriate JAVA_HOME according to the above.
 
  -- Rafael Laboissiere <rafael@debian.org>  Wed, 14 Nov 2007 23:51:54 +0100
