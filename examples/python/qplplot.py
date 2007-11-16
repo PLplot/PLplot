@@ -1,6 +1,7 @@
 import qt
 from qt import QWidget 
 import plplot_py_demos
+import plplot
 import plplot_widget
 
 class qplplot(QWidget):
