@@ -118,7 +118,7 @@ if(APPLE)
   set_target_properties(
   plplotjavac_wrap
   PROPERTIES
-  SUFFIX ".dynlib"
+  SUFFIX ".dylib"
   )
 endif(APPLE)
 
