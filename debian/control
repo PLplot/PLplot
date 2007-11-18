@@ -3,24 +3,21 @@ Section: math
 Priority: optional
 Maintainer: Andrew Ross <andrewross@users.sourceforge.net>
 Standards-Version: 3.7.2
-Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38),
- tcl8.4-dev, tk8.4-dev, itcl3-dev, libx11-dev, libxext-dev,
- libxi-dev, gfortran, itk3-dev, octave2.1-headers (>= 2.1.65),
- libgd2-noxpm-dev | libgd2-xpm-dev, libgnome2-dev,
- libgnomeprintui2.2-dev, libgnomeui-dev, liblasi-dev (>= 1.0.6),
- m4, libqhull-dev, libxml-parser-perl, libxml-dom-perl,
+Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38), 
+ tcl8.4-dev, tk8.4-dev, itcl3-dev, libx11-dev, libxext-dev, 
+ libxi-dev, gfortran, itk3-dev, octave2.1-headers (>= 2.1.65), 
+ libgd2-noxpm-dev | libgd2-xpm-dev, libgnome2-dev, 
+ libgnomeprintui2.2-dev, libgnomeui-dev, liblasi-dev (>= 1.0.6), 
+ m4, libqhull-dev, libxml-parser-perl, libxml-dom-perl, 
  libltdl3-dev, pkg-config, dpatch, atlas3-base-dev
  [!arm !m68k], refblas3-dev [arm m68k], lapack3-dev [arm m68k],
- python-gtk2-dev, libwxgtk2.6-dev, python-gnome2-dev,
- python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6),
- python-numpy, ttf-freefont,
+ python-gtk2-dev, libwxgtk2.6-dev, python-gnome2-dev, 
+ python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6), 
+ python-numpy, ttf-freefont, 
  docbook-xml, docbook, docbook-dsssl, docbook-xsl, docbook2x,
- opensp, jadetex, jikes-kaffe, kaffe-dev, fastjar, swig
+ opensp, jadetex, jikes-kaffe, kaffe-dev, fastjar
 Build-Conflicts: libplplot5
 XS-Python-Version: all
-Homepage: http://www.plplot.org
-XS-Vcs-Svn: https://plplot.svn.sourceforge.net/svnroot/plplot/trunk/debian
-XS-Vcs-Browser: http://plplot.svn.sourceforge.net/viewvc/plplot/trunk/debian/
 
 Package: libplplot9
 Architecture: any
@@ -47,8 +44,8 @@ Package: libplplot-dev
 Architecture: any
 Section: libdevel
 Recommends: pkg-config
-Depends: libplplot9 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
- libltdl3-dev, libplplot-c++9c2 (= ${binary:Version}), plplot9-driver-gnome2
+Depends: libplplot9 (= ${Source-Version}), libqhull-dev, libfreetype6-dev,
+ libltdl3-dev, libplplot-c++9c2 (= ${Source-Version}), plplot9-driver-gnome2
 Description: Scientific plotting library (development files)
  This package contains all that is needed for doing development in C, C++,
  and Fortran with PLplot, a scientific plotting library.  Examples of
@@ -85,7 +82,7 @@ Architecture: any
 Section: libs
 Depends: java-runtime, ${shlibs:Depends}
 Description: Scientific plotting library
- This packages contains the Java bindings for PLplot, a scientific
+ This packages contains the Java bindings for PLplot, a scientific 
  plotting library.
  .
  Homepage: http://www.plplot.org
@@ -109,7 +106,7 @@ Description: Scientific plotting library
 
 Package: plplot-bin
 Architecture: any
-Section: math
+Section:
 Conflicts: libplplot9 (<= 5.3.0-4), plplot (<< 5)
 Depends: ${shlibs:Depends}
 Description: Scientific plotting library (utilities)
@@ -184,7 +181,7 @@ Description: Tcl/Tk support for PLplot, a plotting library
 Package: plplot-tcl-dev
 Architecture: any
 Priority: extra
-Depends: libplplot9 (= ${binary:Version}), plplot-tcl
+Depends: libplplot9 (= ${Source-Version}), plplot-tcl
 Conflicts: plplot-tcl (<= 5.2.0.cvs.20030224-1)
 Description: Tcl/Tk development support for PLplot, a plotting library
  This package contains the necessary files to do development in Tcl/Tk
@@ -208,7 +205,7 @@ Description: Scientific plotting library (GD driver)
 Package: python-plplot
 Architecture: any
 Section: python
-Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends},
+Depends: libplplot9 (= ${Source-Version}), ${shlibs:Depends},
  ${python:Depends}, python-numpy
 Provides: ${python:Provides}
 XB-Python-Version: ${python:Versions}

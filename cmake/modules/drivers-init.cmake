@@ -104,8 +104,8 @@ set(DRIVERS_DEVICE_LIST
 # yet.... :-)
 "plmeta:plmeta:OFF"
 "ps:ps:ON"
-# No longer segfaults, but still default OFF because cleaner/better ways 
-# (psttf and pscairo) to get modern fonts for postscript results.
+# Default OFF because this device is not well maintained (it currently
+# segfaults).
 "pstex:pstex:OFF"
 "psttf:psttf:ON"
 "xterm:tek:OFF" "tek4010:tek:OFF" "tek4107:tek:OFF" "mskermit:tek:OFF"

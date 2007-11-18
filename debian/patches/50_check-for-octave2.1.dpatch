@@ -1,5 +1,5 @@
 #! /bin/sh /usr/share/dpatch/dpatch-run
-## 01_check-for-octave2.1.dpatch by Rafael Laboissiere <rafael@debian.org>
+## 50_check-for-octave2.1.dpatch by Rafael Laboissiere <rafael@debian.org>
 ##
 ## DP: Abort toggle_plplot_use if not using Octave 2.1
 
