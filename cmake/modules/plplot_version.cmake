@@ -1,10 +1,10 @@
 # For now, must set this by hand before each release.  This value affects
 # at least the documentation build and perhaps other parts of the release.
-set(RELEASE_DATE "2007-10-21")
+set(RELEASE_DATE "2007-11-18")
 
 # Version data that need review and possible modification for each release.
 
-set(VERSION 5.8.0-RC1)
+set(VERSION 5.8.0)
 
 # CPack version numbers for release tarball name.
 set(CPACK_PACKAGE_VERSION_MAJOR 5)

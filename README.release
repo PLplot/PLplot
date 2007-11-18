@@ -28,8 +28,13 @@ bindings and so on. With the 5.9.0 release the source distribution will
 no longer contain this directory. Hence you should switch to the new
 build system described below.
 
-Note for gfortran users of our f95 bindings: gfortran version 4.1.2 or later
+Note for gfortran users of our f95 bindings: gfortran version 4.2.1 or later
 is a requirement, see fortran 95 bindings remarks below.
+
+Note for OS-X users:
+The Octave bindings no longer work for Octave 2.1.73. Work is ongoing to
+try and solve this problem.
+
 
 INDEX
 
@@ -98,7 +103,7 @@ INDEX
     Equivalance statements in our F95 bindings were causing problems for
     one fortran 95 compiler so we have dropped those equivalence statements
     and use the transfer intrinsic instead.  However, for gfortran that
-    intrinsic was only implemented for version 4.1.2 so that is the
+    intrinsic was only implemented for version 4.2.1 so that is the
     minimum version requirement for gfortran now if you attempt to build
     the f95 bindings.  Note, earlier versions of gfortran build the f77
     bindings with no problems.
