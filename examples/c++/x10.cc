@@ -35,14 +35,14 @@ using namespace std;
 class x10 {
 
 public:
-  x10(int, char**);
+  x10(int, const char**);
 
 private:
   plstream *pls;
 
 };
 
-x10::x10( int argc, char **argv ) {
+x10::x10( int argc, const char **argv ) {
 
   pls = new plstream();
 
@@ -69,7 +69,7 @@ x10::x10( int argc, char **argv ) {
 
 
 
-int main( int argc, char **argv )
+int main( int argc, const char **argv )
 {
   x10 *x = new x10( argc, argv );
 

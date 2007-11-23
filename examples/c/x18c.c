@@ -21,7 +21,7 @@ void test_poly(int k);
 #define NPTS 1000
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
     int i, k;
     PLFLT *x, *y, *z;

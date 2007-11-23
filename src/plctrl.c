@@ -61,10 +61,10 @@ static void
 strcat_delim(char *dirspec);
 
 static int
-(*exit_handler) (char *errormsg);
+(*exit_handler) (const char *errormsg);
 
 void
-(*abort_handler) (char *errormsg);
+(*abort_handler) (const char *errormsg);
 
 static void
 plcmap0_def(int imin, int imax);
@@ -977,7 +977,7 @@ c_plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
 \*--------------------------------------------------------------------------*/
 
 void
-plwarn(char *errormsg)
+plwarn(const char *errormsg)
 {
     int was_gfx = 0;
 
@@ -1006,7 +1006,7 @@ plwarn(char *errormsg)
 \*--------------------------------------------------------------------------*/
 
 void
-plabort(char *errormsg)
+plabort(const char *errormsg)
 {
 
     if (abort_handler != NULL)
@@ -1045,7 +1045,7 @@ plabort(char *errormsg)
 \*--------------------------------------------------------------------------*/
 
 void
-plsabort(void (*handler) (char *))
+plsabort(void (*handler) (const char *))
 {
     abort_handler = handler;
 }
@@ -1063,7 +1063,7 @@ plsabort(void (*handler) (char *))
 \*--------------------------------------------------------------------------*/
 
 void
-plexit(char *errormsg)
+plexit(const char *errormsg)
 {
     int status = 1;
 
@@ -1088,7 +1088,7 @@ plexit(char *errormsg)
 \*--------------------------------------------------------------------------*/
 
 void
-plsexit(int (*handler) (char *))
+plsexit(int (*handler) (const char *))
 {
     exit_handler = handler;
 }
@@ -1176,7 +1176,7 @@ pl_cmd(PLINT op, void *ptr)
 \*--------------------------------------------------------------------------*/
 
 char *
-plFindCommand(char *fn)
+plFindCommand(const char *fn)
 {
     char *fs = NULL, *dn;
 
@@ -1251,7 +1251,7 @@ plFindCommand(char *fn)
 \*--------------------------------------------------------------------------*/
 
 FILE *
-plLibOpen(char *fn)
+plLibOpen(const char *fn)
 {
     FILE *ret = NULL;
 
@@ -1268,7 +1268,7 @@ plLibOpen(char *fn)
 }
 
 PDFstrm *
-plLibOpenPdfstrm(char *fn)
+plLibOpenPdfstrm(const char *fn)
 {
     PDFstrm *file;
     char *fs = NULL, *dn = NULL;
@@ -1438,7 +1438,7 @@ plFindName(char *p)
 \*--------------------------------------------------------------------------*/
 
 void
-plGetName(char *dir, char *subdir, char *filename, char **filespec)
+plGetName(const char *dir, const char *subdir, const char *filename, char **filespec)
 {
     int lfilespec;
 
@@ -1788,7 +1788,7 @@ plGinInit(PLGraphicsIn *gin)
 \*--------------------------------------------------------------------------*/
 
 PLINT
-plGetInt(char *s)
+plGetInt(const char *s)
 {
     int m;
     int i = 0;
@@ -1818,7 +1818,7 @@ plGetInt(char *s)
 \*--------------------------------------------------------------------------*/
 
 PLFLT
-plGetFlt(char *s)
+plGetFlt(const char *s)
 {
     PLFLT m;
     double m1;

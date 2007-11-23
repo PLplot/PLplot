@@ -57,7 +57,7 @@
 
 /* local variables */
 
-char* plD_DEVICE_INFO_xwinttf = "xwinttf:TrueType X Windows Driver:1:xwinttf:59:xwinttf";
+const char* plD_DEVICE_INFO_xwinttf = "xwinttf:TrueType X Windows Driver:1:xwinttf:59:xwinttf";
 
 static int currentPage = -1;
 static int XScreen;

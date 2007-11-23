@@ -83,7 +83,7 @@ static PLOptionTable options[] = {
     NULL }			/* long syntax */
 };
 
-static char *notes[] = {
+static const char *notes[] = {
 "To get smoother color variation, increase ns, nx, and ny.  To get faster",
 "response (especially on a serial link), decrease them.  A decent but quick",
 "test results from ns around 5 and nx, ny around 25.",
@@ -106,7 +106,7 @@ zdefined (PLFLT x, PLFLT y)
 \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
     int i, j;
     PLFLT x, y, argx, argy, distort, r, t;

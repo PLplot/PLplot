@@ -67,7 +67,7 @@ cmap1_init()
 \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
   int i, j, k;
   PLFLT *x, *y, **z;

@@ -31,7 +31,7 @@
  * Use plparseopts instead.
 \*--------------------------------------------------------------------------*/
 int
-plParseOpts(int *p_argc, char **argv, PLINT mode)
+plParseOpts(int *p_argc, const char **argv, PLINT mode)
 {
    return c_plparseopts(p_argc, argv, mode);
 }

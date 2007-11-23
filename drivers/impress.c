@@ -10,7 +10,7 @@
 #include "drivers.h"
 
 /* Device info */
-char* plD_DEVICE_INFO_impress = "imp:Impress File:0:impress:37:imp";
+const char* plD_DEVICE_INFO_impress = "imp:Impress File:0:impress:37:imp";
 
 /* Function prototypes */
 

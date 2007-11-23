@@ -399,7 +399,7 @@ class PLDLLIMPEXP plstream {
 
 /* plot continental outline in world coordinates */
 
-    void map( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+    void map( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
 	      PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
 /* Plot the latitudes and longitudes on the background. */
@@ -469,7 +469,7 @@ class PLDLLIMPEXP plstream {
     
 /* Process options list using current options info. */
 
-    int parseopts( int *p_argc, char **argv, PLINT mode );
+    int parseopts( int *p_argc, const char **argv, PLINT mode );
 
 /* Set fill pattern directly. */
 
@@ -718,13 +718,13 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 /* Create 1d stripchart */
 
-    void stripc(PLINT *id, char *xspec, char *yspec,
+    void stripc(PLINT *id, const char *xspec, const char *yspec,
         PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
         PLFLT xlpos, PLFLT ylpos,
         bool y_ascl, bool acc,
         PLINT colbox, PLINT collab,
-        PLINT colline[], PLINT styline[], char *legline[],
-        char *labx, char *laby, char *labtop);
+        PLINT colline[], PLINT styline[], const char *legline[],
+        const char *labx, const char *laby, const char *labtop);
 
 /* Add a point to a stripchart.  */
 
@@ -833,7 +833,7 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 /* Sets an optional user exit handler. */
 
-    void sexit( int (*handler) (char *) );
+    void sexit( int (*handler) (const char *) );
 
 	/* Transformation routines */
 
@@ -899,7 +899,7 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 /* Merge user option table into internal info structure. */
 
-    int MergeOpts( PLOptionTable *options, char *name, char **notes );
+    int MergeOpts( PLOptionTable *options, const char *name, const char **notes );
 
 /* Set the strings used in usage and syntax messages. */
 
@@ -907,11 +907,11 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 /* Process input strings, treating them as an option and argument pair. */
 
-    int SetOpt( char *opt, char *optarg );
+    int SetOpt( const char *opt, const char *optarg );
 
 /* Process options list using current options info. */
 
-    int ParseOpts( int *p_argc, char **argv, PLINT mode );
+    int ParseOpts( int *p_argc, const char **argv, PLINT mode );
 
 /* Print usage & syntax message. */
 
@@ -1044,13 +1044,13 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
     void spause( PLINT pause );
 
-    void stripc(PLINT *id, char *xspec, char *yspec,
+    void stripc(PLINT *id, const char *xspec, const char *yspec,
         PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
         PLFLT xlpos, PLFLT ylpos,
         PLINT y_ascl, PLINT acc,
         PLINT colbox, PLINT collab,
-        PLINT colline[], PLINT styline[], char *legline[],
-        char *labx, char *laby, char *labtop);
+        PLINT colline[], PLINT styline[], const char *legline[],
+        const char *labx, const char *laby, const char *labtop);
 
     void xormod(PLINT mode, PLINT *status);
 };

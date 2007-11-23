@@ -64,13 +64,13 @@ plstrip_legend(PLStrip *strip, int flag);
 \*--------------------------------------------------------------------------*/
 
 void
-c_plstripc( PLINT *id, char *xspec, char *yspec,
+c_plstripc( PLINT *id, const char *xspec, const char *yspec,
             PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
             PLFLT xlpos, PLFLT ylpos,
             PLINT y_ascl, PLINT acc,
             PLINT colbox,  PLINT collab,
-            PLINT *colline,  PLINT *styline, char *legline[],
-            char *labx, char *laby, char *labtop )
+            PLINT *colline,  PLINT *styline, const char *legline[],
+            const char *labx, const char *laby, const char *labtop )
 {
     int i;
 

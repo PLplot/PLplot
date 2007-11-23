@@ -42,7 +42,7 @@
 #include "plplotP.h"
 
 /*----------------------------------------------------------------------*\
- * void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+ * void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
  *            PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
  *
  * plot continental outline in world coordinates
@@ -86,7 +86,7 @@
 #define W_BUFSIZ	(32*1024)
 
 void
-plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
     PLINT wrap, sign;

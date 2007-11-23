@@ -37,7 +37,7 @@
 #include "drivers.h"
 
 /* Device info */
-char* plD_DEVICE_INFO_hpgl =
+const char* plD_DEVICE_INFO_hpgl =
 #if defined(PLD_hp7470)
   "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):0:hpgl:34:hp7470\n"
 #endif

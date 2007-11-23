@@ -292,7 +292,7 @@ void potential() {
 }
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
     PLINT narr, fill;
 

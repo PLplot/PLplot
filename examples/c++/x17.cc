@@ -42,7 +42,7 @@ using namespace std;
 class x17 {
 
 public:
-  x17(int, char **);
+  x17(int, const char **);
 
 private:
   // Class data
@@ -57,13 +57,13 @@ public:
 PLINT x17::pl_errcode = 0;
 char x17::errmsg[160] = "";
 
-x17::x17( int argc, char ** argv ) {
+x17::x17( int argc, const char ** argv ) {
   PLINT id1, n, nsteps = 1000;
   bool autoy, acc;
   PLFLT y1, y2, y3, y4, ymin, ymax, xlab, ylab;
   PLFLT t, tmin, tmax, tjump, dt, noise;
   PLINT colbox, collab, colline[4], styline[4];
-  char *legline[4];
+  const char *legline[4];
 
   // plplot initialization
 
@@ -185,7 +185,7 @@ x17::x17( int argc, char ** argv ) {
 
 }
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x17 *x = new x17( argc, argv );
 
   delete x;

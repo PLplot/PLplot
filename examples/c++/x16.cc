@@ -35,7 +35,7 @@ using namespace std;
 class x16 {
 
 public:
-  x16(int, char **);
+  x16(int, const char **);
 
 private:
   // Class data
@@ -56,7 +56,7 @@ public:
   static PLFLT tr[];
 
   static PLOptionTable options[];
-  static char *notes[];
+  static const char *notes[];
 
 };
 
@@ -114,7 +114,7 @@ PLOptionTable x16::options[] = {
     NULL }                      /* long syntax */
 };
 
-char *x16::notes[] = {
+const char *x16::notes[] = {
 "To get smoother color variation, increase ns, nx, and ny.  To get faster",
 "response (especially on a serial link), decrease them.  A decent but quick",
 "test results from ns around 5 and nx, ny around 25.",
@@ -133,7 +133,7 @@ PLINT zdefined (PLFLT x, PLFLT y) {
   return z < 0.4 || z > 0.6;
 }
 
-x16::x16( int argc, char ** argv ) {
+x16::x16( int argc, const char ** argv ) {
 
   int i, j;
   PLFLT x, y, argx, argy, distort, r, t, zmin, zmax;
@@ -385,7 +385,7 @@ x16::x16( int argc, char ** argv ) {
 
 }
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x16 *x = new x16( argc, argv );
 
   delete x;

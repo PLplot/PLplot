@@ -38,7 +38,7 @@ void spiro( PLFLT data[] );
 \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
     /* R, r, p, N */
     PLFLT params[9][4] = {

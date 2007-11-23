@@ -104,7 +104,7 @@ void plot1(int type, char *x_label, char *y_label, char *alty_label,
 \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
     int i;
 /* Parse and process command line arguments */

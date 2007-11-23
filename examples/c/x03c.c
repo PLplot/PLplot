@@ -12,7 +12,7 @@
 \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
     int i, j;
     PLFLT dtr, theta, dx, dy, r;

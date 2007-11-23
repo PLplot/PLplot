@@ -273,13 +273,13 @@ typedef void* PLPointer;
 /* Option table definition */
 
 typedef struct {
-    char *opt;
-    int  (*handler)	(char *, char *, void *);
+    const char *opt;
+    int  (*handler)	(const char *, const char *, void *);
     void *client_data;
     void *var;
     long mode;
-    char *syntax;
-    char *desc;
+    const char *syntax;
+    const char *desc;
 } PLOptionTable;
 
 /* PLplot Graphics Input structure */
@@ -381,7 +381,7 @@ typedef struct {
     unsigned char r;		/* red */
     unsigned char g;		/* green */
     unsigned char b;		/* blue */
-    char *name;
+    const char *name;
 } PLColor;
 
 /* PLControlPt is how cmap1 control points are represented. */
@@ -1021,7 +1021,7 @@ c_pllsty(PLINT lin);
 /* plot continental outline in world coordinates */
 
 PLDLLIMPEXP void
-c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
 /* Plot the latitudes and longitudes on the background. */
@@ -1386,13 +1386,13 @@ c_plstripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);
 /* Create 1d stripchart */
 
 PLDLLIMPEXP void
-c_plstripc(PLINT *id, char *xspec, char *yspec,
+c_plstripc(PLINT *id, const char *xspec, const char *yspec,
 	PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
 	PLFLT xlpos, PLFLT ylpos,
 	PLBOOL y_ascl, PLBOOL acc,
 	PLINT colbox, PLINT collab,
-	PLINT colline[], PLINT styline[], char *legline[],
-	char *labx, char *laby, char *labtop);
+	PLINT colline[], PLINT styline[], const char *legline[],
+	const char *labx, const char *laby, const char *labtop);
 
 /* Deletes and releases memory used by a stripchart.  */
 
@@ -1548,12 +1548,12 @@ plsError(PLINT *errcode, char *errmsg);
 /* Sets an optional user exit handler. */
 
 PLDLLIMPEXP void
-plsexit(int (*handler) (char *));
+plsexit(int (*handler) (const char *));
 
 /* Sets an optional user abort handler. */
 
 PLDLLIMPEXP void
-plsabort(void (*handler) (char *));
+plsabort(void (*handler) (const char *));
 
 	/* Transformation routines */
 
@@ -1625,27 +1625,27 @@ plResetOpts(void);
 /* Merge user option table into internal info structure. */
 
 PLDLLIMPEXP int
-plMergeOpts(PLOptionTable *options, char *name, char **notes);
+plMergeOpts(PLOptionTable *options, const char *name, const char **notes);
 
 /* Set the strings used in usage and syntax messages. */
 
 PLDLLIMPEXP void
-plSetUsage(char *program_string, char *usage_string);
+plSetUsage(const char *program_string, const char *usage_string);
 
 /* Process input strings, treating them as an option and argument pair. */
 /* The first is for the external API, the second the work routine declared
    here for backward compatibilty. */
 
 PLDLLIMPEXP int
-c_plsetopt(char *opt, char *optarg);
+c_plsetopt(const char *opt, const char *optarg);
 
 PLDLLIMPEXP int
-plSetOpt(char *opt, char *optarg);
+plSetOpt(const char *opt, const char *optarg);
 
 /* Process options list using current options info. */
 
 PLDLLIMPEXP int
-c_plparseopts(int *p_argc, char **argv, PLINT mode);
+c_plparseopts(int *p_argc, const char **argv, PLINT mode);
 
 /* Print usage & syntax message. */
 
@@ -1682,23 +1682,23 @@ plFindName(char *p);
 /* Looks for the specified executable file according to usual search path. */
 
 PLDLLIMPEXP char *
-plFindCommand(char *fn);
+plFindCommand(const char *fn);
 
 /* Gets search name for file by concatenating the dir, subdir, and file */
 /* name, allocating memory as needed.  */
 
 PLDLLIMPEXP void
-plGetName(char *dir, char *subdir, char *filename, char **filespec);
+plGetName(const char *dir, const char *subdir, const char *filename, char **filespec);
 
 /* Prompts human to input an integer in response to given message. */
 
 PLDLLIMPEXP PLINT
-plGetInt(char *s);
+plGetInt(const char *s);
 
 /* Prompts human to input a float in response to given message. */
 
 PLDLLIMPEXP PLFLT
-plGetFlt(char *s);
+plGetFlt(const char *s);
 
 	/* Nice way to allocate space for a vectored 2d grid */
 
@@ -1731,7 +1731,7 @@ plTranslateCursor(PLGraphicsIn *gin);
  * backwards compatibility of the library API*/
 
 PLDLLIMPEXP int
-plParseOpts(int *p_argc, char **argv, PLINT mode);
+plParseOpts(int *p_argc, const char **argv, PLINT mode);
 
 PLDLLIMPEXP void
 plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);

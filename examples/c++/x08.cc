@@ -35,7 +35,7 @@ using namespace std;
 class x08 {
 
 public:
-  x08(int, char**);
+  x08(int, const char**);
   void cmap1_init(int);
 
 private:
@@ -45,7 +45,7 @@ private:
   static const int YPTS;
   static PLFLT alt[];
   static PLFLT az[];
-  static char *title[];
+  static const char *title[];
 
   static int sombrero;
 
@@ -58,7 +58,7 @@ const int x08::YPTS = 46;
 PLFLT x08::alt[] = {60.0, 20.0};
 PLFLT x08::az[] = {30.0, 60.0};
 
-char *x08::title[] = {
+const char *x08::title[] = {
   "#frPLplot Example 8 - Alt=60, Az=30",
   "#frPLplot Example 8 - Alt=20, Az=60",
 };
@@ -141,7 +141,7 @@ void x08::cmap1_init(int gray)
 // Does a series of 3-d plots for a given data set, with different viewing
 // options in each plot.
 
-x08::x08( int argc, char **argv ) {
+x08::x08( int argc, const char **argv ) {
   int i, j, k;
   const int LEVELS = 10;
 
@@ -274,7 +274,7 @@ x08::x08( int argc, char **argv ) {
 }
 
 
-int main( int argc, char **argv )
+int main( int argc, const char **argv )
 {
   x08 *x = new x08( argc, argv );
 

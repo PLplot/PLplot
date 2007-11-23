@@ -32,14 +32,14 @@
 class x23 {
 
 public:
-    x23(int, char **);
+    x23(int, const char **);
 
 private:
     plstream *pls;
     
-    static char *Greek[];
+    static const char *Greek[];
     static int Type1[];
-    static char *title[];
+    static const char *title[];
     static int lo[];
     static int hi[];
     static int nxcells[];
@@ -51,7 +51,7 @@ private:
  * Displays Greek letters and mathematically interesting Unicode ranges
 */
  
-char* x23::Greek[] = {
+const char* x23::Greek[] = {
 "#gA","#gB","#gG","#gD","#gE","#gZ","#gY","#gH","#gI","#gK","#gL","#gM",
 "#gN","#gC","#gO","#gP","#gR","#gS","#gT","#gU","#gF","#gX","#gQ","#gW",
 "#ga","#gb","#gg","#gd","#ge","#gz","#gy","#gh","#gi","#gk","#gl","#gm",
@@ -95,7 +95,7 @@ int x23::Type1[] = {
 0x2666,
 };
 
-char* x23::title[] = {
+const char* x23::title[] = {
 "#<0x10>PLplot Example 23 - Greek Letters",
 "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode (a)",
 "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode (b)",
@@ -180,7 +180,7 @@ int x23::offset[] = {
 0,
 };
 
-x23::x23(int argc, char *argv[])
+x23::x23(int argc, const char *argv[])
 {
     PLFLT xmin, xmax, ymin, ymax, ycharacter_scale, yoffset;
     PLFLT chardef, charht, deltax, deltay, x, y;
@@ -251,7 +251,7 @@ x23::x23(int argc, char *argv[])
 
 }
 
-int main( int argc, char **argv )
+int main( int argc, const char **argv )
 {
     x23 *x = new x23( argc, argv );
 

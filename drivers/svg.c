@@ -48,7 +48,7 @@
 
 /* local variables */
 
-char* plD_DEVICE_INFO_svg = "svg:Scalable Vector Graphics (SVG 1.1):1:svg:57:svg";
+const char* plD_DEVICE_INFO_svg = "svg:Scalable Vector Graphics (SVG 1.1):1:svg:57:svg";
 
 static int canvasXSize = 0;
 static int canvasYSize = 0;

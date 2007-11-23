@@ -63,8 +63,8 @@ PLADV(PLINT *sub)
 }
 
 void
-PLAXES7(PLFLT *x0, PLFLT *y0, char *xopt, PLFLT *xtick,
-	PLINT *nxsub, char *yopt, PLFLT *ytick, PLINT *nysub)
+PLAXES7(PLFLT *x0, PLFLT *y0, const char *xopt, PLFLT *xtick,
+	PLINT *nxsub, const char *yopt, PLFLT *ytick, PLINT *nysub)
 {
     c_plaxes(*x0, *y0, xopt, *xtick, *nxsub, yopt, *ytick, *nysub);
 }
@@ -82,16 +82,16 @@ PLBOP(void)
 }
 
 void
-PLBOX7(char *xopt, PLFLT *xtick, PLINT *nxsub,
-       char *yopt, PLFLT *ytick, PLINT *nysub)
+PLBOX7(const char *xopt, PLFLT *xtick, PLINT *nxsub,
+       const char *yopt, PLFLT *ytick, PLINT *nysub)
 {
     c_plbox(xopt, *xtick, *nxsub, yopt, *ytick, *nysub);
 }
 
 void
-PLBOX37(char *xopt, char *xlabel, PLFLT *xtick, PLINT *nxsub,
-	char *yopt, char *ylabel, PLFLT *ytick, PLINT *nysub,
-	char *zopt, char *zlabel, PLFLT *ztick, PLINT *nzsub)
+PLBOX37(const char *xopt, const char *xlabel, PLFLT *xtick, PLINT *nxsub,
+	const char *yopt, const char *ylabel, PLFLT *ytick, PLINT *nysub,
+	const char *zopt, const char *zlabel, PLFLT *ztick, PLINT *nzsub)
 {
     c_plbox3(xopt, xlabel, *xtick, *nxsub,
 	     yopt, ylabel, *ytick, *nysub,
@@ -384,7 +384,7 @@ PLJOIN(PLFLT *x1, PLFLT *y1, PLFLT *x2, PLFLT *y2)
 }
 
 void
-PLLAB7(char *xlab, char *ylab, char *title)
+PLLAB7(const char *xlab, const char *ylab, const char *title)
 {
     c_pllab(xlab, ylab, title);
 }
@@ -420,7 +420,7 @@ plmapf2c( PLINT n, PLFLT *x, PLFLT *y )
 }
 
 void
-PLMAPC( char *type,
+PLMAPC( const char *type,
         PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat )
 
 {
@@ -442,24 +442,24 @@ PLMKSTRM(PLINT *p_strm)
 }
 
 void
-PLMTEX7(char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, char *text)
+PLMTEX7(const char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, const char *text)
 {
     c_plmtex(side, *disp, *pos, *just, text);
 }
 
 void
-PLMTEX37(char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, char *text)
+PLMTEX37(const char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, const char *text)
 {
     c_plmtex3(side, *disp, *pos, *just, text);
 }
 
 void
-PLPARSEOPTS7(int *numargs, char *iargs, PLINT *mode, PLINT *maxindex)
+PLPARSEOPTS7(int *numargs, const char *iargs, PLINT *mode, PLINT *maxindex)
 {
 /* Same as in plparseopts fortran subroutine that calls this one. */
 #define MAXARGS 20
    if(*numargs <= MAXARGS) {
-      char *argv[MAXARGS];
+      const char *argv[MAXARGS];
       int i;
       for(i = 0; i < *numargs; i++) {
 	 argv[i] = iargs + (i* *maxindex);
@@ -507,7 +507,7 @@ PLPSTY(PLINT *patt)
 }
 
 void
-PLPTEX7(PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, char *text)
+PLPTEX7(PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, const char *text)
 {
     c_plptex(*x, *y, *dx, *dy, *just, text);
 }
@@ -517,7 +517,7 @@ PLPTEX37(
 	 PLFLT *x, PLFLT *y, PLFLT *z, 
 	 PLFLT *dx, PLFLT *dy, PLFLT *dz,
 	 PLFLT *sx, PLFLT *sy, PLFLT *sz,
-	 PLFLT *just, char *text)
+	 PLFLT *just, const char *text)
 {
     c_plptex3(*x, *y, *z, *dx, *dy, *dz, *sx, *sy, *sz, *just, text);
 }
@@ -608,7 +608,7 @@ PLSCOMPRESSION(PLINT *compression)
 }
 
 void
-PLSDEV7(char *dev)
+PLSDEV7(const char *dev)
 {
     c_plsdev(dev);
 }
@@ -658,7 +658,7 @@ PLSETMAPFORMC( void (*mapform)(PLINT *, PLFLT *, PLFLT *) )
 }
 
 void
-PLSETOPT7(char *opt, char *optarg)
+PLSETOPT7(const char *opt, const char *optarg)
 {
     c_plsetopt(opt, optarg);
 }
@@ -670,7 +670,7 @@ PLSFAM(PLINT *fam, PLINT *num, PLINT *bmax)
 }
 
 void
-PLSFNAM7(char *fnam)
+PLSFNAM7(const char *fnam)
 {
     c_plsfnam(fnam);
 }
@@ -737,7 +737,7 @@ PLSTAR(PLINT *nx, PLINT *ny)
 }
 
 void
-PLSTART7(char *devname, PLINT *nx, PLINT *ny)
+PLSTART7(const char *devname, PLINT *nx, PLINT *ny)
 {
     c_plstart(devname, *nx, *ny);
 }
@@ -749,16 +749,17 @@ PLSTRIPA(PLINT *id, PLINT *pen, PLFLT *x, PLFLT *y)
 }
 
 void
-PLSTRIPC7(PLINT *id, char *xspec, char *yspec,
+PLSTRIPC7(PLINT *id, const char *xspec, const char *yspec,
 	  PLFLT *xmin, PLFLT *xmax, PLFLT *xjump, PLFLT *ymin, PLFLT *ymax,
 	  PLFLT *xlpos, PLFLT *ylpos,
 	  PLBOOL *y_ascl, PLBOOL *acc,
 	  PLINT *colbox, PLINT *collab,
 	  PLINT *colline, PLINT *styline,
-	  char *legline0, char *legline1, char *legline2, char *legline3,
-	  char *labx, char *laby, char *labtop)
+	  const char *legline0, const char *legline1, 
+          const char *legline2, const char *legline3,
+	  const char *labx, const char *laby, const char *labtop)
 {
-   char* legline[4];
+   const char* legline[4];
    legline[0] = legline0;
    legline[1] = legline1;
    legline[2] = legline2;

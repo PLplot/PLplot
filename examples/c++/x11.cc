@@ -35,7 +35,7 @@ using namespace std;
 class x11 {
 
 public:
-  x11(int, char**);
+  x11(int, const char**);
   void cmap1_init();
 
 private:
@@ -101,7 +101,7 @@ void x11::cmap1_init()
 }
 
 
-x11::x11( int argc, char **argv ) {
+x11::x11( int argc, const char **argv ) {
 
   int i, j, k;
 
@@ -216,7 +216,7 @@ x11::x11( int argc, char **argv ) {
 // options in each plot.
 
 
-int main( int argc, char **argv )
+int main( int argc, const char **argv )
 {
   x11 *x = new x11( argc, argv );
 

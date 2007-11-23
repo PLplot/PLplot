@@ -62,7 +62,7 @@
 
 /* Device info */
 
-char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:9:wingcc";
+const char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:9:wingcc";
 
 /* Struct to hold device-specific info. */
 

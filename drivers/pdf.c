@@ -55,7 +55,7 @@ typedef struct {
 } pdfdev;
 
 /* local variables */
-char* plD_DEVICE_INFO_pdf = "pdf:Portable Document Format PDF:1:pdf:58:pdf";
+const char* plD_DEVICE_INFO_pdf = "pdf:Portable Document Format PDF:1:pdf:58:pdf";
 static jmp_buf env;
 
 //-----------------------------------------------

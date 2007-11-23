@@ -35,7 +35,7 @@ using namespace std;
 class x15 {
 
 public:
-  x15(int, char **);
+  x15(int, const char **);
   void plot1( PLFLT **, PLFLT, PLFLT);
   void plot2( PLFLT **, PLFLT, PLFLT);
 
@@ -62,7 +62,7 @@ const PLFLT x15::YSPA =  2./(YPTS-1);
 const PLFLT x15::tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
 
-x15::x15( int argc, char ** argv ) {
+x15::x15( int argc, const char ** argv ) {
 
   int i, j;
 
@@ -186,7 +186,7 @@ void x15::plot2(PLFLT **z, PLFLT zmin, PLFLT zmax)
   pls->lab("distance", "altitude", "Bogon flux");
 }
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x15 *x = new x15( argc, argv );
 
   delete x;

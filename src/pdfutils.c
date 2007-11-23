@@ -61,7 +61,7 @@ pdf_set(char *option, int value)
 \*--------------------------------------------------------------------------*/
 
 PDFstrm *
-pdf_fopen(char *filename, char *mode)
+pdf_fopen(const char *filename, const char *mode)
 {
     PDFstrm *pdfs;
 

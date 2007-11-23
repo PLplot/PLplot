@@ -35,7 +35,7 @@ mapform19(PLINT n, PLFLT *x, PLFLT *y)
 \*--------------------------------------------------------------------------*/
 
 int 
-main(int argc, char **argv) 
+main(int argc, const char **argv) 
 {
     PLFLT minx, maxx, miny, maxy;
 

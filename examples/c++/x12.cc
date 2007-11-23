@@ -35,7 +35,7 @@ using namespace std;
 class x12 {
 
 public:
-  x12(int, char**);
+  x12(int, const char**);
   void plfbox(PLFLT, PLFLT);
 private:
   plstream *pls;
@@ -47,7 +47,7 @@ private:
 
 const PLFLT x12::y0[10] = {5., 15., 12., 24., 28., 30., 20., 8., 12., 3.};
 
-x12::x12( int argc, char **argv ) {
+x12::x12( int argc, const char **argv ) {
 
   int i;
   char string[20];
@@ -108,7 +108,7 @@ void x12::plfbox(PLFLT x0, PLFLT y0) {
 
 
 
-int main( int argc, char **argv )
+int main( int argc, const char **argv )
 {
   x12 *x = new x12( argc, argv );
 

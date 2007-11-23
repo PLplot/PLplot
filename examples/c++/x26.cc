@@ -69,31 +69,31 @@ using namespace std;
 #endif
 
 
-static char *x_label[] = {
+static const char *x_label[] = {
   "Frequency",
   "Частота",
   NULL
 };
 
-static char *y_label[] = {
+static const char *y_label[] = {
   "Amplitude (dB)",
   "Амплитуда (dB)",
   NULL
 };
 
-static char *alty_label[] = {
+static const char *alty_label[] = {
   "Phase shift (degrees)",
   "Фазовый сдвиг (градусы)",
   NULL
 };
 
-static char *title_label[] = {
+static const char *title_label[] = {
   "Single Pole Low-Pass Filter",
   "Однополюсный Низко-Частотный Фильтр",
   NULL
 };
 
-static char *line_label[] = {
+static const char *line_label[] = {
   "-20 dB/decade",
   "-20 dB/десяток",
   NULL
@@ -102,8 +102,8 @@ static char *line_label[] = {
 class x26 {
 
 public:
-  x26(int, char **);
-  void plot1(int, char*, char*, char*, char*, char*);
+  x26(int, const char **);
+  void plot1(int, const char*, const char*, const char*, const char*, const char*);
 
 private:
   // Class data
@@ -113,7 +113,7 @@ private:
 };
 
 
-x26::x26( int argc, char ** argv ) {
+x26::x26( int argc, const char ** argv ) {
 
   int i;
 
@@ -143,8 +143,9 @@ x26::x26( int argc, char ** argv ) {
 
 // Log-linear plot.
 
-void x26::plot1( int type, char *x_label, char *y_label, char *alty_label,
-           char *title_label, char *line_label ) {
+void x26::plot1( int type, const char *x_label, const char *y_label, 
+           const char *alty_label, const char *title_label, 
+           const char *line_label ) {
   int i;
   PLFLT *freql = new PLFLT[101];
   PLFLT *ampl  = new PLFLT[101];
@@ -211,7 +212,7 @@ void x26::plot1( int type, char *x_label, char *y_label, char *alty_label,
 }
 
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x26 *x = new x26( argc, argv );
 
   delete x;

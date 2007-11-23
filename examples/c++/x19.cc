@@ -35,7 +35,7 @@ using namespace std;
 class x19 {
 
 public:
-  x19(int, char **);
+  x19(int, const char **);
 
 private:
   // Class data
@@ -67,7 +67,7 @@ mapform19(PLINT n, PLFLT *x, PLFLT *y)
 }
 
 
-x19::x19( int argc, char ** argv ) {
+x19::x19( int argc, const char ** argv ) {
 
   PLFLT minx, maxx, miny, maxy;
 
@@ -118,7 +118,7 @@ x19::x19( int argc, char ** argv ) {
 
 }
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x19 *x = new x19( argc, argv );
 
   delete x;

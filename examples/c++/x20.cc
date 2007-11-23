@@ -37,10 +37,10 @@ using namespace std;
 class x20 {
 
 public:
-  x20(int, char **);
-  void save_plot(char *);
+  x20(int, const char **);
+  void save_plot(const char *);
   void gray_cmap(PLINT);
-  int read_img(char *, PLFLT ***, int *, int *, int *);
+  int read_img(const char *, PLFLT ***, int *, int *, int *);
   int get_clip(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
 private:
@@ -110,7 +110,7 @@ PLOptionTable x20::options[] = {
 };
 
 
-x20::x20( int argc, char ** argv ) {
+x20::x20( int argc, const char ** argv ) {
   PLFLT x[XDIM], y[YDIM], **z, **r;
   PLFLT xi, yi, xe, ye;
   int i, j, width, height, num_col;
@@ -270,7 +270,7 @@ x20::x20( int argc, char ** argv ) {
 }
 
 // read image from file in binary ppm format
-int x20::read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num_col) {
+int x20::read_img(const char *fname, PLFLT ***img_f, int *width, int *height, int *num_col) {
   ifstream ifs(fname,ios::out | ios::binary);
   unsigned char *img;
   char ver[80];
@@ -319,7 +319,7 @@ int x20::read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num
 }
 
 // save plot
-void x20::save_plot(char *fname) {
+void x20::save_plot(const char *fname) {
   plstream *pls2;
 
   pls2 = new plstream(); // create a new one
@@ -411,7 +411,7 @@ void x20::gray_cmap(PLINT num_col) {
   pls->scmap1l(true, 2, pos, r, g, b, NULL);
 }
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x20 *x = new x20( argc, argv );
 
   delete x;

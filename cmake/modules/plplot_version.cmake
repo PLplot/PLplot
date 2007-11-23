@@ -34,10 +34,10 @@ set(csironn_SOVERSION 0)
 set(csironn_VERSION ${csironn_SOVERSION}.0.1)
 
 set(plplot_SOVERSION 9)
-set(plplot_VERSION ${plplot_SOVERSION}.3.0)
+set(plplot_VERSION ${plplot_SOVERSION}.4.0)
 
 set(plplotcxx_SOVERSION 9)
-set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.2.1)
+set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.3.0)
 
 set(plplotf77_SOVERSION 9)
 set(plplotf77_VERSION ${plplotf77_SOVERSION}.1.1)

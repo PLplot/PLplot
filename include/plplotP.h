@@ -446,7 +446,7 @@ plfill_soft(short *x, short *y, PLINT npts);
 /* error message and tries to clean up as much as possible. */
 
 PLDLLIMPEXP void
-plexit(char *errormsg);
+plexit(const char *errormsg);
 
 /* Just a front-end to exit().  */
 
@@ -456,12 +456,12 @@ pl_exit(void);
 /* A handy way to issue warnings, if need be. */
 
 PLDLLIMPEXP void
-plwarn(char *errormsg);
+plwarn(const char *errormsg);
 
 /* Same as plwarn(), but appends ", aborting plot" to the error message */
 
 PLDLLIMPEXP void
-plabort(char *errormsg);
+plabort(const char *errormsg);
 
 /* Loads either the standard or extended font. */
 
@@ -543,10 +543,10 @@ typedef struct {
  */
 
 typedef struct {
-  char *opt;     /* a string with the name of the option */
+  const char *opt;     /* a string with the name of the option */
   PLINT type;    /* the type of the variable to be set, see bellow the available types */
   void *var_ptr; /* a pointer to the variable to be set */
-  char *hlp_msg; /* help message of the option */
+  const char *hlp_msg; /* help message of the option */
 } DrvOpt;
 
   /* the available variable types, DrvOpt.type, for driver specific options */
@@ -897,7 +897,7 @@ plP_swin(PLWindow *plwin);
 /* Return file pointer to lib file. */
 
 FILE *
-plLibOpen(char *fn);
+plLibOpen(const char *fn);
 
 /* Does required startup initialization of library.  */
 

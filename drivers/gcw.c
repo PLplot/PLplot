@@ -90,7 +90,7 @@ extern void plD_FreeType_Destroy(PLStream *pls);
 
 
 /* Device info */
-char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
+const char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
 
 /* Global driver options */
 

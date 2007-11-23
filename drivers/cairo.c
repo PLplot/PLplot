@@ -95,7 +95,7 @@ typedef struct {
 #endif
 } PLCairo;
 
-char* plD_DEVICE_INFO_cairo = 
+const char* plD_DEVICE_INFO_cairo = 
 #if defined(PLD_xcairo)
   "xcairo:Cairo X Windows Driver:1:cairo:59:xcairo\n"
 #endif

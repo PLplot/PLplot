@@ -132,7 +132,7 @@
  *  and finally one of each.
  */
 
-char* plD_DEVICE_INFO_gd =
+const char* plD_DEVICE_INFO_gd =
 #if defined(PLD_png)
   "png:PNG file:0:gd:39:png\n"
 #endif

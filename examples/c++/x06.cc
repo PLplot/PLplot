@@ -35,7 +35,7 @@ using namespace std;
 class x06 {
 
 public:
-  x06(int, char **);
+  x06(int, const char **);
 
 private:
   // Class data
@@ -45,7 +45,7 @@ private:
 };
 
 
-x06::x06( int argc, char ** argv ) {
+x06::x06( int argc, const char ** argv ) {
 
   int i, j, k;
   PLFLT x, y;
@@ -107,7 +107,7 @@ x06::x06( int argc, char ** argv ) {
   delete pls;
 }
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x06 *x = new x06( argc, argv );
 
   delete x;

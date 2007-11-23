@@ -509,7 +509,7 @@ plsurf3dl(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
 
 %feature("autodoc", "Process options list using current options info.") plparseopts;
 PLINT
-plparseopts(int *p_argc, char **argv, PLINT mode);
+plparseopts(int *p_argc, const char **argv, PLINT mode);
 
 %feature("autodoc", "Set fill pattern directly.") plpat;
 void
@@ -626,7 +626,7 @@ plsesc(char esc);
 
 %feature("autodoc", "Process input strings, treating them as an option and argument pair. The first is for the external API, the second the work routine declared here for backward compatibilty.") plsetopt;
 PLINT
-plsetopt(char *opt, char *optarg);
+plsetopt(const char *opt, const char *optarg);
 
 %feature("autodoc", "Set family file parameters.") plsfam;
 void
@@ -709,13 +709,13 @@ plstripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);
 
 %feature("autodoc", "Create 1d stripchart.") plstripc;
 void
-plstripc(PLINT *OUTPUT, char *xspec, char *yspec,
+plstripc(PLINT *OUTPUT, const char *xspec, const char *yspec,
 	PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
 	PLFLT xlpos, PLFLT ylpos,
 	PLBOOL y_ascl, PLBOOL acc,
 	PLINT colbox, PLINT collab,
-	PLINT *Array, PLINT *ArrayCk, char *legline[4],
-	char *labx, char *laby, char *labtop);
+	PLINT *Array, PLINT *ArrayCk, const char *legline[4],
+	const char *labx, const char *laby, const char *labtop);
 
 %feature("autodoc", "Deletes and releases memory used by a stripchart.") plstripd;
 void
@@ -842,7 +842,7 @@ plfcont(f2eval_func f2eval,
 /* plot continental outline in world coordinates */
 
 void
-plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
 /* Plot the latitudes and longitudes on the background. */
@@ -921,7 +921,7 @@ plsError(PLINT *OUTPUT, char *OUTPUT);
 /* Sets an optional user exit handler. */
 #if 0
 void
-plsexit(PLINT (*handler) (char *));
+plsexit(PLINT (*handler) (const char *));
 	/* Transformation routines */
 #endif
 
@@ -980,17 +980,17 @@ plResetOpts(void);
 /* Merge user option table into internal info structure. */
 #if 0
 PLINT
-plMergeOpts(PLOptionTable *options, char *name, char **notes);
+plMergeOpts(PLOptionTable *options, const char *name, const char **notes);
 #endif
 /* Set the strings used in usage and syntax messages. */
 
 void
-plSetUsage(char *program_string, char *usage_string);
+plSetUsage(const char *program_string, const char *usage_string);
 
 #if 0
 /* This is wrapped by common API plsetopt so ignore. */
 PLINT
-plSetOpt(char *opt, char *optarg);
+plSetOpt(const char *opt, const char *optarg);
 #endif
 
 /* Print usage & syntax message. */
@@ -1028,23 +1028,23 @@ plFindName(char *p);
 /* Looks for the specified executable file according to usual search path. */
 
 char *
-plFindCommand(char *fn);
+plFindCommand(const char *fn);
 
 /* Gets search name for file by concatenating the dir, subdir, and file */
 /* name, allocating memory as needed.  */
 
 void
-plGetName(char *dir, char *subdir, char *filename, char **filespec);
+plGetName(const char *dir, const char *subdir, const char *filename, char **filespec);
 
 /* Prompts human to input an integer in response to given message. */
 
 PLINT
-plGetInt(char *s);
+plGetInt(const char *s);
 
 /* Prompts human to input a float in response to given message. */
 
 PLFLT
-plGetFlt(char *s);
+plGetFlt(const char *s);
 
 	/* Nice way to allocate space for a vectored 2d grid */
 

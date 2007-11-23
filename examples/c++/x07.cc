@@ -40,7 +40,7 @@ static int base[17] = {
 class x07 {
 
 public:
-  x07(int, char **);
+  x07(int, const char **);
 
 private:
   // Class data
@@ -50,7 +50,7 @@ private:
 };
 
 
-x07::x07( int argc, char ** argv ) {
+x07::x07( int argc, const char ** argv ) {
 
   int i, j, k, l;
   PLFLT x, y;
@@ -113,7 +113,7 @@ x07::x07( int argc, char ** argv ) {
   delete pls;
 }
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x07 *x = new x07( argc, argv );
 
   delete x;

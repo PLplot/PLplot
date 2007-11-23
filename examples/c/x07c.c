@@ -20,7 +20,7 @@ static int base[17] =
 \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
     char text[10];
     int i, j, k, l;

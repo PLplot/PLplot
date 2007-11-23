@@ -49,7 +49,7 @@
 
 /* Device info */
 
-char* plD_DEVICE_INFO_ps = 
+const char* plD_DEVICE_INFO_ps = 
   "ps:PostScript File (monochrome):0:ps:29:psm\n"
   "psc:PostScript File (color):0:ps:30:psc";
 

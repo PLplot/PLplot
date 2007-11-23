@@ -23,7 +23,7 @@
 
 /* Device info */
 
-char* plD_DEVICE_INFO_tek = 
+const char* plD_DEVICE_INFO_tek = 
 #if defined(PLD_conex)
   "conex:Conex vt320/tek emulator:1:tek:24:conex\n"
 #endif

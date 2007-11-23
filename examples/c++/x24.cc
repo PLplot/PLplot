@@ -46,7 +46,7 @@
 class x24 {
 
 public:
-  x24(int, char **);
+  x24(int, const char **);
 
 private:
   plstream *pls;
@@ -55,7 +55,7 @@ private:
 
   static PLFLT px[], py[], sx[], sy[];
 
-  static char *peace[];
+  static const char *peace[];
 };
 
 PLINT x24::red[]   = {240, 204, 204, 204,   0,  39, 125};
@@ -98,7 +98,7 @@ PLFLT x24::sy[] = {
 
 /* Taken from http://www.columbia.edu/~fdc/pace/ */
 
-char* x24::peace[] = {
+const char* x24::peace[] = {
   /* Mandarin */
   "#<0x00>和平",
   /* Hindi */
@@ -125,7 +125,7 @@ char* x24::peace[] = {
   "#<0x10>Hasîtî",
 };
 
-x24::x24(int argc, char *argv[])
+x24::x24(int argc, const char *argv[])
 {
   int i, j;
 
@@ -165,7 +165,7 @@ x24::x24(int argc, char *argv[])
 
 }
 
-int main( int argc, char **argv )
+int main( int argc, const char **argv )
 {
   x24 *x = new x24( argc, argv );
 

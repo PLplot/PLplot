@@ -66,7 +66,7 @@ static PLOptionTable options[] = {
 };
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
   PLFLT x[XDIM], y[YDIM], **z, **r;
   PLFLT xi, yi, xe, ye; 

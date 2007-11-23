@@ -37,7 +37,7 @@
 \*--------------------------------------------------------------------------*/
 
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
    PLFLT *x, *y, **z,
      xmin=0., xmax=1.0, xmid = 0.5*(xmax + xmin), xrange = xmax - xmin,

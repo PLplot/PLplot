@@ -161,7 +161,7 @@ static int offset[] = {
 };
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
     PLFLT xmin, xmax, ymin, ymax, ycharacter_scale, yoffset;
     PLFLT chardef, charht, deltax, deltay, x, y;

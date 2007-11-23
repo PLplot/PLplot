@@ -63,7 +63,7 @@
 #endif
 
 /* Device info */
-char* plD_DEVICE_INFO_tk = "tk:Tcl/TK Window:1:tk:7:tk";
+const char* plD_DEVICE_INFO_tk = "tk:Tcl/TK Window:1:tk:7:tk";
 
 
 /* Number of instructions to skip between updates */
@@ -1108,7 +1108,7 @@ static void
 launch_server(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char *argv[20], *plserver_exec=NULL, *ptr, *tmp=NULL;
+    char * argv[20], *plserver_exec=NULL, *ptr, *tmp=NULL;
     int i;
 
     dbug_enter("launch_server");
@@ -1174,7 +1174,7 @@ launch_server(PLStream *pls)
             *t = '\0';			/* and keep only the base name */
     } else {
         argv[i++] = "-name";            /* plserver name */
-        argv[i++] = pls->program;
+        argv[i++] = (char *) pls->program;
     }
 
     if (pls->auto_path != NULL) {
@@ -1392,7 +1392,7 @@ plwindow_init(PLStream *pls)
 static void
 set_windowname(PLStream *pls)
 {
-  char *pname;
+  const char *pname;
   int i;
 
   /* Set to "plclient" if not initialized via plargs or otherwise */

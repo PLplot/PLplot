@@ -35,7 +35,7 @@ using namespace std;
 class x02 {
 
 public:
-  x02(int, char **);
+  x02(int, const char **);
 
 private:
   void demo1();
@@ -162,7 +162,7 @@ x02::draw_windows(int nw, int cmap0_offset) {
   }
 }
 
-x02::x02( int argc, char ** argv ) {
+x02::x02( int argc, const char ** argv ) {
 
   // plplot initialization
 
@@ -183,7 +183,7 @@ x02::x02( int argc, char ** argv ) {
 
 }
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x02 *x = new x02( argc, argv );
 
   delete x;

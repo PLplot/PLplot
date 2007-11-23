@@ -35,7 +35,7 @@ using namespace std;
 class x14 {
 
 public:
-  x14(int, char **);
+  x14(int, const char **);
   void plot1(plstream *);
   void plot2(plstream *);
   void plot3(plstream *);
@@ -85,7 +85,7 @@ static PLFLT clevel[11] =
  * This version sends the output of the first 4 plots (one page) to two
  * independent streams.
 \*--------------------------------------------------------------------------*/
-x14::x14( int argc, char ** argv ) {
+x14::x14( int argc, const char ** argv ) {
   int digmax;
 
   // Select either TK or DP driver and use a small window
@@ -93,8 +93,8 @@ x14::x14( int argc, char ** argv ) {
   // The geometry strings MUST be in writable memory
 
   char driver[80];
-  char geometry_master[] = "500x410+100+200";
-  char geometry_slave[]  = "500x410+650+200";
+  const char geometry_master[] = "500x410+100+200";
+  const char geometry_slave[]  = "500x410+650+200";
 
   // plplot initialization
 
@@ -406,7 +406,7 @@ void x14::plot5(plstream *pls)
 }
 
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x14 *x = new x14( argc, argv );
 
   delete x;

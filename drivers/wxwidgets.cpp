@@ -133,7 +133,7 @@ extern "C"
 
 /* Application icon as XPM */
 /* This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/ */
-static char *graph[] = {
+static const char *graph[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 4 2",
 "   c black",
@@ -330,7 +330,7 @@ public:
   wxPLplotFrame( const wxString& title, PLStream* pls );
   void OnMenu( wxCommandEvent& event );
   void OnClose( wxCloseEvent& event );
-	bool SavePlot( char* filename, char* devname, int width,  int height );
+  bool SavePlot( const char* filename, const char* devname, int width,  int height );
   void SetRefreshFlag( bool flag=true ) { m_window->SetRefreshFlag( flag ); };
   bool GetRefreshFlag( void ) { return m_window->GetRefreshFlag(); };
 
@@ -379,7 +379,7 @@ static void GetCursorCmd( PLStream *pls, PLGraphicsIn *ptr );
 \*----------------------------------------------------------------------*/
 
 /* Device info */
-char* plD_DEVICE_INFO_wxwidgets = "wxwidgets:wxWidgets DC:1:wxwidgets:51:wxwidgets";
+const char* plD_DEVICE_INFO_wxwidgets = "wxwidgets:wxWidgets DC:1:wxwidgets:51:wxwidgets";
 
 void plD_init_wxwidgets		(PLStream *);
 void plD_line_wxwidgets		(PLStream *, short, short, short, short);
@@ -1777,7 +1777,7 @@ void wxPLplotFrame::OnClose( wxCloseEvent& event )
  *  device (devname) with given width and height. There is no test if
  *  the device really exists.
 \*----------------------------------------------------------------------*/
-bool wxPLplotFrame::SavePlot( char* filename, char* devname, int width,  int height )
+bool wxPLplotFrame::SavePlot( const char* filename, const char* devname, int width,  int height )
 {  
   int pls, pls_save;
   FILE *sfile;

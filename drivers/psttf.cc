@@ -56,7 +56,7 @@ using namespace std;
 
 /* Device info */
 
-char* plD_DEVICE_INFO_psttf = 
+const char* plD_DEVICE_INFO_psttf = 
   "psttf:PostScript File (monochrome):0:psttf:55:psttfm\n"
   "psttfc:PostScript File (color):0:psttf:56:psttfc";
 
@@ -121,7 +121,7 @@ static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (tex
 
 
 static void psttf_dispatch_init_helper( PLDispatchTable *pdt,
-                                     char *menustr, char *devnam,
+                                     const char *menustr, const char *devnam,
                                      int type, int seq, plD_init_fp init )
 {
 #ifndef ENABLE_DYNDRIVERS

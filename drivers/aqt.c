@@ -51,7 +51,7 @@
 static NSAutoreleasePool *arpool;   // Objective-C autorelease pool
 static id adapter;					// Adapter object
 
-char* plD_DEVICE_INFO_aqt = "aqt:AquaTerm (Mac OS X):1:aqt:50:aqt";
+const char* plD_DEVICE_INFO_aqt = "aqt:AquaTerm (Mac OS X):1:aqt:50:aqt";
 
 static int currentPlot = 0;
 static int maxWindows = 30;

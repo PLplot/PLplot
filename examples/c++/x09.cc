@@ -34,7 +34,7 @@ using namespace std;
 
 class x09 {
 public:
-  x09(int, char**);
+  x09(int, const char**);
   void polar();
   const void potential();
 
@@ -97,7 +97,7 @@ static void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data){
 // Does a large series of unlabelled and labelled contour plots.
 
 
-x09::x09( int argc, char **argv ) {
+x09::x09( int argc, const char **argv ) {
 
   int i, j;
 
@@ -475,7 +475,7 @@ const void x09::potential()
   delete[] py;
 }
 
-int main( int argc, char **argv )
+int main( int argc, const char **argv )
 {
   x09 *x = new x09( argc, argv );
 

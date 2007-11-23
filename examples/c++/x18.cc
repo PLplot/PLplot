@@ -35,7 +35,7 @@ using namespace std;
 class x18 {
 
 public:
-  x18(int, char **);
+  x18(int, const char **);
   PLFLT THETA(int);
   PLFLT PHI(int);
   void test_poly(int);
@@ -58,7 +58,7 @@ const PLFLT x18::alt[4] = {20.0, 35.0, 50.0, 65.0};
 const PLFLT x18::az[4] = {30.0, 40.0, 50.0, 60.0};
 
 
-x18::x18( int argc, char ** argv ) {
+x18::x18( int argc, const char ** argv ) {
 
   int i, k;
   PLFLT r;
@@ -199,7 +199,7 @@ void x18::test_poly(int k) {
   delete[] z;
 }
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x18 *x = new x18( argc, argv );
 
   delete x;

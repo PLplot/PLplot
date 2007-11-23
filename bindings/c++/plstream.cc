@@ -934,7 +934,7 @@ void plstream::lsty( PLINT lin )
 
 /* plot continental outline in world coordinates */
 
-void plstream::map( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+void plstream::map( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
 		    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
     set_stream();
@@ -1075,7 +1075,7 @@ void plstream::plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
 
 /* Process options list using current options info. */
 
-int plstream::parseopts( int *p_argc, char **argv, PLINT mode )
+int plstream::parseopts( int *p_argc, const char **argv, PLINT mode )
 {
     set_stream();
 
@@ -1785,13 +1785,13 @@ void plstream::start( const char *devname, PLINT nx, PLINT ny )
 
 /* Create 1d stripchart */
 
-void plstream::stripc(PLINT *id, char *xspec, char *yspec,
+void plstream::stripc(PLINT *id, const char *xspec, const char *yspec,
         PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
         PLFLT xlpos, PLFLT ylpos,
         bool y_ascl, bool acc,
         PLINT colbox, PLINT collab,
-        PLINT colline[], PLINT styline[], char *legline[],
-        char *labx, char *laby, char *labtop)
+        PLINT colline[], PLINT styline[], const char *legline[],
+        const char *labx, const char *laby, const char *labtop)
 {
     set_stream();
 
@@ -1802,13 +1802,13 @@ void plstream::stripc(PLINT *id, char *xspec, char *yspec,
 
 
 // Deprecated version using PLINT not bool
-void plstream::stripc(PLINT *id, char *xspec, char *yspec,
+void plstream::stripc(PLINT *id, const char *xspec, const char *yspec,
         PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
         PLFLT xlpos, PLFLT ylpos,
         PLINT y_ascl, PLINT acc,
         PLINT colbox, PLINT collab,
-        PLINT colline[], PLINT styline[], char *legline[],
-        char *labx, char *laby, char *labtop)
+        PLINT colline[], PLINT styline[], const char *legline[],
+        const char *labx, const char *laby, const char *labtop)
 {
     set_stream();
 
@@ -2046,7 +2046,7 @@ void plstream::sError(PLINT *errcode, char *errmsg) {
 
 /* Sets an optional user exit handler. */
 
-void plstream::sexit( int (*handler) (char *) )
+void plstream::sexit( int (*handler) (const char *) )
 {
     set_stream();
 
@@ -2172,7 +2172,7 @@ void plstream::ResetOpts()
 
 /* Merge user option table into internal info structure. */
 
-int plstream::MergeOpts( PLOptionTable *options, char *name, char **notes )
+int plstream::MergeOpts( PLOptionTable *options, const char *name, const char **notes )
 {
     set_stream();
 
@@ -2190,7 +2190,7 @@ void plstream::SetUsage( char *program_string, char *usage_string )
 
 /* Process input strings, treating them as an option and argument pair. */
 
-int plstream::SetOpt( char *opt, char *optarg )
+int plstream::SetOpt( const char *opt, const char *optarg )
 {
     set_stream();
 
@@ -2199,7 +2199,7 @@ int plstream::SetOpt( char *opt, char *optarg )
 
 /* Process options list using current options info. */
 
-int plstream::ParseOpts( int *p_argc, char **argv, PLINT mode )
+int plstream::ParseOpts( int *p_argc, const char **argv, PLINT mode )
 {
     set_stream();
 

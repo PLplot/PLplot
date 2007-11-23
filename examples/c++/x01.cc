@@ -46,7 +46,7 @@ static int test_xor;
 static int fontset;
 static char *f_name;
 
-static char *notes[] = {"Make sure you get it right!", ""};
+static const char *notes[] = {"Make sure you get it right!", ""};
 
 /* Options data structure definition. */
 static PLOptionTable options[] = {
@@ -96,7 +96,7 @@ static PLOptionTable options[] = {
 class x01 {
 
 public:
-  x01(int, char **);
+  x01(int, const char **);
 
   void plot1(int);
   void plot2();
@@ -112,7 +112,7 @@ private:
 };
 
 
-x01::x01( int argc, char ** argv ) {
+x01::x01( int argc, const char ** argv ) {
 
   char ver[80];
 
@@ -377,7 +377,7 @@ void x01::plot3()
   delete[] y;
 }
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x01 *x = new x01( argc, argv );
   delete x;
 

@@ -35,7 +35,7 @@ using namespace std;
 class x04 {
 
 public:
-  x04(int, char **);
+  x04(int, const char **);
   void plot1(int);
 
 private:
@@ -46,7 +46,7 @@ private:
 };
 
 
-x04::x04( int argc, char ** argv ) {
+x04::x04( int argc, const char ** argv ) {
 
   // plplot initialization
 
@@ -137,7 +137,7 @@ void x04::plot1( int type ) {
 }
 
 
-int main( int argc, char ** argv ) {
+int main( int argc, const char ** argv ) {
   x04 *x = new x04( argc, argv );
 
   delete x;

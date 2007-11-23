@@ -83,10 +83,10 @@ typedef struct {
 /* Use a wrapper for the prototypes for use from K&R C */
 
 void pdf_set		PLARGS((char *option, int value));
-PDFstrm *pdf_fopen	PLARGS((char *fileName, char *mode));
+PDFstrm *pdf_fopen	PLARGS((const char *fileName, const char *mode));
 PDFstrm *pdf_bopen	PLARGS((U_CHAR *buffer, long bufmax));
 PLDLLIMPEXP PDFstrm *pdf_finit	PLARGS((FILE *file));
-PDFstrm *plLibOpenPdfstrm PLARGS((char *fn));
+PDFstrm *plLibOpenPdfstrm PLARGS((const char *fn));
 PLDLLIMPEXP int  pdf_close		PLARGS((PDFstrm *pdfs));
 
 int  pdf_putc		PLARGS((int c, PDFstrm *pdfs));
