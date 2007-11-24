@@ -132,6 +132,8 @@ WWW_GROUP=${WWW_GROUP:-plplot}
 WWW_HOST=${WWW_HOST:-${WWW_USER:+$WWW_USER@}shell.sf.net}
 WWW_DIR=${WWW_DIR:-/home/groups/p/pl/plplot}
 
+echo 'Create remote directory if it does not exist'
+ssh $WWW_HOST mkdir -p $WWW_DIR
 echo Removing remote examples directory
 ssh $WWW_HOST rm -rf $WWW_DIR/$EXDIR
 echo Copying the tarball to WWW site
