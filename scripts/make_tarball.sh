@@ -101,10 +101,8 @@ cleanup
 mkdir $SVNTMPDIR
 cd $SVNTMPDIR
 svn export $SVN_URL/$TAG plplot \
-  && cd plplot \
-  && cf/bootstrap.sh >& bootstrap.sh.out \
-  && mkdir ../build_dir \
-  && cd ../build_dir \
+  && mkdir build_dir \
+  && cd build_dir \
   && cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
      -DPREBUILD_DIST=ON ${DOC_ARG} \
      -DWWW_USER=${WWW_USER} ../plplot >& cmake.out \
