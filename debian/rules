@@ -14,7 +14,7 @@
 include /usr/share/octave/debian/defs.make
 include /usr/share/dpatch/dpatch.make
 
-version		:= $(shell perl debian/get-upstream-version.pl < configure.ac)
+version		:= $(shell perl debian/get-upstream-version.pl < cmake/modules/plplot_version.cmake)
 libpkg          := libplplot9
 docpkg          := plplot-doc
 debbase		:= $(shell pwd)/debian

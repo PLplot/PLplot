@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 while (<>) {
-  if (/^AC_INIT\(plplot, ([^,)]+)/) {
+  if (/^set\(VERSION ([^,)]+)/) {
     print $1;
     last;
   }
