@@ -1,5 +1,6 @@
 This instructions are somehow out of date. Read also the USAGE file.
 
+
 Install:
 
 plplot_octave_org.h is the main important file. It is a massaged version
@@ -65,7 +66,7 @@ Don't worry if you see the following warning:
 	warning: empty matrix found in matrix list
 
 You can avoid it setting "empty_list_elements_ok = 1;" in your
-~/.octaverc Octave startup file (see bellow). This is beeing corrected
+~/.octaverc Octave startup file (see below). This is being corrected
 in plplot_octave, meanwhile keep remembering me :-).
 
 
@@ -83,6 +84,11 @@ There are three paths that you can add to LOADPATH:
 1-The *needed* path is /usr/local/share/plplot_octave//
 2-The demos path is /usr/local/lib/plplotx.y.z/examples/octave//
 3-The path to switch between PLplot and gnuplot is /usr/local/share/octave//
+
+Note: If you are using octave2.9 then LOADPATH is obsolete and you must 
+use addpath instead. Note also that a trailing // no longer includes 
+all subdirectories. You must explicitly add them. In particular you need
+the support subdirectory of plplot_octave.
 
 If you want to test the installation with the demos, call octave and
 set the LOADPATH as in
@@ -166,3 +172,5 @@ patches. I will not send checks for each bug discovered :-)
 Enjoy,
 
 Joao
+
+Update for octave 2.9 by Andrew Ross.

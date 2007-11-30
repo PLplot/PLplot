@@ -1,17 +1,22 @@
 You must add the plplot_octave script installation directory to Octave
-LOADPATH *before* the standard Octave LOADPATH. The best way to do this
-is to create a .octaverc file in your home directory. By default
+path *before* the standard Octave path if you want to use plplot 
+graphics by default. The best way to do this is to create a .octaverc 
+file in your home directory. 
 
-LOADPATH ="<install-directory>/share/plplot_octave//:"
+With octave 2.1 or earlier you can use LOADPATH, e.g.
+
+LOADPATH = [ ":<install-directory>/share/plplot_octave//", LOADPATH ]
+
+With octave 2.9 and later, LOADPATH has been depreciated and you need to
+use addpath instead. You also need to explicitly add in any 
+subdirectories you wish to search, e.g.
+
+addpath("<install-directory>/share/plplot_octave", ...
+        "<install-directory>/share/plplot_octave/support")
 
 If you also want to use Octave's standard plotting package, gnuplot, you
-must set LOADPATH as:
-
-LOADPATH ="<install-directory>/share/plplot_octave//:\
-	<install-directory>/share/octave//:"
-
-and use the command "toggle_plplot_use" to switch between the two plot packages.
-Read the INSTALL file for more details.
+can use the command "toggle_plplot_use" to switch between the two plot 
+packages. Read the INSTALL file for more details.
 
 Then, invoke Octave and create a vector, say
 
@@ -75,7 +80,15 @@ You also have access to the PLplot API,
 NOTES: - You don't need to specify vector or matrix dimensions.
        - When setting Octave variable "automatic_replot = 1", changes take
 	 effect immediately, otherwise they only take effect at the next plot.
-	 (This does not yet apply to all plot types).
+	 (This does not yet apply to all plot types and does not work with 
+         octave 2.9).
+       - With octave 2.9 you will see various spurious warnings about variables
+         which are no longer builtins. These warnings can safely be ignored.
+         Plplot is just testing to see if these variables exist as part of
+         the octave 2.1 compatibility code. To suppress these warnings add
+         warning("off","Octave:built-in-variable-assignment"); 
+         to your .octaverc.
+         
 
 
 --- Plot window control
