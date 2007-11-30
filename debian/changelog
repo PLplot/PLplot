@@ -9,6 +9,7 @@ plplot (5.8.0) unstable; urgency=low
   * debian/libplplot9.README.Debian: Update to reflect changes to
     octave-plplot and replacement of psttf driver with cairo driver.
 
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 30 Nov 2007 17:47:54 +0000
 
 plplot (5.8.0~RC1-3) unstable; urgency=low
 
