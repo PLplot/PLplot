@@ -38,16 +38,15 @@ Testing:
 Before installing, you can test plplot_octave:
 [you must install PLplot before, this will change soon]
 
-'cd' to the source distribution directory bindings/octave
+'cd' to the directory bindings/octave within the build tree.
 
 If you have another version of plplot installed, check, after invoking
 octave and making same plots, the plplot version, typing "plgver'" (note
 the apostrophe in plgver, meaning transpose). You should get the same
 version that you have just compiled, not the installed version.
 
-Invoke octave, (the variable  LOADPATH is automatically set to
-	LOADPATH="../bindings/octave//:"
-because of the file .octaverc which exists in the tmp directory)
+Invoke octave, (the path is automatically set by the .octaverc file
+which exists in that directory).
 
 There are several Octave demos, 'p1' up to 'p20'. Try them:
 

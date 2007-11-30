@@ -1,8 +1,0 @@
-if (exist("LOADPATH"))
-  automatic_replot=1;
-  LOADPATH=".//:";
-else
-  addpath(".","./PLplot/","./PLplot/support/","./demos/");
-  # Suppress spurious warnings for the test.
-  warning("off","Octave:built-in-variable-assignment");
-endif

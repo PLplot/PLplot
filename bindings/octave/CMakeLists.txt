@@ -113,6 +113,11 @@ ${CMAKE_CURRENT_SOURCE_DIR}/octave_version.pl.in
 ${CMAKE_CURRENT_BINARY_DIR}/octave_version.pl
 @ONLY
 )
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/octaverc.in
+${CMAKE_CURRENT_BINARY_DIR}/.octaverc
+@ONLY
+)
 add_custom_command(
 OUTPUT 
 ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc 
