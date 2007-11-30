@@ -35,9 +35,12 @@ plplot for Debian
 
       * plplot9-driver-gnome2: Provides the Gnome canvas driver module.  
 
-      * plplot9-driver-psttf: Provides the psttf driver module. This uses
-	liblasi0 to produce postscript with higher quality text using
-	truetype fonts.  
+      * plplot9-driver-cairo: Provides the cairo driver module. This uses
+	the cairo library to produce higher quality text using truetype 
+        fonts. It produces postscript, pdf, svg, png, mem and X output. 
+        This replaces the plplot9-driver-psttf package in previous 
+        releases. The cairo driver provides similar results for postscript
+        and more functionality.
 
       * plplot9-driver-wxwidgets: Provides the WXWidgets driver module.
 
@@ -58,10 +61,10 @@ plplot for Debian
 
       * python-plplot: Glue library with bindings for Python.
 
-      * octave-plplot: Glue library with bindings for Octave 2.1.  In order
-	to use this package, issue the command "use_plplot" at the Octave
-	2.1 prompt.  This will have the effect of replacing the traditional
-	Gnuplot interface by a PLplot based one.
+      * octave-plplot: Glue library with bindings for Octave 2.9.  In order
+	to use this package, issue the command "toggle_plplot_use" at the 
+        Octave 2.9 prompt.  This will have the effect of replacing the 
+        traditional Gnuplot interface by a PLplot based one.
 
 
 3. DOCUMENTATION

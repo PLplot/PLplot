@@ -29,7 +29,7 @@ Section: libs
 Conflicts: libplplot5, plplot (<< 5)
 Depends: ${shlibs:Depends}
 Suggests: plplot9-driver-xwin, plplot9-driver-gnome2, plplot9-driver-gd,
- plplot-driver-cairo, plplot-driver-wxwidgets, plplot-tcl
+ plplot9-driver-cairo, plplot9-driver-wxwidgets, plplot-tcl
 Description: Scientific plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
