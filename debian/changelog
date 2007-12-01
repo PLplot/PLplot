@@ -1,6 +1,5 @@
-plplot (5.8.0-1) UNRELEASED; urgency=low
+plplot (5.8.0-1) unstable; urgency=low
 
-  [ Andrew Ross ]
   * New upstream release.
   * debian/rules: use cmake to get version information rather than configure.ac.
     Autotools build is now obsolete.
