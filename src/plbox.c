@@ -1219,7 +1219,6 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
             if (ldx) {
               t = (time_t) tn;
               tm = gmtime(&t);
-              fprintf(stderr,"%f %d %d\n",tn,tm->tm_hour,tm->tm_min);
               strftime(string, 40, timefmt, tm);
             }
             else {
