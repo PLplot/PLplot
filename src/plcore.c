@@ -2110,6 +2110,7 @@ int PLDLLIMPEXP plInBuildTree()
 
   if (inited == 0) {
     char currdir[256];
+    char builddir[256];
 
 /* AM: getcwd has a somewhat strange status on Windows, its proper
    name is _getcwd, this is a problem in the case of DLLs, like with
@@ -2121,8 +2122,22 @@ int PLDLLIMPEXP plInBuildTree()
 
     if (getcwd(currdir, 256) == NULL) {
       pldebug("plInBuildTree():", "Not enough buffer space");
-    } else if (strncmp(BUILD_DIR, currdir, strlen(BUILD_DIR)) == 0)
-      inBuildTree = 1;
+    } else {
+      /* The chdir / getcwd call is to ensure we get the physical
+       * path without any symlinks */
+      /* Ignore error in chdir - build tree may not exist */
+      if (chdir(BUILD_DIR) == 0) {
+         if (getcwd(builddir, 256) == NULL) {
+           pldebug("plInBuildTree():", "Not enough buffer space");
+         }
+         else {
+           if (strncmp(builddir, currdir, strlen(builddir)) == 0) {
+             inBuildTree = 1;
+           }
+         }
+         chdir(currdir);
+      }
+    }
     inited = 1;
   }
   return inBuildTree;
