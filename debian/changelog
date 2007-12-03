@@ -1,4 +1,4 @@
-plplot (5.8.0-2) UNRELEASED; urgency=low
+plplot (5.8.0-2) unstable; urgency=low
 
   * debian/rules: add -VV option to ctest. Will make it easier to debug
     any failed tests for auto-built packages.
