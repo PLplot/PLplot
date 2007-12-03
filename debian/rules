@@ -59,7 +59,7 @@ build-stamp: patch config-stamp
 	#( cd bindings/octave ; \
 	#  $(MAKE) CC="gcc -D__builtin_va_list=void" plplot_octave.oct )
 	( cd $(BUILD_DIR) ; $(MAKE)  )
-	-( cd $(BUILD_DIR) ; ITCL_LIBRARY=/usr/lib/itcl3.2 ctest )
+	-( cd $(BUILD_DIR) ; ITCL_LIBRARY=/usr/lib/itcl3.2 ctest -VV)
 	touch build-stamp
 
 clean: unpatch

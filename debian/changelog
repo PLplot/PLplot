@@ -1,3 +1,10 @@
+plplot (5.8.0-2) UNRELEASED; urgency=low
+
+  * debian/rules: add -VV option to ctest. Will make it easier to debug
+    any failed tests for auto-built packages.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 03 Dec 2007 10:57:54 +0000
+
 plplot (5.8.0-1) unstable; urgency=low
 
   * New upstream release.
