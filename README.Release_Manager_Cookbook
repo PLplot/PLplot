@@ -148,18 +148,11 @@ of programmes.
 
 (4) Creating a PLplot Release
 
+Update the README.release file.
+
 Update the docbook documentation to reflect any new drivers or new 
 functionality that has been added to PLplot. Or alternatively, press those
 who made the changes to update the documentation.
-
-
-Update the README.release file.
-  a. Append the README.release file from the last release onto the front of
-     the OLD-README.release file. This is done to preserve a record of the
-     significant changes between versions of PLplot.
-  b. Update README.release file to reflect significant changes made between
-     the current release and the last release.
-
 
 Update cmake/module/plplot_version.cmake to reflect the current version. Also,
 follow the instructions in this file for updating the SOVERSION, the minor
@@ -336,5 +329,13 @@ www scripts. Run the following commands in that directory:
 ./scripts/htdocs-gen_plot-examples.sh
 cd www
 make
+
+Immediate preparation for next release cycle
+
+  a. Append the README.release file from the current release onto the front of
+     the OLD-README.release file. This is done to preserve a record of the
+     significant changes between versions of PLplot.
+  b. Update README.release file to reflect significant changes made between
+     the current release and the last release.
 
 DONE!!!
