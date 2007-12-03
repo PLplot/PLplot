@@ -52,6 +52,7 @@ set(c_STRING_INDICES
 "26"
 "27"
 "28"
+"29"
 )
 
 if(BUILD_TEST)

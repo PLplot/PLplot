@@ -1700,6 +1700,9 @@ c_plinit(void)
     if (plsc->zdigmax == 0)
 	plsc->zdigmax = 3;
 
+    if (plsc->timefmt == NULL) 
+        pltimefmt("%c");
+
 /* Switch to graphics mode and set color and arrow style*/
 
     plgra();
@@ -1829,6 +1832,8 @@ c_plend1(void)
 
     if (plsc->arrow_x) free_mem(plsc->arrow_x);
     if (plsc->arrow_y) free_mem(plsc->arrow_y);
+
+    if (plsc->timefmt) free_mem(plsc->timefmt);
 
 /* Free malloc'ed stream if not in initial stream, else clear it out */
 
@@ -2930,6 +2935,23 @@ plP_gprec(PLINT *p_setp, PLINT *p_prec)
 {
     *p_setp = plsc->setpre;
     *p_prec = plsc->precis;
+}
+
+void
+c_pltimefmt(const char *fmt)
+{
+    if (plsc->timefmt)
+      free_mem(plsc->timefmt);
+
+    plsc->timefmt = (char *) malloc((size_t) (strlen(fmt)+1));
+    strcpy(plsc->timefmt, fmt);
+
+}
+
+const char *
+plP_gtimefmt()
+{
+    return (const char *) plsc->timefmt;
 }
 
 /*

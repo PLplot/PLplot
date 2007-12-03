@@ -90,6 +90,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
  * a: Draw axis (X is horizontal line Y=0, Y is vertical line X=0)
  * b: Draw bottom (X) or left (Y) edge of frame
  * c: Draw top (X) or right (Y) edge of frame
+ * d: Interpret axis as a date/time when writing labels
  * f: Always use fixed point numeric labels
  * g: Draws a grid at the major tick interval
  * h: Draws a grid at the minor tick interval
@@ -113,8 +114,8 @@ c_plaxes(PLFLT x0, PLFLT y0,
 	 const char *xopt, PLFLT xtick, PLINT nxsub,
 	 const char *yopt, PLFLT ytick, PLINT nysub)
 {
-    PLINT lax, lbx, lcx, lgx, lix, llx, lsx, ltx;
-    PLINT lay, lby, lcy, lgy, liy, lly, lsy, lty;
+    PLINT lax, lbx, lcx, ldx, lgx, lix, llx, lsx, ltx;
+    PLINT lay, lby, lcy, ldy, lgy, liy, lly, lsy, lty;
     PLINT xmajor, xminor, ymajor, yminor;
     PLINT i, i1x, i2x, i3x, i4x, i1y, i2y, i3y, i4y;
     PLINT nxsub1, nysub1;
@@ -151,6 +152,7 @@ c_plaxes(PLFLT x0, PLFLT y0,
     lax = plP_stsearch(xopt, 'a');
     lbx = plP_stsearch(xopt, 'b');
     lcx = plP_stsearch(xopt, 'c');
+    ldx = plP_stsearch(xopt, 'd');
     lgx = plP_stsearch(xopt, 'g');
     lix = plP_stsearch(xopt, 'i');
     llx = plP_stsearch(xopt, 'l');
@@ -160,6 +162,7 @@ c_plaxes(PLFLT x0, PLFLT y0,
     lay = plP_stsearch(yopt, 'a');
     lby = plP_stsearch(yopt, 'b');
     lcy = plP_stsearch(yopt, 'c');
+    ldy = plP_stsearch(yopt, 'd');
     lgy = plP_stsearch(yopt, 'g');
     liy = plP_stsearch(yopt, 'i');
     lly = plP_stsearch(yopt, 'l');
@@ -1166,14 +1169,18 @@ static void
 label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 {
     static char string[40];
-    PLINT lfx, lix, llx, lmx, lnx, ltx;
-    PLINT lfy, liy, lly, lmy, lny, lty, lvy;
+    PLINT ldx, lfx, lix, llx, lmx, lnx, ltx;
+    PLINT ldy, lfy, liy, lly, lmy, lny, lty, lvy;
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT vpwxmin, vpwxmax, vpwymin, vpwymax;
     PLFLT pos, tn, tp, offset, height;
+    const char *timefmt;
+    struct tm *tm;
+    time_t t;
 
 /* Set plot options from input */
 
+    ldx = plP_stsearch(xopt, 'd');
     lfx = plP_stsearch(xopt, 'f');
     lix = plP_stsearch(xopt, 'i');
     llx = plP_stsearch(xopt, 'l');
@@ -1181,6 +1188,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     lnx = plP_stsearch(xopt, 'n');
     ltx = plP_stsearch(xopt, 't');
 
+    ldy = plP_stsearch(yopt, 'd');
     lfy = plP_stsearch(yopt, 'f');
     liy = plP_stsearch(yopt, 'i');
     lly = plP_stsearch(yopt, 'l');
@@ -1204,10 +1212,19 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 
 	plgxax(&xdigmax, &xdigits);
 	pldprec(vpwxmi, vpwxma, xtick1, lfx, &xmode, &xprec, xdigmax, &xscale);
+        timefmt = plP_gtimefmt();
 
 	tp = xtick1 * (1. + floor(vpwxmi / xtick1));
 	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
-	    plform(tn, xscale, xprec, string, llx, lfx);
+            if (ldx) {
+              t = (time_t) tn;
+              tm = gmtime(&t);
+              fprintf(stderr,"%f %d %d\n",tn,tm->tm_hour,tm->tm_min);
+              strftime(string, 40, timefmt, tm);
+            }
+            else {
+	      plform(tn, xscale, xprec, string, llx, lfx);
+            }
 	    height = lix ? 1.75 : 1.5;
 	    pos = (vpwxmax > vpwxmin)?
 	        (tn - vpwxmi) / (vpwxma - vpwxmi):
@@ -1222,7 +1239,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 
     /* Write separate exponential label if mode = 1. */
 
-	if (!llx && xmode) {
+	if (!llx && !ldx && xmode) {
 	    pos = 1.0;
 	    height = 3.2;
 	    sprintf(string, "(x10#u%d#d)", (int) xscale);
@@ -1244,7 +1261,14 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	ydigits = 0;
 	tp = ytick1 * (1. + floor(vpwymi / ytick1));
 	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
-	    plform(tn, yscale, yprec, string, lly, lfy);
+            if (ldy) {
+              t = (time_t) tn;
+              tm = gmtime(&t);
+              strftime(string, 40, timefmt, tm);
+            }
+            else {
+	      plform(tn, yscale, yprec, string, lly, lfy);
+            }
 	    pos = (vpwymax > vpwymin)?
 	        (tn - vpwymi) / (vpwyma - vpwymi):
 	        (vpwyma - tn) / (vpwyma - vpwymi);
@@ -1275,7 +1299,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 
     /* Write separate exponential label if mode = 1. */
 
-	if (!lly && ymode) {
+	if (!lly && !ldy && ymode) {
 	    sprintf(string, "(x10#u%d#d)", (int) yscale);
 	    offset = 0.02;
 	    height = 2.0;

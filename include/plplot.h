@@ -596,6 +596,7 @@ typedef struct {
 #define    plsym	c_plsym
 #define    plszax	c_plszax
 #define    pltext	c_pltext
+#define    pltimefmt    c_pltimefmt
 #define    plvasp	c_plvasp
 #define    plvect	c_plvect
 #define    plvpas	c_plvpas
@@ -1459,6 +1460,11 @@ c_plszax(PLINT digmax, PLINT digits);
 
 PLDLLIMPEXP void
 c_pltext(void);
+
+/* Set the format for date / time labels */ 
+
+PLDLLIMPEXP void
+c_pltimefmt(const char *);
 
 /* Sets the edges of the viewport with the given aspect ratio, leaving */
 /* room for labels. */

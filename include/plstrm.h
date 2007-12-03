@@ -396,6 +396,7 @@ typedef struct {
  * precis	User-specified precision
  * xdigmax..	Allowed #digits in axes labels
  * xdigits..	Actual field widths (returned)
+ * timefmt      Format string (for strftime) 
  *
  ***************************************************************************
  *
@@ -644,6 +645,7 @@ typedef struct {
     PLINT setpre, precis;
     PLINT xdigmax, ydigmax, zdigmax;
     PLINT xdigits, ydigits, zdigits;
+    char *timefmt;
 
 /* Variables governing physical coordinate system */
 

@@ -112,6 +112,7 @@ typedef char * caddr_t;
 #include <string.h>
 #include <limits.h>
 #include <float.h>
+#include <time.h>
 #if defined(PLPLOT_WINTK)
 #elif defined(WIN32) &! defined (__GNUC__)
 /* Redefine tmpfile()! (AM)*/
@@ -698,6 +699,11 @@ plP_setsub(void);
 
 void
 plP_gprec(PLINT *p_setp, PLINT *p_prec);
+
+/* Get the date / time format for numeric labels */
+
+const char *
+plP_gtimefmt();
 
 /* Computes the length of a string in mm, including escape sequences. */
 
