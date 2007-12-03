@@ -32,6 +32,7 @@ static PLFLT x[365], y[365];
 
 void plot1();
 void plot2();
+void plot3();
 
 /*--------------------------------------------------------------------------*\
  * main
@@ -61,6 +62,8 @@ main(int argc, const char *argv[])
   plot1();
 
   plot2();
+
+  plot3();
 
   /* Don't forget to call plend() to finish off! */
   plend();
@@ -153,4 +156,54 @@ plot2()
 
   plline(npts, x, y);
   
+}
+
+void
+plot3()
+{
+  int i, npts;
+  PLFLT xmin, xmax, ymin, ymax;
+  time_t tstart;
+
+  struct tm tm;
+
+  tm.tm_year = 105; /* Years since 1900 */
+  tm.tm_mon = 11;  /* 0 == January, 6 = July */
+  tm.tm_mday = 0;    /* 0 = 1st of month */
+  tm.tm_hour = 0;
+  tm.tm_min = 0;
+  tm.tm_sec = 0;
+
+  tstart = mktime(&tm);
+
+  npts = 62;
+
+  xmin = tstart;
+  xmax = xmin + npts*60.0*60.0*24.0;
+  ymin = 0.0;
+  ymax = 5.0;
+  
+  for (i = 0; i<npts; i++) {
+    x[i] = xmin + i*60.0*60.0*24.0;
+    y[i] = 1.0 + sin( 2*M_PI*( (PLFLT) i ) / 7.0 ) + 
+      exp( ((PLFLT) MIN(i,npts-i)) / 31.0);
+  }
+  pladv(0);
+
+  plvsta();
+  plwind(xmin, xmax, ymin, ymax);
+
+  /* Draw a box with ticks spaced every 10 days in X and 1 hour in Y. */
+  plcol0(1);
+  pltimefmt("%y-%m-%d");
+  plbox("bcnstd", 10*24.0*60.0*60.0,10, "bcnstv", 1, 4);
+
+  plcol(3);
+  pllab("Date", "Hours of television watched", "#frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");
+  
+  plcol(4);
+
+  plpoin(npts, x, y, 2);
+  plline(npts, x, y);
+ 
 }
