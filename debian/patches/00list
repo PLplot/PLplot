@@ -2,3 +2,4 @@
 02_unset-python-path
 04_use-mkoctfile
 05_octave_documentation
+06_build_dir_use_physical_path
