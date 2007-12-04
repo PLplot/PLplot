@@ -1,7 +1,7 @@
-PLplot Release 5.9.1
+PLplot Release 5.9.0
 ~~~~~~~~~~~~~~~~~~~~
-This is a routine development release of PLplot. It represents the ongoing 
-efforts of the community to improve the PLplot plotting package. Development 
+This is a development release of PLplot. It represents the ongoing efforts
+of the community to improve the PLplot plotting package. Development 
 releases in the 5.9.x series will be available every few months. The next 
 stable release will be 5.10.0.
 
@@ -13,8 +13,12 @@ mailing lists at http://sourceforge.net/mail/?group_id=2915 .
 (LGPL), and the disclaimer of all warrantees, given in the COPYING.LIB
 file.
 
+N.B. This is the official notice that our deprecated autotools-based build
+system has now been removed.  Instead, use the CMake-based build system
+following the directions in the INSTALL file.
+
 INDEX
 
-1. Changes relative to PLplot 5.8.0
-
 1. Changes relative to PLplot 5.8.0 (the previous stable release)
+
+1.1 All autotools-related files have now been removed.
