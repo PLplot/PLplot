@@ -2,7 +2,7 @@ plplot (5.8.0-3) UNRELEASED; urgency=low
 
   [ Rafael Laboissiere ]
   * debian/control:
-    + Dropped the Homepage pseudo-header from the extended description
+    + Dropped the Homepage pseudo-header from the extended descriptions
     + Bumped Standards-Version to 3.7.3
 
  -- Rafael Laboissiere <rafael@debian.org>  Wed, 05 Dec 2007 12:46:40 +0100
