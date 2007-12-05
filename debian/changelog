@@ -1,9 +1,18 @@
+plplot (5.8.0-3) UNRELEASED; urgency=low
+
+  [ Rafael Laboissiere ]
+  * debian/control:
+    + Dropped the Homepage pseudo-header from the extended description
+    + Bumped Standards-Version to 3.7.3
+
+ -- Rafael Laboissiere <rafael@debian.org>  Wed, 05 Dec 2007 12:46:40 +0100
+
 plplot (5.8.0-2) unstable; urgency=low
 
   * debian/rules: add -VV option to ctest. Will make it easier to debug
     any failed tests for auto-built packages.
   * debian/patches/06_build_dir_use_physical_path.dpatch: Ensure that plplot
-    correctly identifies when run in the build tree, even if the path 
+    correctly identifies when run in the build tree, even if the path
     involves symlinks.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 03 Dec 2007 10:57:54 +0000

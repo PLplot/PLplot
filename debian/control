@@ -3,7 +3,7 @@ Section: math
 Priority: optional
 Maintainer: Andrew Ross <andrewross@users.sourceforge.net>
 Uploaders: Rafael Laboissiere <rafael@debian.org>
-Standards-Version: 3.7.2
+Standards-Version: 3.7.3
 Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38),
  tcl8.4-dev, tk8.4-dev, itcl3-dev, libx11-dev, libxext-dev,
  libxi-dev, gfortran, itk3-dev, octave2.9-headers,
@@ -41,8 +41,6 @@ Description: Scientific plotting library
  .
  This package contains the PLplot libraries for C and Fortran77, as
  well as the necessary data files.
- .
-  Homepage: http://www.plplot.org
 
 Package: libplplot-dev
 Architecture: any
@@ -56,8 +54,6 @@ Description: Scientific plotting library (development files)
  programs for these languages are also included.  For development in
  Tcl/Tk, Python, and Octave, install the plplot-tcl, python-plplot,
  and octave-plplot packages, respectively.
- .
-  Homepage: http://www.plplot.org
 
 Package: libplplot-c++9c2
 Architecture: any
@@ -68,8 +64,6 @@ Depends: ${shlibs:Depends}
 Description: Scientific plotting library
  This package contains the C++ binding for PLplot, a scientific plotting
  library.
- .
-  Homepage: http://www.plplot.org
 
 Package: libplplot-fortran9
 Architecture: any
@@ -78,8 +72,6 @@ Depends: ${shlibs:Depends}
 Description: Scientific plotting library
  This package contains the Fortran 77 and Fortran 95 bindings for
  PLplot, a scientific plotting library.
- .
-  Homepage: http://www.plplot.org
 
 Package: libplplot9-java
 Architecture: any
@@ -105,8 +97,6 @@ Description: Scientific plotting library
  .
  The source code for these libraries are part of the plplot source
  package.
- .
-  Homepage: http://www.plplot.org
 
 Package: plplot-bin
 Architecture: any
@@ -120,8 +110,6 @@ Description: Scientific plotting library (utilities)
   * pltek - review a Tektronix vector file
   * plm2gif - converts PLplot metafiles to GIF files
   * plpr - converts PLplot metafile to something the printer will understand
- .
-  Homepage: http://www.plplot.org
 
 Package: plplot9-driver-xwin
 Architecture: any
@@ -131,8 +119,6 @@ Conflicts: plplot-lib, plplot (<< 5)
 Description: Scientific plotting library (X11 driver)
  This package provides the X11 driver module for PLplot, a scientific
  plotting library.
- .
-  Homepage: http://www.plplot.org
 
 Package: plplot9-driver-gnome2
 Architecture: any
@@ -144,8 +130,6 @@ Description: Scientific plotting library (Gnome Canvas Widget driver)
  This package provides the Gnome Canvas Widget driver module for PLplot, a
  scientific plotting library.  This package replaces the (now deprecated)
  plplot9-driver-gnome package.
- .
-  Homepage: http://www.plplot.org
 
 Package: plplot9-driver-wxwidgets
 Architecture: any
@@ -154,8 +138,6 @@ Depends: libplplot9, ${shlibs:Depends}
 Description: Scientific plotting library (wxWidgets driver)
  This package provides the wxWidgets driver module for PLplot, a
  scientific plotting library.
- .
-  Homepage: http://www.plplot.org
 
 Package: plplot-tcl
 Architecture: any
@@ -167,8 +149,6 @@ Description: Tcl/Tk support for PLplot, a plotting library
  some programs for interactive use of PLplot (plserver and pltcl).
  Also included is the utility program plrender to render PLplot
  metafiles.
- .
-  Homepage: http://www.plplot.org
 
 Package: plplot-tcl-dev
 Architecture: any
@@ -179,8 +159,6 @@ Description: Tcl/Tk development support for PLplot, a plotting library
  This package contains the necessary files to do development in Tcl/Tk
  with PLplot, a scientific plotting library: header files, shared
  libraries links, and examples.
- .
-  Homepage: http://www.plplot.org
 
 Package: plplot9-driver-gd
 Architecture: any
@@ -191,8 +169,6 @@ Description: Scientific plotting library (GD driver)
  This package provides the GD driver module for PLplot, a scientific plotting
  library.  It allows the generation of PNG and JPEG files directly from
  PLplot programs.
- .
-  Homepage: http://www.plplot.org
 
 Package: plplot9-driver-cairo
 Architecture: any
@@ -205,8 +181,6 @@ Description: Scientific plotting library (Cairo driver)
  scientific plotting library.  It is based on the Cairo 2D
  graphics library with supportting multiple output devices (X-Window,
  PDF, PostScript, and PNG).
- .
-  Homepage: http://www.plplot.org
 
 Package: python-plplot
 Architecture: any
@@ -219,8 +193,6 @@ Description: Python support for PLplot, a plotting library
  This package contains the library plmodule.so for gluing the PLplot
  scientific plotting library into Python applications.  Examples are also
  provided.
- .
-  Homepage: http://www.plplot.org
 
 Package: octave-plplot
 Architecture: any
@@ -230,8 +202,6 @@ Description: Octave support for PLplot, a plotting library
  This package contains the Octave bindings for PLplot, a scientific plotting
  library.  It provides an almost drop-in replacement for the traditional
  Gnuplot graphical interface in Octave. Examples are also provided.
- .
-  Homepage: http://www.plplot.org
 
 Package: plplot-doc
 Architecture: all
@@ -241,6 +211,4 @@ Description: Documentation for PLplot, a plotting library
  This package contains the HTML, PDF, PostScript and info forms of the
  PLplot documentation.  It also contains the man pages for the API
  functions.
- .
-  Homepage: http://www.plplot.org
 
