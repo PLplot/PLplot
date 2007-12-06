@@ -27,10 +27,10 @@ INDEX
 1.4 Bug fixes
 
 
-1.1 All autotools-relatex files have now been removed. 
+1.1 All autotools-related files have now been removed. 
 
-Cmake is now the only support build system. It has been tested on 
-Linux / Unix, Mac OS-X and Windows platforms.
+Cmake (with the exception of DJGPP) is now the only supported build system.
+It has been tested on Linux / Unix, Mac OS-X and Windows platforms.
 
 1.2 Date / time labels for axes
   
