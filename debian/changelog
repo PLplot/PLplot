@@ -5,6 +5,11 @@ plplot (5.8.0-3) UNRELEASED; urgency=low
     + Dropped the Homepage pseudo-header from the extended descriptions
     + Bumped Standards-Version to 3.7.3
 
+  [ Andrew Ross ]
+  * debian/patches/07_octave_prune_examples.dpatch: Remove example p7 from the 
+    ctest tests for the octave bindings. Currently this test fails on alpha 
+    in a way that fills the disk partition.
+
  -- Rafael Laboissiere <rafael@debian.org>  Wed, 05 Dec 2007 12:46:40 +0100
 
 plplot (5.8.0-2) unstable; urgency=low
