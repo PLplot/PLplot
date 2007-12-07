@@ -3,3 +3,4 @@
 04_use-mkoctfile
 05_octave_documentation
 06_build_dir_use_physical_path
+07_octave_prune_examples
