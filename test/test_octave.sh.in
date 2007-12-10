@@ -32,6 +32,13 @@ export LD_LIBRARY_PATH=$TOPDIR/src:$TOPDIR/lib/csa:$TOPDIR/lib/nn
 
 # Launch an Octave script that exercises all the demos
 $octave -f -q -p $octavedir <<EOF 2> test.error
+
+# Suppress spurious warnings with octave 2.9
+ver = str2num(split(version,"."));
+if ((ver(1) == 2 && ver(2) == 9) || (ver(1) >= 3))
+  warning("off","Octave:built-in-variable-assignment");
+endif
+
 plplot_stub;
 t = split("$options", "-"); t(1,:)="";
 for i=1:rows(t)
