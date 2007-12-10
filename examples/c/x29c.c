@@ -1,4 +1,4 @@
-/* $Id:$
+/* $Id$
 
        Sample plots using date / time formatting for axes
 
@@ -87,7 +87,6 @@ plot1()
 
   for (i=0;i<npts;i++) {
     x[i] = xmax*((PLFLT) i/(PLFLT)npts);
-    printf("%d %f\n",i,x[i]);
     y[i] = 15.0 - 5.0*cos( 2*M_PI*((PLFLT) i / (PLFLT) npts));
   }
   
