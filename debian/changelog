@@ -1,3 +1,10 @@
+plplot (5.8.0-4) UNRELEASED; urgency=low
+
+  * debian/rules: rewrite the rules so the documentation is only built for 
+    binary-indep targets. This save significant time for the autobuilders.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 10 Dec 2007 20:33:28 +0000
+
 plplot (5.8.0-3) unstable; urgency=low
 
   [ Rafael Laboissiere ]

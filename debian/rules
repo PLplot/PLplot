@@ -30,7 +30,7 @@ JAVA_HOME = /usr/lib/jvm/java-gcj
 
 PYVERS = $(shell pyversions -vr)
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
-	-DBUILD_DOC=ON -DCMAKE_INSTALL_PREFIX=/usr \
+	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
 	-DCMAKE_Java_RUNTIME=$(JAVA_HOME)/bin/java \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
 	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar \
@@ -49,8 +49,8 @@ config-stamp:
 	cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=OFF )
 	touch config-stamp
 
-build: build-stamp
-build-stamp: patch config-stamp
+build-arch: build-arch-stamp
+build-arch-stamp: patch config-stamp
 	dh_testdir
 	# The hack below is to go around a bug in matwrap that was
 	# preventing the Octave binding to compile with g++ 4.0
@@ -60,45 +60,49 @@ build-stamp: patch config-stamp
 	#  $(MAKE) CC="gcc -D__builtin_va_list=void" plplot_octave.oct )
 	( cd $(BUILD_DIR) ; $(MAKE)  )
 	-( cd $(BUILD_DIR) ; ITCL_LIBRARY=/usr/lib/itcl3.2 ctest -VV)
-	touch build-stamp
+	touch build-arch-stamp
+
+build-indep: build-indep-stamp
+build-indep-stamp: patch 
+	dh_testdir
+	( cd $(BUILD_DIR) ; cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DBUILD_DOC=ON ; \
+	cd doc ; $(MAKE)  )
+	touch build-indep-stamp
 
 clean: unpatch
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp install-stamp config-stamp \
-              patch-stamp debian/files install-python*
+	rm -f build-arch-stamp build-indep-stamp install-arch-stamp install-indep-stamp \
+              config-stamp patch-stamp debian/files install-python*
 	rm -rf $(BUILD_DIR)
 	rm -rf $(debbase)/$(libpkg)
 	dh_clean
 
-install: install-stamp install-python
+install-arch: install-arch-stamp install-python
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
 		     --no-package=plplot-bin --no-package=python-plplot
-	dh_movefiles -i
 	dh_movefiles --package=python-plplot
 	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=plplot-bin
 	dh_movefiles --package=$(libpkg)
 
-install-stamp: build-stamp
+install-arch-stamp: build-arch-stamp
 	dh_testdir
 	dh_testroot
 
 	( cd $(BUILD_DIR) ; \
 	  $(MAKE) DESTDIR=$(debtmp) install )
 
-	rm -f $(debtmp)/usr/bin/plplot-config
-
 	( cd $(debdoc)/plplot ; \
 	  rm -f COPYING.LIB *.dvi ; \
 	  mv ChangeLog changelog )
 	mv $(debdoc)/plplot $(debdoc)/$(libpkg)
-	mkdir -p $(debdoc)/$(docpkg)
-	(cd $(debdoc)/$(libpkg) ; mv html *.pdf *.ps.gz $(debdoc)/$(docpkg))
+
 	install -d $(debex)/perl
 	install --mode=644 examples/perl/x* examples/perl/README* \
 		$(debex)/perl
 	mv $(debex) $(debdoc)/$(libpkg)
+	rm -f $(debtmp)/usr/bin/plplot-config
 
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
@@ -112,14 +116,25 @@ install-stamp: build-stamp
 	mv $(debshr)/java/plplot.jar $(debshr)/java/plplot-$(version).jar
 	( cd $(debshr)/java ; ln -s plplot-$(version).jar plplot.jar )
 
-	touch install-stamp
+	touch install-arch-stamp
+
+install-indep: install-indep-stamp
+	dh_movefiles -i
+
+install-indep-stamp: build-indep-stamp
+	( cd $(BUILD_DIR)/doc ; \
+	  $(MAKE) DESTDIR=$(debtmp) install )
+
+	mkdir -p $(debdoc)/$(docpkg)
+	(cd $(debdoc)/plplot ; mv html *.pdf *.ps.gz $(debdoc)/$(docpkg))
+	touch install-indep-stamp
 
 install-python: $(PYVERS:%=install-python%)
 	( cd $(BUILD_DIR)/examples/python ; $(MAKE) DESTDIR=$(debtmp) install )
 	mv $(debex)/python $(debdoc)/$(libpkg)/examples
 	touch $@
 
-install-python%: build-stamp
+install-python%: build-arch-stamp
 	( cd $(BUILD_DIR) ; \
 	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DENABLE_pygcw=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/lib/python$*/site-packages/numpy/core/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/lib/python$*/site-packages/numpy/core/include/numpy ; \
 	  for d in gnome2/python python ; do		\
@@ -131,7 +146,7 @@ install-python%: build-stamp
 	touch $@
 
 # Build architecture-independent files here.
-binary-indep: build install
+binary-indep: build-indep install-indep
 	dh_testdir -i
 	dh_testroot -i
 	dh_installdirs -i
@@ -144,7 +159,7 @@ binary-indep: build install
 	dh_md5sums -i
 	dh_builddeb -i
 
-binary-arch: build install
+binary-arch: build-arch install-arch
 	dh_testdir -a
 	dh_testroot -a
 	dh_installdirs -a
@@ -168,6 +183,6 @@ binary-arch: build install
 source diff:
 	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
 
-binary: binary-indep binary-arch
+binary: binary-arch binary-indep
 .PHONY: build clean binary-indep binary-arch binary config \
         patch unpatch
