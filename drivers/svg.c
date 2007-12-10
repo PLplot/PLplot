@@ -142,7 +142,7 @@ void plD_init_svg(PLStream *pls)
    pls->width = 1;
    pls->verbose = 1;
    pls->bytecnt = 0;
-   pls->debug = 1;
+   /*pls->debug = 1;*/
    pls->dev_text = 1;		/* handles text */
    pls->dev_unicode = 1; 	/* wants text as unicode */
    pls->page = 0;
