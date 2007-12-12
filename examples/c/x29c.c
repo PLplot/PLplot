@@ -175,8 +175,8 @@ plot3()
   toff = difftime(t1,t2);
 
   tm.tm_year = 105; /* Years since 1900 */
-  tm.tm_mon = 11;  /* 0 == January, 6 = July */
-  tm.tm_mday = 1;    /* 0 = 1st of month */
+  tm.tm_mon = 11;  /* 0 == January, 11 = December */
+  tm.tm_mday = 1;    /* 1 = 1st of month */
   tm.tm_hour = 0;
   tm.tm_min = 0;
   tm.tm_sec = 0;
