@@ -100,10 +100,10 @@ plot1()
   pltimefmt("%H:%M");
   plbox("bcnstd", 3.0*60*60, 3, "bcnstv", 1, 5);
 
-  plcol(3);
+  plcol0(3);
   pllab("Time (hours:mins)", "Temperature (degC)", "#frPLplot Example 29 - Daily temperature");
   
-  plcol(4);
+  plcol0(4);
 
   plline(npts, x, y);
 }
@@ -143,10 +143,10 @@ plot2()
   plenv(xmin, xmax, ymin, ymax, 0, 40);
 
 
-  plcol(3);
+  plcol0(3);
   pllab("Date", "Hours of daylight", "#frPLplot Example 29 - Hours of daylight at 51.5N");
   
-  plcol(4);
+  plcol0(4);
 
   plline(npts, x, y);
   
@@ -200,10 +200,10 @@ plot3()
   pltimefmt("%y-%m-%d");
   plbox("bcnstd", 10*24.0*60.0*60.0,10, "bcnstv", 1, 4);
 
-  plcol(3);
+  plcol0(3);
   pllab("Date", "Hours of television watched", "#frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");
   
-  plcol(4);
+  plcol0(4);
 
   plpoin(npts, x, y, 2);
   plline(npts, x, y);
