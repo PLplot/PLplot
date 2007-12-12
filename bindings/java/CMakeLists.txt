@@ -96,9 +96,13 @@ set_source_files_properties(${JAVA_GEN_FILES_FULL} PROPERTIES GENERATED ON)
 set(SWIG_MODULE_plplotjavac_wrap_EXTRA_DEPS
 ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
 
+set_source_files_properties(plplotjavac.i 
+PROPERTIES SWIG_MODULE_NAME plplotjavac
+)
+
 # Set up swig + c wrapper
-swig_add_module( plplotjavac_wrap java plplotjavac.i )
-swig_link_libraries( plplotjavac_wrap plplot${LIB_TAG} )
+swig_add_module(plplotjavac_wrap java plplotjavac.i)
+swig_link_libraries(plplotjavac_wrap plplot${LIB_TAG})
 
 if(USE_RPATH)
   get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
