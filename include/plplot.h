@@ -1464,7 +1464,7 @@ c_pltext(void);
 /* Set the format for date / time labels */ 
 
 PLDLLIMPEXP void
-c_pltimefmt(const char *);
+c_pltimefmt(const char *fmt);
 
 /* Sets the edges of the viewport with the given aspect ratio, leaving */
 /* room for labels. */
