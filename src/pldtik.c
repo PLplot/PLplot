@@ -35,10 +35,21 @@
 \*----------------------------------------------------------------------*/
 
 void
-pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt)
+pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld)
 {
     PLFLT t1, t2, tick_reasonable;
     PLINT np, ns;
+    PLFLT diff, factor;
+
+
+    if (ld) {
+      /* Check suitable units for tick spacing */
+      pldtfac(vmin, vmax, &factor, NULL);
+
+      *tick = *tick / factor;
+      vmin = vmin / factor;
+      vmax = vmax / factor;
+    }
 
 /* Magnitude of min/max difference to get tick spacing */
 
@@ -84,6 +95,105 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt)
 	*nsubt = ns;
 
     *nsubt = ABS(*nsubt);
+
+    if (ld) {
+      *tick = *tick*factor;
+    }
+}
+
+/*----------------------------------------------------------------------*\ 
+ * PLFLT pldtfac()
+ * 
+ * Calculate factor to convert a date/time interval in seconds
+ * into a more natural units (minutes, hours, days, week, years).
+ * Also optionally calculate the sensible start time for counting ticks 
+ * from (e.g. beginning of day, beginning of year).
+ * Used to calculate sensible tick and label spacings.
+\*----------------------------------------------------------------------*/
+void
+pldtfac(PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start) {
+  PLFLT diff, tdiff;
+  time_t t, t2;
+  struct tm tm;
+
+  diff = vmax - vmin;
+
+  if (start != NULL) {
+    t = (time_t) vmin;
+    tm = *gmtime(&t);
+    t2 = mktime(&tm);
+    /* Arg! This is because mktime is in local time and we need to 
+       correct for the offset. C time handling really is broken... */
+    tdiff = difftime(t,t2);
+
+  }
+
+  if (diff < 3.0*60.0) {
+    /* Seconds */
+    *factor = 1.0;
+    if (start != NULL) {
+      tm.tm_sec = 0;
+      t = mktime(&tm);
+      *start = (PLFLT)t+tdiff;
+    }
+  }
+  else if (diff < 3.0*60.0*60.0) {
+    /* Minutes */
+    *factor = 60.0;
+    if (start != NULL) {
+      tm.tm_sec = 0;
+      tm.tm_min = 0;
+      t = mktime(&tm);
+      *start = (PLFLT)t+tdiff;
+    }
+  }
+  else if (diff < 3.0*60.0*60.0*24.0) {
+    /* Hours */
+    *factor = 60.0*60.0;
+    if (start != NULL) {
+      tm.tm_sec = 0;
+      tm.tm_min = 0;
+      tm.tm_hour = 0;
+      t = mktime(&tm);
+      *start = (PLFLT)t+tdiff;
+    }
+  }
+  else if (diff < 3.0*60.0*60.0*24.0*7.0) {
+    /* Days */
+    *factor = 60.0*60.0*24.0;
+    if (start != NULL) {
+      tm.tm_sec = 0;
+      tm.tm_min = 0;
+      tm.tm_hour = 0;
+      t = mktime(&tm);
+      *start = (PLFLT)t+tdiff;
+    }
+  }
+  else if (diff < 3.0*60.0*60.0*24.0*365) {
+    /* Weeks */
+    *factor = 60.0*60.0*24.0*7.0;
+    if (start != NULL) {
+      tm.tm_sec = 0;
+      tm.tm_min = 0;
+      tm.tm_hour = 0;
+      t = mktime(&tm);
+      *start = (PLFLT)t+tdiff;
+    }
+  }
+  else {
+    /* Years */
+    *factor = 60.0*60.0*24.0*365.25;
+    if (start != NULL) {
+      tm.tm_sec = 0;
+      tm.tm_min = 0;
+      tm.tm_hour = 0;
+      tm.tm_mday = 1;
+      tm.tm_mon = 0;
+      t = mktime(&tm);
+      *start = (PLFLT)t+tdiff;
+    }
+  }
+
 }
 
 /*----------------------------------------------------------------------*\

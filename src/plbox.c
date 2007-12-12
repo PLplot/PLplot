@@ -114,8 +114,8 @@ c_plaxes(PLFLT x0, PLFLT y0,
 	 const char *xopt, PLFLT xtick, PLINT nxsub,
 	 const char *yopt, PLFLT ytick, PLINT nysub)
 {
-    PLINT lax, lbx, lcx, ldx, lgx, lix, llx, lsx, ltx;
-    PLINT lay, lby, lcy, ldy, lgy, liy, lly, lsy, lty;
+    PLBOOL lax, lbx, lcx, ldx, lgx, lix, llx, lsx, ltx;
+    PLBOOL lay, lby, lcy, ldy, lgy, liy, lly, lsy, lty;
     PLINT xmajor, xminor, ymajor, yminor;
     PLINT i, i1x, i2x, i3x, i4x, i1y, i2y, i3y, i4y;
     PLINT nxsub1, nysub1;
@@ -125,6 +125,7 @@ c_plaxes(PLFLT x0, PLFLT y0,
     PLFLT xtick1, ytick1, vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT vpwxmin, vpwxmax, vpwymin, vpwymax;
     PLFLT xp0, yp0, tn, tp, temp;
+    PLFLT factor, tstart;
 
     if (plsc->level < 3) {
 	plabort("plbox: Please set up window first");
@@ -195,10 +196,10 @@ c_plaxes(PLFLT x0, PLFLT y0,
 /* Calculate tick spacing */
 
     if (ltx || lgx)
-	pldtik(vpwxmi, vpwxma, &xtick1, &nxsub1);
+	pldtik(vpwxmi, vpwxma, &xtick1, &nxsub1, ldx);
 
     if (lty || lgy)
-	pldtik(vpwymi, vpwyma, &ytick1, &nysub1);
+	pldtik(vpwymi, vpwyma, &ytick1, &nysub1, ldy);
 /* n.b. large change; xtick1, nxsub1, ytick1, nysub1 always positive. */
 
 /* Set up tick variables */
@@ -234,7 +235,12 @@ c_plaxes(PLFLT x0, PLFLT y0,
     if (lbx) {
 	plP_movphy(vppxmi, vppymi);
 	if (ltx) {
-	    tp = xtick1 * floor(vpwxmi / xtick1);
+	    if (ldx) {
+	      pldtfac(vpwxmi, vpwxma, &factor, &tstart);
+	      tp = xtick1 * (floor((vpwxmi-tstart) / xtick1)) + tstart;
+	    }
+	    else
+	      tp = xtick1 * floor(vpwxmi / xtick1);
 	    for (;;) {
 		tn = tp + xtick1;
 		if (lsx) {
@@ -267,7 +273,12 @@ c_plaxes(PLFLT x0, PLFLT y0,
     if (lcy) {
 	plP_movphy(vppxma, vppymi);
 	if (lty) {
-	    tp = ytick1 * floor(vpwymi / ytick1);
+	    if (ldy) {
+	      pldtfac(vpwymi, vpwyma, &factor, &tstart);
+	      tp = ytick1 * (floor((vpwymi-tstart) / ytick1)) + tstart;
+	    }
+	    else
+	      tp = ytick1 * floor(vpwymi / ytick1);
 	    for (;;) {
 		tn = tp + ytick1;
 		if (lsy) {
@@ -300,7 +311,12 @@ c_plaxes(PLFLT x0, PLFLT y0,
     if (lcx) {
 	plP_movphy(vppxma, vppyma);
 	if (ltx) {
-	    tp = xtick1 * (floor(vpwxma / xtick1) + 1);
+	    if (ldx) {
+	      pldtfac(vpwxmi, vpwxma, &factor, &tstart);
+	      tp = xtick1 * (floor((vpwxma-tstart) / xtick1) + 1) + tstart;
+	    }
+	    else
+	      tp = xtick1 * (floor(vpwxma / xtick1) + 1);
 	    for (;;) {
 		tn = tp - xtick1;
 		if (lsx) {
@@ -333,7 +349,12 @@ c_plaxes(PLFLT x0, PLFLT y0,
     if (lby) {
 	plP_movphy(vppxmi, vppyma);
 	if (lty) {
-	    tp = ytick1 * (floor(vpwyma / ytick1) + 1);
+	    if (ldy) {
+	      pldtfac(vpwymi, vpwyma, &factor, &tstart);
+	      tp = ytick1 * (floor((vpwymi-tstart) / ytick1)+1) + tstart;
+	    }
+	    else
+	      tp = ytick1 * (floor(vpwyma / ytick1) + 1);
 	    for (;;) {
 		tn = tp - ytick1;
 		if (lsy) {
@@ -635,7 +656,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
        PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits)
 {
     static char string[40];
-    PLINT lb, lf, li, ll, ln, ls, lt, lu;
+    PLINT lb, ld, lf, li, ll, ln, ls, lt, lu;
     PLINT major, minor, mode, prec, scale;
     PLINT i, i1, i2, i3, i4;
     PLINT nsub1;
@@ -659,6 +680,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
     nsub1 = nsub;
 
     lb = plP_stsearch(opt, 'b');
+    ld = plP_stsearch(opt, 'd');
     lf = plP_stsearch(opt, 'f');
     li = plP_stsearch(opt, 'i');
     ll = plP_stsearch(opt, 'l');
@@ -675,7 +697,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
     if (ll)
 	tick1 = (vmax > vmin) ? 1.0 : -1.0 ;
     if (lt)
-	pldtik(vmin, vmax, &tick1, &nsub1);
+	pldtik(vmin, vmax, &tick1, &nsub1, ld);
 
     if (li) {
 	i1 = minor;
@@ -845,7 +867,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
       PLFLT tick, PLINT nsub, PLINT *digits)
 {
     static char string[40];
-    PLINT lb, lc, lf, li, ll, lm, ln, ls, lt, lu, lv;
+    PLINT lb, lc, ld, lf, li, ll, lm, ln, ls, lt, lu, lv;
     PLINT i, mode, prec, scale;
     PLINT nsub1, lstring;
     PLFLT pos, tn, tp, temp, height, tick1;
@@ -867,6 +889,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 
     lb = plP_stsearch(opt, 'b');
     lc = plP_stsearch(opt, 'c');
+    ld = plP_stsearch(opt, 'd');
     lf = plP_stsearch(opt, 'f');
     li = plP_stsearch(opt, 'i');
     ll = plP_stsearch(opt, 'l');
@@ -893,7 +916,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	tick1 = 1.0;
 
     if (lt)
-	pldtik(vmin, vmax, &tick1, &nsub1);
+	pldtik(vmin, vmax, &tick1, &nsub1, ld);
 
     if ((li && !right) || (!li && right)) {
 	minor = -minor;
@@ -1169,11 +1192,12 @@ static void
 label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 {
     static char string[40];
-    PLINT ldx, lfx, lix, llx, lmx, lnx, ltx;
-    PLINT ldy, lfy, liy, lly, lmy, lny, lty, lvy;
+    PLBOOL ldx, lfx, lix, llx, lmx, lnx, ltx;
+    PLBOOL ldy, lfy, liy, lly, lmy, lny, lty, lvy;
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT vpwxmin, vpwxmax, vpwymin, vpwymax;
     PLFLT pos, tn, tp, offset, height;
+    PLFLT factor, tstart;
     const char *timefmt;
     struct tm *tm;
     time_t t;
@@ -1214,7 +1238,12 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	pldprec(vpwxmi, vpwxma, xtick1, lfx, &xmode, &xprec, xdigmax, &xscale);
         timefmt = plP_gtimefmt();
 
-	tp = xtick1 * (1. + floor(vpwxmi / xtick1));
+	if (ldx) {
+	  pldtfac(vpwxmi, vpwxma, &factor, &tstart);
+	  tp = xtick1 * (1. + floor((vpwxmi-tstart) / xtick1)) + tstart;
+	}
+	else
+	  tp = xtick1 * (1. + floor(vpwxmi / xtick1));
 	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
             if (ldx) {
               t = (time_t) tn;
@@ -1258,7 +1287,12 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	pldprec(vpwymi, vpwyma, ytick1, lfy, &ymode, &yprec, ydigmax, &yscale);
 
 	ydigits = 0;
-	tp = ytick1 * (1. + floor(vpwymi / ytick1));
+	if (ldy) {
+	  pldtfac(vpwymi, vpwyma, &factor, &tstart);
+	  tp = ytick1 * (1. + floor((vpwymi-tstart) / ytick1)) + tstart;
+	}
+	else
+	  tp = ytick1 * (1. + floor(vpwymi / ytick1));
 	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
             if (ldy) {
               t = (time_t) tn;

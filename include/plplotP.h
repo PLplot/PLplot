@@ -404,7 +404,13 @@ extern "C" {
 /* Determines interval between numeric labels */
 
 void
-pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt);
+pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld);
+
+/* Determine factor to convert date / time in seconds to more natural
+ * units */
+
+void
+pldtfac(PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *tstart);
 
 /* Determines precision of box labels */
 
@@ -722,7 +728,7 @@ plP_strpos(const char *str, int chr);
 
 /* Searches string str for character chr (case insensitive). */
 
-PLINT
+PLBOOL
 plP_stsearch(const char *str, int chr);
 
 	/* Conversion functions */

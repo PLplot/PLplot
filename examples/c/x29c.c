@@ -98,7 +98,7 @@ plot1()
   /* Draw a box with ticks spaced every 3 hour in X and 1 degree C in Y. */
   plcol0(1);
   pltimefmt("%H:%M");
-  plbox("bcnstd", 3.0*60.0*60.0,3, "bcnstv", 1, 5);
+  plbox("bcnstd", 3.0*60*60, 3, "bcnstv", 1, 5);
 
   plcol(3);
   pllab("Time (hours:mins)", "Temperature (degC)", "#frPLplot Example 29 - Daily temperature");
@@ -146,7 +146,7 @@ plot2()
   /* Draw a box with ticks spaced every 56 days in X and 3 hours in Y. */
   plcol0(1);
   pltimefmt("%d %b");
-  plbox("bcnstd", 56.0*24.0*60.0*60.0,8, "bcnstv", 3, 3);
+  plbox("bcnstd", 0.0, 0, "bcnstv", 3, 3);
 
   plcol(3);
   pllab("Date", "Hours of daylight", "#frPLplot Example 29 - Hours of daylight at 51.5N");
@@ -162,13 +162,21 @@ plot3()
 {
   int i, npts;
   PLFLT xmin, xmax, ymin, ymax;
-  time_t tstart;
+  time_t tstart, t1, t2;
+  double toff;
 
   struct tm tm;
 
+  /* Warning: mktime is in local time so we need to calculate 
+   * offset to get UTC. C time handling is quirky */
+  t1 = 0;
+  tm = *gmtime(&t1);
+  t2 = mktime(&tm);
+  toff = difftime(t1,t2);
+
   tm.tm_year = 105; /* Years since 1900 */
   tm.tm_mon = 11;  /* 0 == January, 6 = July */
-  tm.tm_mday = 0;    /* 0 = 1st of month */
+  tm.tm_mday = 1;    /* 0 = 1st of month */
   tm.tm_hour = 0;
   tm.tm_min = 0;
   tm.tm_sec = 0;
@@ -177,7 +185,7 @@ plot3()
 
   npts = 62;
 
-  xmin = tstart;
+  xmin = (PLFLT) tstart + toff;
   xmax = xmin + npts*60.0*60.0*24.0;
   ymin = 0.0;
   ymax = 5.0;

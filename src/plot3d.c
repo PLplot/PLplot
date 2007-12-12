@@ -448,7 +448,7 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     PLINT nsub=0;
 
     /* get the tick spacing */
-    pldtik(zmin, zmax, &tick, &nsub);
+    pldtik(zmin, zmax, &tick, &nsub, FALSE);
 
     /* determine the vertices for the background grid line */
     bx[0] = (ixOrigin!=ixmin && ixFast==0) || ixFast > 0 ? xmax : xmin;
@@ -1537,7 +1537,7 @@ plgrid3(PLFLT tick)
     zmin = (zmax_in > zmin_in) ? zmin_in: zmax_in;
     zmax = (zmax_in > zmin_in) ? zmax_in: zmin_in;
 
-    pldtik(zmin, zmax, &tick, &nsub);
+    pldtik(zmin, zmax, &tick, &nsub, FALSE);
     tp = tick * floor(zmin / tick) + tick;
     pl3upv = 0;
 

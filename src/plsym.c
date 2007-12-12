@@ -982,20 +982,20 @@ plP_stindex(const char *str1, const char *str2)
 }
 
 /*--------------------------------------------------------------------------*\
- * PLINT plP_stsearch()
+ * PLBOOL plP_stsearch()
  *
  * Searches string str for character chr (case insensitive).
 \*--------------------------------------------------------------------------*/
 
-PLINT
+PLBOOL
 plP_stsearch(const char *str, int chr)
 {
     if (strchr(str, chr))
-	return (PLINT) 1;
+	return TRUE;
     else if (strchr(str, toupper(chr)))
-	return (PLINT) 1;
+	return TRUE;
     else
-	return (PLINT) 0;
+	return FALSE;
 }
 
 /*--------------------------------------------------------------------------*\
