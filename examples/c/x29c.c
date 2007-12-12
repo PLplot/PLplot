@@ -138,15 +138,10 @@ plot2()
     y[j] = d;
   }
 
-  pladv(0);
-
-  plvsta();
-  plwind(xmin, xmax, ymin, ymax);
-
-  /* Draw a box with ticks spaced every 56 days in X and 3 hours in Y. */
   plcol0(1);
   pltimefmt("%d %b");
-  plbox("bcnstd", 0.0, 0, "bcnstv", 3, 3);
+  plenv(xmin, xmax, ymin, ymax, 0, 40);
+
 
   plcol(3);
   pllab("Date", "Hours of daylight", "#frPLplot Example 29 - Hours of daylight at 51.5N");

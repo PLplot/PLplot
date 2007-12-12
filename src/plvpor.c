@@ -69,6 +69,18 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
  *	axis=32 : Same as 2 except Logarithmic X,Y tick marks. (The X,Y data have
  *      to be converted to logarithms separately.)
  *      axis=33 : Same as 32, but the grid will be also at the minor ticks.
+ *	axis=40 : Same as 0 except date / time X tick marks. 
+ *	axis=41 : Same as 1 except date / time X tick marks. 
+ *	axis=42 : Same as 2 except date / time X tick marks. 
+ *      axis=43 : Same as 42, but the grid will be also at the minor ticks.
+ *	axis=50 : Same as 0 except date / time Y tick marks. 
+ *	axis=51 : Same as 1 except date / time Y tick marks. 
+ *	axis=52 : Same as 2 except date / time Y tick marks. 
+ *      axis=53 : Same as 52, but the grid will be also at the minor ticks.
+ *	axis=60 : Same as 0 except date / time X,Y tick marks. 
+ *	axis=61 : Same as 1 except date / time X,Y tick marks. 
+ *	axis=62 : Same as 2 except date / time X,Y tick marks. 
+ *      axis=63 : Same as 62, but the grid will be also at the minor ticks.
 \*--------------------------------------------------------------------------*/
 
 void
@@ -220,6 +232,42 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	break;
     case 33:
 	plbox("abcglnsth", (PLFLT) 0.0, 0, "abcglnstvh", (PLFLT) 0.0, 0);
+	break;
+    case 40:
+	plbox("bcdnst", (PLFLT) 0.0, 0, "bcnstv", (PLFLT) 0.0, 0);
+	break;
+    case 41:
+	plbox("abcdnst", (PLFLT) 0.0, 0, "abcnstv", (PLFLT) 0.0, 0);
+	break;
+    case 42:
+	plbox("abcgdnst", (PLFLT) 0.0, 0, "abcgnstv", (PLFLT) 0.0, 0);
+	break;
+    case 43:
+	plbox("abcgdnsth", (PLFLT) 0.0, 0, "abcgnstvh", (PLFLT) 0.0, 0);
+	break;
+    case 50:
+	plbox("bcnst", (PLFLT) 0.0, 0, "bcdnstv", (PLFLT) 0.0, 0);
+	break;
+    case 51:
+	plbox("abcnst", (PLFLT) 0.0, 0, "abcdnstv", (PLFLT) 0.0, 0);
+	break;
+    case 52:
+	plbox("abcgnst", (PLFLT) 0.0, 0, "abcgdnstv", (PLFLT) 0.0, 0);
+	break;
+    case 53:
+	plbox("abcgnsth", (PLFLT) 0.0, 0, "abcgdnstvh", (PLFLT) 0.0, 0);
+	break;
+    case 60:
+	plbox("bcdnst", (PLFLT) 0.0, 0, "bcdnstv", (PLFLT) 0.0, 0);
+	break;
+    case 61:
+	plbox("abcdnst", (PLFLT) 0.0, 0, "abcdnstv", (PLFLT) 0.0, 0);
+	break;
+    case 62:
+	plbox("abcgdnst", (PLFLT) 0.0, 0, "abcgdnstv", (PLFLT) 0.0, 0);
+	break;
+    case 63:
+	plbox("abcgdnsth", (PLFLT) 0.0, 0, "abcgdnstvh", (PLFLT) 0.0, 0);
 	break;
     default:
 	plwarn("plenv: Invalid axis argument");
