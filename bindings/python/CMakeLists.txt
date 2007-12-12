@@ -40,12 +40,16 @@ ${CMAKE_SOURCE_DIR}/bindings/swig-support
 )
 include_directories(${python_interface_INCLUDE_PATHS})
 
-set(CMAKE_SWIG_FLAGS -DPL_DOUBLE -DSWIG_PYTHON -python)
+set(CMAKE_SWIG_FLAGS -DPL_DOUBLE -DSWIG_PYTHON)
 
 set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(SWIG_MODULE_plplotcmodule_EXTRA_DEPS
 ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
+
+set_source_files_properties(plplotcmodule.i 
+PROPERTIES SWIG_MODULE_NAME plplotc
+)
 
 # Set up swig + c wrapper.
 # N.B. the python target has an underscore prepended automatically.
