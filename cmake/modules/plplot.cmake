@@ -221,7 +221,10 @@ if(SWIG_FOUND)
 endif(SWIG_FOUND)
 
 if(SWIG_FOUND)
-  include(${SWIG_USE_FILE})
+  # Do not use "include(${SWIG_USE_FILE})" here since we want the option of
+  # using a locally modified version of UseSWIG.cmake if that exists rather
+  # than the official system version of that file.
+  include(UseSWIG)
 endif(SWIG_FOUND)
 
 # Find Perl.  Required in several places in the build system (e.g.,
