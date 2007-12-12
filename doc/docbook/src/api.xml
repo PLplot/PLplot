@@ -5,7 +5,7 @@
     Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Alan W. Irwin
     Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
-    Copyright (C) 2004  Andrew Ross
+    Copyright (C) 2004, 2007  Andrew Ross
     Copyright (C) 2007  Hazen Babcock
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
@@ -338,7 +338,7 @@ contour labelling other than format of numerical label</title>
     </para>
 
     <para>
-      This function is used in examples 1,2,4,6-12,14-18,20,21,23-27.
+      This function is used in examples 1,2,4,6-12,14-18,20,21,23-27,29.
     </para>
 
   </sect1>
@@ -433,6 +433,13 @@ origin
 		<para>
 		  <literal>c</literal>: Draws top (X) or right (Y) edge of
 		  frame.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>d</literal>: Plot labels as date / time. 
+                  Values are assumed to be seconds since the epoch 
+                  (as used by gmtime).
 		</para>
 	      </listitem>
 	      <listitem>
@@ -846,6 +853,13 @@ origin
 	      </listitem>
 	      <listitem>
 		<para>
+		  <literal>d</literal>: Plot labels as date / time. 
+                  Values are assumed to be seconds since the epoch 
+                  (as used by gmtime).
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
 		  <literal>f</literal>:  Always use fixed point numeric labels.
 		</para>
 	      </listitem>
@@ -1000,7 +1014,7 @@ origin
     </para>
 
     <para>
-      This function is used in examples 1,2,4,6,6-12,14-18,21,23-26.
+      This function is used in examples 1,2,4,6,6-12,14-18,21,23-26,29.
     </para>
 
   </sect1>
@@ -1596,7 +1610,7 @@ from relative device coordinates,
     </para>
 
     <para>
-      This function is used in examples 1-9,11-16,18-27.
+      This function is used in examples 1-9,11-16,18-27,29.
     </para>
 
   </sect1>
@@ -2207,6 +2221,78 @@ positions in both coordinates.
                   data have to be converted to logarithms separately.)
 		</para>
 	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>40</literal>: same as 0 except date / time
+		  <literal>x</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>41</literal>: same as 1 except date / time
+		  <literal>x</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>42</literal>: same as 2 except date / time
+		  <literal>x</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>43</literal>: same as 3 except date / time
+		  <literal>x</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>50</literal>: same as 0 except date / time
+		  <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>51</literal>: same as 1 except date / time
+		  <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>52</literal>: same as 2 except date / time
+		  <literal>y</literal> labels.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>53</literal>: same as 3 except date / time
+		  <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>60</literal>: same as 0 except date / time
+		  <literal>x</literal> and <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>61</literal>: same as 1 except date / time
+		  <literal>x</literal> and <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>62</literal>: same as 2 except date / time
+		  <literal>x</literal> and <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>63</literal>: same as 3 except date / time
+		  <literal>x</literal> and <literal>y</literal> labels.
+		</para>
+	      </listitem>
 	    </itemizedlist>
 	  </para>
 	</listitem>
@@ -2464,6 +2550,78 @@ positions in both coordinates.
                   data have to be converted to logarithms separately.)
 		</para>
 	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>40</literal>: same as 0 except date / time
+		  <literal>x</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>41</literal>: same as 1 except date / time
+		  <literal>x</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>42</literal>: same as 2 except date / time
+		  <literal>x</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>43</literal>: same as 3 except date / time
+		  <literal>x</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>50</literal>: same as 0 except date / time
+		  <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>51</literal>: same as 1 except date / time
+		  <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>52</literal>: same as 2 except date / time
+		  <literal>y</literal> labels.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>53</literal>: same as 3 except date / time
+		  <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>60</literal>: same as 0 except date / time
+		  <literal>x</literal> and <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>61</literal>: same as 1 except date / time
+		  <literal>x</literal> and <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>62</literal>: same as 2 except date / time
+		  <literal>x</literal> and <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>63</literal>: same as 3 except date / time
+		  <literal>x</literal> and <literal>y</literal> labels.
+		</para>
+	      </listitem>
 	    </itemizedlist>
 	  </para>
 	</listitem>
@@ -2475,7 +2633,7 @@ positions in both coordinates.
     </para>
 
     <para>
-      This function is used in example 1,3,9,13,14,19-22.
+      This function is used in example 1,3,9,13,14,19-22,29.
     </para>
 
   </sect1>
@@ -5286,7 +5444,7 @@ device coordinates
     </para>
 
     <para>
-      This function is used in examples 1,5,9,12,14-16,20-22.
+      This function is used in examples 1,5,9,12,14-16,20-22,29.
     </para>
 
   </sect1>
@@ -5426,7 +5584,7 @@ source
     </para>
 
     <para>
-      This function is used in examples 1,3,4,9,12-14,16,18,20,22,25-27.
+      This function is used in examples 1,3,4,9,12-14,16,18,20,22,25-27,29.
     </para>
 
   </sect1>
@@ -7098,7 +7256,7 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized arguments.
     </para>
 
     <para>
-      This function is used in examples 1,6,14,18,21.
+      This function is used in examples 1,6,14,18,21,29.
     </para>
 
   </sect1>
@@ -12355,6 +12513,109 @@ stripchart
 
   </sect1>
 
+  <sect1 id="pltimefmt" renderas="sect3">
+    <title>
+      <function>pltimefmt</function>: Set format for date / time labels
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>pltimefmt</function>
+	</funcdef>
+        <paramdef><parameter>fmt</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Sets the format for date / time labels. To enable date / time
+      format labels see the options to &plbox; and &plenv;. 
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>fmt</parameter>
+	  (<literal>const char *</literal>, fmt)
+	</term>
+	<listitem>
+	  <para>
+          This string is passed directly to the system strftime. See
+	  the system documentation for a full list of conversion
+	  specifications for your system. All conversion
+	  specifications take the form of a '%' character followed by
+	  further conversion specification character. All other text
+	  is printed as-is. Common options include:
+	  <itemizedlist>
+	    <listitem>
+	      <para>
+	        <literal>%c</literal>: The preferred date and time
+		representation for the current locale. 
+	      </para>
+            </listitem>
+	    <listitem>
+	      <para>
+	        <literal>%d</literal>: The day of the month as a
+		decimal number. 
+	      </para>
+            </listitem>
+	    <listitem>
+	      <para>
+	        <literal>%H</literal>: The hour as a decimal number
+	        using a 24-hour clock. 
+	      </para>
+            </listitem>
+	    <listitem>
+	      <para>
+	        <literal>%j</literal>: The day of the year as a
+		decimal number. 
+	      </para>
+            </listitem>
+	    <listitem>
+	      <para>
+	        <literal>%m</literal>: The month as a decimal number. 
+	      </para>
+            </listitem>
+	    <listitem>
+	      <para>
+	        <literal>%M</literal>: The minute as a decimal number. 
+	      </para>
+            </listitem>
+	    <listitem>
+	      <para>
+	        <literal>%S</literal>: The second as a decimal number. 
+	      </para>
+            </listitem>
+	    <listitem>
+	      <para>
+	        <literal>%y</literal>: The year as a decimal number
+		without a century. 
+	      </para>
+            </listitem>
+	    <listitem>
+	      <para>
+	        <literal>%Y</literal>: The year  as a decimal number
+		including a century. 
+	      </para>
+            </listitem>
+	  </itemizedlist>
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>pltimefmt(fmt)</function>
+    </para>
+
+    <para>
+      This function is used in example 29.
+    </para>
+
+  </sect1>
+
   <sect1 id="plvasp" renderas="sect3">
     <title>
       <function>plvasp</function>: Specify viewport using aspect ratio only
@@ -12745,7 +13006,7 @@ stripchart
     </para>
 
     <para>
-      This function is used in examples 1,12,14,17,25.
+      This function is used in examples 1,12,14,17,25,29.
     </para>
 
   </sect1>
@@ -13072,7 +13333,7 @@ dependent.
     </para>
 
     <para>
-      This function is used in examples 1,2,4,6-12,14-16,18,21,23-27.
+      This function is used in examples 1,2,4,6-12,14-16,18,21,23-27,29.
     </para>
 
   </sect1>
