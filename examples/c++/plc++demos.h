@@ -8,6 +8,12 @@
 
 /* common includes */
 #include "plstream.h"
+
+/* plplot actually includes the C versions of these 2, but
+ * add here for completeness */
+#include <cstdio>
+#include <cstdlib>
+
 #include <iostream>
 #include <cstring>
 #include <cmath>

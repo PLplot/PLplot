@@ -27,7 +27,7 @@
 //---------------------------------------------------------------------------//
 
 #include "plc++demos.h"
-#include <time.h>
+#include <ctime>
 
 #if !defined(HAVE_ISNAN)
   #define isnan(x) ((x) != (x))
