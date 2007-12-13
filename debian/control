@@ -14,9 +14,9 @@ Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38),
  [!arm !m68k], refblas3-dev [arm m68k], lapack3-dev [arm m68k],
  python-gtk2-dev, libwxgtk2.6-dev, python-gnome2-dev,
  python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6),
- python-numpy, ttf-freefont,
- docbook-xml, docbook, docbook-dsssl, docbook-xsl, docbook2x,
- opensp, jadetex, java-gcj-compat-dev, fastjar, swig
+ python-numpy, ttf-freefont, java-gcj-compat-dev, fastjar, swig
+Build-Depends-Indep: docbook-xml, docbook, docbook-dsssl, docbook-xsl, 
+ docbook2x, opensp, jadetex
 Build-Conflicts: libplplot5,  octave2.1-headers
 XS-Python-Version: all
 Homepage: http://www.plplot.org
