@@ -36,8 +36,9 @@ It has been tested on Linux / Unix, Mac OS-X and Windows platforms.
   
 Plplot now allows date / time labels to be used on axes. A new option 
 ('d') is available for the xopt and yopt arguments to plbox which 
-indicates that the axis should be interpreted as a date / time. The 
-time format is seconds since the epoch (usually 1 Jan 1970). This 
+indicates that the axis should be interpreted as a date / time. Similarly
+there is a new range of options for plenv to select date / time labels. 
+The time format is seconds since the epoch (usually 1 Jan 1970). This 
 format is commonly used on most systems. The C gmtime routine can be 
 used to calculate this for a given date and time. The format for the 
 labels is controlled using a new pltimefmt function, which takes a 
@@ -55,6 +56,14 @@ consistent with this. These changes fix a large number of warnings
 with gcc-4.2. Note: this should not require programs using plplot to be 
 recompiled as it is not a binary API change.
 
+There has also been some cleanup of include files in the C++ examples
+so the code will compile with the forthcoming gcc-4.3.
+
 1.4 Bug fixes.
 
+Various fixes including:
+
 Ctest will now work correctly when the build tree path includes symlinks.
+
+Dependencies for swig generated files fixed so they are not rebuilt every 
+time make is called.
