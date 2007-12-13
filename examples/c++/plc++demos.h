@@ -9,6 +9,7 @@
 /* common includes */
 #include "plstream.h"
 #include <iostream>
+#include <cstring>
 #include <cmath>
 
 /* common defines */
