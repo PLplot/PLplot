@@ -371,10 +371,10 @@ const void x09::potential()
 
   // Expanded limits
   peps = 0.05;
-  xpmin = xmin - abs(xmin)*peps;
-  xpmax = xmax + abs(xmax)*peps;
-  ypmin = ymin - abs(ymin)*peps;
-  ypmax = ymax + abs(ymax)*peps;
+  xpmin = xmin - fabs(xmin)*peps;
+  xpmax = xmax + fabs(xmax)*peps;
+  ypmin = ymin - fabs(ymin)*peps;
+  ypmax = ymax + fabs(ymax)*peps;
 
   // Potential inside a conducting cylinder (or sphere) by method of images.
   // Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
