@@ -1,3 +1,11 @@
+plplot (5.8.0-5) UNRELEASED; urgency=low
+
+  * debian/patches/08_fix_cxx_includes: Add patch to fix the include files for 
+    the c++ examples. This patch should ensure the examples build with gcc 4.3. 
+    (closes: #456040)
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 13 Dec 2007 09:24:51 +0000
+
 plplot (5.8.0-4) unstable; urgency=low
 
   * debian/rules: rewrite the rules so the documentation is only built for
