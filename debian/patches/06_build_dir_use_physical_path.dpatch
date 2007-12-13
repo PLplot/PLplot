@@ -1,6 +1,5 @@
 #! /bin/sh /usr/share/dpatch/dpatch-run
-## 06_build_dir_use_physical_path.dpatch by Andrew Ross <andrewross@users.sourceforge.n
-et>
+## 06_build_dir_use_physical_path.dpatch by Andrew Ross <andrewross@users.sourceforge.net>
 ##
 ## DP: Use physical path (resolve symlinks) when checking whether in build
 ## DP: directory. (This patch was taken from the upstream SVN repository.)

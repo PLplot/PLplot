@@ -1,6 +1,5 @@
 #! /bin/sh /usr/share/dpatch/dpatch-run
-## 07_octave_prune_examples.dpatch by Andrew Ross <andrewross@users.sourceforge.n
-et>
+## 07_octave_prune_examples.dpatch by Andrew Ross <andrewross@users.sourceforge.net>
 ##
 ## DP: Don't run example p7 as part of ctest. It does not work well with postscript
 ## DP: and also fails on the alpha architecure, for reasons as yet unknown.

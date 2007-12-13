@@ -1,6 +1,5 @@
-! /bin/sh /usr/share/dpatch/dpatch-run
-## 08_fix_cxx_includes.dpatch by Andrew Ross <andrewross@users.sourceforge.n
-et>
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 08_fix_cxx_includes.dpatch by Andrew Ross <andrewross@users.sourceforge.net>
 ##
 ## DP: Add in missing include files for C++ examples to fix compile errors
 ## DP: with gcc 4.3. (This patch was taken from the upstream SVN repository.)
