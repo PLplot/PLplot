@@ -80,8 +80,6 @@ Depends: java-gcj-compat, ${shlibs:Depends}
 Description: Scientific plotting library
  This packages contains the Java bindings for PLplot, a scientific
  plotting library.
- .
- Homepage: http://www.plplot.org
 
 Package: libcsiro0
 Architecture: any
