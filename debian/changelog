@@ -1,4 +1,4 @@
-plplot (5.8.0-5) UNRELEASED; urgency=low
+plplot (5.8.0-5) unstable; urgency=low
 
   [ Andrew Ross ]
   * debian/patches/08_fix_cxx_includes: Add patch to fix the include files for
