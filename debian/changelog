@@ -1,13 +1,19 @@
-plplot (5.8.0-5) unstable; urgency=low
+plplot (5.8.0-5) UNRELEASED; urgency=low
 
+  [ Andrew Ross ]
   * debian/patches/08_fix_cxx_includes: Add patch to fix the include files for
     the c++ examples. This patch should ensure the examples build with gcc 4.3.
     (closes: #456040)
-  * debian/control: Add Build-Depends-Indep section for those packages 
+  * debian/control: Add Build-Depends-Indep section for those packages
     only used in building the documentation. Reduces package dependencies
     for autobuilders.
-  
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 13 Dec 2007 15:09:00 +0000
+
+  [ Rafael Laboissiere ]
+  * debian/control: Tighten build-dependency on libqhull-dev to version
+    equal or greater 2003.1-8 because versions previous to that one were
+    terribly broken.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 14 Dec 2007 12:12:21 +0100
 
 plplot (5.8.0-4) unstable; urgency=low
 

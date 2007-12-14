@@ -9,13 +9,13 @@ Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38),
  libxi-dev, gfortran, itk3-dev, octave2.9-headers,
  libgd2-noxpm-dev | libgd2-xpm-dev, libgnome2-dev,
  libgnomeprintui2.2-dev, libgnomeui-dev,
- m4, libqhull-dev, libxml-parser-perl, libxml-dom-perl,
+ m4, libqhull-dev (<= 2003.1-8), libxml-parser-perl, libxml-dom-perl,
  libltdl3-dev, pkg-config, dpatch, atlas3-base-dev
  [!arm !m68k], refblas3-dev [arm m68k], lapack3-dev [arm m68k],
  python-gtk2-dev, libwxgtk2.6-dev, python-gnome2-dev,
  python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6),
  python-numpy, ttf-freefont, java-gcj-compat-dev, fastjar, swig
-Build-Depends-Indep: docbook-xml, docbook, docbook-dsssl, docbook-xsl, 
+Build-Depends-Indep: docbook-xml, docbook, docbook-dsssl, docbook-xsl,
  docbook2x, opensp, jadetex
 Build-Conflicts: libplplot5,  octave2.1-headers
 XS-Python-Version: all
