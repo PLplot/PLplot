@@ -95,8 +95,15 @@ add_custom_command(
 )
 
 
-add_custom_target( plplot_jar ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar )
-add_dependencies( plplot_jar plplot_core plplot_examples )
+add_custom_target(plplot_jar ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar)
+
+# The plplot_examples dependency is required to
+# work around CMake 2-level make recursion issue where independent
+# file dependency chains that refer to the same files must have
+# target dependencies between them in order to work for parallel
+# builds (and possibly some visual studio builds).
+
+add_dependencies(plplot_jar plplot_core plplot_examples)
 
 set(JAVAC ${CMAKE_Java_COMPILER})
 set(JAVADATA_HARDDIR ${JAR_DIR})

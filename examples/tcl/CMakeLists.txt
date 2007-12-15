@@ -100,3 +100,11 @@ DESTINATION ${DATA_DIR}/examples/tcl
 add_custom_target(tclIndex_examples_tcl ALL
   DEPENDS ${tclIndex_DEPENDS} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
 )
+
+# Workaround CMake 2-level make recursion issue where independent
+# file dependency chains that refer to the same files must have
+# target dependencies between them in order to work for parallel
+# builds (and possibly some visual studio builds).
+if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+  add_dependencies(tclIndex_examples_tcl tcl_examples)
+endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")

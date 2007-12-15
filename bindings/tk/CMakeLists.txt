@@ -108,16 +108,25 @@ endif(USE_RPATH)
 
 install(TARGETS plserver DESTINATION ${BIN_DIR})
 
-add_custom_target(tclIndex_tk ALL
-  DEPENDS ${tclIndex_DEPENDS} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-)
-
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
 COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
 DEPENDS ${tclIndex_DEPENDS}
 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+add_custom_target(tclIndex_tk ALL
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+)
+
+# The tcl_files dependency is required to
+# work around CMake 2-level make recursion issue where independent
+# file dependency chains that refer to the same files must have
+# target dependencies between them in order to work for parallel
+# builds (and possibly some visual studio builds).
+if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+  add_dependencies(tclIndex_tk tcl_files)
+endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 
 install(
 FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex

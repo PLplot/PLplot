@@ -133,6 +133,8 @@ if(ENABLE_DYNDRIVERS)
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
     )
+    # Workaround CMake 2-level make recursion issue for parallel builds.
+    add_dependencies(${SOURCE_ROOT_NAME}_CHECK ${SOURCE_ROOT_NAME})
     
     install(TARGETS ${SOURCE_ROOT_NAME} DESTINATION ${DRV_DIR})
     install(
