@@ -66,7 +66,8 @@ endif(DEFAULT_NO_DEVICES AND DEFAULT_ALL_DEVICES)
 # "ON" or "OFF" and this will reflect in inclusion/exclusion by default
 # (as shown by ccmake).
 #
-# Ordered alphabetically by second in each pair (the driver) for human
+# Ordered alphabetically by second in each pair (the driver) and then
+# alphabetically by device (the first in each pair) for human
 # consumption, but this is not necessary.
 
 set(DRIVERS_DEVICE_LIST
@@ -82,12 +83,16 @@ set(DRIVERS_DEVICE_LIST
 "xcairo:cairo:ON"
 "cgm:cgm:ON"
 "dg300:dg300:OFF"
-"png:gd:ON" "jpeg:gd:ON" "gif:gd:ON"
+"gif:gd:ON"
+"jpeg:gd:ON"
+"png:gd:ON" 
+"gcw:gcw:ON"
 # Do not implement gnome which is superseded by gcw
 #"gnome:gnome:OFF"
-"hp7470:hpgl:ON" "hp7580:hpgl:ON" "lj_hpgl:hpgl:ON"
+"hp7470:hpgl:ON"
+"hp7580:hpgl:ON"
+"lj_hpgl:hpgl:ON"
 "imp:impress:OFF"
-"gcw:gcw:ON"
 # Default off because poorly maintained (colours are incorrect)
 # must use software fill, and must run as root.
 "linuxvga:linuxvga:OFF"
@@ -109,9 +114,15 @@ set(DRIVERS_DEVICE_LIST
 "pstex:pstex:OFF"
 "psttf:psttf:ON"
 "svg:svg:ON"
-"xterm:tek:OFF" "tek4010:tek:OFF" "tek4107:tek:OFF" "mskermit:tek:OFF"
-"versaterm:tek:OFF" "vlt:tek:OFF" "conex:tek:OFF" "tek4010f:tek:OFF"
+"conex:tek:OFF" 
+"mskermit:tek:OFF"
+"tek4010:tek:OFF"
+"tek4010f:tek:OFF"
+"tek4107:tek:OFF"
 "tek4107f:tek:OFF"
+"versaterm:tek:OFF"
+"vlt:tek:OFF"
+"xterm:tek:OFF" 
 "tk:tk:ON"
 "tkwin:tkwin:ON"
 "wingcc:wingcc:ON"
