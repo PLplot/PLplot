@@ -82,11 +82,6 @@ if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
   )
 endif(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
 
-set(
-INCLUDED_FILES
-${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
-)
-
 set(TARBALL tarball.tgz)
 set(HTML_TARBALL ${BASE_HTML}.tar.gz)
 set(INFO_TARBALL ${BASE_INFO}.tar.gz)
@@ -146,8 +141,10 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
   "static_built_files\n"
   )
 
-  # The following files are included in plplotdoc.xml and are
-  # required for validation
+  # The following files are defined as entities in plplotdoc.xml and are
+  # used to help build the documentation.  Of course, these files are
+  # required for validation as well.
+  # N.B. if PERL_FOUND is false, then BUILD_DOC is false.
   if(PERL_FOUND)
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
@@ -155,29 +152,45 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot${LIB_TAG}.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
     DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
     )
-  
+    add_custom_target(
+    docbook_plplot-symbols_txt
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
+    )
+    # For parallel builds to work must have all file dependency chains of
+    # targets independent of each other.  Thus, since several targets
+    # need plplot-symbols.txt, must use target dependencies rather than
+    # file dependencies to build this file.
+    add_custom_target(
+    docbook_plplot-symbols_txt
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
+    )
+    # libplplot should be created before plplot-symbols.txt since
+    # get-library-symbols.pl depends upon libplplot.
+    add_dependencies(docbook_plplot-symbols_txt plplot${LIB_TAG})
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+    "plplot-symbols.txt\n"
+    )
+
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
     COMMAND ${PERL_EXECUTABLE}
     ${BINDIR}/get-library-structs.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt ${CMAKE_SOURCE_DIR}/include/plplot.h
     DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
     )
+    # For parallel builds to work must have all file dependency chains of
+    # targets independent of each other.  Thus, since several targets
+    # need plplot-structs.txt, must use target dependencies rather than
+    # file dependencies to build this file.
+    add_custom_target(
+    docbook_plplot-structs_txt
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot-structs.txt
+    )
     file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-    "plplot-symbols.txt\n"
     "plplot-structs.txt\n"
     )
-  
-    # libplplot should be created before plplot-symbols.txt since
-    # get-library-symbols.pl depends upon libplplot and this is enforced
-    # (from the good results I have gotten so far) via the add_dependencies 
-    # command below.
-    add_custom_target(
-    docbook_plplot-symbols_txt
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
-    )
-    add_dependencies(docbook_plplot-symbols_txt plplot${LIB_TAG})
-
   endif(PERL_FOUND)
   
   # Custom command for validating xml file
@@ -193,15 +206,18 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     COMMAND ${ONSGMLS} ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml > ${VALIDATE_OUTPUT}
     DEPENDS 
     ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc.xml
-    ${INCLUDED_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
     )
-    add_dependencies(validate docbook_plplot-symbols_txt)
+    add_dependencies(validate
+    docbook_plplot-symbols_txt
+    docbook_plplot-structs_txt
+    )
   else(PERL_FOUND AND ONSGMLS)
     add_custom_target(validate
     ${CMAKE_COMMAND} -E echo "Unable to validate xml file - missing dependencies"
     )
   endif(PERL_FOUND AND ONSGMLS)
+  # N.B. if PERL_FOUND is false, then BUILD_DOC is false.
   if(BUILD_DOC)
     set(STYLESHEET_HTML plplotdoc-html.dsl)
     set(STYLESHEET_PRINT plplotdoc-print.dsl)
@@ -232,7 +248,6 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     ${SOURCE_FILES}
     ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
     ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
-    ${INCLUDED_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/inline-print.ent
     )
 
@@ -294,10 +309,14 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     cp -pf ${BASE}.aux prior-dvi.aux \; 
     ${JADETEX} ${BASE}.jadetex \; 
     fi
+    # dependence on ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf simply
+    # to serialize for parallel build case since both custom commands use
+    # the same *.aux files.
     DEPENDS 
     ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
     ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg 
     ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map
+    ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
     )
 
     add_custom_command(
@@ -320,7 +339,13 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
       "${BASE}.ps.gz\n"
       "${BASE}.pdf\n"
       )
-      add_dependencies(print docbook_plplot-symbols_txt)
+      # These files used for more than one target.  Therefore must
+      # use target dependencies rather than file dependencies to build
+      # them.  Otherwise, parallel builds won't work.
+      add_dependencies(print
+      docbook_plplot-symbols_txt
+      docbook_plplot-structs_txt
+      )
     endif(BUILD_PRINT)
 
     # Custom commands for building info version of documentation
@@ -336,7 +361,6 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     DEPENDS
     ${SOURCE_FILES} 
     ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML} 
-    ${INCLUDED_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/inline-info.ent
     )
 
@@ -381,7 +405,13 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
       "plplotdoc.texi\n"
       "${INFO_MANIFEST}\n"
       )
-      add_dependencies(info docbook_plplot-symbols_txt)
+      # These files used for more than one target.  Therefore must
+      # use target dependencies rather than file dependencies to build
+      # them.  Otherwise, parallel builds won't work.
+      add_dependencies(info
+      docbook_plplot-symbols_txt
+      docbook_plplot-structs_txt
+      )
     endif(BUILD_INFO)
 
     # Custom commands for building man version of documentation
@@ -418,7 +448,6 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     DEPENDS
     ${SOURCE_FILES} 
     ${CMAKE_CURRENT_BINARY_DIR}/${MASTER_XML}
-    ${INCLUDED_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
     )
 
@@ -429,7 +458,13 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
       file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
       "${HTML_MANIFEST}\n"
       )
-      add_dependencies(html docbook_plplot-symbols_txt)
+      # These files used for more than one target.  Therefore must
+      # use target dependencies rather than file dependencies to build
+      # them.  Otherwise, parallel builds won't work.
+      add_dependencies(html
+      docbook_plplot-symbols_txt
+      docbook_plplot-structs_txt
+      )
     endif(BUILD_HTML)
   endif(BUILD_DOC)
 endif(
