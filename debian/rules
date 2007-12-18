@@ -29,6 +29,13 @@ debex		:= $(debshr)/plplot$(version)/examples
 JAVA_HOME = /usr/lib/jvm/java-gcj
 
 PYVERS = $(shell pyversions -vr)
+# Disable java build on arm - problems with java-gcj-compat-dev at the moment
+ifeq ($(DEB_BUILD_ARCH),arm)
+CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
+	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
+	-DOCTAVE_OCT_DIR=$(OCTDIR) \
+	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_java=OFF
+else
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
 	-DCMAKE_Java_RUNTIME=$(JAVA_HOME)/bin/java \
@@ -36,6 +43,7 @@ CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
 	-DUSE_RPATH=OFF -DPLD_psttf=OFF
+endif
 
 BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
@@ -113,8 +121,10 @@ install-arch-stamp: build-arch-stamp
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
 
+ifneq ($(DEB_BUILD_ARCH),arm)
 	mv $(debshr)/java/plplot.jar $(debshr)/java/plplot-$(version).jar
 	( cd $(debshr)/java ; ln -s plplot-$(version).jar plplot.jar )
+endif
 
 	touch install-arch-stamp
 

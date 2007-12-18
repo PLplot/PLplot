@@ -1,3 +1,11 @@
+plplot (5.8.0-6) UNRELEASED; urgency=low
+
+  * debian/rules, debian/control, debian/libplplot9.README.debian: Disable java 
+    on arm platform. Currently java-gcj-compat-dev is out of date on that 
+    architecture. Instead the libplplot9-java package will be empty on arm. 
+
+ -- Andrew Ross <andrew@localhost>  Tue, 18 Dec 2007 13:07:38 +0000
+
 plplot (5.8.0-5) unstable; urgency=low
 
   [ Andrew Ross ]

@@ -48,7 +48,8 @@ plplot for Debian
 	the PLplot functions.
 
       * libplplot9-java: Contains the bindings for using the PLplot
-	functions from java.
+	functions from java. This package is currently empty on arm due 
+        to problems with java-gcj-compat-dev on this platform.
 
       * plplot-tcl: Modules allowing binding of the PLplot functions
         for Tcl/Tk.  Contains also the Tk driver module and some interactive
