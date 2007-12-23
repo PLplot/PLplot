@@ -11,8 +11,10 @@ plplot (5.8.0-6) UNRELEASED; urgency=low
       previous version had the include files installed in the  wrong
       directory
     + Build-depends on octave3.0-headers instead of octave2.9-headers
+  * debian/patches/01_check-for-octave2.9.dpatch: Adapted for also
+    accepting Octave 3.0
 
- -- Rafael Laboissiere <rafael@debian.org>  Sun, 23 Dec 2007 23:36:42 +0100
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 24 Dec 2007 00:06:08 +0100
 
 plplot (5.8.0-5) unstable; urgency=low
 
