@@ -6,9 +6,11 @@ plplot (5.8.0-6) UNRELEASED; urgency=low
     architecture. Instead the libplplot9-java package will be empty on arm.
 
   [ Rafael Laboissiere ]
-  * debian/control: Force build-dependency on python-numpy to be >=1.0.4-4,
-    because the previous version had the include files installed in the
-    wrong directory
+  * debian/control:
+    + Force build-dependency on python-numpy to be >=1.0.4-4, because the
+      previous version had the include files installed in the  wrong
+      directory
+    + Build-depends on octave3.0-headers instead of octave2.9-headers
 
  -- Rafael Laboissiere <rafael@debian.org>  Sun, 23 Dec 2007 23:36:42 +0100
 
