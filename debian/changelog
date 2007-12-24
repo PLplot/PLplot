@@ -1,4 +1,4 @@
-plplot (5.8.0-6) UNRELEASED; urgency=low
+plplot (5.8.0-6) unstable; urgency=low
 
   [ Andrew Ross ]
   * debian/rules, debian/control, debian/libplplot9.README.debian: Disable java
