@@ -72,14 +72,13 @@ endif(DEFAULT_NO_DEVICES AND DEFAULT_ALL_DEVICES)
 
 set(DRIVERS_DEVICE_LIST
 "aqt:aqt:ON"
-# memcairo does not work and svgcairo does not render text so turn them off
-# by default.  The remaining cairo devices work well so turn them on by
-# default.
+# memcairo does not work so turn it off by default.
+# The remaining cairo devices work well so turn them on by default.
 "memcairo:cairo:OFF"
 "pdfcairo:cairo:ON"
 "pngcairo:cairo:ON"
 "pscairo:cairo:ON"
-"svgcairo:cairo:OFF"
+"svgcairo:cairo:ON"
 "xcairo:cairo:ON"
 "cgm:cgm:ON"
 "dg300:dg300:OFF"
