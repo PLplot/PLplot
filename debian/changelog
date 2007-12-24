@@ -13,6 +13,8 @@ plplot (5.8.0-6) UNRELEASED; urgency=low
     + Build-depends on octave3.0-headers instead of octave2.9-headers
   * debian/patches/01_check-for-octave2.9.dpatch: Adapted for also
     accepting Octave 3.0
+  * debian/rules: Adjusted path of numpy include files, which are now in
+    /usr/include/numpy
 
  -- Rafael Laboissiere <rafael@debian.org>  Mon, 24 Dec 2007 00:06:08 +0100
 
