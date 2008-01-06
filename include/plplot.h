@@ -381,6 +381,7 @@ typedef struct {
     unsigned char r;		/* red */
     unsigned char g;		/* green */
     unsigned char b;		/* blue */
+    PLFLT a;                    /* alpha (or transparency) */
     const char *name;
 } PLColor;
 
@@ -495,6 +496,8 @@ typedef struct {
 #define    plgchr	c_plgchr
 #define    plgcol0	c_plgcol0
 #define    plgcolbg	c_plgcolbg
+#define    plgcol0a	c_plgcol0a
+#define    plgcolbga	c_plgcolbga
 #define    plgcompression	c_plgcompression
 #define    plgdev	c_plgdev
 #define    plgdidev	c_plgdidev
@@ -550,11 +553,13 @@ typedef struct {
 #define    plrgbhls     c_plrgbhls
 #define    plschr	c_plschr
 #define    plscmap0	c_plscmap0
+#define    plscmap0a	c_plscmap0a
 #define    plscmap0n	c_plscmap0n
 #define    plscmap1	c_plscmap1
 #define    plscmap1l	c_plscmap1l
 #define    plscmap1n	c_plscmap1n
 #define    plscol0	c_plscol0
+#define    plscol0a     c_plscol0a
 #define    plscolbg	c_plscolbg
 #define    plscolor	c_plscolor
 #define    plscompression	c_plscompression
@@ -844,7 +849,17 @@ c_plgchr(PLFLT *p_def, PLFLT *p_ht);
 PLDLLIMPEXP void
 c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b);
 
+/* Returns 8 bit RGB values for given color from color map 0 and alpha value */
+
+PLDLLIMPEXP void
+c_plgcol0a(PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a);
+
 /* Returns the background color by 8 bit RGB value */
+
+PLDLLIMPEXP void
+c_plgcolbg(PLINT *r, PLINT *g, PLINT *b);
+
+/* Returns the background color by 8 bit RGB value and alpha value */
 
 PLDLLIMPEXP void
 c_plgcolbg(PLINT *r, PLINT *g, PLINT *b);
@@ -1181,6 +1196,11 @@ c_plschr(PLFLT def, PLFLT scale);
 PLDLLIMPEXP void
 c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0);
 
+/* Set color map 0 colors by 8 bit RGB values and alpha values */
+
+PLDLLIMPEXP void
+c_plscmap0a(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0);
+
 /* Set number of colors in cmap 0 */
 
 PLDLLIMPEXP void
@@ -1208,10 +1228,20 @@ c_plscmap1n(PLINT ncol1);
 PLDLLIMPEXP void
 c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b);
 
+/* Set a given color from color map 0 by 8 bit RGB value */
+
+PLDLLIMPEXP void
+c_plscol0a(PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a);
+
 /* Set the background color by 8 bit RGB value */
 
 PLDLLIMPEXP void
 c_plscolbg(PLINT r, PLINT g, PLINT b);
+
+/* Set the background color by 8 bit RGB value and alpha value*/
+
+PLDLLIMPEXP void
+c_plscolbga(PLINT r, PLINT g, PLINT b, PLFLT a);
 
 /* Used to globally turn color output on/off */
 

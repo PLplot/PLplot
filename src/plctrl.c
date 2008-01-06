@@ -6,6 +6,7 @@
 
    Copyright (C) 2004  Joao Cardoso
    Copyright (C) 2004  Rafael Laboissiere
+   Copyright (C) 2008  Hazen Babcock
 
    This file is part of PLplot.
 
@@ -55,7 +56,7 @@
 char PLDLLIMPEXP * plplotLibDir = 0;
 
 static void
-color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, char *name );
+color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, char *name );
 
 static void
 strcat_delim(char *dirspec);
@@ -126,6 +127,7 @@ c_plcol0(PLINT icol0)
     plsc->curcolor.r = plsc->cmap0[icol0].r;
     plsc->curcolor.g = plsc->cmap0[icol0].g;
     plsc->curcolor.b = plsc->cmap0[icol0].b;
+    plsc->curcolor.a = plsc->cmap0[icol0].a;
 
     plsc->curcmap = 0;
     plP_state(PLSTATE_COLOR0);
@@ -160,6 +162,7 @@ c_plcol1(PLFLT col1)
     plsc->curcolor.r = plsc->cmap1[plsc->icol1].r;
     plsc->curcolor.g = plsc->cmap1[plsc->icol1].g;
     plsc->curcolor.b = plsc->cmap1[plsc->icol1].b;
+    plsc->curcolor.a = plsc->cmap1[plsc->icol1].a;
 
     plsc->curcmap = 1;
     plP_state(PLSTATE_COLOR1);
@@ -178,6 +181,18 @@ c_plscolbg(PLINT r, PLINT g, PLINT b)
 }
 
 /*--------------------------------------------------------------------------*\
+ * plscolbga()
+ *
+ * Set the background color (cmap0[0]) by 8 bit RGB value and alpha value
+\*--------------------------------------------------------------------------*/
+
+void
+c_plscolbga(PLINT r, PLINT g, PLINT b, PLFLT a)
+{
+  plscol0a(0, r, g, b, a);
+}
+
+/*--------------------------------------------------------------------------*\
  * plgcolbg()
  *
  * Returns the background color (cmap0[0]) by 8 bit RGB value
@@ -190,6 +205,18 @@ c_plgcolbg(PLINT *r, PLINT *g, PLINT *b)
 }
 
 /*--------------------------------------------------------------------------*\
+ * plgcolbga()
+ *
+ * Returns the background color (cmap0[0]) by 8 bit RGB value and alpha value
+\*--------------------------------------------------------------------------*/
+
+void
+c_plgcolbga(PLINT *r, PLINT *g, PLINT *b, PLFLT *a)
+{
+  plgcol0a(0, r, g, b, a);
+}
+
+/*--------------------------------------------------------------------------*\
  * plscol0()
  *
  * Set a given color from color map 0 by 8 bit RGB value
@@ -199,19 +226,32 @@ c_plgcolbg(PLINT *r, PLINT *g, PLINT *b)
 void
 c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 {
+    plscol0a(icol0, r, g, b, 1.0);
+}
+
+/*--------------------------------------------------------------------------*\
+ * plscol0a()
+ *
+ * Set a given color from color map 0 by 8 bit RGB value and alpha value.
+ * Does not result in any additional cells to be allocated.
+\*--------------------------------------------------------------------------*/
+
+void
+c_plscol0a(PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a)
+{
     if (plsc->cmap0 == NULL)
 	plscmap0n(0);
 
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
 	char buffer[256];
-	sprintf(buffer, "plscol0: Illegal color table value: %d", (int) icol0);
+	sprintf(buffer, "plscol0a: Illegal color table value: %d", (int) icol0);
 	plabort(buffer);
 	return;
     }
-    if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
+    if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255) || (a < 0 || a > 1.0)) {
 	char buffer[256];
-	sprintf(buffer, "plscol0: Invalid RGB color: %d, %d, %d",
-		(int) r, (int) g, (int) b);
+	sprintf(buffer, "plscol0a: Invalid RGB color: %d, %d, %d, %f",
+		(int) r, (int) g, (int) b, (double) a);
 	plabort(buffer);
 	return;
     }
@@ -219,6 +259,7 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
     plsc->cmap0[icol0].r = r;
     plsc->cmap0[icol0].g = g;
     plsc->cmap0[icol0].b = b;
+    plsc->cmap0[icol0].a = a;
 
     if (plsc->level > 0)
 	plP_state(PLSTATE_CMAP0);
@@ -251,6 +292,39 @@ c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
     *r = plsc->cmap0[icol0].r;
     *g = plsc->cmap0[icol0].g;
     *b = plsc->cmap0[icol0].b;
+
+    return;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plgcol0a()
+ *
+ * Returns 8 bit RGB values for given color from color map 0 and alpha value
+ * Values are negative if an invalid color id is given
+\*--------------------------------------------------------------------------*/
+
+void
+c_plgcol0a(PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a)
+{
+    if (plsc->cmap0 == NULL)
+	plscmap0n(0);
+
+    *r = -1;
+    *g = -1;
+    *b = -1;
+    *a = -1.0;
+
+    if (icol0 < 0 || icol0 > plsc->ncol0) {
+	char buffer[256];
+	sprintf(buffer, "plgcol0: Invalid color index: %d", (int) icol0);
+	plabort(buffer);
+	return;
+    }
+
+    *r = plsc->cmap0[icol0].r;
+    *g = plsc->cmap0[icol0].g;
+    *b = plsc->cmap0[icol0].b;
+    *a = plsc->cmap0[icol0].a;
 
     return;
 }
@@ -291,6 +365,43 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 }
 
 /*--------------------------------------------------------------------------*\
+ * plscmap0a()
+ *
+ * Set color map 0 colors by 8 bit RGB values.  This sets the entire color
+ * map -- only as many colors as specified will be allocated.
+\*--------------------------------------------------------------------------*/
+
+void
+c_plscmap0a(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0)
+{
+    int i;
+
+    plscmap0n(ncol0);
+
+    for (i = 0; i < plsc->ncol0; i++) {
+	if ((r[i] < 0 || r[i] > 255) ||
+	    (g[i] < 0 || g[i] > 255) ||
+	    (b[i] < 0 || b[i] > 255) ||
+	    (a[i] < 0.0 || a[i] > 1.0)) {
+
+	    char buffer[256];
+	    sprintf(buffer, "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
+		    (int) r[i], (int) g[i], (int) b[i], (double) a[i]);
+	    plabort(buffer);
+	    return;
+	}
+
+	plsc->cmap0[i].r = r[i];
+	plsc->cmap0[i].g = g[i];
+	plsc->cmap0[i].b = b[i];
+	plsc->cmap0[i].a = a[i];
+    }
+
+    if (plsc->level > 0)
+	plP_state(PLSTATE_CMAP0);
+}
+
+/*--------------------------------------------------------------------------*\
  * plscmap1()
  *
  * Set color map 1 colors by 8 bit RGB values
@@ -318,6 +429,7 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 	plsc->cmap1[i].r = r[i];
 	plsc->cmap1[i].g = g[i];
 	plsc->cmap1[i].b = b[i];
+	plsc->cmap1[i].a = 1.0;
     }
 
     if (plsc->level > 0)
@@ -499,6 +611,7 @@ plcmap1_calc(void)
 	    plsc->cmap1[i].r = MAX(0, MIN(255, (int) (256. * r)));
 	    plsc->cmap1[i].g = MAX(0, MIN(255, (int) (256. * g)));
 	    plsc->cmap1[i].b = MAX(0, MIN(255, (int) (256. * b)));
+	    plsc->cmap1[i].a = 1.0;
 	}
     }
 
@@ -628,11 +741,12 @@ c_plscmap1n(PLINT ncol1)
 \*--------------------------------------------------------------------------*/
 
 static void
-color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, char *name )
+color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, char *name )
 {
     plsc->cmap0[i].r = r;
     plsc->cmap0[i].g = g;
     plsc->cmap0[i].b = b;
+    plsc->cmap0[i].a = a;
     plsc->cmap0[i].name = name;
 }
 
@@ -647,30 +761,30 @@ color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, char *name )
  * all systems.
 \*--------------------------------------------------------------------------*/
 
-#define color_def(i, r, g, b, n) \
-if (i >= imin && i <= imax) color_set(i, r, g, b, n);
+#define color_def(i, r, g, b, a, n)			\
+  if (i >= imin && i <= imax) color_set(i, r, g, b, a, n);
 
 static void
 plcmap0_def(int imin, int imax)
 {
     int i;
 
-    color_def(0,    0,   0,   0, "black" );	/* black */
-    color_def(1,  255,   0,   0, "red");	/* red */
-    color_def(2,  255, 255,   0, "yellow" );	/* yellow */
-    color_def(3,    0, 255,   0, "green" );	/* green */
-    color_def(4,  127, 255, 212, "aquamarine" );	/* aquamarine */
-    color_def(5,  255, 192, 203, "pink" );	/* pink */
-    color_def(6,  245, 222, 179, "wheat" );	/* wheat */
-    color_def(7,  190, 190, 190, "grey" );	/* grey */
-    color_def(8,  165,  42,  42, "brown" );	/* brown */
-    color_def(9,    0,   0, 255, "blue" );	/* blue */
-    color_def(10, 138,  43, 226, "BlueViolet" );	/* Blue Violet */
-    color_def(11,   0, 255, 255, "cyan" );	/* cyan */
-    color_def(12,  64, 224, 208, "turquoise" );	/* turquoise */
-    color_def(13, 255,   0, 255, "magenta" );	/* magenta */
-    color_def(14, 250, 128, 114, "salmon" );	/* salmon */
-    color_def(15, 255, 255, 255, "white" );	/* white */
+    color_def(0,    0,   0,   0, 1.0, "black" );        /* black */
+    color_def(1,  255,   0,   0, 1.0, "red");           /* red */
+    color_def(2,  255, 255,   0, 1.0, "yellow" );       /* yellow */
+    color_def(3,    0, 255,   0, 1.0, "green" );	/* green */
+    color_def(4,  127, 255, 212, 1.0, "aquamarine" );	/* aquamarine */
+    color_def(5,  255, 192, 203, 1.0, "pink" );	        /* pink */
+    color_def(6,  245, 222, 179, 1.0, "wheat" );	/* wheat */
+    color_def(7,  190, 190, 190, 1.0, "grey" );	        /* grey */
+    color_def(8,  165,  42,  42, 1.0, "brown" );	/* brown */
+    color_def(9,    0,   0, 255, 1.0, "blue" );	        /* blue */
+    color_def(10, 138,  43, 226, 1.0, "BlueViolet" );	/* Blue Violet */
+    color_def(11,   0, 255, 255, 1.0, "cyan" );	        /* cyan */
+    color_def(12,  64, 224, 208, 1.0, "turquoise" );	/* turquoise */
+    color_def(13, 255,   0, 255, 1.0, "magenta" );	/* magenta */
+    color_def(14, 250, 128, 114, 1.0, "salmon" );	/* salmon */
+    color_def(15, 255, 255, 255, 1.0, "white" );	/* white */
 
 /*     color_def(0, 255, 255, 255, "white" );	/\* white *\/ */
 /*     color_def(1,    0,   0,   0, "black" );	/\* black *\/ */
@@ -692,7 +806,7 @@ plcmap0_def(int imin, int imax)
 /* Any others are just arbitrarily set */
 
     for (i = 16; i <= imax; i++)
-	color_def(i, 255, 0, 0, "red"); 	/* red */
+      color_def(i, 255, 0, 0, 1.0, "red"); 	/* red */
 }
 
 /*--------------------------------------------------------------------------*\
