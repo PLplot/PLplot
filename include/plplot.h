@@ -862,7 +862,7 @@ c_plgcolbg(PLINT *r, PLINT *g, PLINT *b);
 /* Returns the background color by 8 bit RGB value and alpha value */
 
 PLDLLIMPEXP void
-c_plgcolbg(PLINT *r, PLINT *g, PLINT *b);
+c_plgcolbga(PLINT *r, PLINT *g, PLINT *b, PLFLT *a);
 
 /* Returns the current compression setting */
 
