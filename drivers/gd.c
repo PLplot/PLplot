@@ -929,8 +929,9 @@ long temp_col;
                  (gdImageTrueColor(dev->im_out)) )  /* In TrueColour mode we allocate each colour as we come to it */
 	       {
 	        /* Next allocate a new colour to a temporary slot since what we do with it will varay depending on if its a pallter index or truecolour */
-                temp_col=gdImageColorAllocate(dev->im_out,pls->curcolor.r,
-                                             pls->curcolor.g, pls->curcolor.b);
+                temp_col=gdImageColorAllocateAlpha(dev->im_out,pls->curcolor.r,
+                                             pls->curcolor.g, pls->curcolor.b, 
+                                             (int) ((1.0-pls->curcolor.a)*gdAlphaMax));
 
                 if (gdImageTrueColor(dev->im_out))
                     dev->colour = temp_col;     /* If it's truecolour, then we will directly set dev->colour to our "new" colour */
@@ -953,7 +954,9 @@ long temp_col;
            {
 	    if (dev->totcol < NCOLOURS)
 	       {
-                gdImageColorAllocate(dev->im_out,pls->curcolor.r, pls->curcolor.g,  pls->curcolor.b);
+                gdImageColorAllocateAlpha(dev->im_out,pls->curcolor.r, 
+                                          pls->curcolor.g,  pls->curcolor.b,
+                                          (int) ((1.0-pls->curcolor.a)*gdAlphaMax));
 		dev->colour = dev->totcol;
 	       }
 
@@ -982,7 +985,9 @@ long temp_col;
            }
         else    /* it is a truecolour image */
            {
-             dev->colour = gdTrueColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b);
+             dev->colour = gdTrueColorAlpha(pls->curcolor.r, pls->curcolor.g, 
+                                            pls->curcolor.b, 
+                                            (int) ((1.0-pls->curcolor.a)*gdAlphaMax) );
            }
 #endif
 	break;
