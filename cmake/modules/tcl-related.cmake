@@ -59,6 +59,7 @@ if(ENABLE_tcl)
   find_package(TCL)
   # Supplement those results with iTcl and iTk include paths and libraries.
   if(TCL_FOUND)
+    option(HAVE_TCL_GT_84 "if Tcl version is greater than 8.4" OFF)
     message(STATUS
     "Looking for include paths and libraries for Tcl/Tk - found"
     )

@@ -85,12 +85,16 @@ EXTERN int		Itk_Init _ANSI_ARGS_((Tcl_Interp * interp));
 
 /* From tclIntDecls.h */
 
+#ifndef Tcl_Import_TCL_DECLARED
 EXTERN int		Tcl_Import _ANSI_ARGS_((Tcl_Interp * interp,
 				Tcl_Namespace * nsPtr, char * pattern,
 				int allowOverwrite));
+#endif
 
+#ifndef Tcl_GetGlobalNamespace_TCL_DECLARE
 EXTERN Tcl_Namespace *	Tcl_GetGlobalNamespace _ANSI_ARGS_((
 				Tcl_Interp * interp));
+#endif
 
 /*
  * Declarations for various library procedures and variables (don't want

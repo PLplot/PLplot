@@ -73,6 +73,9 @@
 /* Define if Tk is available */
 #cmakedefine ENABLE_tk
 
+/* Define if Tcl version is greater than 8.4 */
+#cmakedefine HAVE_TCL_GT_84
+
 /* Define if [incr], [Tk] is available */
 #cmakedefine HAVE_ITK
 
