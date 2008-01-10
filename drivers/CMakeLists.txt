@@ -68,6 +68,16 @@ if(ENABLE_DYNDRIVERS)
       #message("${SOURCE_ROOT_NAME}_COMPILE_FLAGS = ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}")
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
     add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
+    # ${SOURCE_ROOT_NAME}_LINK_FLAGS is ideally a list of the full path names
+    # to libraries determined with find_library.  However, the list can also
+    # include link flags such as the -L and -l form of specifying libraries,
+    # but that way of doing things only works on Unix, and even for Unix,
+    # cmake does not correctly set the rpath for the build tree results
+    # for non-standard locations with the -L and -l forms.
+    #message("${SOURCE_ROOT_NAME}_LINK_FLAGS = ${${SOURCE_ROOT_NAME}_LINK_FLAGS}")
+    # ${SOURCE_ROOT_NAME}_TARGETS is a list of PLplot CMake targets that the
+    # device driver depends on.  
+    #message("${SOURCE_ROOT_NAME}_TARGETS = ${${SOURCE_ROOT_NAME}_TARGETS}")
     target_link_libraries(
     ${SOURCE_ROOT_NAME}
     plplot${LIB_TAG}
@@ -75,8 +85,10 @@ if(ENABLE_DYNDRIVERS)
     ${${SOURCE_ROOT_NAME}_LINK_FLAGS}
     ${${SOURCE_ROOT_NAME}_TARGETS}
     )
-    #message("${SOURCE_ROOT_NAME}_LINK_FLAGS = ${${SOURCE_ROOT_NAME}_LINK_FLAGS}")
-    #message("${SOURCE_ROOT_NAME}_TARGETS = ${${SOURCE_ROOT_NAME}_TARGETS}")
+    # ${SOURCE_ROOT_NAME}_RPATH originally set in cmake/modules files for
+    # each driver in ${DRIVERS_LIST}.  This is only used for the 
+    # install-tree rpath since cmake handles the build-tree rpath
+    # automatically (so long as full pathnames to libraries are used).
     set(
     ${SOURCE_ROOT_NAME}_RPATH
     ${${SOURCE_ROOT_NAME}_RPATH}
