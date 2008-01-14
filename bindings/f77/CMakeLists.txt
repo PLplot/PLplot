@@ -34,8 +34,10 @@ else(PL_DOUBLE)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     COMMAND sed
-    -f ${CMAKE_CURRENT_SOURCE_DIR}/double2single.sed ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4a > ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4
+    -f ${CMAKE_CURRENT_SOURCE_DIR}/double2single.sed ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4 > ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
+    DEPENDS 
+    ${CMAKE_CURRENT_SOURCE_DIR}/double2single.sed
+    ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4
   )
 endif(PL_DOUBLE)
 
