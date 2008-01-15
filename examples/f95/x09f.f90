@@ -348,7 +348,7 @@
       call plline(xtm, ytm)
 
       call plcol0(ncollab)
-      call pllab(' ', ' ', &
+      call pllab('', '', &
       'Shielded potential of charges in a conducting sphere')
       end
 
