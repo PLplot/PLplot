@@ -105,7 +105,7 @@
         sh_width = 2
         call plpsty(0)
         call plshade(z(:NX,:NY), ' ', &
-          dble ( -1._plflt), 1.0_plflt, -1.0_plflt, 1.0_plflt, &
+          -1._plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, &
           shade_min, shade_max, &
           sh_cmap, sh_color, sh_width, &
           min_color, min_width, max_color, max_width )
