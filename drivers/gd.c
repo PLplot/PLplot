@@ -929,9 +929,14 @@ long temp_col;
                  (gdImageTrueColor(dev->im_out)) )  /* In TrueColour mode we allocate each colour as we come to it */
 	       {
 	        /* Next allocate a new colour to a temporary slot since what we do with it will varay depending on if its a pallter index or truecolour */
+#if GD2_VERS >= 2
                 temp_col=gdImageColorAllocateAlpha(dev->im_out,pls->curcolor.r,
                                              pls->curcolor.g, pls->curcolor.b, 
                                              (int) ((1.0-pls->curcolor.a)*gdAlphaMax));
+#else
+                temp_col=gdImageColorAllocate(dev->im_out,pls->curcolor.r,
+                                             pls->curcolor.g, pls->curcolor.b); 
+#endif
 
                 if (gdImageTrueColor(dev->im_out))
                     dev->colour = temp_col;     /* If it's truecolour, then we will directly set dev->colour to our "new" colour */
@@ -954,9 +959,14 @@ long temp_col;
            {
 	    if (dev->totcol < NCOLOURS)
 	       {
+#if GD2_VERS >= 2
                 gdImageColorAllocateAlpha(dev->im_out,pls->curcolor.r, 
                                           pls->curcolor.g,  pls->curcolor.b,
                                           (int) ((1.0-pls->curcolor.a)*gdAlphaMax));
+#else
+                gdImageColorAllocate(dev->im_out,pls->curcolor.r, 
+                                          pls->curcolor.g,  pls->curcolor.b);
+#endif
 		dev->colour = dev->totcol;
 	       }
 
@@ -985,9 +995,14 @@ long temp_col;
            }
         else    /* it is a truecolour image */
            {
+#if GD2_VERS >= 2
              dev->colour = gdTrueColorAlpha(pls->curcolor.r, pls->curcolor.g, 
                                             pls->curcolor.b, 
                                             (int) ((1.0-pls->curcolor.a)*gdAlphaMax) );
+#else
+             dev->colour = gdTrueColorAlpha(pls->curcolor.r, pls->curcolor.g, 
+                                            pls->curcolor.b);
+#endif
            }
 #endif
 	break;
