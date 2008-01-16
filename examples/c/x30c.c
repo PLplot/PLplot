@@ -34,24 +34,33 @@ static PLFLT alpha[] = {1.0, 1.0, 1.0, 1.0};
 static PLFLT px[] = {0.1, 0.5, 0.5, 0.1};
 static PLFLT py[] = {0.1, 0.1, 0.5, 0.5};
 
+static PLFLT pos[] = {0.0, 1.0};
+static PLFLT rcoord[] = {1.0, 1.0};
+static PLFLT gcoord[] = {0.0, 0.0};
+static PLFLT bcoord[] = {0.0, 0.0};
+static PLFLT acoord[] = {0.0, 1.0};
+static PLBOOL rev[] = {0, 0};
+
 int
 main(int argc, const char *argv[])
 {
   int i, j, icol, r, g, b;
-  double a;
+  PLFLT a;
+  PLFLT clevel[101];
+  PLFLT **z;
 
   plparseopts (&argc, argv, PL_PARSE_FULL);
 
   plinit ();
+  plscmap0n (4);
+  plscmap0a (red, green, blue, alpha, 4);
 
+  /* page 1 */
   pladv (0);
   plvpor (0.0, 1.0, 0.0, 1.0);
   plwind (0.0, 1.0, 0.0, 1.0);
   plcol0 (0);
   plbox ("", 1.0, 0, "", 1.0, 0);
-
-  plscmap0n (4);
-  plscmap0a (red, green, blue, alpha, 4);
 
   for (i = 0; i < 9; i++) {
     icol = i%3 + 1;
@@ -64,6 +73,43 @@ main(int argc, const char *argv[])
       py[j] += 0.5/9.0;
     }
   }
+
+  /* page 2 */
+  plAlloc2dGrid(&z, 2, 2);
+  z[0][0] = 0.0;
+  z[1][0] = 0.0;
+  z[0][1] = 1.0;
+  z[1][1] = 1.0;
+
+  pladv(0);
+  plvpor(0.1, 0.9, 0.1, 0.9);
+  plwind(0.0, 1.0, 0.0, 1.0);
+
+  for(i = 0; i < 5; i++){
+    px[0] = 0.05 + 0.2 * i;
+    px[1] = px[0] + 0.1;
+    px[2] = px[1];
+    px[3] = px[0];
+    icol = i%3 + 1;
+    plgcol0a (icol, &r, &g, &b, &a);
+    plscol0a (icol, r, g, b, 1.0);
+    plcol0 (icol);
+    for(j = 0; j < 5; j++){
+      py[0] = 0.05 + 0.2 * j;
+      py[1] = py[0];
+      py[2] = py[0] + 0.1;
+      py[3] = py[2];
+      plfill(4, px, py);
+    }
+  }
+
+  plscmap1n(128);
+  plscmap1la(1, 2, pos, rcoord, gcoord, bcoord, acoord, rev);
+
+  for(i=0;i<101;i++){
+    clevel[i] = 0.01 * (PLFLT)i;
+  }
+  plshades(z, 2, 2, NULL, 0.0, 1.0, 0.0, 1.0, clevel, 101, 10, -1, 2, plfill, 1, NULL, NULL);
 
   plend();
   exit(0);

@@ -226,6 +226,22 @@ c_plgcolbga(PLINT *r, PLINT *g, PLINT *b, PLFLT *a)
 void
 c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 {
+    if (plsc->cmap0 == NULL)
+	plscmap0n(0);
+    if (icol0 < 0 || icol0 >= plsc->ncol0) {
+	char buffer[256];
+	sprintf(buffer, "plscol0: Illegal color table value: %d", (int) icol0);
+	plabort(buffer);
+	return;
+    }
+    if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
+	char buffer[256];
+	sprintf(buffer, "plscol0: Invalid RGB color: %d, %d, %d",
+		(int) r, (int) g, (int) b);
+	plabort(buffer);
+	return;
+    }
+
     plscol0a(icol0, r, g, b, 1.0);
 }
 
@@ -241,7 +257,6 @@ c_plscol0a(PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a)
 {
     if (plsc->cmap0 == NULL)
 	plscmap0n(0);
-
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
 	char buffer[256];
 	sprintf(buffer, "plscol0a: Illegal color table value: %d", (int) icol0);
@@ -367,8 +382,8 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 /*--------------------------------------------------------------------------*\
  * plscmap0a()
  *
- * Set color map 0 colors by 8 bit RGB values.  This sets the entire color
- * map -- only as many colors as specified will be allocated.
+ * Set color map 0 colors by 8 bit RGB and alpha value.  This sets the 
+ * entire color map -- only as many colors as specified will be allocated.
 \*--------------------------------------------------------------------------*/
 
 void
@@ -430,6 +445,42 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 	plsc->cmap1[i].g = g[i];
 	plsc->cmap1[i].b = b[i];
 	plsc->cmap1[i].a = 1.0;
+    }
+
+    if (plsc->level > 0)
+	plP_state(PLSTATE_CMAP1);
+}
+
+/*--------------------------------------------------------------------------*\
+ * plscmap1a()
+ *
+ * Set color map 1 colors by 8 bit RGB and alpha values
+ * This also sets the number of colors.
+\*--------------------------------------------------------------------------*/
+
+void
+c_plscmap1a(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1)
+{
+    int i;
+
+    plscmap1n(ncol1);
+
+    for (i = 0; i < plsc->ncol1; i++) {
+	if ((r[i] < 0 || r[i] > 255) ||
+	    (g[i] < 0 || g[i] > 255) ||
+	    (b[i] < 0 || b[i] > 255) ||
+	    (a[i] < 0.0 || a[i] > 1.0)) {
+
+	    char buffer[256];
+	    sprintf(buffer, "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
+		    (int) r[i], (int) g[i], (int) b[i], (double) a[i]);
+	    plabort(buffer);
+	    return;
+	}
+	plsc->cmap1[i].r = r[i];
+	plsc->cmap1[i].g = g[i];
+	plsc->cmap1[i].b = b[i];
+	plsc->cmap1[i].a = a[i];
     }
 
     if (plsc->level > 0)
@@ -536,6 +587,76 @@ c_plscmap1l(PLINT itype, PLINT npts, PLFLT *pos,
 	plsc->cmap1cp[n].l = l;
 	plsc->cmap1cp[n].s = s;
 	plsc->cmap1cp[n].p = pos[n];
+	plsc->cmap1cp[n].a = 1.0;
+
+	if (rev == NULL)
+	    plsc->cmap1cp[n].rev = 0;
+	else
+	    plsc->cmap1cp[n].rev = rev[n];
+    }
+
+/* Calculate and set color map */
+
+    plcmap1_calc();
+}
+
+/*--------------------------------------------------------------------------*\
+ * plscmap1la()
+ *
+ * This is the same as plscmap1l, but also allows alpha value interpolation.
+ *
+ \*-------------------------------------------------------------------------*/
+
+void
+c_plscmap1la(PLINT itype, PLINT npts, PLFLT *pos,
+	     PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLINT *rev)
+{
+    int n;
+    PLFLT h, l, s, r, g, b;
+
+    if (npts < 2) {
+	plabort("plscmap1la: Must specify at least two control points");
+	return;
+    }
+
+    if ( (pos[0] != 0) || (pos[npts-1] != 1)) {
+	plabort("plscmap1la: First, last control points must lie on boundary");
+	return;
+    }
+
+    if ( npts > PL_MAX_CMAP1CP ) {
+	plabort("plscmap1la: exceeded maximum number of control points");
+	return;
+    }
+
+/* Allocate if not done yet */
+
+    if (plsc->cmap1 == NULL)
+	plscmap1n(0);
+
+/* Save control points */
+
+    plsc->ncp1 = npts;
+
+    for (n = 0; n < npts; n++) {
+
+	if (itype == 0) {
+	    h = coord1[n];
+	    l = coord2[n];
+	    s = coord3[n];
+	}
+	else {
+	    r = coord1[n];
+	    g = coord2[n];
+	    b = coord3[n];
+	    c_plrgbhls(r, g, b, &h, &l, &s);
+	}
+
+	plsc->cmap1cp[n].h = h;
+	plsc->cmap1cp[n].l = l;
+	plsc->cmap1cp[n].s = s;
+	plsc->cmap1cp[n].p = pos[n];
+	plsc->cmap1cp[n].a = a[n];
 
 	if (rev == NULL)
 	    plsc->cmap1cp[n].rev = 0;
@@ -559,8 +680,8 @@ void
 plcmap1_calc(void)
 {
     int i, n;
-    PLFLT delta, dp, dh, dl, ds;
-    PLFLT h, l, s, p, r, g, b;
+    PLFLT delta, dp, dh, dl, ds, da;
+    PLFLT h, l, s, p, r, g, b, a;
 
 /* Loop over all control point pairs */
 
@@ -575,6 +696,7 @@ plcmap1_calc(void)
 	dh = plsc->cmap1cp[n+1].h - plsc->cmap1cp[n].h;
 	dl = plsc->cmap1cp[n+1].l - plsc->cmap1cp[n].l;
 	ds = plsc->cmap1cp[n+1].s - plsc->cmap1cp[n].s;
+	da = plsc->cmap1cp[n+1].a - plsc->cmap1cp[n].a;
 
     /* Adjust dh if we are to go around "the back side" */
 
@@ -599,6 +721,7 @@ plcmap1_calc(void)
 	    h = plsc->cmap1cp[n].h + dh * delta;
 	    l = plsc->cmap1cp[n].l + dl * delta;
 	    s = plsc->cmap1cp[n].s + ds * delta;
+	    a = plsc->cmap1cp[n].a + da * delta;
 
 	    while (h >= 360.)
 		h -= 360.;
@@ -611,7 +734,7 @@ plcmap1_calc(void)
 	    plsc->cmap1[i].r = MAX(0, MIN(255, (int) (256. * r)));
 	    plsc->cmap1[i].g = MAX(0, MIN(255, (int) (256. * g)));
 	    plsc->cmap1[i].b = MAX(0, MIN(255, (int) (256. * b)));
-	    plsc->cmap1[i].a = 1.0;
+	    plsc->cmap1[i].a = a;
 	}
     }
 

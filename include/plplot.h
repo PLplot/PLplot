@@ -392,6 +392,7 @@ typedef struct {
     PLFLT l;			/* lightness */
     PLFLT s;			/* saturation */
     PLFLT p;			/* position */
+    PLFLT a;                    /* alpha (or transparency) */
     int rev;			/* if set, interpolate through h=0 */
 } PLControlPt;
 
@@ -556,7 +557,9 @@ typedef struct {
 #define    plscmap0a	c_plscmap0a
 #define    plscmap0n	c_plscmap0n
 #define    plscmap1	c_plscmap1
+#define    plscmap1a	c_plscmap1a
 #define    plscmap1l	c_plscmap1l
+#define    plscmap1la	c_plscmap1la
 #define    plscmap1n	c_plscmap1n
 #define    plscol0	c_plscol0
 #define    plscol0a     c_plscol0a
@@ -1211,12 +1214,25 @@ c_plscmap0n(PLINT ncol0);
 PLDLLIMPEXP void
 c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1);
 
+/* Set color map 1 colors by 8 bit RGB and alpha values */
+
+PLDLLIMPEXP void
+c_plscmap1a(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1);
+
 /* Set color map 1 colors using a piece-wise linear relationship between */
 /* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
 
 PLDLLIMPEXP void
 c_plscmap1l(PLBOOL itype, PLINT npts, PLFLT *intensity,
 	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev);
+
+/* Set color map 1 colors using a piece-wise linear relationship between */
+/* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
+/* Will also linear interpolate alpha values. */
+
+PLDLLIMPEXP void
+c_plscmap1la(PLBOOL itype, PLINT npts, PLFLT *intensity,
+	     PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *rev);
 
 /* Set number of colors in cmap 1 */
 
