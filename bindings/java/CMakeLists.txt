@@ -31,12 +31,12 @@ set(SWIG_JAVA_FILES
 # Full list of generated java files
 set(JAVA_GEN_FILES
  config.java
+ PLStream.java
  ${SWIG_JAVA_FILES}
 )
 # All source files
 set(JAVA_FILES
  ${JAVA_GEN_FILES}
- PLStream.java
 )
 
 # List of generated java files with full path names
@@ -59,6 +59,11 @@ ${CMAKE_CURRENT_SOURCE_DIR}/config.java.in
 ${CMAKE_CURRENT_BINARY_DIR}/config.java
 )
 
+# Creat PLStream.java
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/PLStream.java.in
+${CMAKE_CURRENT_BINARY_DIR}/PLStream.java
+)
 
 # This is currently the include list for swig, the C wrapper and the
 # the java classpath. Not particular pretty...
