@@ -31,8 +31,8 @@ set(SWIG_JAVA_FILES
 # Full list of generated java files
 set(JAVA_GEN_FILES
  config.java
- PLStream.java
  ${SWIG_JAVA_FILES}
+ PLStream.java
 )
 # All source files
 set(JAVA_FILES
@@ -50,7 +50,6 @@ string( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/\\1.java
 string( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/plplot/core/\\1.class" JAVA_CLASSES "${JAVA_FILES}" )
 set(JAVA_FILES_FULL
   ${JAVA_GEN_FILES_FULL}
-  ${CMAKE_CURRENT_SOURCE_DIR}/PLStream.java
 )
 
 # Create config.java
@@ -59,7 +58,13 @@ ${CMAKE_CURRENT_SOURCE_DIR}/config.java.in
 ${CMAKE_CURRENT_BINARY_DIR}/config.java
 )
 
-# Creat PLStream.java
+if(PL_DOUBLE)
+  set(PLFLT double)
+else(PL_DOUBLE)
+  set(PLFLT float)
+endif(PL_DOUBLE)
+
+# Create PLStream.java
 configure_file(
 ${CMAKE_CURRENT_SOURCE_DIR}/PLStream.java.in
 ${CMAKE_CURRENT_BINARY_DIR}/PLStream.java
