@@ -40,7 +40,7 @@ This is known to work with swig-1.3.21.
 #include "plplotP.h"
 %}
 
-#ifdef PL_DOUBLE
+#ifdef PL_DOUBLE_INTERFACE
 typedef double PLFLT;
 #else
 typedef float PLFLT;
@@ -137,7 +137,7 @@ PLBOOL_OUTPUT_TYPEMAP(PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;"
 
 /* Infrastructure for handling swig compatible plplot API definitions. */
 
-#ifdef PL_DOUBLE
+#ifdef PL_DOUBLE_INTERFACE
 #define setup_array_1d_PLFLT setup_array_1d_d
 #define setup_array_2d_PLFLT setup_array_2d_d
 #define jPLFLTArray "jdoubleArray"
@@ -946,7 +946,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 /* Version with values returned to java */
 %typemap(in) PLFLT **OutMatrixCk {
    jobject ai;
-   jPLFLT **ptr;
+   PLFLT **ptr;
    int nx = (*jenv)->GetArrayLength( jenv, $input );
    int ny = -1;
    int i;
@@ -984,7 +984,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(argout) PLFLT **OutMatrixCk {
    jPLFLT **adat;
    jobject *ai;
-   jPLFLT **ptr;
+   PLFLT **ptr;
    int i, j;
    int nx = (*jenv)->GetArrayLength( jenv, $input );
    int ny = -1;

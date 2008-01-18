@@ -108,7 +108,7 @@ public void setcontlabelformat(int lexp, int sigdig) {
     plplotjavac.pl_setcontlabelformat(lexp, sigdig);
 }
 
-public void setcontlabelparam(@PLFLT@ offset, @PLFLT@ size, @PLFLT@ spacing, int active) {
+public void setcontlabelparam(double offset, double size, double spacing, int active) {
     if (set_stream() == -1) return;
     plplotjavac.pl_setcontlabelparam(offset, size, spacing, active);
 }
@@ -118,13 +118,13 @@ public void adv(int page) {
     plplotjavac.pladv(page);
 }
 
-public void axes(@PLFLT@ x0, @PLFLT@ y0, String xopt, @PLFLT@ xtick, int nxsub, 
-		 String yopt, @PLFLT@ ytick, int nysub) {
+public void axes(double x0, double y0, String xopt, double xtick, int nxsub, 
+		 String yopt, double ytick, int nysub) {
     if (set_stream() == -1) return;
     plplotjavac.plaxes(x0, y0, xopt, xtick, nxsub, yopt, ytick, nysub);
 }
 
-public void bin(@PLFLT@[] x, @PLFLT@[] y, int center) {
+public void bin(double[] x, double[] y, int center) {
     if (set_stream() == -1) return;
     plplotjavac.plbin(x, y, center);
 }
@@ -134,21 +134,21 @@ public void bop() {
     plplotjavac.plbop();
 }
 
-public void box(String xopt, @PLFLT@ xtick, int nxsub,
-		String yopt, @PLFLT@ ytick, int nysub) {
+public void box(String xopt, double xtick, int nxsub,
+		String yopt, double ytick, int nysub) {
     if (set_stream() == -1) return;
     plplotjavac.plbox(xopt, xtick, nxsub, yopt, ytick, nysub);
 }
 
-public void box3(String xopt, String xlabel, @PLFLT@ xtick, int nsubx,
-                 String yopt, String ylabel, @PLFLT@ ytick, int nsuby,
-                 String zopt, String zlabel, @PLFLT@ ztick, int nsubz) {
+public void box3(String xopt, String xlabel, double xtick, int nsubx,
+                 String yopt, String ylabel, double ytick, int nsuby,
+                 String zopt, String zlabel, double ztick, int nsubz) {
     if (set_stream() == -1) return;
     plplotjavac.plbox3(xopt, xlabel, xtick, nsubx, yopt, ylabel, ytick, nsuby,
 		    zopt, zlabel, ztick, nsubz);
 }
 
-public void calc_world(@PLFLT@ rx, @PLFLT@ ry, @PLFLT@[] wx, @PLFLT@[] wy, int[] window) {
+public void calc_world(double rx, double ry, double[] wx, double[] wy, int[] window) {
     if (set_stream() == -1) return;
     plplotjavac.plcalc_world(rx, ry, wx, wy, window);
 }
@@ -163,13 +163,13 @@ public void col0(int icol0) {
     plplotjavac.plcol0(icol0);
 }
 
-public void col1(@PLFLT@ col1) {
+public void col1(double col1) {
     if (set_stream() == -1) return;
     plplotjavac.plcol1(col1);
 }
 
-public void cont(@PLFLT@[][] f, int kx, int lx, int ky, int ly, 
-		@PLFLT@[] clevel, @PLFLT@[][] pltr, @PLFLT@[][] OBJECT_DATA) {
+public void cont(double[][] f, int kx, int lx, int ky, int ly, 
+		double[] clevel, double[][] pltr, double[][] OBJECT_DATA) {
     if (set_stream() == -1) return;
     plplotjavac.plcont(f, kx, lx, ky, ly, clevel, pltr, OBJECT_DATA);
 }
@@ -196,12 +196,12 @@ public void end1() {
     stream_id = -1;
 }
 
-public void env(@PLFLT@ xmin, @PLFLT@ xmax, @PLFLT@ ymin, @PLFLT@ ymax, int just, int axis) {
+public void env(double xmin, double xmax, double ymin, double ymax, int just, int axis) {
     if (set_stream() == -1) return;
     plplotjavac.plenv(xmin, xmax, ymin, ymax, just, axis);
 }
 
-public void env0(@PLFLT@ xmin, @PLFLT@ xmax, @PLFLT@ ymin, @PLFLT@ ymax, int just, int axis) {
+public void env0(double xmin, double xmax, double ymin, double ymax, int just, int axis) {
     if (set_stream() == -1) return;
     plplotjavac.plenv0(xmin, xmax, ymin, ymax, just, axis);
 }
@@ -211,12 +211,12 @@ public void eop() {
     plplotjavac.pleop();
 }
 
-public void errx(@PLFLT@[] xmin, @PLFLT@[] xmax, @PLFLT@[] y) {
+public void errx(double[] xmin, double[] xmax, double[] y) {
     if (set_stream() == -1) return;
     plplotjavac.plerrx(xmin, xmax, y);
 }
 
-public void erry(@PLFLT@[] x, @PLFLT@[] ymin, @PLFLT@[] ymax) {
+public void erry(double[] x, double[] ymin, double[] ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plerry(x, ymin, ymax);
 }
@@ -226,12 +226,12 @@ public void famadv() {
     plplotjavac.plfamadv();
 }
 
-public void fill(@PLFLT@[] x, @PLFLT@[] y) {
+public void fill(double[] x, double[] y) {
     if (set_stream() == -1) return;
     plplotjavac.plfill(x, y);
 }
 
-public void fill3(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[] z) {
+public void fill3(double[] x, double[] y, double[] z) {
     if (set_stream() == -1) return;
     plplotjavac.plfill3(x, y, z);
 }
@@ -251,7 +251,7 @@ public void fontld(int fnt) {
     plplotjavac.plfontld(fnt);
 }
 
-public void gchr(@PLFLT@[] p_def, @PLFLT@[] p_ht) {
+public void gchr(double[] p_def, double[] p_ht) {
     if (set_stream() == -1) return;
     plplotjavac.plgchr(p_def, p_ht);
 }
@@ -276,17 +276,17 @@ public void gdev(StringBuffer dev) {
     plplotjavac.plgdev(dev);
 }
 
-public void gdidev(@PLFLT@[] mar, @PLFLT@[] aspect, @PLFLT@[] jx, @PLFLT@[] jy) {
+public void gdidev(double[] mar, double[] aspect, double[] jx, double[] jy) {
     if (set_stream() == -1) return;
     plplotjavac.plgdidev(mar, aspect, jx, jy);
 }
 
-public void gdiori(@PLFLT@[] rot) {
+public void gdiori(double[] rot) {
     if (set_stream() == -1) return;
     plplotjavac.plgdiori(rot);
 }
 
-public void gdiplt(@PLFLT@[] xmin, @PLFLT@[] xmax, @PLFLT@[] ymin, @PLFLT@[] ymax) {
+public void gdiplt(double[] xmin, double[] xmax, double[] ymin, double[] ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plgdiplt(xmin, xmax, ymin, ymax);
 }
@@ -311,7 +311,7 @@ public void glevel(int[] p_level) {
     plplotjavac.plglevel(p_level);
 }
 
-public void gpage(@PLFLT@[] xp, @PLFLT@[] yp, int[] xleng, int[] yleng, int[] xoff, int[] yoff) {
+public void gpage(double[] xp, double[] yp, int[] xleng, int[] yleng, int[] xoff, int[] yoff) {
     if (set_stream() == -1) return;
     plplotjavac.plgpage(xp, yp, xleng, yleng, xoff, yoff);
 }
@@ -321,13 +321,13 @@ public void gra() {
     plplotjavac.plgra();
 }
 
-public void griddata(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[] z, @PLFLT@[] xg, 
-		     @PLFLT@[] yg, @PLFLT@[][] zg, int type, @PLFLT@ data) {
+public void griddata(double[] x, double[] y, double[] z, double[] xg, 
+		     double[] yg, double[][] zg, int type, double data) {
     if (set_stream() == -1) return;
     plplotjavac.plgriddata(x, y, z, xg, yg, zg, type, data);
 }
 
-public void gspa(@PLFLT@[] xmin, @PLFLT@[] xmax, @PLFLT@[] ymin, @PLFLT@[] ymax) {
+public void gspa(double[] xmin, double[] xmax, double[] ymin, double[] ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plgspa(xmin, xmax, ymin, ymax);
 }
@@ -344,12 +344,12 @@ public void gver(StringBuffer ver) {
     plplotjavac.plgver(ver);
 }
 
-public void gvpd(@PLFLT@[] xmin, @PLFLT@[] xmax, @PLFLT@[] ymin, @PLFLT@[] ymax) {
+public void gvpd(double[] xmin, double[] xmax, double[] ymin, double[] ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plgvpd(xmin, xmax, ymin, ymax);
 }
 
-public void gvpw(@PLFLT@[] xmin, @PLFLT@[] xmax, @PLFLT@[] ymin, @PLFLT@[] ymax) {
+public void gvpw(double[] xmin, double[] xmax, double[] ymin, double[] ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plgvpw(xmin, xmax, ymin, ymax);
 }
@@ -369,17 +369,17 @@ public void gzax(int[] digmax, int[] digits) {
     plplotjavac.plgzax(digmax, digits);
 }
 
-public void hist(@PLFLT@[] data, @PLFLT@ datmin, @PLFLT@ datmax, int nbin, int oldwin) {
+public void hist(double[] data, double datmin, double datmax, int nbin, int oldwin) {
     if (set_stream() == -1) return;
     plplotjavac.plhist(data, datmin, datmax, nbin, oldwin);
 }
 
-public void hls(@PLFLT@ h, @PLFLT@ l, @PLFLT@ s) {
+public void hls(double h, double l, double s) {
     if (set_stream() == -1) return;
     plplotjavac.plhls(h, l, s);
 }
 
-public void image(@PLFLT@[][] data, @PLFLT@ xmin, @PLFLT@ xmax, @PLFLT@ ymin, @PLFLT@ ymax, @PLFLT@ zmin, @PLFLT@ zmax, @PLFLT@ Dxmin, @PLFLT@ Dxmax, @PLFLT@ Dymin, @PLFLT@ Dymax) {
+public void image(double[][] data, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, double Dxmin, double Dxmax, double Dymin, double Dymax) {
     if (set_stream() == -1) return;
     plplotjavac.plimage(data, xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax, Dymin, Dymax);
 }
@@ -389,7 +389,7 @@ public void init() {
     plplotjavac.plinit();
 }
 
-public void join(@PLFLT@ x1, @PLFLT@ y1, @PLFLT@ x2, @PLFLT@ y2) {
+public void join(double x1, double y1, double x2, double y2) {
     if (set_stream() == -1) return;
     plplotjavac.pljoin(x1, y1, x2, y2);
 }
@@ -399,17 +399,17 @@ public void lab(String xlabel, String ylabel, String tlabel) {
     plplotjavac.pllab(xlabel, ylabel, tlabel);
 }
 
-public void lightsource(@PLFLT@ x, @PLFLT@ y, @PLFLT@ z) {
+public void lightsource(double x, double y, double z) {
     if (set_stream() == -1) return;
     plplotjavac.pllightsource(x, y, z);
 }
 
-public void line(@PLFLT@[] x, @PLFLT@[] y) {
+public void line(double[] x, double[] y) {
     if (set_stream() == -1) return;
     plplotjavac.plline(x, y);
 }
 
-public void line3(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[] z) {
+public void line3(double[] x, double[] y, double[] z) {
     if (set_stream() == -1) return;
     plplotjavac.plline3(x, y, z);
 }
@@ -419,18 +419,18 @@ public void lsty(int lin) {
     plplotjavac.pllsty(lin);
 }
 
-public void minMax2dGrid(@PLFLT@[][]f, @PLFLT@[] fmax, @PLFLT@[] fmin) {
+public void minMax2dGrid(double[][]f, double[] fmax, double[] fmin) {
     if (set_stream() == -1) return;
     plplotjavac.plMinMax2dGrid(f,fmax,fmin);
     
 }
 
-public void mesh(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[][] z, int opt) {
+public void mesh(double[] x, double[] y, double[][] z, int opt) {
     if (set_stream() == -1) return;
     plplotjavac.plmesh(x, y, z, opt);
 }
 
-public void meshc(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[][] z, int opt, @PLFLT@[] clevel) {
+public void meshc(double[] x, double[] y, double[][] z, int opt, double[] clevel) {
     if (set_stream() == -1) return;
     plplotjavac.plmeshc(x, y, z, opt,clevel);
 }
@@ -441,39 +441,39 @@ public void meshc(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[][] z, int opt, @PLFLT@[] cl
 //    plplotjavac.plmkstrm(int[] OUTPUT);
 //}
 
-public void mtex(String side, @PLFLT@ disp, @PLFLT@ pos, @PLFLT@ just, String text) {
+public void mtex(String side, double disp, double pos, double just, String text) {
     if (set_stream() == -1) return;
     plplotjavac.plmtex(side, disp, pos, just, text);
 }
 
-public void mtex3(String side, @PLFLT@ disp, @PLFLT@ pos, @PLFLT@ just, String text) {
+public void mtex3(String side, double disp, double pos, double just, String text) {
     if (set_stream() == -1) return;
     plplotjavac.plmtex3(side, disp, pos, just, text);
 }
 
-public void plot3d(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[][] z, int opt, boolean side) {
+public void plot3d(double[] x, double[] y, double[][] z, int opt, boolean side) {
     if (set_stream() == -1) return;
     plplotjavac.plot3d(x, y, z, opt, side);
 }
 
-public void plot3dc(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[][] z, int opt, @PLFLT@[] clevel) {
+public void plot3dc(double[] x, double[] y, double[][] z, int opt, double[] clevel) {
     if (set_stream() == -1) return;
     plplotjavac.plot3dc(x, y, z, opt, clevel);
 }
 
-public void plot3dcl(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[][] z, int opt, 
-		@PLFLT@[] clevel, int ixstart, int[] indexymin, int[] indexymax) {
+public void plot3dcl(double[] x, double[] y, double[][] z, int opt, 
+		double[] clevel, int ixstart, int[] indexymin, int[] indexymax) {
     if (set_stream() == -1) return;
     plplotjavac.plot3dcl(x, y, z, opt, clevel, ixstart, indexymin, indexymax);
 }
 
-public void surf3d(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[][] z, int opt, @PLFLT@[] clevel) {
+public void surf3d(double[] x, double[] y, double[][] z, int opt, double[] clevel) {
     if (set_stream() == -1) return;
     plplotjavac.plsurf3d(x, y, z, opt, clevel);
 }
 
-public void surf3dl(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[][] z, int opt, 
-		@PLFLT@[] clevel, int ixstart, int[] indexymin, int[] indexymax) {
+public void surf3dl(double[] x, double[] y, double[][] z, int opt, 
+		double[] clevel, int ixstart, int[] indexymin, int[] indexymax) {
     if (set_stream() == -1) return;
     plplotjavac.plsurf3dl(x, y, z, opt, clevel, ixstart, indexymin, indexymax);
 }
@@ -488,17 +488,17 @@ public void pat(int[] inc, int[] del) {
     plplotjavac.plpat(inc, del);
 }
 
-public void poin(@PLFLT@[] x, @PLFLT@[] y, int code) {
+public void poin(double[] x, double[] y, int code) {
     if (set_stream() == -1) return;
     plplotjavac.plpoin(x, y, code);
 }
 
-public void poin3(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[] z, int code) {
+public void poin3(double[] x, double[] y, double[] z, int code) {
     if (set_stream() == -1) return;
     plplotjavac.plpoin3(x, y, z, code);
 }
 
-public void poly3(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[] z, boolean[] draw, boolean ifcc) {
+public void poly3(double[] x, double[] y, double[] z, boolean[] draw, boolean ifcc) {
     if (set_stream() == -1) return;
     plplotjavac.plpoly3(x, y, z, draw, ifcc);
 }
@@ -513,12 +513,12 @@ public void psty(int patt) {
     plplotjavac.plpsty(patt);
 }
 
-public void ptex(@PLFLT@ x, @PLFLT@ y, @PLFLT@ dx, @PLFLT@ dy, @PLFLT@ just, String text) {
+public void ptex(double x, double y, double dx, double dy, double just, String text) {
     if (set_stream() == -1) return;
     plplotjavac.plptex(x, y, dx, dy, just, text);
 }
 
-public void ptex3(@PLFLT@ x, @PLFLT@ y, @PLFLT@ z, @PLFLT@ dx, @PLFLT@ dy, @PLFLT@ dz, @PLFLT@ sx, @PLFLT@ sy, @PLFLT@ sz, @PLFLT@ just, String text) {
+public void ptex3(double x, double y, double z, double dx, double dy, double dz, double sx, double sy, double sz, double just, String text) {
     if (set_stream() == -1) return;
     plplotjavac.plptex3(x, y, z, dx, dy, dz, sx, sy, sz, just, text);
 }
@@ -528,7 +528,7 @@ public void replot() {
     plplotjavac.plreplot();
 }
 
-public void schr(@PLFLT@ def, @PLFLT@ scale) {
+public void schr(double def, double scale) {
     if (set_stream() == -1) return;
     plplotjavac.plschr(def, scale);
 }
@@ -548,14 +548,14 @@ public void scmap1(int[] r, int[] g, int[] b) {
     plplotjavac.plscmap1(r, g, b);
 }
 
-public void scmap1l(boolean itype, @PLFLT@[] intensity, @PLFLT@[] coord1, 
-		@PLFLT@[] coord2, @PLFLT@[] coord3, boolean[] rev) {
+public void scmap1l(boolean itype, double[] intensity, double[] coord1, 
+		double[] coord2, double[] coord3, boolean[] rev) {
     if (set_stream() == -1) return;
     plplotjavac.plscmap1l(itype, intensity, coord1, coord2, coord3, rev);
 }
 
-public void scmap1l(boolean itype, @PLFLT@[] intensity, @PLFLT@[] coord1, 
-		@PLFLT@[] coord2, @PLFLT@[] coord3) {
+public void scmap1l(boolean itype, double[] intensity, double[] coord1, 
+		double[] coord2, double[] coord3) {
     if (set_stream() == -1) return;
     plplotjavac.plscmap1l(itype, intensity, coord1, coord2, coord3, null);
 }
@@ -590,28 +590,28 @@ public void sdev(String devname) {
     plplotjavac.plsdev(devname);
 }
 
-public void sdidev(@PLFLT@ mar, @PLFLT@ aspect, @PLFLT@ jx, @PLFLT@ jy) {
+public void sdidev(double mar, double aspect, double jx, double jy) {
     if (set_stream() == -1) return;
     plplotjavac.plsdidev(mar, aspect, jx, jy);
 }
 
 public void sdimap(int dimxmin, int dimxmax, int dimymin, int dimymax, 
-		@PLFLT@ dimxpmm, @PLFLT@ dimypmm) {
+		double dimxpmm, double dimypmm) {
     if (set_stream() == -1) return;
     plplotjavac.plsdimap(dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm);
 }
 
-public void sdiori(@PLFLT@ rot) {
+public void sdiori(double rot) {
     if (set_stream() == -1) return;
     plplotjavac.plsdiori(rot);
 }
 
-public void sdiplt(@PLFLT@ xmin, @PLFLT@ ymin, @PLFLT@ xmax, @PLFLT@ ymax) {
+public void sdiplt(double xmin, double ymin, double xmax, double ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plsdiplt(xmin, ymin, xmax, ymax);
 }
 
-public void sdiplz(@PLFLT@ xmin, @PLFLT@ ymin, @PLFLT@ xmax, @PLFLT@ ymax) {
+public void sdiplz(double xmin, double ymin, double xmax, double ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plsdiplz(xmin, ymin, xmax, ymax);
 }
@@ -636,32 +636,32 @@ public void sfnam(String fnam) {
     plplotjavac.plsfnam(fnam);
 }
 
-public void shades( @PLFLT@[][] a, @PLFLT@ xmin, @PLFLT@ xmax, @PLFLT@ ymin,
-		@PLFLT@ ymax, @PLFLT@[] clevel, int fill_width, int cont_color,
+public void shades( double[][] a, double xmin, double xmax, double ymin,
+		double ymax, double[] clevel, int fill_width, int cont_color,
 		int cont_width, boolean rectangular, 
-		@PLFLT@[][] pltr, @PLFLT@[][] OBJECT_DATA) {
+		double[][] pltr, double[][] OBJECT_DATA) {
     if (set_stream() == -1) return;
     plplotjavac.plshades( a, xmin, xmax, ymin, ymax, clevel, fill_width,
 		    cont_color, cont_width, rectangular, pltr, OBJECT_DATA);
 }
 
-public void shade(@PLFLT@[][] a, @PLFLT@ left, @PLFLT@ right, @PLFLT@ bottom,
-		@PLFLT@ top, @PLFLT@ shade_min, @PLFLT@ shade_max, int sh_cmap,
-		@PLFLT@ sh_color, int sh_width, int min_color, int min_width, 
+public void shade(double[][] a, double left, double right, double bottom,
+		double top, double shade_min, double shade_max, int sh_cmap,
+		double sh_color, int sh_width, int min_color, int min_width, 
 		int max_color, int max_width, boolean rectangular, 
-		@PLFLT@[][] pltr, @PLFLT@[][] OBJECT_DATA) {
+		double[][] pltr, double[][] OBJECT_DATA) {
     if (set_stream() == -1) return;
     plplotjavac.plshade(a, left, right, bottom, top, shade_min, shade_max,
 		    sh_cmap, sh_color, sh_width, min_color, min_width, 
 		    max_color, max_width, rectangular, pltr, OBJECT_DATA);
 }
 
-public void smaj(@PLFLT@ def, @PLFLT@ scale) {
+public void smaj(double def, double scale) {
     if (set_stream() == -1) return;
     plplotjavac.plsmaj(def, scale);
 }
 
-public void smin(@PLFLT@ def, @PLFLT@ scale) {
+public void smin(double def, double scale) {
     if (set_stream() == -1) return;
     plplotjavac.plsmin(def, scale);
 }
@@ -671,7 +671,7 @@ public void sori(int ori) {
     plplotjavac.plsori(ori);
 }
 
-public void spage(@PLFLT@ xp, @PLFLT@ yp, int xleng, int yleng, int xoff, int yoff) {
+public void spage(double xp, double yp, int xleng, int yleng, int xoff, int yoff) {
     if (set_stream() == -1) return;
     plplotjavac.plspage(xp, yp, xleng, yleng, xoff, yoff);
 }
@@ -691,7 +691,7 @@ public void ssub(int nx, int ny) {
     plplotjavac.plssub(nx, ny);
 }
 
-public void ssym(@PLFLT@ def, @PLFLT@ scale) {
+public void ssym(double def, double scale) {
     if (set_stream() == -1) return;
     plplotjavac.plssym(def, scale);
 }
@@ -706,14 +706,14 @@ public void start(String devname, int nx, int ny) {
     plplotjavac.plstart(devname, nx, ny);
 }
 
-public void stripa(int id, int pen, @PLFLT@ x, @PLFLT@ y) {
+public void stripa(int id, int pen, double x, double y) {
     if (set_stream() == -1) return;
     plplotjavac.plstripa(id, pen, x, y);
 }
 
 public void stripc(int[] id, String xspec, String yspec, 
-		@PLFLT@ xmin, @PLFLT@ xmax, @PLFLT@ xjump, 
-		@PLFLT@ ymin, @PLFLT@ ymax, @PLFLT@ xlpos, @PLFLT@ ylpos, 
+		double xmin, double xmax, double xjump, 
+		double ymin, double ymax, double xlpos, double ylpos, 
 		boolean y_ascl, boolean acc, int colbox, int collab, 
 		int[] colline, int[] styline, String[] legline, 
 		String labx, String laby, String labtop) {
@@ -733,12 +733,12 @@ public void styl(int[] mark, int[] space) {
     plplotjavac.plstyl(mark, space);
 }
 
-public void svect(@PLFLT@[] arrow_x, @PLFLT@[] arrow_y, boolean fill) {
+public void svect(double[] arrow_x, double[] arrow_y, boolean fill) {
     if (set_stream() == -1) return;
     plplotjavac.plsvect(arrow_x, arrow_y, fill);
 }
 
-public void svpa(@PLFLT@ xmin, @PLFLT@ xmax, @PLFLT@ ymin, @PLFLT@ ymax) {
+public void svpa(double xmin, double xmax, double ymin, double ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plsvpa(xmin, xmax, ymin, ymax);
 }
@@ -753,7 +753,7 @@ public void syax(int digmax, int digits) {
     plplotjavac.plsyax(digmax, digits);
 }
 
-public void sym(@PLFLT@[] x, @PLFLT@[] y, int code) {
+public void sym(double[] x, double[] y, int code) {
     if (set_stream() == -1) return;
     plplotjavac.plsym(x, y, code);
 }
@@ -768,22 +768,22 @@ public void text() {
     plplotjavac.pltext();
 }
 
-public void vasp(@PLFLT@ aspect) {
+public void vasp(double aspect) {
     if (set_stream() == -1) return;
     plplotjavac.plvasp(aspect);
 }
 
-public void vect(@PLFLT@[][] u, @PLFLT@[][] v, @PLFLT@ scale, @PLFLT@[][] pltr, @PLFLT@[][] OBJECT_DATA) {
+public void vect(double[][] u, double[][] v, double scale, double[][] pltr, double[][] OBJECT_DATA) {
     if (set_stream() == -1) return;
     plplotjavac.plvect(u, v, scale, pltr, OBJECT_DATA);
 }
 
-public void vpas(@PLFLT@ xmin, @PLFLT@ xmax, @PLFLT@ ymin, @PLFLT@ ymax, @PLFLT@ aspect) {
+public void vpas(double xmin, double xmax, double ymin, double ymax, double aspect) {
     if (set_stream() == -1) return;
     plplotjavac.plvpas(xmin, xmax, ymin, ymax, aspect);
 }
 
-public void vpor(@PLFLT@ xmin, @PLFLT@ xmax, @PLFLT@ ymin, @PLFLT@ ymax) {
+public void vpor(double xmin, double xmax, double ymin, double ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plvpor(xmin, xmax, ymin, ymax);
 }
@@ -793,9 +793,9 @@ public void vsta() {
     plplotjavac.plvsta();
 }
 
-public void w3d(@PLFLT@ basex, @PLFLT@ basey, @PLFLT@ height, @PLFLT@ xmin0, 
-		@PLFLT@ xmax0, @PLFLT@ ymin0, @PLFLT@ ymax0, @PLFLT@ zmin0, 
-		@PLFLT@ zmax0, @PLFLT@ alt, @PLFLT@ az) {
+public void w3d(double basex, double basey, double height, double xmin0, 
+		double xmax0, double ymin0, double ymax0, double zmin0, 
+		double zmax0, double alt, double az) {
     if (set_stream() == -1) return;
     plplotjavac.plw3d(basex, basey, height, xmin0, xmax0, ymin0, ymax0, 
 		    zmin0, zmax0, alt, az);
@@ -806,7 +806,7 @@ public void wid(int width) {
     plplotjavac.plwid(width);
 }
 
-public void wind(@PLFLT@ xmin, @PLFLT@ xmax, @PLFLT@ ymin, @PLFLT@ ymax) {
+public void wind(double xmin, double xmax, double ymin, double ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plwind(xmin, xmax, ymin, ymax);
 }
@@ -836,12 +836,12 @@ public void OptUsage() {
     plplotjavac.plOptUsage();
 }
 
-public void hlsrgb(@PLFLT@ h, @PLFLT@ l, @PLFLT@ s, @PLFLT@[] r, @PLFLT@[] g, @PLFLT@[] b) {
+public void hlsrgb(double h, double l, double s, double[] r, double[] g, double[] b) {
     if (set_stream() == -1) return;
     plplotjavac.plhlsrgb(h,l,s,r,g,b);
 }
 
-public void rgbhls(@PLFLT@ r, @PLFLT@ g, @PLFLT@ b, @PLFLT@[] h, @PLFLT@[] l, @PLFLT@[] s) {
+public void rgbhls(double r, double g, double b, double[] h, double[] l, double[] s) {
     if (set_stream() == -1) return;
     plplotjavac.plrgbhls(r,g,b,h,l,s);
 }
@@ -853,12 +853,12 @@ public void cpstrm(int iplsr, int flags) {
     plplotjavac.plcpstrm(iplsr, flags != 0);
 }
 
-public void plot3d(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[][] z, int opt, int side) {
+public void plot3d(double[] x, double[] y, double[][] z, int opt, int side) {
     if (set_stream() == -1) return;
     plplotjavac.plot3d(x, y, z, opt, side != 0);
 }
 
-public void poly3(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[] z, int[] draw, int ifcc) {
+public void poly3(double[] x, double[] y, double[] z, int[] draw, int ifcc) {
     if (set_stream() == -1) return;
     boolean [] loc_draw = new boolean[draw.length];
     for (int i=0;i<draw.length;i++) {
@@ -867,8 +867,8 @@ public void poly3(@PLFLT@[] x, @PLFLT@[] y, @PLFLT@[] z, int[] draw, int ifcc) {
     plplotjavac.plpoly3(x, y, z, loc_draw, ifcc != 0);
 }
 
-public void scmap1l(int itype, @PLFLT@[] intensity, @PLFLT@[] coord1, 
-		@PLFLT@[] coord2, @PLFLT@[] coord3, int[] rev) {
+public void scmap1l(int itype, double[] intensity, double[] coord1, 
+		double[] coord2, double[] coord3, int[] rev) {
     if (set_stream() == -1) return;
     boolean [] loc_rev = null;
     if (rev != null) {
@@ -880,20 +880,20 @@ public void scmap1l(int itype, @PLFLT@[] intensity, @PLFLT@[] coord1,
     plplotjavac.plscmap1l(itype != 0, intensity, coord1, coord2, coord3, loc_rev);
 }
 
-public void shades( @PLFLT@[][] a, @PLFLT@ xmin, @PLFLT@ xmax, @PLFLT@ ymin,
-		@PLFLT@ ymax, @PLFLT@[] clevel, int fill_width, int cont_color,
+public void shades( double[][] a, double xmin, double xmax, double ymin,
+		double ymax, double[] clevel, int fill_width, int cont_color,
 		int cont_width, int rectangular, 
-		@PLFLT@[][] pltr, @PLFLT@[][] OBJECT_DATA) {
+		double[][] pltr, double[][] OBJECT_DATA) {
     if (set_stream() == -1) return;
     plplotjavac.plshades( a, xmin, xmax, ymin, ymax, clevel, fill_width,
 		    cont_color, cont_width, rectangular != 0, pltr, OBJECT_DATA);
 }
 
-public void shade(@PLFLT@[][] a, @PLFLT@ left, @PLFLT@ right, @PLFLT@ bottom,
-		@PLFLT@ top, @PLFLT@ shade_min, @PLFLT@ shade_max, int sh_cmap,
-		@PLFLT@ sh_color, int sh_width, int min_color, int min_width, 
+public void shade(double[][] a, double left, double right, double bottom,
+		double top, double shade_min, double shade_max, int sh_cmap,
+		double sh_color, int sh_width, int min_color, int min_width, 
 		int max_color, int max_width, int rectangular, 
-		@PLFLT@[][] pltr, @PLFLT@[][] OBJECT_DATA) {
+		double[][] pltr, double[][] OBJECT_DATA) {
     if (set_stream() == -1) return;
     plplotjavac.plshade(a, left, right, bottom, top, shade_min, shade_max,
 		    sh_cmap, sh_color, sh_width, min_color, min_width, 
@@ -906,8 +906,8 @@ public void spause(int pause) {
 }
 
 public void stripc(int[] id, String xspec, String yspec, 
-		@PLFLT@ xmin, @PLFLT@ xmax, @PLFLT@ xjump, 
-		@PLFLT@ ymin, @PLFLT@ ymax, @PLFLT@ xlpos, @PLFLT@ ylpos, 
+		double xmin, double xmax, double xjump, 
+		double ymin, double ymax, double xlpos, double ylpos, 
 		int y_ascl, int acc, int colbox, int collab, 
 		int[] colline, int[] styline, String[] legline, 
 		String labx, String laby, String labtop) {
@@ -917,7 +917,7 @@ public void stripc(int[] id, String xspec, String yspec,
 		    colline, styline, legline, labx, laby, labtop);
 }
 
-public void svect(@PLFLT@[] arrow_x, @PLFLT@[] arrow_y, int fill) {
+public void svect(double[] arrow_x, double[] arrow_y, int fill) {
     if (set_stream() == -1) return;
     plplotjavac.plsvect(arrow_x, arrow_y, fill != 0);
 }

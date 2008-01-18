@@ -32,11 +32,11 @@ set(SWIG_JAVA_FILES
 set(JAVA_GEN_FILES
  config.java
  ${SWIG_JAVA_FILES}
- PLStream.java
 )
 # All source files
 set(JAVA_FILES
  ${JAVA_GEN_FILES}
+ PLStream.java
 )
 
 # List of generated java files with full path names
@@ -50,24 +50,13 @@ string( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/\\1.java
 string( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/plplot/core/\\1.class" JAVA_CLASSES "${JAVA_FILES}" )
 set(JAVA_FILES_FULL
   ${JAVA_GEN_FILES_FULL}
+  ${CMAKE_CURRENT_SOURCE_DIR}/PLStream.java
 )
 
 # Create config.java
 configure_file(
 ${CMAKE_CURRENT_SOURCE_DIR}/config.java.in
 ${CMAKE_CURRENT_BINARY_DIR}/config.java
-)
-
-if(PL_DOUBLE)
-  set(PLFLT double)
-else(PL_DOUBLE)
-  set(PLFLT float)
-endif(PL_DOUBLE)
-
-# Create PLStream.java
-configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/PLStream.java.in
-${CMAKE_CURRENT_BINARY_DIR}/PLStream.java
 )
 
 # This is currently the include list for swig, the C wrapper and the
@@ -92,16 +81,11 @@ include_directories(${java_interface_INCLUDE_PATHS})
 
 # Can't use source file properties as we have to quote the flags in that 
 # case and it breaks swig. Doh! I would call this a cmake bug.
-if(PL_DOUBLE)
-  set(CMAKE_SWIG_DOUBLE -DPL_DOUBLE)
-else(PL_DOUBLE)
-  set(CMAKE_SWIG_DOUBLE)
-endif(PL_DOUBLE)
 if(SWIG_JAVA_NOPGCPP)
   #This version of swig supports the -nopgcpp option
-  set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_DOUBLE} -DSWIG_JAVA -package plplot.core -nopgcpp)
+  set(CMAKE_SWIG_FLAGS -DPL_DOUBLE_INTERFACE -DSWIG_JAVA -package plplot.core -nopgcpp)
 else(SWIG_JAVA_NOPGCPP)
-  set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_DOUBLE} -DSWIG_JAVA -package plplot.core)
+  set(CMAKE_SWIG_FLAGS -DPL_DOUBLE_INTERFACE -DSWIG_JAVA -package plplot.core)
 endif(SWIG_JAVA_NOPGCPP)
 
 set( CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR} )
