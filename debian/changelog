@@ -2,8 +2,12 @@ plplot (5.8.0-7) UNRELEASED; urgency=low
 
   [ Rafael Laboissiere ]
   * debian/control: Fixed capitalization of GNOME (Lintian warning)
+  * debian/patches/09_pdftex-EC-encoding.dpatch: Added patch for getting
+    included the correct ec.enc file for the EC encoding, such that
+    ligatures like "ff" and "fi" display correctly in the PDF form of the
+    documentation (closes: #461343)
 
- -- Rafael Laboissiere <rafael@debian.org>  Fri, 18 Jan 2008 13:16:38 +0100
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 18 Jan 2008 13:26:34 +0100
 
 plplot (5.8.0-6) unstable; urgency=low
 
