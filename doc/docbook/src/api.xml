@@ -3402,7 +3402,7 @@ from color map0
 
   <sect1 id="plgcol0a" renderas="sect3">
     <title>
-      <function>plgcol0</function>: Returns 8-bit RGB values and double alpha
+      <function>plgcol0a</function>: Returns 8-bit RGB values and double alpha
       value for given color from color map0.
     </title>
 
@@ -3565,7 +3565,7 @@ from color map0
 
   <sect1 id="plgcolbga" renderas="sect3">
     <title>
-      <function>plgcolbg</function>:  Returns the background color (cmap0[0]) 
+      <function>plgcolbga</function>:  Returns the background color (cmap0[0]) 
       by 8-bit RGB value and double alpha value.
     </title>
 
@@ -8422,7 +8422,7 @@ current device/file
   <sect1 id="plscmap0a" renderas="sect3">
     <title>
       <function>plscmap0a</function>: Set color map0 colors by 8-bit RGB values and 
-      floating point alpha value.
+      double alpha value.
     </title>
 
     <para>
