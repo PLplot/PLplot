@@ -64,33 +64,16 @@ ${CMAKE_BINARY_DIR}/bindings/java/plplot/core/plplotjavacJNI.class
 )
 
 foreach(STRING_INDEX ${java_STRING_INDICES})
-  if(PL_DOUBLE)
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}.java
-      COMMAND ${CMAKE_COMMAND} 
-      -E copy ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}.java
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java
-    )
-  else(PL_DOUBLE)
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}.java
-      COMMAND sed
-      -e 's/double/float/g' -e 's/Double/Float/g'  ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java  > ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}.java
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java
-    )
-  endif(PL_DOUBLE)
-
-  set(java_SRCS ${java_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}.java)
+  set(java_SRCS ${java_SRCS} x${STRING_INDEX}.java)
   set(java_CLASSES ${java_CLASSES} ${CMAKE_CURRENT_BINARY_DIR}/plplot/examples/x${STRING_INDEX}.class)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot/examples/x${STRING_INDEX}.class
     COMMAND ${CMAKE_Java_COMPILER}
-    -classpath ${CMAKE_BINARY_DIR}/bindings/java ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}.java -d ${CMAKE_CURRENT_BINARY_DIR} -encoding utf8
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}.java
+    -classpath ${CMAKE_BINARY_DIR}/bindings/java ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java -d ${CMAKE_CURRENT_BINARY_DIR} -encoding utf8
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java
   )
 endforeach(STRING_INDEX ${java_STRING_INDICES})
 
-add_custom_target(java_examples_src ALL DEPENDS ${java_SRCS})
 add_custom_target(plplot_examples DEPENDS ${java_CLASSES})
 add_dependencies(plplot_examples plplot_core)
 
