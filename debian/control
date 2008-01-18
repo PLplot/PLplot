@@ -125,8 +125,8 @@ Section: libs
 Depends: libplplot9, ${shlibs:Depends}
 Conflicts: plplot9-driver-gnome
 Replaces: plplot9-driver-gnome
-Description: Scientific plotting library (Gnome Canvas Widget driver)
- This package provides the Gnome Canvas Widget driver module for PLplot, a
+Description: Scientific plotting library (GNOME Canvas Widget driver)
+ This package provides the GNOME Canvas Widget driver module for PLplot, a
  scientific plotting library.  This package replaces the (now deprecated)
  plplot9-driver-gnome package.
 

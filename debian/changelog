@@ -1,3 +1,10 @@
+plplot (5.8.0-7) UNRELEASED; urgency=low
+
+  [ Rafael Laboissiere ]
+  * debian/control: Fixed capitalization of GNOME (Lintian warning)
+
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 18 Jan 2008 13:16:38 +0100
+
 plplot (5.8.0-6) unstable; urgency=low
 
   [ Andrew Ross ]
