@@ -68,7 +68,7 @@ woody).
 #define PySequence_Size PySequence_Length
 %}
 
-#ifdef PL_DOUBLE
+#ifdef PL_DOUBLE_INTERFACE
 typedef double PLFLT;
 #else
 typedef float PLFLT;
@@ -205,7 +205,7 @@ PyArrayObject* myIntArray_ContiguousFromObject(PyObject* in, int type, int mindi
 				 PLFLT Arrays 
 ******************************************************************************/
 
-#ifndef PL_DOUBLE
+#ifndef PL_DOUBLE_INTERFACE
 %wrapper %{
 /* some really twisted stuff to allow calling a single precision library from python */
 PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims, int maxdims)

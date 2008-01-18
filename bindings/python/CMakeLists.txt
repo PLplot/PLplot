@@ -41,7 +41,7 @@ ${CMAKE_SOURCE_DIR}/bindings/swig-support
 include_directories(${python_interface_INCLUDE_PATHS})
 
 if(PL_DOUBLE)
-  set(CMAKE_SWIG_FLAGS -DPL_DOUBLE -DSWIG_PYTHON)
+  set(CMAKE_SWIG_FLAGS -DPL_DOUBLE_INTERFACE -DSWIG_PYTHON)
 else(PL_DOUBLE)
   set(CMAKE_SWIG_FLAGS -DSWIG_PYTHON)
 endif(PL_DOUBLE)
