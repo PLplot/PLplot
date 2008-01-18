@@ -279,6 +279,9 @@ void plD_tidy_cairo(PLStream *pls)
   // Free the cairo context and surface.
   cairo_destroy(aStream->cairoContext);
   cairo_surface_destroy(aStream->cairoSurface);
+
+  if (pls->OutFile)
+    fclose(pls->OutFile);
 }
 
 //---------------------------------------------------------------------
