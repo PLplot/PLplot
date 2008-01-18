@@ -3400,6 +3400,97 @@ from color map0
 
   </sect1>
 
+  <sect1 id="plgcol0a" renderas="sect3">
+    <title>
+      <function>plgcol0</function>: Returns 8-bit RGB values and double alpha
+      value for given color from color map0.
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plgcol0a</function>
+        </funcdef>
+        <paramdef><parameter>icol0</parameter></paramdef>
+        <paramdef><parameter>r</parameter></paramdef>
+        <paramdef><parameter>g</parameter></paramdef>
+        <paramdef><parameter>b</parameter></paramdef>
+        <paramdef><parameter>a</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Returns 8-bit RGB values (0-255) and double alpha value (0.0 - 1.0) for 
+      given color from color map0 (see <xref linkend="color-map-0"/>).  Values 
+      are negative if an invalid color id is given.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>icol0</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Index of desired cmap0 color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>r</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to 8-bit red value.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>g</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to 8-bit green value.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>b</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to 8-bit blue value.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>a</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to PLFLT alpha value.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      This function is used in example 30.
+    </para>
+
+  </sect1>
+
   <sect1 id="plgcolbg" renderas="sect3">
     <title>
       <function>plgcolbg</function>:  Returns the background color
@@ -3465,6 +3556,87 @@ from color map0
     <para>
       Redacted form: <function>plgcolbg(r, g, b)</function>
     </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plgcolbga" renderas="sect3">
+    <title>
+      <function>plgcolbg</function>:  Returns the background color (cmap0[0]) 
+      by 8-bit RGB value and double alpha value.
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plgcolbga</function>
+        </funcdef>
+        <paramdef><parameter>r</parameter></paramdef>
+        <paramdef><parameter>g</parameter></paramdef>
+        <paramdef><parameter>b</parameter></paramdef>
+        <paramdef><parameter>a</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+       Returns the background color (cmap0[0]) by 8-bit RGB value and double
+       alpha value.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>r</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to an unsigned 8-bit integer (0-255) representing
+	    the degree of red in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>g</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to an unsigned 8-bit integer (0-255) representing
+	    the degree of green in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>b</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to an unsigned 8-bit integer (0-255) representing
+	    the degree of blue in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>a</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to PLFLT alpha value.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
 
     <para>
       This function is not used in any examples.
@@ -8162,8 +8334,7 @@ current device/file
 
   <sect1 id="plscmap0" renderas="sect3">
     <title>
-      <function>plscmap0</function>: Set color map0 colors by 8-bit RGB
-values
+      <function>plscmap0</function>: Set color map0 colors by 8-bit RGB values
     </title>
 
     <para>
@@ -8244,6 +8415,105 @@ values
 
     <para>
       This function is used in examples 2,24.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plscmap0a" renderas="sect3">
+    <title>
+      <function>plscmap0a</function>: Set color map0 colors by 8-bit RGB values and 
+      floating point alpha value.
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plscmap0</function>
+        </funcdef>
+        <paramdef><parameter>r</parameter></paramdef>
+        <paramdef><parameter>g</parameter></paramdef>
+        <paramdef><parameter>b</parameter></paramdef>
+        <paramdef><parameter>a</parameter></paramdef>
+        <paramdef><parameter>ncol0</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Set color map0 colors using 8-bit RGB values (see <xref linkend="color-map-0"/>) 
+      and floating point alpha value.  This sets the entire color
+      map &ndash; only as many colors as specified will be allocated.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>r</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to array with set of unsigned 8-bit integers (0-255)
+	    representing the degree of red in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>g</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to array with set of unsigned 8-bit integers (0-255)
+	    representing the degree of green in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>b</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to array with set of unsigned 8-bit integers (0-255)
+	    representing the degree of blue in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>a</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to array with set of PLFLT values (0.0 - 1.0)
+	    representing the transparency of the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ncol0</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Number of items in the
+	    <literal><parameter>r</parameter></literal>,
+	    <literal><parameter>g</parameter></literal>,
+	    <literal><parameter>b</parameter></literal>, and
+	    <literal><parameter>a</parameter></literal> arrays.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      This function is used in examples 30.
     </para>
 
   </sect1>
@@ -8380,6 +8650,103 @@ values
     <para>
       Redacted form: <function>plscmap1(r, g, b, ncol1)</function>
     </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plscmap1a" renderas="sect3">
+    <title>
+      <function>plscmap1a</function>: Set color map1 colors using 8-bit RGB values
+      and double alpha values.
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plscmap1</function>
+        </funcdef>
+        <paramdef><parameter>r</parameter></paramdef>
+        <paramdef><parameter>g</parameter></paramdef>
+        <paramdef><parameter>b</parameter></paramdef>
+        <paramdef><parameter>a</parameter></paramdef>
+        <paramdef><parameter>ncol1</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para> Set color map1 colors using 8-bit RGB values (see <xref
+      linkend="color-map-1"/>) and double alpha values. This also sets 
+      the number of colors.</para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>r</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to array with set of unsigned 8-bit integers (0-255)
+	    representing the degree of red in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>g</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to array with set of unsigned 8-bit integers (0-255)
+	    representing the degree of green in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>b</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to array with set of unsigned 8-bit integers (0-255)
+	    representing the degree of blue in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>a</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to array with set of double values (0.0-1.0)
+	    representing the alpha value of the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ncol1</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Number of items in the
+	    <literal><parameter>r</parameter></literal>,
+	    <literal><parameter>g</parameter></literal>,
+	    <literal><parameter>b</parameter></literal>, and
+	    <literal><parameter>a</parameter></literal> arrays.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
 
     <para>
       This function is not used in any examples.
@@ -8556,6 +8923,137 @@ piece-wise linear relationship
 
   </sect1>
 
+  <sect1 id="plscmap1la" renderas="sect3">
+    <title>
+      <function>plscmap1la</function>: Set color map1 colors using a
+      piece-wise linear relationship
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plscmap1l</function>
+        </funcdef>
+        <paramdef><parameter>itype</parameter></paramdef>
+        <paramdef><parameter>npts</parameter></paramdef>
+        <paramdef><parameter>pos</parameter></paramdef>
+        <paramdef><parameter>coord1</parameter></paramdef>
+        <paramdef><parameter>coord2</parameter></paramdef>
+        <paramdef><parameter>coord3</parameter></paramdef>
+        <paramdef><parameter>coord4</parameter></paramdef>	
+        <paramdef><parameter>rev</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para> This the alpha value supporting version of plscmap1l. It sets color 
+    map1 colors using a piece-wise linear relationship between position in the 
+    color map (from 0 to 1) and position in HLS or RGB color space 
+    (see <xref linkend="color-map-1"/>) with alpha value (0.0 - 1.0). It may be 
+    called at any time. </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>itype</parameter>
+	  (<literal>PLBOOL</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            true: RGB, false: HLS.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>npts</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            number of control points
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>pos</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            position for each control point (between 0.0 and 1.0, in
+            ascending order)
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>coord1</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            first coordinate (H or R) for each control point
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>coord2</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            second coordinate (L or G) for each control point
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>coord3</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            third coordinate (S or B) for each control point
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>coord4</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            fourth coordinate, the alpha value for each control point
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>rev</parameter>
+	  (<literal>PLBOOL: *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            reverse flag for each control point. (<literal>rev[i]</literal> 
+	    refers
+	    to the interpolation interval between the <literal>i</literal> and
+	    <literal>i + 1</literal> control points).
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      This function is used in example 30.
+    </para>
+
+  </sect1>
+
   <sect1 id="plscmap1n" renderas="sect3">
     <title>
       <function>plscmap1n</function>: Set number of colors in color map1
@@ -8688,6 +9186,101 @@ bit RGB value
 
   </sect1>
 
+  <sect1 id="plscol0a" renderas="sect3">
+    <title>
+      <function>plscol0a</function>:  Set a given color from color map0 by 8
+      bit RGB value and double alpha value.
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plscol0</function>
+        </funcdef>
+        <paramdef><parameter>icol0</parameter></paramdef>
+        <paramdef><parameter>r</parameter></paramdef>
+        <paramdef><parameter>g</parameter></paramdef>
+        <paramdef><parameter>b</parameter></paramdef>
+        <paramdef><parameter>a</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para> Set a given color by 8-bit RGB value and double alpha value for color 
+    map0 (see <xref linkend="color-map-0"/>).  Overwrites the previous color value 
+    for the given index and, thus, does not result in any additional allocation 
+    of space for colors. </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>icol0</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Color index.  Must be less than the maximum number of colors
+	    (which is set by default, by &plscmap0n;, or even by &plscmap0;).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>r</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Unsigned 8-bit integer (0-255) representing
+	    the degree of red in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>g</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Unsigned 8-bit integer (0-255) representing
+	    the degree of green in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>b</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Unsigned 8-bit integer (0-255) representing
+	    the degree of blue in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>a</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            double value (0.0-1.0) representing the
+	    alpha value of the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      This function is used in example 30.
+    </para>
+
+  </sect1>
+
   <sect1 id="plscolbg" renderas="sect3">
     <title>
       <function>plscolbg</function>: Set the background color
@@ -8757,6 +9350,88 @@ by 8-bit RGB value
 
     <para>
       This function is used in example 15.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plscolbga" renderas="sect3">
+    <title>
+      <function>plscolbga</function>: Set the background color
+      by 8-bit RGB value and double alpha value.
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plscolbga</function>
+        </funcdef>
+        <paramdef><parameter>r</parameter></paramdef>
+        <paramdef><parameter>g</parameter></paramdef>
+        <paramdef><parameter>b</parameter></paramdef>
+        <paramdef><parameter>a</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Set the background color (color 0 in color map 0) by 8-bit RGB value (see
+<xref linkend="color-map-0"/>) and double alpha value.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>r</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Unsigned 8-bit integer (0-255) representing
+	    the degree of red in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>g</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Unsigned 8-bit integer (0-255) representing
+	    the degree of green in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>b</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Unsigned 8-bit integer (0-255) representing
+	    the degree of blue in the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>a</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            double value (0.0-1.0) representing the
+	    alpha value of the color.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      This function is not used in any examples.
     </para>
 
   </sect1>
