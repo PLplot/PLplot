@@ -1021,6 +1021,17 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
     break;
 
 	case PLESC_CLEAR: {
+    /* Since the plot is updated only every MAC_COMCOUNT commands (usually 5000)
+       before we clear the screen we need to show the plot at least once :) */
+    if( dev->ownGUI ) {
+        wxRunApp( pls, true );
+  			dev->comcount=0;
+    }
+/*				"x1", (double) (pls->sppxmi) * PIXELS_PER_DU,
+				"y1", (double) -(pls->sppyma) * PIXELS_PER_DU,
+				"x2", (double) (pls->sppxma) * PIXELS_PER_DU,
+				"y2", (double) -(pls->sppymi) * PIXELS_PER_DU,
+				"fill_color", (pls->cmap0[0]).name,*/
 			PLINT bgr, bgg, bgb;  /* red, green, blue */
 			plgcolbg( &bgr, &bgg, &bgb );  /* get background color information */
 
