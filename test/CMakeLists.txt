@@ -179,6 +179,14 @@ if(PLD_pscairo)
   endif(NOT TEST_DEVICE STREQUAL "pscairo")
 endif(PLD_pscairo)
 
+if(PLD_pngcairo)
+  if (NOT TEST_DEVICE STREQUAL "pngcairo")
+  add_test(examples_pngcairo
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=pngcairo"
+  )
+  endif(NOT TEST_DEVICE STREQUAL "pngcairo")
+endif(PLD_pngcairo)
+
 # Make a copy of lena.pgm to the test subdirectory of the build
 # tree so that example 20 will run from there.
 # Also need a copy of lena.img for the octave bindings
