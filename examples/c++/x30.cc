@@ -1,4 +1,5 @@
-/*
+/* $Id:$
+
   Alpha color values demonstration.
 
   Copyright (C) 2008 Hazen Babcock
