@@ -44,7 +44,8 @@ static PLBOOL rev[] = {0, 0};
 int
 main(int argc, const char *argv[])
 {
-  int i, j, icol, r, g, b;
+  int i, j;
+  PLINT icol, r, g, b;
   PLFLT a;
   PLFLT clevel[101];
   PLFLT **z;
