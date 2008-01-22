@@ -275,9 +275,17 @@ class PLDLLIMPEXP plstream {
 
     void gcol0( PLINT icol0, PLINT& r, PLINT& g, PLINT& b );
 
+// Returns 8 bit RGB and 0.0-1.0 alpha values for given color from color map 0.
+
+    void gcol0a( PLINT icol0, PLINT& r, PLINT& g, PLINT& b, PLFLT& a );
+
 // Returns the background color by 8 bit RGB value.
 
     void gcolbg( PLINT& r, PLINT& g, PLINT& b );
+
+// Returns the background color by 8 bit RGB and 0.0-1.0 alpha values.
+
+    void gcolbga( PLINT& r, PLINT& g, PLINT& b, PLFLT& a );
 
 // Returns the current compression setting
 
@@ -533,22 +541,42 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 
     void scmap0( PLINT *r, PLINT *g, PLINT *b, PLINT ncol0 );
 
+/* Set color map 0 colors by 8 bit RGB values and alpha value (0.0-1.0) */
+
+    void scmap0a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0 );
+
 /* Set color map 1 colors by 8 bit RGB values */
 
     void scmap1( PLINT *r, PLINT *g, PLINT *b, PLINT ncol1 );
+
+/* Set color map 1 colors by 8 bit RGB values and alpha value (0.0-1.0) */
+
+    void scmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 );
 
 /* Set color map 1 colors using a piece-wise linear relationship between */
 /* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
 
     void scmap1l( bool itype, PLINT npts, PLFLT *intensity,
-		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, bool *rev );
+		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, bool *rev = NULL );
 
-    void scmap1l( bool itype, PLINT npts, PLFLT *intensity,
-		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3 );
+/*    void scmap1l( bool itype, PLINT npts, PLFLT *intensity,
+		  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3 );*/
+
+/* Set color map 1 colors using a piece-wise linear relationship between */
+/* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
+/* Include alpha value in range 0.0-1.0.*/
+
+    void scmap1la( bool itype, PLINT npts, PLFLT *intensity,
+		   PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, 
+		   bool *rev = NULL );
 
 /* Set a given color from color map 0 by 8 bit RGB value */
 
     void scol0( PLINT icol0, PLINT r, PLINT g, PLINT b );
+
+/* Set a given color from color map 0 by 8 bit RGB value and alpha value (0.0-1.0) */
+
+    void scol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a );
 
 /* Set the background color by 8 bit RGB value */
 
@@ -771,6 +799,10 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 /* Switches to text screen. */
 
     void text();
+
+/* Set the format for date / time labels */
+
+    void timefmt(const char *fmt);
 
 /* Sets the edges of the viewport with the given aspect ratio, leaving */
 /* room for labels. */

@@ -659,13 +659,31 @@ void plstream::gcol0( PLINT icol0, PLINT& r, PLINT& g, PLINT& b )
     plgcol0( icol0, &r, &g, &b );
 }
 
-// Returns the background color by 8 bit RGB value/
+// Returns 8 bit RGB values + alpha value for given color from color map 0.
+
+void plstream::gcol0a( PLINT icol0, PLINT& r, PLINT& g, PLINT& b, PLFLT& a )
+{
+    set_stream();
+
+    plgcol0a( icol0, &r, &g, &b, &a );
+}
+
+// Returns the background color by 8 bit RGB value.
 
 void plstream::gcolbg( PLINT& r, PLINT& g, PLINT& b )
 {
     set_stream();
 
     plgcolbg( &r, &g, &b );
+}
+
+// Returns the background color by 8 bit RGB value + alpha value.
+
+void plstream::gcolbga( PLINT& r, PLINT& g, PLINT& b, PLFLT& a )
+{
+    set_stream();
+
+    plgcolbga( &r, &g, &b, &a );
 }
 
 // Returns the current compression setting
@@ -1241,6 +1259,15 @@ void plstream::scmap0( PLINT *r, PLINT *g, PLINT *b, PLINT ncol0 )
     plscmap0(r,g,b,ncol0);
 }
 
+/* Set color map 0 colors by 8 bit RGB values + alpha value */
+
+void plstream::scmap0a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0 )
+{
+    set_stream();
+
+    plscmap0a(r,g,b,a,ncol0);
+}
+
 /* Set color map 1 colors by 8 bit RGB values */
 
 void plstream::scmap1( PLINT *r, PLINT *g, PLINT *b, PLINT ncol1 )
@@ -1248,6 +1275,15 @@ void plstream::scmap1( PLINT *r, PLINT *g, PLINT *b, PLINT ncol1 )
     set_stream();
 
     plscmap1(r,g,b,ncol1);
+}
+
+/* Set color map 1 colors by 8 bit RGB values + alpha value */
+
+void plstream::scmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 )
+{
+    set_stream();
+
+    plscmap1a(r,g,b,a,ncol1);
 }
 
 /* Set color map 1 colors using a piece-wise linear relationship between */
@@ -1273,6 +1309,31 @@ void plstream::scmap1l( bool itype, PLINT npts, PLFLT *intensity,
         delete loc_rev;
 }
 
+/* Set color map 1 colors using a piece-wise linear relationship between */
+/* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space */
+/* and alpha value. */
+
+void plstream::scmap1la( bool itype, PLINT npts, PLFLT *intensity,
+			PLFLT *coord1, PLFLT *coord2, PLFLT *coord3,
+			PLFLT *a, bool *rev )
+{
+    PLBOOL * loc_rev = NULL;
+    if (rev != NULL) {
+        loc_rev = new PLBOOL[npts-1];
+        for (int i=0;i<npts-1;i++) {
+            loc_rev[i] = (PLBOOL) rev[i];
+	}
+    }
+    
+    set_stream();
+
+    plscmap1la((PLBOOL) itype,npts,intensity,coord1,coord2,coord3,a,loc_rev);
+
+    if (loc_rev != NULL)
+        delete loc_rev;
+}
+
+/*
 void plstream::scmap1l( bool itype, PLINT npts, PLFLT *intensity,
 			PLFLT *coord1, PLFLT *coord2, PLFLT *coord3)
 {
@@ -1281,6 +1342,7 @@ void plstream::scmap1l( bool itype, PLINT npts, PLFLT *intensity,
     plscmap1l((PLBOOL) itype,npts,intensity,coord1,coord2,coord3,NULL);
 
 }
+*/
 
 // Deprecated version using PLINT instead of bool
 void plstream::scmap1l( PLINT itype, PLINT npts, PLFLT *intensity,
@@ -1310,6 +1372,15 @@ void plstream::scol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
     set_stream();
 
     plscol0(icol0,r,g,b);
+}
+
+/* Set a given color from color map 0 by 8 bit RGB value + alpha value*/
+
+void plstream::scol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
+{
+    set_stream();
+
+    plscol0a(icol0,r,g,b,a);
 }
 
 /* Set the background color by 8 bit RGB value */
@@ -1917,6 +1988,15 @@ void plstream::text()
     set_stream();
 
     pltext();
+}
+
+/* Set the format for date / time labels */
+
+void plstream::timefmt(const char *fmt)
+{
+    set_stream();
+
+    pltimefmt(fmt);
 }
 
 /* Sets the edges of the viewport with the given aspect ratio, leaving */
