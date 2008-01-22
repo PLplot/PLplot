@@ -79,5 +79,6 @@ name as their non-alpha value equivalents, but with a an "a" added to the
 end. Example 30 demonstrates some different ways to use these functions
 and the effects of alpha values, at least for those drivers that support alpha
 values. This change should have no effect on the device drivers that do not 
-currently support alpha values.
+currently support alpha values. Currently only the cairo and gd drivers 
+support alpha values.
 
