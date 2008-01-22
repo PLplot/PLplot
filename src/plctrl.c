@@ -1750,11 +1750,13 @@ plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol)
 	newcolor->r = pls->cmap1[il].r;
 	newcolor->g = pls->cmap1[il].g;
 	newcolor->b = pls->cmap1[il].b;
+	newcolor->a = pls->cmap1[il].a;
     }
     else {
 	newcolor->r = (1.-delta) * pls->cmap1[il].r + delta * pls->cmap1[ir].r;
 	newcolor->g = (1.-delta) * pls->cmap1[il].g + delta * pls->cmap1[ir].g;
 	newcolor->b = (1.-delta) * pls->cmap1[il].b + delta * pls->cmap1[ir].b;
+	newcolor->a = (1.-delta) * pls->cmap1[il].a + delta * pls->cmap1[ir].a;
     }
 }
 

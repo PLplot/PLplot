@@ -235,6 +235,11 @@ static int NCOLOURS=gdMaxColors;
 #define gdImagePalettePixel(  im, x, y )   (im)->pixels[(y)][(x)]
 #endif
 
+int plToGdAlpha( PLFLT a ) {
+  int tmp = (int)((1.0-a)*gdAlphaMax);
+  return tmp;
+}
+
 /* Struct to hold device-specific info. */
 
 typedef struct {
@@ -849,8 +854,14 @@ if ((ncol0>0)&&(dev->im_out != NULL))  /* make sure the program actually asked f
    {
     for (i = 0; i < ncol0; i++)
         {
+#if GD2_VERS >= 2
+        gdImageColorAllocateAlpha(dev->im_out,
+				  pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b,
+				  plToGdAlpha(pls->cmap0[i].a));
+#else
         gdImageColorAllocate(dev->im_out,
                              pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
+#endif
         ++dev->totcol; /* count the number of colours we use as we use them */
         }
 
@@ -886,8 +897,14 @@ if ((ncol1>0)&&(dev->im_out != NULL))    /* make sure that we want to define cma
             }
 
 
-         gdImageColorAllocate(dev->im_out,
+#if GD2_VERS >= 2
+	 gdImageColorAllocateAlpha(dev->im_out,
+                                   cmap1col.r, cmap1col.g, cmap1col.b,
+				   plToGdAlpha(cmap1col.a));
+#else
+	 gdImageColorAllocate(dev->im_out,
                                    cmap1col.r, cmap1col.g, cmap1col.b);
+#endif
 
          ++dev->totcol; /* count the number of colours we use as we go */
         }
@@ -928,11 +945,11 @@ long temp_col;
 	    if ( (dev->totcol < NCOLOURS)||         /* See if there are slots left, if so we will allocate a new colour */
                  (gdImageTrueColor(dev->im_out)) )  /* In TrueColour mode we allocate each colour as we come to it */
 	       {
-	        /* Next allocate a new colour to a temporary slot since what we do with it will varay depending on if its a pallter index or truecolour */
+	        /* Next allocate a new colour to a temporary slot since what we do with it will vary depending on if its a palette index or truecolour */
 #if GD2_VERS >= 2
                 temp_col=gdImageColorAllocateAlpha(dev->im_out,pls->curcolor.r,
                                              pls->curcolor.g, pls->curcolor.b, 
-                                             (int) ((1.0-pls->curcolor.a)*gdAlphaMax));
+                                             plToGdAlpha(pls->curcolor.a));
 #else
                 temp_col=gdImageColorAllocate(dev->im_out,pls->curcolor.r,
                                              pls->curcolor.g, pls->curcolor.b); 
@@ -962,7 +979,7 @@ long temp_col;
 #if GD2_VERS >= 2
                 gdImageColorAllocateAlpha(dev->im_out,pls->curcolor.r, 
                                           pls->curcolor.g,  pls->curcolor.b,
-                                          (int) ((1.0-pls->curcolor.a)*gdAlphaMax));
+                                          plToGdAlpha(pls->curcolor.a));
 #else
                 gdImageColorAllocate(dev->im_out,pls->curcolor.r, 
                                           pls->curcolor.g,  pls->curcolor.b);
@@ -998,9 +1015,9 @@ long temp_col;
 #if GD2_VERS >= 2
              dev->colour = gdTrueColorAlpha(pls->curcolor.r, pls->curcolor.g, 
                                             pls->curcolor.b, 
-                                            (int) ((1.0-pls->curcolor.a)*gdAlphaMax) );
+                                            plToGdAlpha(pls->curcolor.a));
 #else
-             dev->colour = gdTrueColorAlpha(pls->curcolor.r, pls->curcolor.g, 
+             dev->colour = gdTrueColor(pls->curcolor.r, pls->curcolor.g, 
                                             pls->curcolor.b);
 #endif
            }
@@ -1119,11 +1136,12 @@ if (dev->red15) plD_red15_gd(pls);
  */
 
          if ( (pls->cmap0[0].r!=0)||(pls->cmap0[0].g!=0)||
-              (pls->cmap0[0].b!=0) )
+              (pls->cmap0[0].b!=0) || (pls->cmap0[0].a!=0.0) )
             {
              gdImageFilledRectangle(dev->im_out,0,0, pls->xlength-1, pls->ylength-1,
-                                    gdTrueColor(pls->cmap0[0].r,pls->cmap0[0].g,
-                                                pls->cmap0[0].b));
+                                    gdTrueColorAlpha(pls->cmap0[0].r,pls->cmap0[0].g,
+						     pls->cmap0[0].b, 
+						     plToGdAlpha(pls->cmap0[0].a) ));
             }
 
          }
