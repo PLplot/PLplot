@@ -564,6 +564,7 @@ typedef struct {
 #define    plscol0	c_plscol0
 #define    plscol0a     c_plscol0a
 #define    plscolbg	c_plscolbg
+#define    plscolbga	c_plscolbga
 #define    plscolor	c_plscolor
 #define    plscompression	c_plscompression
 #define    plsdev	c_plsdev

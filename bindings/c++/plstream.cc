@@ -1392,6 +1392,15 @@ void plstream::scolbg( PLINT r, PLINT g, PLINT b )
     plscolbg(r,g,b);
 }
 
+/* Set the background color by 8 bit RGB + alpha value */
+
+void plstream::scolbga( PLINT r, PLINT g, PLINT b, PLFLT a )
+{
+    set_stream();
+
+    plscolbga(r,g,b,a);
+}
+
 /* Used to globally turn color output on/off */
 
 void plstream::scolor( PLINT color )

@@ -582,6 +582,10 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 
     void scolbg( PLINT r, PLINT g, PLINT b );
 
+/* Set the background color by 8 bit RGB + alpha value */
+
+    void scolbga( PLINT r, PLINT g, PLINT b, PLFLT a );
+
 /* Used to globally turn color output on/off */
 
     void scolor( PLINT color );
