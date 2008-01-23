@@ -327,9 +327,17 @@ plgchr(PLFLT *OUTPUT, PLFLT *OUTPUT);
 void
 plgcol0(PLINT icol0, PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT);
 
+%feature("autodoc", "Get 8 bit RGB + alpha values for given color from color map 0.") plgcol0a;
+void
+plgcol0a(PLINT icol0, PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLFLT *OUTPUT);
+
 %feature("autodoc", "Get 8-bit RGB background color.") plgcolbg;
 void
 plgcolbg(PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT);
+
+%feature("autodoc", "Get 8-bit RGB + alpha background color.") plgcolbga;
+void
+plgcolbga(PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLFLT *OUTPUT);
 
 %feature("autodoc", "Get the current compression setting.") plgcompression;
 void
@@ -560,6 +568,10 @@ plschr(PLFLT def, PLFLT scale);
 void
 plscmap0(PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLINT n);
 
+%feature("autodoc", "Set color map 0 colors by 8 bit RGB + alpha values.") plscmap0a;
+void
+plscmap0a(PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLFLT *ArrayCk, PLINT n);
+
 %feature("autodoc", "Set number of colors in cmap 0.") plscmap0n;
 void
 plscmap0n(PLINT ncol0);
@@ -568,11 +580,22 @@ plscmap0n(PLINT ncol0);
 void
 plscmap1(PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLINT n);
 
+%feature("autodoc", "Set color map 1 colors by 8 bit RGB + alpha values.") plscmap1a;
+void
+plscmap1a(PLINT *Array, PLINT *ArrayCk, PLINT *ArrayCk, PLFLT *ArrayCk, PLINT n);
+
 %feature("autodoc", "Set color map 1 colors using a piece-wise linear relationship between intensity [0,1] (cmap 1 index) and position in HLS or
 RGB color space.") plscmap1l;
 void
 plscmap1l(PLBOOL itype, PLINT n, PLFLT *Array,
 	    PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk,
+	    PLBOOL *ArrayCkMinus1Null);
+
+%feature("autodoc", "Set color map 1 colors using a piece-wise linear relationship between intensity [0,1] (cmap 1 index) and position in HLS or
+RGB color space + alpha value.") plscmap1la;
+void
+plscmap1la(PLBOOL itype, PLINT n, PLFLT *Array,
+	    PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk, PLFLT *ArrayCk,
 	    PLBOOL *ArrayCkMinus1Null);
 
 %feature("autodoc", "Set number of colors in cmap 1.") plscmap1n;
@@ -583,9 +606,17 @@ plscmap1n(PLINT ncol1);
 void
 plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b);
 
+%feature("autodoc", "Set 8-bit RGB + alpha value in cmap 0.") plscol0a;
+void
+plscol0a(PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a);
+
 %feature("autodoc", "Set the background color using 8-bit RGB value.") plscolbg;
 void
 plscolbg(PLINT r, PLINT g, PLINT b);
+
+%feature("autodoc", "Set the background color using 8-bit RGB + alpha value.") plscolbga;
+void
+plscolbga(PLINT r, PLINT g, PLINT b, PLFLT a);
 
 %feature("autodoc", "Globally turn color output on/off.") plscolor;
 void
@@ -753,6 +784,10 @@ plszax(PLINT digmax, PLINT digits);
 void
 pltext(void);
 
+%feature("autodoc", "Set the format for date / time labels") pltimefmt;
+void
+pltimefmt(const char *fmt);
+ 
 %feature("autodoc", "Sets the edges of the viewport with the given aspect ratio, leaving room for labels.") plvasp;
 void
 plvasp(PLFLT aspect);

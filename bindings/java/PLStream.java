@@ -261,9 +261,19 @@ public void gcol0(int icol0, int[] r, int[] g, int[] b) {
     plplotjavac.plgcol0(icol0, r, g, b);
 }
 
+public void gcol0a(int icol0, int[] r, int[] g, int[] b, double[] a) {
+    if (set_stream() == -1) return;
+    plplotjavac.plgcol0a(icol0, r, g, b, a);
+}
+
 public void gcolbg(int[] r, int[] g, int[] b) {
     if (set_stream() == -1) return;
     plplotjavac.plgcolbg(r, g, b);
+}
+
+public void gcolbga(int[] r, int[] g, int[] b, double[] a) {
+    if (set_stream() == -1) return;
+    plplotjavac.plgcolbga(r, g, b, a);
 }
 
 public void gcompression(int[] compression) {
@@ -538,6 +548,11 @@ public void scmap0(int[] r, int[] g, int[] b) {
     plplotjavac.plscmap0(r, g, b);
 }
 
+public void scmap0a(int[] r, int[] g, int[] b, double[] a) {
+    if (set_stream() == -1) return;
+    plplotjavac.plscmap0a(r, g, b, a);
+}
+
 public void scmap0n(int ncol0) {
     if (set_stream() == -1) return;
     plplotjavac.plscmap0n(ncol0);
@@ -546,6 +561,11 @@ public void scmap0n(int ncol0) {
 public void scmap1(int[] r, int[] g, int[] b) {
     if (set_stream() == -1) return;
     plplotjavac.plscmap1(r, g, b);
+}
+
+public void scmap1a(int[] r, int[] g, int[] b, double[] a) {
+    if (set_stream() == -1) return;
+    plplotjavac.plscmap1a(r, g, b, a);
 }
 
 public void scmap1l(boolean itype, double[] intensity, double[] coord1, 
@@ -560,6 +580,18 @@ public void scmap1l(boolean itype, double[] intensity, double[] coord1,
     plplotjavac.plscmap1l(itype, intensity, coord1, coord2, coord3, null);
 }
 
+public void scmap1la(boolean itype, double[] intensity, double[] coord1, 
+		double[] coord2, double[] coord3, double[] a, boolean[] rev) {
+    if (set_stream() == -1) return;
+    plplotjavac.plscmap1la(itype, intensity, coord1, coord2, coord3, a, rev);
+}
+
+public void scmap1la(boolean itype, double[] intensity, double[] coord1, 
+		double[] coord2, double[] coord3, double[] a) {
+    if (set_stream() == -1) return;
+    plplotjavac.plscmap1la(itype, intensity, coord1, coord2, coord3, a, null);
+}
+
 public void scmap1n(int ncol1) {
     if (set_stream() == -1) return;
     plplotjavac.plscmap1n(ncol1);
@@ -570,9 +602,19 @@ public void scol0(int icol0, int r, int g, int b) {
     plplotjavac.plscol0(icol0, r, g, b);
 }
 
+public void scol0a(int icol0, int r, int g, int b, double a) {
+    if (set_stream() == -1) return;
+    plplotjavac.plscol0a(icol0, r, g, b, a);
+}
+
 public void scolbg(int r, int g, int b) {
     if (set_stream() == -1) return;
     plplotjavac.plscolbg(r, g, b);
+}
+
+public void scolbga(int r, int g, int b, double a) {
+    if (set_stream() == -1) return;
+    plplotjavac.plscolbga(r, g, b, a);
 }
 
 public void scolor(int color) {
@@ -766,6 +808,11 @@ public void szax(int digmax, int digits) {
 public void text() {
     if (set_stream() == -1) return;
     plplotjavac.pltext();
+}
+
+public void timefmt(String fmt) {
+   if (set_stream() == -1) return;
+   plplotjavac.pltimefmt(fmt);
 }
 
 public void vasp(double aspect) {
