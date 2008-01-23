@@ -228,9 +228,21 @@ PLGCOL0(PLINT *icol0, PLINT *r, PLINT *g, PLINT *b)
 }
 
 void
+PLGCOL0A(PLINT *icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a)
+{
+    c_plgcol0a(*icol0, r, g, b, a);
+}
+
+void
 PLGCOLBG(PLINT *r, PLINT *g, PLINT *b)
 {
     c_plgcolbg(r, g, b);
+}
+
+void
+PLGCOLBGA(PLINT *r, PLINT *g, PLINT *b, PLFLT *a)
+{
+    c_plgcolbga(r, g, b, a);
 }
 
 void
@@ -561,6 +573,12 @@ PLSCMAP0(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol0)
 }
 
 void
+PLSCMAP0A(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT *ncol0)
+{
+    c_plscmap0a(r, g, b, a, *ncol0);
+}
+
+void
 PLSCMAP0N(PLINT *n)
 {
     c_plscmap0n(*n);
@@ -573,6 +591,12 @@ PLSCMAP1(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol1)
 }
 
 void
+PLSCMAP1A(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT *ncol1)
+{
+    c_plscmap1a(r, g, b, a, *ncol1);
+}
+
+void
 PLSCMAP1L(PLBOOL *itype, PLINT *npts, PLFLT *intensity,
 	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLBOOL *rev)
 {
@@ -580,10 +604,24 @@ PLSCMAP1L(PLBOOL *itype, PLINT *npts, PLFLT *intensity,
 }
 
 void
-PLSCMAP1LA(PLBOOL *itype, PLINT *npts, PLFLT *intensity,
+PLSCMAP1L2(PLBOOL *itype, PLINT *npts, PLFLT *intensity,
 	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3)
 {
     c_plscmap1l(*itype, *npts, intensity, coord1, coord2, coord3, NULL);
+}
+
+void
+PLSCMAP1LA(PLBOOL *itype, PLINT *npts, PLFLT *intensity,
+	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLBOOL *rev)
+{
+    c_plscmap1la(*itype, *npts, intensity, coord1, coord2, coord3, a, rev);
+}
+
+void
+PLSCMAP1LA2(PLBOOL *itype, PLINT *npts, PLFLT *intensity,
+	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a)
+{
+    c_plscmap1la(*itype, *npts, intensity, coord1, coord2, coord3, a, NULL);
 }
 
 void
@@ -599,9 +637,21 @@ PLSCOL0(PLINT *icol0, PLINT *r, PLINT *g, PLINT *b)
 }
 
 void
+PLSCOL0A(PLINT *icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a)
+{
+    c_plscol0a(*icol0, *r, *g, *b, *a);
+}
+
+void
 PLSCOLBG(PLINT *r, PLINT *g, PLINT *b)
 {
     c_plscolbg(*r, *g, *b);
+}
+
+void
+PLSCOLBGA(PLINT *r, PLINT *g, PLINT *b, PLFLT *a)
+{
+    c_plscolbga(*r, *g, *b, *a);
 }
 
 void
@@ -835,6 +885,12 @@ void
 PLTEXT(void)
 {
     c_pltext();
+}
+
+void
+PLTIMEFMT7(const char *fmt)
+{
+    c_pltimefmt(fmt);
 }
 
 void

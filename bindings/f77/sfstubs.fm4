@@ -660,3 +660,16 @@
 
 !***********************************************************************
 
+      subroutine pltimefmt(fmt)
+
+      implicit none
+      character*(*) fmt
+
+      include 'sfstubs.h'
+
+      call plstrf2c(fmt, string1, maxlen)
+      call pltimefmt7(s1)
+
+      end
+
+!***********************************************************************

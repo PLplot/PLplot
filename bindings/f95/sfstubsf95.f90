@@ -280,9 +280,25 @@
       end interface
 
       interface
+         subroutine plgcol0a( icol, r, g, b, a )
+            use plplot_flt
+            integer :: icol, r, g, b
+            real(kind=plflt) :: a
+         end subroutine plgcol0a
+      end interface
+
+      interface
          subroutine plgcolbg( r, g, b )
             integer :: r, g, b
          end subroutine plgcolbg
+      end interface
+
+      interface
+         subroutine plgcolbga( r, g, b, a )
+            use plplot_flt
+            integer :: r, g, b
+            real(kind=plflt) :: a
+         end subroutine plgcolbga
       end interface
 
       interface
@@ -528,6 +544,10 @@
          module procedure plscmap0
       end interface
 
+      interface plscmap0a
+         module procedure plscmap0a
+      end interface
+
       interface
          subroutine plscmap0n( n )
             integer :: n
@@ -538,9 +558,18 @@
          module procedure plscmap1
       end interface
 
+      interface plscmap1a
+         module procedure plscmap1a
+      end interface
+
       interface plscmap1l
          module procedure plscmap1l
+         module procedure plscmap1l2
+      end interface
+
+      interface plscmap1la
          module procedure plscmap1la
+         module procedure plscmap1la2
       end interface
 
       interface
@@ -556,9 +585,25 @@
       end interface
 
       interface
+         subroutine plscol0a( icol, r, g, b, a )
+            use plplot_flt
+            integer :: icol, r, g, b
+            real(kind=plflt) :: a
+         end subroutine plscol0a
+      end interface
+
+      interface
          subroutine plscolbg( r, g, b )
             integer :: r, g, b
          end subroutine plscolbg
+      end interface
+
+      interface
+         subroutine plscolbga( r, g, b, a )
+            use plplot_flt
+            integer :: r, g, b
+            real(kind=plflt) :: a
+         end subroutine plscolbga
       end interface
 
       interface
@@ -1003,11 +1048,25 @@
          call plscmap0f77( r, g, b, size(r) )
       end subroutine plscmap0
 
+      subroutine plscmap0a( r, g, b, a )
+         integer, dimension(:) :: r, g, b
+         real(kind=plflt) :: a
+
+         call plscmap0af77( r, g, b, a, size(r) )
+      end subroutine plscmap0a
+
       subroutine plscmap1( r, g, b )
          integer, dimension(:) :: r, g, b
 
          call plscmap1f77( r, g, b, size(r) )
       end subroutine plscmap1
+
+      subroutine plscmap1a( r, g, b, a )
+         integer, dimension(:) :: r, g, b
+         real(kind=plflt) :: a
+
+         call plscmap1af77( r, g, b, a, size(r) )
+      end subroutine plscmap1a
 
       subroutine plscmap1l( rgbtype, intensity, coord1, coord2, coord3, rev)
             logical                        :: rgbtype
@@ -1025,15 +1084,41 @@
          call plscmap1lf77( type, size(intensity), intensity, coord1, coord2, coord3, irev )
       end subroutine plscmap1l
 
-      subroutine plscmap1la( rgbtype, intensity, coord1, coord2, coord3)
+      subroutine plscmap1l2( rgbtype, intensity, coord1, coord2, coord3)
             logical                        :: rgbtype
             real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3
 
             integer                        :: type
 
          type = convert_to_int( rgbtype )
-         call plscmap1laf77( type, size(intensity), intensity, coord1, coord2, coord3)
+         call plscmap1l2f77( type, size(intensity), intensity, coord1, coord2, coord3)
+      end subroutine plscmap1l2
+
+      subroutine plscmap1la( rgbtype, intensity, coord1, coord2, coord3, a, rev)
+            logical                        :: rgbtype
+            real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3, a
+            logical, dimension(:)          :: rev
+
+            integer, dimension(size(rev))  :: irev
+            integer                        :: i
+            integer                        :: type
+
+         type = convert_to_int( rgbtype )
+         do i = 1,size(rev)
+            irev(i) = convert_to_int( rev(i) )
+         enddo
+         call plscmap1laf77( type, size(intensity), intensity, coord1, coord2, coord3, a, irev )
       end subroutine plscmap1la
+
+      subroutine plscmap1la2( rgbtype, intensity, coord1, coord2, coord3, a)
+            logical                        :: rgbtype
+            real(kind=plflt), dimension(:) :: intensity, coord1, coord2, coord3, a
+
+            integer                        :: type
+
+         type = convert_to_int( rgbtype )
+         call plscmap1la2f77( type, size(intensity), intensity, coord1, coord2, coord3, a)
+      end subroutine plscmap1la2
 
       subroutine plstripc(id, xspec, yspec, xmin, xmax, xjump, &
         ymin, ymax, xlpos, ylpos, y_ascl, acc, &

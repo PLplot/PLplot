@@ -717,3 +717,19 @@
 
       end subroutine
 
+!***********************************************************************
+
+      subroutine pltimefmt(fmt)
+
+      implicit none
+      character*(*) fmt 
+
+      include 'sfstubs.h'
+
+      call plstrf2c(fmt, string1, maxlen)
+      s1 = transfer( string1, s1 )
+      call pltimefmt7(s1)
+
+      end subroutine
+
+!***********************************************************************
