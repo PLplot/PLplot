@@ -1883,14 +1883,18 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 		//printf( "Clipping region: x=%d, y=%d, width=%d, height=%d, counter=%d\n", vX, vY, vW, vH, counter++ );
   
     if( m_dev->antialized ) {
-      wxMemoryDC MemoryDC;
-			wxBitmap bitmap( m_dev->m_buffer->GetSubImage(wxRect(vX, vY, vW, vH)), -1 );
-      MemoryDC.SelectObject( bitmap );
-      dc.Blit( vX, vY, vW, vH, &MemoryDC, 0, 0 );
-      MemoryDC.SelectObject( wxNullBitmap );
+    	if( m_dev->m_buffer ) {
+	      wxMemoryDC MemoryDC;
+				wxBitmap bitmap( m_dev->m_buffer->GetSubImage(wxRect(vX, vY, vW, vH)), -1 );
+	      MemoryDC.SelectObject( bitmap );
+	      dc.Blit( vX, vY, vW, vH, &MemoryDC, 0, 0 );
+	      MemoryDC.SelectObject( wxNullBitmap );
+    	}
     }
-    else 
-      dc.Blit( vX, vY, vW, vH, m_dev->dc, vX, vY );
+    else {
+    	if( m_dev->dc )
+   	   dc.Blit( vX, vY, vW, vH, m_dev->dc, vX, vY );
+    }
 
     upd ++ ;
   }
