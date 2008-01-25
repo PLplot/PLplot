@@ -20,9 +20,11 @@
 # Module for determining pkg-config configuration variables related to the
 # install-tree build of the examples.
 # Also create useful macros called pkg_check_pkgconfig to emulate the
-# pkgconfig macro using the pkg_check_modules macro and 
-# pc_transform_link_flags to process link flags into standard form for
-# the configured *.pc files.
+# pkgconfig macro using the pkg_check_modules macro,
+# cmake_to_pkg_config_link_flags to process CMake link flags into 
+# pkg-config standard form for the configured output *.pc files, and
+# pkg_config_to_cmake_link_flags to process input link flags delivered
+# by pkg-config into CMake standard form.
 
 # The following variables are set:
 # PKG_CONFIG_EXECUTABLE	  - name of pkg-config executable, but can also be
@@ -91,9 +93,9 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags)
   #message("${_cflags} = ${${_cflags}}")
 endmacro(pkg_check_pkgconfig)
 
-macro(pc_transform_link_flags _link_flags_out _link_flags_in)
-  # Transform link flags into a form that is suitable to be used in
-  # pkg-config (*.pc) files.
+macro(pkg_config_link_flags _link_flags_out _link_flags_in)
+  # Transform link flags into a form that is suitable to be used for
+  # output pkg-config (*.pc) files.
   # N.B. ${_link_flags_in} must be a string and not a list.
 
   #message("(original link flags) = ${_link_flags_in}")
@@ -138,4 +140,53 @@ macro(pc_transform_link_flags _link_flags_out _link_flags_in)
     #message("(frameworks) ${_link_flags_out} = ${${_link_flags_out}}")
   endif(APPLE)
 
-endmacro(pc_transform_link_flags)
+endmacro(pkg_config_link_flags)
+
+macro(cmake_link_flags _link_flags_out _link_flags_in)
+  # Transform link flags delivered by pkg-config into the best form
+  # for CMake.
+  # N.B. ${_link_flags_in} must be a string and not a list.
+
+  #message("(original link flags) = ${_link_flags_in}")
+  # Convert link flags to a blank-delimited string.
+  string(REGEX REPLACE ";" " " ${_link_flags_out} "${_link_flags_in}")
+  #message("(blanks) ${_link_flags_out} = ${${_link_flags_out}}")
+
+  # Replace actual library names with the -LPATHNAME and -lLIBRARYNAME form
+  # since it appears pkg-config handles that latter form much better (with
+  # regard to keeping the correct order and eliminating duplicates).
+
+  # These REGEX REPLACE's won't actually replace anything on bare windows since
+  # library names are not of this form on that platform.  Something to be
+  # considered later if we decide to use pkg-config on bare windows.
+
+  # This logic will need to be expanded for Unix platforms other than
+  # Mac OS X and Linux.
+  if(APPLE)
+    set(suffix_list ".so" ".a" ".dylib")
+  else(APPLE)
+    set(suffix_list ".so" ".a")
+  endif(APPLE)
+
+  foreach(suffix ${suffix_list})
+    string(
+    REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\${suffix}" "-L\\1 -l\\2"
+    ${_link_flags_out}
+    "${${_link_flags_out}}"
+    )
+    #message("(${suffix}) ${_link_flags_out} = ${${_link_flags_out}}")
+  endforeach(suffix ${suffix_list})
+
+  if(APPLE)
+    # For Mac OS X transform frameworks information into correct form.
+    string(
+    REGEX REPLACE
+    "/System/Library/Frameworks/([^ ]*)\\.framework"
+    "-framework \\1"
+    ${_link_flags_out}
+    ${${_link_flags_out}}
+    )
+    #message("(frameworks) ${_link_flags_out} = ${${_link_flags_out}}")
+  endif(APPLE)
+
+endmacro(cmake_link_flags)
