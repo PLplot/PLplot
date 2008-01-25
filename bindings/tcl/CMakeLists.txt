@@ -188,7 +188,7 @@ endif(ENABLE_tk)
 
 # Transform "${libplplottcltk${LIB_TAG}_LINK_FLAGS}" string to the 
 # standard pkg-config form.
-pc_transform_link_flags(
+pkg_config_link_flags(
 libplplottcltk${LIB_TAG}_LINK_FLAGS
 "${libplplottcltk${LIB_TAG}_LINK_FLAGS}"
 )

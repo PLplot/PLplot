@@ -110,7 +110,7 @@ if(ENABLE_wxwidgets)
     )
     
     # Determine libplplotwxwidgets${LIB_TAG}_LINK_FLAGS
-    pc_transform_link_flags(
+    pkg_config_link_flags(
     libplplotwxwidgets${LIB_TAG}_LINK_FLAGS
     "${wxWidgets_LIBRARIES}"
     )
