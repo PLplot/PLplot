@@ -61,6 +61,8 @@ EXECUTABLES_list = \
 		 x26c$(EXEEXT) \
 		 x27c$(EXEEXT) \
 		 x28c$(EXEEXT) \
+		 x29c$(EXEEXT) \
+		 x30c$(EXEEXT) \
 		 $(PLPLOTCANVAS_EXECUTABLES_list)
 
 all: $(EXECUTABLES_list)
