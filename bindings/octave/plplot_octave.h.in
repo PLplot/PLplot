@@ -455,7 +455,9 @@ typedef struct {
 #define    plfontld	c_plfontld
 #define    plgchr	c_plgchr
 #define    plgcol0	c_plgcol0
+#define    plgcol0a	c_plgcol0a
 #define    plgcolbg	c_plgcolbg
+#define    plgcolbga	c_plgcolbga
 #define    plgcompression	c_plgcompression
 #define    plgdev	c_plgdev
 #define    plgdidev	c_plgdidev
@@ -514,7 +516,9 @@ typedef struct {
 #define    plscmap1n	c_plscmap1n
 #define    plscmap1l	c_plscmap1l
 #define    plscol0	c_plscol0
+#define    plscol0a	c_plscol0a
 #define    plscolbg	c_plscolbg
+#define    plscolbga	c_plscolbga
 #define    plscolor	c_plscolor
 #define    plscompression	c_plscompression
 #define    plsdev	c_plsdev
@@ -551,6 +555,7 @@ typedef struct {
 #define    plsym	c_plsym
 #define    plszax	c_plszax
 #define    pltext	c_pltext
+#define    pltimefmt	c_pltimefmt
 #define    plvasp	c_plvasp
 #define    plvect       c_plvect
 #define    plvpas	c_plvpas
@@ -818,9 +823,17 @@ void c_plgchr(PLFLT *p_def, PLFLT *p_ht); //%name plgchr //%output p_def, p_ht
 
 void c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b); //%name plgcol0 //%output r, g, b
 
+/* Returns 8 bit RGB + alpha values for given color from color map 0 */
+
+void c_plgcol0a(PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a); //%name plgcol0a //%output r, g, b, a
+
 /* Returns the background color by 8 bit RGB value */
 
 void c_plgcolbg(PLINT *r, PLINT *g, PLINT *b); //%name plgcolbg //%output r, g, b
+
+/* Returns the background color by 8 bit RGB + alpha values */
+
+void c_plgcolbga(PLINT *r, PLINT *g, PLINT *b, PLFLT *a); //%name plgcolbga //%output r, g, b, a
 
 /* Returns the current compression setting */
 
@@ -1114,6 +1127,30 @@ void c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b); //%name plscol0
 
 void c_plscolbg(PLINT r, PLINT g, PLINT b); //%name plscolbg
 
+/* Set color map 0 colors by 8 bit RGB + alpha values */
+
+void c_plscmap0a(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0); //%name plscmap0a //%input r(ncol0), g(ncol0), b(ncol0), a(ncol0)
+
+/* Set color map 1 colors by 8 bit RGB + alpha values */
+
+void c_plscmap1a(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1); //%name plscmap1a //%input r(ncol1), g(ncol1), b(ncol1), a(ncol1)
+
+/* Set color map 1 colors using a piece-wise linear relationship between */
+/* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space */
+/* and alpha transparency value. */
+
+void c_plscmap1la(PLINT itype, PLINT npts, PLFLT *intensity,
+	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLINT *rev);
+//%name plscmap1la //%input intensity(npts), coord1(npts), coord2(npts), coord3(npts), a(npts), rev(npts)
+
+/* Set a given color from color map 0 by 8 bit RGB + alpha value */
+
+void c_plscol0a(PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a); //%name plscol0a
+
+/* Set the background color by 8 bit RGB + alpha value */
+
+void c_plscolbga(PLINT r, PLINT g, PLINT b, PLFLT a); //%name plscolbga
+
 /* Used to globally turn color output on/off */
 
 void c_plscolor(PLINT color); //%name plscolor
@@ -1390,6 +1427,10 @@ void c_plszax(PLINT digmax, PLINT digits); //%name plszax
 /* Switches to text screen. */
 
 void c_pltext(void); //%name pltext
+
+/* Set the format for date / time labels. */
+
+void c_pltimefmt(const char *fmt); //%name pltimefmt
 
 /* Sets the edges of the viewport with the given aspect ratio, leaving */
 /* room for labels. */
