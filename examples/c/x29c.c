@@ -53,7 +53,7 @@ int
 main(int argc, const char *argv[])
 {
 
-  /* Parese command line arguments */
+  /* Parse command line arguments */
   plparseopts(&argc, argv, PL_PARSE_FULL);
 
   /* Initialize plplot */
