@@ -1,4 +1,4 @@
-// $Id:$
+// $Id$
 //
 //       Sample plots using date / time formatting for axes
 //
@@ -68,10 +68,10 @@ x29::x29(int argc, const char *argv[])
 
   pls = new plstream();
 
-  /* Parese command line arguments */
+  // Parse command line arguments
   pls->parseopts(&argc, argv, PL_PARSE_FULL);
 
-  /* Initialize plplot */
+  // Initialize plplot 
   pls->init();
 
   plot1();
@@ -83,18 +83,18 @@ x29::x29(int argc, const char *argv[])
   delete pls;
 }
 
-/* Plot a model diurnal cycle of temperature */
+// Plot a model diurnal cycle of temperature 
 void
 x29::plot1() 
 {
   int i, npts;
   PLFLT xmin, xmax, ymin, ymax;
 
-  /* Data points every 10 minutes for 1 day */
+  // Data points every 10 minutes for 1 day
   npts = 145;
 
   xmin = 0;
-  xmax = 60.0*60.0*24.0;    /* Number of seconds in a day */
+  xmax = 60.0*60.0*24.0;    // Number of seconds in a day
   ymin = 10.0;
   ymax = 20.0;
 
@@ -108,8 +108,9 @@ x29::plot1()
   pls->vsta();
   pls->wind(xmin, xmax, ymin, ymax);
 
-  /* Draw a box with ticks spaced every 3 hour in X and 1 degree C in Y. */
+  // Draw a box with ticks spaced every 3 hour in X and 1 degree C in Y.
   pls->col0(1);
+  // Set time format to be hours:minutes
   pls->timefmt("%H:%M");
   pls->box("bcnstd", 3.0*60*60, 3, "bcnstv", 1, 5);
 
@@ -121,7 +122,7 @@ x29::plot1()
   pls->line(npts, x, y);
 }
 
-/* Plot the number of hours of daylight as a function of day for a year */
+// Plot the number of hours of daylight as a function of day for a year 
 void
 x29::plot2() 
 {
@@ -129,7 +130,7 @@ x29::plot2()
   PLFLT xmin, xmax, ymin, ymax;
   PLFLT lat, p, d;
 
-  /* Latitude for London */
+  // Latitude for London 
   lat = 51.5;
 
   npts = 365;
@@ -139,9 +140,9 @@ x29::plot2()
   ymin = 0;
   ymax = 24;
   
-  /* Formula for hours of daylight from 
-   * "A Model Comparison for Daylength as a Function of Latitude and 
-   * Day of the Year", 1995, Ecological Modelling, 80, pp 87-95. */
+  // Formula for hours of daylight from 
+  // "A Model Comparison for Daylength as a Function of Latitude and 
+  // Day of the Year", 1995, Ecological Modelling, 80, pp 87-95. 
   for (j = 0; j < npts; j++) {
     x[j] = j*60.0*60.0*24.0;
     p = asin(0.39795*cos(0.2163108 + 2*atan(0.9671396*tan(0.00860*(j-186)))));
@@ -152,7 +153,8 @@ x29::plot2()
   }
 
   pls->col0(1);
-  pls->timefmt("%d %b");
+  // Set time format to be abbreviated month name followed by day of month 
+  pls->timefmt("%b %d");
   pls->env(xmin, xmax, ymin, ymax, 0, 40);
 
 
@@ -175,16 +177,16 @@ x29::plot3()
 
   struct tm tm;
 
-  /* Warning: mktime is in local time so we need to calculate 
-   * offset to get UTC. C time handling is quirky */
+  // Warning: mktime is in local time so we need to calculate 
+  // offset to get UTC. C time handling is quirky 
   t1 = 0;
   tm = *gmtime(&t1);
   t2 = mktime(&tm);
   toff = difftime(t1,t2);
 
-  tm.tm_year = 105; /* Years since 1900 */
-  tm.tm_mon = 11;  /* 0 == January, 11 = December */
-  tm.tm_mday = 1;    /* 1 = 1st of month */
+  tm.tm_year = 105; // Years since 1900 
+  tm.tm_mon = 11;   // 0 == January, 11 = December 
+  tm.tm_mday = 1;   // 1 = 1st of month 
   tm.tm_hour = 0;
   tm.tm_min = 0;
   tm.tm_sec = 0;
@@ -208,10 +210,12 @@ x29::plot3()
   pls->vsta();
   pls->wind(xmin, xmax, ymin, ymax);
 
-  /* Draw a box with ticks spaced every 10 days in X and 1 hour in Y. */
   pls->col0(1);
-  pls->timefmt("%y-%m-%d");
-  pls->box("bcnstd", 10*24.0*60.0*60.0,10, "bcnstv", 1, 4);
+  // Set time format to be ISO 8601 standard YYYY-MM-HH. Note that this is
+  // equivalent to %f for C99 compliant implementations of strftime.
+  pls->timefmt("%Y-%m-%d");
+  // Draw a box with ticks spaced every 14 days in X and 1 hour in Y.
+  pls->box("bcnstd", 14*24.0*60.0*60.0,14, "bcnstv", 1, 4);
 
   pls->col0(3);
   pls->lab("Date", "Hours of television watched", "#frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");

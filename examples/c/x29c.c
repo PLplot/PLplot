@@ -97,6 +97,7 @@ plot1()
 
   /* Draw a box with ticks spaced every 3 hour in X and 1 degree C in Y. */
   plcol0(1);
+  /* Set time format to be hours:minutes */
   pltimefmt("%H:%M");
   plbox("bcnstd", 3.0*60*60, 3, "bcnstv", 1, 5);
 
@@ -139,7 +140,8 @@ plot2()
   }
 
   plcol0(1);
-  pltimefmt("%d %b");
+  /* Set time format to be abbreviated month name followed by day of month */
+  pltimefmt("%b %d");
   plenv(xmin, xmax, ymin, ymax, 0, 40);
 
 
@@ -170,8 +172,8 @@ plot3()
   toff = difftime(t1,t2);
 
   tm.tm_year = 105; /* Years since 1900 */
-  tm.tm_mon = 11;  /* 0 == January, 11 = December */
-  tm.tm_mday = 1;    /* 1 = 1st of month */
+  tm.tm_mon = 11;   /* 0 == January, 11 = December */
+  tm.tm_mday = 1;   /* 1 = 1st of month */
   tm.tm_hour = 0;
   tm.tm_min = 0;
   tm.tm_sec = 0;
@@ -195,10 +197,12 @@ plot3()
   plvsta();
   plwind(xmin, xmax, ymin, ymax);
 
-  /* Draw a box with ticks spaced every 10 days in X and 1 hour in Y. */
   plcol0(1);
-  pltimefmt("%y-%m-%d");
-  plbox("bcnstd", 10*24.0*60.0*60.0,10, "bcnstv", 1, 4);
+  /* Set time format to be ISO 8601 standard YYYY-MM-DD. Note that this is
+   * equivalent to %f for C99 compliant implementations of strftime. */
+  pltimefmt("%Y-%m-%d");
+  /* Draw a box with ticks spaced every 14 days in X and 1 hour in Y. */
+  plbox("bcnstd", 14*24.0*60.0*60.0,14, "bcnstv", 1, 4);
 
   plcol0(3);
   pllab("Date", "Hours of television watched", "#frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");
