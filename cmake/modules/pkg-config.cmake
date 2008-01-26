@@ -145,48 +145,63 @@ endmacro(pkg_config_link_flags)
 macro(cmake_link_flags _link_flags_out _link_flags_in)
   # Transform link flags delivered by pkg-config into the best form
   # for CMake.
+  # N.B. may need revision for windows since the current assumption
+  # is pkg-config delivers link flags using the -L and -l options which
+  # may not be the case for windows.
   # N.B. ${_link_flags_in} must be a string and not a list.
 
   #message("(original link flags) = ${_link_flags_in}")
-  # Convert link flags to a blank-delimited string.
-  string(REGEX REPLACE ";" " " ${_link_flags_out} "${_link_flags_in}")
-  #message("(blanks) ${_link_flags_out} = ${${_link_flags_out}}")
+  # Convert link flags to a list.
+  string(REGEX REPLACE " " ";" _link_flags_list "${_link_flags_in}")
+  # Extract list of directories from -L options.
+  list(LENGTH _link_flags_list _link_flags_length)
+  math(EXPR _link_flags_length "${_link_flags_length} - 1")
+  set(_index_list)
+  set(_link_directory_list)
+  foreach(_list_index RANGE ${_link_flags_length})
+    list(GET _link_flags_list ${_list_index} _list_element)
+    string(REGEX REPLACE "^-L" "" _list_element1 ${_list_element})
+    if(_list_element STREQUAL "-L${_list_element1}")
+      list(APPEND _index_list ${_list_index})
+      list(APPEND _link_directory_list ${_list_element1})
+    endif(_list_element STREQUAL "-L${_list_element1}")
+  endforeach(_list_index RANGE ${_link_flags_length})
+  # Remove -L options from list.
+  list(REMOVE_AT _link_flags_list ${_index_list})
+  #message("_link_directory_list = ${_link_directory_list}")
+  #message("_link_flags_list (without -L options) = ${_link_flags_list}")
 
-  # Replace actual library names with the -LPATHNAME and -lLIBRARYNAME form
-  # since it appears pkg-config handles that latter form much better (with
-  # regard to keeping the correct order and eliminating duplicates).
-
-  # These REGEX REPLACE's won't actually replace anything on bare windows since
-  # library names are not of this form on that platform.  Something to be
-  # considered later if we decide to use pkg-config on bare windows.
-
-  # This logic will need to be expanded for Unix platforms other than
-  # Mac OS X and Linux.
-  if(APPLE)
-    set(suffix_list ".so" ".a" ".dylib")
-  else(APPLE)
-    set(suffix_list ".so" ".a")
-  endif(APPLE)
-
-  foreach(suffix ${suffix_list})
-    string(
-    REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\${suffix}" "-L\\1 -l\\2"
-    ${_link_flags_out}
-    "${${_link_flags_out}}"
-    )
-    #message("(${suffix}) ${_link_flags_out} = ${${_link_flags_out}}")
-  endforeach(suffix ${suffix_list})
-
-  if(APPLE)
-    # For Mac OS X transform frameworks information into correct form.
-    string(
-    REGEX REPLACE
-    "/System/Library/Frameworks/([^ ]*)\\.framework"
-    "-framework \\1"
-    ${_link_flags_out}
-    ${${_link_flags_out}}
-    )
-    #message("(frameworks) ${_link_flags_out} = ${${_link_flags_out}}")
-  endif(APPLE)
-
+  # Derive ${_link_flags_out} from _link_flags_list with -l options 
+  # replaced by complete pathname of library.
+  list(LENGTH _link_flags_list _link_flags_length)
+  math(EXPR _link_flags_length "${_link_flags_length} - 1")
+  set(${_link_flags_out})
+  foreach(_list_index RANGE ${_link_flags_length})
+    list(GET _link_flags_list ${_list_index} _list_element)
+    string(REGEX REPLACE "^-l" "" _list_element1 ${_list_element})
+    if(_list_element STREQUAL "-l${_list_element1}")
+      set(_library_pathname "_library_pathname-NOTFOUND")
+      find_library(
+       _library_pathname 
+       ${_list_element1}
+       PATHS ${_link_directory_list}
+       NO_DEFAULT_PATH
+      )
+      if(NOT _library_pathname)
+        message(
+	"Cannot find library corresponding to linker option ${_list_element}"
+	)
+        message(
+	"original link flags delivered by pkg-config = ${_link_flags_in}"
+	)
+        message(FATAL_ERROR "FATAL ERROR in cmake_link_flags macro")
+      endif(NOT _library_pathname)
+      list(APPEND ${_link_flags_out} ${_library_pathname})
+    else(_list_element STREQUAL "-L${_list_element1}")
+      # link options that are not -L or -l passed through in correct order
+      # in ${_link_flags_out}.
+      list(APPEND ${_link_flags_out} ${_list_element})
+    endif(_list_element STREQUAL "-l${_list_element1}")
+  endforeach(_list_index RANGE ${_link_flags_length})
+  #message("${_link_flags_out} = ${${_link_flags_out}}")
 endmacro(cmake_link_flags)
