@@ -27,8 +27,6 @@
 #			    compile psttf device driver.
 # psttf_LINK_FLAGS     	  - list of LINK_FLAGS for dynamic psttf device driver.
 # psttf_RPATH	       	  - RPATH directory list for psttf device driver.
-# psttf_TARGETS	       	  - Full Name of libLASi so that cmake can figure out
-# 		       	    RPATH stuff in the build tree.
 # DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS and TARGETS for case
 # 			    when ENABLE_DYNDRIVERS OFF.
 
@@ -49,27 +47,13 @@ if(PLD_psttf)
 endif(PLD_psttf)
 
 if(PLD_psttf)
-  pkg_check_pkgconfig("lasi;pangoft2;pango" includedir libdir linkflags cflags _PSTTF)
+  pkg_check_pkgconfig(lasi includedir libdir linkflags cflags _PSTTF)
   if(linkflags)
     #blank-separated required.
     string(REGEX REPLACE ";" " " psttf_COMPILE_FLAGS "${cflags}")
-    set(psttf_LINK_FLAGS "${linkflags}")
+    set(psttf_LINK_FLAGS ${linkflags})
     set(psttf_RPATH ${libdir})
-    # Put libLASI pkg-config information into a form that
-    # target_link_libraries can interpret properly with respect to RPATH
-    # for the build tree.
-    find_library(psttf_TARGETS LASi ${psttf_RPATH})
-    if(NOT psttf_TARGETS)
-      message(FATAL_ERROR
-         "libLASi not in location specified by pkg-config."
-      )
-    endif(NOT psttf_TARGETS)
-    get_filename_component(psttf_RPATH ${psttf_TARGETS} PATH)
-    set(DRIVERS_LINK_FLAGS
-    ${DRIVERS_LINK_FLAGS}
-    ${psttf_LINK_FLAGS}
-    ${psttf_TARGETS}
-    )
+    list(APPEND DRIVERS_LINK_FLAGS ${psttf_LINK_FLAGS})
   else(linkflags)
     message("includedir = ${includedir}")
     message("libdir = ${libdir}")
