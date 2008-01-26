@@ -83,42 +83,52 @@ OR PLD_svgcairo
 OR PLD_xcairo
 )
   pkg_check_pkgconfig(
-  "pangocairo"
+  pangocairo
   includedir
-  cairo_RPATH
+  linkdir
   linkflags 
   cflags
   _CAIRO
   )
   if(linkflags)
-    # Blank-delimited required.
+    set(cairo_RPATH ${linkdir})
     if(PLD_xcairo AND X11_COMPILE_FLAGS)
+      # Blank-delimited required.
       string(REGEX REPLACE ";" " " 
       cairo_COMPILE_FLAGS "${cflags} ${X11_COMPILE_FLAGS}"
       )
-      cmake_link_flags(cairo_LINK_FLAGS "${linkflags} -L${X11_LIBRARY_DIR} ${X11_LIBRARIES}")
+      # Convert X linker information to preferred CMake form before appending
+      # it to already converted ${linkflags}
+      cmake_link_flags(
+      cairo_X_LINK_FLAGS
+      "-L${X11_LIBRARY_DIR};${X11_LIBRARIES}"
+      )
+      set(cairo_LINK_FLAGS ${linkflags} ${cairo_X_LINK_FLAGS})
     else(PLD_xcairo AND X11_COMPILE_FLAGS)
       message(STATUS 
        "WARNING: X windows not found. Setting xcairo driver to OFF."
       )
+      # Blank-delimited required.
       set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
       # now deal with remaining cairo devices.
       string(REGEX REPLACE ";" " " cairo_COMPILE_FLAGS "${cflags}")
-      cmake_link_flags(cairo_LINK_FLAGS "${linkflags}")
+      set(cairo_LINK_FLAGS ${linkflags})
     endif(PLD_xcairo AND X11_COMPILE_FLAGS)
     
-    # message("cairo_COMPILE_FLAGS = ${cairo_COMPILE_FLAGS}")
+    #message("cairo_COMPILE_FLAGS = ${cairo_COMPILE_FLAGS}")
+    #message("cairo_LINK_FLAGS = ${cairo_LINK_FLAGS}")
 
     list(APPEND DRIVERS_LINK_FLAGS ${cairo_LINK_FLAGS})
   else(linkflags)
-    #message("includedir = ${includedir}")
-    #message("libdir = ${libdir}")
-    #message("linkflags = ${linkflags}")
-    #message("cflags = ${cflags}")
+    message("includedir = ${includedir}")
+    message("libdir = ${libdir}")
+    message("linkflags = ${linkflags}")
+    message("cflags = ${cflags}")
     message(STATUS
-       "WARNING: pango or cairo not found with pkg-config.\n"
-    "   Setting cairo drivers to OFF.  Please install all of these packages\n"
-    "   and/or set the environment variable PKG_CONFIG_PATH appropriately."
+       "WARNING: pango and/or cairo not found with pkg-config.\n"
+    "   Disabling cairo drivers.  To enable these drivers you must install\n"
+    "   development versions of pango and cairo and/or set\n"
+    "   the environment variable PKG_CONFIG_PATH appropriately."
     )
     set(PLD_memcairo OFF CACHE BOOL "Enable memcairo device" FORCE)
     set(PLD_pdfcairo OFF CACHE BOOL "Enable pdfcairo device" FORCE)
