@@ -87,11 +87,11 @@ static int	ReadFileHeader	(void);
 
 /* Option handlers */
 
-static int Opt_v	(char *, char *, void *);
-static int Opt_i	(char *, char *, void *);
-static int Opt_b	(char *, char *, void *);
-static int Opt_e	(char *, char *, void *);
-static int Opt_p	(char *, char *, void *);
+static int Opt_v	(const char *, const char *, void *);
+static int Opt_i	(const char *, const char *, void *);
+static int Opt_b	(const char *, const char *, void *);
+static int Opt_e	(const char *, const char *, void *);
+static int Opt_p	(const char *, const char *, void *);
 
 /* Global variables */
 
@@ -255,7 +255,7 @@ static PLOptionTable options[] = {
     NULL }			/* long syntax */
 };
 
-static char *notes[] = {
+static const char *notes[] = {
 "If the \"-i\" flag is omitted, unrecognized input will assumed to be filename",
 "parameters.  Specifying \"-\" for the input or output filename means use stdin",
 "or stdout, respectively.  See the manual for more detail.",
@@ -368,7 +368,7 @@ ProcessFile(int argc, char **argv)
 /* Since we aren't using full parsing, plparseopts() will stop when it hits */
 /* a non-flag item */
 
-    if (plparseopts(&argc, argv, 0))
+    if (plparseopts(&argc, (const char **) argv, 0))
 	exit(1);
 
 /* Any remaining flags are illegal. */
@@ -413,7 +413,7 @@ ProcessFile(int argc, char **argv)
     for (i = 0; i < argc; i++) {
 	argv[i] = myargv[i];
     }
-    (void) plparseopts(&argc, argv, 0);
+    (void) plparseopts(&argc, (const char **) argv, 0);
 
 /* Miscellaneous housekeeping */
 
@@ -1900,7 +1900,7 @@ ReadFileHeader(void)
 \*--------------------------------------------------------------------------*/
 
 static int
-Opt_v(char *opt, char *optarg, void *client_data)
+Opt_v(const char *opt, const char *optarg, void *client_data)
 {
 /* Version */
 
@@ -1915,7 +1915,7 @@ Opt_v(char *opt, char *optarg, void *client_data)
 \*--------------------------------------------------------------------------*/
 
 static int
-Opt_i(char *opt, char *optarg, void *client_data)
+Opt_i(const char *opt, const char *optarg, void *client_data)
 {
 /* Input file */
 
@@ -1933,7 +1933,7 @@ Opt_i(char *opt, char *optarg, void *client_data)
 \*--------------------------------------------------------------------------*/
 
 static int
-Opt_b(char *opt, char *optarg, void *client_data)
+Opt_b(const char *opt, const char *optarg, void *client_data)
 {
 /* Beginning page */
 
@@ -1953,7 +1953,7 @@ Opt_b(char *opt, char *optarg, void *client_data)
 \*--------------------------------------------------------------------------*/
 
 static int
-Opt_e(char *opt, char *optarg, void *client_data)
+Opt_e(const char *opt, const char *optarg, void *client_data)
 {
 /* Ending page */
 
@@ -1973,7 +1973,7 @@ Opt_e(char *opt, char *optarg, void *client_data)
 \*--------------------------------------------------------------------------*/
 
 static int
-Opt_p(char *opt, char *optarg, void *client_data)
+Opt_p(const char *opt, const char *optarg, void *client_data)
 {
 /* Specified page only */
 
