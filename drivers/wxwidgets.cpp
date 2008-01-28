@@ -933,7 +933,8 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
 #ifdef HAVE_AGG
         dev->m_colredstroke = pls->cmap0[pls->icol0].r;
         dev->m_colgreenstroke = pls->cmap0[pls->icol0].g;
-        dev->m_colbluestroke = pls->cmap0[pls->icol0].b;      
+        dev->m_colbluestroke = pls->cmap0[pls->icol0].b;
+        dev->m_StrokeOpacity = (wxUint8)(pls->cmap0[pls->icol0].a*255);
 #endif
       } else {
         dev->dc->SetPen( wxPen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
@@ -953,6 +954,7 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
         dev->m_colredstroke = pls->curcolor.r;
         dev->m_colgreenstroke = pls->curcolor.g;
         dev->m_colbluestroke = pls->curcolor.b;      
+        dev->m_StrokeOpacity = (wxUint8)(pls->curcolor.a*255);
 #endif
       } else {
         dev->dc->SetPen( wxPen(wxColour(pls->curcolor.r, pls->curcolor.g,
