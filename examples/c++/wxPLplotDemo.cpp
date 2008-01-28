@@ -43,7 +43,7 @@
 
 /* Application icon as XPM */
 /* This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/ */
-static char *graph[] = {
+static const char *graph[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 4 2",
 "   c black",
