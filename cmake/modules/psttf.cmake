@@ -47,7 +47,7 @@ if(PLD_psttf)
 endif(PLD_psttf)
 
 if(PLD_psttf)
-  pkg_check_pkgconfig(lasi includedir libdir linkflags cflags _PSTTF)
+  pkg_check_pkgconfig("lasi;pango;pangoft2" includedir libdir linkflags cflags _PSTTF)
   if(linkflags)
     #blank-separated required.
     string(REGEX REPLACE ";" " " psttf_COMPILE_FLAGS "${cflags}")
