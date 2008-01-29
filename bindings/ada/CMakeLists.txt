@@ -30,6 +30,22 @@ if(ENABLE_ada)
   plplot_auxiliary.adb
   plplot_auxiliary.ads
   )
+  
+  # These are Ada library information files built by gnat.  I am not 
+  # sure whether the name suffixes correspond to the *.adb or *.ads files
+  # above or the union of them.  In any case, if any of the names change
+  # above, then this list will probably have to be changed as well.)
+  # N.B. the absolute location prefix of these files may have to be changed
+  # in the future since this is a CMake internal.
+  set(ALI_PREFIX 
+  ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/plplotada${LIB_TAG}.dir
+  )
+  set(ALI_LIST
+  ${ALI_PREFIX}/plplot.ali
+  ${ALI_PREFIX}/plplot_thin.ali
+  ${ALI_PREFIX}/plplot_traditional.ali
+  ${ALI_PREFIX}/plplot_auxiliary.ali
+  )
 
   set(plplotada${LIB_TAG}_LIB_SRCS)
   foreach(SOURCE_FILE ${SOURCE_LIST})
@@ -37,8 +53,7 @@ if(ENABLE_ada)
     ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
     )
-    set(plplotada${LIB_TAG}_LIB_SRCS
-    ${plplotada${LIB_TAG}_LIB_SRCS}
+    list(APPEND plplotada${LIB_TAG}_LIB_SRCS 
     ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
     )
   endforeach(SOURCE_FILE ${SOURCE_LIST})
@@ -67,13 +82,21 @@ if(ENABLE_ada)
     )
   endif(USE_RPATH)
 
-# The commands below have been tested to work fine for the shared libraries,
-# but comment this out until we can decide on an install location for
-# all the Ada stuff that is required beyond just the library.
-#  install(TARGETS plplotada${LIB_TAG}
-#  ARCHIVE DESTINATION ${LIB_DIR}
-#  LIBRARY DESTINATION ${LIB_DIR}
-#  RUNTIME DESTINATION ${BIN_DIR}
-#  )
+  install(FILES ${plplotada${LIB_TAG}_LIB_SRCS} 
+  DESTINATION ${ADA_INCLUDE_DIR}
+  )
+  
+  # Permissions of *.ali files in accordance with
+  # http://www.ada-france.org/debian/debian-ada-policy.html
+  install(FILES ${ALI_LIST}
+  DESTINATION ${ADA_LIB_DIR}
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+  )
+  
+  install(TARGETS plplotada${LIB_TAG}
+  ARCHIVE DESTINATION ${LIB_DIR}
+  LIBRARY DESTINATION ${LIB_DIR}
+  RUNTIME DESTINATION ${BIN_DIR}
+  )
 
 endif(ENABLE_ada)

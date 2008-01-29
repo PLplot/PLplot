@@ -55,11 +55,7 @@ foreach(STRING_INDEX ${ada_STRING_INDICES})
   )
   # Build up list of full-path examples source names to be used (eventually
   # but not until this interface has matured) for installation.
-  set(
-  ada_SRCS
-  ${ada_SRCS}
-  ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
-  )
+  list(APPEND ada_SRCS ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE})
   if(BUILD_TEST)
     # Note due to limitations of the Ada language support for CMake, the the
     # nominal source file for add_executable is compiled (which is why a
@@ -89,3 +85,5 @@ foreach(STRING_INDEX ${ada_STRING_INDICES})
     target_link_libraries(${TARGET_NAME} plplotada${LIB_TAG})
   endif(BUILD_TEST)
 endforeach(STRING_INDEX ${ada_STRING_INDICES})
+
+install(FILES ${ada_SRCS} DESTINATION ${DATA_DIR}/examples/ada)
