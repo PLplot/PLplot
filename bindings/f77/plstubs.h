@@ -190,6 +190,7 @@
 #define    PLFONTLD	FNAME(PLFONTLD,plfontld)
 #define    PLGCHR	FNAME(PLGCHR,plgchr)
 #define    PLGCOL0	FNAME(PLGCOL0,plgcol0)
+#define    PLGCOL0A	FNAME(PLGCOL0A,plgcol0a)
 #define    PLGCOLBG	FNAME(PLGCOLBG,plgcolbg)
 #define    PLGCOMPRESSION	FNAME(PLGCOMPRESSION,plgcompression)
 #define    PLGDEV7	FNAME(PLGDEV7,plgdev7)

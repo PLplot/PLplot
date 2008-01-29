@@ -1,0 +1,225 @@
+C  $Id:$
+C
+C   Sample plots using date / time formatting for axes
+C
+C   Copyright (C) 2008  Andrew Ross
+C
+C   This file is part of PLplot.
+C
+C   PLplot is free software; you can redistribute it and/or modify
+C   it under the terms of the GNU General Library Public License as
+C   published by the Free Software Foundation; either version 2 of the
+C   License, or (at your option) any later version.
+C
+C   PLplot is distributed in the hope that it will be useful,
+C   but WITHOUT ANY WARRANTY; without even the implied warranty of
+C   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+C   GNU Library General Public License for more details.
+C
+C   You should have received a copy of the GNU Library General Public
+C   License along with PLplot; if not, write to the Free Software
+C   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+C
+
+      program x29f
+
+      implicit none
+
+      real*8 x(365), y(365)
+      common /plotdat/ x, y
+
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+
+      call plparseopts(PL_PARSE_FULL)
+
+      call plinit()
+
+      call plot1()
+      call plot2()
+      call plot3()
+
+      call plend()
+      end
+
+c====================================================================
+c
+c     Plot a model diurnal cycle of temperature
+c     
+      subroutine plot1()
+      implicit none
+
+      real*8 x(365), y(365)
+      common /plotdat/ x, y
+
+      integer i, npts
+      real*8 xmin, xmax, ymin, ymax
+
+      parameter(npts = 145)
+      parameter(xmin = 0.0d0)
+      parameter(xmax = 60.0d0*60.0d0*24.0d0)
+      parameter(ymin = 10.0d0)
+      parameter(ymax = 20.0d0)
+
+      real*8 PI
+      parameter (PI = 3.1415926535897932384d0)
+      
+      do i = 1,npts
+      	 x(i) = xmax*(dble(i-1)/dble(npts))
+         y(i) = 15.0d0 - 5.0d0*cos(2.0d0*PI*dble(i-1)/dble(npts))
+      enddo
+
+      call pladv(0)
+      call plvsta()
+      call plwind(xmin, xmax, ymin, ymax)
+
+c     Draw a box with ticks spaced every 3 hour in X and 1 degree C in Y.
+      call plcol0(1)
+c     Set time format to be hours:minutes
+      call pltimefmt("%H:%M")
+      call plbox("bcnstd", 3.0d0*60.0d0*60.0d0, 3, "bcnstv", 1.0d0, 5)
+
+      call plcol0(3)
+      call pllab("Time (hours:mins)", "Temperature (degC)", 
+     &     "#frPLplot Example 29 - Daily temperature")
+  
+      call plcol0(4)
+
+      call plline(npts, x, y)
+
+      end
+
+c
+c     Plot the number of hours of daylight as a function of day for a year
+c
+      subroutine plot2() 
+      implicit none
+      
+      integer j, npts
+      real*8 xmin, xmax, ymin, ymax
+      real*8 lat, p, d
+      real*8 x(365), y(365)
+      common /plotdat/ x, y
+
+
+c Latitude for London
+      parameter (lat = 51.5d0)
+
+      parameter (npts = 365)
+
+      parameter(xmin = 0.0d0)
+      parameter(xmax = npts*60.0d0*60.0d0*24.0d0)
+      parameter(ymin = 0)
+      parameter(ymax = 24)
+
+      real*8 PI
+      parameter (PI = 3.1415926535897932384d0)
+  
+c     Formula for hours of daylight from 
+c     "A Model Comparison for Daylength as a Function of Latitude and 
+c     Day of the Year", 1995, Ecological Modelling, 80, pp 87-95.
+      do j=1,npts
+         x(j) = (j-1)*60.0d0*60.0d0*24.0d0;
+         p = asin(0.39795d0*cos(0.2163108d0 + 2.0d0*atan(0.9671396d0*
+     &        tan(0.00860d0*(j-187)))))
+         d = 24.0d0 - (24.0d0/PI)*
+     &        acos( (sin(0.8333d0*PI/180.0d0) + sin(lat*PI/180.0d0)*
+     &        sin(p)) / (cos(lat*PI/180.0d0)*cos(p)) )
+         y(j) = d
+      enddo
+
+      call plcol0(1)
+c     Set time format to be abbreviated month name followed by day of month
+      call pltimefmt("%b %d")
+      call plenv(xmin, xmax, ymin, ymax, 0, 40)
+      
+      call plcol0(3)
+      call pllab("Date", "Hours of daylight", 
+     &     "#frPLplot Example 29 - Hours of daylight at 51.5N")
+  
+      call plcol0(4)
+
+      call plline(npts, x, y)
+  
+      end
+
+c
+c
+c
+      subroutine plot3()
+      implicit none
+      
+      integer i, npts
+      real*8 xmin, xmax, ymin, ymax
+      integer tstart, t1, t2
+      real*8 toff;
+      real*8 x(365), y(365)
+      common /plotdat/ x, y
+
+      real*8 PI
+      parameter (PI = 3.1415926535897932384d0)
+  
+c     integer tm(9)
+
+      parameter (npts = 62)
+
+c     Warning: mktime is in local time so we need to calculate 
+c     offset to get UTC. C time handling is quirky...
+c     mktime is not implemented at all in fortran.
+c     gmtime is non-standard.
+c     We'll just avoid them altogether for this example
+c     and take values for tstart calculated elsewhere.
+c
+c      t1 = 0
+c      call gmtime(t1,tm)
+c      t2 = mktime(&tm)
+c      toff = t1-t2
+
+c     Years since 1900 
+c      tm(6) = 105
+c     0 == January, 11 = December 
+c      tm(5) = 11
+c     & = 1st of month
+c      tm(4) = 1  
+c      tm(3) = 0
+c      tm(2) = 0
+c      tm(1) = 0
+
+c      tstart = mktime(&tm)
+            
+      tstart = 1133398800
+
+      xmin = dble(tstart)
+      xmax = xmin + npts*60.0d0*60.0d0*24.0d0
+      ymin = 0.0d0
+      ymax = 5.0d0
+  
+      do i=1,npts
+         x(i) = xmin + dble(i-1)*60.0d0*60.0d0*24.0d0
+         y(i) = 1.0d0 + sin( 2.0d0*PI*dble(i-1)/7.0d0) + 
+     &     exp( dble(min(i-1,npts+1-i)) / 31.0d0)
+      enddo
+      call pladv(0)
+
+      call plvsta()
+      call plwind(xmin, xmax, ymin, ymax)
+
+      call plcol0(1)
+c     Set time format to be ISO 8601 standard YYYY-MM-DD. Note that this is
+c     equivalent to %f for C99 compliant implementations of strftime.
+      call pltimefmt("%Y-%m-%d")
+c     Draw a box with ticks spaced every 14 days in X and 1 hour in Y.
+      call plbox("bcnstd", 14.0d0*24.0d0*60.0d0*60.0d0,14, "bcnstv", 
+     &     1.0d0, 4)
+
+      call plcol0(3)
+      call pllab("Date", "Hours of television watched", 
+     &     "#frPLplot Example 29 - Hours of television watched in " //
+     &     "Dec 2005 / Jan 2006");
+  
+      call plcol0(4)
+
+      call plpoin(npts, x, y, 2)
+      call plline(npts, x, y)
+ 
+      end
