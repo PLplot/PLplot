@@ -27,6 +27,8 @@ INDEX
 1.4 Bug fixes
 1.5 Alpha value support
 1.6 Build system improvements
+1.7 Implement build-system infrastructure for installed Ada bindings and 
+examples
 
 
 1.1 All autotools-related files have now been removed
@@ -92,3 +94,11 @@ practical effect of this improvement is that external libraries in
 non-standard locations now have their rpath options set correctly for our
 build system both for the build tree and the install tree so you don't have
 to fiddle with LD_LIBRARY_PATH, etc.
+
+1.7 Implement build-system infrastructure for installed Ada bindings and 
+examples
+
+Install source files, library information files, and the plplotada library
+associated with the Ada bindings.  Configure and install the pkg-config file
+for the plplotada library.  Install the Ada examples and a configured Makefile
+to build them in the install tree.
