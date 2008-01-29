@@ -92,6 +92,14 @@ set(SHLIB_DIR ${CMAKE_INSTALL_LIBDIR})
 # Tcl files.
 set(TCL_DIR ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${VERSION}/tcl)
 
+# Ada source files (*.adb, *.ads) (following recommendations in
+# http://www.ada-france.org/debian/debian-ada-policy.html
+set(ADA_INCLUDE_DIR ${CMAKE_INSTALL_DATADIR}/ada/adainclude/plplotada${LIB_TAG})
+
+# Ada library information files (*.ali) (following recommendations in
+# http://www.ada-france.org/debian/debian-ada-policy.html
+set(ADA_LIB_DIR ${CMAKE_INSTALL_LIBDIR}/ada/adalib/plplotada${LIB_TAG})
+
 # Drivers.
 set(DRV_DIR ${CMAKE_INSTALL_LIBDIR}/${PACKAGE}${VERSION}/drivers${LIB_TAG})
 
