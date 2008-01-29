@@ -48,7 +48,9 @@ example_classes = \
 	x23.class \
 	x24.class \
 	x26.class \
-	x28.class
+	x28.class \
+	x29.class \
+	x30.class
 
 all: $(example_classes)
 
