@@ -407,11 +407,11 @@ void plD_erroraborthandler_wxwidgets( char *errormessage );
 /* #define _DEBUG_VERBOSE //*/
 
 /*--------------------------------------------------------------------------*\
- *  void Log_Verbose( char *fmt, ... )
+ *  void Log_Verbose( const char *fmt, ... )
  *
  *  Print verbose debug message to stderr (printf style).
 \*--------------------------------------------------------------------------*/
-void Log_Verbose( char *fmt, ... )
+void Log_Verbose( const char *fmt, ... )
 {
 #ifdef _DEBUG_VERBOSE
   va_list args;
@@ -426,11 +426,11 @@ void Log_Verbose( char *fmt, ... )
 
 
 /*--------------------------------------------------------------------------*\
- *  void Log_Debug( char *fmt, ... )
+ *  void Log_Debug( const char *fmt, ... )
  *
  *  Print debug message to stderr (printf style).
 \*--------------------------------------------------------------------------*/
-void Log_Debug( char *fmt, ... )
+void Log_Debug( const char *fmt, ... )
 {
 #ifdef _DEBUG
   va_list args;
