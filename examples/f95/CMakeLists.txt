@@ -44,6 +44,8 @@ set(f95_STRING_INDICES
 "22"
 "23"
 "28"
+"29"
+"30"
 )
 
 if(BUILD_TEST)

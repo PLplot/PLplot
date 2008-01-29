@@ -1050,7 +1050,7 @@
 
       subroutine plscmap0a( r, g, b, a )
          integer, dimension(:) :: r, g, b
-         real(kind=plflt) :: a
+         real(kind=plflt), dimension(:) :: a
 
          call plscmap0af77( r, g, b, a, size(r) )
       end subroutine plscmap0a
@@ -1063,7 +1063,7 @@
 
       subroutine plscmap1a( r, g, b, a )
          integer, dimension(:) :: r, g, b
-         real(kind=plflt) :: a
+         real(kind=plflt), dimension(:) :: a
 
          call plscmap1af77( r, g, b, a, size(r) )
       end subroutine plscmap1a
