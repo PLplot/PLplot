@@ -87,3 +87,14 @@ foreach(STRING_INDEX ${ada_STRING_INDICES})
 endforeach(STRING_INDEX ${ada_STRING_INDICES})
 
 install(FILES ${ada_SRCS} DESTINATION ${DATA_DIR}/examples/ada)
+
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
+DESTINATION ${DATA_DIR}/examples/ada
+RENAME Makefile
+)
+
