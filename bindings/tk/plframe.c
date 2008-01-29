@@ -271,7 +271,7 @@ static Tk_ConfigSpec configSpecs[] = {
 
 /* Externals */
 
- int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
+ int   plFrameCmd     	(ClientData, Tcl_Interp *, int, const char **);
 
 /* These are invoked by the TK dispatcher */
 
@@ -290,28 +290,28 @@ static void  PlFrameMotionEH	(ClientData, register XEvent *);
 static void  PlFrameEnterEH	(ClientData, register XEvent *);
 static void  PlFrameLeaveEH	(ClientData, register XEvent *);
 static void  PlFrameKeyEH	(ClientData, register XEvent *);
-static int   PlFrameWidgetCmd	(ClientData, Tcl_Interp *, int, char **);
+static int   PlFrameWidgetCmd	(ClientData, Tcl_Interp *, int, const char **);
 static int   ReadData		(ClientData, int);
 static void  Install_cmap	(PlFrame *plFramePtr);
 
 /* These are invoked by PlFrameWidgetCmd to process widget commands */
 
-static int   Closelink		(Tcl_Interp *, PlFrame *, int, char **);
-static int   Cmd		(Tcl_Interp *, PlFrame *, int, char **);
-static int   ColorManip		(Tcl_Interp *, PlFrame *, int, char **);
-static int   ConfigurePlFrame	(Tcl_Interp *, PlFrame *, int, char **, int);
-static int   Draw		(Tcl_Interp *, PlFrame *, int, char **);
-static int   Info		(Tcl_Interp *, PlFrame *, int, char **);
-static int   Openlink		(Tcl_Interp *, PlFrame *, int, char **);
-static int   Orient		(Tcl_Interp *, PlFrame *, int, char **);
-static int   Page		(Tcl_Interp *, PlFrame *, int, char **);
-static int   Print		(Tcl_Interp *, PlFrame *, int, char **);
-static int   Redraw		(Tcl_Interp *, PlFrame *, int, char **);
-static int   Save		(Tcl_Interp *, PlFrame *, int, char **);
-static int   View		(Tcl_Interp *, PlFrame *, int, char **);
-static int   xScroll		(Tcl_Interp *, PlFrame *, int, char **);
-static int   yScroll		(Tcl_Interp *, PlFrame *, int, char **);
-static int   report		(Tcl_Interp *, PlFrame *, int, char **);
+static int   Closelink		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   Cmd		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   ColorManip		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   ConfigurePlFrame	(Tcl_Interp *, PlFrame *, int, const char **, int);
+static int   Draw		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   Info		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   Openlink		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   Orient		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   Page		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   Print		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   Redraw		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   Save		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   View		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   xScroll		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   yScroll		(Tcl_Interp *, PlFrame *, int, const char **);
+static int   report		(Tcl_Interp *, PlFrame *, int, const char **);
 
 /* Routines for manipulating graphic crosshairs */
 
@@ -334,7 +334,7 @@ static void  process_eop	(void *, int *);
 
 /* Utility routines */
 
-static void  gbox		(PLFLT *, PLFLT *, PLFLT *, PLFLT *, char **);
+static void  gbox		(PLFLT *, PLFLT *, PLFLT *, PLFLT *, const char **);
 static void  UpdateVScrollbar	(register PlFrame *);
 static void  UpdateHScrollbar	(register PlFrame *);
 
@@ -358,7 +358,7 @@ static void  UpdateHScrollbar	(register PlFrame *);
 
 int
 plFrameCmd(ClientData clientData, Tcl_Interp *interp,
-	   int argc, char **argv)
+	   int argc, const char **argv)
 {
     Tk_Window new;
     register PlFrame *plFramePtr;
@@ -506,7 +506,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
 static int
 PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
-		 int argc, char **argv)
+		 int argc, const char **argv)
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
     int result = TCL_OK;
@@ -1702,7 +1702,7 @@ DisplayPlFrame(ClientData clientData)
 
 static int
 scol0(Tcl_Interp *interp, register PlFrame *plFramePtr,
-      int i, char *col, int *p_changed)
+      int i, const char *col, int *p_changed)
 {
     PLStream *pls = plFramePtr->pls;
     XColor xcol;
@@ -1746,7 +1746,7 @@ scol0(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 scol1(Tcl_Interp *interp, register PlFrame *plFramePtr,
-      int i, char *col, char *pos, char *rev, int *p_changed)
+      int i, const char *col, const char *pos, const char *rev, int *p_changed)
 {
     PLStream *pls = plFramePtr->pls;
     XColor xcol;
@@ -1823,12 +1823,13 @@ scol1(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 ColorManip(Tcl_Interp *interp, register PlFrame *plFramePtr,
-	   int argc, char **argv)
+	   int argc, const char **argv)
 {
     PLStream *pls = plFramePtr->pls;
     int length;
     char c;
     int result = TCL_OK;
+    char *tmpstring;
 
 #ifdef DEBUG
     if (pls->debug) {
@@ -1927,7 +1928,9 @@ ColorManip(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	}
 
 	pls->ncol0 = ncol0;
-	col = strtok(argv[2], " ");
+        tmpstring = (char *) malloc(strlen(argv[2])+1);
+        strcpy(tmpstring,argv[2]);
+	col = strtok(tmpstring, " ");
 	for (i = 0; i < pls->ncol0; i++) {
 	    if ( col == NULL )
 		break;
@@ -1937,6 +1940,7 @@ ColorManip(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 	    col = strtok(NULL, " ");
 	}
+        free(tmpstring);
 
 	if (changed)
 	    plP_state(PLSTATE_CMAP0);
@@ -1956,7 +1960,9 @@ ColorManip(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	}
 
-	col = strtok(argv[2], " ");
+        tmpstring = (char *) malloc(strlen(argv[2])+1);
+        strcpy(tmpstring,argv[2]);
+	col = strtok(tmpstring, " ");
 	pos = strtok(NULL, " ");
 	rev = strtok(NULL, " ");
 	for (i = 0; i < ncp1; i++) {
@@ -1971,6 +1977,7 @@ ColorManip(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    pos = strtok(NULL, " ");
 	    rev = strtok(NULL, " ");
 	}
+        free(tmpstring);
 
 	if (changed) {
             PLStream *pls = plFramePtr->pls;
@@ -2032,7 +2039,7 @@ ColorManip(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
-    int argc, char **argv)
+    int argc, const char **argv)
 {
     int result = TCL_OK;
     char cmdlist[] = "";
@@ -2095,7 +2102,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
-		 int argc, char **argv, int flags)
+		 int argc, const char **argv, int flags)
 {
     register Tk_Window tkwin = plFramePtr->tkwin;
     PLStream *pls = plFramePtr->pls;
@@ -2206,7 +2213,7 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
-     int argc, char **argv)
+     int argc, const char **argv)
 {
     register Tk_Window tkwin = plFramePtr->tkwin;
     int result = TCL_OK;
@@ -2298,7 +2305,7 @@ Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
-     int argc, char **argv)
+     int argc, const char **argv)
 {
     int length;
     char c;
@@ -2356,7 +2363,7 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
-	 int argc, char **argv)
+	 int argc, const char **argv)
 {
     register PLRDev *plr = plFramePtr->plr;
     register PLiodev *iodev = plr->iodev;
@@ -2448,7 +2455,7 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Closelink(Tcl_Interp *interp, register PlFrame *plFramePtr,
-	 int argc, char **argv)
+	 int argc, const char **argv)
 {
     register PLRDev *plr = plFramePtr->plr;
     register PLiodev *iodev = plr->iodev;
@@ -2570,7 +2577,7 @@ ReadData(ClientData clientData, int mask)
 
 static int
 Orient(Tcl_Interp *interp, register PlFrame *plFramePtr,
-       int argc, char **argv)
+       int argc, const char **argv)
 {
     int result = TCL_OK;
 
@@ -2611,7 +2618,7 @@ Orient(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
-       int argc, char **argv)
+       int argc, const char **argv)
 {
     PLINT ipls;
     int result = TCL_OK;
@@ -2695,7 +2702,7 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
-     int argc, char **argv)
+     int argc, const char **argv)
 {
 
 /* page -- return current device window parameters */
@@ -2734,7 +2741,7 @@ Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Redraw(Tcl_Interp *interp, register PlFrame *plFramePtr,
-       int argc, char **argv)
+       int argc, const char **argv)
 {
     dbug_enter("Redraw");
 
@@ -2758,7 +2765,7 @@ Redraw(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
-     int argc, char **argv)
+     int argc, const char **argv)
 {
     int length;
     char c;
@@ -2884,7 +2891,7 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 View(Tcl_Interp *interp, register PlFrame *plFramePtr,
-     int argc, char **argv)
+     int argc, const char **argv)
 {
     int length;
     char c;
@@ -2990,7 +2997,7 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 xScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
-	int argc, char **argv)
+	int argc, const char **argv)
 {
     int x0, width = Tk_Width(plFramePtr->tkwin);
     PLFLT xl, xr, yl, yr, xlen;
@@ -3024,7 +3031,7 @@ xScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 yScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
-	int argc, char **argv)
+	int argc, const char **argv)
 {
     int y0, height = Tk_Height(plFramePtr->tkwin);
     PLFLT xl, xr, yl, yr, ylen;
@@ -3058,7 +3065,7 @@ yScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 static int
 report( Tcl_Interp *interp, register PlFrame *plFramePtr,
-	int argc, char **argv )
+	int argc, const char **argv )
 {
     PLFLT x, y;
 /*    fprintf( stdout, "Made it into report, argc=%d\n", argc ); */
@@ -3203,7 +3210,7 @@ UpdateHScrollbar(register PlFrame *plFramePtr)
 \*--------------------------------------------------------------------------*/
 
 static void
-gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, char **argv)
+gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, const char **argv)
 {
     PLFLT x0, y0, x1, y1;
 

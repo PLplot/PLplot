@@ -62,10 +62,10 @@ typedef struct {
 typedef struct {
     int   fd;				/* I/O device file descriptor */
     FILE  *file;			/* File handle */
-    char  *fileName;			/* Fifo or socket name (if needed) */
-    char  *fileHandle;			/* Handle for use from interpreter */
+    const char  *fileName;		/* Fifo or socket name (if needed) */
+    const char  *fileHandle;		/* Handle for use from interpreter */
     int   type;				/* Communication channel type */
-    char  *typeName;			/* As above, but in string form */
+    const char  *typeName;		/* As above, but in string form */
 } PLiodev;
 
 /* Error numbers */

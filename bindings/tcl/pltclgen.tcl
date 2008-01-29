@@ -41,7 +41,7 @@ proc process_pltclcmd {cmd rtype} {
        puts "\nautogenerating Tcl command proc for $rtype $cmd ()"
     }
 
-    puts $GENHEAD "static int ${cmd}Cmd( ClientData, Tcl_Interp *, int, char **);"
+    puts $GENHEAD "static int ${cmd}Cmd( ClientData, Tcl_Interp *, int, const char **);"
     puts $GENSTRUCT "    {\"$cmd\",          ${cmd}Cmd},"
 
     set args    ""
@@ -132,7 +132,7 @@ proc process_pltclcmd {cmd rtype} {
                             puts $GENFILE "    tclMatrix *mat$argname($i);"
                         }
                         "const char *" {
-                            puts $GENFILE "    char *$argname($i);"
+                            puts $GENFILE "    const char *$argname($i);"
                         }
                         "char *" {
                             puts $GENFILE "    char $argname($i)\[200\];"

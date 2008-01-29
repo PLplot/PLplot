@@ -71,12 +71,12 @@ static Tcl_HashTable matTable;	/* Hash table for external access to data */
 
 static int
 matrixInitialize(Tcl_Interp* interp, tclMatrix* m,
-		 int dim, int offs, int nargs, char** args);
+		 int dim, int offs, int nargs, const char** args);
 
 /* Invoked to process the "matrix" Tcl command. */
 
 static  int
-MatrixCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
+MatrixCmd(ClientData clientData, Tcl_Interp *interp, int argc, const char **argv);
 
 /* Causes matrix command to be deleted.  */
 
@@ -92,13 +92,13 @@ DeleteMatrixCmd(ClientData clientData);
 /* These do the put/get operations for each supported type */
 
 static void
-MatrixPut_f(ClientData clientData, Tcl_Interp* interp, int index, char *string);
+MatrixPut_f(ClientData clientData, Tcl_Interp* interp, int index, const char *string);
 
 static void
 MatrixGet_f(ClientData clientData, Tcl_Interp* interp, int index, char *string);
 
 static void
-MatrixPut_i(ClientData clientData, Tcl_Interp* interp, int index, char *string);
+MatrixPut_i(ClientData clientData, Tcl_Interp* interp, int index, const char *string);
 
 static void
 MatrixGet_i(ClientData clientData, Tcl_Interp* interp, int index, char *string);
@@ -121,7 +121,7 @@ MatrixGet_i(ClientData clientData, Tcl_Interp* interp, int index, char *string);
 
 int
 Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
-	      int argc, char **argv)
+	      int argc, const char **argv)
 {
     register tclMatrix *matPtr;
     int i, j, length, new, index, persist = 0, initializer = 0;
@@ -350,7 +350,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 \*--------------------------------------------------------------------------*/
 
 tclMatrix PLDLLIMPEXP *
-Tcl_GetMatrixPtr(Tcl_Interp *interp, char *matName)
+Tcl_GetMatrixPtr(Tcl_Interp *interp, const char *matName)
 {
     Tcl_HashEntry *hPtr;
 
@@ -436,7 +436,7 @@ Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc )
 \*--------------------------------------------------------------------------*/
 
 static int matrixInitialize(Tcl_Interp* interp, tclMatrix* m,
-			    int dim, int offs, int nargs, char** args)
+			    int dim, int offs, int nargs, const char** args)
 {
     static int verbose = 0;
 
@@ -461,7 +461,7 @@ static int matrixInitialize(Tcl_Interp* interp, tclMatrix* m,
 	    else
 		newoffs = 0;
 
-	    matrixInitialize(interp, m, dim + 1, newoffs, numnewargs, newargs);
+	    matrixInitialize(interp, m, dim + 1, newoffs, numnewargs, (const char **) newargs);
 	    /* Must use Tcl_Free since allocated by Tcl */
 	    Tcl_Free((char *) newargs);
 	}
@@ -495,12 +495,12 @@ static int matrixInitialize(Tcl_Interp* interp, tclMatrix* m,
 
 static int
 MatrixCmd(ClientData clientData, Tcl_Interp *interp,
-	  int argc, char **argv)
+	  int argc, const char **argv)
 {
     register tclMatrix *matPtr = (tclMatrix *) clientData;
     int length, put = 0;
     char c, tmp[80];
-    char *name = argv[0];
+    const char *name = argv[0];
     int nmin[MAX_ARRAY_DIM], nmax[MAX_ARRAY_DIM];
     int i, j, k;
 
@@ -878,7 +878,7 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 \*--------------------------------------------------------------------------*/
 
 static void
-MatrixPut_f(ClientData clientData, Tcl_Interp* interp, int index, char *string)
+MatrixPut_f(ClientData clientData, Tcl_Interp* interp, int index, const char *string)
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 
@@ -895,7 +895,7 @@ MatrixGet_f(ClientData clientData, Tcl_Interp* interp, int index, char *string)
 }
 
 static void
-MatrixPut_i(ClientData clientData, Tcl_Interp* interp, int index, char *string)
+MatrixPut_i(ClientData clientData, Tcl_Interp* interp, int index, const char *string)
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 

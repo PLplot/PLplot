@@ -76,7 +76,7 @@ typedef struct {
 
 /* These do the put/get operations for each supported type */
 
-    void (*put) (ClientData clientData, Tcl_Interp* interp, int index, char *string);
+    void (*put) (ClientData clientData, Tcl_Interp* interp, int index, const char *string);
     void (*get) (ClientData clientData, Tcl_Interp* interp, int index, char *string);
 
 } tclMatrix;
@@ -326,17 +326,17 @@ int PLDLLIMPEXP Matrix_Init	(Tcl_Interp*);
 
 int
 Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
-	      int argc, char **argv);
+	      int argc, const char **argv);
 
 /* Returns a pointer to the specified matrix operator's data. */
 
 tclMatrix PLDLLIMPEXP *
-Tcl_GetMatrixPtr(Tcl_Interp *interp, char *matName);
+Tcl_GetMatrixPtr(Tcl_Interp *interp, const char *matName);
 
 /* Some stuff for handling extension subcommands. */
 
 typedef int (*tclMatrixXtnsnProc) ( tclMatrix *pm, Tcl_Interp *interp,
-				    int argc, char *argv[] );
+				    int argc, const char *argv[] );
 
 typedef struct tclMatrixXtnsnDescr {
     char *cmd;

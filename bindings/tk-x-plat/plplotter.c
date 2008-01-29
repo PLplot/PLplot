@@ -267,7 +267,7 @@ static Tk_ConfigSpec configSpecs[] = {
 
 /* Externals */
 
-int   plPlotterCmd        (ClientData, Tcl_Interp *, int, char **);
+int   plPlotterCmd        (ClientData, Tcl_Interp *, int, const char **);
 void PlplotterAtEop(Tcl_Interp *interp, register PlPlotter *plPlotterPtr);
 void PlplotterAtBop(Tcl_Interp *interp, register PlPlotter *plPlotterPtr);
 
@@ -346,7 +346,7 @@ static void  UpdateHScrollbar   (register PlPlotter *);
 
 int
 plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
-           int argc, char **argv)
+           int argc, const char **argv)
 {
     Tk_Window tkwin;
     register PlPlotter *plPlotterPtr;
@@ -1647,7 +1647,7 @@ Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 /* no option -- return list of available PLplot commands */
 
     if (argc == 0)
-        return plTclCmd(cmdlist, interp, argc, (char **) argv);
+        return plTclCmd(cmdlist, interp, argc, argv);
 
 /* Make sure widget has been initialized before going any further */
 
@@ -1849,7 +1849,7 @@ Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 /* unrecognized, so give it to plTclCmd to take care of */
 
     else
-        result = plTclCmd(cmdlist, interp, argc, (char **)argv);
+        result = plTclCmd(cmdlist, interp, argc, argv);
 
     plflush();
     return result;

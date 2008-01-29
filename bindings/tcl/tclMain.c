@@ -90,7 +90,7 @@ int (*tclDummyLinkVarPtr)() = Tcl_LinkVar;
 extern int		isatty _ANSI_ARGS_((int fd));
 extern char *		strcpy _ANSI_ARGS_((char *dst, CONST char *src));
 
-static char *tclStartupScriptFileName = NULL;
+static const char *tclStartupScriptFileName = NULL;
 
 /* pltcl enhancements */
 
@@ -107,7 +107,7 @@ void (*tclPrepOutputHandler)(Tcl_Interp *interp, int code, int tty)
 /* Options data structure definition. */
 
 static char *tclStartupScript = NULL;
-static char *pltcl_notes[] = {
+static const char *pltcl_notes[] = {
     "Specifying the filename on the command line is compatible with modern",
     "tclsh syntax.  Old tclsh's used the -f syntax, which is still supported.",
     "You may use either syntax but not both.",
@@ -188,7 +188,7 @@ void TclSetStartupScriptFileName(char *fileName)
  *
  *----------------------------------------------------------------------
  */
-char *TclGetStartupScriptFileName(void)
+const char *TclGetStartupScriptFileName(void)
 {
     return tclStartupScriptFileName;
 }
@@ -215,7 +215,7 @@ char *TclGetStartupScriptFileName(void)
  */
 
 int PLDLLEXPORT
-pltclMain(int argc, char **argv, char *RcFileName /* OBSOLETE */,
+pltclMain(int argc, const char **argv, char *RcFileName /* OBSOLETE */,
 	  int (*appInitProc)(Tcl_Interp *interp))
 {
     Tcl_Obj *resultPtr;

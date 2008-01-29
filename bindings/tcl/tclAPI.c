@@ -49,19 +49,19 @@
 
 /* PLplot/Tcl API handlers.  Prototypes must come before Cmds struct */
 
-static int loopbackCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plcontCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plmeshCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plmeshcCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plot3dCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plot3dcCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plsurf3dCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plsetoptCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plshadeCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plshadesCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plmapCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plmeridiansCmd (ClientData, Tcl_Interp *, int, char **);
-static int plvectCmd   (ClientData, Tcl_Interp *, int, char **);
+static int loopbackCmd	(ClientData, Tcl_Interp *, int, const char **);
+static int plcontCmd	(ClientData, Tcl_Interp *, int, const char **);
+static int plmeshCmd	(ClientData, Tcl_Interp *, int, const char **);
+static int plmeshcCmd	(ClientData, Tcl_Interp *, int, const char **);
+static int plot3dCmd	(ClientData, Tcl_Interp *, int, const char **);
+static int plot3dcCmd	(ClientData, Tcl_Interp *, int, const char **);
+static int plsurf3dCmd	(ClientData, Tcl_Interp *, int, const char **);
+static int plsetoptCmd	(ClientData, Tcl_Interp *, int, const char **);
+static int plshadeCmd	(ClientData, Tcl_Interp *, int, const char **);
+static int plshadesCmd	(ClientData, Tcl_Interp *, int, const char **);
+static int plmapCmd	(ClientData, Tcl_Interp *, int, const char **);
+static int plmeridiansCmd (ClientData, Tcl_Interp *, int, const char **);
+static int plvectCmd   (ClientData, Tcl_Interp *, int, const char **);
 
 /*
  * The following structure defines all of the commands in the PLplot/Tcl
@@ -79,7 +79,7 @@ typedef struct Command {
 
 typedef struct {
     char *name;
-    int (*proc)(void *, struct Tcl_Interp *, int, char **);
+    int (*proc)(void *, struct Tcl_Interp *, int, const char **);
 } CmdInfo;
 
 /* Built-in commands, and the procedures associated with them */
@@ -238,7 +238,7 @@ plTclCmd_Init(Tcl_Interp *interp)
 \*--------------------------------------------------------------------------*/
 
 int
-plTclCmd(char *cmdlist, Tcl_Interp *interp, int argc, char **argv)
+plTclCmd(char *cmdlist, Tcl_Interp *interp, int argc, const char **argv)
 {
     register Tcl_HashEntry *hPtr;
     int result = TCL_OK;
@@ -300,7 +300,7 @@ plTclCmd(char *cmdlist, Tcl_Interp *interp, int argc, char **argv)
 
 static int
 loopbackCmd(ClientData clientData, Tcl_Interp *interp,
-	    int argc, char **argv)
+	    int argc, const char **argv)
 {
     register Tcl_HashEntry *hPtr;
     int result = TCL_OK;
@@ -554,7 +554,7 @@ Pltcl_Init( Tcl_Interp *interp )
 \*----------------------------------------------------------------------*/
 
 int
-plWait_Until(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
+plWait_Until(ClientData clientData, Tcl_Interp *interp, int argc, const char **argv)
 {
     int result = 0;
 
@@ -766,11 +766,11 @@ PLFLT tclMatrix_feval (PLINT i, PLINT j, PLPointer p)
 
 static int
 plcontCmd( ClientData clientData, Tcl_Interp *interp,
-	   int argc, char *argv[] )
+	   int argc, const char *argv[] )
 {
     tclMatrix *matPtr, *matf, *matclev;
     PLINT nx, ny, kx=0, lx=0, ky=0, ly=0, nclev;
-    char *pltrname = "pltr0";
+    const char *pltrname = "pltr0";
     tclMatrix *mattrx = NULL, *mattry = NULL;
     PLFLT **z, **zused, **zwrapped;
 
@@ -1064,11 +1064,11 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 \*---------------------------------------------------------------------------*/
 static int
 plvectCmd( ClientData clientData, Tcl_Interp *interp,
-	   int argc, char *argv[] )
+	   int argc, const char *argv[] )
 {
     tclMatrix *matPtr, *matu, *matv;
     PLINT nx, ny;
-    char *pltrname = "pltr0";
+    const char *pltrname = "pltr0";
     tclMatrix *mattrx = NULL, *mattry = NULL;
     PLFLT **u, **v, **uused, **vused, **uwrapped, **vwrapped;
     PLFLT scaling;
@@ -1369,7 +1369,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
 
 static int
 plmeshCmd( ClientData clientData, Tcl_Interp *interp,
-	   int argc, char *argv[] )
+	   int argc, const char *argv[] )
 {
     PLINT nx, ny, opt;
     PLFLT *x, *y, **z;
@@ -1490,7 +1490,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
 
 static int
 plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
-	   int argc, char *argv[] )
+	   int argc, const char *argv[] )
 {
     PLINT nx, ny, opt, nlev=10;
     PLFLT *x, *y, **z;
@@ -1695,7 +1695,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
 
 static int
 plot3dCmd( ClientData clientData, Tcl_Interp *interp,
-	   int argc, char *argv[] )
+	   int argc, const char *argv[] )
 {
     PLINT nx, ny, opt, side;
     PLFLT *x, *y, **z;
@@ -1818,7 +1818,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
 
 static int
 plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
-	   int argc, char *argv[] )
+	   int argc, const char *argv[] )
 {
     PLINT nx, ny, opt, nlev=10;
     PLFLT *x, *y, **z;
@@ -2026,7 +2026,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
 
 static int
 plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
-	   int argc, char *argv[] )
+	   int argc, const char *argv[] )
 {
     PLINT nx, ny, opt, nlev=10;
     PLFLT *x, *y, **z;
@@ -2222,7 +2222,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
 
 static int
 plsetoptCmd(ClientData clientData, Tcl_Interp *interp,
-	     int argc, char **argv)
+	     int argc, const char **argv)
 {
     if (argc < 2 || argc > 3) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"",
@@ -2261,7 +2261,7 @@ plsetoptCmd(ClientData clientData, Tcl_Interp *interp,
 
 static int
 plshadeCmd( ClientData clientData, Tcl_Interp *interp,
-	    int argc, char *argv[] )
+	    int argc, const char *argv[] )
 {
     tclMatrix *matPtr, *matz, *mattrx = NULL, *mattry = NULL;
     PLFLT **z, **zused, **zwrapped;
@@ -2270,7 +2270,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
     PLINT sh_cmap =1, sh_wid =2;
     PLINT min_col =1, min_wid =0, max_col =0, max_wid =0;
     PLINT rect =1;
-    char *pltrname = "pltr0";
+    const char *pltrname = "pltr0";
     void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
     PLPointer pltr_data = NULL;
     PLcGrid  cgrid1;
@@ -2535,7 +2535,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
 
 static int
 plshadesCmd( ClientData clientData, Tcl_Interp *interp,
-	    int argc, char *argv[] )
+	    int argc, const char *argv[] )
 {
     tclMatrix *matPtr, *matz, *mattrx = NULL, *mattry = NULL;
     tclMatrix *matclevel = NULL;
@@ -2543,7 +2543,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
     PLFLT xmin, xmax, ymin, ymax;
     PLINT fill_width = 0, cont_color = 0, cont_width =0;
     PLINT rect =1;
-    char *pltrname = "pltr0";
+    const char *pltrname = "pltr0";
     void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
     PLPointer pltr_data = NULL;
     PLcGrid  cgrid1;
@@ -2818,7 +2818,7 @@ mapform(PLINT n, PLFLT *x, PLFLT *y)
 
 static int
 plmapCmd( ClientData clientData, Tcl_Interp *interp,
-	    int argc, char *argv[] )
+	    int argc, const char *argv[] )
 {
     PLFLT minlong, maxlong, minlat, maxlat;
     PLINT transform;
@@ -2857,7 +2857,7 @@ plmapCmd( ClientData clientData, Tcl_Interp *interp,
 
 static int
 plmeridiansCmd( ClientData clientData, Tcl_Interp *interp,
-	    int argc, char *argv[] )
+	    int argc, const char *argv[] )
 {
     PLFLT dlong, dlat, minlong, maxlong, minlat, maxlat;
     PLINT transform;
