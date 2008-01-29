@@ -1,4 +1,4 @@
-C  $Id:$
+C  $Id$
 C
 C   Alpha color values demonstration
 C
@@ -121,7 +121,7 @@ c     the colors transparencies in the first example we have to change
 c     the transparencies back to completely opaque.
          icol = mod(i-1,3) + 1
          call plgcol0a (icol, r, g, b, a)
-         call plscol0a (icol, r, g, b, 1.0);
+         call plscol0a (icol, r, g, b, 1.0d0);
          call plcol0 (icol)
          do j = 1, 5
 c     Set box y position and draw the box.
