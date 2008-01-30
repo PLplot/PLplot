@@ -226,8 +226,8 @@ public: /* variables */
   unsigned char m_colbluefill;
 #endif
 
-  char** devDesc;		/* Descriptive names for file-oriented devices.  Malloc'ed. */
-  char** devName;		/* Keyword names of file-oriented devices. Malloc'ed. */
+  const char** devDesc;		/* Descriptive names for file-oriented devices.  Malloc'ed. */
+  const char** devName;		/* Keyword names of file-oriented devices. Malloc'ed. */
 	int ndev;
 };
 
@@ -514,9 +514,9 @@ wxPLdev::wxPLdev( void )
   m_colbluefill=0;
 #endif
 
-  devName = (char **)malloc( NDEV * sizeof(char**) );
+  devName = (const char **)malloc( NDEV * sizeof(char**) );
   memset( devName, '\0', NDEV * sizeof(char**) );
-  devDesc = (char **)malloc( NDEV * sizeof(char**) );
+  devDesc = (const char **)malloc( NDEV * sizeof(char**) );
   memset( devDesc, '\0', NDEV * sizeof(char**) );
 	ndev=NDEV;
 }

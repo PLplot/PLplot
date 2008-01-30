@@ -453,7 +453,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 	plFramePtr->devName[i] = NULL;
     }
     ndev = NDEV;
-    plgFileDevs(&plFramePtr->devDesc, &plFramePtr->devName, &ndev);
+    plgFileDevs((const char***)&plFramePtr->devDesc, (const char ***)&plFramePtr->devName, &ndev);
 
 /* Start up event handlers and other good stuff */
 

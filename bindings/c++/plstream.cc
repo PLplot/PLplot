@@ -2108,7 +2108,7 @@ void plstream::xormod(PLINT mode, PLINT *status)
 
 /* Returns a list of file-oriented device names and their menu strings */
 
-void plstream::gFileDevs( char ***p_menustr, char ***p_devname, int *p_ndev )
+void plstream::gFileDevs( const char ***p_menustr, const char ***p_devname, int *p_ndev )
 {
     set_stream();
 

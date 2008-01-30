@@ -1565,12 +1565,12 @@ c_plxormod(PLBOOL mode, PLBOOL *status);
 /* Returns a list of file-oriented device names and their menu strings */
 
 PLDLLIMPEXP void
-plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev);
+plgFileDevs(const char ***p_menustr, const char ***p_devname, int *p_ndev);
 
 /* Returns a list of all device names and their menu strings */
 
 PLDLLIMPEXP void
-plgDevs(char ***p_menustr, char ***p_devname, int *p_ndev);
+plgDevs(const char ***p_menustr, const char ***p_devname, int *p_ndev);
 
 /* Set the function pointer for the keyboard event handler */
 

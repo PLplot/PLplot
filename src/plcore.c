@@ -2628,7 +2628,7 @@ c_plreplot(void)
 \*--------------------------------------------------------------------------*/
 
 void
-plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
+plgFileDevs(const char ***p_menustr, const char ***p_devname, int *p_ndev)
 {
     plgdevlst(*p_menustr, *p_devname, p_ndev, 0);
 }
@@ -2640,13 +2640,13 @@ plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
 \*--------------------------------------------------------------------------*/
 
 void
-plgDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
+plgDevs(const char ***p_menustr, const char ***p_devname, int *p_ndev)
 {
     plgdevlst(*p_menustr, *p_devname, p_ndev, -1);
 }
 
 static void
-plgdevlst(char **p_menustr, char **p_devname, int *p_ndev, int type)
+plgdevlst(const char **p_menustr, const char **p_devname, int *p_ndev, int type)
 {
     int i, j;
 

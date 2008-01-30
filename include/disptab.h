@@ -75,8 +75,8 @@ typedef void (*plD_state_fp)   (struct PLStream_struct *, PLINT);
 typedef void (*plD_esc_fp)     (struct PLStream_struct *, PLINT, void *);
 
 typedef struct {
-    char *pl_MenuStr;
-    char *pl_DevName;
+    const char *pl_MenuStr;
+    const char *pl_DevName;
     int  pl_type;
     int  pl_seq;
     plD_init_fp     pl_init;

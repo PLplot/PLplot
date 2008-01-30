@@ -848,7 +848,7 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 /* Returns a list of file-oriented device names and their menu strings */
 
-    void gFileDevs( char ***p_menustr, char ***p_devname, int *p_ndev );
+    void gFileDevs( const char ***p_menustr, const char ***p_devname, int *p_ndev );
 
 /* Set the function pointer for the keyboard event handler */
 

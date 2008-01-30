@@ -56,7 +56,7 @@ static void	calc_diplt	(void);
 static void	calc_didev	(void);
 static void	calc_diori	(void);
 static void	calc_dimap	(void);
-static void	plgdevlst	(char **, char **, int *, int);
+static void	plgdevlst	(const char **, const char **, int *, int);
 
 static void	plInitDispatchTable	(void);
 

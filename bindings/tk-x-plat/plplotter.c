@@ -438,7 +438,7 @@ plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
         plPlotterPtr->devName[i] = NULL;
     }
     ndev = NDEV;
-    plgFileDevs(&plPlotterPtr->devDesc, &plPlotterPtr->devName, &ndev);
+    plgFileDevs((const char ***) &plPlotterPtr->devDesc, (const char ***) &plPlotterPtr->devName, &ndev);
 
 /* Start up event handlers and other good stuff */
 
