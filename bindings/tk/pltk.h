@@ -29,7 +29,7 @@ Pltk_Init( Tcl_Interp *interp );
 /* Main program for wish, with PLplot extensions. */
 
 int
-pltkMain(int argc, char **argv, char *RcFileName,
+pltkMain(int argc, const char **argv, char *RcFileName,
 	 int (*AppInit)(Tcl_Interp *interp));
 
 #ifdef __cplusplus

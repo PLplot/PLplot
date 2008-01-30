@@ -27,7 +27,7 @@ static int
 AppInit(Tcl_Interp *interp);
 
 int mat_max( tclMatrix *pm, Tcl_Interp *interp,
-	     int argc, char *argv[] )
+	     int argc, const char *argv[] )
 {
     PLFLT max = pm->fdata[0];
     int i;
@@ -40,7 +40,7 @@ int mat_max( tclMatrix *pm, Tcl_Interp *interp,
 }
 
 int mat_min( tclMatrix *pm, Tcl_Interp *interp,
-	     int argc, char *argv[] )
+	     int argc, const char *argv[] )
 {
     PLFLT min = pm->fdata[0];
     int i;
@@ -64,7 +64,7 @@ int mat_min( tclMatrix *pm, Tcl_Interp *interp,
 \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, char **argv)
+main(int argc, const char **argv)
 {
     exit(pltkMain(argc, argv, NULL, AppInit));
 }

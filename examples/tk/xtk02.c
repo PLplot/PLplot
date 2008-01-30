@@ -34,7 +34,7 @@ AppInit(Tcl_Interp *interp);
 \*--------------------------------------------------------------------------*/
 
 int stuff( tclMatrix *pm, Tcl_Interp *interp,
-	   int argc, char *argv[] )
+	   int argc, const char *argv[] )
 {
     int i;
     PLFLT x, y;
@@ -65,7 +65,7 @@ int stuff( tclMatrix *pm, Tcl_Interp *interp,
 \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, char **argv)
+main(int argc, const char **argv)
 {
     exit(pltkMain(argc, argv, NULL, AppInit));
 }

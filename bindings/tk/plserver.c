@@ -93,10 +93,10 @@ AppInit(Tcl_Interp *interp);
 \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, char **argv)
+main(int argc, const char **argv)
 {
     int i, myargc = argc;
-    char *myargv[20];
+    const char *myargv[20];
     Tcl_Interp *interp;
     char *helpmsg = "Command-specific options:";
 
@@ -121,7 +121,7 @@ main(int argc, char **argv)
 /* Parse args */
 /* Examine the result string to see if an error return is really an error */
 
-    if (Tk_ParseArgv(interp, (Tk_Window) NULL, &argc, (CONST char**) argv,
+    if (Tk_ParseArgv(interp, (Tk_Window) NULL, &argc, argv,
 		     argTable, TK_ARGV_NO_DEFAULTS) != TCL_OK) {
 	fprintf(stderr, "\n(plserver) %s\n\n", interp->result);
 	fprintf(stderr, "\

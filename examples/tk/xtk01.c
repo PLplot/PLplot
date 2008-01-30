@@ -37,7 +37,7 @@ AppInit(Tcl_Interp *interp);
 \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, char **argv)
+main(int argc, const char **argv)
 {
     exit(pltkMain(argc, argv, NULL, AppInit));
 }

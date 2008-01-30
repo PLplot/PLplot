@@ -126,11 +126,11 @@ static char errorExitCmd[] = "exit 1";
  */
 
 static int synchronize = 0;
-static char *script = NULL;
-static char *fileName = NULL;
-static char *name = NULL;
-static char *display = NULL;
-static char *geometry = NULL;
+static const char *script = NULL;
+static const char *fileName = NULL;
+static const char *name = NULL;
+static const char *display = NULL;
+static const char *geometry = NULL;
 
 static Tk_ArgvInfo argTable[] = {
     {"-file", TK_ARGV_STRING, (char *) NULL, (char *) &fileName,
@@ -177,10 +177,11 @@ static void		StdinProc _ANSI_ARGS_((ClientData clientData,
  */
 
 int
-pltkMain(int argc, char **argv, char *RcFileName,
+pltkMain(int argc, const char **argv, char *RcFileName,
 	 int (*AppInit)(Tcl_Interp *interp))
 {
-    char *args, *p, *msg;
+    char *args, *msg;
+    const char *p;
     char buf[20];
     int code;
 
@@ -194,7 +195,7 @@ pltkMain(int argc, char **argv, char *RcFileName,
      * Parse command-line arguments.
      */
 
-    if (Tk_ParseArgv(interp, (Tk_Window) NULL, &argc, (CONST char**) argv, argTable, 0)
+    if (Tk_ParseArgv(interp, (Tk_Window) NULL, &argc, argv, argTable, 0)
 	    != TCL_OK) {
 	fprintf(stderr, "%s\n", interp->result);
 	exit(1);
