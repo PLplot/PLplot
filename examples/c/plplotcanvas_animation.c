@@ -218,7 +218,7 @@ int main(int argc,char *argv[] )
   GtkBox* vbox;
 
   /* Parse the options */
-  plparseopts(&argc, argv, PL_PARSE_FULL);
+  plparseopts(&argc, (const char **) argv, PL_PARSE_FULL);
 
   /* Initialize */
   g_thread_init(NULL);

@@ -57,7 +57,7 @@ int main(int argc,char *argv[] )
   GtkWidget *window;
 
   /* Parse the options */
-  plparseopts(&argc, argv, PL_PARSE_FULL);
+  plparseopts(&argc, (const char **) argv, PL_PARSE_FULL);
 
   /* The data to plot */
   double x[11] = {0,1,2,3,4,5,6,7,8,9,10};
