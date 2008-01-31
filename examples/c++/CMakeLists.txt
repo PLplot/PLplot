@@ -78,18 +78,19 @@ endforeach(STRING_INDEX ${cxx_STRING_INDICES})
 
 if(PLD_wxwidgets)
   if(BUILD_TEST)
-    add_executable(wxPLplotDemo wxPLplotDemo.cpp)
-    SET_SOURCE_FILES_PROPERTIES(wxPLplotDemo.cpp
-      PROPERTIES COMPILE_FLAGS ${wxwidgets_COMPILE_FLAGS})
+    add_executable(wxPLplotDemo WIN32 wxPLplotDemo.cpp)
     if(WIN32 AND BUILD_SHARED_LIBS)
       SET_SOURCE_FILES_PROPERTIES(wxPLplotDemo.cpp
-        PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
+        PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${wxwidgets_COMPILE_FLAGS}")
+    else(WIN32 AND BUILD_SHARED_LIBS)
+      SET_SOURCE_FILES_PROPERTIES(wxPLplotDemo.cpp
+        PROPERTIES COMPILE_FLAGS ${wxwidgets_COMPILE_FLAGS})
     endif(WIN32 AND BUILD_SHARED_LIBS)
-    target_link_libraries(wxPLplotDemo plplotwxwidgets${LIB_TAG} plplotcxx${LIB_TAG} ${MATH_LIB})
     include_directories(
     ${CMAKE_SOURCE_DIR}/bindings/wxwidgets
     ${CMAKE_BINARY_DIR}/bindings/wxwidgets
     )
+    target_link_libraries(wxPLplotDemo plplotwxwidgets${LIB_TAG} plplotcxx${LIB_TAG} ${MATH_LIB})
   endif(BUILD_TEST)
 endif(PLD_wxwidgets)
 set(wxPLplotDemo_SRCS
