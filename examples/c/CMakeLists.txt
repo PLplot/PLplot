@@ -95,27 +95,3 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/c
 RENAME Makefile
 )
-
-# Install lena.pgm in installed examples directory so that all implementations
-# of example 20 in the various examples subdirectories can conveniently
-# access this file.
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
-DESTINATION ${DATA_DIR}/examples
-)
-
-# Do the same as above for the build tree for those who want to individually
-# run the various example 20 implementations from the examples subdirectories
-# of the build tree.
-
-if(BUILD_TEST)
-  add_custom_command(
-  OUTPUT ${CMAKE_BINARY_DIR}/examples/lena.pgm
-  COMMAND ${CMAKE_COMMAND} -E copy
-  ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
-  ${CMAKE_BINARY_DIR}/examples/lena.pgm
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
-  )
-  add_custom_target(examples_lena_file ALL
-  DEPENDS ${CMAKE_BINARY_DIR}/examples/lena.pgm
-  )
-endif(BUILD_TEST)

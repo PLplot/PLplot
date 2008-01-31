@@ -194,9 +194,9 @@ if(BUILD_TEST)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
     COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_SOURCE_DIR}/examples/c/lena.pgm
+    ${CMAKE_SOURCE_DIR}/examples/lena.pgm
     ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
-    DEPENDS ${CMAKE_SOURCE_DIR}/examples/c/lena.pgm
+    DEPENDS ${CMAKE_SOURCE_DIR}/examples/lena.pgm
   )
   add_custom_target(lena_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm)
   if(ENABLE_octave)

@@ -25,6 +25,30 @@ if(USE_RPATH)
   set(RPATHCMD "-Wl,-rpath -Wl,${LIB_INSTALL_RPATH}")
 endif(USE_RPATH)
 
+# Install lena.pgm in installed examples directory so that all implementations
+# of example 20 in the various examples subdirectories can conveniently
+# access this file.
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
+DESTINATION ${DATA_DIR}/examples
+)
+
+# Do the same as above for the build tree for those who want to individually
+# run the various example 20 implementations from the examples subdirectories
+# of the build tree.
+
+if(BUILD_TEST)
+  add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
+  ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
+  )
+  add_custom_target(examples_lena_file ALL
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+  )
+endif(BUILD_TEST)
+
 add_subdirectory(c)
 if(ENABLE_cxx)
   add_subdirectory(c++)
