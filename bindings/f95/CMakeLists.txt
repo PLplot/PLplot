@@ -36,9 +36,15 @@ plflt.c
 
 add_executable(plflt ${plflt_SRC})
 
+get_target_property(
+plflt_LOCATION
+plflt
+LOCATION
+)
+
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc
   COMMAND ${CMAKE_CURRENT_BINARY_DIR}/plflt
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plflt
+  DEPENDS ${plflt_LOCATION}
 )
 
 set_source_files_properties(plflt.inc PROPERTIES GENERATED ON)
