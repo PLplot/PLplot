@@ -31,6 +31,11 @@
     #include "wx/wx.h"
 #endif
 
+#ifdef __WXMAC__
+	#include <Carbon/Carbon.h>
+  extern "C" { void CPSEnableForegroundOperation(ProcessSerialNumber* psn); }
+#endif
+
 #include "wxPLplotwindow.h"
 #include <cmath>
 
@@ -113,6 +118,16 @@ IMPLEMENT_APP( MyApp )
  */
 bool MyApp::OnInit()
 {
+#ifdef __WXMAC__
+    /* this hack enables to have a GUI on Mac OSX even if the 
+       program was called from the command line (and isn't a bundle) */
+    ProcessSerialNumber psn;
+
+    GetCurrentProcess( &psn );
+    CPSEnableForegroundOperation( &psn );
+    SetFrontProcess( &psn );
+#endif
+
   MyFrame *frame = new MyFrame( _T("wxPLplot demo") );
 	frame->Show( true );
 
