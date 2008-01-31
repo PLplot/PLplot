@@ -20,10 +20,6 @@
 
 */
 
-/* cmake options:
-   MinGW: -G "MinGW Makefiles" -DCMAKE_INSTALL_PREFIX=local -DCMAKE_BUILD_TYPE=Release -DwxWidgets_LIB_DIR=%WXWIN%/lib/gcc_dll -DwxWidgets_CONFIGURATION=msw ..
- */
-
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
@@ -97,14 +93,14 @@ private:
 // ----------------------------------------------------------------------------
 // constants
 // ----------------------------------------------------------------------------
-enum { Minimal_Quit = wxID_EXIT, Minimal_About = wxID_ABOUT };
+enum { wxPLplotDemo_Quit = wxID_EXIT, wxPLplotDemo_About = wxID_ABOUT };
 
 // ----------------------------------------------------------------------------
 // event tables and other macros for wxWidgets
 // ----------------------------------------------------------------------------
 BEGIN_EVENT_TABLE( MyFrame, wxFrame )
-	EVT_MENU( Minimal_Quit,  MyFrame::OnQuit )
-	EVT_MENU( Minimal_About, MyFrame::OnAbout )
+	EVT_MENU( wxPLplotDemo_Quit,  MyFrame::OnQuit )
+	EVT_MENU( wxPLplotDemo_About, MyFrame::OnAbout )
 END_EVENT_TABLE()
 
 IMPLEMENT_APP( MyApp )
@@ -133,8 +129,8 @@ MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 {
   // add menu
 	wxMenu *fileMenu = new wxMenu;
-	fileMenu->Append( Minimal_About, _T("&About...\tF1"), _T("Show about dialog") );
-	fileMenu->Append( Minimal_Quit, _T("E&xit\tAlt-X"), _T("Quit this program") );
+	fileMenu->Append( wxPLplotDemo_About, _T("&About...\tF1"), _T("Show about dialog") );
+	fileMenu->Append( wxPLplotDemo_Quit, _T("E&xit\tAlt-X"), _T("Quit this program") );
 
 	wxMenuBar *menuBar = new wxMenuBar();
 	menuBar->Append( fileMenu, _T("&File") );
