@@ -109,8 +109,3 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/c++
 RENAME Makefile
 )
-
-# The following attempt to create a symlink in the install tree worked, but
-# DESTDIR was not honored so use the above copy instead until we can figure
-# out a better way.
-# install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ../c/lena.pgm lena.pgm WORKING_DIRECTORY ${DATA_DIR}/examples/c++)")
