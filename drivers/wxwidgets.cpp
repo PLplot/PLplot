@@ -353,14 +353,14 @@ END_EVENT_TABLE()
 /* Use this macro if you want to define your own main() or WinMain() function
    and call wxEntry() from there. */
 #define IMPLEMENT_PLAPP_NO_MAIN(appname)                                      \
-    wxAppConsole *wxCreateApp()                                             \
+    wxAppConsole *wxPLCreateApp()                                             \
     {                                                                       \
         wxAppConsole::CheckBuildOptions( WX_BUILD_OPTIONS_SIGNATURE,         \
                                          "your program" );                    \
         return new appname;                                                 \
     }                                                                       \
     wxAppInitializer                                                        \
-        wxAppInitializer((wxAppInitializerFunction) wxCreateApp);        \
+        wxAppInitializer((wxAppInitializerFunction) wxPLCreateApp);        \
     static appname& wxGetApp() { return *(appname *)wxTheApp; } 
 
 IMPLEMENT_PLAPP_NO_MAIN( wxPLplotApp )
@@ -919,9 +919,9 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
         dev->m_strokewidth = pls->width>0 ? pls->width : 1;  // TODO: why and when ist width 0???
 #endif
       } else {
-        dev->dc->SetPen( wxPen(wxColour(pls->curcolor.r, pls->curcolor.g,
-                                        pls->curcolor.b),
-                               pls->width>0 ? pls->width : 1) );
+        dev->dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g,
+                                        pls->curcolor.b, (unsigned char)(pls->curcolor.a*255)),
+                               pls->width>0 ? pls->width : 1, wxSOLID)) );
       }
     } else
       dev->plstate_width = true;
@@ -937,11 +937,11 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
         dev->m_StrokeOpacity = (wxUint8)(pls->cmap0[pls->icol0].a*255);
 #endif
       } else {
-        dev->dc->SetPen( wxPen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                        pls->cmap0[pls->icol0].b),
-                               pls->width>0 ? pls->width : 1) );
+        dev->dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
+                                        pls->cmap0[pls->icol0].b, (unsigned char)(pls->cmap0[pls->icol0].a*255)),
+                               pls->width>0 ? pls->width : 1, wxSOLID)) );
         dev->dc->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                            pls->cmap0[pls->icol0].b)) );
+                                            pls->cmap0[pls->icol0].b, (unsigned char)(pls->cmap0[pls->icol0].a*255))) );
       }
     } else
       dev->plstate_color0 = true;
@@ -957,11 +957,11 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
         dev->m_StrokeOpacity = (wxUint8)(pls->curcolor.a*255);
 #endif
       } else {
-        dev->dc->SetPen( wxPen(wxColour(pls->curcolor.r, pls->curcolor.g,
-                                        pls->curcolor.b),
-                               pls->width>0 ? pls->width : 1) );
+        dev->dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g,
+                                        pls->curcolor.b, (unsigned char)(pls->curcolor.a*255)),
+                               pls->width>0 ? pls->width : 1, wxSOLID)) );
         dev->dc->SetBrush( wxBrush(wxColour(pls->curcolor.r, pls->curcolor.g,
-                                            pls->curcolor.b)) );
+                                            pls->curcolor.b, (unsigned char)(pls->curcolor.a*255))) );
       }
     } else 
       dev->plstate_color1 = true;
@@ -1293,12 +1293,11 @@ static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
   if( !(dev->ready) )
     install_buffer( pls );
 
-  Log_Verbose( "Draw Pixel @ %d, %d\n", x, y );	
   if( dev->antialized ) {
 #ifdef HAVE_AGG
-    dev->m_buffer->SetRGB( x, y, dev->m_colredstroke, dev->m_colgreenstroke, dev->m_colbluestroke );    
+    dev->m_buffer->SetRGB( x, y, dev->m_colredstroke, dev->m_colgreenstroke, dev->m_colbluestroke );
 #endif
-  } else  
+  } else
     dev->dc->DrawPoint( x, y );
 
   if( !(dev->resizing) && dev->ownGUI ) {
@@ -1327,14 +1326,16 @@ static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colo
   if( !(dev->ready) )
     install_buffer( pls );
 
-  Log_Verbose( "Draw Pixel @ %d, %d\n", x, y );	
   if( dev->antialized ) {
 #ifdef HAVE_AGG
     dev->m_buffer->SetRGB( x, y, GetRValue(colour), GetGValue(colour), GetBValue(colour) );    
 #endif
   } else  {
-    dev->dc->SetPen( wxPen(wxColour(GetRValue(colour), GetGValue(colour), GetBValue(colour)), 1) );
+    const wxPen oldpen=dev->dc->GetPen();
+    dev->dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(GetRValue(colour), GetGValue(colour), GetBValue(colour)),
+                                                   1, wxSOLID)) );
     dev->dc->DrawPoint( x, y );
+    dev->dc->SetPen( oldpen );
   }
 
   if( !(dev->resizing) && dev->ownGUI ) {
@@ -1370,10 +1371,17 @@ static PLINT plD_read_pixel_wxwidgets ( PLStream *pls, short x, short y )
                   dev->m_buffer->GetBlue( x, y ) );    
 #endif
   } else {  
+#ifdef __WXGTK__
+    // The GetPixel method is incredible slow for wxGTK. Therefore we set the colour
+    // always to the background color, since this is the case anyway 99% of the time.
+    PLINT bgr, bgg, bgb;  /* red, green, blue */
+    plgcolbg( &bgr, &bgg, &bgb );  /* get background color information */
+    colour=RGB( bgr, bgg, bgb );
+#else
     wxColour col;
     dev->dc->GetPixel( x, y, &col );
-  
-    colour = RGB( col.Red(), col.Green(), col.Blue() );    
+    colour = RGB( col.Red(), col.Green(), col.Blue());
+#endif
 	}
 
   return colour;
@@ -1401,20 +1409,18 @@ static void init_freetype_lv1( PLStream *pls )
 
   /*
    *  See if we have a 24 bit device (or better), in which case
-   *  we can use the better antialaaising.
+   *  we can use the better antialising.
    */
   if( dev->antialized ) {
     FT->BLENDED_ANTIALIASING=1;
     FT->read_pixel= (plD_read_pixel_fp)plD_read_pixel_wxwidgets;
     FT->set_pixel= (plD_set_pixel_fp)plD_set_pixel_wxwidgets;
   } else {
-    //wxDisplay display(0);
-    //printf("bitmap depth=%d\n", display->GetDepth() );
-    //if( display->GetDepth()>=24) {
-      FT->BLENDED_ANTIALIASING=1;
-      FT->read_pixel= (plD_read_pixel_fp)plD_read_pixel_wxwidgets;
-      FT->set_pixel= (plD_set_pixel_fp)plD_set_pixel_wxwidgets;
-    //}
+    // the bitmap we are using in the antialized case has always
+    // 32 bit depth
+    FT->BLENDED_ANTIALIASING=1;
+    FT->read_pixel= (plD_read_pixel_fp)plD_read_pixel_wxwidgets;
+    FT->set_pixel= (plD_set_pixel_fp)plD_set_pixel_wxwidgets;
   }
 }
 
@@ -1581,7 +1587,7 @@ static void install_buffer( PLStream *pls )
       dev->dc = new wxMemoryDC();
     
     /* get a new bitmap */
-    dev->m_bitmap = new wxBitmap( dev->bm_width, dev->bm_height, -1 );
+    dev->m_bitmap = new wxBitmap( dev->bm_width, dev->bm_height, 32 );
     ((wxMemoryDC*)dev->dc)->SelectObject( wxNullBitmap );   /* deselect bitmap */
     ((wxMemoryDC*)dev->dc)->SelectObject( *(dev->m_bitmap) );   /* select new bitmap */
   }
@@ -1994,7 +2000,7 @@ void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
           ((wxMemoryDC*)m_dev->dc)->SelectObject( wxNullBitmap );   /* deselect bitmap */
           if( m_dev->m_bitmap )
             delete m_dev->m_bitmap;
-          m_dev->m_bitmap = new wxBitmap( m_dev->bm_width, m_dev->bm_height, -1 );
+          m_dev->m_bitmap = new wxBitmap( m_dev->bm_width, m_dev->bm_height, 32 );
           ((wxMemoryDC*)m_dev->dc)->SelectObject( *(m_dev->m_bitmap) );   /* select new bitmap */
         }
       }
