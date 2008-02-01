@@ -920,8 +920,8 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
 #endif
       } else {
         dev->dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g,
-                                        pls->curcolor.b, (unsigned char)(pls->curcolor.a*255)),
-                               pls->width>0 ? pls->width : 1, wxSOLID)) );
+                                                                   pls->curcolor.b),
+                                                          pls->width>0 ? pls->width : 1, wxSOLID)) );
       }
     } else
       dev->plstate_width = true;
@@ -938,10 +938,10 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
 #endif
       } else {
         dev->dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                        pls->cmap0[pls->icol0].b, (unsigned char)(pls->cmap0[pls->icol0].a*255)),
-                               pls->width>0 ? pls->width : 1, wxSOLID)) );
+                                                                    pls->cmap0[pls->icol0].b),
+                                                          pls->width>0 ? pls->width : 1, wxSOLID)) );
         dev->dc->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                            pls->cmap0[pls->icol0].b, (unsigned char)(pls->cmap0[pls->icol0].a*255))) );
+                                            pls->cmap0[pls->icol0].b)) );
       }
     } else
       dev->plstate_color0 = true;
@@ -958,10 +958,9 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
 #endif
       } else {
         dev->dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g,
-                                        pls->curcolor.b, (unsigned char)(pls->curcolor.a*255)),
-                               pls->width>0 ? pls->width : 1, wxSOLID)) );
-        dev->dc->SetBrush( wxBrush(wxColour(pls->curcolor.r, pls->curcolor.g,
-                                            pls->curcolor.b, (unsigned char)(pls->curcolor.a*255))) );
+                                                                    pls->curcolor.b),
+                                                          pls->width>0 ? pls->width : 1, wxSOLID)) );
+        dev->dc->SetBrush( wxBrush(wxColour(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b)) );
       }
     } else 
       dev->plstate_color1 = true;
