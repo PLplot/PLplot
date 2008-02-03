@@ -290,13 +290,14 @@ void plD_init_aqt(PLStream *pls)
 
 void plD_bop_aqt(PLStream *pls)
 {
-   currentPlot = currentPlot>=maxWindows?0:currentPlot;
-   [adapter openPlotWithIndex:currentPlot++];
-   [adapter setPlotSize:NSMakeSize(windowXSize, windowYSize)];
-   [adapter setLinewidth:1.0];
-   [adapter setColorRed:(float)(pls->curcolor.r/255.)
-   				  green:(float)(pls->curcolor.g/255.)
-				   blue:(float)(pls->curcolor.b/255.)];
+  currentPlot = currentPlot>=maxWindows?0:currentPlot;
+  [adapter openPlotWithIndex:currentPlot++];
+  [adapter setPlotSize:NSMakeSize(windowXSize, windowYSize)];
+  [adapter setLinewidth:1.0];
+  [adapter setColorRed:(float)(pls->curcolor.r/255.)
+   green:(float)(pls->curcolor.g/255.)
+   blue:(float)(pls->curcolor.b/255.)
+   alpha:(float)(pls->curcolor.a)];
 
    pls->page++;
 }
@@ -359,32 +360,34 @@ void plD_tidy_aqt(PLStream *pls)
 
 void plD_state_aqt(PLStream *pls, PLINT op)
 {
-   int i;
-   float r,g,b;
-
-   switch (op)
-   {
-      case PLSTATE_WIDTH:
-         [adapter setLinewidth:(float)pls->width];
-         break;
-
-      case PLSTATE_COLOR0:	// this seems to work, but that isn't to say that it is done right...
-         [adapter setBackgroundColorRed:(float)(plsc->cmap0[0].r/255.0) 
-	                              green:(float)(plsc->cmap0[0].g/255.0)
-	                               blue:(float)(plsc->cmap0[0].b/255.0)];
-      case PLSTATE_COLOR1:
-      case PLSTATE_FILL:
-		 [adapter setColorRed:(float)(pls->curcolor.r/255.)
-   		 		   	    green:(float)(pls->curcolor.g/255.)
-		 		         blue:(float)(pls->curcolor.b/255.)];
-         break;
-
-      case PLSTATE_CMAP0:
-         break;
-
-      case PLSTATE_CMAP1:
-         break;
-   }
+  int i;
+  float r,g,b;
+  
+  switch (op)
+    {
+    case PLSTATE_WIDTH:
+      [adapter setLinewidth:(float)pls->width];
+      break;
+      
+    case PLSTATE_COLOR0:	// this seems to work, but that isn't to say that it is done right...
+      [adapter setBackgroundColorRed:(float)(plsc->cmap0[0].r/255.0) 
+       green:(float)(plsc->cmap0[0].g/255.0)
+       blue:(float)(plsc->cmap0[0].b/255.0)
+       alpha:(float)(plsc->cmap0[0].a)];
+    case PLSTATE_COLOR1:
+    case PLSTATE_FILL:
+      [adapter setColorRed:(float)(pls->curcolor.r/255.)
+       green:(float)(pls->curcolor.g/255.)
+       blue:(float)(pls->curcolor.b/255.)
+       alpha:(float)(pls->curcolor.a)];
+      break;
+      
+    case PLSTATE_CMAP0:
+      break;
+      
+    case PLSTATE_CMAP1:
+      break;
+    }
 }
 
 //---------------------------------------------------------------------
@@ -484,78 +487,79 @@ void get_cursor(PLStream *pls, PLGraphicsIn *gin){
 
 void proc_str (PLStream *pls, EscText *args)
 {
-	PLFLT   	a1, ft_ht, angle, shear;
-	PLINT   	clxmin, clxmax, clymin, clymax;
-	int     	i, jst, ref;
-	NSMutableAttributedString *str;
+  PLFLT   	a1, ft_ht, angle, shear;
+  PLINT   	clxmin, clxmax, clymin, clymax;
+  int     	i, jst, ref;
+  NSMutableAttributedString *str;
+  
+  /* check that we got unicode, warning message and return if not */
+  
+  if(args->unicode_array_len == 0){
+    printf("Non unicode string passed to AquaTerm driver, ignoring\n");
+    return;
+  }
+  
+  /* check that unicode string isn't longer then the max we allow */
+  
+  if(args->unicode_array_len >= MAX_STRING_LEN){
+    printf("Sorry, the AquaTerm driver only handles strings of length < %d\n", MAX_STRING_LEN);
+    return;
+  }
+  
+  /* set the font height - the 1.2 factor was trial and error */
+  
+  ft_ht = 1.2 * pls->chrht * DPI/25.4; 	/* ft_ht in points. ht is in mm */
 
-	/* check that we got unicode, warning message and return if not */
-	
-	if(args->unicode_array_len == 0){
-		printf("Non unicode string passed to AquaTerm driver, ignoring\n");
-		return;
-	}
-	
-	/* check that unicode string isn't longer then the max we allow */
-	
-	if(args->unicode_array_len >= MAX_STRING_LEN){
-		printf("Sorry, the AquaTerm driver only handles strings of length < %d\n", MAX_STRING_LEN);
-		return;
-	}
-
-	/* set the font height - the 1.2 factor was trial and error */
-
-	ft_ht = 1.2 * pls->chrht * DPI/25.4; 	/* ft_ht in points. ht is in mm */
-
-   	/* given transform, calculate rotation angle & shear angle */
-    plRotationShear(args->xform, &angle, &shear);
-    angle *= 180.0/PI;
-    shear *= -180.0/PI;
-
-	/* text justification, AquaTerm only supports 3 options, so we round appropriately */
-	
-	if (args->just < 0.33)
-		jst = AQTAlignLeft;                             /* left */
-	else if (args->just > 0.66)
-		jst = AQTAlignRight;                            /* right */
-	else
-		jst = AQTAlignCenter;                           /* center */
-	
-	/* set the baseline of the string */
-	// Middle and Bottom are set to Middle since this seems to be what PLplot expects
-	// as judged by where it renders the symbols in example 1.
-	
-	if (args->base == 2)      // Top
-		ref = AQTAlignTop;
-	else if (args->base == 1) // Bottom
-		ref = AQTAlignMiddle;
-	else
-		ref = AQTAlignMiddle; // Middle
-	
-	/* create an appropriately formatted, etc... unicode string */
-	
-	str = create_string(args->unicode_array, args->unicode_array_len, ft_ht);
-
-	/* display the string */
-	
-	[adapter setColorRed:(float)(pls->curcolor.r/255.)
-                   green:(float)(pls->curcolor.g/255.)
-                    blue:(float)(pls->curcolor.b/255.)];
-	
-	if(hasShear){
-	    [adapter addLabel:str 
-    	          atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE)
-        	        angle:angle 
-           	   shearAngle:shear 
-                    align:(jst | ref)];
-    } else {
-	    [adapter addLabel:str 
-    	          atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE)
-        	        angle:angle
-                    align:(jst | ref)];
-    }
-
-    [str release];
+  /* given transform, calculate rotation angle & shear angle */
+  plRotationShear(args->xform, &angle, &shear);
+  angle *= 180.0/PI;
+  shear *= -180.0/PI;
+  
+  /* text justification, AquaTerm only supports 3 options, so we round appropriately */
+  
+  if (args->just < 0.33)
+    jst = AQTAlignLeft;                             /* left */
+  else if (args->just > 0.66)
+    jst = AQTAlignRight;                            /* right */
+  else
+    jst = AQTAlignCenter;                           /* center */
+  
+  /* set the baseline of the string */
+  // Middle and Bottom are set to Middle since this seems to be what PLplot expects
+  // as judged by where it renders the symbols in example 1.
+  
+  if (args->base == 2)      // Top
+    ref = AQTAlignTop;
+  else if (args->base == 1) // Bottom
+    ref = AQTAlignMiddle;
+  else
+    ref = AQTAlignMiddle; // Middle
+  
+  /* create an appropriately formatted, etc... unicode string */
+  
+  str = create_string(args->unicode_array, args->unicode_array_len, ft_ht);
+  
+  /* display the string */
+  
+  [adapter setColorRed:(float)(pls->curcolor.r/255.)
+   green:(float)(pls->curcolor.g/255.)
+   blue:(float)(pls->curcolor.b/255.)
+   alpha:(float)(pls->curcolor.a)];
+  
+  if(hasShear){
+    [adapter addLabel:str 
+     atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE)
+     angle:angle 
+     shearAngle:shear 
+     align:(jst | ref)];
+  } else {
+    [adapter addLabel:str 
+     atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE)
+     angle:angle
+     align:(jst | ref)];
+  }
+  
+  [str release];
 }
 
 //---------------------------------------------------------------------
