@@ -1043,7 +1043,7 @@ void plD_dispatch_init_pdfcairo(PLDispatchTable *pdt)
    pdt->pl_MenuStr  = "Cairo PDF Driver";
    pdt->pl_DevName  = "pdfcairo";
 #endif
-   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_type     = plDevType_FileOriented;
    pdt->pl_seq      = 60;
    pdt->pl_init     = (plD_init_fp)     plD_init_pdfcairo;
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
@@ -1114,7 +1114,7 @@ void plD_dispatch_init_pscairo(PLDispatchTable *pdt)
    pdt->pl_MenuStr  = "Cairo PS Driver";
    pdt->pl_DevName  = "pscairo";
 #endif
-   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_type     = plDevType_FileOriented;
    pdt->pl_seq      = 61;
    pdt->pl_init     = (plD_init_fp)     plD_init_pscairo;
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
@@ -1187,7 +1187,7 @@ void plD_dispatch_init_svgcairo(PLDispatchTable *pdt)
    pdt->pl_MenuStr  = "Cairo SVG Driver";
    pdt->pl_DevName  = "svgcairo";
 #endif
-   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_type     = plDevType_FileOriented;
    pdt->pl_seq      = 62;
    pdt->pl_init     = (plD_init_fp)     plD_init_svgcairo;
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
@@ -1260,7 +1260,7 @@ void plD_dispatch_init_pngcairo(PLDispatchTable *pdt)
    pdt->pl_MenuStr  = "Cairo PNG Driver";
    pdt->pl_DevName  = "pngcairo";
 #endif
-   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_type     = plDevType_FileOriented;
    pdt->pl_seq      = 63;
    pdt->pl_init     = (plD_init_fp)     plD_init_pngcairo;
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
@@ -1390,7 +1390,7 @@ void plD_dispatch_init_memcairo(PLDispatchTable *pdt)
    pdt->pl_MenuStr  = "Cairo memory driver";
    pdt->pl_DevName  = "memcairo";
 #endif
-   pdt->pl_type     = plDevType_Interactive;
+   pdt->pl_type     = plDevType_FileOriented;
    pdt->pl_seq      = 64;
    pdt->pl_init     = (plD_init_fp)     plD_init_memcairo;
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
