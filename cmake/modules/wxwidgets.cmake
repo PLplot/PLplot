@@ -28,7 +28,6 @@
 
 # Find wxWidgets needed for driver and bindings
 if(PLD_wxwidgets)
-  SET(wxWidgets_USE_LIBS core base)
   find_package(wxWidgets QUIET)
   if(NOT wxWidgets_FOUND)
     message(STATUS
