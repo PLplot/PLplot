@@ -78,12 +78,14 @@ ${class_root}/plplotjavacJNI.class
 
 set(
 ${class_root}/plplotjavac.class_DEPENDS
+${class_root}/plplotjavacConstants.class
 ${class_root}/PLGraphicsIn.class
 ${class_root}/plplotjavacJNI.class
 )
 
 set(
 ${class_root}/PLStream.class_DEPENDS
+${class_root}/plplotjavacConstants.class
 ${class_root}/config.class
 ${class_root}/plplotjavac.class
 )
