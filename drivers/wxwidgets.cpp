@@ -242,10 +242,10 @@ struct dev_entry dev_entries[] = {
   { wxT("jpeg"), wxT("jpeg..."), wxT("Save this plot as jpeg!"), wxT("jpg files (*.jpg;*.jpeg)|*.jpg;*.jpeg") },
   { wxT("png"), wxT("png..."), wxT("Save this plot as png"), wxT("png files (*.png)|*.png") },
   { wxT("pngcairo"), wxT("png (cairo)..."), wxT("Save this plot as png using cairo!"), wxT("png files (*.png)|*.png") },
-  { wxT("pdfcairo"), wxT("pdf..."), wxT("Save this plot as pdf using cairo!"), wxT("pdf files (*.pdf)|*.pdf|") },
+  { wxT("pdfcairo"), wxT("pdf..."), wxT("Save this plot as pdf using cairo!"), wxT("pdf files (*.pdf)|*.pdf") },
   { wxT("ps"), wxT("postscript..."), wxT("Save this plot as postscript!"), wxT("ps files (*.ps)|*.ps") },
-  { wxT("psc"), wxT("color postscript..."), wxT("Save this plot as color postscript!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc|") },
-  { wxT("pscairo"), wxT("color postscript (cairo)..."), wxT("Save this plot as color postscript using cairo!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc|") },
+  { wxT("psc"), wxT("color postscript..."), wxT("Save this plot as color postscript!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
+  { wxT("pscairo"), wxT("color postscript (cairo)..."), wxT("Save this plot as color postscript using cairo!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
   { wxT("svg"), wxT("svg..."), wxT("Save this plot as svg!"), wxT("svg files (*.svg)|*.svg") },
   { wxT("svgcairo"), wxT("svg (cairo)..."), wxT("Save this plot as svg using cairo!"), wxT("svg files (*.svg)|*.svg") },
   { wxT("xfig"), wxT("xfig..."), wxT("Save this plot as xfig!"), wxT("fig files (*.fig)|*.fig") }
@@ -508,20 +508,33 @@ wxPLdev::wxPLdev( void )
   exit=false;
 
   comcount = 0;
+
+	dc=NULL;
+  m_bitmap=NULL;
+  m_buffer=NULL;
+  m_frame=NULL;
+  // width, height are set in plD_init_wxwidgets
+  // bm_width, bm_height are set in install_buffer
+  
+  // xmin, xmax, ymin, ymax are set in plD_init_wxwidgets
+  // scalex, scaley are set in plD_init_wxwidgets
+
+  plstate_width = false;
+  plstate_color0 = false;
+  plstate_color1 = false;
+
+  locate_mode=0;
+  draw_xhair=false;
+  
 	newclipregion=true;
 	clipminx=1024;
 	clipmaxx=0;
 	clipminy=800;
 	clipmaxy=0;
 
-	dc=NULL;
-  m_buffer=NULL;
-  m_bitmap=NULL;
-
-  plstate_width = false;
-  plstate_color0 = false;
-  plstate_color1 = false;
-
+	antialized=0;
+	freetype=0;
+	smooth_text=0;
 #ifdef HAVE_AGG
   m_rendering_buffer=NULL;
   m_strokewidth=1.0;
@@ -1523,6 +1536,8 @@ static void init_freetype_lv2( PLStream *pls )
 \*--------------------------------------------------------------------------*/
 static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr)
 {
+  Log_Verbose( "GetCursorCmd" );
+
   wxPLdev *dev=(wxPLdev *)pls->dev;
   PLGraphicsIn *gin = &(dev->gin);
 
@@ -1535,7 +1550,7 @@ static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr)
   wxRunApp( pls, false );
   
   *ptr = *gin;
-  if (dev->locate_mode) {
+  if( dev->locate_mode ) {
     dev->locate_mode = 0;
     dev->draw_xhair=false;
   }
@@ -1627,6 +1642,8 @@ static void install_buffer( PLStream *pls )
 \*----------------------------------------------------------------------*/
 static void wxRunApp( PLStream *pls, bool runonce )
 {
+  Log_Verbose( "wxRunApp" );  
+  
   wxPLdev* dev = (wxPLdev*)pls->dev;
   
   dev->waiting=true;
@@ -1644,8 +1661,8 @@ static void wxRunApp( PLStream *pls, bool runonce )
     wxGetApp().SetAdvanceFlag( runonce );
     wxGetApp().SetRefreshFlag();
 
-		/* to add an idle event is necessary for Linux (wxGTK2)
-		   and not for Windows, but it doesn't harm */
+		/* add an idle event is necessary for Linux (wxGTK2)
+		   but not for Windows, but it doesn't harm */
 	  wxIdleEvent event;
     wxGetApp().AddPendingEvent( event );
 		wxGetApp().OnRun();   /* start wxWidgets application     */
@@ -1686,7 +1703,7 @@ bool wxPLplotApp::OnInit()
 \*----------------------------------------------------------------------*/
 void wxPLplotApp::SetRefreshFlag( bool flag )
 {
-  Log_Verbose( "wxPLplotApp::RefreshFrames" );
+  Log_Verbose( "wxPLplotApp::SetRefreshFlag" );
 
 	for( size_t i=0; i<FrameArray.GetCount(); i++)
 		FrameArray[i]->SetRefreshFlag( flag );
