@@ -20,43 +20,72 @@
 
 if(ENABLE_java)
 
-# Swig generated java files
-set(SWIG_JAVA_FILES
-  plplotjavacJNI.java 
-  PLGraphicsIn.java 
-  plplotjavacConstants.java
-  plplotjavac.java
+# Swig generated java files.  Order no longer matters since class 
+# dependencies are explicitly handled now.
+
+set(
+SWIG_JAVA_FILES
+plplotjavacJNI.java 
+PLGraphicsIn.java 
+plplotjavacConstants.java
+plplotjavac.java
 )
 
 # Full list of generated java files
-set(JAVA_GEN_FILES
- config.java
- ${SWIG_JAVA_FILES}
-)
-# All source files
-set(JAVA_FILES
- ${JAVA_GEN_FILES}
- PLStream.java
+set(
+JAVA_GEN_FILES
+config.java
+${SWIG_JAVA_FILES}
 )
 
 # List of generated java files with full path names
 # Need this otherwise cmake will look in the source directory for the
 # .java files.
-string( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/\\1.java" JAVA_GEN_FILES_FULL "${JAVA_GEN_FILES}" )
-
-# Class list
-# A manual copy of this is also maintained in examples/java/CMakeLists.java
-# in order to get the dependencies right for plplot.jar
-string( REGEX REPLACE "([a-zA-z]*)\\.java" "${CMAKE_CURRENT_BINARY_DIR}/plplot/core/\\1.class" JAVA_CLASSES "${JAVA_FILES}" )
-set(JAVA_FILES_FULL
-  ${JAVA_GEN_FILES_FULL}
-  ${CMAKE_CURRENT_SOURCE_DIR}/PLStream.java
+string(
+REGEX REPLACE "([a-zA-z]*)\\.java"
+"${CMAKE_CURRENT_BINARY_DIR}/\\1.java" 
+JAVA_GEN_FILES_FULL 
+"${JAVA_GEN_FILES}"
 )
 
-# Create config.java
-configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/config.java.in
-${CMAKE_CURRENT_BINARY_DIR}/config.java
+# Full pathnames for all java files.
+set(
+JAVA_FILES_FULL
+${JAVA_GEN_FILES_FULL}
+${CMAKE_CURRENT_SOURCE_DIR}/PLStream.java
+)
+
+# Explicit full-path class dependencies for the foreach loop below which
+# should build classes in the correct order regardless of whether it
+# is a parallel build or not and regardless of the order of JAVA_FILES_FULL.
+# These are hand-crafted dependencies based on scanning the appropriate
+# Java sources.  Apparently CMake has a java dependency scanner which
+# might be good enough to do this task as well, but I have avoided it because
+# I (AWI) am under the impression that CMake support of java is still in its
+# infancy.
+
+set(class_root ${CMAKE_CURRENT_BINARY_DIR}/plplot/core)
+
+set(
+${class_root}/PLGraphicsIn.class_DEPENDS
+${class_root}/plplotjavacJNI.class
+)
+
+set(
+${class_root}/plplotjavacConstants.class_DEPENDS
+${class_root}/plplotjavacJNI.class
+)
+
+set(
+${class_root}/plplotjavac.class_DEPENDS
+${class_root}/PLGraphicsIn.class
+${class_root}/plplotjavacJNI.class
+)
+
+set(
+${class_root}/PLStream.class_DEPENDS
+${class_root}/config.class
+${class_root}/plplotjavac.class
 )
 
 # This is currently the include list for swig, the C wrapper and the
@@ -88,20 +117,30 @@ else(SWIG_JAVA_NOPGCPP)
   set(CMAKE_SWIG_FLAGS -DPL_DOUBLE_INTERFACE -DSWIG_JAVA -package plplot.core)
 endif(SWIG_JAVA_NOPGCPP)
 
-set( CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR} )
+set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
-set_source_files_properties(${JAVA_GEN_FILES_FULL} PROPERTIES GENERATED ON)
+# This may be needed in future when we use CMake java support to build the
+# class files, but it obviously is not correct now when we use custom commands
+# to build the class files using file dependencies to keep things straight.
+## set_source_files_properties(${JAVA_GEN_FILES_FULL} PROPERTIES GENERATED ON)
 
 set(SWIG_MODULE_plplotjavac_wrap_EXTRA_DEPS
 ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
 
-set_source_files_properties(plplotjavac.i 
+set_source_files_properties(
+plplotjavac.i 
 PROPERTIES SWIG_MODULE_NAME plplotjavac
 )
 
 # Set up swig + c wrapper
 swig_add_module(plplotjavac_wrap java plplotjavac.i)
 swig_link_libraries(plplotjavac_wrap plplot${LIB_TAG})
+
+# Create config.java.  Other generated java files created by swig.
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/config.java.in
+${CMAKE_CURRENT_BINARY_DIR}/config.java
+)
 
 if(USE_RPATH)
   get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
@@ -128,21 +167,23 @@ if(APPLE)
   )
 endif(APPLE)
 
-
 install(TARGETS plplotjavac_wrap LIBRARY DESTINATION ${JAVAWRAPPER_HARDDIR})
 
+set(JAVA_CLASSES)
 foreach( srcfile ${JAVA_FILES_FULL} )
-  get_filename_component( fileroot ${srcfile} NAME_WE )
+  get_filename_component(fileroot ${srcfile} NAME_WE)
+  set(output_file ${CMAKE_CURRENT_BINARY_DIR}/plplot/core/${fileroot}.class)
+  list(APPEND JAVA_CLASSES ${output_file})
   add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot/core/${fileroot}.class
-    COMMAND ${CMAKE_Java_COMPILER} 
-    -classpath ${CMAKE_CURRENT_BINARY_DIR} ${srcfile} -d ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${srcfile}
+  OUTPUT ${output_file}
+  COMMAND ${CMAKE_Java_COMPILER} 
+  -classpath ${CMAKE_CURRENT_BINARY_DIR} ${srcfile} -d ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS ${srcfile} ${${output_file}_DEPENDS}
   )
 endforeach( srcfile ${JAVA_FILES_FULL} )
 add_custom_target(plplot_core ALL DEPENDS ${JAVA_CLASSES})
 
-# Ensure that swig is excecuted before we try to compile the java
+# Ensure that swig is executed before we try to compile the java
 # classes.
 add_dependencies(plplot_core plplotjavac_wrap)
 
@@ -153,4 +194,3 @@ remove_definitions("-DHAVE_CONFIG_H")
 #install(FILES ${CMAKE_BINARY_DIR}/plplot.jar DESTINATION ${JAR_DIR})
 
 endif(ENABLE_java)
-
