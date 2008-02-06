@@ -37,7 +37,7 @@
  *  plot to and the size of the canvas. We also check and set several
  *  device style options.
  */
-wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, long style ) :
+wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style ) :
                 m_dc(dc), m_width(width), m_height(height), m_style(style)
 {
   ::plstream();

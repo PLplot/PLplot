@@ -41,7 +41,7 @@ class wxDC;
  *  wxPLPLOT_SMOOTHTEXT: antialiase font (if freetype library is used)
  *  wxPLPLOT_ANTIALIZED: antialize plot (if agg library is available)
  */
-enum wxPLplotstreamstyle {
+enum {
     wxPLPLOT_NONE = 0,
 #ifdef WX_TEMP_HAVE_FREETYPE_IS_ON
     wxPLPLOT_FREETYPE = 1,
@@ -60,18 +60,18 @@ enum wxPLplotstreamstyle {
 class PLDLLIMPEXP wxPLplotstream : public plstream
 {
 public:
-  wxPLplotstream( wxDC *dc, int width, int height, long style = wxPLPLOT_NONE );  //!< Constructor.
+  wxPLplotstream( wxDC *dc, int width, int height, int style = wxPLPLOT_NONE );  //!< Constructor.
   void set_stream();   //!< Calls some code before every PLplot command.
 	void SetSize( int width, int height );   //!< Set new size of plot area.
 	void RenewPlot();   //!< Redo plot and update memory dc
-  void Update();   //!< Update memory dc, but don't redo lpot
+  void Update();   //!< Update memory dc, but don't redo plot
 
 private:
 	wxDC* m_dc;   //!< Pointer to wxDC to plot into.
   wxImage* m_image;   //!< pointer to wxImage
 	int m_width;   //!< Width of dc/plot area.
 	int m_height;   //!< Height of dc/plot area.
-  long m_style;   //!< style of this plot
+  int m_style;   //!< style of this plot
 };
 
 

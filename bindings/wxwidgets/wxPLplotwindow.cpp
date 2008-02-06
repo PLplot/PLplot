@@ -34,7 +34,7 @@ END_EVENT_TABLE()
 /*! Constructor allocates wxMemoryDC, a wxPLplotstream and initializes parameters.
  */
 wxPLplotwindow::wxPLplotwindow( wxWindow* parent, wxWindowID id, const wxPoint& pos,
-                                const wxSize& size, long style, long pl_style ) :
+                                const wxSize& size, long style, int pl_style ) : // TODO: pl_style long?
 	wxWindow( parent, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE )
 {
   // create MemoryDC and set size - if size not set (-1, -1) than
@@ -85,6 +85,7 @@ void wxPLplotwindow::OnPaint( wxPaintEvent &WXUNUSED(event) )
   GetSize( &width, &height );
 
 	// Check if we window was resized (or dc is invalid)
+//	if( (m_stream == NULL) || (MemPlotDC_width!=width) || (MemPlotDC_height!=height) )
 	if( (MemPlotDC_width!=width) || (MemPlotDC_height!=height) )
 	{
     MemPlotDC->SelectObject( wxNullBitmap );
@@ -122,6 +123,36 @@ void wxPLplotwindow::RenewPlot( void )
 {
 	if( m_stream ) {
 		m_stream->RenewPlot();
-		Refresh( false );
+		Refresh( false );  // TODO: true ??
 	}
+}
+
+
+/*! Save plot. 
+ */
+bool wxPLplotwindow::SavePlot( const wxString& devname, const wxString& filename )
+{
+  int pls, pls_save;
+  FILE *sfile;
+
+	if( (sfile = fopen(filename.mb_str(), "wb+")) == NULL) {
+		return false;
+	}
+
+	plgstrm( &pls );
+	plmkstrm( &pls_save );  
+	if( pls_save<0 ) {
+		return false;
+	}
+	plsdev( devname.mb_str() );
+  plsfile( sfile );
+  
+  plspage( 0., 0., 800, 600, 0, 0 );
+	plcpstrm( pls, 0);
+	pladv( 0 );
+	plreplot();
+  plend1();
+	plsstrm( pls );
+
+  return true;
 }

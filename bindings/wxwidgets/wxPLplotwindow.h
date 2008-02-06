@@ -36,11 +36,11 @@ class PLDLLIMPEXP wxPLplotwindow : public wxWindow
 public:
 	wxPLplotwindow( wxWindow* parent, wxWindowID id=-1, const wxPoint& pos = wxDefaultPosition,
                   const wxSize& size = wxDefaultSize, long style = 0,
-                  long pl_style = wxPLPLOT_NONE );   //!< Constructor.
+                  int pl_style = wxPLPLOT_NONE );   //!< Constructor.
   ~wxPLplotwindow( void );  //!< Deconstructor.
 
   void RenewPlot( void );   //!< Redo plot.
-	void SavePlot( const wxString& driver, const wxString& filename );  //!< Save plot using a different driver.
+	bool SavePlot( const wxString& driver, const wxString& filename );  //!< Save plot using a different driver.
 	wxPLplotstream* GetStream()  { return m_stream; }  //!< Get pointer to wxPLplotstream of this widget.
 	
 protected:
