@@ -23,8 +23,7 @@
 
 
 /* TODO: - implement the GraphicsIn stuff
- *       - provide helper functions for bindings (freetype support, etc.)
- *         we need a header file for this
+ *       - clear screen should only clear current plot (e.g in a 2x2 plot) not the whole window
  */
 
 #include "plDevs.h"
@@ -231,6 +230,27 @@ public: /* variables */
 	int ndev;
 };
 
+struct dev_entry {    
+  wxString dev_name;
+  wxString dev_menu_short;
+  wxString dev_menu_long;
+  wxString dev_file_app;
+};
+
+struct dev_entry dev_entries[] = {
+  { wxT("gif"), wxT("gif..."), wxT("Save this plot as gif!"), wxT("gif files (*.gif)|*.gif") },
+  { wxT("jpeg"), wxT("jpeg..."), wxT("Save this plot as jpeg!"), wxT("jpg files (*.jpg;*.jpeg)|*.jpg;*.jpeg") },
+  { wxT("png"), wxT("png..."), wxT("Save this plot as png"), wxT("png files (*.png)|*.png") },
+  { wxT("pngcairo"), wxT("png (cairo)..."), wxT("Save this plot as png using cairo!"), wxT("png files (*.png)|*.png") },
+  { wxT("pdfcairo"), wxT("pdf..."), wxT("Save this plot as pdf using cairo!"), wxT("pdf files (*.pdf)|*.pdf|") },
+  { wxT("ps"), wxT("postscript..."), wxT("Save this plot as postscript!"), wxT("ps files (*.ps)|*.ps") },
+  { wxT("psc"), wxT("color postscript..."), wxT("Save this plot as color postscript!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc|") },
+  { wxT("pscairo"), wxT("color postscript (cairo)..."), wxT("Save this plot as color postscript using cairo!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc|") },
+  { wxT("svg"), wxT("svg..."), wxT("Save this plot as svg!"), wxT("svg files (*.svg)|*.svg") },
+  { wxT("svgcairo"), wxT("svg (cairo)..."), wxT("Save this plot as svg using cairo!"), wxT("svg files (*.svg)|*.svg") },
+  { wxT("xfig"), wxT("xfig..."), wxT("Save this plot as xfig!"), wxT("fig files (*.fig)|*.fig") }
+};
+
 inline void AddtoClipRegion( wxPLdev* dev, int x1, int y1, int x2, int y2 )
 {
 	dev->newclipregion=false;
@@ -342,11 +362,11 @@ private:
   DECLARE_EVENT_TABLE()
 };
 
-enum { wxPL_Quit = 10000, wxPL_Save };
+enum { wxPL_Save=10000, wxPL_Next=10100 };
 
 /* event table */
 BEGIN_EVENT_TABLE( wxPLplotFrame, wxFrame )
-  EVT_MENU( -1, wxPLplotFrame::OnMenu )      /* handle menu events */
+  EVT_MENU( -1, wxPLplotFrame::OnMenu )      /* handle all menu events */
   EVT_CLOSE( wxPLplotFrame::OnClose )
 END_EVENT_TABLE()
 
@@ -1565,7 +1585,7 @@ static void install_buffer( PLStream *pls )
     initApp=true;
   }
   
-  dev->m_frame = new wxPLplotFrame( _T("wxWidgets PLplot App"), pls );
+  dev->m_frame = new wxPLplotFrame( wxT("wxWidgets PLplot App"), pls );
   wxGetApp().AddFrame( dev->m_frame );
   dev->m_frame->SetClientSize( dev->width, dev->height );
   dev->m_frame->Show( true );
@@ -1716,17 +1736,23 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
   m_panel->SetSizer( box );
 	m_window->SetFocus();
 	  
+  wxMenu* saveMenu = new wxMenu;
+  for( size_t j=0; j<sizeof(dev_entries)/sizeof(dev_entry); j++ )
+    for( size_t i=0; i<m_dev->ndev; i++ ) {
+      printf( "%s\n", m_dev->devName[i]);
+      if( !strcmp(m_dev->devName[i], dev_entries[j].dev_name.mb_str()) )
+        saveMenu->Append( wxPL_Save+j, dev_entries[j].dev_menu_short, dev_entries[j].dev_menu_long );
+    }
+
   wxMenu* fileMenu = new wxMenu;
-	for( size_t i=0; i<m_dev->ndev; i++ ) 
-		if( !strcmp(m_dev->devName[i], "png") )
-		  fileMenu->Append( wxPL_Save, _T("Save as png"), _T("Save this plot as png!") );
-  fileMenu->Append( wxPL_Quit, _T("E&xit\tAlt-X"), _T("Quit this program") );
+  fileMenu->AppendSubMenu( saveMenu, wxT("Save plot as..."), wxT("Save this plot as ...!") );
+  fileMenu->Append( wxID_EXIT, wxT("E&xit\tAlt-X"), wxT("Exit wxWidgets PLplot App") );
 
   wxMenuBar* menuBar = new wxMenuBar();
-  menuBar->Append( fileMenu, _T("&File") );
+  menuBar->Append( fileMenu, wxT("&File") );
   SetMenuBar( menuBar );
 
-  SetTitle( _T("wxWidgets PLplot App") );
+  SetTitle( wxT("wxWidgets PLplot App") );
   SetIcon( wxIcon(graph) );
 }
 
@@ -1740,9 +1766,9 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
 {
   Log_Verbose( "wxPLplotFrame::OnMenu" );
 
-  switch( event.GetId( ) )
+  switch( event.GetId() )
   {
-  case wxPL_Quit:
+  case wxID_EXIT:
 		{
 			wxMessageDialog dialog( this, wxT("Do you really want to quit?"), wxT("Close wxWidgets PLplot App?"), wxYES_NO |wxNO_DEFAULT| wxICON_EXCLAMATION );
 			if( dialog.ShowModal() == wxID_YES ) {
@@ -1751,23 +1777,24 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
 			}
 		}
 		break;
-	case wxPL_Save:
-		{
-			wxFileDialog dialog( this, wxT("Save plot as png"), wxT(""), wxT(""),
-													 wxT("png files (*.png)|*.png|All Files (*.*)|*.*") ,
+  }
+    
+  size_t index=event.GetId()-wxPL_Save;
+  if( (index>=0) && (index<sizeof(dev_entries)/sizeof(dev_entry)) ) {
+    wxFileDialog dialog( this, wxT("Save plot as ")+dev_entries[index].dev_name, wxT(""), wxT(""),
+                         dev_entries[index].dev_file_app+wxT("|All Files (*.*)|*.*"),
 #if (wxMAJOR_VERSION<=2) & (wxMINOR_VERSION<=6)
-													 wxSAVE | wxOVERWRITE_PROMPT );
+                         wxSAVE | wxOVERWRITE_PROMPT );
 #else
-													 wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
+                         wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
 #endif	
-			if (dialog.ShowModal() == wxID_OK)
-				SavePlot( "test.png", "png", 800, 600 );
-				//SavePlot( dialog.GetPath().c_str(), "png", 800, 600 );
-		}
-		break;
-	}
+    if (dialog.ShowModal() == wxID_OK) {
+      const wxCharBuffer buf1=dialog.GetPath().mb_str();
+      const wxCharBuffer buf2=dev_entries[index].dev_name.mb_str();
+      SavePlot( (const char*)buf1, (const char*)buf2, 800, 600 );
+    }
+  }
 }
-
 
 /*----------------------------------------------------------------------*\
  *  void wxPLplotFrame::OnClose( wxCloseEvent& event )
@@ -1788,7 +1815,7 @@ void wxPLplotFrame::OnClose( wxCloseEvent& event )
 
 
 /*----------------------------------------------------------------------*\
- *  bool wxPLplotFrame::SavePlot( char* filename, int dev, int width,
+ *  bool wxPLplotFrame::SavePlot( const char* filename, cost char* dev, int width,
  *                                int height )
  *
  *  This function saves the current plot to a file (filename) using a
@@ -1820,9 +1847,10 @@ bool wxPLplotFrame::SavePlot( const char* filename, const char* devname, int wid
 		return false;
 	}
 	plsdev( devname );
-  plsfile( sfile );
+  //plsfile( sfile );
+  plsfnam(filename);       /* file name */
   
-  plspage( 0., 0., width, height, 0, 0 );
+  //plspage( 0., 0., width, height, 0, 0 );
 	plcpstrm( pls, 0);
 	pladv( 0 );
 	plreplot();
