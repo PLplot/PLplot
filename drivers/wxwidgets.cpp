@@ -1761,9 +1761,11 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
     }
 
   wxMenu* fileMenu = new wxMenu;
-  // AppendSubMenu only available with version 2.8
-  // fileMenu->AppendSubMenu( saveMenu, wxT("Save plot as..."), wxT("Save this plot as ...!") );
-  fileMenu->DoAppend( wxMenuItem::New(fileMenu, wxID_ANY, wxT("Save plot as..."), wxT("Save this plot as ...!"), wxITEM_NORMAL, saveMenu) );
+#if (wxMAJOR_VERSION<=2) & (wxMINOR_VERSION<=6)
+  fileMenu->Append( -1, wxT("Save plot as..."), saveMenu, wxT("Save this plot as ...!") );
+#else
+  fileMenu->AppendSubMenu( saveMenu, wxT("Save plot as..."), wxT("Save this plot as ...!") );
+#endif
   fileMenu->Append( wxID_EXIT, wxT("E&xit\tAlt-X"), wxT("Exit wxWidgets PLplot App") );
 
   wxMenuBar* menuBar = new wxMenuBar();
