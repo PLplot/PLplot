@@ -29,6 +29,7 @@ INDEX
 1.6 Build system improvements
 1.7 Implement build-system infrastructure for installed Ada bindings and 
 examples
+1.8 WxWidgets driver improvements
 
 
 1.1 All autotools-related files have now been removed
@@ -73,6 +74,9 @@ Ctest will now work correctly when the build tree path includes symlinks.
 Dependencies for swig generated files fixed so they are not rebuilt every 
 time make is called.
 
+Various dependency fixes to ensure that parallel builds (using make -j) 
+work under unix.
+
 1.5 Alpha value support
 
 PLplot core has been modified to support a transparency or alpha value
@@ -83,8 +87,9 @@ name as their non-alpha value equivalents, but with a an "a" added to the
 end. Example 30 demonstrates some different ways to use these functions
 and the effects of alpha values, at least for those drivers that support alpha
 values. This change should have no effect on the device drivers that do not 
-currently support alpha values. Currently only the cairo and gd drivers 
-support alpha values.
+currently support alpha values. Currently only the cairo, gd and wxwidgets 
+drivers support alpha values. There are some limitations with the gd driver
+due to transparency support in the underlying libgd library.
 
 1.6 Build system improvements
 
@@ -102,3 +107,8 @@ Install source files, library information files, and the plplotada library
 associated with the Ada bindings.  Configure and install the pkg-config file
 for the plplotada library.  Install the Ada examples and a configured Makefile
 to build them in the install tree.
+
+1.8 WxWidgets driver improvements
+
+A number of small bug fixes. New functionality includes menu options to 
+save the current plot in different formats.
