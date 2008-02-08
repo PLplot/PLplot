@@ -26,6 +26,6 @@ option(PL_DOUBLE
 "Compile the library with double precision floating point" ON)
 
 if(PL_DOUBLE)
-  set(LIB_TAG "${LIB_TAG}d")
+  set(LIB_TAG "d")
 endif(PL_DOUBLE)
 
