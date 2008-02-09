@@ -30,6 +30,7 @@ INDEX
 1.7 Implement build-system infrastructure for installed Ada bindings and 
 examples
 1.8 WxWidgets driver improvements
+1.9 External libLASi library improvements affecting our psttf device.
 
 
 1.1 All autotools-related files have now been removed
@@ -112,3 +113,12 @@ to build them in the install tree.
 
 A number of small bug fixes. New functionality includes menu options to 
 save the current plot in different formats.
+
+1.9 External libLASi library improvements affecting our psttf device.
+
+Our psttf device depends on the libLASi library. libLASi-1.1.0 has just been
+released at http://sourceforge.net/svn/?group_id=187113 .  We recommend
+using this latest version of libLASi for building PLplot and the psttf
+device since this version of libLASi is more robust against glyph
+information returned by pango/cairo/fontconfig that on rare occasions is not
+suitable for use by libLASi.
