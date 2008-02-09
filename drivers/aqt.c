@@ -58,8 +58,9 @@ static int maxWindows = 30;
 static int windowXSize = 0;
 static int windowYSize = 0;
 
-static bool didTestShear = false;
+static bool didTests = false;
 static bool hasShear = false;
+static bool hasAlpha = false;
 
 /* font stuff */
 
@@ -276,9 +277,10 @@ void plD_init_aqt(PLStream *pls)
 	/* Check to see if the users version of aquaterm supports sheared labels. */
 	/* If it isn't available 3D plots will look a little strange but things should otherwise be okay. */
 	
-	if (!didTestShear) {
+	if (!didTests) {
   		hasShear = [adapter respondsToSelector:@selector(addLabel:atPoint:angle:shearAngle:align:)];
-		didTestShear = true;
+  		hasAlpha = [adapter respondsToSelector:@selector(setColorRed:green:blue:alpha:)];
+		didTests = true;
 	}
 }
 
@@ -294,10 +296,16 @@ void plD_bop_aqt(PLStream *pls)
   [adapter openPlotWithIndex:currentPlot++];
   [adapter setPlotSize:NSMakeSize(windowXSize, windowYSize)];
   [adapter setLinewidth:1.0];
-  [adapter setColorRed:(float)(pls->curcolor.r/255.)
-   green:(float)(pls->curcolor.g/255.)
-   blue:(float)(pls->curcolor.b/255.)
-   alpha:(float)(pls->curcolor.a)];
+  if(hasAlpha){
+    [adapter setColorRed:(float)(pls->curcolor.r/255.)
+     green:(float)(pls->curcolor.g/255.)
+     blue:(float)(pls->curcolor.b/255.)
+     alpha:(float)(pls->curcolor.a)];
+  } else {
+    [adapter setColorRed:(float)(pls->curcolor.r/255.)
+     green:(float)(pls->curcolor.g/255.)
+     blue:(float)(pls->curcolor.b/255.)];
+  }
 
    pls->page++;
 }
@@ -370,16 +378,28 @@ void plD_state_aqt(PLStream *pls, PLINT op)
       break;
       
     case PLSTATE_COLOR0:	// this seems to work, but that isn't to say that it is done right...
-      [adapter setBackgroundColorRed:(float)(plsc->cmap0[0].r/255.0) 
-       green:(float)(plsc->cmap0[0].g/255.0)
-       blue:(float)(plsc->cmap0[0].b/255.0)
-       alpha:(float)(plsc->cmap0[0].a)];
+      if(hasAlpha){
+	[adapter setBackgroundColorRed:(float)(plsc->cmap0[0].r/255.0) 
+	 green:(float)(plsc->cmap0[0].g/255.0)
+	 blue:(float)(plsc->cmap0[0].b/255.0)
+	 alpha:(float)(plsc->cmap0[0].a)];
+      } else {
+	[adapter setBackgroundColorRed:(float)(plsc->cmap0[0].r/255.0) 
+	 green:(float)(plsc->cmap0[0].g/255.0)
+	 blue:(float)(plsc->cmap0[0].b/255.0)];
+      }
     case PLSTATE_COLOR1:
     case PLSTATE_FILL:
-      [adapter setColorRed:(float)(pls->curcolor.r/255.)
-       green:(float)(pls->curcolor.g/255.)
-       blue:(float)(pls->curcolor.b/255.)
-       alpha:(float)(pls->curcolor.a)];
+      if(hasAlpha){
+	[adapter setColorRed:(float)(pls->curcolor.r/255.)
+	 green:(float)(pls->curcolor.g/255.)
+	 blue:(float)(pls->curcolor.b/255.)
+	 alpha:(float)(pls->curcolor.a)];
+      } else {
+	[adapter setColorRed:(float)(pls->curcolor.r/255.)
+	 green:(float)(pls->curcolor.g/255.)
+	 blue:(float)(pls->curcolor.b/255.)];
+      }
       break;
       
     case PLSTATE_CMAP0:
@@ -541,10 +561,16 @@ void proc_str (PLStream *pls, EscText *args)
   
   /* display the string */
   
-  [adapter setColorRed:(float)(pls->curcolor.r/255.)
-   green:(float)(pls->curcolor.g/255.)
-   blue:(float)(pls->curcolor.b/255.)
-   alpha:(float)(pls->curcolor.a)];
+  if(hasAlpha){
+    [adapter setColorRed:(float)(pls->curcolor.r/255.)
+     green:(float)(pls->curcolor.g/255.)
+     blue:(float)(pls->curcolor.b/255.)
+     alpha:(float)(pls->curcolor.a)];
+  } else {
+    [adapter setColorRed:(float)(pls->curcolor.r/255.)
+     green:(float)(pls->curcolor.g/255.)
+     blue:(float)(pls->curcolor.b/255.)];
+  }
   
   if(hasShear){
     [adapter addLabel:str 
