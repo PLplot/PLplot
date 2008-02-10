@@ -1,4 +1,4 @@
-## $Id:$
+## $Id$
 ##
 ## Sample plots using date / time formatting for axes
 ##
