@@ -55,9 +55,9 @@ popd
 cp examples/c/lena.pgm .
 
 for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
-23 24 25 26 27 28; do
+23 24 25 26 27 28 29 30; do
 
-    if test $exe = 08 -o $exe = 16 -o $exe = 20; then
+    if test $exe = 08 -o $exe = 16 -o $exe = 20 -o $exe = 30; then
       # No cairo graphics AA (Yep, 1 turns it off).
       DRIVEROPT='-drvopt graphics_anti_aliasing=1'
     else
