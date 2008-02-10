@@ -88,9 +88,9 @@ name as their non-alpha value equivalents, but with a an "a" added to the
 end. Example 30 demonstrates some different ways to use these functions
 and the effects of alpha values, at least for those drivers that support alpha
 values. This change should have no effect on the device drivers that do not 
-currently support alpha values. Currently only the cairo, gd and wxwidgets 
-drivers support alpha values. There are some limitations with the gd driver
-due to transparency support in the underlying libgd library.
+currently support alpha values. Currently only the cairo, gd, wxwidgets and
+aquaterm drivers support alpha values. There are some limitations with the gd 
+driver due to transparency support in the underlying libgd library.
 
 1.6 Build system improvements
 
