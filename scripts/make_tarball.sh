@@ -105,7 +105,7 @@ svn export $SVN_URL/$TAG plplot \
   && cd build_dir \
   && cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
      -DPREBUILD_DIST=ON ${DOC_ARG} \
-     -DWWW_USER=${WWW_USER} ../plplot >& cmake.out \
+     -DWWW_USER:STRING=${WWW_USER} ../plplot >& cmake.out \
   && echo "Making distribution." \
   && make prebuild_dist >& make_prebuild_dist.out \
   && make package_source >& make_package_source.out \
@@ -118,9 +118,9 @@ svn export $SVN_URL/$TAG plplot \
   && tar xfz $TARBALL \
   && mkdir ctest_build_dir \
   && ( cd ctest_build_dir \
-       && cmake ${config_opt} -DCMAKE_INSTALL_PREFIX=${prefix} \
+       && cmake ${config_opt} -DCMAKE_INSTALL_PREFIX:PATH=${prefix} \
           -DCMAKE_VERBOSE_MAKEFILE=ON -DPREBUILT_DOC=ON\
-	  -DWWW_USER=${WWW_USER} -DBUILD_TEST=ON \
+	  -DWWW_USER:STRING=${WWW_USER} -DBUILD_TEST=ON \
 	  ../plplot >& cmake.out \
        && make >& make.out \
        && ctest >& ctest.out \
