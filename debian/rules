@@ -34,7 +34,8 @@ ifeq ($(DEB_BUILD_ARCH),arm)
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
-	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_java=OFF
+	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_java=OFF \
+	-DENABLE_ada=ON
 else
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
@@ -42,7 +43,8 @@ CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
 	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
-	-DUSE_RPATH=OFF -DPLD_psttf=OFF
+	-DUSE_RPATH=OFF -DPLD_psttf=OFF \
+	-DENABLE_ada=ON
 endif
 
 BUILD_DIR = $(debbase)/build_tmp
@@ -117,7 +119,7 @@ install-arch-stamp: build-arch-stamp
 		python-plplot plplot-bin libplplot-c++9c2 		\
 		plplot9-driver-gnome2 plplot9-driver-wxwidgets		\
 		plplot9-driver-cairo libplplot-fortran9			\
-		libplplot9-java; do					\
+		libplplot9-java libplplot-ada; do			\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
 

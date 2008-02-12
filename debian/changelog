@@ -1,3 +1,21 @@
+plplot (5.9.0-1) UNRELEASED; urgency=low
+
+  * New upstream release
+  * debian/patches/00list: Remove patches
+      05_octave_documentation.dpatch
+      06_build_dir_use_physical_path.dpatch
+      08_fix_cxx_includes.dpatch
+    as they are now included upstream
+  * debian/rules, debian/control, debian/libplplot-ada.files, 
+    debian/liplplot-dev.files: 
+    Add new package libplplot-ada to contain the Ada bindings. Include 
+    examples and source in with the libplplot-dev package (following 
+    Ada policy).
+  * debian/libplplot9.README.Debian: Update to include new ada 
+    bindings package.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 12 Feb 2008 16:33:45 +0000
+
 plplot (5.8.0-7) UNRELEASED; urgency=low
 
   [ Rafael Laboissiere ]
