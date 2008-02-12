@@ -55,6 +55,19 @@ find_program(ONSGMLS onsgmls)
 
 # Check for required programs and perl libraries.
 if(BUILD_DOC)
+  # EC_PDFTEX needed to configure pdftex.map which is used in general for
+  # the documentation build.  The specific location in
+  # /usr/share/texmf/dvips/base is used in Debian sarge and may cover other
+  # distributions which still use tetex.
+  find_file(EC_ENC_NAME EC.enc /usr/share/texmf/dvips/base)
+  if(EC_ENC_NAME)
+    # Value appropriate for tetex
+    set(EC_PDFTEX EC)
+  else(EC_ENC_NAME)
+    # Value appropriate for texlive
+    set(EC_PDFTEX ec)
+  endif(EC_ENC_NAME)
+    
   if(PERL_FOUND)
     check_perl_modules(PERL_XML_PARSER XML::Parser)
     check_perl_modules(PERL_XML_DOM XML::DOM)

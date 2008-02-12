@@ -63,7 +63,6 @@ if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
   file 
   ${SOURCE_FILES}
   ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg
-  ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map
   )
     get_filename_component(filename ${file} NAME)
     if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${filename})
@@ -78,7 +77,6 @@ if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
   file 
   ${SOURCE_FILES}
   ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg
-  ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map
   )
 endif(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
 
@@ -233,6 +231,11 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
     )
 
+    configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map.in
+    ${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
+    )
+
     # Custom commands for building print version of documentation
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
@@ -280,7 +283,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     DEPENDS 
     ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
     ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg 
-    ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map
+    ${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
     )
 
     # Following approach used in our ABS, use shell commands to recurse
@@ -315,7 +318,7 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     DEPENDS 
     ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
     ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg 
-    ${CMAKE_CURRENT_SOURCE_DIR}/pdftex.map
+    ${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
     ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
     )
 
