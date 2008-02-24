@@ -1,8 +1,5 @@
 01_check-for-octave2.9
 02_unset-python-path
 04_use-mkoctfile
-#05_octave_documentation
-#06_build_dir_use_physical_path
 07_octave_prune_examples
-#08_fix_cxx_includes
 09_pdftex-EC-encoding
