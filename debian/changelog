@@ -16,7 +16,10 @@ plplot (5.9.0-1) UNRELEASED; urgency=low
     bindings package.
 
   [ Rafael Laboissiere ]
-  * debian/control: Fixed capitalization of GNOME (Lintian warning)
+  * debian/control:
+    + Fixed capitalization of GNOME (Lintian warning)
+    + Force build-dependency on octave3.0 >= 3.0.0-2, ensuring the
+      transition from g77 to gfortran
   * debian/patches/09_pdftex-EC-encoding.dpatch: Added patch for getting
     included the correct ec.enc file for the EC encoding, such that
     ligatures like "ff" and "fi" display correctly in the PDF form of the

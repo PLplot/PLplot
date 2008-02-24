@@ -6,12 +6,11 @@ Uploaders: Rafael Laboissiere <rafael@debian.org>
 Standards-Version: 3.7.3
 Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38),
  tcl8.4-dev, tk8.4-dev, itcl3-dev, libx11-dev, libxext-dev,
- libxi-dev, gfortran, itk3-dev, octave3.0-headers,
+ libxi-dev, gfortran, itk3-dev, octave3.0-headers (>= 3.0.0-2),
  libgd2-noxpm-dev | libgd2-xpm-dev, libgnome2-dev,
  libgnomeprintui2.2-dev, libgnomeui-dev,
  m4, libqhull-dev (>= 2003.1-8), libxml-parser-perl, libxml-dom-perl,
- libltdl3-dev, pkg-config, dpatch, atlas3-base-dev
- [!arm !m68k], refblas3-dev [arm m68k], lapack3-dev [arm m68k],
+ libltdl3-dev, pkg-config, dpatch,
  python-gtk2-dev, libwxgtk2.6-dev, python-gnome2-dev,
  python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6),
  python-numpy (>= 1.0.4-4), ttf-freefont, java-gcj-compat-dev [!arm],
