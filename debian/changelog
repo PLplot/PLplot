@@ -22,12 +22,14 @@ plplot (5.9.0-1) UNRELEASED; urgency=low
       transition from g77 to gfortran.  Also, drop the unnecessary
       build-dependencies on blas, atlas, and lapack, since they are pulled
       in by octave3.0.
-  * debian/patches/09_pdftex-EC-encoding.dpatch: Added patch for getting
-    included the correct ec.enc file for the EC encoding, such that
-    ligatures like "ff" and "fi" display correctly in the PDF form of the
-    documentation (closes: #461343)
+  * Add dpatches:
+    + 09_pdftex-EC-encoding: Include the correct ec.enc file for the EC
+      encoding, such that ligatures like "ff" and "fi" display correctly
+      in the PDF form of the documentation (closes: #461343)
+    + 10_print-usage-octave-3.0: Use the appropriate call to print_usage
+      in wrap_octave.pl when building against octave3.0
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 12 Feb 2008 16:33:45 +0000
+ -- Rafael Laboissiere <rafael@debian.org>  Sun, 24 Feb 2008 12:43:28 +0100
 
 plplot (5.8.0-6) unstable; urgency=low
 
