@@ -18,6 +18,9 @@
 #    from v2.1 to v2.9. This requires a file octave_version.pl which defines
 #    the variable octave_version.
 #
+# Modifications 2008 Rafael Laboissiere
+# Change 3) above is adapted for Octave v3.0
+
 
 package octave;			# Everything should be in this package.
 
@@ -158,7 +161,7 @@ sub function_start {
 				# Permissible not to specify output args
 				# if there is only one.
   @ver = split(/\./,$octave_version);
-  if ($ver[0] >= 2 && $ver[1] >= 9) {
+  if ($ver[0] >= 3 || ($ver[0] >= 2 && $ver[1] >= 9)) {
     $retstr .= (")\n" .
 	      "  {\n" .
 	      "    print_usage();\n" . # Give an error.
