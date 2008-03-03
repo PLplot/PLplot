@@ -624,7 +624,7 @@ typedef struct DrvOptCmd {
 } DrvOptCmd;
 
 /* the variable where opt_drvopt() stores the driver specific command line options */
-static DrvOptCmd drv_opt;
+static DrvOptCmd drv_opt = { NULL, NULL, NULL };
 
 static int  tables = 1;
 
@@ -758,10 +758,6 @@ c_plparseopts(int *p_argc, const char **argv, PLINT mode)
     mode_noprogram = mode & PL_PARSE_NOPROGRAM;
     mode_nodash    = mode & PL_PARSE_NODASH;
     mode_skip      = mode & PL_PARSE_SKIP;
-
-    /* Initialize the driver specific option linked structure */
-    drv_opt.option  = drv_opt.value  = NULL;
-    drv_opt.next  = NULL;
 
     myargc = (*p_argc);
     argend = argv + myargc;
@@ -1311,7 +1307,7 @@ void
 plP_FreeDrvOpts() {
   DrvOptCmd *drvp, *drvpl;
 
-  if (!drv_opt.option) 
+  if (!drv_opt.next) 
     return;
 
   drvp = &drv_opt;
@@ -1327,6 +1323,11 @@ plP_FreeDrvOpts() {
       free(drvpl);
 
   } while(drvp != NULL);
+  
+  /* initialize drv_opt if it's used again */
+  drv_opt.option=NULL;
+  drv_opt.value=NULL;
+  drv_opt.next=NULL;  
 }
 
 
@@ -1716,6 +1717,10 @@ opt_drvopt(const char *opt, const char *optarg, void *client_data)
   if (value == NULL)
     plexit("opt_drvopt: Out of memory!?");
 
+  /* first release allocated memory from a (possible) former call
+     of opt_drvopt() */
+  plP_FreeDrvOpts();
+  
   drvp = &drv_opt;
   *option = *value = '\0';
   tt = option;
