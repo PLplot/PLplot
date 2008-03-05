@@ -1,3 +1,11 @@
+plplot (5.9.0-2) unstable; urgency=low
+
+  * debian/control, debian/rules: Disable ada support for arm. The 
+    gnat compiler is not available on the arm architecture. The
+    libplplot-ada package will be empty on this architecture.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 05 Mar 2008 19:49:02 +0000
+
 plplot (5.9.0-1) unstable; urgency=low
 
   [ Andrew Ross ]
