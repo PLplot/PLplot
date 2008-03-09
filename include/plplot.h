@@ -522,6 +522,7 @@ typedef struct {
 #define    plhist	c_plhist
 #define    plhls        c_plhls
 #define    plhlsrgb     c_plhlsrgb
+#define    plimage	c_plimage
 #define    plinit	c_plinit
 #define    pljoin	c_pljoin
 #define    pllab	c_pllab
@@ -1450,7 +1451,7 @@ c_plstripd(PLINT id);
   /* plots a 2d image (or a matrix too large for plshade() ) */
 
 PLDLLIMPEXP void
-plimage( PLFLT **data, PLINT nx, PLINT ny,
+c_plimage( PLFLT **data, PLINT nx, PLINT ny,
 	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
 

@@ -160,7 +160,7 @@ grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny)
 \*-------------------------------------------------------------------------*/
 
 void
-plimage(PLFLT **idata, PLINT nx, PLINT ny,
+c_plimage(PLFLT **idata, PLINT nx, PLINT ny,
 	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
 {
