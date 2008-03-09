@@ -2,7 +2,7 @@
 
    Graphics drivers that are based on the Cairo / Pango Libraries.
     
-   Copyright (C) 2007 Hazen Babcock
+   Copyright (C) 2008 Hazen Babcock
 
    This file is part of PLplot.
 
@@ -73,10 +73,12 @@
 static int text_clipping;
 static int text_anti_aliasing;
 static int graphics_anti_aliasing;
+static int external_drawable;
 
 static DrvOpt cairo_options[] = {{"text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)"},
 				 {"text_anti_aliasing", DRV_INT, &text_anti_aliasing, "Set desired text anti-aliasing (text_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t)"},
 				 {"graphics_anti_aliasing", DRV_INT, &graphics_anti_aliasing, "Set desired graphics anti-aliasing (graphics_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t"},
+				 {"external_drawable", DRV_INT, &external_drawable, "Plot to external X drawable"},
                                  {NULL, DRV_INT, NULL, NULL}};
 
 typedef struct {
@@ -89,6 +91,7 @@ typedef struct {
   short exit_event_loop;
   Display *XDisplay;
   Window XWindow;
+  unsigned int xdrawable_mode;
 #endif
 #if defined(PLD_memcairo)
   unsigned char *memory;
@@ -115,6 +118,17 @@ const char* plD_DEVICE_INFO_cairo =
   "memcairo:Cairo Memory Driver:0:cairo:64:memcairo\n"
 #endif
 ;
+
+/* 
+ * Structure for passing external drawables to xcairo devices via
+ * the PLESC_DEVINIT escape function.
+ */
+#if defined(PLD_xcairo)
+typedef struct {
+  Display *display;
+  Drawable drawable;
+} PLXcairoDrawableInfo;
+#endif
 
 //---------------------------------------------------------------------
 // Font style and weight lookup tables (copied
@@ -205,6 +219,12 @@ void plD_bop_cairo(PLStream *pls)
   PLCairo *aStream;
 
   aStream = (PLCairo *)pls->dev;
+
+  /* Some Cairo devices support delayed device setup (eg: xcairo with
+   * external drawable).
+   */
+  if (aStream->cairoSurface == NULL)
+    return;
 
   // Fill in the window with the background color.
   cairo_rectangle(aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength);
@@ -664,6 +684,12 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
 
   // Allocate a cairo stream structure
   aStream = malloc(sizeof(PLCairo));
+#if defined(PLD_xcairo)
+  aStream->XDisplay = NULL;
+  aStream->XWindow = -1;
+#endif
+  aStream->cairoSurface = NULL;
+  aStream->cairoContext = NULL;
 
   // Set text clipping off as this makes the driver pretty slow
   aStream->text_clipping = 0;
@@ -798,6 +824,38 @@ void plD_dispatch_init_xcairo(PLDispatchTable *pdt)
 }
 
 //---------------------------------------------------------------------
+// xcairo_init_cairo()
+//
+// Configures Cairo to use whichever X Drawable is set up in the given
+// stream.  This is called by plD_init_xcairo() in the event we are 
+// drawing into a plplot-managed window, and plD_esc_xcairo() if
+// we are using an external X Drawable.
+//
+// A return value of 0 indicates success.  Currently this function only
+// returns 0.
+//----------------------------------------------------------------------
+
+static signed int xcairo_init_cairo(PLStream *pls)
+{
+  PLCairo *aStream;
+  Visual *defaultVisual;
+
+  aStream = (PLCairo *)pls->dev;
+
+  // Create an cairo surface & context that are associated with the X window.
+  defaultVisual = DefaultVisual(aStream->XDisplay, 0);
+  aStream->cairoSurface = cairo_xlib_surface_create(aStream->XDisplay, aStream->XWindow, defaultVisual, pls->xlength, pls->ylength);
+  aStream->cairoContext = cairo_create(aStream->cairoSurface);
+
+  // Invert the surface so that the graphs are drawn right side up.
+  rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+
+  // Set graphics aliasing
+  cairo_set_antialias(aStream->cairoContext, aStream->graphics_anti_aliasing);
+
+  return 0;
+}
+//---------------------------------------------------------------------
 // plD_init_xcairo()
 //
 // Initialize Cairo X Windows device.
@@ -806,47 +864,44 @@ void plD_dispatch_init_xcairo(PLDispatchTable *pdt)
 void plD_init_xcairo(PLStream *pls)
 {
   char plotTitle[40];
-  Visual *defaultVisual;
   XGCValues values;
   PLCairo *aStream;
 
-  // Setup the PLStream and the font lookup table
+  // Setup the PLStream and the font lookup table.
   aStream = stream_and_font_setup(pls, 1);
-
-  // X Windows setup
-  aStream->XDisplay = NULL;
-  aStream->XDisplay = XOpenDisplay(NULL);
-  if(aStream->XDisplay == NULL){
-    printf("Failed to open X Windows display\n");
-    // some sort of error here
-  }
-  XScreen = DefaultScreen(aStream->XDisplay);
-  rootWindow = RootWindow(aStream->XDisplay, XScreen);
-  aStream->exit_event_loop = 0;
-
-  // Initialize plot title
-  sprintf(plotTitle, "PLplot");
-    
-  // Create a X Window.
-  aStream->XWindow = XCreateSimpleWindow(aStream->XDisplay, rootWindow, 0, 0, pls->xlength, pls->ylength, 
-					    1, BlackPixel(aStream->XDisplay, XScreen), BlackPixel(aStream->XDisplay, XScreen));
-  XStoreName(aStream->XDisplay, aStream->XWindow, plotTitle);
-  XSelectInput(aStream->XDisplay, aStream->XWindow, NoEventMask);
-  XMapWindow(aStream->XDisplay, aStream->XWindow);
-
-  // Create an cairo surface & context that are associated with the X window.
-  defaultVisual = DefaultVisual(aStream->XDisplay, 0);
-  aStream->cairoSurface = cairo_xlib_surface_create(aStream->XDisplay, aStream->XWindow, defaultVisual, pls->xlength, pls->ylength);
-  aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
   // Save the pointer to the structure in the PLplot stream
   pls->dev = aStream;
 
-  // Invert the surface so that the graphs are drawn right side up.
-  rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+  // Create a X Window if required.
+  if (external_drawable != 0) {
+    aStream->xdrawable_mode = 1;
+  } else {
+    // Initialize plot title
+    sprintf(plotTitle, "PLplot");
 
-  // Set graphics aliasing
-  cairo_set_antialias(aStream->cairoContext, aStream->graphics_anti_aliasing);
+    // X Windows setup
+    aStream->XDisplay = NULL;
+    aStream->XDisplay = XOpenDisplay(NULL);
+    if(aStream->XDisplay == NULL){
+      printf("Failed to open X Windows display\n");
+      // some sort of error here
+    }
+    XScreen = DefaultScreen(aStream->XDisplay);
+    rootWindow = RootWindow(aStream->XDisplay, XScreen);
+
+    aStream->XWindow = XCreateSimpleWindow(aStream->XDisplay, rootWindow, 0, 0, pls->xlength, pls->ylength, 
+					    1, BlackPixel(aStream->XDisplay, XScreen), BlackPixel(aStream->XDisplay, XScreen));
+    XStoreName(aStream->XDisplay, aStream->XWindow, plotTitle);
+    XSelectInput(aStream->XDisplay, aStream->XWindow, NoEventMask);
+    XMapWindow(aStream->XDisplay, aStream->XWindow);
+    aStream->xdrawable_mode = 0;
+
+    xcairo_init_cairo(pls);
+  }
+
+  aStream->exit_event_loop = 0;
+
 }
 
 //---------------------------------------------------------------------
@@ -866,6 +921,9 @@ void plD_eop_xcairo(PLStream *pls)
   PLCairo *aStream;
 
   aStream = (PLCairo *)pls->dev;
+
+  if (aStream->xdrawable_mode)
+    return;
 
   XFlush(aStream->XDisplay);
 
@@ -910,8 +968,12 @@ void plD_tidy_xcairo(PLStream *pls)
 
   plD_tidy_cairo(pls);
 
+  if (aStream->xdrawable_mode)
+    return;
+
   // Close the window and the display.
   XFlush(aStream->XDisplay);
+
   XDestroyWindow(aStream->XDisplay, aStream->XWindow);
 
   XCloseDisplay(aStream->XDisplay);
@@ -945,6 +1007,38 @@ void plD_esc_xcairo(PLStream *pls, PLINT op, void *ptr)
       XFlush(aStream->XDisplay);
       xcairo_get_cursor(pls, (PLGraphicsIn*)ptr);
       break;
+    case  PLESC_DEVINIT: { // Set external drawable
+        Window rootwin;
+        PLXcairoDrawableInfo *xinfo = (PLXcairoDrawableInfo *)ptr;
+        signed int x, y;
+        unsigned int w, h, b, d;
+        if (xinfo == NULL) {
+          printf("xcairo: PLESC_DEVINIT ignored, no drawable info provided\n");
+          return;
+        }
+        if (aStream->xdrawable_mode == 0) {
+          printf("xcairo: PLESC_DEVINIT called with drawable but stream not in xdrawable mode\n");
+          return;
+        }
+        aStream->XDisplay = xinfo->display;
+        aStream->XWindow = xinfo->drawable;
+
+        /* Ensure plplot knows the real dimensions of the drawable */
+        XGetGeometry(aStream->XDisplay, aStream->XWindow, &rootwin,
+          &x, &y, &w, &h, &b, &d);
+        pls->xlength = w;
+        pls->ylength = h;
+        plP_setphy((PLINT) 0, (PLINT) pls->xlength / DOWNSCALE, (PLINT) 0, 
+          (PLINT) pls->ylength / DOWNSCALE);
+  
+        /* Associate cairo with the supplied drawable */
+        xcairo_init_cairo(pls);
+
+        /* Recalculate dimensions and the like now that the drawable is known */
+        plbop();
+
+        break;
+      }
     }
 }
 
