@@ -384,10 +384,11 @@ public void hist(double[] data, double datmin, double datmax, int nbin, int oldw
     plplotjavac.plhist(data, datmin, datmax, nbin, oldwin);
 }
 
-public void hls(double h, double l, double s) {
-    if (set_stream() == -1) return;
-    plplotjavac.plhls(h, l, s);
-}
+// Officially deprecated.
+//public void hls(double h, double l, double s) {
+//    if (set_stream() == -1) return;
+//    plplotjavac.plhls(h, l, s);
+//}
 
 public void image(double[][] data, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, double Dxmin, double Dxmax, double Dymin, double Dymax) {
     if (set_stream() == -1) return;
