@@ -95,6 +95,7 @@ typedef struct {
 #endif
 #if defined(PLD_memcairo)
   unsigned char *memory;
+  unsigned char *cairo_format_memory;
 #endif
 } PLCairo;
 
@@ -1470,6 +1471,7 @@ void plD_eop_pngcairo(PLStream *pls)
 void plD_dispatch_init_memcairo  (PLDispatchTable *pdt);
 void plD_init_memcairo           (PLStream *);
 void plD_eop_memcairo            (PLStream *);
+void plD_bop_memcairo            (PLStream *);
 
 //---------------------------------------------------------------------
 // dispatch_init_init()
@@ -1490,10 +1492,21 @@ void plD_dispatch_init_memcairo(PLDispatchTable *pdt)
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
    pdt->pl_eop      = (plD_eop_fp)      plD_eop_memcairo;
-   pdt->pl_bop      = (plD_bop_fp)      plD_bop_cairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_memcairo;
    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_cairo;
    pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
    pdt->pl_esc      = (plD_esc_fp)      plD_esc_cairo;
+}
+
+//----------------------------------------------------------------------
+// plD_bop_memcairo()
+//
+// Set up for the next page.
+//----------------------------------------------------------------------
+
+void plD_bop_memcairo(PLStream *pls)
+{
+  // nothing to do here (we want to preserve the memory as it is)
 }
 
 //---------------------------------------------------------------------
@@ -1505,6 +1518,9 @@ void plD_dispatch_init_memcairo(PLDispatchTable *pdt)
 void plD_init_memcairo(PLStream *pls)
 {
   PLCairo *aStream;
+  int stride, i;
+  unsigned char *cairo_mem;
+  unsigned char *input_mem;
 
   // Set the plot size to the memory buffer size, on the off chance
   // that they are different.
@@ -1522,8 +1538,30 @@ void plD_init_memcairo(PLStream *pls)
   // Save a pointer to the memory.
   aStream->memory = pls->dev;
 
-  // Create a cairo surface & context.
-  aStream->cairoSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, (double)pls->xlength, (double)pls->ylength);
+  // Create a cairo surface & context.  Copy data in from the input memory area
+
+  // Malloc memory the way cairo likes it.  Aligned on the stride computed by cairo_format_stride_for_width
+  // and in the RGB24 format (from http://cairographics.org/manual/cairo-Image-Surfaces.html):
+  //   Each pixel is a 32-bit quantity, with the upper 8 bits unused. 
+  //   Red, Green, and Blue are stored in the remaining 24 bits in that order
+  stride = pls->xlength * 4;
+  // stride = cairo_format_stride_for_width (CAIRO_FORMAT_RGB24, pls->xlength); // This function missing from version 1.4 :-(
+  aStream->cairo_format_memory = (unsigned char *)malloc (stride * pls->ylength);
+
+  // Copy the input data into the Cairo data format
+  cairo_mem = aStream->cairo_format_memory;
+  input_mem = aStream->memory;
+  for(i = 0;i < (pls->xlength * pls->ylength); i++){
+    cairo_mem[1] = input_mem[0];
+    cairo_mem[2] = input_mem[1];
+    cairo_mem[3] = input_mem[2];
+    input_mem += 3;
+    cairo_mem += 4;
+  }
+
+  // Create a Cairo drawing surface from the input data
+  aStream->cairoSurface = 
+    cairo_image_surface_create_for_data (aStream->cairo_format_memory, CAIRO_FORMAT_RGB24, pls->xlength, pls->ylength, stride);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
   // Save the pointer to the structure in the PLplot stream.
@@ -1555,13 +1593,17 @@ void plD_eop_memcairo(PLStream *pls)
   memory = aStream->memory;
   cairo_surface_data = cairo_image_surface_get_data(aStream->cairoSurface);
 
-  for(i = 0;i < (pls->phyxma * pls->phyyma); i++){
+  for(i = 0;i < (pls->xlength * pls->ylength); i++){
     memory[0] = cairo_surface_data[1];
     memory[1] = cairo_surface_data[2];
     memory[2] = cairo_surface_data[3];
     memory += 3;
     cairo_surface_data += 4;
   }
+
+  // Free up the temporary memory malloc'ed in plD_init_memcairo
+  free (aStream->cairo_format_memory);
+
 }
-                                       
+
 #endif
