@@ -6,11 +6,19 @@
 # This script should be run from the top-level source tree.
 
 # Prepare API list from include/plplot.h to be compared with all others.
+# Be sure to remove officially deprecated functions.
 grep '^#define.*pl.*c_pl' include/plplot.h |\
 grep -v plParseInternalOpts |\
 tr '\t' " " |\
 tr -s " " |\
 cut --delimiter=" " --fields=2 |\
+grep -v 'plclr$' |\
+grep -v 'plcol$' |\
+grep -v 'plhls$' |\
+grep -v 'plHLS$' |\
+grep -v 'plpage$' |\
+grep -v 'plrgb$' |\
+grep -v 'plrgb1$' |\
 sort \
 >| /tmp/plplot_api.txt
 
@@ -31,7 +39,8 @@ case $1 in
     echo "swig API differences (if any)"
     # The grep -v '[A-Z]' stanza gets rid of some of the non-public API that
     # is exposed for the swig-generated bindings, and similarly for the list
-    # of commands that are excluded.
+    # of commands that are excluded.  The grep -v stanzas also get rid of
+    # deprecated API that is mentioned but excluded with #if 0 ... #endif
     
     grep '^pl.*(' bindings/swig-support/plplotcapi.i |\
     cut --delimiter='(' --fields=1 |\
@@ -52,6 +61,9 @@ case $1 in
     grep -v pltr0f |\
     grep -v pltr2f |\
     grep -v pltr2p |\
+    grep -v 'plhls$' |\
+    grep -v 'plrgb$' |\
+    grep -v 'plrgb1$' |\
     sort |\
     diff -au /tmp/plplot_api.txt -
   ;;
@@ -77,6 +89,7 @@ case $1 in
     # that paranthesis and any trailing underscores or "7"s.  We then do a unique
     # sort to get rid of duplicates, and specifically exclude some added special
     # fortran functions (whose original form may have had a "7" appended).
+    # We also remove the plhls, plrgb, and plrgb1 deprecated functions.
     grep 'FNAME.*,pl.*)' bindings/f77/plstubs.h |\
     cut --delimiter="," --fields=2 |\
     sed -e 's?)??' -e 's?_$??' -e 's?7$??' |\
@@ -94,6 +107,9 @@ case $1 in
     grep -v plvec0 |\
     grep -v plvec1 |\
     grep -v plvec2 |\
+    grep -v 'plhls$' |\
+    grep -v 'plrgb$' |\
+    grep -v 'plrgb1$' |\
     diff -au /tmp/plplot_api.txt - 
   ;;
 
@@ -105,6 +121,7 @@ case $1 in
     # that paranthesis and any trailing "_", "f77", and "7".  We then do a unique
     # sort to get rid of duplicates, and specifically exclude some added special
     # fortran functions (whose original form may have had a "7" appended).
+    # We also remove the plhls, plrgb, and plrgb1 deprecated functions.
     grep 'FNAME.*,pl.*)' bindings/f95/plstubs.h |\
     cut --delimiter="," --fields=2 |\
     sed -e 's?)??' -e 's?_$??' -e 's?f77$??' -e 's?7$??' |\
@@ -124,6 +141,9 @@ case $1 in
     grep -v plvec0 |\
     grep -v plvec1 |\
     grep -v plvec2 |\
+    grep -v 'plhls$' |\
+    grep -v 'plrgb$' |\
+    grep -v 'plrgb1$' |\
     diff -au /tmp/plplot_api.txt - 
   ;;
   
