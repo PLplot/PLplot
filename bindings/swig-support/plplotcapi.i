@@ -697,6 +697,16 @@ plshade(PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
 void
 plsmaj(PLFLT def, PLFLT scale);
 
+#if 0
+/* plsmem not implemented because don't know how to make block
+of memory available from python. */
+%feature("autodoc", "Set the memory area to be plotted (with the 'mem'
+driver).") plsmem
+
+void
+plsmem(PLINT maxx, PLINT maxy, void *plotmem);
+#endif
+
 %feature("autodoc", "Set up lengths of minor tick marks.") plsmin;
 void
 plsmin(PLFLT def, PLFLT scale);
