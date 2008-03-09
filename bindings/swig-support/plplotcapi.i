@@ -181,7 +181,6 @@ typedef struct {
  * were part of plmodule.c. */
 
 #if 0
-
 /* Deprecated function that we no longer want to propagate to the
  * python API. */
 
@@ -428,9 +427,14 @@ void
 plhist(PLINT n, PLFLT *Array, PLFLT datmin, PLFLT datmax,
 	 PLINT nbin, PLINT oldwin);
 
+#if 0
+/* Deprecated function that we no longer want to propagate to the
+ * python API. */
+
 %feature("autodoc", "Set current color (map 0) by hue, lightness, and saturation.") plhls;
 void
 plhls(PLFLT h, PLFLT l, PLFLT s);
+#endif
 
 %feature("autodoc", "Transform from HLS to RGB form of colours.") plhlsrgb;
 void
