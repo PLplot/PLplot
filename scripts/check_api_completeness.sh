@@ -68,6 +68,22 @@ case $1 in
     diff -au /tmp/plplot_api.txt -
   ;;
 
+  java)
+    # Prepare API list from bindings/java/PLStream.java
+    # and compare with previous.
+    echo "java API differences (if any)"
+    # The grep -v '[A-Z]' stanza gets rid of some of the non-public API that
+    # is exposed.
+    # Also get rid of the deprecated plhls from the comparison.
+    grep 'plplotjavac.pl.*(' bindings/java/PLStream.java |\
+    cut --delimiter='(' --fields=1 |\
+    cut --delimiter='.' --fields=2 |\
+    sort -u |\
+    grep -v '[A-Z]' |\
+    grep -v 'plhls$' |\
+    diff -au /tmp/plplot_api.txt -
+  ;;
+
   octave)
     # Prepare API list from bindings/octave/plplot_octave.h.in
     # and compare with previous.
@@ -150,6 +166,7 @@ case $1 in
   all)
     $0 docbook
     $0 swig
+    $0 java
     $0 octave
     $0 f77
     $0 f95
@@ -158,7 +175,7 @@ case $1 in
   *)
   echo "First argument was $1"
   echo "Instead, it must be one of the following:"
-  echo "docbook, swig, octave, f77, f95, or all"
+  echo "docbook, swig, java, octave, f77, f95, or all"
   ;;
 esac
 #rm /tmp/plplot_api.txt
