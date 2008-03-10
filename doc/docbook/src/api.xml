@@ -5332,7 +5332,7 @@ device coordinates
     </para>
 
     <para>
-      Convert HLS color coordinates to RGB
+      Convert HLS color coordinates to RGB.
     </para>
 
     <variablelist>
@@ -5424,6 +5424,257 @@ device coordinates
 
     <para>
       This function is used in example 2.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plimagefr" renderas="sect3">
+    <title>
+        <function>plimagefr</function>: Plot a 2D matrix using color map1
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plimagefr</function>
+        </funcdef>
+        <paramdef><parameter>idata</parameter></paramdef>
+        <paramdef><parameter>nx</parameter></paramdef>
+        <paramdef><parameter>ny</parameter></paramdef>
+        <paramdef><parameter>xmin</parameter></paramdef>
+        <paramdef><parameter>xmax</parameter></paramdef>
+        <paramdef><parameter>ymin</parameter></paramdef>
+        <paramdef><parameter>ymax</parameter></paramdef>
+        <paramdef><parameter>zmin</parameter></paramdef>
+        <paramdef><parameter>zmax</parameter></paramdef>
+        <paramdef><parameter>Dxmin</parameter></paramdef>
+        <paramdef><parameter>Dxmax</parameter></paramdef>
+        <paramdef><parameter>Dymin</parameter></paramdef>
+        <paramdef><parameter>Dymax</parameter></paramdef>
+        <paramdef><parameter>valuemin</parameter></paramdef>
+        <paramdef><parameter>valuemax</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Plot a 2D matrix using color map1.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>idata</parameter>
+	  (<literal>PLFLT**</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+              A 2D array of values (intensities) to plot.  Should have
+              dimensions idata[nx][ny].
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx, ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Dimensions of idata
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>xmin, xmax, ymin, ymax</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Plot coordinates to strecth the image data to.  idata[0][0]
+            corresponds to (xmin, ymin) and idata[nx - 1][ny - 1] corresponds
+            to (xmax, ymax).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>zmin, zmax</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Only data between zmin and zmax (inclusive) will be plotted.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>Dxmin, Dxmax, Dymin, Dymax</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+              Plot only the window of points whose plot coordinates fall inside
+              the window of (Dxmin, Dymin) to (Dxmax, Dymax).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>valuemin, valuemax</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+              The minimum and maximum data values to use for value to color
+              mappings.  A datum equal to or less than valuemin will be
+              plotted with color 0.0, while a datum equal to or greater than
+              valuemax will be plotted with color 1.0.  Data between valuemin
+              and valuemax map linearly to colors between 0.0 and 1.0.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+              General:
+              <function>
+                  plimagefr(idata, xmin, xmax, ymin, ymax,
+                  zmin, zmax, Dxmin, Dxmax, Dymin, Dymax,
+                  valuemin, valuemax)
+              </function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plimage" renderas="sect3">
+    <title>
+        <function>plimage</function>: Plot a 2D matrix using color map1 with
+	automatic colour adjustment
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plimage</function>
+        </funcdef>
+        <paramdef><parameter>idata</parameter></paramdef>
+        <paramdef><parameter>nx</parameter></paramdef>
+        <paramdef><parameter>ny</parameter></paramdef>
+        <paramdef><parameter>xmin</parameter></paramdef>
+        <paramdef><parameter>xmax</parameter></paramdef>
+        <paramdef><parameter>ymin</parameter></paramdef>
+        <paramdef><parameter>ymax</parameter></paramdef>
+        <paramdef><parameter>zmin</parameter></paramdef>
+        <paramdef><parameter>zmax</parameter></paramdef>
+        <paramdef><parameter>Dxmin</parameter></paramdef>
+        <paramdef><parameter>Dxmax</parameter></paramdef>
+        <paramdef><parameter>Dymin</parameter></paramdef>
+        <paramdef><parameter>Dymax</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+        Plot a 2D matrix using color palette 1.  The color scale is
+        automatically adjusted to use the maximum and minimum values in
+        idata as valuemin and valuemax in a call to &plimagefr;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>idata</parameter>
+	  (<literal>PLFLT**</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+              A 2D array of values (intensities) to plot.  Should have
+              dimensions idata[nx][ny].
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx, ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Dimensions of idata
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>xmin, xmax, ymin, ymax</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Plot coordinates to strecth the image data to.  idata[0][0]
+            corresponds to (xmin, ymin) and idata[nx - 1][ny - 1] corresponds
+            to (xmax, ymax).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>zmin, zmax</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Only data between zmin and zmax (inclusive) will be plotted.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>Dxmin, Dxmax, Dymin, Dymax</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+              Plot only the window of points whose plot coordinates fall inside
+              the window of (Dxmin, Dymin) to (Dxmax, Dymax).
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+        <listitem>
+          <para>
+              General:
+              <function>
+                  plimage(idata, xmin, xmax, ymin, ymax,
+                  zmin, zmax, Dxmin, Dxmax, Dymin, Dymax)
+              </function>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 20.
     </para>
 
   </sect1>
