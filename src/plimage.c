@@ -136,11 +136,155 @@ grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny)
 }
 
 /*-------------------------------------------------------------------------*\
+ * plimagefr
+ *
+ * arguments are
+ *   idata: array containing image data
+ *   nx: dimension of the array in the X axis.
+ *   ny: dimension of the  array in the Y axis
+ *   The array data is indexed like data[ix][iy]
+ *
+ *   xmin, xmax, ymin, ymax:
+ *       data[0][0] corresponds to (xmin,ymin)
+ *       data[nx-1][ny-1] to (xmax,ymax)
+ *
+ *   zmin, zmax:
+ *       only data within bounds zmin <= data <= zmax will be
+ *       plotted. If zmin == zmax, all data will be ploted.
+ *
+ *   Dxmin, Dxmax, Dymin, Dymax:
+ *       plots only the window of points whose(x,y)'s fall
+ *       inside the [Dxmin->Dxmax]X[Dymin->Dymax] window
+ *
+ *   valuemin, valuemax:
+ *       The minimum and maximum values to use for value -> color
+ *       mappings.  A value in idata of valuemin or less will have
+ *       color 0.0 and a value in idata of valuemax or greater will
+ *       have color 1.0.  Values between valuemin and valuemax will
+ *       map linearly to to the colors between 0.0 and 1.0.
+ *       If you do not want to display values outside of the
+ *       (valuemin -> valuemax) range, then set zmin = valuemin and
+ *       zmax = valuemax.
+ *       This allows for multiple plots to use the same color scale
+ *       with a consistent value -> color mapping, regardless of the
+ *       image content.
+ *
+\*-------------------------------------------------------------------------*/
+
+void
+c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
+         PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+         PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
+         PLFLT valuemin, PLFLT valuemax)
+{
+  PLINT nnx, nny, ix, iy, ixx, iyy, xm, ym;
+  PLFLT dx, dy;
+  // Zf holds transformed image pixel values
+  // szmin and szmax are zmin and zmax scaled to unsigned short values
+  unsigned short *Zf, szmin, szmax;
+  short *Xf, *Yf;
+  // This is used when looping through the image array, checking to
+  // make sure the values are within an acceptable range.
+  PLFLT datum;
+
+  if (plsc->level < 3) {
+    plabort("plimage: window must be set up first");
+    return;
+  }
+
+  if (nx <= 0 || ny <= 0) {
+    plabort("plimage: nx and ny must be positive");
+    return;
+  }
+
+  if (Dxmin < xmin || Dxmax > xmax || Dymin < ymin || Dymax > ymax) {
+    plabort("plimage: Dxmin or Dxmax or Dymin or Dymax not compatible with xmin or xmax or ymin or ymax.");
+    return;
+  }
+
+  dx = (xmax - xmin) / (nx - 1);
+  dy = (ymax - ymin) / (ny - 1);
+  nnx = (Dxmax-Dxmin)/dx + 1;
+  nny = (Dymax-Dymin)/dy + 1;
+
+  if ((Zf = (unsigned short *) malloc(nny*nnx*sizeof(unsigned short)))==NULL)
+    {
+      plexit("plimage: Insufficient memory");
+    }
+
+  xm = floor((Dxmin-xmin)/dx); ym = floor((Dymin-ymin)/dy);
+
+  // Go through the image values and scale them to fit in an
+  // unsigned short range.
+  // Any values greater than valuemax are set to valuemax,
+  // and values less than valuemin are set to valuemin.
+  ixx=-1;
+  for (ix=xm; ix<xm+nnx; ix++) {
+    ixx++; iyy=0;
+    for (iy=ym; iy<ym+nny; iy++) {
+      datum = idata[ix][iy];
+      if (datum < valuemin) {
+        datum = valuemin;
+      }
+      else if (datum > valuemax) {
+        datum = valuemax;
+      }
+      Zf[ixx*nny+iyy++] =
+        (datum - valuemin) / (valuemax - valuemin) * USHRT_MAX;
+    }
+  }
+
+  if (zmin == zmax) {
+    zmin = valuemin;
+    zmax = valuemax;
+  }
+  else {
+    if (zmin < valuemin)
+      zmin = valuemin;
+    if (zmax > valuemax)
+      zmax = valuemax;
+  }
+
+  // The value range to plot, scaled to unsigned short values
+  szmin = (zmin - valuemin) / (valuemax - valuemin) * USHRT_MAX;
+  szmax = (zmax - valuemin) / (valuemax - valuemin) * USHRT_MAX;
+
+  xmin = Dxmin;  xmax = Dxmax;
+  ymin = Dymin;  ymax = Dymax;
+
+  /* The X and Y arrays has size nnx*nny */
+  nnx++; nny++;
+
+  if (((Xf = (short *) malloc(nny*nnx*sizeof(short)))==NULL)||
+      ((Yf = (short *) malloc(nny*nnx*sizeof(short)))==NULL))
+      {
+        plexit("plimage: Insufficient memory");
+      }
+
+  /* adjust the step for the X/Y arrays */
+  dx = dx*(nx-1)/nx;
+  dy = dy*(ny-1)/ny;
+
+  for (ix = 0; ix < nnx; ix++) {
+    for (iy = 0; iy < nny; iy++) {
+      Xf[ix*nny+iy] =  plP_wcpcx(xmin + ix*dx);
+      Yf[ix*nny+iy] =  plP_wcpcy(ymin + iy*dy);
+    }
+  }
+
+  plP_image(Xf, Yf, Zf, nnx, nny, xmin, ymin, dx, dy, szmin, szmax);
+
+  free(Xf);
+  free(Yf);
+  free(Zf);
+}
+
+/*-------------------------------------------------------------------------*\
  * plimage
  *           (***** SUBJECT TO CHANGE ******)
  *
  * arguments are
- *   data: array containing image data
+ *   idata: array containing image data
  *   nx: dimension of the array in the X axis.
  *   ny: dimension of the  array in the Y axis
  *   The array data is indexed like data[ix][iy]
@@ -164,96 +308,25 @@ c_plimage(PLFLT **idata, PLINT nx, PLINT ny,
 	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
 {
-  PLINT nnx, nny, ix, iy, ixx, iyy, xm, ym;
-  PLFLT dx, dy;
-  unsigned short *Zf, szmin, szmax;
-  short *Xf, *Yf;
-  PLFLT lzmin, lzmax, tz;
+  PLINT ix, iy;
+  PLFLT data_min, data_max, iz;
 
-  if (plsc->level < 3) {
-    plabort("plimage: window must be set up first");
-    return;
-  }
+  // Find the minimum and maximum values in the image, and automatically
+  // scale the colors scale over this range.
+  data_min = data_max = idata[0][0];
 
-  if (nx <= 0 || ny <= 0) {
-    plabort("plimage: nx and ny must be positive");
-    return;
-  }
-
-  if (Dxmin < xmin || Dxmax > xmax || Dymin < ymin || Dymax > ymax){
-    plabort("plimage: Dxmin or Dxmax or Dymin or Dymax not compatible with xminor xmax or ymin or ymax.");
-    return;
-  }
-
-  dx = (xmax - xmin) / (nx - 1);
-  dy = (ymax - ymin) / (ny - 1);
-  nnx = (Dxmax-Dxmin)/dx + 1;
-  nny = (Dymax-Dymin)/dy + 1;
-
-  if ((Zf = (unsigned short *) malloc(nny*nnx*sizeof(unsigned short)))==NULL)
-    {
-      plexit("plimage: Insufficient memory");
-    }
-
-  xm = floor((Dxmin-xmin)/dx); ym = floor((Dymin-ymin)/dy);
-  lzmin = lzmax = idata[xm][ym];
-
-  for (ix=xm; ix<xm+nnx; ix++) {
-    for (iy=ym; iy<ym+nny; iy++) {
-      tz = idata[ix][iy];
-      if (lzmax < tz)
-	lzmax = tz;
-      if (lzmin > tz)
-	lzmin = tz;
+  for (ix = 0; ix < nx; ix++) {
+    for (iy = 0; iy < ny; iy++) {
+      iz = idata[ix][iy];
+      if (data_max < iz)
+	data_max = iz;
+      if (data_min > iz)
+	data_min = iz;
     }
   }
 
-  ixx=-1;
-  for (ix=xm; ix<xm+nnx; ix++) {
-    ixx++; iyy=0;
-    for (iy=ym; iy<ym+nny; iy++)
-      Zf[ixx*nny+iyy++] = (idata[ix][iy] - lzmin)/(lzmax-lzmin)*USHRT_MAX;
-  }
-
-  if (zmin == zmax) {
-    zmin = lzmin;
-    zmax = lzmax;
-  } else {
-    if (zmin < lzmin)
-      zmin = lzmin;
-
-    if (zmax > lzmax)
-      zmax = lzmax;
-  }
-
-  szmin = (zmin - lzmin)/(lzmax-lzmin)*USHRT_MAX;
-  szmax = (zmax - lzmin)/(lzmax-lzmin)*USHRT_MAX;
-
-  xmin = Dxmin;  xmax = Dxmax;
-  ymin = Dymin;  ymax = Dymax;
-
-  /* The X and Y arrays has size nnx*nny */
-  nnx++; nny++;
-
-  if (((Xf = (short *) malloc(nny*nnx*sizeof(short)))==NULL)||
-      ((Yf = (short *) malloc(nny*nnx*sizeof(short)))==NULL))
-      {
-        plexit("plimage: Insufficient memory");
-      }
-
-  /* adjust the step for the X/Y arrays */
-  dx = dx*(nx-1)/nx;
-  dy = dy*(ny-1)/ny;
-
-  for (ix = 0; ix < nnx; ix++)
-    for (iy = 0; iy < nny; iy++) {
-      Xf[ix*nny+iy] =  plP_wcpcx(xmin + ix*dx);
-      Yf[ix*nny+iy] =  plP_wcpcy(ymin + iy*dy);
-    }
-
-  plP_image(Xf, Yf, Zf, nnx, nny, xmin, ymin, dx, dy, szmin, szmax);
-
-  free(Xf);
-  free(Yf);
-  free(Zf);
+  // Call plimagefr with the value -> color range mapped to the minimum
+  // and maximum values in idata.
+  plimagefr(idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
+           Dxmin, Dxmax, Dymin, Dymax, data_min, data_max);
 }

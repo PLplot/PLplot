@@ -523,6 +523,7 @@ typedef struct {
 #define    plhls        c_plhls
 #define    plhlsrgb     c_plhlsrgb
 #define    plimage	c_plimage
+#define    plimagefr	c_plimagefr
 #define    plinit	c_plinit
 #define    pljoin	c_pljoin
 #define    pllab	c_pllab
@@ -1448,12 +1449,21 @@ c_plstripc(PLINT *id, const char *xspec, const char *yspec,
 PLDLLIMPEXP void
 c_plstripd(PLINT id);
 
-  /* plots a 2d image (or a matrix too large for plshade() ) */
+/* plots a 2d image (or a matrix too large for plshade() ) */
 
 PLDLLIMPEXP void
-c_plimage( PLFLT **data, PLINT nx, PLINT ny,
+c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
 	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
+	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
+         PLFLT valuemin, PLFLT valuemax);
+
+/* plots a 2d image (or a matrix too large for plshade() ) - colors
+   automatically scaled */
+
+PLDLLIMPEXP void
+c_plimage(PLFLT **idata, PLINT nx, PLINT ny,
+        PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+        PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
 
 /* Set up a new line style */
 
