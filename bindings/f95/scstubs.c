@@ -434,7 +434,7 @@ plmapf2c( PLINT n, PLFLT *x, PLFLT *y )
 }
 
 void
-PLMAPC( const char *type,
+PLMAP7( const char *type,
         PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat )
 
 {
@@ -443,7 +443,7 @@ PLMAPC( const char *type,
 
 
 void
-PLMERIDIANSC( PLFLT *dlong, PLFLT *dlat,
+PLMERIDIANS7( PLFLT *dlong, PLFLT *dlat,
               PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat )
 {
     c_plmeridians(plmapf2c, *dlong, *dlat, *minlong, *maxlong, *minlat, *maxlat);

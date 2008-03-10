@@ -604,7 +604,7 @@
       call plstrf2c(mapname, string1, maxlen)
 
       call plsetmapformc(mapform)
-      call plmapc(s1,minx,maxx,miny,maxy)
+      call plmap7(s1,minx,maxx,miny,maxy)
 
       end subroutine
 
@@ -620,7 +620,7 @@
       include 'sfstubs.h'
 
       call plsetmapformc(mapform)
-      call plmeridiansc(dlong,dlat,minlong,maxlong,minlat,maxlat)
+      call plmeridians7(dlong,dlat,minlong,maxlong,minlat,maxlat)
 
       end subroutine
 
