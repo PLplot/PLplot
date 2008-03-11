@@ -311,6 +311,11 @@ public void gfam(int[] fam, int[] num, int[]  bmax) {
     plplotjavac.plgfam(fam, num, bmax);
 }
 
+public void gfci(long[] pfci) {
+    if (set_stream() == -1) return;
+    plplotjavac.plgfci(pfci);
+}
+
 public void gfnam(StringBuffer fnam) {
     if (set_stream() == -1) return;
     plplotjavac.plgfnam(fnam);
@@ -672,6 +677,11 @@ public void setopt(String opt, String optarg) {
 public void sfam(int fam, int num, int bmax) {
     if (set_stream() == -1) return;
     plplotjavac.plsfam(fam, num, bmax);
+}
+
+public void sfci(long fci) {
+    if (set_stream() == -1) return;
+    plplotjavac.plsfci(fci);
 }
 
 public void sfnam(String fnam) {
