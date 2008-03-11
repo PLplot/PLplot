@@ -33,6 +33,7 @@
 int
 plParseOpts(int *p_argc, const char **argv, PLINT mode)
 {
+   plwarn("plParseOpts: function deprecated. Use plparseopts instead");
    return c_plparseopts(p_argc, argv, mode);
 }
 
@@ -43,6 +44,7 @@ plParseOpts(int *p_argc, const char **argv, PLINT mode)
 void
 plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
 {
+   plwarn("plHLS_RGB: function deprecated. Use plhlsrgb instead");
    c_plhlsrgb(h, l, s, p_r, p_g, p_b);
 }
 
@@ -52,6 +54,7 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
 void
 plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
 {
+   plwarn("plRGB_HLS: function deprecated. Use plrgbhls instead");
    c_plrgbhls(r, g, b, p_h, p_l, p_s);
 }
 
@@ -95,7 +98,7 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
     PLFLT max_u, max_v;
     double t;
 
-    plwarn("plarrows: function depreciated. Use plvect instead");
+    plwarn("plarrows: function deprecated. Use plvect instead");
 
     if (n <= 0) return;
 
