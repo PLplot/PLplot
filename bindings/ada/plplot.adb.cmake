@@ -1101,15 +1101,6 @@ package body PLplot is
     end Advance_To_Subpage;
 
 
-    -- fix this
-    -- simple arrow plotter.
-    -- plarrows
-    procedure Arrow_Plotter is
-    begin
-        Put_Line("Not implemented due to lack of documentation.");
-    end Arrow_Plotter;
-
-
     -- fix this See comment for plcont.
     -- Draw a 2D vector plot.
     -- plvect

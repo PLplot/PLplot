@@ -1102,14 +1102,6 @@ package body PLplot_Traditional is
     end pladv;
 
 
-    -- fix this
-    -- simple arrow plotter.
-    procedure plarrows is
-    begin
-        Put_Line("Not implemented due to lack of documentation.");
-    end plarrows;
-
-
     -- fix this See comment for plcont.
     -- Draw a 2D vector plot.
     procedure plvect

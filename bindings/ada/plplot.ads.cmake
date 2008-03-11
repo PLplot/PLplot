@@ -563,11 +563,6 @@ package PLplot is
     procedure Advance_To_Subpage(Page : Natural);
 
 
-    -- simple arrow plotter.
-    -- plarrows
-    procedure Arrow_Plotter;
-
-
     -- Draw a 2D vector plot.
     -- plvect
     procedure Vector_Plot

@@ -424,12 +424,6 @@ package PLplot_Thin is
     -- simple arrow plotter. 
 
     procedure
-    plarrows(u : PL_Float_Array; v : PL_Float_Array; x : PL_Float_Array; y : PL_Float_Array; n : PLINT;
-             scale : PLFLT; dx : PLFLT; dy : PLFLT) ;
-    pragma Import(C, plarrows, "plarrows");
-
-
-    procedure
     plvect(u : Long_Float_Pointer_Array; v : Long_Float_Pointer_Array; 
         nx : PLINT; ny : PLINT; scale : PLFLT;
         pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);

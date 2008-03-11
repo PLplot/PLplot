@@ -559,10 +559,6 @@ package PLplot_Traditional is
     procedure pladv(Page : Natural);
 
 
-    -- simple arrow plotter.
-    procedure plarrows;
-
-
     -- Draw a 2D vector plot.
     procedure plvect
        (u, v                             : Real_Matrix;
