@@ -25,6 +25,7 @@
     is explicitly commented.
 */
 
+#define NEED_PLDEBUG
 #include "plplotP.h"
 
 /*--------------------------------------------------------------------------*\
