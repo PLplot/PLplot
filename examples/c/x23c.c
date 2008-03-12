@@ -295,7 +295,7 @@ main(int argc, const char *argv[])
 		 family[family_index], 
 		 style[style_index], 
 		 weight[weight_index]);
-         plptex (0.5, 1. - (i+0.5)*dy, 1., 0., 0.5, string);
+         plptex (0., 1. - (i+0.5)*dy, 1., 0., 0., string);
        }
        
        plschr(0., 1.0);
