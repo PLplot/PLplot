@@ -1657,10 +1657,6 @@ void my_plimage(PLFLT *a, PLINT nx, PLINT ny,
   plimage(aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, dxmin, dxmax, dymin, dymax);
 } //%name pplimage //%input a(nx, ny)
 
-#ifdef __cplusplus
-}
-#endif
-
 /* Depreciated functions - retained for backwards compatibility */
 
 /* simple arrow plotter. */
@@ -1668,6 +1664,10 @@ void my_plimage(PLFLT *a, PLINT nx, PLINT ny,
 void plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 	      PLFLT scale, PLFLT dx, PLFLT dy) ; //%name plarrows //%input u(n), v(n), x(n), y(n)
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* __PLPLOT_H__ */
 
