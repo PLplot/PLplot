@@ -506,6 +506,7 @@ typedef struct {
 #define    plgfam	c_plgfam
 #define    plgfci	c_plgfci
 #define    plgfnam	c_plgfnam
+#define    plgfont      c_plgfont
 #define    plglevel	c_plglevel
 #define    plgpage	c_plgpage
 #define    plgra	c_plgra
@@ -579,6 +580,7 @@ typedef struct {
 #define    plsfam	c_plsfam
 #define    plsfci	c_plsfci
 #define    plsfnam	c_plsfnam
+#define    plsfont      c_plsfont
 #define    plshade	c_plshade
 #define    plshade1	c_plshade1
 #define    plshades	c_plshades
@@ -904,6 +906,11 @@ c_plgfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax);
 
 PLDLLIMPEXP void
 c_plgfnam(char *fnam);
+
+/* Get the current font family, style and weight */
+
+PLDLLIMPEXP void
+c_plgfont(PLINT *p_family, PLINT *p_style, PLINT *p_weight);
 
 /* Get the (current) run level.  */
 
@@ -1318,6 +1325,11 @@ c_plsfci(PLUNICODE fci);
 
 PLDLLIMPEXP void
 c_plsfnam(const char *fnam);
+
+/* Set the current font family, style and weight */
+
+PLDLLIMPEXP void
+c_plsfont(PLINT family, PLINT style, PLINT weight);
 
 /* Shade region. */
 

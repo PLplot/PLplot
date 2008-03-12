@@ -1661,5 +1661,79 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
   plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);	
 }
 
+/*------------------------------------------------------------------------*\
+ * void plsfont()
+ *
+ * Set the family, style and weight of the current font.
+ * This is a user-friendly front-end to plsfci.
+ * Note: A negative value signifies that this element should not be changed.
+\*------------------------------------------------------------------------*/ 
+void
+c_plsfont(PLINT family, PLINT style, PLINT weight)
+{
+  PLUNICODE fci;
+
+  plgfci(&fci);
+  
+  if (family >= 0) {
+    /* Bounds checking assumes symbol is last font */
+    if (family > PL_FCI_SYMBOL) 
+      plwarn("plsfont: Value for family is out of range");
+    else
+      plP_hex2fci((unsigned char)family,PL_FCI_FAMILY,&fci);
+  }
+
+  if (style >= 0) {
+    /* Bounds checking assumes oblique is last style */
+    if (family > PL_FCI_OBLIQUE) 
+      plwarn("plsfont: Value for style is out of range");
+    else
+    plP_hex2fci((unsigned char)style,PL_FCI_STYLE,&fci);
+  }
+
+  if (weight >= 0) {
+    /* Bounds checking assumes bold is last weight */
+    if (family > PL_FCI_BOLD) 
+      plwarn("plsfont: Value for weight is out of range");
+    else
+    plP_hex2fci((unsigned char)weight,PL_FCI_WEIGHT,&fci);
+  }
+
+  plsfci(fci);
+}
+
+/*------------------------------------------------------------------------*\
+ * void plgfont()
+ *
+ * Get the family, style and weight of the current font.
+ * This is a user-friendly front-end to plgfci.
+ * Note: A NULL pointer signifies that this value should not be returned.
+\*------------------------------------------------------------------------*/ 
+void
+c_plgfont(PLINT *p_family, PLINT *p_style, PLINT *p_weight)
+{
+  PLUNICODE fci;
+  unsigned char val;
+
+  plgfci(&fci);
+
+  if (p_family) {
+    plP_fci2hex(fci, &val, PL_FCI_FAMILY);
+    *p_family = (PLINT) val;
+  } 
+
+  if (p_style) {
+    plP_fci2hex(fci, &val, PL_FCI_STYLE);
+    *p_style= (PLINT) val;
+  } 
+
+  if (p_weight) {
+    plP_fci2hex(fci, &val, PL_FCI_WEIGHT);
+    *p_weight= (PLINT) val;
+  } 
+
+}
+
+
 #undef PLSYM_H
 #endif
