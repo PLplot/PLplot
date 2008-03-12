@@ -160,6 +160,42 @@ static int offset[] = {
 0,
 };
 
+/* 30 possible FCI values. */
+
+#define FCI_COMBINATIONS 30
+static PLUNICODE fci[] = {
+0x80000000,
+0x80000001,
+0x80000002,
+0x80000003,
+0x80000004,
+0x80000010,
+0x80000011,
+0x80000012,
+0x80000013,
+0x80000014,
+0x80000020,
+0x80000021,
+0x80000022,
+0x80000023,
+0x80000024,
+0x80000100,
+0x80000101,
+0x80000102,
+0x80000103,
+0x80000104,
+0x80000110,
+0x80000111,
+0x80000112,
+0x80000113,
+0x80000114,
+0x80000120,
+0x80000121,
+0x80000122,
+0x80000123,
+0x80000124,
+};
+
 int
 main(int argc, const char *argv[])
 {
@@ -222,12 +258,52 @@ main(int argc, const char *argv[])
 	/* Page title */
 	plmtex("t", 1.5, 0.5, 0.5, title[page]);
     }
+    {
+       float dy = 0.025;
+       int family_index, style_index, weight_index;
+       const char*family[] = { 
+	  "sans-serif",
+	  "serif",
+	  "monospace",
+	  "script",
+	  "symbol",
+       };
+       const char*style[] = {
+	  "upright",
+	  "italic",
+	  "oblique",
+       };
+       const char*weight[] = {
+	  "medium",
+	  "bold",
+       };
+       char string[100];
+
+       pladv(0);
+       plmtex("t", 1.5, 0.5, 0.5, 
+	      "#<0x10>PLplot Example 23 - Set Font with plsfci");
+       plvpor(0.02, 0.98, 0.02, 0.90);
+       plwind(0.0, 1.0, 0.0, 1.0);
+       plschr(0., 0.75);
+       for(i=0; i< FCI_COMBINATIONS; i++) {
+	 family_index = i % 5;
+	 style_index = (i/5) % 3;
+	 weight_index = ((i/5)/3) % 2;
+	 plsfci(fci[i]);
+	 sprintf(string, 
+		 "%s, %s, %s: The quick brown fox jumps over the lazy dog", 
+		 family[family_index], 
+		 style[style_index], 
+		 weight[weight_index]);
+         plptex (0.5, 1. - (i+0.5)*dy, 1., 0., 0.5, string);
+       }
+       
+       plschr(0., 1.0);
+    }
 
     /* Restore defaults */
     plcol0(1);
 
     plend();
     exit(0);
-
 }
-
