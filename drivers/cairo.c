@@ -139,11 +139,11 @@ typedef struct {
 #define NPANGOLOOKUP 5
 
 const char *defaultFamilyLookup[NPANGOLOOKUP] = {
-  "Arial,Bitstream-Vera-Sans,sans",
-  "Times-Roman,Bitstream-Vera-Serif,serif",
-  "Courier,Bitstream-Vera-Sans-Mono,monospace",
-  "Arial,Bitstream-Vera-Sans,sans,serif",
-  "Arial,Bitstream-Vera-Sans,sans,serif"
+  "sans",
+  "serif",
+  "monospace",
+  "sans,serif",
+  "sans,serif"
 };
 
 const char *envFamilyLookup[NPANGOLOOKUP] = {
