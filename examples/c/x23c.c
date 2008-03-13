@@ -1,8 +1,8 @@
 /* 
 
     Displays Greek letters and mathematically interesting Unicode ranges
-    Copyright (C) 2005 Alan Irwin 
-    Copyright (C) 2005 Andrew Ross 
+    Copyright (C) 2005,2008 Alan Irwin 
+    Copyright (C) 2005,2008 Andrew Ross 
 
 
     This file is part of PLplot.
@@ -259,7 +259,7 @@ main(int argc, const char *argv[])
 	plmtex("t", 1.5, 0.5, 0.5, title[page]);
     }
     for (page=11; page<16; page++) {
-       float dy = 0.030;
+       PLFLT dy = 0.030;
        int family_index, style_index, weight_index;
        const char*family[] = { 
 	  "sans-serif",
