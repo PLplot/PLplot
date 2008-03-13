@@ -258,7 +258,7 @@ main(int argc, const char *argv[])
 	/* Page title */
 	plmtex("t", 1.5, 0.5, 0.5, title[page]);
     }
-    for (page=11; page<15; page++) {
+    for (page=11; page<16; page++) {
        float dy = 0.030;
        int family_index, style_index, weight_index;
        const char*family[] = { 
@@ -293,14 +293,19 @@ main(int argc, const char *argv[])
        else if(page == 12) {
 	  plmtex("t", 1.5, 0.5, 0.5,
 		 "#<0x10>PLplot Example 23 - "
-		 "Set Font with ##<0x8nnnnnnn> construct");
+		 "Set Font with plsfont");
        }
        else if(page == 13) {
 	  plmtex("t", 1.5, 0.5, 0.5,
 		 "#<0x10>PLplot Example 23 - "
-		 "Set Font with ##<0xmn> constructs");
+		 "Set Font with ##<0x8nnnnnnn> construct");
        }
        else if(page == 14) {
+	  plmtex("t", 1.5, 0.5, 0.5,
+		 "#<0x10>PLplot Example 23 - "
+		 "Set Font with ##<0xmn> constructs");
+       }
+       else if(page == 15) {
 	  plmtex("t", 1.5, 0.5, 0.5,
 		 "#<0x10>PLplot Example 23 - "
 		 "Set Font with ##<FCI COMMAND STRING/> constructs");
@@ -320,8 +325,17 @@ main(int argc, const char *argv[])
 		    weight[weight_index]);
 	 }
 	 else if(page == 12) {
+	    plsfont(family_index, style_index, weight_index);
 	    sprintf(string, 
 		    "Page 13, %s, %s, %s:  "
+		    "The quick brown fox jumps over the lazy dog", 
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index]);
+	 }
+	 else if(page == 13) {
+	    sprintf(string, 
+		    "Page 14, %s, %s, %s:  "
 		    "#<0x%x>"
 		    "The quick brown fox jumps over the lazy dog", 
 		    family[family_index], 
@@ -329,9 +343,9 @@ main(int argc, const char *argv[])
 		    weight[weight_index],
 		    fci[i]);
 	 }
-	 else if(page == 13) {
+	 else if(page == 14) {
 	    sprintf(string, 
-		    "Page 14, %s, %s, %s:  "
+		    "Page 15, %s, %s, %s:  "
 		    "#<0x%1x0>#<0x%1x1>#<0x%1x2>"
 		    "The quick brown fox jumps over the lazy dog", 
 		    family[family_index], 
@@ -341,9 +355,9 @@ main(int argc, const char *argv[])
 		    style_index,
 		    weight_index);
 	 }
-	 else if(page == 14) {
+	 else if(page == 15) {
 	    sprintf(string, 
-		    "Page 15, %s, %s, %s:  "
+		    "Page 16, %s, %s, %s:  "
 		    "#<%s/>#<%s/>#<%s/>"
 		    "The quick brown fox jumps over the lazy dog", 
 		    family[family_index], 
