@@ -258,8 +258,8 @@ main(int argc, const char *argv[])
 	/* Page title */
 	plmtex("t", 1.5, 0.5, 0.5, title[page]);
     }
-    {
-       float dy = 0.025;
+    for (page=11; page<15; page++) {
+       float dy = 0.030;
        int family_index, style_index, weight_index;
        const char*family[] = { 
 	  "sans-serif",
@@ -277,24 +277,82 @@ main(int argc, const char *argv[])
 	  "medium",
 	  "bold",
        };
-       char string[100];
+       /* Must be big enough to contain the prefix strings, the font-changing
+	* commands, and the "The quick brown..." string. */
+       char string[200];
 
        pladv(0);
-       plmtex("t", 1.5, 0.5, 0.5, 
-	      "#<0x10>PLplot Example 23 - Set Font with plsfci");
        plvpor(0.02, 0.98, 0.02, 0.90);
        plwind(0.0, 1.0, 0.0, 1.0);
+       plsfci(0);
+       if(page == 11) {
+	  plmtex("t", 1.5, 0.5, 0.5,
+		 "#<0x10>PLplot Example 23 - "
+		 "Set Font with plsfci");
+       }
+       else if(page == 12) {
+	  plmtex("t", 1.5, 0.5, 0.5,
+		 "#<0x10>PLplot Example 23 - "
+		 "Set Font with ##<0x8nnnnnnn> construct");
+       }
+       else if(page == 13) {
+	  plmtex("t", 1.5, 0.5, 0.5,
+		 "#<0x10>PLplot Example 23 - "
+		 "Set Font with ##<0xmn> constructs");
+       }
+       else if(page == 14) {
+	  plmtex("t", 1.5, 0.5, 0.5,
+		 "#<0x10>PLplot Example 23 - "
+		 "Set Font with ##<FCI COMMAND STRING/> constructs");
+       }
        plschr(0., 0.75);
        for(i=0; i< FCI_COMBINATIONS; i++) {
 	 family_index = i % 5;
 	 style_index = (i/5) % 3;
 	 weight_index = ((i/5)/3) % 2;
-	 plsfci(fci[i]);
-	 sprintf(string, 
-		 "%s, %s, %s: The quick brown fox jumps over the lazy dog", 
-		 family[family_index], 
-		 style[style_index], 
-		 weight[weight_index]);
+	 if(page == 11) {
+	    plsfci(fci[i]);
+	    sprintf(string, 
+		    "Page 12, %s, %s, %s:  "
+		    "The quick brown fox jumps over the lazy dog", 
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index]);
+	 }
+	 else if(page == 12) {
+	    sprintf(string, 
+		    "Page 13, %s, %s, %s:  "
+		    "#<0x%x>"
+		    "The quick brown fox jumps over the lazy dog", 
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index],
+		    fci[i]);
+	 }
+	 else if(page == 13) {
+	    sprintf(string, 
+		    "Page 14, %s, %s, %s:  "
+		    "#<0x%1x0>#<0x%1x1>#<0x%1x2>"
+		    "The quick brown fox jumps over the lazy dog", 
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index],
+		    family_index,
+		    style_index,
+		    weight_index);
+	 }
+	 else if(page == 14) {
+	    sprintf(string, 
+		    "Page 15, %s, %s, %s:  "
+		    "#<%s/>#<%s/>#<%s/>"
+		    "The quick brown fox jumps over the lazy dog", 
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index],
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index]);
+	 }
          plptex (0., 1. - (i+0.5)*dy, 1., 0., 0., string);
        }
        
