@@ -321,6 +321,11 @@ public void gfnam(StringBuffer fnam) {
     plplotjavac.plgfnam(fnam);
 }
 
+public void gfont(int[] family, int[] style, int[] weight) {
+    if (set_stream() == -1) return;
+    plplotjavac.plgfont(family, style, weight);
+}
+
 public void glevel(int[] p_level) {
     if (set_stream() == -1) return;
     plplotjavac.plglevel(p_level);
@@ -687,6 +692,11 @@ public void sfci(long fci) {
 public void sfnam(String fnam) {
     if (set_stream() == -1) return;
     plplotjavac.plsfnam(fnam);
+}
+
+public void sfont(int family, int style, int weight) {
+    if (set_stream() == -1) return;
+    plplotjavac.plsfont(family, style, weight);
 }
 
 public void shades( double[][] a, double xmin, double xmax, double ymin,

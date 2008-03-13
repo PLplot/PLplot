@@ -167,6 +167,60 @@ class x23 {
 	0,
 	0,
     };
+
+/* 30 possible FCI values. */
+
+    static int FCI_COMBINATIONS = 30;
+
+    static long fci[] = {
+	0x80000000L,
+	0x80000001L,
+	0x80000002L,
+	0x80000003L,
+	0x80000004L,
+	0x80000010L,
+	0x80000011L,
+	0x80000012L,
+	0x80000013L,
+	0x80000014L,
+	0x80000020L,
+	0x80000021L,
+	0x80000022L,
+	0x80000023L,
+	0x80000024L,
+	0x80000100L,
+	0x80000101L,
+	0x80000102L,
+	0x80000103L,
+	0x80000104L,
+	0x80000110L,
+	0x80000111L,
+	0x80000112L,
+	0x80000113L,
+	0x80000114L,
+	0x80000120L,
+	0x80000121L,
+	0x80000122L,
+	0x80000123L,
+	0x80000124L,
+    };
+
+    static String family[] = { 
+	"sans-serif",
+	"serif",
+	"monospace",
+	"script",
+	"symbol",
+    };
+    static String style[] = {
+	"upright",
+	"italic",
+	"oblique",
+    };
+    static String weight[] = {
+	"medium",
+	"bold",
+    };
     
     public x23(String[] args)
     {
@@ -236,6 +290,98 @@ class x23 {
 	    pls.mtex("t", 1.5, 0.5, 0.5, title[page]);
 	}
 
+	// Demonstrate methods of getting the current fonts
+	long[] fci_old = new long[1];
+	int[] ifamily = new int[1];
+	int[] istyle = new int[1];
+	int[] iweight = new int[1];
+	pls.gfci(fci_old);
+	pls.gfont(ifamily, istyle, iweight);
+	System.out.println("For example 23 prior to page 12 the FCI is 0x"+Long.toHexString(fci_old[0]));
+	System.out.println("For example 23 prior to page 12 the family, style and weight are  "+family[ifamily[0]]+" "+ style[istyle[0]]+ " "+ weight[iweight[0]]);;
+
+	for (page=11; page<16; page++) {
+	    double dy = 0.030;
+	    int family_index, style_index, weight_index;
+	    // Must be big enough to contain the prefix strings, the 
+	    // font-changing commands, and the "The quick brown..." string.
+	    String string = "";
+	    
+	    pls.adv(0);
+	    pls.vpor(0.02, 0.98, 0.02, 0.90);
+	    pls.wind(0.0, 1.0, 0.0, 1.0);
+	    pls.sfci(0);
+	    if(page == 11) {
+		pls.mtex("t", 1.5, 0.5, 0.5,
+			 "#<0x10>PLplot Example 23 - "+
+			 "Set Font with plsfci");
+	    }
+	    else if(page == 12) {
+		pls.mtex("t", 1.5, 0.5, 0.5,
+			 "#<0x10>PLplot Example 23 - "+
+			 "Set Font with plsfont");
+	    }
+	    else if(page == 13) {
+		pls.mtex("t", 1.5, 0.5, 0.5,
+			 "#<0x10>PLplot Example 23 - "+
+			 "Set Font with ##<0x8nnnnnnn> construct");
+	    }
+	    else if(page == 14) {
+		pls.mtex("t", 1.5, 0.5, 0.5,
+			 "#<0x10>PLplot Example 23 - "+
+			 "Set Font with ##<0xmn> constructs");
+	    }
+	    else if(page == 15) {
+		pls.mtex("t", 1.5, 0.5, 0.5,
+			 "#<0x10>PLplot Example 23 - "+
+			 "Set Font with ##<FCI COMMAND STRING/> constructs");
+	    }
+	    pls.schr(0., 0.75);
+	    for(i=0; i< FCI_COMBINATIONS; i++) {
+		family_index = i % 5;
+		style_index = (i/5) % 3;
+		weight_index = ((i/5)/3) % 2;
+		if(page == 11) {
+		    pls.sfci(fci[i]);
+		    string = "Page 12, " + family[family_index] + ", " + 
+			style[style_index] + ", " + weight[weight_index] + 
+			":  The quick brown fox jumps over the lazy dog";
+
+		}
+		else if(page == 12) {
+		    pls.sfont(family_index, style_index, weight_index);
+		    string = "Page 13, " + family[family_index] + ", " + 
+			style[style_index] + ", " + weight[weight_index] + 
+			":  The quick brown fox jumps over the lazy dog";
+		}
+		else if(page == 13) {
+		    string = "Page 14, " + family[family_index] + ", " + 
+			style[style_index] + ", " + weight[weight_index] + 
+			":  #<0x" + Long.toHexString(fci[i]) + ">" + 
+			"The quick brown fox jumps over the lazy dog";
+		}
+		else if(page == 14) {
+		    string = "Page 15, " + family[family_index] + ", " + 
+			style[style_index]+", "+weight[weight_index]+":  "+
+			"#<0x" + Integer.toHexString(family_index) + "0>" + 
+			"#<0x" + Integer.toHexString(style_index) + "1>" + 
+			"#<0x" + Integer.toHexString(weight_index) + "2>" + 
+			"The quick brown fox jumps over the lazy dog";
+		}
+		else if(page == 15) {
+		    string = "Page 16, " + family[family_index] + ", " + 
+			style[style_index]+", "+weight[weight_index]+":  "+
+			"#<" + family[family_index] + "/>" + 
+			"#<" + style[style_index] + "/>" + 
+			"#<" + weight[weight_index] + "/>" + 
+			"The quick brown fox jumps over the lazy dog";
+		}
+		pls.ptex (0., 1. - (i+0.5)*dy, 1., 0., 0., string);
+	    }
+	    
+	    pls.schr(0., 1.0);
+	}
+	
 	// Restore defaults
 	pls.col0(1);
 

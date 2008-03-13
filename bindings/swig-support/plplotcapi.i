@@ -370,6 +370,10 @@ plgfci(PLUNICODE *OUTPUT);
 void
 plgfnam(char *OUTPUT);
 
+%feature("autodoc", "Get the current font family, style and weight.") plgfont;
+void
+plgfont(PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT);
+
 %feature("autodoc", "Get the (current) run level.") plglevel;
 void
 plglevel(PLINT *OUTPUT);
@@ -674,6 +678,10 @@ plsfci(PLUNICODE fci);
 %feature("autodoc", "Set the output file name.") plsfnam;
 void
 plsfnam(const char *fnam);
+
+%feature("autodoc", "Set the current font family, style and weight.") plsfont;
+void
+plsfont(PLINT family, PLINT style, PLINT weight);
 
 %feature("autodoc", "Shade regions with continuous range of colours.") plshades;
 void
