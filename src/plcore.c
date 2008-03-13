@@ -373,8 +373,6 @@ plP_fill(short *x, short *y, PLINT npts)
 #define DEBUG_TEXT
 */
 
-#define hex2dec( a ) isdigit(a) ? a - 48 : (toupper(a) - 65) + 10
-
 /*--------------------------------------------------------------------------*\
  *  int text2num( char *text, char end, PLUNICODE *num)
  *       char *text - pointer to the text to be parsed
