@@ -315,7 +315,11 @@ class PLDLLIMPEXP plstream {
 
     void gfnam( char *fnam );
 
-/* Get the (current) run level.  */
+// Get the current font family, style and weight
+
+    void gfont(PLINT& family, PLINT& style, PLINT& weight);
+
+// Get the (current) run level. 
 
     void glevel( PLINT &p_level );
 
@@ -648,6 +652,10 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 /* Set the output file name. */
 
     void sfnam( const char *fnam );
+
+// Set the current font family, style and weight
+
+    void sfont(PLINT family, PLINT style, PLINT weight);
 
 /* Shade region. */
 

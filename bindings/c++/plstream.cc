@@ -750,6 +750,15 @@ void plstream::gfnam( char *fnam )
     plgfnam(fnam);
 }
 
+// Get the current font family, style and weight
+
+void plstream::gfont( PLINT& family, PLINT& style, PLINT& weight )
+{
+    set_stream();
+
+    plgfont(&family, &style, &weight);
+}
+
 // Get current run level.
 
 void plstream::glevel(PLINT& level)
@@ -1535,6 +1544,15 @@ void plstream::sfnam( const char *fnam )
     set_stream();
 
     plsfnam(fnam);
+}
+
+// Set the current font family, style and weight
+
+void plstream::sfont( PLINT family, PLINT style, PLINT weight )
+{
+    set_stream();
+
+    plsfont(family, style, weight);
 }
 
 /* Shade region. */

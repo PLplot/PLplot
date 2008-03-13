@@ -4,8 +4,8 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2005  Alan Irwin 
-// Copyright (C) 2005  Andrew Ross 
+// Copyright (C) 2005,2008  Alan Irwin 
+// Copyright (C) 2005,2008  Andrew Ross 
 //
 // This file is part of PLplot.
 //
@@ -45,6 +45,7 @@ private:
     static int nxcells[];
     static int nycells[];
     static int offset[];
+    static PLUNICODE fci[];
 };
 
 /*
@@ -180,6 +181,42 @@ int x23::offset[] = {
 0,
 };
 
+/* 30 possible FCI values. */
+
+#define FCI_COMBINATIONS 30
+PLUNICODE x23::fci[] = {
+0x80000000,
+0x80000001,
+0x80000002,
+0x80000003,
+0x80000004,
+0x80000010,
+0x80000011,
+0x80000012,
+0x80000013,
+0x80000014,
+0x80000020,
+0x80000021,
+0x80000022,
+0x80000023,
+0x80000024,
+0x80000100,
+0x80000101,
+0x80000102,
+0x80000103,
+0x80000104,
+0x80000110,
+0x80000111,
+0x80000112,
+0x80000113,
+0x80000114,
+0x80000120,
+0x80000121,
+0x80000122,
+0x80000123,
+0x80000124,
+};
+
 x23::x23(int argc, const char *argv[])
 {
     PLFLT xmin, xmax, ymin, ymax, ycharacter_scale, yoffset;
@@ -242,6 +279,120 @@ x23::x23(int argc, const char *argv[])
 	pls->schr(0., 1.0);
 	/* Page title */
 	pls->mtex("t", 1.5, 0.5, 0.5, title[page]);
+    }
+    for (page=11; page<16; page++) {
+       PLFLT dy = 0.030;
+       int family_index, style_index, weight_index;
+       const char*family[] = { 
+	  "sans-serif",
+	  "serif",
+	  "monospace",
+	  "script",
+	  "symbol",
+       };
+       const char*style[] = {
+	  "upright",
+	  "italic",
+	  "oblique",
+       };
+       const char*weight[] = {
+	  "medium",
+	  "bold",
+       };
+       /* Must be big enough to contain the prefix strings, the font-changing
+	* commands, and the "The quick brown..." string. */
+       char string[200];
+
+       pls->adv(0);
+       pls->vpor(0.02, 0.98, 0.02, 0.90);
+       pls->wind(0.0, 1.0, 0.0, 1.0);
+       pls->sfci(0);
+       if(page == 11) {
+	  pls->mtex("t", 1.5, 0.5, 0.5,
+		 "#<0x10>PLplot Example 23 - "
+		 "Set Font with plsfci");
+       }
+       else if(page == 12) {
+	  pls->mtex("t", 1.5, 0.5, 0.5,
+		 "#<0x10>PLplot Example 23 - "
+		 "Set Font with plsfont");
+       }
+       else if(page == 13) {
+	  pls->mtex("t", 1.5, 0.5, 0.5,
+		 "#<0x10>PLplot Example 23 - "
+		 "Set Font with ##<0x8nnnnnnn> construct");
+       }
+       else if(page == 14) {
+	  pls->mtex("t", 1.5, 0.5, 0.5,
+		 "#<0x10>PLplot Example 23 - "
+		 "Set Font with ##<0xmn> constructs");
+       }
+       else if(page == 15) {
+	  pls->mtex("t", 1.5, 0.5, 0.5,
+		 "#<0x10>PLplot Example 23 - "
+		 "Set Font with ##<FCI COMMAND STRING/> constructs");
+       }
+       pls->schr(0., 0.75);
+       for(i=0; i< FCI_COMBINATIONS; i++) {
+	 family_index = i % 5;
+	 style_index = (i/5) % 3;
+	 weight_index = ((i/5)/3) % 2;
+	 if(page == 11) {
+	    pls->sfci(fci[i]);
+	    sprintf(string, 
+		    "Page 12, %s, %s, %s:  "
+		    "The quick brown fox jumps over the lazy dog", 
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index]);
+	 }
+	 else if(page == 12) {
+	    pls->sfont(family_index, style_index, weight_index);
+	    sprintf(string, 
+		    "Page 13, %s, %s, %s:  "
+		    "The quick brown fox jumps over the lazy dog", 
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index]);
+	 }
+	 else if(page == 13) {
+	    sprintf(string, 
+		    "Page 14, %s, %s, %s:  "
+		    "#<0x%x>"
+		    "The quick brown fox jumps over the lazy dog", 
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index],
+		    fci[i]);
+	 }
+	 else if(page == 14) {
+	    sprintf(string, 
+		    "Page 15, %s, %s, %s:  "
+		    "#<0x%1x0>#<0x%1x1>#<0x%1x2>"
+		    "The quick brown fox jumps over the lazy dog", 
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index],
+		    family_index,
+		    style_index,
+		    weight_index);
+	 }
+	 else if(page == 15) {
+	    sprintf(string, 
+		    "Page 16, %s, %s, %s:  "
+		    "#<%s/>#<%s/>#<%s/>"
+		    "The quick brown fox jumps over the lazy dog", 
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index],
+		    family[family_index], 
+		    style[style_index], 
+		    weight[weight_index]);
+	 }
+         pls->ptex (0., 1. - (i+0.5)*dy, 1., 0., 0., string);
+       }
+       
+       pls->schr(0., 1.0);
     }
 
     /* Restore defaults */
