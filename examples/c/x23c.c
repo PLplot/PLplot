@@ -258,6 +258,15 @@ main(int argc, const char *argv[])
 	/* Page title */
 	plmtex("t", 1.5, 0.5, 0.5, title[page]);
     }
+
+    /* Demonstrate methods of getting the current fonts */
+    PLUNICODE fci_old;
+    PLINT family_old, style_old, weight_old;
+    plgfci(&fci_old);
+    plgfont(&family_old, &style_old, &weight_old);
+    printf("The current FCI is 0x%x\n",fci_old);
+    printf("The current family, style and weight are  %d %d %d\n",family_old, style_old, weight_old);
+
     for (page=11; page<16; page++) {
        PLFLT dy = 0.030;
        int family_index, style_index, weight_index;
