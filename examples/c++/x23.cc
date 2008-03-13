@@ -290,8 +290,8 @@ x23::x23(int argc, const char *argv[])
     PLINT family_old, style_old, weight_old;
     pls->gfci(fci_old);
     pls->gfont(family_old, style_old, weight_old);
-    cout << "The current FCI is 0x" << hex << fci_old << endl;
-    cout << "The current family, style and weight are  " << family_old << " " << style_old << " " << weight_old << endl;
+    cout << "For example 23 prior to page 12 the FCI is 0x" << hex << fci_old << endl;
+    cout << "For example 23 prior to page 12 the family, style and weight are  " << family_old << " " << style_old << " " << weight_old << endl;
 
     for (page=11; page<16; page++) {
        PLFLT dy = 0.030;
