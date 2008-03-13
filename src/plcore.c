@@ -383,29 +383,27 @@ plP_fill(short *x, short *y, PLINT npts)
  *
  *    Function takes a string, which can be either hex or decimal,
  *    and converts it into an PLUNICODE, stopping at either a null,
- *    or the character pointed to by 'end'. It is a bit brain-dead,
- *    and probably should make more checks, but it works.
+ *    or the character pointed to by 'end'. This implementation using
+ *    the C library strtol replaces the original brain-dead version
+ *    and should be more robust to invalid control strings.
 \*--------------------------------------------------------------------------*/
 
 int text2num( const char *text, char end, PLUNICODE *num)
 {
-  int base=10;
-  unsigned short i=0;
-  *num=0;
 
-  if (text[1]=='x')
-    {
-      base=16;
-      i=2;
-    }
+  char *endptr;
+  char *endptr2;
+  char msgbuf[80];
 
-  while ((text[i]!=end)&&(text[i]!=0))
-    {
-      *num*=base;
-      *num+=hex2dec(text[i]);
-      i++;
-    }
-  return(i);
+  *num = strtol(text,&endptr,0); 
+
+  if (end != endptr[0]) {
+    sprintf(msgbuf,"text2num: invalid control string detected - %c expected",end);
+    plwarn(msgbuf);
+  }
+
+  return (int)(endptr - text);
+
 }
 
 /*--------------------------------------------------------------------------*\
