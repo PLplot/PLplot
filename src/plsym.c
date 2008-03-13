@@ -1685,7 +1685,7 @@ c_plsfont(PLINT family, PLINT style, PLINT weight)
 
   if (style >= 0) {
     /* Bounds checking assumes oblique is last style */
-    if (family > PL_FCI_OBLIQUE) 
+    if (style > PL_FCI_OBLIQUE) 
       plwarn("plsfont: Value for style is out of range");
     else
     plP_hex2fci((unsigned char)style,PL_FCI_STYLE,&fci);
@@ -1693,7 +1693,7 @@ c_plsfont(PLINT family, PLINT style, PLINT weight)
 
   if (weight >= 0) {
     /* Bounds checking assumes bold is last weight */
-    if (family > PL_FCI_BOLD) 
+    if (weight > PL_FCI_BOLD) 
       plwarn("plsfont: Value for weight is out of range");
     else
     plP_hex2fci((unsigned char)weight,PL_FCI_WEIGHT,&fci);
