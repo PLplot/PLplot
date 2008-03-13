@@ -2067,7 +2067,7 @@ plcmap1_def(void)
 	    <literal>#&lt;0xmn&gt;</literal>: change just one attribute
 	    of the FCI in mid-string where m is the hexdigit and n is
 	    the hexpower.  If more than two digits are given (so long
-	    as the eigth digit does not mark this as an absolute FCI, see
+	    as the eighth digit does not mark this as an absolute FCI, see
 	    above) they
 	    are ignored. (UNICODE ONLY).
 	  </para>
