@@ -196,6 +196,23 @@ static PLUNICODE fci[] = {
 0x80000124,
 };
 
+static const char*family[] = { 
+  "sans-serif",
+  "serif",
+  "monospace",
+  "script",
+  "symbol",
+};
+static const char*style[] = {
+  "upright",
+  "italic",
+  "oblique",
+};
+static const char*weight[] = {
+  "medium",
+  "bold",
+};
+
 int
 main(int argc, const char *argv[])
 {
@@ -261,31 +278,16 @@ main(int argc, const char *argv[])
 
     /* Demonstrate methods of getting the current fonts */
     PLUNICODE fci_old;
-    PLINT family_old, style_old, weight_old;
+    PLINT ifamily, istyle, iweight;
+
     plgfci(&fci_old);
-    plgfont(&family_old, &style_old, &weight_old);
+    plgfont(&ifamily, &istyle, &iweight);
     printf("For example 23 prior to page 12 the FCI is 0x%x\n",fci_old);
-    printf("For example 23 prior to page 12 the font family, style and weight are  %d %d %d\n",family_old, style_old, weight_old);
+    printf("For example 23 prior to page 12 the font family, style and weight are  %d %d %d\n",ifamily, istyle, iweight);
 
     for (page=11; page<16; page++) {
        PLFLT dy = 0.030;
        int family_index, style_index, weight_index;
-       const char*family[] = { 
-	  "sans-serif",
-	  "serif",
-	  "monospace",
-	  "script",
-	  "symbol",
-       };
-       const char*style[] = {
-	  "upright",
-	  "italic",
-	  "oblique",
-       };
-       const char*weight[] = {
-	  "medium",
-	  "bold",
-       };
        /* Must be big enough to contain the prefix strings, the font-changing
 	* commands, and the "The quick brown..." string. */
        char string[200];

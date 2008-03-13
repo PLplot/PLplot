@@ -50,6 +50,9 @@ private:
     static int nycells[];
     static int offset[];
     static PLUNICODE fci[];
+    static const char *family[];
+    static const char *style[];
+    static const char *weight[];
 };
 
 /*
@@ -221,6 +224,23 @@ PLUNICODE x23::fci[] = {
 0x80000124,
 };
 
+const char* x23::family[] = { 
+  "sans-serif",
+  "serif",
+  "monospace",
+  "script",
+  "symbol",
+};
+const char* x23::style[] = {
+  "upright",
+  "italic",
+  "oblique",
+};
+const char* x23::weight[] = {
+  "medium",
+  "bold",
+};
+
 x23::x23(int argc, const char *argv[])
 {
     PLFLT xmin, xmax, ymin, ymax, ycharacter_scale, yoffset;
@@ -287,31 +307,16 @@ x23::x23(int argc, const char *argv[])
 
     /* Demonstrate methods of getting the current fonts */
     PLUNICODE fci_old;
-    PLINT family_old, style_old, weight_old;
+    PLINT ifamily, istyle, iweight;
+
     pls->gfci(fci_old);
-    pls->gfont(family_old, style_old, weight_old);
+    pls->gfont(ifamily, istyle, iweight);
     cout << "For example 23 prior to page 12 the FCI is 0x" << hex << fci_old << endl;
-    cout << "For example 23 prior to page 12 the family, style and weight are  " << family_old << " " << style_old << " " << weight_old << endl;
+    cout << "For example 23 prior to page 12 the family, style and weight are  " << ifamily << " " << istyle << " " << iweight << endl;
 
     for (page=11; page<16; page++) {
        PLFLT dy = 0.030;
        int family_index, style_index, weight_index;
-       const char*family[] = { 
-	  "sans-serif",
-	  "serif",
-	  "monospace",
-	  "script",
-	  "symbol",
-       };
-       const char*style[] = {
-	  "upright",
-	  "italic",
-	  "oblique",
-       };
-       const char*weight[] = {
-	  "medium",
-	  "bold",
-       };
        /* Must be big enough to contain the prefix strings, the font-changing
 	* commands, and the "The quick brown..." string. */
        char string[200];
