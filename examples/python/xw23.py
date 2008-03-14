@@ -132,6 +132,58 @@ offset = (
 0,
 )
 
+# 30 possible FCI values.
+
+fci = (
+0x80000000,
+0x80000001,
+0x80000002,
+0x80000003,
+0x80000004,
+0x80000010,
+0x80000011,
+0x80000012,
+0x80000013,
+0x80000014,
+0x80000020,
+0x80000021,
+0x80000022,
+0x80000023,
+0x80000024,
+0x80000100,
+0x80000101,
+0x80000102,
+0x80000103,
+0x80000104,
+0x80000110,
+0x80000111,
+0x80000112,
+0x80000113,
+0x80000114,
+0x80000120,
+0x80000121,
+0x80000122,
+0x80000123,
+0x80000124,
+)
+
+family = (
+"sans-serif",
+"serif",
+"monospace",
+"script",
+"symbol",
+)
+style = (
+"upright",
+"italic",
+  "oblique",
+)
+weight = (
+"medium",
+"bold",
+)
+
 def main():
     
     for page in range(11):
@@ -175,6 +227,55 @@ def main():
 	plschr(0., 1.0)
 	# Page title
 	plmtex("t", 1.5, 0.5, 0.5, title[page])
+
+    # Demonstrate methods of getting the current fonts
+    
+    fci_old = plgfci()
+    font = plgfont()
+    ifamily = font[0]
+    istyle = font[1]
+    iweight = font[2]
+    print "For example 23 prior to page 12 the FCI is",hex(fci_old)
+    print "For example 23 prior to page 12 the font family, style and weight are ",family[ifamily],style[istyle],weight[iweight]
+
+    FCI_COMBINATIONS = 30
+    dy = 0.030
+    for page in range(11,16):
+        pladv(0)
+        plvpor(0.02, 0.98, 0.02, 0.90)
+        plwind(0.0, 1.0, 0.0, 1.0)
+        plsfci(0)
+        if(page == 11):
+            plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with plsfci")
+        elif(page == 12):
+            plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with plsfont")
+        elif(page == 13):
+            plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0x8nnnnnnn> construct")       
+        elif(page == 14):
+            plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0xmn> constructs")
+        elif(page == 15):
+	  plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<FCI COMMAND STRING/> constructs")
+        plschr(0., 0.75)
+        for i in range(0,FCI_COMBINATIONS):
+            family_index = i % 5
+            style_index = (i/5) % 3
+            weight_index = ((i/5)/3) % 2
+            if(page == 11):
+                plsfci(fci[i])
+                string = "Page 12, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  "+"The quick brown fox jumps over the lazy dog"
+            elif(page == 12):
+                plsfont(family_index, style_index, weight_index)
+                string = "Page 13, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  "+"The quick brown fox jumps over the lazy dog"
+            elif(page == 13):
+                string = "Page 14, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  #<"+hex(fci[i])+">"+"The quick brown fox jumps over the lazy dog"
+            elif(page == 14):
+                string = "Page 15, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  #<"+hex(family_index)+"0>"+"#<"+hex(style_index)+"1>"+"#<"+hex(weight_index)+"2>"+"The quick brown fox jumps over the lazy dog"
+            elif(page == 15):
+                string = "Page 16, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  #<"+family[family_index]+"/>#<"+style[style_index]+"/>#<"+weight[weight_index]+"/>"+"The quick brown fox jumps over the lazy dog"
+            plptex (0., 1. - (i+0.5)*dy, 1., 0., 0., string)
+       
+        plschr(0., 1.0)
+
 
     # Restore defaults
     plcol0(1)
