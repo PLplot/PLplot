@@ -283,7 +283,7 @@ main(int argc, const char *argv[])
     plgfci(&fci_old);
     plgfont(&ifamily, &istyle, &iweight);
     printf("For example 23 prior to page 12 the FCI is 0x%x\n",fci_old);
-    printf("For example 23 prior to page 12 the font family, style and weight are  %d %d %d\n",ifamily, istyle, iweight);
+    printf("For example 23 prior to page 12 the font family, style and weight are  %s %s %s\n",family[ifamily], style[istyle], weight[iweight]);
 
     for (page=11; page<16; page++) {
        PLFLT dy = 0.030;
