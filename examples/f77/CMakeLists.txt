@@ -41,6 +41,7 @@ set(f77_STRING_INDICES
 "17"
 "18"
 "19"
+"20"
 "22"
 "23"
 "28"
@@ -57,7 +58,7 @@ if(PL_DOUBLE)
   foreach(STRING_INDEX ${f77_STRING_INDICES})
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}f.f
-      COMMAND ${CMAKE_COMMAND} 
+      COMMAND ${CMAKE_COMMAND}
       -E copy ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}f.fm4 ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}f.f
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}f.fm4
     )
@@ -86,7 +87,7 @@ endforeach(STRING_INDEX ${f77_STRING_INDICES})
 
 add_custom_target(f77_examples ALL DEPENDS ${f77_SRCS})
 
-install(FILES ${f77_SRCS} 
+install(FILES ${f77_SRCS}
 DESTINATION ${DATA_DIR}/examples/f77
 )
 
@@ -96,7 +97,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
 ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 )
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/f77
 RENAME Makefile
 )
