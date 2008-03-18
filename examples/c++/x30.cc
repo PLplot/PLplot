@@ -1,4 +1,4 @@
-/* $Id:$
+/* $Id$
 
   Alpha color values demonstration.
 
@@ -182,7 +182,7 @@ x30::x30(int argc, const char *argv[])
 
   /* Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate ranges */
   /* such that it fills the entire plotting area. */
-  pls->shades(z, 2, 2, NULL, 0.0, 1.0, 0.0, 1.0, clevel, 101, 0, -1, 2, plfill, 1, NULL, NULL);
+  pls->shades(z, 2, 2, NULL, 0.0, 1.0, 0.0, 1.0, clevel, 101, 0, -1, 2, plfill, true, NULL, NULL);
 
   delete pls;
 }
