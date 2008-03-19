@@ -96,6 +96,7 @@ typedef struct {
 #if defined(PLD_memcairo)
   unsigned char *memory;
   unsigned char *cairo_format_memory;
+  char bigendian
 #endif
 } PLCairo;
 
@@ -1522,6 +1523,13 @@ void plD_init_memcairo(PLStream *pls)
   unsigned char *cairo_mem;
   unsigned char *input_mem;
 
+  // used for checking byte order
+  union {
+    int testWord;
+    char testByte[sizeof(int)];
+  } endianTest;
+  endianTest.testWord = 1;
+    
   // Set the plot size to the memory buffer size, on the off chance
   // that they are different.
   pls->xlength = pls->phyxma;
@@ -1529,6 +1537,10 @@ void plD_init_memcairo(PLStream *pls)
   
   // Setup the PLStream and the font lookup table
   aStream = stream_and_font_setup(pls, 0);
+
+  // Test byte order
+  if (endianTest.testByte[0] == 1) aStream->bigendian = 0;
+  else                             aStream->bigendian = 1;
 
   // Check that user supplied us with some memory to draw in
   if(pls->dev == NULL){
@@ -1546,17 +1558,31 @@ void plD_init_memcairo(PLStream *pls)
   //   Red, Green, and Blue are stored in the remaining 24 bits in that order
   stride = pls->xlength * 4;
   // stride = cairo_format_stride_for_width (CAIRO_FORMAT_RGB24, pls->xlength); // This function missing from version 1.4 :-(
-  aStream->cairo_format_memory = (unsigned char *)malloc (stride * pls->ylength);
+  aStream->cairo_format_memory = (unsigned char *)calloc (stride * pls->ylength, 1);
 
   // Copy the input data into the Cairo data format
   cairo_mem = aStream->cairo_format_memory;
   input_mem = aStream->memory;
-  for(i = 0;i < (pls->xlength * pls->ylength); i++){
-    cairo_mem[1] = input_mem[0];
-    cairo_mem[2] = input_mem[1];
-    cairo_mem[3] = input_mem[2];
-    input_mem += 3;
-    cairo_mem += 4;
+
+  // 32 bit word order
+  // cairo mem:  Big endian:  0=A, 1=R, 2=G, 3=B
+  //          Little endian:  3=A, 2=R, 1=G, 0=B
+  if (aStream->bigendian) {
+    for(i = 0;i < (pls->xlength * pls->ylength); i++){
+      cairo_mem[1] = input_mem[0]; // R
+      cairo_mem[2] = input_mem[1]; // G
+      cairo_mem[3] = input_mem[2]; // B
+      input_mem += 3;
+      cairo_mem += 4;
+    }
+  } else {
+    for(i = 0;i < (pls->xlength * pls->ylength); i++){
+      cairo_mem[2] = input_mem[0]; // R
+      cairo_mem[1] = input_mem[1]; // G
+      cairo_mem[0] = input_mem[2]; // B
+      input_mem += 3;
+      cairo_mem += 4;
+    }
   }
 
   // Create a Cairo drawing surface from the input data
@@ -1592,13 +1618,25 @@ void plD_eop_memcairo(PLStream *pls)
   aStream = (PLCairo *)pls->dev;
   memory = aStream->memory;
   cairo_surface_data = cairo_image_surface_get_data(aStream->cairoSurface);
-
-  for(i = 0;i < (pls->xlength * pls->ylength); i++){
-    memory[0] = cairo_surface_data[1];
-    memory[1] = cairo_surface_data[2];
-    memory[2] = cairo_surface_data[3];
-    memory += 3;
-    cairo_surface_data += 4;
+  // 32 bit word order
+  // cairo mem:  Big endian:  0=A, 1=R, 2=G, 3=B
+  //          Little endian:  3=A, 2=R, 1=G, 0=B
+  if (aStream->bigendian) {
+    for(i = 0;i < (pls->xlength * pls->ylength); i++){
+      memory[0] = cairo_surface_data[1]; // R
+      memory[1] = cairo_surface_data[2]; // G
+      memory[2] = cairo_surface_data[3]; // B
+      memory += 3;
+      cairo_surface_data += 4;
+    }
+  } else {
+    for(i = 0;i < (pls->xlength * pls->ylength); i++){
+      memory[0] = cairo_surface_data[2]; // R
+      memory[1] = cairo_surface_data[1]; // G
+      memory[2] = cairo_surface_data[0]; // B
+      memory += 3;
+      cairo_surface_data += 4;
+    }
   }
 
   // Free up the temporary memory malloc'ed in plD_init_memcairo
