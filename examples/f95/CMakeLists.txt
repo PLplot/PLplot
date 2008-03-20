@@ -70,8 +70,13 @@ endif(BUILD_TEST)
 foreach(STRING_INDEX ${f95_STRING_INDICES})
   set(f95_SRCS ${f95_SRCS} x${STRING_INDEX}f.f90)
   if(BUILD_TEST)
-    add_executable(x${STRING_INDEX}f x${STRING_INDEX}f.f90)
-    target_link_libraries(x${STRING_INDEX}f plplotf95${LIB_TAG})
+    # Need unique target name
+    add_executable(x${STRING_INDEX}f95 x${STRING_INDEX}f.f90)
+    set_target_properties(
+    x${STRING_INDEX}f95 PROPERTIES
+    OUTPUT_NAME x${STRING_INDEX}f
+    )
+    target_link_libraries(x${STRING_INDEX}f95 plplotf95${LIB_TAG})
   endif(BUILD_TEST)
 endforeach(STRING_INDEX ${f95_STRING_INDICES})
 
