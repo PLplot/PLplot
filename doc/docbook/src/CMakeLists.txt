@@ -150,15 +150,12 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt ${CMAKE_BINARY_DIR}/src/libplplot${LIB_TAG}.so ${CMAKE_SOURCE_DIR}/include/plplot.h 3
     DEPENDS ${CMAKE_SOURCE_DIR}/include/plplot.h
     )
-    add_custom_target(
-    docbook_plplot-symbols_txt
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
-    )
     # For parallel builds to work must have all file dependency chains of
     # targets independent of each other.  Thus, since several targets
-    # need plplot-symbols.txt, must use target dependencies rather than
-    # file dependencies to build this file.
+    # need plplot-symbols.txt, must create the target 
+    # docbook_plplot-symbols_txt and have the targets depend on that target
+    # rather than have each target file depend directly on 
+    # ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt.
     add_custom_target(
     docbook_plplot-symbols_txt
     DEPENDS
