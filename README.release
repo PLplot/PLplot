@@ -21,6 +21,7 @@ INDEX
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
 1.1 Improvements to the cairo driver family.
+1.2 Rename test subdirectory to plplot_test
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 2.1 Improvements to the cairo driver family.
@@ -34,6 +35,7 @@ INDEX
 examples
 2.9 WxWidgets driver improvements
 2.10 External libLASi library improvements affecting our psttf device.
+2.11 Rename test subdirectory to plplot_test
 
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
@@ -46,6 +48,10 @@ separation of graphing (PLplot) and window management (Gtk, etc..). Doug
 Hunt fixed the bugs that broke the memcairo driver and it is now fully
 functional.
 
+1.2 Rename test subdirectory to plplot_test
+
+This change was necessary to quit clashing with the "make test" target which
+now works for the first time ever (by executing ctest).
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -146,3 +152,8 @@ using this latest version of libLASi for building PLplot and the psttf
 device since this version of libLASi is more robust against glyph
 information returned by pango/cairo/fontconfig that on rare occasions is not
 suitable for use by libLASi.
+
+2.11 Rename test subdirectory to plplot_test
+
+This change was necessary to quit clashing with the "make test" target which
+now works for the first time ever (by executing ctest).
