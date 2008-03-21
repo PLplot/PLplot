@@ -41,8 +41,8 @@ else (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
   FIND_LIBRARY(AGG_LIBRARIES NAMES ${AGGLIB_NAMES}
     PATHS
     ${_AGGLinkDir}
-    /usr/lib
     /usr/local/lib
+    /usr/lib
   )
   
   if (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
