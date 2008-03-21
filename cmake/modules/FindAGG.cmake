@@ -27,8 +27,8 @@ else (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
   
   FIND_PATH(AGG_INCLUDE_DIR agg2/agg_pixfmt_gray.h
     ${_AGGIncDir}
-    /usr/include
     /usr/local/include
+    /usr/include
   )
   
   # Prefer _pic variant of library name for shared libraries case, and
