@@ -26,6 +26,8 @@ set(ada_STRING_INDICES
 "05"
 "06"
 "07"
+"08"
+"09"
 "10"
 "12"
 "thick01"
@@ -35,6 +37,8 @@ set(ada_STRING_INDICES
 "thick05"
 "thick06"
 "thick07"
+"thick08"
+"thick09"
 "thick10"
 "thick12"
 )
