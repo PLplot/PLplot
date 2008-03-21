@@ -107,5 +107,5 @@ package body PLplot_Auxiliary is
         end loop;
         return Result;
     end Matrix_Max;
-    
+
 end PLplot_Auxiliary;

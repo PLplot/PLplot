@@ -39,6 +39,14 @@ use
 
 package PLplot_Traditional is
 
+    -- "Rename" some types mainly used for contour plots and the like so that 
+    -- user programs can see them without with-ing PLplot_thin. It might be 
+    -- good to remove "use PLplot_Thin" for clarity since it is used in only
+    -- a few places.
+    subtype PLPointer                  is PLplot_Thin.PLpointer;
+    subtype Transformation_Data_Type   is Plplot_Thin.Transformation_Data_Type;
+    subtype Transformation_Data_Type_2 is Plplot_Thin.Transformation_Data_Type_2;
+
 --------------------------------------------------------------------------------
 --        Types and constants for thick binding                               --
 --------------------------------------------------------------------------------
@@ -646,13 +654,16 @@ package PLplot_Traditional is
 
     -- Draws a contour plot from data in f(nx,ny). Is just a front-end to plfcont,
     -- with a particular choice for f2eval and f2eval_data.
+
+
+    --  plcont
     procedure plcont
        (z                                : Real_Matrix;
         x_Min_Index, x_Max_Index         : Integer;
         y_Min_Index, y_Max_Index         : Integer;
         Contour_Levels                   : Real_Vector;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data              : Transformation_Data_Type);
+        Transformation_Data_Pointer      : PLpointer);
 
 
     -- The procedure plfcont is not documented and is not part of the API. 
@@ -1473,14 +1484,24 @@ package PLplot_Traditional is
 
 	-- Transformation routines
 
-    -- These wrappers are necessary because Ada pointers don't like to point to 
-    -- subroutines having non-Ada conventions (I suppose).
+    -- fix this These functions are redundant with those in plplot_thin.
+    -- This might be OK since they are now available at all levels of binding. 
+    -- I wonder if this is approaching "wrapper bloat" since these procedures 
+    -- get called a lot of times during the making of a contour plot. 
+    -- The way to eliminate one level of calling would be to move the bodies 
+    -- of pltrx from plplot_thin.adb into plplot_traditional.adb and 
+    -- plplot.adb, then optionally eliminating the bodies from plplot_thin.adb 
+    -- on the idea that nobody is going to use them anyway. But even if the 
+    -- bodies were left in plplot_thin.adb, having them here would still 
+    -- remove the extra call level. The argument for the currend arrangement is 
+    -- easier code maintainence.
 
     -- Identity transformation.
     procedure pltr0
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
         Data             : PLpointer);
+    pragma Convention(Convention => C, Entity => pltr0);
         
 
     -- Does linear interpolation from singly dimensioned coord arrays.
@@ -1488,6 +1509,7 @@ package PLplot_Traditional is
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
         Data_Pointer     : PLpointer);
+    pragma Convention(Convention => C, Entity => pltr1);
         
 
     -- Does linear interpolation from doubly dimensioned coord arrays
@@ -1496,6 +1518,7 @@ package PLplot_Traditional is
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
         Data_Pointer     : PLpointer);
+    pragma Convention(Convention => C, Entity => pltr2);
         
         
 

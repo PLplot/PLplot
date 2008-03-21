@@ -554,10 +554,6 @@ package body PLplot_Traditional is
 
 --------- Simple Contour Plotter ------
 
-    -- Place-holder for the transformation data which is not used here.
-    Transformation_Data : aliased Transformation_Data_Type 
-        (x_Length_Minus_1 => 2, y_Length_Minus_1 => 2, z_Length_Minus_1 => 2);
-
     procedure Simple_Contour
        (z             : Real_Matrix;
         Number_Levels : Integer := 10;
@@ -566,23 +562,8 @@ package body PLplot_Traditional is
         Title_Label   : String  := To_String(Default_Label_String)) is
        
         Contour_Levels : Real_Vector (0 .. Number_Levels);
-        Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
 
     begin
-        -- Fill up the dummy transformation data with something so we don't get warnings.
-        for i in Transformation_Data.xg'range loop -- use shorthand for .all on pointer
-            Transformation_Data.xg(i) := 0.0;
-        end loop;
-        for i in Transformation_Data.yg'range loop
-            Transformation_Data.yg(i) := 0.0;
-        end loop;
-        for i in Transformation_Data.zg'range loop
-            Transformation_Data.zg(i) := 0.0;
-        end loop;
-
-        -- Point to the do-nothing transformation procedure.
-        Transformation_Procedure_Pointer := PLplot_Thin.pltr0'access;
-
         -- Fill the contour vector with some levels.
         Calculate_Contour_Levels(Contour_Levels, Matrix_Min(z), Matrix_Max(z));
         
@@ -596,7 +577,7 @@ package body PLplot_Traditional is
         plcol0(White);
         pl_setcontlabelparam(0.008, 0.6, 0.1, True);
         plcont(z, z'First(1), z'Last(1), z'First(2), z'Last(2), 
-            Contour_Levels, Transformation_Procedure_Pointer, Transformation_Data);          
+            Contour_Levels, PLplot_Thin.pltr0'access, System.Null_Address);          
     end Simple_Contour;
 
 
@@ -1242,41 +1223,19 @@ package body PLplot_Traditional is
     -- Draws a contour plot from data in f(nx,ny). Is just a front-end to
     -- plfcont, with a particular choice for f2eval and f2eval_data.
 
--- fix this
----------- Ada binding note of December 7, 2006 (JB) ------------
---  This is mostly "fixed," but calls to pltr1 (and presumably pltr2) fail.
---  The subroutine pltr1 (in file plcont.c) seems to be locked in to the 
---  zero-based C array indexing style. For example, this line checks for array 
---  bounds and exits if they are not zero-based:
---    if (x < 0 || x > nx - 1 || y < 0 || y > ny - 1) {
---  	plexit("pltr1: Invalid coordinates");
---  Setting the Ada arrays in Transformation_Data_Type to begin indexing at 0 
---  prevents the above abort to happen (but forces zero-based indexing in your
---  Ada arrays).
---  HOWEVER, this then causes the following error:
---    *** PLPLOT ERROR ***
---    plfcont: indices must satisfy  1 <= kx <= lx <= nx, aborting operation
---  For now, only calls to pltr0 (no mapping) do not cause problems.
-
-    --  plcont
+    -- plcont (universal version using System.Address to the transformation data)
     procedure plcont
        (z                                : Real_Matrix;
         x_Min_Index, x_Max_Index         : Integer;
         y_Min_Index, y_Max_Index         : Integer;
         Contour_Levels                   : Real_Vector;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data              : Transformation_Data_Type) is
-        
-        -- This is a good place to change from the convenient form of passing 
-        -- the transformation data (a record) to the form required by the PLplot 
-        -- API (a pointer).
-        Transformation_Data_Address : PLpointer;
+        Transformation_Data_Pointer      : PLpointer) is
     begin
-        Transformation_Data_Address := Transformation_Data'Address;
         PLplot_Thin.plcont(Matrix_To_Pointers(z), z'Length(1), z'Length(2), 
             x_Min_Index, x_Max_Index, y_Min_Index, y_Max_Index, Contour_Levels, 
             Contour_Levels'Length, Transformation_Procedure_Pointer, 
-            Transformation_Data_Address);
+            Transformation_Data_Pointer);
     end plcont;
 
 
@@ -1287,6 +1246,7 @@ package body PLplot_Traditional is
     -- data (pointed to by Irregular_Data_Pointer) as a (single) pointer to a 
     -- 2D C-style array. Thus, for examaple, it is not possible to pass the data  
     -- as triples.
+    -- For further conversion insight, see plcont, above.
     
     -- Draws a contour plot using the function evaluator f2eval and data stored
     -- by way of the f2eval_data pointer. This allows arbitrary organizations
@@ -2770,8 +2730,17 @@ package body PLplot_Traditional is
 
 	-- Transformation routines
 
-    -- These wrappers are necessary because Ada pointers don't like to point to 
-    -- subroutines having non-Ada conventions (I suppose).
+    -- fix this These functions are redundant with those in plplot_thin.
+    -- This might be OK since they are now available at all levels of binding. 
+    -- I wonder if this is approaching "wrapper bloat" since these procedures 
+    -- get called a lot of times during the making of a contour plot. 
+    -- The way to eliminate one level of calling would be to move the bodies 
+    -- of pltr? from plplot_thin.adb into plplot_traditional.adb and 
+    -- plplot.adb, then optionally eliminating the bodies from plplot_thin.adb 
+    -- on the idea that nobody is going to use them anyway. But even if the 
+    -- bodies were left in plplot_thin.adb, having them here would still 
+    -- remove the extra call level. The argument for the currend arrangement is 
+    -- easier code maintainence.
 
     -- Identity transformation.
     procedure pltr0

@@ -69,7 +69,7 @@ package PLplot_Thin is
     -- Types to pass 2D arrays (matrix) defined in Ada.Numerics.Generic_Real_Arrays
     -- (and its instances) to C functions. Have only Long_Float capability for now.
     type Long_Float_Pointer is access all Long_Float;
-    type Long_Float_Pointer_Array is array (Integer range <>) of Long_Float_Pointer;
+    type Long_Float_Pointer_Array is array (Integer range <>) of aliased Long_Float_Pointer;
 
 
 --------------------------------------------------------------------------------
@@ -89,6 +89,7 @@ package PLplot_Thin is
     -- Access-to-procedure type for Draw_Vector_Plot and its kin.
     type Transformation_Procedure_Pointer_Type is access 
         procedure (x, y : PLFLT; tx, ty : out PLFLT; pltr_data : PLpointer);
+    pragma Convention (Convention => C, Entity => Transformation_Procedure_Pointer_Type);
         
 
     -- Access-to-function type for Shade_Regions (aka plshades).
@@ -328,29 +329,28 @@ package PLplot_Thin is
     -- This variant record emulates PLcGrid. Use it in plvect, plcont, plfcont, 
     -- plshade, c_plshade1, c_plshades, plfshade, plf2eval2, plf2eval, plf2evalr, 
     -- PLcGrid and Ada counterparts thereof.
-    type Transformation_Data_Type (x_Length_Minus_1, y_Length_Minus_1, z_Length_Minus_1 : Positive) is
+    type Transformation_Data_Type (x_Last, y_Last, z_Last : Natural) is
         record
-            xg : PL_Float_Array(0 .. x_Length_Minus_1); -- no way to index from anything but 1?
-            yg : PL_Float_Array(0 .. y_Length_Minus_1);
-            zg : PL_Float_Array(0 .. z_Length_Minus_1);
-            nx : Positive := x_Length_Minus_1 + 1;
-            ny : Positive := y_Length_Minus_1 + 1;
-            nz : Positive := z_Length_Minus_1 + 1;
+            xg : PL_Float_Array(0 .. x_Last);
+            yg : PL_Float_Array(0 .. y_Last);
+            zg : PL_Float_Array(0 .. z_Last);
+            nx : Natural := x_Last + 1;
+            ny : Natural := y_Last + 1;
+            nz : Natural := z_Last + 1;
         end record;
-
 
     -- PLcGrid2 is for passing (as arrays of pointers) 2d coordinate
     -- transformation arrays.  The grid dimensions are passed for possible bounds
     -- checking.
           
     -- This variant record emulates PLcGrid2.
-    type Transformation_Data_Type_2 (x_Length_Minus_1, y_Length_Minus_1 : Positive) is
+    type Transformation_Data_Type_2 (x_Last, y_Last : Natural) is
         record
-            xg : PL_Float_Array_2D(0 .. x_Length_Minus_1, 0 .. y_Length_Minus_1);
-            yg : PL_Float_Array_2D(0 .. x_Length_Minus_1, 0 .. y_Length_Minus_1);
-            zg : PL_Float_Array_2D(0 .. x_Length_Minus_1, 0 .. y_Length_Minus_1);
-            nx : Positive := x_Length_Minus_1 + 1;
-            ny : Positive := y_Length_Minus_1 + 1;
+            xg : PL_Float_Array_2D(0 .. x_Last, 0 .. y_Last);
+            yg : PL_Float_Array_2D(0 .. x_Last, 0 .. y_Last);
+            zg : PL_Float_Array_2D(0 .. x_Last, 0 .. y_Last);
+            nx : Natural := x_Last + 1;
+            ny : Natural := y_Last + 1;
         end record;
 
 
@@ -1570,23 +1570,35 @@ package PLplot_Thin is
 
 	-- Transformation routines
 
-    -- Identity transformation.
-    procedure
-    pltr0(x, y : PLFLT; tx, ty : out PLFLT; pltr_data : PLpointer);
-    pragma Import(Ada, pltr0, "pltr0"); -- fix this; why need "Ada" convention?
+    -- pltr0, pltr1, and pltr2 had to be re-written in Ada in order to make the 
+    -- callback work while also passing the data structure along, e.g. 
+    -- pltr_data in the formal names below. The machinery surround this ide also 
+    -- allows for easy user- defined plot transformation subprograms to be
+    -- written.
+
+    -- Identity transformation. Re-write of pltr0 in plcont.c in Ada.
+    procedure pltr0
+       (x, y      : PLFLT;
+        tx, ty    : out PLFLT;
+        pltr_data : PLplot_thin.PLpointer);
+    pragma Convention (Convention => C, Entity => pltr0);
 
 
-    -- Does linear interpolation from singly dimensioned coord arrays.
-    procedure
-    pltr1(x, y : PLFLT; tx, ty : out PLFLT; pltr_data : PLpointer);
-    pragma Import(Ada, pltr1, "pltr1"); -- fix this; why need "Ada" convention?
+    -- Re-write of pltr1 in Ada.
+    procedure pltr1
+       (x, y      : PLFLT;
+        tx, ty    : out PLFLT;
+        pltr_data : PLplot_thin.PLpointer);
+    pragma Convention (Convention => C, Entity => pltr1);
 
 
+    -- Re-write of pltr2 in Ada.
     -- Does linear interpolation from doubly dimensioned coord arrays
     -- (column dominant, as per normal C 2d arrays).
-    procedure
-    pltr2(x, y : PLFLT; tx, ty : out PLFLT; pltr_data : PLpointer);
-    pragma Import(C, pltr2, "pltr2");
-    
+    procedure pltr2
+       (x, y      : PLFLT;
+        tx, ty    : out PLFLT;
+        pltr_data : PLplot_thin.PLpointer);
+    pragma Convention (Convention => C, Entity => pltr2);
 
 end PLplot_Thin;
