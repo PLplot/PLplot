@@ -27,7 +27,7 @@
 # pushd $adadir; make; popd
 
 # Do the standard non-interactive examples.
-for index in 01 02 03 04 05 06 07 10 12 thick01 thick02 thick03 thick04 thick05 thick06 thick07 thick10 thick12; do
+for index in 01 02 03 04 05 06 07 08 09 10 12 thick01 thick02 thick03 thick04 thick05 thick06 thick07 thick08 thick09 thick10 thick12; do
   $adadir/x${index}a -dev $device -o ${OUTPUT_DIR}/x${index}a.$dsuffix $options 2> test.error
   status_code=$?
   cat test.error

@@ -1396,7 +1396,7 @@ package PLplot_Thin is
     plimage( data : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT;
          xmin : PLFLT; xmax : PLFLT; ymin : PLFLT; ymax : PLFLT; zmin : PLFLT; zmax : PLFLT;
          Dxmin : PLFLT; Dxmax : PLFLT; Dymin : PLFLT; Dymax : PLFLT);
-    pragma Import(C, plimage, "c_plimage");
+    pragma Import(C, plimage, "plimage");
 
     -- Set up a new line style 
 
