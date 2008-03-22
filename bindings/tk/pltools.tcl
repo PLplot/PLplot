@@ -258,7 +258,7 @@ proc max {args} {
 proc fileSelect {{filter {}}} {
 
     # Use the Iwidgets file selector if available
-    if ![catch {package require Iwidgets 3.0}] {
+    if ![catch {package require Iwidgets}] {
 	if {![winfo exist .fs]} {
 	    iwidgets::fileselectiondialog .fs -modality application
 	}
