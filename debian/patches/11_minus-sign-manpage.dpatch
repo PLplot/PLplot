@@ -1,0 +1,22 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 11_minus-sign-manpage.dpatch by Rafael Laboissiere <rafael@debian.org>
+##
+## DP: Escape "-" signs that mean the "minus" character
+
+@DPATCH@
+
+--- plplot-5.9.0.orig/doc/plserver.1
++++ plplot-5.9.0/doc/plserver.1
+@@ -14,10 +14,10 @@
+ is just a front-end to the pltkMain() function.  Structured along the
+ preferred lines for extended wish'es.  It typically runs as a child
+ process from the PLplot TK driver to render output.  Can use either TK
+-send or Tcl-DP RPC for communication, depending on how it is invoked.
++send or Tcl\-DP RPC for communication, depending on how it is invoked.
+ .PP
+ Note that plserver can be used the same way as wish or dpwish, as it
+-contains the functionality of each of these (except the -notk Tcl-DP
++contains the functionality of each of these (except the \-notk Tcl-DP
+ command-line option is not supported).  
+ .SH "SEE ALSO"
+ See /usr/share/doc/plplot/plplot.ps.gz for more details.
