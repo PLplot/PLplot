@@ -29,24 +29,30 @@ debex		:= $(debshr)/plplot$(version)/examples
 JAVA_HOME = /usr/lib/jvm/java-gcj
 
 PYVERS = $(shell pyversions -vr)
-# Disable java and ada build on arm - problems with java-gcj-compat-dev 
-# at the moment. Also gnat not available on arm.
+# Disable java and ada build on arm - problems with java-gcj-compat-dev
+# at the moment. Also gnat not available on arm and mipsel.
 ifeq ($(DEB_BUILD_ARCH),arm)
-CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
-	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
-	-DOCTAVE_OCT_DIR=$(OCTDIR) \
-	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_java=OFF \
-	-DENABLE_ada=OFF
-else
-CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
-	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
+ADA_OPTIONS = -DENABLE_ada=OFF
+JAVA_OPTIONS = -DENABLE_java=OFF
+else ifeq ($(DEB_BUILD_ARCH),mipsel)
+ADA_OPTIONS = -DENABLE_ada=OFF
+JAVA_OPTIONS = \
 	-DCMAKE_Java_RUNTIME=$(JAVA_HOME)/bin/java \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
-	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar \
+	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar
+else
+ADA_OPTIONS = -DENABLE_ada=ON
+JAVA_OPTIONS = \
+	-DCMAKE_Java_RUNTIME=$(JAVA_HOME)/bin/java \
+	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
+	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar
+endif
+
+CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
+	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
 	-DUSE_RPATH=OFF -DPLD_psttf=OFF \
-	-DENABLE_ada=ON
-endif
+	$(ADA_OPTIONS) $(JAVA_OPTIONS)
 
 BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
@@ -74,7 +80,7 @@ build-arch-stamp: patch config-stamp
 	touch build-arch-stamp
 
 build-indep: build-indep-stamp
-build-indep-stamp: patch 
+build-indep-stamp: patch
 	dh_testdir
 	( cd $(BUILD_DIR) ; cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DBUILD_DOC=ON ; \
 	cd doc ; $(MAKE)  )
