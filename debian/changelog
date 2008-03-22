@@ -6,6 +6,8 @@ plplot (5.9.0-2) UNRELEASED; urgency=low
     libplplot-ada package will be empty on this architecture.
 
   [ Rafael Laboissiere ]
+  * Rebuilt against new libffi-dev, such that the python-plplot package
+    will depend on the new libffi5 (closes: #472166)
   * debian/patches/11_minus-sign-manpage.dpatch: Escape "-" signs that
     mean the "minus" character in plserver man page
   * debian/plplot-doc.doc-base: Set section to Science/Mathematics
