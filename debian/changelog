@@ -8,6 +8,7 @@ plplot (5.9.0-2) UNRELEASED; urgency=low
   [ Rafael Laboissiere ]
   * debian/patches/11_minus-sign-manpage.dpatch: Escape "-" signs that
     mean the "minus" character in plserver man page
+  * debian/plplot-doc.doc-base: Set section to Science/Mathematics
 
  -- Rafael Laboissiere <rafael@debian.org>  Sun, 16 Mar 2008 23:37:46 +0100
 
