@@ -140,24 +140,20 @@ else(ENABLE_DYNDRIVERS)
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${DRIVERS_RPATH})
 endif(ENABLE_DYNDRIVERS)
 
-# Transform "${libplplot${LIB_TAG}_LINK_LIBRARIES}" string to the 
-# standard pkg-config form.
-pkg_config_link_flags(
-libplplot${LIB_TAG}_LINK_FLAGS
-"${libplplot${LIB_TAG}_LINK_LIBRARIES}"
-)
-
 if(MATH_LIB)
   set(
   libplplot${LIB_TAG}_LINK_LIBRARIES
   ${libplplot${LIB_TAG}_LINK_LIBRARIES}
   ${MATH_LIB}
   )
-  set(
-  libplplot${LIB_TAG}_LINK_FLAGS
-  "${libplplot${LIB_TAG}_LINK_FLAGS} -l${MATH_LIB}"
-  )
 endif(MATH_LIB)
+
+# Transform "${libplplot${LIB_TAG}_LINK_LIBRARIES}" string to the 
+# standard pkg-config form.
+pkg_config_link_flags(
+libplplot${LIB_TAG}_LINK_FLAGS
+"${libplplot${LIB_TAG}_LINK_LIBRARIES}"
+)
 
 if(WITH_CSA)
   set(
