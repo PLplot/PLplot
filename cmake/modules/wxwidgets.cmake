@@ -39,9 +39,18 @@ if(PLD_wxwidgets)
 endif(PLD_wxwidgets)
 
 if(PLD_wxwidgets)
+  #message("wxWidgets_INCLUDE_DIRS = ${wxWidgets_INCLUDE_DIRS}")
+  #message("wxWidgets_DEFINITIONS = ${wxWidgets_DEFINITIONS}")
   string(REGEX REPLACE ";" " -I" 
   wxwidgets_COMPILE_FLAGS
-  "-I${wxWidgets_INCLUDE_DIRS} ${wxWidgets_DEFINITIONS}"
+  "-I${wxWidgets_INCLUDE_DIRS}"
+  )
+  # For case (cvs version of CMake as of 2008-03-23, but not cmake-2.4.8)
+  # when wxWidgets_DEFINITIONS is a list.
+  string(REGEX REPLACE ";" " " 
+  wxwidgets_COMPILE_FLAGS
+  ${wxwidgets_COMPILE_FLAGS}
+  " ${wxWidgets_DEFINITIONS}"
   )
   set(wxwidgets_LINK_FLAGS ${wxWidgets_LIBRARIES})
   if(WITH_FREETYPE)
