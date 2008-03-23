@@ -1,9 +1,0 @@
-if (exist("LOADPATH"))
-  automatic_replot=1;
-  LOADPATH="@CMAKE_SOURCE_DIR@/bindings/octave//:@CMAKE_BINARY_DIR@/bindings/octave//:";
-else
-  addpath("@CMAKE_SOURCE_DIR@/bindings/octave/PLplot/","@CMAKE_SOURCE_DIR@/bindings/octave/PLplot/support/","@CMAKE_SOURCE_DIR@/bindings/octave/demos/","@CMAKE_SOURCE_DIR@/bindings/octave/misc/","@CMAKE_BINARY_DIR@/bindings/octave/","@CMAKE_BINARY_DIR@/bindings/octave/PLplot");
-  # Suppress spurious warnings for the test.
-  warning("off","Octave:built-in-variable-assignment");
-endif
-putenv("PLPLOT_LIB","@CMAKE_SOURCE_DIR@/data/");
