@@ -2,8 +2,9 @@ plplot (5.9.0-3) UNRELEASED; urgency=low
 
   * debian/control: Build-depend on g++-4.1 on arm, otherwise mkoctfile
     fails on this architecture
+  * debian/rules: Set variable DEB_BUID_ARCH using dpkg-architecture
 
- -- Rafael Laboissiere <rafael@debian.org>  Sun, 23 Mar 2008 16:19:02 +0100
+ -- Rafael Laboissiere <rafael@debian.org>  Sun, 23 Mar 2008 22:18:14 +0100
 
 plplot (5.9.0-2) unstable; urgency=low
 
