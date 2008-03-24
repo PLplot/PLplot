@@ -33,16 +33,10 @@ PYVERS = $(shell pyversions -vr)
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 # Disable java and ada build on arm - problems with java-gcj-compat-dev
-# at the moment. Also gnat not available on arm and mipsel.
+# at the moment. Also gnat not available on arm.
 ifeq ($(DEB_BUILD_ARCH),arm)
 ADA_OPTIONS = -DENABLE_ada=OFF
 JAVA_OPTIONS = -DENABLE_java=OFF
-else ifeq ($(DEB_BUILD_ARCH),mipsel)
-ADA_OPTIONS = -DENABLE_ada=OFF
-JAVA_OPTIONS = \
-	-DCMAKE_Java_RUNTIME=$(JAVA_HOME)/bin/java \
-	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
-	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar
 else
 ADA_OPTIONS = -DENABLE_ada=ON
 JAVA_OPTIONS = \
@@ -100,11 +94,16 @@ clean: unpatch
 
 install-arch: install-arch-stamp install-python
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
-		     --no-package=plplot-bin --no-package=python-plplot
+		     --no-package=plplot-bin --no-package=python-plplot   \
+		     --no-package=libplplot-ada
 	dh_movefiles --package=python-plplot
 	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=plplot-bin
 	dh_movefiles --package=$(libpkg)
+ifneq ($(DEB_BUILD_ARCH),arm)
+	dh_movefiles --package=libplplot-ada
+	dh_movefiles --package=libplplot-dev usr/share/ada
+endif
 
 install-arch-stamp: build-arch-stamp
 	dh_testdir
@@ -128,12 +127,14 @@ install-arch-stamp: build-arch-stamp
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
 		python-plplot plplot-bin libplplot-c++9c2 		\
 		plplot9-driver-gnome2 plplot9-driver-wxwidgets		\
-		plplot9-driver-cairo libplplot-fortran9			\
-		libplplot9-java libplplot-ada; do			\
+		plplot9-driver-cairo libplplot-fortran9	; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
 
 ifneq ($(DEB_BUILD_ARCH),arm)
+	for i in libplplot9-java libplplot-ada ; do			\
+		ln -s $(libpkg) $(debdoc)/$$i ;				\
+	done
 	mv $(debshr)/java/plplot.jar $(debshr)/java/plplot-$(version).jar
 	( cd $(debshr)/java ; ln -s plplot-$(version).jar plplot.jar )
 endif

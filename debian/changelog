@@ -1,3 +1,12 @@
+plplot (5.9.0-4) UNRELEASED; urgency=low
+
+  * debian/control: Build-depend on gnat-4.1 on alpha and mipsel, since
+    gnat-4.3, the default ADA compiler, has issues on those architectures
+  * debian/rules: Do not issue commands related to the libplplot9-java and
+    libplplot-ada packages on arm
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 24 Mar 2008 10:57:11 +0100
+
 plplot (5.9.0-3) unstable; urgency=low
 
   * debian/control: Build-depend on g++-4.1 on arm, otherwise mkoctfile
