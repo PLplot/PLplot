@@ -105,7 +105,6 @@ install-arch: install-arch-stamp install-python
 		     --no-package=libplplot9-java --no-package=libplplot-ada
 	dh_movefiles --package=python-plplot
 	dh_movefiles --package=plplot-bin
-	dh_movefiles --package=$(libpkg)
 ifneq ($(DEB_BUILD_ARCH),arm)
 	dh_movefiles --package=libplplot-ada
 	dh_movefiles --package=libplplot9-java
@@ -113,6 +112,7 @@ ifneq ($(DEB_BUILD_ARCH),arm)
 else
 	dh_movefiles --package=libplplot-dev
 endif
+	dh_movefiles --package=$(libpkg)
 
 install-arch-stamp: build-arch-stamp
 	dh_testdir
