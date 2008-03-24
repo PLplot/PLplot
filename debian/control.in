@@ -14,7 +14,8 @@ Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38), g++-4.1 [arm],
  python-gtk2-dev, libwxgtk2.6-dev, python-gnome2-dev,
  python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6),
  python-numpy (>= 1.0.4-4), ttf-freefont, java-gcj-compat-dev [!arm],
- fastjar, swig, gnat [!alpha !arm !mipsel], gnat-4.1 [alpha mipsel]
+ fastjar, swig, gnat [!alpha !arm !mips !mipsel],
+ gnat-4.1 [alpha mips mipsel]
 Build-Depends-Indep: docbook-xml, docbook, docbook-dsssl, docbook-xsl,
  docbook2x, opensp, jadetex
 Build-Conflicts: libplplot5,  octave2.1-headers
@@ -76,7 +77,7 @@ Description: Scientific plotting library
 [JAVA:Package: libplplot9-java
 Architecture: any
 Section: libs
-Depends: java-gcj-compat [!arm] , ${shlibs:Depends}
+Depends: java-gcj-compat, ${shlibs:Depends}
 Description: Scientific plotting library
  This packages contains the Java bindings for PLplot, a scientific
  plotting library.
