@@ -4,7 +4,7 @@ plplot (5.9.0-4) UNRELEASED; urgency=low
     + Renamed from debian/control.
     + Build-depend on slice
     + Build-depend on gnat-4.1 on alpha and mipsel, since gnat-4.3, the
-      default ADA compiler in Debian unstable, has issues on those
+      default Ada compiler in Debian unstable, has issues on those
       architectures
   * debian/rules:
     + Do not issue commands related to the libplplot9-java and
