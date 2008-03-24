@@ -10,7 +10,7 @@ Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38), g++-4.1 [arm],
  libgd2-noxpm-dev | libgd2-xpm-dev, libgnome2-dev,
  libgnomeprintui2.2-dev, libgnomeui-dev,
  m4, libqhull-dev (>= 2003.1-8), libxml-parser-perl, libxml-dom-perl,
- libltdl3-dev, pkg-config, dpatch,
+ libltdl3-dev, pkg-config, dpatch, slice,
  python-gtk2-dev, libwxgtk2.6-dev, python-gnome2-dev,
  python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6),
  python-numpy (>= 1.0.4-4), ttf-freefont, java-gcj-compat-dev [!arm],
@@ -73,14 +73,14 @@ Description: Scientific plotting library
  This package contains the Fortran 77 and Fortran 95 bindings for
  PLplot, a scientific plotting library.
 
-Package: libplplot9-java
+[JAVA:Package: libplplot9-java
 Architecture: any
 Section: libs
 Depends: java-gcj-compat [!arm] , ${shlibs:Depends}
 Description: Scientific plotting library
  This packages contains the Java bindings for PLplot, a scientific
  plotting library.
-
+:]
 Package: libcsiro0
 Architecture: any
 Section: libs
@@ -201,14 +201,14 @@ Description: Octave support for PLplot, a plotting library
  library.  It provides an almost drop-in replacement for the traditional
  Gnuplot graphical interface in Octave. Examples are also provided.
 
-Package: libplplot-ada
+[ADA:Package: libplplot-ada
 Architecture: any
 Priority: extra
 Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends}
 Description: Ada support for PLplot, a plotting library
  This package contains the Ada bindings for PLplot, a scientific plotting
  library.
-
+:]
 Package: plplot-doc
 Architecture: all
 Section: doc

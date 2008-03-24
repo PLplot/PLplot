@@ -54,7 +54,14 @@ CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
 
-config: config-stamp
+debian/control: debian/control.in
+ifneq ($(DEB_BUILD_ARCH),arm)
+	slice -o UNDEF+JAVA+ADA:$@ $<
+else
+	slice -o UNDEF:$@ $<
+endif
+
+config: config-stamp debian/control
 config-stamp:
 	mkdir $(BUILD_DIR)
 	(cd $(BUILD_DIR) ; \
