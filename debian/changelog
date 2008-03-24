@@ -1,4 +1,4 @@
-plplot (5.9.0-4) UNRELEASED; urgency=low
+plplot (5.9.0-4) unstable; urgency=low
 
   * debian/control.in:
     + Renamed from debian/control.
