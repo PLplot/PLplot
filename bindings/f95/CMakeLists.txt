@@ -141,14 +141,30 @@ LIBRARY DESTINATION ${LIB_DIR}
 RUNTIME DESTINATION ${BIN_DIR}
 )
 
-# Yuk! All Makefiles are run from the top level build directory and
-# so the f90 .mod files end up there rather than in the bindings/f95
-# directory. Ifort and pgf90 both have a -module command line option to
-# override this location, but I'm not sure how portable that?
-install(
-FILES ${CMAKE_BINARY_DIR}/plplot.mod ${CMAKE_BINARY_DIR}/plplotp.mod ${CMAKE_BINARY_DIR}/plplot_flt.mod
-DESTINATION ${F95_MOD_DIR}
-)
+if(CMAKE_CACHE_MAJOR_VERSION EQUAL 2 AND CMAKE_CACHE_MINOR_VERSION EQUAL 4)
+  # Yuk! All Makefiles are run from the top level build directory and
+  # so the f90 .mod files end up there rather than in the bindings/f95
+  # directory. Ifort and pgf90 both have a -module command line option to
+  # override this location, but I'm not sure how portable that?
+  install(
+  FILES
+  ${CMAKE_BINARY_DIR}/plplot.mod
+  ${CMAKE_BINARY_DIR}/plplotp.mod
+  ${CMAKE_BINARY_DIR}/plplot_flt.mod
+  DESTINATION ${F95_MOD_DIR}
+  )
+else(CMAKE_CACHE_MAJOR_VERSION EQUAL 2 AND CMAKE_CACHE_MINOR_VERSION EQUAL 4)
+  # For the current cvs version of CMake, the module files are created by
+  # default during the library build in the more logical bindings/f95 
+  # directory.
+  install(
+  FILES
+  ${CMAKE_BINARY_DIR}/bindings/f95/plplot.mod
+  ${CMAKE_BINARY_DIR}/bindings/f95/plplotp.mod
+  ${CMAKE_BINARY_DIR}/bindings/f95/plplot_flt.mod
+  DESTINATION ${F95_MOD_DIR}
+  )
+endif(CMAKE_CACHE_MAJOR_VERSION EQUAL 2 AND CMAKE_CACHE_MINOR_VERSION EQUAL 4)
 
 # Configure pkg-config *.pc file corresponding to libplplotf95${LIB_TAG}
 if(PKG_CONFIG_EXECUTABLE)
