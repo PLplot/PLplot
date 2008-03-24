@@ -102,14 +102,16 @@ clean: unpatch
 install-arch: install-arch-stamp install-python
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
 		     --no-package=plplot-bin --no-package=python-plplot   \
-		     --no-package=libplplot-ada
+		     --no-package=libplplot9-java --no-package=libplplot-ada
 	dh_movefiles --package=python-plplot
-	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=plplot-bin
 	dh_movefiles --package=$(libpkg)
 ifneq ($(DEB_BUILD_ARCH),arm)
 	dh_movefiles --package=libplplot-ada
+	dh_movefiles --package=libplplot9-java
 	dh_movefiles --package=libplplot-dev usr/share/ada
+else
+	dh_movefiles --package=libplplot-dev
 endif
 
 install-arch-stamp: build-arch-stamp
