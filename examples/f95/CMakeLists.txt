@@ -51,7 +51,7 @@ set(f95_STRING_INDICES
 if(BUILD_TEST)
   remove_definitions("-DHAVE_CONFIG_H")
 
-  if(CMAKE_CACHE_MAJOR_VERSION EQUAL 2 AND CMAKE_CACHE_MINOR_VERSION EQUAL 4)
+  if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
     # Temporary workaround for module handling bug in CMake 2.4.3.  Create a
     # file with arbitrary contents called plplot.mod.proxy in top-level
     # build tree.  As a temporary measure we use cmake_workaround.f as the
@@ -67,11 +67,11 @@ if(BUILD_TEST)
     # The generated module location for 2.4.x CMake is the top-level build
     # tree.
     include_directories(${CMAKE_BINARY_DIR})
-  else(CMAKE_CACHE_MAJOR_VERSION EQUAL 2 AND CMAKE_CACHE_MINOR_VERSION EQUAL 4)
+  else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
     # The generated module location for cvs CMake is the build-tree
     # location where the corresponding library is generated.
     include_directories(${CMAKE_BINARY_DIR}/bindings/f95)
-  endif(CMAKE_CACHE_MAJOR_VERSION EQUAL 2 AND CMAKE_CACHE_MINOR_VERSION EQUAL 4)
+  endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
 endif(BUILD_TEST)
 foreach(STRING_INDEX ${f95_STRING_INDICES})
   set(f95_SRCS ${f95_SRCS} x${STRING_INDEX}f.f90)
