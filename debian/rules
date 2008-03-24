@@ -61,8 +61,8 @@ else
 	slice -o UNDEF:$@ $<
 endif
 
-config: config-stamp debian/control
-config-stamp:
+config: config-stamp
+config-stamp: debian/control
 	mkdir $(BUILD_DIR)
 	(cd $(BUILD_DIR) ; \
 	PKG_CONFIG_ENV=" " F77=gfortran FC=gfortran \
