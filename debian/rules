@@ -32,17 +32,38 @@ PYVERS = $(shell pyversions -vr)
 
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
+BUILD_ADA = yes
+BUILD_JAVA = yes
+
 # Disable java and ada build on arm - problems with java-gcj-compat-dev
-# at the moment. Also gnat not available on arm.
+# at the moment. Also gnat not available on arm, mips, and mipsel.
+
 ifeq ($(DEB_BUILD_ARCH),arm)
-ADA_OPTIONS = -DENABLE_ada=OFF
-JAVA_OPTIONS = -DENABLE_java=OFF
-else
+BUILD_ADA = no
+BUILD_JAVA = no
+endif
+
+ifeq ($(DEB_BUILD_ARCH),mips)
+BUILD_ADA = no
+endif
+
+ifeq ($(DEB_BUILD_ARCH),mipsel)
+BUILD_ADA = no
+endif
+
+ifeq ($(BUILD_ADA),yes)
 ADA_OPTIONS = -DENABLE_ada=ON
+else
+ADA_OPTIONS = -DENABLE_ada=OFF
+endif
+
+ifeq ($(BUILD_JAVA),yes)
 JAVA_OPTIONS = \
 	-DCMAKE_Java_RUNTIME=$(JAVA_HOME)/bin/java \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
 	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar
+else
+JAVA_OPTIONS = -DENABLE_java=OFF
 endif
 
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
@@ -54,11 +75,20 @@ CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 BUILD_DIR = $(debbase)/build_tmp
 SRC_DIR = $(shell pwd)
 
+
 control:
-ifneq ($(DEB_BUILD_ARCH),arm)
-	slice -o UNDEF+JAVA+ADA:debian/control debian/control.in
-else
+ifeq ($(BUILD_ADA),no)
+ifeq ($(BUILD_JAVA),no)
 	slice -o UNDEF:debian/control debian/control.in
+else
+	slice -o UNDEF+JAVA:debian/control debian/control.in
+endif
+else
+ifeq ($(BUILD_JAVA),no)
+	slice -o UNDEF+ADA:debian/control debian/control.in
+else
+	slice -o UNDEF+JAVA+ADA:debian/control debian/control.in
+endif
 endif
 
 config: config-stamp
@@ -105,9 +135,11 @@ install-arch: install-arch-stamp install-python
 		     --no-package=libplplot9-java --no-package=libplplot-ada
 	dh_movefiles --package=python-plplot
 	dh_movefiles --package=plplot-bin
-ifneq ($(DEB_BUILD_ARCH),arm)
-	dh_movefiles --package=libplplot-ada
+ifeq ($(BUILD_JAVA),yes)
 	dh_movefiles --package=libplplot9-java
+endif
+ifeq ($(BUILD_ADA),yes)
+	dh_movefiles --package=libplplot-ada
 	dh_movefiles --package=libplplot-dev usr/share/ada
 else
 	dh_movefiles --package=libplplot-dev
@@ -140,12 +172,14 @@ install-arch-stamp: build-arch-stamp
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
 
-ifneq ($(DEB_BUILD_ARCH),arm)
-	for i in libplplot9-java libplplot-ada ; do			\
-		ln -s $(libpkg) $(debdoc)/$$i ;				\
-	done
+ifeq ($(BUILD_JAVA),yes)
+	ln -s $(libpkg) $(debdoc)/libplplot9-java
 	mv $(debshr)/java/plplot.jar $(debshr)/java/plplot-$(version).jar
 	( cd $(debshr)/java ; ln -s plplot-$(version).jar plplot.jar )
+endif
+
+ifeq ($(BUILD_ADA),yes)
+	ln -s $(libpkg) $(debdoc)/libplplot-ada
 endif
 
 	touch install-arch-stamp
