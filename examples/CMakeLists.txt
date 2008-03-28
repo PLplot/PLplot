@@ -77,6 +77,9 @@ endif(ENABLE_pdl)
 if(ENABLE_ada)
   add_subdirectory(ada)
 endif(ENABLE_ada)
+if(ENABLE_d)
+  add_subdirectory(d)
+endif(ENABLE_d)
 
 install(FILES Makefile.examples 
 DESTINATION ${DATA_DIR}/examples
