@@ -208,7 +208,8 @@ Priority: extra
 Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends}
 Description: Ada support for PLplot, a plotting library
  This package contains the Ada bindings for PLplot, a scientific plotting
- library.
+ library. The ada bindings are currently under development and should be 
+ considered experimental. 
 :]
 Package: plplot-doc
 Architecture: all
