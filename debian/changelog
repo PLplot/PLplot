@@ -1,4 +1,4 @@
-plplot (5.9.0-5) UNRELEASED; urgency=low
+plplot (5.9.0-5) unstable; urgency=low
 
   [ Andrew Ross ]
   * debian/control.in: Make it clear that the ada bindings are still
