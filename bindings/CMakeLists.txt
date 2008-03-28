@@ -31,6 +31,7 @@ add_subdirectory(java)
 add_subdirectory(gnome2)
 add_subdirectory(wxwidgets)
 add_subdirectory(ada)
+add_subdirectory(d)
 
 set(index)
 if(ENABLE_tcl)
