@@ -28,3 +28,4 @@ Compile examples
   - Mac OS X: http://gdcmac.sourceforge.net/
 * cd into the plplot/examples/d directory
 * MinGW: gdc x07d.d -I ..\..\bindings\d path_to_build_directory\dll\libplplotd.dll.a -o x07d
+* Linux: gdc x06d.d -I../../bindings/d path_to_build_directory/src/libplplotd.so -o x06d
