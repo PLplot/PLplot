@@ -22,8 +22,8 @@ int main( char[][] args )
 
   /* Parse and process command line arguments */
   char*[] c_args = new char*[args.length];
-  foreach( int i, char[] arg; args ) {
-     c_args[i] = toStringz(arg);
+  foreach( size_t i, char[] arg; args ) {
+    c_args[i] = toStringz(arg);
   }
   int argc = c_args.length;
   plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
@@ -32,7 +32,7 @@ int main( char[][] args )
   plinit();
 
   plfontld( 1 );
-  for( int l=0; l<17; l++) {
+  for( size_t l=0; l<17; l++) {
     pladv( 0 );
 
     /* Set up viewport and window */
@@ -46,17 +46,17 @@ int main( char[][] args )
 
     /* Write the digits below the frame */
     plcol0( 15 );
-    for( int i=0; i<=9; i++ ) {
+    for( size_t i=0; i<=9; i++ ) {
       text=format( "%d", i);
-	    plmtex( "b", 1.5, (0.1*i+0.05), 0.5, std.string.toStringz(text) );
+	    plmtex( "b", 1.5, (0.1*i+0.05), 0.5, toStringz(text) );
     }
 
-    int k = 0;
-    for( int i=0; i<=9; i++ ) {
+    size_t k = 0;
+    for( size_t i=0; i<=9; i++ ) {
       /* Write the digits to the left of the frame */
 	    text=format( "%d", base[l] + 10 * i );
-	    plmtex( "lv", 1.0, (0.95-0.1*i), 1.0, std.string.toStringz(text) );
-	    for( int j=0; j<=9; j++ ) {
+	    plmtex( "lv", 1.0, (0.95-0.1*i), 1.0, toStringz(text) );
+	    for( size_t j=0; j<=9; j++ ) {
         x = 0.1*j+0.05;
         y = 0.95-0.1*i;
 

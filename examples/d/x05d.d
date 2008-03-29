@@ -5,6 +5,7 @@
 
 import plplot;
 import std.math;
+import std.string;
 
 /*--------------------------------------------------------------------------*\
  * main
@@ -15,17 +16,16 @@ int main( char[][] args )
 {
   const int NPTS=2047;
   
-  int i;
-  PLFLT data[NPTS];
+  PLFLT[NPTS] data;
   PLFLT delta;
 
   /* Parse and process command line arguments */
   char*[] c_args = new char*[args.length];
-  foreach( int i, char[] arg; args ) {
-     c_args[i] = toStringz(arg);
+  foreach( size_t i, char[] arg; args ) {
+    c_args[i] = toStringz(arg);
   }
   int argc = c_args.length;
-  plparseopts( &argc, argv, PL_PARSE_FULL );
+  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
 
   /* Initialize plplot */
   plinit();
@@ -33,7 +33,7 @@ int main( char[][] args )
   /* Fill up data points */
 
   delta = 2.0 * PI / cast(double)NPTS;
-  for( i=0; i<NPTS; i++ )
+  for( size_t i=0; i<NPTS; i++ )
     data[i] = sin(i*delta);
 
   plcol0( 1 );
