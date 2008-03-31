@@ -36,7 +36,6 @@ int main( char[][] args )
     pladv( 0 );
 
     /* Set up viewport and window */
-
     plcol0( 2 );
     plvpor( 0.15, 0.95, 0.1, 0.9 );
     plwind( 0.0, 1.0, 0.0, 1.0 );

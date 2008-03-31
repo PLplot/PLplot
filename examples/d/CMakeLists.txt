@@ -19,9 +19,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 set(d_STRING_INDICES
+"03"
+"04"
 "05"
+"06"
 "07"
+"08"
 "10"
+"12"
+"13"
 )
 
 foreach(STRING_INDEX ${d_STRING_INDICES})
