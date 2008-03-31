@@ -877,7 +877,16 @@ void  c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, P
  *
  * DRAW_LINEX *must* be 1 and DRAW_LINEY *must* be 2, because of legacy code!
  */
-
+const DRAW_LINEX=1<<0; /* draw lines parallel to the X axis */
+const DRAW_LINEY=1<<1; /* draw lines parallel to the Y axis */
+const DRAW_LINEXY=DRAW_LINEX|DRAW_LINEY; /* draw lines parallel to both the X and Y axis */
+const MAG_COLOR=1<<2; /* draw the mesh with a color dependent of the magnitude */
+const BASE_CONT=1<<3; /* draw contour plot at bottom xy plane */
+const TOP_CONT=1<<4; /* draw contour plot at top xy plane */
+const SURF_CONT=1<<5; /* draw contour plot at surface */
+const DRAW_SIDES=1<<6; /* draw sides */
+const FACETED=1<<7; /* draw outline for each square that makes up the surface */
+const MESH=1<<8; /* draw mesh */
 
   /*
    *  valid options for plot3dc():

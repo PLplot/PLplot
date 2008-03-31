@@ -18,6 +18,17 @@ Instructions to create the plplot module
     alias DBL_MAX PLFLT_MAX;
     alias DBL_MIN PLFLT_MIN;
   from the plplot.d file (right at the top).
+* needed to add the following lines at about line 880, since they were not converted
+    const DRAW_LINEX=1<<0; /* draw lines parallel to the X axis */
+    const DRAW_LINEY=1<<1; /* draw lines parallel to the Y axis */
+    const DRAW_LINEXY=DRAW_LINEX|DRAW_LINEY; /* draw lines parallel to both the X and Y axis */
+    const MAG_COLOR=1<<2; /* draw the mesh with a color dependent of the magnitude */
+    const BASE_CONT=1<<3; /* draw contour plot at bottom xy plane */
+    const TOP_CONT=1<<4; /* draw contour plot at top xy plane */
+    const SURF_CONT=1<<5; /* draw contour plot at surface */
+    const DRAW_SIDES=1<<6; /* draw sides */
+    const FACETED=1<<7; /* draw outline for each square that makes up the surface */
+    const MESH=1<<8; /* draw mesh */
   
 Compile examples
 ================
