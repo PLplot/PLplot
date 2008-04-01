@@ -374,7 +374,9 @@ pltkMain(int argc, const char **argv, char *RcFileName,
 	    }
 	    Tcl_DStringFree(&buffer);
 	}
+#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
 	Tk_CreateFileHandler(0, TK_READABLE, StdinProc, (ClientData) 0);
+#endif
 	if (tty) {
 	    Prompt(interp, 0);
 	}
@@ -447,7 +449,9 @@ StdinProc(clientData, mask)
 		Tcl_Eval(interp, "exit");
 		exit(1);
 	    } else {
+#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
 		Tk_DeleteFileHandler(0);
+#endif
 	    }
 	    return;
 	} else {
@@ -474,10 +478,13 @@ StdinProc(clientData, mask)
      * finished.  Among other things, this will trash the text of the
      * command being evaluated.
      */
-
+#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
     Tk_CreateFileHandler(0, 0, StdinProc, (ClientData) 0);
+#endif
     code = Tcl_RecordAndEval(interp, cmd, 0);
+#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
     Tk_CreateFileHandler(0, TK_READABLE, StdinProc, (ClientData) 0);
+#endif
     Tcl_DStringFree(&command);
     if (*interp->result != 0) {
 	if ((code != TCL_OK) || (tty)) {

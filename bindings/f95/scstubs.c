@@ -57,6 +57,12 @@ PL_SETCONTLABELPARAMa(PLFLT *offset, PLFLT *size, PLFLT *spacing, PLINT *active)
 }
 
 void
+PLABORT7(const char *text)
+{
+    plabort(*text);
+}
+
+void
 PLADV(PLINT *sub)
 {
     c_pladv(*sub);
@@ -159,6 +165,13 @@ PLENV(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
       PLINT *just, PLINT *axis)
 {
     c_plenv(*xmin, *xmax, *ymin, *ymax, *just, *axis);
+}
+
+void
+PLENV0(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+       PLINT *just, PLINT *axis)
+{
+    c_plenv0(*xmin, *xmax, *ymin, *ymax, *just, *axis);
 }
 
 void
@@ -386,6 +399,54 @@ PLHLSRGB(PLFLT *h, PLFLT *l, PLFLT *s, PLFLT *r, PLFLT *g, PLFLT *b)
 }
 
 void
+PLIMAGEFR(PLFLT *idata, PLINT *nx, PLINT *ny,
+          PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLFLT *zmin, PLFLT *zmax,
+          PLFLT *Dxmin, PLFLT *Dxmax, PLFLT *Dymin, PLFLT *Dymax,
+          PLFLT *valuemin, PLFLT *valuemax)
+{
+    int   i, j;
+    PLFLT **pidata;
+
+    plAlloc2dGrid(&pidata, *nx, *ny);
+
+    for ( i = 0 ; i < *nx ; i ++ ) {
+        for ( j = 0 ; j < *ny ; j ++ ) {
+            pidata[i][j] = idata[i + j * (*nx)];
+        }
+    }
+
+    c_plimagefr(pidata, *nx, *ny,
+         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
+         *Dxmin, *Dxmax, *Dymin, *Dymax,
+         *valuemin, *valuemax);
+
+    plFree2dGrid(pidata, *nx, *ny);
+}
+
+void
+PLIMAGE(PLFLT *idata, PLINT *nx, PLINT *ny,
+          PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLFLT *zmin, PLFLT *zmax,
+          PLFLT *Dxmin, PLFLT *Dxmax, PLFLT *Dymin, PLFLT *Dymax)
+{
+    int   i, j;
+    PLFLT **pidata;
+
+    plAlloc2dGrid(&pidata, *nx, *ny);
+
+    for ( i = 0 ; i < *nx ; i ++ ) {
+        for ( j = 0 ; j < *ny ; j ++ ) {
+            pidata[i][j] = idata[i + j * (*nx)];
+        }
+    }
+
+    c_plimage(pidata, *nx, *ny,
+         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
+         *Dxmin, *Dxmax, *Dymin, *Dymax);
+
+    plFree2dGrid(pidata, *nx, *ny);
+}
+
+void
 PLINIT(void)
 {
     c_plinit();
@@ -528,7 +589,7 @@ PLPTEX7(PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, const char *text)
 
 void
 PLPTEX37(
-	 PLFLT *x, PLFLT *y, PLFLT *z, 
+	 PLFLT *x, PLFLT *y, PLFLT *z,
 	 PLFLT *dx, PLFLT *dy, PLFLT *dz,
 	 PLFLT *sx, PLFLT *sy, PLFLT *sz,
 	 PLFLT *just, const char *text)
@@ -710,6 +771,9 @@ PLSESC(PLINT *esc)
     c_plsesc((char) *esc);
 }
 
+/* Auxiliary routine - not to be used publicly
+*/
+#define    PLSETMAPFORMC	FNAME(PLSETMAPFORMC,plsetmapformc)
 void
 PLSETMAPFORMC( void (*mapform)(PLINT *, PLFLT *, PLFLT *) )
 {
@@ -814,7 +878,7 @@ PLSTRIPC(PLINT *id, const char *xspec, const char *yspec,
 	  PLBOOL *y_ascl, PLBOOL *acc,
 	  PLINT *colbox, PLINT *collab,
 	  PLINT *colline, PLINT *styline,
-	  const char *legline0, const char *legline1, 
+	  const char *legline0, const char *legline1,
           const char *legline2, const char *legline3,
 	  const char *labx, const char *laby, const char *labtop)
 {

@@ -2413,10 +2413,12 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 #define FILECAST (ClientData)
 #endif
 
+#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
 	if (Tcl_GetOpenFile(interp, iodev->fileHandle,
 			    0, 1, FILECAST &iodev->file) != TCL_OK) {
 	    return TCL_ERROR;
 	}
+#endif
 	iodev->fd = fileno(iodev->file);
     }
 
@@ -2435,12 +2437,16 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 #if TK_MAJOR_VERSION < 4 || \
     ( TK_MAJOR_VERSION == 4 && TK_MINOR_VERSION == 0 ) || \
 	TK_MAJOR_VERSION > 7
+#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
     Tk_CreateFileHandler(iodev->fd, TK_READABLE, (Tk_FileProc *) ReadData,
 			 (ClientData) plFramePtr);
+#endif
 #else
+#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
     Tcl_CreateFileHandler( Tcl_GetFile( (ClientData) iodev->fd, TCL_UNIX_FD ),
 			   TK_READABLE, (Tk_FileProc *) ReadData,
 			   (ClientData) plFramePtr );
+#endif
 #endif
 
     return TCL_OK;
@@ -2470,11 +2476,15 @@ Closelink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 #if TK_MAJOR_VERSION < 4 || \
     ( TK_MAJOR_VERSION == 4 && TK_MINOR_VERSION == 0 ) || \
 	TK_MAJOR_VERSION > 7
+#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
     Tk_DeleteFileHandler(iodev->fd);
+#endif
 #else
 /*    Tk_DeleteFileHandler( iodev->file );*/
+#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
     Tcl_DeleteFileHandler( Tcl_GetFile( (ClientData) iodev->fd,
 					TCL_UNIX_FD ) );
+#endif
 #endif
     pdf_close(plr->pdfs);
     iodev->fd = 0;

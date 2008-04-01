@@ -41,6 +41,7 @@ set(f95_STRING_INDICES
 "17"
 "18"
 "19"
+"20"
 "22"
 "23"
 "28"
@@ -86,7 +87,7 @@ foreach(STRING_INDEX ${f95_STRING_INDICES})
   endif(BUILD_TEST)
 endforeach(STRING_INDEX ${f95_STRING_INDICES})
 
-install(FILES ${f95_SRCS} 
+install(FILES ${f95_SRCS}
 DESTINATION ${DATA_DIR}/examples/f95
 )
 
@@ -96,7 +97,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
 ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 )
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/f95
 RENAME Makefile
 )

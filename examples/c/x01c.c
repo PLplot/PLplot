@@ -113,23 +113,30 @@ main(int argc, const char *argv[])
 /* plplot initialization */
 /* Divide page into 2x2 plots unless user overrides */
 
+    fprintf( stderr, "pllsub\n");
     plssub(2, 2);
 
 /* Parse and process command line arguments */
 
+    fprintf( stderr, "plMergeOpts\n");
     plMergeOpts(options, "x01c options", notes);
+    fprintf( stderr, "plparseopts\n");
     plparseopts(&argc, argv, PL_PARSE_FULL);
 
 /* Get version number, just for kicks */
 
+    fprintf( stderr, "plgver\n");
     plgver(ver);
+    fprintf( stderr, "plplot library version\n");
     fprintf(stdout, "PLplot library version: %s\n", ver);
 
 /* Initialize plplot */
 
+    fprintf( stderr, "plinit\n");
     plinit();
 /* Select font set as per input flag */
 
+    fprintf( stderr, "plfontld\n");
     if (fontset)
 	plfontld(1);
     else
@@ -164,18 +171,18 @@ main(int argc, const char *argv[])
 
     plot3();
 
-      /* 
+      /*
        * Show how to save a plot:
        * Open a new device, make it current, copy parameters,
-       * and replay the plot buffer 
+       * and replay the plot buffer
        */
 
     if (f_name) { /* command line option '-save filename' */
 
       printf("The current plot was saved in color Postscript under the name `%s'.\n", f_name);
       plgstrm(&cur_strm);    /* get current stream */
-      plmkstrm(&new_strm);   /* create a new one */ 
-    
+      plmkstrm(&new_strm);   /* create a new one */
+
       plsfnam(f_name);       /* file name */
       plsdev("psc");         /* device type */
 
@@ -194,7 +201,7 @@ main(int argc, const char *argv[])
 	  if (gin.keysym == PLK_Escape) break;
 
 	    pltext();
-	    if (gin.keysym < 0xFF && isprint(gin.keysym)) 
+	    if (gin.keysym < 0xFF && isprint(gin.keysym))
 		printf("subwin = %d, wx = %f,  wy = %f, dx = %f,  dy = %f,  c = '%c'\n",
 		       gin.subwindow, gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
 	    else
@@ -212,7 +219,7 @@ main(int argc, const char *argv[])
 }
 
  /* =============================================================== */
- 
+
 void
 plot1(int do_test)
 {
@@ -235,10 +242,10 @@ plot1(int do_test)
 	ys[i] = y[i * 10 + 3];
     }
 
-/* Set up the viewport and window using PLENV. The range in X is 
- * 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
- * scaled separately (just = 0), and we just draw a labelled 
- * box (axis = 0). 
+/* Set up the viewport and window using PLENV. The range in X is
+ * 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
+ * scaled separately (just = 0), and we just draw a labelled
+ * box (axis = 0).
  */
     plcol0(1);
     plenv(xmin, xmax, ymin, ymax, 0, 0);
@@ -272,11 +279,11 @@ plot1(int do_test)
 	}
 #else
     printf("The -xor command line option can only be exercised if your "
-           "system\nhas usleep(), which does not seem to happen.\n"); 
+           "system\nhas usleep(), which does not seem to happen.\n");
 #endif
     }
 }
- 
+
  /* =============================================================== */
 
 void
@@ -286,7 +293,7 @@ plot2(void)
 
 /* Set up the viewport and window using PLENV. The range in X is -2.0 to
  * 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
- * (just = 0), and we draw a box with axes (axis = 1). 
+ * (just = 0), and we draw a box with axes (axis = 1).
 */
     plcol0(1);
     plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
@@ -324,7 +331,7 @@ plot3(void)
     pladv(0);
 
 /* Use standard viewport, and define X range from 0 to 360 degrees, Y range
- * from -1.2 to 1.2. 
+ * from -1.2 to 1.2.
 */
     plvsta();
     plwind(0.0, 360.0, -1.2, 1.2);
@@ -334,7 +341,7 @@ plot3(void)
     plcol0(1);
     plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
-/* Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
+/* Superimpose a dashed line grid, with 1.5 mm marks and spaces.
  * plstyl expects a pointer!
 */
     plstyl(1, &mark1, &space1);

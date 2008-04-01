@@ -53,6 +53,21 @@
 
 !***********************************************************************
 
+      subroutine plabort(text)
+
+      implicit none
+      character*(*) text
+
+      include 'sfstubs.h'
+
+      call plstrf2c(text, string1, maxlen)
+      s1 = transfer( string1, s1 )
+      call plabort7(s1)
+
+      end subroutine
+
+!***********************************************************************
+
       subroutine plsdev(dnam)
 
       implicit none
@@ -722,7 +737,7 @@
       subroutine pltimefmt(fmt)
 
       implicit none
-      character*(*) fmt 
+      character*(*) fmt
 
       include 'sfstubs.h'
 

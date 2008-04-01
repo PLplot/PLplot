@@ -168,7 +168,7 @@ C         draw a yellow plot box, useful for diagnostics! :(
           do 210 i=1,XDIM
               x(i) = (i-1)*2.d0*M_PI/(XDIM-1)
   210     continue
-          do 220 i=0,YDIM
+          do 220 i=1,YDIM
             y(i) = (i-1)*3.d0*M_PI/(YDIM-1)
   220     continue
 
@@ -380,7 +380,7 @@ C     So do that rightaway
 C
 C
       do 220 j = 1,h
-          do 220 i = 1,w
+          do 210 i = 1,w
               record = record + 1
               read( 10, rec = record ) img
               k = i + (h-j)*w

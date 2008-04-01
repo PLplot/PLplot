@@ -57,6 +57,12 @@ PL_SETCONTLABELPARAMa(PLFLT *offset, PLFLT *size, PLFLT *spacing, PLINT *active)
 }
 
 void
+PLABORT7(char *text)
+{
+    plabort(text);
+}
+
+void
 PLADV(PLINT *sub)
 {
     c_pladv(*sub);
@@ -749,6 +755,9 @@ PLSESC(PLINT *esc)
     c_plsesc((char) *esc);
 }
 
+/* Auxiliary routine - not to be used publicly
+*/
+#define    PLSETMAPFORMC	FNAME(PLSETMAPFORMC,plsetmapformc)
 void
 PLSETMAPFORMC( void (*mapform)(PLINT *, PLFLT *, PLFLT *) )
 {

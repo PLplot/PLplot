@@ -940,6 +940,35 @@
          call plhistf77( size(data), data, datmin, datmax, nbin, oldwin )
       end subroutine plhist
 
+      subroutine plimagefr( idata, xmin, xmax, ymin, ymax, zmin, zmax, &
+                            dxmin, dxmax, dymin, dymax, valuemin, valuemax )
+         real(kind=plflt), dimension(:,:) :: idata
+         real(kind=plflt)                 :: xmin,  xmax,  ymin,  ymax,  zmin, zmax
+         real(kind=plflt)                 :: dxmin, dxmax, dymin, dymax, &
+                                             valuemin, valuemax
+
+         integer                          :: nx, ny
+
+         nx = size(idata,1)
+         ny = size(idata,2)
+         call plimagefrf77( idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, &
+                            dxmin, dxmax, dymin, dymax, valuemin, valuemax )
+      end subroutine plimagefr
+
+      subroutine plimage( idata, xmin, xmax, ymin, ymax, zmin, zmax, &
+                          dxmin, dxmax, dymin, dymax )
+         real(kind=plflt), dimension(:,:) :: idata
+         real(kind=plflt)                 :: xmin,  xmax,  ymin,  ymax,  zmin, zmax
+         real(kind=plflt)                 :: dxmin, dxmax, dymin, dymax
+
+         integer                          :: nx, ny
+
+         nx = size(idata,1)
+         ny = size(idata,2)
+         call plimagef77( idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, &
+                          dxmin, dxmax, dymin, dymax )
+      end subroutine plimage
+
       subroutine plline( x, y )
          real(kind=plflt), dimension(:) :: x, y
 

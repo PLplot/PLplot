@@ -51,6 +51,20 @@
 
 !***********************************************************************
 
+      subroutine plabort(text)
+
+      implicit none
+      character*(*) text
+
+      include 'sfstubs.h'
+
+      call plstrf2c(text, string1, maxlen)
+      call plabort7(s1)
+
+      end
+
+!***********************************************************************
+
       subroutine plsdev(dnam)
 
       implicit none

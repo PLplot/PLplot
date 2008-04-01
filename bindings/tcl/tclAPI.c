@@ -367,6 +367,7 @@ PlbasicInit( Tcl_Interp *interp )
     "tcl_findLibrary plplot " VERSION "/tcl \"\" plplot.tcl PL_LIBRARY pllibrary";
 #endif
 
+debug=1;
 #ifdef USE_TCL_STUBS
 /*
  * We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
@@ -374,10 +375,12 @@ PlbasicInit( Tcl_Interp *interp )
  * is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
  * be loaded into 8.1
  */
+printf( "Tcl_InitStubs\n");fflush(stdout);
     Tcl_InitStubs(interp,"8.1",0);
 #endif
 
 #if 1
+printf( "Matrix_Init\n");fflush(stdout);
     if (Matrix_Init(interp) != TCL_OK) {
 	if (debug) fprintf(stderr, "error in matrix init\n");
         return TCL_ERROR;
@@ -391,6 +394,7 @@ PlbasicInit( Tcl_Interp *interp )
  * is made in pltcl.h, and should be removed only with extreme caution.
  */
 #ifdef USE_MATRIX_STUBS
+printf( "Matrix_InitStubs\n");fflush(stdout);
     if (Matrix_InitStubs(interp,"0.1",0) == NULL) {
 	if (debug) fprintf(stderr, "error in matrix stubs init\n");
         return TCL_ERROR;
@@ -463,6 +467,7 @@ PlbasicInit( Tcl_Interp *interp )
     if (libDir == NULL) {
 	Tcl_DString ds;
 	if (debug) fprintf(stderr, "trying curdir\n");
+printf( "Tcl_Access\n");fflush(stdout);
 	if (Tcl_Access("plplot.tcl", 0) != 0) {
 	    if (debug) fprintf(stderr, "couldn't find plplot.tcl in curdir\n");
 	    return TCL_ERROR;
@@ -478,6 +483,7 @@ PlbasicInit( Tcl_Interp *interp )
 	Tcl_DStringFree(&ds);
 	Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
 
+printf( "Tcl_EvalFile\n");fflush(stdout);
 	if (Tcl_EvalFile(interp, "plplot.tcl") != TCL_OK) {
 	    if (debug) fprintf(stderr, "error evalling plplot.tcl\n");
 	    return TCL_ERROR;
