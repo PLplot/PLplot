@@ -113,30 +113,22 @@ main(int argc, const char *argv[])
 /* plplot initialization */
 /* Divide page into 2x2 plots unless user overrides */
 
-    fprintf( stderr, "pllsub\n");
     plssub(2, 2);
 
 /* Parse and process command line arguments */
 
-    fprintf( stderr, "plMergeOpts\n");
     plMergeOpts(options, "x01c options", notes);
-    fprintf( stderr, "plparseopts\n");
     plparseopts(&argc, argv, PL_PARSE_FULL);
 
 /* Get version number, just for kicks */
 
-    fprintf( stderr, "plgver\n");
     plgver(ver);
-    fprintf( stderr, "plplot library version\n");
-    fprintf(stdout, "PLplot library version: %s\n", ver);
 
 /* Initialize plplot */
 
-    fprintf( stderr, "plinit\n");
     plinit();
 /* Select font set as per input flag */
 
-    fprintf( stderr, "plfontld\n");
     if (fontset)
 	plfontld(1);
     else
