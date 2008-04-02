@@ -551,6 +551,7 @@ readError:
      * Remove the file handler and close the file.
      */
     if (iodev->type == 0) {
+/* Exclude UNIX-only feature */
 #if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
 	Tk_DeleteFileHandler(iodev->fd);
 #endif

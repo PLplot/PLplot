@@ -2413,6 +2413,7 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 #define FILECAST (ClientData)
 #endif
 
+/* Exclude UNIX-only feature */
 #if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
 	if (Tcl_GetOpenFile(interp, iodev->fileHandle,
 			    0, 1, FILECAST &iodev->file) != TCL_OK) {

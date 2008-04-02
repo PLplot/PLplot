@@ -374,6 +374,7 @@ pltkMain(int argc, const char **argv, char *RcFileName,
 	    }
 	    Tcl_DStringFree(&buffer);
 	}
+/* Exclude UNIX-only feature */
 #if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
 	Tk_CreateFileHandler(0, TK_READABLE, StdinProc, (ClientData) 0);
 #endif
