@@ -38,6 +38,10 @@ BUILD_JAVA = yes
 # Disable java and ada build on arm - problems with java-gcj-compat-dev
 # at the moment. Also gnat not available on arm, mips, and mipsel.
 
+ifeq ($(DEB_BUILD_ARCH),alpha)
+BUILD_ADA = no
+endif
+
 ifeq ($(DEB_BUILD_ARCH),arm)
 BUILD_ADA = no
 BUILD_JAVA = no
