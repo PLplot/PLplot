@@ -162,7 +162,7 @@ package PLplot_Traditional is
     Unchanged : constant Integer := 0;
     
     -- Pre-defined fill patterns
-    subtype Fill_Pattern_Type is Integer range 0..7; -- Guessing; not documented
+    subtype Fill_Pattern_Type is Integer range 1..8; -- Guessing; not documented
     
     -- Modes for parsing command line arguments.
     Parse_Partial    : constant Parse_Mode_Type := 0;   -- For backward compatibility

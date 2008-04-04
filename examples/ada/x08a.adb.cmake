@@ -1,4 +1,4 @@
--- $Id: x01a.adb.cmake 8022 2007-11-13 18:58:30Z airwin $
+-- $Id$
 
 -- 3-d plot demo.
 
