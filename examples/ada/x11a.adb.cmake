@@ -1,4 +1,4 @@
--- $Id: x11a.adb.cmake 8022 2007-11-13 18:58:30Z airwin $
+-- $Id$
 
 -- Mesh plot demo.
 

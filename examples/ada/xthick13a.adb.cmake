@@ -1,4 +1,4 @@
--- $Id: xthick13a.adb.cmake 8022 2007-11-13 18:58:30Z airwin $
+-- $Id$
 
 -- Pie chart demo.
 
