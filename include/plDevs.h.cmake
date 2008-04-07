@@ -83,6 +83,7 @@
 #cmakedefine PLD_svgcairo
 #cmakedefine PLD_pngcairo
 #cmakedefine PLD_memcairo
+#cmakedefine PLD_extcairo
 
 
 #endif	/* __PLDEVS_H__ */

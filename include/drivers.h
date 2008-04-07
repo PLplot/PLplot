@@ -95,6 +95,7 @@ void plD_dispatch_init_pscairo  ( PLDispatchTable *pdt );
 void plD_dispatch_init_svgcairo  ( PLDispatchTable *pdt );
 void plD_dispatch_init_pngcairo  ( PLDispatchTable *pdt );
 void plD_dispatch_init_memcairo  ( PLDispatchTable *pdt );
+void plD_dispatch_init_extcairo  ( PLDispatchTable *pdt );
 
 /* Prototypes for plot buffer calls. */
 

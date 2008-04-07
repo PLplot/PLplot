@@ -175,6 +175,9 @@
 /* Define if dg300 driver is present */
 #cmakedefine PLD_dg300
 
+/* Define if the Cario external context driver is present */
+#cmakedefine PLD_extcairo
+
 /* Define if gcw driver is present */
 #cmakedefine PLD_gcw
 

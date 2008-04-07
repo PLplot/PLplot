@@ -119,6 +119,9 @@ const char* plD_DEVICE_INFO_cairo =
 #if defined(PLD_memcairo)
   "memcairo:Cairo Memory Driver:0:cairo:64:memcairo\n"
 #endif
+#if defined(PLD_extcairo)
+  "extcairo:Cairo External Context Driver:0:cairo:65:extcairo\n"
+#endif
 ;
 
 /* 
@@ -222,10 +225,9 @@ void plD_bop_cairo(PLStream *pls)
 
   aStream = (PLCairo *)pls->dev;
 
-  /* Some Cairo devices support delayed device setup (eg: xcairo with
-   * external drawable).
-   */
-  if (aStream->cairoSurface == NULL)
+  // Some Cairo devices support delayed device setup (eg: xcairo with
+  // external drawable and extcairo with an external context).
+  if (aStream->cairoContext == NULL)
     return;
 
   // Fill in the window with the background color.
@@ -1009,7 +1011,7 @@ void plD_esc_xcairo(PLStream *pls, PLINT op, void *ptr)
       XFlush(aStream->XDisplay);
       xcairo_get_cursor(pls, (PLGraphicsIn*)ptr);
       break;
-    case  PLESC_DEVINIT: { // Set external drawable
+    case PLESC_DEVINIT: { // Set external drawable
         Window rootwin;
         PLXcairoDrawableInfo *xinfo = (PLXcairoDrawableInfo *)ptr;
         signed int x, y;
@@ -1645,3 +1647,117 @@ void plD_eop_memcairo(PLStream *pls)
 }
 
 #endif
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+//
+// That which is specific to the cairo external context driver.
+//
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+
+#if defined(PLD_extcairo)
+
+void plD_dispatch_init_extcairo (PLDispatchTable *pdt);
+void plD_init_extcairo          (PLStream *);
+void plD_bop_extcairo           (PLStream *);
+void plD_esc_extcairo           (PLStream *, PLINT, void *);
+void plD_tidy_extcairo          (PLStream *);
+
+//---------------------------------------------------------------------
+// dispatch_init_init()
+//
+// Initialize device dispatch table
+//----------------------------------------------------------------------
+
+// extcairo
+void plD_dispatch_init_extcairo(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+   pdt->pl_MenuStr  = "Cairo external context driver";
+   pdt->pl_DevName  = "extcairo";
+#endif
+   pdt->pl_type     = plDevType_FileOriented;
+   pdt->pl_seq      = 65;
+   pdt->pl_init     = (plD_init_fp)     plD_init_extcairo;
+   pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
+   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
+   pdt->pl_eop      = (plD_eop_fp)      plD_eop_cairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_extcairo;
+   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_extcairo;
+   pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
+   pdt->pl_esc      = (plD_esc_fp)      plD_esc_extcairo;
+}
+
+//---------------------------------------------------------------------
+// plD_init_extcairo()
+//
+// Initialize Cairo external context driver.
+//----------------------------------------------------------------------
+void plD_init_extcairo (PLStream *pls)
+{
+  PLCairo *aStream;
+
+  // Setup the PLStream and the font lookup table
+  aStream = stream_and_font_setup(pls, 0);
+
+  // Save the pointer to the structure in the PLplot stream
+  pls->dev = aStream;
+
+}
+
+//----------------------------------------------------------------------
+// plD_bop_extcairo()
+//
+// Set up for the next page.
+//----------------------------------------------------------------------
+
+void plD_bop_extcairo(PLStream *pls)
+{
+  // nothing to do here (we want to preserve the Cairo context as it is)
+}
+
+//---------------------------------------------------------------------
+// plD_esc_extcairo()
+//
+// The generic escape function, extended so that user can pass in
+// an external Cairo context to use for rendering.
+//---------------------------------------------------------------------
+
+void plD_esc_extcairo(PLStream *pls, PLINT op, void *ptr)
+{
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  switch(op)
+    {
+    case PLESC_FILL:     // filled polygon
+      poly_line(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
+      cairo_fill(aStream->cairoContext);
+      break;
+    case PLESC_HAS_TEXT: // render rext
+      proc_str(pls, (EscText *) ptr);
+      break;
+    case PLESC_DEVINIT: // Set external context
+      aStream->cairoContext = (cairo_t *)ptr;
+      // Set graphics aliasing
+      cairo_set_antialias(aStream->cairoContext, aStream->graphics_anti_aliasing);
+      // Should adjust plot size to fit in the given cairo context?
+      break;
+    }
+}
+
+//---------------------------------------------------------------------
+// plD_tidy_extcairo()
+//
+// This is nop, it is up to the calling program to clean up the Cairo
+// context, etc...
+//---------------------------------------------------------------------
+
+void plD_tidy_extcairo(PLStream *pls)
+{
+}
+
+#endif
+
