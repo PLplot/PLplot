@@ -168,6 +168,8 @@ case $1 in
     # and compare with previous.
     echo "c++ API differences (if any)"
     grep 'plstream::' bindings/c++/plstream.cc |\
+    grep -v '//' |\
+    grep '(' |\
     cut --delimiter='(' --fields=1 |\
     cut --delimiter=':' --fields=3 |\
     sed 's/[^ ]*/pl&/' |\
