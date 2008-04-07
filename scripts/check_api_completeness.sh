@@ -163,6 +163,19 @@ case $1 in
     diff -au /tmp/plplot_api.txt - 
   ;;
   
+  c++)
+    # Prepare API list from bindings/c++/plstream.h
+    # and compare with previous.
+    echo "c++ API differences (if any)"
+    grep 'plstream::' bindings/c++/plstream.cc |\
+    cut --delimiter='(' --fields=1 |\
+    cut --delimiter=':' --fields=3 |\
+    sed 's/[^ ]*/pl&/' |\
+    sort -u |\
+    grep -v '[A-Z]' |\
+    diff -au /tmp/plplot_api.txt -
+  ;;
+
   all)
     $0 docbook
     $0 swig
@@ -170,12 +183,13 @@ case $1 in
     $0 octave
     $0 f77
     $0 f95
+    $0 c++
   ;;
 
   *)
   echo "First argument was $1"
   echo "Instead, it must be one of the following:"
-  echo "docbook, swig, java, octave, f77, f95, or all"
+  echo "docbook, swig, java, octave, f77, f95, c++ or all"
   ;;
 esac
 #rm /tmp/plplot_api.txt
