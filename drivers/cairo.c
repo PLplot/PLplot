@@ -1661,6 +1661,7 @@ void plD_eop_memcairo(PLStream *pls)
 void plD_dispatch_init_extcairo (PLDispatchTable *pdt);
 void plD_init_extcairo          (PLStream *);
 void plD_bop_extcairo           (PLStream *);
+void plD_eop_extcairo           (PLStream *);
 void plD_esc_extcairo           (PLStream *, PLINT, void *);
 void plD_tidy_extcairo          (PLStream *);
 
@@ -1682,8 +1683,8 @@ void plD_dispatch_init_extcairo(PLDispatchTable *pdt)
    pdt->pl_init     = (plD_init_fp)     plD_init_extcairo;
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
-   pdt->pl_eop      = (plD_eop_fp)      plD_eop_cairo;
    pdt->pl_bop      = (plD_bop_fp)      plD_bop_extcairo;
+   pdt->pl_eop      = (plD_eop_fp)      plD_eop_extcairo;
    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_extcairo;
    pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
    pdt->pl_esc      = (plD_esc_fp)      plD_esc_extcairo;
@@ -1714,7 +1715,19 @@ void plD_init_extcairo (PLStream *pls)
 
 void plD_bop_extcairo(PLStream *pls)
 {
-  // nothing to do here (we want to preserve the Cairo context as it is)
+  // nothing to do here, we want to preserve the Cairo context as it is.
+}
+
+//----------------------------------------------------------------------
+// plD_eop_extcairo()
+//
+// End of page.
+//----------------------------------------------------------------------
+
+void plD_eop_extcairo(PLStream *pls)
+{
+  // nothing to do here, we leave it to the calling program to display
+  // (or not) the update cairo context.
 }
 
 //---------------------------------------------------------------------
@@ -1743,7 +1756,13 @@ void plD_esc_extcairo(PLStream *pls, PLINT op, void *ptr)
       aStream->cairoContext = (cairo_t *)ptr;
       // Set graphics aliasing
       cairo_set_antialias(aStream->cairoContext, aStream->graphics_anti_aliasing);
+
+      // Invert the surface so that the graphs are drawn right side up.
+      rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
+
       // Should adjust plot size to fit in the given cairo context?
+      // Cairo does not provide a way to query the dimensions of a context?
+
       break;
     }
 }
