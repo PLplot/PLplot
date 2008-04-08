@@ -1,4 +1,4 @@
-plplot (5.9.0-6) UNRELEASED; urgency=low
+plplot (5.9.0-6) unstable; urgency=low
 
   * debian/control.in, debian/rules: Disable building of the Ada binding
     on alpha
