@@ -46,6 +46,22 @@ package PLplot_Traditional is
     subtype PLPointer                  is PLplot_Thin.PLpointer;
     subtype Transformation_Data_Type   is Plplot_Thin.Transformation_Data_Type;
     subtype Transformation_Data_Type_2 is Plplot_Thin.Transformation_Data_Type_2;
+    
+    -- Rename Plplot_Thin.plfill so that a pointer to it can be passed to 
+    -- procedures such as plshade, plshade1, and plshades and called with C 
+    -- conventions. Note that Plplot_Thin.plfill is already in C so that it does 
+    -- not have to be re-written like e.g. pltr1 was for plcont. The Ada 
+    -- procedure plfill in this package can't be used because it does not carry 
+    -- the array dimensions which will be needed by the time it is finally 
+    -- called deep within the plplot calling chain; this is why the version 
+    -- from this package (PLplot_Traditional) can't be used. Thus, this also
+    -- overloads the name plfill. It might never occur to the Ada programmer 
+    -- that this is happening, which is good.
+    procedure plfill(length : Integer; x, y : Real_Vector) renames PLplot_Thin.plfill;
+    
+    -- Make Mask_Function_Pointer_Type available to the user so that s/he doesn't 
+    -- have to "with" PLplot_Thin. Note that it is also used herein.
+    subtype Mask_Function_Pointer_Type is PLplot_Thin.Mask_Function_Pointer_Type;
 
 --------------------------------------------------------------------------------
 --        Types and constants for thick binding                               --
@@ -742,6 +758,11 @@ package PLplot_Traditional is
     procedure plfamadv;
 
 
+    -- Other "fill" routines similar to plfill could be written in Ada if 
+    -- desired, but if they are intended to be used as callbacks in subprograms 
+    -- such as plshade, plshade1, and plshades, they should be called with C 
+    -- calling conventions.
+    
     -- Pattern fills the polygon bounded by the input points.
     procedure plfill(x, y : Real_Vector);
 
@@ -1212,9 +1233,10 @@ package PLplot_Traditional is
         Fill_Pattern_Pen_Width                   : Positive;
         Shade_Min_Pen_Color, Shade_Min_Pen_Width : Natural;
         Shade_Max_Pen_Color, Shade_Max_Pen_Width : Natural;
+        Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
-        Transformation_Procedure_Pointer          : Transformation_Procedure_Pointer_Type;
-        Transformation_Data                      : Transformation_Data_Type);
+        Transformation_Procedure_Pointer         : Transformation_Procedure_Pointer_Type;
+        Transformation_Data_Pointer              : PLpointer);
 
 
     procedure plshade1
@@ -1227,22 +1249,24 @@ package PLplot_Traditional is
         Fill_Pattern_Pen_Width                   : Positive;
         Shade_Min_Pen_Color, Shade_Min_Pen_Width : Natural;
         Shade_Max_Pen_Color, Shade_Max_Pen_Width : Natural;
+        Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
-        Transformation_Procedure_Pointer          : Transformation_Procedure_Pointer_Type;
-        Transformation_Data                      : Transformation_Data_Type);
+        Transformation_Procedure_Pointer         : Transformation_Procedure_Pointer_Type;
+        Transformation_Data_Pointer              : PLpointer);
 
 
     procedure plshades
-       (z                               : Real_Matrix;
-        Mask_Function_Pointer           : Mask_Function_Pointer_Type;
-        x_Min, x_Max, y_Min, y_Max      : Long_Float; -- world mins and maxes
-        Contour_Levels                  : Real_Vector;
-        Fill_Pattern_Pen_Width          : Positive;
-        Contour_Pen_Color               : Natural; -- 0 for no contours
-        Contour_Pen_Width               : Natural; -- 0 for no contours
-        Preserve_Rectangles             : Boolean;
+       (z                                : Real_Matrix;
+        Mask_Function_Pointer            : Mask_Function_Pointer_Type;
+        x_Min, x_Max, y_Min, y_Max       : Long_Float; -- world mins and maxes
+        Contour_Levels                   : Real_Vector;
+        Fill_Pattern_Pen_Width           : Positive;
+        Contour_Pen_Color                : Natural; -- 0 for no contours
+        Contour_Pen_Width                : Natural; -- 0 for no contours
+        Fill_Procedure_Pointer           : Fill_Procedure_Pointer_Type;
+        Preserve_Rectangles              : Boolean;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data             : Transformation_Data_Type);
+        Transformation_Data_Pointer      : PLpointer);
 
 
     -- The procedure plfshade is not part of the API. If it should be necessary 

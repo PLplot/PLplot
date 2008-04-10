@@ -90,6 +90,15 @@ package PLplot_Thin is
     type Transformation_Procedure_Pointer_Type is access 
         procedure (x, y : PLFLT; tx, ty : out PLFLT; pltr_data : PLpointer);
     pragma Convention (Convention => C, Entity => Transformation_Procedure_Pointer_Type);
+    
+    
+    -- Access-to-procedure to e.g. to plfill, used by plshade, plshade1, plshades.
+    -- Needs C calling convention because it is passed eventually to plfill aka 
+    -- c_plfill in plplot.h. plfill is said in the documentation to be possibly 
+    -- supplemented in the future. 
+    type Fill_Procedure_Pointer_Type is access
+        procedure(length : Integer; x, y : Real_Vector);
+    pragma Convention (Convention => C, Entity => Fill_Procedure_Pointer_Type);
         
 
     -- Access-to-function type for Shade_Regions (aka plshades).
@@ -98,11 +107,6 @@ package PLplot_Thin is
         function (x, y : PLFLT) return Integer;
         
 
-    -- Access-to-procedure type for filling polygons; example is plfill.
-    type Fill_Polygon_Procedure_Pointer_Type is access
-        procedure (n : Integer; x, y : PL_Float_Array);
-        
-    
     -- Access-to-procedure type for plotting map outlines (continents).
     -- Length_Of_x is x'Length or y'Length; this is the easiest way to match the 
     -- C formal arguments.
@@ -611,14 +615,6 @@ package PLplot_Thin is
     procedure
     plfamadv;
     pragma Import(C, plfamadv, "c_plfamadv");
-
-
-    -- Pattern fills the polygon bounded by the input points.
-    -- (This Ada variation required by plplot.adb).
-
-    procedure
-    plfillada(n : PLINT; x : PL_Float_Array; y : PL_Float_Array);
-    pragma Import(Ada, plfillada, "c_plfill");
 
 
     -- Pattern fills the polygon bounded by the input points. 
@@ -1241,7 +1237,7 @@ package PLplot_Thin is
           sh_cmap : PLINT; sh_color : PLFLT; sh_width : PLINT;
           min_color : PLINT; min_width : PLINT;
           max_color : PLINT; max_width : PLINT;
-          fill : Fill_Polygon_Procedure_Pointer_Type; rectangular : PLINT;
+          fill : Fill_Procedure_Pointer_Type; rectangular : PLINT;
           pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
     pragma Import(C, plshade, "c_plshade");
 
@@ -1253,7 +1249,7 @@ package PLplot_Thin is
           sh_cmap : PLINT; sh_color : PLFLT; sh_width : PLINT;
           min_color : PLINT; min_width : PLINT;
           max_color : PLINT; max_width : PLINT;
-          fill : Fill_Polygon_Procedure_Pointer_Type; rectangular : PLINT;
+          fill : Fill_Procedure_Pointer_Type; rectangular : PLINT;
           pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
     pragma Import(C, plshade1, "c_plshade1");
 
@@ -1263,7 +1259,7 @@ package PLplot_Thin is
           xmin : PLFLT; xmax : PLFLT; ymin : PLFLT; ymax : PLFLT;
           clevel : PL_Float_Array; nlevel : PLINT; fill_width : PLINT;
           cont_color : PLINT; cont_width : PLINT;
-          fill : Fill_Polygon_Procedure_Pointer_Type; rectangular : PLINT;
+          fill : Fill_Procedure_Pointer_Type; rectangular : PLINT;
           pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
     pragma Import(C, plshades, "c_plshades");
 

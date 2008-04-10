@@ -43,6 +43,7 @@ EXECUTABLES_list = \
 	x11a$(EXEEXT) \
 	x12a$(EXEEXT) \
 	x13a$(EXEEXT) \
+	x15a$(EXEEXT) \
 	xthick01a$(EXEEXT) \
 	xthick02a$(EXEEXT) \
 	xthick03a$(EXEEXT) \
@@ -55,7 +56,8 @@ EXECUTABLES_list = \
 	xthick10a$(EXEEXT) \
 	xthick11a$(EXEEXT) \
 	xthick12a$(EXEEXT) \
-	xthick13a$(EXEEXT)
+	xthick13a$(EXEEXT) \
+	xthick15a$(EXEEXT)
 		 
 all: $(EXECUTABLES_list)
 

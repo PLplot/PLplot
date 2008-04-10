@@ -1017,7 +1017,7 @@ package body PLplot_Traditional is
 
     -- This is a mask function for Shade_Regions (aka plshades) et al that always
     -- returns 1 so that all points are plotted. Can be used as a template 
-    -- for other user-written mask functions. This behave the same as 
+    -- for other user-written mask functions. This behaves the same as 
     -- when passing null for the second argument in Shade_Regions.
     function Mask_Function_No_Mask(x, y : Long_Float) return Integer is
     begin
@@ -1375,9 +1375,13 @@ package body PLplot_Traditional is
         PLplot_Thin.plfamadv;
     end plfamadv;
 
-
+    -- Other "fill" routines similar to plfill could be written in Ada if 
+    -- desired, but if they are intended to be used as callbacks in subprograms 
+    -- such as plshade, plshade1, and plshades, they should be called with C 
+    -- calling conventions.
+    
     -- Pattern fills the polygon bounded by the input points.
-    procedure plfill(x, y : Real_Vector) is
+    procedure plfill(x, y : Real_Vector) is -- might have to put n:Integer first
     begin
         PLplot_Thin.plfill(x'Length, x, y);
     end plfill;
@@ -2203,21 +2207,13 @@ package body PLplot_Traditional is
         Fill_Pattern_Pen_Width                   : Positive;
         Shade_Min_Pen_Color, Shade_Min_Pen_Width : Natural;
         Shade_Max_Pen_Color, Shade_Max_Pen_Width : Natural;
+        Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer         : Transformation_Procedure_Pointer_Type;
-        Transformation_Data                      : Transformation_Data_Type) is
+        Transformation_Data_Pointer              : PLpointer) is
 
-        Transformation_Data_Address : PLpointer;
-        Fill_Routine_Pointer : Fill_Polygon_Procedure_Pointer_Type;
         Preserve_Rectangles_As_Integer : Integer;
     begin
-        Transformation_Data_Address := Transformation_Data'Address;
-
-        -- If there ever become available other fill routines, this pointer
-        -- assignment will have to be handled by the caller and the function
-        -- pointer passed as an argument, breaking backward compatibility a little.
-        Fill_Routine_Pointer := plfillada'access;
-
         if Preserve_Rectangles then
             Preserve_Rectangles_As_Integer := 1;
         else
@@ -2229,8 +2225,8 @@ package body PLplot_Traditional is
             Color, Fill_Pattern_Pen_Width, 
             Shade_Min_Pen_Color, Shade_Min_Pen_Width, 
             Shade_Max_Pen_Color, Shade_Max_Pen_Width, 
-            Fill_Routine_Pointer, Preserve_Rectangles_As_Integer,
-            Transformation_Procedure_Pointer, Transformation_Data_Address);
+            Fill_Procedure_Pointer, Preserve_Rectangles_As_Integer,
+            Transformation_Procedure_Pointer, Transformation_Data_Pointer);
     end plshade;
 
 
@@ -2244,21 +2240,13 @@ package body PLplot_Traditional is
         Fill_Pattern_Pen_Width                   : Positive;
         Shade_Min_Pen_Color, Shade_Min_Pen_Width : Natural;
         Shade_Max_Pen_Color, Shade_Max_Pen_Width : Natural;
+        Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer         : Transformation_Procedure_Pointer_Type;
-        Transformation_Data                      : Transformation_Data_Type) is
+        Transformation_Data_Pointer              : PLpointer) is
 
-        Transformation_Data_Address : PLpointer;
-        Fill_Routine_Pointer : Fill_Polygon_Procedure_Pointer_Type;
         Preserve_Rectangles_As_Integer : Integer;
     begin
-        Transformation_Data_Address := Transformation_Data'Address;
-
-        -- If there ever become available other fill routines, this pointer
-        -- assignment will have to be handled by the caller and the function
-        -- pointer passed as an argument, breaking backward compatibility a little.
-        Fill_Routine_Pointer := plfillada'access;
-
         if Preserve_Rectangles then
             Preserve_Rectangles_As_Integer := 1;
         else
@@ -2270,8 +2258,8 @@ package body PLplot_Traditional is
             Color, Fill_Pattern_Pen_Width, 
             Shade_Min_Pen_Color, Shade_Min_Pen_Width, 
             Shade_Max_Pen_Color, Shade_Max_Pen_Width, 
-            Fill_Routine_Pointer, Preserve_Rectangles_As_Integer,
-            Transformation_Procedure_Pointer, Transformation_Data_Address);
+            Fill_Procedure_Pointer, Preserve_Rectangles_As_Integer, 
+            Transformation_Procedure_Pointer, Transformation_Data_Pointer);
     end plshade1;
 
 
@@ -2283,21 +2271,13 @@ package body PLplot_Traditional is
         Fill_Pattern_Pen_Width           : Positive;
         Contour_Pen_Color                : Natural; -- 0 for no contours
         Contour_Pen_Width                : Natural; -- 0 for no contours
+        Fill_Procedure_Pointer           : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles              : Boolean;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data              : Transformation_Data_Type) is
+        Transformation_Data_Pointer      : PLpointer) is
 
-        Transformation_Data_Address : PLpointer;
-        Fill_Routine_Pointer : Fill_Polygon_Procedure_Pointer_Type;
         Preserve_Rectangles_As_Integer : Integer;
     begin
-        Transformation_Data_Address := Transformation_Data'Address;
-
-        -- If there ever become available other fill routines, this pointer
-        -- assignment will have to be handled by the caller and the function
-        -- pointer passed as an argument, breaking backward compatibility a little.
-        Fill_Routine_Pointer := plfillada'access;
-
         if Preserve_Rectangles then
             Preserve_Rectangles_As_Integer := 1;
         else
@@ -2307,8 +2287,8 @@ package body PLplot_Traditional is
         PLplot_Thin.plshades(Matrix_To_Pointers(z), z'Length(1), z'Length(2), Mask_Function_Pointer, 
             x_Min, x_Max, y_Min, y_Max, Contour_Levels, Contour_Levels'Length, 
             Fill_Pattern_Pen_Width, Contour_Pen_Color, Contour_Pen_Width, 
-            Fill_Routine_Pointer, Preserve_Rectangles_As_Integer, 
-            Transformation_Procedure_Pointer, Transformation_Data_Address);
+            Fill_Procedure_Pointer, Preserve_Rectangles_As_Integer, 
+            Transformation_Procedure_Pointer, Transformation_Data_Pointer);
     end plshades;
 
     

@@ -98,7 +98,7 @@ begin
 
     for i in y0'range loop
         Set_Pen_Color(i + 1);
-        Select_Fill_Pattern(0);
+        Select_Fill_Pattern(1);
         plfbox((1980.0 + Long_Float(i)), y0(i));
         Write_Text_World(1980.0 + Long_Float(i) + 0.5, y0(i) + 1.0, 1.0, 0.0, 0.5, Trim(Integer'image(Integer(y0(i))), Left));
         Write_Text_Viewport("b", 1.0, (Long_Float(i) + 1.0) * 0.1 - 0.05, 0.5, Trim(Integer'image(1980 + i), Left));

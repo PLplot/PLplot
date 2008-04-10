@@ -99,7 +99,7 @@ begin
 
     for i in y0'range loop
         plcol0(i + 1);
-        plpsty(0);
+        plpsty(1);
         plfbox((1980.0 + Long_Float(i)), y0(i));
         plptex(1980.0 + Long_Float(i) + 0.5, y0(i) + 1.0, 1.0, 0.0, 0.5, Trim(Integer'image(Integer(y0(i))), Left));
         plmtex("b", 1.0, (Long_Float(i) + 1.0) * 0.1 - 0.05, 0.5, Trim(Integer'image(1980 + i), Left));
