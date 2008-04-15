@@ -1269,36 +1269,36 @@ plP_FCI2FontName ( PLUNICODE fci,
 void
 c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 {
-    // local storage
+    /* local storage */
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
     PLFLT chrdef, chrht;
     
-	// calculated
+	/* calculated */
 	PLFLT xpc, ypc, xrefpc, yrefpc;
 	PLFLT epx1, epy1, epx2, epy2, epx3, epy3;
     PLFLT dispx, dispy, xform[4];
     PLFLT shift, theta, temp;
 
-	// check that the plotting environment is set up
+	/* check that the plotting environment is set up */
     if (plsc->level < 3) {
 		plabort("plmtex3: Please set up window first");
 		return;
     }
 	
-	// get plotting environment information
+	/* get plotting environment information */
     plP_gdom(&xmin, &xmax, &ymin, &ymax);
     plP_grange(&zscale, &zmin, &zmax);
     plgchr(&chrdef, &chrht);
 
-	// handle x/y axises
+	/* handle x/y axises */
     if((plP_stindex(side, "x") != -1)||(plP_stindex(side, "y") != -1)){
 	
-	    // get the locations of the end points of the relevant axis
+	    /* get the locations of the end points of the relevant axis */
 
-	    // x axis label
+	    /* x axis label */
     	if(plP_stindex(side, "x") != -1){
 	
-			// primary    
+			/* primary */
 	    	if(plP_stindex(side, "p") != -1){
    		 		epx1 = plP_wcpcx(plP_w3wcx(xmin, ymin, zmin));
 				epy1 = plP_wcpcy(plP_w3wcy(xmin, ymin, zmin));
@@ -1325,7 +1325,7 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 			}
 		}
 
-		// text always goes from left to right
+		/* text always goes from left to right */
 		if(epx1 > epx2){
 			temp = epx1;
 			epx1 = epx2;
@@ -1333,15 +1333,15 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 			temp = epy1;
 			epy1 = epy2;
 			epy2 = temp;
-			// recalculate position assuming the user specified
-			// it in the min -> max direction of the axis. 
+			/* recalculate position assuming the user specified
+			 * it in the min -> max direction of the axis. */
 			pos = 1.0 - pos;
 		}
 
-		// calculate location of text center point
+		/* calculate location of text center point */
 
-		// 1. calculate the angle of the axis we are to
-		// draw the text on relative to the horizontal
+		/* 1. calculate the angle of the axis we are to
+		 * draw the text on relative to the horizontal */
 								
 		if((epx2-epx1)!=0.0){
 			theta = atan((epy2 - epy1)/(epx2 - epx1));
@@ -1353,22 +1353,22 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 			}
 		}
 		
-		// 2. calculate the perpendicular vector
+		/* 2. calculate the perpendicular vector */
 
 		dispy = disp * chrht;
 
-		// 3. calculate x & y center points
+		/* 3. calculate x & y center points */
 		
 		xpc = pos * (epx2 - epx1) + epx1;
 		ypc = pos * (epy2 - epy1) + epy1;
 		
-		// 4. compute reference point
-		//  It appears that drivers that cannot handle text justification 
-		//   use this as the starting point of the string.
-		//  Calculations must be done in millimeters for this part
-		//   so we convert to mm, do the calculation and convert back.
-		//  The calculation is also dependent of the orientation
-		//   (perpendicular or parallel) of the text.
+		/* 4. compute reference point
+		 *  It appears that drivers that cannot handle text justification 
+		 *   use this as the starting point of the string.
+		 *  Calculations must be done in millimeters for this part
+		 *   so we convert to mm, do the calculation and convert back.
+		 *  The calculation is also dependent of the orientation
+		 *   (perpendicular or parallel) of the text. */
 
 		xpc = plP_dcmmx(plP_pcdcx(xpc));
 		ypc = plP_dcmmy(plP_pcdcy(ypc)) - dispy;
@@ -1388,9 +1388,9 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 		xrefpc = plP_mmpcx(xrefpc);
 		yrefpc = plP_mmpcy(yrefpc);
 
-    	// 5. compute transform matrix & draw text
+    	/* 5. compute transform matrix & draw text */
 
-    	// perpendicular, rotate 90 degrees & shear
+    	/* perpendicular, rotate 90 degrees & shear */
 
     	if(plP_stindex(side, "v") != -1){    	 	
     		xform[0] = 0.0;
@@ -1400,7 +1400,7 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 			plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);
     	}
 
-    	// parallel, rotate & shear by angle
+    	/* parallel, rotate & shear by angle */
     	else {
     		xform[0] = cos(theta);
     		xform[1] = 0.0;
@@ -1411,13 +1411,13 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 		}
 	}
 
-	// handle z axises
+	/* handle z axises */
     if(plP_stindex(side, "z") != -1){
 
-    	// Find the left most of the 4 z axis options for "primary"
-    	// Also find the location of frontmost point in the graph,
-    	//  which will be needed to calculate at what angle to shear
-    	//  the text.
+    	/* Find the left most of the 4 z axis options for "primary"
+    	 * Also find the location of frontmost point in the graph,
+    	 *  which will be needed to calculate at what angle to shear
+    	 *  the text. */
 
     	if(plP_stindex(side, "p") != -1){
 
@@ -1452,7 +1452,7 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 			}
 		}
 
-    	// find the right most of the 4 z axis options for "primary"
+    	/* find the right most of the 4 z axis options for "primary" */
     	if(plP_stindex(side, "s") != -1){
 
 	    	epx1 = plP_wcpcx(plP_w3wcx(xmin, ymin, zmin));
@@ -1486,15 +1486,15 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 			}
 		}
 
-		// Calculate location of text center point.
-		// This is very similiar for the z axis.
+		/* Calculate location of text center point.
+		 * This is very similiar for the z axis. */
 
-		// primary and secondary have to be handled separately here
+		/* primary and secondary have to be handled separately here */
 
     	if(plP_stindex(side, "p") != -1){
 
-			// 1. Calculate the angle of the axis we are to
-			// draw the text on relative to the horizontal.
+			/* 1. Calculate the angle of the axis we are to
+			 * draw the text on relative to the horizontal. */
 								
 			if((epx3-epx1)!=0.0){
 				theta = atan((epy3 - epy1)/(epx3 - epx1));
@@ -1506,7 +1506,7 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 				}
 			}
 		
-			// 2. Calculate the perpendicular vector.
+			/* 2. Calculate the perpendicular vector. */
 
 			dispx = -cos(theta) * disp * chrht;
 			dispy = -sin(theta) * disp * chrht;
@@ -1525,12 +1525,12 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 			dispy = sin(theta) * disp * chrht;
 		}
 		
-		// 3. Calculate x & y center points.
+		/* 3. Calculate x & y center points. */
 		
 		xpc = epx1;
 		ypc = pos * (epy2 - epy1) + epy1;
 		
-		// 4. Compute the reference point.
+		/* 4. Compute the reference point. */
 
 		xpc = plP_dcmmx(plP_pcdcx(xpc)) + dispx;
 		ypc = plP_dcmmy(plP_pcdcy(ypc)) + dispy;
@@ -1550,7 +1550,7 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 		xrefpc = plP_mmpcx(xrefpc);
 		yrefpc = plP_mmpcy(yrefpc);
 
-    	// 5. Compute transform matrix & draw text.
+    	/* 5. Compute transform matrix & draw text. */
 
     	if(plP_stindex(side, "v") != -1){
     		xform[0] = cos(theta);
@@ -1601,30 +1601,30 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
   PLFLT xpc, ypc, xrefpc, yrefpc, xdpc, ydpc, xspc, yspc, ld, ls, cp, shift;
   PLFLT theta, phi, xform[4];
 
-  // check that the plotting environment is set up
+  /* check that the plotting environment is set up */
   if (plsc->level < 3) {
     plabort("plptex3: Please set up window first");
     return;
   }
   
-  // compute text x,y location in physical coordinates	
+  /* compute text x,y location in physical coordinates */
   xpc = plP_wcpcx(plP_w3wcx(wx, wy, wz));
   ypc = plP_wcpcy(plP_w3wcy(wx, wy, wz));
   
-  // determine angle to rotate text in the x-y plane
+  /* determine angle to rotate text in the x-y plane */
   xdpc = plP_wcpcx(plP_w3wcx(wx+dx, wy+dy, wz+dz));
   ydpc = plP_wcpcy(plP_w3wcy(wx+dx, wy+dy, wz+dz));
   theta = atan2(ydpc - ypc, xdpc - xpc);
 
-  // Determine angle to shear text in the x-y plane. This is a little
-  // messy, but basically the idea is:
-  //
-  // Compute the dot product of the vector d and the vector s to
-  // determine the angle between them (acos(t) = d . s / |d| |s|).
-  // Then because acos will return a number from 0.0 to PI, i.e.
-  // only in quadrants 1 or 2, compute the cross product of the
-  // two vectors. If this is negative then the angle is adjusted
-  // 0.0 to -PI.
+  /* Determine angle to shear text in the x-y plane. This is a little
+   * messy, but basically the idea is:
+   *
+   * Compute the dot product of the vector d and the vector s to
+   * determine the angle between them (acos(t) = d . s / |d| |s|).
+   * Then because acos will return a number from 0.0 to PI, i.e.
+   * only in quadrants 1 or 2, compute the cross product of the
+   * two vectors. If this is negative then the angle is adjusted
+   * 0.0 to -PI. */
   
   if((sx == 0.0) && (sy == 0.0) && (sz == 0.0)){
     phi = 0.0;
@@ -1639,7 +1639,7 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
     phi = 1.570796 - phi;
   }
   
-  // compute the reference point	
+  /* compute the reference point */	
   xpc = plP_dcmmx(plP_pcdcx(xpc));
   ypc = plP_dcmmy(plP_pcdcy(ypc));
   
@@ -1652,7 +1652,7 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
   xrefpc = plP_mmpcx(xrefpc);
   yrefpc = plP_mmpcy(yrefpc);
   
-  // compute the transform
+  /* compute the transform */
   xform[0] = cos(theta);
   xform[1] = cos(theta) * sin(phi) - sin(theta) * cos(phi);
   xform[2] = sin(theta);

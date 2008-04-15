@@ -179,12 +179,12 @@ c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
 {
   PLINT nnx, nny, ix, iy, ixx, iyy, xm, ym;
   PLFLT dx, dy;
-  // Zf holds transformed image pixel values
-  // szmin and szmax are zmin and zmax scaled to unsigned short values
+  /* Zf holds transformed image pixel values
+   * szmin and szmax are zmin and zmax scaled to unsigned short values */
   unsigned short *Zf, szmin, szmax;
   short *Xf, *Yf;
-  // This is used when looping through the image array, checking to
-  // make sure the values are within an acceptable range.
+  /* This is used when looping through the image array, checking to
+   * make sure the values are within an acceptable range. */
   PLFLT datum;
 
   if (plsc->level < 3) {
@@ -214,10 +214,10 @@ c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
 
   xm = floor((Dxmin-xmin)/dx); ym = floor((Dymin-ymin)/dy);
 
-  // Go through the image values and scale them to fit in an
-  // unsigned short range.
-  // Any values greater than valuemax are set to valuemax,
-  // and values less than valuemin are set to valuemin.
+  /* Go through the image values and scale them to fit in an
+   * unsigned short range.
+   * Any values greater than valuemax are set to valuemax,
+   * and values less than valuemin are set to valuemin. */
   ixx=-1;
   for (ix=xm; ix<xm+nnx; ix++) {
     ixx++; iyy=0;
@@ -245,7 +245,7 @@ c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
       zmax = valuemax;
   }
 
-  // The value range to plot, scaled to unsigned short values
+  /* The value range to plot, scaled to unsigned short values */
   szmin = (zmin - valuemin) / (valuemax - valuemin) * USHRT_MAX;
   szmax = (zmax - valuemin) / (valuemax - valuemin) * USHRT_MAX;
 
@@ -311,8 +311,8 @@ c_plimage(PLFLT **idata, PLINT nx, PLINT ny,
   PLINT ix, iy;
   PLFLT data_min, data_max, iz;
 
-  // Find the minimum and maximum values in the image, and automatically
-  // scale the colors scale over this range.
+  /* Find the minimum and maximum values in the image, and automatically
+   * scale the colors scale over this range. */
   data_min = data_max = idata[0][0];
 
   for (ix = 0; ix < nx; ix++) {
@@ -325,8 +325,8 @@ c_plimage(PLFLT **idata, PLINT nx, PLINT ny,
     }
   }
 
-  // Call plimagefr with the value -> color range mapped to the minimum
-  // and maximum values in idata.
+  /* Call plimagefr with the value -> color range mapped to the minimum
+   * and maximum values in idata. */
   plimagefr(idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
            Dxmin, Dxmax, Dymin, Dymax, data_min, data_max);
 }
