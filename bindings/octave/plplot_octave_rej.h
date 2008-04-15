@@ -102,7 +102,7 @@ void c_plstripc(PLINT *id, char *xspec, char *yspec,
 /* Plot vector arrows */
 void c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
 	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-	PLPointer pltr_data);
+	PLPointer pltr_data); //%nowrap
 
 
 /* Set the function pointer for the keyboard event handler */
@@ -116,4 +116,4 @@ void plsButtonEH(void (*ButtonEH) (PLGraphicsIn *, void *, int *),
 	    
 /* Sets an optional user exit handler. */
 
-void plsexit(int (*handler) (char *));   
+void plsexit(int (*handler) (char *));  //%nowrap 
