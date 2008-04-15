@@ -141,4 +141,9 @@ if(ENABLE_ada)
     )
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
   endif(PKG_CONFIG_EXECUTABLE)
+
+  # Add generated .ali files to the list of additional files to be
+  # removed by make clean
+  SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ALI_LIST}")
+
 endif(ENABLE_ada)

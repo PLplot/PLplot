@@ -93,8 +93,13 @@ foreach(STRING_INDEX ${ada_STRING_INDICES})
     "-aI${CMAKE_BINARY_DIR}/examples/ada -aI${CMAKE_BINARY_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada${LIB_TAG}.dir"
     )
     target_link_libraries(${TARGET_NAME} plplotada${LIB_TAG})
+    list(APPEND ada_extra_clean_files "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.o;${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.ali")
   endif(BUILD_TEST)
 endforeach(STRING_INDEX ${ada_STRING_INDICES})
+
+if(BUILD_TEST)
+SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ada_extra_clean_files}")
+endif(BUILD_TEST)
 
 install(FILES ${ada_SRCS} DESTINATION ${DATA_DIR}/examples/ada)
 
