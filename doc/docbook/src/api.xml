@@ -1796,6 +1796,12 @@ from relative device coordinates,
 	    <xref linkend="contour-plots-c"/>.
 	    The transformation function should
 	    have the form given by any of &pltr0;, &pltr1;, or &pltr2;.
+            Note that unlike &plshades; and similar PLplot functions
+            which have a <literal><parameter>pltr</parameter></literal>
+            argument, plcont requires that a transformation function be
+            provided in the C interface.  Leaving 
+            <literal><parameter>pltr</parameter></literal> NULL will result
+            in an error.
 	  </para>
 	</listitem>
       </varlistentry>

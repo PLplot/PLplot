@@ -484,6 +484,11 @@ c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 {
     PLfGrid2 grid;
 
+    if (pltr == NULL) {
+        /* If pltr is undefined, abort with an error. */
+        plabort("plcont: The pltr callback must be defined");
+    }
+
     grid.f = f;
     plfcont(plf2eval2, (PLPointer) &grid,
 	    nx, ny, kx, lx, ky, ly, clevel, nlevel,
