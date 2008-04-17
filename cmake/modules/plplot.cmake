@@ -321,7 +321,8 @@ if(NOT WIN32)
 endif(NOT WIN32)
 
 # =======================================================================
-# pkg-config support
+# pkg-config support as well as macros to put link flags in standard
+# *.pc (pkg-config) form as well as standard fullpath form used by cmake.
 # =======================================================================
 include(pkg-config)
 
