@@ -23,9 +23,9 @@
    	
 */
 
-//---------------------------------------------
-// Header files, defines and local variables
-//---------------------------------------------
+/*---------------------------------------------
+  Header files, defines and local variables
+  ---------------------------------------------*/
 
 /* OS X specific header files */
 
@@ -48,8 +48,8 @@
 
 /* local variables */
 
-static NSAutoreleasePool *arpool;   // Objective-C autorelease pool
-static id adapter;					// Adapter object
+static NSAutoreleasePool *arpool;   /* Objective-C autorelease pool */
+static id adapter;		    /* Adapter object */
 
 const char* plD_DEVICE_INFO_aqt = "aqt:AquaTerm (Mac OS X):1:aqt:50:aqt";
 
@@ -172,9 +172,9 @@ static inline void NOOP_(id x, ...) {;}
 #define LOG  NOOP_
 #endif  /* LOGGING */
 
-//-----------------------------------------------
-// function declarations
-//-----------------------------------------------
+/*-----------------------------------------------
+  function declarations
+  -----------------------------------------------*/
 
 /* helper functions */
 
@@ -196,11 +196,11 @@ void plD_tidy_aqt               (PLStream *);
 void plD_state_aqt              (PLStream *, PLINT);
 void plD_esc_aqt                (PLStream *, PLINT, void *);
 
-//---------------------------------------------------------------------
-//   dispatch_init_init()
-//
-//   Initialize device dispatch table
-//----------------------------------------------------------------------
+/*---------------------------------------------------------------------
+  dispatch_init_init()
+  
+  Initialize device dispatch table
+  ---------------------------------------------------------------------*/
 
 void plD_dispatch_init_aqt( PLDispatchTable *pdt )
 {
@@ -220,11 +220,11 @@ void plD_dispatch_init_aqt( PLDispatchTable *pdt )
    pdt->pl_esc      = (plD_esc_fp)      plD_esc_aqt;
 }
 
-//---------------------------------------------------------------------
-//   aqt_init()
-//
-//   Initialize device
-//----------------------------------------------------------------------
+/*---------------------------------------------------------------------
+  aqt_init()
+  
+  Initialize device
+  ---------------------------------------------------------------------*/
 
 void plD_init_aqt(PLStream *pls)
 {
@@ -284,11 +284,11 @@ void plD_init_aqt(PLStream *pls)
 	}
 }
 
-//----------------------------------------------------------------------
-//   aqt_bop()
-//
-//   Set up for the next page.
-//----------------------------------------------------------------------
+/*----------------------------------------------------------------------
+  aqt_bop()
+  
+  Set up for the next page.
+  ----------------------------------------------------------------------*/
 
 void plD_bop_aqt(PLStream *pls)
 {
@@ -310,11 +310,11 @@ void plD_bop_aqt(PLStream *pls)
    pls->page++;
 }
 
-//---------------------------------------------------------------------
-//   aqt_line()
-//
-//   Draw a line in the current color from (x1,y1) to (x2,y2).
-//----------------------------------------------------------------------
+/*---------------------------------------------------------------------
+  aqt_line()
+  
+  Draw a line in the current color from (x1,y1) to (x2,y2).
+  ---------------------------------------------------------------------*/
 
 void plD_line_aqt(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
@@ -322,11 +322,11 @@ void plD_line_aqt(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
    [adapter addLineToPoint:NSMakePoint((float)x2a*SCALE, (float)y2a*SCALE)];
 }
 
-//---------------------------------------------------------------------
-//  aqt_polyline()
-//
-// Draw a polyline in the current color.
-//---------------------------------------------------------------------
+/*---------------------------------------------------------------------
+  aqt_polyline()
+  
+  Draw a polyline in the current color.
+  ---------------------------------------------------------------------*/
 
 void plD_polyline_aqt(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
@@ -336,35 +336,36 @@ void plD_polyline_aqt(PLStream *pls, short *xa, short *ya, PLINT npts)
       plD_line_aqt(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
-//---------------------------------------------------------------------
-//   aqt_eop()
-//
-//   End of page
-//---------------------------------------------------------------------
+/*---------------------------------------------------------------------
+  aqt_eop()
+  
+  End of page
+  ---------------------------------------------------------------------*/
 
 void plD_eop_aqt(PLStream *pls)
 {
-	[arpool release]; 	// prevents a memory leak by freeing everything in
-						// the auto-release pool when the plot is closed.
-	arpool = [[NSAutoreleasePool alloc] init];
-	[adapter renderPlot];
+  [arpool release]; /* prevents a memory leak by freeing everything in */
+                    /* the auto-release pool when the plot is closed. */
+  arpool = [[NSAutoreleasePool alloc] init];
+  [adapter renderPlot];
 }
 
-//---------------------------------------------------------------------
-// aqt_tidy()
-//
-// Close graphics file or otherwise clean up.
-//---------------------------------------------------------------------
+/*---------------------------------------------------------------------
+  aqt_tidy()
+  
+  Close graphics file or otherwise clean up.
+  ---------------------------------------------------------------------*/
 
 void plD_tidy_aqt(PLStream *pls)
 {
    [adapter closePlot];
 }
-//---------------------------------------------------------------------
-//  plD_state_aqt()
-//
-//  Handle change in PLStream state (color, pen width, fill attribute, etc).
-//---------------------------------------------------------------------
+
+/*---------------------------------------------------------------------
+  plD_state_aqt()
+  
+  Handle change in PLStream state (color, pen width, fill attribute, etc).
+  ---------------------------------------------------------------------*/
 
 void plD_state_aqt(PLStream *pls, PLINT op)
 {
@@ -377,7 +378,7 @@ void plD_state_aqt(PLStream *pls, PLINT op)
       [adapter setLinewidth:(float)pls->width];
       break;
       
-    case PLSTATE_COLOR0:	// this seems to work, but that isn't to say that it is done right...
+    case PLSTATE_COLOR0:	/* this seems to work, but that isn't to say that it is done right... */
       if(hasAlpha){
 	[adapter setBackgroundColorRed:(float)(plsc->cmap0[0].r/255.0) 
 	 green:(float)(plsc->cmap0[0].g/255.0)
@@ -410,68 +411,68 @@ void plD_state_aqt(PLStream *pls, PLINT op)
     }
 }
 
-//---------------------------------------------------------------------
-// aqt_esc()
-//
-// Escape function.
-//
-// Functions:
-//
-//      PLESC_EH        Handle pending events
-//      PLESC_EXPOSE    Force an expose
-//      PLESC_FILL      Fill polygon
-//      PLESC_FLUSH     Flush X event buffer
-//      PLESC_GETC      Get coordinates upon mouse click
-//      PLESC_REDRAW    Force a redraw
-//      PLESC_RESIZE    Force a resize
-//---------------------------------------------------------------------
-//
+/*---------------------------------------------------------------------
+  aqt_esc()
+  
+  Escape function.
+  
+  Functions:
+  
+   PLESC_EH        Handle pending events
+   PLESC_EXPOSE    Force an expose
+   PLESC_FILL      Fill polygon
+   PLESC_FLUSH     Flush X event buffer
+   PLESC_GETC      Get coordinates upon mouse click
+   PLESC_REDRAW    Force a redraw
+   PLESC_RESIZE    Force a resize
+  ---------------------------------------------------------------------*/
+
 void plD_esc_aqt(PLStream *pls, PLINT op, void *ptr)
 {
    int     i;
    switch (op)
    {
-      case PLESC_EXPOSE:              // handle window expose
-         break;
-      case PLESC_RESIZE:              // handle window resize
-         break;
-      case PLESC_REDRAW:              // handle window redraw
-         break;
-      case PLESC_TEXT:                // switch to text screen
-         break;
-      case PLESC_GRAPH:               // switch to graphics screen
-         break;
-      case PLESC_FILL:                // fill polygon	 
-         [adapter moveToVertexPoint:NSMakePoint(pls->dev_x[0]*SCALE, pls->dev_y[0]*SCALE)];
-         for (i = 1; i < pls->dev_npts ; i++)
-         {
-            [adapter addEdgeToVertexPoint:NSMakePoint(pls->dev_x[i]*SCALE, pls->dev_y[i]*SCALE)];
-         };
-         break;
-      case PLESC_DI:                  // handle DI command
-         break;
-      case PLESC_FLUSH:               // flush output
-         [adapter renderPlot];
-         break;
-      case PLESC_EH:                  // handle Window events
-         break;
-      case PLESC_GETC:                // get cursor position
-         [adapter renderPlot]; // needed to give the user something to click on
-         get_cursor(pls, (PLGraphicsIn*)ptr);
-         break;
-      case PLESC_SWIN:                // set window parameters
-         break;
-      case PLESC_HAS_TEXT:
-         proc_str(pls, (EscText *)ptr);
-         break;
+   case PLESC_EXPOSE:              /* handle window expose */
+     break;
+   case PLESC_RESIZE:              /* handle window resize */
+     break;
+   case PLESC_REDRAW:              /* handle window redraw */
+     break;
+   case PLESC_TEXT:                /* switch to text screen */
+     break;
+   case PLESC_GRAPH:               /* switch to graphics screen */
+     break;
+   case PLESC_FILL:                /* fill polygon */	 
+     [adapter moveToVertexPoint:NSMakePoint(pls->dev_x[0]*SCALE, pls->dev_y[0]*SCALE)];
+     for (i = 1; i < pls->dev_npts ; i++)
+       {
+	 [adapter addEdgeToVertexPoint:NSMakePoint(pls->dev_x[i]*SCALE, pls->dev_y[i]*SCALE)];
+       };
+     break;
+   case PLESC_DI:                  /* handle DI command */
+     break;
+   case PLESC_FLUSH:               /* flush output */
+     [adapter renderPlot];
+     break;
+   case PLESC_EH:                  /* handle Window events */
+     break;
+   case PLESC_GETC:                /* get cursor position */
+     [adapter renderPlot]; /* needed to give the user something to click on */
+     get_cursor(pls, (PLGraphicsIn*)ptr);
+     break;
+   case PLESC_SWIN:                /* set window parameters */
+     break;
+   case PLESC_HAS_TEXT:
+     proc_str(pls, (EscText *)ptr);
+     break;
    }
 }
 
-//---------------------------------------------------------------------
-// get_cursor()
-//
-// returns the location of the next mouse click
-//---------------------------------------------------------------------
+/*---------------------------------------------------------------------
+  get_cursor()
+  
+  returns the location of the next mouse click
+  ---------------------------------------------------------------------*/
 
 void get_cursor(PLStream *pls, PLGraphicsIn *gin){
 	int scanned, x, y, button;
@@ -482,13 +483,13 @@ void get_cursor(PLStream *pls, PLGraphicsIn *gin){
 	temp = [adapter waitNextEvent];
 	scanned = sscanf([temp cString],"1:{%d, %d}:%d", &x, &y, &button);
 
-	if(scanned == 3){	// check that we did actually get a reasonable event string
+	if(scanned == 3){	/* check that we did actually get a reasonable event string */
 		gin->button = button;
 		gin->pX = x;
 		gin->pY = y;
 		gin->dX = (PLFLT)x/((PLFLT)(pls->xlength));
 		gin->dY = (PLFLT)y/((PLFLT)(pls->ylength));
-	} else {	// just return zeroes if we did not
+	} else {	/* just return zeroes if we did not */
 		printf("AquaTerm did not return a valid mouse location!\n");
 		gin->button = 0;
 		gin->pX = 0;
@@ -498,12 +499,12 @@ void get_cursor(PLStream *pls, PLGraphicsIn *gin){
 	}
 }
 
-//---------------------------------------------------------------------
-// proc_str()
-//
-// Processes strings for display. The actual parsing of the unicode
-// string is handled by the sub-routine create_string.
-//---------------------------------------------------------------------
+/*---------------------------------------------------------------------
+  proc_str()
+  
+  Processes strings for display. The actual parsing of the unicode
+  string is handled by the sub-routine create_string.
+  ---------------------------------------------------------------------*/
 
 void proc_str (PLStream *pls, EscText *args)
 {
@@ -545,15 +546,15 @@ void proc_str (PLStream *pls, EscText *args)
     jst = AQTAlignCenter;                           /* center */
   
   /* set the baseline of the string */
-  // Middle and Bottom are set to Middle since this seems to be what PLplot expects
-  // as judged by where it renders the symbols in example 1.
+  /* Middle and Bottom are set to Middle since this seems to be what PLplot expects
+     as judged by where it renders the symbols in example 1. */
   
-  if (args->base == 2)      // Top
+  if (args->base == 2)      /* Top */
     ref = AQTAlignTop;
-  else if (args->base == 1) // Bottom
+  else if (args->base == 1) /* Bottom */
     ref = AQTAlignMiddle;
   else
-    ref = AQTAlignMiddle; // Middle
+    ref = AQTAlignMiddle; /* Middle */
   
   /* create an appropriately formatted, etc... unicode string */
   
@@ -588,18 +589,18 @@ void proc_str (PLStream *pls, EscText *args)
   [str release];
 }
 
-//---------------------------------------------------------------------
-// create_string()
-//
-// create a NSMutableAttributedString from the plplot ucs4 string
-//
-// assumptions :
-//	1. font changes are unicode >= PL_FCI_MARK
-//  2. we'll never have to deal with a string longer then MAX_STRING_LEN characters
-// 	3. <esc><esc> means we desired <esc> as a character & not actually as <esc>
-//  4. there are no two character <esc> sequences... i.e. <esc>fn is now covered by fci
-//
-//---------------------------------------------------------------------
+/*---------------------------------------------------------------------
+  create_string()
+  
+  create a NSMutableAttributedString from the plplot ucs4 string
+  
+  assumptions :
+  1. font changes are unicode >= PL_FCI_MARK
+  2. we'll never have to deal with a string longer then MAX_STRING_LEN characters
+  3. <esc><esc> means we desired <esc> as a character & not actually as <esc>
+  4. there are no two character <esc> sequences... i.e. <esc>fn is now covered by fci
+  
+  ---------------------------------------------------------------------*/
 
 NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, PLFLT font_height)
 {
@@ -655,17 +656,17 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 				continue;
 			}
     		else {
-    			if(ucs4[i] == (PLUNICODE)'f'){	// font change
+		  if(ucs4[i] == (PLUNICODE)'f'){	/* font change */
     				i++;
     				printf("hmm, unicode string apparently not following fci convention...\n");
     			}
-    			if(ucs4[i] == (PLUNICODE)'d'){	// Subscript
+		  if(ucs4[i] == (PLUNICODE)'d'){	/* Subscript */
     				updown--;
     				[str addAttribute:@"NSSuperScript"
                 				value:[NSNumber numberWithInt:updown]
                 				range:NSMakeRange(cur_loc, (MAX_STRING_LEN - cur_loc))];
     			}
-    			if(ucs4[i] == (PLUNICODE)'u'){	// Superscript
+		  if(ucs4[i] == (PLUNICODE)'u'){	/* Superscript */
     				updown++;
     				[str addAttribute:@"NSSuperScript"
                 				value:[NSNumber numberWithInt:updown]
@@ -687,11 +688,11 @@ NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, 
 	return str;
 }
 
-//---------------------------------------------------------------------
-// set_font_and_size
-//
-// set the font & size of a attributable string object
-//---------------------------------------------------------------------
+/*---------------------------------------------------------------------
+  set_font_and_size
+  
+  set the font & size of a attributable string object
+  ---------------------------------------------------------------------*/
 
 void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT font_height, int cur_loc)
 {
@@ -699,14 +700,14 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
 
 	font = plP_FCI2FontName(fci, AQT_FontLookup, AQT_N_FontLookup);
 	
-	// check whether that font exists & if not, use standard font instread
+	/* check whether that font exists & if not, use standard font instread */
 	
 	if(font == NULL){
 		printf("AquaTerm : Warning, could not find font given by fci = 0x%x\n", fci);
 		font = "Helvetica";
 	}
-	// font = "FreeSerif";	// force the font for debugging purposes
-	// printf("Font at %d is : %s\n", cur_loc, font);
+	/* font = "FreeSerif";	*/ /* force the font for debugging purposes */
+	/* printf("Font at %d is : %s\n", cur_loc, font); */
 
     [str addAttribute:@"AQTFontname"
                 value:[NSString stringWithCString:font]
@@ -716,46 +717,46 @@ void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT fon
                 range:NSMakeRange(cur_loc, (MAX_STRING_LEN - cur_loc))];
 }
 
-//---------------------------------------------------------------------
-// check_font_environment_variables
-//
-// Checks to see if any font environment variables are defined.
-// If a font environment variable is defined, then the appropriate 
-// element of the default font table is replaced with the font name
-// string specified by the environment variable.
-//---------------------------------------------------------------------
+/*---------------------------------------------------------------------
+  check_font_environment_variables
+  
+  Checks to see if any font environment variables are defined.
+  If a font environment variable is defined, then the appropriate 
+  element of the default font table is replaced with the font name
+  string specified by the environment variable.
+  ---------------------------------------------------------------------*/
 
 
 void check_font_environment_variables(void){
-	int i;
-	char *new_font;
-	char *begin;
-	char *end;
-	
-	for(i=0;i<AQT_N_FontLookup;i++){
-		if ((new_font = getenv(aqt_font_env_names[i])) != NULL){
-		
-			// If the user is just blindly following the suggestions in
-			// the plplot examples then we might get a font name with
-			// a path and extension. We need to remove that since it
-			// isn't relevant and will only cause trouble. We warn them
-			// AquaTerm was not expecting a path or extension.
-			
-			begin = strrchr(new_font,'/');
-			end = strrchr(new_font,'.');
-
-			if(end != NULL) {
-				printf("Aquaterm : Warning, removing extension from font name : %s\n", new_font);
-				*end = '\0'; 
-			}
-			if(begin != NULL) {
-				printf("AquaTerm : Warning, removing path from font name : %s\n", new_font);
-				new_font = begin+1;
-			}
-
-			// printf("new font : %s\n", new_font);
-
-			AQT_FontLookup[i].pfont = (unsigned char*) new_font;
-		}
-	}
+  int i;
+  char *new_font;
+  char *begin;
+  char *end;
+  
+  for(i=0;i<AQT_N_FontLookup;i++){
+    if ((new_font = getenv(aqt_font_env_names[i])) != NULL){
+      
+      /* If the user is just blindly following the suggestions in
+	 the plplot examples then we might get a font name with
+	 a path and extension. We need to remove that since it
+	 isn't relevant and will only cause trouble. We warn them
+	 AquaTerm was not expecting a path or extension. */
+      
+      begin = strrchr(new_font,'/');
+      end = strrchr(new_font,'.');
+      
+      if(end != NULL) {
+	printf("Aquaterm : Warning, removing extension from font name : %s\n", new_font);
+	*end = '\0'; 
+      }
+      if(begin != NULL) {
+	printf("AquaTerm : Warning, removing path from font name : %s\n", new_font);
+	new_font = begin+1;
+      }
+      
+      /* printf("new font : %s\n", new_font); */
+      
+      AQT_FontLookup[i].pfont = (unsigned char*) new_font;
+    }
+  }
 }
