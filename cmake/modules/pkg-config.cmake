@@ -20,10 +20,10 @@
 # Module for determining pkg-config configuration variables related to the
 # install-tree build of the examples.
 # Also create useful macros called pkg_check_pkgconfig to emulate the
-# pkgconfig macro using the pkg_check_modules macro,
-# cmake_to_pkg_config_link_flags to process CMake link flags into 
+# pkgconfig macro using the pkg_check_modules macro;
+# pkg_config_link_flags to process CMake link flags into 
 # pkg-config standard form for the configured output *.pc files, and
-# pkg_config_to_cmake_link_flags to process input link flags delivered
+# cmake_link_flags to process input link flags delivered
 # by pkg-config into CMake standard form.
 
 # The following variables are set:
