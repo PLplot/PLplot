@@ -135,12 +135,7 @@ if(ENABLE_tcl)
     endif(ENABLE_tk AND NOT X11_FOUND)
     if(ENABLE_tk)
       set(TK_INCLUDE_PATH ${TK_INCLUDE_PATH} ${X11_INCLUDE_DIR})
-      set(
-      TK_LIBRARY
-      ${TK_LIBRARY}
-      -L${X11_LIBRARY_DIR}
-      ${X11_LIBRARIES}
-      )
+      set(TK_LIBRARY ${TK_LIBRARY} ${X11_LIBRARIES})
       message(STATUS "TK_INCLUDE_PATH = ${TK_INCLUDE_PATH}")
       message(STATUS "TK_LIBRARY = ${TK_LIBRARY}")
     else(ENABLE_tk)
