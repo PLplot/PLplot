@@ -23,8 +23,10 @@
 # PLD_wxwidgets		  - ON means the wxwidgets device is enabled.
 # wxwidgets_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile wxwidgets
 # 			    device.
-# wxwidgets_LINK_FLAGS	  - individual LINK_FLAGS for dynamic wxwidgets device.
-# DRIVERS_LINK_FLAGS  	  - list of LINK_FLAGS for all static devices.
+# wxwidgets_LINK_FLAGS	  - list of full path names of libraries and
+# 			    linker flags for dynamic wxwidgets device driver.
+# DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS for case
+# 			    when ENABLE_DYNDRIVERS OFF.
 
 # Find wxWidgets needed for driver and bindings
 if(PLD_wxwidgets)
@@ -52,7 +54,8 @@ if(PLD_wxwidgets)
   ${wxwidgets_COMPILE_FLAGS}
   " ${wxWidgets_DEFINITIONS}"
   )
-  set(wxwidgets_LINK_FLAGS ${wxWidgets_LIBRARIES})
+  # Convert wxWidgets_LIBRARIES to full pathname form.
+  cmake_link_flags(wxwidgets_LINK_FLAGS "${wxWidgets_LIBRARIES}")
   if(WITH_FREETYPE)
     set(
     wxwidgets_COMPILE_FLAGS
