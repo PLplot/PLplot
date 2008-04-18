@@ -29,10 +29,10 @@ function arrows( X, Y, dx, dy)
     plflush; pleop;
     do_fortran_indexing = of;
   else
-    for i = 1:columns(X)
-      plarrows(dx(:,i), dy(:,i), X(:,i), Y(:,i), 1, 1, 1);
-    endfor
-#     plvect2(dx,dy,1,X,Y);
+#    for i = 1:columns(X)
+#      plarrows(dx(:,i), dy(:,i), X(:,i), Y(:,i), 1, 1, 1);
+#    endfor
+     plvect2(dx,dy,1,X,Y);
   endif
 
 endfunction
