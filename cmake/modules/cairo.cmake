@@ -97,10 +97,7 @@ OR PLD_xcairo
       string(REGEX REPLACE ";" " " 
       cairo_COMPILE_FLAGS "${cflags} ${X11_COMPILE_FLAGS}"
       )
-      # Convert X linker information to preferred CMake form before appending
-      # it to already converted ${linkflags}
-      cmake_link_flags(cairo_X_LINK_FLAGS "${X11_LIBRARIES}")
-      set(cairo_LINK_FLAGS ${linkflags} ${cairo_X_LINK_FLAGS})
+      set(cairo_LINK_FLAGS ${linkflags} ${X11_LIBRARIES})
     else(PLD_xcairo AND X11_COMPILE_FLAGS)
       message(STATUS 
        "WARNING: X windows not found. Setting xcairo driver to OFF."

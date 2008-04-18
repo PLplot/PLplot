@@ -234,25 +234,19 @@ if(PERL_FOUND)
     include(CheckPerlModules)
 endif(PERL_FOUND)
 
+# =======================================================================
+# pkg-config support as well as macros to put link flags in standard
+# *.pc (pkg-config) form as well as standard fullpath form used by cmake.
+# =======================================================================
+include(pkg-config)
+
 # Find X headers, libraries, and library directory (required by xwin and
 # cairo device drivers and also everything that is Tk related).
 find_package(X11)
-if(X11_FOUND)
-  if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
-    # For 2.4.x, (but not for 2.6 and later) have nasty situation with 
-    # X11_LIBRARIES that some -l flags can be returned rather than fullpath
-    # for X11_X_PRE_LIBS libraries with non-standard install locations.  
-    # (Note, X11_X_EXTRA_LIBS are always specified by -l flags, but those
-    # are for standard install locations so this issue doesn't matter for
-    # that case.)  Therefore, must use -L flag and X11_LIBRARY_DIR (an
-    # internal variable to FindX11.cmake) to make sure
-    # linker finds the correct location for these X11_X_PRE_LIBS libraries.
-    list(GET X11_LIBRARIES 1 X11_LIBRARIES1)
-    if(NOT X11_LIBRARIES1 STREQUAL "-L${X11_LIBRARY_DIR}")
-      set(X11_LIBRARIES "-L${X11_LIBRARY_DIR};${X11_LIBRARIES}")
-    endif(NOT X11_LIBRARIES1 STREQUAL "-L${X11_LIBRARY_DIR}")
-  endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
-endif(X11_FOUND)
+
+# Convert X11_LIBRARIES to full pathname in all cases (2.4 and 2.6).
+cmake_link_flags(X11_LIBRARIES "${X11_LIBRARIES}")
+
 if(X11_INCLUDE_DIR)
   # remove duplicates in the X11_INCLUDE_DIR list since those screw up
   # certain of our modules and also slow down compilation if any of
@@ -319,12 +313,6 @@ if(NOT WIN32)
     message(FATAL_ERROR "Cannot find required math library")
   endif(NOT MATH_LIB)
 endif(NOT WIN32)
-
-# =======================================================================
-# pkg-config support as well as macros to put link flags in standard
-# *.pc (pkg-config) form as well as standard fullpath form used by cmake.
-# =======================================================================
-include(pkg-config)
 
 # =======================================================================
 # libpango support
