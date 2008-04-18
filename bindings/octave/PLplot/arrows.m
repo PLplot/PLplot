@@ -32,6 +32,7 @@ function arrows( X, Y, dx, dy)
     for i = 1:columns(X)
       plarrows(dx(:,i), dy(:,i), X(:,i), Y(:,i), 1, 1, 1);
     endfor
+#     plvect2(dx,dy,1,X,Y);
   endif
 
 endfunction
