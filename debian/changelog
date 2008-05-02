@@ -1,3 +1,12 @@
+plplot (5.9.0-7) UNRELEASED; urgency=low
+
+  * debian/control.in, debian/rules: Build-Depends on default-jdk-builddep
+    instead of java-gcj-compat-dev and prevents building of the
+    libplplot9-java package on alpha, hppa, and hurd-i386 (closes:
+    #477902)
+
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 02 May 2008 15:37:17 +0200
+
 plplot (5.9.0-6) unstable; urgency=low
 
   * debian/control.in, debian/rules: Disable building of the Ada binding

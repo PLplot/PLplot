@@ -40,10 +40,19 @@ BUILD_JAVA = yes
 
 ifeq ($(DEB_BUILD_ARCH),alpha)
 BUILD_ADA = no
+BUILD_JAVA = no
 endif
 
 ifeq ($(DEB_BUILD_ARCH),arm)
 BUILD_ADA = no
+BUILD_JAVA = no
+endif
+
+ifeq ($(DEB_BUILD_ARCH),hppa)
+BUILD_JAVA = no
+endif
+
+ifeq ($(DEB_BUILD_ARCH),hurd-i386)
 BUILD_JAVA = no
 endif
 
