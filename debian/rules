@@ -48,6 +48,14 @@ BUILD_ADA = no
 BUILD_JAVA = no
 endif
 
+ifeq ($(DEB_BUILD_ARCH),armeb)
+BUILD_ADA = no
+endif
+
+ifeq ($(DEB_BUILD_ARCH),armel)
+BUILD_ADA = no
+endif
+
 ifeq ($(DEB_BUILD_ARCH),hppa)
 BUILD_JAVA = no
 endif
