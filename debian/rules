@@ -32,45 +32,22 @@ PYVERS = $(shell pyversions -vr)
 
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-BUILD_ADA = yes
-BUILD_JAVA = yes
-
 # Disable java and ada build on arm - problems with java-gcj-compat-dev
 # at the moment. Also gnat not available on arm, mips, and mipsel.
 
-ifeq ($(DEB_BUILD_ARCH),alpha)
+ifneq (,$(findstring $(DEB_BUILD_ARCH):,alpha:arm:armeb:armel:mips:mipsel:))
 BUILD_ADA = no
+else
+BUILD_ADA = yes
+endif
+
+ifneq (,$(findstring $(DEB_BUILD_ARCH):,alpha:arm:hppa:hurd-i386:))
 BUILD_JAVA = no
+else
+BUILD_JAVA = yes
 endif
 
-ifeq ($(DEB_BUILD_ARCH),arm)
-BUILD_ADA = no
-BUILD_JAVA = no
-endif
-
-ifeq ($(DEB_BUILD_ARCH),armeb)
-BUILD_ADA = no
-endif
-
-ifeq ($(DEB_BUILD_ARCH),armel)
-BUILD_ADA = no
-endif
-
-ifeq ($(DEB_BUILD_ARCH),hppa)
-BUILD_JAVA = no
-endif
-
-ifeq ($(DEB_BUILD_ARCH),hurd-i386)
-BUILD_JAVA = no
-endif
-
-ifeq ($(DEB_BUILD_ARCH),mips)
-BUILD_ADA = no
-endif
-
-ifeq ($(DEB_BUILD_ARCH),mipsel)
-BUILD_ADA = no
-endif
+# Configure options
 
 ifeq ($(BUILD_ADA),yes)
 ADA_OPTIONS = -DENABLE_ada=ON
