@@ -1,4 +1,4 @@
-plplot (5.9.0-7) UNRELEASED; urgency=low
+plplot (5.9.0-7) unstable; urgency=low
 
   * debian/control.in, debian/rules:
     + Build-depend on default-jdk-builddep instead of java-gcj-compat-dev
