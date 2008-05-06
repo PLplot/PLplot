@@ -56,7 +56,11 @@ if(ENABLE_wxwidgets)
   INCLUDE_DIRECTORIES( ${wxWidgets_INCLUDE_DIRS} )
   ADD_DEFINITIONS( ${wxWidgets_DEFINITIONS} )
 
-  target_link_libraries(plplotwxwidgets${LIB_TAG} plplotcxx${LIB_TAG} ${wxWidgets_LIBRARIES})
+  target_link_libraries(
+  plplotwxwidgets${LIB_TAG}
+  plplotcxx${LIB_TAG} 
+  ${wxwidgets_LINK_FLAGS}
+  )
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
@@ -112,7 +116,7 @@ if(ENABLE_wxwidgets)
     # Determine libplplotwxwidgets${LIB_TAG}_LINK_FLAGS
     pkg_config_link_flags(
     libplplotwxwidgets${LIB_TAG}_LINK_FLAGS
-    "${wxWidgets_LIBRARIES}"
+    "${wxwidgets_LINK_FLAGS}"
     )
 
     # Each list element must consist of a colon-separated string with the
