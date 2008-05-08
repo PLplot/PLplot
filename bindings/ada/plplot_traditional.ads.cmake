@@ -62,6 +62,9 @@ package PLplot_Traditional is
     -- Make Mask_Function_Pointer_Type available to the user so that s/he doesn't 
     -- have to "with" PLplot_Thin. Note that it is also used herein.
     subtype Mask_Function_Pointer_Type is PLplot_Thin.Mask_Function_Pointer_Type;
+    
+--    -- "Rename" callback for map functions plmap and plmeridians.
+--    subtype Map_Form_Function_Pointer_Type is Plplot_Thin.Map_Form_Function_Pointer_Type;
 
 --------------------------------------------------------------------------------
 --        Types and constants for thick binding                               --
@@ -178,7 +181,7 @@ package PLplot_Traditional is
     Unchanged : constant Integer := 0;
     
     -- Pre-defined fill patterns
-    subtype Fill_Pattern_Type is Integer range 1..8; -- Guessing; not documented
+    subtype Fill_Pattern_Type is Integer range 0..8; -- Guessing; not documented
     
     -- Modes for parsing command line arguments.
     Parse_Partial    : constant Parse_Mode_Type := 0;   -- For backward compatibility
@@ -960,6 +963,10 @@ package PLplot_Traditional is
     procedure pllsty(Line_Style : Line_Style_Type);
 
 
+    -- fix this See comment in Example 19, x19a.adb or xthick19a.adb for how to 
+    -- possibly eliminate the need to pass array size as the first argument in 
+    -- the function poinetd to by Map_Form_Function_Pointer. Ditto for plmeridians.
+
     -- plot continental outline in world coordinates
     procedure plmap
        (Map_Form_Function_Pointer            : Map_Form_Function_Pointer_Type;
@@ -967,6 +974,8 @@ package PLplot_Traditional is
         Minimum_Longitude, Maximum_Longitude : Long_Float;
         Minimum_Latitude,  Maximum_Latitude  : Long_Float);
 
+
+    -- fix this See comment for plmap.
 
     -- Plot the latitudes and longitudes on the background.
     procedure plmeridians
@@ -1468,8 +1477,8 @@ package PLplot_Traditional is
 
     -- Set up a window for three-dimensional plotting.
     procedure plw3d
-       (X_Box, Y_Box, Z_Box                      : Long_Float; -- Extents of enclosing box; world coordinates
-        X_Min, X_Max, Y_Min, Y_Max, Z_Min, Z_Max : Long_Float; -- Data limits; user coordinates
+       (X_Box, Y_Box, Z_Box                      : Long_Float;  -- Extents of enclosing box; world coordinates
+        X_Min, X_Max, Y_Min, Y_Max, Z_Min, Z_Max : Long_Float;  -- Data limits; user coordinates
         Altitude, Azimuth                        : Long_Float); -- Viewing angles in world coordinates
 
 

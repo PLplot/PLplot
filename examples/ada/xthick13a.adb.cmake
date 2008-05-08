@@ -53,7 +53,7 @@ begin
     -- Initialize plplot
     Initialize_PLplot;
 
-    Set_Environment(0.0, 10.0, 0.0, 10.0, 1, -2);
+    Set_Environment(0.0, 10.0, 0.0, 10.0, Justified, No_Box);
     Set_Pen_Color(Yellow);
 
     -- n.b. all theta quantities scaled by 2 * pi / 500 to be integers to avoid

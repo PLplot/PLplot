@@ -111,7 +111,8 @@ package PLplot_Thin is
     -- Length_Of_x is x'Length or y'Length; this is the easiest way to match the 
     -- C formal arguments.
     type Map_Form_Function_Pointer_Type is access
-        procedure (Length_Of_x : Integer; x, y : PL_Float_Array);
+        procedure (Length_Of_x : Integer; x, y : in out Real_Vector);
+    pragma Convention(Convention => C, Entity => Map_Form_Function_Pointer_Type);
     
     
     -- Access-to-function type for making contour plots from irregularly 

@@ -1719,6 +1719,10 @@ package body PLplot_Traditional is
     end pllsty;
 
 
+    -- fix this See comment in Example 19, x19a.adb or xthick19a.adb for how to 
+    -- possibly eliminate the need to pass array size as the first argument in 
+    -- the function poinetd to by Map_Form_Function_Pointer. Ditto for plmeridians.
+
     -- plot continental outline in world coordinates
     procedure plmap
        (Map_Form_Function_Pointer            : Map_Form_Function_Pointer_Type;
@@ -1752,6 +1756,8 @@ package body PLplot_Traditional is
             Minimum_Longitude, Maximum_Longitude, Minimum_Latitude, Maximum_Latitude);
     end plmap;
 
+
+    -- fix this See comment for plmap.
 
     -- Plot the latitudes and longitudes on the background.
     procedure plmeridians

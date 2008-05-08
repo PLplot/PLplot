@@ -124,7 +124,7 @@ procedure xthick09a is
             y_Last => THETAPTS - 1);
 
     begin -- polar
-        Set_Environment(-1.0, 1.0, -1.0, 1.0, 0, -2);
+        Set_Environment(-1.0, 1.0, -1.0, 1.0, Not_Justified, No_Box);
         Set_Pen_Color(Red);
            
         -- Perimeter
@@ -335,7 +335,7 @@ begin -- main
     -- I move that type declaration into the thick bindings, the problem remains.
 
     Set_Contour_Label_Parameters(0.006, 0.3, 0.1, True);
-    Set_Environment(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    Set_Environment(-1.0, 1.0, -1.0, 1.0, Not_Justified, Linear_Box_Plus);
     Set_Pen_Color(Yellow);
     Contour_Plot(z, 1, XPTS, 1, YPTS, clevel, mypltr'Unrestricted_Access, System.Null_Address);
 
@@ -348,7 +348,7 @@ begin -- main
 
     -- Plot using 1d coordinate transform
     Set_Contour_Label_Parameters(0.006, 0.3, 0.1, False);
-    Set_Environment(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    Set_Environment(-1.0, 1.0, -1.0, 1.0, Not_Justified, Linear_Box_Plus);
     Set_Pen_Color(Yellow);
     Contour_Plot(z, 1, XPTS, 1, YPTS, clevel, Plot_Transformation_1'access, cgrid1'Address);
 
@@ -360,7 +360,7 @@ begin -- main
     Write_Labels("X Coordinate", "Y Coordinate", "Streamlines of flow");
    
     -- Plot using 2d coordinate transform
-    Set_Environment(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    Set_Environment(-1.0, 1.0, -1.0, 1.0, Not_Justified, Linear_Box_Plus);
     Set_Pen_Color(Yellow);
     Contour_Plot(z, 1, XPTS, 1, YPTS, clevel, Plot_Transformation_2'access, cgrid2'Address);
 

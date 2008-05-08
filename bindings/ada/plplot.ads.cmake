@@ -179,7 +179,7 @@ package PLplot is
     Unchanged : constant Integer := 0;
     
     -- Pre-defined fill patterns
-    subtype Fill_Pattern_Type is Integer range 1..8; -- Guessing; not documented
+    subtype Fill_Pattern_Type is Integer range 0..8; -- Guessing; not documented
     
     -- Modes for parsing command line arguments.
     Parse_Partial    : constant Parse_Mode_Type := 0;   -- For backward compatibility
@@ -1027,6 +1027,10 @@ package PLplot is
     procedure Select_Line_Style(Line_Style : Line_Style_Type);
 
 
+    -- fix this See comment in Example 19, x19a.adb or xthick19a.adb for how to 
+    -- possibly eliminate the need to pass array size as the first argument in 
+    -- the function poinetd to by Map_Form_Function_Pointer. Ditto for plmeridians.
+
     -- plot continental outline in world coordinates
     -- plmap
     procedure Draw_Map
@@ -1035,6 +1039,8 @@ package PLplot is
         Minimum_Longitude, Maximum_Longitude : Long_Float;
         Minimum_Latitude,  Maximum_Latitude  : Long_Float);
 
+
+    -- fix this See comment for plmap.
 
     -- Plot the latitudes and longitudes on the background.
     -- plmeridians
@@ -1361,21 +1367,21 @@ package PLplot is
         Shade_Max_Pen_Color, Shade_Max_Pen_Width : Natural;
         Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
-        Transformation_Procedure_Pointer          : Transformation_Procedure_Pointer_Type;
+        Transformation_Procedure_Pointer         : Transformation_Procedure_Pointer_Type;
         Transformation_Data_Pointer              : PLpointer);
 
 
     -- plshades
     procedure Shade_Regions
-       (z                               : Real_Matrix;
-        Mask_Function_Pointer           : Mask_Function_Pointer_Type;
-        x_Min, x_Max, y_Min, y_Max      : Long_Float; -- world mins and maxes
-        Contour_Levels                  : Real_Vector;
-        Fill_Pattern_Pen_Width          : Positive;
-        Contour_Pen_Color               : Natural; -- 0 for no contours
-        Contour_Pen_Width               : Natural; -- 0 for no contours
+       (z                                : Real_Matrix;
+        Mask_Function_Pointer            : Mask_Function_Pointer_Type;
+        x_Min, x_Max, y_Min, y_Max       : Long_Float; -- world mins and maxes
+        Contour_Levels                   : Real_Vector;
+        Fill_Pattern_Pen_Width           : Positive;
+        Contour_Pen_Color                : Natural; -- 0 for no contours
+        Contour_Pen_Width                : Natural; -- 0 for no contours
         Fill_Procedure_Pointer           : Fill_Procedure_Pointer_Type;
-        Preserve_Rectangles             : Boolean;
+        Preserve_Rectangles              : Boolean;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
         Transformation_Data_Pointer      : PLpointer);
 
@@ -1609,8 +1615,8 @@ package PLplot is
     -- Set up a window for three-dimensional plotting.
     -- plw3d
     procedure Set_Up_3D
-       (X_Box, Y_Box, Z_Box                      : Long_Float; -- Extents of enclosing box; world coordinates
-        X_Min, X_Max, Y_Min, Y_Max, Z_Min, Z_Max : Long_Float; -- Data limits; user coordinates
+       (X_Box, Y_Box, Z_Box                      : Long_Float;  -- Extents of enclosing box; world coordinates
+        X_Min, X_Max, Y_Min, Y_Max, Z_Min, Z_Max : Long_Float;  -- Data limits; user coordinates
         Altitude, Azimuth                        : Long_Float); -- Viewing angles in world coordinates
 
 

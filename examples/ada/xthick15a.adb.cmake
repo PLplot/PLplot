@@ -28,7 +28,6 @@ with
     Ada.Numerics,
     System,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot_Thin,
     PLplot,
     PLplot_Auxiliary;
 use

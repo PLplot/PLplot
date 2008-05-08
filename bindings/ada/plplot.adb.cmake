@@ -1781,6 +1781,10 @@ package body PLplot is
     end Select_Line_Style;
 
 
+    -- fix this See comment in Example 19, x19a.adb or xthick19a.adb for how to 
+    -- possibly eliminate the need to pass array size as the first argument in 
+    -- the function poinetd to by Map_Form_Function_Pointer. Ditto for plmeridians.
+
     -- plot continental outline in world coordinates
     -- plmap
     procedure Draw_Map
@@ -1815,6 +1819,8 @@ package body PLplot is
             Minimum_Longitude, Maximum_Longitude, Minimum_Latitude, Maximum_Latitude);
     end Draw_Map;
 
+
+    -- fix this See comment for plmap.
 
     -- Plot the latitudes and longitudes on the background.
     -- plmeridians

@@ -60,7 +60,7 @@ begin
     Initialize_PLplot;
 
     -- Set up viewport and window, but do not draw box. 
-    Set_Environment(-1.3, 1.3, -1.3, 1.3, 1, -2);
+    Set_Environment(-1.3, 1.3, -1.3, 1.3, Justified, No_Box);
     for i in 1..10 loop
         for j in x'range loop
             x(j) := 0.1 * Long_Float(i) * x0(j);
