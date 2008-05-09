@@ -1,26 +1,26 @@
 
 #ifdef PLD_wxwidgets
 
+#include "wxwidgets.h"
 
 /* antigrain headers (for antialzing) */
-#ifdef HAVE_AGG
-  #include "agg2/agg_basics.h"
-  #include "agg2/agg_rendering_buffer.h"
-  #include "agg2/agg_rasterizer_scanline_aa.h"
-  #include "agg2/agg_scanline_u.h"
-  #include "agg2/agg_conv_stroke.h"
-  #include "agg2/agg_pixfmt_rgb.h"
-  #include "agg2/agg_renderer_base.h"
-  #include "agg2/agg_renderer_scanline.h"
-  #include "agg2/agg_path_storage.h"
-  
-  typedef agg::pixfmt_rgb24 pixfmt;
-  typedef agg::renderer_base<pixfmt> ren_base;
-  typedef agg::renderer_scanline_aa_solid<ren_base> renderer;
-#endif  
+#include "agg2/agg_basics.h"
+#include "agg2/agg_rendering_buffer.h"
+#include "agg2/agg_rasterizer_scanline_aa.h"
+#include "agg2/agg_scanline_u.h"
+#include "agg2/agg_conv_stroke.h"
+#include "agg2/agg_pixfmt_rgb.h"
+#include "agg2/agg_renderer_base.h"
+#include "agg2/agg_renderer_scanline.h"
+#include "agg2/agg_path_storage.h"
 
-wxPLDevAGG::wxPLDevAGG( void ) : wxPLDevBase()
+typedef agg::pixfmt_rgb24 pixfmt;
+typedef agg::renderer_base<pixfmt> ren_base;
+typedef agg::renderer_scanline_aa_solid<ren_base> renderer;
+
+wxPLDevAGG::wxPLDevAGG() : wxPLDevBase()
 {
+  m_buffer=NULL;
   m_rendering_buffer=NULL;
   m_strokewidth=1.0;
   m_StrokeOpacity=255;
@@ -30,6 +30,16 @@ wxPLDevAGG::wxPLDevAGG( void ) : wxPLDevBase()
   m_colredfill=0;
   m_colgreenfill=0;
   m_colbluefill=0;
+}
+
+wxPLDevAGG::~wxPLDevAGG()
+{
+  if( ownGUI ) {
+    if( m_buffer )
+      delete dev->m_buffer;
+    if( m_rendering_buffer )
+      delete dev->m_rendering_buffer;
+  }
 }
 
 void wxPLDevAGG::DrawLine( short x1a, short y1a, short x2a, short y2a )
@@ -90,8 +100,11 @@ void wxPLDevAGG::DrawPolyline( short *xa, short *ya, PLINT npts )
   agg::render_scanlines( ras, sl, ren );
 }
 
-void wxPLDevAGG::ClearBackground(  )
+void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
+  pixfmt pixf( *m_rendering_buffer );
+  ren_base renb( pixf );
+  renb.clear( agg::rgba8(bgr, bgg, bgb) );
 }
 
 void wxPLDevAGG::FillPolygon( PLStream *pls )
@@ -126,6 +139,25 @@ void wxPLDevAGG::FillPolygon( PLStream *pls )
   ras.add_path( stroke );    
   ren.color( agg::rgba8(m_colredstroke, m_colgreenstroke, m_colbluestroke, m_StrokeOpacity) );
   agg::render_scanlines( ras, sl, ren );
+}
+
+void wxPLDevAGG::BlitRectangle( wxPaintDC dc, int vX, int vY, int vW, int vH )
+{
+  if( m_buffer ) {
+    wxMemoryDC MemoryDC;
+    wxBitmap bitmap( m_buffer->GetSubImage(wxRect(vX, vY, vW, vH)), -1 );
+    MemoryDC.SelectObject( bitmap );
+    dc.Blit( vX, vY, vW, vH, &MemoryDC, 0, 0 );
+    MemoryDC.SelectObject( wxNullBitmap );
+  }
+}
+
+void wxPLDevAGG::NewCanvas()
+{
+  /* get a new wxImage (image buffer) */
+  if( m_buffer )
+    delete m_buffer;
+  m_buffer = new wxImage( bm_width, bm_height );
 }
 
 #endif				/* PLD_wxwidgets */

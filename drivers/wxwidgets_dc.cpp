@@ -2,10 +2,25 @@
 
 #ifdef PLD_wxwidgets
 
-include "wxwidgets.h"
+#include "wxwidgets.h"
 
 wxPLDevDC::wxPLDevDC( void ) : wxPLDevBase()
 {
+  m_dc=NULL;
+  m_bitmap=NULL;
+}
+
+
+wxPLDevDC::~wxPLDevDC()
+{
+  if( ownGUI ) {
+    if( m_dc ) {
+        ((wxMemoryDC*)m_dc)->SelectObject( wxNullBitmap );
+        delete m_dc;
+    }
+    if( m_bitmap )
+      delete dev->m_bitmap;
+  }
 }
 
 void wxPLDevDC::Drawline( short x1a, short y1a, short x2a, short y2a )
@@ -33,11 +48,13 @@ void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
   }
 }
 
-void wxPLDevDC::ClearBackground(  )
+void wxPLDevDC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
+  m_dc->SetBackground( wxBrush(wxColour(bgr, bgg, bgb)) );
+  m_dc->Clear();
 }
 
-void wxPLDevAGG::FillPolygon( PLStream *pls )
+void wxPLDevDC::FillPolygon( PLStream *pls )
 {
   wxPoint *points = new wxPoint[pls->dev_npts];
 
@@ -48,6 +65,21 @@ void wxPLDevAGG::FillPolygon( PLStream *pls )
 
   dev->dc->DrawPolygon( pls->dev_npts, points );
   delete[] points;
+}
+
+void wxPLDevDC::BlitRectangle( wxPaintDC dc, int vX, int vY, int vW, int vH )
+{
+  if( m_dc )
+    dc.Blit( vX, vY, vW, vH, m_dc, vX, vY );
+}
+
+void wxPLDevDC::NewCanvas()
+{
+  ((wxMemoryDC*)m_dc)->SelectObject( wxNullBitmap );   /* deselect bitmap */
+  if( m_bitmap )
+    delete m_bitmap;
+  m_bitmap = new wxBitmap( bm_width, bm_height, 32 );
+  ((wxMemoryDC*)m_dc)->SelectObject( *m_bitmap );   /* select new bitmap */
 }
 
 #endif				/* PLD_wxwidgets */

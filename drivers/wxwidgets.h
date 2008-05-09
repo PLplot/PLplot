@@ -119,9 +119,12 @@ public: /* methods */
 	~wxPLDevBase( void );
 
   // virtual functions which need to implemented
-  virtual void Drawline( short x1a, short y1a, short x2a, short y2a )=0;
+  virtual void DrawLine( short x1a, short y1a, short x2a, short y2a )=0;
   virtual void DrawPolyline( short *xa, short *ya, PLINT npts )=0;
-  virtual void ClearBackground()=0;
+  virtual void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )=0;
+  virtual void FillPolygon( PLStream *pls )=0;
+  virtual void BlitRectangle( wxPaintDC dc, int vX, int vY, int vW, int vH )=0;
+  virtual void NewCanvas();
 
 public: /* variables */
   bool ready;
@@ -132,8 +135,6 @@ public: /* variables */
 
   int comcount;
   
-  wxBitmap* m_bitmap;
-  wxImage* m_buffer;
   wxPLplotFrame* m_frame;
   PLINT width;
   PLINT height;
@@ -177,8 +178,9 @@ public: /* methods */
 	wxPLDevDC( void );
 
 private: /* variables */
-  wxDC* dc;
-}
+  wxBitmap* m_bitmap;
+  wxDC* m_dc;
+};
 
 #ifdef HAVE_AGG
 class wxPLDevAGG : public wxPLDevBase
@@ -187,6 +189,7 @@ public: /* methods */
 	wxPLDevAGG( void );
 
 private: /* variables */
+  wxImage* m_buffer;
   agg::rendering_buffer *m_rendering_buffer;
   double m_strokewidth;
   wxUint8 m_StrokeOpacity;
@@ -196,7 +199,7 @@ private: /* variables */
   unsigned char m_colredfill;
   unsigned char m_colgreenfill;
   unsigned char m_colbluefill;
-}
+};
 #endif
 
 
@@ -221,24 +224,7 @@ struct dev_entry dev_entries[] = {
   { wxT("xfig"), wxT("xfig..."), wxT("Save this plot as xfig!"), wxT("fig files (*.fig)|*.fig") }
 };
 
-inline void AddtoClipRegion( wxPLdev* dev, int x1, int y1, int x2, int y2 )
-{
-	dev->newclipregion=false;
-	if( x1<x2 ) {
-		if( x1<dev->clipminx ) dev->clipminx=x1;
-		if( x2>dev->clipmaxx ) dev->clipmaxx=x2;
-	} else {
-		if( x2<dev->clipminx ) dev->clipminx=x2;
-		if( x1>dev->clipmaxx ) dev->clipmaxx=x1;
-	}
-	if( y1<y2 ) {
-		if( y1<dev->clipminy ) dev->clipminy=y1;
-		if( y2>dev->clipmaxy ) dev->clipmaxy=y2;
-	} else {
-		if( y2<dev->clipminy ) dev->clipminy=y2;
-		if( y1>dev->clipmaxy ) dev->clipmaxy=y1;
-	}
-}
+inline void AddtoClipRegion( wxPLDevBase * dev, int x1, int y1, int x2, int y2 );
 
 /* after how many commands the window should be refreshed */
 #define MAX_COMCOUNT 5000
@@ -293,7 +279,7 @@ private:
   void DrawCrosshair();
   
   PLStream *m_pls;
-  wxPLdev* m_dev;  /* windows needs to know this structure */
+  wxPLDevBase* m_dev;  /* windows needs to know this structure */
   bool refresh;
   bool xhair_drawn;
   int mouse_x, mouse_y, old_mouse_x, old_mouse_y;
@@ -327,7 +313,7 @@ public:
 private:
   wxPanel* m_panel;
   wxPLplotWindow* m_window;
-  wxPLdev* m_dev;  /* frame needs to know this structure */
+  wxPLDevBase* m_dev;  /* frame needs to know this structure */
 
   DECLARE_EVENT_TABLE()
 };

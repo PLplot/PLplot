@@ -1,11 +1,12 @@
 
 #ifdef PLD_wxwidgets
 
+#include "wxwidgets.h"
+
 /*----------------------------------------------------------------------*\
  *  bool wxPLplotApp::OnInit()
  *
- *  This method is called before the applications gets control. A frame
- *  is created here.
+ *  This method is called before the applications gets control.
 \*----------------------------------------------------------------------*/
 bool wxPLplotApp::OnInit()
 {
@@ -259,19 +260,7 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 
 		//printf( "Clipping region: x=%d, y=%d, width=%d, height=%d, counter=%d\n", vX, vY, vW, vH, counter++ );
   
-    if( m_dev->antialized ) {
-    	if( m_dev->m_buffer ) {
-	      wxMemoryDC MemoryDC;
-				wxBitmap bitmap( m_dev->m_buffer->GetSubImage(wxRect(vX, vY, vW, vH)), -1 );
-	      MemoryDC.SelectObject( bitmap );
-	      dc.Blit( vX, vY, vW, vH, &MemoryDC, 0, 0 );
-	      MemoryDC.SelectObject( wxNullBitmap );
-    	}
-    }
-    else {
-    	if( m_dev->dc )
-   	   dc.Blit( vX, vY, vW, vH, m_dev->dc, vX, vY );
-    }
+    BlitRectangle( &dc, vX, vY, vW, vH );
 
     upd ++ ;
   }
@@ -360,18 +349,8 @@ void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
       if( (width>m_dev->bm_width) || (height>m_dev->bm_height) ) {
 				m_dev->bm_width = m_dev->bm_width > width ? m_dev->bm_width : width;
 				m_dev->bm_height = m_dev->bm_height > height ? m_dev->bm_height : height;
-        if( m_dev->antialized ) {
-          /* get a new wxImage (image buffer) */
-          if( m_dev->m_buffer )
-            delete m_dev->m_buffer;
-          m_dev->m_buffer = new wxImage( m_dev->bm_width, m_dev->bm_height );
-        } else {
-          ((wxMemoryDC*)m_dev->dc)->SelectObject( wxNullBitmap );   /* deselect bitmap */
-          if( m_dev->m_bitmap )
-            delete m_dev->m_bitmap;
-          m_dev->m_bitmap = new wxBitmap( m_dev->bm_width, m_dev->bm_height, 32 );
-          ((wxMemoryDC*)m_dev->dc)->SelectObject( *(m_dev->m_bitmap) );   /* select new bitmap */
-        }
+        
+        m_dev->NewCanvas();
       }
 
       wx_set_size( m_pls, width, height );
