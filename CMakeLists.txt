@@ -24,8 +24,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 # set CMake 2.6.x policy if the cmake_policy command exists, (i.e., if
 # the user is using CMake 2.6.0 or newer).
 if(COMMAND  cmake_policy)
-  # empty elements are ignored in lists.
-  cmake_policy(SET CMP0007 OLD)
+  # empty elements are not ignored in lists.
+  cmake_policy(SET CMP0007 NEW)
 endif(COMMAND  cmake_policy)
 
 # Recommended way to do user overrides of C-related variables, is given at
