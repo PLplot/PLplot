@@ -38,7 +38,7 @@ usage () {
   echo "  subdirectory so normally the -t option is a version tag"
   echo "  (e.g., v5_7_4) used for the _already committed_ tags subdirectory"
   echo "  of the release existing at the SourceForge svn repository."
-  echo "Option -n prevents building of the DocBook manual."
+  echo "Option -n prevents pre-building anything including the DocBook manual."
   echo "Option -w sets the svn repository URL."
   echo "When option -c is given, the generated tarball is"
   echo "  unpacked, configured with cmake and built with make, and"
@@ -46,6 +46,8 @@ usage () {
   echo "  If the -i prefix option is specified in addition to -c,"
   echo "  the configuration is done with the specified install prefix"
   echo "  and make install is run after ctest."
+  echo "  WARNING: the prefix directory is completely removed before the"
+  echo "  install so be careful what you specify for the -i option."
   echo "  If the -o cmake options option is specified in addition to -c,"
   echo "  those options are used for the configuration of the unpacked"
   echo "  tarball."
@@ -63,6 +65,10 @@ SVNTMPDIR=/tmp/plplot-dist-prep
 # generating a tarball
 config_opt=""
 
+# Put here extra make options
+# Parallel builds for extra speed on multiprocessing boxes
+make_opt="-j3"
+
 print_defaults () {
   local v
   for v in DOC_ARG SVN_URL ; do
@@ -73,6 +79,9 @@ print_defaults () {
 
 do_check=no
 prefix=""
+PREBUILD_ARG="-DPREBUILD_DIST=ON"
+PREBUILT_DOC_ARG="-DPREBUILT_DOC=ON"
+do_prebuild_dist=yes
 
 while getopts "cdhi:no:t:u:w:" option
 do
@@ -81,7 +90,7 @@ do
     d) print_defaults ;;
     h) usage 0 ;;
     i) test -n "$OPTARG" || usage 1 ; prefix=$OPTARG ;;
-    n) DOC_ARG= ;;
+    n) DOC_ARG=;PREBUILD_ARG=;PREBUILT_DOC_ARG=;do_prebuild_dist=no ;;
     o) config_opt="$config_opt $OPTARG" ;;
     t) test -n "$OPTARG" || usage 1 ; TAG=$OPTARG ;;
     w) test -n "$OPTARG" || usage 1 ; SVN_URL=$OPTARG ;;
@@ -104,11 +113,13 @@ svn export $SVN_URL/$TAG plplot \
   && mkdir build_dir \
   && cd build_dir \
   && cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
-     -DPREBUILD_DIST=ON ${DOC_ARG} \
+     ${PREBUILD_ARG} ${DOC_ARG} \
      -DWWW_USER:STRING=${WWW_USER} ../plplot >& cmake.out \
   && echo "Making distribution." \
-  && make prebuild_dist >& make_prebuild_dist.out \
-  && make package_source >& make_package_source.out \
+  && (if test "$do_prebuild_dist" = yes; then
+        make ${make_opt} prebuild_dist >& make_prebuild_dist.out
+      fi) \
+  && make ${make_opt} package_source >& make_package_source.out \
   && TARBALL=`ls plplot-*.tar.gz` \
   && DISTDIR=`echo $TARBALL | sed s/.tar.gz//` \
   && mv $TARBALL .. \
@@ -119,11 +130,11 @@ svn export $SVN_URL/$TAG plplot \
   && mkdir ctest_build_dir \
   && ( cd ctest_build_dir \
        && cmake ${config_opt} -DCMAKE_INSTALL_PREFIX:PATH=${prefix} \
-          -DCMAKE_VERBOSE_MAKEFILE=ON -DPREBUILT_DOC=ON\
+          -DCMAKE_VERBOSE_MAKEFILE=ON ${PREBUILT_DOC_ARG} \
 	  -DWWW_USER:STRING=${WWW_USER} -DBUILD_TEST=ON \
 	  ../plplot >& cmake.out \
-       && make >& make.out \
+       && make ${make_opt} >& make.out \
        && ctest >& ctest.out \
        && test -n "$prefix" \
        && rm -rf ${prefix} \
-       && make install >& make_install.out )
+       && make ${make_opt} install >& make_install.out )
