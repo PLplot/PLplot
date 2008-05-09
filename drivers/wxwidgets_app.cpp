@@ -1,7 +1,92 @@
 
+#include "plDevs.h"
+
 #ifdef PLD_wxwidgets
 
+/* plplot headers */
+#include "plplotP.h"
+#include "drivers.h"
+
+/* os specific headers */
+#ifdef __WIN32__
+  #include <windows.h>
+#endif
+
+/* wxwidgets headers */
+#include "wx/wx.h"
+#include "wx/image.h"
+#include "wx/filedlg.h"
+#include "wx/display.h"
+    
 #include "wxwidgets.h"
+
+/* Application icon as XPM */
+/* This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/ */
+static const char *graph[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 2",
+"   c black",
+".  c #BA1825",
+"X  c gray100",
+"UX c None",
+/* pixels */
+"UX. . . . . . . . . . . . . . UX",
+". . . . . . . . . . . . . . . . ",
+". . . . . . . . . . . . . . . . ",
+". . . . . . . . . . . X X . . . ",
+". . . . . . . . . . . X X . . . ",
+". . . . . . . . . . . X X . . . ",
+". . . . . X X . . . . X X . . . ",
+". . . . . X X . . . . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . X X X X X X X X X X . . . ",
+". . . . . . . . . . . . . . . . ",
+". . . . . . . . . . . . . . . . ",
+"UX. . . . . . . . . . . . . . UX"
+};
+
+struct dev_entry dev_entries[] = {
+  { wxT("gif"), wxT("gif..."), wxT("Save this plot as gif!"), wxT("gif files (*.gif)|*.gif") },
+  { wxT("jpeg"), wxT("jpeg..."), wxT("Save this plot as jpeg!"), wxT("jpg files (*.jpg;*.jpeg)|*.jpg;*.jpeg") },
+  { wxT("png"), wxT("png..."), wxT("Save this plot as png"), wxT("png files (*.png)|*.png") },
+  { wxT("pngcairo"), wxT("png (cairo)..."), wxT("Save this plot as png using cairo!"), wxT("png files (*.png)|*.png") },
+  { wxT("pdfcairo"), wxT("pdf..."), wxT("Save this plot as pdf using cairo!"), wxT("pdf files (*.pdf)|*.pdf") },
+  { wxT("ps"), wxT("postscript..."), wxT("Save this plot as postscript!"), wxT("ps files (*.ps)|*.ps") },
+  { wxT("psc"), wxT("color postscript..."), wxT("Save this plot as color postscript!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
+  { wxT("pscairo"), wxT("color postscript (cairo)..."), wxT("Save this plot as color postscript using cairo!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
+  { wxT("svg"), wxT("svg..."), wxT("Save this plot as svg!"), wxT("svg files (*.svg)|*.svg") },
+  { wxT("svgcairo"), wxT("svg (cairo)..."), wxT("Save this plot as svg using cairo!"), wxT("svg files (*.svg)|*.svg") },
+  { wxT("xfig"), wxT("xfig..."), wxT("Save this plot as xfig!"), wxT("fig files (*.fig)|*.fig") }
+};
+
+
+IMPLEMENT_PLAPP_NO_MAIN( wxPLplotApp )
+
+/* event table for the app */
+BEGIN_EVENT_TABLE( wxPLplotApp, wxApp )
+  EVT_IDLE( wxPLplotApp::OnIdle )
+END_EVENT_TABLE()
+
+/* event table for frames */
+BEGIN_EVENT_TABLE( wxPLplotFrame, wxFrame )
+  EVT_MENU( -1, wxPLplotFrame::OnMenu )      /* handle all menu events */
+  EVT_CLOSE( wxPLplotFrame::OnClose )
+END_EVENT_TABLE()
+
+/* event table the widget */
+BEGIN_EVENT_TABLE( wxPLplotWindow, wxWindow )
+  EVT_PAINT( wxPLplotWindow::OnPaint )               /* (re)draw the plot in window */
+  EVT_CHAR( wxPLplotWindow::OnChar )
+  EVT_IDLE( wxPLplotWindow::OnIdle )
+  EVT_MOUSE_EVENTS( wxPLplotWindow::OnMouse )
+	EVT_ERASE_BACKGROUND( wxPLplotWindow::OnErase )
+  EVT_SIZE( wxPLplotWindow::OnSize )
+  EVT_MAXIMIZE( wxPLplotWindow::OnMaximize )
+END_EVENT_TABLE()
+
 
 /*----------------------------------------------------------------------*\
  *  bool wxPLplotApp::OnInit()
@@ -67,7 +152,7 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
                         wxCLOSE_BOX | wxRESIZE_BORDER | wxCLIP_CHILDREN ) 
 {
   Log_Verbose( "wxPLplotFrame::wxPLplotFrame" );
-  m_dev=(wxPLdev*)pls->dev;
+  m_dev=(wxPLDevBase*)pls->dev;
 
   m_panel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN );
   wxBoxSizer* box = new wxBoxSizer( wxVERTICAL );
@@ -216,7 +301,7 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
   Log_Verbose( "wxPLplotWindow::wxPLplotWindow" );
 
   m_pls=pls;
-  m_dev=(wxPLdev*)pls->dev;
+  m_dev=(wxPLDevBase*)pls->dev;
 	refresh=false;
   mouse_x=old_mouse_x=-1;
   mouse_y=old_mouse_y=-1;
@@ -260,9 +345,9 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 
 		//printf( "Clipping region: x=%d, y=%d, width=%d, height=%d, counter=%d\n", vX, vY, vW, vH, counter++ );
   
-    BlitRectangle( &dc, vX, vY, vW, vH );
+    m_dev->BlitRectangle( &dc, vX, vY, vW, vH );
 
-    upd ++ ;
+    upd++ ;
   }
 
   if( m_dev->draw_xhair && !xhair_drawn ) {
@@ -349,8 +434,6 @@ void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
       if( (width>m_dev->bm_width) || (height>m_dev->bm_height) ) {
 				m_dev->bm_width = m_dev->bm_width > width ? m_dev->bm_width : width;
 				m_dev->bm_height = m_dev->bm_height > height ? m_dev->bm_height : height;
-        
-        m_dev->NewCanvas();
       }
 
       wx_set_size( m_pls, width, height );

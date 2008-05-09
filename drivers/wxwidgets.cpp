@@ -34,28 +34,17 @@
 #include "plplotP.h"
 #include "drivers.h"
 
-/* os specific headers */
-#ifdef __WIN32__
-  #include <windows.h>
-#endif
-
-#ifdef __WXMAC__
-	#include <Carbon/Carbon.h>
-  extern "C" { void CPSEnableForegroundOperation(ProcessSerialNumber* psn); }
-#endif
-
 /* C/C++ headers */
 #include <cstdio>
 
 /* wxwidgets headers */
 #include "wx/wx.h"
 #include "wx/except.h"
-#include "wx/image.h"
-#include "wx/filedlg.h"
-#include "wx/display.h"
-    
+
 #include "wxwidgets.h"
-  
+
+DECLARE_APP( wxPLplotApp )
+
 /*--------------------------------------------------------------------------*\
  *  void Log_Verbose( const char *fmt, ... )
  *
@@ -94,7 +83,7 @@ void Log_Debug( const char *fmt, ... )
 }
 
 
-inline void AddtoClipRegion( wxPLDevBase* dev, int x1, int y1, int x2, int y2 )
+void AddtoClipRegion( wxPLDevBase* dev, int x1, int y1, int x2, int y2 )
 {
 	dev->newclipregion=false;
 	if( x1<x2 ) {
@@ -120,6 +109,8 @@ inline void AddtoClipRegion( wxPLDevBase* dev, int x1, int y1, int x2, int y2 )
  *  are needed by the plplot core.
 \*----------------------------------------------------------------------*/
 
+/* Device info */
+const char* plD_DEVICE_INFO_wxwidgets = "wxwidgets:wxWidgets DC:1:wxwidgets:51:wxwidgets";
 
 /*--------------------------------------------------------------------------*\
  *  void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
@@ -239,7 +230,7 @@ DrvOpt wx_options[] = {
 #endif
 
   /* allocate memory for the device storage */
-  dev = (wxPLDevBase*)new wxPLDevBase;
+  dev = new wxPLDevDC;
 	if( dev == NULL) {
     fprintf( stderr, "Insufficient memory\n" );
     exit( 0 );
@@ -491,56 +482,23 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
   switch( op ) {
 		
   case PLSTATE_WIDTH:  /* 1 */
-    if( dev->ready ) {
-      if( dev->antialized ) {
-#ifdef HAVE_AGG
-        dev->m_strokewidth = pls->width>0 ? pls->width : 1;  // TODO: why and when ist width 0???
-#endif
-      } else {
-        dev->m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g,
-                                                                   pls->curcolor.b),
-                                                          pls->width>0 ? pls->width : 1, wxSOLID)) );
-      }
-    } else
+    if( dev->ready )
+      dev->SetWidth( pls );
+    else
       dev->plstate_width = true;
     break;
 		
   case PLSTATE_COLOR0:  /* 2 */
-    if( dev->ready ) {
-      if( dev->antialized ) {
-#ifdef HAVE_AGG
-        dev->m_colredstroke = pls->cmap0[pls->icol0].r;
-        dev->m_colgreenstroke = pls->cmap0[pls->icol0].g;
-        dev->m_colbluestroke = pls->cmap0[pls->icol0].b;
-        dev->m_StrokeOpacity = (wxUint8)(pls->cmap0[pls->icol0].a*255);
-#endif
-      } else {
-        dev->m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                                                    pls->cmap0[pls->icol0].b),
-                                                          pls->width>0 ? pls->width : 1, wxSOLID)) );
-        dev->m_dc->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                            pls->cmap0[pls->icol0].b)) );
-      }
-    } else
+    if( dev->ready )
+      dev->SetColor0( pls );
+    else
       dev->plstate_color0 = true;
     break;
 		
   case PLSTATE_COLOR1:  /* 3 */
-    if( dev->ready ) {
-      if( dev->antialized ) {
-#ifdef HAVE_AGG
-        dev->m_colredstroke = pls->curcolor.r;
-        dev->m_colgreenstroke = pls->curcolor.g;
-        dev->m_colbluestroke = pls->curcolor.b;      
-        dev->m_StrokeOpacity = (wxUint8)(pls->curcolor.a*255);
-#endif
-      } else {
-        dev->m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g,
-                                                                    pls->curcolor.b),
-                                                          pls->width>0 ? pls->width : 1, wxSOLID)) );
-        dev->m_dc->SetBrush( wxBrush(wxColour(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b)) );
-      }
-    } else 
+    if( dev->ready )
+      dev->SetColor0( pls );
+    else 
       dev->plstate_color1 = true;
     break;
 		
@@ -572,19 +530,19 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 
 	case PLESC_XORMOD:
 		/* switch between wxXOR and wxCOPY */
-    if( dev->ready ) {
+    /* if( dev->ready ) {
 			if( dev->m_dc->GetLogicalFunction() == wxCOPY )
 				dev->m_dc->SetLogicalFunction( wxXOR );    
 			else if( dev->m_dc->GetLogicalFunction() == wxXOR )
 				dev->m_dc->SetLogicalFunction( wxCOPY );
-		}
+		} */
 		break;
 
 	case PLESC_DEVINIT:
-    if( dev->antialized )
-      wx_set_buffer( pls, (wxImage*)ptr );
-    else
-      wx_set_dc( pls, (wxDC*)ptr );      
+    dev->SetExternalBuffer( ptr );
+
+    /* replay begin of page call and state settings */
+  	plD_bop_wxwidgets( pls );
     break;
 
 #ifdef HAVE_FREETYPE
@@ -614,17 +572,8 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 			PLINT bgr, bgg, bgb;  /* red, green, blue */
 			plgcolbg( &bgr, &bgg, &bgb );  /* get background color information */
 
-      if( dev->antialized ) {
-#ifdef HAVE_AGG
-        pixfmt pixf( *dev->m_rendering_buffer );
-        ren_base renb( pixf );
-        renb.clear( agg::rgba8(bgr, bgg, bgb) );
-#endif
-      } else {
-        dev->m_dc->SetBackground( wxBrush(wxColour(bgr, bgg, bgb)) );
-        dev->m_dc->Clear();
-      }
-  		AddtoClipRegion( dev, 0, 0, (int)( dev->width), (int)(dev->height) );
+      dev->ClearBackground( bgr, bgg, bgb, 0, 0, (int)(dev->width), (int)(dev->height) );
+  		AddtoClipRegion( dev, 0, 0, (int)(dev->width), (int)(dev->height) );
 		}
 		break;
   
@@ -688,24 +637,10 @@ void wx_set_size( PLStream* pls, int width, int height )
 		PLINT bgr, bgg, bgb;  /* red, green, blue */
 		plgcolbg( &bgr, &bgg, &bgb);  /* get background color information */
 
-    if( dev->antialized ) {
-#ifdef HAVE_AGG
-		  if( dev->m_rendering_buffer )
-			  delete dev->m_rendering_buffer;
-		  dev->m_rendering_buffer = new agg::rendering_buffer;
-			if( dev->ownGUI )
-				dev->m_rendering_buffer->attach( dev->m_buffer->GetData(), dev->bm_width, dev->bm_height, dev->bm_width*3 );
-			else
-				dev->m_rendering_buffer->attach( dev->m_buffer->GetData(), dev->width, dev->height, dev->width*3 );
-      pixfmt pixf( *dev->m_rendering_buffer );
-      ren_base renb( pixf );
-      renb.clear( agg::rgba8(bgr, bgg, bgb) );
-#endif
-    } else {
-      dev->m_dc->SetBackground( wxBrush(wxColour(bgr, bgg, bgb)) );
-      dev->m_dc->Clear();
-    }
-		AddtoClipRegion( dev, 0, 0, (int)( dev->width), (int)(dev->height) );
+    dev->CreateCanvas();
+    dev->ClearBackground( bgr, bgg, bgb, 0, 0, (int)(dev->width), (int)(dev->height) );
+    
+		AddtoClipRegion( dev, 0, 0, (int)(dev->width), (int)(dev->height) );
 	}
 
   dev->scalex=(PLFLT)(dev->xmax-dev->xmin)/dev->width;
@@ -724,52 +659,6 @@ void wx_set_size( PLStream* pls, int width, int height )
     FT->ymax=dev->height;
   }
 #endif
-}
-
-
-/*--------------------------------------------------------------------------*\
- *  void wx_set_dc( PLStream* pls, wxDC* dc )
- *
- *  Adds a dc to the stream. The associated device is attached to the canvas
- *  as the property "dev".
-\*--------------------------------------------------------------------------*/
-void wx_set_dc( PLStream* pls, wxDC* dc )
-{
-  Log_Verbose( "wx_set_dc()" );
-  
-  wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
-  dev->m_dc=dc;  /* Add the dc to the device */
-  dev->ready = true;
-  dev->ownGUI = false;
-
-	/* replay begin of page call and state settings */
-	plD_bop_wxwidgets( pls );
-}
-
-
-/*--------------------------------------------------------------------------*\
- *  void wx_set_buffer( PLStream* pls, wxImage* dc )
- *
- *  Adds a dc to the stream. The associated device is attached to the canvas
- *  as the property "dev".
-\*--------------------------------------------------------------------------*/
-void wx_set_buffer( PLStream* pls, wxImage* buffer )
-{
-  Log_Verbose( "wx_set_buffer()" );
-  
-  wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
-  dev->m_buffer = buffer;
-#ifdef HAVE_AGG
-  if( dev->m_rendering_buffer )
-    delete dev->m_rendering_buffer;
-  dev->m_rendering_buffer = new agg::rendering_buffer;
-  dev->m_rendering_buffer->attach( dev->m_buffer->GetData(), dev->width, dev->height, dev->width*3 );
-#endif
-  dev->ready = true;
-  dev->ownGUI = false;
-
-	/* replay begin of page call and state settings */
-	plD_bop_wxwidgets( pls );
 }
 
 
@@ -827,12 +716,7 @@ static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
   if( !(dev->ready) )
     install_buffer( pls );
 
-  if( dev->antialized ) {
-#ifdef HAVE_AGG
-    dev->m_buffer->SetRGB( x, y, dev->m_colredstroke, dev->m_colgreenstroke, dev->m_colbluestroke );
-#endif
-  } else
-    dev->m_dc->DrawPoint( x, y );
+  dev->PutPixel( x, y );
 
   if( !(dev->resizing) && dev->ownGUI ) {
 		AddtoClipRegion( dev, x, y, x+1, y+1 );
@@ -860,17 +744,7 @@ static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colo
   if( !(dev->ready) )
     install_buffer( pls );
 
-  if( dev->antialized ) {
-#ifdef HAVE_AGG
-    dev->m_buffer->SetRGB( x, y, GetRValue(colour), GetGValue(colour), GetBValue(colour) );    
-#endif
-  } else  {
-    const wxPen oldpen=dev->m_dc->GetPen();
-    dev->m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(GetRValue(colour), GetGValue(colour), GetBValue(colour)),
-                                                   1, wxSOLID)) );
-    dev->m_dc->DrawPoint( x, y );
-    dev->m_dc->SetPen( oldpen );
-  }
+  dev->PutPixel( x, y, colour );
 
   if( !(dev->resizing) && dev->ownGUI ) {
 		AddtoClipRegion( dev, x, y, x+1, y+1 );
@@ -894,31 +768,11 @@ static PLINT plD_read_pixel_wxwidgets ( PLStream *pls, short x, short y )
   Log_Verbose( "plD_read_pixel_wxwidgets" );
 
   wxPLDevBase *dev=(wxPLDevBase*)pls->dev;
-  PLINT colour;
   
   if( !(dev->ready) )
     install_buffer( pls );
 
-  if( dev->antialized ) {
-#ifdef HAVE_AGG
-    colour = RGB( dev->m_buffer->GetRed( x, y ), dev->m_buffer->GetGreen( x, y ),
-                  dev->m_buffer->GetBlue( x, y ) );    
-#endif
-  } else {  
-#ifdef __WXGTK__
-    // The GetPixel method is incredible slow for wxGTK. Therefore we set the colour
-    // always to the background color, since this is the case anyway 99% of the time.
-    PLINT bgr, bgg, bgb;  /* red, green, blue */
-    plgcolbg( &bgr, &bgg, &bgb );  /* get background color information */
-    colour=RGB( bgr, bgg, bgb );
-#else
-    wxColour col;
-    dev->m_dc->GetPixel( x, y, &col );
-    colour = RGB( col.Red(), col.Green(), col.Blue());
-#endif
-	}
-
-  return colour;
+  return dev->GetPixel( x, y );
 }
 
 
@@ -1108,28 +962,13 @@ static void install_buffer( PLStream *pls )
   dev->m_frame->Show( true );
   dev->m_frame->Raise();
 	
+  /* get a DC and a bitmap or an imagebuffer */
+  dev->ownGUI = true;
   dev->bm_width=1024;
   dev->bm_height=800;
-  /* get a DC and a bitmap or an imagebuffer */
-  if( dev->antialized ) {
-    /* get a new wxImage (image buffer) */
-    dev->m_buffer = new wxImage( dev->bm_width, dev->bm_height );
-#ifdef HAVE_AGG  
-    dev->m_rendering_buffer = new agg::rendering_buffer;
-    dev->m_rendering_buffer->attach( dev->m_buffer->GetData(), dev->bm_width, dev->bm_height, dev->bm_width*3 );
-#endif
-  } else {
-    if( !(dev->m_dc) )
-      dev->m_dc = new wxMemoryDC();
-    
-    /* get a new bitmap */
-    dev->m_bitmap = new wxBitmap( dev->bm_width, dev->bm_height, 32 );
-    ((wxMemoryDC*)dev->m_dc)->SelectObject( wxNullBitmap );   /* deselect bitmap */
-    ((wxMemoryDC*)dev->m_dc)->SelectObject( *(dev->m_bitmap) );   /* select new bitmap */
-  }
+  dev->CreateCanvas();
   
   dev->ready = true;
-  dev->ownGUI = true;
 
   /* replay command we may have missed */
   plD_bop_wxwidgets( pls );

@@ -1,4 +1,6 @@
 
+#include "plDevs.h"
+
 #ifdef PLD_wxwidgets
 
 #include "wxwidgets.h"
@@ -141,23 +143,87 @@ void wxPLDevAGG::FillPolygon( PLStream *pls )
   agg::render_scanlines( ras, sl, ren );
 }
 
-void wxPLDevAGG::BlitRectangle( wxPaintDC dc, int vX, int vY, int vW, int vH )
+void wxPLDevAGG::BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )
 {
   if( m_buffer ) {
     wxMemoryDC MemoryDC;
     wxBitmap bitmap( m_buffer->GetSubImage(wxRect(vX, vY, vW, vH)), -1 );
     MemoryDC.SelectObject( bitmap );
-    dc.Blit( vX, vY, vW, vH, &MemoryDC, 0, 0 );
+    dc->Blit( vX, vY, vW, vH, &MemoryDC, 0, 0 );
     MemoryDC.SelectObject( wxNullBitmap );
   }
 }
 
-void wxPLDevAGG::NewCanvas()
+void wxPLDevAGG::CreateCanvas()
 {
-  /* get a new wxImage (image buffer) */
-  if( m_buffer )
-    delete m_buffer;
-  m_buffer = new wxImage( bm_width, bm_height );
+  if( m_rendering_buffer )
+    delete m_rendering_buffer;
+  m_rendering_buffer = new agg::rendering_buffer;
+
+  if( ownGUI ) {
+    /* get a new wxImage (image buffer) */
+    if( m_buffer )
+      delete m_buffer;
+    m_buffer = new wxImage( bm_width, bm_height );
+    m_rendering_buffer->attach( m_buffer->GetData(), bm_width, bm_height, bm_width*3 );
+  }
+  else
+    m_rendering_buffer->attach( m_buffer->GetData(), width, height, width*3 );
+}
+
+void wxPLDevAGG::SetWidth( PLStream *pls )
+{
+  m_strokewidth = pls->width>0 ? pls->width : 1;  // TODO: why and when ist width 0???
+}
+
+void wxPLDevAGG::SetColor0( PLStream *pls )
+{
+  m_colredstroke = pls->cmap0[pls->icol0].r;
+  m_colgreenstroke = pls->cmap0[pls->icol0].g;
+  m_colbluestroke = pls->cmap0[pls->icol0].b;
+  m_StrokeOpacity = (wxUint8)(pls->cmap0[pls->icol0].a*255);
+}
+
+void wxPLDevAGG::SetColor1( PLStream *pls )
+{
+  m_colredstroke = pls->curcolor.r;
+  m_colgreenstroke = pls->curcolor.g;
+  m_colbluestroke = pls->curcolor.b;      
+  m_StrokeOpacity = (wxUint8)(pls->curcolor.a*255);
+}
+
+
+/*--------------------------------------------------------------------------*\
+ *  void wx_set_buffer( PLStream* pls, wxImage* dc )
+ *
+ *  Adds a dc to the stream. The associated device is attached to the canvas
+ *  as the property "dev".
+\*--------------------------------------------------------------------------*/
+void wxPLDevAGG::SetExternalBuffer( void* buffer )
+{
+  m_buffer = (wxImage*)buffer;
+  if( m_rendering_buffer )
+    delete m_rendering_buffer;
+  m_rendering_buffer = new agg::rendering_buffer;
+  m_rendering_buffer->attach( m_buffer->GetData(), width, height, width*3 );
+
+  ready = true;
+  ownGUI = false;
+}
+
+void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
+{
+  m_buffer->SetRGB( x, y, GetRValue(colour), GetGValue(colour), GetBValue(colour) );   
+}
+
+void wxPLDevAGG::PutPixel( short x, short y )
+{
+  m_buffer->SetRGB( x, y, m_colredstroke, m_colgreenstroke, m_colbluestroke );
+}
+
+PLINT wxPLDevAGG::PutPixel( short x, short y )
+{
+  return RGB( m_buffer->GetRed( x, y ), m_buffer->GetGreen( x, y ), m_buffer->GetBlue( x, y ) );    
 }
 
 #endif				/* PLD_wxwidgets */

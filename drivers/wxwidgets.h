@@ -75,35 +75,6 @@ extern "C"
 /* size of plot in pixels on screen if not given */
 #define PLOT_WIDTH 800
 #define PLOT_HEIGHT 600
-/*=========================================================================*/
-
-/* Application icon as XPM */
-/* This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/ */
-static const char *graph[] = {
-/* columns rows colors chars-per-pixel */
-"16 16 4 2",
-"   c black",
-".  c #BA1825",
-"X  c gray100",
-"UX c None",
-/* pixels */
-"UX. . . . . . . . . . . . . . UX",
-". . . . . . . . . . . . . . . . ",
-". . . . . . . . . . . . . . . . ",
-". . . . . . . . . . . X X . . . ",
-". . . . . . . . . . . X X . . . ",
-". . . . . . . . . . . X X . . . ",
-". . . . . X X . . . . X X . . . ",
-". . . . . X X . . . . X X . . . ",
-". . . . . X X . X X . X X . . . ",
-". . . . . X X . X X . X X . . . ",
-". . . . . X X . X X . X X . . . ",
-". . . . . X X . X X . X X . . . ",
-". . . X X X X X X X X X X . . . ",
-". . . . . . . . . . . . . . . . ",
-". . . . . . . . . . . . . . . . ",
-"UX. . . . . . . . . . . . . . UX"
-};
 
 /* These need to be distinguished since the handling is slightly different. */
 #define LOCATE_INVOKED_VIA_API		1
@@ -123,8 +94,15 @@ public: /* methods */
   virtual void DrawPolyline( short *xa, short *ya, PLINT npts )=0;
   virtual void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )=0;
   virtual void FillPolygon( PLStream *pls )=0;
-  virtual void BlitRectangle( wxPaintDC dc, int vX, int vY, int vW, int vH )=0;
-  virtual void NewCanvas();
+  virtual void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )=0;
+  virtual void CreateCanvas()=0;
+  virtual void SetWidth( PLStream *pls )=0;
+  virtual void SetColor0( PLStream *pls )=0;
+  virtual void SetColor1( PLStream *pls )=0;
+  virtual void SetExternalBuffer( void* buffer )=0;
+  virtual void PutPixel( short x, short y, PLINT color )=0;
+  virtual void PutPixel( short x, short y )=0;
+  virtual PLINT GetPixel( short x, short y )=0;
 
 public: /* variables */
   bool ready;
@@ -176,6 +154,21 @@ class wxPLDevDC : public wxPLDevBase
 {
 public: /* methods */
 	wxPLDevDC( void );
+	~wxPLDevDC( void );
+
+  void DrawLine( short x1a, short y1a, short x2a, short y2a );
+  void DrawPolyline( short *xa, short *ya, PLINT npts );
+  void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 );
+  void FillPolygon( PLStream *pls );
+  void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH );
+  void CreateCanvas();
+  void SetWidth( PLStream *pls );
+  void SetColor0( PLStream *pls );
+  void SetColor1( PLStream *pls );
+  void SetExternalBuffer( void* buffer );
+  void PutPixel( short x, short y, PLINT color );
+  void PutPixel( short x, short y );
+  PLINT GetPixel( short x, short y );
 
 private: /* variables */
   wxBitmap* m_bitmap;
@@ -187,6 +180,21 @@ class wxPLDevAGG : public wxPLDevBase
 {
 public: /* methods */
 	wxPLDevAGG( void );
+	~wxPLDevAGG( void );
+
+  void DrawLine( short x1a, short y1a, short x2a, short y2a );
+  void DrawPolyline( short *xa, short *ya, PLINT npts );
+  void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 );
+  void FillPolygon( PLStream *pls );
+  void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH );
+  void CreateCanvas();
+  void SetWidth( PLStream *pls );
+  void SetColor0( PLStream *pls );
+  void SetColor1( PLStream *pls );
+  void SetExternalBuffer( void* buffer );
+  void PutPixel( short x, short y, PLINT color );
+  void PutPixel( short x, short y );
+  PLINT GetPixel( short x, short y );
 
 private: /* variables */
   wxImage* m_buffer;
@@ -210,21 +218,7 @@ struct dev_entry {
   wxString dev_file_app;
 };
 
-struct dev_entry dev_entries[] = {
-  { wxT("gif"), wxT("gif..."), wxT("Save this plot as gif!"), wxT("gif files (*.gif)|*.gif") },
-  { wxT("jpeg"), wxT("jpeg..."), wxT("Save this plot as jpeg!"), wxT("jpg files (*.jpg;*.jpeg)|*.jpg;*.jpeg") },
-  { wxT("png"), wxT("png..."), wxT("Save this plot as png"), wxT("png files (*.png)|*.png") },
-  { wxT("pngcairo"), wxT("png (cairo)..."), wxT("Save this plot as png using cairo!"), wxT("png files (*.png)|*.png") },
-  { wxT("pdfcairo"), wxT("pdf..."), wxT("Save this plot as pdf using cairo!"), wxT("pdf files (*.pdf)|*.pdf") },
-  { wxT("ps"), wxT("postscript..."), wxT("Save this plot as postscript!"), wxT("ps files (*.ps)|*.ps") },
-  { wxT("psc"), wxT("color postscript..."), wxT("Save this plot as color postscript!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
-  { wxT("pscairo"), wxT("color postscript (cairo)..."), wxT("Save this plot as color postscript using cairo!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
-  { wxT("svg"), wxT("svg..."), wxT("Save this plot as svg!"), wxT("svg files (*.svg)|*.svg") },
-  { wxT("svgcairo"), wxT("svg (cairo)..."), wxT("Save this plot as svg using cairo!"), wxT("svg files (*.svg)|*.svg") },
-  { wxT("xfig"), wxT("xfig..."), wxT("Save this plot as xfig!"), wxT("fig files (*.fig)|*.fig") }
-};
-
-inline void AddtoClipRegion( wxPLDevBase * dev, int x1, int y1, int x2, int y2 );
+void AddtoClipRegion( wxPLDevBase * dev, int x1, int y1, int x2, int y2 );
 
 /* after how many commands the window should be refreshed */
 #define MAX_COMCOUNT 5000
@@ -254,11 +248,6 @@ private:
   DECLARE_EVENT_TABLE()
 };
 
-/* event table */
-BEGIN_EVENT_TABLE( wxPLplotApp, wxApp )
-  EVT_IDLE( wxPLplotApp::OnIdle )
-END_EVENT_TABLE()
-
 /* definition of the actual window/frame shown */
 class wxPLplotWindow : public wxWindow
 {
@@ -287,17 +276,6 @@ private:
   DECLARE_EVENT_TABLE()
 };
 
-/* event table */
-BEGIN_EVENT_TABLE( wxPLplotWindow, wxWindow )
-  EVT_PAINT( wxPLplotWindow::OnPaint )               /* (re)draw the plot in window */
-  EVT_CHAR( wxPLplotWindow::OnChar )
-  EVT_IDLE( wxPLplotWindow::OnIdle )
-  EVT_MOUSE_EVENTS( wxPLplotWindow::OnMouse )
-	EVT_ERASE_BACKGROUND( wxPLplotWindow::OnErase )
-  EVT_SIZE( wxPLplotWindow::OnSize )
-  EVT_MAXIMIZE( wxPLplotWindow::OnMaximize )
-END_EVENT_TABLE()
-
 /* definition of the actual window/frame shown */
 
 class wxPLplotFrame : public wxFrame
@@ -320,12 +298,6 @@ private:
 
 enum { wxPL_Save=10000, wxPL_Next=10100 };
 
-/* event table */
-BEGIN_EVENT_TABLE( wxPLplotFrame, wxFrame )
-  EVT_MENU( -1, wxPLplotFrame::OnMenu )      /* handle all menu events */
-  EVT_CLOSE( wxPLplotFrame::OnClose )
-END_EVENT_TABLE()
-
 /* Use this macro if you want to define your own main() or WinMain() function
    and call wxEntry() from there. */
 #define IMPLEMENT_PLAPP_NO_MAIN(appname)                                      \
@@ -337,9 +309,10 @@ END_EVENT_TABLE()
     }                                                                       \
     wxAppInitializer                                                        \
         wxAppInitializer((wxAppInitializerFunction) wxPLCreateApp);        \
-    static appname& wxGetApp() { return *(appname *)wxTheApp; } 
+    DECLARE_APP(appname)                                                    \
+    appname& wxGetApp() { return *wx_static_cast(appname*, wxApp::GetInstance()); }
 
-IMPLEMENT_PLAPP_NO_MAIN( wxPLplotApp )
+#define DECLARE_APP(appname) extern appname& wxGetApp();
 
 /* workaround against warnings for unused variables */
 static inline void Use(void *) { }
@@ -353,9 +326,6 @@ static void GetCursorCmd( PLStream *pls, PLGraphicsIn *ptr );
 /*----------------------------------------------------------------------*\
  *  Declarations for the device.
 \*----------------------------------------------------------------------*/
-
-/* Device info */
-const char* plD_DEVICE_INFO_wxwidgets = "wxwidgets:wxWidgets DC:1:wxwidgets:51:wxwidgets";
 
 void plD_init_wxwidgets		(PLStream *);
 void plD_line_wxwidgets		(PLStream *, short, short, short, short);
