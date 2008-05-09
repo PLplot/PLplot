@@ -1,0 +1,398 @@
+/* $Id: wxwidgets.cpp 8222 2008-02-07 13:55:45Z smekal $
+
+   Copyright (C) 2008  Werner Smekal
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+*/
+
+
+/* freetype headers and macros */
+#ifdef HAVE_FREETYPE
+  #include "plfreetype.h"
+
+  static void plD_pixel_wxwidgets( PLStream *pls, short x, short y );
+  static PLINT plD_read_pixel_wxwidgets( PLStream *pls, short x, short y );
+  static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colour );
+  static void init_freetype_lv1( PLStream *pls );
+  static void init_freetype_lv2( PLStream *pls );
+extern "C"
+{
+  extern void plD_FreeType_init( PLStream *pls );
+  extern void plD_render_freetype_text( PLStream *pls, EscText *args );
+  extern void plD_FreeType_Destroy( PLStream *pls );
+  extern void pl_set_extended_cmap0( PLStream *pls, int ncol0_width, int ncol0_org );
+}
+#endif
+
+#ifndef max_number_of_grey_levels_used_in_text_smoothing
+  #define max_number_of_grey_levels_used_in_text_smoothing 64
+#endif
+
+#define NDEV	100		/* Max number of output device types in menu */
+
+/*=========================================================================*/
+/* Physical dimension constants used by the driver */
+
+/* Virtual coordinate scaling parameter, used to do calculations at
+ * higher resolution.  Chosen to be 32 for consistency with the PLplot
+ * metafile (see plplotP.h).
+ *
+ * The trick here is to do everything in device coordinates on the driver
+ * side, but report/receive everything in virtual coordinates to/from the
+ * PLplot core.
+ */
+#define VSCALE (32.)
+
+/* pixels per mm */
+#define DEVICE_PIXELS_PER_MM (3.4)
+#define VIRTUAL_PIXELS_PER_MM (DEVICE_PIXELS_PER_MM*VSCALE)
+
+/* mm per inch */
+#define MM_PER_IN (25.4)
+
+/* pixels per inch */
+#define DEVICE_PIXELS_PER_IN (DEVICE_PIXELS_PER_MM*MM_PER_IN)
+#define VIRTUAL_PIXELS_PER_IN (VIRTUAL_PIXELS_PER_MM*MM_PER_IN)
+
+/* Default dimensions of the canvas (in inches) */
+#define CANVAS_WIDTH (10.)
+#define CANVAS_HEIGHT (7.5)
+
+/* size of plot in pixels on screen if not given */
+#define PLOT_WIDTH 800
+#define PLOT_HEIGHT 600
+/*=========================================================================*/
+
+/* Application icon as XPM */
+/* This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/ */
+static const char *graph[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 2",
+"   c black",
+".  c #BA1825",
+"X  c gray100",
+"UX c None",
+/* pixels */
+"UX. . . . . . . . . . . . . . UX",
+". . . . . . . . . . . . . . . . ",
+". . . . . . . . . . . . . . . . ",
+". . . . . . . . . . . X X . . . ",
+". . . . . . . . . . . X X . . . ",
+". . . . . . . . . . . X X . . . ",
+". . . . . X X . . . . X X . . . ",
+". . . . . X X . . . . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . . . X X . X X . X X . . . ",
+". . . X X X X X X X X X X . . . ",
+". . . . . . . . . . . . . . . . ",
+". . . . . . . . . . . . . . . . ",
+"UX. . . . . . . . . . . . . . UX"
+};
+
+/* These need to be distinguished since the handling is slightly different. */
+#define LOCATE_INVOKED_VIA_API		1
+#define LOCATE_INVOKED_VIA_DRIVER	2
+
+/* struct which contains information about device */
+class wxPLplotFrame;
+  
+class wxPLDevBase
+{
+public: /* methods */
+	wxPLDevBase( void );
+	~wxPLDevBase( void );
+
+  // virtual functions which need to implemented
+  virtual void Drawline( short x1a, short y1a, short x2a, short y2a )=0;
+  virtual void DrawPolyline( short *xa, short *ya, PLINT npts )=0;
+  virtual void ClearBackground()=0;
+
+public: /* variables */
+  bool ready;
+  bool ownGUI;
+  bool waiting;
+  bool resizing;
+  bool exit;
+
+  int comcount;
+  
+  wxBitmap* m_bitmap;
+  wxImage* m_buffer;
+  wxPLplotFrame* m_frame;
+  PLINT width;
+  PLINT height;
+  PLINT bm_width;
+  PLINT bm_height;
+
+  PLINT xmin;
+  PLINT xmax;
+  PLINT ymin;
+  PLINT ymax;
+
+	PLFLT scalex;
+	PLFLT scaley;
+
+  bool plstate_width;   /* Flags indicating change of state before */
+  bool plstate_color0;  /* device is fully initialized */
+  bool plstate_color1;  /* taken from gcw driver */
+  
+  PLGraphicsIn gin;			/* Graphics input structure */
+  int locate_mode;		  /* Set while in locate mode */
+  bool	draw_xhair;		/* Set during xhair draws */
+
+	/* clipping region */
+	int clipminx, clipmaxx;
+	int clipminy, clipmaxy;
+	bool newclipregion;
+
+  /* variables for antializing */
+	int antialized;
+	int freetype;
+	int smooth_text;
+
+  const char** devDesc;		/* Descriptive names for file-oriented devices.  Malloc'ed. */
+  const char** devName;		/* Keyword names of file-oriented devices. Malloc'ed. */
+	int ndev;
+};
+
+class wxPLDevDC : public wxPLDevBase
+{
+public: /* methods */
+	wxPLDevDC( void );
+
+private: /* variables */
+  wxDC* dc;
+}
+
+#ifdef HAVE_AGG
+class wxPLDevAGG : public wxPLDevBase
+{
+public: /* methods */
+	wxPLDevAGG( void );
+
+private: /* variables */
+  agg::rendering_buffer *m_rendering_buffer;
+  double m_strokewidth;
+  wxUint8 m_StrokeOpacity;
+  unsigned char m_colredstroke;
+  unsigned char m_colgreenstroke;
+  unsigned char m_colbluestroke;
+  unsigned char m_colredfill;
+  unsigned char m_colgreenfill;
+  unsigned char m_colbluefill;
+}
+#endif
+
+
+struct dev_entry {    
+  wxString dev_name;
+  wxString dev_menu_short;
+  wxString dev_menu_long;
+  wxString dev_file_app;
+};
+
+struct dev_entry dev_entries[] = {
+  { wxT("gif"), wxT("gif..."), wxT("Save this plot as gif!"), wxT("gif files (*.gif)|*.gif") },
+  { wxT("jpeg"), wxT("jpeg..."), wxT("Save this plot as jpeg!"), wxT("jpg files (*.jpg;*.jpeg)|*.jpg;*.jpeg") },
+  { wxT("png"), wxT("png..."), wxT("Save this plot as png"), wxT("png files (*.png)|*.png") },
+  { wxT("pngcairo"), wxT("png (cairo)..."), wxT("Save this plot as png using cairo!"), wxT("png files (*.png)|*.png") },
+  { wxT("pdfcairo"), wxT("pdf..."), wxT("Save this plot as pdf using cairo!"), wxT("pdf files (*.pdf)|*.pdf") },
+  { wxT("ps"), wxT("postscript..."), wxT("Save this plot as postscript!"), wxT("ps files (*.ps)|*.ps") },
+  { wxT("psc"), wxT("color postscript..."), wxT("Save this plot as color postscript!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
+  { wxT("pscairo"), wxT("color postscript (cairo)..."), wxT("Save this plot as color postscript using cairo!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
+  { wxT("svg"), wxT("svg..."), wxT("Save this plot as svg!"), wxT("svg files (*.svg)|*.svg") },
+  { wxT("svgcairo"), wxT("svg (cairo)..."), wxT("Save this plot as svg using cairo!"), wxT("svg files (*.svg)|*.svg") },
+  { wxT("xfig"), wxT("xfig..."), wxT("Save this plot as xfig!"), wxT("fig files (*.fig)|*.fig") }
+};
+
+inline void AddtoClipRegion( wxPLdev* dev, int x1, int y1, int x2, int y2 )
+{
+	dev->newclipregion=false;
+	if( x1<x2 ) {
+		if( x1<dev->clipminx ) dev->clipminx=x1;
+		if( x2>dev->clipmaxx ) dev->clipmaxx=x2;
+	} else {
+		if( x2<dev->clipminx ) dev->clipminx=x2;
+		if( x1>dev->clipmaxx ) dev->clipmaxx=x1;
+	}
+	if( y1<y2 ) {
+		if( y1<dev->clipminy ) dev->clipminy=y1;
+		if( y2>dev->clipmaxy ) dev->clipmaxy=y2;
+	} else {
+		if( y2<dev->clipminy ) dev->clipminy=y2;
+		if( y1>dev->clipmaxy ) dev->clipmaxy=y1;
+	}
+}
+
+/* after how many commands the window should be refreshed */
+#define MAX_COMCOUNT 5000
+
+/* wxwidgets application definition (if needed) */
+WX_DEFINE_ARRAY( wxPLplotFrame*, wxArrayOfwxPLplotFrame );
+class wxPLplotApp : public wxApp
+{
+public:
+  virtual bool OnInit();
+  /* virtual int OnExit(); */
+  void SetExitFlag( bool flag=true ) { exit=flag; };
+  bool GetExitFlag( void ) { return exit; };
+  void SetAdvanceFlag( bool flag=true ) { advance=flag; };
+  bool GetAdvanceFlag( void ) { return advance; };
+  void SetRefreshFlag( bool flag=true );
+	void AddFrame( wxPLplotFrame* frame ) { FrameArray.Add( frame ); };
+	void RemoveFrame( wxPLplotFrame* frame ) { FrameArray.Remove( frame ); };
+  size_t FrameCount( void ) { return FrameArray.GetCount(); }
+  void OnIdle( wxIdleEvent& event );
+
+private:
+  bool exit;
+  bool advance;
+	wxArrayOfwxPLplotFrame FrameArray;
+
+  DECLARE_EVENT_TABLE()
+};
+
+/* event table */
+BEGIN_EVENT_TABLE( wxPLplotApp, wxApp )
+  EVT_IDLE( wxPLplotApp::OnIdle )
+END_EVENT_TABLE()
+
+/* definition of the actual window/frame shown */
+class wxPLplotWindow : public wxWindow
+{
+public:
+	wxPLplotWindow( wxWindow* parent, PLStream *pls );
+
+  void SetRefreshFlag( bool flag=true ) { refresh=flag; };
+  bool GetRefreshFlag( void ) { return refresh; };
+  
+private:
+  void OnPaint( wxPaintEvent& event );
+  void OnChar( wxKeyEvent& event );
+  void OnIdle( wxIdleEvent& event );
+	void OnErase( wxEraseEvent& WXUNUSED(event) );
+  void OnSize( wxSizeEvent & WXUNUSED(event) );
+  void OnMaximize( wxMaximizeEvent & WXUNUSED(event) );
+  void OnMouse( wxMouseEvent& event );
+  void DrawCrosshair();
+  
+  PLStream *m_pls;
+  wxPLdev* m_dev;  /* windows needs to know this structure */
+  bool refresh;
+  bool xhair_drawn;
+  int mouse_x, mouse_y, old_mouse_x, old_mouse_y;
+
+  DECLARE_EVENT_TABLE()
+};
+
+/* event table */
+BEGIN_EVENT_TABLE( wxPLplotWindow, wxWindow )
+  EVT_PAINT( wxPLplotWindow::OnPaint )               /* (re)draw the plot in window */
+  EVT_CHAR( wxPLplotWindow::OnChar )
+  EVT_IDLE( wxPLplotWindow::OnIdle )
+  EVT_MOUSE_EVENTS( wxPLplotWindow::OnMouse )
+	EVT_ERASE_BACKGROUND( wxPLplotWindow::OnErase )
+  EVT_SIZE( wxPLplotWindow::OnSize )
+  EVT_MAXIMIZE( wxPLplotWindow::OnMaximize )
+END_EVENT_TABLE()
+
+/* definition of the actual window/frame shown */
+
+class wxPLplotFrame : public wxFrame
+{
+public:
+  wxPLplotFrame( const wxString& title, PLStream* pls );
+  void OnMenu( wxCommandEvent& event );
+  void OnClose( wxCloseEvent& event );
+  bool SavePlot( const char* filename, const char* devname, int width,  int height );
+  void SetRefreshFlag( bool flag=true ) { m_window->SetRefreshFlag( flag ); };
+  bool GetRefreshFlag( void ) { return m_window->GetRefreshFlag(); };
+
+private:
+  wxPanel* m_panel;
+  wxPLplotWindow* m_window;
+  wxPLdev* m_dev;  /* frame needs to know this structure */
+
+  DECLARE_EVENT_TABLE()
+};
+
+enum { wxPL_Save=10000, wxPL_Next=10100 };
+
+/* event table */
+BEGIN_EVENT_TABLE( wxPLplotFrame, wxFrame )
+  EVT_MENU( -1, wxPLplotFrame::OnMenu )      /* handle all menu events */
+  EVT_CLOSE( wxPLplotFrame::OnClose )
+END_EVENT_TABLE()
+
+/* Use this macro if you want to define your own main() or WinMain() function
+   and call wxEntry() from there. */
+#define IMPLEMENT_PLAPP_NO_MAIN(appname)                                      \
+    wxAppConsole *wxPLCreateApp()                                             \
+    {                                                                       \
+        wxAppConsole::CheckBuildOptions( WX_BUILD_OPTIONS_SIGNATURE,         \
+                                         "your program" );                    \
+        return new appname;                                                 \
+    }                                                                       \
+    wxAppInitializer                                                        \
+        wxAppInitializer((wxAppInitializerFunction) wxPLCreateApp);        \
+    static appname& wxGetApp() { return *(appname *)wxTheApp; } 
+
+IMPLEMENT_PLAPP_NO_MAIN( wxPLplotApp )
+
+/* workaround against warnings for unused variables */
+static inline void Use(void *) { }
+#define WX_SUPPRESS_UNUSED_WARN( x ) Use( &x )
+
+/* private functions needed by the wxwidgets Driver */
+static void install_buffer( PLStream *pls );
+static void wxRunApp( PLStream *pls, bool runonce=false );
+static void GetCursorCmd( PLStream *pls, PLGraphicsIn *ptr );
+
+/*----------------------------------------------------------------------*\
+ *  Declarations for the device.
+\*----------------------------------------------------------------------*/
+
+/* Device info */
+const char* plD_DEVICE_INFO_wxwidgets = "wxwidgets:wxWidgets DC:1:wxwidgets:51:wxwidgets";
+
+void plD_init_wxwidgets		(PLStream *);
+void plD_line_wxwidgets		(PLStream *, short, short, short, short);
+void plD_polyline_wxwidgets	(PLStream *, short *, short *, PLINT);
+void plD_eop_wxwidgets		(PLStream *);
+void plD_bop_wxwidgets		(PLStream *);
+void plD_tidy_wxwidgets		(PLStream *);
+void plD_state_wxwidgets	(PLStream *, PLINT);
+void plD_esc_wxwidgets		(PLStream *, PLINT, void *);
+
+static void fill_polygon( PLStream *pls );
+void wx_set_dc( PLStream* pls, wxDC* dc );
+void wx_set_buffer( PLStream* pls, wxImage* buffer );
+void wx_set_size( PLStream* pls, int width, int height );
+int plD_errorexithandler_wxwidgets( char *errormessage );
+void plD_erroraborthandler_wxwidgets( char *errormessage );
+
+/*----------------------------------------------------------------------*\
+ *  Debug functions
+\*----------------------------------------------------------------------*/
+
+/* define if you want debug output */
+/* #define _DEBUG //*/
+/* #define _DEBUG_VERBOSE //*/
+void Log_Verbose( const char *fmt, ... );
+void Log_Debug( const char *fmt, ... );
