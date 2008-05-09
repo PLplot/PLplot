@@ -18,11 +18,6 @@
 #include "wx/filedlg.h"
 #include "wx/display.h"
     
-#ifdef __WXMAC__
-	#include <Carbon/Carbon.h>
-  extern "C" { void CPSEnableForegroundOperation(ProcessSerialNumber* psn); }
-#endif
-
 #include "wxwidgets.h"
 
 wxPLDevDC::wxPLDevDC( void ) : wxPLDevBase()

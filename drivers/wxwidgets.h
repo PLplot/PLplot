@@ -176,6 +176,17 @@ private: /* variables */
 };
 
 #ifdef HAVE_AGG
+/* antigrain headers (for antialzing) */
+#include "agg2/agg_basics.h"
+#include "agg2/agg_rendering_buffer.h"
+#include "agg2/agg_rasterizer_scanline_aa.h"
+#include "agg2/agg_scanline_u.h"
+#include "agg2/agg_conv_stroke.h"
+#include "agg2/agg_pixfmt_rgb.h"
+#include "agg2/agg_renderer_base.h"
+#include "agg2/agg_renderer_scanline.h"
+#include "agg2/agg_path_storage.h"
+
 class wxPLDevAGG : public wxPLDevBase
 {
 public: /* methods */

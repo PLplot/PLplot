@@ -3,18 +3,22 @@
 
 #ifdef PLD_wxwidgets
 
-#include "wxwidgets.h"
+/* plplot headers */
+#include "plplotP.h"
 
-/* antigrain headers (for antialzing) */
-#include "agg2/agg_basics.h"
-#include "agg2/agg_rendering_buffer.h"
-#include "agg2/agg_rasterizer_scanline_aa.h"
-#include "agg2/agg_scanline_u.h"
-#include "agg2/agg_conv_stroke.h"
-#include "agg2/agg_pixfmt_rgb.h"
-#include "agg2/agg_renderer_base.h"
-#include "agg2/agg_renderer_scanline.h"
-#include "agg2/agg_path_storage.h"
+/* os specific headers */
+#ifdef __WIN32__
+  #include <windows.h>
+#endif
+
+/* wxwidgets headers */
+#include "wx/wx.h"
+#include "wx/except.h"
+#include "wx/image.h"
+#include "wx/filedlg.h"
+#include "wx/display.h"
+    
+#include "wxwidgets.h"
 
 typedef agg::pixfmt_rgb24 pixfmt;
 typedef agg::renderer_base<pixfmt> ren_base;
@@ -38,9 +42,9 @@ wxPLDevAGG::~wxPLDevAGG()
 {
   if( ownGUI ) {
     if( m_buffer )
-      delete dev->m_buffer;
+      delete m_buffer;
     if( m_rendering_buffer )
-      delete dev->m_rendering_buffer;
+      delete m_rendering_buffer;
   }
 }
 
@@ -51,7 +55,7 @@ void wxPLDevAGG::DrawLine( short x1a, short y1a, short x2a, short y2a )
 
   agg::rasterizer_scanline_aa<> ras;
   agg::scanline_u8 sl;
-  pixfmt pixf( m_rendering_buffer );
+  pixfmt pixf( *m_rendering_buffer );
   ren_base renb( pixf );
   renderer ren( renb );
 
@@ -111,6 +115,7 @@ void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLI
 
 void wxPLDevAGG::FillPolygon( PLStream *pls )
 {
+  short x1a, y1a, x2a, y2a;
   agg::rasterizer_scanline_aa<> ras;
   agg::scanline_u8 sl;
   pixfmt pixf( *m_rendering_buffer );
@@ -125,7 +130,7 @@ void wxPLDevAGG::FillPolygon( PLStream *pls )
     x2a=(short)(pls->dev_x[i]/scalex); y2a=(short)(height-pls->dev_y[i]/scaley);
     path.line_to( x2a, y2a );
     if( !resizing && ownGUI ) 
-      AddtoClipRegion( dev, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
+      AddtoClipRegion( this, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
   }
   path.line_to( pls->dev_x[0]/scalex, height-pls->dev_y[0]/scaley );
   path.close_polygon();
@@ -213,7 +218,7 @@ void wxPLDevAGG::SetExternalBuffer( void* buffer )
 
 void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
 {
-  m_buffer->SetRGB( x, y, GetRValue(colour), GetGValue(colour), GetBValue(colour) );   
+  m_buffer->SetRGB( x, y, GetRValue(color), GetGValue(color), GetBValue(color) );   
 }
 
 void wxPLDevAGG::PutPixel( short x, short y )
@@ -221,7 +226,7 @@ void wxPLDevAGG::PutPixel( short x, short y )
   m_buffer->SetRGB( x, y, m_colredstroke, m_colgreenstroke, m_colbluestroke );
 }
 
-PLINT wxPLDevAGG::PutPixel( short x, short y )
+PLINT wxPLDevAGG::GetPixel( short x, short y )
 {
   return RGB( m_buffer->GetRed( x, y ), m_buffer->GetGreen( x, y ), m_buffer->GetBlue( x, y ) );    
 }

@@ -43,6 +43,11 @@
 
 #include "wxwidgets.h"
 
+#ifdef __WXMAC__
+	#include <Carbon/Carbon.h>
+  extern "C" { void CPSEnableForegroundOperation(ProcessSerialNumber* psn); }
+#endif
+
 DECLARE_APP( wxPLplotApp )
 
 /*--------------------------------------------------------------------------*\
