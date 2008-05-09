@@ -1,4 +1,4 @@
-/* $Id: wxwidgets.cpp 8222 2008-02-07 13:55:45Z smekal $
+/* $Id$
 
    Copyright (C) 2008  Werner Smekal
 
