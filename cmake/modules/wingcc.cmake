@@ -23,15 +23,19 @@
 # PLD_wingcc		  - ON means the wingcc device is enabled.
 # wingcc_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile wingcc
 # 			    device.
-# wingcc_LINK_FLAGS	  - individual LINK_FLAGS for dynamic wingcc device.
+# wingcc_LINK_FLAGS	  - list of pathnames of libraries for dynamic 
+# 			    wingcc device.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 
 if(PLD_wingcc)
   message(STATUS "Looking for gdi32 header and library")
   find_package(GDI32)
   if(GDI32_FOUND)
+    find_library(COMDLG32_LIBRARY comdlg32)
+  endif(GDI32_FOUND)
+  if(GDI32_FOUND AND COMDLG32_LIBRARY)
     message(STATUS "Looking for gdi32 header and library - found")
-    set(wingcc_LINK_FLAGS "${GDI32_LIBRARIES};comdlg32")
+    set(wingcc_LINK_FLAGS "${GDI32_LIBRARIES};${COMDLG32_LIBRARY}")
     if(WITH_FREETYPE)
       set(
       wingcc_COMPILE_FLAGS
@@ -44,10 +48,9 @@ if(PLD_wingcc)
       )
     endif(WITH_FREETYPE)
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${wingcc_LINK_FLAGS})
-  else(GDI32_FOUND)
+  else(GDI32_FOUND AND COMDLG32_LIBRARY)
     message(STATUS "Looking for gdi32 header and library - not found")
     message(STATUS "WARNING: Setting PLD_wingcc to OFF.")
     set(PLD_wingcc OFF CACHE BOOL "Enable wingcc device" FORCE)    
-  endif(GDI32_FOUND)
+  endif(GDI32_FOUND AND COMDLG32_LIBRARY)
 endif(PLD_wingcc)
-
