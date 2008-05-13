@@ -1,8 +1,8 @@
-/* 
+/*
 
     Displays Greek letters and mathematically interesting Unicode ranges
-    Copyright (C) 2005,2008 Alan Irwin 
-    Copyright (C) 2005,2008 Andrew Ross 
+    Copyright (C) 2005,2008 Alan Irwin
+    Copyright (C) 2005,2008 Andrew Ross
 
 
     This file is part of PLplot.
@@ -30,7 +30,7 @@
  *
  * Displays Greek letters and mathematically interesting Unicode ranges
 */
- 
+
 static char* Greek[] = {
 "#gA","#gB","#gG","#gD","#gE","#gZ","#gY","#gH","#gI","#gK","#gL","#gM",
 "#gN","#gC","#gO","#gP","#gR","#gS","#gT","#gU","#gF","#gX","#gQ","#gW",
@@ -196,7 +196,7 @@ static PLUNICODE fci[] = {
 0x80000124,
 };
 
-static const char*family[] = { 
+static const char*family[] = {
   "sans-serif",
   "serif",
   "monospace",
@@ -221,10 +221,14 @@ main(int argc, const char *argv[])
     int i, j, page, length, slice;
     char cmdString[20];
 
+    PLUNICODE fci_old;
+    PLINT ifamily, istyle, iweight;
+
+
     plparseopts(&argc, argv, PL_PARSE_FULL);
 
     plinit();
-    
+
     for (page=0; page<11; page++) {
 
 	pladv(0);
@@ -277,9 +281,6 @@ main(int argc, const char *argv[])
     }
 
     /* Demonstrate methods of getting the current fonts */
-    PLUNICODE fci_old;
-    PLINT ifamily, istyle, iweight;
-
     plgfci(&fci_old);
     plgfont(&ifamily, &istyle, &iweight);
     printf("For example 23 prior to page 12 the FCI is 0x%x\n",fci_old);
@@ -328,59 +329,59 @@ main(int argc, const char *argv[])
 	 weight_index = ((i/5)/3) % 2;
 	 if(page == 11) {
 	    plsfci(fci[i]);
-	    sprintf(string, 
+	    sprintf(string,
 		    "Page 12, %s, %s, %s:  "
-		    "The quick brown fox jumps over the lazy dog", 
-		    family[family_index], 
-		    style[style_index], 
+		    "The quick brown fox jumps over the lazy dog",
+		    family[family_index],
+		    style[style_index],
 		    weight[weight_index]);
 	 }
 	 else if(page == 12) {
 	    plsfont(family_index, style_index, weight_index);
-	    sprintf(string, 
+	    sprintf(string,
 		    "Page 13, %s, %s, %s:  "
-		    "The quick brown fox jumps over the lazy dog", 
-		    family[family_index], 
-		    style[style_index], 
+		    "The quick brown fox jumps over the lazy dog",
+		    family[family_index],
+		    style[style_index],
 		    weight[weight_index]);
 	 }
 	 else if(page == 13) {
-	    sprintf(string, 
+	    sprintf(string,
 		    "Page 14, %s, %s, %s:  "
 		    "#<0x%x>"
-		    "The quick brown fox jumps over the lazy dog", 
-		    family[family_index], 
-		    style[style_index], 
+		    "The quick brown fox jumps over the lazy dog",
+		    family[family_index],
+		    style[style_index],
 		    weight[weight_index],
 		    fci[i]);
 	 }
 	 else if(page == 14) {
-	    sprintf(string, 
+	    sprintf(string,
 		    "Page 15, %s, %s, %s:  "
 		    "#<0x%1x0>#<0x%1x1>#<0x%1x2>"
-		    "The quick brown fox jumps over the lazy dog", 
-		    family[family_index], 
-		    style[style_index], 
+		    "The quick brown fox jumps over the lazy dog",
+		    family[family_index],
+		    style[style_index],
 		    weight[weight_index],
 		    family_index,
 		    style_index,
 		    weight_index);
 	 }
 	 else if(page == 15) {
-	    sprintf(string, 
+	    sprintf(string,
 		    "Page 16, %s, %s, %s:  "
 		    "#<%s/>#<%s/>#<%s/>"
-		    "The quick brown fox jumps over the lazy dog", 
-		    family[family_index], 
-		    style[style_index], 
+		    "The quick brown fox jumps over the lazy dog",
+		    family[family_index],
+		    style[style_index],
 		    weight[weight_index],
-		    family[family_index], 
-		    style[style_index], 
+		    family[family_index],
+		    style[style_index],
 		    weight[weight_index]);
 	 }
          plptex (0., 1. - (i+0.5)*dy, 1., 0., 0., string);
        }
-       
+
        plschr(0., 1.0);
     }
 
