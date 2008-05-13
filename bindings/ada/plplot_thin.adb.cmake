@@ -270,6 +270,7 @@ package body PLplot_Thin is
                     tx := TD.xg(TD.nx - 1, 0);
                     ty := TD.yg(TD.nx - 1, 0);
                 elsif y > ymax then
+Put_Line(TD.nx'img & TD.ny'img);
                     tx := TD.xg(TD.nx - 1, TD.ny - 1);
                     ty := TD.yg(TD.nx - 1, TD.ny - 1);
                 else 

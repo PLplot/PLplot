@@ -1083,18 +1083,14 @@ package body PLplot_Traditional is
     end pladv;
 
 
-    -- fix this See comment for plcont.
     -- Draw a 2D vector plot.
     procedure plvect
        (u, v                             : Real_Matrix;
         Scale                            : Long_Float;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data              : Transformation_Data_Type) is
-
-        Transformation_Data_Address : PLpointer;
+        Transformation_Data_Pointer      : PLpointer) is
     begin
-        Transformation_Data_Address := Transformation_Data'Address;
-        PLplot_Thin.plvect(Matrix_To_Pointers(u), Matrix_To_Pointers(v), u'Length(1), u'Length(2), Scale, Transformation_Procedure_Pointer, Transformation_Data_Address);
+        PLplot_Thin.plvect(Matrix_To_Pointers(u), Matrix_To_Pointers(v), u'Length(1), u'Length(2), Scale, Transformation_Procedure_Pointer, Transformation_Data_Pointer);
     end plvect;
        
 

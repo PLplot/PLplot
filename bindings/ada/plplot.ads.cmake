@@ -593,7 +593,7 @@ package PLplot is
        (u, v                             : Real_Matrix;
         Scale                            : Long_Float;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data              : Transformation_Data_Type);
+        Transformation_Data_Pointer      : PLpointer);
 
     -- Set the style for the arrow used by plvect to plot vectors.
     -- plsvect
