@@ -207,14 +207,11 @@ plD_init_wxwidgets( PLStream *pls )
   wxPLDevBase* dev;
 
   /* default options */
-#ifdef HAVE_FREETYPE
   static int freetype=1;
   static int smooth_text=1;
-#endif
-#ifdef HAVE_AGG
 	static int antialized=0;
-#endif
-
+  static int backend=0;
+  
 DrvOpt wx_options[] = {
 #ifdef HAVE_FREETYPE
         {"text", DRV_INT, &freetype, "Use driver text (FreeType)"},
@@ -223,24 +220,8 @@ DrvOpt wx_options[] = {
 #ifdef HAVE_AGG
         {"antialized", DRV_INT, &antialized, "Turn antializing on (1) or off (0)"},
 #endif
+        {"backend", DRV_INT, &backend, "Choose backend: (0) standard, (1) using AGG library, (2) using wxGraphicsContext"},
         {NULL, DRV_INT, NULL, NULL}};
-
-/* be verbose and write out debug messages */
-#ifdef _DEBUG
-  pls->verbose = 1;
-  pls->debug = 1;
-#else
-  pls->verbose = 0;
-  pls->debug = 0;
-#endif
-
-  /* allocate memory for the device storage */
-  dev = new wxPLDevDC;
-	if( dev == NULL) {
-    fprintf( stderr, "Insufficient memory\n" );
-    exit( 0 );
-  }
-  pls->dev = (void*)dev;
 
   /* Check for and set up driver options */
   plParseDrvOpts( wx_options );
@@ -250,6 +231,38 @@ DrvOpt wx_options[] = {
 #endif
 #ifdef HAVE_AGG
   dev->antialized=antialized;
+#endif
+
+  /* allocate memory for the device storage */
+  switch( backend )
+  {
+#if wxUSE_GRAPHICS_CONTEXT    
+  case 2:
+    dev = new wxPLDevGC;
+    break;
+#endif
+#ifdef HAVE_AGG
+  case 1:
+    dev = new wxPLDevAGG;
+    break;
+#endif
+  default:
+    dev = new wxPLDevDC;
+    break;
+  }
+	if( dev == NULL) {
+    fprintf( stderr, "Insufficient memory\n" );
+    exit( 0 );
+  }
+  pls->dev = (void*)dev;
+
+/* be verbose and write out debug messages */
+#ifdef _DEBUG
+  pls->verbose = 1;
+  pls->debug = 1;
+#else
+  pls->verbose = 0;
+  pls->debug = 0;
 #endif
 
   pls->color = 1;		/* Is a color device */
@@ -599,7 +612,6 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 \*--------------------------------------------------------------------------*/
 static void fill_polygon( PLStream *pls )
 {
-	short x1a, y1a, x2a, y2a;
   Log_Verbose( "fill_polygon(), npts=%d, x[0]=%d, y[0]=%d", pls->dev_npts, pls->dev_y[0], pls->dev_y[0] );
 
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;

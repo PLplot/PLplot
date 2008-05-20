@@ -163,7 +163,7 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
 	  
   wxMenu* saveMenu = new wxMenu;
   for( size_t j=0; j<sizeof(dev_entries)/sizeof(dev_entry); j++ )
-    for( size_t i=0; i<m_dev->ndev; i++ ) {
+    for( int i=0; i<m_dev->ndev; i++ ) {
       if( !strcmp(m_dev->devName[i], dev_entries[j].dev_name.mb_str()) )
         saveMenu->Append( wxPL_Save+j, dev_entries[j].dev_menu_short, dev_entries[j].dev_menu_long );
     }
@@ -322,7 +322,7 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
 void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 {
   Log_Verbose( "wxPLplotWindow::OnPaint" );
-	//static int counter=0;  
+  
   /* copy bitmap into client area */
   wxPaintDC dc( this );
 

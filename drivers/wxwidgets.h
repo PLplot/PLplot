@@ -87,7 +87,7 @@ class wxPLDevBase
 {
 public: /* methods */
 	wxPLDevBase( void );
-	~wxPLDevBase( void );
+	virtual ~wxPLDevBase( void );
 
   // virtual functions which need to implemented
   virtual void DrawLine( short x1a, short y1a, short x2a, short y2a )=0;
@@ -221,6 +221,34 @@ private: /* variables */
 };
 #endif
 
+#if wxUSE_GRAPHICS_CONTEXT
+
+class wxPLDevGC : public wxPLDevBase
+{
+public: /* methods */
+	wxPLDevGC( void );
+	~wxPLDevGC( void );
+
+  void DrawLine( short x1a, short y1a, short x2a, short y2a );
+  void DrawPolyline( short *xa, short *ya, PLINT npts );
+  void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 );
+  void FillPolygon( PLStream *pls );
+  void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH );
+  void CreateCanvas();
+  void SetWidth( PLStream *pls );
+  void SetColor0( PLStream *pls );
+  void SetColor1( PLStream *pls );
+  void SetExternalBuffer( void* buffer );
+  void PutPixel( short x, short y, PLINT color );
+  void PutPixel( short x, short y );
+  PLINT GetPixel( short x, short y );
+
+private: /* variables */
+  wxBitmap* m_bitmap;
+  wxDC* m_dc;
+  wxGraphicsContext* m_context;
+};
+#endif
 
 struct dev_entry {    
   wxString dev_name;
@@ -359,7 +387,7 @@ void plD_erroraborthandler_wxwidgets( char *errormessage );
 \*----------------------------------------------------------------------*/
 
 /* define if you want debug output */
-/* #define _DEBUG //*/
+#define _DEBUG //*/
 /* #define _DEBUG_VERBOSE //*/
 void Log_Verbose( const char *fmt, ... );
 void Log_Debug( const char *fmt, ... );
