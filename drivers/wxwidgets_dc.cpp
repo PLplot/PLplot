@@ -45,6 +45,9 @@ void wxPLDevDC::DrawLine( short x1a, short y1a, short x2a, short y2a )
 	x2a=(short)(x2a/scalex);	y2a=(short)(height-y2a/scaley);
 
   m_dc->DrawLine( (wxCoord)x1a, (wxCoord)y1a, (wxCoord)x2a, (wxCoord)y2a );
+  
+  if( !resizing && ownGUI )
+    AddtoClipRegion( this, (int)x1a, (int)y1a, (int)x2a, (int)y2a );    
 }
 
 void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
@@ -77,6 +80,8 @@ void wxPLDevDC::FillPolygon( PLStream *pls )
   for( int i=0; i < pls->dev_npts; i++ ) {
     points[i].x=(int)(pls->dev_x[i]/scalex);
     points[i].y=(int)(height-pls->dev_y[i]/scaley);
+    if( !resizing && ownGUI && i!=0) 
+      AddtoClipRegion( this, points[i-1].x, points[i-1].y, points[i].x, points[i].y );        
   }
 
   m_dc->DrawPolygon( pls->dev_npts, points );
@@ -115,7 +120,7 @@ void wxPLDevDC::SetColor0( PLStream *pls )
                                                           pls->cmap0[pls->icol0].b),
                                                  pls->width>0 ? pls->width : 1, wxSOLID)) );
   m_dc->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                    pls->cmap0[pls->icol0].b)) );
+                                   pls->cmap0[pls->icol0].b)) );
 }
 
 void wxPLDevDC::SetColor1( PLStream *pls )

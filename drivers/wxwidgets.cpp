@@ -515,7 +515,7 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
 		
   case PLSTATE_COLOR1:  /* 3 */
     if( dev->ready )
-      dev->SetColor0( pls );
+      dev->SetColor1( pls );
     else 
       dev->plstate_color1 = true;
     break;

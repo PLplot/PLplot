@@ -51,15 +51,20 @@ void wxPLDevGC::DrawLine( short x1a, short y1a, short x2a, short y2a )
 {
   Log_Verbose( "%s", __FUNCTION__ );
 
-	x1a=(short)(x1a/scalex); y1a=(short)(height-y1a/scaley);
-	x2a=(short)(x2a/scalex);	y2a=(short)(height-y2a/scaley);
+	wxDouble x1=x1a/scalex;
+  wxDouble y1=height-y1a/scaley;
+	wxDouble x2=x2a/scalex;
+  wxDouble y2=height-y2a/scaley;
 
-  Log_Verbose( "x1a=%d, y1a=%d, x2a=%d, y2a=%d", x1a, y1a, x2a, y2a );
+  Log_Verbose( "x1=%d, y1=%d, x2=%d, y2=%d", x1, y1, x2, y2 );
 
   wxGraphicsPath path=m_context->CreatePath();
-  path.MoveToPoint( x1a, y1a );
-  path.AddLineToPoint( x2a, y2a );
+  path.MoveToPoint( x1, y1 );
+  path.AddLineToPoint( x2, y2 );
   m_context->StrokePath( path );
+
+  if( !resizing && ownGUI )
+    AddtoClipRegion( this, (int)x1, (int)y1, (int)x2, (int)y2 );  
 }
 
 void wxPLDevGC::DrawPolyline( short *xa, short *ya, PLINT npts )
@@ -77,12 +82,16 @@ void wxPLDevGC::DrawPolyline( short *xa, short *ya, PLINT npts )
     x2a=xa[i]/scalex;
     y2a=height-ya[i]/scaley;
     path.AddLineToPoint( x2a, y2a );
-
-    if( !resizing && ownGUI ) 
-      AddtoClipRegion( this, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
     x1a=x2a; y1a=y2a;
   }
   m_context->StrokePath( path );
+
+  if( !resizing && ownGUI ) {
+    wxDouble x, y, w, h;
+    path.GetBox( &x, &y, &w, &h );
+    
+    AddtoClipRegion( this, (int)x, (int)y, (int)(x+w), (int)(y+h) );  
+  }
 }
 
 void wxPLDevGC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
@@ -97,15 +106,20 @@ void wxPLDevGC::FillPolygon( PLStream *pls )
 {
   Log_Verbose( "%s", __FUNCTION__ );
 
-  wxPoint2DDouble* points = new wxPoint2DDouble[pls->dev_npts];
+  wxGraphicsPath path=m_context->CreatePath();
+  path.MoveToPoint( pls->dev_x[0]/scalex, height-pls->dev_y[0]/scaley );
+  for( int i=1; i < pls->dev_npts; i++ )
+    path.AddLineToPoint( pls->dev_x[i]/scalex, height-pls->dev_y[i]/scaley );
+  path.CloseSubpath();
+  
+  m_context->DrawPath( path );
 
-  for( int i=0; i < pls->dev_npts; i++ ) {
-    points[i].m_x=(int)(pls->dev_x[i]/scalex);
-    points[i].m_y=(int)(height-pls->dev_y[i]/scaley);
+  if( !resizing && ownGUI ) {
+    wxDouble x, y, w, h;
+    path.GetBox( &x, &y, &w, &h );
+    
+    AddtoClipRegion( this, (int)x, (int)y, (int)(x+w), (int)(y+h) );  
   }
-
-  m_context->DrawLines( pls->dev_npts, points );
-  delete[] points;
 }
 
 void wxPLDevGC::BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )
@@ -132,7 +146,7 @@ void wxPLDevGC::CreateCanvas()
     ((wxMemoryDC*)m_dc)->SelectObject( *m_bitmap );   /* select new bitmap */
   
     m_context = wxGraphicsContext::Create( *((wxMemoryDC*)m_dc) );
-    Log_Debug( "Context created %x", m_context );
+    Log_Verbose( "Context created %x", m_context );
   }
 }
 
@@ -142,6 +156,9 @@ void wxPLDevGC::SetWidth( PLStream *pls )
 
   m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b),
                                                      pls->width>0 ? pls->width : 1, wxSOLID)) );
+  //m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
+  //                                                             pls->cmap0[pls->icol0].b),
+  //                                                   pls->width>0 ? pls->width : 1, wxSOLID)) );
 }
 
 void wxPLDevGC::SetColor0( PLStream *pls )
@@ -151,8 +168,8 @@ void wxPLDevGC::SetColor0( PLStream *pls )
   m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
                                                                pls->cmap0[pls->icol0].b),
                                                      pls->width>0 ? pls->width : 1, wxSOLID)) );
-  m_context->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                        pls->cmap0[pls->icol0].b)) );
+  //m_context->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
+  //                                      pls->cmap0[pls->icol0].b)) );
 }
 
 void wxPLDevGC::SetColor1( PLStream *pls )
