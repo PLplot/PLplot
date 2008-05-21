@@ -6,6 +6,41 @@
 /* plplot headers */
 #include "plplotP.h"
 
+/*---------------------------------------------------------------------
+  Font style and weight lookup tables (copied
+  from the cairo driver).
+  ---------------------------------------------------------------------*/
+#define NPANGOLOOKUP 5
+
+const char *defaultFamilyLookup[NPANGOLOOKUP] = {
+  "sans",
+  "serif",
+  "monospace",
+  "sans,serif",
+  "sans,serif"
+};
+
+const char *envFamilyLookup[NPANGOLOOKUP] = {
+  "PLPLOT_FREETYPE_SANS_FAMILY",
+  "PLPLOT_FREETYPE_SERIF_FAMILY",
+  "PLPLOT_FREETYPE_MONO_FAMILY",
+  "PLPLOT_FREETYPE_SCRIPT_FAMILY",
+  "PLPLOT_FREETYPE_SYMBOL_FAMILY"
+};
+
+char familyLookup[NPANGOLOOKUP][1024];
+
+const char *weightLookup[2] = {
+  "normal",
+  "bold"
+};
+
+const char *styleLookup[3] = {
+  "normal",
+  "italic",
+  "oblique"
+};
+
 /* os specific headers */
 #ifdef __WIN32__
   #include <windows.h>
@@ -171,6 +206,90 @@ PLINT wxPLDevDC::GetPixel( short x, short y )
     m_dc->GetPixel( x, y, &col );
     return RGB( col.Red(), col.Green(), col.Blue());
 #endif
+}
+
+
+void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
+{
+  const int max_string_length=500;
+
+  /* Check that we got unicode, warning message and return if not */
+  if( args->unicode_array_len == 0 ) {
+    printf( "Non unicode string passed to a cairo driver, ignoring\n" );
+    return;
+  }
+	
+  /* Check that unicode string isn't longer then the max we allow */
+  if( args->unicode_array_len >= max_string_length ) {
+    printf( "Sorry, the cairo drivers only handles strings of length < %d\n", max_string_length );
+    return;
+  }
+  
+  /* Calculate the font size (in pixels) */
+  float fontSize = pls->chrht * DEVICE_PIXELS_PER_MM;
+
+  /* Set font color */
+  m_dc->SetTextForeground( wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
+                                   pls->cmap0[pls->icol0].b));
+  m_dc->SetTextBackground( wxColour(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b) );
+  
+  char plplotEsc;
+  int upDown = 0;
+  PLUNICODE fci;
+  char utf8[5];
+  char utf8_string[max_string_length];
+  memset( utf8_string, '\0', max_string_length );
+
+  /* Get PLplot escape character */
+  plgesc( &plplotEsc );
+
+  /* Get the curent font */
+  plgfci( &fci );
+
+  /* Parse the string to generate the tags */
+  PLUNICODE *ucs4 = args->unicode_array;
+  int ucs4Len = args->unicode_array_len;
+  int i = 0;
+  while( i < ucs4Len ) {
+    if( ucs4[i] < PL_FCI_MARK ) {	/* not a font change */
+      if( ucs4[i] != (PLUNICODE)plplotEsc ) {  /* a character to display */
+        ucs4_to_utf8( ucs4[i], utf8 );
+        strcat( utf8_string, utf8 );
+      	i++;
+      	continue;
+      }
+      i++;
+      if( ucs4[i] == (PLUNICODE)plplotEsc ) {   /* a escape character to display */
+        ucs4_to_utf8( ucs4[i], utf8 );
+        strcat( utf8_string, utf8 );
+        i++;
+        continue;
+      } else {
+      	if( ucs4[i] == (PLUNICODE)'u' ) {	/* Superscript */
+          // TODO: superscript
+      	  upDown++;
+      	}
+      	if( ucs4[i] == (PLUNICODE)'d' ){	/* Subscript */
+          // TODO: subscript
+      	  upDown--;
+      	}
+        i++;
+      }
+    } else { /* a font change */
+      // TODO: font change
+      i++;
+    }
+  }
+
+  wxString str(wxConvUTF8.cMB2WC(utf8_string), *wxConvCurrent);
+  
+  m_dc->SetFont( wxFont(fontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL) );
+  m_dc->DrawText( str, args->x/scalex, args->y/scaley );
+
+  if( !resizing && ownGUI ) 
+    AddtoClipRegion( this, 0, 0, width, height );        
+  
+  //Log_Debug( "utf8_string=%s, x=%f, y=%f", utf8_string, args->x/scalex, args->y/scaley );
 }
 
 #endif				/* PLD_wxwidgets */

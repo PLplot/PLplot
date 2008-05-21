@@ -204,9 +204,12 @@ void wxPLDevAGG::SetColor1( PLStream *pls )
  *  Adds a dc to the stream. The associated device is attached to the canvas
  *  as the property "dev".
 \*--------------------------------------------------------------------------*/
-void wxPLDevAGG::SetExternalBuffer( void* buffer )
+void wxPLDevAGG::SetExternalBuffer( void* dc )
 {
-  m_buffer = (wxImage*)buffer;
+  m_dc=(wxDC*)dc;  /* Add the dc to the device */
+  if( m_buffer )
+    delete m_buffer;
+  m_buffer = new wxImage( width, height );
   if( m_rendering_buffer )
     delete m_rendering_buffer;
   m_rendering_buffer = new agg::rendering_buffer;
@@ -229,6 +232,10 @@ void wxPLDevAGG::PutPixel( short x, short y )
 PLINT wxPLDevAGG::GetPixel( short x, short y )
 {
   return RGB( m_buffer->GetRed( x, y ), m_buffer->GetGreen( x, y ), m_buffer->GetBlue( x, y ) );    
+}
+
+void wxPLDevAGG::ProcessString( PLStream* pls, EscText* args )
+{
 }
 
 #endif				/* PLD_wxwidgets */

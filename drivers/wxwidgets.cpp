@@ -173,7 +173,6 @@ wxPLDevBase::wxPLDevBase( void )
 	clipminy=800;
 	clipmaxy=0;
 
-	antialized=0;
 	freetype=0;
 	smooth_text=0;
 
@@ -209,16 +208,12 @@ plD_init_wxwidgets( PLStream *pls )
   /* default options */
   static int freetype=1;
   static int smooth_text=1;
-	static int antialized=0;
   static int backend=0;
   
 DrvOpt wx_options[] = {
 #ifdef HAVE_FREETYPE
         {"text", DRV_INT, &freetype, "Use driver text (FreeType)"},
         {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
-#endif
-#ifdef HAVE_AGG
-        {"antialized", DRV_INT, &antialized, "Turn antializing on (1) or off (0)"},
 #endif
         {"backend", DRV_INT, &backend, "Choose backend: (0) standard, (1) using AGG library, (2) using wxGraphicsContext"},
         {NULL, DRV_INT, NULL, NULL}};
@@ -228,9 +223,6 @@ DrvOpt wx_options[] = {
 #ifdef HAVE_FREETYPE
 	dev->smooth_text=smooth_text;
 	dev->freetype=freetype;
-#endif
-#ifdef HAVE_AGG
-  dev->antialized=antialized;
 #endif
 
   /* allocate memory for the device storage */
@@ -274,6 +266,8 @@ DrvOpt wx_options[] = {
   pls->graphx = GRAPHICS_MODE; /*  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination) */
   pls->dev_clear = 1;          /* driver supports clear */
 
+  pls->dev_text = 1; /* want to draw text */
+  pls->dev_unicode = 1; /* want unicode */
 #ifdef HAVE_FREETYPE
   if( freetype ) {
     pls->dev_text = 1; /* want to draw text */
@@ -563,11 +557,12 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
   	plD_bop_wxwidgets( pls );
     break;
 
-#ifdef HAVE_FREETYPE
   case PLESC_HAS_TEXT:
+    dev->ProcessString( pls, (EscText *)ptr );
+#ifdef HAVE_FREETYPE
     plD_render_freetype_text( pls, (EscText *)ptr );
-    break;
 #endif
+    break;
 
   case PLESC_RESIZE: {
     	wxSize* size=(wxSize*)ptr;
@@ -816,17 +811,11 @@ static void init_freetype_lv1( PLStream *pls )
    *  See if we have a 24 bit device (or better), in which case
    *  we can use the better antialising.
    */
-  if( dev->antialized ) {
-    FT->BLENDED_ANTIALIASING=1;
-    FT->read_pixel= (plD_read_pixel_fp)plD_read_pixel_wxwidgets;
-    FT->set_pixel= (plD_set_pixel_fp)plD_set_pixel_wxwidgets;
-  } else {
-    // the bitmap we are using in the antialized case has always
-    // 32 bit depth
-    FT->BLENDED_ANTIALIASING=1;
-    FT->read_pixel= (plD_read_pixel_fp)plD_read_pixel_wxwidgets;
-    FT->set_pixel= (plD_set_pixel_fp)plD_set_pixel_wxwidgets;
-  }
+  // the bitmap we are using in the antialized case has always
+  // 32 bit depth
+  FT->BLENDED_ANTIALIASING=1;
+  FT->read_pixel= (plD_read_pixel_fp)plD_read_pixel_wxwidgets;
+  FT->set_pixel= (plD_set_pixel_fp)plD_set_pixel_wxwidgets;
 }
 
 

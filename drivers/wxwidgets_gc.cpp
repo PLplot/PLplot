@@ -233,6 +233,10 @@ PLINT wxPLDevGC::GetPixel( short x, short y )
 #endif
 }
 
+void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
+{
+}
+
 #endif
 
 #endif				/* PLD_wxwidgets */

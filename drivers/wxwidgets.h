@@ -103,6 +103,7 @@ public: /* methods */
   virtual void PutPixel( short x, short y, PLINT color )=0;
   virtual void PutPixel( short x, short y )=0;
   virtual PLINT GetPixel( short x, short y )=0;
+  virtual void ProcessString( PLStream* pls, EscText* args )=0;
 
 public: /* variables */
   bool ready;
@@ -141,7 +142,6 @@ public: /* variables */
 	bool newclipregion;
 
   /* variables for antializing */
-	int antialized;
 	int freetype;
 	int smooth_text;
 
@@ -169,6 +169,7 @@ public: /* methods */
   void PutPixel( short x, short y, PLINT color );
   void PutPixel( short x, short y );
   PLINT GetPixel( short x, short y );
+  void ProcessString( PLStream* pls, EscText* args );
 
 private: /* variables */
   wxBitmap* m_bitmap;
@@ -206,6 +207,7 @@ public: /* methods */
   void PutPixel( short x, short y, PLINT color );
   void PutPixel( short x, short y );
   PLINT GetPixel( short x, short y );
+  void ProcessString( PLStream* pls, EscText* args );
 
 private: /* variables */
   wxImage* m_buffer;
@@ -242,6 +244,7 @@ public: /* methods */
   void PutPixel( short x, short y, PLINT color );
   void PutPixel( short x, short y );
   PLINT GetPixel( short x, short y );
+  void ProcessString( PLStream* pls, EscText* args );
 
 private: /* variables */
   wxBitmap* m_bitmap;
