@@ -10,7 +10,11 @@ if(COMMAND  cmake_policy)
   cmake_policy(SET CMP0007 NEW)
 endif(COMMAND  cmake_policy)
 
-project(simple_ada_test Ada)
+# Ideally use "project(simple_ada_test Ada)", but that doesn't work
+# (at least for case where Ada support files are in user-specified location
+# below).  Therefore, specify project with C even though C is unused.
+
+project(simple_ada_test C)
 
 # First location where simple_ada_test looks for CMake Ada language
 # support files.
