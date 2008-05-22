@@ -17,6 +17,8 @@ end;
 
   FILE(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CMakeLists.txt
   "
+# FIXME: This specific location currently needs to be changed whenever the
+# location of the experimental Ada support files is changed.
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL \"\" FORCE)
 project(test Ada)
