@@ -1,0 +1,64 @@
+I have been creating the 2.6 versions of the Ada language support files by
+looking at what is done for C, C++, and Fortran.  As a first step
+gratuitous inconsistencies between those flavours of support files were
+eliminated.
+
+1. CMakeDetermine<lang>Compiler.cmake.
+
+Changes:
+
+a. Removed all trailing white space for C, CXX, and Fortran versions.
+
+b. C version:
+
+"SET(CMAKE_CXX_COMPILER_INIT NOTFOUND)" removed.  This change was introduced
+at 1.12, but I believe it was an oversight then (copied in error from the
+CXX version), and I cannot see any
+purpose now since this variable does not occur anywhere else in the file.
+N.B. However, I could be missing something so please review.
+
+The only other C change was to make comments more consistent with CXX and
+Fortran versions.
+
+c. CXX version:
+
+Changed CMAKE_CXX_COMPILER_INIT logic to be consistent with the equivalent C
+and Fortran logic.  The principle change is to remove
+"SET(CMAKE_CXX_COMPILER_INIT NOTFOUND)" at the start of everything and
+removing the output of CMAKE_CXX_COMPILER_INIT from one of the FATAL ERROR
+messages.
+
+N.B. the above change should be reviewed, and if the C++ style of
+CMAKE_<lang>_COMPILER_INIT logic is preferred, then the C and Fortran versions
+should be changed instead.
+
+The only other CXX change was to make comments more consistent with C and
+Fortran versions.
+
+d. Fortran version:
+
+Instead of using empty IF(...) branch followed by ELSE(...) branch which
+actually does something, used IF(NOT ...) logic form instead to be consistent
+with C and CXX versions.
+
+The only other Fortran change was to make comments more consistent with C and
+CXX versions.
+
+Useful comparison of C, Fortran, and CXX versions with most expected differences
+removed.  The above changes substantially reduce the size of the remaining
+differences.
+
+sed -e 's?_Fortran?_C?g' -e 's?FC?CC?g' -e 's? Fortran ? C ?'g \
+<CMakeDetermineFortranCompiler.cmake | \
+diff -au CMakeDetermineCCompiler.cmake - |less
+
+sed -e 's?CMAKE_CXX?CMAKE_C?g' -e 's?_CXX?_CC?g' -e 's?CXX?CC?g' -e
+'s?C[+][+]?C?g' <CMakeDetermineCXXCompiler.cmake |diff -au
+CMakeDetermineCCompiler.cmake - |less
+
+e. Ada version:
+
+Adopt the same style as the (changed) Fortran version.  (The C and CXX
+versions are not as suitable as templates because they include a lot of
+cross-compile stuff.)
+
