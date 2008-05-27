@@ -44,6 +44,7 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
           ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cpp
 	        ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_app.cpp
           ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_dc.cpp
+          ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_gc.cpp
           ${${DRIVER}_SOURCE}
 	      )
         if(HAVE_AGG)
