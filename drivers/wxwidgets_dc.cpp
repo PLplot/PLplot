@@ -6,59 +6,20 @@
 /* plplot headers */
 #include "plplotP.h"
 
-/*---------------------------------------------------------------------
-  Font style and weight lookup tables (copied
-  from the cairo driver).
-  ---------------------------------------------------------------------*/
-#define NPANGOLOOKUP 5
-
-const char *defaultFamilyLookup[NPANGOLOOKUP] = {
-  "sans",
-  "serif",
-  "monospace",
-  "sans,serif",
-  "sans,serif"
-};
-
-const char *envFamilyLookup[NPANGOLOOKUP] = {
-  "PLPLOT_FREETYPE_SANS_FAMILY",
-  "PLPLOT_FREETYPE_SERIF_FAMILY",
-  "PLPLOT_FREETYPE_MONO_FAMILY",
-  "PLPLOT_FREETYPE_SCRIPT_FAMILY",
-  "PLPLOT_FREETYPE_SYMBOL_FAMILY"
-};
-
-char familyLookup[NPANGOLOOKUP][1024];
-
-const char *weightLookup[2] = {
-  "normal",
-  "bold"
-};
-
-const char *styleLookup[3] = {
-  "normal",
-  "italic",
-  "oblique"
-};
-
-/* os specific headers */
-#ifdef __WIN32__
-  #include <windows.h>
-#endif
-
 /* wxwidgets headers */
 #include "wx/wx.h"
-#include "wx/except.h"
-#include "wx/image.h"
-#include "wx/filedlg.h"
-#include "wx/display.h"
     
+/* std headers and wxwidgets.h*/
+#include <cmath>
 #include "wxwidgets.h"
+
 
 wxPLDevDC::wxPLDevDC( void ) : wxPLDevBase()
 {
   m_dc=NULL;
   m_bitmap=NULL;
+  m_font=NULL;
+  underlined=false;
 }
 
 
@@ -72,7 +33,11 @@ wxPLDevDC::~wxPLDevDC()
     if( m_bitmap )
       delete m_bitmap;
   }
+
+  if( m_font )
+    delete m_font;
 }
+
 
 void wxPLDevDC::DrawLine( short x1a, short y1a, short x2a, short y2a )
 {
@@ -84,6 +49,7 @@ void wxPLDevDC::DrawLine( short x1a, short y1a, short x2a, short y2a )
   if( !resizing && ownGUI )
     AddtoClipRegion( this, (int)x1a, (int)y1a, (int)x2a, (int)y2a );    
 }
+
 
 void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
 {
@@ -101,6 +67,7 @@ void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
       AddtoClipRegion( this, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
   }
 }
+
 
 void wxPLDevDC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
@@ -209,10 +176,41 @@ PLINT wxPLDevDC::GetPixel( short x, short y )
 }
 
 
+void wxPLDevDC::PSDrawTextToDC( char* utf8_string, bool drawText )
+{
+  wxCoord w, h, d, l;
+
+  wxString str(wxConvUTF8.cMB2WC(utf8_string), *wxConvCurrent);
+  m_dc->GetTextExtent( str, &w, &h, &d, &l );
+  if( drawText )
+    m_dc->DrawRotatedText( str, (posX-yOffset*sin_rot)/scalex,
+                           height-(posY+yOffset*cos_rot)/scaley, rotation*180.0/M_PI );
+  posX += w*scalex*cos_rot;
+  posY += w*scalex*sin_rot;
+  textWidth += w;
+  textHeight = textHeight>(h+yOffset/scaley) ? textHeight : (h+yOffset/scaley);
+  memset( utf8_string, '\0', max_string_length );
+}
+
+
+void wxPLDevDC::PSSetFont( PLUNICODE fci )
+{
+  unsigned char fontFamily, fontStyle, fontWeight;
+
+  plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
+  plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
+  plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );  
+  if( m_font )
+    delete m_font;
+  m_font=wxFont::New(fontSize*fontScale, fontFamilyLookup[fontFamily],
+                         fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
+  m_font->SetUnderlined( underlined );
+  m_dc->SetFont( *m_font );
+}
+
+
 void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
 {
-  const int max_string_length=500;
-
   /* Check that we got unicode, warning message and return if not */
   if( args->unicode_array_len == 0 ) {
     printf( "Non unicode string passed to a cairo driver, ignoring\n" );
@@ -220,76 +218,35 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
   }
 	
   /* Check that unicode string isn't longer then the max we allow */
-  if( args->unicode_array_len >= max_string_length ) {
-    printf( "Sorry, the cairo drivers only handles strings of length < %d\n", max_string_length );
+  if( args->unicode_array_len >= 500 ) {
+    printf( "Sorry, the wxWidgets drivers only handles strings of length < %d\n", 500 );
     return;
   }
   
   /* Calculate the font size (in pixels) */
-  float fontSize = pls->chrht * DEVICE_PIXELS_PER_MM;
+  fontSize = pls->chrht * DEVICE_PIXELS_PER_MM * 1.2;
+
+  /* calculate rotation of text */
+  plRotationShear( args->xform, &rotation, &shear );
+  rotation -= pls->diorot * M_PI / 2.0;
+  cos_rot = cos( rotation );
+  sin_rot = sin( rotation );
 
   /* Set font color */
   m_dc->SetTextForeground( wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
                                    pls->cmap0[pls->icol0].b));
   m_dc->SetTextBackground( wxColour(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b) );
+
+  posX = args->x;
+  posY = args->y;
+  PSDrawText( args->unicode_array, args->unicode_array_len, false );
   
-  char plplotEsc;
-  int upDown = 0;
-  PLUNICODE fci;
-  char utf8[5];
-  char utf8_string[max_string_length];
-  memset( utf8_string, '\0', max_string_length );
-
-  /* Get PLplot escape character */
-  plgesc( &plplotEsc );
-
-  /* Get the curent font */
-  plgfci( &fci );
-
-  /* Parse the string to generate the tags */
-  PLUNICODE *ucs4 = args->unicode_array;
-  int ucs4Len = args->unicode_array_len;
-  int i = 0;
-  while( i < ucs4Len ) {
-    if( ucs4[i] < PL_FCI_MARK ) {	/* not a font change */
-      if( ucs4[i] != (PLUNICODE)plplotEsc ) {  /* a character to display */
-        ucs4_to_utf8( ucs4[i], utf8 );
-        strcat( utf8_string, utf8 );
-      	i++;
-      	continue;
-      }
-      i++;
-      if( ucs4[i] == (PLUNICODE)plplotEsc ) {   /* a escape character to display */
-        ucs4_to_utf8( ucs4[i], utf8 );
-        strcat( utf8_string, utf8 );
-        i++;
-        continue;
-      } else {
-      	if( ucs4[i] == (PLUNICODE)'u' ) {	/* Superscript */
-          // TODO: superscript
-      	  upDown++;
-      	}
-      	if( ucs4[i] == (PLUNICODE)'d' ){	/* Subscript */
-          // TODO: subscript
-      	  upDown--;
-      	}
-        i++;
-      }
-    } else { /* a font change */
-      // TODO: font change
-      i++;
-    }
-  }
-
-  wxString str(wxConvUTF8.cMB2WC(utf8_string), *wxConvCurrent);
-  
-  m_dc->SetFont( wxFont(fontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL) );
-  m_dc->DrawText( str, args->x/scalex, args->y/scaley );
+  posX = args->x-(args->just*textWidth)*scalex*cos_rot-(0.5*textHeight)*scalex*sin_rot;
+  posY = args->y-(args->just*textWidth)*scaley*sin_rot+(0.5*textHeight)*scaley*cos_rot;
+  PSDrawText( args->unicode_array, args->unicode_array_len, true );
 
   if( !resizing && ownGUI ) 
     AddtoClipRegion( this, 0, 0, width, height );        
-  
-  //Log_Debug( "utf8_string=%s, x=%f, y=%f", utf8_string, args->x/scalex, args->y/scaley );
 }
 
 #endif				/* PLD_wxwidgets */

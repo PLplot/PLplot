@@ -19,6 +19,8 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
+#ifndef __WXWIDGETS_H__
+#define __WXWIDGETS_H__
 
 /* freetype headers and macros */
 #ifdef HAVE_FREETYPE
@@ -104,6 +106,9 @@ public: /* methods */
   virtual void PutPixel( short x, short y )=0;
   virtual PLINT GetPixel( short x, short y )=0;
   virtual void ProcessString( PLStream* pls, EscText* args )=0;
+  virtual void PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );
+  virtual void PSDrawTextToDC( char* utf8_string, bool drawText )=0;
+  virtual void PSSetFont( PLUNICODE fci )=0;
 
 public: /* variables */
   bool ready;
@@ -148,6 +153,18 @@ public: /* variables */
   const char** devDesc;		/* Descriptive names for file-oriented devices.  Malloc'ed. */
   const char** devName;		/* Keyword names of file-oriented devices. Malloc'ed. */
 	int ndev;
+
+  /* font variables */
+  static const int max_string_length=500;
+  wxFont* m_font;
+  bool underlined;
+  double fontSize;
+  double fontScale;
+  wxCoord textWidth, textHeight, textDescent, textLeading;
+  double yOffset;
+  PLINT posX, posY;
+  PLFLT rotation, cos_rot, sin_rot;
+  PLFLT shear, cos_shear, sin_shear;
 };
 
 class wxPLDevDC : public wxPLDevBase
@@ -170,6 +187,8 @@ public: /* methods */
   void PutPixel( short x, short y );
   PLINT GetPixel( short x, short y );
   void ProcessString( PLStream* pls, EscText* args );
+  void PSDrawTextToDC( char* utf8_string, bool drawText );
+  void PSSetFont( PLUNICODE fci );
 
 private: /* variables */
   wxBitmap* m_bitmap;
@@ -245,11 +264,16 @@ public: /* methods */
   void PutPixel( short x, short y );
   PLINT GetPixel( short x, short y );
   void ProcessString( PLStream* pls, EscText* args );
+  void PSDrawTextToDC( char* utf8_string, bool drawText );
+  void PSSetFont( PLUNICODE fci );
 
 private: /* variables */
   wxBitmap* m_bitmap;
   wxDC* m_dc;
   wxGraphicsContext* m_context;
+  
+  /* text colors */
+  unsigned char textRed, textGreen, textBlue;
 };
 #endif
 
@@ -390,7 +414,32 @@ void plD_erroraborthandler_wxwidgets( char *errormessage );
 \*----------------------------------------------------------------------*/
 
 /* define if you want debug output */
-#define _DEBUG //*/
+/* #define _DEBUG //*/
 /* #define _DEBUG_VERBOSE //*/
 void Log_Verbose( const char *fmt, ... );
 void Log_Debug( const char *fmt, ... );
+
+
+/*---------------------------------------------------------------------
+  Font style and weight lookup tables
+  ---------------------------------------------------------------------*/
+const wxFontFamily fontFamilyLookup[5] = {
+  wxFONTFAMILY_SWISS,        // sans-serif
+  wxFONTFAMILY_ROMAN,        // serif
+  wxFONTFAMILY_TELETYPE,     // monospace
+  wxFONTFAMILY_SCRIPT,       // script
+  wxFONTFAMILY_ROMAN         // symbol
+};
+
+const int fontStyleLookup[3] = {
+  wxFONTFLAG_DEFAULT,        // upright
+  wxFONTFLAG_ITALIC,         // italic
+  wxFONTFLAG_SLANT           // oblique
+};
+
+const int fontWeightLookup[2] = {
+  wxFONTFLAG_DEFAULT,       // medium
+  wxFONTFLAG_BOLD           // bold
+};
+
+#endif /* __WXWIDGETS_H__ */

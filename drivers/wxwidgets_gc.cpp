@@ -30,6 +30,8 @@ wxPLDevGC::wxPLDevGC( void ) : wxPLDevBase()
   m_dc=NULL;
   m_bitmap=NULL;
   m_context=NULL;
+  m_font=NULL;
+  underlined=false;  
 }
 
 
@@ -45,6 +47,9 @@ wxPLDevGC::~wxPLDevGC()
     if( m_bitmap )
       delete m_bitmap;
   }
+
+  if( m_font )
+    delete m_font;
 }
 
 void wxPLDevGC::DrawLine( short x1a, short y1a, short x2a, short y2a )
@@ -233,8 +238,85 @@ PLINT wxPLDevGC::GetPixel( short x, short y )
 #endif
 }
 
+void wxPLDevGC::PSDrawTextToDC( char* utf8_string, bool drawText )
+{
+  wxDouble w, h, d, l;
+
+  wxString str(wxConvUTF8.cMB2WC(utf8_string), *wxConvCurrent);
+  m_context->GetTextExtent( str, &w, &h, &d, &l );
+  if( drawText ) {
+    m_context->DrawText( str, 0, -yOffset/scaley );
+    m_context->Translate( w, 0 );
+  }
+ 
+  textWidth += w;
+  textHeight = textHeight>(h+yOffset/scaley) ? textHeight : (h+yOffset/scaley);
+  memset( utf8_string, '\0', max_string_length );
+}
+
+
+void wxPLDevGC::PSSetFont( PLUNICODE fci )
+{
+  unsigned char fontFamily, fontStyle, fontWeight;
+
+  plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
+  plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
+  plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );  
+  if( m_font )
+    delete m_font;
+  m_font=wxFont::New(fontSize*fontScale, fontFamilyLookup[fontFamily],
+                         fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
+  m_font->SetUnderlined( underlined );
+  m_context->SetFont( *m_font, wxColour(textRed, textGreen, textBlue) );
+}
+
+
 void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
 {
+  /* Check that we got unicode, warning message and return if not */
+  if( args->unicode_array_len == 0 ) {
+    printf( "Non unicode string passed to a cairo driver, ignoring\n" );
+    return;
+  }
+	
+  /* Check that unicode string isn't longer then the max we allow */
+  if( args->unicode_array_len >= 500 ) {
+    printf( "Sorry, the wxWidgets drivers only handles strings of length < %d\n", 500 );
+    return;
+  }
+  
+  /* Calculate the font size (in pixels) */
+  fontSize = pls->chrht * DEVICE_PIXELS_PER_MM * 1.2;
+
+  /* text color */
+  textRed=pls->cmap0[pls->icol0].r;
+  textGreen=pls->cmap0[pls->icol0].g;
+  textBlue=pls->cmap0[pls->icol0].b;
+  
+  /* calculate rotation of text */
+  plRotationShear( args->xform, &rotation, &shear );
+  rotation -= pls->diorot * M_PI / 2.0;
+  cos_rot = cos( rotation );
+  sin_rot = sin( rotation );
+  cos_shear = cos(shear);
+  sin_shear = sin(shear);
+ 
+  /* determine extend of text */
+  PSDrawText( args->unicode_array, args->unicode_array_len, false );
+ 
+  /* actually draw text */
+  m_context->PushState();
+  wxGraphicsMatrix matrix=m_context->CreateMatrix(  cos_rot, -sin_rot,
+                                                    cos_rot * sin_shear + sin_rot * cos_shear,
+                                                   -sin_rot * sin_shear + cos_rot * cos_shear,
+                                                    args->x/scalex-args->just*textWidth,
+                                                    height-args->y/scaley-0.5*textHeight );
+  m_context->SetTransform( matrix );
+  PSDrawText( args->unicode_array, args->unicode_array_len, true );
+  m_context->PopState();
+
+  if( !resizing && ownGUI ) 
+    AddtoClipRegion( this, 0, 0, width, height );        
 }
 
 #endif

@@ -192,6 +192,95 @@ wxPLDevBase::~wxPLDevBase( void )
     free( devName );
 }
 
+void wxPLDevBase::PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
+{
+  int i = 0;
+
+  char utf8_string[max_string_length];
+  char utf8[5];
+  memset( utf8_string, '\0', max_string_length );
+
+  /* Get PLplot escape character */
+  char plplotEsc;
+  plgesc( &plplotEsc );
+
+  /* Get the curent font */
+  fontScale = 1.0;
+  yOffset = 0.0;
+  PLUNICODE fci;
+  plgfci( &fci );
+  PSSetFont( fci );
+  textWidth=0;
+  textHeight=0;
+
+  while( i < ucs4Len ) {
+    if( ucs4[i] < PL_FCI_MARK ) {	/* not a font change */
+      if( ucs4[i] != (PLUNICODE)plplotEsc ) {  /* a character to display */
+        ucs4_to_utf8( ucs4[i], utf8 );
+        strcat( utf8_string, utf8 );
+      	i++;
+      	continue;
+      }
+      i++;
+      if( ucs4[i] == (PLUNICODE)plplotEsc ) {   /* a escape character to display */
+        ucs4_to_utf8( ucs4[i], utf8 );
+        strcat( utf8_string, utf8 );
+        i++;
+        continue;
+      } else {
+      	if( ucs4[i] == (PLUNICODE)'u' ) {	/* Superscript */
+          // draw string so far
+          PSDrawTextToDC( utf8_string, drawText );
+          
+          // change font scale
+      		if( yOffset<0.0 )
+            fontScale *= 1.25;  /* Subscript scaling parameter */
+      		else
+            fontScale *= 0.8;  /* Subscript scaling parameter */
+          PSSetFont( fci );
+
+      		yOffset += scaley * fontSize * fontScale / 2.;
+      	}
+      	if( ucs4[i] == (PLUNICODE)'d' ) {	/* Subscript */
+          // draw string so far
+          PSDrawTextToDC( utf8_string, drawText );
+
+          // change font scale
+          double old_fontScale=fontScale;
+      		if( yOffset>0.0 )
+            fontScale *= 1.25;  /* Subscript scaling parameter */
+      		else
+            fontScale *= 0.8;  /* Subscript scaling parameter */
+          PSSetFont( fci );
+
+      		yOffset -= scaley * fontSize * old_fontScale / 2.;
+      	}
+      	if( ucs4[i] == (PLUNICODE)'-' ) {	/* underline */
+          // draw string so far
+          PSDrawTextToDC( utf8_string, drawText );
+
+          underlined = !underlined; 
+          PSSetFont( fci );
+      	}
+      	if( ucs4[i] == (PLUNICODE)'+' ) {	/* overline */
+          /* not implemented yet */
+        }
+        i++;
+      }
+    } else { /* a font change */
+      // draw string so far
+      PSDrawTextToDC( utf8_string, drawText );
+
+      // get new font
+      fci = ucs4[i];
+      PSSetFont( fci );
+      i++;
+    }
+  }
+
+  PSDrawTextToDC( utf8_string, drawText );
+}
+
 
 /*--------------------------------------------------------------------------*\
  *  plD_init_wxwidgets()
@@ -209,6 +298,7 @@ plD_init_wxwidgets( PLStream *pls )
   static int freetype=1;
   static int smooth_text=1;
   static int backend=0;
+  static int text=1;
   
 DrvOpt wx_options[] = {
 #ifdef HAVE_FREETYPE
@@ -216,6 +306,7 @@ DrvOpt wx_options[] = {
         {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
 #endif
         {"backend", DRV_INT, &backend, "Choose backend: (0) standard, (1) using AGG library, (2) using wxGraphicsContext"},
+        {"text", DRV_INT, &text, "Use own text routines (text=0|1)"},
         {NULL, DRV_INT, NULL, NULL}};
 
   /* Check for and set up driver options */
@@ -266,8 +357,10 @@ DrvOpt wx_options[] = {
   pls->graphx = GRAPHICS_MODE; /*  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination) */
   pls->dev_clear = 1;          /* driver supports clear */
 
-  pls->dev_text = 1; /* want to draw text */
-  pls->dev_unicode = 1; /* want unicode */
+  if( text ) {
+    pls->dev_text = 1; /* want to draw text */
+    pls->dev_unicode = 1; /* want unicode */
+  }
 #ifdef HAVE_FREETYPE
   if( freetype ) {
     pls->dev_text = 1; /* want to draw text */
@@ -558,6 +651,9 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
     break;
 
   case PLESC_HAS_TEXT:
+    if( !(dev->ready) )
+      install_buffer( pls );
+
     dev->ProcessString( pls, (EscText *)ptr );
 #ifdef HAVE_FREETYPE
     plD_render_freetype_text( pls, (EscText *)ptr );
