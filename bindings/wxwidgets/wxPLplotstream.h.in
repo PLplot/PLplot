@@ -33,24 +33,24 @@ class wxDC;
 // for the WX_TEMP_...._IS_ON macros (otherwise WX_TEMP_...._IS_OFF
 // is defined)
 #define WX_TEMP_HAVE_FREETYPE_IS_@HAVE_FREETYPE@
-#define WX_TEMP_HAVE_AGG_IS_@HAVE_AGG@
   
 /*! Style options for wxPLplotstream:
  *  wxPLPLOT_NONE: no option
  *  wxPLPLOT_FREETYPE: use freetype library instead of Hershey fonts
  *  wxPLPLOT_SMOOTHTEXT: antialiase font (if freetype library is used)
- *  wxPLPLOT_ANTIALIZED: antialize plot (if agg library is available)
+ *  wxPLPLOT_BACKEND_DC: use the standard wxDC backend (always available)
+ *  wxPLPLOT_BACKEND_AGG: use the AGG backend (if available)
+ *  wxPLPLOT_BACKEND_GC: use the wxGraphicsContext backend (if available)
  */
 enum {
-    wxPLPLOT_NONE = 0,
+  wxPLPLOT_NONE = 0,
 #ifdef WX_TEMP_HAVE_FREETYPE_IS_ON
-    wxPLPLOT_FREETYPE = 1,
-    wxPLPLOT_SMOOTHTEXT = 2,
+  wxPLPLOT_FREETYPE = 1,
+  wxPLPLOT_SMOOTHTEXT = 2,
 #endif
-#ifdef WX_TEMP_HAVE_AGG_IS_ON
-    wxPLPLOT_ANTIALIZED = 4,
-#endif
-    wxPLPLOT_DUMMY = 128  // don't use obviously
+  wxPLPLOT_BACKEND_DC = 4,
+  wxPLPLOT_BACKEND_AGG = 8,
+  wxPLPLOT_BACKEND_GC = 16,
 };
 
 /*! wxPLplotstream is inherited from plstream, which is the C++ interface
@@ -61,11 +61,15 @@ class PLDLLIMPEXP wxPLplotstream : public plstream
 {
 public:
   wxPLplotstream( wxDC *dc, int width, int height, int style = wxPLPLOT_NONE );  //!< Constructor.
+  wxPLplotstream( wxImage *buffer, int width, int height, int style );
   void set_stream();   //!< Calls some code before every PLplot command.
 	void SetSize( int width, int height );   //!< Set new size of plot area.
 	void RenewPlot();   //!< Redo plot and update memory dc
   void Update();   //!< Update memory dc, but don't redo plot
 
+private:
+  void InitStream();
+  
 private:
 	wxDC* m_dc;   //!< Pointer to wxDC to plot into.
   wxImage* m_image;   //!< pointer to wxImage

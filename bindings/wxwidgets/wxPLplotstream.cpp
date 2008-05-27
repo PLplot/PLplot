@@ -24,14 +24,6 @@
 #include "wx/image.h"
 #include "wx/dcmemory.h"
 
-/* Visual C++ and Borland C++ do not define snprintf, but _snprintf - we
-   therefore redefine it, but this check should actually done by cmake */
-#if defined(__BORLANDC__) || defined(_MSC_VER)
-  #ifndef snprintf
-    #define snprintf _snprintf
-  #endif
-#endif
-
 /*! Constructor of wxPLplotstream class which is inherited from plstream.
  *  Here we set the driver (wxwidgets :), and tell plplot in which dc to
  *  plot to and the size of the canvas. We also check and set several
@@ -41,7 +33,12 @@ wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style ) :
                 m_dc(dc), m_width(width), m_height(height), m_style(style)
 {
   ::plstream();
+  InitStream();
+  cmd( PLESC_DEVINIT, (void*)m_dc );
+}
 
+void wxPLplotstream::InitStream()
+{
   sdev( "wxwidgets" );
   spage( 0.0, 0.0, m_width, m_height, 0, 0 );
 
@@ -54,26 +51,31 @@ wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style ) :
             m_style & wxPLPLOT_SMOOTHTEXT ? 1 : 0 );
   strncat( drvopt, buffer, 64-strlen(drvopt) );
 #endif  
-#ifdef WX_TEMP_HAVE_AGG_IS_ON  
   if( drvopt[0] != '\0' )
     strncat( drvopt, ",", 64-strlen(drvopt) );
-  snprintf( buffer, 64, "antialized=%d",
-            m_style & wxPLPLOT_ANTIALIZED ? 1 : 0 );
+  
+  int backend;
+  switch( m_style )
+  {
+  case wxPLPLOT_BACKEND_GC:
+    backend=2;
+    break;
+  case wxPLPLOT_BACKEND_AGG:
+    backend=1;
+    break;
+  default:
+    backend=0;
+    break;
+  }
+  snprintf( buffer, 64, "backend=%d", backend );
   strncat( drvopt, buffer, 64-strlen(drvopt) );
-#endif
 
   if( drvopt[0] != '\0' )
 	  SetOpt( "-drvopt", drvopt );
   
   init();
-#ifdef WX_TEMP_HAVE_AGG_IS_ON  
-  if( m_style & wxPLPLOT_ANTIALIZED ) {
-    m_image = new wxImage( m_width, m_height );
-    cmd( PLESC_DEVINIT, (void*)m_image );
-  } else
-#endif
-    cmd( PLESC_DEVINIT, (void*)m_dc );
 }
+
 
 
 /*! This is the overloaded set_stream() function, where we could have some
@@ -94,11 +96,6 @@ void wxPLplotstream::SetSize( int width, int height )
 	m_width=width;
 	m_height=height;
 
-#ifdef WX_TEMP_HAVE_AGG_IS_ON  
-  if( m_style & wxPLPLOT_ANTIALIZED )
-    m_image->Resize( wxSize(m_width, m_height), wxPoint(0, 0) );
-#endif
-  
   wxSize size( m_width, m_height );
   cmd( PLESC_RESIZE, (void*)&size );
 }

@@ -34,7 +34,7 @@ END_EVENT_TABLE()
 /*! Constructor allocates wxMemoryDC, a wxPLplotstream and initializes parameters.
  */
 wxPLplotwindow::wxPLplotwindow( wxWindow* parent, wxWindowID id, const wxPoint& pos,
-                                const wxSize& size, long style, int pl_style ) : // TODO: pl_style long?
+                                const wxSize& size, long style, int pl_style ) :
 	wxWindow( parent, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE )
 {
   // create MemoryDC and set size - if size not set (-1, -1) than
