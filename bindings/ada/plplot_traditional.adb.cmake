@@ -1481,10 +1481,17 @@ package body PLplot_Traditional is
 
 
     -- Get FCI (font characterization integer)
-    procedure plgfci(Font_Characterization_Integer : out PLUNICODE) is
+    procedure plgfci(Font_Characterization_Integer : out Unicode) is
     begin
         PLplot_Thin.plgfci(Font_Characterization_Integer);
     end plgfci;
+
+
+    -- Get family, style and weight of the current font
+    procedure plgfont(Family, Style, Weight : out Integer) is
+    begin
+        PLplot_Thin.plgfont(Family, Style, Weight);
+    end;
 
 
     -- Get family file parameters
@@ -2185,10 +2192,17 @@ package body PLplot_Traditional is
 
 
     -- Set FCI (font characterization integer)
-    procedure plsfci(Font_Characterization_Integer : PLUNICODE) is
+    procedure plsfci(Font_Characterization_Integer : Unicode) is
     begin
         PLplot_Thin.plsfci(Font_Characterization_Integer);
     end plsfci;
+    
+    
+    -- Set the font family, style and weight
+    procedure plsfont(Family, Style, Weight : Integer) is
+    begin
+        PLplot_Thin.plsfont(Family, Style, Weight);
+    end;
 
 
     -- Set the output file name.

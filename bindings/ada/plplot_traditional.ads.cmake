@@ -47,6 +47,9 @@ package PLplot_Traditional is
     subtype Transformation_Data_Type   is Plplot_Thin.Transformation_Data_Type;
     subtype Transformation_Data_Type_2 is Plplot_Thin.Transformation_Data_Type_2;
     
+    -- "Rename" the unicode type for characters.
+    subtype Unicode is PLplot_Thin.PLUNICODE;
+    
     -- Rename Plplot_Thin.plfill so that a pointer to it can be passed to 
     -- procedures such as plshade, plshade1, and plshades and called with C 
     -- conventions. Note that Plplot_Thin.plfill is already in C so that it does 
@@ -830,7 +833,11 @@ package PLplot_Traditional is
 
 
     -- Get FCI (font characterization integer)
-    procedure plgfci(Font_Characterization_Integer : out PLUNICODE);
+    procedure plgfci(Font_Characterization_Integer : out Unicode);
+    
+    
+    -- Get family, style and weight of the current font
+    procedure plgfont(Family, Style, Weight : out Integer);
 
 
     -- Get family file parameters
@@ -1225,7 +1232,12 @@ package PLplot_Traditional is
 
 
     -- Set FCI (font characterization integer)
-    procedure plsfci(Font_Characterization_Integer : PLUNICODE);
+    procedure plsfci(Font_Characterization_Integer : Unicode);
+    
+    
+    -- Set the font family, style and weight
+    procedure plsfont(Family, Style, Weight : Integer);
+
 
     -- Set the output file name.
     procedure plsfnam(Output_File_Name : String);

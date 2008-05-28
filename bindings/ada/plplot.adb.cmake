@@ -1518,10 +1518,18 @@ package body PLplot is
 
     -- Get FCI (font characterization integer)
     -- plgfci
-    procedure Get_Font_Characterization_Integer(Font_Characterization_Integer : out PLUNICODE) is
+    procedure Get_Font_Characterization_Integer(Font_Characterization_Integer : out Unicode) is
     begin
         plgfci(Font_Characterization_Integer);
     end Get_Font_Characterization_Integer;
+
+
+    -- Get family, style and weight of the current font
+    -- plgfont
+    procedure Get_Font(Family, Style, Weight : out Integer) is
+    begin
+        PLplot_Thin.plgfont(Family, Style, Weight);
+    end;
 
 
     -- Get family file parameters
@@ -2288,10 +2296,18 @@ package body PLplot is
 
     -- Set FCI (font characterization integer)
     -- plsfci;
-    procedure Set_Font_Characterization_Integer(Font_Characterization_Integer : PLUNICODE) is
+    procedure Set_Font_Characterization_Integer(Font_Characterization_Integer : Unicode) is
     begin
         plsfci(Font_Characterization_Integer);
     end Set_Font_Characterization_Integer;
+    
+    
+    -- Set the font family, style and weight
+    -- plsfont
+    procedure Set_Font(Family, Style, Weight : Integer) is
+    begin
+        PLplot_Thin.plsfont(Family, Style, Weight);
+    end;
 
 
     -- Set the output file name.

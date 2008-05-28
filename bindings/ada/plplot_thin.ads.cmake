@@ -58,7 +58,8 @@ package PLplot_Thin is
     PLfalse : constant Integer := 0;
     PLtrue  : constant Integer := 1;
     subtype PLBOOL is Integer range PLfalse..PLtrue;
-    type PLUNICODE is range 0..2**32-1;
+    --type PLUNICODE is range 0..2**32-1;
+    type PLUNICODE is mod 2**32;
 
     subtype PL_Integer_Array  is Integer_Array_1D;
     subtype PL_Float_Array    is Real_Vector;
@@ -714,6 +715,13 @@ package PLplot_Thin is
     procedure
     plgfci(pfci : out PLUNICODE);
     pragma Import(C, plgfci, "c_plgfci");
+    
+    
+    -- Get family, style and weight of the current font
+
+    procedure
+    plgfont(p_family, p_style, p_weight : out PLINT);
+    pragma Import(C, plgfont, "c_plgfont");
 
 
     -- Get family file parameters 
@@ -1220,6 +1228,13 @@ package PLplot_Thin is
     procedure
     plsfci(fci : PLUNICODE);
     pragma Import(C, plsfci, "c_plsfci");
+    
+    
+    -- Set the font family, style and weight
+
+    procedure
+    plsfont(family, style, weight : PLINT);
+    pragma Import(C, plsfont, "c_plsfont");
 
 
     -- Set the output file name. 
