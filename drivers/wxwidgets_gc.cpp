@@ -6,22 +6,15 @@
 /* plplot headers */
 #include "plplotP.h"
 
-/* os specific headers */
-#ifdef __WIN32__
-  #include <windows.h>
-#endif
-
 /* wxwidgets headers */
 #include "wx/wx.h"
-#include "wx/except.h"
-#include "wx/image.h"
-#include "wx/filedlg.h"
-#include "wx/display.h"
-#include "wx/graphics.h"
     
 #include "wxwidgets.h"
 
+
 #if wxUSE_GRAPHICS_CONTEXT
+
+#include "wx/graphics.h"
   
 wxPLDevGC::wxPLDevGC( void ) : wxPLDevBase()
 {
