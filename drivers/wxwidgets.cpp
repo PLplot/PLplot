@@ -295,14 +295,14 @@ plD_init_wxwidgets( PLStream *pls )
   wxPLDevBase* dev;
 
   /* default options */
-  static int freetype=1;
+  static int freetype=0;
   static int smooth_text=1;
   static int backend=0;
   static int text=1;
   
 DrvOpt wx_options[] = {
 #ifdef HAVE_FREETYPE
-        {"text", DRV_INT, &freetype, "Use driver text (FreeType)"},
+        {"freetype", DRV_INT, &freetype, "Use FreeType library"},
         {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
 #endif
         {"backend", DRV_INT, &backend, "Choose backend: (0) standard, (1) using AGG library, (2) using wxGraphicsContext"},
@@ -311,10 +311,6 @@ DrvOpt wx_options[] = {
 
   /* Check for and set up driver options */
   plParseDrvOpts( wx_options );
-#ifdef HAVE_FREETYPE
-	dev->smooth_text=smooth_text;
-	dev->freetype=freetype;
-#endif
 
   /* allocate memory for the device storage */
   switch( backend )
@@ -339,6 +335,12 @@ DrvOpt wx_options[] = {
   }
   pls->dev = (void*)dev;
 
+#ifdef HAVE_FREETYPE
+	dev->smooth_text=smooth_text;
+	dev->freetype=freetype;
+#endif
+
+
 /* be verbose and write out debug messages */
 #ifdef _DEBUG
   pls->verbose = 1;
@@ -361,8 +363,9 @@ DrvOpt wx_options[] = {
     pls->dev_text = 1; /* want to draw text */
     pls->dev_unicode = 1; /* want unicode */
   }
+  
 #ifdef HAVE_FREETYPE
-  if( freetype ) {
+  if( dev->freetype ) {
     pls->dev_text = 1; /* want to draw text */
     pls->dev_unicode = 1; /* want unicode */
 
@@ -411,7 +414,7 @@ DrvOpt wx_options[] = {
   /* plsabort(plD_erroraborthandler_wxwidgets); */
   
 #ifdef HAVE_FREETYPE
-  if( pls->dev_text )
+  if( dev->freetype )
     init_freetype_lv2( pls );
 #endif
   
@@ -554,7 +557,7 @@ void plD_tidy_wxwidgets( PLStream *pls )
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
 
 #ifdef HAVE_FREETYPE
-  if( pls->dev_text ) {
+  if( dev->freetype ) {
     FT_Data *FT=(FT_Data *)pls->FT;
     plscmap0n( FT->ncol0_org );
     plD_FreeType_Destroy( pls );
@@ -654,10 +657,12 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
     if( !(dev->ready) )
       install_buffer( pls );
 
-    dev->ProcessString( pls, (EscText *)ptr );
+    if( dev->freetype ) {
 #ifdef HAVE_FREETYPE
-    plD_render_freetype_text( pls, (EscText *)ptr );
+      plD_render_freetype_text( pls, (EscText *)ptr );
 #endif
+    } else
+      dev->ProcessString( pls, (EscText *)ptr );
     break;
 
   case PLESC_RESIZE: {
@@ -760,7 +765,7 @@ void wx_set_size( PLStream* pls, int width, int height )
     
   /* freetype parameters must also be changed */
 #ifdef HAVE_FREETYPE  
-  if( pls->dev_text ) {
+  if( dev->freetype ) {
     FT_Data *FT=(FT_Data *)pls->FT;
     FT->scalex=dev->scalex;   
     FT->scaley=dev->scaley;   
