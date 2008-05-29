@@ -122,6 +122,20 @@ if(ENABLE_ada)
   )
 endif(ENABLE_ada)
 
+if(ENABLE_ocaml)
+  configure_file(
+    test_ocaml.sh.in 
+    ${CMAKE_CURRENT_BINARY_DIR}/test_ocaml.sh 
+    @ONLY
+    )
+  set(SCRIPTS ${SCRIPTS} test_ocaml.sh)
+  # Disable test for now - ocaml bindings don't cope with command line options
+  # so non-interactive tests don't work.
+  #add_test(examples_ocaml
+  #  ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=ocaml"
+  #)
+endif(ENABLE_ocaml)
+
 # Run C examples with different drivers
 if(PLD_psc)
   if (NOT TEST_DEVICE STREQUAL "psc")
