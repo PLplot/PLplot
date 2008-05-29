@@ -80,6 +80,9 @@ endif(ENABLE_ada)
 if(ENABLE_d)
   add_subdirectory(d)
 endif(ENABLE_d)
+if(ENABLE_ocaml)
+  add_subdirectory(ocaml)
+endif(ENABLE_ocaml)
 
 install(FILES Makefile.examples 
 DESTINATION ${DATA_DIR}/examples

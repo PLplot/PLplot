@@ -117,6 +117,7 @@ ENABLE_tk:		${ENABLE_tk}		ENABLE_itk:		${ENABLE_itk}
 ENABLE_pdl:		${ENABLE_pdl}		ENABLE_wxwidgets:	${ENABLE_wxwidgets}
 ENABLE_gnome2:		${ENABLE_gnome2}		ENABLE_pygcw:		${ENABLE_pygcw}
 ENABLE_ada:		${ENABLE_ada}		ENABLE_d:		${ENABLE_d}
+ENABLE_ocaml:		${ENABLE_ocaml}		
 ")
 message("${_output_results}")
 endmacro(summary)

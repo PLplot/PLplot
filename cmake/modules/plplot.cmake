@@ -299,6 +299,7 @@ include(octave)
 include(tcl-related)
 include(pdl)
 include(ada)
+include(ocaml)
 
 # =======================================================================
 # additional library support

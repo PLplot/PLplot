@@ -32,6 +32,7 @@ add_subdirectory(gnome2)
 add_subdirectory(wxwidgets)
 add_subdirectory(ada)
 add_subdirectory(d)
+add_subdirectory(ocaml)
 
 set(index)
 if(ENABLE_tcl)

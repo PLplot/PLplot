@@ -117,6 +117,9 @@ set(MAN_DIR ${CMAKE_INSTALL_MANDIR})
 # Absolute path of top-level build directory.
 set(BUILD_DIR ${CMAKE_BINARY_DIR})
 
+# Absolute path of top-level source directory.
+set(SOURCE_DIR ${CMAKE_SOURCE_DIR})
+
 # The following *_CMD variables are needed in
 # examples/*/Makefile.examples.cmake
 
