@@ -1,3 +1,29 @@
+/* $Id$
+
+   Copyright (C) 2008  Werner Smekal
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+*/
+
+
+/* TODO:
+ * - text clipping
+ * - implement AddToClipRegion for text correctly
+ */
 
 #include "plDevs.h"
 
@@ -8,17 +34,17 @@
 
 /* wxwidgets headers */
 #include "wx/wx.h"
-    
+
+/* std and driver headers */
 #include "wxwidgets.h"
 
-
+/* only compile code if wxGraphicsContext available */
 #if wxUSE_GRAPHICS_CONTEXT
-
 #include "wx/graphics.h"
   
 wxPLDevGC::wxPLDevGC( void ) : wxPLDevBase()
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
   m_dc=NULL;
   m_bitmap=NULL;
@@ -30,12 +56,12 @@ wxPLDevGC::wxPLDevGC( void ) : wxPLDevBase()
 
 wxPLDevGC::~wxPLDevGC()
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
   if( ownGUI ) {
     if( m_dc ) {
-        ((wxMemoryDC*)m_dc)->SelectObject( wxNullBitmap );
-        delete m_dc;
+      ((wxMemoryDC*)m_dc)->SelectObject( wxNullBitmap );
+      delete m_dc;
     }
     if( m_bitmap )
       delete m_bitmap;
@@ -45,29 +71,28 @@ wxPLDevGC::~wxPLDevGC()
     delete m_font;
 }
 
+
 void wxPLDevGC::DrawLine( short x1a, short y1a, short x2a, short y2a )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
 	wxDouble x1=x1a/scalex;
   wxDouble y1=height-y1a/scaley;
 	wxDouble x2=x2a/scalex;
   wxDouble y2=height-y2a/scaley;
 
-  Log_Verbose( "x1=%d, y1=%d, x2=%d, y2=%d", x1, y1, x2, y2 );
-
   wxGraphicsPath path=m_context->CreatePath();
   path.MoveToPoint( x1, y1 );
   path.AddLineToPoint( x2, y2 );
   m_context->StrokePath( path );
 
-  if( !resizing && ownGUI )
-    AddtoClipRegion( this, (int)x1, (int)y1, (int)x2, (int)y2 );  
+  AddtoClipRegion( (int)x1, (int)y1, (int)x2, (int)y2 );  
 }
+
 
 void wxPLDevGC::DrawPolyline( short *xa, short *ya, PLINT npts )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
 	wxDouble x1a, y1a, x2a, y2a;
   
@@ -84,21 +109,37 @@ void wxPLDevGC::DrawPolyline( short *xa, short *ya, PLINT npts )
   }
   m_context->StrokePath( path );
 
-  if( !resizing && ownGUI ) {
-    wxDouble x, y, w, h;
-    path.GetBox( &x, &y, &w, &h );
-    
-    AddtoClipRegion( this, (int)x, (int)y, (int)(x+w), (int)(y+h) );  
-  }
+  wxDouble x, y, w, h;
+  path.GetBox( &x, &y, &w, &h );
+  
+  AddtoClipRegion( (int)x, (int)y, (int)(x+w), (int)(y+h) );  
 }
+
 
 void wxPLDevGC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
-  m_dc->SetBackground( wxBrush(wxColour(bgr, bgg, bgb)) );
-  m_dc->Clear();
+	wxDouble x1a, y1a, x2a, y2a;
+
+  if( x1<0 ) x1a=0;      else x1a=x1/scalex;
+  if( y1<0 ) y1a=0;      else y1a=height-y1/scaley;
+  if( x2<0 ) x2a=width;  else x2a=x2/scalex;
+  if( y2<0 ) y2a=height; else y2a=height-y2/scaley;
+
+  const wxPen oldPen=m_dc->GetPen();
+  const wxBrush oldBrush=m_dc->GetBrush();
+
+  m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(bgr, bgg, bgb), 1, wxSOLID)) );
+  m_context->SetBrush( wxBrush(wxColour(bgr, bgg, bgb)) );
+  m_context->DrawRectangle( x1a, y1a, x2a-x1a, y2a-y1a ); 
+
+  m_context->SetPen( oldPen );  
+  m_context->SetBrush( oldBrush );  
+   
+  AddtoClipRegion( (int)x1a, (int)y1a, (int)x2a, (int)y2a );
 }
+
 
 void wxPLDevGC::FillPolygon( PLStream *pls )
 {
@@ -112,26 +153,25 @@ void wxPLDevGC::FillPolygon( PLStream *pls )
   
   m_context->DrawPath( path );
 
-  if( !resizing && ownGUI ) {
-    wxDouble x, y, w, h;
-    path.GetBox( &x, &y, &w, &h );
-    
-    AddtoClipRegion( this, (int)x, (int)y, (int)(x+w), (int)(y+h) );  
-  }
+  wxDouble x, y, w, h;
+  path.GetBox( &x, &y, &w, &h );
+  
+  AddtoClipRegion( (int)x, (int)y, (int)(x+w), (int)(y+h) );  
 }
+
 
 void wxPLDevGC::BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
-  Log_Verbose( "vx=%d, vy=%d, vw=%d, vh=%d", vX, vY, vW, vH );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
   if( m_dc )
     dc->Blit( vX, vY, vW, vH, m_dc, vX, vY );
 }
 
+
 void wxPLDevGC::CreateCanvas()
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
   if( ownGUI ) {
     if( !m_dc )
@@ -144,41 +184,43 @@ void wxPLDevGC::CreateCanvas()
     ((wxMemoryDC*)m_dc)->SelectObject( *m_bitmap );   /* select new bitmap */
   
     m_context = wxGraphicsContext::Create( *((wxMemoryDC*)m_dc) );
-    Log_Verbose( "Context created %x", m_context );
   }
 }
 
+
 void wxPLDevGC::SetWidth( PLStream *pls )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
-  m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b),
+  m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
+                                                               pls->cmap0[pls->icol0].b, (unsigned char)(pls->cmap0[pls->icol0].a*255)),
                                                      pls->width>0 ? pls->width : 1, wxSOLID)) );
-  //m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-  //                                                             pls->cmap0[pls->icol0].b),
-  //                                                   pls->width>0 ? pls->width : 1, wxSOLID)) );
 }
+
 
 void wxPLDevGC::SetColor0( PLStream *pls )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
   m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                                               pls->cmap0[pls->icol0].b),
+                                                               pls->cmap0[pls->icol0].b, (unsigned char)(pls->cmap0[pls->icol0].a*255)),
                                                      pls->width>0 ? pls->width : 1, wxSOLID)) );
-  //m_context->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-  //                                      pls->cmap0[pls->icol0].b)) );
+  m_context->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g, pls->cmap0[pls->icol0].b,
+                                        (unsigned char)(pls->cmap0[pls->icol0].a*255))) );
 }
+
 
 void wxPLDevGC::SetColor1( PLStream *pls )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
   m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g,
-                                                              pls->curcolor.b),
+                                                              pls->curcolor.b, (unsigned char)(pls->curcolor.a*255)),
                                                      pls->width>0 ? pls->width : 1, wxSOLID)) );
-  m_context->SetBrush( wxBrush(wxColour(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b)) );
+  m_context->SetBrush( wxBrush(wxColour(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b,
+                                        (unsigned char)(pls->curcolor.a*255))) );
 }
+
 
 /*--------------------------------------------------------------------------*\
  *  void wx_set_dc( PLStream* pls, wxDC* dc )
@@ -188,7 +230,7 @@ void wxPLDevGC::SetColor1( PLStream *pls )
 \*--------------------------------------------------------------------------*/
 void wxPLDevGC::SetExternalBuffer( void* dc )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
   m_dc=(wxDC*)dc;  /* Add the dc to the device */
   m_context = wxGraphicsContext::Create( *((wxMemoryDC*)m_dc) );
@@ -196,27 +238,30 @@ void wxPLDevGC::SetExternalBuffer( void* dc )
   ownGUI = false;
 }
 
+
 void wxPLDevGC::PutPixel( short x, short y, PLINT color )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
   const wxPen oldpen=m_dc->GetPen();
   m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(GetRValue(color), GetGValue(color), GetBValue(color)),
                                                      1, wxSOLID)) );
   //m_context->DrawPoint( x, y );
+  AddtoClipRegion( x, y, x, y );
   m_context->SetPen( oldpen );
 }
 
 void wxPLDevGC::PutPixel( short x, short y )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
   //m_dc->DrawPoint( x, y );
+  AddtoClipRegion( x, y, x, y );
 }
 
 PLINT wxPLDevGC::GetPixel( short x, short y )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
   #ifdef __WXGTK__
     // The GetPixel method is incredible slow for wxGTK. Therefore we set the colour
@@ -233,6 +278,8 @@ PLINT wxPLDevGC::GetPixel( short x, short y )
 
 void wxPLDevGC::PSDrawTextToDC( char* utf8_string, bool drawText )
 {
+  // Log_Verbose( "%s", __FUNCTION__ );
+
   wxDouble w, h, d, l;
 
   wxString str(wxConvUTF8.cMB2WC(utf8_string), *wxConvCurrent);
@@ -250,6 +297,8 @@ void wxPLDevGC::PSDrawTextToDC( char* utf8_string, bool drawText )
 
 void wxPLDevGC::PSSetFont( PLUNICODE fci )
 {
+  // Log_Verbose( "%s", __FUNCTION__ );
+
   unsigned char fontFamily, fontStyle, fontWeight;
 
   plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
@@ -266,6 +315,8 @@ void wxPLDevGC::PSSetFont( PLUNICODE fci )
 
 void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
 {
+  // Log_Verbose( "%s", __FUNCTION__ );
+
   /* Check that we got unicode, warning message and return if not */
   if( args->unicode_array_len == 0 ) {
     printf( "Non unicode string passed to a cairo driver, ignoring\n" );
@@ -308,8 +359,7 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
   PSDrawText( args->unicode_array, args->unicode_array_len, true );
   m_context->PopState();
 
-  if( !resizing && ownGUI ) 
-    AddtoClipRegion( this, 0, 0, width, height );        
+  AddtoClipRegion( 0, 0, width, height );        
 }
 
 #endif

@@ -22,8 +22,8 @@
 */
 
 
-/* TODO: - implement the GraphicsIn stuff
- *       - clear screen should only clear current plot (e.g in a 2x2 plot) not the whole window
+/* TODO: 
+ * - implement the GraphicsIn stuff (only part of it so far)
  */
 
 #include "plDevs.h"
@@ -86,27 +86,6 @@ void Log_Debug( const char *fmt, ... )
   fflush( stderr );
 #endif
 }
-
-
-void AddtoClipRegion( wxPLDevBase* dev, int x1, int y1, int x2, int y2 )
-{
-	dev->newclipregion=false;
-	if( x1<x2 ) {
-		if( x1<dev->clipminx ) dev->clipminx=x1;
-		if( x2>dev->clipmaxx ) dev->clipmaxx=x2;
-	} else {
-		if( x2<dev->clipminx ) dev->clipminx=x2;
-		if( x1>dev->clipmaxx ) dev->clipmaxx=x1;
-	}
-	if( y1<y2 ) {
-		if( y1<dev->clipminy ) dev->clipminy=y1;
-		if( y2>dev->clipmaxy ) dev->clipmaxy=y2;
-	} else {
-		if( y2<dev->clipminy ) dev->clipminy=y2;
-		if( y1>dev->clipmaxy ) dev->clipmaxy=y1;
-	}
-}
-
 
 
 /*----------------------------------------------------------------------*\
@@ -191,6 +170,27 @@ wxPLDevBase::~wxPLDevBase( void )
   if( devName )
     free( devName );
 }
+
+
+void wxPLDevBase::AddtoClipRegion( int x1, int y1, int x2, int y2 )
+{
+	newclipregion=false;
+	if( x1<x2 ) {
+		if( x1<clipminx ) clipminx=x1;
+		if( x2>clipmaxx ) clipmaxx=x2;
+	} else {
+		if( x2<clipminx ) clipminx=x2;
+		if( x1>clipmaxx ) clipmaxx=x1;
+	}
+	if( y1<y2 ) {
+		if( y1<clipminy ) clipminy=y1;
+		if( y2>clipmaxy ) clipmaxy=y2;
+	} else {
+		if( y2<clipminy ) clipminy=y2;
+		if( y1>clipmaxy ) clipmaxy=y1;
+	}
+}
+
 
 void wxPLDevBase::PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
 {
@@ -434,14 +434,13 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
   Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", x1a, y1a, x2a, y2a );
 
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
-
+  
   if( !(dev->ready) )
     install_buffer( pls );
   
   dev->DrawLine( x1a, y1a, x2a, y2a );
     
   if( !(dev->resizing) && dev->ownGUI ) {
-		AddtoClipRegion( dev, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
 		dev->comcount+=10;
 		if( dev->comcount>MAX_COMCOUNT ) {
 			wxRunApp( pls, true );
@@ -484,8 +483,8 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
  *
  *  End of Page. This function is called if a "end of page" is send by the
  *  user. This command is ignored if we have the plot embedded in a 
- *  wxWidgets application, but a new bitmap is created if we use a
- *  command line executable.
+ *  wxWidgets application, otherwise the application created by the device
+ *  takes over.
 \*--------------------------------------------------------------------------*/
 void plD_eop_wxwidgets( PLStream *pls )
 {
@@ -520,9 +519,7 @@ void plD_bop_wxwidgets( PLStream *pls )
     /* clear background */
 		PLINT bgr, bgg, bgb;  /* red, green, blue */
 		plgcolbg( &bgr, &bgg, &bgb);  /* get background color information */
-
-    dev->ClearBackground( bgr, bgg, bgb, 0, 0, (int)(dev->width), (int)(dev->height) );
-		AddtoClipRegion( dev, 0, 0, (int)(dev->width), (int)(dev->height) );
+    dev->ClearBackground( bgr, bgg, bgb );
     
     /* Replay escape calls that come in before PLESC_DEVINIT.  All of them
      * required a DC that didn't exist yet.
@@ -672,22 +669,14 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
     break;
 
 	case PLESC_CLEAR: {
-    /* Since the plot is updated only every MAX_COMCOUNT commands (usually 5000)
-       before we clear the screen we need to show the plot at least once :) */
-    if( dev->ownGUI ) {
-        wxRunApp( pls, true );
-  			dev->comcount=0;
-    }
-/*				"x1", (double) (pls->sppxmi) * PIXELS_PER_DU,
-				"y1", (double) -(pls->sppyma) * PIXELS_PER_DU,
-				"x2", (double) (pls->sppxma) * PIXELS_PER_DU,
-				"y2", (double) -(pls->sppymi) * PIXELS_PER_DU,
-				"fill_color", (pls->cmap0[0]).name,*/
-			PLINT bgr, bgg, bgb;  /* red, green, blue */
-			plgcolbg( &bgr, &bgg, &bgb );  /* get background color information */
-
-      dev->ClearBackground( bgr, bgg, bgb, 0, 0, (int)(dev->width), (int)(dev->height) );
-  		AddtoClipRegion( dev, 0, 0, (int)(dev->width), (int)(dev->height) );
+      /* Since the plot is updated only every MAX_COMCOUNT commands (usually 5000)
+         before we clear the screen we need to show the plot at least once :) */
+      if( dev->ownGUI ) {
+          wxRunApp( pls, true );
+          dev->comcount=0;
+      }
+      dev->ClearBackground( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b,
+                            pls->sppxmi, pls->sppymi, pls->sppxma, pls->sppyma );
 		}
 		break;
   
@@ -751,9 +740,7 @@ void wx_set_size( PLStream* pls, int width, int height )
 		plgcolbg( &bgr, &bgg, &bgb);  /* get background color information */
 
     dev->CreateCanvas();
-    dev->ClearBackground( bgr, bgg, bgb, 0, 0, (int)(dev->width), (int)(dev->height) );
-    
-		AddtoClipRegion( dev, 0, 0, (int)(dev->width), (int)(dev->height) );
+    dev->ClearBackground( bgr, bgg, bgb );
 	}
 
   dev->scalex=(PLFLT)(dev->xmax-dev->xmin)/dev->width;
@@ -832,7 +819,6 @@ static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
   dev->PutPixel( x, y );
 
   if( !(dev->resizing) && dev->ownGUI ) {
-		AddtoClipRegion( dev, x, y, x+1, y+1 );
     dev->comcount++;
 		if( dev->comcount>MAX_COMCOUNT ) {
 			wxRunApp( pls, true );
@@ -860,7 +846,6 @@ static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colo
   dev->PutPixel( x, y, colour );
 
   if( !(dev->resizing) && dev->ownGUI ) {
-		AddtoClipRegion( dev, x, y, x+1, y+1 );
     dev->comcount++;
 		if( dev->comcount>MAX_COMCOUNT ) {
 			wxRunApp( pls, true );

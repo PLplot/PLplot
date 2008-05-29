@@ -71,7 +71,7 @@ extern "C"
 #define VIRTUAL_PIXELS_PER_IN (VIRTUAL_PIXELS_PER_MM*MM_PER_IN)
 
 /* Default dimensions of the canvas (in inches) */
-#define CANVAS_WIDTH (10.)
+#define CANVAS_WIDTH (10.0)
 #define CANVAS_HEIGHT (7.5)
 
 /* size of plot in pixels on screen if not given */
@@ -82,9 +82,9 @@ extern "C"
 #define LOCATE_INVOKED_VIA_API		1
 #define LOCATE_INVOKED_VIA_DRIVER	2
 
-/* struct which contains information about device */
 class wxPLplotFrame;
   
+/* base device class */
 class wxPLDevBase
 {
 public: /* methods */
@@ -94,9 +94,10 @@ public: /* methods */
   // virtual functions which need to implemented
   virtual void DrawLine( short x1a, short y1a, short x2a, short y2a )=0;
   virtual void DrawPolyline( short *xa, short *ya, PLINT npts )=0;
-  virtual void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )=0;
+  virtual void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1=-1, PLINT y1=-1, PLINT x2=-1, PLINT y2=-1 )=0;
   virtual void FillPolygon( PLStream *pls )=0;
   virtual void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )=0;
+  void AddtoClipRegion( int x1, int y1, int x2, int y2 );
   virtual void CreateCanvas()=0;
   virtual void SetWidth( PLStream *pls )=0;
   virtual void SetColor0( PLStream *pls )=0;
@@ -167,6 +168,7 @@ public: /* variables */
   PLFLT shear, cos_shear, sin_shear;
 };
 
+
 class wxPLDevDC : public wxPLDevBase
 {
 public: /* methods */
@@ -175,7 +177,7 @@ public: /* methods */
 
   void DrawLine( short x1a, short y1a, short x2a, short y2a );
   void DrawPolyline( short *xa, short *ya, PLINT npts );
-  void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 );
+  void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1=-1, PLINT y1=-1, PLINT x2=-1, PLINT y2=-1 );
   void FillPolygon( PLStream *pls );
   void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH );
   void CreateCanvas();
@@ -194,6 +196,7 @@ private: /* variables */
   wxBitmap* m_bitmap;
   wxDC* m_dc;
 };
+
 
 #ifdef HAVE_AGG
 /* antigrain headers (for antialzing) */
@@ -215,7 +218,7 @@ public: /* methods */
 
   void DrawLine( short x1a, short y1a, short x2a, short y2a );
   void DrawPolyline( short *xa, short *ya, PLINT npts );
-  void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 );
+  void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1=-1, PLINT y1=-1, PLINT x2=-1, PLINT y2=-1 );
   void FillPolygon( PLStream *pls );
   void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH );
   void CreateCanvas();
@@ -242,8 +245,8 @@ private: /* variables */
 };
 #endif
 
-#if wxUSE_GRAPHICS_CONTEXT
 
+#if wxUSE_GRAPHICS_CONTEXT
 class wxPLDevGC : public wxPLDevBase
 {
 public: /* methods */
@@ -252,7 +255,7 @@ public: /* methods */
 
   void DrawLine( short x1a, short y1a, short x2a, short y2a );
   void DrawPolyline( short *xa, short *ya, PLINT npts );
-  void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 );
+  void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1=-1, PLINT y1=-1, PLINT x2=-1, PLINT y2=-1 );
   void FillPolygon( PLStream *pls );
   void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH );
   void CreateCanvas();
@@ -277,6 +280,7 @@ private: /* variables */
 };
 #endif
 
+
 struct dev_entry {    
   wxString dev_name;
   wxString dev_menu_short;
@@ -284,7 +288,7 @@ struct dev_entry {
   wxString dev_file_app;
 };
 
-void AddtoClipRegion( wxPLDevBase * dev, int x1, int y1, int x2, int y2 );
+
 
 /* after how many commands the window should be refreshed */
 #define MAX_COMCOUNT 5000

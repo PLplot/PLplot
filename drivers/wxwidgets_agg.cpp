@@ -1,3 +1,23 @@
+/* $Id$
+
+   Copyright (C) 2008  Werner Smekal
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+*/
 
 #include "plDevs.h"
 
@@ -6,18 +26,10 @@
 /* plplot headers */
 #include "plplotP.h"
 
-/* os specific headers */
-#ifdef __WIN32__
-  #include <windows.h>
-#endif
-
 /* wxwidgets headers */
 #include "wx/wx.h"
-#include "wx/except.h"
-#include "wx/image.h"
-#include "wx/filedlg.h"
-#include "wx/display.h"
     
+/* std and driver headers */
 #include "wxwidgets.h"
 
 typedef agg::pixfmt_rgb24 pixfmt;
@@ -92,7 +104,7 @@ void wxPLDevAGG::DrawPolyline( short *xa, short *ya, PLINT npts )
     x2a=(short)(xa[i]/scalex); y2a=(short)(height-ya[i]/scaley);
     path.line_to( x2a, y2a );
     if( !resizing && ownGUI ) 
-      AddtoClipRegion( this, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
+      AddtoClipRegion( (int)x1a, (int)y1a, (int)x2a, (int)y2a );
   }
 
   agg::conv_stroke<agg::path_storage> stroke( path );
@@ -130,7 +142,7 @@ void wxPLDevAGG::FillPolygon( PLStream *pls )
     x2a=(short)(pls->dev_x[i]/scalex); y2a=(short)(height-pls->dev_y[i]/scaley);
     path.line_to( x2a, y2a );
     if( !resizing && ownGUI ) 
-      AddtoClipRegion( this, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
+      AddtoClipRegion( (int)x1a, (int)y1a, (int)x2a, (int)y2a );
   }
   path.line_to( pls->dev_x[0]/scalex, height-pls->dev_y[0]/scaley );
   path.close_polygon();

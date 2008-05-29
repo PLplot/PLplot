@@ -1,3 +1,23 @@
+/* $Id$
+
+   Copyright (C) 2008  Werner Smekal
+   
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+*/
 
 #include "plDevs.h"
 
@@ -7,17 +27,13 @@
 #include "plplotP.h"
 #include "drivers.h"
 
-/* os specific headers */
-#ifdef __WIN32__
-  #include <windows.h>
-#endif
-
 /* wxwidgets headers */
 #include "wx/wx.h"
-#include "wx/image.h"
-#include "wx/filedlg.h"
-#include "wx/display.h"
+//#include "wx/image.h"
+//#include "wx/filedlg.h"
+//#include "wx/display.h"
     
+/* std and driver headers */
 #include "wxwidgets.h"
 
 /* Application icon as XPM */

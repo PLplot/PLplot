@@ -1,3 +1,30 @@
+/* $Id$
+
+   Copyright (C) 2005  Werner Smekal, Sjaak Verdoold
+   Copyright (C) 2005  Germain Carrera Corraleche
+   Copyright (C) 1999  Frank Huebner
+   
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+*/
+
+/* TODO:
+ * - text clipping
+ * - implement AddToClipRegion for text correctly
+ */
 
 #include "plDevs.h"
 
@@ -9,11 +36,17 @@
 /* wxwidgets headers */
 #include "wx/wx.h"
     
-/* std headers and wxwidgets.h*/
+/* std and driver headers */
 #include <cmath>
 #include "wxwidgets.h"
 
 
+/*--------------------------------------------------------------------------*\
+ *  wxPLDevDC::wxPLDevDC( void )
+ *
+ *  Constructor of the standard wxWidgets device based on the wxPLDevBase
+ *  class. Only some initialisations are done.
+\*--------------------------------------------------------------------------*/
 wxPLDevDC::wxPLDevDC( void ) : wxPLDevBase()
 {
   m_dc=NULL;
@@ -23,6 +56,11 @@ wxPLDevDC::wxPLDevDC( void ) : wxPLDevBase()
 }
 
 
+/*--------------------------------------------------------------------------*\
+ *  wxPLDevDC::~wxPLDevDC( void )
+ *
+ *  The deconstructor frees memory allocated by the device.
+\*--------------------------------------------------------------------------*/
 wxPLDevDC::~wxPLDevDC()
 {
   if( ownGUI ) {
@@ -39,6 +77,11 @@ wxPLDevDC::~wxPLDevDC()
 }
 
 
+/*--------------------------------------------------------------------------*\
+ *  void wxPLDevDC::DrawLine( short x1a, short y1a, short x2a, short y2a )
+ *
+ *  Draw a line from (x1a, y1a) to (x2a, y2a).
+\*--------------------------------------------------------------------------*/
 void wxPLDevDC::DrawLine( short x1a, short y1a, short x2a, short y2a )
 {
 	x1a=(short)(x1a/scalex); y1a=(short)(height-y1a/scaley);
@@ -46,11 +89,15 @@ void wxPLDevDC::DrawLine( short x1a, short y1a, short x2a, short y2a )
 
   m_dc->DrawLine( (wxCoord)x1a, (wxCoord)y1a, (wxCoord)x2a, (wxCoord)y2a );
   
-  if( !resizing && ownGUI )
-    AddtoClipRegion( this, (int)x1a, (int)y1a, (int)x2a, (int)y2a );    
+  AddtoClipRegion( (int)x1a, (int)y1a, (int)x2a, (int)y2a );    
 }
 
 
+/*--------------------------------------------------------------------------*\
+ *  void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
+ *
+ *  Draw a poly line - coordinates are in the xa and ya arrays.
+\*--------------------------------------------------------------------------*/
 void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
 {
 	wxCoord x1a, y1a, x2a, y2a;
@@ -63,17 +110,33 @@ void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
     y2a=(wxCoord)(height-ya[i]/scaley);
 
     m_dc->DrawLine( x1a, y1a, x2a, y2a );
-    if( !resizing && ownGUI ) 
-      AddtoClipRegion( this, (int)x1a, (int)y1a, (int)x2a, (int)y2a );
+
+    AddtoClipRegion( (int)x1a, (int)y1a, (int)x2a, (int)y2a );
   }
 }
 
 
-void wxPLDevDC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
+void wxPLDevDC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, 
+                                 PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
-  m_dc->SetBackground( wxBrush(wxColour(bgr, bgg, bgb)) );
-  m_dc->Clear();
+  if( x1<0 ) x1=0;      else x1=(PLINT)(x1/scalex);
+  if( y1<0 ) y1=0;      else y1=(PLINT)(height-y1/scaley);
+  if( x2<0 ) x2=width;  else x2=(PLINT)(x2/scalex);
+  if( y2<0 ) y2=height; else y2=(PLINT)(height-y2/scaley);
+
+  const wxPen oldPen=m_dc->GetPen();
+  const wxBrush oldBrush=m_dc->GetBrush();
+
+  m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(bgr, bgg, bgb), 1, wxSOLID)) );
+  m_dc->SetBrush( wxBrush(wxColour(bgr, bgg, bgb)) );
+  m_dc->DrawRectangle( x1, y1, x2-x1, y2-y1 ); 
+
+  m_dc->SetPen( oldPen );  
+  m_dc->SetBrush( oldBrush );  
+
+  AddtoClipRegion( x1, y1, x2, y2 );
 }
+
 
 void wxPLDevDC::FillPolygon( PLStream *pls )
 {
@@ -82,8 +145,7 @@ void wxPLDevDC::FillPolygon( PLStream *pls )
   for( int i=0; i < pls->dev_npts; i++ ) {
     points[i].x=(int)(pls->dev_x[i]/scalex);
     points[i].y=(int)(height-pls->dev_y[i]/scaley);
-    if( !resizing && ownGUI && i!=0) 
-      AddtoClipRegion( this, points[i-1].x, points[i-1].y, points[i].x, points[i].y );        
+    AddtoClipRegion( points[i-1].x, points[i-1].y, points[i].x, points[i].y );        
   }
 
   m_dc->DrawPolygon( pls->dev_npts, points );
@@ -112,18 +174,20 @@ void wxPLDevDC::CreateCanvas()
 
 void wxPLDevDC::SetWidth( PLStream *pls )
 {
-  m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b),
+  m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
+                                                          pls->cmap0[pls->icol0].b),
                                                  pls->width>0 ? pls->width : 1, wxSOLID)) );
 }
+
 
 void wxPLDevDC::SetColor0( PLStream *pls )
 {
   m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
                                                           pls->cmap0[pls->icol0].b),
                                                  pls->width>0 ? pls->width : 1, wxSOLID)) );
-  m_dc->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                   pls->cmap0[pls->icol0].b)) );
+  m_dc->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g, pls->cmap0[pls->icol0].b)) );
 }
+
 
 void wxPLDevDC::SetColor1( PLStream *pls )
 {
@@ -132,6 +196,7 @@ void wxPLDevDC::SetColor1( PLStream *pls )
                                                  pls->width>0 ? pls->width : 1, wxSOLID)) );
   m_dc->SetBrush( wxBrush(wxColour(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b)) );
 }
+
 
 /*--------------------------------------------------------------------------*\
  *  void wx_set_dc( PLStream* pls, wxDC* dc )
@@ -146,19 +211,24 @@ void wxPLDevDC::SetExternalBuffer( void* dc )
   ownGUI = false;
 }
 
+
 void wxPLDevDC::PutPixel( short x, short y, PLINT color )
 {
   const wxPen oldpen=m_dc->GetPen();
   m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(GetRValue(color), GetGValue(color), GetBValue(color)),
                                                  1, wxSOLID)) );
   m_dc->DrawPoint( x, y );
-  m_dc->SetPen( oldpen );
+  AddtoClipRegion( x, y, x, y );
+  m_dc->SetPen( oldpen );  
 }
+
 
 void wxPLDevDC::PutPixel( short x, short y )
 {
   m_dc->DrawPoint( x, y );
+  AddtoClipRegion( x, y, x, y );
 }
+
 
 PLINT wxPLDevDC::GetPixel( short x, short y )
 {
@@ -245,8 +315,7 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
   posY = args->y-(args->just*textWidth)*scaley*sin_rot+(0.5*textHeight)*scaley*cos_rot;
   PSDrawText( args->unicode_array, args->unicode_array_len, true );
 
-  if( !resizing && ownGUI ) 
-    AddtoClipRegion( this, 0, 0, width, height );        
+  AddtoClipRegion( 0, 0, width, height );        
 }
 
 #endif				/* PLD_wxwidgets */
