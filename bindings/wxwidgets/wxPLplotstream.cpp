@@ -48,10 +48,10 @@ void wxPLplotstream::InitStream()
   char drvopt[bufferSize], buffer[bufferSize];
   drvopt[0]='\0';
 #ifdef WX_TEMP_HAVE_FREETYPE_IS_ON  
-  snprintf( buffer, bufferSize, "freetype=%d,smooth=%d,",
+  sprintf( buffer, "freetype=%d,smooth=%d,",
             m_style & wxPLPLOT_FREETYPE ? 1 : 0,
             m_style & wxPLPLOT_SMOOTHTEXT ? 1 : 0 );
-  strncat( drvopt, buffer, bufferSize-strlen(drvopt) );
+  strcat( drvopt, buffer );
 #endif  
   
   int backend;
@@ -67,7 +67,7 @@ void wxPLplotstream::InitStream()
     backend=0;
     break;
   }
-  snprintf( buffer, bufferSize, "backend=%d", backend );
+  sprintf( buffer, "backend=%d", backend );
   strncat( drvopt, buffer, bufferSize-strlen(drvopt) );
 
   SetOpt( "-drvopt", drvopt );
