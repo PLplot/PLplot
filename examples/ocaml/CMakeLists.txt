@@ -24,10 +24,12 @@ set(ocaml_STRING_INDICES
   )
 
 set(ocaml_SRCS)
+set(ocaml_EXTRA_CLEAN_FILES)
 foreach(STRING_INDEX ${ocaml_STRING_INDICES})
   set(TARGET_NAME x${STRING_INDEX})
   set(SOURCE_FILE x${STRING_INDEX}.ml)
   set(ocaml_SRCS ${ocaml_SRCS} ${SOURCE_FILE})
+  set(ocaml_EXTRA_CLEAN_FILES ${ocaml_EXTRA_CLEAN_FILES} x${STRING_INDEX}.cmo x${STRING_INDEX}.cmi)
   if(BUILD_TEST)
     # Copy source code to build tree since ocamlc is a bit broken and will 
     # otherwise litter the source tree with intermediate files
@@ -39,7 +41,7 @@ foreach(STRING_INDEX ${ocaml_STRING_INDICES})
       )
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}
-      COMMAND ${OCAMLC} -I ${CMAKE_BINARY_DIR}/bindings/ocaml/${OCAML_BUILD_DIR} -ccopt "-L ${CMAKE_BINARY_DIR}/src" plplot.cma -o ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
+      COMMAND ${OCAMLC} -I ${CMAKE_BINARY_DIR}/bindings/ocaml/${OCAML_BUILD_DIR} -ccopt "-L ${CMAKE_BINARY_DIR}/src" plplot.cma -o ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
       DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
@@ -54,6 +56,8 @@ configure_file(
 ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
 ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 )
+
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ocaml_EXTRA_CLEAN_FILES}")
 
 install(FILES ${ocaml_SRCS}
   DESTINATION ${DATA_DIR}/examples/ocaml

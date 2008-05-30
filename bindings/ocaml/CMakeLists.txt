@@ -100,4 +100,11 @@ if(ENABLE_ocaml)
     DESTINATION ${OCAML_INSTALL_DIR}/stublibs
     )
 
+  # This does not work as the clean rule will not remove directories which
+  # are not empty
+  set_directory_properties(PROPERTIES 
+    ADDITIONAL_MAKE_CLEAN_FILES 
+    ${OCAML_BUILD_DIR}
+  )
+
 endif(ENABLE_ocaml)
