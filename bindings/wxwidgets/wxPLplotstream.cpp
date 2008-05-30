@@ -39,20 +39,20 @@ wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style ) :
 
 void wxPLplotstream::InitStream()
 {
+  const size_t bufferSize=256;
+
   sdev( "wxwidgets" );
   spage( 0.0, 0.0, m_width, m_height, 0, 0 );
 
   // use freetype, antialized canvas?
-  char drvopt[64], buffer[64];
+  char drvopt[bufferSize], buffer[bufferSize];
   drvopt[0]='\0';
 #ifdef WX_TEMP_HAVE_FREETYPE_IS_ON  
-  snprintf( buffer, 64, "text=%d,smooth=%d",
+  snprintf( buffer, bufferSize, "freetype=%d,smooth=%d,",
             m_style & wxPLPLOT_FREETYPE ? 1 : 0,
             m_style & wxPLPLOT_SMOOTHTEXT ? 1 : 0 );
-  strncat( drvopt, buffer, 64-strlen(drvopt) );
+  strncat( drvopt, buffer, bufferSize-strlen(drvopt) );
 #endif  
-  if( drvopt[0] != '\0' )
-    strncat( drvopt, ",", 64-strlen(drvopt) );
   
   int backend;
   switch( m_style )
@@ -67,11 +67,10 @@ void wxPLplotstream::InitStream()
     backend=0;
     break;
   }
-  snprintf( buffer, 64, "backend=%d", backend );
-  strncat( drvopt, buffer, 64-strlen(drvopt) );
+  snprintf( buffer, bufferSize, "backend=%d", backend );
+  strncat( drvopt, buffer, bufferSize-strlen(drvopt) );
 
-  if( drvopt[0] != '\0' )
-	  SetOpt( "-drvopt", drvopt );
+  SetOpt( "-drvopt", drvopt );
   
   init();
 }

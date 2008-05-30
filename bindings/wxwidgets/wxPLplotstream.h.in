@@ -29,7 +29,7 @@ class wxImage;
 class wxDC;
   
 // we define some macros, where the *name* of these depend on
-// if freetype and agg are available - in the code we have checks
+// if freetype is available - in the code we have checks
 // for the WX_TEMP_...._IS_ON macros (otherwise WX_TEMP_...._IS_OFF
 // is defined)
 #define WX_TEMP_HAVE_FREETYPE_IS_@HAVE_FREETYPE@
