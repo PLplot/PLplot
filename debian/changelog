@@ -1,3 +1,11 @@
+plplot (5.9.0-8) unreleased; urgency=low
+
+  * debian/rules:
+    + Fix use of findstring in debian/rules which prevented java
+      building on i386 (closes: #483826)
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Sun, 01 Jun 2008 22:10:34 +0100
+
 plplot (5.9.0-7) unstable; urgency=low
 
   * debian/control.in, debian/rules:
