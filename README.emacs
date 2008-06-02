@@ -23,7 +23,7 @@ with cmake. If not, then the following cookbook should work.
 ; Enable CMake mode |
 ;--------------------
 (setq load-path (cons (expand-file-name "~/lib/site-lisp") load-path))
-(require 'cmake-mode)
+(autoload 'cmake-mode "CMAKE" "Major mode for editing CMake listfiles")
 (setq auto-mode-alist
       (append '(("CMakeLists\\.txt\\'" . cmake-mode)
                 ("\\.cmake\\'" . cmake-mode))
@@ -35,7 +35,8 @@ with cmake. If not, then the following cookbook should work.
   installed cmake-mode.el
 
 4) Check the file works by loading one of the plplot cmake files into
-   emacs. 
+   emacs. You should see CMAKE at the bottom of the screen as the major 
+   mode.
 
 5) For my version of emacs this does not autoload all the helper 
    functions. Typing "M-x load-library cmake-mode" should fix this.
