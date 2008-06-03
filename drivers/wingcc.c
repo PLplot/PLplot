@@ -660,7 +660,12 @@ plD_line_wingcc(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
   points[1].y=dev->height - (y2a/dev->scale);
 
   dev->oldobject = SelectObject (dev->hdc, dev->pen);
-  Polyline(dev->hdc, points,2);
+
+  if ( points[0].x != points[1].x || points[0].y != points[1].y ) {
+      Polyline(dev->hdc, points,2);
+  } else {
+      SetPixel(dev->hdc, points[0].x, points[0].y, dev->colour);
+  }
   SelectObject (dev->hdc, dev->oldobject);
 
 }
@@ -1122,7 +1127,7 @@ static void plD_pixelV_wingcc (PLStream *pls, short x, short y)
 /*----------------------------------------------------------------------*\
  *  void plD_set_pixelV_wingcc (PLStream *pls, short x, short y,PLINT colour)
  *
- *  callback function, of type "plD_set_pixel_fp", which specifies how a 
+ *  callback function, of type "plD_set_pixel_fp", which specifies how a
  *  single pixel is set in the s[ecified colour. This colour
  *  by-passes plplot's internal table, and directly 'hits the hardware'.
 \*----------------------------------------------------------------------*/
