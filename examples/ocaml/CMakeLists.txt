@@ -1,6 +1,8 @@
 # examples/ocaml/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
-###
+#
+# -*- cmake-mode -*-
+#
 # Copyright (C) 2008 Andrew Ross
 #
 # This file is part of PLplot.
@@ -26,7 +28,7 @@ set(ocaml_STRING_INDICES
 set(ocaml_SRCS)
 set(ocaml_EXTRA_CLEAN_FILES)
 foreach(STRING_INDEX ${ocaml_STRING_INDICES})
-  set(TARGET_NAME x${STRING_INDEX})
+  set(TARGET_NAME x${STRING_INDEX}ocaml)
   set(SOURCE_FILE x${STRING_INDEX}.ml)
   set(ocaml_SRCS ${ocaml_SRCS} ${SOURCE_FILE})
   set(ocaml_EXTRA_CLEAN_FILES ${ocaml_EXTRA_CLEAN_FILES} x${STRING_INDEX}.cmo x${STRING_INDEX}.cmi)
