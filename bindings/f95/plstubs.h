@@ -52,7 +52,7 @@
 #define STUB_L		2
 #define STUB_U		3
 #define STUB_FORTRAN	4
-#define STUB_WINFORTRAN	5
+#define STUB_STDCALL	5
 
 #ifndef STUB_LINKAGE
 
@@ -91,10 +91,16 @@
 #endif
 
 #ifdef WIN32				/* MS-DOS based */
-#define STUB_LINKAGE STUB_WINFORTRAN
+#ifdef IVF                              /* Intel Visual Fortran */
+#define STUB_LINKAGE STUB_U
+#elif defined(CVF)
+#define STUB_LINKAGE_STUB_U
+#elif defined(_MSC_VER)
+#define STUB_LINKAGE STUB_STDCALL
+#else
+#define STUB_LINKAGE STUB_STDCALL
 #endif
-
-#ifdef MSDOS				/* MS-DOS based */
+#elif defined(MSDOS)
 #define STUB_LINKAGE STUB_FORTRAN
 #endif
 
@@ -119,7 +125,7 @@
 #elif STUB_LINKAGE == STUB_U
 #define FNAME(x,y)	x
 
-#elif STUB_LINKAGE == STUB_WINFORTRAN
+#elif STUB_LINKAGE == STUB_STDCALL
 #define FNAME(x,y)	PLDLLIMPEXP __stdcall x
 
 #elif STUB_LINKAGE == STUB_FORTRAN
@@ -225,7 +231,7 @@
 #define    PLOT3D	FNAME(PLOT3DF77,plot3df77)
 #define    PLOT3DC	FNAME(PLOT3DCF77,plot3dcf77)
 
-#if STUB_LINKAGE == STUB_WINFORTRAN || STUB_LINKAGE == STUB_FORTRAN
+#if STUB_LINKAGE == STUB_STDCALL || STUB_LINKAGE == STUB_FORTRAN
 #define    CALL_PLOT3DC PLOT3DCF77
 #else
 #define    CALL_PLOT3DC PLOT3DC
