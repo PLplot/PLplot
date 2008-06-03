@@ -38,8 +38,9 @@ with cmake. If not, then the following cookbook should work.
    emacs. You should see CMAKE at the bottom of the screen as the major 
    mode.
 
-5) For my version of emacs this does not autoload all the helper 
-   functions. Typing "M-x load-library cmake-mode" should fix this.
+5) For my version of emacs this does not autoload the helper function 
+   for unscreamifying the buffer (i.e. all cmake commands in lower case).
+   Typing "M-x load-library cmake-mode" should fix this.
 
    The two most useful functions are 
    "M-x unscreamify-buffer" which will put all cmake commands into 
