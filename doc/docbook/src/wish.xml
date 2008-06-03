@@ -1,36 +1,37 @@
+<!-- -*-  mode: nxml -*- -->
 <!--
     wish.xml: "Building an Extended WISH" chapter
-        
+    
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
     Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
 
-    Redistribution and use in source (XML DocBook) and "compiled" forms
-    (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
-    modification, are permitted provided that the following conditions are
-    met:
+Redistribution and use in source (XML DocBook) and "compiled" forms
+(HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
+modification, are permitted provided that the following conditions are
+met:
 
-       1. Redistributions of source code (XML DocBook) must retain the
-          above copyright notice, this list of conditions and the following
-          disclaimer as the first lines of this file unmodified.
+1. Redistributions of source code (XML DocBook) must retain the
+above copyright notice, this list of conditions and the following
+disclaimer as the first lines of this file unmodified.
 
-       2. Redistributions in compiled form (transformed to other DTDs,
-          converted to HTML, PDF, PostScript, and other formats) must
-          reproduce the above copyright notice, this list of conditions and
-          the following disclaimer in the documentation and/or other
-          materials provided with the distribution.
+2. Redistributions in compiled form (transformed to other DTDs,
+converted to HTML, PDF, PostScript, and other formats) must
+reproduce the above copyright notice, this list of conditions and
+the following disclaimer in the documentation and/or other
+materials provided with the distribution.
 
-    Important: THIS DOCUMENTATION IS PROVIDED BY THE PLPLOT PROJECT "AS IS"
-    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-    THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-    PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PLPLOT PROJECT BE LIABLE
-    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-    BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
-    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Important: THIS DOCUMENTATION IS PROVIDED BY THE PLPLOT PROJECT "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PLPLOT PROJECT BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
 <chapter id="extended-wish">
@@ -153,7 +154,7 @@
       <para>
 	The other major anonymous <command>ftp</command> site for Tcl is
 	<ulink
-	url="ftp://harbor.ecn.purdue.edu/pub/tcl"><filename>harbor.ecn.purdue.edu:/pub/tcl</filename></ulink>.
+	    url="ftp://harbor.ecn.purdue.edu/pub/tcl"><filename>harbor.ecn.purdue.edu:/pub/tcl</filename></ulink>.
 	Harbor contains a mirror of <literal>sprite</literal> as well as
 	innumerable extensions, Tcl/Tk packages, tutorials, documentation,
 	etc.  The level of excitement in the Tcl community is
@@ -170,9 +171,9 @@
       </para>
 
       <para> In any event, in order to use the Tk driver in PLplot, you will
-	need Tcl-8.2 and Tk-8.2 (or higher versions). Additionally, in order
-	to use the extended WISH paradigm (described below) you will need
-	iTcl-3.1 (or a higher version).
+      need Tcl-8.2 and Tk-8.2 (or higher versions). Additionally, in order
+      to use the extended WISH paradigm (described below) you will need
+      iTcl-3.1 (or a higher version).
       </para>
 
       <para>
@@ -216,11 +217,11 @@
     
     <para>
       <programlisting>
-#!/usr/local/bin/wish -f
+	#!/usr/local/bin/wish -f
 
-button .hello -text "Hello World!"  -command "destroy ."
-pack .hello<!--
-      --></programlisting>
+	button .hello -text "Hello World!"  -command "destroy ."
+	pack .hello<!--
+	--></programlisting>
     </para>
     
     <para>
@@ -289,15 +290,15 @@ pack .hello<!--
     <para>
       This is exactly the sort of thing object orientation is intended to
       assist.  Using Itcl you can create an <literal>itcl_class
-	FileSelector</literal> and then you can instantiate them freely as
+      FileSelector</literal> and then you can instantiate them freely as
       easily as:
     </para>
     
     <para>
       <programlisting>
-    FileSelector .fs1
-    .fs1 -dir . -find "*.cc"<!--
-      --></programlisting>
+	FileSelector .fs1
+	.fs1 -dir . -find "*.cc"<!--
+	--></programlisting>
     </para>
 
     <para>
@@ -361,9 +362,9 @@ pack .hello<!--
 
     <para>
       <programlisting>
-PLWin .plw
-pack .plw<!--
-      --></programlisting>
+	PLWin .plw
+	pack .plw<!--
+	--></programlisting>
     </para>
 
     <para>
@@ -428,70 +429,70 @@ pack .plw<!--
       
       <para>
 	<programlisting>
-#include "tk.h"
-#include "itcl.h"
+	  #include "tk.h"
+	  #include "itcl.h"
 
-/* ... */
+	  /* ... */
 
-int   myplotCmd        (ClientData, Tcl_Interp *, int, char **);
+	  int   myplotCmd        (ClientData, Tcl_Interp *, int, char **);
 
-int
-Tcl_AppInit(interp)
-    Tcl_Interp *interp;		/* Interpreter for application. */
-{
-int   plFrameCmd        (ClientData, Tcl_Interp *, int, char **);
+	  int
+	  Tcl_AppInit(interp)
+	  Tcl_Interp *interp;		/* Interpreter for application. */
+	  {
+	  int   plFrameCmd        (ClientData, Tcl_Interp *, int, char **);
 
-    Tk_Window main;
+	  Tk_Window main;
 
-    main = Tk_MainWindow(interp);
+	  main = Tk_MainWindow(interp);
 
-    /*
-     * Call the init procedures for included packages.  Each call should
-     * look like this:
-     *
-     * if (Mod_Init(interp) == TCL_ERROR) {
-     *     return TCL_ERROR;
-     * }
-     *
-     * where "Mod" is the name of the module.
-     */
+	  /*
+	  * Call the init procedures for included packages.  Each call should
+	  * look like this:
+	  *
+	  * if (Mod_Init(interp) == TCL_ERROR) {
+	  *     return TCL_ERROR;
+	  * }
+	  *
+	  * where "Mod" is the name of the module.
+	  */
 
-    if (Tcl_Init(interp) == TCL_ERROR) {
-        return TCL_ERROR;
-    }
-    if (Tk_Init(interp) == TCL_ERROR) {
-        return TCL_ERROR;
-    }
-    if (Itcl_Init(interp) == TCL_ERROR) {
-        return TCL_ERROR;
-    }
-    if (Pltk_Init(interp) == TCL_ERROR) {
-        return TCL_ERROR;
-    }
+	  if (Tcl_Init(interp) == TCL_ERROR) {
+	  return TCL_ERROR;
+	  }
+	  if (Tk_Init(interp) == TCL_ERROR) {
+	  return TCL_ERROR;
+	  }
+	  if (Itcl_Init(interp) == TCL_ERROR) {
+	  return TCL_ERROR;
+	  }
+	  if (Pltk_Init(interp) == TCL_ERROR) {
+	  return TCL_ERROR;
+	  }
 
-    /*
-     * Call Tcl_CreateCommand for application-specific commands, if
-     * they weren't already created by the init procedures called above.
-     */
+	  /*
+	  * Call Tcl_CreateCommand for application-specific commands, if
+	  * they weren't already created by the init procedures called above.
+	  */
 
-    Tcl_CreateCommand(interp, "myplot", myplotCmd,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
+	  Tcl_CreateCommand(interp, "myplot", myplotCmd,
+	  (ClientData) main, (void (*)(ClientData)) NULL);
 
 
-    /*
-     * Specify a user-specific startup file to invoke if the
-     * application is run interactively.  Typically the startup
-     * file is "~/.apprc" where "app" is the name of the application.
-     * If this line is deleted then no user-specific startup file
-     * will be run under any conditions.
-     */
+	  /*
+	  * Specify a user-specific startup file to invoke if the
+	  * application is run interactively.  Typically the startup
+	  * file is "~/.apprc" where "app" is the name of the application.
+	  * If this line is deleted then no user-specific startup file
+	  * will be run under any conditions.
+	  */
 
-    tcl_RcFileName = "~/.wishrc";
-    return TCL_OK;
-}
+	  tcl_RcFileName = "~/.wishrc";
+	  return TCL_OK;
+	  }
 
-/* ... myPlotCmd, etc ... */<!--
-      --></programlisting>
+	  /* ... myPlotCmd, etc ... */<!--
+	  --></programlisting>
       </para>
       
       <para>
@@ -525,11 +526,11 @@ int   plFrameCmd        (ClientData, Tcl_Interp *, int, char **);
       
       <para>
 	<programlisting>
-cc -c tkAppInit.c
-cc -c mycommands.c
-cc -o my_wish tkAppInit.o mycommands.o 
-           -lplplotftk -ltcl -ltk -litcl -lX11 -lm<!--
-      --></programlisting>
+	  cc -c tkAppInit.c
+	  cc -c mycommands.c
+	  cc -o my_wish tkAppInit.o mycommands.o 
+	  -lplplotftk -ltcl -ltk -litcl -lX11 -lm<!--
+	  --></programlisting>
       </para>
 
       <para>      
@@ -568,20 +569,3 @@ cc -o my_wish tkAppInit.o mycommands.o
     </sect2>
   </sect1>
 </chapter>
-
-<!-- Keep this comment at the end of the file
-Local variables:
-mode: sgml
-sgml-omittag:t
-sgml-shorttag:t
-sgml-minimize-attributes:nil
-sgml-always-quote-attributes:t
-sgml-indent-step:2
-sgml-indent-data:t
-sgml-parent-document:("plplotdoc.xml" "book" "chapter" "")
-sgml-default-dtd-file:nil
-sgml-exposed-tags:nil
-sgml-local-catalogs:("/usr/lib/sgml/catalog")
-sgml-local-ecat-files:nil
-End:
--->

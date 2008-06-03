@@ -1,36 +1,37 @@
+<!-- -*-  mode: nxml -*- -->
 <!--
     deploying.xml: "Deploying programs that use PLplot" chapter
 
-    Copyright (C) 2004  Arjen Markus
-    Copyright (C) 2004  Rafael Laboissiere
-    Copyright (C) 2004  Alan W. Irwin
+Copyright (C) 2004  Arjen Markus
+Copyright (C) 2004  Rafael Laboissiere
+Copyright (C) 2004  Alan W. Irwin
 
-    Redistribution and use in source (XML DocBook) and "compiled" forms
-    (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
-    modification, are permitted provided that the following conditions are
-    met:
+Redistribution and use in source (XML DocBook) and "compiled" forms
+(HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
+modification, are permitted provided that the following conditions are
+met:
 
-       1. Redistributions of source code (XML DocBook) must retain the
-          above copyright notice, this list of conditions and the following
-          disclaimer as the first lines of this file unmodified.
+1. Redistributions of source code (XML DocBook) must retain the
+above copyright notice, this list of conditions and the following
+disclaimer as the first lines of this file unmodified.
 
-       2. Redistributions in compiled form (transformed to other DTDs,
-          converted to HTML, PDF, PostScript, and other formats) must
-          reproduce the above copyright notice, this list of conditions and
-          the following disclaimer in the documentation and/or other
-          materials provided with the distribution.
+2. Redistributions in compiled form (transformed to other DTDs,
+converted to HTML, PDF, PostScript, and other formats) must
+reproduce the above copyright notice, this list of conditions and
+the following disclaimer in the documentation and/or other
+materials provided with the distribution.
 
-    Important: THIS DOCUMENTATION IS PROVIDED BY THE PLPLOT PROJECT "AS IS"
-    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-    THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-    PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PLPLOT PROJECT BE LIABLE
-    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-    BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
-    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Important: THIS DOCUMENTATION IS PROVIDED BY THE PLPLOT PROJECT "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PLPLOT PROJECT BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
 <chapter id="deploying">
@@ -61,23 +62,23 @@
     To be absolutely clear about what we are describing, here is a summary:
     <itemizedlist>
       <listitem>
-        <para>
-          Your program must run on a machine that does not have PLplot
-          installed from the sources.
-        </para>
+	<para>
+	  Your program must run on a machine that does not have PLplot
+	  installed from the sources.
+	</para>
       </listitem>
       <listitem>
-        <para>
-          There is no development environment that you can rely on.
-        </para>
+	<para>
+	  There is no development environment that you can rely on.
+	</para>
       </listitem>
       <listitem>
-        <para>
-          The program should be installed in a self-contained directory
-          structure (which <emphasis>can</emphasis> be
-          <filename>/usr/local</filename> or <filename>c:\program</filename>
-          files or whatever, but need not be so).
-        </para>
+	<para>
+	  The program should be installed in a self-contained directory
+	  structure (which <emphasis>can</emphasis> be
+	  <filename>/usr/local</filename> or <filename>c:\program</filename>
+	  files or whatever, but need not be so).
+	</para>
       </listitem>
     </itemizedlist>
   </para>
@@ -101,39 +102,39 @@
     on users' machines is as follows:
     <itemizedlist>
       <listitem>
-        <para>
+	<para>
 	  Use the <command>./configure</command> option
 	  <userinput>--prefix=/usr/local/plplot</userinput> (or some other
 	  unique but consistent directory that is available on the build
 	  machine and all users' machines).
-        </para>
+	</para>
       </listitem>
       <listitem>
-        <para>
+	<para>
 	  Build and install as normal on the build machine.
-        </para>
+	</para>
       </listitem>
       <listitem>
-        <para>
+	<para>
 	  Copy the installed PLplot tree,
 	  <filename>/usr/local/plplot</filename>, into a tarball.
-        </para>
+	</para>
       </listitem>
       <listitem>
-        <para>
+	<para>
 	  Unpack that tarball on all users' machines in the same location
 	  <filename>/usr/local/plplot</filename>.
-        </para>
+	</para>
       </listitem>
       <listitem>
-        <para>
+	<para>
 	  Build the application(s) on the build machine using the results
 	  of the <userinput>plplot-config --cflags --libs</userinput>
 	  command, and copy the resulting executable(s) to the users'
 	  machines.  Since the PLplot install location is consistent on all
 	  machines, the application should work the same way on all
 	  machines.
-        </para>
+	</para>
       </listitem>
     </itemizedlist>
   </para>
@@ -149,31 +150,31 @@
     build the PLplot libraries:
     <orderedlist>
       <listitem>
-        <para>
-          You use the static versions of the PLplot libraries and devices
+	<para>
+	  You use the static versions of the PLplot libraries and devices
 	  which are not dynamically loaded.
-          <footnote>
-            <para>
-              UNIX-like systems libraries can be static or shared, the first
-              type becoming part of the program, the second existing as a
-              separate file. On Windows the terms are respectively static
-              and dynamic (the latter type is also known as DLL).
-            </para>
-          </footnote>
-        </para>
+	  <footnote>
+	    <para>
+	      UNIX-like systems libraries can be static or shared, the first
+	      type becoming part of the program, the second existing as a
+	      separate file. On Windows the terms are respectively static
+	      and dynamic (the latter type is also known as DLL).
+	    </para>
+	  </footnote>
+	</para>
       </listitem>
       <listitem>
-        <para>
-          You use the shared versions of the PLplot libraries and devices
+	<para>
+	  You use the shared versions of the PLplot libraries and devices
 	  which are not dynamically loaded.
-        </para>
+	</para>
       </listitem>
       <listitem>
-        <para>
-          You use the shared versions of the PLplot library and devices
+	<para>
+	  You use the shared versions of the PLplot library and devices
 	  which are dynamically loaded.  This combination is the default
 	  option under Unix/Linux.
-        </para>
+	</para>
       </listitem>
     </orderedlist>
   </para>
@@ -186,25 +187,25 @@
     these files is fairly simple:
     <itemizedlist>
       <listitem>
-        <para>
-          It looks at a number of built-in places, determined at the time
-          the PLplot library itself was installed and built. For deployment
-          these places are irrelevant in general.
-        </para>
+	<para>
+	  It looks at a number of built-in places, determined at the time
+	  the PLplot library itself was installed and built. For deployment
+	  these places are irrelevant in general.
+	</para>
       </listitem>
       <listitem>
-        <para>
-          It looks at the environment variables
-          <envar>PLPLOT_LIB</envar> and <envar>PLPLOT_HOME</envar>.
-          (Actually, this happens only, if the corresponding compiler
-          macros <envar>PLPLOT_LIB_ENV</envar> and
-          <envar>PLPLOT_HOME_ENV</envar> were defined at compile time.)
-        </para>
+	<para>
+	  It looks at the environment variables
+	  <envar>PLPLOT_LIB</envar> and <envar>PLPLOT_HOME</envar>.
+	  (Actually, this happens only, if the corresponding compiler
+	  macros <envar>PLPLOT_LIB_ENV</envar> and
+	  <envar>PLPLOT_HOME_ENV</envar> were defined at compile time.)
+	</para>
       </listitem>
       <listitem>
-        <para>
-          <emphasis>(TODO: remark about Mac)</emphasis>
-        </para>
+	<para>
+	  <emphasis>(TODO: remark about Mac)</emphasis>
+	</para>
       </listitem>
     </itemizedlist>
   </para>
@@ -219,17 +220,17 @@
     font files or the one above (one variable is enough though):
     <itemizedlist>
       <listitem>
-        <para>
-          <envar>PLPLOT_LIB</envar> should point to the directory
-          actually holding these files
-        </para>
+	<para>
+	  <envar>PLPLOT_LIB</envar> should point to the directory
+	  actually holding these files
+	</para>
       </listitem>
       <listitem>
-        <para>
-          <envar>PLPLOT_HOME</envar> should point to the directory that
-          holds a subdirectory <quote><filename>lib</filename></quote>
-          which in turn holds these files.
-        </para>
+	<para>
+	  <envar>PLPLOT_HOME</envar> should point to the directory that
+	  holds a subdirectory <quote><filename>lib</filename></quote>
+	  which in turn holds these files.
+	</para>
       </listitem>
     </itemizedlist>
   </para>
@@ -252,26 +253,26 @@
     system you are working on, but here are some common platforms:
     <itemizedlist>
       <listitem>
-        <para>
-          Most UNIX, BSD and Linux systems use an environment variable
-          <envar>LD_LIBRARY_PATH</envar> which indicates 
-          directories where shared libraries can be found. Some use
-          <envar>SHLIB_PATH</envar>, like HPUX.
-        </para>
+	<para>
+	  Most UNIX, BSD and Linux systems use an environment variable
+	  <envar>LD_LIBRARY_PATH</envar> which indicates 
+	  directories where shared libraries can be found. Some use
+	  <envar>SHLIB_PATH</envar>, like HPUX.
+	</para>
       </listitem>
       <listitem>
-        <para>
-          On Windows the PATH variable is used to find the DLLs, but
-          beware: Windows uses a number of places to find the DLLs a
-          program needs and the ordering seems to depend on some intricate
-          details. It seems easiest and safest to put the DLLs in the same
-          directory as your program.
-        </para>
+	<para>
+	  On Windows the PATH variable is used to find the DLLs, but
+	  beware: Windows uses a number of places to find the DLLs a
+	  program needs and the ordering seems to depend on some intricate
+	  details. It seems easiest and safest to put the DLLs in the same
+	  directory as your program.
+	</para>
       </listitem>
       <listitem>
-        <para>
-          On MacOSX, ... <emphasis>TODO</emphasis>
-        </para>
+	<para>
+	  On MacOSX, ... <emphasis>TODO</emphasis>
+	</para>
       </listitem>
     </itemizedlist>
   </para>
@@ -308,56 +309,56 @@
     you must use inconsistent install locations on your users' machines:
     <itemizedlist>
       <listitem>
-        <para>
-          The following environment variables are important:
-          <itemizedlist>
-            <listitem>
-              <para>
-                <envar>PLPLOT_HOME</envar> or
-                <envar>PLPLOT_LIB</envar> to indicate the position of
-                font files (and also of the various geographic maps)
-              </para>
-            </listitem>
-            <listitem>
-              <para>
-                <envar>LD_LIBRARY_PATH</envar>,
-                <envar>SHLIB_PATH</envar> or <envar>PATH</envar> to
-                find the dynamic/shared libraries
-              </para>
-            </listitem>
-            <listitem>
-              <para>
-                <envar>PLPLOT_DRV_DIR</envar> to find the device
-                descriptions
-              </para>
-            </listitem>
-          </itemizedlist>
-        </para>
+	<para>
+	  The following environment variables are important:
+	  <itemizedlist>
+	    <listitem>
+	      <para>
+		<envar>PLPLOT_HOME</envar> or
+		<envar>PLPLOT_LIB</envar> to indicate the position of
+		font files (and also of the various geographic maps)
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		<envar>LD_LIBRARY_PATH</envar>,
+		<envar>SHLIB_PATH</envar> or <envar>PATH</envar> to
+		find the dynamic/shared libraries
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		<envar>PLPLOT_DRV_DIR</envar> to find the device
+		descriptions
+	      </para>
+	    </listitem>
+	  </itemizedlist>
+	</para>
       </listitem>
       <listitem>
-        <para>
-          The following files being part of PLplot must be distributed
-          along with your program:
-          <itemizedlist>
-            <listitem>
-              <para>
-                The font files (<filename>plstnd5.fnt</filename> and
-                <filename>plxtnd5.fnt</filename>) and, possibly, if you use
-                them, the geographic map files.
-              </para>
-            </listitem>
-            <listitem>
-              <para>
-                The PLplot shared libraries
-              </para>
-            </listitem>
-            <listitem>
-              <para>
-                The device description files and the device shared object files
-              </para>
-            </listitem>
-          </itemizedlist>
-        </para>
+	<para>
+	  The following files being part of PLplot must be distributed
+	  along with your program:
+	  <itemizedlist>
+	    <listitem>
+	      <para>
+		The font files (<filename>plstnd5.fnt</filename> and
+		<filename>plxtnd5.fnt</filename>) and, possibly, if you use
+		them, the geographic map files.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		The PLplot shared libraries
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		The device description files and the device shared object files
+	      </para>
+	    </listitem>
+	  </itemizedlist>
+	</para>
       </listitem>
     </itemizedlist>
   </para>

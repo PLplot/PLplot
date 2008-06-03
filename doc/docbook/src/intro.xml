@@ -1,37 +1,38 @@
+<!-- -*-  mode: nxml -*- -->
 <!--
     intro.xml: "Introduction" chapter
 
-    Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-    Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin
-    Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
-    Copyright (C) 2003  Joao Cardoso
+Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
+Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin
+Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
+Copyright (C) 2003  Joao Cardoso
 
-    Redistribution and use in source (XML DocBook) and "compiled" forms
-    (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
-    modification, are permitted provided that the following conditions are
-    met:
+Redistribution and use in source (XML DocBook) and "compiled" forms
+(HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
+modification, are permitted provided that the following conditions are
+met:
 
-       1. Redistributions of source code (XML DocBook) must retain the
-          above copyright notice, this list of conditions and the following
-          disclaimer as the first lines of this file unmodified.
+1. Redistributions of source code (XML DocBook) must retain the
+above copyright notice, this list of conditions and the following
+disclaimer as the first lines of this file unmodified.
 
-       2. Redistributions in compiled form (transformed to other DTDs,
-          converted to HTML, PDF, PostScript, and other formats) must
-          reproduce the above copyright notice, this list of conditions and
-          the following disclaimer in the documentation and/or other
-          materials provided with the distribution.
+2. Redistributions in compiled form (transformed to other DTDs,
+converted to HTML, PDF, PostScript, and other formats) must
+reproduce the above copyright notice, this list of conditions and
+the following disclaimer in the documentation and/or other
+materials provided with the distribution.
 
-    Important: THIS DOCUMENTATION IS PROVIDED BY THE PLPLOT PROJECT "AS IS"
-    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-    THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-    PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PLPLOT PROJECT BE LIABLE
-    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-    BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
-    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Important: THIS DOCUMENTATION IS PROVIDED BY THE PLPLOT PROJECT "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PLPLOT PROJECT BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
 <chapter id="intro">
@@ -39,56 +40,56 @@
   <sect1 id="plplot-plotting-library">
     <title>The PLplot Plotting Library</title>
 
-<para> PLplot is a library of C functions that are useful for making
-scientific plots from programs written in C, C++, Fortran77, Fortran95, Java, Octave, 
-Perl, Python, and Tcl/Tk. The PLplot project is being developed by a world-wide 
-team who interact via the facilities provided by SourceForge (<ulink
-url="http://sourceforge.net/projects/plplot">http://sourceforge.net/projects/plplot</ulink>)
-</para>
+    <para> PLplot is a library of C functions that are useful for making
+    scientific plots from programs written in C, C++, Fortran77, Fortran95, Java, Octave, 
+    Perl, Python, and Tcl/Tk. The PLplot project is being developed by a world-wide 
+    team who interact via the facilities provided by SourceForge (<ulink
+    url="http://sourceforge.net/projects/plplot">http://sourceforge.net/projects/plplot</ulink>)
+    </para>
 
-<para> The PLplot library can be used to create standard x-y plots, semi-log
-plots, log-log plots, contour plots, 3D plots, shade (gray-scale and color)
-plots, mesh plots, bar charts and pie charts. Multiple graphs (of the same
-or different sizes) may be placed on a single page with multiple lines in
-each graph. Different line styles, widths and colors are supported. A
-virtually infinite number of distinct area fill patterns may be used. 
-There is full unicode support in the PLplot library, and most of the
-display drivers are capable of displaying any of the millions(?) of
-characters in the unicode standard. Those driver that are not unicode
-enabled can still display almost 1000 characters in the extended character set. 
-This includes four different fonts, the Greek alphabet and a host of 
-mathematical, musical, and other symbols. A variety of output devices and 
-file formats are supported including a metafile format which can be 
-subsequently rendered to any device/file.  New devices and file formats can 
-be easily added by writing a driver routine. For example, we have recently 
-added a postscript driver with TrueType font support (PSTTF), a SVG file 
-driver and a PDF file driver. A wxWidgets interactive driver is currently 
-in development. 
-</para>
+    <para> The PLplot library can be used to create standard x-y plots, semi-log
+    plots, log-log plots, contour plots, 3D plots, shade (gray-scale and color)
+    plots, mesh plots, bar charts and pie charts. Multiple graphs (of the same
+    or different sizes) may be placed on a single page with multiple lines in
+    each graph. Different line styles, widths and colors are supported. A
+    virtually infinite number of distinct area fill patterns may be used. 
+    There is full unicode support in the PLplot library, and most of the
+    display drivers are capable of displaying any of the millions(?) of
+    characters in the unicode standard. Those driver that are not unicode
+    enabled can still display almost 1000 characters in the extended character set. 
+    This includes four different fonts, the Greek alphabet and a host of 
+    mathematical, musical, and other symbols. A variety of output devices and 
+    file formats are supported including a metafile format which can be 
+    subsequently rendered to any device/file.  New devices and file formats can 
+    be easily added by writing a driver routine. For example, we have recently 
+    added a postscript driver with TrueType font support (PSTTF), a SVG file 
+    driver and a PDF file driver. A wxWidgets interactive driver is currently 
+    in development. 
+    </para>
 
     <para>
       PLplot was originally developed by Sze Tan of the University of
       Auckland in Fortran-77.  Many of the underlying concepts used in the
       PLplot package are based on ideas used in Tim Pearson's PGPLOT
       package.  Sze Tan writes:
-    <blockquote>
-      <para>
-	I'm rather amazed how far PLPLOT has traveled given its origins
-	etc. I first used PGPLOT on the Starlink VAX computers while I was
-	a graduate student at the Mullard Radio Astronomy Observatory in
-	Cambridge from 1983-1987. At the beginning of 1986, I was to give a
-	seminar within the department at which I wanted to have a computer
-	graphics demonstration on an IBM PC which was connected to a
-	completely non-standard graphics card. Having about a week to do
-	this and not having any drivers for the card, I started from the
-	back end and designed PLPLOT to be such that one only needed to be
-	able to draw a line or a dot on the screen in order to do arbitrary
-	graphics.  The application programmer's interface was made as
-	similar as possible to PGPLOT so that I could easily port my
-	programs from the VAX to the PC.  The kernel of PLPLOT was modeled
-	on PGPLOT but the code is not derived from it.
-      </para>
-    </blockquote>
+      <blockquote>
+	<para>
+	  I'm rather amazed how far PLPLOT has traveled given its origins
+	  etc. I first used PGPLOT on the Starlink VAX computers while I was
+	  a graduate student at the Mullard Radio Astronomy Observatory in
+	  Cambridge from 1983-1987. At the beginning of 1986, I was to give a
+	  seminar within the department at which I wanted to have a computer
+	  graphics demonstration on an IBM PC which was connected to a
+	  completely non-standard graphics card. Having about a week to do
+	  this and not having any drivers for the card, I started from the
+	  back end and designed PLPLOT to be such that one only needed to be
+	  able to draw a line or a dot on the screen in order to do arbitrary
+	  graphics.  The application programmer's interface was made as
+	  similar as possible to PGPLOT so that I could easily port my
+	  programs from the VAX to the PC.  The kernel of PLPLOT was modeled
+	  on PGPLOT but the code is not derived from it.
+	</para>
+      </blockquote>
     </para>
 
     <para>
@@ -264,19 +265,19 @@ in development.
       The PLplot package may be distributed under the following terms:
     </para>
     <programlisting>
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+      This library is free software; you can redistribute it and/or
+      modify it under the terms of the GNU Library General Public
+      License as published by the Free Software Foundation; either
+      version 2 of the License, or (at your option) any later version.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+      This library is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+      Library General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+      You should have received a copy of the GNU Library General Public
+      License along with this library; if not, write to the Free
+      Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
     </programlisting>
     <para>
       The text of this license is given in the file COPYING.LIB in the
@@ -302,29 +303,29 @@ in development.
 	copyright is reproduced here:
       </para>
       <programlisting>
-******************************************************************************
-Copyright 1987, 1988 by Digital Equipment Corporation, Maynard,
-Massachusetts, and the Massachusetts Institute of Technology, Cambridge,
-Massachusetts.
+	******************************************************************************
+	Copyright 1987, 1988 by Digital Equipment Corporation, Maynard,
+	Massachusetts, and the Massachusetts Institute of Technology, Cambridge,
+	Massachusetts.
 
-                        All Rights Reserved
+	All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its
-documentation for any purpose and without fee is hereby granted,
-provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in
-supporting documentation, and that the names of Digital or MIT not be
-used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.
+	Permission to use, copy, modify, and distribute this software and its
+	documentation for any purpose and without fee is hereby granted,
+	provided that the above copyright notice appear in all copies and that
+	both that copyright notice and this permission notice appear in
+	supporting documentation, and that the names of Digital or MIT not be
+	used in advertising or publicity pertaining to distribution of the
+	software without specific, written prior permission.
 
-DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
-ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
-DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
-ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
-WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
-ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
-SOFTWARE.
-******************************************************************************
+	DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+	ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
+	DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
+	ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+	WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+	ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+	SOFTWARE.
+	******************************************************************************
       </programlisting>
       <para>
 	Any file that is explicitly marked as "public domain" is free
@@ -412,21 +413,3 @@ SOFTWARE.
     </para>
   </sect1>
 </chapter>
-
-<!-- Keep this comment at the end of the file
-Local variables:
-mode: sgml
-sgml-omittag:t
-sgml-shorttag:t
-sgml-minimize-attributes:nil
-sgml-always-quote-attributes:t
-sgml-indent-step:2
-sgml-indent-data:t
-sgml-parent-document: ("plplotdoc.xml" "book" "chapter" "")
-sgml-default-dtd-file:nil
-sgml-exposed-tags:nil
-sgml-local-catalogs:("/usr/lib/sgml/catalog")
-sgml-local-ecat-files:nil
-sgml-declaration:nil
-End:
--->
