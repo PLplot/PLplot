@@ -1,7 +1,7 @@
+# -*- mode: cmake -*-
 # examples/ocaml/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 #
-# -*- cmake-mode -*-
 #
 # Copyright (C) 2008 Andrew Ross
 #
