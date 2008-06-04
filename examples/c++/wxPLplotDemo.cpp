@@ -155,7 +155,8 @@ MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 	// add the wxPLplot
 	wxPanel* panel = new wxPanel( this );
 	wxBoxSizer* box = new wxBoxSizer( wxVERTICAL );
-	plotwindow = new wxPLplotwindow( panel, -1, wxDefaultPosition, wxDefaultSize, 0, wxPLPLOT_BACKEND_GC );
+	plotwindow = new wxPLplotwindow( panel, -1, wxDefaultPosition, wxDefaultSize, 0,
+                                   wxPLPLOT_BACKEND_GC | wxPLPLOT_DRAW_TEXT );
 
 	box->Add( plotwindow, 1, wxALL | wxEXPAND, 0 );
   panel->SetSizer( box );
