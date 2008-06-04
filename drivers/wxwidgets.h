@@ -60,7 +60,7 @@ extern "C"
 #define VSCALE (32.)
 
 /* pixels per mm */
-#define DEVICE_PIXELS_PER_MM (3.4)
+#define DEVICE_PIXELS_PER_MM (3.14961)
 #define VIRTUAL_PIXELS_PER_MM (DEVICE_PIXELS_PER_MM*VSCALE)
 
 /* mm per inch */
@@ -75,8 +75,8 @@ extern "C"
 #define CANVAS_HEIGHT (7.5)
 
 /* size of plot in pixels on screen if not given */
-#define PLOT_WIDTH 800
-#define PLOT_HEIGHT 600
+#define PLOT_WIDTH (800)
+#define PLOT_HEIGHT (600)
 
 /* These need to be distinguished since the handling is slightly different. */
 #define LOCATE_INVOKED_VIA_API		1
@@ -437,7 +437,7 @@ void plD_erroraborthandler_wxwidgets( char *errormessage );
 \*----------------------------------------------------------------------*/
 
 /* define if you want debug output */
-/* #define _DEBUG //*/
+// #define _DEBUG //*/
 /* #define _DEBUG_VERBOSE //*/
 void Log_Verbose( const char *fmt, ... );
 void Log_Debug( const char *fmt, ... );

@@ -330,7 +330,7 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
   }
   
   /* Calculate the font size (in pixels) */
-  fontSize = pls->chrht * DEVICE_PIXELS_PER_MM * 1.2;
+  fontSize = pls->chrht * VIRTUAL_PIXELS_PER_MM/scaley * 1.3;
 
   /* text color */
   textRed=pls->cmap0[pls->icol0].r;

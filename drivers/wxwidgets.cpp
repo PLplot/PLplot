@@ -295,19 +295,21 @@ plD_init_wxwidgets( PLStream *pls )
   wxPLDevBase* dev;
 
   /* default options */
-  static int freetype=0;
-  static int smooth_text=1;
-  static int backend=0;
-  static int text=1;
+  static PLINT freetype=0;
+  static PLINT smooth_text=1;
+  static PLINT backend=0;
+  static PLINT text=1;
+  static PLINT hrshsym = 0;
   
 DrvOpt wx_options[] = {
 #ifdef HAVE_FREETYPE
-        {"freetype", DRV_INT, &freetype, "Use FreeType library"},
-        {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
+  {"freetype", DRV_INT, &freetype, "Use FreeType library"},
+  {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
 #endif
-        {"backend", DRV_INT, &backend, "Choose backend: (0) standard, (1) using AGG library, (2) using wxGraphicsContext"},
-        {"text", DRV_INT, &text, "Use own text routines (text=0|1)"},
-        {NULL, DRV_INT, NULL, NULL}};
+  {"hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)"},
+  {"backend", DRV_INT, &backend, "Choose backend: (0) standard, (1) using AGG library, (2) using wxGraphicsContext"},
+  {"text", DRV_INT, &text, "Use own text routines (text=0|1)"},
+  {NULL, DRV_INT, NULL, NULL}};
 
   /* Check for and set up driver options */
   plParseDrvOpts( wx_options );
@@ -336,12 +338,6 @@ DrvOpt wx_options[] = {
   }
   pls->dev = (void*)dev;
 
-#ifdef HAVE_FREETYPE
-	dev->smooth_text=smooth_text;
-	dev->freetype=freetype;
-#endif
-
-
 /* be verbose and write out debug messages */
 #ifdef _DEBUG
   pls->verbose = 1;
@@ -363,12 +359,21 @@ DrvOpt wx_options[] = {
   if( text ) {
     pls->dev_text = 1; /* want to draw text */
     pls->dev_unicode = 1; /* want unicode */
+    if( hrshsym )
+      pls->dev_hrshsym = 1;    
   }
   
 #ifdef HAVE_FREETYPE
+  if( !text) {
+    dev->smooth_text=smooth_text;
+    dev->freetype=freetype;
+  }
+
   if( dev->freetype ) {
     pls->dev_text = 1; /* want to draw text */
     pls->dev_unicode = 1; /* want unicode */
+    if( hrshsym )
+      pls->dev_hrshsym = 1;    
 
     init_freetype_lv1( pls );
     FT_Data* FT=(FT_Data *)pls->FT;
