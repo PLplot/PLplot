@@ -44,14 +44,17 @@ public:
 	wxPLplotstream* GetStream()  { return m_stream; }  //!< Get pointer to wxPLplotstream of this widget.
 	
 protected:
-  virtual void OnPaint( wxPaintEvent& event );   //!< Paint event.
-	virtual void OnErase( wxEraseEvent &WXUNUSED(event) );   //!< Erase event.
+  virtual void OnPaint( wxPaintEvent& event );           //!< Paint event
+	virtual void OnErase( wxEraseEvent &WXUNUSED(event) ); //!< Erase event
+  virtual void OnSize( wxSizeEvent & WXUNUSED(event) );  //!< Size event
 
 private:
   // variables regarding double buffering
   wxMemoryDC* MemPlotDC;      //!< Pointer to wxMemoryDC, used for double buffering
-  int MemPlotDC_width;        //!< Saved width of MemoryDC, to find out if size changed.
-  int MemPlotDC_height;       //!< Saved height of MemoryDC, to find out if size changed.
+  int m_width;                //!< Saved width of plot, to find out if size changed.
+  int m_height;               //!< Saved height of plot, to find out if size changed.
+  int bitmapWidth;                //!< Width of bitmap, only changed if plot gets bigger
+  int bitmapHeight;               //!< Height of bitmap, only changed if plot gets bigger
   wxBitmap* MemPlotDCBitmap;  //!< Pointer to bitmap, used for double buffering.
 
 protected:

@@ -50,24 +50,22 @@ void wxPLplotstream::InitStream()
 #ifdef WX_TEMP_HAVE_FREETYPE_IS_ON  
   sprintf( buffer, "freetype=%d,smooth=%d,",
             m_style & wxPLPLOT_FREETYPE ? 1 : 0,
-            m_style & wxPLPLOT_SMOOTHTEXT ? 1 : 0 );
+            m_style & wxPLPLOT_SMOOTH_TEXT ? 1 : 0 );
   strcat( drvopt, buffer );
 #endif  
   
   int backend;
-  switch( m_style )
-  {
-  case wxPLPLOT_BACKEND_GC:
+  if( m_style & wxPLPLOT_BACKEND_GC )
     backend=2;
-    break;
-  case wxPLPLOT_BACKEND_AGG:
+  else if ( m_style & wxPLPLOT_BACKEND_AGG )
     backend=1;
-    break;
-  default:
+  else
     backend=0;
-    break;
-  }
-  sprintf( buffer, "backend=%d", backend );
+    
+  sprintf( buffer, "hrshsym=%d,text=%d,backend=%d",
+           m_style & wxPLPLOT_USE_HERSHEY_SYMBOLS ? 1 : 0,
+           m_style & wxPLPLOT_DRAW_TEXT ? 1 : 0,
+           backend );
   strncat( drvopt, buffer, bufferSize-strlen(drvopt) );
 
   SetOpt( "-drvopt", drvopt );

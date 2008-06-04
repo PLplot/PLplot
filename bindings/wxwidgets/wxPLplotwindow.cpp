@@ -23,9 +23,10 @@
 #include "wxPLplotwindow.h"
 #include "wxPLplotstream.h"
 #include "wx/window.h"
-
+//#include "wx/log.h"
 
 BEGIN_EVENT_TABLE( wxPLplotwindow, wxWindow )
+  EVT_SIZE( wxPLplotwindow::OnSize )
   EVT_PAINT( wxPLplotwindow::OnPaint )
 	EVT_ERASE_BACKGROUND( wxPLplotwindow::OnErase )
 END_EVENT_TABLE()
@@ -41,17 +42,19 @@ wxPLplotwindow::wxPLplotwindow( wxWindow* parent, wxWindowID id, const wxPoint& 
   // set size to (640,400)
 	MemPlotDC = new wxMemoryDC;
   if( size.GetWidth()<0 || size.GetHeight()<0 ) {
-    MemPlotDC_width = 640;
-    MemPlotDC_height = 400;  
+    m_width = 640;
+    m_height = 400;  
   } else {    
-    MemPlotDC_width = size.GetWidth();
-    MemPlotDC_height = size.GetHeight();  
+    m_width = size.GetWidth();
+    m_height = size.GetHeight();  
   }
+  bitmapWidth=m_width;
+  bitmapHeight=m_height;
     
-  MemPlotDCBitmap = new wxBitmap( MemPlotDC_width, MemPlotDC_height, -1 );
+  MemPlotDCBitmap = new wxBitmap( bitmapWidth, bitmapHeight, -1 );
   MemPlotDC->SelectObject( *MemPlotDCBitmap );
 
-	m_stream = new wxPLplotstream( (wxDC*)MemPlotDC, MemPlotDC_width, MemPlotDC_height, pl_style );
+	m_stream = new wxPLplotstream( (wxDC*)MemPlotDC, m_width, m_height, pl_style );
 
 	// tell wxWidgets to leave the background painting to this control
 	SetBackgroundStyle( wxBG_STYLE_CUSTOM );
@@ -81,31 +84,38 @@ wxPLplotwindow::~wxPLplotwindow( void )
  */
 void wxPLplotwindow::OnPaint( wxPaintEvent &WXUNUSED(event) )
 {
+  wxPaintDC dc( this );
+  dc.Blit( 0, 0, m_width, m_height, MemPlotDC, 0, 0 );
+}
+
+
+void wxPLplotwindow::OnSize( wxSizeEvent & WXUNUSED(event) )
+{
   int width, height;
-  GetSize( &width, &height );
+  GetClientSize( &width, &height );
 
-	// Check if we window was resized (or dc is invalid)
-//	if( (m_stream == NULL) || (MemPlotDC_width!=width) || (MemPlotDC_height!=height) )
-	if( (MemPlotDC_width!=width) || (MemPlotDC_height!=height) )
-	{
-    MemPlotDC->SelectObject( wxNullBitmap );
+	// Check if we window was resized
+	if( (m_width!=width) || (m_height!=height) ) {
+    if( (width>bitmapWidth) || (height>bitmapHeight) ) {
+      bitmapWidth = bitmapWidth > width ? bitmapWidth : width;
+      bitmapHeight = bitmapHeight > height ? bitmapHeight : height;
 
-    if( MemPlotDCBitmap )
-      delete MemPlotDCBitmap;
-    MemPlotDCBitmap = new wxBitmap( width, height, -1 );
-    MemPlotDC->SelectObject( *MemPlotDCBitmap );
+      MemPlotDC->SelectObject( wxNullBitmap );
+      if( MemPlotDCBitmap )
+        delete MemPlotDCBitmap;
+      MemPlotDCBitmap = new wxBitmap( bitmapWidth, bitmapHeight, -1 );
+      MemPlotDC->SelectObject( *MemPlotDCBitmap );
+    }
 
 		m_stream->SetSize( width, height );
 		m_stream->RenewPlot();
 
-    MemPlotDC_width = width;
-    MemPlotDC_height = height;
+    m_width = width;
+    m_height = height;
 	} else
     m_stream->Update();
 
-  wxPaintDC dc( this );
-	//dc.SetClippingRegion( GetUpdateRegion() );
-  dc.Blit( 0, 0, width, height, MemPlotDC, 0, 0 );
+  Refresh( false );
 }
 
 
@@ -123,7 +133,7 @@ void wxPLplotwindow::RenewPlot( void )
 {
 	if( m_stream ) {
 		m_stream->RenewPlot();
-		Refresh( false );  // TODO: true ??
+		Refresh( false );
 	}
 }
 
