@@ -181,10 +181,11 @@ void wxPLDevGC::CreateCanvas()
     if( m_bitmap )
       delete m_bitmap;
     m_bitmap = new wxBitmap( bm_width, bm_height, 32 );
-    ((wxMemoryDC*)m_dc)->SelectObject( *m_bitmap );   /* select new bitmap */
-  
-    m_context = wxGraphicsContext::Create( *((wxMemoryDC*)m_dc) );
+    ((wxMemoryDC*)m_dc)->SelectObject( *m_bitmap );   /* select new bitmap */  
   }
+  
+  if( m_dc )
+    m_context = wxGraphicsContext::Create( *((wxMemoryDC*)m_dc) );
 }
 
 
