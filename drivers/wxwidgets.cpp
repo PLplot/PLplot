@@ -323,6 +323,7 @@ DrvOpt wx_options[] = {
 #ifdef HAVE_AGG
   case 1:
     dev = new wxPLDevAGG;
+    text = 0;  // agg backend is not able to draw text in the moment
     break;
 #endif
   default:

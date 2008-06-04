@@ -32,11 +32,10 @@
 /* std and driver headers */
 #include "wxwidgets.h"
 
-typedef agg::pixfmt_rgb24 pixfmt;
-typedef agg::renderer_base<pixfmt> ren_base;
-typedef agg::renderer_scanline_aa_solid<ren_base> renderer;
-
-wxPLDevAGG::wxPLDevAGG() : wxPLDevBase()
+wxPLDevAGG::wxPLDevAGG() :
+		wxPLDevBase() //,
+//		m_font_engine(), m_font_manager( m_font_engine ),
+//		m_curves( m_font_manager.path_adaptor() ),  m_contour( m_curves )
 {
   m_buffer=NULL;
   m_rendering_buffer=NULL;
@@ -246,8 +245,56 @@ PLINT wxPLDevAGG::GetPixel( short x, short y )
   return RGB( m_buffer->GetRed( x, y ), m_buffer->GetGreen( x, y ), m_buffer->GetBlue( x, y ) );    
 }
 
+void wxPLDevAGG::PSDrawTextToDC( char* utf8_string, bool drawText )
+{
+  memset( utf8_string, '\0', max_string_length );
+}
+
+
+void wxPLDevAGG::PSSetFont( PLUNICODE fci )
+{
+  unsigned char fontFamily, fontStyle, fontWeight;
+
+  plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
+  plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
+  plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );  
+}
+
+
 void wxPLDevAGG::ProcessString( PLStream* pls, EscText* args )
 {
+  /* Check that we got unicode, warning message and return if not */
+  if( args->unicode_array_len == 0 ) {
+    printf( "Non unicode string passed to a cairo driver, ignoring\n" );
+    return;
+  }
+	
+  /* Check that unicode string isn't longer then the max we allow */
+  if( args->unicode_array_len >= 500 ) {
+    printf( "Sorry, the wxWidgets drivers only handles strings of length < %d\n", 500 );
+    return;
+  }
+  
+  /* Calculate the font size (in pixels) */
+  fontSize = pls->chrht * DEVICE_PIXELS_PER_MM * 1.2;
+
+  /* calculate rotation of text */
+  plRotationShear( args->xform, &rotation, &shear );
+  rotation -= pls->diorot * M_PI / 2.0;
+  cos_rot = cos( rotation );
+  sin_rot = sin( rotation );
+  cos_shear = cos(shear);
+  sin_shear = sin(shear);
+
+  posX = args->x;
+  posY = args->y;
+  PSDrawText( args->unicode_array, args->unicode_array_len, false );
+  
+  posX = args->x-(args->just*textWidth)*scalex*cos_rot-(0.5*textHeight)*scalex*sin_rot;
+  posY = args->y-(args->just*textWidth)*scaley*sin_rot+(0.5*textHeight)*scaley*cos_rot;
+  PSDrawText( args->unicode_array, args->unicode_array_len, true );
+
+  AddtoClipRegion( 0, 0, width, height );        
 }
 
 #endif				/* PLD_wxwidgets */

@@ -199,16 +199,27 @@ private: /* variables */
 
 
 #ifdef HAVE_AGG
-/* antigrain headers (for antialzing) */
+/* antigrain headers */
 #include "agg2/agg_basics.h"
 #include "agg2/agg_rendering_buffer.h"
 #include "agg2/agg_rasterizer_scanline_aa.h"
 #include "agg2/agg_scanline_u.h"
+#include "agg2/agg_scanline_bin.h"
 #include "agg2/agg_conv_stroke.h"
 #include "agg2/agg_pixfmt_rgb.h"
 #include "agg2/agg_renderer_base.h"
 #include "agg2/agg_renderer_scanline.h"
+#include "agg2/agg_renderer_primitives.h"
 #include "agg2/agg_path_storage.h"
+#include "agg2/agg_conv_curve.h"
+#include "agg2/agg_conv_contour.h"
+#include "agg2/agg_font_freetype.h"
+
+typedef agg::pixfmt_rgb24 pixfmt;
+typedef agg::renderer_base<pixfmt> ren_base;
+typedef agg::renderer_scanline_aa_solid<ren_base> renderer;
+typedef agg::font_engine_freetype_int32 font_engine_type;
+typedef agg::font_cache_manager<font_engine_type> font_manager_type;
 
 class wxPLDevAGG : public wxPLDevBase
 {
@@ -230,10 +241,18 @@ public: /* methods */
   void PutPixel( short x, short y );
   PLINT GetPixel( short x, short y );
   void ProcessString( PLStream* pls, EscText* args );
+  void PSDrawTextToDC( char* utf8_string, bool drawText );
+  void PSSetFont( PLUNICODE fci );
 
 private: /* variables */
+  wxDC* m_dc;
   wxImage* m_buffer;
   agg::rendering_buffer *m_rendering_buffer;
+//	font_engine_type m_font_engine;
+//  font_manager_type m_font_manager;
+//	agg::conv_curve<font_manager_type::path_adaptor_type> m_curves;
+//  agg::conv_contour<agg::conv_curve<font_manager_type::path_adaptor_type> > m_contour;
+
   double m_strokewidth;
   wxUint8 m_StrokeOpacity;
   unsigned char m_colredstroke;
