@@ -3,7 +3,7 @@ looking at what is done for C, C++, and Fortran.  As a first step
 gratuitous inconsistencies between those flavours of support files were
 eliminated.
 
-1. CMakeDetermine<lang>Compiler.cmake.
+I. CMakeDetermine(LANG)Compiler.cmake.
 
 Changes:
 
@@ -29,7 +29,7 @@ removing the output of CMAKE_CXX_COMPILER_INIT from one of the FATAL ERROR
 messages.
 
 N.B. the above change should be reviewed, and if the C++ style of
-CMAKE_<lang>_COMPILER_INIT logic is preferred, then the C and Fortran versions
+CMAKE_(LANG)_COMPILER_INIT logic is preferred, then the C and Fortran versions
 should be changed instead.
 
 The only other CXX change was to make comments more consistent with C and
@@ -44,9 +44,9 @@ with C and CXX versions.
 The only other Fortran change was to make comments more consistent with C and
 CXX versions.
 
-Useful comparison of C, Fortran, and CXX versions with most expected differences
-removed.  The above changes substantially reduce the size of the remaining
-differences.
+Useful comparison of C, Fortran, and CXX versions with most expected
+differences removed.  The above changes substantially reduce the size of the
+remaining differences.
 
 sed -e 's?_Fortran?_C?g' -e 's?FC?CC?g' -e 's? Fortran ? C ?'g \
 <CMakeDetermineFortranCompiler.cmake | \
@@ -60,5 +60,24 @@ e. Ada version:
 
 Adopt the same style as the (changed) Fortran version.  (The C and CXX
 versions are not as suitable as templates because they include a lot of
-cross-compile stuff.)
+cross-compile stuff.)  A large part of the Fortran version is ignored
+that has to do with choosing the compiler and checking its identity since
+only gnatmake is supported in the Ada case.
 
+II. CMake(LANG)Compiler.cmake.in
+
+Useful comparison of C, Fortran, and CXX versions with most expected
+differences removed.  The above changes substantially reduce the size of the
+remaining differences.
+
+sed -e 's?_Fortran?_C?g' -e 's?FC?CC?g' -e 's? Fortran ? C ?'g \
+<CMakeFortranCompiler.cmake.in | \
+diff -au CMakeCCompiler.cmake.in - |less
+
+sed -e 's?CMAKE_CXX?CMAKE_C?g' -e 's?_CXX?_CC?g' -e 's?CXX?CC?g' -e
+'s?C[+][+]?C?g' <CMakeDetermineCXXCompiler.cmake |diff -au
+CMakeDetermineCCompiler.cmake - |less
+
+III. CMakeTest(LANG)Compiler.cmake
+
+IV. CMake(LANG)Information.cmake
