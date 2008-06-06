@@ -87,3 +87,10 @@ set(flags_in "-framework QuickTime -framework IOKit -framework Carbon -framework
 message("flags_in = ${flags_in}")
 cmake_link_flags(flags_out ${flags_in})
 message("flags_out = ${flags_out}")
+
+# Actual wx-config --libs results on Linux
+set(flags_in "-pthread   -lwx_gtk2u_xrc-2.6 -lwx_gtk2u_qa-2.6 -lwx_gtk2u_html-2.6 -lwx_gtk2u_adv-2.6 -lwx_gtk2u_core-2.6 -lwx_baseu_xml-2.6 -lwx_baseu_net-2.6 -lwx_baseu-2.6")
+message("flags_in = ${flags_in}")
+cmake_link_flags(flags_out ${flags_in})
+message("flags_out = ${flags_out}")
+
