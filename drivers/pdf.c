@@ -25,6 +25,9 @@
 //---------------------------------------------
 // Header files, defines and local variables
 //---------------------------------------------
+#include "plDevs.h"
+
+#ifdef PLD_pdf
 
 #include <stdarg.h>
 #include <math.h>
@@ -33,7 +36,6 @@
 #include "hpdf.h"
 
 /* PLplot header files */
-
 #include "plplotP.h"
 #include "drivers.h"
 
@@ -52,6 +54,16 @@ typedef struct {
   FILE *pdfFile;
   int canvasXSize;
   int canvasYSize;
+  
+  /* font variables */
+  HPDF_Font m_font;
+  double fontSize;
+  double fontScale;
+  PLINT textWidth, textHeight, textDescent, textLeading;
+  double yOffset;
+  PLINT posX, posY;
+  PLFLT rotation, cos_rot, sin_rot;
+  PLFLT shear, cos_shear, sin_shear;  
 } pdfdev;
 
 /* local variables */
@@ -64,15 +76,13 @@ static jmp_buf env;
 
 /* General */
 
-static short desired_offset(short, double);
+static short desired_offset( short, double );
 static void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts, short fill);
 
 /* String processing */
-
-//static void proc_str(PLStream *, EscText *);
+static void process_string( PLStream *, EscText * );
 
 /* PLplot interface functions */
-
 void plD_dispatch_init_pdf      (PLDispatchTable *pdt);
 void plD_init_pdf               (PLStream *);
 void plD_line_pdf               (PLStream *, short, short, short, short);
@@ -120,24 +130,48 @@ void plD_dispatch_init_pdf(PLDispatchTable *pdt)
    pdt->pl_esc      = (plD_esc_fp)      plD_esc_pdf;
 }
 
+static int text=1;
+DrvOpt pdf_options[] = {
+  { "text", DRV_INT, &text, "Use own text routines (text=0|1)" },
+  { NULL, DRV_INT, NULL, NULL}
+};
+  
+
 //---------------------------------------------------------------------
 // pdf_init()
 //
 // Initialize device
 //----------------------------------------------------------------------
-
 void plD_init_pdf(PLStream *pls)
 {
   pdfdev* dev;
-  
+
+  /* allocate memory for the device storage */
+  dev = (pdfdev*)calloc( 1, sizeof(pdfdev) );
+	if( dev == NULL)
+    plexit( "Insufficient memory\n" );
+  pls->dev = (void*)dev;
+   
+  /* Check for and set up driver options */
+  plParseDrvOpts( pdf_options );
+        
   pls->termin = 0;			/* not an interactive device */
-  pls->color = 1;			/* supports color */
+  pls->color = 1;		  	/* supports color */
   pls->width = 1;
-  pls->verbose = 1;
   pls->bytecnt = 0;
+#ifdef _DEBUG
+  pls->verbose = 1;
   pls->debug = 1;
-  pls->dev_text = 0;		/* handles text */
-  pls->dev_unicode = 1; 	/* wants text as unicode */
+#else
+  pls->verbose = 0;
+  pls->debug = 0;
+#endif
+
+  if( text ) {
+    pls->dev_text = 1;		  /* handles text        */
+    pls->dev_unicode = 1; 	/* wants text as unicode */
+  }
+
   pls->page = 0;
   pls->dev_fill0 = 1;		/* supports hardware solid fills */
   pls->dev_fill1 = 1;
@@ -146,29 +180,25 @@ void plD_init_pdf(PLStream *pls)
 
   if (!pls->colorset)
     pls->color = 1; 
-
-  /* allocate memory for the device storage */
-  dev = (pdfdev*)malloc( sizeof(pdfdev) );
-	if( dev == NULL)
-    plexit( "Insufficient memory\n" );
-  pls->dev = (void*)dev;
-   
+ 
    /* Set up device parameters */
-   
    plP_setpxl( DPI/25.4, DPI/25.4 );           /* Pixels/mm. */
 
   /* Set the bounds for plotting.  default is PDF_Default_X x PDF_Default_Y unless otherwise specified. */
   if (pls->xlength <= 0 || pls->ylength <= 0){
-    dev->canvasXSize = PDF_Default_X;
-    dev->canvasYSize = PDF_Default_Y;
+    dev->canvasXSize = (PLINT)PDF_Default_X;
+    dev->canvasYSize = (PLINT)PDF_Default_Y;
   } else {
     dev->canvasXSize = pls->xlength;
     dev->canvasYSize = pls->ylength;
   }   
-  plP_setphy((PLINT) 0, (PLINT) dev->canvasXSize, (PLINT) 0, (PLINT) dev->canvasYSize);
+  plP_setphy( 0, dev->canvasXSize, 0, dev->canvasYSize );
   
+  /* Initialize family file info */
+  /*plFamInit(pls);*/
+
   /* Prompt for a file name if not already set */
-  plOpenFile(pls);
+  plOpenFile( pls );
   dev->pdfFile = pls->OutFile;
    
   dev->pdf = HPDF_New( error_handler, NULL );
@@ -307,27 +337,25 @@ void plD_state_pdf(PLStream *pls, PLINT op)
 //
 // Escape function.
 //---------------------------------------------------------------------
-
 void plD_esc_pdf(PLStream *pls, PLINT op, void *ptr)
 {
-   int     i;
-   switch (op)
-   {
-      case PLESC_FILL:      // fill polygon
-         poly_line(pls, pls->dev_x, pls->dev_y, pls->dev_npts, 1);
-         break;
-      case PLESC_HAS_TEXT:  // render text
-         //proc_str(pls, (EscText *)ptr);
-         break;
-   }
+  switch( op )
+  {
+    case PLESC_FILL:      // fill polygon
+      poly_line( pls, pls->dev_x, pls->dev_y, pls->dev_npts, 1 );
+      break;
+    case PLESC_HAS_TEXT:  // render text
+      process_string( pls, (EscText*)ptr );
+      break;
+  }
 }
+
 
 //---------------------------------------------------------------------
 // poly_line()
 //
 // Handles drawing filled and unfilled polygons
 //---------------------------------------------------------------------
-
 void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
 {
   pdfdev* dev = (pdfdev*)pls->dev;
@@ -340,7 +368,7 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
   HPDF_Page_SetRGBFill( dev->page, pls->curcolor.r/255.0, pls->curcolor.g/255.0, pls->curcolor.b/255.0 );  
   
   HPDF_Page_MoveTo( dev->page, (HPDF_REAL)xa[0], (HPDF_REAL)ya[0] );
-  for ( i=1; i<npts; i++ )
+  for( i=1; i<npts; i++ )
     HPDF_Page_LineTo( dev->page, (HPDF_REAL)xa[i], (HPDF_REAL)ya[i] );
 
   if( fill==1 )
@@ -349,4 +377,160 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
     HPDF_Page_Stroke( dev->page );
 }
 
+void PSDrawTextToCanvas( pdfdev* dev, char* utf8_string, short drawText )
+{
+}
+
+
+void PSSetFont( pdfdev* dev, PLUNICODE fci )
+{
+  unsigned char fontFamily, fontStyle, fontWeight;
+
+  plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
+  plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
+  plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );  
+
+  dev->m_font = HPDF_GetFont( dev->page, "Courier", "StandardEncoding" );
+}
+
+
+void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
+{
+  int i = 0;
+  char utf8_string[MAX_STRING_LEN];
+  char utf8[5];
+  char plplotEsc;
+  PLUNICODE fci;
+
+  memset( utf8_string, '\0', MAX_STRING_LEN );
+
+  /* Get PLplot escape character */
+  plgesc( &plplotEsc );
+
+  /* Get the curent font */
+  dev->fontScale = 1.0;
+  dev->yOffset = 0.0;
+  plgfci( &fci );
+  PSSetFont( dev, fci );
+  dev->textWidth=0;
+  dev->textHeight=0;
+
+  while( i < ucs4Len ) {
+    if( ucs4[i] < PL_FCI_MARK ) {	/* not a font change */
+      if( ucs4[i] != (PLUNICODE)plplotEsc ) {  /* a character to display */
+        ucs4_to_utf8( ucs4[i], utf8 );
+        strcat( utf8_string, utf8 );
+      	i++;
+      	continue;
+      }
+      i++;
+      if( ucs4[i] == (PLUNICODE)plplotEsc ) {   /* a escape character to display */
+        ucs4_to_utf8( ucs4[i], utf8 );
+        strcat( utf8_string, utf8 );
+        i++;
+        continue;
+      } else {
+      	if( ucs4[i] == (PLUNICODE)'u' ) {	/* Superscript */
+          // draw string so far
+          PSDrawTextToCanvas( dev, utf8_string, drawText );
+          
+          // change font scale
+      		if( dev->yOffset<0.0 )
+            dev->fontScale *= 1.25;  /* Subscript scaling parameter */
+      		else
+            dev->fontScale *= 0.8;  /* Subscript scaling parameter */
+          PSSetFont( dev, fci );
+
+      		dev->yOffset += dev->fontSize * dev->fontScale / 2.;
+      	}
+      	if( ucs4[i] == (PLUNICODE)'d' ) {	/* Subscript */
+          double old_fontScale=dev->fontScale;
+          // draw string so far
+          PSDrawTextToCanvas( dev, utf8_string, drawText );
+
+          // change font scale
+      		if( dev->yOffset>0.0 )
+            dev->fontScale *= 1.25;  /* Subscript scaling parameter */
+      		else
+            dev->fontScale *= 0.8;  /* Subscript scaling parameter */
+          PSSetFont( dev, fci );
+
+      		dev->yOffset -= dev->fontSize * old_fontScale / 2.;
+      	}
+      	if( ucs4[i] == (PLUNICODE)'-' ) {	/* underline */
+          // draw string so far
+          PSDrawTextToCanvas( dev, utf8_string, drawText );
+
+          //dev->underlined = !dev->underlined; 
+          PSSetFont( dev, fci );
+      	}
+      	if( ucs4[i] == (PLUNICODE)'+' ) {	/* overline */
+          /* not implemented yet */
+        }
+        i++;
+      }
+    } else { /* a font change */
+      // draw string so far
+      PSDrawTextToCanvas( dev, utf8_string, drawText );
+
+      // get new font
+      fci = ucs4[i];
+      PSSetFont( dev, fci );
+      i++;
+    }
+  }
+
+  PSDrawTextToCanvas( dev, utf8_string, drawText );
+}
+
+
+
+//---------------------------------------------------------------------
+// process_string()
+//
+// Handles drawing filled and unfilled polygons
+//---------------------------------------------------------------------
+void process_string( PLStream* pls, EscText* args )
+{
+  pdfdev* dev = (pdfdev*)pls->dev;
+
+  /* Check that we got unicode, warning message and return if not */
+  if( args->unicode_array_len == 0 ) {
+    printf( "Non unicode string passed to a cairo driver, ignoring\n" );
+    return;
+  }
+	
+  /* Check that unicode string isn't longer then the max we allow */
+  if( args->unicode_array_len >= 500 ) {
+    printf( "Sorry, the wxWidgets drivers only handles strings of length < %d\n", 500 );
+    return;
+  }
+  
+  /* Calculate the font size (in pixels) */
+  dev->fontSize = pls->chrht * DPI/25.4 * 1.3;
+  
+  /* calculate rotation of text */
+  plRotationShear( args->xform, &dev->rotation, &dev->shear );
+  dev->rotation -= pls->diorot * M_PI / 2.0;
+  dev->cos_rot = cos( dev->rotation );
+  dev->sin_rot = sin( dev->rotation );
+
+  dev->posX = args->x;
+  dev->posY = args->y;
+  //PSDrawText( dev, args->unicode_array, args->unicode_array_len, false );
+  
+  dev->posX = args->x-(args->just*dev->textWidth)*dev->cos_rot-(0.5*dev->textHeight)*dev->sin_rot;
+  dev->posY = args->y-(args->just*dev->textWidth)*dev->sin_rot+(0.5*dev->textHeight)*dev->cos_rot;
+  //PSDrawText( dev, args->unicode_array, args->unicode_array_len, true );
+}
+
+#else
+
+int 
+pldummy_pdf()
+{
+  return 0;
+}
+
+#endif				/* PLD_pdf */
 
