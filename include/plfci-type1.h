@@ -32,7 +32,7 @@
  * ascending order in fci! 
  */
 #define N_Type1Lookup 30
-const FCI_to_FontName_Table Type1Lookup[N_Type1Lookup] = {
+static const FCI_to_FontName_Table Type1Lookup[N_Type1Lookup] = {
      {PL_FCI_MARK | 0x000, (unsigned char *)"Helvetica"},
      {PL_FCI_MARK | 0x001, (unsigned char *)"Times-Roman"},
      {PL_FCI_MARK | 0x002, (unsigned char *)"Courier"},
