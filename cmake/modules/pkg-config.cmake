@@ -155,8 +155,10 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
     set(${_link_flags_out})
   else("${_link_flags_in}" STREQUAL ""})
     #message("(original link flags) = ${_link_flags_in}")
-    # Convert link flags to a list.
-    string(REGEX REPLACE " " ";" _link_flags_list "${_link_flags_in}")
+    # Convert link flags to a list.  Note some link flags are blank-delimited
+    # (such as "-framework whatever") so preserve those by splitting into
+    # separate list elements only if the next element starts with a hyphen.
+    string(REGEX REPLACE " -" ";-" _link_flags_list "${_link_flags_in}")
     # Extract list of directories from -L options.
     list(LENGTH _link_flags_list _link_flags_length)
     math(EXPR _link_flags_length "${_link_flags_length} - 1")
