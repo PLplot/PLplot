@@ -50,13 +50,15 @@ class Contourable_Data {
     Contourable_Data( int nx, int ny ) : _nx(nx), _ny(ny) {}
     virtual void elements( int& nx, int& ny ) const { nx = _nx; ny=_ny; }
     virtual PLFLT operator()( int i, int j ) const =0;
+    virtual ~Contourable_Data() {};
 };
 
 PLFLT Contourable_Data_evaluator( PLINT i, PLINT j, PLPointer p );
 
-class Coord_Xformer {
+class PLDLLIMPEXP Coord_Xformer {
   public:
     virtual void xform( PLFLT ox, PLFLT oy, PLFLT& nx, PLFLT& ny ) const =0;
+    virtual ~Coord_Xformer() {};  
 };
 
 void Coord_Xform_evaluator( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer );
@@ -66,6 +68,7 @@ class Coord_2d {
     virtual PLFLT operator() ( int ix, int iy ) const =0;
     virtual void elements( int& _nx, int& _ny ) =0;
     virtual void min_max( PLFLT& _min, PLFLT& _max ) =0;
+    virtual ~Coord_2d() {};  
 };
 
 class PLDLLIMPEXP cxx_pltr2 : public Coord_Xformer {
@@ -108,7 +111,7 @@ class PLDLLIMPEXP plstream {
     plstream( PLINT nx /*=1*/, PLINT ny /*=1*/, PLINT r, PLINT g, PLINT b,
 	      const char *driver =NULL, const char *file =NULL );
 
-    ~plstream();
+    virtual ~plstream();
 
 // Now start miroring the PLplot C API.
 
