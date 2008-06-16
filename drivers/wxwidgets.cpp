@@ -383,7 +383,8 @@ DrvOpt wx_options[] = {
 
   /* initialize device storage */
   if( pls->xlength <= 0 || pls->ylength <=0 )
-    plspage( 0.0, 0.0, (PLINT)(CANVAS_WIDTH*DEVICE_PIXELS_PER_IN), (PLINT)(CANVAS_HEIGHT*DEVICE_PIXELS_PER_IN), 0, 0 );
+    plspage( 0.0, 0.0, (PLINT)(CANVAS_WIDTH*DEVICE_PIXELS_PER_IN), 
+                       (PLINT)(CANVAS_HEIGHT*DEVICE_PIXELS_PER_IN), 0, 0 );
 
   dev->width=pls->xlength;
   dev->height=pls->ylength;

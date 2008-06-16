@@ -354,9 +354,9 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
   wxGraphicsMatrix matrix=m_context->CreateMatrix(  cos_rot, -sin_rot,
                                                     cos_rot * sin_shear + sin_rot * cos_shear,
                                                    -sin_rot * sin_shear + cos_rot * cos_shear,
-                                                    args->x/scalex-args->just*textWidth,
-                                                    height-args->y/scaley-0.5*textHeight );
+                                                    args->x/scalex, height-args->y/scaley );
   m_context->SetTransform( matrix );
+  m_context->Translate( -args->just*textWidth, -0.5*textHeight );
   PSDrawText( args->unicode_array, args->unicode_array_len, true );
   m_context->PopState();
 
