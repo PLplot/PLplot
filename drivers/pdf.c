@@ -22,9 +22,13 @@
    	
 */
 
-//---------------------------------------------
-// Header files, defines and local variables
-//---------------------------------------------
+/* TODO: 
+ * - page orientation
+ */
+
+/***********************************************************************
+ * Header files, defines and local variables
+ ***********************************************************************/
 #include "plDevs.h"
 
 #ifdef PLD_pdf
@@ -36,8 +40,8 @@
 #include "hpdf.h"
 
 /* PLplot header files */
-//#define NEED_PLDEBUG
-//#define DEBUG
+#define NEED_PLDEBUG
+/* #define DEBUG */
 #include "plplotP.h"
 #include "drivers.h"
 #include "plunicode-type1.h"
@@ -45,24 +49,36 @@
 
 /* constants */
 
-/* a4 page, 144 dpi */
-#define DPI            (144) 
-#define PDF_Default_X	 (DPI*11.69)
-#define PDF_Default_Y	 (DPI*8.27)
+/* We define a virtual page and scale it down to the 
+   paper size chosen by the user (A4 is default).
+ */
 
+/* Default dimensions of the canvas (in inches) and DPI */
+#define CANVAS_WIDTH             (50.0)
+#define CANVAS_HEIGHT            (37.5)
+#define DEVICE_PIXELS_PER_INCH   (72) 
+
+/* mm per inch */
+#define MM_PER_INCH (25.4)
+
+/* pixels per mm */
+#define DEVICE_PIXELS_PER_MM (DEVICE_PIXELS_PER_INCH/MM_PER_INCH)
+
+/* maximum string length for own font handling */
 #define MAX_STRING_LEN	1000
 
+/* container for device specific data */
 typedef struct {
   HPDF_Doc pdf;
   HPDF_Page page;
+  HPDF_PageSizes pageSize;
   FILE *pdfFile;
-  int canvasXSize;
-  int canvasYSize;
+  PLFLT scalex, scaley;
   
   /* font variables */
   HPDF_Font m_font;
- 	int nlookup;
-	const Unicode_to_Type1_table *lookup; 
+  int nlookup;
+  const Unicode_to_Type1_table *lookup; 
   HPDF_REAL fontSize;
   HPDF_REAL fontScale;
   HPDF_REAL textWidth, textHeight;
@@ -74,9 +90,9 @@ typedef struct {
 const char* plD_DEVICE_INFO_pdf = "pdf:Portable Document Format PDF:1:pdf:58:pdf";
 static jmp_buf env;
 
-//-----------------------------------------------
-// function declarations
-//-----------------------------------------------
+/***********************************************************************
+ * function declarations
+ ***********************************************************************/
 
 /* General */
 static short desired_offset( short, double );
@@ -96,6 +112,12 @@ void plD_tidy_pdf               (PLStream *);
 void plD_state_pdf              (PLStream *, PLINT);
 void plD_esc_pdf                (PLStream *, PLINT, void *);
 
+/***********************************************************************
+ * error_handler( HPDF_STATUS error_no, HPDF_STATUS detail_no,
+ *                void *user_data )
+ *
+ * Error handler for haru library.
+ ***********************************************************************/
 #ifdef HPDF_DLL
 void  __stdcall
 #else
@@ -109,50 +131,53 @@ error_handler( HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data )
 }
 
 
-//---------------------------------------------------------------------
-// dispatch_init_init()
-//
-// Initialize device dispatch table
-//----------------------------------------------------------------------
-
-void plD_dispatch_init_pdf(PLDispatchTable *pdt)
+/***********************************************************************
+ * plD_dispatch_init_pdf( PLDispatchTable *pdt )
+ *
+ * Initialize device dispatch table.
+ ***********************************************************************/
+void plD_dispatch_init_pdf( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
-   pdt->pl_MenuStr  = "Portable Document Format PDF";
-   pdt->pl_DevName  = "pdf";
+  pdt->pl_MenuStr  = "Portable Document Format PDF";
+  pdt->pl_DevName  = "pdf";
 #endif
-   pdt->pl_type     = plDevType_FileOriented;
-   pdt->pl_seq      = 58;
-   pdt->pl_init     = (plD_init_fp)     plD_init_pdf;
-   pdt->pl_line     = (plD_line_fp)     plD_line_pdf;
-   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_pdf;
-   pdt->pl_eop      = (plD_eop_fp)      plD_eop_pdf;
-   pdt->pl_bop      = (plD_bop_fp)      plD_bop_pdf;
-   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_pdf;
-   pdt->pl_state    = (plD_state_fp)    plD_state_pdf;
-   pdt->pl_esc      = (plD_esc_fp)      plD_esc_pdf;
+  pdt->pl_type     = plDevType_FileOriented;
+  pdt->pl_seq      = 58;
+  pdt->pl_init     = (plD_init_fp)     plD_init_pdf;
+  pdt->pl_line     = (plD_line_fp)     plD_line_pdf;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_pdf;
+  pdt->pl_eop      = (plD_eop_fp)      plD_eop_pdf;
+  pdt->pl_bop      = (plD_bop_fp)      plD_bop_pdf;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_pdf;
+  pdt->pl_state    = (plD_state_fp)    plD_state_pdf;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_pdf;
 }
 
 
 /* driver specific options */
-static PLINT text=1;
-static PLINT compress=1;
-static PLINT hrshsym = 1;
+static PLINT text     = 1;
+static PLINT compress = 1;
+static PLINT hrshsym  = 1;
+static PLINT color    = 1;
+static char* pageSize = NULL;
 
 DrvOpt pdf_options[] = {
   { "text", DRV_INT, &text, "Use own text routines (text=0|1)" },
+  { "color", DRV_INT, &color, "Use color (color=0|1)"},
   { "compress", DRV_INT, &compress, "Compress pdf output (compress=0|1)" },
   { "hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)" },
+  { "pagesize", DRV_STR, &pageSize, "Set page size (pagesize=A4|letter|A3|A5)" },
   { NULL, DRV_INT, NULL, NULL}
 };
   
 
-//---------------------------------------------------------------------
-// pdf_init()
-//
-// Initialize device
-//----------------------------------------------------------------------
-void plD_init_pdf(PLStream *pls)
+/***********************************************************************
+ *  plD_init_pdf( PLStream *pls )
+ *
+ * Initialize device.
+ ***********************************************************************/
+void plD_init_pdf( PLStream *pls )
 {
   pdfdev* dev;
 
@@ -166,7 +191,10 @@ void plD_init_pdf(PLStream *pls)
   plParseDrvOpts( pdf_options );
         
   pls->termin = 0;			/* not an interactive device */
-  pls->color = 1;		  	/* supports color */
+  if( color )
+    pls->color = 1;		  	/* supports color */
+  else
+    pls->color = 0;		  	/* monochrome */
   pls->width = 1;
   pls->bytecnt = 0;
 
@@ -191,24 +219,34 @@ void plD_init_pdf(PLStream *pls)
 
   pls->graphx = GRAPHICS_MODE;
 
-  if (!pls->colorset)
+  if( !pls->colorset )
     pls->color = 1; 
  
-   /* Set up device parameters */
-   plP_setpxl( DPI/25.4, DPI/25.4 );           /* Pixels/mm. */
+  /* Set the (virtual) page size. The geometry option is
+     neglected. Page sizes are set with the pagesize option.  */
+  plspage( DEVICE_PIXELS_PER_INCH, DEVICE_PIXELS_PER_INCH,
+           (PLINT)(CANVAS_WIDTH*DEVICE_PIXELS_PER_INCH), (PLINT)(CANVAS_HEIGHT*DEVICE_PIXELS_PER_INCH), 0, 0 );
 
-  /* Set the bounds for plotting.  default is PDF_Default_X x PDF_Default_Y unless otherwise specified. */
-  if (pls->xlength <= 0 || pls->ylength <= 0){
-    dev->canvasXSize = (PLINT)PDF_Default_X;
-    dev->canvasYSize = (PLINT)PDF_Default_Y;
-  } else {
-    dev->canvasXSize = pls->xlength;
-    dev->canvasYSize = pls->ylength;
-  }   
-  plP_setphy( 0, dev->canvasXSize, 0, dev->canvasYSize );
+  /* Set up physical limits of plotting device (in drawing units) */
+  plP_setphy( 0, (PLINT)(CANVAS_WIDTH*DEVICE_PIXELS_PER_INCH),
+              0, (PLINT)(CANVAS_HEIGHT*DEVICE_PIXELS_PER_INCH) );
+
+  /* Set the number of pixels per mm */
+  plP_setpxl( (PLFLT)DEVICE_PIXELS_PER_MM, (PLFLT)DEVICE_PIXELS_PER_MM );
   
+  /* If portrait mode is specified, then set up an additional rotation 
+   * transformation with aspect ratio allowed to adjust via freeaspect.  
+   * Default orientation is landscape (ORIENTATION == 3 or 90 deg rotation 
+   * counter-clockwise from portrait).  (Legacy PLplot used seascape
+   * which was equivalent to ORIENTATION == 1 or 90 deg clockwise rotation 
+   * from portrait.) */
+  if( pls->portrait ) {
+     plsdiori( (PLFLT)(4-ORIENTATION) );
+     pls->freeaspect = 1;
+  }
+
   /* Initialize family file info */
-  /*plFamInit(pls);*/
+  plFamInit( pls );
 
   /* Prompt for a file name if not already set */
   plOpenFile( pls );
@@ -221,14 +259,30 @@ void plD_init_pdf(PLStream *pls)
   if( compress )
     HPDF_SetCompressionMode( dev->pdf, HPDF_COMP_ALL );
     
+  /* determine size of pdf page - A4 is default */
+  dev->pageSize=HPDF_PAGE_SIZE_EOF;
+  if( pageSize==NULL )
+    dev->pageSize=HPDF_PAGE_SIZE_A4;
+  else if( !strcmp(pageSize, "letter") )
+    dev->pageSize=HPDF_PAGE_SIZE_LETTER;
+  else if( !strcmp(pageSize, "A3") )
+    dev->pageSize=HPDF_PAGE_SIZE_A3;
+  else if( !strcmp(pageSize, "A4") )
+    dev->pageSize=HPDF_PAGE_SIZE_A4;
+  else if( !strcmp(pageSize, "A5") )
+    dev->pageSize=HPDF_PAGE_SIZE_A5;
+  
+  if( dev->pageSize==HPDF_PAGE_SIZE_EOF )
+    plexit("ERROR: Unknown page size. Allowed strings are: letter, A3, A4, A5.\n");
+    
   if( setjmp(env) ) {
     HPDF_Free( dev->pdf );
-    plexit("ERROR: ???\n");
+    plexit( "ERROR: ???\n" );
   }
 }
 
 /***********************************************************************
- * pdf_bop( PLStream *pls )
+ * plD_bop_pdf( PLStream *pls )
  *
  * Set up for the next page.
  ***********************************************************************/
@@ -239,17 +293,23 @@ void plD_bop_pdf( PLStream *pls )
 
   pls->page++;
 
+  /* add page and set size (default is A4) */
   dev->page = HPDF_AddPage( dev->pdf );
-  HPDF_Page_SetSize( dev->page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_LANDSCAPE );
-  HPDF_Page_Concat( dev->page, 72.0f/DPI, 0, 0, 72.0f/DPI, 0, 0);
-  
-   // set the background by drawing a rectangle that is the size of
-   // of the canvas and filling it with the background color.
+  HPDF_Page_SetSize( dev->page, dev->pageSize, HPDF_PAGE_LANDSCAPE );
+
+  /* Determine scaling parameters. */
+  width=HPDF_Page_GetWidth( dev->page );  /* in pixels/dots */
+  height=HPDF_Page_GetHeight( dev->page );  /* in pixels/dots */
+  dev->scalex=(PLFLT)(width/(CANVAS_WIDTH*DEVICE_PIXELS_PER_INCH));
+  dev->scaley=(PLFLT)(height/(CANVAS_HEIGHT*DEVICE_PIXELS_PER_INCH));  
+  HPDF_Page_Concat( dev->page, (HPDF_REAL)(dev->scalex), 0, 0, (HPDF_REAL)(dev->scaley), 0, 0);
+
+  /* Set the background by drawing a rectangle that is the size of
+     of the canvas and filling it with the background color. */
   HPDF_Page_SetRGBFill( dev->page, (HPDF_REAL)(pls->cmap0[0].r/255.0),
-                        (HPDF_REAL)(pls->cmap0[0].g/255.0), (HPDF_REAL)(pls->cmap0[0].b/255.0) );  
-  
-  width=HPDF_Page_GetWidth( dev->page )*DPI/72.f; // TODO: why this?
-  height=HPDF_Page_GetHeight( dev->page )*DPI/72.f;  // TODO: why this?
+                        (HPDF_REAL)(pls->cmap0[0].g/255.0), (HPDF_REAL)(pls->cmap0[0].b/255.0) );
+  width /= (HPDF_REAL)(dev->scalex);
+  height /= (HPDF_REAL)(dev->scaley);
   HPDF_Page_MoveTo( dev->page, (HPDF_REAL)0.0, (HPDF_REAL)0.0 );
   HPDF_Page_LineTo( dev->page, width, (HPDF_REAL)0.0 );
   HPDF_Page_LineTo( dev->page, width, (HPDF_REAL)height );
@@ -258,12 +318,12 @@ void plD_bop_pdf( PLStream *pls )
 }
 
 
-//---------------------------------------------------------------------
-// pdf_line()
-//
-// Draw a line in the current color from (x1,y1) to (x2,y2).
-//----------------------------------------------------------------------
-void plD_line_pdf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+/***********************************************************************
+ * pdf_line()
+ *
+ * Draw a line in the current color from (x1,y1) to (x2,y2).
+ ***********************************************************************/
+void plD_line_pdf( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
   short xa[2], ya[2];
   
@@ -274,32 +334,33 @@ void plD_line_pdf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 
-//---------------------------------------------------------------------
-// pdf_polyline()
-//
-// Draw a polyline in the current color.
-//---------------------------------------------------------------------
+/***********************************************************************
+ * pdf_polyline()
+ *
+ * Draw a polyline in the current color.
+ ***********************************************************************/
 void plD_polyline_pdf(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
   poly_line( pls, xa, ya, npts, 0 );
 }
 
 
-//---------------------------------------------------------------------
-// pdf_eop()
-//
-// End of page
-//---------------------------------------------------------------------
-void plD_eop_pdf(PLStream *pls)
+/***********************************************************************
+ * pdf_eop()
+ *
+ * End of page
+ ***********************************************************************/
+void plD_eop_pdf( PLStream *pls )
 {
+  /* nothing to be done here */
 }
 
 
-//---------------------------------------------------------------------
-// pdf_tidy()
-//
-// Close graphics file or otherwise clean up.
-//---------------------------------------------------------------------
+/***********************************************************************
+ * pdf_tidy()
+ *
+ * Close graphics file or otherwise clean up.
+ ***********************************************************************/
 void plD_tidy_pdf(PLStream *pls)
 {
   pdfdev* dev = (pdfdev*)pls->dev;
@@ -312,7 +373,7 @@ void plD_tidy_pdf(PLStream *pls)
 
   /* get the data from the stream and output it to stdout. */
   for (;;) {
-    HPDF_BYTE buf[4096]; // TODO: not good
+    HPDF_BYTE buf[4096]; /* TODO: not good */
     HPDF_UINT32 size = 4096;
     HPDF_STATUS ret = HPDF_ReadFromStream( dev->pdf, buf, &size );
 
@@ -330,43 +391,43 @@ void plD_tidy_pdf(PLStream *pls)
 }
 
 
-//---------------------------------------------------------------------
-// plD_state_pdf()
-//
-// Handle change in PLStream state (color, pen width, fill attribute, etc).
-//
-// Nothing is done here because these attributes are aquired from 
-// PLStream for each element that is drawn.
-//---------------------------------------------------------------------
+/***********************************************************************
+ * plD_state_pdf()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute, etc).
+ *
+ * Nothing is done here because these attributes are aquired from 
+ * PLStream for each element that is drawn.
+ ***********************************************************************/
 void plD_state_pdf(PLStream *pls, PLINT op)
 {
+  /* Nothing to be done here. */
 }
 
 
-//---------------------------------------------------------------------
-// pdf_esc()
-//
-// Escape function.
-//---------------------------------------------------------------------
+/***********************************************************************
+ * pdf_esc()
+ *
+ * Escape function.
+ ***********************************************************************/
 void plD_esc_pdf(PLStream *pls, PLINT op, void *ptr)
 {
-  switch( op )
-  {
-    case PLESC_FILL:      // fill polygon
-      poly_line( pls, pls->dev_x, pls->dev_y, pls->dev_npts, 1 );
-      break;
-    case PLESC_HAS_TEXT:  // render text
-      process_string( pls, (EscText*)ptr );
-      break;
+  switch( op ) {
+  case PLESC_FILL:      /* fill polygon */
+    poly_line( pls, pls->dev_x, pls->dev_y, pls->dev_npts, 1 );
+    break;
+  case PLESC_HAS_TEXT:  /* render text */
+    process_string( pls, (EscText*)ptr );
+    break;
   }
 }
 
 
-//---------------------------------------------------------------------
-// poly_line()
-//
-// Handles drawing filled and unfilled polygons
-//---------------------------------------------------------------------
+/***********************************************************************
+ * poly_line()
+ *
+ * Handles drawing filled and unfilled polygons
+ ***********************************************************************/
 void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
 {
   pdfdev* dev = (pdfdev*)pls->dev;
@@ -391,16 +452,16 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
 }
 
 
-/*--------------------------------------------------------------------------*\
+/***********************************************************************
  *  unsigned char plunicode2type1 (const PLUNICODE index, 
- *       const Unicode_to_Type1_table lookup[], const int number_of_entries)
+ *   const Unicode_to_Type1_table lookup[], const int number_of_entries)
  *
  *  Function takes an input unicode index, looks through the lookup
  *  table (which must be sorted by PLUNICODE Unicode), then returns the 
- *  corresponding Type1 code in the lookup table.  If the Unicode index is
- *  not present the returned value is 32 (which is normally a blank
+ *  corresponding Type1 code in the lookup table.  If the Unicode index
+ *  is not present the returned value is 32 (which is normally a blank
  *  for Type 1 fonts).
-\*--------------------------------------------------------------------------*/
+ ***********************************************************************/
 static unsigned char plunicode2type1( const PLUNICODE index,
                                       const Unicode_to_Type1_table lookup[],
                                       const int nlookup )
@@ -432,10 +493,17 @@ static unsigned char plunicode2type1( const PLUNICODE index,
 }
 
 
+/***********************************************************************
+ * PSDrawTextToCanvas( pdfdev* dev, char* type1_string, short drawText )
+ *
+ * This function determines the extend of the string and does
+ * the actual drawing to the page if drawText is true.
+ ***********************************************************************/
 void PSDrawTextToCanvas( pdfdev* dev, char* type1_string, short drawText )
 {
   HPDF_REAL th;
 
+  /* write text to page */
   if( drawText ) {
     HPDF_Page_BeginText( dev->page );
     HPDF_Page_SetTextRenderingMode( dev->page, HPDF_FILL );
@@ -455,6 +523,11 @@ void PSDrawTextToCanvas( pdfdev* dev, char* type1_string, short drawText )
 }
 
 
+/***********************************************************************
+ * PSSetFont( pdfdev* dev, PLUNICODE fci )
+ *
+ * Sets the font.
+ ***********************************************************************/
 void PSSetFont( pdfdev* dev, PLUNICODE fci )
 {
   char *font;
@@ -476,6 +549,13 @@ void PSSetFont( pdfdev* dev, PLUNICODE fci )
 }
 
 
+/***********************************************************************
+ * PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
+ *
+ * This function is called twice, first to determine the extend of the
+ * text written to the page and then a second time to actually draw
+ * the text.
+ ***********************************************************************/
 void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
 {
   int i, s;
@@ -511,11 +591,11 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
         continue;
       } else {
       	if( ucs4[i] == (PLUNICODE)'u' ) {	/* Superscript */
-          // draw string so far
+          /* draw string so far */
           PSDrawTextToCanvas( dev, type1_string, drawText );
           s=0;
           
-          // change font scale
+          /* change font scale */
       		if( dev->yOffset<0.0 )
             dev->fontScale *= (HPDF_REAL)1.25;  /* Subscript scaling parameter */
       		else
@@ -526,11 +606,11 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
       	}
       	if( ucs4[i] == (PLUNICODE)'d' ) {	/* Subscript */
           HPDF_REAL old_fontScale=dev->fontScale;
-          // draw string so far
+          /* draw string so far */
           PSDrawTextToCanvas( dev, type1_string, drawText );
           s=0;
 
-          // change font scale
+          /* change font scale */
       		if( dev->yOffset>0.0 )
             dev->fontScale *= (HPDF_REAL)1.25;  /* Subscript scaling parameter */
       		else
@@ -540,11 +620,11 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
       		dev->yOffset -= dev->fontSize * old_fontScale / (HPDF_REAL)2.;
       	}
       	if( ucs4[i] == (PLUNICODE)'-' ) {	/* underline */
-          // draw string so far
+          /* draw string so far */
           PSDrawTextToCanvas( dev, type1_string, drawText );
           s=0;
 
-          //dev->underlined = !dev->underlined; 
+          /* dev->underlined = !dev->underlined; */
           PSSetFont( dev, fci );
       	}
       	if( ucs4[i] == (PLUNICODE)'+' ) {	/* overline */
@@ -553,11 +633,11 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
         i++;
       }
     } else { /* a font change */
-      // draw string so far
+      /* draw string so far */
       PSDrawTextToCanvas( dev, type1_string, drawText );
       s=0;
 
-      // get new font
+      /* get new font */
       fci = ucs4[i];
       PSSetFont( dev, fci );
       i++;
@@ -568,11 +648,11 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
 }
 
 
-//---------------------------------------------------------------------
-// process_string()
-//
-// Handles drawing filled and unfilled polygons
-//---------------------------------------------------------------------
+/***********************************************************************
+ * process_string( PLStream* pls, EscText* args )
+ *
+ * Handles the output of the text on the page.
+ ***********************************************************************/
 void process_string( PLStream* pls, EscText* args )
 {
   pdfdev* dev = (pdfdev*)pls->dev;
@@ -592,7 +672,7 @@ void process_string( PLStream* pls, EscText* args )
   }
   
   /* Calculate the font size (in pixels) */
-  dev->fontSize =(HPDF_REAL)( pls->chrht * DPI/25.4 * 1.6);
+  dev->fontSize =(HPDF_REAL)( pls->chrht * DEVICE_PIXELS_PER_INCH/25.4 * 1.6);
   
   /* text color */
   dev->textRed=(HPDF_REAL)(pls->curcolor.r/255.0);
@@ -624,6 +704,11 @@ void process_string( PLStream* pls, EscText* args )
 
 #else
 
+/***********************************************************************
+ * pldummy_pdf()
+ *
+ * Dummy function if driver should not be available.
+ ***********************************************************************/
 int pldummy_pdf()
 {
   return 0;
