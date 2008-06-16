@@ -22,6 +22,8 @@ INDEX
 1. Changes relative to PLplot 5.9.0 (the previous development release)
 1.1 Improvements to the cairo driver family.
 1.2 Rename test subdirectory to plplot_test
+1.3 wxWidgets driver improvements
+1.4 pdf driver improvements
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 2.1 Improvements to the cairo driver family.
@@ -53,6 +55,39 @@ functional.
 This change was necessary to quit clashing with the "make test" target which
 now works for the first time ever (by executing ctest).
 
+1.3 wxWidgets driver improvements
+
+Complete reorganisation of the driver code. A new backend was added, based
+on the wxGraphicsContext class, which is available for wxWidgets 2.8.4
+and later. This backend produces antialized output similar to the
+AGG backend but has no dependency on the AGG library. The basic wxDC
+backend and the wxGraphicsContext backend process the text output
+on their own, which results in much nicer plots than with the standard
+Hershey fonts and is much faster than using the freetype library. New
+options were introduced in the wxWidgets driver:
+ - backend: Choose backend: (0) standard, (1) using AGG library,
+                            (2) using wxGraphicsContext
+ - hrshsym: Use Hershey symbol set (hrshsym=0|1)
+ - text: Use own text routines (text=0|1)
+ - freetype: Use FreeType library (freetype=0|1)
+The option "text" changed its meaning, since it enabled the FreeType library
+support, while now the option enables the driver's own text routines.
+
+1.4 pdf driver improvements
+
+The pdf driver (which is based on the haru library http://www.libharu.org)
+processes the text output now on its own. So far only the Adobe Type1
+fonts are supported. TrueType font support will follow. Full unicode
+support will follow after the haru library will support unicode strings. The
+driver is now able to produce A4, letter, A5 and A3 pages. The Hershey font
+may be used only for symbols. Output can now be compressed, resulting in 
+much smaller file sizes.
+Added new options:
+ - text: Use own text routines (text=0|1)
+ - compress: Compress pdf output (compress=0|1)
+ - hrshsym: Use Hershey symbol set (hrshsym=0|1)
+ - pagesize: Set page size (pagesize=A4|letter|A3|A5)
+ 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
 2.1 Improvements to the cairo driver family.
