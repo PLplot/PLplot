@@ -89,7 +89,7 @@ void wxPLplotwindow::OnPaint( wxPaintEvent &WXUNUSED(event) )
 }
 
 
-void wxPLplotwindow::OnSize( wxSizeEvent & WXUNUSED(event) )
+void wxPLplotwindow::OnSize( wxSizeEvent& WXUNUSED(event) )
 {
   int width, height;
   GetClientSize( &width, &height );

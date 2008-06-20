@@ -64,8 +64,10 @@ enum {
 class PLDLLIMPEXP wxPLplotstream : public plstream
 {
 public:
+  wxPLplotstream();  //!< Constructor.
   wxPLplotstream( wxDC *dc, int width, int height, int style = wxPLPLOT_NONE );  //!< Constructor.
-  wxPLplotstream( wxImage *buffer, int width, int height, int style );
+  void Create( wxDC *dc, int width, int height, int style );
+  //wxPLplotstream( wxImage *buffer, int width, int height, int style );
   void set_stream();   //!< Calls some code before every PLplot command.
 	void SetSize( int width, int height );   //!< Set new size of plot area.
 	void RenewPlot();   //!< Redo plot and update memory dc

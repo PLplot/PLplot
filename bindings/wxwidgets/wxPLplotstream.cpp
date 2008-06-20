@@ -29,17 +29,23 @@
  *  plot to and the size of the canvas. We also check and set several
  *  device style options.
  */
-wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style ) :
-                m_dc(dc), m_width(width), m_height(height), m_style(style)
+wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style ) : plstream()
 {
-  ::plstream();
-  InitStream();
-  cmd( PLESC_DEVINIT, (void*)m_dc );
+  Create( dc, width, height, style );
 }
 
-void wxPLplotstream::InitStream()
+wxPLplotstream::wxPLplotstream() : plstream()
+{
+}
+
+void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
 {
   const size_t bufferSize=256;
+  
+  m_dc=dc;
+  m_width=width;
+  m_height=height;
+  m_style=style;
 
   sdev( "wxwidgets" );
   spage( 0.0, 0.0, m_width, m_height, 0, 0 );
@@ -71,8 +77,8 @@ void wxPLplotstream::InitStream()
   SetOpt( "-drvopt", drvopt );
   
   init();
+  cmd( PLESC_DEVINIT, (void*)m_dc );
 }
-
 
 
 /*! This is the overloaded set_stream() function, where we could have some
