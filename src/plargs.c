@@ -1307,9 +1307,6 @@ void
 plP_FreeDrvOpts() {
   DrvOptCmd *drvp, *drvpl;
 
-  if (!drv_opt.next) 
-    return;
-
   drvp = &drv_opt;
   do {
     drvpl = drvp;
@@ -1717,10 +1714,6 @@ opt_drvopt(const char *opt, const char *optarg, void *client_data)
   if (value == NULL)
     plexit("opt_drvopt: Out of memory!?");
 
-  /* first release allocated memory from a (possible) former call
-     of opt_drvopt() */
-  plP_FreeDrvOpts();
-  
   drvp = &drv_opt;
   *option = *value = '\0';
   tt = option;

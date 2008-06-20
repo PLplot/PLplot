@@ -1647,6 +1647,15 @@ c_plinit(void)
     plP_bop();
     plsc->level = 1;
 
+    
+/* The driver options are freed after driver initialisation,
+ * since it is assumed that in this function options are
+ * processed and stored somewhere else. For further driver
+ * initialisations (e.g. copy stream) there are no driver
+ * options defined. */
+
+    plP_FreeDrvOpts();
+
 /* Calculate factor such that the character aspect ratio is preserved
  * when the overall aspect ratio is changed, i.e., if portrait mode is
  * requested (only honored for subset of drivers) or if the aspect ratio
@@ -1781,8 +1790,6 @@ c_plend(void)
       free_mem(dispatch_table[i]);
     }
     free_mem(dispatch_table);
-
-    plP_FreeDrvOpts();
 
     lib_initialized = 0;
 }
