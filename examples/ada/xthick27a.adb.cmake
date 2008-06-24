@@ -40,7 +40,7 @@ use
 --   - series of epitrochoids and hypotrochoids
 ------------------------------------------------------------------------------
 
-procedure x27a is
+procedure xthick27a is
     -- R, r, p, N
     params : Real_Matrix(0 .. 8, 0 .. 3) := 
       ((21.0,  7.0,  7.0,  3.0),
@@ -58,7 +58,6 @@ procedure x27a is
         xcoord, ycoord : Real_Vector(0 .. 20000);
         windings : Integer;
         steps    : Integer;
-        i        : Integer;
         phi      : Long_Float;
         phiw     : Long_Float;
         dphi     : Long_Float;
@@ -149,4 +148,4 @@ begin
 
     -- Don't forget to call End_PLplot to finish off!
     End_PLplot;
-end x27a;
+end xthick27a;

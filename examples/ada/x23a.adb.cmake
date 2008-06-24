@@ -256,7 +256,6 @@ procedure x23a is
     -- Must be big enough to contain the prefix strings, the font-changing
     -- commands, and the "The quick brown..." string.
     a_string : Unbounded_String;
-    temp_string : String(1 .. 6);
     
     package Unicode_IO is new Ada.Text_IO.Modular_IO(Unicode); -- fix this probably not used
     use Unicode_IO;

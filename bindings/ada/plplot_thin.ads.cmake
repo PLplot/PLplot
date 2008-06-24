@@ -932,14 +932,14 @@ package PLplot_Thin is
     pragma Import(C, plmeridians, "c_plmeridians");
 
 
-    -- Plots a mesh representation of the function z[x][y]. 
+    -- Plots a mesh representation of the function z(x, y). 
 
     procedure
     plmesh(x : PL_Float_Array; y : PL_Float_Array; z : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT; opt : PLINT);
     pragma Import(C, plmesh, "c_plmesh");
 
 
-    -- Plots a mesh representation of the function z[x][y] with contour 
+    -- Plots a mesh representation of the function z(x, y) with contour 
 
     procedure
     plmeshc(x : PL_Float_Array; y : PL_Float_Array; z : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT; opt : PLINT;
@@ -962,7 +962,14 @@ package PLplot_Thin is
     pragma Import(C, plmtex, "c_plmtex");
 
 
-    -- Plots a 3-d representation of the function z[x][y]. 
+    -- Prints out "text" at specified position relative to viewport (3D)
+
+    procedure
+    plmtex3(side : char_array; disp, pos, just : PLFLT; text : char_array);
+    pragma Import(C, plmtex3, "c_plmtex3");
+
+
+    -- Plots a 3-d representation of the function z(x, y). 
 
     procedure
     plot3d(x : PL_Float_Array; y : PL_Float_Array; z : Long_Float_Pointer_Array;
@@ -970,7 +977,7 @@ package PLplot_Thin is
     pragma Import(C, plot3d, "c_plot3d");
 
 
-    -- Plots a 3-d representation of the function z[x][y] with contour. 
+    -- Plots a 3-d representation of the function z(x, y) with contour. 
 
     procedure
     plot3dc(x : PL_Float_Array; y : PL_Float_Array; z : Long_Float_Pointer_Array;
@@ -979,7 +986,7 @@ package PLplot_Thin is
     pragma Import(C, plot3dc, "c_plot3dc");
 
 
-    -- Plots a 3-d representation of the function z[x][y] with contour and
+    -- Plots a 3-d representation of the function z(x, y) with contour and
     -- y index limits. 
 
     procedure
@@ -1062,6 +1069,13 @@ package PLplot_Thin is
     procedure
     plptex(x : PLFLT; y : PLFLT; dx : PLFLT; dy : PLFLT; just : PLFLT; text : char_array);
     pragma Import(C, plptex, "c_plptex");
+
+
+    -- Prints out "text" at world cooordinate (x,y,z).
+
+    procedure
+    plptex3(wx, wy, wz, dx, dy, dz, sx, sy, sz, just : PLFLT; text : char_array);
+    pragma Import(C, plptex3, "c_plptex3");
 
 
     -- Replays contents of plot buffer to current device/file. 
@@ -1417,7 +1431,7 @@ package PLplot_Thin is
     pragma Import(C, plstyl, "c_plstyl");
 
 
-    -- Plots the 3d surface representation of the function z[x][y]. 
+    -- Plots the 3d surface representation of the function z(x, y). 
 
     procedure
     plsurf3d(x : PL_Float_Array; y : PL_Float_Array; z : Long_Float_Pointer_Array; nx : PLINT; ny :  PLINT;
@@ -1425,7 +1439,7 @@ package PLplot_Thin is
     pragma Import(C, plsurf3d, "c_plsurf3d");
 
 
-    -- Plots the 3d surface representation of the function z[x][y] with y
+    -- Plots the 3d surface representation of the function z(x, y) with y
     -- index limits. 
 
     procedure

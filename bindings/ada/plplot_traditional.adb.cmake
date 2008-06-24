@@ -1774,7 +1774,7 @@ package body PLplot_Traditional is
     end plmeridians;
 
 
-    -- Plots a mesh representation of the function z[x][y].
+    -- Plots a mesh representation of the function z(x, y).
     procedure plmesh
        (x, y    : Real_Vector; -- surface definition points
         z       : Real_Matrix; -- height of surface at definition points
@@ -1784,7 +1784,7 @@ package body PLplot_Traditional is
     end plmesh;
 
 
-    -- Plots a mesh representation of the function z[x][y] with contour
+    -- Plots a mesh representation of the function z(x, y) with contour
     procedure plmeshc -- prototype
        (x, y           : Real_Vector; -- surface definition points
         z              : Real_Matrix; -- height of surface at definition points
@@ -1814,7 +1814,20 @@ package body PLplot_Traditional is
     end plmtex;
 
 
-    -- Plots a 3-d representation of the function z[x][y].
+    -- Prints out "The_Text" at specified position relative to viewport (3D)
+    procedure plmtex3
+       (Side : String;
+        Position_From_Edge : Long_Float;
+        Position_Along_Edge : Long_Float;
+        Justification : Long_Float;
+        The_Text : String) is
+    begin
+        PLplot_Thin.plmtex3(To_C(Side, True), Position_From_Edge, Position_Along_Edge, Justification, To_C(The_Text, True));
+    end plmtex3;
+
+
+
+    -- Plots a 3-d representation of the function z(x, y).
     procedure plot3d
        (x, y    : Real_Vector; -- surface definition points
         z       : Real_Matrix; -- height of surface at definition points
@@ -1833,7 +1846,7 @@ package body PLplot_Traditional is
     end plot3d;
 
 
-    -- Plots a 3-d representation of the function z[x][y] with contour.
+    -- Plots a 3-d representation of the function z(x, y) with contour.
     procedure plot3dc
        (x, y           : Real_Vector; -- surface definition points
         z              : Real_Matrix; -- height of surface at definition points
@@ -1845,7 +1858,7 @@ package body PLplot_Traditional is
 
 
     -- fix this; update variable names when documentation becomes available.
-    -- Plots a 3-d representation of the function z[x][y] with contour and
+    -- Plots a 3-d representation of the function z(x, y) with contour and
     -- y index limits.
     procedure plot3dcl -- Lacks documentation in Chapter 17 of Ref. Man.
        (x, y                 : Real_Vector; -- surface definition points
@@ -1934,7 +1947,7 @@ package body PLplot_Traditional is
     end plpsty;
 
 
-    -- Prints out "text" at world cooordinate (x,y).
+    -- Prints out "The_Text" at world cooordinate (x, y).
     procedure plptex
        (x, y             : Long_Float;
         Delta_X, Delta_Y : Long_Float;
@@ -1943,6 +1956,19 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plptex(x, y, Delta_X, Delta_Y, Justification, To_C(The_Text, True));
     end plptex;
+
+
+    -- Prints out "The_Text" at world cooordinate (x, y, z).
+    procedure plptex3
+       (x, y, z                   : Long_Float;
+        Delta_X, Delta_Y, Delta_Z : Long_Float;
+        Shear_X, Shear_Y, Shear_Z : Long_Float;
+        Justification             : Long_Float;
+        The_Text                  : String) is
+    begin
+        PLplot_Thin.plptex3(x, y, z, Delta_X, Delta_Y, Delta_Z, Shear_X, Shear_Y, Shear_Z, 
+            Justification, To_C(The_Text, True));
+    end plptex3;
 
 
     -- Replays contents of plot buffer to current device/file.
@@ -2518,7 +2544,7 @@ package body PLplot_Traditional is
     end plstyl;
 
 
-    -- Plots the 3d surface representation of the function z[x][y].
+    -- Plots the 3d surface representation of the function z(x, y).
     procedure plsurf3d
        (x, y           : Real_Vector; -- surface definition points
         z              : Real_Matrix; -- height of surface at definition points
@@ -2529,7 +2555,7 @@ package body PLplot_Traditional is
     end plsurf3d;
 
 
-    -- Plots the 3d surface representation of the function z[x][y] with y
+    -- Plots the 3d surface representation of the function z(x, y) with y
     -- index limits.
     -- plsurf3dl
 

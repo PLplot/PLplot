@@ -992,13 +992,13 @@ package PLplot_Traditional is
         Minimum_Latitude,  Maximum_Latitude  : Long_Float);
 
 
-    -- Plots a mesh representation of the function z[x][y].
+    -- Plots a mesh representation of the function z(x, y).
     procedure plmesh
        (x, y    : Real_Vector; -- surface definition points
         z       : Real_Matrix; -- height of surface at definition points
         Options : Integer);
 
-    -- Plots a mesh representation of the function z[x][y] with contour
+    -- Plots a mesh representation of the function z(x, y) with contour
     procedure plmeshc
        (x, y           : Real_Vector; -- surface definition points
         z              : in Real_Matrix; -- height of surface at definition points
@@ -1010,7 +1010,7 @@ package PLplot_Traditional is
     procedure plmkstrm(New_Stream_Number : out Integer);
 
 
-    -- Prints out "text" at specified position relative to viewport
+    -- Prints out "The_Text" at specified position relative to viewport
     procedure plmtex
        (Side                : String;
         Position_From_Edge  : Long_Float;
@@ -1019,7 +1019,16 @@ package PLplot_Traditional is
         The_Text            : String);
 
 
-    -- Plots a 3-d representation of the function z[x][y].
+    -- Prints out "The_Text" at specified position relative to viewport (3D)
+    procedure plmtex3
+       (Side                : String;
+        Position_From_Edge  : Long_Float;
+        Position_Along_Edge : Long_Float;
+        Justification       : Long_Float;
+        The_Text            : String);
+
+
+    -- Plots a 3-d representation of the function z(x, y).
     procedure plot3d
        (x, y    : Real_Vector; -- surface definition points
         z       : Real_Matrix; -- height of surface at definition points
@@ -1027,7 +1036,7 @@ package PLplot_Traditional is
         Sides : Boolean); -- draw sides?
 
 
-    -- Plots a 3-d representation of the function z[x][y] with contour.
+    -- Plots a 3-d representation of the function z(x, y) with contour.
     procedure plot3dc
        (x, y           : Real_Vector; -- surface definition points
         z              : Real_Matrix; -- height of surface at definition points
@@ -1035,7 +1044,7 @@ package PLplot_Traditional is
         Contour_Levels : Real_Vector); -- levels at which to draw contours
 
 
-    -- Plots a 3-d representation of the function z[x][y] with contour and
+    -- Plots a 3-d representation of the function z(x, y) with contour and
     -- y index limits.
     procedure plot3dcl -- Lacks documentation in Chapter 17 of Ref. Man.
        (x, y           : Real_Vector; -- surface definition points
@@ -1091,12 +1100,21 @@ package PLplot_Traditional is
     procedure plpsty(Fill_Pattern : Fill_Pattern_Type);
 
 
-    -- Prints out "text" at world cooordinate (x,y).
+    -- Prints out "The_Text" at world cooordinate (x, y).
     procedure plptex
        (x, y             : Long_Float;
         Delta_X, Delta_Y : Long_Float;
         Justification    : Long_Float;
         The_Text         : String);
+
+
+    -- Prints out "The_Text" at world cooordinate (x, y, z).
+    procedure plptex3
+       (x, y, z                   : Long_Float;
+        Delta_X, Delta_Y, Delta_Z : Long_Float;
+        Shear_X, Shear_Y, Shear_Z : Long_Float;
+        Justification             : Long_Float;
+        The_Text                  : String);
 
 
     -- Replays contents of plot buffer to current device/file.
@@ -1412,7 +1430,7 @@ package PLplot_Traditional is
     procedure plstyl(Default_Continuous_Line : Integer);
 
 
-    -- Plots the 3d surface representation of the function z[x][y].
+    -- Plots the 3d surface representation of the function z(x, y).
     procedure plsurf3d
        (x, y           : Real_Vector; -- surface definition points
         z              : Real_Matrix; -- height of surface at definition points
@@ -1420,7 +1438,7 @@ package PLplot_Traditional is
         Contour_Levels : Real_Vector); -- levels at which to draw contours
 
 
-    -- Plots the 3d surface representation of the function z[x][y] with y
+    -- Plots the 3d surface representation of the function z(x, y) with y
     -- index limits.
     -- plsurf3dl
 

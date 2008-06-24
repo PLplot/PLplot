@@ -32,7 +32,7 @@ use
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
 @Ada_Is_2007_With_and_Use_Numerics@
 
-procedure x24a is
+procedure xthick24a is
     red   : Integer_Array_1D(0 .. 6) := (240, 204, 204, 204,   0,  39, 125);
     green : Integer_Array_1D(0 .. 6) := (240,   0, 125, 204, 204,  80,   0);
     blue  : Integer_Array_1D(0 .. 6) := (240,   0,   0,   0,   0, 204, 125);
@@ -123,4 +123,4 @@ begin
         Write_Text_World(sx(i), sy(i), 1.0, 0.0, 0.5, peace(i));
     end loop;
     End_PLplot;
-end x24a;
+end xthick24a;

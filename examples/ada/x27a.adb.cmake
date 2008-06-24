@@ -58,7 +58,6 @@ procedure x27a is
         xcoord, ycoord : Real_Vector(0 .. 20000);
         windings : Integer;
         steps    : Integer;
-        i        : Integer;
         phi      : Long_Float;
         phiw     : Long_Float;
         dphi     : Long_Float;

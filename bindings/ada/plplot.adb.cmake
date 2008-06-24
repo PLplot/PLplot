@@ -1839,7 +1839,7 @@ package body PLplot is
     end Draw_Latitude_Longitude;
 
 
-    -- Plots a mesh representation of the function z[x][y].
+    -- Plots a mesh representation of the function z(x, y).
     -- plmesh
     procedure Mesh_3D
        (x, y    : Real_Vector; -- surface definition points
@@ -1850,7 +1850,7 @@ package body PLplot is
     end Mesh_3D;
 
 
-    -- Plots a mesh representation of the function z[x][y] with contour
+    -- Plots a mesh representation of the function z(x, y) with contour
     -- plmeshc
     procedure Mesh_3D_Base_Contour -- prototype
        (x, y           : Real_Vector; -- surface definition points
@@ -1883,7 +1883,20 @@ package body PLplot is
     end Write_Text_Viewport;
 
 
-    -- Plots a 3-d representation of the function z[x][y].
+    -- Prints out "The_Text" at specified position relative to viewport (3D)
+    -- plmtex3
+    procedure Write_Text_Viewport_3D
+       (Side                : String;
+        Position_From_Edge  : Long_Float;
+        Position_Along_Edge : Long_Float;
+        Justification       : Long_Float;
+        The_Text            : String) is
+    begin
+        plmtex3(To_C(Side, True), Position_From_Edge, Position_Along_Edge, Justification, To_C(The_Text, True));
+    end Write_Text_Viewport_3D;
+
+
+    -- Plots a 3-d representation of the function z(x, y).
     -- plot3d
     procedure Plot_3D
        (x, y    : Real_Vector; -- surface definition points
@@ -1903,7 +1916,7 @@ package body PLplot is
     end Plot_3D;
 
 
-    -- Plots a 3-d representation of the function z[x][y] with contour.
+    -- Plots a 3-d representation of the function z(x, y) with contour.
     -- plot3dc
     procedure Plot_3D_Base_Contour
        (x, y           : Real_Vector; -- surface definition points
@@ -1916,7 +1929,7 @@ package body PLplot is
 
 
     -- fix this; update variable names when documentation becomes available.
-    -- Plots a 3-d representation of the function z[x][y] with contour and
+    -- Plots a 3-d representation of the function z(x, y) with contour and
     -- y index limits.
     -- plot3dcl
     procedure Plot_3D_Base_Contour_Limits -- Lacks documentation in Chapter 17 of Ref. Man.
@@ -2012,7 +2025,7 @@ package body PLplot is
     end Select_Fill_Pattern;
 
 
-    -- Prints out "text" at world cooordinate (x,y).
+    -- Prints out "The_Text" at world cooordinate (x, y).
     -- plptex
     procedure Write_Text_World
        (x, y             : Long_Float;
@@ -2022,6 +2035,20 @@ package body PLplot is
     begin
         plptex(x, y, Delta_X, Delta_Y, Justification, To_C(The_Text, True));
     end Write_Text_World;
+
+
+    -- Prints out "The_Text" at world cooordinate (x, y, z).
+    -- plptex3
+    procedure Write_Text_World_3D
+       (x, y, z                   : Long_Float;
+        Delta_X, Delta_Y, Delta_Z : Long_Float;
+        Shear_X, Shear_Y, Shear_Z : Long_Float;
+        Justification             : Long_Float;
+        The_Text                  : String) is
+    begin
+        plptex3(x, y, z, Delta_X, Delta_Y, Delta_Z, Shear_X, Shear_Y, Shear_Z, 
+            Justification, To_C(The_Text, True));
+    end Write_Text_World_3D;
 
 
     -- Replays contents of plot buffer to current device/file.
@@ -2641,7 +2668,7 @@ package body PLplot is
     end Set_Line_Style;
 
 
-    -- Plots the 3d surface representation of the function z[x][y].
+    -- Plots the 3d surface representation of the function z(x, y).
     -- plsurf3d
     procedure Shaded_Surface_3D
        (x, y           : Real_Vector; -- surface definition points
@@ -2653,7 +2680,7 @@ package body PLplot is
     end Shaded_Surface_3D;
 
 
-    -- Plots the 3d surface representation of the function z[x][y] with y
+    -- Plots the 3d surface representation of the function z(x, y) with y
     -- index limits.
     -- plsurf3dl
 
