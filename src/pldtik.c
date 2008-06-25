@@ -39,7 +39,7 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld)
 {
     PLFLT t1, t2, tick_reasonable;
     PLINT np, ns;
-    PLFLT diff, factor;
+    PLFLT factor;
 
 
     if (ld) {
