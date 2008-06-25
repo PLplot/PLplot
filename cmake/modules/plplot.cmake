@@ -190,6 +190,11 @@ if(NOT HAVE_ISNAN)
   check_function_exists(_isnan _HAVE_ISNAN)
   set(HAVE_ISNAN ${_HAVE_ISNAN} CACHE INTERNAL "Have function _isnan")
 endif(NOT HAVE_ISNAN)
+check_function_exists(snprintf HAVE_SNPRINTF)
+if(NOT HAVE_SNPRINTF)
+  check_function_exists(_snprintf _HAVE_SNPRINTF)
+  set(HAVE_SNPRINTF ${_HAVE_SNPRINTF} CACHE INTERNAL "Have function _sprintf")
+endif(NOT HAVE_SNPRINTF)
 
 # =======================================================================
 # Language bindings
