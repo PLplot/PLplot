@@ -1224,7 +1224,8 @@ plParseDrvOpts(DrvOpt *acc_opt) {
   DrvOpt *t;
   int fl;
   char msg[80];
-
+  memset( msg, '\0', sizeof(msg) );
+  
   if (!drv_opt.option)
     return 1;
 
@@ -1245,7 +1246,7 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 
 	case DRV_INT:
 	  if (sscanf(drvp->value, "%d", (int *)t->var_ptr) != 1) {
-	    sprintf(msg,"Incorrect argument to '%s' option", drvp->option);
+	    snprintf(msg, sizeof(msg)-1, "Incorrect argument to '%s' option", drvp->option);
 	    plexit(msg);
 	  }
 #ifdef DEBUG
@@ -1255,7 +1256,7 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 
 	case DRV_FLT:
 	  if (sscanf(drvp->value, "%f", (float *)t->var_ptr) != 1) {
-	    sprintf(msg,"Incorrect argument to '%s' option", drvp->option);
+	    snprintf(msg, sizeof(msg)-1, "Incorrect argument to '%s' option", drvp->option);
 	    plexit(msg);
 	  }
 #ifdef DEBUG
@@ -1268,7 +1269,7 @@ plParseDrvOpts(DrvOpt *acc_opt) {
     }
 
     if (!fl) {
-      sprintf(msg, "Option '%s' not recognized.\n\nRecognized options for this driver are:\n", drvp->option);
+      snprintf(msg, sizeof(msg)-1, "Option '%s' not recognized.\n\nRecognized options for this driver are:\n", drvp->option);
       plwarn(msg);
       plHelpDrvOpts(acc_opt);
       plexit("");

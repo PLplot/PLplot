@@ -2101,3 +2101,48 @@ plstrdup(const char *src)
 
     return dest;
 }
+
+#ifndef HAVE_SNPRINTF
+/*--------------------------------------------------------------------------*\
+ * plsnprintf()
+ *
+ * Dummy function for snprintf(). This function just calls
+ * the unsafe function ignoring the string size. This function will
+ * rarely be needed if ever.
+\*--------------------------------------------------------------------------*/
+
+int 
+plsnprintf(char *buffer, int n, const char *format, ...)
+{
+  int ret;
+
+  va_list args;             
+  va_start(args, format);
+	ret=vsprintf(buffer, fmt, args);
+  va_end( argptr );
+  
+  return ret;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plsnscanf()
+ *
+ * Dummy function for snscanf(). This function just calls
+ * the unsafe function ignoring the string size. This function will
+ * rarely be needed if ever.
+\*--------------------------------------------------------------------------*/
+
+int
+plsnscanf( const char *buffer, int n, const char *format, ... )
+{
+  int ret;
+  
+  va_list argptr;             
+  va_start(argptr, format);
+	ret=vsscanf(buffer, fmt, args);  
+  va_end(argptr);
+  
+  return ret;
+}
+
+#endif /* HAVE_SNPRINTF */
