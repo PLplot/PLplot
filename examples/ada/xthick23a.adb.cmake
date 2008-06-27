@@ -379,7 +379,7 @@ begin
         if page = 11 then
             Write_Text_Viewport("t", 1.5, 0.5, 0.5,
             "#<0x10>PLplot Example 23 - " &
-            "Set Font with Set_Font_Characterization_Integer");
+            "Set Font with plsfci");
         elsif page = 12 then
             Write_Text_Viewport("t", 1.5, 0.5, 0.5,
             "#<0x10>PLplot Example 23 - " &
