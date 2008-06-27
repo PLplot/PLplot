@@ -188,6 +188,9 @@ begin
     opt(3) := Long_Float(knn_order);
     opt(4) := threshold;
 
+    -- Parse and process command line arguments 
+    plparseopts(PL_PARSE_FULL);
+
     -- Initialize plplot 
     plinit;
 
