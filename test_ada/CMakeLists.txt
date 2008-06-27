@@ -26,5 +26,5 @@ include(ada.cmake)
 
 # Build Ada library
 add_subdirectory(src_lib)
-# Build Ada executable
+# Build Ada executable that links to that Ada library
 add_subdirectory(src_executable)
