@@ -2,7 +2,22 @@ The purpose of this complete project is to provide a simple Ada test case
 consisting of an Ada executable calling a single routine in an Ada library
 which prints out the classic "hello, world" phrase.  This complete project
 includes a CMake-based build system and files for Ada language support
-within CMake which will eventually become part of CMake itself.  
+within CMake which will eventually become part of CMake itself.
+
+To run the test
+
+(1) create an empty build directory and cd to it.
+mkdir build_dir
+
+(2) configure project with cmake
+cmake path/to/this/source/directory
+
+(3) build library and executable that links to it
+make
+
+(4) run test that should generate "hello, world" phrase.
+
+src_executable/hello
 
 In sum, this project provides a simple demonstration of how to use the CMake
 Ada language support and at the same time tests the quality of that support
