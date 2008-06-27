@@ -24,6 +24,9 @@ INDEX
 1.2 Rename test subdirectory to plplot_test
 1.3 wxWidgets driver improvements
 1.4 pdf driver improvements
+1.5 Ada language support
+1.6 Ada examples
+
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 2.1 Improvements to the cairo driver family.
@@ -38,6 +41,8 @@ examples
 2.9 WxWidgets driver improvements
 2.10 External libLASi library improvements affecting our psttf device.
 2.11 Rename test subdirectory to plplot_test
+2.12 Ada language support
+2.13 Ada examples
 
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
@@ -88,6 +93,17 @@ Added new options:
  - hrshsym: Use Hershey symbol set (hrshsym=0|1)
  - pagesize: Set page size (pagesize=A4|letter|A3|A5)
  
+1.5 Ada language support
+
+Ada language support is now working for both CMake-2.4.x and CMake-2.6.0.
+
+1.6 Ada examples
+
+Many Ada examples have been added.  Some of these standard examples do not
+give the same results as the corresponding C examples for unknown reasons.
+Until these issues are addressed, the Ada interface must still be considered
+experimental.
+
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
 2.1 Improvements to the cairo driver family.
@@ -192,3 +208,14 @@ suitable for use by libLASi.
 
 This change was necessary to quit clashing with the "make test" target which
 now works for the first time ever (by executing ctest).
+
+2.12 Ada language support
+
+Ada language support is now working for both CMake-2.4.x and CMake-2.6.0.
+
+2.13 Ada examples
+
+Many Ada examples have been added.  Some of these standard examples do not
+give the same results as the corresponding C examples for unknown reasons.
+Until these issues are addressed, the Ada interface must still be considered
+experimental.
