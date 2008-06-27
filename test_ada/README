@@ -9,8 +9,15 @@ To run the test
 (1) create an empty build directory and cd to it.
 mkdir build_dir
 
-(2) configure project with cmake
+(2) configure project with cmake 
+
+  option a (built library is static).
+
 cmake path/to/this/source/directory
+
+  option b (built library is shared).
+
+cmake -DBUILD_SHARED_LIBS=ON path/to/this/source/directory
 
 (3) build library and executable that links to it
 make
@@ -20,6 +27,7 @@ make
 src_executable/hello
 
 In sum, this project provides a simple demonstration of how to use the CMake
-Ada language support and at the same time tests the quality of that support
-for various user's platforms.  If any user is having trouble with CMake
-Ada language support, this is the simple test case they should run first.
+Ada language support with Ada libraries that are either static or shared. At
+the same time, this project tests the quality of CMake Ada support for
+various user's platforms.  If any user is having trouble with CMake Ada
+language support, this is the simple test case they should run first.

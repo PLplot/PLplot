@@ -20,8 +20,9 @@ project(simple_ada_test C)
 # support files.
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake-2.4/Modules)
 
-# Set up Ada variables specific to this project.
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
+# Set up Ada variables specific to this project.
 include(ada.cmake)
 
 # Build Ada library
