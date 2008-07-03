@@ -127,7 +127,7 @@ package PLplot is
     Justified_Square_Box : constant Justification_Type := 2;
 
     -- Axis styles
-    subtype Axis_Style_Type is Integer range -2..33; -- Not all values are used.
+    subtype Axis_Style_Type is Integer range -2..63; -- Not all values are used.
 
     No_Box            : constant Axis_Style_Type := -2;
     Box               : constant Axis_Style_Type := -1;
@@ -151,6 +151,21 @@ package PLplot is
     Log_XY_Zero_Axes  : constant Axis_Style_Type := 31;
     Log_XY_Major_Grid : constant Axis_Style_Type := 32;
     Log_XY_Minor_Grid : constant Axis_Style_Type := 33;
+
+    Date_Time_X_Linear_Box_Plus    : constant Axis_Style_Type := 40;
+    Date_Time_X_Linear_Zero_Axes   : constant Axis_Style_Type := 41;
+    Date_Time_X_Linear_Major_Grid  : constant Axis_Style_Type := 42;
+    Date_Time_X_Linear_Minor_Grid  : constant Axis_Style_Type := 43;
+
+    Date_Time_Y_Linear_Box_Plus    : constant Axis_Style_Type := 50;
+    Date_Time_Y_Linear_Zero_Axes   : constant Axis_Style_Type := 51;
+    Date_Time_Y_Linear_Major_Grid  : constant Axis_Style_Type := 52;
+    Date_Time_Y_Linear_Minor_Grid  : constant Axis_Style_Type := 53;
+
+    Date_Time_XY_Linear_Box_Plus   : constant Axis_Style_Type := 60;
+    Date_Time_XY_Linear_Zero_Axes  : constant Axis_Style_Type := 61;
+    Date_Time_XY_Linear_Major_Grid : constant Axis_Style_Type := 62;
+    Date_Time_XY_Linear_Minor_Grid : constant Axis_Style_Type := 63;
 
     -- Integer constrained to 0..255
     subtype Integer_0_255_Type is Integer range 0 .. 255;
@@ -639,7 +654,7 @@ package PLplot is
         X_Number_Of_Subintervals : Natural := 0;
         Y_Option_String          : String;
         Y_Major_Tick_Interval    : Long_Float;
-        Y_Number_Of_Subintervals : Natural);
+        Y_Number_Of_Subintervals : Natural := 0);
 
     Auto_Subintervals : Integer := 0; -- Intervals for minor ticks is automatic.
 
@@ -831,10 +846,25 @@ package PLplot is
         Red_Component, Green_Component, Blue_Component : out Integer);
 
 
+    -- Returns 8 bit RGB values for given color from color map 0 and alpha value
+    -- plgcol0a
+    procedure Get_Color_RGB_And_Alpha
+       (Color_Index                                    : Integer;
+        Red_Component, Green_Component, Blue_Component : out Integer;
+        a                                              : out Long_Float);
+
+
     -- Returns the background color by 8 bit RGB value
     -- plgcolbg
     procedure Get_Background_Color_RGB
        (Red_Component, Green_Component, Blue_Component : out Integer);
+
+
+    -- Returns the background color by 8 bit RGB value and alpha value
+    -- plgcolbga
+    procedure Get_Background_Color_RGB_And_Alpha
+       (Red_Component, Green_Component, Blue_Component : out Integer;
+        Alpha                                          : out Real_Vector);
 
 
     -- Returns the current compression setting
@@ -1239,6 +1269,13 @@ package PLplot is
     procedure Set_Color_Map_0(Red_Components, Green_Components, Blue_Components : Integer_Array_1D);
 
 
+    -- Set color map 0 colors by 8 bit RGB values and alpha values
+    -- plscmap0a
+    procedure Set_Color_Map_0_And_Alpha
+       (Red_Components, Green_Components, Blue_Components : Integer_Array_1D;
+        Alpha                                             : Real_Vector);
+
+
     -- Set number of colors in cmap 0
     -- plscmap0n
     procedure Set_Number_Of_Colors_Map_0(Number_Of_Colors : Integer);
@@ -1248,6 +1285,13 @@ package PLplot is
     -- plscmap1
     procedure Set_Color_Map_1_RGB
        (Red_Component, Green_Component, Blue_Component : Integer_0_255_Array);
+
+
+    -- Set color map 1 colors by 8 bit RGB and alpha values
+    -- plscmap1a
+    procedure Set_Color_Map_1_RGB_And_Alpha
+       (Red_Component, Green_Component, Blue_Component : Integer_0_255_Array;
+        Alpha                                          : Real_Vector);
 
 
     -- Types for colors for color map 1.
@@ -1266,6 +1310,20 @@ package PLplot is
         Reverse_Hue    : Boolean_Array_1D);   -- False means red<->green<->blue<->red, True reverses
 
 
+    -- Set color map 1 colors using a piece-wise linear relationship between
+    -- intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
+    -- Will also linear interpolate alpha values.
+    -- plscmap1la
+    procedure Set_Color_Map_1_Piecewise_And_Alpha
+       (Color_Model    : Color_Model_Type;    -- HLS or RGB
+        Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        Reverse_Hue    : Boolean_Array_1D);   -- False means red<->green<->blue<->red, True reverses
+
+
     -- Set number of colors in cmap 1
     -- plscmap1n
     procedure Set_Number_Of_Colors_In_Color_Map_1(Number_Of_Colors : Integer);
@@ -1277,10 +1335,26 @@ package PLplot is
        (Plot_Color : Plot_Color_Type;
         Red_Component, Green_Component, Blue_Component : Integer);
 
+
+    -- Set a given color from color map 0 by 8 bit RGB value and alpha value
+    -- plscol0a
+    procedure Set_One_Color_Map_0_And_Alpha
+       (Plot_Color                                     : Plot_Color_Type;
+        Red_Component, Green_Component, Blue_Component : Integer;
+        Alpha                                          : Long_Float);
+
+
     -- Set the background color by 8 bit RGB value
     -- plscolbg
     procedure Set_Background_Color_RGB
        (Red_Component, Green_Component, Blue_Component : Integer);
+
+
+    -- Set the background color by 8 bit RGB value and alpha value
+    -- plscolbga
+    procedure Set_Background_Color_RGB_And_Alpha
+       (Red_Component, Green_Component, Blue_Component : Integer;
+        Alpha : Long_Float);
 
 
     -- Used to globally turn color output on/off
@@ -1411,7 +1485,7 @@ package PLplot is
         Mask_Function_Pointer            : Mask_Function_Pointer_Type;
         x_Min, x_Max, y_Min, y_Max       : Long_Float; -- world mins and maxes
         Contour_Levels                   : Real_Vector;
-        Fill_Pattern_Pen_Width           : Positive;
+        Fill_Pattern_Pen_Width           : Natural; -- 0 is allowed
         Contour_Pen_Color                : Natural; -- 0 for no contours
         Contour_Pen_Width                : Natural; -- 0 for no contours
         Fill_Procedure_Pointer           : Fill_Procedure_Pointer_Type;
@@ -1617,6 +1691,11 @@ package PLplot is
     procedure Use_Text_Mode;
 
 
+    -- Set the format for date / time labels
+    -- pltimefmt
+    procedure Set_Date_Time_Label_Format(Format : String);
+
+
     -- Sets the edges of the viewport with the given aspect ratio, leaving
     -- room for labels.
     -- plvasp
@@ -1639,6 +1718,7 @@ package PLplot is
         Right_Edge  : Long_Float := 1.0;
         Bottom_Edge : Long_Float := 0.0;
         Top_Edge    : Long_Float := 1.0);
+
 
     -- Defines a "standard" viewport with seven character heights for
     -- the left margin and four character heights everywhere else.

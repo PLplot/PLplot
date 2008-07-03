@@ -1153,7 +1153,7 @@ package body PLplot_Traditional is
         X_Number_Of_Subintervals : Natural := 0;
         Y_Option_String          : String;
         Y_Major_Tick_Interval    : Long_Float;
-        Y_Number_Of_Subintervals : Natural) is
+        Y_Number_Of_Subintervals : Natural := 0) is
     begin
         PLplot_Thin.plbox
            (To_C(X_Option_String, True), X_Major_Tick_Interval, X_Number_Of_Subintervals,
@@ -1427,12 +1427,31 @@ package body PLplot_Traditional is
     end plgcol0;
 
 
+    -- Returns 8 bit RGB values for given color from color map 0 and alpha value
+    procedure plgcol0a
+       (Color_Index                                    : Integer;
+        Red_Component, Green_Component, Blue_Component : out Integer;
+        a                                              : out Long_Float) is
+    begin
+        PLplot_Thin.plgcol0a(Color_Index, Red_Component, Green_Component, Blue_Component, a);
+    end plgcol0a;
+
     -- Returns the background color by 8 bit RGB value
     procedure plgcolbg
        (Red_Component, Green_Component, Blue_Component : out Integer) is
     begin
         PLplot_Thin.plgcolbg(Red_Component, Green_Component, Blue_Component);
     end plgcolbg;
+
+
+    -- Returns the background color by 8 bit RGB value and alpha value
+    procedure plgcolbga
+       (Red_Component, Green_Component, Blue_Component : out Integer;
+        Alpha                                          : out Real_Vector) is
+    begin
+        PLplot_Thin.plgcolbga(Red_Component, Green_Component, Blue_Component,
+            Alpha);
+    end;
 
 
     -- Returns the current compression setting
@@ -2019,6 +2038,15 @@ package body PLplot_Traditional is
     end plscmap0;
 
 
+    -- Set color map 0 colors by 8 bit RGB values and alpha values
+    procedure plscmap0a
+       (Red_Components, Green_Components, Blue_Components : Integer_Array_1D;
+        Alpha                                             : Real_Vector) is
+    begin
+        PLplot_Thin.plscmap0a(Red_Components, Green_Components, Blue_Components, Alpha, Red_Components'Length);
+    end plscmap0a;
+
+
     -- Set number of colors in cmap 0
     procedure plscmap0n(Number_Of_Colors : Integer) is
     begin
@@ -2033,13 +2061,30 @@ package body PLplot_Traditional is
        PL_Red_Component, PL_Green_Component, PL_Blue_Component : Integer_Array_1D(Red_Component'range);
     begin
         -- Copy constrained color integers to unconstrained integers.
-        for i in Red_Component'range loop
+        for i in Red_Component'range loop -- Should use slices
             PL_Red_Component(i)   := Red_Component(i);
             PL_Green_Component(i) := Green_Component(i);
             PL_Blue_Component(i)  := Blue_Component(i);
         end loop;
         PLplot_Thin.plscmap1(PL_Red_Component, PL_Green_Component, PL_Blue_Component, PL_Red_Component'Length);
     end plscmap1;
+
+
+    -- Set color map 1 colors by 8 bit RGB values
+    procedure plscmap1a
+       (Red_Component, Green_Component, Blue_Component : Integer_0_255_Array;
+        Alpha                                          : Real_Vector) is
+       
+       PL_Red_Component, PL_Green_Component, PL_Blue_Component : Integer_Array_1D(Red_Component'range);
+    begin
+        -- Copy constrained color integers to unconstrained integers.
+        for i in Red_Component'range loop -- Should use slices
+            PL_Red_Component(i)   := Red_Component(i);
+            PL_Green_Component(i) := Green_Component(i);
+            PL_Blue_Component(i)  := Blue_Component(i);
+        end loop;
+        PLplot_Thin.plscmap1a(PL_Red_Component, PL_Green_Component, PL_Blue_Component, Alpha, PL_Red_Component'Length);
+    end plscmap1a;
 
 
     -- Set color map 1 colors using a piece-wise linear relationship between
@@ -2075,6 +2120,40 @@ package body PLplot_Traditional is
     end plscmap1l;
 
 
+    -- Set color map 1 colors using a piece-wise linear relationship between
+    -- intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
+    -- Will also linear interpolate alpha values.
+    procedure plscmap1la
+       (Color_Model    : Color_Model_Type;    -- HLS or RGB
+        Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        Reverse_Hue    : Boolean_Array_1D) is   -- False means red<->green<->blue<->red, True reverses
+        
+        PL_Color_Model : PLBOOL;
+        PL_Reverse_Hue : PL_Bool_Array (Reverse_Hue'range);
+        
+    begin
+        if Color_Model = RGB then
+            PL_Color_Model := PLtrue;
+        else
+            PL_Color_Model := PLfalse;
+        end if;
+
+        for i in Reverse_Hue'range loop
+            if Reverse_Hue(i) then
+                PL_Reverse_Hue(i) := PLtrue;
+            else
+                PL_Reverse_Hue(i) := PLfalse;
+            end if;
+        end loop;
+
+        PLplot_Thin.plscmap1la(PL_Color_Model, Control_Points'Length, Control_Points, H_Or_R, L_Or_G, S_Or_B, Alpha, PL_Reverse_Hue);
+    end plscmap1la;
+
+
     -- Set number of colors in cmap 1
     procedure plscmap1n(Number_Of_Colors : Integer) is
     begin
@@ -2089,6 +2168,16 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plscol0(Plot_Color, Red_Component, Green_Component, Blue_Component);
     end plscol0;
+    
+
+    -- Set a given color from color map 0 by 8 bit RGB value and alpha value
+    procedure plscol0a
+       (Plot_Color                                     : Plot_Color_Type;
+        Red_Component, Green_Component, Blue_Component : Integer;
+        Alpha                                          : Long_Float) is
+    begin
+        PLplot_Thin.plscol0a(Plot_Color, Red_Component, Green_Component, Blue_Component, Alpha);
+    end plscol0a;
 
 
     -- Set the background color by 8 bit RGB value
@@ -2097,6 +2186,15 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plscolbg(Red, Green, Blue);
     end plscolbg;
+
+
+    -- Set the background color by 8 bit RGB value and alpha value
+    procedure plscolbga
+       (Red_Component, Green_Component, Blue_Component : Integer;
+        Alpha : Long_Float) is
+    begin
+        PLplot_Thin.plscolbga(Red_Component, Green_Component, Blue_Component, Alpha);
+    end plscolbga;
 
 
     -- Used to globally turn color output on/off
@@ -2310,7 +2408,7 @@ package body PLplot_Traditional is
         Mask_Function_Pointer            : Mask_Function_Pointer_Type;
         x_Min, x_Max, y_Min, y_Max       : Long_Float; -- world mins and maxes
         Contour_Levels                   : Real_Vector;
-        Fill_Pattern_Pen_Width           : Positive;
+        Fill_Pattern_Pen_Width           : Natural; -- 0 is allowed
         Contour_Pen_Color                : Natural; -- 0 for no contours
         Contour_Pen_Width                : Natural; -- 0 for no contours
         Fill_Procedure_Pointer           : Fill_Procedure_Pointer_Type;
@@ -2617,6 +2715,13 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.pltext;
     end pltext;
+
+
+    -- Set the format for date / time labels
+    procedure pltimefmt(Format : String) is
+    begin
+        PLplot_Thin.pltimefmt(To_C(Format));
+    end pltimefmt;
 
 
     -- Sets the edges of the viewport with the given aspect ratio, leaving

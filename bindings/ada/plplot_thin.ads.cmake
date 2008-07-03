@@ -58,7 +58,6 @@ package PLplot_Thin is
     PLfalse : constant Integer := 0;
     PLtrue  : constant Integer := 1;
     subtype PLBOOL is Integer range PLfalse..PLtrue;
-    --type PLUNICODE is range 0..2**32-1;
     type PLUNICODE is mod 2**32;
 
     subtype PL_Integer_Array  is Integer_Array_1D;
@@ -666,6 +665,13 @@ package PLplot_Thin is
     procedure
     plgcol0(icol0 : PLINT; r : out PLINT; g : out PLINT; b : out PLINT);
     pragma Import(C, plgcol0, "c_plgcol0");
+    
+    
+    -- Returns 8 bit RGB values for given color from color map 0 and alpha value
+
+    procedure
+    plgcol0a(icol0 : PLINT; r, g, b: out PLINT; a : out PLFLT);
+    pragma Import(C, plgcol0a, "c_plgcol0a");
 
 
     -- Returns the background color by 8 bit RGB value 
@@ -673,6 +679,13 @@ package PLplot_Thin is
     procedure
     plgcolbg(r : out PLINT; g : out PLINT; b : out PLINT);
     pragma Import(C, plgcolbg, "c_plgcolbg");
+
+
+    -- Returns the background color by 8 bit RGB value and alpha value
+
+    procedure
+    plgcolbga(r, g, b : out PLINT; a : out PL_Float_Array);
+    pragma Import(C, plgcolbga, "c_plgcolbga");
 
 
     -- Returns the current compression setting 
@@ -1120,6 +1133,13 @@ package PLplot_Thin is
     pragma Import(C, plscmap0, "c_plscmap0");
 
 
+    -- Set color map 0 colors by 8 bit RGB values and alpha values
+
+    procedure
+    plscmap0a(r, g, b : PL_Integer_Array; a : PL_Float_Array; ncol0 : PLINT);
+    pragma Import(C, plscmap0a, "c_plscmap0a");
+
+
     -- Set number of colors in cmap 0 
 
     procedure
@@ -1134,6 +1154,13 @@ package PLplot_Thin is
     pragma Import(C, plscmap1, "c_plscmap1");
 
 
+    -- Set color map 1 colors by 8 bit RGB and alpha values
+
+    procedure
+    plscmap1a(r, g, b : PL_Integer_Array; a : PL_Float_Array; ncol1 : PLINT);
+    pragma Import(C, plscmap1a, "c_plscmap1a");
+
+
     -- Set color map 1 colors using a piece-wise linear relationship between 
     -- intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. 
 
@@ -1142,6 +1169,17 @@ package PLplot_Thin is
         coord1 : PL_Float_Array; coord2 : PL_Float_Array; coord3 : PL_Float_Array; 
         rev : PL_Bool_Array);
     pragma Import(C, plscmap1l, "c_plscmap1l");
+
+
+    -- Set color map 1 colors using a piece-wise linear relationship between
+    -- intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
+    -- Will also linear interpolate alpha values.
+
+    procedure
+    plscmap1la(itype : PLINT; npts : PLINT;
+        intensity, coord1, coord2, coord3, a : PL_Float_Array; 
+        rev : PL_Bool_Array);
+    pragma Import(C, plscmap1la, "c_plscmap1la");
 
 
     -- Set number of colors in cmap 1 
@@ -1158,11 +1196,25 @@ package PLplot_Thin is
     pragma Import(C, plscol0, "c_plscol0");
 
 
+    -- Set a given color from color map 0 by 8 bit RGB value and alpha value
+
+    procedure
+    plscol0a(icol0 : PLINT; r, g, b : PLINT; a : PLFLT);
+    pragma Import(C, plscol0a, "c_plscol0a");
+
+
     -- Set the background color by 8 bit RGB value 
 
     procedure
     plscolbg(r : PLINT; g : PLINT; b : PLINT);
     pragma Import(C, plscolbg, "c_plscolbg");
+
+
+    -- Set the background color by 8 bit RGB value and alpha value
+
+    procedure
+    plscolbga(r, g, b : PLINT; a : PLFLT);
+    pragma Import(C, plscolbga, "c_plscolbga");
 
 
     -- Used to globally turn color output on/off 
@@ -1495,6 +1547,14 @@ package PLplot_Thin is
     procedure
     pltext;
     pragma Import(C, pltext, "c_pltext");
+    
+
+    -- Set the format for date / time labels
+
+    procedure
+    pltimefmt(fmt : char_array);
+    pragma Import(C, pltimefmt, "c_pltimefmt");
+
 
 
     -- Sets the edges of the viewport with the given aspect ratio, leaving 
