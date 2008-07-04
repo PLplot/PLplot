@@ -65,10 +65,14 @@
 #cmakedefine HAVE_ISNAN
 
 /* Define if snprintf is available */
-#cmakedefine HAVE_SNPRINTF
+#ifndef PL_HAVE_SNPRINTF
+#cmakedefine PL_HAVE_SNPRINTF
+#endif
 
 /* Define if _snprintf is available */
-#cmakedefine _HAVE_SNPRINTF
+#ifndef _PL_HAVE_SNPRINTF
+#cmakedefine _PL_HAVE_SNPRINTF
+#endif
 
 /* Define if [incr], [Tcl] is available */
 #cmakedefine HAVE_ITCL

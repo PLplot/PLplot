@@ -246,21 +246,21 @@ extern PLDLLIMPEXP_DATA(PLStream *)plsc;
 
 /* Declarations for save string functions */
 
-#ifdef HAVE_SNPRINTF
+#ifdef PL_HAVE_SNPRINTF
   /* In case only _snprintf is declared (as for Visual C++ and
      Borland compiler toolset) we redefine the function names */
-  #ifdef _HAVE_SNPRINTF
+  #ifdef _PL_HAVE_SNPRINTF
     #define snprintf _snprintf
     #define snscanf _snscanf
-  #endif /* _HAVE_SNPRINTF */
-#else /* !HAVE_SNPRINTF */
+  #endif /* _PL_HAVE_SNPRINTF */
+#else /* !PL_HAVE_SNPRINTF */
   /* declare dummy functions which just call the unsafe
      functions ignoring the size of the string */
   int plsnprintf( char *buffer, int n, const char *format, ... );
   int plsnscanf( const char *buffer, int n, const char *format, ... );
   #define snprintf plsnprintf
   #define snscanf plsnscanf
-#endif /* HAVE_SNPRINTF */
+#endif /* PL_HAVE_SNPRINTF */
 
 /*--------------------------------------------------------------------------*\
  *                       PLPLOT control macros

@@ -2102,7 +2102,7 @@ plstrdup(const char *src)
     return dest;
 }
 
-#ifndef HAVE_SNPRINTF
+#ifndef PL_HAVE_SNPRINTF
 /*--------------------------------------------------------------------------*\
  * plsnprintf()
  *
@@ -2145,4 +2145,4 @@ plsnscanf( const char *buffer, int n, const char *format, ... )
   return ret;
 }
 
-#endif /* HAVE_SNPRINTF */
+#endif /* PL_HAVE_SNPRINTF */
