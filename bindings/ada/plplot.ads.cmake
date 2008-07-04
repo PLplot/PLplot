@@ -449,10 +449,10 @@ package PLplot is
     procedure Simple_Mesh_3D
        (x, y     : Real_Vector; -- data definition points 
         z        : Real_Matrix; -- z(x, y) = z(x(i), y(j))
-        x_Min    : Long_Float := 0.0; -- user coordinate limits
-        x_Max    : Long_Float := 0.0;
-        y_Min    : Long_Float := 0.0;
-        y_Max    : Long_Float := 0.0;
+        x_Min    : Long_Float := 0.0;  -- user coordinate limits
+        x_Max    : Long_Float := 0.0;  -- If x_Min = x_Max = 0.0 then plot
+        y_Min    : Long_Float := 0.0;  -- x-limits are found automatically.
+        y_Max    : Long_Float := 0.0;  -- Ditto y_Min and y_Max.
         Altitude : Long_Float := 30.0; -- viewing elevation angle in degrees
         Azimuth  : Long_Float := 30.0; -- viewing azimuth in degrees
         X_Label  : String := "x";
@@ -465,10 +465,10 @@ package PLplot is
     procedure Simple_Surface_3D
        (x, y     : Real_Vector; -- data definition points 
         z        : Real_Matrix; -- z(x, y) = z(x(i), y(j))
-        x_Min    : Long_Float := 0.0; -- user coordinate limits
-        x_Max    : Long_Float := 0.0;
-        y_Min    : Long_Float := 0.0;
-        y_Max    : Long_Float := 0.0;
+        x_Min    : Long_Float := 0.0;  -- user coordinate limits
+        x_Max    : Long_Float := 0.0;  -- If x_Min = x_Max = 0.0 then plot
+        y_Min    : Long_Float := 0.0;  -- x-limits are found automatically.
+        y_Max    : Long_Float := 0.0;  -- Ditto y_Min and y_Max.
         Altitude : Long_Float := 30.0; -- viewing elevation angle in degrees
         Azimuth  : Long_Float := 30.0; -- viewing azimuth in degrees
         X_Label  : String := "x";
@@ -851,7 +851,7 @@ package PLplot is
     procedure Get_Color_RGB_And_Alpha
        (Color_Index                                    : Integer;
         Red_Component, Green_Component, Blue_Component : out Integer;
-        a                                              : out Long_Float);
+        Alpha                                          : out Long_Float_0_1_Type);
 
 
     -- Returns the background color by 8 bit RGB value
@@ -864,7 +864,7 @@ package PLplot is
     -- plgcolbga
     procedure Get_Background_Color_RGB_And_Alpha
        (Red_Component, Green_Component, Blue_Component : out Integer;
-        Alpha                                          : out Real_Vector);
+        Alpha                                          : out Long_Float_0_1_Type);
 
 
     -- Returns the current compression setting
@@ -1236,7 +1236,7 @@ package PLplot is
     procedure Replot;
 
 
-    -- Set line color by red, green, blue from  0. to 1.
+    -- Set line color by red, green, blue from 0.0 to 1.0
     -- plrgb
     procedure Set_Line_Color_RGB_0_1(Red_Component, Blue_Component, Green_Component : Long_Float_0_1_Type);
 
@@ -1341,7 +1341,7 @@ package PLplot is
     procedure Set_One_Color_Map_0_And_Alpha
        (Plot_Color                                     : Plot_Color_Type;
         Red_Component, Green_Component, Blue_Component : Integer;
-        Alpha                                          : Long_Float);
+        Alpha                                          : Long_Float_0_1_Type);
 
 
     -- Set the background color by 8 bit RGB value
@@ -1354,7 +1354,7 @@ package PLplot is
     -- plscolbga
     procedure Set_Background_Color_RGB_And_Alpha
        (Red_Component, Green_Component, Blue_Component : Integer;
-        Alpha : Long_Float);
+        Alpha                                          : Long_Float_0_1_Type);
 
 
     -- Used to globally turn color output on/off

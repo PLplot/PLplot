@@ -684,7 +684,7 @@ package PLplot_Thin is
     -- Returns the background color by 8 bit RGB value and alpha value
 
     procedure
-    plgcolbga(r, g, b : out PLINT; a : out PL_Float_Array);
+    plgcolbga(r, g, b : out PLINT; a : out PLFLT);
     pragma Import(C, plgcolbga, "c_plgcolbga");
 
 

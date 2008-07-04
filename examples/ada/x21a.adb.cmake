@@ -30,7 +30,6 @@
 -- Approximation plots.
 
 with
-    Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Numerics.Float_Random,
@@ -42,7 +41,6 @@ with
     PLplot_Traditional,
     PLplot_Auxiliary;
 use
-    Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Numerics.Float_Random,

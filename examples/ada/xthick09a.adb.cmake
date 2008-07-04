@@ -22,13 +22,11 @@
 
 with
     System,
-    Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot,
     PLplot_Auxiliary;
 use
-    Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     System,

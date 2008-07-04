@@ -136,9 +136,9 @@ procedure x02a is
             -- approximately like C to match that example.  -0.5 produces
             -- at least one -1 result (rather than zero) so we subtract
             -- something with a slightly smaller absolute value.
-            r(i+16) := Integer((r1 * 255.0)-0.4999999);
-            g(i+16) := Integer((g1 * 255.0)-0.4999999);
-            b(i+16) := Integer((b1 * 255.0)-0.4999999);
+            r(i+16) := Integer((r1 * 255.0) - 0.499999999999999);
+            g(i+16) := Integer((g1 * 255.0) - 0.499999999999999);
+            b(i+16) := Integer((b1 * 255.0) - 0.499999999999999);
         end loop;
 
         -- Load default cmap0 colors into our custom set.
