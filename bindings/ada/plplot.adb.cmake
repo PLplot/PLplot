@@ -1713,10 +1713,8 @@ package body PLplot is
         Number_Of_Bins : Positive; -- equal-sized, between Data_Min and Data_Max
         Options : Integer) is -- Options are not defined in plplot.h.
     begin
-        Set_Pen_Color(White);
         plhist
            (Data'length, Data, Data_Min, Data_Max, Number_Of_Bins, Options);
-        Set_Pen_Color(White);
     end Histogram_Unbinned;
 
 
