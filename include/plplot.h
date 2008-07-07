@@ -618,6 +618,9 @@ typedef struct {
 #define    plwid	c_plwid
 #define    plwind	c_plwind
 #define    plxormod	c_plxormod
+#define    plseed	c_plseed
+#define    plrandi	c_plrandi
+#define    plrandd	c_plrandd
 
 #endif /* __PLSTUBS_H__ */
 
@@ -1571,10 +1574,23 @@ c_plwid(PLINT width);
 PLDLLIMPEXP void
 c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 
-/*  set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device  */
+/* Set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device  */
 
 PLDLLIMPEXP void
 c_plxormod(PLBOOL mode, PLBOOL *status);
+
+/* Random number generator based on Mersenne Twister.
+   Functions to set seed and obtain random numbers as integer
+   ([0,0xffffffff]-interval) and as double/float ([0,1]-real-interval). */
+
+PLDLLIMPEXP void
+c_plseed(unsigned int s);
+
+PLDLLIMPEXP unsigned long
+c_plrandi(void);
+
+PLDLLIMPEXP PLFLT
+c_plrandd(void);
 
 /*--------------------------------------------------------------------------*\
  *		Functions for use from C or C++ only
@@ -1771,7 +1787,7 @@ plGetInt(const char *s);
 PLDLLIMPEXP PLFLT
 plGetFlt(const char *s);
 
-	/* Nice way to allocate space for a vectored 2d grid */
+/* Nice way to allocate space for a vectored 2d grid */
 
 /* Allocates a block of memory for use as a 2-d grid of PLFLT's.  */
 
