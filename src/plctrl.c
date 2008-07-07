@@ -50,6 +50,9 @@
 #include <errno.h>
 #endif
 
+/* Random number generator (Mersenne Twister) */
+#include "mt19937ar.h"
+
 /* Static functions */
 
 /* Used by any external init code to suggest a path */
@@ -2146,3 +2149,39 @@ plsnscanf( const char *buffer, int n, const char *format, ... )
 }
 
 #endif /* PL_HAVE_SNPRINTF */
+
+/*--------------------------------------------------------------------------*\
+ * plseed()
+ *
+ * Set the seed for the random number generator included.
+\*--------------------------------------------------------------------------*/
+
+void
+c_plseed(unsigned int s)
+{
+  init_genrand(s);
+}
+
+/*--------------------------------------------------------------------------*\
+ * plrandi()
+ *
+ * Returns a random number on [0,0xffffffff]-interval.
+\*--------------------------------------------------------------------------*/
+
+unsigned long
+c_plrandi(void)
+{
+  return genrand_int32();
+}
+
+/*--------------------------------------------------------------------------*\
+ * plrandd()
+ *
+ * Returns a random number on [0,1]-interval.
+\*--------------------------------------------------------------------------*/
+
+PLFLT
+c_plrandd(void)
+{
+  return (PLFLT)(genrand_real1());
+}

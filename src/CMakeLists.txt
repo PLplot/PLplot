@@ -48,6 +48,7 @@ plwind.c
 plbuf.c
 plgridd.c
 plvect.c
+mt19937ar.c
 )
 
 if(WIN32 AND BUILD_SHARED_LIBS)
