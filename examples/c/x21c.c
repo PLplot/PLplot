@@ -335,11 +335,6 @@ free_grid(PLFLT *xi, PLFLT *yi)
   free((void *)yi);
 }
 
-/* Function drand48() does not exist on Windows (MSVC/C++) and it is
-   deprecated under Linux, so use rand() instead
-*/
-#define drand48 (1.0/RAND_MAX)*(PLFLT)rand
-
 void
 create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts)
 {
@@ -352,8 +347,8 @@ create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts)
   *zi = z = (PLFLT *) malloc(pts * sizeof(PLFLT));
 
   for(i=0; i<pts; i++) {
-    xt = drand48();
-    yt = drand48();
+    xt = plrandd();
+    yt = plrandd();
     if (!randn) {
       *x = xt + xm;
       *y = yt + ym;

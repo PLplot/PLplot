@@ -47,11 +47,6 @@ extern "C" int isnan (double);
 using namespace std;
 #endif
 
-/* Function drand48() does not exist on all platforms
-   and is deprecated on others. Use rand() instead
-*/
-#define drand48 (1.0/RAND_MAX)*(PLFLT)rand
-
 class x21 {
 
 public:
@@ -387,8 +382,8 @@ void x21::create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, PLINT pts) {
   *zi = z = new PLFLT[pts];
 
   for(i=0; i<pts; i++) {
-    xt = drand48();
-    yt = drand48();
+    xt = pls->randd();
+    yt = pls->randd();
     if (!randn) {
       *x = xt + xm;
       *y = yt + ym;
