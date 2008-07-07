@@ -2096,7 +2096,7 @@ void plstream::wind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
     plwind(xmin,xmax,ymin,ymax);
 }
 
-/*  set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device
+/*  Set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device
  */
 
 void plstream::xormod(bool mode, bool *status)
@@ -2120,6 +2120,33 @@ void plstream::xormod(PLINT mode, PLINT *status)
    plxormod((PLBOOL) mode, &loc_status);
 
    *status = (PLINT) loc_status;
+}
+
+/* Set the seed for the random number generator included. */
+
+void plstream::seed(unsigned int s)
+{
+   set_stream();
+
+   plseed(s);
+}
+
+/* Returns a random number on [0,0xffffffff]-interval. */
+
+unsigned long plstream::randi(void)
+{
+   set_stream();
+
+   return plrandi();
+}
+
+/* Returns a random number on [0,1]-interval. */
+
+PLFLT plstream::randd(void)
+{
+   set_stream();
+
+   return plrandd();
 }
 
 	/* The rest for use from C / C++ only */

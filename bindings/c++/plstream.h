@@ -852,8 +852,19 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
     void wind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );
 
-/* set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device */
+/* Set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device */
     void xormod(bool mode, bool *status);
+    
+/* Random number generator based on Mersenne Twister.
+   Functions to set seed and obtain random numbers as integer
+   ([0,0xffffffff]-interval) and as double/float ([0,1]-real-interval). */
+
+    void seed(unsigned int s);
+
+    unsigned long randi(void);
+
+    PLFLT randd(void);
+    
 
 	/* The rest for use from C only */
 
