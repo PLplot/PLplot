@@ -87,7 +87,7 @@ procedure x16a is
     begin
         tx := tr(0) * x + tr(1) * y + tr(2);
         ty := tr(3) * x + tr(4) * y + tr(5);
-    end;
+    end mypltr;
 
 
     -- Masking function
@@ -153,7 +153,7 @@ begin
             argy := y * pi / 2.0;
             distort := 0.4;
 
-            cgrid1.xg(i) := x + distort * cos(argx);
+            cgrid1.xg(i) := x + distort * cos(argx); -- This gets assigned j times.
             cgrid1.yg(j) := y - distort * cos(argy);
 
             cgrid2.xg(i, j) := x + distort * cos(argx) * cos(argy);
@@ -161,9 +161,9 @@ begin
             cgrid2.zg(i, j) := 0.0; -- Not used, but initialize anway.
         end loop;
     end loop;
-
+    
     -- Plot using identity transform
-    pladv(0);
+    pladv(0); -- page 1
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
@@ -181,7 +181,7 @@ begin
     pllab("distance", "altitude", "Bogon density");
 
     -- Plot using 1d coordinate transform
-    pladv(0);
+    pladv(0); -- page 2
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
@@ -199,7 +199,7 @@ begin
     pllab("distance", "altitude", "Bogon density");
 
     -- Plot using 2d coordinate transform
-    pladv(0);
+    pladv(0); -- page 3
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
@@ -218,7 +218,7 @@ begin
     pllab("distance", "altitude", "Bogon density, with streamlines");
 
     -- Plot using 2d coordinate transform
-    pladv(0);
+    pladv(0); -- page 4
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
@@ -262,20 +262,20 @@ begin
 --    end if;
 
     -- Example with polar coordinates.
-    pladv(0);
+    pladv(0); -- page 5
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
     plpsty(0);
 
     -- Build new coordinate matrices. 
-    for i in cgrid2.xg'range loop
+    for i in cgrid2.xg'range(1) loop
         r := Long_Float(i) / Long_Float(nx - 1);
-        for j in cgrid2.yg'range loop
-           t := (2.0 * pi /(Long_Float(ny) - 1.0)) * Long_Float(j);
-           cgrid2.xg(i, j) := r * cos(t);
-           cgrid2.yg(i, j) := r * sin(t);
-           z(i, j) := exp(-r * r) * cos(5.0 * pi * r) * cos(5.0 * t);
+        for j in cgrid2.xg'range(2) loop
+            t := (2.0 * pi /(Long_Float(ny) - 1.0)) * Long_Float(j);
+            cgrid2.xg(i, j) := r * cos(t);
+            cgrid2.yg(i, j) := r * sin(t);
+            z(i, j) := exp(-r * r) * cos(5.0 * pi * r) * cos(5.0 * t);
         end loop;
     end loop;
 
@@ -287,7 +287,7 @@ begin
         shedge(i) := zmin + (zmax - zmin) * Long_Float(i) / Long_Float(ns);
     end loop;
 
-    --  Now we can shade the interior region.
+    -- Now we can shade the interior region.
     plshades(z, Null, -1.0, 1.0, -1.0, 1.0, 
          shedge, fill_width,
          cont_color, cont_width,

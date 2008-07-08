@@ -132,10 +132,12 @@ procedure x02a is
 
             plhlsrgb(h, l, s, r1, g1, b1);
 
-            -- Ada rounds to nearest integer.  We want to truncate
-            -- approximately like C to match that example.  -0.5 produces
-            -- at least one -1 result (rather than zero) so we subtract
-            -- something with a slightly smaller absolute value.
+            -- Ada converts floats to integers by rounding while C does so by 
+            -- truncation. There is no fool-proof way to fix that but this is pretty 
+            -- close: Add a bit less than 1/2 to the float before converting. A good  
+            -- number to use appears to be about 0.5 - 10^-16 which _might_  
+            -- be an exact fix for 64-bit floats since they have about 16 digits
+            -- of accuracy.
             r(i+16) := Integer((r1 * 255.0) - 0.499999999999999);
             g(i+16) := Integer((g1 * 255.0) - 0.499999999999999);
             b(i+16) := Integer((b1 * 255.0) - 0.499999999999999);

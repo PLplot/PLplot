@@ -136,8 +136,8 @@ package body PLplot_Thin is
 
     -- pltr0, pltr1, and pltr2 had to be re-written in Ada in order to make the 
     -- callback work while also passing the data structure along, e.g. 
-    -- pltr_data in the formal names below. The machinery surround this ide also 
-    -- allows for easy user- defined plot transformation subprograms to be
+    -- pltr_data in the formal names below. The machinery surroundinging this idea  
+    -- also allows for user-defined plot transformation subprograms to be easily
     -- written.
 
     -- Identity transformation. Re-write of pltr0 in plcont.c in Ada.
@@ -160,9 +160,11 @@ package body PLplot_Thin is
         ul, ur, vl, vr : PLINT;
         du, dv : PLFLT;
         xl, xr, yl, yr : PLFLT;
-        package Transformation_Data_Type_Address_Conversions is new System.Address_To_Access_Conversions(Transformation_Data_Type); -- temp
+        nx, ny : PLINT;
+       
+        -- Tell the program what structure the data beginning at pltr_data has.
+        package Transformation_Data_Type_Address_Conversions is new System.Address_To_Access_Conversions(Transformation_Data_Type);
         Transformation_Data_Pointer : Transformation_Data_Type_Address_Conversions.Object_Pointer;
-        nx, ny : Integer;
     
     begin
         Transformation_Data_Pointer := Transformation_Data_Type_Address_Conversions.To_Pointer(pltr_data);
@@ -170,11 +172,17 @@ package body PLplot_Thin is
         nx := Transformation_Data_Pointer.nx;
         ny := Transformation_Data_Pointer.ny;
 
-        ul := Integer(x);
+        -- Ada converts floats to integers by rounding while C does so by 
+        -- truncation. There is no fool-proof way to fix that but this is pretty 
+        -- close: Add a bit less than 1/2 to the float before converting. A good  
+        -- number to use appears to be about 0.5 - 10^-16 which _might_  
+        -- be an exact fix for 64-bit floats since they have about 16 digits
+        -- of accuracy. This kludge was first used in Ada example 2, x02a.adb.
+        ul := Integer(x - 0.499999999999999);
         ur := ul + 1;
         du := x - Long_Float(ul);
 
-        vl := Integer(y);
+        vl := Integer(y - 0.499999999999999);
         vr := vl + 1;
         dv := y - Long_Float(vl);
 
@@ -227,13 +235,18 @@ package body PLplot_Thin is
     
     begin
         TD := Transformation_Data_Type_2_Address_Conversions.To_Pointer(pltr_data);
-    
-    
-        ul := Integer(x);
+
+        -- Ada converts floats to integers by rounding while C does so by 
+        -- truncation. There is no fool-proof way to fix that but this is pretty 
+        -- close: Add a bit less than 1/2 to the float before converting. A good  
+        -- number to use appears to be about 0.5 - 10^-16 which _might_  
+        -- be an exact fix for 64-bit floats since they have about 16 digits
+        -- of accuracy. This kludge was first used in Ada example 2, x02a.adb.
+        ul := Integer(x - 0.499999999999999);
         ur := ul + 1;
         du := x - Long_Float(ul);
 
-        vl := Integer(y);
+        vl := Integer(y - 0.499999999999999);
         vr := vl + 1;
         dv := y - Long_Float(vl);
 
@@ -270,7 +283,7 @@ package body PLplot_Thin is
                     tx := TD.xg(TD.nx - 1, 0);
                     ty := TD.yg(TD.nx - 1, 0);
                 elsif y > ymax then
-Put_Line(TD.nx'img & TD.ny'img);
+--Put_Line(TD.nx'img & TD.ny'img);
                     tx := TD.xg(TD.nx - 1, TD.ny - 1);
                     ty := TD.yg(TD.nx - 1, TD.ny - 1);
                 else 

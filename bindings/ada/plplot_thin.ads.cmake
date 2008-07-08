@@ -1658,8 +1658,8 @@ package PLplot_Thin is
 
     -- pltr0, pltr1, and pltr2 had to be re-written in Ada in order to make the 
     -- callback work while also passing the data structure along, e.g. 
-    -- pltr_data in the formal names below. The machinery surround this ide also 
-    -- allows for easy user- defined plot transformation subprograms to be
+    -- pltr_data in the formal names below. The machinery surrounding this idea  
+    -- also allows for easy user- defined plot transformation subprograms to be
     -- written.
 
     -- Identity transformation. Re-write of pltr0 in plcont.c in Ada.

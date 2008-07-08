@@ -269,9 +269,9 @@ begin
     Select_Fill_Pattern(0);
 
     -- Build new coordinate matrices. 
-    for i in cgrid2.xg'range loop
+    for i in cgrid2.xg'range(1) loop
         r := Long_Float(i) / Long_Float(nx - 1);
-        for j in cgrid2.yg'range loop
+        for j in cgrid2.xg'range(2) loop
            t := (2.0 * pi /(Long_Float(ny) - 1.0)) * Long_Float(j);
            cgrid2.xg(i, j) := r * cos(t);
            cgrid2.yg(i, j) := r * sin(t);
@@ -287,7 +287,7 @@ begin
         shedge(i) := zmin + (zmax - zmin) * Long_Float(i) / Long_Float(ns);
     end loop;
 
-    --  Now we can shade the interior region.
+    -- Now we can shade the interior region.
     Shade_Regions(z, Null, -1.0, 1.0, -1.0, 1.0, 
          shedge, fill_width,
          cont_color, cont_width,
