@@ -173,16 +173,15 @@ package body PLplot_Thin is
         ny := Transformation_Data_Pointer.ny;
 
         -- Ada converts floats to integers by rounding while C does so by 
-        -- truncation. There is no fool-proof way to fix that but this is pretty 
-        -- close: Add a bit less than 1/2 to the float before converting. A good  
-        -- number to use appears to be about 0.5 - 10^-16 which _might_  
-        -- be an exact fix for 64-bit floats since they have about 16 digits
-        -- of accuracy. This kludge was first used in Ada example 2, x02a.adb.
-        ul := Integer(x - 0.499999999999999);
+        -- truncation. There is no fool-proof way to fix that. Here, we simply 
+        -- subtract 0.5 before doing the conversion. There is some possibility
+        -- that subtracting 0.5 - 10^-16 = 0.499999999999999 might work better 
+        -- for 64-bit floats.
+        ul := Integer(x - 0.5);
         ur := ul + 1;
         du := x - Long_Float(ul);
 
-        vl := Integer(y - 0.499999999999999);
+        vl := Integer(y - 0.5);
         vr := vl + 1;
         dv := y - Long_Float(vl);
 
@@ -237,16 +236,15 @@ package body PLplot_Thin is
         TD := Transformation_Data_Type_2_Address_Conversions.To_Pointer(pltr_data);
 
         -- Ada converts floats to integers by rounding while C does so by 
-        -- truncation. There is no fool-proof way to fix that but this is pretty 
-        -- close: Add a bit less than 1/2 to the float before converting. A good  
-        -- number to use appears to be about 0.5 - 10^-16 which _might_  
-        -- be an exact fix for 64-bit floats since they have about 16 digits
-        -- of accuracy. This kludge was first used in Ada example 2, x02a.adb.
-        ul := Integer(x - 0.499999999999999);
+        -- truncation. There is no fool-proof way to fix that. Here, we simply 
+        -- subtract 0.5 before doing the conversion. There is some possibility
+        -- that subtracting 0.5 - 10^-16 = 0.499999999999999 might work better 
+        -- for 64-bit floats.
+        ul := Integer(x - 0.5);
         ur := ul + 1;
         du := x - Long_Float(ul);
 
-        vl := Integer(y - 0.499999999999999);
+        vl := Integer(y - 0.5);
         vr := vl + 1;
         dv := y - Long_Float(vl);
 
@@ -283,7 +281,6 @@ package body PLplot_Thin is
                     tx := TD.xg(TD.nx - 1, 0);
                     ty := TD.yg(TD.nx - 1, 0);
                 elsif y > ymax then
---Put_Line(TD.nx'img & TD.ny'img);
                     tx := TD.xg(TD.nx - 1, TD.ny - 1);
                     ty := TD.yg(TD.nx - 1, TD.ny - 1);
                 else 

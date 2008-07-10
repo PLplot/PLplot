@@ -1556,7 +1556,6 @@ package PLplot_Thin is
     pragma Import(C, pltimefmt, "c_pltimefmt");
 
 
-
     -- Sets the edges of the viewport with the given aspect ratio, leaving 
     -- room for labels. 
 

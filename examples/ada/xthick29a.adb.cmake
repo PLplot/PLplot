@@ -118,10 +118,12 @@ procedure xthick29a is
         x, y : Real_Vector(0 .. 61);
     begin
         -- The C version of this example accesses time.h. Ada's Calendar package 
-        -- would surely work here, but let's just take the same shortcut as 
-        -- in several of the other versions of this example in other languages.
+        -- would surely work here, but let's just take the same shortcut as is used  
+        -- in several of the other versions of this example in other languages. 
+        -- However, the correct value for xmin here is 1_133_395_200.0 not 
+        -- 1_133_398_800.0 as in those examples.
         
-        xmin := 1_133_398_800.0;
+        xmin := 1_133_395_200.0;
         
         xmax := xmin + Long_Float(x'length) * 60.0 * 60.0 * 24.0;
         ymin := 0.0;

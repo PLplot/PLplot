@@ -36,6 +36,19 @@ use
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
 @Ada_Is_2007_With_and_Use_Numerics@
 
+------------------------------------------------------------------------------
+-- Draws several plots which demonstrate the use of date / time formats for
+-- the axis labels.
+-- Time formatting is done using the system strftime routine. See the 
+-- documentation of this for full details of the available formats.
+--
+-- 1) Plotting temperature over a day (using hours / minutes)
+-- 2) Plotting 
+--
+-- Note: Times are stored as seconds since the epoch (usually 1st Jan 1970). 
+-- 
+------------------------------------------------------------------------------
+
 procedure x29a is
     -- Plot a model diurnal cycle of temperature
     procedure plot1 is
@@ -118,10 +131,12 @@ procedure x29a is
         x, y : Real_Vector(0 .. 61);
     begin
         -- The C version of this example accesses time.h. Ada's Calendar package 
-        -- would surely work here, but let's just take the same shortcut as 
-        -- in several of the other versions of this example in other languages.
+        -- would surely work here, but let's just take the same shortcut as is used  
+        -- in several of the other versions of this example in other languages. 
+        -- However, the correct value for xmin here is 1_133_395_200.0 not 
+        -- 1_133_398_800.0 as in those examples.
         
-        xmin := 1_133_398_800.0;
+        xmin := 1_133_395_200.0;
         
         xmax := xmin + Long_Float(x'length) * 60.0 * 60.0 * 24.0;
         ymin := 0.0;
