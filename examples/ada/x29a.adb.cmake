@@ -23,11 +23,13 @@
 with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
+    Ada.Calendar,
     PLplot_Traditional,
     PLplot_Auxiliary;
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
+    Ada.Calendar,
     PLplot_Traditional,
     PLplot_Auxiliary;
 
@@ -130,13 +132,9 @@ procedure x29a is
         xmin, xmax, ymin, ymax : Long_Float;
         x, y : Real_Vector(0 .. 61);
     begin
-        -- The C version of this example accesses time.h. Ada's Calendar package 
-        -- would surely work here, but let's just take the same shortcut as is used  
-        -- in several of the other versions of this example in other languages. 
-        -- However, the correct value for xmin here is 1_133_395_200.0 not 
-        -- 1_133_398_800.0 as in those examples.
-        
-        xmin := 1_133_395_200.0;
+        -- Find the number of seconds since January 1, 1970 to December 12, 2005.
+        -- Should be 1_133_395_200.0.
+        xmin := Long_Float(Time_Of(2005, 12, 1, 0.0) - Time_Of(1970, 1,  1, 0.0));
         
         xmax := xmin + Long_Float(x'length) * 60.0 * 60.0 * 24.0;
         ymin := 0.0;
