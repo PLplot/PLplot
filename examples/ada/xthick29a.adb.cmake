@@ -119,7 +119,7 @@ procedure xthick29a is
         xmin, xmax, ymin, ymax : Long_Float;
         x, y : Real_Vector(0 .. 61);
     begin
-        -- Find the number of seconds since January 1, 1970 to December 12, 2005.
+        -- Find the number of seconds since January 1, 1970 to December 1, 2005.
         -- Should be 1_133_395_200.0.
         xmin := Long_Float(Time_Of(2005, 12, 1, 0.0) - Time_Of(1970, 1,  1, 0.0));
         

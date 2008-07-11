@@ -1468,6 +1468,18 @@ package body PLplot_Traditional is
         PLplot_Thin.plgdev(PL_Device_Name);
         Device_Name := To_Ada(PL_Device_Name, True);
     end plgdev;
+    
+    
+    -- Make a function version of plgdev so that the caller can use it whereever
+    -- a String type is expected without fooling around with conversions between
+    -- Ada string types. See Example 14 for useage.
+    -- THIS IS NOT IN THE C API.
+    function plgdev return String is
+        PL_Device_Name : char_array(0..79);
+    begin
+        PLplot_Thin.plgdev(PL_Device_Name);
+        return To_Ada(PL_Device_Name, True);
+    end plgdev;
 
 
     -- Retrieve current window into device space

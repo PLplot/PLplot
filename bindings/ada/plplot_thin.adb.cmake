@@ -174,14 +174,13 @@ package body PLplot_Thin is
 
         -- Ada converts floats to integers by rounding while C does so by 
         -- truncation. There is no fool-proof way to fix that. Here, we simply 
-        -- subtract 0.5 before doing the conversion. There is some possibility
-        -- that subtracting 0.5 - 10^-16 = 0.499999999999999 might work better 
-        -- for 64-bit floats.
-        ul := Integer(x - 0.5);
+        -- subtract 0.499999999999999 before doing the conversion. Subtracting 
+        -- 0.5 results in index constraint errors being raised.
+        ul := Integer(x - 0.499999999999999);
         ur := ul + 1;
         du := x - Long_Float(ul);
 
-        vl := Integer(y - 0.5);
+        vl := Integer(y - 0.499999999999999);
         vr := vl + 1;
         dv := y - Long_Float(vl);
 
@@ -237,14 +236,13 @@ package body PLplot_Thin is
 
         -- Ada converts floats to integers by rounding while C does so by 
         -- truncation. There is no fool-proof way to fix that. Here, we simply 
-        -- subtract 0.5 before doing the conversion. There is some possibility
-        -- that subtracting 0.5 - 10^-16 = 0.499999999999999 might work better 
-        -- for 64-bit floats.
-        ul := Integer(x - 0.5);
+        -- subtract 0.499999999999999 before doing the conversion. Subtracting 
+        -- 0.5 results in index constraint errors being raised.
+        ul := Integer(x - 0.499999999999999);
         ur := ul + 1;
         du := x - Long_Float(ul);
 
-        vl := Integer(y - 0.5);
+        vl := Integer(y - 0.499999999999999);
         vr := vl + 1;
         dv := y - Long_Float(vl);
 
