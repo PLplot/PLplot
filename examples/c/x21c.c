@@ -159,7 +159,6 @@ main(int argc, const char *argv[])
   long ct;
   int i, j, k;
   PLINT alg;
-  char ylab[40], xlab[40];
   char *title[] = {"Cubic Spline Approximation",
 		   "Delaunay Linear Interpolation",
 		   "Natural Neighbors Interpolation",
@@ -170,7 +169,7 @@ main(int argc, const char *argv[])
   PLFLT opt[] = {0., 0., 0., 0., 0., 0.};
 
   xm = ym = -0.2;
-  xM = yM = 0.8;
+  xM = yM = 0.6;
 
   plMergeOpts(options, "x21c options", NULL);
   plparseopts(&argc, argv, PL_PARSE_FULL);
@@ -197,11 +196,11 @@ main(int argc, const char *argv[])
   plAlloc2dGrid(&zg, xp, yp); /* the output grided data */
   clev = (PLFLT *) malloc(nl * sizeof(PLFLT));
 
-  sprintf(xlab, "Npts=%d gridx=%d gridy=%d", pts, xp, yp);
+  /* printf("Npts=%d gridx=%d gridy=%d", pts, xp, yp); */
   plcol0(1);
   plenv(xm, xM, ym, yM, 2, 0);
   plcol0(15);
-  pllab(xlab, "", "The original data");
+  pllab("X", "Y", "The original data sampling");
   plcol0(2);
   plpoin(pts, x, y, 5);
   pladv(0);
@@ -214,8 +213,8 @@ main(int argc, const char *argv[])
 
       ct = clock();
       plgriddata(x, y, z, pts, xg, xp, yg, yp, zg, alg, opt[alg-1]);
-      sprintf(xlab, "time=%ld ms", (clock() - ct)/1000);
-      sprintf(ylab, "opt=%.3f", opt[alg-1]);
+      /* printf("time=%ld ms", (clock() - ct)/1000); */
+      /* printf("opt=%.3f", opt[alg-1]); */
 
       /* - CSA can generate NaNs (only interpolates?!).
        * - DTLI and NNI can generate NaNs for points outside the convex hull
@@ -270,7 +269,7 @@ main(int argc, const char *argv[])
 
 	plenv0(xm, xM, ym, yM, 2, 0);
 	plcol0(15);
-	pllab(xlab, ylab, title[alg-1]);
+	pllab("X", "Y", title[alg-1]);
 	plshades(zg, xp, yp, NULL, xm, xM, ym, yM,
 		 clev, nl, 1, 0, 1, plfill, 1, NULL, NULL);
 	plcol0(2);
@@ -281,19 +280,19 @@ main(int argc, const char *argv[])
 
 	cmap1_init();
 	plvpor(0.0, 1.0, 0.0, 0.9);
-	plwind(-1.0, 1.0, -1.0, 1.5);
+	plwind(-1.1, 0.75, -0.65, 1.20);
 	/*
-	 * For the comparition to be fair, all plots should have the
+	 * For the comparison to be fair, all plots should have the
 	 * same z values, but to get the max/min of the data generated
 	 * by all algorithms would imply two passes. Keep it simple.
 	 *
 	 * plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
 	 */
 
-	plw3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -60);
-	plbox3("bnstu", ylab, 0.0, 0,
-	       "bnstu", xlab, 0.0, 0,
-	       "bcdmnstuv", "", 0.0, 4);
+	plw3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -40);
+	plbox3("bntu", "X", 0., 0,
+	       "bntu", "Y", 0., 0,
+	       "bcdfntu", "Z", 0.5, 0);
 	plcol0(15);
 	pllab("", "", title[alg-1]);
 	plot3dc(xg, yg, zg, xp, yp, DRAW_LINEXY | MAG_COLOR | BASE_CONT, clev, nl);
@@ -347,8 +346,8 @@ create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts)
   *zi = z = (PLFLT *) malloc(pts * sizeof(PLFLT));
 
   for(i=0; i<pts; i++) {
-    xt = plrandd();
-    yt = plrandd();
+    xt = (xM-xm)*plrandd();
+    yt = (yM-ym)*plrandd();
     if (!randn) {
       *x = xt + xm;
       *y = yt + ym;
