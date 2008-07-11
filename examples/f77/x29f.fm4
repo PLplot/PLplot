@@ -1,4 +1,4 @@
-C  $Id:$
+C  $Id$
 C
 C   Sample plots using date / time formatting for axes
 C
@@ -163,31 +163,11 @@ c     integer tm(9)
 
       parameter (npts = 62)
 
-c     Warning: mktime is in local time so we need to calculate 
-c     offset to get UTC. C time handling is quirky...
-c     mktime is not implemented at all in fortran.
-c     gmtime is non-standard.
-c     We'll just avoid them altogether for this example
-c     and take values for tstart calculated elsewhere.
-c
-c      t1 = 0
-c      call gmtime(t1,tm)
-c      t2 = mktime(&tm)
-c      toff = t1-t2
-
-c     Years since 1900 
-c      tm(6) = 105
-c     0 == January, 11 = December 
-c      tm(5) = 11
-c     & = 1st of month
-c      tm(4) = 1  
-c      tm(3) = 0
-c      tm(2) = 0
-c      tm(1) = 0
-
-c      tstart = mktime(&tm)
-            
-      tstart = 1133398800
+c     number of seconds elapsed since the Unix epoch (1970-01-01, UTC) for
+c     2005-12-01, UTC.  This is the same result as the Python
+c     calendar.timegm((2005,12,1,0,0,0)) result or the Linux C timegm
+c     result corresponding to 2005-12-01.
+      tstart = 1133395200
 
       xmin = dble(tstart)
       xmax = xmin + npts*60.0d0*60.0d0*24.0d0

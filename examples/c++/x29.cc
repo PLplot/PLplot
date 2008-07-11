@@ -172,8 +172,8 @@ x29::plot3()
 {
   int i, npts;
   PLFLT xmin, xmax, ymin, ymax;
-  time_t tstart, t1, t2;
-  double toff;
+  time_t t1, t2;
+  PLFLT tstart, toff;
 
   struct tm tm;
 
@@ -182,20 +182,29 @@ x29::plot3()
   t1 = 0;
   tm = *gmtime(&t1);
   t2 = mktime(&tm);
-  toff = difftime(t1,t2);
+  // Calculate difference between UTC and local time.
+  toff = (PLFLT) difftime(t1,t2);
 
-  tm.tm_year = 105; // Years since 1900 
+  tm.tm_year = 105; // Years since 1900 = 2005
   tm.tm_mon = 11;   // 0 == January, 11 = December 
   tm.tm_mday = 1;   // 1 = 1st of month 
   tm.tm_hour = 0;
   tm.tm_min = 0;
   tm.tm_sec = 0;
 
-  tstart = mktime(&tm);
+// tstart is a time_t value (cast to PLFLT) which represents the number
+// of seconds elapsed since 00:00:00 on January 1, 1970, Coordinated 
+// Universal Time (UTC).  The actual value corresponds to 2005-12-01 in
+// _local time_.  toff (calculated above and applied below) transforms that
+// to a time_t value (cast to a PLFLT) corresponding to 2005-12-01 UTC.
+// Aside from casting, the cross-platform result for tstart + toff should
+// be identical to the result from the Linux timegm function (the inverse
+// of the POSIX gmtime) for 2005-12-01.
+  tstart = (PLFLT) mktime(&tm);
 
   npts = 62;
 
-  xmin = (PLFLT) tstart + toff;
+  xmin = tstart + toff;
   xmax = xmin + npts*60.0*60.0*24.0;
   ymin = 0.0;
   ymax = 5.0;

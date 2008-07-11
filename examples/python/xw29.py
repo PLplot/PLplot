@@ -1,4 +1,4 @@
-# $Id:$
+# $Id$
 
 #  Copyright (C) 2008 Andrew Ross
 
@@ -21,6 +21,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 from plplot_py_demos import *
+import calendar
 
 #--------------------------------------------------------------------------
 # main
@@ -117,28 +118,13 @@ def plot2():
 
 def plot3():
 
-  # Warning: mktime is in local time so we need to calculate 
-  # offset to get UTC. C time handling is quirky 
-  #   t1 = 0
-  #   tm = *gmtime(&t1)
-  #   t2 = mktime(&tm)
-  #   toff = difftime(t1,t2)
-  
-  #   tm.tm_year = 105 # Years since 1900 
-  #   tm.tm_mon = 11   # 0 == January, 11 = December 
-  #   tm.tm_mday = 1   # 1 = 1st of month 
-  #   tm.tm_hour = 0
-  #   tm.tm_min = 0
-  #   tm.tm_sec = 0
-  
-  #   tstart = mktime(&tm)
-
-  tstart = 1133398800
-  toff = 0
+# number of seconds elapsed since the Unix epoch (1970-01-01, UTC) for
+# 2005-12-01, UTC.
+  tstart = calendar.timegm((2005,12,1,0,0,0))
 
   npts = 62
 
-  xmin = float(tstart + toff)
+  xmin = float(tstart)
   xmax = xmin + npts*60.0*60.0*24.0
   ymin = 0.0
   ymax = 5.0

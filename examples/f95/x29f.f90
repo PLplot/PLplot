@@ -158,31 +158,11 @@
 
       parameter (npts = 62)
 
-!     Warning: mktime is in local time so we need to calculate 
-!     offset to get UTC. C time handling is quirky...
-!     mktime is not implemented at all in fortran.
-!     gmtime is non-standard.
-!     We'll just avoid them altogether for this example
-!     and take values for tstart calculated elsewhere.
-!
-!      t1 = 0
-!      call gmtime(t1,tm)
-!      t2 = mktime(&tm)
-!      toff = t1-t2
-
-!     Years since 1900 
-!      tm(6) = 105
-!     0 == January, 11 = December 
-!      tm(5) = 11
-!     & = 1st of month
-!      tm(4) = 1  
-!      tm(3) = 0
-!      tm(2) = 0
-!      tm(1) = 0
-
-!      tstart = mktime(&tm)
-            
-      tstart = 1133398800
+!     number of seconds elapsed since the Unix epoch (1970-01-01, UTC) for
+!     2005-12-01, UTC.  This is the same result as the Python
+!     calendar.timegm((2005,12,1,0,0,0)) result or the Linux C timegm
+!     result corresponding to 2005-12-01.
+      tstart = 1133395200
 
       xmin = dble(tstart)
       xmax = xmin + npts*60.0_plflt*60.0_plflt*24.0_plflt
