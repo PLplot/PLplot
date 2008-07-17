@@ -152,7 +152,7 @@ if(ENABLE_tcl)
         message(STATUS "Looking for itk library")
         set(itk_library_versions 3.4 3.3 3.2 3.1 3.0 2.1 2.0)
         foreach(version ${itk_library_versions})
-          find_library(ITK_LIBRARY itk${version} ${TK_LIBRARY}
+          find_library(ITK_LIBRARY itk${version} 
                        PATH_SUFFIXES itk${version})
         endforeach(version ${itk_library_versions})
         if(ITK_LIBRARY)
