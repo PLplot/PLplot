@@ -1,4 +1,4 @@
-// $Id:$
+// $Id$
 //
 //       Sample plots using date / time formatting for axes
 //
@@ -25,7 +25,7 @@ package plplot.examples;
 
 import plplot.core.*;
 
-//import java.util.*;
+import java.util.*;
 
 
 class x29 {
@@ -162,26 +162,21 @@ class x29 {
 	int i, npts;
 	double xmin, xmax, ymin, ymax;
 	long tstart;
-	int toff;
 	double x[], y[];
 
-	//Calendar cal = Calendar.getInstance();
-	//TimeZone tz = cal.getTimeZone();
+	TimeZone tz = TimeZone.getTimeZone("UTC");
+	Calendar cal = Calendar.getInstance(tz);
 	
-	//cal.set(2005, 0, 1, 0, 0, 0);
+	cal.set(2005, 11, 1, 0, 0, 0);
 	
-	//tstart = cal.getTimeInMillis()/1000;
-	//toff = tz.getOffset(tstart)/1000;
-
-	tstart = 1133398800;
-	toff = 0;
+	tstart = cal.getTimeInMillis()/1000;
 
 	npts = 62;
 	
 	x = new double[npts];
 	y = new double[npts];
 	
-	xmin = (double) (tstart - toff);
+	xmin = (double) tstart;
 	xmax = xmin + npts*60.0*60.0*24.0;
 	ymin = 0.0;
 	ymax = 5.0;
