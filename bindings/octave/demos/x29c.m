@@ -1,4 +1,4 @@
-## $Id:$
+## $Id$
 ##
 ## Sample plots using date / time formatting for axes
 ##
@@ -139,6 +139,14 @@ function plot3
   tm.min = 0;
   tm.sec = 0;
 
+  ## tstart is a time_t value (cast to PLFLT) which represents the number
+  ## of seconds elapsed since 00:00:00 on January 1, 1970, Coordinated 
+  ## Universal Time (UTC).  The actual value corresponds to 2005-12-01 in
+  ## _local time_.  toff (calculated above and applied below) transforms that
+  ## to a time_t value (cast to a PLFLT) corresponding to 2005-12-01 UTC.
+  ## Aside from casting, the cross-platform result for tstart + toff should
+  ## be identical to the result from the Linux timegm function (the inverse
+  ## of the POSIX gmtime) for 2005-12-01.
   tstart = mktime(tm);
 
   npts = 62;
