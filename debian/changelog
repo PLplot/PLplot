@@ -1,4 +1,4 @@
-plplot (5.9.0-8) UNRELEASED; urgency=low
+plplot (5.9.0-8) unstable; urgency=low
 
   [ Andrew Ross ]
   * debian/rules:
