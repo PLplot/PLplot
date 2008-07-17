@@ -3,8 +3,11 @@ plplot (5.9.0-8) unreleased; urgency=low
   * debian/rules:
     + Fix use of findstring in debian/rules which prevented java
       building on i386 (closes: #483826)
+  * Add dpatches 
+      12_cmake-2.6-fixes: Fixes build with cmake 2.6 now in sid. This
+        patch is taken from svn upstream. (closes: #482236)
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Sun, 01 Jun 2008 22:10:34 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 16 Jul 2008 13:18:07 +0100
 
 plplot (5.9.0-7) unstable; urgency=low
 

@@ -1,0 +1,364 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 12_cmake-2.6-fixes.dpatch by  <andrewross@users.sourceforge.net>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Fix the build system to work with cmake 2.6.
+## DP: This patch is extracted from the upstream SVN version of plplot.
+
+@DPATCH@
+
+diff -ur plplot-5.9.0-orig/bindings/f95/CMakeLists.txt plplot-5.9.0/bindings/f95/CMakeLists.txt
+--- plplot-5.9.0-orig/bindings/f95/CMakeLists.txt	2008-02-10 15:54:01.000000000 +0000
++++ plplot-5.9.0/bindings/f95/CMakeLists.txt	2008-07-16 10:53:26.000000000 +0100
+@@ -141,14 +141,30 @@
+ RUNTIME DESTINATION ${BIN_DIR}
+ )
+ 
+-# Yuk! All Makefiles are run from the top level build directory and
+-# so the f90 .mod files end up there rather than in the bindings/f95
+-# directory. Ifort and pgf90 both have a -module command line option to
+-# override this location, but I'm not sure how portable that?
+-install(
+-FILES ${CMAKE_BINARY_DIR}/plplot.mod ${CMAKE_BINARY_DIR}/plplotp.mod ${CMAKE_BINARY_DIR}/plplot_flt.mod
+-DESTINATION ${F95_MOD_DIR}
+-)
++if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
++  # Yuk! All Makefiles are run from the top level build directory and
++  # so the f90 .mod files end up there rather than in the bindings/f95
++  # directory. Ifort and pgf90 both have a -module command line option to
++  # override this location, but I'm not sure how portable that?
++  install(
++  FILES
++  ${CMAKE_BINARY_DIR}/plplot.mod
++  ${CMAKE_BINARY_DIR}/plplotp.mod
++  ${CMAKE_BINARY_DIR}/plplot_flt.mod
++  DESTINATION ${F95_MOD_DIR}
++  )
++else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
++  # For the current cvs version of CMake, the module files are created by
++  # default during the library build in the more logical bindings/f95
++  # directory.
++  install(
++  FILES
++  ${CMAKE_BINARY_DIR}/bindings/f95/plplot.mod
++  ${CMAKE_BINARY_DIR}/bindings/f95/plplotp.mod
++  ${CMAKE_BINARY_DIR}/bindings/f95/plplot_flt.mod
++  DESTINATION ${F95_MOD_DIR}
++  )
++endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
+ 
+ # Configure pkg-config *.pc file corresponding to libplplotf95${LIB_TAG}
+ if(PKG_CONFIG_EXECUTABLE)
+diff -ur plplot-5.9.0-orig/cmake/modules/cairo.cmake plplot-5.9.0/cmake/modules/cairo.cmake
+--- plplot-5.9.0-orig/cmake/modules/cairo.cmake	2008-02-10 15:53:59.000000000 +0000
++++ plplot-5.9.0/cmake/modules/cairo.cmake	2008-07-15 16:25:46.000000000 +0100
+@@ -97,13 +97,7 @@
+       string(REGEX REPLACE ";" " " 
+       cairo_COMPILE_FLAGS "${cflags} ${X11_COMPILE_FLAGS}"
+       )
+-      # Convert X linker information to preferred CMake form before appending
+-      # it to already converted ${linkflags}
+-      cmake_link_flags(
+-      cairo_X_LINK_FLAGS
+-      "-L${X11_LIBRARY_DIR};${X11_LIBRARIES}"
+-      )
+-      set(cairo_LINK_FLAGS ${linkflags} ${cairo_X_LINK_FLAGS})
++      set(cairo_LINK_FLAGS ${linkflags} ${X11_LIBRARIES})
+     else(PLD_xcairo AND X11_COMPILE_FLAGS)
+       message(STATUS 
+        "WARNING: X windows not found. Setting xcairo driver to OFF."
+diff -ur plplot-5.9.0-orig/cmake/modules/CMakeAdaCompiler.cmake.in plplot-5.9.0/cmake/modules/CMakeAdaCompiler.cmake.in
+--- plplot-5.9.0-orig/cmake/modules/CMakeAdaCompiler.cmake.in	2008-02-10 15:53:59.000000000 +0000
++++ plplot-5.9.0/cmake/modules/CMakeAdaCompiler.cmake.in	2008-07-15 15:47:30.000000000 +0100
+@@ -14,3 +14,4 @@
+ ELSE(UNIX OR MINGW)
+   SET(CMAKE_Ada_OUTPUT_EXTENSION .obj)
+ ENDIF(UNIX OR MINGW)
++SET(CMAKE_Ada_OUTPUT_EXTENSION_REPLACE 1)
+diff -ur plplot-5.9.0-orig/cmake/modules/CMakeAdaInformation.cmake plplot-5.9.0/cmake/modules/CMakeAdaInformation.cmake
+--- plplot-5.9.0-orig/cmake/modules/CMakeAdaInformation.cmake	2008-02-10 15:53:59.000000000 +0000
++++ plplot-5.9.0/cmake/modules/CMakeAdaInformation.cmake	2008-07-15 15:47:54.000000000 +0100
+@@ -41,9 +41,9 @@
+   SET(CMAKE_SHARED_LIBRARY_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_C_FLAGS})
+ ENDIF(NOT CMAKE_SHARED_LIBRARY_Ada_FLAGS)
+ 
+-IF(NOT CMAKE_SHARED_LIBRARY_LINK_Ada_FLAGS)
++IF(NOT DEFINED CMAKE_SHARED_LIBRARY_LINK_Ada_FLAGS)
+   SET(CMAKE_SHARED_LIBRARY_LINK_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS})
+-ENDIF(NOT CMAKE_SHARED_LIBRARY_LINK_Ada_FLAGS)
++ENDIF(NOT DEFINED CMAKE_SHARED_LIBRARY_LINK_Ada_FLAGS)
+ 
+ IF(NOT CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG)
+   SET(CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG}) 
+@@ -53,6 +53,10 @@
+   SET(CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG_SEP})
+ ENDIF(NOT CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP)
+ 
++IF(NOT CMAKE_SHARED_LIBRARY_RPATH_LINK_Ada_FLAG)
++  SET(CMAKE_SHARED_LIBRARY_RPATH_LINK_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_C_FLAG})
++ENDIF(NOT CMAKE_SHARED_LIBRARY_RPATH_LINK_Ada_FLAG)
++
+ # repeat for modules
+ IF(NOT CMAKE_SHARED_MODULE_CREATE_Ada_FLAGS)
+   SET(CMAKE_SHARED_MODULE_CREATE_Ada_FLAGS ${CMAKE_SHARED_MODULE_CREATE_C_FLAGS})
+@@ -70,6 +74,22 @@
+   SET(CMAKE_SHARED_MODULE_RUNTIME_Ada_FLAG_SEP ${CMAKE_SHARED_MODULE_RUNTIME_C_FLAG_SEP})
+ ENDIF(NOT CMAKE_SHARED_MODULE_RUNTIME_Ada_FLAG_SEP)
+ 
++IF(NOT CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG)
++  SET(CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG})
++ENDIF(NOT CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG)
++
++IF(NOT CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG_SEP)
++  SET(CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP})
++ENDIF(NOT CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG_SEP)
++
++IF(NOT CMAKE_EXECUTABLE_RPATH_LINK_Ada_FLAG)
++  SET(CMAKE_EXECUTABLE_RPATH_LINK_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_Ada_FLAG})
++ENDIF(NOT CMAKE_EXECUTABLE_RPATH_LINK_Ada_FLAG)
++
++IF(NOT DEFINED CMAKE_SHARED_LIBRARY_LINK_Ada_WITH_RUNTIME_PATH)
++  SET(CMAKE_SHARED_LIBRARY_LINK_Ada_WITH_RUNTIME_PATH ${CMAKE_SHARED_LIBRARY_LINK_C_WITH_RUNTIME_PATH})
++ENDIF(NOT DEFINED CMAKE_SHARED_LIBRARY_LINK_Ada_WITH_RUNTIME_PATH)
++
+ IF(NOT CMAKE_INCLUDE_FLAG_Ada)
+   SET(CMAKE_INCLUDE_FLAG_Ada ${CMAKE_INCLUDE_FLAG_C})
+ ENDIF(NOT CMAKE_INCLUDE_FLAG_Ada)
+@@ -85,7 +105,12 @@
+ 
+ SET(CMAKE_VERBOSE_MAKEFILE FALSE CACHE BOOL "If this value is on, makefiles will be generated without the .SILENT directive, and all commands will be echoed to the console during the make.  This is useful for debugging only. With Visual Studio IDE projects all commands are done without /nologo.")
+ 
+-SET (CMAKE_Ada_FLAGS "$ENV{FFLAGS} ${CMAKE_Ada_FLAGS_INIT}" CACHE STRING
++SET(CMAKE_Ada_FLAGS_INIT "$ENV{FFLAGS} ${CMAKE_Ada_FLAGS_INIT}")
++# avoid just having a space as the initial value for the cache 
++IF(CMAKE_Ada_FLAGS_INIT STREQUAL " ")
++  SET(CMAKE_Ada_FLAGS_INIT)
++ENDIF(CMAKE_Ada_FLAGS_INIT STREQUAL " ")
++SET (CMAKE_Ada_FLAGS "${CMAKE_Ada_FLAGS_INIT}" CACHE STRING
+      "Flags for Ada compiler.")
+ 
+ INCLUDE(CMakeCommonLanguageInclude)
+diff -ur plplot-5.9.0-orig/cmake/modules/CMakeTestAdaCompiler.cmake plplot-5.9.0/cmake/modules/CMakeTestAdaCompiler.cmake
+--- plplot-5.9.0-orig/cmake/modules/CMakeTestAdaCompiler.cmake	2008-02-10 15:53:59.000000000 +0000
++++ plplot-5.9.0/cmake/modules/CMakeTestAdaCompiler.cmake	2008-07-15 15:48:05.000000000 +0100
+@@ -17,6 +17,8 @@
+ 
+   FILE(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CMakeLists.txt
+   "
++# FIXME: This specific location currently needs to be changed whenever the
++# location of the experimental Ada support files is changed.
+ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+ set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL \"\" FORCE)
+ project(test Ada)
+diff -ur plplot-5.9.0-orig/cmake/modules/pkg-config.cmake plplot-5.9.0/cmake/modules/pkg-config.cmake
+--- plplot-5.9.0-orig/cmake/modules/pkg-config.cmake	2008-02-10 15:53:59.000000000 +0000
++++ plplot-5.9.0/cmake/modules/pkg-config.cmake	2008-07-15 16:27:07.000000000 +0100
+@@ -20,10 +20,10 @@
+ # Module for determining pkg-config configuration variables related to the
+ # install-tree build of the examples.
+ # Also create useful macros called pkg_check_pkgconfig to emulate the
+-# pkgconfig macro using the pkg_check_modules macro,
+-# cmake_to_pkg_config_link_flags to process CMake link flags into 
++# pkgconfig macro using the pkg_check_modules macro;
++# pkg_config_link_flags to process CMake link flags into 
+ # pkg-config standard form for the configured output *.pc files, and
+-# pkg_config_to_cmake_link_flags to process input link flags delivered
++# cmake_link_flags to process input link flags delivered
+ # by pkg-config into CMake standard form.
+ 
+ # The following variables are set:
+@@ -155,8 +155,10 @@
+     set(${_link_flags_out})
+   else("${_link_flags_in}" STREQUAL ""})
+     #message("(original link flags) = ${_link_flags_in}")
+-    # Convert link flags to a list.
+-    string(REGEX REPLACE " " ";" _link_flags_list "${_link_flags_in}")
++    # Convert link flags to a list.  Note some link flags are blank-delimited
++    # (such as "-framework whatever") so preserve those by splitting into
++    # separate list elements only if the next element starts with a hyphen.
++    string(REGEX REPLACE " -" ";-" _link_flags_list "${_link_flags_in}")
+     # Extract list of directories from -L options.
+     list(LENGTH _link_flags_list _link_flags_length)
+     math(EXPR _link_flags_length "${_link_flags_length} - 1")
+@@ -164,7 +166,7 @@
+     set(_link_directory_list)
+     foreach(_list_index RANGE ${_link_flags_length})
+       list(GET _link_flags_list ${_list_index} _list_element)
+-      string(REGEX REPLACE "^-L" "" _list_element1 ${_list_element})
++      string(REGEX REPLACE "^-L" "" _list_element1 "${_list_element}")
+       if(_list_element STREQUAL "-L${_list_element1}")
+         list(APPEND _index_list ${_list_index})
+         list(APPEND _link_directory_list ${_list_element1})
+@@ -186,7 +188,7 @@
+     set(${_link_flags_out})
+     foreach(_list_index RANGE ${_link_flags_length})
+       list(GET _link_flags_list ${_list_index} _list_element)
+-      string(REGEX REPLACE "^-l" "" _list_element1 ${_list_element})
++      string(REGEX REPLACE "^-l" "" _list_element1 "${_list_element}")
+       if(_list_element STREQUAL "-l${_list_element1}")
+         set(_library_pathname "_library_pathname-NOTFOUND")
+         find_library(
+diff -ur plplot-5.9.0-orig/cmake/modules/tcl-related.cmake plplot-5.9.0/cmake/modules/tcl-related.cmake
+--- plplot-5.9.0-orig/cmake/modules/tcl-related.cmake	2008-02-10 15:53:59.000000000 +0000
++++ plplot-5.9.0/cmake/modules/tcl-related.cmake	2008-07-15 16:55:58.000000000 +0100
+@@ -135,12 +135,7 @@
+     endif(ENABLE_tk AND NOT X11_FOUND)
+     if(ENABLE_tk)
+       set(TK_INCLUDE_PATH ${TK_INCLUDE_PATH} ${X11_INCLUDE_DIR})
+-      set(
+-      TK_LIBRARY
+-      ${TK_LIBRARY}
+-      -L${X11_LIBRARY_DIR}
+-      ${X11_LIBRARIES}
+-      )
++      set(TK_LIBRARY ${TK_LIBRARY} ${X11_LIBRARIES})
+       message(STATUS "TK_INCLUDE_PATH = ${TK_INCLUDE_PATH}")
+       message(STATUS "TK_LIBRARY = ${TK_LIBRARY}")
+     else(ENABLE_tk)
+@@ -157,7 +152,7 @@
+         message(STATUS "Looking for itk library")
+         set(itk_library_versions 3.4 3.3 3.2 3.1 3.0 2.1 2.0)
+         foreach(version ${itk_library_versions})
+-          find_library(ITK_LIBRARY itk${version} ${TK_LIBRARY}
++          find_library(ITK_LIBRARY itk${version}
+                        PATH_SUFFIXES itk${version})
+         endforeach(version ${itk_library_versions})
+         if(ITK_LIBRARY)
+diff -ur plplot-5.9.0-orig/cmake/modules/wxwidgets.cmake plplot-5.9.0/cmake/modules/wxwidgets.cmake
+--- plplot-5.9.0-orig/cmake/modules/wxwidgets.cmake	2008-02-10 15:53:59.000000000 +0000
++++ plplot-5.9.0/cmake/modules/wxwidgets.cmake	2008-07-15 16:31:27.000000000 +0100
+@@ -23,8 +23,10 @@
+ # PLD_wxwidgets		  - ON means the wxwidgets device is enabled.
+ # wxwidgets_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile wxwidgets
+ # 			    device.
+-# wxwidgets_LINK_FLAGS	  - individual LINK_FLAGS for dynamic wxwidgets device.
+-# DRIVERS_LINK_FLAGS  	  - list of LINK_FLAGS for all static devices.
++# wxwidgets_LINK_FLAGS	  - list of full path names of libraries and
++# 			    linker flags for dynamic wxwidgets device driver.
++# DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS for case
++# 			    when ENABLE_DYNDRIVERS OFF.
+ 
+ # Find wxWidgets needed for driver and bindings
+ if(PLD_wxwidgets)
+@@ -39,11 +41,21 @@
+ endif(PLD_wxwidgets)
+ 
+ if(PLD_wxwidgets)
++  #message("wxWidgets_INCLUDE_DIRS = ${wxWidgets_INCLUDE_DIRS}")
++  #message("wxWidgets_DEFINITIONS = ${wxWidgets_DEFINITIONS}")
+   string(REGEX REPLACE ";" " -I" 
+   wxwidgets_COMPILE_FLAGS
+-  "-I${wxWidgets_INCLUDE_DIRS} ${wxWidgets_DEFINITIONS}"
++  "-I${wxWidgets_INCLUDE_DIRS}"
+   )
+-  set(wxwidgets_LINK_FLAGS ${wxWidgets_LIBRARIES})
++  # For case (cvs version of CMake as of 2008-03-23, but not cmake-2.4.8)
++  # when wxWidgets_DEFINITIONS is a list.
++  string(REGEX REPLACE ";" " " 
++  wxwidgets_COMPILE_FLAGS
++  ${wxwidgets_COMPILE_FLAGS}
++  " ${wxWidgets_DEFINITIONS}"
++  )
++  # Convert wxWidgets_LIBRARIES to full pathname form.
++  cmake_link_flags(wxwidgets_LINK_FLAGS "${wxWidgets_LIBRARIES}")
+   if(WITH_FREETYPE)
+     set(
+     wxwidgets_COMPILE_FLAGS
+diff -ur plplot-5.9.0-orig/cmake/modules/xwin.cmake plplot-5.9.0/cmake/modules/xwin.cmake
+--- plplot-5.9.0-orig/cmake/modules/xwin.cmake	2008-02-10 15:53:59.000000000 +0000
++++ plplot-5.9.0/cmake/modules/xwin.cmake	2008-07-15 16:31:23.000000000 +0100
+@@ -30,12 +30,7 @@
+ if(PLD_xwin)
+   if(X11_FOUND)
+     set(xwin_COMPILE_FLAGS "${X11_COMPILE_FLAGS}")
+-    # N.B. X11_LIBRARY_DIR is used internally by FindX11.cmake but not
+-    # documented for external use so we may have to replace this
+-    # some day by the appropriate 
+-    # "GET_FILENAME_COMPONENT(X11_LIBRARY_DIR ??? PATH)" logic.
+-    # But this works for now....
+-    set(xwin_LINK_FLAGS "-L${X11_LIBRARY_DIR} ${X11_LIBRARIES}")
++    set(xwin_LINK_FLAGS "${X11_LIBRARIES}")
+     option(HAVE_PTHREAD "Use pthreads with the xwin driver" OFF)
+     if(HAVE_PTHREAD)
+       find_package(Threads)
+diff -ur plplot-5.9.0-orig/CMakeLists.txt plplot-5.9.0/CMakeLists.txt
+--- plplot-5.9.0-orig/CMakeLists.txt	2008-02-10 15:54:06.000000000 +0000
++++ plplot-5.9.0/CMakeLists.txt	2008-07-15 16:06:05.000000000 +0100
+@@ -21,6 +21,12 @@
+ 
+ # Version 2.4.5 or above of cmake is required!
+ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
++# set CMake 2.6.x policy if the cmake_policy command exists, (i.e., if
++# the user is using CMake 2.6.0 or newer).
++if(COMMAND  cmake_policy)
++  # empty elements are not ignored in lists.
++  cmake_policy(SET CMP0007 NEW)
++endif(COMMAND  cmake_policy)
+ 
+ # Recommended way to do user overrides of C-related variables, is given at
+ # http://public.kitware.com/pipermail/cmake/2006-July/010334.html.
+diff -ur plplot-5.9.0-orig/examples/f95/CMakeLists.txt plplot-5.9.0/examples/f95/CMakeLists.txt
+--- plplot-5.9.0-orig/examples/f95/CMakeLists.txt	2008-02-10 15:54:08.000000000 +0000
++++ plplot-5.9.0/examples/f95/CMakeLists.txt	2008-07-15 16:04:44.000000000 +0100
+@@ -50,32 +50,43 @@
+ 
+ if(BUILD_TEST)
+   remove_definitions("-DHAVE_CONFIG_H")
+-  # N.B. This is required because it's the location of plplot.mod
+-  # generated as a by-product of building libplplotf95${LIB_TAG}.
+-  include_directories(${CMAKE_BINARY_DIR})
+ 
+-  # Temporary workaround for module handling bug in CMake 2.4.3.  Create a
+-  # file with arbitrary contents called plplot.mod.proxy in top-level
+-  # build tree.  As a temporary measure we use cmake_workaround.f as the
+-  # generator of this file.  (cmake_workaround.f was previously compiled,
+-  # but that is no longer the case.)  Note, once CMake is fixed this comment
+-  # the following configure_file command and cmake_workaround.f should all
+-  # just disappear.
+-  configure_file(
+-  ${CMAKE_CURRENT_SOURCE_DIR}/cmake_workaround.f
+-  ${CMAKE_BINARY_DIR}/plplot.mod.proxy
+-  COPYONLY
+-  )
++  if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
++    # Temporary workaround for module handling bug in CMake 2.4.3.  Create a
++    # file with arbitrary contents called plplot.mod.proxy in top-level
++    # build tree.  As a temporary measure we use cmake_workaround.f as the
++    # generator of this file.  (cmake_workaround.f was previously compiled,
++    # but that is no longer the case.)  Note, once CMake is fixed this comment
++    # the following configure_file command and cmake_workaround.f should all
++    # just disappear.
++    configure_file(
++    ${CMAKE_CURRENT_SOURCE_DIR}/cmake_workaround.f
++    ${CMAKE_BINARY_DIR}/plplot.mod.proxy
++    COPYONLY
++    )
++    # The generated module location for 2.4.x CMake is the top-level build
++    # tree.
++    include_directories(${CMAKE_BINARY_DIR})
++  else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
++    # The generated module location for cvs CMake is the build-tree
++    # location where the corresponding library is generated.
++    include_directories(${CMAKE_BINARY_DIR}/bindings/f95)
++  endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 4)
+ endif(BUILD_TEST)
+ foreach(STRING_INDEX ${f95_STRING_INDICES})
+   set(f95_SRCS ${f95_SRCS} x${STRING_INDEX}f.f90)
+   if(BUILD_TEST)
+-    add_executable(x${STRING_INDEX}f x${STRING_INDEX}f.f90)
+-    target_link_libraries(x${STRING_INDEX}f plplotf95${LIB_TAG})
++    # Need unique target name
++    add_executable(x${STRING_INDEX}f95 x${STRING_INDEX}f.f90)
++    set_target_properties(
++    x${STRING_INDEX}f95 PROPERTIES
++    OUTPUT_NAME x${STRING_INDEX}f
++    )
++    target_link_libraries(x${STRING_INDEX}f95 plplotf95${LIB_TAG})
+   endif(BUILD_TEST)
+ endforeach(STRING_INDEX ${f95_STRING_INDICES})
+ 
+-install(FILES ${f95_SRCS} 
++install(FILES ${f95_SRCS}
+ DESTINATION ${DATA_DIR}/examples/f95
+ )
+ 
