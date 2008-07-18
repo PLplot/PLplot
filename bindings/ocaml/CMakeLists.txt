@@ -73,17 +73,22 @@ if(ENABLE_ocaml)
   # Build bytecode version
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cma 
-    COMMAND ${OCAMLBUILD} -tag debug -classic-display -build-dir ${OCAML_BUILD_DIR} plplot.cma
-    DEPENDS ${DEPENDS_LIST}
+    COMMAND ${OCAMLBUILD} -tag debug -classic-display
+    -build-dir ${OCAML_BUILD_DIR} plplot.cma
+    DEPENDS ${DEPENDS_LIST} plplot${LIB_TAG}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
   
-  # Build native version
+  # Build native version.  Use DEPENDS to serialize against plplot.cma
+  # since the two ocamlbuilds interfere with each other when in parallel
+  # build mode.
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cmxa 
     ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.a
-    COMMAND ocamlbuild -tag debug -build-dir ${OCAML_BUILD_DIR}  plplot.cmxa
-    DEPENDS ${DEPENDS_LIST}
+    COMMAND ${OCAMLBUILD} -tag debug -classic-display
+    -build-dir ${OCAML_BUILD_DIR} plplot.cmxa
+    DEPENDS ${DEPENDS_LIST} plplot${LIB_TAG}
+    ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cma
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
 
