@@ -45,7 +45,8 @@ foreach(STRING_INDEX ${ocaml_STRING_INDICES})
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
       COMMAND ${OCAMLC} 
       -I ${CMAKE_BINARY_DIR}/bindings/ocaml/${OCAML_BUILD_DIR} 
-      -ccopt "-L ${CMAKE_BINARY_DIR}/src" plplot.cma 
+      -ccopt "-L ${CMAKE_BINARY_DIR}/src -Wl,-rpath -Wl,${CMAKE_BINARY_DIR}/src "
+      plplot.cma 
       -o ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME} 
       ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
       DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
