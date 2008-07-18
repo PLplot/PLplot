@@ -25,7 +25,7 @@
 # Do the standard non-interactive examples.
 # Currently only 11 and 19 are implemented
 for index in 11 19; do
-  $ocamldir/x${index} -dev $device -o ${OUTPUT_DIR}/x${index}ocaml.$dsuffix \
+  $ocamldir/x${index}ocaml -dev $device -o ${OUTPUT_DIR}/x${index}ocaml.$dsuffix \
     $options 2> test.error
   # Look for any status codes (segfaults, plexit) from the examples themselves.
   status_code=$?
