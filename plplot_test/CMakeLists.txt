@@ -129,11 +129,9 @@ if(ENABLE_ocaml)
     @ONLY
     )
   set(SCRIPTS ${SCRIPTS} test_ocaml.sh)
-  # Disable test for now - ocaml bindings don't cope with command line options
-  # so non-interactive tests don't work.
-  #add_test(examples_ocaml
-  #  ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=ocaml"
-  #)
+  add_test(examples_ocaml
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=ocaml"
+  )
 endif(ENABLE_ocaml)
 
 # Run C examples with different drivers
