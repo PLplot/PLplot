@@ -172,19 +172,16 @@ x29::plot3()
 {
   int i, npts;
   PLFLT xmin, xmax, ymin, ymax;
-  time_t t1, t2;
-  PLFLT tstart, toff;
+  PLFLT tstart;
+  char *tz;
 
   struct tm tm;
 
-  // Warning: mktime is in local time so we need to calculate 
-  // offset to get UTC. C time handling is quirky 
-  t1 = 0;
-  tm = *gmtime(&t1);
-  t2 = mktime(&tm);
-  // Calculate difference between UTC and local time.
-  toff = (PLFLT) difftime(t1,t2);
-
+  // Calculate seconds since the Unix epoch for 2005-12-01 UTC.
+#if defined(WIN32)
+  // Adopt the known result for POSIX-compliant systems.
+  tstart = (PLFLT) 1133395200;
+#else
   tm.tm_year = 105; // Years since 1900 = 2005
   tm.tm_mon = 11;   // 0 == January, 11 = December 
   tm.tm_mday = 1;   // 1 = 1st of month 
@@ -192,19 +189,24 @@ x29::plot3()
   tm.tm_min = 0;
   tm.tm_sec = 0;
 
-// tstart is a time_t value (cast to PLFLT) which represents the number
-// of seconds elapsed since 00:00:00 on January 1, 1970, Coordinated 
-// Universal Time (UTC).  The actual value corresponds to 2005-12-01 in
-// _local time_.  toff (calculated above and applied below) transforms that
-// to a time_t value (cast to a PLFLT) corresponding to 2005-12-01 UTC.
-// Aside from casting, the cross-platform result for tstart + toff should
-// be identical to the result from the Linux timegm function (the inverse
-// of the POSIX gmtime) for 2005-12-01.
+  // Use POSIX-compliant equivalent of timegm GNU extension.
+  tz = getenv("TZ");
+  setenv("TZ", "", 1);
+  tzset();
+  // tstart is a time_t value (cast to PLFLT) which represents the number
+  // of seconds elapsed since 00:00:00 on January 1, 1970, Coordinated 
+  // Universal Time (UTC) on  2005-12-01 (UTC).
   tstart = (PLFLT) mktime(&tm);
+  if (tz)
+    setenv("TZ", tz, 1);
+  else
+    unsetenv("TZ");
+  tzset();
+#endif
 
   npts = 62;
 
-  xmin = tstart + toff;
+  xmin = tstart;
   xmax = xmin + npts*60.0*60.0*24.0;
   ymin = 0.0;
   ymax = 5.0;
