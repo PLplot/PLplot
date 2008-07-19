@@ -48,7 +48,17 @@ let manual_function_attributes =
     {
       function_name = "c_plrgbhls";
       function_attrs = None;
-      parameter_attrs = Some ["p_h", ["out"]; "p_l", ["out"]; "p_s", ["out"]]
+      parameter_attrs = Some ["p_h", ["out"]; "p_l", ["out"]; "p_s", ["out"]];
+    };
+    {
+      function_name = "c_plhlsrgb";
+      function_attrs = None;
+      parameter_attrs = Some ["p_r", ["out"]; "p_g", ["out"]; "p_b", ["out"]];
+    };
+    {
+      function_name = "c_plmkstrm";
+      function_attrs = None;
+      parameter_attrs = Some ["p_strm", ["out"]];
     };
     (* For now, this will be wrapped by hand...
     {
