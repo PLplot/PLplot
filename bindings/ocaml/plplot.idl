@@ -102,25 +102,29 @@ quote(ml,
     "let unset_defined () = Callback.register \"caml_plplot_defined\" 0");
 quote(mli, "val unset_defined : unit -> unit");
 
-// plgriddata wrapper
-// These #define lines were pulled from plplot.h, v5.8.0
-#define _GRID_CSA    1 /* Bivariate Cubic Spline approximation */
-#define _GRID_DTLI   2 /* Delaunay Triangulation Linear Interpolation */
-#define _GRID_NNI    3 /* Natural Neighbors Interpolation */
-#define _GRID_NNIDW  4 /* Nearest Neighbors Inverse Distance Weighted */
-#define _GRID_NNLI   5 /* Nearest Neighbors Linear Interpolation */
-#define _GRID_NNAIDW 6 /* Nearest Neighbors Around Inverse Distance Weighted  */
+// Hand-translated GRID_* flags for use with plgriddata
+quote(mlmli, "type plplot_grid_method_type = \
+                GRID_CSA | \
+                GRID_DTLI | \
+                GRID_NNI | \
+                GRID_NNIDW | \
+                GRID_NNLI | \
+                GRID_NNAIDW");
 
-typedef enum {
-        GRID_CSA = _GRID_CSA,
-        GRID_DTLI = _GRID_DTLI,
-        GRID_NNI = _GRID_NNI,
-        GRID_NNIDW = _GRID_NNIDW,
-        GRID_NNLI = _GRID_NNLI,
-        GRID_NNAIDW = _GRID_NNAIDW,
-} plplot_grid_method_type;
+// Hand-translated PL_PARSE_* flags for use with plparseopts
+quote(mlmli, "type plplot_parse_method_type = \
+                PL_PARSE_PARTIAL | \
+                PL_PARSE_FULL | \
+                PL_PARSE_QUIET | \
+                PL_PARSE_NODELETE | \
+                PL_PARSE_SHOWALL | \
+                PL_PARSE_OVERRIDE | \
+                PL_PARSE_NOPROGRAM | \
+                PL_PARSE_NODASH | \
+                PL_PARSE_SKIP");
 
 RAW_ML(external plgriddata : float array -> float array -> float array -> float array -> float array -> plplot_grid_method_type -> float -> float array array = "ml_plgriddata_bytecode" "ml_plgriddata")
+RAW_ML(external plparseopts : string array -> plplot_parse_method_type array -> int = "ml_plparseopts")
 
 // Taken from the plplot.h 3D plot style definitions
 // XXX TODO This is currently unused...
