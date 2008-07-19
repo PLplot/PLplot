@@ -394,6 +394,50 @@ value ml_plgriddata_bytecode(value* argv, int argn) {
                          argv[5], argv[6]);
 }
 
+/* Translate the integer version of the OCaml variant to the appropriate
+   PLplot constant. */
+int translate_parse_option(int parse_option) {
+    int translated_option;
+    switch (parse_option) {
+        case 0: translated_option = PL_PARSE_PARTIAL; break;
+        case 1: translated_option = PL_PARSE_FULL; break;
+        case 2: translated_option = PL_PARSE_QUIET; break;
+        case 3: translated_option = PL_PARSE_NODELETE; break;
+        case 4: translated_option = PL_PARSE_SHOWALL; break;
+        case 5: translated_option = PL_PARSE_OVERRIDE; break;
+        case 6: translated_option = PL_PARSE_NOPROGRAM; break;
+        case 7: translated_option = PL_PARSE_NODASH; break;
+        case 8: translated_option = PL_PARSE_SKIP; break;
+        default: translated_option = -1;
+    }
+    return translated_option;
+}
+
+value ml_plparseopts(value argv, value parse_method) {
+    CAMLparam2(argv, parse_method);
+    int i;
+    int result;
+    int argv_length;
+    int parse_method_length;
+    int combined_parse_method;
+    argv_length = Wosize_val(argv);
+    parse_method_length = Wosize_val(parse_method);
+    // Make a copy of the command line argument strings
+    const char* argv_copy[argv_length];
+    for (i = 0; i < argv_length; i++) {
+        argv_copy[i] = String_val( Field(argv, i) );
+    }
+    // OR the elements of the parse_method array together
+    combined_parse_method = Int_val(Field(parse_method, 0));
+    for (i = 1; i < parse_method_length; i++) {
+        combined_parse_method =
+            combined_parse_method |
+                translate_parse_option(Int_val(Field(parse_method, i)));
+    }
+    result = plparseopts(&argv_length, argv_copy, combined_parse_method);
+    CAMLreturn( Val_int(result) );
+}
+
 
 
 /* XXX Non-core functions follow XXX */
