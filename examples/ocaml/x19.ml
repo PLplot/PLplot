@@ -54,6 +54,9 @@ let () =
   let miny = -70.0 in
   let maxy = 80.0 in
 
+  (* Parse and process command line arguments *)
+  ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
+
   plinit();
 
   (* Cartesian plots *)

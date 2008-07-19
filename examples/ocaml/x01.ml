@@ -244,8 +244,8 @@ let main fontset =
   (* NOT IMPLEMENTED YET
   (* Parse and process command line arguments *)
   plMergeOpts(options, "x01c options", notes);
-  plparseopts(&argc, argv, PL_PARSE_FULL);
   *)
+  ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
 
   (* Get version number, just for kicks *)
   let plplot_version = plgver () in

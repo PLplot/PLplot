@@ -35,10 +35,8 @@ let main () =
   let x0 = Array.init 361 (fun i -> cos (dtr *. float_of_int i)) in
   let y0 = Array.init 361 (fun i -> sin (dtr *. float_of_int i)) in
 
-  (* NOT SUPPORTED YET
   (* Parse and process command line arguments *)
-  (void) plparseopts(&argc, argv, PL_PARSE_FULL);
-  *)
+  ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
 
   (* Initialize plplot *)
   plinit ();
