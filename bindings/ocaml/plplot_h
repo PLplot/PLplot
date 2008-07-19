@@ -581,6 +581,15 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
  void
 c_plxormod(PLBOOL mode, PLBOOL *status);
 
+ void
+c_plseed(unsigned int s);
+
+ unsigned long
+c_plrandi(void);
+
+ PLFLT
+c_plrandd(void);
+
 /*
  void
 plgFileDevs(const char ***p_menustr, const char ***p_devname, int *p_ndev);
