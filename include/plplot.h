@@ -1463,9 +1463,10 @@ c_plstripd(PLINT id);
 
 PLDLLIMPEXP void
 c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
-	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
-         PLFLT valuemin, PLFLT valuemax);
+        PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+        PLFLT valuemin, PLFLT valuemax,
+        void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+        PLPointer pltr_data);
 
 /* plots a 2d image (or a matrix too large for plshade() ) - colors
    automatically scaled */

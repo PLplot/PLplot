@@ -659,7 +659,14 @@ rdbuf_image(PLStream *pls)
     rd_data(pls, dev_iy, sizeof(short) * npts);
     rd_data(pls, dev_z, sizeof(unsigned short) * (nptsX-1)*(nptsY-1));
 
-    plP_image(dev_ix, dev_iy, dev_z, nptsX, nptsY, xmin, ymin, dx, dy, dev_zmin, dev_zmax);
+    /*
+     * COMMENTED OUT by Hezekiah Carty
+     * Commented (hopefullly temporarily) until the dev_fastimg rendering 
+     * path can be updated to support the new plimage internals. In the
+     * meantime this function is not actually used so the issue of how to
+     * update the code to support the new interface can be ignored.
+     */
+    /*plP_image(dev_ix, dev_iy, dev_z, nptsX, nptsY, xmin, ymin, dx, dy, dev_zmin, dev_zmax);*/
 
     free(dev_ix);
     free(dev_iy);

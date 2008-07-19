@@ -5538,12 +5538,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <paramdef><parameter>ymax</parameter></paramdef>
 	  <paramdef><parameter>zmin</parameter></paramdef>
 	  <paramdef><parameter>zmax</parameter></paramdef>
-	  <paramdef><parameter>Dxmin</parameter></paramdef>
-	  <paramdef><parameter>Dxmax</parameter></paramdef>
-	  <paramdef><parameter>Dymin</parameter></paramdef>
-	  <paramdef><parameter>Dymax</parameter></paramdef>
 	  <paramdef><parameter>valuemin</parameter></paramdef>
 	  <paramdef><parameter>valuemax</parameter></paramdef>
+	  <paramdef><parameter>pltr</parameter></paramdef>
+	  <paramdef><parameter>pltr_data</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -5602,18 +5600,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>Dxmin, Dxmax, Dymin, Dymax</parameter>
-	  (<literal>PLFLT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Plot only the window of points whose plot coordinates fall inside
-	    the window of (Dxmin, Dymin) to (Dxmax, Dymax).
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
 	  <parameter>valuemin, valuemax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
@@ -5627,6 +5613,42 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </para>
 	</listitem>
       </varlistentry>
+        <varlistentry>
+  	<term>
+ 	  <parameter>pltr</parameter>
+ 	  (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer)
+            </literal>, input)
+  	</term>
+  	<listitem>
+  	  <para>
+ 	    Pointer to function that defines transformation between indices
+ 	    in array <literal><parameter>idata</parameter></literal> and the
+ 	    world coordinates (C only).  Transformation functions are
+ 	    provided in the PLplot library:
+ 	    &pltr0; for identity mapping, and &pltr1; and &pltr2; for
+ 	    arbitrary mappings respectively defined by one- and
+ 	    two-dimensional arrays.  In addition, user-supplied routines
+ 	    for the transformation can be used as well.  Examples of
+ 	    all of these approaches are given in
+ 	    <xref linkend="contour-plots-c"/>.
+ 	    The transformation function should
+ 	    have the form given by any of &pltr0;, &pltr1;, or &pltr2;.
+ 	  </para>
+	</listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>
+	    <parameter>pltr_data</parameter>
+ 	  (<literal>PLPointer</literal>, input)
+ 	</term>
+ 	<listitem>
+ 	  <para>
+ 	    Extra parameter to help
+ 	    pass information to &pltr0;, &pltr1;, &pltr2;, or whatever routine
+ 	    that is externally supplied.
+  	  </para>
+  	</listitem>
+        </varlistentry>
     </variablelist>
 
     <para>
@@ -5637,8 +5659,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    General:
 	    <function>
 	      plimagefr(idata, xmin, xmax, ymin, ymax,
-	      zmin, zmax, Dxmin, Dxmax, Dymin, Dymax,
-	      valuemin, valuemax)
+	      zmin, zmax, valuemin, valuemax, pltr, pltr_data)
 	    </function>
 	  </para>
 	</listitem>

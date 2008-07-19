@@ -2,6 +2,7 @@
  *
  * Author: Alessandro Mirone, Nov 2001
  * Adapted: Joao Cardoso
+ * Updated: Hezekiah Carty 2008
  *
  * Copyright (C) 2004  Alan W. Irwin
  *
@@ -24,7 +25,11 @@
 
 #include "plplotP.h"
 
-/* Get better names, those are too criptic!
+#define COLOR_MIN 0.0
+#define COLOR_MAX 1.0
+#define COLOR_NO_PLOT (-1.0)
+
+/* Get better names, those are too cryptic!
  *
  * ZEROW2B: zero writing to buffer ?
  * ZEROW2D: zero writing to display ?
@@ -70,55 +75,63 @@ enabledisplay()
 
 
 
+/*
+ * NOTE: The plshade* functions require that both pltr and pltr_data are set
+ * in order for pltr to be used.  plimageslow does NOT require this, so it is
+ * up to the user to make sure pltr_data is something non-NULL if pltr
+ * requires it.
+ * Plottable values in idata must be scaled between COLOR_MIN and COLOR_MAX.
+ * This is an internal function, and should not be used directly.  Its
+ * interface may change.
+ */
 void
-plimageslow(short *x, short *y, unsigned short *data, PLINT nx, PLINT ny,
-	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
-	    unsigned short zmin, unsigned short zmax)
+plimageslow(PLFLT *idata, PLINT nx, PLINT ny,
+            PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
+            void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+            PLPointer pltr_data)
 {
+  /* Indices */
   PLINT ix, iy, i;
+  /* Float coordinates */
   PLFLT xf[4], yf[4];
-  short xs[5], ys[5];
+  /* Translated (by pltr) coordinates */
+  PLFLT tx, ty;
+  /* The corners of a single filled region */
   int corners[4];
-  unsigned short col;
+  /* The color to use in the fill */
+  PLFLT color;
 
   for (ix = 0; ix < nx ; ix++) {
     for (iy = 0; iy < ny ; iy++) {
+      /* Only plot values within in appropriate range */
+      color = idata[ix * ny + iy];
+      if (color == COLOR_NO_PLOT)
+        continue;
 
-      col = data[ix*ny+iy];
-      /* only plot points within zmin/zmax range */
-      if (col < zmin || col > zmax)
-	continue;
+      /* The color value has to be scaled to 0.0 -> 1.0 plcol1 color values */
+      plcol1(color / COLOR_MAX);
 
-      plcol1(col/(float)USHRT_MAX);
+      xf[0] = xf[1] = ix;
+      xf[2] = xf[3] = ix + 1;
+      yf[0] = yf[3] = iy;
+      yf[1] = yf[2] = iy + 1;
 
-      if (plsc->plbuf_read == 1) {
-	/* buffer read, is a replot to a slow device. */
-
-	corners[0] = ix*(ny+1)+iy;       /* [ix][iy] */
-	corners[1] = (ix+1)*(ny+1)+iy;   /* [ix+1][iy] */
-	corners[2] = (ix+1)*(ny+1)+iy+1; /* [ix+1][iy+1] */
-	corners[3] = ix*(ny+1)+iy+1;     /* [ix][iy+1] */
-
-	for (i = 0; i < 4; i++) {
-	  xs[i] = x[corners[i]];
-	  ys[i] = y[corners[i]];
-	}
-	xs[4] = xs[0]; ys[4] = ys[0];
-	plP_fill(xs, ys, 5);
-
-      } else {
-
-	xf[0] = xf[1] = ix;
-	xf[2] = xf[3] = ix+1;
-	yf[0] = yf[3] = iy;
-	yf[1] = yf[2] = iy+1;
-
-	for (i = 0; i < 4; i++) {
-	  xf[i] = xmin + xf[i]*dx;
-	  yf[i] = ymin + yf[i]*dy;
-	}
-	plfill(4, xf, yf);
+      if (pltr) {
+        for (i = 0; i < 4; i++) {
+          /* Translate the points */
+          (*pltr) (xf[i], yf[i], &tx, &ty, pltr_data);
+          xf[i] = tx;
+          yf[i] = ty;
+        }
       }
+      else {
+        for (i = 0; i < 4; i++) {
+          /* Automatic translation to the specified plot area */
+          xf[i] = xmin + xf[i] * dx;
+          yf[i] = ymin + yf[i] * dy;
+        }
+      }
+      plfill(4, xf, yf);
     }
   }
 }
@@ -152,10 +165,6 @@ grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny)
  *       only data within bounds zmin <= data <= zmax will be
  *       plotted. If zmin == zmax, all data will be ploted.
  *
- *   Dxmin, Dxmax, Dymin, Dymax:
- *       plots only the window of points whose(x,y)'s fall
- *       inside the [Dxmin->Dxmax]X[Dymin->Dymax] window
- *
  *   valuemin, valuemax:
  *       The minimum and maximum values to use for value -> color
  *       mappings.  A value in idata of valuemin or less will have
@@ -170,118 +179,94 @@ grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny)
  *       image content.
  *
 \*-------------------------------------------------------------------------*/
-
 void
 c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-         PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
-         PLFLT valuemin, PLFLT valuemax)
+         PLFLT valuemin, PLFLT valuemax,
+         void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+         PLPointer pltr_data)
 {
-  PLINT nnx, nny, ix, iy, ixx, iyy, xm, ym;
+  PLINT ix, iy;
   PLFLT dx, dy;
-  /* Zf holds transformed image pixel values
-   * szmin and szmax are zmin and zmax scaled to unsigned short values */
-  unsigned short *Zf, szmin, szmax;
-  short *Xf, *Yf;
+  /* z holds scaled image pixel values */
+  PLFLT *z;
   /* This is used when looping through the image array, checking to
-   * make sure the values are within an acceptable range. */
+     make sure the values are within an acceptable range. */
   PLFLT datum;
+  /* Color palette 0 color in use before the plimage* call */
+  PLINT init_color;
 
   if (plsc->level < 3) {
-    plabort("plimage: window must be set up first");
+    plabort("plimagefr: window must be set up first");
     return;
   }
 
   if (nx <= 0 || ny <= 0) {
-    plabort("plimage: nx and ny must be positive");
+    plabort("plimagefr: nx and ny must be positive");
     return;
   }
 
-  if (Dxmin < xmin || Dxmax > xmax || Dymin < ymin || Dymax > ymax) {
-    plabort("plimage: Dxmin or Dxmax or Dymin or Dymax not compatible with xmin or xmax or ymin or ymax.");
-    return;
+  if ((z = (PLFLT *) malloc(ny * nx * sizeof(PLFLT))) == NULL) {
+    plexit("plimagefr: Insufficient memory");
   }
 
-  dx = (xmax - xmin) / (nx - 1);
-  dy = (ymax - ymin) / (ny - 1);
-  nnx = (Dxmax-Dxmin)/dx + 1;
-  nny = (Dymax-Dymin)/dy + 1;
+  /* Save the currently-in-use color. */
+  init_color = plsc->icol0;
 
-  if ((Zf = (unsigned short *) malloc(nny*nnx*sizeof(unsigned short)))==NULL)
-    {
-      plexit("plimage: Insufficient memory");
-    }
-
-  xm = floor((Dxmin-xmin)/dx); ym = floor((Dymin-ymin)/dy);
-
-  /* Go through the image values and scale them to fit in an
-   * unsigned short range.
-   * Any values greater than valuemax are set to valuemax,
-   * and values less than valuemin are set to valuemin. */
-  ixx=-1;
-  for (ix=xm; ix<xm+nnx; ix++) {
-    ixx++; iyy=0;
-    for (iy=ym; iy<ym+nny; iy++) {
-      datum = idata[ix][iy];
-      if (datum < valuemin) {
-        datum = valuemin;
-      }
-      else if (datum > valuemax) {
-        datum = valuemax;
-      }
-      Zf[ixx*nny+iyy++] =
-        (datum - valuemin) / (valuemax - valuemin) * USHRT_MAX;
-    }
-  }
-
+  /* If no acceptable data range is given, then set the min/max data range
+     to include all of the given data. */
   if (zmin == zmax) {
-    zmin = valuemin;
-    zmax = valuemax;
-  }
-  else {
-    if (zmin < valuemin)
-      zmin = valuemin;
-    if (zmax > valuemax)
-      zmax = valuemax;
+    /* Find the minimum and maximum values in the image */
+    plMinMax2dGrid(idata, nx, ny, &zmax, &zmin);
   }
 
-  /* The value range to plot, scaled to unsigned short values */
-  szmin = (zmin - valuemin) / (valuemax - valuemin) * USHRT_MAX;
-  szmax = (zmax - valuemin) / (valuemax - valuemin) * USHRT_MAX;
-
-  xmin = Dxmin;  xmax = Dxmax;
-  ymin = Dymin;  ymax = Dymax;
-
-  /* The X and Y arrays has size nnx*nny */
-  nnx++; nny++;
-
-  if (((Xf = (short *) malloc(nny*nnx*sizeof(short)))==NULL)||
-      ((Yf = (short *) malloc(nny*nnx*sizeof(short)))==NULL))
-      {
-        plexit("plimage: Insufficient memory");
+  /* Go through the image values and scale them to fit in
+     the COLOR_MIN to COLOR_MAX range.
+     Any values greater than valuemax are set to valuemax,
+     and values less than valuemin are set to valuemin.
+     Any values outside of zmin to zmax are flagged so they
+     are not plotted. */
+  for (ix = 0; ix < nx; ix++) {
+    for (iy = 0; iy < ny; iy++) {
+      if (valuemin == valuemax) {
+        /* If valuemin == valuemax, avoid dividing by zero. */
+        z[ix * ny + iy] = (COLOR_MAX + COLOR_MIN) / 2.0;
       }
-
-  /* adjust the step for the X/Y arrays */
-  dx = dx*(nx-1)/nx;
-  dy = dy*(ny-1)/ny;
-
-  for (ix = 0; ix < nnx; ix++) {
-    for (iy = 0; iy < nny; iy++) {
-      Xf[ix*nny+iy] =  plP_wcpcx(xmin + ix*dx);
-      Yf[ix*nny+iy] =  plP_wcpcy(ymin + iy*dy);
+      else {
+        datum = idata[ix][iy];
+        if (datum < zmin || datum > zmax) {
+          /* Set to a guaranteed-not-to-plot value */
+          z[ix * ny + iy] = COLOR_NO_PLOT;
+        }
+        else {
+          if (datum < valuemin) {
+            datum = valuemin;
+          }
+          else if (datum > valuemax) {
+            datum = valuemax;
+          }
+          /* Set to a value scaled between COLOR_MIN and COLOR_MAX. */
+          z[ix * ny + iy] =
+            (datum - valuemin + COLOR_MIN) / (valuemax - valuemin) * COLOR_MAX;
+        }
+      }
     }
   }
 
-  plP_image(Xf, Yf, Zf, nnx, nny, xmin, ymin, dx, dy, szmin, szmax);
+  /* dx and dy are the plot-coordinates pixel sizes for an untransformed
+     image */
+  dx = (xmax - xmin) / (PLFLT)nx;
+  dy = (ymax - ymin) / (PLFLT)ny;
 
-  free(Xf);
-  free(Yf);
-  free(Zf);
+  plP_image(z, nx, ny, xmin, ymin, dx, dy, pltr, pltr_data);
+
+  plcol0(init_color);
+
+  free(z);
 }
 
 /*-------------------------------------------------------------------------*\
  * plimage
- *           (***** SUBJECT TO CHANGE ******)
  *
  * arguments are
  *   idata: array containing image data
@@ -302,31 +287,82 @@ c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
  *       inside the [Dxmin->Dxmax]X[Dymin->Dymax] window
  *
 \*-------------------------------------------------------------------------*/
-
 void
 c_plimage(PLFLT **idata, PLINT nx, PLINT ny,
-	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-	PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
+        PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+        PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
 {
-  PLINT ix, iy;
-  PLFLT data_min, data_max, iz;
+  PLINT ix, iy, ixx, iyy, xm, ym, nnx, nny;
+  PLFLT data_min, data_max, dx, dy;
+  /* z holds the subimage (Dxmin, Dymin) - (Dxmax, Dymax) */
+  PLFLT **z;
+  /* Was any space allocated for z? */
+  PLBOOL copied;
+  copied = FALSE;
 
-  /* Find the minimum and maximum values in the image, and automatically
-   * scale the colors scale over this range. */
-  data_min = data_max = idata[0][0];
-
-  for (ix = 0; ix < nx; ix++) {
-    for (iy = 0; iy < ny; iy++) {
-      iz = idata[ix][iy];
-      if (data_max < iz)
-	data_max = iz;
-      if (data_min > iz)
-	data_min = iz;
-    }
+  if (nx <= 0 || ny <= 0) {
+    plabort("plimage: nx and ny must be positive");
+    return;
   }
 
-  /* Call plimagefr with the value -> color range mapped to the minimum
-   * and maximum values in idata. */
-  plimagefr(idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
-           Dxmin, Dxmax, Dymin, Dymax, data_min, data_max);
+  if (Dxmin < xmin || Dxmax > xmax || Dymin < ymin || Dymax > ymax) {
+    plabort("plimage: Dxmin or Dxmax or Dymin or Dymax not compatible with xmin or xmax or ymin or ymax.");
+    return;
+  }
+
+  if (Dxmax < Dxmin || xmax < xmin || Dymax < Dymin || ymax < ymin) {
+    plabort("plimage: All (Dxmin < Dxmax) and (Dymin < Dymax) and (xmin < xmax) and (ymin < ymax) must hold.");
+    return;
+  }
+
+  /* Find the minimum and maximum values in the image.  Use these values to
+     for the color scale range. */
+  plMinMax2dGrid(idata, nx, ny, &data_max, &data_min);
+
+  if (xmin == Dxmin && xmax == Dxmax && ymin == Dymin && ymax == Dymax) {
+    /* If the whole image should be shown, then no copying is needed. */
+    z = idata;
+    nnx = nx;
+    nny = ny;
+  }
+  else {
+    /* dx and dy are the plot-coordinates pixel sizes for an untransformed
+       image */
+    dx = (xmax - xmin) / (PLFLT)nx;
+    dy = (ymax - ymin) / (PLFLT)ny;
+
+    /* Pixel dimensions of the (Dxmin, Dymin) to (Dxmax, Dymax) box */
+    nnx = ceil((Dxmax - Dxmin) / dx);
+    nny = ceil((Dymax - Dymin) / dy);
+
+    /* Call plimagefr with the value -> color range mapped to the minimum
+       Offsets for the idata indices to select
+       (Dxmin, Dymin) to (Dxmax, Dymax) */
+    xm = floor((Dxmin - xmin) / dx);
+    ym = floor((Dymin - ymin) / dy);
+
+    /* Allocate space for the sub-image */
+    plAlloc2dGrid(&z, nnx, nny);
+
+    /* Go through the image and select the pixels within the given
+       (Dxmin, Dymin) - (Dxmax, Dymax) window. */
+    ixx = -1;
+    for (ix = xm; ix < xm + nnx; ix++) {
+      ixx++; iyy=0;
+      for (iy = ym; iy < ym + nny; iy++) {
+        z[ixx][iyy++] = idata[ix][iy];
+      }
+    }
+
+    /* Set the appropriate values to pass in to plimagefr */
+    copied = TRUE;
+  }
+
+  plimagefr(z, nnx, nny, Dxmin, Dxmax, Dymin, Dymax, zmin, zmax,
+            data_min, data_max, NULL, NULL);
+
+  /* Only free the memory if it was allocated by us... */
+  if (copied == TRUE) {
+    plFree2dGrid(z, nnx, nny);
+  }
 }

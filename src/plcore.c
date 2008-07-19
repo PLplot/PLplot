@@ -3425,13 +3425,30 @@ return(ret);
  *
  * Author: Alessandro Mirone, Nov 2001
  *
- *
+ * Updated by Hezekiah Carty, Mar 2008.
+ *   - Added support for pltr callback
+ *   - Commented out the "dev_fastimg" rendering path
  *
 \*--------------------------------------------------------------------------*/
 
 void
-plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy, unsigned short zmin, unsigned short zmax)
+plP_image(PLFLT *z , PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
+          void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer), PLPointer pltr_data)
 {
+  plsc->page_status = DRAWING;
+
+  plimageslow(z, nx, ny, xmin, ymin, dx, dy, pltr, pltr_data);
+
+  /*
+   * COMMENTED OUT by Hezekiah Carty, March 2008
+   * The current dev_fastimg rendering method does not work as-is with
+   * the plimagefr coordinate transform support.
+   * This is hopefully temporary, until the dev_fastimg rendering
+   * path can be updated to work with the new plimage internals.
+   * Until then, all plimage* rendering is done by the plimageslow
+   * rendering path.
+   */
+#if 0   /* BEGIN dev_fastimg COMMENT */  
   PLINT i, npts;
   short *xscl, *yscl;
   int   plbuf_write;
@@ -3497,4 +3514,5 @@ plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin
     grimage(x, y, z, nx, ny );
   }
   plsc->plbuf_write = plbuf_write;
+#endif  /* END dev_fastimg COMMENT */
 }

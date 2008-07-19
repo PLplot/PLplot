@@ -65,6 +65,14 @@ static PLOptionTable options[] = {
     NULL }			/* long syntax */
 };
 
+/* Transformation function */
+static void
+mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
+{
+    *tx = x + 2.0 * sin(x) + cos(y);
+    *ty = y + sin(x) + 2.0 * cos(y);
+}
+
 int
 main(int argc, const char *argv[])
 {
@@ -72,6 +80,8 @@ main(int argc, const char *argv[])
   PLFLT xi, yi, xe, ye; 
   int i, j, width, height, num_col;
   PLFLT **img_f;
+  PLFLT img_min;
+  PLFLT img_max;
 
   /*
     Bugs in plimage():
@@ -221,6 +231,22 @@ main(int argc, const char *argv[])
     plimage(img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
     pladv(0);
   }
+
+  /* Base the dynamic range on the image contents. */
+  plMinMax2dGrid(img_f, width, height, &img_max, &img_min);
+
+  /* Draw a saturated version of the original image.  Only use the middle 50%
+     of the image's full dynamic range. */
+  plcol0(2);
+  plenv(0, width, 0, height, 1, -1);
+  pllab("", "", "Reduced dynamic range image example");
+  plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, img_max - img_max * 0.25, NULL, NULL);
+
+  /* Draw a distorted version of the original image, showing its full dynamic range. */
+  plenv(0, width, 0, height, 1, -1);
+  pllab("", "", "Distorted image example");
+  plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, NULL);
+  pladv(0);
 
   plFree2dGrid(img_f, width, height);
 

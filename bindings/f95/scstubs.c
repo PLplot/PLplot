@@ -398,6 +398,7 @@ PLHLSRGB(PLFLT *h, PLFLT *l, PLFLT *s, PLFLT *r, PLFLT *g, PLFLT *b)
     c_plhlsrgb(*h, *l, *s, r, g, b);
 }
 
+#if 0
 void
 PLIMAGEFR(PLFLT *idata, PLINT *nx, PLINT *ny,
           PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLFLT *zmin, PLFLT *zmax,
@@ -422,6 +423,7 @@ PLIMAGEFR(PLFLT *idata, PLINT *nx, PLINT *ny,
 
     plFree2dGrid(pidata, *nx, *ny);
 }
+#endif
 
 void
 PLIMAGE(PLFLT *idata, PLINT *nx, PLINT *ny,

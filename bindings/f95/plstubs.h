@@ -213,7 +213,8 @@
 #define    PLHLS	FNAME(PLHLS,plhls)
 #define    PLHLSRGB	FNAME(PLHLSRGB,plhlsrgb)
 #define    PLIMAGE	FNAME(PLIMAGEF77,plimagef77)
-#define    PLIMAGEFR	FNAME(PLIMAGEFRF77,plimagefrf77)
+/* Commented out until fixed to use pltr */
+/*#define    PLIMAGEFR	FNAME(PLIMAGEFRF77,plimagefrf77)*/
 #define    PLINIT	FNAME(PLINIT,plinit)
 #define    PLJOIN	FNAME(PLJOIN,pljoin)
 #define    PLLAB7	FNAME(PLLAB7,pllab7)

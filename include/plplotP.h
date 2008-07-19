@@ -892,7 +892,8 @@ plP_fill(short *x, short *y, PLINT npts);
 /* draw image */
 
 void
-plP_image(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy, unsigned short zmin, unsigned short zmax);
+plP_image(PLFLT *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
+        void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer), PLPointer pltr_data);
 
 /* End of page */
 
@@ -974,9 +975,10 @@ int PLDLLIMPEXP
 plInBuildTree();
 
 void
-plimageslow(short *x, short *y, unsigned short *data, PLINT nx, PLINT ny,
-	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
-	    unsigned short zmin,  unsigned short zmax);
+plimageslow(PLFLT *idata, PLINT nx, PLINT ny,
+        PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
+        void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+        PLPointer pltr_data);
 
 typedef struct {
   PLFLT xmin, ymin, dx, dy;} IMG_DT;
