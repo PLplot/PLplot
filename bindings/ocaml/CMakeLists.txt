@@ -23,7 +23,6 @@
 if(ENABLE_ocaml)
 
   set(SOURCE_LIST
-    extras.ml
     libplplot_stubs.clib
     plplot_h
     plplot_h.inc
