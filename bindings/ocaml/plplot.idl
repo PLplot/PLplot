@@ -51,7 +51,6 @@ along with ocaml-plplot.  If not, see <http://www.gnu.org/licenses/>.
     [size_is(nx, ny)] PLFLT **idata, PLINT nx, PLINT ny,
     PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     PLFLT zmin, PLFLT zmax,
-    PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
     PLFLT valuemin, PLFLT valuemax);
 
 [mlname(plvect)] void ml_plvect(

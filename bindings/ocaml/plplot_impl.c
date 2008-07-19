@@ -275,19 +275,20 @@ void ml_plshades(PLFLT **a, PLINT nx, PLINT ny,
  void
 c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
         PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-        PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax, 
-        PLFLT valuemin, PLFLT valuemax);
+        PLFLT valuemin, PLFLT valuemax,
+        void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+        PLPointer pltr_data);
 */
 void ml_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
                   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                   PLFLT zmin, PLFLT zmax,
-                  PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
                   PLFLT valuemin, PLFLT valuemax) {
     c_plimagefr(idata, nx, ny,
                 xmin, xmax, ymin, ymax,
                 zmin, zmax,
-                Dxmin, Dxmax, Dymin, Dymax,
-                valuemin, valuemax);
+                valuemin, valuemax,
+                get_ml_plotter_func(),
+                (void*)1);
 }
 
 /*
