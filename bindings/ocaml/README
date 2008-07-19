@@ -6,37 +6,48 @@ This is an interface to PLplot (http://plplot.sourceforge.net/) for the
 Objective Caml language.
 
 * REQUIREMENTS
-- PLplot >5.9.0
-- OCaml 3.10.x
-  - ocamlbuild is used to compile ocaml-plplot.  ocamlbuild is only included
-    in OCaml 3.10.0 and later.  No other 3.10.x specific OCaml functionality
-    is used in ocaml-plplot.
+- PLplot which matches the version of ocaml-plplot (5.8.0 with 5.8.0, etc)
+- OCaml 3.09.x or 3.10.x for ocaml-plplot 5.8.0 or 5.9.0
+- OCaml 3.10.x for later versions
+  - ocamlbuild is used to compile ocaml-plplot versions newer than 5.9.0.
+    ocamlbuild is only included in OCaml 3.10.0 and later.  No other 3.10.x
+    specific OCaml functionality is used in ocaml-plplot at this time.
 - camlidl
 - findlib
 - GNU make
 
 * INSTALLATION
+For 5.8.0 and 5.9.0:
 Modify INCDIRS and LIBDIRS in the Makefile to point to your PLplot installation
 $ make            (generates bytecode and native libs, plus a toplevel)
 $ make libinstall (to install the library using findlib)
 
+For later versions:
+Make sure pkg-config can see you PLplot installation and that both ocamlfind
+and ocamlbuild are in your $PATH.  Then:
+$ make            (builds both bytecode and native libs)
+$ make install    (may have to be run as sudo or root)
+
 * NOTES
-ocaml-plplot has only been tested on OCaml 3.10.x, under 32bit Linux (Fedora,
-Debian and CentOS).  It should work on a 64bit system as well as older versions
-of OCaml, but these are not tested.  Any feedback regarding function or lack of
-function on other platforms is welcome.
+ocaml-plplot has been tested on OCaml 3.09.x and 3.10.x, under 32bit and 64bit
+Linux (Fedora, Debian and CentOS).  It should work on other versions of OCaml,
+but these are not tested.  Any questions or feedback regarding function or lack
+of function on Linux or other platforms are welcome.
 
-This wrapper/interface is still in a fairly basic state.  Most of the 2D and 3D
-plotting routines are in place.  For a 3D plotting example, see the file
-examples/x11.ml - a direct port of the PLplot example 11.  The function names
-are the same as for the PLplot C API.  Function parameters are largely the
-same, with the exception that most arguments indicating array lengths are
-deduced automatically by the camlidl generated interface (the "redacted form"
-of the commands in the PLplot manual).
+This wrapper/interface is fairly complete at this point.  Almost all of the
+plotting and support routines are wrapped and functioning.  For examples, see
+the examples/ directory for a selection of examples ported directly from the
+official C PLplot examples.
 
-The best reference is currently the PLplot web page shown at the top of this
-README file.  The documentation there for the C API holds for the most part here
-as well.
+Almost all of the function names are the same as in the PLplot C API.  Function
+parameters are largely the same, with the exception that most arguments
+indicating array lengths are deduced automatically by the camlidl generated
+interface (see the "redacted form" of the commands in the PLplot manual).
+
+The best references are the included examples and the PLplot web page shown at
+the top of this README file.  The documentation there for the C API holds for
+the most part here as well.  See also the ocaml-plplot Google Code site for
+some OCaml-specific information.  http://ocaml-plplot.googlecode.com/
 
 Hezekiah M. Carty
 hcarty@atmos.umd.edu
