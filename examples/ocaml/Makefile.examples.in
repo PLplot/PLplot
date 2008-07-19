@@ -28,6 +28,9 @@ EXEEXT = @EXEEXT@
 @pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 
 EXECUTABLES_list = \
+		 x01$(EXEEXT) \
+		 x02$(EXEEXT) \
+		 x03$(EXEEXT) \
 		 x11$(EXEEXT) \
 		 x19$(EXEEXT) \
 

@@ -21,6 +21,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 set(ocaml_STRING_INDICES
+  "01"
+  "02"
+  "03"
   "11"
   "19"
   )
