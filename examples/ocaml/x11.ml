@@ -1,20 +1,20 @@
 (*
 Copyright 2007  Hezekiah M. Carty
 
-This file is part of ocaml-plplot.
+This file is part of PLplot.
 
-ocaml-plplot is free software: you can redistribute it and/or modify
+PLplot is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
 (at your option) any later version.
 
-ocaml-plplot is distributed in the hope that it will be useful,
+PLplot is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with ocaml-plplot.  If not, see <http://www.gnu.org/licenses/>.
+along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 *)
 
 (* A more or less direct port of the PLplot example 11 *)
@@ -76,9 +76,9 @@ let () =
       z.(i).(j) <-
         3. *. (1. -. xx) *. (1. -. xx) *.
         exp (-.(xx *. xx) -. (yy +. 1.) *. (yy +. 1.)) -.
-	10. *. (xx /. 5. -. xx**3. -. yy**5.) *.
+        10. *. (xx /. 5. -. xx**3. -. yy**5.) *.
         exp (-.(xx *. xx) -. (yy *. yy)) -.
-	1. /. 3. *. exp (-.(xx +. 1.) *. (xx +. 1.) -. (yy *. yy));
+        1. /. 3. *. exp (-.(xx +. 1.) *. (xx +. 1.) -. (yy *. yy));
     done
   done;
 
@@ -95,8 +95,8 @@ let () =
       plwind (-1.0) 1.0 (-1.0) 1.5;
       plw3d 1.0 1.0 1.2 (-3.0) 3.0 (-3.0) 3.0 zmin zmax alt.(k) az.(k);
       plbox3 "bnstu" "x axis" 0.0 0
-	     "bnstu" "y axis" 0.0 0
-	     "bcdmnstuv" "z axis" 0.0 4;
+             "bnstu" "y axis" 0.0 0
+             "bcdmnstuv" "z axis" 0.0 4;
 
       plcol0 2;
 
@@ -104,17 +104,17 @@ let () =
         match i with
             0 ->
               (* wireframe plot *)
-	      plmesh x y z opt.(k);
+              plmesh x y z opt.(k);
           | 1 ->
               (* magnitude colored wireframe plot *)
-	      plmesh x y z (opt.(k) lor 4);
+              plmesh x y z (opt.(k) lor 4);
           | 2 ->
               (* magnitude colored wireframe plot with sides *)
-	      plot3d x y z (opt.(k) lor 4) 1;
+              plot3d x y z (opt.(k) lor 4) 1;
           | 3 ->
               (* magnitude colored wireframe plot with base contour *)
-	      plmeshc x y z (opt.(k) lor 4 lor 8)
-	        clevel;
+              plmeshc x y z (opt.(k) lor 4 lor 8)
+                clevel;
           | _ -> raise (Failure "You let i get too big!")
       in
 
