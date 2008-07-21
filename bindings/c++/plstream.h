@@ -777,11 +777,20 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
     void stripd(PLINT id);
 
-/* plots a 2d image (or a matrix too large for plshade() ) */
+/* plots a 2d image (or a matrix too large for plshade() ) - colors 
+ * automatically scaled */
 
     void image( PLFLT **data, PLINT nx, PLINT ny,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
            PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
+
+/* plots a 2d image (or a matrix too large for plshade() ) */
+
+    void imagefr( PLFLT **data, PLINT nx, PLINT ny,
+           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+           PLFLT valuemin, PLFLT valuemax, 
+           void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+           PLPointer pltr_data);
 
 /* Set up a new line style */
 

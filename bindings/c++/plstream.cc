@@ -1933,7 +1933,8 @@ void plstream::stripd(PLINT id)
     plstripd(id);
 }
 
-/* plots a 2d image (or a matrix too large for plshade() ) */
+/* plots a 2d image (or a matrix too large for plshade() )  - colors
+ * automatically scaled */
 
 void plstream::image( PLFLT **data, PLINT nx, PLINT ny,
          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
@@ -1943,6 +1944,20 @@ void plstream::image( PLFLT **data, PLINT nx, PLINT ny,
 
     plimage(data, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
     	Dxmin, Dxmax, Dymin, Dymax);
+}
+
+/* plots a 2d image (or a matrix too large for plshade() ) */
+
+void plstream::imagefr( PLFLT **data, PLINT nx, PLINT ny,
+         PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+        PLFLT valuemin, PLFLT valuemax,
+        void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+        PLPointer pltr_data)
+{
+    set_stream();
+
+    plimagefr(data, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
+    	valuemin, valuemax, pltr, pltr_data);
 }
 
 /* Set up a new line style */
