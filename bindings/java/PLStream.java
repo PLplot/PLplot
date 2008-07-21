@@ -405,6 +405,11 @@ public void image(double[][] data, double xmin, double xmax, double ymin, double
     plplotjavac.plimage(data, xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax, Dymin, Dymax);
 }
 
+public void imagefr(double[][] data, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, double valuemin, double valuemax, double[][] pltr, double[][] OBJECT_DATA) {
+    if (set_stream() == -1) return;
+    plplotjavac.plimagefr(data, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, pltr, OBJECT_DATA);
+}
+
 public void init() {
     if (set_stream() == -1) return;
     plplotjavac.plinit();

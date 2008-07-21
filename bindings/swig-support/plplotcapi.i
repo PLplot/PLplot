@@ -944,6 +944,14 @@ plimage( PLFLT **Matrix, PLINT nx, PLINT ny,
 	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
 
+/* plots a 2d image (or a matrix too large for plshade() ). */
+
+void
+plimagefr( PLFLT **Matrix, PLINT nx, PLINT ny,
+	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+	 PLFLT valuemin, PLFLT valuemax,
+         pltr_func pltr, PLPointer SWIG_OBJECT_DATA);
+
 #ifdef 0
 /* Returns a list of file-oriented device names and their menu strings */
 void
