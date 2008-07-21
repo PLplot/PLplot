@@ -22,6 +22,11 @@ int nosombrero = 0;
 int nointeractive = 0;
 char *f_name = NULL;
 
+struct stretch_data {
+  PLFLT xmin, xmax, ymin, ymax;
+  PLFLT stretch;
+};
+
 static PLOptionTable options[] = {
 {
     "dbg",			/* extra debugging plot */
@@ -67,10 +72,17 @@ static PLOptionTable options[] = {
 
 /* Transformation function */
 static void
-mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
+mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 {
-    *tx = x + 2.0 * sin(x) + cos(y);
-    *ty = y + sin(x) + 2.0 * cos(y);
+    struct stretch_data *s = (struct stretch_data *) pltr_data;
+    PLFLT x0, y0, dy;
+//    *tx = x + 2.0 * sin(x) + cos(y);
+//    *ty = y + sin(x) + 2.0 * cos(y);
+    x0 = (s->xmin + s->xmax)*0.5;
+    y0 = (s->ymin + s->ymax)*0.5;
+    dy = (s->ymax-s->ymin)*0.5;
+    *tx = x0 + (x0-x)*(1.0 - s->stretch*cos((y-y0)/dy*M_PI*0.5));
+    *ty = y;
 }
 
 int
@@ -82,6 +94,7 @@ main(int argc, const char *argv[])
   PLFLT **img_f;
   PLFLT img_min;
   PLFLT img_max;
+  struct stretch_data stretch;
 
   /*
     Bugs in plimage():
@@ -245,7 +258,12 @@ main(int argc, const char *argv[])
   /* Draw a distorted version of the original image, showing its full dynamic range. */
   plenv(0, width, 0, height, 1, -1);
   pllab("", "", "Distorted image example");
-  plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, NULL);
+  stretch.xmin = 0;
+  stretch.xmax = width;
+  stretch.ymin = 0;
+  stretch.ymax = height;
+  stretch.stretch = 0.5;
+  plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch);
   pladv(0);
 
   plFree2dGrid(img_f, width, height);
