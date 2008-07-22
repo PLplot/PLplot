@@ -599,6 +599,18 @@ PLPTEX37(
     c_plptex3(*x, *y, *z, *dx, *dy, *dz, *sx, *sy, *sz, *just, text);
 }
 
+PLFLT
+PLRANDD()
+{
+    return c_plrandd();
+}
+
+unsigned long
+PLRANDI()
+{
+    return c_plrandi();
+}
+
 void
 PLREPLOT(void)
 {
@@ -765,6 +777,12 @@ void
 PLSDIPLZ(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 {
     c_plsdiplz(*xmin, *ymin, *xmax, *ymax);
+}
+
+void
+PLSEED(unsigned int s)
+{
+    c_plseed(s);
 }
 
 void

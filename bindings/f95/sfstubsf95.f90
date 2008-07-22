@@ -506,6 +506,16 @@
       end interface
 
       interface
+         function plrandd()
+         end function plrandd
+      end interface
+
+      interface
+         function plrandi()
+         end function plrandi
+      end interface
+
+      interface
          subroutine plreplot
          end subroutine plreplot
       end interface
@@ -651,6 +661,11 @@
             use plplot_flt
             real(kind=plflt) :: xmin, xmax, ymin, ymax
          end subroutine plsdiplz
+      end interface
+
+      interface
+         subroutine plseed()
+         end subroutine plseed
       end interface
 
       ! TODO: character-version
