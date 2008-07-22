@@ -666,6 +666,7 @@ sub put_val_ptr {
 #
 $typemap_get_scalar{'double'} = $typemap_get_scalar{'float'} = 
   $typemap_get_scalar{'int'} = $typemap_get_scalar{'unsigned'} = 
+  $typemap_get_scalar{'long'} = $typemap_get_scalar{'unsigned long'} = 
   $typemap_get_scalar{'short'} = $typemap_get_scalar{'unsigned short'} = sub {
     my ($arg) = @_;		# Name the arguments.
     "  $arg->{c_var_name} = ($arg->{basic_type})$arg->{oct_expr}.double_value();\n";
@@ -724,6 +725,7 @@ $typemap_get_ptr{'double'} =	# For double precision, if the input array is
 
 $typemap_get_ptr{'float'} =	# Floats and ints require a temporary array.
   $typemap_get_ptr{'int'} = $typemap_get_ptr{'unsigned'} =
+  $typemap_get_ptr{'long'} = $typemap_get_ptr{'unsigned long'} =
   $typemap_get_ptr{'short'} = $typemap_get_ptr{'unsigned short'} = sub {
     my ($arg, $argname, $argtype) = @_;	# Name the arguments.
     my $retstr =
@@ -837,6 +839,8 @@ $typemap_output_array_make{'double'} = sub {
 $typemap_output_array_make{'float'} = # These types require an intermediate
   $typemap_output_array_make{'int'} = # temporary vector.
   $typemap_output_array_make{'unsigned'} = 
+  $typemap_output_array_make{'long '} = 
+  $typemap_output_array_make{'unsigned long'} = 
   $typemap_output_array_make{'short'} =
   $typemap_output_array_make{'unsigned short'} = sub {
     my ($arg, $argname, @dims) = @_; # Name the arguments.
@@ -900,6 +904,8 @@ $typemap_output_scalar_make{'double'} =
   $typemap_output_scalar_make{'float'} =
   $typemap_output_scalar_make{'unsigned'} =
   $typemap_output_scalar_make{'int'} =
+  $typemap_output_scalar_make{'long'} =
+  $typemap_output_scalar_make{'unsigned long'} =
   $typemap_output_scalar_make{'short'} =
   $typemap_output_scalar_make{'unsigned short'} =
   $typemap_output_scalar_make{'char *'} =
@@ -930,7 +936,8 @@ $typemap_put_scalar{'double'} =
 
 $typemap_put_scalar{'float'} =
   $typemap_put_scalar{'int'} = $typemap_put_scalar{'unsigned'} =
-  $typemap_put_scalar{'short'} = $typemap_put_scalar{'short'} = sub {
+  $typemap_put_scalar{'long'} = $typemap_put_scalar{'unsigned long'} =
+  $typemap_put_scalar{'short'} = $typemap_put_scalar{'unsigned short'} = sub {
     my ($arg) = @_;	# Name the arguments.
 
     "  $arg->{oct_expr_out} = octave_value((double)$arg->{c_var_name});\n";
@@ -967,6 +974,7 @@ $typemap_put_ptr{'double'} =
 
 $typemap_put_ptr{'float'} =
   $typemap_put_ptr{'int'} = $typemap_put_ptr{'unsigned'} =
+  $typemap_put_ptr{'long'} = $typemap_put_ptr{'unsigned long'} =
   $typemap_put_ptr{'short'} = $typemap_put_ptr{'unsigned short'} = sub {
     my ($arg) = @_;		# Name the arguments.
     ("  if (_arraylen($arg->{oct_expr_out}) == 1)\n" . # Is this a scalar?
@@ -1085,6 +1093,8 @@ _cvt_double_to(FLOAT *out_arr, double *in_arr, unsigned n_el)
 
 template void _cvt_double_to(int *, double *, unsigned);
 template void _cvt_double_to(unsigned *, double *, unsigned);
+template void _cvt_double_to(long *, double *, unsigned);
+template void _cvt_double_to(unsigned long *, double *, unsigned);
 template void _cvt_double_to(short *, double *, unsigned);
 template void _cvt_double_to(unsigned short *, double *, unsigned);
 template void _cvt_double_to(float *, double *, unsigned);
@@ -1107,6 +1117,8 @@ _cvt_to_double(FLOAT *arr, double *d_arr, unsigned n_el)
 
 template void _cvt_to_double(int *, double *, unsigned);
 template void _cvt_to_double(unsigned *, double *, unsigned);
+template void _cvt_to_double(long *, double *, unsigned);
+template void _cvt_to_double(unsigned long *, double *, unsigned);
 template void _cvt_to_double(short *, double *, unsigned);
 template void _cvt_to_double(unsigned short *, double *, unsigned);
 template void _cvt_to_double(float *, double *, unsigned);

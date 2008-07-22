@@ -68,7 +68,7 @@ function ix21c
   opt = zeros(6,1);
 
   xm = -0.2; ym = -0.2;
-  xM = 0.8; yM = 0.8;
+  xM = 0.6; yM = 0.6;
 
   ##plMergeOpts(options, "x21c options", NULL);
   ##plparseopts(&argc, argv, PL_PARSE_FULL);
@@ -81,17 +81,16 @@ function ix21c
 
   plinit;
 
-  [x, y, z] = create_data(pts, xm, ym, randn, rosen); ## the sampled data
+  [x, y, z] = create_data(pts, xm, xM, ym, yM, randn, rosen); ## the sampled data
   zmax = max(z);
   zmin = min(z);
 
   [xg, yg] = create_grid(xp, yp, xm, xM, ym, yM); ## grid the data at
 
-  xlab = sprintf("Npts=%d gridx=%d gridy=%d", pts, xp, yp);
   plcol0(1);
   plenv(xm, xM, ym, yM, 2, 0);
   plcol0(15);
-  pllab(xlab, "", "The original data");
+  pllab("X", "Y", "The original data sampling");
   plcol0(2);
   plpoin(x, y, 5);
   pladv(0);
@@ -102,10 +101,7 @@ function ix21c
     pladv(0);
     for alg=1:6
 
-      ct = cputime;
       zg = plgriddata(x, y, z, xg, yg, alg, opt(alg));
-      xlab=sprintf("time=%ld ms", (cputime - ct)*1000);
-      ylab=sprintf("opt=%.3f", opt(alg));
 
       ## - CSA can generate NaNs (only interpolates?!).
       ## - DTLI and NNI can generate NaNs for points outside the convex hull
@@ -163,8 +159,8 @@ function ix21c
 
 	plenv0(xm, xM, ym, yM, 2, 0);
 	plcol0(15);
-	pllab(xlab, ylab, deblank(title(alg,:)));
-	plshades1(zg, xm, xM, ym, yM, clev, 1, 0, 1, 1, xg, yg);
+	pllab("X", "Y", deblank(title(alg,:)));
+	plshades(zg, xm, xM, ym, yM, clev, 1, 0, 1, 1);
 	plcol0(2);
       else 
 
@@ -173,7 +169,7 @@ function ix21c
 
 	cmap1_init;
 	plvpor(0.0, 1.0, 0.0, 0.9);
-	plwind(-1.0, 1.0, -1.0, 1.5);
+	plwind(-1.1, 0.75, -0.65, 1.20);
 	##
 	## For the comparition to be fair, all plots should have the
 	## same z values, but to get the max/min of the data generated
@@ -182,10 +178,10 @@ function ix21c
 	## plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
 	##
 
-	plw3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -60);
-	plbox3("bnstu", ylab, 0.0, 0,
-	       "bnstu", xlab, 0.0, 0,
-	       "bcdmnstuv", "", 0.0, 4);
+	plw3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -40);
+	plbox3("bntu", "X", 0.0, 0,
+	       "bntu", "Y", 0.0, 0,
+	       "bcdfntu", "Z", 0.5, 0);
 	plcol0(15);
 	pllab("", "", deblank(title(alg,:)));
 	plot3dc(xg, yg, zg, bitor(DRAW_LINEXY,bitor(MAG_COLOR,BASE_CONT)), clev);
@@ -208,10 +204,19 @@ function [x, y] = create_grid(px, py, xm, xM, ym, yM)
 
 endfunction
 
-function [x, y, z] = create_data(pts, xm, ym, randn, rosen)
+function [x, y, z] = create_data(pts, xm, xM, ym, yM, randn, rosen)
   
-  x = rand(pts,1);
-  y = rand(pts,1);
+  ## This would be a much more efficient way of generating an array of 
+  ## random numbers, but we stick with plrandd for compatibility between
+  ## examples.
+  ## x = rand(pts,1);
+  ## y = rand(pts,1);
+  x = zeros(pts,1);
+  y = zeros(pts,1);
+  for i=1:pts
+    x(i) = (xM-xm)*plrandd();
+    y(i) = (yM-ym)*plrandd();
+  endfor
 
   if (!randn)
     x = x + xm;

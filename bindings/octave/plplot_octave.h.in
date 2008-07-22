@@ -481,6 +481,7 @@ typedef struct {
 #define    plhls        c_plhls
 #define    plhlsrgb     c_plhlsrgb
 #define    plimage	c_plimage
+#define    plimagefr	c_plimagefr
 #define    plinit	c_plinit
 #define    pljoin	c_pljoin
 #define    pllab	c_pllab
@@ -505,6 +506,8 @@ typedef struct {
 #define    plpsty	c_plpsty
 #define    plptex	c_plptex
 #define    plptex3	c_plptex3
+#define    plrandd      c_plrandd
+#define    plrandi      c_plrandi
 #define    plreplot	c_plreplot
 #define    plrgb	c_plrgb
 #define    plrgb1	c_plrgb1
@@ -527,6 +530,7 @@ typedef struct {
 #define    plsdidev	c_plsdidev
 #define    plsdimap	c_plsdimap
 #define    plsdiori	c_plsdiori
+#define    plseed       c_plseed
 #define    plsesc	c_plsesc
 #define    plsfam	c_plsfam
 #define    plsfci	c_plsfci
@@ -1071,6 +1075,16 @@ void c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text
 
 void c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text); //%name plptex3
 
+/* Random number generator based on Mersenne Twister.
+ *    Obtain real random number in range [0,1]. */
+
+PLFLT c_plrandd(void);  //%name plrandd
+
+/* Random number generator based on Mersenne Twister.
+ *    Obtain integer random number in range [0,0xffffffffa]. */
+
+unsigned long c_plrandi(void);   //%name plrandi
+
 /* Replays contents of plot buffer to current device/file. */
 
 void c_plreplot(void); //%name plreplot
@@ -1179,6 +1193,10 @@ void c_plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax); //%name plsdipl
 /* Set window into plot space incrementally (zoom) */
 
 void c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax); //%name plsdiplz
+
+/* Set seed for internal random number generator */
+
+void c_plseed(unsigned s);  //%name plseed
 
 /* Set the escape character for text strings. */
 
@@ -1656,6 +1674,41 @@ void my_plimage(PLFLT *a, PLINT nx, PLINT ny,
   f2c(a,aa,nx,ny);
   plimage(aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, dxmin, dxmax, dymin, dymax);
 } //%name pplimage //%input a(nx, ny)
+
+/* Plot an image with distortion - uses the same function pointer
+ * convention as plcont */
+
+void my_plimagefr(PLFLT *a, PLINT nx, PLINT ny, 
+                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+                  PLFLT valuemin, PLFLT valuemax, PLFLT *tr) {
+  f2c(a,aa,nx,ny);
+  plimagefr(aa,nx,ny,xmin,xmax,ymin,ymax,zmin,zmax,valuemin,valuemax,xform,tr);
+}  //%name plimagefr  //%input a(nx,ny), tr(6)
+  
+/* plimagefr() for use with pltr1 */
+void my_plimagefr1(PLFLT *a, PLINT nx, PLINT ny, 
+                   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, 
+                   PLFLT zmin, PLFLT zmax,
+                   PLFLT valuemin, PLFLT valuemax, PLFLT *xg, PLFLT *yg) {
+  PLcGrid grid1;
+  grid1.nx = nx;  grid1.ny = ny;
+  grid1.xg = xg;  grid1.yg = yg;
+  f2c(a,aa,nx,ny);
+  c_plimagefr(aa,nx,ny,xmin,xmax,ymin,ymax,zmin,zmax,valuemin,valuemax,pltr1,&grid1);
+}  //%name plimagefr1  //%input a(nx,ny), xg(nx), yg(ny)
+
+/* plimagefr() for use with pltr2 */
+void my_plimagefr2(PLFLT *a, PLINT nx, PLINT ny, 
+                   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, 
+                   PLFLT zmin, PLFLT zmax,
+                   PLFLT valuemin, PLFLT valuemax, PLFLT *xg, PLFLT *yg) {
+  PLcGrid2 grid2;
+  f2c(xg,xgg,nx,ny);  f2c(yg,ygg,nx,ny);  
+  grid2.nx = nx;  grid2.ny = ny;
+  grid2.xg = xgg;  grid2.yg = ygg;
+  f2c(a,aa,nx,ny);
+  c_plimagefr(aa,nx,ny,xmin,xmax,ymin,ymax,zmin,zmax,valuemin,valuemax,pltr2,&grid2);
+}  //%name plimagefr2  //%input a(nx,ny), xg(nx,ny), yg(nx,ny)
 
 /* Depreciated functions - retained for backwards compatibility */
 

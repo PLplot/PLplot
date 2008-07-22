@@ -198,6 +198,7 @@ tdeblank	-- Remove trailing amd leading blanks from string.
 pldef		-- set your defaults.
 plsetopt	-- set/view/reset/aplly plplot options.
 plimage		-- display octave images.
+plimagefr	-- display octave images with transformation.
 griddata	-- grid irregularly sampled data
 
 toggle_plplot_use	-- use plplot or gnuplot.

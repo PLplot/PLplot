@@ -28,6 +28,14 @@ void plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	PLPointer pltr_data);  //%nowrap
 
+/* Plot an image with distortion */
+
+void plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
+	       PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, 
+	       PLFLT zmin, PLFLT zmax, PLFLT valuemin, PLFLT valuemax,
+	       void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	  PLPointer pltr_data);  //%nowrap
+  
 /* plot continental outline in world coordinates */
 
 void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
