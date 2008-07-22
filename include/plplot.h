@@ -550,6 +550,8 @@ typedef struct {
 #define    plpsty	c_plpsty
 #define    plptex	c_plptex
 #define    plptex3	c_plptex3
+#define    plrandd	c_plrandd
+#define    plrandi	c_plrandi
 #define    plreplot	c_plreplot
 #define    plrgb	c_plrgb
 #define    plrgb1	c_plrgb1
@@ -575,6 +577,7 @@ typedef struct {
 #define    plsdiori	c_plsdiori
 #define    plsdiplt	c_plsdiplt
 #define    plsdiplz	c_plsdiplz
+#define    plseed	c_plseed
 #define    plsesc	c_plsesc
 #define    plsetopt	c_plsetopt
 #define    plsfam	c_plsfam
@@ -618,9 +621,6 @@ typedef struct {
 #define    plwid	c_plwid
 #define    plwind	c_plwind
 #define    plxormod	c_plxormod
-#define    plseed	c_plseed
-#define    plrandi	c_plrandi
-#define    plrandd	c_plrandd
 
 #endif /* __PLSTUBS_H__ */
 
@@ -1177,6 +1177,18 @@ PLDLLIMPEXP void
 c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, 
 	     PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text);
 
+/* Random number generator based on Mersenne Twister.
+   Obtain real random number in range [0,1]. */
+
+PLDLLIMPEXP PLFLT
+c_plrandd(void);
+
+/* Random number generator based on Mersenne Twister.
+   Obtain integer random number in range [0,0xffffffffa]. */
+
+PLDLLIMPEXP unsigned long
+c_plrandi(void);
+
 /* Replays contents of plot buffer to current device/file. */
 
 PLDLLIMPEXP void
@@ -1308,6 +1320,11 @@ c_plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
 
 PLDLLIMPEXP void
 c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
+
+/* Set seed for internal random number generator */
+
+PLDLLIMPEXP void
+c_plseed(unsigned int s);
 
 /* Set the escape character for text strings. */
 
@@ -1579,19 +1596,6 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 
 PLDLLIMPEXP void
 c_plxormod(PLBOOL mode, PLBOOL *status);
-
-/* Random number generator based on Mersenne Twister.
-   Functions to set seed and obtain random numbers as integer
-   ([0,0xffffffff]-interval) and as double/float ([0,1]-real-interval). */
-
-PLDLLIMPEXP void
-c_plseed(unsigned int s);
-
-PLDLLIMPEXP unsigned long
-c_plrandi(void);
-
-PLDLLIMPEXP PLFLT
-c_plrandd(void);
 
 /*--------------------------------------------------------------------------*\
  *		Functions for use from C or C++ only
