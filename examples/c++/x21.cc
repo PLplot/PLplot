@@ -27,7 +27,6 @@
 //---------------------------------------------------------------------------//
 
 #include "plc++demos.h"
-#include <ctime>
 
 #if !defined(HAVE_ISNAN)
   #define isnan(x) ((x) != (x))
@@ -173,10 +172,8 @@ x21::x21( int argc, const char ** argv ) {
   PLFLT *x, *y, *z, *clev;
   PLFLT *xg, *yg, **zg;
   PLFLT zmin, zmax, lzm, lzM;
-  long ct;
   int i, j, k;
   PLINT alg;
-  char ylab[40], xlab[40];
   const char *title[] = {"Cubic Spline Approximation",
 		   "Delaunay Linear Interpolation",
 		   "Natural Neighbors Interpolation",
@@ -187,7 +184,7 @@ x21::x21( int argc, const char ** argv ) {
   PLFLT opt[] = {0., 0., 0., 0., 0., 0.};
 
   xm = ym = -0.2;
-  xM = yM = 0.8;
+  xM = yM = 0.6;
 
   // plplot initialization
 
@@ -218,11 +215,10 @@ x21::x21( int argc, const char ** argv ) {
   pls->Alloc2dGrid(&zg, xp, yp); /* the output grided data */
   clev = new PLFLT[nl];
 
-  sprintf(xlab, "Npts=%d gridx=%d gridy=%d", pts, xp, yp);
   pls->col0(1);
   pls->env(xm, xM, ym, yM, 2, 0);
   pls->col0(15);
-  pls->lab(xlab, "", "The original data");
+  pls->lab("X", "Y", "The original data sampling");
   pls->col0(2);
   pls->poin(pts, x, y, 5);
   pls->adv(0);
@@ -233,10 +229,7 @@ x21::x21( int argc, const char ** argv ) {
     pls->adv(0);
     for (alg=1; alg<7; alg++) {
 
-      ct = clock();
       pls->griddata(x, y, z, pts, xg, xp, yg, yp, zg, alg, opt[alg-1]);
-      sprintf(xlab, "time=%ld ms", (clock() - ct)/1000);
-      sprintf(ylab, "opt=%.3f", opt[alg-1]);
 
       /* - CSA can generate NaNs (only interpolates?!).
        * - DTLI and NNI can generate NaNs for points outside the convex hull
@@ -291,7 +284,7 @@ x21::x21( int argc, const char ** argv ) {
 
 	pls->env0(xm, xM, ym, yM, 2, 0);
 	pls->col0(15);
-	pls->lab(xlab, ylab, title[alg-1]);
+	pls->lab("X", "Y", title[alg-1]);
 	pls->shades(zg, xp, yp, NULL, xm, xM, ym, yM,
 		 clev, nl, 1, 0, 1, plfill, true, NULL, NULL);
 	pls->col0(2);
@@ -302,7 +295,7 @@ x21::x21( int argc, const char ** argv ) {
 
 	cmap1_init();
 	pls->vpor(0.0, 1.0, 0.0, 0.9);
-	pls->wind(-1.0, 1.0, -1.0, 1.5);
+	pls->wind(-1.1, 0.75, -0.65, 1.20);
 	/*
 	 * For the comparition to be fair, all plots should have the
 	 * same z values, but to get the max/min of the data generated
@@ -311,10 +304,10 @@ x21::x21( int argc, const char ** argv ) {
 	 * plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
 	 */
 
-	pls->w3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -60);
-	pls->box3("bnstu", ylab, 0.0, 0,
-	       "bnstu", xlab, 0.0, 0,
-	       "bcdmnstuv", "", 0.0, 4);
+	pls->w3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -40);
+	pls->box3("bntu", "X", 0.0, 0,
+	       "bntu", "Y", 0.0, 0,
+	       "bcdfntu", "Z", 0.5, 0);
 	pls->col0(15);
 	pls->lab("", "", title[alg-1]);
 	pls->plot3dc(xg, yg, zg, xp, yp, DRAW_LINEXY | MAG_COLOR | BASE_CONT, clev, nl);
@@ -382,8 +375,8 @@ void x21::create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, PLINT pts) {
   *zi = z = new PLFLT[pts];
 
   for(i=0; i<pts; i++) {
-    xt = pls->randd();
-    yt = pls->randd();
+    xt = (xM-xm)*pls->randd();
+    yt = (yM-ym)*pls->randd();
     if (!randn) {
       *x = xt + xm;
       *y = yt + ym;
