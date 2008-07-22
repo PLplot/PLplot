@@ -60,6 +60,18 @@ let manual_function_attributes =
       function_attrs = None;
       parameter_attrs = Some ["p_strm", ["out"]];
     };
+    {
+      function_name = "c_plbin";
+      function_attrs = None;
+      parameter_attrs = Some ["x", ["in"; "size_is(nbin)"];
+                              "y", ["in"; "size_is(nbin)"]];
+    };
+    {
+      function_name = "c_plpat";
+      function_attrs = None;
+      parameter_attrs = Some ["inc", ["in"; "size_is(nlin)"];
+                              "del", ["in"; "size_is(nlin)"]];
+    };
     (* For now, this will be wrapped by hand...
     {
       function_name = "c_plgriddata";
@@ -163,7 +175,6 @@ let function_attributes return_type name =
             | 2 ->
                 String.lowercase a.(0) ^ "_" ^ a.(1)
             | _ -> raise (Failure "Bad result in function caps check")
-                  
         ) ^ ")"]
       );
       (* Plplot names many of their functions c_* to avoid clashes with certain
@@ -319,7 +330,6 @@ let parameter_attributes function_name types names =
        )
     |> List.iter (fun (_,_,_,_,attrs) -> Hashtbl.add attr_hash param_name attrs)
   in
-         
   List.iter2 perform_check types names;
   attr_hash
 
@@ -332,7 +342,7 @@ let build_attribute_list l =
 let process_prototype line =
   let pieces =
     line
-    |> Pcre.extract ~pat:"^((?:const )?\\w+ (?:\\*\\s*)?)(\\w+)\\s*\\(([\\w\\s\\*\\[\\],]*)\\)" ~full_match:false
+    |> Pcre.extract ~pat:"^((?:(?:const|unsigned) )?\\w+ (?:\\*\\s*)?)(\\w+)\\s*\\(([\\w\\s\\*\\[\\],]*)\\)" ~full_match:false
     |> Array.map minimize_whitespace
   in
   (* Get the return type, name and arg list separately *)
