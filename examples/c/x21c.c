@@ -22,7 +22,6 @@
 */
 
 #include "plcdemos.h"
-#include <time.h>
 
 #if !defined(HAVE_ISNAN)
 #  define isnan(x) ((x) != (x))
@@ -156,7 +155,6 @@ main(int argc, const char *argv[])
   PLFLT *x, *y, *z, *clev;
   PLFLT *xg, *yg, **zg;
   PLFLT zmin, zmax, lzm, lzM;
-  long ct;
   int i, j, k;
   PLINT alg;
   char *title[] = {"Cubic Spline Approximation",
@@ -211,10 +209,7 @@ main(int argc, const char *argv[])
     pladv(0);
     for (alg=1; alg<7; alg++) {
 
-      ct = clock();
       plgriddata(x, y, z, pts, xg, xp, yg, yp, zg, alg, opt[alg-1]);
-      /* printf("time=%ld ms", (clock() - ct)/1000); */
-      /* printf("opt=%.3f", opt[alg-1]); */
 
       /* - CSA can generate NaNs (only interpolates?!).
        * - DTLI and NNI can generate NaNs for points outside the convex hull

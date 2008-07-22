@@ -135,10 +135,8 @@ class x21 {
 	double xg[], yg[], zg[][];
 	double xg0[][], yg0[][];
 	double zmin, zmax, lzm[], lzM[];
-	long ct;
 	int i, j, k;
 	int alg;
-	String ylab, xlab;
 	String title[] = {"Cubic Spline Approximation",
 			 "Delaunay Linear Interpolation",
 			 "Natural Neighbors Interpolation",
