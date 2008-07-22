@@ -26,6 +26,7 @@ INDEX
 1.4 pdf driver improvements
 1.5 Ada language support
 1.6 Ada examples
+1.7 Ocaml language support
 
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -43,6 +44,7 @@ examples
 2.11 Rename test subdirectory to plplot_test
 2.12 Ada language support
 2.13 Ada examples
+2.14 Ocaml language support
 
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
@@ -103,6 +105,12 @@ Many Ada examples have been added.  Some of these standard examples do not
 give the same results as the corresponding C examples for unknown reasons.
 Until these issues are addressed, the Ada interface must still be considered
 experimental.
+
+1.7 Ocaml language support
+
+Experimental support for the ocaml language is now included in plplot. 
+As this is experimental it is disabled by default. Currently only some 
+of the examples are available in ocaml.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -219,3 +227,10 @@ Many Ada examples have been added.  Some of these standard examples do not
 give the same results as the corresponding C examples for unknown reasons.
 Until these issues are addressed, the Ada interface must still be considered
 experimental.
+
+2.14 Ocaml language support
+
+Experimental support for the ocaml language is now included in plplot. 
+As this is experimental it is disabled by default. Currently only some 
+of the examples are available in ocaml.
+
