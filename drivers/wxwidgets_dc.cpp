@@ -253,12 +253,13 @@ void wxPLDevDC::PSDrawTextToDC( char* utf8_string, bool drawText )
   wxString str(wxConvUTF8.cMB2WC(utf8_string), *wxConvCurrent);
   m_dc->GetTextExtent( str, &w, &h, &d, &l );
   if( drawText )
-    m_dc->DrawRotatedText( str, (posX-yOffset*sin_rot)/scalex,
-                           height-(posY+yOffset*cos_rot)/scaley, rotation*180.0/M_PI );
-  posX += w*scalex*cos_rot;
-  posY += w*scalex*sin_rot;
+    m_dc->DrawRotatedText( str, (wxCoord) ((posX-yOffset*sin_rot)/scalex),
+                           (wxCoord) (height-(posY+yOffset*cos_rot)/scaley), 
+                           rotation*180.0/M_PI );
+  posX += (PLINT) (w*scalex*cos_rot);
+  posY += (PLINT) (w*scalex*sin_rot);
   textWidth += w;
-  textHeight = textHeight>(h+yOffset/scaley) ? textHeight : (h+yOffset/scaley);
+  textHeight = (wxCoord) (textHeight>(h+yOffset/scaley) ? textHeight : (h+yOffset/scaley));
   memset( utf8_string, '\0', max_string_length );
 }
 
@@ -272,7 +273,7 @@ void wxPLDevDC::PSSetFont( PLUNICODE fci )
   plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );  
   if( m_font )
     delete m_font;
-  m_font=wxFont::New(fontSize*fontScale, fontFamilyLookup[fontFamily],
+  m_font=wxFont::New((int) (fontSize*fontScale), fontFamilyLookup[fontFamily],
                          fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
   m_font->SetUnderlined( underlined );
   m_dc->SetFont( *m_font );
@@ -311,8 +312,8 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
   posY = args->y;
   PSDrawText( args->unicode_array, args->unicode_array_len, false );
   
-  posX = args->x-(args->just*textWidth)*scalex*cos_rot-(0.5*textHeight)*scalex*sin_rot;
-  posY = args->y-(args->just*textWidth)*scaley*sin_rot+(0.5*textHeight)*scaley*cos_rot;
+  posX = (PLINT) (args->x-(args->just*textWidth)*scalex*cos_rot-(0.5*textHeight)*scalex*sin_rot);
+  posY = (PLINT) (args->y-(args->just*textWidth)*scaley*sin_rot+(0.5*textHeight)*scaley*cos_rot);
   PSDrawText( args->unicode_array, args->unicode_array_len, true );
 
   AddtoClipRegion( 0, 0, width, height );        
