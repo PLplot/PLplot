@@ -1,4 +1,4 @@
-C      $Id:$
+C      $Id$
 C      Grid data demo.
 C
 C      Copyright (C) 2004  Joao Cardoso
@@ -44,6 +44,9 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
        
       external plrandd
       real*8 plrandd
+
+      external isnan
+      logical isnan
 
       integer pts, xp, yp, nl, knn_order, randn, rosen
       real*8 threshold, wmin
@@ -236,8 +239,8 @@ c
      &              "bcdfntu", "Z", 0.5, 0)
                call plcol0(15)
                call pllab("", "", title(alg))
-c               call plot3dc(xg, yg, zg, xp, yp, ior(ior(DRAW_LINEXY,
-c     &              MAG_COLOR), BASE_CONT), clev, nl, xp)
+               call plot3dc(xg, yg, zg, xp, yp, ior(ior(DRAW_LINEXY,
+     &              MAG_COLOR), BASE_CONT), clev, nl, xp)
             endif
          enddo
       enddo
@@ -248,24 +251,24 @@ c     &              MAG_COLOR), BASE_CONT), clev, nl, xp)
       implicit none
       real*8 i(2), h(2), l(2), s(2)
       
-      i(0) = 0.d0
-      i(1) = 1.d0
+      i(1) = 0.d0
+      i(2) = 1.d0
 
-      h(0) = 240.d0
-      h(1) = 0.d0
+      h(1) = 240.d0
+      h(2) = 0.d0
       
-      l(0) = 0.6d0
       l(1) = 0.6d0
+      l(2) = 0.6d0
 
-      s(0) = 0.8d0
       s(1) = 0.8d0
+      s(2) = 0.8d0
 
       call plscmap1n(256)
       call plscmap1l(0, 2, i, h, l, s, 0)
       end subroutine
 
 
-      function isnan(x)
+      logical function isnan(x)
       implicit none
       
       logical isnan
