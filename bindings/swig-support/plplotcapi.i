@@ -560,6 +560,14 @@ plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text);
 void
 plptex3(PLFLT x, PLFLT y, PLFLT z, PLFLT dx, PLFLT dy, PLFLT dz, PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text);
 
+%feature("autodoc","Return a random number in the range [0,1].") plrandd;
+PLFLT
+plrandd();
+
+%feature("autodoc","Return a random number in the range [0,1].") plrandi;
+unsigned long
+plrandi();
+
 %feature("autodoc", "Replay contents of plot buffer to current device/file.") plreplot;
 void
 plreplot(void);
@@ -658,6 +666,10 @@ plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
 %feature("autodoc", "Set window into plot space incrementally (zoom).") plsdiplz;
 void
 plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
+
+%feature("autodoc", "Seed the random number generator.") plseed;
+void
+plseed(unsigned int s);
 
 %feature("autodoc", "Set the escape character for text strings.") plsesc;
 void

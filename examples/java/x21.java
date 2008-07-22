@@ -31,7 +31,6 @@ package plplot.examples;
 import plplot.core.*;
 
 import java.lang.Math;
-import java.util.Random;
 
 class x21 {
 
@@ -150,7 +149,7 @@ class x21 {
 	double opt[] = {0., 0., 0., 0., 0., 0.};
 	
 	xm = ym = -0.2;
-	xM = yM = 0.8;
+	xM = yM = 0.6;
 	
 	// plplot initialization
 	
@@ -197,11 +196,10 @@ class x21 {
 	
 	clev = new double[nl];
 	
-	xlab = new String("Npts="+pts+" gridx="+xp+" gridy="+yp);
 	pls.col0(1);
 	pls.env(xm, xM, ym, yM, 2, 0);
 	pls.col0(15);
-	pls.lab(xlab, "", "The original data");
+	pls.lab("X", "Y", "The original data sampling");
 	pls.col0(2);
 	pls.poin(x, y, 5);
 	pls.adv(0);
@@ -212,10 +210,7 @@ class x21 {
 	    pls.adv(0);
 	    for (alg=1; alg<7; alg++) {
 		
-		ct = System.currentTimeMillis();
 		pls.griddata(x, y, z, xg, yg, zg, alg, opt[alg-1]);
-		xlab = new String("time="+(System.currentTimeMillis() - ct)/1000+" ms");
-		ylab = new String("opt="+opt[alg-1]);
 		
 		/* - CSA can generate NaNs (only interpolates?!).
 		 * - DTLI and NNI can generate NaNs for points outside the 
@@ -274,7 +269,7 @@ class x21 {
 		    
 		    pls.env0(xm, xM, ym, yM, 2, 0);
 		    pls.col0(15);
-		    pls.lab(xlab, ylab, title[alg-1]);
+		    pls.lab("X", "Y", title[alg-1]);
 		    pls.shades(zg, xm, xM, ym, yM,
 			       clev, 1, 0, 1, true, xg0, yg0);
 		    pls.col0(2);
@@ -285,7 +280,7 @@ class x21 {
 		    
 		    cmap1_init();
 		    pls.vpor(0.0, 1.0, 0.0, 0.9);
-		    pls.wind(-1.0, 1.0, -1.0, 1.5);
+		    pls.wind(-1.1, 0.75, -0.65, 1.20);
 		    /*
 		     * For the comparison to be fair, all plots should have the
 		     * same z values, but to get the max/min of the data 
@@ -295,10 +290,10 @@ class x21 {
 		     * plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
 		     */
 		    
-		    pls.w3d(1., 1., 1., xm, xM, ym, yM, lzm[0], lzM[0], 30, -60);
-		    pls.box3("bnstu", ylab, 0.0, 0,
-			     "bnstu", xlab, 0.0, 0,
-			     "bcdmnstuv", "", 0.0, 4);
+		    pls.w3d(1., 1., 1., xm, xM, ym, yM, lzm[0], lzM[0], 30, -40);
+		    pls.box3("bntu", "X", 0.0, 0,
+			     "bntu", "Y", 0.0, 0,
+			     "bcdfntu", "Z", 0.5, 0);
 		    pls.col0(15);
 		    pls.lab("", "", title[alg-1]);
 		    pls.plot3dc(xg, yg, zg, PLStream.DRAW_LINEXY | 
@@ -352,12 +347,11 @@ class x21 {
 	int i;
 	double r;
 	double xt, yt;
-	Random rnd = new Random();
 	int pts = x.length;
 
 	for(i=0; i<pts; i++) {
-	    xt = rnd.nextDouble();
-	    yt = rnd.nextDouble();
+	    xt = (xM-xm)*pls.randd();
+	    yt = (yM-ym)*pls.randd();
 	    if (randn == 0) {
 		x[i] = xt + xm;
 		y[i] = yt + ym;

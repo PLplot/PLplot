@@ -549,6 +549,16 @@ public void ptex3(double x, double y, double z, double dx, double dy, double dz,
     plplotjavac.plptex3(x, y, z, dx, dy, dz, sx, sy, sz, just, text);
 }
 
+public double randd() {
+    if (set_stream() == -1) return 0.0;
+    return plplotjavac.plrandd();
+}
+
+public long randi() {
+    if (set_stream() == -1) return 0;
+    return plplotjavac.plrandi();
+}
+
 public void replot() {
     if (set_stream() == -1) return;
     plplotjavac.plreplot();
@@ -672,6 +682,11 @@ public void sdiplt(double xmin, double ymin, double xmax, double ymax) {
 public void sdiplz(double xmin, double ymin, double xmax, double ymax) {
     if (set_stream() == -1) return;
     plplotjavac.plsdiplz(xmin, ymin, xmax, ymax);
+}
+
+public void seed(long s) {
+    if (set_stream() == -1) return;
+    plplotjavac.plseed(s);
 }
 
 public void sesc(char esc) {
