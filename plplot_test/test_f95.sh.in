@@ -52,7 +52,7 @@ if test "yes@HAVE_F77PARSE_CL_TRUE@" = "yes"; then
 # skip 14, 17, and 20 because they are interactive, and 20 not implemented.
 # skip 21 because it delivers variable results depending on computer timing
 # and load (and not implemented yet).
-  for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 22 23 28 29 30; do
+  for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 21 22 23 28 29 30; do
     $f95dir/x${index}f -dev $device -o ${OUTPUT_DIR}/x${index}f95.$dsuffix $options 2> test.error
     status_code=$?
     cat test.error
@@ -93,7 +93,7 @@ EOF
 # skip 14, 17, and 20 because they are interactive, and 20 not implemented.
 # skip 21 because it delivers variable results depending on computer timing
 # and load (and not implemented yet).
-  for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 22 23 28 29 30; do
+  for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 21 22 23 28 29 30; do
      $f95dir/x${index}f <<EOF 2> test.error
 $device
 ${OUTPUT_DIR}/x${index}f95.$dsuffix

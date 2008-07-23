@@ -506,19 +506,6 @@
       end interface
 
       interface
-         function plrandd()
-            use plplot_flt
-            real (kind=plflt) :: plrandd
-         end function plrandd
-      end interface
-
-      interface
-         function plrandi()
-            integer :: plrandi
-         end function plrandi
-      end interface
-
-      interface
          subroutine plreplot
          end subroutine plreplot
       end interface
@@ -1090,6 +1077,20 @@
          enddo
          call plpoly3f77( size(x), x, y, z, idraw, iifcc )
       end subroutine plpoly3
+ 
+      real (kind=plflt) function plrandd()
+        external plranddf77
+        real(kind=plflt) :: plranddf77
+
+        plrandd = plranddf77()
+      end function plrandd
+
+      integer function plrandi()
+        external plrandif77
+        integer :: plrandif77
+
+        plrandi = plrandif77()
+      end function plrandi
 
       subroutine plscmap0( r, g, b )
          integer, dimension(:) :: r, g, b
