@@ -84,6 +84,8 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       integer ii, jj
       real*8 dist, d
 
+      character*1 defined
+
       xmin = -0.2
       ymin = -0.2
       xmax = 0.6
@@ -147,7 +149,7 @@ c Initialize plplot
          do alg=1,6
 
             call plgriddata(x, y, z, pts, xg, xp, yg, yp, zg, alg, 
-     &           opt(alg))
+     &           opt(alg),xp)
 
 c     - CSA can generate NaNs (only interpolates? !).
 c     - DTLI and NNI can generate NaNs for points outside the convex hull
@@ -179,7 +181,7 @@ c     average (IDW) over the 8 neighbors
                                  if (abs(ii-i) + abs(jj-j) .eq. 1) then
                                     d = 1.d0
                                  else
-                                    d = 1.4142
+                                    d = 1.4142d0
                                  endif
                                  zg(i,j) = zg(i,j) + zg(ii,jj)/(d*d)
                                  dist = dist + d
@@ -198,12 +200,12 @@ c     average (IDW) over the 8 neighbors
                enddo
             endif
             
-            call a2mnmx(zg, xp, yp, lzmax, lzmin, xp);
+            call a2mnmx(zg, xp, yp, lzmin, lzmax, xp);
 
             call plcol0(1)
             call pladv(alg)
             
-            if (k.eq.0) then
+            if (k.eq.1) then
                
                lzmin = min(lzmin, zmin)
                lzmax = max(lzmax, zmax)
@@ -213,8 +215,8 @@ c     average (IDW) over the 8 neighbors
                call plenv0(xmin, xmax, ymin, ymax, 2, 0)
                call plcol0(15)
                call pllab("X", "Y", title(alg))
-               call plshades(zg, xp, yp, xmin, xmax, ymin, ymax,
-     &              clev, nl, 1, 0, 1, 1)
+               call plshades0(zg, xp, yp, defined, xmin, xmax, ymin, 
+     &              ymax, clev, nl, 1, 0, 1, xp)
                call plcol0(2)
             else
                
@@ -222,8 +224,8 @@ c     average (IDW) over the 8 neighbors
                   clev(i) = lzmin + (lzmax-lzmin)/(nl-1.d0)*(i-1.d0);
                enddo
                call cmap1_init()
-               call plvpor(0.0, 1.0, 0.0, 0.9)
-               call plwind(-1.1, 0.75, -0.65, 1.20)
+               call plvpor(0.d0, 1.d0, 0.d0, 0.9d0)
+               call plwind(-1.1d0, 0.75d0, -0.65d0, 1.20d0)
 c     
 c     For the comparison to be fair, all plots should have the
 c     same z values, but to get the max/min of the data generated
@@ -232,11 +234,11 @@ c
 c     plw3d(1., 1., 1., xmin, xmax, ymin, ymax, zmin, zmax, 30, -60);
 c
                
-               call plw3d(1., 1., 1., xmin, xmax, ymin, ymax, lzmin, 
-     &              lzmax, 30, -40)
-               call plbox3("bntu", "X", 0., 0,
-     &              "bntu", "Y", 0., 0,
-     &              "bcdfntu", "Z", 0.5, 0)
+               call plw3d(1.d0, 1.d0, 1.d0, xmin, xmax, ymin, ymax, 
+     &              lzmin, lzmax, 30.d0, -40.d0)
+               call plbox3("bntu", "X", 0.d0, 0,
+     &              "bntu", "Y", 0.d0, 0,
+     &              "bcdfntu", "Z", 0.5d0, 0)
                call plcol0(15)
                call pllab("", "", title(alg))
                call plot3dc(xg, yg, zg, xp, yp, ior(ior(DRAW_LINEXY,
@@ -244,6 +246,8 @@ c
             endif
          enddo
       enddo
+
+      call plend
             
       end
 
