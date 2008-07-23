@@ -2146,15 +2146,6 @@ void plstream::seed(unsigned int s)
    plseed(s);
 }
 
-/* Returns a random number on [0,0xffffffff]-interval. */
-
-unsigned long plstream::randi(void)
-{
-   set_stream();
-
-   return plrandi();
-}
-
 /* Returns a random number on [0,1]-interval. */
 
 PLFLT plstream::randd(void)

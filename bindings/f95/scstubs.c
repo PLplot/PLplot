@@ -605,12 +605,6 @@ PLRANDD()
     return c_plrandd();
 }
 
-unsigned long
-PLRANDI()
-{
-    return c_plrandi();
-}
-
 void
 PLREPLOT(void)
 {

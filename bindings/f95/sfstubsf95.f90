@@ -1085,13 +1085,6 @@
         plrandd = plranddf77()
       end function plrandd
 
-      integer function plrandi()
-        external plrandif77
-        integer :: plrandif77
-
-        plrandi = plrandif77()
-      end function plrandi
-
       subroutine plscmap0( r, g, b )
          integer, dimension(:) :: r, g, b
 

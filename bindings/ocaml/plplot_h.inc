@@ -135,7 +135,6 @@ void plsxwin ( int window_id );
 [mlname(plwind)] void c_plwind ( double xmin, double xmax, double ymin, double ymax );
 [mlname(plxormod)] void c_plxormod ( int mode, [out] int * status );
 [mlname(plseed)] void c_plseed ( unsigned int s );
-[mlname(plrandi)] unsigned long c_plrandi ( void );
 [mlname(plrandd)] double c_plrandd ( void );
 [mlname(plsetopt)] int c_plsetopt ( [string] const char * opt, [string] const char * optarg );
 void plMinMax2dGrid ( [size_is(nx, ny)] double ** f, int nx, int ny, [out] double * fmax, [out] double * fmin );

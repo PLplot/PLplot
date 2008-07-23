@@ -554,11 +554,6 @@ public double randd() {
     return plplotjavac.plrandd();
 }
 
-public long randi() {
-    if (set_stream() == -1) return 0;
-    return plplotjavac.plrandi();
-}
-
 public void replot() {
     if (set_stream() == -1) return;
     plplotjavac.plreplot();

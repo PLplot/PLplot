@@ -2163,18 +2163,6 @@ c_plseed(unsigned int s)
 }
 
 /*--------------------------------------------------------------------------*\
- * plrandi()
- *
- * Returns a random number on [0,0xffffffff]-interval.
-\*--------------------------------------------------------------------------*/
-
-unsigned long
-c_plrandi(void)
-{
-  return genrand_int32();
-}
-
-/*--------------------------------------------------------------------------*\
  * plrandd()
  *
  * Returns a random number on [0,1]-interval.

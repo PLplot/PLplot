@@ -564,10 +564,6 @@ plptex3(PLFLT x, PLFLT y, PLFLT z, PLFLT dx, PLFLT dy, PLFLT dz, PLFLT sx, PLFLT
 PLFLT
 plrandd();
 
-%feature("autodoc","Return a random number in the range [0,1].") plrandi;
-unsigned long
-plrandi();
-
 %feature("autodoc", "Replay contents of plot buffer to current device/file.") plreplot;
 void
 plreplot(void);

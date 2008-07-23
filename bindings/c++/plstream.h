@@ -865,12 +865,9 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
     void xormod(bool mode, bool *status);
     
 /* Random number generator based on Mersenne Twister.
-   Functions to set seed and obtain random numbers as integer
-   ([0,0xffffffff]-interval) and as double/float ([0,1]-real-interval). */
+   Functions to set seed and obtain real random numbers in the range [0,1]. */
 
     void seed(unsigned int s);
-
-    unsigned long randi(void);
 
     PLFLT randd(void);
     

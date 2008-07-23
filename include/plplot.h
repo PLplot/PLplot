@@ -551,7 +551,6 @@ typedef struct {
 #define    plptex	c_plptex
 #define    plptex3	c_plptex3
 #define    plrandd	c_plrandd
-#define    plrandi	c_plrandi
 #define    plreplot	c_plreplot
 #define    plrgb	c_plrgb
 #define    plrgb1	c_plrgb1
@@ -1182,12 +1181,6 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
 
 PLDLLIMPEXP PLFLT
 c_plrandd(void);
-
-/* Random number generator based on Mersenne Twister.
-   Obtain integer random number in range [0,0xffffffffa]. */
-
-PLDLLIMPEXP unsigned long
-c_plrandi(void);
 
 /* Replays contents of plot buffer to current device/file. */
 

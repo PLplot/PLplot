@@ -248,7 +248,6 @@
 #define    PLPTEX7	FNAME(PLPTEX7,plptex7)
 #define    PLPTEX37	FNAME(PLPTEX37,plptex37)
 #define    PLRANDD	FNAME(PLRANDD,plrandd)
-#define    PLRANDI	FNAME(PLRANDI,plrandi)
 #define    PLREPLOT	FNAME(PLREPLOT,plreplot)
 #define    PLRGB	FNAME(PLRGB,plrgb)
 #define    PLRGB1	FNAME(PLRGB1,plrgb1)
