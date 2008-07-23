@@ -322,11 +322,26 @@ PLGRA(void)
 void
 PLGRIDDATA(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts,
 	   PLFLT *xg, PLINT *nptsx, PLFLT *yg,  PLINT *nptsy,
-	   PLFLT **zg, PLINT *type, PLFLT *data)
+	   PLFLT *zg, PLINT *type, PLFLT *data, PLINT *lx)
 {
+    PLFLT **a;
+    int i,j;
+
+    plAlloc2dGrid(&a, *nptsx, *nptsy);
+
     c_plgriddata(x, y, z, *npts,
 		 xg, *nptsx, yg, *nptsy,
-		 zg, *type, *data);
+		 a, *type, *data);
+
+    for (i = 0; i < *nptsx; i++) {
+       for (j = 0; j < *nptsy; j++) {
+           zg[i +j * *lx] = a[i][j];
+       }
+    }
+
+/* Clean up memory allocated for a */
+   plFree2dGrid(a, *nptsx, *nptsy);
+
 }
 
 void
