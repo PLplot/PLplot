@@ -95,6 +95,8 @@ main(int argc, const char *argv[])
   PLFLT img_min;
   PLFLT img_max;
   struct stretch_data stretch;
+  PLcGrid2 cgrid2;
+  PLFLT xx, yy;
 
   /*
     Bugs in plimage():
@@ -258,12 +260,33 @@ main(int argc, const char *argv[])
   /* Draw a distorted version of the original image, showing its full dynamic range. */
   plenv(0, width, 0, height, 1, -1);
   pllab("", "", "Distorted image example");
+
   stretch.xmin = 0;
   stretch.xmax = width;
   stretch.ymin = 0;
   stretch.ymax = height;
   stretch.stretch = 0.5;
-  plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch);
+
+  /* In C / C++ the following would work, with plimagefr directly calling
+     mypltr. For compatibilty with other language bindings the same effect
+     can be achieved by generating the transformed grid first and then
+     using pltr2. */
+  /* plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch); */
+
+  plAlloc2dGrid(&cgrid2.xg, width+1, height+1);
+  plAlloc2dGrid(&cgrid2.yg, width+1, height+1);
+  cgrid2.nx = width+1;
+  cgrid2.ny = height+1;
+  
+  for (i = 0; i<=width; i++) {
+    for (j = 0; j<=height; j++) {
+      mypltr(i,j,&xx,&yy,(PLPointer) &stretch);
+      cgrid2.xg[i][j] = xx;
+      cgrid2.yg[i][j] = yy;
+    }
+  }
+      
+  plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, pltr2, &cgrid2);
   pladv(0);
 
   plFree2dGrid(img_f, width, height);
