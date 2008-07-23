@@ -507,11 +507,14 @@
 
       interface
          function plrandd()
+            use plplot_flt
+            real (kind=plflt) :: plrandd
          end function plrandd
       end interface
 
       interface
          function plrandi()
+            integer :: plrandi
          end function plrandi
       end interface
 
@@ -664,7 +667,8 @@
       end interface
 
       interface
-         subroutine plseed()
+         subroutine plseed( s )
+           integer :: s
          end subroutine plseed
       end interface
 
@@ -937,8 +941,9 @@
       end subroutine plfill3
 
       subroutine plgriddata( x, y, z, xg, yg, zg, type, data )
-         real(kind=plflt), dimension(:)   :: x, y, z, xg, yg, data
+         real(kind=plflt), dimension(:)   :: x, y, z, xg, yg
          real(kind=plflt), dimension(:,:) :: zg
+         real(kind=plflt)                 :: data
          integer                          :: type
 
          call plgriddataf77( x, y, z, size(x), xg, size(xg), yg, size(yg), zg, &
