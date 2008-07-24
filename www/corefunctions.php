@@ -40,7 +40,7 @@ END;
 
 		echo '	<div id="menubar">';
 		echo '		<ul>';
-		echo '		  <li><a href="index.php" ' . (($item=='index') ? ('id="selected"') : ('')) .'>Home</a></li>';
+		echo '		  <li><a href="index_new.php" ' . (($item=='index') ? ('id="selected"') : ('')) .'>Home</a></li>';
 		echo '		  <li><a href="download.php" ' . (($item=='download') ? ('id="selected"') : ('')) .'>Download</a></li>';
 		echo '		  <li><a href="examples.php" ' . (($item=='examples') ? ('id="selected"') : ('')) .'>Examples</a></li>';
 		echo '		  <li><a href="documentation.php" ' . (($item=='documentation') ? ('id="selected"') : ('')) .'>Documentation</a></li>';

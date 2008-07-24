@@ -14,13 +14,13 @@
 		<div id="leftside">
 			<h3>PLplot Documentation</h3>
 			<ul class="arrowlist">
-	      <li> <a href="@BASE_HTML@">Browse the latest on-line documentation</a> </li>
-	      <li> <a href="@BASE@.ps.gz">PostScript form of documentation (<?php filesize("@BASE@.ps.gz")/1024)?>MB)</a> </li>
-	      <li> <a href="@BASE@.pdf">PDF form of documentation (<?php filesize("@BASE@.pdf")/1024)?>MB)</a> </li>
-	      <li> <a href="@BASE@.dvi">DVI form of documentation (<?php filesize("@BASE@.dvi")/1024)?>MB)</a> </li>
-	      <li> <a href="@BASE_INFO@.tar.gz">Info form of documentation (<?php filesize("@BASE_INFO@.tar.gz")/1024)?>MB)</a> </li>
-	      <li> <a href="@BASE_MAN@.tar.gz">Man pages tarball (API chapter in nroff format) (<?php filesize("@BASE_MAN@.tar.gz")/1024)?>MB)</a> </li>
-	      <li> <a href="@BASE_HTML@.tar.gz">HTML results tarball (<?php filesize("@BASE_HTML@.tar.gz")/1024)?>MB)</a> </li>
+	      <li> <a href="docbook-manual/@BASE_HTML@">Browse the latest on-line documentation</a> </li>
+	      <li> <a href="docbook-manual/@BASE@.ps.gz">PostScript form of documentation (<?php filesize("docbook-manual/@BASE@.ps.gz")/1024 ?>MB)</a> </li>
+	      <li> <a href="docbook-manual/@BASE@.pdf">PDF form of documentation (<?php filesize("docbook-manual/@BASE@.pdf")/1024 ?>MB)</a> </li>
+	      <li> <a href="docbook-manual/@BASE@.dvi">DVI form of documentation (<?php filesize("docbook-manual/@BASE@.dvi")/1024 ?>MB)</a> </li>
+	      <li> <a href="docbook-manual/@BASE_INFO@.tar.gz">Info form of documentation (<?php filesize("docbook-manual/@BASE_INFO@.tar.gz")/1024 ?>MB)</a> </li>
+	      <li> <a href="docbook-manual/@BASE_MAN@.tar.gz">Man pages tarball (API chapter in nroff format) (<?php filesize("docbook-manual/@BASE_MAN@.tar.gz")/1024 ?>MB)</a> </li>
+	      <li> <a href="docbook-manual/@BASE_HTML@.tar.gz">HTML results tarball (<?php filesize("docbook-manual/@BASE_HTML@.tar.gz")/1024 ?>MB)</a> </li>
 			</ul>
     <h4>The Current PLplot Documentation Project</h4>
 	    <p>

@@ -13,7 +13,18 @@ FILES =          \
     news         \
     plplot_icons \
     resources    \
-    source
+    source       \
+    index_new.php     \
+    corefunctions.php \
+    credits.php       \
+    css               \
+    development.php   \
+    download.php      \
+    examples.php      \
+    img               \
+    js
+    
+    
 
 WWW_FILES = $(patsubst %,$(WWW_DIR)/%,$(FILES))
 
