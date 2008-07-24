@@ -66,6 +66,11 @@ int x20::nosombrero = 0;
 int x20::nointeractive = 0;
 char *x20::f_name = NULL;
 
+struct stretch_data {
+  PLFLT xmin, xmax, ymin, ymax;
+  PLFLT stretch;
+};
+
 PLOptionTable x20::options[] = {
 {
     "dbg",			/* extra debugging plot */
@@ -109,12 +114,29 @@ PLOptionTable x20::options[] = {
     NULL }			/* long syntax */
 };
 
+/* Transformation function */
+static void
+mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
+{
+    struct stretch_data *s = (struct stretch_data *) pltr_data;
+    PLFLT x0, y0, dy;
+    x0 = (s->xmin + s->xmax)*0.5;
+    y0 = (s->ymin + s->ymax)*0.5;
+    dy = (s->ymax-s->ymin)*0.5;
+    *tx = x0 + (x0-x)*(1.0 - s->stretch*cos((y-y0)/dy*M_PI*0.5));
+    *ty = y;
+}
 
 x20::x20( int argc, const char ** argv ) {
   PLFLT x[XDIM], y[YDIM], **z, **r;
   PLFLT xi, yi, xe, ye;
   int i, j, width, height, num_col;
   PLFLT **img_f;
+  PLFLT img_min;
+  PLFLT img_max;
+  struct stretch_data stretch;
+  PLcGrid2 cgrid2;
+  PLFLT xx, yy;
 
   /*
     Bugs in plimage():
@@ -263,6 +285,51 @@ x20::x20( int argc, const char ** argv ) {
     pls->adv(0);
   }
 
+  // Base the dynamic range on the image contents.
+  pls->MinMax2dGrid(img_f, width, height, &img_max, &img_min);
+
+  // Draw a saturated version of the original image.  Only use the middle 50%
+  // of the image's full dynamic range.
+  pls->col0(2);
+  pls->env(0, width, 0, height, 1, -1);
+  pls->lab("", "", "Reduced dynamic range image example");
+  pls->imagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, img_max - img_max * 0.25, NULL, NULL);
+
+  // Draw a distorted version of the original image, showing its full dynamic range.
+  pls->env(0, width, 0, height, 1, -1);
+  pls->lab("", "", "Distorted image example");
+
+  stretch.xmin = 0;
+  stretch.xmax = width;
+  stretch.ymin = 0;
+  stretch.ymax = height;
+  stretch.stretch = 0.5;
+
+  // In C / C++ the following would work, with plimagefr directly calling
+  // mypltr. For compatibilty with other language bindings the same effect
+  // can be achieved by generating the transformed grid first and then
+  // using pltr2.
+  //
+  // plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch);
+
+  pls->Alloc2dGrid(&cgrid2.xg, width+1, height+1);
+  pls->Alloc2dGrid(&cgrid2.yg, width+1, height+1);
+  cgrid2.nx = width+1;
+  cgrid2.ny = height+1;
+  
+  for (i = 0; i<=width; i++) {
+    for (j = 0; j<=height; j++) {
+      mypltr(i,j,&xx,&yy,(PLPointer) &stretch);
+      cgrid2.xg[i][j] = xx;
+      cgrid2.yg[i][j] = yy;
+    }
+  }
+      
+  pls->imagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, pltr2, &cgrid2);
+  pls->adv(0);
+
+  pls->Free2dGrid(cgrid2.xg, width+1, height+1);
+  pls->Free2dGrid(cgrid2.yg, width+1, height+1);
   pls->Free2dGrid(img_f, width, height);
 
   delete pls;
