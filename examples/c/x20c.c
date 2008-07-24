@@ -76,8 +76,6 @@ mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 {
     struct stretch_data *s = (struct stretch_data *) pltr_data;
     PLFLT x0, y0, dy;
-//    *tx = x + 2.0 * sin(x) + cos(y);
-//    *ty = y + sin(x) + 2.0 * cos(y);
     x0 = (s->xmin + s->xmax)*0.5;
     y0 = (s->ymin + s->ymax)*0.5;
     dy = (s->ymax-s->ymin)*0.5;
@@ -250,14 +248,11 @@ main(int argc, const char *argv[])
   /* Base the dynamic range on the image contents. */
   plMinMax2dGrid(img_f, width, height, &img_max, &img_min);
 
-  printf("%f %f\n",img_min,img_max);
-
   /* Draw a saturated version of the original image.  Only use the middle 50%
      of the image's full dynamic range. */
   plcol0(2);
   plenv(0, width, 0, height, 1, -1);
   pllab("", "", "Reduced dynamic range image example");
-  printf("%f %f\n",img_max-img_max*0.25,img_min+img_max*0.25);
   plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, img_max - img_max * 0.25, NULL, NULL);
 
   /* Draw a distorted version of the original image, showing its full dynamic range. */
@@ -292,6 +287,8 @@ main(int argc, const char *argv[])
   plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, pltr2, &cgrid2);
   pladv(0);
 
+  plFree2dGrid(cgrid2.xg, width+1, height+1);
+  plFree2dGrid(cgrid2.yg, width+1, height+1);
   plFree2dGrid(img_f, width, height);
 
   plend();
