@@ -503,6 +503,7 @@ if(BUILD_INFO OR PREBUILT_DOC)
     set(INFO_TARBALL ${BASE_INFO}.tar.gz)
     set(MAN_TARBALL ${BASE_MAN}.tar.gz)
     set(INDEX_HTML ${CMAKE_CURRENT_BINARY_DIR}/../www/index.html)
+    set(DOCUMENTATION_PHP ${CMAKE_CURRENT_BINARY_DIR}/../../../www/documentation.php)
 
     set(WWW_USERAT ${WWW_USER}@)
     set(RCP_PREFIX ${WWW_USERAT}${WWW_HOST}:)
@@ -565,6 +566,7 @@ if(BUILD_INFO OR PREBUILT_DOC)
     ${BASE}.dvi
     -C ${CMAKE_CURRENT_SOURCE_DIR}/.. COPYING
     -C ${CMAKE_CURRENT_BINARY_DIR}/../www index.html
+    -C ${CMAKE_CURRENT_BINARY_DIR}/../../../www documentation.php
     DEPENDS
     ${HTML_TARBALL}
     ${INFO_TARBALL}
@@ -574,6 +576,7 @@ if(BUILD_INFO OR PREBUILT_DOC)
     ${BASE}.dvi
     ${CMAKE_CURRENT_SOURCE_DIR}/../COPYING
     ${INDEX_HTML}
+    ${DOCUMENTATION_PHP}
     )
 
     add_custom_target(www-uninstall COMMAND ${RSH_COMMAND} rm -rf ${WWW_DIR})
@@ -584,6 +587,7 @@ if(BUILD_INFO OR PREBUILT_DOC)
     COMMAND ${RCP} ${TARBALL} ${RCP_PREFIX}${WWW_DIR}
     COMMAND ${RSH_COMMAND} tar xfz ${WWW_DIR}/${TARBALL} -C ${WWW_DIR}
     COMMAND ${RSH_COMMAND} tar xfz ${WWW_DIR}/${HTML_TARBALL} -C ${WWW_DIR}
+    COMMAND ${RSH_COMMAND} mv ${WWW_DIR}/documentation.php ${WWW_DIR}/../documentation.php 
     COMMAND ${RSH_COMMAND} chgrp -R ${WWW_GROUP} ${WWW_DIR}
     COMMAND ${RSH_COMMAND} chmod -R g=u ${WWW_DIR}
     COMMAND ${RSH_COMMAND} rm -f ${WWW_DIR}/${TARBALL}
