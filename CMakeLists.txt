@@ -120,6 +120,7 @@ add_subdirectory(utils)
 add_subdirectory(plplot_test)
 add_subdirectory(scripts)
 add_subdirectory(doc)
+add_subdirectory(www)
 add_subdirectory(pkgcfg)
 # needs no cmake processing
 #add_subdirectory(cf)
