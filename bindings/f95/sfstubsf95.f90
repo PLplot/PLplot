@@ -113,9 +113,25 @@
          include 'sfstubs.f90'
       end module plplotp
 
+      module plplot_types
+        use plplot_flt
+        type :: PLGraphicsIn
+           integer type          ! of event (CURRENTLY UNUSED)
+           integer state         ! key or button mask
+           integer keysym        ! key selected
+           integer button        ! mouse button selected
+           integer subwindow     ! subwindow (alias subpage, alias subplot) number
+           character(len=16) string   ! translated string
+           integer pX, pY        ! absolute device coordinates of pointer
+           real(kind=plflt) dX, dY    ! relative device coordinates of pointer
+           real(kind=plflt) wX, wY    ! world coordinates of pointer
+        end type PLGraphicsIn
+      end module plplot_types
+
       module plplot
       use plplotp
       use plplot_flt
+      use plplot_types
       !
       ! To be added: renaming list
       !
@@ -335,6 +351,14 @@
             use plplot_flt
             real(kind=plflt) :: xmin, xmax, ymin, ymax
          end subroutine plgdiplt
+      end interface
+
+      interface
+         subroutine plgetcursor( gin )
+           use plplot_flt
+           use plplot_types
+           type(PLGraphicsIn) :: gin
+         end subroutine plgetcursor
       end interface
 
       interface

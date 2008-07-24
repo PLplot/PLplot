@@ -195,6 +195,7 @@
 #define    PLGDIDEV	FNAME(PLGDIDEV,plgdidev)
 #define    PLGDIORI	FNAME(PLGDIORI,plgdiori)
 #define    PLGDIPLT	FNAME(PLGDIPLT,plgdiplt)
+#define    PLGETCURSOR  FNAME(PLGETCURSOR,plgetcursor)
 #define    PLGFAM	FNAME(PLGFAM,plgfam)
 #define    PLGFNAM7	FNAME(PLGFNAM7,plgfnam7)
 #define    PLGLEVEL	FNAME(PLGLEVEL,plglevel)

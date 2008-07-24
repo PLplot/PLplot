@@ -289,6 +289,12 @@ PLGDIPLT(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax)
 }
 
 void
+PLGETCURSOR(PLGraphicsIn *gin)
+{
+  plGetCursor(gin);
+}
+
+void
 PLGFAM(PLINT *fam, PLINT *num, PLINT *bmax)
 {
     c_plgfam(fam, num, bmax);

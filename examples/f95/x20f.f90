@@ -452,11 +452,13 @@
 
       real(kind=plflt) xi, xe, yi, ye
 
-!      PLGraphicsIn gin
-      integer gin
-      real(kind=plflt) xxi, yyi, xxe, yye, t
+      type(PLGraphicsIn) :: gin
+      real(kind=plflt) :: xxi, yyi, xxe, yye, t
       logical st, start
       real(kind=plflt) sx(5), sy(5)
+
+      integer PLK_Return
+      parameter(PLK_Return = Z'0D')
 
       xxi = xi
       yyi = yi
@@ -469,54 +471,55 @@
 
 !     Driver has xormod capability, continue
       if (st) then
-  100     continue
+         do while (.true.)
 
-          call plxormod(.false., st)
-!C        call plGetCursor(gin)
-          call plxormod(.true., st)
-
-!C         if (gin.button == 1) {
-!C             xxi = gin.wX
-!C             yyi = gin.wY
-              if (start) then
+            call plxormod(.false., st)
+            call plgetcursor(gin)
+            call plxormod(.true., st)
+            
+            if (gin%button .eq. 1) then 
+               xxi = gin%wX
+               yyi = gin%wY
+               if (start) then
 !C                clear previous rectangle
                   call plline(sx, sy)
-              endif
-
-              start = .false.
-
-              sx(1) = xxi
-              sy(1) = yyi
-              sx(5) = xxi
-              sy(5) = yyi
-!C         endif
-
-!C         if (gin.state & 0x100) then
-!C             xxe = gin.wX
-!C             yye = gin.wY
-              if (start) then
+               endif
+               
+               start = .false.
+               
+               sx(1) = xxi
+               sy(1) = yyi
+               sx(5) = xxi
+               sy(5) = yyi
+            endif
+            
+            if (iand(gin%state,Z'100').ne.0) then
+               xxe = gin%wX
+               yye = gin%wY
+               if (start) then
 !                 Clear previous rectangle
                   call plline(sx, sy)
-              endif
-              start = .true.
+               endif
+               start = .true.
+             
+               sx(3) = xxe
+               sy(3) = yye
+               sx(2) = xxe
+               sy(2) = yyi
+               sx(4) = xxi
+               sy(4) = yye
+!              Draw new rectangle
+               call plline(sx, sy)
+            endif
 
-              sx(3) = xxe
-              sy(3) = yye
-              sx(2) = xxe
-              sy(2) = yyi
-              sx(4) = xxi
-              sy(4) = yye
-!             Draw new rectangle
-              call plline(sx, sy)
-!C         endif
-
-!C         if (gin.button == 3 || gin.keysym == PLK_Return || gin.keysym == 'Q') then
-              if (start) then
+            if ((gin%button .eq. 3).or.(gin%keysym .eq. PLK_Return).or.(gin%keysym .eq. ichar('Q'))) then
+               if (start) then
 !                 Clear previous rectangle
                   call plline(sx, sy)
                   goto 110
-              endif
-!C         endif
+               endif
+            endif
+         enddo
 
   110     continue
 !         Leave xor mode
@@ -539,8 +542,8 @@
           ye = yye
           yi = yyi
 
-!C         get_clip = gin.keysym == 'Q'
-          get_clip = .false.
+         get_clip = (gin%keysym .eq. ichar('Q'))
+!          get_clip = .false.
       else
 !         driver has no xormod capability, just do nothing
           get_clip = .false.
