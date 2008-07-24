@@ -1,6 +1,8 @@
-! $Id: x20c.c 8033 2007-11-23 15:28:09Z andrewross $
+! $Id:$
 !
 !      Copyright (C) 2004  Alan W. Irwin
+!      Copyright (C) 2008  Andrew Ross
+!
 !
 !      This file is part of PLplot.
 !
@@ -84,6 +86,10 @@
 !
       integer width, height, num_col
       real(kind=plflt), dimension(:,:), pointer :: img_f
+      real(kind=plflt), dimension(:,:), pointer :: xg, yg
+      real(kind=plflt) :: img_max, img_min
+
+      real(kind=plflt) :: x0, y0, dy, stretch
 
 !
 !     Parameters from command-line
@@ -107,9 +113,9 @@
 !
 !      call plMergeOpts(options, 'x20c options', NULL)
 
-      dbg            = .true.
+      dbg            = .false.
       nosombrero     = .false.
-      nointeractive  = .true.
+      nointeractive  = .false.
       f_name         = ' '
       call plparseopts(PL_PARSE_FULL)
 
@@ -154,20 +160,20 @@
           call plenv(0._plflt, 2._plflt*M_PI, 0.0_plflt, 3._plflt*M_PI, 1, -1)
 
           do i=1,XDIM
-              x(i) = (i-1)*2._plflt*M_PI/(XDIM-1)
+              x(i) = dble(i-1)*2._plflt*M_PI/dble(XDIM-1)
           enddo
           do i=1,YDIM
-            y(i) = (i-1)*3._plflt*M_PI/(YDIM-1)
+            y(i) = dble(i-1)*3._plflt*M_PI/dble(YDIM-1)
           enddo
 
           do i=1,XDIM
               do j=1,YDIM
-                  r(i,j) = sqrt(x(i)*x(i)+y(j)*y(j))+1e-3
+                  r(i,j) = sqrt(x(i)*x(i)+y(j)*y(j))+0.001_plflt
                   z(i,j) = sin(r(i,j)) / (r(i,j))
               enddo
           enddo
 
-          call pllab('No, an amplitude clipped ''sombrero''', '', &
+          call pllab('No, an amplitude clipped "sombrero"', '', &
               'Saturn?')
           call plptex(2._plflt, 2._plflt, 3._plflt, 4._plflt, 0._plflt, 'Transparent image')
           call plimage(z, 0._plflt, 2._plflt*M_PI, 0.0_plflt, 3._plflt*M_PI, &
@@ -199,13 +205,13 @@
       call gray_cmap(num_col)
 
 !     Display Lena
-      width_r  = width
-      height_r = height
+      width_r  = dble(width)
+      height_r = dble(height)
       call plenv(1._plflt, width_r, 1._plflt, height_r, 1, -1)
 
       if (.not. nointeractive) then
-          call pllab('Set and drag Button 1 to (re)set selection, Butto&
-     &n 2 to finish.',' ','Lena...')
+          call pllab('Set and drag Button 1 to (re)set selection, Butto'// &
+               'n 2 to finish.',' ','Lena...')
       else
           call pllab('',' ','Lena...')
       endif
@@ -256,6 +262,44 @@
               height_r, 0._plflt, 0._plflt, xi, xe, ye, yi)
           call pladv(0)
       endif
+
+!     Base the dynamic range on the image contents.
+
+      call a2mnmx(img_f,width,height,img_min,img_max,width)
+
+      call plcol(2)
+      call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
+      call pllab("", "", "Reduced dynamic range image example")
+      call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
+           height_r, 0._plflt, 0._plflt, img_min + img_max * 0.25_plflt, &
+           img_max - img_max * 0.25_plflt)
+
+!     Draw a distorted version of the original image, showing its 
+!     full dynamic range.
+      call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
+      call pllab("", "", "Distorted image example")
+
+!     Populate the 2-d grids used for the distortion
+!     NB grids must be 1 larger in each dimension than the image
+!     since the coordinates are for the corner of each pixel.
+      allocate( xg(width+1,height+1) )
+      allocate( yg(width+1,height+1) )
+      x0 = 0.5_plflt*width_r
+      y0 = 0.5_plflt*height_r
+      dy = 0.5_plflt*height_r
+      stretch = 0.5_plflt
+      do i=1,width+1
+         do j=1,height+1
+            xg(i,j) = x0 + (x0-dble(i-1))*(1.0_plflt - stretch* &
+                 cos((dble(j-1)-y0)/dy*M_PI*0.5_plflt))
+            yg(i,j) = dble(j-1)
+         enddo
+      enddo
+      call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
+           height_r, 0._plflt, 0._plflt, img_min, img_max, xg, yg)
+      call pladv(0)
+
+      deallocate( img_f, xg, yg )
 
       call plend()
       call exit(0)
@@ -496,6 +540,7 @@
           yi = yyi
 
 !C         get_clip = gin.keysym == 'Q'
+          get_clip = .false.
       else
 !         driver has no xormod capability, just do nothing
           get_clip = .false.
@@ -529,3 +574,24 @@
       end subroutine
 
       end program
+
+!----------------------------------------------------------------------------
+!      Subroutine a2mmx
+!      Minimum and the maximum elements of a 2-d array.
+
+      subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
+      use plplot
+      implicit none
+
+      integer   i, j, nx, ny, xdim
+      real(kind=plflt)    f(xdim, ny), fmin, fmax
+
+      fmax = f(1, 1)
+      fmin = fmax
+      do j = 1, ny
+        do  i = 1, nx
+          fmax = max(fmax, f(i, j))
+          fmin = min(fmin, f(i, j))
+        enddo
+      enddo
+      end

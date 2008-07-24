@@ -590,6 +590,67 @@
 
 !***********************************************************************
 
+      subroutine plimagefr_0(z,xmin,xmax,ymin,ymax,zmin,zmax, &
+           valuemin,valuemax)
+
+      implicit none
+      integer nx, ny, lx
+      real(kind=plflt) z(:,:)
+      real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
+
+      call plimagefr07(z,size(z,1),size(z,2),xmin,xmax,ymin,ymax,zmin,zmax, &
+          valuemin,valuemax,size(z,1))
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plimagefr_1(z,xmin,xmax,ymin,ymax,zmin,zmax, &
+           valuemin,valuemax,xg,yg)
+
+      implicit none
+      integer nx, ny, lx
+      real(kind=plflt) z(:,:), xg(:), yg(:)
+      real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
+
+      call plimagefr17(z,size(z,1),size(z,2),xmin,xmax,ymin,ymax,zmin,zmax, &
+          valuemin,valuemax,xg,yg,size(z,1))
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plimagefr_2(z,xmin,xmax,ymin,ymax,zmin,zmax, &
+           valuemin,valuemax,xg,yg)
+
+      implicit none
+      integer nx, ny, lx
+      real(kind=plflt) z(:,:), xg(:,:), yg(:,:)
+      real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
+
+      call plimagefr27(z,size(z,1),size(z,2),xmin,xmax,ymin,ymax,zmin,zmax, &
+          valuemin,valuemax,xg,yg,size(z,1))
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plimagefr_tr(z,xmin,xmax,ymin,ymax,zmin,zmax, &
+           valuemin,valuemax,tr)
+
+      implicit none
+      integer nx, ny, lx
+      real(kind=plflt) z(:,:)
+      real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
+      real(kind=plflt) tr(6)
+
+      call plimagefr7(z,size(z,1),size(z,2),xmin,xmax,ymin,ymax,zmin,zmax, &
+           valuemin,valuemax,tr,size(z,1))
+
+      end  subroutine
+
+!***********************************************************************
+
       subroutine pllab(xlab,ylab,title)
 
       implicit none

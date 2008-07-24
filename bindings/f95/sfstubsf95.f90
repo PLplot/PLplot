@@ -100,6 +100,15 @@
          end interface
          private :: plshades_multiple_0, plshades_multiple_1, &
                     plshades_multiple_2, plshades_multiple_tr
+
+         interface plimagefr
+            module procedure plimagefr_0
+            module procedure plimagefr_1
+            module procedure plimagefr_2
+            module procedure plimagefr_tr
+         end interface
+         private :: plimagefr_0, plimagefr_1, plimagefr_2, plimagefr_tr
+
       contains
          include 'sfstubs.f90'
       end module plplotp
@@ -973,7 +982,7 @@
          nx = size(idata,1)
          ny = size(idata,2)
          call plimagef77( idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, &
-                          dxmin, dxmax, dymin, dymax )
+                          dxmin, dxmax, dymin, dymax, nx )
       end subroutine plimage
 
       subroutine plline( x, y )

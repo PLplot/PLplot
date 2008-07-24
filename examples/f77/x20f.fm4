@@ -1,6 +1,7 @@
 C $Id: x20c.c 8033 2007-11-23 15:28:09Z andrewross $
 C
 C      Copyright (C) 2004  Alan W. Irwin
+C      Copyright (C) 2008  Andrew Ross
 C
 C      This file is part of PLplot.
 C
@@ -73,8 +74,8 @@ C};
       real*8  XDIMR, YDIMR
       parameter(XDIM = 260, YDIM = 260)
       parameter(XDIMR = XDIM, YDIMR = YDIM)
-      real*8  M_PI
-      parameter(M_PI = 3.1415926d0)
+      real*8  PI
+      parameter(PI = 3.1415926535897932384d0)
 
       real*8  x(XDIM), y(YDIM), z(XDIM,YDIM), r(XDIM,YDIM)
       real*8  xi, yi, xe, ye
@@ -84,9 +85,15 @@ C};
 C
 C     Dimensions taken from "lena.pgm"
 C
-      integer width, height, num_col
+      integer width, height, num_col, WDIM, HDIM
+      parameter (WDIM = 500)
+      parameter (HDIM = 500)
       data width, height / 500, 500/
-      real*8  img_f(500,500)
+      real*8  img_f(WDIM,HDIM)
+      real*8  xg(WDIM+1,HDIM+1), yg(WDIM+1,HDIM+1)
+      real*8 img_max, img_min
+
+      real x0, y0, dy, stretch
 
       logical  read_img
       external read_img
@@ -120,9 +127,9 @@ C     Parse and process command line arguments
 C
 C      call plMergeOpts(options, 'x20c options', NULL)
 
-      dbg            = .true.
+      dbg            = .false.
       nosombrero     = .false.
-      nointeractive  = .true.
+      nointeractive  = .false.
       f_name         = ' '
       call plparseopts(PL_PARSE_FULL)
 
@@ -154,7 +161,7 @@ C             Bottom
 
           call plimage(z, XDIM, YDIM,
      &     1.d0, XDIMR, 1.d0, YDIMR, 0.d0, 0.d0,
-     &     1.d0, XDIMR, 1.d0, YDIMR)
+     &     1.d0, XDIMR, 1.d0, YDIMR, XDIM)
 
           call pladv(0)
       endif
@@ -163,27 +170,27 @@ C     Sombrero-like demo
       if (.not. nosombrero) then
 C         draw a yellow plot box, useful for diagnostics! :(
           call plcol0(2)
-          call plenv(0.d0, 2.d0*M_PI, 0.0d0, 3.d0*M_PI, 1, -1)
+          call plenv(0.d0, 2.d0*PI, 0.0d0, 3.d0*PI, 1, -1)
 
           do 210 i=1,XDIM
-              x(i) = (i-1)*2.d0*M_PI/(XDIM-1)
+              x(i) = dble(i-1)*2.d0*PI/dble(XDIM-1)
   210     continue
           do 220 i=1,YDIM
-            y(i) = (i-1)*3.d0*M_PI/(YDIM-1)
+            y(i) = dble(i-1)*3.d0*PI/dble(YDIM-1)
   220     continue
 
           do 240 i=1,XDIM
               do 230 j=1,YDIM
-                  r(i,j) = sqrt(x(i)*x(i)+y(j)*y(j))+1e-3
+                  r(i,j) = sqrt(x(i)*x(i)+y(j)*y(j))+1.d-3
                   z(i,j) = sin(r(i,j)) / (r(i,j))
   230         continue
   240     continue
 
-          call pllab('No, an amplitude clipped ''sombrero''', '',
+          call pllab('No, an amplitude clipped "sombrero"', '',
      &        'Saturn?')
           call plptex(2.d0, 2.d0, 3.d0, 4.d0, 0.d0, 'Transparent image')
-          call plimage(z, XDIM, YDIM, 0.d0, 2.d0*M_PI, 0.0d0, 3.d0*M_PI,
-     &        0.05d0, 1.d0, 0.d0, 2.d0*M_PI, 0.d0, 3.d0*M_PI)
+          call plimage(z, XDIM, YDIM, 0.d0, 2.d0*PI, 0.0d0, 3.d0*PI,
+     &        0.05d0, 1.d0, 0.d0, 2.d0*PI, 0.d0, 3.d0*PI, XDIM)
 
 C         Save the plot
           if (f_name .ne. ' ') then
@@ -213,19 +220,19 @@ C     Set gray colormap
       call gray_cmap(num_col)
 
 C     Display Lena
-      width_r  = width
-      height_r = height
+      width_r  = dble(width)
+      height_r = dble(height)
       call plenv(1.d0, width_r, 1.d0, height_r, 1, -1)
 
       if (.not. nointeractive) then
-          call pllab('Set and drag Button 1 to (re)set selection, Butto
-     &n 2 to finish.',' ','Lena...')
+          call pllab('Set and drag Button 1 to (re)set selection, '//
+     &        'Button 2 to finish.',' ','Lena...')
       else
           call pllab('',' ','Lena...')
       endif
 
       call plimage(img_f, width, height, 1.d0, width_r, 1.d0,
-     &    height_r, 0.d0, 0.d0, 1.d0, width_r, 1.d0, height_r)
+     &    height_r, 0.d0, 0.d0, 1.d0, width_r, 1.d0, height_r, WDIM)
 
 
 C     Selection/expansion demo
@@ -260,7 +267,7 @@ C
 
 C         Display selection only
           call plimage(img_f, width, height, 1.d0, width_r, 1.d0,
-     &        height_r, 0.d0, 0.d0, xi, xe, ye, yi)
+     &        height_r, 0.d0, 0.d0, xi, xe, ye, yi, WDIM)
 
           call plspause(1)
           call pladv(0)
@@ -268,12 +275,46 @@ C         Display selection only
 C         Zoom in selection
           call plenv(xi, xe, ye, yi, 1, -1)
           call plimage(img_f, width, height, 1.d0, width_r, 1.d0,
-     &        height_r, 0.d0, 0.d0, xi, xe, ye, yi)
+     &        height_r, 0.d0, 0.d0, xi, xe, ye, yi, WDIM)
           call pladv(0)
       endif
 
+c     Base the dynamic range on the image contents.
+
+      call a2mnmx(img_f,width,height,img_min,img_max,WDIM)
+      
+      call plcol(2)
+      call plenv(0.d0, width_r, 0.d0, height_r, 1, -1)
+      call pllab("", "", "Reduced dynamic range image example")
+      call plimagefr0(img_f, width, height, 0.d0, width_r, 0.d0, 
+     &     height_r, 0.d0, 0.d0, img_min + img_max * 0.25d0, 
+     &     img_max - img_max * 0.25d0, WDIM)
+
+c     Draw a distorted version of the original image, showing its 
+c     full dynamic range.
+      call plenv(0.d0, width_r, 0.d0, height_r, 1, -1)
+      call pllab("", "", "Distorted image example")
+
+c     Populate the 2-d grids used for the distortion
+c     NB grids must be 1 larger in each dimension than the image
+c     since the coordinates are for the corner of each pixel.
+      x0 = 0.5d0*width_r
+      y0 = 0.5d0*height_r
+      dy = 0.5d0*height_r
+      stretch = 0.5d0
+      do i=1,width+1
+         do j=1,height+1
+            xg(i,j) = x0 + (x0-dble(i-1))*(1.0d0 - stretch*
+     &           cos((dble(j-1)-y0)/dy*PI*0.5d0))
+            yg(i,j) = dble(j-1)
+         enddo
+      enddo
+      call plimagefr2(img_f, width, height, 0.d0, width_r, 0.d0, 
+     &     height_r, 0.d0, 0.d0, img_min, img_max, xg, yg, WDIM)
+      call pladv(0)
+
+
       call plend()
-      call exit(0)
 
       end
 
@@ -282,7 +323,7 @@ C     Read image from file in binary ppm format
       implicit none
       character(*) fname
       integer      width, height
-      real*8       img_f(width*height)
+      real*8       img_f(width,height)
       integer      num_col
 
       character    img
@@ -383,8 +424,7 @@ C
           do 210 i = 1,w
               record = record + 1
               read( 10, rec = record ) img
-              k = i + (h-j)*w
-              img_f(k) = dble(ichar(img))
+              img_f(i,h-j+1) = dble(ichar(img))
   210     continue
   220 continue
 
@@ -514,6 +554,7 @@ C         Leave xor mode
           yi = yyi
 
 CC         get_clip = gin.keysym == 'Q'
+          get_clip = .false.
       else
 C         driver has no xormod capability, just do nothing
           get_clip = .false.
@@ -541,4 +582,24 @@ C     Set gray colormap
       call plscmap1n(num_col)
       call plscmap1l(1, 2, pos, r, g, b, 0)
 
+      end
+
+C----------------------------------------------------------------------------
+C      Subroutine a2mmx
+C      Minimum and the maximum elements of a 2-d array.
+
+      subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
+      implicit none
+
+      integer   i, j, nx, ny, xdim
+      real*8    f(xdim, ny), fmin, fmax
+
+      fmax = f(1, 1)
+      fmin = fmax
+      do j = 1, ny
+        do  i = 1, nx
+          fmax = max(fmax, f(i, j))
+          fmin = min(fmin, f(i, j))
+        enddo
+      enddo
       end

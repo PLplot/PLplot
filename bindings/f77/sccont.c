@@ -746,3 +746,119 @@ PLGRIDDATA(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts,
    plFree2dGrid(a, *nptsx, *nptsy);
 
 }
+
+void
+PLIMAGEFR07(PLFLT *idata, PLINT *nx, PLINT *ny,
+	    PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, 
+	    PLFLT *zmin, PLFLT *zmax, PLFLT *valuemin, PLFLT *valuemax, 
+	    PLINT *lx)
+{
+    int   i, j;
+    PLFLT **pidata;
+
+    plAlloc2dGrid(&pidata, *nx, *ny);
+
+    for ( i = 0 ; i < *nx ; i ++ ) {
+        for ( j = 0 ; j < *ny ; j ++ ) {
+            pidata[i][j] = idata[i + j * (*lx)];
+        }
+    }
+
+    c_plimagefr(pidata, *nx, *ny,
+         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
+         *valuemin, *valuemax, pltr0, NULL);
+
+    plFree2dGrid(pidata, *nx, *ny);
+}
+
+void
+PLIMAGEFR17(PLFLT *idata, PLINT *nx, PLINT *ny,
+	    PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, 
+	    PLFLT *zmin, PLFLT *zmax, PLFLT *valuemin, PLFLT *valuemax,
+	    PLFLT *xg, PLFLT *yg, PLINT *lx)
+{
+    int   i, j;
+    PLFLT **pidata;
+    PLcGrid cgrid;
+
+    plAlloc2dGrid(&pidata, *nx, *ny);
+
+    cgrid.nx = (*nx)+1;
+    cgrid.ny = (*ny)+1;
+    cgrid.xg = xg;
+    cgrid.yg = yg;
+
+    for ( i = 0 ; i < *nx ; i ++ ) {
+        for ( j = 0 ; j < *ny ; j ++ ) {
+            pidata[i][j] = idata[i + j * (*lx)];
+        }
+    }
+
+    c_plimagefr(pidata, *nx, *ny,
+         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
+         *valuemin, *valuemax, pltr1, (void *) &cgrid);
+
+    plFree2dGrid(pidata, *nx, *ny);
+}
+
+void
+PLIMAGEFR27(PLFLT *idata, PLINT *nx, PLINT *ny,
+	    PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, 
+	    PLFLT *zmin, PLFLT *zmax, PLFLT *valuemin, PLFLT *valuemax,
+	    PLFLT *xg, PLFLT *yg, PLINT *lx)
+{
+    int   i, j;
+    PLFLT **pidata;
+    PLcGrid2 cgrid2;
+
+    plAlloc2dGrid(&pidata, *nx, *ny);
+    plAlloc2dGrid(&cgrid2.xg, (*nx)+1, (*ny)+1);
+    plAlloc2dGrid(&cgrid2.yg, (*nx)+1, (*ny)+1);
+
+    cgrid2.nx = (*nx)+1;
+    cgrid2.ny = (*ny)+1;
+    for ( i = 0 ; i <= *nx ; i ++ ) {
+        for ( j = 0 ; j <= *ny ; j ++ ) {
+            cgrid2.xg[i][j] = xg[i + j * ((*lx)+1)];
+            cgrid2.yg[i][j] = yg[i + j * ((*lx)+1)];
+        }
+    }
+
+    for ( i = 0 ; i < *nx ; i ++ ) {
+        for ( j = 0 ; j < *ny ; j ++ ) {
+            pidata[i][j] = idata[i + j * (*lx)];
+        }
+    }
+
+    c_plimagefr(pidata, *nx, *ny,
+         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
+         *valuemin, *valuemax, pltr2, (void *) &cgrid2);
+
+    plFree2dGrid(pidata, *nx, *ny);
+    plFree2dGrid(cgrid2.xg, (*nx)+1, (*ny)+1);
+    plFree2dGrid(cgrid2.yg, (*nx)+1, (*ny)+1);
+}
+
+void
+PLIMAGEFR7(PLFLT *idata, PLINT *nx, PLINT *ny,
+	    PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, 
+	    PLFLT *zmin, PLFLT *zmax, PLFLT *valuemin, PLFLT *valuemax,
+	    PLFLT *ftr, PLINT *lx)
+{
+    int   i, j;
+    PLFLT **pidata;
+
+    plAlloc2dGrid(&pidata, *nx, *ny);
+
+    for ( i = 0 ; i < *nx ; i ++ ) {
+        for ( j = 0 ; j < *ny ; j ++ ) {
+            pidata[i][j] = idata[i + j * (*lx)];
+        }
+    }
+
+    c_plimagefr(pidata, *nx, *ny,
+         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
+         *valuemin, *valuemax, pltr, (void *) ftr);
+
+    plFree2dGrid(pidata, *nx, *ny);
+}

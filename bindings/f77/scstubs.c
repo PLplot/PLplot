@@ -386,37 +386,10 @@ PLHLSRGB(PLFLT *h, PLFLT *l, PLFLT *s, PLFLT *r, PLFLT *g, PLFLT *b)
     c_plhlsrgb(*h, *l, *s, r, g, b);
 }
 
-#if 0
-void
-PLIMAGEFR(PLFLT *idata, PLINT *nx, PLINT *ny,
-          PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLFLT *zmin, PLFLT *zmax,
-          PLFLT *Dxmin, PLFLT *Dxmax, PLFLT *Dymin, PLFLT *Dymax,
-          PLFLT *valuemin, PLFLT *valuemax)
-{
-    int   i, j;
-    PLFLT **pidata;
-
-    plAlloc2dGrid(&pidata, *nx, *ny);
-
-    for ( i = 0 ; i < *nx ; i ++ ) {
-        for ( j = 0 ; j < *ny ; j ++ ) {
-            pidata[i][j] = idata[i + j * (*nx)];
-        }
-    }
-
-    c_plimagefr(pidata, *nx, *ny,
-         *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
-         *Dxmin, *Dxmax, *Dymin, *Dymax,
-         *valuemin, *valuemax);
-
-    plFree2dGrid(pidata, *nx, *ny);
-}
-#endif
-
 void
 PLIMAGE(PLFLT *idata, PLINT *nx, PLINT *ny,
           PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax, PLFLT *zmin, PLFLT *zmax,
-          PLFLT *Dxmin, PLFLT *Dxmax, PLFLT *Dymin, PLFLT *Dymax)
+          PLFLT *Dxmin, PLFLT *Dxmax, PLFLT *Dymin, PLFLT *Dymax, PLINT *lx)
 {
     int   i, j;
     PLFLT **pidata;
@@ -425,7 +398,7 @@ PLIMAGE(PLFLT *idata, PLINT *nx, PLINT *ny,
 
     for ( i = 0 ; i < *nx ; i ++ ) {
         for ( j = 0 ; j < *ny ; j ++ ) {
-            pidata[i][j] = idata[i + j * (*nx)];
+            pidata[i][j] = idata[i + j * (*lx)];
         }
     }
 
