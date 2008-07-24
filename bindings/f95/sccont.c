@@ -760,7 +760,6 @@ PLIMAGEFR07(PLFLT *idata, PLINT *nx, PLINT *ny,
             pidata[i][j] = idata[i + j * (*lx)];
         }
     }
-    printf("%f %f\n",*valuemax,*valuemin);
 
     c_plimagefr(pidata, *nx, *ny,
          *xmin, *xmax, *ymin, *ymax, *zmin, *zmax,
