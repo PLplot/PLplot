@@ -129,22 +129,23 @@ rm -rf htdocs
 # appear in the PLplot web site
 
 WWW_GROUP=${WWW_GROUP:-plplot}
-WWW_HOST=${WWW_HOST:-${WWW_USER:+$WWW_USER@}shell.sf.net}
+WWW_HOST=${WWW_HOST:-shell.sf.net}
+WWW_USER_AT_HOST=${WWW_USER:+$WWW_USER@}$WWW_HOST
 WWW_DIR=${WWW_DIR:-/home/groups/p/pl/plplot}
 
-echo 'Create remote directory if it does not exist'
-ssh $WWW_HOST mkdir -p $WWW_DIR
-echo Removing remote examples directory
-ssh $WWW_HOST rm -rf $WWW_DIR/$EXDIR
-echo Copying the tarball to WWW site
-scp $TARBALL $WWW_HOST:$WWW_DIR
-echo Changing its permission to allow group access
-ssh $WWW_HOST chmod g=u $WWW_DIR/$TARBALL
-echo Unpacking the remote tarball
-ssh $WWW_HOST tar -x -z -C $WWW_DIR -f $WWW_DIR/$TARBALL
-echo Changing group of the remote examples directory
-ssh $WWW_HOST chgrp -R $WWW_GROUP $WWW_DIR/$EXDIR
-echo Changing group permissions of the remote examples directory
-ssh $WWW_HOST chmod -R g=u $WWW_DIR/$EXDIR
-echo Removing the remote tarball
-ssh $WWW_HOST rm -f $WWW_DIR/$TARBALL
+echo "ssh $WWW_USER_AT_HOST mkdir -p $WWW_DIR"
+ssh $WWW_USER_AT_HOST mkdir -p $WWW_DIR
+echo "ssh $WWW_USER_AT_HOST rm -rf $WWW_DIR/$EXDIR"
+ssh $WWW_USER_AT_HOST rm -rf $WWW_DIR/$EXDIR
+echo "scp $TARBALL $WWW_USER_AT_HOST:$WWW_DIR"
+scp $TARBALL $WWW_USER_AT_HOST:$WWW_DIR
+echo "ssh $WWW_USER_AT_HOST chmod g=u $WWW_DIR/$TARBALL"
+ssh $WWW_USER_AT_HOST chmod g=u $WWW_DIR/$TARBALL
+echo "ssh $WWW_USER_AT_HOST tar -x -z -C $WWW_DIR -f $WWW_DIR/$TARBALL"
+ssh $WWW_USER_AT_HOST tar -x -z -C $WWW_DIR -f $WWW_DIR/$TARBALL
+echo "ssh $WWW_USER_AT_HOST chgrp -R $WWW_GROUP $WWW_DIR/$EXDIR"
+ssh $WWW_USER_AT_HOST chgrp -R $WWW_GROUP $WWW_DIR/$EXDIR
+echo "ssh $WWW_USER_AT_HOST chmod -R g=u $WWW_DIR/$EXDIR"
+ssh $WWW_USER_AT_HOST chmod -R g=u $WWW_DIR/$EXDIR
+echo "ssh $WWW_USER_AT_HOST rm -f $WWW_DIR/$TARBALL"
+ssh $WWW_USER_AT_HOST rm -f $WWW_DIR/$TARBALL
