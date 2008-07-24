@@ -47,19 +47,22 @@ cd /tmp/plplotdoc
 svn export https://plplot.svn.sourceforge.net/svnroot/plplot/trunk \
 plplot_source
 cd /tmp/plplotdoc/build
-cmake 
+cmake \
 -DWWW_USER=username \
 -DWWW_GROUP=group \
 -DWWW_HOST=localhost \
 -DWWW_DIR=/var/www/plplot/htdocs/docbook-manual \
 -DCMAKE_VERBOSE_MAKEFILE=ON \
 -DDEFAULT_NO_BINDINGS=ON -DDEFAULT_NO_DEVICES=ON \
--DPREBUILD_DIST=ON
+-DPREBUILD_DIST=ON \
 -DBUILD_DOC=ON \
 ../plplot_source \
 >& cmake.out
 make prebuild_dist >& make_prebuild.out
      
+Install the documentation on the local machine:
+cd /tmp/plplotdoc/build/doc/docbook/src
+make www-install
 
   2. In the root directory of a throwaway copy of the PLplot source tree (say
      /tmp/plplotdoc/plplot_source from step 1 above) execute the following
