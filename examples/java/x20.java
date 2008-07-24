@@ -108,6 +108,12 @@ class x20 {
 	int i, j, width, height, num_col;
 	int n[] = new int[1];
 	double img_f[][];
+	double img_min;
+	double img_max;
+	double maxmin[] = new double[2];
+	double x0, y0, dy, stretch;
+	double xg[][], yg[][];
+
 
 	/*
 	  Bugs in plimage():
@@ -252,6 +258,57 @@ class x20 {
 	    pls.adv(0);
 	}
 
+	// Base the dynamic range on the image contents.
+	f2mnmx(img_f,width,height,maxmin);
+	img_max = maxmin[0];
+	img_min = maxmin[1];
+
+	// For java we use 2-d arrays to replace the pltr function
+	// even for the NULL case.
+	xg = new double[width+1][height+1];
+	yg = new double[width+1][height+1];
+
+	for (i = 0; i<=width; i++) {
+	    for (j = 0; j<=height; j++) {
+		xg[i][j] = (double) i;
+		yg[i][j] = (double) j;
+	    }
+	}
+	// Draw a saturated version of the original image.  Only use 
+	// the middle 50% of the image's full dynamic range.
+	pls.col0(2);
+	pls.env(0, width, 0, height, 1, -1);
+	pls.lab("", "", "Reduced dynamic range image example");
+	pls.imagefr(img_f, 0., (double) width, 0., (double) height, 0., 0., 
+		    img_min + img_max * 0.25, 
+		    img_max - img_max * 0.25, 
+		    xg, yg);
+	
+	// Draw a distorted version of the original image, showing its full dynamic range.
+	pls.env(0, width, 0, height, 1, -1);
+	pls.lab("", "", "Distorted image example");
+	
+	x0 = 0.5*width;
+	y0 = 0.5*height;
+	dy = 0.5*height;
+	stretch = 0.5;
+	
+	/* In C / C++ the following would work, with plimagefr directly calling
+     mypltr. For compatibilty with other language bindings the same effect
+     can be achieved by generating the transformed grid first and then
+     using pltr2. */
+  /* plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch); */
+
+	for (i = 0; i<=width; i++) {
+	    for (j = 0; j<=height; j++) {
+		xg[i][j] = x0 + (x0-i)*(1.0 - stretch*
+					Math.cos((j-y0)/dy*Math.PI*0.5));
+		yg[i][j] = j;
+	    }
+	}
+      
+	pls.imagefr(img_f, 0., (double) width, 0., (double) height, 0., 0., img_min, img_max, xg, yg);
+	pls.adv(0);
 	pls.end();
 
     }
@@ -408,6 +465,22 @@ class x20 {
 
 	pls.scmap1n(num_col);
 	pls.scmap1l(true, pos, r, g, b);
+    }
+
+    // Calculate the minimum and maximum of a 2-d array
+    void f2mnmx(double [][] f, int nx, int ny, double[] fmaxmin)
+    {
+        int i, j;
+
+        fmaxmin[0] = f[0][0];
+        fmaxmin[1] = fmaxmin[0];
+
+        for (i = 0; i < nx; i++) {
+            for (j = 0; j < ny; j++) {
+                fmaxmin[0] = Math.max(fmaxmin[0], f[i][j]);
+                fmaxmin[1] = Math.min(fmaxmin[1], f[i][j]);
+            }
+        }
     }
 
     public static void main( String[] args ) {

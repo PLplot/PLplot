@@ -171,8 +171,11 @@ typedef struct {
 
 #ifdef SWIG_PYTHON
 #define SWIG_OBJECT_DATA PYOBJECT_DATA
+#define SWIG_OBJECT_DATA_img PYOBJECT_DATA
+#define pltr_img pltr
 #else
 #define SWIG_OBJECT_DATA OBJECT_DATA
+#define SWIG_OBJECT_DATA_img OBJECT_DATA_img
 #endif
 
 #ifdef SWIG_PYTHON
@@ -958,7 +961,7 @@ void
 plimagefr( PLFLT **Matrix, PLINT nx, PLINT ny,
 	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	 PLFLT valuemin, PLFLT valuemax,
-         pltr_func pltr, PLPointer SWIG_OBJECT_DATA);
+         pltr_func pltr_img, PLPointer SWIG_OBJECT_DATA_img);
 
 #ifdef 0
 /* Returns a list of file-oriented device names and their menu strings */

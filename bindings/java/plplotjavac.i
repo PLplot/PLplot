@@ -1171,6 +1171,145 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    return $jnicall;
 }
 
+/* First of two object arrays, where we check X and Y with previous.
+ * Note this is the simplified Tcl-like approach to handling the xg
+ * and yg arrays.  Later we would like to move to true call-back functions
+ * here instead like is done with the python interface. */
+/* This is the version for plimagefr where size is 1 larger than previous 
+ * array */
+%typemap(in) pltr_func pltr_img {
+   jPLFLT **adat;
+   jobject *ai;
+   int nx = (*jenv)->GetArrayLength( jenv, $input );
+   int ny = -1;
+   int i, j;
+   ai = (jobject *) malloc( nx * sizeof(jobject) );
+   adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+
+   (*jenv)->EnsureLocalCapacity( jenv, nx );
+
+   for( i=0; i < nx; i++ )
+     {
+	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
+	adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
+
+	if (ny == -1)
+	  ny = (*jenv)->GetArrayLength( jenv, ai[i] );
+	else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
+	   printf( "Misshapen a array.\n" );
+	   for( j=0; j <= i; j++ )
+	     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
+	   free(adat);
+	   free(ai);
+	   return;
+	}
+     }
+
+   if( !((nx == Xlen+1 && ny == Ylen+1) || (nx == Xlen+1 && ny == 1))) {
+      printf( "Xlen = %d, nx = %d, Ylen = %d, ny = %d\n", Xlen, nx, Ylen, ny );
+      printf( "X vector or matrix must match matrix dimensions.\n" );
+      for( i=0; i < nx; i++ )
+	(*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      free(adat);
+      free(ai);
+      return;
+   }
+   /* Store whether second dimension is unity. */
+   Alen = ny;
+   setup_array_2d_PLFLT( &xg, adat, nx, ny );
+   for( i=0; i < nx; i++ ) {
+      (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      (*jenv)->DeleteLocalRef(jenv, ai[i]);
+   }
+
+   free(adat);
+   free(ai);
+   $1 = pltr2;
+
+}
+
+%typemap(freearg) pltr_func pltr_img {
+   free(xg[0]);
+   free(xg);
+}
+%typemap(jni) pltr_func pltr_img "jobjectArray"
+%typemap(jtype) pltr_func pltr_img jPLFLTbracket2
+%typemap(jstype) pltr_func pltr_img jPLFLTbracket2
+%typemap(javain) pltr_func pltr_img "$javainput"
+%typemap(javaout) pltr_func pltr_img {
+   return $jnicall;
+}
+
+/* Second of two object arrays, where we check X and Y with previous object. */
+/* This is the version for plimagefr where size is 1 larger than previous 
+ * array */
+%typemap(in) PLPointer OBJECT_DATA_img {
+   jPLFLT **adat;
+   jobject *ai;
+   int nx = (*jenv)->GetArrayLength( jenv, $input );
+   int ny = -1;
+   int i, j;
+   PLcGrid2 cgrid;
+   ai = (jobject *) malloc( nx * sizeof(jobject) );
+   adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+
+   (*jenv)->EnsureLocalCapacity( jenv, nx );
+
+   for( i=0; i < nx; i++ )
+     {
+	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
+	adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
+
+	if (ny == -1)
+	  ny = (*jenv)->GetArrayLength( jenv, ai[i] );
+	else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
+	   printf( "Misshapen a array.\n" );
+	   for( j=0; j <= i; j++ )
+	     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
+	   free(adat);
+	   free(ai);
+	   return;
+	}
+     }
+
+   if( !((nx == Xlen+1 && ny == Ylen+1) || (nx == Ylen+1 && ny == 1 && ny == Alen))) {
+      printf( "Xlen = %d, nx = %d, Ylen = %d, Alen = %d, ny = %d\n",
+	      Xlen, nx, Ylen, Alen, ny );
+      printf( "Y vector or matrix must match matrix dimensions.\n" );
+      for( i=0; i < nx; i++ )
+	(*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      free(adat);
+      free(ai);
+      return;
+   }
+   setup_array_2d_PLFLT( &yg, adat, nx, ny );
+   for( i=0; i < nx; i++ ) {
+      (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      (*jenv)->DeleteLocalRef(jenv, ai[i]);
+   }
+
+   free(adat);
+   free(ai);
+   cgrid.xg = xg;
+   cgrid.yg = yg;
+   cgrid.nx = nx;
+   cgrid.ny = ny;
+   $1 = &cgrid;
+
+}
+
+%typemap(freearg) PLPointer OBJECT_DATA_img {
+   free(yg[0]);
+   free(yg);
+}
+%typemap(jni) PLPointer OBJECT_DATA_img "jobjectArray"
+%typemap(jtype) PLPointer OBJECT_DATA_img jPLFLTbracket2
+%typemap(jstype) PLPointer OBJECT_DATA_img jPLFLTbracket2
+%typemap(javain) PLPointer OBJECT_DATA_img "$javainput"
+%typemap(javaout) PLPointer OBJECT_DATA_img {
+   return $jnicall;
+}
+
 // Do not specify defined function or fill function from java.  Instead
 // specify NULL and plfill defaults in the interface C code.
 %typemap(in, numinputs=0) defined_func df {
