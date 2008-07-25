@@ -157,6 +157,59 @@ offset = [\
 0,\
 ];
 
+## 30 possible FCI values.
+FCI_COMBINATIONS = 30;
+
+fci = [\
+0x80000000,\
+0x80000001,\
+0x80000002,\
+0x80000003,\
+0x80000004,\
+0x80000010,\
+0x80000011,\
+0x80000012,\
+0x80000013,\
+0x80000014,\
+0x80000020,\
+0x80000021,\
+0x80000022,\
+0x80000023,\
+0x80000024,\
+0x80000100,\
+0x80000101,\
+0x80000102,\
+0x80000103,\
+0x80000104,\
+0x80000110,\
+0x80000111,\
+0x80000112,\
+0x80000113,\
+0x80000114,\
+0x80000120,\
+0x80000121,\
+0x80000122,\
+0x80000123,\
+0x80000124,\
+];
+
+family = [\
+  "sans-serif";\
+  "serif";\
+  "monospace";\
+  "script";\
+  "symbol"\
+];
+style = [\
+  "upright";\
+  "italic";\
+  "oblique"\
+];
+weight = [\
+  "medium";\
+  "bold"\
+];
+
 
 ## plparseopts(&argc, argv, PL_PARSE_FULL);
 
@@ -213,6 +266,53 @@ for page=1:11
   plmtex("t", 1.5, 0.5, 0.5, title(page,:));
   
 end
+
+## Demonstrate methods of getting the current fonts
+fci_old = plgfci();
+[ifamily,istyle,iweight] = plgfont();
+printf("For example 23 prior to page 12 the FCI is 0x%x\n",fci_old);
+printf("For example 23 prior to page 12 the font family, style and weight are  %s %s %s\n",deblank(family(ifamily+1,:)), deblank(style(istyle+1,:)), deblank(weight(iweight+1,:)));
+
+for page=11:15
+  dy = 0.030;
+
+  pladv(0);
+  plvpor(0.02, 0.98, 0.02, 0.90);
+  plwind(0.0, 1.0, 0.0, 1.0);
+  plsfci(0);
+  if (page == 11) 
+    plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with plsfci");
+  elseif (page == 12) 
+    plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with plsfont");
+  elseif (page == 13) 
+    plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0x8nnnnnnn> construct");
+  elseif(page == 14)
+    plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0xmn> constructs");
+  elseif(page == 15)
+    plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<FCI COMMAND STRING/> constructs");
+  endif
+  plschr(0., 0.75);
+  for i = 0:FCI_COMBINATIONS-1
+    family_index = mod(i,5);
+    style_index = mod(floor(i/5),3);
+    weight_index = mod(floor((i/5)/3),2);
+    if(page == 11)
+      plsfci(fci(i+1));
+      string = sprintf("Page 12, %s, %s, %s:  The quick brown fox jumps over the lazy dog",deblank(family(family_index+1,:)),deblank(style(style_index+1,:)),deblank(weight(weight_index+1,:)));
+    elseif(page == 12)
+      plsfont(family_index, style_index, weight_index);
+      string = sprintf("Page 13, %s, %s, %s:  The quick brown fox jumps over the lazy dog",deblank(family(family_index+1,:)),deblank(style(style_index+1,:)),deblank(weight(weight_index+1,:)));
+    elseif(page == 13)
+      string = sprintf("Page 14, %s, %s, %s:  #<0x%x>The quick brown fox jumps over the lazy dog",deblank(family(family_index+1,:)),deblank(style(style_index+1,:)),deblank(weight(weight_index+1,:)),fci(i+1));
+    elseif(page == 14)
+      string = sprintf("Page 15, %s, %s, %s:  #<0x%1x0>#<0x%1x1>#<0x%1x2>The quick brown fox jumps over the lazy dog",deblank(family(family_index+1,:)),deblank(style(style_index+1,:)),deblank(weight(weight_index+1,:)),family_index,style_index,weight_index);
+    elseif(page == 15)
+      string = sprintf("Page 16, %s, %s, %s:  #<%s/>#<%s/>#<%s/>The quick brown fox jumps over the lazy dog",deblank(family(family_index+1,:)),deblank(style(style_index+1,:)),deblank(weight(weight_index+1,:)),deblank(family(family_index+1,:)),deblank(style(style_index+1,:)),deblank(weight(weight_index+1,:)));
+    endif
+    plptex (0., 1. - (i+0.5)*dy, 1., 0., 0., string);
+  endfor
+  plschr(0., 1.0);
+endfor
 
 ## Restore defaults
 plcol0(1);

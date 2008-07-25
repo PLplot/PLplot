@@ -465,6 +465,7 @@ typedef struct {
 #define    plgfam	c_plgfam
 #define    plgfci	c_plgfci
 #define    plgfnam	c_plgfnam
+#define    plgfont	c_plgfont
 #define    plglevel	c_plglevel
 #define    plgpage	c_plgpage
 #define    plgra	c_plgra
@@ -534,6 +535,7 @@ typedef struct {
 #define    plsfam	c_plsfam
 #define    plsfci	c_plsfci
 #define    plsfnam	c_plsfnam
+#define    plsfont	c_plsfont
 #define    plshades	c_plshades
 #define    plshade	c_plshade
 #define    plshade1	c_plshade1
@@ -864,6 +866,10 @@ void c_plgfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax); //%name plgfam //%outp
 /* Get the (current) output file name.  Must be preallocated to >80 bytes */
 
 void c_plgfnam(char *fnam); //%name plgfnam //%output fnam(80)
+
+/* Get the current font family, style and weight */
+
+void c_plgfont(PLINT *p_family, PLINT *p_style, PLINT *p_weight); //%name plgfont //%output p_family, p_style, p_weight
 
 /* Get the (current) run level.  */
 
@@ -1211,6 +1217,11 @@ void c_plsfam(PLINT fam, PLINT num, PLINT bmax); //%name plsfam
 /* Set FCI (font characterization integer) */
 
 void c_plsfci(PLUNICODE fci); //%name plsfci
+
+/* Set the current font family, style and weight */
+
+void c_plsfont(PLINT family, PLINT style, PLINT weight); //%name plsfont
+
 
 /* Set the output file name. */
 
