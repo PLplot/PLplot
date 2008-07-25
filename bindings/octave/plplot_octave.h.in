@@ -1673,11 +1673,20 @@ void my_plimage(PLFLT *a, PLINT nx, PLINT ny,
  * convention as plcont */
 
 void my_plimagefr(PLFLT *a, PLINT nx, PLINT ny, 
-                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-                  PLFLT valuemin, PLFLT valuemax, PLFLT *tr) {
+                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, 
+	          PLFLT zmin, PLFLT zmax,
+                  PLFLT valuemin, PLFLT valuemax) {
+  f2c(a,aa,nx,ny);
+  plimagefr(aa,nx,ny,xmin,xmax,ymin,ymax,zmin,zmax,valuemin,valuemax,NULL,NULL);
+}  //%name plimagefr  //%input a(nx,ny)
+  
+void my_plimagefrx(PLFLT *a, PLINT nx, PLINT ny, 
+		   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, 
+		   PLFLT zmin, PLFLT zmax,
+		   PLFLT valuemin, PLFLT valuemax, PLFLT *tr) {
   f2c(a,aa,nx,ny);
   plimagefr(aa,nx,ny,xmin,xmax,ymin,ymax,zmin,zmax,valuemin,valuemax,xform,tr);
-}  //%name plimagefr  //%input a(nx,ny), tr(6)
+}  //%name plimagefrx  //%input a(nx,ny), tr(6)
   
 /* plimagefr() for use with pltr1 */
 void my_plimagefr1(PLFLT *a, PLINT nx, PLINT ny, 
@@ -1685,11 +1694,11 @@ void my_plimagefr1(PLFLT *a, PLINT nx, PLINT ny,
                    PLFLT zmin, PLFLT zmax,
                    PLFLT valuemin, PLFLT valuemax, PLFLT *xg, PLFLT *yg) {
   PLcGrid grid1;
-  grid1.nx = nx;  grid1.ny = ny;
+  grid1.nx = nx+1;  grid1.ny = ny+1;
   grid1.xg = xg;  grid1.yg = yg;
   f2c(a,aa,nx,ny);
   c_plimagefr(aa,nx,ny,xmin,xmax,ymin,ymax,zmin,zmax,valuemin,valuemax,pltr1,&grid1);
-}  //%name plimagefr1  //%input a(nx,ny), xg(nx), yg(ny)
+}  //%name plimagefr1  //%input a(nx,ny), xg(nx+1), yg(ny+1)
 
 /* plimagefr() for use with pltr2 */
 void my_plimagefr2(PLFLT *a, PLINT nx, PLINT ny, 
@@ -1697,12 +1706,12 @@ void my_plimagefr2(PLFLT *a, PLINT nx, PLINT ny,
                    PLFLT zmin, PLFLT zmax,
                    PLFLT valuemin, PLFLT valuemax, PLFLT *xg, PLFLT *yg) {
   PLcGrid2 grid2;
-  f2c(xg,xgg,nx,ny);  f2c(yg,ygg,nx,ny);  
-  grid2.nx = nx;  grid2.ny = ny;
+  f2c(xg,xgg,(nx+1),(ny+1));  f2c(yg,ygg,(nx+1),(ny+1));
+  grid2.nx = nx+1;  grid2.ny = ny+1;
   grid2.xg = xgg;  grid2.yg = ygg;
   f2c(a,aa,nx,ny);
   c_plimagefr(aa,nx,ny,xmin,xmax,ymin,ymax,zmin,zmax,valuemin,valuemax,pltr2,&grid2);
-}  //%name plimagefr2  //%input a(nx,ny), xg(nx,ny), yg(nx,ny)
+}  //%name plimagefr2  //%input a(nx,ny), xg(nx+1,ny+1), yg(nx+1,ny+1)
 
 /* Depreciated functions - retained for backwards compatibility */
 

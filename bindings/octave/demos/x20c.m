@@ -84,7 +84,7 @@ function ix20c
   elseif (exist("../lena.pgm","file"))
     [ret, img, width, height, num_col] = read_img("../lena.pgm");
   else
-    plabort("No such file");
+    printf("Error: No such file\n");
     plend1;
     return;
   endif
@@ -145,6 +145,34 @@ function ix20c
     pplimage(img, 1.0, width, 1.0, height, 0.0, 0.0, xi, xe, ye, yi);
     pladv(0);
   endif  
+
+  ## Base the dynamic range on the image contents.
+
+  img_max = max(max(img));
+  img_min = min(min(img));
+      
+  plcol(2)
+  plenv(0., width, 0., height, 1, -1)
+  pllab("", "", "Reduced dynamic range image example")
+  plimagefr(img, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, img_max - img_max * 0.25)
+
+  ## Draw a distorted version of the original image, showing its 
+  ## full dynamic range.
+  plenv(0., width, 0., height, 1, -1)
+  pllab("", "", "Distorted image example")
+
+  ## Populate the 2-d grids used for the distortion
+  ## NB grids must be 1 larger in each dimension than the image
+  ## since the coordinates are for the corner of each pixel.
+  x0 = 0.5*width;
+  y0 = 0.5*height;
+  dy = 0.5*height;
+  stretch = 0.5;
+  xg = [0:width]'*ones(1,height+1);
+  yg = ones(width+1,1)*[0:height];
+  xg = x0 + (x0-xg).*(1-stretch*cos((yg-y0)/dy*pi*0.5));
+  plimagefr2(img, 0., width, 0., height, 0., 0., img_min, img_max, xg, yg);
+  pladv(0)
 
   plend1;
 endfunction
