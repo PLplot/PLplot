@@ -32,14 +32,14 @@ driver. After you have installed these items do the following three steps
 (N.B. each with the same prefix for WWW_DIR but with a deliberately different 
 suffix for WWW_DIR):
 
-  1. Build a local version of the documentation and install it to the
-     local copy of the PLplot webpage.  
+  1a. Build a local version of the documentation.
      
      N.B. this build puts some documentation results into the source tree so
      we use a throwaway source tree for this.
      
-     N.B. this build completely removes WWW_DIR on the local machine
-     (localhost) so be careful how you specify the -DWWW_DIR option!
+     N.B. The make www-install command below completely removes WWW_DIR on 
+     the local machine (localhost) so be careful how you specify 
+     the -DWWW_DIR option.
 
 rm -rf /tmp/plplotdoc
 mkdir -p /tmp/plplotdoc/build
@@ -60,27 +60,32 @@ cmake \
 >& cmake.out
 make prebuild_dist >& make_prebuild.out
      
-Install the documentation on the local machine:
-cd /tmp/plplotdoc/build/doc/docbook/src
+  1b. Install that documentation to the local copy of the PLplot webpage.
+     N.B. this command completely removes WWW_DIR on the local machine
+     (localhost) so be careful how you specify the above -DWWW_DIR option.
+
+cd /tmp/plplotdoc/build
 make www-install
 
-  2. In the root directory of a throwaway copy of the PLplot source tree (say
-     /tmp/plplotdoc/plplot_source from step 1 above) execute the following
-     command:
+  2. Generate examples and screenshots of those examples.
 
-     N.B. this command completely removes WWW_DIR on the local machine
-     (localhost) so be careful how you specify WWW_DIR!
+     N.B. this command completely removes WWW_DIR/htdocs/examples-data 
+     on the local machine (localhost) so be careful how you specify WWW_DIR!
 
+cd /tmp/plplotdoc/plplot_source
 WWW_USER=username \
 WWW_GROUP=group \
 WWW_HOST=localhost \
 WWW_DIR=/var/www/plplot \
-./scripts/htdocs-gen_plot-examples.sh
+scripts/htdocs-gen_plot-examples.sh >& htdocs_gen.out
 
-  3. Then, in /tmp/plplotdoc/plplot_source/www execute the following command:
+  3. Generate the website (other than the documentation and examples 
+     done above).
+     N.B. this command removes certain files and subdirectories of
+     WWW_DIR on the local machine (localhost) so be careful how you 
+     specify WWW_DIR!
 
-     N.B. this command completely removes WWW_DIR on the local machine
-     (localhost) so be careful how you specify WWW_DIR!
+cd /tmp/plplotdoc/plplot_source/www
 make \
 WWW_USER=username \
 WWW_GROUP=group \
@@ -252,7 +257,7 @@ to tags/vX_Y_Z in the merge process. These can be determined by commit
 messages.
 
 Install the documentation on the PLplot website:
-cd /tmp/plplot-dist-prep/build_dir/doc/docbook/src
+cd /tmp/plplot-dist-prep/build_dir
 make www-install
 
 Sign the release with your plplot Release Manager gpg key:
