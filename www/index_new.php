@@ -2,14 +2,17 @@
   include "corefunctions.php";
 ?>
 
+<!-- include the html header -->
 <?php pageHeader("Main"); ?>
 
 <body>
 
 <div id="pagewrapper">
 
+  <!-- create the menu, index is selected -->
 	<?php pageMenu("index"); ?>
 
+  <!-- the actual content of the page -->
 	<div id="contentwrapper">
 		<div id="leftside">
 			<h3>Introduction</h3>
@@ -17,35 +20,35 @@
 				 plots.</p>
 			<p>PLplot can be used from within compiled languages such as C, C++, D,
 				 FORTRAN and Java, and interactively from interpreted languages
-				 such as Octave, Python, Perl and Tcl.<br />
-				 The PLplot library can be used to create standard x-y plots, semilog plots,
+				 such as Octave, Python, Perl and Tcl.</p>
+      <p>The PLplot library can be used to create standard x-y plots, semi-log plots,
 				 log-log plots, contour plots, 3D surface plots, mesh plots, bar charts and
 				 pie charts. Multiple graphs (of the same or different sizes) may be
-				 placed on a single page with multiple lines in each graph.<br />
-				 A variety of output file devices such as Postscript, png, jpeg
+				 placed on a single page with multiple lines in each graph.</p>
+      <p>A variety of output file devices such as Postscript, png, jpeg
 				 and others, as well as interactive devices such as xwin, tk,
 				 xterm and Tektronics devices are supported. There are also interfaces
          available to include the PLplot library in your application, e.g.
          for <a href="http://www.wxwidgets.org">wxWidgets</a>. New devices can be easily
-				 added by writing a small number of device dependent routines.<br />
-				 PLplot has core support for unicode. This means plots can be labelled using
-         the enormous selection of unicode mathematical symbols and simple text
+				 added by writing a small number of device dependent routines.</p>
+      <p>PLplot has core support for Unicode. This means plots can be labelled using
+         the enormous selection of Unicode mathematical symbols and simple text
          layout (left to right) language scripts for many of our devices. For our
          cairo-related devices we also support complex text layout (CTL) languages
          such as Arabic, Hebrew, and Indic and Indic-derived CTL scripts such as
-         Devanagari, Thai, Lao, and Tibetan.<br />
-				 Some devices supports its own way of dealing with text,
-				 such as the Postscript driver, or the png and jpeg drivers that
-				 uses the Freetype library.</p>
+         Devanagari, Thai, Lao, and Tibetan.</p>
+      <p>Some devices support their own way of dealing with text,
+				 such as the Postscript driver (using postscript fonts), or the png and jpeg drivers
+         (which use the Freetype library).</p>
 			<p>PLplot is free software primarily licensed under the
 				 <a href="http://www.gnu.org/licenses/lgpl.html">LGPL</a>.</p>
 
 			<h3>Feature Summary</h3>
 			<div class="splitcontentleft">
-				<h4>Cross Plattform</h4>
+				<h4>Cross Platform</h4>
 				 <p>PLplot is currently known to work on following platforms:</p>
 				 <ul class="arrowlist">
-				   <li>Linux and other Unices</li>
+				   <li>Linux and other Unixes</li>
 				   <li>Windows (2000, XP and Vista)</li>
 				   <li>Mac OS X</li>
 				   <li>MS-DOS (DJGPP)</li>
@@ -75,6 +78,7 @@
 			<div class="clear"></div>
 
 		
+      <!-- show some plots using the lightbox js script -->
 			<h3>Screenshots</h3>
 			<p>
 			<a href="examples-data/demo03/x03.01.png" rel="lightbox[plplot]" title="Polar plot">
@@ -93,11 +97,13 @@
 			<p>You can find the code for these and other examples at the <a href="examples.php">examples page</a></p>
 		</div>
 
-	<?php pageSidebar(0); ?>
+    <!-- add the sidebar, news displayed -->
+    <?php pageSidebar(1); ?>
 
 		<div id="spacer"></div>
 	</div>
 
+  <!-- include the page footer -->
 	<?php pageFooter(); ?>
 </div>
 

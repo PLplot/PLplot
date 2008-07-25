@@ -3,6 +3,7 @@
 
 	# Each element of the structure below contains:
 	# [ demo#, number of pages, particular thumbnail for top-level page, credits]
+  # if number of pages==0 the entry is ignored (e.g. example 14 and 17)
 	$demoArray = array(
 	  array( 1,  1, 1, ""),
 	  array( 2,  2, 1, ""),
@@ -42,25 +43,31 @@
 	  array(30,  2, 1, ""));
 ?>
 
+<!-- include the html header -->
 <?php pageHeader("Examples"); ?>
 
 <body>
 
 <div id="pagewrapper">
 
+  <!-- create the menu, examples is selected -->
 	<?php pageMenu("examples"); ?>
 
+  <!-- the actual content of the page -->
 	<div id="contentwrapper">
 		<div id="fullside">
 <?php
+  // if the variable demo was set the source code of this example
+  // is displayed
 	if(isset($_GET["demo"])) {
-		$demoID=$_GET["demo"];
-		$lbind=$_GET["lbind"];
+		$demoID=$_GET["demo"];  // demo number
+		$lbind=$_GET["lbind"];  // language
 		$demo_str = sprintf("%02d", $demoArray[$demoID-1][0]);
 		$nplots = $demoArray[$demoID-1][1];
 		$credits = $demoArray[$demoID-1][3];
 	  $demo_dir = "examples-data/demo$demo_str";
 
+    // add buttons for language selection
 		echo <<<END
 		<h3>Example $demoID</h3>
 		<p>Select language to see the source code</p>
@@ -76,7 +83,7 @@
 		<input type="submit" name="lbind" value="Python" />
 		<input type="submit" name="lbind" value="Octave" />
 		<input type="submit" name="lbind" value="PerlDL" />
-		<input type="submit" name="lbind" value="OCAML" />
+		<input type="submit" name="lbind" value="Ocaml" />
 		</form>
 END;
 
@@ -91,15 +98,16 @@ END;
 	  case ("Python"): $fname = "xw" . $demo_str . ".py-"; break;
 	  case ("Octave"): $fname = "x" . $demo_str . "c.m-"; break;
 	  case ("PerlDL"): $fname = "x" . $demo_str . ".pl-"; break;
-	  case ("OCAML"):  $fname = "x" . $demo_str . ".ocaml-"; break;
+	  case ("Ocaml"):  $fname = "x" . $demo_str . ".ml-"; break;
 	  default:         $fname = "x" . $demo_str . "c.c-";
 	  }
 
+    // view code
 	  echo "<object id=\"codebox\" type=\"text/plain\" data=\"$demo_dir/$fname\">\n";
 		echo "Your browser is not able to display text!\n</object>\n";
 			
+    // show plots for chosen example
 	  echo "<p>Select to view full-size image</p>\n";
-
 		echo "<p>\n";
 	  for($ndx = 1; $ndx <= $nplots; ++$ndx) {
 	    $ndx_str = sprintf ("%02d", $ndx);
@@ -110,6 +118,7 @@ END;
 	  }
 		echo "</p>\n";
 
+    // show credits if any
 		if($credits!="")
 			echo "<p>" . $credits . "</p>\n";
 
@@ -130,6 +139,7 @@ END;
 	  }
 		echo "</p>\n";
 	} else {
+    // display plots if all examples
 		echo <<<END
 			<h3>Examples</h3>
 			<p>These examples were generated with the pngcairo device and
@@ -139,14 +149,13 @@ END;
 END;
 		$count = 0;
 		foreach($demoArray as $drec) {
-		  $demo = sprintf ("%02d", $drec[0]);
-		  $dir = "demo$demo";
+		  $demo_str = sprintf ("%02d", $drec[0]);
+		  $dir = "demo$demo_str";
 		  $thumbnail = sprintf ("%02d", $drec[2]);
 		  $npages = $drec[1];
-		  $credits = $drec[3];
 
 			if($npages!=0) {
-				echo "<a href=\"examples.php?demo=$demo\"><img border=\"0\" src=\"examples-data/$dir/prev-x$demo.$thumbnail.png\" /></a>\n";
+				echo "<a href=\"examples.php?demo=$demo_str\"><img border=\"0\" src=\"examples-data/$dir/prev-x$demo_str.$thumbnail.png\" /></a>\n";
 			  $count++;
 			  if(($count%3) == 0) echo "<br />\n";  
 			}
@@ -156,6 +165,7 @@ END;
 		</div>
 	</div>
 
+  <!-- include the page footer -->
 	<?php pageFooter(); ?>
 </div>
 
