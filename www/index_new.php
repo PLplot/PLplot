@@ -68,7 +68,7 @@
 				  <li>Java</li>
 				  <li>Python</li>
 				  <li>Perl</li>
-				  <li>ADA</li>
+				  <li>Ada</li>
 				  <li>OCaml</li>
 				  <li>Octave</li>
 				  <li>TCL/Tk</li>
