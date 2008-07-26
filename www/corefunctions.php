@@ -35,7 +35,7 @@ END;
 	{
 		echo "	<div id=\"pageheader\">\n";
 		echo "		<h1>PLplot Homepage</h1>\n";
-		echo "		<h2>The ultimate cross-plattform plotting library</h2>\n";
+		echo "		<h2>The ultimate cross-platform plotting library</h2>\n";
 		echo "	</div>\n";
 
 		echo '	<div id="menubar">';
