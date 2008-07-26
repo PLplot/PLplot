@@ -320,6 +320,8 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi 
     )
 
+    # Use this variable to serialize inline.ent use in parallel builds.
+    set(SERIALIZE_INLINE_DEPENDS)
     if(BUILD_PRINT)
       add_custom_target(
       print ALL 
@@ -339,7 +341,9 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
       add_dependencies(print
       docbook_plplot-symbols_txt
       docbook_plplot-structs_txt
+      ${SERIALIZE_INLINE_DEPENDS}
       )
+      list(APPEND SERIALIZE_INLINE_DEPENDS print)
     endif(BUILD_PRINT)
 
     # Custom commands for building info version of documentation
@@ -405,7 +409,9 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
       add_dependencies(info
       docbook_plplot-symbols_txt
       docbook_plplot-structs_txt
+      ${SERIALIZE_INLINE_DEPENDS}
       )
+      list(APPEND SERIALIZE_INLINE_DEPENDS info)
     endif(BUILD_INFO)
 
     # Custom commands for building man version of documentation
@@ -458,7 +464,9 @@ AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${HTML_MANIFEST}
       add_dependencies(html
       docbook_plplot-symbols_txt
       docbook_plplot-structs_txt
+      ${SERIALIZE_INLINE_DEPENDS}
       )
+      list(APPEND SERIALIZE_INLINE_DEPENDS html)
     endif(BUILD_HTML)
   endif(BUILD_DOC)
 endif(
