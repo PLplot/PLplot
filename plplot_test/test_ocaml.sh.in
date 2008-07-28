@@ -23,8 +23,7 @@
 # and $options defined.
 
 # Do the standard non-interactive examples.
-# Currently only 11 and 19 are implemented
-for index in 01 02 03 11 19; do
+for index in 01 02 03 04 05 06 07 08 11 19; do
   $ocamldir/x${index}ocaml -dev $device -o ${OUTPUT_DIR}/x${index}ocaml.$dsuffix \
     $options 2> test.error
   # Look for any status codes (segfaults, plexit) from the examples themselves.
