@@ -1,4 +1,4 @@
-!      $Id:$
+!      $Id$
 !      Grid data demo.
 !
 !      Copyright (C) 2004  Joao Cardoso
@@ -40,8 +40,8 @@
       parameter(MAG_COLOR = 4)
       parameter(BASE_CONT = 8)
       
-      external isnan
-      logical isnan
+      external myisnan
+      logical myisnan
 
       integer pts, xp, yp, nl, knn_order, randn, rosen
       real(kind=plflt) threshold, wmin
@@ -160,7 +160,7 @@
                
                do i=1,xp
                   do j=1,yp
-                     if (isnan(zg(i,j))) then
+                     if (myisnan(zg(i,j))) then
 !     average (IDW) over the 8 neighbors
                         
                         zg(i,j) = 0._plflt
@@ -171,7 +171,7 @@
                            jj = j-1
                            do while ((jj.le.j+1).and.(jj.le.yp))
                               if ((ii.ge.1) .and. (jj.ge.1) .and. &
-                                   (.not.isnan(zg(ii,jj))) ) then
+                                   (.not.myisnan(zg(ii,jj))) ) then
                                  if (abs(ii-i) + abs(jj-j) .eq. 1) then
                                     d = 1._plflt
                                  else
@@ -267,16 +267,16 @@
       end subroutine cmap1_init
 
 
-      logical function isnan(x)
+      function myisnan(x)
         use plplot
         implicit none
         
-        logical isnan
+        logical myisnan
         real(kind=plflt) x
         
-        isnan = (x.ne.x)
+        myisnan = (x.ne.x)
         return
-      end function isnan
+      end function myisnan
 
 
 !----------------------------------------------------------------------------

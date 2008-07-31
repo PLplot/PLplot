@@ -45,8 +45,8 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       external plrandd
       real*8 plrandd
 
-      external isnan
-      logical isnan
+      external myisnan
+      logical myisnan
 
       integer pts, xp, yp, nl, knn_order, randn, rosen
       real*8 threshold, wmin
@@ -166,7 +166,7 @@ c
                
                do i=1,xp
                   do j=1,yp
-                     if (isnan(zg(i,j))) then
+                     if (myisnan(zg(i,j))) then
 c     average (IDW) over the 8 neighbors
                         
                         zg(i,j) = 0.d0
@@ -177,7 +177,7 @@ c     average (IDW) over the 8 neighbors
                            jj = j-1
                            do while ((jj.le.j+1).and.(jj.le.yp))
                               if ((ii.ge.1) .and. (jj.ge.1) .and.
-     &                             (.not.isnan(zg(ii,jj))) ) then
+     &                             (.not.myisnan(zg(ii,jj))) ) then
                                  if (abs(ii-i) + abs(jj-j) .eq. 1) then
                                     d = 1.d0
                                  else
@@ -272,13 +272,13 @@ c
       end subroutine
 
 
-      logical function isnan(x)
+      function myisnan(x)
       implicit none
       
-      logical isnan
+      logical myisnan
       real*8 x
 
-      isnan = (x.ne.x)
+      myisnan = (x.ne.x)
       return
       end function
 
