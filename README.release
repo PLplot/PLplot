@@ -17,6 +17,13 @@ N.B. This is the official notice that our deprecated autotools-based build
 system has now been removed.  Instead, use the CMake-based build system
 following the directions in the INSTALL file.
 
+Note that we no longer support Octave-2.1.73 which has a variety of run-time
+issues in our tests of the octave examples on different platforms.  In
+contrast our tests show we get good run-time results with all our Octave
+examples for Octave-3.0.1. Also, that is the recommended stable version of
+Octave at http://www.gnu.org/software/octave/download.html so that is the
+only version of Octave we support at this time.
+
 INDEX
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
