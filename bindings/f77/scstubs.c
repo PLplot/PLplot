@@ -301,6 +301,12 @@ PLGFNAM7(char *fnam, int length)
 }
 
 void
+PLGFONT(PLINT *family, PLINT *style, PLINT *weight)
+{
+    c_plgfont(family, style, weight);
+}
+
+void
 PLGLEVEL(PLINT *level)
 {
     c_plglevel(level);
@@ -757,6 +763,12 @@ void
 PLSFNAM7(const char *fnam)
 {
     c_plsfnam(fnam);
+}
+
+void
+PLSFONT(PLINT *family, PLINT *style, PLINT *weight)
+{
+    c_plsfont(*family, *style, *weight);
 }
 
 void
