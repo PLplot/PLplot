@@ -300,10 +300,28 @@ PLGFAM(PLINT *fam, PLINT *num, PLINT *bmax)
     c_plgfam(fam, num, bmax);
 }
 
+/* Note: Fortran does not have unsigned integers so we need to use a long 
+ * (should be 64 bit on most platforms?) which corresponds to a fortran integer*8
+ *  in order to contain the number. This all a bit ugly and could break on 
+ *  different hardware */
+void
+PLGFCI(long long *pfci)
+{
+    PLUNICODE fci;
+    c_plgfci(&fci);
+    *pfci = (long long) fci;
+}
+
 void
 PLGFNAM7(char *fnam, int length)
 {
     c_plgfnam(fnam);
+}
+
+void
+PLGFONT(PLINT *family, PLINT *style, PLINT *weight)
+{
+    c_plgfont(family, style, weight);
 }
 
 void
@@ -812,10 +830,28 @@ PLSFAM(PLINT *fam, PLINT *num, PLINT *bmax)
     c_plsfam(*fam, *num, *bmax);
 }
 
+/* Note: Fortran does not have unsigned integers so we need to use a long 
+ * (should be 64 bit on most platforms?) which corresponds to a fortran integer*8
+ *  in order to contain the number. This all a bit ugly and could break on 
+ *  different hardware */
+void
+PLSFCI(long long *fci)
+{
+    PLUNICODE f;
+    f = (PLUNICODE) (*fci & 0xffffffff);
+    c_plsfci(f);
+}
+
 void
 PLSFNAM7(const char *fnam)
 {
     c_plsfnam(fnam);
+}
+
+void
+PLSFONT(PLINT *family, PLINT *style, PLINT *weight)
+{
+    c_plsfont(*family, *style, *weight);
 }
 
 void

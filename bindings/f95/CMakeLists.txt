@@ -44,6 +44,8 @@ else(PL_DOUBLE)
   FILE(APPEND "${INC_FILE}"
        "integer, parameter :: plflt   = kind(1.0)\n")
 endif(PL_DOUBLE)
+FILE(APPEND "${INC_FILE}"
+     "integer, parameter :: plunicode  = kind(z'80000000')\n")
 
 # Mark the include file as being generated
 set_source_files_properties(plflt.inc PROPERTIES GENERATED ON)

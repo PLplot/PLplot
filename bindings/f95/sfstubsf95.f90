@@ -368,6 +368,19 @@
       end interface
 
       interface
+         subroutine plgfci( fci )
+            use plplot_flt
+            integer(kind=plunicode) :: fci
+         end subroutine plgfci
+      end interface    
+
+      interface
+         subroutine plgfont( family, style, weight )
+            integer :: family, style, weight
+         end subroutine plgfont
+      end interface
+
+      interface
          subroutine plglevel( level )
             integer :: level
          end subroutine plglevel
@@ -719,6 +732,19 @@
          subroutine plsfam( fam, num, bmax )
             integer :: fam, num, bmax
          end subroutine plsfam
+      end interface
+
+      interface
+         subroutine plsfci( fci )
+            use plplot_flt
+            integer(kind=plunicode) :: fci
+         end subroutine plsfci
+      end interface    
+
+      interface
+         subroutine plsfont( family, style, weight )
+            integer :: family, style, weight
+         end subroutine plsfont
       end interface
 
       interface
