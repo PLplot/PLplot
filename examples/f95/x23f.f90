@@ -311,7 +311,7 @@
        call pladv(0)
        call plvpor(0.02_plflt, 0.98_plflt, 0.02_plflt, 0.90_plflt)
        call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
-       call plsfci(0)
+       call plsfci(0_plunicode)
        if (page == 11) then
 	  call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
