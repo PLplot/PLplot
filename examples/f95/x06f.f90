@@ -56,8 +56,16 @@
       do i=0,12
 
 !        Write the digits to the left of the frame
+!        N.B. The chain of if statements is just to ensure no leading
+!        blanks, consistent with the C version of the example.
 
-        write (text,'(i3)') 10*i
+        if(i.eq.0) then
+          write (text,'(i1)') 10*i
+        elseif(i.le.9) then
+          write (text,'(i2)') 10*i
+        else
+          write (text,'(i3)') 10*i
+        endif
         call plmtex('lv', 1.0_plflt, (1.0_plflt-(2*i+1)/26.0_plflt), &
           1.0_plflt, text)
         do j=0,9
