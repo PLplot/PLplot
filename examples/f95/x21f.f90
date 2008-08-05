@@ -50,8 +50,8 @@
       parameter (yp = 20)
       parameter (nl = 15)
       parameter (knn_order = 20)
-      parameter (threshold = 1.001)
-      parameter (wmin = -1e3)
+      parameter (threshold = 1.001_plflt)
+      parameter (wmin = -1e3_plflt)
       parameter (randn = 0)
       parameter (rosen = 0)
 
@@ -81,10 +81,10 @@
 
       character*1 defined
 
-      xmin = -0.2
-      ymin = -0.2
-      xmax = 0.6
-      ymax = 0.6
+      xmin = -0.2_plflt
+      ymin = -0.2_plflt
+      xmax = 0.6_plflt
+      ymax = 0.6_plflt
 
 !      call plMergeOpts(options, "x21c options", NULL);
       call plparseopts(PL_PARSE_FULL);
