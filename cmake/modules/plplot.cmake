@@ -73,6 +73,11 @@ if(NOT SH_EXECUTABLE)
    )
 endif(NOT SH_EXECUTABLE)
 
+# Find diff and tail which are used to compare results from different
+# bindings.
+find_program(DIFF_EXECUTABLE diff)
+find_program(TAIL_EXECUTABLE tail)
+
 option(PREBUILD_DIST "Pre-build all components required for distribution" OFF)
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
   set(

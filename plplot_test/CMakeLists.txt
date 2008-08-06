@@ -199,6 +199,15 @@ if(PLD_pngcairo)
   endif(NOT TEST_DEVICE STREQUAL "pngcairo")
 endif(PLD_pngcairo)
 
+if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+configure_file(test_diff.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh @ONLY)
+set(SCRIPTS test_diff.sh)
+add_test(examples_compare
+  ${SH_EXECUTABLE} -c "./test_diff.sh"
+)
+endif(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+
+
 # Make a copy of lena.pgm to the test subdirectory of the build
 # tree so that example 20 will run from there.
 # Also need a copy of lena.img for the octave bindings
