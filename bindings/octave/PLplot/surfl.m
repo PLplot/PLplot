@@ -41,7 +41,7 @@ function surfl (x, y, z, s)
     flag = 1;
   endif
 
-  if (is_vector(s))
+  if (isvector(s))
     if (length(s) == 2) ## [az, alt]
       s = [10*cos(s(1)); 10*sin(s(1)); 10*sin(s(2))];
     endif

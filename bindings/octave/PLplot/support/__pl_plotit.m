@@ -138,12 +138,12 @@ function __pl_plotit
     
     xc = columns(x); yc = columns(y);
     
-    if (is_matrix(x) && !is_vector(x) && is_matrix(y) && !is_vector(y)) 
+    if (ismatrix(x) && !isvector(x) && ismatrix(y) && !isvector(y)) 
       if (style != 9 && (xc != yc || rows(x) != rows(y)))
 	error ("__pl_plotit: matrix dimensions must match.");
       endif
       range = "i;";	
-    elseif (is_vector(x) || is_vector(y))
+    elseif (isvector(x) || isvector(y))
       range ="1:yc;";
     endif
     
@@ -158,7 +158,7 @@ function __pl_plotit
 	endif
 	
 	if (isempty(key_title))
-	  if (!is_vector(x) || !is_vector(y))
+	  if (!isvector(x) || !isvector(y))
 	    lab = sprintf("line %d.%d", __pl.line_count(strm), (i-1)*yc+j);
 	    if (i==xc && j==max(eval(range)))
 	      __pl.line_count(strm)=__pl.line_count(strm)+1;
@@ -168,7 +168,7 @@ function __pl_plotit
 	    __pl.line_count(strm) = __pl.line_count(strm)+1;
 	  endif
 	elseif (length(key_title) != 1 || key_title != " ")
-	  if ((!is_vector(x) || !is_vector(y)) && is_strvector(fmt))
+	  if ((!isvector(x) || !isvector(y)) && is_strvector(fmt))
 	    lab = sprintf("%s %d", key_title, (i-1)*yc+j);
 	  else
 	    lab = sprintf("%s", key_title);

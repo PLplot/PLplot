@@ -36,7 +36,7 @@ function st = legend (x, xpos, varargin)
     ##__pl.legend_xpos(strm) = __pl.legend_ypos(strm) = 1;
     st = __pl.legend(strm);
 
-  elseif (nargin == 1 && is_scalar(x) && x >=0 && x <= 2)
+  elseif (nargin == 1 && isscalar(x) && x >=0 && x <= 2)
     __pl.legend(strm) = x;
 
   elseif (nargin == 2 && !ischar(x) && !ischar(xpos))

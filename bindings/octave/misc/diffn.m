@@ -32,7 +32,7 @@ if (order > 4 || order < 1)
 	usage("order must be:  <= 1 order <= 4 ");
 endif
 
-if (! is_vector(data))
+if (! isvector(data))
 	error("diffn only operate on row/column vectors. FIXME");
 endif
 

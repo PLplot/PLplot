@@ -32,7 +32,7 @@ function st = autostyle(x)
       else
 	help autostyle
       endif
-    elseif (is_scalar(x))
+    elseif (isscalar(x))
       if (x == 0)
 	__pl.line_style(strm) = 0;
       elseif (x == 1)

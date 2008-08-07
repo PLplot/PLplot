@@ -49,8 +49,8 @@ function  zg = griddata(x, y, z, xg, yg, method, arg)
     return;
   endif
 
-  if (is_vector(x) && is_vector(y) && is_vector(z) &&
-      is_vector(xg) && is_vector(yg))
+  if (isvector(x) && isvector(y) && isvector(z) &&
+      isvector(xg) && isvector(yg))
     
     [err, x, y, z] = common_size(x, y, z);
     if (err)

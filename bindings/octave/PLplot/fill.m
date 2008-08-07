@@ -45,19 +45,19 @@ function fill(x, y, c)
     error("fill: not yet.\n");
   endif
 
-  if (is_vector(x) & is_vector(y))
+  if (isvector(x) & isvector(y))
     __pl_fill(x, y, c);
     
-  elseif (is_matrix(x) | is_matrix(y))
+  elseif (ismatrix(x) | ismatrix(y))
 
     if (rows(x) == rows(y))
-      if (is_vector(x))
+      if (isvector(x))
 	x = x*ones(1,rows(x));
-      elseif (is_vector(y))
+      elseif (isvector(y))
 	y = y*ones(1,rows(y));
       endif
 
-      if (is_scalar(c))
+      if (isscalar(c))
 	c = ones(rows(x),1)*c;
       elseif (rows(c) == 1)
 	c = c';

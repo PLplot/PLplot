@@ -42,20 +42,20 @@ function contour (z, n, x, y)
   ## no way to determine their current values.
 
   if (nargin == 1 || nargin == 2)
-    if (is_matrix (z))
+    if (ismatrix (z))
       __pl_contour(1:columns(z), 1:rows(z), z', n);      
     else
       error ("contour: argument must be a matrix");
     endif
   elseif (nargin == 3 || nargin == 4)
-    if (nargin == 4 && !is_scalar(n))	# matlab syntax
+    if (nargin == 4 && !isscalar(n))	# matlab syntax
       temp1 = z; lines = y; y = n; z = x; x = temp1;
-    elseif (nargin == 4 && is_scalar(n))
+    elseif (nargin == 4 && isscalar(n))
       lines = n;
     elseif (nargin == 3)	# matlab syntax
       temp1 = z; y = n; z = x; x = temp1;
     endif	
-    if (is_vector (x) && is_vector (y) && is_matrix (z))
+    if (isvector (x) && isvector (y) && ismatrix (z))
       if (length (x) == columns (z) && length (y) == rows (z))
 	if (rows (x) == 1)
 	  x = x';

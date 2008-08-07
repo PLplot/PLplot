@@ -31,7 +31,7 @@ function __pl_fill(x, y, c)
 
   strm = plgstrm+1;
 
-  if (is_vector(x) & is_vector(y))
+  if (isvector(x) & isvector(y))
     if (columns(x) != 1)
       x = x';
       y = y';
@@ -61,17 +61,17 @@ function __pl_fill(x, y, c)
       coli = [2, 4, 10, 12, 14, 3, 16, 1];
       col = coli(find(c == coln))-1;
       plcol(col);
-    elseif (is_scalar(c))
+    elseif (isscalar(c))
       if (ceil(c) == c)	#integer
 	plcol(c);
       else
 	plcol1(c);
       endif
-    elseif (is_vector(c) & length(c) == 3)
+    elseif (isvector(c) & length(c) == 3)
       ## FIXME -- color 15 became permanently set!
       plscol0(15, c(1), c(2), c(3));
       plcol(15);
-    elseif (is_vector(c) & length(x) == length(x))
+    elseif (isvector(c) & length(x) == length(x))
       
       ## If C is a vector the same length as X and Y, its elements are
       ## scaled by CAXIS and used as indices into the current COLORMAP to

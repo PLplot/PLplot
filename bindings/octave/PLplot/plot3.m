@@ -36,7 +36,7 @@ function plot3 (x, y, z, fmt)
     error("plot3: not yet.\n");
   endif
 
-  if (is_vector(x) & is_vector(y) & is_vector(y))
+  if (isvector(x) & isvector(y) & isvector(y))
     
     if (nargin == 3)
       fmt = "-r";
@@ -44,7 +44,7 @@ function plot3 (x, y, z, fmt)
 
     __pl_plot3(x, y, z, fmt);
     
-  elseif (is_matrix(x) & is_matrix(y) & is_matrix(z))
+  elseif (ismatrix(x) & ismatrix(y) & ismatrix(z))
     
     if (!common_size(x,y,z))
 

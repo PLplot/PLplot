@@ -76,15 +76,15 @@ function label_plot( data, label, class, names)
     hold off
   endif
 
-  if (nargin == 3 && is_scalar(class))
+  if (nargin == 3 && isscalar(class))
     item = find(label == class)';
-  elseif (nargin == 3 && is_vector(class) && columns(class) == 1)
+  elseif (nargin == 3 && isvector(class) && columns(class) == 1)
     ## if (columns(class) != 1)
     ##	item = class;
     ## else
     item = class';
     ## endif
-  elseif (nargin == 3 && is_matrix(class) && !ischar(class))
+  elseif (nargin == 3 && ismatrix(class) && !ischar(class))
     item = []; ct = rows(class);
     if (nc != columns(class))
       error("label_plot: `data' and `class' must have the same number of columns\n");

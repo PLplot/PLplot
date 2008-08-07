@@ -39,7 +39,7 @@ function __pl_mesh(caller, varargin)
 
   if (nargin == 2)
     z = varargin{1};
-    if (is_matrix (z))
+    if (ismatrix (z))
       [rz, cz] = size(z);
       x = (1:cz)'; 
       y = (1:rz)'; 
@@ -50,7 +50,7 @@ function __pl_mesh(caller, varargin)
     x = varargin{1};
     y = varargin{2};
     z = varargin{3};
-    if (is_vector (x) && is_vector (y) && is_matrix (z))
+    if (isvector (x) && isvector (y) && ismatrix (z))
       xlen = length (x);
       ylen = length (y);
       if (xlen == columns (z) && ylen == rows (z))
@@ -65,7 +65,7 @@ function __pl_mesh(caller, varargin)
         msg = sprintf ("%s\ncolumns (z) must be the same as length (y).\n", msg);
         error (msg);
       endif
-    elseif (is_matrix (x) && is_matrix (y) && is_matrix (z))			
+    elseif (ismatrix (x) && ismatrix (y) && ismatrix (z))			
       error("x,y and z all matrices not yet implemented.\n")
     else
       error ("mesh: x and y must be vectors and z must be a matrix.\n");

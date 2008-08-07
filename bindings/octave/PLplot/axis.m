@@ -69,7 +69,7 @@ function curr_axis = axis (ax, opt)
     curr_axis = __pl.axis(strm,:);
   elseif (nargin == 1 && ischar (ax))
     opt = ax; ax = [];
-  elseif (nargin == 1 && is_vector (ax))
+  elseif (nargin == 1 && isvector (ax))
     opt = "";
   else
     usage "axis"

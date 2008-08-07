@@ -81,7 +81,7 @@ function __pl_contour(x, y, z, n)
   [xlen, ylen] = size(z);
   tr = [(xM-xm)/(xlen-1); 0; xm; 0; (yM-ym)/(ylen-1); ym];
 
-  if (!is_scalar(n))
+  if (!isscalar(n))
     st = (zM-zm)/length(n)/2;
     clevel = n; n = length(n);
   else

@@ -16,7 +16,7 @@
 ##
 ## Return 1 if X is a vector.  Otherwise, return 0.
 ##
-## See also: size, rows, columns, length, is_scalar, is_matrix
+## See also: size, rows, columns, length, isscalar, ismatrix
 
 ## Author: jwe
 ## Modified: jc

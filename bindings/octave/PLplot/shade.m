@@ -36,14 +36,14 @@ function shade(x, y, z, levels, cont )
     warning("off","Octave:empty-list-elements");
   endif
 
-  if (nargin == 1 && is_matrix(x))
+  if (nargin == 1 && ismatrix(x))
     levels = 20;
     cont = 0;
     z = x; y = 1:rows(z); x = 1:columns(z);
-  elseif (nargin == 2 && is_matrix(x))
+  elseif (nargin == 2 && ismatrix(x))
     cont = 0; levels = y;
     z = x; y = 1:rows(z); x = 1:columns(z);
-  elseif (nargin == 3 && is_scalar(z))
+  elseif (nargin == 3 && isscalar(z))
     levels = y; cont = z;
     z = x; y = 1:rows(z); x = 1:columns(z);
   elseif (nargin == 3)
@@ -53,7 +53,7 @@ function shade(x, y, z, levels, cont )
     cont = 0;
   endif
 
-  if (is_scalar(levels) && levels == 1)	# segmentation violation!
+  if (isscalar(levels) && levels == 1)	# segmentation violation!
     levels = 2;
   endif
 
@@ -116,7 +116,7 @@ function shade(x, y, z, levels, cont )
 
   maxx = max(x); maxy = max(y); minx = min(x); miny = min(y);
     
-  if (!is_scalar(levels))
+  if (!isscalar(levels))
     n = length(levels)-1;
     clevel = levels;
   else

@@ -20,7 +20,7 @@ function __pl_plot3(x, y, z, c)
 
   strm = plgstrm+1;
 
-  if (is_vector(x) & is_vector(y) & is_vector(z))
+  if (isvector(x) & isvector(y) & isvector(z))
 
     if (columns(x) != 1)
       x = x';
