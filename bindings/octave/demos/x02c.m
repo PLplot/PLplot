@@ -123,9 +123,9 @@ function demo2
 
     [r1, g1, b1] = plhlsrgb(h, l, s);
 
-    r(i+17) = r1 * 255;
-    g(i+17) = g1 * 255;
-    b(i+17) = b1 * 255;
+    r(i+17) = r1 * 255.001;
+    g(i+17) = g1 * 255.001;
+    b(i+17) = b1 * 255.001;
   endfor
 
   ## Load default cmap0 colors into our custom set
