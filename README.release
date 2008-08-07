@@ -108,10 +108,12 @@ Ada language support is now working for both CMake-2.4.x and CMake-2.6.0.
 
 1.6 Ada examples
 
-Many Ada examples have been added.  Some of these standard examples do not
-give the same results as the corresponding C examples for unknown reasons.
-Until these issues are addressed, the Ada interface must still be considered
-experimental.
+Example 19 currently has a run-time error for some platforms.  Otherwise,
+the Ada bindings and standard examples are in excellent shape with all
+standard examples now implemented (except for example 20), and all
+implemented examples giving the same results as the corresponding C examples
+(except for example 19 on some platforms and example 21 [currently] on all
+platforms). To give Ada wider testing, we have enabled it by default.
 
 1.7 Ocaml language support
 
@@ -230,10 +232,12 @@ Ada language support is now working for both CMake-2.4.x and CMake-2.6.0.
 
 2.13 Ada examples
 
-Many Ada examples have been added.  Some of these standard examples do not
-give the same results as the corresponding C examples for unknown reasons.
-Until these issues are addressed, the Ada interface must still be considered
-experimental.
+Example 19 currently has a run-time error for some platforms.  Otherwise,
+the Ada bindings and standard examples are in excellent shape with all
+standard examples now implemented (except for example 20), and all
+implemented examples giving the same results as the corresponding C examples
+(except for example 19 on some platforms and example 21 [currently] on all
+platforms). To give Ada wider testing, we have enabled it by default.
 
 2.14 Ocaml language support
 
