@@ -101,9 +101,9 @@ let demo2 () =
 
     let (r1, g1, b1) = plhlsrgb h l s in
 
-    r.(i+16) <- int_of_float (r1 *. 255.);
-    g.(i+16) <- int_of_float (g1 *. 255.);
-    b.(i+16) <- int_of_float (b1 *. 255.);
+    r.(i+16) <- int_of_float (r1 *. 255.001);
+    g.(i+16) <- int_of_float (g1 *. 255.001);
+    b.(i+16) <- int_of_float (b1 *. 255.001);
   done;
 
   (* Load default cmap0 colors into our custom set *)

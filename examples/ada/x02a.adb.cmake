@@ -138,9 +138,9 @@ procedure x02a is
             -- number to use appears to be about 0.5 - 10^-16 which _might_  
             -- be an exact fix for 64-bit floats since they have about 16 digits
             -- of accuracy.
-            r(i+16) := Integer((r1 * 255.0) - 0.499999999999999);
-            g(i+16) := Integer((g1 * 255.0) - 0.499999999999999);
-            b(i+16) := Integer((b1 * 255.0) - 0.499999999999999);
+            r(i+16) := Integer((r1 * 255.001) - 0.499999999999999);
+            g(i+16) := Integer((g1 * 255.001) - 0.499999999999999);
+            b(i+16) := Integer((b1 * 255.001) - 0.499999999999999);
         end loop;
 
         -- Load default cmap0 colors into our custom set.

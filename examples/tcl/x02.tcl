@@ -72,20 +72,37 @@ proc x02_demo2 {w} {
         set s 1.0
 
         plhlsrgb $h $l $s r1 g1 b1
+	# puts [format "%3d %15.9f %15.9f %15.9f %15.9f %15.9f %15.9f" $i1 $h $l $s $r1 $g1 $b1]
         if $see_the_bug {
-            r $i1 = [expr int($r1 * 255)]
-            g $i1 = [expr int($g1 * 255)]
-            b $i1 = [expr int($b1 * 255)]
+            r $i1 = [expr int($r1 * 255.001)]
+            g $i1 = [expr int($g1 * 255.001)]
+            b $i1 = [expr int($b1 * 255.001)]
         } else {
-            set r2 [expr int($r1 * 255)]
-            set g2 [expr int($g1 * 255)]
-            set b2 [expr int($b1 * 255)]
+            set r2 [expr int($r1 * 255.001)]
+            set g2 [expr int($g1 * 255.001)]
+            set b2 [expr int($b1 * 255.001)]
+  	    # puts [format "%3d %3d %3d %3d" $i1 $r2 $g2 $b2]
             plscol0 $i1 $r2 $g2 $b2
         }
     }
 
     if $see_the_bug {
-        plscmap0 r g b $ntot
+       # Load default cmap0 colors into our custom set
+       for {set i 0} {$i < $offset} {incr i} {
+	  plgcol0 $i r1 g1 b1
+	  r $i = [expr int($r1)]
+	  g $i = [expr int($g1)]
+	  b $i = [expr int($b1)]
+       }
+       # temporary
+       for {set i 0} {$i < $ntot} {incr i} {
+	  set r1 [expr [r $i]]
+	  set g1 [expr [g $i]]
+	  set b1 [expr [b $i]]
+  	  puts [format "%3d %3d %3d %3d" $i $r1 $g1 $b1]
+       }
+       # The following call currently segfaults.
+       plscmap0 r g b $ntot
     }
 
     x02_draw_windows $w 100 $offset

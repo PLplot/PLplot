@@ -109,9 +109,9 @@ x02::demo2() {
     
     pls->hlsrgb(h, l, s, &r1, &g1, &b1);
     
-    r[i+16] = (PLINT)(r1 * 255);
-    g[i+16] = (PLINT)(g1 * 255);
-    b[i+16] = (PLINT)(b1 * 255);
+    r[i+16] = (PLINT)(r1 * 255.001);
+    g[i+16] = (PLINT)(g1 * 255.001);
+    b[i+16] = (PLINT)(b1 * 255.001);
   }
   
   // Load default cmap0 colors into our custom set

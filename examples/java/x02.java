@@ -117,9 +117,9 @@ class x02 {
 	    
 	    pls.hlsrgb(h, l, s, r1, g1, b1);
     
-	    r[i+16] = (int)(r1[0] * 255);
-	    g[i+16] = (int)(g1[0] * 255);
-	    b[i+16] = (int)(b1[0] * 255);
+	    r[i+16] = (int)(r1[0] * 255.001);
+	    g[i+16] = (int)(g1[0] * 255.001);
+	    b[i+16] = (int)(b1[0] * 255.001);
 	}
   
 	// Load default cmap0 colors into our custom set

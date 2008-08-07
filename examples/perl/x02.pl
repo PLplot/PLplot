@@ -109,9 +109,9 @@ sub demo2 {
 
         ($r1, $g1, $b1) = plhlsrgb($h, $l, $s);
 
-        set $r, i+16, r1 * 255;
-        set $g, i+16, g1 * 255;
-        set $b, i+16, b1 * 255;
+        set $r, i+16, r1 * 255.001;
+        set $g, i+16, g1 * 255.001;
+        set $b, i+16, b1 * 255.001;
     }
 
 # Load default cmap0 colors into our custom set

@@ -54,9 +54,9 @@ def demo2():
 
         rgb = plhlsrgb(h, l, s)
 
-        r[i+16] = rgb[0]*255
-        g[i+16] = rgb[1]*255
-        b[i+16] = rgb[2]*255
+        r[i+16] = rgb[0]*255.001
+        g[i+16] = rgb[1]*255.001
+        b[i+16] = rgb[2]*255.001
 
     # Load default cmap0 colors into out custom set
     for i in range(16):

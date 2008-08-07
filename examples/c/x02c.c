@@ -93,16 +93,21 @@ void demo2()
         s = 1.0;
 
         plhlsrgb(h, l, s, &r1, &g1, &b1);
+       /*printf("%3d %15.9f %15.9f %15.9f %15.9f %15.9f %15.9f\n", 
+	      i+16,h,l,s,r1,g1,b1); */
 
-        r[i+16] = r1 * 255;
-        g[i+16] = g1 * 255;
-        b[i+16] = b1 * 255;
+        /* Use 255.001 to avoid close truncation decisions in this example. */
+        r[i+16] = r1 * 255.001;
+        g[i+16] = g1 * 255.001;
+        b[i+16] = b1 * 255.001;
     }
 
 /* Load default cmap0 colors into our custom set */
     for (i = 0; i <= 15; i++)
         plgcol0(i, &r[i], &g[i], &b[i]);
 
+/*    for (i = 0; i < 116; i++)
+        printf("%3d %3d %3d %3d \n", i, r[i], g[i], b[i]); */
 /* Now set cmap0 all at once (faster, since fewer driver calls) */
     plscmap0(r, g, b, 116);
 
