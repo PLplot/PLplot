@@ -122,16 +122,7 @@ endfunction
 
 function plot3
 
-  ## Warning: mktime is in local time so we need to calculate 
-  ## offset to get UTC. C time handling is quirky
-  t1 = 0;
-  tm = gmtime(t1);
-  t2 = mktime(tm);
-  ## Octave doesn't have difftime, so assume that time is an arithmetic
-  ## type in seconds
-  ## toff = difftime(t1,t2);
-  toff = t1-t2;
-
+  ## Calculate seconds since the Unix epoch for 2005-12-01 UTC.
   tm.year = 105; ## Years since 1900
   tm.mon = 11;   ## 0 == January, 11 = December
   tm.mday = 1;   ## 1 = 1st of month
@@ -139,20 +130,22 @@ function plot3
   tm.min = 0;
   tm.sec = 0;
 
+  ## NB - no need to call tzset in octave - it doesn't exist.
+  tz = getenv("TZ");
+  putenv("TZ","");
+  
   ## tstart is a time_t value (cast to PLFLT) which represents the number
   ## of seconds elapsed since 00:00:00 on January 1, 1970, Coordinated 
-  ## Universal Time (UTC).  The actual value corresponds to 2005-12-01 in
-  ## _local time_.  toff (calculated above and applied below) transforms that
-  ## to a time_t value (cast to a PLFLT) corresponding to 2005-12-01 UTC.
-  ## Aside from casting, the cross-platform result for tstart + toff should
-  ## be identical to the result from the Linux timegm function (the inverse
-  ## of the POSIX gmtime) for 2005-12-01.
+  ## Universal Time (UTC).  
   tstart = mktime(tm);
+
+  ## Note currently octave appears to have no way to unset a env 
+  ## variable. 
+  putenv("TZ",tz);
 
   npts = 62;
 
-
-  xmin = tstart + toff;
+  xmin = tstart;
   xmax = xmin + npts*60.0*60.0*24.0;
   ymin = 0.0;
   ymax = 5.0;
@@ -183,4 +176,4 @@ function plot3
 endfunction
   
 ix29c
-  
+ 
