@@ -22,7 +22,7 @@
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_ada "Enable Ada bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_ada "Enable Ada bindings" OFF)
+  option(ENABLE_ada "Enable Ada bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_ada)
