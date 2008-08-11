@@ -137,8 +137,8 @@ C     This initialisation is safe!
       ymin = 0.0d0
       ymax = 0.0d0
 
-      do 110 i = 1,windings*steps
-          phi       = real(i-1) * dphi
+      do 110 i = 1,windings*steps+1
+          phi       = dble(i-1) * dphi
           phiw      = (params(1)-params(2))/params(2)*phi
           xcoord(i) = (params(1)-params(2))*cos(phi)+params(3)*cos(phiw)
           ycoord(i) = (params(1)-params(2))*sin(phi)-params(3)*sin(phiw)
@@ -154,10 +154,10 @@ C     This initialisation is safe!
       else
           scale = ymax - ymin
       endif
-      xmin = - 0.65 * scale
-      xmax =   0.65 * scale
-      ymin = - 0.65 * scale
-      ymax =   0.65 * scale
+      xmin = - 0.65d0 * scale
+      xmax =   0.65d0 * scale
+      ymin = - 0.65d0 * scale
+      ymax =   0.65d0 * scale
 
       call plwind( xmin, xmax, ymin, ymax )
 
