@@ -1,0 +1,167 @@
+C $Id: x27c.c 8033 2007-11-23 15:28:09Z andrewross $
+C
+C  Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
+C
+C  Copyright (C) 2007  Arjen Markus
+C
+C This file is part of PLplot.
+C
+C PLplot is free software; you can redistribute it and/or modify
+C it under the terms of the GNU General Library Public License as published
+C by the Free Software Foundation; either version 2 of the License, or
+C (at your option) any later version.
+C
+C PLplot is distributed in the hope that it will be useful,
+C but WITHOUT ANY WARRANTY; without even the implied warranty of
+C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+C GNU Library General Public License for more details.
+C
+C You should have received a copy of the GNU Library General Public License
+C along with PLplot; if not, write to the Free Software
+C Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+C
+C
+
+C --------------------------------------------------------------------------
+C main
+C
+C Generates two kinds of plots:
+C   - construction of a cycloid (animated)
+C   - series of epitrochoids and hypotrochoids
+C --------------------------------------------------------------------------
+
+      program x27f
+
+      implicit none
+
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+
+C     R, r, p, N
+
+      real*8 params(4,9)
+
+      integer i, j
+
+      data ( ( params(i,j) ,i=1,4) ,j=1,9 ) /
+     & 21.0d0,  7.0d0,  7.0d0,  3.0d0,
+     & 21.0d0,  7.0d0, 10.0d0,  3.0d0,
+     & 21.0d0, -7.0d0, 10.0d0,  3.0d0,
+     & 20.0d0,  3.0d0,  7.0d0, 20.0d0,
+     & 20.0d0,  3.0d0, 10.0d0, 20.0d0,
+     & 20.0d0, -3.0d0, 10.0d0, 20.0d0,
+     & 20.0d0, 13.0d0,  7.0d0, 20.0d0,
+     & 20.0d0, 13.0d0, 20.0d0, 20.0d0,
+     & 20.0d0,-13.0d0, 20.0d0, 20.0d0/
+
+C  plplot initialization
+
+C  Parse and process command line arguments
+
+      call plparseopts(PL_PARSE_FULL)
+
+C  Initialize plplot
+
+      call plinit()
+
+C  Illustrate the construction of a cycloid
+
+      call cycloid()
+
+C  Loop over the various curves
+C  First an overview, then all curves one by one
+
+      call plssub(3, 3)
+
+      do 110 i = 1,9
+          call pladv(0)
+          call plvpor( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+          call spiro( params(1,i) )
+  110 continue
+
+      call pladv(0)
+      call plssub(1, 1)
+
+      do 120 i = 1,9
+          call pladv(0)
+          call plvpor( 0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+          call spiro( params(1,i) )
+  120 continue
+
+C  Don't forget to call plend() to finish off!
+
+      call plend()
+      end
+
+C  ===============================================================
+
+      subroutine cycloid
+
+C     TODO
+
+      end
+
+C  ===============================================================
+
+      subroutine spiro( params )
+
+      implicit none
+
+      real*8      params(*)
+      integer     NPNT
+      parameter ( NPNT = 20000 )
+      real*8      xcoord(NPNT+1)
+      real*8      ycoord(NPNT+1)
+
+      integer     windings
+      integer     steps
+      integer     i
+      real*8      phi
+      real*8      phiw
+      real*8      dphi
+      real*8      xmin
+      real*8      xmax
+      real*8      ymin
+      real*8      ymax
+      real*8      scale
+
+C     Fill the coordinates
+
+      windings = int(params(4))
+      steps    = NPNT/windings
+      dphi     = 8.0d0*acos(-1.0d0)/dble(steps)
+
+C     This initialisation is safe!
+      xmin = 0.0d0
+      xmax = 0.0d0
+      ymin = 0.0d0
+      ymax = 0.0d0
+
+      do 110 i = 1,windings*steps
+          phi       = real(i-1) * dphi
+          phiw      = (params(1)-params(2))/params(2)*phi
+          xcoord(i) = (params(1)-params(2))*cos(phi)+params(3)*cos(phiw)
+          ycoord(i) = (params(1)-params(2))*sin(phi)-params(3)*sin(phiw)
+
+          if ( xmin > xcoord(i) ) xmin = xcoord(i)
+          if ( xmax < xcoord(i) ) xmax = xcoord(i)
+          if ( ymin > ycoord(i) ) ymin = ycoord(i)
+          if ( ymax < ycoord(i) ) ymax = ycoord(i)
+  110 continue
+
+      if ( xmax-xmin > ymax-ymin ) then
+          scale = xmax - xmin
+      else
+          scale = ymax - ymin
+      endif
+      xmin = - 0.65 * scale
+      xmax =   0.65 * scale
+      ymin = - 0.65 * scale
+      ymax =   0.65 * scale
+
+      call plwind( xmin, xmax, ymin, ymax )
+
+      call plcol0(1)
+      call plline( 1+steps*windings, xcoord, ycoord )
+
+      end
