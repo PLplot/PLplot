@@ -122,7 +122,7 @@ void plot(PlplotCanvas *canvas,gdouble offset,char* title)
 
   /* Generate the sinusoid */
   for (i = 0; i < NPTS; i++)
-    y[i] = sin(2.*3.14*(x[i]+offset*(Nstream+1))/PERIOD/(float)(Nstream+1));
+    y[i] = sin(2.*3.14*(x[i]+offset*(Nstream+1))/PERIOD/(PLFLT)(Nstream+1));
 
   /* Draw the line */
   plplot_canvas_line(canvas,NPTS, x, y);

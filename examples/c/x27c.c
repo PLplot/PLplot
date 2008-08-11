@@ -127,7 +127,7 @@ spiro( PLFLT params[] )
 
     windings = (int) params[3] ;
     steps    = NPNT/windings ;
-    dphi     = 8.0*acos(-1.0)/(float)steps ;
+    dphi     = 8.0*acos(-1.0)/(PLFLT)steps ;
 
     xmin = 0.0 ; /* This initialisation is safe! */
     xmax = 0.0 ;
@@ -135,7 +135,7 @@ spiro( PLFLT params[] )
     ymax = 0.0 ;
 
     for ( i = 0; i <= windings*steps ; i ++ ) {
-        phi       = (float)i * dphi ;
+        phi       = (PLFLT)i * dphi ;
         phiw      = (params[0]-params[1])/params[1]*phi ;
         xcoord[i] = (params[0]-params[1])*cos(phi) + params[2]*cos(phiw) ;
         ycoord[i] = (params[0]-params[1])*sin(phi) - params[2]*sin(phiw) ;

@@ -148,9 +148,9 @@ main(int argc, const char *argv[])
     plenv(0., 2.*M_PI, 0, 3.*M_PI, 1, -1);
 
     for (i=0; i<XDIM; i++)
-      x[i] = i*2.*M_PI/(XDIM-1);
+      x[i] = i*2.*M_PI/(PLFLT)(XDIM-1);
     for (i=0; i<YDIM; i++)
-      y[i] = i*3.*M_PI/(YDIM-1);
+      y[i] = i*3.*M_PI/(PLFLT)(YDIM-1);
 
     for (i=0; i<XDIM; i++)
       for (j=0; j<YDIM; j++) {
