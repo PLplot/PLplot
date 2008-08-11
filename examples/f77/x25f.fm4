@@ -81,7 +81,7 @@ C  Polygon 2: a square with punctures
               npts = 10
           endif
           if ( j .eq. 4 ) then
-/* Polygon 2: a square with punctures - reversed direction */
+C  Polygon 2: a square with punctures - reversed direction 
               x0(10) = -100 ; y0(10) = -100
               x0(9)  = -100 ; y0(9)  =  -80
               x0(8)  =   80 ; y0(8)  =    0
