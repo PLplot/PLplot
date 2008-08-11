@@ -354,7 +354,7 @@
           endif
 
           if (ver(1:1) .ne. '#' ) then
-              exit
+              call exit
           endif
       enddo
 
@@ -397,7 +397,7 @@
           read( 10, rec = record, iostat = ierr ) img
 
           if ( img .eq. char(10) ) count = count - 1
-          if ( ierr .ne. 0 ) exit
+          if ( ierr .ne. 0 ) call exit
       enddo
 
 !
