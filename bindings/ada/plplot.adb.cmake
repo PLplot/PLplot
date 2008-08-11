@@ -1505,6 +1505,16 @@ package body PLplot is
     end Get_Device_Name;
 
 
+    -- Function version of the procedure Get_Device_Name; not part of the PLplot API.
+    -- plgdev
+    function Get_Device_Name return String is
+        PL_Device_Name : char_array(0..79);
+    begin
+        plgdev(PL_Device_Name);
+        return To_Ada(PL_Device_Name, True);
+    end Get_Device_Name;
+
+
     -- Retrieve current window into device space
     -- plgdidev
     procedure Get_Device_Window_Parameters
