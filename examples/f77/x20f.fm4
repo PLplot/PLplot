@@ -93,7 +93,7 @@ C
       real*8  xg(WDIM+1,HDIM+1), yg(WDIM+1,HDIM+1)
       real*8 img_max, img_min
 
-      real x0, y0, dy, stretch
+      real*8 x0, y0, dy, stretch
 
       logical  read_img
       external read_img
