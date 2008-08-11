@@ -20,13 +20,13 @@
 -- along with PLplot; if not, write to the Free Software
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
--- Ada note: This example relies on a random number generator go make up some 
--- data so there is no possibility of getting exact agreement at the Postscript 
--- level with the C example as has been the standard in other examples. 
--- Therefore, a couple of shortcuts have been used such as not actually using 
--- the times reported by the calls to a clock which are then (in the C example) 
--- used to create some labels (the time differences are all 0 ms anyway). 
--- Also, there is some sort of edge effect anomlies in the Cubic Spline 
+-- Ada note: This example relies on a random number generator go make up some
+-- data so there is no possibility of getting exact agreement at the Postscript
+-- level with the C example as has been the standard in other examples.
+-- Therefore, a couple of shortcuts have been used such as not actually using
+-- the times reported by the calls to a clock which are then (in the C example)
+-- used to create some labels (the time differences are all 0 ms anyway).
+-- Also, there is some sort of edge effect anomlies in the Cubic Spline
 -- Approximation plots.
 
 with
@@ -50,7 +50,7 @@ use
     PLplot_Traditional,
     PLplot_Auxiliary;
 
--- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
+-- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
 @Ada_Is_2007_With_and_Use_Numerics@
@@ -61,7 +61,6 @@ procedure x21a is
     yp  : Integer := 20;
     nl  : Integer := 15;
     knn_order : Integer := 20;
-    ct, ct1 : Integer;
     threshold : Long_Float := 1.001;
     wmin : Long_Float := -1.0e3;
     randn, rosen : Integer := 0;
@@ -95,10 +94,10 @@ procedure x21a is
     begin
         A_Boolean(1) := False; -- Don't reverse direction of control points
 
-        i(0) := 0.0;   -- left boundary 
-        i(1) := 1.0;   -- right boundary 
+        i(0) := 0.0;   -- left boundary
+        i(1) := 1.0;   -- right boundary
 
-        h(0) := 240.0; -- blue -> green -> yellow -> red 
+        h(0) := 240.0; -- blue -> green -> yellow -> red
 
         l(0) := 0.6;
         l(1) := 0.6;
@@ -132,7 +131,7 @@ procedure x21a is
             if randn = 0 then
                 x(i) := xt + xm;
                 y(i) := yt + ym;
-            else  -- std=1, meaning that many points are outside the plot range 
+            else  -- std=1, meaning that many points are outside the plot range
                 x(i) := sqrt(-2.0 *log(xt)) * cos(2.0 * pi * yt) + xm;
                 x(i) := sqrt(-2.0 *log(xt)) * sin(2.0 * pi * yt) + ym;
             end if;
@@ -145,31 +144,11 @@ procedure x21a is
           end loop;
     end create_data;
 
-
-    -- Make a clock that returns milliseconds. Can't seem to use Ada.Calendar 
-    -- because the Time type is private and in nanoseconds, and I can't see a 
-    -- way to divide by 1000000. This uses a GNAT package which is not part of 
-    -- standard Ada, GNAT.Calendar.Time_IO, in the function Image.
-    -- %i is said to be a GNAT extension to the GNU Date specificacion, 
-    -- returning time in milliseconds during the current minute. Therefore, 
-    -- this kludge returns time in milliseconds modulo minutes; subtracting one  
-    -- Clock call from another might yield surprising results. Clock _is_ the 
-    -- standard function in Ada.Calendar, so there _is_ a way to do this without
-    -- using the GNAT extension.
-    -- Final note: This clock is never actually put to use here in order to speed 
-    -- conversion of this example from C. The time values all returned 0 ms 
-    -- so I just hard-coded the labels that used the clock values to 0.
-    function Millisecond_Clock return Integer is
-    begin
-        return Integer'value(GNAT.Calendar.Time_IO.Image(Clock, "%i"));
-    end Millisecond_Clock;
-
-
-    -- Ada lacks full access to IEEE 754 aka IEC 559. The following works 
+    -- Ada lacks full access to IEEE 754 aka IEC 559. The following works
     -- because a NaN is not equal to any other float, including itself.
-    -- Use of the 'valid attribute might also work, as might casting to a 64-bit 
-    -- Integer and comparing to the known bit pattern for NaN; but beware of 
-    -- quiet NaNs and signalling NaNs. See the discussion at 
+    -- Use of the 'valid attribute might also work, as might casting to a 64-bit
+    -- Integer and comparing to the known bit pattern for NaN; but beware of
+    -- quiet NaNs and signalling NaNs. See the discussion at
     -- http://groups.google.com/group/comp.lang.ada/browse_thread/thread/772ddcb41cd06d5b?hl=en
     function Is_NaN(x : Long_Float) return Boolean is
     begin
@@ -179,20 +158,20 @@ procedure x21a is
 begin
     xm  := -0.2;
     ym  := -0.2;
-    xMM :=  0.8;
-    yMM :=  0.8;
+    xMM :=  0.6;
+    yMM :=  0.6;
 
     opt(2) := wmin;
     opt(3) := Long_Float(knn_order);
     opt(4) := threshold;
 
-    -- Parse and process command line arguments 
+    -- Parse and process command line arguments
     plparseopts(PL_PARSE_FULL);
 
-    -- Initialize plplot 
+    -- Initialize plplot
     plinit;
 
-    create_data(x, y, z); -- the sampled data 
+    create_data(x, y, z); -- the sampled data
     zmin := Vector_Min(z);
     zmax := Vector_Max(z);
 
@@ -201,8 +180,7 @@ begin
     plcol0(1);
     plenv(xm, xMM, ym, yMM, 2, 0);
     plcol0(15);
-    pllab("Npts=" & Trim(Integer'image(pts), Left) & " gridx=" & Trim(Integer'image(xp), Left) & " gridy=" & Trim(Integer'image(yp), Left),
-        "", "The original data");
+    pllab("X", "Y", "The original data sampling");
     plcol0(2);
     plpoin(x, y, 5);
     pladv(0);
@@ -213,9 +191,7 @@ begin
         pladv(0);
         for alg in 1 .. 6 loop
 
-            ct := Millisecond_Clock;
             plgriddata(x, y, z, xg, yg, zg, alg, opt(alg - 1));
-            ct1 := Millisecond_Clock - ct; -- Not used; see notes above.
 
             -- CSA can generate NaNs (only interpolates?!).
             -- DTLI and NNI can generate NaNs for points outside the convex hull
@@ -227,7 +203,7 @@ begin
             if alg = GRID_CSA or alg = GRID_DTLI or alg = GRID_NNLI or alg = GRID_NNI then
                 for i in xg'range loop
                     for j in yg'range loop
-                        if Is_NaN(zg(i, j)) then -- average (IDW) over the 8 neighbors 
+                        if Is_NaN(zg(i, j)) then -- average (IDW) over the 8 neighbors
                             zg(i, j) := 0.0;
                             dist := 0.0;
 
@@ -248,9 +224,9 @@ begin
                                     end if;
                                 end loop; -- jj
                             end loop; -- ii
-                            
+
                             if dist /= 0.0 then
-                                zg(i, j) := dist;
+                                zg(i, j) := zg(i,j) / dist;
                             else
                                 zg(i, j) := zmin;
                             end if;
@@ -262,7 +238,7 @@ begin
 
             lzm  := Matrix_Min(zg);
             lzMM := Matrix_Max(zg);
-            
+
             plcol0(1);
             pladv(alg);
 
@@ -275,7 +251,7 @@ begin
 
                 plenv0(xm, xMM, ym, yMM, 2, 0);
                 plcol0(15);
-                pllab("time=0 ms", "opt=0.000", title(alg - 1));
+                pllab("X", "Y", title(alg - 1));
                 plshades(zg, null, xm, xMM, ym, yMM,
                  clev, 1, 0, 1, plfill'access, True, null, System.Null_Address);
                 plcol0(2);
@@ -286,15 +262,15 @@ begin
 
                 cmap1_init;
                 plvpor(0.0, 1.0, 0.0, 0.9);
-                plwind(-1.0, 1.0, -1.0, 1.5);
-                
+                plwind(-1.1, 0.75, -0.65, 1.20);
+
                 -- For the comparition to be fair, all plots should have the
                 -- same z values, but to get the max/min of the data generated
                 -- by all algorithms would imply two passes. Keep it simple.
-                plw3d(1.0, 1.0, 1.0, xm, xMM, ym, yMM, lzm, lzMM, 30.0, -60.0);
-                plbox3("bnstu", "opt=0.000", 0.0, 0,
-                   "bnstu", "time=0 ms", 0.0, 0,
-                   "bcdmnstuv", "", 0.0, 4);
+                plw3d(1.0, 1.0, 1.0, xm, xMM, ym, yMM, lzm, lzMM, 30.0, -40.0);
+                plbox3("bntu", "X", 0.0, 0,
+                   "bntu", "Y", 0.0, 0,
+                   "bcdfntu", "Z", 0.5, 0);
                 plcol0(15);
                 pllab("", "", title(alg - 1));
                 plot3dc(xg, yg, zg, DRAW_LINEXY + MAG_COLOR + BASE_CONT, clev);
