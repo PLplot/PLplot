@@ -168,11 +168,15 @@ function ix20c
   y0 = 0.5*height;
   dy = 0.5*height;
   stretch = 0.5;
-  xg = [0:width]'*ones(1,height+1);
-  yg = ones(width+1,1)*[0:height];
+  ## The following can cause a crash on octave 2.1.
+  #xg = [0:width]'*ones(1,height+1);
+  #yg = ones(width+1,1)*[0:height];
+  ## Using repmat seems to work round the bug
+  xg = repmat([0:width]',1,height+1);
+  yg = repmat([0:height],width+1,1);
   xg = x0 + (x0-xg).*(1-stretch*cos((yg-y0)/dy*pi*0.5));
   plimagefr2(img, 0., width, 0., height, 0., 0., img_min, img_max, xg, yg);
-  pladv(0)
+  pladv(0);
 
   plend1;
 endfunction
