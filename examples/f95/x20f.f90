@@ -1,4 +1,4 @@
-! $Id:$
+! $Id$
 !
 !      Copyright (C) 2004  Alan W. Irwin
 !      Copyright (C) 2008  Andrew Ross
