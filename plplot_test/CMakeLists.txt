@@ -8,7 +8,8 @@ set(TEST_ENVIRONMENT
 )
 
 set(TEST_DEVICE psc CACHE STRING "device used for ctest")
-set(TEST_SCRIPT "./plplot-test.sh --device=${TEST_DEVICE}")
+set(TEST_SCRIPT "./plplot-test.sh --verbose")
+set(TEST_SCRIPT_DEVICE "${TEST_SCRIPT} --device=${TEST_DEVICE}")
 
 set(JAVA_TEST_ENVIRONMENT "${TEST_ENVIRONMENT} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar")
 
@@ -21,14 +22,14 @@ configure_file(
 configure_file(test_c.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_c.sh @ONLY)
 set(SCRIPTS test_c.sh)
 add_test(examples_c
-  ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c"
+  ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
   )
 
 if(ENABLE_cxx)
   configure_file(test_cxx.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_cxx.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_cxx.sh)
   add_test(examples_cxx
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=cxx"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=cxx"
   )
 endif(ENABLE_cxx)
 
@@ -36,7 +37,7 @@ if(ENABLE_f77)
   configure_file(test_f77.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_f77.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_f77.sh)
   add_test(examples_f77
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=f77"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f77"
   )
 endif(ENABLE_f77)
 
@@ -44,7 +45,7 @@ if(ENABLE_f95)
   configure_file(test_f95.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_f95.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_f95.sh)
   add_test(examples_f95
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=f95"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f95"
   )
 endif(ENABLE_f95)
 
@@ -56,7 +57,7 @@ if(ENABLE_java)
     )
   set(SCRIPTS ${SCRIPTS} test_java.sh)
   add_test(examples_java
-    ${SH_EXECUTABLE} -c "${JAVA_TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=java"
+    ${SH_EXECUTABLE} -c "${JAVA_TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=java"
   )
 endif(ENABLE_java)
 
@@ -68,7 +69,7 @@ if(ENABLE_octave)
     )
   set(SCRIPTS ${SCRIPTS} test_octave.sh)
   add_test(examples_octave
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=octave"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=octave"
   )
 endif(ENABLE_octave)
 
@@ -86,7 +87,7 @@ if(ENABLE_python)
     )
   set(SCRIPTS ${SCRIPTS} test_python.sh)
   add_test(examples_python
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=python"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=python"
   )
 endif(ENABLE_python)
 
@@ -94,7 +95,7 @@ if(ENABLE_tcl)
   configure_file(test_tcl.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh @ONLY)
   set(SCRIPTS ${SCRIPTS} test_tcl.sh)
   add_test(examples_tcl
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=tcl"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=tcl"
   )
 endif(ENABLE_tcl)
 
@@ -106,7 +107,7 @@ if(ENABLE_pdl)
     )
   set(SCRIPTS ${SCRIPTS} test_perl.sh)
   add_test(examples_perl
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=perl"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=perl"
   )
 endif(ENABLE_pdl)
 
@@ -118,7 +119,7 @@ if(ENABLE_ada)
     )
   set(SCRIPTS ${SCRIPTS} test_ada.sh)
   add_test(examples_ada
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=ada"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ada"
   )
 endif(ENABLE_ada)
 
@@ -130,7 +131,7 @@ if(ENABLE_ocaml)
     )
   set(SCRIPTS ${SCRIPTS} test_ocaml.sh)
   add_test(examples_ocaml
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=ocaml"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ocaml"
   )
 endif(ENABLE_ocaml)
 
@@ -138,7 +139,7 @@ endif(ENABLE_ocaml)
 if(PLD_psc)
   if (NOT TEST_DEVICE STREQUAL "psc")
   add_test(examples_psttfc
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=psttfc"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psttfc"
   )
   endif(NOT TEST_DEVICE STREQUAL "psc")
 endif(PLD_psc)
@@ -146,7 +147,7 @@ endif(PLD_psc)
 if(PLD_psttf)
   if (NOT TEST_DEVICE STREQUAL "psttfc")
   add_test(examples_psttfc
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=psttfc"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psttfc"
   )
   endif(NOT TEST_DEVICE STREQUAL "psttfc")
 endif(PLD_psttf)
@@ -154,7 +155,7 @@ endif(PLD_psttf)
 if(PLD_pstex)
   if (NOT TEST_DEVICE STREQUAL "pstex")
   add_test(examples_pstex
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=pstex"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pstex"
   )
   endif(NOT TEST_DEVICE STREQUAL "pstex")
 endif(PLD_pstex)
@@ -162,7 +163,7 @@ endif(PLD_pstex)
 if(PLD_png)
   if (NOT TEST_DEVICE STREQUAL "png")
   add_test(examples_png
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=png"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=png"
   )
   endif(NOT TEST_DEVICE STREQUAL "png")
 endif(PLD_png)
@@ -170,7 +171,7 @@ endif(PLD_png)
 if(PLD_svg)
   if (NOT TEST_DEVICE STREQUAL "svg")
   add_test(examples_svg
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=svg"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svg"
   )
   endif(NOT TEST_DEVICE STREQUAL "svg")
 endif(PLD_svg)
@@ -178,7 +179,7 @@ endif(PLD_svg)
 if(PLD_plmeta)
   if (NOT TEST_DEVICE STREQUAL "plmeta")
   add_test(examples_plmeta
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=plmeta"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=plmeta"
   )
   endif(NOT TEST_DEVICE STREQUAL "plmeta")
 endif(PLD_plmeta)
@@ -186,7 +187,7 @@ endif(PLD_plmeta)
 if(PLD_pscairo)
   if (NOT TEST_DEVICE STREQUAL "pscairo")
   add_test(examples_pscairo
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=pscairo"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pscairo"
   )
   endif(NOT TEST_DEVICE STREQUAL "pscairo")
 endif(PLD_pscairo)
@@ -194,7 +195,7 @@ endif(PLD_pscairo)
 if(PLD_pngcairo)
   if (NOT TEST_DEVICE STREQUAL "pngcairo")
   add_test(examples_pngcairo
-    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ./plplot-test.sh --front-end=c --device=pngcairo"
+    ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngcairo"
   )
   endif(NOT TEST_DEVICE STREQUAL "pngcairo")
 endif(PLD_pngcairo)

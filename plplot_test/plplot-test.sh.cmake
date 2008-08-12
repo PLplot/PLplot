@@ -58,6 +58,7 @@ Options:
    [--output-dir=/path/to/output/dir]
                      Specify location where the resulting files are stored.
                      Defaults to "."
+   [--verbose]	     Echo each PLplot example that is executed.
    [--version]
    [--help]
 
@@ -88,6 +89,9 @@ while test $# -gt 0; do
    case $1 in
       --device=*)
          device=$optarg
+         ;;
+      --verbose)
+         export verbose_test=on
          ;;
       --version)
          echo $version
