@@ -30,7 +30,7 @@ C
 
 C
 C This example designed just for devices (e.g., psttfc and the
-C cairo-related devices) that use the pango and fontconfig libraries. The
+C cairo-related devices) that utilise the pango and fontconfig libraries. The
 C best choice of glyph is selected by fontconfig and automatically rendered
 C by pango in way that is sensitive to complex text layout (CTL) language
 C issues for each unicode character in this example. Of course, you must
