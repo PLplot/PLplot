@@ -1,0 +1,202 @@
+C  -*- coding: utf-8; -*-
+C
+C  $Id: x26c.c 8033 2007-11-23 15:28:09Z andrewross $
+C
+C  Multi-lingual version of the first page of example 4.
+C
+C  Copyright (C) 2006 Alan Irwin
+C  Copyright (C) 2006 Andrew Ross
+C
+C  Thanks to the following for providing translated strings for this example:
+C  Valery Pipin (Russian)
+C
+C  This file is part of PLplot.
+C
+C  PLplot is free software; you can redistribute it and/or modify
+C  it under the terms of the GNU General Library Public License as published
+C  by the Free Software Foundation; either version 2 of the License, or
+C  (at your option) any later version.
+C
+C  PLplot is distributed in the hope that it will be useful,
+C  but WITHOUT ANY WARRANTY; without even the implied warranty of
+C  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+C  GNU Library General Public License for more details.
+C
+C  You should have received a copy of the GNU Library General Public License
+C  along with PLplot; if not, write to the Free Software
+C  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+C
+C
+
+C
+C This example designed just for devices (e.g., psttfc and the
+C cairo-related devices) that use the pango and fontconfig libraries. The
+C best choice of glyph is selected by fontconfig and automatically rendered
+C by pango in way that is sensitive to complex text layout (CTL) language
+C issues for each unicode character in this example. Of course, you must
+C have the appropriate TrueType fonts installed to have access to all the
+C required glyphs.
+C
+C Translation instructions: The strings to be translated are given by
+C x_label, y_label, alty_label, title_label, and line_label below.  The
+C encoding used must be UTF-8.
+C
+C The following strings to be translated involve some scientific/mathematical
+C jargon which is now discussed further to help translators.
+C
+C (1) dB is a decibel unit, see http://en.wikipedia.org/wiki/Decibel .
+C (2) degrees is an angular measure, see
+C     http://en.wikipedia.org/wiki/Degree_(angle) .
+C (3) low-pass filter is one that transmits (passes) low frequencies.
+C (4) pole is in the mathematical sense, see
+C     http://en.wikipedia.org/wiki/Pole_(complex_analysis) .  "Single Pole"
+C     means a particular mathematical transformation of the filter function has
+C     a single pole, see
+C     http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .
+C     Furthermore, a single-pole filter must have an inverse square decline
+C     (or -20 db/decade). Since the filter plotted here does have that
+C     characteristic, it must by definition be a single-pole filter, see also
+C     http://www-k.ext.ti.com/SRVS/Data/ti/KnowledgeBases/analog/document/faqs/1p.htm
+C (5) decade represents a factor of 10, see
+C     http://en.wikipedia.org/wiki/Decade_(log_scale) .
+C
+C
+C
+
+C --------------------------------------------------------------------------
+C  main
+C
+C  Illustration of logarithmic axes, and redefinition of window.
+C --------------------------------------------------------------------------
+
+      program x26f
+
+      implicit none
+
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+
+      integer      nolangs
+      parameter  ( nolangs = 2 )
+
+      character*80 x_label(nolangs)
+      character*80 y_label(nolangs)
+      character*80 alty_label(nolangs)
+      character*80 title_label(nolangs)
+      character*80 line_label(nolangs)
+
+      integer      i
+
+      data (x_label(i) ,i=1,nolangs) /
+     &    'Frequency',
+     &    'Частота'/
+
+      data (y_label(i) ,i=1,nolangs) /
+     &    'Amplitude (dB)',
+     &    'Амплитуда (dB)'/
+
+      data (alty_label(i) ,i=1,nolangs) /
+     &    'Phase shift (degrees)',
+     &    'Фазовый сдвиг (градусы)'/
+
+      data (title_label(i) ,i=1,nolangs) /
+     &    'Single Pole Low-Pass Filter',
+     &    'Однополюсный Низко-ЧастотныйФил�
+     &�тр'/
+
+      data (line_label(i) ,i=1,nolangs) /
+     &     '-20 dB/decade',
+     &     '-20 dB/десяток'/
+
+C  Parse and process command line arguments
+
+      call plparseopts(PL_PARSE_FULL)
+
+C  Initialize plplot
+
+      call plinit()
+      call plfont(2)
+
+C  Make log plots using two different styles.
+
+      do 110 i = 1,nolangs
+          call plot1(0, x_label(i), y_label(i), alty_label(i),
+     &               title_label(i), line_label(i))
+  110 continue
+
+      call plend()
+      end
+
+C --------------------------------------------------------------------------
+C  plot1
+C
+C  Log-linear plot.
+C --------------------------------------------------------------------------
+
+      subroutine plot1( type, x_label, y_label, alty_label,
+     &                  title_label, line_label )
+
+      implicit none
+
+      integer type
+      character(*) x_label, y_label, alty_label, title_label, line_label
+
+      integer i
+      real*8  freql(101), ampl(101), phase(101)
+      real*8  f0, freq
+      real*8  M_PI
+
+      M_PI = 4.0d0 * atan(1.0d0)
+
+      call pladv(0)
+
+C  Set up data for log plot
+
+      f0 = 1.0
+      do 110 i = 1,101
+          freql(i) = -2.0d0 + (i-1) / 20.0d0
+          freq     = 10.0d0 ** freql(i)
+          ampl(i)  = 20.0d0 * log10(1.0d0 / sqrt(1.0d0 + (freq/f0)**2))
+          phase(i) = -(180.0d0 / M_PI) * atan(freq / f0)
+  110 continue
+
+      call plvpor(0.15d0, 0.85d0, 0.1d0, 0.9d0)
+      call plwind(-2.0d0, 3.0d0, -80.0d0, 0.0d0)
+
+C  Try different axis and labelling styles.
+
+      call plcol0(1)
+      if ( type .eq. 0 ) then
+          call plbox("bclnst", 0.0d0, 0, "bnstv", 0.0d0, 0)
+      endif
+      if ( type .eq. 1 ) then
+          call plbox("bcfghlnst", 0.0d0, 0, "bcghnstv", 0.0d0, 0)
+      endif
+
+C  Plot ampl vs freq
+
+      call plcol0(2)
+      call plline(101, freql, ampl)
+      call plcol0(1)
+      call plptex(1.6d0, -30.0d0, 1.0d0, -20.0d0, 0.5d0, line_label)
+
+C  Put labels on
+
+      call plcol0(1)
+      call plmtex("b", 3.2d0, 0.5d0, 0.5d0, x_label)
+      call plmtex("t", 2.0d0, 0.5d0, 0.5d0, title_label)
+      call plcol0(2)
+      call plmtex("l", 5.0d0, 0.5d0, 0.5d0, y_label)
+
+C  For the gridless case, put phase vs freq on same plot
+
+      if (type .eq. 0) then
+          call plcol0(1)
+          call plwind(-2.0d0, 3.0d0, -100.0d0, 0.0d0)
+          call plbox("", 0.0d0, 0, "cmstv", 30.0d0, 3)
+          call plcol0(3)
+          call plline(101, freql, phase)
+          call plcol0(3)
+          call plmtex("r", 5.0d0, 0.5d0, 0.5d0, alty_label)
+      endif
+      end
