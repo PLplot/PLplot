@@ -20,10 +20,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 # This is called from plplot-test.sh with $ocamldir, $device, $dsuffix,
-# and $options defined.
+# $options, and possibly $verbose_test defined.
 
 # Do the standard non-interactive examples.
 for index in 01 02 03 04 05 06 07 08 11 19; do
+  if [ "$verbose_test" ]; then
+    echo "x${index}ocaml"
+  fi
   $ocamldir/x${index}ocaml -dev $device -o ${OUTPUT_DIR}/x${index}ocaml.$dsuffix \
     $options 2> test.error
   # Look for any status codes (segfaults, plexit) from the examples themselves.

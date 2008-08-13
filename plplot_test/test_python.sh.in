@@ -20,8 +20,9 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-# This is called from plplot-test.sh with $pythondir, $device,
-# $dsuffix, and $options defined.
+# This is called from plplot-test.sh with $pythondir, $device, $dsuffix,
+# $options, and possibly $verbose_test defined.
+
 # $pythondir must be the build tree and not the source tree (if separate from
 # build tree) since must access plplot_python_start.py in build tree and
 # paths in that file are relative to build tree.
@@ -32,6 +33,9 @@
 # For 24 you need special fonts installed to get good result.
 for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 \
 20 22 23 24 25 26 27 28 29 30 @NUMPY_EXAMPLES@ ; do
+  if [ "$verbose_test" ]; then
+    echo "x${index}"
+  fi
   @PYTHON_EXECUTABLE@ $pythondir/x$index -dev $device -o ${OUTPUT_DIR}/x${index}p.$dsuffix $options 2> test.error
   status_code=$?
   cat test.error
@@ -44,5 +48,4 @@ for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 \
   if test -n "$is_error"; then
     exit 1
   fi
-
 done

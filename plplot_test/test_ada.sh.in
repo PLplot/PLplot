@@ -21,7 +21,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 # This is called from plplot-test.sh with $adadir, $device, $dsuffix,
-# and $options defined.
+# $options, and possibly $verbose_test defined.
 
 # To build the Ada examples before running this script do the following:
 # pushd $adadir; make; popd
@@ -36,6 +36,9 @@ for index in \
 thick01 thick02 thick03 thick04 thick05 thick06 thick07 thick08 thick09 \
 thick10 thick11 thick12 thick13 thick15 thick16 thick18 thick19 \
 thick21 thick22 thick23 thick24 thick25 thick26 thick27 thick28 thick29 thick30; do
+  if [ "$verbose_test" ]; then
+    echo "x${index}a"
+  fi
   $adadir/x${index}a -dev $device -o ${OUTPUT_DIR}/x${index}a.$dsuffix $options 2> test.error
   status_code=$?
   cat test.error
