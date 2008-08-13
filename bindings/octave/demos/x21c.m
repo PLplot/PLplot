@@ -50,7 +50,7 @@ function ix21c
   pts = 500;
   xp = 25;
   yp = 20;
-  nl = 15;
+  nl = 16;
   knn_order = 20;
   threshold = 1.001;
   wmin = -1e3;
@@ -147,13 +147,14 @@ function ix21c
       lzM = max(max(zg));
       lzm = min(min(zg));
 
+      lzm = min(lzm, zmin)-0.01;
+      lzM = max(lzM, zmax)+0.01;
+      
       plcol0(1);
       pladv(alg);
 
       if (k == 0)
 
-	lzm = min(lzm, zmin);
-	lzM = max(lzM, zmax);
 	i = (0:nl-1)';
 	clev = lzm + (lzM-lzm)/(nl-1)*i;
 
@@ -178,7 +179,7 @@ function ix21c
 	## plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
 	##
 
-	plw3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -40);
+	plw3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30., -40.);
 	plbox3("bntu", "X", 0.0, 0,
 	       "bntu", "Y", 0.0, 0,
 	       "bcdfntu", "Z", 0.5, 0);

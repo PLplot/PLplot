@@ -59,7 +59,7 @@ procedure x21a is
     pts : Integer := 500;
     xp  : Integer := 25;
     yp  : Integer := 20;
-    nl  : Integer := 15;
+    nl  : Integer := 16;
     knn_order : Integer := 20;
     threshold : Long_Float := 1.001;
     wmin : Long_Float := -1.0e3;
@@ -239,12 +239,16 @@ begin
             lzm  := Matrix_Min(zg);
             lzMM := Matrix_Max(zg);
 
+            lzm :=  Vector_Min((lzm,  zmin));
+            lzMM := Vector_Max((lzMM, zmax));
+
+	    lzm := lzm - 0.01;
+	    lzMM := lzMM + 0.01;
+
             plcol0(1);
             pladv(alg);
 
             if k = 0 then
-                lzm :=  Vector_Min((lzm,  zmin));
-                lzMM := Vector_Max((lzMM, zmax));
                 for i in 0 .. nl - 1 loop
                     clev(i) := lzm + (lzMM - lzm) / Long_Float(nl-1) * Long_Float(i);
                 end loop;

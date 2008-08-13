@@ -53,7 +53,7 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       parameter (pts = 500)
       parameter (xp = 25)
       parameter (yp = 20)
-      parameter (nl = 15)
+      parameter (nl = 16)
       parameter (knn_order = 20)
       parameter (threshold = 1.001d0)
       parameter (wmin = -1d3)
@@ -200,15 +200,19 @@ c     average (IDW) over the 8 neighbors
                enddo
             endif
             
-            call a2mnmx(zg, xp, yp, lzmin, lzmax, xp);
+            call a2mnmx(zg, xp, yp, lzmin, lzmax, xp)
+
+            lzmin = min(lzmin, zmin)
+            lzmax = max(lzmax, zmax)
+
+            lzmin = lzmin - 0.01d0
+            lzmax = lzmax + 0.01d0
 
             call plcol0(1)
             call pladv(alg)
             
             if (k.eq.1) then
                
-               lzmin = min(lzmin, zmin)
-               lzmax = max(lzmax, zmax)
                do i=1,nl
                   clev(i) = lzmin + (lzmax-lzmin)/(nl-1.d0)*(i-1.d0);
                enddo

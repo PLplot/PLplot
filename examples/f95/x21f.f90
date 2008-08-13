@@ -48,7 +48,7 @@
       parameter (pts = 500)
       parameter (xp = 25)
       parameter (yp = 20)
-      parameter (nl = 15)
+      parameter (nl = 16)
       parameter (knn_order = 20)
       parameter (threshold = 1.001_plflt)
       parameter (wmin = -1e3_plflt)
@@ -194,15 +194,19 @@
                enddo
             endif
             
-            call a2mnmx(zg, xp, yp, lzmin, lzmax, xp);
+            call a2mnmx(zg, xp, yp, lzmin, lzmax, xp)
+
+            lzmin = min(lzmin, zmin)
+            lzmax = max(lzmax, zmax)
+
+            lzmin = lzmin - 0.01_plflt
+            lzmax = lzmax + 0.01_plflt
 
             call plcol0(1)
             call pladv(alg)
             
             if (k.eq.1) then
                
-               lzmin = min(lzmin, zmin)
-               lzmax = max(lzmax, zmax)
                do i=1,nl
                   clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt);
                enddo

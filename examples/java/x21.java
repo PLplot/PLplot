@@ -43,7 +43,7 @@ class x21 {
     static int pts = 500;
     static int xp = 25;
     static int yp = 20;
-    static int nl = 15;
+    static int nl = 16;
     static int knn_order = 20;
     static double threshold = 1.001;
     static double wmin = -1e3;
@@ -102,7 +102,7 @@ class x21 {
     //     &nl,
     //     PL_OPT_INT,
     //     "-nlevel ",
-    //     "Specify number of contour levels [15]" },
+    //     "Specify number of contour levels [16]" },
     //   {
     //     "knn_order",
     //     NULL,
@@ -254,14 +254,16 @@ class x21 {
 		lzm = new double[1];
 		lzM = new double[1];
 		pls.minMax2dGrid(zg, lzM, lzm);
+		lzm[0] = Math.min(lzm[0], zmin);
+		lzM[0] = Math.max(lzM[0], zmax);
+		lzm[0] = lzm[0] - 0.01;
+		lzM[0] = lzM[0] + 0.01;
 
 		pls.col0(1);
 		pls.adv(alg);
 		
 		if (k == 0) {
 		    
-		    lzm[0] = Math.min(lzm[0], zmin);
-		    lzM[0] = Math.max(lzM[0], zmax);
 		    for (i=0; i<nl; i++)
 			clev[i] = lzm[0] + (lzM[0]-lzm[0])/(nl-1)*i;
 		    

@@ -37,7 +37,7 @@
 static PLINT pts = 500;
 static PLINT xp = 25;
 static PLINT yp = 20;
-static PLINT nl = 15;
+static PLINT nl = 16;
 static int knn_order = 20;
 static PLFLT threshold = 1.001;
 static PLFLT wmin = -1e3;
@@ -252,13 +252,20 @@ main(int argc, const char *argv[])
 
       plMinMax2dGrid(zg, xp, yp, &lzM, &lzm);
 
+      lzm = MIN(lzm, zmin);
+      lzM = MAX(lzM, zmax);
+
+      /* Increase limits slightly to prevent spurious contours 
+       due to rounding errors */
+      lzm = lzm-0.01;
+      lzM = lzM+0.01;
+
       plcol0(1);
+
       pladv(alg);
 
       if (k == 0) {
 
-	lzm = MIN(lzm, zmin);
-	lzM = MAX(lzM, zmax);
 	for (i=0; i<nl; i++)
 	  clev[i] = lzm + (lzM-lzm)/(nl-1)*i;
 

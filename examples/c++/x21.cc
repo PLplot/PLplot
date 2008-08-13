@@ -84,7 +84,7 @@ private:
 PLINT x21::pts = 500;
 PLINT x21::xp = 25;
 PLINT x21::yp = 20;
-PLINT x21::nl = 15;
+PLINT x21::nl = 16;
 PLINT x21::knn_order = 20;
 PLFLT x21::threshold = 1.001;
 PLFLT x21::wmin = -1e3;
@@ -272,13 +272,17 @@ x21::x21( int argc, const char ** argv ) {
 
       pls->MinMax2dGrid(zg, xp, yp, &lzM, &lzm);
 
+      lzm = MIN(lzm, zmin);
+      lzM = MAX(lzM, zmax);
+
+      lzm = lzm-0.01;
+      lzM = lzM+0.01;
+
       pls->col0(1);
       pls->adv(alg);
 
       if (k == 0) {
 
-	lzm = MIN(lzm, zmin);
-	lzM = MAX(lzM, zmax);
 	for (i=0; i<nl; i++)
 	  clev[i] = lzm + (lzM-lzm)/(nl-1)*i;
 
@@ -304,7 +308,7 @@ x21::x21( int argc, const char ** argv ) {
 	 * plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
 	 */
 
-	pls->w3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -40);
+	pls->w3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30., -40.);
 	pls->box3("bntu", "X", 0.0, 0,
 	       "bntu", "Y", 0.0, 0,
 	       "bcdfntu", "Z", 0.5, 0);
