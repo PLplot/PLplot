@@ -4,9 +4,6 @@
 
 from plplot_py_demos import *
 
-import os.path
-import sys
-
 XDIM = 260
 YDIM = 220
 
@@ -152,6 +149,15 @@ def get_clip(xi, xe, yi, ye):
         
     else:  # Driver has no xormod capability, just do nothing
         return [0, xi, xe, yi, ye]
+
+def mypltr(x, y, stretch):
+    x0 = (stretch[0] + stretch[1])*0.5
+    y0 = (stretch[2] + stretch[3])*0.5
+    dy = (stretch[3] - stretch[2])*0.5
+    result0 = x0 + multiply.outer((x0-x),(1.0 - stretch[4]*cos((y-y0)/dy*pi*0.5)))
+    result1 = multiply.outer(ones(len(x)),y)
+    return array((result0, result1))
+    
     
 # main
 #
@@ -190,9 +196,9 @@ def main():
         r = sqrt( multiply.outer(x*x,ones(YDIM)) + multiply.outer(ones(XDIM),y*y)) + 1e-3
         z = sin(r) / r
 
-    pllab("No, an amplitude clipped \"sombrero\"", "", "Saturn?");
-    plptex(2., 2., 3., 4., 0., "Transparent image");
-    plimage(z, 0., 2.*pi, 0, 3.*pi, 0.05, 1.,0., 2.*pi, 0, 3.*pi); 
+    pllab("No, an amplitude clipped \"sombrero\"", "", "Saturn?")
+    plptex(2., 2., 3., 4., 0., "Transparent image")
+    plimage(z, 0., 2.*pi, 0, 3.*pi, 0.05, 1.,0., 2.*pi, 0, 3.*pi)
 
     # Save the plot
     if (f_name != ""):
@@ -249,8 +255,34 @@ def main():
         plenv(xi, xe, ye, yi, 1, -1)
         plimage(img, 1., width, 1., height, 0., 0., xi, xe, ye, yi)
         pladv(0)
-    plend()
-    sys.exit(0)
+
+    # Base the dynamic range on the image contents.
+    img_min = min(img.flat)
+    img_max = max(img.flat)
+
+    # Draw a saturated version of the original image.  Only use the middle 50%
+    # of the image's full dynamic range.
+    plcol0(2)
+    plenv(0, width, 0, height, 1, -1)
+    pllab("", "", "Reduced dynamic range image example")
+    plimagefr(img, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, \
+              img_max - img_max * 0.25)
+
+    # Draw a distorted version of the original image, showing its full dynamic range.
+    plenv(0, width, 0, height, 1, -1)
+    pllab("", "", "Distorted image example")
+
+    stretch = zeros(5)
+    stretch[1] = width
+    stretch[3] = height
+    stretch[4] = 0.5
+
+    xg = mypltr(arange(width+1),arange(height+1),stretch)[0]
+    yg = mypltr(arange(width+1),arange(height+1),stretch)[1]
+    
+    plimagefr(img, 0., width, 0., height, 0., 0., img_min, img_max, \
+              pltr2, xg, yg)
+    pladv(0)
 
     
 main()

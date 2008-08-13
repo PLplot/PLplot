@@ -171,7 +171,7 @@ typedef struct {
 
 #ifdef SWIG_PYTHON
 #define SWIG_OBJECT_DATA PYOBJECT_DATA
-#define SWIG_OBJECT_DATA_img PYOBJECT_DATA
+#define SWIG_OBJECT_DATA_img PYOBJECT_DATA_img
 #define pltr_img pltr
 #else
 #define SWIG_OBJECT_DATA OBJECT_DATA

@@ -489,7 +489,7 @@ pltr0(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE);
   static PLcGrid tmpGrid1;
   static PLcGrid2 tmpGrid2;
 
-  PLcGrid* marshal_PLcGrid1(PyObject* input) {
+  PLcGrid* marshal_PLcGrid1(PyObject* input, int isimg) {
     /* fprintf(stderr, "marshal PLcGrid1\n"); */
     if(!PySequence_Check(input) || PySequence_Size(input) != 2) {
       PyErr_SetString(PyExc_ValueError, "Expected a sequence of two arrays.");
@@ -505,9 +505,17 @@ pltr0(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE);
     }
     tmpGrid1.nx = pltr_xg->dimensions[0];
     tmpGrid1.ny = pltr_yg->dimensions[0];
-    if(Xlen != tmpGrid1.nx || Ylen != tmpGrid1.ny) {
-      PyErr_SetString(PyExc_ValueError, "pltr arguments must have X and Y dimensions of first arg.");
-      return NULL;
+    if (isimg == 0) {
+      if(Xlen != tmpGrid1.nx || Ylen != tmpGrid1.ny) {
+        PyErr_SetString(PyExc_ValueError, "pltr arguments must have X and Y dimensions of first arg.");
+        return NULL;
+      }
+    }
+    else {
+      if(Xlen != tmpGrid1.nx-1 || Ylen != tmpGrid1.ny-1) {
+        PyErr_SetString(PyExc_ValueError, "pltr arguments must have X and Y dimensions of first arg + 1.");
+        return NULL;
+      }
     }
     tmpGrid1.xg = (PLFLT*)pltr_xg->data;
     tmpGrid1.yg = (PLFLT*)pltr_yg->data;
@@ -520,7 +528,7 @@ pltr0(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE);
     Py_DECREF(pltr_yg);
   }
 
-  PLcGrid2* marshal_PLcGrid2(PyObject* input) {
+  PLcGrid2* marshal_PLcGrid2(PyObject* input, int isimg) {
     int i, size;
     /* fprintf(stderr, "marshal PLcGrid2\n"); */
     if(!PySequence_Check(input) || PySequence_Size(input) != 2) {
@@ -542,9 +550,17 @@ pltr0(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE);
     }
     tmpGrid2.nx = pltr_xg->dimensions[0];
     tmpGrid2.ny = pltr_xg->dimensions[1];
-    if(Xlen != tmpGrid2.nx || Ylen != tmpGrid2.ny) {
-      PyErr_SetString(PyExc_ValueError, "pltr arguments must have X and Y dimensions of first arg.");
-      return NULL;
+    if (isimg == 0) {
+      if(Xlen != tmpGrid2.nx || Ylen != tmpGrid2.ny) {
+        PyErr_SetString(PyExc_ValueError, "pltr arguments must have X and Y dimensions of first arg.");
+        return NULL;
+      }
+    }
+    else {
+      if(Xlen != tmpGrid2.nx-1 || Ylen != tmpGrid2.ny-1) {
+        PyErr_SetString(PyExc_ValueError, "pltr arguments must have X and Y dimensions of first arg + 1.");
+        return NULL;
+      }
     }
     size = sizeof(PLFLT)*tmpGrid2.ny;
     tmpGrid2.xg = (PLFLT**)malloc(sizeof(PLFLT*)*tmpGrid2.nx);
@@ -566,7 +582,7 @@ pltr0(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE);
   %}
 
 %typemap(in) PLcGrid* cgrid {
-  $1 = marshal_PLcGrid1($input);
+  $1 = marshal_PLcGrid1($input,0);
   if(!$1)
     return NULL;
 }
@@ -582,7 +598,7 @@ pltr1(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLcGrid* cgrid);
    structure that pltr2 expects */
 
 %typemap(in) PLcGrid2* cgrid {
-  $1 = marshal_PLcGrid2($input);
+  $1 = marshal_PLcGrid2($input,0);
   if(!$1)
     return NULL;
 }
@@ -775,18 +791,18 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
     python_pltr = 0;
   }
 
-  PLPointer marshal_PLPointer(PyObject* input) {
+  PLPointer marshal_PLPointer(PyObject* input,int isimg) {
     PLPointer result = NULL;
     switch(pltr_type) {
     case CB_0:
       break;
     case CB_1:
       if(input != Py_None)
-	result = marshal_PLcGrid1(input);
+	result = marshal_PLcGrid1(input,isimg);
       break;
     case CB_2:
       if(input != Py_None)
-	result = marshal_PLcGrid2(input);
+	result = marshal_PLcGrid2(input,isimg);
       break;
     case CB_Python:
       Py_XINCREF(input);
@@ -844,7 +860,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   if($input == Py_None)
     $1 = NULL;
   else {
-    $1 = marshal_PLPointer($input);
+    $1 = marshal_PLPointer($input,0);
   }
 }
 %typemap(freearg) PLPointer PYOBJECT_DATA {
@@ -853,6 +869,23 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 
 /* you can omit the data too */
 %typemap(default) PLPointer PYOBJECT_DATA {
+  $1 = NULL;
+}
+
+/* convert an arbitrary Python object into the void* pointer they want */
+%typemap(in) PLPointer PYOBJECT_DATA_img {
+  if($input == Py_None)
+    $1 = NULL;
+  else {
+    $1 = marshal_PLPointer($input,1);
+  }
+}
+%typemap(freearg) PLPointer PYOBJECT_DATA_img {
+  cleanup_PLPointer();
+}
+
+/* you can omit the data too */
+%typemap(default) PLPointer PYOBJECT_DATA_img {
   $1 = NULL;
 }
 
