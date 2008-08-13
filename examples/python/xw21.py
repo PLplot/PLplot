@@ -8,7 +8,7 @@ import time
 pts = 500
 xp = 25
 yp = 20
-nl = 15
+nl = 16
 knn_order = 20
 threshold = 1.001
 wmin = -1e3
@@ -44,16 +44,23 @@ def main():
 
     xm = -0.2
     ym = -0.2
-    xM = 0.8
-    yM = 0.8
+    xM = 0.6
+    yM = 0.6
 
     opt[2] = wmin
     opt[3] = knn_order
     opt[4] = threshold
 
     # Create the sampled data
-    xt = random(pts)
-    yt = random(pts)
+    # random is an efficient way of generating random numbers in
+    # python, but for consistency across languages we use plrandd
+    #xt = random(pts)
+    #yt = random(pts)
+    xt = zeros(pts)
+    yt = zeros(pts)
+    for i in range(pts) :
+	xt[i] = (xM-xm)*plrandd()
+	yt[i] = (yM-ym)*plrandd()
     if randn == 0 :
         x = xt + xm
         y = yt + ym
@@ -74,11 +81,10 @@ def main():
     xg = xm + (xM-xm)*arange(xp)/(xp-1.)
     yg = ym + (yM-ym)*arange(yp)/(yp-1.)
 
-    xlab = 'Npts='+`pts`+' gridx='+`xp`+' gridy='+`yp`
     plcol0(1)
     plenv(xm,xM,ym,yM,2,0)
     plcol0(15)
-    pllab(xlab,'','The original data')
+    pllab('X','Y','The original data sampling')
     plcol0(2)
     plpoin(x,y,5)
     pladv(0)
@@ -88,11 +94,8 @@ def main():
     for k in range(2):
         pladv(0)
         for alg in range(1,7):
-            ct = time.clock()
             zg = reshape(zeros(xp*yp),(xp,yp))
             plgriddata(x, y, z, xg, yg, zg, alg, opt[alg-1])
-            xlab = 'time='+`int((time.clock()-ct)*1000)`+' ms'
-            ylab = 'opt='+`opt[alg-1]`
 
             if alg == GRID_CSA or alg == GRID_DTLI or alg == GRID_NNLI or alg == GRID_NNI:
                 for i in range(xp):
@@ -118,25 +121,29 @@ def main():
             lzM = max(zg.flat)
             lzm = min(zg.flat)
 
+	    lzm = min(lzm,zmin)
+            lzM = max(lzM,zmax)
+
+            lzm = lzm - 0.01
+            lzM = lzM + 0.01
+            
             plcol0(1)
             pladv(alg)
 
             if (k == 0):
-                lzm = min(lzm,zmin)
-                lzM = max(lzM,zmax)
                 clev = lzm + (lzM-lzm)*arange(nl)/(nl-1)
                 plenv0(xm,xM,ym,yM,2,0)
                 plcol0(15)
-                pllab(xlab,ylab,title[alg-1])
+                pllab('X','Y',title[alg-1])
                 plshades(zg, xm, xM, ym, yM, clev, 1, 1)
                 plcol0(2)
             else:
                 clev = lzm + (lzM-lzm)*arange(nl)/(nl-1)
                 cmap1_init()
                 plvpor(0.0, 1.0, 0.0, 0.9)
-                plwind(-1.0, 1.0, -1.0, 1.5)
-                plw3d(1.0, 1.0, 1.0, xm, xM, ym, yM, lzm, lzM, 30, -60)
-                plbox3('bnstu', ylab, 0.0, 0,'bnstu', xlab, 0.0, 0,'bcdmnstuv', '', 0.0, 4)
+                plwind(-1.1, 0.75, -0.65, 1.20)
+                plw3d(1.0, 1.0, 1.0, xm, xM, ym, yM, lzm, lzM, 30.0, -40.0)
+                plbox3('bntu', 'X', 0.0, 0,'bntu', 'Y', 0.0, 0,'bcdfntu', 'Z', 0.5, 0)
                 plcol0(15)
                 pllab('','',title[alg-1])
                 plot3dc(xg, yg, zg, DRAW_LINEXY | MAG_COLOR | BASE_CONT, clev)

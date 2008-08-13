@@ -61,7 +61,7 @@ sub main {
   my $pts = 500;
   my $xp = 25;
   my $yp = 20;
-  my $nl = 15;
+  my $nl = 16;
   my $knn_order = 20;
   my $threshold = 1.001;
   my $wmin = -1e3;
@@ -104,7 +104,7 @@ EOT
   @opt = (0., 0., 0., 0., 0., 0.);
 
   $xm = $ym = -0.2;
-  $xM = $yM = 0.8;
+  $xM = $yM = 0.6;
 
   plParseOpts (\@ARGV, PL_PARSE_PARTIAL);
 
@@ -123,11 +123,10 @@ EOT
   my ($xg, $yg) = create_grid ($xp, $yp);  # grid the data at
                                            # the output grided data
 
-  my $xlab = "Npts=$pts gridx=$xp gridy=$yp";
   plcol0 (1);
   plenv ($xm, $xM, $ym, $yM, 2, 0);
   plcol0 (15);
-  pllab ($xlab, "", "The original data");
+  pllab ("X", "Y", "The original data sampling");
   plcol0 (2);
   plpoin ($x, $y, 5);
   pladv (0);
@@ -138,10 +137,7 @@ EOT
     pladv (0);
     for (my $alg = 1; $alg < 7; $alg++) {
 
-      my $ct = clock ();
       $zg = plgriddata ($x, $y, $z, $xg, $yg, $alg, $opt [$alg - 1]);
-      $xlab = sprintf ("time=\%d ms", (clock () - $ct) / 1000);
-      $ylab = sprintf ("opt=\%.3f", $opt [$alg - 1]);
 
       # - CSA can generate NaNs (only interpolates?!).
       # - DTLI and NNI can generate NaNs for points outside the convex hull
@@ -187,19 +183,22 @@ EOT
       my $lzM = max ($zg);
       my $lzm = min ($zg);
 
+      $lzm = min pdl ([$lzm, $zmin]);
+      $lzM = max pdl ([$lzM, $zmax]);
+
+      $lzm = $lzm - 0.01;
+      $lzM = $lzM + 0.01;
+
       plcol0 (1);
       pladv ($alg);
 
       if ($k == 0) {
 
-        $lzm = min pdl ([$lzm, $zmin]);
-        $lzM = max pdl ([$lzM, $zmax]);
-
         $clev = $lzm + ($lzM - $lzm) * sequence ($nl)/ ($nl - 1);
 
         plenv0 ($xm, $xM, $ym, $yM, 2, 0);
         plcol0 (15);
-        pllab ($xlab, $ylab, $title [$alg - 1]);
+        pllab ("X", "Y", $title [$alg - 1]);
         plshades ($zg, $xm, $xM, $ym, $yM,
                   $clev, 1, 0, 1, 1, 0, 0, 0);
         plcol0 (2);
@@ -210,7 +209,7 @@ EOT
 
 	cmap1_init ();
 	plvpor (0.0, 1.0, 0.0, 0.9);
-	plwind (-1.0, 1.0, -1.0, 1.5);
+	plwind (-1.1, 0.75, -0.65, 1.20);
 	#
         # For the comparition to be fair, all plots should have the
         # same z values, but to get the max/min of the data generated
@@ -219,9 +218,9 @@ EOT
         # plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
         #
 
-	plw3d (1., 1., 1., $xm, $xM, $ym, $yM, $lzm, $lzM, 30, -60);
-	plbox3 (0.0, 0, 0.0, 0, 0.0, 4,
-                "bnstu", $ylab, "bnstu", $xlab, "bcdmnstuv", "");
+	plw3d (1., 1., 1., $xm, $xM, $ym, $yM, $lzm, $lzM, 30.0, -40.0);
+	plbox3 (0.0, 0, 0.0, 0, 0.5, 0,
+                "bntu", "X", "bntu", "Y", "bcdfntu", "Z");
 	plcol0 (15);
 	pllab ("", "", $title [$alg - 1]);
 	plot3dc ($xg, $yg, $zg, DRAW_LINEXY | MAG_COLOR | BASE_CONT, $clev);
