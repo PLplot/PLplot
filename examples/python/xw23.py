@@ -267,7 +267,7 @@ def main():
                 plsfont(family_index, style_index, weight_index)
                 string = "Page 13, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  "+"The quick brown fox jumps over the lazy dog"
             elif(page == 13):
-                string = "Page 14, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  #<"+hex(fci[i])+">"+"The quick brown fox jumps over the lazy dog"
+                string = "Page 14, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  #<"+hex(fci[i]).rstrip('L')+">"+"The quick brown fox jumps over the lazy dog"
             elif(page == 14):
                 string = "Page 15, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  #<"+hex(family_index)+"0>"+"#<"+hex(style_index)+"1>"+"#<"+hex(weight_index)+"2>"+"The quick brown fox jumps over the lazy dog"
             elif(page == 15):
