@@ -72,7 +72,7 @@ C};
 
       integer XDIM, YDIM
       real*8  XDIMR, YDIMR
-      parameter(XDIM = 260, YDIM = 260)
+      parameter(XDIM = 260, YDIM = 220)
       parameter(XDIMR = XDIM, YDIMR = YDIM)
       real*8  PI
       parameter(PI = 3.1415926535897932384d0)

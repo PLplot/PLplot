@@ -73,7 +73,7 @@
 
       implicit none
 
-      integer, parameter          :: XDIM = 260, YDIM = 260
+      integer, parameter          :: XDIM = 260, YDIM = 220
       real(kind=plflt), parameter :: XDIMR = XDIM, YDIMR = YDIM
 
       real(kind=plflt) ::  x(XDIM), y(YDIM), z(XDIM,YDIM), r(XDIM,YDIM)
