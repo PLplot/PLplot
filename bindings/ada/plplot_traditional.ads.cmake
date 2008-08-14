@@ -119,7 +119,8 @@ package PLplot_Traditional is
     Default_Label_String : constant Unbounded_String := To_Unbounded_String("");
     type Label_String_Array_Type is array (1..Max_Lines_For_Multiplot) of Unbounded_String;
     Default_Label_String_Array : Label_String_Array_Type := (others => Default_Label_String);
-    type Stripchart_Label_String_Array_Type is array (1..4) of Unbounded_String;
+    Maximum_Number_Of_Stripcharts : Integer := 4; -- Limited by PLplot designers.
+    type Stripchart_Label_String_Array_Type is array (1 .. Maximum_Number_Of_Stripcharts) of Unbounded_String;
 
     -- Justification for plots
     subtype Justification_Type is Integer range -1..2;
@@ -841,6 +842,13 @@ package PLplot_Traditional is
 
     -- Function version of the procedure Get_Device_Name; not part of the PLplot API.
     function plgdev return String;
+
+    -- Make a function version of plgdev so that the caller can use it whereever
+    -- a String type is expected without fooling around with conversions between
+    -- Ada string types. See Example 14 for useage.
+    -- THIS IS NOT IN THE C API.
+    function plgdev return String;
+
 
     -- Retrieve current window into device space
     procedure plgdidev

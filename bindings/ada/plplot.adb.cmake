@@ -1503,6 +1503,18 @@ package body PLplot is
         plgdev(PL_Device_Name);
         Device_Name := To_Ada(PL_Device_Name, True);
     end Get_Device_Name;
+    
+    
+    -- Make a function version of plgdev so that the caller can use it whereever
+    -- a String type is expected without fooling around with conversions between
+    -- Ada string types. See Example 14 for useage.
+    -- THIS IS NOT IN THE C API.
+    function Get_Device_Name return String is
+        PL_Device_Name : char_array(0..79);
+    begin
+        PLplot_Thin.plgdev(PL_Device_Name);
+        return To_Ada(PL_Device_Name, True);
+    end Get_Device_Name;
 
 
     -- Function version of the procedure Get_Device_Name; not part of the PLplot API.
@@ -2716,11 +2728,12 @@ package body PLplot is
         X_Label, Y_Label, Title_Label        : String := To_String(Default_Label_String)) is
     
         PL_Autoscale_Y, PL_Accumulate : PLBOOL;
-        PL_Pen_Labels : Stripchart_String_Array;
+        PL_Pen_Labels : PL_Stripchart_String_Array;
         
         x_LP : Long_Float renames x_Legend_Position;
         y_LP : Long_Float renames y_Legend_Position;
         
+        Temp_C_String : aliased PL_Stripchart_String;
     begin
         if Autoscale_Y then
             PL_Autoscale_Y := PLtrue;
@@ -2734,12 +2747,23 @@ package body PLplot is
             PL_Accumulate := PLfalse;
         end if;
         
-        -- Adapt strings for Pen_Labels to C.
-        for Index in 1..4 loop
-            PL_Pen_Labels(Index) := To_C(To_String(Pen_Labels(Index)), True);
+        -- Adapt strings for Pen_Labels to C. Head truncates or pads as 
+        -- necessary to the length of Stripchart_String - 1; we then append 
+        -- a null terminator which I suppose C needs. This could have also been 
+        -- accomplished using char_array from the C interfaces.
+        -- fix this NOTE that the current implementation displays all four 
+        -- legend labels the same, and equal to the fourth legend label. The 
+        -- goal is to match const char *legline[4] in plstripc.c and e.g. 
+        -- in x17c.c.
+        for Index in Pen_Labels'range loop
+            Temp_C_String := To_String(Head(Pen_Labels(Index), PL_Stripchart_String'length - 1) & Character'val(0));
+            PL_Pen_Labels(Index) := Temp_C_String'Unchecked_Access;
         end loop;
 
-        plstripc(ID, To_C(X_Options), To_C(Y_Options), x_Min, x_Max, x_Jump, y_Min, y_Max, x_LP, y_LP, PL_Autoscale_Y, PL_Accumulate, Box_Color, Legend_Color, Pen_Colors, Line_Styles, PL_Pen_Labels, To_C(x_Label), To_C(y_Label), To_C(Title_Label));
+        plstripc(ID, To_C(X_Options), To_C(Y_Options), 
+            x_Min, x_Max, x_Jump, y_Min, y_Max, x_LP, y_LP, PL_Autoscale_Y, 
+            PL_Accumulate, Box_Color, Legend_Color, Pen_Colors, Line_Styles, 
+            PL_Pen_Labels, To_C(x_Label), To_C(y_Label), To_C(Title_Label));
     end Create_Stripchart;
 
 
