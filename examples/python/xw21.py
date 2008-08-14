@@ -104,8 +104,8 @@ def main():
                         if isnan(zg[i][j]):
                             zg[i][j] = 0.0
                             dist = 0.0
-                            for ii in range(max(i-1,0),min(i+1,xp+1)):
-                                for jj in range(max(j-1,0),min(j+1,yp+1)):
+                            for ii in range(max(i-1,0),min(i+2,xp)):
+                                for jj in range(max(j-1,0),min(j+2,yp)):
                                     if (not isnan(zg[ii][jj])):
                                         d = abs(ii-i) + abs(jj-j)
                                         if (d != 1.0) :
