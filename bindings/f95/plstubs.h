@@ -284,7 +284,7 @@
 #define    PLSESC	FNAME(PLSESC,plsesc)
 #define    PLSETOPT7	FNAME(PLSETOPT7,plsetopt7)
 #define    PLSFAM	FNAME(PLSFAM,plsfam)
-#define    PLSFCI	FNAME(PLSFAM,plsfci)
+#define    PLSFCI	FNAME(PLSFCI,plsfci)
 #define    PLSFNAM7	FNAME(PLSFNAM7,plsfnam7)
 #define    PLSFONT	FNAME(PLSFONT,plsfont)
 #define    PLSHADE07	FNAME(PLSHADE07,plshade07)
