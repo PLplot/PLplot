@@ -108,7 +108,7 @@ procedure xthick09a is
     begin -- mypltr
         tx := tr(0) * x + tr(1) * y + tr(2);
         ty := tr(3) * x + tr(4) * y + tr(5);
-    end; -- mypltr
+    end mypltr;
 
 
     -- Polar contour plot example
@@ -152,7 +152,7 @@ procedure xthick09a is
         Contour_Plot(z, 1, RPTS, 1, THETAPTS, lev, Plot_Transformation_2'access, cgrid2'Address);
         Set_Pen_Color(Red);
         Write_Labels("", "", "Polar Contour Plot");
-    end; -- polar
+    end polar;
 
 
     -- Shielded potential contour plot example
@@ -283,7 +283,7 @@ procedure xthick09a is
         Set_Pen_Color(ncollab);
         Write_Labels("", "", "Shielded potential of charges in a conducting sphere");
 
-    end; -- potential
+    end potential;
 
 
 begin -- main
