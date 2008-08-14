@@ -20,6 +20,8 @@ C      You should have received a copy of the GNU Library General Public
 C      License along with PLplot; if not, write to the Free Software
 C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+      include 'plf77demos.inc'
+
       implicit none
 
       real*8 PI
@@ -45,6 +47,7 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       external plrandd
       real*8 plrandd
 
+C     The function myisnan is defined in plf77demos.h
       external myisnan
       logical myisnan
 
@@ -276,15 +279,15 @@ c
       end subroutine
 
 
-      function myisnan(x)
-      implicit none
-      
-      logical myisnan
-      real*8 x
-
-      myisnan = (x.ne.x)
-      return
-      end function
+c      function myisnan(x)
+c      implicit none
+c      
+c      logical myisnan
+c      real*8 x
+c
+c      myisnan = (x.ne.x)
+c      return
+c      end function
 
 
 C----------------------------------------------------------------------------

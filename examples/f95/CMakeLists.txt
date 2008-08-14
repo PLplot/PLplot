@@ -50,6 +50,20 @@ set(f95_STRING_INDICES
 "30"
 )
 
+# Process fortran header file to define isnan
+if(FORTRAN_HAVE_ISNAN)
+  set(HAVE_F77_ISNAN_FALSE !)
+else(FORTRAN_HAVE_ISNAN)
+  set(HAVE_F77_ISNAN_TRUE !)
+endif(FORTRAN_HAVE_ISNAN)
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/plf95demos.inc.cmake
+${CMAKE_CURRENT_BINARY_DIR}/plf95demos.inc
+)
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/plf95demos.inc
+PROPERTIES GENERATED ON)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 if(BUILD_TEST)
   remove_definitions("-DHAVE_CONFIG_H")
 
@@ -102,3 +116,8 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/f95
 RENAME Makefile
 )
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plf95demos.inc
+DESTINATION ${DATA_DIR}/examples/f95
+)
+

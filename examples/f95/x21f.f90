@@ -21,6 +21,7 @@
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       use plplot, PI => PL_PI
+
       implicit none
 
 !       integer PL_PARSE_FULL
@@ -271,18 +272,6 @@
       end subroutine cmap1_init
 
 
-      function myisnan(x)
-        use plplot
-        implicit none
-        
-        logical myisnan
-        real(kind=plflt) x
-        
-        myisnan = (x.ne.x)
-        return
-      end function myisnan
-
-
 !----------------------------------------------------------------------------
 !      Subroutine a2mnmx
 !      Minimum and the maximum elements of a 2-d array.
@@ -303,3 +292,7 @@
            enddo
         enddo
       end subroutine a2mnmx
+
+      include 'plf95demos.inc'
+
+

@@ -79,6 +79,19 @@ else(PL_DOUBLE)
   endforeach(STRING_INDEX ${f77_STRING_INDICES})
 endif(PL_DOUBLE)
 
+# Process fortran header file to define isnan
+if(FORTRAN_HAVE_ISNAN)
+  set(HAVE_F77_ISNAN_FALSE C)
+else(FORTRAN_HAVE_ISNAN)
+  set(HAVE_F77_ISNAN_TRUE C)
+endif(FORTRAN_HAVE_ISNAN)
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/plf77demos.inc.cmake
+${CMAKE_CURRENT_BINARY_DIR}/plf77demos.inc
+)
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/plf77demos.inc
+PROPERTIES GENERATED ON)
+
 if(BUILD_TEST)
   remove_definitions("-DHAVE_CONFIG_H")
   include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
@@ -106,3 +119,8 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/f77
 RENAME Makefile
 )
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plf77demos.inc
+DESTINATION ${DATA_DIR}/examples/f77
+)
+

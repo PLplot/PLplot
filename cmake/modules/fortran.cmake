@@ -62,6 +62,9 @@ if(ENABLE_f77 OR ENABLE_f95)
     include(TestF77CmdLine)
   endif(ENABLE_f77)
 
+  # Check if isnan is available as an fortran function
+  include(TestFortranIsnan)
+
   # Determine which Fortran compiler we have.  We do not need to
   # this for all compilers, just the ones that have a test in
   # bindings/f77/plstubs.h and bindings/f95/plstubs.h
