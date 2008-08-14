@@ -4,6 +4,9 @@
 
 from plplot_py_demos import *
 
+import os.path
+import sys
+
 XDIM = 260
 YDIM = 220
 
