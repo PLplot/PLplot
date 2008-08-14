@@ -840,8 +840,6 @@ package PLplot_Traditional is
     -- Get the current device (keyword) name
     procedure plgdev(Device_Name : out String);
 
-    -- Function version of the procedure Get_Device_Name; not part of the PLplot API.
-    function plgdev return String;
 
     -- Make a function version of plgdev so that the caller can use it whereever
     -- a String type is expected without fooling around with conversions between

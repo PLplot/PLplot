@@ -1509,15 +1509,6 @@ package body PLplot is
     -- a String type is expected without fooling around with conversions between
     -- Ada string types. See Example 14 for useage.
     -- THIS IS NOT IN THE C API.
-    function Get_Device_Name return String is
-        PL_Device_Name : char_array(0..79);
-    begin
-        PLplot_Thin.plgdev(PL_Device_Name);
-        return To_Ada(PL_Device_Name, True);
-    end Get_Device_Name;
-
-
-    -- Function version of the procedure Get_Device_Name; not part of the PLplot API.
     -- plgdev
     function Get_Device_Name return String is
         PL_Device_Name : char_array(0..79);

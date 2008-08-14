@@ -877,9 +877,6 @@ package PLplot is
     -- plgdev
     procedure Get_Device_Name(Device_Name : out String);
 
-    -- Function version of the procedure Get_Device_Name; not part of the PLplot API.
-    -- plgdev
-    function Get_Device_Name return String;
 
     -- Make a function version of plgdev so that the caller can use it whereever
     -- a String type is expected without fooling around with conversions between
