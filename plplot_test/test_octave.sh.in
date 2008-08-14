@@ -39,6 +39,13 @@ if ((ver(1) == 2 && ver(2) == 9) || (ver(1) >= 3))
   warning("off","Octave:built-in-variable-assignment");
 endif
 
+# Check verbose_test variable
+if (strcmp(getenv("verbose_test"),"on") == 1)
+  verbose_test = 1;
+else
+  verbose_test = 0;
+endif
+
 plplot_stub;
 t = split("$options", "-"); t(1,:)="";
 for i=1:rows(t)
@@ -53,6 +60,9 @@ endfor
 # this.
 
 for i=[1:7 8 9 13 15 16];
+   if (verbose_test)
+     printf("p%d\n",i);
+   endif
    figure(i,"$device",sprintf("${OUTPUT_DIR}/p%d.$dsuffix",i));
    feval(sprintf("p%d",i))
    closefig
@@ -64,6 +74,9 @@ endfor
 failed = [];
 for i=[1:13 15 16 18 20:30 ];
     cmd = sprintf("x%.2dc",i);
+    if (verbose_test)
+      printf("%s\n",cmd);
+    endif
     t = split("$options", "-"); t(1,:)="";
     for j=1:rows(t)
         tt = deblank (t(j,:)); len = length(tt);
