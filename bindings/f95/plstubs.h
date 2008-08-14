@@ -197,7 +197,7 @@
 #define    PLGDIPLT	FNAME(PLGDIPLT,plgdiplt)
 #define    PLGETCURSOR  FNAME(PLGETCURSOR,plgetcursor)
 #define    PLGFAM	FNAME(PLGFAM,plgfam)
-#define    PLGFCI	FNAME(PLGFAM,plgfci)
+#define    PLGFCI	FNAME(PLGFCI,plgfci)
 #define    PLGFNAM7	FNAME(PLGFNAM7,plgfnam7)
 #define    PLGFONT	FNAME(PLGFONT,plgfont)
 #define    PLGLEVEL	FNAME(PLGLEVEL,plglevel)

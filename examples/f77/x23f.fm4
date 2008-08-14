@@ -31,6 +31,13 @@ C
       real*8 chardef, charht, deltax, deltay, x, y
       integer i, j, page, length, slice
       character*20 cmdString
+      integer*8 fci_old
+      integer ifamily, istyle, iweight
+      real*8 dy
+      integer family_index, style_index, weight_index
+C     Must be big enough to contain the prefix strings, the font-changing
+C     commands, and the "The quick brown..." string.
+      character*200 string
 
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
@@ -38,6 +45,9 @@ C
 C
 C  Displays Greek letters and mathematically interesting Unicode ranges
 C
+      integer      fci_combinations
+      parameter(fci_combinations = 30)
+
       character*5  greek(48)
       integer      type1(166)
       character*80 title(11)
@@ -46,6 +56,10 @@ C
       integer      nxcells(11)
       integer      nycells(11)
       integer      offset(11)
+      integer*8    fci(fci_combinations)
+      character*11 family(5)
+      character*8  style(3)
+      character*7  weight(2)
 
       data (greek(i) ,i=1,48) /
      & '#gA','#gB','#gG','#gD','#gE','#gZ',
@@ -180,6 +194,54 @@ C  non-zero values Must be consistent with nxcells and nycells. */
      &0,
      &0 /
 
+      data (fci(i), i=1,fci_combinations) /
+     &     z'80000000',
+     &     z'80000001',
+     &     z'80000002',
+     &     z'80000003',
+     &     z'80000004',
+     &     z'80000010',
+     &     z'80000011',
+     &     z'80000012',
+     &     z'80000013',
+     &     z'80000014',
+     &     z'80000020',
+     &     z'80000021',
+     &     z'80000022',
+     &     z'80000023',
+     &     z'80000024',
+     &     z'80000100',
+     &     z'80000101',
+     &     z'80000102',
+     &     z'80000103',
+     &     z'80000104',
+     &     z'80000110',
+     &     z'80000111',
+     &     z'80000112',
+     &     z'80000113',
+     &     z'80000114',
+     &     z'80000120',
+     &     z'80000121',
+     &     z'80000122',
+     &     z'80000123',
+     &     z'80000124' /
+
+        data (family(i), i=1,5) /
+     &     "sans-serif",
+     &     "serif",
+     &     "monospace",
+     &     "script",
+     &     "symbol" /
+        
+        data (style(i), i=1,3) /
+     &       "upright",
+     &       "italic",
+     &       "oblique" /
+
+        data (weight(i), i=1,2) /
+     &       "medium",
+     &       "bold" /
+
       call plparseopts(PL_PARSE_FULL)
 
       call plinit()
@@ -244,6 +306,99 @@ C                     lowercase display of command as corresponding C example.
          call plschr(0.d0, 1.0d0)
          call plmtex("t", 1.5d0, 0.5d0, 0.5d0, title(page))
   130 continue
+
+C     Demonstrate methods of getting the current fonts 
+      call plgfci(fci_old)
+      call plgfont(ifamily, istyle, iweight)
+      write (*,'(a,z8)') 'For example 23 prior to page 12 the FCI is 0x'
+     &     ,fci_old
+      write (*,'(a)') 'For example 23 prior to page 12 the '//
+     &     'font family, style and weight are  '// 
+     &     family(ifamily+1)//' '//style(istyle+1)//' '//
+     &     weight(iweight+1)
+
+      do 140 page=11,15
+         dy = 0.030d0
+       
+       call pladv(0)
+       call plvpor(0.02d0, 0.98d0, 0.02d0, 0.90d0)
+       call plwind(0.0d0, 1.0d0, 0.0d0, 1.0d0)
+       call plsfci(0)
+       if (page == 11) then
+	  call plmtex('t', 1.5d0, 0.5d0, 0.5d0,
+     &         '#<0x10>PLplot Example 23 - '//
+     &         'Set Font with plsfci')
+       elseif (page == 12) then
+	  call plmtex('t', 1.5d0, 0.5d0, 0.5d0,
+     &         '#<0x10>PLplot Example 23 - '//
+     &         'Set Font with plsfont')
+       elseif(page == 13) then
+	  call plmtex('t', 1.5d0, 0.5d0, 0.5d0,
+     &         '#<0x10>PLplot Example 23 - '//
+     &         'Set Font with ##<0x8nnnnnnn> construct')
+       elseif(page == 14) then
+	  call plmtex('t', 1.5d0, 0.5d0, 0.5d0,
+     &         '#<0x10>PLplot Example 23 - '//
+     &         'Set Font with ##<0xmn> constructs')
+       elseif(page == 15) then
+	  call plmtex('t', 1.5d0, 0.5d0, 0.5d0,
+     &         '#<0x10>PLplot Example 23 - '//
+     &         'Set Font with ##<FCI COMMAND STRING/> constructs')
+       endif
+       call plschr(0.d0, 0.75d0)
+       do 150 i=0,fci_combinations-1
+	 family_index = mod(i,5)
+	 style_index = mod(i/5,3)
+	 weight_index = mod((i/5)/3,2)
+	 if(page == 11) then
+	    call plsfci(fci(i+1))
+	    write(string,'(a)')
+     &           'Page 12, '//
+     &           trim(family(family_index+1))//', '//
+     &           trim(style(style_index+1))//', '//
+     &           trim(weight(weight_index+1))//':  '//
+     &           'The quick brown fox jumps over the lazy dog'
+	 elseif(page == 12) then
+	    call plsfont(family_index, style_index, weight_index)
+	    write(string,'(a)')
+     &           'Page 13, '//
+     &           trim(family(family_index+1))//', '//
+     &           trim(style(style_index+1))//', '//
+     &           trim(weight(weight_index+1))//':  '//
+     &           'The quick brown fox jumps over the lazy dog'
+	 elseif(page == 13) then
+	    write(string,'(a,"#<0x",z8,">",a)')
+     &           'Page 14, '//trim(family(family_index+1))//', '//
+     &           trim(style(style_index+1))//', '//
+     &           trim(weight(weight_index+1))//':  ',
+     &           fci(i+1),
+     &           'The quick brown fox jumps over the lazy dog'
+	 elseif(page == 14) then
+	    write(string,'(a,"#<0x",z1,"0>#<0x",z1,"1>#<0x",z1,"2>",a)')
+     &           'Page 15, '//
+     &           trim(family(family_index+1))//', '//
+     &           trim(style(style_index+1))//', '//
+     &           trim(weight(weight_index+1))//':  ',
+     &           family_index,
+     &           style_index,
+     &           weight_index,
+     &           'The quick brown fox jumps over the lazy dog'
+	 elseif(page == 15) then
+	    write(string,'(a)')
+     &           'Page 16, '//
+     &           trim(family(family_index+1))//', '//
+     &           trim(style(style_index+1))//', '//
+     &           trim(weight(weight_index+1))//':  '//
+     &           '#<'//trim(family(family_index+1))//'/>#<'//
+     &           trim(style(style_index+1))//'/>#<'//
+     &           trim(weight(weight_index+1))//'/>'//
+     &           'The quick brown fox jumps over the lazy dog'
+         endif
+         call plptex (0.d0, 1.d0 - (i+0.5d0)*dy, 1.d0,
+     &        0.d0, 0.d0, string)
+ 150  continue
+      call plschr(0.d0, 1.0d0)
+ 140  continue
 
 C     Restore defaults
 

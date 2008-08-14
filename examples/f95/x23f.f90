@@ -35,10 +35,10 @@
       integer(kind=plunicode) fci_old
       integer ifamily, istyle, iweight
       real(kind=plflt) dy
-      integer family_index, style_index, weight_index;
+      integer family_index, style_index, weight_index
       ! Must be big enough to contain the prefix strings, the font-changing
       ! commands, and the "The quick brown..." string.
-      character*200 string;
+      character*200 string
 
        
 

@@ -300,16 +300,15 @@ PLGFAM(PLINT *fam, PLINT *num, PLINT *bmax)
     c_plgfam(fam, num, bmax);
 }
 
-/* Note: Fortran does not have unsigned integers so we need to use a long 
- * (should be 64 bit on most platforms?) which corresponds to a fortran integer*8
- *  in order to contain the number. This all a bit ugly and could break on 
- *  different hardware */
+/* Note: Fortran does not have unsigned integers so we need to use a 
+ * 64 bit signed integer which corresponds to a fortran integer*8
+ * in order to contain the number.  */
 void
-PLGFCI(long long *pfci)
+PLGFCI(PLINT64 *pfci)
 {
     PLUNICODE fci;
     c_plgfci(&fci);
-    *pfci = (long long) fci;
+    *pfci = (PLINT64) fci;
 }
 
 void
@@ -830,12 +829,11 @@ PLSFAM(PLINT *fam, PLINT *num, PLINT *bmax)
     c_plsfam(*fam, *num, *bmax);
 }
 
-/* Note: Fortran does not have unsigned integers so we need to use a long 
- * (should be 64 bit on most platforms?) which corresponds to a fortran integer*8
- *  in order to contain the number. This all a bit ugly and could break on 
- *  different hardware */
+/* Note: Fortran does not have unsigned integers so we need to use a 
+ * 64 bit signed integer which corresponds to a fortran integer*8
+ * in order to contain the number.  */
 void
-PLSFCI(long long *fci)
+PLSFCI(PLINT64 *fci)
 {
     PLUNICODE f;
     f = (PLUNICODE) (*fci & 0xffffffff);

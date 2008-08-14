@@ -149,13 +149,18 @@ typedef float PLFLT;
 (defined(__cplusplus) && defined(HAVE_CXX_STDINT_H))
 #include <stdint.h>
 /* This is apparently portable if stdint.h exists. */
-typedef uint32_t PLUNICODE;
+typedef uint32_t PLUINT;
 typedef int32_t PLINT;
+typedef int64_t PLINT64;
 #else
 /* A reasonable back-up in case stdint.h does not exist on the platform. */
-typedef unsigned int PLUNICODE;
+typedef unsigned int PLUINT;
 typedef int PLINT;
+typedef long long PLINT64;
 #endif
+
+/* For identifying unicode characters */
+typedef PLUINT PLUNICODE;
 
 /* For identifying logical (boolean) arguments */
 typedef PLINT PLBOOL;
