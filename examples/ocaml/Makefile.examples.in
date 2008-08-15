@@ -36,7 +36,10 @@ EXECUTABLES_list = \
 		 x06$(EXEEXT) \
 		 x07$(EXEEXT) \
 		 x08$(EXEEXT) \
+		 x10$(EXEEXT) \
 		 x11$(EXEEXT) \
+		 x12$(EXEEXT) \
+		 x13$(EXEEXT) \
 		 x19$(EXEEXT) \
 
 all: $(EXECUTABLES_list)
