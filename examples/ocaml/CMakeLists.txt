@@ -34,6 +34,11 @@ set(ocaml_STRING_INDICES
   "12"
   "13"
   "19"
+  "24"
+  "25"
+  "26"
+  "27"
+  "30"
   )
 
 set(ocaml_SRCS)
