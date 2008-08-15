@@ -439,7 +439,30 @@ value ml_plparseopts(value argv, value parse_method) {
     CAMLreturn( Val_int(result) );
 }
 
+/* pltr* function implementations */
+void ml_pltr0(double x, double y, double* tx, double* ty) {
+    pltr0(x, y, tx, ty, NULL);
+}
 
+void ml_pltr1(double x, double y, double* tx, double* ty,
+              double nxg, double nyg, double* xg, double* yg) {
+    PLcGrid grid;
+    grid.xg = xg;
+    grid.yg = yg;
+    grid.nx = nxg;
+    grid.ny = nyg;
+    pltr1(x, y, tx, ty, (PLPointer)&grid);
+}
+
+void ml_pltr2(double x, double y, double* tx, double* ty,
+              double nxg, double nyg, double** xg, double** yg) {
+    PLcGrid2 grid;
+    grid.xg = xg;
+    grid.yg = yg;
+    grid.nx = nxg;
+    grid.ny = nyg;
+    pltr2(x, y, tx, ty, (PLPointer)&grid);
+}
 
 /* XXX Non-core functions follow XXX */
 /**
