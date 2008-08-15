@@ -249,7 +249,7 @@ begin
             pladv(alg);
 
             if k = 0 then
-                for i in 0 .. nl - 1 loop
+                for i in clev'range loop
                     clev(i) := lzm + (lzMM - lzm) / Long_Float(nl-1) * Long_Float(i);
                 end loop;
 
@@ -260,7 +260,7 @@ begin
                  clev, 1, 0, 1, plfill'access, True, null, System.Null_Address);
                 plcol0(2);
             else
-                for i in 0 .. nl - 1 loop
+                for i in clev'range loop
                     clev(i) := lzm + (lzMM - lzm) / Long_Float(nl - 1) * Long_Float(i);
                 end loop;
 
