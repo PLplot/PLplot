@@ -32,7 +32,7 @@
 with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Numerics.Float_Random,
+    -- Ada.Numerics.Float_Random,
     Ada.Strings,
     Ada.Strings.Fixed,
     Ada.Calendar,
@@ -43,7 +43,7 @@ with
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Numerics.Float_Random,
+    -- Ada.Numerics.Float_Random,
     Ada.Strings,
     Ada.Strings.Fixed,
     Ada.Calendar,
@@ -73,7 +73,7 @@ procedure x21a is
     yg : Real_Vector(0 .. yp - 1);
     zg : Real_Matrix(0 .. xp - 1, 0 .. yp - 1);
     opt : Real_Vector(0 .. 5) := (0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    Random_Generator : Generator; -- From Ada.Numerics.Float_Random
+    -- Random_Generator : Generator; -- From Ada.Numerics.Float_Random
 
 
     function title(which : Integer) return String is
@@ -98,6 +98,7 @@ procedure x21a is
         i(1) := 1.0;   -- right boundary
 
         h(0) := 240.0; -- blue -> green -> yellow -> red
+        h(1) := 0.0;
 
         l(0) := 0.6;
         l(1) := 0.6;
@@ -126,8 +127,10 @@ procedure x21a is
       r, xt, yt : Long_Float;
     begin
         for i in x'range loop
-            xt := Long_Float(Random(Random_Generator));
-            yt := Long_Float(Random(Random_Generator));
+            -- xt := Long_Float(Random(Random_Generator));
+            -- yt := Long_Float(Random(Random_Generator));
+            xt := (xMM - xm) * plrandd; -- Use the PLplot random number generator
+            yt := (yMM - ym) * plrandd; -- to make the same plot as C example 21.
             if randn = 0 then
                 x(i) := xt + xm;
                 y(i) := yt + ym;
@@ -143,6 +146,7 @@ procedure x21a is
             end if;
           end loop;
     end create_data;
+
 
     -- Ada lacks full access to IEEE 754 aka IEC 559. The following works
     -- because a NaN is not equal to any other float, including itself.
@@ -242,8 +246,10 @@ begin
             lzm :=  Vector_Min((lzm,  zmin));
             lzMM := Vector_Max((lzMM, zmax));
 
-	    lzm := lzm - 0.01;
-	    lzMM := lzMM + 0.01;
+            -- Increase limits slightly to prevent spurious contours 
+            -- due to rounding errors.
+            lzm := lzm - 0.01;
+            lzMM := lzMM + 0.01;
 
             plcol0(1);
             pladv(alg);

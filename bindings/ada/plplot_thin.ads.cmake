@@ -59,6 +59,7 @@ package PLplot_Thin is
     PLtrue  : constant Integer := 1;
     subtype PLBOOL is Integer range PLfalse..PLtrue;
     type PLUNICODE is mod 2**32;
+    type Unsigned_Int is mod 2**32; -- for e.g. plseed
 
     subtype PL_Integer_Array  is Integer_Array_1D;
     subtype PL_Float_Array    is Real_Vector;
@@ -1110,6 +1111,14 @@ package PLplot_Thin is
     pragma Import(C, plptex3, "c_plptex3");
 
 
+    -- Random number generator based on Mersenne Twister.
+    -- Obtain real random number in range [0,1].
+
+    function
+    plrandd return Long_Float;
+    pragma Import(C, plrandd, "c_plrandd");
+
+
     -- Replays contents of plot buffer to current device/file. 
 
     procedure
@@ -1292,6 +1301,13 @@ package PLplot_Thin is
     procedure
     plsdiplz(xmin : PLFLT; ymin : PLFLT; xmax : PLFLT; ymax : PLFLT);
     pragma Import(C, plsdiplz, "c_plsdiplz");
+
+
+    -- Set seed for internal random number generator
+
+    procedure
+    plseed(s : Unsigned_Int);
+    pragma Import(C, plseed, "c_plseed");
 
 
     -- Set the escape character for text strings. 

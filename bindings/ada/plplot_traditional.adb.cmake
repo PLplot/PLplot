@@ -2000,6 +2000,14 @@ package body PLplot_Traditional is
     end plptex3;
 
 
+    -- Random number generator based on Mersenne Twister.
+    -- Obtain real random number in range [0,1].
+    function plrandd return Long_Float is
+    begin
+        return PLplot_Thin.plrandd;
+    end plrandd;
+
+
     -- Replays contents of plot buffer to current device/file.
     procedure plreplot is
     begin
@@ -2288,6 +2296,13 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plsdiplz(x_Min_Relative, y_Min_Relative, x_Max_Relative, y_Max_Relative);
     end plsdiplz;
+
+
+    -- Set seed for internal random number generator
+    procedure plseed(Seed : Unsigned_Int) is
+    begin
+        PLplot_Thin.plseed(Seed);
+    end plseed;
 
 
     -- Set the escape character for text strings.

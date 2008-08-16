@@ -2083,6 +2083,15 @@ package body PLplot is
     end Write_Text_World_3D;
 
 
+    -- Random number generator based on Mersenne Twister.
+    -- Obtain real random number in range [0,1].
+    -- randd
+    function Random_Number return Long_Float is
+    begin
+        return plrandd;
+    end Random_Number;
+
+
     -- Replays contents of plot buffer to current device/file.
     -- plreplot
     procedure Replot is
@@ -2399,6 +2408,14 @@ package body PLplot is
     begin
         plsdiplz(x_Min_Relative, y_Min_Relative, x_Max_Relative, y_Max_Relative);
     end Set_Zoom;
+
+
+    -- Set seed for internal random number generator
+    -- plseed
+    procedure Random_Number_Seed(Seed : Unsigned_Int) is
+    begin
+        plseed(Seed);
+    end Random_Number_Seed;
 
 
     -- Set the escape character for text strings.

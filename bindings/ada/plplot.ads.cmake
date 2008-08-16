@@ -1239,6 +1239,12 @@ package PLplot is
         The_Text                  : String);
 
 
+    -- Random number generator based on Mersenne Twister.
+    -- Obtain real random number in range [0,1].
+    -- plrandd
+    function Random_Number return Long_Float;
+
+
     -- Replays contents of plot buffer to current device/file.
     -- plreplot
     procedure Replot;
@@ -1422,6 +1428,11 @@ package PLplot is
         y_Min_Relative : Long_Float;
         x_Max_Relative : Long_Float;
         y_Max_Relative : Long_Float);
+
+
+    -- Set seed for internal random number generator
+    -- plseed
+    procedure Random_Number_Seed(Seed : Unsigned_Int);
 
 
     -- Set the escape character for text strings.
