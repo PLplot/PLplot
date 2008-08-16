@@ -104,6 +104,7 @@ package PLplot_Thin is
     -- legends to be the same and equal to the fourth one.
     subtype PL_Stripchart_String is String(1 .. 41);
     type PL_Stripchart_String_Array is array (1 .. 4) of access PL_Stripchart_String;
+    Temp_C_Stripchart_String : aliased PL_Stripchart_String;
 
 
     -- Access-to-procedure type for Draw_Vector_Plot and its kin.

@@ -2607,7 +2607,6 @@ package body PLplot_Traditional is
         x_LP : Long_Float renames x_Legend_Position;
         y_LP : Long_Float renames y_Legend_Position;
         
-        Temp_C_String : aliased PL_Stripchart_String;
     begin
         if Autoscale_Y then
             PL_Autoscale_Y := PLtrue;
@@ -2630,8 +2629,8 @@ package body PLplot_Traditional is
         -- goal is to match const char *legline[4] in plstripc.c and e.g. 
         -- in x17c.c.
         for Index in Pen_Labels'range loop
-            Temp_C_String := To_String(Head(Pen_Labels(Index), PL_Stripchart_String'length - 1) & Character'val(0));
-            PL_Pen_Labels(Index) := Temp_C_String'Unchecked_Access;
+            Temp_C_Stripchart_String := To_String(Head(Pen_Labels(Index), PL_Stripchart_String'length - 1) & Character'val(0));
+            PL_Pen_Labels(Index) := Temp_C_Stripchart_String'Access;
         end loop;
         
         PLplot_Thin.plstripc(ID, To_C(X_Options), To_C(Y_Options), 
