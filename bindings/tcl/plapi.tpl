@@ -237,10 +237,22 @@ fam	PLINT&
 num	PLINT&
 bmax	PLINT&
 
+# Get the (FCI) font characterisation integer
+
+pltclcmd plgfci void
+fci	PLUNICODE&
+
 # Get the output file name.
 
 pltclcmd plgfnam void
 fnam	char *
+
+# Get the current font family, style and weight
+
+pltclcmd plgfont void
+family	PLINT&
+style	PLINT&
+weight	PLINT&
 
 # Get the current run level.
 
@@ -392,6 +404,15 @@ pos	PLFLT
 just	PLFLT
 text	const char *
 
+# Prints out "text" at specified position relative to viewport (3D).
+
+pltclcmd plmtex3 void
+side	const char *
+disp	PLFLT
+pos	PLFLT
+just	PLFLT
+text	const char *
+
 # Set fill pattern directly.
 
 pltclcmd plpat void
@@ -448,6 +469,26 @@ dx	PLFLT
 dy	PLFLT
 just	PLFLT
 text	const char *
+
+# Prints out "text" at world cooordinate (x,y,z).
+
+pltclcmd plptex3 void
+wx	PLFLT
+wy	PLFLT
+wz	PLFLT
+dx	PLFLT
+dy	PLFLT
+dz	PLFLT
+sx	PLFLT
+sy	PLFLT
+sz	PLFLT
+just	PLFLT
+text	const char *
+
+# Random number generator based on Mersenne Twister.
+# Obtain real random number in range [0,1].
+
+pltclcmd plrandd PLFLT
 
 # Replays contents of plot buffer to current device/file.
 
@@ -586,6 +627,12 @@ ymin	PLFLT
 xmax	PLFLT
 ymax	PLFLT
 
+# Set seed for internal random number generator
+
+pltclcmd plseed void
+s	unsigned int
+
+
 # Set the escape character for text strings.
 
 pltclcmd plsesc void
@@ -598,10 +645,22 @@ fam	PLINT
 num	PLINT
 bmax	PLINT
 
+# Set FCI (font characterization integer)
+
+pltclcmd plsfci void
+fci	PLUNICODE
+
 # Set the output file name.
 
 pltclcmd plsfnam void
 fnam	const char *
+
+# Set the current font family, style and weight
+
+pltclcmd plsfont void
+family	PLINT
+style	PLINT
+weight	PLINT
 
 # Set up lengths of major tick marks.
 

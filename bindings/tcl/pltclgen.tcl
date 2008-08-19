@@ -117,6 +117,9 @@ proc process_pltclcmd {cmd rtype} {
                         "PLINT&" {
                             puts $GENFILE "    PLINT $argname($i);"
                         }
+                        "PLUNICODE&" {
+                            puts $GENFILE "    PLUNICODE $argname($i);"
+                        }
                         "PLFLT&" {
                             puts $GENFILE "    PLFLT $argname($i);"
                         }
@@ -125,6 +128,10 @@ proc process_pltclcmd {cmd rtype} {
                         }
                         "PLINT *" {
                             puts $GENFILE "    PLINT *$argname($i);"
+                            puts $GENFILE "    tclMatrix *mat$argname($i);"
+                        }
+                        "PLUNICODE *" {
+                            puts $GENFILE "    PLUNICODE *$argname($i);"
                             puts $GENFILE "    tclMatrix *mat$argname($i);"
                         }
                         "PLFLT *" {
@@ -166,6 +173,11 @@ proc process_pltclcmd {cmd rtype} {
                             puts $GENFILE "    if (mat$argname($i) == NULL) return TCL_ERROR;"
                             puts $GENFILE "    $argname($i) = mat$argname($i)-\>idata;"
                         }
+                        "PLUNICODE *" {
+                            puts $GENFILE "    mat$argname($i) = Tcl_GetMatrixPtr( interp, argv\[1+$i\] );"
+                            puts $GENFILE "    if (mat$argname($i) == NULL) return TCL_ERROR;"
+                            puts $GENFILE "    $argname($i) = mat$argname($i)-\>idata;"
+                        }
                         "PLFLT \*" {
                             puts $GENFILE "    mat$argname($i) = Tcl_GetMatrixPtr( interp, argv\[1+$i\] );"
                             puts $GENFILE "    if (mat$argname($i) == NULL) return TCL_ERROR;"
@@ -173,6 +185,12 @@ proc process_pltclcmd {cmd rtype} {
                         }
                         "PLINT" {
                             puts $GENFILE "    $argname($i) = atoi(argv\[1+$i\]);"
+                        }
+                        "PLUNICODE" {
+                            puts $GENFILE "    $argname($i) = strtoul(argv\[1+$i\],NULL,10);"
+                        }
+                        "unsigned int" {
+                            puts $GENFILE "    $argname($i) = (unsigned int) strtoul(argv\[1+$i\],NULL,10);"
                         }
                         "PLFLT" {
                             puts $GENFILE "    $argname($i) = atof(argv\[1+$i\]);"
@@ -230,6 +248,14 @@ proc process_pltclcmd {cmd rtype} {
                          switch -- $argtype($i) {
                              "PLINT&" {
                                  puts $GENFILE "    sprintf( buf, \"%d\", $argname($i) );"
+                                 puts $GENFILE "    if (argc > 1)"
+                                 puts $GENFILE "        Tcl_SetVar( interp, argv\[1+$i\], buf, 0 );"
+                                 puts $GENFILE "    else"
+                                 puts $GENFILE "        Tcl_AppendResult( interp, buf, (char *) NULL );"
+                             }
+
+                             "PLUNICODE&" {
+                                 puts $GENFILE "    sprintf( buf, \"%u\", $argname($i) );"
                                  puts $GENFILE "    if (argc > 1)"
                                  puts $GENFILE "        Tcl_SetVar( interp, argv\[1+$i\], buf, 0 );"
                                  puts $GENFILE "    else"

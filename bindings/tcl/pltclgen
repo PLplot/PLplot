@@ -156,6 +156,10 @@ sub process_pltclcmd {
 		      print GENFILE "    PLINT $argname[$i];\n";
 		      last argdecl;
 		  };
+		  /PLUNICODE&/ && do {
+		      print GENFILE "    PLUNICODE $argname[$i];\n";
+		      last argdecl;
+		  };
 		  /PLFLT&/ && do {
 		      print GENFILE "    PLFLT $argname[$i];\n";
 		      last argdecl;
@@ -166,6 +170,11 @@ sub process_pltclcmd {
 		  };
 		  /PLINT \*/ && do {
 		      print GENFILE "    PLINT *$argname[$i];\n";
+		      print GENFILE "    tclMatrix *mat$argname[$i];\n";
+		      last argdecl;
+		  };
+		  /PLUNICODE \*/ && do {
+		      print GENFILE "    PLUNICODE *$argname[$i];\n";
 		      print GENFILE "    tclMatrix *mat$argname[$i];\n";
 		      last argdecl;
 		  };
@@ -213,6 +222,12 @@ sub process_pltclcmd {
 		      print GENFILE "    $argname[$i] = mat$argname[$i]-\>idata;\n";
 		      last getarg;
 		  };
+		  /PLUNICODE \*/ && do {
+		      print GENFILE "    mat$argname[$i] = Tcl_GetMatrixPtr( interp, argv[1+$i] );\n";
+		      print GENFILE "    if (mat$argname[$i] == NULL) return TCL_ERROR;\n";		      
+		      print GENFILE "    $argname[$i] = mat$argname[$i]-\>idata;\n";
+		      last getarg;
+		  };
 		  /PLFLT \*/ && do {
 		      print GENFILE "    mat$argname[$i] = Tcl_GetMatrixPtr( interp, argv[1+$i] );\n";
 		      print GENFILE "    if (mat$argname[$i] == NULL) return TCL_ERROR;\n";		      
@@ -221,6 +236,10 @@ sub process_pltclcmd {
 		  };
 		  /PLINT/ && do {
 		      print GENFILE "    $argname[$i] = atoi(argv[1+$i]);\n";
+		      last getarg;
+		  };
+		  /PLUNICODE/ && do {
+		      print GENFILE "    $argname[$i] = strtoul(argv[1+$i],NULL,10);\n";
 		      last getarg;
 		  };
 		  /PLFLT/ && do {
@@ -283,6 +302,15 @@ sub process_pltclcmd {
 		  fetch: {
 		      /PLINT&/ && do {
 			  print GENFILE "    sprintf( buf, \"%d\", $argname[$i] );\n";
+			  print GENFILE "    if (argc > 1)\n";
+			  print GENFILE "        Tcl_SetVar( interp, argv[1+$i], buf, 0 );\n";
+			  print GENFILE "    else\n";
+			  print GENFILE "        Tcl_AppendResult( interp, buf, (char *) NULL );\n";
+			  last fetch;
+		      };
+
+		      /PLUNICODE&/ && do {
+			  print GENFILE "    sprintf( buf, \"%u\", $argname[$i] );\n";
 			  print GENFILE "    if (argc > 1)\n";
 			  print GENFILE "        Tcl_SetVar( interp, argv[1+$i], buf, 0 );\n";
 			  print GENFILE "    else\n";
