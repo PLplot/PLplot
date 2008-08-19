@@ -49,6 +49,7 @@ set(tcl_STRING_INDICES
 "18"
 "19"
 "22"
+"24"
 "26"
 )
 
