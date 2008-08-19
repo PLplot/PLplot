@@ -52,6 +52,7 @@ set(tcl_STRING_INDICES
 "24"
 "25"
 "26"
+"27"
 )
 
 set(tcl_SCRIPTS)
@@ -63,7 +64,7 @@ endforeach(STRING_INDEX ${tcl_STRING_INDICES})
 install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
 install(PROGRAMS ${tcl_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
 
-# Copy file and scripts to the binary directory if different to the 
+# Copy file and scripts to the binary directory if different to the
 # source directory. Needed for ctest, but also so the tclIndex file
 # is generated in the binary tree not the source tree.
 if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
