@@ -167,4 +167,8 @@ proc x25 {{w loopback}} {
         }
     }
 
+    # Restore defaults
+    $w cmd plssub 1 1
+    $w cmd pleop
+
 }

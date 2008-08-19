@@ -33,3 +33,10 @@ source $demo.tcl
 # restore defaults
 plcol0 1
 proc $i {} "$demo"
+for {set i 24} {$i <= 27} {incr i} {
+    set demo x[format "%02d" $i]
+    source $demo.tcl
+    # restore defaults
+    plcol0 1
+    proc $i {} "$demo"
+}

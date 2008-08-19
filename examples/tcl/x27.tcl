@@ -51,7 +51,7 @@ proc x27 {{w loopback}} {
 
   #  Loop over the various curves
   #  First an overview, then all curves one by one
-
+  $w cmd pladv 0
   $w cmd plssub 3 3
 
   for { set i 0 } { $i < 9 } { incr i } {
@@ -67,9 +67,6 @@ proc x27 {{w loopback}} {
      $w cmd plvpor 0.0  1.0  0.0  1.0
      spiro $w [lindex $params $i]
   }
-  #  Don't forget to $w cmd plend() to finish off!
-
-  $w cmd plend
 
 }
 

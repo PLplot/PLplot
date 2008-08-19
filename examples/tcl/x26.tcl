@@ -109,9 +109,8 @@ proc x26 {{w loopback}} {
   #  Make log plots using two different styles.
 
   foreach xl $x_label yl $y_label altyl $alty_label title $title_label linel $line_label {
-      plot1 $w 0 $xl $yl $altyl $title $linel
+      plot261 $w 0 $xl $yl $altyl $title $linel
   }
-  $w cmd plend
 
 }
 
@@ -121,7 +120,7 @@ proc x26 {{w loopback}} {
 #  Log-linear plot.
 # --------------------------------------------------------------------------
 
-proc plot1 { w type x_label y_label alty_label title_label line_label } {
+proc plot261 { w type x_label y_label alty_label title_label line_label } {
 
   set PI [expr {4.0*atan(1.0)}]
 

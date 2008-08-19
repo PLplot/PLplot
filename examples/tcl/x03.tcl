@@ -6,6 +6,7 @@ proc x03 {{w loopback}} {
     set twopi  [expr 2. * 3.14159265358979323846]
 # Set up viewport and window, but do not draw box 
 
+    $w cmd pladv 0
     $w cmd plenv -1.3 1.3 -1.3 1.3 1 -2
 
 # Draw circles for polar grid
