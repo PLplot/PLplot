@@ -20,5 +20,5 @@ proc x05 {{w loopback}} {
     $w cmd pllab "#frValue" "#frFrequency" \
 	"#frPLplot Example 5 - Probability function of Oscillator"
     # Restore defaults
-    $w cmd plcol0 1
+    # $w cmd plcol0 1
 }

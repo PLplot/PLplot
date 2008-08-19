@@ -39,8 +39,8 @@ proc x01 {{w loopback}} {
 
     plot3 $w
 # Restore defaults
-    $w cmd plcol0 1
-    $w cmd plssub 1 1
+#    $w cmd plcol0 1
+#    $w cmd plssub 1 1
     $w cmd pleop
 
 }

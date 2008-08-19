@@ -219,5 +219,5 @@ proc x16 {{w loopback}} {
     $w cmd plcol0 2
     $w cmd pllab "" "" "Tokamak Bogon Instability"
 # Restore defaults
-    $w cmd plcol0 1
+    # $w cmd plcol0 1
 }

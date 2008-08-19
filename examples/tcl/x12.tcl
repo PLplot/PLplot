@@ -33,7 +33,7 @@ proc x12 {{w loopback}} {
 	$w cmd plmtex "b" 1.0 [expr ($i + 1) * .1 - .05] 0.5 $string
     }
 # Restore defaults
-    $w cmd plcol0 1
+    # $w cmd plcol0 1
 }
 
 proc plfbox  {w x0 y0} {

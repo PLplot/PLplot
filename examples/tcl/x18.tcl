@@ -57,7 +57,7 @@ proc x18 {{w loopback}} {
 	$w cmd plmtex t 1.0 0.5 0.5 "$title"
     }
     # Restore defaults
-    $w cmd plcol0 1
+    # $w cmd plcol0 1
 }
 
 proc test_poly {{w loopback} k} {

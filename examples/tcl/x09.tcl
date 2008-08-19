@@ -159,7 +159,7 @@ proc x09 {{w loopback}} {
 #    x09_potential $w
 
 # Restore defaults
-    $w cmd plcol0 1
+    # $w cmd plcol0 1
 #    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
 }
 

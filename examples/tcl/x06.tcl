@@ -49,5 +49,5 @@ proc x06 {{w loopback}} {
     $w cmd plmtex "t" 1.5 0.5 0.5 "PLplot Example 6 - plpoin symbols"
 
     # Restore defaults
-    $w cmd plcol0 1
+    # $w cmd plcol0 1
 }

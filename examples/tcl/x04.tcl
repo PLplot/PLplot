@@ -10,7 +10,7 @@ proc x04 {{w loopback}} {
 
     # Restore defaults
     $w cmd plfont 1
-    $w cmd plcol0 1
+    # $w cmd plcol0 1
 
 }
 

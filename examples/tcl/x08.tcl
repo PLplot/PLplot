@@ -194,6 +194,6 @@ proc x08 {{w loopback}} {
     }
 
 # Restore defaults
-    $w cmd plcol0 1
+    # $w cmd plcol0 1
     restore_cmap1_8 $w
 }

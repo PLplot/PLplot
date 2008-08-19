@@ -122,5 +122,5 @@ proc plot152 { w z zmin zmax } {
   $w cmd plcol0 2
   $w cmd pllab "distance" "altitude" "Bogon flux"
 # Restore defaults
-  $w cmd plcol0 1
+  # $w cmd plcol0 1
 }

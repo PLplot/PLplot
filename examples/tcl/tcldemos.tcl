@@ -23,9 +23,13 @@
 for {set i 1} {$i <= 19} {incr i} {
     set demo x[format "%02d" $i]
     source $demo.tcl
+    # restore defaults
+    plcol0 1
     proc $i {} "$demo"
 }
 set i 22
 set demo x[format "%02d" $i]
 source $demo.tcl
+# restore defaults
+plcol0 1
 proc $i {} "$demo"
