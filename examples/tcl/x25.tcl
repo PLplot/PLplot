@@ -1,4 +1,4 @@
-# $Id:$
+# $Id$
 #
 #	Filling and clipping polygons.
 #
@@ -163,7 +163,7 @@ proc x25 {{w loopback}} {
             $w cmd plfill $npts x0 y0
             $w cmd plcol0 2
             $w cmd pllsty 1
-            $w cmd plline npts x0 y0
+            $w cmd plline $npts x0 y0
         }
     }
 
