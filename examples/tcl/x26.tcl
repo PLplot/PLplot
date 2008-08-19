@@ -89,7 +89,7 @@ proc x26 {{w loopback}} {
 
   set title_label {
       "Single Pole Low-Pass Filter"
-      "Однополюсный Низко-Частотный Фильт�"
+      "Однополюсный Низко-Частотный Фильтр"
   }
 
   set line_label {
@@ -135,7 +135,7 @@ proc plot1 { w type x_label y_label alty_label title_label line_label } {
 
   set f0 1.0
   for {set i 0} {$i < 101} {incr i} {
-     freql $i = [expr {-2.0 + ($i-1) / 20.0}]
+     freql $i = [expr {-2.0 + $i / 20.0}]
      set freq [expr {pow(10.0,[freql $i])}]
      ampl $i  = [expr {20.0 * log10(1.0 / sqrt(1.0 + pow($freq/$f0,2)))}]
      phase $i = [expr {-(180.0 / $PI) * atan($freq / $f0)}]
