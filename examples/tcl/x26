@@ -15,5 +15,5 @@ exec pltcl -f "$0" ${1+"$@"}
 source x26.tcl
 
 plinit
-x10
+x26
 plend
