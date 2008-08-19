@@ -661,7 +661,7 @@ typedef struct {
     PLFLT base3x, base3y, basecx, basecy;
     PLFLT domxmi, domxma, domymi, domyma;
     PLFLT zzscl, ranmi, ranma;
-    PLFLT cxx, cxy, cyx, cyy, cyz;
+  PLFLT cxx, cxy, cyx, cyy, cyz, czx, czy, czz;
 
 /* Variables for keeping track of windows on a page. */
 

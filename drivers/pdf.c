@@ -656,7 +656,7 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
 void process_string( PLStream* pls, EscText* args )
 {
   pdfdev* dev = (pdfdev*)pls->dev;
-  PLFLT rotation, shear;
+  PLFLT rotation, shear, stride;
   HPDF_REAL cos_rot, sin_rot, cos_shear, sin_shear;  
 
   /* Check that we got unicode, warning message and return if not */
@@ -680,7 +680,7 @@ void process_string( PLStream* pls, EscText* args )
   dev->textBlue=(HPDF_REAL)(pls->curcolor.b/255.0);
   
   /* calculate transformation matrix (rotation and shear of text) */
-  plRotationShear( args->xform, &rotation, &shear );
+  plRotationShear( args->xform, &rotation, &shear, &stride);
   rotation -= pls->diorot * M_PI / 2.0;
   cos_rot = (HPDF_REAL)cos( rotation );
   sin_rot = (HPDF_REAL)sin( rotation );

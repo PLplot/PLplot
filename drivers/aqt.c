@@ -508,7 +508,7 @@ void get_cursor(PLStream *pls, PLGraphicsIn *gin){
 
 void proc_str (PLStream *pls, EscText *args)
 {
-  PLFLT   	a1, ft_ht, angle, shear;
+  PLFLT   	a1, ft_ht, angle, shear, stride;
   PLINT   	clxmin, clxmax, clymin, clymax;
   int     	i, jst, ref;
   NSMutableAttributedString *str;
@@ -532,7 +532,7 @@ void proc_str (PLStream *pls, EscText *args)
   ft_ht = 1.2 * pls->chrht * DPI/25.4; 	/* ft_ht in points. ht is in mm */
 
   /* given transform, calculate rotation angle & shear angle */
-  plRotationShear(args->xform, &angle, &shear);
+  plRotationShear(args->xform, &angle, &shear, &stride);
   angle *= 180.0/PI;
   shear *= -180.0/PI;
   

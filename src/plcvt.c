@@ -223,3 +223,14 @@ plP_w3wcy(PLFLT x, PLFLT y, PLFLT z)
 		     (y - plsc->basecy) * plsc->cyy +
 		     (z - plsc->ranmi) * plsc->cyz));
 }
+
+/* 3-d coords to 2-d projection (z), if that makes any sense... */
+/* See c_plw3d for a mathematical explanation of the transformation. */
+
+PLFLT
+plP_w3wcz(PLFLT x, PLFLT y, PLFLT z)
+{
+    return ((PLFLT) ((x - plsc->basecx) * plsc->czx +
+		     (y - plsc->basecy) * plsc->czy +
+		     (z - plsc->ranmi) * plsc->czz));
+}

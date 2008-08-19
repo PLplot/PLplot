@@ -376,7 +376,7 @@ void proc_str (PLStream *pls, EscText *args)
    short lastOffset = 0;
    double ftHt;
    PLUNICODE fci;
-   PLFLT rotation, shear, cos_rot, sin_rot, sin_shear, cos_shear;
+   PLFLT rotation, shear, stride, cos_rot, sin_rot, sin_shear, cos_shear;
    PLFLT t[4];
    /*   PLFLT *t = args->xform; */
    PLUNICODE *ucs4 = args->unicode_array;
@@ -396,7 +396,7 @@ void proc_str (PLStream *pls, EscText *args)
 
    /* Calculate the tranformation matrix for SVG based on the
       transformation matrix provived by PLplot. */
-   plRotationShear(args->xform, &rotation, &shear);
+   plRotationShear(args->xform, &rotation, &shear, &stride);
    /* N.B. Experimentally, I (AWI) have found the svg rotation angle is
       the negative of the libcairo rotation angle, and the svg shear angle
       is pi minus the libcairo shear angle. */

@@ -2373,16 +2373,18 @@ pl3cut(PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
  * N.B. The plot transformation matrix is the product of the following
  * rotation and shear matrices:
  *
- * [c(t) -s(t)] [1 s(p)]
- * [s(t)  c(t)] [0 c(p)]
+ * [c(t) -s(t)] [stride s(p)]
+ * [s(t)  c(t)] [0      c(p)]
  * 
  * Where t is the rotation angle and phi is the shear angle.
 \*--------------------------------------------------------------------------*/
 
 void
-plRotationShear(PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear)
+plRotationShear(PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear, PLFLT *stride)
 {
-  *rotation = acos(xFormMatrix[0]);
+  *stride = sqrt(xFormMatrix[0] * xFormMatrix[0] + xFormMatrix[2] * xFormMatrix[2]);
+
+  *rotation = acos(xFormMatrix[0] / *stride);
   if(xFormMatrix[2] < 0.0){
     *rotation = -*rotation;
   }

@@ -861,10 +861,15 @@ plP_w3wcx(PLFLT x, PLFLT y, PLFLT z);
 PLFLT
 plP_w3wcy(PLFLT x, PLFLT y, PLFLT z);
 
-/* Returns the rotation and shear angle from a plplot transformation matrix */
+/* 3-d coords to 2-d projection (z) */
+
+PLFLT
+plP_w3wcz(PLFLT x, PLFLT y, PLFLT z);
+
+/* Returns the rotation and shear angle and stride from a plplot transformation matrix */
 
 void
-plRotationShear(PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear);
+plRotationShear(PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear, PLFLT *stride);
 
 
     /* Driver calls */

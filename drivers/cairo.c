@@ -357,7 +357,7 @@ void proc_str(PLStream *pls, EscText *args)
   float fontSize;
   int textXExtent, textYExtent;
   char *textWithPangoMarkup;
-  PLFLT rotation, shear, cos_rot, sin_rot, cos_shear, sin_shear;
+  PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
   cairo_matrix_t *cairoTransformMatrix;
   cairo_font_options_t *cairoFontOptions;
   PangoContext *context;
@@ -419,7 +419,7 @@ void proc_str(PLStream *pls, EscText *args)
 
   /* Extract rotation angle and shear from the PLplot tranformation matrix.
      Compute sines and cosines of the angles as an optimization. */
-  plRotationShear(args->xform, &rotation, &shear);
+  plRotationShear(args->xform, &rotation, &shear, &stride);
   rotation -= pls->diorot * 3.14159 / 2.0;
   cos_rot = cos(rotation);
   sin_rot = sin(rotation);
@@ -428,8 +428,8 @@ void proc_str(PLStream *pls, EscText *args)
 
   /* Apply the transform matrix */
   cairo_matrix_init(cairoTransformMatrix,             
-		    cos_rot,
-		    -sin_rot,
+		    cos_rot * stride,
+		    -sin_rot * stride,
 		    cos_rot * sin_shear + sin_rot * cos_shear,
 		    -sin_rot * sin_shear + cos_rot * cos_shear,
 		    0,0);

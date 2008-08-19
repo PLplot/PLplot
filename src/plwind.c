@@ -229,4 +229,7 @@ c_plw3d(PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
     plsc->cyx = cx * saz * salt;
     plsc->cyy = cy * caz * salt;
     plsc->cyz = zscale * calt;
+    plsc->czx = -cx * calt * saz;
+    plsc->czy = -cy * calt * caz;
+    plsc->czz = zscale * salt;
 }
