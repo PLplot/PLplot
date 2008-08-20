@@ -20,145 +20,153 @@
 
 if(ENABLE_tk)
 
-set(include_INSTALLED_HEADERS
-pltk.h
-)
-
-install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${INCLUDE_DIR})
-
-set(tcldata
-FileSelector.tcl
-Pltkwin.tcl
-about.tcl
-help_gui.tcl
-help_keys.tcl
-help_tcltk.tcl
-plclient.tcl
-plcolor.tcl
-plconfig.tcl
-pldefaults.tcl
-plplot.tcl
-plserver.tcl
-pltools.tcl
-plwidget.tcl
-)
-
-set(itkdata
-PLWin.itk
-PLXWin.itk
-)
-
-set(paldata
-cmap0a.pal
-cmap1a.pal
-cmap1a1.pal
-cmap1b.pal
-cmap1c.pal
-cmap1d.pal
-)
-
-# Ugly hack to copy all .tcl files to the build tree so that tclIndex 
-# can be generated there. This is a limitation is tcl's auto_mkindex which 
-# always generates the index in the directory with the files.
-if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-  set(tclIndex_DEPENDS)
-  foreach(file ${tcldata} ${itkdata})
-    set(
-    tclIndex_DEPENDS
-    ${tclIndex_DEPENDS}
-    ${CMAKE_CURRENT_BINARY_DIR}/${file}
+  set(include_INSTALLED_HEADERS
+    pltk.h
     )
-    add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
-    COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+
+  install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${INCLUDE_DIR})
+
+  set(tcldata
+    FileSelector.tcl
+    Pltkwin.tcl
+    about.tcl
+    help_gui.tcl
+    help_keys.tcl
+    help_tcltk.tcl
+    plclient.tcl
+    plcolor.tcl
+    plconfig.tcl
+    pldefaults.tcl
+    plplot.tcl
+    plserver.tcl
+    pltools.tcl
+    plwidget.tcl
     )
-  endforeach(file ${tcldata} ${itkdata})
-  add_custom_target(tcl_files ALL DEPENDS ${tclIndex_DEPENDS})
-else(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-  set(tclIndex_DEPENDS ${tcldata} ${itkdata})
-endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 
-install(
-FILES ${tcldata} ${itkdata} ${paldata}
-DESTINATION ${TCL_DIR}
-)
+  set(itkdata
+    PLWin.itk
+    PLXWin.itk
+    )
 
-include_directories(
-${TCL_INCLUDE_PATH}
-${TK_INCLUDE_PATH}
-${CMAKE_SOURCE_DIR}/include
-${CMAKE_SOURCE_DIR}/bindings/tcl
-${CMAKE_CURRENT_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/include
-)
+  set(paldata
+    cmap0a.pal
+    cmap1a.pal
+    cmap1a1.pal
+    cmap1b.pal
+    cmap1c.pal
+    cmap1d.pal
+    )
 
-add_executable(plserver plserver.c)
-target_link_libraries(plserver plplot${LIB_TAG} plplottcltk${LIB_TAG})
+  # Ugly hack to copy all .tcl files to the build tree so that tclIndex 
+  # can be generated there. This is a limitation is tcl's auto_mkindex which 
+  # always generates the index in the directory with the files.
+  if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+    set(tclIndex_DEPENDS)
+    foreach(file ${tcldata} ${itkdata})
+      set(
+	tclIndex_DEPENDS
+	${tclIndex_DEPENDS}
+	${CMAKE_CURRENT_BINARY_DIR}/${file}
+	)
+      add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	COMMAND ${CMAKE_COMMAND} -E copy
+	${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
+	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+	)
+    endforeach(file ${tcldata} ${itkdata})
+    add_custom_target(tcl_files ALL DEPENDS ${tclIndex_DEPENDS})
+  else(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+    set(tclIndex_DEPENDS ${tcldata} ${itkdata})
+  endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 
-if(USE_RPATH)
-  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-  set_target_properties(plserver
-  PROPERTIES
-  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-  )
-endif(USE_RPATH)
+  install(
+    FILES ${tcldata} ${itkdata} ${paldata}
+    DESTINATION ${TCL_DIR}
+    )
 
-install(TARGETS plserver DESTINATION ${BIN_DIR})
+  include_directories(
+    ${TCL_INCLUDE_PATH}
+    ${TK_INCLUDE_PATH}
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/bindings/tcl
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/include
+    )
 
-add_custom_command(
-OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
-DEPENDS ${tclIndex_DEPENDS}
-WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
+  if(ENABLE_itcl)
+    include_directories(${ITCL_INCLUDE_PATH})
+  endif(ENABLE_itcl)
 
-add_custom_target(tclIndex_tk ALL
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-)
+  if(ENABLE_itk)
+    include_directories(${ITK_INCLUDE_PATH})
+  endif(ENABLE_itk)
 
-# The tcl_files dependency is required to
-# work around CMake 2-level make recursion issue where independent
-# file dependency chains that refer to the same files must have
-# target dependencies between them in order to work for parallel
-# builds (and possibly some visual studio builds).
-if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-  add_dependencies(tclIndex_tk tcl_files)
-endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+  add_executable(plserver plserver.c)
+  target_link_libraries(plserver plplot${LIB_TAG} plplottcltk${LIB_TAG})
 
-install(
-FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-DESTINATION ${TCL_DIR}
-)
+  if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    set_target_properties(plserver
+      PROPERTIES
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      )
+  endif(USE_RPATH)
 
-set(DRV_HARDDIR ${DRV_DIR})
-set(LIB_HARDDIR ${LIB_DIR})
+  install(TARGETS plserver DESTINATION ${BIN_DIR})
 
-get_target_property(
-DLNAME_LIBPLPLOT
-plplot${LIB_TAG}
-LOCATION
-)
-get_filename_component(
-DLNAME_LIBPLPLOT
-${DLNAME_LIBPLPLOT}
-NAME
-)
-string(REPLACE "plplotd" "plplot"
-DLNAME_LIBPLPLOT
-${DLNAME_LIBPLPLOT}
-)
-string(REPLACE "plplot" "plplotd"
-DLNAME_LIBPLPLOTD
-${DLNAME_LIBPLPLOT}
-)
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+    COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+    DEPENDS ${tclIndex_DEPENDS}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
 
-configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in
-${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
-@ONLY
-)
+  add_custom_target(tclIndex_tk ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+    )
+
+  # The tcl_files dependency is required to
+  # work around CMake 2-level make recursion issue where independent
+  # file dependency chains that refer to the same files must have
+  # target dependencies between them in order to work for parallel
+  # builds (and possibly some visual studio builds).
+  if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+    add_dependencies(tclIndex_tk tcl_files)
+  endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+    DESTINATION ${TCL_DIR}
+    )
+
+  set(DRV_HARDDIR ${DRV_DIR})
+  set(LIB_HARDDIR ${LIB_DIR})
+
+  get_target_property(
+    DLNAME_LIBPLPLOT
+    plplot${LIB_TAG}
+    LOCATION
+    )
+  get_filename_component(
+    DLNAME_LIBPLPLOT
+    ${DLNAME_LIBPLPLOT}
+    NAME
+    )
+  string(REPLACE "plplotd" "plplot"
+    DLNAME_LIBPLPLOT
+    ${DLNAME_LIBPLPLOT}
+    )
+  string(REPLACE "plplot" "plplotd"
+    DLNAME_LIBPLPLOTD
+    ${DLNAME_LIBPLPLOT}
+    )
+
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in
+    ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
+    @ONLY
+    )
 
 endif(ENABLE_tk)
