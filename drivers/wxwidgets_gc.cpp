@@ -339,7 +339,7 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
   textBlue=pls->cmap0[pls->icol0].b;
   
   /* calculate rotation of text */
-  plRotationShear( args->xform, &rotation, &shear );
+  plRotationShear( args->xform, &rotation, &shear, &stride);
   rotation -= pls->diorot * M_PI / 2.0;
   cos_rot = cos( rotation );
   sin_rot = sin( rotation );

@@ -279,7 +279,7 @@ void wxPLDevAGG::ProcessString( PLStream* pls, EscText* args )
   fontSize = pls->chrht * DEVICE_PIXELS_PER_MM * 1.2;
 
   /* calculate rotation of text */
-  plRotationShear( args->xform, &rotation, &shear );
+  plRotationShear( args->xform, &rotation, &shear, &stride);
   rotation -= pls->diorot * M_PI / 2.0;
   cos_rot = cos( rotation );
   sin_rot = sin( rotation );

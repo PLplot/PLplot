@@ -166,6 +166,7 @@ public: /* variables */
   PLINT posX, posY;
   PLFLT rotation, cos_rot, sin_rot;
   PLFLT shear, cos_shear, sin_shear;
+  PLFLT stride;
 };
 
 
