@@ -1,4 +1,4 @@
-#   $Id:$
+#   $Id$
 #
 #   Displays Greek letters and mathematically interesting Unicode ranges
 #   Copyright (C) 2005,2008 Alan Irwin
@@ -186,7 +186,7 @@ proc x23 {{w loopback}} {
 
     # non-zero values Must be consistent with nxcells and nycells.
     matrix offset i 11 =  {
-	0, 
+ 	0, 
 	0, 
 	64, 
 	128, 
@@ -256,7 +256,7 @@ proc x23 {{w loopback}} {
 	$w cmd plwind 0.0 1.0 0.0 1.0
 	$w cmd plgspa xmin xmax ymin ymax
 	$w cmd plschr 0.0 0.8
-	set ycharacter_scale [ expr {1.0/($ymax-$ymin)}]
+	set ycharacter_scale [ expr {1.0/($ymax-$ymin)} ]
 
 	# Factor should be 0.5, but heuristically it turns out to be larger.
 	$w cmd plgchr chardef charht
@@ -277,13 +277,13 @@ proc x23 {{w loopback}} {
 	        set x [ expr {(0.5+$i)*$deltax} ]
 		if {$slice < $length} {
 		    if {$page == 0} {
-		        set cmdString [set Greek$slice]
-	            } elseif (($page >= 1) && ($page <= 3)) {
-			set cmdString [format "##[0x%.4x]" [ Type1 [expr [offset $page]+$slice] ] ]
-		    } elseif ($page >= 4) {
-			set cmdString [format "##[0x%.4x]" [eval {[lo $page]+$slice}]]
+		        set cmdString [format "#%s" [set Greek$slice]]
+	            } elseif {$page <= 3} {
+			set cmdString [format "##\[0x%.4x\]" [ Type1 [expr [offset $page]+$slice] ] ]
+		    } else {
+			set cmdString [format "##\[0x%.4x\]" [expr {[lo $page]+$slice}]]
 	            }
-		    $w cmd plptex $x [ expr {$y+$yoffset}] 1. 0. 0.5 $cmdString
+		    $w cmd plptex $x [ expr {$y+$yoffset}] 1. 0. 0.5 [ string range $cmdString 1 end ]
 		    $w cmd plptex $x [ expr {$y-$yoffset}] 1. 0. 0.5 $cmdString
 		}
 		incr slice
@@ -298,8 +298,9 @@ proc x23 {{w loopback}} {
     # Demonstrate methods of getting the current fonts
     $w cmd plgfci fci_old
     $w cmd plgfont ifamily istyle iweight
-    format "For example 23 prior to page 12 the FCI is 0x%x\n" $fci_old
-    format "For example 23 prior to page 12 the font family, style and weight are  %s %s %s\n" $family($ifamily) $style($istyle) $weight($iweight)
+    puts [ format "For example 23 prior to page 12 the FCI is 0x%x" $fci_old ]
+    puts [ format "For example 23 prior to page 12 the font family, style and weight are  %s %s %s" \
+	       $family($ifamily) $style($istyle) $weight($iweight) ]
 
     for {set page 11} {$page<16} {incr page} {
 	set dy 0.030
