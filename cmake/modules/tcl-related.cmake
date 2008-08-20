@@ -33,7 +33,7 @@ else(DEFAULT_NO_BINDINGS)
 endif(DEFAULT_NO_BINDINGS)
 
 # Depending on these above options and system resources may also determine
-# the following variables which are largely self-explantory unless documented
+# the following variables which are largely self-explanatory unless documented
 # further.
 
 #TCL_INCLUDE_PATH
@@ -60,8 +60,8 @@ if(ENABLE_tcl)
   # Supplement those results with iTcl and iTk include paths and libraries.
   if(TCL_FOUND)
     message(STATUS
-    "Looking for include paths and libraries for Tcl/Tk - found"
-    )
+      "Looking for include paths and libraries for Tcl/Tk - found"
+      )
     message(STATUS "Looking for tclsh")
     include(FindTclsh)
     if(TCL_TCLSH)
@@ -69,10 +69,10 @@ if(ENABLE_tcl)
       message(STATUS "TCL_TCLSH = ${TCL_TCLSH}")
       # test to determine HAVE_TCL_GT_84
       execute_process(
-      COMMAND ${TCL_TCLSH} CheckTCL_GT_84.tcl
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/cmake/modules
-      OUTPUT_VARIABLE HAVE_TCL_GT_84
-      )
+	COMMAND ${TCL_TCLSH} CheckTCL_GT_84.tcl
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/cmake/modules
+	OUTPUT_VARIABLE HAVE_TCL_GT_84
+	)
     else(TCL_TCLSH)
       message(STATUS "Looking for tclsh - not found")
       # Fall back to user option for determining HAVE_TCL_GT_84.
@@ -81,8 +81,8 @@ if(ENABLE_tcl)
     message(STATUS "HAVE_TCL_GT_84 = ${HAVE_TCL_GT_84}")
   else(TCL_FOUND)
     message(STATUS
-    "Looking for include paths and libraries for Tcl/Tk - not found"
-    )
+      "Looking for include paths and libraries for Tcl/Tk - not found"
+      )
   endif(TCL_FOUND)
   if(TCL_FOUND AND TCL_TCLSH)
     message(STATUS "TCL_INCLUDE_PATH = ${TCL_INCLUDE_PATH}")
@@ -97,7 +97,7 @@ if(ENABLE_tcl)
         set(itcl_library_versions 3.4 3.3 3.2 3.1 3.0 2.1 2.0)
         foreach(version ${itcl_library_versions})
           find_library(ITCL_LIBRARY itcl${version} PATHS ${TCL_LIBRARY_PATH}
-                       PATH_SUFFIXES itcl${version})
+            PATH_SUFFIXES itcl${version})
         endforeach(version ${itcl_library_versions})
         if(ITCL_LIBRARY)
           message(STATUS "Looking for itcl library - found")
@@ -105,14 +105,12 @@ if(ENABLE_tcl)
           find_path(HAVE_ITCLDECLS_H itclDecls.h ${TCL_INCLUDE_PATH})
         else(ITCL_LIBRARY)
           message(STATUS "Looking for itcl library - not found")
-          message(STATUS "WARNING: Disabling incr Tcl interface code"
-        )
-        set(ENABLE_itcl OFF CACHE BOOL "Enable incr Tcl interface code" FORCE)
+          message(STATUS "WARNING: Disabling incr Tcl interface code")
+          set(ENABLE_itcl OFF CACHE BOOL "Enable incr Tcl interface code" FORCE)
         endif(ITCL_LIBRARY)
       else(ITCL_INCLUDE_PATH)
         message(STATUS "Looking for itcl.h - not found")
-        message(STATUS "WARNING: Disabling incr Tcl interface code"
-        )
+        message(STATUS "WARNING: Disabling incr Tcl interface code")
         set(ENABLE_itcl OFF CACHE BOOL "Enable incr Tcl interface code" FORCE)
       endif(ITCL_INCLUDE_PATH)
     endif(ENABLE_itcl)
@@ -140,8 +138,8 @@ if(ENABLE_tcl)
       message(STATUS "TK_LIBRARY = ${TK_LIBRARY}")
     else(ENABLE_tk)
       message(STATUS
-      "WARNING: Because Tk is disabled must disable incr Tk as well"
-      )
+	"WARNING: Because Tk is disabled must disable incr Tk as well"
+	)
       set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
     endif(ENABLE_tk)
     if(ENABLE_itk)
@@ -153,16 +151,15 @@ if(ENABLE_tcl)
         set(itk_library_versions 3.4 3.3 3.2 3.1 3.0 2.1 2.0)
         foreach(version ${itk_library_versions})
           find_library(ITK_LIBRARY itk${version} 
-                       PATH_SUFFIXES itk${version})
+            PATH_SUFFIXES itk${version})
         endforeach(version ${itk_library_versions})
         if(ITK_LIBRARY)
           message(STATUS "Looking for itk library - found")
           set(HAVE_ITK ON)
         else(ITK_LIBRARY)
           message(STATUS "Looking for itk library - not found")
-          message(STATUS "WARNING: Disabling incr Tk interface code"
-        )
-        set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
+          message(STATUS "WARNING: Disabling incr Tk interface code")
+          set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
         endif(ITK_LIBRARY)
       else(ITK_INCLUDE_PATH)
         message(STATUS "Looking for itk.h - not found")
@@ -183,9 +180,9 @@ if(ENABLE_tcl)
   endif(TCL_FOUND AND TCL_TCLSH)
 else(ENABLE_tcl)
   message(STATUS 
-  "ENABLE_tcl is OFF so disabling everything else that "
-  "is Tcl/Tk related"
-  )
+    "ENABLE_tcl is OFF so disabling everything else that "
+    "is Tcl/Tk related"
+    )
   set(ENABLE_itcl OFF CACHE BOOL "Enable incr Tcl interface code" FORCE)
   set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
   set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
