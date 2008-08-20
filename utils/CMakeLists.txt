@@ -20,13 +20,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 include_directories(
-${CMAKE_SOURCE_DIR}/include
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/include
-)
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/include
+  )
 
 if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
 endif(USE_RPATH)
 
 if(PLD_plmeta)
@@ -34,17 +34,17 @@ if(PLD_plmeta)
 
   if(WIN32 AND BUILD_SHARED_LIBS)
     SET_SOURCE_FILES_PROPERTIES(plrender.c
-    PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-    )
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+      )
   endif(WIN32 AND BUILD_SHARED_LIBS)
-    
+  
   target_link_libraries(plrender plplot${LIB_TAG})
 
   if(USE_RPATH)
     set_target_properties(plrender
-    PROPERTIES
-    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-    )
+      PROPERTIES
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      )
   endif(USE_RPATH)
 
   install(TARGETS plrender DESTINATION ${BIN_DIR})
@@ -54,25 +54,28 @@ add_executable(pltek pltek.c)
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   SET_SOURCE_FILES_PROPERTIES(pltek.c
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
+    PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
 endif(WIN32 AND BUILD_SHARED_LIBS)
 
 target_link_libraries(pltek plplot${LIB_TAG})
 
 if(USE_RPATH)
   set_target_properties(pltek
-  PROPERTIES
-  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-  )
+    PROPERTIES
+    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+    )
 endif(USE_RPATH)
 
 install(TARGETS pltek DESTINATION ${BIN_DIR})
 
 if(ENABLE_tcl)
   include_directories(
-  ${CMAKE_SOURCE_DIR}/bindings/tcl
-  ${TCL_INCLUDE_PATH}
-  )
+    ${CMAKE_SOURCE_DIR}/bindings/tcl
+    ${TCL_INCLUDE_PATH}
+    )
+  if(ENABLE_itcl)
+    include_directories(${ITCL_INCLUDE_PATH})
+  endif(ENABLE_itcl)
 
   add_executable(pltcl pltcl.c)
 
@@ -80,9 +83,9 @@ if(ENABLE_tcl)
 
   if(USE_RPATH)
     set_target_properties(pltcl
-    PROPERTIES
-    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-    )
+      PROPERTIES
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      )
   endif(USE_RPATH)
 
   install(TARGETS pltcl DESTINATION ${BIN_DIR})
