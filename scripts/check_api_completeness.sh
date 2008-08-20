@@ -178,6 +178,18 @@ case $1 in
     diff -au /tmp/plplot_api.txt -
   ;;
 
+  tcl)
+    # Prepare API list from bindings/tcl/plapi.tpl
+    echo "tcl API differences (if any)"
+    ( grep '^pltclcmd' bindings/tcl/plapi.tpl |\
+      cut --delimiter=' ' --fields=2  && \
+      grep '{"pl' bindings/tcl/tclAPI.c | \
+      cut --delimiter='"' --fields=2 \
+    ) | \
+    sort -u | \
+    diff -au /tmp/plplot_api.txt - 
+  ;;
+
   all)
     $0 docbook
     $0 swig
@@ -186,12 +198,13 @@ case $1 in
     $0 f77
     $0 f95
     $0 c++
+    $0 tcl
   ;;
 
   *)
   echo "First argument was $1"
   echo "Instead, it must be one of the following:"
-  echo "docbook, swig, java, octave, f77, f95, c++ or all"
+  echo "docbook, swig, java, octave, f77, f95, c++, tcl or all"
   ;;
 esac
 #rm /tmp/plplot_api.txt
