@@ -95,14 +95,6 @@ if(ENABLE_tk)
     ${CMAKE_BINARY_DIR}/include
     )
 
-  if(ENABLE_itcl)
-    include_directories(${ITCL_INCLUDE_PATH})
-  endif(ENABLE_itcl)
-
-  if(ENABLE_itk)
-    include_directories(${ITK_INCLUDE_PATH})
-  endif(ENABLE_itk)
-
   add_executable(plserver plserver.c)
   target_link_libraries(plserver plplot${LIB_TAG} plplottcltk${LIB_TAG})
 
