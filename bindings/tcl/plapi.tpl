@@ -87,6 +87,19 @@ zlabel	const char *
 ztick	PLFLT
 nsubz	PLINT
 
+# Calculate world coordinates and subpage from relative device coordinates.
+
+pltclcmd plcalc_world void
+rx	PLFLT
+ry	PLFLT
+wx	PLFLT&
+wy	PLFLT&
+window	PLINT&
+
+# Clear current subpage
+
+pltclcmd plclear void
+
 # Set color, map 0.  Argument is integer between 0 and 15.
 
 pltclcmd plcol0 void
@@ -96,6 +109,12 @@ icol0	PLINT
 
 pltclcmd plcol1 void
 col1	PLFLT
+
+# Copies state parameters from the reference stream to the current stream.
+
+pltclcmd plcpstrm void
+iplsr   PLINT
+flags	PLINT
 
 # Converts input values from relative device coordinates to relative plot
 # coordinates.
@@ -126,6 +145,17 @@ pltclcmd plend1 void
 # Simple interface for defining viewport and window.
 
 pltclcmd plenv void
+xmin	PLFLT
+xmax	PLFLT
+ymin	PLFLT
+ymax	PLFLT
+just	PLINT
+axis	PLINT
+
+# Similar to plenv() above, but in multiplot mode does not advance the subpage,
+# instead the current subpage is cleared.
+
+pltclcmd plenv0 void
 xmin	PLFLT
 xmax	PLFLT
 ymin	PLFLT
@@ -164,6 +194,14 @@ n	PLINT
 x	PLFLT *
 y	PLFLT *
 
+# Pattern fills the 3d polygon bounded by the input points.
+
+pltclcmd plfill3 void
+n	PLINT
+x	PLFLT *
+y	PLFLT *
+z	PLFLT *
+
 # Flushes the output stream.  Use sparingly, if at all.
 
 pltclcmd plflush void
@@ -192,12 +230,34 @@ r	PLINT&
 g	PLINT&
 b	PLINT&
 
+# Returns 8 bit RGB values for given color from color map 0 and alpha value.
+
+pltclcmd plgcol0a void
+icol0	PLINT
+r	PLINT&
+g	PLINT&
+b	PLINT&
+a	PLFLT&
+
 # Returns the background color by 8 bit RGB value.
 
 pltclcmd plgcolbg void
 r	PLINT&
 g	PLINT&
 b	PLINT&
+
+# Returns the background color by 8 bit RGB value and alpha value.
+
+pltclcmd plgcolbga void
+r	PLINT&
+g	PLINT&
+b	PLINT&
+a	PLFLT&
+
+# Returns the current compression setting
+
+pltclcmd plgcompression void
+compression	PLINT&
 
 # Get the device (keyword) name
 
@@ -294,6 +354,22 @@ strm	PLINT&
 
 pltclcmd plgver void
 ver	char *
+
+# Get viewport boundaries in normalized device coordinates.
+
+pltclcmd plgvpd void
+xmin    PLFLT *
+xmax	PLFLT *
+ymin	PLFLT *
+ymax	PLFLT *
+
+# Get viewport boundaries in world coordinates.
+
+pltclcmd plgvpw void
+xmin    PLFLT *
+xmax	PLFLT *
+ymin	PLFLT *
+ymax	PLFLT *
 
 # Get x axis labeling parameters.
 
@@ -532,6 +608,15 @@ g	PLINT *
 b	PLINT *
 ncol0	PLINT
 
+# Set color map 0 colors by 8 bit RGB values and alpha values.
+
+pltclcmd plscmap0a void
+r	PLINT *
+g	PLINT *
+b	PLINT *
+a	PLFLT *
+ncol0	PLINT
+
 # Set number of colors in cmap 0.
 
 pltclcmd plscmap0n void
@@ -545,6 +630,15 @@ g	PLINT *
 b	PLINT *
 ncol1	PLINT
 
+# Set color map 1 colors by 8 bit RGB values and alpha values.
+
+pltclcmd plscmap1a void
+r	PLINT *
+g	PLINT *
+b	PLINT *
+a	PLFLT *
+ncol1	PLINT
+
 # Set color map 1 colors using a piece-wise linear relationship between
 # intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
 
@@ -555,6 +649,20 @@ intensity	PLFLT *
 coord1		PLFLT *
 coord2		PLFLT *
 coord3		PLFLT *
+rev		PLINT *
+
+# Set color map 1 colors using a piece-wise linear relationship between
+# intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
+# Will also linearly interpolate alpha values.
+
+pltclcmd plscmap1la void
+itype		PLINT
+npts		PLINT
+intensity	PLFLT *
+coord1		PLFLT *
+coord2		PLFLT *
+coord3		PLFLT *
+a		PLFLT *
 rev		PLINT *
 
 # Set number of colors in cmap 1.
@@ -570,6 +678,15 @@ r	PLINT
 g	PLINT
 b	PLINT
 
+# Set a given color from color map 0 by 8 bit RGB value and alpha value.
+
+pltclcmd plscol0a void
+icol0	PLINT
+r	PLINT
+g	PLINT
+b	PLINT
+a	PLFLT
+
 # Set the background color by 8 bit RGB value.
 
 pltclcmd plscolbg void
@@ -577,10 +694,23 @@ r	PLINT
 g	PLINT
 b	PLINT
 
+# Set the background color by 8 bit RGB value and alpha value.
+
+pltclcmd plscolbga void
+r	PLINT
+g	PLINT
+b	PLINT
+a	PLFLT
+
 # Used to globally turn color output on/off.
 
 pltclcmd plscolor void
 color	PLINT
+
+# Set the compression level.
+
+pltclcmd plscompression void
+compression	PLINT
 
 # Set the device (keyword) name
 
@@ -711,6 +841,19 @@ pltclcmd plssym void
 def	PLFLT
 scale	PLFLT
 
+# Initialize PLplot, passing in the windows/page settings.
+
+pltclcmd plstar void
+nx	PLINT
+ny	PLINT
+
+# Initialize PLplot, passing the device name and windows/page settings.
+
+pltclcmd plstart void
+devname 	const char *
+nx		PLINT
+ny		PLINT
+
 # Set up a new line style.
 
 pltclcmd plstyl void
@@ -765,6 +908,11 @@ digits	PLINT
 # Switches to text screen.
 
 pltclcmd pltext void
+
+# Set the format for date / time labels.
+
+pltclcmd pltimefmt void
+fmt	const char *
 
 # Sets the edges of the viewport with the given aspect ratio, leaving
 # room for labels.
