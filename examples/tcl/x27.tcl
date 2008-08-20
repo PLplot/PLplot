@@ -101,7 +101,7 @@ proc spiro {w params} {
   set ymin 0.0
   set ymax 0.0
 
-  set n [expr {$windings*$steps+1}]
+  set n [expr {int($windings*$steps+1)}]
 
   for { set i 0 } { $i < $n } { incr i } {
      set phi  [expr {double($i) * $dphi}]
@@ -128,6 +128,6 @@ proc spiro {w params} {
   $w cmd plwind $xmin $xmax $ymin $ymax
 
   $w cmd plcol0 1
-  $w cmd plline [expr {$n-1}] xcoord ycoord
+  $w cmd plline $n xcoord ycoord
 
 }
