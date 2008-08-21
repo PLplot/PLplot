@@ -445,7 +445,7 @@ void ml_pltr0(double x, double y, double* tx, double* ty) {
 }
 
 void ml_pltr1(double x, double y, double* tx, double* ty,
-              double nxg, double nyg, double* xg, double* yg) {
+              int nxg, int nyg, double* xg, double* yg) {
     PLcGrid grid;
     grid.xg = xg;
     grid.yg = yg;
@@ -455,7 +455,7 @@ void ml_pltr1(double x, double y, double* tx, double* ty,
 }
 
 void ml_pltr2(double x, double y, double* tx, double* ty,
-              double nxg, double nyg, double** xg, double** yg) {
+              int nxg, int nyg, double** xg, double** yg) {
     PLcGrid2 grid;
     grid.xg = xg;
     grid.yg = yg;
