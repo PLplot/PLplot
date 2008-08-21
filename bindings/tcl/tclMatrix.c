@@ -900,7 +900,7 @@ MatrixPut_i(ClientData clientData, Tcl_Interp* interp, int index, const char *st
     tclMatrix *matPtr = (tclMatrix *) clientData;
 
     if ((strlen(string) > 2) && (strncmp(string,"0x",2) == 0)) {
-      matPtr->idata[index] = strtol(&string[2],NULL,16);
+      matPtr->idata[index] = strtoul(&string[2],NULL,16);
     }
     else
       matPtr->idata[index] = atoi(string);
