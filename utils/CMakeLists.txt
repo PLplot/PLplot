@@ -73,9 +73,9 @@ if(ENABLE_tcl)
     ${CMAKE_SOURCE_DIR}/bindings/tcl
     ${TCL_INCLUDE_PATH}
     )
-  if(ENABLE_itcl)
+  if(HAVE_ITCL)
     include_directories(${ITCL_INCLUDE_PATH})
-  endif(ENABLE_itcl)
+  endif(HAVE_ITCL)
 
   add_executable(pltcl pltcl.c)
 
