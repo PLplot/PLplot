@@ -29,6 +29,7 @@ set(ocaml_STRING_INDICES
   "06"
   "07"
   "08"
+  "09"
   "10"
   "11"
   "12"
