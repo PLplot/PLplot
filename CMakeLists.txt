@@ -202,7 +202,7 @@ set(CPACK_SOURCE_GENERATOR TGZ)
 set(CPACK_SOURCE_IGNORE_FILES
 "~$"
 "\\\\.cvsignore$"
-"^${PROJECT_SOURCE_DIR}.*/CVS/"
+"^${PROJECT_SOURCE_DIR}.*/\\\\.svn/"
 "^${PROJECT_SOURCE_DIR}/old/"
 "^${PROJECT_SOURCE_DIR}/sys/mac"
 "^${PROJECT_SOURCE_DIR}/sys/os2"
