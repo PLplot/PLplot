@@ -59,7 +59,8 @@ package PLplot_Thin is
     PLtrue  : constant Integer := 1;
     subtype PLBOOL is Integer range PLfalse..PLtrue;
     type PLUNICODE is mod 2**32;
-    type Unsigned_Int is mod 2**32; -- for e.g. plseed
+--    subtype Unsigned_Int is mod 2**32; -- for e.g. plseed
+--    subtype Unsigned_Int is Integer range 0 .. 2**31 - 1; -- for e.g. plseed fix this
 
     subtype PL_Integer_Array  is Integer_Array_1D;
     subtype PL_Float_Array    is Real_Vector;
@@ -273,21 +274,22 @@ package PLplot_Thin is
 
     -- PLplot Graphics Input structure 
 
-    PL_MAXKEY : constant Integer := 16;
 
-    -- fix this
-    --type PLGraphicsIn is
-    --    record
-    --        PLGraphicsIn_type : integer; -- of event (CURRENTLY UNUSED); Renamed to un-clobber Ada reserved word.
-    --        state     : unsigned; -- key or button mask 
-    --        keysym    : unsigned; -- key selected 
-    --        button    : unsigned; -- mouse button selected 
-    --        subwindow : PLINT;    -- subwindow (alias subpage, alias subplot) number 
-    --        char string[PL_MAXKEY];	-- translated string 
-    --        pX, pY    : integer;  -- absolute device coordinates of pointer 
-    --        dX, dY    : PLFLT;    -- relative device coordinates of pointer 
-    --        wX, wY    : PLFLT;    -- world coordinates of pointer 
-    --    end record;
+    PL_MAXKEY : constant Integer := 16;
+    
+    type PLGraphicsIn is
+        record
+            Event_Type : Integer; -- of event (CURRENTLY UNUSED)
+            state      : unsigned; -- key or button mask 
+            keysym     : unsigned; -- key selected 
+            button     : unsigned; -- mouse button selected 
+            subwindow  : PLINT;    -- subwindow (alias subpage, alias subplot) number 
+            T_String   : String(1 .. PL_MAXKEY);
+            pX, pY     : integer;  -- absolute device coordinates of pointer 
+            dX, dY     : PLFLT;    -- relative device coordinates of pointer 
+            wX, wY     : PLFLT;    -- world coordinates of pointer 
+        end record;
+
 
     -- Structure for describing the plot window 
 
@@ -304,7 +306,7 @@ package PLplot_Thin is
 
     type PLDisplay is
         record
-            x, y      : unsigned; -- upper left hand corner 
+            x, y          : unsigned; -- upper left hand corner 
             width, height : unsigned; -- window dimensions 
         end record;
 
@@ -1307,7 +1309,7 @@ package PLplot_Thin is
     -- Set seed for internal random number generator
 
     procedure
-    plseed(s : Unsigned_Int);
+    plseed(s : unsigned);
     pragma Import(C, plseed, "c_plseed");
 
 
@@ -1373,7 +1375,7 @@ package PLplot_Thin is
 
 
     procedure
-    plshades( z : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT; defined : Mask_Function_Pointer_Type;
+    plshades(z : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT; defined : Mask_Function_Pointer_Type;
           xmin : PLFLT; xmax : PLFLT; ymin : PLFLT; ymax : PLFLT;
           clevel : PL_Float_Array; nlevel : PLINT; fill_width : PLINT;
           cont_color : PLINT; cont_width : PLINT;
@@ -1504,10 +1506,21 @@ package PLplot_Thin is
     pragma Import(C, plstripd, "c_plstripd");
 
 
+    -- plots a 2d image (or a matrix too large for plshade() )
+
+    procedure 
+    plimagefr(data : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT;
+        xmin : PLFLT; xmax : PLFLT; ymin : PLFLT; ymax : PLFLT; zmin : PLFLT; zmax : PLFLT;
+        valuemin :PLFLT; valuemax : PLFLT;
+        pltr : Transformation_Procedure_Pointer_Type;
+        pltr_data : PLpointer);
+    pragma Import(C, plimagefr, "c_plimagefr");
+
+
       -- plots a 2d image (or a matrix too large for plshade() ) 
 
     procedure
-    plimage( data : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT;
+    plimage(data : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT;
          xmin : PLFLT; xmax : PLFLT; ymin : PLFLT; ymax : PLFLT; zmin : PLFLT; zmax : PLFLT;
          Dxmin : PLFLT; Dxmax : PLFLT; Dymin : PLFLT; Dymax : PLFLT);
     pragma Import(C, plimage, "c_plimage");
@@ -1694,7 +1707,7 @@ package PLplot_Thin is
     -- pltr0, pltr1, and pltr2 had to be re-written in Ada in order to make the 
     -- callback work while also passing the data structure along, e.g. 
     -- pltr_data in the formal names below. The machinery surrounding this idea  
-    -- also allows for easy user- defined plot transformation subprograms to be
+    -- also allows for easy user-defined plot transformation subprograms to be
     -- written.
 
     -- Identity transformation. Re-write of pltr0 in plcont.c in Ada.
@@ -1721,5 +1734,10 @@ package PLplot_Thin is
         tx, ty    : out PLFLT;
         pltr_data : PLplot_thin.PLpointer);
     pragma Convention (Convention => C, Entity => pltr2);
+    
+    
+    -- Wait for graphics input event and translate to world coordinates.
+    procedure plGetCursor(gin : out PLGraphicsIn);
+    pragma Import (C, plGetCursor, "plGetCursor");
 
 end PLplot_Thin;

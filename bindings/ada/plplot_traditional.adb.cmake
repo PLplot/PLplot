@@ -2648,7 +2648,23 @@ package body PLplot_Traditional is
 
 
     -- plots a 2d image (or a matrix too large for plshade() )
-    procedure plimage -- No documentation in Chapter 17 of Programmer's Reference Manual
+    procedure plimagefr
+       (Data                             : Real_Matrix;
+        x_Min,     x_Max                 : Long_Float;
+        y_Min,     y_Max                 : Long_Float;
+        z_Min,     z_Max                 : Long_Float;
+        Value_Min, Value_Max             : Long_Float;
+        Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
+        Transformation_Data_Pointer      : PLpointer) is
+    begin
+        PLplot_Thin.plimagefr(Matrix_To_Pointers(Data), Data'Length(1), Data'Length(2), 
+            x_Min, x_Max, y_Min, y_Max, z_Min, z_Max, Value_Min, Value_Max, 
+            Transformation_Procedure_Pointer, Transformation_Data_Pointer);
+    end plimagefr;
+
+
+    -- plots a 2d image (or a matrix too large for plshade() )
+    procedure plimage
        (Data : Real_Matrix;
         x_Min, x_Max : Long_Float;
         y_Min, y_Max : Long_Float;
@@ -2656,7 +2672,7 @@ package body PLplot_Traditional is
         Dxmin, Dxmax : Long_Float;
         Dymin, Dymax : Long_Float) is
     begin
-        PLplot_Thin.plimage(Matrix_To_Pointers(Data), Data'Length(2), Data'Length(1), x_Min, x_Max, y_Min, y_Max, z_Min, z_Max, Dxmin, Dxmax, Dymin, Dymax);
+        PLplot_Thin.plimage(Matrix_To_Pointers(Data), Data'Length(1), Data'Length(2), x_Min, x_Max, y_Min, y_Max, z_Min, z_Max, Dxmin, Dxmax, Dymin, Dymax);
     end plimage;
 
 
@@ -2931,7 +2947,13 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.pltr2(x_Grid, y_Grid, x_World, y_World, Data_Pointer);
     end pltr2;
+        
 
+    -- Wait for graphics input event and translate to world coordinates.
+    procedure plGetCursor(Graphics_Input : out PLGraphicsIn) is
+    begin
+        PLplot_Thin.plGetCursor(Graphics_Input);
+    end plGetCursor;
 
 begin -- package body for PLplot
 

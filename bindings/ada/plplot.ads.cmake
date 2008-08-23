@@ -44,8 +44,10 @@ package PLplot is
     -- good to remove "use PLplot_Thin" for clarity since it is used in only
     -- a few places.
     subtype PLPointer                  is PLplot_Thin.PLpointer;
+    subtype Unsigned_Int               is Interfaces.C.unsigned;
     subtype Transformation_Data_Type   is Plplot_Thin.Transformation_Data_Type;
     subtype Transformation_Data_Type_2 is Plplot_Thin.Transformation_Data_Type_2;
+    subtype Graphics_Input_Record_Type is Plplot_Thin.PLGraphicsIn;
     
     -- "Rename" the unicode type for characters.
     subtype Unicode is PLplot_Thin.PLUNICODE;
@@ -1316,7 +1318,7 @@ package PLplot is
     -- intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
     -- plscmap1l
     procedure Set_Color_Map_1_Piecewise
-       (Color_Model    : Color_Model_Type;    -- HLS or RGB
+       (Color_Model    : Color_Model_Type; -- HLS or RGB
         Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
         H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
@@ -1329,7 +1331,7 @@ package PLplot is
     -- Will also linear interpolate alpha values.
     -- plscmap1la
     procedure Set_Color_Map_1_Piecewise_And_Alpha
-       (Color_Model    : Color_Model_Type;    -- HLS or RGB
+       (Color_Model    : Color_Model_Type; -- HLS or RGB
         Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
         H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
@@ -1629,8 +1631,20 @@ package PLplot is
 
 
     -- plots a 2d image (or a matrix too large for plshade() )
+    -- plimagefr
+    procedure Draw_Image_Color_Map_1
+       (Data                             : Real_Matrix;
+        x_Min,     x_Max                 : Long_Float;
+        y_Min,     y_Max                 : Long_Float;
+        z_Min,     z_Max                 : Long_Float;
+        Value_Min, Value_Max             : Long_Float;
+        Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
+        Transformation_Data_Pointer      : PLpointer);
+
+
+    -- plots a 2d image (or a matrix too large for plshade() )
     -- plimage
-    procedure Draw_Image -- No documentation in Chapter 17 of Programmer's Reference Manual
+    procedure Draw_Image_Color_Map_1_Automatic
        (Data : Real_Matrix;
         x_Min, x_Max : Long_Float;
         y_Min, y_Max : Long_Float;
@@ -1798,11 +1812,11 @@ package PLplot is
     -- I wonder if this is approaching "wrapper bloat" since these procedures 
     -- get called a lot of times during the making of a contour plot. 
     -- The way to eliminate one level of calling would be to move the bodies 
-    -- of pltrx from plplot_thin.adb into plplot_traditional.adb and 
+    -- of pltr? from plplot_thin.adb into plplot_traditional.adb and 
     -- plplot.adb, then optionally eliminating the bodies from plplot_thin.adb 
     -- on the idea that nobody is going to use them anyway. But even if the 
     -- bodies were left in plplot_thin.adb, having them here would still 
-    -- remove the extra call level. The argument for the currend arrangement is 
+    -- remove the extra call level. The argument for the current arrangement is 
     -- easier code maintainence.
 
     -- Identity transformation.
@@ -1832,6 +1846,8 @@ package PLplot is
         Data_Pointer     : PLpointer);
     pragma Convention(Convention => C, Entity => Plot_Transformation_2);
         
-        
+
+    -- Wait for graphics input event and translate to world coordinates.
+    procedure Get_Cursor(Graphics_Input : out Graphics_Input_Record_Type);
 
 end PLplot;

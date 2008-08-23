@@ -2783,8 +2783,25 @@ package body PLplot is
 
 
     -- plots a 2d image (or a matrix too large for plshade() )
+    -- plimagefr
+    procedure Draw_Image_Color_Map_1
+       (Data                             : Real_Matrix;
+        x_Min,     x_Max                 : Long_Float;
+        y_Min,     y_Max                 : Long_Float;
+        z_Min,     z_Max                 : Long_Float;
+        Value_Min, Value_Max             : Long_Float;
+        Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
+        Transformation_Data_Pointer      : PLpointer) is
+    begin
+        plimagefr(Matrix_To_Pointers(Data), Data'Length(1), Data'Length(2), 
+            x_Min, x_Max, y_Min, y_Max, z_Min, z_Max, Value_Min, Value_Max, 
+            Transformation_Procedure_Pointer, Transformation_Data_Pointer);
+    end Draw_Image_Color_Map_1;
+
+
+    -- plots a 2d image (or a matrix too large for plshade() )
     -- plimage
-    procedure Draw_Image -- No documentation in Chapter 17 of Programmer's Reference Manual
+    procedure Draw_Image_Color_Map_1_Automatic
        (Data : Real_Matrix;
         x_Min, x_Max : Long_Float;
         y_Min, y_Max : Long_Float;
@@ -2792,8 +2809,8 @@ package body PLplot is
         Dxmin, Dxmax : Long_Float;
         Dymin, Dymax : Long_Float) is
     begin
-        plimage(Matrix_To_Pointers(Data), Data'Length(2), Data'Length(1), x_Min, x_Max, y_Min, y_Max, z_Min, z_Max, Dxmin, Dxmax, Dymin, Dymax);
-    end Draw_Image;
+        plimage(Matrix_To_Pointers(Data), Data'Length(1), Data'Length(2), x_Min, x_Max, y_Min, y_Max, z_Min, z_Max, Dxmin, Dxmax, Dymin, Dymax);
+    end Draw_Image_Color_Map_1_Automatic;
 
 
     -- Set up a new line style
@@ -3091,6 +3108,13 @@ package body PLplot is
     begin
         pltr2(x_Grid, y_Grid, x_World, y_World, Data_Pointer);
     end Plot_Transformation_2;
+        
+
+    -- Wait for graphics input event and translate to world coordinates.
+    procedure Get_Cursor(Graphics_Input : out PLGraphicsIn) is
+    begin
+        plGetCursor(Graphics_Input);
+    end Get_Cursor;
 
 
 begin -- package body for PLplot
