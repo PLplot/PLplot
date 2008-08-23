@@ -395,6 +395,16 @@ value ml_plgriddata_bytecode(value* argv, int argn) {
                          argv[5], argv[6]);
 }
 
+/*
+ void
+c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc);
+*/
+// plpoly3 is wrapped by hand because draw has a length of (n - 1) and camlidl
+// does not have a way to indicate this automatically.
+void ml_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT ndraw, PLBOOL *draw, PLBOOL ifcc) {
+    plpoly3(n, x, y, z, draw, ifcc);
+}
+
 /* Translate the integer version of the OCaml variant to the appropriate
    PLplot constant. */
 int translate_parse_option(int parse_option) {

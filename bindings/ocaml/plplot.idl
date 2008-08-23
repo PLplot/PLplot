@@ -65,6 +65,10 @@ along with ocaml-plplot.  If not, see <http://www.gnu.org/licenses/>.
     PLFLT dlong, PLFLT dlat,
     PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
 
+[mlname(plpoly3)] void ml_plpoly3(
+    PLINT n, [size_is(n)] PLFLT *x, [size_is(n)] PLFLT *y, [size_is(n)] PLFLT *z,
+    PLINT ndraw, [size_is(ndraw)] PLBOOL *draw, PLBOOL ifcc);
+
 // The following are for the pltr functions
 [mlname(pltr0)] void ml_pltr0(
     PLFLT x, PLFLT y, [out] PLFLT *tx, [out] PLFLT *ty);

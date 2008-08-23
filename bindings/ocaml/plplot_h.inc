@@ -69,7 +69,6 @@ void c_pl_setcontlabelformat(int lexp, int sigdig);
 [mlname(plpat)] void c_plpat ( int nlin, [in, size_is(nlin)] int * inc, [in, size_is(nlin)] int * del );
 [mlname(plpoin)] void c_plpoin ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, int code );
 [mlname(plpoin3)] void c_plpoin3 ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, [in, size_is(n)] double * z, int code );
-[mlname(plpoly3)] void c_plpoly3 ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, [in, size_is(n)] double * z, [in, size_is(n)] int * draw, int ifcc );
 [mlname(plprec)] void c_plprec ( int setp, int prec );
 [mlname(plpsty)] void c_plpsty ( int patt );
 [mlname(plptex)] void c_plptex ( double x, double y, double dx, double dy, double just, [string] const char * text );

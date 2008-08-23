@@ -297,8 +297,10 @@ c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code);
  void
 c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code);
 
+/*
  void
 c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc);
+*/
 
  void
 c_plprec(PLINT setp, PLINT prec);
