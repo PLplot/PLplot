@@ -62,6 +62,7 @@ static int plshadesCmd	(ClientData, Tcl_Interp *, int, const char **);
 static int plmapCmd	(ClientData, Tcl_Interp *, int, const char **);
 static int plmeridiansCmd (ClientData, Tcl_Interp *, int, const char **);
 static int plvectCmd   (ClientData, Tcl_Interp *, int, const char **);
+static int plranddCmd  (ClientData, Tcl_Interp *, int, const char **);
 
 /*
  * The following structure defines all of the commands in the PLplot/Tcl
@@ -100,6 +101,7 @@ static CmdInfo Cmds[] = {
     {"plshade",		plshadeCmd},
     {"plshades",	plshadesCmd},
     {"plvect",         plvectCmd},
+    {"plrandd",        plranddCmd},
     {NULL,		NULL}
 };
 
@@ -516,6 +518,10 @@ Pltcl_Init( Tcl_Interp *interp )
     register CmdInfo *cmdInfoPtr;
 /* This must be before any other Tcl related calls */
     if (PlbasicInit(interp) != TCL_OK) {
+	Tcl_AppendResult(interp, "Could not find plplot.tcl - please set \
+environment variable PL_LIBRARY to the directory containing that file",
+	(char *) NULL);
+
 	return TCL_ERROR;
     }
 
@@ -2212,6 +2218,26 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
 
     plflush();
     return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plranddCmd
+ *
+ * Return a random number
+\*--------------------------------------------------------------------------*/
+
+static int
+plranddCmd(ClientData clientData, Tcl_Interp *interp,
+	     int argc, const char **argv)
+{
+    if (argc != 1) {
+	Tcl_AppendResult(interp, "wrong # args: ",
+			 argv[0], " takes no arguments", (char *) NULL);
+	return TCL_ERROR;
+    } else {
+	Tcl_SetObjResult(interp, Tcl_NewDoubleObj(plrandd()));
+	return TCL_OK;
+    }
 }
 
 /*--------------------------------------------------------------------------*\

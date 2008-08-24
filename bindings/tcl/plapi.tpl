@@ -563,8 +563,9 @@ text	const char *
 
 # Random number generator based on Mersenne Twister.
 # Obtain real random number in range [0,1].
-
-pltclcmd plrandd PLFLT
+#
+#pltclcmd plrandd PLFLT
+# (AM: does not work, no value return!)
 
 # Replays contents of plot buffer to current device/file.
 
@@ -978,10 +979,10 @@ mod PLINT
 st  PLINT&
 
 ###############################################################################
-# The rest are kept in as reminders to how Tcl API might be improved 
+# The rest are kept in as reminders to how Tcl API might be improved
 
 # Draws a contour plot from data in f(nx,ny).  Is just a front-end to
-# plfcont, with a particular choice for f2eval and f2eval_data. 
+# plfcont, with a particular choice for f2eval and f2eval_data.
 
 # void
 # c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
@@ -991,7 +992,7 @@ st  PLINT&
 
 # Draws a contour plot using the function evaluator f2eval and data stored
 # by way of the f2eval_data pointer.  This allows arbitrary organizations
-# of 2d array data to be used. 
+# of 2d array data to be used.
 
 # void
 # plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
@@ -1009,14 +1010,14 @@ st  PLINT&
 
 # Plot the latitudes and longitudes on the background.
 
-# void 
-# plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+# void
+# plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *),
 # 	    PLFLT dlong, PLFLT dlat,
 # 	    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
 
 # Shade region.
 
-# void 
+# void
 # c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
 # 	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 # 	  PLFLT shade_min, PLFLT shade_max,
@@ -1027,7 +1028,7 @@ st  PLINT&
 # 	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 # 	  PLPointer pltr_data);
 
-# void 
+# void
 # plshade1(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
 # 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 # 	 PLFLT shade_min, PLFLT shade_max,
@@ -1038,12 +1039,12 @@ st  PLINT&
 # 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 # 	 PLPointer pltr_data);
 
-# void 
+# void
 # plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 # 	 PLPointer f2eval_data,
 # 	 PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
 # 	 PLPointer c2eval_data,
-# 	 PLINT nx, PLINT ny, 
+# 	 PLINT nx, PLINT ny,
 # 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 # 	 PLFLT shade_min, PLFLT shade_max,
 # 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -1128,7 +1129,7 @@ st  PLINT&
 
 # Return full pathname for given file if executable
 
-# int 
+# int
 # plFindName(char *p);
 
 # Looks for the specified executable file according to usual search path.
@@ -1137,7 +1138,7 @@ st  PLINT&
 # plFindCommand(char *fn);
 
 # Gets search name for file by concatenating the dir, subdir, and file
-# name, allocating memory as needed. 
+# name, allocating memory as needed.
 
 # void
 # plGetName(char *dir, char *subdir, char *filename, char **filespec);
@@ -1147,7 +1148,7 @@ st  PLINT&
 # int
 # plGetCursor(PLGraphicsIn *gin);
 
-# Translates relative device coordinates to world coordinates. 
+# Translates relative device coordinates to world coordinates.
 
 # int
 # plTranslateCursor(PLGraphicsIn *gin);
