@@ -63,6 +63,7 @@ static int plmapCmd	(ClientData, Tcl_Interp *, int, const char **);
 static int plmeridiansCmd (ClientData, Tcl_Interp *, int, const char **);
 static int plvectCmd   (ClientData, Tcl_Interp *, int, const char **);
 static int plranddCmd  (ClientData, Tcl_Interp *, int, const char **);
+static int plgriddataCmd  (ClientData, Tcl_Interp *, int, const char **);
 
 /*
  * The following structure defines all of the commands in the PLplot/Tcl
@@ -102,6 +103,7 @@ static CmdInfo Cmds[] = {
     {"plshades",	plshadesCmd},
     {"plvect",         plvectCmd},
     {"plrandd",        plranddCmd},
+    {"plgriddata",     plgriddataCmd},
     {NULL,		NULL}
 };
 
@@ -2909,5 +2911,94 @@ plmeridiansCmd( ClientData clientData, Tcl_Interp *interp,
     }
 
     plflush();
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plgriddataCmd
+ *
+ * Processes plgriddata Tcl command.
+\*--------------------------------------------------------------------------*/
+static int
+plgriddataCmd( ClientData clientData, Tcl_Interp *interp,
+	   int argc, const char *argv[] )
+{
+    tclMatrix *arrx, *arry, *arrz, *xcoord, *ycoord, *zvalue;
+    PLINT pts, nx, ny, alg;
+    PLFLT optalg;
+    PLFLT **z;
+
+    int i, j;
+
+    if (argc  != 9 ) {
+	Tcl_AppendResult( interp, "wrong # args: see documentation for ",
+			 argv[0], (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    arrx = Tcl_GetMatrixPtr(interp, argv[1]);
+    arry = Tcl_GetMatrixPtr(interp, argv[2]);
+    arrz = Tcl_GetMatrixPtr(interp, argv[3]);
+
+    xcoord = Tcl_GetMatrixPtr(interp, argv[4]);
+    ycoord = Tcl_GetMatrixPtr(interp, argv[5]);
+
+    zvalue = Tcl_GetMatrixPtr(interp, argv[6]);
+
+    sscanf( argv[7], "%d", &alg);
+    sscanf( argv[8], "%g", &optalg);
+
+    if (arrx == NULL || arrx->dim != 1) {
+        Tcl_AppendResult(interp, argv[0], ": argument 1 should be a \
+one-dimensional matrix - ", argv[1], (char *) NULL);
+        return TCL_ERROR;
+    }
+    if (arry == NULL || arry->dim != 1) {
+        Tcl_AppendResult(interp, argv[0], ": argument 2 should be a \
+one-dimensional matrix - ", argv[2], (char *) NULL);
+        return TCL_ERROR;
+    }
+    if (arrz == NULL || arrz->dim != 1) {
+        Tcl_AppendResult(interp, argv[0], ": argument 3 should be a \
+one-dimensional matrix - ", argv[3], (char *) NULL);
+        return TCL_ERROR;
+    }
+
+    if (xcoord == NULL || xcoord->dim != 1) {
+        Tcl_AppendResult(interp, argv[0], ": argument 4 should be a \
+one-dimensional matrix - ", argv[4], (char *) NULL);
+        return TCL_ERROR;
+    }
+    if (ycoord == NULL || ycoord->dim != 1) {
+        Tcl_AppendResult(interp, argv[0], ": argument 5 should be a \
+one-dimensional matrix - ", argv[5], (char *) NULL);
+        return TCL_ERROR;
+    }
+    if (zvalue == NULL || zvalue->dim != 2) {
+        Tcl_AppendResult(interp, argv[0], ": argument 6 should be a \
+two-dimensional matrix - ", argv[6], (char *) NULL);
+        return TCL_ERROR;
+    }
+
+    pts = arrx->n[0];
+    nx  = zvalue->n[0];
+    ny  = zvalue->n[1];
+
+    /* convert zvalue to 2d-array so can use standard wrap approach
+     * from now on in this code. */
+    plAlloc2dGrid(&z, nx, ny );
+
+    /* Interpolate the data */
+    plgriddata( arrx->fdata, arry->fdata, arrz->fdata, pts,
+       xcoord->fdata, nx, ycoord->fdata, ny, z, alg, optalg );
+
+    /* Copy the result into the matrix */
+    for (i=0; i < nx; i++) {
+       for (j=0; j < ny; j++) {
+          zvalue->fdata[j+zvalue->n[1]*i] = z[i][j];
+       }
+    }
+
+    plFree2dGrid( z, nx, ny );
     return TCL_OK;
 }
