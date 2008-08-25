@@ -156,7 +156,12 @@ typedef int64_t PLINT64;
 /* A reasonable back-up in case stdint.h does not exist on the platform. */
 typedef unsigned int PLUINT;
 typedef int PLINT;
+typedef __int64 PLINT64;
+/*
+typedef unsigned int PLUINT;
+typedef int PLINT;
 typedef long long PLINT64;
+*/
 #endif
 
 /* For identifying unicode characters */
@@ -1089,7 +1094,7 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 PLDLLIMPEXP void
 c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 	 const char *text);
-	 
+	
 /* Plots a 3-d representation of the function z[x][y]. */
 
 PLDLLIMPEXP void
@@ -1178,7 +1183,7 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text);
 /* Prints out "text" at world cooordinate (x,y,z). */
 
 PLDLLIMPEXP void
-c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, 
+c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
 	     PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text);
 
 /* Random number generator based on Mersenne Twister.
@@ -1545,7 +1550,7 @@ c_plszax(PLINT digmax, PLINT digits);
 PLDLLIMPEXP void
 c_pltext(void);
 
-/* Set the format for date / time labels */ 
+/* Set the format for date / time labels */
 
 PLDLLIMPEXP void
 c_pltimefmt(const char *fmt);
