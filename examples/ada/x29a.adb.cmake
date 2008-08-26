@@ -134,7 +134,11 @@ procedure x29a is
     begin
         -- Find the number of seconds since January 1, 1970 to December 1, 2005.
         -- Should be 1_133_395_200.0.
-        xmin := Long_Float(Time_Of(2005, 12, 1, 0.0) - Time_Of(1970, 1,  1, 0.0));
+        -- This method does not work reliably for timezones which were 
+        -- on daylight saving time on Janary 1 1970, e.g. the UK.
+        -- xmin := Long_Float(Time_Of(2005, 12, 1, 0.0) - Time_Of(1970, 1,  1, 0.0));
+        -- For now we will just hard code it
+        xmin := 1133395200.0;
         
         xmax := xmin + Long_Float(x'length) * 60.0 * 60.0 * 24.0;
         ymin := 0.0;
