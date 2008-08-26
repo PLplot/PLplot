@@ -103,9 +103,11 @@ public: /* methods */
   virtual void SetColor0( PLStream *pls )=0;
   virtual void SetColor1( PLStream *pls )=0;
   virtual void SetExternalBuffer( void* buffer )=0;
+#ifdef HAVE_FREETYPE
   virtual void PutPixel( short x, short y, PLINT color )=0;
   virtual void PutPixel( short x, short y )=0;
   virtual PLINT GetPixel( short x, short y )=0;
+#endif // HAVE_FREETYPE
   virtual void ProcessString( PLStream* pls, EscText* args )=0;
   virtual void PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );
   virtual void PSDrawTextToDC( char* utf8_string, bool drawText )=0;
@@ -186,9 +188,11 @@ public: /* methods */
   void SetColor0( PLStream *pls );
   void SetColor1( PLStream *pls );
   void SetExternalBuffer( void* buffer );
+#ifdef HAVE_FREETYPE
   void PutPixel( short x, short y, PLINT color );
   void PutPixel( short x, short y );
   PLINT GetPixel( short x, short y );
+#endif // HAVE_FREETYPE
   void ProcessString( PLStream* pls, EscText* args );
   void PSDrawTextToDC( char* utf8_string, bool drawText );
   void PSSetFont( PLUNICODE fci );
@@ -238,9 +242,11 @@ public: /* methods */
   void SetColor0( PLStream *pls );
   void SetColor1( PLStream *pls );
   void SetExternalBuffer( void* buffer );
+#ifdef HAVE_FREETYPE
   void PutPixel( short x, short y, PLINT color );
   void PutPixel( short x, short y );
   PLINT GetPixel( short x, short y );
+#endif // HAVE_FREETYPE
   void ProcessString( PLStream* pls, EscText* args );
   void PSDrawTextToDC( char* utf8_string, bool drawText );
   void PSSetFont( PLUNICODE fci );
@@ -283,9 +289,11 @@ public: /* methods */
   void SetColor0( PLStream *pls );
   void SetColor1( PLStream *pls );
   void SetExternalBuffer( void* buffer );
+#ifdef HAVE_FREETYPE
   void PutPixel( short x, short y, PLINT color );
   void PutPixel( short x, short y );
   PLINT GetPixel( short x, short y );
+#endif // HAVE_FREETYPE
   void ProcessString( PLStream* pls, EscText* args );
   void PSDrawTextToDC( char* utf8_string, bool drawText );
   void PSSetFont( PLUNICODE fci );

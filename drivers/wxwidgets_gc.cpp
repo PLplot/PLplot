@@ -240,6 +240,8 @@ void wxPLDevGC::SetExternalBuffer( void* dc )
 }
 
 
+#ifdef HAVE_FREETYPE
+
 void wxPLDevGC::PutPixel( short x, short y, PLINT color )
 {
   // Log_Verbose( "%s", __FUNCTION__ );
@@ -276,6 +278,9 @@ PLINT wxPLDevGC::GetPixel( short x, short y )
     return RGB( col.Red(), col.Green(), col.Blue());
 #endif
 }
+
+#endif // HAVE_FREETYPE
+
 
 void wxPLDevGC::PSDrawTextToDC( char* utf8_string, bool drawText )
 {

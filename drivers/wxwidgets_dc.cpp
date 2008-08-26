@@ -212,6 +212,8 @@ void wxPLDevDC::SetExternalBuffer( void* dc )
 }
 
 
+#ifdef HAVE_FREETYPE
+
 void wxPLDevDC::PutPixel( short x, short y, PLINT color )
 {
   const wxPen oldpen=m_dc->GetPen();
@@ -244,6 +246,8 @@ PLINT wxPLDevDC::GetPixel( short x, short y )
     return RGB( col.Red(), col.Green(), col.Blue());
 #endif
 }
+
+#endif // HAVE_FREETYPE
 
 
 void wxPLDevDC::PSDrawTextToDC( char* utf8_string, bool drawText )

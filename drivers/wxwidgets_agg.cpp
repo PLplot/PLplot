@@ -230,6 +230,9 @@ void wxPLDevAGG::SetExternalBuffer( void* dc )
   ownGUI = false;
 }
 
+
+#ifdef HAVE_FREETYPE
+
 void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
 {
   m_buffer->SetRGB( x, y, GetRValue(color), GetGValue(color), GetBValue(color) );   
@@ -244,6 +247,9 @@ PLINT wxPLDevAGG::GetPixel( short x, short y )
 {
   return RGB( m_buffer->GetRed( x, y ), m_buffer->GetGreen( x, y ), m_buffer->GetBlue( x, y ) );    
 }
+
+#endif // HAVE_FREETYPE
+
 
 void wxPLDevAGG::PSDrawTextToDC( char* utf8_string, bool drawText )
 {
