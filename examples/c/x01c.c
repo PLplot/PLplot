@@ -259,7 +259,7 @@ plot1(int do_test)
 /* it does not work in double buffering mode, however */
 
     if (do_test && test_xor) {
-#ifdef HAVE_USLEEP
+#ifdef PL_HAVE_USLEEP
 	plxormod(1, &st); /* enter xor mode */
 	if (st) {
 	  for (i=0; i<60; i++) {

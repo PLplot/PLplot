@@ -183,7 +183,7 @@ include(TestSignalType)
 
 include(CheckFunctionExists)
 check_function_exists(popen HAVE_POPEN)
-check_function_exists(usleep HAVE_USLEEP)
+check_function_exists(usleep PL_HAVE_USLEEP)
 check_function_exists(isinf HAVE_ISINF)
 check_function_exists(finite HAVE_FINITE)
 if(NOT HAVE_FINITE)

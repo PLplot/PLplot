@@ -270,7 +270,7 @@ void x01::plot1( int do_test )
 /* it does not work in double buffering mode, however */
 
   if (do_test && test_xor) {
-#ifdef HAVE_USLEEP
+#ifdef PL_HAVE_USLEEP
     pls->xormod(true, &st); /* enter xor mode */
     if (st) {
       for (i=0; i<60; i++) {

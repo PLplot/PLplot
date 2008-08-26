@@ -159,7 +159,7 @@
 #cmakedefine HAVE_UNISTD_H 1
 
 /* Define if usleep is available */
-#cmakedefine HAVE_USLEEP
+#cmakedefine PL_HAVE_USLEEP
 
 /* Define to 1 if you have the `vfork' function. */
 #cmakedefine HAVE_VFORK 1

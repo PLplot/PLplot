@@ -72,7 +72,7 @@
 #cmakedefine HAVE_UNISTD_H 1
 
 /* Define if usleep is available */
-#cmakedefine HAVE_USLEEP
+#cmakedefine PL_HAVE_USLEEP
 
 /* Define if you want PLplot's float type to be double */
 #cmakedefine PL_DOUBLE

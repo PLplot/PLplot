@@ -123,7 +123,7 @@ main(int argc, const char *argv[])
     dt = 0.1;
 
     for (n = 0; n < nsteps; n++) {
-#ifdef HAVE_USLEEP
+#ifdef PL_HAVE_USLEEP
 	usleep(10000);	/* wait a little (10 ms) to simulate time elapsing */
 #else
 # ifdef HAS_POLL
