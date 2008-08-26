@@ -2,7 +2,7 @@
 # a shell is available.
 
 if(SH_EXECUTABLE)
-
+  set(SCRIPTS)
   set(TEST_ENVIRONMENT
     "EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples PLPLOT_LIB=${CMAKE_SOURCE_DIR}/data/"
     )
@@ -20,14 +20,14 @@ if(SH_EXECUTABLE)
     )
 
   configure_file(test_c.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_c.sh @ONLY)
-  set(SCRIPTS test_c.sh)
+  list(APPEND SCRIPTS test_c.sh)
   add_test(examples_c
     ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
     )
 
   if(ENABLE_cxx)
     configure_file(test_cxx.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_cxx.sh @ONLY)
-    set(SCRIPTS ${SCRIPTS} test_cxx.sh)
+    list(APPEND SCRIPTS test_cxx.sh)
     add_test(examples_cxx
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=cxx"
       )
@@ -35,7 +35,7 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_f77)
     configure_file(test_f77.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_f77.sh @ONLY)
-    set(SCRIPTS ${SCRIPTS} test_f77.sh)
+    list(APPEND SCRIPTS test_f77.sh)
     add_test(examples_f77
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f77"
       )
@@ -43,7 +43,7 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_f95)
     configure_file(test_f95.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_f95.sh @ONLY)
-    set(SCRIPTS ${SCRIPTS} test_f95.sh)
+    list(APPEND SCRIPTS test_f95.sh)
     add_test(examples_f95
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f95"
       )
@@ -55,7 +55,7 @@ if(SH_EXECUTABLE)
       ${CMAKE_CURRENT_BINARY_DIR}/test_java.sh 
       @ONLY
       )
-    set(SCRIPTS ${SCRIPTS} test_java.sh)
+    list(APPEND SCRIPTS test_java.sh)
     add_test(examples_java
       ${SH_EXECUTABLE} -c "${JAVA_TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=java"
       )
@@ -67,7 +67,7 @@ if(SH_EXECUTABLE)
       ${CMAKE_CURRENT_BINARY_DIR}/test_octave.sh 
       @ONLY
       )
-    set(SCRIPTS ${SCRIPTS} test_octave.sh)
+    list(APPEND SCRIPTS test_octave.sh)
     add_test(examples_octave
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=octave"
       )
@@ -85,7 +85,7 @@ if(SH_EXECUTABLE)
       ${CMAKE_CURRENT_BINARY_DIR}/test_python.sh 
       @ONLY
       )
-    set(SCRIPTS ${SCRIPTS} test_python.sh)
+    list(APPEND SCRIPTS test_python.sh)
     add_test(examples_python
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=python"
       )
@@ -93,7 +93,7 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_tcl)
     configure_file(test_tcl.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh @ONLY)
-    set(SCRIPTS ${SCRIPTS} test_tcl.sh)
+    list(APPEND SCRIPTS test_tcl.sh)
     add_test(examples_tcl
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=tcl"
       )
@@ -105,7 +105,7 @@ if(SH_EXECUTABLE)
       ${CMAKE_CURRENT_BINARY_DIR}/test_perl.sh 
       @ONLY
       )
-    set(SCRIPTS ${SCRIPTS} test_perl.sh)
+    list(APPEND SCRIPTS test_perl.sh)
     add_test(examples_perl
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=perl"
       )
@@ -117,7 +117,7 @@ if(SH_EXECUTABLE)
       ${CMAKE_CURRENT_BINARY_DIR}/test_ada.sh 
       @ONLY
       )
-    set(SCRIPTS ${SCRIPTS} test_ada.sh)
+    list(APPEND SCRIPTS test_ada.sh)
     add_test(examples_ada
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ada"
       )
@@ -129,7 +129,7 @@ if(SH_EXECUTABLE)
       ${CMAKE_CURRENT_BINARY_DIR}/test_ocaml.sh 
       @ONLY
       )
-    set(SCRIPTS ${SCRIPTS} test_ocaml.sh)
+    list(APPEND SCRIPTS test_ocaml.sh)
     add_test(examples_ocaml
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=ocaml"
       )
@@ -202,7 +202,7 @@ if(SH_EXECUTABLE)
 
   if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
     configure_file(test_diff.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh @ONLY)
-    set(SCRIPTS test_diff.sh)
+    list(APPEND SCRIPTS test_diff.sh)
     add_test(examples_compare
       ${SH_EXECUTABLE} -c "./test_diff.sh"
       )
