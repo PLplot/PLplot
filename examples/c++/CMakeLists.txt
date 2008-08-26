@@ -77,7 +77,7 @@ foreach(STRING_INDEX ${cxx_STRING_INDICES})
   endif(BUILD_TEST)
 endforeach(STRING_INDEX ${cxx_STRING_INDICES})
 
-if(PLD_wxwidgets)
+if(ENABLE_wxwidgets)
   if(BUILD_TEST)
     add_executable(wxPLplotDemo WIN32 wxPLplotDemo.cpp)
     if(WIN32 AND BUILD_SHARED_LIBS)
