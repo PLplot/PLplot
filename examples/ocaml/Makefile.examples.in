@@ -50,6 +50,7 @@ EXECUTABLES_list = \
 		 x25$(EXEEXT) \
 		 x26$(EXEEXT) \
 		 x27$(EXEEXT) \
+		 x29$(EXEEXT) \
 		 x30$(EXEEXT) \
 
 all: $(EXECUTABLES_list)

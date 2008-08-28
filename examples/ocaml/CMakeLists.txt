@@ -43,6 +43,7 @@ set(ocaml_STRING_INDICES
   "25"
   "26"
   "27"
+  "29"
   "30"
   )
 
