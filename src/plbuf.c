@@ -1151,7 +1151,7 @@ void * plbuf_save(PLStream *pls, void *state)
  */
 void plbuf_restore(PLStream *pls, void *state)
 {
-    struct _state *new_state;
+    struct _state *new_state = (struct _state *)state;
 
 #ifdef BUFFERED_FILE
     pls->plbufFile = new_state->save_file;
