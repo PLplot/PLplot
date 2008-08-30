@@ -58,12 +58,13 @@ proc x21 {{w loopback}} {
     matrix x    f $pts
     matrix y    f $pts
     matrix z    f $pts
-    matrix clev f $pts
+    matrix clev f $nl
     matrix xg   f $xp
     matrix yg   f $yp
     matrix zg   f $xp $yp
 
-    set title {"Cubic Spline Approximation"
+    set title {"-dummy-"
+               "Cubic Spline Approximation"
                "Delaunay Linear Interpolation"
                "Natural Neighbors Interpolation"
                "KNN Inv. Distance Weighted"
@@ -77,9 +78,9 @@ proc x21 {{w loopback}} {
     set xmax 0.6
     set ymax 0.6
 
-    opt 3 = $wmin
-    opt 4 = [expr {double($knn_order)}]
-    opt 5 = $threshold
+    opt 2 = $wmin
+    opt 3 = [expr {double($knn_order)}]
+    opt 4 = $threshold
 
     for {set i 0} {$i < $pts} {incr i} {
         set xt [expr {($xmax-$xmin)*[plrandd]}]
@@ -111,10 +112,12 @@ proc x21 {{w loopback}} {
     }
 
     for {set i 0} {$i < $xp} {incr i} {
-        xg $i = [expr {$xmin + ($xmax-$xmin)*($i-1.)/($xp-1.)}]
+        xg $i = [expr {$xmin + ($xmax-$xmin)*$i/double($xp-1.)}]
+        puts "xg: $i [xg $i]"
     }
     for {set i 0} {$i < $yp} {incr i} {
-        yg $i = [expr {$ymin + ($ymax-$ymin)*($i-1.)/($yp-1.)}]
+        yg $i = [expr {$ymin + ($ymax-$ymin)*$i/double($yp-1.)}]
+        puts "yg: $i [yg $i]"
     }
 
     $w cmd plcol0 1
@@ -131,7 +134,7 @@ proc x21 {{w loopback}} {
         $w cmd pladv 0
         for {set alg 1} {$alg <= 6} {incr alg} {
 
-            $w cmd plgriddata x y z xg yg zg $alg [opt $alg]
+            $w cmd plgriddata x y z xg yg zg $alg [opt [expr {$alg-1}]]
 
 #     - CSA can generate NaNs (only interpolates? #).
 #     - DTLI and NNI can generate NaNs for points outside the convex hull
@@ -144,7 +147,7 @@ proc x21 {{w loopback}} {
 #
 
             if {($alg == $GRID_CSA)  || ($alg == $GRID_DTLI) ||
-                ($alg == $GRID_NNLI) || ($alg == $GRID_NNI} {
+                ($alg == $GRID_NNLI) || ($alg == $GRID_NNI)} {
 
                 for {set i 0} {$i < $xp} {incr i} {
                     for {set j 0} {$j < $yp} {incr j} {
@@ -155,10 +158,10 @@ proc x21 {{w loopback}} {
                             set dist 0.
 
                             set ii [expr {$i-1}]
-                            while {($ii < $i+1) && ($ii < $xp)} {
+                            while {($ii <= $i+1) && ($ii < $xp)} {
                                 set jj [expr {$j-1}]
-                                while {($jj == $j+1) && ($jj < $yp)} {
-                                    if {($ii >= 0) && (jj >= 1) &&
+                                while {($jj <= $j+1) && ($jj < $yp)} {
+                                    if {($ii >= 0) && ($jj >= 0) &&
                                         ![isnan [zg $ii $jj]] } {
                                         if {abs($ii-$i) + abs($jj-$j) == 1)} {
                                             set d 1.
@@ -182,13 +185,13 @@ proc x21 {{w loopback}} {
                 }
             }
 
-            a2mnmx zg xp yp lzmin lzmax xp
+            a2mnmx zg $xp $yp lzmin lzmax
 
-            set lzmin = [min $lzmin $zmin]
-            set lzmax = [max $lzmax $zmax]
+            set lzmin [min $lzmin $zmin]
+            set lzmax [max $lzmax $zmax]
 
-            set lzmin = [expr {lzmin - 0.01}]
-            set lzmax = [expr {lzmax + 0.01}]
+            set lzmin [expr {$lzmin - 0.01}]
+            set lzmax [expr {$lzmax + 0.01}]
 
             $w cmd plcol0 1
             $w cmd pladv $alg
@@ -196,20 +199,19 @@ proc x21 {{w loopback}} {
             if {$k == 0} {
 
                 for {set i 0} {$i < $nl} {incr i} {
-                    clev $i = [expr {$lzmin + ($lzmax-$lzmin)/($nl-1.)*($i-1.)}]
+                    clev $i = [expr {$lzmin + ($lzmax-$lzmin)/double($nl-1.)*$i}]
                 }
-                $w cmd plenv0 xmin xmax ymin ymax 2 0
+                $w cmd plenv0 $xmin $xmax $ymin $ymax 2 0
                 $w cmd plcol0 15
                 $w cmd pllab "X" "Y" [lindex $title $alg]
-                $w cmd plshades zg $defined $xmin $xmax $ymin \
-                     $ymax clev 1 0 1
+                $w cmd plshades zg $xmin $xmax $ymin $ymax clev 1 0 1 2
                 $w cmd plcol0 2
             } else {
 
                 for {set i 0} {$i < $nl} {incr i} {
-                    clev $i = [expr {$lzmin + ($lzmax-$lzmin)/($nl-1.)*($i-1.)}]
+                    clev $i = [expr {$lzmin + ($lzmax-$lzmin)/double($nl-1.)*$i}]
                 }
-                cmap1_init
+                cmap1_init $w
                 $w cmd plvpor 0. 1. 0. 0.9
                 $w cmd plwind -1.1 0.75 -0.65 1.20
 #
@@ -227,12 +229,13 @@ proc x21 {{w loopback}} {
                               "bcdfntu" "Z" 0.5 0
                 $w cmd plcol0 15
                 $w cmd pllab "" "" [lindex $title $alg]
-                $w cmd plot3dc xg yg zg ior ior $DRAW_LINEXY
-                    $MAG_COLOR $BASE_CONT clev
+                $w cmd plot3dc xg yg zg $xp $yp \
+                   [expr {$DRAW_LINEXY|$MAG_COLOR|$BASE_CONT}] clev $nl
             }
         }
     }
 
+    $w cmd plflush
     $w cmd plend
 }
 
@@ -250,41 +253,47 @@ proc min {x y} {
 #----------------------------------------------------------------------------
 #      proc cmap1_init
 #      Set up the colour map
-proc cmap1_init {} {
+proc cmap1_init {w} {
 
-    matrix i i 2
-    matrix h i 2
-    matrix l i 2
-    matrix s i 2
+    matrix i f 2
+    matrix h f 2
+    matrix l f 2
+    matrix s f 2
+    matrix r i 2
 
-    i 1  = 0.
-    i 2  = 1.
+    i 0  = 0.
+    i 1  = 1.
 
-    h 1  = 240.
-    h 2  = 0.
+    h 0  = 240.
+    h 1  = 0.
 
+    l 0  = 0.6
     l 1  = 0.6
-    l 2  = 0.6
 
+    s 0  = 0.8
     s 1  = 0.8
-    s 2  = 0.8
+
+    r 0  = 0
+    r 1  = 0
 
     $w cmd plscmap1n 256
-    $w cmd plscmap1l .false. i h l s
+    $w cmd plscmap1l 0 2 i h l s r
 }
 
 #----------------------------------------------------------------------------
 #      proc a2mnmx
 #      Minimum and the maximum elements of a 2-d array.
 
-proc a2mnmx {f nx ny fmin fmax xdim} {
+proc a2mnmx {f nx ny fmin fmax} {
+    upvar 1 $fmin vmin
+    upvar 1 $fmax vmax
 
-    set fmax [f 0 0]
-    set fmin $fmax
+    set vmax [$f 0 0]
+    set vmin $vmax
     for {set j 0} {$j < $ny} {incr j} {
         for {set i 0} {$i < $nx} {incr i} {
-            set fmax [max $fmax [f $i $j]]
-            set fmin [min $fmin [f $i $j]]
+            set vmax [max $vmax [$f $i $j]]
+            set vmin [min $vmin [$f $i $j]]
         }
     }
 }
