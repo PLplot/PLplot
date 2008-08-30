@@ -182,7 +182,7 @@ proc x20 {{w loopback}} {
 #C          $w cmd plabort "No such file"
             puts "Image could not be read"
             $w cmd plend
-            exit
+            return
         }
     }
 
@@ -210,7 +210,7 @@ proc x20 {{w loopback}} {
 
         if { [get_clip $w $xi $xe $yi $ye] } {
             $w cmd plend
-            $w cmd exit 0
+            return
         }
 
 #
@@ -265,26 +265,25 @@ proc x20 {{w loopback}} {
 
     set widthp1  [expr {$width+1}]
     set heightp1 [expr {$height+1}]
-    matrix xg f $withp1 $heightp1
-    matrix yg f $withp1 $heightp1
+    matrix xg f $widthp1 $heightp1
+    matrix yg f $widthp1 $heightp1
 
     set x0      [expr {0.5*$width}]
     set y0      [expr {0.5*$height}]
     set dy      [expr {0.5*$height}]
     set stretch 0.5
     for { set i 0 } { $i < $widthp1 } { incr i } {
-        for { set j 0 } { $j < $widthp1 } { incr j } {
+        for { set j 0 } { $j < $heightp1 } { incr j } {
             xg $i $j = [expr {$x0 + ($x0-double($i))*(1.0 - $stretch *
                               cos((double($j)-$y0)/$dy*$PI*0.5))}]
             yg $i $j = $j
         }
     }
-    $w cmd plimagefr img_f 0. $width_r 0. $height_r 0. 0. $img_min \
+    $w cmd plimagefr img_f 0. $width 0. $height 0. 0. $img_min \
         $img_max xg yg
     $w cmd pladv 0
 
     $w cmd plend
-    $w cmd exit 0
 }
 
 # -------------------------------------------
@@ -344,10 +343,7 @@ proc read_img {fname img_f_name width_name height_name num_col_name} {
         for { set j 0 } { $j < $h } { incr j } {
             for { set i 0 } { $i < $w } { incr i } {
 
-                binary scan [string index $picture $count] c value
-                if { $value < 0 } {
-                    set value [expr {256+$value}]
-                }
+                binary scan [string index $picture $count] cu value
                 img_f $i [expr {$h-$j-1}] = $value
                 incr count
             }
@@ -487,8 +483,7 @@ proc get_clip {w xi xe yi ye} {
        set get_clip [expr { $gin_keysym == $Q}]
     } else {
 #       driver has no xormod capability, just do nothing
-        get_clip = 0
-        return
+        return 0
     }
 }
 
