@@ -94,12 +94,12 @@ proc x21 {{w loopback}} {
         }
         if {$rosen == 0} {
             set xx [x $i]
-            set yy [x $i]
+            set yy [y $i]
             set r [expr {sqrt($xx*$xx + $yy*$yy)}]
             z $i = [expr {exp(-$r*$r)*cos(2.*$PI*$r)}]
         } else {
             set xx [x $i]
-            set yy [x $i]
+            set yy [y $i]
             z $i = [expr {log((1.-$xx)**2 + 100.*($yy-$xx**2)**2)}]
         }
     }
@@ -113,11 +113,9 @@ proc x21 {{w loopback}} {
 
     for {set i 0} {$i < $xp} {incr i} {
         xg $i = [expr {$xmin + ($xmax-$xmin)*$i/double($xp-1.)}]
-        puts "xg: $i [xg $i]"
     }
     for {set i 0} {$i < $yp} {incr i} {
         yg $i = [expr {$ymin + ($ymax-$ymin)*$i/double($yp-1.)}]
-        puts "yg: $i [yg $i]"
     }
 
     $w cmd plcol0 1
@@ -151,7 +149,7 @@ proc x21 {{w loopback}} {
 
                 for {set i 0} {$i < $xp} {incr i} {
                     for {set j 0} {$j < $yp} {incr j} {
-                        if { [zg $i $j] == NaN } {
+                        if { [isnan [zg $i $j]] } {
 #     average (IDW) over the 8 neighbors
 
                             zg $i $j = 0.
@@ -163,7 +161,7 @@ proc x21 {{w loopback}} {
                                 while {($jj <= $j+1) && ($jj < $yp)} {
                                     if {($ii >= 0) && ($jj >= 0) &&
                                         ![isnan [zg $ii $jj]] } {
-                                        if {abs($ii-$i) + abs($jj-$j) == 1)} {
+                                        if {abs($ii-$i) + abs($jj-$j) == 1} {
                                             set d 1.
                                         } else {
                                             set d 1.4142
@@ -239,6 +237,19 @@ proc x21 {{w loopback}} {
     $w cmd plend
 }
 
+#----------------------------------------------------------------------------
+#      isnan
+#
+# Note: the current string interface makes it necessary to check for the
+# special string "-1.#IND" - at least with MSVC 6.0
+#
+proc isnan {x} {
+    if {$x == NaN || $x eq "-1.#IND"} {
+        return 1
+    } else {
+        return 0
+    }
+}
 
 #----------------------------------------------------------------------------
 #      proc max and min
