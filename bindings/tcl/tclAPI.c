@@ -107,7 +107,7 @@ static CmdInfo Cmds[] = {
     {"plrandd",        plranddCmd},
     {"plgriddata",     plgriddataCmd},
     {"plimage",        plimageCmd},
-    {"plimagefr",      plimageCmd},
+    {"plimagefr",      plimagefrCmd},
     {NULL,		NULL}
 };
 
@@ -3051,12 +3051,6 @@ two-dimensional matrix - ", argv[1], (char *) NULL);
     sscanf( argv[10], "%lg", &value); Dymin = (PLFLT)value;
     sscanf( argv[11], "%lg", &value); Dymax = (PLFLT)value;
 
-    printf( "xmin, etc.: %f %f\n", (float)xmin, (float)xmax );
-    printf( "ymin, etc.: %f %f\n", (float)ymin, (float)ymax );
-    printf( "zmin, etc.: %f %f\n", (float)zmin, (float)zmax );
-    printf( "Dxmin, etc.: %f %f\n", (float)Dxmin, (float)Dxmax );
-    printf( "Dymin, etc.: %f %f\n", (float)Dymin, (float)Dymax );
-
     nx  = zvalue->n[0];
     ny  = zvalue->n[1];
 
@@ -3091,10 +3085,10 @@ plimagefrCmd( ClientData clientData, Tcl_Interp *interp,
     tclMatrix *zvalue;
     tclMatrix *xg;
     tclMatrix *yg;
-    PLINT nx, ny;
-    PLFLT **pidata;
-    PLcGrid cgrid;
-    PLFLT xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax;
+    PLINT      nx, ny;
+    PLFLT    **pidata;
+    PLcGrid2   cgrid2;
+    PLFLT      xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax;
 
     double value;
     int i, j;
@@ -3119,15 +3113,15 @@ two-dimensional matrix - ", argv[1], (char *) NULL);
         xg = Tcl_GetMatrixPtr(interp, argv[10]);
         yg = Tcl_GetMatrixPtr(interp, argv[11]);
 
-        if (xg == NULL || xg->dim != 1) {
+        if (xg == NULL || xg->dim != 2) {
            Tcl_AppendResult(interp, argv[0], ": argument 10 should be a \
-one-dimensional matrix - ", argv[10], (char *) NULL);
+two-dimensional matrix - ", argv[10], (char *) NULL);
            return TCL_ERROR;
         }
 
-        if (yg == NULL || yg->dim != 1) {
+        if (yg == NULL || yg->dim != 2) {
            Tcl_AppendResult(interp, argv[0], ": argument 11 should be a \
-one-dimensional matrix - ", argv[11], (char *) NULL);
+two-dimensional matrix - ", argv[11], (char *) NULL);
            return TCL_ERROR;
         }
     }
@@ -3144,12 +3138,6 @@ one-dimensional matrix - ", argv[11], (char *) NULL);
     nx  = zvalue->n[0];
     ny  = zvalue->n[1];
 
-    printf( "xmin, etc.: %f %f\n", (float)xmin, (float)xmax );
-    printf( "ymin, etc.: %f %f\n", (float)ymin, (float)ymax );
-    printf( "zmin, etc.: %f %f\n", (float)zmin, (float)zmax );
-    printf( "valuemin, etc.: %f %f\n", (float)valuemin, (float)valuemax );
-
-
     plAlloc2dGrid(&pidata, nx, ny);
 
     for ( i = 0 ; i < nx ; i ++ ) {
@@ -3159,16 +3147,29 @@ one-dimensional matrix - ", argv[11], (char *) NULL);
     }
 
     if (xg != NULL) {
-        cgrid.nx = nx+1;
-        cgrid.ny = ny+1;
-        cgrid.xg = xg;
-        cgrid.yg = yg;
+        plAlloc2dGrid(&cgrid2.xg, nx+1, ny+1);
+        plAlloc2dGrid(&cgrid2.yg, nx+1, ny+1);
+
+        cgrid2.nx = nx+1;
+        cgrid2.ny = ny+1;
+        for ( i = 0 ; i <= nx ; i ++ ) {
+            for ( j = 0 ; j <= ny ; j ++ ) {
+                cgrid2.xg[i][j] = xg->fdata[j + i * (ny+1)];
+                cgrid2.yg[i][j] = yg->fdata[j + i * (ny+1)];
+            }
+        }
         c_plimagefr(pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
-             valuemin, valuemax, pltr1, (void *) &cgrid);
+             valuemin, valuemax, pltr2, (void *) &cgrid2);
     } else {
         c_plimagefr(pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
              valuemin, valuemax, pltr0, NULL);
     }
 
     plFree2dGrid(pidata, nx, ny);
+    if (xg != NULL) {
+        plFree2dGrid(cgrid2.xg, nx+1, ny+1);
+        plFree2dGrid(cgrid2.yg, nx+1, ny+1);
+    }
+
+    return TCL_OK;
 }
