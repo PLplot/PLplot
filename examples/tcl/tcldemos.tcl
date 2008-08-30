@@ -20,20 +20,7 @@
 # Tcl scripts compatible.
 #----------------------------------------------------------------------------
 
-for {set i 1} {$i <= 19} {incr i} {
-    set demo x[format "%02d" $i]
-    source $demo.tcl
-    # restore defaults
-    plcol0 1
-    proc $i {} "$demo"
-}
-set i 22
-set demo x[format "%02d" $i]
-source $demo.tcl
-# restore defaults
-plcol0 1
-proc $i {} "$demo"
-for {set i 24} {$i <= 30} {incr i} {
+for {set i 1} {$i <= 30} {incr i} {
     set demo x[format "%02d" $i]
     source $demo.tcl
     # restore defaults
