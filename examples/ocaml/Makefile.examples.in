@@ -48,10 +48,12 @@ EXECUTABLES_list = \
 		 x20$(EXEEXT) \
 		 x21$(EXEEXT) \
 		 x22$(EXEEXT) \
+		 x23$(EXEEXT) \
 		 x24$(EXEEXT) \
 		 x25$(EXEEXT) \
 		 x26$(EXEEXT) \
 		 x27$(EXEEXT) \
+		 x28$(EXEEXT) \
 		 x29$(EXEEXT) \
 		 x30$(EXEEXT) \
 

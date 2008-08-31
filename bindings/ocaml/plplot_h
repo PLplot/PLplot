@@ -171,6 +171,9 @@ c_plgfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax);
 c_plgfnam(char *fnam);
 
  void
+c_plgfont(PLINT *p_family, PLINT *p_style, PLINT *p_weight);
+
+ void
 c_plglevel(PLINT *p_level);
 
  void
@@ -404,6 +407,9 @@ c_plsfci(PLUNICODE fci);
 
  void
 c_plsfnam(const char *fnam);
+
+ void
+c_plsfont(PLINT family, PLINT style, PLINT weight);
 
 /*
  void
