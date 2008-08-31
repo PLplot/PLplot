@@ -100,7 +100,7 @@ proc x21 {{w loopback}} {
         } else {
             set xx [x $i]
             set yy [y $i]
-            z $i = [expr {log((1.-$xx)**2 + 100.*($yy-$xx**2)**2)}]
+            z $i = [expr {log(pow(1.-$xx,2)) + 100.*pow($yy-pow($xx,2),2)}]
         }
     }
 
