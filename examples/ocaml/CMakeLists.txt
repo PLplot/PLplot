@@ -35,8 +35,10 @@ set(ocaml_STRING_INDICES
   "12"
   "13"
   "15"
+  "16"
   "18"
   "19"
+  "20"
   "21"
   "22"
   "24"
@@ -66,6 +68,7 @@ foreach(STRING_INDEX ${ocaml_STRING_INDICES})
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
       COMMAND ${OCAMLC} 
+      -g
       -I ${CMAKE_BINARY_DIR}/bindings/ocaml/${OCAML_BUILD_DIR} 
       -ccopt "-L ${CMAKE_BINARY_DIR}/src -Wl,-rpath -Wl,${CMAKE_BINARY_DIR}/src "
       plplot.cma 

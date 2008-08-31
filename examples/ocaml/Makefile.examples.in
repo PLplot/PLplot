@@ -42,8 +42,10 @@ EXECUTABLES_list = \
 		 x12$(EXEEXT) \
 		 x13$(EXEEXT) \
 		 x15$(EXEEXT) \
+		 x16$(EXEEXT) \
 		 x18$(EXEEXT) \
 		 x19$(EXEEXT) \
+		 x20$(EXEEXT) \
 		 x21$(EXEEXT) \
 		 x22$(EXEEXT) \
 		 x24$(EXEEXT) \
@@ -60,6 +62,6 @@ clean:
 
 
 .ml$(EXEEXT):
-	$(OCAMLC) -I @OCAML_INSTALL_DIR@/plplot -ccopt "-L @CMAKE_INSTALL_LIBDIR@" plplot.cma  -o $@ $< 
+	$(OCAMLC) -g -I @OCAML_INSTALL_DIR@/plplot -ccopt "-L @CMAKE_INSTALL_LIBDIR@" plplot.cma  -o $@ $< 
 
 .SUFFIXES: .ml $(EXEEXT)
