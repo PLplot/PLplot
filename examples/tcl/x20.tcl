@@ -128,8 +128,8 @@ proc x20 {{w loopback}} {
             z $XDIMM1 $i = 1.0
         }
 
-        $w cmd pllab "...around a blue square."" " \
-            "A red border should appear...")
+        $w cmd pllab "...around a blue square." " " \
+            "A red border should appear..."
 
         $w cmd plimage z 1. $XDIM 1. $YDIM 0. 0. 1. $XDIM 1.$YDIM
 
@@ -196,7 +196,7 @@ proc x20 {{w loopback}} {
         $w cmd pllab "Set and drag Button 1 to  re set selection Button 2 to finish." \
             "" "Lena..."
     } else {
-        $w cmd pllab """ ""Lena..."
+        $w cmd pllab "" " " "Lena..."
     }
 
     $w cmd plimage img_f 1. $width 1. $height 0. 0. 1. $width 1. $height
@@ -343,7 +343,12 @@ proc read_img {fname img_f_name width_name height_name num_col_name} {
         for { set j 0 } { $j < $h } { incr j } {
             for { set i 0 } { $i < $w } { incr i } {
 
-                binary scan [string index $picture $count] cu value
+                # The u flag for binary scan is only available
+                # with tcl8.5 onwards - use a simpler method
+                # for compatibility.
+                #binary scan [string index $picture $count] cu value
+                binary scan [string index $picture $count] c value
+                set value [expr ( $value + 0x100 ) % 0x100]
                 img_f $i [expr {$h-$j-1}] = $value
                 incr count
             }
@@ -418,7 +423,7 @@ proc get_clip {w xi xe yi ye} {
           if { $gin_button == 1 } {
              set xxi $gin_wX
              set yyi $gin_wY
-             if { start } {
+             if { $start } {
 #C              clear previous rectangle
                 $w cmd plline 5 sx sy
              }
@@ -431,7 +436,7 @@ proc get_clip {w xi xe yi ye} {
              sy 4 = $yyi
           }
 
-          if { gin%state & 0x100 != 0 } {
+          if { $gin_state & 0x100 != 0 } {
              set xxe $gin_wX
              set yye $gin_wY
              if { $start } {
@@ -450,8 +455,8 @@ proc get_clip {w xi xe yi ye} {
              $w cmd plline 5 sx sy
           }
 
-          if {($gin_button == 3) || ($gin_keysym == $PLK_Return) ||
-              ($gin_keysym == $Q } {
+          if {($gin_button == 3) || ($gin_keysym == $PLK_Return) || \
+              ($gin_keysym == $Q) } {
              if { $start } {
 #               Clear previous rectangle
                 $w cmd plline 5 sx sy
