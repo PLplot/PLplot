@@ -454,24 +454,68 @@ void ml_pltr0(double x, double y, double* tx, double* ty) {
     pltr0(x, y, tx, ty, NULL);
 }
 
-void ml_pltr1(double x, double y, double* tx, double* ty,
-              int nxg, int nyg, double* xg, double* yg) {
+value ml_pltr1(value x, value y, value xg, value yg) {
+    CAMLparam4(x, y, xg, yg);
+    CAMLlocal1(tx_ty);
+    tx_ty = caml_alloc(2, 0);
+    double tx;
+    double ty;
     PLcGrid grid;
-    grid.xg = xg;
-    grid.yg = yg;
-    grid.nx = nxg;
-    grid.ny = nyg;
-    pltr1(x, y, tx, ty, (PLPointer)&grid);
+    grid.xg = (double*)xg;
+    grid.yg = (double*)yg;
+    grid.nx = Wosize_val(xg) / Double_wosize;
+    grid.ny = Wosize_val(yg) / Double_wosize;
+    pltr1(Double_val(x), Double_val(y), &tx, &ty, (PLPointer)&grid);
+
+    // Allocate a tuple and return it with the results
+    Store_field(tx_ty, 0, caml_copy_double(tx));
+    Store_field(tx_ty, 1, caml_copy_double(ty));
+    CAMLreturn(tx_ty);
 }
 
-void ml_pltr2(double x, double y, double* tx, double* ty,
-              int nxg, int nyg, double** xg, double** yg) {
+value ml_pltr2(value x, value y, value xg, value yg) {
+    CAMLparam4(x, y, xg, yg);
+    CAMLlocal1(tx_ty);
+    tx_ty = caml_alloc(2, 0);
+    double** c_xg;
+    double** c_yg;
+    int i;
+    int length1;
+    int length2;
     PLcGrid2 grid;
-    grid.xg = xg;
-    grid.yg = yg;
-    grid.nx = nxg;
-    grid.ny = nyg;
-    pltr2(x, y, tx, ty, (PLPointer)&grid);
+    double tx;
+    double ty;
+
+    /* TODO: As of now, you will probably get a segfault of the xg and yg
+       dimensions don't match up properly. */
+    // Build the grid.
+    // Length of "outer" array
+    length1 = Wosize_val(xg);
+    // Length of the "inner" arrays
+    length2 = Wosize_val(Field(xg, 0)) / Double_wosize;
+    c_xg = malloc(length1 * sizeof(double*));
+    for (i = 0; i < length1; i++) {
+        c_xg[i] = (double*)Field(xg, i);
+    }
+    c_yg = malloc(length1 * sizeof(double*));
+    for (i = 0; i < length1; i++) {
+        c_yg[i] = (double*)Field(yg, i);
+    }
+    grid.xg = c_xg;
+    grid.yg = c_yg;
+    grid.nx = length1;
+    grid.ny = length2;
+
+    pltr2(Double_val(x), Double_val(y), &tx, &ty, (PLPointer)&grid);
+
+    // Clean up
+    free(c_xg);
+    free(c_yg);
+
+    // Allocate a tuple and return it with the results
+    Store_field(tx_ty, 0, caml_copy_double(tx));
+    Store_field(tx_ty, 1, caml_copy_double(ty));
+    CAMLreturn(tx_ty);
 }
 
 /* XXX Non-core functions follow XXX */

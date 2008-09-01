@@ -1,4 +1,4 @@
-void c_pl_setcontlabelformat(int lexp, int sigdig);
+[mlname(pl_setcontlabelformat)] void c_pl_setcontlabelformat(int lexp, int sigdig);
 [mlname(pl_setcontlabelparam)] void c_pl_setcontlabelparam ( double offset, double size, double spacing, int active );
 [mlname(pladv)] void c_pladv ( int page );
 [mlname(plsvect)] void c_plsvect ( [in, size_is(npts)] double * arrowx, [in, size_is(npts)] double * arrowy, int npts, int fill );

@@ -1,5 +1,5 @@
 /*
-Copyright 2007  Hezekiah M. Carty
+Copyright 2007, 2008  Hezekiah M. Carty
 
 This file is part of ocaml-plplot.
 
@@ -73,16 +73,6 @@ along with ocaml-plplot.  If not, see <http://www.gnu.org/licenses/>.
 [mlname(pltr0)] void ml_pltr0(
     PLFLT x, PLFLT y, [out] PLFLT *tx, [out] PLFLT *ty);
 
-[mlname(pltr1)] void ml_pltr1(
-    PLFLT x, PLFLT y, [out] PLFLT *tx, [out] PLFLT *ty,
-    PLINT nxg, PLINT nyg,
-    [in, size_is(nxg)] PLFLT *xg, [in, size_is(nyg)] PLFLT *yg);
-
-[mlname(pltr2)] void ml_pltr2(
-    PLFLT x, PLFLT y, [out] PLFLT *tx, [out] PLFLT *ty,
-    PLINT nxg, PLINT nyg,
-    [in, size_is(nxg, nyg)] PLFLT **xg, [in, size_is(nxg, nyg)] PLFLT **yg);
-
 // XXX The following are non-standard functions which help retrieve some extra
 // information from PLplot.
 int plg_current_col0(void);
@@ -93,31 +83,39 @@ float plgchrht(void);
 #define QUOTEME(x) #x
 #define RAW_ML(x) quote(mlmli, QUOTEME(x));
 
+// pltr callback functions, hand-wrapped
+quote(mlmli,
+    "external pltr1 : float -> float -> float array -> float array -> float * float \
+    = \"ml_pltr1\"");
+quote(mlmli,
+    "external pltr2 : float -> float -> float array array -> float array array -> float * float \
+    = \"ml_pltr2\"");
+
 // Setting the translation function for the contouring and plotting functions
 quote(ml,
-    "let set_pltr (f : float -> float -> (float * float)) =\
+    "let plset_pltr (f : float -> float -> (float * float)) =\
      Callback.register \"caml_plplot_plotter\" f");
-quote(mli, "val set_pltr : (float -> float -> (float * float)) -> unit");
-quote(ml, "let unset_pltr () = Callback.register \"caml_plplot_plotter\" 0");
-quote(mli, "val unset_pltr : unit -> unit");
+quote(mli, "val plset_pltr : (float -> float -> (float * float)) -> unit");
+quote(ml, "let plunset_pltr () = Callback.register \"caml_plplot_plotter\" 0");
+quote(mli, "val plunset_pltr : unit -> unit");
 
 // Setting the translation function for the map drawing functions
 quote(ml,
-    "let set_mapform (f : float -> float -> (float * float)) =\
+    "let plset_mapform (f : float -> float -> (float * float)) =\
      Callback.register \"caml_plplot_mapform\" f");
-quote(mli, "val set_mapform : (float -> float -> (float * float)) -> unit");
+quote(mli, "val plset_mapform : (float -> float -> (float * float)) -> unit");
 quote(ml,
-    "let unset_mapform () = Callback.register \"caml_plplot_mapform\" 0");
-quote(mli, "val unset_mapform : unit -> unit");
+    "let plunset_mapform () = Callback.register \"caml_plplot_mapform\" 0");
+quote(mli, "val plunset_mapform : unit -> unit");
 
 // Setting the "defined" function for the shading functions
 quote(ml,
-"let set_defined (f : float -> float -> int) =\
+"let plset_defined (f : float -> float -> int) =\
   Callback.register \"caml_plplot_defined\" f");
-quote(mli, "val set_defined : (float -> float -> int) -> unit");
+quote(mli, "val plset_defined : (float -> float -> int) -> unit");
 quote(ml,
-    "let unset_defined () = Callback.register \"caml_plplot_defined\" 0");
-quote(mli, "val unset_defined : unit -> unit");
+    "let plunset_defined () = Callback.register \"caml_plplot_defined\" 0");
+quote(mli, "val plunset_defined : unit -> unit");
 
 // Hand-translated GRID_* flags for use with plgriddata
 quote(mlmli, "type plplot_grid_method_type = \
