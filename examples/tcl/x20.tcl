@@ -193,7 +193,7 @@ proc x20 {{w loopback}} {
     $w cmd plenv 1. $width 1. $height 1 -1
 
     if { !$nointeractive } {
-        $w cmd pllab "Set and drag Button 1 to (re)set selection Button 2 to finish." \
+        $w cmd pllab "Set and drag Button 1 to (re)set selection, Button 2 to finish." \
             " " "Lena..."
     } else {
         $w cmd pllab "" " " "Lena..."
