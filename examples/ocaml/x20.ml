@@ -45,18 +45,17 @@ let read_img fname =
     ();
 
   (* This will skip comments. *)
-  let rec ignore_comments initial_pos =
+  let rec ignore_comments_then_get_w_h () =
     let maybe_comment = input_line fp in
     if maybe_comment.[0] = '#' then
-      ignore_comments (pos_in fp)
+      ignore_comments_then_get_w_h ()
     else
-      (* Skip back to the start of the first post-comment line. *)
-      seek_in fp initial_pos
+      (* This line has the width and height in it *)
+      maybe_comment
   in
-  ignore_comments (pos_in fp);
 
   (* width, height num colors *)
-  let w_h_line = input_line fp in
+  let w_h_line = ignore_comments_then_get_w_h () in
   let num_col_line = input_line fp in
   let w, h = Scanf.sscanf w_h_line "%d %d" (fun w h -> w, h) in
   let num_col = Scanf.sscanf num_col_line "%d" (fun n -> n) in
@@ -66,7 +65,7 @@ let read_img fname =
 
   (* Note that under 32bit OCaml, this will only work when reading strings up
      to ~16 megabytes. *)
-  really_input fp img 0 (w * h - 2);
+  really_input fp img 0 (w * h);
 
   close_in fp;
 
