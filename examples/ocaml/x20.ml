@@ -228,7 +228,7 @@ let () =
 
   (* OCaml supports arbitrary coordinate transform callbacks, so take advantage
      of that to use mypltr directly and skip the use of pltr2. *)
-  set_pltr (fun x y -> mypltr x y stretch);
+  plset_pltr (fun x y -> mypltr x y stretch);
   (* Comment the above line, and uncomment the following section to use pltr2 *)
   (*
   let xg = Array.make_matrix (int_of_float width + 1) (int_of_float height + 1) 0.0 in
@@ -240,7 +240,7 @@ let () =
       yg.(i).(j) <- yy;
     done
   done;
-  set_pltr (fun x y -> pltr2 x y xg yg);
+  plset_pltr (fun x y -> pltr2 x y xg yg);
   *)
   plimagefr img_f 0.0 width 0.0 height 0.0 0.0 img_min img_max;
 

@@ -74,7 +74,7 @@ let circulation () =
   plenv xmin xmax ymin ymax 0 0;
   pllab "(x)" "(y)" "#frPLplot Example 22 - circulation";
   plcol0 2;
-  set_pltr (fun x y -> pltr2 x y xg yg);
+  plset_pltr (fun x y -> pltr2 x y xg yg);
   plvect u v 0.0;
   plcol0 1;
   ()
@@ -121,7 +121,7 @@ let constriction () =
   plenv xmin xmax ymin ymax 0 0;
   pllab "(x)" "(y)" "#frPLplot Example 22 - constriction";
   plcol0 2;
-  set_pltr (fun x y -> pltr2 x y xg yg);
+  plset_pltr (fun x y -> pltr2 x y xg yg);
   plvect u v (-0.5);
   plcol0 1;
   ()
@@ -211,7 +211,7 @@ let potential () =
   in
   plcol0 3;
   pllsty 2;
-  set_pltr (fun x y -> pltr2 x y xg yg);
+  plset_pltr (fun x y -> pltr2 x y xg yg);
   plcont z 1 nr 1 ntheta clevel;
   pllsty 1;
   plcol0 1;

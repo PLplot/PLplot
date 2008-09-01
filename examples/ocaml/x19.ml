@@ -88,7 +88,7 @@ let () =
   plenv (-75.) 75. (-75.) 75. 1 (-1);
   (* Now we set mapform19 as our callback.  It will be used for every following
      plmap and plmeridians call until set to something else. *)
-  set_mapform mapform19;
+  plset_mapform mapform19;
   plmap "globe" minx maxx miny maxy;
 
   pllsty 2;

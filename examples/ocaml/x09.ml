@@ -89,9 +89,9 @@ let polar () =
   plcol0 2;
   (* TODO FIXME XXX: This is not correct because pltr2 is not properly
      implemented in OCaml at this point. *)
-  set_pltr (fun x y -> pltr2 x y xg yg);
+  plset_pltr (fun x y -> pltr2 x y xg yg);
   plcont z 1 rpts 1 thetapts lev;
-  unset_pltr ();
+  plunset_pltr ();
   plcol0 1;
   pllab "" "" "Polar Contour Plot";
   ()
@@ -213,7 +213,7 @@ let potential () =
   plbox "" 0.0 0 "" 0.0 0;
 
   plcol0 ncollin;
-  set_pltr (fun x y -> pltr2 x y xg yg);
+  plset_pltr (fun x y -> pltr2 x y xg yg);
   if !nlevelneg > 0 then (
     (* Negative contours *)
     pllsty 2;
@@ -225,7 +225,7 @@ let potential () =
     pllsty 1;
     plcont z 1 prpts 1 pthetapts (Array.sub clevelpos 0 !nlevelpos);
   );
-  unset_pltr ();
+  plunset_pltr ();
 
   (* Draw outer boundary *)
   let px = Array.make pperimeterpts 0.0 in
@@ -298,7 +298,7 @@ let () =
   pl_setcontlabelparam 0.006 0.3 0.1 1;
   plenv (-1.0) 1.0 (-1.0) 1.0 0 0;
   plcol0 2;
-  set_pltr mypltr;
+  plset_pltr mypltr;
   plcont z 1 xpts 1 ypts clevel;
   plstyl mark space;
   plcol0 3;
@@ -311,7 +311,7 @@ let () =
   (* Plot using 1d coordinate transform *)
   plenv (-1.0) 1.0 (-1.0) 1.0 0 0;
   plcol0 2;
-  set_pltr (fun x y -> pltr1 x y cgrid1_xg cgrid1_yg);
+  plset_pltr (fun x y -> pltr1 x y cgrid1_xg cgrid1_yg);
   plcont z 1 xpts 1 ypts clevel;
 
   plstyl mark space;
@@ -324,7 +324,7 @@ let () =
   (* Plot using 2d coordinate transform *)
   plenv (-1.0) 1.0 (-1.0) 1.0 0 0;
   plcol0 2;
-  set_pltr (fun x y -> pltr2 x y cgrid2_xg cgrid2_yg);
+  plset_pltr (fun x y -> pltr2 x y cgrid2_xg cgrid2_yg);
   plcont z 1 xpts 1 ypts clevel;
 
   plstyl mark space;
@@ -335,7 +335,7 @@ let () =
   pllab "X Coordinate" "Y Coordinate" "Streamlines of flow";
 
   (* Unset the plotting coordinate transformation function *)
-  unset_pltr ();
+  plunset_pltr ();
 
   pl_setcontlabelparam 0.006 0.3 0.1 0;
   polar ();
