@@ -41,6 +41,7 @@ set(ocaml_STRING_INDICES
   "20"
   "21"
   "22"
+  "23"
   "24"
   "25"
   "26"
