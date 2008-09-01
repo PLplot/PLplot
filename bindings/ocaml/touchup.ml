@@ -234,6 +234,13 @@ let parameter_attributes function_name types names =
          misc. check (anything, as long as it's a bool)
          attributes, if all of the above are true
       *)
+      (* "PLUNICODE" parameters need at least unsigned int32 width ints,
+         so use Int64.t values to be safe. *)
+      true,
+      pmatch "unsigned int" p_type,
+      true,
+      true,
+      ["int64"];
       (* "get" functions *)
       pmatch "^c_plg" function_name,
       pmatch "\\*" p_type,
