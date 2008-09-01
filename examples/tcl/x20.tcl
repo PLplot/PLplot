@@ -159,7 +159,7 @@ proc x20 {{w loopback}} {
             }
         }
 
-        $w cmd pllab "No an amplitude clipped \"sombrero\"" "" "Saturn?"
+        $w cmd pllab "No, an amplitude clipped \"sombrero\"" "" "Saturn?"
         $w cmd plptex 2. 2. 3. 4. 0. "Transparent image"
         $w cmd plimage z 0. [expr {2.*$PI}] 0.0 [expr {3.*$PI}] \
             0.05 1. 0. [expr {2.*$PI}]  0. [expr {3.*$PI}]
@@ -193,8 +193,8 @@ proc x20 {{w loopback}} {
     $w cmd plenv 1. $width 1. $height 1 -1
 
     if { !$nointeractive } {
-        $w cmd pllab "Set and drag Button 1 to  re set selection Button 2 to finish." \
-            "" "Lena..."
+        $w cmd pllab "Set and drag Button 1 to (re)set selection Button 2 to finish." \
+            " " "Lena..."
     } else {
         $w cmd pllab "" " " "Lena..."
     }
