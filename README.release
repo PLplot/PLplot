@@ -33,7 +33,7 @@ INDEX
 1.4 pdf driver improvements
 1.5 Ada language support
 1.6 Ada examples
-1.7 Ocaml language support
+1.7 OCaml language support
 
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -51,7 +51,7 @@ examples
 2.11 Rename test subdirectory to plplot_test
 2.12 Ada language support
 2.13 Ada examples
-2.14 Ocaml language support
+2.14 OCaml language support
 
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
@@ -115,11 +115,14 @@ implemented examples giving the same results as the corresponding C examples
 (except for example 19 on some platforms and example 21 [currently] on all
 platforms). To give Ada wider testing, we have enabled it by default.
 
-1.7 Ocaml language support
+1.7 OCaml language support
 
-Experimental support for the ocaml language is now included in plplot. 
-As this is experimental it is disabled by default. Currently only some 
-of the examples are available in ocaml.
+Thanks primarily to Hezekiah M. Carty's efforts we now have complete OCaml
+bindings and a complete set of OCaml standard examples implemented for
+PLplot.  These new bindings have been tested by showing the OCaml standard
+examples give identical results to the corresponding C standard examples. We
+now enable OCaml by default for our users and request widespread testing of
+this new feature for PLplot.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -239,9 +242,12 @@ implemented examples giving the same results as the corresponding C examples
 (except for example 19 on some platforms and example 21 [currently] on all
 platforms). To give Ada wider testing, we have enabled it by default.
 
-2.14 Ocaml language support
+2.14 OCaml language support
 
-Experimental support for the ocaml language is now included in plplot. 
-As this is experimental it is disabled by default. Currently only some 
-of the examples are available in ocaml.
+Thanks primarily to Hezekiah M. Carty's efforts we now have complete OCaml
+bindings and a complete set of OCaml standard examples implemented for
+PLplot.  These new bindings have been tested by showing the OCaml standard
+examples give identical results to the corresponding C standard examples. We
+now enable OCaml by default for our users and request widespread testing of
+this new feature for PLplot.
 
