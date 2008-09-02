@@ -34,6 +34,9 @@ INDEX
 1.5 Ada language support
 1.6 Ada examples
 1.7 OCaml language support
+1.8 New plplot functions
+1.9 Update to various language bindings
+1.10 Update to various examples
 
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -52,6 +55,9 @@ examples
 2.12 Ada language support
 2.13 Ada examples
 2.14 OCaml language support
+2.15 New plplot functions
+2.16 Update to various language bindings
+2.17 Update to various examples
 
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
@@ -123,6 +129,42 @@ PLplot.  These new bindings have been tested by showing the OCaml standard
 examples give identical results to the corresponding C standard examples. We
 now enable OCaml by default for our users and request widespread testing of
 this new feature for PLplot.
+
+1.8 New plplot functions
+
+An enhanced version of plimage, plimagefr has been added. This allows images
+to be plotted using coordinate transformation, and also for the dynamic range
+of the plotted values to be altered. Example 20 has been modified to 
+demonstrate this new functionality. 
+
+To ensure consistent results in example 21 between different platforms and 
+language bindings plplot now includes a small random number generator within
+the library. plrandd will return a PLFLT random number in the range 0.0-1.0. 
+plseed will allow the random number generator to be seeded.
+
+1.9 Updates to various language bindings
+
+A concerted effort has been made to bring all the language bindings up to
+date with recently added functions. C, C++, f77, f95, java, octave, 
+python, tcl, ada and ocaml now all support the common plplot API (with the 
+exception of the mapping functions which are not yet implemented for all 
+bindings due to technical issues.) This is a significant step forward for 
+those using languages other than C.
+
+1.10 Updates to various examples
+
+To help test the updates to the language bindings the examples have been 
+thoroughly checked. C, C++, f77, f95, ada and ocaml now contain a full set 
+of non-interactive tests (example 1-30 excluding 14 and 17). Java, octave, 
+python and tcl are missing example 19 because of the issue with the mapping
+functions. The examples have also been checked to ensure consistent results
+between different language bindings. Currently there are still some minor 
+differences in the results for the tcl examples, probably due to rounding 
+errors. The standard test suite for plplot using ctest now carries out a 
+comparison of the postscript output for different languages as a check.
+Some of the tcl examples (example 21) require tcl8.5 for proper support 
+for NaNs.
+
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -250,4 +292,40 @@ PLplot.  These new bindings have been tested by showing the OCaml standard
 examples give identical results to the corresponding C standard examples. We
 now enable OCaml by default for our users and request widespread testing of
 this new feature for PLplot.
+
+2.15 New plplot functions
+
+An enhanced version of plimage, plimagefr has been added. This allows images
+to be plotted using coordinate transformation, and also for the dynamic range
+of the plotted values to be altered. Example 20 has been modified to 
+demonstrate this new functionality. 
+
+To ensure consistent results in example 21 between different platforms and 
+language bindings plplot now includes a small random number generator within
+the library. plrandd will return a PLFLT random number in the range 0.0-1.0. 
+plseed will allow the random number generator to be seeded.
+
+2.16 Updates to various language bindings
+
+A concerted effort has been made to bring all the language bindings up to
+date with recently added functions. C, C++, f77, f95, java, octave, 
+python, tcl, ada and ocaml now all support the common plplot API (with the 
+exception of the mapping functions which are not yet implemented for all 
+bindings due to technical issues.) This is a significant step forward for 
+those using languages other than C.
+
+2.17 Updates to various examples
+
+To help test the updates to the language bindings the examples have been 
+thoroughly checked. C, C++, f77, f95, ada and ocaml now contain a full set 
+of non-interactive tests (example 1-30 excluding 14 and 17). Java, octave, 
+python and tcl are missing example 19 because of the issue with the mapping
+functions. The examples have also been checked to ensure consistent results
+between different language bindings. Currently there are still some minor 
+differences in the results for the tcl examples, probably due to rounding 
+errors. The standard test suite for plplot using ctest now carries out a 
+comparison of the postscript output for different languages as a check.
+Some of the tcl examples (example 21) require tcl8.5 for proper support 
+for NaNs.
+
 
