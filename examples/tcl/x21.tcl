@@ -242,9 +242,10 @@ proc x21 {{w loopback}} {
 #
 # Note: the current string interface makes it necessary to check for the
 # special string "-1.#IND" - at least with MSVC 6.0
+# On linux it looks like the relevant string is nan.
 #
 proc isnan {x} {
-    if {$x == NaN || $x eq "-1.#IND"} {
+    if {$x == NaN || $x eq "nan" || $x eq "-1.#IND"} {
         return 1
     } else {
         return 0
