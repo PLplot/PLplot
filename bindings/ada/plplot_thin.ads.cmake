@@ -1034,9 +1034,8 @@ package PLplot_Thin is
 
 
     -- definitions for the opt argument in plot3dc() and plsurf3d()
-
     -- DRAW_LINEX *must* be 1 and DRAW_LINEY *must* be 2, because of legacy code!
- 
+    -- fix this Why is there no type declared for these?
     DRAW_LINEX  : constant Integer := 1;   -- draw lines parallel to the X axis
     DRAW_LINEY  : constant Integer := 2;   -- draw lines parallel to the Y axis
     DRAW_LINEXY : constant Integer := 3;   -- draw lines parallel to both the X and Y axis

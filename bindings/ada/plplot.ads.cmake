@@ -67,6 +67,9 @@ package PLplot is
     -- Make Mask_Function_Pointer_Type available to the user so that s/he doesn't 
     -- have to "with" PLplot_Thin. Note that it is also used herein.
     subtype Mask_Function_Pointer_Type is PLplot_Thin.Mask_Function_Pointer_Type;
+    
+    -- "Rename" callback for map functions plmap and plmeridians.
+    subtype Map_Form_Function_Pointer_Type is Plplot_Thin.Map_Form_Function_Pointer_Type;
 
 --------------------------------------------------------------------------------
 --        Types and constants for thick binding                               --
@@ -218,6 +221,7 @@ package PLplot is
 
     -- definitions for the opt argument in plot3dc() and plsurf3d()
     -- DRAW_LINEX *must* be 1 and DRAW_LINEY *must* be 2, because of legacy code!
+    -- fix this Why is there no type declared for these?
     No_3D_Options             : constant Integer := 0;   -- None of the options
     Lines_Parallel_To_X       : constant Integer := 1;   -- draw lines parallel to the X axis
     Lines_Parallel_To_Y       : constant Integer := 2;   -- draw lines parallel to the Y axis
@@ -281,6 +285,7 @@ package PLplot is
 --------------------------------------------------------------------------------
 
 
+    -- fix this Why is there no style here?
     -- Flags for the opt argument in plhist                                   --
     Histogram_Default         : constant Integer := 0;
     Histogram_Noscaling       : constant Integer := 1;

@@ -3,7 +3,7 @@
 --	Illustrates backdrop plotting of world, US maps.
 --	Contributed by Wesley Ebisuzaki.
 
--- Copyright (C) 2007 Jerry Bauck
+-- Copyright (C) 2008 Jerry Bauck
 
 -- This file is part of PLplot.
 

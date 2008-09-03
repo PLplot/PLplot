@@ -52,7 +52,7 @@ package body PLplot_Thin is
     -- discussed in "Ada as a Second Language," Second Edition, by Norman H. 
     -- Cohen, Section 19.3, for portability. This should remove GNAT dependence.
     
-    -- Question: Will Unchecked_Access, a normal Ada feature, work instead?
+    -- Question: Will Unchecked_Access, a normal Ada feature, work instead? fix this
 
     function Matrix_To_Pointers(x : Real_Matrix) return Long_Float_Pointer_Array is
         Index_Of_First_Column : Integer := x'First(2);
