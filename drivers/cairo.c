@@ -1713,7 +1713,7 @@ void plD_init_extcairo (PLStream *pls)
   plD_bop_extcairo()
   
   Set up for the next page.
-  ----------------------------------------------------------------------
+  ----------------------------------------------------------------------*/
 
 void plD_bop_extcairo(PLStream *pls)
 {
@@ -1759,7 +1759,7 @@ void plD_esc_extcairo(PLStream *pls, PLINT op, void *ptr)
       /* Set graphics aliasing */
       cairo_set_antialias(aStream->cairoContext, aStream->graphics_anti_aliasing);
 
-      /* Invert the surface so that the graphs are drawn right side up.
+      /* Invert the surface so that the graphs are drawn right side up. */
       rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
 
       /* Should adjust plot size to fit in the given cairo context?
