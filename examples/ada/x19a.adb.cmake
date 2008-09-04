@@ -24,13 +24,11 @@
 with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot_Traditional,
-    PLplot_Auxiliary;
+    PLplot_Traditional;
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot_Traditional,
-    PLplot_Auxiliary;
+    PLplot_Traditional;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
@@ -43,7 +41,7 @@ procedure x19a is
 
     -- This spec is necessary in order to enforce C calling conventions, used 
     -- in the callback by intervening C code.
-    procedure mapform19(n : Integer; x, y : in out Real_Vector); 
+    procedure mapform19(n : Integer; x, y : in out Map_Form_Constrained_Array); 
     pragma Convention(C, mapform19);
 
     -- Defines specific coordinate transformation for example 19.
@@ -57,7 +55,7 @@ procedure x19a is
     -- wrapper function inside plmap and plmeridians that has the "correct" C 
     -- argument list, and then pass a pointer to _that_ when calling plmap and
     -- plmeridian.
-    procedure mapform19(n : Integer; x, y : in out Real_Vector) is 
+    procedure mapform19(n : Integer; x, y : in out Map_Form_Constrained_Array) is 
         xp, yp, radius : Long_Float;
     begin
          -- DO NOT use x'range for this loop because the C function which calls 

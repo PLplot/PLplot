@@ -24,14 +24,12 @@ with
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Auxiliary;
+    PLplot;
 use
     Ada.Text_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Auxiliary;
+    PLplot;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
 -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
@@ -43,7 +41,6 @@ procedure xthick01a is
     xscale, yscale, xoff, yoff : Long_Float;
     fontset : Integer := 1;
     notes : String := "Make sure you get it right!";
-    ver : String_80;
     
     procedure plot1 is
         xmin, xmax, ymin, ymax : Long_Float;

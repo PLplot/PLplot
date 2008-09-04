@@ -21,11 +21,9 @@
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 with
-    PLplot_Auxiliary,
     Ada.Text_IO,
     System.Address_To_Access_Conversions;
 use
-    PLplot_Auxiliary,
     Ada.Text_IO;
 
 package body PLplot_Thin is

@@ -33,7 +33,6 @@
 -- this is right.
 
 with
-    PLplot_Auxiliary,
     Interfaces.C,
     Interfaces.C.Pointers,
     System,
@@ -41,7 +40,6 @@ with
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;
 use
-    PLplot_Auxiliary,
     Interfaces.C,
     Ada.Text_IO,
     Ada.Strings.Bounded,
@@ -59,8 +57,9 @@ package PLplot_Thin is
     PLtrue  : constant Integer := 1;
     subtype PLBOOL is Integer range PLfalse..PLtrue;
     type PLUNICODE is mod 2**32;
---    subtype Unsigned_Int is mod 2**32; -- for e.g. plseed
---    subtype Unsigned_Int is Integer range 0 .. 2**31 - 1; -- for e.g. plseed fix this
+
+    type Boolean_Array_1D is array (Integer range <>) of Boolean;
+    type Integer_Array_1D is array (Integer range <>) of Integer;
 
     subtype PL_Integer_Array  is Integer_Array_1D;
     subtype PL_Float_Array    is Real_Vector;
@@ -127,13 +126,24 @@ package PLplot_Thin is
     -- Returns 1 if point is to be plotted, 0 if not.
     type Mask_Function_Pointer_Type is access
         function (x, y : PLFLT) return Integer;
-        
+
+    -- Make a constrained array for use by plmap (Draw_Map) and 
+    -- plmeridians (Draw_Latitude_Longitude). The reason that this is necessary 
+    -- is that the callback structure for those routines requires that a C 
+    -- subprogram calls an Ada subroutine *with an unconstrained array*. This 
+    -- seems to be unique in the PLplot bindings. For a discussion of this, see 
+    -- http://groups.google.com/group/comp.lang.ada/browse_thread/thread/0e5a3abec221df39?hl=en#
+    -- If the user needs to have a larger array, it will require making this 
+    -- array longer, but we try to anticipate the most extreme situation here 
+    -- without being too wasteful. Note that the user will typically use only a 
+    -- portion of the array, beginning at index 0.
+    subtype Map_Form_Constrained_Array is Real_Vector(0 .. 2000);
 
     -- Access-to-procedure type for plotting map outlines (continents).
     -- Length_Of_x is x'Length or y'Length; this is the easiest way to match the 
     -- C formal arguments.
     type Map_Form_Function_Pointer_Type is access
-        procedure (Length_Of_x : Integer; x, y : in out Real_Vector);
+        procedure (Length_Of_x : Integer; x, y : in out Map_Form_Constrained_Array);
     pragma Convention(Convention => C, Entity => Map_Form_Function_Pointer_Type);
     
     

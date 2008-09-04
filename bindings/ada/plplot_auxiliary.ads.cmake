@@ -53,8 +53,8 @@ package PLplot_Auxiliary is
 @Ada_Is_Not_2007_Vector_Matrix_Declarations@
 
     -- Other array types for the bindings.
-    type Boolean_Array_1D is array (Integer range <>) of Boolean;
-    type Integer_Array_1D is array (Integer range <>) of Integer;
+--    type Boolean_Array_1D is array (Integer range <>) of Boolean;
+--    type Integer_Array_1D is array (Integer range <>) of Integer;
 
 
 --------------------------------------------------------------------------------
@@ -82,15 +82,5 @@ package PLplot_Auxiliary is
     
     -- Find maximum in a 2D array.
     function Matrix_Max(x : Real_Matrix) return Long_Float;
-
-
---------------------------------------------------------------------------------
---             String things useful in compiling the examples                 --
---------------------------------------------------------------------------------
-
-    -- Convenient string of length 80
-    package Bounded_String_80 is
-        new Ada.Strings.Bounded.Generic_Bounded_Length(80);
-    subtype String_80 is Bounded_String_80.Bounded_String;
 
 end PLplot_Auxiliary;

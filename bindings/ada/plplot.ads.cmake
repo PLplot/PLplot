@@ -22,14 +22,12 @@
 
 with
     PLplot_Thin,
-    PLplot_Auxiliary,
     System,
     Interfaces.C.Pointers,
     Ada.Strings.Unbounded,
     Ada.Strings.Maps;
 use
     PLplot_Thin,
-    PLplot_Auxiliary,
     Ada.Strings.Unbounded;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
@@ -38,6 +36,10 @@ use
 @Ada_Is_2007_With_and_Use_Numerics@
 
 package PLplot is
+
+    -- "Rename" some useful types from the thin binding.
+    subtype Boolean_Array_1D is PLplot_Thin.Boolean_Array_1D;
+    subtype Integer_Array_1D is PLplot_Thin.Integer_Array_1D;
 
     -- "Rename" some types mainly used for contour plots and the like so that 
     -- user programs can see them without with-ing PLplot_thin. It might be 
@@ -70,6 +72,9 @@ package PLplot is
     
     -- "Rename" callback for map functions plmap and plmeridians.
     subtype Map_Form_Function_Pointer_Type is Plplot_Thin.Map_Form_Function_Pointer_Type;
+    
+    -- "Rename" the necessarily constrained array for mapping longitudes and latitudes.
+    subtype Map_Form_Constrained_Array is PLplot_Thin.Map_Form_Constrained_Array;
 
 --------------------------------------------------------------------------------
 --        Types and constants for thick binding                               --
