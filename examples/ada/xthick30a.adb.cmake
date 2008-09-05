@@ -24,11 +24,13 @@ with
     System,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
+    PLplot_Auxiliary,
     PLplot;
 use
     System,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
+    PLplot_Auxiliary,
     PLplot;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 

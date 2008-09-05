@@ -35,12 +35,14 @@
 with
     Interfaces.C,
     Interfaces.C.Pointers,
+    PLplot_Auxiliary,
     System,
     Ada.Text_IO,
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;
 use
     Interfaces.C,
+    PLplot_Auxiliary,
     Ada.Text_IO,
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;

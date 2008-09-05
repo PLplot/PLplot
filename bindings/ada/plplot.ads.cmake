@@ -22,12 +22,14 @@
 
 with
     PLplot_Thin,
+    PLplot_Auxiliary,
     System,
     Interfaces.C.Pointers,
     Ada.Strings.Unbounded,
     Ada.Strings.Maps;
 use
     PLplot_Thin,
+    PLplot_Auxiliary,
     Ada.Strings.Unbounded;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 

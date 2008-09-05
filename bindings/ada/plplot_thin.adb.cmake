@@ -22,8 +22,10 @@
 
 with
     Ada.Text_IO,
+    PLplot_Auxiliary,
     System.Address_To_Access_Conversions;
 use
+    PLplot_Auxiliary,
     Ada.Text_IO;
 
 package body PLplot_Thin is

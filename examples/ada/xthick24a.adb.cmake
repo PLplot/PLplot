@@ -21,8 +21,10 @@
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 with
+    PLplot_Auxiliary,
     PLplot;
 use
+    PLplot_Auxiliary,
     PLplot;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 

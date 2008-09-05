@@ -52,10 +52,6 @@ package PLplot_Auxiliary is
 --    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
 @Ada_Is_Not_2007_Vector_Matrix_Declarations@
 
-    -- Other array types for the bindings.
---    type Boolean_Array_1D is array (Integer range <>) of Boolean;
---    type Integer_Array_1D is array (Integer range <>) of Integer;
-
 
 --------------------------------------------------------------------------------
 --            Utility procedures useful in compiling the examples             --

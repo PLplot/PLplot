@@ -25,6 +25,7 @@ with
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings,
     Ada.Strings.Fixed,
+    PLplot_Auxiliary,
     PLplot_Traditional;
 
 use
@@ -32,6 +33,7 @@ use
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings,
     Ada.Strings.Fixed,
+    PLplot_Auxiliary,
     PLplot_Traditional;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 

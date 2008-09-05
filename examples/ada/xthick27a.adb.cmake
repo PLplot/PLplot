@@ -22,9 +22,11 @@
 
 with
     Ada.Numerics.Long_Elementary_Functions,
+    PLplot_Auxiliary,
     PLplot;
 use
     Ada.Numerics.Long_Elementary_Functions,
+    PLplot_Auxiliary,
     PLplot;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 

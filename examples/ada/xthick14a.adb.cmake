@@ -31,6 +31,7 @@ with
     Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
+    PLplot_Auxiliary,
     PLplot;
 use
     Ada.Text_IO,
@@ -39,6 +40,7 @@ use
     Ada.Strings.Fixed,
     Ada.Strings.Unbounded,
     Ada.Numerics.Long_Elementary_Functions,
+    PLplot_Auxiliary,
     PLplot;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 

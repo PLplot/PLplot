@@ -26,6 +26,7 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Numerics.Float_Random,
+    PLplot_Auxiliary,
     PLplot_Traditional;
 use
     Ada.Text_IO,
@@ -33,6 +34,7 @@ use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Numerics.Float_Random,
+    PLplot_Auxiliary,
     PLplot_Traditional;
 
 -- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
