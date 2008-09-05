@@ -1,0 +1,20 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 02_unset-python-path.dpatch by  <andrewross@users.sourceforge.net>
+##
+## DP: No need to explicitly set python path with debian since the
+## DP: default path is correct. This ensure the examples work with
+## DP: multiple version of python.
+
+@DPATCH@
+
+--- plplot/examples/python/CMakeLists.txt.old
++++ plplot/examples/python/CMakeLists.txt
+@@ -147,7 +147,7 @@
+ @ONLY
+ )
+ 
+-set(python_location1 ${PYTHON_INSTDIR})
++set(python_location1)
+ set(python_location2)
+ configure_file(
+ ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake

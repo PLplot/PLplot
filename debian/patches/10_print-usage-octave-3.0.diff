@@ -1,0 +1,38 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 10_print-usage-octave-3.0.dpatch by Rafael Laboissiere <rafael@debian.org>
+##
+## DP: Use correct call to print_usage in wrap_octave.pl when compiling
+## DP: against octave3.0
+
+@DPATCH@
+
+--- plplot-5.9.0.orig/bindings/octave/matwrap/wrap_octave.pl
++++ plplot-5.9.0/bindings/octave/matwrap/wrap_octave.pl
+@@ -10,7 +10,7 @@
+ # Copyright (c) 1997 Gary R. Holt.  This is distributed under the terms of the 
+ # perl artistic license (http://language.perl.com/misc/Artistic.html).
+ #
+-# Modifications 2007 Andrew Ross 
++# Modifications 2007 Andrew Ross
+ # This version contains three local fixes for plplot
+ # 1) Change _dim function to allow a zero length array (required by plstyl)
+ # 2) Alter string to std::string for compatibility with gcc3.2 and later
+@@ -18,6 +18,9 @@
+ #    from v2.1 to v2.9. This requires a file octave_version.pl which defines
+ #    the variable octave_version.
+ #
++# Modifications 2008 Rafael Laboissiere
++# Change 3) above is adapted for Octave v3.0
++
+ 
+ package octave;			# Everything should be in this package.
+ 
+@@ -158,7 +161,7 @@
+ 				# Permissible not to specify output args
+ 				# if there is only one.
+   @ver = split(/\./,$octave_version);
+-  if ($ver[0] >= 2 && $ver[1] >= 9) {
++  if ($ver[0] >= 3 || ($ver[0] >= 2 && $ver[1] >= 9)) {
+     $retstr .= (")\n" .
+ 	      "  {\n" .
+ 	      "    print_usage();\n" . # Give an error.

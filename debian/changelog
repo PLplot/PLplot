@@ -1,3 +1,9 @@
+plplot (5.9.0-9) UNRELEASED; urgency=low
+
+  * Switch from dpatch to quilt
+
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 05 Sep 2008 19:50:35 +0200
+
 plplot (5.9.0-8) unstable; urgency=low
 
   [ Andrew Ross ]
