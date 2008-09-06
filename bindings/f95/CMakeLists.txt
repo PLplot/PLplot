@@ -110,9 +110,12 @@ sfstubs.h
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   SET(plplotf95${LIB_TAG}_LIB_SRCS ${plplotf95${LIB_TAG}_LIB_SRCS} plplotf95.def)
+endif(WIN32 AND BUILD_SHARED_LIBS)
+
+if(BUILD_SHARED_LIBS)
   SET_SOURCE_FILES_PROPERTIES(${plplotf95c${LIB_TAG}_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
-endif(WIN32 AND BUILD_SHARED_LIBS)
+endif(BUILD_SHARED_LIBS)
 
 # Explicitly include dependencies for sfstubsf95.f90
 include(AddFileDependencies)

@@ -48,10 +48,10 @@ if(ENABLE_wxwidgets)
   # Create plplotwxwidgets[d] library
   add_library(plplotwxwidgets${LIB_TAG} ${plplotwxwidgets${LIB_TAG}_LIB_SRCS})
 
-  if(WIN32 AND BUILD_SHARED_LIBS)
+  if(BUILD_SHARED_LIBS)
     SET_SOURCE_FILES_PROPERTIES(${plplotwxwidgets${LIB_TAG}_LIB_SRCS}
         PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
-  endif(WIN32 AND BUILD_SHARED_LIBS)
+  endif(BUILD_SHARED_LIBS)
 
   INCLUDE_DIRECTORIES( ${wxWidgets_INCLUDE_DIRS} )
   ADD_DEFINITIONS( ${wxWidgets_DEFINITIONS} )

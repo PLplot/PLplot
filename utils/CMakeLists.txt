@@ -32,11 +32,11 @@ endif(USE_RPATH)
 if(PLD_plmeta)
   add_executable(plrender plrender.c)
 
-  if(WIN32 AND BUILD_SHARED_LIBS)
+  if(BUILD_SHARED_LIBS)
     SET_SOURCE_FILES_PROPERTIES(plrender.c
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
       )
-  endif(WIN32 AND BUILD_SHARED_LIBS)
+  endif(BUILD_SHARED_LIBS)
   
   target_link_libraries(plrender plplot${LIB_TAG})
 
@@ -52,10 +52,10 @@ endif(PLD_plmeta)
 
 add_executable(pltek pltek.c)
 
-if(WIN32 AND BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
   SET_SOURCE_FILES_PROPERTIES(pltek.c
     PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-endif(WIN32 AND BUILD_SHARED_LIBS)
+endif(BUILD_SHARED_LIBS)
 
 target_link_libraries(pltek plplot${LIB_TAG})
 

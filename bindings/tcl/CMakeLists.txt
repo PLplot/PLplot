@@ -41,12 +41,15 @@ libplplottcltk${LIB_TAG}_COMPILE_FLAGS
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   SET(libvar "tclmatrix${LIB_TAG}_LIB_SRCS")
-  SET_SOURCE_FILES_PROPERTIES(${${libvar}}
-      PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
   include_directories(
       ${CMAKE_SOURCE_DIR}/include
   )
 endif(WIN32 AND BUILD_SHARED_LIBS)
+
+if(BUILD_SHARED_LIBS)
+  SET_SOURCE_FILES_PROPERTIES(${${libvar}}
+      PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
+endif(BUILD_SHARED_LIBS)
 
 add_library(tclmatrix${LIB_TAG} ${tclmatrix${LIB_TAG}_LIB_SRCS})
 target_link_libraries(tclmatrix${LIB_TAG} ${TCL_LIBRARY})

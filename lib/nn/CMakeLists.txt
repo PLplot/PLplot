@@ -31,11 +31,11 @@ nnpi.c
 nncommon.c
 )
 
-if(WIN32 AND BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
   SET_SOURCE_FILES_PROPERTIES( ${csironn_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DMAKINGNNDLL"
   )
-endif(WIN32 AND BUILD_SHARED_LIBS)
+endif(BUILD_SHARED_LIBS)
 
 add_library(csironn ${csironn_LIB_SRCS})
 set_target_properties(
