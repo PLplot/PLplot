@@ -62,7 +62,7 @@
 
 /* Device info */
 
-const char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:9:wingcc";
+PLDLLEXPORT const char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:9:wingcc";
 
 /* Struct to hold device-specific info. */
 
@@ -112,7 +112,7 @@ typedef struct {
   } wingcc_Dev;
 
 
-void plD_dispatch_init_wingcc	( PLDispatchTable *pdt );
+PLDLLEXPORT void plD_dispatch_init_wingcc	( PLDispatchTable *pdt );
 
 void plD_init_wingcc       (PLStream *);
 void plD_line_wingcc       (PLStream *, short, short, short, short);
@@ -133,10 +133,6 @@ static void plD_set_pixelV_wingcc (PLStream *pls, short x, short y,PLINT colour)
 static void init_freetype_lv1 (PLStream *pls);
 static void init_freetype_lv2 (PLStream *pls);
 
-extern void plD_FreeType_init(PLStream *pls);
-extern void plD_render_freetype_text (PLStream *pls, EscText *args);
-extern void plD_FreeType_Destroy(PLStream *pls);
-extern void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org);
 #endif
 
 

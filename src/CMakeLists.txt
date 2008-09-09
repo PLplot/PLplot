@@ -185,7 +185,8 @@ if(HAVE_QHULL)
 endif(HAVE_QHULL)
 
 if(WITH_FREETYPE)
-  set_source_files_properties(plfreetype.c PROPERTIES COMPILE_FLAGS "-I${FREETYPE_INCLUDE_DIR}")
+  get_source_file_property(PLFREETYPE_COMPILE_PROPS plfreetype.c COMPILE_FLAGS)
+  set_source_files_properties(plfreetype.c PROPERTIES COMPILE_FLAGS "${PLFREETYPE_COMPILE_PROPS} -I${FREETYPE_INCLUDE_DIR}")
   set(
   libplplot${LIB_TAG}_LINK_LIBRARIES
   ${libplplot${LIB_TAG}_LINK_LIBRARIES}

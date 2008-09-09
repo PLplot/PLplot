@@ -23,7 +23,7 @@
 
 /* Device info */
 
-const char* plD_DEVICE_INFO_tek = 
+PLDLLEXPORT const char* plD_DEVICE_INFO_tek = 
 #if defined(PLD_conex)
   "conex:Conex vt320/tek emulator:1:tek:24:conex\n"
 #endif
@@ -178,7 +178,7 @@ static void tek_dispatch_init_helper( PLDispatchTable *pdt,
     pdt->pl_esc      = (plD_esc_fp)      plD_esc_tek;
 }
 
-void plD_dispatch_init_xterm	( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_xterm	( PLDispatchTable *pdt )
 {
     tek_dispatch_init_helper( pdt,
                               "Xterm Window", "xterm",
@@ -186,7 +186,7 @@ void plD_dispatch_init_xterm	( PLDispatchTable *pdt )
                               (plD_init_fp) plD_init_xterm );
 }
 
-void plD_dispatch_init_tekt	( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_tekt	( PLDispatchTable *pdt )
 {
     tek_dispatch_init_helper( pdt,
                               "Tektronix Terminal (4010)", "tekt",
@@ -194,7 +194,7 @@ void plD_dispatch_init_tekt	( PLDispatchTable *pdt )
                               (plD_init_fp) plD_init_tekt );
 }
 
-void plD_dispatch_init_tek4107t	( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_tek4107t	( PLDispatchTable *pdt )
 {
     tek_dispatch_init_helper( pdt,
                               "Tektronix Terminal (4105/4107)", "tek4107t",
@@ -202,7 +202,7 @@ void plD_dispatch_init_tek4107t	( PLDispatchTable *pdt )
                               (plD_init_fp) plD_init_tek4107t );
 }
 
-void plD_dispatch_init_mskermit	( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_mskermit	( PLDispatchTable *pdt )
 {
     tek_dispatch_init_helper( pdt,
                               "MS-Kermit emulator", "mskermit",
@@ -210,7 +210,7 @@ void plD_dispatch_init_mskermit	( PLDispatchTable *pdt )
                               (plD_init_fp) plD_init_mskermit );
 }
 
-void plD_dispatch_init_versaterm( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_versaterm( PLDispatchTable *pdt )
 {
     tek_dispatch_init_helper( pdt,
                               "Versaterm vt100/tek emulator", "versaterm",
@@ -218,7 +218,7 @@ void plD_dispatch_init_versaterm( PLDispatchTable *pdt )
                               (plD_init_fp) plD_init_versaterm );
 }
 
-void plD_dispatch_init_vlt	( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_vlt	( PLDispatchTable *pdt )
 {
     tek_dispatch_init_helper( pdt,
                               "VLT vt100/tek emulator", "vlt",
@@ -226,7 +226,7 @@ void plD_dispatch_init_vlt	( PLDispatchTable *pdt )
                               (plD_init_fp) plD_init_vlt );
 }
 
-void plD_dispatch_init_conex	( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_conex	( PLDispatchTable *pdt )
 {
     tek_dispatch_init_helper( pdt,
                               "Conex vt320/tek emulator", "conex",
@@ -234,7 +234,7 @@ void plD_dispatch_init_conex	( PLDispatchTable *pdt )
                               (plD_init_fp) plD_init_conex );
 }
 
-void plD_dispatch_init_tekf	( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_tekf	( PLDispatchTable *pdt )
 {
     tek_dispatch_init_helper( pdt,
                               "Tektronix File (4010)", "tekf",
@@ -242,7 +242,7 @@ void plD_dispatch_init_tekf	( PLDispatchTable *pdt )
                               (plD_init_fp) plD_init_tekf );
 }
 
-void plD_dispatch_init_tek4107f	( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_tek4107f	( PLDispatchTable *pdt )
 {
     tek_dispatch_init_helper( pdt,
                               "Tektronix File (4105/4107)", "tek4107f",

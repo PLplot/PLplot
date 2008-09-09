@@ -31,13 +31,6 @@
   static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colour );
   static void init_freetype_lv1( PLStream *pls );
   static void init_freetype_lv2( PLStream *pls );
-extern "C"
-{
-  extern void plD_FreeType_init( PLStream *pls );
-  extern void plD_render_freetype_text( PLStream *pls, EscText *args );
-  extern void plD_FreeType_Destroy( PLStream *pls );
-  extern void pl_set_extended_cmap0( PLStream *pls, int ncol0_width, int ncol0_org );
-}
 #endif
 
 #ifndef max_number_of_grey_levels_used_in_text_smoothing

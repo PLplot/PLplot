@@ -94,7 +94,7 @@
 #define FT_Data _FT_Data_
 
 /* Font lookup table that is constructed in plD_FreeType_init*/
-FCI_to_FontName_Table FontLookup[N_TrueTypeLookup];
+PLDLLIMPEXP_DATA(FCI_to_FontName_Table) FontLookup[N_TrueTypeLookup];
 /*              TOP LEVEL DEFINES       */
 
 /*  Freetype lets you set the text size absolutely. It also takes into

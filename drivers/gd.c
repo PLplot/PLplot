@@ -132,7 +132,7 @@
  *  and finally one of each.
  */
 
-const char* plD_DEVICE_INFO_gd =
+PLDLLEXPORT const char* plD_DEVICE_INFO_gd =
 #if defined(PLD_png)
   "png:PNG file:0:gd:39:png\n"
 #endif
@@ -192,11 +192,6 @@ static PLINT plD_read_pixel_gd (PLStream *pls, short x, short y);
 static void plD_set_pixel_gd (PLStream *pls, short x, short y, PLINT colour);
 static void init_freetype_lv1 (PLStream *pls);
 static void init_freetype_lv2 (PLStream *pls);
-
-extern void plD_FreeType_init(PLStream *pls);
-extern void plD_render_freetype_text (PLStream *pls, EscText *args);
-extern void plD_FreeType_Destroy(PLStream *pls);
-extern void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org);
 
 #endif
 
@@ -285,7 +280,7 @@ void plD_eop_gif		(PLStream *);
 
 #ifdef PLD_png
 
-void plD_dispatch_init_png( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_png( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "PNG file";
@@ -307,7 +302,7 @@ void plD_dispatch_init_png( PLDispatchTable *pdt )
 
 #ifdef PLD_jpeg
 
-void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "JPEG File";
@@ -329,7 +324,7 @@ void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
 
 #ifdef PLD_gif
 
-void plD_dispatch_init_gif( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_gif( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "GIF File";

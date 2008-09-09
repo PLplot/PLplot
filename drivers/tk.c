@@ -63,7 +63,7 @@
 #endif
 
 /* Device info */
-const char* plD_DEVICE_INFO_tk = "tk:Tcl/TK Window:1:tk:7:tk";
+PLDLLEXPORT const char* plD_DEVICE_INFO_tk = "tk:Tcl/TK Window:1:tk:7:tk";
 
 
 /* Number of instructions to skip between updates */
@@ -89,7 +89,7 @@ if (code) { abort_session(pls, "Unable to write to PDFstrm"); }
 
 /* Driver entry and dispatch setup */
 
-void plD_dispatch_init_tk	( PLDispatchTable *pdt );
+PLDLLEXPORT void plD_dispatch_init_tk	( PLDispatchTable *pdt );
 
 void plD_init_tk		(PLStream *);
 void plD_line_tk		(PLStream *, short, short, short, short);

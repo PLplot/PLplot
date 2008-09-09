@@ -27,12 +27,12 @@
 #endif
 
 /* Device info */
-const char* plD_DEVICE_INFO_ljiip =
+PLDLLEXPORT const char* plD_DEVICE_INFO_ljiip =
   "ljiip:LaserJet IIp/deskjet compressed graphics:0:ljiip:32:ljiip";
 
 /* Function prototypes */
 
-void plD_dispatch_init_ljiip	( PLDispatchTable *pdt );
+PLDLLEXPORT void plD_dispatch_init_ljiip	( PLDispatchTable *pdt );
 
 void plD_init_ljiip		(PLStream *);
 void plD_line_ljiip		(PLStream *, short, short, short, short);

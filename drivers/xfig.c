@@ -10,11 +10,11 @@
 #include "drivers.h"
 
 /* Device info */
-const char* plD_DEVICE_INFO_xfig = "xfig:Fig file:0:xfig:31:xfig";
+PLDLLEXPORT const char* plD_DEVICE_INFO_xfig = "xfig:Fig file:0:xfig:31:xfig";
 
 /* Function prototypes */
 
-void plD_dispatch_init_xfig	( PLDispatchTable *pdt );
+PLDLLEXPORT void plD_dispatch_init_xfig	( PLDispatchTable *pdt );
 
 void plD_init_xfig		(PLStream *);
 void plD_line_xfig		(PLStream *, short, short, short, short);

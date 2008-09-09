@@ -10,9 +10,9 @@
 #include "drivers.h"
 
 /* Device info */
-const char* plD_DEVICE_INFO_dg300 = "dg300:DG300 Terminal:0:dg300:25:dg300";
+PLDLLEXPORT const char* plD_DEVICE_INFO_dg300 = "dg300:DG300 Terminal:0:dg300:25:dg300";
 
-void plD_dispatch_init_dg	( PLDispatchTable *pdt );
+PLDLLEXPORT void plD_dispatch_init_dg	( PLDispatchTable *pdt );
 
 void plD_init_dg		(PLStream *);
 void plD_line_dg		(PLStream *, short, short, short, short);

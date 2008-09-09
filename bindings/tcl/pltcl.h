@@ -49,7 +49,7 @@ pls_auto_path(Tcl_Interp *interp);
 
 /* Tcl command -- wait until the specified condition is satisfied. */
 
-int
+PLDLLIMPEXP int
 plWait_Until(ClientData, Tcl_Interp *, int, const char **);
 
 /* Tcl command -- return the IP address for the current host.  */

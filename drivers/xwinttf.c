@@ -57,7 +57,7 @@
 
 /* local variables */
 
-const char* plD_DEVICE_INFO_xwinttf = "xwinttf:TrueType X Windows Driver:1:xwinttf:59:xwinttf";
+PLDLLEXPORT const char* plD_DEVICE_INFO_xwinttf = "xwinttf:TrueType X Windows Driver:1:xwinttf:59:xwinttf";
 
 static int currentPage = -1;
 static int XScreen;
@@ -126,7 +126,7 @@ static void poly_line(PLStream *, short *, short *, PLINT);
 
 /* PLplot interface functions */
 
-void plD_dispatch_init_xwinttf      (PLDispatchTable *pdt);
+PLDLLEXPORT void plD_dispatch_init_xwinttf      (PLDispatchTable *pdt);
 void plD_init_xwinttf               (PLStream *);
 void plD_line_xwinttf               (PLStream *, short, short, short, short);
 void plD_polyline_xwinttf   	    (PLStream *, short *, short *, PLINT);

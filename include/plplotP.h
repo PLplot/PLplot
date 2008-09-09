@@ -1057,6 +1057,22 @@ PLDLLIMPEXP char*
 plGetDrvDir (void);
 #endif
 
+#ifdef HAVE_FREETYPE
+PLDLLIMPEXP void 
+plD_FreeType_init(PLStream *);
+
+PLDLLIMPEXP void 
+plD_render_freetype_text (PLStream *, EscText *);
+
+PLDLLIMPEXP void 
+plD_FreeType_Destroy(PLStream *);
+
+PLDLLIMPEXP void 
+pl_set_extended_cmap0(PLStream *, int, int);
+
+#endif
+
+
 #ifdef __cplusplus
 }
 #endif

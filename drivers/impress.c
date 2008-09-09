@@ -10,11 +10,11 @@
 #include "drivers.h"
 
 /* Device info */
-const char* plD_DEVICE_INFO_impress = "imp:Impress File:0:impress:37:imp";
+PLDLLEXPORT const char* plD_DEVICE_INFO_impress = "imp:Impress File:0:impress:37:imp";
 
 /* Function prototypes */
 
-void plD_dispatch_init_imp	( PLDispatchTable *pdt );
+PLDLLEXPORT void plD_dispatch_init_imp	( PLDispatchTable *pdt );
 
 void plD_init_imp		(PLStream *);
 void plD_line_imp		(PLStream *, short, short, short, short);

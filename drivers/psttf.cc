@@ -56,15 +56,15 @@ using namespace std;
 
 /* Device info */
 
-const char* plD_DEVICE_INFO_psttf = 
+PLDLLEXPORT const char* plD_DEVICE_INFO_psttf = 
   "psttf:PostScript File (monochrome):0:psttf:55:psttfm\n"
   "psttfc:PostScript File (color):0:psttf:56:psttfc";
 
 
 /* Prototypes for functions in this file. */
 
-void plD_dispatch_init_psttfm	( PLDispatchTable *pdt );
-void plD_dispatch_init_psttfc	( PLDispatchTable *pdt );
+PLDLLEXPORT void plD_dispatch_init_psttfm	( PLDispatchTable *pdt );
+PLDLLEXPORT void plD_dispatch_init_psttfc	( PLDispatchTable *pdt );
 
 static char  *ps_getdate	(void);
 static void  ps_init		(PLStream *);

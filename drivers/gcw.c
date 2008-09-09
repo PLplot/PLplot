@@ -83,14 +83,11 @@ KNOWN BUGS
 /* Font lookup table that is constructed in plD_FreeType_init*/
 extern FCI_to_FontName_Table FontLookup[N_TrueTypeLookup];
 
-extern void plD_FreeType_init(PLStream *pls);
-extern void plD_FreeType_Destroy(PLStream *pls);
-
 #endif /* HAVE_FREETYPE */
 
 
 /* Device info */
-const char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
+PLDLLEXPORT const char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
 
 /* Global driver options */
 
@@ -142,7 +139,7 @@ void plD_tidy_gcw(PLStream *);
 void plD_state_gcw(PLStream *, PLINT);
 void plD_esc_gcw(PLStream *, PLINT, void *);
 
-void plD_dispatch_init_gcw( PLDispatchTable *pdt )
+PLDLLEXPORT void plD_dispatch_init_gcw( PLDispatchTable *pdt )
 {
 
 #ifdef DEBUG_GCW_1

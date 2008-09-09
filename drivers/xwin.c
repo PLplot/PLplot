@@ -45,7 +45,7 @@ static int already = 0;
 #endif
 
 /* Device info */
-const char* plD_DEVICE_INFO_xwin = "xwin:X-Window (Xlib):1:xwin:5:xw";
+PLDLLEXPORT const char* plD_DEVICE_INFO_xwin = "xwin:X-Window (Xlib):1:xwin:5:xw";
 
 static int synchronize = 0;	/* change to 1 for X synchronized operation */
                                 /* Use "-drvopt sync" cmd line option to set. */
@@ -126,7 +126,7 @@ static XwDisplay *xwDisplay[PLXDISPLAYS];
 
 /* Driver entry and dispatch setup */
 
-void plD_dispatch_init_xw	( PLDispatchTable *pdt );
+PLDLLEXPORT void plD_dispatch_init_xw	( PLDispatchTable *pdt );
 
 void plD_init_xw		(PLStream *);
 void plD_line_xw		(PLStream *, short, short, short, short);
