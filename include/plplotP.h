@@ -870,7 +870,7 @@ plP_w3wcz(PLFLT x, PLFLT y, PLFLT z);
 
 /* Returns the rotation and shear angle and stride from a plplot transformation matrix */
 
-void
+PLDLLIMPEXP void
 plRotationShear(PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear, PLFLT *stride);
 
 
