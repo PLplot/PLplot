@@ -68,7 +68,8 @@ Jonathan Woithe improved the xcairo driver so that it can optionally be
 used with an external user supplied X Drawable. This enables a nice 
 separation of graphing (PLplot) and window management (Gtk, etc..). Doug 
 Hunt fixed the bugs that broke the memcairo driver and it is now fully
-functional.
+functional. Additionally, a new extcairo driver was added that will plot
+into a user supplied cairo context.
 
 1.2 Rename test subdirectory to plplot_test
 
@@ -174,7 +175,8 @@ Jonathan Woithe improved the xcairo driver so that it can optionally be
 used with an external user supplied X Drawable. This enables a nice 
 separation of graphing (PLplot) and window management (Gtk, etc..). Doug 
 Hunt fixed the bugs that broke the memcairo driver and it is now fully
-functional.
+functional. Additionally, a new extcairo driver was added that will plot
+into a user supplied cairo context.
 
 2.2 All autotools-related files have now been removed
 
