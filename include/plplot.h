@@ -90,12 +90,14 @@
 #endif
 #endif
 
+#if 0
 #if defined(__GNUC__) && __GNUC__ > 3
   /* If gcc 4.x, then turn off all visibility of symbols unless
    * specified as visible using PLDLLIMPEXP. */
   /*#pragma GCC visibility push(hidden)*/
   /* temporary until issues with above hidden can be sorted out */
   #pragma GCC visibility push(default)
+#endif
 #endif
 /* Make sure Unix systems define "__unix" */
 
@@ -1849,8 +1851,10 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 #ifdef __cplusplus
 }
 #endif
+#if 0
 #if defined(__GNUC__) && __GNUC__ > 3
   #pragma GCC visibility pop
+#endif
 #endif
 
 #endif	/* __PLPLOT_H__ */
