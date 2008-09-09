@@ -734,7 +734,7 @@ plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol);
 
 /* Opens file for output, prompting if not set. */
 
-void
+PLDLLIMPEXP void
 plOpenFile(PLStream *pls);
 
 /* Sets up next file member name (in pls->FileName), but does not open it. */
@@ -749,17 +749,17 @@ plP_sfnam(PLStream *pls, const char *fnam);
 
 /* Initializes family file parameters. */
 
-void
+PLDLLIMPEXP void
 plFamInit(PLStream *pls);
 
 /* Starts new member file of family file set if necessary. */
 
-void
+PLDLLIMPEXP void
 plGetFam(PLStream *pls);
 
 /* Rotates physical coordinates if necessary for given orientation. */
 
-void
+PLDLLIMPEXP void
 plRotPhy(PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
 	 PLINT *px, PLINT *py);
 

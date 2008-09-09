@@ -174,6 +174,8 @@ typedef char * caddr_t;
 #define pl_fgetpos(a,b) (-1L == (*b = ftell(a)))
 #endif
 
+#include "pldll.h"
+
 /* Include all externally-visible definitions and prototypes */
 /* plplot.h also includes some handy system header files */
 
@@ -533,7 +535,7 @@ plytik(PLINT x, PLINT y, PLINT left, PLINT right);
   /* Driver interface filter --
      passes all coordinates through a variety of filters. */
 
-void
+PLDLLIMPEXP void
 difilt(PLINT *, PLINT *, PLINT,
        PLINT *, PLINT *, PLINT *, PLINT *);
 
@@ -580,7 +582,7 @@ enum {DRV_INT, DRV_FLT, DRV_STR};
 
   /* parse driver specific options, as in -drvopt <option[=value]>* */
 
-int
+PLDLLIMPEXP int
 plParseDrvOpts(DrvOpt *);
 
   /* give help on driver specific options */
@@ -671,7 +673,7 @@ plP_gpixmm(PLFLT *p_x, PLFLT *p_y);
 
 /* All the drivers call this to set physical pixels/mm. */
 
-void
+PLDLLIMPEXP void
 plP_setpxl(PLFLT xpmm0, PLFLT ypmm0);
 
 /* Get background parameters (including line width) for 3d plot. */
@@ -711,7 +713,7 @@ plP_drawor_poly(PLFLT *x, PLFLT *y, PLINT n);
 
 /* Sets up physical limits of plotting device. */
 
-void
+PLDLLIMPEXP void
 plP_setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax);
 
 /* Set up the subpage boundaries according to the current subpage selected */
@@ -1016,7 +1018,7 @@ typedef struct
 } FCI_to_FontName_Table;
 
 /* Internal function to obtain a pointer to a valid font name. */
-char *
+PLDLLIMPEXP char *
 plP_FCI2FontName ( PLUNICODE fci,
 		   const FCI_to_FontName_Table lookup[], const int nlookup);
 
@@ -1051,7 +1053,7 @@ plio_fgets(char *, int, FILE *);
 /* get drivers directory */
    
 #ifdef ENABLE_DYNDRIVERS
-char*
+PLDLLIMPEXP char* 
 plGetDrvDir (void);
 #endif
 

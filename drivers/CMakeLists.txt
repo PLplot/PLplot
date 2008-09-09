@@ -27,7 +27,7 @@ DESTINATION ${DOC_DIR}
 if(ENABLE_DYNDRIVERS)
   set_source_files_properties(
   get-drv-info.c
-  PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR}"
+  PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR} -DUSINGPLDLL"
   )
 			   
   include_directories(
@@ -63,9 +63,14 @@ if(ENABLE_DYNDRIVERS)
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
       set_source_files_properties(
       ${${SOURCE_ROOT_NAME}_SOURCE}
-      PROPERTIES COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
+      PROPERTIES COMPILE_FLAGS "${${SOURCE_ROOT_NAME}_COMPILE_FLAGS} -DUSINGPLDLL"
       )
       #message("${SOURCE_ROOT_NAME}_COMPILE_FLAGS = ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}")
+    else(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
+      set_source_files_properties(
+      ${${SOURCE_ROOT_NAME}_SOURCE}
+      PROPERTIES COMPILE_FLAGS "-DUSINGPLDLL"
+      )
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
     add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
     # ${SOURCE_ROOT_NAME}_LINK_FLAGS is ideally a list of the full path names
