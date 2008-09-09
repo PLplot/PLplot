@@ -117,7 +117,7 @@
 \*----------------------------------------------------------------------*/
 
 #if STUB_LINKAGE==STUB_LAU
-#define FNAME(x,y)	y##_
+#define FNAME(x,y)	PLDLLIMPEXP y##_
 #define FNAME_(x,y)	y##_
 
 #elif STUB_LINKAGE == STUB_L

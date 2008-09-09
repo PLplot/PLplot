@@ -117,7 +117,7 @@
 \*----------------------------------------------------------------------*/
 
 #if STUB_LINKAGE==STUB_LAU
-#define FNAME(x,y)	y##_
+#define FNAME(x,y)	PLDLLIMPEXP y##_
 
 #elif STUB_LINKAGE == STUB_L
 #define FNAME(x,y)	y
@@ -239,6 +239,8 @@
 
 #if STUB_LINKAGE == STUB_STDCALL || STUB_LINKAGE == STUB_FORTRAN
 #define    CALL_PLOT3DC PLOT3DCF77
+#elif  STUB_LINKAGE == STUB_LAU
+#define    CALL_PLOT3DC plot3dcf77_
 #else
 #define    CALL_PLOT3DC PLOT3DC
 #endif
