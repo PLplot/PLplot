@@ -39,15 +39,8 @@ libplplottcltk${LIB_TAG}_COMPILE_FLAGS
 "-I${TCL_INCLUDE_PATH}"
 )
 
-if(WIN32 AND BUILD_SHARED_LIBS)
-  SET(libvar "tclmatrix${LIB_TAG}_LIB_SRCS")
-  include_directories(
-      ${CMAKE_SOURCE_DIR}/include
-  )
-endif(WIN32 AND BUILD_SHARED_LIBS)
-
 if(BUILD_SHARED_LIBS)
-  SET_SOURCE_FILES_PROPERTIES(${${libvar}}
+  SET_SOURCE_FILES_PROPERTIES(${tclmatrix${LIB_TAG}_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
 endif(BUILD_SHARED_LIBS)
 
@@ -162,6 +155,11 @@ if(ENABLE_tk)
   libplplottcltk${LIB_TAG}_COMPILE_FLAGS
   "${libplplottcltk${LIB_TAG}_COMPILE_FLAGS} ${TKLIB_COMPILE_FLAGS}"
   )
+  if(BUILD_SHARED_LIBS)
+  set_source_files_properties(${plplottcltk${LIB_TAG}_LIB_SRCS}
+  PROPERTIES COMPILE_FLAGS "-DUSINGPLDLL"
+  )
+  endif(BUILD_SHARED_LIBS)
   set(plplottcltk${LIB_TAG}_link_libraries
   ${plplottcltk${LIB_TAG}_link_libraries}
   ${TK_LIBRARY}

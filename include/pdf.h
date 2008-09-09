@@ -84,14 +84,14 @@ typedef struct {
 
 void pdf_set		PLARGS((char *option, int value));
 PDFstrm *pdf_fopen	PLARGS((const char *fileName, const char *mode));
-PDFstrm *pdf_bopen	PLARGS((U_CHAR *buffer, long bufmax));
+PLDLLIMPEXP PDFstrm *pdf_bopen	PLARGS((U_CHAR *buffer, long bufmax));
 PLDLLIMPEXP PDFstrm *pdf_finit	PLARGS((FILE *file));
 PDFstrm *plLibOpenPdfstrm PLARGS((const char *fn));
 PLDLLIMPEXP int  pdf_close		PLARGS((PDFstrm *pdfs));
 
 int  pdf_putc		PLARGS((int c, PDFstrm *pdfs));
-int  pdf_getc		PLARGS((PDFstrm *pdfs));
-int  pdf_ungetc		PLARGS((int c, PDFstrm *pdfs));
+PLDLLIMPEXP int  pdf_getc		PLARGS((PDFstrm *pdfs));
+PLDLLIMPEXP int  pdf_ungetc		PLARGS((int c, PDFstrm *pdfs));
 int  pdf_rdx	        PLARGS((U_CHAR *x, long nitems, PDFstrm *pdfs));
 
 PLDLLIMPEXP int  pdf_rd_header	PLARGS((PDFstrm *pdfs, char *header));

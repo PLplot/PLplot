@@ -176,7 +176,7 @@ static void		StdinProc _ANSI_ARGS_((ClientData clientData,
  *----------------------------------------------------------------------
  */
 
-int
+PLDLLIMPEXP int
 pltkMain(int argc, const char **argv, char *RcFileName,
 	 int (*AppInit)(Tcl_Interp *interp))
 {

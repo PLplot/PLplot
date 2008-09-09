@@ -507,7 +507,7 @@ plstrdup(const char *src);
 
 /* Bin up cmap 1 space and assign colors to make inverse mapping easy. */
 
-void
+PLDLLIMPEXP void
 plcmap1_calc(void);
 
 /* Draws a slanting tick at position (mx,my) (measured in mm) of */
@@ -924,7 +924,7 @@ plP_state(PLINT op);
 
 /* Escape function, for driver-specific commands. */
 
-void
+PLDLLIMPEXP void
 plP_esc(PLINT op, void *ptr);
 
 /* Set up plot window parameters. */
@@ -939,17 +939,17 @@ plLibOpen(const char *fn);
 
 /* Does required startup initialization of library.  */
 
-void
+PLDLLIMPEXP void
 pllib_init(void);
 
 /* Does preliminary setup of device driver. */
 
-void
+PLDLLIMPEXP void
 pllib_devinit(void);
 
 /* Utility to copy one PLColor to another. */
 
-void
+PLDLLIMPEXP void
 pl_cpcolor(PLColor *to, PLColor *from);
 
 /* Does required startup initialization of a stream.  */

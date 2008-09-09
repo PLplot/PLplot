@@ -95,6 +95,12 @@ if(ENABLE_tk)
     ${CMAKE_BINARY_DIR}/include
     )
 
+
+  if(BUILD_SHARED_LIBS)
+    SET_SOURCE_FILES_PROPERTIES(plserver.c
+        PROPERTIES COMPILE_FLAGS "-DUSINGPLDLL" )
+  endif(BUILD_SHARED_LIBS)
+
   add_executable(plserver plserver.c)
   target_link_libraries(plserver plplot${LIB_TAG} plplottcltk${LIB_TAG})
 
