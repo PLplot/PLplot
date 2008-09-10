@@ -770,7 +770,7 @@ plAllocDev(PLStream *pls);
 
 /* Just fills in the PLGraphicsIn with appropriate initial values. */
 
-void
+PLDLLIMPEXP void
 plGinInit(PLGraphicsIn *gin);
 
 #ifdef __cplusplus
