@@ -321,12 +321,12 @@ package PLplot_Traditional is
 
     -- When asked to draw white lines on black background, do it.
     -- This is the default.
-    procedure Draw_White_On_Black;
+    procedure Draw_On_Black;
     
     
     -- When asked to draw black lines on white background, reverse black and white.
     -- This might look better on anti-aliased displays.
-    procedure Draw_Black_On_White;
+    procedure Draw_On_White;
 
 
     -- Plotter for up to five x-y pairs and settable axis style, plot 
@@ -703,7 +703,6 @@ package PLplot_Traditional is
 
     -- Draws a contour plot from data in f(nx,ny). Is just a front-end to plfcont,
     -- with a particular choice for f2eval and f2eval_data.
-
 
     --  plcont
     procedure plcont

@@ -53,22 +53,22 @@ package body PLplot_Traditional is
 
     -- When asked to draw white lines on black background, do it.
     -- This is the default.
-    procedure Draw_White_On_Black is
+    procedure Draw_On_Black is
     begin
         plscol0(Black, 0,   0  ,   0);
         plscol0(White, 255, 255, 255);
-    end Draw_White_On_Black;
+    end Draw_On_Black;
 
     
     -- When asked to draw black lines on white background, reverse black and white.
     -- This might look better on anti-aliased displays.
     -- fix this Darken some colors which have low contrast on white background, e.g. Yellow.
     -- fix this Make a version that draws on white and converts _all_ colors to black for publications.
-    procedure Draw_Black_On_White is
+    procedure Draw_On_White is
     begin
         plscol0(Black, 255, 255, 255);
         plscol0(White, 0,   0,   0);
-    end Draw_Black_On_White;
+    end Draw_On_White;
     
     
     -- Set default pen width. Docs don't say, so I'll make it 1.

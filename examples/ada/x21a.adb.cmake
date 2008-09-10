@@ -20,14 +20,10 @@
 -- along with PLplot; if not, write to the Free Software
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
--- Ada note: This example relies on a random number generator go make up some
--- data so there is no possibility of getting exact agreement at the Postscript
--- level with the C example as has been the standard in other examples.
--- Therefore, a couple of shortcuts have been used such as not actually using
--- the times reported by the calls to a clock which are then (in the C example)
--- used to create some labels (the time differences are all 0 ms anyway).
--- Also, there is some sort of edge effect anomlies in the Cubic Spline
--- Approximation plots.
+-- Ada note: This example originally used Ada's random number generator, but in
+-- order to make Postscript results that are identical to the C version, a 
+-- PLplot-specific random number generator was substituted. The original Ada
+-- generator lines are left in as comments for reference.
 
 with
     Ada.Numerics,
@@ -36,7 +32,6 @@ with
     Ada.Strings,
     Ada.Strings.Fixed,
     Ada.Calendar,
-    GNAT.Calendar.Time_IO,
     System,
     PLplot_Traditional,
     PLplot_Auxiliary;
