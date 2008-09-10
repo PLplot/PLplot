@@ -32,294 +32,254 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-	      <!--
-This document was converted from RTF source: 
-By r2net 6.2.22
-Translation:docbook.trn Revision: 1.53  Revision: 1.157 
-See http://www.logictran.com
-Filename:/Users/jerrybauck/Documents/Programs/Ada/Code/Bindings/PLplot/Documentation for Ada bindings to PLplot/README.rtf
-OutFileName:/Users/jerrybauck/Documents/Programs/Ada/Code/Bindings/PLplot/Documentation for Ada bindings to PLplot/README.xml
-Application Directory:/Users/jerrybauck/Desktop/DOWNLOADS/R2Net Desktop
-Subject:
-Author:
-Operator:
-Document Comments:
-Version Comments:
-Comments:
-Keywords:
-Translation Date:09/09/2008
-Translation Time:23:09:53
-Translation Platform:Unix
-Number of Output files:1
-This File:/Users/jerrybauck/Documents/Programs/Ada/Code/Bindings/PLplot/Documentation for Ada bindings to PLplot/README.xml
-percentCallback=10
-ImageExt=jpg
-createOutputFolder=0
-outputFolder=/Users/jerrybauck/Documents/Programs/Ada/Code/Bindings/PLplot/Documentation for Ada bindings to PLplot
-outfilename=/Users/jerrybauck/Documents/Programs/Ada/Code/Bindings/PLplot/Documentation for Ada bindings to PLplot/README.html
-createImageFolder=0
-GenIndex=1
-CopyLinkedImages=1
-CSS=1
-XHTML=1
-HTML=4
-PreserveSpaces=1
-NavLinks=auto
-NavImagePath=
-trnfile=docbook.trn
-DocBookSystem=
-DocBookPublic=
-charset=UTF-8
-RootElement=book
--->
 
-	      <chapter>
-<title>Ada Language</title>
-<!-- 1:'Normal' --><para><emphasis role="bold">Ada Bindings for the PLplot Plotting Package</emphasis></para>
-<para><emphasis role="bold"> </emphasis></para>
+<chapter>
+  <title>Ada Language</title>
+  <!-- 1:'Normal' --><para><emphasis role="bold">Ada Bindings for the PLplot Plotting Package</emphasis></para>
+  <para><emphasis role="bold"> </emphasis></para>
 
-<orderedlist numeration="arabic" continuation="restarts" spacing="normal">
-<listitem><para><emphasis role="bold">About the This Document</emphasis></para></listitem>
-</orderedlist>
-<!-- 5:'Normal' --><para>        This document describes the Ada bindings to the PLplot technical plotting software, how to obtain the necessary software components, and how to use them together.</para>
+  <orderedlist numeration="arabic" continuation="restarts" spacing="normal">
+    <listitem><para><emphasis role="bold">About the This Document</emphasis></para></listitem>
+  </orderedlist>
+  <!-- 5:'Normal' --><para>        This document describes the Ada bindings to the PLplot technical plotting software, how to obtain the necessary software components, and how to use them together.</para>
 
-<orderedlist numeration="arabic" continuation="restarts" spacing="normal">
-<listitem><para><emphasis role="bold">Overview</emphasis></para></listitem>
-</orderedlist>
-<!-- 7:'Normal' --><para>        The Ada bindings for PLplot provide a way for Ada programmers to access the powerful PLplot technical plotting facilities directly from Ada programs while working completely in Ada&#8212;the Ada programmer never needs to know or worry that PLplot itself is written in another language.</para>
-<para>        There are a thin binding and two thick bindings provided. The thin binding presents the application programming interface (API) in a form very similar to the C API, although in 100% Ada. The thick bindings present the API in a form to which Ada programmers will be more accustomed and add some ease-of-use features. It is expected that the thick bindings will be preferred.</para>
+  <orderedlist numeration="arabic" continuation="restarts" spacing="normal">
+    <listitem><para><emphasis role="bold">Overview</emphasis></para></listitem>
+  </orderedlist>
+  <!-- 7:'Normal' --><para>        The Ada bindings for PLplot provide a way for Ada programmers to access the powerful PLplot technical plotting facilities directly from Ada programs while working completely in Ada&#8212;the Ada programmer never needs to know or worry that PLplot itself is written in another language.</para>
+  <para>        There are a thin binding and two thick bindings provided. The thin binding presents the application programming interface (API) in a form very similar to the C API, although in 100% Ada. The thick bindings present the API in a form to which Ada programmers will be more accustomed and add some ease-of-use features. It is expected that the thick bindings will be preferred.</para>
 
-<orderedlist numeration="arabic" continuation="restarts" spacing="normal">
-<listitem><para><emphasis role="bold">The Bindings</emphasis></para></listitem>
-</orderedlist>
-<!-- 19:'Normal' --><para><emphasis role="bold">        </emphasis>The bindings are a re-expression and extension of the C-language API and as such are a kind of abstract layer between the user's code and the PLplot binary library. Additionally, there are a few capabilities not in the official API but nonetheless which are available to the C programmer which are included in the bindings and thus are directly available to the Ada programmer.</para>
-<para>        The thin binding is a layer between the thick bindings and the underlying C code. It is mainly a programming convenience for the developer of the bindings; this is a common implementation for foreign language bindings and for the most part, the user can ignore it.</para>
-<para>        There are two thick bindings provided for the convenience of the user. Either may be used and they both provide exactly the same functionality. The thick bindings are the user's main concern with programming for PLplot.</para>
-<para><emphasis role="bold">	4.1	Thin Binding</emphasis></para>
-<para>	        The thin binding, in the files plplotthin.ads and plplotthin.adb, is mostly a direct and obvious mapping of the C application programming interface (API) to Ada. Thus, for example, where a C program such as plcol0 requires a single integer argument, there is a corresponding Ada program also called plcol0 which also requires a single integer argument. (plcol0 happens to set the drawing color using a number which is associated with a set of colors.) Various constants from the C API are also included here. Numeric types as defined in PLplot are associated with numeric types in Ada in the thin binding by use of Ada's type system. Thus, the thin binding refers to the PLplot-centric type PLFLT for floating-point types while the thick binding uses the usual Ada type Long_Float.</para>
-<para>	        Many of the comments from the C source header file (similar in purpose to an Ada specification file) have been retained in the thin binding, even when they are no longer sensical. These might be pruned at some point to facilitate reading the Ada source.</para>
-<para>	        Also included in the thin binding are some other declarations which help the Ada binding to mesh well with C by emulating certain data structures which are needed in some rather specialized usages as well as providing certain subprogram pointer types.</para>
-<para>	        The Ada programmer working with either of the thick bindings will have to refer to the thin binding relatively rarely, if ever, and mainly to examine the subroutine pointer declarations and the several variant record types which are used mostly for contour and three-dimensional plots. However, some of these have been subtype-ed or renames-ed in the thick bindings so even less reference to the thin binding will be necessary. The goal is to put everything of interest to the user in the thick bindings and the user need not with the thin binding.</para>
-<para><emphasis role="bold">	4.2	The Thick Bindings</emphasis></para>
-<para>	        The thick bindings provide most of the information that the Ada programmer needs. Normally, only one of the two thick bindings would be used per user program but it should be possible to include both but that scenario would be unusual.</para>
-<para>	        There are three main aspects of the thick bindings: providing an alternative access to the PLplot API, extending the PLplot functionality with some easy-to-use features, and overlaying Ada data structures and types.</para>
-<para>	        In the first aspect, the thick bindings provide a fully Ada interface to the entire PLplot library. Packages are with-ed and use-d as normal Ada code. Ada arrays can be passed as usual, not requiring the array length or start or end indices to be passed separately. All necessary Ada types are made to match the underlying C types exactly.</para>
-<para>	        The second aspect of the thick bindings is to provide some simplified ways to get a lot of plotting done with only one or two subroutine calls. For example, a single call to Simple_Plot can display from one to five "<emphasis>y</emphasis>'s" as a function of a single "<emphasis>x</emphasis>" with default plot appearances chosen to suit many situations. Other simple plotters are available for three-dimensional and contour plots. Manipulating PLplot's colors is similarly made easy and some default color schemes are provided.</para>
-<para>	        The third main aspect of the thick binding is to use Ada data structures and Ada's type system extensively to reduce the chances of inappropriate actions. For example, Ada arrays are used throughout (as opposed to C's pointer-plus-offset-while-carrying-along-the-size-separately approach). Quantities which have natural range limits are subtype-d to reflect those constraints. The hope is that program errors will result in more-familiar Ada compilation or run-time errors rather than error reports from the PLplot library or no reports at all. However, there remain a few instances where the typing could be improved and PLplot errors will still be reported from time to time.</para>
-<para>	        Both the specification and body for the standard thick (and thin) binding contain the C subroutine name as a comment line immediately above the Ada procedure declaration; this should help in making the associations between "Ada" names and "PLplot" names. Also, the subroutine-specific comments from the C API have been retained verbatim.</para>
-<para><emphasis role="bold">	4.3	Standard Thick Binding Using Enhanced Names</emphasis></para>
-<para>	        The distinguishing feature of this thick binding (the "standard" binding) is to provide more descriptive names for PLplot subroutines, variables, constants, arguments, and other objects. Most Ada programmers will be more comfortable using these names. For example, in the C API as well as the thin Ada binding and the other thick Ada binding, the procedure plcol0(1) sets the drawing color to red. In the standard thick binding, the same thing is accomplished by writing Set_Color(Red). The Ada program may just as well write Set_Color(1) since the binding merely sets a constant Red to be equal to the integer 1. Many such numeric constants from the C API are given names in this thick binding. These renamed integers are discussed more fully in Section 7.2.</para>
-<para>	        The disadvantage of this renaming is that it makes referring to the PLplot documentation somewhat awkward. There might be, at some time, a utility for easing this problem by providing an HTML file with links so that a "normal" PLplot name can be linked to the "Ada" name along with the appropriate entry in the Ada specification, as well as another HTML file with links from the "Ada" name directly to the PLplot web page that documents that name. It might also be possible to provide an alternate version of the documentation with the enhanced names used. (The developer of the bindings has a sed file prepared  which makes most of the subroutine-name substitutions.) However, this thick binding retains the original C subprogram names as comments immediately above the function or procedure name in the code listing so it is relatively easy to locate the relevant item in the PLplot documentation.</para>
-<para>	        One simple rule applies in reading the PLplot API documentation: the argument names are in the same order in Ada as in the PLplot documentation (the names are different) except that all array lengths are eliminated. The PLplot documentation, for each subroutine, shows a "redacted" version which should be correct for Ada as well as other languages which have proper arrays.</para>
-<para>	        The standard bindings are in the Ada files plplot.ads and plplot.adb.</para>
-<para><emphasis role="bold">	4.4	Thick Binding Using Traditional Names</emphasis></para>
-<para>	        This thick binding provides exactly the same functionality as the standard thick binding but retains the original names as used in the C code and the PLplot documentation.</para>
-<para>	        The traditional bindings are in the Ada files plplot_traditional.ads and plplot_traditional.adb.</para>
-<para><emphasis role="bold">	4.5	Examples</emphasis></para>
-<para><emphasis role="bold">        </emphasis>An important part of the Ada bindings is the examples, some 30 of which demonstrate how to use many of the features of the PLplot package. These examples also serve as a testbed for the bindings in Ada and other languages by checking the Postscript files that are generated by each example against those generated by the C versions. These examples have been completely re-written in Ada (but retain a C flavor in the names that are given to objects). All of the Ada examples generate exactly the same Postscript as the C versions, Examples 14 and 17 excepted since those operate interactively and don't (normally) make Postscript. Two  versions of each example are available, one calling the standard binding and the other the traditional binding. (In development, a sed script does almost all of the conversion automatically.)</para>
+  <orderedlist numeration="arabic" continuation="restarts" spacing="normal">
+    <listitem><para><emphasis role="bold">The Bindings</emphasis></para></listitem>
+  </orderedlist>
+  <!-- 19:'Normal' --><para><emphasis role="bold">        </emphasis>The bindings are a re-expression and extension of the C-language API and as such are a kind of abstract layer between the user's code and the PLplot binary library. Additionally, there are a few capabilities not in the official API but nonetheless which are available to the C programmer which are included in the bindings and thus are directly available to the Ada programmer.</para>
+  <para>        The thin binding is a layer between the thick bindings and the underlying C code. It is mainly a programming convenience for the developer of the bindings; this is a common implementation for foreign language bindings and for the most part, the user can ignore it.</para>
+  <para>        There are two thick bindings provided for the convenience of the user. Either may be used and they both provide exactly the same functionality. The thick bindings are the user's main concern with programming for PLplot.</para>
+  <para><emphasis role="bold">	4.1	Thin Binding</emphasis></para>
+  <para>	        The thin binding, in the files plplotthin.ads and plplotthin.adb, is mostly a direct and obvious mapping of the C application programming interface (API) to Ada. Thus, for example, where a C program such as plcol0 requires a single integer argument, there is a corresponding Ada program also called plcol0 which also requires a single integer argument. (plcol0 happens to set the drawing color using a number which is associated with a set of colors.) Various constants from the C API are also included here. Numeric types as defined in PLplot are associated with numeric types in Ada in the thin binding by use of Ada's type system. Thus, the thin binding refers to the PLplot-centric type PLFLT for floating-point types while the thick binding uses the usual Ada type Long_Float.</para>
+  <para>	        Many of the comments from the C source header file (similar in purpose to an Ada specification file) have been retained in the thin binding, even when they are no longer sensical. These might be pruned at some point to facilitate reading the Ada source.</para>
+  <para>	        Also included in the thin binding are some other declarations which help the Ada binding to mesh well with C by emulating certain data structures which are needed in some rather specialized usages as well as providing certain subprogram pointer types.</para>
+  <para>	        The Ada programmer working with either of the thick bindings will have to refer to the thin binding relatively rarely, if ever, and mainly to examine the subroutine pointer declarations and the several variant record types which are used mostly for contour and three-dimensional plots. However, some of these have been subtype-ed or renames-ed in the thick bindings so even less reference to the thin binding will be necessary. The goal is to put everything of interest to the user in the thick bindings and the user need not with the thin binding.</para>
+  <para><emphasis role="bold">	4.2	The Thick Bindings</emphasis></para>
+  <para>	        The thick bindings provide most of the information that the Ada programmer needs. Normally, only one of the two thick bindings would be used per user program but it should be possible to include both but that scenario would be unusual.</para>
+  <para>	        There are three main aspects of the thick bindings: providing an alternative access to the PLplot API, extending the PLplot functionality with some easy-to-use features, and overlaying Ada data structures and types.</para>
+  <para>	        In the first aspect, the thick bindings provide a fully Ada interface to the entire PLplot library. Packages are with-ed and use-d as normal Ada code. Ada arrays can be passed as usual, not requiring the array length or start or end indices to be passed separately. All necessary Ada types are made to match the underlying C types exactly.</para>
+  <para>	        The second aspect of the thick bindings is to provide some simplified ways to get a lot of plotting done with only one or two subroutine calls. For example, a single call to Simple_Plot can display from one to five "<emphasis>y</emphasis>'s" as a function of a single "<emphasis>x</emphasis>" with default plot appearances chosen to suit many situations. Other simple plotters are available for three-dimensional and contour plots. Manipulating PLplot's colors is similarly made easy and some default color schemes are provided.</para>
+  <para>	        The third main aspect of the thick binding is to use Ada data structures and Ada's type system extensively to reduce the chances of inappropriate actions. For example, Ada arrays are used throughout (as opposed to C's pointer-plus-offset-while-carrying-along-the-size-separately approach). Quantities which have natural range limits are subtype-d to reflect those constraints. The hope is that program errors will result in more-familiar Ada compilation or run-time errors rather than error reports from the PLplot library or no reports at all. However, there remain a few instances where the typing could be improved and PLplot errors will still be reported from time to time.</para>
+  <para>	        Both the specification and body for the standard thick (and thin) binding contain the C subroutine name as a comment line immediately above the Ada procedure declaration; this should help in making the associations between "Ada" names and "PLplot" names. Also, the subroutine-specific comments from the C API have been retained verbatim.</para>
+  <para><emphasis role="bold">	4.3	Standard Thick Binding Using Enhanced Names</emphasis></para>
+  <para>	        The distinguishing feature of this thick binding (the "standard" binding) is to provide more descriptive names for PLplot subroutines, variables, constants, arguments, and other objects. Most Ada programmers will be more comfortable using these names. For example, in the C API as well as the thin Ada binding and the other thick Ada binding, the procedure plcol0(1) sets the drawing color to red. In the standard thick binding, the same thing is accomplished by writing Set_Color(Red). The Ada program may just as well write Set_Color(1) since the binding merely sets a constant Red to be equal to the integer 1. Many such numeric constants from the C API are given names in this thick binding. These renamed integers are discussed more fully in Section 7.2.</para>
+  <para>	        The disadvantage of this renaming is that it makes referring to the PLplot documentation somewhat awkward. There might be, at some time, a utility for easing this problem by providing an HTML file with links so that a "normal" PLplot name can be linked to the "Ada" name along with the appropriate entry in the Ada specification, as well as another HTML file with links from the "Ada" name directly to the PLplot web page that documents that name. It might also be possible to provide an alternate version of the documentation with the enhanced names used. (The developer of the bindings has a sed file prepared  which makes most of the subroutine-name substitutions.) However, this thick binding retains the original C subprogram names as comments immediately above the function or procedure name in the code listing so it is relatively easy to locate the relevant item in the PLplot documentation.</para>
+  <para>	        One simple rule applies in reading the PLplot API documentation: the argument names are in the same order in Ada as in the PLplot documentation (the names are different) except that all array lengths are eliminated. The PLplot documentation, for each subroutine, shows a "redacted" version which should be correct for Ada as well as other languages which have proper arrays.</para>
+  <para>	        The standard bindings are in the Ada files plplot.ads and plplot.adb.</para>
+  <para><emphasis role="bold">	4.4	Thick Binding Using Traditional Names</emphasis></para>
+  <para>	        This thick binding provides exactly the same functionality as the standard thick binding but retains the original names as used in the C code and the PLplot documentation.</para>
+  <para>	        The traditional bindings are in the Ada files plplot_traditional.ads and plplot_traditional.adb.</para>
+  <para><emphasis role="bold">	4.5	Examples</emphasis></para>
+  <para><emphasis role="bold">        </emphasis>An important part of the Ada bindings is the examples, some 30 of which demonstrate how to use many of the features of the PLplot package. These examples also serve as a testbed for the bindings in Ada and other languages by checking the Postscript files that are generated by each example against those generated by the C versions. These examples have been completely re-written in Ada (but retain a C flavor in the names that are given to objects). All of the Ada examples generate exactly the same Postscript as the C versions, Examples 14 and 17 excepted since those operate interactively and don't (normally) make Postscript. Two  versions of each example are available, one calling the standard binding and the other the traditional binding. (In development, a sed script does almost all of the conversion automatically.)</para>
 
-<orderedlist numeration="arabic" continuation="restarts" spacing="normal">
-<listitem><para><emphasis role="bold">Obtaining the Software</emphasis></para></listitem>
-</orderedlist>
-<!-- 45:'Normal' --><para>        There are three software components that you will need: an Ada compiler, the PLplot library, and the Ada bindings.</para>
-<para><emphasis role="bold">	5.1	Obtaining an Ada compiler</emphasis></para>
-<para>	        You will need an Ada compiler in order to use the Ada PLplot bindings. There are several compilers available. Here, we will focus on the free, open source compiler that is included with the GNU Compiler Collection, (gcc) which is at the center of much of the open source software movement. The gcc Ada compiler is known as GNAT, for GNU NYU Ada Translator, where NYU stands for New York University. (Although GNAT was originally developed at NYU, it has for many years been developed and supported commercially by AdaCore with academic and pro versions available.)</para>
-<para>	       Your computer may already have GNAT installed, or you can download it from <ulink url="http://gcc.gnu.org/">gcc.gnu.org</ulink>. Another route to obtaining GNAT is from the AdaCore page, <ulink url="https://libre2.adacore.com/">libre2.adacore.com</ulink>. There are versions for many operating systems and processors including Apple's OS X or its open source version Darwin, Linux, and Windows. The gcc and AdaCore versions differ in their licenses. Download the version that you need and follow the installation instructions. </para>
-<para><emphasis role="bold">	5.2	Download and install PLplot</emphasis></para>
-<para>	        PLplot can be downloaded from the PLplot home page at <ulink url="http://sourceforge.net/projects/plplot">sourceforge.net&#8212;plplot</ulink>. Follow the installation instructions after downloading. The installation process is more involved than other open source software and requires that your computer has cmake installed. OS X users can try installing PLplot in its entirety from MacPorts but that activity is not officially supported by the PLplot developers. The advantage of using MacPorts is that all installation dependencies are automatically installed for you.</para>
-<para><emphasis role="bold">	5.3	Download the Ada bindings to PLplot</emphasis></para>
-<para>	        The third major software component is the bindings themselves. Since they are currently included with the PLplot software itself, there is no need to download them from another place.</para>
-<para>	        The bindings themselves are six Ada source files named (using GNAT filename extensions) plplot.ads, plplot.adb, plplot_traditional.ads, plplot_traditional.adb, plplothin.ads, plplotthin.adb. There are two additional files, plplot_auxiliary.ads and plplot_auxililary.adb which will be discussed later, in Section 9. These can be stored somewhere on your system's search paths for easy access.</para>
+  <orderedlist numeration="arabic" continuation="restarts" spacing="normal">
+    <listitem><para><emphasis role="bold">Obtaining the Software</emphasis></para></listitem>
+  </orderedlist>
+  <!-- 45:'Normal' --><para>        There are three software components that you will need: an Ada compiler, the PLplot library, and the Ada bindings.</para>
+  <para><emphasis role="bold">	5.1	Obtaining an Ada compiler</emphasis></para>
+  <para>	        You will need an Ada compiler in order to use the Ada PLplot bindings. There are several compilers available. Here, we will focus on the free, open source compiler that is included with the GNU Compiler Collection, (gcc) which is at the center of much of the open source software movement. The gcc Ada compiler is known as GNAT, for GNU NYU Ada Translator, where NYU stands for New York University. (Although GNAT was originally developed at NYU, it has for many years been developed and supported commercially by AdaCore with academic and pro versions available.)</para>
+  <para>	       Your computer may already have GNAT installed, or you can download it from <ulink url="http://gcc.gnu.org/">gcc.gnu.org</ulink>. Another route to obtaining GNAT is from the AdaCore page, <ulink url="https://libre2.adacore.com/">libre2.adacore.com</ulink>. There are versions for many operating systems and processors including Apple's OS X or its open source version Darwin, Linux, and Windows. The gcc and AdaCore versions differ in their licenses. Download the version that you need and follow the installation instructions. </para>
+  <para><emphasis role="bold">	5.2	Download and install PLplot</emphasis></para>
+  <para>	        PLplot can be downloaded from the PLplot home page at <ulink url="http://sourceforge.net/projects/plplot">sourceforge.net&#8212;plplot</ulink>. Follow the installation instructions after downloading. The installation process is more involved than other open source software and requires that your computer has cmake installed. OS X users can try installing PLplot in its entirety from MacPorts but that activity is not officially supported by the PLplot developers. The advantage of using MacPorts is that all installation dependencies are automatically installed for you.</para>
+  <para><emphasis role="bold">	5.3	Download the Ada bindings to PLplot</emphasis></para>
+  <para>	        The third major software component is the bindings themselves. Since they are currently included with the PLplot software itself, there is no need to download them from another place.</para>
+  <para>	        The bindings themselves are six Ada source files named (using GNAT filename extensions) plplot.ads, plplot.adb, plplot_traditional.ads, plplot_traditional.adb, plplothin.ads, plplotthin.adb. There are two additional files, plplot_auxiliary.ads and plplot_auxililary.adb which will be discussed later, in Section 9. These can be stored somewhere on your system's search paths for easy access.</para>
 
-<orderedlist numeration="arabic" continuation="restarts" spacing="normal">
-<listitem><para><emphasis role="bold">How to use the Ada bindings</emphasis></para></listitem>
-</orderedlist>
-<!-- 55:'Normal' --><para><emphasis role="bold">	6.1	Ada 95 versus Ada 2005</emphasis></para>
-<para>	        The bindings will work for either Ada 95 or Ada 2005. The only difference that concerns PLplot users is that Ada 2005, in Annex G.3, provides declarations for real-valued vectors and matrices (along with some other functionality). These declarations make available type Real_Vector and type Real_Matrix.</para>
-<para>	        The installation process for PLplot requires you to select Ada 95 or Ada 2005. After that, the correct bindings are generated automatically depending on your choice. The differences are very minor: If Ada 2005, the type declarations provided according to Annex G.3 are used; if Ada 95, similar type declarations are provided. For the most part, you don't need to think about this much. However, see Section 9, Compilation Notes, if you are using Ada 95 and need to declare vectors or matrices. The design goal in either case is to encourage users to use Real_Vector and Real_Matrix since these are the "official" versions of these entities as of Ada 2005. Someone using objects based on these type definitions in Ada 95 in their PLplot programs should expect their programs to work without modification if they should switch to Ada 2005.</para>
-<para><emphasis role="bold">	6.2	GNAT versus non-GNAT</emphasis></para>
-<para>	        The bindings were made using the GNAT compiler and there is a slight dependence on that compiler. Specifically, the Unrestricted_Access attribute of GNAT was used in making the function Matrix_To_Pointers in plplotthin.adb and in a few callbacks. Matrix_To_Pointers is called whenever an Ada matrix (2D array) is passed to a PLplot subroutine. For more about Unrestricted_Access attribute, see Implementation Defined Attributes in the GNAT Reference Manual. This dependency shouldn't be difficult to remove by either incorporating the GNAT code which implements it, by following the TO-DO comment near the function definition in plplotthin.adb, or by providing the proper aliasing.</para>
-<para>	        Another GNAT dependency is used to parse command line arguments in a C-like way.</para>
-<para>	        Most of the GNAT dependencies can be found by searching the source code for "GNAT" and "Unrestricted_Access."</para>
-<para>	        The GNAT dependence, though slight, will no doubt frustrate users of other Ada compilers. We welcome comments from those users, especially comments with specific suggestions on how to remove any GNAT-specific usages.</para>
-<para><emphasis role="bold">	6.3	Sample command line project</emphasis></para>
-<para>	        It is instructive to present a simple example that can be compiled and run from the command line. Although this example is specific to one installation, it should be fairly straightforward to adapt it to another installation. Toward that end, it is helpful to understand the PLplot lingo of "build directory" and "installation directory."</para>
-<para>	        Here is a simple program that will generate a plot of part of a parabola.</para>
-<para>	with</para>
-<para>    PLplot_Auxiliary,</para>
-<para>    PLplot;</para>
-<para>use</para>
-<para>    PLplot_Auxiliary,</para>
-<para>    PLplot;</para>
-<para>procedure Simple_Example is</para>
-<para>    x, y : Real_Vector(-10 .. 10);</para>
-<para>begin</para>
-<para>    for i in x'range loop </para>
-<para>        x(i) := Long_Float(i);</para>
-<para>        y(i) := x(i)**2;</para>
-<para>    end loop;</para>
-<para>    Initialize_PLplot; -- Call this only once.</para>
-<para>    Simple_Plot(x, y); -- Make the plot.</para>
-<para>    End_PLplot;        -- Call this only once.</para>
-<para>end Simple_Example;</para>
-<para>	        Next is a bash script that will compile, bind, and link it. It is installation-specific in that paths to the GNAT compiler, PLplot libraries, and BLAS (Basic Linear Algebra System) and LAPACK (Linear Algebra Package) are hard-coded. You will have to adjust the paths to fit your installation. Some Linux installations which have GNAT 4.3 or later (Ada 2005) pre-installed might have already set the paths to the BLAS and LAPACK libraries.</para>
-<para>	        (Note that the G.3 Annex of Ada 2005, in the GNAT version, depends heavily on BLAS and LAPACK. These packages are tried-and-true packages that are available from several places in either C or Fortran versions. The present example is specific to OS X which has them pre-installed.)</para>
-<para>	</para>
-<para>#!/bin/bash</para>
-<para>/usr/local/ada-4.3/bin/gnatmake simple_example.adb \</para>
-<para>-aI/usr/local/plplot_build_dir/bindings/ada \</para>
-<para>-aL/usr/local/plplot_build_dir/bindings/ada/CMakeFiles/plplotadad.dir \</para>
-<para>-largs \</para>
-<para>/usr/local/plplot/lib/libplplotd.dylib \</para>
-<para>/Developer/SDKs/MacOSX10.4u.sdk/usr/lib/libblas.dylib \</para>
-<para>/Developer/SDKs/MacOSX10.4u.sdk/usr/lib/liblapack.dylib</para>
-<para>	        Beware of inadvertent line wraps in the above code.</para>
-<para>	        The resulting binary program can be run by typing</para>
-<para>	./simple_example</para>
+  <orderedlist numeration="arabic" continuation="restarts" spacing="normal">
+    <listitem><para><emphasis role="bold">How to use the Ada bindings</emphasis></para></listitem>
+  </orderedlist>
+  <!-- 55:'Normal' --><para><emphasis role="bold">	6.1	Ada 95 versus Ada 2005</emphasis></para>
+  <para>	        The bindings will work for either Ada 95 or Ada 2005. The only difference that concerns PLplot users is that Ada 2005, in Annex G.3, provides declarations for real-valued vectors and matrices (along with some other functionality). These declarations make available type Real_Vector and type Real_Matrix.</para>
+  <para>	        The installation process for PLplot requires you to select Ada 95 or Ada 2005. After that, the correct bindings are generated automatically depending on your choice. The differences are very minor: If Ada 2005, the type declarations provided according to Annex G.3 are used; if Ada 95, similar type declarations are provided. For the most part, you don't need to think about this much. However, see Section 9, Compilation Notes, if you are using Ada 95 and need to declare vectors or matrices. The design goal in either case is to encourage users to use Real_Vector and Real_Matrix since these are the "official" versions of these entities as of Ada 2005. Someone using objects based on these type definitions in Ada 95 in their PLplot programs should expect their programs to work without modification if they should switch to Ada 2005.</para>
+  <para><emphasis role="bold">	6.2	GNAT versus non-GNAT</emphasis></para>
+  <para>	        The bindings were made using the GNAT compiler and there is a slight dependence on that compiler. Specifically, the Unrestricted_Access attribute of GNAT was used in making the function Matrix_To_Pointers in plplotthin.adb and in a few callbacks. Matrix_To_Pointers is called whenever an Ada matrix (2D array) is passed to a PLplot subroutine. For more about Unrestricted_Access attribute, see Implementation Defined Attributes in the GNAT Reference Manual. This dependency shouldn't be difficult to remove by either incorporating the GNAT code which implements it, by following the TO-DO comment near the function definition in plplotthin.adb, or by providing the proper aliasing.</para>
+  <para>	        Another GNAT dependency is used to parse command line arguments in a C-like way.</para>
+  <para>	        Most of the GNAT dependencies can be found by searching the source code for "GNAT" and "Unrestricted_Access."</para>
+  <para>	        The GNAT dependence, though slight, will no doubt frustrate users of other Ada compilers. We welcome comments from those users, especially comments with specific suggestions on how to remove any GNAT-specific usages.</para>
+  <para><emphasis role="bold">	6.3	Sample command line project</emphasis></para>
+  <para>	        It is instructive to present a simple example that can be compiled and run from the command line. Although this example is specific to one installation, it should be fairly straightforward to adapt it to another installation. Toward that end, it is helpful to understand the PLplot lingo of "build directory" and "installation directory."</para>
+  <para>	        Here is a simple program that will generate a plot of part of a parabola.</para>
+  <para>	with</para>
+  <para>    PLplot_Auxiliary,</para>
+  <para>    PLplot;</para>
+  <para>use</para>
+  <para>    PLplot_Auxiliary,</para>
+  <para>    PLplot;</para>
+  <para>procedure Simple_Example is</para>
+  <para>    x, y : Real_Vector(-10 .. 10);</para>
+  <para>begin</para>
+  <para>    for i in x'range loop </para>
+  <para>        x(i) := Long_Float(i);</para>
+  <para>        y(i) := x(i)**2;</para>
+  <para>    end loop;</para>
+  <para>    Initialize_PLplot; -- Call this only once.</para>
+  <para>    Simple_Plot(x, y); -- Make the plot.</para>
+  <para>    End_PLplot;        -- Call this only once.</para>
+  <para>end Simple_Example;</para>
+  <para>	        Next is a bash script that will compile, bind, and link it. It is installation-specific in that paths to the GNAT compiler, PLplot libraries, and BLAS (Basic Linear Algebra System) and LAPACK (Linear Algebra Package) are hard-coded. You will have to adjust the paths to fit your installation. Some Linux installations which have GNAT 4.3 or later (Ada 2005) pre-installed might have already set the paths to the BLAS and LAPACK libraries.</para>
+  <para>	        (Note that the G.3 Annex of Ada 2005, in the GNAT version, depends heavily on BLAS and LAPACK. These packages are tried-and-true packages that are available from several places in either C or Fortran versions. The present example is specific to OS X which has them pre-installed.)</para>
+  <para>	</para>
+  <para>#!/bin/bash</para>
+  <para>/usr/local/ada-4.3/bin/gnatmake simple_example.adb \</para>
+  <para>-aI/usr/local/plplot_build_dir/bindings/ada \</para>
+  <para>-aL/usr/local/plplot_build_dir/bindings/ada/CMakeFiles/plplotadad.dir \</para>
+  <para>-largs \</para>
+  <para>/usr/local/plplot/lib/libplplotd.dylib \</para>
+  <para>/Developer/SDKs/MacOSX10.4u.sdk/usr/lib/libblas.dylib \</para>
+  <para>/Developer/SDKs/MacOSX10.4u.sdk/usr/lib/liblapack.dylib</para>
+  <para>	        Beware of inadvertent line wraps in the above code.</para>
+  <para>	        The resulting binary program can be run by typing</para>
+  <para>	./simple_example</para>
 
-<orderedlist numeration="arabic" continuation="restarts" spacing="normal">
-<listitem><para><emphasis role="bold">Unique Features of the Ada bindings</emphasis></para></listitem>
-</orderedlist>
-<!-- 102:'Normal' --><para><emphasis role="bold">        </emphasis>The Ada bindings have been augmented with a number of features that are not present in other languages which work with PLplot. These features are intended to greatly simplify the use of PLplot; many users will find that they can do most of their work using these "Simple" plotters. Also included are facilities for easily manipulating the PLplot color tables</para>
-<para><emphasis role="bold">	7.1	High-level features for simplified plotting</emphasis></para>
-<para><emphasis role="bold">	Foreground-background control</emphasis></para>
-<para>	Draw_On_Black, Draw_On_White</para>
-<para>	The default for PLplot is to draw its graphics on a black background. A white background can be used instead with Draw_On_White or reset to the original mode with Draw_On_Black. Each of these manipulates color map 0 by swapping black and white so that e.g.with Draw_On_White, formerly white lines on a black background autotmatically become black lines on a white background.</para>
-<para>	<emphasis role="bold">Simple Plotters</emphasis></para>
-<para>        Several high-level but flexible plotters are available, and more might be added in the future. It is expected that many users will find that these high-level routines are adequate for most of their day-to-day plotting.</para>
-<para>	Multiplot_Pairs</para>
-<para>	Plot up to five x-y pairs with easy labeling, coloring, line width and styles, justification, and zooming.</para>
-<para>	Simple_Plot</para>
-<para>	Plot up to five <emphasis>y</emphasis>'s against a single <emphasis>x</emphasis> with easy labeling and automatic line colors and styles.</para>
-<para>	Simple_Plot_Log_X</para>
-<para>	Same as Simple_Plot but with logarithmic <emphasis>x</emphasis>-axis.</para>
-<para>	Simple_Plot_Log_Y</para>
-<para>	Same as Simple_Plot but with logarithmic <emphasis>y</emphasis>-axis.</para>
-<para>	Simple_Plot_Log_XY</para>
-<para>	Same as Simple_Plot but with logarithmic <emphasis>x</emphasis>- and <emphasis>y</emphasis>-axes.</para>
-<para>	Simple_Plot_Pairs</para>
-<para>	Plot up to five <emphasis>x</emphasis>&#8211;<emphasis>y</emphasis> pairs with easy labeling and automatic line colors and styles.</para>
-<para>	Single_Plot</para>
-<para>	Plot a single <emphasis>x</emphasis>&#8211;<emphasis>y</emphasis> pair with flexible labels, axis styles, colors, line width and style, justification, and zooming.</para>
-<para>	Simple_Contour</para>
-<para>	Make a contour plot with labels</para>
-<para>	Simple_Mesh_3D</para>
-<para>	Easy 3D mesh plot with labels, zooming, and perspective controls</para>
-<para>	Simple_Surface_3D</para>
-<para>	Easy 3D surface plot with labels, zooming, and perspective controls</para>
-<para>	<emphasis role="bold">Simple color map manipulations</emphasis></para>
-<para>        PLplot provides extensive manipulation and control of two separate color maps, color map 0 and color map 1. The Ada binding makes basic manipulations easier and also adds facilities for making snapshots of color map 0 so that any state of the map can easlily be restored later. An initial snapshot is taken when the package is initialized so that the default color settings can always be restored after having been changed.</para>
-<para>        Another set of features lets the user reset the 16 individual colors in color map 0 after a color definition has been changed. It is important to note that while Set_Pen_Color(Red) (plcol0 in the traditional binding) normally does what it says, Red simply has the value 1. If the user changes the color map so that 1 corresponds to another color, then Set_Pen_Color(Red) will draw in that color instead of red. To always assure that red is drawn even if the color map has been changed for integer 1, use Set_Pen_Color(Reset_Red) instead. These 16 "reset" functions return the appropriate default integer for the specified color but also reset that slot in the color table so that a subsequent call such as Set_Pen_Color(Red) will also cause drawing in red.</para>
-<para>        Color map 1 also gets a easy-to-use makeover for Ada users. There are several pre-built color themes that are useful for quickly making surface and mesh plots, Color_Themes_For_Map_1_Type. These color themes can be quickly applied with Quick_Set_Color_Map_1.</para>
-<para>        Miscellaneous other Ada features include a pre-built mask function for Shade_Regions that does no masking; perhaps the most useful purpose is to provide a template for writing mask functions that do mask. And there is a handy function for calculating the contour levels for making contour plots.</para>
-<para>	Color table snapshots</para>
-<para>	Make_Snapshot_Of_Color_Map_0</para>
-<para>	Restore_Snapshot_Of_Color_Map_0</para>
-<para>	Restore_Default_Snapshot_Of_Color_Map_0</para>
-<para>	Color resetting functions for the 16 colors of color map 0</para>
-<para>	Reset_Black, Reset_Red, &#8230; Reset_White</para>
-<para>	Easy manipulation of color map 1</para>
-<para>	Pre-built color themes for color map 1: Color_Themes_For_Map_1_Type</para>
-<para>	Quick application of pre-built color themes: Quick_Set_Color_Map_1</para>
-<para>	Other features</para>
-<para>	A pre-built mask function for Shade_Regions that does no masking: Mask_Function_No_Mask</para>
-<para>	An easy way to calculate an array of contour levels for contour plots: Calculate_Contour_Levels</para>
-<para><emphasis role="bold">	7.2	Integer-options Given Ada Names</emphasis></para>
-<para><emphasis role="bold">        </emphasis>The C version of PLplot uses a number of integers to mean specific things. Unfortunately, the meaning is lost when it it consigned to being a mere integer with no name. The Ada binding partially rectifies this situation by giving names to these integer constants&#8212;the integer can still be used if desired. (A more complete and safer rectification would use enumerated types.)</para>
-<para>        Below is a listing of at least the contexts in which these "re-namings" have been applied. In some cases the entire range of values is listed, but if there are more than about four such values for each context, only a sampling is given.</para>
-<para><emphasis role="bold">	Instances</emphasis></para>
-<para>	Colors: Plot_Color_Type</para>
-<para>	0 is Black, 1 is Red, etc.</para>
-<para>	Justification for plots: Justification_Type</para>
-<para>	User_Justified</para>
-<para>	Not_Justified</para>
-<para>	Justified</para>
-<para>	Justified_Square_Box</para>
-<para>	Axis styles: Axis_Style_Type</para>
-<para>	Linear_Major_Grid</para>
-<para>	Linear_Minor_Grid</para>
-<para>	etc.</para>
-<para>	Font styles: Font_Style_Type</para>
-<para>	Normal_Font</para>
-<para>	Roman_Font</para>
-<para>	Italic_Font</para>
-<para>	Script_Font</para>
-<para>	Character sets: Character_Set_Type</para>
-<para>	Standard_Character_Set</para>
-<para>	Extended_Character_Set</para>
-<para>	Plot orientation: Orientation_Type</para>
-<para>	Landscape</para>
-<para>	Portrait</para>
-<para>	Modes for parsing command line arguments: Parse_Mode_Type</para>
-<para>	E.g. PL_PARSE_PARTIAL</para>
-<para>	Descriptions of map outlines (continents, states, etc.): Map_Type</para>
-<para>	Continents</para>
-<para>	USA_and_States</para>
-<para>	Continents_and_Countries</para>
-<para>	USA_States_and_Continents</para>
-<para>	Various style and view options for 3D and surface plots</para>
-<para>	E.g. Lines_Parallel_To_X</para>
-<para>	Kind of gridding algorithm for interpolating 2D data to a grid: Gridding_Algorithm_Type</para>
-<para>	E.g. Grid_Bivariate_Cubic_Spline_Approximation</para>
-<para>	Flags for histogram style</para>
-<para>	E.g. Histogram_Default</para>
-<para>	Flags for histogram binning</para>
-<para>	E.g. Bin_Default</para>
-<para>	Names for color space models</para>
-<para>	Hue, Lightness, Saturation: HLS</para>
-<para>	Red, Green, Blue: RGB</para>
-<para><emphasis role="bold">	7.3	One-offs</emphasis></para>
-<para>	        Convenient string handling for Get_Device_Name (plgdev in the traditional binding); a function version is provided that simplifies the string handling associated with this feature.</para>
-<para>	        Overloaded Set_Line_Style (plstyl in the traditional binding) with a version that takes a single argument, Default_Continuous_Line. This replaces the awkward situation of calling the normal versions of these procedures with unused arguments simply to set the line style to the default, continuous, line.</para>
-<para>	        The contour plotter Contour_Plot_Irregular_Data (plfcont in the traditional binding) is provided for making contour plots from irregularly spaced data. This feature is not documented in the PLplot API documentation. </para>
+  <orderedlist numeration="arabic" continuation="restarts" spacing="normal">
+    <listitem><para><emphasis role="bold">Unique Features of the Ada bindings</emphasis></para></listitem>
+  </orderedlist>
+  <!-- 102:'Normal' --><para><emphasis role="bold">        </emphasis>The Ada bindings have been augmented with a number of features that are not present in other languages which work with PLplot. These features are intended to greatly simplify the use of PLplot; many users will find that they can do most of their work using these "Simple" plotters. Also included are facilities for easily manipulating the PLplot color tables</para>
+  <para><emphasis role="bold">	7.1	High-level features for simplified plotting</emphasis></para>
+  <para><emphasis role="bold">	Foreground-background control</emphasis></para>
+  <para>	Draw_On_Black, Draw_On_White</para>
+  <para>	The default for PLplot is to draw its graphics on a black background. A white background can be used instead with Draw_On_White or reset to the original mode with Draw_On_Black. Each of these manipulates color map 0 by swapping black and white so that e.g.with Draw_On_White, formerly white lines on a black background autotmatically become black lines on a white background.</para>
+  <para>	<emphasis role="bold">Simple Plotters</emphasis></para>
+  <para>        Several high-level but flexible plotters are available, and more might be added in the future. It is expected that many users will find that these high-level routines are adequate for most of their day-to-day plotting.</para>
+  <para>	Multiplot_Pairs</para>
+  <para>	Plot up to five x-y pairs with easy labeling, coloring, line width and styles, justification, and zooming.</para>
+  <para>	Simple_Plot</para>
+  <para>	Plot up to five <emphasis>y</emphasis>'s against a single <emphasis>x</emphasis> with easy labeling and automatic line colors and styles.</para>
+  <para>	Simple_Plot_Log_X</para>
+  <para>	Same as Simple_Plot but with logarithmic <emphasis>x</emphasis>-axis.</para>
+  <para>	Simple_Plot_Log_Y</para>
+  <para>	Same as Simple_Plot but with logarithmic <emphasis>y</emphasis>-axis.</para>
+  <para>	Simple_Plot_Log_XY</para>
+  <para>	Same as Simple_Plot but with logarithmic <emphasis>x</emphasis>- and <emphasis>y</emphasis>-axes.</para>
+  <para>	Simple_Plot_Pairs</para>
+  <para>	Plot up to five <emphasis>x</emphasis>&#8211;<emphasis>y</emphasis> pairs with easy labeling and automatic line colors and styles.</para>
+  <para>	Single_Plot</para>
+  <para>	Plot a single <emphasis>x</emphasis>&#8211;<emphasis>y</emphasis> pair with flexible labels, axis styles, colors, line width and style, justification, and zooming.</para>
+  <para>	Simple_Contour</para>
+  <para>	Make a contour plot with labels</para>
+  <para>	Simple_Mesh_3D</para>
+  <para>	Easy 3D mesh plot with labels, zooming, and perspective controls</para>
+  <para>	Simple_Surface_3D</para>
+  <para>	Easy 3D surface plot with labels, zooming, and perspective controls</para>
+  <para>	<emphasis role="bold">Simple color map manipulations</emphasis></para>
+  <para>        PLplot provides extensive manipulation and control of two separate color maps, color map 0 and color map 1. The Ada binding makes basic manipulations easier and also adds facilities for making snapshots of color map 0 so that any state of the map can easlily be restored later. An initial snapshot is taken when the package is initialized so that the default color settings can always be restored after having been changed.</para>
+  <para>        Another set of features lets the user reset the 16 individual colors in color map 0 after a color definition has been changed. It is important to note that while Set_Pen_Color(Red) (plcol0 in the traditional binding) normally does what it says, Red simply has the value 1. If the user changes the color map so that 1 corresponds to another color, then Set_Pen_Color(Red) will draw in that color instead of red. To always assure that red is drawn even if the color map has been changed for integer 1, use Set_Pen_Color(Reset_Red) instead. These 16 "reset" functions return the appropriate default integer for the specified color but also reset that slot in the color table so that a subsequent call such as Set_Pen_Color(Red) will also cause drawing in red.</para>
+  <para>        Color map 1 also gets a easy-to-use makeover for Ada users. There are several pre-built color themes that are useful for quickly making surface and mesh plots, Color_Themes_For_Map_1_Type. These color themes can be quickly applied with Quick_Set_Color_Map_1.</para>
+  <para>        Miscellaneous other Ada features include a pre-built mask function for Shade_Regions that does no masking; perhaps the most useful purpose is to provide a template for writing mask functions that do mask. And there is a handy function for calculating the contour levels for making contour plots.</para>
+  <para>	Color table snapshots</para>
+  <para>	Make_Snapshot_Of_Color_Map_0</para>
+  <para>	Restore_Snapshot_Of_Color_Map_0</para>
+  <para>	Restore_Default_Snapshot_Of_Color_Map_0</para>
+  <para>	Color resetting functions for the 16 colors of color map 0</para>
+  <para>	Reset_Black, Reset_Red, &#8230; Reset_White</para>
+  <para>	Easy manipulation of color map 1</para>
+  <para>	Pre-built color themes for color map 1: Color_Themes_For_Map_1_Type</para>
+  <para>	Quick application of pre-built color themes: Quick_Set_Color_Map_1</para>
+  <para>	Other features</para>
+  <para>	A pre-built mask function for Shade_Regions that does no masking: Mask_Function_No_Mask</para>
+  <para>	An easy way to calculate an array of contour levels for contour plots: Calculate_Contour_Levels</para>
+  <para><emphasis role="bold">	7.2	Integer-options Given Ada Names</emphasis></para>
+  <para><emphasis role="bold">        </emphasis>The C version of PLplot uses a number of integers to mean specific things. Unfortunately, the meaning is lost when it it consigned to being a mere integer with no name. The Ada binding partially rectifies this situation by giving names to these integer constants&#8212;the integer can still be used if desired. (A more complete and safer rectification would use enumerated types.)</para>
+  <para>        Below is a listing of at least the contexts in which these "re-namings" have been applied. In some cases the entire range of values is listed, but if there are more than about four such values for each context, only a sampling is given.</para>
+  <para><emphasis role="bold">	Instances</emphasis></para>
+  <para>	Colors: Plot_Color_Type</para>
+  <para>	0 is Black, 1 is Red, etc.</para>
+  <para>	Justification for plots: Justification_Type</para>
+  <para>	User_Justified</para>
+  <para>	Not_Justified</para>
+  <para>	Justified</para>
+  <para>	Justified_Square_Box</para>
+  <para>	Axis styles: Axis_Style_Type</para>
+  <para>	Linear_Major_Grid</para>
+  <para>	Linear_Minor_Grid</para>
+  <para>	etc.</para>
+  <para>	Font styles: Font_Style_Type</para>
+  <para>	Normal_Font</para>
+  <para>	Roman_Font</para>
+  <para>	Italic_Font</para>
+  <para>	Script_Font</para>
+  <para>	Character sets: Character_Set_Type</para>
+  <para>	Standard_Character_Set</para>
+  <para>	Extended_Character_Set</para>
+  <para>	Plot orientation: Orientation_Type</para>
+  <para>	Landscape</para>
+  <para>	Portrait</para>
+  <para>	Modes for parsing command line arguments: Parse_Mode_Type</para>
+  <para>	E.g. PL_PARSE_PARTIAL</para>
+  <para>	Descriptions of map outlines (continents, states, etc.): Map_Type</para>
+  <para>	Continents</para>
+  <para>	USA_and_States</para>
+  <para>	Continents_and_Countries</para>
+  <para>	USA_States_and_Continents</para>
+  <para>	Various style and view options for 3D and surface plots</para>
+  <para>	E.g. Lines_Parallel_To_X</para>
+  <para>	Kind of gridding algorithm for interpolating 2D data to a grid: Gridding_Algorithm_Type</para>
+  <para>	E.g. Grid_Bivariate_Cubic_Spline_Approximation</para>
+  <para>	Flags for histogram style</para>
+  <para>	E.g. Histogram_Default</para>
+  <para>	Flags for histogram binning</para>
+  <para>	E.g. Bin_Default</para>
+  <para>	Names for color space models</para>
+  <para>	Hue, Lightness, Saturation: HLS</para>
+  <para>	Red, Green, Blue: RGB</para>
+  <para><emphasis role="bold">	7.3	One-offs</emphasis></para>
+  <para>	        Convenient string handling for Get_Device_Name (plgdev in the traditional binding); a function version is provided that simplifies the string handling associated with this feature.</para>
+  <para>	        Overloaded Set_Line_Style (plstyl in the traditional binding) with a version that takes a single argument, Default_Continuous_Line. This replaces the awkward situation of calling the normal versions of these procedures with unused arguments simply to set the line style to the default, continuous, line.</para>
+  <para>	        The contour plotter Contour_Plot_Irregular_Data (plfcont in the traditional binding) is provided for making contour plots from irregularly spaced data. This feature is not documented in the PLplot API documentation. </para>
 
-<orderedlist numeration="arabic" continuation="restarts" spacing="normal">
-<listitem><para><emphasis role="bold">Parts That Retain a C Flavor</emphasis></para></listitem>
-</orderedlist>
-<!-- 195:'Normal' --><para><emphasis role="bold">        </emphasis>There remains at least one area in the Ada bindings which is still affected by the C underpinnings. This might be cleaned up in future versions. There might be other residual C influence as well.</para>
-<para><emphasis role="bold">	8.1	Map-drawing</emphasis></para>
-<para>	        plmapform as called by Draw_Latitude_Longitude (plmap) and Draw_Latitude_Longitude (plmeridians)</para>
-<para>	        This is the only place in the PLplot bindings where a C subprogram calls an Ada subprogram while passing an array. If the array is unconstrained, there is no guarantee that it will work because C has no way of telling Ada what offset to use for the beginning of the array. But passing a constrained array is acceptable with the downside that the array size must be fixed within the bindings as being large enough to handle any situation; currently, it is sized as 0 .. 2000. See Example 19 for how this is handled in by the user program. The constrained array is called Map_Form_Constrained_Array.</para>
+  <orderedlist numeration="arabic" continuation="restarts" spacing="normal">
+    <listitem><para><emphasis role="bold">Parts That Retain a C Flavor</emphasis></para></listitem>
+  </orderedlist>
+  <!-- 195:'Normal' --><para><emphasis role="bold">        </emphasis>There remains at least one area in the Ada bindings which is still affected by the C underpinnings. This might be cleaned up in future versions. There might be other residual C influence as well.</para>
+  <para><emphasis role="bold">	8.1	Map-drawing</emphasis></para>
+  <para>	        plmapform as called by Draw_Latitude_Longitude (plmap) and Draw_Latitude_Longitude (plmeridians)</para>
+  <para>	        This is the only place in the PLplot bindings where a C subprogram calls an Ada subprogram while passing an array. If the array is unconstrained, there is no guarantee that it will work because C has no way of telling Ada what offset to use for the beginning of the array. But passing a constrained array is acceptable with the downside that the array size must be fixed within the bindings as being large enough to handle any situation; currently, it is sized as 0 .. 2000. See Example 19 for how this is handled in by the user program. The constrained array is called Map_Form_Constrained_Array.</para>
 
-<orderedlist numeration="arabic" continuation="restarts" spacing="normal">
-<listitem><para><emphasis role="bold">Known Issues</emphasis></para></listitem>
-</orderedlist>
-<!-- 200:'Normal' --><para><emphasis role="bold">	9.1	Stripchart labelling</emphasis></para>
-<para>	        In Example 17, all of the stripchart labels are the same regardless of the fact that the calling program  sets them to be different. This is likely to affect user programs in the same manner.</para>
-<para><emphasis role="bold">	9.2	Documentation</emphasis></para>
-<para>	        In numerous places in the documentation, a feature is listed or described as "C only." Many of these features are actually available in Ada. For example, in Contour_Plot (plcont in the traditional binding), the transformation from array indices to world coordinates is mentioned as "C only" but is actually available in Ada.</para>
+  <orderedlist numeration="arabic" continuation="restarts" spacing="normal">
+    <listitem><para><emphasis role="bold">Known Issues</emphasis></para></listitem>
+  </orderedlist>
+  <!-- 200:'Normal' --><para><emphasis role="bold">	9.1	Stripchart labelling</emphasis></para>
+  <para>	        In Example 17, all of the stripchart labels are the same regardless of the fact that the calling program  sets them to be different. This is likely to affect user programs in the same manner.</para>
+  <para><emphasis role="bold">	9.2	Documentation</emphasis></para>
+  <para>	        In numerous places in the documentation, a feature is listed or described as "C only." Many of these features are actually available in Ada. For example, in Contour_Plot (plcont in the traditional binding), the transformation from array indices to world coordinates is mentioned as "C only" but is actually available in Ada.</para>
 
-<orderedlist numeration="arabic" continuation="restarts" spacing="normal">
-<listitem><para><emphasis role="bold">Compilation notes</emphasis></para></listitem>
-</orderedlist>
-<!-- 205:'Normal' --><para><emphasis role="bold">	10.1	Ada 95 Versus Ada 2005</emphasis></para>
-<para>	        As discussed in Section 6.1, the bindings are made to work with Ada 95 but to also take advantage of the Annex G.3 (vector-matrix) features of Ada 2005. Actually, this adaptation takes place during the PLplot build process when DHAVE_ADA_2007=OFF or DHAVE_ADA_2007=ON is chosen; the appropriate binding source files are generated automatically. User programs will work with either compiler type without modification.</para>
-<para><emphasis role="bold">	10.2	GNAT Dependence</emphasis></para>
-<para>	        There is a slight but significant dependence on the GNAT version of Ada. This is discussed more fully in Section 6.2</para>
-<para><emphasis role="bold">	10.3	Compiler Warnings</emphasis></para>
-<para>	        During normal compilation of the Ada bindings, approximately a dozen warnings are generated, in pairs, of the following form:</para>
-<para>	bar.adb:46: warning: type of argument "foo" is unconstrained array</para>
-<para>	bar.adb:46: warning: foreign caller must pass bounds explicitly</para>
-<para>	These are normal and an unavoidable consequence of some of the callback routines interacting with the underlying C code.</para>
-<para><emphasis role="bold">	10.4	PLplot_Auxiliary</emphasis></para>
-<para>	        The bindings include files PLplot_Auxiliary.ads and PLplot_Auxiliary.adb. These files are currently used to provide a few convenience subprograms that are used in the examples. However, they are also very tightly associated with the above-mentioned facility to accommodate either Ada 95 or Ada 2005 compilers. The current situation is such that if the user is using an Ada 95 compiler <emphasis>and</emphasis> requires the Real_Vector or Real_Matrix type definitions, then he/she should with PLplot_Auxiliary. If in doubt, PLplot_Auxiliary can always be with-ed without harm. In the future, this confusion might be removed and the need for PLplot_Auxiliary removed. (However, user programs that with it should still work without change.)</para>
+  <orderedlist numeration="arabic" continuation="restarts" spacing="normal">
+    <listitem><para><emphasis role="bold">Compilation notes</emphasis></para></listitem>
+  </orderedlist>
+  <!-- 205:'Normal' --><para><emphasis role="bold">	10.1	Ada 95 Versus Ada 2005</emphasis></para>
+  <para>	        As discussed in Section 6.1, the bindings are made to work with Ada 95 but to also take advantage of the Annex G.3 (vector-matrix) features of Ada 2005. Actually, this adaptation takes place during the PLplot build process when DHAVE_ADA_2007=OFF or DHAVE_ADA_2007=ON is chosen; the appropriate binding source files are generated automatically. User programs will work with either compiler type without modification.</para>
+  <para><emphasis role="bold">	10.2	GNAT Dependence</emphasis></para>
+  <para>	        There is a slight but significant dependence on the GNAT version of Ada. This is discussed more fully in Section 6.2</para>
+  <para><emphasis role="bold">	10.3	Compiler Warnings</emphasis></para>
+  <para>	        During normal compilation of the Ada bindings, approximately a dozen warnings are generated, in pairs, of the following form:</para>
+  <para>	bar.adb:46: warning: type of argument "foo" is unconstrained array</para>
+  <para>	bar.adb:46: warning: foreign caller must pass bounds explicitly</para>
+  <para>	These are normal and an unavoidable consequence of some of the callback routines interacting with the underlying C code.</para>
+  <para><emphasis role="bold">	10.4	PLplot_Auxiliary</emphasis></para>
+  <para>	        The bindings include files PLplot_Auxiliary.ads and PLplot_Auxiliary.adb. These files are currently used to provide a few convenience subprograms that are used in the examples. However, they are also very tightly associated with the above-mentioned facility to accommodate either Ada 95 or Ada 2005 compilers. The current situation is such that if the user is using an Ada 95 compiler <emphasis>and</emphasis> requires the Real_Vector or Real_Matrix type definitions, then he/she should with PLplot_Auxiliary. If in doubt, PLplot_Auxiliary can always be with-ed without harm. In the future, this confusion might be removed and the need for PLplot_Auxiliary removed. (However, user programs that with it should still work without change.)</para>
 
-<orderedlist numeration="arabic" continuation="restarts" spacing="normal">
-<listitem><para><emphasis role="bold">Notes for Apple Macintosh OS X users</emphasis></para></listitem>
-</orderedlist>
-<!-- 217:'Normal' --><para><emphasis role="bold">        </emphasis>The following comments apply to users of Apple Macintosh computers which run OS X. OS X users may use Apple's free integrated development environment (IDE) or may prefer other methods such as using a favorite editor and building from the command line.</para>
-<para>        OS X users should be aware that an excellent graphical terminal program is available and is highly recommended. It is called AquaTerm and is a full Cocoa program with window control. Performing a cut operation places a PDF of the front window on the clipboard, a convenience when working with other graphics or word processing programs.</para>
-<para><emphasis role="bold">	11.1	Using Apple's Xcode IDE</emphasis></para>
-<para>	        The Macintosh Ada community has made a plug-in for Apple's free Xcode integrated development environment (IDE) that makes programming Ada in Xcode possible. The plug-in is included with the compiler that is available at <ulink url="http://www.macada.org/">www.macada.org</ulink>. Since Xcode is based on gcc, it is possible to work in the various gcc languages as well as to incorporate binaries such as the PLplot library.</para>
-<para>	        In order to make an Xcode project, drag-and-drop source files and the PLplot library file to the Groups &amp; Files pane of an Ada project. There are a few idiosyncrasies that you may encounter so make sure to contact the very friendly Macintosh Ada mailing list at <ulink url="http://www.macada.org/">www.macada.org</ulink> or study the FAQ at that same site if you have any difficulties.</para>
-<para><emphasis role="bold">	11.2	A Note on AquaTerm</emphasis></para>
-<para>	        AquaTerm is a display option available on Macintosh computers using OS X and is supported by PLplot. It is a native Cocoa graphics "terminal" that is highly recommended. All output is antialiased and is easily cut-and-pasted in OS X's native PDF format. Get it at <ulink url="http://sourceforge.net/project/showfiles.php?group_id=39915">sourceforge.net&#8212;showfiles.php</ulink>. It can also be installed from either the Fink <ulink url="http://www.finkproject.org/">www.finkproject.org</ulink> or MacPorts <ulink url="http://www.macports.org/projects.">www.macports.org&#8212;projects.</ulink> projects.</para>
-<para><emphasis role="bold">	11.3	X11</emphasis></para>
-<para>	        Apple supplies the X11 windowing system that is popular on some other Unix and Linux operations systems as part of the Developer Tools. All PLplot programs made with the Ada bindings will run on X11. In fact, some types of interactivity such as Examples 14 and 17 will not run on Apple's X11 (as of OS X 10.4 at least) and must be run on X11 (or some other output device such as TCL/TK).</para>
-<para><emphasis role="bold">	11.4	GNAT for OS X</emphasis></para>
-<para>	        Apple Macintosh users will benefit from a pre-built version of GNAT that comes packaged using the usual Apple software installer and is strongly recommended. This compiler is available for both PowerPC and Intel Macintoshes at <ulink url="http://www.macada.org/macada/Welcome.html.">www.macada.org&#8212;Welcome.html.</ulink>. This site is traditionally rather confusing but the mailing list is extremely helpful. The installer also includes an Ada-specific plug-in for Apple's Xcode IDE which is strongly recommended if you plan to work on this platform. Xcode is part of the Developer Tools and is available on the Apple system disks that also contain the operating system or it can be downloaded for free from <ulink url="http://developer.apple.com/tools/xcode/">developer.apple.com&#8212;xcode</ulink>. </para>
-<para>Document version dated September 8, 2008</para>
-<para>Author: Jerry Bauck</para>
-<para>&#169; 2008 Jerry Bauck</para>
-<para>Distributed as part of the PLplot plotting software</para>
+  <orderedlist numeration="arabic" continuation="restarts" spacing="normal">
+    <listitem><para><emphasis role="bold">Notes for Apple Macintosh OS X users</emphasis></para></listitem>
+  </orderedlist>
+  <!-- 217:'Normal' --><para><emphasis role="bold">        </emphasis>The following comments apply to users of Apple Macintosh computers which run OS X. OS X users may use Apple's free integrated development environment (IDE) or may prefer other methods such as using a favorite editor and building from the command line.</para>
+  <para>        OS X users should be aware that an excellent graphical terminal program is available and is highly recommended. It is called AquaTerm and is a full Cocoa program with window control. Performing a cut operation places a PDF of the front window on the clipboard, a convenience when working with other graphics or word processing programs.</para>
+  <para><emphasis role="bold">	11.1	Using Apple's Xcode IDE</emphasis></para>
+  <para>	        The Macintosh Ada community has made a plug-in for Apple's free Xcode integrated development environment (IDE) that makes programming Ada in Xcode possible. The plug-in is included with the compiler that is available at <ulink url="http://www.macada.org/">www.macada.org</ulink>. Since Xcode is based on gcc, it is possible to work in the various gcc languages as well as to incorporate binaries such as the PLplot library.</para>
+  <para>	        In order to make an Xcode project, drag-and-drop source files and the PLplot library file to the Groups &amp; Files pane of an Ada project. There are a few idiosyncrasies that you may encounter so make sure to contact the very friendly Macintosh Ada mailing list at <ulink url="http://www.macada.org/">www.macada.org</ulink> or study the FAQ at that same site if you have any difficulties.</para>
+  <para><emphasis role="bold">	11.2	A Note on AquaTerm</emphasis></para>
+  <para>	        AquaTerm is a display option available on Macintosh computers using OS X and is supported by PLplot. It is a native Cocoa graphics "terminal" that is highly recommended. All output is antialiased and is easily cut-and-pasted in OS X's native PDF format. Get it at <ulink url="http://sourceforge.net/project/showfiles.php?group_id=39915">sourceforge.net&#8212;showfiles.php</ulink>. It can also be installed from either the Fink <ulink url="http://www.finkproject.org/">www.finkproject.org</ulink> or MacPorts <ulink url="http://www.macports.org/projects.">www.macports.org&#8212;projects.</ulink> projects.</para>
+  <para><emphasis role="bold">	11.3	X11</emphasis></para>
+  <para>	        Apple supplies the X11 windowing system that is popular on some other Unix and Linux operations systems as part of the Developer Tools. All PLplot programs made with the Ada bindings will run on X11. In fact, some types of interactivity such as Examples 14 and 17 will not run on Apple's X11 (as of OS X 10.4 at least) and must be run on X11 (or some other output device such as TCL/TK).</para>
+  <para><emphasis role="bold">	11.4	GNAT for OS X</emphasis></para>
+  <para>	        Apple Macintosh users will benefit from a pre-built version of GNAT that comes packaged using the usual Apple software installer and is strongly recommended. This compiler is available for both PowerPC and Intel Macintoshes at <ulink url="http://www.macada.org/macada/Welcome.html.">www.macada.org&#8212;Welcome.html.</ulink>. This site is traditionally rather confusing but the mailing list is extremely helpful. The installer also includes an Ada-specific plug-in for Apple's Xcode IDE which is strongly recommended if you plan to work on this platform. Xcode is part of the Developer Tools and is available on the Apple system disks that also contain the operating system or it can be downloaded for free from <ulink url="http://developer.apple.com/tools/xcode/">developer.apple.com&#8212;xcode</ulink>. </para>
+  <para>Document version dated September 8, 2008</para>
+  <para>Author: Jerry Bauck</para>
+  <para>&#169; 2008 Jerry Bauck</para>
+  <para>Distributed as part of the PLplot plotting software</para>
 </chapter>
