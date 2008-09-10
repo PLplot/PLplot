@@ -1,5 +1,37 @@
-<?xml version='1.0'?>
-	      <!DOCTYPE book>
+<!-- -*-  mode: nxml -*- -->
+<!--
+    ada.xml: "Ada Language" chapter
+
+Copyright (C) 2008 Jerry Bauck
+
+Redistribution and use in source (XML DocBook) and "compiled" forms
+(HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
+modification, are permitted provided that the following conditions are
+met:
+
+1. Redistributions of source code (XML DocBook) must retain the
+above copyright notice, this list of conditions and the following
+disclaimer as the first lines of this file unmodified.
+
+2. Redistributions in compiled form (transformed to other DTDs,
+converted to HTML, PDF, PostScript, and other formats) must
+reproduce the above copyright notice, this list of conditions and
+the following disclaimer in the documentation and/or other
+materials provided with the distribution.
+
+Important: THIS DOCUMENTATION IS PROVIDED BY THE PLPLOT PROJECT "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PLPLOT PROJECT BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
 	      <!--
 This document was converted from RTF source: 
 By r2net 6.2.22
@@ -41,9 +73,8 @@ charset=UTF-8
 RootElement=book
 -->
 
-	      <book>
-<title>README.xml</title>
-<preface></preface>
+	      <chapter>
+<title>Ada Language</title>
 <!-- 1:'Normal' --><para><emphasis role="bold">Ada Bindings for the PLplot Plotting Package</emphasis></para>
 <para><emphasis role="bold"> </emphasis></para>
 
@@ -57,18 +88,6 @@ RootElement=book
 </orderedlist>
 <!-- 7:'Normal' --><para>        The Ada bindings for PLplot provide a way for Ada programmers to access the powerful PLplot technical plotting facilities directly from Ada programs while working completely in Ada&#8212;the Ada programmer never needs to know or worry that PLplot itself is written in another language.</para>
 <para>        There are a thin binding and two thick bindings provided. The thin binding presents the application programming interface (API) in a form very similar to the C API, although in 100% Ada. The thick bindings present the API in a form to which Ada programmers will be more accustomed and add some ease-of-use features. It is expected that the thick bindings will be preferred.</para>
-
-<orderedlist numeration="arabic" continuation="restarts" spacing="normal">
-<listitem><para><emphasis role="bold">About PLplot</emphasis></para></listitem>
-</orderedlist>
-<!-- 10:'Normal' --><para>        PLplot is a general purpose technical plotting package that can be accessed directly by the user's own program without first writing the data to be plotted to disk. The package is marked by speed, convenience, breadth, and flexibility.</para>
-<para>        The PLplot project is one of the most active on SourceForge, typically in the 99th percentile for activity.</para>
-<para>        The following is taken from the PLplot web site at <ulink url="http://plplot.sourceforge.net/">plplot.sourceforge.net</ulink>:</para>
-<para>       "PLplot is a library of functions that are useful for making scientific plots.</para>
-<para>        "PLplot can be used from within compiled languages such as C, C++, FORTRAN and Java, and interactively from interpreted languages such as Octave, Python, Perl and Tcl.</para>
-<para>        "The PLplot library can be used to create standard x-y plots, semilog plots, log-log plots, contour plots, 3D surface plots, mesh plots, bar charts and pie charts. Multiple graphs (of the same or different sizes) may be placed on a single page with multiple lines in each graph.</para>
-<para>        "A variety of output file devices such as Postscript, png, jpeg and others, as well as interactive devices such as xwin, tk, xterm and Tektronics devices are supported. New devices can be easily added by writing a small number of device dependent routines.</para>
-<para>        "There are almost 2000 characters in the extended character set. This includes four different fonts, the Greek alphabet and a host of mathematical, musical, and other symbols. Some devices supports its own way of dealing with text, such as the Postscript driver, or the png and jpeg drivers that uses the Freetype library."</para>
 
 <orderedlist numeration="arabic" continuation="restarts" spacing="normal">
 <listitem><para><emphasis role="bold">The Bindings</emphasis></para></listitem>
@@ -303,4 +322,4 @@ RootElement=book
 <para>Author: Jerry Bauck</para>
 <para>&#169; 2008 Jerry Bauck</para>
 <para>Distributed as part of the PLplot plotting software</para>
-</book>
+</chapter>
