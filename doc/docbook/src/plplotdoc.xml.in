@@ -50,15 +50,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY chap-advanced SYSTEM "advanced.xml">
 <!ENTITY chap-deploying SYSTEM "deploying.xml">
 <!ENTITY chap-drivers SYSTEM "drivers.xml">
+<!ENTITY chap-ada SYSTEM "ada.xml">
 <!ENTITY chap-c SYSTEM "c.xml">
-<!ENTITY chap-fortran95 SYSTEM "fortran95.xml">
-<!ENTITY chap-fortran77 SYSTEM "fortran77.xml">
 <!ENTITY chap-cplus SYSTEM "cplus.xml">
+<!ENTITY chap-fortran77 SYSTEM "fortran77.xml">
+<!ENTITY chap-fortran95 SYSTEM "fortran95.xml">
+<!ENTITY chap-perl SYSTEM "perl.xml">
+<!ENTITY chap-python SYSTEM "python.xml">
 <!ENTITY chap-tcl SYSTEM "tcl.xml">
 <!ENTITY chap-wish SYSTEM "wish.xml">
 <!ENTITY chap-gui SYSTEM "gui.xml">
-<!ENTITY chap-perl SYSTEM "perl.xml">
-<!ENTITY chap-python SYSTEM "python.xml">
 <!ENTITY chap-bibliography SYSTEM "bibliography.xml">
 <!ENTITY chap-api SYSTEM "api.xml">
 <!ENTITY chap-api-c SYSTEM "api-c.xml">
@@ -372,15 +373,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <part>
     <title> Language Bindings </title>
+    &chap-ada;
     &chap-c;
-    &chap-fortran95;
-    &chap-fortran77;
     &chap-cplus;
+    &chap-fortran77;
+    &chap-fortran95;
+    &chap-perl;
+    &chap-python;
     &chap-tcl;
     &chap-wish;
     &chap-gui;
-    &chap-perl;
-    &chap-python;
   </part>
 
   <part>
