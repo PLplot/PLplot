@@ -95,6 +95,13 @@ sub error_dimension {
 sub finish {
   print OUTFILE qq[
 
+// The following section needs to be default visibility. The DEFUN_DLD macro 
+// defines several functions so we can't easily individually tag them, and so
+// we resort to using the GGC pragma instead. What happens on Windows?
+#if defined(__GNUC__) && __GNUC__ > 3
+#pragma GCC visibility push(default)
+#endif
+
 //
 // The main dispatch function.  This function calls the appropriate wrapper
 // based on the value of the first argument.
@@ -115,6 +122,10 @@ DEFUN_DLD($octave_output_file, args, nargout, "See $stub_file for documentation"
   default: error(\"Illegal function ID parameter\"); return octave_value();
   }
 }
+
+#if defined(__GNUC__) && __GNUC__ > 3
+#pragma GCC visibility pop
+#endif
 
 ";
 
