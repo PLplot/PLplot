@@ -10,13 +10,15 @@
 # Copyright (c) 1997 Gary R. Holt.  This is distributed under the terms of the 
 # perl artistic license (http://language.perl.com/misc/Artistic.html).
 #
-# Modifications 2007 Andrew Ross 
-# This version contains three local fixes for plplot
+# Modifications 2007,2008 Andrew Ross 
+# This version contains four local fixes for plplot
 # 1) Change _dim function to allow a zero length array (required by plstyl)
 # 2) Alter string to std::string for compatibility with gcc3.2 and later
 # 3) Add octave version checking - the syntax of print_usage has changed
 #    from v2.1 to v2.9. This requires a file octave_version.pl which defines
 #    the variable octave_version.
+# 4) Add in GCC visibility pragma to ensure symbols are dispatch function 
+#    symbols are always visible, even when -fvisibility=hidden is used.
 #
 # Modifications 2008 Rafael Laboissiere
 # Change 3) above is adapted for Octave v3.0
