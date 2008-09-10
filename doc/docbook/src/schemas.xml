@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <locatingRules xmlns="http://thaiopensource.com/ns/locating-rules/1.0">
+  <uri resource="ada.xml" typeId="DocBook"/>
   <uri resource="api.xml" typeId="DocBook"/>
   <uri resource="advanced.xml" typeId="DocBook"/>
   <uri resource="api-c.xml" typeId="DocBook"/>
