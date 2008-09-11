@@ -19,10 +19,10 @@
   #define CSADLLIMPORT __declspec(dllimport)
 #elif defined(__GNUC__) && __GNUC__ > 3
   /* Follow ideas in http://gcc.gnu.org/wiki/Visibility for GCC version 4.x
-   *    * The following forces symbols specifically designated with either 
-   *    * CSADLLEXPORT or CSADLLIMPORT to be visible.  */
+   * The following forces exported symbols specifically designated with 
+   * CSADLLEXPORT to be visible.  */
   #define CSADLLEXPORT __attribute__ ((visibility("default")))
-  #define CSADLLIMPORT __attribute__ ((visibility("default")))
+  #define CSADLLIMPORT
 #endif
 
 #ifndef CSADLLEXPORT

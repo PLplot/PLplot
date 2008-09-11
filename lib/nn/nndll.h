@@ -19,10 +19,10 @@
   #define NNDLLIMPORT __declspec(dllimport)
 #elif defined(__GNUC__) && __GNUC__ > 3
   /* Follow ideas in http://gcc.gnu.org/wiki/Visibility for GCC version 4.x
-   *    * The following forces symbols specifically designated with either 
-   *    * NNDLLEXPORT or NNDLLIMPORT to be visible.  */
+   * The following forces exported symbols specifically designated with 
+   * NNDLLEXPORT to be visible.  */
   #define NNDLLEXPORT __attribute__ ((visibility("default")))
-  #define NNDLLIMPORT __attribute__ ((visibility("default")))
+  #define NNDLLIMPORT
 #endif
 
 #ifndef NNDLLEXPORT
