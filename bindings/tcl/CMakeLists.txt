@@ -157,7 +157,7 @@ if(ENABLE_tk)
   )
   if(BUILD_SHARED_LIBS)
   set_source_files_properties(${plplottcltk${LIB_TAG}_LIB_SRCS}
-  PROPERTIES COMPILE_FLAGS "-DUSINGPLDLL"
+  PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL"
   )
   endif(BUILD_SHARED_LIBS)
   set(plplottcltk${LIB_TAG}_link_libraries
