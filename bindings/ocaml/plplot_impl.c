@@ -1,20 +1,20 @@
 /*
-Copyright 2007  Hezekiah M. Carty
+Copyright 2007, 2008  Hezekiah M. Carty
 
-This file is part of ocaml-plplot.
+This file is part of PLplot.
 
-ocaml-plplot is free software: you can redistribute it and/or modify
+PLplot is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
 (at your option) any later version.
 
-Foobar is distributed in the hope that it will be useful,
+PLplot is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with ocaml-plplot.  If not, see <http://www.gnu.org/licenses/>.
+along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <plplotP.h>
