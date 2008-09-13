@@ -85,7 +85,7 @@
 [mlname(plscmap1)] void c_plscmap1 ( [size_is(ncol1), in] int * r, [size_is(ncol1), in] int * g, [size_is(ncol1), in] int * b, int ncol1 );
 [mlname(plscmap1a)] void c_plscmap1a ( [size_is(ncol1), in] int * r, [size_is(ncol1), in] int * g, [size_is(ncol1), in] int * b, [size_is(ncol1), in] double * a, int ncol1 );
 [mlname(plscmap1l)] void c_plscmap1l ( int itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [in, size_is(npts), in, size_is(npts), unique] int * rev );
-[mlname(plscmap1la)] void c_plscmap1la ( int itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [size_is(npts), in, size_is(npts)] double * a, [in, size_is(npts)] int * rev );
+[mlname(plscmap1la)] void c_plscmap1la ( int itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [size_is(npts), in, size_is(npts)] double * a, [in, size_is(npts), in, size_is(npts), unique] int * rev );
 [mlname(plscmap1n)] void c_plscmap1n ( int ncol1 );
 [mlname(plscol0)] void c_plscol0 ( int icol0, int r, int g, int b );
 [mlname(plscol0a)] void c_plscol0a ( int icol0, int r, int g, int b, double a );

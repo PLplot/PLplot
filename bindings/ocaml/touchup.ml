@@ -41,6 +41,11 @@ let manual_function_attributes =
       parameter_attrs = Some ["rev", ["in"; "size_is(npts)"; "unique"]];
     };
     {
+      function_name = "c_plscmap1la";
+      function_attrs = None;
+      parameter_attrs = Some ["rev", ["in"; "size_is(npts)"; "unique"]];
+    };
+    {
       function_name = "c_plxormod";
       function_attrs = None;
       parameter_attrs = Some ["status", ["out"]];
