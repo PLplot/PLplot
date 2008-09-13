@@ -120,7 +120,7 @@ let () =
   (* Create the color map with 128 colors and use plscmap1la to initialize
      the color values with a linear varying transparency (or alpha) *)
   plscmap1n 128;
-  plscmap1la 1 pos rcoord gcoord bcoord acoord rev;
+  plscmap1la 1 pos rcoord gcoord bcoord acoord (Some rev);
 
   (* Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will
      used for the shade plot. plshades will use linear interpolation to
