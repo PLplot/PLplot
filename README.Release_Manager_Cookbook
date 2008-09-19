@@ -24,79 +24,39 @@ command)
 
 (2) Installing a Local Copy of the PLplot Webpage.
 
-It can be convenient for testing purposes to install a local copy of the 
-PLplot webpage (http://plplot.sourceforge.net/index.html) on your machine.
-The first step is to install Apache and PHP (if you don't already have 
-them). You will also need to be able to build PLplot with the cairo device 
-driver. After you have installed these items do the following three steps
-(N.B. each with the same prefix for WWW_DIR but with a deliberately different 
-suffix for WWW_DIR):
+It can be convenient for testing purposes to generate and install from
+scratch a local copy of the PLplot website on some ssh-accessible machine
+(normally your local machine).
 
-  1a. Build a local version of the documentation.
-     
-     N.B. this build puts some documentation results into the source tree so
-     we use a throwaway source tree for this.
-     
-     N.B. The make www-install command below completely removes WWW_DIR on 
-     the local machine (localhost) so be careful how you specify 
-     the -DWWW_DIR option.
+All you have to do is run (on a Linux host that is capable of building the
+documentation)
 
-rm -rf /tmp/plplotdoc
-mkdir -p /tmp/plplotdoc/build
-cd /tmp/plplotdoc
-svn export https://plplot.svn.sourceforge.net/svnroot/plplot/trunk \
-plplot_source
-cd /tmp/plplotdoc/build
-cmake \
--DWWW_USER=username \
--DWWW_GROUP=group \
--DWWW_HOST=localhost \
--DWWW_DIR=/var/www/plplot/htdocs/docbook-manual \
--DCMAKE_VERBOSE_MAKEFILE=ON \
--DDEFAULT_NO_BINDINGS=ON -DDEFAULT_NO_DEVICES=ON \
--DPREBUILD_DIST=ON \
--DBUILD_DOC=ON \
-../plplot_source \
->& cmake.out
-make prebuild_dist >& make_prebuild.out
-     
-  1b. Install that documentation to the local copy of the PLplot webpage.
-     N.B. this command completely removes WWW_DIR on the local machine
-     (localhost) so be careful how you specify the above -DWWW_DIR option.
+scripts/generate_website.sh
 
-cd /tmp/plplotdoc/build
-make www-install
+with no arguments.  The script asks you four questions, gives you a chance
+to verify your answers, then does all the rest of it (downloading a
+throwaway copy of the PLplot source code, building the documentation,
+installing the documentation, building the examples, running the examples,
+installing the examples, and building the remainder of the website)
+automatically.  I (AWI) tested this script using the four answers
 
-  2. Generate examples and screenshots of those examples.
+Summary:
+USERNAME = irwin
+GROUPNAME = irwin
+HOSTNAME = raven
+WEBSITE_PREFIX = /home/irwin/public_html/plplot
 
-     N.B. this command completely removes WWW_DIR/htdocs/examples-data 
-     on the local machine (localhost) so be careful how you specify WWW_DIR!
+(raven is my local computer name, and /home/irwin/public_html is a location
+where I can put various websites).  I have both apache and PHP installed on
+my local machine.  Therefore, when I browse
+http://raven/~irwin/plplot/htdocs/ (the website corresponding to the above
+file prefix location), the result looks good.  In particular, the Ada plplot
+documentation is there and all the previous problems with source code
+accessibility for the Ada, f77, and OCaml examples are now fixed.
 
-cd /tmp/plplotdoc/plplot_source
-WWW_USER=username \
-WWW_GROUP=group \
-WWW_HOST=localhost \
-WWW_DIR=/var/www/plplot \
-scripts/htdocs-gen_plot-examples.sh >& htdocs_gen.out
-
-  3. Generate the website (other than the documentation and examples 
-     done above).
-     N.B. this command removes certain files and subdirectories of
-     WWW_DIR on the local machine (localhost) so be careful how you 
-     specify WWW_DIR!
-
-cd /tmp/plplotdoc/plplot_source/www
-make \
-WWW_USER=username \
-WWW_GROUP=group \
-WWW_HOST=localhost \
-WWW_DIR=/var/www/plplot/htdocs
-
-Where username and group are your username and group.
-
-If everything works as it should, you should be able to browse the local
-site at:
-http://127.0.0.1/plplot/htdocs/index.html
+N.B. SourceForge is no longer ssh-accessible.  The SF documentation says
+you should use rsync to upload local websites (such as the one created by
+the above script) to SF, but I haven't tried that yet.
 
 (3) Creating a test tarball from trunk
 
@@ -256,10 +216,6 @@ Where A and B specify the range of revisions in trunk to be applied
 to tags/vX_Y_Z in the merge process. These can be determined by commit
 messages.
 
-Install the documentation on the PLplot website:
-cd /tmp/plplot-dist-prep/build_dir
-make www-install
-
 Sign the release with your plplot Release Manager gpg key:
 gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-X.X.X.tar.gz
 
@@ -328,15 +284,21 @@ changed).
 Click on submit.
 
 Update the project web page, including the examples:
-edit www/index.html to include a link to the latest release.
-edit www/examples/index.html.in to reflect the current release number.
+edit www/index.php to include a link to the latest release.
+edit www/examples.php to reflect the current release number.
 svn commit the updated pages.
 
-Create a directory containing a fresh svn checkout of PLplot, including the 
-www scripts. Run the following commands in that directory:
-./scripts/htdocs-gen_plot-examples.sh
-cd www
-make
+Generate and install a local copy of the website using
+
+scripts/generate_website.sh
+
+(see comments above for exactly what this script does).
+
+N.B. SourceForge is no longer ssh accessible.  Therefore,
+once you are satisfied with the local website, use rsync to upload it to
+SourceForge.  (AWI: still reading the SF documentation about how to
+do that.)
+
 
 Immediate preparation for next release cycle
 
