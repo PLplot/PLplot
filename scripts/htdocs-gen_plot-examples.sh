@@ -35,13 +35,13 @@ if test "$build" = true; then
     rm -rf htdocsgen/build_dir htdocsgen/install
     mkdir -p htdocsgen/build_dir htdocsgen/install
     cd htdocsgen/build_dir
-    # Specifically enable f77 so that examples will be generated.
+    # Specifically enable f77 and Ada so that examples will be generated.
     cmake -DCMAKE_INSTALL_PREFIX=`pwd`/../install \
-    -DDEFAULT_NO_BINDINGS=ON -DENABLE_f77=ON \
+    -DDEFAULT_NO_BINDINGS=ON -DENABLE_f77=ON -DENABLE_ada=ON\
     -DDEFAULT_NO_DEVICES=ON -DPLD_pngcairo=ON \
     ../../
-    make
-    make install
+    make -j3
+    make -j3 install
     cd ../..
 fi
 
@@ -91,9 +91,9 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
     for f in examples/c/x${exe}c.c \
              examples/tcl/x${exe}.tcl \
              examples/java/x${exe}.java \
-	     cexamples_dir/../f77/x${exe}f.f \
+	     $cexamples_dir/../f77/x${exe}f.f \
 	     examples/f95/x${exe}f.f90 \
-	     examples/ada/x${exe}a.adb \
+	     $cexamples_dir/../ada/x${exe}a.adb \
              bindings/octave/demos/x${exe}c.m \
              examples/python/xw${exe}.py \
 	     examples/c++/x${exe}.cc \
