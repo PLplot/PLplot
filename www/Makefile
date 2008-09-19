@@ -6,7 +6,7 @@
 include Makefile-vars
 
 FILES =          \
-    index.html   \
+    index_old.html   \
     credits      \
     demo         \
     examples     \
@@ -14,7 +14,7 @@ FILES =          \
     plplot_icons \
     resources    \
     source       \
-    index_new.php     \
+    index.php     \
     corefunctions.php \
     credits.php       \
     css               \
