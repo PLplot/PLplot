@@ -73,32 +73,32 @@
 		<p>Select language to see the source code</p>
 		<form class="codeform" action="examples.php" method="get">
 		<input type="hidden" name="demo" value="$demo_str" />
+		<input type="submit" name="lbind" value="Ada" />
 		<input type="submit" name="lbind" value="C" />
 		<input type="submit" name="lbind" value="C++" />
 		<input type="submit" name="lbind" value="F77" />
 		<input type="submit" name="lbind" value="F95" />
-		<input type="submit" name="lbind" value="Ada" />
-		<input type="submit" name="lbind" value="Tcl" />
 		<input type="submit" name="lbind" value="Java" />
-		<input type="submit" name="lbind" value="Python" />
+		<input type="submit" name="lbind" value="Ocaml" />
 		<input type="submit" name="lbind" value="Octave" />
 		<input type="submit" name="lbind" value="PerlDL" />
-		<input type="submit" name="lbind" value="Ocaml" />
+		<input type="submit" name="lbind" value="Python" />
+		<input type="submit" name="lbind" value="Tcl" />
 		</form>
 END;
 
 	  switch($lbind) {
+	  case ("Ada"):    $fname = "x" . $demo_str . "a.adb-"; break;
 	  case ("C"):      $fname = "x" . $demo_str . "c.c-"; break;
 	  case ("C++"):$fname = "x" . $demo_str . ".cc-"; break;
 	  case ("F77"):    $fname = "x" . $demo_str . "f.f-"; break;
 	  case ("F95"):    $fname = "x" . $demo_str . "f.f90-"; break;
-	  case ("Ada"):    $fname = "x" . $demo_str . "a.adb-"; break;
-	  case ("Tcl"):    $fname = "x" . $demo_str . ".tcl-";  break;
 	  case ("Java"):   $fname = "x" . $demo_str . ".java-"; break;
-	  case ("Python"): $fname = "xw" . $demo_str . ".py-"; break;
+	  case ("Ocaml"):  $fname = "x" . $demo_str . ".ml-"; break;
 	  case ("Octave"): $fname = "x" . $demo_str . "c.m-"; break;
 	  case ("PerlDL"): $fname = "x" . $demo_str . ".pl-"; break;
-	  case ("Ocaml"):  $fname = "x" . $demo_str . ".ml-"; break;
+	  case ("Python"): $fname = "xw" . $demo_str . ".py-"; break;
+	  case ("Tcl"):    $fname = "x" . $demo_str . ".tcl-";  break;
 	  default:         $fname = "x" . $demo_str . "c.c-";
 	  }
 
