@@ -89,7 +89,7 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
     mv *${exe}.??.png $EXDIR/demo${exe}
     # Note both Ada and fortran 77 examples grabbed from the installed
     # examples.
-    for f in 
+    for f in \
 	     $cexamples_dir/../ada/x${exe}a.adb \
              examples/c/x${exe}c.c \
 	     examples/c++/x${exe}.cc \
