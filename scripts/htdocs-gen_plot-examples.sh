@@ -87,17 +87,21 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
     rm -rf $EXDIR/demo${exe}
     mkdir -p $EXDIR/demo${exe}
     mv *${exe}.??.png $EXDIR/demo${exe}
-    # Note fortran 77 examples grabbed from installed examples.
-    for f in examples/c/x${exe}c.c \
-             examples/tcl/x${exe}.tcl \
-             examples/java/x${exe}.java \
+    # Note both Ada and fortran 77 examples grabbed from the installed
+    # examples.
+    for f in 
+	     $cexamples_dir/../ada/x${exe}a.adb \
+             examples/c/x${exe}c.c \
+	     examples/c++/x${exe}.cc \
 	     $cexamples_dir/../f77/x${exe}f.f \
 	     examples/f95/x${exe}f.f90 \
-	     $cexamples_dir/../ada/x${exe}a.adb \
+             examples/java/x${exe}.java \
+             examples/ocaml/x${exe}.ml \
              bindings/octave/demos/x${exe}c.m \
+             examples/perl/x${exe}.pl \
              examples/python/xw${exe}.py \
-	     examples/c++/x${exe}.cc \
-             examples/perl/x${exe}.pl ; do
+             examples/tcl/x${exe}.tcl \
+	     ; do
         if test -f $f ; then
             cp $f $EXDIR/demo${exe}
         else
@@ -109,7 +113,19 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
     # rename executables, to avoid browsers trying to execute files
     # instead of showing them.
     (cd  $EXDIR/demo${exe};
-    for j in *.c *.cc *.f *.f90 *.adb *.m *.tcl *.java *.py *.pl; do
+    for j in \
+	*.adb \
+        *.c \
+	*.cc \
+	*.f \
+	*.f90 \
+	*.java \
+	*.ml \
+	*.m \
+	*.pl \
+	*.py \
+	*.tcl \ 
+	; do
 	    mv $j $j-
     done
     )
