@@ -37,7 +37,7 @@ with no arguments.  The script asks you four questions, gives you a chance
 to verify your answers, then does all the rest of it (downloading a
 throwaway copy of the PLplot source code, building the documentation,
 installing the documentation, building the examples, running the examples,
-installing the examples, and building the remainder of the website)
+installing the examples, and installing the remainder of the website)
 automatically.  I (AWI) tested this script using the four answers
 
 Summary:
@@ -54,9 +54,21 @@ file prefix location), the result looks good.  In particular, the Ada plplot
 documentation is there and all the previous problems with source code
 accessibility for the Ada, f77, and OCaml examples are now fixed.
 
-N.B. SourceForge is no longer ssh-accessible.  The SF documentation says
-you should use rsync to upload local websites (such as the one created by
-the above script) to SF, but I haven't tried that yet.
+Once you are satisfied with the locall website, you can upload it to
+SourceForge with rsync.  I give the directions here, although you may want
+to do this later (see below) in the release process.
+
+For the above WEBSITE_PREFIX, here is what worked for me from my computer
+with the hostname of raven where that WEBSITE_PREFIX directory was
+created.
+
+rsync -av --delete \
+/home/irwin/public_html/plplot/htdocs/* \
+airwin,plplot@web.sourceforge.net:htdocs 
+
+Adjust for your username and WEBSITE_PREFIX.  The ",plplot" part of the
+username makes sure you have the right group permissions and default website
+directory location for PLplot.
 
 (3) Creating a test tarball from trunk
 
@@ -296,8 +308,7 @@ scripts/generate_website.sh
 
 N.B. SourceForge is no longer ssh accessible.  Therefore,
 once you are satisfied with the local website, use rsync to upload it to
-SourceForge.  (AWI: still reading the SF documentation about how to
-do that.)
+SourceForge (see above).
 
 
 Immediate preparation for next release cycle
