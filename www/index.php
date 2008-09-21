@@ -19,7 +19,7 @@
 			<p>PLplot is a library of functions that are useful for making scientific
 				 plots.</p>
 			<p>PLplot can be used from within compiled languages such as C, C++, D,
-				 FORTRAN and Java, and interactively from interpreted languages
+				 Fortran and Java, and interactively from interpreted languages
 				 such as Octave, Python, Perl and Tcl.</p>
       <p>The PLplot library can be used to create standard x-y plots, semi-log plots,
 				 log-log plots, contour plots, 3D surface plots, mesh plots, bar charts and
@@ -56,14 +56,14 @@
 				<h4>Output file formats</h4>
           <p>pdf, svg, postscript, cgm, png, jpeg, gif pbm, xfig and latex</p>
         <h4>Interactive Platforms</h4>
-          <p>X, Tk/Tcl, wxWidgets, Gnome</p>
+          <p>X, Tcl/Tk, wxWidgets, Gnome</p>
 			</div>
 			<div class="splitcontentright">
 				<h4>Language Bindings</h4>
 				<p>There are many bindings to the PLplot library</p>
 				<ul class="arrowlist">
 				  <li>C/C++</li>
-				  <li>FORTAN 77/90</li>
+				  <li>Fortran 77/90</li>
 				  <li>D</li>
 				  <li>Java</li>
 				  <li>Python</li>
@@ -71,7 +71,7 @@
 				  <li>Ada</li>
 				  <li>OCaml</li>
 				  <li>Octave</li>
-				  <li>TCL/Tk</li>
+				  <li>Tcl/Tk</li>
 				  <li>wxWidgets</li>
 				</ul>
 			</div>
