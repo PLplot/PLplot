@@ -41,7 +41,7 @@ install: examples/index.html
 	    else \
 	        dir=`dirname $$f` ; \
 	    fi ; \
-	    scp -r $$f $(USER_AT_HOST):$(WWW_DIR)/$$dir ; \
+	    scp -rp $$f $(USER_AT_HOST):$(WWW_DIR)/$$dir ; \
 	done
 	-ssh $(USER_AT_HOST) chgrp -R $(WWW_GROUP) $(WWW_FILES)
 	-ssh $(USER_AT_HOST) chmod -R g=u $(WWW_FILES)
