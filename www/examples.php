@@ -155,7 +155,7 @@ END;
 		  $npages = $drec[1];
 
 			if($npages!=0) {
-				echo "<a href=\"examples.php?demo=$demo_str\"><img border=\"0\" src=\"examples-data/$dir/prev-x$demo_str.$thumbnail.png\" /></a>\n";
+				echo "<a href=\"examples.php?demo=$demo_str\"><img border=\"0\" src=\"examples-data/$dir/prev-x$demo_str.$thumbnail.png\" alt=\"x$demo_str.thumbnail\"/></a>\n";
 			  $count++;
 			  if(($count%3) == 0) echo "<br />\n";  
 			}
