@@ -160,6 +160,7 @@ END;
 			  if(($count%3) == 0) echo "<br />\n";  
 			}
 		}
+		echo "</p>";
 	}
 ?>
 		</div>
