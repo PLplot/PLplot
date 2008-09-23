@@ -7,7 +7,6 @@ include Makefile-vars
 
 FILES =          \
     index_old.html   \
-    news         \
     plplot_icons \
     resources    \
     source       \
