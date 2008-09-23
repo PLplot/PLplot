@@ -106,7 +106,7 @@ END;
 			<ul class="arrowlist">
 				<li><a href="documentation.php">Documentation</a></li>
 				<li><a href="http://www.miscdebris.net/plplot_wiki">Wiki</a></li>
-				<li><a href="http://sourceforge.net/projects/plplot">SourcForge Project Page</a></li>
+				<li><a href="http://sourceforge.net/projects/plplot">SourceForge Project Page</a></li>
 				<li><a href="http://sourceforge.net/mail/?group_id=2915">Mailing Lists</a></li>
 			</ul>
 
