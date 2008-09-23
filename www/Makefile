@@ -9,7 +9,6 @@ FILES =          \
     index_old.html   \
     credits      \
     demo         \
-    examples     \
     news         \
     plplot_icons \
     resources    \
@@ -30,10 +29,7 @@ WWW_FILES = $(patsubst %,$(WWW_DIR)/%,$(FILES))
 
 all: install install-announce
 
-examples/index.html: examples/index.html.in
-	(cd examples ; eperl index.html.in > index.html || rm -f index.html)
-
-install: examples/index.html
+install:
 	ssh $(USER_AT_HOST) rm -rf $(WWW_FILES)
 	for f in $(FILES) ; do \
 	    if test -d $$f ; then \
@@ -50,5 +46,4 @@ install-announce:
 	-( cd announce ; $(MAKE) install )
 
 clean:
-	rm -f examples/index.html examples/demo*.php
 	( cd announce ; $(MAKE) clean )
