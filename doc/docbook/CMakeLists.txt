@@ -1,5 +1,3 @@
-add_subdirectory(www) 
-
 if(BUILD_DOC)
   add_subdirectory(bin) 
 endif(BUILD_DOC)

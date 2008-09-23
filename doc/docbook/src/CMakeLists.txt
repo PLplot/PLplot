@@ -511,7 +511,6 @@ if(BUILD_INFO OR PREBUILT_DOC)
     set(HTML_TARBALL ${BASE_HTML}.tar.gz)
     set(INFO_TARBALL ${BASE_INFO}.tar.gz)
     set(MAN_TARBALL ${BASE_MAN}.tar.gz)
-    set(INDEX_HTML ${CMAKE_CURRENT_BINARY_DIR}/../www/index.html)
     set(DOCUMENTATION_PHP ${CMAKE_CURRENT_BINARY_DIR}/../../../www/documentation.php)
 
     set(WWW_USERAT ${WWW_USER}@)
@@ -550,21 +549,6 @@ if(BUILD_INFO OR PREBUILT_DOC)
     )
 
     add_custom_command(
-    OUTPUT ${INDEX_HTML}
-    COMMAND ${PERL_EXECUTABLE}
-    ${BINDIR}/size-href.pl < ${INDEX_HTML}.in > ${INDEX_HTML}
-    DEPENDS
-    ${BINDIR}/size-href.pl
-    ${INDEX_HTML}.in
-    ${BASE}.ps.gz
-    ${BASE}.pdf
-    ${BASE}.dvi
-    ${CMAKE_CURRENT_BINARY_DIR}/${INFO_TARBALL}
-    ${CMAKE_CURRENT_BINARY_DIR}/${MAN_TARBALL}
-    ${CMAKE_CURRENT_BINARY_DIR}/${HTML_TARBALL}
-    )
-
-    add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${TARBALL}
     COMMAND tar cfz ${TARBALL}
     ${HTML_TARBALL}
@@ -574,7 +558,6 @@ if(BUILD_INFO OR PREBUILT_DOC)
     ${BASE}.pdf
     ${BASE}.dvi
     -C ${CMAKE_CURRENT_SOURCE_DIR}/.. COPYING
-    -C ${CMAKE_CURRENT_BINARY_DIR}/../www index.html
     -C ${CMAKE_CURRENT_BINARY_DIR}/../../../www documentation.php
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/${HTML_TARBALL}
@@ -584,7 +567,6 @@ if(BUILD_INFO OR PREBUILT_DOC)
     ${BASE}.pdf
     ${BASE}.dvi
     ${CMAKE_CURRENT_SOURCE_DIR}/../COPYING
-    ${INDEX_HTML}
     ${DOCUMENTATION_PHP}
     )
 
