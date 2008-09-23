@@ -7,7 +7,6 @@
 include Makefile-vars
 
 FILES =          \
-    plplot_icons \
     index.php     \
     corefunctions.php \
     credits.php       \
