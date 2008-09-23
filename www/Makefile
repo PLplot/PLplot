@@ -2,11 +2,11 @@
 # (only works with GNU make)
 #
 # Rafael Labosisiere, 2004-02-04
+# Alan W. Irwin, 2008-09-23
 
 include Makefile-vars
 
 FILES =          \
-    index_old.html   \
     plplot_icons \
     index.php     \
     corefunctions.php \
