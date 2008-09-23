@@ -95,17 +95,19 @@ END;
 			pageNews(3);
 		}
 		echo <<<END
-			<h3>Releases</h3>
+			<h3>Source Code</h3>
 			<ul class="arrowlist">
-				<li><a href="http://sourceforge.net/project/shownotes.php?release_id=555104">Stable</a></li>
-				<li><a href="http://sourceforge.net/project/shownotes.php?release_id=575403">Development</a></li>
+				<li><a href="http://sourceforge.net/project/showfiles.php?group_id=2915">Download</a></li>
+				<li><a href="http://sourceforge.net/svn/?group_id=2915">SVN Repository</a></li>
+				<li><a href="http://plplot.svn.sourceforge.net/viewvc/plplot/">Browse SVN</a></li>
 			</ul>
 
 			<h3>Resources</h3>
 			<ul class="arrowlist">
 				<li><a href="documentation.php">Documentation</a></li>
-				<li><a href="http://sourceforge.net/mail/?group_id=2915">Mailing Lists</a></li>
 				<li><a href="http://www.miscdebris.net/plplot_wiki">Wiki</a></li>
+				<li><a href="http://sourceforge.net/projects/plplot">SourcForge Project Page</a></li>
+				<li><a href="http://sourceforge.net/mail/?group_id=2915">Mailing Lists</a></li>
 			</ul>
 
 			<h3>Links</h3>
