@@ -103,7 +103,7 @@ END;
 
 			<h3>Resources</h3>
 			<ul class="arrowlist">
-				<li><a href="docbook-manual">Documentation</a></li>
+				<li><a href="documentation.php">Documentation</a></li>
 				<li><a href="http://sourceforge.net/mail/?group_id=2915">Mailing Lists</a></li>
 				<li><a href="http://www.miscdebris.net/plplot_wiki">Wiki</a></li>
 			</ul>
