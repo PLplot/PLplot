@@ -63,12 +63,21 @@ with the hostname of raven where that WEBSITE_PREFIX directory was
 created.
 
 rsync -av --delete \
-/home/irwin/public_html/plplot/htdocs/* \
+/home/irwin/public_html/plplot/htdocs/ \
 airwin,plplot@web.sourceforge.net:htdocs 
 
 Adjust for your username and WEBSITE_PREFIX.  The ",plplot" part of the
 username makes sure you have the right group permissions and default website
-directory location for PLplot.
+directory location for PLplot.  
+
+N.B. the trailing slash on the source directory is essential and means rsync
+the contents of this directory with the contents of the destination htdocs
+directory.  Without the trailing slash you would rsync the the contents of
+the source directory with the contents of the htdocs/htdocs destination
+directory which is not what you want to do.  
+
+N.B. the --dry-run option for rsync is a god-send and tells you exactly what
+will happen without actually doing it.
 
 (3) Creating a test tarball from trunk
 
