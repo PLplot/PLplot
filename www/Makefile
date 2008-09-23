@@ -8,7 +8,6 @@ include Makefile-vars
 FILES =          \
     index_old.html   \
     plplot_icons \
-    resources    \
     source       \
     index.php     \
     corefunctions.php \
