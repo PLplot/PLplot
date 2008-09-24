@@ -15,7 +15,7 @@
 			<h3>Developers</h3>
 		  <p>Several developers contributed to the PLplot library, some of them are not
 				 part of the active development team any more. You can view a list of all
-				 active developers at the <a href=http://sourceforge.net/project/memberlist.php?group_id=2915">
+				 active developers at the <a href="http://sourceforge.net/project/memberlist.php?group_id=2915">
 				 Sourceforge memberpage</a> of the PLplot project.</p>
 				 
 			<p>A more complete list, including inactive developers but very likely
