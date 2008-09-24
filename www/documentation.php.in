@@ -30,7 +30,7 @@ The documentation results below have been generated from our DocBook/XML source 
 			</ul>
 		</div>
 
-		<?php pageSidebar(); ?>
+		<?php pageSidebar(1); ?>
 
 		<div id="spacer"></div>
 	</div>

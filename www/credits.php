@@ -23,7 +23,7 @@
 				 team</a>) continue to commit documentation and code to the SVN repository.</p>
 		</div>
 
-		<?php pageSidebar(); ?>
+		<?php pageSidebar(1); ?>
 
 		<div id="spacer"></div>
 	</div>

@@ -36,7 +36,7 @@
 		  </ul>
 		</div>
 
-		<?php pageSidebar(); ?>
+		<?php pageSidebar(1); ?>
 
 		<div id="spacer"></div>
 	</div>
