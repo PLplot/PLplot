@@ -5,10 +5,10 @@ $intoc = 0;
 while (<>) {
   if (/(<!DOCTYPE.*)\[(.*)/) {
     print "$1 \"foobar\" [$2\n" ; next}
-  if (/(.*)<part>(.*)/) {
+  if (/(.*)<part(.*)>(.*)/) {
     $inpart = 1;
-    print "$1<!--<part>";
-    $_ = "$2\n";
+    print "$1<!--<part$2>";
+    $_ = "$3\n";
     redo;
   }
   if ($inpart and m{(.*)</title>(.*)}) {
@@ -37,7 +37,7 @@ while (<>) {
   }
 
   # The hacks below are necessary because docbook2texixml does
-  # not know hot to include system entities
+  # not know how to include system entities
   if (m{(.*)<!ENTITY % ([^\s]+) SYSTEM "([^"]+)">(.*)}) {
     $sysent{$2} = $3;
     print "$1";
