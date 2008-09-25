@@ -38,18 +38,29 @@
       <ul class="arrowlist">
       <li><a href="http://www.freetype.org/">FreeType</a>: a free, high-quality, and 
       	  portable font engine.</li>
-      <li><a href="http://www.libharu.org/">libHaru</a>: free, cross platform, open
-      	  source library for generating PDF files.</li>
       <li><a href="http://www.cairographics.org/">cairo</a>: a 2D graphics library
           with support for multiple output devices. Currently supported output
           targets include the X Window System, Quartz, Win32, image buffers,
           PostScript, PDF, and SVG file output.</li>
       <li><a href="http://www.pango.org/">Pango</a>: a library for laying out
           and rendering of text, with an emphasis on internationalization.</li>
-      <li><a href="http://www.antigrain.com/">Anti-Grain Geometry</a>: an open source, 
-          free of charge high quality rendering engine, written in industrially standard C++.</li>
       <li><a href="http://www.libgd.org/">gd library</a>: an open source code library
                 for the dynamic creation of images by programmers.</li>
+      <li><a href="http://aquaterm.sourceforge.net/">AquaTerm.app</a>: a Mac OS X
+          plotting front end (grahics terminal) written using Objective-C and
+          the Cocoa API.</li>
+      <li><a href="http://www.wxwidgets.org/">wxWidgets</a>: lets developers
+          create GUI applications for Win32, Mac OS X, GTK+, X11, Motif, WinCE,
+          and more using one codebase.</li>
+      <li><a href="http://www.antigrain.com/">Anti-Grain Geometry</a>: an open source, 
+          free of charge high quality rendering engine, written in industrially
+          standard C++.</li>
+      <li><a href="http://www.unifont.org/lasi/">LASi</a>: provides a C++ stream output
+      	  interface (with operator <<) for creating Postscript documents that can contain
+          characters from any of the scripts and symbol blocks supported in Unicode 
+          and by Owen Taylor's Pango layout engine.</li>
+      <li><a href="http://www.libharu.org/">libHaru</a>: free, cross platform, open
+      	  source library for generating PDF files.</li>
       </ul>
       
       <h3>Tools</h3>
