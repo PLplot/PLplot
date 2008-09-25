@@ -358,12 +358,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <toc></toc>
   <!-- <lot></lot> -->
 
-  <part>
+  <part id="part_introduction">
     <title> Introduction </title>
     &chap-intro;
   </part>
 
-  <part>
+  <part id="part_programming">
     <title> Programming </title>
     &chap-simple;
     &chap-advanced;
@@ -371,7 +371,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     &chap-drivers;
   </part>
 
-  <part>
+  <part id="part_bindings">
     <title> Language Bindings </title>
     &chap-ada;
     &chap-c;
@@ -385,7 +385,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     &chap-gui;
   </part>
 
-  <part>
+  <part id="part_reference">
     <title> Reference </title>
     &chap-bibliography;
     &chap-api;

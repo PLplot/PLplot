@@ -53,7 +53,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     PLplot, released on &Release-Date;.
   </para>
 
-  <sect1>
+  <sect1 id="api_definition">
     <title>
       What is in the API?
     </title>
@@ -84,7 +84,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
-  <sect1>
+  <sect1 id="api_regression_tests">
     <title>
       Regression test for backwards compatibility
     </title>
