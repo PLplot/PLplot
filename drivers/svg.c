@@ -176,7 +176,7 @@ void plD_init_svg(PLStream *pls)
    svgFile = pls->OutFile;
 
    svgIndent = 0;
-   svg_open("document>");
+   svg_open("?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 }
 
 /*----------------------------------------------------------------------
@@ -193,9 +193,12 @@ void plD_bop_svg(PLStream *pls)
       
    svg_open("svg");
    svg_attr_value("xmlns", "http://www.w3.org/2000/svg");
+   svg_attr_value("xmlns:xlink", "http://www.w3.org/1999/xlink");
    svg_attr_value("version", "1.1");   
-   svg_attr_values("width", "%dcm", (int)((double)canvasXSize/DPI * 2.54));
-   svg_attr_values("height", "%dcm", (int)((double)canvasYSize/DPI * 2.54));
+   /* svg_attr_values("width", "%dcm", (int)((double)canvasXSize/DPI * 2.54)); */
+   /* svg_attr_values("height", "%dcm", (int)((double)canvasYSize/DPI * 2.54)); */
+   svg_attr_values("width", "%dpt", canvasXSize);
+   svg_attr_values("height", "%dpt", canvasYSize);
    svg_attr_values("viewBox", "%d %d %d %d", 0, 0, canvasXSize, canvasYSize);
    svg_general(">\n");
 
@@ -268,7 +271,6 @@ void plD_eop_svg(PLStream *pls)
 
 void plD_tidy_svg(PLStream *pls)
 {
-   svg_close("document");
    fclose(svgFile);
 }
 
@@ -558,7 +560,7 @@ void svg_open (char *tag)
 /*---------------------------------------------------------------------
   svg_open_end ()
   
-  Used to end the opending of a new XML expression i.e. add 
+  Used to end the opening of a new XML expression i.e. add 
   the final ">".
   ---------------------------------------------------------------------*/
 
