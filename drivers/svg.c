@@ -170,6 +170,9 @@ void plD_init_svg(PLStream *pls)
       plP_setphy((PLINT) 0, (PLINT) pls->xlength, (PLINT) 0, (PLINT) pls->ylength);
    }   
 
+   /* Initialize family file info */
+   plFamInit(pls);
+
    /* Prompt for a file name if not already set */
     
    plOpenFile(pls);
@@ -187,6 +190,9 @@ void plD_init_svg(PLStream *pls)
 
 void plD_bop_svg(PLStream *pls)
 {
+   /* Plot familying stuff. Not really understood, just copying gd.c */
+   plGetFam(pls);
+   pls->famadv = 1;
    pls->page++;
    
    /* write opening svg tag for the new page */
