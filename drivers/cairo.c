@@ -786,6 +786,43 @@ void rotate_cairo_surface(PLStream *pls, float x11, float x12, float x21, float 
 /*---------------------------------------------------------------------
   ---------------------------------------------------------------------
   
+  That which is common to all familying Cairo Drivers
+  
+  ---------------------------------------------------------------------
+  ---------------------------------------------------------------------*/
+#if defined(PLD_pngcairo) || defined(PLD_svgcairo)
+
+void plD_bop_famcairo            (PLStream *);
+/*----------------------------------------------------------------------
+  plD_bop_famcairo()
+  
+  Familying Devices: Set up for the next page.
+  ----------------------------------------------------------------------*/
+
+void plD_bop_famcairo(PLStream *pls)
+{
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  /* Plot familying stuff. Not really understood, just copying gd.c */
+  plGetFam(pls);
+  pls->famadv = 1;
+  pls->page++;
+
+  /* Fill in the window with the background color. */
+  cairo_rectangle(aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength);
+  cairo_set_source_rgb(aStream->cairoContext,
+		       (double)pls->cmap0[0].r/255.0,
+		       (double)pls->cmap0[0].g/255.0,
+		       (double)pls->cmap0[0].b/255.0);
+  cairo_fill(aStream->cairoContext);
+}
+
+#endif
+/*---------------------------------------------------------------------
+  ---------------------------------------------------------------------
+  
   That which is specific to the xcairo driver.
   
   ---------------------------------------------------------------------
@@ -1292,7 +1329,7 @@ void plD_dispatch_init_svgcairo(PLDispatchTable *pdt)
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
    pdt->pl_eop      = (plD_eop_fp)      plD_eop_cairo;
-   pdt->pl_bop      = (plD_bop_fp)      plD_bop_cairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_famcairo;
    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_cairo;
    pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
    pdt->pl_esc      = (plD_esc_fp)      plD_esc_cairo;
@@ -1308,18 +1345,36 @@ void plD_init_svgcairo(PLStream *pls)
 {
   PLCairo *aStream;
 
-  /* Setup the PLStream and the font lookup table */
-  aStream = stream_and_font_setup(pls, 0);
+  /* Setup the PLStream and the font lookup table and allocate a cairo 
+     stream structure.
+     
+     NOTE: The check below is necessary since, in family mode, this function
+      will be called multiple times. While you might think that it is
+      sufficient to update what *should* be the only pointer to the contents
+      of pls->dev, i.e. the pointer pls->dev itself, it appears that
+      something else somewhere else is also pointing to pls->dev. If you
+      change what pls->dev points to then you will get a "bus error", from
+      which I infer the existence of said bad stale pointer.
+  */
+  if(pls->dev == NULL){
+    aStream = stream_and_font_setup(pls, 0);
+  } else {
+    stream_and_font_setup(pls, 0);
+    aStream = pls->dev;
+  }
+
+  /* Initialize family file info */
+  plFamInit(pls);
 
   /* Prompt for a file name if not already set. */
   plOpenFile(pls);
 
+  /* Save the pointer to the structure in the PLplot stream */
+  pls->dev = aStream;
+
   /* Create an cairo surface & context for SVG file. */
   aStream->cairoSurface = cairo_svg_surface_create_for_stream((cairo_write_func_t)write_to_stream, pls->OutFile, (double)pls->xlength, (double)pls->ylength);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
-
-  /* Save the pointer to the structure in the PLplot stream */
-  pls->dev = aStream;
 
   /* Invert the surface so that the graphs are drawn right side up. */
   rotate_cairo_surface(pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength);
@@ -1343,7 +1398,6 @@ void plD_init_svgcairo(PLStream *pls)
 
 PLDLLEXPORT void plD_dispatch_init_pngcairo  (PLDispatchTable *pdt);
 void plD_init_pngcairo           (PLStream *);
-void plD_bop_pngcairo            (PLStream *);
 void plD_eop_pngcairo            (PLStream *);
 
 /*---------------------------------------------------------------------
@@ -1365,7 +1419,7 @@ void plD_dispatch_init_pngcairo(PLDispatchTable *pdt)
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
    pdt->pl_eop      = (plD_eop_fp)      plD_eop_pngcairo;
-   pdt->pl_bop      = (plD_bop_fp)      plD_bop_pngcairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_famcairo;
    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_cairo;
    pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
    pdt->pl_esc      = (plD_esc_fp)      plD_esc_cairo;
@@ -1417,32 +1471,6 @@ void plD_init_pngcairo(PLStream *pls)
 
   /* Set graphics aliasing */
   cairo_set_antialias(aStream->cairoContext, aStream->graphics_anti_aliasing);
-}
-
-/*----------------------------------------------------------------------
-  plD_bop_pngcairo()
-  
-  PNG: Set up for the next page.
-  ----------------------------------------------------------------------*/
-
-void plD_bop_pngcairo(PLStream *pls)
-{
-  PLCairo *aStream;
-
-  aStream = (PLCairo *)pls->dev;
-
-  /* Plot familying stuff. Not really understood, just copying gd.c */
-  plGetFam(pls);
-  pls->famadv = 1;
-  pls->page++;
-
-  /* Fill in the window with the background color. */
-  cairo_rectangle(aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength);
-  cairo_set_source_rgb(aStream->cairoContext,
-		       (double)pls->cmap0[0].r/255.0,
-		       (double)pls->cmap0[0].g/255.0,
-		       (double)pls->cmap0[0].b/255.0);
-  cairo_fill(aStream->cairoContext);
 }
 
 /*---------------------------------------------------------------------
