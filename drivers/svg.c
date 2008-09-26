@@ -701,6 +701,8 @@ void svg_stroke_color(PLStream *pls)
    write_hex(pls->curcolor.g);
    write_hex(pls->curcolor.b);
    fprintf(svgFile, "\"\n");
+   svg_indent();
+   fprintf(svgFile, "stroke-opacity=\"%f\"\n", pls->curcolor.a);
 }
 
 /*---------------------------------------------------------------------
@@ -717,6 +719,8 @@ void svg_fill_color(PLStream *pls)
    write_hex(pls->curcolor.g);
    write_hex(pls->curcolor.b);
    fprintf(svgFile, "\"\n");
+   svg_indent();
+   fprintf(svgFile, "fill-opacity=\"%f\"\n", pls->curcolor.a);
 }
 
 /*---------------------------------------------------------------------
