@@ -57,6 +57,7 @@ static int svgIndent = 0;
 static FILE *svgFile;
 
 static char curColor[7];
+static int already_warned = 0;
 
 /* font stuff */
 
@@ -79,6 +80,8 @@ static void svg_stroke_width(PLStream *);
 static void svg_stroke_color(PLStream *);
 static void svg_fill_color(PLStream *);
 static void svg_fill_background_color(PLStream *);
+static int svg_family_check(PLStream *);
+
 
 /* General */
 
@@ -194,6 +197,7 @@ void plD_bop_svg(PLStream *pls)
    plGetFam(pls);
    pls->famadv = 1;
    pls->page++;
+   if(svg_family_check(pls)) {return;} 
    
    /* write opening svg tag for the new page */
       
@@ -235,6 +239,7 @@ void plD_bop_svg(PLStream *pls)
 
 void plD_line_svg(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
+   if(svg_family_check(pls)) {return;} 
    svg_open("polyline");
    svg_stroke_width(pls);
    svg_stroke_color(pls);
@@ -252,6 +257,7 @@ void plD_line_svg(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
 void plD_polyline_svg(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
+   if(svg_family_check(pls)) {return;} 
    poly_line(pls, xa, ya, npts, 0);
 }
 
@@ -263,6 +269,7 @@ void plD_polyline_svg(PLStream *pls, short *xa, short *ya, PLINT npts)
 
 void plD_eop_svg(PLStream *pls)
 {
+   if(svg_family_check(pls)) {return;} 
   /* write the closing svg tag */
 
    svg_close("g");
@@ -277,6 +284,7 @@ void plD_eop_svg(PLStream *pls)
 
 void plD_tidy_svg(PLStream *pls)
 {
+   if(svg_family_check(pls)) {return;} 
    fclose(svgFile);
 }
 
@@ -301,6 +309,7 @@ void plD_state_svg(PLStream *pls, PLINT op)
 
 void plD_esc_svg(PLStream *pls, PLINT op, void *ptr)
 {
+  if(svg_family_check(pls)) {return;} 
   int     i;
   switch (op)
     {
@@ -746,9 +755,33 @@ void svg_fill_background_color(PLStream *pls)
 }
 
 /*---------------------------------------------------------------------
+  svg_family_check ()
+  
+  support function to help supress more than one page if family file
+  output not specified by the user  (e.g., with the -fam command-line option).
+  ---------------------------------------------------------------------*/
+
+int svg_family_check(PLStream *pls)
+{
+   if (pls->family || pls->page == 1) 
+     {
+	return 0;
+     }
+   else 
+     {
+	if(! already_warned)
+	  {
+	     already_warned = 1;
+	     plwarn("All pages after the first skipped because family file output not specified.\n");
+	  }
+	return 1;
+     }
+}
+
+/*---------------------------------------------------------------------
   write_hex ()
   
-  writes a unsigned char as an approriately formatted hex value
+  writes a unsigned char as an appropriately formatted hex value
   ---------------------------------------------------------------------*/
 
 void write_hex(unsigned char val)
