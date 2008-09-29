@@ -52,6 +52,7 @@ PLDLLEXPORT const char* plD_DEVICE_INFO_svg = "svg:Scalable Vector Graphics (SVG
 
 static int canvasXSize = 0;
 static int canvasYSize = 0;
+static PLFLT scale = 0.;
 
 static int svgIndent = 0;
 static FILE *svgFile;
@@ -159,19 +160,28 @@ void plD_init_svg(PLStream *pls)
 
    /* Set up device parameters */
    
-   plP_setpxl(DPI/25.4, DPI/25.4);           /* Pixels/mm. */
-
    /* Set the bounds for plotting.  default is SVG_Default_X x SVG_Default_Y unless otherwise specified. */
    
    if (pls->xlength <= 0 || pls->ylength <= 0){
       canvasXSize = SVG_Default_X;
       canvasYSize = SVG_Default_Y;
-      plP_setphy((PLINT) 0, (PLINT) SVG_Default_X, (PLINT) 0, (PLINT) SVG_Default_Y);
    } else {
       canvasXSize = pls->xlength;
       canvasYSize = pls->ylength;
-      plP_setphy((PLINT) 0, (PLINT) pls->xlength, (PLINT) 0, (PLINT) pls->ylength);
-   }   
+   }
+   /* Calculate ratio of (larger) internal PLplot coordinates to external
+      coordinates used for svg file. */
+   if (canvasXSize > canvasYSize)
+     scale = (PLFLT)PIXELS_X/(PLFLT)canvasXSize;
+   else
+     scale = (PLFLT)PIXELS_Y/(PLFLT)canvasYSize;
+   /* to return to old behaviour use
+      scale = 1.;
+   */
+
+   plP_setphy((PLINT) 0, (PLINT) (scale*canvasXSize), (PLINT) 0, (PLINT) (scale*canvasYSize));
+
+   plP_setpxl(scale*DPI/25.4, scale*DPI/25.4);           /* Pixels/mm. */
 
    /* Initialize family file info */
    plFamInit(pls);
@@ -245,7 +255,7 @@ void plD_line_svg(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
    svg_stroke_color(pls);
    svg_attr_value("fill", "none");
    /*   svg_attr_value("shape-rendering", "crisp-edges"); */
-   svg_attr_values("points", "%d,%d %d,%d", x1a, y1a, x2a, y2a);
+   svg_attr_values("points", "%f,%f %f,%f", (double)x1a/scale, (double)y1a/scale, (double)x2a/scale, (double)y2a/scale);
    svg_open_end();
 }
 
@@ -344,7 +354,7 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts, short fill)
    svg_indent();
    fprintf(svgFile, "points=\"");
    for (i = 0; i < npts; i++){
-      fprintf(svgFile, "%d,%d ", xa[i], ya[i]);
+     fprintf(svgFile, "%f,%f ", (double)xa[i]/scale, (double)ya[i]/scale);
       if(((i+1)%10) == 0){
          fprintf(svgFile,"\n");
          svg_indent();
@@ -412,7 +422,7 @@ void proc_str (PLStream *pls, EscText *args)
    ftHt = 1.5 * pls->chrht * DPI/25.4;
 
    /* Calculate the tranformation matrix for SVG based on the
-      transformation matrix provived by PLplot. */
+      transformation matrix provided by PLplot. */
    plRotationShear(args->xform, &rotation, &shear, &stride);
    /* N.B. Experimentally, I (AWI) have found the svg rotation angle is
       the negative of the libcairo rotation angle, and the svg shear angle
@@ -429,7 +439,7 @@ void proc_str (PLStream *pls, EscText *args)
    /* Apply coordinate transform for text display.
       The transformation also defines the location of the text in x and y. */
    svg_open("g");
-   svg_attr_values("transform", "matrix(%f %f %f %f %d %d)", t[0], t[1], t[2], t[3], args->x, (int)(args->y - 0.3*ftHt + 0.5));
+   svg_attr_values("transform", "matrix(%f %f %f %f %f %f)", t[0], t[1], t[2], t[3], (double)(args->x/scale), (double)(args->y/scale - 0.3*ftHt + 0.5));
    svg_general(">\n");
 
    /*--------------
