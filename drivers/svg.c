@@ -255,7 +255,7 @@ void plD_line_svg(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
    svg_stroke_color(pls);
    svg_attr_value("fill", "none");
    /*   svg_attr_value("shape-rendering", "crisp-edges"); */
-   svg_attr_values("points", "%f,%f %f,%f", (double)x1a/scale, (double)y1a/scale, (double)x2a/scale, (double)y2a/scale);
+   svg_attr_values("points", "%r,%r %r,%r", (double)x1a/scale, (double)y1a/scale, (double)x2a/scale, (double)y2a/scale);
    svg_open_end();
 }
 
@@ -354,7 +354,7 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts, short fill)
    svg_indent();
    fprintf(svgFile, "points=\"");
    for (i = 0; i < npts; i++){
-     fprintf(svgFile, "%f,%f ", (double)xa[i]/scale, (double)ya[i]/scale);
+     fprintf(svgFile, "%.2f,%.2f ", (double)xa[i]/scale, (double)ya[i]/scale);
       if(((i+1)%10) == 0){
          fprintf(svgFile,"\n");
          svg_indent();
@@ -643,6 +643,11 @@ void svg_attr_values (char *attribute, char *format, ...)
       case 'f':
         dval = va_arg(ap, double);
         fprintf(svgFile, "%f", dval);
+        break;
+      case 'r':
+        /* r is non-standard, but use it here to format rounded value */
+        dval = va_arg(ap, double);
+        fprintf(svgFile, "%.2f", dval);
         break;
       case 's':
         sval = va_arg(ap, char *);
