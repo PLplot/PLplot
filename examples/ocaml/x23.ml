@@ -280,12 +280,6 @@ let () =
 
   for page = 11 to 15 do
     let dy = 0.030 in
-    (*
-       int family_index, style_index, weight_index;
-       /* Must be big enough to contain the prefix strings, the font-changing
-        * commands, and the "The quick brown..." string. */
-       char string[200];
-    *)
 
     pladv 0;
     plvpor 0.02 0.98 0.02 0.90;
@@ -308,6 +302,7 @@ let () =
         | 15 ->
             plmtex "t" 1.5 0.5 0.5
                    "#<0x10>PLplot Example 23 - Set Font with ##<FCI COMMAND STRING/> constructs";
+        | _ -> failwith "Invalid page"
     in
     plschr 0.0 0.75;
     for i = 0 to fci_combinations - 1 do
@@ -355,6 +350,7 @@ let () =
                 family.(family_index)
                 style.(style_index)
                 weight.(weight_index);
+        | _ -> failwith "Invalid page"
       in
       plptex 0.0 (1.0 -. (float_of_int i +. 0.5) *. dy) 1.0 0.0 0.0 text_string;
     done;
