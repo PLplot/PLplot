@@ -418,7 +418,7 @@ void proc_str (PLStream *pls, EscText *args)
    plgesc(&plplot_esc);
    plgfci(&fci);
 
-   /* determine the font height */
+   /* determine the font height in pixels*/
    ftHt = 1.5 * pls->chrht * DPI/25.4;
 
    /* Calculate the tranformation matrix for SVG based on the
@@ -437,9 +437,11 @@ void proc_str (PLStream *pls, EscText *args)
    t[3] = -sin_rot * sin_shear + cos_rot * cos_shear;
 
    /* Apply coordinate transform for text display.
-      The transformation also defines the location of the text in x and y. */
+      The transformation also defines the location of the text in x and y.
+      The value of the ftHT multiplicative factor has been determined 
+      empirically by looking at example 1 and example 2 results. */
    svg_open("g");
-   svg_attr_values("transform", "matrix(%f %f %f %f %f %f)", t[0], t[1], t[2], t[3], (double)(args->x/scale), (double)(args->y/scale - 0.3*ftHt + 0.5));
+   svg_attr_values("transform", "matrix(%f %f %f %f %f %f)", t[0], t[1], t[2], t[3], (double)(args->x/scale), (double)(args->y/scale - 0.38*ftHt + 0.5));
    svg_general(">\n");
 
    /*--------------
