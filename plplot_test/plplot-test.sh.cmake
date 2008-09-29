@@ -252,7 +252,7 @@ fi
 
 # Some devices require familying others do not.
 case "$device" in
-   png|pngcairo|gif|jpeg|xfig)
+   png|pngcairo|gif|jpeg|xfig|svg|svgcairo)
       options="-fam -fflen 2"
       ;;
    *)
