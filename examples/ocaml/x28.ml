@@ -50,9 +50,6 @@ let () =
   let zmax = 1.0 in
   let zmid = 0.5 *. (zmax +. zmin) in
   let zrange = zmax -. zmin in
-  (* p1string must be exactly one character + the null termination 
-     character. *)
-  let p1string = "O" in
   let pstring =
     "The future of our civilization depends on software freedom."
   in
@@ -297,7 +294,6 @@ let () =
      string and also the maximum value of omega for the given number
      of characters in pstring. *)
   let domega = 2.0 *. pi /. float_of_int (String.length pstring) in
-  let omega = 0.0 in
   (* 3D function is a helix of the given radius and pitch *)
   let radius = 0.5 in
   let pitch = 1.0 /. (2.0 *. pi) in

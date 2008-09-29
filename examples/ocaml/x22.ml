@@ -241,7 +241,6 @@ let () =
 
   circulation ();
 
-  let narr = 6 in
   let fill = 0 in
 
   (* Set arrow style using arrow_x and arrow_y then

@@ -81,7 +81,7 @@ let read_img fname =
 (* save plot *)
 let save_plot fname =
   let cur_strm = plgstrm () in (* get current stream *)
-  let new_strm = plmkstrm () in (* create a new one *)
+  let _ = plmkstrm () in  (* create a new one *)
 
   plsdev "psc"; (* new device type. Use a known existing driver *)
   plsfnam fname; (* file name *)
