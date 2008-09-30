@@ -247,7 +247,7 @@ typedef struct {
         int totcol;                             /* Total number of colours      */
         int ncol1;                              /* Actual size of ncol1 we got  */
 
-        int scale;                              /* scaling factor to "blow up" to */
+        PLFLT scale;                            /* scaling factor to "blow up" to */
                                                 /* the "virtual" page in removing hidden lines*/
 
         int optimise;                           /* Flag used for 4bit pngs */
@@ -505,15 +505,15 @@ void plD_init_png(PLStream *pls)
 
      if (dev->pngx>dev->pngy)    /* Work out the scaling factor for the  */
         {                        /* "virtual" (oversized) page           */
-        dev->scale=PIXELS_X/dev->pngx;
+        dev->scale=(PLFLT)PIXELS_X/(PLFLT)dev->pngx;
         }
      else
         {
-        dev->scale=PIXELS_Y/dev->pngy;
+        dev->scale=(PLFLT)PIXELS_Y/(PLFLT)dev->pngy;
         }
 #else
 
-     dev->scale=1;
+     dev->scale=1.;
 
 #endif
 
@@ -661,15 +661,15 @@ void plD_init_gif(PLStream *pls)
 
      if (dev->pngx>dev->pngy)    /* Work out the scaling factor for the  */
         {                        /* "virtual" (oversized) page           */
-        dev->scale=PIXELS_X/dev->pngx;
+        dev->scale=(PLFLT)PIXELS_X/(PLFLT)dev->pngx;
         }
      else
         {
-        dev->scale=PIXELS_Y/dev->pngy;
+        dev->scale=(PLFLT)PIXELS_Y/(PLFLT)dev->pngy;
         }
 #else
 
-     dev->scale=1;
+     dev->scale=1.;
 
 #endif
 
