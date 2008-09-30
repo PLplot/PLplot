@@ -138,7 +138,6 @@ main(int argc, const char *argv[])
 	    1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 0., 0.,
 	    1., (PLFLT) XDIM, 1., (PLFLT) YDIM);
 
-    pladv(0);
   }
 
   /* sombrero-like demo */
@@ -168,7 +167,6 @@ main(int argc, const char *argv[])
     if (f_name)
       save_plot(f_name);
 
-    pladv(0);
     }
 
   plFree2dGrid(z, XDIM, YDIM);
@@ -237,12 +235,10 @@ main(int argc, const char *argv[])
     plimage(img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
 
     plspause(1);
-    pladv(0);
 
     /* zoom in selection */
     plenv(xi, xe, ye, yi, 1, -1);
     plimage(img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
-    pladv(0);
   }
 
   /* Base the dynamic range on the image contents. */
@@ -285,7 +281,6 @@ main(int argc, const char *argv[])
   }
       
   plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, pltr2, &cgrid2);
-  pladv(0);
 
   plFree2dGrid(cgrid2.xg, width+1, height+1);
   plFree2dGrid(cgrid2.yg, width+1, height+1);
