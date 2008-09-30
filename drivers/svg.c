@@ -710,13 +710,15 @@ void svg_indent(void)
 /*---------------------------------------------------------------------
   svg_stroke_width ()
   
-  sets the stroke color based on the current color
+  sets the stroke width based on the current width
+  N.B. a stroke width of 0 in SVG means no stroke is painted so
+  we make sure the minimum value is 1.
   ---------------------------------------------------------------------*/
 
 void svg_stroke_width(PLStream *pls)
 {
    svg_indent();
-   fprintf(svgFile, "stroke-width=\"%d\"\n", pls->width);
+   fprintf(svgFile, "stroke-width=\"%d\"\n", MAX(1,pls->width));
 }
 
 /*---------------------------------------------------------------------
