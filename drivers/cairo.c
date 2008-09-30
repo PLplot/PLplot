@@ -63,7 +63,6 @@
  ---------------------------------------------------------------------*/
 
 #define DPI 72
-#define DOWNSCALE 0.1
 #define PLCAIRO_DEFAULT_X 720
 #define PLCAIRO_DEFAULT_Y 540
 
@@ -74,7 +73,7 @@ static int text_clipping;
 static int text_anti_aliasing;
 static int graphics_anti_aliasing;
 static int external_drawable;
-
+static PLFLT downscale = 0.;
 static DrvOpt cairo_options[] = {{"text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)"},
 				 {"text_anti_aliasing", DRV_INT, &text_anti_aliasing, "Set desired text anti-aliasing (text_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t)"},
 				 {"graphics_anti_aliasing", DRV_INT, &graphics_anti_aliasing, "Set desired graphics anti-aliasing (graphics_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t"},
@@ -253,8 +252,8 @@ void plD_line_cairo(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
   set_current_context(pls);
 
-  cairo_move_to(aStream->cairoContext, DOWNSCALE * (double) x1a, DOWNSCALE * (double) y1a);
-  cairo_line_to(aStream->cairoContext, DOWNSCALE * (double) x2a, DOWNSCALE * (double) y2a);
+  cairo_move_to(aStream->cairoContext, downscale * (double) x1a, downscale * (double) y1a);
+  cairo_line_to(aStream->cairoContext, downscale * (double) x2a, downscale * (double) y2a);
   cairo_stroke(aStream->cairoContext);
 }
 
@@ -405,12 +404,12 @@ void proc_str(PLStream *pls, EscText *args)
 
   /* Set up the clipping region if we are doing text clipping */
   if(aStream->text_clipping){
-    cairo_rectangle(aStream->cairoContext, DOWNSCALE * pls->clpxmi, DOWNSCALE * pls->clpymi, DOWNSCALE * (pls->clpxma - pls->clpxmi), DOWNSCALE * (pls->clpyma - pls->clpymi));
+    cairo_rectangle(aStream->cairoContext, downscale * pls->clpxmi, downscale * pls->clpymi, downscale * (pls->clpxma - pls->clpxmi), downscale * (pls->clpyma - pls->clpymi));
     cairo_clip(aStream->cairoContext);
   }
 
   /* Move to the string reference point */
-  cairo_move_to(aStream->cairoContext, DOWNSCALE * (double) args->x, DOWNSCALE * (double) args->y);
+  cairo_move_to(aStream->cairoContext, downscale * (double) args->x, downscale * (double) args->y);
 
   /* Invert the coordinate system so that the text is drawn right side up */
   cairoTransformMatrix = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
@@ -667,13 +666,19 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   pls->dev_fill0 = 1;        /* Supports hardware solid fills */
   pls->plbuf_write = 1;      /* Activate plot buffer */
   
-  plP_setpxl(DPI/25.4/DOWNSCALE, DPI/25.4/DOWNSCALE);
   
   if (pls->xlength <= 0 || pls->ylength <= 0){
     pls->xlength = PLCAIRO_DEFAULT_X;
     pls->ylength = PLCAIRO_DEFAULT_Y;
   }
-  plP_setphy((PLINT) 0, (PLINT) pls->xlength / DOWNSCALE, (PLINT) 0, (PLINT) pls->ylength / DOWNSCALE);
+  /* Calculate ratio of (smaller) external coordinates used for cairo
+     devices to (larger) internal PLplot coordinates. */
+  if (pls->xlength > pls->ylength)
+    downscale = (PLFLT)pls->xlength/(PLFLT)PIXELS_X;
+  else
+    downscale = (PLFLT)pls->ylength/(PLFLT)PIXELS_Y;
+  plP_setphy((PLINT) 0, (PLINT) (pls->xlength / downscale), (PLINT) 0, (PLINT) (pls->ylength / downscale));
+  plP_setpxl(DPI/25.4/downscale, DPI/25.4/downscale);
 
   /* Initialize font table with either enviroment variables or defaults.
      This was copied from the psttf driver. */
@@ -758,9 +763,9 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts)
 
   set_current_context(pls);
   
-  cairo_move_to(aStream->cairoContext, DOWNSCALE * (double) xa[0], DOWNSCALE * (double) ya[0]);
+  cairo_move_to(aStream->cairoContext, downscale * (double) xa[0], downscale * (double) ya[0]);
   for(i=1;i<npts;i++){
-    cairo_line_to(aStream->cairoContext, DOWNSCALE * (double) xa[i], DOWNSCALE * (double) ya[i]);
+    cairo_line_to(aStream->cairoContext, downscale * (double) xa[i], downscale * (double) ya[i]);
   }
 }
 
@@ -1070,8 +1075,8 @@ void plD_esc_xcairo(PLStream *pls, PLINT op, void *ptr)
           &x, &y, &w, &h, &b, &d);
         pls->xlength = w;
         pls->ylength = h;
-        plP_setphy((PLINT) 0, (PLINT) pls->xlength / DOWNSCALE, (PLINT) 0, 
-          (PLINT) pls->ylength / DOWNSCALE);
+        plP_setphy((PLINT) 0, (PLINT) (pls->xlength / downscale), (PLINT) 0, 
+          (PLINT) (pls->ylength / downscale));
   
         /* Associate cairo with the supplied drawable */
         xcairo_init_cairo(pls);
