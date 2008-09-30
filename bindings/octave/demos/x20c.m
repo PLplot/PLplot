@@ -48,8 +48,6 @@ function ix20c
     pllab("...around a blue square."," ","A red border should appear...");
 
     pplimage(z, 1.0, xdim, 1.0, ydim, 0.0, 0.0, 1.0, xdim, 1.0, ydim);
-
-    pladv(0);
   endif
 
   ## sombrero-like demo
@@ -75,7 +73,6 @@ function ix20c
     if (exist("f_name","var"))
       save_plot(f_name);
     endif
-    pladv(0);
   endif
 
   ## read Lena image
@@ -138,12 +135,10 @@ function ix20c
     pplimage(img, 1.0, width, 1.0, height, 0.0, 0.0, xi, xe, ye, yi);
 
     plspause(1);
-    pladv(0);
 
     ## zoom in selection
     plenv(xi, xe, ye, yi, 1, -1);
     pplimage(img, 1.0, width, 1.0, height, 0.0, 0.0, xi, xe, ye, yi);
-    pladv(0);
   endif  
 
   ## Base the dynamic range on the image contents.
@@ -176,7 +171,6 @@ function ix20c
   yg = repmat([0:height],width+1,1);
   xg = x0 + (x0-xg).*(1-stretch*cos((yg-y0)/dy*pi*0.5));
   plimagefr2(img, 0., width, 0., height, 0., 0., img_min, img_max, xg, yg);
-  pladv(0);
 
   plend1;
 endfunction

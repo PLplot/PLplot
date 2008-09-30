@@ -153,8 +153,6 @@ class x20 {
 
 	    pls.image(z, 1., (double) XDIM, 1., (double) YDIM, 0., 0.,
 		      1., (double) XDIM, 1., (double) YDIM);
-
-	    pls.adv(0);
 	}
 
 	/* sombrero-like demo */
@@ -182,8 +180,6 @@ class x20 {
 	    /* save the plot */
 	    if (f_name != null)
 		save_plot(f_name);
-
-	    pls.adv(0);
 	}
 
 
@@ -250,12 +246,10 @@ class x20 {
 	    pls.image(img_f, 1., (double) width, 1., (double) height, 0., 0., xi[0], xe[0], ye[0], yi[0]);
 
 	    pls.spause(true);
-	    pls.adv(0);
 
 	    // zoom in selection
 	    pls.env(xi[0], xe[0], ye[0], yi[0], 1, -1);
 	    pls.image(img_f, 1., (double) width, 1., (double) height, 0., 0., xi[0], xe[0], ye[0], yi[0]);
-	    pls.adv(0);
 	}
 
 	// Base the dynamic range on the image contents.
@@ -308,7 +302,6 @@ class x20 {
 	}
       
 	pls.imagefr(img_f, 0., (double) width, 0., (double) height, 0., 0., img_min, img_max, xg, yg);
-	pls.adv(0);
 	pls.end();
 
     }

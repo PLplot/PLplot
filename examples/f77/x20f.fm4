@@ -162,8 +162,6 @@ C             Bottom
           call plimage(z, XDIM, YDIM,
      &     1.d0, XDIMR, 1.d0, YDIMR, 0.d0, 0.d0,
      &     1.d0, XDIMR, 1.d0, YDIMR, XDIM)
-
-          call pladv(0)
       endif
 
 C     Sombrero-like demo
@@ -196,8 +194,6 @@ C         Save the plot
           if (f_name .ne. ' ') then
               call save_plot(f_name)
           endif
-
-          call pladv(0)
       endif
 
 C
@@ -270,13 +266,11 @@ C         Display selection only
      &        height_r, 0.d0, 0.d0, xi, xe, ye, yi, WDIM)
 
           call plspause(1)
-          call pladv(0)
 
 C         Zoom in selection
           call plenv(xi, xe, ye, yi, 1, -1)
           call plimage(img_f, width, height, 1.d0, width_r, 1.d0,
      &        height_r, 0.d0, 0.d0, xi, xe, ye, yi, WDIM)
-          call pladv(0)
       endif
 
 c     Base the dynamic range on the image contents.
@@ -311,8 +305,6 @@ c     since the coordinates are for the corner of each pixel.
       enddo
       call plimagefr2(img_f, width, height, 0.d0, width_r, 0.d0, 
      &     height_r, 0.d0, 0.d0, img_min, img_max, xg, yg, WDIM)
-      call pladv(0)
-
 
       call plend()
 

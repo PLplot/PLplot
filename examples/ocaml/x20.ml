@@ -147,8 +147,6 @@ let () =
       | None -> ()
   in
 
-  pladv 0;
-
   (* read Lena image *)
   (* Note we try two different locations to cover the case where this
    * examples is being run from the test_ocaml.sh script *)
@@ -192,12 +190,10 @@ let () =
   plimage img_f 1.0 width 1.0 height 0.0 0.0 xi xe ye yi;
 
   plspause 1;
-  pladv 0;
 
   (* zoom in selection *)
   plenv xi xe ye yi 1 (-1);
   plimage img_f 1.0 width 1.0 height 0.0 0.0 xi xe ye yi;
-  pladv 0;
 
   (* Base the dynamic range on the image contents. *)
   let img_max, img_min = plMinMax2dGrid img_f in
@@ -243,8 +239,6 @@ let () =
   plset_pltr (fun x y -> pltr2 x y xg yg);
   *)
   plimagefr img_f 0.0 width 0.0 height 0.0 0.0 img_min img_max;
-
-  pladv 0;
 
   plend ();
   ()

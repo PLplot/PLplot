@@ -289,8 +289,6 @@ begin
         Draw_Image_Color_Map_1_Automatic(z,
             1.0, Long_Float(XDIM), 1.0, Long_Float(YDIM), 0.0, 0.0,
             1.0, Long_Float(XDIM), 1.0, Long_Float(YDIM));
-
-        Advance_To_Subpage(Next_Subpage);
     end if;
 
     -- sombrero-like demo
@@ -326,8 +324,6 @@ begin
                 save_plot(f_name(1 .. f_name_length));
             end if;
         end if;
-
-        Advance_To_Subpage(Next_Subpage);
     end if;
 
     -- Read the Lena image.
@@ -398,12 +394,10 @@ begin
         Draw_Image_Color_Map_1_Automatic(img_f, 1.0, Long_Float(width), 1.0, Long_Float(height), 0.0, 0.0, xi, xe, ye, yi);
 
         Set_Pause(True);
-        Advance_To_Subpage(Next_Subpage);
 
         -- Zoom in selection.
         Set_Environment(xi, xe, ye, yi, Justified, Box);
         Draw_Image_Color_Map_1_Automatic(img_f, 1.0, Long_Float(width), 1.0, Long_Float(height), 0.0, 0.0, xi, xe, ye, yi);
-        Advance_To_Subpage(Next_Subpage);
     end if;
 
     -- Base the dynamic range on the image contents.
@@ -449,7 +443,6 @@ begin
           
         Draw_Image_Color_Map_1(img_f, 0.0, Long_Float(width), 0.0, Long_Float(height), 0.0, 0.0, img_min, img_max, 
             Plot_Transformation_2'access, cgrid2'Address);
-        Advance_To_Subpage(Next_Subpage);
     end;
     End_PLplot;
 end xthick20a;

@@ -132,8 +132,6 @@ proc x20 {{w loopback}} {
             "A red border should appear..."
 
         $w cmd plimage z 1. $XDIM 1. $YDIM 0. 0. 1. $XDIM 1.$YDIM
-
-        $w cmd pladv 0
     }
 
 #   Sombrero-like demo
@@ -168,8 +166,6 @@ proc x20 {{w loopback}} {
         if { $f_name != "" } {
             save_plot $w $f_name
         }
-
-        $w cmd pladv 0
     }
 
 #
@@ -235,12 +231,10 @@ proc x20 {{w loopback}} {
         $w cmd plimage img_f 1. $width 1. $height 0. 0. $xi $xe $ye $yi
 
         $w cmd plspause 1
-        $w cmd pladv 0
 
 #       Zoom in selection
         $w cmd plenv $xi $xe $ye $yi 1 -1
         $w cmd plimage img_f 1. $width 1. $height 0. 0. $xi $xe $ye $yi
-        $w cmd pladv 0
     }
 
 #   Base the dynamic range on the image contents.
@@ -281,7 +275,6 @@ proc x20 {{w loopback}} {
     }
     $w cmd plimagefr img_f 0. $width 0. $height 0. 0. $img_min \
         $img_max xg yg
-    $w cmd pladv 0
 
     $w cmd plend
 }

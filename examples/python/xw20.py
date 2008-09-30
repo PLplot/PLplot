@@ -186,8 +186,6 @@ def main():
 
         plimage(z, 1.0, XDIM, 1.0, YDIM, 0.0, 0.0, 1.0, XDIM, 1.0, YDIM)
 
-        pladv(0)
-
     if (not nosombrero):
         plcol0(2)  # Draw a yellow box, useful for diagnostics!
         plenv(0.0, 2.0*pi, 0, 3.0*pi, 1, -1)
@@ -199,15 +197,13 @@ def main():
         r = sqrt( multiply.outer(x*x,ones(YDIM)) + multiply.outer(ones(XDIM),y*y)) + 1e-3
         z = sin(r) / r
 
-    pllab("No, an amplitude clipped \"sombrero\"", "", "Saturn?")
-    plptex(2., 2., 3., 4., 0., "Transparent image")
-    plimage(z, 0., 2.*pi, 0, 3.*pi, 0.05, 1.,0., 2.*pi, 0, 3.*pi)
+        pllab("No, an amplitude clipped \"sombrero\"", "", "Saturn?")
+        plptex(2., 2., 3., 4., 0., "Transparent image")
+        plimage(z, 0., 2.*pi, 0, 3.*pi, 0.05, 1.,0., 2.*pi, 0, 3.*pi)
 
-    # Save the plot
-    if (f_name != ""):
-        save_plot(f_name)
-
-    pladv(0)
+        # Save the plot
+        if (f_name != ""):
+            save_plot(f_name)
 
     # Read Lena image
     # Note: we try two different locations to cover the case where
@@ -252,12 +248,10 @@ def main():
         plimage(img, 1., width, 1., height, 0., 0., xi, xe, ye, yi)
 
         plspause(1)
-        pladv(0)
 
         # zoom in selection
         plenv(xi, xe, ye, yi, 1, -1)
         plimage(img, 1., width, 1., height, 0., 0., xi, xe, ye, yi)
-        pladv(0)
 
     # Base the dynamic range on the image contents.
     img_min = min(img.flat)
@@ -285,7 +279,6 @@ def main():
     
     plimagefr(img, 0., width, 0., height, 0., 0., img_min, img_max, \
               pltr2, xg, yg)
-    pladv(0)
 
     
 main()

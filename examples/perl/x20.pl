@@ -88,8 +88,6 @@ EOT
     pllab ("...around a blue square."," ","A red border should appear...");
 
     plimage ($z, 1, XDIM, 1, YDIM, 0, 0, 1, XDIM, 1, YDIM);
-
-    pladv (0);
   }
 
   # sombrero-like demo
@@ -111,8 +109,6 @@ EOT
     # save the plot
     save_plot ($f_name)
       if $f_name;
-
-    pladv (0);
   }
 
   # read Lena image
@@ -161,13 +157,10 @@ EOT
     plimage ($img_f, 1, $width, 1, $height, 0, 0, $xi, $xe, $ye, $yi);
 
     plspause (1);
-    pladv (0);
 
     # zoom in selection
     plenv ($xi, $xe, $ye, $yi, 1, -1);
     plimage ($img_f, 1, $width, 1, $height, 0, 0, $xi, $xe, $ye, $yi);
-
-    pladv(0);
   }
 
   plend ();

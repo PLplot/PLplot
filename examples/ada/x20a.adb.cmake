@@ -289,8 +289,6 @@ begin
         plimage(z,
             1.0, Long_Float(XDIM), 1.0, Long_Float(YDIM), 0.0, 0.0,
             1.0, Long_Float(XDIM), 1.0, Long_Float(YDIM));
-
-        pladv(0);
     end if;
 
     -- sombrero-like demo
@@ -326,8 +324,6 @@ begin
                 save_plot(f_name(1 .. f_name_length));
             end if;
         end if;
-
-        pladv(0);
     end if;
 
     -- Read the Lena image.
@@ -398,12 +394,10 @@ begin
         plimage(img_f, 1.0, Long_Float(width), 1.0, Long_Float(height), 0.0, 0.0, xi, xe, ye, yi);
 
         plspause(True);
-        pladv(0);
 
         -- Zoom in selection.
         plenv(xi, xe, ye, yi, 1, -1);
         plimage(img_f, 1.0, Long_Float(width), 1.0, Long_Float(height), 0.0, 0.0, xi, xe, ye, yi);
-        pladv(0);
     end if;
 
     -- Base the dynamic range on the image contents.
@@ -449,7 +443,6 @@ begin
           
         plimagefr(img_f, 0.0, Long_Float(width), 0.0, Long_Float(height), 0.0, 0.0, img_min, img_max, 
             pltr2'access, cgrid2'Address);
-        pladv(0);
     end;
     plend;
 end x20a;

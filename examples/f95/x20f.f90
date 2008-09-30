@@ -149,8 +149,6 @@
 
           call plimage(z, 1._plflt, XDIMR, 1._plflt, YDIMR, 0._plflt, 0._plflt, &
               1._plflt, XDIMR, 1._plflt, YDIMR)
-
-          call pladv(0)
       endif
 
 !     Sombrero-like demo
@@ -183,8 +181,6 @@
           if (f_name .ne. ' ') then
               call save_plot(f_name)
           endif
-
-          call pladv(0)
       endif
 
 !
@@ -254,13 +250,11 @@
               height_r, 0._plflt, 0._plflt, xi, xe, ye, yi)
 
           call plspause(.true.)
-          call pladv(0)
 
 !         Zoom in selection
           call plenv(xi, xe, ye, yi, 1, -1)
           call plimage(img_f, 1._plflt, width_r, 1._plflt, &
               height_r, 0._plflt, 0._plflt, xi, xe, ye, yi)
-          call pladv(0)
       endif
 
 !     Base the dynamic range on the image contents.
@@ -297,7 +291,6 @@
       enddo
       call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
            height_r, 0._plflt, 0._plflt, img_min, img_max, xg, yg)
-      call pladv(0)
 
       deallocate( img_f, xg, yg )
 

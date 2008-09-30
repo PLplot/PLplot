@@ -181,8 +181,6 @@ x20::x20( int argc, const char ** argv ) {
     pls->image(z, XDIM, YDIM,
 	    1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 0., 0.,
 	    1., (PLFLT) XDIM, 1., (PLFLT) YDIM);
-
-    pls->adv(0);
   }
 
   /* sombrero-like demo */
@@ -211,8 +209,6 @@ x20::x20( int argc, const char ** argv ) {
     /* save the plot */
     if (f_name)
       save_plot(f_name);
-
-    pls->adv(0);
     }
 
   pls->Free2dGrid(z, XDIM, YDIM);
@@ -277,12 +273,10 @@ x20::x20( int argc, const char ** argv ) {
     pls->image(img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
 
     pls->spause(true);
-    pls->adv(0);
 
     // zoom in selection
     pls->env(xi, xe, ye, yi, 1, -1);
     pls->image(img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
-    pls->adv(0);
   }
 
   // Base the dynamic range on the image contents.
@@ -326,7 +320,6 @@ x20::x20( int argc, const char ** argv ) {
   }
       
   pls->imagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, pltr2, &cgrid2);
-  pls->adv(0);
 
   pls->Free2dGrid(cgrid2.xg, width+1, height+1);
   pls->Free2dGrid(cgrid2.yg, width+1, height+1);
