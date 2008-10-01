@@ -890,6 +890,7 @@ static signed int xcairo_init_cairo(PLStream *pls)
 
   /* Create an cairo surface & context that are associated with the X window. */
   defaultVisual = DefaultVisual(aStream->XDisplay, 0);
+  /* Dimension units are pixels from cairo documentation. */
   aStream->cairoSurface = cairo_xlib_surface_create(aStream->XDisplay, aStream->XWindow, defaultVisual, pls->xlength, pls->ylength);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
@@ -1213,6 +1214,7 @@ void plD_init_pdfcairo(PLStream *pls)
   plOpenFile(pls);
 
   /* Create an cairo surface & context for PDF file. */
+  /* Dimension units are pts = 1/72 inches from cairo documentation. */
   aStream->cairoSurface = cairo_pdf_surface_create_for_stream((cairo_write_func_t)write_to_stream, pls->OutFile, (double)pls->xlength, (double)pls->ylength);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
@@ -1284,6 +1286,7 @@ void plD_init_pscairo(PLStream *pls)
   plOpenFile(pls);
 
   /* Create an cairo surface & context for PS file. */
+  /* Dimension units are pts = 1/72 inches from cairo documentation. */
   aStream->cairoSurface = cairo_ps_surface_create_for_stream((cairo_write_func_t)write_to_stream, pls->OutFile, (double)pls->ylength, (double)pls->xlength);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
@@ -1378,6 +1381,7 @@ void plD_init_svgcairo(PLStream *pls)
   pls->dev = aStream;
 
   /* Create an cairo surface & context for SVG file. */
+  /* Dimension units are pts = 1/72 inches from cairo documentation. */
   aStream->cairoSurface = cairo_svg_surface_create_for_stream((cairo_write_func_t)write_to_stream, pls->OutFile, (double)pls->xlength, (double)pls->ylength);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
@@ -1468,6 +1472,7 @@ void plD_init_pngcairo(PLStream *pls)
   pls->dev = aStream;
 
   /* Create a new cairo surface & context for PNG file. */
+  /* Dimension units are pixels from cairo documentation. */
   aStream->cairoSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, (double)pls->xlength, (double)pls->ylength);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
@@ -1623,6 +1628,8 @@ void plD_init_memcairo(PLStream *pls)
 
   /* Create a Cairo drawing surface from the input data */
   aStream->cairoSurface = 
+  /* Dimension units are width, height of buffer image from cairo 
+     documentation. */
     cairo_image_surface_create_for_data (aStream->cairo_format_memory, CAIRO_FORMAT_RGB24, pls->xlength, pls->ylength, stride);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
