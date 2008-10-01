@@ -1969,6 +1969,7 @@ pl_cpcolor(PLColor *to, PLColor *from)
     to->r = from->r;
     to->g = from->g;
     to->b = from->b;
+    to->a = from->a;
 }
 
 /*--------------------------------------------------------------------------*\

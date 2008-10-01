@@ -376,6 +376,7 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 	plsc->cmap0[i].r = r[i];
 	plsc->cmap0[i].g = g[i];
 	plsc->cmap0[i].b = b[i];
+	plsc->cmap0[i].a = 1.0;
     }
 
     if (plsc->level > 0)

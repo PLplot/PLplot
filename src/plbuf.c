@@ -495,12 +495,14 @@ rdbuf_state(PLStream *pls)
     case PLSTATE_COLOR0:{
 	short icol0;
 	U_CHAR r, g, b;
+        PLFLT a;
 
 	rd_data(pls, &icol0, sizeof(short));
 	if (icol0 == PL_RGB_COLOR) {
 	    rd_data(pls, &r, sizeof(U_CHAR));
 	    rd_data(pls, &g, sizeof(U_CHAR));
 	    rd_data(pls, &b, sizeof(U_CHAR));
+            a = 1.0;
 	}
 	else {
 	    if ((int) icol0 >= pls->ncol0) {
@@ -512,11 +514,13 @@ rdbuf_state(PLStream *pls)
 	    r = pls->cmap0[icol0].r;
 	    g = pls->cmap0[icol0].g;
 	    b = pls->cmap0[icol0].b;
+	    a = pls->cmap0[icol0].a;
 	}
 	pls->icol0 = icol0;
 	pls->curcolor.r = r;
 	pls->curcolor.g = g;
 	pls->curcolor.b = b;
+	pls->curcolor.a = a;
 
 	plP_state(PLSTATE_COLOR0);
 	break;
@@ -531,6 +535,7 @@ rdbuf_state(PLStream *pls)
 	pls->curcolor.r = pls->cmap1[icol1].r;
 	pls->curcolor.g = pls->cmap1[icol1].g;
 	pls->curcolor.b = pls->cmap1[icol1].b;
+	pls->curcolor.a = pls->cmap1[icol1].a;
 
 	plP_state(PLSTATE_COLOR1);
 	break;
