@@ -217,8 +217,8 @@ void plD_bop_svg(PLStream *pls)
    svg_attr_value("version", "1.1");   
    /* svg_attr_values("width", "%dcm", (int)((double)canvasXSize/DPI * 2.54)); */
    /* svg_attr_values("height", "%dcm", (int)((double)canvasYSize/DPI * 2.54)); */
-   svg_attr_values("width", "%dpt", canvasXSize);
-   svg_attr_values("height", "%dpt", canvasYSize);
+   svg_attr_values("width", "%dpx", canvasXSize);
+   svg_attr_values("height", "%dpx", canvasYSize);
    svg_attr_values("viewBox", "%d %d %d %d", 0, 0, canvasXSize, canvasYSize);
    svg_general(">\n");
 
