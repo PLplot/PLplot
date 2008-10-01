@@ -12022,7 +12022,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Number of pixels, x.
+	    Number of pixels/inch (DPI), x.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -12033,7 +12033,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Number of pixels, y.
+	    Number of pixels/inch (DPI), y.
 	  </para>
 	</listitem>
       </varlistentry>
