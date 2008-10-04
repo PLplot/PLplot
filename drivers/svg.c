@@ -396,6 +396,7 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts, short fill)
 void proc_str (PLStream *pls, EscText *args)
 {
    char plplot_esc;
+   short static which_clip = 0;
    short i;
    short upDown = 0;
    short totalTags = 1;
@@ -420,6 +421,24 @@ void proc_str (PLStream *pls, EscText *args)
 
    /* determine the font height in pixels*/
    ftHt = 1.5 * pls->chrht * DPI/25.4;
+
+   /* Setup & apply text clipping area */
+   svg_open("clipPath");
+   svg_attr_values("id","text-clipping%d", which_clip);
+   svg_general(">\n");
+   svg_open("rect");
+   svg_attr_values("x","%f", pls->clpxmi/scale);
+   svg_attr_values("y","%f", pls->clpymi/scale);
+   svg_attr_values("width","%f", (pls->clpxma - pls->clpxmi)/scale);
+   svg_attr_values("height","%f", (pls->clpyma - pls->clpymi)/scale);
+   svg_open_end();
+   svg_close("clipPath");
+   
+   svg_open("g");
+   svg_attr_values("clip-path", "url(#text-clipping%d)", which_clip);
+   svg_general(">\n");
+
+   which_clip++;
 
    /* Calculate the tranformation matrix for SVG based on the
       transformation matrix provided by PLplot. */
@@ -572,6 +591,7 @@ void proc_str (PLStream *pls, EscText *args)
    fprintf(svgFile,"\n");
    
    svg_close("text");
+   svg_close("g");
    svg_close("g");
    svg_close("g");
 }
