@@ -1,9 +1,11 @@
 This document is a quick overview of building and configuring drivers from
-the perspective of what system files have to be modified.  (For actual details
-about how to construct a new device driver read the source for some of
-the drivers in plplot/drivers.  Also, there are several useful sections in
-the DocBook documentation [see, for example, "Output Devices" and "Driver
-Functions" in Chapter 3] that you should look at.)
+the perspective of what system files have to be modified.  (For actual
+details about how to construct a new device driver read the source for some
+of the drivers in plplot/drivers.  For some additional details about the
+core paging and familying code see ../src/README.pages.  Finally, there are
+several useful sections in the DocBook documentation [see, for example,
+"Output Devices" and "Driver Functions" in Chapter 3] that you should look
+at.)
 
 The following PLplot system files must be modified to add a new driver to
 PLplot:
