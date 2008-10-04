@@ -441,7 +441,11 @@ void proc_str (PLStream *pls, EscText *args)
       The value of the ftHT multiplicative factor has been determined 
       empirically by looking at example 1 and example 2 results. */
    svg_open("g");
-   svg_attr_values("transform", "matrix(%f %f %f %f %f %f)", t[0], t[1], t[2], t[3], (double)(args->x/scale), (double)(args->y/scale - 0.38*ftHt + 0.5));
+   svg_attr_values("transform", "matrix(%f %f %f %f %f %f)", t[0], t[1], t[2], t[3], (double)(args->x/scale), (double)(args->y/scale));
+   svg_general(">\n");
+
+   svg_open("g");
+   svg_attr_values("transform", "matrix(1.0 0.0 0.0 1.0 0.0 %f)", 0.38*ftHt - 0.5);
    svg_general(">\n");
 
    /*--------------
@@ -568,6 +572,7 @@ void proc_str (PLStream *pls, EscText *args)
    fprintf(svgFile,"\n");
    
    svg_close("text");
+   svg_close("g");
    svg_close("g");
 }
 
