@@ -84,7 +84,12 @@ Page and family related code fragments:
     }
 
 
-* plGetFam calls plP_tidy and plP_init to start next familied file.
+* plGetFam calls plP_tidy and plP_init to start next familied file.  It also
+restores the initial page status (in all cases so far this internal function
+is called by device drivers from their plD_bop-* function so this initial
+page status is necessarily AT_BOP in the use so far) that otherwise is
+changed to AT_EOP by the plP_init call.  This restoration is necessary to
+have valid empty pages for some devices (e.g., svg).
 
 In sum, plP_bop is called from plinit, plbop, and pladv.  The dispatch table
 part of it is never done if already at bop.  plP_eop is called from pleop,
