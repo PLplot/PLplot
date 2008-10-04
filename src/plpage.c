@@ -117,7 +117,7 @@ void
 c_plbop(void)
 {
     if (plsc->level < 1) {
-	plabort("pladv: Please call plinit first");
+	plabort("plbop: Please call plinit first");
 	return;
     }
     plP_bop();
