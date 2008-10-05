@@ -172,7 +172,7 @@ void plD_init_svg(PLStream *pls)
    /* Calculate ratio of (larger) internal PLplot coordinates to external
       coordinates used for svg file. */
    if (canvasXSize > canvasYSize)
-     scale = (PLFLT)PIXELS_X/(PLFLT)canvasXSize;
+     scale = (PLFLT)(PIXELS_X-1)/(PLFLT)canvasXSize;
    else
      scale = (PLFLT)PIXELS_Y/(PLFLT)canvasYSize;
    /* to return to old behaviour use

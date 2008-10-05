@@ -616,7 +616,7 @@ plD_state_wingcc(pls, PLSTATE_COLOR0);
 
     if (dev->width>dev->height)           /* Work out the scaling factor for the  */
       {                                   /* "virtual" (oversized) page           */
-        dev->scale=(PLFLT)PIXELS_X/dev->width;
+        dev->scale=(PLFLT)(PIXELS_X-1)/dev->width;
       }
     else
       {
@@ -1010,7 +1010,7 @@ static void Resize( PLStream *pls )
               dev->height=dev->rect.bottom;
               if (dev->width>dev->height)           /* Work out the scaling factor for the  */
                 {                                   /* "virtual" (oversized) page           */
-                  dev->scale=(PLFLT)PIXELS_X/dev->width;
+                  dev->scale=(PLFLT)(PIXELS_X-1)/dev->width;
                 }
               else
                 {
@@ -1300,7 +1300,7 @@ static void UpdatePageMetrics ( PLStream *pls, char flag )
 
   if (dev->width>dev->height)           /* Work out the scaling factor for the  */
     {                                   /* "virtual" (oversized) page           */
-      dev->scale=(PLFLT)PIXELS_X/dev->width;
+      dev->scale=(PLFLT)(PIXELS_X-1)/dev->width;
     }
   else
     {

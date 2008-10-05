@@ -259,7 +259,7 @@ void plD_init_cgm(PLStream *pls)
 
      if (dev->cgmx>dev->cgmy)    /* Work out the scaling factor for the  */
         {                        /* "virtual" (oversized) page           */
-        dev->scale=PIXELS_X/dev->cgmx;
+        dev->scale=(PIXELS_X-1)/dev->cgmx;
         }
      else
         {

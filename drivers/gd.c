@@ -505,7 +505,7 @@ void plD_init_png(PLStream *pls)
 
      if (dev->pngx>dev->pngy)    /* Work out the scaling factor for the  */
         {                        /* "virtual" (oversized) page           */
-        dev->scale=(PLFLT)PIXELS_X/(PLFLT)dev->pngx;
+        dev->scale=(PLFLT)(PIXELS_X-1)/(PLFLT)dev->pngx;
         }
      else
         {
@@ -661,7 +661,7 @@ void plD_init_gif(PLStream *pls)
 
      if (dev->pngx>dev->pngy)    /* Work out the scaling factor for the  */
         {                        /* "virtual" (oversized) page           */
-        dev->scale=(PLFLT)PIXELS_X/(PLFLT)dev->pngx;
+        dev->scale=(PLFLT)(PIXELS_X-1)/(PLFLT)dev->pngx;
         }
      else
         {

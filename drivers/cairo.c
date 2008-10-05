@@ -674,7 +674,7 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   /* Calculate ratio of (smaller) external coordinates used for cairo
      devices to (larger) internal PLplot coordinates. */
   if (pls->xlength > pls->ylength)
-    downscale = (PLFLT)pls->xlength/(PLFLT)PIXELS_X;
+    downscale = (PLFLT)pls->xlength/(PLFLT)(PIXELS_X-1);
   else
     downscale = (PLFLT)pls->ylength/(PLFLT)PIXELS_Y;
   plP_setphy((PLINT) 0, (PLINT) (pls->xlength / downscale), (PLINT) 0, (PLINT) (pls->ylength / downscale));
