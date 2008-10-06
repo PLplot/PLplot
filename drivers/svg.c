@@ -468,6 +468,7 @@ void proc_str (PLStream *pls, EscText *args)
    /* N.B. Experimentally, I (AWI) have found the svg rotation angle is
       the negative of the libcairo rotation angle, and the svg shear angle
       is pi minus the libcairo shear angle. */
+   rotation -= pls->diorot * 3.14159 / 2.0;
    cos_rot = cos(rotation);
    sin_rot = -sin(rotation);
    sin_shear = sin(shear);
