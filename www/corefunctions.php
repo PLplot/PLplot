@@ -97,7 +97,7 @@ END;
 		echo <<<END
 			<h3>Source Code</h3>
 			<ul class="arrowlist">
-				<li><a href="http://sourceforge.net/project/showfiles.php?group_id=2915">Download</a></li>
+				<li><a href="http://sourceforge.net/project/showfiles.php?group_id=2915&amp;package_id=2865">Download</a></li>
 				<li><a href="http://sourceforge.net/svn/?group_id=2915">SVN Repository</a></li>
 				<li><a href="http://plplot.svn.sourceforge.net/viewvc/plplot/">Browse SVN</a></li>
 			</ul>

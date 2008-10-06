@@ -14,7 +14,7 @@
 		<div id="leftside">
 			<h3>Obtain the source code of the PLplot library</h3>
 		  <p>You can obtain the latest stable version of PLplot from our
-		     <a href="http://sourceforge.net/project/showfiles.php?group_id=2915">file
+		     <a href="http://sourceforge.net/project/showfiles.php?group_id=2915&amp;package_id=2865">file
 		     release site</a>. Alternatively, you can obtain the cutting-edge version of
 		     PLplot (but with no promises about stability) from SVN via anonymous
 		     access to our <a href="http://sourceforge.net/svn/?group_id=2915">
