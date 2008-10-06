@@ -60,7 +60,7 @@ static FILE *svgFile;
 static char curColor[7];
 static int already_warned = 0;
 
-static int text_clipping;
+static int text_clipping = 1;
 static DrvOpt svg_options[] = {{"text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)"}};
 
 typedef struct {
@@ -158,8 +158,8 @@ void plD_init_svg(PLStream *pls)
    pls->dev_text = 1;		/* handles text */
    pls->dev_unicode = 1; 	/* wants text as unicode */
    pls->page = 0;
-   pls->dev_fill0 = 1;		/* supports hardware solid fills */
-   pls->dev_fill1 = 1;
+   pls->dev_fill0 = 1;		/* driver generates solid fills */
+   pls->dev_fill1 = 0;		/* PLplot core software generates pattern fills */
 
    pls->graphx = GRAPHICS_MODE;
 
@@ -468,7 +468,7 @@ void proc_str (PLStream *pls, EscText *args)
    /* N.B. Experimentally, I (AWI) have found the svg rotation angle is
       the negative of the libcairo rotation angle, and the svg shear angle
       is pi minus the libcairo shear angle. */
-   rotation -= pls->diorot * 3.14159 / 2.0;
+   rotation -= pls->diorot * PI / 2.0;
    cos_rot = cos(rotation);
    sin_rot = -sin(rotation);
    sin_shear = sin(shear);
