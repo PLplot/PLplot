@@ -60,6 +60,13 @@ static FILE *svgFile;
 static char curColor[7];
 static int already_warned = 0;
 
+static int text_clipping;
+static DrvOpt svg_options[] = {{"text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)"}};
+
+typedef struct {
+  short textClipping;
+} SVG;
+
 /* font stuff */
 
 /* Debugging extras */
@@ -140,6 +147,7 @@ void plD_dispatch_init_svg(PLDispatchTable *pdt)
 
 void plD_init_svg(PLStream *pls)
 {
+   SVG *aStream;
 
    pls->termin = 0;			/* not an interactive device */
    pls->color = 1;			/* supports color */
@@ -186,10 +194,21 @@ void plD_init_svg(PLStream *pls)
    /* Initialize family file info */
    plFamInit(pls);
 
-   /* Prompt for a file name if not already set */
-    
+   /* Prompt for a file name if not already set */    
    plOpenFile(pls);
    svgFile = pls->OutFile;
+
+   /* Handle the text clipping option */
+   aStream = malloc(sizeof(SVG));
+   plParseDrvOpts(svg_options);
+
+   printf("text clipping: %d\n", text_clipping);
+   /* Turn on text clipping if the user desires this */
+   if(text_clipping){
+     aStream->textClipping = 1;
+   }
+   aStream->textClipping = text_clipping;
+   pls->dev = aStream;
 
    svgIndent = 0;
    svg_open("?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -408,6 +427,7 @@ void proc_str (PLStream *pls, EscText *args)
    PLFLT t[4];
    /*   PLFLT *t = args->xform; */
    PLUNICODE *ucs4 = args->unicode_array;
+   SVG *aStream;
 
    /* check that we got unicode */
    if(ucs4Len == 0){
@@ -422,23 +442,26 @@ void proc_str (PLStream *pls, EscText *args)
    /* determine the font height in pixels*/
    ftHt = 1.5 * pls->chrht * DPI/25.4;
 
-   /* Setup & apply text clipping area */
-   svg_open("clipPath");
-   svg_attr_values("id","text-clipping%d", which_clip);
-   svg_general(">\n");
-   svg_open("rect");
-   svg_attr_values("x","%f", pls->clpxmi/scale);
-   svg_attr_values("y","%f", pls->clpymi/scale);
-   svg_attr_values("width","%f", (pls->clpxma - pls->clpxmi)/scale);
-   svg_attr_values("height","%f", (pls->clpyma - pls->clpymi)/scale);
-   svg_open_end();
-   svg_close("clipPath");
-   
-   svg_open("g");
-   svg_attr_values("clip-path", "url(#text-clipping%d)", which_clip);
-   svg_general(">\n");
-
-   which_clip++;
+   /* Setup & apply text clipping area if desired */
+   aStream = (SVG*)pls->dev;
+   if(aStream->textClipping){
+     svg_open("clipPath");
+     svg_attr_values("id","text-clipping%d", which_clip);
+     svg_general(">\n");
+     svg_open("rect");
+     svg_attr_values("x","%f", pls->clpxmi/scale);
+     svg_attr_values("y","%f", pls->clpymi/scale);
+     svg_attr_values("width","%f", (pls->clpxma - pls->clpxmi)/scale);
+     svg_attr_values("height","%f", (pls->clpyma - pls->clpymi)/scale);
+     svg_open_end();
+     svg_close("clipPath");
+     
+     svg_open("g");
+     svg_attr_values("clip-path", "url(#text-clipping%d)", which_clip);
+     svg_general(">\n");
+     
+     which_clip++;
+   }
 
    /* Calculate the tranformation matrix for SVG based on the
       transformation matrix provided by PLplot. */
@@ -593,7 +616,9 @@ void proc_str (PLStream *pls, EscText *args)
    svg_close("text");
    svg_close("g");
    svg_close("g");
-   svg_close("g");
+   if(aStream->textClipping){
+     svg_close("g");
+   }
 }
 
 /*---------------------------------------------------------------------
