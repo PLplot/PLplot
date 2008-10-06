@@ -202,7 +202,6 @@ void plD_init_svg(PLStream *pls)
    aStream = malloc(sizeof(SVG));
    plParseDrvOpts(svg_options);
 
-   printf("text clipping: %d\n", text_clipping);
    /* Turn on text clipping if the user desires this */
    if(text_clipping){
      aStream->textClipping = 1;
