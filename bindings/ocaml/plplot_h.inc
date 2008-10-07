@@ -1,7 +1,7 @@
 [mlname(pl_setcontlabelformat)] void c_pl_setcontlabelformat(int lexp, int sigdig);
 [mlname(pl_setcontlabelparam)] void c_pl_setcontlabelparam ( double offset, double size, double spacing, int active );
 [mlname(pladv)] void c_pladv ( int page );
-[mlname(plsvect)] void c_plsvect ( [in, size_is(npts)] double * arrowx, [in, size_is(npts)] double * arrowy, int npts, int fill );
+[mlname(plsvect)] void c_plsvect ( [in, size_is(npts)] double * arrowx, [in, size_is(npts)] double * arrowy, int npts, boolean fill );
 [mlname(plaxes)] void c_plaxes ( double x0, double y0, [string] const char * xopt, double xtick, int nxsub, [string] const char * yopt, double ytick, int nysub );
 [mlname(plbin)] void c_plbin ( int nbin, [in, size_is(nbin)] double * x, [in, size_is(nbin)] double * y, int opt );
 [mlname(plbop)] void c_plbop ( void );
@@ -11,7 +11,7 @@
 [mlname(plclear)] void c_plclear ( void );
 [mlname(plcol0)] void c_plcol0 ( int icol0 );
 [mlname(plcol1)] void c_plcol1 ( double col1 );
-[mlname(plcpstrm)] void c_plcpstrm ( int iplsr, int flags );
+[mlname(plcpstrm)] void c_plcpstrm ( int iplsr, boolean flags );
 [mlname(plend)] void c_plend ( void );
 [mlname(plend1)] void c_plend1 ( void );
 [mlname(plenv)] void c_plenv ( double xmin, double xmax, double ymin, double ymax, int just, int axis );
@@ -65,7 +65,7 @@
 [mlname(plmkstrm)] void c_plmkstrm ( [out] int * p_strm );
 [mlname(plmtex)] void c_plmtex ( [string] const char * side, double disp, double pos, double just, [string] const char * text );
 [mlname(plmtex3)] void c_plmtex3 ( [string] const char * side, double disp, double pos, double just, [string] const char * text );
-[mlname(plot3d)] void c_plot3d ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, int opt, int side );
+[mlname(plot3d)] void c_plot3d ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, int opt, boolean side );
 [mlname(plot3dc)] void c_plot3dc ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, int opt, [size_is(nlevel), in] double * clevel, int nlevel );
 [mlname(plpat)] void c_plpat ( int nlin, [in, size_is(nlin)] int * inc, [in, size_is(nlin)] int * del );
 [mlname(plpoin)] void c_plpoin ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, int code );
@@ -84,8 +84,8 @@
 [mlname(plscmap0n)] void c_plscmap0n ( int ncol0 );
 [mlname(plscmap1)] void c_plscmap1 ( [size_is(ncol1), in] int * r, [size_is(ncol1), in] int * g, [size_is(ncol1), in] int * b, int ncol1 );
 [mlname(plscmap1a)] void c_plscmap1a ( [size_is(ncol1), in] int * r, [size_is(ncol1), in] int * g, [size_is(ncol1), in] int * b, [size_is(ncol1), in] double * a, int ncol1 );
-[mlname(plscmap1l)] void c_plscmap1l ( int itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [in, size_is(npts), in, size_is(npts), unique] int * rev );
-[mlname(plscmap1la)] void c_plscmap1la ( int itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [size_is(npts), in, size_is(npts)] double * a, [in, size_is(npts), in, size_is(npts), unique] int * rev );
+[mlname(plscmap1l)] void c_plscmap1l ( boolean itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [in, size_is(npts), in, size_is(npts), unique] boolean * rev );
+[mlname(plscmap1la)] void c_plscmap1la ( boolean itype, int npts, [size_is(npts), in, size_is(npts)] double * intensity, [size_is(npts), in, size_is(npts)] double * coord1, [size_is(npts), in, size_is(npts)] double * coord2, [size_is(npts), in, size_is(npts)] double * coord3, [size_is(npts), in, size_is(npts)] double * a, [in, size_is(npts), in, size_is(npts), unique] boolean * rev );
 [mlname(plscmap1n)] void c_plscmap1n ( int ncol1 );
 [mlname(plscol0)] void c_plscol0 ( int icol0, int r, int g, int b );
 [mlname(plscol0a)] void c_plscol0a ( int icol0, int r, int g, int b, double a );
@@ -108,7 +108,7 @@
 [mlname(plsmin)] void c_plsmin ( double def, double scale );
 [mlname(plsori)] void c_plsori ( int ori );
 [mlname(plspage)] void c_plspage ( double xp, double yp, int xleng, int yleng, int xoff, int yoff );
-[mlname(plspause)] void c_plspause ( int pause );
+[mlname(plspause)] void c_plspause ( boolean pause );
 [mlname(plsstrm)] void c_plsstrm ( int strm );
 [mlname(plssub)] void c_plssub ( int nx, int ny );
 [mlname(plssym)] void c_plssym ( double def, double scale );
@@ -134,7 +134,7 @@ void plsxwin ( int window_id );
 [mlname(plw3d)] void c_plw3d ( double basex, double basey, double height, double xmin0, double xmax0, double ymin0, double ymax0, double zmin0, double zmax0, double alt, double az );
 [mlname(plwid)] void c_plwid ( int width );
 [mlname(plwind)] void c_plwind ( double xmin, double xmax, double ymin, double ymax );
-[mlname(plxormod)] void c_plxormod ( int mode, [out] int * status );
+[mlname(plxormod)] void c_plxormod ( boolean mode, [out] boolean * status );
 [mlname(plseed)] void c_plseed ( [int64] unsigned int s );
 [mlname(plrandd)] double c_plrandd ( void );
 [mlname(plsetopt)] int c_plsetopt ( [string] const char * opt, [string] const char * optarg );

@@ -40,7 +40,7 @@ let rcoord = [|1.0; 1.0|]
 let gcoord = [|0.0; 0.0|]
 let bcoord = [|0.0; 0.0|]
 let acoord = [|0.0; 1.0|]
-let rev = [|0; 0|]
+let rev = [|false; false|]
 
 let () =
   ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
@@ -120,7 +120,7 @@ let () =
   (* Create the color map with 128 colors and use plscmap1la to initialize
      the color values with a linear varying transparency (or alpha) *)
   plscmap1n 128;
-  plscmap1la 1 pos rcoord gcoord bcoord acoord (Some rev);
+  plscmap1la true pos rcoord gcoord bcoord acoord (Some rev);
 
   (* Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will
      used for the shade plot. plshades will use linear interpolation to

@@ -7,7 +7,7 @@
 #define PLINT int
 
 //typedef PLINT PLBOOL;
-#define PLBOOL int
+#define PLBOOL boolean
 
  void
 c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig);

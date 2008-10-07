@@ -71,7 +71,7 @@ let cmap1_init gray =
   in
 
   plscmap1n 256;
-  plscmap1l 0 i h l s None;
+  plscmap1l false i h l s None;
   ()
 
 let levels = 10

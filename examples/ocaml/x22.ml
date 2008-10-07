@@ -241,7 +241,7 @@ let () =
 
   circulation ();
 
-  let fill = 0 in
+  let fill = false in
 
   (* Set arrow style using arrow_x and arrow_y then
      plot using these arrows. *)
@@ -250,7 +250,7 @@ let () =
 
   (* Set arrow style using arrow2_x and arrow2_y then
      plot using these filled arrows. *)
-  let fill = 1 in
+  let fill = true in
   plsvect arrow2_x arrow2_y fill;
   constriction ();
 

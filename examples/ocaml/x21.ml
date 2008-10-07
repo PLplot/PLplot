@@ -52,7 +52,7 @@ let cmap1_init () =
   let l = [|0.6; 0.6|] in
   let s = [|0.8; 0.8|] in
   plscmap1n 256;
-  plscmap1l 0 i h l s None;
+  plscmap1l false i h l s None;
   ()
 
 let create_grid px py =

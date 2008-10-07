@@ -86,7 +86,7 @@ let save_plot fname =
   plsdev "psc"; (* new device type. Use a known existing driver *)
   plsfnam fname; (* file name *)
 
-  plcpstrm cur_strm 0; (* copy old stream parameters to new stream *)
+  plcpstrm cur_strm false; (* copy old stream parameters to new stream *)
   plreplot (); (* do the save *)
   plend1 (); (* close new device *)
 
@@ -100,7 +100,7 @@ let gray_cmap num_col =
   let b = [|0.0; 1.0|] in
   let pos = [|0.0; 1.0|] in
   plscmap1n num_col;
-  plscmap1l 1 pos r g b None;
+  plscmap1l true pos r g b None;
   ()
 
 let () =
@@ -183,13 +183,13 @@ let () =
   let yi = 280.0 in
   let ye = 220.0 in
 
-  plspause 0;
+  plspause false;
   pladv 0;
 
   (* display selection only *)
   plimage img_f 1.0 width 1.0 height 0.0 0.0 xi xe ye yi;
 
-  plspause 1;
+  plspause true;
 
   (* zoom in selection *)
   plenv xi xe ye yi 1 (-1);

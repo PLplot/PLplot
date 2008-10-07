@@ -48,7 +48,7 @@ let cmap1_init () =
   let s = [|0.8; 0.8|] in
   plscmap1n 256;
   (* TODO: The first argument to plscmap1l should be a boolean value *)
-  plscmap1l 0 i h l s None;
+  plscmap1l false i h l s None;
   ()
 
 (*--------------------------------------------------------------------------*\
@@ -122,7 +122,7 @@ let () =
               plmesh x y z (opt.(k) lor 4)
           | 2 ->
               (* magnitude colored wireframe plot with sides *)
-              plot3d x y z (opt.(k) lor 4) 1
+              plot3d x y z (opt.(k) lor 4) true
           | 3 ->
               (* magnitude colored wireframe plot with base contour *)
               plmeshc x y z (opt.(k) lor 4 lor 8) clevel
