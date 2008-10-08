@@ -39,6 +39,9 @@
 #else
   #define NNDLLIMPEXP
   #define NNDLLIMPEXP_DATA(type) type
+  /* Enforce consistency for this case. */
+  #define NNDLLEXPORT
+  #define NNDLLIMPORT
 #endif
 
 #endif /* __NN_DLL_H */

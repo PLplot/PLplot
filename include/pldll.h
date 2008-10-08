@@ -39,6 +39,9 @@
 #else
   #define PLDLLIMPEXP
   #define PLDLLIMPEXP_DATA(type) type
+  /* Enforce consistency for this case. */
+  #define PLDLLEXPORT
+  #define PLDLLIMPORT
 #endif
 
 #endif /* __PL_DLL_H */
