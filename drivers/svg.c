@@ -338,7 +338,6 @@ void plD_state_svg(PLStream *pls, PLINT op)
 void plD_esc_svg(PLStream *pls, PLINT op, void *ptr)
 {
   if(svg_family_check(pls)) {return;} 
-  int     i;
   switch (op)
     {
     case PLESC_FILL:      /* fill polygon */
