@@ -1,8 +1,8 @@
-/* December 29, 2006
+/* $Id$
 
-	PLplot driver for PDF 
-
-	Copyright (C) 2006 Werner Smekal
+	PLplot driver for PDF based on the haru library http://www.libharu.org.
+  
+	Copyright (C) 2006, 2008  Werner Smekal
 
 	This file is part of PLplot.
 
@@ -24,6 +24,7 @@
 
 /* TODO: 
  * - page orientation
+ * - text clipping
  */
 
 /***********************************************************************
@@ -87,7 +88,7 @@ typedef struct {
 } pdfdev;
 
 /* local variables */
-PLDLLEXPORT const char* plD_DEVICE_INFO_pdf = "pdf:Portable Document Format PDF:1:pdf:58:pdf";
+PLDLLIMPEXP const char* plD_DEVICE_INFO_pdf = "pdf:Portable Document Format PDF:1:pdf:58:pdf";
 static jmp_buf env;
 
 /***********************************************************************
@@ -102,7 +103,7 @@ static void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts, short fil
 static void process_string( PLStream *, EscText * );
 
 /* PLplot interface functions */
-PLDLLEXPORT void plD_dispatch_init_pdf      (PLDispatchTable *pdt);
+PLDLLIMPEXP void plD_dispatch_init_pdf      (PLDispatchTable *pdt);
 void plD_init_pdf               (PLStream *);
 void plD_line_pdf               (PLStream *, short, short, short, short);
 void plD_polyline_pdf   		(PLStream *, short *, short *, PLINT);
@@ -263,13 +264,13 @@ void plD_init_pdf( PLStream *pls )
   dev->pageSize=HPDF_PAGE_SIZE_EOF;
   if( pageSize==NULL )
     dev->pageSize=HPDF_PAGE_SIZE_A4;
-  else if( !strcmp(pageSize, "letter") )
+  else if( !stricmp(pageSize, "letter") )
     dev->pageSize=HPDF_PAGE_SIZE_LETTER;
-  else if( !strcmp(pageSize, "A3") )
+  else if( !stricmp(pageSize, "A3") )
     dev->pageSize=HPDF_PAGE_SIZE_A3;
-  else if( !strcmp(pageSize, "A4") )
+  else if( !stricmp(pageSize, "A4") )
     dev->pageSize=HPDF_PAGE_SIZE_A4;
-  else if( !strcmp(pageSize, "A5") )
+  else if( !stricmp(pageSize, "A5") )
     dev->pageSize=HPDF_PAGE_SIZE_A5;
   
   if( dev->pageSize==HPDF_PAGE_SIZE_EOF )
@@ -295,7 +296,10 @@ void plD_bop_pdf( PLStream *pls )
 
   /* add page and set size (default is A4) */
   dev->page = HPDF_AddPage( dev->pdf );
-  HPDF_Page_SetSize( dev->page, dev->pageSize, HPDF_PAGE_LANDSCAPE );
+  if( pls->portrait )
+    HPDF_Page_SetSize( dev->page, dev->pageSize, HPDF_PAGE_PORTRAIT );
+  else
+    HPDF_Page_SetSize( dev->page, dev->pageSize, HPDF_PAGE_LANDSCAPE );
 
   /* Determine scaling parameters. */
   width=HPDF_Page_GetWidth( dev->page );  /* in pixels/dots */

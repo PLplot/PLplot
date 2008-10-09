@@ -14,10 +14,10 @@
 #include "drivers.h"
 
 /* Device info */
-PLDLLEXPORT const char* plD_DEVICE_INFO_pbm = "pbm:PDB (PPM) Driver:0:pbm:38:pbm";
+PLDLLIMPEXP const char* plD_DEVICE_INFO_pbm = "pbm:PDB (PPM) Driver:0:pbm:38:pbm";
 
 
-PLDLLEXPORT void plD_dispatch_init_pbm	( PLDispatchTable *pdt );
+PLDLLIMPEXP void plD_dispatch_init_pbm	( PLDispatchTable *pdt );
 
 void plD_init_pbm		(PLStream *);
 void plD_line_pbm		(PLStream *, short, short, short, short);

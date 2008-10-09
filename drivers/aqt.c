@@ -51,7 +51,7 @@
 static NSAutoreleasePool *arpool;   /* Objective-C autorelease pool */
 static id adapter;		    /* Adapter object */
 
-PLDLLEXPORT const char* plD_DEVICE_INFO_aqt = "aqt:AquaTerm (Mac OS X):1:aqt:50:aqt";
+PLDLLIMPEXP const char* plD_DEVICE_INFO_aqt = "aqt:AquaTerm (Mac OS X):1:aqt:50:aqt";
 
 static int currentPlot = 0;
 static int maxWindows = 30;
@@ -186,7 +186,7 @@ static void check_font_environment_variables(void);
 
 /* PLplot interface functions */
 
-PLDLLEXPORT void plD_dispatch_init_aqt      (PLDispatchTable *pdt);
+PLDLLIMPEXP void plD_dispatch_init_aqt      (PLDispatchTable *pdt);
 void plD_init_aqt               (PLStream *);
 void plD_line_aqt               (PLStream *, short, short, short, short);
 void plD_polyline_aqt   		(PLStream *, short *, short *, PLINT);

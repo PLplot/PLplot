@@ -94,14 +94,14 @@ void Log_Debug( const char *fmt, ... )
 \*----------------------------------------------------------------------*/
 
 /* Device info */
-PLDLLEXPORT const char* plD_DEVICE_INFO_wxwidgets = "wxwidgets:wxWidgets DC:1:wxwidgets:51:wxwidgets";
+PLDLLIMPEXP const char* plD_DEVICE_INFO_wxwidgets = "wxwidgets:wxWidgets DC:1:wxwidgets:51:wxwidgets";
 
 /*--------------------------------------------------------------------------*\
  *  void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
  *
  *  Make driver functions known to plplot.
 \*--------------------------------------------------------------------------*/
-PLDLLEXPORT void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
+PLDLLIMPEXP void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "wxWidgets DC";

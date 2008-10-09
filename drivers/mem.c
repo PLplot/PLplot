@@ -21,9 +21,9 @@
 #include "drivers.h"
 
 /* Device info */
-PLDLLEXPORT const char* plD_DEVICE_INFO_mem = "mem:User-supplied memory device:-1:mem:46:mem";
+PLDLLIMPEXP const char* plD_DEVICE_INFO_mem = "mem:User-supplied memory device:-1:mem:46:mem";
 
-PLDLLEXPORT void plD_dispatch_init_mem	( PLDispatchTable *pdt );
+PLDLLIMPEXP void plD_dispatch_init_mem	( PLDispatchTable *pdt );
 
 void plD_init_mem		(PLStream *);
 void plD_line_mem		(PLStream *, short, short, short, short);

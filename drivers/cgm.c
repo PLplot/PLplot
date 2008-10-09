@@ -81,7 +81,7 @@
 #include <cd.h>
 
 /* Device info */
-PLDLLEXPORT const char* plD_DEVICE_INFO_cgm = "cgm:CGM file:0:cgm:44:cgm";
+PLDLLIMPEXP const char* plD_DEVICE_INFO_cgm = "cgm:CGM file:0:cgm:44:cgm";
 
 /* Prototypes for functions in this file. */
 
@@ -157,7 +157,7 @@ void plD_state_cgm		(PLStream *, PLINT);
 void plD_esc_cgm		(PLStream *, PLINT, void *);
 
 
-PLDLLEXPORT void plD_dispatch_init_cgm( PLDispatchTable *pdt )
+PLDLLIMPEXP void plD_dispatch_init_cgm( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "CGM (Computer Graphics metafile) file";

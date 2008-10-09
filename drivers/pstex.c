@@ -12,7 +12,7 @@
 #include "ps.h"
 
 /* Device info */
-PLDLLEXPORT const char* plD_DEVICE_INFO_pstex =
+PLDLLIMPEXP const char* plD_DEVICE_INFO_pstex =
   "pstex:Combined Postscript/LaTeX files:0:pstex:41:pstex";
 
 /*--------------------------------------------------------------------------*\
@@ -32,7 +32,7 @@ static DrvOpt pstex_options[] = {{"color", DRV_INT, &color,
 				  "Color Postscript/LaTeX (color=1|0)"},
 				 {NULL, DRV_INT, NULL, NULL}};
 
-PLDLLEXPORT void plD_dispatch_init_pstex( PLDispatchTable *pdt )
+PLDLLIMPEXP void plD_dispatch_init_pstex( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  ="Combined Postscript/LaTeX files" ;

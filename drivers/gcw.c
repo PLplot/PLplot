@@ -87,7 +87,7 @@ extern FCI_to_FontName_Table FontLookup[N_TrueTypeLookup];
 
 
 /* Device info */
-PLDLLEXPORT const char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
+PLDLLIMPEXP const char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
 
 /* Global driver options */
 
@@ -139,7 +139,7 @@ void plD_tidy_gcw(PLStream *);
 void plD_state_gcw(PLStream *, PLINT);
 void plD_esc_gcw(PLStream *, PLINT, void *);
 
-PLDLLEXPORT void plD_dispatch_init_gcw( PLDispatchTable *pdt )
+PLDLLIMPEXP void plD_dispatch_init_gcw( PLDispatchTable *pdt )
 {
 
 #ifdef DEBUG_GCW_1

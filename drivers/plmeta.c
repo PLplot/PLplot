@@ -37,10 +37,10 @@
 #include <string.h>
 
 /* Device info */
-PLDLLEXPORT const char* plD_DEVICE_INFO_plmeta = "plmeta:PLplot Native Meta-File:0:plmeta:26:plm";
+PLDLLIMPEXP const char* plD_DEVICE_INFO_plmeta = "plmeta:PLplot Native Meta-File:0:plmeta:26:plm";
 
 
-PLDLLEXPORT void plD_dispatch_init_plm	( PLDispatchTable *pdt );
+PLDLLIMPEXP void plD_dispatch_init_plm	( PLDispatchTable *pdt );
 
 void plD_init_plm		(PLStream *);
 void plD_line_plm		(PLStream *, short, short, short, short);

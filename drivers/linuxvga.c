@@ -18,7 +18,7 @@
 #include <vga.h>
 
 /* Device info */
-PLDLLEXPORT const char* plD_DEVICE_INFO_linuxvga = "linuxvga:Linux VGA driver:0:linuxvga:8:vga";
+PLDLLIMPEXP const char* plD_DEVICE_INFO_linuxvga = "linuxvga:Linux VGA driver:0:linuxvga:8:vga";
 
 
 /* Function prototypes */
@@ -59,7 +59,7 @@ static int totcol = 16;
 
 static page_state;
 
-PLDLLEXPORT void plD_dispatch_init_vga( PLDispatchTable *pdt )
+PLDLLIMPEXP void plD_dispatch_init_vga( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "Linux console VGA Screen";

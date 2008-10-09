@@ -132,7 +132,7 @@
  *  and finally one of each.
  */
 
-PLDLLEXPORT const char* plD_DEVICE_INFO_gd =
+PLDLLIMPEXP const char* plD_DEVICE_INFO_gd =
 #if defined(PLD_png)
   "png:PNG file:0:gd:39:png\n"
 #endif
@@ -280,7 +280,7 @@ void plD_eop_gif		(PLStream *);
 
 #ifdef PLD_png
 
-PLDLLEXPORT void plD_dispatch_init_png( PLDispatchTable *pdt )
+PLDLLIMPEXP void plD_dispatch_init_png( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "PNG file";
@@ -302,7 +302,7 @@ PLDLLEXPORT void plD_dispatch_init_png( PLDispatchTable *pdt )
 
 #ifdef PLD_jpeg
 
-PLDLLEXPORT void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
+PLDLLIMPEXP void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "JPEG File";
@@ -324,7 +324,7 @@ PLDLLEXPORT void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
 
 #ifdef PLD_gif
 
-PLDLLEXPORT void plD_dispatch_init_gif( PLDispatchTable *pdt )
+PLDLLIMPEXP void plD_dispatch_init_gif( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "GIF File";

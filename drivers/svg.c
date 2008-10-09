@@ -48,7 +48,7 @@
 
 /* local variables */
 
-PLDLLEXPORT const char* plD_DEVICE_INFO_svg = "svg:Scalable Vector Graphics (SVG 1.1):1:svg:57:svg";
+PLDLLIMPEXP const char* plD_DEVICE_INFO_svg = "svg:Scalable Vector Graphics (SVG 1.1):1:svg:57:svg";
 
 static int canvasXSize = 0;
 static int canvasYSize = 0;
@@ -105,7 +105,7 @@ static void proc_str(PLStream *, EscText *);
 
 /* PLplot interface functions */
 
-PLDLLEXPORT void plD_dispatch_init_svg      (PLDispatchTable *pdt);
+PLDLLIMPEXP void plD_dispatch_init_svg      (PLDispatchTable *pdt);
 void plD_init_svg               (PLStream *);
 void plD_line_svg               (PLStream *, short, short, short, short);
 void plD_polyline_svg   		(PLStream *, short *, short *, PLINT);
