@@ -39,9 +39,6 @@
 #else
   #define CSADLLIMPEXP
   #define CSADLLIMPEXP_DATA(type) type
-  /* Enforce consistency for this case. */
-  #define CSADLLEXPORT
-  #define CSADLLIMPORT
 #endif
 
 #endif /* __CSA_DLL_H */
