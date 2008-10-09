@@ -217,7 +217,6 @@ void
 plot1(int do_test)
 {
   int i;
-  PLINT st;
     PLFLT xmin, xmax, ymin, ymax;
 
     for (i = 0; i < 60; i++) {
@@ -260,6 +259,7 @@ plot1(int do_test)
 
     if (do_test && test_xor) {
 #ifdef PL_HAVE_USLEEP
+  PLINT st;
 	plxormod(1, &st); /* enter xor mode */
 	if (st) {
 	  for (i=0; i<60; i++) {
