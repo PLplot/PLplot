@@ -517,7 +517,7 @@ PlbasicInit( Tcl_Interp *interp )
  * interfacing to PLplot.  Should not be used in a widget-based system.
 \*--------------------------------------------------------------------------*/
 
-int PLDLLEXPORT
+int PLDLLIMPEXP
 Pltcl_Init( Tcl_Interp *interp )
 {
     register CmdInfo *cmdInfoPtr;
