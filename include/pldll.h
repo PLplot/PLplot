@@ -74,6 +74,22 @@
   #define PLDLLIMPEXP_WX_DATA(type) PLDLLIMPORT type
 #endif
 
+#if defined(tclmatrixd_EXPORTS)
+  #define PLDLLIMPEXP_TCLMAT PLDLLEXPORT
+  #define PLDLLIMPEXP_TCLMAT_DATA(type) PLDLLEXPORT type
+#else
+  #define PLDLLIMPEXP_TCLMAT PLDLLIMPORT
+  #define PLDLLIMPEXP_TCLMAT_DATA(type) PLDLLIMPORT type
+#endif
+
+#if defined(plplottcltkd_EXPORTS)
+  #define PLDLLIMPEXP_TCLTK PLDLLEXPORT
+  #define PLDLLIMPEXP_TCLTK_DATA(type) PLDLLEXPORT type
+#else
+  #define PLDLLIMPEXP_TCLTK PLDLLIMPORT
+  #define PLDLLIMPEXP_TCLTK_DATA(type) PLDLLIMPORT type
+#endif
+
 #if defined(aqt_EXPORTS) || defined(cairo_EXPORTS) || defined(cgm_EXPORTS) || \
      defined(dg300_EXPORTS) || defined(gd_EXPORTS) || defined(gcw_EXPORTS) || \
      defined(hpgl_EXPORTS) || defined(impress_EXPORTS) || defined(linuxvga_EXPORTS) || \
