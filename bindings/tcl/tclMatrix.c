@@ -349,7 +349,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
  *
 \*--------------------------------------------------------------------------*/
 
-tclMatrix PLDLLIMPEXP *
+tclMatrix *
 Tcl_GetMatrixPtr(Tcl_Interp *interp, const char *matName)
 {
     Tcl_HashEntry *hPtr;

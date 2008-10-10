@@ -126,8 +126,7 @@ static char errmsg[160];
 #define PL_LIBRARY ""
 #endif
 
-/* extern char PLDLLIMPEXP * plplotLibDir; */
-extern char PLDLLIMPORT * plplotLibDir;
+extern char PLDLLIMPEXP_TCLTK * plplotLibDir;
 
 #if (!defined(MAC_TCL) && !defined(__WIN32__))
 /*
@@ -517,7 +516,7 @@ PlbasicInit( Tcl_Interp *interp )
  * interfacing to PLplot.  Should not be used in a widget-based system.
 \*--------------------------------------------------------------------------*/
 
-int PLDLLIMPEXP
+int
 Pltcl_Init( Tcl_Interp *interp )
 {
     register CmdInfo *cmdInfoPtr;
