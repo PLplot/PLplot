@@ -22,7 +22,7 @@ extern "C" {
 /* tclMain.c */
 /* Main program for a Tcl-based shell that reads Tcl commands from stdin. */
 
-int PLDLLIMPEXP
+int PLDLLIMPEXP_TCLTK
 pltclMain(int argc, const char **argv, char *RcFileName,
 	  int (*AppInit)(Tcl_Interp *interp));
 
@@ -35,7 +35,7 @@ plTclCmd(char *cmdlist, Tcl_Interp *interp,
 
 /* Initialization routine for PLplot-extended tclsh's (like pltcl). */
 
-int PLDLLIMPEXP
+int PLDLLIMPEXP_TCLTK
 Pltcl_Init( Tcl_Interp *interp );
 
 int
@@ -49,7 +49,7 @@ pls_auto_path(Tcl_Interp *interp);
 
 /* Tcl command -- wait until the specified condition is satisfied. */
 
-PLDLLIMPEXP int
+PLDLLIMPEXP_TCLTK int
 plWait_Until(ClientData, Tcl_Interp *, int, const char **);
 
 /* Tcl command -- return the IP address for the current host.  */

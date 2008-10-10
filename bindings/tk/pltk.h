@@ -23,12 +23,12 @@ extern "C" {
 #define TCL_STORAGE_CLASS DLLEXPORT
 #endif /* BUILD_Vfs */
 
-EXTERN PLDLLIMPEXP int
+EXTERN PLDLLIMPEXP_TCLTK int
 Pltk_Init( Tcl_Interp *interp );
 
 /* Main program for wish, with PLplot extensions. */
 
-EXTERN PLDLLIMPEXP int
+EXTERN PLDLLIMPEXP_TCLTK int
 pltkMain(int argc, const char **argv, char *RcFileName,
 	 int (*AppInit)(Tcl_Interp *interp));
 
