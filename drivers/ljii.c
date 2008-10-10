@@ -22,12 +22,12 @@
 #endif
 
 /* Device info */
-PLDLLIMPEXP const char* plD_DEVICE_INFO_ljii =
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_ljii =
   "ljii:LaserJet II Bitmap File (150 dpi):0:ljii:33:ljii";
 
 /* Function prototypes */
 
-PLDLLIMPEXP void plD_dispatch_init_ljii	( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_ljii	( PLDispatchTable *pdt );
 
 void plD_init_ljii		(PLStream *);
 void plD_line_ljii		(PLStream *, short, short, short, short);

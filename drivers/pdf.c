@@ -88,7 +88,7 @@ typedef struct {
 } pdfdev;
 
 /* local variables */
-PLDLLIMPEXP const char* plD_DEVICE_INFO_pdf = "pdf:Portable Document Format PDF:1:pdf:58:pdf";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_pdf = "pdf:Portable Document Format PDF:1:pdf:58:pdf";
 static jmp_buf env;
 
 /***********************************************************************
@@ -103,7 +103,7 @@ static void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts, short fil
 static void process_string( PLStream *, EscText * );
 
 /* PLplot interface functions */
-PLDLLIMPEXP void plD_dispatch_init_pdf      (PLDispatchTable *pdt);
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdf      (PLDispatchTable *pdt);
 void plD_init_pdf               (PLStream *);
 void plD_line_pdf               (PLStream *, short, short, short, short);
 void plD_polyline_pdf   		(PLStream *, short *, short *, PLINT);

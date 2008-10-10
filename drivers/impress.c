@@ -10,11 +10,11 @@
 #include "drivers.h"
 
 /* Device info */
-PLDLLIMPEXP const char* plD_DEVICE_INFO_impress = "imp:Impress File:0:impress:37:imp";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_impress = "imp:Impress File:0:impress:37:imp";
 
 /* Function prototypes */
 
-PLDLLIMPEXP void plD_dispatch_init_imp	( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_imp	( PLDispatchTable *pdt );
 
 void plD_init_imp		(PLStream *);
 void plD_line_imp		(PLStream *, short, short, short, short);

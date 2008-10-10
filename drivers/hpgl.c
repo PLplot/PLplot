@@ -37,7 +37,7 @@
 #include "drivers.h"
 
 /* Device info */
-PLDLLIMPEXP const char* plD_DEVICE_INFO_hpgl =
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_hpgl =
 #if defined(PLD_hp7470)
   "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):0:hpgl:34:hp7470\n"
 #endif
@@ -137,7 +137,7 @@ initialize_hpgl_pls(PLStream *pls)
 #ifdef PLD_hp7470
 void plD_init_hp7470		(PLStream *);
 
-PLDLLIMPEXP void plD_dispatch_init_hp7470( PLDispatchTable *pdt )
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_hp7470( PLDispatchTable *pdt )
 {
     hpgl_dispatch_init_helper( pdt,
                                "HP 7470 Plotter File (HPGL Cartridge, Small Plotter)",
@@ -173,7 +173,7 @@ plD_init_hp7470(PLStream *pls)
 #ifdef PLD_hp7580
 void plD_init_hp7580		(PLStream *);
 
-PLDLLIMPEXP void plD_dispatch_init_hp7580( PLDispatchTable *pdt )
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_hp7580( PLDispatchTable *pdt )
 {
     hpgl_dispatch_init_helper( pdt,
                                "HP 7580 Plotter File (Large Plotter)", "hp7580",

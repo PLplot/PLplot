@@ -62,7 +62,7 @@
 
 /* Device info */
 
-PLDLLIMPEXP const char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:9:wingcc";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:9:wingcc";
 
 /* Struct to hold device-specific info. */
 
@@ -112,7 +112,7 @@ typedef struct {
   } wingcc_Dev;
 
 
-PLDLLIMPEXP void plD_dispatch_init_wingcc	( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_wingcc	( PLDispatchTable *pdt );
 
 void plD_init_wingcc       (PLStream *);
 void plD_line_wingcc       (PLStream *, short, short, short, short);

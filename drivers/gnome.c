@@ -39,7 +39,7 @@
 #include <unistd.h>
 
 /* Device info */
-PLDLLIMPEXP const char* plD_DEVICE_INFO_gnome = "gnome:Gnome Canvas:1:gnome:6:gnome";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_gnome = "gnome:Gnome Canvas:1:gnome:6:gnome";
 
 /*#undef DEBUG*/
 #define DEBUG
@@ -773,7 +773,7 @@ void plD_tidy_gnome		(PLStream *);
 void plD_state_gnome		(PLStream *, PLINT);
 void plD_esc_gnome			(PLStream *, PLINT, void *);
 
-PLDLLIMPEXP void plD_dispatch_init_gnome( PLDispatchTable *pdt )
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_gnome( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "Gnome Canvas";

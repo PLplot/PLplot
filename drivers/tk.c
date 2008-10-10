@@ -63,7 +63,7 @@
 #endif
 
 /* Device info */
-PLDLLIMPEXP const char* plD_DEVICE_INFO_tk = "tk:Tcl/TK Window:1:tk:7:tk";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_tk = "tk:Tcl/TK Window:1:tk:7:tk";
 
 
 /* Number of instructions to skip between updates */
@@ -89,7 +89,7 @@ if (code) { abort_session(pls, "Unable to write to PDFstrm"); }
 
 /* Driver entry and dispatch setup */
 
-PLDLLIMPEXP void plD_dispatch_init_tk	( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_tk	( PLDispatchTable *pdt );
 
 void plD_init_tk		(PLStream *);
 void plD_line_tk		(PLStream *, short, short, short, short);

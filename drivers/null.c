@@ -10,9 +10,9 @@
 #include "drivers.h"
 
 /* Device info */
-PLDLLIMPEXP const char* plD_DEVICE_INFO_null = "null:Null device:-1:null:42:null";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_null = "null:Null device:-1:null:42:null";
 
-PLDLLIMPEXP void plD_dispatch_init_null	( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_null	( PLDispatchTable *pdt );
 
 void plD_init_null		(PLStream *);
 void plD_line_null		(PLStream *, short, short, short, short);
