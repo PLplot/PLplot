@@ -8,6 +8,8 @@ generates the files tclgen.c, tclgen.h, tclgen_s.h using the command
 
 perl pltclgen
 
+(now tclsh ${CMAKE_CURRENT_SOURCE_DIR}/pltclgen.tcl ${CMAKE_CURRENT_SOURCE_DIR})
+
 tclAPI.c includes the generated files tclgen.c, tclgen.h, tclgen_s.h
 where appropriate and also adds additional more complicated API as required
 to define the overall PLplot API for Tcl.
