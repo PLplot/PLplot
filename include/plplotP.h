@@ -461,7 +461,7 @@ void
 plP_hex2fci(unsigned char hexdigit, unsigned char hexpower, PLUNICODE *pfci);
 
 /* Retrieves hex digit value from FCI (font characterization integer). */
-void
+PLDLLIMPEXP void
 plP_fci2hex(PLUNICODE fci, unsigned char *phexdigit, unsigned char hexpower);
 
 /* Pattern fills in software the polygon bounded by the input points. */
@@ -502,7 +502,7 @@ plfontrel(void);
 
 /* A replacement for strdup(), which isn't portable. */
 
-char PLDLLIMPEXP *
+PLDLLIMPEXP char *
 plstrdup(const char *src);
 
 /* Bin up cmap 1 space and assign colors to make inverse mapping easy. */
@@ -978,7 +978,7 @@ RestoreWrite2BufferPixmap(void);
 void
 grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny);
 
-int PLDLLIMPEXP
+PLDLLIMPEXP int
 plInBuildTree();
 
 void
@@ -997,7 +997,7 @@ typedef struct {
  * and vector transformations.
  * This is not currently intended to be called direct by the user
  */
-void PLDLLIMPEXP
+PLDLLIMPEXP void
 plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 		PLPointer f2evalv_data, PLPointer f2evalc_data,
 		PLINT nx, PLINT ny, PLFLT scale,
@@ -1028,7 +1028,7 @@ void
 plP_FreeDrvOpts();
 
 /* Convert a ucs4 unichar to utf8 char string*/
-int
+PLDLLIMPEXP int
 ucs4_to_utf8(PLUNICODE unichar, char *ptr);
 
 /*

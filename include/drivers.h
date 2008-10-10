@@ -110,7 +110,7 @@ void plbuf_esc		(PLStream *, PLINT, void *);
 void * plbuf_save	(PLStream *, void *);
 void * plbuf_switch	(PLStream *, void *);
 
-void plRemakePlot	(PLStream *);
+PLDLLIMPEXP void plRemakePlot	(PLStream *);
 
 #ifdef __cplusplus
 }
