@@ -50,20 +50,20 @@
   #define PLDLLIMPEXP_CXX_DATA(type) PLDLLIMPORT type
 #endif
 
-#if defined(plplotf77d_EXPORTS)
-  #define PLDLLIMPEXP_F77 PLDLLEXPORT
-  #define PLDLLIMPEXP_F77_DATA(type) PLDLLEXPORT type
+#if defined(plplotf77cd_EXPORTS)
+  #define PLDLLIMPEXP_F77C PLDLLEXPORT
+  #define PLDLLIMPEXP_F77C_DATA(type) PLDLLEXPORT type
 #else
-  #define PLDLLIMPEXP_F77 PLDLLIMPORT
-  #define PLDLLIMPEXP_F77_DATA(type) PLDLLIMPORT type
+  #define PLDLLIMPEXP_F77C PLDLLIMPORT
+  #define PLDLLIMPEXP_F77C_DATA(type) PLDLLIMPORT type
 #endif
 
-#if defined(plplotf95d_EXPORTS)
-  #define PLDLLIMPEXP_F95 PLDLLEXPORT
-  #define PLDLLIMPEXP_F95_DATA(type) PLDLLEXPORT type
+#if defined(plplotf95cd_EXPORTS)
+  #define PLDLLIMPEXP_F95C PLDLLEXPORT
+  #define PLDLLIMPEXP_F95C_DATA(type) PLDLLEXPORT type
 #else
-  #define PLDLLIMPEXP_F95 PLDLLIMPORT
-  #define PLDLLIMPEXP_F95_DATA(type) PLDLLIMPORT type
+  #define PLDLLIMPEXP_F95C PLDLLIMPORT
+  #define PLDLLIMPEXP_F95C_DATA(type) PLDLLIMPORT type
 #endif
 
 #if defined(plplotwxwidgetsd_EXPORTS)
