@@ -62,7 +62,7 @@
  */
 
 #include "plplotP.h"
-
+#include "pltkd.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <tcl.h>
@@ -176,7 +176,7 @@ static void		StdinProc _ANSI_ARGS_((ClientData clientData,
  *----------------------------------------------------------------------
  */
 
-PLDLLIMPEXP int
+int
 pltkMain(int argc, const char **argv, char *RcFileName,
 	 int (*AppInit)(Tcl_Interp *interp))
 {
