@@ -41,7 +41,7 @@ libplplottcltk${LIB_TAG}_COMPILE_FLAGS
 
 if(BUILD_SHARED_LIBS)
   SET_SOURCE_FILES_PROPERTIES(${tclmatrix${LIB_TAG}_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
 endif(BUILD_SHARED_LIBS)
 
 add_library(tclmatrix${LIB_TAG} ${tclmatrix${LIB_TAG}_LIB_SRCS})
@@ -157,7 +157,7 @@ if(ENABLE_tk)
   )
   if(BUILD_SHARED_LIBS)
   set_source_files_properties(${plplottcltk${LIB_TAG}_LIB_SRCS}
-  PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL"
+  PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
   )
   endif(BUILD_SHARED_LIBS)
   set(plplottcltk${LIB_TAG}_link_libraries

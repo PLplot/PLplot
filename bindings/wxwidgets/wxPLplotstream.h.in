@@ -61,7 +61,7 @@ enum {
  *  to the plplot API. The documentation of this interface is described in
  *  the PLplot manual, not here. 
  */
-class PLDLLIMPEXP wxPLplotstream : public plstream
+class PLDLLIMPEXP_WX wxPLplotstream : public plstream
 {
 public:
   wxPLplotstream();  //!< Constructor.

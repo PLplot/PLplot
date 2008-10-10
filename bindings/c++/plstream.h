@@ -55,7 +55,7 @@ class Contourable_Data {
 
 PLFLT Contourable_Data_evaluator( PLINT i, PLINT j, PLPointer p );
 
-class PLDLLIMPEXP Coord_Xformer {
+class PLDLLIMPEXP_CXX Coord_Xformer {
   public:
     virtual void xform( PLFLT ox, PLFLT oy, PLFLT& nx, PLFLT& ny ) const =0;
     virtual ~Coord_Xformer() {};  
@@ -71,7 +71,7 @@ class Coord_2d {
     virtual ~Coord_2d() {};  
 };
 
-class PLDLLIMPEXP cxx_pltr2 : public Coord_Xformer {
+class PLDLLIMPEXP_CXX cxx_pltr2 : public Coord_Xformer {
     Coord_2d& xg;
     Coord_2d& yg;
   public:
@@ -85,7 +85,7 @@ class PLDLLIMPEXP cxx_pltr2 : public Coord_Xformer {
 // Cool stuff.
 //===========================================================================//
 
-class PLDLLIMPEXP plstream {
+class PLDLLIMPEXP_CXX plstream {
 
     PLINT stream;
 

@@ -31,7 +31,7 @@
  *  provide an own plot API. You have to get a pointer to wxPLplotstream via the 
  *  GetStream() method to gain access to the PLplot API.
  */
-class PLDLLIMPEXP wxPLplotwindow : public wxWindow
+class PLDLLIMPEXP_WX wxPLplotwindow : public wxWindow
 {
 public:
 	wxPLplotwindow( wxWindow* parent, wxWindowID id=-1, const wxPoint& pos = wxDefaultPosition,

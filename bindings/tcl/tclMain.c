@@ -50,7 +50,7 @@
 
 #include <tcl.h>
 #include "plplot.h"
-#define MAKINGPLDLL
+#define USINGDLL
 #include "pldll.h"
 
 #ifdef HAVE_TCL_GT_84

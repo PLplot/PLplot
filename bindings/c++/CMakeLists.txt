@@ -40,7 +40,7 @@ add_library(plplotcxx${LIB_TAG} ${plplotcxx${LIB_TAG}_LIB_SRCS})
 
 if(BUILD_SHARED_LIBS)
   SET_SOURCE_FILES_PROPERTIES(${plplotcxx${LIB_TAG}_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DMAKINGPLDLL" )
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
 endif(BUILD_SHARED_LIBS)
 
 target_link_libraries(plplotcxx${LIB_TAG} plplot${LIB_TAG})
