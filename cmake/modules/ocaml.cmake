@@ -25,6 +25,12 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_ocaml "Enable OCaml bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
+if(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
+  message(STATUS "WARNING: "
+    "OCaml requires shared libraries. Disabling ocaml bindings")
+  set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
+endif(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
+
 if(ENABLE_ocaml)
   find_program(OCAMLBUILD ocamlbuild)
   if (OCAMLBUILD)
