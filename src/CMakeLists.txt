@@ -58,6 +58,10 @@ endif(BUILD_SHARED_LIBS)
 
 if(ENABLE_DYNDRIVERS)
   get_source_file_property(PLCORE_COMPILE_PROPS plcore.c COMPILE_FLAGS)
+  # Deal with NOTFOUND case.
+  if(NOT PLCORE_COMPILE_PROPS)
+    set(PLCORE_COMPILE_PROPS)
+  endif(NOT PLCORE_COMPILE_PROPS)
   set_source_files_properties(
   plcore.c
   PROPERTIES COMPILE_FLAGS "${PLCORE_COMPILE_PROPS} -I${LTDL_INCLUDE_DIR}"
@@ -186,6 +190,10 @@ endif(HAVE_QHULL)
 
 if(WITH_FREETYPE)
   get_source_file_property(PLFREETYPE_COMPILE_PROPS plfreetype.c COMPILE_FLAGS)
+  # Deal with NOTFOUND case.
+  if(NOT PLFREETYPE_COMPILE_PROPS)
+    set(PLFREETYPE_COMPILE_PROPS)
+  endif(NOT PLFREETYPE_COMPILE_PROPS)
   set_source_files_properties(plfreetype.c PROPERTIES COMPILE_FLAGS "${PLFREETYPE_COMPILE_PROPS} -I${FREETYPE_INCLUDE_DIR}")
   set(
   libplplot${LIB_TAG}_LINK_LIBRARIES
