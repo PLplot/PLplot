@@ -612,9 +612,16 @@ void proc_str (PLStream *pls, EscText *args)
    for(i=0;i<totalTags;i++){
       fprintf(svgFile,"</tspan>");
    }
-   fprintf(svgFile,"\n");
-   
-   svg_close("text");
+   /* The following commented out (by AWI) because it is a bad idea to
+    * put line ends in the middle of a text tag.  This was the key to
+    * all the text rendering issues we had. */
+   /*fprintf(svgFile,"\n");*/
+   /* For the same reason use fprintf and svgIndent -= 2;
+    * to close the text tag rather than svg_close("text"); since
+    * we don't want indentation spaces entering the text. */
+   /* svg_close("text"); */
+   fprintf(svgFile,"</text>\n");
+   svgIndent -= 2;
    svg_close("g");
    svg_close("g");
    if(aStream->textClipping){
