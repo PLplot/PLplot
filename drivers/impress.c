@@ -14,7 +14,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_impress = "imp:Impress File:0:imp
 
 /* Function prototypes */
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_imp	( PLDispatchTable *pdt );
+void plD_dispatch_init_imp	( PLDispatchTable *pdt );
 
 void plD_init_imp		(PLStream *);
 void plD_line_imp		(PLStream *, short, short, short, short);

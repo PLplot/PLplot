@@ -838,7 +838,7 @@ void plD_bop_famcairo(PLStream *pls)
 static int XScreen;
 static Window rootWindow;
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_xcairo    (PLDispatchTable *pdt);
+void plD_dispatch_init_xcairo    (PLDispatchTable *pdt);
 void plD_init_xcairo             (PLStream *);
 void plD_eop_xcairo              (PLStream *);
 void plD_tidy_xcairo             (PLStream *);
@@ -1169,7 +1169,7 @@ void xcairo_get_cursor(PLStream *pls, PLGraphicsIn *gin)
 
 #if defined(PLD_pdfcairo)
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdfcairo  (PLDispatchTable *pdt);
+void plD_dispatch_init_pdfcairo  (PLDispatchTable *pdt);
 void plD_init_pdfcairo           (PLStream *);
 
 /*---------------------------------------------------------------------
@@ -1241,7 +1241,7 @@ void plD_init_pdfcairo(PLStream *pls)
 
 #if defined(PLD_pscairo)
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_pscairo  (PLDispatchTable *pdt);
+void plD_dispatch_init_pscairo  (PLDispatchTable *pdt);
 void plD_init_pscairo           (PLStream *);
 
 /*---------------------------------------------------------------------
@@ -1315,7 +1315,7 @@ void plD_init_pscairo(PLStream *pls)
 
 #if defined(PLD_svgcairo)
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_svgcairo  (PLDispatchTable *pdt);
+void plD_dispatch_init_svgcairo  (PLDispatchTable *pdt);
 void plD_init_svgcairo           (PLStream *);
 
 /*---------------------------------------------------------------------
@@ -1405,7 +1405,7 @@ void plD_init_svgcairo(PLStream *pls)
 
 #if defined(PLD_pngcairo)
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_pngcairo  (PLDispatchTable *pdt);
+void plD_dispatch_init_pngcairo  (PLDispatchTable *pdt);
 void plD_init_pngcairo           (PLStream *);
 void plD_eop_pngcairo            (PLStream *);
 
@@ -1510,7 +1510,7 @@ void plD_eop_pngcairo(PLStream *pls)
 
 #if defined(PLD_memcairo)
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_memcairo  (PLDispatchTable *pdt);
+void plD_dispatch_init_memcairo  (PLDispatchTable *pdt);
 void plD_init_memcairo           (PLStream *);
 void plD_eop_memcairo            (PLStream *);
 void plD_bop_memcairo            (PLStream *);
@@ -1699,7 +1699,7 @@ void plD_eop_memcairo(PLStream *pls)
 
 #if defined(PLD_extcairo)
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_extcairo (PLDispatchTable *pdt);
+void plD_dispatch_init_extcairo (PLDispatchTable *pdt);
 void plD_init_extcairo          (PLStream *);
 void plD_bop_extcairo           (PLStream *);
 void plD_eop_extcairo           (PLStream *);

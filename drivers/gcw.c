@@ -139,7 +139,7 @@ void plD_tidy_gcw(PLStream *);
 void plD_state_gcw(PLStream *, PLINT);
 void plD_esc_gcw(PLStream *, PLINT, void *);
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_gcw( PLDispatchTable *pdt )
+void plD_dispatch_init_gcw( PLDispatchTable *pdt )
 {
 
 #ifdef DEBUG_GCW_1

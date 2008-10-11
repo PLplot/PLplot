@@ -112,7 +112,7 @@ typedef struct {
   } wingcc_Dev;
 
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_wingcc	( PLDispatchTable *pdt );
+void plD_dispatch_init_wingcc	( PLDispatchTable *pdt );
 
 void plD_init_wingcc       (PLStream *);
 void plD_line_wingcc       (PLStream *, short, short, short, short);

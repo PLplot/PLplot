@@ -89,7 +89,7 @@ if (code) { abort_session(pls, "Unable to write to PDFstrm"); }
 
 /* Driver entry and dispatch setup */
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_tk	( PLDispatchTable *pdt );
+void plD_dispatch_init_tk	( PLDispatchTable *pdt );
 
 void plD_init_tk		(PLStream *);
 void plD_line_tk		(PLStream *, short, short, short, short);

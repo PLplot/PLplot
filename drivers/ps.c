@@ -49,15 +49,15 @@
 
 /* Device info */
 
-PLDLLIMPEXP_DRIVER const char * plD_DEVICE_INFO_ps = 
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_ps = 
   "ps:PostScript File (monochrome):0:ps:29:psm\n"
   "psc:PostScript File (color):0:ps:30:psc";
 
 
 /* Prototypes for functions in this file. */
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_psm	( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_psc	( PLDispatchTable *pdt );
+void plD_dispatch_init_psm	( PLDispatchTable *pdt );
+void plD_dispatch_init_psc	( PLDispatchTable *pdt );
 
 static char  *ps_getdate	(void);
 static void  ps_init		(PLStream *);

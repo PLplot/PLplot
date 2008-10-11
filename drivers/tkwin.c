@@ -202,7 +202,7 @@ static void StoreCmap0  (PLStream *pls);
 static void StoreCmap1  (PLStream *pls);
 static void WaitForPage(PLStream *pls);
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_tkwin	( PLDispatchTable *pdt );
+void plD_dispatch_init_tkwin	( PLDispatchTable *pdt );
 
 void plD_init_tkwin		(PLStream *);
 void plD_line_tkwin		(PLStream *, short, short, short, short);

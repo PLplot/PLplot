@@ -101,7 +101,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wxwidgets = "wxwidgets:wxWidgets 
  *
  *  Make driver functions known to plplot.
 \*--------------------------------------------------------------------------*/
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
+void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "wxWidgets DC";

@@ -280,7 +280,7 @@ void plD_eop_gif		(PLStream *);
 
 #ifdef PLD_png
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_png( PLDispatchTable *pdt )
+void plD_dispatch_init_png( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "PNG file";
@@ -302,7 +302,7 @@ PLDLLIMPEXP_DRIVER void plD_dispatch_init_png( PLDispatchTable *pdt )
 
 #ifdef PLD_jpeg
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
+void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "JPEG File";
@@ -324,7 +324,7 @@ PLDLLIMPEXP_DRIVER void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
 
 #ifdef PLD_gif
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_gif( PLDispatchTable *pdt )
+void plD_dispatch_init_gif( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "GIF File";

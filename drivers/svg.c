@@ -105,7 +105,7 @@ static void proc_str(PLStream *, EscText *);
 
 /* PLplot interface functions */
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_svg      (PLDispatchTable *pdt);
+void plD_dispatch_init_svg      (PLDispatchTable *pdt);
 void plD_init_svg               (PLStream *);
 void plD_line_svg               (PLStream *, short, short, short, short);
 void plD_polyline_svg   		(PLStream *, short *, short *, PLINT);

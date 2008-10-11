@@ -157,7 +157,7 @@ void plD_state_cgm		(PLStream *, PLINT);
 void plD_esc_cgm		(PLStream *, PLINT, void *);
 
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_cgm( PLDispatchTable *pdt )
+void plD_dispatch_init_cgm( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "CGM (Computer Graphics metafile) file";

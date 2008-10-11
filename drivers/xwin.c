@@ -126,7 +126,7 @@ static XwDisplay *xwDisplay[PLXDISPLAYS];
 
 /* Driver entry and dispatch setup */
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_xw	( PLDispatchTable *pdt );
+void plD_dispatch_init_xw	( PLDispatchTable *pdt );
 
 void plD_init_xw		(PLStream *);
 void plD_line_xw		(PLStream *, short, short, short, short);

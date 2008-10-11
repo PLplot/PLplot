@@ -32,7 +32,7 @@ static DrvOpt pstex_options[] = {{"color", DRV_INT, &color,
 				  "Color Postscript/LaTeX (color=1|0)"},
 				 {NULL, DRV_INT, NULL, NULL}};
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_pstex( PLDispatchTable *pdt )
+void plD_dispatch_init_pstex( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  ="Combined Postscript/LaTeX files" ;

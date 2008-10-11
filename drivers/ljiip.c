@@ -32,7 +32,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_ljiip =
 
 /* Function prototypes */
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_ljiip	( PLDispatchTable *pdt );
+void plD_dispatch_init_ljiip	( PLDispatchTable *pdt );
 
 void plD_init_ljiip		(PLStream *);
 void plD_line_ljiip		(PLStream *, short, short, short, short);

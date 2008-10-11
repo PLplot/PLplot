@@ -773,7 +773,7 @@ void plD_tidy_gnome		(PLStream *);
 void plD_state_gnome		(PLStream *, PLINT);
 void plD_esc_gnome			(PLStream *, PLINT, void *);
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_gnome( PLDispatchTable *pdt )
+void plD_dispatch_init_gnome( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "Gnome Canvas";

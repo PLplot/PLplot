@@ -23,7 +23,7 @@
 /* Device info */
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_mem = "mem:User-supplied memory device:-1:mem:46:mem";
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_mem	( PLDispatchTable *pdt );
+void plD_dispatch_init_mem	( PLDispatchTable *pdt );
 
 void plD_init_mem		(PLStream *);
 void plD_line_mem		(PLStream *, short, short, short, short);

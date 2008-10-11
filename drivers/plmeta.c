@@ -40,7 +40,7 @@
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_plmeta = "plmeta:PLplot Native Meta-File:0:plmeta:26:plm";
 
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_plm	( PLDispatchTable *pdt );
+void plD_dispatch_init_plm	( PLDispatchTable *pdt );
 
 void plD_init_plm		(PLStream *);
 void plD_line_plm		(PLStream *, short, short, short, short);

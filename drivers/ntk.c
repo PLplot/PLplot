@@ -37,7 +37,7 @@
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_ntk = "ntk:New tk driver:1:ntk:43:ntk";
 
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_ntk	( PLDispatchTable *pdt );
+void plD_dispatch_init_ntk	( PLDispatchTable *pdt );
 
 void plD_init_ntk		(PLStream *);
 void plD_line_ntk		(PLStream *, short, short, short, short);

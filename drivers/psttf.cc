@@ -63,8 +63,8 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_psttf =
 
 /* Prototypes for functions in this file. */
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_psttfm	( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_psttfc	( PLDispatchTable *pdt );
+void plD_dispatch_init_psttfm	( PLDispatchTable *pdt );
+void plD_dispatch_init_psttfc	( PLDispatchTable *pdt );
 
 static char  *ps_getdate	(void);
 static void  ps_init		(PLStream *);

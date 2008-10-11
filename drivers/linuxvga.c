@@ -59,7 +59,7 @@ static int totcol = 16;
 
 static page_state;
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_vga( PLDispatchTable *pdt )
+void plD_dispatch_init_vga( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "Linux console VGA Screen";

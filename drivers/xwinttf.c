@@ -126,7 +126,7 @@ static void poly_line(PLStream *, short *, short *, PLINT);
 
 /* PLplot interface functions */
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_xwinttf      (PLDispatchTable *pdt);
+void plD_dispatch_init_xwinttf      (PLDispatchTable *pdt);
 void plD_init_xwinttf               (PLStream *);
 void plD_line_xwinttf               (PLStream *, short, short, short, short);
 void plD_polyline_xwinttf   	    (PLStream *, short *, short *, PLINT);
