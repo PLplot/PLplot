@@ -210,7 +210,9 @@ void plD_init_svg(PLStream *pls)
    pls->dev = aStream;
 
    svgIndent = 0;
-   svg_open("?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+   svg_general("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+   svg_general("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
+   svg_general("        \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
 }
 
 /*----------------------------------------------------------------------
