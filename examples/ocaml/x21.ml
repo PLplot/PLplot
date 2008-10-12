@@ -229,8 +229,7 @@ let () =
                "bcdfntu" "Z" 0.5 0;
         plcol0 15;
         pllab "" "" title.(alg - 1);
-        (* TODO FIXME -- The proper PLplot constants should be used here... *)
-        plot3dc xg yg zg (3 lor 4 lor 8) clev;
+        plot3dc xg yg zg [PL_DRAW_LINEXY; PL_MAG_COLOR; PL_BASE_CONT] clev;
       );
     done
   done;

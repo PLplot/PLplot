@@ -3,7 +3,7 @@
 
 //typedef unsigned int PLUNICODE;
 //typedef int PLINT;
-#define PLUNICODE unsigned int
+#define PLUNICODE long long
 #define PLINT int
 
 //typedef PLINT PLBOOL;
@@ -257,10 +257,10 @@ c_plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
 */
 
  void
-c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt);
+c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, plplot3d_style opt);
 
  void
-c_plmeshc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+c_plmeshc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, plplot3d_style opt,
    PLFLT *clevel, PLINT nlevel);
 
  void
@@ -276,11 +276,11 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 
  void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
-  PLINT nx, PLINT ny, PLINT opt, PLBOOL side);
+  PLINT nx, PLINT ny, plplot3d_style opt, PLBOOL side);
 
  void
 c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
-  PLINT nx, PLINT ny, PLINT opt,
+  PLINT nx, PLINT ny, plplot3d_style opt,
   PLFLT *clevel, PLINT nlevel);
 
 /*
@@ -530,7 +530,7 @@ c_plstyl(PLINT nms, PLINT *mark, PLINT *space);
 
  void
 c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-    PLINT opt, PLFLT *clevel, PLINT nlevel);
+    plplot3d_style opt, PLFLT *clevel, PLINT nlevel);
 
 /*
  void

@@ -17,6 +17,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with ocaml-plplot.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// Taken from the plplot.h 3D plot style definitions
+enum plplot3d_style_enum {
+    PL_DIFFUSE = 0,
+    PL_DRAW_LINEX = 1,
+    PL_DRAW_LINEY = 2,
+    PL_DRAW_LINEXY = 3,
+    PL_MAG_COLOR = 4,
+    PL_BASE_CONT = 8,
+    PL_TOP_CONT = 16,
+    PL_SURF_CONT = 32,
+    PL_DRAW_SIDES = 64,
+    PL_FACETED = 128,
+    PL_MESH = 256
+};
+typedef [set] enum plplot3d_style_enum plplot3d_style;
+
 // This is a simplified and modified version of the plplot.h file.
 #include "plplot_h.inc"
 
@@ -141,11 +157,3 @@ quote(mlmli, "type plplot_parse_method_type = \
 RAW_ML(external plgriddata : float array -> float array -> float array -> float array -> float array -> plplot_grid_method_type -> float -> float array array = "ml_plgriddata_bytecode" "ml_plgriddata")
 RAW_ML(external plparseopts : string array -> plplot_parse_method_type array -> int = "ml_plparseopts")
 
-// Taken from the plplot.h 3D plot style definitions
-// XXX TODO This is currently unused...
-/*
-enum plot_style_enum { DRAW_LINEX = 1, DRAW_LINEY = 2, DRAW_LINEXY = 3, MAG_COLOR = 4,
-                       BASE_CONT = 8, TOP_CONT = 16, SURF_CONT = 32, DRAW_SIDES = 64,
-                       FACETED = 128, MESH = 256 };
-typedef [set] enum plot_style_enum plot_style;
-*/

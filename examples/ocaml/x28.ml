@@ -138,7 +138,7 @@ let () =
         0.0 "  revolution";
   done;
   (* Draw minimal 3D grid to finish defining the 3D box. *)
-  plmesh x y z 3;
+  plmesh x y z [PL_DRAW_LINEXY];
 
   (* Page 2: Demonstrate rotation of string around its axis. *)
   pladv 0;
@@ -205,7 +205,7 @@ let () =
       0.5 "rotation for z = z#dmin#u";
   done;
   (* Draw minimal 3D grid to finish defining the 3D box. *)
-  plmesh x y z 3;
+  plmesh x y z [PL_DRAW_LINEXY];
 
   (* Page 3: Demonstrate shear of string along its axis. *)
   (* Work around xcairo and pngcairo (but not pscairo) problems for
@@ -276,7 +276,7 @@ let () =
       0.5 "shear for z = z#dmin#u";
   done;
   (* Draw minimal 3D grid to finish defining the 3D box. *)
-  plmesh x y z 3;
+  plmesh x y z [PL_DRAW_LINEXY];
 
   (* Page 4: Demonstrate drawing a string on a 3D path. *)
   pladv 0;
@@ -324,7 +324,7 @@ let () =
   done;
 
   (* Draw minimal 3D grid to finish defining the 3D box. *)
-  plmesh x y z 3;
+  plmesh x y z [PL_DRAW_LINEXY];
 
   (* Page 5: Demonstrate plmtex3 axis labelling capability *)
   pladv 0;
@@ -351,7 +351,7 @@ let () =
   plmtex3 "zs" (-2.5) 0.5 0.5 "Arbitrarily displaced";
   plmtex3 "zs" (-1.0) 0.5 0.5 "secondary Z-axis label";
   (* Draw minimal 3D grid to finish defining the 3D box. *)
-  plmesh x y z 3;
+  plmesh x y z [PL_DRAW_LINEXY];
 
   (* Clean up. *)
   plend ();

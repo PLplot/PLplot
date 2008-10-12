@@ -87,8 +87,6 @@ let polar () =
   let lev = Array.init 10 (fun i -> 0.05 +. 0.10 *. float_of_int i) in
 
   plcol0 2;
-  (* TODO FIXME XXX: This is not correct because pltr2 is not properly
-     implemented in OCaml at this point. *)
   plset_pltr (fun x y -> pltr2 x y xg yg);
   plcont z 1 rpts 1 thetapts lev;
   plunset_pltr ();

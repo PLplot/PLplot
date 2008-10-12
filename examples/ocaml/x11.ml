@@ -28,10 +28,7 @@ let xpts = 35 (* Data points in x *)
 let ypts = 46 (* Data points in y *)
 let levels = 10
 
-(* FIXME TODO: The plot style #define statements have not been brought over to
-   the OCaml interface yet.  This example uses the constant values until they
-   are properly carried over. *)
-let opt = [|3; 3|]
+let opt = [|PL_DRAW_LINEXY; PL_DRAW_LINEXY|]
 
 let alt = [|33.0; 17.0|]
 let az = [|24.0; 115.0|]
@@ -47,7 +44,6 @@ let cmap1_init () =
   let l = [|0.6; 0.6|] in
   let s = [|0.8; 0.8|] in
   plscmap1n 256;
-  (* TODO: The first argument to plscmap1l should be a boolean value *)
   plscmap1l false i h l s None;
   ()
 
@@ -116,16 +112,16 @@ let () =
       let () =
         match i with
             0 ->
-              plmesh x y z opt.(k)
+              plmesh x y z [opt.(k)]
           | 1 ->
               (* magnitude colored wireframe plot *)
-              plmesh x y z (opt.(k) lor 4)
+              plmesh x y z [opt.(k); PL_MAG_COLOR]
           | 2 ->
               (* magnitude colored wireframe plot with sides *)
-              plot3d x y z (opt.(k) lor 4) true
+              plot3d x y z [opt.(k); PL_MAG_COLOR] true
           | 3 ->
               (* magnitude colored wireframe plot with base contour *)
-              plmeshc x y z (opt.(k) lor 4 lor 8) clevel
+              plmeshc x y z [opt.(k); PL_MAG_COLOR; PL_BASE_CONT] clevel
           | _ -> raise (Failure "You let i get too big!")
       in
 

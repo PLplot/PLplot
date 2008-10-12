@@ -160,22 +160,20 @@ let () =
              "bcdmnstuv" "z axis" 0.0 0;
       plcol0 2;
 
-      (* NOTE: As of now, the named variables for the opt parameter options
-         have not been defined in the OCaml interface. *)
       match ifshade with
           0 -> (* diffuse light surface plot *)
             cmap1_init true;
-            plsurf3d x y z  0 [||];
+            plsurf3d x y z  [PL_DIFFUSE] [||];
         | 1 -> (* magnitude colored plot *)
             cmap1_init false;
-            plsurf3d x y z 4 [||];
+            plsurf3d x y z [PL_MAG_COLOR] [||];
         | 2 -> (* magnitude colored plot with faceted
                   squares *)
             cmap1_init false;
-            plsurf3d x y z (4 + 128) [||];
+            plsurf3d x y z [PL_MAG_COLOR; PL_FACETED] [||];
         | _ -> (* magnitude colored plot with contours *)
             cmap1_init false;
-            plsurf3d x y z (4 + 32 + 8) clevel;
+            plsurf3d x y z [PL_MAG_COLOR; PL_SURF_CONT; PL_BASE_CONT] clevel;
     done
   done;
 

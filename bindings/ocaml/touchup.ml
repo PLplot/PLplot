@@ -239,8 +239,8 @@ let parameter_attributes function_name types names =
          misc. check (anything, as long as it's a bool)
          attributes, if all of the above are true
       *)
-      (* "PLUNICODE" parameters need at least unsigned int32 width ints,
-         so use Int64.t values to be safe. *)
+      (* OCaml does not support unsigned integer values in its standard library
+         so use Int64.t values for unsigned ints to be safe. *)
       true,
       pmatch "unsigned int" p_type,
       true,

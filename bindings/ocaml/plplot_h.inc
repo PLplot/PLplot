@@ -35,7 +35,7 @@
 [mlname(plgdidev)] void c_plgdidev ( [out] double * p_mar, [out] double * p_aspect, [out] double * p_jx, [out] double * p_jy );
 [mlname(plgdiori)] void c_plgdiori ( [out] double * p_rot );
 [mlname(plgdiplt)] void c_plgdiplt ( [out] double * p_xmin, [out] double * p_ymin, [out] double * p_xmax, [out] double * p_ymax );
-[mlname(plgfci)] void c_plgfci ( [out, int64] unsigned int * pfci );
+[mlname(plgfci)] void c_plgfci ( [out] long long * pfci );
 [mlname(plgfam)] void c_plgfam ( [out] int * p_fam, [out] int * p_num, [out] int * p_bmax );
 [mlname(plgfnam)] void c_plgfnam ( [string, out, length_is(1024)] char * fnam );
 [mlname(plgfont)] void c_plgfont ( [out] int * p_family, [out] int * p_style, [out] int * p_weight );
@@ -60,13 +60,13 @@
 [mlname(plline)] void c_plline ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y );
 [mlname(plline3)] void c_plline3 ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, [in, size_is(n)] double * z );
 [mlname(pllsty)] void c_pllsty ( int lin );
-[mlname(plmesh)] void c_plmesh ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, int opt );
-[mlname(plmeshc)] void c_plmeshc ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, int opt, [size_is(nlevel), in] double * clevel, int nlevel );
+[mlname(plmesh)] void c_plmesh ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt );
+[mlname(plmeshc)] void c_plmeshc ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt, [size_is(nlevel), in] double * clevel, int nlevel );
 [mlname(plmkstrm)] void c_plmkstrm ( [out] int * p_strm );
 [mlname(plmtex)] void c_plmtex ( [string] const char * side, double disp, double pos, double just, [string] const char * text );
 [mlname(plmtex3)] void c_plmtex3 ( [string] const char * side, double disp, double pos, double just, [string] const char * text );
-[mlname(plot3d)] void c_plot3d ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, int opt, boolean side );
-[mlname(plot3dc)] void c_plot3dc ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, int opt, [size_is(nlevel), in] double * clevel, int nlevel );
+[mlname(plot3d)] void c_plot3d ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt, boolean side );
+[mlname(plot3dc)] void c_plot3dc ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt, [size_is(nlevel), in] double * clevel, int nlevel );
 [mlname(plpat)] void c_plpat ( int nlin, [in, size_is(nlin)] int * inc, [in, size_is(nlin)] int * del );
 [mlname(plpoin)] void c_plpoin ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, int code );
 [mlname(plpoin3)] void c_plpoin3 ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, [in, size_is(n)] double * z, int code );
@@ -101,7 +101,7 @@
 [mlname(plsdiplz)] void c_plsdiplz ( double xmin, double ymin, double xmax, double ymax );
 [mlname(plsesc)] void c_plsesc ( char esc );
 [mlname(plsfam)] void c_plsfam ( int fam, int num, int bmax );
-[mlname(plsfci)] void c_plsfci ( [int64] unsigned int fci );
+[mlname(plsfci)] void c_plsfci ( long long fci );
 [mlname(plsfnam)] void c_plsfnam ( [string] const char * fnam );
 [mlname(plsfont)] void c_plsfont ( int family, int style, int weight );
 [mlname(plsmaj)] void c_plsmaj ( double def, double scale );
@@ -118,7 +118,7 @@
 [mlname(plstripd)] void c_plstripd ( int id );
 [mlname(plimage)] void c_plimage ( [in, size_is(nx, ny)] double ** idata, int nx, int ny, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, double Dxmin, double Dxmax, double Dymin, double Dymax );
 [mlname(plstyl)] void c_plstyl ( int nms, [size_is(nms)] int * mark, [size_is(nms)] int * space );
-[mlname(plsurf3d)] void c_plsurf3d ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, int opt, [size_is(nlevel), in] double * clevel, int nlevel );
+[mlname(plsurf3d)] void c_plsurf3d ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt, [size_is(nlevel), in] double * clevel, int nlevel );
 [mlname(plsvpa)] void c_plsvpa ( double xmin, double xmax, double ymin, double ymax );
 [mlname(plsxax)] void c_plsxax ( int digmax, int digits );
 void plsxwin ( int window_id );
