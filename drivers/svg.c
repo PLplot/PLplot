@@ -417,7 +417,7 @@ void proc_str (PLStream *pls, EscText *args)
   char plplot_esc;
   short static which_clip = 0;
   short i;
-  short upDown = 0;
+  short upDown;
   short totalTags = 1;
   short ucs4Len = args->unicode_array_len;
   short lastOffset = 0;
@@ -425,6 +425,8 @@ void proc_str (PLStream *pls, EscText *args)
   PLUNICODE fci;
   PLFLT rotation, shear, stride, cos_rot, sin_rot, sin_shear, cos_shear;
   PLFLT t[4];
+  PLFLT glyph_size, sum_glyph_size;
+  short if_write;
   /*   PLFLT *t = args->xform; */
   PLUNICODE *ucs4 = args->unicode_array;
   SVG *aStream;
@@ -502,13 +504,9 @@ void proc_str (PLStream *pls, EscText *args)
      be controlled in some way with this parameter? */
   svg_attr_value("dominant-baseline","no-change"); 
    
-  /* The text goes at zero in x since the coordinate transform also defined the location of the text */
-  svg_attr_value("x", "0");
-  svg_attr_value("y", "0");
-
-  /* Tentavively removed. The examples, or at least Example 1, seem to expect
+  /* Tentatively removed. The examples, or at least Example 1, seem to expect
      the driver to ignore the text baseline, so the baseline adjustment is
-     now done the text transform is applied above.
+     now done to the text transform as applied above.
 
      /* Set the baseline of the string by adjusting the y offset
      Values were arrived at by trial and error. Unfortunately they don't seem to
@@ -546,62 +544,104 @@ void proc_str (PLStream *pls, EscText *args)
   svg_attr_value("xml:space","preserve"); 
    
   /* set the font size */
-  svg_attr_values("font-size","%d", (int)ftHt);
+  svg_attr_values("font-size","%f", ftHt);
    
-  /* set the justification, svg only supports 3 options so we round appropriately */
-   
-  if (args->just < 0.33)
-    svg_attr_value("text-anchor", "start");   /* left justification */
-  else if (args->just > 0.66)
-    svg_attr_value("text-anchor", "end");     /* right justification */
-  else
-    svg_attr_value("text-anchor", "middle");  /* center */
-            
-  fprintf(svgFile,">");
-
-  /* specify the initial font */
-  specify_font(fci);
-
   /*----------------------------------------------------------
     Write the text with formatting
     We just keep stacking up tspan tags, then close them all
     after we have written out all of the text.
     ----------------------------------------------------------*/
 
-  i = 0;
-  while (i < ucs4Len){
-    if (ucs4[i] < PL_FCI_MARK){	/* not a font change */
-      if (ucs4[i] != (PLUNICODE)plplot_esc) {  /* a character to display */
-	write_unicode(ucs4[i]);
-	i++;
-	continue;
-      }
-      i++;
-      if (ucs4[i] == (PLUNICODE)plplot_esc){   /* a escape character to display */
-	write_unicode(ucs4[i]);
-	i++;
-	continue;
-      }
-      else {
-	if(ucs4[i] == (PLUNICODE)'u'){	/* Superscript */
-	  totalTags++;
-	  upDown++;
-	  fprintf(svgFile,"<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
-	  lastOffset = desired_offset(upDown, ftHt);
+  /* For if_write = 0, we write nothing and instead accumulate the
+   * total sum_glyph_size from the fontsize of the individual glyphs which
+   * is then used to figure out the initial x position from text-anchor and
+   * args->just that is used to write out the SVG xml for if_write = 1. */
+
+  glyph_size = ftHt;
+  sum_glyph_size = 0.;
+  if_write = 0;
+  while (if_write < 2) {
+    i = 0;
+    upDown = 0;
+    while (i < ucs4Len){
+      if (ucs4[i] < PL_FCI_MARK){	/* not a font change */
+	if (ucs4[i] != (PLUNICODE)plplot_esc) {  /* a character to display */
+	  if(if_write) {
+	    write_unicode(ucs4[i]);
+	  }
+	  else{
+	    sum_glyph_size += glyph_size;
+	  }
+	  i++;
+	  continue;
 	}
-	if(ucs4[i] == (PLUNICODE)'d'){	/* Subscript */
+	i++;
+	if (ucs4[i] == (PLUNICODE)plplot_esc){   /* a escape character to display */
+	  if(if_write) {
+	    write_unicode(ucs4[i]);
+	  }
+	  else{
+	    sum_glyph_size += glyph_size;
+	  }
+	  i++;
+	  continue;
+	}
+	else {
+	  if(ucs4[i] == (PLUNICODE)'u'){	/* Superscript */
+	    upDown++;
+	    if(if_write) {
+	      totalTags++;
+	      fprintf(svgFile,"<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
+	    }
+	    else{
+	      glyph_size = desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown)));
+	    }
+	    lastOffset = desired_offset(upDown, ftHt);
+	  }
+	  if(ucs4[i] == (PLUNICODE)'d'){	/* Subscript */
+	    upDown--;
+	    if(if_write) {
+	      totalTags++;
+	      fprintf(svgFile,"<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
+	    }
+	    else{
+	      glyph_size = desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown)));
+	    }
+	    lastOffset = desired_offset(upDown, ftHt);
+	  }
+	  i++;
+	}
+      }
+      else { /* a font change */
+	if(if_write) {
+	  specify_font(ucs4[i]);
 	  totalTags++;
-	  upDown--;
-	  fprintf(svgFile,"<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
-	  lastOffset = desired_offset(upDown, ftHt);
 	}
 	i++;
       }
     }
-    else { /* a font change */
-      specify_font(ucs4[i]);         
-      totalTags++;
-      i++;
+    if_write++;
+    if(if_write == 1) {
+      if (args->just < 0.33)
+	svg_attr_value("text-anchor", "start");   /* left justification */
+      else if (args->just > 0.66)
+	svg_attr_value("text-anchor", "end");     /* right justification */
+      else
+	svg_attr_value("text-anchor", "middle");  /* center */
+            
+      /* The above coordinate transform defines the _raw_ x position of the 
+       * text without justification so this attribute value depends on
+       * text-anchor and args->just. */
+      svg_attr_value("x", "0");
+
+      /* The text goes at zero in y since the above
+       * coordinate transform defines the y position of the text */
+      svg_attr_value("y", "0");
+      fprintf(svgFile,">");
+
+      /* specify the initial font */
+      specify_font(fci);
+
     }
   }
 
