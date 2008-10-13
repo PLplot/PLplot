@@ -46,6 +46,12 @@
 
 #define MAX_STRING_LEN	1000
 
+/* This has been generated empirically by looking carefully at results from
+ * examples 1 and 2.  It may be significant that the actual value is awful
+ * close to 0.80, the ratio of number of points/inch (72) and DPI. */
+
+#define FONT_SIZE_RATIO 0.76
+
 /* local variables */
 
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_svg = "svg:Scalable Vector Graphics (SVG 1.1):1:svg:57:svg";
@@ -420,7 +426,7 @@ void proc_str (PLStream *pls, EscText *args)
   short upDown;
   short totalTags = 1;
   short ucs4Len = args->unicode_array_len;
-  short lastOffset = 0;
+  short lastOffset;
   double ftHt;
   PLUNICODE fci;
   PLFLT rotation, shear, stride, cos_rot, sin_rot, sin_shear, cos_shear;
@@ -482,15 +488,13 @@ void proc_str (PLStream *pls, EscText *args)
   t[3] = -sin_rot * sin_shear + cos_rot * cos_shear;
 
   /* Apply coordinate transform for text display.
-     The transformation also defines the location of the text in x and y.
-     The value of the ftHT multiplicative factor has been determined 
-     empirically by looking at example 1 and example 2 results. */
+     The transformation also defines the location of the text in x and y. */
   svg_open("g");
   svg_attr_values("transform", "matrix(%f %f %f %f %f %f)", t[0], t[1], t[2], t[3], (double)(args->x/scale), (double)(args->y/scale));
   svg_general(">\n");
 
   svg_open("g");
-  svg_attr_values("transform", "matrix(1.0 0.0 0.0 1.0 0.0 %f)", 0.38*ftHt - 0.5);
+  svg_attr_values("transform", "matrix(1.0 0.0 0.0 1.0 0.0 %f)", FONT_SIZE_RATIO*0.5*ftHt - 0.5);
   svg_general(">\n");
 
   /*--------------
@@ -499,43 +503,7 @@ void proc_str (PLStream *pls, EscText *args)
 
   svg_open("text");
    
-  /* I believe this property to be important, but I'm not sure what the right value is.
-     In example 2 the numbers are all over the place vertically. Perhaps that could
-     be controlled in some way with this parameter? */
   svg_attr_value("dominant-baseline","no-change"); 
-   
-  /* Tentatively removed. The examples, or at least Example 1, seem to expect
-     the driver to ignore the text baseline, so the baseline adjustment is
-     now done to the text transform as applied above.
-
-     /* Set the baseline of the string by adjusting the y offset
-     Values were arrived at by trial and error. Unfortunately they don't seem to
-     right in all cases, presumably due to adjustments being performed by
-     my svg renderer. 
-
-     if (args->base == 2){
-     /* Align to the top of the text, and probably wrong. 
-     svg_attr_values("y", "%d", (int)(0.7*ftHt + 0.5));
-     }
-     else if (args->base == 1){
-     /* Align to the bottom of the text.
-	
-     This was adjusted based on example1 so that the symbols would be centered
-     on the line. It is strange that it should have the same value as align
-     to the middle of the text.
-     
-     svg_attr_values("y", "%d", (int)(0.3*ftHt + 0.5));  
-     }
-     else{
-     /* Align to the middle of the text
-	
-     This was adjusted based on example1 so that the axis label text would be centered
-     on the appropriate tick mark. Strangely, some seem to end up on the high side
-     and others on the low side. Perhaps this is due rounding to the nearest pixel?
-     
-     svg_attr_values("y", "%d", (int)(0.3*ftHt + 0.5));
-     }
-  */
    
   /* set font color */
   svg_fill_color(pls);
@@ -544,7 +512,7 @@ void proc_str (PLStream *pls, EscText *args)
   svg_attr_value("xml:space","preserve"); 
    
   /* set the font size */
-  svg_attr_values("font-size","%f", ftHt);
+  svg_attr_values("font-size","%d", (int)ftHt);
    
   /*----------------------------------------------------------
     Write the text with formatting
@@ -553,7 +521,7 @@ void proc_str (PLStream *pls, EscText *args)
     ----------------------------------------------------------*/
 
   /* For if_write = 0, we write nothing and instead accumulate the
-   * total sum_glyph_size from the fontsize of the individual glyphs which
+   * sum_glyph_size from the fontsize of the individual glyphs which
    * is then used to figure out the initial x position from text-anchor and
    * args->just that is used to write out the SVG xml for if_write = 1. */
 
@@ -561,7 +529,32 @@ void proc_str (PLStream *pls, EscText *args)
   sum_glyph_size = 0.;
   if_write = 0;
   while (if_write < 2) {
+    if(if_write == 1) {
+      sum_glyph_size *= FONT_SIZE_RATIO;
+      if (args->just < 0.33)
+	svg_attr_value("text-anchor", "start");   /* left justification */
+      else if (args->just > 0.66)
+	svg_attr_value("text-anchor", "end");     /* right justification */
+      else
+	svg_attr_value("text-anchor", "middle");  /* center */
+            
+      /* The above coordinate transform defines the _raw_ x position of the 
+       * text without justification so this attribute value depends on
+       * text-anchor and args->just*sum_glyph_size */
+      //svg_attr_values("x", "%f", (double)(-args->just*sum_glyph_size));
+
+      /* The text goes at zero in y since the above
+       * coordinate transform defines the y position of the text */
+      svg_attr_value("x", "0");
+      svg_attr_value("y", "0");
+      fprintf(svgFile,">");
+
+      /* specify the initial font */
+      specify_font(fci);
+
+    }
     i = 0;
+    lastOffset = 0;
     upDown = 0;
     while (i < ucs4Len){
       if (ucs4[i] < PL_FCI_MARK){	/* not a font change */
@@ -621,28 +614,6 @@ void proc_str (PLStream *pls, EscText *args)
       }
     }
     if_write++;
-    if(if_write == 1) {
-      if (args->just < 0.33)
-	svg_attr_value("text-anchor", "start");   /* left justification */
-      else if (args->just > 0.66)
-	svg_attr_value("text-anchor", "end");     /* right justification */
-      else
-	svg_attr_value("text-anchor", "middle");  /* center */
-            
-      /* The above coordinate transform defines the _raw_ x position of the 
-       * text without justification so this attribute value depends on
-       * text-anchor and args->just. */
-      svg_attr_value("x", "0");
-
-      /* The text goes at zero in y since the above
-       * coordinate transform defines the y position of the text */
-      svg_attr_value("y", "0");
-      fprintf(svgFile,">");
-
-      /* specify the initial font */
-      specify_font(fci);
-
-    }
   }
 
   /*----------------------------------------------
