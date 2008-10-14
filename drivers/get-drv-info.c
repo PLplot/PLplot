@@ -22,7 +22,11 @@
  */
 
 #include "plplotP.h"
-#include <ltdl.h>
+#ifndef LTDL_WIN32
+  #include <ltdl.h>
+#else
+  #include "ltdl_win32.h"
+#endif
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -48,7 +52,11 @@ main (int argc, char* argv[])
   signal (SIGSEGV, catch_segv);
 
   lt_dlinit ();
+#ifdef LTDL_WIN32  
+  sprintf( drvspec, "%s", drvnam );
+#else
   sprintf( drvspec, "%s/%s", plGetDrvDir (), drvnam );
+#endif /* LTDL_WIN32 */
   dlhand = lt_dlopenext (drvspec);
   if (dlhand == NULL) {
     fprintf (stderr, "Could not open driver module %s\n"
