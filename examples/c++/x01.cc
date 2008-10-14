@@ -223,7 +223,6 @@ x01::x01( int argc, const char ** argv ) {
 void x01::plot1( int do_test )
 {
   int i;
-  bool st;
   PLFLT xmin, xmax, ymin, ymax;
   PLFLT *x = new PLFLT[60];
   PLFLT *y = new PLFLT[60];
@@ -271,7 +270,8 @@ void x01::plot1( int do_test )
 
   if (do_test && test_xor) {
 #ifdef PL_HAVE_USLEEP
-    pls->xormod(true, &st); /* enter xor mode */
+  bool st;
+  pls->xormod(true, &st); /* enter xor mode */
     if (st) {
       for (i=0; i<60; i++) {
 	pls->poin(1, x+i, y+i,9);      /* draw a point */
