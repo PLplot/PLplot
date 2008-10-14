@@ -42,7 +42,7 @@ use
 @Ada_Is_2007_With_and_Use_Numerics@
 
 procedure x03a is
-    dtr, theta, dx, dy, r : Long_Float;
+    dtr, theta, dx, dy, r, offset : Long_Float;
     x0, y0 : Real_Vector(0..360);
     x,  y  : Real_Vector(0..360);
 
@@ -81,11 +81,20 @@ begin
         pljoin(0.0, 0.0, dx, dy);
 
         -- Write labels for angle. 
+
+        if theta < 9.99 then
+           offset := 0.45;
+        elsif theta < 99.9 then
+	   offset := 0.30;
+        else
+           offset := 0.15;
+        end if;
+
         -- Slightly off zero to avoid floating point logic flips at 90 and 270 deg
         if dx >= -0.00001 then
-            plptex(dx, dy, dx, dy, -0.15, Trim(Integer'image(Integer(theta)), Left));
+            plptex(dx, dy, dx, dy, -offset, Trim(Integer'image(Integer(theta)), Left));
         else
-            plptex(dx, dy, -dx, -dy, 1.15, Trim(Integer'image(Integer(theta)), Left));
+            plptex(dx, dy, -dx, -dy, 1.0 + offset, Trim(Integer'image(Integer(theta)), Left));
         end if;
     end loop;
 

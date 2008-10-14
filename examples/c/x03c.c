@@ -15,7 +15,7 @@ int
 main(int argc, const char *argv[])
 {
     int i, j;
-    PLFLT dtr, theta, dx, dy, r;
+    PLFLT dtr, theta, dx, dy, r, offset;
     char text[4];
     static PLFLT x0[361], y0[361];
     static PLFLT x[361], y[361];
@@ -61,11 +61,19 @@ main(int argc, const char *argv[])
 
     /* Write labels for angle */
 
+	if (theta < 9.99) {
+	  offset = 0.45;
+	} else if (theta < 99.9) {
+	  offset = 0.30;
+	} else {
+	  offset = 0.15;
+	}
+
 /* Slightly off zero to avoid floating point logic flips at 90 and 270 deg. */
 	if (dx >= -0.00001)
-	    plptex(dx, dy, dx, dy, -0.15, text);
+	    plptex(dx, dy, dx, dy, -offset, text);
 	else
-	    plptex(dx, dy, -dx, -dy, 1.15, text);
+	    plptex(dx, dy, -dx, -dy, 1.+offset, text);
     }
 
 /* Draw the graph */

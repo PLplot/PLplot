@@ -65,13 +65,21 @@ for my $i (0 .. 11) {
 
   pljoin (0, 0, $dx, $dy);
 
+  if ($theta < 9.99) {
+      $offset = 0.45;
+  } elsif ($theta < 99.9) {
+      $offset = 0.30;
+  } else {
+      $offset = 0.15;
+  }
+
   # Write labels for angle
   # Slightly off zero to avoid floating point logic flips at 90 and 270 deg
 
   if ($dx >= -0.00001) {
-    plptex ($dx, $dy, $dx, $dy, -0.15, int ($theta));
+    plptex ($dx, $dy, $dx, $dy, -$offset, int ($theta));
   } else {
-    plptex ($dx, $dy, -$dx, -$dy, 1.15, int ($theta));
+    plptex ($dx, $dy, -$dx, -$dy, (1.+$offset), int ($theta));
   }
 }
 

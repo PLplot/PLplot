@@ -25,7 +25,7 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
 
       character*3 text
       real*8 x0(0:360), y0(0:360)
-      real*8 x(0:360), y(0:360), dtr, theta, dx, dy, r
+      real*8 x(0:360), y(0:360), dtr, theta, dx, dy, r, offset
       integer i, j, nsp
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
@@ -69,12 +69,21 @@ C        Draw radial spokes for polar grid
 C        Write labels for angle
 
         text = text(nsp(text):)
+
+        if (theta .lt. 9.99) then
+           offset = 0.45
+        elseif (theta .lt. 99.9) then
+	   offset = 0.30
+        else
+           offset = 0.15
+        endif
+
 C        Slightly off zero to avoid floating point logic flips at
 C        90 and 270 deg.
         if (dx.ge.-0.00001d0) then
-          call plptex(dx, dy, dx, dy, -0.15d0, text)
+          call plptex(dx, dy, dx, dy, -offset, text)
         else
-          call plptex(dx, dy, -dx, -dy, 1.15d0, text)
+          call plptex(dx, dy, -dx, -dy, (1.d0 + offset), text)
         end if
       enddo
 C      Draw the graph

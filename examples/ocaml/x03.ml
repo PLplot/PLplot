@@ -62,12 +62,19 @@ let main () =
 
     (* Write labels for angle *)
 
+    (*if theta < 9.99 then
+      let offset = 0.45 in
+    else if theta < 99.9 then
+      let offset = 0.30 in
+    else *)
+      let offset = 0.15 in
+
     (* Slightly off zero to avoid floating point logic flips at 90 and
        270 deg.*)
     if dx >= -0.00001 then
-      plptex dx dy dx dy (-0.15) text
+      plptex dx dy dx dy (-.offset) text
     else
-      plptex dx dy (-.dx) (-.dy) 1.15 text
+      plptex dx dy (-.dx) (-.dy) (1.+.offset) text
   done;
 
   (* Draw the graph *)

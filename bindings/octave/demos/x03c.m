@@ -63,10 +63,17 @@ function x03c
 
     ## Write labels for angle */
 
-    if (dx >= -0.00001)
-      plptex(dx, dy, dx, dy, -0.15, text);
+    if (theta < 9.99)
+      offset = 0.45;
+    elseif (theta < 99.9)
+      offset = 0.30;
     else
-      plptex(dx, dy, -dx, -dy, 1.15, text);
+      offset = 0.15;
+    endif
+    if (dx >= -0.00001)
+      plptex(dx, dy, dx, dy, -offset, text);
+    else
+      plptex(dx, dy, -dx, -dy, 1.+offset, text);
     endif
   endfor
 

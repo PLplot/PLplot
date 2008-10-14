@@ -49,7 +49,7 @@ x03::x03( int argc, const char ** argv ) {
 
   int i, j;
   char text[4];
-  PLFLT dtr, theta, dx, dy, r;
+  PLFLT dtr, theta, dx, dy, r, offset;
 
   PLFLT *x0 = new PLFLT[361];
   PLFLT *y0 = new PLFLT[361];
@@ -100,11 +100,19 @@ x03::x03( int argc, const char ** argv ) {
 
     // Write labels for angle.
 
+    if (theta < 9.99) {
+      offset = 0.45;
+    } else if (theta < 99.9) {
+      offset = 0.30;
+    } else {
+      offset = 0.15;
+    }
+
     //Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
     if (dx >= -0.00001)
-      pls->ptex(dx, dy, dx, dy, -0.15, text);
+      pls->ptex(dx, dy, dx, dy, -offset, text);
     else
-      pls->ptex(dx, dy, -dx, -dy, 1.15, text);
+      pls->ptex(dx, dy, -dx, -dy, 1.+offset, text);
   }
 
   // Draw the graph.

@@ -14,7 +14,7 @@ import std.string;
 \*--------------------------------------------------------------------------*/
 int main( char[][] args )
 {
-  PLFLT dtr, theta, dx, dy, r;
+  PLFLT dtr, theta, dx, dy, r, offset;
   char[] text;
   PLFLT[361] x0, y0;
   PLFLT[361] x, y;
@@ -59,11 +59,20 @@ int main( char[][] args )
     text = format( "%.0f", round(theta) );
 
     /* Write labels for angle */
+
+    if (theta < 9.99) {
+       	offset = 0.45;
+    } else if (theta < 99.9) {
+	offset = 0.30;
+    } else {
+	offset = 0.15;
+    }
+
     /* Slightly off zero to avoid floating point logic flips at 90 and 270 deg. */
     if( dx>=-0.00001 )
-	    plptex( dx, dy, dx, dy, -0.15, toStringz(text) );
+	    plptex( dx, dy, dx, dy, -offset, toStringz(text) );
     else
-	    plptex(dx, dy, -dx, -dy, 1.15, toStringz(text) );
+	    plptex(dx, dy, -dx, -dy, 1.+offset, toStringz(text) );
   }
 
   /* Draw the graph */

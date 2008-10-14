@@ -38,11 +38,17 @@ def main():
 	# Write labels for angle
 
 	text = `int(theta)`
+        if theta < 9.99:
+            offset = 0.45
+        elif theta < 99.9:
+            offset = 0.30
+        else:
+            offset = 0.15
 #Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
 	if dx >= -0.00001:
-	    plptex(dx, dy, dx, dy, -0.15, text)
+	    plptex(dx, dy, dx, dy, -offset, text)
 	else:
-	    plptex(dx, dy, -dx, -dy, 1.15, text)
+	    plptex(dx, dy, -dx, -dy, 1.+offset, text)
 
     # Draw the graph
 

@@ -24,7 +24,7 @@
 
       character*3 text
       real(kind=plflt) x0(0:360), y0(0:360)
-      real(kind=plflt) x(0:360), y(0:360), dtr, theta, dx, dy, r
+      real(kind=plflt) x(0:360), y(0:360), dtr, theta, dx, dy, r, offset
       integer i, j, nsp
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
@@ -66,12 +66,20 @@
 !        Write labels for angle
 
         text = text(nsp(text):)
+
+        if (theta .lt. 9.99) then
+           offset = 0.45
+        elseif (theta .lt. 99.9) then
+           offset = 0.30
+        else
+           offset = 0.15
+        endif
 !        Slightly off zero to avoid floating point logic flips at
 !        90 and 270 deg.
         if (dx.ge.-0.00001_plflt) then
-          call plptex(dx, dy, dx, dy, -0.15_plflt, text)
+          call plptex(dx, dy, dx, dy, -offset, text)
         else
-          call plptex(dx, dy, -dx, -dy, 1.15_plflt, text)
+          call plptex(dx, dy, -dx, -dy, 1._plflt+offset, text)
         end if
       enddo
 !      Draw the graph

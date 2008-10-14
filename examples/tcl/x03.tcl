@@ -39,15 +39,24 @@ proc x03 {{w loopback}} {
 	set yg [expr sin($theta)]
 	$w cmd pljoin 0.0 0.0 $xg $yg
 
+	set theta_deg [expr $theta*360./$twopi]
+	if {$theta_deg < 9.99} {
+	    set offset 0.45
+	} elseif {$theta_deg < 99.9} {
+	    set offset 0.30
+	} else {
+	    set offset 0.15
+	}
+		   
 # Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
 	if {$xg >= -0.00001} {
-	    set dx $xg
-	    set dy $yg
-	    set just -0.15
+	    set dx [expr $xg]
+	    set dy [expr $yg]
+	    set just [expr -$offset]
 	} else {
 	    set dx [expr -$xg]
 	    set dy [expr -$yg]
-	    set just 1.15
+	    set just [expr 1. + $offset]
 	}
 	set label [expr round($theta*360./$twopi)]
 
