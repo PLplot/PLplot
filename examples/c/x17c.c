@@ -128,10 +128,12 @@ main(int argc, const char *argv[])
 #else
 # ifdef HAS_POLL
 	poll(0,0,10);
+# else
+	{ int i; for( i=0; i<1000000; i++ ); }
 # endif
 #endif
 	t = (double)n * dt;
-	noise = ((double)rand()/(RAND_MAX+1.0)) - 0.5;
+	noise = plrandd() - 0.5;
 	y1 = y1 + noise;
 	y2 = sin(t*M_PI/18.);
 	y3 = y2 * noise;
