@@ -96,9 +96,9 @@ if(ENABLE_DYNDRIVERS)
     # automatically (so long as full pathnames to libraries are used).
     set(
     ${SOURCE_ROOT_NAME}_RPATH
+    ${LIB_DIR}
     ${${SOURCE_ROOT_NAME}_RPATH}
     ${libplplot${LIB_TAG}_RPATH}
-    ${LIB_DIR}
     )
     # Our implementation of dynamic loading using libltdl assumes
     # the prefix should always be nothing (rather than lib) and the suffix
