@@ -104,14 +104,14 @@ if(ENABLE_DYNDRIVERS)
     # the prefix should always be nothing (rather than lib) and the suffix
     # should be set in a platform-dependent manner in order for libltdl
     # to find the dynamic device.
-    if(CYGWIN)
+    if(WIN32)
       # strace showed that .dll was a must for libltdl on Cygwin.
       set(DYNAMIC_SUFFIX ".dll")
-    else(CYGWIN)
+    else(WIN32)
       # So far this works on all non-Cygwin systems, but only Linux and
       # Mac OS X have been tested so far.
       set(DYNAMIC_SUFFIX ".so")
-    endif(CYGWIN)
+    endif(WIN32)
     
     #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
     if(USE_RPATH)
