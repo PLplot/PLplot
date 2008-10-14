@@ -43,7 +43,13 @@ if(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
   set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
   "Enable dynamic loading of device drivers" FORCE)
 endif(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
-if(ENABLE_DYNDRIVERS)
+if(ENABLE_DYNDRIVERS AND WIN32)
+  if(NOT CYGWIN AND NOT MSYS)
+    set(LTDL_WIN32 ON)
+    set(LTDL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+  endif(NOT CYGWIN AND NOT MSYS)
+endif(ENABLE_DYNDRIVERS AND WIN32)
+if(ENABLE_DYNDRIVERS AND NOT LTDL_WIN32)
   find_package(LTDL)
   if(LTDL_FOUND)
     set(libplplot${LIB_TAG}_RPATH ${LTDL_LIBRARY_DIR})
@@ -56,7 +62,7 @@ if(ENABLE_DYNDRIVERS)
     set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
     "Enable dynamic loading of device drivers" FORCE)
   endif(LTDL_FOUND)
-endif(ENABLE_DYNDRIVERS)
+endif(ENABLE_DYNDRIVERS AND NOT LTDL_WIN32)
 
 # Decide whether to enable each device or not and find special resources
 # when required.
