@@ -38,7 +38,11 @@
 #include "plcore.h"
 
 #ifdef ENABLE_DYNDRIVERS
-#include <ltdl.h>
+  #ifndef LTDL_WIN32
+    #include <ltdl.h>
+  #else
+    #include "ltdl_win32.h"
+  #endif
 #endif
 
 /*--------------------------------------------------------------------------*\
@@ -2114,7 +2118,7 @@ pllib_devinit()
     plsc->dispatch_table = dispatch_table[plsc->device - 1];
 }
 
-int PLDLLIMPEXP plInBuildTree()
+PLDLLIMPEXP int plInBuildTree()
 {
   static int inited = 0;
   static int inBuildTree = 0;
@@ -2179,6 +2183,8 @@ plGetDrvDir ()
       }
     }
 
+    printf("plGetDrvDir(): drvdir=%s\n", drvdir );
+    
     return drvdir;
 }
 
@@ -2547,7 +2553,11 @@ plLoadDriver(void)
     if (!driver->dlhand)
     {
         char drvspec[ 400 ];
+#ifdef LTDL_WIN32  
+        sprintf( drvspec, "%s", driver->drvnam );
+#else
         sprintf( drvspec, "%s/%s", plGetDrvDir (), driver->drvnam );
+#endif /* LTDL_WIN32 */
 
 	pldebug("plLoadDriver", "Trying to load %s on %s\n",
 		driver->drvnam, drvspec );

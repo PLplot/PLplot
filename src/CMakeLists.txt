@@ -50,6 +50,9 @@ plgridd.c
 plvect.c
 mt19937ar.c
 )
+if(LTDL_WIN32)
+  set(plplot${LIB_TAG}_LIB_SRCS ${plplot${LIB_TAG}_LIB_SRCS} ltdl_win32.c)
+endif(LTDL_WIN32)
 
 if(BUILD_SHARED_LIBS)
   SET_SOURCE_FILES_PROPERTIES(${plplot${LIB_TAG}_LIB_SRCS}
