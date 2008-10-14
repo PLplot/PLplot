@@ -765,7 +765,7 @@ plRotPhy(PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
 
 /* Allocates a standard PLDev structure for device-specific data */
 
-PLDev *
+PLDLLIMPEXP PLDev *
 plAllocDev(PLStream *pls);
 
 /* Just fills in the PLGraphicsIn with appropriate initial values. */
