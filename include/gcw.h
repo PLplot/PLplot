@@ -134,11 +134,11 @@ void gcw_use_hrshsym(PLINT use_hrshsym);
 /* Private functions */
 
 void gcw_debug(char* msg);
-void gcw_set_gdk_color();
-void gcw_clear_background();
-void gcw_init_canvas(GnomeCanvas* canvas);
-void gcw_install_canvas(GnomeCanvas *canvas);
-void gcw_set_device_size(PLINT width,PLINT height);
+PLDLLIMPEXP_GNOME2 void gcw_set_gdk_color();
+PLDLLIMPEXP_GNOME2 void gcw_clear_background();
+PLDLLIMPEXP_GNOME2 void gcw_init_canvas(GnomeCanvas* canvas);
+PLDLLIMPEXP_GNOME2 void gcw_install_canvas(GnomeCanvas *canvas);
+PLDLLIMPEXP_GNOME2 void gcw_set_device_size(PLINT width,PLINT height);
 void gcw_set_canvas_size(GnomeCanvas* canvas,PLINT width,PLINT height);
 void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification);
 void gcw_use_persistence(PLINT use_persistence);

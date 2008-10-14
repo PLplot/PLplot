@@ -960,7 +960,7 @@ plstrm_init(void);
 /* Builds a list of the active devices/streams by device name */
 
 void
-plP_getinitdriverlist(char *names);
+PLDLLIMPEXP plP_getinitdriverlist(char *names);
 
 /* Checks a give list of device names against active streams and returns the number of matches */
 

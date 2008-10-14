@@ -25,9 +25,21 @@ plplotcanvas.c
 gcw-lib.c
 )
 
+if(BUILD_SHARED_LIBS)
+  SET_SOURCE_FILES_PROPERTIES(
+    ${plplotgnome2${LIB_TAG}_LIB_SRCS}
+    PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+  )
+endif(BUILD_SHARED_LIBS)
+	
+get_source_file_property(PLGNOME2_COMPILE_PROPS plplotcanvas.c COMPILE_FLAGS)
+# Deal with NOTFOUND case.
+if(NOT PLGNOME2_COMPILE_PROPS)
+  set(PLGNOME2_COMPILE_PROPS)
+endif(NOT PLGNOME2_COMPILE_PROPS)
 set_source_files_properties(
 ${plplotgnome2${LIB_TAG}_LIB_SRCS}
-PROPERTIES COMPILE_FLAGS ${gcw_COMPILE_FLAGS}
+PROPERTIES COMPILE_FLAGS "${PLGNOME2_COMPILE_PROPS} ${gcw_COMPILE_FLAGS}"
 )
 
 # Set the include path

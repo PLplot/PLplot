@@ -729,7 +729,7 @@ plgpls(PLStream **p_pls);
 
 /* Initializes device cmap 1 entry by interpolation from pls->cmap1 entries */
 
-void
+PLDLLIMPEXP void
 plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol);
 
 /* Opens file for output, prompting if not set. */

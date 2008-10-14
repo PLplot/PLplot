@@ -90,6 +90,14 @@
   #define PLDLLIMPEXP_TCLTK_DATA(type) PLDLLIMPORT type
 #endif
 
+#if defined(plplotgnome2d_EXPORTS)
+  #define PLDLLIMPEXP_GNOME2 PLDLLEXPORT
+  #define PLDLLIMPEXP_GNOME2_DATA(type) PLDLLEXPORT type
+#else
+  #define PLDLLIMPEXP_GNOME2 PLDLLIMPORT
+  #define PLDLLIMPEXP_GNOME2_DATA(type) PLDLLIMPORT type
+#endif
+
 #if defined(aqt_EXPORTS) || defined(cairo_EXPORTS) || defined(cgm_EXPORTS) || \
      defined(dg300_EXPORTS) || defined(gd_EXPORTS) || defined(gcw_EXPORTS) || \
      defined(hpgl_EXPORTS) || defined(impress_EXPORTS) || defined(linuxvga_EXPORTS) || \
