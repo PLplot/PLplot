@@ -193,10 +193,11 @@ void plplot_canvas_adv(PlplotCanvas* self, PLINT page) {
 
 /* simple arrow plotter. */
 
-void plplot_canvas_arrows(PlplotCanvas* self, PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n, PLFLT scale, PLFLT dx, PLFLT dy) {
+/* deprecated in core so remove this. */
+/* void plplot_canvas_arrows(PlplotCanvas* self, PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n, PLFLT scale, PLFLT dx, PLFLT dy) {
   plsstrm(self->Nstream); 
   plarrows(u, v, x, y, n, scale, dx, dy) ;
-}
+}*/
 
 void plplot_canvas_vect(PlplotCanvas* self, PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer), PLPointer pltr_data) {
   plsstrm(self->Nstream); 
