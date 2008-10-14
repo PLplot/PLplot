@@ -431,7 +431,7 @@ void proc_str (PLStream *pls, EscText *args)
   PLUNICODE fci;
   PLFLT rotation, shear, stride, cos_rot, sin_rot, sin_shear, cos_shear;
   PLFLT t[4];
-  PLFLT glyph_size, sum_glyph_size;
+  int glyph_size, sum_glyph_size;
   short if_write;
   /*   PLFLT *t = args->xform; */
   PLUNICODE *ucs4 = args->unicode_array;
@@ -525,27 +525,34 @@ void proc_str (PLStream *pls, EscText *args)
    * is then used to figure out the initial x position from text-anchor and
    * args->just that is used to write out the SVG xml for if_write = 1. */
 
-  glyph_size = ftHt;
-  sum_glyph_size = 0.;
+  glyph_size = (int)ftHt;
+  sum_glyph_size = 0;
   if_write = 0;
   while (if_write < 2) {
     if(if_write == 1) {
-      sum_glyph_size *= FONT_SIZE_RATIO;
-      if (args->just < 0.33)
-	svg_attr_value("text-anchor", "start");   /* left justification */
-      else if (args->just > 0.66)
-	svg_attr_value("text-anchor", "end");     /* right justification */
-      else
-	svg_attr_value("text-anchor", "middle");  /* center */
-            
+      /*printf("number of characters = %f\n", sum_glyph_size/(double)(int)ftHt);*/
       /* The above coordinate transform defines the _raw_ x position of the 
        * text without justification so this attribute value depends on
-       * text-anchor and args->just*sum_glyph_size */
-      //svg_attr_values("x", "%f", (double)(-args->just*sum_glyph_size));
-
+       * text-anchor and args->just*FONT_SIZE_RATIO*sum_glyph_size */
+      /* N.B. sum_glyph_size calculation only correct for monospaced fonts
+       * so generally sum_glyph_size will be overestimated by various amounts
+       * depending on what glyphs are to be rendered, the font, etc.  However,
+       * this correction is differential respect to the end points or the
+       * middle so you should be okay so long as you don't deviate too far
+       * from those anchor points. */
+      if (args->just < 0.33) {
+	svg_attr_value("text-anchor", "start");   /* left justification */
+	svg_attr_values("x", "%f", (double)(-args->just*FONT_SIZE_RATIO*sum_glyph_size));
+      }else if (args->just > 0.66) {
+	svg_attr_value("text-anchor", "end");     /* right justification */
+	svg_attr_values("x", "%f", (double)((1.-args->just)*FONT_SIZE_RATIO*sum_glyph_size));
+      }else {
+	svg_attr_value("text-anchor", "middle");  /* center */
+	svg_attr_values("x", "%f", (double)((0.5-args->just)*FONT_SIZE_RATIO*sum_glyph_size));
+      }
+            
       /* The text goes at zero in y since the above
        * coordinate transform defines the y position of the text */
-      svg_attr_value("x", "0");
       svg_attr_value("y", "0");
       fprintf(svgFile,">");
 
@@ -587,7 +594,7 @@ void proc_str (PLStream *pls, EscText *args)
 	      fprintf(svgFile,"<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
 	    }
 	    else{
-	      glyph_size = desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown)));
+	      glyph_size = (int)(ftHt * pow(0.8, abs(upDown)));
 	    }
 	    lastOffset = desired_offset(upDown, ftHt);
 	  }
@@ -598,7 +605,7 @@ void proc_str (PLStream *pls, EscText *args)
 	      fprintf(svgFile,"<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
 	    }
 	    else{
-	      glyph_size = desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown)));
+	      glyph_size = (int)(ftHt * pow(0.8, abs(upDown)));
 	    }
 	    lastOffset = desired_offset(upDown, ftHt);
 	  }
