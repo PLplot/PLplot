@@ -173,6 +173,9 @@
 /* Name of package */
 #define PACKAGE "${PACKAGE}"
 
+/* Define if the win32 ltdl implementation should be used */
+#cmakedefine LTDL_WIN32
+
 /* Define if aqt driver is present */
 #cmakedefine PLD_aqt
 
