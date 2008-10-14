@@ -33,10 +33,14 @@
 #include "disptab.h"
 
 #ifdef ENABLE_DYNDRIVERS
-#include <ltdl.h>
-typedef lt_ptr (*PLDispatchInit)( PLDispatchTable *pdt );
+  #ifndef LTDL_WIN32
+    #include <ltdl.h>
+  #else
+    #include "ltdl_win32.h"
+  #endif
+  typedef lt_ptr (*PLDispatchInit)( PLDispatchTable *pdt );
 #else
-typedef void (*PLDispatchInit)( PLDispatchTable *pdt );
+  typedef void (*PLDispatchInit)( PLDispatchTable *pdt );
 #endif
 
 #ifdef HAVE_LIBUNICODE
