@@ -116,7 +116,7 @@ typedef char * caddr_t;
 #if defined(PLPLOT_WINTK)
 #elif defined(WIN32) &! defined (__GNUC__)
 /* Redefine tmpfile()! (AM)*/
-#define tmpfile w32_tmpfile
+/* #define tmpfile w32_tmpfile */
 #else
 #include <unistd.h>
 #endif
@@ -132,21 +132,25 @@ typedef char * caddr_t;
    When  the dirent.h file will be fixed upstream by Apple Inc, this should
    go away. */
 # ifdef NEED_SYS_TYPE_H
-#   include <sys/types.h>
+#  include <sys/types.h>
 # endif
 # include <dirent.h>
 # define NAMLEN(dirent) strlen((dirent)->d_name)
 #else
-# define dirent direct
-# define NAMLEN(dirent) (dirent)->d_namlen
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# if HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# if HAVE_NDIR_H
-#  include <ndir.h>
+# if defined(_MSC_VER)
+#  include "dirent_msvc.h"
+# else
+#  define dirent direct
+#  define NAMLEN(dirent) (dirent)->d_namlen
+#  if HAVE_SYS_NDIR_H
+#   include <sys/ndir.h>
+#  endif
+#  if HAVE_SYS_DIR_H
+#   include <sys/dir.h>
+#  endif
+#  if HAVE_NDIR_H
+#   include <ndir.h>
+#  endif
 # endif
 #endif
 
