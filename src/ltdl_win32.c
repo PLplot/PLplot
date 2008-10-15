@@ -23,16 +23,25 @@
 */
 
 #include <windows.h>
-
+#include <stdlib.h>
 #include "ltdl_win32.h"
 
+/* (static) pointer to the last handle, which contains a pointer
+   to a possible previous handle */
 lt_dlhandle lastHandle=NULL;
 
+/* buffer for error messages */
+char errortext[512];
+
+
+/* initialise variables */
 void lt_dlinit( void )
 {
   lastHandle=NULL;
 }
 
+
+/* on exit free library handles and release allocate memory */
 void lt_dlexit( void )
 {
   lt_dlhandle prev;
@@ -46,11 +55,15 @@ void lt_dlexit( void )
   }
 }
 
+
+/* try to open shared library with given dllname. If there is
+   no extension given LoadLibrary() assumes .dll. The library
+   must be somewhere in the path or in the current directory. */
 lt_dlhandle lt_dlopenext( char* dllname )
 {
-  lt_dlhandle dlhandle=malloc( sizeof(lt_dlhandle) );
-  memset( dlhandle, '\0', sizeof(lt_dlhandle) );
-  
+  lt_dlhandle dlhandle=malloc( sizeof(struct __dlhandle) );
+  memset( dlhandle, '\0', sizeof(struct __dlhandle) );
+
   dlhandle->hinstLib = LoadLibrary( dllname );
   if( !dlhandle->hinstLib ) {
     free( dlhandle );
@@ -63,14 +76,22 @@ lt_dlhandle lt_dlopenext( char* dllname )
   return dlhandle;
 }
 
+
+/* return last error occured. Needs some work :). */
 const char* lt_dlerror()
 {
-  static char* text="No error information";
+  strncpy( errortext, "No error information", 512 );
   
-  return text;
+  return errortext;
 }
 
+
+/* load symbol from library */
 void* lt_dlsym( lt_dlhandle dlhandle, const char* symbol )
 {
-  return GetProcAddress( dlhandle->hinstLib, symbol );
+  if( dlhandle->hinstLib )
+    return GetProcAddress( dlhandle->hinstLib, symbol );
+  else
+    return NULL;
+  
 }
