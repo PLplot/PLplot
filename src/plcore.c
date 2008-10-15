@@ -2183,8 +2183,6 @@ plGetDrvDir ()
       }
     }
 
-    printf("plGetDrvDir(): drvdir=%s\n", drvdir );
-    
     return drvdir;
 }
 
