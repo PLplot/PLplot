@@ -61,13 +61,14 @@ let main () =
     let text = string_of_int (int_of_float (floor (theta +. 0.5))) in
 
     (* Write labels for angle *)
-
-    (*if theta < 9.99 then
-      let offset = 0.45 in
-    else if theta < 99.9 then
-      let offset = 0.30 in
-    else *)
-      let offset = 0.15 in
+    let offset =
+      if theta < 9.99 then
+        0.45
+      else if theta < 99.9 then
+        0.30
+      else
+        0.15
+    in
 
     (* Slightly off zero to avoid floating point logic flips at 90 and
        270 deg.*)
