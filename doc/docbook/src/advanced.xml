@@ -500,6 +500,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       the byte limit is large you can still insure a new file is automatically
       started after a page break if you precede the call to &pleop; with a call to
       &plfamadv;.</para>
+      <para> If familying is not enabled, <filename>%n</filename> is dropped
+      from the filename if that string appears anywhere in it.</para>
+
 
       <para>
 	The &plgfam; routine can be used from within the user program to find

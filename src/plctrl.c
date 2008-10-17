@@ -1863,13 +1863,15 @@ plP_getmember(PLStream *pls)
 /*--------------------------------------------------------------------------*\
  * plP_sfnam()
  *
- * Sets up file name & family stem name.
- * Reserve some extra space (5 chars) to hold an optional member number.
+ * Sets up file name (with "%n" removed if present) & family stem name.
+ * Reserve some extra space (10 chars) to hold an optional member number.
 \*--------------------------------------------------------------------------*/
 
 void
 plP_sfnam(PLStream *pls, const char *fnam)
 {
+    char prefix[256];
+    char* suffix;
     pls->OutFile = NULL;
 
     if (pls->FileName != NULL)
@@ -1880,7 +1882,15 @@ plP_sfnam(PLStream *pls, const char *fnam)
         plexit("plP_sfnam: Insufficient memory");
       }
 
-    strcpy(pls->FileName, fnam);
+    suffix = strstr (fnam, "%n");
+
+    if (suffix == NULL)
+      strcpy(pls->FileName, fnam);
+    else {
+      strncpy (prefix, fnam, 256);
+      prefix [suffix - fnam] = 0;
+      sprintf (pls->FileName, "%s%s", prefix, suffix + 2);
+    }
 
     if (pls->BaseName != NULL)
 	free((void *) pls->BaseName);
