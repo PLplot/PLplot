@@ -68,6 +68,7 @@ x17
 prova.py
 xw14.py
 xw17.py
+plplot_logo.py
 )
 
 if(ENABLE_pygcw)
