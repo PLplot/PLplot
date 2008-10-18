@@ -101,7 +101,39 @@ def main():
     # magnitude colored plot with faceted squares
     cmap1_init(0)
     plsurf3d(x, y, z, MAG_COLOR | FACETED, ())
+    
+    # Transluscent gradient over left portion of surface.
+    plvpor(0.0, 0.7, 0.0, 1.0)
+    plwind(0.0, 1.0, 0.0, 1.0)
+    # The overlaid box is drawn using plshades with a color map that is 
+    # the same color but has a linearly varying transparency. 
+    
+    pos = array([0.0, 1.0])
+    rcoord = array([0.0, 0.0])
+    gcoord = array([0.0, 0.0])
+    bcoord = array([0.0, 0.0])
+    acoord = array([0.0, 1.0])
+    rev = array([0, 0])
 
+    # Create the color map with 128 colors and use plscmap1la to initialize 
+    # the color values with a linear varying transparency (or alpha) 
+    plscmap1n(128)
+    plscmap1la(1, pos, rcoord, gcoord, bcoord, acoord, rev)
+    
+    # Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will 
+    # used for the shade plot. plshades will use linear interpolation to 
+    # calculate the z values of all the intermediate points in this array.
+    z = reshape(zeros(2*2),(2,2))
+    z[0][0] = 1.0
+    z[0][1] = 1.0
+    
+    # Set the color levels array. These levels are also between 0.0 and 1.0
+    clevel = 0.05*arange(21)
+    
+    # Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate 
+    # ranges such that it fills the entire plotting area. 
+    plshades(z, 0.0, 1.0, 0.0, 1.0, clevel, 0, 1)
+    
 main()
 # Terminate plplot
 plend()
