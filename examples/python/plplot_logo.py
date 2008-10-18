@@ -88,14 +88,14 @@ def main():
     plwid(1)
     pladv(0)
     plvpor(0.0, 1.0, 0.0, 1.0)
-    plwind(-0.42, 0.840, 0.05, 0.48)
+    plwind(-0.43, 0.840, 0.05, 0.48)
     plcol0(1)
     plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
           alt, az)
     plbox3("bnstu", "", 0.0, 0,
            "bnstu", "", 0.0, 0,
            "bcdmnstuv", "", 0.0, 0)
-    plmtex3("zs", 5.0, 1.05, 1.0, "z axis")
+    plmtex3("zs", 5.0, 1.07, 1.0, "z axis")
 
     plcol0(2)
     # magnitude colored plot with faceted squares
