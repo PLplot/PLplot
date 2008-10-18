@@ -84,17 +84,18 @@ def main():
     nlevel = 10
     step = (zmax-zmin)/(nlevel+1)
     clevel = zmin + step + arange(nlevel)*step
-    plschr(0., 1.5)
+    plschr(0., 1.8)
     plwid(1)
     pladv(0)
     plvpor(0.0, 1.0, 0.0, 1.0)
-    plwind(-0.3, 0.8, 0.05, 0.4)
+    plwind(-0.42, 0.840, 0.05, 0.48)
     plcol0(1)
     plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
           alt, az)
-    plbox3("bnstu", "x axis", 0.0, 0,
-           "bnstu", "y axis", 0.0, 0,
-           "bcdmnstuv", "z axis", 0.0, 0)
+    plbox3("bnstu", "", 0.0, 0,
+           "bnstu", "", 0.0, 0,
+           "bcdmnstuv", "", 0.0, 0)
+    plmtex3("zs", 5.0, 1.05, 1.0, "z axis")
 
     plcol0(2)
     # magnitude colored plot with faceted squares
