@@ -66,12 +66,10 @@ def cmap1_init(gray):
 
 def main():
 
-    rosen = 1
     x = (arange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
     y = (arange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
-    if rosen == 1:
-	x = 1.5*x
-	y = 0.5 + y
+    x = 1.5*x
+    y = 0.5 + y
     x.shape = (-1,1)
     r2 = (x*x) + (y*y)
     z = (1. - x)*(1. - x) + 100 * (x*x - y)*(x*x - y)
@@ -95,7 +93,17 @@ def main():
     plbox3("bnstu", "", 0.0, 0,
            "bnstu", "", 0.0, 0,
            "bcdmnstuv", "", 0.0, 0)
-    plmtex3("zs", 5.0, 1.07, 1.0, "z axis")
+    # If converting the -dev svg result later with the ImageMagick
+    # "convert" application or viewing the svg result with the ImageMagick
+    # "display" application must compensate for the librsvg-2.22 
+    # positioning bug since librsvg is what ImageMagick uses
+    # to interpret SVG results.
+    if_rsvg_bug = True
+    if if_rsvg_bug:
+        shift = 1.00
+    else:
+        shift = 1.07
+    plmtex3("zs", 5.0, shift, 1.0, "z axis")
 
     plcol0(2)
     # magnitude colored plot with faceted squares
