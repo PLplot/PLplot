@@ -132,6 +132,30 @@ typedef void* PLPointer;
 #define PL_PARSE_NODASH		0x0040	/* Set if leading dash NOT required */
 #define PL_PARSE_SKIP		0x0080	/* Skip over unrecognized args */
 
+/* FCI (font characterization integer) related constants. */
+#define PL_FCI_MARK 0x80000000
+#define PL_FCI_IMPOSSIBLE 0x00000000
+#define PL_FCI_HEXDIGIT_MASK 0xf
+#define PL_FCI_HEXPOWER_MASK 0x7
+#define PL_FCI_HEXPOWER_IMPOSSIBLE 0xf
+/* These define hexpower values corresponding to each font attribute. */
+#define PL_FCI_FAMILY  0x0
+#define PL_FCI_STYLE  0x1
+#define PL_FCI_WEIGHT  0x2
+/* These are legal values for font family attribute */
+#define PL_FCI_SANS 0x0
+#define PL_FCI_SERIF 0x1
+#define PL_FCI_MONO 0x2
+#define PL_FCI_SCRIPT 0x3
+#define PL_FCI_SYMBOL 0x4
+/* These are legal values for font style attribute */
+#define PL_FCI_UPRIGHT 0x0
+#define PL_FCI_ITALIC 0x1
+#define PL_FCI_OBLIQUE 0x2
+/* These are legal values for font weight attribute */
+#define PL_FCI_MEDIUM 0x0
+#define PL_FCI_BOLD 0x1
+
 #define PL_MAXKEY 16
 
 typedef struct {
