@@ -101,6 +101,7 @@ set(
 python_DATA
 ${python_DATA}
 README.pythondemos
+README.logo
 qplplot.py
 )
 

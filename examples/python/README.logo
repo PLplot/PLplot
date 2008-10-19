@@ -1,0 +1,90 @@
+N.B. This logo production example is not considered to be one of the 
+standard examples because it has been excessively fine-tuned, and may
+be subject to further fine-tuning (which we do not want to keep propagating
+to all the rest of the languages).
+
+To produce an SVG form of the logo with -dev svg (which is the device which
+plplot_logo.py has been explicitly tuned for) execute (only in the installed
+examples/python directory!)
+
+./plplot_logo.py -dev svg -o plplot_logo.svg -geometry 760x120
+
+# Patch to apply native SVG gradient.  Since this patch is problematic (see
+below) use --dry-run first to make sure it will work.
+
+patch --dry-run <svg_760x120_gradient.patch
+patch  <svg_760x120_gradient.patch
+
+N.B. This patch is problematic because it depends on the exact command
+above and absolutely no changes to the svg.c device-driver code or
+libplplotd code or even platform dependent rounding.  So in general it
+shouldn't be considered a working patch (unless --dry-run says it will
+apply, see above).  Instead, it should be considered a method of reminding
+human editors of the plplot_logo.svg file of the simple changes that are
+necessary to apply a native SVG opacity gradient as a background to the
+legend of the logo.
+
+The patched results look great on konqueror, but they are slow to render.
+The patched results also look good for display (for the default compensation
+for text shifts) and take very little time to render.
+
+Partially because of the file-bloating issue discussed on list (lots of
+graphical objects outside device boundaries that are still included in the
+file, the size of the file is 1.8M.  (Of course, another reason for this
+large file size is there is incredible detail (many triangles) used to
+represent the surface.
+
+If I compress that file using
+
+gzip -c <plplot_logo.svg >| plplot_logo.svgz
+
+then the result is only 97 K (which is mostly reasonable) and a factor of
+almost 20 (!) in size over uncompressed.  Other results follow:
+
+(1) The compressed result can still be quickly rendered with "display".
+
+(2) The compressed result makes no difference to the slow konqueror rendering,
+but that is konqueror's problem and not ours because of how quicky "display"
+renders the result.
+
+(3) Firefox 2 does not know what to do with the compressed result.  For
+the uncompressed result it does not recognize the gradient.  These two
+issues should be checked for firefox 3.
+
+(4) scribus-ng quickly imports the compressed result with the same issues (no
+clipping of results at the stated boundary of the device) as for the
+uncompressed results.
+
+(5) The compressed result is completely unrecognized by the w3c validator.
+However, the uncompressed result (after a long upload) validates properly
+at w3c.
+
+Until the *.svgz compressed form becomes well-recognized (not least by w3c),
+it is probably best to convert to jpeg to improve rendering speed/reduce
+bandwidth compared to the uncompressed svg file.  This convert step also
+appears to get rid of everything outside the device boundaries.
+
+convert plplot_logo.svg.gz plplot_logo.jpeg
+
+The result has a file size of 34K compared to the original jpeg logo
+(www/img/header.jpg) put together by Werner (with external editor?) which
+has a file size of 42K and which lacks a legend for the logo.  The "z axis"
+label is shifted a bit by ImageMagick because of the librsvg-2.22 bug, and
+until this bug is fixed I have put a default option into the original
+plplot_logo.py file to compensate for this bug.  The result looks
+essentially the same as the original logo (by design and fine-tuning of
+plplot_logo.py), but the *.svgz form looks substantially better (if only it
+would be more widely recognized).
+
+The future prospects of reducing the uncompressed size of the *.svg result
+to a reasonable value and the compressed size of the *.svgz result to a
+miniscule value are good.  First, the solution of the file bloating issue
+discussed on list (many graphical objects outside the device boundary
+clipping limits are included unnecessarily in the file) should reduce the
+file size by roughly a factor of three.  An even bigger reduction factor 
+for file size is expected when native gradients for file formats that
+support them become supported by PLplot since that means the triangles used
+to represent colour surfaces in PLplot can be made much larger without
+compromising how good the result looks.
+
+Alan W. Irwin 2008-10-19
