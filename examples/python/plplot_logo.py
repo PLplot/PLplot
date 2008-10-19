@@ -102,6 +102,7 @@ def main():
     cmap1_init(0)
     plsurf3d(x, y, z, MAG_COLOR | FACETED, ())
     
+    # Shading to provide a good background for legend.
     x1 = 0.10
     x2 = 0.8
     plvpor(0.0, 1.0, 0.0, 1.0)
@@ -117,6 +118,17 @@ def main():
     plcol0(15)
     x=array([x1, x1, x2, x2])
     plfill(x,y)
+    # Logo Legend
+    plscol0a(15, 255, 255, 255, 1.0)
+    plcol0(15)
+    x1 = 0.03
+    plschr(0., 2.5)
+    plsfont(PL_FCI_SANS, PL_FCI_UPRIGHT, PL_FCI_BOLD)
+    plptex(x1, 0.57, 1.0, 0.0, 0.0, "PLplot")
+    plschr(0., 1.3)
+    plptex(x1, 0.30, 1.0, 0.0, 0.0,
+           "The ultimate cross-platform plotting library")
+    
 main()
 # Terminate plplot
 plend()
