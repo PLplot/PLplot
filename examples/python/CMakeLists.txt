@@ -102,6 +102,7 @@ python_DATA
 ${python_DATA}
 README.pythondemos
 README.logo
+svg_760x120_gradient.patch
 qplplot.py
 )
 

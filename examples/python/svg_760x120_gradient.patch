@@ -1,0 +1,28 @@
+--- plplot_logo.svg	2008-10-18 23:16:48.000000000 -0700
++++ plplot_logo_edited.svg	2008-10-18 23:17:25.000000000 -0700
+@@ -64209,13 +64209,18 @@
+       fill="#000000"
+       fill-opacity="1.000000"
+       points="0.00,0.00 0.00,119.98 76.01,119.98 76.01,0.00 0.00,0.00 0.00,0.00 "/>
+-    <polyline
+-      stroke-width="1"
+-      stroke="#000000"
+-      stroke-opacity="0.300000"
+-      fill="#000000"
+-      fill-opacity="0.300000"
+-      points="76.01,0.00 76.01,119.98 607.96,119.98 607.96,0.00 76.01,0.00 "/>
++    <g>
++      <defs>
++	<linearGradient id="MyGradient">
++          <stop offset="0%" stop-color="#000" stop-opacity="1." />
++          <stop offset="100%" stop-color="#000" stop-opacity="0." />
++	</linearGradient>
++      </defs>
++      <polyline
++	 stroke-width="1"
++	 fill="url(#MyGradient)"
++	 points="76.01,0.00 76.01,119.98 607.96,119.98 607.96,0.00 76.01,0.00 "/>
++    </g>
+     <clipPath
+       id="text-clipping19"
+       >
