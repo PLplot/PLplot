@@ -128,7 +128,8 @@ def main():
     z[0][1] = 1.0
     
     # Set the color levels array. These levels are also between 0.0 and 1.0
-    clevel = 0.05*arange(21)
+    nlevel=601
+    clevel = arange(nlevel)/float(nlevel-1)
     
     # Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate 
     # ranges such that it fills the entire plotting area. 
