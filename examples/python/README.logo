@@ -64,7 +64,7 @@ it is probably best to convert to jpeg to improve rendering speed/reduce
 bandwidth compared to the uncompressed svg file.  This convert step also
 appears to get rid of everything outside the device boundaries.
 
-convert plplot_logo.svg.gz plplot_logo.jpeg
+convert plplot_logo.svg.gz plplot_logo.jpg
 
 The result has a file size of 34K compared to the original jpeg logo
 (www/img/header.jpg) put together by Werner (with external editor?) which
