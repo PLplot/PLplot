@@ -100,7 +100,7 @@ A:hover {
   color: #EFEFEF;
   text-decoration: none;
   float: left;
-  border-right: 1px solid #fff;
+/*  border-right: 1px solid #fff; */
 }
 
 #menubar ul li a:hover
