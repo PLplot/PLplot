@@ -34,8 +34,6 @@ END;
 	function pageMenu($item)#
 	{
 		echo "	<div id=\"pageheader\">\n";
-		echo "		<h1>PLplot</h1>\n";
-		echo "		<h2>The ultimate cross-platform plotting library</h2>\n";
 		echo "	</div>\n";
 
 		echo '	<div id="menubar">';
