@@ -135,7 +135,7 @@ def main():
     plptex(x1, 0.57, 1.0, 0.0, 0.0, "PLplot")
     plschr(0., 1.3)
     plptex(x1, 0.30, 1.0, 0.0, 0.0,
-           "The ultimate cross-platform plotting library")
+           "The ultimate in cross-platform plotting")
     
 main()
 # Terminate plplot
