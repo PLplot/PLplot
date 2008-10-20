@@ -1058,7 +1058,8 @@ void plD_FreeType_Destroy(PLStream *pls)
 
     if (FT) {
 	if ((FT->smooth_text==1)&&(FT->BLENDED_ANTIALIASING==0)) plscmap0n(FT->ncol0_org);
-
+        if (FT->textbuf)
+          free(FT->textbuf);
 	FT_Done_Library(FT->library);
 	free(pls->FT);
 	pls->FT=NULL;
