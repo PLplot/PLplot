@@ -18,6 +18,9 @@
  *
  * Modified:       Joao Cardoso, 4/2/2003
  *                 Adapted for use with Qhull instead of "triangle".
+ *                 Andrew Ross 20/10/2008
+ *                 Fix bug in delaunay_circles_find() when checking 
+ *                 whether a circle has been found.
  *
  *****************************************************************************/
 
@@ -676,7 +679,7 @@ void delaunay_circles_find(delaunay* d, point* p, int* n, int** out)
             /*
              * if unsuccessful, search through all circles 
              */
-            if (tid < 0 || tid == nn) {
+            if (tid < 0 || i == nn) {
                 double nt = d->ntriangles;
 
                 for (tid = 0; tid < nt; ++tid) {

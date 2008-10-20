@@ -17,6 +17,10 @@
  *                   necessary.
  *                 09/04/2003 PS: Modified points_read() to read from a
  *                   file specified by name, not by handle.
+ * Modified:       Andrew Ross 20/10/2008
+ *                 Change <= comparison in circle_contains() to use EPSILON
+ *                 to catch case where the point lies on the circle and there
+ *                 is floating point rounding error in the radii.
  *
  *****************************************************************************/
 
@@ -33,6 +37,8 @@
 #include "delaunay.h"
 
 #define BUFSIZE 1024
+
+#define EPSILON 1.0e-8
 
 int nn_verbose = 0;
 int nn_test_vertice = -1;
@@ -87,7 +93,7 @@ int circle_build(circle* c, point* p1, point* p2, point* p3)
  */
 int circle_contains(circle* c, point* p)
 {
-    return hypot(c->x - p->x, c->y - p->y) <= c->r;
+    return hypot(c->x - p->x, c->y - p->y) <= c->r*(1.0+EPSILON);
 }
 
 /* Smoothes the input point array by averaging the input x,y and z values
