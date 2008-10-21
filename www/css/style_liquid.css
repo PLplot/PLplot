@@ -44,7 +44,7 @@ A:hover {
 
 #pageheader {
   height: 120px;
-  background: #000000 url('../img/plplot_logo.jpg') top center no-repeat;
+  background: #000000 url('../img/plplot_logo.jpg') top left no-repeat;
   clear: both;
 }
 
@@ -126,7 +126,7 @@ A:hover {
 #rightside {
   margin-top:5px;
   float: right;
-  width:20%;
+  width:23%;
   border:0px dashed #cccccc;
 }
 
@@ -160,7 +160,7 @@ A:hover {
 
 #leftside {
   float: left;
-  width:68%;
+  width:75%;
   background-color: #FFFFFF;
   border:0px dashed #cccccc;
 }
