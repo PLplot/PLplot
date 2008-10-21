@@ -19,7 +19,8 @@ http://creativecommons.org/licenses/by-nc/2.5/
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <meta name="description" content="Homepage of the open source PLplot project" />
   <meta name="keywords" content="plot,library,c++,python" />
-  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen,projection" />
+  <link rel="stylesheet" title="liquid" href="css/style_liquid.css" type="text/css" media="screen,projection" />
+  <link rel="alternate stylesheet" title="static" href="css/style_static.css" type="text/css" media="screen,projection" />
   <script type="text/javascript" src="js/slimbox.js"></script>
   <link rel="stylesheet" href="css/slimbox.css" type="text/css" media="screen" />
 </head>
