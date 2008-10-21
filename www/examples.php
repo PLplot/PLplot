@@ -113,8 +113,6 @@ END;
 	    $ndx_str = sprintf ("%02d", $ndx);
 			echo "<a href=\"$demo_dir/x$demo_str.$ndx_str.png\" rel=\"lightbox[plplot]\" title=\"x$demo_str.$ndx_str\">
 					<img src=\"$demo_dir/prev-x$demo_str.$ndx_str.png\" border=\"1\" alt=\"x$demo_str.$ndx_str\"/></a>\n";
-	    if(($ndx%3 == 0))
-	      echo "<br/>\n";
 	  }
 		echo "</p>\n";
 
@@ -123,7 +121,6 @@ END;
 			echo "<p>" . $credits . "</p>\n";
 
 		echo "<h4>Choose other examples</h4><p>\n";
-		$counter=1;
 	  foreach($demoArray as $drec) {
 		  $dstr = sprintf ("%02d", $drec[0]);
 			if($drec[1]!=0) {
@@ -132,9 +129,6 @@ END;
 		    } else {
 		      echo "x$dstr\n";
 		    }
-				if($counter%20==0)
-					echo "<br />\n";
-				$counter++;
 			}
 	  }
 		echo "</p>\n";
@@ -147,7 +141,6 @@ END;
 			<p>Select a thumbnail to view full-size image and source code.</p>
 			<p>
 END;
-		$count = 0;
 		foreach($demoArray as $drec) {
 		  $demo_str = sprintf ("%02d", $drec[0]);
 		  $dir = "demo$demo_str";
@@ -156,8 +149,6 @@ END;
 
 			if($npages!=0) {
 				echo "<a href=\"examples.php?demo=$demo_str\"><img border=\"0\" src=\"examples-data/$dir/prev-x$demo_str.$thumbnail.png\" alt=\"x$demo_str.thumbnail\"/></a>\n";
-			  $count++;
-			  if(($count%3) == 0) echo "<br />\n";  
 			}
 		}
 		echo "</p>";
