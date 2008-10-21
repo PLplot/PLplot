@@ -35,6 +35,7 @@ void
 c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
     PLFLT dx, dy, mmxmi, mmxma, mmymi, mmyma;
+    PLFLT xvpwxmin, xvpwxmax, xvpwymin, xvpwymax;
     PLWindow w;
 
     if (plsc->level < 2) {
@@ -53,21 +54,20 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 	ymin--; ymax++;
     }
 
-    dx = (xmax - xmin) * 1.0e-5;
-    dy = (ymax - ymin) * 1.0e-5;
-
+    plsc->vpwxmi = xmin;
+    plsc->vpwxma = xmax;
+    plsc->vpwymi = ymin;
+    plsc->vpwyma = ymax;
+   
 /* The true plot window is made slightly larger than requested so that */
 /* the end limits will be on the graph  */
-
-    plsc->vpwxmi = xmin - dx;
-    plsc->vpwxma = xmax + dx;
-    plsc->vpwymi = ymin - dy;
-    plsc->vpwyma = ymax + dy;
+/* Get the (slightly extended) window limits. */
+    plP_xgvpw(&xvpwxmin, &xvpwxmax, &xvpwymin, &xvpwymax);
 
 /* Compute the scaling between coordinate systems */
 
-    dx = plsc->vpwxma - plsc->vpwxmi;
-    dy = plsc->vpwyma - plsc->vpwymi;
+    dx = xvpwxmax - xvpwxmin;
+    dy = xvpwymax - xvpwymin;
 
     plsc->wpxscl = (plsc->vppxma - plsc->vppxmi) / dx;
     plsc->wpxoff = (xmax * plsc->vppxmi - xmin * plsc->vppxma) / dx;
@@ -100,10 +100,10 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     w.dymi = plsc->vpdymi;
     w.dyma = plsc->vpdyma;
 
-    w.wxmi = plsc->vpwxmi;
-    w.wxma = plsc->vpwxma;
-    w.wymi = plsc->vpwymi;
-    w.wyma = plsc->vpwyma;
+    w.wxmi = xvpwxmin;
+    w.wxma = xvpwxmax;
+    w.wymi = xvpwymin;
+    w.wyma = xvpwymax;
 
     plP_swin(&w);
 

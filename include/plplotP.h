@@ -624,6 +624,11 @@ cont_store(PLFLT **f, PLINT nx, PLINT ny,
 void
 cont_clean_store(CONT_LEVEL *ct);
 
+/* Get the viewport boundaries in world coordinates, expanded slightly */
+
+void
+plP_xgvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
+
 /* Get x-y domain in world coordinates for 3d plots */
 
 void

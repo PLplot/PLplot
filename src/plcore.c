@@ -3202,6 +3202,24 @@ c_plgvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
     *p_ymax = plsc->vpwyma;
 }
 
+/* Get the viewport boundaries in world coordinates, expanded slightly */
+void
+plP_xgvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
+{
+    PLFLT dx, dy;
+
+    dx = (plsc->vpwxma - plsc->vpwxmi) * 1.0e-5;
+    dy = (plsc->vpwyma - plsc->vpwymi) * 1.0e-5;
+
+    /* The plot window is made slightly larger than requested so that */
+    /* the end limits will be on the graph  */
+
+    *p_xmin = plsc->vpwxmi - dx;
+    *p_xmax = plsc->vpwxma + dx;
+    *p_ymin = plsc->vpwymi - dy;
+    *p_ymax = plsc->vpwyma + dy;
+}
+
 /*--------------------------------------------------------------------------*\
  *  These should not be called by the user.
 \*--------------------------------------------------------------------------*/
