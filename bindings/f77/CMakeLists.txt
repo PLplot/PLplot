@@ -35,7 +35,7 @@ else(PL_DOUBLE)
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
     COMMAND sed
     -f ${CMAKE_CURRENT_SOURCE_DIR}/double2single.sed ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4 > ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
-    DEPENDS 
+    DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/double2single.sed
     ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4
   )
@@ -128,6 +128,10 @@ strutil.f
 sfstubs.f
 configurable.f
 )
+
+if(WIN32 AND BUILD_SHARED_LIBS)
+  SET(plplotf77${LIB_TAG}_LIB_SRCS ${plplotf77${LIB_TAG}_LIB_SRCS} plplotf77.def)
+endif(WIN32 AND BUILD_SHARED_LIBS)
 
 add_library(plplotf77${LIB_TAG} ${plplotf77${LIB_TAG}_LIB_SRCS})
 

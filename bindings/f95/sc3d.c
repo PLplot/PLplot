@@ -25,7 +25,7 @@
 #include "plstubs.h"
 
 void
-PLOT3DC(PLFLT *x, PLFLT *y, PLFLT *z,
+PLOT3DC__(PLFLT *x, PLFLT *y, PLFLT *z,
 	PLINT *nx, PLINT *ny, PLINT *opt,
 	PLFLT *clevel, PLINT *nlevel, PLINT *lx)
 {
@@ -45,6 +45,14 @@ PLOT3DC(PLFLT *x, PLFLT *y, PLFLT *z,
 /* Clean up memory allocated for a */
    plFree2dGrid(a, *nx, *ny);
 
+}
+
+void
+PLOT3DC(PLFLT *x, PLFLT *y, PLFLT *z,
+        PLINT *nx, PLINT *ny, PLINT *opt,
+        PLFLT *clevel, PLINT *nlevel, PLINT *lx)
+{
+    PLOT3DC__(x, y, z, nx, ny, opt, clevel, nlevel, lx);
 }
 
 void
@@ -97,7 +105,7 @@ PLMESH(PLFLT *x, PLFLT *y, PLFLT *z,
    PLFLT clevel = 0.;
 
    optlocal = *opt | MESH;
-   CALL_PLOT3DC(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
+   PLOT3DC__(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
 }
 
 void
@@ -107,7 +115,7 @@ PLMESHC(PLFLT *x, PLFLT *y, PLFLT *z,
 {
    PLINT optlocal;
    optlocal = *opt | MESH;
-   CALL_PLOT3DC(x, y, z, nx, ny, &optlocal, clevel, nlevel, lx);
+   PLOT3DC__(x, y, z, nx, ny, &optlocal, clevel, nlevel, lx);
 }
 
 
@@ -119,6 +127,6 @@ PLOT3D(PLFLT *x, PLFLT *y, PLFLT *z,
    PLFLT clevel = 0.;
 
    optlocal = *opt | (*side != 0 ? DRAW_SIDES : 0);
-   CALL_PLOT3DC(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
+   PLOT3DC__(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
 }
 

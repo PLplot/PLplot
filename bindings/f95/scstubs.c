@@ -300,7 +300,7 @@ PLGFAM(PLINT *fam, PLINT *num, PLINT *bmax)
     c_plgfam(fam, num, bmax);
 }
 
-/* Note: Fortran does not have unsigned integers so we need to use a 
+/* Note: Fortran does not have unsigned integers so we need to use a
  * 64 bit signed integer which corresponds to a fortran integer*8
  * in order to contain the number.  */
 void
@@ -829,9 +829,10 @@ PLSFAM(PLINT *fam, PLINT *num, PLINT *bmax)
     c_plsfam(*fam, *num, *bmax);
 }
 
-/* Note: Fortran does not have unsigned integers so we need to use a 
+/* Note: Fortran does not have unsigned integers so we need to use a
  * 64 bit signed integer which corresponds to a fortran integer*8
  * in order to contain the number.  */
+/* PLSFCI(PLINT64 *fci) */
 void
 PLSFCI(PLINT64 *fci)
 {

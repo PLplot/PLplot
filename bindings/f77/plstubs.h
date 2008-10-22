@@ -53,6 +53,7 @@
 #define STUB_U		3
 #define STUB_FORTRAN	4
 #define STUB_STDCALL	5
+#define STUB_MINGW	6
 
 #ifndef STUB_LINKAGE
 
@@ -99,6 +100,8 @@
 #define STUB_LINKAGE STUB_FORTRAN
 #elif defined(_MSC_VER)
 #define STUB_LINKAGE STUB_STDCALL
+#elif defined(__GNUC__)				/* GNU C with MinGW/Cygwin */
+#define STUB_LINKAGE STUB_MINGW
 #endif
 #elif defined(MSDOS)				/* MS-DOS based */
 #define STUB_LINKAGE STUB_FORTRAN
@@ -125,7 +128,7 @@
 #define FNAME_(x,y)	y
 
 #elif STUB_LINKAGE == STUB_U
-#define FNAME(x,y)	x
+#define FNAME(x,y)	PLDLLIMPEXP_F77C __stdcall x
 #define FNAME_(x,y)	x
 
 #elif STUB_LINKAGE == STUB_FORTRAN
@@ -135,6 +138,10 @@
 #elif STUB_LINKAGE == STUB_STDCALL
 #define FNAME(x,y)	PLDLLIMPEXP_F77C __stdcall x
 #define FNAME_(x,y)	x
+
+#elif STUB_LINKAGE == STUB_MINGW
+#define FNAME(x,y)	PLDLLIMPEXP_F77C y##_
+#define FNAME_(x,y)	y
 
 #else
 #error "Illegal setting for STUB_LINKAGE"

@@ -53,6 +53,7 @@
 #define STUB_U		3
 #define STUB_FORTRAN	4
 #define STUB_STDCALL	5
+#define STUB_MINGW	6
 
 #ifndef STUB_LINKAGE
 
@@ -94,15 +95,17 @@
 #ifdef IVF                              /* Intel Visual Fortran */
 #define STUB_LINKAGE STUB_U
 #elif defined(CVF)
-#define STUB_LINKAGE_STUB_U
-#elif defined(_MSC_VER)
-#define STUB_LINKAGE STUB_STDCALL
-#else
-#define STUB_LINKAGE STUB_STDCALL
-#endif
+#define STUB_LINKAGE STUB_U
 #elif defined(MSDOS)
 #define STUB_LINKAGE STUB_FORTRAN
+#elif defined(_MSC_VER)
+#define STUB_LINKAGE STUB_STDCALL
+#elif defined(__GNUC__)
+#define STUB_LINKAGE STUB_MINGW
 #endif
+#elif defined(MSDOS)                    /* MS-DOS based */
+#define STUB_LINKAGE STUB_FORTRAN
+#endif /* Windows 32-bit */
 
 #ifndef STUB_LINKAGE			/* The default */
 #define STUB_LINKAGE STUB_LAU
@@ -118,18 +121,27 @@
 
 #if STUB_LINKAGE==STUB_LAU
 #define FNAME(x,y)	PLDLLIMPEXP_F95C y##_
+#define FNAME_(x,y)	y##_
 
 #elif STUB_LINKAGE == STUB_L
 #define FNAME(x,y)	y
+#define FNAME_(x,y)	y
 
 #elif STUB_LINKAGE == STUB_U
 #define FNAME(x,y)	x
-
-#elif STUB_LINKAGE == STUB_STDCALL
-#define FNAME(x,y)	PLDLLIMPEXP_F95C __stdcall x
+#define FNAME_(x,y)	x
 
 #elif STUB_LINKAGE == STUB_FORTRAN
 #define FNAME(x,y)	fortran x
+#define FNAME_(x,y)	x
+
+#elif STUB_LINKAGE == STUB_STDCALL
+#define FNAME(x,y)	PLDLLIMPEXP_F95C __stdcall x
+#define FNAME_(x,y)	x
+
+#elif STUB_LINKAGE == STUB_MINGW
+#define FNAME(x,y)	PLDLLIMPEXP_F95C y##_
+#define FNAME_(x,y)	y
 
 #else
 #error "Illegal setting for STUB_LINKAGE"
