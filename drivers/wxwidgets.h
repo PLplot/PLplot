@@ -213,14 +213,23 @@ private: /* variables */
 #include "agg2/agg_conv_contour.h"
 #include "agg2/agg_font_freetype.h"
 
-typedef agg::pixfmt_rgb24 pixfmt;
-typedef agg::renderer_base<pixfmt> ren_base;
-typedef agg::renderer_scanline_aa_solid<ren_base> renderer;
-typedef agg::font_engine_freetype_int32 font_engine_type;
-typedef agg::font_cache_manager<font_engine_type> font_manager_type;
-
 class wxPLDevAGG : public wxPLDevBase
 {
+  /* type definitions and enums */
+  typedef agg::pixfmt_rgb24 pixFormat;
+  typedef agg::renderer_base<pixFormat> rendererBase;
+  typedef agg::renderer_scanline_aa_solid<rendererBase> rendererSolid;
+  typedef agg::font_engine_freetype_int32 fontEngineType;
+  typedef agg::font_cache_manager<fontEngineType> fontManagerType;
+  typedef agg::font_cache_manager<fontEngineType>::gray8_adaptor_type fontRasterizer;
+  typedef agg::font_cache_manager<fontEngineType>::gray8_scanline_type fontScanline;
+  typedef agg::conv_curve<agg::path_storage> convCurve;
+  typedef agg::conv_stroke<convCurve> convStroke;
+  typedef agg::conv_transform<convCurve> pathTransform;
+  typedef agg::conv_transform<convStroke> strokeTransform;
+
+  enum drawPathFlag { Fill, Stroke, FillAndStroke };
+
 public: /* methods */
 	wxPLDevAGG( void );
 	~wxPLDevAGG( void );
@@ -243,24 +252,41 @@ public: /* methods */
   void ProcessString( PLStream* pls, EscText* args );
   void PSDrawTextToDC( char* utf8_string, bool drawText );
   void PSSetFont( PLUNICODE fci );
+  void drawPath( drawPathFlag flag );
 
 private: /* variables */
-  wxDC* m_dc;
-  wxImage* m_buffer;
-  agg::rendering_buffer *m_rendering_buffer;
-//	font_engine_type m_font_engine;
-//  font_manager_type m_font_manager;
-//	agg::conv_curve<font_manager_type::path_adaptor_type> m_curves;
-//  agg::conv_contour<agg::conv_curve<font_manager_type::path_adaptor_type> > m_contour;
+  wxDC* mDC;
+  wxImage* mBuffer;
+  agg::rendering_buffer mRenderingBuffer;
+	fontEngineType mFontEngine;
+  fontManagerType mFontManager;
+	agg::conv_curve<fontManagerType::path_adaptor_type> mCurves;
+  agg::conv_contour<agg::conv_curve<fontManagerType::path_adaptor_type> > mContour;
 
-  double m_strokewidth;
-  wxUint8 m_StrokeOpacity;
-  unsigned char m_colredstroke;
-  unsigned char m_colgreenstroke;
-  unsigned char m_colbluestroke;
-  unsigned char m_colredfill;
-  unsigned char m_colgreenfill;
-  unsigned char m_colbluefill;
+  pixFormat mPixFormat;
+  rendererBase mRendererBase;
+  rendererSolid mRendererSolid;
+  
+  agg::scanline_u8 mScanLine;
+  agg::rasterizer_scanline_aa<> mRasterizer;
+  agg::path_storage mPath;
+  agg::trans_affine mTransform;
+  
+  convCurve mConvCurve;
+  convStroke mConvStroke;
+  pathTransform mPathTransform;
+  strokeTransform mStrokeTransform;
+
+  double mStrokeWidth;
+  wxUint8 mStrokeOpacity;
+  unsigned char mColorRedStroke;
+  unsigned char mColorGreenStroke;
+  unsigned char mColorBlueStroke;
+  unsigned char mColorRedFill;
+  unsigned char mColorGreenFill;
+  unsigned char mColorBlueFill;
+
+  double textWidth, textHeight;
 };
 #endif
 
