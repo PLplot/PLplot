@@ -29,7 +29,7 @@ A:hover {
   margin-right: auto;
   width: 95%;
   text-align: left;
-  background: #FFFFFF url('../img/content_bg.jpg') top right repeat-y;
+  background: #FFFFFF top right repeat-y;
   border: 1px solid #018843;
 }
 
