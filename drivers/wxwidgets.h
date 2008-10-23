@@ -287,6 +287,7 @@ private: /* variables */
   unsigned char mColorBlueFill;
 
   double textWidth, textHeight;
+	wxString fontdir;
 };
 #endif
 

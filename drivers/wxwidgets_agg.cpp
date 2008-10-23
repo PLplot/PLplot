@@ -35,7 +35,26 @@
 #include "wxwidgets.h"
 #include <wchar.h>
 
+/* helper functions */
+#if !defined(WIN32) || defined(__GNUC__)
+  #include <unistd.h>
+#else
+  #define F_OK 1
+  #include <stdio.h>
+  int access( char *filename, int flag )
+	{
+		FILE *infile ;
+		infile = fopen( filename, "r" ) ;
+		if( infile != NULL ) {
+			fclose( infile ) ;
+			return 0 ;
+		} else
+			return 1 ;
+  }
+#endif
 
+#define makeunixslash( b ) do { char *I; for( I=b;*I!=0;*I++ ) if( *I=='\\' ) *I='/';} while(0)
+	
 /* Constructor initializes all variables and objects */
 wxPLDevAGG::wxPLDevAGG() :
 		wxPLDevBase(),
@@ -70,6 +89,67 @@ wxPLDevAGG::wxPLDevAGG() :
   mContour.auto_detect_orientation( false );
   mConvStroke.line_join( agg::round_join );
   mConvStroke.line_cap( agg::round_cap );
+	
+	/* determine font directory */
+#if defined(WIN32)
+    static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.ttf",
+				       "symbol.ttf"};
+    char WINDIR_PATH[255];
+    char *b;
+    b=getenv("WINDIR");
+    strcpy(WINDIR_PATH,b);
+
+/*
+ * Work out if we have Win95+ or Win3.?... sort of.
+ * Actually, this just tries to find the place where the fonts live by looking
+ * for arial, which should be on all windows machines.
+ * At present, it only looks in two places, on one drive. I might change this
+ * soon.
+ */
+    if (WINDIR_PATH==NULL)
+    {
+        if (access("c:\\windows\\fonts\\arial.ttf", F_OK)==0) {
+            strcpy(font_dir,"c:/windows/fonts/");
+        }
+        else if ( access("c:\\windows\\system\\arial.ttf", F_OK)==0) {
+            strcpy(font_dir,"c:/windows/system/");
+        }
+        else
+        plwarn("Could not find font path; I sure hope you have defined fonts manually !");
+    }
+    else
+    {
+      strcat(WINDIR_PATH,"\\fonts\\arial.ttf");
+      if (access(WINDIR_PATH, F_OK)==0)
+        {
+          b=strrchr(WINDIR_PATH,'\\');
+          b++;
+          *b=0;
+          makeunixslash(WINDIR_PATH);
+          strcpy(font_dir,WINDIR_PATH);
+        }
+      else
+        plwarn("Could not find font path; I sure hope you have defined fonts manually !");
+    }
+
+    if (pls->debug) fprintf( stderr, "%s\n", font_dir ) ;
+#else
+	/*  For Unix systems, we will set the font path up a little differently in
+	 *  that the configured PL_FREETYPE_FONT_DIR has been set as the default path,
+	 *  but the user can override this by setting the environmental variable
+	 *  "PLPLOT_FREETYPE_FONT_DIR" to something else.
+	 *  NOTE WELL - the trailing slash must be added for now !
+	 */
+	const char *str;
+
+	fontdir.Clear();
+	if( (str=getenv("PLPLOT_FREETYPE_FONT_DIR"))!=NULL )
+		fontdir.Append( wxString(str, wxConvFile) );
+	else
+		fontdir.Append( wxT(PL_FREETYPE_FONT_DIR) );
+	
+	printf("fontdir=%ws, len=%d\n", fontdir.c_str(), fontdir.Length() );
+#endif	
 }
 
 
@@ -308,10 +388,10 @@ void wxPLDevAGG::PSDrawTextToDC( char* utf8_string, bool drawText )
 void wxPLDevAGG::PSSetFont( PLUNICODE fci )
 {
   /* convert the fci to Base14/Type1 font information */
-  char* fontname = plP_FCI2FontName( fci, TrueTypeLookup, N_TrueTypeLookup );
-  printf("fontname=%s\n", fontname );
+	wxString fontname=fontdir + wxString( plP_FCI2FontName(fci, TrueTypeLookup, N_TrueTypeLookup), *wxConvCurrent );
+  printf("fontname=%s\n", fontdir.c_str() );
 
-  mFontEngine.load_font( "c:\\windows\\fonts\\arial.ttf", 0, agg::glyph_ren_agg_gray8 );
+  mFontEngine.load_font( plP_FCI2FontName(fci, TrueTypeLookup, N_TrueTypeLookup), 0, agg::glyph_ren_agg_gray8 );
   mFontEngine.height( fontSize*fontScale );
   mFontEngine.width( fontSize*fontScale );
   mFontEngine.flip_y( true );
