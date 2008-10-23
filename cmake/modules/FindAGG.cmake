@@ -35,8 +35,10 @@ else (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
   # plain name for static libraries case.
   if(BUILD_SHARED_LIBS)
     set(AGGLIB_NAMES = "agg_pic;agg")
+    set(AGGFONTLIB_NAMES = "aggfontfreetype_pic;aggfontfreetype")
   else(BUILD_SHARED_LIBS)
     set(AGGLIB_NAMES = "agg;agg_pic")
+    set(AGGFONTLIB_NAMES = "aggfontfreetype;aggfontfreetype_pic;")
   endif(BUILD_SHARED_LIBS)
   FIND_LIBRARY(AGG_LIBRARIES NAMES ${AGGLIB_NAMES}
     PATHS
@@ -44,6 +46,15 @@ else (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
     /usr/local/lib
     /usr/lib
   )
+  FIND_LIBRARY(AGGFONT_LIBRARIES NAMES ${AGGFONTLIB_NAMES}
+    PATHS
+    ${_AGGLinkDir}
+    /usr/local/lib
+    /usr/lib
+  )
+	if (AGGFONT_LIBRARIES AND AGG_LIBRARIES)
+		set(AGG_LIBRARIES ${AGG_LIBRARIES} ${AGGFONT_LIBRARIES})
+	endif (AGGFONT_LIBRARIES AND AGG_LIBRARIES)
   
   if (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
      set(AGG_FOUND TRUE)
