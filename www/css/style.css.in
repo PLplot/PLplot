@@ -6,7 +6,16 @@ http://creativecommons.org/licenses/by-nc/2.5/
 
 body {
   text-align: center;
-  background: #F4FDE5 top center no-repeat fixed;
+  background-color: #F4FDE5;
+/* Could configure the url for the static style and use a pseudo scaling
+   background for the liquid style, but none looks fine in all cases so
+   don't bother with anything more fancy than that. */
+/*  background-image: url('../img/bg.jpg');*/
+  background-image: none;
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  
   margin-top:10px;
   margin-bottom:10px;
 }
@@ -27,7 +36,7 @@ A:hover {
 #pagewrapper {
   margin-left: auto; 
   margin-right: auto;
-  width: 95%;
+  width: @width_pagewrapper@;
   text-align: left;
   background: #FFFFFF top right repeat-y;
   border: 1px solid #018843;
@@ -36,7 +45,7 @@ A:hover {
 #pagewrapper_full {
   margin-left: auto; 
   margin-right: auto;
-  width: 95%;
+  width: @width_pagewrapper@;
   text-align: left;
   background: #FFFFFF;
   border: 1px solid #018843;
@@ -126,7 +135,7 @@ A:hover {
 #rightside {
   margin-top:5px;
   float: right;
-  width:23%;
+  width:@width_rightside@;
   border:0px dashed #cccccc;
 }
 
@@ -153,14 +162,14 @@ A:hover {
 
 #fullside {
   float:left;
-  width:100%;
+  width:@width_fullside@;
   background: #FFFFFF;
   border:0px dashed #cccccc;
 }
 
 #leftside {
   float: left;
-  width:75%;
+  width:@width_leftside@;
   background-color: #FFFFFF;
   border:0px dashed #cccccc;
 }
@@ -210,7 +219,7 @@ A:hover {
 
 #featurebox {
   float:left;
-  width:31%;
+  width:@width_featurebox@;
   background-color: #F6FCEC;
   border:1px solid #AAE5A4;
   padding:10px;
@@ -237,7 +246,7 @@ A:hover {
 }
 
 #pagefooter {
-  height: 7.5%;
+  height:@height_pagefooter@ ;
   background-color: #99CC33;
   clear: both;
 }
@@ -257,7 +266,7 @@ A:hover {
 }
 
 #codebox {
-  width:92%;
+  width:@width_codebox@;
 	height:400px;
 	font-size:0.7em;
   background-color:#f2f8e6;
@@ -301,7 +310,7 @@ text-align:center;
 
 #searchbar #s{
 height:1.2em;
-width:14%;
+width:@width_searchbar@;
 margin:0 5px 0 0;
 border:1px solid #a0a0a0;
 }
