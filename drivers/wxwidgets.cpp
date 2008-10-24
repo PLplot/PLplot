@@ -735,9 +735,15 @@ void wx_set_size( PLStream* pls, int width, int height )
   
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
 
-	/* set new size */
+	/* set new size and scale parameters */
 	dev->width = width;
 	dev->height = height;
+  dev->scalex=(PLFLT)(dev->xmax-dev->xmin)/dev->width;
+  dev->scaley=(PLFLT)(dev->ymax-dev->ymin)/dev->height;  
+    
+  /* recalculate the dpi used in calculation of fontsize */
+  pls->xdpi = VIRTUAL_PIXELS_PER_IN/dev->scalex;
+  pls->ydpi = VIRTUAL_PIXELS_PER_IN/dev->scaley;
 
   /* clear background if we have a dc, since it's invalid (TODO: why, since in bop
      it must be cleared anyway?) */
@@ -749,12 +755,6 @@ void wx_set_size( PLStream* pls, int width, int height )
     dev->ClearBackground( bgr, bgg, bgb );
 	}
 
-  dev->scalex=(PLFLT)(dev->xmax-dev->xmin)/dev->width;
-  dev->scaley=(PLFLT)(dev->ymax-dev->ymin)/dev->height;  
-    
-    /* recalculate the dpi used in calculation of fontsize */
-  pls->xdpi = VIRTUAL_PIXELS_PER_IN/dev->scalex;
-  pls->ydpi = VIRTUAL_PIXELS_PER_IN/dev->scaley;
     
   /* freetype parameters must also be changed */
 #ifdef HAVE_FREETYPE  

@@ -253,7 +253,8 @@ public: /* methods */
   void PSDrawTextToDC( char* utf8_string, bool drawText );
   void PSSetFont( PLUNICODE fci );
   void drawPath( drawPathFlag flag );
-
+  void AGGAddtoClipRegion( short x1, short y1, short x2, short y2 );
+  
 private: /* variables */
   wxDC* mDC;
   wxImage* mBuffer;
