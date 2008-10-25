@@ -54,7 +54,7 @@ file prefix location), the result looks good.  In particular, the Ada plplot
 documentation is there and all the previous problems with source code
 accessibility for the Ada, f77, and OCaml examples are now fixed.
 
-Once you are satisfied with the locall website, you can upload it to
+Once you are satisfied with the local website, you can upload it to
 SourceForge with rsync.  I give the directions here, although you may want
 to do this later (see below) in the release process.
 
