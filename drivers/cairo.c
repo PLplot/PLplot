@@ -73,7 +73,6 @@ static int text_clipping;
 static int text_anti_aliasing;
 static int graphics_anti_aliasing;
 static int external_drawable;
-static PLFLT downscale = 0.;
 static DrvOpt cairo_options[] = {{"text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)"},
 				 {"text_anti_aliasing", DRV_INT, &text_anti_aliasing, "Set desired text anti-aliasing (text_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t)"},
 				 {"graphics_anti_aliasing", DRV_INT, &graphics_anti_aliasing, "Set desired graphics anti-aliasing (graphics_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t"},
@@ -86,6 +85,7 @@ typedef struct {
   short text_clipping;
   short text_anti_aliasing;
   short graphics_anti_aliasing;
+  PLFLT downscale;
 #if defined(PLD_xcairo)
   short exit_event_loop;
   Display *XDisplay;
@@ -252,8 +252,8 @@ void plD_line_cairo(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
   set_current_context(pls);
 
-  cairo_move_to(aStream->cairoContext, downscale * (double) x1a, downscale * (double) y1a);
-  cairo_line_to(aStream->cairoContext, downscale * (double) x2a, downscale * (double) y2a);
+  cairo_move_to(aStream->cairoContext, aStream->downscale * (double) x1a, aStream->downscale * (double) y1a);
+  cairo_line_to(aStream->cairoContext, aStream->downscale * (double) x2a, aStream->downscale * (double) y2a);
   cairo_stroke(aStream->cairoContext);
 }
 
@@ -404,12 +404,12 @@ void proc_str(PLStream *pls, EscText *args)
 
   /* Set up the clipping region if we are doing text clipping */
   if(aStream->text_clipping){
-    cairo_rectangle(aStream->cairoContext, downscale * pls->clpxmi, downscale * pls->clpymi, downscale * (pls->clpxma - pls->clpxmi), downscale * (pls->clpyma - pls->clpymi));
+    cairo_rectangle(aStream->cairoContext, aStream->downscale * pls->clpxmi, aStream->downscale * pls->clpymi, aStream->downscale * (pls->clpxma - pls->clpxmi), aStream->downscale * (pls->clpyma - pls->clpymi));
     cairo_clip(aStream->cairoContext);
   }
 
   /* Move to the string reference point */
-  cairo_move_to(aStream->cairoContext, downscale * (double) args->x, downscale * (double) args->y);
+  cairo_move_to(aStream->cairoContext, aStream->downscale * (double) args->x, aStream->downscale * (double) args->y);
 
   /* Invert the coordinate system so that the text is drawn right side up */
   cairoTransformMatrix = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
@@ -655,6 +655,8 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   int i;
   char *a;
   PLCairo *aStream;
+  PLFLT downscale;
+  downscale = 0.0;
 
   /* Stream setup */
   pls->termin = interactive; /* Interactive device */
@@ -699,6 +701,7 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
 #endif
   aStream->cairoSurface = NULL;
   aStream->cairoContext = NULL;
+  aStream->downscale = downscale;
 
   /* Set text clipping off as this makes the driver pretty slow */
   aStream->text_clipping = 0;
@@ -763,9 +766,9 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts)
 
   set_current_context(pls);
   
-  cairo_move_to(aStream->cairoContext, downscale * (double) xa[0], downscale * (double) ya[0]);
+  cairo_move_to(aStream->cairoContext, aStream->downscale * (double) xa[0], aStream->downscale * (double) ya[0]);
   for(i=1;i<npts;i++){
-    cairo_line_to(aStream->cairoContext, downscale * (double) xa[i], downscale * (double) ya[i]);
+    cairo_line_to(aStream->cairoContext, aStream->downscale * (double) xa[i], aStream->downscale * (double) ya[i]);
   }
 }
 
@@ -1076,8 +1079,8 @@ void plD_esc_xcairo(PLStream *pls, PLINT op, void *ptr)
           &x, &y, &w, &h, &b, &d);
         pls->xlength = w;
         pls->ylength = h;
-        plP_setphy((PLINT) 0, (PLINT) (pls->xlength / downscale), (PLINT) 0, 
-          (PLINT) (pls->ylength / downscale));
+        plP_setphy((PLINT) 0, (PLINT) (pls->xlength / aStream->downscale), (PLINT) 0, 
+          (PLINT) (pls->ylength / aStream->downscale));
   
         /* Associate cairo with the supplied drawable */
         xcairo_init_cairo(pls);
@@ -1791,7 +1794,7 @@ void plD_esc_extcairo(PLStream *pls, PLINT op, void *ptr)
       poly_line(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
       cairo_fill(aStream->cairoContext);
       break;
-    case PLESC_HAS_TEXT: /* render rext */
+    case PLESC_HAS_TEXT: /* render text */
       proc_str(pls, (EscText *) ptr);
       break;
     case PLESC_DEVINIT: /* Set external context */
