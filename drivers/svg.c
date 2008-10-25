@@ -56,14 +56,6 @@
 
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_svg = "svg:Scalable Vector Graphics (SVG 1.1):1:svg:57:svg";
 
-static int canvasXSize = 0;
-static int canvasYSize = 0;
-static PLFLT scale = 0.;
-
-static int svgIndent = 0;
-static FILE *svgFile;
-
-static char curColor[7];
 static int already_warned = 0;
 
 static int text_clipping = 1;
@@ -71,6 +63,12 @@ static DrvOpt svg_options[] = {{"text_clipping", DRV_INT, &text_clipping, "Use t
 
 typedef struct {
   short textClipping;
+  int canvasXSize;
+  int canvasYSize;
+  PLFLT scale;
+  int svgIndent;
+  FILE *svgFile;
+  /*  char curColor[7]; */
 } SVG;
 
 /* font stuff */
@@ -83,13 +81,13 @@ typedef struct {
 
 /* Functions for writing XML SVG tags to a file */
 
-static void svg_open(char *);
-static void svg_open_end(void);
-static void svg_attr_value(char *, char *);
-static void svg_attr_values(char *, char *, ...);
-static void svg_close(char *);
-static void svg_general(char *);
-static void svg_indent(void);
+static void svg_open(SVG *, char *);
+static void svg_open_end(SVG *);
+static void svg_attr_value(SVG *, char *, char *);
+static void svg_attr_values(SVG *, char *, char *, ...);
+static void svg_close(SVG *, char *);
+static void svg_general(SVG *, char *);
+static void svg_indent(SVG *);
 static void svg_stroke_width(PLStream *);
 static void svg_stroke_color(PLStream *);
 static void svg_fill_color(PLStream *);
@@ -100,10 +98,10 @@ static int svg_family_check(PLStream *);
 /* General */
 
 static void poly_line(PLStream *, short *, short *, PLINT, short);
-static void write_hex(unsigned char);
-static void write_unicode(PLUNICODE);
+static void write_hex(FILE *, unsigned char);
+static void write_unicode(FILE *, PLUNICODE);
 static short desired_offset(short, double);
-static void specify_font(PLUNICODE);
+static void specify_font(FILE *, PLUNICODE);
 
 /* String processing */
 
@@ -114,7 +112,7 @@ static void proc_str(PLStream *, EscText *);
 void plD_dispatch_init_svg      (PLDispatchTable *pdt);
 void plD_init_svg               (PLStream *);
 void plD_line_svg               (PLStream *, short, short, short, short);
-void plD_polyline_svg   		(PLStream *, short *, short *, PLINT);
+void plD_polyline_svg   	(PLStream *, short *, short *, PLINT);
 void plD_eop_svg                (PLStream *);
 void plD_bop_svg                (PLStream *);
 void plD_tidy_svg               (PLStream *);
@@ -172,40 +170,40 @@ void plD_init_svg(PLStream *pls)
   if (!pls->colorset)
     pls->color = 1; 
 
-  /* Set up device parameters */
-   
+  /* Set up device parameters */ 
+  aStream = malloc(sizeof(SVG));
+  
   /* Set the bounds for plotting.  default is SVG_Default_X x SVG_Default_Y unless otherwise specified. */
    
   if (pls->xlength <= 0 || pls->ylength <= 0){
-    canvasXSize = SVG_Default_X;
-    canvasYSize = SVG_Default_Y;
+    aStream->canvasXSize = SVG_Default_X;
+    aStream->canvasYSize = SVG_Default_Y;
   } else {
-    canvasXSize = pls->xlength;
-    canvasYSize = pls->ylength;
+    aStream->canvasXSize = pls->xlength;
+    aStream->canvasYSize = pls->ylength;
   }
   /* Calculate ratio of (larger) internal PLplot coordinates to external
      coordinates used for svg file. */
-  if (canvasXSize > canvasYSize)
-    scale = (PLFLT)(PIXELS_X-1)/(PLFLT)canvasXSize;
+  if (aStream->canvasXSize > aStream->canvasYSize)
+    aStream->scale = (PLFLT)(PIXELS_X-1)/(PLFLT)aStream->canvasXSize;
   else
-    scale = (PLFLT)PIXELS_Y/(PLFLT)canvasYSize;
+    aStream->scale = (PLFLT)PIXELS_Y/(PLFLT)aStream->canvasYSize;
   /* to return to old behaviour use
      scale = 1.;
   */
 
-  plP_setphy((PLINT) 0, (PLINT) (scale*canvasXSize), (PLINT) 0, (PLINT) (scale*canvasYSize));
+  plP_setphy((PLINT) 0, (PLINT) (aStream->scale*aStream->canvasXSize), (PLINT) 0, (PLINT) (aStream->scale*aStream->canvasYSize));
 
-  plP_setpxl(scale*DPI/25.4, scale*DPI/25.4);           /* Pixels/mm. */
+  plP_setpxl(aStream->scale*DPI/25.4, aStream->scale*DPI/25.4);           /* Pixels/mm. */
 
   /* Initialize family file info */
   plFamInit(pls);
 
   /* Prompt for a file name if not already set */    
   plOpenFile(pls);
-  svgFile = pls->OutFile;
+  aStream->svgFile = pls->OutFile;
 
   /* Handle the text clipping option */
-  aStream = malloc(sizeof(SVG));
   plParseDrvOpts(svg_options);
 
   /* Turn on text clipping if the user desires this */
@@ -215,10 +213,10 @@ void plD_init_svg(PLStream *pls)
   aStream->textClipping = text_clipping;
   pls->dev = aStream;
 
-  svgIndent = 0;
-  svg_general("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-  svg_general("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
-  svg_general("        \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
+  aStream->svgIndent = 0;
+  svg_general(aStream, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+  svg_general(aStream, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n");
+  svg_general(aStream, "        \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
 }
 
 /*----------------------------------------------------------------------
@@ -229,6 +227,10 @@ void plD_init_svg(PLStream *pls)
 
 void plD_bop_svg(PLStream *pls)
 {
+  SVG *aStream;
+
+  aStream = pls->dev;
+
   /* Plot familying stuff. Not really understood, just copying gd.c */
   plGetFam(pls);
   pls->famadv = 1;
@@ -237,34 +239,34 @@ void plD_bop_svg(PLStream *pls)
    
   /* write opening svg tag for the new page */
       
-  svg_open("svg");
-  svg_attr_value("xmlns", "http://www.w3.org/2000/svg");
-  svg_attr_value("xmlns:xlink", "http://www.w3.org/1999/xlink");
-  svg_attr_value("version", "1.1");   
+  svg_open(aStream, "svg");
+  svg_attr_value(aStream, "xmlns", "http://www.w3.org/2000/svg");
+  svg_attr_value(aStream, "xmlns:xlink", "http://www.w3.org/1999/xlink");
+  svg_attr_value(aStream, "version", "1.1");   
   /* svg_attr_values("width", "%dcm", (int)((double)canvasXSize/DPI * 2.54)); */
   /* svg_attr_values("height", "%dcm", (int)((double)canvasYSize/DPI * 2.54)); */
-  svg_attr_values("width", "%dpx", canvasXSize);
-  svg_attr_values("height", "%dpx", canvasYSize);
-  svg_attr_values("viewBox", "%d %d %d %d", 0, 0, canvasXSize, canvasYSize);
-  svg_general(">\n");
+  svg_attr_values(aStream, "width", "%dpx", aStream->canvasXSize);
+  svg_attr_values(aStream, "height", "%dpx", aStream->canvasYSize);
+  svg_attr_values(aStream, "viewBox", "%d %d %d %d", 0, 0, aStream->canvasXSize, aStream->canvasYSize);
+  svg_general(aStream, ">\n");
 
   /* set the background by drawing a rectangle that is the size of
      of the canvas and filling it with the background color. */
    
-  svg_open("rect");
-  svg_attr_values("x", "%d", 0);
-  svg_attr_values("y", "%d", 0);
-  svg_attr_values("width", "%d", canvasXSize);
-  svg_attr_values("height", "%d", canvasYSize);
-  svg_attr_value("stroke", "none");
+  svg_open(aStream, "rect");
+  svg_attr_values(aStream, "x", "%d", 0);
+  svg_attr_values(aStream, "y", "%d", 0);
+  svg_attr_values(aStream, "width", "%d", aStream->canvasXSize);
+  svg_attr_values(aStream, "height", "%d", aStream->canvasYSize);
+  svg_attr_value(aStream, "stroke", "none");
   svg_fill_background_color(pls);
-  svg_open_end();
+  svg_open_end(aStream);
    
   /* invert the coordinate system so that PLplot graphs appear right side up */
    
-  svg_open("g");
-  svg_attr_values("transform", "matrix(1 0 0 -1 0 %d)", canvasYSize);
-  svg_general(">\n");
+  svg_open(aStream, "g");
+  svg_attr_values(aStream, "transform", "matrix(1 0 0 -1 0 %d)", aStream->canvasYSize);
+  svg_general(aStream, ">\n");
 }
 
 /*---------------------------------------------------------------------
@@ -275,14 +277,18 @@ void plD_bop_svg(PLStream *pls)
 
 void plD_line_svg(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
+  SVG *aStream;
+
+  aStream = pls->dev;
+
   if(svg_family_check(pls)) {return;} 
-  svg_open("polyline");
+  svg_open(aStream, "polyline");
   svg_stroke_width(pls);
   svg_stroke_color(pls);
-  svg_attr_value("fill", "none");
+  svg_attr_value(aStream, "fill", "none");
   /*   svg_attr_value("shape-rendering", "crisp-edges"); */
-  svg_attr_values("points", "%r,%r %r,%r", (double)x1a/scale, (double)y1a/scale, (double)x2a/scale, (double)y2a/scale);
-  svg_open_end();
+  svg_attr_values(aStream, "points", "%r,%r %r,%r", (double)x1a/aStream->scale, (double)y1a/aStream->scale, (double)x2a/aStream->scale, (double)y2a/aStream->scale);
+  svg_open_end(aStream);
 }
 
 /*---------------------------------------------------------------------
@@ -305,11 +311,15 @@ void plD_polyline_svg(PLStream *pls, short *xa, short *ya, PLINT npts)
 
 void plD_eop_svg(PLStream *pls)
 {
+  SVG *aStream;
+
+  aStream = pls->dev;
+
   if(svg_family_check(pls)) {return;} 
   /* write the closing svg tag */
 
-  svg_close("g");
-  svg_close("svg");
+  svg_close(aStream, "g");
+  svg_close(aStream, "svg");
 }
 
 /*---------------------------------------------------------------------
@@ -320,8 +330,11 @@ void plD_eop_svg(PLStream *pls)
 
 void plD_tidy_svg(PLStream *pls)
 {
+  SVG *aStream;
+
+  aStream = pls->dev;
   if(svg_family_check(pls)) {return;} 
-  fclose(svgFile);
+  fclose(aStream->svgFile);
 }
 
 /*---------------------------------------------------------------------
@@ -366,27 +379,30 @@ void plD_esc_svg(PLStream *pls, PLINT op, void *ptr)
 void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts, short fill)
 {
   int i;
+  SVG *aStream;
 
-  svg_open("polyline");
+  aStream = pls->dev;
+
+  svg_open(aStream, "polyline");
   svg_stroke_width(pls);
   svg_stroke_color(pls);
   if(fill){
     svg_fill_color(pls);
   } else {
-    svg_attr_value("fill", "none");
+    svg_attr_value(aStream, "fill", "none");
   }
   /*   svg_attr_value("shape-rendering", "crisp-edges"); */
-  svg_indent();
-  fprintf(svgFile, "points=\"");
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "points=\"");
   for (i = 0; i < npts; i++){
-    fprintf(svgFile, "%.2f,%.2f ", (double)xa[i]/scale, (double)ya[i]/scale);
+    fprintf(aStream->svgFile, "%.2f,%.2f ", (double)xa[i]/aStream->scale, (double)ya[i]/aStream->scale);
     if(((i+1)%10) == 0){
-      fprintf(svgFile,"\n");
-      svg_indent();
+      fprintf(aStream->svgFile,"\n");
+      svg_indent(aStream);
     }
   }
-  fprintf(svgFile, "\"/>\n");
-  svgIndent -= 2;
+  fprintf(aStream->svgFile, "\"/>\n");
+  aStream->svgIndent -= 2;
 }
 
 /*---------------------------------------------------------------------
@@ -453,20 +469,20 @@ void proc_str (PLStream *pls, EscText *args)
   /* Setup & apply text clipping area if desired */
   aStream = (SVG*)pls->dev;
   if(aStream->textClipping){
-    svg_open("clipPath");
-    svg_attr_values("id","text-clipping%d", which_clip);
-    svg_general(">\n");
-    svg_open("rect");
-    svg_attr_values("x","%f", pls->clpxmi/scale);
-    svg_attr_values("y","%f", pls->clpymi/scale);
-    svg_attr_values("width","%f", (pls->clpxma - pls->clpxmi)/scale);
-    svg_attr_values("height","%f", (pls->clpyma - pls->clpymi)/scale);
-    svg_open_end();
-    svg_close("clipPath");
+    svg_open(aStream, "clipPath");
+    svg_attr_values(aStream, "id","text-clipping%d", which_clip);
+    svg_general(aStream, ">\n");
+    svg_open(aStream, "rect");
+    svg_attr_values(aStream, "x","%f", pls->clpxmi/aStream->scale);
+    svg_attr_values(aStream, "y","%f", pls->clpymi/aStream->scale);
+    svg_attr_values(aStream, "width","%f", (pls->clpxma - pls->clpxmi)/aStream->scale);
+    svg_attr_values(aStream, "height","%f", (pls->clpyma - pls->clpymi)/aStream->scale);
+    svg_open_end(aStream);
+    svg_close(aStream, "clipPath");
      
-    svg_open("g");
-    svg_attr_values("clip-path", "url(#text-clipping%d)", which_clip);
-    svg_general(">\n");
+    svg_open(aStream, "g");
+    svg_attr_values(aStream, "clip-path", "url(#text-clipping%d)", which_clip);
+    svg_general(aStream, ">\n");
      
     which_clip++;
   }
@@ -489,30 +505,30 @@ void proc_str (PLStream *pls, EscText *args)
 
   /* Apply coordinate transform for text display.
      The transformation also defines the location of the text in x and y. */
-  svg_open("g");
-  svg_attr_values("transform", "matrix(%f %f %f %f %f %f)", t[0], t[1], t[2], t[3], (double)(args->x/scale), (double)(args->y/scale));
-  svg_general(">\n");
+  svg_open(aStream, "g");
+  svg_attr_values(aStream, "transform", "matrix(%f %f %f %f %f %f)", t[0], t[1], t[2], t[3], (double)(args->x/aStream->scale), (double)(args->y/aStream->scale));
+  svg_general(aStream, ">\n");
 
-  svg_open("g");
-  svg_attr_values("transform", "matrix(1.0 0.0 0.0 1.0 0.0 %f)", FONT_SIZE_RATIO*0.5*ftHt - 0.5);
-  svg_general(">\n");
+  svg_open(aStream, "g");
+  svg_attr_values(aStream, "transform", "matrix(1.0 0.0 0.0 1.0 0.0 %f)", FONT_SIZE_RATIO*0.5*ftHt - 0.5);
+  svg_general(aStream, ">\n");
 
   /*--------------
     open text tag
     --------------*/
 
-  svg_open("text");
+  svg_open(aStream, "text");
    
-  svg_attr_value("dominant-baseline","no-change"); 
+  svg_attr_value(aStream, "dominant-baseline","no-change"); 
    
   /* set font color */
   svg_fill_color(pls);
    
   /* white space preserving mode */
-  svg_attr_value("xml:space","preserve"); 
+  svg_attr_value(aStream, "xml:space","preserve"); 
    
   /* set the font size */
-  svg_attr_values("font-size","%d", (int)ftHt);
+  svg_attr_values(aStream, "font-size","%d", (int)ftHt);
    
   /*----------------------------------------------------------
     Write the text with formatting
@@ -541,23 +557,23 @@ void proc_str (PLStream *pls, EscText *args)
        * middle so you should be okay so long as you don't deviate too far
        * from those anchor points. */
       if (args->just < 0.33) {
-	svg_attr_value("text-anchor", "start");   /* left justification */
-	svg_attr_values("x", "%f", (double)(-args->just*FONT_SIZE_RATIO*sum_glyph_size));
+	svg_attr_value(aStream, "text-anchor", "start");   /* left justification */
+	svg_attr_values(aStream, "x", "%f", (double)(-args->just*FONT_SIZE_RATIO*sum_glyph_size));
       }else if (args->just > 0.66) {
-	svg_attr_value("text-anchor", "end");     /* right justification */
-	svg_attr_values("x", "%f", (double)((1.-args->just)*FONT_SIZE_RATIO*sum_glyph_size));
+	svg_attr_value(aStream, "text-anchor", "end");     /* right justification */
+	svg_attr_values(aStream, "x", "%f", (double)((1.-args->just)*FONT_SIZE_RATIO*sum_glyph_size));
       }else {
-	svg_attr_value("text-anchor", "middle");  /* center */
-	svg_attr_values("x", "%f", (double)((0.5-args->just)*FONT_SIZE_RATIO*sum_glyph_size));
+	svg_attr_value(aStream, "text-anchor", "middle");  /* center */
+	svg_attr_values(aStream, "x", "%f", (double)((0.5-args->just)*FONT_SIZE_RATIO*sum_glyph_size));
       }
             
       /* The text goes at zero in y since the above
        * coordinate transform defines the y position of the text */
-      svg_attr_value("y", "0");
-      fprintf(svgFile,">");
+      svg_attr_value(aStream, "y", "0");
+      fprintf(aStream->svgFile, ">");
 
       /* specify the initial font */
-      specify_font(fci);
+      specify_font(aStream->svgFile, fci);
 
     }
     i = 0;
@@ -567,7 +583,7 @@ void proc_str (PLStream *pls, EscText *args)
       if (ucs4[i] < PL_FCI_MARK){	/* not a font change */
 	if (ucs4[i] != (PLUNICODE)plplot_esc) {  /* a character to display */
 	  if(if_write) {
-	    write_unicode(ucs4[i]);
+	    write_unicode(aStream->svgFile, ucs4[i]);
 	  }
 	  else{
 	    sum_glyph_size += glyph_size;
@@ -578,7 +594,7 @@ void proc_str (PLStream *pls, EscText *args)
 	i++;
 	if (ucs4[i] == (PLUNICODE)plplot_esc){   /* a escape character to display */
 	  if(if_write) {
-	    write_unicode(ucs4[i]);
+	    write_unicode(aStream->svgFile, ucs4[i]);
 	  }
 	  else{
 	    sum_glyph_size += glyph_size;
@@ -591,7 +607,7 @@ void proc_str (PLStream *pls, EscText *args)
 	    upDown++;
 	    if(if_write) {
 	      totalTags++;
-	      fprintf(svgFile,"<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
+	      fprintf(aStream->svgFile, "<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
 	    }
 	    else{
 	      glyph_size = (int)(ftHt * pow(0.8, abs(upDown)));
@@ -602,7 +618,7 @@ void proc_str (PLStream *pls, EscText *args)
 	    upDown--;
 	    if(if_write) {
 	      totalTags++;
-	      fprintf(svgFile,"<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
+	      fprintf(aStream->svgFile, "<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
 	    }
 	    else{
 	      glyph_size = (int)(ftHt * pow(0.8, abs(upDown)));
@@ -614,7 +630,7 @@ void proc_str (PLStream *pls, EscText *args)
       }
       else { /* a font change */
 	if(if_write) {
-	  specify_font(ucs4[i]);
+	  specify_font(aStream->svgFile, ucs4[i]);
 	  totalTags++;
 	}
 	i++;
@@ -628,7 +644,7 @@ void proc_str (PLStream *pls, EscText *args)
     ----------------------------------------------*/
    
   for(i=0;i<totalTags;i++){
-    fprintf(svgFile,"</tspan>");
+    fprintf(aStream->svgFile,"</tspan>");
   }
   /* The following commented out (by AWI) because it is a bad idea to
    * put line ends in the middle of a text tag.  This was the key to
@@ -638,12 +654,12 @@ void proc_str (PLStream *pls, EscText *args)
    * to close the text tag rather than svg_close("text"); since
    * we don't want indentation spaces entering the text. */
   /* svg_close("text"); */
-  fprintf(svgFile,"</text>\n");
-  svgIndent -= 2;
-  svg_close("g");
-  svg_close("g");
+  fprintf(aStream->svgFile,"</text>\n");
+  aStream->svgIndent -= 2;
+  svg_close(aStream, "g");
+  svg_close(aStream, "g");
   if(aStream->textClipping){
-    svg_close("g");
+    svg_close(aStream, "g");
   }
 }
 
@@ -653,11 +669,11 @@ void proc_str (PLStream *pls, EscText *args)
   Used to open a new XML expression, sets the indent level appropriately
   ---------------------------------------------------------------------*/
 
-void svg_open (char *tag)
+void svg_open (SVG *aStream, char *tag)
 {
-  svg_indent();
-  fprintf(svgFile, "<%s\n", tag);
-  svgIndent += 2;
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "<%s\n", tag);
+  aStream->svgIndent += 2;
 }
 
 /*---------------------------------------------------------------------
@@ -667,11 +683,11 @@ void svg_open (char *tag)
   the final ">".
   ---------------------------------------------------------------------*/
 
-void svg_open_end (void)
+void svg_open_end (SVG *aStream)
 {
-  svg_indent();
-  fprintf(svgFile, "/>\n");
-  svgIndent -= 2;
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "/>\n");
+  aStream->svgIndent -= 2;
 }
 
 /*---------------------------------------------------------------------
@@ -681,10 +697,10 @@ void svg_open_end (void)
   i.e. foo="bar"
   ---------------------------------------------------------------------*/
 
-void svg_attr_value (char *attribute, char *value)
+void svg_attr_value (SVG *aStream, char *attribute, char *value)
 {   
-  svg_indent();
-  fprintf(svgFile, "%s=\"%s\"\n", attribute, value);
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "%s=\"%s\"\n", attribute, value);
 }
 
 /*---------------------------------------------------------------------
@@ -698,45 +714,45 @@ void svg_attr_value (char *attribute, char *value)
   
   ---------------------------------------------------------------------*/
 
-void svg_attr_values (char *attribute, char *format, ...)
+void svg_attr_values (SVG *aStream, char *attribute, char *format, ...)
 {
   va_list ap;
   char *p, *sval;
   int ival;
   double dval;
 
-  svg_indent();
-  fprintf(svgFile, "%s=\"", attribute);
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "%s=\"", attribute);
   va_start(ap, format);
   for(p=format; *p; p++){
     if(*p != '%'){
-      fprintf(svgFile, "%c", *p);
+      fprintf(aStream->svgFile, "%c", *p);
       continue;
     }
     switch(*++p){
     case 'd':
       ival = va_arg(ap, int);
-      fprintf(svgFile, "%d", ival);
+      fprintf(aStream->svgFile, "%d", ival);
       break;
     case 'f':
       dval = va_arg(ap, double);
-      fprintf(svgFile, "%f", dval);
+      fprintf(aStream->svgFile, "%f", dval);
       break;
     case 'r':
       /* r is non-standard, but use it here to format rounded value */
       dval = va_arg(ap, double);
-      fprintf(svgFile, "%.2f", dval);
+      fprintf(aStream->svgFile, "%.2f", dval);
       break;
     case 's':
       sval = va_arg(ap, char *);
-      fprintf(svgFile, "%s", sval);
+      fprintf(aStream->svgFile, "%s", sval);
       break;
     default:
-      fprintf(svgFile, "%c", *p);
+      fprintf(aStream->svgFile, "%c", *p);
       break;
     }        
   }
-  fprintf(svgFile, "\"\n");
+  fprintf(aStream->svgFile, "\"\n");
   va_end(ap);
 }
 
@@ -746,14 +762,14 @@ void svg_attr_values (char *attribute, char *format, ...)
   Used to close a XML expression, sets the indent level appropriately
   ---------------------------------------------------------------------*/
 
-void svg_close (char *tag)
+void svg_close (SVG *aStream, char *tag)
 {
-  svgIndent -= 2;
-  svg_indent();
+  aStream->svgIndent -= 2;
+  svg_indent(aStream);
   if(strlen(tag) > 0){
-    fprintf(svgFile, "</%s>\n", tag);
+    fprintf(aStream->svgFile, "</%s>\n", tag);
   } else {
-    fprintf(svgFile, "/>\n");
+    fprintf(aStream->svgFile, "/>\n");
   }
 }
 
@@ -763,10 +779,10 @@ void svg_close (char *tag)
   Used to print any text into the svgFile
   ---------------------------------------------------------------------*/
 
-void svg_general (char *text)
+void svg_general (SVG *aStream, char *text)
 {
-  svg_indent();
-  fprintf(svgFile, "%s", text);
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "%s", text);
 }
 
 /*---------------------------------------------------------------------
@@ -775,11 +791,11 @@ void svg_general (char *text)
   Indents properly based on the current indent level
   ---------------------------------------------------------------------*/
 
-void svg_indent(void)
+void svg_indent(SVG *aStream)
 {
   short i;
-  for(i=0;i<svgIndent;i++){
-    fprintf(svgFile, " ");
+  for(i=0;i<aStream->svgIndent;i++){
+    fprintf(aStream->svgFile, " ");
   }
 }
 
@@ -793,8 +809,11 @@ void svg_indent(void)
 
 void svg_stroke_width(PLStream *pls)
 {
-  svg_indent();
-  fprintf(svgFile, "stroke-width=\"%d\"\n", MAX(1,pls->width));
+  SVG *aStream;
+
+  aStream = pls->dev;
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "stroke-width=\"%d\"\n", MAX(1,pls->width));
 }
 
 /*---------------------------------------------------------------------
@@ -805,14 +824,17 @@ void svg_stroke_width(PLStream *pls)
 
 void svg_stroke_color(PLStream *pls)
 {
-  svg_indent();
-  fprintf(svgFile, "stroke=\"#");
-  write_hex(pls->curcolor.r);
-  write_hex(pls->curcolor.g);
-  write_hex(pls->curcolor.b);
-  fprintf(svgFile, "\"\n");
-  svg_indent();
-  fprintf(svgFile, "stroke-opacity=\"%f\"\n", pls->curcolor.a);
+  SVG *aStream;
+
+  aStream = pls->dev;
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "stroke=\"#");
+  write_hex(aStream->svgFile, pls->curcolor.r);
+  write_hex(aStream->svgFile, pls->curcolor.g);
+  write_hex(aStream->svgFile, pls->curcolor.b);
+  fprintf(aStream->svgFile, "\"\n");
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "stroke-opacity=\"%f\"\n", pls->curcolor.a);
 }
 
 /*---------------------------------------------------------------------
@@ -823,14 +845,17 @@ void svg_stroke_color(PLStream *pls)
 
 void svg_fill_color(PLStream *pls)
 {
-  svg_indent();
-  fprintf(svgFile, "fill=\"#");
-  write_hex(pls->curcolor.r);
-  write_hex(pls->curcolor.g);
-  write_hex(pls->curcolor.b);
-  fprintf(svgFile, "\"\n");
-  svg_indent();
-  fprintf(svgFile, "fill-opacity=\"%f\"\n", pls->curcolor.a);
+  SVG *aStream;
+
+  aStream = pls->dev;
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "fill=\"#");
+  write_hex(aStream->svgFile, pls->curcolor.r);
+  write_hex(aStream->svgFile, pls->curcolor.g);
+  write_hex(aStream->svgFile, pls->curcolor.b);
+  fprintf(aStream->svgFile, "\"\n");
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "fill-opacity=\"%f\"\n", pls->curcolor.a);
 }
 
 /*---------------------------------------------------------------------
@@ -841,12 +866,15 @@ void svg_fill_color(PLStream *pls)
 
 void svg_fill_background_color(PLStream *pls)
 {
-  svg_indent();
-  fprintf(svgFile, "fill=\"#");
-  write_hex(pls->cmap0[0].r);
-  write_hex(pls->cmap0[0].g);
-  write_hex(pls->cmap0[0].b);
-  fprintf(svgFile, "\"\n");
+  SVG *aStream;
+
+  aStream = pls->dev;
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "fill=\"#");
+  write_hex(aStream->svgFile, pls->cmap0[0].r);
+  write_hex(aStream->svgFile, pls->cmap0[0].g);
+  write_hex(aStream->svgFile, pls->cmap0[0].b);
+  fprintf(aStream->svgFile, "\"\n");
 }
 
 /*---------------------------------------------------------------------
@@ -879,7 +907,7 @@ int svg_family_check(PLStream *pls)
   writes a unsigned char as an appropriately formatted hex value
   ---------------------------------------------------------------------*/
 
-void write_hex(unsigned char val)
+void write_hex(FILE *svgFile, unsigned char val)
 {
   if(val < 16){
     fprintf(svgFile, "0%X", val);
@@ -894,7 +922,7 @@ void write_hex(unsigned char val)
   writes a unicode character, appropriately formatted (i.e. &#xNNN)
   ---------------------------------------------------------------------*/
 
-void write_unicode(PLUNICODE ucs4_char)
+void write_unicode(FILE *svgFile, PLUNICODE ucs4_char)
 {
   fprintf(svgFile, "&#x%x;", ucs4_char);
 }
@@ -930,7 +958,7 @@ short desired_offset(short level, double ftHt)
   
   ---------------------------------------------------------------------*/
 
-void specify_font(PLUNICODE ucs4_char)
+void specify_font(FILE *svgFile, PLUNICODE ucs4_char)
 {
   fprintf(svgFile,"<tspan ");
          
