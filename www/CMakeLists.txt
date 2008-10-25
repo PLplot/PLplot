@@ -19,8 +19,25 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+# Configure documentation file sizes.
 configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/documentation.php.in
-${CMAKE_CURRENT_BINARY_DIR}/documentation.php @ONLY
-)
+  ${CMAKE_CURRENT_SOURCE_DIR}/documentation.php.in
+  ${CMAKE_CURRENT_BINARY_DIR}/documentation.php @ONLY
+  )
+
+# Configure style files
 add_subdirectory(css)
+
+# Set up Makefile rules to generate announcements and validate their DocBook-XML source.
+add_subdirectory(announce)
+
+set(PHP_FILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/corefunctions.php
+  ${CMAKE_CURRENT_SOURCE_DIR}/credits.php
+  ${CMAKE_CURRENT_SOURCE_DIR}/development.php
+  ${CMAKE_CURRENT_SOURCE_DIR}/download.php
+  ${CMAKE_CURRENT_SOURCE_DIR}/examples.php
+  ${CMAKE_CURRENT_SOURCE_DIR}/index.php
+  ${CMAKE_CURRENT_SOURCE_DIR}/template.php
+  ${CMAKE_CURRENT_BINARY_DIR}/documentation.php
+  )
