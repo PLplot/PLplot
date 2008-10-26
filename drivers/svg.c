@@ -170,8 +170,21 @@ void plD_init_svg(PLStream *pls)
   if (!pls->colorset)
     pls->color = 1; 
 
-  /* Set up device parameters */ 
-  aStream = malloc(sizeof(SVG));
+  /* Initialize family file info */
+  plFamInit(pls);
+
+  /* Prompt for a file name if not already set */    
+  plOpenFile(pls);
+/* Allocate and initialize device-specific data */
+
+  if (pls->dev != NULL)
+    free((void *) pls->dev);
+
+  pls->dev = calloc(1, (size_t) sizeof(SVG));
+  if (pls->dev == NULL)
+    plexit("plD_init_svg: Out of memory.");
+
+  aStream = (SVG *) pls->dev;
   
   /* Set the bounds for plotting.  default is SVG_Default_X x SVG_Default_Y unless otherwise specified. */
    
@@ -196,11 +209,6 @@ void plD_init_svg(PLStream *pls)
 
   plP_setpxl(aStream->scale*DPI/25.4, aStream->scale*DPI/25.4);           /* Pixels/mm. */
 
-  /* Initialize family file info */
-  plFamInit(pls);
-
-  /* Prompt for a file name if not already set */    
-  plOpenFile(pls);
   aStream->svgFile = pls->OutFile;
 
   /* Handle the text clipping option */
@@ -211,7 +219,6 @@ void plD_init_svg(PLStream *pls)
     aStream->textClipping = 1;
   }
   aStream->textClipping = text_clipping;
-  pls->dev = aStream;
 
   aStream->svgIndent = 0;
   svg_general(aStream, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -231,7 +238,7 @@ void plD_bop_svg(PLStream *pls)
 
   /* Plot familying stuff. Not really understood, just copying gd.c */
   plGetFam(pls);
-/* n.b. pls->dev can change because of an indirect call to plD_init_png
+/* n.b. pls->dev can change because of an indirect call to plD_init_svg
  * from plGetFam if familying is enabled.  Thus, wait to define aStream until
  * now. */
   aStream = pls->dev;
