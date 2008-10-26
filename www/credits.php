@@ -16,7 +16,7 @@
 		  <p>Many developers have contributed to PLplot over its long history.  The list of the current core developers is <a href="http://sourceforge.net/project/memberlist.php?group_id=2915">here.</a> A more complete list of developers is at the <a href="http://www.ohloh.net/projects/10094/contributors"> PLplot project page</a> at <a href="http://www.ohloh.net/">Ohloh</a>. In addition many other individuals have contributed to PLplot by providing patches, finding bugs, or requesting features.</p>
          
       <h3>Additional libraries</h3>
-      <p>The Plplot library depends on some other open source libraries provided by 
+      <p>The PLplot library depends on some other open source libraries provided by 
       the community.</p>
       <h4>PLplot core dependencies</h4>
       <ul class="arrowlist">
