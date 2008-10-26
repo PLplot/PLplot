@@ -22,9 +22,10 @@ gpg --send-keys 6C58D1AC
 (where 6C58D1AC is replaced with the appropriate value from the list-keys
 command)
 
-(2) Installing a Local Copy of the PLplot Webpage.
+(2) (Optional) Installing a Local Test Copy of the PLplot Webpage
 
-It can be convenient for testing purposes to generate and install from
+If there has been any changes in the documentation, examples, or the base
+website itself, it is probably a good idea to generate and install from
 scratch a local copy of the PLplot website on some ssh-accessible machine
 (normally your local machine).
 
@@ -36,8 +37,9 @@ scripts/generate_website.sh
 with no arguments.  The script asks you four questions, gives you a chance
 to verify your answers, then does all the rest of it (downloading a
 throwaway copy of the PLplot source code, building the documentation,
-installing the documentation, building the examples, running the examples,
-installing the examples, and installing the remainder of the website)
+generating the announcements that are part of the base website, uploading
+the base website, uploading the documentation, building the examples,
+running the examples, uploading the example source code and example results)
 automatically.  I (AWI) tested this script using the four answers
 
 Summary:
@@ -55,8 +57,11 @@ documentation is there and all the previous problems with source code
 accessibility for the Ada, f77, and OCaml examples are now fixed.
 
 Once you are satisfied with the local website, you can upload it to
-SourceForge with rsync.  I give the directions here, although you may want
-to do this later (see below) in the release process.
+SourceForge with rsync.  I give the directions here, although you will
+probably want to do this later (see below) in the actual release process
+since there is some release link and version information that needs to
+be updated for the actual release (see below) as opposed to this optional
+test of the website generation.
 
 For the above WEBSITE_PREFIX, here is what worked for me from my computer
 with the hostname of raven where that WEBSITE_PREFIX directory was
@@ -79,9 +84,9 @@ directory which is not what you want to do.
 N.B. the --dry-run option for rsync is a god-send and tells you exactly what
 will happen without actually doing it.
 
-(3) Creating a test tarball from trunk
+(3) (Optional) Creating a test tarball from trunk
 
-This optional step is only required if you have some concerns about how
+This step is only required if you have some concerns about how
 recent changes may have affected the generated source tarball, and you want
 to generate that tarball and test it _before_ you create a tag for the
 release.  (The release process for the tag below also generates a tarball
