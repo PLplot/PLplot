@@ -47,7 +47,6 @@ file(MAKE_DIRECTORY
 
 # Note documentation.php configured as above.
 set(toplevel_FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/.htaccess
   ${CMAKE_CURRENT_SOURCE_DIR}/corefunctions.php
   ${CMAKE_CURRENT_SOURCE_DIR}/credits.php
   ${CMAKE_CURRENT_SOURCE_DIR}/development.php
