@@ -511,7 +511,6 @@ if(BUILD_INFO OR PREBUILT_DOC)
     set(HTML_TARBALL ${BASE_HTML}.tar.gz)
     set(INFO_TARBALL ${BASE_INFO}.tar.gz)
     set(MAN_TARBALL ${BASE_MAN}.tar.gz)
-    set(DOCUMENTATION_PHP ${CMAKE_CURRENT_BINARY_DIR}/../../../www/documentation.php)
 
     set(WWW_USERAT ${WWW_USER}@)
     set(RCP_PREFIX ${WWW_USERAT}${WWW_HOST}:)
@@ -558,7 +557,6 @@ if(BUILD_INFO OR PREBUILT_DOC)
     ${BASE}.pdf
     ${BASE}.dvi
     -C ${CMAKE_CURRENT_SOURCE_DIR}/.. COPYING
-    -C ${CMAKE_CURRENT_BINARY_DIR}/../../../www documentation.php
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/${HTML_TARBALL}
     ${CMAKE_CURRENT_BINARY_DIR}/${INFO_TARBALL}
@@ -567,21 +565,19 @@ if(BUILD_INFO OR PREBUILT_DOC)
     ${BASE}.pdf
     ${BASE}.dvi
     ${CMAKE_CURRENT_SOURCE_DIR}/../COPYING
-    ${DOCUMENTATION_PHP}
     )
 
-    add_custom_target(www-uninstall COMMAND ${RSH_COMMAND} rm -rf ${WWW_DIR})
+    add_custom_target(www-uninstall COMMAND ${RSH_COMMAND} rm -rf ${WWW_DIR}/htdocs/docbook-manual)
 
     add_custom_target(
     www-install
-    COMMAND ${RSH_COMMAND} mkdir -p ${WWW_DIR}
-    COMMAND ${RCP} ${TARBALL} ${RCP_PREFIX}${WWW_DIR}
-    COMMAND ${RSH_COMMAND} tar xfz ${WWW_DIR}/${TARBALL} -C ${WWW_DIR}
-    COMMAND ${RSH_COMMAND} tar xfz ${WWW_DIR}/${HTML_TARBALL} -C ${WWW_DIR}
-    COMMAND ${RSH_COMMAND} mv ${WWW_DIR}/documentation.php ${WWW_DIR}/../documentation.php 
-    COMMAND ${RSH_COMMAND} chgrp -R ${WWW_GROUP} ${WWW_DIR}
-    COMMAND ${RSH_COMMAND} chmod -R g=u ${WWW_DIR}
-    COMMAND ${RSH_COMMAND} rm -f ${WWW_DIR}/${TARBALL}
+    COMMAND ${RSH_COMMAND} mkdir -p ${WWW_DIR}/htdocs/docbook-manual
+    COMMAND ${RCP} ${TARBALL} ${RCP_PREFIX}${WWW_DIR}/htdocs/docbook-manual
+    COMMAND ${RSH_COMMAND} tar xfz ${WWW_DIR}/htdocs/docbook-manual/${TARBALL} -C ${WWW_DIR}/htdocs/docbook-manual
+    COMMAND ${RSH_COMMAND} tar xfz ${WWW_DIR}/htdocs/docbook-manual/${HTML_TARBALL} -C ${WWW_DIR}/htdocs/docbook-manual
+    COMMAND ${RSH_COMMAND} chgrp -R ${WWW_GROUP} ${WWW_DIR}/htdocs/docbook-manual
+    COMMAND ${RSH_COMMAND} chmod -R g=u ${WWW_DIR}/htdocs/docbook-manual
+    COMMAND ${RSH_COMMAND} rm -f ${WWW_DIR}/htdocs/docbook-manual/${TARBALL}
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/${TARBALL}
     )
