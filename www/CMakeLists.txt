@@ -54,7 +54,6 @@ set(toplevel_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/download.php
   ${CMAKE_CURRENT_SOURCE_DIR}/examples.php
   ${CMAKE_CURRENT_SOURCE_DIR}/index.php
-  ${CMAKE_CURRENT_SOURCE_DIR}/template.php
   ${CMAKE_CURRENT_BINARY_DIR}/documentation.php
   )
 
