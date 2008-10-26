@@ -30,7 +30,7 @@ fi
 # Remove $WEBSITE_PREFIX to insure absolutely clean result.
 echo ""
 echo "Completely remove old website files."
-ssh $USERNAME@$HOSTNAME rm -rf $WEBSITE_PREFIX
+ssh $USERNAME@$HOSTNAME "rm -rf $WEBSITE_PREFIX; mkdir -p $WEBSITE_PREFIX; chmod u=rwx,g=rwxs $WEBSITE_PREFIX"
 
 # Get down to the work of generating the components of the PLplot website
 # and uploading them to the $WEBSITE_PREFIX directory on $HOSTNAME.
@@ -54,7 +54,7 @@ cmake \
     -DWWW_USER=$USERNAME \
     -DWWW_GROUP=$GROUPNAME \
     -DWWW_HOST=$HOSTNAME \
-    -DWWW_DIR=$WEBSITE_PREFIX/htdocs/docbook-manual \
+    -DWWW_DIR=$WEBSITE_PREFIX \
     -DDEFAULT_NO_BINDINGS=ON -DDEFAULT_NO_DEVICES=ON \
     -DPREBUILD_DIST=ON \
     -DBUILD_DOC=ON \
@@ -63,12 +63,16 @@ cmake \
 make VERBOSE=1 -j3 prebuild_dist >& make_prebuild.out
 
 echo ""
-echo "Install the just-generated documentation to $WEBSITE_PREFIX/htdocs/docbook-manual on $HOSTNAME."
-# This command completely removes WWW_DIR on $HOSTNAME
-# so be careful how you specify the above -DWWW_DIR option.
-
+echo "Install the configured base part of the website to $WEBSITE_PREFIX on $HOSTNAME."
 cd /tmp/plplotdoc/build
-make VERBOSE=1 www-install >& make_www_install.out
+make VERBOSE=1 www-install-base >& make_www-install-base.out
+
+echo ""
+echo "Install the just-generated documentation to $WEBSITE_PREFIX/htdocs/docbook-manual on $HOSTNAME."
+# This command completely removes WWW_DIR/htdocs/docbook-manual on $HOSTNAME
+# so be careful how you specify the above -DWWW_DIR option.
+cd /tmp/plplotdoc/build
+make VERBOSE=1 www-install >& make_www-install.out
 
 echo ""
 echo "Build PLplot, PLplot examples, and screenshots of those examples.  This may take a while depending on your cpu speed...."
@@ -82,19 +86,6 @@ WWW_USER=$USERNAME \
     WWW_HOST=$HOSTNAME \
     WWW_DIR=$WEBSITE_PREFIX \
     scripts/htdocs-gen_plot-examples.sh >& htdocs_gen.out
-
-echo ""
-echo "Finish up by copying static components of the website."
-# Generate the website (other than the documentation and examples done above).
-# N.B. this command removes certain files and subdirectories of
-# WWW_DIR on $HOSTNAME so be careful how you specify WWW_DIR!
-
-cd /tmp/plplotdoc/plplot_source/www
-make \
-    WWW_USER=$USERNAME \
-    WWW_GROUP=$GROUPNAME \
-    WWW_HOST=$HOSTNAME \
-    WWW_DIR=$WEBSITE_PREFIX/htdocs >& make_www.out
 
 # If all the above works like it should, and $HOSTNAME has apache and PHP
 # installed properly, you should be able to browse the
