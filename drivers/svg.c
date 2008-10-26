@@ -229,10 +229,13 @@ void plD_bop_svg(PLStream *pls)
 {
   SVG *aStream;
 
-  aStream = pls->dev;
-
   /* Plot familying stuff. Not really understood, just copying gd.c */
   plGetFam(pls);
+/* n.b. pls->dev can change because of an indirect call to plD_init_png
+ * from plGetFam if familying is enabled.  Thus, wait to define aStream until
+ * now. */
+  aStream = pls->dev;
+
   pls->famadv = 1;
   pls->page++;
   if(svg_family_check(pls)) {return;} 
