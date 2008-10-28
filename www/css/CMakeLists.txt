@@ -22,11 +22,10 @@
 
 # Variables to control configuration of CSS files.
 
-# Colours:
-
-# Our colour style uses few colours which are duplicated over a large number
-# of different contexts so relatively few CMake variables are required to
-# configure our colour style.
+# Colour scheme for menu section is mostly done by fixed gradient 
+# background images.  Thus configuring the non-menu colours is tricky since
+# the result must be reasonably consistent with menu.  Because of this
+# limitation I (AWI) ultimately decided not to configure colours at all.
 
 # Widths and heights:
 

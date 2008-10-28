@@ -2,6 +2,10 @@
 Copyright: Darren Hester 2006, http://www.designsbydarren.com
 License: Released Under the "Creative Commons License", 
 http://creativecommons.org/licenses/by-nc/2.5/
+The original theme was called fruitopia, 
+http://www.oswd.org/design/preview/id/3181, but there have been substantial
+modifications for our needs and also to make it easy to configure it
+with CMake.
 */
 
 body {
@@ -84,11 +88,20 @@ A:hover {
   clear: both;
 }
 
+/* Notes on menu images.
+
+/* menu_bg.gif is a 10x40 color gradient ranging from 
+ * #FF6500 at the top to #C55000 at the bottom. */
+
+/* menu_hover_bg.gif is a 10x40 color gradient ranging from 
+ * #E65D00 at the top to #FF6500 at the bottom. */
+
+/* menu_selected.gif is a 10x40 solid color = #94CA31. */
 #menubar ul {
   margin-top: 0px;
   padding-left: 0px;
   margin-left: 0px;
-  background: #FF6600 url('../img/menu_bg.gif') top left repeat-x;
+  background: #FF6601 url('../img/menu_bg.gif') top left repeat-x;
   color: White;
   float: left;
   width: 100%;
@@ -105,7 +118,7 @@ A:hover {
   padding-bottom:5px;
   padding-left:30px;
   padding-right:30px;
-  background: #FF6600 url('../img/menu_bg.gif') top left repeat-x;
+  background: #FF6601 url('../img/menu_bg.gif') top left repeat-x;
   color: #EFEFEF;
   text-decoration: none;
   float: left;
@@ -114,13 +127,13 @@ A:hover {
 
 #menubar ul li a:hover
 {
-  background: #FF6600 url('../img/menu_hover_bg.gif') top left repeat-x;
+  background: #FF6601 url('../img/menu_hover_bg.gif') top left repeat-x;
   color: #FFFFFF;
 }
 
 #menubar #selected
 {
-  background: #FF6600 url('../img/menu_selected_bg.gif') top left repeat-x;
+  background: #FF6601 url('../img/menu_selected_bg.gif') top left repeat-x;
   color: #FFFFFF;
 }
 
