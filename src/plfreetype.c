@@ -461,10 +461,11 @@ FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
 	    for (k=0;k<n;k++) {
 		bittest=128;
 		for (j=0;j<8;j++) {
-		    if ((bittest&(unsigned char)slot->bitmap.buffer[(i*n)+k])==bittest)
+		    if ((bittest&(unsigned char)slot->bitmap.buffer[(i*n)+k])==bittest) {
 			xx = x+(k*8)+j;
 			if ( (xx >= clipxmin) && (xx <= clipxmax) )
 			  FT->pixel(pls, xx, y+i);
+                    }
 		    bittest>>=1;
 		}
             }
