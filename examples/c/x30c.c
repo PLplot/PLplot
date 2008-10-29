@@ -155,6 +155,8 @@ main(int argc, const char *argv[])
   /* such that it fills the entire plotting area. */
   plshades(z, 2, 2, NULL, 0.0, 1.0, 0.0, 1.0, clevel, 101, 0, -1, 2, plfill, 1, NULL, NULL);
 
+  plFree2dGrid(z,2,2);
+
   plend();
   exit(0);
 }
