@@ -48,6 +48,11 @@ if(ENABLE_java)
       "java compiler not found. Disabling java bindings")
     set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
   endif(NOT CMAKE_Java_COMPILER)
+  if(NOT CMAKE_Java_ARCHIVE)
+    message(STATUS "WARNING: "
+      "java archiver (jar) not found. Disabling java bindings")
+    set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
+  endif(NOT CMAKE_Java_ARCHIVE)
 endif(ENABLE_java)
 
 if(ENABLE_java)
