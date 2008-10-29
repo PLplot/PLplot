@@ -37,8 +37,9 @@ version=@VERSION@
 EXAMPLES_DIR=${EXAMPLES_DIR:-.}
 SRC_EXAMPLES_DIR=${SRC_EXAMPLES_DIR:-.}
 OUTPUT_DIR=${OUTPUT_DIR:-.}
+DEBUG_CMD=${DEBUG_CMD:-.}
 device=${DEVICE:-psc}
-export EXAMPLES_DIR SRC_EXAMPLES_DIR OUTPUT_DIR device 
+export EXAMPLES_DIR SRC_EXAMPLES_DIR OUTPUT_DIR device DEBUG_CMD
 
 usage()
 {
@@ -59,6 +60,9 @@ Options:
                      Specify location where the resulting files are stored.
                      Defaults to "."
    [--verbose]	     Echo each PLplot example that is executed.
+   [--debug="debug command"]         
+                     Run examples with given debug command.
+   [--debug]         Run examples with default debug command (valgrind).
    [--version]
    [--help]
 
@@ -122,6 +126,12 @@ while test $# -gt 0; do
          ;;
       --output-dir=*)
          OUTPUT_DIR=$optarg
+         ;;
+      --debug=*)
+         DEBUG_CMD=$optarg
+         ;;
+      --debug)
+         DEBUG_CMD="valgrind --leak-check=full --show-reachable=yes --log-file=valgrind.x%q{index}%q{lang}.%q{dsuffix}.log"
          ;;
       --help)
          usage 0 1>&2
