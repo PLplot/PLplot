@@ -26,6 +26,8 @@
 # To build the f77 examples before running this script do the following:
 # pushd $f77dir; make; popd
 
+lang="f"
+export index lang 
 if test "yes@HAVE_F77PARSE_CL_TRUE@" = "yes"; then
 # This stanza only works if fortran has command-line parsing capability.
 # However, this is the preferred method because it allows access to
@@ -37,7 +39,8 @@ if test "yes@HAVE_F77PARSE_CL_TRUE@" = "yes"; then
   if [ "$verbose_test" ]; then
     echo "x16af"
   fi
-  $f77dir/x16af -dev $device -o ${OUTPUT_DIR}/x16af%n.$dsuffix $options 2> test.error
+  index="16a"
+  $DEBUG_CMD $f77dir/x16af -dev $device -o ${OUTPUT_DIR}/x16af%n.$dsuffix $options 2> test.error
   status_code=$?
   cat test.error
   if [ "$status_code" -ne 0 ]; then
@@ -56,7 +59,7 @@ if test "yes@HAVE_F77PARSE_CL_TRUE@" = "yes"; then
   if [ "$verbose_test" ]; then
     echo "x${index}f"
   fi
-    $f77dir/x${index}f -dev $device -o ${OUTPUT_DIR}/x${index}f%n.$dsuffix $options 2> test.error
+    $DEBUG_CMD $f77dir/x${index}f -dev $device -o ${OUTPUT_DIR}/x${index}f%n.$dsuffix $options 2> test.error
     status_code=$?
     cat test.error
     if [ "$status_code" -ne 0 ]; then
@@ -79,7 +82,7 @@ else
   if [ "$verbose_test" ]; then
     echo "x16af"
   fi
-  $f77dir/x16af <<EOF 2> test.error
+  $DEBUG_CMD $f77dir/x16af <<EOF 2> test.error
 $device
 ${OUTPUT_DIR}/x16af%n.$dsuffix 
 EOF
@@ -101,7 +104,7 @@ EOF
     if [ "$verbose_test" ]; then
       echo "x${index}f"
     fi
-     $f77dir/x${index}f <<EOF 2> test.error
+     $DEBUG_CMD $f77dir/x${index}f <<EOF 2> test.error
 $device
 ${OUTPUT_DIR}/x${index}f%n.$dsuffix
 EOF
