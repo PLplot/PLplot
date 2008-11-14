@@ -10,7 +10,7 @@ PROBLEMS file, then please send bug reports to PLplot developers via the
 mailing lists at http://sourceforge.net/mail/?group_id=2915 .
 
      Please see the license under which this software is distributed
-(LGPL), and the disclaimer of all warrantees, given in the COPYING.LIB
+(LGPL), and the disclaimer of all warranties, given in the COPYING.LIB
 file.
 
 Notices for Users.
@@ -20,7 +20,7 @@ has now been removed.  Instead, use the CMake-based build system following
 the directions in the INSTALL file.
 
 This is official notice that we no longer support Octave-2.1.73 which has a
-variety of run-time issues in our tests of the octave examples on different
+variety of run-time issues in our tests of the Octave examples on different
 platforms.  In contrast our tests show we get good run-time results with all
 our Octave examples for Octave-3.0.1. Also, that is the recommended stable
 version of Octave at http://www.gnu.org/software/octave/download.html so
@@ -42,42 +42,55 @@ in C/C++) or use plgvpw.
 INDEX
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
-1.1 Improvements to the cairo driver family.
-1.2 Rename test subdirectory to plplot_test
+1.1 New PLplot functions
+1.2 Improvements to the cairo driver family.
 1.3 wxWidgets driver improvements
 1.4 pdf driver improvements
-1.5 Ada language support
-1.6 Ada examples
+1.5 svg driver improvements
+1.6 Ada language support
 1.7 OCaml language support
-1.8 New plplot functions
-1.9 Update to various language bindings
-1.10 Update to various examples
-
+1.8 Update to various language bindings
+1.9 Update to various examples
+1.10 Rename test subdirectory to plplot_test
+1.11 Website support files updated
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
-2.1 Improvements to the cairo driver family.
-2.2 All autotools-related files have now been removed
-2.3 Date / time labels for axes
-2.4 Code cleanup 
-2.5 Bug fixes
-2.6 Alpha value support
-2.7 Build system improvements
-2.8 Implement build-system infrastructure for installed Ada bindings and 
+2.1 All autotools-related files have now been removed
+2.2 Build system bug fixes
+2.3 Build system improvements
+2.4 Implement build-system infrastructure for installed Ada bindings and 
 examples
-2.9 WxWidgets driver improvements
-2.10 External libLASi library improvements affecting our psttf device.
-2.11 Rename test subdirectory to plplot_test
-2.12 Ada language support
-2.13 Ada examples
-2.14 OCaml language support
-2.15 New plplot functions
+2.5 Code cleanup 
+2.6 Date / time labels for axes
+2.7 Alpha value support
+2.8 New PLplot functions
+2.9 External libLASi library improvements affecting our psttf device.
+2.10 Improvements to the cairo driver family.
+2.11 wxWidgets driver improvements
+2.12 pdf driver improvements
+2.13 svg driver improvements
+2.14 Ada language support
+2.15 OCaml language support
 2.16 Update to various language bindings
 2.17 Update to various examples
-
+2.18 Rename test subdirectory to plplot_test
+2.19 Website support files updated
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
 
-1.1 Improvements to the cairo driver family.
+1.1 New PLplot functions
+
+An enhanced version of plimage, plimagefr has been added. This allows images
+to be plotted using coordinate transformation, and also for the dynamic range
+of the plotted values to be altered. Example 20 has been modified to 
+demonstrate this new functionality. 
+
+To ensure consistent results in example 21 between different platforms and 
+language bindings PLplot now includes a small random number generator within
+the library. plrandd will return a PLFLT random number in the range 0.0-1.0. 
+plseed will allow the random number generator to be seeded.
+
+1.2 Improvements to the cairo driver family.
 
 Jonathan Woithe improved the xcairo driver so that it can optionally be 
 used with an external user supplied X Drawable. This enables a nice 
@@ -86,14 +99,9 @@ Hunt fixed the bugs that broke the memcairo driver and it is now fully
 functional. Additionally, a new extcairo driver was added that will plot
 into a user supplied cairo context.
 
-1.2 Rename test subdirectory to plplot_test
-
-This change was necessary to quit clashing with the "make test" target which
-now works for the first time ever (by executing ctest).
-
 1.3 wxWidgets driver improvements
 
-Complete reorganisation of the driver code. A new backend was added, based
+Complete reorganization of the driver code. A new backend was added, based
 on the wxGraphicsContext class, which is available for wxWidgets 2.8.4
 and later. This backend produces antialized output similar to the
 AGG backend but has no dependency on the AGG library. The basic wxDC
@@ -124,84 +132,134 @@ Added new options:
  - hrshsym: Use Hershey symbol set (hrshsym=0|1)
  - pagesize: Set page size (pagesize=A4|letter|A3|A5)
  
-1.5 Ada language support
+1.5 svg driver improvements
 
-Ada language support is now working for both CMake-2.4.x and CMake-2.6.0.
+This device driver has had the following improvements: schema for generated
+file now validates properly at http://validator.w3.org/ for the
+automatically detected document type of SVG 1.1; -geometry option now works;
+alpha channel transparency has been implemented; file familying for
+multipage examples has been implemented; coordinate scaling has been
+implemented so that full internal PLplot resolution is used; extraneous
+whitespace and line endings that were being injected into text in error have
+now been removed; and differential correction to string justification is now
+applied.  
 
-1.6 Ada examples
+The result of these improvements is that our SVG device now gives the
+best-looking results of all our devices.  However, currently you must be
+careful of which SVG viewer or editor you try because a number of them have
+some bugs that need to be resolved.  For example, there is a librsvg bug in
+text placement (http://bugzilla.gnome.org/show_bug.cgi?id=525023) that
+affects all svg use within GNOME as well as the ImageMagick "display"
+application.  However, at least the latest konqueror and firefox as well as
+inkscape and scribus-ng (but not scribus!) give outstanding looking results
+for files generated by our svg device driver.
 
-Example 19 currently has a run-time error for some platforms.  Otherwise,
-the Ada bindings and standard examples are in excellent shape with all
-standard examples now implemented (except for example 20), and all
-implemented examples giving the same results as the corresponding C examples
-(except for example 19 on some platforms and example 21 [currently] on all
-platforms). To give Ada wider testing, we have enabled it by default.
+1.6 Ada language support
+
+We now have a complete Ada bindings implemented for PLplot. We also have a
+complete set of our standard examples implemented in Ada which give results
+that are identical with corresponding results for the C standard examples.
+This is an excellent test of a large subset of the Ada bindings. We now
+enable Ada by default for our users and request widespread testing of this
+new feature.
 
 1.7 OCaml language support
 
-Thanks primarily to Hezekiah M. Carty's efforts we now have complete OCaml
-bindings and a complete set of OCaml standard examples implemented for
-PLplot.  These new bindings have been tested by showing the OCaml standard
-examples give identical results to the corresponding C standard examples. We
-now enable OCaml by default for our users and request widespread testing of
-this new feature for PLplot.
+Thanks primarily to Hezekiah M. Carty's efforts we now have a complete OCaml
+bindings implemented for PLplot. We also have a complete set of our standard
+examples implemented in OCaml which give results that are identical with
+corresponding results for the C standard examples. This is an excellent test
+of a large subset of the OCaml bindings. We now enable OCaml by default for
+our users and request widespread testing of this new feature.
 
-1.8 New plplot functions
-
-An enhanced version of plimage, plimagefr has been added. This allows images
-to be plotted using coordinate transformation, and also for the dynamic range
-of the plotted values to be altered. Example 20 has been modified to 
-demonstrate this new functionality. 
-
-To ensure consistent results in example 21 between different platforms and 
-language bindings plplot now includes a small random number generator within
-the library. plrandd will return a PLFLT random number in the range 0.0-1.0. 
-plseed will allow the random number generator to be seeded.
-
-1.9 Updates to various language bindings
+1.8 Updates to various language bindings
 
 A concerted effort has been made to bring all the language bindings up to
-date with recently added functions. C, C++, f77, f95, java, octave, 
-python, tcl, ada and ocaml now all support the common plplot API (with the 
+date with recently added functions. Ada, C++, f77, f95, Java, OCaml, Octave, 
+Python, and Tcl now all support the common PLplot API (with the 
 exception of the mapping functions which are not yet implemented for all 
 bindings due to technical issues.) This is a significant step forward for 
 those using languages other than C.
 
-1.10 Updates to various examples
+1.9 Updates to various examples
 
 To help test the updates to the language bindings the examples have been 
-thoroughly checked. C, C++, f77, f95, ada and ocaml now contain a full set 
-of non-interactive tests (example 1-30 excluding 14 and 17). Java, octave, 
-python and tcl are missing example 19 because of the issue with the mapping
+thoroughly checked. Ada, C, C++, f77, f95, and OCaml now contain a full set
+of non-interactive tests (example 1-30 excluding 14 and 17). Java, Octave,
+Python and Tcl are missing example 19 because of the issue with the mapping
 functions. The examples have also been checked to ensure consistent results
-between different language bindings. Currently there are still some minor 
-differences in the results for the tcl examples, probably due to rounding 
-errors. The standard test suite for plplot using ctest now carries out a 
-comparison of the postscript output for different languages as a check.
-Some of the tcl examples (example 21) require tcl8.5 for proper support 
+between different language bindings. Currently there are still some minor
+differences in the results for the tcl examples, probably due to rounding
+errors. The standard test suite for PLplot using ctest now carries out a
+comparison of the postscript output for different languages as a check. Some
+of the Tcl examples (example 21) require Tcl version 8.5 for proper support
 for NaNs.
 
+1.10 Rename test subdirectory to plplot_test
+
+This change was necessary to quit clashing with the "make test" target which
+now works for the first time ever (by executing ctest).
+
+1.11 Website support files updated
+
+Our new website content is generated with PHP and uses CSS (cascaded style
+sheets) to implement a consistent style.  This new approach demanded lots of
+changes in the website support files that are used to generate and upload
+our website and which are automatically included with the release.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
-2.1 Improvements to the cairo driver family.
-
-Jonathan Woithe improved the xcairo driver so that it can optionally be 
-used with an external user supplied X Drawable. This enables a nice 
-separation of graphing (PLplot) and window management (Gtk, etc..). Doug 
-Hunt fixed the bugs that broke the memcairo driver and it is now fully
-functional. Additionally, a new extcairo driver was added that will plot
-into a user supplied cairo context.
-
-2.2 All autotools-related files have now been removed
+2.1 All autotools-related files have now been removed
 
 CMake (with the exception of a special build script for the DJGPP platform)
 is now the only supported build system. It has been tested on Linux / Unix,
 Mac OS-X and Windows platforms.
 
-2.3 Date / time labels for axes
+2.2 Build system bug fixes
+
+Various fixes include the following:
+
+Ctest will now work correctly when the build tree path includes symlinks.
+
+Dependencies for swig generated files fixed so they are not rebuilt every 
+time make is called.
+
+Various dependency fixes to ensure that parallel builds (using make -j) 
+work under unix.
+
+2.3 Build system improvements
+
+We now transform link flag results delivered to the CMake environment by
+pkg-config into the preferred CMake form of library information.  The
+practical effect of this improvement is that external libraries in
+non-standard locations now have their rpath options set correctly for our
+build system both for the build tree and the install tree so you don't have
+to fiddle with LD_LIBRARY_PATH, etc.
+
+2.4 Implement build-system infrastructure for installed Ada bindings and 
+examples
+
+Install source files, library information files, and the plplotada library
+associated with the Ada bindings.  Configure and install the pkg-config file
+for the plplotada library.  Install the Ada examples and a configured Makefile
+to build them in the install tree.
+
+2.5 Code cleanup
+
+The PLplot source code has been cleaned up to make consistent use of 
+(const char *) and (char *) throughout. Some API functions have changed 
+to use const char * instead of char * to make it clear that the strings 
+are not modified by the function. The C and C++ examples have been updated
+consistent with this. These changes fix a large number of warnings 
+with gcc-4.2. Note: this should not require programs using PLplot to be 
+recompiled as it is not a binary API change.
+
+There has also been some cleanup of include files in the C++ examples
+so the code will compile with the forthcoming gcc-4.3.
+
+2.6 Date / time labels for axes
   
-Plplot now allows date / time labels to be used on axes. A new option 
+PLplot now allows date / time labels to be used on axes. A new option 
 ('d') is available for the xopt and yopt arguments to plbox which 
 indicates that the axis should be interpreted as a date / time. Similarly
 there is a new range of options for plenv to select date / time labels. 
@@ -213,32 +271,7 @@ format string. All formatting is done using the C strftime function.
 See documentation for available options on your platform. Example 29 
 demonstrates the new capabilities.  
 
-2.4 Code cleanup
-
-The plplot source code has been cleaned up to make consistent use of 
-(const char *) and (char *) throughout. Some API functions have changed 
-to use const char * instead of char * to make it clear that the strings 
-are not modified by the function. The C and C++ examples have been updated
-consistent with this. These changes fix a large number of warnings 
-with gcc-4.2. Note: this should not require programs using plplot to be 
-recompiled as it is not a binary API change.
-
-There has also been some cleanup of include files in the C++ examples
-so the code will compile with the forthcoming gcc-4.3.
-
-2.5 Bug fixes
-
-Various fixes including:
-
-Ctest will now work correctly when the build tree path includes symlinks.
-
-Dependencies for swig generated files fixed so they are not rebuilt every 
-time make is called.
-
-Various dependency fixes to ensure that parallel builds (using make -j) 
-work under unix.
-
-2.6 Alpha value support
+2.7 Alpha value support
 
 PLplot core has been modified to support a transparency or alpha value
 channel for each color in color map 0 and 1. In addition a number of new
@@ -252,29 +285,19 @@ currently support alpha values. Currently only the cairo, gd, wxwidgets and
 aquaterm drivers support alpha values. There are some limitations with the gd 
 driver due to transparency support in the underlying libgd library.
 
-2.7 Build system improvements
+2.8 New PLplot functions
 
-We now transform link flag results delivered to the CMake environment by
-pkg-config into the preferred CMake form of library information.  The
-practical effect of this improvement is that external libraries in
-non-standard locations now have their rpath options set correctly for our
-build system both for the build tree and the install tree so you don't have
-to fiddle with LD_LIBRARY_PATH, etc.
+An enhanced version of plimage, plimagefr has been added. This allows images
+to be plotted using coordinate transformation, and also for the dynamic range
+of the plotted values to be altered. Example 20 has been modified to 
+demonstrate this new functionality. 
 
-2.8 Implement build-system infrastructure for installed Ada bindings and 
-examples
+To ensure consistent results in example 21 between different platforms and 
+language bindings PLplot now includes a small random number generator within
+the library. plrandd will return a PLFLT random number in the range 0.0-1.0. 
+plseed will allow the random number generator to be seeded.
 
-Install source files, library information files, and the plplotada library
-associated with the Ada bindings.  Configure and install the pkg-config file
-for the plplotada library.  Install the Ada examples and a configured Makefile
-to build them in the install tree.
-
-2.9 WxWidgets driver improvements
-
-A number of small bug fixes. New functionality includes menu options to 
-save the current plot in different formats.
-
-2.10 External libLASi library improvements affecting our psttf device.
+2.9 External libLASi library improvements affecting our psttf device.
 
 Our psttf device depends on the libLASi library. libLASi-1.1.0 has just been
 released at http://sourceforge.net/svn/?group_id=187113 .  We recommend
@@ -283,50 +306,93 @@ device since this version of libLASi is more robust against glyph
 information returned by pango/cairo/fontconfig that on rare occasions is not
 suitable for use by libLASi.
 
-2.11 Rename test subdirectory to plplot_test
+2.10 Improvements to the cairo driver family.
 
-This change was necessary to quit clashing with the "make test" target which
-now works for the first time ever (by executing ctest).
+Jonathan Woithe improved the xcairo driver so that it can optionally be 
+used with an external user supplied X Drawable. This enables a nice 
+separation of graphing (PLplot) and window management (Gtk, etc..). Doug 
+Hunt fixed the bugs that broke the memcairo driver and it is now fully
+functional. Additionally, a new extcairo driver was added that will plot
+into a user supplied cairo context.
 
-2.12 Ada language support
+2.11 wxWidgets driver improvements
 
-Ada language support is now working for both CMake-2.4.x and CMake-2.6.0.
+Complete reorganization of the driver code. A new backend was added, based
+on the wxGraphicsContext class, which is available for wxWidgets 2.8.4
+and later. This backend produces antialized output similar to the
+AGG backend but has no dependency on the AGG library. The basic wxDC
+backend and the wxGraphicsContext backend process the text output
+on their own, which results in much nicer plots than with the standard
+Hershey fonts and is much faster than using the freetype library. New
+options were introduced in the wxWidgets driver:
+ - backend: Choose backend: (0) standard, (1) using AGG library,
+                            (2) using wxGraphicsContext
+ - hrshsym: Use Hershey symbol set (hrshsym=0|1)
+ - text: Use own text routines (text=0|1)
+ - freetype: Use FreeType library (freetype=0|1)
+The option "text" changed its meaning, since it enabled the FreeType library
+support, while now the option enables the driver's own text routines.
 
-2.13 Ada examples
+2.12 pdf driver improvements
 
-Example 19 currently has a run-time error for some platforms.  Otherwise,
-the Ada bindings and standard examples are in excellent shape with all
-standard examples now implemented (except for example 20), and all
-implemented examples giving the same results as the corresponding C examples
-(except for example 19 on some platforms and example 21 [currently] on all
-platforms). To give Ada wider testing, we have enabled it by default.
+The pdf driver (which is based on the haru library http://www.libharu.org)
+processes the text output now on its own. So far only the Adobe Type1
+fonts are supported. TrueType font support will follow. Full unicode
+support will follow after the haru library will support unicode strings. The
+driver is now able to produce A4, letter, A5 and A3 pages. The Hershey font
+may be used only for symbols. Output can now be compressed, resulting in 
+much smaller file sizes.
+Added new options:
+ - text: Use own text routines (text=0|1)
+ - compress: Compress pdf output (compress=0|1)
+ - hrshsym: Use Hershey symbol set (hrshsym=0|1)
+ - pagesize: Set page size (pagesize=A4|letter|A3|A5)
+ 
+2.13 svg driver improvements
 
-2.14 OCaml language support
+This device driver has had the following improvements: schema for generated
+file now validates properly at http://validator.w3.org/ for the
+automatically detected document type of SVG 1.1; -geometry option now works;
+alpha channel transparency has been implemented; file familying for
+multipage examples has been implemented; coordinate scaling has been
+implemented so that full internal PLplot resolution is used; extraneous
+whitespace and line endings that were being injected into text in error have
+now been removed; and differential correction to string justification is now
+applied.  
 
-Thanks primarily to Hezekiah M. Carty's efforts we now have complete OCaml
-bindings and a complete set of OCaml standard examples implemented for
-PLplot.  These new bindings have been tested by showing the OCaml standard
-examples give identical results to the corresponding C standard examples. We
-now enable OCaml by default for our users and request widespread testing of
-this new feature for PLplot.
+The result of these improvements is that our SVG device now gives the
+best-looking results of all our devices.  However, currently you must be
+careful of which SVG viewer or editor you try because a number of them have
+some bugs that need to be resolved.  For example, there is a librsvg bug in
+text placement (http://bugzilla.gnome.org/show_bug.cgi?id=525023) that
+affects all svg use within GNOME as well as the ImageMagick "display"
+application.  However, at least the latest konqueror and firefox as well as
+inkscape and scribus-ng (but not scribus!) give outstanding looking results
+for files generated by our svg device driver.
 
-2.15 New plplot functions
+2.14 Ada language support
 
-An enhanced version of plimage, plimagefr has been added. This allows images
-to be plotted using coordinate transformation, and also for the dynamic range
-of the plotted values to be altered. Example 20 has been modified to 
-demonstrate this new functionality. 
+We now have a complete Ada bindings implemented for PLplot. We also have a
+complete set of our standard examples implemented in Ada which give results
+that are identical with corresponding results for the C standard examples.
+This is an excellent test of a large subset of the Ada bindings. We now
+enable Ada by default for our users and request widespread testing of this
+new feature.
 
-To ensure consistent results in example 21 between different platforms and 
-language bindings plplot now includes a small random number generator within
-the library. plrandd will return a PLFLT random number in the range 0.0-1.0. 
-plseed will allow the random number generator to be seeded.
+2.15 OCaml language support
+
+Thanks primarily to Hezekiah M. Carty's efforts we now have a complete OCaml
+bindings implemented for PLplot. We also have a complete set of our standard
+examples implemented in OCaml which give results that are identical with
+corresponding results for the C standard examples. This is an excellent test
+of a large subset of the OCaml bindings. We now enable OCaml by default for
+our users and request widespread testing of this new feature.
 
 2.16 Updates to various language bindings
 
 A concerted effort has been made to bring all the language bindings up to
-date with recently added functions. C, C++, f77, f95, java, octave, 
-python, tcl, ada and ocaml now all support the common plplot API (with the 
+date with recently added functions. Ada, C++, f77, f95, Java, OCaml, Octave, 
+Python, and Tcl now all support the common PLplot API (with the 
 exception of the mapping functions which are not yet implemented for all 
 bindings due to technical issues.) This is a significant step forward for 
 those using languages other than C.
@@ -334,15 +400,26 @@ those using languages other than C.
 2.17 Updates to various examples
 
 To help test the updates to the language bindings the examples have been 
-thoroughly checked. C, C++, f77, f95, ada and ocaml now contain a full set 
-of non-interactive tests (example 1-30 excluding 14 and 17). Java, octave, 
-python and tcl are missing example 19 because of the issue with the mapping
+thoroughly checked. Ada, C, C++, f77, f95, and OCaml now contain a full set
+of non-interactive tests (example 1-30 excluding 14 and 17). Java, Octave,
+Python and Tcl are missing example 19 because of the issue with the mapping
 functions. The examples have also been checked to ensure consistent results
-between different language bindings. Currently there are still some minor 
-differences in the results for the tcl examples, probably due to rounding 
-errors. The standard test suite for plplot using ctest now carries out a 
-comparison of the postscript output for different languages as a check.
-Some of the tcl examples (example 21) require tcl8.5 for proper support 
+between different language bindings. Currently there are still some minor
+differences in the results for the tcl examples, probably due to rounding
+errors. The standard test suite for PLplot using ctest now carries out a
+comparison of the postscript output for different languages as a check. Some
+of the Tcl examples (example 21) require Tcl version 8.5 for proper support
 for NaNs.
 
+2.18 Rename test subdirectory to plplot_test
+
+This change was necessary to quit clashing with the "make test" target which
+now works for the first time ever (by executing ctest).
+
+2.19 Website support files updated
+
+Our new website content is generated with PHP and uses CSS (cascaded style
+sheets) to implement a consistent style.  This new approach demanded lots of
+changes in the website support files that are used to generate and upload
+our website and which are automatically included with the release.
 
