@@ -53,6 +53,7 @@ INDEX
 1.9 Update to various examples
 1.10 Rename test subdirectory to plplot_test
 1.11 Website support files updated
+1.12 Internal changes to function visibility
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 2.1 All autotools-related files have now been removed
@@ -75,6 +76,7 @@ examples
 2.17 Update to various examples
 2.18 Rename test subdirectory to plplot_test
 2.19 Website support files updated
+2.20 Internal changes to function visibility
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
 
@@ -195,6 +197,13 @@ comparison of the postscript output for different languages as a check. Some
 of the Tcl examples (example 21) require Tcl version 8.5 for proper support
 for NaNs.
 
+Also new is an option for the plplot_test.sh script to run the examples 
+using a debugging command. This is enabled using the --debug option. The
+default it to use the valgrind memory checker. This has highlighted at 
+least one memory leaks in plplot which have been fixed. It is not part 
+of the standard ctest tests because it can be _very_ slow for a complete
+set of language bindings and device drivers.
+
 1.10 Rename test subdirectory to plplot_test
 
 This change was necessary to quit clashing with the "make test" target which
@@ -206,6 +215,14 @@ Our new website content is generated with PHP and uses CSS (cascaded style
 sheets) to implement a consistent style.  This new approach demanded lots of
 changes in the website support files that are used to generate and upload
 our website and which are automatically included with the release.
+
+1.12 Internal changes to function visibility
+
+The internal definitions of functions in plplot have been significantly 
+tidied up to allow the use of the -fvisibility=hidden option with newer
+versions of gcc. This prevents internal functions from being exported
+to the user where possible. This extends the existing support for this
+on windows.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -411,6 +428,13 @@ comparison of the postscript output for different languages as a check. Some
 of the Tcl examples (example 21) require Tcl version 8.5 for proper support
 for NaNs.
 
+Also new is an option for the plplot_test.sh script to run the examples 
+using a debugging command. This is enabled using the --debug option. The
+default it to use the valgrind memory checker. This has highlighted at 
+least one memory leaks in plplot which have been fixed. It is not part 
+of the standard ctest tests because it can be _very_ slow for a complete
+set of language bindings and device drivers.
+
 2.18 Rename test subdirectory to plplot_test
 
 This change was necessary to quit clashing with the "make test" target which
@@ -422,4 +446,12 @@ Our new website content is generated with PHP and uses CSS (cascaded style
 sheets) to implement a consistent style.  This new approach demanded lots of
 changes in the website support files that are used to generate and upload
 our website and which are automatically included with the release.
+
+2.20 Internal changes to function visibility
+
+The internal definitions of functions in plplot have been significantly 
+tidied up to allow the use of the -fvisibility=hidden option with newer
+versions of gcc. This prevents internal functions from being exported
+to the user where possible. This extends the existing support for this
+on windows.
 
