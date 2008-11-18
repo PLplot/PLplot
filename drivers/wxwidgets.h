@@ -326,6 +326,14 @@ private: /* variables */
   
   /* text colors */
   unsigned char textRed, textGreen, textBlue;
+
+  unsigned char mStrokeOpacity;
+  unsigned char mColorRedStroke;
+  unsigned char mColorGreenStroke;
+  unsigned char mColorBlueStroke;
+  unsigned char mColorRedFill;
+  unsigned char mColorGreenFill;
+  unsigned char mColorBlueFill;
 };
 #endif
 
@@ -467,7 +475,7 @@ void plD_erroraborthandler_wxwidgets( char *errormessage );
 \*----------------------------------------------------------------------*/
 
 /* define if you want debug output */
-// #define _DEBUG //*/
+/* #define _DEBUG //*/
 /* #define _DEBUG_VERBOSE //*/
 void Log_Verbose( const char *fmt, ... );
 void Log_Debug( const char *fmt, ... );

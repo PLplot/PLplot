@@ -24,7 +24,6 @@
 /* TODO:
  * - text clipping
  * - implement AddToClipRegion for text correctly
- * - Example 16 problem at last page
  */
 
 #include "plDevs.h"

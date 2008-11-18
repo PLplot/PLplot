@@ -94,24 +94,14 @@ void wxPLDevGC::DrawPolyline( short *xa, short *ya, PLINT npts )
 {
   // Log_Verbose( "%s", __FUNCTION__ );
 
-	wxDouble x1a, y1a, x2a, y2a;
-  
-  x1a=xa[0]/scalex;
-  y1a=height-ya[0]/scaley;
-  
   wxGraphicsPath path=m_context->CreatePath();
-  path.MoveToPoint( x1a, y1a );
-  for( PLINT i=1; i<npts; i++ ) {
-    x2a=xa[i]/scalex;
-    y2a=height-ya[i]/scaley;
-    path.AddLineToPoint( x2a, y2a );
-    x1a=x2a; y1a=y2a;
-  }
+  path.MoveToPoint( xa[0]/scalex, height-ya[0]/scaley );
+  for( PLINT i=1; i<npts; i++ )
+    path.AddLineToPoint( xa[i]/scalex, height-ya[i]/scaley );
   m_context->StrokePath( path );
 
   wxDouble x, y, w, h;
   path.GetBox( &x, &y, &w, &h );
-  
   AddtoClipRegion( (int)x, (int)y, (int)(x+w), (int)(y+h) );  
 }
 
@@ -127,15 +117,14 @@ void wxPLDevGC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLIN
   if( x2<0 ) x2a=width;  else x2a=x2/scalex;
   if( y2<0 ) y2a=height; else y2a=height-y2/scaley;
 
-  const wxPen oldPen=m_dc->GetPen();
-  const wxBrush oldBrush=m_dc->GetBrush();
-
   m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(bgr, bgg, bgb), 1, wxSOLID)) );
   m_context->SetBrush( wxBrush(wxColour(bgr, bgg, bgb)) );
   m_context->DrawRectangle( x1a, y1a, x2a-x1a, y2a-y1a ); 
 
-  m_context->SetPen( oldPen );  
-  m_context->SetBrush( oldBrush );  
+  m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(mColorRedStroke, mColorGreenStroke,
+                                                              mColorBlueStroke, mStrokeOpacity),
+                                                     1, wxSOLID)) );
+  m_context->SetBrush( wxBrush(wxColour(mColorRedFill, mColorGreenFill, mColorBlueFill, mStrokeOpacity)) );
    
   AddtoClipRegion( (int)x1a, (int)y1a, (int)x2a, (int)y2a );
 }
@@ -143,7 +132,7 @@ void wxPLDevGC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLIN
 
 void wxPLDevGC::FillPolygon( PLStream *pls )
 {
-  Log_Verbose( "%s", __FUNCTION__ );
+  // Log_Verbose( "%s", __FUNCTION__ );
 
   wxGraphicsPath path=m_context->CreatePath();
   path.MoveToPoint( pls->dev_x[0]/scalex, height-pls->dev_y[0]/scaley );
@@ -193,8 +182,8 @@ void wxPLDevGC::SetWidth( PLStream *pls )
 {
   // Log_Verbose( "%s", __FUNCTION__ );
 
-  m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                                               pls->cmap0[pls->icol0].b, (unsigned char)(pls->cmap0[pls->icol0].a*255)),
+  m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(mColorRedStroke, mColorGreenStroke,
+                                                              mColorBlueStroke, mStrokeOpacity),
                                                      pls->width>0 ? pls->width : 1, wxSOLID)) );
 }
 
@@ -203,11 +192,18 @@ void wxPLDevGC::SetColor0( PLStream *pls )
 {
   // Log_Verbose( "%s", __FUNCTION__ );
 
-  m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-                                                               pls->cmap0[pls->icol0].b, (unsigned char)(pls->cmap0[pls->icol0].a*255)),
+  mColorRedStroke = pls->cmap0[pls->icol0].r;
+  mColorGreenStroke = pls->cmap0[pls->icol0].g;
+  mColorBlueStroke = pls->cmap0[pls->icol0].b;
+  mColorRedFill = pls->cmap0[pls->icol0].r;
+  mColorGreenFill = pls->cmap0[pls->icol0].g;
+  mColorBlueFill = pls->cmap0[pls->icol0].b;
+  mStrokeOpacity = (unsigned char)(pls->cmap0[pls->icol0].a*255);
+
+  m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(mColorRedStroke, mColorGreenStroke,
+                                                              mColorBlueStroke, mStrokeOpacity),
                                                      pls->width>0 ? pls->width : 1, wxSOLID)) );
-  m_context->SetBrush( wxBrush(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g, pls->cmap0[pls->icol0].b,
-                                        (unsigned char)(pls->cmap0[pls->icol0].a*255))) );
+  m_context->SetBrush( wxBrush(wxColour(mColorRedFill, mColorGreenFill, mColorBlueFill, mStrokeOpacity)) );
 }
 
 
@@ -215,11 +211,18 @@ void wxPLDevGC::SetColor1( PLStream *pls )
 {
   // Log_Verbose( "%s", __FUNCTION__ );
 
-  m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g,
-                                                              pls->curcolor.b, (unsigned char)(pls->curcolor.a*255)),
+  mColorRedStroke = pls->curcolor.r;
+  mColorGreenStroke = pls->curcolor.g;
+  mColorBlueStroke = pls->curcolor.b;      
+  mColorRedFill = pls->curcolor.r;
+  mColorGreenFill = pls->curcolor.g;
+  mColorBlueFill = pls->curcolor.b;      
+  mStrokeOpacity = (unsigned char)(pls->curcolor.a*255);
+
+  m_context->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(mColorRedStroke, mColorGreenStroke,
+                                                              mColorBlueStroke, mStrokeOpacity),
                                                      pls->width>0 ? pls->width : 1, wxSOLID)) );
-  m_context->SetBrush( wxBrush(wxColour(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b,
-                                        (unsigned char)(pls->curcolor.a*255))) );
+  m_context->SetBrush( wxBrush(wxColour(mColorRedFill, mColorGreenFill, mColorBlueFill, mStrokeOpacity)) );
 }
 
 
