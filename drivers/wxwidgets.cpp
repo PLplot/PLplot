@@ -325,6 +325,7 @@ DrvOpt wx_options[] = {
 #ifdef HAVE_AGG
   case 1:
     dev = new wxPLDevAGG;
+    text = 0; /* text processing doesn't work yet for the AGG backend */
     break;
 #endif
   default:
