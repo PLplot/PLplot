@@ -19,6 +19,11 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
+/* TODO: 
+ * - let the AGG library process the text. In the moment most of the relevant code
+ *   is commented out, since there are problems with the affine transformation 
+ */
+
 #include "plDevs.h"
 
 #ifdef PLD_wxwidgets
@@ -140,7 +145,7 @@ wxPLDevAGG::wxPLDevAGG() :
 	 *  "PLPLOT_FREETYPE_FONT_DIR" to something else.
 	 *  NOTE WELL - the trailing slash must be added for now !
 	 */
-	const char *str;
+	/* const char *str;
 
 	fontdir.Clear();
 	if( (str=getenv("PLPLOT_FREETYPE_FONT_DIR"))!=NULL )
@@ -148,7 +153,7 @@ wxPLDevAGG::wxPLDevAGG() :
 	else
 		fontdir.Append( wxT(PL_FREETYPE_FONT_DIR) );
 	
-	printf("fontdir=%ws, len=%d\n", fontdir.c_str(), fontdir.Length() );
+	//printf("fontdir=%s, len=%d\n", fontdir.c_str(), fontdir.Length() ); */
 #endif	
 }
 
@@ -222,7 +227,31 @@ void wxPLDevAGG::DrawPolyline( short *xa, short *ya, PLINT npts )
 
 void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
-  mRendererBase.clear( agg::rgba8(bgr, bgg, bgb) );
+  if( x1<0 && y1<0 && x2<0 && y2<0 ) {
+    mRendererBase.clear( agg::rgba8(bgr, bgg, bgb) );
+    if( !resizing && ownGUI )
+      AddtoClipRegion( 0, 0, width, height );
+  } else {
+    mPath.remove_all();
+    mPath.move_to( x1, y1 );
+    mPath.line_to( x2, y1 );
+    mPath.line_to( x2, y2 );
+    mPath.line_to( x1, y2 );
+    mPath.close_polygon();
+
+    mRasterizer.reset();
+    mRasterizer.add_path( mPathTransform );
+    mRendererSolid.color( agg::rgba8(bgr, bgg, bgb, 255) );
+    agg::render_scanlines( mRasterizer, mScanLine, mRendererSolid );
+    
+    mConvStroke.width( 1.0 );
+    mRasterizer.add_path( mStrokeTransform );
+    mRendererSolid.color( agg::rgba8(bgr, bgg, bgb, 255) );
+    agg::render_scanlines( mRasterizer, mScanLine, mRendererSolid );
+
+    if( !resizing && ownGUI )
+      AGGAddtoClipRegion( x1, y1, x2, y2 );
+  }
 }
 
 
@@ -341,11 +370,13 @@ void wxPLDevAGG::SetExternalBuffer( void* dc )
 void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
 {
   mBuffer->SetRGB( x, y, GetRValue(color), GetGValue(color), GetBValue(color) );   
+  AddtoClipRegion( x, y, x, y );
 }
 
 void wxPLDevAGG::PutPixel( short x, short y )
 {
   mBuffer->SetRGB( x, y, mColorRedStroke, mColorGreenStroke, mColorBlueStroke );
+  AddtoClipRegion( x, y, x, y );
 }
 
 PLINT wxPLDevAGG::GetPixel( short x, short y )
@@ -371,28 +402,46 @@ void wxPLDevAGG::PSDrawTextToDC( char* utf8_string, bool drawText )
   printf("len=%d\n", len );
 
   const agg::glyph_cache* glyph;
-  for( size_t i=0; i<len && str[i]; i++ ) {
-    glyph = mFontManager.glyph( str[i] );
-    if( glyph ) {
-      printf( "before: start_x=%f, start_y=%f\n", start_x, start_y );
-      //if( i )
-        mFontManager.add_kerning( &start_x, &start_y );
-      printf( "after: start_x=%f, start_y=%f\n", start_x, start_y );
-      mFontManager.init_embedded_adaptors( glyph, start_x, start_y );
-
-      if( drawText ) {
-        mRendererSolid.color( agg::rgba8(mColorRedStroke, mColorGreenStroke, mColorBlueStroke, mStrokeOpacity) );
-        agg::render_scanlines( mFontManager.gray8_adaptor(), mFontManager.gray8_scanline(), mRendererSolid );
+  if( !drawText ) {
+    double x = 0;
+    double y = 0;
+    bool first = true;
+    char* saveStr = str;
+    while( *str && len )
+    {
+      glyph = mFontManager.glyph( *str );
+      if( glyph ) {
+        if( !first )
+          mFontManager.add_kerning( &x, &y );
+        x += glyph->advance_x;
+        y += glyph->advance_y;
+        first = false;
       }
-
       textHeight = textHeight>(glyph->bounds.y2-glyph->bounds.y1+yOffset) ?
                      textHeight : (glyph->bounds.y2-glyph->bounds.y1+yOffset);
-      start_x += glyph->advance_x/scalex;
-      //start_y += glyph->advance_y;
+      ++str; --len;
+    }
+    textWidth = x;
+    printf( "str: %s, textWidth=%lf\n", saveStr, textWidth );
+  } else {
+    for( size_t i=0; i<len && str[i]; i++ ) {
+      glyph = mFontManager.glyph( str[i] );
+      if( glyph ) {
+        printf( "before: start_x=%f, start_y=%f\n", start_x, start_y );
+        if( i )
+          mFontManager.add_kerning( &start_x, &start_y );
+        printf( "after: start_x=%f, start_y=%f\n", start_x, start_y );
+        mFontManager.init_embedded_adaptors( glyph, start_x, start_y );
+
+        mRendererSolid.color( agg::rgba8(mColorRedStroke, mColorGreenStroke, mColorBlueStroke, mStrokeOpacity) );
+        agg::render_scanlines( mFontManager.gray8_adaptor(), mFontManager.gray8_scanline(), mRendererSolid );
+
+        start_x += glyph->advance_x/scalex;
+        //start_y += glyph->advance_y/scaley;
+      }
     }
   }
 
-  textWidth += start_x;
   memset( utf8_string, '\0', max_string_length );
 }
 
@@ -402,9 +451,12 @@ void wxPLDevAGG::PSSetFont( PLUNICODE fci )
   /* convert the fci to Base14/Type1 font information */
 	wxString fontname=fontdir + wxString( plP_FCI2FontName(fci, TrueTypeLookup, N_TrueTypeLookup), *wxConvCurrent );
 
-  mFontEngine.load_font( "c:\\windows\\fonts\\arial.ttf", 0, agg::glyph_ren_agg_gray8 );
+  if( !mFontEngine.load_font("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 0, agg::glyph_ren_agg_gray8) )
+    plabort( "Font could not be loaded" );
+  //mFontEngine.load_font( "c:\\windows\\fonts\\arial.ttf", 0, agg::glyph_ren_agg_gray8 );
   mFontEngine.height( fontSize*fontScale );
   mFontEngine.width( fontSize*fontScale );
+  mFontEngine.hinting( true );
   mFontEngine.flip_y( false );
   mContour.width( fontSize*fontScale*0.2);
 }
@@ -412,6 +464,8 @@ void wxPLDevAGG::PSSetFont( PLUNICODE fci )
 
 void wxPLDevAGG::ProcessString( PLStream* pls, EscText* args )
 {
+  plabort( "The AGG backend can't process the text yet own its own!" );  
+  
   /* Check that we got unicode, warning message and return if not */
   if( args->unicode_array_len == 0 ) {
     printf( "Non unicode string passed to a wxWidgets driver, ignoring\n" );
@@ -433,18 +487,19 @@ void wxPLDevAGG::ProcessString( PLStream* pls, EscText* args )
   cos_shear = cos(shear);
   sin_shear = sin(shear);
 
-  agg::trans_affine mtx;
-  mtx *= agg::trans_affine_rotation( rotation );
-  mtx *= agg::trans_affine_skewing( shear, shear );
-  mtx *= agg::trans_affine_translation( args->x, args->y );
-  mtx *= mTransform;
-  mFontEngine.transform(mtx);
-  
   PSDrawText( args->unicode_array, args->unicode_array_len, false );
   printf("textWidth=%f, textHeight=%f\n", textWidth, textHeight );
 
-  mtx *= agg::trans_affine_translation( -args->just*textWidth/scalex, -0.5*textHeight/scaley );
-  //mFontEngine.transform(mtx);
+  agg::trans_affine mtx;
+  mtx.reset();
+  mtx *= agg::trans_affine_translation( args->x, args->y );
+  //mtx *= agg::trans_affine_rotation( rotation );
+  //mtx *= agg::trans_affine_skewing( shear, shear );
+  mtx *= mTransform;
+  mtx *= agg::trans_affine_translation( -args->just*textWidth/scalex, -0.5*textHeight );
+  mtx *= agg::trans_affine_translation( -args->just*textWidth/scalex, -0.5*textHeight );
+  mFontEngine.transform(mtx);
+  
   PSDrawText( args->unicode_array, args->unicode_array_len, true );
 
   AddtoClipRegion( 0, 0, width, height );        
