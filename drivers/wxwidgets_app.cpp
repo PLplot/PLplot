@@ -213,13 +213,8 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
   switch( event.GetId() )
   {
   case wxID_EXIT:
-		{
-			wxMessageDialog dialog( this, wxT("Do you really want to quit?"), wxT("Close wxWidgets PLplot App?"), wxYES_NO |wxNO_DEFAULT| wxICON_EXCLAMATION );
-			if( dialog.ShowModal() == wxID_YES ) {
-				m_dev->exit=true;
-				wxGetApp().ExitMainLoop();
-			}
-		}
+    m_dev->exit=true;
+    wxGetApp().ExitMainLoop();
 		break;
   }
     
@@ -249,12 +244,8 @@ void wxPLplotFrame::OnClose( wxCloseEvent& event )
 {
   Log_Verbose( "wxPLplotFrame::OnClose" );
 
-  // Are you old enough to know that you want really to quit?
-  wxMessageDialog dialog( this, wxT("Do you really want to quit?"), wxT("Close wxWidgets PLplot App?"), wxYES_NO |wxNO_DEFAULT| wxICON_EXCLAMATION );
-  if( dialog.ShowModal() == wxID_YES ) {
-		m_dev->exit=true;
-		wxGetApp().ExitMainLoop();
-	}
+  m_dev->exit=true;
+  wxGetApp().ExitMainLoop();
 }
 
 
