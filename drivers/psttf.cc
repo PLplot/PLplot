@@ -408,7 +408,8 @@ writeHeader(PLStream *pls) {
     doc->osHeader() << "/A {0.5 0 360 arc} def\n";
     doc->osHeader() << "/S {stroke} def\n";
     doc->osHeader() << "/Z {stroke newpath} def\n";
-    doc->osHeader() << "/F {fill} def\n";
+    doc->osHeader() << "/F {closepath gsave fill grestore stroke} def\n";
+    doc->osHeader() << "/N {newpath} def\n";
     doc->osHeader() << "/C {setrgbcolor} def\n";
     doc->osHeader() << "/G {setgray} def\n";
     doc->osHeader() << "/W {setlinewidth} def\n";
@@ -723,7 +724,7 @@ fill_polygon(PLStream *pls)
 /* First time through start with a x y moveto */
 
 	if (n == 0) {
-	    sprintf(outbuf, "%d %d M", x, y);
+	    sprintf(outbuf, "N %d %d M", x, y);
 	    dev->llx = MIN(dev->llx, x);
 	    dev->lly = MIN(dev->lly, y);
 	    dev->urx = MAX(dev->urx, x);
