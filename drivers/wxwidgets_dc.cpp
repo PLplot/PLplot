@@ -145,7 +145,8 @@ void wxPLDevDC::FillPolygon( PLStream *pls )
   for( int i=0; i < pls->dev_npts; i++ ) {
     points[i].x=(int)(pls->dev_x[i]/scalex);
     points[i].y=(int)(height-pls->dev_y[i]/scaley);
-    AddtoClipRegion( points[i-1].x, points[i-1].y, points[i].x, points[i].y );        
+    if(i>0)
+    	AddtoClipRegion( points[i-1].x, points[i-1].y, points[i].x, points[i].y );        
   }
 
   m_dc->DrawPolygon( pls->dev_npts, points );
