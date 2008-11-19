@@ -234,6 +234,7 @@ c_plaxes(PLFLT x0, PLFLT y0,
 
     if (lbx) {
 	plP_movphy(vppxmi, vppymi);
+	plP_draphy(vppxma, vppymi);
 	if (ltx) {
 	    if (ldx) {
 	      pldtfac(vpwxmi, vpwxma, &factor, &tstart);
@@ -265,13 +266,13 @@ c_plaxes(PLFLT x0, PLFLT y0,
 		tp = tn;
 	    }
 	}
-	plP_draphy(vppxma, vppymi);
     }
 
 /* Draw right-hand edge of box */
 
     if (lcy) {
 	plP_movphy(vppxma, vppymi);
+	plP_draphy(vppxma, vppyma);
 	if (lty) {
 	    if (ldy) {
 	      pldtfac(vpwymi, vpwyma, &factor, &tstart);
@@ -303,13 +304,13 @@ c_plaxes(PLFLT x0, PLFLT y0,
 		tp = tn;
 	    }
 	}
-	plP_draphy(vppxma, vppyma);
     }
 
 /* Draw the top edge of the box */
 
     if (lcx) {
 	plP_movphy(vppxma, vppyma);
+	plP_draphy(vppxmi, vppyma);
 	if (ltx) {
 	    if (ldx) {
 	      pldtfac(vpwxmi, vpwxma, &factor, &tstart);
@@ -341,13 +342,13 @@ c_plaxes(PLFLT x0, PLFLT y0,
 		tp = tn;
 	    }
 	}
-	plP_draphy(vppxmi, vppyma);
     }
 
 /* Draw left-hand edge of box */
 
     if (lby) {
 	plP_movphy(vppxmi, vppyma);
+	plP_draphy(vppxmi, vppymi);
 	if (lty) {
 	    if (ldy) {
 	      pldtfac(vpwymi, vpwyma, &factor, &tstart);
@@ -379,13 +380,13 @@ c_plaxes(PLFLT x0, PLFLT y0,
 		tp = tn;
 	    }
 	}
-	plP_draphy(vppxmi, vppymi);
     }
 
 /* Draw the horizontal axis */
 
     if (lax) {
 	plP_movphy(vppxmi, yp0);
+	plP_draphy(vppxma, yp0);
 	if (ltx) {
 	    tp = xtick1 * floor(vpwxmi / xtick1);
 	    for (;;) {
@@ -412,13 +413,13 @@ c_plaxes(PLFLT x0, PLFLT y0,
 		tp = tn;
 	    }
 	}
-	plP_draphy(vppxma, yp0);
     }
 
 /* Draw the vertical axis */
 
     if (lay) {
 	plP_movphy(xp0, vppymi);
+	plP_draphy(xp0, vppyma);
 	if (lty) {
 	    tp = ytick1 * floor(vpwymi / ytick1);
 	    for (;;) {
@@ -445,7 +446,6 @@ c_plaxes(PLFLT x0, PLFLT y0,
 		tp = tn;
 	    }
 	}
-	plP_draphy(xp0, vppyma);
     }
 
 /* Draw grids */
@@ -715,6 +715,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 /* Draw the line */
 
     plP_movwor(wx1, wy1);
+    plP_drawor(wx2, wy2);
     if (lt) {
 	tp = tick1 * floor(vmin / tick1);
 	for (;;) {
@@ -760,7 +761,6 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	}
     }
 
-    plP_drawor(wx2, wy2);
 
 /* Label the line */
 
@@ -935,6 +935,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 /* Draw the line */
 
     plP_movwor(wx, wy1);
+    plP_drawor(wx, wy2);
     if (lt) {
 	tp = tick1 * floor(vmin / tick1);
 	for (;;) {
@@ -979,7 +980,6 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	}
     }
 
-    plP_drawor(wx, wy2);
 
 /* Label the line */
 

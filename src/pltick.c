@@ -32,15 +32,8 @@
 void
 plxtik(PLINT x, PLINT y, PLINT below, PLINT above)
 {
-    plP_draphy(x, y);
-
-    if (below != 0)
-	plP_draphy(x, y - below);
-
-    if (above != 0)
-	plP_draphy(x, y + above);
-
-    plP_draphy(x, y);
+    plP_movphy(x, y-below);
+    plP_draphy(x, y+above);
 }
 
 /*----------------------------------------------------------------------*\
@@ -52,15 +45,8 @@ plxtik(PLINT x, PLINT y, PLINT below, PLINT above)
 void
 plytik(PLINT x, PLINT y, PLINT left, PLINT right)
 {
-    plP_draphy(x, y);
-
-    if (left != 0)
-	plP_draphy(x - left, y);
-
-    if (right != 0)
-	plP_draphy(x + right, y);
-
-    plP_draphy(x, y);
+    plP_movphy(x-left, y);
+    plP_draphy(x+right, y);
 }
 
 /*----------------------------------------------------------------------*\
@@ -73,9 +59,8 @@ plytik(PLINT x, PLINT y, PLINT left, PLINT right)
 void
 plstik(PLFLT mx, PLFLT my, PLFLT dx, PLFLT dy)
 {
-    plP_draphy(plP_mmpcx(mx), plP_mmpcy(my));
+    plP_movphy(plP_mmpcx(mx), plP_mmpcy(my));
     plP_draphy(plP_mmpcx((PLFLT) (mx + dx)), plP_mmpcy((PLFLT) (my + dy)));
-    plP_draphy(plP_mmpcx(mx), plP_mmpcy(my));
 }
 
 /*----------------------------------------------------------------------*\
