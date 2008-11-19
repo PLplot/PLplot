@@ -286,7 +286,22 @@ used to calculate this for a given date and time. The format for the
 labels is controlled using a new pltimefmt function, which takes a 
 format string. All formatting is done using the C strftime function. 
 See documentation for available options on your platform. Example 29 
-demonstrates the new capabilities.  
+demonstrates the new capabilities.
+
+N.B. Our reliance on C library POSIX time routines to (1) convert from
+broken-down time to time-epoch, (2) to convert from time-epoch to
+broken-down time, and (3) to format results with strftime have proved
+problematic for non-C languages which have time routines of variable
+quality.  Also, it is not clear that even the POSIX time routines are
+available on Windows. So we have plans afoot to implement high-quality
+versions of (1), (2), and (3) with additional functions to get/set the epoch
+in the PLplot core library itself.  These routines should work on all C
+platforms and should also be uniformly accessible for all our language
+bindings. 
+
+WARNING.....  Therefore, assuming these plans are implemented, the present
+part of our date/time PLplot API that uses POSIX time routines will be
+changed.
 
 2.7 Alpha value support
 
