@@ -180,6 +180,61 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
+  <sect1 id="plAlloc2dGrid" renderas="sect3">
+    <title>
+      <function>plAlloc2dGrid</function>: Allocate a block of memory
+    for use as a 2-d grid of type PLFLT.
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plAlloc2dGrid</function>
+	  </funcdef>
+	  <paramdef><parameter>f</parameter></paramdef>
+	  <paramdef><parameter>nx</parameter></paramdef>
+	  <paramdef><parameter>ny</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+    
+    <para>
+    Allocates a block of memory for use as a 2-d grid of type
+    PLFLT. The grid is vectored 2d C style grid and so can be accessed
+    using syntax like <literal>f[i][j]</literal>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>f</parameter>
+	  (<literal>PLFLT ***</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a PLFLT grid. On success <literal>f</literal>
+	  will point to a pointer to the vectored 2-d array
+	  of type PLFLT. If the allocation fails
+	  <literal>f</literal> will be NULL.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx, ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  Dimensions of grid to be allocated.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="plexit" renderas="sect3">
     <title>
       <function>plexit</function>: Error exit
@@ -222,6 +277,56 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
+  <sect1 id="plFree2dGrid" renderas="sect3">
+    <title>
+      <function>plFree2dGrid</function>: Free the memory associated
+    with a 2-d grid allocated using &plAlloc2dGrid. 
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plFree2dGrid</function>
+	  </funcdef>
+	  <paramdef><parameter>f</parameter></paramdef>
+	  <paramdef><parameter>nx</parameter></paramdef>
+	  <paramdef><parameter>ny</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+    
+    <para>
+    Frees a block of memory allocated using &plAlloc2dGrid.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>f</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    PLFLT grid to be freed. 
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx, ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  Dimensions of grid to be freed.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="plgfile" renderas="sect3">
     <title>
       <function>plgfile</function>: Get output file handle
@@ -251,6 +356,70 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    File pointer to current output file.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="plMinMax2dGrid" renderas="sect3">
+    <title>
+      <function>plMinMax2dGrid</function>: Find the minimum and
+    maximum of a 2d grid allocated using &plAlloc2dGrid.
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plMinMax2dGrid</function>
+	  </funcdef>
+	  <paramdef><parameter>f</parameter></paramdef>
+	  <paramdef><parameter>nx</parameter></paramdef>
+	  <paramdef><parameter>ny</parameter></paramdef>
+	  <paramdef><parameter>fmax</parameter></paramdef>
+	  <paramdef><parameter>fmin</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+    
+    <para>
+    Find the minimum and maximum of a 2d grid allocated using &plAlloc2dGrid.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>f</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    PLFLT grid to find the maximum / minimum of.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx, ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  Dimensions of <literal>f</literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>fmax, fmin</parameter>
+	  (<literal>PLFLT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	  Maximum and minimum values in the grid
+	  <literal>f</literal>.
 	  </para>
 	</listitem>
       </varlistentry>
