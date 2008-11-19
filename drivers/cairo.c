@@ -794,7 +794,7 @@ void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts)
       (double)pls->curcolor.b/255.0,
       (double)pls->curcolor.a);
       //(double)1.0);
-  cairo_set_line_width(aStream->cairoContext, 0.0);
+  cairo_set_line_width(aStream->cairoContext, 1.0);
   //cairo_push_group(aStream->cairoContext);
   cairo_fill_preserve(aStream->cairoContext);
   cairo_stroke(aStream->cairoContext);
