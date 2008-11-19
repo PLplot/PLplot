@@ -76,6 +76,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY pl_setcontlabelparam '<link linkend="pl_setcontlabelparam"><function>pl_setcontlabelparam</function></link>'>
 <!ENTITY plabort '<link linkend="plabort"><function>plabort</function></link>'>
 <!ENTITY pladv '<link linkend="pladv"><function>pladv</function></link>'>
+<!ENTITY plAlloc2dGrid '<link linkend="plAlloc2dGrid"><function>plAlloc2dGrid</function></link>'>
 <!ENTITY plaxes '<link linkend="plaxes"><function>plaxes</function></link>'>
 <!ENTITY plbin '<link linkend="plbin"><function>plbin</function></link>'>
 <!ENTITY plbop '<link linkend="plbop"><function>plbop</function></link>'>
@@ -107,6 +108,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plflush '<link linkend="plflush"><function>plflush</function></link>'>
 <!ENTITY plfont '<link linkend="plfont"><function>plfont</function></link>'>
 <!ENTITY plfontld '<link linkend="plfontld"><function>plfontld</function></link>'>
+<!ENTITY plFree2dGrid '<link linkend="plFree2dGrid"><function>plFree2dGrid</function></link>'>
 <!ENTITY plgch '<link linkend="plgch"><function>plgch</function></link>'>
 <!ENTITY plgcol0 '<link linkend="plgcol0"><function>plgcol0</function></link>'>
 <!ENTITY plgcolbg '<link linkend="plgcolbg"><function>plgcolbg</function></link>'>

@@ -201,8 +201,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     <para>
     Allocates a block of memory for use as a 2-d grid of type
-    PLFLT. The grid is vectored 2d C style grid and so can be accessed
-    using syntax like <literal>f[i][j]</literal>.
+    PLFLT. The grid is a vectored 2-d C-style array and so can be accessed
+    using syntax like <literal>*f[i][j]</literal>. The memory associated
+    with the grid must be freed by 
+    calling &plFree2dGrid; once it is no longer required.
     </para>
 
     <variablelist>
@@ -232,9 +234,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</listitem>
       </varlistentry>
     </variablelist>
-
+    
   </sect1>
-
+  
   <sect1 id="plexit" renderas="sect3">
     <title>
       <function>plexit</function>: Error exit
@@ -276,13 +278,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
   </sect1>
-
+  
   <sect1 id="plFree2dGrid" renderas="sect3">
     <title>
-      <function>plFree2dGrid</function>: Free the memory associated
-    with a 2-d grid allocated using &plAlloc2dGrid. 
+        <function>plFree2dGrid</function>: Free the memory associated
+	with a 2-d grid allocated using &plAlloc2dGrid;.
     </title>
-
+    
     <para>
       <funcsynopsis>
 	<funcprototype>
@@ -297,7 +299,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
     
     <para>
-    Frees a block of memory allocated using &plAlloc2dGrid.
+    Frees a block of memory allocated using &plAlloc2dGrid;.
     </para>
 
     <variablelist>
@@ -366,7 +368,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="plMinMax2dGrid" renderas="sect3">
     <title>
       <function>plMinMax2dGrid</function>: Find the minimum and
-    maximum of a 2d grid allocated using &plAlloc2dGrid.
+    maximum of a 2d grid allocated using &plAlloc2dGrid;.
     </title>
 
     <para>
@@ -385,7 +387,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
     
     <para>
-    Find the minimum and maximum of a 2d grid allocated using &plAlloc2dGrid.
+    Find the minimum and maximum of a 2d grid allocated using &plAlloc2dGrid;.
     </para>
 
     <variablelist>
