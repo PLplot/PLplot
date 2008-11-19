@@ -340,7 +340,11 @@ ps_init(PLStream *pls)
     fprintf(OF, "/A {0.5 0 360 arc} def\n");
     fprintf(OF, "/S {stroke} def\n");
     fprintf(OF, "/Z {stroke newpath} def\n");
-    fprintf(OF, "/F {fill} def\n");
+    /* Modify to use fill and stroke for better output with 
+     * anti-aliasing */
+    /*fprintf(OF, "/F {fill} def\n");*/
+    fprintf(OF, "/F {closepath gsave fill grestore stroke} def ");
+    fprintf(OF, "/N {newpath} def");
     fprintf(OF, "/C {setrgbcolor} def\n");
     fprintf(OF, "/G {setgray} def\n");
     fprintf(OF, "/W {setlinewidth} def\n");
@@ -643,7 +647,7 @@ fill_polygon(PLStream *pls)
 /* First time through start with a x y moveto */
 
 	if (n == 0) {
-	    sprintf(outbuf, "%d %d M", x, y);
+	    sprintf(outbuf, "N %d %d M", x, y);
 	    dev->llx = MIN(dev->llx, x);
 	    dev->lly = MIN(dev->lly, y);
 	    dev->urx = MAX(dev->urx, x);
