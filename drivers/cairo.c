@@ -199,6 +199,7 @@ static void close_span_tag(char *, int);
 
 static void set_current_context(PLStream *);
 static void poly_line(PLStream *, short *, short *, PLINT);
+static void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts);
 static void rotate_cairo_surface(PLStream *, float, float, float, float, float, float);
 
 /* PLplot interface functions */
@@ -335,8 +336,7 @@ void plD_esc_cairo(PLStream *pls, PLINT op, void *ptr)
   switch(op)
     {
     case PLESC_FILL:     /* filled polygon */
-      poly_line(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
-      cairo_fill(aStream->cairoContext);
+      filled_polygon(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
       break;
     case PLESC_HAS_TEXT: /* render rext */
       proc_str(pls, (EscText *) ptr);
@@ -773,6 +773,36 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*---------------------------------------------------------------------
+  filled_polygon()
+  
+  Draws a filled polygon.
+  ---------------------------------------------------------------------*/
+
+void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts)
+{
+  int i;
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  cairo_move_to(aStream->cairoContext, aStream->downscale * (double) xa[0], aStream->downscale * (double) ya[0]);
+  for(i=1;i<npts;i++)
+    cairo_line_to(aStream->cairoContext, aStream->downscale * (double) xa[i], aStream->downscale * (double) ya[i]);
+  cairo_set_source_rgba(aStream->cairoContext,
+      (double)pls->curcolor.r/255.0, 
+      (double)pls->curcolor.g/255.0,
+      (double)pls->curcolor.b/255.0,
+      (double)pls->curcolor.a);
+      //(double)1.0);
+  cairo_set_line_width(aStream->cairoContext, 0.0);
+  //cairo_push_group(aStream->cairoContext);
+  cairo_fill_preserve(aStream->cairoContext);
+  cairo_stroke(aStream->cairoContext);
+  //cairo_pop_group_to_source(aStream->cairoContext);
+  //cairo_paint_with_alpha(aStream->cairoContext, (double)pls->curcolor.a);  
+}
+
+/*---------------------------------------------------------------------
   rotate_cairo_surface()
   
   Rotates the cairo surface to the appropriate orientation.
@@ -1045,8 +1075,7 @@ void plD_esc_xcairo(PLStream *pls, PLINT op, void *ptr)
   switch(op)
     {
     case PLESC_FILL:     /* filled polygon */
-      poly_line(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
-      cairo_fill(aStream->cairoContext);
+      filled_polygon(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
       break;
     case PLESC_HAS_TEXT: /* render rext */
       proc_str(pls, (EscText *) ptr);
@@ -1791,8 +1820,7 @@ void plD_esc_extcairo(PLStream *pls, PLINT op, void *ptr)
   switch(op)
     {
     case PLESC_FILL:     /* filled polygon */
-      poly_line(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
-      cairo_fill(aStream->cairoContext);
+      filled_polygon(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
       break;
     case PLESC_HAS_TEXT: /* render text */
       proc_str(pls, (EscText *) ptr);
