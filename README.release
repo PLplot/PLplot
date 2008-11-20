@@ -78,6 +78,7 @@ examples
 2.18 Rename test subdirectory to plplot_test
 2.19 Website support files updated
 2.20 Internal changes to function visibility
+2.21 Dynamic driver support in Windows
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
 
@@ -483,4 +484,13 @@ tidied up to allow the use of the -fvisibility=hidden option with newer
 versions of gcc. This prevents internal functions from being exported
 to the user where possible. This extends the existing support for this
 on windows.
+
+2.21 Dynamic driver support in Windows
+
+An interface based on the ltdl library function calls was established
+which allows to open and close dynamic link libraries (DLL) during
+run-time and call functions from these libraries. As a consequence
+drivers can now be compiled into single DLLs separate from the core
+plplot DLL also in Windows. The cmake option ENABLE_DYNDRIVERS is now
+ON by default for Windows if a shared plplot library is built.
 
