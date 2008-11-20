@@ -19,12 +19,14 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-set(scripts_SCRIPTS
-plm2gif
-plpr
-)
-if(PLD_pstex)
-  set(scripts_SCRIPTS ${scripts_SCRIPTS} pstex2eps)
-endif(PLD_pstex)
-install(PROGRAMS ${scripts_SCRIPTS} DESTINATION ${BIN_DIR})
+if(HAVE_BASH)
+  set(scripts_SCRIPTS
+  plm2gif
+  plpr
+  )
+  if(PLD_pstex)
+    set(scripts_SCRIPTS ${scripts_SCRIPTS} pstex2eps)
+  endif(PLD_pstex)
+  install(PROGRAMS ${scripts_SCRIPTS} DESTINATION ${BIN_DIR})
+endif(HAVE_BASH)
 
