@@ -24,6 +24,7 @@
 
 /* TODO: 
  * - implement the GraphicsIn stuff (only part of it so far)
+ * - example 29 crashes on Win32, wxWidgets driver
  */
 
 #include "plDevs.h"
@@ -122,7 +123,7 @@ void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
 
 wxPLDevBase::wxPLDevBase( void )
 {
-  Log_Verbose( "wxPLDevBase::wxPLDevBase()" );
+  // Log_Verbose( "wxPLDevBase::wxPLDevBase()" );
 
   ready = false;
   ownGUI = false;
@@ -290,7 +291,7 @@ void wxPLDevBase::PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
 void
 plD_init_wxwidgets( PLStream *pls )
 {
-  Log_Verbose( "plD_init_wxwidgets()" );
+  // Log_Verbose( "plD_init_wxwidgets()" );
 
   wxPLDevBase* dev;
 
@@ -397,7 +398,7 @@ DrvOpt wx_options[] = {
     pls->freeaspect = 1;
   }
 
-  Log_Verbose( "settings" );
+  // Log_Verbose( "settings" );
 
   /* Set the number of pixels per mm */
   plP_setpxl( (PLFLT)VIRTUAL_PIXELS_PER_MM, (PLFLT)VIRTUAL_PIXELS_PER_MM );
@@ -438,7 +439,7 @@ DrvOpt wx_options[] = {
 \*--------------------------------------------------------------------------*/
 void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
-  Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", x1a, y1a, x2a, y2a );
+  // Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", x1a, y1a, x2a, y2a );
 
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
   
@@ -465,7 +466,7 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
 \*--------------------------------------------------------------------------*/
 void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
-  Log_Verbose( "plD_polyline_wxwidgets()" );
+  // Log_Verbose( "plD_polyline_wxwidgets()" );
 
   /* should be changed to use the wxDC::DrawLines function? */
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
@@ -495,7 +496,7 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 \*--------------------------------------------------------------------------*/
 void plD_eop_wxwidgets( PLStream *pls )
 {
-  Log_Verbose( "plD_eop_wxwidgets()" );
+  // Log_Verbose( "plD_eop_wxwidgets()" );
 
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
 
@@ -518,7 +519,7 @@ void plD_eop_wxwidgets( PLStream *pls )
 \*--------------------------------------------------------------------------*/
 void plD_bop_wxwidgets( PLStream *pls )
 {
-  Log_Verbose( "plD_bop_wxwidgets()" );
+  // Log_Verbose( "plD_bop_wxwidgets()" );
 
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
 
@@ -556,7 +557,7 @@ void plD_bop_wxwidgets( PLStream *pls )
 \*--------------------------------------------------------------------------*/
 void plD_tidy_wxwidgets( PLStream *pls )
 {
-  Log_Verbose( "plD_tidy_wxwidgets()" );
+  // Log_Verbose( "plD_tidy_wxwidgets()" );
 
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
 
@@ -587,7 +588,7 @@ void plD_tidy_wxwidgets( PLStream *pls )
 \*--------------------------------------------------------------------------*/
 void plD_state_wxwidgets( PLStream *pls, PLINT op )
 {
-  Log_Verbose( "plD_state_wxwidgets(op=%d)", op );
+  // Log_Verbose( "plD_state_wxwidgets(op=%d)", op );
 
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
 
@@ -630,7 +631,7 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
 \*--------------------------------------------------------------------------*/
 void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 {
-  Log_Verbose( "plD_esc_wxwidgets(op=%d, ptr=%x)", op, ptr );
+  // Log_Verbose( "plD_esc_wxwidgets(op=%d, ptr=%x)", op, ptr );
 
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
 
@@ -704,7 +705,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 \*--------------------------------------------------------------------------*/
 static void fill_polygon( PLStream *pls )
 {
-  Log_Verbose( "fill_polygon(), npts=%d, x[0]=%d, y[0]=%d", pls->dev_npts, pls->dev_y[0], pls->dev_y[0] );
+  // Log_Verbose( "fill_polygon(), npts=%d, x[0]=%d, y[0]=%d", pls->dev_npts, pls->dev_y[0], pls->dev_y[0] );
 
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
 
@@ -732,7 +733,7 @@ static void fill_polygon( PLStream *pls )
 void wx_set_size( PLStream* pls, int width, int height )
 {
   /* TODO: buffer must be resized here or in wxplotstream */
-  Log_Verbose( "wx_set_size()" );
+  // Log_Verbose( "wx_set_size()" );
   
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
 
@@ -816,7 +817,7 @@ void plD_erroraborthandler_wxwidgets( char *errormessage )
 \*----------------------------------------------------------------------*/
 static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
 {
-  Log_Verbose( "plD_pixel_wxwidgets" );
+  // Log_Verbose( "plD_pixel_wxwidgets" );
 
   wxPLDevBase *dev=(wxPLDevBase*)pls->dev;
 
@@ -843,7 +844,7 @@ static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
 \*----------------------------------------------------------------------*/
 static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colour)
 {
-  Log_Verbose( "plD_set_pixel_wxwidgets" );
+  // Log_Verbose( "plD_set_pixel_wxwidgets" );
 
   wxPLDevBase *dev=(wxPLDevBase*)pls->dev;
 
@@ -870,7 +871,7 @@ static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colo
 \*--------------------------------------------------------------------------*/
 static PLINT plD_read_pixel_wxwidgets ( PLStream *pls, short x, short y )
 {
-  Log_Verbose( "plD_read_pixel_wxwidgets" );
+  // Log_Verbose( "plD_read_pixel_wxwidgets" );
 
   wxPLDevBase *dev=(wxPLDevBase*)pls->dev;
   
@@ -891,7 +892,7 @@ static PLINT plD_read_pixel_wxwidgets ( PLStream *pls, short x, short y )
 \*----------------------------------------------------------------------*/
 static void init_freetype_lv1( PLStream *pls )
 {
-  Log_Verbose( "init_freetype_lv1" );
+  // Log_Verbose( "init_freetype_lv1" );
 
   wxPLDevBase *dev=(wxPLDevBase*)pls->dev;
 
@@ -939,7 +940,7 @@ static void init_freetype_lv1( PLStream *pls )
 
 static void init_freetype_lv2( PLStream *pls )
 {
-  Log_Verbose( "init_freetype_lv2" );
+  // Log_Verbose( "init_freetype_lv2" );
 
   wxPLDevBase *dev=(wxPLDevBase *)pls->dev;
   FT_Data *FT=(FT_Data *)pls->FT;
@@ -991,7 +992,7 @@ static void init_freetype_lv2( PLStream *pls )
 \*--------------------------------------------------------------------------*/
 static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr)
 {
-  Log_Verbose( "GetCursorCmd" );
+  // Log_Verbose( "GetCursorCmd" );
 
   wxPLDevBase *dev=(wxPLDevBase *)pls->dev;
   PLGraphicsIn *gin = &(dev->gin);
@@ -1029,7 +1030,7 @@ static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr)
 \*----------------------------------------------------------------------*/
 static void install_buffer( PLStream *pls )
 {
-  Log_Verbose( "install_buffer" );
+  // Log_Verbose( "install_buffer" );
 
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
   static bool initApp=false;
@@ -1082,7 +1083,7 @@ static void install_buffer( PLStream *pls )
 \*----------------------------------------------------------------------*/
 static void wxRunApp( PLStream *pls, bool runonce )
 {
-  Log_Verbose( "wxRunApp" );  
+  // Log_Verbose( "wxRunApp" );  
   
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
   

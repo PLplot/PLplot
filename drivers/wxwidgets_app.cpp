@@ -111,7 +111,7 @@ END_EVENT_TABLE()
 \*----------------------------------------------------------------------*/
 bool wxPLplotApp::OnInit()
 {
-  Log_Verbose( "wxPLplotApp::OnInit" );
+  // Log_Verbose( "wxPLplotApp::OnInit" );
   
   exit=false;
   advance=false;
@@ -127,7 +127,7 @@ bool wxPLplotApp::OnInit()
 \*----------------------------------------------------------------------*/
 void wxPLplotApp::SetRefreshFlag( bool flag )
 {
-  Log_Verbose( "wxPLplotApp::SetRefreshFlag" );
+  // Log_Verbose( "wxPLplotApp::SetRefreshFlag" );
 
 	for( size_t i=0; i<FrameArray.GetCount(); i++)
 		FrameArray[i]->SetRefreshFlag( flag );
@@ -141,7 +141,7 @@ void wxPLplotApp::SetRefreshFlag( bool flag )
 \*----------------------------------------------------------------------*/
 void wxPLplotApp::OnIdle( wxIdleEvent& WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotApp::OnIdle" );
+  // Log_Verbose( "wxPLplotApp::OnIdle" );
 
 	bool refresh=false;
 
@@ -167,7 +167,8 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
                         wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION |
                         wxCLOSE_BOX | wxRESIZE_BORDER | wxCLIP_CHILDREN ) 
 {
-  Log_Verbose( "wxPLplotFrame::wxPLplotFrame" );
+  // Log_Verbose( "wxPLplotFrame::wxPLplotFrame" );
+  
   m_dev=(wxPLDevBase*)pls->dev;
 
   m_panel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN );
@@ -208,7 +209,7 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
 \*----------------------------------------------------------------------*/
 void wxPLplotFrame::OnMenu( wxCommandEvent& event )
 {
-  Log_Verbose( "wxPLplotFrame::OnMenu" );
+  // Log_Verbose( "wxPLplotFrame::OnMenu" );
 
   switch( event.GetId() )
   {
@@ -242,7 +243,7 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
 \*----------------------------------------------------------------------*/
 void wxPLplotFrame::OnClose( wxCloseEvent& event )
 {
-  Log_Verbose( "wxPLplotFrame::OnClose" );
+  // Log_Verbose( "wxPLplotFrame::OnClose" );
 
   m_dev->exit=true;
   wxGetApp().ExitMainLoop();
@@ -305,7 +306,7 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
              : wxWindow( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                          wxNO_BORDER|wxWANTS_CHARS|wxCLIP_CHILDREN )
 {
-  Log_Verbose( "wxPLplotWindow::wxPLplotWindow" );
+  // Log_Verbose( "wxPLplotWindow::wxPLplotWindow" );
 
   m_pls=pls;
   m_dev=(wxPLDevBase*)pls->dev;
@@ -328,7 +329,7 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
 \*----------------------------------------------------------------------*/
 void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotWindow::OnPaint" );
+  // Log_Verbose( "wxPLplotWindow::OnPaint" );
   
   /* copy bitmap into client area */
   wxPaintDC dc( this );
@@ -368,7 +369,7 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 
 void wxPLplotWindow::OnChar( wxKeyEvent& event )
 {
-  Log_Verbose( "wxPLplotWindow::OnChar" );
+  // Log_Verbose( "wxPLplotWindow::OnChar" );
 
   int keycode = event.GetKeyCode();
   switch( keycode ) {
@@ -396,7 +397,7 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
 
 void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotWindow::OnIdle" );
+  // Log_Verbose( "wxPLplotWindow::OnIdle" );
 
   if( refresh ) {
     if(!m_dev->newclipregion) {
@@ -424,13 +425,13 @@ void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
 
 void wxPLplotWindow::OnErase( wxEraseEvent &WXUNUSED(event) )
 {  
-  Log_Verbose( "wxPLplotWindow::OnErase" );
+  // Log_Verbose( "wxPLplotWindow::OnErase" );
 }
 
 
 void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotWindow::OnSize" );
+  // Log_Verbose( "wxPLplotWindow::OnSize" );
 
   int width, height;
   GetClientSize( &width, &height );
@@ -455,7 +456,7 @@ void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
 
 void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
 {
-  Log_Verbose( "wxPLplotWindow::OnMax" );
+  // Log_Verbose( "wxPLplotWindow::OnMax" );
 
   wxSizeEvent event( GetClientSize() );
   AddPendingEvent( event );
@@ -463,7 +464,7 @@ void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
 
 void wxPLplotWindow::OnMouse( wxMouseEvent &event )
 {
-  Log_Verbose( "wxPLplotWindow::OnMouse" );
+  // Log_Verbose( "wxPLplotWindow::OnMouse" );
 
   PLGraphicsIn *gin = &(m_dev->gin);
   wxPoint pos( event.GetPosition() );
