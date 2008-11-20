@@ -56,17 +56,6 @@ if(PLD_wxwidgets)
   )
   # Convert wxWidgets_LIBRARIES to full pathname form.
   cmake_link_flags(wxwidgets_LINK_FLAGS "${wxWidgets_LIBRARIES}")
-  if(WITH_FREETYPE)
-    set(
-    wxwidgets_COMPILE_FLAGS
-    "${wxwidgets_COMPILE_FLAGS} -I${FREETYPE_INCLUDE_DIR}"
-    )
-    set(
-    wxwidgets_LINK_FLAGS
-    ${wxwidgets_LINK_FLAGS}
-    ${FREETYPE_LIBRARIES}
-    )
-  endif(WITH_FREETYPE)
   include(agg)
   if(HAVE_AGG)
     set(
@@ -79,6 +68,17 @@ if(PLD_wxwidgets)
     ${AGG_LIBRARIES}
     )
   endif(HAVE_AGG)
+  if(WITH_FREETYPE)
+    set(
+    wxwidgets_COMPILE_FLAGS
+    "${wxwidgets_COMPILE_FLAGS} -I${FREETYPE_INCLUDE_DIR}"
+    )
+    set(
+    wxwidgets_LINK_FLAGS
+    ${wxwidgets_LINK_FLAGS}
+    ${FREETYPE_LIBRARIES}
+    )
+  endif(WITH_FREETYPE)
   set(DRIVERS_LINK_FLAGS
   ${DRIVERS_LINK_FLAGS} 
   ${wxwidgets_LINK_FLAGS}
