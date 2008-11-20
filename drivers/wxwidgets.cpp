@@ -95,7 +95,13 @@ void Log_Debug( const char *fmt, ... )
 \*----------------------------------------------------------------------*/
 
 /* Device info */
+#ifdef __cplusplus
+extern "C" {
+#endif
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wxwidgets = "wxwidgets:wxWidgets DC:1:wxwidgets:51:wxwidgets";
+#ifdef __cplusplus
+}
+#endif
 
 /*--------------------------------------------------------------------------*\
  *  void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
