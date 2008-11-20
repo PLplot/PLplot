@@ -359,11 +359,12 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
  
   /* actually draw text */
   m_context->PushState();
+  m_context->Translate( args->x/scalex, height-args->y/scaley );
   wxGraphicsMatrix matrix=m_context->CreateMatrix(  cos_rot, -sin_rot,
                                                     cos_rot * sin_shear + sin_rot * cos_shear,
                                                    -sin_rot * sin_shear + cos_rot * cos_shear,
-                                                    args->x/scalex, height-args->y/scaley );
-  m_context->SetTransform( matrix );
+                                                    0.0, 0.0 );
+  m_context->ConcatTransform( matrix );
   m_context->Translate( -args->just*textWidth, -0.5*textHeight );
   PSDrawText( args->unicode_array, args->unicode_array_len, true );
   m_context->PopState();
