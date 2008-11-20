@@ -126,7 +126,7 @@ set(DRIVERS_DEVICE_LIST
 "tk:tk:ON"
 "tkwin:tkwin:ON"
 "wingcc:wingcc:ON"
-"wxwidgets:wxwidgets:OFF"
+"wxwidgets:wxwidgets:ON"
 "xfig:xfig:ON"
 "xwin:xwin:ON"
 )
