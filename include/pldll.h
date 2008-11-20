@@ -42,6 +42,31 @@
   #define PLDLLIMPEXP_DATA(type) PLDLLIMPORT type
 #endif
 
+/* for dynamic drivers set the macros correctly. If a shared library is built,
+   but dyanmic drivers disabled, the driver dll macros are the same as the
+   plplot dll macros */
+#ifdef ENABLE_DYNDRIVERS
+  #if defined(aqt_EXPORTS) || defined(cairo_EXPORTS) || defined(cgm_EXPORTS) || \
+       defined(dg300_EXPORTS) || defined(gd_EXPORTS) || defined(gcw_EXPORTS) || \
+       defined(hpgl_EXPORTS) || defined(impress_EXPORTS) || defined(linuxvga_EXPORTS) || \
+       defined(ljii_EXPORTS) || defined(ljiip_EXPORTS) || defined(mem_EXPORTS) || \
+       defined(ntk_EXPORTS) || defined(null_EXPORTS) || defined(pbm_EXPORTS) || \
+       defined(pdf_EXPORTS) || defined(plmeta_EXPORTS) || defined(ps_EXPORTS) || \
+       defined(pstex_EXPORTS) || defined(psttf_EXPORTS) || defined(svg_EXPORTS) || \
+       defined(tek_EXPORTS) || defined(tk_EXPORTS) || defined(tkwin_EXPORTS) || \
+       defined(wingcc_EXPORTS) || defined(wxwidgets_EXPORTS) || defined(xfig_EXPORTS) || \
+       defined(xwin_EXPORTS)
+    #define PLDLLIMPEXP_DRIVER PLDLLEXPORT
+    #define PLDLLIMPEXP_DRIVER_DATA(type) PLDLLEXPORT type
+  #else
+    #define PLDLLIMPEXP_DRIVER PLDLLIMPORT
+    #define PLDLLIMPEXP_DRIVER_DATA(type) PLDLLIMPORT type
+  #endif
+#else
+  #define PLDLLIMPEXP_DRIVER PLDLLIMPEXP
+  #define PLDLLIMPEXP_DRIVER_DATA(type) PLDLLIMPEXP_DATA(type)
+#endif
+
 #if defined(plplotcxxd_EXPORTS)
   #define PLDLLIMPEXP_CXX PLDLLEXPORT
   #define PLDLLIMPEXP_CXX_DATA(type) PLDLLEXPORT type
@@ -96,23 +121,6 @@
 #else
   #define PLDLLIMPEXP_GNOME2 PLDLLIMPORT
   #define PLDLLIMPEXP_GNOME2_DATA(type) PLDLLIMPORT type
-#endif
-
-#if defined(aqt_EXPORTS) || defined(cairo_EXPORTS) || defined(cgm_EXPORTS) || \
-     defined(dg300_EXPORTS) || defined(gd_EXPORTS) || defined(gcw_EXPORTS) || \
-     defined(hpgl_EXPORTS) || defined(impress_EXPORTS) || defined(linuxvga_EXPORTS) || \
-     defined(ljii_EXPORTS) || defined(ljiip_EXPORTS) || defined(mem_EXPORTS) || \
-     defined(ntk_EXPORTS) || defined(null_EXPORTS) || defined(pbm_EXPORTS) || \
-     defined(pdf_EXPORTS) || defined(plmeta_EXPORTS) || defined(ps_EXPORTS) || \
-     defined(pstex_EXPORTS) || defined(psttf_EXPORTS) || defined(svg_EXPORTS) || \
-     defined(tek_EXPORTS) || defined(tk_EXPORTS) || defined(tkwin_EXPORTS) || \
-     defined(wingcc_EXPORTS) || defined(wxwidgets_EXPORTS) || defined(xfig_EXPORTS) || \
-     defined(xwin_EXPORTS)
-  #define PLDLLIMPEXP_DRIVER PLDLLEXPORT
-  #define PLDLLIMPEXP_DRIVER_DATA(type) PLDLLEXPORT type
-#else
-  #define PLDLLIMPEXP_DRIVER PLDLLIMPORT
-  #define PLDLLIMPEXP_DRIVER_DATA(type) PLDLLIMPORT type
 #endif
 
 #endif /* __PL_DLL_H */
