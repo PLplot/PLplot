@@ -54,6 +54,7 @@ INDEX
 1.10 Rename test subdirectory to plplot_test
 1.11 Website support files updated
 1.12 Internal changes to function visibility
+1.13 Dynamic driver support in Windows
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 2.1 All autotools-related files have now been removed
@@ -88,9 +89,10 @@ of the plotted values to be altered. Example 20 has been modified to
 demonstrate this new functionality. 
 
 To ensure consistent results in example 21 between different platforms and 
-language bindings PLplot now includes a small random number generator within
-the library. plrandd will return a PLFLT random number in the range 0.0-1.0. 
-plseed will allow the random number generator to be seeded.
+language bindings PLplot now includes a small random number generator (based
+on the original Mersenne Twister 1997 code) within the library. plrandd will
+return a PLFLT random number in the range 0.0-1.0. plseed will allow the
+random number generator to be seeded.
 
 1.2 Improvements to the cairo driver family.
 
@@ -118,6 +120,9 @@ options were introduced in the wxWidgets driver:
  - freetype: Use FreeType library (freetype=0|1)
 The option "text" changed its meaning, since it enabled the FreeType library
 support, while now the option enables the driver's own text routines.
+
+In addition the wxWidgets driver now correctly clears the background
+(or parts of it) and transparency support was added.
 
 1.4 pdf driver improvements
 
@@ -223,6 +228,15 @@ tidied up to allow the use of the -fvisibility=hidden option with newer
 versions of gcc. This prevents internal functions from being exported
 to the user where possible. This extends the existing support for this
 on windows.
+
+1.13 Dynamic driver support in Windows
+
+An interface based on the ltdl library function calls was established
+which allows to open and close dynamic link libraries (DLL) during
+run-time and call functions from these libraries. As a consequence
+drivers can now be compiled into single DLLs separate from the core
+plplot DLL also in Windows. The cmake option ENABLE_DYNDRIVERS is now
+ON by default for Windows if a shared plplot library is built.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
