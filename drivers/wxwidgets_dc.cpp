@@ -41,12 +41,12 @@
 #include "wxwidgets.h"
 
 
-/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------
  *  wxPLDevDC::wxPLDevDC( void )
  *
  *  Constructor of the standard wxWidgets device based on the wxPLDevBase
  *  class. Only some initialisations are done.
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 wxPLDevDC::wxPLDevDC( void ) : wxPLDevBase()
 {
   m_dc=NULL;
@@ -56,11 +56,11 @@ wxPLDevDC::wxPLDevDC( void ) : wxPLDevBase()
 }
 
 
-/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------
  *  wxPLDevDC::~wxPLDevDC( void )
  *
  *  The deconstructor frees memory allocated by the device.
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 wxPLDevDC::~wxPLDevDC()
 {
   if( ownGUI ) {
@@ -77,11 +77,11 @@ wxPLDevDC::~wxPLDevDC()
 }
 
 
-/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------
  *  void wxPLDevDC::DrawLine( short x1a, short y1a, short x2a, short y2a )
  *
  *  Draw a line from (x1a, y1a) to (x2a, y2a).
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::DrawLine( short x1a, short y1a, short x2a, short y2a )
 {
 	x1a=(short)(x1a/scalex); y1a=(short)(height-y1a/scaley);
@@ -93,11 +93,11 @@ void wxPLDevDC::DrawLine( short x1a, short y1a, short x2a, short y2a )
 }
 
 
-/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------
  *  void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
  *
  *  Draw a poly line - coordinates are in the xa and ya arrays.
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
 {
 	wxCoord x1a, y1a, x2a, y2a;
@@ -116,6 +116,12 @@ void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, 
+ *                                   PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
+ *
+ *  Clear parts ((x1,y1) to (x2,y2)) of the background in color (bgr,bgg,bgb).
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, 
                                  PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
@@ -138,6 +144,11 @@ void wxPLDevDC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb,
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::FillPolygon( PLStream *pls )
+ *
+ *  Draw a filled polygon.
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::FillPolygon( PLStream *pls )
 {
   wxPoint *points = new wxPoint[pls->dev_npts];
@@ -153,12 +164,25 @@ void wxPLDevDC::FillPolygon( PLStream *pls )
   delete[] points;
 }
 
+
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::BlitRectangle( wxPaintDC* dc, int vX, int vY,
+ *                                 int vW, int vH )
+ *
+ *  Copy/Blit a rectangle ((vX,vY) to (vX+vW,vY+vH)) into given dc.
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )
 {
   if( m_dc )
     dc->Blit( vX, vY, vW, vH, m_dc, vX, vY );
 }
 
+
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::CreateCanvas( void )
+ *
+ *  Create canvas (bitmap and dc) if the driver provides the GUI.
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::CreateCanvas()
 {
   if( ownGUI ) {
@@ -173,6 +197,12 @@ void wxPLDevDC::CreateCanvas()
   }
 }
 
+
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::SetWidth( PLStream *pls )
+ *
+ *  Set the width of the drawing pen.
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::SetWidth( PLStream *pls )
 {
   m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
@@ -181,6 +211,11 @@ void wxPLDevDC::SetWidth( PLStream *pls )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::SetColor0( PLStream *pls )
+ *
+ *  Set color from colormap 0.
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::SetColor0( PLStream *pls )
 {
   m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
@@ -190,6 +225,11 @@ void wxPLDevDC::SetColor0( PLStream *pls )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::SetColor1( PLStream *pls )
+ *
+ *  Set color from colormap 1.
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::SetColor1( PLStream *pls )
 {
   m_dc->SetPen( *(wxThePenList->FindOrCreatePen(wxColour(pls->curcolor.r, pls->curcolor.g,
@@ -199,12 +239,12 @@ void wxPLDevDC::SetColor1( PLStream *pls )
 }
 
 
-/*--------------------------------------------------------------------------*\
- *  void wx_set_dc( PLStream* pls, wxDC* dc )
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::SetExternalBuffer( void* dc )
  *
- *  Adds a dc to the stream. The associated device is attached to the canvas
- *  as the property "dev".
-\*--------------------------------------------------------------------------*/
+ *  Adds a dc to the device. In that case, the drivers doesn't provide 
+ *  a GUI
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::SetExternalBuffer( void* dc )
 {
   m_dc=(wxDC*)dc;  /* Add the dc to the device */
@@ -215,6 +255,11 @@ void wxPLDevDC::SetExternalBuffer( void* dc )
 
 #ifdef HAVE_FREETYPE
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::PutPixel( short x, short y, PLINT color )
+ *
+ *  Draw a pixel in color color @ (x,y).
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::PutPixel( short x, short y, PLINT color )
 {
   const wxPen oldpen=m_dc->GetPen();
@@ -226,6 +271,11 @@ void wxPLDevDC::PutPixel( short x, short y, PLINT color )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::PutPixel( short x, short y )
+ *
+ *  Draw a pixel in current color @ (x,y).
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::PutPixel( short x, short y )
 {
   m_dc->DrawPoint( x, y );
@@ -233,11 +283,16 @@ void wxPLDevDC::PutPixel( short x, short y )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  PLINT wxPLDevDC::GetPixel( short x, short y )
+ *
+ *  Get color information from pixel @ (x,y).
+ *--------------------------------------------------------------------------*/
 PLINT wxPLDevDC::GetPixel( short x, short y )
 {
 #ifdef __WXGTK__
-    // The GetPixel method is incredible slow for wxGTK. Therefore we set the colour
-    // always to the background color, since this is the case anyway 99% of the time.
+    /* The GetPixel method is incredible slow for wxGTK. Therefore we set the colour
+       always to the background color, since this is the case anyway 99% of the time. */
     PLINT bgr, bgg, bgb;  /* red, green, blue */
     plgcolbg( &bgr, &bgg, &bgb );  /* get background color information */
     return RGB( bgr, bgg, bgb );
@@ -248,9 +303,15 @@ PLINT wxPLDevDC::GetPixel( short x, short y )
 #endif
 }
 
-#endif // HAVE_FREETYPE
+#endif /* HAVE_FREETYPE */
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::PSDrawTextToDC( char* utf8_string, bool drawText )
+ *
+ *  Draw utf8 text to screen if drawText==true. Otherwise determine
+ *  width and height of text.
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::PSDrawTextToDC( char* utf8_string, bool drawText )
 {
   wxCoord w, h, d, l;
@@ -269,6 +330,11 @@ void wxPLDevDC::PSDrawTextToDC( char* utf8_string, bool drawText )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::PSSetFont( PLUNICODE fci )
+ *
+ *  Set font defined by fci.
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::PSSetFont( PLUNICODE fci )
 {
   unsigned char fontFamily, fontStyle, fontWeight;
@@ -276,8 +342,10 @@ void wxPLDevDC::PSSetFont( PLUNICODE fci )
   plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
   plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
   plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );  
+
   if( m_font )
     delete m_font;
+  
   m_font=wxFont::New((int) (fontSize*fontScale), fontFamilyLookup[fontFamily],
                          fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
   m_font->SetUnderlined( underlined );
@@ -285,6 +353,13 @@ void wxPLDevDC::PSSetFont( PLUNICODE fci )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
+ *
+ *  This is the main function which processes the unicode text strings.
+ *  Font size, rotation and color are set, width and height of the 
+ *  text string is determined and then the string is drawn to the canvas.
+ *--------------------------------------------------------------------------*/
 void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
 {
   /* Check that we got unicode, warning message and return if not */
