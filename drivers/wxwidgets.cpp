@@ -321,6 +321,7 @@ DrvOpt wx_options[] = {
 #if wxUSE_GRAPHICS_CONTEXT    
   case 2:
     dev = new wxPLDevGC;
+    freetype = 0; /* this backend is vector oriented and doesn't now pixels */
     break;
 #endif
 #ifdef HAVE_AGG
