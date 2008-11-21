@@ -119,8 +119,14 @@ pldtfac(PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start) {
   diff = vmax - vmin;
 
   if (start != NULL) {
+    struct tm* tmp;
+    
     t = (time_t) vmin;
-    tm = *gmtime(&t);
+    if(!(tmp=gmtime(&t))) {
+      plabort("pldtfac: gmtime() returned an invalid value");
+      return;
+    }
+    tm = *tmp;
     t2 = mktime(&tm);
     /* Arg! This is because mktime is in local time and we need to 
        correct for the offset. C time handling really is broken... */
