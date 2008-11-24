@@ -117,6 +117,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plgdidev '<link linkend="plgdidev"><function>plgdidev</function></link>'>
 <!ENTITY plgdiori '<link linkend="plgdiori"><function>plgdiori</function></link>'>
 <!ENTITY plgdiplt '<link linkend="plgdiplt"><function>plgdiplt</function></link>'>
+<!ENTITY plGetCursor '<link linkend="plGetCursor"><function>plGetCursor</function></link>'>
 <!ENTITY plgfam '<link linkend="plgfam"><function>plgfam</function></link>'>
 <!ENTITY plgfci '<link linkend="plgfci"><function>plgfci</function></link>'>
 <!ENTITY plgfnam '<link linkend="plgfnam"><function>plgfnam</function></link>'>
