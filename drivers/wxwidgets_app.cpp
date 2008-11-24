@@ -416,11 +416,14 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
     Locate();    
   } else {
     /* Call user keypress event handler.  Since this is called first, the user
-     * can disable all internal event handling by setting key.keysym to 0. */
-    //if (pls->KeyEH != NULL)
-    //  (*pls->KeyEH) (gin, pls->KeyEH_data, &dev->exit_eventloop);
-    // TODO: This must be tested and implemented
-    
+     * can disable all internal event handling by setting gin.keysym to 0. */
+    if( m_pls->KeyEH != NULL ) {
+      int advance=0;
+      (*m_pls->KeyEH)( gin, m_pls->KeyEH_data, &advance );
+      if( advance )
+        wxGetApp().SetAdvanceFlag();      
+    }
+        
     switch( gin->keysym ) {
       case 'L':
         m_dev->locate_mode = LOCATE_INVOKED_VIA_DRIVER;  
@@ -554,9 +557,12 @@ void wxPLplotWindow::OnMouse( wxMouseEvent &event )
     else {
       /* Call user event handler.  Since this is called first, the user can
        * disable all PLplot internal event handling by setting gin->button to 0. */
-      //if( pls->ButtonEH != NULL)
-      //  (*pls->ButtonEH)( gin, pls->ButtonEH_data, &dev->exit_eventloop );
-      // TODO: This must be tested and implemented!
+      if( m_pls->ButtonEH != NULL) {
+        int advance=0;
+        (*m_pls->ButtonEH)( gin, m_pls->ButtonEH_data, &advance );
+        if( advance )
+          wxGetApp().SetAdvanceFlag();
+      }
 
       /* Handle internal events */
       switch( gin->button ) {
@@ -591,10 +597,14 @@ void wxPLplotWindow::Locate( void )
     wxGetApp().SetAdvanceFlag();        
   
   /* Call user locate mode handler if provided */
-  //if( pls->LocateEH != NULL )
-  //  (*pls->LocateEH)( gin, pls->LocateEH_data, &dev->locate_mode );
-  // TODO: This must be tested and implemented!
-  // else {
+  if( m_pls->LocateEH != NULL ) {
+    int locate_mode=m_dev->locate_mode;
+    (*m_pls->LocateEH)( gin, m_pls->LocateEH_data, &locate_mode );
+    if( !locate_mode ) {
+      m_dev->locate_mode = 0;
+      m_dev->draw_xhair=false;
+    }
+  } else {
     if( plTranslateCursor(gin) ) {
       /* If invoked by the API, we're done */
       /* Otherwise send report to stdout */
@@ -606,9 +616,9 @@ void wxPLplotWindow::Locate( void )
     } else {
       /* Selected point is out of bounds, so end locate mode */
       m_dev->locate_mode = 0;
-       m_dev->draw_xhair=false;
+      m_dev->draw_xhair=false;
     }
-  //}
+  }
 }
 
 

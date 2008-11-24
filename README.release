@@ -122,8 +122,12 @@ options were introduced in the wxWidgets driver:
 The option "text" changed its meaning, since it enabled the FreeType library
 support, while now the option enables the driver's own text routines.
 
-In addition the wxWidgets driver now correctly clears the background
-(or parts of it) and transparency support was added.
+Some other features were added:
+ * the wxWidgets driver now correctly clears the background (or parts of it)
+ * transparency support was added
+ * the "locate mode" (already availale in the xwin and tk driver) was
+   implemented, where graphics input events are processed and translated
+   to world coordinates
 
 1.4 pdf driver improvements
 
@@ -379,6 +383,13 @@ options were introduced in the wxWidgets driver:
  - freetype: Use FreeType library (freetype=0|1)
 The option "text" changed its meaning, since it enabled the FreeType library
 support, while now the option enables the driver's own text routines.
+
+Some other features were added:
+ * the wxWidgets driver now correctly clears the background (or parts of it)
+ * transparency support was added
+ * the "locate mode" (already availale in the xwin and tk driver) was
+   implemented, where graphics input events are processed and translated
+   to world coordinates
 
 2.12 pdf driver improvements
 
