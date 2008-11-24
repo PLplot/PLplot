@@ -19,6 +19,11 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
+/* TODO: 
+ * - Locate mode is implemented, but user functions are not called
+ */
+
+
 #include "plDevs.h"
 
 #ifdef PLD_wxwidgets
@@ -26,12 +31,10 @@
 /* plplot headers */
 #include "plplotP.h"
 #include "drivers.h"
+#include "plevent.h"
 
 /* wxwidgets headers */
 #include "wx/wx.h"
-//#include "wx/image.h"
-//#include "wx/filedlg.h"
-//#include "wx/display.h"
     
 /* std and driver headers */
 #include "wxwidgets.h"
@@ -338,11 +341,13 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
   int vX, vY, vW, vH; 
   wxRegionIterator upd( GetUpdateRegion() ); 
 
+  // remove the xhair before updating
   if( m_dev->draw_xhair && upd && xhair_drawn ) {
     dc.SetLogicalFunction( wxINVERT );
-    dc.CrossHair( mouse_x, mouse_y );
+    dc.CrossHair( old_mouse_x, old_mouse_y );
     dc.SetLogicalFunction( wxCOPY );
     xhair_drawn = false;
+    old_mouse_x=old_mouse_y=-1;    
   }
 
   while( upd ) {
@@ -360,36 +365,81 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
 
   if( m_dev->draw_xhair && !xhair_drawn ) {
     dc.SetLogicalFunction( wxINVERT );
-    dc.CrossHair( mouse_x, mouse_y );
+    dc.CrossHair( mouse_x, mouse_y );  
     dc.SetLogicalFunction( wxCOPY );
+    old_mouse_x=mouse_x;
+    old_mouse_y=mouse_y;  
     xhair_drawn=true;
   }  
 }
  
 
+/*----------------------------------------------------------------------
+ *  void wxPLplotWindow::OnChar( wxKeyEvent& event )
+ *
+ *  Handle key events.
+ *----------------------------------------------------------------------*/
 void wxPLplotWindow::OnChar( wxKeyEvent& event )
 {
   // Log_Verbose( "wxPLplotWindow::OnChar" );
 
+  PLGraphicsIn *gin = &(m_dev->gin);
+
+  int width, height;
+  GetClientSize( &width, &height );
+
+  gin->pX = mouse_x;
+  gin->pY = mouse_y;
+  gin->dX = (PLFLT) mouse_x / (width - 1);
+  gin->dY = 1.0 - (PLFLT) mouse_y / (height - 1);
+
+  // gin->state = keyEvent->state;
+
   int keycode = event.GetKeyCode();
-  switch( keycode ) {
-    case 'L':
-      m_dev->locate_mode = LOCATE_INVOKED_VIA_DRIVER;  
-      m_dev->draw_xhair=true;
+  gin->string[0] = (char)keycode;
+  gin->string[1] = '\0';
+
+  // ESCAPE, RETURN, etc. are already in ASCII equivalent
+  gin->keysym = keycode;
+  
+  if( m_dev->locate_mode ) {   
+    /* End locate mode on <Escape> */
+    if( gin->keysym == PLK_Escape ) {
+      if( m_dev->locate_mode == LOCATE_INVOKED_VIA_API )
+        wxGetApp().SetAdvanceFlag();   
+      m_dev->locate_mode = 0;
+      m_dev->draw_xhair = false;
       DrawCrosshair();
-      break;
-    case 'Q':
-    case WXK_ESCAPE:
-      m_dev->exit=true;
-      wxGetApp().SetExitFlag();
-      break;
-    case WXK_RETURN:
-    case WXK_SPACE:
-    case WXK_RIGHT:
-      wxGetApp().SetAdvanceFlag();
-      break;
-    default:
-      break;      
+      plGinInit(gin);
+    }
+    
+    Locate();    
+  } else {
+    /* Call user keypress event handler.  Since this is called first, the user
+     * can disable all internal event handling by setting key.keysym to 0. */
+    //if (pls->KeyEH != NULL)
+    //  (*pls->KeyEH) (gin, pls->KeyEH_data, &dev->exit_eventloop);
+    // TODO: This must be tested and implemented
+    
+    switch( gin->keysym ) {
+      case 'L':
+        m_dev->locate_mode = LOCATE_INVOKED_VIA_DRIVER;  
+        m_dev->draw_xhair=true;
+        DrawCrosshair();
+        break;
+      case 'Q':
+      case PLK_Escape:
+        m_dev->exit=true;
+        wxGetApp().SetExitFlag();
+        break;
+      case PLK_Return:
+      case WXK_SPACE:
+      case WXK_RIGHT:
+        wxGetApp().SetAdvanceFlag();
+        break;
+      default:
+        break;      
+    }
   }
   
   event.Skip();
@@ -462,46 +512,111 @@ void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
   AddPendingEvent( event );
 }
 
+
+/*----------------------------------------------------------------------
+ *  void wxPLplotWindow::OnMouse( wxMouseEvent &event )
+ *
+ *  Handle mouse events.
+ *----------------------------------------------------------------------*/
 void wxPLplotWindow::OnMouse( wxMouseEvent &event )
 {
   // Log_Verbose( "wxPLplotWindow::OnMouse" );
 
-  PLGraphicsIn *gin = &(m_dev->gin);
   wxPoint pos( event.GetPosition() );
-
   mouse_x = pos.x;
   mouse_y = pos.y;
   
-  if( event.LeftDown() ) {    
+  if( event.ButtonDown() ) {    
+    PLGraphicsIn *gin = &(m_dev->gin);
+
     int width, height;
     GetClientSize( &width, &height );
 
-    gin->pX = pos.x;
-    gin->pY = pos.y;
-    gin->dX = (PLFLT) pos.x / (width - 1);
-    gin->dY = 1.0 - (PLFLT) pos.y / (height - 1);
+    gin->pX = mouse_x;
+    gin->pY = mouse_y;
+    gin->dX = (PLFLT) mouse_x / (width - 1);
+    gin->dY = 1.0 - (PLFLT) mouse_y / (height - 1);
+    
+    if( event.LeftDown() ) {
+      gin->button = 1;  // X11/X.h: #define Button1	1
+      gin->state = 1<<8;  // X11/X.h: #define Button1Mask	(1<<8)
+    } else if ( event.MiddleDown() ) {
+      gin->button = 2;  // X11/X.h: #define Button2	2
+      gin->state = 1<<9;  // X11/X.h: #define Button2Mask	(1<<9)
+    } else if ( event.RightDown() ) {
+      gin->button = 3;  // X11/X.h: #define Button3	3
+      gin->state = 1<<10;  // X11/X.h: #define Button3Mask	(1<<10)
+    }
+    gin->keysym = 0x20;  // keysym for button event from xwin.c
 
-    gin->button = 1;  // X11/X.h: #define Button1	1
-    gin->state = 1<<8;  // X11/X.h: #define Button1Mask	(1<<8)
-    gin->keysym = 0x20;  // TODO: ????? from xwin.c
-  }
+    if( m_dev->locate_mode )
+      Locate();
+    else {
+      /* Call user event handler.  Since this is called first, the user can
+       * disable all PLplot internal event handling by setting gin->button to 0. */
+      //if( pls->ButtonEH != NULL)
+      //  (*pls->ButtonEH)( gin, pls->ButtonEH_data, &dev->exit_eventloop );
+      // TODO: This must be tested and implemented!
 
-  if( event.LeftDown() ) {    
-  	if( plTranslateCursor(gin) ) {
-      /* If invoked by the API, we're done */
-      /* Otherwise send report to stdout */
-	    if( m_dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER )
-		    printf( "%f %f\n", gin->wX, gin->wY );
-    } else {
-      /* Selected point is out of bounds, so end locate mode */
-        m_dev->locate_mode = 0;
-        m_dev->draw_xhair=false;
+      /* Handle internal events */
+      switch( gin->button ) {
+      case 3:  // on right mouse button advance
+        wxGetApp().SetAdvanceFlag();
+        break;
+      default:
+        break;
+      }
     }
   }
 
   DrawCrosshair();
 }
 
+
+/*----------------------------------------------------------------------
+ *  void wxPLplotWindow::Locate( void )
+ *
+ *  Take care of Locate mode, called by OnChar() and OnMouse().
+ *----------------------------------------------------------------------*/
+void wxPLplotWindow::Locate( void )
+{
+  // Log_Verbose( "wxPLplotWindow::Locate" );
+
+  PLGraphicsIn *gin = &(m_dev->gin);
+
+  // Some event (key, button) occured, and if the locate mode
+  // was initiated by the API we need to return back to the
+  // user program
+  if( m_dev->locate_mode == LOCATE_INVOKED_VIA_API )
+    wxGetApp().SetAdvanceFlag();        
+  
+  /* Call user locate mode handler if provided */
+  //if( pls->LocateEH != NULL )
+  //  (*pls->LocateEH)( gin, pls->LocateEH_data, &dev->locate_mode );
+  // TODO: This must be tested and implemented!
+  // else {
+    if( plTranslateCursor(gin) ) {
+      /* If invoked by the API, we're done */
+      /* Otherwise send report to stdout */
+      if( m_dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER )
+        if( gin->keysym < 0xFF && isprint(gin->keysym) )
+            printf("%f %f %c\n", gin->wX, gin->wY, gin->keysym);
+        else
+            printf("%f %f 0x%02x\n", gin->wX, gin->wY, gin->keysym);
+    } else {
+      /* Selected point is out of bounds, so end locate mode */
+      m_dev->locate_mode = 0;
+       m_dev->draw_xhair=false;
+    }
+  //}
+}
+
+
+/*----------------------------------------------------------------------
+ *  void wxPLplotWindow::DrawCrosshair()
+ *
+ *  Draw a cross hair (inverted lines).
+ *----------------------------------------------------------------------*/
 void wxPLplotWindow::DrawCrosshair()
 {
   /* draw cross hair */

@@ -21,10 +21,8 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 /* TODO: 
- * - implement the GraphicsIn stuff (only part of it so far)
- * - example 29 crashes on Win32, wxWidgets driver
+ * - NA
  */
 
 #include "plDevs.h"
@@ -992,11 +990,11 @@ static void init_freetype_lv2( PLStream *pls )
 #endif
 
 
-/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------
  * GetCursorCmd()
  *
  * Waits for a graphics input event and returns coordinates.
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr)
 {
   // Log_Verbose( "GetCursorCmd" );
@@ -1022,19 +1020,19 @@ static void GetCursorCmd( PLStream* pls, PLGraphicsIn* ptr)
 
 
 
-/*----------------------------------------------------------------------*\
+/*----------------------------------------------------------------------
  *  This part includes wxWidgets specific functions, which allow to
  *  open a window from the command line, if needed.
-\*----------------------------------------------------------------------*/
+ *----------------------------------------------------------------------*/
 
 
-/*----------------------------------------------------------------------*\
+/*----------------------------------------------------------------------
  *  void install_buffer( PLStream *pls )
  *
  *  If this driver is called from a command line executable (and not
  *  from within a wxWidgets program), this function prepares a DC and a
  *  bitmap to plot into.
-\*----------------------------------------------------------------------*/
+ *----------------------------------------------------------------------*/
 static void install_buffer( PLStream *pls )
 {
   // Log_Verbose( "install_buffer" );
@@ -1082,12 +1080,12 @@ static void install_buffer( PLStream *pls )
 }
  
 
-/*----------------------------------------------------------------------*\
+/*----------------------------------------------------------------------
  *  void wxRunApp( PLStream *pls, bool runonce )
  *
  *  This is a hacked wxEntry-function, so that wxUninitialize is not
  *  called twice. Here we actually start the wxApplication.
-\*----------------------------------------------------------------------*/
+ *----------------------------------------------------------------------*/
 static void wxRunApp( PLStream *pls, bool runonce )
 {
   // Log_Verbose( "wxRunApp" );  

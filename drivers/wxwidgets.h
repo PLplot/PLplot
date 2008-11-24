@@ -392,6 +392,7 @@ private:
   void OnSize( wxSizeEvent & WXUNUSED(event) );
   void OnMaximize( wxMaximizeEvent & WXUNUSED(event) );
   void OnMouse( wxMouseEvent& event );
+  void Locate( void );
   void DrawCrosshair();
   
   PLStream *m_pls;
