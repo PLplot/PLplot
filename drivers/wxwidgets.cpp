@@ -694,7 +694,8 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 		break;
   
   case PLESC_GETC:
-	  GetCursorCmd( pls, (PLGraphicsIn *) ptr );
+    if( dev->ownGUI )
+      GetCursorCmd( pls, (PLGraphicsIn *) ptr );
 	  break;
 
   default:
