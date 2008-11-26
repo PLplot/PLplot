@@ -55,6 +55,7 @@ INDEX
 1.11 Website support files updated
 1.12 Internal changes to function visibility
 1.13 Dynamic driver support in Windows
+1.14 Documentation updates
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 2.1 All autotools-related files have now been removed
@@ -79,6 +80,7 @@ examples
 2.19 Website support files updated
 2.20 Internal changes to function visibility
 2.21 Dynamic driver support in Windows
+2.22 Documentation updates
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
 
@@ -242,6 +244,13 @@ run-time and call functions from these libraries. As a consequence
 drivers can now be compiled into single DLLs separate from the core
 plplot DLL also in Windows. The cmake option ENABLE_DYNDRIVERS is now
 ON by default for Windows if a shared plplot library is built.
+
+1.14 Documentation updates
+
+The docbook documentation has been updated to include many of the 
+C-specific functions (for example plAlloc2dGrid) which are not part 
+of the common API, but are used in the examples and may be helpful 
+for plplot users.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -504,4 +513,11 @@ run-time and call functions from these libraries. As a consequence
 drivers can now be compiled into single DLLs separate from the core
 plplot DLL also in Windows. The cmake option ENABLE_DYNDRIVERS is now
 ON by default for Windows if a shared plplot library is built.
+
+2.22 Documentation updates
+
+The docbook documentation has been updated to include many of the 
+C-specific functions (for example plAlloc2dGrid) which are not part 
+of the common API, but are used in the examples and may be helpful 
+for plplot users.
 
