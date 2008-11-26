@@ -422,10 +422,6 @@ DrvOpt wx_options[] = {
   /* set dpi */    
   plspage(VIRTUAL_PIXELS_PER_IN/dev->scalex, VIRTUAL_PIXELS_PER_IN/dev->scaley, 0, 0, 0, 0);
 
-	/* Set wx error handler for various errors in plplot*/
-  /* plsexit(plD_errorexithandler_wxwidgets); */
-  /* plsabort(plD_erroraborthandler_wxwidgets); */
-  
 #ifdef HAVE_FREETYPE
   if( dev->freetype )
     init_freetype_lv2( pls );
@@ -776,38 +772,31 @@ void wx_set_size( PLStream* pls, int width, int height )
 }
 
 
-/*----------------------------------------------------------------------*\
- *  int plD_errorexithandler_wxwidgets( char *errormessage )
+/*----------------------------------------------------------------------
+ *  int plD_errorexithandler_wxwidgets( const char *errormessage )
  *
  *  If an PLplot error occurs, this function shows a dialog regarding
  *  this error and than exits.
-\*----------------------------------------------------------------------*/
-int plD_errorexithandler_wxwidgets( char *errormessage )
+ *----------------------------------------------------------------------*/
+int plD_errorexithandler_wxwidgets( const char *errormessage )
 {  
-  /* wxPLDevBase* dev = (wxPLDevBase*)pls->dev; */
+  wxMessageDialog dialog( 0, wxString(errormessage, *wxConvCurrent),wxString("wxWidgets PLplot App error",*wxConvCurrent),wxOK );
+  dialog.ShowModal();
 
-  /* if( dev->ownGUI ) { */
-    wxMessageDialog dialog( 0, wxString(errormessage, *wxConvCurrent),wxString("wxPlot error",*wxConvCurrent),wxOK );
-    dialog.ShowModal();
-    plend();
-    return 0;
-  /*} */
+  return 0;
 }
 
-/*----------------------------------------------------------------------*\
- *  void plD_erroraborthandler_wxwidgets( char *errormessage )
- *
- *  If an PLplot error occurs, this function shows a dialog regarding
- *  this error.
-\*----------------------------------------------------------------------*/
-void plD_erroraborthandler_wxwidgets( char *errormessage )
-{  
-  /* wxPLDevBase* dev = (wxPLDevBase*)pls->dev; */
 
-  /* if( dev->ownGUI ) { */
-    wxMessageDialog dialog( 0,(wxString(errormessage, *wxConvCurrent)+ wxString(" aborting operation...", *wxConvCurrent)), wxString("wxPlot error",*wxConvCurrent), wxOK );
-    dialog.ShowModal();
-  /* } */
+/*----------------------------------------------------------------------
+ *  void plD_erroraborthandler_wxwidgets( const char *errormessage )
+ *
+ *  If PLplot aborts, this function shows a dialog regarding
+ *  this error.
+ *----------------------------------------------------------------------*/
+void plD_erroraborthandler_wxwidgets( const char *errormessage )
+{  
+  wxMessageDialog dialog( 0,(wxString(errormessage, *wxConvCurrent)+wxString(" aborting operation...", *wxConvCurrent)), wxString("wxWidgets PLplot App abort",*wxConvCurrent), wxOK );
+  dialog.ShowModal();
 }
 
 
@@ -1076,6 +1065,10 @@ static void install_buffer( PLStream *pls )
   
   dev->ready = true;
 
+	/* Set wx error handler for various errors in plplot*/
+  plsexit( plD_errorexithandler_wxwidgets );
+  plsabort( plD_erroraborthandler_wxwidgets );
+  
   /* replay command we may have missed */
   plD_bop_wxwidgets( pls );
 }
@@ -1112,7 +1105,7 @@ static void wxRunApp( PLStream *pls, bool runonce )
 		   but not for Windows, but it doesn't harm */
 	  wxIdleEvent event;
     wxGetApp().AddPendingEvent( event );
-		wxGetApp().OnRun();   /* start wxWidgets application     */
+		wxGetApp().OnRun();   /* start wxWidgets application */
     callOnExit.exit=false;
   }
   wxCATCH_ALL( wxGetApp().OnUnhandledException(); fprintf(stderr, "Problem running wxWidgets!\n"); exit(0); )

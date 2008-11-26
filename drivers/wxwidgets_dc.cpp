@@ -243,7 +243,7 @@ void wxPLDevDC::SetColor1( PLStream *pls )
  *  void wxPLDevDC::SetExternalBuffer( void* dc )
  *
  *  Adds a dc to the device. In that case, the drivers doesn't provide 
- *  a GUI
+ *  a GUI.
  *--------------------------------------------------------------------------*/
 void wxPLDevDC::SetExternalBuffer( void* dc )
 {

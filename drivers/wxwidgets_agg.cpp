@@ -60,7 +60,12 @@
 
 #define makeunixslash( b ) do { char *I; for( I=b;*I!=0;*I++ ) if( *I=='\\' ) *I='/';} while(0)
 	
-/* Constructor initializes all variables and objects */
+/*--------------------------------------------------------------------------
+ *  wxPLDevAGG::wxPLDevAGG()
+ *
+ *  Constructor of the AGG wxWidgets device based on the wxPLDevBase
+ *  class. Initialisations of variables and objects are done.
+ *--------------------------------------------------------------------------*/
 wxPLDevAGG::wxPLDevAGG() :
 		wxPLDevBase(),
     mRenderingBuffer(),
@@ -158,7 +163,11 @@ wxPLDevAGG::wxPLDevAGG() :
 }
 
 
-/* Deconstructor frees allocated buffer */
+/*--------------------------------------------------------------------------
+ *  wxPLDevAGG::~wxPLDevAGG()
+ *
+ *  Deconstructor frees allocated buffer.
+ *--------------------------------------------------------------------------*/
 wxPLDevAGG::~wxPLDevAGG()
 {
   if( ownGUI )
@@ -167,6 +176,12 @@ wxPLDevAGG::~wxPLDevAGG()
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::drawPath( drawPathFlag flag )
+ *
+ *  Common function which either draws a stroke along a path or a filled
+ *  polygon surrounded by a stroke depending on flag.
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::drawPath( drawPathFlag flag )
 {
   mRasterizer.reset();
@@ -198,6 +213,11 @@ void wxPLDevAGG::drawPath( drawPathFlag flag )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::DrawLine( short x1a, short y1a, short x2a, short y2a )
+ *
+ *  Draw a line from (x1a, y1a) to (x2a, y2a).
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::DrawLine( short x1a, short y1a, short x2a, short y2a )
 {
   mPath.remove_all();
@@ -211,6 +231,11 @@ void wxPLDevAGG::DrawLine( short x1a, short y1a, short x2a, short y2a )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::DrawPolyline( short *xa, short *ya, PLINT npts )
+ *
+ *  Draw a poly line - coordinates are in the xa and ya arrays.
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::DrawPolyline( short *xa, short *ya, PLINT npts )
 {
   mPath.remove_all();
@@ -225,6 +250,12 @@ void wxPLDevAGG::DrawPolyline( short *xa, short *ya, PLINT npts )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb,
+ *                                    PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
+ *
+ *  Clear parts ((x1,y1) to (x2,y2)) of the background in color (bgr,bgg,bgb).
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
   if( x1<0 && y1<0 && x2<0 && y2<0 ) {
@@ -255,6 +286,13 @@ void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLI
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::AGGAddtoClipRegion( short x1, short y1,
+ *                                       short x2, short y2 )
+ *
+ *  Adds the region (x1,y1)-(x2,y2) to the regions which needs to be
+ *  updated/redrawn.
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::AGGAddtoClipRegion( short x1, short y1, short x2, short y2 )
 {
   double x1d=x1, x2d=x2, y1d=y1, y2d=y2;
@@ -265,6 +303,11 @@ void wxPLDevAGG::AGGAddtoClipRegion( short x1, short y1, short x2, short y2 )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::FillPolygon( PLStream *pls )
+ *
+ *  Draw a filled polygon.
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::FillPolygon( PLStream *pls )
 {
   short *xa = pls->dev_x;
@@ -284,6 +327,12 @@ void wxPLDevAGG::FillPolygon( PLStream *pls )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::BlitRectangle( wxPaintDC* dc, int vX, int vY,
+ *                                  int vW, int vH )
+ *
+ *  Copy/Blit a rectangle ((vX,vY) to (vX+vW,vY+vH)) into given dc.
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )
 {
   if( mBuffer ) {
@@ -296,6 +345,11 @@ void wxPLDevAGG::BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::CreateCanvas( void )
+ *
+ *  Create canvas (bitmap and dc) if the driver provides the GUI.
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::CreateCanvas()
 {
   if( ownGUI ) {
@@ -316,12 +370,22 @@ void wxPLDevAGG::CreateCanvas()
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::SetWidth( PLStream *pls )
+ *
+ *  Set the width of the drawing pen.
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::SetWidth( PLStream *pls )
 {
   mStrokeWidth = (scalex+scaley)/2.0*(pls->width>0 ? pls->width : 1);  // TODO: why and when ist width 0???
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::SetColor0( PLStream *pls )
+ *
+ *  Set color from colormap 0.
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::SetColor0( PLStream *pls )
 {
   mColorRedStroke = pls->cmap0[pls->icol0].r;
@@ -331,6 +395,11 @@ void wxPLDevAGG::SetColor0( PLStream *pls )
 }
 
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::SetColor1( PLStream *pls )
+ *
+ *  Set color from colormap 1.
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::SetColor1( PLStream *pls )
 {
   mColorRedStroke = pls->curcolor.r;
@@ -340,12 +409,12 @@ void wxPLDevAGG::SetColor1( PLStream *pls )
 }
 
 
-/*--------------------------------------------------------------------------*\
- *  void wx_set_buffer( PLStream* pls, wxImage* dc )
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::SetExternalBuffer( void* dc )
  *
- *  Adds a dc to the stream. The associated device is attached to the canvas
- *  as the property "dev".
-\*--------------------------------------------------------------------------*/
+ *  Adds a dc to the device. In that case, the drivers doesn't provide 
+ *  a GUI. A new buffer (image) will be created and set up.
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::SetExternalBuffer( void* dc )
 {
   mDC=(wxDC*)dc;  /* Add the dc to the device */
@@ -367,18 +436,35 @@ void wxPLDevAGG::SetExternalBuffer( void* dc )
 
 #ifdef HAVE_FREETYPE
 
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
+ *
+ *  Draw a pixel in color color @ (x,y).
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
 {
   mBuffer->SetRGB( x, y, GetRValue(color), GetGValue(color), GetBValue(color) );   
   AddtoClipRegion( x, y, x, y );
 }
 
+
+/*--------------------------------------------------------------------------
+ *  void wxPLDevAGG::PutPixel( short x, short y )
+ *
+ *  Draw a pixel in current color @ (x,y).
+ *--------------------------------------------------------------------------*/
 void wxPLDevAGG::PutPixel( short x, short y )
 {
   mBuffer->SetRGB( x, y, mColorRedStroke, mColorGreenStroke, mColorBlueStroke );
   AddtoClipRegion( x, y, x, y );
 }
 
+
+/*--------------------------------------------------------------------------
+ *  PLINT wxPLDevAGG::GetPixel( short x, short y )
+ *
+ *  Get color information from pixel @ (x,y).
+ *--------------------------------------------------------------------------*/
 PLINT wxPLDevAGG::GetPixel( short x, short y )
 {
   return RGB( mBuffer->GetRed( x, y ), mBuffer->GetGreen( x, y ), mBuffer->GetBlue( x, y ) );    
