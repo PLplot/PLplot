@@ -40,122 +40,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <title>The Specialized C API for PLplot</title>
 
   <para>
-    The purpose of this chapter is to document the API for every C function
-    in PLplot (other than language bindings) that
-    is <emphasis>not</emphasis> part of the common API that has already been
-    documented in <xref linkend="API"/>.
+    The purpose of this chapter is to document the PLPlot C functions that are
+    currently not part of the common API, 
+    either because they are C/C++ specific utility 
+    functions (e.g. &plAlloc2dGrid;, &plFree2dGrid;) or because they are not
+    easily implemented in other languages (e.g. &plGetCursor;). Some of these 
+    functions are used in the examples and may be helpful for other users of 
+    plplot.
   </para>
-
   <para>
-    This chapter is a work that is just starting.  There are many C functions
-    in the code base that are not part of the common API, and we haven't even
-    gotten to the point of listing them all.  What gets documented here now
-    is whatever C-explicit code we are trying to understand at the time.
+    This chapter also documents some of the data types and structures 
+    defined by plplot and used by the functions.
   </para>
-
-  <para>
-    The functions currently documented here are either C specific utility 
-    functions (e.g. &plAlloc2dGrid;, &plFree2dGrid;) or internal functions 
-    which might of use to developers (e.g. &plP_checkdriverinit;). Some of 
-    the utility functions are also implemented in some other languages (e.g. 
-    &plGetCursor;).
-  </para>
-
-  <sect1 id="plP_checkdriverinit" renderas="sect3">
-    <title>
-      <function>plP_checkdriverinit</function>: Checks to see if any
-      of the specified drivers have been initialized
-    </title>
-
-    <para>
-      <funcsynopsis>
-	<funcprototype>
-	  <funcdef>
-	    <function>plP_checkdriverinit</function>
-	  </funcdef>
-	  <paramdef><parameter>list</parameter></paramdef>
-	</funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para> Checks to see if any of the specified drivers have been
-    initialized. Function tests a space-delimited list of driver names to
-    see how many of the given drivers have been initialized, and how often.
-    The return code of the function is: <literal>0</literal> if no matching
-    drivers were found to have been initialized; <literal>-1</literal> if
-    an error occurred allocating the internal buffer; or, a positive number
-    indicating the number of streams encountered that belong to drivers on
-    the provided list. This function invokes &plP_getinitdriverlist;
-    internally to get a <emphasis>complete</emphasis> list of drivers that have been initialized
-    in order to compare with the driver names specified in the argument list
-    to &plP_checkdriverinit;.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>list</parameter>
-	  (<literal>char *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to character string specifying a space-delimited
-	    list of driver names, e.g., <literal>"bmp jpeg tiff"</literal>.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-    <para> 
-      This function is not used in any examples.
-    </para>
-
-  </sect1>
-
-  <sect1 id="plP_getinitdriverlist" renderas="sect3">
-    <title>
-      <function>plP_getinitdriverlist</function>: Get the initialized-driver
-      list
-    </title>
-
-    <para>
-      <funcsynopsis>
-	<funcprototype>
-	  <funcdef>
-	    <function>plP_getinitdriverlist</function>
-	  </funcdef>
-	  <paramdef><parameter>text_buffer</parameter></paramdef>
-	</funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para> Get the initialized-driver list. Function returns a
-    space-delimited list of the currently initialized drivers or streams. If more
-    than one stream is using the same driver, then its name will be returned
-    more than once. The function can be analogously thought of as also
-    returning the names of the active streams.  Invoked internally by
-    &plP_checkdriverinit;. </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>text_buffer</parameter>
-	  (<literal>char *</literal>, output)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to a user-allocated buffer to hold the result. The user
-	    must ensure the buffer is big enough to hold the result.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-    <para> 
-      This function is not used in any examples.
-    </para>
-
-  </sect1>
 
   <sect1 id="plabort" renderas="sect3">
     <title>
@@ -194,6 +90,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      This function is currently available in C, f77, f95 and python.
+    </para>
 
     <para>
       This function is used in example 20.
@@ -257,6 +157,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
+      This function is currently available in C, C++, perl and tk.
+    </para>
+
+    <para>
       This function is used in examples 8, 9, 11, 14, 16, 20, 21, 22, 28, 30.
     </para>
     
@@ -281,7 +185,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       This routine is called in case an error is encountered during
       execution of a PLplot routine.  It prints the error message, tries to
-      release allocated resources, calls the handler prvided by &plsexit;
+      release allocated resources, calls the handler provided by &plsexit;
       and then exits.  If cleanup needs to be done in the driver program
       then the user may want to supply his/her own exit handler and pass it
       in via &plsexit;.  This function should either call &plend; before
@@ -301,6 +205,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      This function is currently available in C and ada.
+    </para>
 
     <para> 
       This function is not used in any examples.
@@ -357,6 +265,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
+      This function is currently available in C, C++, perl and tk.
+    </para>
+
+    <para>
       This function is used in examples 8, 9, 11, 14, 16, 20, 21, 22, 28, 30.
     </para>
     
@@ -389,11 +301,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>gin</parameter>
-	  (<literal>PLGraphicsIn *</literal>, output)
+	  (<literal>&PLGraphicsIn; *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to PLGraphicsIn structure which will contain the 
+	    Pointer to &PLGraphicsIn; structure which will contain the 
 	    output. The structure is not allocated by the routine 
 	    and must exist before the function is called.
 	  </para>
@@ -401,9 +313,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
     </variablelist>
 
+    <para>
+      This function is currently only available with the C, C++, Ocaml, 
+      Octave, Perl, Python and Ada language bindings.
+    </para>
+
     <para> 
       This function is used in examples 1 and 20.
     </para>
+
+    
 
   </sect1>
 
@@ -441,10 +360,88 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
     </variablelist>
 
+    <para>
+      This function is currently available in C, C++ and Ocaml.
+    </para>
+
     <para> 
       This function is not used in any examples.
     </para>
 
+  </sect1>
+
+  <sect1 id="plMergeOpts" renderas="sect3">
+    <title>
+      <function>plMergeOpts</function>: Merge use option table into
+      internal info structure.
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plMergeOpts</function>
+	  </funcdef>
+	  <paramdef><parameter>options</parameter></paramdef>
+	  <paramdef><parameter>name</parameter></paramdef>
+	  <paramdef><parameter>notes</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+    
+    <para>
+      Merges in a set of user supplied command line options with the 
+      internal options table. This allows use options to be used along 
+      with the built-in plplot options to set device driver, output file 
+      etc. See &plparseopts; for details of how to parse these options in 
+      a program. 
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>options</parameter>
+	  (<literal>PLOptionTable *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    User option table to merge. 
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>name</parameter>
+	  (<literal>const char *name</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  Label to preface the options in the program help.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>notes</parameter>
+	  (<literal>const char **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    A null-terminated array of notes which appear after
+	    the options in the program help.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      This function is currently available in C, C++ and Ocaml.
+    </para>
+
+    <para>
+      This function is used in examples 1, 8, 16, 20 and 21.
+    </para>
+      
   </sect1>
 
   <sect1 id="plMinMax2dGrid" renderas="sect3">
@@ -510,7 +507,107 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
+      This function is currently available in C, C++, Java, Ocaml 
+      and Python.
+    </para>
+
+    <para>
       This function is used in examples 8, 11, 20 and 21.
+    </para>
+      
+  </sect1>
+
+  <sect1 id="plOptUsage" renderas="sect3">
+    <title>
+      <function>plOptUsage</function>: Print usage and syntax message.
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plOptUsage</function>
+	  </funcdef>
+	  <paramdef></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+    
+    <para>
+      Prints the usage and syntax message. The message can also be 
+      display using the -h command line option. There is a default
+      message describing the default plplot options. The usage
+      message is also modified by &plSetUsage; and &plMergeOpts;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>program_string</parameter>
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    String to appear as the name of program. 
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>usage_string</parameter>
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  String to appear as the usage text.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      This function is currently available in C, C++, Java, Ocaml, Octave
+      and Python.
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+      
+  </sect1>
+
+  <sect1 id="plResetOpts" renderas="sect3">
+    <title>
+      <function>plMergeOpts</function>: Reset internal option table
+      info structure. 
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plResetOpts</function>
+	  </funcdef>
+	  <paramdef></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+    
+    <para>
+      Resets the internal command line options table to the default 
+      builtin value. Any user options added with &plMergeOpts; will be 
+      cleared. See &plparseopts; for details of how to parse these 
+      options in a program. 
+    </para>
+
+    <para>
+      This function is currently available in C, C++, Java, Ocaml and
+      Octave, although it is not much use in Java or Octave since they 
+      don't have plMergeOpts.
+    </para>
+
+    <para>
+      This function is not used in any examples.
     </para>
       
   </sect1>
@@ -549,10 +646,73 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
     </variablelist>
 
+    <para>
+      This function is currently available in C and Ocaml.
+    </para>
+
     <para> 
       This function is not used in any examples.
     </para>
 
+  </sect1>
+
+  <sect1 id="plSetUsage" renderas="sect3">
+    <title>
+      <function>plSetUsage</function>: Set the strings used in usage
+      and syntax messages.
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plSetUsage</function>
+	  </funcdef>
+	  <paramdef><parameter>program_string</parameter></paramdef>
+	  <paramdef><parameter>usage_string</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+    
+    <para>
+      Sets the program string and usage string displayed by the command 
+      line help option (-h) and by &plOptUsage;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>program_string</parameter>
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    String to appear as the name of program. 
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>usage_string</parameter>
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  String to appear as the usage text.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      This function is currently available in C, C++, Java, Ocaml, Octave
+      and Python.
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+      
   </sect1>
 
   <sect1 id="plsexit" renderas="sect3">
@@ -588,6 +748,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      This function is currently available in C, C++ and Ocaml.
+    </para>
 
     <para> 
       This function is not used in any examples.
@@ -634,6 +798,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      This function is currently available in C, C++ and Ocaml.
+    </para>
 
     <para> 
       This function is not used in any examples.
@@ -729,6 +897,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
     </variablelist>
 
+    <para>
+      This function is currently available in C, C++, Ocaml, Perl, Python 
+      and Tcl.
+    </para>
+
     <para> 
       This function is not used in any examples.
     </para>
@@ -823,6 +996,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      This function is currently available in C, C++, Ocaml, Perl, Python 
+      and Tcl.
+    </para>
 
     <para> 
       This function is used in examples 9 and 16.
@@ -920,10 +1098,225 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
     </variablelist>
 
+    <para>
+      This function is currently available in C, C++, Ocaml, Perl, Python 
+      and Tcl.
+    </para>
+
     <para> 
       This function is used in example 22.
     </para>
 
   </sect1>
+
+  <sect1 id="PLGraphicsIn" renderas="sect3">
+    <title><structname>PLGraphicsIn</structname>: PLplot Graphics Input structure</title>
+
+    <para>
+      The <structname>PLGraphicsIn</structname> structure is used by 
+      &plGetCursor; to return information 
+      on the current cursor position and key / button state for 
+      interactive drivers. The structure contains the following fields:
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <structfield>type</structfield>
+	  (<literal>int</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Type of event (currently unused?).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>state</structfield>
+	  (<literal>unsigned int</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Key or button mask.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>keysym</structfield>
+	  (<literal>unsigned int</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Key selected.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>button</structfield>
+	  (<literal>unsigned int</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Mouse button selected.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>subwindow</structfield>
+	  (<literal>PLINT</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Subwindow (or subpage / subplot) number.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>string</structfield>
+	  (<literal>char [PL_MAXKEY]</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Translated string.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>pX, pY</structfield>
+	  (<literal>int</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Absolute device coordinates of pointer.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>dX, dY</structfield>
+	  (<literal>PLFLT</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    relative device coordinates of pointer.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>wX, wY</structfield>
+	  (<literal>PLFLT</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    World coordinates of pointer.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    </sect1>
+
+  <sect1 id="PLOptionTable" renderas="sect3">
+    <title><structname>PLOptionTable</structname>: PLplot command line options table structure</title>
+
+    <para>
+      The <structname>PLOptionTable</structname> structure is used by 
+      &plMergeOpts; to pass information on user-defined command line 
+      options to plplot. The structure contains the following fields:
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <structfield>opt</structfield>
+	  (<literal>const char*</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Name of option.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>handler</structfield>
+	  (<literal>int (*func) (const char *, const char *, void *)</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    User-defined handler function to be called when option is set. A 
+	    NULL value indicates that no user-defined handler is required.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>client_data</structfield>
+	  (<literal>void *</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to client data. A 
+	    NULL value indicates that no client data is required.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>var</structfield>
+	  (<literal>void *</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to variable to set to the value specified on the 
+	    command line option.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>mode</structfield>
+	  (<literal>long</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Type of variable <parameter>var</parameter>. Allowed values
+	    are PL_OPT_FUNC, PL_OPT_BOOL, PL_OPT_INT, PL_OPT_FLOAT, 
+	    PL_OPT_STRING.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>syntax</structfield>
+	  (<literal>const char *</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Syntax for option (used in the usage message).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <structfield>desc</structfield>
+	  (<literal>const char *</literal>)
+	</term>
+	<listitem>
+	  <para>
+	    Description of the option (used in the usage message).
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    </sect1>
 
 </chapter>

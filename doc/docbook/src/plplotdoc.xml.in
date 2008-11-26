@@ -67,6 +67,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY chap-api-fortran77 SYSTEM "api-fortran77.xml">
 <!ENTITY chap-api-compat SYSTEM "api-compat.xml">
 <!ENTITY chap-api-obsolete SYSTEM "api-obsolete.xml">
+<!ENTITY chap-api-internal SYSTEM "api-internal.xml">
 <!ENTITY plplot-symbols SYSTEM "plplot-symbols.txt">
 <!ENTITY plplot-structs SYSTEM "plplot-structs.txt">
 <!ENTITY chap-os-notes SYSTEM "os_notes.xml">
@@ -144,12 +145,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plline '<link linkend="plline"><function>plline</function></link>'>
 <!ENTITY plline3 '<link linkend="plline3"><function>plline3</function></link>'>
 <!ENTITY pllsty '<link linkend="pllsty"><function>pllsty</function></link>'>
+<!ENTITY plMergeOpts '<link linkend="plMergeOpts"><function>plMergeOpts</function></link>'>
 <!ENTITY plmesh '<link linkend="plmesh"><function>plmesh</function></link>'>
 <!ENTITY plmeshc '<link linkend="plmeshc"><function>plmeshc</function></link>'>
 <!ENTITY plmeshfortran95 '<link linkend="plmeshfortran95"><function>plmeshfortran95</function></link>'>
 <!ENTITY plmeshfortran77 '<link linkend="plmeshfortran77"><function>plmeshfortran77</function></link>'>
 <!ENTITY plmkstrm '<link linkend="plmkstrm"><function>plmkstrm</function></link>'>
 <!ENTITY plmtex '<link linkend="plmtex"><function>plmtex</function></link>'>
+<!ENTITY plOptUsage '<link linkend="plOptUsage"><function>plOptUsage</function></link>'>
 <!ENTITY plot3d '<link linkend="plot3d"><function>plot3d</function></link>'>
 <!ENTITY plot3dc '<link linkend="plot3dc"><function>plot3dc</function></link>'>
 <!ENTITY plot3dfortran95 '<link linkend="plot3dfortran95"><function>plot3dfortran95</function></link>'>
@@ -165,6 +168,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plpsty '<link linkend="plpsty"><function>plpsty</function></link>'>
 <!ENTITY plptex '<link linkend="plptex"><function>plptex</function></link>'>
 <!ENTITY plreplot '<link linkend="plreplot"><function>plreplot</function></link>'>
+<!ENTITY plResetOpts '<link linkend="plResetOpts"><function>plResetOpts</function></link>'>
 <!ENTITY plrgbhls '<link linkend="plrgbhls"><function>plrgbhls</function></link>'>
 <!ENTITY plsabort '<link linkend="plsabort"><function>plsabort</function></link>'>
 <!ENTITY plschr '<link linkend="plschr"><function>plschr</function></link>'>
@@ -187,6 +191,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plsescfortran95 '<link linkend="plsescfortran95"><function>plsescfortran95</function></link>'>
 <!ENTITY plsescfortran77 '<link linkend="plsescfortran77"><function>plsescfortran77</function></link>'>
 <!ENTITY plsetopt '<link linkend="plsetopt"><function>plsetopt</function></link>'>
+<!ENTITY plSetUsage '<link linkend="plSetUsage"><function>plSetUsage</function></link>'>
 <!ENTITY plsexit '<link linkend="plsexit"><function>plsexit</function></link>'>
 <!ENTITY plsfam '<link linkend="plsfam"><function>plsfam</function></link>'>
 <!ENTITY plsfci '<link linkend="plsfci"><function>plsfci</function></link>'>
@@ -233,6 +238,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plw3d '<link linkend="plw3d"><function>plw3d</function></link>'>
 <!ENTITY plwid '<link linkend="plwid"><function>plwid</function></link>'>
 <!ENTITY plwind '<link linkend="plwind"><function>plwind</function></link>'>
+<!ENTITY PLGraphicsIn '<link linkend="PLGraphicsIn"><function>PLGraphicsIn</function></link>'>
 <!ENTITY PLplot-website '@PLPLOT_WEBSITE@'>
 <!ENTITY % Math-Entities SYSTEM "math.ent">
 %Math-Entities;
@@ -297,7 +303,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <holder>Andrew Roach</holder>
     </copyright>
     <copyright>
-      <year>2004</year>
+      <year>2004,2008</year>
       <holder>Andrew Ross</holder>
     </copyright>
     <copyright>
@@ -397,6 +403,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     &chap-api-fortran77;
     &chap-api-compat;
     &chap-api-obsolete;
+    &chap-api-internal;
     &chap-os-notes;
   </part>
 

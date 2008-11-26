@@ -7,6 +7,7 @@
   <uri resource="api-compat.xml" typeId="DocBook"/>
   <uri resource="api-fortran77.xml" typeId="DocBook"/>
   <uri resource="api-fortran95.xml" typeId="DocBook"/>
+  <uri resource="api-internal.xml" typeId="DocBook"/>
   <uri resource="api-obsolete.xml" typeId="DocBook"/>
   <uri resource="api.xml" typeId="DocBook"/>
   <uri resource="bibliography.xml" typeId="DocBook"/>
