@@ -37,24 +37,13 @@ if(PLD_wxwidgets)
     "setting PLD_wxwidgets to OFF."
     )
     set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
+  else(NOT wxWidgets_FOUND)  
+		# Check if stdint.h can be used from c++ (HAVE_CXX_STDINT_H)
+		include(TestForStdintCXX)
   endif(NOT wxWidgets_FOUND)  
 endif(PLD_wxwidgets)
 
-# Need to add check if stdint.h can be used from c++ (HAVE_CXX_STDINT_H)
 if(PLD_wxwidgets)
-  include(TestForStdintCXX)
-  if(NOT CMAKE_CXX_STDINT_H)
-    message(STATUS
-    "WARNING: CXX compiler doesn't support using stdint.h so "
-    "setting PLD_wxwidgets to OFF."
-    )
-    set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
-  endif(NOT CMAKE_CXX_STDINT_H)
-endif(PLD_wxwidgets)
-
-if(PLD_wxwidgets)
-  #message("wxWidgets_INCLUDE_DIRS = ${wxWidgets_INCLUDE_DIRS}")
-  #message("wxWidgets_DEFINITIONS = ${wxWidgets_DEFINITIONS}")
   string(REGEX REPLACE ";" " -I" 
   wxwidgets_COMPILE_FLAGS
   "-I${wxWidgets_INCLUDE_DIRS}"
