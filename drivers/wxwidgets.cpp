@@ -780,8 +780,10 @@ void wx_set_size( PLStream* pls, int width, int height )
  *----------------------------------------------------------------------*/
 int plD_errorexithandler_wxwidgets( const char *errormessage )
 {  
-  wxMessageDialog dialog( 0, wxString(errormessage, *wxConvCurrent),wxString("wxWidgets PLplot App error",*wxConvCurrent),wxOK );
-  dialog.ShowModal();
+  if( errormessage[0] ) {
+    wxMessageDialog dialog( 0, wxString(errormessage, *wxConvCurrent),wxString("wxWidgets PLplot App error",*wxConvCurrent),wxOK );
+    dialog.ShowModal();
+  }
 
   return 0;
 }
@@ -795,8 +797,10 @@ int plD_errorexithandler_wxwidgets( const char *errormessage )
  *----------------------------------------------------------------------*/
 void plD_erroraborthandler_wxwidgets( const char *errormessage )
 {  
-  wxMessageDialog dialog( 0,(wxString(errormessage, *wxConvCurrent)+wxString(" aborting operation...", *wxConvCurrent)), wxString("wxWidgets PLplot App abort",*wxConvCurrent), wxOK );
-  dialog.ShowModal();
+  if( errormessage[0] ) {
+    wxMessageDialog dialog( 0,(wxString(errormessage, *wxConvCurrent)+wxString(" aborting operation...", *wxConvCurrent)), wxString("wxWidgets PLplot App abort",*wxConvCurrent), wxOK );
+    dialog.ShowModal();
+  }
 }
 
 

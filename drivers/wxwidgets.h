@@ -383,6 +383,7 @@ public:
 
   void SetRefreshFlag( bool flag=true ) { refresh=flag; };
   bool GetRefreshFlag( void ) { return refresh; };
+  void SetOrientation( int rot );
   
 private:
   void OnPaint( wxPaintEvent& event );
@@ -395,7 +396,7 @@ private:
   void Locate( void );
   void DrawCrosshair();
   
-  PLStream *m_pls;
+  PLStream* m_pls;
   wxPLDevBase* m_dev;  /* windows needs to know this structure */
   bool refresh;
   bool xhair_drawn;
@@ -424,7 +425,9 @@ private:
   DECLARE_EVENT_TABLE()
 };
 
-enum { wxPL_Save=10000, wxPL_Next=10100 };
+/* menu ids */
+enum { wxPL_Save=10000, wxPL_Next=10100, wxPL_Locate, wxPL_Orientation_0, wxPL_Orientation_90,
+        wxPL_Orientation_180, wxPL_Orientation_270 };
 
 /* Use this macro if you want to define your own main() or WinMain() function
    and call wxEntry() from there. */

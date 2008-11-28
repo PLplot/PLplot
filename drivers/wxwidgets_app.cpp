@@ -189,15 +189,35 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
     }
 
   wxMenu* fileMenu = new wxMenu;
+  if( m_dev->ndev ) {
 #if (wxMAJOR_VERSION<=2) & (wxMINOR_VERSION<=6)
-  fileMenu->Append( -1, wxT("Save plot as..."), saveMenu, wxT("Save this plot as ...!") );
+    fileMenu->Append( -1, wxT("Save plot as..."), saveMenu, wxT("Save this plot as ...!") );
 #else
-  fileMenu->AppendSubMenu( saveMenu, wxT("Save plot as..."), wxT("Save this plot as ...!") );
+    fileMenu->AppendSubMenu( saveMenu, wxT("Save plot as..."), wxT("Save this plot as ...!") );
 #endif
+  }
   fileMenu->Append( wxID_EXIT, wxT("E&xit\tAlt-X"), wxT("Exit wxWidgets PLplot App") );
+
+  wxMenu* orientationMenu = new wxMenu;
+  orientationMenu->Append( wxPL_Orientation_0, wxT("0 deg."), wxT("Orientation 0 deg.") );
+  orientationMenu->Append( wxPL_Orientation_90, wxT("90 deg."), wxT("Orientation 90 deg.") );
+  orientationMenu->Append( wxPL_Orientation_180, wxT("180 deg."), wxT("Orientation 180 deg.") );
+  orientationMenu->Append( wxPL_Orientation_270, wxT("270 deg."), wxT("Orientation 270 deg.") );
+
+  wxMenu* plotMenu = new wxMenu;
+  plotMenu->Append( wxPL_Locate, wxT("Locate\tL"), wxT("Enter locate mode") );
+  // only add the orientation menu for hershey text processing
+  if( !pls->dev_text ) {
+#if (wxMAJOR_VERSION<=2) & (wxMINOR_VERSION<=6)
+    plotMenu->Append( -1, wxT("Set Orientation to..."), orientationMenu, wxT("Set the Orientation of the plot!") );
+#else
+    plotMenu->AppendSubMenu( orientationMenu, wxT("Set Orientation to..."), wxT("Set the Orientation of the plot!") );
+#endif
+  }
 
   wxMenuBar* menuBar = new wxMenuBar();
   menuBar->Append( fileMenu, wxT("&File") );
+  menuBar->Append( plotMenu, wxT("&Plot") );
   SetMenuBar( menuBar );
 
   SetTitle( wxT("wxWidgets PLplot App") );
@@ -220,6 +240,12 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
     m_dev->exit=true;
     wxGetApp().ExitMainLoop();
 		break;
+  case wxPL_Orientation_0:
+  case wxPL_Orientation_90:
+  case wxPL_Orientation_180:
+  case wxPL_Orientation_270:
+    m_window->SetOrientation( event.GetId()-wxPL_Orientation_0 );
+    break;
   }
     
   size_t index=event.GetId()-wxPL_Save;
@@ -651,6 +677,26 @@ void wxPLplotWindow::DrawCrosshair()
       old_mouse_x=old_mouse_y=-1;
     }
   }  
+}
+
+
+/*----------------------------------------------------------------------
+ *  void wxPLplotWindow::SetOrientation( int rot )
+ *
+ *  Set the orientation of the plot.
+ *----------------------------------------------------------------------*/
+void wxPLplotWindow::SetOrientation( int rot )
+{
+  PLINT bgr, bgg, bgb;  /* red, green, blue */
+
+  //plsstrm( m_pls );
+  plsdiori( rot );
+  m_dev->resizing = true;
+  plgcolbg( &bgr, &bgg, &bgb);  /* get background color information */
+  m_dev->ClearBackground( bgr, bgg, bgb );
+  plRemakePlot( m_pls );
+  m_dev->resizing = false;
+  Refresh();
 }
 
 #endif				/* PLD_wxwidgets */
