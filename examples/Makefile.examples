@@ -25,7 +25,7 @@
 # convenience to the user for building all the examples without having 
 # to invoke make in the individual sub-directories of examples.
 
-SUBDIRS = c c++ f77 f95 tk java ada
+SUBDIRS = c c++ f77 f95 tk java ada ocaml
 all clean: 
 	target=`echo $@`; \
 	list='$(SUBDIRS)'; for subdir in $$list; do \

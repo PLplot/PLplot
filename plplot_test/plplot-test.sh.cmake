@@ -178,7 +178,7 @@ $SRC_EXAMPLES_DIR/octave:\
 @PLPLOT_OCTAVE_DIR@/support:\
 @OCTAVE_M_DIR@/PLplot:\
 @OCTAVE_OCT_DIR@:
-PATH=$EXAMPLES_DIR/../utils:@exec_prefix@/bin:$PATH
+PATH=$EXAMPLES_DIR/../utils:@BIN_DIR@:$PATH
 export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perldir adadir ocamldir PATH
 
 fe=""
