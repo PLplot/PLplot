@@ -88,9 +88,13 @@ public:
 
   void OnQuit( wxCommandEvent& event );
   void OnAbout( wxCommandEvent& event );
+  void OnBackgroundColor( wxCommandEvent& event );
+  
+  void Plot();
 
 private:
   wxPLplotwindow* plotwindow;
+  bool bgcolor;
 
   DECLARE_EVENT_TABLE()
 };
@@ -98,7 +102,8 @@ private:
 // ----------------------------------------------------------------------------
 // constants
 // ----------------------------------------------------------------------------
-enum { wxPLplotDemo_Quit = wxID_EXIT, wxPLplotDemo_About = wxID_ABOUT };
+enum { wxPLplotDemo_Quit = wxID_EXIT, wxPLplotDemo_About = wxID_ABOUT,
+       wxPLplotDemo_BGColor=10000 };
 
 // ----------------------------------------------------------------------------
 // event tables and other macros for wxWidgets
@@ -106,6 +111,7 @@ enum { wxPLplotDemo_Quit = wxID_EXIT, wxPLplotDemo_About = wxID_ABOUT };
 BEGIN_EVENT_TABLE( MyFrame, wxFrame )
 	EVT_MENU( wxPLplotDemo_Quit,  MyFrame::OnQuit )
 	EVT_MENU( wxPLplotDemo_About, MyFrame::OnAbout )
+	EVT_MENU( wxPLplotDemo_BGColor, MyFrame::OnBackgroundColor )
 END_EVENT_TABLE()
 
 IMPLEMENT_APP( MyApp )
@@ -142,8 +148,11 @@ bool MyApp::OnInit()
  */
 MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 {
+	bgcolor=false;
+
   // add menu
 	wxMenu *fileMenu = new wxMenu;
+	fileMenu->Append( wxPLplotDemo_BGColor, _T("&Change background color...\tAlt-C"), _T("Change background color") );
 	fileMenu->Append( wxPLplotDemo_About, _T("&About...\tF1"), _T("Show about dialog") );
 	fileMenu->Append( wxPLplotDemo_Quit, _T("E&xit\tAlt-X"), _T("Quit this program") );
 
@@ -161,7 +170,12 @@ MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 	box->Add( plotwindow, 1, wxALL | wxEXPAND, 0 );
   panel->SetSizer( box );
 	SetSize( 640, 500 );  // set wxWindow size
+	
+	Plot();
+}
 
+void MyFrame::Plot()
+{
   wxPLplotstream* pls=plotwindow->GetStream();
 
   const size_t np=500;
@@ -180,6 +194,14 @@ MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
     ymax=MAX( ymax, y[i] );
   }
 
+	pls->adv( 0 );
+	if(bgcolor) {
+		pls->scol0( 0, 255, 255, 255 );
+		pls->scol0( 15, 0, 0, 0 ); 
+	} else {
+		pls->scol0( 15, 255, 255, 255 );
+		pls->scol0( 0, 0, 0, 0 ); 
+	}
   pls->col0( 1 );
   pls->env( xmin, xmax, ymin, ymax, 0, 0 );
   pls->col0( 2 );
@@ -196,6 +218,13 @@ MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 void MyFrame::OnQuit( wxCommandEvent& WXUNUSED(event) )
 {
   Close( true );
+}
+
+
+void MyFrame::OnBackgroundColor( wxCommandEvent& WXUNUSED(event) )
+{
+  bgcolor=!bgcolor;
+  Plot();
 }
 
 
