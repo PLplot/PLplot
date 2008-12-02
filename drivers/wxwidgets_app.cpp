@@ -20,7 +20,7 @@
 */
 
 /* TODO: 
- * - NA
+ * - Add dialog to get width and height from user for plot size to save.
  */
 
 
@@ -68,11 +68,14 @@ static const char *graph[] = {
 };
 
 struct dev_entry dev_entries[] = {
-  { wxT("gif"), wxT("gif..."), wxT("Save this plot as gif!"), wxT("gif files (*.gif)|*.gif") },
-  { wxT("jpeg"), wxT("jpeg..."), wxT("Save this plot as jpeg!"), wxT("jpg files (*.jpg;*.jpeg)|*.jpg;*.jpeg") },
-  { wxT("png"), wxT("png..."), wxT("Save this plot as png"), wxT("png files (*.png)|*.png") },
+  { wxT("wxbmp"), wxT("bmp (wx)..."), wxT("Save this plot as bmp!"), wxT("bmp files (*.bmp)|*.bmp") },
+  { wxT("wxpng"), wxT("png (wx)..."), wxT("Save this plot as png"), wxT("png files (*.png)|*.png") },
+  { wxT("wxpcx"), wxT("pcx (wx)..."), wxT("Save this plot as pcx!"), wxT("pcx files (*.pcx)|*.pcx") },
+  { wxT("wxjpeg"), wxT("jpeg (wx)..."), wxT("Save this plot as jpeg!"), wxT("jpg files (*.jpg;*.jpeg)|*.jpg;*.jpeg") },
+  { wxT("wxtiff"), wxT("tiff (wx)..."), wxT("Save this plot as tiff!"), wxT("tiff files (*.tif;*.tiff)|*.tif;*.tiff") },
+  { wxT("wxpnm"), wxT("pnm (wx)..."), wxT("Save this plot as pnm!"), wxT("pnm files (*.pnm)|*.pnm") },
   { wxT("pngcairo"), wxT("png (cairo)..."), wxT("Save this plot as png using cairo!"), wxT("png files (*.png)|*.png") },
-  { wxT("pdfcairo"), wxT("pdf..."), wxT("Save this plot as pdf using cairo!"), wxT("pdf files (*.pdf)|*.pdf") },
+  { wxT("pdfcairo"), wxT("pdf (cairo)..."), wxT("Save this plot as pdf using cairo!"), wxT("pdf files (*.pdf)|*.pdf") },
   { wxT("ps"), wxT("postscript..."), wxT("Save this plot as postscript!"), wxT("ps files (*.ps)|*.ps") },
   { wxT("psc"), wxT("color postscript..."), wxT("Save this plot as color postscript!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
   { wxT("pscairo"), wxT("color postscript (cairo)..."), wxT("Save this plot as color postscript using cairo!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
@@ -118,6 +121,22 @@ bool wxPLplotApp::OnInit()
   
   exit=false;
   advance=false;
+
+#if wxUSE_LIBPNG
+  wxImage::AddHandler(new wxPNGHandler);
+#endif
+#if wxUSE_LIBJPEG
+  wxImage::AddHandler(new wxJPEGHandler);
+#endif
+#if wxUSE_PCX
+  wxImage::AddHandler(new wxPCXHandler);
+#endif
+#if wxUSE_LIBTIFF
+  wxImage::AddHandler(new wxTIFFHandler);
+#endif
+#if wxUSE_PNM
+  wxImage::AddHandler(new wxPNMHandler);
+#endif
 
   return true;
 }
@@ -182,20 +201,34 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
 	m_window->SetFocus();
 	  
   wxMenu* saveMenu = new wxMenu;
-  for( size_t j=0; j<sizeof(dev_entries)/sizeof(dev_entry); j++ )
+  saveMenu->Append( wxPL_Save, dev_entries[0].dev_menu_short, dev_entries[0].dev_menu_long );
+#if wxUSE_LIBPNG
+  saveMenu->Append( wxPL_Save+1, dev_entries[1].dev_menu_short, dev_entries[1].dev_menu_long );
+#endif
+#if wxUSE_PCX
+  saveMenu->Append( wxPL_Save+2, dev_entries[2].dev_menu_short, dev_entries[2].dev_menu_long );
+#endif
+#if wxUSE_LIBJPEG
+  saveMenu->Append( wxPL_Save+3, dev_entries[3].dev_menu_short, dev_entries[3].dev_menu_long );
+#endif
+#if wxUSE_LIBTIFF
+  saveMenu->Append( wxPL_Save+4, dev_entries[4].dev_menu_short, dev_entries[4].dev_menu_long );
+#endif
+#if wxUSE_PNM
+  saveMenu->Append( wxPL_Save+5, dev_entries[5].dev_menu_short, dev_entries[5].dev_menu_long );
+#endif
+  for( size_t j=6; j<sizeof(dev_entries)/sizeof(dev_entry); j++ )
     for( int i=0; i<m_dev->ndev; i++ ) {
       if( !strcmp(m_dev->devName[i], dev_entries[j].dev_name.mb_str()) )
         saveMenu->Append( wxPL_Save+j, dev_entries[j].dev_menu_short, dev_entries[j].dev_menu_long );
     }
 
   wxMenu* fileMenu = new wxMenu;
-  if( m_dev->ndev ) {
 #if (wxMAJOR_VERSION<=2) & (wxMINOR_VERSION<=6)
-    fileMenu->Append( -1, wxT("Save plot as..."), saveMenu, wxT("Save this plot as ...!") );
+  fileMenu->Append( -1, wxT("Save plot as..."), saveMenu, wxT("Save this plot as ...!") );
 #else
-    fileMenu->AppendSubMenu( saveMenu, wxT("Save plot as..."), wxT("Save this plot as ...!") );
+  fileMenu->AppendSubMenu( saveMenu, wxT("Save plot as..."), wxT("Save this plot as ...!") );
 #endif
-  }
   fileMenu->Append( wxID_EXIT, wxT("E&xit\tAlt-X"), wxT("Exit wxWidgets PLplot App") );
 
   wxMenu* orientationMenu = new wxMenu;
@@ -290,37 +323,75 @@ void wxPLplotFrame::OnClose( wxCloseEvent& event )
 bool wxPLplotFrame::SavePlot( const char* filename, const char* devname, int width,  int height )
 {  
   int pls, pls_save;
-  FILE *sfile;
 
-	if( (sfile = fopen(filename, "wb+")) == NULL) {
-    if( m_dev->ownGUI ) {
-      wxMessageDialog dialog( 0, wxT("Couldn't open file for saving!"), wxT("plPlot error"),
-														  wxOK|wxICON_ERROR );
-      dialog.ShowModal();
-    } 
-		return false;
-	}
+	if( !strcmp(devname, "wxbmp") || !strcmp(devname, "wxpng") || !strcmp(devname, "wxpcx") ||
+		  !strcmp(devname, "wxjpeg") || !strcmp(devname, "wxtiff") || !strcmp(devname, "wxpnm") ) {
+		wxMemoryDC memDC;
 
-	plgstrm( &pls );
-	plmkstrm( &pls_save );  
-	if( pls_save<0 ) {
-    if( m_dev->ownGUI ) {
-      wxMessageDialog dialog( 0, wxT("Couldn't open file for saving!"), wxT("plPlot error"),
-																 wxOK|wxICON_ERROR );
-      dialog.ShowModal();
-    } 
-		return false;
-	}
-	plsdev( devname );
-  //plsfile( sfile );
-  plsfnam(filename);       /* file name */
-  
-  //plspage( 0., 0., width, height, 0, 0 );
-	plcpstrm( pls, 0);
-	pladv( 0 );
-	plreplot();
-  plend1();
-	plsstrm( pls );
+		wxBitmap bitmap( width, height, -1 );
+		memDC.SelectObject( bitmap );
+
+    plgstrm( &pls );
+    plmkstrm( &pls_save );  
+    plsdev( "wxwidgets" );
+    plspage( 0.0, 0.0, width, height, 0, 0 );
+
+    plsetopt( "-drvopt", "backend=0" );
+    plinit();
+    pl_cmd( PLESC_DEVINIT, (void*)&memDC );
+
+    plcpstrm( pls, 0 );
+    pladv( 0 );
+    plreplot();
+    plend1();
+    plsstrm( pls );
+
+		wxBitmapType type;
+		if( !strcmp( devname, "wxbmp" ) )
+			type=wxBITMAP_TYPE_BMP;
+#if wxUSE_LIBPNG
+		else if( !strcmp( devname, "wxpng" ) )
+			type=wxBITMAP_TYPE_PNG;
+#endif
+#if wxUSE_PCX
+		else if( !strcmp( devname, "wxpcx" ) )
+			type=wxBITMAP_TYPE_PCX;
+#endif
+#if wxUSE_LIBJPEG
+		else if( !strcmp( devname, "wxjpeg" ) )
+			type=wxBITMAP_TYPE_JPEG;
+#endif
+#if wxUSE_LIBTIFF
+		else if( !strcmp( devname, "wxtiff" ) )
+			type=wxBITMAP_TYPE_TIF;
+#endif
+#if wxUSE_PNM
+		else if( !strcmp( devname, "wxpnm" ) )
+			type=wxBITMAP_TYPE_PNM;
+#endif
+		bool status=bitmap.SaveFile( wxString(filename, *wxConvCurrent), type );
+
+		if( !status ) {
+      char buf[512];
+      snprintf( buf, 512, "File %s couldn't be saved", filename );
+			plabort( buf );
+      return false;
+    }
+	} else {
+
+    plgstrm( &pls );
+    plmkstrm( &pls_save );  
+    
+    plsdev( devname );
+    //plspage( 0., 0., width, height, 0, 0 );
+    plsfnam( filename );
+    
+    plcpstrm( pls, 0 );
+    pladv( 0 );
+    plreplot();
+    plend1();
+    plsstrm( pls );
+  }
 
   return true;
 }
