@@ -440,10 +440,10 @@ enum { wxPL_Save=10000, wxPL_Next=10100, wxPL_Locate, wxPL_Orientation_0, wxPL_O
     }                                                                       \
     wxAppInitializer                                                        \
         wxAppInitializer((wxAppInitializerFunction) wxPLCreateApp);        \
-    DECLARE_APP(appname)                                                    \
-    appname& wxGetApp() { return *wx_static_cast(appname*, wxApp::GetInstance()); }
+    DECLARE_PLAPP(appname)                                                    \
+    appname& wxPLGetApp() { return *wx_static_cast(appname*, wxApp::GetInstance()); }
 
-#define DECLARE_APP(appname) extern appname& wxGetApp();
+#define DECLARE_PLAPP(appname) extern appname& wxPLGetApp();
 
 /* workaround against warnings for unused variables */
 static inline void Use(void *) { }

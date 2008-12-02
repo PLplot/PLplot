@@ -20,7 +20,7 @@
 */
 
 /* TODO: 
- * - Locate mode is implemented, but user functions are not called
+ * - NA
  */
 
 
@@ -238,7 +238,7 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
   {
   case wxID_EXIT:
     m_dev->exit=true;
-    wxGetApp().ExitMainLoop();
+    wxPLGetApp().ExitMainLoop();
 		break;
   case wxPL_Orientation_0:
   case wxPL_Orientation_90:
@@ -275,7 +275,7 @@ void wxPLplotFrame::OnClose( wxCloseEvent& event )
   // Log_Verbose( "wxPLplotFrame::OnClose" );
 
   m_dev->exit=true;
-  wxGetApp().ExitMainLoop();
+  wxPLGetApp().ExitMainLoop();
 }
 
 
@@ -432,7 +432,7 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
     /* End locate mode on <Escape> */
     if( gin->keysym == PLK_Escape ) {
       if( m_dev->locate_mode == LOCATE_INVOKED_VIA_API )
-        wxGetApp().SetAdvanceFlag();   
+        wxPLGetApp().SetAdvanceFlag();   
       m_dev->locate_mode = 0;
       m_dev->draw_xhair = false;
       DrawCrosshair();
@@ -447,7 +447,7 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
       int advance=0;
       (*m_pls->KeyEH)( gin, m_pls->KeyEH_data, &advance );
       if( advance )
-        wxGetApp().SetAdvanceFlag();      
+        wxPLGetApp().SetAdvanceFlag();      
     }
         
     switch( gin->keysym ) {
@@ -459,12 +459,12 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
       case 'Q':
       case PLK_Escape:
         m_dev->exit=true;
-        wxGetApp().SetExitFlag();
+        wxPLGetApp().SetExitFlag();
         break;
       case PLK_Return:
       case WXK_SPACE:
       case WXK_RIGHT:
-        wxGetApp().SetAdvanceFlag();
+        wxPLGetApp().SetAdvanceFlag();
         break;
       default:
         break;      
@@ -587,13 +587,13 @@ void wxPLplotWindow::OnMouse( wxMouseEvent &event )
         int advance=0;
         (*m_pls->ButtonEH)( gin, m_pls->ButtonEH_data, &advance );
         if( advance )
-          wxGetApp().SetAdvanceFlag();
+          wxPLGetApp().SetAdvanceFlag();
       }
 
       /* Handle internal events */
       switch( gin->button ) {
       case 3:  // on right mouse button advance
-        wxGetApp().SetAdvanceFlag();
+        wxPLGetApp().SetAdvanceFlag();
         break;
       default:
         break;
@@ -620,7 +620,7 @@ void wxPLplotWindow::Locate( void )
   // was initiated by the API we need to return back to the
   // user program
   if( m_dev->locate_mode == LOCATE_INVOKED_VIA_API )
-    wxGetApp().SetAdvanceFlag();        
+    wxPLGetApp().SetAdvanceFlag();        
   
   /* Call user locate mode handler if provided */
   if( m_pls->LocateEH != NULL ) {

@@ -47,7 +47,7 @@
   extern "C" { void CPSEnableForegroundOperation(ProcessSerialNumber* psn); }
 #endif
 
-DECLARE_APP( wxPLplotApp )
+DECLARE_PLAPP( wxPLplotApp )
 
 /*--------------------------------------------------------------------------*\
  *  void Log_Verbose( const char *fmt, ... )
@@ -571,8 +571,8 @@ void plD_tidy_wxwidgets( PLStream *pls )
 #endif
 
   if( dev->ownGUI ) {
-    wxGetApp().RemoveFrame( dev->m_frame );
-		if( !wxGetApp().FrameCount() )
+    wxPLGetApp().RemoveFrame( dev->m_frame );
+		if( !wxPLGetApp().FrameCount() )
     	wxUninitialize();
   }
   
@@ -1049,14 +1049,14 @@ static void install_buffer( PLStream *pls )
     wxInitialize();
     wxLog::GetActiveTarget();
     wxTRY {
-      wxGetApp().CallOnInit();
+      wxPLGetApp().CallOnInit();
     }
-    wxCATCH_ALL( wxGetApp().OnUnhandledException(); fprintf(stderr, "Can't init wxWidgets!\n"); exit(0); )
+    wxCATCH_ALL( wxPLGetApp().OnUnhandledException(); fprintf(stderr, "Can't init wxWidgets!\n"); exit(0); )
     initApp=true;
   }
   
   dev->m_frame = new wxPLplotFrame( wxT("wxWidgets PLplot App"), pls );
-  wxGetApp().AddFrame( dev->m_frame );
+  wxPLGetApp().AddFrame( dev->m_frame );
   dev->m_frame->SetClientSize( dev->width, dev->height );
   dev->m_frame->Show( true );
   dev->m_frame->Raise();
@@ -1097,25 +1097,25 @@ static void wxRunApp( PLStream *pls, bool runonce )
     {
     public:
       /* only call OnExit if exit is true (i.e. due an exception) */
-      ~CallOnExit() { if(exit) wxGetApp().OnExit(); }
+      ~CallOnExit() { if(exit) wxPLGetApp().OnExit(); }
       bool exit;
     } callOnExit;
     
     callOnExit.exit=true;
-    wxGetApp().SetAdvanceFlag( runonce );
-    wxGetApp().SetRefreshFlag();
+    wxPLGetApp().SetAdvanceFlag( runonce );
+    wxPLGetApp().SetRefreshFlag();
 
 		/* add an idle event is necessary for Linux (wxGTK2)
 		   but not for Windows, but it doesn't harm */
 	  wxIdleEvent event;
-    wxGetApp().AddPendingEvent( event );
-		wxGetApp().OnRun();   /* start wxWidgets application */
+    wxPLGetApp().AddPendingEvent( event );
+		wxPLGetApp().OnRun();   /* start wxWidgets application */
     callOnExit.exit=false;
   }
-  wxCATCH_ALL( wxGetApp().OnUnhandledException(); fprintf(stderr, "Problem running wxWidgets!\n"); exit(0); )
+  wxCATCH_ALL( wxPLGetApp().OnUnhandledException(); fprintf(stderr, "Problem running wxWidgets!\n"); exit(0); )
 
   if( dev->exit ) {
-    wxGetApp().OnExit();
+    wxPLGetApp().OnExit();
     plexit("");
   }
 
