@@ -279,6 +279,17 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
   case wxPL_Orientation_270:
     m_window->SetOrientation( event.GetId()-wxPL_Orientation_0 );
     break;
+  case wxPL_Locate:
+    if( m_dev->locate_mode ) {   
+      if( m_dev->locate_mode == LOCATE_INVOKED_VIA_API )
+        wxPLGetApp().SetAdvanceFlag();   
+      m_dev->locate_mode = 0;
+      m_dev->draw_xhair = false;
+    } else {
+      m_dev->locate_mode = LOCATE_INVOKED_VIA_DRIVER;  
+      m_dev->draw_xhair=true;
+    }
+    break;
   }
     
   size_t index=event.GetId()-wxPL_Save;
@@ -545,6 +556,12 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
   event.Skip();
 }
 
+
+/*----------------------------------------------------------------------
+ *  void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
+ *
+ *  If there is no pending event, maybe the canvas needs to be refreshed.
+ *----------------------------------------------------------------------*/
 void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
 {
   // Log_Verbose( "wxPLplotWindow::OnIdle" );
@@ -573,12 +590,23 @@ void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED(event) )
 }
 
 
+/*----------------------------------------------------------------------
+ *  void wxPLplotWindow::OnErase( wxEraseEvent &WXUNUSED(event) )
+ *
+ *  Do nothing here to prevent flickering.
+ *----------------------------------------------------------------------*/
 void wxPLplotWindow::OnErase( wxEraseEvent &WXUNUSED(event) )
 {  
   // Log_Verbose( "wxPLplotWindow::OnErase" );
 }
 
 
+/*----------------------------------------------------------------------
+ *  void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
+ *
+ *  Allocate a bigger bitmap if necessary and redo the plot if the
+ *  window size was changed.
+ *----------------------------------------------------------------------*/
 void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
 {
   // Log_Verbose( "wxPLplotWindow::OnSize" );
@@ -604,6 +632,11 @@ void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED(event) )
 }
 
 
+/*----------------------------------------------------------------------
+ *  wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
+ *
+ *  Add a size event if the Window is maximized.
+ *----------------------------------------------------------------------*/
 void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED(event) )
 {
   // Log_Verbose( "wxPLplotWindow::OnMax" );
@@ -707,15 +740,16 @@ void wxPLplotWindow::Locate( void )
       /* Otherwise send report to stdout */
       if( m_dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER )
         if( gin->keysym < 0xFF && isprint(gin->keysym) )
-            printf("%f %f %c\n", gin->wX, gin->wY, gin->keysym);
+          printf("%f %f %c\n", gin->wX, gin->wY, gin->keysym);
         else
-            printf("%f %f 0x%02x\n", gin->wX, gin->wY, gin->keysym);
+          printf("%f %f 0x%02x\n", gin->wX, gin->wY, gin->keysym);
     } else {
       /* Selected point is out of bounds, so end locate mode */
       m_dev->locate_mode = 0;
       m_dev->draw_xhair=false;
     }
   }
+  DrawCrosshair();
 }
 
 
