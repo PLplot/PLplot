@@ -6,6 +6,7 @@
 # (inspired from t/x02.t of module Graphics::PLplot, by Tim Jenness)
 #
 # Copyright (C) 2004  Rafael Laboissiere
+#               2008  Doug Hunt -- Added working, more PDL-ish demo2
 #
 # This file is part of PLplot.
 #
@@ -23,8 +24,6 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-# SYNC: x02c.c 1.14
-
 use PDL;
 use PDL::Graphics::PLplot;
 
@@ -40,10 +39,7 @@ sub main {
 
 # Run demos
     demo1();
-
-    # plhlsrgb is currently not implemented in PDL
-    # so demo 2 does not work
-    #demo2();
+    demo2();
     
     plend();
 }
@@ -66,19 +62,17 @@ sub demo1 {
 
 }
 
+
 #--------------------------------------------------------------------------
 # demo2
 #
 # Demonstrates multiple windows, user-modified color map 0 palette, and
 # HLS -> RGB translation.
 #--------------------------------------------------------------------------
-
 sub demo2 {
+
 # Set up cmap0
 # Use 100 custom colors in addition to base 16
-    my $r = zeroes(116);
-    my $g = zeroes(116);
-    my $b = zeroes(116);
 
 # Min & max lightness values
     my $lmin = 0.15;
@@ -90,41 +84,26 @@ sub demo2 {
 
     plssub(10, 10);
 
-    my $h, $l, $s, $r1, $g1, $g1;
+    my $basemap = sequence(16);
+    my $custmap = sequence(100);
 
-    for (my $i = 0; $i <= 99; $i++) {
+    my ($r, $g, $b) = plgcol0($basemap);
 
-    # Bounds on HLS, from plhlsrgb() commentary --
-    #	hue		[0., 360.]	degrees
-    #	lightness	[0., 1.]	magnitude
-    #	saturation	[0., 1.]	magnitude
-    #
+    my $h = (360/10) * ($custmap % 10);
+    my $s = ones(100);
+    my $l = $lmin + ($lmax - $lmin) * ($custmap / 10)->floor / 9;
+    my ($r1, $g1, $b1) = plhlsrgb($h, $l, $s);
 
-    # Vary hue uniformly from left to right
-        $h = (360. / 10. ) * ( $i % 10 );
-    # Vary lightness uniformly from top to bottom, between min & max
-        $l = $lmin + ($lmax - $lmin) * ($i / 10) / 9.;
-    # Use max saturation
-        $s = 1.0;
+    $r = $r->append($r1*255);
+    $g = $g->append($g1*255);
+    $b = $b->append($b1*255);
 
-        ($r1, $g1, $b1) = plhlsrgb($h, $l, $s);
-
-        set $r, i+16, r1 * 255.001;
-        set $g, i+16, g1 * 255.001;
-        set $b, i+16, b1 * 255.001;
-    }
-
-# Load default cmap0 colors into our custom set
-    for (my $i = 0; $i <= 15; $i++) {
-        ($r1, $g1, $b1) = plgcol0($i);
-        set $r, i, r1;
-        set $g, i, g1;
-        set $b, i, b1;
-    }
+    #for ($i = 0; $i < 116; $i++) {
+    #  printf("%3.0f %3.0f %3.0f %3.0f \n", $i, $r->at($i), $g->at($i), $b->at($i)); 
+    #}
     
-
 # Now set cmap0 all at once (faster, since fewer driver calls)
-    plscmap0(r, g, b, 116);
+    plscmap0($r, $g, $b, 116);
 
     draw_windows( 100, 16 );
 
@@ -137,7 +116,7 @@ sub demo2 {
 # Draws a set of numbered boxes with colors according to cmap0 entry.
 #--------------------------------------------------------------------------
 
-sub draw_windows(int nw, int cmap0_offset)
+sub draw_windows
 {
     my ($nw, $cmap_offset) = @_;
 
@@ -145,7 +124,7 @@ sub draw_windows(int nw, int cmap0_offset)
     plfont(4);
 
     for (my $i = 0; $i < $nw; $i++) {
-	plcol0($i+$cmap0_offset);
+	plcol0($i+$cmap_offset);
 	my $text = $i;
 	pladv(0);
 	my $vmin = 0.1;
