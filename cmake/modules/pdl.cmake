@@ -53,6 +53,10 @@ if(ENABLE_pdl)
 	   "Perl and PDL are available and PDL passes version test.\n"
 	"   Enable Perl/PDL examples in tests"
 	)
+	option(HAVE_PDL_GRAPHICS_PLPLOT_40
+	  "PDL-Graphics-PLplot version is 0.40 or higher"
+	  OFF
+	  )
       endif(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
     else(NOT PDL_RETURNCODE)
       message(STATUS "WARNING: "
