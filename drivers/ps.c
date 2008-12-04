@@ -156,6 +156,14 @@ ps_init(PLStream *pls)
 {
     PSDev *dev;
 
+    /* Set default values - 7.5 x 10 [inches] (72 points = 1 inch) */
+    if (pls->xlength <= 0 || pls->ylength <=0) {
+      pls->xlength = 540;
+      pls->ylength = 720;
+    }
+    if (pls->xdpi <= 0) pls->xdpi = 72.;
+    if (pls->ydpi <= 0) pls->ydpi = 72.;
+
     PLFLT pxlx = YPSSIZE/LPAGE_X;
     PLFLT pxly = XPSSIZE/LPAGE_Y;
 

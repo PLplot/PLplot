@@ -10,8 +10,8 @@
 
 #define LINELENGTH      78
 #define COPIES          1
-#define XSIZE           540		/* 7.5 x 10 [inches]    */
-#define YSIZE           720		/* (72 points = 1 inch) */
+#define XSIZE           (int) (pls->xlength*(pls->xdpi/72.))
+#define YSIZE           (int) (pls->ylength*(pls->ydpi/72.))
 #define ENLARGE         5
 #define XPSSIZE         ENLARGE*XSIZE
 #define YPSSIZE         ENLARGE*YSIZE
