@@ -41,6 +41,7 @@ if(ENABLE_pdl)
       "-e use PDL; print \"$PDL::VERSION\""
       OUTPUT_VARIABLE PDL_VERSION
       )
+    message("PDL_VERSION = ${PDL_VERSION}")
       transform_version(NUMERICAL_PDL_MINIMUM_VERSION "2.4.1")
       transform_version(NUMERICAL_PDL_VERSION "${PDL_VERSION}")
       if(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
@@ -53,10 +54,25 @@ if(ENABLE_pdl)
 	   "Perl and PDL are available and PDL passes version test.\n"
 	"   Enable Perl/PDL examples in tests"
 	)
-	option(HAVE_PDL_GRAPHICS_PLPLOT_40
-	  "PDL-Graphics-PLplot version is 0.40 or higher"
-	  OFF
-	  )
+        execute_process(
+	  COMMAND ${PERL_EXECUTABLE}
+	  -MPDL::Graphics::PLplot "-e print \"$PDL::Graphics::PLplot::VERSION\""
+          OUTPUT_VARIABLE PDL_PLPLOT_VERSION
+          ERROR_VARIABLE PDL_PLPLOT_VERSION
+          )
+        #message("PDL_PLPLOT_VERSION = ${PDL_PLPLOT_VERSION}")
+        transform_version(NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION "0.41.0")
+        transform_version(NUMERICAL_PDL_PLPLOT_VERSION "${PDL_PLPLOT_VERSION}.0")
+	#message("NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION = ${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
+	#message("NUMERICAL_PDL_PLPLOT_VERSION = ${NUMERICAL_PDL_PLPLOT_VERSION}")
+        if(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
+          message(STATUS "WARNING: "
+          "perl PDL PLplot version < 0.41 "
+          "Using more limited set of Perl/PDL examples that work with old versions")
+          set(HAVE_PDL_GRAPHICS_PLPLOT_40 OFF CACHE BOOL "PDL-Graphics-PLplot version is 0.41 or higher" FORCE)
+        else(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
+          set(HAVE_PDL_GRAPHICS_PLPLOT_40 ON CACHE BOOL "PDL-Graphics-PLplot version is 0.41 or higher" FORCE)
+        endif(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
       endif(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
     else(NOT PDL_RETURNCODE)
       message(STATUS "WARNING: "
