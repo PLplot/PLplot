@@ -133,14 +133,14 @@ quote(ml,
     "let plunset_defined () = Callback.register \"caml_plplot_defined\" 0");
 quote(mli, "val plunset_defined : unit -> unit");
 
-// Hand-translated GRID_* flags for use with plgriddata
+// Hand-translated PL_GRID_* flags for use with plgriddata
 quote(mlmli, "type plplot_grid_method_type = \
-                GRID_CSA | \
-                GRID_DTLI | \
-                GRID_NNI | \
-                GRID_NNIDW | \
-                GRID_NNLI | \
-                GRID_NNAIDW");
+                PL_GRID_CSA | \
+                PL_GRID_DTLI | \
+                PL_GRID_NNI | \
+                PL_GRID_NNIDW | \
+                PL_GRID_NNLI | \
+                PL_GRID_NNAIDW");
 
 // Hand-translated PL_PARSE_* flags for use with plparseopts
 quote(mlmli, "type plplot_parse_method_type = \

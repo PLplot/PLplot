@@ -86,7 +86,8 @@ let () =
      related integer values are distinct.  The array provides a mapping to
      make conversion of this example from C easier. *)
   let alg_array =
-    [|GRID_CSA; GRID_DTLI; GRID_NNI; GRID_NNIDW; GRID_NNLI; GRID_NNAIDW|]
+    [|PL_GRID_CSA; PL_GRID_DTLI; PL_GRID_NNI; PL_GRID_NNIDW; PL_GRID_NNLI;
+      PL_GRID_NNAIDW|]
   in
   let title =
     [|
@@ -140,10 +141,10 @@ let () =
        * the neighbors is done.
        *)
       if
-        named_alg = GRID_CSA ||
-        named_alg = GRID_DTLI ||
-        named_alg = GRID_NNLI ||
-        named_alg = GRID_NNI
+        named_alg = PL_GRID_CSA ||
+        named_alg = PL_GRID_DTLI ||
+        named_alg = PL_GRID_NNLI ||
+        named_alg = PL_GRID_NNI
       then (
         for i = 0 to xp - 1 do
           for j = 0 to yp - 1 do
