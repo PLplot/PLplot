@@ -5,7 +5,50 @@ The files in this directory are close translations of the PLplot demos
 witten in C (see directory above ../c/).  They use the PDL and
 PDL::Graphics::PLplot modules distributed with PDL.
 
-CAVEAT: The scripts in this directory only work with the CVS sources of PDL
-(as on 2004-03-01 or later).
+Here is a recipe for building and installing the latest version of that
+module.
 
- -- Rafael Laboissiere <rlaboiss@users.sf.net>, Mon Dec 15 18:26:08 CET 2003
+Instructions for building and installing Doug Hunt's latest version of the
+PDL Graphics PLplot module (version 0.42 at the time of writing)
+
+export TARBALL_ROOT_NAME=PDL-Graphics-PLplot-0.42
+
+wget \
+http://search.cpan.org/CPAN/authors/id/D/DH/DHUNT/$TARBALL_ROOT_NAME.tar.gz
+
+less $TARBALL_ROOT_NAME.tar.gz
+
+tar zxf $TARBALL_ROOT_NAME.tar.gz
+
+cd $TARBALL_ROOT_NAME
+
+# Edit Makefile.PL library location list and header location list to point
+# to the location of the PLplot libraries and headers (if not installed
+# in a standard location).
+
+perl Makefile.PL
+make >& make.out
+make test >& make_test.out
+
+# Substitute whatever install prefix you want to use.
+export PDL_GRAPHICS_PLPLOT_PREFIX=/home/software/pdl/install
+make PREFIX=$PDL_GRAPHICS_PLPLOT_PREFIX install >& make_install.out
+
+# Check what files have been installed
+
+find $PDL_GRAPHICS_PLPLOT_PREFIX -type f
+
+# Find the equivalent files in your PDL installation.  For example, on my
+# system the equivalent files are
+
+/usr/lib/perl5/PDL/Graphics/PLplot.pm
+/usr/lib/perl5/auto/PDL/Graphics/PLplot
+/usr/lib/perl5/auto/PDL/Graphics/PLplot/PLplot.so
+/usr/lib/perl5/auto/PDL/Graphics/PLplot/PLplot.bs
+
+# Back those up (so none of your further changes are irrevocable), and
+# replace them (probably with the aid of symlinks for convenience).  You can
+# ignore some of the list you generate with the above find command, but you
+# do have to replace/symlink the .../PDL/Graphics/PLplot directory
+# and also replace/symlink the individual file,
+# .../PDL/Graphics/PLplot.pm.
