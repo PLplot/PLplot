@@ -163,8 +163,47 @@ EOT
     plimage ($img_f, 1, $width, 1, $height, 0, 0, $xi, $xe, $ye, $yi);
   }
 
+  # Base the dynamic range on the image contents.
+  my ($img_min, $img_max) = $img_f->minmax;
+
+  # Draw a saturated version of the original image.  Only use the middle 50%
+  # of the image's full dynamic range.
+  plcol0(2);
+  plenv(0, $width, 0, $height, 1, -1);
+  pllab("", "", "Reduced dynamic range image example");
+  plimagefr($img_f, 0, $width, 0, $height, 0, 0, 
+	    $img_min + $img_max * 0.25, $img_max - $img_max * 0.25, 0, 0);
+
+  # Draw a distorted version of the original image, showing its full dynamic range.
+  plenv(0, $width, 0, $height, 1, -1);
+  pllab("", "", "Distorted image example");
+
+  my $stretch = [0, $width, 0, $height, 0.5];
+
+  # both xmap and ymap are 2D
+  my ($xmap, $ymap) = mypltr(sequence($width+1), sequence($height+1), $stretch);
+
+  my $grid = plAlloc2dGrid ($xmap, $ymap); # set of 2 2D maps
+
+  plimagefr($img_f, 0, $width, 0, $height, 0, 0, $img_min, $img_max, \&pltr2, $grid);
+
+  plFree2dGrid ($grid);
+
   plend ();
 }
+
+# set up 2D transformation matrices
+sub mypltr {
+  my ($x, $y, $stretch) = @_; # pdl, pdl, listref
+  my $pi = atan2(1,1)*4;
+  my $x0 = ($stretch->[0] + $stretch->[1])*0.5;
+  my $y0 = ($stretch->[2] + $stretch->[3])*0.5;
+  my $dy = ($stretch->[3] - $stretch->[2])*0.5;
+  my $result0 = $x0 + outer(($x0-$x),(1.0 - $stretch->[4]*cos(($y-$y0)/$dy*$pi*0.5)));
+  my $result1 = outer(ones($x->nelem),$y);
+  return ($result0, $result1);
+}
+
 
 # set gray colormap
 
