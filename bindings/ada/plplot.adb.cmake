@@ -208,6 +208,8 @@ package body PLplot is
             Set_Pen_Color(Colors(1));
             Select_Line_Style(Line_Styles(1));
             Draw_Curve(x1, y1);
+            --Draw_Hershey_Symbol(x1, y1, 850);
+            --Draw_Points(x1, y1, 17);
         end if;
 
         if x2'length /= 1 and y2'length /= 1 then
