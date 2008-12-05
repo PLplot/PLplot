@@ -89,11 +89,11 @@ $rosen = 0
 
 plinit ();
 
-my $x = (sequence (XPTS) - (XPTS / 2)) / (XPTS / 2);
+my $x = (sequence (XPTS) - int(XPTS / 2)) / int(XPTS / 2);
 $x *=  1.5
   if $rosen;
 
-my $y = (sequence (YPTS) - (YPTS / 2)) / (YPTS / 2);
+my $y = (sequence (YPTS) - int(YPTS / 2)) / int(YPTS / 2);
 $y += 0.5
   if $rosen;
 
@@ -151,17 +151,17 @@ for (my $k = 0; $k < 2; $k++) {
     if ($ifshade == 0) {        # diffuse light surface plot
       cmap1_init (1);
       plsurf3d ($x, $y, $z, 0, pdl []);
-      } elsif ($ifshade == 1) { # magnitude colored plot
-	cmap1_init (0);
-	plsurf3d ($x, $y, $z, MAG_COLOR, pdl []);
-      }
+    } elsif ($ifshade == 1) { # magnitude colored plot
+      cmap1_init (0);
+      plsurf3d ($x, $y, $z, MAG_COLOR, pdl []);
+    }
     elsif ($ifshade == 2) {     # magnitude colored plot with faceted squares
-	cmap1_init (0);
-	plsurf3d ($x, $y, $z, MAG_COLOR | FACETED, pdl []);
-      } else {                  # magnitude colored plot with contours
-	cmap1_init (0);
-	plsurf3d ($x, $y, $z, MAG_COLOR | SURF_CONT | BASE_CONT, $clevel);
-      }
+      cmap1_init (0);
+      plsurf3d ($x, $y, $z, MAG_COLOR | FACETED, pdl []);
+    } else {                  # magnitude colored plot with contours
+      cmap1_init (0);
+      plsurf3d ($x, $y, $z, MAG_COLOR | SURF_CONT | BASE_CONT, $clevel);
+    }
   }
 }
 
