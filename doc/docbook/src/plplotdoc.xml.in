@@ -55,6 +55,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY chap-cplus SYSTEM "cplus.xml">
 <!ENTITY chap-fortran77 SYSTEM "fortran77.xml">
 <!ENTITY chap-fortran95 SYSTEM "fortran95.xml">
+<!ENTITY chap-ocaml SYSTEM "ocaml.xml">
 <!ENTITY chap-perl SYSTEM "perl.xml">
 <!ENTITY chap-python SYSTEM "python.xml">
 <!ENTITY chap-tcl SYSTEM "tcl.xml">
@@ -387,6 +388,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     &chap-cplus;
     &chap-fortran77;
     &chap-fortran95;
+    &chap-ocaml;
     &chap-perl;
     &chap-python;
     &chap-tcl;
