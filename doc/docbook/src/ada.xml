@@ -50,31 +50,31 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>        There are two thick bindings provided for the convenience of the user. Either may be used and they both provide exactly the same functionality. The thick bindings are the user's main concern with programming for PLplot.</para>
     <sect2 id="ada_thin">
       <title>Thin Binding</title>
-      <para>	        The thin binding, in the files plplotthin.ads and plplotthin.adb, is mostly a direct and obvious mapping of the C application programming interface (API) to Ada. Thus, for example, where a C program such as plcol0 requires a single integer argument, there is a corresponding Ada program also called plcol0 which also requires a single integer argument. (plcol0 happens to set the drawing color using a number which is associated with a set of colors.) Various constants from the C API are also included here. Numeric types as defined in PLplot are associated with numeric types in Ada in the thin binding by use of Ada's type system. Thus, the thin binding refers to the PLplot-centric type PLFLT for floating-point types while the thick binding uses the usual Ada type Long_Float.</para>
+      <para>	        The thin binding, in the files <literal>plplotthin.ads</literal> and <literal>plplotthin.adb</literal>, is mostly a direct and obvious mapping of the C application programming interface (API) to Ada. Thus, for example, where a C program such as <literal>plcol0</literal> requires a single integer argument, there is a corresponding Ada program also called <literal>plcol0</literal> which also requires a single integer argument. (<literal>plcol0</literal> happens to set the drawing color using a number which is associated with a set of colors.) Various constants from the C API are also included here. Numeric types as defined in PLplot are associated with numeric types in Ada in the thin binding by use of Ada's type system. Thus, the thin binding refers to the PLplot-centric type <literal>PLFLT</literal> for floating-point types while the thick binding uses the usual Ada type <literal>Long_Float</literal>.</para>
       <para>	        Many of the comments from the C source header file (similar in purpose to an Ada specification file) have been retained in the thin binding, even when they are no longer sensical. These might be pruned at some point to facilitate reading the Ada source.</para>
       <para>	        Also included in the thin binding are some other declarations which help the Ada binding to mesh well with C by emulating certain data structures which are needed in some rather specialized usages as well as providing certain subprogram pointer types.</para>
-      <para>	        The Ada programmer working with either of the thick bindings will have to refer to the thin binding relatively rarely, if ever, and mainly to examine the subroutine pointer declarations and the several variant record types which are used mostly for contour and three-dimensional plots. However, some of these have been subtype-ed or renames-ed in the thick bindings so even less reference to the thin binding will be necessary. The goal is to put everything of interest to the user in the thick bindings and the user need not with the thin binding.</para>
+      <para>	        The Ada programmer working with either of the thick bindings will have to refer to the thin binding relatively rarely, if ever, and mainly to examine the subroutine pointer declarations and the several variant record types which are used mostly for contour and three-dimensional plots. However, some of these have been <literal>subtype</literal>-ed or <literal>renames</literal>-ed in the thick bindings so even less reference to the thin binding will be necessary. The goal is to put everything of interest to the user in the thick bindings and the user need not bother with the thin binding.</para>
     </sect2>
     <sect2 id="ada_thick">
       <title>The Thick Bindings</title>
       <para>	        The thick bindings provide most of the information that the Ada programmer needs. Normally, only one of the two thick bindings would be used per user program but it should be possible to include both but that scenario would be unusual.</para>
       <para>	        There are three main aspects of the thick bindings: providing an alternative access to the PLplot API, extending the PLplot functionality with some easy-to-use features, and overlaying Ada data structures and types.</para>
-      <para>	        In the first aspect, the thick bindings provide a fully Ada interface to the entire PLplot library. Packages are with-ed and use-d as normal Ada code. Ada arrays can be passed as usual, not requiring the array length or start or end indices to be passed separately. All necessary Ada types are made to match the underlying C types exactly.</para>
+      <para>	        In the first aspect, the thick bindings provide a fully Ada interface to the entire PLplot library. Packages are <literal>with</literal>-ed and <literal>use</literal>-d as normal Ada code. Ada arrays can be passed as usual, not requiring the array length or start or end indices to be passed separately. All necessary Ada types are made to match the underlying C types exactly.</para>
       <para>	        The second aspect of the thick bindings is to provide some simplified ways to get a lot of plotting done with only one or two subroutine calls. For example, a single call to Simple_Plot can display from one to five "<emphasis>y</emphasis>'s" as a function of a single "<emphasis>x</emphasis>" with default plot appearances chosen to suit many situations. Other simple plotters are available for three-dimensional and contour plots. Manipulating PLplot's colors is similarly made easy and some default color schemes are provided.</para>
-      <para>	        The third main aspect of the thick binding is to use Ada data structures and Ada's type system extensively to reduce the chances of inappropriate actions. For example, Ada arrays are used throughout (as opposed to C's pointer-plus-offset-while-carrying-along-the-size-separately approach). Quantities which have natural range limits are subtype-d to reflect those constraints. The hope is that program errors will result in more-familiar Ada compilation or run-time errors rather than error reports from the PLplot library or no reports at all. However, there remain a few instances where the typing could be improved and PLplot errors will still be reported from time to time.</para>
+      <para>	        The third main aspect of the thick binding is to use Ada data structures and Ada's type system extensively to reduce the chances of inappropriate actions. For example, Ada arrays are used throughout (as opposed to C's pointer-plus-offset-while-carrying-along-the-size-separately approach). Quantities which have natural range limits are <literal>subtype</literal>-d to reflect those constraints. The hope is that program errors will result in more-familiar Ada compilation or run-time errors rather than error reports from the PLplot library or no reports at all. However, there remain a few instances where the typing could be improved and PLplot errors will still be reported from time to time.</para>
       <para>	        Both the specification and body for the standard thick (and thin) binding contain the C subroutine name as a comment line immediately above the Ada procedure declaration; this should help in making the associations between "Ada" names and "PLplot" names. Also, the subroutine-specific comments from the C API have been retained verbatim.</para>
     </sect2>
     <sect2 id="ada_thick_enhanced">
       <title>Standard Thick Binding Using Enhanced Names</title>
-      <para>	        The distinguishing feature of this thick binding (the "standard" binding) is to provide more descriptive names for PLplot subroutines, variables, constants, arguments, and other objects. Most Ada programmers will be more comfortable using these names. For example, in the C API as well as the thin Ada binding and the other thick Ada binding, the procedure plcol0(1) sets the drawing color to red. In the standard thick binding, the same thing is accomplished by writing Set_Color(Red). The Ada program may just as well write Set_Color(1) since the binding merely sets a constant Red to be equal to the integer 1. Many such numeric constants from the C API are given names in this thick binding. These renamed integers are discussed more fully in Section 7.2.</para>
+      <para>	        The distinguishing feature of this thick binding (the "standard" binding) is to provide more descriptive names for PLplot subroutines, variables, constants, arguments, and other objects. Most Ada programmers will be more comfortable using these names. For example, in the C API as well as the thin Ada binding and the other thick Ada binding, the procedure <literal>plcol0(1)</literal> sets the drawing color to red. In the standard thick binding, the same thing is accomplished by writing <literal>Set_Color(Red)</literal>. The Ada program may just as well write <literal>Set_Color(1)</literal> since the binding merely sets a constant <literal>Red</literal> to be equal to the integer <literal>1</literal>. Many such numeric constants from the C API are given names in this thick binding. These renamed integers are discussed more fully in Section 7.2.</para>
       <para>	        The disadvantage of this renaming is that it makes referring to the PLplot documentation somewhat awkward. There might be, at some time, a utility for easing this problem by providing an HTML file with links so that a "normal" PLplot name can be linked to the "Ada" name along with the appropriate entry in the Ada specification, as well as another HTML file with links from the "Ada" name directly to the PLplot web page that documents that name. It might also be possible to provide an alternate version of the documentation with the enhanced names used. (The developer of the bindings has a sed file prepared  which makes most of the subroutine-name substitutions.) However, this thick binding retains the original C subprogram names as comments immediately above the function or procedure name in the code listing so it is relatively easy to locate the relevant item in the PLplot documentation.</para>
       <para>	        One simple rule applies in reading the PLplot API documentation: the argument names are in the same order in Ada as in the PLplot documentation (the names are different) except that all array lengths are eliminated. The PLplot documentation, for each subroutine, shows a "redacted" version which should be correct for Ada as well as other languages which have proper arrays.</para>
-      <para>	        The standard bindings are in the Ada files plplot.ads and plplot.adb.</para>
+      <para>	        The standard bindings are in the Ada files <literal>plplot.ads</literal> and <literal>plplot.adb</literal>.</para>
     </sect2>
     <sect2 id="ada_thick_traditional">
       <title>Thick Binding Using Traditional Names</title>
       <para>	        This thick binding provides exactly the same functionality as the standard thick binding but retains the original names as used in the C code and the PLplot documentation.</para>
-      <para>	        The traditional bindings are in the Ada files plplot_traditional.ads and plplot_traditional.adb.</para>
+      <para>	        The traditional bindings are in the Ada files <literal>plplot_traditional.ads</literal> and <literal>plplot_traditional.adb</literal>.</para>
     </sect2>
   </sect1>
   <sect1 id="ada_examples">
@@ -96,7 +96,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <sect2 id="ada_obtaining_bindings">
       <title>Download the Ada bindings to PLplot</title>
       <para>	        The third major software component is the bindings themselves. Since they are currently included with the PLplot software itself, there is no need to download them from another place.</para>
-      <para>	        The bindings themselves are six Ada source files named (using GNAT filename extensions) plplot.ads, plplot.adb, plplot_traditional.ads, plplot_traditional.adb, plplothin.ads, plplotthin.adb. There are two additional files, plplot_auxiliary.ads and plplot_auxililary.adb which will be discussed later, in Section 9. These can be stored somewhere on your system's search paths for easy access.</para>
+      <para>	        The bindings themselves are six Ada source files named (using GNAT filename extensions) <literal>plplot.ads</literal>, <literal>plplot.adb</literal>, <literal>plplot_traditional.ads</literal>, <literal>plplot_traditional.adb</literal>, <literal>plplothin.ads</literal>, and  <literal>plplotthin.adb</literal>. There are two additional files, <literal>plplot_auxiliary.ads</literal> and <literal>plplot_auxililary.adb</literal> which will be discussed later, in Section 9. These can be stored somewhere on your system's search paths for easy access.</para>
     </sect2>
   </sect1>
   <sect1 id="ada_howto">
@@ -104,13 +104,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <sect2 id="ada_95_2005">
       <title>Ada 95 versus Ada 2005</title>
       <para>	        The bindings will work for either Ada 95 or Ada 2005. The only difference that concerns PLplot users is that Ada 2005, in Annex G.3, provides declarations for real-valued vectors and matrices (along with some other functionality). These declarations make available type Real_Vector and type Real_Matrix.</para>
-      <para>	        The installation process for PLplot requires you to select Ada 95 or Ada 2005. After that, the correct bindings are generated automatically depending on your choice. The differences are very minor: If Ada 2005, the type declarations provided according to Annex G.3 are used; if Ada 95, similar type declarations are provided. For the most part, you don't need to think about this much. However, see Section 9, Compilation Notes, if you are using Ada 95 and need to declare vectors or matrices. The design goal in either case is to encourage users to use Real_Vector and Real_Matrix since these are the "official" versions of these entities as of Ada 2005. Someone using objects based on these type definitions in Ada 95 in their PLplot programs should expect their programs to work without modification if they should switch to Ada 2005.</para>
+      <para>	        The installation process for PLplot requires you to select Ada 95 or Ada 2005. After that, the correct bindings are generated automatically depending on your choice. The differences are very minor: If Ada 2005, the type declarations provided according to Annex G.3 are used; if Ada 95, similar type declarations are provided explicitly in the bindingss. For the most part, you don't need to think about this much. However, see Section 9, Compilation Notes, if you are using Ada 95 and need to declare vectors or matrices. The design goal in either case is to encourage users to use Real_Vector and Real_Matrix since these are the "official" versions of these entities as of Ada 2005. Someone using objects based on these type definitions in Ada 95 in their PLplot programs should expect their programs to work without modification if they should switch to Ada 2005.</para>
     </sect2>
     <sect2 id="ada_gnat_nongnat">
       <title>GNAT versus non-GNAT</title>
-      <para>	        The bindings were made using the GNAT compiler and there is a slight dependence on that compiler. Specifically, the Unrestricted_Access attribute of GNAT was used in making the function Matrix_To_Pointers in plplotthin.adb and in a few callbacks. Matrix_To_Pointers is called whenever an Ada matrix (2D array) is passed to a PLplot subroutine. For more about Unrestricted_Access attribute, see Implementation Defined Attributes in the GNAT Reference Manual. This dependency shouldn't be difficult to remove by either incorporating the GNAT code which implements it, by following the TO-DO comment near the function definition in plplotthin.adb, or by providing the proper aliasing.</para>
+      <para>	        The bindings were made using the GNAT compiler and there is a slight dependence on that compiler. Specifically, the <literal>Unrestricted_Access</literal> attribute of GNAT was used in making the function <literal>Matrix_To_Pointers</literal> in <literal>plplotthin.adb</literal> and in a few callbacks. <literal>Matrix_To_Pointers</literal> is called whenever an Ada matrix (2D array) is passed to a PLplot subroutine. For more about <literal>Unrestricted_Access attribute</literal>, see Implementation Defined Attributes in the GNAT Reference Manual. This dependency shouldn't be difficult to remove by either incorporating the GNAT code which implements it, by following the TO-DO comment near the function definition in <literal>plplotthin.adb</literal>, or by providing the proper aliasing.</para>
       <para>	        Another GNAT dependency is used to parse command line arguments in a C-like way.</para>
-      <para>	        Most of the GNAT dependencies can be found by searching the source code for "GNAT" and "Unrestricted_Access."</para>
+      <para>	        Most of the GNAT dependencies can be found by searching the source code for "<literal>GNAT</literal>" and "<literal>Unrestricted_Access</literal>."</para>
       <para>	        The GNAT dependence, though slight, will no doubt frustrate users of other Ada compilers. We welcome comments from those users, especially comments with specific suggestions on how to remove any GNAT-specific usages.</para>
     </sect2>
     <sect2 id="ada_sample_project">
@@ -119,25 +119,25 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para>	        Here is a simple program that will generate a plot of part of a parabola.</para>
       <programlisting>
 	with
-	PLplot_Auxiliary,
-	PLplot;
+	   PLplot_Auxiliary,
+	   PLplot;
 	use
-	PLplot_Auxiliary,
-	PLplot;
+	   PLplot_Auxiliary,
+	   PLplot;
 	procedure Simple_Example is
-	x, y : Real_Vector(-10 .. 10);
+	   x, y : Real_Vector(-10 .. 10);
 	begin
-	for i in x'range loop 
-	x(i) := Long_Float(i);
-	y(i) := x(i)**2;
-	end loop;
-	Initialize_PLplot; -- Call this only once.
-	Simple_Plot(x, y); -- Make the plot.
-	End_PLplot;        -- Call this only once.
+	   for i in x'range loop 
+	      x(i) := Long_Float(i);
+	      y(i) := x(i)**2;
+	   end loop;
+	   Initialize_PLplot; -- Call this only once.
+	   Simple_Plot(x, y); -- Make the plot.
+	   End_PLplot;        -- Call this only once.
 	end Simple_Example;
       </programlisting>
       <para>	        Next is a bash script that will compile, bind, and link it. It is installation-specific in that paths to the GNAT compiler, PLplot libraries, and BLAS (Basic Linear Algebra System) and LAPACK (Linear Algebra Package) are hard-coded. You will have to adjust the paths to fit your installation. Some Linux installations which have GNAT 4.3 or later (Ada 2005) pre-installed might have already set the paths to the BLAS and LAPACK libraries.</para>
-      <para>	        (Note that the G.3 Annex of Ada 2005, in the GNAT version, depends heavily on BLAS and LAPACK. These packages are tried-and-true packages that are available from several places in either C or Fortran versions. The present example is specific to OS X which has them pre-installed.)</para>
+      <para>	        (Note that the G.3 Annex of Ada 2005, in the GNAT version, depends heavily on BLAS and LAPACK. These packages are tried-and-true packages that are available from several places in either C or Fortran versions. The present example is specific to OS X which has both C and Fortran versions pre-installed.)</para>
       <programlisting>
 	#!/bin/bash
 	/usr/local/ada-4.3/bin/gnatmake simple_example.adb \
@@ -162,7 +162,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<title>Foreground-background control</title>
 	<sect4 id="ada_draw_bw">
 	  <title>Draw_On_Black, Draw_On_White</title>
-	  <para>	The default for PLplot is to draw its graphics on a black background. A white background can be used instead with Draw_On_White or reset to the original mode with Draw_On_Black. Each of these manipulates color map 0 by swapping black and white so that e.g.with Draw_On_White, formerly white lines on a black background autotmatically become black lines on a white background.</para>
+	  <para>	The default for PLplot is to draw its graphics on a black background. A white background can be used instead with <literal>Draw_On_White</literal> or reset to the original mode with <literal>Draw_On_Black</literal>. Each of these manipulates color map 0 by swapping black and white so that e.g.with <literal>Draw_On_White</literal>, formerly white lines on a black background autotmatically become black lines on a white background.</para>
 	</sect4>
       </sect3>
       <sect3 id="ada_simple_plotters">
@@ -170,7 +170,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<para>        Several high-level but flexible plotters are available, and more might be added in the future. It is expected that many users will find that these high-level routines are adequate for most of their day-to-day plotting.</para>
 	<sect4 id="ada_multiple_pairs">
 	  <title>Multiplot_Pairs</title>
-	  <para>	Plot up to five x-y pairs with easy labeling, coloring, line width and styles, justification, and zooming.</para>
+	  <para>	Plot up to five <emphasis>x-y</emphasis> pairs with easy labeling, coloring, line width and styles, justification, and zooming.</para>
 	</sect4>
 	<sect4 id="ada_simple_plot">
 	  <title>Simple_Plot</title>
@@ -178,15 +178,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</sect4>
 	<sect4 id="ada_simple_plot_logx">
 	  <title>	Simple_Plot_Log_X</title>
-	  <para>	Same as Simple_Plot but with logarithmic <emphasis>x</emphasis>-axis.</para>
+	  <para>	Same as <literal>Simple_Plot</literal> but with logarithmic <emphasis>x</emphasis>-axis.</para>
 	</sect4>
 	<sect4 id="ada_simple_plot_logy">
 	  <title>Simple_Plot_Log_Y</title>
-	  <para>	Same as Simple_Plot but with logarithmic <emphasis>y</emphasis>-axis.</para>
+	  <para>	Same as <literal>Simple_Plot</literal> but with logarithmic <emphasis>y</emphasis>-axis.</para>
 	</sect4>
 	<sect4 id="ada_simple_plot_logxy">
 	  <title>Simple_Plot_Log_XY</title>
-	  <para>	Same as Simple_Plot but with logarithmic <emphasis>x</emphasis>- and <emphasis>y</emphasis>-axes.</para>
+	  <para>	Same as <literal>Simple_Plot</literal> but with logarithmic <emphasis>x</emphasis>- and <emphasis>y</emphasis>-axes.</para>
 	</sect4>
 	<sect4 id="ada_simple_plot_pairs">
 	  <title>Simple_Plot_Pairs</title>
@@ -212,21 +212,21 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <sect3 id="ada_simple_color">
 	<title>Simple color map manipulations</title>
 	<para>        PLplot provides extensive manipulation and control of two separate color maps, color map 0 and color map 1. The Ada binding makes basic manipulations easier and also adds facilities for making snapshots of color map 0 so that any state of the map can easlily be restored later. An initial snapshot is taken when the package is initialized so that the default color settings can always be restored after having been changed.</para>
-	<para>        Another set of features lets the user reset the 16 individual colors in color map 0 after a color definition has been changed. It is important to note that while Set_Pen_Color(Red) (plcol0 in the traditional binding) normally does what it says, Red simply has the value 1. If the user changes the color map so that 1 corresponds to another color, then Set_Pen_Color(Red) will draw in that color instead of red. To always assure that red is drawn even if the color map has been changed for integer 1, use Set_Pen_Color(Reset_Red) instead. These 16 "reset" functions return the appropriate default integer for the specified color but also reset that slot in the color table so that a subsequent call such as Set_Pen_Color(Red) will also cause drawing in red.</para>
-	<para>        Color map 1 also gets a easy-to-use makeover for Ada users. There are several pre-built color themes that are useful for quickly making surface and mesh plots, Color_Themes_For_Map_1_Type. These color themes can be quickly applied with Quick_Set_Color_Map_1.</para>
-	<para>        Miscellaneous other Ada features include a pre-built mask function for Shade_Regions that does no masking; perhaps the most useful purpose is to provide a template for writing mask functions that do mask. And there is a handy function for calculating the contour levels for making contour plots.</para>
+	<para>        Another set of features lets the user reset the 16 individual colors in color map 0 after a color definition has been changed. It is important to note that while <literal>Set_Pen_Color(Red)</literal> (<literal>plcol0</literal> in the traditional binding) normally does what it says, <literal>Red</literal> simply has the value <literal>1</literal>. If the user changes the color map so that <literal>1</literal> corresponds to another color, then <literal>Set_Pen_Color(Red)</literal> will draw in that color instead of red. To always assure that red is drawn even if the color map has been changed for integer <literal>1</literal>, use <literal>Set_Pen_Color(Reset_Red)</literal> instead. These 16 "reset" functions return the appropriate default integer for the specified color but also reset that slot in the color table so that a subsequent call such as <literal>Set_Pen_Color(Red)</literal> will also cause drawing in red.</para>
+	<para>        Color map 1 also gets a easy-to-use makeover for Ada users. There are several pre-built color themes that are useful for quickly making surface and mesh plots, <literal>Color_Themes_For_Map_1_Type</literal>. These color themes can be quickly applied with <literal>Quick_Set_Color_Map_1</literal>.</para>
+	<para>        Miscellaneous other Ada features include a pre-built mask function for <literal>Shade_Regions</literal> that does no masking; perhaps the most useful purpose is to provide a template for writing mask functions that do mask. And there is a handy function for calculating the contour levels for making contour plots.</para>
 	<para>	Color table snapshots</para>
-	<para>	Make_Snapshot_Of_Color_Map_0</para>
-	<para>	Restore_Snapshot_Of_Color_Map_0</para>
-	<para>	Restore_Default_Snapshot_Of_Color_Map_0</para>
+	<para>	   <literal>Make_Snapshot_Of_Color_Map_0</literal></para>
+	<para>	   <literal>Restore_Snapshot_Of_Color_Map_0</literal></para>
+	<para>	   <literal>Restore_Default_Snapshot_Of_Color_Map_0</literal></para>
 	<para>	Color resetting functions for the 16 colors of color map 0</para>
-	<para>	Reset_Black, Reset_Red, &#8230; Reset_White</para>
+	<para>	   <literal>Reset_Black, Reset_Red, &#8230; Reset_White</literal></para>
 	<para>	Easy manipulation of color map 1</para>
-	<para>	Pre-built color themes for color map 1: Color_Themes_For_Map_1_Type</para>
-	<para>	Quick application of pre-built color themes: Quick_Set_Color_Map_1</para>
+	<para>	   Pre-built color themes for color map 1: <literal>Color_Themes_For_Map_1_Type</literal></para>
+	<para>	   Quick application of pre-built color themes: <literal>Quick_Set_Color_Map_1</literal></para>
 	<para>	Other features</para>
-	<para>	A pre-built mask function for Shade_Regions that does no masking: Mask_Function_No_Mask</para>
-	<para>	An easy way to calculate an array of contour levels for contour plots: Calculate_Contour_Levels</para>
+	<para>	   A pre-built mask function for <literal>Shade_Regions</literal> that does no masking: <literal>Mask_Function_No_Mask</literal></para>
+	<para>	   An easy way to calculate an array of contour levels for contour plots: <literal>Calculate_Contour_Levels</literal></para>
       </sect3>
     </sect2>
     <sect2 id="ada_integer_options">
@@ -235,59 +235,59 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para>        Below is a listing of at least the contexts in which these "re-namings" have been applied. In some cases the entire range of values is listed, but if there are more than about four such values for each context, only a sampling is given.</para>
       <para><emphasis role="bold">	Instances</emphasis></para>
       <para>	Colors: Plot_Color_Type</para>
-      <para>	0 is Black, 1 is Red, etc.</para>
-      <para>	Justification for plots: Justification_Type</para>
-      <para>	User_Justified</para>
-      <para>	Not_Justified</para>
-      <para>	Justified</para>
-      <para>	Justified_Square_Box</para>
-      <para>	Axis styles: Axis_Style_Type</para>
-      <para>	Linear_Major_Grid</para>
-      <para>	Linear_Minor_Grid</para>
-      <para>	etc.</para>
-      <para>	Font styles: Font_Style_Type</para>
-      <para>	Normal_Font</para>
-      <para>	Roman_Font</para>
-      <para>	Italic_Font</para>
-      <para>	Script_Font</para>
-      <para>	Character sets: Character_Set_Type</para>
-      <para>	Standard_Character_Set</para>
-      <para>	Extended_Character_Set</para>
-      <para>	Plot orientation: Orientation_Type</para>
-      <para>	Landscape</para>
-      <para>	Portrait</para>
-      <para>	Modes for parsing command line arguments: Parse_Mode_Type</para>
-      <para>	E.g. PL_PARSE_PARTIAL</para>
-      <para>	Descriptions of map outlines (continents, states, etc.): Map_Type</para>
-      <para>	Continents</para>
-      <para>	USA_and_States</para>
-      <para>	Continents_and_Countries</para>
-      <para>	USA_States_and_Continents</para>
+      <para>	   <literal>0</literal> is Black, <literal>1</literal> is Red, etc.</para>
+      <para>	Justification for plots: <literal>Justification_Type</literal></para>
+      <para>	   <literal>User_Justified</literal></para>
+      <para>	   <literal>Not_Justified</literal></para>
+      <para>	   <literal>Justified</literal></para>
+      <para>	   <literal>Justified_Square_Box</literal></para>
+      <para>	Axis styles: <literal>Axis_Style_Type</literal></para>
+      <para>	   <literal>Linear_Major_Grid</literal></para>
+      <para>	   <literal>Linear_Minor_Grid</literal></para>
+      <para>	   etc.</para>
+      <para>	Font styles: <literal>Font_Style_Type</literal></para>
+      <para>	   <literal>Normal_Font</literal></para>
+      <para>	   <literal>Roman_Font</literal></para>
+      <para>	   <literal>Italic_Font</literal></para>
+      <para>	   <literal>Script_Font</literal></para>
+      <para>	Character sets: <literal>Character_Set_Type</literal></para>
+      <para>	   <literal>Standard_Character_Set</literal></para>
+      <para>	   <literal>Extended_Character_Set</literal></para>
+      <para>	Plot orientation: <literal>Orientation_Type</literal></para>
+      <para>	   <literal>Landscape</literal></para>
+      <para>	   <literal>Portrait</literal></para>
+      <para>	Modes for parsing command line arguments: <literal>Parse_Mode_Type</literal></para>
+      <para>	   E.g. <literal>PL_PARSE_PARTIAL</literal></para>
+      <para>	Descriptions of map outlines (continents, states, etc.): <literal>Map_Type</literal></para>
+      <para>	   <literal>Continents</literal></para>
+      <para>	   <literal>USA_and_States</literal></para>
+      <para>	   <literal>Continents_and_Countries</literal></para>
+      <para>	   <literal>USA_States_and_Continents</literal></para>
       <para>	Various style and view options for 3D and surface plots</para>
-      <para>	E.g. Lines_Parallel_To_X</para>
-      <para>	Kind of gridding algorithm for interpolating 2D data to a grid: Gridding_Algorithm_Type</para>
-      <para>	E.g. Grid_Bivariate_Cubic_Spline_Approximation</para>
+      <para>	   E.g. <literal>Lines_Parallel_To_X</literal></para>
+      <para>	Kind of gridding algorithm for interpolating 2D data to a grid: <literal>Gridding_Algorithm_Type</literal></para>
+      <para>	   E.g. <literal>Grid_Bivariate_Cubic_Spline_Approximation</literal></para>
       <para>	Flags for histogram style</para>
-      <para>	E.g. Histogram_Default</para>
+      <para>	   E.g. <literal>Histogram_Default</literal></para>
       <para>	Flags for histogram binning</para>
-      <para>	E.g. Bin_Default</para>
+      <para>	   E.g. <literal>Bin_Default</literal></para>
       <para>	Names for color space models</para>
-      <para>	Hue, Lightness, Saturation: HLS</para>
-      <para>	Red, Green, Blue: RGB</para>
+      <para>	   Hue, Lightness, Saturation: <literal>HLS</literal></para>
+      <para>	   Red, Green, Blue: <literal>RGB</literal></para>
     </sect2>
     <sect2 id="ada_one_offs">
       <title>One-offs</title>
-      <para>	        Convenient string handling for Get_Device_Name (plgdev in the traditional binding); a function version is provided that simplifies the string handling associated with this feature.</para>
-      <para>	        Overloaded Set_Line_Style (plstyl in the traditional binding) with a version that takes a single argument, Default_Continuous_Line. This replaces the awkward situation of calling the normal versions of these procedures with unused arguments simply to set the line style to the default, continuous, line.</para>
-      <para>	        The contour plotter Contour_Plot_Irregular_Data (plfcont in the traditional binding) is provided for making contour plots from irregularly spaced data. This feature is not documented in the PLplot API documentation. </para>
+      <para>	        Convenient string handling for Get_Device_Name (<literal>plgdev</literal> in the traditional binding); a function version is provided that simplifies the string handling associated with this feature.</para>
+      <para>	        Overloaded <literal>Set_Line_Style</literal> (<literal>plstyl</literal> in the traditional binding) with a version that takes a single argument, <literal>Default_Continuous_Line</literal>. This replaces the awkward situation of calling the normal versions of these procedures with unused arguments simply to set the line style to the default, continuous, line.</para>
+      <para>	        The contour plotter <literal>Contour_Plot_Irregular_Data</literal> (<literal>plfcont</literal> in the traditional binding) is provided for making contour plots from irregularly spaced data. This feature is not documented in the PLplot API documentation. </para>
     </sect2>
   </sect1>
   <sect1 id="ada_c_flavor">
     <title>Parts That Retain a C Flavor</title>
     <!-- 195:'Normal' --><para><emphasis role="bold">        </emphasis>There remains at least one area in the Ada bindings which is still affected by the C underpinnings. This might be cleaned up in future versions. There might be other residual C influence as well.</para>
     <para><emphasis role="bold">	8.1	Map-drawing</emphasis></para>
-    <para>	        plmapform as called by Draw_Latitude_Longitude (plmap) and Draw_Latitude_Longitude (plmeridians)</para>
-    <para>	        This is the only place in the PLplot bindings where a C subprogram calls an Ada subprogram while passing an array. If the array is unconstrained, there is no guarantee that it will work because C has no way of telling Ada what offset to use for the beginning of the array. But passing a constrained array is acceptable with the downside that the array size must be fixed within the bindings as being large enough to handle any situation; currently, it is sized as 0 .. 2000. See Example 19 for how this is handled in by the user program. The constrained array is called Map_Form_Constrained_Array.</para>
+    <para>	        <literal>plmapform</literal> as called by <literal>Draw_Latitude_Longitude</literal> (<literal>plmap</literal>) and <literal>Draw_Latitude_Longitude</literal> (<literal>plmeridians</literal>)</para>
+    <para>	        This is the only place in the PLplot bindings where a C subprogram calls an Ada subprogram while passing an array. If the array is unconstrained, there is no guarantee that it will work because C has no way of telling Ada what offset to use for the beginning of the array. But passing a constrained array is acceptable with the downside that the array size must be fixed within the bindings as being large enough to handle any situation; currently, it is sized as <literal>0 .. 2000</literal>. See Example 19 for how this is handled in by the user program. The constrained array is called <literal>Map_Form_Constrained_Array</literal>.</para>
 
   </sect1>
   <sect1 id="ada_known_issues">
@@ -295,22 +295,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <!-- 200:'Normal' --><para><emphasis role="bold">	9.1	Stripchart labelling</emphasis></para>
     <para>	        In Example 17, all of the stripchart labels are the same regardless of the fact that the calling program  sets them to be different. This is likely to affect user programs in the same manner.</para>
     <para><emphasis role="bold">	9.2	Documentation</emphasis></para>
-    <para>	        In numerous places in the documentation, a feature is listed or described as "C only." Many of these features are actually available in Ada. For example, in Contour_Plot (plcont in the traditional binding), the transformation from array indices to world coordinates is mentioned as "C only" but is actually available in Ada.</para>
+    <para>	        In numerous places in the documentation, a feature is listed or described as "C only." Many of these features are actually available in Ada. For example, in <literal>Contour_Plot</literal> (<literal>plcont</literal> in the traditional binding), the transformation from array indices to world coordinates is mentioned as "C only" but is actually available in Ada.</para>
 
   </sect1>
   <sect1 id="ada_compilation_notes">
     <title>Compilation notes</title>
     <!-- 205:'Normal' --><para><emphasis role="bold">	10.1	Ada 95 Versus Ada 2005</emphasis></para>
-    <para>	        As discussed in Section 6.1, the bindings are made to work with Ada 95 but to also take advantage of the Annex G.3 (vector-matrix) features of Ada 2005. Actually, this adaptation takes place during the PLplot build process when DHAVE_ADA_2007=OFF or DHAVE_ADA_2007=ON is chosen; the appropriate binding source files are generated automatically. User programs will work with either compiler type without modification.</para>
+    <para>	        As discussed in Section 6.1, the bindings are made to work with Ada 95 but to also take advantage of the Annex G.3 (vector-matrix) features of Ada 2005. Actually, this adaptation takes place during the PLplot build process when <literal>DHAVE_ADA_2007=OFF</literal> or <literal>DHAVE_ADA_2007=ON</literal> is chosen; the appropriate binding source files are generated automatically. User programs will work with either compiler type without modification.</para>
     <para><emphasis role="bold">	10.2	GNAT Dependence</emphasis></para>
     <para>	        There is a slight but significant dependence on the GNAT version of Ada. This is discussed more fully in Section 6.2</para>
     <para><emphasis role="bold">	10.3	Compiler Warnings</emphasis></para>
     <para>	        During normal compilation of the Ada bindings, approximately a dozen warnings are generated, in pairs, of the following form:</para>
-    <para>	bar.adb:46: warning: type of argument "foo" is unconstrained array</para>
-    <para>	bar.adb:46: warning: foreign caller must pass bounds explicitly</para>
+    <para>	<literal>bar.adb:46: warning: type of argument "foo" is unconstrained array</literal></para>
+    <para>	<literal>bar.adb:46: warning: foreign caller must pass bounds explicitly</literal></para>
     <para>	These are normal and an unavoidable consequence of some of the callback routines interacting with the underlying C code.</para>
     <para><emphasis role="bold">	10.4	PLplot_Auxiliary</emphasis></para>
-    <para>	        The bindings include files PLplot_Auxiliary.ads and PLplot_Auxiliary.adb. These files are currently used to provide a few convenience subprograms that are used in the examples. However, they are also very tightly associated with the above-mentioned facility to accommodate either Ada 95 or Ada 2005 compilers. The current situation is such that if the user is using an Ada 95 compiler <emphasis>and</emphasis> requires the Real_Vector or Real_Matrix type definitions, then he/she should with PLplot_Auxiliary. If in doubt, PLplot_Auxiliary can always be with-ed without harm. In the future, this confusion might be removed and the need for PLplot_Auxiliary removed. (However, user programs that with it should still work without change.)</para>
+    <para>	        The bindings include files <literal>PLplot_Auxiliary.ads</literal> and <literal>PLplot_Auxiliary.adb</literal>. These files are currently used to provide a few convenience subprograms that are used in the examples. However, they are also very tightly associated with the above-mentioned facility to accommodate either Ada 95 or Ada 2005 compilers. The current situation is such that if the user is using an Ada 95 compiler <emphasis>and</emphasis> requires the Real_Vector or Real_Matrix type definitions, then he/she should <literal>with</literal> <literal>PLplot_Auxiliary</literal>. If in doubt, <literal>PLplot_Auxiliary</literal> can always be <literal>with</literal>-ed without harm. In the future, this confusion might be removed and the need for <literal>PLplot_Auxiliary</literal> removed. (However, user programs that with it should still work without change.)</para>
 
   </sect1>
   <sect1 id="ada_apple_notes">
