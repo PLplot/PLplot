@@ -29,9 +29,6 @@ use PDL::Graphics::PLplot;
 use Math::Trig qw [pi];
 use Getopt::Long qw [:config pass_through];
 use POSIX qw [clock];
-use PDL::GSL::RNG;
-
-my $rng = PDL::GSL::RNG->new ('taus');
 
 sub cmap1_init {
   my $i = pdl ([0.0,    # left boundary
@@ -245,12 +242,22 @@ sub create_data {
   my $pts = shift;
   my ($x, $y, $z);
 
+  # generate a vector of pseudo-random numbers 2*$pts long
+  my $t = zeroes(2*$pts);
+  plrandd($t); # use the PLplot standard random number generator for consistency with other demos
+
+  # Use every other random number for the x vect and y vect.
+  # This is done in this funny way to make the results identical
+  # to the c version, which calls plrandd once for x, then once for y in a loop.
+  my $xt = ($xM-$xm) * $t->mslice([0,(2*$pts)-2,2]);
+  my $yt = ($yM-$ym) * $t->mslice([1,(2*$pts)-1,2]);
+
   if (not $randn) {
-    $x = $rng->get_uniform ($pts) + $xm;
-    $y = $rng->get_uniform ($pts) + $ym;
+    $x = $xt + $xm;
+    $y = $yt + $ym;
   } else {    # std=1, meaning that many points are outside the plot range
-    $x = $rng->ran_gaussian (1.0, $pts) + $xm;
-    $y = $rng->ran_gaussian (1.0, $pts) + $ym;
+    $x = sqrt(-2 * log($xt)) * cos(2 * pi * $yt) + $xm;
+    $y = sqrt(-2 * log($xt)) * sin(2 * pi * $yt) + $ym;
   }
 
   if (not $rosen) {
