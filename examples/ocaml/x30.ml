@@ -43,7 +43,7 @@ let acoord = [|0.0; 1.0|]
 let rev = [|false; false|]
 
 let () =
-  ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
+  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
   plinit ();
   plscmap0n 4;

@@ -56,7 +56,7 @@ let () =
   let cont_width = 0 in
 
   (* Parse and process command line arguments *)
-  ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
+  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
   (* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display *)
   plscmap0n 3;

@@ -20,7 +20,7 @@ let plfbox x0 y0 =
 
 let () =
   (* Parse and process command line arguments *)
-  ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
+  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
   (* Initialize plplot *)
   plinit ();

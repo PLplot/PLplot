@@ -93,7 +93,7 @@ let () =
 
   (* plplot initialization *)
   (* Parse and process command line arguments *)
-  ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
+  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
   (* Initialize plplot *)
   plinit ();

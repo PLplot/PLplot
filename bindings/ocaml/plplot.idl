@@ -172,5 +172,5 @@ quote(mlmli, "type plplot_parse_method_type = \
                 PL_PARSE_SKIP");
 
 RAW_ML(external plgriddata : float array -> float array -> float array -> float array -> float array -> plplot_grid_method_type -> float -> float array array = "ml_plgriddata_bytecode" "ml_plgriddata")
-RAW_ML(external plparseopts : string array -> plplot_parse_method_type array -> int = "ml_plparseopts")
+RAW_ML(external plparseopts : string array -> plplot_parse_method_type list -> int = "ml_plparseopts")
 

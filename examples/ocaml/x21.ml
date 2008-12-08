@@ -102,7 +102,7 @@ let () =
 
   let opt = [|0.0; 0.0; wmin; float_of_int knn_order; threshold; 0.0|] in
 
-  ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
+  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
   (* Initialize plplot *)
   plinit ();

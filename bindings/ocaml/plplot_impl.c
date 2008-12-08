@@ -429,21 +429,21 @@ value ml_plparseopts(value argv, value parse_method) {
     int i;
     int result;
     int argv_length;
-    int parse_method_length;
     int combined_parse_method;
     argv_length = Wosize_val(argv);
-    parse_method_length = Wosize_val(parse_method);
     // Make a copy of the command line argument strings
     const char* argv_copy[argv_length];
     for (i = 0; i < argv_length; i++) {
         argv_copy[i] = String_val( Field(argv, i) );
     }
-    // OR the elements of the parse_method array together
-    combined_parse_method = Int_val(Field(parse_method, 0));
-    for (i = 1; i < parse_method_length; i++) {
+    // OR the elements of the parse_method list together
+    combined_parse_method = 0;
+    while (parse_method != Val_emptylist) {
         combined_parse_method =
             combined_parse_method |
-                translate_parse_option(Int_val(Field(parse_method, i)));
+                translate_parse_option(Int_val(Field(parse_method, 0)));
+        // Point to the tail of the list for the next loop
+        parse_method = Field(parse_method, 1);
     }
     result = plparseopts(&argv_length, argv_copy, combined_parse_method);
     CAMLreturn( Val_int(result) );

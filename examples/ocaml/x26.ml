@@ -170,7 +170,7 @@ let plot1 label_type x_label y_label alty_label title_label line_label =
 \*--------------------------------------------------------------------------*)
 let () =
   (* Parse and process command line arguments *)
-  ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
+  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
   (* Initialize plplot *)
   plinit ();

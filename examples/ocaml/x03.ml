@@ -36,7 +36,7 @@ let main () =
   let y0 = Array.init 361 (fun i -> sin (dtr *. float_of_int i)) in
 
   (* Parse and process command line arguments *)
-  ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
+  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
   (* Initialize plplot *)
   plinit ();

@@ -24,7 +24,7 @@ let () =
   let per = [|10.0; 32.0; 12.0; 30.0; 16.0|] in
 
   (* Parse and process command line arguments *)
-  ignore (plparseopts Sys.argv [|PL_PARSE_FULL|]);
+  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
   (* Initialize plplot *)
   plinit ();
