@@ -61,17 +61,17 @@ if(ENABLE_pdl)
           ERROR_VARIABLE PDL_PLPLOT_VERSION
           )
         #message("PDL_PLPLOT_VERSION = ${PDL_PLPLOT_VERSION}")
-        transform_version(NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION "0.42.0")
+        transform_version(NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION "0.44.0")
         transform_version(NUMERICAL_PDL_PLPLOT_VERSION "${PDL_PLPLOT_VERSION}.0")
 	#message("NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION = ${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
 	#message("NUMERICAL_PDL_PLPLOT_VERSION = ${NUMERICAL_PDL_PLPLOT_VERSION}")
         if(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
           message(STATUS "WARNING: "
-          "perl PDL PLplot version < 0.42 "
+          "perl PDL PLplot version < 0.44 "
           "Using more limited set of Perl/PDL examples that work with old versions")
-          set(HAVE_PDL_GRAPHICS_PLPLOT_40 OFF CACHE BOOL "PDL-Graphics-PLplot version is 0.42 or higher" FORCE)
+          set(HAVE_PDL_GRAPHICS_PLPLOT_40 OFF CACHE BOOL "PDL-Graphics-PLplot version is 0.44 or higher" FORCE)
         else(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
-          set(HAVE_PDL_GRAPHICS_PLPLOT_40 ON CACHE BOOL "PDL-Graphics-PLplot version is 0.42 or higher" FORCE)
+          set(HAVE_PDL_GRAPHICS_PLPLOT_40 ON CACHE BOOL "PDL-Graphics-PLplot version is 0.44 or higher" FORCE)
         endif(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
       endif(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
     else(NOT PDL_RETURNCODE)
