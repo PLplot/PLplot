@@ -37,7 +37,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
   const char *yopt, PLFLT ytick, PLINT nysub);
 
  void
-c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT opt);
+c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, plplot_bin_style opt);
 
  void
 c_plbop(void);
@@ -216,7 +216,7 @@ c_plgzax(PLINT *p_digmax, PLINT *p_digits);
 
  void
 c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
-  PLINT nbin, PLINT opt);
+  PLINT nbin, plplot_hist_style opt);
 
  void
 c_plhls(PLFLT h, PLFLT l, PLFLT s);

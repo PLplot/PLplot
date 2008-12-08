@@ -33,6 +33,23 @@ enum plplot3d_style_enum {
 };
 typedef [set] enum plplot3d_style_enum plplot3d_style;
 
+enum plplot_bin_enum {
+    PL_BIN_DEFAULT = 0,
+    PL_BIN_CENTRED = 1,
+    PL_BIN_NOEXPAND = 2,
+    PL_BIN_NOEMPTY = 4,
+};
+typedef [set] enum plplot_bin_enum plplot_bin_style;
+
+enum plplot_hist_enum {
+    PL_HIST_DEFAULT = 0,
+    PL_HIST_NOSCALING = 1,
+    PL_HIST_IGNORE_OUTLIERS = 2,
+    PL_HIST_NOEXPAND = 8,
+    PL_HIST_NOEMPTY = 16,
+};
+typedef [set] enum plplot_hist_enum plplot_hist_style;
+
 // This is a simplified and modified version of the plplot.h file.
 #include "plplot_h.inc"
 

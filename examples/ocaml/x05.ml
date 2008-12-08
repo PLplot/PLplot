@@ -26,7 +26,7 @@ let () =
   let data = Array.init npts (fun i -> sin (float_of_int i *. delta)) in
 
   plcol0 1;
-  plhist data (-1.1) 1.1 44 0;
+  plhist data (-1.1) 1.1 44 [PL_HIST_DEFAULT];
   plcol0 2;
   pllab "#frValue" "#frFrequency"
     "#frPLplot Example 5 - Probability function of Oscillator";
