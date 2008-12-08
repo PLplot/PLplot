@@ -9,9 +9,9 @@ Here is a recipe for building and installing the latest version of that
 module.
 
 Instructions for building and installing Doug Hunt's latest version of the
-PDL Graphics PLplot module (version 0.42 at the time of writing)
+PDL Graphics PLplot module (version 0.44 at the time of writing)
 
-export TARBALL_ROOT_NAME=PDL-Graphics-PLplot-0.42
+export TARBALL_ROOT_NAME=PDL-Graphics-PLplot-0.44
 
 wget \
 http://search.cpan.org/CPAN/authors/id/D/DH/DHUNT/$TARBALL_ROOT_NAME.tar.gz
@@ -22,17 +22,24 @@ tar zxf $TARBALL_ROOT_NAME.tar.gz
 
 cd $TARBALL_ROOT_NAME
 
-# Edit Makefile.PL library location list and header location list to point
-# to the location of the PLplot libraries and headers (if not installed
-# in a standard location).
+# Specify the location of the PLplot headers and libraries
+# (if not installed in a standard location).  For example, if the
+# PLplot install prefix is $PLPLOT_INSTALL_PREFIX
 
-perl Makefile.PL
+export PLPLOT_INCDIR=$PLPLOT_INSTALL_PREFIX/include/plplot
+export PLPLOT_LIBDIR=$PLPLOT_INSTALL_PREFIX/lib
+
+# If you want to install PDL-Graphics-PLplot to a local 
+# directory for testing, then specify that with INSTALL_BASE
+# which for later convenience can be specified with an environment
+# variable.
+# For example,
+export PDL_GRAPHICS_PLPLOT_PREFIX=/home/software/pdl/install
+
+perl Makefile.PL INSTALL_BASE=$PDL_GRAPHICS_PLPLOT_PREFIX
 make >& make.out
 make test >& make_test.out
-
-# Substitute whatever install prefix you want to use.
-export PDL_GRAPHICS_PLPLOT_PREFIX=/home/software/pdl/install
-make PREFIX=$PDL_GRAPHICS_PLPLOT_PREFIX install >& make_install.out
+make install >& make_install.out
 
 # Check what files have been installed
 
