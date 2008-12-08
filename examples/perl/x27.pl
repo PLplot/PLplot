@@ -69,6 +69,7 @@ foreach my $parm (@$params) {
   plvpor(0, 1, 0, 1);
   spiro($parm);
 }
+plend ();
 
 sub spiro {
   my $params = shift;
