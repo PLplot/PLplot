@@ -22,6 +22,9 @@
 #ifndef __WXWIDGETS_H__
 #define __WXWIDGETS_H__
 
+/* some special wxWidgets headers */
+#include <wx/spinctrl.h>
+
 /* freetype headers and macros */
 #ifdef HAVE_FREETYPE
   #include "plfreetype.h"
@@ -343,6 +346,7 @@ struct dev_entry {
   wxString dev_menu_short;
   wxString dev_menu_long;
   wxString dev_file_app;
+  bool pixelDevice;
 };
 
 
@@ -405,8 +409,8 @@ private:
   DECLARE_EVENT_TABLE()
 };
 
-/* definition of the actual window/frame shown */
 
+/* declaration of the actual window/frame shown */
 class wxPLplotFrame : public wxFrame
 {
 public:
@@ -428,6 +432,30 @@ private:
 /* menu ids */
 enum { wxPL_Save=10000, wxPL_Next=10100, wxPL_Locate, wxPL_Orientation_0, wxPL_Orientation_90,
         wxPL_Orientation_180, wxPL_Orientation_270 };
+
+        
+/* Pixel size dialog */
+class wxGetSizeDialog: public wxDialog
+{
+public:
+  // constructors and destructors
+  wxGetSizeDialog( wxWindow *parent, wxWindowID id, const wxString &title,
+      const wxPoint& pos = wxDefaultPosition,
+      const wxSize& size = wxDefaultSize,
+      long style = wxDEFAULT_DIALOG_STYLE,
+      int width=800, int height=600 );
+  
+  int getWidth()  { return spinControlWidth->GetValue(); }
+  int getHeight()  { return spinControlHeight->GetValue(); }
+
+private:
+  wxSpinCtrl* spinControlWidth;
+  wxSpinCtrl* spinControlHeight;
+    
+private:
+    DECLARE_EVENT_TABLE()
+};
+
 
 /* Use this macro if you want to define your own main() or WinMain() function
    and call wxEntry() from there. */

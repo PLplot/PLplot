@@ -68,20 +68,20 @@ static const char *graph[] = {
 };
 
 struct dev_entry dev_entries[] = {
-  { wxT("wxbmp"), wxT("bmp (wx)..."), wxT("Save this plot as bmp!"), wxT("bmp files (*.bmp)|*.bmp") },
-  { wxT("wxpng"), wxT("png (wx)..."), wxT("Save this plot as png"), wxT("png files (*.png)|*.png") },
-  { wxT("wxpcx"), wxT("pcx (wx)..."), wxT("Save this plot as pcx!"), wxT("pcx files (*.pcx)|*.pcx") },
-  { wxT("wxjpeg"), wxT("jpeg (wx)..."), wxT("Save this plot as jpeg!"), wxT("jpg files (*.jpg;*.jpeg)|*.jpg;*.jpeg") },
-  { wxT("wxtiff"), wxT("tiff (wx)..."), wxT("Save this plot as tiff!"), wxT("tiff files (*.tif;*.tiff)|*.tif;*.tiff") },
-  { wxT("wxpnm"), wxT("pnm (wx)..."), wxT("Save this plot as pnm!"), wxT("pnm files (*.pnm)|*.pnm") },
-  { wxT("pngcairo"), wxT("png (cairo)..."), wxT("Save this plot as png using cairo!"), wxT("png files (*.png)|*.png") },
-  { wxT("pdfcairo"), wxT("pdf (cairo)..."), wxT("Save this plot as pdf using cairo!"), wxT("pdf files (*.pdf)|*.pdf") },
-  { wxT("ps"), wxT("postscript..."), wxT("Save this plot as postscript!"), wxT("ps files (*.ps)|*.ps") },
-  { wxT("psc"), wxT("color postscript..."), wxT("Save this plot as color postscript!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
-  { wxT("pscairo"), wxT("color postscript (cairo)..."), wxT("Save this plot as color postscript using cairo!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc") },
-  { wxT("svg"), wxT("svg..."), wxT("Save this plot as svg!"), wxT("svg files (*.svg)|*.svg") },
-  { wxT("svgcairo"), wxT("svg (cairo)..."), wxT("Save this plot as svg using cairo!"), wxT("svg files (*.svg)|*.svg") },
-  { wxT("xfig"), wxT("xfig..."), wxT("Save this plot as xfig!"), wxT("fig files (*.fig)|*.fig") }
+  { wxT("wxbmp"), wxT("bmp (wx)..."), wxT("Save this plot as bmp!"), wxT("bmp files (*.bmp)|*.bmp"), true },
+  { wxT("wxpng"), wxT("png (wx)..."), wxT("Save this plot as png"), wxT("png files (*.png)|*.png"), true },
+  { wxT("wxpcx"), wxT("pcx (wx)..."), wxT("Save this plot as pcx!"), wxT("pcx files (*.pcx)|*.pcx"), true },
+  { wxT("wxjpeg"), wxT("jpeg (wx)..."), wxT("Save this plot as jpeg!"), wxT("jpg files (*.jpg;*.jpeg)|*.jpg;*.jpeg"), true },
+  { wxT("wxtiff"), wxT("tiff (wx)..."), wxT("Save this plot as tiff!"), wxT("tiff files (*.tif;*.tiff)|*.tif;*.tiff"), true },
+  { wxT("wxpnm"), wxT("pnm (wx)..."), wxT("Save this plot as pnm!"), wxT("pnm files (*.pnm)|*.pnm"), true },
+  { wxT("pngcairo"), wxT("png (cairo)..."), wxT("Save this plot as png using cairo!"), wxT("png files (*.png)|*.png"), true },
+  { wxT("pdfcairo"), wxT("pdf (cairo)..."), wxT("Save this plot as pdf using cairo!"), wxT("pdf files (*.pdf)|*.pdf"), false },
+  { wxT("ps"), wxT("postscript..."), wxT("Save this plot as postscript!"), wxT("ps files (*.ps)|*.ps"), false },
+  { wxT("psc"), wxT("color postscript..."), wxT("Save this plot as color postscript!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc"), false },
+  { wxT("pscairo"), wxT("color postscript (cairo)..."), wxT("Save this plot as color postscript using cairo!"), wxT("ps files (*.ps;*.psc)|*.ps;*.psc"), false },
+  { wxT("svg"), wxT("svg..."), wxT("Save this plot as svg!"), wxT("svg files (*.svg)|*.svg"), false },
+  { wxT("svgcairo"), wxT("svg (cairo)..."), wxT("Save this plot as svg using cairo!"), wxT("svg files (*.svg)|*.svg"), false },
+  { wxT("xfig"), wxT("xfig..."), wxT("Save this plot as xfig!"), wxT("fig files (*.fig)|*.fig"), false }
 };
 
 
@@ -98,7 +98,7 @@ BEGIN_EVENT_TABLE( wxPLplotFrame, wxFrame )
   EVT_CLOSE( wxPLplotFrame::OnClose )
 END_EVENT_TABLE()
 
-/* event table the widget */
+/* event table for the plot widget */
 BEGIN_EVENT_TABLE( wxPLplotWindow, wxWindow )
   EVT_PAINT( wxPLplotWindow::OnPaint )               /* (re)draw the plot in window */
   EVT_CHAR( wxPLplotWindow::OnChar )
@@ -109,6 +109,9 @@ BEGIN_EVENT_TABLE( wxPLplotWindow, wxWindow )
   EVT_MAXIMIZE( wxPLplotWindow::OnMaximize )
 END_EVENT_TABLE()
 
+/* event table for the size dialog */
+BEGIN_EVENT_TABLE(wxGetSizeDialog,wxDialog)
+END_EVENT_TABLE()
 
 /*----------------------------------------------------------------------*\
  *  bool wxPLplotApp::OnInit()
@@ -294,17 +297,35 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
     
   size_t index=event.GetId()-wxPL_Save;
   if( (index>=0) && (index<sizeof(dev_entries)/sizeof(dev_entry)) ) {
-    wxFileDialog dialog( this, wxT("Save plot as ")+dev_entries[index].dev_name, wxT(""), wxT(""),
-                         dev_entries[index].dev_file_app+wxT("|All Files (*.*)|*.*"),
+    int width=800;
+    int height=600;
+    bool proceed=false;
+    
+    /* ask for geometry in pixels only for image devices */
+    if( dev_entries[index].pixelDevice ) {
+      wxGetSizeDialog sizeDialog( this, -1, wxT("Size of plot"), wxDefaultPosition, wxDefaultSize,
+                                  wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, width, height );
+      if( sizeDialog.ShowModal() == wxID_OK ) {
+        width=sizeDialog.getWidth();
+        height=sizeDialog.getHeight();      
+        proceed=true;
+      }
+    } else
+      proceed=true;
+        
+    if( proceed ) {
+      wxFileDialog dialog( this, wxT("Save plot as ")+dev_entries[index].dev_name, wxT(""), wxT(""),
+                           dev_entries[index].dev_file_app+wxT("|All Files (*.*)|*.*"),
 #if (wxMAJOR_VERSION<=2) & (wxMINOR_VERSION<=6)
-                         wxSAVE | wxOVERWRITE_PROMPT );
+                           wxSAVE | wxOVERWRITE_PROMPT );
 #else
-                         wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
+                           wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
 #endif	
-    if (dialog.ShowModal() == wxID_OK) {
-      const wxCharBuffer buf1=dialog.GetPath().mb_str();
-      const wxCharBuffer buf2=dev_entries[index].dev_name.mb_str();
-      SavePlot( (const char*)buf1, (const char*)buf2, 800, 600 );
+      if (dialog.ShowModal() == wxID_OK) {
+        const wxCharBuffer buf1=dialog.GetPath().mb_str();
+        const wxCharBuffer buf2=dev_entries[index].dev_name.mb_str();
+        SavePlot( (const char*)buf1, (const char*)buf2, width, height );
+      }
     }
   }
 }
@@ -802,6 +823,48 @@ void wxPLplotWindow::SetOrientation( int rot )
   plRemakePlot( m_pls );
   m_dev->resizing = false;
   Refresh();
+}
+
+/*----------------------------------------------------------------------
+ *  wxGetSizeDialog::wxGetSizeDialog( wxWindow *parent, ... )
+ *
+ *  Constructor of GetSizeDialog.
+ *----------------------------------------------------------------------*/
+wxGetSizeDialog::wxGetSizeDialog( wxWindow *parent, wxWindowID id, const wxString &title,
+    const wxPoint &position, const wxSize& size, long style, int width, int height ) :
+    wxDialog( parent, id, title, position, size, style )
+{
+  wxBoxSizer *sizer = new wxBoxSizer( wxVERTICAL );
+
+  wxStaticBoxSizer *staticSizer = new wxStaticBoxSizer( new wxStaticBox(this, -1, wxT("Size of plot")), wxVERTICAL );
+
+  wxFlexGridSizer *flexSizer = new wxFlexGridSizer( 2, 0, 0 );
+  flexSizer->AddGrowableCol( 1 );
+
+  wxStaticText *textWidth = new wxStaticText( this, -1, wxT("Width [pixels]:"), wxDefaultPosition, wxDefaultSize, 0 );
+  flexSizer->Add( textWidth, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+  spinControlWidth = new wxSpinCtrl( this, -1, wxString::Format(wxT("%d"), width), wxDefaultPosition, wxSize(100,-1), wxSP_ARROW_KEYS, 10, 4096, width );
+  flexSizer->Add( spinControlWidth, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+  wxStaticText *textHeight = new wxStaticText( this, -1, wxT("Height [pixels]:"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+  flexSizer->Add( textHeight, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+  spinControlHeight = new wxSpinCtrl( this, -1, wxString::Format(wxT("%d"), height), wxDefaultPosition, wxSize(100,-1), wxSP_ARROW_KEYS, 10, 4096, height );
+  flexSizer->Add( spinControlHeight, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+  staticSizer->Add( flexSizer, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+  sizer->Add( staticSizer, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+
+  wxBoxSizer *buttonSizer = new wxBoxSizer( wxHORIZONTAL );
+  wxButton *buttonOK = new wxButton( this, wxID_OK, wxT("OK"), wxDefaultPosition, wxDefaultSize, 0 );
+  buttonSizer->Add( buttonOK, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+  buttonSizer->Add( 20, 20, 1, wxALIGN_CENTER|wxALL, 5 );
+  wxButton *buttonCancel = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+  buttonSizer->Add( buttonCancel, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+
+  sizer->Add( buttonSizer, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 15 );
+
+  this->SetSizer( sizer );
+  sizer->SetSizeHints( this );
 }
 
 #endif				/* PLD_wxwidgets */
