@@ -19,4 +19,22 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 
+# Run all python plplot examples non-interactively.
+
+# Append to effective python path so that can find plplot modules.
+from plplot_python_start import *
+
+import sys
+from plplot import *
+
+# Parse and process command line arguments
+plparseopts(sys.argv, PL_PARSE_FULL)
+
+# Initialize plplot
+plinit()
+
 import xw17
+
+# Terminate plplot
+plend()
+
