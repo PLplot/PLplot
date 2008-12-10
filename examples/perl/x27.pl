@@ -81,9 +81,6 @@ sub spiro {
   my $steps    = int($NPNT/$windings);
   my $dphi     = 8.0*acos(-1.0)/$steps;
 
-  my $xcoord = zeroes($windings*$steps+1);
-  my $ycoord = zeroes($windings*$steps+1);
-
   my $phi  = sequence($windings*$steps+1) * $dphi;
   my $phiw = ($params->[0]-$params->[1])/$params->[1]*$phi;
 
