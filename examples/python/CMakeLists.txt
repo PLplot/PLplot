@@ -18,6 +18,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+# N.B. examples 14 and 17 handled independently.
 set(python_STRING_INDICES
 "01"
 "02"
@@ -32,10 +33,8 @@ set(python_STRING_INDICES
 "11"
 "12"
 "13"
-"14"
 "15"
 "16"
-"17"
 "18"
 "19"
 "20"
