@@ -166,6 +166,42 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
   </sect1>
   
+  <sect1 id="plClearOpts" renderas="sect3">
+    <title>
+      <function>plClearOpts</function>: Clear internal option table info 
+      structure.
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plClearOpts</function>
+	  </funcdef>
+	  <paramdef></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+    
+    <para>
+      Clear the internal options table info structure. This removes any
+      option added with &plMergeOpts; as well as all default entries. 
+    </para>
+
+    <para>
+      This function returns 0 on success.
+    </para>
+
+    <para>
+      This function is currently available in C, C++ and Ocaml.
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+      
+  </sect1>
+
   <sect1 id="plexit" renderas="sect3">
     <title>
       <function>plexit</function>: Error exit
@@ -284,7 +320,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       <funcsynopsis>
 	<funcprototype>
-	  <funcdef>
+	  <funcdef>int
 	    <function>plGetCursor</function>
 	  </funcdef>
 	  <paramdef><parameter>gin</parameter></paramdef>
@@ -312,6 +348,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      This function returns 1 on success and 0 if no translation to world 
+      coordinates is possible.
+    </para>
 
     <para>
       This function is currently only available with the C, C++, Ocaml, 
@@ -379,7 +420,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       <funcsynopsis>
 	<funcprototype>
-	  <funcdef>
+	  <funcdef>int
 	    <function>plMergeOpts</function>
 	  </funcdef>
 	  <paramdef><parameter>options</parameter></paramdef>

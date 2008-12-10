@@ -7499,7 +7499,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       <funcsynopsis>
 	<funcprototype>
-	  <funcdef>
+	  <funcdef>int
 	    <function>plparseopts</function>
 	  </funcdef>
 	  <paramdef><parameter>p_argc</parameter></paramdef>
@@ -7591,6 +7591,49 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+   <para>
+    &plparseopts; removes all recognized flags
+    (decreasing argc accordingly), so that invalid input may be readily
+    detected.  It can also be used to process user command line flags.  The
+    user can merge an option table of type PLOptionTable into the internal
+    option table info structure using &plMergeOpts;.  Or, the user can
+    specify that ONLY the external table(s) be parsed by calling
+    &plClearOpts; before &plMergeOpts;.
+    </para>
+
+    <para>
+    The default action taken by &plparseopts; is as follows:
+    <simplelist columns="1">
+        <member>
+         Returns with an error if an unrecognized option or badly formed
+         option-value pair are encountered.
+        </member>
+        <member>
+         Returns immediately (return code 0) when the first non-option
+         command line argument is found.
+        </member>
+        <member>
+         Returns with the return code of the option handler, if one
+         was called.
+        </member>
+        <member>
+         Deletes command line arguments from argv list as they are found,
+         and decrements argc accordingly.
+        </member>
+        <member>
+         Does not show "invisible" options in usage or help messages.
+        </member>
+        <member>
+         Assumes the program name is contained in argv[0].
+        </member>
+    </simplelist>
+    </para>
+
+    <para>
+    These behaviors may be controlled through the 
+    <parameter>mode</parameter> argument.
+    </para>
 
     <para>
       Redacted form: 
@@ -10480,7 +10523,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       <funcsynopsis>
 	<funcprototype>
-	  <funcdef>
+	  <funcdef>int
 	    <function>plsetopt</function>
 	  </funcdef>
 	  <paramdef><parameter>opt</parameter></paramdef>
@@ -10493,7 +10536,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       Set any command-line option internally from a program before it invokes
       &plinit;. <literal>opt</literal> is the name of the command-line
       option and <literal>optarg</literal> is the corresponding command-line
-      option argument.
+      option argument. 
     </para>
 
     <variablelist>
@@ -10521,6 +10564,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</listitem>
       </varlistentry>
     </variablelist>
+
+    <para>
+      This function returns 0 on success.
+    </para>
 
     <para>
       Redacted form: <function>plsetopt(opt, optarg)</function>

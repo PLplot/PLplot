@@ -86,6 +86,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plbox3 '<link linkend="plbox3"><function> plbox3</function></link>'>
 <!ENTITY plcalc_world '<link linkend="plcalc_world"><function> plcalc_world</function></link>'>
 <!ENTITY plclear '<link linkend="plclear"><function>plclear</function></link>'>
+<!ENTITY plClearOpts '<link linkend="plClearOpts"><function>plClearOpts</function></link>'>
 <!ENTITY plcol0 '<link linkend="plcol0"><function>plcol0</function></link>'>
 <!ENTITY plcol1 '<link linkend="plcol1"><function>plcol1</function></link>'>
 <!ENTITY plcon0 '<link linkend="plcon0"><function>plcon0</function></link>'>
@@ -239,7 +240,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plw3d '<link linkend="plw3d"><function>plw3d</function></link>'>
 <!ENTITY plwid '<link linkend="plwid"><function>plwid</function></link>'>
 <!ENTITY plwind '<link linkend="plwind"><function>plwind</function></link>'>
-<!ENTITY PLGraphicsIn '<link linkend="PLGraphicsIn"><function>PLGraphicsIn</function></link>'>
+<!ENTITY PLGraphicsIn '<link linkend="PLGraphicsIn"><structname>PLGraphicsIn</structname></link>'>
+<!ENTITY PLOptionTable '<link linkend="PLOptionTable"><structname>PLOptionTable</structname></link>'>
 <!ENTITY PLplot-website '@PLPLOT_WEBSITE@'>
 <!ENTITY % Math-Entities SYSTEM "math.ent">
 %Math-Entities;
