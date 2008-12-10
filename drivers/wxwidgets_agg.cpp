@@ -415,12 +415,9 @@ void wxPLDevAGG::SetColor1( PLStream *pls )
  *  Adds a dc to the device. In that case, the drivers doesn't provide 
  *  a GUI. A new buffer (image) will be created and set up.
  *--------------------------------------------------------------------------*/
-void wxPLDevAGG::SetExternalBuffer( void* dc )
+void wxPLDevAGG::SetExternalBuffer( void* image )
 {
-  mDC=(wxDC*)dc;  /* Add the dc to the device */
-  if( mBuffer )
-    delete mBuffer;
-  mBuffer = new wxImage( width, height );
+  mBuffer = (wxImage*)image;  /* Add the image to the device */
   mRenderingBuffer.attach( mBuffer->GetData(), width, height, width*3 );
   
   mRendererBase.reset_clipping( true );

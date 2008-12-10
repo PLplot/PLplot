@@ -680,11 +680,11 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 	case PLESC_CLEAR: {
       /* Since the plot is updated only every MAX_COMCOUNT commands (usually 5000)
          before we clear the screen we need to show the plot at least once :) */
-      if( dev->ownGUI ) {
+      if( !(dev->resizing) && dev->ownGUI ) {
           wxRunApp( pls, true );
           dev->comcount=0;
       }
-      dev->ClearBackground( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b,
+			dev->ClearBackground( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b,
                             pls->sppxmi, pls->sppymi, pls->sppxma, pls->sppyma );
 		}
 		break;
