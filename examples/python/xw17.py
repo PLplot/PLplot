@@ -30,8 +30,6 @@ plparseopts(sys.argv, PL_PARSE_FULL)
 # Initialize plplot
 plinit()
 
-from ${PYTHON_NUMERIC_NAME} import *
-from random import random
 from time import sleep
 
 def main():
@@ -111,7 +109,7 @@ def main():
     for n in range(nsteps):
         sleep(0.01)
 	t = n * dt
-	noise = random() - 0.5
+	noise = plrandd() - 0.5
 	y1 = y1 + noise
 	y2 = sin(t*pi/18.)
 	y3 = y2 * noise
