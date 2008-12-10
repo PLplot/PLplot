@@ -52,10 +52,8 @@ def main():
     opt[4] = threshold
 
     # Create the sampled data
-    # random is an efficient way of generating random numbers in
-    # python, but for consistency across languages we use plrandd
-    #xt = random(pts)
-    #yt = random(pts)
+    # For consistency across languages use plrandd to create the 
+    # pseudo-random data that are required.
     xt = zeros(pts)
     yt = zeros(pts)
     for i in range(pts) :
