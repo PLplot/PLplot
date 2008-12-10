@@ -60,7 +60,7 @@ headers
 %%
 %%modulename c_plplotcanvas
 %%
-import gnome.canvas.Canvas as PyGnomeCanvas_Type
+import gnomecanvas.Canvas as PyGnomeCanvas_Type
 %%
 ignore-glob
   *_get_type

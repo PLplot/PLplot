@@ -72,6 +72,12 @@ endif(USE_RPATH)
 
 add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
 set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
+set_source_files_properties( 
+  plplot_widgetmodule.c 
+  PROPERTIES COMPILE_FLAGS
+  "-DUSINGDLL"
+)
+
 target_link_libraries(plplot_widgetmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
 if(USE_RPATH)
   set_target_properties(

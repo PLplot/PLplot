@@ -30,11 +30,13 @@ NOTICE
 
 #define PY_ARRAY_UNIQUE_SYMBOL plplotcanvasapi
 #include "Numeric/arrayobject.h"
- 
+
+#include "plplot.h"
+
 void cplplotcanvas_register_classes (PyObject *d); 
 extern PyMethodDef cplplotcanvas_functions[];
  
-DL_EXPORT(void)
+PLDLLIMPEXP_CPLPLOTCANVASMODULE DL_EXPORT(void) 
 initcplplotcanvas(void)
 {
     PyObject *m, *d;

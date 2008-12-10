@@ -95,7 +95,7 @@ cplplotcanvasmodule.c
 set_source_files_properties(
 ${gcwmodule_SRCS} ${cplplotcanvasmodule_SRCS}
 PROPERTIES COMPILE_FLAGS 
-"${gcw_COMPILE_FLAGS} ${PYGCW_CFLAGS}"
+"${gcw_COMPILE_FLAGS} ${PYGCW_CFLAGS} -DUSINGDLL"
 )
 
 include_directories(

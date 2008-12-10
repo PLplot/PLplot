@@ -64,7 +64,7 @@ struct _PlplotCanvasClass {
   GnomeCanvasClass parent;
 };
 
-GType plplot_canvas_get_type();
+PLDLLIMPEXP_GNOME2 GType plplot_canvas_get_type();
 
 PLDLLIMPEXP_GNOME2 PlplotCanvas* plplot_canvas_new();
 PLDLLIMPEXP_GNOME2 void plplot_canvas_devinit(PlplotCanvas* self);
