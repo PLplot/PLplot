@@ -112,10 +112,10 @@ void wxPLplotwindow::OnSize( wxSizeEvent& WXUNUSED(event) )
 
     m_width = width;
     m_height = height;
-	} else
+	} else {
     m_stream->Update();
-
-  Refresh( false );
+		Refresh( false );
+	}
 }
 
 

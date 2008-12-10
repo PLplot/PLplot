@@ -19,10 +19,13 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
+/* plplot headers */
 #include "plplotP.h" 
+
+/* wxwidgets headers */
+#include "wx/wx.h"
+
 #include "wxPLplotstream.h"
-#include "wx/image.h"
-#include "wx/dcmemory.h"
 
 /*! Constructor of wxPLplotstream class which is inherited from plstream.
  *  Here we set the driver (wxwidgets :), and tell plplot in which dc to
@@ -46,6 +49,7 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
   m_width=width;
   m_height=height;
   m_style=style;
+	m_image=NULL;
 
   sdev( "wxwidgets" );
   spage( 0.0, 0.0, m_width, m_height, 0, 0 );
@@ -77,9 +81,20 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
   SetOpt( "-drvopt", drvopt );
   
   init();
+#ifdef HAVE_AGG	
+	m_image = new wxImage( m_width, m_height );
+  cmd( PLESC_DEVINIT, (void*)m_image );
+#else
   cmd( PLESC_DEVINIT, (void*)m_dc );
+#endif
 }
 
+
+wxPLplotstream::~wxPLplotstream()
+{
+	if( m_image )
+		delete m_image;
+}
 
 /*! This is the overloaded set_stream() function, where we could have some
  *  code processed before every call of a plplot functions, since set_stream()
@@ -96,31 +111,42 @@ void wxPLplotstream::set_stream()
  */
 void wxPLplotstream::SetSize( int width, int height )
 {
+	/* For the AGG backend it is important to set first the new image buffer
+		 and tell the driver the new size if the buffer size increases and
+		 the other way round if the buffer size decreases. There is no impact
+		 for the other backends. This is kind of hacky, but I have no better 
+		 idea in the moment */
+	if( width*height>m_width*m_height ) {
+#ifdef HAVE_AGG  
+		if( m_image )
+			delete m_image;	
+		m_image = new wxImage( width, height );
+		cmd( PLESC_DEVINIT, (void*)m_image );	
+#endif	
+		wxSize size( width, height );
+		cmd( PLESC_RESIZE, (void*)&size );
+	} else {
+		wxSize size( width, height );
+		cmd( PLESC_RESIZE, (void*)&size );
+#ifdef HAVE_AGG  
+		if( m_image )
+			delete m_image;	
+		m_image = new wxImage( width, height );
+		cmd( PLESC_DEVINIT, (void*)m_image );	
+#endif	
+	}
+
 	m_width=width;
 	m_height=height;
-
-  wxSize size( m_width, m_height );
-  cmd( PLESC_RESIZE, (void*)&size );
 }
 
 
-/*! Clear the background and replot everything. TODO: actually this should
- *  not be necessary, but bop() is not working as it should?
+/*! Replot everything.
  */
 void wxPLplotstream::RenewPlot()
 {
-  cmd( PLESC_CLEAR, NULL );
   replot();
-
-#ifdef WX_TEMP_HAVE_AGG_IS_ON  
-  if( m_style & wxPLPLOT_ANTIALIZED ) {
-    wxMemoryDC MemoryDC;
-    wxBitmap bitmap( *m_image, -1 );
-    MemoryDC.SelectObject( bitmap );
-    m_dc->Blit( 0, 0, m_width, m_height, &MemoryDC, 0, 0 );
-    MemoryDC.SelectObject( wxNullBitmap );
-  }
-#endif
+	Update();
 }
 
 
@@ -129,8 +155,8 @@ void wxPLplotstream::RenewPlot()
  */
 void wxPLplotstream::Update()
 {
-#ifdef WX_TEMP_HAVE_AGG_IS_ON  
-  if( m_style & wxPLPLOT_ANTIALIZED ) {
+#ifdef HAVE_AGG  
+  if( m_style & wxPLPLOT_BACKEND_AGG ) {
     wxMemoryDC MemoryDC;
     wxBitmap bitmap( *m_image, -1 );
     MemoryDC.SelectObject( bitmap );

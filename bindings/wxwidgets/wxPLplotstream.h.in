@@ -67,6 +67,7 @@ public:
   wxPLplotstream();  //!< Constructor.
   wxPLplotstream( wxDC *dc, int width, int height, int style = wxPLPLOT_NONE );  //!< Constructor.
   void Create( wxDC *dc, int width, int height, int style );
+	~wxPLplotstream();
   //wxPLplotstream( wxImage *buffer, int width, int height, int style );
   void set_stream();   //!< Calls some code before every PLplot command.
 	void SetSize( int width, int height );   //!< Set new size of plot area.
