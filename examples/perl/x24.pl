@@ -122,7 +122,7 @@ plcol0 (0);
 plbox ("", 1.0, 0, "", 1.0, 0);
 
 plscmap0n (7);
-plscmap0 ($red, $green, $blue, 7);
+plscmap0 ($red, $green, $blue);
 
 plschr (0, 4.0);
 plfont (1);
