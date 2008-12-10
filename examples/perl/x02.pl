@@ -103,7 +103,7 @@ sub demo2 {
     #}
     
 # Now set cmap0 all at once (faster, since fewer driver calls)
-    plscmap0($r, $g, $b, 116);
+    plscmap0($r, $g, $b);
 
     draw_windows( 100, 16 );
 
