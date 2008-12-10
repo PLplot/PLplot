@@ -19,6 +19,12 @@ if(SH_EXECUTABLE)
     @ONLY
     )
 
+  configure_file(
+    plplot-test-interactive.sh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh 
+    @ONLY
+    )
+
   configure_file(test_c.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_c.sh @ONLY)
   list(APPEND SCRIPTS test_c.sh)
   add_test(examples_c
@@ -253,6 +259,12 @@ if(SH_EXECUTABLE)
 
   install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh
+    DESTINATION ${DATA_DIR}/examples
+    PERMISSIONS ${PERM_SCRIPTS}
+    )
+
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh
     DESTINATION ${DATA_DIR}/examples
     PERMISSIONS ${PERM_SCRIPTS}
     )
