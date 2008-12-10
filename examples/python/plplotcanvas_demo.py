@@ -51,10 +51,10 @@ def destroy(widget, data=None):
     gtk.main_quit()
 
 # Parse the options
-plplot.plparseopts(sys.argv,plplot.PL_PARSE_FULL);
+plplot_py_demos.plparseopts(sys.argv,plplot_py_demos.PL_PARSE_FULL);
 
 # The data to plot
-x = ${PYTHON_NUMERIC_NAME}.arange(11)
+x = plplot_py_demos.arange(11)
 y = x**2/10.
 
 # Create the canvas and set its size; during the creation process,

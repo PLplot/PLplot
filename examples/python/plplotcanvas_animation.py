@@ -67,7 +67,7 @@ canvas0=None
 canvas1=None
 
 # Create the x array
-x = ${PYTHON_NUMERIC_NAME}.arange(NPTS)
+x = plplot_py_demos.arange(NPTS)
 
 # Lock on the gtkstate so that we don't try to plot after gtk_main_quit
 GTKSTATE_CONTINUE=True
@@ -108,7 +108,7 @@ def plot(canvas,offset,title):
     Nstream = canvas.get_stream_number()
 
     # Generate the sinusoid
-    y = ${PYTHON_NUMERIC_NAME}.sin(2.*3.14*(x+offset*(Nstream+1))/PERIOD/(Nstream+1))
+    y = plplot_py_demos.sin(2.*3.14*(x+offset*(Nstream+1))/PERIOD/(Nstream+1))
     
     # Draw the line
     canvas.line(x, y)
@@ -177,7 +177,7 @@ def start_threads(widget,data):
 if __name__ == "__main__":
 
     # Parse the options
-    plplot.plparseopts(sys.argv,plplot.PL_PARSE_FULL);
+    plplot_py_demos.plparseopts(sys.argv,plplot_py_demos.PL_PARSE_FULL);
 
     # Initialize
     gtk.threads_init()
