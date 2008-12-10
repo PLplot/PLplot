@@ -230,10 +230,12 @@ static int NCOLOURS=gdMaxColors;
 #define gdImagePalettePixel(  im, x, y )   (im)->pixels[(y)][(x)]
 #endif
 
+#if GD2_VERS >= 2
 int plToGdAlpha( PLFLT a ) {
   int tmp = (int)((1.0-a)*gdAlphaMax);
   return tmp;
 }
+#endif
 
 /* Struct to hold device-specific info. */
 
