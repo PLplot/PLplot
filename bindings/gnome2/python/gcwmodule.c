@@ -29,7 +29,7 @@ NOTICE
 #include <pygobject.h>
 
 #define PY_ARRAY_UNIQUE_SYMBOL gcwapi
-#include "Numeric/arrayobject.h"
+#include "arrayobject.h"
  
 void gcw_register_classes (PyObject *d); 
 extern PyMethodDef gcw_functions[];

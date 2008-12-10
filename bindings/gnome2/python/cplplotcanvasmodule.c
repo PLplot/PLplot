@@ -29,7 +29,7 @@ NOTICE
 #include <pygobject.h>
 
 #define PY_ARRAY_UNIQUE_SYMBOL plplotcanvasapi
-#include "Numeric/arrayobject.h"
+#include "arrayobject.h"
 
 #include "plplot.h"
 

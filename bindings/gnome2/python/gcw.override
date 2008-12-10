@@ -37,7 +37,7 @@ headers
 #include "gcw.h"
 
 #define PY_ARRAY_UNIQUE_SYMBOL gcwapi
-#include "Numeric/arrayobject.h"
+#include "arrayobject.h"
 %%
 %%modulename gcw
 %%
