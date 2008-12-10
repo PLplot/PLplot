@@ -315,10 +315,11 @@ plbuf_text(PLStream *pls, EscText *text)
  *
  * Functions:
  *
- *	PLESC_FILL	Fill polygon
- *	PLESC_SWIN	Set plot window parameters
- *      PLESC_IMAGE     Draw image
- *      PLESC_HAS_TEXT  Draw PostScript text
+ *	PLESC_FILL	    Fill polygon
+ *	PLESC_SWIN	    Set plot window parameters
+ *  PLESC_IMAGE     Draw image
+ *  PLESC_HAS_TEXT  Draw PostScript text
+ *	PLESC_CLEAR	    Clear Background
 \*--------------------------------------------------------------------------*/
 
 void
@@ -565,10 +566,11 @@ rdbuf_state(PLStream *pls)
  *
  * Functions:
  *
- *	PLESC_FILL	Fill polygon
- *	PLESC_SWIN	Set plot window parameters
- *      PLESC_IMAGE     Draw image
- *      PLESC_HAS_TEXT  Draw PostScript text
+ *	PLESC_FILL	    Fill polygon
+ *	PLESC_SWIN	    Set plot window parameters
+ *  PLESC_IMAGE     Draw image
+ *  PLESC_HAS_TEXT  Draw PostScript text
+ *	PLESC_CLEAR	    Clear Background
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -599,7 +601,10 @@ rdbuf_esc(PLStream *pls)
     case PLESC_HAS_TEXT:
         rdbuf_text(pls);
 	break;
-    }
+    case PLESC_CLEAR:
+	plP_esc(PLESC_CLEAR,NULL);
+	break;
+		}
 }
 
 /*--------------------------------------------------------------------------*\
