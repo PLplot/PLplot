@@ -194,6 +194,7 @@ ps_init(PLStream *pls)
     char *a;
     PSDev *dev;
     PostscriptDocument *doc; 
+    PLFLT pxlx, pxly;
 
     /* Set default values - 7.5 x 10 [inches] (72 points = 1 inch) */
     if (pls->xlength <= 0 || pls->ylength <=0) {
@@ -204,8 +205,8 @@ ps_init(PLStream *pls)
     if (pls->ydpi <= 0) pls->ydpi = 72.;
 
 
-    PLFLT pxlx = YPSSIZE/LPAGE_X;
-    PLFLT pxly = XPSSIZE/LPAGE_Y;
+    pxlx = YPSSIZE/LPAGE_X;
+    pxly = XPSSIZE/LPAGE_Y;
 
     if (text) 
      {
