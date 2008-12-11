@@ -25,7 +25,7 @@
 
 use PDL;
 use PDL::Graphics::PLplot;
-
+use constant PI => 4*atan2(1,1);
 plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
 plinit ();
@@ -79,7 +79,7 @@ sub spiro {
 
   my $windings = int($params->[3]);
   my $steps    = int($NPNT/$windings);
-  my $dphi     = 8.0*acos(-1.0)/$steps;
+  my $dphi     = 8.0*PI/$steps;
 
   my $phi  = sequence($windings*$steps+1) * $dphi;
   my $phiw = ($params->[0]-$params->[1])/$params->[1]*$phi;
