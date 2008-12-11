@@ -1,12 +1,12 @@
 #! /usr/bin/env perl
 #
-# THIS SCRIPT DOES NOT WORK YET !!!
 #
 # Demo x23 for the PLplot PDL binding
 #
 # Displays Greek letters and mathematically interesting Unicode ranges
 #
 # Copyright (C) 2005  Rafael Laboissiere
+# Unicode examples (pages 11-15) Doug Hunt
 #
 # This file is part of PLplot.
 #
@@ -25,6 +25,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 # SYNC: x23c.c 1.2
+
+$|++; # set output to immediate flush
 
 use PDL;
 use PDL::Graphics::PLplot;
@@ -159,6 +161,60 @@ my @offset = (
   0
 );
 
+# 30 possible FCI values.
+use constant FCI_COMBINATIONS => 30;
+
+my @fci = (
+0x80000000,
+0x80000001,
+0x80000002,
+0x80000003,
+0x80000004,
+0x80000010,
+0x80000011,
+0x80000012,
+0x80000013,
+0x80000014,
+0x80000020,
+0x80000021,
+0x80000022,
+0x80000023,
+0x80000024,
+0x80000100,
+0x80000101,
+0x80000102,
+0x80000103,
+0x80000104,
+0x80000110,
+0x80000111,
+0x80000112,
+0x80000113,
+0x80000114,
+0x80000120,
+0x80000121,
+0x80000122,
+0x80000123,
+0x80000124,
+);
+
+my @family = (
+  "sans-serif",
+  "serif",
+  "monospace",
+  "script",
+  "symbol",
+);
+my @style = (
+  "upright",
+  "italic",
+  "oblique",
+);
+my @weight = (
+  "medium",
+  "bold",
+);
+
+
 plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
 plinit ();
@@ -217,6 +273,97 @@ for (my $page = 0; $page < 11; $page++) {
   plschr (0., 1.0);
   # Page title
   plmtex (1.5, 0.5, 0.5, "t", $title [$page]);
+}
+
+# Demonstrate methods of getting the current fonts
+my $fci_old = plgfci();
+my ($ifamily, $istyle, $iweight) = plgfont();
+1;
+printf("For example 23 prior to page 12 the FCI is 0x%x\n",$fci_old);
+printf("For example 23 prior to page 12 the font family, style and weight are  %s %s %s\n",
+       $family[$ifamily], $style[$istyle], $weight[$iweight]);
+
+for (my $page=11; $page<16; $page++) {
+  my $dy = 0.030;
+
+  pladv(0);
+  plvpor(0.02, 0.98, 0.02, 0.90);
+  plwind(0.0, 1.0, 0.0, 1.0);
+  plsfci(0);
+  if($page == 11) {
+    plmtex(1.5, 0.5, 0.5,
+	   "t", "#<0x10>PLplot Example 23 - Set Font with plsfci");
+   }
+   elsif($page == 12) {
+	  plmtex(1.5, 0.5, 0.5,
+		 "t", "#<0x10>PLplot Example 23 - Set Font with plsfont");
+   }
+   elsif($page == 13) {
+	  plmtex(1.5, 0.5, 0.5,
+		 "t", "#<0x10>PLplot Example 23 - Set Font with ##<0x8nnnnnnn> construct");
+   }
+   elsif($page == 14) {
+	  plmtex(1.5, 0.5, 0.5,
+		 "t", "#<0x10>PLplot Example 23 - Set Font with ##<0xmn> constructs");
+   }
+   elsif($page == 15) {
+	  plmtex(1.5, 0.5, 0.5,
+		 "t", "#<0x10>PLplot Example 23 - Set Font with ##<FCI COMMAND STRING/> constructs");
+   }
+   plschr(0., 0.75);
+   for (my $i=0; $i < FCI_COMBINATIONS; $i++) {
+     my $family_index = $i % 5;
+     my $style_index = ($i/5) % 3;
+     my $weight_index = int(int($i/5)/3) % 2;
+     my $string = '';
+     if ($page == 11) {
+       plsfci($fci[$i]);
+       $string = sprintf(
+			 "Page 12, %s, %s, %s:  The quick brown fox jumps over the lazy dog",
+			 $family[$family_index],
+			 $style[$style_index],
+			 $weight[$weight_index]);
+     }
+     elsif($page == 12) {
+       plsfont($family_index, $style_index, $weight_index);
+       $string = sprintf(
+			 "Page 13, %s, %s, %s:  The quick brown fox jumps over the lazy dog",
+			 $family[$family_index],
+			 $style[$style_index],
+			 $weight[$weight_index]);
+     }
+     elsif($page == 13) {
+       $string = sprintf(
+			 "Page 14, %s, %s, %s:  #<0x%x>The quick brown fox jumps over the lazy dog",
+			 $family[$family_index],
+			 $style[$style_index],
+			 $weight[$weight_index],
+			 $fci[$i]);
+     }
+     elsif($page == 14) {
+       $string = sprintf(
+			 "Page 15, %s, %s, %s:  #<0x%1x0>#<0x%1x1>#<0x%1x2>The quick brown fox jumps over the lazy dog",
+			 $family[$family_index],
+			 $style[$style_index],
+			 $weight[$weight_index],
+			 $family_index,
+			 $style_index,
+			 $weight_index);
+     }
+     elsif($page == 15) {
+       $string = sprintf(
+			 "Page 16, %s, %s, %s:  #<%s/>#<%s/>#<%s/>The quick brown fox jumps over the lazy dog",
+			 $family[$family_index],
+			 $style[$style_index],
+			 $weight[$weight_index],
+			 $family[$family_index],
+			 $style[$style_index],
+			 $weight[$weight_index]);
+     }
+     plptex (0, 1 - ($i+0.5)*$dy, 1, 0, 0, $string);
+   }
+  
+  plschr(0, 1.0);
 }
 
 # Restore defaults
