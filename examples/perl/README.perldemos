@@ -9,9 +9,9 @@ Here is a recipe for building and installing the latest version of that
 module.
 
 Instructions for building and installing Doug Hunt's latest version of the
-PDL Graphics PLplot module (version 0.45 at the time of writing)
+PDL Graphics PLplot module (version 0.46 at the time of writing)
 
-export TARBALL_ROOT_NAME=PDL-Graphics-PLplot-0.45
+export TARBALL_ROOT_NAME=PDL-Graphics-PLplot-0.46
 
 wget \
 http://search.cpan.org/CPAN/authors/id/D/DH/DHUNT/$TARBALL_ROOT_NAME.tar.gz
