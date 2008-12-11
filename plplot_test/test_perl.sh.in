@@ -40,9 +40,9 @@ fi
 if [ "@HAVE_PDL_GRAPHICS_PLPLOT_40@" = "ON" ] ; then
   INDEX_LIST="01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 23 24 25 26 27 28 29 30"
 else
-  # For versions of PDL_GRAPHICS_PLPLOT prior to 0.40, examples
-  # 02, 20 and 21 don't work.  Not sure about 27-30 so didn't include them.
-  INDEX_LIST="01 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 22 23 24 25 26"
+  # Examples 02, 20, 21, 23, 24, 28, 29, and 30 require PDL::Graphics::PLplot
+  # version 0.46 or later.
+  INDEX_LIST="01 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 22 25 26 27"
 fi
 
 for index in $INDEX_LIST ; do
