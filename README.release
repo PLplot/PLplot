@@ -49,13 +49,14 @@ INDEX
 1.5 svg driver improvements
 1.6 Ada language support
 1.7 OCaml language support
-1.8 Update to various language bindings
-1.9 Update to various examples
-1.10 Rename test subdirectory to plplot_test
-1.11 Website support files updated
-1.12 Internal changes to function visibility
-1.13 Dynamic driver support in Windows
-1.14 Documentation updates
+1.8 Perl/PDL language support
+1.9 Update to various language bindings
+1.10 Update to various examples
+1.11 Rename test subdirectory to plplot_test
+1.12 Website support files updated
+1.13 Internal changes to function visibility
+1.14 Dynamic driver support in Windows
+1.15 Documentation updates
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 2.1 All autotools-related files have now been removed
@@ -74,13 +75,14 @@ examples
 2.13 svg driver improvements
 2.14 Ada language support
 2.15 OCaml language support
-2.16 Update to various language bindings
-2.17 Update to various examples
-2.18 Rename test subdirectory to plplot_test
-2.19 Website support files updated
-2.20 Internal changes to function visibility
-2.21 Dynamic driver support in Windows
-2.22 Documentation updates
+2.16 Perl/PDL language support
+2.17 Update to various language bindings
+2.18 Update to various examples
+2.19 Rename test subdirectory to plplot_test
+2.20 Website support files updated
+2.21 Internal changes to function visibility
+2.22 Dynamic driver support in Windows
+2.23 Documentation updates
 
 1. Changes relative to PLplot 5.9.0 (the previous development release)
 
@@ -186,16 +188,34 @@ corresponding results for the C standard examples. This is an excellent test
 of a large subset of the OCaml bindings. We now enable OCaml by default for
 our users and request widespread testing of this new feature.
 
-1.8 Updates to various language bindings
+1.8 Perl/PDL language support
+
+Thanks to Doug Hunt's efforts the external Perl/PDL module,
+PDL::Graphics::PLplot version 0.46 available at
+http://search.cpan.org/dist/PDL-Graphics-PLplot has been brought up to date
+to give access to recently added PLplot API.  The instructions for how to
+install this module on top of an offical PDL release are given in
+examples/perl/README.perldemos. Doug has also finished implementing a
+complete set of standard examples in Perl/PDL which are part of PLplot and
+which produce identical results to their C counterparts if the above updated
+module has been installed.  Our build system tests the version of
+PDL::Graphics::PLplot that is available, and if it is not 0.46 or later, the
+list of Perl/PDL examples that are run as part of our standard tests is
+substantially reduced to avoid examples that use the new functionality.  In
+sum, if you use PDL::Graphics::PLplot version 0.46 or later the full
+complement of PLplot commands is available to you from Perl/PDL, but
+otherwise not.
+
+1.9 Updates to various language bindings
 
 A concerted effort has been made to bring all the language bindings up to
 date with recently added functions. Ada, C++, f77, f95, Java, OCaml, Octave, 
-Python, and Tcl now all support the common PLplot API (with the 
+Perl/PDL, Python, and Tcl now all support the common PLplot API (with the 
 exception of the mapping functions which are not yet implemented for all 
 bindings due to technical issues.) This is a significant step forward for 
 those using languages other than C.
 
-1.9 Updates to various examples
+1.10 Updates to various examples
 
 To help test the updates to the language bindings the examples have been 
 thoroughly checked. Ada, C, C++, f77, f95, and OCaml now contain a full set
@@ -216,19 +236,19 @@ least one memory leaks in plplot which have been fixed. It is not part
 of the standard ctest tests because it can be _very_ slow for a complete
 set of language bindings and device drivers.
 
-1.10 Rename test subdirectory to plplot_test
+1.11 Rename test subdirectory to plplot_test
 
 This change was necessary to quit clashing with the "make test" target which
 now works for the first time ever (by executing ctest).
 
-1.11 Website support files updated
+1.12 Website support files updated
 
 Our new website content is generated with PHP and uses CSS (cascaded style
 sheets) to implement a consistent style.  This new approach demanded lots of
 changes in the website support files that are used to generate and upload
 our website and which are automatically included with the release.
 
-1.12 Internal changes to function visibility
+1.13 Internal changes to function visibility
 
 The internal definitions of functions in plplot have been significantly 
 tidied up to allow the use of the -fvisibility=hidden option with newer
@@ -236,7 +256,7 @@ versions of gcc. This prevents internal functions from being exported
 to the user where possible. This extends the existing support for this
 on windows.
 
-1.13 Dynamic driver support in Windows
+1.14 Dynamic driver support in Windows
 
 An interface based on the ltdl library function calls was established
 which allows to open and close dynamic link libraries (DLL) during
@@ -245,7 +265,7 @@ drivers can now be compiled into single DLLs separate from the core
 plplot DLL also in Windows. The cmake option ENABLE_DYNDRIVERS is now
 ON by default for Windows if a shared plplot library is built.
 
-1.14 Documentation updates
+1.15 Documentation updates
 
 The docbook documentation has been updated to include many of the 
 C-specific functions (for example plAlloc2dGrid) which are not part 
@@ -455,16 +475,34 @@ corresponding results for the C standard examples. This is an excellent test
 of a large subset of the OCaml bindings. We now enable OCaml by default for
 our users and request widespread testing of this new feature.
 
-2.16 Updates to various language bindings
+2.16 Perl/PDL language support
+
+Thanks to Doug Hunt's efforts the external Perl/PDL module,
+PDL::Graphics::PLplot version 0.46 available at
+http://search.cpan.org/dist/PDL-Graphics-PLplot has been brought up to date
+to give access to recently added PLplot API.  The instructions for how to
+install this module on top of an offical PDL release are given in
+examples/perl/README.perldemos. Doug has also finished implementing a
+complete set of standard examples in Perl/PDL which are part of PLplot and
+which produce identical results to their C counterparts if the above updated
+module has been installed.  Our build system tests the version of
+PDL::Graphics::PLplot that is available, and if it is not 0.46 or later, the
+list of Perl/PDL examples that are run as part of our standard tests is
+substantially reduced to avoid examples that use the new functionality.  In
+sum, if you use PDL::Graphics::PLplot version 0.46 or later the full
+complement of PLplot commands is available to you from Perl/PDL, but
+otherwise not.
+
+2.17 Updates to various language bindings
 
 A concerted effort has been made to bring all the language bindings up to
 date with recently added functions. Ada, C++, f77, f95, Java, OCaml, Octave, 
-Python, and Tcl now all support the common PLplot API (with the 
+Perl/PDL, Python, and Tcl now all support the common PLplot API (with the 
 exception of the mapping functions which are not yet implemented for all 
 bindings due to technical issues.) This is a significant step forward for 
 those using languages other than C.
 
-2.17 Updates to various examples
+2.18 Updates to various examples
 
 To help test the updates to the language bindings the examples have been 
 thoroughly checked. Ada, C, C++, f77, f95, and OCaml now contain a full set
@@ -485,19 +523,19 @@ least one memory leaks in plplot which have been fixed. It is not part
 of the standard ctest tests because it can be _very_ slow for a complete
 set of language bindings and device drivers.
 
-2.18 Rename test subdirectory to plplot_test
+2.19 Rename test subdirectory to plplot_test
 
 This change was necessary to quit clashing with the "make test" target which
 now works for the first time ever (by executing ctest).
 
-2.19 Website support files updated
+2.20 Website support files updated
 
 Our new website content is generated with PHP and uses CSS (cascaded style
 sheets) to implement a consistent style.  This new approach demanded lots of
 changes in the website support files that are used to generate and upload
 our website and which are automatically included with the release.
 
-2.20 Internal changes to function visibility
+2.21 Internal changes to function visibility
 
 The internal definitions of functions in plplot have been significantly 
 tidied up to allow the use of the -fvisibility=hidden option with newer
@@ -505,7 +543,7 @@ versions of gcc. This prevents internal functions from being exported
 to the user where possible. This extends the existing support for this
 on windows.
 
-2.21 Dynamic driver support in Windows
+2.22 Dynamic driver support in Windows
 
 An interface based on the ltdl library function calls was established
 which allows to open and close dynamic link libraries (DLL) during
@@ -514,7 +552,7 @@ drivers can now be compiled into single DLLs separate from the core
 plplot DLL also in Windows. The cmake option ENABLE_DYNDRIVERS is now
 ON by default for Windows if a shared plplot library is built.
 
-2.22 Documentation updates
+2.23 Documentation updates
 
 The docbook documentation has been updated to include many of the 
 C-specific functions (for example plAlloc2dGrid) which are not part 
