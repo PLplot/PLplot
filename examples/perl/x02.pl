@@ -94,9 +94,9 @@ sub demo2 {
     my $l = $lmin + ($lmax - $lmin) * ($custmap / 10)->floor / 9;
     my ($r1, $g1, $b1) = plhlsrgb($h, $l, $s);
 
-    $r = $r->append($r1*255);
-    $g = $g->append($g1*255);
-    $b = $b->append($b1*255);
+    $r = $r->append($r1*255.001);
+    $g = $g->append($g1*255.001);
+    $b = $b->append($b1*255.001);
 
     #for ($i = 0; $i < 116; $i++) {
     #  printf("%3.0f %3.0f %3.0f %3.0f \n", $i, $r->at($i), $g->at($i), $b->at($i)); 
