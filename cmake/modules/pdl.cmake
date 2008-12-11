@@ -23,7 +23,7 @@
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_pdl "Enable Perl/PDL examples in tests" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_pdl "Enable Perl/PDL examples in tests" OFF)
+  option(ENABLE_pdl "Enable Perl/PDL examples in tests" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_pdl)
