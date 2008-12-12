@@ -89,6 +89,16 @@ foreach(STRING_INDEX ${tk_STRING_INDICES})
   set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${_file})
 endforeach(STRING_INDEX ${tk_STRING_INDICES})
 
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plgrid.tcl
+  COMMAND ${CMAKE_COMMAND}
+  -E copy
+  ${CMAKE_SOURCE_DIR}/examples/tcl/plgrid.tcl
+  ${CMAKE_CURRENT_BINARY_DIR}/plgrid.tcl
+  DEPENDS ${CMAKE_SOURCE_DIR}/examples/tcl/plgrid.tcl
+  )
+set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/plgrid.tcl)
+
 install(FILES ${tk_FILES} DESTINATION ${DATA_DIR}/examples/tk)
 
 add_custom_command(
