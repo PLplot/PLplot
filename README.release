@@ -15,29 +15,40 @@ file.
 
 Notices for Users.
 
-This is the official notice that our deprecated autotools-based build system
-has now been removed.  Instead, use the CMake-based build system following
-the directions in the INSTALL file.
+I. This is the official notice that our deprecated autotools-based build
+system has now been removed.  Instead, use the CMake-based build system
+following the directions in the INSTALL file.
 
-This is official notice that we no longer support Octave-2.1.73 which has a
-variety of run-time issues in our tests of the Octave examples on different
-platforms.  In contrast our tests show we get good run-time results with all
-our Octave examples for Octave-3.0.1. Also, that is the recommended stable
-version of Octave at http://www.gnu.org/software/octave/download.html so
-that is the only version of Octave we support at this time.
+II. This is official notice that the tk, itk, and itcl components of PLplot
+have been disabled by default for this release.  We reluctantly take this
+step for these venerable PLplot components because we found segfaults with
+most of our Tk-related interactive tests for this release.  We hope these
+issues are addressed before our next release so that the tk, itk, and itcl
+components of PLplot can be enabled by default again.  For now, if you want
+to try these components of PLplot to help us debug the problem, you must
+specifically use the cmake options -DENABLE_tk=ON -DENABLE_itk=ON
+-DENABLE_itcl=ON to build and install these components.
 
-This is official notice that the PLplot team have decided for consistency
-sake to change the PLplot stream variables plsc->vpwxmi, plsc->vpwxma,
-plsc->vpwymi, and plsc->vpwyma and the results returned by plgvpw to reflect
-the exact window limit values input by users using plwind.  Previously to
-this change, the stream variables and the values returned by plgvpw
-reflected the internal slightly expanded range of window limits used by
-PLplot so that the user's specified limits would be on the graph.  Two users
-noted this slight difference, and we agree with them it should not be there.
-Note that internally, PLplot still uses the expanded ranges so most users
-results will be identical.  However, you may notice some small changes to
-your plot results if you use these stream variables directly (only possible
-in C/C++) or use plgvpw.
+III. This is official notice that we no longer support Octave-2.1.73 which
+has a variety of run-time issues in our tests of the Octave examples on
+different platforms.  In contrast our tests show we get good run-time
+results with all our Octave examples for Octave-3.0.1. Also, that is the
+recommended stable version of Octave at
+http://www.gnu.org/software/octave/download.html so that is the only version
+of Octave we support at this time.
+
+IV.  This is official notice that the PLplot team have decided for
+consistency sake to change the PLplot stream variables plsc->vpwxmi,
+plsc->vpwxma, plsc->vpwymi, and plsc->vpwyma and the results returned by
+plgvpw to reflect the exact window limit values input by users using plwind.
+Previously to this change, the stream variables and the values returned by
+plgvpw reflected the internal slightly expanded range of window limits used
+by PLplot so that the user's specified limits would be on the graph.  Two
+users noted this slight difference, and we agree with them it should not be
+there. Note that internally, PLplot still uses the expanded ranges so most
+users results will be identical.  However, you may notice some small changes
+to your plot results if you use these stream variables directly (only
+possible in C/C++) or use plgvpw.
 
 INDEX
 
