@@ -169,7 +169,8 @@ MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 
 	box->Add( plotwindow, 1, wxALL | wxEXPAND, 0 );
   panel->SetSizer( box );
-	SetSize( 640, 500 );  // set wxWindow size
+	SetSize( 640, 500 );  // set frame size
+  SetSizeHints( 220, 150 );  // set minimum frame size
 	
 	Plot();
 }

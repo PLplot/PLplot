@@ -346,8 +346,9 @@ void wxPLDevDC::PSSetFont( PLUNICODE fci )
   if( m_font )
     delete m_font;
   
-  m_font=wxFont::New((int) (fontSize*fontScale), fontFamilyLookup[fontFamily],
-                         fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
+  m_font=wxFont::New((int) (fontSize*fontScale<4 ? 4 : fontSize*fontScale),
+                     fontFamilyLookup[fontFamily],
+                     fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
   m_font->SetUnderlined( underlined );
   m_dc->SetFont( *m_font );
 }
