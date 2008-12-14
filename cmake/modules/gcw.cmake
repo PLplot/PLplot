@@ -105,7 +105,7 @@ if(DEFAULT_NO_BINDINGS)
   option(ENABLE_pygcw "Enable Python Gnome2 bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
   option(ENABLE_gnome2 "Enable Gnome2 bindings" ON)
-  option(ENABLE_pygcw "Enable Python Gnome2 bindings" ON)
+  option(ENABLE_pygcw "Enable Python Gnome2 bindings" OFF)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_gnome2 AND NOT PLD_gcw)

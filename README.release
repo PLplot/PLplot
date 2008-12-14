@@ -29,7 +29,22 @@ to try these components of PLplot to help us debug the problem, you must
 specifically use the cmake options -DENABLE_tk=ON -DENABLE_itk=ON
 -DENABLE_itcl=ON to build and install these components.
 
-III. This is official notice that we no longer support Octave-2.1.73 which
+III. This is official notice that the python version of gnome2 has been
+temporarily disabled by default until we can figure out a
+
+RuntimeError: maximum recursion depth exceeded
+
+error that has been introduced for it (e.g., when running
+plplotcanvas_animation.py in the installed examples/python directory).  If
+you wish to experiment with this component of PLplot use the
+-DENABLE_pygcw=ON option.  
+
+examples/c/plplotcanvas_animation (when built in the install tree for the
+default ENABLE_gnome2=ON case) works fine.  So do all the standard examples
+in the installed examples/python tree.  So this issue appears to be confined
+just to the python version of gnome2.
+
+IV. This is official notice that we no longer support Octave-2.1.73 which
 has a variety of run-time issues in our tests of the Octave examples on
 different platforms.  In contrast our tests show we get good run-time
 results with all our Octave examples for Octave-3.0.1. Also, that is the
@@ -37,7 +52,7 @@ recommended stable version of Octave at
 http://www.gnu.org/software/octave/download.html so that is the only version
 of Octave we support at this time.
 
-IV.  This is official notice that the PLplot team have decided for
+V.  This is official notice that the PLplot team have decided for
 consistency sake to change the PLplot stream variables plsc->vpwxmi,
 plsc->vpwxma, plsc->vpwymi, and plsc->vpwyma and the results returned by
 plgvpw to reflect the exact window limit values input by users using plwind.
