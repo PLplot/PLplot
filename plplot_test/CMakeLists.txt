@@ -15,24 +15,32 @@ if(SH_EXECUTABLE)
 
   configure_file(
     plplot-test.sh.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh
     @ONLY
     )
 
   configure_file(
     plplot-test-interactive.sh.in
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh
     @ONLY
     )
 
-  configure_file(test_c.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_c.sh @ONLY)
+  configure_file(
+    test_c.sh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/test_c.sh
+    @ONLY
+    )
   list(APPEND SCRIPTS test_c.sh)
   add_test(examples_c
     ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
     )
 
   if(ENABLE_cxx)
-    configure_file(test_cxx.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_cxx.sh @ONLY)
+    configure_file(
+      test_cxx.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_cxx.sh
+      @ONLY
+      )
     list(APPEND SCRIPTS test_cxx.sh)
     add_test(examples_cxx
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=cxx"
@@ -40,7 +48,11 @@ if(SH_EXECUTABLE)
   endif(ENABLE_cxx)
 
   if(ENABLE_f77)
-    configure_file(test_f77.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_f77.sh @ONLY)
+    configure_file(
+      test_f77.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_f77.sh
+      @ONLY
+      )
     list(APPEND SCRIPTS test_f77.sh)
     add_test(examples_f77
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f77"
@@ -48,7 +60,11 @@ if(SH_EXECUTABLE)
   endif(ENABLE_f77)
 
   if(ENABLE_f95)
-    configure_file(test_f95.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_f95.sh @ONLY)
+    configure_file(
+      test_f95.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_f95.sh
+      @ONLY
+      )
     list(APPEND SCRIPTS test_f95.sh)
     add_test(examples_f95
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f95"
@@ -57,8 +73,8 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_java)
     configure_file(
-      test_java.sh.in 
-      ${CMAKE_CURRENT_BINARY_DIR}/test_java.sh 
+      test_java.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_java.sh
       @ONLY
       )
     list(APPEND SCRIPTS test_java.sh)
@@ -69,8 +85,8 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_octave)
     configure_file(
-      test_octave.sh.in 
-      ${CMAKE_CURRENT_BINARY_DIR}/test_octave.sh 
+      test_octave.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_octave.sh
       @ONLY
       )
     list(APPEND SCRIPTS test_octave.sh)
@@ -87,8 +103,8 @@ if(SH_EXECUTABLE)
       set(NUMPY_EXAMPLES)
     endif(HAVE_NUMPY)
     configure_file(
-      test_python.sh.in 
-      ${CMAKE_CURRENT_BINARY_DIR}/test_python.sh 
+      test_python.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_python.sh
       @ONLY
       )
     list(APPEND SCRIPTS test_python.sh)
@@ -98,7 +114,10 @@ if(SH_EXECUTABLE)
   endif(ENABLE_python)
 
   if(ENABLE_tcl)
-    configure_file(test_tcl.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh @ONLY)
+    configure_file(test_tcl.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh
+      @ONLY
+      )
     list(APPEND SCRIPTS test_tcl.sh)
     add_test(examples_tcl
       ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=tcl"
@@ -107,8 +126,8 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_pdl)
     configure_file(
-      test_perl.sh.in 
-      ${CMAKE_CURRENT_BINARY_DIR}/test_perl.sh 
+      test_perl.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_perl.sh
       @ONLY
       )
     list(APPEND SCRIPTS test_perl.sh)
@@ -119,8 +138,8 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_ada)
     configure_file(
-      test_ada.sh.in 
-      ${CMAKE_CURRENT_BINARY_DIR}/test_ada.sh 
+      test_ada.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_ada.sh
       @ONLY
       )
     list(APPEND SCRIPTS test_ada.sh)
@@ -131,8 +150,8 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_ocaml)
     configure_file(
-      test_ocaml.sh.in 
-      ${CMAKE_CURRENT_BINARY_DIR}/test_ocaml.sh 
+      test_ocaml.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_ocaml.sh
       @ONLY
       )
     list(APPEND SCRIPTS test_ocaml.sh)
@@ -207,7 +226,11 @@ if(SH_EXECUTABLE)
   endif(PLD_pngcairo)
 
   if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
-    configure_file(test_diff.sh.in ${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh @ONLY)
+    configure_file(
+      test_diff.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh
+      @ONLY
+      )
     list(APPEND SCRIPTS test_diff.sh)
     add_test(examples_compare
       ${SH_EXECUTABLE} -c "./test_diff.sh"
@@ -251,7 +274,7 @@ if(SH_EXECUTABLE)
 
   foreach(SCRIPT ${SCRIPTS})
     install(
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/${SCRIPT} 
+      FILES ${CMAKE_CURRENT_BINARY_DIR}/${SCRIPT}
       DESTINATION ${DATA_DIR}/examples
       PERMISSIONS ${PERM_SCRIPTS}
       )
