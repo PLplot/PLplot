@@ -1,7 +1,41 @@
 #!@SH_EXECUTABLE@
 # Test suite of PLplot interactive stuff that cannot be tested with
 # file output device drivers.
-# e.g., tk driver (x14c), tcldemos, tkdemos.
+
+
+if [ "@PLD_xwin@" = "ON" ] ; then
+    c/x01c -dev xwin
+    c/x04c -dev xwin
+    c/x08c -dev xwin
+    c/x16c -dev xwin
+fi
+
+if [ "@PLD_gcw@" = "ON" ] ; then
+    c/x01c -dev gcw
+    c/x04c -dev gcw
+    c/x08c -dev gcw
+    c/x16c -dev gcw
+fi
+
+if [ "@PLD_wxwidgets@" = "ON" ] ; then
+    c/x01c -dev wxwidgets
+    c/x04c -dev wxwidgets
+    c/x08c -dev wxwidgets
+    c/x16c -dev wxwidgets
+fi
+
+if [ "@PLD_xcairo@" = "ON" ] ; then
+    c/x01c -dev xcairo
+    c/x04c -dev xcairo
+    c/x08c -dev xcairo
+    c/x16c -dev xcairo
+fi
+
+if [ "@ENABLE_wxwidgets@" = "ON" ] ; then
+    cd c++
+    ./wxPLplotDemo
+    cd ..
+fi
 
 if [ "@ENABLE_gnome2@" = "ON" ] ; then
     cd c
