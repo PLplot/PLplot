@@ -2,20 +2,32 @@
 # Test suite of PLplot interactive stuff that cannot be tested with
 # file output device drivers.
 # e.g., tk driver (x14c), tcldemos, tkdemos.
-export cdir=c
-export tcldir=tcl
-export tkdir=tk
+
+if [ "@ENABLE_gnome2@" = "ON" ] ; then
+    cd c
+    ./plplotcanvas_demo
+    ./plplotcanvas_animation
+    cd ..
+fi
+
+if [ "@ENABLE_pygcw@" = "ON" ] ; then
+    cd python
+    ./plplotcanvas_demo.py
+    ./plplotcanvas_animation.py
+    cd ..
+fi
+
 if [ "@PLD_tk@" = "ON" ] ; then
-    $cdir/x14c -dev tk
-    $cdir/x17c -dev tk
+    c/x14c -dev tk
+    c/x17c -dev tk
 fi
 
 if [ "@ENABLE_tk@" = "ON" ] ; then
-    $tkdir/xtk01 -f $tkdir/tk01
-    $tkdir/xtk02 -f $tkdir/tk02
-    plserver -f $tkdir/tk03
-    $tkdir/xtk04 -f $tkdir/tk04
-    cd $tcldir
+    tk/xtk01 -f tk/tk01
+    tk/xtk02 -f tk/tk02
+    plserver -f tk/tk03
+    tk/xtk04 -f tk/tk04
+    cd tcl
     plserver <<EOF
 plstdwin .
 plxframe .plw
@@ -25,7 +37,7 @@ proc 1 {} "plgrid .plw.plwin"
 1
 exit
 EOF
-    cd ../$tkdir
+    cd ../tk
     pwd
 # Drop 2 to avoid 'invalid command name "plhlsrgb"' error.
 # Drop 14 because multiple devices do not seem to work in this context.
