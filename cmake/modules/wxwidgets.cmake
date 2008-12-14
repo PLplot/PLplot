@@ -89,7 +89,7 @@ endif(PLD_wxwidgets)
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_wxwidgets "Enable wxwidgets bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_wxwidgets "Enable wxwidgets bindings" ON)
+  option(ENABLE_wxwidgets "Enable wxwidgets bindings" OFF)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
