@@ -27,6 +27,14 @@ else(DEFAULT_NO_BINDINGS)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_pdl)
+  if(NOT BUILD_SHARED_LIBS)
+    message(STATUS "WARNING: "
+    "Disabling Perl/PDL examples because BUILD_SHARED_LIBS=OFF")
+    set(ENABLE_pdl OFF CACHE BOOL "Enable Perl/PDL examples in tests" FORCE)
+  endif(NOT BUILD_SHARED_LIBS)
+endif(ENABLE_pdl)
+
+if(ENABLE_pdl)
   if(PERL_FOUND)
     execute_process(
     COMMAND ${PERL_EXECUTABLE}
