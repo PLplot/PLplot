@@ -53,10 +53,10 @@ static void flushline(PLStream *);
 #define DRAW_PATH	0352
 #define OPTYPE		017
 
-static short *LineBuff;
-static short FirstLine;
+static int *LineBuff;
+static int FirstLine;
 static int penchange = 0, penwidth = 1;
-static short count;
+static int count;
 
 void plD_dispatch_init_imp( PLDispatchTable *pdt )
 {
@@ -111,7 +111,7 @@ plD_init_imp(PLStream *pls)
     plP_setpxl((PLFLT) 11.81, (PLFLT) 11.81);
     plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
-    LineBuff = (short *) malloc(BUFFLENG * sizeof(short));
+    LineBuff = (int *) malloc(BUFFLENG * sizeof(int));
     if (LineBuff == NULL) {
 	plexit("Error in memory alloc in plD_init_imp().");
     }
@@ -144,17 +144,17 @@ plD_line_imp(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
 	count = 0;
 	FirstLine = 0;
-	*(LineBuff + count++) = (short) x1;
-	*(LineBuff + count++) = (short) y1;
-	*(LineBuff + count++) = (short) x2;
-	*(LineBuff + count++) = (short) y2;
+	*(LineBuff + count++) = x1;
+	*(LineBuff + count++) = y1;
+	*(LineBuff + count++) = x2;
+	*(LineBuff + count++) = y2;
     }
     else if ((count + 2) < BUFFLENG && x1 == dev->xold && y1 == dev->yold) {
 
     /* Add new point to path */
 
-	*(LineBuff + count++) = (short) x2;
-	*(LineBuff + count++) = (short) y2;
+	*(LineBuff + count++) = x2;
+	*(LineBuff + count++) = y2;
     }
     else {
 
@@ -162,7 +162,7 @@ plD_line_imp(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
 	count /= 2;
 	fprintf(pls->OutFile, "%c%c%c", CREATE_PATH, (char) count / 256, (char) count % 256);
-	fwrite((char *) LineBuff, sizeof(short), 2 * count, pls->OutFile);
+	fwrite((char *) LineBuff, sizeof(int), 2 * count, pls->OutFile);
 	fprintf(pls->OutFile, "%c%c", DRAW_PATH, OPTYPE);
 
     /* And start a new path */
@@ -172,10 +172,10 @@ plD_line_imp(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 	    penchange = 0;
 	}
 	count = 0;
-	*(LineBuff + count++) = (short) x1;
-	*(LineBuff + count++) = (short) y1;
-	*(LineBuff + count++) = (short) x2;
-	*(LineBuff + count++) = (short) y2;
+	*(LineBuff + count++) = x1;
+	*(LineBuff + count++) = y1;
+	*(LineBuff + count++) = x2;
+	*(LineBuff + count++) = y2;
     }
     dev->xold = x2;
     dev->yold = y2;
@@ -291,7 +291,7 @@ flushline(PLStream *pls)
 {
     count /= 2;
     fprintf(pls->OutFile, "%c%c%c", CREATE_PATH, (char) count / 256, (char) count % 256);
-    fwrite((char *) LineBuff, sizeof(short), 2 * count, pls->OutFile);
+    fwrite((char *) LineBuff, sizeof(int), 2 * count, pls->OutFile);
     fprintf(pls->OutFile, "%c%c", DRAW_PATH, OPTYPE);
     FirstLine = 1;
 }
