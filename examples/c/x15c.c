@@ -22,6 +22,14 @@ static void	f2mnmx		(PLFLT *, PLINT, PLINT, PLFLT *, PLFLT *);
 static void	cmap1_init1	(void);
 static void	cmap1_init2	(void);
 
+static PLINT nlin[10] = {1, 1, 1, 1, 1, 2, 2, 2, 2, 2};
+static PLINT inc[10][2] = { {450, 0}, {-450, 0}, {0, 0}, {900, 0}, {300, 0}, 
+                         {450,-450}, {0, 900}, {0, 450}, {450, -450}, {0, 900} };
+static PLINT del[10][2] = { {2000, 2000}, {2000, 2000}, {2000, 2000}, 
+                            {2000, 2000}, {2000, 2000}, {2000, 2000}, 
+                            {2000, 2000}, {2000, 2000}, {4000, 4000}, 
+                            {4000, 2000} };
+
 /*--------------------------------------------------------------------------*\
  * main
  *
@@ -218,7 +226,7 @@ plot2(void)
 	shade_min = zmin + (zmax - zmin) * i / 10.0;
 	shade_max = zmin + (zmax - zmin) * (i +1) / 10.0;
 	sh_color = i+6;
-	plpsty((i + 2) % 8 + 1);
+	plpat(nlin[i],inc[i],del[i]);
 
 	plshade1(&z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1., 
 		 shade_min, shade_max, 
