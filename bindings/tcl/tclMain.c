@@ -50,8 +50,6 @@
 
 #include <tcl.h>
 #include "plplot.h"
-#define USINGDLL
-#include "pldll.h"
 
 #ifdef HAVE_TCL_GT_84
 /* From (private) tclInt.h in tcl8.5 */
