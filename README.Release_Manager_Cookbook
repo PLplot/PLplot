@@ -253,17 +253,16 @@ svn log -v > ChangeLog.release
 Edit ChangeLog.release to be the appropriate date range (i.e. only the
 changes that were made since the last release should be included).
 
+(See also:
+http://alexandria.wiki.sourceforge.net/File+Release+System+-+Offering+Files+for+Download)
 
 Upload the plplot-X.X.X.tar.gz.* files to the SF upload section
 
-ftp upload.sourceforge.net #username is ftp, password is your e-mail address
-cd incoming
-bin
+sftp frs.sourceforge.net
+cd uploads 
 put plplot-X.X.X.tar.gz
 put plplot-X.X.X.tar.gz.asc
 quit
-
-ftp does not provide any feedback re upload progress, so again, be patient.
 
 
 Prepare a file release:
