@@ -34,7 +34,7 @@ extern PLStream *pls[];
 
 void gcw_debug(char* msg)
 {
-  fprintf(stderr,msg);
+  fputs(msg,stderr);
   fflush(stderr);
 }
 
