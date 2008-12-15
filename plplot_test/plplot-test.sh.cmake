@@ -259,10 +259,16 @@ script with DEVICE='"$device"'.
 exit 1
 fi
 
-# Some devices require familying others do not.
+# Some devices require special options others do not.
 case "$device" in
-   png|pngcairo|gif|jpeg|xfig|svg|svgcairo)
+   png|pngcairo|jpeg|xfig|svg|svgcairo)
       options="-fam -fflen 2"
+      ;;
+   gif)
+   # gif standard is limited to 256 colours so cannot have aliasing turned
+   # on (which uses additional colours) for examples which already have
+   # a substantial number of colours (such as example 2 with its 116 colours).
+      options="-fam -fflen 2 -drvopt smooth=0"
       ;;
    *)
       options=
