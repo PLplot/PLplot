@@ -18,17 +18,11 @@ PLFLT z[XPTS][YPTS], zmin, zmax;
 
 static void	plot1		(void);
 static void	plot2		(void);
+static void	plot3		(void);
 static void	f2mnmx		(PLFLT *, PLINT, PLINT, PLFLT *, PLFLT *);
 static void	cmap1_init1	(void);
 static void	cmap1_init2	(void);
 
-static PLINT nlin[10] = {1, 1, 1, 1, 1, 2, 2, 2, 2, 2};
-static PLINT inc[10][2] = { {450, 0}, {-450, 0}, {0, 0}, {900, 0}, {300, 0}, 
-                         {450,-450}, {0, 900}, {0, 450}, {450, -450}, {0, 900} };
-static PLINT del[10][2] = { {2000, 2000}, {2000, 2000}, {2000, 2000}, 
-                            {2000, 2000}, {2000, 2000}, {2000, 2000}, 
-                            {2000, 2000}, {2000, 2000}, {4000, 4000}, 
-                            {4000, 2000} };
 
 /*--------------------------------------------------------------------------*\
  * main
@@ -72,6 +66,7 @@ main(int argc, const char *argv[])
 
     plot1();
     plot2();
+    plot3();
 
     plend();
     exit(0);
@@ -214,6 +209,15 @@ plot2(void)
     PLINT sh_cmap = 0, sh_width;
     PLINT min_color = 0, min_width = 0, max_color = 0, max_width = 0;
     int i;
+    static PLINT nlin[10] = {1, 1, 1, 1, 1, 2, 2, 2, 2, 2};
+    static PLINT inc[10][2] = { {450, 0}, {-450, 0}, {0, 0}, {900, 0}, 
+				{300, 0}, {450,-450}, {0, 900}, {0, 450}, 
+				{450, -450}, {0, 900} };
+    static PLINT del[10][2] = { {2000, 2000}, {2000, 2000}, {2000, 2000}, 
+				{2000, 2000}, {2000, 2000}, {2000, 2000}, 
+				{2000, 2000}, {2000, 2000}, {4000, 4000}, 
+				{4000, 2000} };
+
     sh_width = 2;
 
     pladv(0);
@@ -239,6 +243,46 @@ plot2(void)
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol0(2);
     pllab("distance", "altitude", "Bogon flux");
+}
+
+/*--------------------------------------------------------------------------*\
+ * plot3
+ *
+ * Illustrates shaded regions in 3d, using a different fill pattern for 
+ * each region.  
+\*--------------------------------------------------------------------------*/
+
+static void 
+plot3(void)
+{
+    static PLFLT xx[2][5] = { {-1.0, 1.0, 1.0, -1.0, -1.0}, 
+			      {-1.0, 1.0, 1.0, -1.0, -1.0} };
+    static PLFLT yy[2][5] = { {1.0, 1.0, 0.0, 0.0, 1.0}, 
+			      {-1.0, -1.0, 0.0, 0.0, -1.0} };
+    static PLFLT zz[2][5] = { {0.0, 0.0, 1.0, 1.0, 0.0}, 
+			      {0.0, 0.0, 1.0, 1.0, 0.0} };
+
+    pladv(0);
+    plvpor(0.1, 0.9, 0.1, 0.9);
+    plwind(-1.0, 1.0, -1.0, 1.0);
+    plw3d(1., 1., 1., -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30, -40);
+
+/* Plot using identity transform */
+    
+    plcol0(1);
+    plbox3("bntu", "X", 0.0, 0, "bntu", "Y", 0.0, 0, "bcdfntu", "Z", 0.5, 0);
+    plcol0(2);
+    pllab("","","3-d polygon filling");
+
+    plcol0(3);
+    plpsty(1);
+    plline3(5, xx[0], yy[0], zz[0]);
+    plfill3(4, xx[0], yy[0], zz[0]);
+    plpsty(2);
+    plline3(5, xx[1], yy[1], zz[1]);
+    plfill3(4, xx[1], yy[1], zz[1]);
+
+    
 }
 
 /*--------------------------------------------------------------------------*\
