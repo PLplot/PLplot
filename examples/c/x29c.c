@@ -100,9 +100,9 @@ plot1()
   pladv(0);
 
   /* Rescale major ticks marks by 0.5 */
-  plsmaj(0,0.5);
+  plsmaj(0.0,0.5);
   /* Rescale minor ticks and error bar marks by 0.5 */
-  plsmin(0,0.5);
+  plsmin(0.0,0.5);
 
   plvsta();
   plwind(xmin, xmax, ymin, ymax);
@@ -125,8 +125,8 @@ plot1()
   plerry(npts, x, yerr1, yerr2);
 
   /* Rescale major / minor tick marks back to default */
-  plsmin(0,1.0); 
-  plsmaj(0,1.0); 
+  plsmin(0.0,1.0); 
+  plsmaj(0.0,1.0); 
 
 }
 
