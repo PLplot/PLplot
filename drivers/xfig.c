@@ -41,8 +41,8 @@ static void flushbuffer(PLStream *);
 #define XFIG_COLBASE 33 /* xfig first user color, plplot colormap0[0],
                            the background color */
 
-static short *buffptr, bufflen;
-static short count;
+static int *buffptr, bufflen;
+static int count;
 static int   curwid = 1;
 static int   curcol = 1;
 static int   firstline = 1;
@@ -144,7 +144,7 @@ plD_init_xfig(PLStream *pls)
     stcmap1(pls);
 
     bufflen = 2 * BSIZE;
-    buffptr = (short *) malloc(sizeof(short) * bufflen);
+    buffptr = (int *) malloc(sizeof(int) * bufflen);
     if (buffptr == NULL)
 	plexit("Out of memory!");
 }
@@ -214,7 +214,7 @@ plD_line_xfig(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     PLDev *dev = (PLDev *) pls->dev;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
-    short *tempptr;
+    int *tempptr;
 
 /* If starting point of this line is the same as the ending point of */
 /* the previous line then don't raise the pen. (This really speeds up */
@@ -231,8 +231,8 @@ plD_line_xfig(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     else if (x1 == dev->xold && y1 == dev->yold) {
 	if (count + 2 >= bufflen) {
 	    bufflen += 2 * BSIZE;
-	    tempptr = (short *)
-		realloc((void *) buffptr, bufflen * sizeof(short));
+	    tempptr = (int *)
+		realloc((void *) buffptr, bufflen * sizeof(int));
 	    if (tempptr == NULL) {
 		free((void *) buffptr);
 		plexit("Out of memory!");
@@ -415,7 +415,7 @@ static void
 flushbuffer(PLStream *pls)
 {
   PLDev *dev = pls->dev;
-  short i = 0;
+  int i = 0;
 
   if (count == 0)
     return;
