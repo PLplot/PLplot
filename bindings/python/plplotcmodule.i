@@ -435,7 +435,6 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 2, 2);
   if(tmp == NULL) return NULL;
   if(tmp->dimensions[0] != Xlen || tmp->dimensions[1] != Ylen) {
-    printf("%d %d %d %d\n",tmp->dimensions[0],Xlen,tmp->dimensions[1],Ylen);
     PyErr_SetString(PyExc_ValueError, "Vectors must match matrix.");
     return NULL;
   }
