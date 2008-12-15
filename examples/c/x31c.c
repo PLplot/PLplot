@@ -29,7 +29,7 @@ main(int argc, const char *argv[])
   plwind(0.2, 0.3, 0.4, 0.5);
   plgvpw(&xmin, &xmax, &ymin, &ymax);
   if (xmin != 0.2 || xmax != 0.3 || ymin != 0.4 || ymax != 0.5) {
-    fprintf(stderr, "%s\n", "plgvpi test failed");
+    fprintf(stderr, "%s\n", "plgvpw test failed");
     plend();
     exit(1);
   }
