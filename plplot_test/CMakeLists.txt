@@ -233,6 +233,14 @@ if(SH_EXECUTABLE)
     endif(NOT TEST_DEVICE STREQUAL "xfig")
   endif(PLD_xfig)
 
+  if(PLD_gif)
+    if (NOT TEST_DEVICE STREQUAL "gif")
+      add_test(examples_gif
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=gif"
+	)
+    endif(NOT TEST_DEVICE STREQUAL "gif")
+  endif(PLD_gif)
+
   if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
     configure_file(
       test_diff.sh.in
