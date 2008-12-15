@@ -225,6 +225,14 @@ if(SH_EXECUTABLE)
     endif(NOT TEST_DEVICE STREQUAL "pngcairo")
   endif(PLD_pngcairo)
 
+  if(PLD_xfig)
+    if (NOT TEST_DEVICE STREQUAL "xfig")
+      add_test(examples_xfig
+	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=xfig"
+	)
+    endif(NOT TEST_DEVICE STREQUAL "xfig")
+  endif(PLD_xfig)
+
   if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
     configure_file(
       test_diff.sh.in
