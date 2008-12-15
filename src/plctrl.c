@@ -2053,7 +2053,7 @@ plGetInt(const char *s)
     char line[256];
 
     while (i++ < 10) {
-	fprintf(stdout, s);
+	fputs(s, stdout);
 	plio_fgets(line, sizeof(line), stdin);
 
 #ifdef MSDOS
@@ -2084,7 +2084,7 @@ plGetFlt(const char *s)
     char line[256];
 
     while (i++ < 10) {
-	fprintf(stdout, s);
+	fputs(s, stdout);
 	plio_fgets(line, sizeof(line), stdin);
 
 #ifdef MSDOS
