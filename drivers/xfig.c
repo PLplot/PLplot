@@ -146,7 +146,7 @@ plD_init_xfig(PLStream *pls)
     bufflen = 2 * BSIZE;
     buffptr = (int *) malloc(sizeof(int) * bufflen);
     if (buffptr == NULL)
-	plexit("Out of memory!");
+	plexit("plD_init_xfig: Out of memory!");
 }
 
 void
@@ -235,7 +235,7 @@ plD_line_xfig(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 		realloc((void *) buffptr, bufflen * sizeof(int));
 	    if (tempptr == NULL) {
 		free((void *) buffptr);
-		plexit("Out of memory!");
+		plexit("plD_line_xfig: Out of memory!");
 	    }
 	    buffptr = tempptr;
 	}
