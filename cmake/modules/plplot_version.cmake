@@ -1,15 +1,15 @@
 # For now, must set this by hand before each release.  This value affects
 # at least the documentation build and perhaps other parts of the release.
-set(RELEASE_DATE "2007-11-18")
+set(RELEASE_DATE "2008-12-14")
 
 # Version data that need review and possible modification for each release.
 
-set(VERSION 5.9.0)
+set(VERSION 5.9.1)
 
 # CPack version numbers for release tarball name.
 set(CPACK_PACKAGE_VERSION_MAJOR 5)
 set(CPACK_PACKAGE_VERSION_MINOR 9)
-set(CPACK_PACKAGE_VERSION_PATCH 0)
+set(CPACK_PACKAGE_VERSION_PATCH 1)
 
 # PLplot library version information.
 
@@ -34,7 +34,7 @@ set(csironn_SOVERSION 0)
 set(csironn_VERSION ${csironn_SOVERSION}.0.1)
 
 set(plplot_SOVERSION 9)
-set(plplot_VERSION ${plplot_SOVERSION}.5.0)
+set(plplot_VERSION ${plplot_SOVERSION}.6.0)
 
 set(plplotcxx_SOVERSION 9)
 set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.3.0)
