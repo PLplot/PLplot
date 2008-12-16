@@ -46,7 +46,12 @@ function x13c
   ## Initialize plplot */
   plinit();
 
-  plenv(0., 10., 0., 10., 1, -2);
+  pladv(0);
+  ## Ensure window has aspect ratio of one so circle is
+  ## plotted as a circle. */
+  plvasp(1.0);
+  plwind(0., 10., 0., 10.);
+  ##plenv(0., 10., 0., 10., 1, -2);
   plcol(2);
 
   theta0 = 0.;

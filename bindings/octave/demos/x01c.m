@@ -28,9 +28,6 @@ function ix01c
   endif
 
   ## plplot initialization */
-  ## Divide page into 2x2 plots unless user overrides */
-
-  plssub(2, 2);
 
   ## Parse and process command line arguments */
 
@@ -43,7 +40,8 @@ function ix01c
   printf("PLplot library version: %s\n", ver);
 
   ## Initialize plplot */
-  plinit;
+  ## Divide page into 2x2 plots unless user overrides */
+  plstar(2,2);
 
   ## Set up the data */
   ## Original case */
