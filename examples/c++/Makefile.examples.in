@@ -63,6 +63,7 @@ EXECUTABLES_list = \
 		 x28$(EXEEXT) \
 		 x29$(EXEEXT) \
 		 x30$(EXEEXT) \
+		 x31$(EXEEXT) \
 		 $(PLPLOTWXWIDGETS_EXECUTABLES_list)
 		 
 all: $(EXECUTABLES_list)

@@ -1,4 +1,4 @@
-# examples/c/Makefile.examples.in for PLplot
+# examples/ocaml/Makefile.examples.in for PLplot
 ###
 ### Process this file with configure to produce Makefile.examples
 ###
@@ -61,6 +61,7 @@ EXECUTABLES_list = \
 		 x28ocaml$(EXEEXT) \
 		 x29ocaml$(EXEEXT) \
 		 x30ocaml$(EXEEXT) \
+		 x31ocaml$(EXEEXT)
 
 all: $(EXECUTABLES_list)
 
