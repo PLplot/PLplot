@@ -115,6 +115,7 @@ class x15 {
 	
 	plot1( xg0, yg0, z, zmin, zmax );
 	plot2( xg0, yg0, z, zmin, zmax );
+	plot3();
 	
         pls.end();
     }
@@ -165,6 +166,13 @@ class x15 {
 	int sh_cmap = 0, sh_width;
 	int min_color = 0, min_width = 0, max_color = 0, max_width = 0;
 	int i;
+	int[] nlin = {1, 1, 1, 1, 1, 2, 2, 2, 2, 2};
+	int[][] inc = { {450}, {-450}, {0}, {900}, {300}, 
+			{450,-450}, {0, 900}, {0, 450}, 
+			{450, -450}, {0, 900} };
+	int[][] del = { {2000}, {2000}, {2000},{2000}, {2000}, 
+			{2000, 2000}, {2000, 2000}, {2000, 2000}, 
+			{4000, 4000}, {4000, 2000} };
 	sh_width = 2;
 	
 	pls.adv(0);
@@ -177,7 +185,7 @@ class x15 {
             shade_min = zmin + (zmax - zmin) * i / 10.0;
             shade_max = zmin + (zmax - zmin) * (i +1) / 10.0;
             sh_color = i+6;
-            pls.psty((i + 2) % 8 + 1);
+	    pls.pat(inc[i],del[i]);
        
             pls.shade( z, -1., 1., -1., 1.,
                        shade_min, shade_max,
@@ -191,6 +199,41 @@ class x15 {
 	pls.col0(2);
 	pls.lab("distance", "altitude", "Bogon flux");
     }
+
+// Illustrates shaded regions in 3d, using a different fill pattern for 
+// each region.  
+
+    void plot3()
+    {
+	double[][] xx = { {-1.0, 1.0, 1.0, -1.0, -1.0}, 
+			      {-1.0, 1.0, 1.0, -1.0, -1.0} };
+	double[][] yy = { {1.0, 1.0, 0.0, 0.0, 1.0}, 
+			      {-1.0, -1.0, 0.0, 0.0, -1.0} };
+	double[][] zz = { {0.0, 0.0, 1.0, 1.0, 0.0}, 
+			      {0.0, 0.0, 1.0, 1.0, 0.0} };
+
+	pls.adv(0);
+	pls.vpor(0.1, 0.9, 0.1, 0.9);
+	pls.wind(-1.0, 1.0, -1.0, 1.0);
+	pls.w3d(1., 1., 1., -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30, -40);
+	
+	// Plot using identity transform
+	
+	pls.col0(1);
+	pls.box3("bntu", "X", 0.0, 0, "bntu", "Y", 0.0, 0, "bcdfntu", "Z", 0.5, 0);
+	pls.col0(2);
+	pls.lab("","","3-d polygon filling");
+	
+	pls.col0(3);
+	pls.psty(1);
+	pls.line3(xx[0], yy[0], zz[0]);
+	pls.fill3(xx[0], yy[0], zz[0]);
+	pls.psty(2);
+	pls.line3(xx[1], yy[1], zz[1]);
+	pls.fill3(xx[1], yy[1], zz[1]);
+	
+    }
+
 
 }
 

@@ -145,6 +145,7 @@ class x09 {
 	pls.col0(1);
 	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 */
+	pls.setcontlabelformat(4,3);
 	pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
 	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.col0(2);

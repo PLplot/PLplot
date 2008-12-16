@@ -56,7 +56,12 @@ class x13 {
 
         pls.init();
 	
-	pls.env(0., 10., 0., 10., 1, -2);
+	pls.adv(0);
+	// Ensure window has aspect ratio of one so circle is
+	// plotted as a circle.
+	pls.vasp(1.0);
+	pls.wind(0., 10., 0., 10.);
+	//pls.env(0., 10., 0., 10., 1, -2);
 	pls.col0(2);
     // n.b. all theta quantities scaled by 2*pi/500 to be integers to avoid
     // floating point logic problems.

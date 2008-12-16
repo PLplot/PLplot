@@ -65,6 +65,10 @@ class x03 {
 
         pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
+    // Set orientation to landscape - note not all device drivers
+    // support this, in particular most interactive drivers do not.
+	pls.sori(1);
+
     // Initialize plplot.
 
         pls.init();

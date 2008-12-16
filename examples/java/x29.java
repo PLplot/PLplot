@@ -57,6 +57,8 @@ class x29 {
 	// Initialize plplot 
 	pls.init();
 
+	pls.sesc('@');
+
 	plot1();
 	
 	plot2();
@@ -72,13 +74,17 @@ class x29 {
     {
 	int i, npts;
 	double xmin, xmax, ymin, ymax;
-	double x[], y[];
+	double x[], y[], xerr1[], xerr2[], yerr1[], yerr2[];
 
 	// Data points every 10 minutes for 1 day
-	npts = 145;
+	npts = 73;
 
 	x = new double[npts];
 	y = new double[npts];
+	xerr1 = new double[npts];
+	xerr2 = new double[npts];
+	yerr1 = new double[npts];
+	yerr2 = new double[npts];
 	
 	xmin = 0;
 	xmax = 60.0*60.0*24.0;    // Number of seconds in a day
@@ -88,10 +94,21 @@ class x29 {
 	for (i=0;i<npts;i++) {
 	    x[i] = xmax*((double) i/(double)npts);
 	    y[i] = 15.0 - 5.0*Math.cos( 2*Math.PI*((double) i / (double) npts));
+	    // Set x error bars to +/- 5 minute
+	    xerr1[i] = x[i]-60*5;
+	    xerr2[i] = x[i]+60*5;
+	    // Set y error bars to +/- 0.1 deg C
+	    yerr1[i] = y[i]-0.1;
+	    yerr2[i] = y[i]+0.1;
 	}
 	
 	pls.adv(0);
 	
+	// Rescale major ticks marks by 0.5
+	pls.smaj(0.0,0.5);
+	// Rescale minor ticks and error bar marks by 0.5
+	pls.smin(0.0,0.5);
+
 	pls.vsta();
 	pls.wind(xmin, xmax, ymin, ymax);
 	
@@ -102,11 +119,20 @@ class x29 {
 	pls.box("bcnstd", 3.0*60*60, 3, "bcnstv", 1, 5);
 	
 	pls.col0(3);
-	pls.lab("Time (hours:mins)", "Temperature (degC)", "#frPLplot Example 29 - Daily temperature");
+	pls.lab("Time (hours:mins)", "Temperature (degC)", "@frPLplot Example 29 - Daily temperature");
 	
 	pls.col0(4);
 
 	pls.line(x, y);
+	pls.col0(2);
+	pls.errx(xerr1, xerr2, y);
+	pls.col0(3);
+	pls.erry(x, yerr1, yerr2);
+	  
+	// Rescale major / minor tick marks back to default
+	pls.smin(0.0,1.0);
+	pls.smaj(0.0,1.0);
+
     }
 
     // Plot the number of hours of daylight as a function of day for a year 
@@ -145,16 +171,18 @@ class x29 {
 	pls.col0(1);
 	// Set time format to be abbreviated month name followed by day of month 
 	pls.timefmt("%b %d");
+	pls.prec(1,1);
 	pls.env(xmin, xmax, ymin, ymax, 0, 40);
 	
 
 	pls.col0(3);
-	pls.lab("Date", "Hours of daylight", "#frPLplot Example 29 - Hours of daylight at 51.5N");
+	pls.lab("Date", "Hours of daylight", "@frPLplot Example 29 - Hours of daylight at 51.5N");
 	
 	pls.col0(4);
 	
 	pls.line(x, y);
 	
+	pls.prec(0,0);
     }
 
     void plot3()
@@ -199,10 +227,11 @@ class x29 {
 	pls.box("bcnstd", 14*24.0*60.0*60.0,14, "bcnstv", 1, 4);
 	
 	pls.col0(3);
-	pls.lab("Date", "Hours of television watched", "#frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");
+	pls.lab("Date", "Hours of television watched", "@frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");
 	
 	pls.col0(4);
-	
+
+	pls.ssym(0.0,0.5);
 	pls.poin(x, y, 2);
 	pls.line(x, y);
  

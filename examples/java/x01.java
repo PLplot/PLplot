@@ -56,9 +56,6 @@ class x01 {
      {
 
     // plplot initialization
-    // Divide page into 2x2 plots unless user overrides.
-
-        pls.ssub(2, 2);
 
     // Parse and process command line arguments.
 
@@ -73,7 +70,8 @@ class x01 {
 	System.out.println("PLplot library version: " + version);
 
     // Initialize PLplot.
-        pls.init();
+    // Divide page into 2x2 plots unless user overrides.
+        pls.star(2,2);
 
     // Select the multi-stroke font.
         if (fontset == 1) 
