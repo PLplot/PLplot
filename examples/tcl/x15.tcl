@@ -30,6 +30,7 @@ proc x15 {{w loopback}} {
   }
   plot151 $w $z $zmin $zmax
   plot152 $w $z $zmin $zmax
+  plot153 $w
   
 }
 
@@ -105,6 +106,28 @@ proc plot152 { w z zmin zmax } {
   # N.B. this flag set to use cmap0
   set sh_cmap 0
 
+  matrix nlin i 10 = {1, 1, 1, 1, 1, 2, 2, 2, 2, 2}
+  matrix inc0 i 1 = {450}
+  matrix inc1 i 1 = {-450}
+  matrix inc2 i 1 = {0}
+  matrix inc3 i 1 = {900}
+  matrix inc4 i 1 = {300}
+  matrix inc5 i 2 = {450, -450}
+  matrix inc6 i 2 = {0, 900}
+  matrix inc7 i 2 = {0, 450}
+  matrix inc8 i 2 = {450, -450}
+  matrix inc9 i 2 = {0, 900}
+  matrix del0 i 2 =  {2000, 2000}
+  matrix del1 i 2 = {2000, 2000}
+  matrix del2 i 2 = {2000, 2000}
+  matrix del3 i 2 = {2000, 2000}
+  matrix del4 i 2 = {2000, 2000}
+  matrix del5 i 2 = {2000, 2000}
+  matrix del6 i 2 = {2000, 2000}
+  matrix del7 i 2 = {2000, 2000}
+  matrix del8 i 2 = {4000, 4000}
+  matrix del9 i 2 = {4000, 2000}
+
   $w cmd pladv 0
   $w cmd plvpor .1 .9 .1 .9
   $w cmd plwind -1.0 1.0 -1.0 1.0
@@ -112,7 +135,7 @@ proc plot152 { w z zmin zmax } {
     set shade_min [expr $zmin + ($zmax - $zmin)*$i/10.0 ]
     set shade_max [expr $zmin + ($zmax - $zmin)*($i + 1)/10.0 ]
     set sh_color [expr $i + 6]
-    $w cmd plpsty [expr ($i + 2) % 8 + 1]
+    $w cmd plpat [nlin $i] inc$i del$i
     $w cmd plshade z -1. 1. -1. 1. $shade_min $shade_max \
       $sh_cmap $sh_color $sh_width \
       $min_color $min_width $max_color $max_width 1
@@ -123,4 +146,37 @@ proc plot152 { w z zmin zmax } {
   $w cmd pllab "distance" "altitude" "Bogon flux"
 # Restore defaults
   # $w cmd plcol0 1
+}
+
+proc plot153 { w } {
+
+    matrix xx0 f 5 = {-1.0, 1.0, 1.0, -1.0, -1.0} 
+    matrix xx1 f 5 = {-1.0, 1.0, 1.0, -1.0, -1.0}
+    matrix yy0 f 5 = {1.0, 1.0, 0.0, 0.0, 1.0} 
+    matrix yy1 f 5 = {-1.0, -1.0, 0.0, 0.0, -1.0}
+    matrix zz0 f 5 = {0.0, 0.0, 1.0, 1.0, 0.0}
+    matrix zz1 f 5 = {0.0, 0.0, 1.0, 1.0, 0.0}
+
+    $w cmd pladv 0
+    $w cmd plvpor 0.1 0.9 0.1 0.9
+    $w cmd plwind -1.0 1.0 -1.0 1.0
+    $w cmd plw3d 1. 1. 1. -1.0 1.0 -1.0 1.0 0.0 1.5 30 -40
+
+    # Plot using identity transform
+    
+    $w cmd plcol0 1
+    $w cmd plbox3 "bntu" "X" 0.0 0 "bntu" "Y" 0.0 0 "bcdfntu" "Z" 0.5 0
+    $w cmd plcol0 2
+    $w cmd pllab "" "" "3-d polygon filling"
+
+    $w cmd plcol0 3
+    $w cmd plpsty 1
+    $w cmd plline3 5 xx0 yy0 zz0
+    $w cmd plfill3 4 xx0 yy0 zz0
+    $w cmd plpsty 2
+    $w cmd plline3 5 xx1 yy1 zz1
+    $w cmd plfill3 4 xx1 yy1 zz1
+
+    # Restore defaults
+    # $w cmd plcol0 1
 }
