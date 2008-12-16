@@ -293,6 +293,7 @@ let () =
   done;
 
   (* Plot using identity transform *)
+  pl_setcontlabelformat 4 3;
   pl_setcontlabelparam 0.006 0.3 0.1 1;
   plenv (-1.0) 1.0 (-1.0) 1.0 0 0;
   plcol0 2;

@@ -238,8 +238,6 @@ let plot3 () =
 \*--------------------------------------------------------------------------*)
 let main fontset =
   (* plplot initialization *)
-  (* Divide page into 2x2 plots unless user overrides *)
-  plssub 2 2;
 
   (* NOT IMPLEMENTED YET
   (* Parse and process command line arguments *)
@@ -252,7 +250,8 @@ let main fontset =
   fprintf stdout "PLplot library version: %s\n" plplot_version;
 
   (* Initialize plplot *)
-  plinit ();
+  (* Divide page into 2x2 plots *)
+  plstar 2 2;
 
   (* Select font set as per input flag *)
   plfontld (if fontset then 1 else 0);

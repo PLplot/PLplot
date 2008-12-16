@@ -38,6 +38,10 @@ let main () =
   (* Parse and process command line arguments *)
   ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
+  (* Set orientation to landscape - note not all device drivers 
+   * support this, in particular most interactive drivers do not *)
+  plsori 1;
+
   (* Initialize plplot *)
   plinit ();
 
