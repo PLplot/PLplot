@@ -85,6 +85,7 @@ proc x09 {{w loopback}} {
 #    $w cmd plcol0 1
 #    $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
+    $w cmd pl_setcontlabelformat 4 3
     $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
     $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
     $w cmd plcol0 2
