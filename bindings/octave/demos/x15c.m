@@ -1,5 +1,6 @@
 ## Copyright (C) 1998, 1999, 2000  Joao Cardoso
 ## Copyright (C) 2004  Rafael Laboissiere
+## Copyright (C) 2008 Andrew Ross
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -62,6 +63,7 @@ function ix15c
 
   plot1(z,zmin,zmax);
   plot2(z,zmin,zmax);
+  plot3();
 
   plend1();
   
@@ -177,6 +179,12 @@ function plot2(z,zmin,zmax)
   sh_cmap = 0;
   min_color = 0; min_width = 0; max_color = 0; max_width = 0;
 
+  nlin = [1, 1, 1, 1, 1, 2, 2, 2, 2, 2];
+  inc = [450, 0; -450, 0; 0, 0; 900, 0; 300, 0;
+	 450,-450; 0, 900; 0, 450; 450, -450; 0, 900];
+  del = [2000, 2000; 2000, 2000; 2000, 2000; 2000, 2000; 2000, 2000;
+	 2000, 2000; 2000, 2000; 2000, 2000; 4000, 4000; 4000, 2000 ];
+
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
   plwind(-1.0, 1.0, -1.0, 1.0);
@@ -188,7 +196,8 @@ function plot2(z,zmin,zmax)
     shade_max = zmin + (zmax - zmin) * (i +1) / 10.0;
     sh_color = i+6;
     sh_width = 2;
-    plpsty( rem((i + 2), 8) + 1);
+    n = nlin(i+1);
+    plpat(inc(i+1,1:n)',del(i+1,1:n)');
 
     plshade(z, 0, -1., 1., -1., 1., 
 	    shade_min, shade_max, 
@@ -201,5 +210,39 @@ function plot2(z,zmin,zmax)
   plcol(2);
   pllab("distance", "altitude", "Bogon flux");
 endfunction
+
+## Illustrates shaded regions in 3d, using a different fill pattern for 
+## each region.  
+function plot3
+
+    xx = [ -1.0, 1.0, 1.0, -1.0, -1.0;
+	   -1.0, 1.0, 1.0, -1.0, -1.0 ];
+    yy = [ 1.0, 1.0, 0.0, 0.0, 1.0;
+	  -1.0, -1.0, 0.0, 0.0, -1.0 ];
+    zz = [ 0.0, 0.0, 1.0, 1.0, 0.0;
+	  0.0, 0.0, 1.0, 1.0, 0.0 ];
+
+    pladv(0);
+    plvpor(0.1, 0.9, 0.1, 0.9);
+    plwind(-1.0, 1.0, -1.0, 1.0);
+    plw3d(1., 1., 1., -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30, -40);
+
+    ## Plot using identity transform
+    
+    plcol0(1);
+    plbox3("bntu", "X", 0.0, 0, "bntu", "Y", 0.0, 0, "bcdfntu", "Z", 0.5, 0);
+    plcol0(2);
+    pllab("","","3-d polygon filling");
+
+    plcol0(3);
+    plpsty(1);
+    plline3(xx(1,:)', yy(1,:)', zz(1,:)');
+    plfill3(xx(1,1:4)', yy(1,1:4)', zz(1,1:4)');
+    plpsty(2);
+    plline3(xx(2,:)', yy(2,:)', zz(2,:)');
+    plfill3(xx(2,1:4)', yy(2,1:4)', zz(2,1:4)');
+
+  endfunction    
+
 
 ix15c
