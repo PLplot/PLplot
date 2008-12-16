@@ -111,9 +111,6 @@ main(int argc, const char *argv[])
     char ver[80];
 
 /* plplot initialization */
-/* Divide page into 2x2 plots unless user overrides */
-
-    plssub(2, 2);
 
 /* Parse and process command line arguments */
 
@@ -126,8 +123,10 @@ main(int argc, const char *argv[])
     fprintf(stdout, "PLplot library version: %s\n", ver);
 
 /* Initialize plplot */
+/* Divide page into 2x2 plots */
+/* Note: calling plstar replaces separate calls to plssub and plinit */
+    plstar(2,2);
 
-    plinit();
 /* Select font set as per input flag */
 
     if (fontset)

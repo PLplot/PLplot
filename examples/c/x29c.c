@@ -60,6 +60,9 @@ main(int argc, const char *argv[])
   /* Initialize plplot */
   plinit();
 
+  /* Change the escape character to a '@' instead of the default '#'
+  plsesc('@');
+
   plot1();
 
   plot2();
@@ -114,7 +117,7 @@ plot1()
   plbox("bcnstd", 3.0*60*60, 3, "bcnstv", 1, 5);
 
   plcol0(3);
-  pllab("Time (hours:mins)", "Temperature (degC)", "#frPLplot Example 29 - Daily temperature");
+  pllab("Time (hours:mins)", "Temperature (degC)", "@frPLplot Example 29 - Daily temperature");
   
   plcol0(4);
 
@@ -168,7 +171,7 @@ plot2()
 
 
   plcol0(3);
-  pllab("Date", "Hours of daylight", "#frPLplot Example 29 - Hours of daylight at 51.5N");
+  pllab("Date", "Hours of daylight", "@frPLplot Example 29 - Hours of daylight at 51.5N");
   
   plcol0(4);
 
@@ -239,7 +242,7 @@ plot3()
   plbox("bcnstd", 14*24.0*60.0*60.0,14, "bcnstv", 1, 4);
 
   plcol0(3);
-  pllab("Date", "Hours of television watched", "#frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");
+  pllab("Date", "Hours of television watched", "@frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");
   
   plcol0(4);
 

@@ -339,7 +339,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is used in examples 1,2,4,6-12,14-18,20,21,23-27,29.
+      This function is used in examples 1,2,4,6-12,14-18,20,21,23-27,29,31.
     </para>
 
   </sect1>
@@ -1499,7 +1499,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -3565,7 +3565,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -3646,7 +3646,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -3693,7 +3693,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -3827,7 +3827,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -3968,7 +3968,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -4039,7 +4039,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -4130,7 +4130,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -4279,7 +4279,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -4386,7 +4386,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -4957,7 +4957,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -5049,7 +5049,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -5115,7 +5115,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -5176,7 +5176,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -5237,7 +5237,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -9057,7 +9057,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -9154,7 +9154,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -9754,7 +9754,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is used in example 15.
+      This function is used in examples 15,31.
     </para>
 
   </sect1>
@@ -9836,7 +9836,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -9882,7 +9882,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -9930,7 +9930,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -10065,7 +10065,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -10312,7 +10312,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -10401,7 +10401,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -10510,7 +10510,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 29.
     </para>
 
   </sect1>
@@ -10645,7 +10645,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -12027,7 +12027,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 3.
     </para>
 
   </sect1>
@@ -12135,7 +12135,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -12410,7 +12410,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 1.
     </para>
 
   </sect1>
@@ -13423,7 +13423,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -13486,7 +13486,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is used in examples 1,14.
+      This function is used in examples 1,14,31.
     </para>
 
   </sect1>
@@ -13635,7 +13635,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 31.
     </para>
 
   </sect1>
@@ -13825,7 +13825,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is not used in any examples.
+      This function is used in example 13.
     </para>
 
   </sect1>
@@ -14142,7 +14142,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is used in examples 2,6-8,10,11,15,16,18,21,23,24,26,27.
+      This function is used in examples 2,6-8,10,11,15,16,18,21,23,24,26,27,31.
     </para>
 
   </sect1>
@@ -14501,7 +14501,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is used in examples 1,2,4,6-12,14-16,18,21,23-27,29.
+      This function is used in examples 1,2,4,6-12,14-16,18,21,23-27,29,31.
     </para>
 
   </sect1>
