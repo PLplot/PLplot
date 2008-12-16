@@ -169,6 +169,8 @@
       integer, parameter :: PL_FONT_STANDARD   =  0
       integer, parameter :: PL_FONT_EXTENDED   =  1
 
+      real(kind=plflt), parameter :: PL_NOTSET = -42.0_plflt
+
       !
       ! TODO:
       ! Parameters for fill patterns and symbols
@@ -765,8 +767,7 @@
 
       interface
          subroutine plsori( rot )
-            use plplot_flt
-            real(kind=plflt) :: rot
+            integer :: rot
          end subroutine plsori
       end interface
 
@@ -802,9 +803,8 @@
       end interface
 
       interface
-         subroutine plstar( x, y )
-            use plplot_flt
-            real(kind=plflt) :: x, y
+         subroutine plstar( nx, ny )
+            integer :: nx, ny
          end subroutine plstar
       end interface
 
