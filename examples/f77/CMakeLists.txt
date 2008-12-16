@@ -52,6 +52,7 @@ set(f77_STRING_INDICES
 "28"
 "29"
 "30"
+"31"
 )
 
 foreach(STRING_INDEX ${f77_STRING_INDICES})

@@ -29,6 +29,9 @@
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
+!     Set orientation to landscape - note not all device drivers
+!     support this, in particular most interactive drivers do not.
+      call plsori(1)
 
       dtr = PI/180.0_plflt
       do i=0,360

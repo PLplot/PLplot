@@ -32,6 +32,9 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
 C      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
+C     Set orientation to landscape - note not all device drivers
+C     support this, in particular most interactive drivers do not.
+      call plsori(1)
 
       dtr = PI/180.0d0
       do i=0,360

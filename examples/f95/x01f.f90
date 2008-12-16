@@ -31,15 +31,13 @@
 !  Process command-line arguments
    call plparseopts(PL_PARSE_FULL)
 
-!  Divide page into 2x2 plots
-   call plssub(2, 2)
-
 !  Print plplot version
    call plgver(version)
    write (*,'(a,a)') 'PLplot library version: ', trim(version)
 
 !  Initialize plplot
-   call plinit()
+!  Divide page into 2x2 plots
+   call plstar(2,2)
 
 !  Set up the data
 !  Original case

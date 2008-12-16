@@ -35,16 +35,14 @@ C      although this is not demanded on g77 it also works there.
 C      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
-C      Divide page into 2x2 plots
-      call plssub(2, 2)
-
 C      Print plplot version
       call plgver(version)
       write (*,'(a,a)') 'PLplot library version: ',
      &  version(:lnblnk(version))
 
 C      Initialize plplot
-      call plinit()
+C      Divide page into 2x2 plots
+      call plstar(2,2)
 
 C      Set up the data
 C      Original case

@@ -1,0 +1,220 @@
+C      $Id:$
+C      set / get tester.
+C
+C      Copyright (C) 2008  Alan W. Irwin
+C      Copyright (C) 2008  Andrew Ross
+C
+C      This file is part of PLplot.
+C
+C      PLplot is free software; you can redistribute it and/or modify
+C      it under the terms of the GNU General Library Public License as
+C      published by the Free Software Foundation; either version 2 of the
+C      License, or (at your option) any later version.
+C
+C      PLplot is distributed in the hope that it will be useful,
+C      but WITHOUT ANY WARRANTY; without even the implied warranty of
+C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+C      GNU Library General Public License for more details.
+C
+C      You should have received a copy of the GNU Library General Public
+C      License along with PLplot; if not, write to the Free Software
+C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+C--------------------------------------------------------------------------
+C main
+C
+C Demonstrates absolute positioning of graphs on a page.
+C--------------------------------------------------------------------------
+
+      implicit none
+      real*8 xmin, xmax, ymin, ymax, wx, wy
+      real*8 mar, aspect, jx, jy, ori
+      integer win, level, digmax, digits, compression
+      real*8 xp, yp, xp2, yp2
+      integer xleng, yleng, xoff, yoff, xleng2, yleng2
+      integer fam, num, bmax, fam1, num1, bmax1, r, g, b
+      real*8 a
+      integer r1(2), g1(2), b1(2)
+      data r1 /0, 255/
+      data g1 /255, 0/
+      data b1 /0, 0/
+      real*8 a1(2)
+      data a1 /1.0d0, 1.0d0/
+      character*80 fnam
+
+C     Parse and process command line arguments
+
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+      real*8 PL_NOTSET
+      parameter(PL_NOTSET = -42.0d0)
+      call plparseopts(PL_PARSE_FULL)
+
+C     Test setting / getting page size
+      call plgpage(xp, yp, xleng, yleng, xoff, yoff)
+      xp2 = xp*0.9d0
+      yp2 = yp*0.9d0
+      xleng2 = int(xleng*0.9d0)
+      yleng2 = int(yleng*0.9d0)
+      call plspage(xp2, yp2, xleng2, yleng2, xoff, yoff)
+      call plgpage(xp, yp, xleng, yleng, xoff, yoff)
+      if (xp.ne.xp2 .or. yp .ne. yp2 .or. xleng .ne. xleng2 .or. 
+     &     yleng .ne. yleng2) then
+         write (0,*) "plgpage test failed"
+         call plend()
+         call exit(1)
+      endif
+
+      call plscompression(1)
+      call plgcompression(compression)
+      if (compression .ne. 1) then
+         write (0,*) "plgcompression test failed"
+         call plend()
+         call exit(1)
+      endif
+
+      call plgfam(fam, num, bmax)
+      call plsfam(1,1,100000)
+      call plgfam(fam1, num1, bmax1)
+      if (fam1 .ne. 1 .or. num1 .ne. 1 .or. bmax1 .ne. 100000) then
+         write (0,*) "plgfam test failed"
+         call plend()
+         call exit(1)
+      endif
+      call plsfam(fam, num, bmax)
+
+C     Initialize plplot
+
+      call plinit()
+
+      call plscolor(1)
+
+      call plscol0(1, 255, 0, 0)
+
+      call plscmap1(r1,g1,b1,2)
+      call plscmap1a(r1,g1,b1,a1,2)
+  
+      call plglevel(level)
+      if (level .ne. 1) then
+         write(0,*) "plglevel test failed. Level is ",level,
+     &        ", but 1 expected."
+         call plend()
+         call exit(1)
+      endif
+
+      call pladv(0)
+      call plvpor(0.0d0, 1.0d0, 0.0d0, 1.0d0)
+
+      call plwind(0.2d0, 0.3d0, 0.4d0, 0.5d0)
+      call plgvpw(xmin, xmax, ymin, ymax)
+      if (xmin .ne. 0.2d0 .or. xmax .ne. 0.3d0 .or. ymin .ne. 0.4d0 .or. 
+     &     ymax .ne. 0.5d0) then
+         write (0,*) "plgvpw test failed",xmin,xmax,ymin,ymax
+         call plend()
+         call exit(1)
+      endif
+
+      call plgvpd(xmin, xmax, ymin, ymax)
+      if (xmin .ne. 0.0d0 .or. xmax .ne. 1.0d0 .or. ymin .ne. 0.0d0 .or. 
+     &     ymax .ne. 1.0d0) then
+         write (0,*) "plgvpd test failed"
+         call plend()
+         call exit(1)
+      endif
+
+C     Get world coordinates for 0.5,0.5 which is in the middle of 
+C     the window
+      call plcalc_world(0.5d0,0.5d0,wx,wy,win)
+      if (abs(wx-0.25d0).gt.1.0d-5 .or. abs(wy-0.45d0).gt.1.0d-5) then
+         write (0,*) "plcalc_world test failed"
+         call plend()
+         call exit(1)  
+      endif
+
+C     Retrieve and print the name of the output file (if any)
+      call plgfnam(fnam)
+      print *,"Output file name is ",fnam
+
+C     Set and get the number of digits used to display axis labels
+C     Note digits is currently ignored in pls[xyz]ax and 
+C     therefore it does not make sense to test the returned 
+C     value
+      call plsxax(3,0)
+      call plgxax(digmax,digits)
+      if (digmax .ne. 3) then
+         write (0,*) "plgxax test failed"
+         call plend()
+         call exit(1)
+      endif
+
+      call plsyax(3,0)
+      call plgyax(digmax,digits)
+      if (digmax .ne. 3) then
+         write (0,*) "plgyax test failed"
+         call plend()
+         call exit(1)
+      endif
+
+      call plszax(3,0)
+      call plgzax(digmax,digits)
+      if (digmax .ne. 3) then
+         write(0,*) "plgzax test failed"
+         call plend()
+         call exit(1)
+      endif
+      
+      call plsdidev(0.05d0, PL_NOTSET, 0.0d0, 0.0d0)
+      call plgdidev(mar, aspect, jx, jy)
+      if (mar .ne. 0.05d0 .or. jx .ne. 0.0d0 .or. jy .ne. 0.0d0) then
+         write(0,*) "plgdidev test failed"
+         call plend()
+         call exit(1)
+      endif
+      
+      call plsdiori(1.0d0)
+      call plgdiori(ori)
+      if (ori .ne. 1.0d0) then
+         write(0,*) "plgdiori test failed"
+         call plend()
+         call exit(1)
+      endif
+      
+      call plsdiplt(0.1d0, 0.1d0, 0.9d0, 0.9d0)
+      call plgdiplt(xmin, ymin, xmax, ymax)
+      if (xmin .ne. 0.1d0 .or. xmax .ne. 0.9d0 .or. ymin .ne. 0.1d0 .or. 
+     &     ymax .ne. 0.9d0) then
+         write(0,*) "plgdiplt test failed"
+         call plend()
+         call exit(1)
+      endif
+
+      call plsdiplz(0.1d0, 0.1d0, 0.9d0, 0.9d0)
+      call plgdiplt(xmin, ymin, xmax, ymax)
+      if (xmin .ne. 0.1d0+0.8d0*0.1d0 .or. 
+     &     xmax .ne. 0.1d0+0.8d0*0.9d0 .or.
+     &     ymin .ne. 0.1d0+0.8d0*0.1d0 .or. 
+     &     ymax .ne. 0.1d0+0.8d0*0.9d0) then
+         write(0,*) "plsdiplz test failed"
+         call plend()
+         call exit(1)
+      endif
+      
+      call plscolbg(0,0,0)
+      call plgcolbg(r, g, b)
+      if (r .ne. 0 .or. g .ne. 0 .or. b .ne. 0) then
+         write(0,*) "plgcolbg test failed"
+         call plend()
+         call exit(1)
+      endif
+
+      call plscolbga(0,0,0,1.0d0)
+      call plgcolbga(r, g, b, a)
+      if (r .ne. 0 .or. g .ne. 0 .or. b .ne. 0 .or. a .ne. 1.0d0) then
+         write(0,*) "plgcolbga test failed"
+         call plend()
+         call exit(1)
+      endif
+
+      call plend()
+      call exit(0)
+      end

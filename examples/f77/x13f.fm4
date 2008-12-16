@@ -42,7 +42,12 @@ C      Ask user to specify the output device.
 
       call plinit()
 
-      call plenv( 0.d0, 10.d0, 0.d0, 10.d0, 1, -2 )
+      call pladv(0)
+C     Ensure window has aspect ratio of one so circle is
+C     plotted as a circle.
+      call plvasp(1.0d0)
+      call plwind(0.d0, 10.d0, 0.d0, 10.d0)
+C      call plenv( 0.d0, 10.d0, 0.d0, 10.d0, 1, -2 )
       call plcol0(2)
 
 C      n.b. all theta quantities scaled by 2*pi/500 to be integers to avoid

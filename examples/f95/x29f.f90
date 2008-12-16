@@ -26,12 +26,15 @@
 
    implicit none
 
-   real(kind=plflt), dimension(365) :: x, y
-   common /plotdat/ x, y
+   real(kind=plflt), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
+   common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
 
    call plparseopts(PL_PARSE_FULL)
    
    call plinit()
+
+!  This is the ASCII value for character @
+   call plsesc(64)
    
    call plot1()
    call plot2()
@@ -48,13 +51,13 @@
       use plplot, PI => PL_PI
       implicit none
 
-      real(kind=plflt), dimension(365) :: x, y
-      common /plotdat/ x, y
+      real(kind=plflt), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
+      common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
 
       integer :: i, npts
       real(kind=plflt) :: xmin, xmax, ymin, ymax
       
-      parameter(npts = 145)
+      parameter(npts = 73)
       parameter(xmin = 0.0_plflt)
       parameter(xmax = 60.0_plflt*60.0_plflt*24.0_plflt)
       parameter(ymin = 10.0_plflt)
@@ -63,9 +66,21 @@
       do i = 1,npts
       	 x(i) = xmax*(dble(i-1)/dble(npts))
          y(i) = 15.0_plflt - 5.0_plflt*cos(2.0_plflt*PI*dble(i-1)/dble(npts))
+!     Set x error bars to +/- 5 minute 
+         xerr1(i) = x(i)-60.0_plflt*5.0_plflt
+         xerr2(i) = x(i)+60.0_plflt*5.0_plflt
+!     Set y error bars to +/- 0.1 deg C
+         yerr1(i) = y(i)-0.1_plflt
+         yerr2(i) = y(i)+0.1_plflt
       enddo
 
       call pladv(0)
+      
+!     Rescale major ticks marks by 0.5
+      call plsmaj(0.0_plflt,0.5_plflt)
+!     Rescale minor ticks and error bar marks by 0.5
+      call plsmin(0.0_plflt,0.5_plflt)
+
       call plvsta()
       call plwind(xmin, xmax, ymin, ymax)
 
@@ -78,11 +93,19 @@
 
       call plcol0(3)
       call pllab("Time (hours:mins)", "Temperature (degC)", &
-           "#frPLplot Example 29 - Daily temperature")
+           "@frPLplot Example 29 - Daily temperature")
       
       call plcol0(4)
 
       call plline(x(1:npts), y(1:npts))
+      call plcol0(2)
+      call plerrx(xerr1(1:npts), xerr2(1:npts), y(1:npts))
+      call plcol0(3)
+      call plerry(x(1:npts), yerr1(1:npts), yerr2(1:npts))
+
+!     Rescale major / minor tick marks back to default
+      call plsmin(0.0_plflt,1.0_plflt)
+      call plsmaj(0.0_plflt,1.0_plflt)
       
     end subroutine plot1
 
@@ -97,8 +120,8 @@
       integer ::  j, npts
       real(kind=plflt) :: xmin, xmax, ymin, ymax
       real(kind=plflt) :: lat, p, d
-      real(kind=plflt), dimension(365) :: x, y
-      common /plotdat/ x, y
+      real(kind=plflt), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
+      common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
 
 
       ! Latitude for London
@@ -128,16 +151,19 @@
       call plcol0(1)
 !     Set time format to be abbreviated month name followed by day of month
       call pltimefmt("%b %d")
+      call plprec(1,1)
       call plenv(xmin, xmax, ymin, ymax, 0, 40)
       
       call plcol0(3)
       call pllab("Date", "Hours of daylight", &
-           "#frPLplot Example 29 - Hours of daylight at 51.5N")
+           "@frPLplot Example 29 - Hours of daylight at 51.5N")
   
       call plcol0(4)
 
       call plline(x, y)
   
+      call plprec(0,0)
+
     end subroutine plot2
 
 !
@@ -151,8 +177,8 @@
       real(kind=plflt) :: xmin, xmax, ymin, ymax
       integer :: tstart, t1, t2
 !      real(kind=plflt) :: toff;
-      real(kind=plflt), dimension(365) :: x, y
-      common /plotdat/ x, y
+      real(kind=plflt), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
+      common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
 
 !     integer tm(9)
 
@@ -189,11 +215,12 @@
 
       call plcol0(3)
       call pllab("Date", "Hours of television watched", &
-           "#frPLplot Example 29 - Hours of television watched in " // &
+           "@frPLplot Example 29 - Hours of television watched in " // &
            "Dec 2005 / Jan 2006");
   
       call plcol0(4)
 
+      call plssym(0.0_plflt, 0.5_plflt)
       call plpoin(x(1:npts), y(1:npts), 2)
       call plline(x(1:npts), y(1:npts))
  

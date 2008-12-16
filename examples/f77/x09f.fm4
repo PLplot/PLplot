@@ -87,6 +87,7 @@ C      Build the 2-d coord arrays.
       call plinit
 
 C      Plot using identity transform
+      call pl_setcontlabelformat(4,3)
       call pl_setcontlabelparam(0.006d0, 0.3d0, 0.1d0, 1)
       call plenv(-1.0d0, 1.0d0, -1.0d0, 1.0d0, 0, 0)
       call plcol0(2)

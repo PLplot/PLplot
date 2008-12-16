@@ -39,7 +39,12 @@
 
       call plinit()
 
-      call plenv( 0._plflt, 10._plflt, 0._plflt, 10._plflt, 1, -2 )
+      call pladv(0)
+!     Ensure window has aspect ratio of one so circle is
+!     plotted as a circle.
+      call plvasp(1.0_plflt)
+      call plwind(0._plflt, 10._plflt, 0._plflt, 10._plflt)      
+!      call plenv( 0._plflt, 10._plflt, 0._plflt, 10._plflt, 1, -2 )
       call plcol0(2)
 
 !      n.b. all theta quantities scaled by 2*pi/500 to be integers to avoid

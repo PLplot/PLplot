@@ -59,6 +59,7 @@ C      Set up data array
 
       call plot1(z, XPTS, YPTS, zmin, zmax, xdim)
       call plot2(z, XPTS, YPTS, zmin, zmax, xdim)
+      call plot3()
 
       call plend()
       end
@@ -226,7 +227,19 @@ C -------------------------------------------------------------------------
       real*8  shade_min, shade_max, sh_color
       integer sh_cmap, sh_width
       integer min_color, min_width, max_color, max_width
-      integer i
+      integer i,j
+
+      integer nlin(10), inc(2,10), del(2,10)
+      data nlin /1, 1, 1, 1, 1, 2, 2, 2, 2, 2/
+      data ( (inc(i,j), i=1,2), j=1,10) /
+     &     450, 0, -450, 0, 0, 0, 900, 0, 
+     &     300, 0, 450,-450, 0, 900, 0, 450, 
+     &     450, -450, 0, 900/
+      data ( (del(i,j), i=1,2), j=1,10) /
+     &     2000, 2000, 2000, 2000, 2000, 2000, 
+     &     2000, 2000, 2000, 2000, 2000, 2000, 
+     &     2000, 2000, 2000, 2000, 4000, 4000,
+     &     4000, 2000/
 
       sh_cmap   = 0
       min_color = 0
@@ -245,7 +258,7 @@ C      Plot using identity transform
         shade_min = zmin + (zmax - zmin) * (i-1) / 10.0d0
         shade_max = zmin + (zmax - zmin) * i / 10.0d0
         sh_color = i+5
-        call plpsty(mod((i + 1),8) + 1)
+        call plpat(nlin(i),inc(1,i),del(1,i))
 C        Use_ plshade0 instead of plshade1 - identity mapping
         call plshade0(z, XPTS, YPTS, undefined,
      &    -1.d0, 1.d0, -1.d0, 1.d0,
@@ -258,6 +271,47 @@ C        Use_ plshade0 instead of plshade1 - identity mapping
       call plbox('bcnst', 0.0d0, 0, 'bcnstv', 0.0d0, 0)
       call plcol0(2)
       call pllab('distance', 'altitude', 'Bogon flux')
+      
+      end
+
+C--------------------------------------------------------------------------
+C     plot3
+C
+C     Illustrates shaded regions in 3d, using a different fill pattern for 
+C     each region.  
+C--------------------------------------------------------------------------
+
+      subroutine plot3
+      implicit none
+      real*8 xx1(5), xx2(5), yy1(5), yy2(5), zz1(5), zz2(5)
+      data xx1 / -1.0d0, 1.0d0, 1.0d0, -1.0d0, -1.0d0/
+      data xx2 / -1.0d0, 1.0d0, 1.0d0, -1.0d0, -1.0d0/
+      data yy1 /1.0d0, 1.0d0, 0.0d0, 0.0d0, 1.0d0/
+      data yy2 / -1.0d0, -1.0d0, 0.0d0, 0.0d0, -1.0d0/
+      data zz1 / 0.0d0, 0.0d0, 1.0d0, 1.0d0, 0.0d0/
+      data zz2 / 0.0d0, 0.0d0, 1.0d0, 1.0d0, 0.0d0/
+
+      call pladv(0)
+      call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
+      call plwind(-1.0d0, 1.0d0, -1.0d0, 1.0d0)
+      call plw3d(1.d0, 1.d0, 1.d0, -1.0d0, 1.0d0, -1.0d0, 1.0d0, 0.0d0, 
+     &     1.5d0, 30.d0, -40.d0)
+
+C     Plot using identity transform 
+    
+      call plcol0(1)
+      call plbox3("bntu", "X", 0.0d0, 0, "bntu", "Y", 0.0d0, 0, 
+     &     "bcdfntu", "Z", 0.5d0, 0)
+      call plcol0(2)
+      call pllab("","","3-d polygon filling")
+
+      call plcol0(3)
+      call plpsty(1)
+      call plline3(5, xx1, yy1, zz1)
+      call plfill3(4, xx1, yy1, zz1)
+      call plpsty(2)
+      call plline3(5, xx2, yy2, zz2)
+      call plfill3(4, xx2, yy2, zz2)
 
       end
 

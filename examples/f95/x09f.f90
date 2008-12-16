@@ -84,6 +84,7 @@
       call plinit
 
 !      Plot using identity transform
+      call pl_setcontlabelformat(4,3)
       call pl_setcontlabelparam(0.006_plflt, 0.3_plflt, 0.1_plflt, 1)
       call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
       call plcol0(2)

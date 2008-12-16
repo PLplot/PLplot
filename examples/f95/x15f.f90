@@ -58,6 +58,7 @@
 
       call plot1(z, XPTS, YPTS, zmin, zmax, xdim)
       call plot2(z, XPTS, YPTS, zmin, zmax, xdim)
+      call plot3()
 
       call plend()
       end
@@ -217,8 +218,20 @@
       real(kind=plflt)  shade_min, shade_max, sh_color
       integer sh_cmap, sh_width
       integer min_color, min_width, max_color, max_width
-      integer i
+      integer i, j
 
+      integer nlin(10), inc(2,10), del(2,10)
+      data nlin /1, 1, 1, 1, 1, 2, 2, 2, 2, 2/
+      data ( (inc(i,j), i=1,2), j=1,10) / &
+           450, 0, -450, 0, 0, 0, 900, 0, &
+           300, 0, 450,-450, 0, 900, 0, 450, & 
+           450, -450, 0, 900/
+      data ( (del(i,j), i=1,2), j=1,10) / &
+           2000, 2000, 2000, 2000, 2000, 2000, &
+           2000, 2000, 2000, 2000, 2000, 2000, &
+           2000, 2000, 2000, 2000, 4000, 4000, &
+           4000, 2000/
+      
       sh_cmap   = 0
       min_color = 0
       min_width = 0
@@ -236,7 +249,7 @@
         shade_min = zmin + (zmax - zmin) * (i-1) / 10.0_plflt
         shade_max = zmin + (zmax - zmin) * i / 10.0_plflt
         sh_color = i+5
-        call plpsty(mod((i + 1),8) + 1)
+        call plpat(nlin(i),inc(1,i),del(1,i))
 !        Use_ plshade0 instead of plshade1 - identity mapping
         call plshade(z(:XPTS,:YPTS), undefined, &
           -1._plflt, 1._plflt, -1._plflt, 1._plflt, &
@@ -249,6 +262,48 @@
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
       call plcol0(2)
       call pllab('distance', 'altitude', 'Bogon flux')
+
+      end
+!--------------------------------------------------------------------------
+!     plot3
+!
+!     Illustrates shaded regions in 3d, using a different fill pattern for 
+!     each region.  
+!--------------------------------------------------------------------------
+
+      subroutine plot3
+      use plplot
+      implicit none
+
+      real(kind=plflt) xx1(5), xx2(5), yy1(5), yy2(5), zz1(5), zz2(5)
+      data xx1 / -1.0_plflt, 1.0_plflt, 1.0_plflt, -1.0_plflt, -1.0_plflt/
+      data xx2 / -1.0_plflt, 1.0_plflt, 1.0_plflt, -1.0_plflt, -1.0_plflt/
+      data yy1 /1.0_plflt, 1.0_plflt, 0.0_plflt, 0.0_plflt, 1.0_plflt/
+      data yy2 / -1.0_plflt, -1.0_plflt, 0.0_plflt, 0.0_plflt, -1.0_plflt/
+      data zz1 / 0.0_plflt, 0.0_plflt, 1.0_plflt, 1.0_plflt, 0.0_plflt/
+      data zz2 / 0.0_plflt, 0.0_plflt, 1.0_plflt, 1.0_plflt, 0.0_plflt/
+
+      call pladv(0)
+      call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
+      call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
+      call plw3d(1._plflt, 1._plflt, 1._plflt, -1.0_plflt, 1.0_plflt, &
+           -1.0_plflt, 1.0_plflt, 0.0_plflt,1.5_plflt, 30._plflt, -40._plflt)
+
+!     Plot using identity transform 
+    
+      call plcol0(1)
+      call plbox3("bntu", "X", 0.0_plflt, 0, "bntu", "Y", 0.0_plflt, 0, &
+           "bcdfntu", "Z", 0.5_plflt, 0)
+      call plcol0(2)
+      call pllab("","","3-d polygon filling")
+
+      call plcol0(3)
+      call plpsty(1)
+      call plline3(xx1, yy1, zz1)
+      call plfill3(xx1(1:4), yy1(1:4), zz1(1:4))
+      call plpsty(2)
+      call plline3(xx2, yy2, zz2)
+      call plfill3(xx2(1:4), yy2(1:4), zz2(1:4))
 
       end
 
