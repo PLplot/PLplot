@@ -72,7 +72,7 @@ endfor
 #(and should probably be dropped anyway since the map stuff is not
 #in the API that is supposed to be common to all front ends.)
 failed = [];
-for i=[1:13 15 16 18 20:30 ];
+for i=[1:13 15 16 18 20:31 ];
     cmd = sprintf("x%.2dc",i);
     if (verbose_test)
       printf("%s\n",cmd);

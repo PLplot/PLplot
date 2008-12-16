@@ -73,6 +73,7 @@ x27c.m
 x28c.m
 x29c.m
 x30c.m
+x31c.m
 lena.img
 )
 
