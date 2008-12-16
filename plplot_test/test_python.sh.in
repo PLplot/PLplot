@@ -32,7 +32,7 @@
 # Skip 21 if using Numeric - it doesn't work
 # For 24 you need special fonts installed to get good result.
 for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 \
-20 22 23 24 25 26 27 28 29 30 @NUMPY_EXAMPLES@ ; do
+20 22 23 24 25 26 27 28 29 30 31 @NUMPY_EXAMPLES@ ; do
   if [ "$verbose_test" ]; then
     echo "x${index}"
   fi

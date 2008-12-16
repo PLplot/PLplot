@@ -48,6 +48,7 @@ set(python_STRING_INDICES
 "28"
 "29"
 "30"
+"31"
 )
 
 set(python_SCRIPTS)
