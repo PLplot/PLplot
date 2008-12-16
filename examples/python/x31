@@ -1,54 +1,9 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2004  Alan W. Irwin
-# Copyright (C) 2004  Andrew Ross
-#
-# This file is part of PLplot.
-#
-# PLplot is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Library General Public License as published
-# by the Free Software Foundation; version 2 of the License.
-#
-# PLplot is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Library General Public License for more details.
-#
-# You should have received a copy of the GNU Library General Public License
-# along with the file PLplot; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+# This is a standalone example since at least one of the tests spans
+# plinit so must be done in the same module.
 
-
-# Run all python plplot examples non-interactively.
-
-# Append to effective python path so that can find plplot modules.
-from plplot_python_start import *
-
-import sys
-from plplot import *
-
-# Parse and process command line arguments
-plparseopts(sys.argv, PL_PARSE_FULL)
-
-# Test setting / getting page size.
-(xp, yp, xleng, yleng, xoff, yoff) = plgpage()
-xp2 = xp*0.9
-yp2 = yp*0.9
-xleng2 = int(xleng*0.9)
-yleng2 = int(yleng*0.9)
-plspage(xp2, yp2, xleng2, yleng2, xoff, yoff)
-(xp, yp, xleng, yleng, xoff, yoff) = plgpage()
-if xp != xp2*1.1 || yp != yp2 || xleng != xleng2 || yleng != yleng2:
-    sys.stderr.write("plgpage test failed\n")
-    plend()
-    sys.exit(1)
-                  
-
-# Initialize plplot
-plinit()
-
+# However, provide this wrapper for the standalone module so that it
+# can be run just like the other python examples that are not standalone.
 import xw31
-
-# Terminate plplot
-plend()
 

@@ -48,7 +48,6 @@ set(python_STRING_INDICES
 "28"
 "29"
 "30"
-"31"
 )
 
 set(python_SCRIPTS)
@@ -66,9 +65,11 @@ ${python_SCRIPTS}
 pythondemos.py
 x14
 x17
+x31
 prova.py
 xw14.py
 xw17.py
+xw31.py
 plplot_logo.py
 )
 
