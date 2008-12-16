@@ -71,6 +71,10 @@ x03::x03( int argc, const char ** argv ) {
   // Parse and process command line arguments.
   pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
+  // Set orientation to landscape - note not all device drivers 
+  // support this, in particular most interactive drivers do not.
+  pls->sori(1);
+
   // Initialize PLplot.
   pls->init();
 

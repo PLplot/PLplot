@@ -55,6 +55,7 @@ set(cxx_STRING_INDICES
 "28"
 "29"
 "30"
+"31"
 )
 
 if(BUILD_TEST)
