@@ -4306,7 +4306,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Gets the current page configuration. The parameters are expressed
+      Gets the current page configuration. The length and offset values are expressed
       in units that are specific to the current driver. For instance:
       screen drivers will usually interpret them as number of pixels,
       whereas printer drivers will usually use mm.
@@ -4320,7 +4320,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to number of pixels in x.
+	    Pointer to number of pixels/inch (DPI), x.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4331,7 +4331,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to number of pixels in y.
+	    Pointer to number of pixels/inch (DPI) in y.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -12054,10 +12054,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Sets the page configuration (optional).  Not all parameters are
+      Sets the page configuration (optional).  If an individual parameter
+      is zero then that parameter value is not updated.  Not all parameters are
       recognized by all drivers and the interpretation is device-dependent.
       The X-window driver uses the length and offset parameters to determine
-      the window size and location.  This routine, if used, must be called
+      the window size and location.  The length and offset values are expressed
+      in units that are specific to the current driver. For instance:
+      screen drivers will usually interpret them as number of pixels,
+      whereas printer drivers will usually use mm.
+      This routine, if used, must be called
       before initializing PLplot.
     </para>
 
