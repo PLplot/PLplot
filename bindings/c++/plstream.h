@@ -373,7 +373,7 @@ class PLDLLIMPEXP_CXX plstream {
 
 /* Get z axis labeling parameters */
 
-    void gzax( PLINT *p_digmax, PLINT *p_digits );
+    void gzax( PLINT& digmax, PLINT& digits );
 
 /* Draws a histogram of n values of a variable in array data[0..n-1] */
 

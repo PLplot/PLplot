@@ -864,11 +864,11 @@ void plstream::gyax( PLINT& digmax, PLINT& digits )
 
 /* Get z axis labeling parameters */
 
-void plstream::gzax( PLINT *p_digmax, PLINT *p_digits )
+void plstream::gzax( PLINT& digmax, PLINT& digits )
 {
     set_stream();
 
-    plgzax(p_digmax, p_digits);
+    plgzax( &digmax, &digits );
 }
 
 /* Draws a histogram of n values of a variable in array data[0..n-1] */
