@@ -19,7 +19,7 @@ main(int argc, const char *argv[])
   PLINT win, level, digmax, digits, compression;
   PLFLT xp, yp, xp2, yp2;
   PLINT xleng, yleng, xoff, yoff, xleng2, yleng2;
-  PLINT fam, num, bmax, r, g, b;
+  PLINT fam, num, bmax, fam1, num1, bmax1, r, g, b;
   PLFLT a;
   PLINT r1[] = {0, 255};
   PLINT g1[] = {255, 0};
@@ -53,13 +53,15 @@ main(int argc, const char *argv[])
     exit(1);
   }
 
-  plsfam(1,1,100000);
   plgfam(&fam, &num, &bmax);
-  if (fam != 1 || num != 1 || bmax != 100000) {
+  plsfam(1,1,100000);
+  plgfam(&fam1, &num1, &bmax1);
+  if (fam1 != 1 || num1 != 1 || bmax1 != 100000) {
     fputs("plgfam test failed\n",stderr);
     plend();
     exit(1);
   }
+  plsfam(fam, num, bmax);
 
   /* Initialize plplot */
 

@@ -60,7 +60,7 @@ main(int argc, const char *argv[])
   /* Initialize plplot */
   plinit();
 
-  /* Change the escape character to a '@' instead of the default '#'
+  /* Change the escape character to a '@' instead of the default '#' */
   plsesc('@');
 
   plot1();
