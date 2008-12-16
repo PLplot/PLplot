@@ -52,6 +52,7 @@ set(f95_STRING_INDICES
 "28"
 "29"
 "30"
+"31"
 )
 
 # Process fortran header file to define isnan
