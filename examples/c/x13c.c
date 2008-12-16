@@ -46,7 +46,7 @@ main(int argc, const char *argv[])
      * plotted as a circle. */
     plvasp(1.0);
     plwind(0., 10., 0., 10.);
-    //plenv(0., 10., 0., 10., 1, -2);
+    /* plenv(0., 10., 0., 10., 1, -2); */
     plcol0(2);
     /* n.b. all theta quantities scaled by 2*M_PI/500 to be integers to avoid
      * floating point logic problems. */
