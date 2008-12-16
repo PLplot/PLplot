@@ -14,6 +14,6 @@ exec pltcl -f "$0" ${1+"$@"}
 
 source x01.tcl
 
-plinit
+plstar 2 2
 x01
 plend

@@ -1,4 +1,4 @@
-# $Id:$
+# $Id$
 #
 #       Sample plots using date / time formatting for axes
 #
@@ -35,6 +35,8 @@
 
 proc x29 {{w loopback}} {
 
+    $w cmd plsesc "@"
+
     x29_plot1 $w
 
     x29_plot2 $w
@@ -49,10 +51,14 @@ proc x29_plot1 {{w loopback}} {
     set pi 3.14159265358979323846    
 
     # Data points every 10 minutes for 1 day
-    set npts 145
+    set npts 73
     
     matrix x f $npts
     matrix y f $npts
+    matrix xerr1 f $npts
+    matrix xerr2 f $npts
+    matrix yerr1 f $npts
+    matrix yerr2 f $npts
     
     set xmin 0
     # Number of seconds in a day
@@ -61,11 +67,20 @@ proc x29_plot1 {{w loopback}} {
     set ymax 20.0
     
     for {set i 0} {$i<$npts} {incr i} {
-	x $i = [expr {$xmax*double($i)/double($npts)}]
-	y $i = [expr {15.0 - 5.0*cos( 2*$pi*double($i)/double($npts))}]
+	set xx [expr {$xmax*double($i)/double($npts)}]
+	set yy [expr {15.0 - 5.0*cos( 2*$pi*double($i)/double($npts))}]
+        x $i = $xx
+        y $i = $yy
+        xerr1 $i = [expr {$xx - 60.0*5.0}]
+        xerr2 $i = [expr {$xx + 60.0*5.0}]
+        yerr1 $i = [expr {$yy - 0.1}]
+        yerr2 $i = [expr {$yy + 0.1}]
     }
   
     $w cmd pladv 0
+
+    $w cmd plsmaj 0.0 0.5
+    $w cmd plsmin 0.0 0.5
 
     $w cmd plvsta
     $w cmd plwind $xmin $xmax $ymin $ymax
@@ -78,11 +93,18 @@ proc x29_plot1 {{w loopback}} {
 
     $w cmd plcol0 3
     $w cmd pllab "Time (hours:mins)" "Temperature (degC)" \
-	"#frPLplot Example 29 - Daily temperature"
+	"@frPLplot Example 29 - Daily temperature"
   
     $w cmd plcol0 4
 
     $w cmd plline $npts x y
+    $w cmd plcol0 2
+    $w cmd plerrx $npts xerr1 xerr2 y
+    $w cmd plcol0 3
+    $w cmd plerry $npts x yerr1 yerr2
+
+    $w cmd plsmaj 0.0 1.0
+    $w cmd plsmin 0.0 1.0
 }
 
 # Plot the number of hours of daylight as a function of day for a year
@@ -119,17 +141,19 @@ proc x29_plot2 {{w loopback}} {
     $w cmd plcol0 1
     # Set time format to be abbreviated month name followed by day of month
     $w cmd pltimefmt "%b %d"
+    $w cmd plprec 1 1
     $w cmd plenv $xmin $xmax $ymin $ymax 0 40
 
 
     $w cmd plcol0 3
     $w cmd pllab "Date" "Hours of daylight" \
-	"#frPLplot Example 29 - Hours of daylight at 51.5N"
+	"@frPLplot Example 29 - Hours of daylight at 51.5N"
   
     $w cmd plcol0 4
 
     $w cmd plline $npts x y
-  
+
+    $w cmd plprec 0 0
 }
 
 proc x29_plot3 {{w loopback}} {
@@ -174,10 +198,11 @@ proc x29_plot3 {{w loopback}} {
     
     $w cmd plcol0 3
     $w cmd pllab "Date" "Hours of television watched" \
-	"#frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006"
+	"@frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006"
   
     $w cmd plcol0 4
 
+    $w cmd plssym 0.0 0.5
     $w cmd plpoin $npts x y 2
     $w cmd plline $npts x y
  

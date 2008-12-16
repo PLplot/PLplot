@@ -20,7 +20,10 @@ proc x13 {{w loopback}} {
     matrix y f 500
     matrix per f 5 = {10., 32., 12., 30., 16.}
 
-    $w cmd plenv 0. 10. 0. 10. 1 -2
+    $w cmd pladv 0
+    $w cmd plvasp 1.
+    $w cmd plwind 0. 10. 0. 10. 
+    # $w cmd plenv 0. 10. 0. 10. 1 -2
     $w cmd plcol0 2
 
     set theta0 0.;
