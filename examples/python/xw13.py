@@ -12,7 +12,12 @@ text = ["Maurice",
 
 def main():
 
-    plenv(0., 10., 0., 10., 1, -2)
+    pladv(0)
+    # Ensure window has aspect ratio of one so circle is
+    # plotted as a circle.
+    plvasp(1.0)
+    plwind(0., 10., 0., 10.)
+    #plenv(0., 10., 0., 10., 1, -2)
     plcol0(2)
     #if these don't add up to 100, the logic adds to the last to make
     #up the balance.

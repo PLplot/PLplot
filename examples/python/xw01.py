@@ -19,9 +19,8 @@ def main():
     # essentially a nop.  However, for the case when other examples are run 
     # first, this call to pladv is absolutely essential to finish the 
     # preceding page.
-    pladv(0)
-    # Do plots on 4 subwindows of the first page
-    plssub(2, 2)
+    # This is not needed if we use plstar?
+    #pladv(0)
 
     # Do a plot with one range of data
 

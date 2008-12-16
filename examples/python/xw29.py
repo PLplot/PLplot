@@ -39,6 +39,8 @@ import calendar
 #--------------------------------------------------------------------------
 
 def main():
+
+  plsesc('@')
   
   plot1()
 
@@ -51,7 +53,7 @@ def main():
 def plot1():
 
   # Data points every 10 minutes for 1 day 
-  npts = 145;
+  npts = 73;
 
   xmin = 0.0;
   xmax = 60.0*60.0*24.0;    # Number of seconds in a day 
@@ -60,8 +62,15 @@ def plot1():
 
   x = xmax*arange(npts)/float(npts)
   y = 15.0 - 5.0*cos(2*pi*x/xmax)
+  xerr1 = x-60.0*5.0
+  xerr2 = x+60.0*5.0
+  yerr1 = y-0.1
+  yerr2 = y+0.1
 
   pladv(0)
+
+  plsmaj(0.0,0.5)
+  plsmin(0.0,0.5)
 
   plvsta()
   plwind(xmin, xmax, ymin, ymax)
@@ -73,12 +82,18 @@ def plot1():
   plbox("bcnstd", 3.0*60*60, 3, "bcnstv", 1, 5)
 
   plcol0(3)
-  pllab("Time (hours:mins)", "Temperature (degC)", "#frPLplot Example 29 - Daily temperature")
+  pllab("Time (hours:mins)", "Temperature (degC)", "@frPLplot Example 29 - Daily temperature")
   
   plcol0(4)
 
   plline(x, y)
+  plcol0(2)
+  plerrx(xerr1,xerr2,y)
+  plcol0(3)
+  plerry(x,yerr1,yerr2)
 
+  plsmin(0.0,1.0)
+  plsmaj(0.0,1.0)
 
 # Plot the number of hours of daylight as a function of day for a year 
 def plot2():
@@ -104,16 +119,18 @@ def plot2():
   plcol0(1)
   # Set time format to be abbreviated month name followed by day of month 
   pltimefmt("%b %d")
+  plprec(1,1)
   plenv(xmin, xmax, ymin, ymax, 0, 40)
 
 
   plcol0(3)
-  pllab("Date", "Hours of daylight", "#frPLplot Example 29 - Hours of daylight at 51.5N")
+  pllab("Date", "Hours of daylight", "@frPLplot Example 29 - Hours of daylight at 51.5N")
   
   plcol0(4)
 
   plline(x, y)
   
+  plprec(0,0)
 
 
 def plot3():
@@ -146,10 +163,11 @@ def plot3():
   plbox("bcnstd", 14*24.0*60.0*60.0,14, "bcnstv", 1, 4)
 
   plcol0(3)
-  pllab("Date", "Hours of television watched", "#frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006")
+  pllab("Date", "Hours of television watched", "@frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006")
   
   plcol0(4)
 
+  plssym(0.0,0.5)
   plpoin(x, y, 2)
   plline(x, y)
 	    
