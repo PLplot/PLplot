@@ -213,7 +213,10 @@ main(int argc, const char *argv[])
   plsdiplz(0.1, 0.1, 0.9, 0.9);
   plgdiplt(&zxmin, &zymin, &zxmax, &zymax);
   printf("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f \n", zxmin, zymin, zxmax, zymax);
-  if (zxmin != xmin + (xmax-xmin)*0.1 || zxmax != xmin+(xmax-xmin)*0.9 || zymin != ymin+(ymax-ymin)*0.1 || zymax != ymin+(ymax-ymin)*0.9) {
+  if ( fabs(zxmin -(xmin + (xmax-xmin)*0.1)) > 1.0E-5 || 
+       fabs(zxmax -(xmin+(xmax-xmin)*0.9)) > 1.0E-5 || 
+       fabs(zymin -(ymin+(ymax-ymin)*0.1)) > 1.0E-5 || 
+       fabs(zymax -(ymin+(ymax-ymin)*0.9)) > 1.0E-5 ) {
     fputs("plsdiplz test failed\n",stderr);
     plend();
     exit(1);

@@ -187,7 +187,7 @@ def main():
     plsdiplz(0.1, 0.1, 0.9, 0.9)
     (zxmin, zymin, zxmax, zymax) = plgdiplt()
     sys.stdout.write("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f \n" % (zxmin, zymin, zxmax, zymax))
-    if zxmin != xmin+(xmax-xmin)*0.1 or zxmax != xmin+(xmax-xmin)*0.9 or zymin != ymin+(ymax-ymin)*0.1 or zymax != ymin+(ymax-ymin)*0.9:
+    if abs(zxmin -(xmin + (xmax-xmin)*0.1)) > 1.0E-5 or abs(zxmax -(xmin+(xmax-xmin)*0.9)) > 1.0E-5 or abs(zymin -(ymin+(ymax-ymin)*0.1)) > 1.0E-5 or abs(zymax -(ymin+(ymax-ymin)*0.9)) > 1.0E-5 :
         sys.stderr.write("plsdiplz test failed\n")
         plend()
         sys.exit(1)
