@@ -84,9 +84,6 @@ EOT
   unshift (@ARGV, $0);
 
   # plplot initialization
-  # Divide page into 2x2 plots unless user overrides
-
-  plssub (2, 2);
 
   # Parse and process command line arguments
 
@@ -98,8 +95,8 @@ EOT
   print STDOUT "PLplot library version: $ver\n";
 
   # Initialize plplot
-
-  plinit;
+  # Divide page into 2x2 plots unless user overrides
+  plstar (2, 2);
 
   # Select font set as per input flag
 

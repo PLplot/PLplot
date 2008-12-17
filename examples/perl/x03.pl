@@ -37,6 +37,10 @@ my $y0 = sin ($dtr * sequence (361));
 
 plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
+# Set orientation to landscape - note not all device drivers
+# support this, in particular most interactive drivers do not
+plsori(1);
+
 # Initialize plplot
 
 plinit ();
