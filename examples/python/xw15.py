@@ -44,6 +44,7 @@ def main():
     
     plot1(z, zmin, zmax)
     plot2(z, zmin, zmax)
+    plot3()
     
     # Restore defaults
     #plcol0(1)
@@ -82,6 +83,15 @@ def plot2(z, zmin, zmax):
 # Illustrates multiple adjacent shaded regions, using different fill
 # patterns for each region.
 
+    nlin = array( [1, 1, 1, 1, 1, 2, 2, 2, 2, 2] )
+    inc = array( [ [450, 0], [-450, 0], [0, 0], [900, 0], 
+                 [300, 0], [450,-450], [0, 900], [0, 450], 
+                 [450, -450], [0, 900] ] )
+    spa = array( [ [2000, 2000], [2000, 2000], [2000, 2000], 
+                 [2000, 2000], [2000, 2000], [2000, 2000], 
+                 [2000, 2000], [2000, 2000], [4000, 4000], 
+                 [4000, 2000] ] )
+
     pladv(0)
     plvpor(0.1, 0.9, 0.1, 0.9)
     plwind(-1.0, 1.0, -1.0, 1.0)
@@ -97,7 +107,8 @@ def plot2(z, zmin, zmax):
 	shade_min = zmin + (zmax - zmin) * i / 10.0
 	shade_max = zmin + (zmax - zmin) * (i +1) / 10.0
 	sh_color = i+6
-	plpsty((i + 2) % 8 + 1)
+        n = nlin[i]
+	plpat(inc[i][0:n], spa[i][0:n])
     
 	# Just use identity transform on indices of z mapped to -1, 1 range
 	# in X and Y coordinates
@@ -109,5 +120,36 @@ def plot2(z, zmin, zmax):
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)
     plcol0(2)
     pllab("distance", "altitude", "Bogon flux")
+
+def plot3():
+# Illustrates shaded regions in 3d, using a different fill pattern for 
+# each region.  
+    xx = array( [ [-1.0, 1.0, 1.0, -1.0, -1.0],
+                  [-1.0, 1.0, 1.0, -1.0, -1.0] ] )
+    yy = array( [ [1.0, 1.0, 0.0, 0.0, 1.0], 
+                [-1.0, -1.0, 0.0, 0.0, -1.0] ] )
+    zz = array( [ [0.0, 0.0, 1.0, 1.0, 0.0], 
+                  [0.0, 0.0, 1.0, 1.0, 0.0] ] )
+
+    pladv(0)
+    plvpor(0.1, 0.9, 0.1, 0.9)
+    plwind(-1.0, 1.0, -1.0, 1.0)
+    plw3d(1., 1., 1., -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30, -40)
+
+    # Plot using identity transform
+    
+    plcol0(1)
+    plbox3("bntu", "X", 0.0, 0, "bntu", "Y", 0.0, 0, "bcdfntu", "Z", 0.5, 0)
+    plcol0(2)
+    pllab("","","3-d polygon filling")
+
+    plcol0(3)
+    plpsty(1)
+    plline3(xx[0], yy[0], zz[0])
+    plfill3(xx[0][0:4], yy[0][0:4], zz[0][0:4])
+    plpsty(2)
+    plline3(xx[1], yy[1], zz[1])
+    plfill3(xx[1][0:4], yy[1][0:4], zz[1][0:4])
+
 
 main()
