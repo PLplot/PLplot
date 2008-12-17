@@ -99,8 +99,8 @@ def main():
     sys.stdout.write("level parameter = %d\n" % level2)
     if level2 != 1:
         sys.stderr.write("plglevel test failed.\n")
-        plend();
-        sys.exit(1);
+        plend()
+        sys.exit(1)
 
     pladv(0)
     plvpor(0.01, 0.99, 0.02, 0.49)
@@ -110,6 +110,8 @@ def main():
         sys.stderr.write("plgvpd test failed\n")
         plend()
         sys.exit(1)
+    xmid = 0.5*(xmin+xmax)
+    ymid = 0.5*(ymin+ymax)
 
     plwind(0.2, 0.3, 0.4, 0.5)
     (xmin, xmax, ymin, ymax) = plgvpw()
@@ -119,11 +121,10 @@ def main():
         plend()
         sys.exit(1)
 
-    # Get world coordinates for 0.5,0.5 which is in the middle of 
-    # the window.
-    (wx, wy, win) = plcalc_world(0.5,0.5)
+    # Get world coordinates for middle of viewport
+    (wx, wy, win) = plcalc_world(xmid,ymid)
     sys.stdout.write("world parameters: wx, wy, win = %f %f %d \n" % (wx, wy, win))
-    if abs(wx-0.25) > 1.0E-5 or abs(wy-0.45) > 1.0E-5:
+    if abs(wx-0.5*(xmin+xmax)) > 1.0E-5 or abs(wy-0.5*(ymin+ymax)) > 1.0E-5:
         sys.stderr.write("plcalc_world test failed\n")
         # Temporary comment out because this test always fails for some
         # reason which is still being investigated.
@@ -132,7 +133,7 @@ def main():
 
     # Retrieve and print the name of the output file (if any)
     fnam = plgfnam()
-    sys.stdout.write("Output file name is %s\n" % fnam)
+    sys.stderr.write("Output file name is %s\n" % fnam)
 
     # Set and get the number of digits used to display axis labels
     # Note digits is currently ignored in pls[xyz]ax and 
@@ -161,10 +162,10 @@ def main():
         plend()
         sys.exit(1)
 
-    plsdidev(0.05, PL_NOTSET, 10.0, 20.0)
+    plsdidev(0.05, PL_NOTSET, 0.1, 0.2)
     (mar, aspect, jx, jy) = plgdidev()
     sys.stdout.write("device-space window parameters: mar, aspect, jx, jy = %f %f %f %f \n" % (mar, aspect, jx, jy))
-    if mar != 0.05 or jx != 10.0 or jy != 20.0:
+    if mar != 0.05 or jx != 0.1 or jy != 0.2:
         sys.stderr.write("plgdidev test failed\n")
         # Temporary comment out because this test always fails for some
         # reason which is still being investigated.
