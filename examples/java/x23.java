@@ -298,7 +298,7 @@ class x23 {
 	pls.gfci(fci_old);
 	pls.gfont(ifamily, istyle, iweight);
 	System.out.println("For example 23 prior to page 12 the FCI is 0x"+Long.toHexString(fci_old[0]));
-	System.out.println("For example 23 prior to page 12 the family, style and weight are  "+family[ifamily[0]]+" "+ style[istyle[0]]+ " "+ weight[iweight[0]]);;
+	System.out.println("For example 23 prior to page 12 the font family, style and weight are  "+family[ifamily[0]]+" "+ style[istyle[0]]+ " "+ weight[iweight[0]]);;
 
 	for (page=11; page<16; page++) {
 	    double dy = 0.030;
