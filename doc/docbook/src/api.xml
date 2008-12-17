@@ -10043,7 +10043,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Relative justification in x.
+	    Relative justification in x. Value must lie in the
+            range -0.5 to 0.5.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -10054,7 +10055,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Relative justification in y.
+	    Relative justification in y. Value must lie in the
+            range -0.5 to 0.5.
 	  </para>
 	</listitem>
       </varlistentry>
