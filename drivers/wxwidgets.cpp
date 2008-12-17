@@ -671,22 +671,24 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
       dev->ProcessString( pls, (EscText *)ptr );
     break;
 
-  case PLESC_RESIZE: {
+  case PLESC_RESIZE:
+  	{
     	wxSize* size=(wxSize*)ptr;
     	wx_set_size( pls, size->GetWidth(), size->GetHeight() );
 		}
     break;
 
-	case PLESC_CLEAR: {
-      /* Since the plot is updated only every MAX_COMCOUNT commands (usually 5000)
-         before we clear the screen we need to show the plot at least once :) */
-      if( !(dev->resizing) && dev->ownGUI ) {
-          wxRunApp( pls, true );
-          dev->comcount=0;
-      }
-			dev->ClearBackground( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b,
-                            pls->sppxmi, pls->sppymi, pls->sppxma, pls->sppyma );
+	case PLESC_CLEAR:
+		if( !(dev->ready) )
+			install_buffer( pls );
+		/* Since the plot is updated only every MAX_COMCOUNT commands (usually 5000)
+			 before we clear the screen we need to show the plot at least once :) */
+		if( !(dev->resizing) && dev->ownGUI ) {
+				wxRunApp( pls, true );
+				dev->comcount=0;
 		}
+		dev->ClearBackground( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b,
+													pls->sppxmi, pls->sppymi, pls->sppxma, pls->sppyma );
 		break;
   
   case PLESC_GETC:
