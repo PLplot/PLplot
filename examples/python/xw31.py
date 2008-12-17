@@ -30,7 +30,17 @@ from plplot import *
 # Parse and process command line arguments
 plparseopts(sys.argv, PL_PARSE_FULL)
 
-# Test setting / getting page size across plinit.
+# Test setting / getting compression parameter across plinit.
+compression1 = 100
+plscompression(compression1)
+
+# Test setting / getting familying parameters across plinit.
+fam1 = True
+num1 = 10
+bmax1 = 1000
+plsfam(fam1, num1, bmax1)
+          
+# Test setting / getting page parameters across plinit.
 xp1 = 200.
 yp1 = 200.
 xleng1 = 400
@@ -39,28 +49,6 @@ xoff1 = 10
 yoff1 = 20
 plspage(xp1, yp1, xleng1, yleng1, xoff1, yoff1)
 
-compression = plgcompression()
-compression1 = compression + 100
-plscompression(compression1)
-compression2 = plgcompression()
-if compression2 != compression1:
-    sys.stderr.write("plgcompression test failed\n")
-    plend()
-    sys.exit(1)
-plscompression(compression)
-
-(fam, num, bmax) = plgfam()
-fam1 = fam + 100
-num1 = num + 100
-bmax1 = bmax + 100
-plsfam(fam1, num1, bmax1)
-(fam2, num2, bmax2) = plgfam()
-if fam2 != fam1  or num2 != num1 or bmax2 != bmax1:
-    sys.stderr.write("plgfam test failed\n")
-    plend()
-    sys.exit(1)
-plsfam(fam, num, bmax)
-          
 # Initialize plplot
 plinit()
 
@@ -68,9 +56,29 @@ from plplot_py_demos import *
 
 def main():
 
+    # Test if device initialization screwed around with the preset
+    # compression parameter.
+    compression2 = plgcompression()
+    sys.stdout.write("Output various PLplot parameters\n")
+    sys.stdout.write("compression parameter = %d\n" % compression2)
+    if compression2 != compression1:
+        sys.stderr.write("plgcompression test failed\n")
+        plend()
+        sys.exit(1)
+
+    # Test if device initialization screwed around with any of the
+    # preset familying values.
+    (fam2, num2, bmax2) = plgfam()
+    sys.stdout.write("family parameters: fam, num, bmax = %d %d %d\n" % (fam2, num2, bmax2))
+    if fam2 != fam1  or num2 != num1 or bmax2 != bmax1:
+        sys.stderr.write("plgfam test failed\n")
+        plend()
+        sys.exit(1)
+
     # Test if device initialization screwed around with any of the
     # preset page values.
     (xp2, yp2, xleng2, yleng2, xoff2, yoff2) = plgpage()
+    sys.stdout.write("page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n" % (xp2, yp2, xleng2, yleng2, xoff2, yoff2))
     if xp2 != xp1 or yp2 != yp1 or xleng2 != xleng1 or yleng2 != yleng1 or xoff2 != xoff1 or yoff2 != yoff1:
         sys.stderr.write("plgpage test failed\n")
         plend()
@@ -87,19 +95,126 @@ def main():
     plscmap1(r1,g1,b1)
     plscmap1a(r1,g1,b1,a1)
 
-    level = plglevel()
-    if level != 1:
+    level2 = plglevel()
+    sys.stdout.write("level parameter = %d\n" % level2)
+    if level2 != 1:
         sys.stderr.write("plglevel test failed. Level is %d, but 1 expected.\n" % level)
         plend();
         sys.exit(1);
 
     pladv(0)
-    plvpor(0.0, 1.0, 0.0, 1.0)
+    plvpor(0.01, 0.99, 0.02, 0.49)
+    (xmin, xmax, ymin, ymax) = plgvpd()
+    sys.stdout.write("plvpor: xmin, xmax, ymin, ymax = %f %f %f %f \n" % (xmin, xmax, ymin, ymax))
+    if xmin != 0.01 or xmax != 0.99 or ymin != 0.02 or ymax != 0.49:
+        sys.stderr.write("plgvpd test failed\n")
+        plend()
+        sys.exit(1)
+
     plwind(0.2, 0.3, 0.4, 0.5)
+    (xmin, xmax, ymin, ymax) = plgvpw()
+    sys.stdout.write("plwind: xmin, xmax, ymin, ymax = %f %f %f %f \n" % (xmin, xmax, ymin, ymax))
+    if xmin != 0.2 or xmax != 0.3 or ymin != 0.4 or ymax != 0.5:
+        sys.stderr.write("plgvpw test failed\n")
+        plend()
+        sys.exit(1)
+
+    # Get world coordinates for 0.5,0.5 which is in the middle of 
+    # the window.
+    (wx, wy, win) = plcalc_world(0.5,0.5)
+    sys.stdout.write("world parameters: wx, wy, win = %f %f %d \n" % (wx, wy, win))
+    if abs(wx-0.25) > 1.0E-5 or abs(wy-0.45) > 1.0E-5:
+        sys.stderr.write("plcalc_world test failed\n")
+        # Temporary comment out because this test always fails for some
+        # reason which is still being investigated.
+        #plend()
+        #sys.exit(1)
+
+    # Retrieve and print the name of the output file (if any)
+    fnam = plgfnam()
+    sys.stdout.write("Output file name is %s\n" % fnam)
+
+    # Set and get the number of digits used to display axis labels
+    # Note digits is currently ignored in pls[xyz]ax and 
+    # therefore it does not make sense to test the returned value.
+    plsxax(3,0)
+    (digmax, digits) = plgxax()
+    sys.stdout.write("x axis parameters: digmax, digits = %d %d \n" % (digmax, digits))
+    if digmax != 3:
+        sys.stderr.write("plgxax test failed\n")
+        plend()
+        sys.exit(1)
+
+    plsyax(4,0)
+    (digmax, digits) = plgyax()
+    sys.stdout.write("y axis parameters: digmax, digits = %d %d \n" % (digmax, digits))
+    if digmax != 4:
+        sys.stderr.write("plgyax test failed\n")
+        plend()
+        sys.exit(1)
+
+    plszax(5,0)
+    (digmax, digits) = plgzax()
+    sys.stdout.write("z axis parameters: digmax, digits = %d %d \n" % (digmax, digits))
+    if digmax != 5:
+        sys.stderr.write("plgzax test failed\n")
+        plend()
+        sys.exit(1)
+
+    plsdidev(0.05, PL_NOTSET, 10.0, 20.0)
+    (mar, aspect, jx, jy) = plgdidev()
+    sys.stdout.write("device-space window parameters: mar, aspect, jx, jy = %f %f %f %f \n" % (mar, aspect, jx, jy))
+    if mar != 0.05 or jx != 10.0 or jy != 20.0:
+        sys.stderr.write("plgdidev test failed\n")
+        # Temporary comment out because this test always fails for some
+        # reason which is still being investigated.
+        #plend()
+        #sys.exit(1)
+
+    plsdiori(1.0)
+    ori = plgdiori()
+    sys.stdout.write("ori parameter = %f \n" % ori)
+    if ori != 1.0 :
+        sys.stderr.write("plgdiori test failed\n")
+        plend()
+        sys.exit(1)
+
+    plsdiplt(0.1, 0.2, 0.9, 0.8)
+    (xmin, ymin, xmax, ymax) = plgdiplt()
+    sys.stdout.write("plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f \n" % (xmin, ymin, xmax, ymax))
+    if xmin != 0.1 or xmax != 0.9 or ymin != 0.2 or ymax != 0.8:
+        sys.stderr.write("plgdiplt test failed\n")
+        plend()
+        sys.exit(1)
+
+    plsdiplz(0.1, 0.1, 0.9, 0.9)
+    (zxmin, zymin, zxmax, zymax) = plgdiplt()
+    sys.stdout.write("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f \n" % (zxmin, zymin, zxmax, zymax))
+    if zxmin != xmin+(xmax-xmin)*0.1 or zxmax != xmin+(xmax-xmin)*0.9 or zymin != ymin+(ymax-ymin)*0.1 or zymax != ymin+(ymax-ymin)*0.9:
+        sys.stderr.write("plsdiplz test failed\n")
+        plend()
+        sys.exit(1)
+
+    plscolbg(10,20,30)
+    (r, g, b) = plgcolbg()
+    sys.stdout.write("background colour parameters: r, g, b = %d %d %d \n" % (r, g, b))
+    if r != 10 or g != 20 or b != 30:
+        sys.stderr.write("plgcolbg test failed\n")
+        plend()
+        sys.exit(1)
+
+    plscolbga(20, 30, 40, 0.5)
+    (r, g, b, a) = plgcolbga()
+    sys.stdout.write("background/transparency colour parameters: r, g, b, a = %d %d %d %f \n" % (r, g, b, a))
+    if r != 20 or g != 30 or b != 40 or a != 0.5:
+        sys.stderr.write("plgcolbga test failed\n")
+        plend()
+        sys.exit(1)
+
 
     # Restore defaults
     #plcol0(1)
-    
+
 main()
 # Terminate plplot
 plend()
