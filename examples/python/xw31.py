@@ -126,10 +126,8 @@ def main():
     sys.stdout.write("world parameters: wx, wy, win = %f %f %d \n" % (wx, wy, win))
     if abs(wx-0.5*(xmin+xmax)) > 1.0E-5 or abs(wy-0.5*(ymin+ymax)) > 1.0E-5:
         sys.stderr.write("plcalc_world test failed\n")
-        # Temporary comment out because this test always fails for some
-        # reason which is still being investigated.
-        #plend()
-        #sys.exit(1)
+        plend()
+        sys.exit(1)
 
     # Retrieve and print the name of the output file (if any)
     fnam = plgfnam()
@@ -167,10 +165,8 @@ def main():
     sys.stdout.write("device-space window parameters: mar, aspect, jx, jy = %f %f %f %f \n" % (mar, aspect, jx, jy))
     if mar != 0.05 or jx != 0.1 or jy != 0.2:
         sys.stderr.write("plgdidev test failed\n")
-        # Temporary comment out because this test always fails for some
-        # reason which is still being investigated.
-        #plend()
-        #sys.exit(1)
+        plend()
+        sys.exit(1)
 
     plsdiori(1.0)
     ori = plgdiori()
