@@ -62,6 +62,8 @@ for lang in c++ f77 f95 java octave python tcl perl ada ocaml ; do
 
   missing=""
   different=""
+  diffstdout=""
+  missingstdout=""
 
   # Assume that if example 1 is missing then the language is
   # not implemented.
@@ -84,13 +86,23 @@ for lang in c++ f77 f95 java octave python tcl perl ada ocaml ; do
         if [ $? != 0 ] ; then
           different="${different} ${index}"
         fi
+        if [ -f x${index}${suffix}_psc.txt ] ; then
+          @DIFF_EXECUTABLE@ -q x${index}c_psc.txt x${index}${suffix}_psc.txt 2>&1 > /dev/null
+          if [ $? != 0 ] ; then
+            diffstdout="${diffstdout} ${index}"
+          fi
+        else
+          missingstdout="${missingstdout} ${index}"
+        fi
       fi
     fi
   done
   echo "${lang}"
-  echo "  Missing examples   : ${missing}"
-  echo "  Differing examples : ${different}"
-  if [ "${different}" != "" ] ; then
+  echo "  Missing examples            : ${missing}"
+  echo "  Differing postscript output : ${different}"
+  echo "  Missing stdout              : ${missingstdout}"
+  echo "  Differing stdout            : ${diffstdout}"
+  if [ "${different}" != "" ]  || [ ${diffstdout} != "" ] ; then
     ret=1
   fi
   fi 

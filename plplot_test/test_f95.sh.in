@@ -40,7 +40,7 @@ if test "yes@HAVE_F77PARSE_CL_TRUE@" = "yes"; then
   if [ "$verbose_test" ]; then
     echo "x16af"
   fi
-  $DEBUG_CMD $f95dir/x16af -dev $device -o ${OUTPUT_DIR}/x16af95%n.$dsuffix $options 2> test.error
+  $DEBUG_CMD $f95dir/x16af -dev $device -o ${OUTPUT_DIR}/x16af95%n.$dsuffix $options 2> test.error @TEE_CMD@ ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
   status_code=$?
   cat test.error
   if [ "$status_code" -ne 0 ]; then
@@ -60,7 +60,7 @@ if test "yes@HAVE_F77PARSE_CL_TRUE@" = "yes"; then
     if [ "$verbose_test" ]; then
       echo "x${index}f"
     fi
-    $DEBUG_CMD $f95dir/x${index}f -dev $device -o ${OUTPUT_DIR}/x${index}f95%n.$dsuffix $options 2> test.error
+    $DEBUG_CMD $f95dir/x${index}f -dev $device -o ${OUTPUT_DIR}/x${index}f95%n.$dsuffix $options 2> test.error @TEE_CMD@ ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
     status_code=$?
     cat test.error
     if [ "$status_code" -ne 0 ]; then
@@ -82,7 +82,7 @@ else
   if [ "$verbose_test" ]; then
     echo "x16af"
   fi
-  $DEBUG_CMD $f95dir/x16af <<EOF 2> test.error
+  $DEBUG_CMD $f95dir/x16af <<EOF 2> test.error @TEE_CMD@ ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
 $device
 ${OUTPUT_DIR}/x16af95%n.$dsuffix
 EOF
@@ -105,7 +105,7 @@ EOF
     if [ "$verbose_test" ]; then
       echo "x${index}f"
     fi
-     $DEBUG_CMD $f95dir/x${index}f <<EOF 2> test.error
+     $DEBUG_CMD $f95dir/x${index}f <<EOF 2> test.error @TEE_CMD@ ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
 $device
 ${OUTPUT_DIR}/x${index}f95%n.$dsuffix
 EOF

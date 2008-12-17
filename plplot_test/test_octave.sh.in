@@ -26,6 +26,8 @@
 
 # The following is only need for the build tree!  It should has no effect
 # when this script is launched from the install tree.
+lang="o"
+export lang
 TOPDIR=`pwd`/..
 echo $TOPDIR
 export LD_LIBRARY_PATH=$TOPDIR/src:$TOPDIR/lib/csa:$TOPDIR/lib/nn
@@ -88,7 +90,7 @@ for i=[1:13 15 16 18 20:31 ];
     plSetOpt("dev", device);
 #o trailer on filename e.g., x01o.ps) to distinguish from other
 #common examples.
-    file = sprintf("${OUTPUT_DIR}/x%.2do%%n.$dsuffix",i);
+    file = sprintf("${OUTPUT_DIR}/x%.2d${lang}%%n.$dsuffix",i);
     plSetOpt("o", file);
     eval(cmd, "failed = [failed, i];");
 endfor

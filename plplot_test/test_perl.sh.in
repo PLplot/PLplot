@@ -31,6 +31,7 @@
 
 # Ensure correct version of the libraries are picked up in both the build
 # tree and install tree.
+lang="pdl"
 if [ "$LD_LIBRARY_PATH" == "" ] ; then
   export LD_LIBRARY_PATH=../src:@LIB_DIR@
 else
@@ -49,7 +50,7 @@ for index in $INDEX_LIST ; do
   if [ "$verbose_test" ]; then
     echo "x${index}.pl"
   fi
-  $perldir/x${index}.pl -dev $device -o ${OUTPUT_DIR}/x${index}pdl%n.$dsuffix $options 2> test.error
+  $perldir/x${index}.pl -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error @TEE_CMD@ ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
   status_code=$?
   cat test.error
   if [ "$status_code" -ne 0 ]; then
