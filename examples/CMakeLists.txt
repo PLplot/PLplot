@@ -84,7 +84,13 @@ if(ENABLE_ocaml)
   add_subdirectory(ocaml)
 endif(ENABLE_ocaml)
 
-install(FILES Makefile.examples 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+  ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+  @ONLY
+  )
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
 DESTINATION ${DATA_DIR}/examples
 RENAME Makefile
 )
