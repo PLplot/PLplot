@@ -35,7 +35,7 @@ compression1 = 100
 plscompression(compression1)
 
 # Test setting / getting familying parameters across plinit.
-fam1 = True
+fam1 = False
 num1 = 10
 bmax1 = 1000
 plsfam(fam1, num1, bmax1)
@@ -98,7 +98,7 @@ def main():
     level2 = plglevel()
     sys.stdout.write("level parameter = %d\n" % level2)
     if level2 != 1:
-        sys.stderr.write("plglevel test failed. Level is %d, but 1 expected.\n" % level)
+        sys.stderr.write("plglevel test failed.\n")
         plend();
         sys.exit(1);
 
