@@ -29,7 +29,10 @@
 # 			    when ENABLE_DYNDRIVERS OFF.
 
 # Find wxWidgets needed for driver and bindings
-if(PLD_wxwidgets)
+if(
+   PLD_wxwidgets
+OR PLD_wxpng
+)
   find_package(wxWidgets QUIET)
   if(NOT wxWidgets_FOUND)
     message(STATUS
@@ -37,13 +40,20 @@ if(PLD_wxwidgets)
     "setting PLD_wxwidgets to OFF."
     )
     set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
+    set(PLD_wxpng OFF CACHE BOOL "Enable wxwidgets png device" FORCE)
   else(NOT wxWidgets_FOUND)  
 		# Check if stdint.h can be used from c++ (HAVE_CXX_STDINT_H)
 		include(TestForStdintCXX)
   endif(NOT wxWidgets_FOUND)  
-endif(PLD_wxwidgets)
+endif(
+   PLD_wxwidgets
+OR PLD_wxpng
+)
 
-if(PLD_wxwidgets)
+if(
+   PLD_wxwidgets
+OR PLD_wxpng
+)
   string(REGEX REPLACE ";" " -I" 
   wxwidgets_COMPILE_FLAGS
   "-I${wxWidgets_INCLUDE_DIRS}"
@@ -84,7 +94,10 @@ if(PLD_wxwidgets)
   ${DRIVERS_LINK_FLAGS} 
   ${wxwidgets_LINK_FLAGS}
   )
-endif(PLD_wxwidgets)
+endif(
+   PLD_wxwidgets
+OR PLD_wxpng
+)
 
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_wxwidgets "Enable wxwidgets bindings" OFF)
