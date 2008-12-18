@@ -15,7 +15,7 @@ plplot/cmake/modules/drivers-init.cmake
 plplot/include/drivers.h
 plplot/include/plDevs.h.cmake
 plplot/include/plcore.h
-plplot/test/plplot-test.sh.cmake
+plplot/plplot-test/plplot-test.sh.cmake
 
 The following are some short notes on what you need to add to these files
 to add a new driver (which we'll call foo) to PLplot.
