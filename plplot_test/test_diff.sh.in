@@ -102,7 +102,7 @@ for lang in c++ f77 f95 java octave python tcl perl ada ocaml ; do
   echo "  Differing postscript output : ${different}"
   echo "  Missing stdout              : ${missingstdout}"
   echo "  Differing stdout            : ${diffstdout}"
-  if [ "${different}" != "" ]  || [ ${diffstdout} != "" ] ; then
+  if [ "${different}" != "" ]  || [ "${diffstdout}" != "" ] ; then
     ret=1
   fi
   fi 
