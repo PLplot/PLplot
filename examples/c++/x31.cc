@@ -1,4 +1,4 @@
-// $Id:$
+// $Id$
 //
 //   set/get tester
 //
@@ -44,107 +44,137 @@ private:
 
 x31::x31(int argc, const char *argv[])
 {
-  PLFLT xmin, xmax, ymin, ymax, wx, wy;
+  PLFLT xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax;
+  PLFLT xmid, ymid, wx, wy;
   PLFLT mar, aspect, jx, jy, ori;  
-  PLINT win, level, digmax, digits, compression;
-  PLFLT xp, yp, xp2, yp2;
-  PLINT xleng, yleng, xoff, yoff, xleng2, yleng2;
-  PLINT fam1, num1, bmax1, fam, num, bmax, r, g, b;
+  PLINT win, level2, digmax, digits, compression1, compression2;
+  PLFLT xp1, yp1, xp2, yp2;
+  PLINT xleng1, yleng1, xoff1, yoff1, xleng2, yleng2, xoff2, yoff2;
+  PLINT fam1, num1, bmax1, fam2, num2, bmax2, r, g, b;
   PLFLT a;
   PLINT r1[] = {0, 255};
   PLINT g1[] = {255, 0};
   PLINT b1[] = {0, 0};
   PLFLT a1[] = {1.0, 1.0};
+  int status;
   char fnam[80];
 
   pls = new plstream();
 
-  // Parse and process command line arguments
+  status = 0;
+
+  // Set floating point precision for cout consistent with C printf.
+  cout.setf(ios::fixed, ios::floatfield);
+  cout.setf(ios::showpoint);
+  cout.precision(6);
 
   pls->parseopts(&argc, argv, PL_PARSE_FULL);
 
-  // Test setting / getting page size 
-  pls->gpage(xp, yp, xleng, yleng, xoff, yoff);
-  xp2 = xp*0.9;
-  yp2 = yp*0.9;
-  xleng2 = (PLINT)(xleng*0.9);
-  yleng2 = (PLINT)(yleng*0.9);
-  pls->spage(xp2, yp2, xleng2, yleng2, xoff, yoff);
-  pls->gpage(xp, yp, xleng, yleng, xoff, yoff);
-  if (xp != xp2 || yp != yp2 || xleng != xleng2 || yleng != yleng2) {
-    fputs("plgpage test failed\n",stderr);
-    delete pls;
-    exit(1);
-  }
+  // Test setting / getting compression parameter across plinit.
+  compression1 = 100;
+  plscompression(compression1);
 
-  pls->scompression(1);
-  pls->gcompression(compression);
-  if (compression != 1) {
-    fputs("plgcompression test failed\n",stderr);
-    delete pls;
-    exit(1);
-  }
+  // Test setting / getting familying parameters across plinit
+  fam1 = 0;
+  num1 = 10;
+  bmax1 = 1000;
+  pls->sfam(fam1, num1, bmax1);
 
-  // Test family functions - need to restore defaults to ensure 
-  // that test scripts work ok.
-  pls->gfam(fam, num, bmax);
-  pls->sfam(1,1,100000);
-  pls->gfam(fam1, num1, bmax1);
-  if (fam1 != 1 || num1 != 1 || bmax1 != 100000) {
-    fputs("plgfam test failed\n",stderr);
-    delete pls;
-    exit(1);
-  }
-  pls->sfam(fam,num,bmax);
+  // Test setting / getting page parameters across plinit
+  xp1 = 200.;
+  yp1 = 200.;
+  xleng1 = 400;
+  yleng1 = 200;
+  xoff1 = 10;
+  yoff1 = 20;
+  pls->spage(xp1, yp1, xleng1, yleng1, xoff1, yoff1);
 
   // Initialize plplot
-
   pls->init();
 
+  // Test if device initialization screwed around with the preset
+  // compression parameter.
+  pls->gcompression(compression2);
+  cout << "Output various PLplot parameters" << endl;
+  cout << "compression parameter = " << compression2 << endl;
+  if (compression2 != compression1) {
+    cerr << "plgcompression test failed" << endl;
+    status = 1;
+  }
+
+  // Test if device initialization screwed around with any of the
+  // preset familying values.
+  pls->gfam(fam2, num2, bmax2);
+  cout << "family parameters: fam, num, bmax = " << fam2 << " " << 
+    num2 << " " << bmax2 << endl;
+  if (fam2 != fam1 || num2 != num1 || bmax2 != bmax1) {
+    cerr << "plgfam test failed" << endl;
+    status = 1;
+  }
+
+  // Test if device initialization screwed around with any of the
+  // preset page values.
+  pls->gpage(xp2, yp2, xleng2, yleng2, xoff2, yoff2);
+  cout << "page parameters: xp, yp, xleng, yleng, xoff, yoff = " << xp2 << " " << yp2 << " " << xleng2 << " " << yleng2 << " " << xoff2 << " " << yoff2 << endl;
+  if (xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 || 
+      xoff2 != xoff1 || yoff2 != yoff1 ) {
+    cerr << "plgpage test failed" << endl;
+    status = 1;
+  }
+
+
+  // Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
+  // they work without any obvious error messages.
   pls->scolor(1);
-
   pls->scol0(1, 255, 0, 0);
-
   pls->scmap1(r1,g1,b1,2);
   pls->scmap1a(r1,g1,b1,a1,2);
   
-  pls->glevel(level);
-  if (level != 1) {
-    fprintf(stderr,"plglevel test failed. Level is %d, but 1 expected.\n",level);
-    delete pls;
-    exit(1);
+  pls->glevel(level2);
+  cout << "level parameter = " << level2 << endl;
+  if (level2 != 1) {
+    cerr << "plglevel test failed." << endl;
+    status = 1;
   }
 
   pls->adv(0);
-  pls->vpor(0.0, 1.0, 0.0, 1.0);
+  pls->vpor(0.01, 0.99, 0.02, 0.49);
+  pls->gvpd(xmin, xmax, ymin, ymax);
+  cout << "plvpor: xmin, xmax, ymin, ymax = " << xmin << " " << xmax << " " << ymin << " " << ymax << endl;
+  if (xmin != 0.01 || xmax != 0.99 || ymin != 0.02 || ymax != 0.49) {
+    cerr << "plgvpd test failed" << endl;
+    status = 1;
+  }
+  xmid = 0.5*(xmin+xmax);
+  ymid = 0.5*(ymin+ymax);
 
   pls->wind(0.2, 0.3, 0.4, 0.5);
   pls->gvpw(xmin, xmax, ymin, ymax);
+  cout << "plwind: xmin, xmax, ymin, ymax = " << xmin << " " << xmax << " " << ymin << " " << ymax << endl;
   if (xmin != 0.2 || xmax != 0.3 || ymin != 0.4 || ymax != 0.5) {
-    fputs("plgvpw test failed\n",stderr);
-    delete pls;
-    exit(1);
+    cerr << "plgvpw test failed" << endl;
+    status = 1;
   }
 
-  pls->gvpd(xmin, xmax, ymin, ymax);
-  if (xmin != 0.0 || xmax != 1.0 || ymin != 0.0 || ymax != 1.0) {
-    fputs("plgvpd test failed\n",stderr);
-    delete pls;
-    exit(1);
+  // Get world coordinates for middle of viewport
+  pls->calc_world(xmid,ymid,wx,wy,win);
+  cout << "world parameters: wx, wy, win = " << wx << " " << wy << " " << win << endl;
+  if (fabs(wx-0.5*(xmin+xmax))>1.0E-5 || fabs(wy-0.5*(ymin+ymax))>1.0E-5) {
+    cerr << "plcalc_world test failed" << endl;
+    status = 1;    
   }
 
-  // Get world coordinates for 0.5,0.5 which is in the middle of 
-  // the window
-  pls->calc_world(0.5,0.5,wx,wy,win);
-  if (fabs(wx-0.25)>1.0E-5 || fabs(wy-0.45)>1.0E-5) {
-    fputs("plcalc_world test failed\n",stderr);
-    delete pls;
-    exit(1);    
-  }
-
-  // Retrieve and print the name of the output file (if any)
+  // Retrieve and print the name of the output file (if any).
+  // This goes to stderr not stdout since it will vary between tests and 
+  // we want stdout to be identical for compare test.
   pls->gfnam(fnam);
-  printf("Output file name is %s\n",fnam);
+  if (fnam[0] == '\0') {
+    cout << "No output file name is set" << endl;
+  }
+  else {
+    cout << "Output file name read" << endl;
+  }
+  cerr << "Output file name is " << fnam << endl;
 
   // Set and get the number of digits used to display axis labels
   // Note digits is currently ignored in pls[xyz]ax and 
@@ -152,78 +182,83 @@ x31::x31(int argc, const char *argv[])
   // value
   pls->sxax(3,0);
   pls->gxax(digmax,digits);
+  cout << "x axis parameters: digmax, digits = " << digmax << " " << digits << endl;
   if (digmax != 3) {
-    fputs("plgxax test failed\n",stderr);
-    delete pls;
-    exit(1);
+    cerr << "plgxax test failed" << endl;
+    status = 1;
   }
 
-  pls->syax(3,0);
+  pls->syax(4,0);
   pls->gyax(digmax,digits);
-  if (digmax != 3) {
-    fputs("plgyax test failed\n",stderr);
-    delete pls;
-    exit(1);
+  cout << "y axis parameters: digmax, digits = " << digmax << " " << digits << endl;
+  if (digmax != 4) {
+    cerr << "plgyax test failed" << endl;
+    status = 1;
   }
 
-  pls->szax(3,0);
+  pls->szax(5,0);
   pls->gzax(digmax,digits);
-  if (digmax != 3) {
-    fputs("plgzax test failed\n",stderr);
-    delete pls;
-    exit(1);
+  cout << "z axis parameters: digmax, digits = " << digmax << " " << digits << endl;
+  if (digmax != 5) {
+    cerr << "plgzax test failed" << endl;
+    status = 1;
   }
 
-  pls->sdidev(0.05, PL_NOTSET, 0.0, 0.0);
+  pls->sdidev(0.05, PL_NOTSET, 0.1, 0.2);
   pls->gdidev(mar, aspect, jx, jy);
-  if (mar != 0.05 || jx != 0.0 || jy != 0.0) {
-    fputs("plgdidev test failed\n",stderr);
-    delete pls;
-    exit(1);
+  cout << "device-space window parameters: mar, aspect, jx, jy = " << mar << " " << aspect << " " << jx << " " << jy << endl;
+  if (mar != 0.05 || jx != 0.1 || jy != 0.2) {
+    cerr << "plgdidev test failed" << endl;
+    status = 1;
   }
 
   pls->sdiori(1.0);
   pls->gdiori(ori);
+  cout << "ori parameter = " << ori << endl;
   if (ori != 1.0) {
-    fputs("plgdiori test failed\n",stderr);
-    delete pls;
-    exit(1);
+    cerr << "plgdiori test failed" << endl;
+    status = 1;
   }
 
-  pls->sdiplt(0.1, 0.1, 0.9, 0.9);
+  pls->sdiplt(0.1, 0.2, 0.9, 0.8);
   pls->gdiplt(xmin, ymin, xmax, ymax);
-  if (xmin != 0.1 || xmax != 0.9 || ymin != 0.1 || ymax != 0.9) {
-    fputs("plgdiplt test failed\n",stderr);
-    delete pls;
-    exit(1);
+  cout << "plot-space window parameters: xmin, ymin, xmax, ymax = " <<  xmin << " " <<  ymin << " " << xmax << " " << ymax << endl;
+  if (xmin != 0.1 || xmax != 0.9 || ymin != 0.2 || ymax != 0.8) {
+    cerr << "plgdiplt test failed" << endl;
+    status = 1;
   }
 
   pls->sdiplz(0.1, 0.1, 0.9, 0.9);
-  pls->gdiplt(xmin, ymin, xmax, ymax);
-  if (xmin != 0.1+0.8*0.1 || xmax != 0.1+0.8*0.9 || ymin != 0.1+0.8*0.1 || ymax != 0.1+0.8*0.9) {
-    fputs("plsdiplz test failed\n",stderr);
-    delete pls;
-    exit(1);
+  pls->gdiplt(zxmin, zymin, zxmax, zymax);
+  cout << "zoomed plot-space window parameters: xmin, ymin, xmax, ymax = " << zxmin << " " << zymin << " " << zxmax << " " << zymax << endl;
+  if ( fabs(zxmin -(xmin + (xmax-xmin)*0.1)) > 1.0E-5 || 
+       fabs(zxmax -(xmin+(xmax-xmin)*0.9)) > 1.0E-5 || 
+       fabs(zymin -(ymin+(ymax-ymin)*0.1)) > 1.0E-5 || 
+       fabs(zymax -(ymin+(ymax-ymin)*0.9)) > 1.0E-5 ) {
+    cerr << "plsdiplz test failed" << endl;
+    status = 1;
   }
 
-  pls->scolbg(0,0,0);
+  pls->scolbg(10,20,30);
   pls->gcolbg(r, g, b);
-  if (r != 0 || g != 0 || b != 0) {
-    fputs("plgcolbg test failed\n",stderr);
-    delete pls;
-    exit(1);
+  cout << "background colour parameters: r, g, b = " << r << " " <<  g << " " << b << endl;
+  if (r != 10 || g != 20 || b != 30) {
+    cerr << "plgcolbg test failed" << endl;
+    status = 1;
   }
 
-  pls->scolbga(0,0,0,1.0);
+  pls->scolbga(20,30,40,0.5);
   pls->gcolbga(r, g, b, a);
-  if (r != 0 || g != 0 || b != 0 || a != 1.0) {
-    fputs("plgcolbga test failed\n",stderr);
-    delete pls;
-    exit(1);
+  cout << "background/transparency colour parameters: r, g, b, a = " << r << " " <<  g << " " << b << " " << a << endl;
+  if (r != 20 || g != 30 || b != 40 || a != 0.5) {
+    cerr << "plgcolbga test failed" << endl;
+    status = 1;
   }
 
   delete pls;
-  exit(0);
+
+  exit(status);
+
 }
 
 int main( int argc, const char **argv )
