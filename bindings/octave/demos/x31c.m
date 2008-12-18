@@ -24,7 +24,7 @@
 
 1;
 
-function ret = ix31c(strm)
+function status = ix31c(strm)
 
   # Redirect output to file if required
   if (nargin == 0)
@@ -41,6 +41,9 @@ function ret = ix31c(strm)
 
   PL_NOTSET = -42.0;
 
+  ## Clear status flag to begin with
+  status = 0;
+
   r1 = [0, 255];
   g1 = [255, 0];
   b1 = [0, 0];
@@ -50,41 +53,61 @@ function ret = ix31c(strm)
 
   ## (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
-  ## Test setting / getting page size
-  [xp, yp, xleng, yleng, xoff, yoff] = plgpage();
-  xp2 = xp*0.9;
-  yp2 = yp*0.9;
-  xleng2 = floor(xleng*0.9);
-  yleng2 = floor(yleng*0.9);
-  plspage(xp2, yp2, xleng2, yleng2, xoff, yoff);
-  [xp, yp, xleng, yleng, xoff, yoff] = plgpage();
-  if (xp != xp2 || yp != yp2 || xleng != xleng2 || yleng != yleng2)
-    fputs("plgpage test failed\n",stderr);
-    plend();
-    ret = 1; return;
-  endif
+  ## Test setting / getting compression parameter across plint 
+  compression1 = 100;
+  plscompression(compression1);
 
-  plscompression(1);
-  compression = plgcompression();
-  if (compression != 1) 
-    fputs("plgcompression test failed\n",stderr);
-    plend();
-    ret = 1; return;
-  endif
+  ## Test setting / getting familying parameters across plinit
+  fam1 = 0;
+  num1 = 10;
+  bmax1 = 1000;
+  plsfam(fam1, num1, bmax1);
 
-  [fam, num, bmax] = plgfam();
-  plsfam(1,1,100000);
-  [fam1, num1, bmax1] = plgfam();
-  if (fam1 != 1 || num1 != 1 || bmax1 != 100000) 
-    fputs("plgfam test failed\n",stderr);
-    plend();
-    ret = 1; return;
-  endif
-  plsfam(fam, num, bmax);
+  ## Test setting / getting page parameters across plinit
+  xp1 = 200.;
+  yp1 = 200.;
+  xleng1 = 400;
+  yleng1 = 200;
+  xoff1 = 10;
+  yoff1 = 20;
+  plspage(xp1, yp1, xleng1, yleng1, xoff1, yoff1);
 
   ## Initialize plplot
 
   plinit();
+
+  ## Test if device initialization screwed around with the preset
+  ## compression parameter.
+  compression2 = plgcompression();
+  if (compression2 != compression1) 
+    fputs(stderr, "plgcompression test failed\n");
+    plend();
+    status = 1;
+  endif
+
+  ## Test if device initialization screwed around with any of the
+  ## preset familying values.
+  [fam2, num2, bmax2] = plgfam();
+  fprintf(strm,"family parameters: fam, num, bmax = %d %d %d\n", fam2, num2, bmax2);
+  if (fam2 != fam1 || num2 != num1 || bmax2 != bmax1)
+    fputs(stderr,"plgfam test failed\n");
+    plend();
+    status = 1;
+  endif
+
+  ## Test if device initialization screwed around with any of the
+  ## preset page values.
+  [xp2, yp2, xleng2, yleng2, xoff2, yoff2] = plgpage();
+  fprintf(strm,"page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n", xp2, yp2, xleng2, yleng2, xoff2, yoff2);
+  if (xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 || 
+      xoff2 != xoff1 || yoff2 != yoff1 ) 
+    fputs(stderr,"plgpage test failed\n");
+    plend();
+    status = 1;
+  endif
+
+  ## Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
+  ## they work without any obvious error messages.
 
   plscolor(1);
 
@@ -93,43 +116,54 @@ function ret = ix31c(strm)
   plscmap1(r1',g1',b1');
   plscmap1a(r1',g1',b1',a1');
   
-  level = plglevel();
-  if (level != 1)
+  level2 = plglevel();
+  fprintf(strm,"level parameter = %d\n", level2);
+  if (level2 != 1)
     fprintf(stderr,"plglevel test failed. Level is %d, but 1 expected.\n",level);
     plend();
-    ret = 1; return;
+    status = 1;
   endif
 
   pladv(0);
-  plvpor(0.0, 1.0, 0.0, 1.0);
+  plvpor(0.01, 0.99, 0.02, 0.49);
+  [xmin, xmax, ymin, ymax] = plgvpd();
+  fprintf(strm,"plvpor: xmin, xmax, ymin, ymax = %f %f %f %f \n", xmin, xmax, ymin, ymax);
+  if (xmin != 0.01 || xmax != 0.99 || ymin != 0.02 || ymax != 0.49)
+    fputs(stderr,"plgvpd test failed\n");
+    plend();
+    status = 1; 
+  endif
+  xmid = 0.5*(xmin+xmax);
+  ymid = 0.5*(ymin+ymax);
 
   plwind(0.2, 0.3, 0.4, 0.5);
   [xmin, xmax, ymin, ymax] = plgvpw();
+  fprintf(strm,"plwind: xmin, xmax, ymin, ymax = %f %f %f %f \n", xmin, xmax, ymin, ymax);
   if (xmin != 0.2 || xmax != 0.3 || ymin != 0.4 || ymax != 0.5)
-    fputs("plgvpw test failed\n",stderr);
+    fputs(stderr,"plgvpw test failed\n");
     plend();
-    ret = 1; return;
+    status = 1;
   endif
 
-  [xmin, xmax, ymin, ymax] = plgvpd();
-  if (xmin != 0.0 || xmax != 1.0 || ymin != 0.0 || ymax != 1.0)
-    fputs("plgvpd test failed\n",stderr);
-    plend();
-    ret = 1; return;
-  endif
 
-  ## Get world coordinates for 0.5,0.5 which is in the middle of 
-  ## the window
-  [wx,wy,win] = plcalc_world(0.5,0.5);
-  if (abs(wx-0.25)>1.0E-5 || abs(wy-0.45)>1.0E-5)
-    fputs("plcalc_world test failed\n",stderr);
+  ## Get world coordinates for middle of viewport 
+  [wx,wy,win] = plcalc_world(xmid,ymid);
+  if (abs(wx-0.5*(xmin+xmax))>1.0E-5 || abs(wy-0.5*(ymin+ymax))>1.0E-5)
+    fputs(stderr,"plcalc_world test failed\n");
     plend();
-    ret = 1; return;    
+    status = 1;
   endif
 
   ## Retrieve and print the name of the output file (if any)
+  ## This goes to stderr not stdout since it will vary between tests and 
+  ## we want stdout to be identical for compare test.
   fnam = plgfnam();
-  printf("Output file name is %s\n",fnam);
+  if (fnam(1) == "\0")
+    fputs(strm,"Output file name read\n");
+  else
+    fputs(strm,"No output file name is set\n");
+  endif
+  fprintf(stderr,"Output file name is %s\n",fnam);
 
   ## Set and get the number of digits used to display axis labels
   ## Note digits is currently ignored in pls[xyz]ax and 
@@ -137,78 +171,87 @@ function ret = ix31c(strm)
   ## value.
   plsxax(3,0);
   [digmax,digits] = plgxax();
+  fprintf(strm,"x axis parameters: digmax, digits = %d %d \n", digmax, digits);
   if (digmax != 3)
-    fputs("plgxax test failed\n",stderr);
+    fputs(stderr,"plgxax test failed\n");
     plend();
-    ret = 1; return;
+    status = 1; 
+    return;
   endif
 
-  plsyax(3,0);
+  plsyax(4,0);
   [digmax,digits] = plgyax();
-  if (digmax != 3)
-    fputs("plgyax test failed\n",stderr);
+  fprintf(strm,"y axis parameters: digmax, digits = %d %d \n", digmax, digits);
+  if (digmax != 4)
+    fputs(stderr,"plgyax test failed\n");
     plend();
-    ret = 1; return;
+    status = 1;
   endif
 
-  plszax(3,0);
+  plszax(5,0);
   [digmax,digits] = plgzax();
-  if (digmax != 3)
-    fputs("plgzax test failed\n",stderr);
+  fprintf(strm,"z axis parameters: digmax, digits = %d %d \n", digmax, digits);
+  if (digmax != 5)
+    fputs(stderr,"plgzax test failed\n");
     plend();
-    ret = 1; return;
+    status = 1;
   endif
 
-  plsdidev(0.05, PL_NOTSET, 0.0, 0.0);
+  plsdidev(0.05, PL_NOTSET, 0.1, 0.2);
   [mar, aspect, jx, jy] = plgdidev();
-  if (mar != 0.05 || jx != 0.0 || jy != 0.0)
-    fputs("plgdidev test failed\n",stderr);
+  fprintf(strm,"device-space window parameters: mar, aspect, jx, jy = %f %f %f %f \n" , mar, aspect, jx, jy);
+  if (mar != 0.05 || jx != 0.1 || jy != 0.2)
+    fputs(stderr,"plgdidev test failed\n");
     plend();
-    ret = 1; return;
+    status = 1;
   endif
 
   plsdiori(1.0);
   ori = plgdiori();
+  printf("ori parameter = %f \n", ori);
   if (ori != 1.0)
-    fputs("plgdiori test failed\n",stderr);
+    fputs(stderr,"plgdiori test failed\n");
     plend();
-    ret = 1; return;
+    status = 1;
   endif
 
-  plsdiplt(0.1, 0.1, 0.9, 0.9);
+  plsdiplt(0.1, 0.2, 0.9, 0.8);
   [xmin, ymin, xmax, ymax] = plgdiplt();
-  if (xmin != 0.1 || xmax != 0.9 || ymin != 0.1 || ymax != 0.9)
-    fputs("plgdiplt test failed\n",stderr);
+  fprintf(strm,"plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f \n", xmin, ymin, xmax, ymax);
+  if (xmin != 0.1 || xmax != 0.9 || ymin != 0.2 || ymax != 0.8)
+    fputs(stderr,"plgdiplt test failed\n");
     plend();
-    ret = 1; return;
+    status = 1;
   endif
 
   plsdiplz(0.1, 0.1, 0.9, 0.9);
-  [xmin, ymin, xmax, ymax] = plgdiplt();
-  if (xmin != 0.1+0.8*0.1 || xmax != 0.1+0.8*0.9 || ymin != 0.1+0.8*0.1 || ymax != 0.1+0.8*0.9)
-    fputs("plsdiplz test failed\n",stderr);
+  [zxmin, zymin, zxmax, zymax] = plgdiplt();
+  fprintf(strm,"zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f \n", zxmin, zymin, zxmax, zymax);
+  if ( abs(zxmin -(xmin + (xmax-xmin)*0.1)) > 1.0E-5 || abs(zxmax -(xmin+(xmax-xmin)*0.9)) > 1.0E-5 || abs(zymin -(ymin+(ymax-ymin)*0.1)) > 1.0E-5 || abs(zymax -(ymin+(ymax-ymin)*0.9)) > 1.0E-5 ) 
+    fputs(stderr,"plsdiplz test failed\n");
     plend();
-    ret = 1; return;
+    status = 1; 
   endif
 
-  plscolbg(0,0,0);
+  plscolbg(10,20,30);
   [r, g, b] = plgcolbg();
-  if (r != 0 || g != 0 || b != 0)
-    fputs("plgcolbg test failed\n",stderr);
+  fprintf(strm,"background colour parameters: r, g, b = %d %d %d \n", r, g, b);
+  if (r != 10 || g != 20 || b != 30)
+    fputs(stderr,"plgcolbg test failed\n");
     plend();
-    ret = 1; return;
+    status = 1;
   endif
 
-  plscolbga(0,0,0,1.0);
+  plscolbga(20,30,40,0.5);
   [r, g, b, a] = plgcolbga();
-  if (r != 0 || g != 0 || b != 0 || a != 1.0)
-    fputs("plgcolbga test failed\n",stderr);
+  fprintf(strm,"background/transparency colour parameters: r, g, b, a = %d %d %d %f \n", r, g, b, a);
+  if (r != 20 || g != 30 || b != 40 || a != 0.5)
+    fputs(stderr,"plgcolbga test failed\n");
     plend();
-    ret = 1; return;
+    status = 1;
   endif
 
   plend();
-  ret = 0;
 
 endfunction
 
