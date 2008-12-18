@@ -233,6 +233,7 @@ PLD_tek4107f=@PLD_tek4107f@
 PLD_versaterm=@PLD_versaterm@
 PLD_vlt=@PLD_vlt@
 #interactive PLD_wingcc=@PLD_wingcc@
+PLD_wxpng=@PLD_wxpng@
 #interactive PLD_wxwidgets=@PLD_wxwidgets@
 #interactive PLD_xcairo=@PLD_xcairo@
 PLD_xfig=@PLD_xfig@
