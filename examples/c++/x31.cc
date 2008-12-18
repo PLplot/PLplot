@@ -72,7 +72,7 @@ x31::x31(int argc, const char *argv[])
 
   // Test setting / getting compression parameter across plinit.
   compression1 = 100;
-  plscompression(compression1);
+  pls->scompression(compression1);
 
   // Test setting / getting familying parameters across plinit
   fam1 = 0;
