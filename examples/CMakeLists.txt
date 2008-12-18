@@ -84,6 +84,74 @@ if(ENABLE_ocaml)
   add_subdirectory(ocaml)
 endif(ENABLE_ocaml)
 
+# Configure Makefile.examples with some specific variables
+
+if(PLD_ps)
+  set(PSC_ALL x01c.psc)
+else(PLD_ps)
+  set(PSC_ALL_COMMENT "#")
+endif(PLD_ps)
+
+if(PLD_pdfcairo)
+  set(PDFCAIRO x01c.pdfcairo)
+else(PLD_pdfcairo)
+  set(PDFCAIRO_COMMENT "#")
+endif(PLD_pdfcairo)
+
+if(PLD_pngcairo)
+  set(PNGCAIRO x01c01.pngcairo)
+else(PLD_pngcairo)
+  set(PNGCAIRO_COMMENT "#")
+endif(PLD_pngcairo)
+
+if(PLD_pscairo)
+  set(PSCAIRO x01c.pscairo)
+else(PLD_pscairo)
+  set(PSCAIRO_COMMENT "#")
+endif(PLD_pscairo)
+
+if(PLD_svgcairo)
+  set(SVGCAIRO x01c01.svgcairo)
+else(PLD_svgcairo)
+  set(SVGCAIRO_COMMENT "#")
+endif(PLD_svgcairo)
+
+if(PLD_gif)
+  set(GIF x01c01.gif)
+else(PLD_gif)
+  set(GIF_COMMENT "#")
+endif(PLD_gif)
+
+if(PLD_jpeg)
+  set(JPEG x01c01.jpeg)
+else(PLD_jpeg)
+  set(JPEG_COMMENT "#")
+endif(PLD_jpeg)
+
+if(PLD_png)
+  set(PNG x01c01.png)
+else(PLD_png)
+  set(PNG_COMMENT "#")
+endif(PLD_png)
+
+if(PLD_psttf)
+  set(PSTTFC x01c.psttfc)
+else(PLD_psttf)
+  set(PSTTFC_COMMENT "#")
+endif(PLD_psttf)
+
+if(PLD_svg)
+  set(SVG x01c01.svg)
+else(PLD_svg)
+  set(SVG_COMMENT "#")
+endif(PLD_svg)
+
+if(PLD_xfig)
+  set(XFIG x01c01.xfig)
+else(PLD_xfig)
+  set(XFIG_COMMENT "#")
+endif(PLD_xfig)
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
   ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples

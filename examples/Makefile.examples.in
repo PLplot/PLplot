@@ -1,8 +1,8 @@
 # examples/Makefile.examples.in for PLplot
-###
-### Process this file with configure to produce Makefile.examples
-###
-# Copyright (C) 2004  Alan W. Irwin
+# configured by our CMake-based build system to examples/Makefile.examples
+# in the build tree and installed as examples/Makefile in the install tree.
+
+# Copyright (C) 2004, 2008  Alan W. Irwin
 # 
 # This file is part of PLplot.
 #
@@ -26,7 +26,71 @@
 # to invoke make in the individual sub-directories of examples.
 
 SUBDIRS = c c++ f77 f95 tk java ada ocaml
-all clean: 
+all: c/x01c@EXEEXT@
+
+# Need real file here as target so that tests don't depend on all (which means
+# they would always be out of date).
+
+c/x01c@EXEEXT@:
+	target=`echo $@`; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  if test -d "$$subdir"; then \
+	    echo "Making $$target in $$subdir"; \
+	    (cd $$subdir && $(MAKE)); \
+	  fi; \
+	done
+
+test: @PSC_ALL@ @PDFCAIRO@ @PNGCAIRO@ @PSCAIRO@ @SVGCAIRO@ \
+	@GIF@ @JPEG@ @PNG@ @PSTTFC@ @SVG@ @XFIG@
+
+@PSC_ALL_COMMENT@@PSC_ALL@:  c/x01c@EXEEXT@
+@PSC_ALL_COMMENT@	echo psc all front-ends
+@PSC_ALL_COMMENT@	./plplot-test.sh --device=psc
+
+@PDFCAIRO_COMMENT@@PDFCAIRO@: c/x01c@EXEEXT@
+@PDFCAIRO_COMMENT@	echo pdfcairo
+@PDFCAIRO_COMMENT@	./plplot-test.sh --front-end=c --device=pdfcairo
+
+@PNGCAIRO_COMMENT@@PNGCAIRO@: c/x01c@EXEEXT@
+@PNGCAIRO_COMMENT@	echo pngcairo
+@PNGCAIRO_COMMENT@	./plplot-test.sh --front-end=c --device=pngcairo
+
+@PSCAIRO_COMMENT@@PSCAIRO@: c/x01c@EXEEXT@
+@PSCAIRO_COMMENT@	echo pscairo
+@PSCAIRO_COMMENT@	./plplot-test.sh --front-end=c --device=pscairo
+
+@SVGCAIRO_COMMENT@@SVGCAIRO@: c/x01c@EXEEXT@
+@SVGCAIRO_COMMENT@	echo svgcairo
+@SVGCAIRO_COMMENT@	./plplot-test.sh --front-end=c --device=svgcairo
+
+@GIF_COMMENT@@GIF@: c/x01c@EXEEXT@
+@GIF_COMMENT@	echo gif
+@GIF_COMMENT@	./plplot-test.sh --front-end=c --device=gif
+
+@JPEG_COMMENT@@JPEG@: c/x01c@EXEEXT@
+@JPEG_COMMENT@	echo jpeg
+@JPEG_COMMENT@	./plplot-test.sh --front-end=c --device=jpeg
+
+@PNG_COMMENT@@PNG@: c/x01c@EXEEXT@
+@PNG_COMMENT@	echo png
+@PNG_COMMENT@	./plplot-test.sh --front-end=c --device=png
+
+@PSTTFC_COMMENT@@PSTTFC@: c/x01c@EXEEXT@
+@PSTTFC_COMMENT@	echo psttfc
+@PSTTFC_COMMENT@	./plplot-test.sh --front-end=c --device=psttfc
+
+@SVG_COMMENT@@SVG@: c/x01c@EXEEXT@
+@SVG_COMMENT@	echo svg
+@SVG_COMMENT@	./plplot-test.sh --front-end=c --device=svg
+
+@XFIG_COMMENT@@XFIG@: c/x01c@EXEEXT@
+@XFIG_COMMENT@	echo xfig
+@XFIG_COMMENT@	./plplot-test.sh --front-end=c --device=xfig
+
+test_interactive:
+	./plplot-test-interactive.sh
+
+clean: test_clean
 	target=`echo $@`; \
 	list='$(SUBDIRS)'; for subdir in $$list; do \
 	  if test -d "$$subdir"; then \
@@ -34,3 +98,9 @@ all clean:
 	    (cd $$subdir && $(MAKE) $$target); \
 	  fi; \
 	done
+
+test_clean:
+	rm -f *.psc *.pdfcairo *.pngcairo *.pscairo *.svgcairo \
+	*.gif *.jpeg *.png *.psttfc *.svg *.xfig *.txt test.error
+
+.PHONY : all clean test test_clean test_interactive
