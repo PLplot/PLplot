@@ -1,4 +1,4 @@
-C      $Id:$
+C      $Id$
 C      set / get tester.
 C
 C      Copyright (C) 2008  Alan W. Irwin
@@ -27,12 +27,13 @@ C Demonstrates absolute positioning of graphs on a page.
 C--------------------------------------------------------------------------
 
       implicit none
-      real*8 xmin, xmax, ymin, ymax, wx, wy
+      real*8 xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax
+      real*8 xmid, ymid, wx, wy
       real*8 mar, aspect, jx, jy, ori
-      integer win, level, digmax, digits, compression
-      real*8 xp, yp, xp2, yp2
-      integer xleng, yleng, xoff, yoff, xleng2, yleng2
-      integer fam, num, bmax, fam1, num1, bmax1, r, g, b
+      integer win, level2, digmax, digits, compression1, compression2
+      real*8 xp1, yp1, xp2, yp2
+      integer xleng1, yleng1, xoff1, yoff1, xleng2, yleng2, xoff2, yoff2
+      integer fam1, num1, bmax1, fam2, num2, bmax2, r, g, b
       real*8 a
       integer r1(2), g1(2), b1(2)
       data r1 /0, 255/
@@ -41,6 +42,8 @@ C--------------------------------------------------------------------------
       real*8 a1(2)
       data a1 /1.0d0, 1.0d0/
       character*80 fnam
+      integer stderr
+      integer status
 
 C     Parse and process command line arguments
 
@@ -48,92 +51,122 @@ C     Parse and process command line arguments
       parameter(PL_PARSE_FULL = 1)
       real*8 PL_NOTSET
       parameter(PL_NOTSET = -42.0d0)
+      
+      status = 0
+      stderr = 0
+
       call plparseopts(PL_PARSE_FULL)
+C     Test setting / getting compression parameter across plinit
+      compression1 = 100
+      call plscompression(compression1)
 
-C     Test setting / getting page size
-      call plgpage(xp, yp, xleng, yleng, xoff, yoff)
-      xp2 = xp*0.9d0
-      yp2 = yp*0.9d0
-      xleng2 = int(xleng*0.9d0)
-      yleng2 = int(yleng*0.9d0)
-      call plspage(xp2, yp2, xleng2, yleng2, xoff, yoff)
-      call plgpage(xp, yp, xleng, yleng, xoff, yoff)
-      if (xp.ne.xp2 .or. yp .ne. yp2 .or. xleng .ne. xleng2 .or. 
-     &     yleng .ne. yleng2) then
-         write (0,*) "plgpage test failed"
-         call plend()
-         call exit(1)
-      endif
+C     Test setting / getting familying parameters across plinit
+      fam1 = 0
+      num1 = 10
+      bmax1 = 1000
+      call plsfam(fam1, num1, bmax1)
 
-      call plscompression(1)
-      call plgcompression(compression)
-      if (compression .ne. 1) then
-         write (0,*) "plgcompression test failed"
-         call plend()
-         call exit(1)
-      endif
-
-      call plgfam(fam, num, bmax)
-      call plsfam(1,1,100000)
-      call plgfam(fam1, num1, bmax1)
-      if (fam1 .ne. 1 .or. num1 .ne. 1 .or. bmax1 .ne. 100000) then
-         write (0,*) "plgfam test failed"
-         call plend()
-         call exit(1)
-      endif
-      call plsfam(fam, num, bmax)
+C     Test setting / getting page parameters across plinit
+      xp1 = 200.d0
+      yp1 = 200.d0
+      xleng1 = 400
+      yleng1 = 200
+      xoff1 = 10
+      yoff1 = 20
+      call plspage(xp1, yp1, xleng1, yleng1, xoff1, yoff1)
 
 C     Initialize plplot
 
       call plinit()
 
+C     Test if device initialization screwed around with the preset
+C     compression parameter. 
+      call plgcompression(compression2)
+      write(*,'(A)') 'Output various PLplot parameters'
+      write(*,'(A,I3)') 'compression parameter = ', compression2
+      if (compression2 .ne. compression1) then
+         write(stderr,*) 'plgcompression test failed'
+         status = 1;
+      endif
+
+C     Test if device initialization screwed around with any of the
+C     preset familying values.
+      call plgfam(fam2, num2, bmax2);
+      write(*,'(A,I1,I3,I5)') 'family parameters: fam, num, bmax = ', 
+     &     fam2, num2, bmax2
+      if (fam2 .ne. fam1 .or. num2 .ne. num1 .or. bmax2 .ne. bmax1) then
+         write(stderr,*) 'plgfam test failed\n'
+         status = 1
+      endif
+
+C     Test if device initialization screwed around with any of the
+C     preset page values.
+      call plgpage(xp2, yp2, xleng2, yleng2, xoff2, yoff2)
+      write(*,'(A,2F11.6, 2I4, 2I3)') 
+     &     'page parameters: xp, yp, xleng, yleng, xoff, yoff =',
+     &     xp2, yp2, xleng2, yleng2, xoff2, yoff2
+      if (xp2 .ne. xp1 .or. yp2 .ne. yp1 .or. xleng2 .ne. xleng1 .or. 
+     &     yleng2 .ne. yleng1 .or. xoff2 .ne. xoff1 .or. 
+     &     yoff2 .ne. yoff1 ) then
+         write(stderr,*) 'plgpage test failed'
+         status = 1;
+      endif
+
+
+C     Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
+C     they work without any obvious error messages.
       call plscolor(1)
-
       call plscol0(1, 255, 0, 0)
-
       call plscmap1(r1,g1,b1,2)
       call plscmap1a(r1,g1,b1,a1,2)
   
-      call plglevel(level)
-      if (level .ne. 1) then
-         write(0,*) "plglevel test failed. Level is ",level,
-     &        ", but 1 expected."
-         call plend()
-         call exit(1)
+      call plglevel(level2)
+      write(*,'(A,I1)') 'level parameter = ', level2
+      if (level2 .ne. 1) then
+         write(stderr,*) 'plglevel test failed.'
+         status = 1
       endif
 
       call pladv(0)
-      call plvpor(0.0d0, 1.0d0, 0.0d0, 1.0d0)
+      call plvpor(0.01d0, 0.99d0, 0.02d0, 0.49d0)
+      call plgvpd(xmin, xmax, ymin, ymax)
+      write(*,'(A,4F9.6)') 'plvpor: xmin, xmax, ymin, ymax =', 
+     &     xmin, xmax, ymin, ymax
+      if (xmin .ne. 0.01d0 .or. xmax .ne. 0.99d0 .or. 
+     &     ymin .ne. 0.02d0 .or. ymax .ne. 0.49d0) then
+         write(stderr,*) 'plgvpd test failed'
+         status = 1
+      endif
+      xmid = 0.5*(xmin+xmax);
+      ymid = 0.5*(ymin+ymax);
 
       call plwind(0.2d0, 0.3d0, 0.4d0, 0.5d0)
       call plgvpw(xmin, xmax, ymin, ymax)
+      write(*,'(A,4F9.6)') 'plwind: xmin, xmax, ymin, ymax =', 
+     &     xmin, xmax, ymin, ymax
       if (xmin .ne. 0.2d0 .or. xmax .ne. 0.3d0 .or. ymin .ne. 0.4d0 .or. 
      &     ymax .ne. 0.5d0) then
-         write (0,*) "plgvpw test failed",xmin,xmax,ymin,ymax
-         call plend()
-         call exit(1)
+         write(stderr,*) 'plgvpw test failed',xmin,xmax,ymin,ymax
+         status = 1
       endif
 
-      call plgvpd(xmin, xmax, ymin, ymax)
-      if (xmin .ne. 0.0d0 .or. xmax .ne. 1.0d0 .or. ymin .ne. 0.0d0 .or. 
-     &     ymax .ne. 1.0d0) then
-         write (0,*) "plgvpd test failed"
-         call plend()
-         call exit(1)
-      endif
-
-C     Get world coordinates for 0.5,0.5 which is in the middle of 
-C     the window
-      call plcalc_world(0.5d0,0.5d0,wx,wy,win)
+C     Get world coordinates for midpoint of viewport
+      call plcalc_world(xmid,ymid,wx,wy,win)
+      write(*,'(A,2F9.6,I2)') 'world parameters: wx, wy, win =', 
+     &     wx, wy, win
       if (abs(wx-0.25d0).gt.1.0d-5 .or. abs(wy-0.45d0).gt.1.0d-5) then
-         write (0,*) "plcalc_world test failed"
-         call plend()
-         call exit(1)  
+         write(stderr,*) 'plcalc_world test failed'
+         status = 1
       endif
 
 C     Retrieve and print the name of the output file (if any)
       call plgfnam(fnam)
-      print *,"Output file name is ",fnam
+      if (len(trim(fnam)) .eq. 0) then
+         write(*,'(A)') 'No output file name is set'
+      else 
+         write(*,'(A)') 'Output file name read'
+      endif
+      write(stderr,'(A,A)') 'Output file name is ',trim(fnam)
 
 C     Set and get the number of digits used to display axis labels
 C     Note digits is currently ignored in pls[xyz]ax and 
@@ -141,80 +174,88 @@ C     therefore it does not make sense to test the returned
 C     value
       call plsxax(3,0)
       call plgxax(digmax,digits)
+      write(*,'(A,I2,I2)') 'x axis parameters: digmax, digits =', 
+     &     digmax, digits
       if (digmax .ne. 3) then
-         write (0,*) "plgxax test failed"
-         call plend()
-         call exit(1)
+         write(stderr,*) 'plgxax test failed'
+         status = 1
       endif
 
-      call plsyax(3,0)
+      call plsyax(4,0)
       call plgyax(digmax,digits)
-      if (digmax .ne. 3) then
-         write (0,*) "plgyax test failed"
-         call plend()
-         call exit(1)
+      write(*,'(A,I2,I2)') 'y axis parameters: digmax, digits =', 
+     &     digmax, digits
+      if (digmax .ne. 4) then
+         write(stderr,*) 'plgyax test failed'
+         status = 1
       endif
 
-      call plszax(3,0)
+      call plszax(5,0)
       call plgzax(digmax,digits)
-      if (digmax .ne. 3) then
-         write(0,*) "plgzax test failed"
-         call plend()
-         call exit(1)
+      write(*,'(A,I2,I2)') 'z axis parameters: digmax, digits =', 
+     &     digmax, digits
+      if (digmax .ne. 5) then
+         write(stderr,*) 'plgzax test failed'
+         status = 1
       endif
       
-      call plsdidev(0.05d0, PL_NOTSET, 0.0d0, 0.0d0)
+      call plsdidev(0.05d0, PL_NOTSET, 0.1d0, 0.2d0)
       call plgdidev(mar, aspect, jx, jy)
-      if (mar .ne. 0.05d0 .or. jx .ne. 0.0d0 .or. jy .ne. 0.0d0) then
-         write(0,*) "plgdidev test failed"
-         call plend()
-         call exit(1)
+      write(*,'(A,4F9.6)') 'device-space window parameters: '//
+     &     'mar, aspect, jx, jy =', mar, aspect, jx, jy
+      if (mar .ne. 0.05d0 .or. jx .ne. 0.1d0 .or. jy .ne. 0.2d0) then
+         write(stderr,*) 'plgdidev test failed'
+         status = 1
       endif
       
       call plsdiori(1.0d0)
       call plgdiori(ori)
+      write(*,'(A,F9.6)') 'ori parameter =', ori
       if (ori .ne. 1.0d0) then
-         write(0,*) "plgdiori test failed"
-         call plend()
-         call exit(1)
+         write(stderr,*) 'plgdiori test failed'
+         status = 1
       endif
       
-      call plsdiplt(0.1d0, 0.1d0, 0.9d0, 0.9d0)
+      call plsdiplt(0.1d0, 0.2d0, 0.9d0, 0.8d0)
       call plgdiplt(xmin, ymin, xmax, ymax)
-      if (xmin .ne. 0.1d0 .or. xmax .ne. 0.9d0 .or. ymin .ne. 0.1d0 .or. 
-     &     ymax .ne. 0.9d0) then
-         write(0,*) "plgdiplt test failed"
-         call plend()
-         call exit(1)
+      write(*,'(A,4F9.6)') 'plot-space window parameters: '//
+     &     'xmin, ymin, xmax, ymax =', xmin, ymin, xmax, ymax
+      if (xmin .ne. 0.1d0 .or. xmax .ne. 0.9d0 .or. ymin .ne. 0.2d0 .or. 
+     &     ymax .ne. 0.8d0) then
+         write(stderr,*) 'plgdiplt test failed'
+         status = 1
       endif
 
       call plsdiplz(0.1d0, 0.1d0, 0.9d0, 0.9d0)
-      call plgdiplt(xmin, ymin, xmax, ymax)
-      if (xmin .ne. 0.1d0+0.8d0*0.1d0 .or. 
-     &     xmax .ne. 0.1d0+0.8d0*0.9d0 .or.
-     &     ymin .ne. 0.1d0+0.8d0*0.1d0 .or. 
-     &     ymax .ne. 0.1d0+0.8d0*0.9d0) then
-         write(0,*) "plsdiplz test failed"
-         call plend()
-         call exit(1)
+      call plgdiplt(zxmin, zymin, zxmax, zymax)
+      write(*,'(A,4F9.6)') 'zoomed plot-space window parameters: '//
+     &     'xmin, ymin, xmax, ymax =', zxmin, zymin, zxmax, zymax
+      if ( abs(zxmin -(xmin + (xmax-xmin)*0.1d0)) .gt. 1.0d-5 .or.
+     &     abs(zxmax -(xmin+(xmax-xmin)*0.9d0)) .gt. 1.0d-5 .or.
+     &     abs(zymin -(ymin+(ymax-ymin)*0.1d0)) .gt. 1.0d-5 .or.
+     &     abs(zymax -(ymin+(ymax-ymin)*0.9d0)) .gt. 1.0d-5 ) then
+         write(stderr,*) 'plsdiplz test failed'
+         status = 1
       endif
       
-      call plscolbg(0,0,0)
+      call plscolbg(10,20,30)
       call plgcolbg(r, g, b)
-      if (r .ne. 0 .or. g .ne. 0 .or. b .ne. 0) then
-         write(0,*) "plgcolbg test failed"
-         call plend()
-         call exit(1)
+      write(*,'(A,3I3)') 'background colour parameters: r, g, b =', 
+     &     r, g, b
+      if (r .ne. 10 .or. g .ne. 20 .or. b .ne. 30) then
+         write(stderr,*) 'plgcolbg test failed'
+         status = 1
       endif
 
-      call plscolbga(0,0,0,1.0d0)
+      call plscolbga(20,30,40,0.5d0)
       call plgcolbga(r, g, b, a)
-      if (r .ne. 0 .or. g .ne. 0 .or. b .ne. 0 .or. a .ne. 1.0d0) then
-         write(0,*) "plgcolbga test failed"
-         call plend()
-         call exit(1)
+      write(*,'(A,3I3,F9.6)') 'background/transparency colour '//
+     &     'parameters: r, g, b, a =', r, g, b, a
+      if (r.ne.20 .or. g.ne.30 .or. b.ne.40 .or. a.ne.0.5d0) then
+         write(stderr,*) 'plgcolbga test failed'
+         status = 1
       endif
 
       call plend()
-      call exit(0)
+      call exit(status)
       end
