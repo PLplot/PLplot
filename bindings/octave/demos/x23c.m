@@ -276,8 +276,8 @@ end
 ## Demonstrate methods of getting the current fonts
 fci_old = plgfci();
 [ifamily,istyle,iweight] = plgfont();
-fprintf(ostrm,"For example 23 prior to page 12 the FCI is 0x%x\n",fci_old);
-fprintf(ostrm,"For example 23 prior to page 12 the font family, style and weight are  %s %s %s\n",deblank(family(ifamily+1,:)), deblank(style(istyle+1,:)), deblank(weight(iweight+1,:)));
+fprintf(strm,"For example 23 prior to page 12 the FCI is 0x%x\n",fci_old);
+fprintf(strm,"For example 23 prior to page 12 the font family, style and weight are  %s %s %s\n",deblank(family(ifamily+1,:)), deblank(style(istyle+1,:)), deblank(weight(iweight+1,:)));
 
 for page=11:15
   dy = 0.030;
