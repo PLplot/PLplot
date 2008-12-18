@@ -24,7 +24,12 @@
 
 1;
 
-function ret = ix31c
+function ret = ix31c(strm)
+
+  # Redirect output to file if required
+  if (nargin == 0)
+    strm = stdout;
+  endif
 
   if (!exist("plinit"))
     plplot_stub
@@ -207,4 +212,8 @@ function ret = ix31c
 
 endfunction
 
-ix31c
+if (exist("strm","var"))
+  ix31c(strm)
+else
+  ix31c()
+endif

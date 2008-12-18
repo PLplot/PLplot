@@ -26,8 +26,14 @@
 
 ## Displays Greek letters and mathematically interesting Unicode ranges
 
-function ix23c
+function ix23c(strm)
  
+  # Redirect output to file if required
+  if (nargin == 0)
+    strm = stdout;
+  endif
+
+
   Greek = [\
 "#gA";"#gB";"#gG";"#gD";"#gE";"#gZ";"#gY";"#gH";"#gI";"#gK";"#gL";"#gM";\
 "#gN";"#gC";"#gO";"#gP";"#gR";"#gS";"#gT";"#gU";"#gF";"#gX";"#gQ";"#gW";\
@@ -270,8 +276,8 @@ end
 ## Demonstrate methods of getting the current fonts
 fci_old = plgfci();
 [ifamily,istyle,iweight] = plgfont();
-printf("For example 23 prior to page 12 the FCI is 0x%x\n",fci_old);
-printf("For example 23 prior to page 12 the font family, style and weight are  %s %s %s\n",deblank(family(ifamily+1,:)), deblank(style(istyle+1,:)), deblank(weight(iweight+1,:)));
+fprintf(ostrm,"For example 23 prior to page 12 the FCI is 0x%x\n",fci_old);
+fprintf(ostrm,"For example 23 prior to page 12 the font family, style and weight are  %s %s %s\n",deblank(family(ifamily+1,:)), deblank(style(istyle+1,:)), deblank(weight(iweight+1,:)));
 
 for page=11:15
   dy = 0.030;
@@ -321,4 +327,9 @@ plend1;
 
 end
 
-ix23c
+if (exist("strm","var"))
+  ix23c(strm);
+else
+  ix23c();
+endif
+

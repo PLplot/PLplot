@@ -17,7 +17,12 @@
 
 1;
 
-function ix01c
+function ix01c(strm)
+
+  # Redirect output to file if required
+  if (nargin == 0)
+    strm = stdout;
+  endif
 
   if (!exist("plinit"))
     plplot_stub
@@ -37,7 +42,7 @@ function ix01c
   ## Get version number, just for kicks */
 
   ver=plgver';
-  printf("PLplot library version: %s\n", ver);
+  fprintf(strm,"PLplot library version: %s\n", ver);
 
   ## Initialize plplot */
   ## Divide page into 2x2 plots unless user overrides */
@@ -219,6 +224,10 @@ function plot3
   
 endfunction
 
-ix01c
+if (exist("strm","var"))
+  ix01c(strm)
+else
+  ix01c()
+endif
 
 
