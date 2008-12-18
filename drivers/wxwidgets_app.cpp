@@ -84,7 +84,7 @@ struct dev_entry dev_entries[] = {
   { wxT("xfig"), wxT("xfig..."), wxT("Save this plot as xfig!"), wxT("fig files (*.fig)|*.fig"), false }
 };
 
-
+/* Application implementation */
 IMPLEMENT_PLAPP_NO_MAIN( wxPLplotApp )
 
 /* event table for the app */

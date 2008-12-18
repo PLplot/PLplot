@@ -26,16 +26,14 @@
 
 #include "plDevs.h"
 
-#ifdef PLD_wxwidgets
-
 /* plplot headers */
 #include "plplotP.h"
 #include "plfci-truetype.h"
 
 /* wxwidgets headers */
-#include "wx/wx.h"
+#include <wx/wx.h>
 #include <wx/strconv.h>
-    
+   
 /* std and driver headers */
 #include "wxwidgets.h"
 #include <wchar.h>
@@ -95,11 +93,13 @@ wxPLDevAGG::wxPLDevAGG() :
     mColorGreenFill( 0 ),
     mColorBlueFill( 0 )
 {
+  backend=wxBACKEND_AGG;
+	
   mCurves.approximation_scale( 2.0 );
   mContour.auto_detect_orientation( false );
   mConvStroke.line_join( agg::round_join );
   mConvStroke.line_cap( agg::round_cap );
-	
+
 	/* determine font directory */
 #if defined(WIN32)
     /*static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.ttf",
@@ -328,12 +328,12 @@ void wxPLDevAGG::FillPolygon( PLStream *pls )
 
 
 /*--------------------------------------------------------------------------
- *  void wxPLDevAGG::BlitRectangle( wxPaintDC* dc, int vX, int vY,
+ *  void wxPLDevAGG::BlitRectangle( wxDC* dc, int vX, int vY,
  *                                  int vW, int vH )
  *
  *  Copy/Blit a rectangle ((vX,vY) to (vX+vW,vY+vH)) into given dc.
  *--------------------------------------------------------------------------*/
-void wxPLDevAGG::BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )
+void wxPLDevAGG::BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH )
 {
   if( mBuffer ) {
     wxMemoryDC MemoryDC;
@@ -587,5 +587,3 @@ void wxPLDevAGG::ProcessString( PLStream* pls, EscText* args )
 
   AddtoClipRegion( 0, 0, width, height );        
 }
-
-#endif				/* PLD_wxwidgets */

@@ -27,13 +27,11 @@
 
 #include "plDevs.h"
 
-#ifdef PLD_wxwidgets
-
 /* plplot headers */
 #include "plplotP.h"
 
 /* wxwidgets headers */
-#include "wx/wx.h"
+#include <wx/wx.h>
 
 /* std and driver headers */
 #include "wxwidgets.h"
@@ -46,11 +44,12 @@ wxPLDevGC::wxPLDevGC( void ) : wxPLDevBase()
 {
   // Log_Verbose( "%s", __FUNCTION__ );
 
+  backend=wxBACKEND_GC;
   m_dc=NULL;
   m_bitmap=NULL;
   m_context=NULL;
   m_font=NULL;
-  underlined=false;  
+  underlined=false;
 }
 
 
@@ -149,7 +148,7 @@ void wxPLDevGC::FillPolygon( PLStream *pls )
 }
 
 
-void wxPLDevGC::BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )
+void wxPLDevGC::BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH )
 {
   // Log_Verbose( "%s", __FUNCTION__ );
 
@@ -373,7 +372,3 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
 }
 
 #endif
-
-#endif				/* PLD_wxwidgets */
-
-

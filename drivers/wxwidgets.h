@@ -78,6 +78,11 @@
 #define LOCATE_INVOKED_VIA_API		1
 #define LOCATE_INVOKED_VIA_DRIVER	2
 
+/* Available backends */
+#define wxBACKEND_DC 0
+#define wxBACKEND_AGG 1
+#define wxBACKEND_GC 2
+
 class wxPLplotFrame;
   
 /* base device class */
@@ -92,7 +97,7 @@ public: /* methods */
   virtual void DrawPolyline( short *xa, short *ya, PLINT npts )=0;
   virtual void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1=-1, PLINT y1=-1, PLINT x2=-1, PLINT y2=-1 )=0;
   virtual void FillPolygon( PLStream *pls )=0;
-  virtual void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )=0;
+  virtual void BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH )=0;
   void AddtoClipRegion( int x1, int y1, int x2, int y2 );
   virtual void CreateCanvas()=0;
   virtual void SetWidth( PLStream *pls )=0;
@@ -112,10 +117,11 @@ public: /* methods */
 public: /* variables */
   bool ready;
   bool ownGUI;
+  bool showGUI;
   bool waiting;
   bool resizing;
   bool exit;
-
+  int backend;
   int comcount;
   
   wxPLplotFrame* m_frame;
@@ -152,6 +158,7 @@ public: /* variables */
   const char** devDesc;		/* Descriptive names for file-oriented devices.  Malloc'ed. */
   const char** devName;		/* Keyword names of file-oriented devices. Malloc'ed. */
 	int ndev;
+  wxBitmapType bitmapType;
 
   /* font variables */
   static const int max_string_length=500;
@@ -178,7 +185,7 @@ public: /* methods */
   void DrawPolyline( short *xa, short *ya, PLINT npts );
   void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1=-1, PLINT y1=-1, PLINT x2=-1, PLINT y2=-1 );
   void FillPolygon( PLStream *pls );
-  void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH );
+  void BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH );
   void CreateCanvas();
   void SetWidth( PLStream *pls );
   void SetColor0( PLStream *pls );
@@ -241,7 +248,7 @@ public: /* methods */
   void DrawPolyline( short *xa, short *ya, PLINT npts );
   void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1=-1, PLINT y1=-1, PLINT x2=-1, PLINT y2=-1 );
   void FillPolygon( PLStream *pls );
-  void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH );
+  void BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH );
   void CreateCanvas();
   void SetWidth( PLStream *pls );
   void SetColor0( PLStream *pls );
@@ -307,7 +314,7 @@ public: /* methods */
   void DrawPolyline( short *xa, short *ya, PLINT npts );
   void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1=-1, PLINT y1=-1, PLINT x2=-1, PLINT y2=-1 );
   void FillPolygon( PLStream *pls );
-  void BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH );
+  void BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH );
   void CreateCanvas();
   void SetWidth( PLStream *pls );
   void SetColor0( PLStream *pls );
@@ -482,11 +489,13 @@ static void install_buffer( PLStream *pls );
 static void wxRunApp( PLStream *pls, bool runonce=false );
 static void GetCursorCmd( PLStream *pls, PLGraphicsIn *ptr );
 
+
 /*----------------------------------------------------------------------*\
  *  Declarations for the device.
 \*----------------------------------------------------------------------*/
 
 void plD_init_wxwidgets		(PLStream *);
+void plD_init_wxpng		(PLStream *);
 void plD_line_wxwidgets		(PLStream *, short, short, short, short);
 void plD_polyline_wxwidgets	(PLStream *, short *, short *, PLINT);
 void plD_eop_wxwidgets		(PLStream *);

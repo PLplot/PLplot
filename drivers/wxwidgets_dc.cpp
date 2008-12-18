@@ -28,13 +28,11 @@
 
 #include "plDevs.h"
 
-#ifdef PLD_wxwidgets
-
 /* plplot headers */
 #include "plplotP.h"
 
 /* wxwidgets headers */
-#include "wx/wx.h"
+#include <wx/wx.h>
     
 /* std and driver headers */
 #include <cmath>
@@ -49,6 +47,7 @@
  *--------------------------------------------------------------------------*/
 wxPLDevDC::wxPLDevDC( void ) : wxPLDevBase()
 {
+  backend=wxBACKEND_DC;
   m_dc=NULL;
   m_bitmap=NULL;
   m_font=NULL;
@@ -166,12 +165,12 @@ void wxPLDevDC::FillPolygon( PLStream *pls )
 
 
 /*--------------------------------------------------------------------------
- *  void wxPLDevDC::BlitRectangle( wxPaintDC* dc, int vX, int vY,
+ *  void wxPLDevDC::BlitRectangle( wxDC* dc, int vX, int vY,
  *                                 int vW, int vH )
  *
  *  Copy/Blit a rectangle ((vX,vY) to (vX+vW,vY+vH)) into given dc.
  *--------------------------------------------------------------------------*/
-void wxPLDevDC::BlitRectangle( wxPaintDC* dc, int vX, int vY, int vW, int vH )
+void wxPLDevDC::BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH )
 {
   if( m_dc )
     dc->Blit( vX, vY, vW, vH, m_dc, vX, vY );
@@ -399,7 +398,5 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
 
   AddtoClipRegion( 0, 0, width, height );        
 }
-
-#endif				/* PLD_wxwidgets */
 
 

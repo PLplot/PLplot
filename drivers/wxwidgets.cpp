@@ -27,8 +27,6 @@
 
 #include "plDevs.h"
 
-#ifdef PLD_wxwidgets
-
 /* plplot headers */
 #include "plplotP.h"
 #include "drivers.h"
@@ -37,8 +35,9 @@
 #include <cstdio>
 
 /* wxwidgets headers */
-#include "wx/wx.h"
-#include "wx/except.h"
+#include <wx/wx.h>
+#include <wx/wfstream.h>
+#include <wx/except.h>
 
 #include "wxwidgets.h"
 
@@ -49,11 +48,11 @@
 
 DECLARE_PLAPP( wxPLplotApp )
 
-/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------
  *  void Log_Verbose( const char *fmt, ... )
  *
  *  Print verbose debug message to stderr (printf style).
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 void Log_Verbose( const char *fmt, ... )
 {
 #ifdef _DEBUG_VERBOSE
@@ -68,11 +67,11 @@ void Log_Verbose( const char *fmt, ... )
 }
 
 
-/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------
  *  void Log_Debug( const char *fmt, ... )
  *
  *  Print debug message to stderr (printf style).
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 void Log_Debug( const char *fmt, ... )
 {
 #ifdef _DEBUG
@@ -87,44 +86,35 @@ void Log_Debug( const char *fmt, ... )
 }
 
 
-/*----------------------------------------------------------------------*\
+/*----------------------------------------------------------------------
  *  In the following you'll find the driver functions which are
  *  are needed by the plplot core.
-\*----------------------------------------------------------------------*/
+ *----------------------------------------------------------------------*/
 
 /* Device info */
 #ifdef __cplusplus
 extern "C" {
 #endif
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wxwidgets = "wxwidgets:wxWidgets DC:1:wxwidgets:51:wxwidgets";
+
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wxwidgets =
+#ifdef PLD_wxwidgets
+  "wxwidgets:wxWidgets Driver:1:wxwidgets:51:wxwidgets\n"
+#endif  
+#ifdef PLD_wxpng
+  "wxpng:wxWidgets PNG Driver:0:wxwidgets:52:wxpng\n"
+#endif  
+;
+
 #ifdef __cplusplus
 }
 #endif
 
-/*--------------------------------------------------------------------------*\
- *  void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
+
+/*--------------------------------------------------------------------------
+ *  wxPLDevBase::wxPLDevBase( void )
  *
- *  Make driver functions known to plplot.
-\*--------------------------------------------------------------------------*/
-void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
-{
-#ifndef ENABLE_DYNDRIVERS
-    pdt->pl_MenuStr  = "wxWidgets DC";
-    pdt->pl_DevName  = "wxwidgets";
-#endif
-    pdt->pl_type     = plDevType_Interactive;
-    pdt->pl_seq      = 51;
-    pdt->pl_init     = (plD_init_fp)     plD_init_wxwidgets;
-    pdt->pl_line     = (plD_line_fp)     plD_line_wxwidgets;
-    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_wxwidgets;
-    pdt->pl_eop      = (plD_eop_fp)      plD_eop_wxwidgets;
-    pdt->pl_bop      = (plD_bop_fp)      plD_bop_wxwidgets;
-    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_wxwidgets;
-    pdt->pl_state    = (plD_state_fp)    plD_state_wxwidgets;
-    pdt->pl_esc      = (plD_esc_fp)      plD_esc_wxwidgets;
-}
-
-
+ *  Contructor of base class of wxPLDev classes.
+ *--------------------------------------------------------------------------*/
 wxPLDevBase::wxPLDevBase( void )
 {
   // Log_Verbose( "wxPLDevBase::wxPLDevBase()" );
@@ -287,22 +277,21 @@ void wxPLDevBase::PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
 }
 
 
-/*--------------------------------------------------------------------------*\
- *  plD_init_wxwidgets()
+/*--------------------------------------------------------------------------
+ *  void common_init(  PLStream *pls )
  *
- *  Initialize device.
-\*--------------------------------------------------------------------------*/
-void
-plD_init_wxwidgets( PLStream *pls )
+ *  Basic initialization for all devices.
+ *--------------------------------------------------------------------------*/
+wxPLDevBase* common_init(  PLStream *pls )
 {
-  // Log_Verbose( "plD_init_wxwidgets()" );
-
+  // Log_Verbose( "common_init()" );
+  
   wxPLDevBase* dev;
 
   /* default options */
   static PLINT freetype=0;
   static PLINT smooth_text=1;
-  static PLINT backend=0;
+  static PLINT backend=wxBACKEND_DC;
   static PLINT text=1;
   static PLINT hrshsym = 0;
   
@@ -323,13 +312,13 @@ DrvOpt wx_options[] = {
   switch( backend )
   {
 #if wxUSE_GRAPHICS_CONTEXT    
-  case 2:
+  case wxBACKEND_GC:
     dev = new wxPLDevGC;
     freetype = 0; /* this backend is vector oriented and doesn't now pixels */
     break;
 #endif
 #ifdef HAVE_AGG
-  case 1:
+  case wxBACKEND_AGG:
     dev = new wxPLDevAGG;
     text = 0; /* text processing doesn't work yet for the AGG backend */
     break;
@@ -353,15 +342,12 @@ DrvOpt wx_options[] = {
   pls->debug = 0;
 #endif
 
-  pls->color = 1;		/* Is a color device */
+  pls->color = 1;		    /* Is a color device */
   pls->dev_fill0 = 1;		/* Can handle solid fills */
   pls->dev_fill1 = 0;		/* Can't handle pattern fills */
   pls->dev_dash = 0;
-  pls->plbuf_write = 1;    /* use the plot buffer! */
-  pls->termin = 1;             /* interactive device */
-  pls->graphx = GRAPHICS_MODE; /*  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination) */
-  pls->dev_clear = 1;          /* driver supports clear */
-
+  pls->dev_clear = 1;   /* driver supports clear */
+ 
   if( text ) {
     pls->dev_text = 1; /* want to draw text */
     pls->dev_unicode = 1; /* want unicode */
@@ -396,14 +382,12 @@ DrvOpt wx_options[] = {
   dev->height=pls->ylength;
   dev->clipminx=pls->xlength;
   dev->clipminy=pls->ylength;
-
+  
   /* If portrait mode, apply a rotation and set freeaspect */
   if( pls->portrait ) {
     plsdiori( (PLFLT)(4 - ORIENTATION) );
     pls->freeaspect = 1;
   }
-
-  // Log_Verbose( "settings" );
 
   /* Set the number of pixels per mm */
   plP_setpxl( (PLFLT)VIRTUAL_PIXELS_PER_MM, (PLFLT)VIRTUAL_PIXELS_PER_MM );
@@ -426,18 +410,122 @@ DrvOpt wx_options[] = {
   if( dev->freetype )
     init_freetype_lv2( pls );
 #endif
-  
+
   /* find out what file drivers are available */
   plgFileDevs( &dev->devDesc, &dev->devName, &dev->ndev );
+  
+  return dev;
 }
 
 
-/*--------------------------------------------------------------------------*\
+#ifdef PLD_wxwidgets
+
+/*--------------------------------------------------------------------------
+ *  void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
+ *
+ *  Make wxwidgets driver functions known to plplot.
+ *--------------------------------------------------------------------------*/
+void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
+{
+#ifndef ENABLE_DYNDRIVERS
+    pdt->pl_MenuStr  = "wxWidgets DC";
+    pdt->pl_DevName  = "wxwidgets";
+#endif
+    pdt->pl_type     = plDevType_Interactive;
+    pdt->pl_seq      = 51;
+    pdt->pl_init     = (plD_init_fp)     plD_init_wxwidgets;
+    pdt->pl_line     = (plD_line_fp)     plD_line_wxwidgets;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_wxwidgets;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_wxwidgets;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_wxwidgets;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_wxwidgets;
+    pdt->pl_state    = (plD_state_fp)    plD_state_wxwidgets;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_wxwidgets;
+}
+
+/*--------------------------------------------------------------------------
+ *  plD_init_wxwidgets( PLStream* pls )
+ *
+ *  Initialize wxWidgets device.
+ *--------------------------------------------------------------------------*/
+void plD_init_wxwidgets( PLStream* pls )
+{
+  // Log_Verbose( "plD_init_wxwidgets()" );
+
+  wxPLDevBase* dev;
+  dev = common_init( pls );
+
+  pls->plbuf_write = 1;    /* use the plot buffer! */
+  pls->termin = 1;             /* interactive device */
+  pls->graphx = GRAPHICS_MODE; /*  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination) */
+ 
+  dev->showGUI = true;  
+  dev->bitmapType = (wxBitmapType)0;
+}
+
+#endif  /* PLD_wxwidgets */
+
+
+#ifdef PLD_wxpng
+
+/*--------------------------------------------------------------------------
+ *  void plD_dispatch_init_wxpng( PLDispatchTable *pdt )
+ *
+ *  Make wxpng driver functions known to plplot.
+ *--------------------------------------------------------------------------*/
+void plD_dispatch_init_wxpng( PLDispatchTable *pdt )
+{
+#ifndef ENABLE_DYNDRIVERS
+    pdt->pl_MenuStr  = "wxWidgets PNG driver";
+    pdt->pl_DevName  = "wxpng";
+#endif
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 52;
+    pdt->pl_init     = (plD_init_fp)     plD_init_wxpng;
+    pdt->pl_line     = (plD_line_fp)     plD_line_wxwidgets;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_wxwidgets;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_wxwidgets;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_wxwidgets;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_wxwidgets;
+    pdt->pl_state    = (plD_state_fp)    plD_state_wxwidgets;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_wxwidgets;
+}
+
+/*--------------------------------------------------------------------------
+ *  void plD_init_wxpng( PLStream *pls )
+ *
+ *  Initialize wxpng device.
+ *--------------------------------------------------------------------------*/
+void plD_init_wxpng( PLStream *pls )
+{
+  // Log_Verbose( "plD_init_wxwidgets()" );
+
+  wxPLDevBase* dev;
+  dev = common_init( pls );
+  
+  /* Initialize family file info */
+  plFamInit( pls );
+
+  /* Prompt for a file name if not already set. */
+  plOpenFile( pls );  
+
+  pls->plbuf_write = 1;        /* use the plot buffer! */
+  pls->termin = 0;             /* interactive device */
+  pls->graphx = GRAPHICS_MODE; /*  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination) */
+
+  dev->showGUI = false;  
+  dev->bitmapType = wxBITMAP_TYPE_PNG;
+}
+
+#endif  /* PLD_wxpng */
+
+
+/*--------------------------------------------------------------------------
  *  void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a,
  *													 short x2a, short y2a )
  *
  *  Draws a line from (x1a, y1a) to (x2a, y2a).
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
   // Log_Verbose( "plD_line_wxwidgets(x1a=%d, y1a=%d, x2a=%d, y2a=%d)", x1a, y1a, x2a, y2a );
@@ -459,12 +547,12 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
 }
 
 
-/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------
  *  void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya,
  *															 PLINT npts )
  *
  *  Draw a poly line - points are in xa and ya arrays.
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
   // Log_Verbose( "plD_polyline_wxwidgets()" );
@@ -487,29 +575,42 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 }
 
 
-/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------
  *  void plD_eop_wxwidgets( PLStream *pls )
  *
  *  End of Page. This function is called if a "end of page" is send by the
  *  user. This command is ignored if we have the plot embedded in a 
  *  wxWidgets application, otherwise the application created by the device
  *  takes over.
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 void plD_eop_wxwidgets( PLStream *pls )
 {
   // Log_Verbose( "plD_eop_wxwidgets()" );
 
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
 
+  if( dev->bitmapType ) {
+		wxMemoryDC memDC;
+		wxBitmap bitmap( dev->width, dev->height, -1 );
+		memDC.SelectObject( bitmap );
+    
+    dev->BlitRectangle( &memDC, 0, 0, dev->width, dev->height );
+    wxImage buffer=bitmap.ConvertToImage();
+    wxFFileOutputStream fstream( pls->OutFile );
+    if(!(buffer.SaveFile( fstream, dev->bitmapType )))
+      puts("Troubles saving file!");
+    memDC.SelectObject( wxNullBitmap );
+  }
+  
   if( dev->ownGUI )
-    if ( pls->nopause )
+    if ( pls->nopause || !dev->showGUI )
       wxRunApp( pls, true );
     else
       wxRunApp( pls );
 }
 
 
-/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------
  *  void plD_bop_wxwidgets( PLStream *pls )
  *
  *  Begin of page. Before any plot command, this function is called, If we
@@ -517,7 +618,7 @@ void plD_eop_wxwidgets( PLStream *pls )
  *  state calls are resent - this is because at the first call of this
  *  function, a dc does most likely not exist, but state calls are recorded
  *  and when a new dc is created this function is called again.
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 void plD_bop_wxwidgets( PLStream *pls )
 {
   // Log_Verbose( "plD_bop_wxwidgets()" );
@@ -551,11 +652,11 @@ void plD_bop_wxwidgets( PLStream *pls )
 }
 
 
-/*--------------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------
  *  void plD_tidy_wxwidgets( PLStream *pls )
  *
  *  This function is called, if all plots are done. 
-\*--------------------------------------------------------------------------*/
+ *--------------------------------------------------------------------------*/
 void plD_tidy_wxwidgets( PLStream *pls )
 {
   // Log_Verbose( "plD_tidy_wxwidgets()" );
@@ -760,7 +861,6 @@ void wx_set_size( PLStream* pls, int width, int height )
     dev->CreateCanvas();
     dev->ClearBackground( bgr, bgg, bgb );
 	}
-
     
   /* freetype parameters must also be changed */
 #ifdef HAVE_FREETYPE  
@@ -1060,15 +1160,18 @@ static void install_buffer( PLStream *pls )
   dev->m_frame = new wxPLplotFrame( wxT("wxWidgets PLplot App"), pls );
   wxPLGetApp().AddFrame( dev->m_frame );
   dev->m_frame->SetClientSize( dev->width, dev->height );
-  dev->m_frame->Show( true );
-  dev->m_frame->Raise();
+  if( dev->showGUI ) {
+    dev->m_frame->Show( true );
+    dev->m_frame->Raise();
+  }
+  else
+    dev->m_frame->Show( false );
 	
   /* get a DC and a bitmap or an imagebuffer */
   dev->ownGUI = true;
-  dev->bm_width=1024;
-  dev->bm_height=800;
+  dev->bm_width=dev->width;
+  dev->bm_height=dev->height;
   dev->CreateCanvas();
-  
   dev->ready = true;
 
 	/* Set wx error handler for various errors in plplot*/
@@ -1123,12 +1226,3 @@ static void wxRunApp( PLStream *pls, bool runonce )
 
   dev->waiting=false;
 }
-
-#else
-
-int pldummy_wxwidgets()
-{
-    return 0;
-}
-
-#endif				/* PLD_wxwidgets */
