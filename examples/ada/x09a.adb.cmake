@@ -332,6 +332,7 @@ begin -- main
     -- which is where the type for the "pltr" subprograms is declared. Even if 
     -- I move that type declaration into the thick bindings, the problem remains.
 
+    pl_setcontlabelformat(4,3);
     pl_setcontlabelparam(0.006, 0.3, 0.1, True);
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
     plcol0(2);

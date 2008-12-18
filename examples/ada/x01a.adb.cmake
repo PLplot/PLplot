@@ -146,8 +146,6 @@ procedure x01a is
 begin   
     -- plplot initialization
     
-    -- Divide page into 2x2 plots unless user overrides
-    plssub(2, 2);
     
     -- Parse and process command line arguments
     plparseopts(PL_PARSE_FULL); 
@@ -156,7 +154,8 @@ begin
     Put_Line("PLplot library version: " & plgver);
 
     -- Initialize plplot
-    plinit;
+    -- Divide page into 2x2 plots unless user overrides
+    plstar(2, 2);
 
     -- Set up the data
     -- Original case

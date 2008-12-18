@@ -53,7 +53,12 @@ begin
     -- Initialize plplot
     plinit;
 
-    plenv(0.0, 10.0, 0.0, 10.0, 1, -2);
+    pladv(0);
+    -- Ensure window has aspect ratio of one so circle is
+    -- plotted as a circle.
+    plvasp(1.0);
+    plwind(0.0, 10.0, 0.0, 10.0);
+    -- plenv(0.0, 10.0, 0.0, 10.0, 1, -2);
     plcol0(2);
 
     -- n.b. all theta quantities scaled by 2 * pi / 500 to be integers to avoid
