@@ -78,7 +78,6 @@ main(int argc, const char *argv[])
   printf("compression parameter = %d\n", compression2);
   if (compression2 != compression1) {
     fputs("plgcompression test failed\n",stderr);
-    plend();
     status = 1;
   }
 
@@ -88,7 +87,6 @@ main(int argc, const char *argv[])
   printf("family parameters: fam, num, bmax = %d %d %d\n", fam2, num2, bmax2);
   if (fam2 != fam1 || num2 != num1 || bmax2 != bmax1) {
     fputs("plgfam test failed\n",stderr);
-    plend();
     status = 1;
   }
 
@@ -99,7 +97,6 @@ main(int argc, const char *argv[])
   if (xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 || 
       xoff2 != xoff1 || yoff2 != yoff1 ) {
     fputs("plgpage test failed\n",stderr);
-    plend();
     status = 1;
   }
 
@@ -115,17 +112,15 @@ main(int argc, const char *argv[])
   printf("level parameter = %d\n", level2);
   if (level2 != 1) {
     fputs("plglevel test failed.\n",stderr);
-    plend();
     status = 1;
   }
 
   pladv(0);
   plvpor(0.01, 0.99, 0.02, 0.49);
   plgvpd(&xmin, &xmax, &ymin, &ymax);
-  printf("plvpor: xmin, xmax, ymin, ymax = %f %f %f %f \n", xmin, xmax, ymin, ymax);
+  printf("plvpor: xmin, xmax, ymin, ymax = %f %f %f %f\n", xmin, xmax, ymin, ymax);
   if (xmin != 0.01 || xmax != 0.99 || ymin != 0.02 || ymax != 0.49) {
     fputs("plgvpd test failed\n",stderr);
-    plend();
     status = 1;
   }
   xmid = 0.5*(xmin+xmax);
@@ -133,19 +128,17 @@ main(int argc, const char *argv[])
 
   plwind(0.2, 0.3, 0.4, 0.5);
   plgvpw(&xmin, &xmax, &ymin, &ymax);
-  printf("plwind: xmin, xmax, ymin, ymax = %f %f %f %f \n", xmin, xmax, ymin, ymax);
+  printf("plwind: xmin, xmax, ymin, ymax = %f %f %f %f\n", xmin, xmax, ymin, ymax);
   if (xmin != 0.2 || xmax != 0.3 || ymin != 0.4 || ymax != 0.5) {
     fputs("plgvpw test failed\n",stderr);
-    plend();
     status = 1;
   }
 
   /* Get world coordinates for middle of viewport */
   plcalc_world(xmid,ymid,&wx,&wy,&win);
-  printf("world parameters: wx, wy, win = %f %f %d \n", wx, wy, win);
+  printf("world parameters: wx, wy, win = %f %f %d\n", wx, wy, win);
   if (fabs(wx-0.5*(xmin+xmax))>1.0E-5 || fabs(wy-0.5*(ymin+ymax))>1.0E-5) {
     fputs("plcalc_world test failed\n",stderr);
-    plend();
     status = 1;    
   }
 
@@ -167,85 +160,76 @@ main(int argc, const char *argv[])
      value */
   plsxax(3,0);
   plgxax(&digmax,&digits);
-  printf("x axis parameters: digmax, digits = %d %d \n", digmax, digits);
+  printf("x axis parameters: digmax, digits = %d %d\n", digmax, digits);
   if (digmax != 3) {
     fputs("plgxax test failed\n",stderr);
-    plend();
     status = 1;
   }
 
   plsyax(4,0);
   plgyax(&digmax,&digits);
-  printf("y axis parameters: digmax, digits = %d %d \n", digmax, digits);
+  printf("y axis parameters: digmax, digits = %d %d\n", digmax, digits);
   if (digmax != 4) {
     fputs("plgyax test failed\n",stderr);
-    plend();
     status = 1;
   }
 
   plszax(5,0);
   plgzax(&digmax,&digits);
-  printf("z axis parameters: digmax, digits = %d %d \n", digmax, digits);
+  printf("z axis parameters: digmax, digits = %d %d\n", digmax, digits);
   if (digmax != 5) {
     fputs("plgzax test failed\n",stderr);
-    plend();
     status = 1;
   }
 
   plsdidev(0.05, PL_NOTSET, 0.1, 0.2);
   plgdidev(&mar, &aspect, &jx, &jy);
-  printf("device-space window parameters: mar, aspect, jx, jy = %f %f %f %f \n" , mar, aspect, jx, jy);
+  printf("device-space window parameters: mar, aspect, jx, jy = %f %f %f %f\n" , mar, aspect, jx, jy);
   if (mar != 0.05 || jx != 0.1 || jy != 0.2) {
     fputs("plgdidev test failed\n",stderr);
-    plend();
     status = 1;
   }
 
   plsdiori(1.0);
   plgdiori(&ori);
-  printf("ori parameter = %f \n", ori);
+  printf("ori parameter = %f\n", ori);
   if (ori != 1.0) {
     fputs("plgdiori test failed\n",stderr);
-    plend();
     status = 1;
   }
 
   plsdiplt(0.1, 0.2, 0.9, 0.8);
   plgdiplt(&xmin, &ymin, &xmax, &ymax);
-  printf("plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f \n", xmin, ymin, xmax, ymax);
+  printf("plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f\n", xmin, ymin, xmax, ymax);
   if (xmin != 0.1 || xmax != 0.9 || ymin != 0.2 || ymax != 0.8) {
     fputs("plgdiplt test failed\n",stderr);
-    plend();
     status = 1;
   }
 
   plsdiplz(0.1, 0.1, 0.9, 0.9);
   plgdiplt(&zxmin, &zymin, &zxmax, &zymax);
-  printf("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f \n", zxmin, zymin, zxmax, zymax);
+  printf("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f\n", zxmin, zymin, zxmax, zymax);
   if ( fabs(zxmin -(xmin + (xmax-xmin)*0.1)) > 1.0E-5 || 
        fabs(zxmax -(xmin+(xmax-xmin)*0.9)) > 1.0E-5 || 
        fabs(zymin -(ymin+(ymax-ymin)*0.1)) > 1.0E-5 || 
        fabs(zymax -(ymin+(ymax-ymin)*0.9)) > 1.0E-5 ) {
     fputs("plsdiplz test failed\n",stderr);
-    plend();
     status = 1;
   }
 
   plscolbg(10,20,30);
   plgcolbg(&r, &g, &b);
-  printf("background colour parameters: r, g, b = %d %d %d \n", r, g, b);
+  printf("background colour parameters: r, g, b = %d %d %d\n", r, g, b);
   if (r != 10 || g != 20 || b != 30) {
     fputs("plgcolbg test failed\n",stderr);
-    plend();
     status = 1;
   }
 
   plscolbga(20,30,40,0.5);
   plgcolbga(&r, &g, &b, &a);
-  printf("background/transparency colour parameters: r, g, b, a = %d %d %d %f \n", r, g, b, a);
+  printf("background/transparency colour parameters: r, g, b, a = %d %d %d %f\n", r, g, b, a);
   if (r != 20 || g != 30 || b != 40 || a != 0.5) {
     fputs("plgcolbga test failed\n",stderr);
-    plend();
     status = 1;
   }
 
