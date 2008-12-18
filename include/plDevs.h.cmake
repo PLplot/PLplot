@@ -75,6 +75,7 @@
 #cmakedefine PLD_mem
 #cmakedefine PLD_wingcc
 #cmakedefine PLD_wxwidgets
+#cmakedefine PLD_wxpng
 #cmakedefine PLD_svg
 #cmakedefine PLD_pdf
 #cmakedefine PLD_xcairo

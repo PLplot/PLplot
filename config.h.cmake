@@ -305,6 +305,9 @@
 /* Define if wxwidgets driver is present */
 #cmakedefine PLD_wxwidgets
 
+/* Define if wxwidgets png driver is present */
+#cmakedefine PLD_wxpng
+
 /* Define if the cairo X windows driver is present */
 #cmakedefine PLD_xcairo
 

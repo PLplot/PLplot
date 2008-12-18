@@ -87,6 +87,7 @@ PLDLLIMPEXP_DRIVER void plD_dispatch_init_ntk	( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_mem	( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_wingcc	( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_wxwidgets	( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_wxpng	( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_svg	( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdf	( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_xcairo  ( PLDispatchTable *pdt );
