@@ -40,9 +40,12 @@ main(int argc, const char *argv[])
   PLINT g1[] = {255, 0};
   PLINT b1[] = {0, 0};
   PLFLT a1[] = {1.0, 1.0};
+  int status;
   char fnam[80];
 
   /* Parse and process command line arguments */
+
+  status = 0;
 
   (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
@@ -76,7 +79,7 @@ main(int argc, const char *argv[])
   if (compression2 != compression1) {
     fputs("plgcompression test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   /* Test if device initialization screwed around with any of the
@@ -86,7 +89,7 @@ main(int argc, const char *argv[])
   if (fam2 != fam1 || num2 != num1 || bmax2 != bmax1) {
     fputs("plgfam test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   /* Test if device initialization screwed around with any of the
@@ -97,7 +100,7 @@ main(int argc, const char *argv[])
       xoff2 != xoff1 || yoff2 != yoff1 ) {
     fputs("plgpage test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
 
@@ -113,7 +116,7 @@ main(int argc, const char *argv[])
   if (level2 != 1) {
     fputs("plglevel test failed.\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   pladv(0);
@@ -123,7 +126,7 @@ main(int argc, const char *argv[])
   if (xmin != 0.01 || xmax != 0.99 || ymin != 0.02 || ymax != 0.49) {
     fputs("plgvpd test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
   xmid = 0.5*(xmin+xmax);
   ymid = 0.5*(ymin+ymax);
@@ -134,7 +137,7 @@ main(int argc, const char *argv[])
   if (xmin != 0.2 || xmax != 0.3 || ymin != 0.4 || ymax != 0.5) {
     fputs("plgvpw test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   /* Get world coordinates for middle of viewport */
@@ -143,13 +146,19 @@ main(int argc, const char *argv[])
   if (fabs(wx-0.5*(xmin+xmax))>1.0E-5 || fabs(wy-0.5*(ymin+ymax))>1.0E-5) {
     fputs("plcalc_world test failed\n",stderr);
     plend();
-    exit(1);    
+    status = 1;    
   }
 
   /* Retrieve and print the name of the output file (if any).
   * This goes to stderr not stdout since it will vary between tests and 
   * we want stdout to be identical for compare test. */
   plgfnam(fnam);
+  if (fnam[0] == '\0') {
+    printf("No output file name is set\n");
+  }
+  else {
+    printf("Output file name read\n");
+  }
   fprintf(stderr,"Output file name is %s\n",fnam);
 
   /* Set and get the number of digits used to display axis labels */
@@ -162,7 +171,7 @@ main(int argc, const char *argv[])
   if (digmax != 3) {
     fputs("plgxax test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   plsyax(4,0);
@@ -171,7 +180,7 @@ main(int argc, const char *argv[])
   if (digmax != 4) {
     fputs("plgyax test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   plszax(5,0);
@@ -180,7 +189,7 @@ main(int argc, const char *argv[])
   if (digmax != 5) {
     fputs("plgzax test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   plsdidev(0.05, PL_NOTSET, 0.1, 0.2);
@@ -189,7 +198,7 @@ main(int argc, const char *argv[])
   if (mar != 0.05 || jx != 0.1 || jy != 0.2) {
     fputs("plgdidev test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   plsdiori(1.0);
@@ -198,7 +207,7 @@ main(int argc, const char *argv[])
   if (ori != 1.0) {
     fputs("plgdiori test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   plsdiplt(0.1, 0.2, 0.9, 0.8);
@@ -207,7 +216,7 @@ main(int argc, const char *argv[])
   if (xmin != 0.1 || xmax != 0.9 || ymin != 0.2 || ymax != 0.8) {
     fputs("plgdiplt test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   plsdiplz(0.1, 0.1, 0.9, 0.9);
@@ -219,7 +228,7 @@ main(int argc, const char *argv[])
        fabs(zymax -(ymin+(ymax-ymin)*0.9)) > 1.0E-5 ) {
     fputs("plsdiplz test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   plscolbg(10,20,30);
@@ -228,7 +237,7 @@ main(int argc, const char *argv[])
   if (r != 10 || g != 20 || b != 30) {
     fputs("plgcolbg test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   plscolbga(20,30,40,0.5);
@@ -237,9 +246,10 @@ main(int argc, const char *argv[])
   if (r != 20 || g != 30 || b != 40 || a != 0.5) {
     fputs("plgcolbga test failed\n",stderr);
     plend();
-    exit(1);
+    status = 1;
   }
 
   plend();
-  exit(0);
+
+  exit(status);
 }

@@ -56,6 +56,8 @@ from plplot_py_demos import *
 
 def main():
 
+    status = 0
+
     # Test if device initialization screwed around with the preset
     # compression parameter.
     compression2 = plgcompression()
@@ -64,7 +66,7 @@ def main():
     if compression2 != compression1:
         sys.stderr.write("plgcompression test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     # Test if device initialization screwed around with any of the
     # preset familying values.
@@ -73,7 +75,7 @@ def main():
     if fam2 != fam1  or num2 != num1 or bmax2 != bmax1:
         sys.stderr.write("plgfam test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     # Test if device initialization screwed around with any of the
     # preset page values.
@@ -82,7 +84,7 @@ def main():
     if xp2 != xp1 or yp2 != yp1 or xleng2 != xleng1 or yleng2 != yleng1 or xoff2 != xoff1 or yoff2 != yoff1:
         sys.stderr.write("plgpage test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     # Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
     # they work without any obvious error messages.
@@ -100,7 +102,7 @@ def main():
     if level2 != 1:
         sys.stderr.write("plglevel test failed.\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     pladv(0)
     plvpor(0.01, 0.99, 0.02, 0.49)
@@ -109,7 +111,7 @@ def main():
     if xmin != 0.01 or xmax != 0.99 or ymin != 0.02 or ymax != 0.49:
         sys.stderr.write("plgvpd test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
     xmid = 0.5*(xmin+xmax)
     ymid = 0.5*(ymin+ymax)
 
@@ -119,7 +121,7 @@ def main():
     if xmin != 0.2 or xmax != 0.3 or ymin != 0.4 or ymax != 0.5:
         sys.stderr.write("plgvpw test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     # Get world coordinates for middle of viewport
     (wx, wy, win) = plcalc_world(xmid,ymid)
@@ -127,10 +129,14 @@ def main():
     if abs(wx-0.5*(xmin+xmax)) > 1.0E-5 or abs(wy-0.5*(ymin+ymax)) > 1.0E-5:
         sys.stderr.write("plcalc_world test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     # Retrieve and print the name of the output file (if any)
     fnam = plgfnam()
+    if fnam == '' :
+        sys.stdout.write("No output file name is set\n")
+    else :
+        sys.stdout.write("Output file name read\n")
     sys.stderr.write("Output file name is %s\n" % fnam)
 
     # Set and get the number of digits used to display axis labels
@@ -142,7 +148,7 @@ def main():
     if digmax != 3:
         sys.stderr.write("plgxax test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     plsyax(4,0)
     (digmax, digits) = plgyax()
@@ -150,7 +156,7 @@ def main():
     if digmax != 4:
         sys.stderr.write("plgyax test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     plszax(5,0)
     (digmax, digits) = plgzax()
@@ -158,7 +164,7 @@ def main():
     if digmax != 5:
         sys.stderr.write("plgzax test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     plsdidev(0.05, PL_NOTSET, 0.1, 0.2)
     (mar, aspect, jx, jy) = plgdidev()
@@ -166,7 +172,7 @@ def main():
     if mar != 0.05 or jx != 0.1 or jy != 0.2:
         sys.stderr.write("plgdidev test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     plsdiori(1.0)
     ori = plgdiori()
@@ -174,7 +180,7 @@ def main():
     if ori != 1.0 :
         sys.stderr.write("plgdiori test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     plsdiplt(0.1, 0.2, 0.9, 0.8)
     (xmin, ymin, xmax, ymax) = plgdiplt()
@@ -182,7 +188,7 @@ def main():
     if xmin != 0.1 or xmax != 0.9 or ymin != 0.2 or ymax != 0.8:
         sys.stderr.write("plgdiplt test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     plsdiplz(0.1, 0.1, 0.9, 0.9)
     (zxmin, zymin, zxmax, zymax) = plgdiplt()
@@ -190,7 +196,7 @@ def main():
     if abs(zxmin -(xmin + (xmax-xmin)*0.1)) > 1.0E-5 or abs(zxmax -(xmin+(xmax-xmin)*0.9)) > 1.0E-5 or abs(zymin -(ymin+(ymax-ymin)*0.1)) > 1.0E-5 or abs(zymax -(ymin+(ymax-ymin)*0.9)) > 1.0E-5 :
         sys.stderr.write("plsdiplz test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     plscolbg(10,20,30)
     (r, g, b) = plgcolbg()
@@ -198,7 +204,7 @@ def main():
     if r != 10 or g != 20 or b != 30:
         sys.stderr.write("plgcolbg test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
     plscolbga(20, 30, 40, 0.5)
     (r, g, b, a) = plgcolbga()
@@ -206,11 +212,14 @@ def main():
     if r != 20 or g != 30 or b != 40 or a != 0.5:
         sys.stderr.write("plgcolbga test failed\n")
         plend()
-        sys.exit(1)
+        status = 1
 
 
     # Restore defaults
     #plcol0(1)
+
+    if status != 0 :
+        sys.exit(status)
 
 main()
 # Terminate plplot

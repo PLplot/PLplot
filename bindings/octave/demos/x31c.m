@@ -79,6 +79,8 @@ function status = ix31c(strm)
   ## Test if device initialization screwed around with the preset
   ## compression parameter.
   compression2 = plgcompression();
+  fprintf(strm,"Output various PLplot parameters\n");
+  fprintf(strm,"compression parameter = %d\n", compression2);
   if (compression2 != compression1) 
     fputs(stderr, "plgcompression test failed\n");
     plend();
@@ -148,6 +150,7 @@ function status = ix31c(strm)
 
   ## Get world coordinates for middle of viewport 
   [wx,wy,win] = plcalc_world(xmid,ymid);
+  fprintf(strm,"world parameters: wx, wy, win = %f %f %d \n", wx, wy, win);
   if (abs(wx-0.5*(xmin+xmax))>1.0E-5 || abs(wy-0.5*(ymin+ymax))>1.0E-5)
     fputs(stderr,"plcalc_world test failed\n");
     plend();
@@ -159,9 +162,9 @@ function status = ix31c(strm)
   ## we want stdout to be identical for compare test.
   fnam = plgfnam();
   if (fnam(1) == "\0")
-    fputs(strm,"Output file name read\n");
-  else
     fputs(strm,"No output file name is set\n");
+  else
+    fputs(strm,"Output file name read\n");
   endif
   fprintf(stderr,"Output file name is %s\n",fnam);
 
@@ -208,7 +211,7 @@ function status = ix31c(strm)
 
   plsdiori(1.0);
   ori = plgdiori();
-  printf("ori parameter = %f \n", ori);
+  fprintf(strm,"ori parameter = %f \n", ori);
   if (ori != 1.0)
     fputs(stderr,"plgdiori test failed\n");
     plend();
