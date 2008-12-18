@@ -152,6 +152,12 @@ else(PLD_xfig)
   set(XFIG_COMMENT "#")
 endif(PLD_xfig)
 
+if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+  set(COMPARE compare)
+else(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+  set(COMPARE_COMMENT "#")
+endif(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
   ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples

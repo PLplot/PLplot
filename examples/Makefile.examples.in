@@ -41,7 +41,7 @@ c/x01c@EXEEXT@:
 	done
 
 test: @PSC_ALL@ @PDFCAIRO@ @PNGCAIRO@ @PSCAIRO@ @SVGCAIRO@ \
-	@GIF@ @JPEG@ @PNG@ @PSTTFC@ @SVG@ @XFIG@
+	@GIF@ @JPEG@ @PNG@ @PSTTFC@ @SVG@ @XFIG@ @COMPARE@
 
 @PSC_ALL_COMMENT@@PSC_ALL@:  c/x01c@EXEEXT@
 @PSC_ALL_COMMENT@	echo psc all front-ends
@@ -87,6 +87,11 @@ test: @PSC_ALL@ @PDFCAIRO@ @PNGCAIRO@ @PSCAIRO@ @SVGCAIRO@ \
 @XFIG_COMMENT@	echo xfig
 @XFIG_COMMENT@	./plplot-test.sh --front-end=c --device=xfig
 
+@COMPARE_COMMENT@@COMPARE@: @PSC_ALL@ @PDFCAIRO@ @PNGCAIRO@ @PSCAIRO@ @SVGCAIRO@ \
+	@GIF@ @JPEG@ @PNG@ @PSTTFC@ @SVG@ @XFIG@
+@COMPARE_COMMENT@	echo compare
+@COMPARE_COMMENT@	./test_diff.sh
+
 test_interactive:
 	./plplot-test-interactive.sh
 
@@ -103,4 +108,4 @@ test_clean:
 	rm -f *.psc *.pdfcairo *.pngcairo *.pscairo *.svgcairo \
 	*.gif *.jpeg *.png *.psttfc *.svg *.xfig *.txt test.error
 
-.PHONY : all clean test test_clean test_interactive
+.PHONY : all clean test test_clean test_interactive @COMPARE@
