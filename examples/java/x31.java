@@ -26,6 +26,7 @@ package plplot.examples;
 
 import plplot.core.*;
 
+import java.text.*;
 
 class x31 {
     PLStream pls = new PLStream();
@@ -60,6 +61,12 @@ class x31 {
 	double a1[] = {1.0, 1.0};
 	StringBuffer fnam = new StringBuffer(80);
 	int status;
+
+        // Create NumberFormat to format floating point numbers
+        // consistent with C printf
+        NumberFormat nf = NumberFormat.getInstance();
+	nf.setMaximumFractionDigits(6);
+	nf.setMinimumFractionDigits(6);
 
 	status = 0;	
 
@@ -112,7 +119,7 @@ class x31 {
 	// Test if device initialization screwed around with any of the
 	// preset page values.
 	pls.gpage(xp2, yp2, xleng2, yleng2, xoff2, yoff2);
-	System.out.println("page parameters: xp, yp, xleng, yleng, xoff, yoff = " + xp2[0] + " " + yp2[0] + " " + xleng2[0] + " " + yleng2[0] + " " + xoff2[0] + " " + yoff2[0] );
+	System.out.println("page parameters: xp, yp, xleng, yleng, xoff, yoff = " + nf.format(xp2[0]) + " " + nf.format(yp2[0]) + " " + xleng2[0] + " " + yleng2[0] + " " + xoff2[0] + " " + yoff2[0] );
 	if (xp2[0] != xp1[0] || yp2[0] != yp1[0] || 
 	    xleng2[0] != xleng1[0] || yleng2[0] != yleng1[0] || 
 	    xoff2[0] != xoff1[0] || yoff2[0] != yoff1[0] ) {
@@ -138,7 +145,7 @@ class x31 {
 	pls.adv(0);
 	pls.vpor(0.01, 0.99, 0.02, 0.49);
 	pls.gvpd(xmin, xmax, ymin, ymax);
-	System.out.println("plvpor: xmin, xmax, ymin, ymax = " + xmin[0] + " " + xmax[0] + " " + ymin[0] + " " + ymax[0] );
+	System.out.println("plvpor: xmin, xmax, ymin, ymax = " + nf.format(xmin[0]) + " " + nf.format(xmax[0]) + " " + nf.format(ymin[0]) + " " + nf.format(ymax[0]) );
 	if (xmin[0] != 0.01 || xmax[0] != 0.99 || ymin[0] != 0.02 || ymax[0] != 0.49) {
 	    System.err.println("plgvpd test failed" );
 	    status = 1;
@@ -148,7 +155,7 @@ class x31 {
 
 	pls.wind(0.2, 0.3, 0.4, 0.5);
 	pls.gvpw(xmin, xmax, ymin, ymax);
-	System.out.println("plwind: xmin, xmax, ymin, ymax = " + xmin[0] + " " + xmax[0] + " " + ymin[0] + " " + ymax[0] );
+	System.out.println("plwind: xmin, xmax, ymin, ymax = " + nf.format(xmin[0]) + " " + nf.format(xmax[0]) + " " + nf.format(ymin[0]) + " " + nf.format(ymax[0]) );
 	if (xmin[0] != 0.2 || xmax[0] != 0.3 || ymin[0] != 0.4 || ymax[0] != 0.5) {
 	    System.err.println("plgvpw test failed" );
 	    status = 1;
@@ -156,7 +163,7 @@ class x31 {
 
 	// Get world coordinates for middle of viewport
 	pls.calc_world(xmid,ymid,wx,wy,win);
-	System.out.println("world parameters: wx, wy, win = " + wx[0] + " " + wy[0] + " " + win[0] );
+	System.out.println("world parameters: wx, wy, win = " + nf.format(wx[0]) + " " + nf.format(wy[0]) + " " + win[0] );
 	if (Math.abs(wx[0]-0.5*(xmin[0]+xmax[0]))>1.0E-5 || Math.abs(wy[0]-0.5*(ymin[0]+ymax[0]))>1.0E-5) {
 	    System.err.println("plcalc_world test failed" );
 	    status = 1;    
@@ -204,7 +211,7 @@ class x31 {
 
 	pls.sdidev(0.05, PLStream.PL_NOTSET, 0.1, 0.2);
 	pls.gdidev(mar, aspect, jx, jy);
-	System.out.println("device-space window parameters: mar, aspect, jx, jy = " + mar[0] + " " + aspect[0] + " " + jx[0] + " " + jy[0] );
+	System.out.println("device-space window parameters: mar, aspect, jx, jy = " + nf.format(mar[0]) + " " + nf.format(aspect[0]) + " " + nf.format(jx[0]) + " " + nf.format(jy[0]) );
 	if (mar[0] != 0.05 || jx[0] != 0.1 || jy[0] != 0.2) {
 	    System.err.println("plgdidev test failed" );
 	    status = 1;
@@ -212,7 +219,7 @@ class x31 {
 
 	pls.sdiori(1.0);
 	pls.gdiori(ori);
-	System.out.println("ori parameter = " + ori[0] );
+	System.out.println("ori parameter = " + nf.format(ori[0]) );
 	if (ori[0] != 1.0) {
 	    System.err.println("plgdiori test failed" );
 	    status = 1;
@@ -220,7 +227,7 @@ class x31 {
 
 	pls.sdiplt(0.1, 0.2, 0.9, 0.8);
 	pls.gdiplt(xmin, ymin, xmax, ymax);
-	System.out.println("plot-space window parameters: xmin, ymin, xmax, ymax = " +  xmin[0] + " " +  ymin[0] + " " + xmax[0] + " " + ymax[0] );
+	System.out.println("plot-space window parameters: xmin, ymin, xmax, ymax = " +  nf.format(xmin[0]) + " " +  nf.format(ymin[0]) + " " + nf.format(xmax[0]) + " " + nf.format(ymax[0]) );
 	if (xmin[0] != 0.1 || xmax[0] != 0.9 || ymin[0] != 0.2 || ymax[0] != 0.8) {
 	    System.err.println("plgdiplt test failed" );
 	    status = 1;
@@ -228,7 +235,7 @@ class x31 {
 
 	pls.sdiplz(0.1, 0.1, 0.9, 0.9);
 	pls.gdiplt(zxmin, zymin, zxmax, zymax);
-	System.out.println("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = " + zxmin[0] + " " + zymin[0] + " " + zxmax[0] + " " + zymax[0] );
+	System.out.println("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = " + nf.format(zxmin[0]) + " " + nf.format(zymin[0]) + " " + nf.format(zxmax[0]) + " " + nf.format(zymax[0]) );
 	if ( Math.abs(zxmin[0] -(xmin[0] + (xmax[0]-xmin[0])*0.1)) > 1.0E-5 || 
 	     Math.abs(zxmax[0] -(xmin[0]+(xmax[0]-xmin[0])*0.9)) > 1.0E-5 || 
 	     Math.abs(zymin[0] -(ymin[0]+(ymax[0]-ymin[0])*0.1)) > 1.0E-5 || 
@@ -247,7 +254,7 @@ class x31 {
 
 	pls.scolbga(20,30,40,0.5);
 	pls.gcolbga(r, g, b, a);
-	System.out.println("background/transparency colour parameters: r, g, b, a = " + r[0] + " " +  g[0] + " " + b[0] + " " + a[0] );
+	System.out.println("background/transparency colour parameters: r, g, b, a = " + r[0] + " " +  g[0] + " " + b[0] + " " + nf.format(a[0]) );
 	if (r[0] != 20 || g[0] != 30 || b[0] != 40 || a[0] != 0.5) {
 	    System.err.println("plgcolbga test failed" );
 	    status = 1;
