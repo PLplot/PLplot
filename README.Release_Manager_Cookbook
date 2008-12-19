@@ -84,6 +84,10 @@ directory which is not what you want to do.
 N.B. the --dry-run option for rsync is a god-send and tells you exactly what
 will happen without actually doing it.
 
+N.B. log files for the website build can be found in the /tmp/plplotdoc/build
+directory. This can be useful for finding problems with the build of the
+website.
+
 (3) (Optional) Creating a test tarball from trunk
 
 This step is only required if you have some concerns about how
@@ -309,7 +313,6 @@ changed).
 Click on submit.
 
 Update the project web page, including the examples:
-edit www/index.php to include a link to the latest release.
 edit www/examples.php to reflect the current release number.
 svn commit the updated pages.
 
