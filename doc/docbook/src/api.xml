@@ -9906,7 +9906,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       Set device-compression level.  Only used for drivers that provide
       compression.  This function, if used, should be invoked
-      before a call to &plinit;.
+      before a call to &plinit;. 
     </para>
 
     <variablelist>
@@ -9919,8 +9919,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <para>
 	    The desired compression level. This is a device-dependent
 	    value.
+            Currently only the jpeg and png devices use these values. For jpeg 
+            value is the jpeg quality which should normally be in the range 0-95.
+            Higher values denote higher quality and hence larger image sizes. For
+            png values are in the range -1 to 99. Values of 0-9 are taken as the 
+            compression level for zlib. A value of -1 denotes the default zlib 
+            compression level. Values in the range 10-99 are divided by 10 and 
+            then used as the zlib compression level. Higher compression levels
+            correspond to greater compression and small file sizes at the
+            expense of more computation.
 	  </para>
-	  <!-- TODO: what is the interpretation? In general: what documentation on devices? -->
 	</listitem>
       </varlistentry>
     </variablelist>
