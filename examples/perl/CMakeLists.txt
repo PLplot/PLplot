@@ -49,6 +49,7 @@ set(perl_STRING_INDICES
 "28"
 "29"
 "30"
+"31"
 )
 
 set(perl_SCRIPTS)
