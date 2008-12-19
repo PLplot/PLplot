@@ -40,7 +40,7 @@ thick21 thick22 thick23 thick24 thick25 thick26 thick27 thick28 thick29 thick30;
   if [ "$verbose_test" ]; then
     echo "x${index}"
   fi
-  $adadir/x${index}${lang} -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error @TEE_CMD@ ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
+  $adadir/x${index}${lang} -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
   status_code=$?
   cat test.error
   if [ "$status_code" -ne 0 ]; then

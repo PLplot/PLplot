@@ -77,12 +77,6 @@ endif(NOT SH_EXECUTABLE)
 # bindings.
 find_program(DIFF_EXECUTABLE diff)
 find_program(TAIL_EXECUTABLE tail)
-find_program(TEE_EXECUTABLE tee)
-if(TEE_EXECUTABLE)
-  set(TEE_CMD "| ${TEE_EXECUTABLE} ")
-else(TEE_EXECUTABLE)
-  set(TEE_CMD "> ")
-endif(TEE_EXECUTABLE)
 
 
 option(PREBUILD_DIST "Pre-build all components required for distribution" OFF)

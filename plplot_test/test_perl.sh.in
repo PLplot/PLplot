@@ -50,7 +50,7 @@ for index in $INDEX_LIST ; do
   if [ "$verbose_test" ]; then
     echo "x${index}.pl"
   fi
-  $perldir/x${index}.pl -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error @TEE_CMD@ ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
+  $perldir/x${index}.pl -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
   status_code=$?
   cat test.error
   if [ "$status_code" -ne 0 ]; then
