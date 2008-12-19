@@ -56,7 +56,7 @@ program x31f95
   call plparseopts(PL_PARSE_FULL)
   
 !     Test setting / getting compression parameter across plinit
-  compression1 = 100
+  compression1 = 95
   call plscompression(compression1)
   
 !     Test setting / getting familying parameters across plinit

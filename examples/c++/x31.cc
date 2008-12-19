@@ -71,7 +71,7 @@ x31::x31(int argc, const char *argv[])
   pls->parseopts(&argc, argv, PL_PARSE_FULL);
 
   // Test setting / getting compression parameter across plinit.
-  compression1 = 100;
+  compression1 = 95;
   pls->scompression(compression1);
 
   // Test setting / getting familying parameters across plinit

@@ -32,7 +32,7 @@ use PDL::Graphics::PLplot;
 plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
 # Test setting / getting compression parameter across plinit.
-my $compression1 = 100;
+my $compression1 = 95;
 plscompression ($compression1);
 
 # Test setting / getting familying parameters across plinit.

@@ -57,7 +57,7 @@ C     Parse and process command line arguments
 
       call plparseopts(PL_PARSE_FULL)
 C     Test setting / getting compression parameter across plinit
-      compression1 = 100
+      compression1 = 95
       call plscompression(compression1)
 
 C     Test setting / getting familying parameters across plinit

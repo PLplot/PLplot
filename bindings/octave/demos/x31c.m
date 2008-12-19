@@ -54,7 +54,7 @@ function status = ix31c(strm)
   ## (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
   ## Test setting / getting compression parameter across plint 
-  compression1 = 100;
+  compression1 = 95;
   plscompression(compression1);
 
   ## Test setting / getting familying parameters across plinit

@@ -31,7 +31,7 @@ from plplot import *
 plparseopts(sys.argv, PL_PARSE_FULL)
 
 # Test setting / getting compression parameter across plinit.
-compression1 = 100
+compression1 = 95
 plscompression(compression1)
 
 # Test setting / getting familying parameters across plinit.

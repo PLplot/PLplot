@@ -75,7 +75,7 @@ class x31 {
 	pls.parseopts(args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM);
 
 	// Test setting / getting compression parameter across plinit.
-	compression1[0] = 100;
+	compression1[0] = 95;
 	pls.scompression(compression1[0]);
 
 	// Test setting / getting familying parameters across plinit
