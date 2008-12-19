@@ -403,8 +403,11 @@ plD_init_png_Dev(PLStream *pls)
     dev->colour=1;  /* Set a fall back pen colour in case user doesn't */
 
 /*
- *  Set the compression/quality level for JPEG files
+ *  Set the compression/quality level for PNG files
  *  The higher the value, the bigger/better the image is
+ *  Values of 0-9 translate to the zlib compression values 0-9
+ *  Values 10 <= compression <= 99 are divided by 10 to get the zlib 
+ *  compresison value. Values greater than 99 are set to 90.
  */
     if ( (pls->dev_compression<=0)||(pls->dev_compression>99) )
        pls->dev_compression=90;
