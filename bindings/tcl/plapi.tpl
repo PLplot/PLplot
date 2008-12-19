@@ -358,18 +358,18 @@ ver	char *
 # Get viewport boundaries in normalized device coordinates.
 
 pltclcmd plgvpd void
-xmin    PLFLT *
-xmax	PLFLT *
-ymin	PLFLT *
-ymax	PLFLT *
+xmin    PLFLT&
+xmax	PLFLT&
+ymin	PLFLT&
+ymax	PLFLT&
 
 # Get viewport boundaries in world coordinates.
 
 pltclcmd plgvpw void
-xmin    PLFLT *
-xmax	PLFLT *
-ymin	PLFLT *
-ymax	PLFLT *
+xmin    PLFLT&
+xmax	PLFLT&
+ymin	PLFLT&
+ymax	PLFLT&
 
 # Get x axis labeling parameters.
 
