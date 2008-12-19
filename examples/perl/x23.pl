@@ -227,16 +227,12 @@ for (my $page = 0; $page < 11; $page++) {
 
   plvpor (0.02, 0.98, 0.02, 0.90);
   plwind (0.0, 1.0, 0.0, 1.0);
-  my ($xmin, $xmax, $ymin, $ymax) = 
-      (PDL->new(0), PDL->new(0), PDL->new(0), PDL->new(0));
-  plgspa ($xmin, $xmax, $ymin, $ymax);
+  my ($xmin, $xmax, $ymin, $ymax) = plgspa ();
   plschr (0., 0.8);
   my $ycharacter_scale = (1.0 - 0.0) / ($ymax->at (0) - $ymin->at (0));
 
   # Factor should be 0.5, but heuristically it turns out to be larger
-  my ($chardef, $charht) = (PDL->new(0), PDL->new(0));
-
-  plgchr ($chardef, $charht);
+  my ($chardef, $charht) = plgchr ();
   my $yoffset = 1.0 * $charht->at (0) * $ycharacter_scale;
 
   # Draw the grid using plbox
