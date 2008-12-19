@@ -402,15 +402,6 @@ plD_init_png_Dev(PLStream *pls)
 
     dev->colour=1;  /* Set a fall back pen colour in case user doesn't */
 
-/*
- *  Set the compression/quality level for PNG files
- *  The higher the value, the bigger/better the image is
- *  Values of 0-9 translate to the zlib compression values 0-9
- *  Values 10 <= compression <= 99 are divided by 10 to get the zlib 
- *  compresison value. Values greater than 99 are set to 90.
- */
-    if ( (pls->dev_compression<=0)||(pls->dev_compression>99) )
-       pls->dev_compression=90;
 
 /* Check for and set up driver options */
 
@@ -1312,6 +1303,7 @@ void plD_eop_png(PLStream *pls)
 {
     png_Dev *dev=(png_Dev *)pls->dev;
     int im_size=0;
+    int png_compression;
     void *im_ptr=NULL;
 
     if (pls->family || pls->page == 1) {
@@ -1338,7 +1330,20 @@ void plD_eop_png(PLStream *pls)
           lib a crash occurs - this fix works also in Linux */
        /* gdImagePng(dev->im_out, pls->OutFile); */
        #if GD2_VERS >= 2
-         im_ptr = gdImagePngPtrEx (dev->im_out, &im_size, pls->dev_compression >9 ? (pls->dev_compression/10) : pls->dev_compression);
+ 
+       /*Set the compression/quality level for PNG files.
+   pls->dev_compression values of 1-9 translate to the zlib compression values 1-9
+   pls->dev_compression values 10 <= compression <= 99 are divided by 10 to get the zlib 
+   compression value. Values <=0 or greater than 99 are set to 90 which
+   translates to a zlib compression value of 9, the highest quality
+   of compression or smallest file size or largest computer time required
+   to achieve the compression.  Smaller zlib compression values correspond
+   to lower qualities of compression (larger file size), but lower 
+   computer times as well. */
+
+         png_compression = ((pls->dev_compression<=0)||(pls->dev_compression>99)) ? 90 : pls->dev_compression;
+         png_compression = (png_compression > 9) ? (png_compression/10) : png_compression;
+         im_ptr = gdImagePngPtrEx (dev->im_out, &im_size, png_compression);
        #else
          im_ptr = gdImagePngPtr(dev->im_out, &im_size);
        #endif
