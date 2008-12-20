@@ -18,7 +18,10 @@ INDEX
 
 1. Changes relative to PLplot 5.9.1 (the previous development release)
 
+1.1 Extension of our test framework
+
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
+
 2.1 All autotools-related files have now been removed
 2.2 Build system bug fixes
 2.3 Build system improvements
@@ -38,15 +41,26 @@ examples
 2.16 Perl/PDL language support
 2.17 Update to various language bindings
 2.18 Update to various examples
-2.19 Rename test subdirectory to plplot_test
-2.20 Website support files updated
-2.21 Internal changes to function visibility
-2.22 Dynamic driver support in Windows
-2.23 Documentation updates
+2.19 Extension of our test framework
+2.20 Rename test subdirectory to plplot_test
+2.21 Website support files updated
+2.22 Internal changes to function visibility
+2.23 Dynamic driver support in Windows
+2.24 Documentation updates
 
 
 1. Changes relative to PLplot 5.9.1 (the previous development release)
 
+1.1 Extension of our test framework
+
+The standard test suite for PLplot now carries out a comparison of the
+stdout output (especially important for example 31 which tests most of our
+set and get functions) and PostScript output for different languages as a
+check.  Thanks to the addition of example 31 and other recent extensions of
+the other examples we now have rigourous testing in place for almost the
+entirety of our common API.  This extensive testing framework has already
+helped us track down a number of bugs, and it should make it much easier for
+us to maintain high quality for our ongoing PLplot releases.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -282,15 +296,13 @@ those using languages other than C.
 
 To help test the updates to the language bindings the examples have been 
 thoroughly checked. Ada, C, C++, f77, f95, and OCaml now contain a full set
-of non-interactive tests (example 1-30 excluding 14 and 17). Java, Octave,
+of non-interactive tests (examples 1-31 excluding 14 and 17). Java, Octave,
 Python and Tcl are missing example 19 because of the issue with the mapping
 functions. The examples have also been checked to ensure consistent results
 between different language bindings. Currently there are still some minor
 differences in the results for the tcl examples, probably due to rounding
-errors. The standard test suite for PLplot using ctest now carries out a
-comparison of the postscript output for different languages as a check. Some
-of the Tcl examples (example 21) require Tcl version 8.5 for proper support
-for NaNs.
+errors.  Some of the Tcl examples (example 21) require Tcl version 8.5 for
+proper support for NaNs.
 
 Also new is an option for the plplot_test.sh script to run the examples 
 using a debugging command. This is enabled using the --debug option. The
@@ -299,19 +311,30 @@ least one memory leaks in plplot which have been fixed. It is not part
 of the standard ctest tests because it can be _very_ slow for a complete
 set of language bindings and device drivers.
 
-2.19 Rename test subdirectory to plplot_test
+2.19 Extension of our test framework
+
+The standard test suite for PLplot now carries out a comparison of the
+stdout output (especially important for example 31 which tests most of our
+set and get functions) and PostScript output for different languages as a
+check.  Thanks to the addition of example 31 and other recent extensions of
+the other examples we now have rigourous testing in place for almost the
+entirety of our common API.  This extensive testing framework has already
+helped us track down a number of bugs, and it should make it much easier for
+us to maintain high quality for our ongoing PLplot releases.
+
+2.20 Rename test subdirectory to plplot_test
 
 This change was necessary to quit clashing with the "make test" target which
 now works for the first time ever (by executing ctest).
 
-2.20 Website support files updated
+2.21 Website support files updated
 
 Our new website content is generated with PHP and uses CSS (cascaded style
 sheets) to implement a consistent style.  This new approach demanded lots of
 changes in the website support files that are used to generate and upload
 our website and which are automatically included with the release.
 
-2.21 Internal changes to function visibility
+2.22 Internal changes to function visibility
 
 The internal definitions of functions in plplot have been significantly 
 tidied up to allow the use of the -fvisibility=hidden option with newer
@@ -319,7 +342,7 @@ versions of gcc. This prevents internal functions from being exported
 to the user where possible. This extends the existing support for this
 on windows.
 
-2.22 Dynamic driver support in Windows
+2.23 Dynamic driver support in Windows
 
 An interface based on the ltdl library function calls was established
 which allows to open and close dynamic link libraries (DLL) during
@@ -328,7 +351,7 @@ drivers can now be compiled into single DLLs separate from the core
 plplot DLL also in Windows. The cmake option ENABLE_DYNDRIVERS is now
 ON by default for Windows if a shared plplot library is built.
 
-2.23 Documentation updates
+2.24 Documentation updates
 
 The docbook documentation has been updated to include many of the 
 C-specific functions (for example plAlloc2dGrid) which are not part 
