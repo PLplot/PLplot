@@ -59,6 +59,7 @@ set(tcl_STRING_INDICES
 "28"
 "29"
 "30"
+"31"
 )
 
 set(tcl_SCRIPTS)
