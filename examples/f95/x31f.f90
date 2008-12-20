@@ -82,7 +82,7 @@ program x31f95
 !     compression parameter. 
   call plgcompression(compression2)
   write(*,'(A)') 'Output various PLplot parameters'
-  write(*,'(A,I3)') 'compression parameter = ', compression2
+  write(*,'(A,I2)') 'compression parameter = ', compression2
   if (compression2 .ne. compression1) then
      write(stderr,*) 'plgcompression test failed'
      status = 1;
