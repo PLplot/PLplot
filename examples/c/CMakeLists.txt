@@ -82,11 +82,11 @@ if(ENABLE_gnome2)
   set(plplotcanvas_DOCS
     README.plplotcanvas
     )
-
-  install(FILES ${c_SRCS} ${plplotcanvas_SRCS} ${plplotcanvas_DOCS}
-    DESTINATION ${DATA_DIR}/examples/c
-    )
 endif(ENABLE_gnome2)
+
+install(FILES ${c_SRCS} ${plplotcanvas_SRCS} ${plplotcanvas_DOCS}
+  DESTINATION ${DATA_DIR}/examples/c
+  )
 
 set(CC ${CMAKE_C_COMPILER})
 configure_file(
