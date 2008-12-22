@@ -105,7 +105,7 @@ if(DEFAULT_NO_BINDINGS)
   option(ENABLE_pygcw "Enable Python Gnome2 bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
   option(ENABLE_gnome2 "Enable Gnome2 bindings" ON)
-  option(ENABLE_pygcw "Enable Python Gnome2 bindings" OFF)
+  option(ENABLE_pygcw "Enable Python Gnome2 bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_gnome2 AND NOT PLD_gcw)
@@ -173,7 +173,35 @@ if(ENABLE_pygcw AND NOT ENABLE_python)
 endif(ENABLE_pygcw AND NOT ENABLE_python)
 
 if(ENABLE_pygcw)
-  pkg_check_pkgconfig(pygtk-2.0 includedir libdir linkflags cflags _GCW4)
+  pkg_check_modules(_GCW4 pygtk-2.0)
+  cmake_link_flags(linkflags  "${_GCW4_LDFLAGS}")
+  set (cflags "${_GCW4_CFLAGS}")
+  # pygtk 2.13.0 uses numpy by default if it is available while 2.12.x does
+  # not.  So 2.13.0 and above are likely to be using numpy although no
+  # absolute guarantees.
+  transform_version(MININUM_NUMERICAL_NUMPY_PYGCW_VERSION "2.13.0")
+  transform_version(NUMERICAL_NUMPY_PYGCW_VERSION "${_GCW4_VERSION}")
+  if(NUMERICAL_NUMPY_PYGCW_VERSION LESS "${MININUM_NUMERICAL_NUMPY_PYGCW_VERSION}")
+    if(HAVE_NUMPY)
+      message(STATUS
+      "WARNING: Must specify HAVE_NUMPY=OFF for pygcw to work with version\n"
+      "${_GCW4_VERSION} of pygtk-2.0.  Setting ENABLE_gcw to OFF."
+      )
+      set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
+    endif(HAVE_NUMPY)
+  else(NUMERICAL_NUMPY_PYGCW_VERSION LESS "${MININUM_NUMERICAL_NUMPY_PYGCW_VERSION}")
+    if(NOT HAVE_NUMPY)
+      message(STATUS
+      "WARNING: Must specify HAVE_NUMPY=ON for pygcw to work with version\n"
+      "${_GCW4_VERSION} of pygtk-2.0.  Setting ENABLE_gcw to OFF."
+      )
+      set(ENABLE_pygcw OFF CACHE BOOL "Enable Python Gnome2 bindings" FORCE)
+    endif(NOT HAVE_NUMPY)
+  endif(NUMERICAL_NUMPY_PYGCW_VERSION LESS "${MININUM_NUMERICAL_NUMPY_PYGCW_VERSION}")
+endif(ENABLE_pygcw)
+    
+if(ENABLE_pygcw)
+  #pkg_check_pkgconfig(pygtk-2.0 includedir libdir linkflags cflags _GCW4)
   if(linkflags)
     # This logic needs review.  It was copied right out of cf/gcw.ac
     # which checks for the existence of gnome-python-2.0 but uses no
