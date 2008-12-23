@@ -53,7 +53,12 @@ begin
     -- Initialize plplot
     Initialize_PLplot;
 
-    Set_Environment(0.0, 10.0, 0.0, 10.0, Justified, No_Box);
+    Advance_To_Subpage(Next_Subpage);
+
+    -- Ensure window has aspect ratio of one so circle is plotted as a circle.
+    Set_Viewport_Aspect_Ratio(1.0);
+    Set_Viewport_World(0.0, 10.0, 0.0, 10.0);
+    -- Set_Environment(0.0, 10.0, 0.0, 10.0, Justified, No_Box);
     Set_Pen_Color(Yellow);
 
     -- n.b. all theta quantities scaled by 2 * pi / 500 to be integers to avoid

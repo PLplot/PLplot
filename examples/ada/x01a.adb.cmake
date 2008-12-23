@@ -144,9 +144,6 @@ procedure x01a is
     end plot3;
 
 begin   
-    -- plplot initialization
-    
-    
     -- Parse and process command line arguments
     plparseopts(PL_PARSE_FULL); 
     

@@ -56,6 +56,10 @@ begin
     -- Parse and process command line arguments. 
     Parse_Command_Line_Arguments(Parse_Full);
 
+    -- Set orientation to landscape. Note not all device drivers
+    -- support this, in particular most interactive drivers do not.
+    Set_Orientation(Portrait);
+
     -- Initialize plplot 
     Initialize_PLplot;
 

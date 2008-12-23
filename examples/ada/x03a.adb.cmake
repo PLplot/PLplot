@@ -56,8 +56,8 @@ begin
     -- Parse and process command line arguments. 
     plparseopts(PL_PARSE_FULL);
 
-    -- Set orientation to landscape - note not all device drivers
-    -- support this, in particular most interactive drivers do not */
+    -- Set orientation to landscape. Note not all device drivers
+    -- support this, in particular most interactive drivers do not.
     plsori(Portrait);
 
     -- Initialize plplot 

@@ -332,6 +332,7 @@ begin -- main
     -- which is where the type for the "pltr" subprograms is declared. Even if 
     -- I move that type declaration into the thick bindings, the problem remains.
 
+    Set_Contour_Label_Format(4,3);
     Set_Contour_Label_Parameters(0.006, 0.3, 0.1, True);
     Set_Environment(-1.0, 1.0, -1.0, 1.0, Not_Justified, Linear_Box_Plus);
     Set_Pen_Color(Yellow);

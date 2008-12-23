@@ -144,11 +144,6 @@ procedure xthick01a is
     end plot3;
 
 begin   
-    -- plplot initialization
-    
-    -- Divide page into 2x2 plots unless user overrides
-    Set_Number_Of_Subpages(2, 2);
-    
     -- Parse and process command line arguments
     Parse_Command_Line_Arguments(Parse_Full); 
     
@@ -156,7 +151,8 @@ begin
     Put_Line("PLplot library version: " & Get_Version_Number);
 
     -- Initialize plplot
-    Initialize_PLplot;
+    -- Divide page into 2x2 plots unless user overrides
+    Initialize_Query_Device(2, 2);
 
     -- Set up the data
     -- Original case
