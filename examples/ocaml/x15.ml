@@ -91,6 +91,22 @@ let plot2 z zmin zmax =
   let max_width = 0 in
   let sh_width = 2 in
 
+  let inc =
+    [|
+      [|450|]; [|-450|]; [|0|]; [|900|]; 
+      [|300|]; [|450;-450|]; [|0; 900|]; [|0; 450|]; 
+      [|450; -450|]; [|0; 900|];
+    |]
+  in
+  let del =
+    [|
+      [|2000|]; [|2000|]; [|2000|]; 
+      [|2000|]; [|2000|]; [|2000; 2000|]; 
+      [|2000; 2000|]; [|2000; 2000|]; [|4000; 4000|]; 
+      [|4000; 2000|];
+    |]
+  in
+
   pladv 0;
   plvpor 0.1 0.9 0.1 0.9;
   plwind (-1.0) 1.0 (-1.0) 1.0;
@@ -100,7 +116,7 @@ let plot2 z zmin zmax =
     let shade_min = zmin +. (zmax -. zmin) *. float_of_int i /. 10.0 in
     let shade_max = zmin +. (zmax -. zmin) *. float_of_int (i + 1) /. 10.0 in
     let sh_color = float_of_int (i + 6) in
-    plpsty ((i + 2) mod 8 + 1);
+    plpat inc.(i) del.(i);
 
     plshade
       z (-1.0) 1.0 (-1.0) 1.0
@@ -113,6 +129,54 @@ let plot2 z zmin zmax =
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
   plcol0 2;
   pllab "distance" "altitude" "Bogon flux";
+  ()
+
+(*--------------------------------------------------------------------------*\
+ * plot3
+ *
+ * Illustrates shaded regions in 3d, using a different fill pattern for 
+ * each region.  
+\*--------------------------------------------------------------------------*)
+
+let plot3 () =
+  let xx =
+    [|
+      [|-1.0; 1.0; 1.0; -1.0; -1.0|];
+      [|-1.0; 1.0; 1.0; -1.0; -1.0|];
+    |]
+  in
+  let yy =
+    [|
+      [|1.0; 1.0; 0.0; 0.0; 1.0|]; 
+      [|-1.0; -1.0; 0.0; 0.0; -1.0|];
+    |]
+  in
+  let zz =
+    [|
+      [|0.0; 0.0; 1.0; 1.0; 0.0|];
+      [|0.0; 0.0; 1.0; 1.0; 0.0|];
+    |]
+  in
+
+  pladv 0;
+  plvpor 0.1 0.9 0.1 0.9;
+  plwind (-1.0) 1.0 (-1.0) 1.0;
+  plw3d 1.0 1.0 1.0 (-1.0) 1.0 (-1.0) 1.0 0.0 1.5 30.0 (-40.0);
+
+  (* Plot using identity transform *) 
+  plcol0 1;
+  plbox3 "bntu" "X" 0.0 0 "bntu" "Y" 0.0 0 "bcdfntu" "Z" 0.5 0;
+  plcol0 2;
+  pllab "" "" "3-d polygon filling";
+
+  plcol0 3;
+  plpsty 1;
+  plline3 xx.(0) yy.(0) zz.(0);
+  let sub a = Array.sub a 0 4 in
+  plfill3 (sub xx.(0)) (sub yy.(0)) (sub zz.(0));
+  plpsty 2;
+  plline3 xx.(1) yy.(1) zz.(1);
+  plfill3 (sub xx.(1)) (sub yy.(1)) (sub zz.(1));
   ()
 
 (*--------------------------------------------------------------------------*\
@@ -144,6 +208,7 @@ let () =
 
   plot1 z zmin zmax;
   plot2 z zmin zmax;
+  plot3 ();
 
   plend ();
   ()

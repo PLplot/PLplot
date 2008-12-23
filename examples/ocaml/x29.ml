@@ -30,7 +30,7 @@ let pi = atan 1.0 *. 4.0
 (* Plot a model diurnal cycle of temperature *)
 let plot1 () =
   (* Data points every 10 minutes for 1 day *)
-  let npts = 145 in
+  let npts = 73 in
 
   let xmin = 0.0 in
   let xmax = 60.0 *. 60.0 *. 24.0 in (* Number of seconds in a day *)
@@ -46,7 +46,20 @@ let plot1 () =
         15.0 -. 5.0 *. cos (2.0 *. pi *. (float_of_int i /. float_of_int npts))
     )
   in
+
+  (* Set x error bars to +/- 5 minute *)
+  let xerr1 = Array.map (fun xi -> xi -. 60.0 *. 5.0) x in
+  let xerr2 = Array.map (fun xi -> xi +. 60.0 *. 5.0) x in
+  (* Set y error bars to +/- 0.1 deg C *)
+  let yerr1 = Array.map (fun yi -> yi -. 0.1) y in
+  let yerr2 = Array.map (fun yi -> yi +. 0.1) y in
+
   pladv 0;
+
+  (* Rescale major ticks marks by 0.5 *)
+  plsmaj 0.0 0.5;
+  (* Rescale minor ticks and error bar marks by 0.5 *)
+  plsmin 0.0 0.5;
 
   plvsta ();
   plwind xmin xmax ymin ymax;
@@ -63,6 +76,15 @@ let plot1 () =
   plcol0 4;
 
   plline x y;
+
+  plcol0 2;
+  plerrx xerr1 xerr2 y;
+  plcol0 3;
+  plerry x yerr1 yerr2;
+
+  (* Rescale major / minor tick marks back to default *)
+  plsmin 0.0 1.0;
+  plsmaj 0.0 1.0; 
   ()
 
 (* Plot the number of hours of daylight as a function of day for a year *)
@@ -101,6 +123,7 @@ let plot2 () =
   plcol0 1;
   (* Set time format to be abbreviated month name followed by day of month *)
   pltimefmt "%b %d";
+  plprec 1 1;
   plenv xmin xmax ymin ymax 0 40;
 
 
@@ -110,6 +133,8 @@ let plot2 () =
   plcol0 4;
 
   plline x y;
+
+  plprec 0 0;
   ()
 
 let plot3 () =
@@ -152,6 +177,8 @@ let plot3 () =
 
   plcol0 4;
 
+  (* Rescale symbol size (used by plpoin) by 0.5 *)
+  plssym 0.0 0.5;
   plpoin x y 2;
   plline x y;
   ()
