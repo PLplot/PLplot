@@ -28,12 +28,15 @@ option(
 # Look for freetype libraries
 if (WITH_FREETYPE)
   find_package(Freetype)
-  if (NOT FREETYPE_FOUND)
+  if (FREETYPE_FOUND)
+    message(STATUS "FREETYPE_INCLUDE_DIR = ${FREETYPE_INCLUDE_DIR}")
+    message(STATUS "FREETYPE_LIBRARIES = ${FREETYPE_LIBRARIES}")
+  else (FREETYPE_FOUND)
     set(WITH_FREETYPE OFF
       CACHE BOOL "Enable driver options for using freetype library for fonts"
       FORCE
       )
-  endif (NOT FREETYPE_FOUND)
+  endif (FREETYPE_FOUND)
 endif (WITH_FREETYPE)
 
 if (WITH_FREETYPE)

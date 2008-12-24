@@ -53,6 +53,9 @@ if(ENABLE_DYNDRIVERS AND NOT LTDL_WIN32)
   find_package(LTDL)
   if(LTDL_FOUND)
     set(libplplot${LIB_TAG}_RPATH ${LTDL_LIBRARY_DIR})
+    message(STATUS "LTDL_INCLUDE_DIR = ${LTDL_INCLUDE_DIR}")
+    message(STATUS "LTDL_LIBRARY_DIR = ${LTDL_LIBRARY_DIR}")
+    message(STATUS "LTDL_LIBRARIES = ${LTDL_LIBRARIES}")
   else(LTDL_FOUND)
     message(STATUS 
       "WARNING: libltdl library not found. Setting ENABLE_DYNDRIVERS OFF.\n"
