@@ -41,29 +41,29 @@ if(HAVE_QHULL OR WITH_CSA)
   if(NOT DEFINED NaNAwareCCompiler)
     message(STATUS "Check for NaN awareness in C compiler")
     try_run(NaNAwareCCompiler COMPILE_RESULT
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_SOURCE_DIR}/cmake/modules/TestNaNAware.c
-    CMAKE_FLAGS "-DCOMPILE_DEFINITIONS:STRING=${NAN_CFLAGS} -I${CMAKE_SOURCE_DIR}/lib/csa"
-    OUTPUT_VARIABLE OUTPUT
-    )
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_SOURCE_DIR}/cmake/modules/TestNaNAware.c
+      CMAKE_FLAGS "-DCOMPILE_DEFINITIONS:STRING=${NAN_CFLAGS} -I${CMAKE_SOURCE_DIR}/lib/csa"
+      OUTPUT_VARIABLE OUTPUT
+      )
     if(NOT COMPILE_RESULT)
       set(NaNAwareCCompiler ${COMPILE_RESULT})
     endif(NOT COMPILE_RESULT)
     if(NaNAwareCCompiler)
       message(STATUS "Check for NaN awareness in C compiler - found")
       file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
-      "Determining whether C compiler is NaN aware succeeded with "
-      "the following output:\n${OUTPUT}\n\n"
-      )
+	"Determining whether C compiler is NaN aware succeeded with "
+	"the following output:\n${OUTPUT}\n\n"
+	)
     else(NaNAwareCCompiler)
       message(STATUS "Check for NaN awareness in C compiler - not found")
       message(STATUS "WARNING: Setting HAVE_QHULL and WITH_CSA to OFF.")
       set(HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
       set(WITH_CSA OFF CACHE BOOL "Enable use of the csa library" FORCE)
       file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
-      "Determining whether C compiler is NaN aware failed with "
-      "the following output:\n${OUTPUT}\n\n"
-      )
+	"Determining whether C compiler is NaN aware failed with "
+	"the following output:\n${OUTPUT}\n\n"
+	)
     endif(NaNAwareCCompiler)
   endif(NOT DEFINED NaNAwareCCompiler)
 endif(HAVE_QHULL OR WITH_CSA)
@@ -75,14 +75,17 @@ if(HAVE_QHULL)
     set(CMAKE_REQUIRED_LIBRARIES ${QHULL_LIBRARIES})
     check_function_exists(qh_new_qhull QH_NEW_EXIST)
     set(CMAKE_REQUIRED_LIBRARIES)
-    if(NOT QH_NEW_EXIST)
+    if(QH_NEW_EXIST)
+      message(STATUS "QHULL_INCLUDE_DIRS = ${QHULL_INCLUDE_DIRS}")
+      message(STATUS "QHULL_LIBRARIES = ${QHULL_LIBRARIES}")
+    else(QH_NEW_EXIST)
       message(STATUS "WARNING: function qh_new_qhull not found.  Setting HAVE_QHULL to OFF.")
       set(HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
-    endif(NOT QH_NEW_EXIST)
+    endif(QH_NEW_EXIST)
   else(QHULL_FOUND)
     message(STATUS 
-    "WARNING: qhull library not found.  Setting HAVE_QHULL to OFF."
-    )
+      "WARNING: qhull library not found.  Setting HAVE_QHULL to OFF."
+      )
     set(HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
   endif(QHULL_FOUND)
 endif(HAVE_QHULL)
