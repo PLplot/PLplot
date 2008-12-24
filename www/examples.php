@@ -19,7 +19,7 @@
 	  array(12,  1, 1, ""),
 	  array(13,  1, 1, ""),
 	  array(14,  0, 0, ""),
-	  array(15,  2, 1, ""),
+	  array(15,  3, 1, ""),
 	  array(16,  5, 1, ""),
 	  array(17,  0, 0, ""),
 	  array(18,  8, 1, ""),
@@ -27,14 +27,14 @@
 	  array(20,  6, 3, ""),
 	  array(21,  3, 3, ""),
 	  array(22,  4, 3, ""),
-	  array(23, 11, 1, ""),
+	  array(23, 16, 1, ""),
 	  array(24,  1, 1, "
-	Credits:
+	<p>Credits:</p>
 	<ul class=\"arrowlist\">
 	<li><a href=\"http://www.columbia.edu/~fdc/pace/\">Say Peace in all languages!</a></li>
 	<li><a href=\"http://www.columbia.edu/~fdc/pace/flag.html\">Pace flag</a></li>
 	</ul>
-	"),
+	\n"),
 	  array(25,  4, 1, ""),
 	  array(26,  2, 1, ""),
 	  array(27, 10, 1, ""),
@@ -118,7 +118,7 @@ END;
 
     // show credits if any
 		if($credits!="")
-			echo "<p>" . $credits . "</p>\n";
+			echo "$credits";
 
 		echo "<h4>Choose other examples</h4><p>\n";
 	  foreach($demoArray as $drec) {
