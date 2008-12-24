@@ -313,7 +313,9 @@ changed).
 Click on submit.
 
 Update the project web page, including the examples:
-edit www/examples.php to reflect the current release number.
+edit www/examples.php to reflect the current release number and any changes
+to the examples themselves (i.e. new examples and/or pages added or removed
+from an existing example).
 svn commit the updated pages.
 
 Generate and install a local copy of the website using
