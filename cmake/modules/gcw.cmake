@@ -175,6 +175,8 @@ endif(ENABLE_pygcw AND NOT ENABLE_python)
 if(ENABLE_pygcw)
   pkg_check_modules(_GCW4 pygtk-2.0)
   cmake_link_flags(linkflags  "${_GCW4_LDFLAGS}")
+  # Include PYTHON_LIBRARIES because pkg-config does not appear to do so.
+  list(APPEND linkflags "${PYTHON_LIBRARIES}")
   set (cflags "${_GCW4_CFLAGS}")
   # pygtk 2.13.0 uses numpy by default if it is available while 2.12.x does
   # not.  So 2.13.0 and above are likely to be using numpy although no
