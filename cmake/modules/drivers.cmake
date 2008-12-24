@@ -38,10 +38,10 @@ set(DRIVERS_LINK_FLAGS)
 option(ENABLE_DYNDRIVERS "Enable dynamic loading of device drivers" ON)
 if(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
   message(STATUS 
-  "WARNING: Shared libraries not built. Setting ENABLE_DYNDRIVERS OFF."
-  )
+    "WARNING: Shared libraries not built. Setting ENABLE_DYNDRIVERS OFF."
+    )
   set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
-  "Enable dynamic loading of device drivers" FORCE)
+    "Enable dynamic loading of device drivers" FORCE)
 endif(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
 if(ENABLE_DYNDRIVERS AND WIN32)
   if(NOT CYGWIN AND NOT MSYS)
@@ -55,12 +55,12 @@ if(ENABLE_DYNDRIVERS AND NOT LTDL_WIN32)
     set(libplplot${LIB_TAG}_RPATH ${LTDL_LIBRARY_DIR})
   else(LTDL_FOUND)
     message(STATUS 
-       "WARNING: libltdl library not found. Setting ENABLE_DYNDRIVERS OFF.\n"
-    "   Please install that library and/or set the environment variables\n"
-    "   CMAKE_INCLUDE_PATH and CMAKE_LIBRARY_PATH appropriately."
-    )
+      "WARNING: libltdl library not found. Setting ENABLE_DYNDRIVERS OFF.\n"
+      "   Please install that library and/or set the environment variables\n"
+      "   CMAKE_INCLUDE_PATH and CMAKE_LIBRARY_PATH appropriately."
+      )
     set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
-    "Enable dynamic loading of device drivers" FORCE)
+      "Enable dynamic loading of device drivers" FORCE)
   endif(LTDL_FOUND)
 endif(ENABLE_DYNDRIVERS AND NOT LTDL_WIN32)
 
