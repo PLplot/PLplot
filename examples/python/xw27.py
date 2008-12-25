@@ -79,8 +79,9 @@ def spiro(params):
     ymin = 0.0
     ymax = 0.0
 
-    xcoord = zeros(windings*steps+1)
-    ycoord = zeros(windings*steps+1)
+    # Add 0. to convert to real array for Numeric.  numpy does not require this.
+    xcoord = 0. + zeros(windings*steps+1)
+    ycoord = 0. + zeros(windings*steps+1)
 
     for i in range(windings*steps+1) :
         phi       = i * dphi
