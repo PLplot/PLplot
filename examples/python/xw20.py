@@ -288,7 +288,8 @@ def main():
     plenv(0, width, 0, height, 1, -1)
     pllab("", "", "Distorted image example")
 
-    stretch = zeros(5)
+    # Add 0. to convert to real array for Numeric.  numpy does not need this.
+    stretch = 0.+zeros(5)
     stretch[1] = width
     stretch[3] = height
     stretch[4] = 0.5
