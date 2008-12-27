@@ -81,12 +81,17 @@ popd
 # hack, x20c needs lena in the current directory
 $CP examples/c/lena.pgm .
 
+# 14 and 17 skipped because these are interactive examples.
+# 31 skipped because the plot generated is blank.
 for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
     23 24 25 26 27 28 29 30; do
 
     if test $exe = 08 -o $exe = 16 -o $exe = 20 -o $exe = 30; then
-      # No cairo graphics AA (Yep, 1 turns it off).
-	DRIVEROPT='-drvopt graphics_anti_aliasing=1'
+      # The default cairo graphics AA looks good for these examples now
+      # since Werner's filled_polygon change to the cairo driver so no need
+      # to explicitly turn graphics AA off any more with
+      # DRIVEROPT='-drvopt graphics_anti_aliasing=1'
+	DRIVEROPT=
     else
 	if test $exe = 09 -o $exe = 21; then
         # Text clipping.
