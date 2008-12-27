@@ -296,7 +296,7 @@ void plD_line_svg(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
   svg_stroke_width(pls);
   svg_stroke_color(pls);
   svg_attr_value(aStream, "fill", "none");
-  /*   svg_attr_value("shape-rendering", "crisp-edges"); */
+  /* svg_attr_value(aStream, "shape-rendering", "crispEdges");*/
   svg_attr_values(aStream, "points", "%r,%r %r,%r", (double)x1a/aStream->scale, (double)y1a/aStream->scale, (double)x2a/aStream->scale, (double)y2a/aStream->scale);
   svg_open_end(aStream);
 }
@@ -394,14 +394,30 @@ void poly_line(PLStream *pls, short *xa, short *ya, PLINT npts, short fill)
   aStream = pls->dev;
 
   svg_open(aStream, "polyline");
-  svg_stroke_width(pls);
-  svg_stroke_color(pls);
   if(fill){
+    /* Two adjacent regions will put non-zero width boundary strokes on top
+       of each other on their common boundary.  Thus, a stroke on the boundary
+       of a filled region is generally a bad idea when the fill is partially
+       opaque because the partial opacity of the two boundary strokes which
+       are on top of each other will mutually interfere and produce a
+       bad-looking result.  On the other hand, for completely opaque fills
+       a boundary stroke is a good idea since if it is of sufficient width
+       it will keep the background from leaking through at the anti-aliased
+       edges of filled regions that have a common boundary with other
+       filled regions. */
+    if(pls->curcolor.a < 0.99) {
+      svg_attr_value(aStream, "stroke", "none");
+    } else {
+      svg_stroke_width(pls);
+      svg_stroke_color(pls);
+    }
     svg_fill_color(pls);
   } else {
+    svg_stroke_width(pls);
+    svg_stroke_color(pls);
     svg_attr_value(aStream, "fill", "none");
   }
-  /*   svg_attr_value("shape-rendering", "crisp-edges"); */
+  /*svg_attr_value(aStream, "shape-rendering", "crispEdges"); */
   svg_indent(aStream);
   fprintf(aStream->svgFile, "points=\"");
   for (i = 0; i < npts; i++){
