@@ -312,7 +312,7 @@ x23::x23(int argc, const char *argv[])
     pls->gfci(fci_old);
     pls->gfont(ifamily, istyle, iweight);
     cout << "For example 23 prior to page 12 the FCI is 0x" << hex << fci_old << endl;
-    cout << "For example 23 prior to page 12 the font family, style and weight are  " << family[ifamily] << " " << style[istyle] << " " << weight[iweight] << endl;
+    cout << "For example 23 prior to page 12 the font family, style and weight are " << family[ifamily] << " " << style[istyle] << " " << weight[iweight] << endl;
 
     for (page=11; page<16; page++) {
        PLFLT dy = 0.030;

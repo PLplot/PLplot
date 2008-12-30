@@ -276,7 +276,7 @@ my $fci_old = plgfci();
 my ($ifamily, $istyle, $iweight) = plgfont();
 1;
 printf("For example 23 prior to page 12 the FCI is 0x%x\n",$fci_old);
-printf("For example 23 prior to page 12 the font family, style and weight are  %s %s %s\n",
+printf("For example 23 prior to page 12 the font family, style and weight are %s %s %s\n",
        $family[$ifamily], $style[$istyle], $weight[$iweight]);
 
 for (my $page=11; $page<16; $page++) {

@@ -258,7 +258,7 @@ def main():
     istyle = font[1]
     iweight = font[2]
     print "For example 23 prior to page 12 the FCI is",hex(fci_old)
-    print "For example 23 prior to page 12 the font family, style and weight are ",family[ifamily],style[istyle],weight[iweight]
+    print "For example 23 prior to page 12 the font family, style and weight are %s %s %s" % (family[ifamily],style[istyle],weight[iweight])
 
     FCI_COMBINATIONS = 30
     dy = 0.030

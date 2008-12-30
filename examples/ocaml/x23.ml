@@ -276,7 +276,7 @@ let () =
   let ifamily, istyle, iweight = plgfont () in
   printf "For example 23 prior to page 12 the FCI is 0x%lx\n"
     (Int64.to_int32 fci_old);
-  printf "For example 23 prior to page 12 the font family, style and weight are  %s %s %s\n"
+  printf "For example 23 prior to page 12 the font family, style and weight are %s %s %s\n"
     family.(ifamily) style.(istyle) weight.(iweight);
 
   for page = 11 to 15 do

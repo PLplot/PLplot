@@ -299,7 +299,7 @@ proc x23 {{w loopback}} {
     $w cmd plgfci fci_old
     $w cmd plgfont ifamily istyle iweight
     puts [ format "For example 23 prior to page 12 the FCI is 0x%x" $fci_old ]
-    puts [ format "For example 23 prior to page 12 the font family, style and weight are  %s %s %s" \
+    puts [ format "For example 23 prior to page 12 the font family, style and weight are %s %s %s" \
 	       $family($ifamily) $style($istyle) $weight($iweight) ]
 
     for {set page 11} {$page<16} {incr page} {

@@ -371,7 +371,7 @@ begin
     -- Put(fci_old, Base => 16, Width => 0); -- Outputs "Ada" style.
     Put("0x" & Hex_Image_8(fci_old));        -- Outputs "C" style.
     New_Line;
-    Put("For example 23 prior to page 12 the font family, style and weight are  "
+    Put("For example 23 prior to page 12 the font family, style and weight are "
         & family(ifamily) & " " & style(istyle) & " " & weight(iweight));
     New_Line;
 

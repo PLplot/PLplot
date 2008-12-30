@@ -302,7 +302,7 @@
       call plgfci(fci_old)
       call plgfont(ifamily, istyle, iweight)
       write (*,'(a,z8)') 'For example 23 prior to page 12 the FCI is 0x',fci_old
-      write (*,'(a)') 'For example 23 prior to page 12 the font family, style and weight are  '// &
+      write (*,'(a)') 'For example 23 prior to page 12 the font family, style and weight are '// &
            trim(family(ifamily+1))//' '//trim(style(istyle+1))//' '//trim(weight(iweight+1))
 
     do page=11,15
