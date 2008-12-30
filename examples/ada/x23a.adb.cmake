@@ -109,7 +109,6 @@ procedure x23a is
     end title;
 
 
-
     lo : array (0 .. 10) of Integer := (
     16#0#,
     16#0#,
@@ -365,7 +364,12 @@ begin
     plgfci(fci_old);
     plgfont(ifamily, istyle, iweight);
     Put("For example 23 prior to page 12 the FCI is ");
-    Put(fci_old, Base => 16, Width => 0);
+    
+    -- The following hack in outputting the hexadecimal value of fci_old in "C" 
+    -- style, e.g. 0x00000000 instead of "Ada" style 16#00000000#, is done in 
+    -- order to create the same textual output as the C example x23c.
+    -- Put(fci_old, Base => 16, Width => 0); -- Outputs "Ada" style.
+    Put("0x" & Hex_Image_8(fci_old));        -- Outputs "C" style.
     New_Line;
     Put("For example 23 prior to page 12 the font family, style and weight are  "
         & family(ifamily) & " " & style(istyle) & " " & weight(iweight));
