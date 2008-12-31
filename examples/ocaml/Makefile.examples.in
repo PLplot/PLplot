@@ -46,6 +46,7 @@ EXECUTABLES_list = \
 		 x11ocaml$(EXEEXT) \
 		 x12ocaml$(EXEEXT) \
 		 x13ocaml$(EXEEXT) \
+		 x14ocaml$(EXEEXT) \
 		 x15ocaml$(EXEEXT) \
 		 x16ocaml$(EXEEXT) \
 		 x18ocaml$(EXEEXT) \
