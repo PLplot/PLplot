@@ -2,16 +2,16 @@ Perl (PDL) demos for PLplot
 ---------------------------
 
 The files in this directory are close translations of the PLplot demos
-witten in C (see directory above ../c/).  They use the PDL and
+written in C (see directory above ../c/).  They use the PDL and
 PDL::Graphics::PLplot modules distributed with PDL.
 
 Here is a recipe for building and installing the latest version of that
 module.
 
 Instructions for building and installing Doug Hunt's latest version of the
-PDL Graphics PLplot module (version 0.46 at the time of writing)
+PDL Graphics PLplot module (version 0.47 at the time of writing)
 
-export TARBALL_ROOT_NAME=PDL-Graphics-PLplot-0.46
+export TARBALL_ROOT_NAME=PDL-Graphics-PLplot-0.47
 
 wget \
 http://search.cpan.org/CPAN/authors/id/D/DH/DHUNT/$TARBALL_ROOT_NAME.tar.gz
