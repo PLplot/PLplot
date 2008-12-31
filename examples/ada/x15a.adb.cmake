@@ -132,7 +132,30 @@ procedure x15a is
         sh_cmap  : Integer := 0;
         sh_width : Integer;
         min_color, min_width, max_color, max_width : Integer := 0;
+
+        -- C run amok. The following arrays are made to accommodate the 
+        -- original example which is written in perverse C.
+        inc_0_To_4 : array (0 .. 4) of Integer_Array_1D(0 .. 0);
+        inc_5_To_9 : array (5 .. 9) of Integer_Array_1D(0 .. 1) := 
+           ((450, -450), (0, 900), (0, 450), (450, -450), (0, 900));
+
+        del_0_To_4 : array (0 .. 4) of Integer_Array_1D(0 .. 0);
+        del_5_To_9 : array (5 .. 9) of Integer_Array_1D(0 .. 1) := 
+           ((2000, 2000), (2000, 2000), (2000, 2000), (4000, 4000), (4000, 2000));
     begin
+        -- Initialize the rest of the amokified arrays.
+        inc_0_To_4(0)(0) :=  450;
+        inc_0_To_4(1)(0) := -450;
+        inc_0_To_4(2)(0) :=    0;
+        inc_0_To_4(3)(0) :=  900;
+        inc_0_To_4(4)(0) :=  300;
+        
+        del_0_To_4(0)(0) := 2000;
+        del_0_To_4(1)(0) := 2000;
+        del_0_To_4(2)(0) := 2000;
+        del_0_To_4(3)(0) := 2000;
+        del_0_To_4(4)(0) := 2000;
+
         sh_width := 2;
 
         pladv(0);
@@ -144,8 +167,11 @@ procedure x15a is
             shade_min := zmin + (zmax - zmin) * Long_Float(i) / 10.0;
             shade_max := zmin + (zmax - zmin) * Long_Float(i +1) / 10.0;
             sh_color := Long_Float(i + 6);
-            plpsty((i + 2) mod 8 + 1);
-
+            if i in 0 .. 4 then
+                plpat(inc_0_To_4(i), del_0_To_4(i));
+            else
+                plpat(inc_5_To_9(i), del_5_To_9(i));
+            end if;
             plshade1(z, Mask_Function_No_Mask'access, -1.0, 1.0, -1.0, 1.0, 
                  shade_min, shade_max, 
                  sh_cmap, sh_color, sh_width,
@@ -158,6 +184,41 @@ procedure x15a is
         plcol0(2);
         pllab("distance", "altitude", "Bogon flux");
     end plot2;
+
+    ----------------------------------------------------------------------------
+    -- plot3
+    -- Illustrates shaded regions in 3d, using a different fill pattern for 
+    -- each region.  
+    ----------------------------------------------------------------------------
+    procedure plot3 is
+    xx : array (0 .. 1) of Real_Vector(0 ..4) := 
+       ((-1.0, 1.0, 1.0, -1.0, -1.0), 
+        (-1.0, 1.0, 1.0, -1.0, -1.0));
+    yy : array (0 .. 1) of Real_Vector(0 ..4) := 
+       ((1.0,  1.0,  0.0, 0.0,  1.0), 
+        (-1.0, -1.0, 0.0, 0.0, -1.0));
+    zz : array (0 .. 1) of Real_Vector(0 ..4) := 
+       ((0.0, 0.0, 1.0, 1.0, 0.0), 
+        (0.0, 0.0, 1.0, 1.0, 0.0));
+    begin
+        pladv(0);
+        plvpor(0.1, 0.9, 0.1, 0.9);
+        plwind(-1.0, 1.0, -1.0, 1.0);
+        plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30.0, -40.0);
+
+        -- Plot using identity transform
+        plcol0(1);
+        plbox3("bntu", "X", 0.0, 0, "bntu", "Y", 0.0, 0, "bcdfntu", "Z", 0.5, 0);
+        plcol0(2);
+        pllab("","","3-d polygon filling");
+        plcol0(3);
+        plpsty(1);
+        plline3(xx(0), yy(0), zz(0));
+        plfill3(xx(0)(0 .. 3), yy(0)(0 .. 3), zz(0)(0 .. 3));
+        plpsty(2);
+        plline3(xx(1), yy(1), zz(1));
+        plfill3(xx(1)(0 .. 3), yy(1)(0 .. 3), zz(1)(0 .. 3));
+    end;
 
 begin
     -- Parse and process command line arguments
@@ -183,6 +244,7 @@ begin
 
     plot1;
     plot2;
+    plot3;
 
     plend;
 end x15a;
