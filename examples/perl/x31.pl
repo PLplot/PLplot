@@ -22,8 +22,6 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-# SYNC: x31c.c 1.?? FIXME
-
 use PDL;
 use PDL::Graphics::PLplot;
 
@@ -122,27 +120,16 @@ if ($xmin != 0.2 || $xmax != 0.3 || $ymin != 0.4 || $ymax != 0.5) {
 }
 
 # Get world coordinates for middle of viewport
-# FIXME plcalc_world is not yet implemented.  I have inferred the argument list
-# below where xmid, and ymid are input, and ($wx, $wy, $win) are all output.
-# my ($wx, $wy, $win) = plcalc_world ($xmid, $ymid);
-my ($wx, $wy, $win) = (0., 0., 0); #Temporary FIXME
+my ($wx, $wy, $win) = plcalc_world ($xmid, $ymid);
 printf("world parameters: wx, wy, win = %f %f %d\n", $wx, $wy, $win);
 if (abs($wx-0.5*($xmin+$xmax)) > 1.0E-5 || abs($wy-0.5*($ymin+$ymax)) > 1.0E-5) {
     printf STDERR ("plcalc_world test failed\n");
     $status = 1;
-    $status = 0;  #FIXME, temporary
 }
 
 # Retrieve and print the name of the output file (if any)
-# FIXME, I could not get the following code to work.
-# my $fnam = plgfnam();
-# plgfam currently needs an argument unlike other plg functions that return
-# a character string such as plgver.  Also, if I tried an argument, it
-# generated a run-time error in glibc.
-# Temporarily use plgver instead which unlike the current plgfnam has no
-# arguments.
-my $fnam = plgver();
-if ($fnam == "") {
+my $fnam = plgfnam();
+if ($fnam eq "") {
     printf ("No output file name is set\n");
 } else {
     printf ("Output file name read\n");
