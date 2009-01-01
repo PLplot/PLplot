@@ -1224,7 +1224,7 @@ package PLplot is
     -- Set the floating point precision (in number of places) in numeric labels.
     -- plprec
     procedure Set_Numeric_Label_Precision
-       (Set_Automatically : Boolean := False;
+       (Set_Manually : Boolean := True;
         Number_Digits_After_Decimal_Point : Integer := 2);
 
 

@@ -1958,13 +1958,13 @@ package body PLplot_Traditional is
 
     -- Set the floating point precision (in number of places) in numeric labels.
     procedure plprec
-       (Set_Automatically : Boolean := False;
+       (Set_Manually : Boolean := True;
         Number_Digits_After_Decimal_Point : Integer := 2) is
     begin
-        if Set_Automatically then
-            PLplot_Thin.plprec(0, Number_Digits_After_Decimal_Point);
-        else
+        if Set_Manually then
             PLplot_Thin.plprec(1, Number_Digits_After_Decimal_Point);
+        else
+            PLplot_Thin.plprec(0, Number_Digits_After_Decimal_Point);
         end if;
     end plprec;
 

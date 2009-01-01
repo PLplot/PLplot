@@ -1138,7 +1138,7 @@ package PLplot_Traditional is
 
     -- Set the floating point precision (in number of places) in numeric labels.
     procedure plprec
-       (Set_Automatically : Boolean := False;
+       (Set_Manually : Boolean := True;
         Number_Digits_After_Decimal_Point : Integer := 2);
 
 

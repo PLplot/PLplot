@@ -38,7 +38,7 @@ use
 --with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
 @Ada_Is_2007_With_and_Use_Numerics@
 
-------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Draws several plots which demonstrate the use of date / time formats for
 -- the axis labels.
 -- Time formatting is done using the system strftime routine. See the 
@@ -48,13 +48,13 @@ use
 -- 2) Plotting 
 --
 -- Note: Times are stored as seconds since the epoch (usually 1st Jan 1970). 
--- 
-------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 procedure x29a is
     -- Plot a model diurnal cycle of temperature
     procedure plot1 is
-        x, y : Real_Vector(0 .. 144);
+        x, y : Real_Vector(0 .. 72);
+        xerr1, xerr2, yerr1, yerr2 : Real_Vector(0 .. 72);
 
         -- Data points every 10 minutes for 1 day
         xmin, xmax, ymin, ymax : Long_Float;
@@ -67,9 +67,23 @@ procedure x29a is
         for i in x'range loop
             x(i) := xmax * Long_Float(i) / Long_Float(x'length);
             y(i) := 15.0 - 5.0 * cos( 2.0 * pi * Long_Float(i) / Long_Float(x'length));
+
+            -- Set x error bars to +/- 5 minute
+            xerr1(i) := x(i) - Long_Float(60 * 5);
+            xerr2(i) := x(i) + Long_Float(60 * 5);
+            
+            -- Set y error bars to +/- 0.1 deg C */
+            yerr1(i) := y(i) - 0.1;
+            yerr2(i) := y(i) + 0.1;
         end loop;
 
         pladv(0);
+
+        -- Rescale major ticks marks by 0.5
+        plsmaj(0.0, 0.5);
+
+        -- Rescale minor ticks and error bar marks by 0.5
+        plsmin(0.0, 0.5);
 
         plvsta;
         plwind(xmin, xmax, ymin, ymax);
@@ -82,9 +96,18 @@ procedure x29a is
         plbox("bcnstd", 3.0 * 60.0 * 60.0, 3, "bcnstv", 1.0, 5);
 
         plcol0(3);
-        pllab("Time (hours:mins)", "Temperature (degC)", "#frPLplot Example 29 - Daily temperature");
+        pllab("Time (hours:mins)", "Temperature (degC)", "@frPLplot Example 29 - Daily temperature");
         plcol0(4);
         plline(x, y);
+
+        plcol0(2);
+        plerrx(xerr1, xerr2, y);
+        plcol0(3);
+        plerry(x, yerr1, yerr2);
+
+        -- Rescale major / minor tick marks back to default
+        plsmin(0.0, 1.0); 
+        plsmaj(0.0, 1.0); 
     end plot1;
 
 
@@ -118,13 +141,15 @@ procedure x29a is
         
         -- Set time format to be abbreviated month name followed by day of month
         pltimefmt("%b %d");
+        plprec(True, 1);
         plenv(xmin, xmax, ymin, ymax, 0, 40);
 
         plcol0(3);
-        pllab("Date", "Hours of daylight", "#frPLplot Example 29 - Hours of daylight at 51.5N");
-
+        pllab("Date", "Hours of daylight", "@frPLplot Example 29 - Hours of daylight at 51.5N");
         plcol0(4);
         plline(x, y);
+
+        plprec(False, 0);
     end plot2;
 
 
@@ -134,9 +159,17 @@ procedure x29a is
     begin
         -- Find the number of seconds since January 1, 1970 to December 1, 2005.
         -- Should be 1_133_395_200.0.
-        -- This method does not work reliably for timezones which were 
-        -- on daylight saving time on Janary 1 1970, e.g. the UK.
+
+        -- NOTE that some PLplot developers claim that the Time_Of function 
+        -- is incorrect, saying that this method does not work reliably for 
+        -- time zones which were on daylight saving time on Janary 1 1970, e.g. 
+        -- the UK. However, there is confusion over the C and/or Unix 
+        -- time functions which apparently refer to local time: Time_Of does 
+        -- not refer to local time. The following commented-out line which 
+        -- calculates xmin returns 1133395200.0 which is identical to the 
+        -- PLplot-developer-agreed-to value which is hard-coded here. Go figure.
         -- xmin := Long_Float(Time_Of(2005, 12, 1, 0.0) - Time_Of(1970, 1,  1, 0.0));
+
         -- For now we will just hard code it
         xmin := 1133395200.0;
         
@@ -165,9 +198,11 @@ procedure x29a is
         plbox("bcnstd", 14.0 * 24.0 * 60.0 * 60.0, 14, "bcnstv", 1.0, 4);
 
         plcol0(3);
-        pllab("Date", "Hours of television watched", "#frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");
-
+        pllab("Date", "Hours of television watched", "@frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");
         plcol0(4);
+
+        -- Rescale symbol size (used by plpoin) by 0.5
+        plssym(0.0,0.5);
 
         plpoin(x, y, 2);
         plline(x, y);
@@ -180,6 +215,9 @@ begin
 
     -- Initialize plplot
     plinit;
+
+    -- Change the escape character to a '@' instead of the default '#'
+    plsesc('@');
 
     plot1;
     plot2;
