@@ -1548,7 +1548,7 @@ package body PLplot_Traditional is
         PL_Output_File_Name : char_array(0..79);
     begin
         PLplot_Thin.plgfnam(PL_Output_File_Name);
-        Output_File_Name := To_Ada(PL_Output_File_Name, True);
+        Output_File_Name := To_Ada(PL_Output_File_Name, False);
     end plgfnam;
 
 
@@ -2202,7 +2202,7 @@ package body PLplot_Traditional is
     procedure plscolbg
        (Red_Component, Green_Component, Blue_Component : Integer) is
     begin
-        PLplot_Thin.plscolbg(Red, Green, Blue);
+        PLplot_Thin.plscolbg(Red_Component, Green_Component, Blue_Component);
     end plscolbg;
 
 

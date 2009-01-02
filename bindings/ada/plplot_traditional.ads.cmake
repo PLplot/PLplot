@@ -39,6 +39,9 @@ use
 
 package PLplot_Traditional is
 
+    -- Used with plsdidev.
+    PL_NOTSET : Long_Float renames PLplot_Thin.PL_NOTSET;
+
     -- "Rename" some useful types from the thin binding.
     subtype Boolean_Array_1D is PLplot_Thin.Boolean_Array_1D;
     subtype Integer_Array_1D is PLplot_Thin.Integer_Array_1D;

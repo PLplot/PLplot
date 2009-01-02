@@ -325,8 +325,9 @@ package PLplot_Thin is
     -- Macro used (in some cases) to ignore value of argument 
     -- I don't plan on changing the value so you can hard-code it 
 
-    PL_NOTSET : constant := -42;
-    PL_NOTSET_Float : constant := -42.0; -- Added for Ada binding.
+    -- Long_Float for Ada binding. Used with plsdidev which requires Long_Float. 
+    -- C doesn't care if it is an integer, apparently converting it to a float.
+    PL_NOTSET : constant Long_Float := -42.0;
 
     -- See plcont.c for examples of the following 
 

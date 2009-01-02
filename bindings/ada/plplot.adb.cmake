@@ -1593,7 +1593,7 @@ package body PLplot is
         PL_Output_File_Name : char_array(0..79);
     begin
         plgfnam(PL_Output_File_Name);
-        Output_File_Name := To_Ada(PL_Output_File_Name, True);
+        Output_File_Name := To_Ada(PL_Output_File_Name, False);
     end Get_Output_File_Name;
 
 
@@ -2307,7 +2307,7 @@ package body PLplot is
     procedure Set_Background_Color_RGB
        (Red_Component, Green_Component, Blue_Component : Integer) is
     begin
-        plscolbg(Red, Green, Blue);
+        plscolbg(Red_Component, Green_Component, Blue_Component);
     end Set_Background_Color_RGB;
 
 
