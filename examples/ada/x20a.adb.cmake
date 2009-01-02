@@ -142,7 +142,11 @@ procedure x20a is
                     xxi := gin.wX;
                     yyi := gin.wY;
                     if start /= 0 then
+                        pragma Warnings(Off, """sx"" may be referenced before it has a value");
+                        pragma Warnings(Off, """sy"" may be referenced before it has a value");
                         plline(sx, sy); -- Clear previous rectangle.
+                        pragma Warnings(On, """sx"" may be referenced before it has a value");
+                        pragma Warnings(On, """sy"" may be referenced before it has a value");
                     end if;
         
                     start := 0;

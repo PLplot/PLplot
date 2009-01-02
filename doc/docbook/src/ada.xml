@@ -304,12 +304,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>	        As discussed in Section 6.1, the bindings are made to work with Ada 95 but to also take advantage of the Annex G.3 (vector-matrix) features of Ada 2005. Actually, this adaptation takes place during the PLplot build process when <literal>DHAVE_ADA_2007=OFF</literal> or <literal>DHAVE_ADA_2007=ON</literal> is chosen; the appropriate binding source files are generated automatically. User programs will work with either compiler type without modification.</para>
     <para><emphasis role="bold">	10.2	GNAT Dependence</emphasis></para>
     <para>	        There is a slight but significant dependence on the GNAT version of Ada. This is discussed more fully in Section 6.2</para>
-    <para><emphasis role="bold">	10.3	Compiler Warnings</emphasis></para>
-    <para>	        During normal compilation of the Ada bindings, approximately a dozen warnings are generated, in pairs, of the following form:</para>
-    <para>	<literal>bar.adb:46: warning: type of argument "foo" is unconstrained array</literal></para>
-    <para>	<literal>bar.adb:46: warning: foreign caller must pass bounds explicitly</literal></para>
-    <para>	These are normal and an unavoidable consequence of some of the callback routines interacting with the underlying C code.</para>
-    <para><emphasis role="bold">	10.4	PLplot_Auxiliary</emphasis></para>
+    <para><emphasis role="bold">	10.3	PLplot_Auxiliary</emphasis></para>
     <para>	        The bindings include files <literal>PLplot_Auxiliary.ads</literal> and <literal>PLplot_Auxiliary.adb</literal>. These files are currently used to provide a few convenience subprograms that are used in the examples. However, they are also very tightly associated with the above-mentioned facility to accommodate either Ada 95 or Ada 2005 compilers. The current situation is such that if the user is using an Ada 95 compiler <emphasis>and</emphasis> requires the Real_Vector or Real_Matrix type definitions, then he/she should <literal>with</literal> <literal>PLplot_Auxiliary</literal>. If in doubt, <literal>PLplot_Auxiliary</literal> can always be <literal>with</literal>-ed without harm. In the future, this confusion might be removed and the need for <literal>PLplot_Auxiliary</literal> removed. (However, user programs that with it should still work without change.)</para>
 
   </sect1>

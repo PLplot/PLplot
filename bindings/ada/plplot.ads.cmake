@@ -69,7 +69,13 @@ package PLplot is
     -- from this package (PLplot_Traditional) can't be used. Thus, this also
     -- overloads the name Fill_Polygon. It might never occur to the Ada programmer 
     -- that this is happening, which is good.
+    pragma Warnings(Off, "foreign caller must pass bounds explicitly");
+    pragma Warnings(Off, "type of argument ""Fill_Polygon.x"" is unconstrained array");
+    pragma Warnings(Off, "type of argument ""Fill_Polygon.y"" is unconstrained array");
     procedure Fill_Polygon(length : Integer; x, y : Real_Vector) renames PLplot_Thin.plfill;
+    pragma Warnings(On, "foreign caller must pass bounds explicitly");
+    pragma Warnings(On, "type of argument ""Fill_Polygon.x"" is unconstrained array");
+    pragma Warnings(On, "type of argument ""Fill_Polygon.y"" is unconstrained array");
     
     -- Make Mask_Function_Pointer_Type available to the user so that s/he doesn't 
     -- have to "with" PLplot_Thin. Note that it is also used herein.
