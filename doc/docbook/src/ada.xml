@@ -110,7 +110,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <title>GNAT versus non-GNAT</title>
       <para>	        The bindings were made using the GNAT compiler and there is a slight dependence on that compiler. Specifically, the <literal>Unrestricted_Access</literal> attribute of GNAT was used in making the function <literal>Matrix_To_Pointers</literal> in <literal>plplotthin.adb</literal> and in a few callbacks. <literal>Matrix_To_Pointers</literal> is called whenever an Ada matrix (2D array) is passed to a PLplot subroutine. For more about <literal>Unrestricted_Access attribute</literal>, see Implementation Defined Attributes in the GNAT Reference Manual. This dependency shouldn't be difficult to remove by either incorporating the GNAT code which implements it, by following the TO-DO comment near the function definition in <literal>plplotthin.adb</literal>, or by providing the proper aliasing.</para>
       <para>	        Another GNAT dependency is used to parse command line arguments in a C-like way.</para>
-      <para>	        Most of the GNAT dependencies can be found by searching the source code for "<literal>GNAT</literal>" and "<literal>Unrestricted_Access</literal>."</para>
+      <para>	        Pragma Warnings (Off, "some text") and Pragma Warnings (On, "some text") are used in the bindings to suppress warnings about a particular method used to intereface with C code. These pragmas are also used in Ada Exaamples 21 to suppress a particular warning. Pragma Warnings is a GNAT extension. Non-GNAT usage could simply remove these pragmas with the resulting warnings ignored as they are benign.</para>
+      <para>	        Most of the GNAT dependencies can be found by searching the source code for "<literal>GNAT</literal>", "<literal>Unrestricted_Access</literal> and <literal>Pragma Warnings</literal>."</para>
       <para>	        The GNAT dependence, though slight, will no doubt frustrate users of other Ada compilers. We welcome comments from those users, especially comments with specific suggestions on how to remove any GNAT-specific usages.</para>
     </sect2>
     <sect2 id="ada_sample_project">
@@ -167,7 +168,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </sect3>
       <sect3 id="ada_simple_plotters">
 	<title>Simple Plotters</title>
-	<para>        Several high-level but flexible plotters are available, and more might be added in the future. It is expected that many users will find that these high-level routines are adequate for most of their day-to-day plotting.</para>
+	<para>        Several high-level but flexible plotters are available and more might be added in the future. It is expected that many users will find that these high-level routines are adequate for most of their day-to-day plotting.</para>
 	<sect4 id="ada_multiple_pairs">
 	  <title>Multiplot_Pairs</title>
 	  <para>	Plot up to five <emphasis>x-y</emphasis> pairs with easy labeling, coloring, line width and styles, justification, and zooming.</para>
@@ -215,18 +216,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<para>        Another set of features lets the user reset the 16 individual colors in color map 0 after a color definition has been changed. It is important to note that while <literal>Set_Pen_Color(Red)</literal> (<literal>plcol0</literal> in the traditional binding) normally does what it says, <literal>Red</literal> simply has the value <literal>1</literal>. If the user changes the color map so that <literal>1</literal> corresponds to another color, then <literal>Set_Pen_Color(Red)</literal> will draw in that color instead of red. To always assure that red is drawn even if the color map has been changed for integer <literal>1</literal>, use <literal>Set_Pen_Color(Reset_Red)</literal> instead. These 16 "reset" functions return the appropriate default integer for the specified color but also reset that slot in the color table so that a subsequent call such as <literal>Set_Pen_Color(Red)</literal> will also cause drawing in red.</para>
 	<para>        Color map 1 also gets a easy-to-use makeover for Ada users. There are several pre-built color themes that are useful for quickly making surface and mesh plots, <literal>Color_Themes_For_Map_1_Type</literal>. These color themes can be quickly applied with <literal>Quick_Set_Color_Map_1</literal>.</para>
 	<para>        Miscellaneous other Ada features include a pre-built mask function for <literal>Shade_Regions</literal> that does no masking; perhaps the most useful purpose is to provide a template for writing mask functions that do mask. And there is a handy function for calculating the contour levels for making contour plots.</para>
-	<para>	Color table snapshots</para>
-	<para>	   <literal>Make_Snapshot_Of_Color_Map_0</literal></para>
-	<para>	   <literal>Restore_Snapshot_Of_Color_Map_0</literal></para>
-	<para>	   <literal>Restore_Default_Snapshot_Of_Color_Map_0</literal></para>
-	<para>	Color resetting functions for the 16 colors of color map 0</para>
-	<para>	   <literal>Reset_Black, Reset_Red, &#8230; Reset_White</literal></para>
-	<para>	Easy manipulation of color map 1</para>
-	<para>	   Pre-built color themes for color map 1: <literal>Color_Themes_For_Map_1_Type</literal></para>
-	<para>	   Quick application of pre-built color themes: <literal>Quick_Set_Color_Map_1</literal></para>
-	<para>	Other features</para>
-	<para>	   A pre-built mask function for <literal>Shade_Regions</literal> that does no masking: <literal>Mask_Function_No_Mask</literal></para>
-	<para>	   An easy way to calculate an array of contour levels for contour plots: <literal>Calculate_Contour_Levels</literal></para>
+	<para>  Color table snapshots</para>
+	<para><literal>    Make_Snapshot_Of_Color_Map_0</literal></para>
+	<para><literal>    Restore_Snapshot_Of_Color_Map_0</literal></para>
+	<para><literal>    Restore_Default_Snapshot_Of_Color_Map_0</literal></para>
+	<para>  Color resetting functions for the 16 colors of color map 0</para>
+	<para><literal>    Reset_Black, Reset_Red, &#8230; Reset_White</literal></para>
+	<para>  Easy manipulation of color map 1</para>
+	<para>    Pre-built color themes for color map 1: <literal>Color_Themes_For_Map_1_Type</literal></para>
+	<para>    Quick application of pre-built color themes: <literal>Quick_Set_Color_Map_1</literal></para>
+	<para>  Other features</para>
+	<para>    A pre-built mask function for <literal>Shade_Regions</literal> that does no masking: <literal>Mask_Function_No_Mask</literal></para>
+	<para>    An easy way to calculate an array of contour levels for contour plots: <literal>Calculate_Contour_Levels</literal></para>
       </sect3>
     </sect2>
     <sect2 id="ada_integer_options">
@@ -234,46 +235,46 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para>The C version of PLplot uses a number of integers to mean specific things. Unfortunately, the meaning is lost when it it consigned to being a mere integer with no name. The Ada binding partially rectifies this situation by giving names to these integer constants&#8212;the integer can still be used if desired. (A more complete and safer rectification would use enumerated types.)</para>
       <para>        Below is a listing of at least the contexts in which these "re-namings" have been applied. In some cases the entire range of values is listed, but if there are more than about four such values for each context, only a sampling is given.</para>
       <para><emphasis role="bold">	Instances</emphasis></para>
-      <para>	Colors: Plot_Color_Type</para>
-      <para>	   <literal>0</literal> is Black, <literal>1</literal> is Red, etc.</para>
-      <para>	Justification for plots: <literal>Justification_Type</literal></para>
-      <para>	   <literal>User_Justified</literal></para>
-      <para>	   <literal>Not_Justified</literal></para>
-      <para>	   <literal>Justified</literal></para>
-      <para>	   <literal>Justified_Square_Box</literal></para>
-      <para>	Axis styles: <literal>Axis_Style_Type</literal></para>
-      <para>	   <literal>Linear_Major_Grid</literal></para>
-      <para>	   <literal>Linear_Minor_Grid</literal></para>
-      <para>	   etc.</para>
-      <para>	Font styles: <literal>Font_Style_Type</literal></para>
-      <para>	   <literal>Normal_Font</literal></para>
-      <para>	   <literal>Roman_Font</literal></para>
-      <para>	   <literal>Italic_Font</literal></para>
-      <para>	   <literal>Script_Font</literal></para>
-      <para>	Character sets: <literal>Character_Set_Type</literal></para>
-      <para>	   <literal>Standard_Character_Set</literal></para>
-      <para>	   <literal>Extended_Character_Set</literal></para>
-      <para>	Plot orientation: <literal>Orientation_Type</literal></para>
-      <para>	   <literal>Landscape</literal></para>
-      <para>	   <literal>Portrait</literal></para>
-      <para>	Modes for parsing command line arguments: <literal>Parse_Mode_Type</literal></para>
-      <para>	   E.g. <literal>PL_PARSE_PARTIAL</literal></para>
-      <para>	Descriptions of map outlines (continents, states, etc.): <literal>Map_Type</literal></para>
-      <para>	   <literal>Continents</literal></para>
-      <para>	   <literal>USA_and_States</literal></para>
-      <para>	   <literal>Continents_and_Countries</literal></para>
-      <para>	   <literal>USA_States_and_Continents</literal></para>
-      <para>	Various style and view options for 3D and surface plots</para>
-      <para>	   E.g. <literal>Lines_Parallel_To_X</literal></para>
-      <para>	Kind of gridding algorithm for interpolating 2D data to a grid: <literal>Gridding_Algorithm_Type</literal></para>
-      <para>	   E.g. <literal>Grid_Bivariate_Cubic_Spline_Approximation</literal></para>
-      <para>	Flags for histogram style</para>
-      <para>	   E.g. <literal>Histogram_Default</literal></para>
-      <para>	Flags for histogram binning</para>
-      <para>	   E.g. <literal>Bin_Default</literal></para>
-      <para>	Names for color space models</para>
-      <para>	   Hue, Lightness, Saturation: <literal>HLS</literal></para>
-      <para>	   Red, Green, Blue: <literal>RGB</literal></para>
+      <para>  Colors: Plot_Color_Type</para>
+      <para> <literal>    0</literal> is Black, <literal>1</literal> is Red, etc.</para>
+      <para>  Justification for plots: <literal>Justification_Type</literal></para>
+      <para><literal>    User_Justified</literal></para>
+      <para><literal>    Not_Justified</literal></para>
+      <para><literal>    Justified</literal></para>
+      <para><literal>    Justified_Square_Box</literal></para>
+      <para>  Axis styles: <literal>Axis_Style_Type</literal></para>
+      <para><literal>    Linear_Major_Grid</literal></para>
+      <para><literal>    Linear_Minor_Grid</literal></para>
+      <para>    etc.</para>
+      <para>  Font styles: <literal>Font_Style_Type</literal></para>
+      <para><literal>    Normal_Font</literal></para>
+      <para><literal>    Roman_Font</literal></para>
+      <para><literal>    Italic_Font</literal></para>
+      <para><literal>    Script_Font</literal></para>
+      <para>  Character sets: <literal>Character_Set_Type</literal></para>
+      <para><literal>    Standard_Character_Set</literal></para>
+      <para><literal>    Extended_Character_Set</literal></para>
+      <para>  Plot orientation: <literal>Orientation_Type</literal></para>
+      <para><literal>    Landscape</literal></para>
+      <para><literal>    Portrait</literal></para>
+      <para>  Modes for parsing command line arguments: <literal>Parse_Mode_Type</literal></para>
+      <para>    E.g. <literal>PL_PARSE_PARTIAL</literal></para>
+      <para>  Descriptions of map outlines (continents, states, etc.): <literal>Map_Type</literal></para>
+      <para><literal>    Continents</literal></para>
+      <para><literal>    USA_and_States</literal></para>
+      <para><literal>    Continents_and_Countries</literal></para>
+      <para><literal>    USA_States_and_Continents</literal></para>
+      <para>  Various style and view options for 3D and surface plots</para>
+      <para>    E.g. <literal>Lines_Parallel_To_X</literal></para>
+      <para>  Kind of gridding algorithm for interpolating 2D data to a grid: <literal>Gridding_Algorithm_Type</literal></para>
+      <para>    E.g. <literal>Grid_Bivariate_Cubic_Spline_Approximation</literal></para>
+      <para>  Flags for histogram style</para>
+      <para>    E.g. <literal>Histogram_Default</literal></para>
+      <para>  Flags for histogram binning</para>
+      <para>    E.g. <literal>Bin_Default</literal></para>
+      <para>  Names for color space models</para>
+      <para>    Hue, Lightness, Saturation: <literal>HLS</literal></para>
+      <para>    Red, Green, Blue: <literal>RGB</literal></para>
     </sect2>
     <sect2 id="ada_one_offs">
       <title>One-offs</title>
