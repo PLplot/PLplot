@@ -22,49 +22,51 @@ proc x13 {{w loopback}} {
 
     $w cmd pladv 0
     $w cmd plvasp 1.
-    $w cmd plwind 0. 10. 0. 10. 
+    $w cmd plwind 0. 10. 0. 10.
     # $w cmd plenv 0. 10. 0. 10. 1 -2
     $w cmd plcol0 2
 
-    set theta0 0.;
+    set theta0 0.
     set pi 3.14159265358979323846
 
-    set dthet [expr 2. * $pi / 500.]
+    set factor [expr {2. * $pi / 500.}]
+    set dthet  1.0
     for {set i 0} {$i <= 4} {incr i} {
-	set j 0;
-	x $j = 5.;
-	y $j = 5.;
+	set j 0
+	x $j = 5.
+	y $j = 5.
 	incr j
 
-	set theta1 [expr $theta0 + 2. * $pi * [per $i] / 100.]
+	set theta1 [expr {$theta0 + 5.0 * [per $i]}]
 	if {$i == 4} {
-	    set theta1 [expr 2. * $pi]
+	    set theta1 500.0
 	}
 
 	for {set theta $theta0} {$theta <= $theta1} {
-	    set theta [expr $theta + $dthet]} {
-	    x $j = [expr 5. + 3. * cos($theta) ]
-	    y $j = [expr 5. + 3. * sin($theta) ]
+	    set theta [expr {$theta + $dthet}]} {
+	    x $j = [expr {5. + 3. * cos($factor*$theta)} ]
+	    y $j = [expr {5. + 3. * sin($factor*$theta)} ]
 	    incr j
 	}
 
-	$w cmd plcol0 [expr $i + 1]
-	$w cmd plpsty [expr (($i + 3) % 8 + 1)]
+	$w cmd plcol0 [expr {$i + 1}]
+	$w cmd plpsty [expr {(($i + 3) % 8 + 1)}]
 	$w cmd plfill $j x y
 	$w cmd plcol0 1
 	$w cmd plline $j x y
-	set just [expr ($theta0 + $theta1) / 2.]
-	set dx [expr .25 * cos($just)]
-	set dy [expr .25 * sin($just)]
-	if {$just < $pi / 2. || $just > 3. * $pi / 2.} {
+	set just [expr {$factor * ($theta0 + $theta1) / 2.}]
+	set dx [expr {.25 * cos($just)}]
+	set dy [expr {.25 * sin($just)}]
+	if { ($theta0 + $theta1) < 250.0 || ($theta0 + $theta1) > 750.0 } {
 	    set just 0.
 	} else {
 	    set just 1.
 	}
 
-	$w cmd plptex [expr [x [expr $j / 2]] + $dx] \
-	    [expr [y [expr $j / 2]] + $dy] 1.0 0.0 $just [set text$i]
-	set theta0 [expr $theta - $dthet]
+	set halfj [expr {$j/2}]
+	$w cmd plptex [expr {[x $halfj] + $dx}] \
+	    [expr {[y $halfj] + $dy}] 1.0 0.0 $just [set text$i]
+	set theta0 [expr {$theta - $dthet}]
     }
     $w cmd plfont 2
     $w cmd plschr 0. 1.3
