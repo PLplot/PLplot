@@ -109,6 +109,11 @@ set(plplottcltk${LIB_TAG}_LIB_SRCS
 tclAPI.c
 tclMain.c
 )
+if(BUILD_SHARED_LIBS)
+  set_source_files_properties(${plplottcltk${LIB_TAG}_LIB_SRCS}
+  PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+  )
+endif(BUILD_SHARED_LIBS)
 
 set(
 plplottcltk${LIB_TAG}_link_libraries
@@ -118,7 +123,7 @@ ${TCL_LIBRARY}
 )
 set(
 libplplottcltk${LIB_TAG}_LINK_FLAGS
--ltclmatrix${LIB_TAG} 
+-ltclmatrix${LIB_TAG}
 ${TCL_LIBRARY}
 )
 
@@ -187,7 +192,7 @@ if(ENABLE_tk)
   endif(ENABLE_itk)
 endif(ENABLE_tk)
 
-# Transform "${libplplottcltk${LIB_TAG}_LINK_FLAGS}" string to the 
+# Transform "${libplplottcltk${LIB_TAG}_LINK_FLAGS}" string to the
 # standard pkg-config form.
 pkg_config_link_flags(
 libplplottcltk${LIB_TAG}_LINK_FLAGS
@@ -196,8 +201,8 @@ libplplottcltk${LIB_TAG}_LINK_FLAGS
 
 add_library(plplottcltk${LIB_TAG} ${plplottcltk${LIB_TAG}_LIB_SRCS})
 
-#message(STATUS 
-#"plplottcltk${LIB_TAG}_link_libraries = 
+#message(STATUS
+#"plplottcltk${LIB_TAG}_link_libraries =
 #${plplottcltk${LIB_TAG}_link_libraries}"
 #)
 target_link_libraries(
