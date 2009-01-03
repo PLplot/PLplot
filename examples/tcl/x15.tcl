@@ -13,11 +13,11 @@ proc x15 {{w loopback}} {
   # cmap1_init152 $w
 
   for {set i 0} {$i < $xpts} {incr i} {
-    set x [expr ($i - ($xpts/2)) / double($xpts/2)]
+    set x [expr {double($i - ($xpts/2)) / double($xpts/2)}]
     for {set j 0} {$j < $ypts} {incr j} {
-      set y [expr ($j - double($ypts/2)) / double($ypts/2) - 1.]
+      set y [expr {double($j - ($ypts/2)) / double($ypts/2) - 1.}]
 
-      z $i $j = [expr $x*$x - $y*$y + ($x - $y)/($x * $x + $y * $y + .1) ]
+      z $i $j = [expr {$x*$x - $y*$y + ($x - $y)/($x * $x + $y * $y + .1)} ]
     }
   }
   set zmin [z 0 0]
@@ -31,7 +31,7 @@ proc x15 {{w loopback}} {
   plot151 $w $z $zmin $zmax
   plot152 $w $z $zmin $zmax
   plot153 $w
-  
+
 }
 
 proc  cmap1_init152 { w } {
@@ -60,7 +60,7 @@ proc  cmap1_init152 { w } {
   s 1 = 0.5
   s 2 = 0.5
   s 3 = 1.0
-  
+
   rev 0 = 0
   rev 1 = 0
   rev 2 = 0
@@ -78,8 +78,8 @@ proc plot151 { w z zmin zmax } {
   # N.B. this flag set to use cmap0
   set sh_cmap 0
 
-  set shade_min [expr $zmin + ($zmax - $zmin)*.4 ]
-  set shade_max [expr $zmin + ($zmax - $zmin)*.6 ]
+  set shade_min [expr {$zmin + ($zmax - $zmin)*.4} ]
+  set shade_max [expr {$zmin + ($zmax - $zmin)*.6} ]
   set sh_color 7
 
   $w cmd pladv 0
@@ -132,9 +132,9 @@ proc plot152 { w z zmin zmax } {
   $w cmd plvpor .1 .9 .1 .9
   $w cmd plwind -1.0 1.0 -1.0 1.0
   for {set i 0} {$i < 10} {incr i} {
-    set shade_min [expr $zmin + ($zmax - $zmin)*$i/10.0 ]
-    set shade_max [expr $zmin + ($zmax - $zmin)*($i + 1)/10.0 ]
-    set sh_color [expr $i + 6]
+    set shade_min [expr {$zmin + ($zmax - $zmin)*$i/10.0} ]
+    set shade_max [expr {$zmin + ($zmax - $zmin)*($i + 1)/10.0} ]
+    set sh_color [expr {$i + 6}]
     $w cmd plpat [nlin $i] inc$i del$i
     $w cmd plshade z -1. 1. -1. 1. $shade_min $shade_max \
       $sh_cmap $sh_color $sh_width \
@@ -150,9 +150,9 @@ proc plot152 { w z zmin zmax } {
 
 proc plot153 { w } {
 
-    matrix xx0 f 5 = {-1.0, 1.0, 1.0, -1.0, -1.0} 
+    matrix xx0 f 5 = {-1.0, 1.0, 1.0, -1.0, -1.0}
     matrix xx1 f 5 = {-1.0, 1.0, 1.0, -1.0, -1.0}
-    matrix yy0 f 5 = {1.0, 1.0, 0.0, 0.0, 1.0} 
+    matrix yy0 f 5 = {1.0, 1.0, 0.0, 0.0, 1.0}
     matrix yy1 f 5 = {-1.0, -1.0, 0.0, 0.0, -1.0}
     matrix zz0 f 5 = {0.0, 0.0, 1.0, 1.0, 0.0}
     matrix zz1 f 5 = {0.0, 0.0, 1.0, 1.0, 0.0}
@@ -163,7 +163,7 @@ proc plot153 { w } {
     $w cmd plw3d 1. 1. 1. -1.0 1.0 -1.0 1.0 0.0 1.5 30 -40
 
     # Plot using identity transform
-    
+
     $w cmd plcol0 1
     $w cmd plbox3 "bntu" "X" 0.0 0 "bntu" "Y" 0.0 0 "bcdfntu" "Z" 0.5 0
     $w cmd plcol0 2
