@@ -69,13 +69,13 @@ package PLplot_Traditional is
     -- from this package (PLplot_Traditional) can't be used. Thus, this also
     -- overloads the name plfill. It might never occur to the Ada programmer 
     -- that this is happening, which is good.
-    pragma Warnings(Off, "foreign caller must pass bounds explicitly");
-    pragma Warnings(Off, "type of argument ""plfill.x"" is unconstrained array");
-    pragma Warnings(Off, "type of argument ""plfill.y"" is unconstrained array");
+    -- Suppress these warnings compatibly with pre-4.3 GNAT:
+    --    "foreign caller must pass bounds explicitly"
+    --    "type of argument ""plfill.x"" is unconstrained array"
+    --    "type of argument ""plfill.y"" is unconstrained array"
+    pragma Warnings(Off);
     procedure plfill(length : Integer; x, y : Real_Vector) renames PLplot_Thin.plfill;
-    pragma Warnings(On, "foreign caller must pass bounds explicitly");
-    pragma Warnings(On, "type of argument ""plfill.x"" is unconstrained array");
-    pragma Warnings(On, "type of argument ""plfill.y"" is unconstrained array");
+    pragma Warnings(On);
     
     -- Make Mask_Function_Pointer_Type available to the user so that s/he doesn't 
     -- have to "with" PLplot_Thin. Note that it is also used herein.
