@@ -74,10 +74,10 @@ c_plstripc( PLINT *id, const char *xspec, const char *yspec,
 {
     int i;
 
-    if (!plsc->termin) {
-	plabort("Stripchart plot requires a terminal output device");
-	return;
-    }
+//    if (!plsc->termin) {
+//	plabort("Stripchart plot requires a terminal output device");
+//	return;
+//    }
 
 /* Get a free strip id and allocate it */
 
