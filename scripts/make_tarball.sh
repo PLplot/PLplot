@@ -116,7 +116,7 @@ svn export $SVN_URL/$TAG plplot \
      ${PREBUILD_ARG} ${DOC_ARG} \
      -DWWW_USER:STRING=${WWW_USER} ../plplot >& cmake.out \
   && echo "Making distribution." \
-  && (if test "$do_prebuild_dist" = yes; then
+  && (if [ "$do_prebuild_dist" = "yes" ] ; then
         make ${make_opt} prebuild_dist >& make_prebuild_dist.out
       fi) \
   && make ${make_opt} package_source >& make_package_source.out \
@@ -125,7 +125,7 @@ svn export $SVN_URL/$TAG plplot \
   && mv $TARBALL .. \
   && cd .. \
   && echo "distribution tarball: $TARBALL" \
-  && test "$do_check" = yes \
+  && test "$do_check" = "yes" \
   && tar xfz $TARBALL \
   && mkdir ctest_build_dir \
   && ( cd ctest_build_dir \

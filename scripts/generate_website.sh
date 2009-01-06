@@ -18,11 +18,11 @@ echo "WEBSITE_PREFIX = $WEBSITE_PREFIX"
 echo ""
 echo "Last warning: if you specify 'yes' below, then the '$WEBSITE_PREFIX' directory on the remote host, '$HOSTNAME', will be removed and then replaced."
 ANSWER=
-while test "$ANSWER" != "yes" -a "$ANSWER" != "no"; do
+while [ "$ANSWER" != "yes" -a "$ANSWER" != "no" ] ; do
     echo -n "Continue (yes/no)? "
     read ANSWER
 done
-if test "$ANSWER" = "no"; then
+if [ "$ANSWER" = "no" ] ; then
     echo "Immediate exit specified!"
     exit
 fi

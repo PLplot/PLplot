@@ -29,22 +29,22 @@
 # build=false scripts/htdocs-gen_plot-examples.sh
 
 # Sanity checks.
-if test -z "$WWW_USER"; then
+if [ -z "$WWW_USER" ] ; then
   echo "must specify non-empty WWW_USER environment variable"
   exit 1
 fi
 
-if test -z "$WWW_GROUP"; then
+if [ -z "$WWW_GROUP" ] ; then
   echo "must specify non-empty WWW_GROUP environment variable"
   exit 1
 fi
 
-if test -z "$WWW_HOST"; then
+if [ -z "$WWW_HOST" ] ; then
   echo "must specify non-empty WWW_HOST environment variable"
   exit 1
 fi
 
-if test -z "$WWW_DIR"; then
+if [ -z "$WWW_DIR" ] ; then
   echo "must specify non-empty WWW_DIR environment variable"
   exit 1
 fi
@@ -58,7 +58,7 @@ CP='cp -p'
 
 build=${build:-true}
 
-if test "$build" = true; then
+if [ "$build" = "true" ] ; then
     rm -rf htdocsgen/build_dir htdocsgen/install
     mkdir -p htdocsgen/build_dir htdocsgen/install
     cd htdocsgen/build_dir
@@ -86,14 +86,14 @@ $CP examples/c/lena.pgm .
 for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
     23 24 25 26 27 28 29 30; do
 
-    if test $exe = 08 -o $exe = 16 -o $exe = 20 -o $exe = 30; then
+    if [ $exe = "08" -o $exe = "16" -o $exe = "20" -o $exe = "30" ] ; then
       # The default cairo graphics AA looks good for these examples now
       # since Werner's filled_polygon change to the cairo driver so no need
       # to explicitly turn graphics AA off any more with
       # DRIVEROPT='-drvopt graphics_anti_aliasing=1'
 	DRIVEROPT=
     else
-	if test $exe = 09 -o $exe = 21; then
+	if [ $exe = "09" -o $exe = "21" ] ; then
         # Text clipping.
             DRIVEROPT='-drvopt text_clipping=1'
 	else
@@ -135,7 +135,7 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
         examples/python/xw${exe}.py \
         examples/tcl/x${exe}.tcl \
 	; do
-        if test -f $f ; then
+        if [ -f $f ] ; then
             $CP $f $EXDIR/demo${exe}
         else
             echo Example `basename $f` is not yet available \
