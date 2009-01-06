@@ -128,7 +128,7 @@ set(DRIVERS_DEVICE_LIST
 "wingcc:wingcc:ON"
 "wxwidgets:wxwidgets:ON"
 "wxpng:wxwidgets:OFF"
-"xfig:xfig:ON"
+"xfig:xfig:OFF"
 "xwin:xwin:ON"
 )
 
