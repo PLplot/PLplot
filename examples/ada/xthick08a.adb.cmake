@@ -154,7 +154,7 @@ begin
 
     for k in alt'range loop
         for ifshade in 0 .. 3 loop
-            Advance_To_Subpage(0);
+            Advance_To_Subpage(Next_Subpage);
             Set_Viewport_Normalized(0.0, 1.0, 0.0, 0.9);
             Set_Viewport_World(-1.0, 1.0, -0.9, 1.1);
             Set_Pen_Color(Green);

@@ -90,7 +90,7 @@ procedure xthick04a is
 
 begin
     -- Parse and process command line arguments
-    Parse_Command_Line_Arguments(PL_PARSE_FULL); 
+    Parse_Command_Line_Arguments(Parse_Full); 
 
     -- Initialize plplot
     Initialize_PLplot;

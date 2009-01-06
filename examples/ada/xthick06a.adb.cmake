@@ -52,7 +52,7 @@ begin
     -- Initialize plplot
     Initialize_PLplot;
 
-    Advance_To_Subpage(0);
+    Advance_To_Subpage(Next_Subpage);
 
     -- Set up viewport and window
     Set_Pen_Color(2);

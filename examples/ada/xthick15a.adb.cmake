@@ -94,7 +94,7 @@ procedure xthick15a is
         sh_width : Integer;
         min_color, min_width, max_color, max_width : Integer;
     begin
-        Advance_To_Subpage(0);
+        Advance_To_Subpage(Next_Subpage);
         Set_Viewport_Normalized(0.1, 0.9, 0.1, 0.9);
         Set_Viewport_World(-1.0, 1.0, -1.0, 1.0);
 
@@ -158,7 +158,7 @@ procedure xthick15a is
 
         sh_width := 2;
 
-        Advance_To_Subpage(0);
+        Advance_To_Subpage(Next_Subpage);
         Set_Viewport_Normalized(0.1, 0.9, 0.1, 0.9);
         Set_Viewport_World(-1.0, 1.0, -1.0, 1.0);
 

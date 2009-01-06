@@ -125,7 +125,7 @@ procedure xthick01a is
         Box_Around_Viewport("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
         -- Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
-        -- plstyl expects a pointer! (-- Not Ada.)
+        -- Set_Line_Style expects a pointer! (-- Not Ada.)
         Set_Line_Style(mark1, space1);
         Set_Pen_Color(Yellow);
         Box_Around_Viewport("g", 30.0, 0, "g", 0.2, 0);

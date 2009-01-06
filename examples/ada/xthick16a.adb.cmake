@@ -244,7 +244,7 @@ begin
     -- the input parser which handling is not implemented in this Ada example.
 --    exclude := True;
 --    if exclude then
---        Advance_To_Subpage(0);
+--        Advance_To_Subpage(Next_Subpage);
 --        Set_Viewport_Normalized(0.1, 0.9, 0.1, 0.9);
 --        Set_Viewport_World(-1.0, 1.0, -1.0, 1.0);
 --

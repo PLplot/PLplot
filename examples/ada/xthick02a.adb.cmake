@@ -61,7 +61,7 @@ procedure xthick02a is
 
         for i in 0..(nw-1) loop
             Set_Pen_Color(i+cmap0_offset);
-            Advance_To_Subpage(0);
+            Advance_To_Subpage(Next_Subpage);
             vmin := 0.1;
             vmax := 0.9;
             for j in 0..2 loop

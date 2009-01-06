@@ -56,7 +56,7 @@ begin
 
     Set_Characer_Set(1);
     for l in 0 .. 16 loop
-        Advance_To_Subpage(0);
+        Advance_To_Subpage(Next_Subpage);
 
         -- Set up viewport and window
         Set_Pen_Color(2);
