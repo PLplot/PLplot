@@ -73,7 +73,8 @@
 		<p>Select language to see the source code</p>
 		<form class="codeform" action="examples.php" method="get">
 		<input type="hidden" name="demo" value="$demo_str" />
-		<input type="submit" name="lbind" value="Ada" />
+		<input type="submit" name="lbind" value="Ada(thick)" />
+		<input type="submit" name="lbind" value="Ada(thin)" />
 		<input type="submit" name="lbind" value="C" />
 		<input type="submit" name="lbind" value="C++" />
 		<input type="submit" name="lbind" value="F77" />
@@ -88,7 +89,8 @@
 END;
 
 	  switch($lbind) {
-	  case ("Ada"):    $fname = "x" . $demo_str . "a.adb-"; break;
+	  case ("Ada(thick)"):    $fname = "xthick" . $demo_str . "a.adb-"; break;
+	  case ("Ada(thin)"):    $fname = "x" . $demo_str . "a.adb-"; break;
 	  case ("C"):      $fname = "x" . $demo_str . "c.c-"; break;
 	  case ("C++"):$fname = "x" . $demo_str . ".cc-"; break;
 	  case ("F77"):    $fname = "x" . $demo_str . "f.f-"; break;
