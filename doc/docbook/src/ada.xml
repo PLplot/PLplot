@@ -156,7 +156,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="ada_unique">
     <title>Unique Features of the Ada bindings</title>
-    <para>The Ada bindings have been augmented with a number of features that are not present in other languages which work with PLplot. These features are intended to greatly simplify the use of PLplot; many users will find that they can do most of their work using these "Simple" plotters. Also included are facilities for easily manipulating the PLplot color tables</para>
+    <para>The Ada bindings have been augmented with a number of features which are intended to simplify the use of PLplot. They include high-level features for simplified plotting (such as easy foreground-background control, a collection of "simple plotters," and easy color map manipulations), integer options which have been given meaningful names, and a few other focused additions. Many users will find that they can do most of their work using the "simple plotters".</para>
     <sect2 id="ada_high_level">
       <title>High-level features for simplified plotting</title>
       <sect3 id="ada_foreground_background">

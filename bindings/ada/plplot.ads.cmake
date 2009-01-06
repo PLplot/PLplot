@@ -311,10 +311,10 @@ package PLplot is
 
 
     -- Flags for the opt argument in plbin                                    --
-    Bin_Default  : constant Integer := 0;
-    Bin_Centred  : constant Integer := 1;
-    Bin_Noexpand : constant Integer := 2;
-    Bin_Noempty  : constant Integer := 4;
+    Bin_Default   : constant Integer := 0;
+    Bin_Centered  : constant Integer := 1;
+    Bin_Noexpand  : constant Integer := 2;
+    Bin_Noempty   : constant Integer := 4;
 
 
 --------------------------------------------------------------------------------
