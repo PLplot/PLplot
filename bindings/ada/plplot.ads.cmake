@@ -948,9 +948,14 @@ package PLplot is
         Maximum_File_Size : out Integer);
 
 
-    -- Get the (current) output file name. Must be preallocated to >80 bytes
+    -- Get the (current) output file name.
     -- plgfnam
     procedure Get_Output_File_Name(Output_File_Name : out String);
+
+
+    -- Function version of the procedure Get_Output_File_Name; not part of the PLplot API.
+    -- plgver
+    function Get_Output_File_Name return String;
 
 
     -- Get the (current) run level.

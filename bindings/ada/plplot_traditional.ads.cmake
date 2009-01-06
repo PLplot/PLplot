@@ -902,9 +902,12 @@ package PLplot_Traditional is
         Maximum_File_Size : out Integer);
 
 
-    -- Get the (current) output file name. Must be preallocated to >80 bytes
+    -- Get the (current) output file name.
     procedure plgfnam(Output_File_Name : out String);
 
+
+    -- Function version of the procedure plgfnam; not part of the PLplot API.
+    function plgfnam return String;
 
     -- Get the (current) run level.
     procedure plglevel(Run_Level : out Integer);
@@ -943,7 +946,7 @@ package PLplot_Traditional is
     -- Get the current library version number
     procedure plgver(Version_Number : out String);
 
-    -- Function version of the procedure Get_Version_Number; not part of the PLplot API.
+    -- Function version of the procedure plgver; not part of the PLplot API.
     function plgver return String;
 
     -- Get viewport boundaries in normalized device coordinates

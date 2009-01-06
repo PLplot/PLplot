@@ -1466,7 +1466,7 @@ package body PLplot_Traditional is
         PL_Device_Name : char_array(0..79);
     begin
         PLplot_Thin.plgdev(PL_Device_Name);
-        Device_Name := To_Ada(PL_Device_Name, True);
+        Device_Name := To_Ada(PL_Device_Name, False);
     end plgdev;
     
     
@@ -1543,12 +1543,21 @@ package body PLplot_Traditional is
     end plgfam;
 
 
-    -- Get the (current) output file name. Must be preallocated to >80 bytes
+    -- Get the (current) output file name.
     procedure plgfnam(Output_File_Name : out String) is
         PL_Output_File_Name : char_array(0..79);
     begin
         PLplot_Thin.plgfnam(PL_Output_File_Name);
         Output_File_Name := To_Ada(PL_Output_File_Name, False);
+    end plgfnam;
+
+
+    -- Function version of the procedure plgfnam; not part of the PLplot API.
+    function plgfnam return String is
+        PL_Output_File_Name : char_array(0..79);
+    begin
+        PLplot_Thin.plgfnam(PL_Output_File_Name);
+        return To_Ada(PL_Output_File_Name, True);
     end plgfnam;
 
 
@@ -1613,11 +1622,11 @@ package body PLplot_Traditional is
         PL_Version_Number : char_array(0..79);
     begin
         PLplot_Thin.plgver(PL_Version_Number);
-        Version_Number := To_Ada(PL_Version_Number, True);
+        Version_Number := To_Ada(PL_Version_Number, False);
     end plgver;
 
 
-    -- Function version of the procedure Get_Version_Number; not part of the PLplot API.
+    -- Function version of the procedure plgver; not part of the PLplot API.
     function plgver return String is
         PL_Version_Number : char_array(0..79);
     begin

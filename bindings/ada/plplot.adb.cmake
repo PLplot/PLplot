@@ -1503,7 +1503,7 @@ package body PLplot is
         PL_Device_Name : char_array(0..79);
     begin
         plgdev(PL_Device_Name);
-        Device_Name := To_Ada(PL_Device_Name, True);
+        Device_Name := To_Ada(PL_Device_Name, False);
     end Get_Device_Name;
     
     
@@ -1587,13 +1587,23 @@ package body PLplot is
     end Get_File_Family_Parameters;
 
 
-    -- Get the (current) output file name. Must be preallocated to >80 bytes
+    -- Get the (current) output file name.
     -- plgfnam
     procedure Get_Output_File_Name(Output_File_Name : out String) is
         PL_Output_File_Name : char_array(0..79);
     begin
         plgfnam(PL_Output_File_Name);
         Output_File_Name := To_Ada(PL_Output_File_Name, False);
+    end Get_Output_File_Name;
+
+
+    -- Function version of the procedure Get_Output_File_Name; not part of the PLplot API.
+    -- plgfnam
+    function Get_Output_File_Name return String is
+        Output_File_Name : char_array(0..79);
+    begin
+        plgfnam(Output_File_Name);
+        return To_Ada(Output_File_Name, True);
     end Get_Output_File_Name;
 
 
@@ -1665,7 +1675,7 @@ package body PLplot is
         PL_Version_Number : char_array(0..79);
     begin
         plgver(PL_Version_Number);
-        Version_Number := To_Ada(PL_Version_Number, True);
+        Version_Number := To_Ada(PL_Version_Number, False);
     end Get_Version_Number;
 
 
