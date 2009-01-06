@@ -27,101 +27,100 @@ ret=0
 for lang in c++ f77 f95 java octave python tcl perl ada adathick ocaml ; do
 
   # Check which suffix is used for this binding
-  case $lang in 
-    c++)
-      xsuffix=
-      suffix=cxx
-      ;;
-    f77)
-      xsuffix=
-      suffix=f
-      ;;
-    f95)
-      xsuffix=
-      suffix=f95
-      ;;
-    java)
-      xsuffix=
-      suffix=j
-      ;;
-    octave)
-      xsuffix=
-      suffix=o
-      ;;
-    python)
-      xsuffix=
-      suffix=p
-      ;;
-    tcl)
-      xsuffix=
-      suffix=t
-      ;;
-    perl)
-      xsuffix=
-      suffix=pdl
-      ;;
-    ada)
-      xsuffix=
-      suffix=a
-      ;;
-    adathick)
-      xsuffix=
-      suffix=a
-      ;;
-    ocaml)
-      xsuffix=
-      suffix=ocaml
-      ;;
-  esac
+    case $lang in 
+	c++)
+	    xsuffix=
+	    suffix=cxx
+	    ;;
+	f77)
+	    xsuffix=
+	    suffix=f
+	    ;;
+	f95)
+	    xsuffix=
+	    suffix=f95
+	    ;;
+	java)
+	    xsuffix=
+	    suffix=j
+	    ;;
+	octave)
+	    xsuffix=
+	    suffix=o
+	    ;;
+	python)
+	    xsuffix=
+	    suffix=p
+	    ;;
+	tcl)
+	    xsuffix=
+	    suffix=t
+	    ;;
+	perl)
+	    xsuffix=
+	    suffix=pdl
+	    ;;
+	ada)
+	    xsuffix=
+	    suffix=a
+	    ;;
+	adathick)
+	    xsuffix=
+	    suffix=a
+	    ;;
+	ocaml)
+	    xsuffix=
+	    suffix=ocaml
+	    ;;
+    esac
 
-  missing=""
-  different=""
-  diffstdout=""
-  missingstdout=""
+    missing=""
+    different=""
+    diffstdout=""
+    missingstdout=""
 
   # Assume that if example 1 is missing then the language is
   # not implemented.
-  if [ -f x${xsuffix}01${suffix}.psc ] ; then
-    
+    if [ -f x${xsuffix}01${suffix}.psc ] ; then
+	
   # Standard non-interactive examples
   # Skip example 17 because it is interactive
-  for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 14a 15 16 18 19 20 \
-      21 22 23 24 25 26 27 28 29 30 31 ; do
-    if [ ! -f x${xsuffix}${index}c.psc ] ; then
-      echo "C example ${index} is missing"
-    else
-      if [ ! -f x${xsuffix}${index}${suffix}.psc ] ; then
-        missing="${missing} ${index}"
-      else
-        @TAIL_EXECUTABLE@ --lines=+9 x${xsuffix}${index}c.psc > test1.psc
-        @TAIL_EXECUTABLE@ --lines=+9 x${xsuffix}${index}${suffix}.psc > test2.psc
-        @DIFF_EXECUTABLE@ -q test1.psc test2.psc 2>&1 > /dev/null
-        if [ $? != 0 ] ; then
-          different="${different} ${index}"
-        fi
-        if [ "$index" != "14a" ] ; then
-          if [ -f x${xsuffix}${index}${suffix}_psc.txt ] ; then
-            @DIFF_EXECUTABLE@ -q x${xsuffix}${index}c_psc.txt x${xsuffix}${index}${suffix}_psc.txt 2>&1 > /dev/null
-            if [ $? != 0 ] ; then
-              diffstdout="${diffstdout} ${index}"
-            fi
-          else
-            missingstdout="${missingstdout} ${index}"
-          fi
-        fi
-      fi
-    fi
-  done
-  echo "${lang}"
-  echo "  Missing examples            : ${missing}"
-  echo "  Differing postscript output : ${different}"
-  echo "  Missing stdout              : ${missingstdout}"
-  echo "  Differing stdout            : ${diffstdout}"
-  if [ "${different}" != "" -o "${diffstdout}" != "" ] ; then
-    ret=1
-  fi
-  fi 
+	for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 14a 15 16 18 19 20 \
+	    21 22 23 24 25 26 27 28 29 30 31 ; do
+	    if [ ! -f x${xsuffix}${index}c.psc ] ; then
+		echo "C example ${index} is missing"
+	    else
+		if [ ! -f x${xsuffix}${index}${suffix}.psc ] ; then
+		    missing="${missing} ${index}"
+		else
+		    @TAIL_EXECUTABLE@ --lines=+9 x${xsuffix}${index}c.psc > test1.psc
+		    @TAIL_EXECUTABLE@ --lines=+9 x${xsuffix}${index}${suffix}.psc > test2.psc
+		    @DIFF_EXECUTABLE@ -q test1.psc test2.psc 2>&1 > /dev/null
+		    if [ $? != 0 ] ; then
+			different="${different} ${index}"
+		    fi
+		    if [ "$index" != "14a" ] ; then
+			if [ -f x${xsuffix}${index}${suffix}_psc.txt ] ; then
+			    @DIFF_EXECUTABLE@ -q x${xsuffix}${index}c_psc.txt x${xsuffix}${index}${suffix}_psc.txt 2>&1 > /dev/null
+			    if [ $? != 0 ] ; then
+				diffstdout="${diffstdout} ${index}"
+			    fi
+			else
+			    missingstdout="${missingstdout} ${index}"
+			fi
+		    fi
+		fi
+	    fi
+	done
+	echo "${lang}"
+	echo "  Missing examples            : ${missing}"
+	echo "  Differing postscript output : ${different}"
+	echo "  Missing stdout              : ${missingstdout}"
+	echo "  Differing stdout            : ${diffstdout}"
+	if [ "${different}" != "" -o "${diffstdout}" != "" ] ; then
+	    ret=1
+	fi
+    fi 
 done
 
 exit ${ret}
-

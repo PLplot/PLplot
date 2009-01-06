@@ -32,27 +32,27 @@
 # For 24 you need special fonts installed to get good result.
 lang="p"
 for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 18 \
-20 22 23 24 25 26 27 28 29 30 31 @NUMPY_EXAMPLES@ ; do
-  if [ "$verbose_test" ]; then
-    echo "x${index}"
-  fi
-  if [ "$index" = "14" ] ; then
-    @PYTHON_EXECUTABLE@ $pythondir/x$index -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt  << EOF
+    20 22 23 24 25 26 27 28 29 30 31 @NUMPY_EXAMPLES@ ; do
+    if [ "$verbose_test" ]; then
+	echo "x${index}"
+    fi
+    if [ "$index" = "14" ] ; then
+	@PYTHON_EXECUTABLE@ $pythondir/x$index -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt  << EOF
 ${OUTPUT_DIR}/x${index}a${lang}%n.$dsuffix
 EOF
-    status_code=$?
-  else
-    @PYTHON_EXECUTABLE@ $pythondir/x$index -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt 
-    status_code=$?
-  fi
-  cat test.error
-  if [ "$status_code" -ne 0 ]; then
-    exit $status_code
-  fi
+	status_code=$?
+    else
+	@PYTHON_EXECUTABLE@ $pythondir/x$index -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt 
+	status_code=$?
+    fi
+    cat test.error
+    if [ "$status_code" -ne 0 ]; then
+	exit $status_code
+    fi
   # Look for any PLPLOT ERROR messages from plwarn that do not result in an
   # exit code.
-  is_error=`grep -l 'PLPLOT ERROR' test.error`
-  if test -n "$is_error"; then
-    exit 1
-  fi
+    is_error=`grep -l 'PLPLOT ERROR' test.error`
+    if test -n "$is_error"; then
+	exit 1
+    fi
 done
