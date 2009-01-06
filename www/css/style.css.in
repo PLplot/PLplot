@@ -289,7 +289,7 @@ A:hover {
 }
 
 .codeform {
-text-align:center;
+text-align:left;
 }
 
 .codeform input {
