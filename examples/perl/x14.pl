@@ -260,10 +260,9 @@ sub plot4 {
   # Set up viewport and window, but do not draw box
 
   plenv (-1.3, 1.3, -1.3, 1.3, 1, -2);
-  for (my $i = 1; $i <= 10; $i++) {
-    my $j = sequence (361);
-    my $x = 0.1 * $i * $x0;
-    my $y = 0.1 * $i * $y0;
+  for my $i (1 .. 10) {
+    my $x = pdl (0.1 * $i * $x0);
+    my $y = pdl (0.1 * $i * $y0);
 
     # Draw circles for polar grid
 
@@ -271,7 +270,7 @@ sub plot4 {
   }
 
   plcol0 (2);
-  for (my $i = 1; $i <= 11; $i++) {
+  for my $i (0 .. 11) {
     my $theta = 30 * $i;
     my $dx = cos ($dtr * $theta);
     my $dy = sin ($dtr * $theta);
@@ -287,14 +286,13 @@ sub plot4 {
     if ($dx >= -0.00001) {
       plptex ($dx, $dy, $dx, $dy, -0.15, $text);
     } else {
-      plptex($dx, $dy, -$dx, -$dy, 1.15, $text);
+      plptex ($dx, $dy, -$dx, -$dy, 1.15, $text);
     }
   }
 
   # Draw the graph
 
-  $i = sequence (361);
-  my $r = sin ($dtr * (5 * $i));
+  my $r = sin ($dtr * 5 * sequence(361));
   $x = $x0 * $r;
   $y = $y0 * $r;
 
@@ -331,9 +329,9 @@ sub plot5 {
 
   my $mark = 1500; my $space = 1500;
 
-  my $xx = ((sequence (XPTS) - (XPTS / 2)) / (XPTS / 2))->dummy (1, YPTS);
-  my $yy = ((sequence (YPTS) - (YPTS / 2))
-            / (YPTS / 2) - 1.0)->dummy (0, XPTS);
+  my $xx = ((sequence (XPTS) - int(XPTS / 2)) / int(XPTS / 2))->dummy (1, YPTS);
+  my $yy = ((sequence (YPTS) - int(YPTS / 2))
+            / int(YPTS / 2) - 1.0)->dummy (0, XPTS);
   my $z = $xx * $xx - $yy * $yy;
   my $w = 2 * $xx * $yy;
 

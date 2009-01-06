@@ -59,9 +59,9 @@
 
       call plgdev(driver)
 
-      write(*,*) 'Demo of multiple output streams via the ', &
+      write(*,'(3A)') 'Demo of multiple output streams via the ', &
         trim(driver), ' driver.'
-      write(*,*) 'Running with the second stream as slave ', &
+      write(*,'(A)') 'Running with the second stream as slave '// & 
         'to the first.'
       write(*,*)
 

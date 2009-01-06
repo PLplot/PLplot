@@ -71,14 +71,14 @@ for i=[1:7 8 9 13 15 16];
    closefig
 endfor
 #plot equivalent of x??c examples.  These only required octave-2.0.x
-#For file output 14 and 17 are not suitable, and 19 is not done
+#For file output 17 is not suitable, and 19 is not done
 #(and should probably be dropped anyway since the map stuff is not
 #in the API that is supposed to be common to all front ends.)
 failed = [];
-for i=[1:13 15 16 18 20:31 ];
+for i=[1:16 18 20:31 ];
     ofile = sprintf("${OUTPUT_DIR}/x%.2d${lang}_${dsuffix}.txt",i);
     strm = fopen(ofile,"w");
-    cmd = sprintf("x%.2dc",i);
+      cmd = sprintf("x%.2dc",i);
     if (verbose_test)
       printf("%s\n",cmd);
     endif
@@ -95,8 +95,12 @@ for i=[1:13 15 16 18 20:31 ];
 #common examples.
     file = sprintf("${OUTPUT_DIR}/x%.2d${lang}%%n.$dsuffix",i);
     plSetOpt("o", file);
+    if i == 14  
+      file2 = sprintf("${OUTPUT_DIR}/x%.2da${lang}.${dsuffix}",i);
+    endif
     eval(cmd, "failed = [failed, i];");
     fclose(strm);
+    clear file2;
 endfor
 if ! isempty (failed)
     printf ("Failed tests: ");

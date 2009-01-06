@@ -107,7 +107,7 @@ x14::x14( int argc, const char ** argv ) {
 
   cout << "Demo of multiple output streams via the " <<
     driver << " driver." << endl;
-  cout << "Running with the second stream as slave.\n" << endl;
+  cout << "Running with the second stream as slave to the first.\n" << endl;
 
   // Set up first stream
 

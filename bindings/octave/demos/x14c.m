@@ -24,7 +24,11 @@
 
 1;
 
-function ix14c
+function ix14c(fname2,strm)
+
+  if (nargin < 2)
+    strm = stdout;
+  endif
 
   if (!exist("plinit"))
     plplot_stub
@@ -33,8 +37,9 @@ function ix14c
   device = sprintf("%s",plgdev');
   if(isempty(device))
     device = "xwin";
-    plsdev(device);
   endif
+
+  [fam, num, bmax] = plgfam();
 
   xleng0 = 400; yleng0 = 300; xoff0 = 200; yoff0 = 200;
   xleng1 = 400; yleng1 = 300; xoff1 = 500; yoff1 = 500;
@@ -44,16 +49,24 @@ function ix14c
   geometry_master = "500x410+100+200";
   geometry_slave  = "500x410+650+200";
 
-  printf("Demo of multiple output streams via the %s driver.\n", device);
-  printf("Running with the second (right) window as slave.\n");
-  printf("To advance to the next plot, press the third mouse button\n");
-  printf("or the enter key in the first (left) window\n");
+  fprintf(strm,"Demo of multiple output streams via the %s driver.\n", device);
+  fprintf(strm,"Running with the second stream as slave to the first.\n");
+  ##fprintf(strm,"To advance to the next plot, press the third mouse button\n");
+  ##fprintf(strm,"or the enter key in the first (left) window\n");
+
+  ## This is an entirely bogus message since the output file name is 
+  ## set by the function arguments - but it does ensure that stdout 
+  ## is identical to the C version of the example for ctest.
+  if (strm != stdout)
+    fprintf(strm,"\nEnter graphics output file name: ");
+  endif
 
   fflush(stdout);
 
   ## Set up first stream */
 
   plSetOpt("geometry", geometry_master);
+  plsdev(device);
   plssub(2,2);
   plinit();
 
@@ -66,7 +79,14 @@ function ix14c
   plSetOpt("geometry", geometry_slave);
   plspause(0);
 
-  plsdev(device)
+  ## This is an addition to C version to allow second file name to be
+  ## set as a function argument. This is required for the test scripts.
+  if (nargin >= 1)
+    plsfnam(fname2);
+  endif
+
+  plsdev(device);
+  plsfam(fam,num,bmax);
   plinit();
 
   ## Set up the data & plot */
@@ -248,7 +268,7 @@ endfunction
 
 function plot4()
 
-  dtr = 3.141592654 / 180.0;
+  dtr = pi / 180.0;
 
   zz=0:360;
   x0 = cos(dtr * zz');
@@ -281,7 +301,7 @@ function plot4()
 
     ## Write labels for angle */
 
-    if (dx >= 0)
+    if (dx >= -0.00001)
       plptex(dx, dy, dx, dy, -0.15, text);
     else
       plptex(dx, dy, -dx, -dy, 1.15, text);
@@ -329,9 +349,9 @@ function plot5()
   ## Set up function arrays */
 
   for i = 0:XPTS-1
-    xx = (i - (XPTS / 2)) / (XPTS / 2);
+    xx = (i - fix(XPTS / 2)) / fix(XPTS / 2);
     for j = 0:YPTS-1
-      yy = (j - (YPTS / 2)) / (YPTS / 2) - 1.0;
+      yy = (j - fix(YPTS / 2)) / fix(YPTS / 2) - 1.0;
       z(i+1,j+1) = xx * xx - yy * yy;
       w(i+1,j+1) = 2 * xx * yy;
     endfor
@@ -348,4 +368,12 @@ function plot5()
   plflush;#pleop();
 endfunction
 
-ix14c
+if (exist("file2","var"))
+  if (exist("strm","var"))
+    ix14c(file2,strm);
+  else
+    ix14c(file2);
+  endif
+else
+  ix14c()
+endif

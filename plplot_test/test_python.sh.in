@@ -26,19 +26,25 @@
 # $pythondir must be the build tree and not the source tree (if separate from
 # build tree) since must access plplot_python_start.py in build tree and
 # paths in that file are relative to build tree.
-# Skip 14 and 17 because they are interactive.
+# Skip 17 because it is interactive and not currently implemented.
 # Skip 19 because it is just a placeholder without a real implementation.
-# Skip 20 because it is not (yet) implemented.
 # Skip 21 if using Numeric - it doesn't work
 # For 24 you need special fonts installed to get good result.
 lang="p"
-for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 \
+for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 18 \
 20 22 23 24 25 26 27 28 29 30 31 @NUMPY_EXAMPLES@ ; do
   if [ "$verbose_test" ]; then
     echo "x${index}"
   fi
-  @PYTHON_EXECUTABLE@ $pythondir/x$index -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt 
-  status_code=$?
+  if [ "$index" = "14" ] ; then
+    @PYTHON_EXECUTABLE@ $pythondir/x$index -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt  << EOF
+${OUTPUT_DIR}/x${index}a${lang}%n.$dsuffix
+EOF
+    status_code=$?
+  else
+    @PYTHON_EXECUTABLE@ $pythondir/x$index -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt 
+    status_code=$?
+  fi
   cat test.error
   if [ "$status_code" -ne 0 ]; then
     exit $status_code

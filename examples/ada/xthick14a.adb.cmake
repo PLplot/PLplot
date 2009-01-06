@@ -296,7 +296,7 @@ begin
 
     driver := To_Unbounded_String(Get_Device_Name);
 
-    Put_Line("Demo of multiple output streams via the " & Get_Device_Name & "driver.");
+    Put_Line("Demo of multiple output streams via the " & Get_Device_Name & " driver.");
     Put_Line("Running with the second stream as slave to the first.");
     New_Line;
 

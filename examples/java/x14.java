@@ -38,7 +38,8 @@ import java.text.*;
 class x14 {
 
     double xscale, yscale, xoff, yoff;
-    PLStream pls = new PLStream();
+    PLStream pls1 = new PLStream();
+    PLStream pls2 = new PLStream();
 
    public static void main( String[] args ) 
      {
@@ -52,11 +53,11 @@ class x14 {
 
     // Parse and process command line arguments.
 
-        pls.parseopts( args, PLStream.PL_PARSE_FULL|PLStream.PL_PARSE_NOPROGRAM );
+        pls1.parseopts( args, PLStream.PL_PARSE_FULL|PLStream.PL_PARSE_NOPROGRAM );
 
 	StringBuffer driver = new StringBuffer(80);
 	
-	pls.gdev(driver);
+	pls1.gdev(driver);
 	String sdriver = new String(driver);
 	System.out.println("Demo of multiple output streams via the " + sdriver +  " driver.");
 	System.out.println("Running with the second stream as slave to the first.");
@@ -64,47 +65,43 @@ class x14 {
 
 	// Set up first stream
 
-	pls.setopt("geometry", geometry_master);
+	pls1.setopt("geometry", geometry_master);
 
-	pls.sdev(sdriver);
-	pls.ssub(2, 2);
-	pls.init();
+	pls1.sdev(sdriver);
+	pls1.ssub(2, 2);
+	pls1.init();
 	
 	// Start next stream
 	
-	pls.sstrm(1);
-	
 	// Turn off pause to make this a slave (must follow master)
 	
-	pls.setopt("geometry", geometry_slave);
-	pls.spause(false);
-	pls.sdev(sdriver);
-	pls.init();
+	pls2.setopt("geometry", geometry_slave);
+	pls2.spause(false);
+	pls2.sdev(sdriver);
+	pls2.init();
 	
 	//Set up the data & plot
 	// Original case
-	
-	pls.sstrm(0);
 	
         xscale = 6.;
         yscale = 1.;
         xoff = 0.;
         yoff = 0.;
-        plot1();
+        plot1(pls1);
 
 	// Set up the data & plot
 	
 	xscale = 1.;
 	yscale = 1.e+6;
-	plot1();
+	plot1(pls1);
 
 	// Set up the data & plot
 	
 	xscale = 1.;
 	yscale = 1.e-6;
 	int digmax = 2;
-	pls.syax(digmax, 0);
-	plot1();
+	pls1.syax(digmax, 0);
+	plot1(pls1);
 	
 	// Set up the data & plot
 	
@@ -112,39 +109,36 @@ class x14 {
 	yscale = 0.0014;
 	yoff = 0.0185;
 	digmax = 5;
-	pls.syax(digmax, 0);
-	plot1();
+	pls1.syax(digmax, 0);
+	plot1(pls1);
 	
 	// To slave
 	// The pleop() ensures the eop indicator gets lit.
 	
-	pls.sstrm(1);
-	plot4();
-	pls.eop();
+	plot4(pls2);
+	pls2.eop();
 	
 	// Back to master
 	
-	pls.sstrm(0);
-	plot2();
-	plot3();
+	plot2(pls1);
+	plot3(pls1);
 	
 	// To slave
 	
-	pls.sstrm(1);
-	plot5();
-	pls.eop();
+	plot5(pls2);
+	pls2.eop();
 	
 	// Back to master to wait for user to advance
 	
-	pls.sstrm(0);
-	pls.eop();
+	pls1.eop();
 	
 	// Call plend to finish off.
 
-        pls.end();
+        //pls2.endl();
+        pls1.end();
     }
 
-    void plot1()
+    void plot1(PLStream pls)
     {
         int i;
         double xmin, xmax, ymin, ymax;
@@ -191,7 +185,7 @@ class x14 {
         pls.flush();
     }
 
-    void plot2()
+    void plot2(PLStream pls)
     {
         int i;
         double x[] = new double[100];
@@ -222,7 +216,7 @@ class x14 {
         pls.flush();
     }
 
-    void plot3()
+    void plot3(PLStream pls)
     {
         int i;
         int space0[] = {};
@@ -270,7 +264,7 @@ class x14 {
         pls.flush();
     }
 
-    void plot4()
+    void plot4(PLStream pls)
     {
         NumberFormat nf = NumberFormat.getNumberInstance();
 
@@ -347,7 +341,7 @@ class x14 {
 // Transformation function
     final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
    
-    void plot5()
+    void plot5(PLStream pls)
     {
         int i, j;
 

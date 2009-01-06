@@ -296,7 +296,7 @@ begin
 
     driver := To_Unbounded_String(plgdev);
 
-    Put_Line("Demo of multiple output streams via the " & plgdev & "driver.");
+    Put_Line("Demo of multiple output streams via the " & plgdev & " driver.");
     Put_Line("Running with the second stream as slave to the first.");
     New_Line;
 

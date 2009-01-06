@@ -60,12 +60,15 @@ main(int argc, const char *argv[])
 
     char driver[80];
 
+    PLINT fam, num, bmax;
+
 /* plplot initialization */
 /* Parse and process command line arguments */
 
     (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
     plgdev(driver);
+    plgfam(&fam,&num,&bmax);
 
     printf("Demo of multiple output streams via the %s driver.\n", driver);
     printf("Running with the second stream as slave to the first.\n");
@@ -88,6 +91,7 @@ main(int argc, const char *argv[])
     plsetopt("geometry", geometry_slave);
     plspause(0);
     plsdev(driver);
+    plsfam(fam,num,bmax);
     plinit();
 
 /* Set up the data & plot */
