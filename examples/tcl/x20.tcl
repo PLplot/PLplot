@@ -506,7 +506,7 @@ proc gray_cmap {w num_col} {
     rev 0 = 0
     rev 1 = 0
 
-    $w cmd plscmap1n num_col
+    $w cmd plscmap1n $num_col
     $w cmd plscmap1l 1 2 pos R G B rev
 
 }
