@@ -29,7 +29,7 @@
 lang="f95"
 export index lang
 
-if test "yes@HAVE_F77PARSE_CL_TRUE@" = "yes"; then
+if [ "yes@HAVE_F77PARSE_CL_TRUE@" = "yes" ] ; then
 # This stanza only works if fortran has command-line parsing capability.
 # However, this is the preferred method because it allows access to
 # command-line parsing of the $options (e.g., familying options for png
@@ -37,19 +37,19 @@ if test "yes@HAVE_F77PARSE_CL_TRUE@" = "yes"; then
 
 # Do non-standard example 16a because it illustrates plshade functionality
 # with cmap1 (and also because the result looks nice.)
-    if [ "$verbose_test" ]; then
+    if [ "$verbose_test" ] ; then
 	echo "x16af"
     fi
     $DEBUG_CMD $f95dir/x16af -dev $device -o ${OUTPUT_DIR}/x16af95%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
     status_code=$?
     cat test.error
-    if [ "$status_code" -ne 0 ]; then
+    if [ "$status_code" -ne 0 ] ; then
 	exit $status_code
     fi
   # Look for any PLPLOT ERROR messages from plwarn that do not result in an
   # exit code.
     is_error=`grep -l 'PLPLOT ERROR' test.error`
-    if test -n "$is_error"; then
+    if [ -n "$is_error" ] ; then
 	exit 1
     fi
 
@@ -57,7 +57,7 @@ if test "yes@HAVE_F77PARSE_CL_TRUE@" = "yes"; then
 # Do the standard non-interactive examples.
 # skip 17 because it is interactive.
     for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 18 19 20 21 22 23 24 25 26 27 28 29 30 31; do
-	if [ "$verbose_test" ]; then
+	if [ "$verbose_test" ] ; then
 	    echo "x${index}f"
 	fi
 	if [ "${index}" = "14" ] ; then
@@ -70,13 +70,13 @@ EOF
 	    status_code=$?
 	fi
 	cat test.error
-	if [ "$status_code" -ne 0 ]; then
+	if [ "$status_code" -ne 0 ] ; then
 	    exit $status_code
 	fi
     # Look for any PLPLOT ERROR messages from plwarn that do not result in an
     # exit code.
 	is_error=`grep -l 'PLPLOT ERROR' test.error`
-	if test -n "$is_error"; then
+	if [ -n "$is_error" ] ; then
 	    exit 1
 	fi
     done
@@ -86,7 +86,7 @@ else
 # for this method.
 # Do non-standard example 16a because it illustrates plshade functionality
 # with cmap1 (and also because the result looks nice.)
-    if [ "$verbose_test" ]; then
+    if [ "$verbose_test" ] ; then
 	echo "x16af"
     fi
     $DEBUG_CMD $f95dir/x16af <<EOF 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
@@ -95,13 +95,13 @@ ${OUTPUT_DIR}/x16af95%n.$dsuffix
 EOF
   status_code=$?
   cat test.error
-  if [ "$status_code" -ne 0 ]; then
+  if [ "$status_code" -ne 0 ] ; then
       exit $status_code
   fi
   # Look for any PLPLOT ERROR messages from plwarn that do not result in an
   # exit code.
   is_error=`grep -l 'PLPLOT ERROR' test.error`
-  if test -n "$is_error"; then
+  if [ -n "$is_error" ] ; then
       exit 1
   fi
 
@@ -109,7 +109,7 @@ EOF
 # Do the standard non-interactive examples.
 # skip 17 because it is interactive.
   for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 18 19 20 21 22 23 24 25 26 27 28 29 30 31; do
-      if [ "$verbose_test" ]; then
+      if [ "$verbose_test" ] ; then
 	  echo "x${index}f"
       fi
       if [ "${index}" = "14" ] ; then
@@ -128,13 +128,13 @@ EOF
 	  status_code=$?
       fi
       cat test.error
-      if [ "$status_code" -ne 0 ]; then
+      if [ "$status_code" -ne 0 ] ; then
 	  exit $status_code
       fi
   # Look for any PLPLOT ERROR messages from plwarn that do not result in an
   # exit code.
       is_error=`grep -l 'PLPLOT ERROR' test.error`
-      if test -n "$is_error"; then
+      if [ -n "$is_error" ] ; then
 	  exit 1
       fi
   done

@@ -25,7 +25,7 @@
 # Do the standard non-interactive examples.
 lang="ocaml"
 for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 18 19 20 21 22 23 24 25 26 27 28 29 30 31; do
-    if [ "$verbose_test" ]; then
+    if [ "$verbose_test" ] ; then
 	echo "x${index}ocaml"
     fi
     if [ "$index" = "14" ] ; then
@@ -42,13 +42,13 @@ EOF
 	status_code=$?
     fi
     cat test.error
-    if [ "$status_code" -ne 0 ]; then
+    if [ "$status_code" -ne 0 ] ; then
 	exit $status_code
     fi
   # Look for any PLPLOT ERROR messages from plwarn that do not result in an
   # exit code.
     is_error=`grep -l 'PLPLOT ERROR' test.error`
-    if test -n "$is_error"; then
+    if [ -n "$is_error" ] ; then
 	exit 1
     fi
 done

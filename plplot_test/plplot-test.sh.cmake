@@ -77,7 +77,7 @@ Environment variables:
 }
 
 while test $# -gt 0; do
-   if test "@HAVE_BASH@" = ON ; then
+   if [ "@HAVE_BASH@" = "ON" ] ; then
       case "$1" in
       -*=*) optarg=${1#*=} ;;
       *) optarg= ;;
@@ -103,18 +103,19 @@ while test $# -gt 0; do
       --front-end=*)
          FRONT_END=$optarg
          for i in $FRONT_END ; do
-	 test $i = "c"         \
-              -o $i = "cxx"    \
-              -o $i = "f77"    \
-              -o $i = "f95"    \
-              -o $i = "java"   \
-              -o $i = "octave" \
-              -o $i = "python" \
-              -o $i = "tcl"    \
-              -o $i = "perl"    \
-              -o $i = "ada"    \
-              -o $i = "ocaml"    \
-         || usage 0 1>&2
+           [ $i = "c"         \
+             -o $i = "cxx"    \
+             -o $i = "f77"    \
+             -o $i = "f95"    \
+             -o $i = "java"   \
+             -o $i = "octave" \
+             -o $i = "python" \
+             -o $i = "tcl"    \
+             -o $i = "perl"    \
+             -o $i = "ada"    \
+             -o $i = "ocaml"    \
+           ] \
+           || usage 0 1>&2
          done
 	 ;;
       --examples-dir=*)
@@ -145,7 +146,7 @@ done
 # This script is only designed to work when EXAMPLES_DIR is a directory
 # with a subdirectory called "c".  Check whether this conditions is true.
 
-if test ! -d $EXAMPLES_DIR/c ; then
+if [ ! -d $EXAMPLES_DIR/c ] ; then
 echo '
 This script is only designed to work when the EXAMPLES_DIR environment
 variable (overridden by option --examples-dir) is a directory with a
@@ -241,7 +242,7 @@ PLD_xterm=@PLD_xterm@
 #interactive PLD_xwin=@PLD_xwin@
 
 eval pld_device='$'PLD_$device
-if test -z "$pld_device" ; then
+if [ -z "$pld_device" ] ; then
 echo '
 Never heard of a file device called '"$device"'.  Either this is not a
 legitimate file (i.e. non-interactive) device for PLplot or else 
@@ -251,7 +252,7 @@ the list of possible PLplot file devices.
 exit 1
 fi
 
-if test ! "$pld_device" = ON; then
+if [ ! "$pld_device" = "ON" ] ; then
 echo '
 PLD_'"$device"' is defined as '"$pld_device"'.  It must be ON (i.e., enabled
 by your cmake configuration and built properly) before you can use this
@@ -279,24 +280,24 @@ dsuffix=$device
 export dsuffix options
 
 # Find out what front-ends have been configured
-if test -z "$FRONT_END" ; then
+if [ -z "$FRONT_END" ] ; then
    FRONT_END=c
-   test "@ENABLE_cxx@" = ON && FRONT_END="$FRONT_END cxx"
-   test "@ENABLE_f77@" = ON    && FRONT_END="$FRONT_END f77"
-   test "@ENABLE_f95@" = ON    && FRONT_END="$FRONT_END f95"
-   test "@ENABLE_java@" = ON   && FRONT_END="$FRONT_END java"
-   test "@ENABLE_octave@" = ON && FRONT_END="$FRONT_END octave"
-   test "@ENABLE_python@" = ON && FRONT_END="$FRONT_END python"
-   test "@ENABLE_tcl@" = ON    && FRONT_END="$FRONT_END tcl"
-   test "@ENABLE_pdl@" = ON    && FRONT_END="$FRONT_END perl"
-   test "@ENABLE_ada@" = ON    && FRONT_END="$FRONT_END ada"
-   test "@ENABLE_ocaml@" = ON    && FRONT_END="$FRONT_END ocaml"
+   test "@ENABLE_cxx@" = "ON" && FRONT_END="$FRONT_END cxx"
+   test "@ENABLE_f77@" = "ON"    && FRONT_END="$FRONT_END f77"
+   test "@ENABLE_f95@" = "ON"    && FRONT_END="$FRONT_END f95"
+   test "@ENABLE_java@" = "ON"   && FRONT_END="$FRONT_END java"
+   test "@ENABLE_octave@" = "ON" && FRONT_END="$FRONT_END octave"
+   test "@ENABLE_python@" = "ON" && FRONT_END="$FRONT_END python"
+   test "@ENABLE_tcl@" = "ON"    && FRONT_END="$FRONT_END tcl"
+   test "@ENABLE_pdl@" = "ON"    && FRONT_END="$FRONT_END perl"
+   test "@ENABLE_ada@" = "ON"    && FRONT_END="$FRONT_END ada"
+   test "@ENABLE_ocaml@" = "ON"  && FRONT_END="$FRONT_END ocaml"
 fi
 
 # Find where the front-end scripts are by looking at the directory name of the
 # current script.  
 
-if test "@WIN32@" = "1"; then
+if [ "@WIN32@" = "1" ] ; then
    scripts_dir=${0%/*}
 else
    scripts_dir=`echo $0 | sed 's:/[^/][^/]*$::'`
@@ -308,7 +309,7 @@ status=0
 for i in $FRONT_END ; do
    echo "Testing front-end $i"
    script=$scripts_dir/test_$i.sh
-   if test "@WIN32@" != "1"; then
+   if [ "@WIN32@" != "1" ] ; then
       chmod +x $script
    fi
    @SH_EXECUTABLE@ $script || status=1

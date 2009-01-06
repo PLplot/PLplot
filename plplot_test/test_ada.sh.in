@@ -36,7 +36,7 @@ for index in \
     thick01 thick02 thick03 thick04 thick05 thick06 thick07 thick08 thick09 \
     thick10 thick11 thick12 thick13 thick14 thick15 thick16 thick18 thick19 thick20 \
     thick21 thick22 thick23 thick24 thick25 thick26 thick27 thick28 thick29 thick30 thick31; do
-    if [ "$verbose_test" ]; then
+    if [ "$verbose_test" ] ; then
 	echo "x${index}"
     fi
     if [ "$index" = "14" -o "$index" = "thick14" ] ; then
@@ -49,13 +49,13 @@ EOF
 	status_code=$?
     fi
     cat test.error
-    if [ "$status_code" -ne 0 ]; then
+    if [ "$status_code" -ne 0 ] ; then
 	exit $status_code
     fi
   # Look for any PLPLOT ERROR messages from plwarn that do not result in an
   # exit code.
     is_error=`grep -l 'PLPLOT ERROR' test.error`
-    if test -n "$is_error"; then
+    if [ -n "$is_error" ] ; then
 	exit 1
     fi
 done
