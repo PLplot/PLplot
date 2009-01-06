@@ -123,6 +123,7 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22 \
     # examples.
     for f in \
 	$cexamples_dir/../ada/x${exe}a.adb \
+	$cexamples_dir/../ada/xthick${exe}a.adb \
         examples/c/x${exe}c.c \
 	examples/c++/x${exe}.cc \
 	$cexamples_dir/../f77/x${exe}f.f \
