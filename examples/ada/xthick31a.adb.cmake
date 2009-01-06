@@ -199,7 +199,7 @@ begin
     else
         Put_Line("Output file name read");
     end if;
-    Put_Line(Standard_Error, "Output file name is " & fnam);
+    Put_Line(Standard_Error, "Output file name is " & Get_Output_File_Name);
 
     -- Set and get the number of digits used to display axis labels.
     -- Note digit is currently ignored in pls[xyz]ax and 
