@@ -32,7 +32,6 @@
 
 # Do the standard non-interactive examples.
 # skip 19 because it is not implemented.
-# skip 17 because it is interactive.
 #
 # Set up option to point to java bindings jar file and wrapper if needed.
 lang="j"
@@ -46,7 +45,7 @@ if [ "@WIN32@" != "1" ]; then
     PLPLOT_CLASSPATH=${javadir}:${PLPLOT_CLASSPATH}
 fi
 
-for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 18 20 21 22 23 24 25 26 27 28 29 30 31 ; do
+for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 20 21 22 23 24 25 26 27 28 29 30 31 ; do
     if [ "$verbose_test" ] ; then
 	echo "x${index}"
     fi

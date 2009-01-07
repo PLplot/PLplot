@@ -24,17 +24,19 @@ function x17c
     plsdev("xwin");
   endif
 
+  nsteps = 1000;
+
   ## If db is used the plot is much more smooth. However, because of the
   ## async X behaviour, one does not have a real-time scripcharter.
   ##    plSetOpt("db", ""); 
 
-  plSetOpt("np", "");
+  ## plSetOpt("np", "");
 
   ## Specify some reasonable defaults for ymin and ymax */
   ## The plot will grow automatically if needed (but not shrink) */
 
-  ymin = -1.0;
-  ymax =  1.0;
+  ymin = -0.1;
+  ymax =  0.1;
 
   ## Specify initial tmin and tmax -- this determines length of window. */
   ## Also specify maximum jump in t */
@@ -60,7 +62,7 @@ function x17c
 
   xlab = 0.; ylab = 0.25;	## legend position 
   
-  autoy = 0;	## autoscale y
+  autoy = 1;	## autoscale y
   acc = 1;	## dont strip, accumulate
 
   ## Initialize plplot */
@@ -73,7 +75,10 @@ function x17c
 		autoy, acc,
 		colbox, collab,
 		colline', styline', "sum", "sin", "sin*noi", "sin+noi",
-		"t", "pois", "Strip chart demo");
+		"t", "", "Strip chart demo");
+
+  autoy = 0;
+  acc = 1;
 
   ## This is to represent a loop over time */
   ## Let's try a random walk process */
@@ -81,13 +86,13 @@ function x17c
   y1 = y2 = y3 = y4 = 0.0;
   dt = 0.1;
 
-  for n = 0:1000
+  for n = 0:nsteps-1
     t = n * dt;
-    noise = randn/2;
+    noise = plrandd()-0.5;
     y1 = y1 + noise;
     y2 = sin(t*pi/18.);
     y3 = y2 * noise;
-    y4 = y2 + noise;
+    y4 = y2 + noise/3.;
     
     ## there is no need for all pens to have the same number of points
     ## or beeing equally time spaced.

@@ -40,9 +40,13 @@ main(int argc, const char *argv[])
 
 /* If db is used the plot is much more smooth. However, because of the
    async X behaviour, one does not have a real-time scripcharter.
+   This is now disabled since it does not significantly improve the 
+   performance on new machines and makes it difficult to use this
+   example non-interactively since it requires an extra pleop call after
+   each call to plstripa.
 */
-    plsetopt("db", "");
-    plsetopt("np", "");
+    /*plsetopt("db", "");*/
+    /*plsetopt("np", "");*/
 
 /* User sets up plot completely except for window and data 
  * Eventually settings in place when strip chart is created will be
@@ -150,7 +154,9 @@ main(int argc, const char *argv[])
 	    plstripa(id1, 2, t, y3);
 	if (n%5)
 	    plstripa(id1, 3, t, y4);
-	pleop();  /* use double buffer (-db on command line) */
+
+        /* needed if using double buffering (-db on command line) */
+	/*pleop();*/  
     }
 
 /* Destroy strip chart and it's memory */

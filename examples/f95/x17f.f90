@@ -38,11 +38,6 @@
       logical      pl_errcode
       character*80 errmsg
 
-!      some fortran compilers demand typing of intrinsic rand, and
-!      although this is not demanded on g77 it also works there.
-!      n.b. real*4 will be left alone by double2single.sed script.
-      real*4 rand
-
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
@@ -51,8 +46,8 @@
 !      If db is used the plot is much more smooth. However, because of the
 !      async X behaviour, one does not have a real-time scripcharter.
 !
-      call plsetopt('db', '')
-      call plsetopt('np', '')
+!     call plsetopt('db', '')
+!     call plsetopt('np', '')
 
 !      User sets up plot completely except for window and data
 !      Eventually settings in place when strip chart is created will be
@@ -123,7 +118,7 @@
         autoy, acc, &
         colbox, collab, &
         colline, styline, legline, &
-        't', ' ', 'Strip chart demo')
+        't', '', 'Strip chart demo')
 
       pl_errcode = .false.
       if ( pl_errcode ) then
@@ -148,11 +143,8 @@
       y3 = 0.0_plflt
       y4 = 0.0_plflt
       dt = 0.1_plflt
-!      start random number generator.
-!      (This use_ of rand should work for g77 and Solaris and ?)
-      noise = rand(1)
 
-      do n = 1,nsteps
+      do n = 0,nsteps-1
 !        wait a little (10 ms) to simulate time elapsing.
 !        g77 sleep has resolution of 1 sec so the call below is commented out
 !        because it is like watching paint dry.  In any case,
@@ -161,8 +153,7 @@
 !        call sleep(1)
 
         t = dble(n) * dt
-!        (This use_ of rand should work for g77 and Solaris and ?)
-        noise = rand(0) - 0.5_plflt
+        noise = plrandd() - 0.5_plflt
         y1 = y1 + noise
         y2 = sin(t*PI/18._plflt)
         y3 = y2 * noise
@@ -184,7 +175,7 @@
           call plstripa(id1, 3, t, y4)
         endif
 !        use_ double buffer (-db on command line)
-        call pleop()
+!       call pleop()
       enddo
 
 !      Destroy strip chart and it's memory

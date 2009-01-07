@@ -26,7 +26,6 @@
 # pushd $cdir; make; popd
 
 # Do the standard non-interactive examples.
-# skip 17 because it is interactive.
 
 # Ensure correct version of the libraries are picked up in both the build
 # tree and install tree.
@@ -38,11 +37,11 @@ else
 fi
 
 if [ "@HAVE_PDL_GRAPHICS_PLPLOT_40@" = "ON" ] ; then
-    INDEX_LIST="01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 18 19 20 21 22 23 24 25 26 27 28 29 30 31"
+    INDEX_LIST="01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31"
 else
   # Examples 02, 20, 21, 23, 24, 28, 29, and 30 require PDL::Graphics::PLplot
   # version 0.46 or later.
-    INDEX_LIST="01 03 04 05 06 07 08 09 10 11 12 13 14 15 16 18 19 22 25 26 27"
+    INDEX_LIST="01 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 22 25 26 27"
 fi
 
 for index in $INDEX_LIST ; do

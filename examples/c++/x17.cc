@@ -74,8 +74,8 @@ x17::x17( int argc, const char ** argv ) {
 
   // If db is used the plot is much more smooth. However, because of the
   // async X behaviour, one does not have a real-time scripcharter.
-  pls->SetOpt("db", "");
-  pls->SetOpt("np", "");
+  //pls->SetOpt("db", "");
+  //pls->SetOpt("np", "");
   // Specify some reasonable defaults for ymin and ymax
   // The plot will grow automatically if needed (but not shrink)
 
@@ -177,7 +177,7 @@ x17::x17( int argc, const char ** argv ) {
       pls->stripa(id1, 2, t, y3);
     if (n%5)
       pls->stripa(id1, 3, t, y4);
-    pls->eop();  // use double buffer (-db on command line)
+    //pls->eop();  // use double buffer (-db on command line)
   }
 
   // Destroy strip chart and it's memory

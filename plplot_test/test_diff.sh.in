@@ -84,8 +84,7 @@ for lang in c++ f77 f95 java octave python tcl perl ada adathick ocaml ; do
     if [ -f x${xsuffix}01${suffix}.psc ] ; then
 	
   # Standard non-interactive examples
-  # Skip example 17 because it is interactive
-	for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 14a 15 16 18 19 20 \
+	for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 14a 15 16 17 18 19 20 \
 	    21 22 23 24 25 26 27 28 29 30 31 ; do
 	    if [ ! -f x${xsuffix}${index}c.psc ] ; then
 		echo "C example ${index} is missing"

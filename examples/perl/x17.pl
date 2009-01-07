@@ -38,8 +38,8 @@ plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 # If db is used the plot is much more smooth. However, because of the
 #  async X behaviour, one does not have a real-time scripcharter.
 
-plsetopt ("db", "");
-plsetopt ("np", "");
+# plsetopt ("db", "");
+# plsetopt ("np", "");
 
 # User sets up plot completely except for window and data
 # Eventually settings in place when strip chart is created will be
@@ -123,7 +123,7 @@ my $dt = 0.1;
 for (my $n = 0; $n < $nsteps; $n++) {
   usleep (10000);    # wait a little (10 ms) to simulate time elapsing
   my $t = $n * $dt;
-  $noise = rand (1.0) - 0.5;
+  $noise = plrandd () - 0.5;
   $y1 = $y1 + $noise;
   $y2 = sin ($t * pi / 18);
   $y3 = $y2 * $noise;
@@ -144,7 +144,7 @@ for (my $n = 0; $n < $nsteps; $n++) {
   if ($n % 5) {
     plstripa ($id1, 3, $t, $y4);
   }
-  pleop ();  # use double buffer (-db on command line)
+#  pleop ();  # use double buffer (-db on command line)
 }
 
 # Destroy strip chart and it's memory

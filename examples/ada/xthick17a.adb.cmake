@@ -25,7 +25,6 @@ with
     Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Numerics.Float_Random,
     PLplot_Auxiliary,
     PLplot;
 use
@@ -33,7 +32,6 @@ use
     Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Numerics.Float_Random,
     PLplot_Auxiliary,
     PLplot;
 
@@ -56,7 +54,6 @@ procedure xthick17a is
         To_Unbounded_String("sin"), 
         To_Unbounded_String("sin*noi"), 
         To_Unbounded_String("sin+noi"));
-    Random_Generator : Generator; -- From Ada.Numerics.Float_Random
 begin
     -- plplot initialization
     -- Parse and process command line arguments
@@ -64,8 +61,8 @@ begin
 
     -- If db is used the plot is much more smooth. However, because of the
     -- async X behaviour, one does not have a real-time scripcharter.
-    Set_Command_Line_Option("db", "");
-    Set_Command_Line_Option("np", "");
+    -- Set_Command_Line_Option("db", "");
+    -- Set_Command_Line_Option("np", "");
 
     -- User sets up plot completely except for window and data 
     -- Eventually settings in place when strip chart is created will be
@@ -156,7 +153,7 @@ begin
         -- the delay to 0.02.
         delay 0.01; -- wait a little (10 ms) to simulate time elapsing
         t := Long_Float(n) * dt;
-        noise := Long_Float(Random(Random_Generator)) - 0.5;
+        noise := Random_Number- 0.5;
         y1 := y1 + noise;
         y2 := sin(t * pi / 18.0);
         y3 := y2 * noise;
@@ -179,7 +176,7 @@ begin
         if n mod 5 /= 0 then
             Update_Stripchart(id1, 3, t, y4);
         end if;
-        Eject_Current_Page;  -- use double buffer (-db on command line)
+        -- Eject_Current_Page;  -- use double buffer (-db on command line)
     end loop;
 
     -- Destroy strip chart and its memory

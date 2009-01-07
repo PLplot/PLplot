@@ -30,8 +30,6 @@ package plplot.examples;
 
 import plplot.core.*;
 
-import java.util.Random;
-
 class x17 {
 
     // Class data
@@ -60,8 +58,8 @@ class x17 {
 
 	// If db is used the plot is much more smooth. However, because of the
 	// async X behaviour, one does not have a real-time scripcharter.
-	pls.setopt("db", "");
-	pls.setopt("np", "");
+	// pls.setopt("db", "");
+	// pls.setopt("np", "");
 	// Specify some reasonable defaults for ymin and ymax
 	// The plot will grow automatically if needed (but not shrink)
 
@@ -135,8 +133,6 @@ class x17 {
 	y1 = y2 = y3 = y4 = 0.0;
 	dt = 0.1;
 
-	Random rnd = new Random();
-	
 	for (n = 0; n < nsteps; n++) {
 	    try {
 		Thread.sleep(10);
@@ -144,7 +140,7 @@ class x17 {
 	    catch (InterruptedException e) {
 	    }
 	    t = (double)n * dt;
-	    noise = rnd.nextDouble() - 0.5;
+	    noise = pls.randd() - 0.5;
 	    y1 = y1 + noise;
 	    y2 = Math.sin(t*Math.PI/18.);
 	    y3 = y2 * noise;
@@ -161,7 +157,7 @@ class x17 {
 		pls.stripa(id1[0], 2, t, y3);
 	    if (n%5 != 0)
 		pls.stripa(id1[0], 3, t, y4);
-	    pls.eop();  // use double buffer (-db on command line)
+	    // pls.eop();  // use double buffer (-db on command line)
 	}
 	
 	// Destroy strip chart and it's memory

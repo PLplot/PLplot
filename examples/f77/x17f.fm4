@@ -32,6 +32,9 @@ C--------------------------------------------------------------------------
       integer colbox, collab, colline(4), styline(4)
       character*20 legline(4)
 
+      external plrandd
+      real*8 plrandd
+
       real*8 PI
       parameter ( PI = 3.1415926535897932384d0 )
 
@@ -41,11 +44,6 @@ C--------------------------------------------------------------------------
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
 
-C      some fortran compilers demand typing of intrinsic rand, and
-C      although this is not demanded on g77 it also works there.
-C      n.b. real*4 will be left alone by double2single.sed script.
-      real*4 rand
-
 C      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
@@ -54,8 +52,8 @@ C      plplot initialization
 C      If db is used the plot is much more smooth. However, because of the
 C      async X behaviour, one does not have a real-time scripcharter.
 C
-      call plsetopt('db', '')
-      call plsetopt('np', '')
+C     call plsetopt('db', '')
+C     call plsetopt('np', '')
 
 C      User sets up plot completely except for window and data
 C      Eventually settings in place when strip chart is created will be
@@ -126,7 +124,7 @@ C      TODO: call plsError(&pl_errcode, errmsg)
      &  autoy, acc,
      &  colbox, collab,
      &  colline, styline, legline,
-     &  't', ' ', 'Strip chart demo')
+     &  't', '', 'Strip chart demo')
 
       pl_errcode = .false.
       if ( pl_errcode ) then
@@ -151,11 +149,8 @@ C      Let's try a random walk process
       y3 = 0.0d0
       y4 = 0.0d0
       dt = 0.1d0
-C      start random number generator.
-C      (This use_ of rand should work for g77 and Solaris and ?)
-      noise = rand(1)
 
-      do n = 1,nsteps
+      do n = 0,nsteps-1
 C        wait a little (10 ms) to simulate time elapsing.
 C        g77 sleep has resolution of 1 sec so the call below is commented out
 C        because it is like watching paint dry.  In any case,
@@ -164,8 +159,7 @@ C        you drop sleep altogether from this loop.
 !        call sleep(1)
 
         t = dble(n) * dt
-C        (This use_ of rand should work for g77 and Solaris and ?)
-        noise = rand(0) - 0.5d0
+        noise = plrandd() - 0.5d0
         y1 = y1 + noise
         y2 = sin(t*PI/18.d0)
         y3 = y2 * noise
@@ -187,7 +181,7 @@ C        points or beeing equally time spaced.
           call plstripa(id1, 3, t, y4)
         endif
 C        use_ double buffer (-db on command line)
-        call pleop()
+C       call pleop()
       enddo
 
 C      Destroy strip chart and it's memory
