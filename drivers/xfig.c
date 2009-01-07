@@ -12,6 +12,25 @@
 /* Device info */
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_xfig = "xfig:Fig file:0:xfig:31:xfig";
 
+typedef struct {
+  PLINT xold, yold;
+
+  PLINT xmin, xmax;
+  PLINT ymin, ymax;
+  
+  PLFLT xscale_dev, yscale_dev;
+
+  int *buffptr, bufflen;
+  int count;
+  int curwid;
+  int curcol;
+  int firstline;
+  long cmap0_pos, cmap1_pos;
+  int cmap0_ncol, cmap1_ncol;
+  int offset, offset_inc;
+
+} xfig_Dev;
+
 /* Function prototypes */
 
 void plD_dispatch_init_xfig	( PLDispatchTable *pdt );
@@ -41,14 +60,6 @@ static void flushbuffer(PLStream *);
 #define XFIG_COLBASE 33 /* xfig first user color, plplot colormap0[0],
                            the background color */
 
-static int *buffptr, bufflen;
-static int count;
-static int   curwid = 1;
-static int   curcol = 1;
-static int   firstline = 1;
-static long  cmap0_pos, cmap1_pos;
-static int   cmap0_ncol, cmap1_ncol;
-static int   offset, offset_inc;
 
 static void stcmap0(PLStream *);
 static void stcmap1(PLStream *);
@@ -86,7 +97,7 @@ void plD_dispatch_init_xfig( PLDispatchTable *pdt )
 void
 plD_init_xfig(PLStream *pls)
 {
-    PLDev *dev;
+    xfig_Dev *dev;
 
     plParseDrvOpts(xfig_options);
     if (text)
@@ -102,7 +113,18 @@ plD_init_xfig(PLStream *pls)
 
 /* Allocate and initialize device-specific data */
 
-    dev = plAllocDev(pls);
+    if (pls->dev != NULL) 
+        free((void *) pls->dev);
+
+    pls->dev = calloc(1, (size_t) sizeof(xfig_Dev));
+
+    if (pls->dev == NULL) 
+      plexit("plD_init_xfig: cannot allocate memory\n");
+
+    dev = (xfig_Dev *) pls->dev;
+
+    dev->curwid = pls->width < 1 ? 1: pls->width;
+    dev->firstline = 1;
 
     dev->xold = PL_UNDEFINED;
     dev->yold = PL_UNDEFINED;
@@ -112,8 +134,8 @@ plD_init_xfig(PLStream *pls)
     dev->ymax = FIGY;
     dev->xscale_dev = DPI/25.4;
     dev->yscale_dev = DPI/25.4;
-    offset_inc = dev->ymax * (PLINT)dev->yscale_dev;
-    offset = - offset_inc;
+    dev->offset_inc = dev->ymax * (PLINT)dev->yscale_dev;
+    dev->offset = - dev->offset_inc;
     pls->dev_fill0 = 1;	    /* Handle solid fills */
     if (!pls->colorset)
       pls->color = 1;         /* Is a color device */
@@ -134,33 +156,36 @@ plD_init_xfig(PLStream *pls)
     fprintf(pls->OutFile, "%d 2\n", DPI);
 
     /* user defined colors, for colormap0 */
-    cmap0_ncol = 2 * pls->ncol0; /* allow for a maximum of 2x the default cmap0 entries */
-    cmap0_pos = ftell(pls->OutFile);
+    dev->cmap0_ncol = 2 * pls->ncol0; /* allow for a maximum of 2x the default cmap0 entries */
+    dev->cmap0_pos = ftell(pls->OutFile);
     stcmap0(pls);
 
     /* user defined colors, for colormap1 */
-    cmap1_ncol = 2 * pls->ncol1; /* allow for a maximum of  2x the default cmap1 entries */
-    cmap1_pos = ftell(pls->OutFile); 
+    dev->cmap1_ncol = 2 * pls->ncol1; /* allow for a maximum of  2x the default cmap1 entries */
+    dev->cmap1_pos = ftell(pls->OutFile); 
     stcmap1(pls);
 
-    bufflen = 2 * BSIZE;
-    buffptr = (int *) malloc(sizeof(int) * bufflen);
-    if (buffptr == NULL)
+    dev->bufflen = 2 * BSIZE;
+    dev->buffptr = (int *) malloc(sizeof(int) * dev->bufflen);
+    if (dev->buffptr == NULL)
 	plexit("plD_init_xfig: Out of memory!");
 }
 
 void
 stcmap0(PLStream *pls)
 {
+  xfig_Dev *dev;
   long cur_pos;
   int i;
 
-  if (pls->ncol0 > cmap0_ncol)
-    plwarn("Too much colors for cmap0. Preallocate using command line '-ncol0 n.\n'");
+  dev = (xfig_Dev *) pls->dev;
+
+  if (pls->ncol0 > dev->cmap0_ncol)
+    plwarn("Too many colors for cmap0. Preallocate using command line '-ncol0 n.\n'");
 
       cur_pos = ftell(pls->OutFile);
 
-      if (fseek(pls->OutFile, cmap0_pos, SEEK_SET))
+      if (fseek(pls->OutFile, dev->cmap0_pos, SEEK_SET))
 	plexit("Sorry, only file based output, no pipes.\n");
 
       /* fill the colormap */
@@ -169,37 +194,40 @@ stcmap0(PLStream *pls)
 		pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
 
       /* fill the nonspecified entries colormap */
-      for (i=pls->ncol0; i<cmap0_ncol; i++)
+      for (i=pls->ncol0; i<dev->cmap0_ncol; i++)
 	fprintf(pls->OutFile,"0 %d #000000\n", i+XFIG_COLBASE);
 
-      if (cur_pos != cmap0_pos)
+      if (cur_pos != dev->cmap0_pos)
 	fseek(pls->OutFile, cur_pos, SEEK_SET);
 }
 
 void
 stcmap1(PLStream *pls)
 {
+  xfig_Dev *dev;
   long cur_pos;
   int i;
 
-  if (pls->ncol1 > cmap1_ncol)
-    plwarn("Too much colors for cmap1. Preallocate using command line '-ncol1 n.\n'");
+  dev = (xfig_Dev *) pls->dev;
+
+  if (pls->ncol1 > dev->cmap1_ncol)
+    plwarn("Too many colors for cmap1. Preallocate using command line '-ncol1 n.\n'");
 
       cur_pos = ftell(pls->OutFile);
 
-      if (fseek(pls->OutFile, cmap1_pos, SEEK_SET))
+      if (fseek(pls->OutFile, dev->cmap1_pos, SEEK_SET))
 	plexit("Sorry, only file based output, no pipes.\n");
 
       /* fill the colormap */
       for (i=0; i<pls->ncol1; i++)
-	fprintf(pls->OutFile,"0 %d #%.2x%.2x%.2x\n", i+XFIG_COLBASE+cmap0_ncol,
+	fprintf(pls->OutFile,"0 %d #%.2x%.2x%.2x\n", i+XFIG_COLBASE+dev->cmap0_ncol,
 		pls->cmap1[i].r, pls->cmap1[i].g, pls->cmap1[i].b);
 
       /* fill the nonspecified entries colormap */
-      for (i=pls->ncol1; i<cmap1_ncol; i++)
-	fprintf(pls->OutFile,"0 %d #000000\n", i+XFIG_COLBASE+cmap0_ncol);
+      for (i=pls->ncol1; i<dev->cmap1_ncol; i++)
+	fprintf(pls->OutFile,"0 %d #000000\n", i+XFIG_COLBASE+dev->cmap0_ncol);
 
-      if (cur_pos != cmap1_pos)
+      if (cur_pos != dev->cmap1_pos)
 	fseek(pls->OutFile, cur_pos, SEEK_SET);
 }
 
@@ -212,43 +240,47 @@ stcmap1(PLStream *pls)
 void
 plD_line_xfig(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
-    PLDev *dev = (PLDev *) pls->dev;
+    xfig_Dev *dev = (xfig_Dev *) pls->dev;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int *tempptr;
+    int count;
 
 /* If starting point of this line is the same as the ending point of */
 /* the previous line then don't raise the pen. (This really speeds up */
 /* plotting and reduces the size of the file. */
 
-    if (firstline) {
+    if (dev->firstline) {
 	count = 0;
-	*(buffptr + count++) = x1;
-	*(buffptr + count++) = y1;
-	*(buffptr + count++) = x2;
-	*(buffptr + count++) = y2;
-	firstline = 0;
+	*(dev->buffptr + count++) = x1;
+	*(dev->buffptr + count++) = y1;
+	*(dev->buffptr + count++) = x2;
+	*(dev->buffptr + count++) = y2;
+	dev->firstline = 0;
     }
     else if (x1 == dev->xold && y1 == dev->yold) {
-	if (count + 2 >= bufflen) {
-	    bufflen += 2 * BSIZE;
+        count = dev->count;
+	if (count + 2 >= dev->bufflen) {
+	    dev->bufflen += 2 * BSIZE;
 	    tempptr = (int *)
-		realloc((void *) buffptr, bufflen * sizeof(int));
+		realloc((void *) dev->buffptr, dev->bufflen * sizeof(int));
 	    if (tempptr == NULL) {
-		free((void *) buffptr);
+		free((void *) dev->buffptr);
 		plexit("plD_line_xfig: Out of memory!");
 	    }
-	    buffptr = tempptr;
+	    dev->buffptr = tempptr;
 	}
-	*(buffptr + count++) = x2;
-	*(buffptr + count++) = y2;
+	*(dev->buffptr + count++) = x2;
+	*(dev->buffptr + count++) = y2;
     }
     else {
 	flushbuffer(pls);
-	*(buffptr + count++) = x1;
-	*(buffptr + count++) = y1;
-	*(buffptr + count++) = x2;
-	*(buffptr + count++) = y2;
+	count = dev->count;
+	*(dev->buffptr + count++) = x1;
+	*(dev->buffptr + count++) = y1;
+	*(dev->buffptr + count++) = x2;
+	*(dev->buffptr + count++) = y2;
     }
+    dev->count = count;
     dev->xold = x2;
     dev->yold = y2;
 }
@@ -277,7 +309,10 @@ plD_polyline_xfig(PLStream *pls, short *xa, short *ya, PLINT npts)
 void
 plD_eop_xfig(PLStream *pls)
 {
-    if (!firstline)
+
+  xfig_Dev *dev = (xfig_Dev *) pls->dev;
+
+    if (!dev->firstline)
 	flushbuffer(pls);
 }
 
@@ -291,30 +326,32 @@ plD_eop_xfig(PLStream *pls)
 void
 plD_bop_xfig(PLStream *pls)
 {
-    PLDev *dev = (PLDev *) pls->dev;
-
-    dev->xold = PL_UNDEFINED;
-    dev->yold = PL_UNDEFINED;
-    firstline = 1;
+    xfig_Dev *dev;
 
     if (!pls->termin)
       plGetFam(pls);
 
+    dev = (xfig_Dev *) pls->dev;
+
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
+    dev->firstline = 1;
+
     pls->famadv = 1;
     pls->page++;
 
-    offset += offset_inc;
+    dev->offset += dev->offset_inc;
     flushbuffer(pls);
     
     /* create background FIXME -- sync with orientation in header and pls->diorot */
-    curcol = XFIG_COLBASE; /* colormap entry 0, background */
-    fprintf(pls->OutFile, "2 1 0 1 %d %d 50 0 20 0.0 0 0 -1 0 0 5\n", curcol, curcol );
+    dev->curcol = XFIG_COLBASE; /* colormap entry 0, background */
+    fprintf(pls->OutFile, "2 1 0 1 %d %d 50 0 20 0.0 0 0 -1 0 0 5\n", dev->curcol, dev->curcol );
     fprintf(pls->OutFile, "%d %d %d %d %d %d %d %d %d %d\n",
-	    0, offset,
-	    0, (int) (FIGY * dev->yscale_dev) + offset,
-	    (int) (FIGX * dev->xscale_dev), (int) (FIGY * dev->yscale_dev) + offset,
-	    (int) (FIGX * dev->xscale_dev), offset,
-	    0, offset);
+	    0, dev->offset,
+	    0, (int) (FIGY * dev->yscale_dev) + dev->offset,
+	    (int) (FIGX * dev->xscale_dev), (int) (FIGY * dev->yscale_dev) + dev->offset,
+	    (int) (FIGX * dev->xscale_dev), dev->offset,
+	    0, dev->offset);
     
 }
 
@@ -327,8 +364,10 @@ plD_bop_xfig(PLStream *pls)
 void
 plD_tidy_xfig(PLStream *pls)
 {
+    xfig_Dev *dev = (xfig_Dev *) pls->dev;
+
     flushbuffer(pls);
-    free((void *) buffptr);
+    free((void *) dev->buffptr);
     fclose(pls->OutFile);
 }
 
@@ -341,22 +380,24 @@ plD_tidy_xfig(PLStream *pls)
 void 
 plD_state_xfig(PLStream *pls, PLINT op)
 {
+  xfig_Dev *dev = (xfig_Dev *) pls->dev;
+
   switch (op) {
 
   case PLSTATE_WIDTH:
     flushbuffer(pls);
-    firstline = 1;
-    curwid = pls->width < 1 ? 1: pls->width;
+    dev->firstline = 1;
+    dev->curwid = pls->width < 1 ? 1: pls->width;
     break;
 
   case PLSTATE_COLOR0:
     flushbuffer(pls);
-    curcol =  pls->icol0 + XFIG_COLBASE;
+    dev->curcol =  pls->icol0 + XFIG_COLBASE;
     break;
 
   case PLSTATE_COLOR1:
     flushbuffer(pls);
-    curcol =  pls->icol1 + XFIG_COLBASE + pls->ncol0;
+    dev->curcol =  pls->icol1 + XFIG_COLBASE + pls->ncol0;
     break;
 
   case PLSTATE_CMAP0:
@@ -380,7 +421,7 @@ plD_state_xfig(PLStream *pls, PLINT op)
 void
 plD_esc_xfig(PLStream *pls, PLINT op, void *ptr)
 {
-  PLDev *dev = pls->dev;
+  xfig_Dev *dev = pls->dev;
   int i, npts;
  
   switch (op) { 
@@ -392,11 +433,11 @@ plD_esc_xfig(PLStream *pls, PLINT op, void *ptr)
      
     flushbuffer(pls);
     fprintf(pls->OutFile, "2 1 0 1 %d %d 50 0 20 0.0 0 0 0 0 0 %d\n",
-	    curcol, curcol, npts);
+	    dev->curcol, dev->curcol, npts);
 
     for (i = 0; i < npts; i++)
       fprintf(pls->OutFile,"%d %d ",  pls->dev_x[i],
-	      offset + dev->ymax * (int)dev->xscale_dev - pls->dev_y[i]);
+	      dev->offset + dev->ymax * (int)dev->xscale_dev - pls->dev_y[i]);
 
     fprintf(pls->OutFile, "\n");
     break;
@@ -414,21 +455,21 @@ plD_esc_xfig(PLStream *pls, PLINT op, void *ptr)
 static void
 flushbuffer(PLStream *pls)
 {
-  PLDev *dev = pls->dev;
+  xfig_Dev *dev = pls->dev;
   int i = 0;
 
-  if (count == 0)
+  if (dev->count == 0)
     return;
 
   fprintf(pls->OutFile, "2 1 0 %d %d 0 50 0 -1 0.0 0 0 0 0 0 %d\n",
-	  curwid, curcol, count/2);
-  while (i < count) {
-    fprintf(pls->OutFile, "%d %d ", *(buffptr + i),
-	     offset + dev->ymax * (int)dev->yscale_dev - *(buffptr + i + 1));
+	  dev->curwid, dev->curcol, dev->count/2);
+  while (i < dev->count) {
+    fprintf(pls->OutFile, "%d %d ", *(dev->buffptr + i),
+	     dev->offset + dev->ymax * (int)dev->yscale_dev - *(dev->buffptr + i + 1));
     i += 2;
   }
   fprintf(pls->OutFile, "\n");
-  count = 0;
+  dev->count = 0;
 }
 
 void
@@ -436,7 +477,7 @@ proc_str (PLStream *pls, EscText *args)
 {
   PLFLT *t = args->xform;
   PLFLT a1, alpha, ft_ht, angle, ref;
-  PLDev *dev = (PLDev *) pls->dev;
+  xfig_Dev *dev = (xfig_Dev *) pls->dev;
   PLINT clxmin, clxmax, clymin, clymax;
   int jst, font;
 
@@ -500,7 +541,7 @@ proc_str (PLStream *pls, EscText *args)
     ref = DPI/72. * ft_ht / 2.;
 
   /* rotate point in xfig is lower left corner, compensate */
-  args->y = offset + dev->ymax * (int)dev->xscale_dev - (args->y - ref*cos(alpha));
+  args->y = dev->offset + dev->ymax * (int)dev->xscale_dev - (args->y - ref*cos(alpha));
   args->x = args->x + ref*sin(alpha);
 
   /*
@@ -522,7 +563,7 @@ proc_str (PLStream *pls, EscText *args)
   }
 
   fprintf(pls->OutFile,"4 %d %d 50 0 %d %f %f 4 1 1 %d %d %s\\001\n",
-	  jst, curcol, font, 1.8 /*!*/ * ft_ht, alpha, args->x, args->y, args->string);
+	  jst, dev->curcol, font, 1.8 /*!*/ * ft_ht, alpha, args->x, args->y, args->string);
 
 }
 
