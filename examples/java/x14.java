@@ -51,6 +51,10 @@ class x14 {
 	String geometry_master = "500x410+100+200";
 	String geometry_slave = "500x410+650+200";
 
+	int fam[] = new int[1];
+	int num[] = new int[1];
+	int bmax[] = new int[1];
+
     // Parse and process command line arguments.
 
         pls1.parseopts( args, PLStream.PL_PARSE_FULL|PLStream.PL_PARSE_NOPROGRAM );
@@ -58,6 +62,7 @@ class x14 {
 	StringBuffer driver = new StringBuffer(80);
 	
 	pls1.gdev(driver);
+	pls1.gfam(fam,num,bmax);
 	String sdriver = new String(driver);
 	System.out.println("Demo of multiple output streams via the " + sdriver +  " driver.");
 	System.out.println("Running with the second stream as slave to the first.");
@@ -78,6 +83,8 @@ class x14 {
 	pls2.setopt("geometry", geometry_slave);
 	pls2.spause(false);
 	pls2.sdev(sdriver);
+	pls2.sfam(fam[0],num[0],bmax[0]);
+	pls2.setopt("fflen","2");
 	pls2.init();
 	
 	//Set up the data & plot

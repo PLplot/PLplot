@@ -92,6 +92,9 @@ main(int argc, const char *argv[])
     plspause(0);
     plsdev(driver);
     plsfam(fam,num,bmax);
+    /* Currently number of digits in format number can only be 
+     * set via the command line option */
+    plsetopt("fflen","2");
     plinit();
 
 /* Set up the data & plot */

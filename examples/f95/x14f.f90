@@ -36,6 +36,8 @@
       character*15 geometry_master
       character*15 geometry_slave
 
+      integer fam, num, bmax
+
       real(kind=plflt)  x(101), y(101)
       real(kind=plflt)  xs(6), ys(6)
       real(kind=plflt)  xscale, yscale, xoff, yoff
@@ -58,6 +60,7 @@
       call plparseopts(PL_PARSE_FULL)
 
       call plgdev(driver)
+      call plgfam(fam,num,bmax)
 
       write(*,'(3A)') 'Demo of multiple output streams via the ', &
         trim(driver), ' driver.'
@@ -82,6 +85,8 @@
       call plsetopt( 'geometry', geometry_slave)
       call plspause(.false.)
       call plsdev(driver)
+      call plsfam(fam,num,bmax)
+      call plsetopt('fflen','2')
       call plinit()
 
 !      Set up the data & plot

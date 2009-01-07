@@ -8,6 +8,7 @@ proc x14 {{w loopback}} {
     set geometry_slave  "500x410+650+200"
 
     $w cmd plgdev driver
+    $w cmd plgfam fam num bmax
     puts "Demo of multiple output streams via the $driver driver."
     puts "Running with the second stream as slave to the first."
     puts ""
@@ -27,7 +28,11 @@ proc x14 {{w loopback}} {
     
     $w cmd plsetopt "geometry" $geometry_slave
     $w cmd plspause 0
-    if {$driver != ""} {$w cmd plsdev $driver}
+    if {$driver != ""} {
+	$w cmd plsdev $driver
+    }
+    $w cmd plsfam $fam $num $bmax
+    $w cmd plsetopt "fflen" "2"
     $w cmd plinit
     
 # Set up the data & plot

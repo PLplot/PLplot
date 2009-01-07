@@ -57,6 +57,7 @@ sub main {
   plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
   my $driver = plgdev ();
+  my ($fam, $num, $bmax) = plgfam ();
 
   print ("Demo of multiple output streams via the $driver driver.\n"
          . "Running with the second stream as slave to the first.\n"
@@ -79,6 +80,8 @@ sub main {
   plsetopt ("geometry", $geometry_slave);
   plspause (0);
   plsdev ($driver);
+  plsfam ($fam, $num, $bmax);
+  plsetopt ("fflen","2");
   plinit ();
 
   # Set up the data & plot

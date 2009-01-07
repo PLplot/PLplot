@@ -69,6 +69,8 @@ procedure x14a is
     mark0  : Integer_Array_1D(1 .. 1) := (Others => 0);
     space1 : Integer_Array_1D(1 .. 1) := (Others => 1500);
     mark1  : Integer_Array_1D(1 .. 1) := (Others => 1500);
+    fam : Boolean;
+    num, bmax : Integer;
 
     procedure plot1 is
         xmin, xmax, ymin, ymax : Long_Float;
@@ -295,6 +297,7 @@ begin
     plparseopts(PL_PARSE_FULL);
 
     driver := To_Unbounded_String(plgdev);
+    plgfam(fam, num, bmax);    
 
     Put_Line("Demo of multiple output streams via the " & plgdev & " driver.");
     Put_Line("Running with the second stream as slave to the first.");
@@ -313,6 +316,8 @@ begin
     -- Turn off pause to make this a slave (must follow master) 
     plsetopt("geometry", geometry_slave);
     plspause(False);
+    plgfam(fam, num, bmax);    
+    plsetopt("fflen","2");
     plsdev(To_String(driver));
     plinit;
 

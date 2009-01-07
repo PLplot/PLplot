@@ -228,6 +228,7 @@ let () =
   ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
   let driver = plgdev () in
+  let fam, num, bmax = plgfam () in
 
   printf "Demo of multiple output streams via the %s driver.\n" driver;
   printf "Running with the second stream as slave to the first.\n";
@@ -247,6 +248,8 @@ let () =
   plsetopt "geometry" geometry_slave;
   plspause false;
   plsdev driver;
+  plsfam fam num bmax;
+  plsetopt "fflen" "2";
   plinit ();
 
   (* Set up the data & plot *)

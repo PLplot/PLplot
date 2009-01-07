@@ -35,6 +35,8 @@ C independent streams.
       character*15 geometry_master
       character*15 geometry_slave
 
+      integer fam, num, bmax
+
       real*8  x(101), y(101)
       real*8  xs(6), ys(6)
       real*8  xscale, yscale, xoff, yoff
@@ -61,6 +63,7 @@ C      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
       call plgdev(driver)
+      call plgfam(fam,num,bmax)
 
       write(*,'(3A)') 'Demo of multiple output streams via the ',
      &  driver(:lnblnk(driver)), ' driver.'
@@ -85,6 +88,8 @@ C      Turn off pause to make this a slave (must follow master)
       call plsetopt( 'geometry', geometry_slave)
       call plspause(0)
       call plsdev(driver)
+      call plsfam(fam,num,bmax)
+      call plsetopt('fflen','2')
       call plinit()
 
 C      Set up the data & plot

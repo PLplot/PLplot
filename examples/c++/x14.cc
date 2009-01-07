@@ -93,6 +93,9 @@ x14::x14( int argc, const char ** argv ) {
   // The geometry strings MUST be in writable memory
 
   char driver[80];
+
+  PLINT fam, num, bmax;
+
   const char geometry_master[] = "500x410+100+200";
   const char geometry_slave[]  = "500x410+650+200";
 
@@ -104,6 +107,7 @@ x14::x14( int argc, const char ** argv ) {
   pls1->parseopts( &argc, argv, PL_PARSE_FULL );
 
   pls1->gdev(driver);
+  pls1->gfam(fam,num,bmax);
 
   cout << "Demo of multiple output streams via the " <<
     driver << " driver." << endl;
@@ -125,6 +129,10 @@ x14::x14( int argc, const char ** argv ) {
   pls2->SetOpt("geometry", geometry_slave);
   pls2->spause(false);
   pls2->sdev(driver);
+  pls2->sfam(fam,num,bmax);
+  // Currently number of digits in format number can only be
+  // set via the command line option
+  pls2->SetOpt("fflen","2");
   pls2->init();
 
   // Set up the data & plot

@@ -42,6 +42,8 @@ def main():
     geometry_master = "500x410+100+200"
     geometry_slave  = "500x410+650+200"
     driver = plgdev()
+    (fam, num, bmax) = plgfam()
+    
     print "Demo of multiple output streams via the %s driver." % driver
     print "Running with the second stream as slave to the first."
     print ""
@@ -60,6 +62,8 @@ def main():
     plsetopt("geometry", geometry_slave)
     plspause(0)
     plsdev(driver)
+    plsfam(fam, num, bmax)
+    plsetopt("fflen","2")
     plinit()
 		    
     # Set up the data & plot
