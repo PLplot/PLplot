@@ -49,7 +49,7 @@ if [ "yes@HAVE_F77PARSE_CL_TRUE@" = "yes" ] ; then
   # Look for any PLPLOT ERROR messages from plwarn that do not result in an
   # exit code.
     is_error=`grep -l 'PLPLOT ERROR' test.error`
-    if [-n "$is_error" ] ; then
+    if [ -n "$is_error" ] ; then
 	exit 1
     fi
 
