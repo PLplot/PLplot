@@ -115,7 +115,7 @@ x14::x14( int argc, const char ** argv ) {
 
   // Set up first stream
 
-  pls1->SetOpt("geometry", geometry_master);
+  pls1->setopt("geometry", geometry_master);
 
   pls1->sdev(driver);
   pls1->ssub(2, 2);
@@ -126,13 +126,13 @@ x14::x14( int argc, const char ** argv ) {
   pls2 = new plstream();
   // Turn off pause to make this a slave (must follow master)
 
-  pls2->SetOpt("geometry", geometry_slave);
+  pls2->setopt("geometry", geometry_slave);
   pls2->spause(false);
   pls2->sdev(driver);
   pls2->sfam(fam,num,bmax);
   // Currently number of digits in format number can only be
   // set via the command line option
-  pls2->SetOpt("fflen","2");
+  pls2->setopt("fflen","2");
   pls2->init();
 
   // Set up the data & plot

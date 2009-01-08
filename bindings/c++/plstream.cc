@@ -2330,6 +2330,14 @@ void plstream::SetUsage( char *program_string, char *usage_string )
 
 /* Process input strings, treating them as an option and argument pair. */
 
+int plstream::setopt( const char *opt, const char *optarg )
+{
+    set_stream();
+
+    return ::plsetopt(opt, optarg);
+}
+
+// Depreciated version - use setopt instead.
 int plstream::SetOpt( const char *opt, const char *optarg )
 {
     set_stream();

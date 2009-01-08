@@ -971,6 +971,10 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 /* Process input strings, treating them as an option and argument pair. */
 
+    int setopt( const char *opt, const char *optarg );
+
+/* This version is for backward compatibility only - don't use in new code */
+
     int SetOpt( const char *opt, const char *optarg );
 
 /* Process options list using current options info. */
