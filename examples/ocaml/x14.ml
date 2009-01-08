@@ -245,11 +245,11 @@ let () =
   plsstrm 1;
 
   (* Turn off pause to make this a slave (must follow master) *)
-  plsetopt "geometry" geometry_slave;
+  ignore (plsetopt "geometry" geometry_slave);
   plspause false;
   plsdev driver;
   plsfam fam num bmax;
-  plsetopt "fflen" "2";
+  ignore (plsetopt "fflen" "2");
   plinit ();
 
   (* Set up the data & plot *)
