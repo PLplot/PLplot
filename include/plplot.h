@@ -1019,11 +1019,6 @@ PLDLLIMPEXP void
 c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 	 PLINT nbin, PLINT opt);
 
-/* Set current color (map 0) by hue, lightness, and saturation. */
-
-PLDLLIMPEXP void
-c_plhls(PLFLT h, PLFLT l, PLFLT s);
-
 /* Functions for converting between HLS and RGB color space */
 
 PLDLLIMPEXP void
@@ -1205,16 +1200,6 @@ c_plrandd(void);
 
 PLDLLIMPEXP void
 c_plreplot(void);
-
-/* Set line color by red, green, blue from  0. to 1. */
-
-PLDLLIMPEXP void
-c_plrgb(PLFLT r, PLFLT g, PLFLT b);
-
-/* Set line color by 8 bit RGB values. */
-
-PLDLLIMPEXP void
-c_plrgb1(PLINT r, PLINT g, PLINT b);
 
 /* Functions for converting between HLS and RGB color space */
 
@@ -1846,6 +1831,24 @@ plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 PLDLLIMPEXP void
 plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
            PLFLT scale, PLFLT dx, PLFLT dy) ;
+
+/* These functions are depreciated and only retained for backwards
+ * compatibility - do not use in new code. */
+
+/* Set current color (map 0) by hue, lightness, and saturation. */
+
+PLDLLIMPEXP void
+c_plhls(PLFLT h, PLFLT l, PLFLT s);
+
+/* Set line color by red, green, blue from  0. to 1. */
+
+PLDLLIMPEXP void
+c_plrgb(PLFLT r, PLFLT g, PLFLT b);
+
+/* Set line color by 8 bit RGB values. */
+
+PLDLLIMPEXP void
+c_plrgb1(PLINT r, PLINT g, PLINT b);
 
 
 #ifdef __cplusplus
