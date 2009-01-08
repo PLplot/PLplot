@@ -98,6 +98,8 @@
 
       call plinit
 
+      call plseed(5489)
+
       do i=1,pts
          xt = (xmax-xmin)*plrandd()
          yt = (ymax-ymin)*plrandd()

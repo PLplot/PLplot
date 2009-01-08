@@ -113,6 +113,8 @@ EOT
 
   plinit ();
 
+  plseed (5489);
+
   my ($x, $y, $z) = create_data ($pts);    # the sampled data
   my $zmin = min ($z);
   my $zmax = max ($z);

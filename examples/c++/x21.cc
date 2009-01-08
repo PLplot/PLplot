@@ -189,6 +189,8 @@ x21::x21( int argc, const char ** argv ) {
   // plplot initialization
 
   pls = new plstream();
+ 
+  pls->seed(5489);
 
   // Parse and process command line arguments.
   pls->MergeOpts(options, "x21c options", NULL);

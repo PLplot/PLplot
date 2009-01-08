@@ -69,6 +69,8 @@ def main():
     opt[2] = wmin
     opt[3] = knn_order
     opt[4] = threshold
+ 
+    plseed(5489)
 
     # Create the sampled data
     # For consistency across languages use plrandd to create the 

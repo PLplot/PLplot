@@ -82,6 +82,8 @@ proc x21 {{w loopback}} {
     opt 3 = [expr {double($knn_order)}]
     opt 4 = $threshold
 
+    $w cmd plseed 5489
+
     for {set i 0} {$i < $pts} {incr i} {
         set xt [expr {($xmax-$xmin)*[plrandd]}]
         set yt [expr {($ymax-$ymin)*[plrandd]}]

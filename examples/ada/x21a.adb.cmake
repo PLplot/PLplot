@@ -170,6 +170,8 @@ begin
     -- Initialize plplot
     plinit;
 
+    plseed(5489);
+
     create_data(x, y, z); -- the sampled data
     zmin := Vector_Min(z);
     zmax := Vector_Max(z);

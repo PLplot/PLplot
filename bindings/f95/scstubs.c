@@ -797,9 +797,9 @@ PLSDIPLZ(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 }
 
 void
-PLSEED(unsigned int s)
+PLSEED(unsigned int *s)
 {
-    c_plseed(s);
+    c_plseed(*s);
 }
 
 void

@@ -107,6 +107,8 @@ let () =
   (* Initialize plplot *)
   plinit ();
 
+  plseed (5489L);
+
   (* The sampled data *)
   let x, y, z = create_data pts in
   let zmin = Array.fold_left min infinity z in

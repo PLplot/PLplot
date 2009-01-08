@@ -162,6 +162,8 @@ class x21 {
 	// Initialize PLplot.
 	pls.init();
 	
+        pls.seed(5489);
+
 	x = new double[pts];
 	y = new double[pts];
 	z = new double[pts];

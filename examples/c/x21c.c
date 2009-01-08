@@ -180,6 +180,9 @@ main(int argc, const char *argv[])
 
   plinit();
 
+  /* Initialise random number generator */
+  plseed(5489);
+
   create_data(&x, &y, &z, pts); /* the sampled data */
   zmin = z[0];
   zmax = z[0];

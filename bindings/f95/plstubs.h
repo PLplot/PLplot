@@ -294,7 +294,7 @@
 #define    PLSDIORI	FNAME(PLSDIORI,plsdiori)
 #define    PLSDIPLT	FNAME(PLSDIPLT,plsdiplt)
 #define    PLSDIPLZ	FNAME(PLSDIPLZ,plsdiplz)
-#define    PLSEED       FNAME(PLSEEDF77,plseedf77)
+#define    PLSEED       FNAME(PLSEED,plseed)
 #define    PLSESC	FNAME(PLSESC,plsesc)
 #define    PLSETOPT7	FNAME(PLSETOPT7,plsetopt7)
 #define    PLSFAM	FNAME(PLSFAM,plsfam)
