@@ -8528,6 +8528,43 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
+  <sect1 id="plrandd" renderas="sect3">
+    <title>
+      <function>plrandd</function>: Random number generator 
+      returning a real random number in the range [0,1].
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plrandd</function>
+	  </funcdef>
+	  <paramdef></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Random number generator returning a real random number in the 
+      range [0,1]. The generator is based on the Mersenne Twister. 
+      Most languages / compilers provide their own random number generator, 
+      and so this is provided purely for convenience and to give a
+      consistent random number generator across all languages supported 
+      by PLplot. This is particularly useful for comparing results 
+      from the test suite of examples.
+    </para>
+
+    <para>
+      Redacted form: <function>plrandd()</function>
+    </para>
+
+    <para>
+      This function is used in examples 17,21.
+    </para>
+
+  </sect1>
+
   <sect1 id="plreplot" renderas="sect3">
     <title>
       <function>plreplot</function>: Replays contents of plot buffer to
@@ -10412,6 +10449,50 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       This function is used in example 31.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plseed" renderas="sect3">
+    <title>
+      <function>plseed</function>: Set seed for internal random 
+      number generator.
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plseed</function>
+	  </funcdef>
+	  <paramdef><parameter>seed</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+    Set the seed for the internal random number generator. See &plrandd; 
+    for further details.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>seed</parameter>
+	  (<literal>unsigned int</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Seed for random number generator.
+	  </para>
+	</listitem>
+      </varlistentry>
+    <para>
+      Redacted form: <function>plseed(seed)</function>
+    </para>
+
+    <para>
+      This function is used in example 21.
     </para>
 
   </sect1>

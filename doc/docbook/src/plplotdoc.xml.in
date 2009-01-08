@@ -169,6 +169,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plprec '<link linkend="plprec"><function>plprec</function></link>'>
 <!ENTITY plpsty '<link linkend="plpsty"><function>plpsty</function></link>'>
 <!ENTITY plptex '<link linkend="plptex"><function>plptex</function></link>'>
+<!ENTITY plrandd '<link linkend="plrandd"><function>plrandd</function></link>'>
 <!ENTITY plreplot '<link linkend="plreplot"><function>plreplot</function></link>'>
 <!ENTITY plResetOpts '<link linkend="plResetOpts"><function>plResetOpts</function></link>'>
 <!ENTITY plrgbhls '<link linkend="plrgbhls"><function>plrgbhls</function></link>'>
@@ -189,6 +190,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plsdiori '<link linkend="plsdiori"><function>plsdiori</function></link>'>
 <!ENTITY plsdiplt '<link linkend="plsdiplt"><function>plsdiplt</function></link>'>
 <!ENTITY plsdiplz '<link linkend="plsdiplz"><function>plsdiplz</function></link>'>
+<!ENTITY plseed '<link linkend="plseed"><function>plseed</function></link>'>
 <!ENTITY plsesc '<link linkend="plsesc"><function>plsesc</function></link>'>
 <!ENTITY plsescfortran95 '<link linkend="plsescfortran95"><function>plsescfortran95</function></link>'>
 <!ENTITY plsescfortran77 '<link linkend="plsescfortran77"><function>plsescfortran77</function></link>'>
