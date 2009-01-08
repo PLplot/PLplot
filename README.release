@@ -56,11 +56,12 @@ examples
 The standard test suite for PLplot now carries out a comparison of the
 stdout output (especially important for example 31 which tests most of our
 set and get functions) and PostScript output for different languages as a
-check.  Thanks to the addition of example 31 and other recent extensions of
-the other examples we now have rigourous testing in place for almost the
-entirety of our common API.  This extensive testing framework has already
-helped us track down a number of bugs, and it should make it much easier for
-us to maintain high quality for our ongoing PLplot releases.
+check.  Thanks to the addition of example 31, the inclusion of examples 14
+and 17 in the test suite and other recent extensions of the other 
+examples we now have rigourous testing in place for almost the entirety 
+of our common API.  This extensive testing framework has already helped 
+us track down a number of bugs, and it should make it much easier for us 
+to maintain high quality for our ongoing PLplot releases.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -316,11 +317,12 @@ set of language bindings and device drivers.
 The standard test suite for PLplot now carries out a comparison of the
 stdout output (especially important for example 31 which tests most of our
 set and get functions) and PostScript output for different languages as a
-check.  Thanks to the addition of example 31 and other recent extensions of
-the other examples we now have rigourous testing in place for almost the
-entirety of our common API.  This extensive testing framework has already
-helped us track down a number of bugs, and it should make it much easier for
-us to maintain high quality for our ongoing PLplot releases.
+check.  Thanks to the addition of example 31, the inclusion of examples 14
+and 17 in the test suite and other recent extensions of the other 
+examples we now have rigourous testing in place for almost the entirety 
+of our common API.  This extensive testing framework has already helped 
+us track down a number of bugs, and it should make it much easier for us 
+to maintain high quality for our ongoing PLplot releases.
 
 2.20 Rename test subdirectory to plplot_test
 
