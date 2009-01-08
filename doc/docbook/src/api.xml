@@ -10487,6 +10487,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </para>
 	</listitem>
       </varlistentry>
+    </variablelist>
+
     <para>
       Redacted form: <function>plseed(seed)</function>
     </para>
