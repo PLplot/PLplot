@@ -81,6 +81,8 @@ function ix21c
 
   plinit;
 
+  plseed(5489);
+
   [x, y, z] = create_data(pts, xm, xM, ym, yM, randn, rosen); ## the sampled data
   zmax = max(z);
   zmin = min(z);
