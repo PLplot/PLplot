@@ -176,6 +176,11 @@ class PLDLLIMPEXP_CXX plstream {
 
 // Set color, map 1.  Argument is a float between 0. and 1.
 
+    void col1( PLFLT c );
+
+// Previous function was inadvertently named plcol in old versions of p
+// lplot - this is maintained for backwards compatibility, but is best 
+// avoided in new code.
     void col( PLFLT c );
 
 // Draws a contour plot from data in f(nx,ny).  Is just a front-end to

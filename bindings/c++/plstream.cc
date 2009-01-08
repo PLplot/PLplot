@@ -441,9 +441,19 @@ void plstream::col( PLcolor c )
 
 // Set color, map 1.  Argument is a float between 0. and 1.
 
+void plstream::col1( PLFLT c )
+{
+    set_stream();
+
+    plcol1( c );
+}
+
+// Old (incorrect) version retained only for compatibility
 void plstream::col( PLFLT c )
 {
     set_stream();
+
+    cerr << "plstream::col(PLFLT c) : function deprecated. Use plstream::col1(PLFLT c) instead" << endl;
 
     plcol1( c );
 }
