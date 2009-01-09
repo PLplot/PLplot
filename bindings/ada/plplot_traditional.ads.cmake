@@ -856,14 +856,13 @@ package PLplot_Traditional is
     procedure plgcompression(Compression_Level : out Integer);
 
 
-    -- Get the current device (keyword) name
-    procedure plgdev(Device_Name : out String);
-
-
     -- Make a function version of plgdev so that the caller can use it whereever
     -- a String type is expected without fooling around with conversions between
     -- Ada string types. See Example 14 for useage.
+    -- This _replaces_ the procedure version.
     -- THIS IS NOT IN THE C API.
+
+    -- Get the current device (keyword) name
     function plgdev return String;
 
 
@@ -902,11 +901,13 @@ package PLplot_Traditional is
         Maximum_File_Size : out Integer);
 
 
+    -- Make a function version of plgfnam so that the caller can use it whereever
+    -- a String type is expected without fooling around with conversions between
+    -- Ada string types. See Example 14 for useage.
+    -- This _replaces_ the procedure version.
+    -- THIS IS NOT IN THE C API.
+
     -- Get the (current) output file name.
-    procedure plgfnam(Output_File_Name : out String);
-
-
-    -- Function version of the procedure plgfnam; not part of the PLplot API.
     function plgfnam return String;
 
     -- Get the (current) run level.
@@ -943,10 +944,13 @@ package PLplot_Traditional is
     procedure plgstrm(Stream_Number : out Integer);
 
 
-    -- Get the current library version number
-    procedure plgver(Version_Number : out String);
+    -- Make a function version of plgver so that the caller can use it whereever
+    -- a String type is expected without fooling around with conversions between
+    -- Ada string types. See Example 14 for useage.
+    -- This _replaces_ the procedure version.
+    -- THIS IS NOT IN THE C API.
 
-    -- Function version of the procedure plgver; not part of the PLplot API.
+    -- Get the current library version number
     function plgver return String;
 
     -- Get viewport boundaries in normalized device coordinates

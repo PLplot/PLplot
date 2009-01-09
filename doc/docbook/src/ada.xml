@@ -278,7 +278,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </sect2>
     <sect2 id="ada_one_offs">
       <title>One-offs</title>
-      <para>	        Convenient string handling for Get_Device_Name (<literal>plgdev</literal> in the traditional binding); a function version is provided that simplifies the string handling associated with this feature.</para>
+      <para>	        To provide convenient string handling in a fashion that is familiar to Ada programmers, function versions which return a <literal>String</literal> type are provided of <literal>Get_Device_Name</literal>, <literal>Get_Version_Number</literal>, and <literal>Get_Output_File_Name</literal> (<literal>plgdev</literal>, <literal>plgver</literal>, and <literal>plgfnam</literal> in the traditional binding). These functions replace the procedure-style subprograms that are described in the C API documentation.</para>
       <para>	        Overloaded <literal>Set_Line_Style</literal> (<literal>plstyl</literal> in the traditional binding) with a version that takes a single argument, <literal>Default_Continuous_Line</literal>. This replaces the awkward situation of calling the normal versions of these procedures with unused arguments simply to set the line style to the default, continuous, line.</para>
       <para>	        The contour plotter <literal>Contour_Plot_Irregular_Data</literal> (<literal>plfcont</literal> in the traditional binding) is provided for making contour plots from irregularly spaced data. This feature is not documented in the PLplot API documentation. </para>
     </sect2>

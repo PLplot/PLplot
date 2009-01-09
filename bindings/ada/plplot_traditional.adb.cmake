@@ -1461,24 +1461,18 @@ package body PLplot_Traditional is
     end plgcompression;
 
 
-    -- Get the current device (keyword) name
-    procedure plgdev(Device_Name : out String) is
-        PL_Device_Name : char_array(0..79);
-    begin
-        PLplot_Thin.plgdev(PL_Device_Name);
-        Device_Name := To_Ada(PL_Device_Name, False);
-    end plgdev;
-    
-    
     -- Make a function version of plgdev so that the caller can use it whereever
     -- a String type is expected without fooling around with conversions between
     -- Ada string types. See Example 14 for useage.
+    -- This _replaces_ the procedure version.
     -- THIS IS NOT IN THE C API.
+
+    -- Get the current device (keyword) name
     function plgdev return String is
         PL_Device_Name : char_array(0..79);
     begin
         PLplot_Thin.plgdev(PL_Device_Name);
-        return To_Ada(PL_Device_Name, True);
+        return To_Ada(PL_Device_Name, False);
     end plgdev;
 
 
@@ -1543,21 +1537,18 @@ package body PLplot_Traditional is
     end plgfam;
 
 
+    -- Make a function version of plgfnam so that the caller can use it whereever
+    -- a String type is expected without fooling around with conversions between
+    -- Ada string types. See Example 14 for useage.
+    -- This _replaces_ the procedure version.
+    -- THIS IS NOT IN THE C API.
+
     -- Get the (current) output file name.
-    procedure plgfnam(Output_File_Name : out String) is
-        PL_Output_File_Name : char_array(0..79);
-    begin
-        PLplot_Thin.plgfnam(PL_Output_File_Name);
-        Output_File_Name := To_Ada(PL_Output_File_Name, False);
-    end plgfnam;
-
-
-    -- Function version of the procedure plgfnam; not part of the PLplot API.
     function plgfnam return String is
         PL_Output_File_Name : char_array(0..79);
     begin
         PLplot_Thin.plgfnam(PL_Output_File_Name);
-        return To_Ada(PL_Output_File_Name, True);
+        return To_Ada(PL_Output_File_Name, False);
     end plgfnam;
 
 
@@ -1617,21 +1608,18 @@ package body PLplot_Traditional is
     end plgstrm;
 
 
+    -- Make a function version of plgver so that the caller can use it whereever
+    -- a String type is expected without fooling around with conversions between
+    -- Ada string types. See Example 14 for useage.
+    -- This _replaces_ the procedure version.
+    -- THIS IS NOT IN THE C API.
+
     -- Get the current library version number
-    procedure plgver(Version_Number : out String) is
-        PL_Version_Number : char_array(0..79);
-    begin
-        PLplot_Thin.plgver(PL_Version_Number);
-        Version_Number := To_Ada(PL_Version_Number, False);
-    end plgver;
-
-
-    -- Function version of the procedure plgver; not part of the PLplot API.
     function plgver return String is
         PL_Version_Number : char_array(0..79);
     begin
         PLplot_Thin.plgver(PL_Version_Number);
-        return To_Ada(PL_Version_Number, True);
+        return To_Ada(PL_Version_Number, False);
     end plgver;
 
 

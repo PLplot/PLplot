@@ -25,6 +25,7 @@ with
     Ada.Long_Float_Text_IO,
     Ada.Strings,
     Ada.Strings.Fixed,
+    Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
@@ -34,6 +35,7 @@ use
     Ada.Long_Float_Text_IO,
     Ada.Strings,
     Ada.Strings.Fixed,
+    Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
@@ -64,7 +66,7 @@ procedure xthick31a is
     b1 : Integer_0_255_Array(0 .. 1) := (0,   0);
     a1 : Real_Vector(0 .. 1) := (1.0, 1.0);
     status : Integer;
-    fnam : String(1 .. 80);
+    fnam : Unbounded_String;
     
     -- Convert a boolean to integers 0 or 1.
     function Boolean_To_Integer(B : Boolean) return Integer is
@@ -193,8 +195,8 @@ begin
     -- Retrieve and print the name of the output file (if any).
     -- This goes to stderr not stdout since it will vary between tests and 
     -- we want stdout to be identical for compare test.
-    Get_Output_File_Name(fnam);
-    if fnam(1) = Character'Val(0) then
+    fnam := To_Unbounded_String(Get_Output_File_Name);
+    if fnam = Null_Unbounded_String then
         Put_Line("No output file name is set");
     else
         Put_Line("Output file name read");
