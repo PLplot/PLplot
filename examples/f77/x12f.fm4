@@ -24,8 +24,17 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       character*20 string
       integer i
       real*8 y0(10)
+      real*8 pos(5), rcoord(5), gcoord(5), bcoord(5)
+      integer rev(5)
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
+
+      data pos    /0.0d0, 0.25d0, 0.5d0, 0.75d0, 1.0d0/
+      data rcoord /0.0d0, 0.25d0, 0.5d0, 1.0d0, 1.0d0/
+      data gcoord /1.0d0, 0.5d0, 0.5d0, 0.5d0, 1.0d0/
+      data bcoord /1.0d0, 1.0d0, 0.5d0, 0.25d0, 0.0d0/
+      data rev /0, 0, 0, 0, 0/
+
 C      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
@@ -50,8 +59,11 @@ C      Process command-line arguments
       y0(9) = 12
       y0(10) = 3
 
+      call plscmap1l(1,5,pos,rcoord,gcoord,bcoord,rev)
+
       do i = 0, 9
-        call plcol0(i + 1)
+C        call plcol0(i + 1)
+        call plcol1(dble(i)/9.0d0)
         call plpsty(0)
         call plfbox( dble (1980.d0+i), y0(i+1) )
         write (string, '(i8)')int(y0(i+1))

@@ -25,6 +25,13 @@
       character*20 string
       integer i
       real(kind=plflt) y0(10)
+      real(kind=plflt) pos(5), red(5), green(5), blue(5)
+
+      data pos   /0.0_plflt, 0.25_plflt, 0.5_plflt, 0.75_plflt, 1.0_plflt/
+      data red   /0.0_plflt, 0.25_plflt, 0.5_plflt, 1.0_plflt, 1.0_plflt/
+      data green /1.0_plflt, 0.5_plflt, 0.5_plflt, 0.5_plflt, 1.0_plflt/
+      data blue  /1.0_plflt, 1.0_plflt, 0.5_plflt, 0.25_plflt, 0.0_plflt/
+
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
@@ -48,9 +55,12 @@
       y0(8) = 8
       y0(9) = 12
       y0(10) = 3
+      
+      call plscmap1l(.true.,pos,red,green,blue)
 
       do i = 0, 9
-        call plcol0(i + 1)
+!        call plcol0(i + 1)
+        call plcol1(dble(i)/9.0_plflt)
         call plpsty(0)
         call plfbox( 1980._plflt+i, y0(i+1) )
         write (string, '(i8)')int(y0(i+1))

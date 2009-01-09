@@ -30,6 +30,11 @@ from plplot_py_demos import *
 
 def main():
 
+    pos = array ([0.0, 0.25, 0.5, 0.75, 1.0])
+    red = array ([0.0, 0.25, 0.5, 1.0, 1.0])
+    green = array ([1.0, 0.5, 0.5, 0.5, 1.0])
+    blue = array ([1.0, 1.0, 0.5, 0.25, 0.0])
+
     pladv(0)
     plvsta()
     plwind(1980.0, 1990.0, 0.0, 35.0)
@@ -39,8 +44,11 @@ def main():
 
     y0 = [5, 15, 12, 24, 28, 30, 20, 8, 12, 3]
 
+    plscmap1l(1, pos, red, green, blue)
+
     for i in range(10):
-	plcol0(i + 1)
+	# plcol0(i + 1)
+        plcol1(i / 9.0)
 	plpsty(0)
 	fbox( (1980. + i), y0[i] )
 	string = `y0[i]`

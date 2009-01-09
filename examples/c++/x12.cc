@@ -42,10 +42,16 @@ private:
 
   static const PLFLT y0[];
 
+  static PLFLT pos[], red[], green[], blue[];
 
 };
 
 const PLFLT x12::y0[10] = {5., 15., 12., 24., 28., 30., 20., 8., 12., 3.};
+
+PLFLT x12::pos[] = {0.0, 0.25, 0.5, 0.75, 1.0};
+PLFLT x12::red[] = {0.0, 0.25, 0.5, 1.0, 1.0};
+PLFLT x12::green[] = {1.0, 0.5, 0.5, 0.5, 1.0};
+PLFLT x12::blue[] = {1.0, 1.0, 0.5, 0.25, 0.0};
 
 x12::x12( int argc, const char **argv ) {
 
@@ -71,9 +77,12 @@ x12::x12( int argc, const char **argv ) {
   pls->box("bc", 1.0, 0, "bcnv", 10.0, 0);
   pls->col0(2);
   pls->lab("Year", "Widget Sales (millions)", "#frPLplot Example 12");
+
+  pls->scmap1l(true,5,pos,red,green,blue,NULL);
+
   for (i = 0; i < 10; i++) {
-    pls->col0(i + 1);
-    //             pls->col1((PLFLT) ((i + 1)/10.0));
+    //pls->col0(i + 1);
+    pls->col1(i/9.0);
     pls->psty(0);
     plfbox((1980. + i), y0[i]);
     sprintf(string, "%.0f", y0[i]);

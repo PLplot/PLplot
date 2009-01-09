@@ -18,6 +18,11 @@ let plfbox x0 y0 =
  * unavailable, pattern fill is used instead (automatic).
 \*--------------------------------------------------------------------------*)
 
+let pos = [|0.0; 0.25; 0.5; 0.75; 1.0|]
+let red = [|0.0; 0.25; 0.5; 1.00; 1.0|]
+let green = [|1.0; 0.50; 0.5; 0.50; 1.0|]
+let blue = [|1.0; 1.0; 0.5; 0.25; 0.0|]
+
 let () =
   (* Parse and process command line arguments *)
   ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
@@ -34,8 +39,11 @@ let () =
 
   let y0 = [|5.0; 15.0; 12.0; 24.0; 28.0; 30.0; 20.0; 8.0; 12.0; 3.0|] in
 
+  plscmap1l true pos red green blue None;
+
   for i = 0 to 9 do
-    plcol0 (i + 1);
+    (* plcol0 (i + 1); *)
+    plcol1(float_of_int i /. 9.0);
     plpsty 0;
     plfbox (1980.0 +. float_of_int i) y0.(i);
     let text = Printf.sprintf "%.0f" y0.(i) in

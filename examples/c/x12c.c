@@ -22,6 +22,11 @@ main(int argc, const char *argv[])
     char string[20];
     PLFLT y0[10];
 
+    static PLFLT pos[] = {0.0, 0.25, 0.5, 0.75, 1.0};
+    static PLFLT red[] = {0.0, 0.25, 0.5, 1.0, 1.0};
+    static PLFLT green[] = {1.0, 0.5, 0.5, 0.5, 1.0};
+    static PLFLT blue[] = {1.0, 1.0, 0.5, 0.25, 0.0};
+
 /* Parse and process command line arguments */
 
     (void) plparseopts(&argc, argv, PL_PARSE_FULL);
@@ -48,11 +53,11 @@ main(int argc, const char *argv[])
     y0[8] = 12;
     y0[9] = 3;
 
+    plscmap1l(1,5,pos,red,green,blue,NULL);
+
     for (i = 0; i < 10; i++) {
-	plcol0(i + 1);
-    /*
-	plcol1((PLFLT) ((i + 1)/10.0));
-	*/
+	/*plcol0(i + 1);*/
+	plcol1(i/9.0);
 	plpsty(0);
 	plfbox((1980. + i), y0[i]);
 	sprintf(string, "%.0f", y0[i]);

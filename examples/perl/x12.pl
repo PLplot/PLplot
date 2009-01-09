@@ -27,6 +27,11 @@
 use PDL;
 use PDL::Graphics::PLplot;
 
+my $pos = double (0.0, 0.25, 0.5, 0.75, 1.0);
+my $red = double (0.0, 0.25, 0.5, 1.0, 1.0);
+my $green = double (1.0, 0.5, 0.5, 0.5, 1.0);
+my $blue = double (1.0, 1.0, 0.5, 0.25, 0.0);
+
 # Parse and process command line arguments
 
 plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
@@ -45,8 +50,11 @@ pllab ("Year", "Widget Sales (millions)", "#frPLplot Example 12");
 
 my $y0 = pdl [5, 15, 12, 24, 28, 30, 20, 8, 12, 3];
 
+plscmap1l(1, $pos, $red, $green, $blue, pdl []);
+
 for (my $i = 0; $i < 10; $i++) {
-  plcol0 ($i + 1);
+  # plcol0 ($i + 1);
+  plcol1 ($i/9.0);
   plpsty (0);
   myplfbox ((1980. + $i), $y0->index ($i));
   my $string = sprintf ("%.0f", $y0->index ($i));

@@ -36,6 +36,12 @@ import java.text.*;
 class x12 {
 
     static double y0[] = {5., 15., 12., 24., 28., 30., 20., 8., 12., 3.};
+
+    static double[] pos = {0.0, 0.25, 0.5, 0.75, 1.0};
+    static double[] red = {0.0, 0.25, 0.5, 1.0, 1.0};
+    static double[] green = {1.0, 0.5, 0.5, 0.5, 1.0};
+    static double[] blue = {1.0, 1.0, 0.5, 0.25, 0.0};
+
    
     PLStream pls = new PLStream();
    
@@ -62,9 +68,12 @@ class x12 {
         pls.box("bc", 1.0, 0, "bcnv", 10.0, 0);
         pls.col0(2);
         pls.lab("Year", "Widget Sales (millions)", "#frPLplot Example 12");
+
+	pls.scmap1l(true,pos,red,green,blue);
+	
         for (i = 0; i < 10; i++) {
-            pls.col0(i + 1);
-//             pls.col1((double) ((i + 1)/10.0));
+//            pls.col0(i + 1);
+	    pls.col1((double) i/9.0);
             pls.psty(0);
             plfbox((1980. + i), y0[i]);
 //	   sprintf(string, "%.0f", y0[i]);

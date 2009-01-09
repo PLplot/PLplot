@@ -9,6 +9,12 @@ proc x12 {{w loopback}} {
 
     matrix y0 f 10 = {5., 15., 12., 24., 28., 30., 20., 8., 12., 3.}
 
+    matrix pos f 5 = {0.0, 0.25, 0.5, 0.75, 1.0}
+    matrix red f 5 = {0.0, 0.25, 0.5, 1.0, 1.0}
+    matrix green f 5 = {1.0, 0.5, 0.5, 0.5, 1.0}
+    matrix blue f 5 = {1.0, 1.0, 0.5, 0.25, 0.0}
+    matrix rev i 5 = {0, 0, 0, 0, 0}
+
     $w cmd pladv 0
     $w cmd plvsta
     $w cmd plwind 1980.0 1990.0 0.0 35.0
@@ -16,10 +22,12 @@ proc x12 {{w loopback}} {
     $w cmd plcol0 2
     $w cmd pllab "Year" "Widget Sales (millions)" "#frPLplot Example 12"
 
-    for {set i 0} {$i < 10} {incr i} {
-	$w cmd plcol0 [expr $i+1]
+    $w cmd plscmap1l 1 5 pos red green blue rev
 
-#	$w cmd plcol1 [expr ($i + 1.)/10.0 ]
+    for {set i 0} {$i < 10} {incr i} {
+#	$w cmd plcol0 [expr $i+1]
+
+	$w cmd plcol1 [expr ($i / 9.0) ]
 
 	$w cmd plpsty 0
 
