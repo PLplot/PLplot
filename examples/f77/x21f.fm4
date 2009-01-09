@@ -262,7 +262,7 @@ c
 
       subroutine cmap1_init
       implicit none
-      real*8 i(2), h(2), l(2), s(2)
+      real*8 i(2), h(2), l(2), s(2), rev(2)
       
       i(1) = 0.d0
       i(2) = 1.d0
@@ -276,8 +276,11 @@ c
       s(1) = 0.8d0
       s(2) = 0.8d0
 
+      rev(1) = 0
+      rev(2) = 0
+
       call plscmap1n(256)
-      call plscmap1l(0, 2, i, h, l, s, 0)
+      call plscmap1l(0, 2, i, h, l, s, rev)
       end subroutine
 
 

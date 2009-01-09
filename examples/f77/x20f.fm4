@@ -560,6 +560,7 @@ C     Set gray colormap
       implicit none
       integer num_col
       real*8 r(2), g(2), b(2), pos(2)
+      integer rev(2)
 
       r(1) = 0.0
       g(1) = 0.0
@@ -570,9 +571,12 @@ C     Set gray colormap
 
       pos(1) = 0.0
       pos(2) = 1.0
+    
+      rev(1) = 0
+      rev(2) = 0
 
       call plscmap1n(num_col)
-      call plscmap1l(1, 2, pos, r, g, b, 0)
+      call plscmap1l(1, 2, pos, r, g, b, rev)
 
       end
 
