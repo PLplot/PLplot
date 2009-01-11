@@ -104,6 +104,7 @@ NEWS
 PROBLEMS
 README
 README.release
+README.testing
 )
 install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
 
