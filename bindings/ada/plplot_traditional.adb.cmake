@@ -1472,7 +1472,7 @@ package body PLplot_Traditional is
         PL_Device_Name : char_array(0..79);
     begin
         PLplot_Thin.plgdev(PL_Device_Name);
-        return To_Ada(PL_Device_Name, False);
+        return To_Ada(PL_Device_Name, True);
     end plgdev;
 
 
@@ -1548,7 +1548,7 @@ package body PLplot_Traditional is
         PL_Output_File_Name : char_array(0..79);
     begin
         PLplot_Thin.plgfnam(PL_Output_File_Name);
-        return To_Ada(PL_Output_File_Name, False);
+        return To_Ada(PL_Output_File_Name, True);
     end plgfnam;
 
 
@@ -1619,7 +1619,7 @@ package body PLplot_Traditional is
         PL_Version_Number : char_array(0..79);
     begin
         PLplot_Thin.plgver(PL_Version_Number);
-        return To_Ada(PL_Version_Number, False);
+        return To_Ada(PL_Version_Number, True);
     end plgver;
 
 

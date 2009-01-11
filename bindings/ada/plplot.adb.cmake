@@ -1509,7 +1509,7 @@ package body PLplot is
         PL_Device_Name : char_array(0..79);
     begin
         plgdev(PL_Device_Name);
-        return To_Ada(PL_Device_Name, False);
+        return To_Ada(PL_Device_Name, True);
     end Get_Device_Name;
 
 
@@ -1592,7 +1592,7 @@ package body PLplot is
         Output_File_Name : char_array(0..79);
     begin
         plgfnam(Output_File_Name);
-        return To_Ada(Output_File_Name, False);
+        return To_Ada(Output_File_Name, True);
     end Get_Output_File_Name;
 
 
@@ -1670,7 +1670,7 @@ package body PLplot is
         PL_Version_Number : char_array(0..79);
     begin
         plgver(PL_Version_Number);
-        return To_Ada(PL_Version_Number, False);
+        return To_Ada(PL_Version_Number, True);
     end Get_Version_Number;
 
 
