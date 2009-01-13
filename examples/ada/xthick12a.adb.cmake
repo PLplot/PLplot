@@ -47,12 +47,11 @@ use
 
 procedure xthick12a is
     y0 : Real_Vector (0 .. 9);
-
     pos : Real_Vector (0 .. 4) := (0.0, 0.25, 0.5, 0.75, 1.0);
-    r : Real_Vector (0 .. 4) := (0.0, 0.25, 0.5, 1.0, 1.0);
-    g : Real_Vector (0 .. 4) := (1.0, 0.5, 0.5, 0.5, 1.0);
-    b : Real_Vector (0 .. 4) := (1.0, 1.0, 0.5, 0.25, 0.0);
-    A_Boolean :Boolean_Array_1D(0 .. 4) := (False, False, False, False, False);
+    r   : Real_Vector (0 .. 4) := (0.0, 0.25, 0.5, 1.0,  1.0);
+    g   : Real_Vector (0 .. 4) := (1.0, 0.5,  0.5, 0.5,  1.0);
+    b   : Real_Vector (0 .. 4) := (1.0, 1.0,  0.5, 0.25, 0.0);
+    Reverse_Flag : Boolean_Array_1D (0 .. 4) := (False, False, False, False, False);
     
     procedure plfbox (x0, y0 : Long_Float) is
         x, y : Real_Vector (0 ..3);
@@ -100,11 +99,10 @@ procedure xthick12a is
     y0(8) := 12.0;
     y0(9) :=  3.0;
 
-    Set_Color_Map_1_Piecewise(RGB, pos, r, g, b, A_Boolean);
+    Set_Color_Map_1_Piecewise(RGB, pos, r, g, b, Reverse_Flag);
     
     for i in y0'range loop
-        --Set_Pen_Color(i + 1);
-	Set_Color_Map_1(Long_Float(i)/9.0);
+        Set_Color_Map_1(Long_Float(i)/9.0);
         Select_Fill_Pattern(0);
         plfbox((1980.0 + Long_Float(i)), y0(i));
         Write_Text_World(1980.0 + Long_Float(i) + 0.5, y0(i) + 1.0, 1.0, 0.0, 0.5, Trim(Integer'image(Integer(y0(i))), Left));

@@ -291,13 +291,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>	        This is the only place in the PLplot bindings where a C subprogram calls an Ada subprogram while passing an array. If the array is unconstrained, there is no guarantee that it will work because C has no way of telling Ada what offset to use for the beginning of the array. But passing a constrained array is acceptable with the downside that the array size must be fixed within the bindings as being large enough to handle any situation; currently, it is sized as <literal>0 .. 2000</literal>. See Example 19 for how this is handled in by the user program. The constrained array is called <literal>Map_Form_Constrained_Array</literal>.</para>
 
   </sect1>
-  <sect1 id="ada_known_issues">
-    <title>Known Issues</title>
+  <sect1 id="ada_known_variances">
+    <title>Known Variances</title>
     <!-- 200:'Normal' --><para><emphasis role="bold">	9.1	Stripchart labelling</emphasis></para>
     <para>	        In Example 17, all of the stripchart labels are the same regardless of the fact that the calling program  sets them to be different. This is likely to affect user programs in the same manner.</para>
     <para><emphasis role="bold">	9.2	Documentation</emphasis></para>
     <para>	        In numerous places in the documentation, a feature is listed or described as "C only." Many of these features are actually available in Ada. For example, in <literal>Contour_Plot</literal> (<literal>plcont</literal> in the traditional binding), the transformation from array indices to world coordinates is mentioned as "C only" but is actually available in Ada.</para>
-
+    <para><emphasis role="bold">	9.3	API</emphasis></para>
+    <para>	        The C documentation for <literal>plscmap1l</literal> (<literal>Set_Color_Map_1_Piecewise</literal> in the thick binding) states that if the last argument is a null pointer, the behavior is as though a proper-length array of all <literal>False</literal> values was passed. In Ada, the last parameter should always be an array of Boolean of the same length as the other array arguments.</para>
   </sect1>
   <sect1 id="ada_compilation_notes">
     <title>Compilation notes</title>

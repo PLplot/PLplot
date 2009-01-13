@@ -56,7 +56,7 @@ procedure x11a is
     clevel : Real_Vector(0 .. LEVELS - 1);
     zmin, zmax, step : Long_Float;
     
-    A_Boolean : Boolean_Array_1D(1 .. 1);
+    Reverse_Flag : Boolean_Array_1D(0 .. 1) := (False, False);
 
     procedure cmap1_init is
         i, h, l, s : Real_Vector(0 .. 1);
@@ -74,7 +74,7 @@ procedure x11a is
         s(1) := 0.8;
 
         plscmap1n(256);
-        plscmap1l(HLS, i, h, l, s, A_Boolean);
+        plscmap1l(HLS, i, h, l, s, Reverse_Flag);
     end cmap1_init;
 
 
@@ -87,8 +87,6 @@ begin
 
     -- Initialize plplot
     plinit;
-
-    A_Boolean(1) := False;
     
     for i in x'range loop
         x(i) := 3.0 * Long_Float(i - XPTS / 2) / Long_Float(XPTS / 2);

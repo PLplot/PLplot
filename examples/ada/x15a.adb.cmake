@@ -53,10 +53,8 @@ procedure x15a is
     ----------------------------------------------------------------------------
     procedure cmap1_init2 is
         i, h, l, s : Real_Vector(0 .. 3);
-        A_Boolean : Boolean_Array_1D(1 .. 1);
+        Reverse_Flag : Boolean_Array_1D(0 .. 3) := (False, False, False, False);
     begin
-        A_Boolean(1) := False; -- Don't reverse direction of control points
-        
         -- Set control points.
         i(0) := 0.0;		-- left boundary
         i(1) := 0.45;       -- just before center
@@ -81,7 +79,7 @@ procedure x15a is
         s(2) := 0.5;		-- center
         s(3) := 1.0;		-- high
 
-        plscmap1l(HLS, i, h, l, s, A_Boolean);
+        plscmap1l(HLS, i, h, l, s, Reverse_Flag);
     end cmap1_init2;
 
     ----------------------------------------------------------------------------
