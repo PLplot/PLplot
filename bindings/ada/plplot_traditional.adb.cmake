@@ -2151,6 +2151,8 @@ package body PLplot_Traditional is
         PL_Reverse_Hue : PL_Bool_Array (Reverse_Hue'range);
         
     begin
+        -- fix this Should check that arrays H_Or_R, S_Or_B, S_Or_B and 
+        -- Reverse_Hue should be the same length.
         if Color_Model = RGB then
             PL_Color_Model := PLtrue;
         else
