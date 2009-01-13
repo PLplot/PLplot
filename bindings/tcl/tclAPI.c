@@ -2822,18 +2822,69 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
  * x[], y[] are the coordinates to be plotted.
 \*--------------------------------------------------------------------------*/
 
+static char *transform_name;   /* Name of the procedure that transforms the
+                                  coordinates */
+static Tcl_Interp *tcl_interp; /* Pointer to the current interp */
+static int return_code;        /* Saved return code */
+
 void
 mapform(PLINT n, PLFLT *x, PLFLT *y)
 {
     int i;
     double xp, yp, radius;
-    for (i = 0; i < n; i++) {
-	radius = 90.0 - y[i];
-	xp = radius * cos(x[i] * PI / 180.0);
-	yp = radius * sin(x[i] * PI / 180.0);
-	x[i] = xp;
-	y[i] = yp;
+    char *cmd;
+    tclMatrix *xPtr, *yPtr;
+
+    cmd = (char *) malloc( strlen(transform_name) + 40);
+
+    /* Build the (new) matrix commands and fill the matrices */
+    sprintf(cmd, "matrix %cx f %d", (char)1, n);
+    if (Tcl_Eval(tcl_interp, cmd) != TCL_OK) {
+        return_code = TCL_ERROR;
+        free(cmd);
+        return;
     }
+    sprintf(cmd, "matrix %cy f %d", (char)1, n);
+    if (Tcl_Eval(tcl_interp, cmd) != TCL_OK) {
+        return_code = TCL_ERROR;
+        free(cmd);
+        return;
+    }
+
+    sprintf(cmd, "%cx", (char)1);
+    xPtr = Tcl_GetMatrixPtr(tcl_interp, cmd);
+    sprintf(cmd, "%cy", (char)1);
+    yPtr = Tcl_GetMatrixPtr(tcl_interp, cmd);
+
+    if (xPtr == NULL || yPtr == NULL ) return; /* Impossible, but still */
+
+    for (i = 0; i < n; i++) {
+       xPtr->fdata[i] = x[i];
+       yPtr->fdata[i] = y[i];
+    }
+
+    /* Now call the Tcl procedure to do the work */
+    sprintf(cmd, "%s %d %cx %cy", transform_name, n, (char)1, (char)1);
+    return_code = Tcl_Eval(tcl_interp, cmd);
+    if (return_code != TCL_OK) {
+        free(cmd);
+        return;
+    }
+
+    /* Don't forget to copy the results back into the original arrays
+    */
+    for (i = 0; i < n; i++) {
+       x[i] = xPtr->fdata[i] ;
+       y[i] = yPtr->fdata[i] ;
+    }
+
+    /* Clean up, otherwise the next call will fail - [matrix] does not
+       overwrite existing commands
+    */
+    sprintf(cmd, "rename %cx {}; rename %cy {}", (char)1, (char)1);
+    return_code = Tcl_Eval(tcl_interp, cmd);
+
+    free(cmd);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2852,27 +2903,48 @@ plmapCmd( ClientData clientData, Tcl_Interp *interp,
 {
     PLFLT minlong, maxlong, minlat, maxlat;
     PLINT transform;
+    PLINT idxname;
+    char  cmd[40];
 
-    if (argc < 7 ) {
+    return_code = TCL_OK;
+    if (argc < 6 || argc > 7) {
 	Tcl_AppendResult(interp, "bogus syntax for plmap, see doc.",
 			 (char *) NULL );
 	return TCL_ERROR;
     }
 
-    transform = atoi(argv[2]);
-    minlong = atof( argv[3] );
-    maxlong = atof( argv[4] );
-    minlat = atof( argv[5] );
-    maxlat = atof( argv[6] );
-
-    if (transform) {
-	plmap(&mapform, argv[1], minlong, maxlong, minlat, maxlat);
+    if ( argc == 6 ) {
+        transform = 0;
+        idxname = 1;
+        transform_name = NULL;
+        minlong = atof( argv[2] );
+        maxlong = atof( argv[3] );
+        minlat = atof( argv[4] );
+        maxlat = atof( argv[5] );
     } else {
-	plmap(NULL, argv[1], minlong, maxlong, minlat, maxlat);
+        transform = 1;
+        idxname = 2;
+        minlong = atof( argv[3] );
+        maxlong = atof( argv[4] );
+        minlat = atof( argv[5] );
+        maxlat = atof( argv[6] );
+
+        tcl_interp = interp;
+        transform_name = argv[1];
+        if (strlen(transform_name) == 0) {
+           idxname = 1;
+        }
+    }
+
+    if (transform && idxname == 2) {
+	plmap(&mapform, argv[idxname], minlong, maxlong, minlat, maxlat);
+    } else {
+	/* No transformation given */
+	plmap(NULL, argv[idxname], minlong, maxlong, minlat, maxlat);
     }
 
     plflush();
-    return TCL_OK;
+    return return_code;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2892,19 +2964,38 @@ plmeridiansCmd( ClientData clientData, Tcl_Interp *interp,
     PLFLT dlong, dlat, minlong, maxlong, minlat, maxlat;
     PLINT transform;
 
-    if (argc < 8 ) {
-	Tcl_AppendResult(interp, "bogus syntax for plmap, see doc.",
+    return_code = TCL_OK;
+
+    if (argc < 7 || argc > 8) {
+	Tcl_AppendResult(interp, "bogus syntax for plmeridians, see doc.",
 			 (char *) NULL );
 	return TCL_ERROR;
     }
 
-    transform = atoi(argv[1]);
-    dlong = atof( argv[2] );
-    dlat = atof( argv[3] );
-    minlong = atof( argv[4] );
-    maxlong = atof( argv[5] );
-    minlat = atof( argv[6] );
-    maxlat = atof( argv[7] );
+    if ( argc == 7 ) {
+        transform = 0;
+        transform_name = NULL;
+        dlong = atof( argv[1] );
+        dlat = atof( argv[2] );
+        minlong = atof( argv[3] );
+        maxlong = atof( argv[4] );
+        minlat = atof( argv[5] );
+        maxlat = atof( argv[6] );
+    } else {
+        dlong = atof( argv[2] );
+        dlat = atof( argv[3] );
+        minlong = atof( argv[4] );
+        maxlong = atof( argv[5] );
+        minlat = atof( argv[6] );
+        maxlat = atof( argv[7] );
+
+        transform = 1;
+        tcl_interp = interp;
+        transform_name = argv[1];
+        if (strlen(transform_name) == 0) {
+           transform = 0;
+        }
+    }
 
     if (transform) {
 	plmeridians(&mapform, dlong, dlat, minlong, maxlong, minlat, maxlat);
@@ -3059,6 +3150,13 @@ two-dimensional matrix - ", argv[1], (char *) NULL);
             pidata[i][j] = zvalue->fdata[j + i * ny];
         }
     }
+
+    fprintf(stderr,"nx, ny: %d %d\n", nx, ny);
+    fprintf(stderr,"xmin, xmax: %.17g %.17g\n", xmin, xmax);
+    fprintf(stderr,"ymin, ymax: %.17g %.17g\n", ymin, ymax);
+    fprintf(stderr,"zmin, zmax: %.17g %.17g\n", zmin, zmax);
+    fprintf(stderr,"Dxmin, Dxmax: %.17g %.17g\n", Dxmin, Dxmax);
+    fprintf(stderr,"Dymin, Dymax: %.17g %.17g\n", Dymin, Dymax);
 
     c_plimage(pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
          Dxmin, Dxmax, Dymin, Dymax);
