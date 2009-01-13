@@ -793,13 +793,12 @@ void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts)
       (double)pls->curcolor.g/255.0,
       (double)pls->curcolor.b/255.0,
       (double)pls->curcolor.a);
-      //(double)1.0);
   cairo_set_line_width(aStream->cairoContext, 1.0);
-  //cairo_push_group(aStream->cairoContext);
-  cairo_fill_preserve(aStream->cairoContext);
-  cairo_stroke(aStream->cairoContext);
-  //cairo_pop_group_to_source(aStream->cairoContext);
-  //cairo_paint_with_alpha(aStream->cairoContext, (double)pls->curcolor.a);  
+  if(pls->curcolor.a>0.99) {
+    cairo_fill_preserve(aStream->cairoContext);
+    cairo_stroke(aStream->cairoContext);
+  } else
+    cairo_fill(aStream->cairoContext);
 }
 
 /*---------------------------------------------------------------------
