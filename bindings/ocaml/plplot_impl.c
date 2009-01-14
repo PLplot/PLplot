@@ -449,6 +449,45 @@ value ml_plparseopts(value argv, value parse_method) {
     CAMLreturn( Val_int(result) );
 }
 
+value ml_plstripc(value xspec, value yspec, value xmin, value xmax, value xjump,
+                  value ymin, value ymax, value xlpos, value ylpos, value y_ascl,
+                  value acc, value colbox, value collab, value colline, value styline,
+                  value legline, value labx, value laby, value labtop) {
+    // Function parameters
+    CAMLparam5(xspec, yspec, xmin, xmax, xjump);
+    CAMLxparam5(ymin, ymax, xlpos, ylpos, y_ascl);
+    CAMLxparam5(acc, colbox, collab, colline, styline);
+    CAMLxparam4(legline, labx, laby, labtop);
+    // Line attribute array copies
+    int colline_copy[4];
+    int styline_copy[4];
+    const char* legend_copy[4];
+    int i;
+    for (i = 0; i < 4; i++) {
+        colline_copy[i] = Int_val(Field(colline, i));
+        styline_copy[i] = Int_val(Field(styline, i));
+        legend_copy[i] = String_val(Field(legline, i));
+    }
+    // The returned value
+    int id;
+    plstripc(&id, String_val(xspec), String_val(yspec),
+             Double_val(xmin), Double_val(xmax),
+             Double_val(xjump), Double_val(ymin), Double_val(ymax),
+             Double_val(xlpos), Double_val(ylpos), Bool_val(y_ascl),
+             Bool_val(acc), Int_val(colbox), Int_val(collab),
+             colline_copy, styline_copy, legend_copy,
+             String_val(labx), String_val(laby), String_val(labtop));
+    // Make me do something!
+    CAMLreturn(Val_int(id));
+}
+
+value ml_plstripc_byte(value* argv, int argn) {
+    return ml_plstripc(argv[0], argv[1], argv[2], argv[3], argv[4],
+                       argv[5], argv[6], argv[7], argv[8], argv[9],
+                       argv[10], argv[11], argv[12], argv[13], argv[14],
+                       argv[15], argv[16], argv[17], argv[18]);
+}
+
 /* pltr* function implementations */
 void ml_pltr0(double x, double y, double* tx, double* ty) {
     pltr0(x, y, tx, ty, NULL);

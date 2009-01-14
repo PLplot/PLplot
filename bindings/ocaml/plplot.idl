@@ -116,6 +116,13 @@ float plgchrht(void);
 #define QUOTEME(x) #x
 #define RAW_ML(x) quote(mlmli, QUOTEME(x));
 
+// plstripc function
+quote(mlmli,
+    "external plstripc : string -> string -> float -> float -> float -> float -> \
+                         float -> float -> float -> bool -> bool -> int -> int -> \
+                         int array -> int array -> string array -> string -> \
+                         string -> string -> int = \"ml_plstripc_byte\" \"ml_plstripc\"");
+
 // pltr callback functions, hand-wrapped
 quote(mlmli,
     "external pltr1 : float -> float -> float array -> float array -> float * float \
