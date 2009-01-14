@@ -152,6 +152,12 @@ else(PLD_xfig)
   set(XFIG_COMMENT "#")
 endif(PLD_xfig)
 
+if(PLD_pstex)
+  set(PSTEX x01c.pstex)
+else(PLD_pstex)
+  set(PSTEX_COMMENT "#")
+endif(PLD_pstex)
+
 if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
   set(COMPARE compare)
 else(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
