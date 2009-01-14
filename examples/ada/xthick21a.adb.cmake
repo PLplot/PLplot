@@ -85,7 +85,6 @@ procedure xthick21a is
 
     procedure cmap1_init is
         i, h, l, s : Real_Vector(0 .. 1);
-        Reverse_Flag : Boolean_Array_1D(0 .. 1) := (False, False);
     begin
         i(0) := 0.0;   -- left boundary
         i(1) := 1.0;   -- right boundary
@@ -100,7 +99,7 @@ procedure xthick21a is
         s(1) := 0.8;
 
         Set_Number_Of_Colors_In_Color_Map_1(256);
-        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Reverse_Flag);
+        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Reverse_Hue_None);
     end cmap1_init;
 
 

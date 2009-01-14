@@ -69,7 +69,6 @@ procedure x08a is
 
     procedure cmap1_init(gray : Boolean) is
         i, h, l, s : Real_Vector(0 .. 1);
-        Reverse_Hue : Boolean_Array_1D(0 .. 1) := (False, False);
     begin
         i(0) := 0.0;        -- left boundary
         i(1) := 1.0;        -- right boundary
@@ -95,7 +94,7 @@ procedure x08a is
         end if;
 
         plscmap1n(256);
-        plscmap1l(HLS, i, h, l, s, Reverse_Hue);
+        plscmap1l(HLS, i, h, l, s, Reverse_Hue_None);
 
     end cmap1_init;
 

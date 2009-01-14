@@ -56,8 +56,6 @@ procedure xthick11a is
     clevel : Real_Vector(0 .. LEVELS - 1);
     zmin, zmax, step : Long_Float;
     
-    Reverse_Flag : Boolean_Array_1D(0 .. 1) := (False, False);
-
     procedure cmap1_init is
         i, h, l, s : Real_Vector(0 .. 1);
     begin
@@ -74,7 +72,7 @@ procedure xthick11a is
         s(1) := 0.8;
 
         Set_Number_Of_Colors_In_Color_Map_1(256);
-        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Reverse_Flag);
+        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Reverse_Hue_None);
     end cmap1_init;
 
 

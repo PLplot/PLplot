@@ -52,7 +52,6 @@ procedure x30a is
     gcoord : Real_Vector(0 .. 1) := (0.0, 0.0);
     bcoord : Real_Vector(0 .. 1) := (0.0, 0.0);
     acoord : Real_Vector(0 .. 1) := (0.0, 1.0);
-    rev    : Boolean_Array_1D(0 .. 1) := (False, False);
 
     icol, r, g, b : Integer;
     a : Long_Float;
@@ -137,7 +136,7 @@ begin
     -- Create the color map with 128 colors and use plscmap1la to initialize
     -- the color values with a linear varying transparency (or alpha).
     plscmap1n(128);
-    plscmap1la(RGB, pos, rcoord, gcoord, bcoord, acoord, rev);
+    plscmap1la(RGB, pos, rcoord, gcoord, bcoord, acoord, Reverse_Hue_None);
 
     -- Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will
     -- used for the shade plot. plshades will use linear interpolation to

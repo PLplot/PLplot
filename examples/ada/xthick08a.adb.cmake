@@ -69,7 +69,6 @@ procedure xthick08a is
 
     procedure cmap1_init(gray : Boolean) is
         i, h, l, s : Real_Vector(0 .. 1);
-        Reverse_Hue : Boolean_Array_1D(0 .. 1) := (False, False);
     begin
         i(0) := 0.0;        -- left boundary
         i(1) := 1.0;        -- right boundary
@@ -95,7 +94,7 @@ procedure xthick08a is
         end if;
 
         Set_Number_Of_Colors_In_Color_Map_1(256);
-        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Reverse_Hue);
+        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Reverse_Hue_None);
 
     end cmap1_init;
 

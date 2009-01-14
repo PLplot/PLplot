@@ -576,6 +576,7 @@ package PLplot is
 
     type Color_Themes_For_Map_1_Type is (Gray, Blue_Green_Red, Red_Green_Blue, 
         Red_Cyan_Blue, Blue_Black_Red, Red_Blue_Green, Red_Yellow);
+    type Reverse_Hue_Type is (Reverse_Hue_None, Reverse_Hue_All);
 
 
     -- Quick application of pre-fabricated color schemes to color map 1.
@@ -1351,6 +1352,20 @@ package PLplot is
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Reverse_Hue    : Boolean_Array_1D);   -- False means red<->green<->blue<->red, True reverses
+    
+    
+    -- Overloaded version of Set_Color_Map_1_Piecewise which allows simplified (non-)reversal of 
+    -- the traversed hue range. This is an Ada-like way of doing what is described
+    -- in the PLplot documentation when a C user passes a null pointer as the
+    -- final argument instead of an array of booleans to indicate hue reversal.
+    procedure Set_Color_Map_1_Piecewise
+       (Color_Model    : Color_Model_Type; -- HLS or RGB
+        Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+                                              -- Note: Hue is 0.0 .. 360.0.
+        L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        Reverse_Hue    : Reverse_Hue_Type);
 
 
     -- Set color map 1 colors using a piece-wise linear relationship between
@@ -1365,6 +1380,20 @@ package PLplot is
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Reverse_Hue    : Boolean_Array_1D);   -- False means red<->green<->blue<->red, True reverses
+    
+    
+    -- Overloaded version of Set_Color_Map_1_Piecewise_And_Alpha which allows simplified (non-)reversal of 
+    -- the traversed hue range. This is an Ada-like way of doing what is described
+    -- in the PLplot documentation when a C user passes a null pointer as the
+    -- final argument instead of an array of booleans to indicate hue reversal.
+    procedure Set_Color_Map_1_Piecewise_And_Alpha
+       (Color_Model    : Color_Model_Type; -- HLS or RGB
+        Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        Reverse_Hue    : Reverse_Hue_Type);
 
 
     -- Set number of colors in cmap 1

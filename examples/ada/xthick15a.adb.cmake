@@ -53,7 +53,6 @@ procedure xthick15a is
     ----------------------------------------------------------------------------
     procedure cmap1_init2 is
         i, h, l, s : Real_Vector(0 .. 3);
-        Reverse_Flag : Boolean_Array_1D(0 .. 3) := (False, False, False, False);
     begin
         -- Set control points.
         i(0) := 0.0;		-- left boundary
@@ -79,7 +78,7 @@ procedure xthick15a is
         s(2) := 0.5;		-- center
         s(3) := 1.0;		-- high
 
-        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Reverse_Flag);
+        Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Reverse_Hue_None);
     end cmap1_init2;
 
     ----------------------------------------------------------------------------

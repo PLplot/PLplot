@@ -217,7 +217,6 @@ procedure x20a is
     -- Set gray colormap.
     procedure gray_cmap(num_col : Integer) is
         r, g, b, pos : Real_Vector(0 .. 1);
-        Reverse_Flag : Boolean_Array_1D(0 .. 1) := (False, False);
     begin
         r(0) := 0.0;
         g(0) := 0.0;
@@ -231,7 +230,7 @@ procedure x20a is
         pos(1) := 1.0;
 
         plscmap1n(num_col);
-        plscmap1l(RGB, pos, r, g, b, Reverse_Flag);
+        plscmap1l(RGB, pos, r, g, b, Reverse_Hue_None);
     end gray_cmap;
 
 

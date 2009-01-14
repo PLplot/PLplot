@@ -52,7 +52,6 @@ procedure x12a is
     r   : Real_Vector (0 .. 4) := (0.0, 0.25, 0.5, 1.0,  1.0);
     g   : Real_Vector (0 .. 4) := (1.0, 0.5,  0.5, 0.5,  1.0);
     b   : Real_Vector (0 .. 4) := (1.0, 1.0,  0.5, 0.25, 0.0);
-    Reverse_Flag : Boolean_Array_1D (0 .. 4) := (False, False, False, False, False);
     
     procedure plfbox (x0, y0 : Long_Float) is
         x, y : Real_Vector (0 ..3);
@@ -100,7 +99,7 @@ begin
     y0(8) := 12.0;
     y0(9) :=  3.0;
 
-    plscmap1l(RGB, pos, r, g, b, Reverse_Flag);
+    plscmap1l(RGB, pos, r, g, b, Reverse_Hue_None);
 
     for i in y0'range loop
         plcol1(Long_Float(i)/9.0);

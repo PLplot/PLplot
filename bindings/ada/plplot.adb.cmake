@@ -2202,7 +2202,7 @@ package body PLplot is
     -- intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
     -- plscmap1l
     procedure Set_Color_Map_1_Piecewise
-       (Color_Model    : Color_Model_Type;    -- HLS or RGB
+       (Color_Model    : Color_Model_Type; -- HLS or RGB
         Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
         H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
                                               -- Note: Hue is 0.0 .. 360.0.
@@ -2214,6 +2214,13 @@ package body PLplot is
         PL_Reverse_Hue : PL_Bool_Array (Reverse_Hue'range);
         
     begin
+        -- Check for consistent array lengths.
+        if  Control_Points'length /= H_Or_R'length or Control_Points'length /= L_or_G'length or
+            Control_Points'length /= S_Or_B'length or Control_Points'length /= Reverse_Hue'length 
+        then
+            Put_Line("*** WARNING: Inconsistent array lengths when setting color map 1 ***");
+        end if;
+
         if Color_Model = RGB then
             PL_Color_Model := PLtrue;
         else
@@ -2230,6 +2237,35 @@ package body PLplot is
 
         plscmap1l(PL_Color_Model, Control_Points'Length, Control_Points, H_Or_R, L_Or_G, S_Or_B, PL_Reverse_Hue);
     end Set_Color_Map_1_Piecewise;
+    
+    
+    -- Overloaded version of Set_Color_Map_1_Piecewise which allows simplified (non-)reversal of 
+    -- the traversed hue range. This is an Ada-like way of doing what is described
+    -- in the PLplot documentation when a C user passes a null pointer as the
+    -- final argument instead of an array of booleans to indicate hue reversal.
+    -- plscmap1l
+    procedure Set_Color_Map_1_Piecewise
+       (Color_Model    : Color_Model_Type; -- HLS or RGB
+        Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+                                              -- Note: Hue is 0.0 .. 360.0.
+        L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        Reverse_Hue    : Reverse_Hue_Type) is
+        
+        Reverse_Hue_Array : Boolean_Array_1D(Control_Points'range);
+    begin
+        if Reverse_Hue = Reverse_Hue_All then
+            for i in Reverse_Hue_Array'range loop
+                Reverse_Hue_Array(i) := True;
+            end loop;
+        elsif Reverse_Hue = Reverse_Hue_None then
+            for i in Reverse_Hue_Array'range loop
+                Reverse_Hue_Array(i) := False;
+            end loop;
+        end if;
+        Set_Color_Map_1_Piecewise(Color_Model, Control_Points, H_Or_R, L_Or_G, S_Or_B, Reverse_Hue_Array);
+    end Set_Color_Map_1_Piecewise;
 
 
     -- Set color map 1 colors using a piece-wise linear relationship between
@@ -2237,7 +2273,7 @@ package body PLplot is
     -- Will also linear interpolate alpha values.
     -- plscmap1la
     procedure Set_Color_Map_1_Piecewise_And_Alpha
-       (Color_Model    : Color_Model_Type;    -- HLS or RGB
+       (Color_Model    : Color_Model_Type; -- HLS or RGB
         Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
         H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
@@ -2249,8 +2285,13 @@ package body PLplot is
         PL_Reverse_Hue : PL_Bool_Array (Reverse_Hue'range);
         
     begin
-        -- fix this Should check that arrays H_Or_R, S_Or_B, S_Or_B and 
-        -- Reverse_Hue should be the same length.
+        -- Check for consistent array lengths.
+        if  Control_Points'length /= H_Or_R'length or Control_Points'length /= L_or_G'length or
+            Control_Points'length /= S_Or_B'length or Control_Points'length /= Reverse_Hue'length 
+        then
+            Put_Line("*** WARNING: Inconsistent array lengths when setting color map 1 ***");
+        end if;
+
         if Color_Model = RGB then
             PL_Color_Model := PLtrue;
         else
@@ -2267,7 +2308,35 @@ package body PLplot is
 
         plscmap1la(PL_Color_Model, Control_Points'Length, Control_Points, H_Or_R, L_Or_G, S_Or_B, Alpha, PL_Reverse_Hue);
     end Set_Color_Map_1_Piecewise_And_Alpha;
-
+    
+    
+    -- Overloaded version of Set_Color_Map_1_Piecewise_And_Alpha which allows simplified (non-)reversal of 
+    -- the traversed hue range. This is an Ada-like way of doing what is described
+    -- in the PLplot documentation when a C user passes a null pointer as the
+    -- final argument instead of an array of booleans to indicate hue reversal.
+    -- plscmap1la
+    procedure Set_Color_Map_1_Piecewise_And_Alpha
+       (Color_Model    : Color_Model_Type; -- HLS or RGB
+        Control_Points : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        H_Or_R         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
+        Reverse_Hue    : Reverse_Hue_Type) is
+        
+        Reverse_Hue_Array : Boolean_Array_1D(Control_Points'range);
+    begin
+        if Reverse_Hue = Reverse_Hue_All then
+            for i in Reverse_Hue_Array'range loop
+                Reverse_Hue_Array(i) := True;
+            end loop;
+        elsif Reverse_Hue = Reverse_Hue_None then
+            for i in Reverse_Hue_Array'range loop
+                Reverse_Hue_Array(i) := False;
+            end loop;
+        end if;
+        Set_Color_Map_1_Piecewise_And_Alpha(Color_Model, Control_Points, H_Or_R, L_Or_G, S_Or_B, Alpha, Reverse_Hue_Array);
+    end Set_Color_Map_1_Piecewise_And_Alpha;
 
 
     -- Set number of colors in cmap 1

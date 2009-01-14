@@ -217,7 +217,6 @@ procedure xthick20a is
     -- Set gray colormap.
     procedure gray_cmap(num_col : Integer) is
         r, g, b, pos : Real_Vector(0 .. 1);
-        Reverse_Flag : Boolean_Array_1D(0 .. 1) := (False, False);
     begin
         r(0) := 0.0;
         g(0) := 0.0;
@@ -231,7 +230,7 @@ procedure xthick20a is
         pos(1) := 1.0;
 
         Set_Number_Of_Colors_In_Color_Map_1(num_col);
-        Set_Color_Map_1_Piecewise(RGB, pos, r, g, b, Reverse_Flag);
+        Set_Color_Map_1_Piecewise(RGB, pos, r, g, b, Reverse_Hue_None);
     end gray_cmap;
 
 
