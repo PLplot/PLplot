@@ -31,7 +31,17 @@ if(PLD_xwin)
   if(X11_FOUND)
     set(xwin_COMPILE_FLAGS "${X11_COMPILE_FLAGS}")
     set(xwin_LINK_FLAGS "${X11_LIBRARIES}")
-    option(HAVE_PTHREAD "Use pthreads with the xwin driver" ON)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+      # turn HAVE_PTHREAD OFF by default for Mac OS X since it doesn't
+      # work for Mac OS X 10.4.  Werner says it does work for vanilla 
+      # XQuartz X11, but the official Apple version of X(Quartz) for 10.5
+      # doesn't have all the fixes of the vanilla version so he doesn't trust
+      # it.  This his advice for now is to be conservative until we can
+      # get a clear report that official X works for 10.5.
+      option(HAVE_PTHREAD "Use pthreads with the xwin driver" OFF)
+    else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+      option(HAVE_PTHREAD "Use pthreads with the xwin driver" ON)
+    endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     if(HAVE_PTHREAD)
       find_package(Threads)
       if(CMAKE_USE_PTHREADS_INIT)
