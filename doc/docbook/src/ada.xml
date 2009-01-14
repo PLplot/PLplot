@@ -298,7 +298,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para><emphasis role="bold">	9.2	Documentation</emphasis></para>
     <para>	        In numerous places in the documentation, a feature is listed or described as "C only." Many of these features are actually available in Ada. For example, in <literal>Contour_Plot</literal> (<literal>plcont</literal> in the traditional binding), the transformation from array indices to world coordinates is mentioned as "C only" but is actually available in Ada.</para>
     <para><emphasis role="bold">	9.3	API</emphasis></para>
-    <para>	        The C documentation for <literal>plscmap1l</literal> (<literal>Set_Color_Map_1_Piecewise</literal> in the thick binding) states that if the last argument is a null pointer, the behavior is as though a proper-length array of all <literal>False</literal> values was passed. In Ada, the last parameter should always be an array of Boolean of the same length as the other array arguments.</para>
+    <para>	        The C documentation for <literal>plscmap1l</literal>, (<literal>Set_Color_Map_1_Piecewise</literal> in the thick binding) and  <literal>plscmap1la</literal> (<literal>Set_Color_Map_1_Piecewise_And_Alpha</literal> in the thick binding) states that if the last argument is a null pointer, the behavior is as though a proper-length array of all <literal>False</literal> values was passed. In Ada, these procedures are overloaded to allow a last argument that can be either an array of Boolean or a value of the enumerated type <literal>(Reverse_Hue_None, Reverse_Hue_All)</literal>.</para>
   </sect1>
   <sect1 id="ada_compilation_notes">
     <title>Compilation notes</title>
