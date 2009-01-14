@@ -24,8 +24,6 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_pstex =
 
 static void parse_str(const char *str, char *dest);
 static void proc_str (PLStream *pls, EscText *args);
-static long cur_pos;
-static FILE *fp;
 static int  color = 1;
 
 static DrvOpt pstex_options[] = {{"color", DRV_INT, &color,
@@ -54,6 +52,8 @@ void
 plD_init_pstex(PLStream *pls)
 {
   char ofile[80];
+  PSDev *dev;
+  FILE *fp;
 
   plParseDrvOpts(pstex_options);
   if (color)
@@ -61,13 +61,16 @@ plD_init_pstex(PLStream *pls)
   else
     plD_init_psm(pls); /* init monochrome postscript driver */
 
+  dev = (PSDev *) pls->dev;
+
   pls->dev_text = 1; /* want to draw text */
-	pls->dev_unicode = 0; /* don't want unicode */
+  pls->dev_unicode = 0; /* don't want unicode */
 
   /* open latex output file */
   strncpy(ofile, pls->FileName, 80);
   strcat(ofile, "_t");
   fp = fopen(ofile, "w");
+  dev->fp = fp;
 
   fprintf(fp,"\\begin{picture}(0,0)(0,0)%%\n");
   fprintf(fp,"\\includegraphics[scale=1.,clip]{%s}%%\n",pls->FileName); 
@@ -81,7 +84,7 @@ plD_init_pstex(PLStream *pls)
   fprintf(fp,"\\selectfont}%%\n");
   fprintf(fp,"\\fi\\endgroup%%\n"); 
 
-  cur_pos = ftell(fp);
+  dev->cur_pos = ftell(fp);
   fprintf(fp,"\\begin{picture}(xxxxxx,xxxxxx)(xxxxxx,xxxxxx)%%\n");
 }
 
@@ -109,14 +112,16 @@ plD_tidy_pstex(PLStream *pls)
 {
   PSDev *dev = (PSDev *) pls->dev;
   PLFLT scale;
+  FILE *fp;
 
   plD_tidy_ps(pls);
   
   scale = pls->xpmm * 25.4 / 72.;
   
+  fp = dev->fp;
   fprintf(fp,"\\end{picture}\n");
 
-  fseek(fp, cur_pos, SEEK_SET);
+  fseek(fp, dev->cur_pos, SEEK_SET);
   fprintf(fp,"\\begin{picture}(%d,%d)(%d,%d)%%\n%%",
 	  ROUND((dev->urx - dev->llx) * scale),
 	  ROUND((dev->ury - dev->lly) * scale),
@@ -134,6 +139,9 @@ proc_str (PLStream *pls, EscText *args)
   char cptr[256], jst, ref;
   PSDev *dev = (PSDev *) pls->dev;
   PLINT clxmin, clxmax, clymin, clymax;
+  FILE *fp;
+
+  fp = dev->fp;
 
   /* font height */
   ft_ht = 1.6 /*!*/ * pls->chrht * 72.0/25.4; /* ft_ht in points. ht is in mm */

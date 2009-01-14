@@ -46,6 +46,12 @@ typedef struct {
     PLFLT xscale_dev, yscale_dev;
 
     int llx, lly, urx, ury, ptcnt;
+
+    /* These are only used by the pstex driver for the additional
+     * file required in this case */
+    long cur_pos;
+    FILE *fp;
+
 } PSDev;
 
 void plD_init_pstex		(PLStream *);
