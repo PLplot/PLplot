@@ -2822,7 +2822,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
  * x[], y[] are the coordinates to be plotted.
 \*--------------------------------------------------------------------------*/
 
-static char *transform_name;   /* Name of the procedure that transforms the
+static const char *transform_name;   /* Name of the procedure that transforms the
                                   coordinates */
 static Tcl_Interp *tcl_interp; /* Pointer to the current interp */
 static int return_code;        /* Saved return code */
@@ -3150,13 +3150,14 @@ two-dimensional matrix - ", argv[1], (char *) NULL);
             pidata[i][j] = zvalue->fdata[j + i * ny];
         }
     }
-
+    /*
     fprintf(stderr,"nx, ny: %d %d\n", nx, ny);
     fprintf(stderr,"xmin, xmax: %.17g %.17g\n", xmin, xmax);
     fprintf(stderr,"ymin, ymax: %.17g %.17g\n", ymin, ymax);
     fprintf(stderr,"zmin, zmax: %.17g %.17g\n", zmin, zmax);
     fprintf(stderr,"Dxmin, Dxmax: %.17g %.17g\n", Dxmin, Dxmax);
     fprintf(stderr,"Dymin, Dymax: %.17g %.17g\n", Dymin, Dymax);
+    */
 
     c_plimage(pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
          Dxmin, Dxmax, Dymin, Dymax);
