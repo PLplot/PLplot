@@ -82,7 +82,8 @@ else
 		if (verbose_test)
 		    printf("%s\n",cmd);
 		    endif
-		    t = split("$options", "-"); t(1,:)="";
+		    t = split("$options", "-"); 
+                    if (t) ; t(1,:)=""; endif
 		    for j=1:rows(t)
 		    tt = deblank (t(j,:)); len = length(tt);
 		    ix = index(tt," ");
