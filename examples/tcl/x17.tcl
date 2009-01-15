@@ -122,7 +122,7 @@ proc x17 {{w loopback}} {
         if { $n%5 } {
             $w cmd plstripa $id1 3 $t $y4
         }
-        $w cmd pleop ;# use double buffer (-db on command line)
+        #$w cmd pleop ;# use double buffer (-db on command line)
     }
 
 #   Destroy strip chart and it's memory
