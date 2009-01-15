@@ -26,11 +26,10 @@
 # $pythondir must be the build tree and not the source tree (if separate from
 # build tree) since must access plplot_python_start.py in build tree and
 # paths in that file are relative to build tree.
-# Skip 19 because it is just a placeholder without a real implementation.
 # Skip 21 if using Numeric - it doesn't work
 # For 24 you need special fonts installed to get good result.
 lang="p"
-for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 \
+for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 \
     20 22 23 24 25 26 27 28 29 30 31 @NUMPY_EXAMPLES@ ; do
     if [ "$verbose_test" ] ; then
 	echo "x${index}"

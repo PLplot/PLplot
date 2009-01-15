@@ -613,12 +613,14 @@ pltr2(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLcGrid2* cgrid);
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
+typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 
 %{
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
+typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   %}
 
@@ -642,6 +644,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
  enum callback_type { CB_0, CB_1, CB_2, CB_Python } pltr_type;
  PyObject* python_pltr = NULL;
  PyObject* python_f2eval = NULL;
+ PyObject* python_mapform = NULL;
 
 #if 0
 #define MY_BLOCK_THREADS { \
@@ -753,6 +756,60 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
       return fresult;
     }
 
+  void do_mapform_callback(PLINT n, PLFLT *x, PLFLT *y)
+    {
+      PyObject *px, *py, *arglist, *result;
+      PyArrayObject *tmpx, *tmpy;
+      PLFLT *xx, *yy;
+      PLINT i;
+
+      if(python_mapform) { /* if not something is terribly wrong */
+	/* grab the Global Interpreter Lock to be sure threads don't mess us up */
+	MY_BLOCK_THREADS	
+	/* build the argument list */
+#ifdef PL_DOUBLE
+ 	px = PyArray_FromDimsAndData(1, &n, PyArray_DOUBLE,(char *)x);
+	py = PyArray_FromDimsAndData(1, &n, PyArray_DOUBLE,(char *)y);
+#else
+ 	px = PyArray_FromDimsAndData(1, &n, PyArray_FLOAT,(char *)x);
+	py = PyArray_FromDimsAndData(1, &n, PyArray_FLOAT,(char *)y);
+#endif
+	arglist = Py_BuildValue("(iOO)", n, px, py);
+	/* call the python function */
+	result = PyEval_CallObject(python_mapform, arglist);
+	/* release the argument list */
+	Py_DECREF(arglist);
+	Py_DECREF(px);
+	Py_DECREF(py);
+	/* check and unpack the result */
+	if(result == NULL) {
+	  fprintf(stderr, "call to python mapform function with 3 arguments failed\n");
+	  PyErr_SetString(PyExc_RuntimeError, "mapform callback must take 3 arguments.");
+	} /* else {
+	  PyArg_ParseTuple(result,"OO",&px,&py);
+	  PyArrayObject *tmpx = (PyArrayObject *)myArray_ContiguousFromObject(px, PyArray_PLFLT, 1, 1);
+	  PyArrayObject *tmpy = (PyArrayObject *)myArray_ContiguousFromObject(py, PyArray_PLFLT, 1, 1);
+	  if(tmpx == 0 || tmpy == 0 || tmpx->dimensions[0] != 1 ||tmpy->dimensions[0] != 1) {
+	    fprintf(stderr, "pltr callback must return a 1-D vector or sequence\n");
+	    PyErr_SetString(PyExc_RuntimeError, "pltr callback must return a 1-sequence.");
+	  } else {
+	    xx = (PLFLT*)tmpx->data;
+	    yy = (PLFLT*)tmpy->data;
+            for (i=0;i<n;i++) {
+	      x[i] = xx[i];
+	      y[i] = yy[1];
+            }
+	    Py_XDECREF(tmpx);
+	    Py_XDECREF(tmpy);
+	  }
+	} */
+	/* release the result */
+	Py_XDECREF(result);
+	/* release the global interpreter lock */
+	MY_UNBLOCK_THREADS
+      }	
+    }
+
 /* marshal the pltr function pointer argument */
   pltr_func marshal_pltr(PyObject* input) {
     pltr_func result = do_pltr_callback;
@@ -788,6 +845,19 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   void cleanup_pltr(void) {
     Py_XDECREF(python_pltr);
     python_pltr = 0;
+  }
+
+/* marshal the mapform function pointer argument */
+  mapform_func marshal_mapform(PyObject* input) {
+    mapform_func result = do_mapform_callback;
+    python_mapform = input;
+    Py_XINCREF(input);
+    return result;
+  }
+
+  void cleanup_mapform(void) {
+    Py_XDECREF(python_mapform);
+    python_mapform = 0;
   }
 
   PLPointer marshal_PLPointer(PyObject* input,int isimg) {
@@ -851,6 +921,24 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 /* you can omit the pltr func */
 %typemap(default) pltr_func pltr {
   python_pltr = 0;
+  $1 = NULL;
+}
+
+%typemap(in) mapform_func mapform {
+  /* it must be a callable */
+  if(!PyCallable_Check((PyObject*)$input)) {
+    PyErr_SetString(PyExc_ValueError, "mapform argument must be callable");
+    return NULL;
+  }
+  $1 = marshal_mapform($input);
+}
+%typemap(freearg) mapform_func mapform {
+  cleanup_mapform();
+}
+
+/* you can omit the mapform func */
+%typemap(default) mapform_func mapform {
+  python_mapform = 0;
   $1 = NULL;
 }
 

@@ -934,8 +934,6 @@ plfcont(f2eval_func f2eval,
 
 #endif
 
-#ifdef SWIG_JAVA
-
 /* plot continental outline in world coordinates */
 
 void
@@ -949,7 +947,6 @@ plmeridians( mapform_func mapform,
                PLFLT dlong, PLFLT dlat,
                PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
-#endif
 
 #if 0
 
