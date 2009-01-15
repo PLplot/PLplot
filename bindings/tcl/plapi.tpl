@@ -855,6 +855,19 @@ devname 	const char *
 nx		PLINT
 ny		PLINT
 
+# Add data to the strip chart
+
+pltclcmd plstripa void
+id		PLINT
+pen		PLINT
+x		PLFLT
+y		PLFLT
+
+# Destroy the strip chart
+
+pltclcmd plstripd void
+id		PLINT
+
 # Set up a new line style.
 
 pltclcmd plstyl void

@@ -65,6 +65,7 @@ static int plranddCmd  (ClientData, Tcl_Interp *, int, const char **);
 static int plgriddataCmd  (ClientData, Tcl_Interp *, int, const char **);
 static int plimageCmd  (ClientData, Tcl_Interp *, int, const char **);
 static int plimagefrCmd(ClientData, Tcl_Interp *, int, const char **);
+static int plstripcCmd (ClientData, Tcl_Interp *, int, const char **);
 
 /*
  * The following structure defines all of the commands in the PLplot/Tcl
@@ -107,6 +108,7 @@ static CmdInfo Cmds[] = {
     {"plgriddata",     plgriddataCmd},
     {"plimage",        plimageCmd},
     {"plimagefr",      plimagefrCmd},
+    {"plstripc",       plstripcCmd},
     {NULL,		NULL}
 };
 
@@ -2831,7 +2833,6 @@ void
 mapform(PLINT n, PLFLT *x, PLFLT *y)
 {
     int i;
-    double xp, yp, radius;
     char *cmd;
     tclMatrix *xPtr, *yPtr;
 
@@ -2904,7 +2905,6 @@ plmapCmd( ClientData clientData, Tcl_Interp *interp,
     PLFLT minlong, maxlong, minlat, maxlat;
     PLINT transform;
     PLINT idxname;
-    char  cmd[40];
 
     return_code = TCL_OK;
     if (argc < 6 || argc > 7) {
@@ -3267,6 +3267,106 @@ two-dimensional matrix - ", argv[11], (char *) NULL);
         plFree2dGrid(cgrid2.xg, nx+1, ny+1);
         plFree2dGrid(cgrid2.yg, nx+1, ny+1);
     }
+
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plstripcCmd
+ *
+ * Processes plstripc Tcl command.
+\*--------------------------------------------------------------------------*/
+static int
+plstripcCmd( ClientData clientData, Tcl_Interp *interp,
+	   int argc, const char *argv[] )
+{
+    int        i;
+    int        id;
+    char      *xspec;
+    char      *yspec;
+    char      *idName;
+    tclMatrix *colMat;
+    tclMatrix *styleMat;
+    double     value;
+    int        ivalue;
+    PLFLT      xmin, xmax, xjump, ymin, ymax, xlpos, ylpos;
+    PLBOOL     y_ascl, acc;
+    PLINT      colbox, collab;
+    PLINT      colline[4], styline[4];
+    int        nlegend;
+    char     **legline;
+    char      *labx;
+    char      *laby;
+    char      *labtop;
+    char       idvalue[20];
+
+    if (argc  != 21) {
+	Tcl_AppendResult( interp, "wrong # args: see documentation for ",
+			 argv[0], (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    colMat = Tcl_GetMatrixPtr(interp, argv[15]);
+    styleMat = Tcl_GetMatrixPtr(interp, argv[16]);
+
+    if (colMat == NULL || colMat->dim != 1 || colMat->idata == NULL) {
+        Tcl_AppendResult(interp, argv[0], ": argument 15 should be a \
+one-dimensional integer matrix - ", argv[15], (char *) NULL);
+        return TCL_ERROR;
+    }
+
+    if (styleMat == NULL || styleMat->dim != 1 || styleMat->idata == NULL) {
+        Tcl_AppendResult(interp, argv[0], ": argument 16 should be a \
+one-dimensional integer matrix - ", argv[16], (char *) NULL);
+        return TCL_ERROR;
+    }
+
+    idName = argv[1];
+    xspec  = argv[2];
+    yspec  = argv[3];
+
+    sscanf( argv[4], "%lg", &value); xmin     = (PLFLT)value;
+    sscanf( argv[5], "%lg", &value); xmax     = (PLFLT)value;
+    sscanf( argv[6], "%lg", &value); xjump    = (PLFLT)value;
+    sscanf( argv[7], "%lg", &value); ymin     = (PLFLT)value;
+    sscanf( argv[8], "%lg", &value); ymax     = (PLFLT)value;
+    sscanf( argv[9], "%lg", &value); xlpos    = (PLFLT)value;
+    sscanf( argv[10],"%lg", &value); ylpos    = (PLFLT)value;
+    sscanf( argv[11],"%d", &ivalue); y_ascl   = (PLBOOL)ivalue;
+    sscanf( argv[12],"%d", &ivalue); acc      = (PLBOOL)ivalue;
+    sscanf( argv[13],"%d", &ivalue); colbox   = ivalue;
+    sscanf( argv[14],"%d", &ivalue); collab   = ivalue;
+
+    labx   = argv[18];
+    laby   = argv[19];
+    labtop = argv[20];
+
+    for ( i = 0; i < 4; i ++ ) {
+        colline[i] = colMat->idata[i];
+        styline[i] = styleMat->idata[i];
+    }
+
+    if ( Tcl_SplitList( interp, argv[17], &nlegend, &legline ) != TCL_OK ) {
+        return TCL_ERROR;
+    }
+    if ( nlegend < 4 ) {
+        Tcl_AppendResult(interp, argv[0], ": argument 18 should be a \
+list of at least four items - ", argv[17], (char *) NULL);
+        return TCL_ERROR;
+    }
+
+    c_plstripc(&id, xspec, yspec,
+               xmin, xmax, xjump, ymin, ymax,
+               xlpos, ylpos,
+               y_ascl, acc,
+               colbox, collab,
+               colline, styline, legline,
+               labx, laby, labtop);
+
+    sprintf( idvalue, "%d", id );
+    Tcl_SetVar( interp, idName, idvalue, 0 );
+
+    Tcl_Free( (char *)legline );
 
     return TCL_OK;
 }
