@@ -27,11 +27,87 @@
 
 package plplot.examples;
 
+import plplot.core.*;
+
+import java.lang.Math;
+
+class Mapform19 implements PLCallback {
+
+    public void mapform(double[] x, double[] y) {
+	int i;
+	double xp, yp, radius;
+	for (i=0;i< x.length;i++) {
+	    radius = 90.0-y[i];
+	    xp = radius * Math.cos(x[i] * Math.PI / 180.0);
+	    yp = radius * Math.sin(x[i] * Math.PI / 180.0);
+	    x[i] = xp;
+	    y[i] = yp;
+	}
+        
+	
+    }
+
+}
+
 class x19 {
+
+    PLStream pls = new PLStream();
 
     public static void main( String[] args ) 
     {
-        System.out.println( "x19 not implemented yet." );
+        new x19(args);
+    }
+
+    public x19 (String[] args) 
+    {
+	double minx, maxx, miny,maxy;
+        PLCallback nullCallback = null;
+
+	// Parse and process command line arguments.
+	pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+
+	// Longitude (x) and latitude (y)
+	
+	miny = -70;
+	maxy = 80;
+	
+	// Initialize PLplot.
+	pls.init();
+	// Cartesian plots
+	// Most of world
+	
+	minx = 190;
+	maxx = 190+360;
+	
+	pls.col0(1);
+	pls.env(minx, maxx, miny, maxy, 1, -1);
+	pls.map(nullCallback, "usaglobe", minx, maxx, miny, maxy);
+
+	// The Americas
+
+	minx = 190;
+	maxx = 340;
+
+	pls.col0(1);
+	pls.env(minx, maxx, miny, maxy, 1, -1);
+	pls.map(nullCallback, "usaglobe", minx, maxx, miny, maxy);
+
+	// Polar, Northern hemisphere
+        
+        // Create callback object containing mapform function
+	Mapform19 mapform19 = new Mapform19();
+
+	minx = 0;
+	maxx = 360;
+
+	pls.env(-75., 75., -75., 75., 1, -1);
+	pls.map(mapform19,"globe", minx, maxx, miny, maxy);
+	
+	pls.lsty(2);
+	pls.meridians(mapform19,10.0, 10.0, 0.0, 360.0, -10.0, 80.0);
+
+        pls.end();
+
     }
 }
 

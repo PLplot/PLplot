@@ -445,6 +445,16 @@ public void lsty(int lin) {
     plplotjavac.pllsty(lin);
 }
 
+public void map(PLCallback mapform, String type, double minlong, double maxlong, double minlat, double maxlat) {
+    if (set_stream() == -1) return;
+    plplotjavac.plmap(mapform, type, minlong, maxlong, minlat, maxlat);
+}
+
+public void meridians(PLCallback mapform, double dlong, double dlat, double minlong, double maxlong, double minlat, double maxlat) {
+    if (set_stream() == -1) return;
+    plplotjavac.plmeridians(mapform, dlong, dlat, minlong, maxlong, minlat, maxlat);
+}
+
 public void minMax2dGrid(double[][]f, double[] fmax, double[] fmin) {
     if (set_stream() == -1) return;
     plplotjavac.plMinMax2dGrid(f,fmax,fmin);

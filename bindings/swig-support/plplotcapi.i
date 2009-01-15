@@ -931,18 +931,27 @@ plfcont(f2eval_func f2eval,
 	PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
 	pltr_func pltr,
 	PLPointer SWIG_OBJECT_DATA);
+
+#endif
+
+#ifdef SWIG_JAVA
+
 /* plot continental outline in world coordinates */
 
 void
-plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
+plmap( mapform_func mapform, const char *type,
          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
 /* Plot the latitudes and longitudes on the background. */
 
 void
-plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
+plmeridians( mapform_func mapform,
                PLFLT dlong, PLFLT dlat,
                PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
+
+#endif
+
+#if 0
 
 void
 plfshade(f2eval_func,

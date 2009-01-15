@@ -254,6 +254,48 @@ setup_array_2d_d( PLFLT ***pa, jdouble **adat, int nx, int ny )
      }
 
 }
+
+/* Setup java arrays (for callback functions) */
+
+#ifdef PL_DOUBLE
+#define jPLFLT jdouble
+#define jPLFLTArray jdoubleArray
+#define NewPLFLTArray NewDoubleArray
+#define SetPLFLTArrayRegion SetDoubleArrayRegion
+#define GetPLFLTArrayElements GetDoubleArrayElements
+#define ReleasePLFLTArrayElements ReleaseDoubleArrayElements
+#else
+#define jPLFLT jfloat
+#define jPLFLTArray jfloatArray
+#define NewPLFLTArray NewFloatArray
+#define SetPLFLTArrayRegion SetFloatArrayRegion
+#define GetPLFLTArrayElements GetFloatArrayElements
+#define ReleasePLFLTArrayElements ReleaseFloatArrayElements
+#endif
+
+/* Create a jPLFLTArray and fill it from the C array dat */
+static jPLFLTArray
+setup_java_array_1d_PLFLT( JNIEnv *jenv, PLFLT *dat, PLINT n) 
+{
+   jPLFLTArray jadat = (*jenv)->NewPLFLTArray(jenv, n);
+   (*jenv)->SetPLFLTArrayRegion(jenv, jadat, 0, n, dat);
+   return jadat;
+}
+
+/* Copy back data from jPLFLTArray to C array then release java array */
+static void
+release_java_array_1d_PLFLT(JNIEnv *jenv, jPLFLTArray jadat, PLFLT *dat, PLINT n)
+{
+   PLINT i;
+   jPLFLT *jdata = (*jenv)->GetPLFLTArrayElements( jenv, jadat, 0 );
+   for (i=0;i<n;i++) {
+      dat[i] = jdata[i];
+   }
+   (*jenv)->ReleasePLFLTArrayElements( jenv, jadat, jdata, 0 );
+}
+
+
+
 %}
 
 
@@ -1033,6 +1075,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    typedef PLINT (*defined_func)(PLFLT, PLFLT);
    typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
    typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
+   typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
    typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
    %}
 
@@ -1102,6 +1145,46 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(javaout) pltr_func pltr {
    return $jnicall;
 }
+
+%{
+   
+   jobject mapformClass;
+   jmethodID mapformID;
+   JNIEnv *cbenv;
+
+   /* C mapform callback function which calls the java
+    * mapform function in a PLCallback object. */
+   void mapform_java(PLINT n, PLFLT *x, PLFLT *y) {
+      jPLFLTArray jx = setup_java_array_1d_PLFLT(cbenv,x,n);
+      jPLFLTArray jy = setup_java_array_1d_PLFLT(cbenv,y,n);
+      (*cbenv)->CallVoidMethod(cbenv,mapformClass, mapformID,jx,jy);
+      release_java_array_1d_PLFLT(cbenv,jx,x,n);
+      release_java_array_1d_PLFLT(cbenv,jy,y,n);
+   }
+%}
+
+
+/* Handle function pointers to mapform function using an java class */
+%typemap(in) mapform_func mapform {
+
+   jobject obj = $input;
+   if (obj != NULL) {
+      jclass cls = (*jenv)->GetObjectClass(jenv,obj);
+      mapformID = (*jenv)->GetMethodID(jenv,cls, "mapform","([D[D)V" );
+      mapformClass = obj;
+      cbenv = jenv;
+      $1 = mapform_java;
+   }
+   else {
+      $1 = NULL;
+   }
+
+}
+
+%typemap(jni) mapform_func "jobject"
+%typemap(jtype) mapform_func "PLCallback"
+%typemap(jstype) mapform_func "PLCallback"
+%typemap(javain) mapform_func mapform "$javainput"
 
 /* Second of two object arrays, where we check X and Y with previous object. */
 %typemap(in) PLPointer OBJECT_DATA {
