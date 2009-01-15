@@ -45,51 +45,51 @@ test: @PSC_ALL@ @PDFCAIRO@ @PNGCAIRO@ @PSCAIRO@ @SVGCAIRO@ \
 
 @PSC_ALL_COMMENT@@PSC_ALL@:  c/x01c@EXEEXT@
 @PSC_ALL_COMMENT@	echo psc all front-ends
-@PSC_ALL_COMMENT@	./plplot-test.sh --device=psc
+@PSC_ALL_COMMENT@	./plplot-test.sh --verbose --device=psc
 
 @PDFCAIRO_COMMENT@@PDFCAIRO@: c/x01c@EXEEXT@
 @PDFCAIRO_COMMENT@	echo pdfcairo
-@PDFCAIRO_COMMENT@	./plplot-test.sh --front-end=c --device=pdfcairo
+@PDFCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pdfcairo
 
 @PNGCAIRO_COMMENT@@PNGCAIRO@: c/x01c@EXEEXT@
 @PNGCAIRO_COMMENT@	echo pngcairo
-@PNGCAIRO_COMMENT@	./plplot-test.sh --front-end=c --device=pngcairo
+@PNGCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pngcairo
 
 @PSCAIRO_COMMENT@@PSCAIRO@: c/x01c@EXEEXT@
 @PSCAIRO_COMMENT@	echo pscairo
-@PSCAIRO_COMMENT@	./plplot-test.sh --front-end=c --device=pscairo
+@PSCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pscairo
 
 @SVGCAIRO_COMMENT@@SVGCAIRO@: c/x01c@EXEEXT@
 @SVGCAIRO_COMMENT@	echo svgcairo
-@SVGCAIRO_COMMENT@	./plplot-test.sh --front-end=c --device=svgcairo
+@SVGCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=svgcairo
 
 @GIF_COMMENT@@GIF@: c/x01c@EXEEXT@
 @GIF_COMMENT@	echo gif
-@GIF_COMMENT@	./plplot-test.sh --front-end=c --device=gif
+@GIF_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=gif
 
 @JPEG_COMMENT@@JPEG@: c/x01c@EXEEXT@
 @JPEG_COMMENT@	echo jpeg
-@JPEG_COMMENT@	./plplot-test.sh --front-end=c --device=jpeg
+@JPEG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=jpeg
 
 @PNG_COMMENT@@PNG@: c/x01c@EXEEXT@
 @PNG_COMMENT@	echo png
-@PNG_COMMENT@	./plplot-test.sh --front-end=c --device=png
+@PNG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=png
 
 @PSTTFC_COMMENT@@PSTTFC@: c/x01c@EXEEXT@
 @PSTTFC_COMMENT@	echo psttfc
-@PSTTFC_COMMENT@	./plplot-test.sh --front-end=c --device=psttfc
+@PSTTFC_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=psttfc
 
 @SVG_COMMENT@@SVG@: c/x01c@EXEEXT@
 @SVG_COMMENT@	echo svg
-@SVG_COMMENT@	./plplot-test.sh --front-end=c --device=svg
+@SVG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=svg
 
 @XFIG_COMMENT@@XFIG@: c/x01c@EXEEXT@
 @XFIG_COMMENT@	echo xfig
-@XFIG_COMMENT@	./plplot-test.sh --front-end=c --device=xfig
+@XFIG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=xfig
 
 @PSTEX_COMMENT@@PSTEX@: c/x01c@EXEEXT@
 @PSTEX_COMMENT@	echo pstex
-@PSTEX_COMMENT@	./plplot-test.sh --front-end=c --device=pstex
+@PSTEX_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pstex
 
 @COMPARE_COMMENT@@COMPARE@: @PSC_ALL@
 @COMPARE_COMMENT@	echo compare
