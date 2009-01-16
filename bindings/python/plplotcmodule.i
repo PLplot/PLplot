@@ -190,7 +190,7 @@ PyArrayObject* myIntArray_ContiguousFromObject(PyObject* in, int type, int mindi
   }
   $1 = (PLINT*)tmp->data;
 }
-%typemap(freearg) PLINT *ArrayCkMinus1 { Py_DECREF(tmp$argnum);}
+%typemap(freearg) PLINT *ArrayCkMinus1NULL { Py_DECREF(tmp$argnum);}
 
 /* No length but remember size to check others */
 %typemap(in) PLINT *Array (PyArrayObject* tmp) {
