@@ -3282,9 +3282,9 @@ plstripcCmd( ClientData clientData, Tcl_Interp *interp,
 {
     int        i;
     int        id;
-    char      *xspec;
-    char      *yspec;
-    char      *idName;
+    const char *xspec;
+    const char *yspec;
+    const char *idName;
     tclMatrix *colMat;
     tclMatrix *styleMat;
     double     value;
@@ -3294,10 +3294,10 @@ plstripcCmd( ClientData clientData, Tcl_Interp *interp,
     PLINT      colbox, collab;
     PLINT      colline[4], styline[4];
     int        nlegend;
-    char     **legline;
-    char      *labx;
-    char      *laby;
-    char      *labtop;
+    const char     **legline;
+    const char *labx;
+    const char *laby;
+    const char *labtop;
     char       idvalue[20];
 
     if (argc  != 21) {
