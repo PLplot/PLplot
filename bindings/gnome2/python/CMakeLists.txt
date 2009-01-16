@@ -60,14 +60,24 @@ gcwmodule.c
 ### gcwmodule_SRCS is now prepared.
 
 ### Prepare cplplotcanvasmodule_SRCS
+# First strip out visibility macros so h2def.py can interpret header file
+add_custom_command(
+OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_strip.h
+COMMAND sed -e s/PLDLLIMPEXP_GNOME2\ // ${CMAKE_SOURCE_DIR}/include/plplotcanvas.h
+> ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_strip.h
+DEPENDS 
+${CMAKE_SOURCE_DIR}/include/plplotcanvas.h
+)
 # Use sed to rename PLINT, PLFLT and PLUNICODE so that h2def.py knows what to do.
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas.defs
 COMMAND ${PYTHON_EXECUTABLE}
 ${codegen}/h2def.py
-${CMAKE_SOURCE_DIR}/include/plplotcanvas.h
+${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_strip.h
 | sed -e s/PLINT/gint32/ -e s/PLFLT/double/ -e s/PLUNICODE/guint32/
 > ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas.defs
+DEPENDS 
+${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_strip.h
 )
 
 add_custom_command(
@@ -83,6 +93,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas.defs
 > ${CMAKE_CURRENT_BINARY_DIR}/cplplotcanvas.c
 DEPENDS 
 ${CMAKE_CURRENT_SOURCE_DIR}/cplplotcanvas.override
+${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_strip.h
 ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas.defs
 )
 
