@@ -256,7 +256,6 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
   menuBar->Append( plotMenu, wxT("&Plot") );
   SetMenuBar( menuBar );
 
-  SetTitle( wxT("wxWidgets PLplot App") );
   SetIcon( wxIcon(graph) );
 }
 

@@ -291,9 +291,21 @@ wxPLDevBase* common_init(  PLStream *pls )
   /* default options */
   static PLINT freetype=0;
   static PLINT smooth_text=1;
-  static PLINT backend=wxBACKEND_DC;
   static PLINT text=1;
   static PLINT hrshsym = 0;
+  
+  /* default backend uses wxGraphicsContext, if not available
+     the agg library will be used, if not available the basic
+     backend will be used. */
+  static PLINT backend=wxBACKEND_DC;
+	#if wxUSE_GRAPHICS_CONTEXT
+		backend=wxBACKEND_GC;
+	#else
+		#ifdef HAVE_AGG 
+			backend=wxBACKEND_AGG;
+		#endif
+	#endif
+
   
 DrvOpt wx_options[] = {
 #ifdef HAVE_FREETYPE
@@ -311,14 +323,18 @@ DrvOpt wx_options[] = {
   /* allocate memory for the device storage */
   switch( backend )
   {
-#if wxUSE_GRAPHICS_CONTEXT    
   case wxBACKEND_GC:
+  /* in case wxGraphicsContext isn't available, the next backend (agg
+     if available) in this list will be used */
+#if wxUSE_GRAPHICS_CONTEXT    
     dev = new wxPLDevGC;
-    freetype = 0; /* this backend is vector oriented and doesn't now pixels */
+    freetype = 0; /* this backend is vector oriented and doesn't know pixels */
     break;
 #endif
-#ifdef HAVE_AGG
   case wxBACKEND_AGG:
+  /* in case the agg library isn't available, the standard backend
+     will be used */
+#ifdef HAVE_AGG
     dev = new wxPLDevAGG;
     text = 0; /* text processing doesn't work yet for the AGG backend */
     break;
@@ -332,7 +348,7 @@ DrvOpt wx_options[] = {
     exit( 0 );
   }
   pls->dev = (void*)dev;
-
+ 
 /* be verbose and write out debug messages */
 #ifdef _DEBUG
   pls->verbose = 1;
@@ -1157,7 +1173,22 @@ static void install_buffer( PLStream *pls )
     initApp=true;
   }
   
-  dev->m_frame = new wxPLplotFrame( wxT("wxWidgets PLplot App"), pls );
+
+  wxString title=wxT("wxWidgets PLplot App");
+  switch(dev->backend) {
+  case wxBACKEND_DC:
+  	title += wxT(" (basic)");
+  	break;
+  case wxBACKEND_GC:
+  	title += wxT(" (wxGC)");
+  	break;
+  case wxBACKEND_AGG:
+  	title += wxT(" (AGG)");
+  	break;
+  default:
+  	break;
+  }
+  dev->m_frame = new wxPLplotFrame( title, pls );
   wxPLGetApp().AddFrame( dev->m_frame );
   dev->m_frame->SetClientSize( dev->width, dev->height );
   if( dev->showGUI ) {
