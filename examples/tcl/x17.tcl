@@ -28,8 +28,8 @@ proc x17 {{w loopback}} {
 #   async X behaviour, one does not have a real-time scripcharter.
 #
 
-    plsetopt "db" ""
-    plsetopt "np" ""
+#    plsetopt "db" ""
+#    plsetopt "np" ""
 
 #   User sets up plot completely except for window and data
 #   Eventually settings in place when strip chart is created will be
