@@ -37,9 +37,11 @@ wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height, int style ) : p
   Create( dc, width, height, style );
 }
 
+
 wxPLplotstream::wxPLplotstream() : plstream()
 {
 }
+
 
 void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
 {
@@ -65,11 +67,13 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
 #endif  
   
   int backend;
+#if wxUSE_GRAPHICS_CONTEXT  
   if( m_style & wxPLPLOT_BACKEND_GC )
     backend=2;
-  else if ( m_style & wxPLPLOT_BACKEND_AGG )
-    backend=0;
+  /* else if ( m_style & wxPLPLOT_BACKEND_AGG )
+    backend=0; */
   else
+#endif
     backend=0;
     
   sprintf( buffer, "hrshsym=%d,text=%d,backend=%d",
