@@ -104,4 +104,5 @@ int main(int argc,char *argv[] )
 
   /* Start the gtk main loop */
   gtk_main();
+  return 0;
 }
