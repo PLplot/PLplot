@@ -2,65 +2,121 @@
 # Test suite of PLplot interactive stuff that cannot be tested with
 # file output device drivers.
 
-
+INDEX_LIST="01 04 08 14 16 17 23"
+DEVICE_LIST=
 if [ "@PLD_xwin@" = "ON" ] ; then
-    c/x01c -dev xwin
-    c/x04c -dev xwin
-    c/x08c -dev xwin
-    c/x16c -dev xwin
-fi
-
-if [ "@PLD_gcw@" = "ON" ] ; then
-    c/x01c -dev gcw
-    c/x04c -dev gcw
-    c/x08c -dev gcw
-    c/x16c -dev gcw
-fi
-
-if [ "@PLD_wxwidgets@" = "ON" ] ; then
-    c/x01c -dev wxwidgets
-    c/x04c -dev wxwidgets
-    c/x08c -dev wxwidgets
-    c/x16c -dev wxwidgets
-fi
-
-if [ "@PLD_xcairo@" = "ON" ] ; then
-    c/x01c -dev xcairo
-    c/x04c -dev xcairo
-    c/x08c -dev xcairo
-    c/x16c -dev xcairo
-fi
-
-if [ "@ENABLE_wxwidgets@" = "ON" ] ; then
-    cd c++
-    ./wxPLplotDemo
-    cd ..
-fi
-
-if [ "@ENABLE_gnome2@" = "ON" ] ; then
-    cd c
-    ./plplotcanvas_demo
-    ./plplotcanvas_animation
-    cd ..
-fi
-
-if [ "@ENABLE_pygcw@" = "ON" ] ; then
-    cd python
-    ./plplotcanvas_demo.py
-    ./plplotcanvas_animation.py
-    cd ..
+    DEVICE_LIST="$DEVICE_LIST xwin"
 fi
 
 if [ "@PLD_tk@" = "ON" ] ; then
-    c/x14c -dev tk
-    c/x17c -dev tk
+    DEVICE_LIST="$DEVICE_LIST tk"
+fi
+
+if [ "@PLD_xcairo@" = "ON" ] ; then
+    DEVICE_LIST="$DEVICE_LIST xcairo"
+fi
+
+if [ "@PLD_gcw@" = "ON" ] ; then
+    DEVICE_LIST="$DEVICE_LIST gcw"
+fi
+
+if [ "@PLD_wxwidgets@" = "ON" ] ; then
+    DEVICE_LIST="$DEVICE_LIST wxwidgets"
+fi
+
+for device in $DEVICE_LIST ; do
+    for index in $INDEX_LIST ; do
+	echo "c/x${index}c -dev $device"
+	c/x${index}c -dev $device 2> test.error
+	# Look for any status codes (segfaults, plexit) from the examples themselves
+	status_code=$?
+	if [ "$status_code" -ne 0 ] ; then
+            echo "ERROR indicated by status code for c/x${index}c -dev $device"
+	fi
+	cat test.error
+	# Look for any PLPLOT ERROR messages from plwarn that do not result in an exit code.
+	is_error=`grep -l 'PLPLOT ERROR' test.error`
+	if [ -n "$is_error" ] ; then
+            echo "ERROR indicated by 'PLPLOT ERROR' in stderr for c/x${index}c -dev $device" 
+	fi
+    done
+done
+
+INDEX_LIST=
+COUNT=0
+if [ "@ENABLE_wxwidgets@" = "ON" ] ; then
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="c++"
+    COMMAND[$COUNT]="./wxPLplotDemo"
+    COUNT=$(( $COUNT + 1 ))
+fi
+
+if [ "@ENABLE_gnome2@" = "ON" ] ; then
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="c"
+    COMMAND[$COUNT]="./plplotcanvas_demo"
+    COUNT=$(( $COUNT + 1 ))
+
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="c"
+    COMMAND[$COUNT]="./plplotcanvas_animation"
+    COUNT=$(( $COUNT + 1 ))
+fi
+
+if [ "@ENABLE_pygcw@" = "ON" ] ; then
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="python"
+    COMMAND[$COUNT]="./plplotcanvas_demo.py"
+    COUNT=$(( $COUNT + 1 ))
+
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="python"
+    COMMAND[$COUNT]="./plplotcanvas_animation.py"
+    COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_tk@" = "ON" ] ; then
-    tk/xtk01 -f tk/tk01
-    tk/xtk02 -f tk/tk02
-    plserver -f tk/tk03
-    tk/xtk04 -f tk/tk04
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="tk"
+    COMMAND[$COUNT]="./xtk01 -f tk01"
+    COUNT=$(( $COUNT + 1 ))
+
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="tk"
+    COMMAND[$COUNT]="./xtk02 -f tk02"
+    COUNT=$(( $COUNT + 1 ))
+
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="tk"
+    COMMAND[$COUNT]="plserver  -f tk03"
+    COUNT=$(( $COUNT + 1 ))
+
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="tk"
+    COMMAND[$COUNT]="./xtk04 -f tk04"
+    COUNT=$(( $COUNT + 1 ))
+fi
+
+# execute all interactive commands set up by previous stanzas.
+for index in $INDEX_LIST ; do
+    pushd ${DIRECTORY[$index]}
+    echo "${COMMAND[$index]}"
+    ${COMMAND[$index]} 2> test.error
+    # Look for any status codes (segfaults, plexit) from the examples themselves
+    status_code=$?
+    if [ "$status_code" -ne 0 ] ; then
+        echo "ERROR indicated by status code for ${COMMAND[$index]}"
+    fi
+    cat test.error
+    # Look for any PLPLOT ERROR messages from plwarn that do not result in an exit code.
+    is_error=`grep -l 'PLPLOT ERROR' test.error`
+    if [ -n "$is_error" ] ; then
+        echo "ERROR indicated by 'PLPLOT ERROR' in stderr for ${COMMAND[$index]}" 
+    fi
+    popd
+done
+
+if [ "@ENABLE_tk@" = "ON" ] ; then
     cd tcl
     plserver <<EOF
 plstdwin .
@@ -75,8 +131,8 @@ EOF
     pwd
 # Drop 2 to avoid 'invalid command name "plhlsrgb"' error.
 # Drop 14 because multiple devices do not seem to work in this context.
-# Drop 17 because it simply prints out unimplemented message.
 # Drop 24 to avoid 'invalid command name "plschr"' error.
+# Drop 31 since it produces empty plot (by design).
     plserver <<EOF
 source tkdemos.tcl
 1
@@ -93,6 +149,7 @@ source tkdemos.tcl
 13
 15
 16
+17
 18
 19
 20
