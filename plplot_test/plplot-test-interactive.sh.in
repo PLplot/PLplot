@@ -2,6 +2,7 @@
 # Test suite of PLplot interactive stuff that cannot be tested with
 # file output device drivers.
 
+OVERALL_STATUS_CODE=0
 INDEX_LIST="01 04 08 14 16 17 23"
 DEVICE_LIST=
 if [ "@PLD_xwin@" = "ON" ] ; then
@@ -31,13 +32,15 @@ for device in $DEVICE_LIST ; do
 	# Look for any status codes (segfaults, plexit) from the examples themselves
 	status_code=$?
 	if [ "$status_code" -ne 0 ] ; then
-            echo "ERROR indicated by status code for c/x${index}c -dev $device"
+            echo "ERROR indicated by status code = $status_code for c/x${index}c -dev $device"
+	    OVERALL_STATUS_CODE=$status_code
 	fi
 	cat test.error
 	# Look for any PLPLOT ERROR messages from plwarn that do not result in an exit code.
 	is_error=`grep -l 'PLPLOT ERROR' test.error`
 	if [ -n "$is_error" ] ; then
             echo "ERROR indicated by 'PLPLOT ERROR' in stderr for c/x${index}c -dev $device" 
+	    OVERALL_STATUS_CODE=1
 	fi
     done
 done
@@ -105,13 +108,15 @@ for index in $INDEX_LIST ; do
     # Look for any status codes (segfaults, plexit) from the examples themselves
     status_code=$?
     if [ "$status_code" -ne 0 ] ; then
-        echo "ERROR indicated by status code for ${COMMAND[$index]}"
+        echo "ERROR indicated by status code = $status_code for ${COMMAND[$index]}"
+	OVERALL_STATUS_CODE=$status_code
     fi
     cat test.error
     # Look for any PLPLOT ERROR messages from plwarn that do not result in an exit code.
     is_error=`grep -l 'PLPLOT ERROR' test.error`
     if [ -n "$is_error" ] ; then
         echo "ERROR indicated by 'PLPLOT ERROR' in stderr for ${COMMAND[$index]}" 
+	OVERALL_STATUS_CODE=1
     fi
     popd
 done
@@ -165,3 +170,9 @@ source tkdemos.tcl
 exit
 EOF
 fi
+if [ "$OVERALL_STATUS_CODE" -ne 0 ] ; then
+    echo "A major error occurred for one of the interactive examples"
+else
+    echo "All interactive tests completed without major errors"
+fi
+exit $OVERALL_STATUS_CODE
