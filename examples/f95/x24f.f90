@@ -1,4 +1,4 @@
-!     $Id:$  
+!     $Id$  
 !
 !   Unicode Pace Flag
 !
