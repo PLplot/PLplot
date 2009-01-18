@@ -40,7 +40,8 @@
 	  array(27, 10, 1, ""),
 	  array(28,  5, 1, ""),
 	  array(29,  3, 1, ""),
-	  array(30,  2, 1, ""));
+	  array(30,  2, 1, "");
+	  array(31,  1, 1, ""));
 ?>
 
 <!-- include the html header -->
@@ -139,7 +140,7 @@ END;
 		echo <<<END
 			<h3>Examples</h3>
 			<p>These examples were generated with the pngcairo device and
-				 reflect the status of PLplot-5.9.1.</p>
+				 reflect the status of PLplot-5.9.2.</p>
 			<p>Select a thumbnail to view full-size image and source code.</p>
 			<p>
 END;
