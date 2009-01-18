@@ -84,6 +84,5 @@ def main():
 
     pllsty(2)
     plmeridians(mapform19,10.0, 10.0, 0.0, 360.0, -10.0, 80.0)
-    plend()
 
 main()

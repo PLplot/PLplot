@@ -166,6 +166,5 @@ def main():
                 plcol0(15)
                 pllab('','',title[alg-1])
                 plot3dc(xg, yg, zg, DRAW_LINEXY | MAG_COLOR | BASE_CONT, clev)
-    plend()
     
 main()

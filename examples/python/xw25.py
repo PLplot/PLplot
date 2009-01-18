@@ -84,8 +84,5 @@ def main():
             pllsty(1)
             plline(x0,y0)
 
-    # Don't forget to call plend() to finish off!
-
-    plend()
 
 main()

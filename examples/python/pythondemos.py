@@ -33,15 +33,10 @@ plparseopts(sys.argv, PL_PARSE_FULL)
 # Initialize plplot
 plinit()
 
-# Skip 14 (must be standalone so cannot be run from pythondemos.py),
-# 17 (must be standalone and interactive so cannot be run from pythondemos.py),
-# 19 (placeholder without real implementation),
-# 20 (no implementation)
-# 21 (no implementation), and 
-# 24 (requires special fonts installed to produce good-looking result).
-# 25 (no implementation)
+# Exclude interactive demos 14, 17, 31 which call plinit in the xw??.py 
+# script
 failed = []
-for i in range(1, 14) + [15, 16, 18, 22, 23, 26]:
+for i in range(1, 14)+[15,16]+range(18,31):
     script = 'xw' + '%02d' % i
     try:
 	__import__(script, globals(), locals(), [])
