@@ -1,4 +1,4 @@
-PLplot Release 5.9.2
+PLplot Release 5.9.3
 ~~~~~~~~~~~~~~~~~~~~
 This is a development release of PLplot. It represents the ongoing efforts
 of the community to improve the PLplot plotting package. Development 
@@ -52,9 +52,8 @@ directly (only possible in C/C++) or use plgvpw.
 
 INDEX
 
-1. Changes relative to PLplot 5.9.1 (the previous development release)
+1. Changes relative to PLplot 5.9.2 (the previous development release)
 
-1.1 Extension of our test framework
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -85,19 +84,8 @@ examples
 2.24 Documentation updates
 
 
-1. Changes relative to PLplot 5.9.1 (the previous development release)
+1. Changes relative to PLplot 5.9.2 (the previous development release)
 
-1.1 Extension of our test framework
-
-The standard test suite for PLplot now carries out a comparison of the
-stdout output (especially important for example 31 which tests most of our
-set and get functions) and PostScript output for different languages as a
-check.  Thanks to the addition of example 31, the inclusion of examples 14
-and 17 in the test suite and other recent extensions of the other 
-examples we now have rigourous testing in place for almost the entirety 
-of our common API.  This extensive testing framework has already helped 
-us track down a number of bugs, and it should make it much easier for us 
-to maintain high quality for our ongoing PLplot releases.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
