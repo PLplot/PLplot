@@ -560,7 +560,7 @@ plD_init_gif_Dev(PLStream *pls)
     static int red15=0;
 #ifdef HAVE_FREETYPE
     static int freetype=1;
-    static int smooth_text=1;
+    static int smooth_text=0;
     FT_Data *FT;
 #endif
 
