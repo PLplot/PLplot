@@ -451,7 +451,11 @@ FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
       clipymin = tmp;
     }
 
-    if ((slot->bitmap.pixel_mode==ft_pixel_mode_mono)||(pls->icol0==0)) {
+    /* Comment this out as it fails for cases where we want to plot text
+     * in the background font, i.e. example 24. 
+     */
+    /*if ((slot->bitmap.pixel_mode==ft_pixel_mode_mono)||(pls->icol0==0)) {*/
+    if (slot->bitmap.pixel_mode==ft_pixel_mode_mono) {
 	x+=slot->bitmap_left;
 	y-=slot->bitmap_top;
 
