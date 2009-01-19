@@ -1,4 +1,4 @@
-/* $Id: x09c.c 9117 2008-12-15 12:45:13Z andrewross $
+/* $Id$
 
 	Contour plot demo.
 

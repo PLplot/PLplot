@@ -1,4 +1,4 @@
-/* $Id: x11c.c 8033 2007-11-23 15:28:09Z andrewross $
+/* $Id$
 
 	Mesh plot demo.
 

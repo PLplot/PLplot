@@ -1,4 +1,4 @@
--- $Id: $
+-- $Id$
 
 --	Window positioning demo.
 

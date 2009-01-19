@@ -1,4 +1,4 @@
--- $Id: $
+-- $Id$
 
 --	Filling and clipping polygons.
 
