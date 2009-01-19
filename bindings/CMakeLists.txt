@@ -33,6 +33,7 @@ add_subdirectory(wxwidgets)
 add_subdirectory(ada)
 add_subdirectory(d)
 add_subdirectory(ocaml)
+add_subdirectory(lua)
 
 set(index)
 if(ENABLE_tcl)
