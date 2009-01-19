@@ -31,7 +31,7 @@
 // PLPLOT_FREETYPE_MONO_FONT=/usr/share/fonts/truetype/ttf-devanagari-fonts/lohit_hi.ttf \
 // PLPLOT_FREETYPE_SCRIPT_FONT=/usr/share/fonts/truetype/unfonts/UnBatang.ttf \
 // PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bangla-fonts/JamrulNormal.ttf \
-// ./x24 -dev png -drvopt smooth=0 -o x24cxx.png
+// java -cp /path/to/plplot.jar plplot.examples.x24 -dev png -o x24j.png
 //
 // Packages needed:
 //
@@ -41,6 +41,9 @@
 // ttf-unfonts
 // ttf-bangla-fonts
 //
+// For the latest Ubuntu systems lohit_hi.ttf has been moved to the
+//  ttf-indic-fonts-core package instead of ttf-devanagari-fonts so you
+//  will have to use this package instead and update the font path.
 //
 
 package plplot.examples;

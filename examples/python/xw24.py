@@ -31,7 +31,7 @@
 #    PLPLOT_FREETYPE_MONO_FONT=$TTFDIR/ttf-devanagari-fonts/lohit_hi.ttf \
 #    PLPLOT_FREETYPE_SCRIPT_FONT=$TTFDIR/unfonts/UnBatang.ttf \
 #    PLPLOT_FREETYPE_SYMBOL_FONT=$TTFDIR/ttf-bengali-fonts/JamrulNormal.ttf \
-#    ./x24 -dev png -drvopt smooth=0 -o x24p.png )
+#    ./x24 -dev png -o x24p.png )
 #
 #  Packages needed:
 #
@@ -41,6 +41,9 @@
 #  ttf-unfonts
 #  ttf-bengali-fonts
 #
+#  For the latest Ubuntu systems lohit_hi.ttf has been moved to the
+#  ttf-indic-fonts-core package instead of ttf-devanagari-fonts so you
+#  will have to use this package instead and update the font path.
 #
 #  Translated from x24c.c into python by Thomas J. Duck
 

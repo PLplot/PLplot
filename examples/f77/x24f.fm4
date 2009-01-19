@@ -1,3 +1,4 @@
+C   $Id:$
 C   Unicode Pace Flag
 C
 C   Copyright (C) 2005 Rafael Laboissiere
@@ -28,7 +29,7 @@ C     PLPLOT_FREETYPE_SERIF_FONT=$TTFDIR/freefont/FreeSerif.ttf \
 C     PLPLOT_FREETYPE_MONO_FONT=$TTFDIR/ttf-devanagari-fonts/lohit_hi.ttf \
 C     PLPLOT_FREETYPE_SCRIPT_FONT=$TTFDIR/unfonts/UnBatang.ttf \
 C     PLPLOT_FREETYPE_SYMBOL_FONT=$TTFDIR/ttf-bengali-fonts/JamrulNormal.ttf \
-C     ./x24c -dev png -drvopt smooth=0 -o x24c.png )
+C     ./x24f -dev png -o x24f.png )
 C
 C   Packages needed:
 C
@@ -38,6 +39,9 @@ C   ttf-devanagari-fonts
 C   ttf-unfonts
 C   ttf-bengali-fonts
 C
+C   For the latest Ubuntu systems lohit_hi.ttf has been moved to the
+C   ttf-indic-fonts-core package instead of ttf-devanagari-fonts so you
+C   will have to use this package instead and update the font path.
 
       program x24f
       implicit none
