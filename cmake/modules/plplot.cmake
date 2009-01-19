@@ -311,6 +311,7 @@ include(tcl-related)
 include(pdl)
 include(ada)
 include(ocaml)
+include(lua)
 
 # =======================================================================
 # additional library support
