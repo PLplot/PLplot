@@ -660,7 +660,7 @@ void plD_bop_wxwidgets( PLStream *pls )
 
   if( dev->ready ) {
     /*if( pls->termin==0 ) {
-      plGetFam( pls );
+      plGetFam( pls );*/
       /* force new file if pls->family set for all subsequent calls to plGetFam
          n.b. putting this after plGetFam call is important since plinit calls
          bop, and you don't want the familying sequence started until after
@@ -669,7 +669,7 @@ void plD_bop_wxwidgets( PLStream *pls )
       /* n.b. pls->dev can change because of an indirect call to plD_init_png
          from plGetFam if familying is enabled.  Thus, wait to define dev until
          now. */
-      dev = (wxPLDevBase*)pls->dev;
+      /*dev = (wxPLDevBase*)pls->dev;
 
       pls->famadv = 1;
       pls->page++;
