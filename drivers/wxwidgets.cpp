@@ -290,8 +290,8 @@ wxPLDevBase* common_init(  PLStream *pls )
 
   /* default options */
   static PLINT freetype=-1;
-  static PLINT smooth_text=-1;
-  static PLINT text=1;
+  static PLINT smooth_text=1;
+  static PLINT text=-1;
   static PLINT hrshsym = 0;
   
   /* default backend uses wxGraphicsContext, if not available
