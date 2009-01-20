@@ -1125,11 +1125,12 @@ static void init_freetype_lv2( PLStream *pls )
          }
         FT->smooth_text=1;      /* Yippee ! We had success setting up the extended cmap0 */
       }
+    else
+      plwarn("Insufficient colour slots available in CMAP0 to do text smoothing.");
   } else if ((FT->want_smooth_text==1)&&(FT->BLENDED_ANTIALIASING==1))    /* If we have a truecolour device, we wont even bother trying to change the palette */
    {
      FT->smooth_text=1;
-   } else
-     plwarn("Insufficient colour slots available in CMAP0 to do text smoothing.");
+   } 
 }
 
 #endif
