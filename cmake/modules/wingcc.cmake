@@ -29,9 +29,9 @@
 
 if(PLD_wingcc)
   message(STATUS "Looking for gdi32 header and library")
-  find_library(GDI32_LIBRARY gdi32 HINTS ${MINGWLIBPATH})
+  find_library(GDI32_LIBRARY gdi32 HINTS ${MINGWLIBPATH} ${BORLANDLIBPATH})
   if(GDI32_LIBRARY)
-    find_library(COMDLG32_LIBRARY comdlg32 HINTS ${MINGWLIBPATH})
+    find_library(COMDLG32_LIBRARY comdlg32 HINTS ${MINGWLIBPATH} ${BORLANDLIBPATH})
   endif(GDI32_LIBRARY)
   if(GDI32_LIBRARY AND COMDLG32_LIBRARY)
     message(STATUS "Looking for gdi32 header and library - found")

@@ -46,7 +46,7 @@ set(PACKAGE plplot)
 # Location where PLplot cmake build system first looks for cmake modules.
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
-# We need the path to the MinGW compiler in order to find
+# We need the path to the MinGW/Borland compiler in order to find
 # the import libraries for system libraries.
 IF(MINGW)
 	get_filename_component(MINGWBINPATH ${CMAKE_C_COMPILER} PATH)
@@ -54,6 +54,12 @@ IF(MINGW)
 			CACHE FILEPATH
 			DOCSTRING "Path to MinGW import libraries")
 ENDIF(MINGW)
+IF(BORLAND)
+	get_filename_component(BORLANDBINPATH ${CMAKE_C_COMPILER} PATH)
+	set(BORLANDLIBPATH ${BORLANDBINPATH}/../Lib/PSDK
+			CACHE FILEPATH
+			DOCSTRING "Path to Borland import libraries")
+ENDIF(BORLAND)
 
 # Version data that need modification for each release.
 include(plplot_version)
