@@ -78,18 +78,9 @@ You also have access to the PLplot API,
 		   plfill(n, x, y) ...
 
 NOTES: - You don't need to specify vector or matrix dimensions.
-       - When setting Octave variable "automatic_replot = 1", changes take
-	 effect immediately, otherwise they only take effect at the next plot.
-	 (This does not yet apply to all plot types and does not work with 
-         octave 2.9).
-       - With octave 2.9 you will see various spurious warnings about variables
-         which are no longer builtins. These warnings can safely be ignored.
-         Plplot is just testing to see if these variables exist as part of
-         the octave 2.1 compatibility code. To suppress these warnings add
-         warning("off","Octave:built-in-variable-assignment"); 
-         to your .octaverc.
-         
-
+       - When setting the plplot variable "pl_automatic_replot = 1", 
+         changes take effect immediately, otherwise they only take 
+         effect at the next plot.
 
 --- Plot window control
 fig,

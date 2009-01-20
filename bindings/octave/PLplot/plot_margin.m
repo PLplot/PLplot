@@ -22,6 +22,7 @@
 function ost = plot_margin(st)
 
   global __pl
+  global pl_automatic_replot
   n = __pl_init;
 
   ost = __pl.margin(n);
@@ -30,8 +31,8 @@ function ost = plot_margin(st)
     __pl.margin(n) = st;
   endif
 
-  if (exist("automatic_replot"))
-    if (automatic_replot)
+  if (exist("pl_automatic_replot"))
+    if (pl_automatic_replot)
       __pl_plotit;
     endif
   endif

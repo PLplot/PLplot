@@ -35,12 +35,6 @@ export LD_LIBRARY_PATH=$TOPDIR/src:$TOPDIR/lib/csa:$TOPDIR/lib/nn
 # Launch an Octave script that exercises all the demos
 $octave -f -q -p $octavedir <<EOF 2> test.error
 
-# Suppress spurious warnings with octave 2.9
-ver = str2num(split(version,"."));
-if ((ver(1) == 2 && ver(2) == 9) || (ver(1) >= 3))
-  warning("off","Octave:built-in-variable-assignment");
-endif
-
 # Check verbose_test variable
 if (strcmp(getenv("verbose_test"),"on") == 1)
 verbose_test = 1;
@@ -59,10 +53,8 @@ else
 	    endfor
 
 # p7 works OK with plmeta, e.g., but not ps or psc. pleop/plbop issue?
-# These require octave-2.1.50 so comment out since not everybody has
-# this.
 
-	    for i=[1:7 8 9 13 15 16] ;
+	    for i=[1:7 8 9 13 15 16 21] ;
 	    if (verbose_test)
 		printf("p%d\n",i);
 		endif

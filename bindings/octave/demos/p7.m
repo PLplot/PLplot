@@ -14,10 +14,9 @@
 
 function p7
 
-  if (exist("automatic_replot"))
-    t = automatic_replot;
-    automatic_replot = 0;
-  endif
+  global pl_automatic_replot
+  t = pl_automatic_replot;
+  pl_automatic_replot = 0;
 
   [x y z]=rosenbrock;z=log(z);
 
@@ -36,7 +35,5 @@ function p7
   shade(x,y,z,15,3);
   axis;
 
-  if (exist("automatic_replot"))
-    automatic_replot = t;
-  endif
+  pl_automatic_replot = t;
 endfunction

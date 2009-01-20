@@ -20,10 +20,9 @@ function p21
   ##ocmap = colormap;
   colormap(bgr);
 
-  if (exist("automatic_replot"))
-    t = automatic_replot;
-    automatic_replot = 0;
-  endif
+  global pl_automatic_replot
+  t = pl_automatic_replot;
+  pl_automatic_replot = 0;
 
   gx = 30;
   gy = 40;
@@ -52,16 +51,15 @@ function p21
     pladv(j++);
     zg = griddata(x, y, z, xg, yg, i, opt(i));
     ## zg(isnan(zg)) = 0;
-    ofi = do_fortran_indexing;  do_fortran_indexing = 1;
+    old_dofi = warning("query","Octave:fortran-indexing");
+    warning("off","Octave:fortran-indexing");
     zg(isnan(zg)) = 0;
-    do_fortran_indexing = ofi;
+    warning(old_dofi.state,"Octave:fortran-indexing");
     title(alg(i,:));
     meshc(xg, yg, zg');
   endfor
 
-  if (exist("automatic_replot"))
-    automatic_replot = t;
-  endif
+  pl_automatic_replot = t;
   ##colormap(ocmap);
 
 endfunction

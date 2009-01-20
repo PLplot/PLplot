@@ -14,10 +14,9 @@
 
 function p19
 
-  if (exist("automatic_replot"))
-    t = automatic_replot;
-    automatic_replot = 0;
-  endif
+  global pl_automatic_replot
+  t = pl_automatic_replot;
+  pl_automatic_replot = 0;
 
   f0=figure;
   multiplot(1,2);
@@ -100,8 +99,6 @@ function p19
   closefig(f1);
   oneplot;
 
-  if (exist("automatic_replot"))
-    automatic_replot = t;
-  endif
+  pl_automatic_replot = t;
 
 endfunction

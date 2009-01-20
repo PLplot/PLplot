@@ -23,6 +23,7 @@
 function ccmap = colormap(map)
 
   global __pl
+  global pl_automatic_replot
   __pl_init;
 
   if (nargin == 0)
@@ -68,8 +69,8 @@ function ccmap = colormap(map)
   plscmap1(map(:,1), map(:,2), map(:,3));
   plflush;#pleop;
   
-  if (exist("automatic_replot"))
-    if (automatic_replot)
+  if (exist("pl_automatic_replot"))
+    if (pl_automatic_replot)
       ## can cause problems on plot scripts that dont support automatic _replot
       __pl_plotit; 
     endif

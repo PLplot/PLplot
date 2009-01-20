@@ -14,10 +14,9 @@
 
 function p2 
 
-  if (exist("automatic_replot"))
-    t = automatic_replot;
-    automatic_replot = 0;
-  endif
+  global pl_automatic_replot;
+  t = pl_automatic_replot;
+  pl_automatic_replot = 0;
 
   legend("opaque",0)
   title("PLplot Example 2");
@@ -30,9 +29,7 @@ function p2
        x, y2, 'b;sin(x)*cos(2*x);',
        x, y3, 'g;x*sin(x);');
   
-  if (exist("automatic_replot"))
-    automatic_replot = t;
-  endif
+  pl_automatic_replot = t;
 
 endfunction
 

@@ -29,6 +29,7 @@
 function st = legend (x, xpos, varargin)
 
   global __pl
+  global pl_automatic_replot
   strm = __pl_init;
 
   if (nargin == 0)
@@ -66,8 +67,8 @@ function st = legend (x, xpos, varargin)
     help "legend"
   endif
 
-  if (exist("automatic_replot"))
-    if (automatic_replot)
+  if (exist("pl_automatic_replot"))
+    if (pl_automatic_replot)
       __pl_plotit;
     endif
   endif

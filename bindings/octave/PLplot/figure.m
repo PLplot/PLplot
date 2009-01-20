@@ -46,15 +46,15 @@
 function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame)
 
   global __pl __tk_name
+  global pl_automatic_replot
 
   if (!exist("__pl") || !struct_contains (__pl,"inited"))
     v = split(version ,'.');
     if (! ((str2num(v(1,:)) > 2) ||
-           (str2num(v(1,:)) == 2 && str2num(v(2,:)) > 1) ||
-           (str2num(v(1,:)) == 2 && str2num(v(2,:)) == 1 &&
-            str2num(v(3,:)) >= 57)))
+           (str2num(v(1,:)) == 2 && str2num(v(2,:)) == 9 &&
+            str2num(v(3,:)) >= 0)))
         error("The PLplot-Octave scripts need an Octave version \n\
-               greater than or equal to 2.1.57.\n");
+               greater than or equal to 2.9.0.\n");
     endif
 
     plplot_stub;
@@ -65,13 +65,13 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 
     __pl.inited = 1;
 
-    if (exist("automatic_replot"))
-      if (automatic_replot == 0)
-        warning("It is recommended that you set 'automatic_replot=1' \n\
-                 in your ~/.octaverc file.");
-        ##automatic_replot = 1;
-      endif
-    endif
+##    if (exist("pl_automatic_replot"))
+##     if (pl_automatic_replot == 0)
+##        warning("It is recommended that you set 'pl_automatic_replot=1' \n\
+##                 in your ~/.octaverc file.");
+##        ##automatic_replot = 1;
+##      endif
+##    endif
   endif
 
   if (nargin == 0)

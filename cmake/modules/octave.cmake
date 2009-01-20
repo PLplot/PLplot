@@ -73,7 +73,25 @@ if(ENABLE_octave)
   ${_OCTAVE_VERSION}
   )
   message(STATUS "OCTAVE_VERSION = ${OCTAVE_VERSION}")
+  # Logic that depends on octave version
+  transform_version(NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION "2.9.0")
+  transform_version(NUMERICAL_OCTAVE_VERSION "${OCTAVE_VERSION}")
+  if(
+   NUMERICAL_OCTAVE_VERSION
+   LESS
+   "${NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION}"
+   )
+    message(STATUS "WARNING: "
+    "plplot require octave version 2.9 or greater. Disabling octave bindings")
+    set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+  endif(
+   NUMERICAL_OCTAVE_VERSION
+   LESS
+   "${NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION}"
+   )
+endif(ENABLE_octave)
 
+if(ENABLE_octave)
   # The following if block is required to keep from repeated pre-pending
   # of OCTAVE_INCLUDE_PATH_TRIMMED onto OCTAVE_INCLUDE_PATH which would
   # create 2^n components to OCTAVE_INCLUDE_PATH for n cmake calls.
@@ -154,82 +172,28 @@ if(ENABLE_octave)
   )
   #message(STATUS "OCTAVE_PREFIX = ${OCTAVE_PREFIX}")
   
-  # Logic that depends on octave version
-  transform_version(NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION "2.1.0")
-  transform_version(NUMERICAL_OCTAVE_VERSION "${OCTAVE_VERSION}")
-  if(
-   NUMERICAL_OCTAVE_VERSION
-   LESS
-   "${NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION}"
-   )
-    # octave-2.0 logic.
-    #_OCTAVE_M_DIR
-    file(WRITE ${CMAKE_BINARY_DIR}/octave_command
-    "printf(octave_config_info(\"localfcnfilepath\"));"
-    )
-    execute_process(
-    COMMAND ${OCTAVE} -q -f octave_command
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    OUTPUT_VARIABLE __OCTAVE_M_DIR
-    )
-    #message(STATUS "__OCTAVE_M_DIR = ${__OCTAVE_M_DIR}")    
-    string(REGEX REPLACE
-    "^.*:([^:][^:]*)//$"
-    "\\1"
-    _OCTAVE_M_DIR
-    ${__OCTAVE_M_DIR}
-    )
-    #message(STATUS "_OCTAVE_M_DIR = ${_OCTAVE_M_DIR}")    
-    #OCTAVE_OCT_DIR
-    if(NOT DEFINED OCTAVE_OCT_DIR)
-    file(WRITE ${CMAKE_BINARY_DIR}/octave_command
-    "printf(octave_config_info(\"localoctfilepath\"));"
-    )
-    execute_process(
-    COMMAND ${OCTAVE} -q -f octave_command
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    OUTPUT_VARIABLE _OCTAVE_OCT_DIR
-    )
-    #message(STATUS "_OCTAVE_OCT_DIR = ${_OCTAVE_OCT_DIR}")    
-    string(REGEX REPLACE
-    "^.*:([^:][^:]*)//$"
-    "\\1"
-    OCTAVE_OCT_DIR
-    ${_OCTAVE_OCT_DIR}
-    )
-    endif(NOT DEFINED OCTAVE_OCT_DIR)
-    #message(STATUS "OCTAVE_OCT_DIR = ${OCTAVE_OCT_DIR}")    
-  else(
-   NUMERICAL_OCTAVE_VERSION
-   LESS
-   "${NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION}"
-   )
-    # octave-2.1 (or higher) logic.
-    #_OCTAVE_M_DIR
-    file(WRITE ${CMAKE_BINARY_DIR}/octave_command
-    "printf(octave_config_info(\"localfcnfiledir\"));"
-    )
-    execute_process(
-    COMMAND ${OCTAVE} -q -f octave_command
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    OUTPUT_VARIABLE _OCTAVE_M_DIR
-    )
-    #OCTAVE_OCT_DIR
-    if(NOT DEFINED OCTAVE_OCT_DIR)
-    file(WRITE ${CMAKE_BINARY_DIR}/octave_command
-    "printf(octave_config_info(\"localoctfiledir\"));"
-    )
-    execute_process(
-    COMMAND ${OCTAVE} -q -f octave_command
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    OUTPUT_VARIABLE OCTAVE_OCT_DIR
-    )
-    endif(NOT DEFINED OCTAVE_OCT_DIR)
-  endif(
-   NUMERICAL_OCTAVE_VERSION
-   LESS
-   "${NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION}"
-   )
+  # octave-2.1 (or higher) logic.
+  #_OCTAVE_M_DIR
+  file(WRITE ${CMAKE_BINARY_DIR}/octave_command
+  "printf(octave_config_info(\"localfcnfiledir\"));"
+  )
+  execute_process(
+  COMMAND ${OCTAVE} -q -f octave_command
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  OUTPUT_VARIABLE _OCTAVE_M_DIR
+  )
+  #OCTAVE_OCT_DIR
+  if(NOT DEFINED OCTAVE_OCT_DIR)
+  file(WRITE ${CMAKE_BINARY_DIR}/octave_command
+  "printf(octave_config_info(\"localoctfiledir\"));"
+  )
+  execute_process(
+  COMMAND ${OCTAVE} -q -f octave_command
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  OUTPUT_VARIABLE OCTAVE_OCT_DIR
+  )
+  endif(NOT DEFINED OCTAVE_OCT_DIR)
+
   # Replace the OCTAVE_PREFIX with the PLplot prefix in OCTAVE_M_DIR
   string(REPLACE
   "${OCTAVE_PREFIX}" 

@@ -61,6 +61,7 @@ function curr_axis = axis (ax, opt)
   ## as setup by the user, or automaticaly. It interacts with hold mode.
 
   global __pl
+  global pl_automatic_replot
   strm = __pl_init;
 
   if (nargin == 0)
@@ -193,8 +194,8 @@ function curr_axis = axis (ax, opt)
     endswitch
   endif
 
-  if (exist("automatic_replot"))
-    if (automatic_replot)
+  if (exist("pl_automatic_replot"))
+    if (pl_automatic_replot)
       __pl_plotit;
     endif
   endif

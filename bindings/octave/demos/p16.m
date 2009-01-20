@@ -14,10 +14,9 @@
 
 function p16
 
-  if (exist("automatic_replot"))
-    t = automatic_replot;
-    automatic_replot = 0;
-  endif
+  global pl_automatic_replot
+  t = pl_automatic_replot;
+  pl_automatic_replot = 0;
 
   multiplot(1, 2);
   p1;
@@ -31,8 +30,6 @@ function p16
   shade(x, y, z);
 
   oneplot;
-  if (exist("automatic_replot"))
-    automatic_replot = t;
-  endif
+  pl_automatic_replot = t;
 
 endfunction

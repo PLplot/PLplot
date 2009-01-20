@@ -14,10 +14,9 @@
 
 function p4
 
-  if (exist("automatic_replot"))
-    t = automatic_replot;
-    automatic_replot = 0;
-  endif
+  global pl_automatic_replot;
+  t = pl_automatic_replot;
+  pl_automatic_replot = 0;
 
   x=0.01:0.1:10;
   y=exp(x);
@@ -27,8 +26,6 @@ function p4
   loglog(x,y,'y')
   grid (og);
  
-  if (exist("automatic_replot"))
-    automatic_replot = t;
-  endif
+  pl_automatic_replot = t;
 
 endfunction

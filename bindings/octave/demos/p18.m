@@ -14,10 +14,9 @@
 
 function p18
 
-  if (exist("automatic_replot"))
-    t = automatic_replot;
-    automatic_replot = 0;
-  endif
+  global pl_automatic_replot
+  t = pl_automatic_replot;
+  pl_automatic_replot = 0;
 
   plsetopt "db";
   fig( free_fig); #  unused plot window
@@ -33,8 +32,6 @@ function p18
   set_view("meshc", x, y, z);
   closefig
 
-  if (exist("automatic_replot"))
-    automatic_replot = 0;
-  endif
+  pl_automatic_replot = t;
 
 endfunction

@@ -28,13 +28,8 @@ function shade(x, y, z, levels, cont )
 
   unwind_protect
     
-  if (exist("warn_empty_list_elements"))
-    old_empty_list_elements_ok = warn_empty_list_elements;
-    warn_empty_list_elements = 0;
-  else
-    old_empty_list_elements_ok = warning("query", "Octave:empty-list-elements");
-    warning("off","Octave:empty-list-elements");
-  endif
+  old_empty_list_elements_ok = warning("query", "Octave:empty-list-elements");
+  warning("off","Octave:empty-list-elements");
 
   if (nargin == 1 && ismatrix(x))
     levels = 20;
@@ -177,11 +172,7 @@ function shade(x, y, z, levels, cont )
 
   unwind_protect_cleanup  
   
-  if (exist("warn_empty_list_elements"))
-    warn_empty_list_elements = old_empty_list_elements_ok;
-  else
-    warning(old_empty_list_elements_ok.state, "Octave:empty-list-elements");
-  endif
+  warning(old_empty_list_elements_ok.state, "Octave:empty-list-elements");
 
   end_unwind_protect  
 

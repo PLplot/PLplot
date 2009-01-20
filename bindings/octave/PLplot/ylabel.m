@@ -21,6 +21,7 @@
 function text = ylabel (text)
 
   global __pl
+  global pl_automatic_replot
 
   strm = __pl_init;
 
@@ -38,8 +39,8 @@ function text = ylabel (text)
     __pl.ylabel = __pl_matstr(__pl.ylabel, text, strm);
   endif
 
-  if (exist("automatic_replot"))
-    if (automatic_replot)
+  if (exist("pl_automatic_replot"))
+    if (pl_automatic_replot)
       __pl_plotit;
     endif
   endif

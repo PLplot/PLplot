@@ -14,10 +14,9 @@
 
 function p3
 
-  if (exist("automatic_replot"))
-    t = automatic_replot;
-    automatic_replot = 0;
-  endif
+  global pl_automatic_replot;
+  t = pl_automatic_replot;
+  pl_automatic_replot = 0;
 
   xscale = 6.;
   yscale = 1.;
@@ -39,8 +38,6 @@ function p3
   title("#frPLplot Example 3 - y=x#u2 #d(with error bars)");
   plot(x, y, [xs' xe'], [ys' yel' yer'], '~g; ;');
 
-  if (exist("automatic_replot"))
-    automatic_replot = t;
-  endif
+  pl_automatic_replot = t;
 
 endfunction

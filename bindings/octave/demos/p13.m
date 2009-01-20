@@ -14,10 +14,9 @@
 
 function p13
 
-  if (exist("automatic_replot"))
-    t = automatic_replot;
-    automatic_replot = 0;
-  endif
+  global pl_automatic_replot
+  t = pl_automatic_replot;
+  pl_automatic_replot = 0;
 
   legend("opaque");
   title("Matrix with individual line attributes");
@@ -36,8 +35,6 @@ function p13
 
   ##  plot(randn(10,3),fmt)
   plot(g,fmt)
-  if (exist("automatic_replot"))
-    automatic_replot = t;
-  endif
+  pl_automatic_replot = t;
 
 endfunction
