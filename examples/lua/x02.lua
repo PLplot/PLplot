@@ -1,4 +1,4 @@
--- $Id: $
+-- $Id$
 
 --	Multipl.e window and color map 0 demo.
 
