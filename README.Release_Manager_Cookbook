@@ -1,8 +1,9 @@
 INDEX
 (1) GNU Privacy Guard (gpg).
-(2) Installing a Local Copy of the PLplot Webpage.
-(3) Creating a test tarball from trunk.
-(4) Creating a PLplot Release.
+(2) Creating a test tarball from trunk.
+(3) Install and test a local copy of the PLplot website.
+(4) Upload the local website to SourceForge.
+(5) Creating a PLplot Release.
 
 
 (1) GNU Privacy Guard (gpg)
@@ -22,73 +23,7 @@ gpg --send-keys 6C58D1AC
 (where 6C58D1AC is replaced with the appropriate value from the list-keys
 command)
 
-(2) (Optional) Installing a Local Test Copy of the PLplot Webpage
-
-If there has been any changes in the documentation, examples, or the base
-website itself, it is probably a good idea to generate and install from
-scratch a local copy of the PLplot website on some ssh-accessible machine
-(normally your local machine).
-
-All you have to do is run (on a Linux host that is capable of building the
-documentation)
-
-scripts/generate_website.sh
-
-with no arguments.  The script asks you four questions, gives you a chance
-to verify your answers, then does all the rest of it (downloading a
-throwaway copy of the PLplot source code, building the documentation,
-generating the announcements that are part of the base website, uploading
-the base website, uploading the documentation, building the examples,
-running the examples, uploading the example source code and example results)
-automatically.  I (AWI) tested this script using the four answers
-
-Summary:
-USERNAME = irwin
-GROUPNAME = irwin
-HOSTNAME = raven
-WEBSITE_PREFIX = /home/irwin/public_html/plplot
-
-(raven is my local computer name, and /home/irwin/public_html is a location
-where I can put various websites).  I have both apache and PHP installed on
-my local machine.  Therefore, when I browse
-http://raven/~irwin/plplot/htdocs/ (the website corresponding to the above
-file prefix location), the result looks good.  In particular, the Ada plplot
-documentation is there and all the previous problems with source code
-accessibility for the Ada, f77, and OCaml examples are now fixed.
-
-Once you are satisfied with the local website, you can upload it to
-SourceForge with rsync.  I give the directions here, although you will
-probably want to do this later (see below) in the actual release process
-since there is some release link and version information that needs to
-be updated for the actual release (see below) as opposed to this optional
-test of the website generation.
-
-For the above WEBSITE_PREFIX, here is what worked for me from my computer
-with the hostname of raven where that WEBSITE_PREFIX directory was
-created.
-
-rsync -av --delete \
-/home/irwin/public_html/plplot/htdocs/ \
-airwin,plplot@web.sourceforge.net:htdocs 
-
-Adjust for your username and WEBSITE_PREFIX.  The ",plplot" part of the
-username makes sure you have the right group permissions and default website
-directory location for PLplot.  
-
-N.B. the trailing slash on the source directory is essential and means rsync
-the contents of this directory with the contents of the destination htdocs
-directory.  Without the trailing slash you would rsync the the contents of
-the source directory with the contents of the htdocs/htdocs destination
-directory which is not what you want to do.  
-
-N.B. the --dry-run option for rsync is a god-send and tells you exactly what
-will happen without actually doing it.
-
-N.B. log files for the website build can be found in the /tmp/plplotdoc/build
-directory. This can be useful for finding problems with the build of the
-website.
-
-(3) (Optional) Creating a test tarball from trunk
+(2) (Optional) Creating a test tarball from trunk
 
 This step is only required if you have some concerns about how
 recent changes may have affected the generated source tarball, and you want
@@ -144,7 +79,84 @@ display x08c.pscairo
 where "display" is the general image viewer from the imagemagick suite
 of programmes.
 
-(4) Creating a PLplot Release
+(3) Install and test a local copy of the PLplot website.
+
+You should always generate and install from scratch a local copy of the
+PLplot website on some ssh-accessible machine (normally your local machine).
+
+If necessary, update the examples list in
+scripts/htdocs-gen_plot-examples.sh. That list is used to generate the
+website example-related files and copy the results to the website. The list
+automatically controls what example source code is configured (for source
+code that needs that), as well as what example plots and example thumbnails
+are generated.  The list also automatically controls what examples-related
+files are copied to the website.
+
+Update the project web page, including the examples: edit www/examples.php
+to reflect the forthcoming release number and any changes to the examples
+themselves (i.e. pages added or removed from an existing example or entirely
+new examples).
+
+svn commit the updated pages since the script below downloads directly
+from the svn repository rather than working with any local files.
+
+Run (on a Linux host that is capable of building the documentation)
+
+scripts/generate_website.sh
+
+with no arguments.  The script asks you four questions, gives you a chance
+to verify your answers, then does all the rest of it (downloading a
+throwaway copy of the PLplot source code, building the documentation,
+generating the announcements that are part of the base website, uploading
+the base website, uploading the documentation, building the examples,
+running the examples, uploading the example source code and example results)
+automatically.  I (AWI) tested this script using the four answers
+
+Summary:
+USERNAME = irwin
+GROUPNAME = irwin
+HOSTNAME = raven
+WEBSITE_PREFIX = /home/irwin/public_html/plplot
+
+(raven is my local computer name, and /home/irwin/public_html is a location
+where I can put various websites).  I have both apache and PHP installed on
+my local machine.  Therefore, when I browse
+http://raven/~irwin/plplot/htdocs/ (the website corresponding to the above
+file prefix location), the result looks good.  In particular, the Ada plplot
+documentation is there and all the previous problems with source code
+accessibility for the Ada, f77, and OCaml examples are now fixed.
+
+(4) Upload the local website to SourceForge.
+
+Once you are satisfied with the local website, you should upload it to
+SourceForge with rsync.
+
+For the above WEBSITE_PREFIX, here is what worked for me from my computer
+with the hostname of raven where that WEBSITE_PREFIX directory was
+created.
+
+rsync -av --delete \
+/home/irwin/public_html/plplot/htdocs/ \
+airwin,plplot@web.sourceforge.net:htdocs 
+
+Adjust for your username and WEBSITE_PREFIX.  The ",plplot" part of the
+username makes sure you have the right group permissions and default website
+directory location for PLplot.  
+
+N.B. the trailing slash on the source directory is essential and means rsync
+the contents of this directory with the contents of the destination htdocs
+directory.  Without the trailing slash you would rsync the the contents of
+the source directory with the contents of the htdocs/htdocs destination
+directory which is not what you want to do.  
+
+N.B. the --dry-run option for rsync is a god-send and tells you exactly what
+will happen without actually doing it.
+
+N.B. log files for the website build can be found in the /tmp/plplotdoc/build
+directory. This can be useful for finding problems with the build of the
+website.
+
+(5) Creating a PLplot Release
 
 Update the README.release file.
 
@@ -175,7 +187,6 @@ can install the debian ntp package, which must be properly configured to work.
 Some notes about how to do this can be found in the PLplot mailing list 
 archive. Look for the thread titled "PLplot 5.7.2 is now available" dated 
 Jan 22/23 2007.
-
 
 Based on suggestions in the svn manual, the PLplot svn archive is configured
 as follows:
@@ -233,7 +244,6 @@ The "-i /tmp/vX_Y_Z" specifies the install prefix for the tarball
 test configure and runs "make install" after cmake, make and ctest. When the
 above command finishes executing you should go to this directory and verify
 that the examples build and that plplot_test.sh executes without errors.
-
 
 In the event that problems are found in PLplot during the release process, 
 corrections should be made to trunk/ and then merged into the tags/vX_Y_Z 
@@ -303,7 +313,7 @@ Select that you are sure that you want to send an e-mail to those who are
 monitoring the PLplot releases.
 
 Prepare the release notes:
-Return the PLplot project page
+Return to the PLplot project page
 Select Admin -> News
 Click on submit to create a new news item.
 Load an old release news item in another browser window and use that as a 
@@ -311,23 +321,6 @@ template for creating your new release news item. Make sure that you get
 the link to the release notes correct (none of the other links need to be
 changed).
 Click on submit.
-
-Update the project web page, including the examples:
-edit www/examples.php to reflect the current release number and any changes
-to the examples themselves (i.e. new examples and/or pages added or removed
-from an existing example).
-svn commit the updated pages.
-
-Generate and install a local copy of the website using
-
-scripts/generate_website.sh
-
-(see comments above for exactly what this script does).
-
-N.B. SourceForge is no longer ssh accessible.  Therefore,
-once you are satisfied with the local website, use rsync to upload it to
-SourceForge (see above).
-
 
 Immediate preparation for next release cycle
 
