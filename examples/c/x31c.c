@@ -32,10 +32,8 @@ main(int argc, const char *argv[])
   PLFLT xmid, ymid, wx, wy;
   PLFLT mar, aspect, jx, jy, ori;  
   PLINT win, level2, digmax, digits, compression1, compression2;
-  PLFLT xp0, yp0, xp1, yp1, xp2, yp2;
-  PLINT xleng0, yleng0, xoff0, yoff0;
-  PLINT xleng1, yleng1, xoff1, yoff1;
-  PLINT xleng2, yleng2, xoff2, yoff2;
+  PLFLT xp1, yp1, xp2, yp2;
+  PLINT xleng1, yleng1, xoff1, yoff1, xleng2, yleng2, xoff2, yoff2;
   PLINT fam1, num1, bmax1, fam2, num2, bmax2, r, g, b;
   PLFLT a;
   PLINT r1[] = {0, 255};
@@ -62,8 +60,6 @@ main(int argc, const char *argv[])
   plsfam(fam1, num1, bmax1);
 
   /* Test setting / getting page parameters across plinit */
-  /* Obtain values to eventually be restored */
-  plgpage(&xp0, &yp0, &xleng0, &yleng0, &xoff0, &yoff0);
   xp1 = 200.;
   yp1 = 200.;
   xleng1 = 400;
@@ -103,9 +99,6 @@ main(int argc, const char *argv[])
     fputs("plgpage test failed\n",stderr);
     status = 1;
   }
-  /* Restore original values so that the (empty) plot doesn't come out to
-   * be the odd size that has been specified in this test). */
-  plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
 
 
   /* Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
