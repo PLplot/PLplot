@@ -3,7 +3,8 @@
 
 	# Each element of the structure below contains:
 	# [ demo#, number of pages, particular thumbnail for top-level page, credits]
-  # if number of pages==0 the entry is ignored (e.g. example 14 and 17)
+  # if number of pages==0 the entry is ignored (e.g. example 14 which requires
+  # some stdin to specify name of second file)
 	$demoArray = array(
 	  array( 1,  1, 1, ""),
 	  array( 2,  2, 1, ""),
@@ -21,7 +22,7 @@
 	  array(14,  0, 0, ""),
 	  array(15,  3, 1, ""),
 	  array(16,  5, 1, ""),
-	  array(17,  0, 0, ""),
+	  array(17,  1, 1, ""),
 	  array(18,  8, 1, ""),
 	  array(19,  3, 1, ""),
 	  array(20,  6, 3, ""),
@@ -40,7 +41,8 @@
 	  array(27, 10, 1, ""),
 	  array(28,  5, 1, ""),
 	  array(29,  3, 1, ""),
-	  array(30,  2, 1, ""));
+	  array(30,  2, 1, ""),
+	  array(31,  1, 1, ""));
 ?>
 
 <!-- include the html header -->
