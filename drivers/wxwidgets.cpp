@@ -289,8 +289,8 @@ wxPLDevBase* common_init(  PLStream *pls )
   wxPLDevBase* dev;
 
   /* default options */
-  static PLINT freetype=0;
-  static PLINT smooth_text=1;
+  static PLINT freetype=-1;
+  static PLINT smooth_text=-1;
   static PLINT text=1;
   static PLINT hrshsym = 0;
   
@@ -298,7 +298,7 @@ wxPLDevBase* common_init(  PLStream *pls )
      the agg library will be used, if not available the basic
      backend will be used. */
   static PLINT backend=wxBACKEND_DC;
-	#if wxUSE_GRAPHICS_CONTEXT
+  #if wxUSE_GRAPHICS_CONTEXT
 		backend=wxBACKEND_GC;
 	#else
 		#ifdef HAVE_AGG 
@@ -306,16 +306,16 @@ wxPLDevBase* common_init(  PLStream *pls )
 		#endif
 	#endif
 
-  
-DrvOpt wx_options[] = {
+  DrvOpt wx_options[] = {
 #ifdef HAVE_FREETYPE
-  {"freetype", DRV_INT, &freetype, "Use FreeType library"},
-  {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
+    {"freetype", DRV_INT, &freetype, "Use FreeType library"},
+    {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
 #endif
-  {"hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)"},
-  {"backend", DRV_INT, &backend, "Choose backend: (0) standard, (1) using AGG library, (2) using wxGraphicsContext"},
-  {"text", DRV_INT, &text, "Use own text routines (text=0|1)"},
-  {NULL, DRV_INT, NULL, NULL}};
+    {"hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)"},
+    {"backend", DRV_INT, &backend, "Choose backend: (0) standard, (1) using AGG library, (2) using wxGraphicsContext"},
+    {"text", DRV_INT, &text, "Use own text routines (text=0|1)"},
+    {NULL, DRV_INT, NULL, NULL}
+  };
 
   /* Check for and set up driver options */
   plParseDrvOpts( wx_options );
@@ -328,6 +328,9 @@ DrvOpt wx_options[] = {
      if available) in this list will be used */
 #if wxUSE_GRAPHICS_CONTEXT    
     dev = new wxPLDevGC;
+    /* by default the own text routines are used for wxGC */
+    if(text==-1)
+      text=1; 
     freetype = 0; /* this backend is vector oriented and doesn't know pixels */
     break;
 #endif
@@ -336,11 +339,22 @@ DrvOpt wx_options[] = {
      will be used */
 #ifdef HAVE_AGG
     dev = new wxPLDevAGG;
+    /* by default the freetype text routines are used for wxAGG */
     text = 0; /* text processing doesn't work yet for the AGG backend */
+    if(freetype==-1)
+      freetype=1;
     break;
 #endif
   default:
     dev = new wxPLDevDC;
+    /* by default the own text routines are used for wxDC */
+    if(text==-1)
+      if(freetype!=1)
+        text=1;
+      else
+        text=0;
+    if(freetype==-1)
+      freetype=0;      
     break;
   }
 	if( dev == NULL) {
@@ -372,6 +386,8 @@ DrvOpt wx_options[] = {
   }
   
 #ifdef HAVE_FREETYPE
+  /* own text routines have higher priority over freetype
+     if text and freetype option are set to 1 */
   if( !text) {
     dev->smooth_text=smooth_text;
     dev->freetype=freetype;
@@ -526,9 +542,10 @@ void plD_init_wxpng( PLStream *pls )
   plOpenFile( pls );  
 
   pls->plbuf_write = 1;        /* use the plot buffer! */
-  pls->termin = 0;             /* interactive device */
+  pls->termin = 0;             /* file oriented device */
   pls->graphx = GRAPHICS_MODE; /*  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination) */
-
+  pls->page = 0;
+  
   dev->showGUI = false;  
   dev->bitmapType = wxBITMAP_TYPE_PNG;
 }
@@ -642,6 +659,22 @@ void plD_bop_wxwidgets( PLStream *pls )
   wxPLDevBase* dev = (wxPLDevBase*)pls->dev;
 
   if( dev->ready ) {
+    /*if( pls->termin==0 ) {
+      plGetFam( pls );
+      /* force new file if pls->family set for all subsequent calls to plGetFam
+         n.b. putting this after plGetFam call is important since plinit calls
+         bop, and you don't want the familying sequence started until after
+         that first call to bop.*/
+
+      /* n.b. pls->dev can change because of an indirect call to plD_init_png
+         from plGetFam if familying is enabled.  Thus, wait to define dev until
+         now. */
+      dev = (wxPLDevBase*)pls->dev;
+
+      pls->famadv = 1;
+      pls->page++;
+    }*/
+
     /* clear background */
 		PLINT bgr, bgg, bgb;  /* red, green, blue */
 		plgcolbg( &bgr, &bgg, &bgb);  /* get background color information */
