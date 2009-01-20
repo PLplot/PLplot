@@ -11,7 +11,6 @@ if string.sub(_VERSION,1,7)=='Lua 5.0' then
 else
 	require('plplotluac')
 end
-pl=plplotluac
 
 --------------------------------------------------------------------------
 -- mapform19
@@ -39,14 +38,14 @@ end
 
 -- Parse and process command line arguments 
 
---    (void) plparseopts(&argc, argv, PL_PARSE_FULL)
+pl.parseopts(arg, pl.PL_PARSE_FULL)
 
 -- Longitude (x) and latitude (y) 
 
 miny = -70
 maxy = 80
 
-pl.plinit()
+pl.init()
 
 -- Cartesian plots 
 -- Most of world 
@@ -54,27 +53,27 @@ pl.plinit()
 minx = 190
 maxx = 190+360
 
-pl.plcol0(1)
-pl.plenv(minx, maxx, miny, maxy, 1, -1)
-pl.plmap(NULL, "usaglobe", minx, maxx, miny, maxy)
+pl.col0(1)
+pl.env(minx, maxx, miny, maxy, 1, -1)
+pl.map(NULL, "usaglobe", minx, maxx, miny, maxy)
 
 -- The Americas 
 
 minx = 190
 maxx = 340
 
-pl.plcol0(1)
-pl.plenv(minx, maxx, miny, maxy, 1, -1)
-pl.plmap(NULL, "usaglobe", minx, maxx, miny, maxy)
+pl.col0(1)
+pl.env(minx, maxx, miny, maxy, 1, -1)
+pl.map(NULL, "usaglobe", minx, maxx, miny, maxy)
 
 -- Polar, Northern hemisphere 
 
 minx = 0
 maxx = 360
 
-pl.plenv(-75., 75., -75., 75., 1, -1)
-pl.plmap(mapform19,"globe", minx, maxx, miny, maxy)
+pl.env(-75., 75., -75., 75., 1, -1)
+pl.map(mapform19,"globe", minx, maxx, miny, maxy)
 
-pl.pllsty(2)
-pl.plmeridians(mapform19, 10, 10, 0, 360, -10, 80)
+pl.lsty(2)
+pl.meridians(mapform19, 10, 10, 0, 360, -10, 80)
 pl.plend()

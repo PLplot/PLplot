@@ -9,7 +9,6 @@ if string.sub(_VERSION,1,7)=='Lua 5.0' then
 else
 	require('plplotluac')
 end
-pl=plplotluac
 
 --------------------------------------------------------------------------
 -- main
@@ -24,12 +23,12 @@ y0 = {}
 
 -- Parse and process command line arguments 
 
---    (void) plparseopts(&argc, argv, PL_PARSE_FULL)
+pl.parseopts(arg, pl.PL_PARSE_FULL)
 
 -- Initialize plplot 
 
-pl.plssub(3,3)
-pl.plinit()
+pl.ssub(3,3)
+pl.init()
 
 xextreme[0][0] = -120.0  xextreme[0][1] =  120.0  yextreme[0][0] = -120.0  yextreme[0][1] =  120.0 
 xextreme[1][0] = -120.0  xextreme[1][1] =  120.0  yextreme[1][0] =   20.0  yextreme[1][1] =  120.0 

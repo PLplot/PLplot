@@ -32,7 +32,6 @@ if string.sub(_VERSION,1,7)=='Lua 5.0' then
 else
 	require('plplotluac')
 end
-pl=plplotluac
 
 red   = {  0, 255,   0,   0 }
 green = {  0,   0, 255,   0 }
@@ -51,11 +50,11 @@ rev = { false, false }
 
 clevel = {}
 
---  plparseopts (&argc, argv, PL_PARSE_FULL);
+pl.parseopts (arg, pl.PL_PARSE_FULL);
 
-pl.plinit()
-pl.plscmap0n(4)
-pl.plscmap0a(red, green, blue, alpha, 4)
+pl.init()
+pl.scmap0n(4)
+pl.scmap0a(red, green, blue, alpha)
 
 --   Page 1:
 --
@@ -63,11 +62,11 @@ pl.plscmap0a(red, green, blue, alpha, 4)
 --   on each other with gradually increasing transparency.
 
 -- Set up the window
-pl.pladv(0)
-pl.plvpor(0, 1, 0, 1)
-pl.plwind(0, 1, 0, 1)
-pl.plcol0(0)
-pl.plbox("", 1, 0, "", 1, 0)
+pl.adv(0)
+pl.vpor(0, 1, 0, 1)
+pl.wind(0, 1, 0, 1)
+pl.col0(0)
+pl.box("", 1, 0, "", 1, 0)
 
 -- Draw the boxes
 for i = 0, 8 do
@@ -75,12 +74,12 @@ for i = 0, 8 do
 
   -- Get a color, change its transparency and
   -- set it as the current color.
-  r, g, b, a = pl.plgcol0a(icol)
-  pl.plscol0a(icol, r, g, b, 1-i/9)
-  pl.plcol0(icol)
+  r, g, b, a = pl.gcol0a(icol)
+  pl.scol0a(icol, r, g, b, 1-i/9)
+  pl.col0(icol)
 
   -- Draw the rectangle
-  plfill(px, py)
+  pl.fill(px, py)
 
   -- Shift the rectangles coordinates
   for j = 1, 4 do
@@ -97,9 +96,9 @@ end
 --   opaque at the top.
 
 -- Set up the window
-pladv(0)
-plvpor(0.1, 0.9, 0.1, 0.9)
-plwind(0.0, 1.0, 0.0, 1.0)
+pl.adv(0)
+pl.vpor(0.1, 0.9, 0.1, 0.9)
+pl.wind(0.0, 1.0, 0.0, 1.0)
 
 -- Draw the boxes. There are 25 of them drawn on a 5 x 5 grid.
 for i = 0, 4 do
@@ -112,10 +111,10 @@ for i = 0, 4 do
   -- We don't want the boxes to be transparent, so since we changed 
   -- the colors transparencies in the first example we have to change
   -- the transparencies back to completely opaque.
-  icol = mod(i, 3) + 1
-  r, g, b, a = plgcol0a(icol)
-  plscol0a(icol, r, g, b, 1)
-  plcol0(icol)
+  icol = math.mod(i, 3) + 1
+  r, g, b, a = pl.gcol0a(icol)
+  pl.scol0a(icol, r, g, b, 1)
+  pl.col0(icol)
   
   for j = 0, 4 do
     -- Set box y position and draw the box.
@@ -123,7 +122,7 @@ for i = 0, 4 do
     py[2] = py[1]
     py[3] = py[1] + 0.1
     py[4] = py[3]
-    plfill(px, py)
+    pl.fill(px, py)
   end
 end
 
@@ -132,8 +131,8 @@ end
 
 -- Create the color map with 128 colors and use plscmap1la to initialize
 -- the color values with a linear varying transparency (or alpha)
-plscmap1n(128)
-plscmap1la(1, 2, pos, rcoord, gcoord, bcoord, acoord, rev)
+pl.scmap1n(128)
+pl.scmap1la(1, 2, pos, rcoord, gcoord, bcoord, acoord, rev)
 
 -- Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will
 -- used for the shade plot. plshades will use linear interpolation to
@@ -155,5 +154,5 @@ plshades(z, 2, 2, NULL, 0.0, 1.0, 0.0, 1.0, clevel, 101, 0, -1, 2, plfill, 1, NU
 
 plFree2dGrid(z,2,2);--]]
 
-plend()
+pl.plend()
 

@@ -117,35 +117,34 @@ peace = {
   "#<0x10>Hasîtî",
 }
 
-n=pl.parseopts(arg, pl.PL_PARSE_FULL)
-print(n)
+pl.parseopts(arg, pl.PL_PARSE_FULL)
 
-pl.plinit()
+pl.init()
 
-pl.pladv(0)
-pl.plvpor(0, 1, 0, 1)
-pl.plwind(0, 1, 0, 1)
-pl.plcol0(0)
-pl.plbox("", 1, 0, "", 1, 0)
+pl.adv(0)
+pl.vpor(0, 1, 0, 1)
+pl.wind(0, 1, 0, 1)
+pl.col0(0)
+pl.box("", 1, 0, "", 1, 0)
 
-pl.plscmap0n(7)
-pl.plscmap0(red, green, blue)
+pl.scmap0n(7)
+pl.scmap0(red, green, blue)
 
-pl.plschr(0, 4)
-pl.plfont(1)
+pl.schr(0, 4)
+pl.font(1)
 
 for i = 1, 4 do
-  pl.plcol0(i)
-  pl.plfill(px, py)
+  pl.col0(i)
+  pl.fill(px, py)
 
   for j = 1, 4 do
     py[j] = py[j] + 1/4
   end
 end
 
-pl.plcol0(0)
+pl.col0(0)
 for i = 1, 12 do
-  pl.plptex(sx[i], sy[i], 1, 0, 0.5, peace[i])
+  pl.ptex(sx[i], sy[i], 1, 0, 0.5, peace[i])
 end
 
 pl.plend()

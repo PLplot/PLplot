@@ -9,7 +9,6 @@ if string.sub(_VERSION,1,7)=='Lua 5.0' then
 else
 	require('plplotluac')
 end
-pl=plplotluac
 
 --------------------------------------------------------------------------
 -- main
@@ -21,10 +20,10 @@ NPTS=2047
 data = {}
 
 -- Parse and process command line arguments
---    (void) plparseopts(&argc, argv, PL_PARSE_FULL);
+pl.parseopts(arg, pl.PL_PARSE_FULL);
 
 -- Initialize plplot
-pl.plinit()
+pl.init()
 
 -- Fill up data points
 delta = 2.0*math.pi/NPTS
@@ -32,10 +31,10 @@ for i=1, NPTS do
   data[i] = math.sin((i-1)*delta)
 end
 
-pl.plcol0(1)
-pl.plhist(data, -1.1, 1.1, 44, 0)
-pl.plcol0(2)
-pl.pllab("#frValue", "#frFrequency", 
+pl.col0(1)
+pl.hist(data, -1.1, 1.1, 44, 0)
+pl.col0(2)
+pl.lab("#frValue", "#frFrequency", 
          "#frPLplot Example 5 - Probability function of Oscillator")
 
 pl.plend()
