@@ -367,7 +367,7 @@ proc save_plot {w fname} {
 #   Create a new one
     $w cmd plmkstrm new_strm
 
-#   New device type. _Use_ a known existing driver
+#   New device type. Use a known existing driver
     $w cmd plsdev "psc"
     $w cmd plsfnam $fname
 
