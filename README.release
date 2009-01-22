@@ -37,8 +37,8 @@ that is the recommended stable version of Octave at
 http://www.gnu.org/software/octave/download.html so that is the only version
 of Octave we support at this time.
 
-IV.  This is official notice that the PLplot team have decided (as of
-release 5.9.1) for consistency sake to change the PLplot stream variables
+IV. This is official notice that the PLplot team have decided (as of release
+5.9.1) for consistency sake to change the PLplot stream variables
 plsc->vpwxmi, plsc->vpwxma, plsc->vpwymi, and plsc->vpwyma and the results
 returned by plgvpw to reflect the exact window limit values input by users
 using plwind. Previously to this change, the stream variables and the values
@@ -49,6 +49,9 @@ should not be there. Note that internally, PLplot still uses the expanded
 ranges so most users results will be identical.  However, you may notice
 some small changes to your plot results if you use these stream variables
 directly (only possible in C/C++) or use plgvpw.
+
+V. This is official notice that (as of release 5.9.3) our  build system
+requires CMake version 2.6.0 or higher.
 
 INDEX
 
