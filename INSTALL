@@ -23,7 +23,7 @@ for your convenience at
 http://www.miscdebris.net/plplot_wiki/index.php?title=General_CMake_documentation_links.
 
 After consulting that documentation, install the appropriate package of
-CMake for your system platform. Note, you must use at least version 2.4.5 of
+CMake for your system platform. Note, you must use at least version 2.6.0 of
 CMake for your PLplot configuration, but our build system works with the
 latest version (2.6.2) of CMake as well.
 
