@@ -373,11 +373,8 @@
 !
 !     Note:
 !     The algorithm only works if the unit of record length is a byte!
-!     (Some compilers _use_ a word (4 bytes) instead, but often provide
-!     a compile switch to _use_ bytes)
-!
-!     NOTE: _use_ is used instead of the ordinary word because of a
-!     bug in CMake
+!     (Some compilers use a word (4 bytes) instead, but often provide
+!     a compile switch to use bytes)
 !
       open( 10, file = fname, access = 'direct', recl = 1 )
 
@@ -428,7 +425,7 @@
 !     Create a new one
       call plmkstrm(new_strm)
 
-!     New device type. _Use_ a known existing driver
+!     New device type. Use a known existing driver
       call plsdev('psc')
       call plsfnam(fname)
 
