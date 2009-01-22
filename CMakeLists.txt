@@ -19,14 +19,9 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Version 2.4.5 or above of cmake is required!
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
-# set CMake 2.6.x policy if the cmake_policy command exists, (i.e., if
-# the user is using CMake 2.6.0 or newer).
-if(COMMAND  cmake_policy)
-  # empty elements are not ignored in lists.
-  cmake_policy(SET CMP0007 NEW)
-endif(COMMAND  cmake_policy)
+# Version 2.6.0 or above of cmake is required!
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
+cmake_policy(SET CMP0007 NEW)
 
 # Recommended way to do user overrides of C-related variables, is given at
 # http://public.kitware.com/pipermail/cmake/2006-July/010334.html.
