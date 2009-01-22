@@ -123,8 +123,7 @@ install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
 # is determined by the dependencies between targets and also by file
 # dependencies that are established by the cmake configuration files.
 
-# needs no cmake processing
-#add_subdirectory(fonts)
+add_subdirectory(fonts)
 add_subdirectory(lib)
 add_subdirectory(include)
 add_subdirectory(src)
@@ -138,8 +137,6 @@ add_subdirectory(scripts)
 add_subdirectory(doc)
 add_subdirectory(www)
 add_subdirectory(pkgcfg)
-# needs no cmake processing
-#add_subdirectory(cf)
 summary()
 
 if(PREBUILD_DIST)
