@@ -15,7 +15,7 @@
 	Utility to generate standard font set.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 extern short int *hersh[];
 extern short int *findex[];
