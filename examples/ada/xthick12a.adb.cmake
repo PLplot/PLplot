@@ -35,9 +35,6 @@ use
     PLplot_Auxiliary,
     PLplot;
 
--- COMMENT THIS LINE IF YOUR COMPILER DOES NOT INCLUDE THESE 
--- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
---with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;
 @Ada_Is_2007_With_and_Use_Numerics@
 
 ------------------------------------------------------------------------------
