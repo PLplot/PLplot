@@ -148,7 +148,7 @@ c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
 #ifdef WITH_CSA
     grid_csa(x, y, z, npts, xg, nptsx, yg, nptsy, zg);
 #else
-    plabort("plgriddata(): PLplot was configured to not use GRID_CSA.\n  Reverting to GRID_NNAIDW.");
+    plwarn("plgriddata(): PLplot was configured to not use GRID_CSA.\n  Reverting to GRID_NNAIDW.");
     grid_nnaidw(x, y, z, npts, xg, nptsx, yg, nptsy, zg);
 #endif
     break;
