@@ -25,17 +25,6 @@ HAVE_AGG
 ON
 )
 
-#if(HAVE_AGG)
-#  if(NOT PKG_CONFIG_EXECUTABLE)
-#    message(STATUS 
-#    "WARNING: pkg-config not found. Setting HAVE_AGG to OFF."
-#    )
-#    set(HAVE_AGG OFF
-#    CACHE BOOL "Enable driver options for using AGG library for antializing"
-#    FORCE
-#    )
-#  endif(NOT PKG_CONFIG_EXECUTABLE)
-#endif(HAVE_AGG)
 # Look for agg libraries
 if (HAVE_AGG)
   find_package(AGG)

@@ -29,76 +29,62 @@
 # 			    when ENABLE_DYNDRIVERS OFF.
 
 # Find wxWidgets needed for driver and bindings
-if(
-   PLD_wxwidgets
-OR PLD_wxpng
-)
+if(PLD_wxwidgets OR PLD_wxpng)
   find_package(wxWidgets QUIET)
   if(NOT wxWidgets_FOUND)
     message(STATUS
-    "WARNING: wxWidgets not found so "
-    "setting PLD_wxwidgets to OFF."
-    )
+      "WARNING: wxWidgets not found so "
+      "setting PLD_wxwidgets to OFF."
+      )
     set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
     set(PLD_wxpng OFF CACHE BOOL "Enable wxwidgets png device" FORCE)
   else(NOT wxWidgets_FOUND)  
-		# Check if stdint.h can be used from c++ (HAVE_CXX_STDINT_H)
-		include(TestForStdintCXX)
+    # Check if stdint.h can be used from c++ (HAVE_CXX_STDINT_H)
+    include(TestForStdintCXX)
   endif(NOT wxWidgets_FOUND)  
-endif(
-   PLD_wxwidgets
-OR PLD_wxpng
-)
-
-if(
-   PLD_wxwidgets
-OR PLD_wxpng
-)
+endif(PLD_wxwidgets OR PLD_wxpng)
+if(PLD_wxwidgets OR PLD_wxpng)
   string(REGEX REPLACE ";" " -I" 
-  wxwidgets_COMPILE_FLAGS
-  "-I${wxWidgets_INCLUDE_DIRS}"
-  )
+    wxwidgets_COMPILE_FLAGS
+    "-I${wxWidgets_INCLUDE_DIRS}"
+    )
   # For case (cvs version of CMake as of 2008-03-23, but not cmake-2.4.8)
   # when wxWidgets_DEFINITIONS is a list.
   string(REGEX REPLACE ";" " " 
-  wxwidgets_COMPILE_FLAGS
-  ${wxwidgets_COMPILE_FLAGS}
-  " ${wxWidgets_DEFINITIONS}"
-  )
+    wxwidgets_COMPILE_FLAGS
+    ${wxwidgets_COMPILE_FLAGS}
+    " ${wxWidgets_DEFINITIONS}"
+    )
   # Convert wxWidgets_LIBRARIES to full pathname form.
   cmake_link_flags(wxwidgets_LINK_FLAGS "${wxWidgets_LIBRARIES}")
   include(agg)
   if(HAVE_AGG)
     set(
-    wxwidgets_COMPILE_FLAGS
-    "${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIR}"
-    )
+      wxwidgets_COMPILE_FLAGS
+      "${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIRS}"
+      )
     set(
-    wxwidgets_LINK_FLAGS
-    ${wxwidgets_LINK_FLAGS}
-    ${AGG_LIBRARIES}
-    )
+      wxwidgets_LINK_FLAGS
+      ${wxwidgets_LINK_FLAGS}
+      ${AGG_LIBRARIES}
+      )
   endif(HAVE_AGG)
   if(WITH_FREETYPE)
     set(
-    wxwidgets_COMPILE_FLAGS
-    "${wxwidgets_COMPILE_FLAGS} -I${FREETYPE_INCLUDE_DIR}"
-    )
+      wxwidgets_COMPILE_FLAGS
+      "${wxwidgets_COMPILE_FLAGS} -I${FREETYPE_INCLUDE_DIR}"
+      )
     set(
-    wxwidgets_LINK_FLAGS
-    ${wxwidgets_LINK_FLAGS}
-    ${FREETYPE_LIBRARIES}
-    )
+      wxwidgets_LINK_FLAGS
+      ${wxwidgets_LINK_FLAGS}
+      ${FREETYPE_LIBRARIES}
+      )
   endif(WITH_FREETYPE)
   set(DRIVERS_LINK_FLAGS
-  ${DRIVERS_LINK_FLAGS} 
-  ${wxwidgets_LINK_FLAGS}
-  )
-endif(
-   PLD_wxwidgets
-OR PLD_wxpng
-)
-
+    ${DRIVERS_LINK_FLAGS} 
+    ${wxwidgets_LINK_FLAGS}
+    )
+endif(PLD_wxwidgets OR PLD_wxpng)
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_wxwidgets "Enable wxwidgets bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
@@ -107,17 +93,17 @@ endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
   message(STATUS
-  "WARNING: PLD_wxwidgets is OFF so "
-  "setting ENABLE_wxwidgets to OFF."
-  )
+    "WARNING: PLD_wxwidgets is OFF so "
+    "setting ENABLE_wxwidgets to OFF."
+    )
   set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
 endif(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
 
 if(ENABLE_wxwidgets AND NOT ENABLE_cxx)
   message(STATUS
-  "WARNING: ENABLE_cxx is OFF so "
-  "setting ENABLE_wxwidgets to OFF."
-  )
+    "WARNING: ENABLE_cxx is OFF so "
+    "setting ENABLE_wxwidgets to OFF."
+    )
   set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
 endif(ENABLE_wxwidgets AND NOT ENABLE_cxx)
 if(ENABLE_wxwidgets)

@@ -1,75 +1,71 @@
 # - Try to find the AGG graphics library
-# Once done this will define
+# Once done this will define in uncached variables
 #
 #  AGG_FOUND - system has AGG
-#  AGG_INCLUDE_DIR - the AGG include directory
-#  AGG_LIBRARIES - Link these to use AGG
+#  AGG_INCLUDE_DIRS - the AGG include directories
 #  AGG_DEFINITIONS - Compiler switches required for using AGG
+#  AGG_LIBRARIES - Link these to use AGG
 #
 
-if (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
+if(PKG_CONFIG_EXECUTABLE)
+  # Use pkg-config (if available) to provide location of AGG headers and
+  # libraries and also provide basis for defining AGG_DEFINITIONS.
+  pkg_check_pkgconfig(libagg _AGGIncDir _AGGLinkDir _AGGLinkFlags _AGGCflags _AGG)
+  #message(STATUS "_AGGIncDir = ${_AGGIncDir}")
+  #message(STATUS "_AGGLinkDir = ${_AGGLinkDir}")
+  #message(STATUS "_AGGLinkFlags = ${_AGGLinkFlags}")
+  #message(STATUS "_AGGCflags = ${_AGGCflags}")
+endif(PKG_CONFIG_EXECUTABLE)
 
-  # in cache already
-  SET(AGG_FOUND TRUE)
+FIND_PATH(AGG_INCLUDE_DIR agg2/agg_pixfmt_gray.h
+  ${_AGGIncDir}
+  /usr/local/include
+  /usr/include
+  )
 
-else (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
+# Prefer _pic variant of library name for shared libraries case, and
+# plain name for static libraries case.
+if(BUILD_SHARED_LIBS)
+  set(AGGLIB_NAMES = "agg_pic;agg")
+  set(AGGFONTLIB_NAMES = "aggfontfreetype_pic;aggfontfreetype")
+else(BUILD_SHARED_LIBS)
+  set(AGGLIB_NAMES = "agg;agg_pic")
+  set(AGGFONTLIB_NAMES = "aggfontfreetype;aggfontfreetype_pic;")
+endif(BUILD_SHARED_LIBS)
+FIND_LIBRARY(AGG_LIBRARY NAMES ${AGGLIB_NAMES}
+  PATHS
+  ${_AGGLinkDir}
+  /usr/local/lib
+  /usr/lib
+  )
+FIND_LIBRARY(AGGFONT_LIBRARY NAMES ${AGGFONTLIB_NAMES}
+  PATHS
+  ${_AGGLinkDir}
+  /usr/local/lib
+  /usr/lib
+  )
 
-  if(PKG_CONFIG_EXECUTABLE)
-    pkg_check_pkgconfig(libagg _AGGIncDir _AGGLinkDir _AGGLinkFlags _AGGCflags _AGG)
-    #message(STATUS "_AGGIncDir = ${_AGGIncDir}")
-    #message(STATUS "_AGGLinkDir = ${_AGGLinkDir}")
-    #message(STATUS "_AGGLinkFlags = ${_AGGLinkFlags}")
-    #message(STATUS "_AGGCflags = ${_AGGCflags}")
-    
-    # Blank-delimited is required.
-    string(REGEX REPLACE ";" " " AGG_DEFINITIONS "${_AGGCflags}")
-  endif(PKG_CONFIG_EXECUTABLE)
+MARK_AS_ADVANCED(AGG_INCLUDE_DIR AGG_LIBRARY AGGFONT_LIBRARY)
+
+# Set uncached variable AGG_LIBRARIES (needed by user and also
+# by FIND_PACKAGE_HANDLE_STANDARD_ARGS)
+if(AGG_LIBRARY AND AGGFONT_LIBRARY)
+  set(AGG_LIBRARIES ${AGG_LIBRARY} ${AGGFONT_LIBRARY})
+elseif(AGG_LIBRARY)
+    set(AGG_LIBRARIES ${AGG_LIBRARY})
+endif(AGG_LIBRARY AND AGGFONT_LIBRARY)
+
+# Standard 2.6.x method of handling QUIETLY and REQUIRED arguments and set
+# AGG_FOUND to TRUE if all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(AGG DEFAULT_MSG AGG_LIBRARIES AGG_INCLUDE_DIR)
+
+if(AGG_FOUND)
+  # Set additional uncached variables that users of this module should use.
+
+  set(AGG_INCLUDE_DIRS ${AGG_INCLUDE_DIR})
   
-  FIND_PATH(AGG_INCLUDE_DIR agg2/agg_pixfmt_gray.h
-    ${_AGGIncDir}
-    /usr/local/include
-    /usr/include
-  )
-  
-  # Prefer _pic variant of library name for shared libraries case, and
-  # plain name for static libraries case.
-  if(BUILD_SHARED_LIBS)
-    set(AGGLIB_NAMES = "agg_pic;agg")
-    set(AGGFONTLIB_NAMES = "aggfontfreetype_pic;aggfontfreetype")
-  else(BUILD_SHARED_LIBS)
-    set(AGGLIB_NAMES = "agg;agg_pic")
-    set(AGGFONTLIB_NAMES = "aggfontfreetype;aggfontfreetype_pic;")
-  endif(BUILD_SHARED_LIBS)
-  FIND_LIBRARY(AGG_LIBRARIES NAMES ${AGGLIB_NAMES}
-    PATHS
-    ${_AGGLinkDir}
-    /usr/local/lib
-    /usr/lib
-  )
-  FIND_LIBRARY(AGGFONT_LIBRARIES NAMES ${AGGFONTLIB_NAMES}
-    PATHS
-    ${_AGGLinkDir}
-    /usr/local/lib
-    /usr/lib
-  )
-	if (AGGFONT_LIBRARIES AND AGG_LIBRARIES)
-		set(AGG_LIBRARIES ${AGG_LIBRARIES} ${AGGFONT_LIBRARIES})
-	endif (AGGFONT_LIBRARIES AND AGG_LIBRARIES)
-  
-  if (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
-     set(AGG_FOUND TRUE)
-  endif (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
-  
-  if (AGG_FOUND)
-    if (NOT AGG_FIND_QUIETLY)
-      message(STATUS "Found AGG: ${AGG_LIBRARIES}")
-    endif (NOT AGG_FIND_QUIETLY)
-  else (AGG_FOUND)
-    if (AGG_FIND_REQUIRED)
-      message(FATAL_ERROR "Could NOT find AGG")
-    endif (AGG_FIND_REQUIRED)
-  endif (AGG_FOUND)
-  
-  MARK_AS_ADVANCED(AGG_INCLUDE_DIR AGG_LIBRARIES)
-  
-endif (AGG_INCLUDE_DIR AND AGG_LIBRARIES)
+  # Blank-delimited is required.
+  string(REGEX REPLACE ";" " " AGG_DEFINITIONS "${_AGGCflags}")
+
+endif(AGG_FOUND)
