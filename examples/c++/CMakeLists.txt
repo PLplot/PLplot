@@ -94,10 +94,8 @@ if(ENABLE_wxwidgets)
     )
     target_link_libraries(wxPLplotDemo plplotwxwidgets${LIB_TAG} plplotcxx${LIB_TAG} ${MATH_LIB})
   endif(BUILD_TEST)
+  set(wxPLplotDemo_SRCS wxPLplotDemo.cpp)
 endif(ENABLE_wxwidgets)
-set(wxPLplotDemo_SRCS
-wxPLplotDemo.cpp
-)
 
 install(FILES ${cxx_SRCS} ${wxPLplotDemo_SRCS} DESTINATION ${DATA_DIR}/examples/c++)
 
