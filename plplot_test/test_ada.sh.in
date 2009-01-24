@@ -40,9 +40,9 @@ for index in \
 	echo "x${index}"
     fi
     if [ "$index" = "14" -o "$index" = "thick14" ] ; then
-	$adadir/x${index}${lang} -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt << EOF
-${OUTPUT_DIR}/x${index}a${lang}%n.$dsuffix
-EOF
+	echo ${OUTPUT_DIR}/x${index}a${lang}%n.$dsuffix | \
+	$adadir/x${index}${lang} -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix \
+	    $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
 	status_code=$?
     else
 	$adadir/x${index}${lang} -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt

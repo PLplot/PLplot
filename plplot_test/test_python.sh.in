@@ -35,9 +35,9 @@ for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 \
 	echo "x${index}"
     fi
     if [ "$index" = "14" ] ; then
-	@PYTHON_EXECUTABLE@ $pythondir/x$index -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt  << EOF
-${OUTPUT_DIR}/x${index}a${lang}%n.$dsuffix
-EOF
+	echo ${OUTPUT_DIR}/x${index}a${lang}%n.$dsuffix | \
+	@PYTHON_EXECUTABLE@ $pythondir/x$index -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix \
+	    $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
 	status_code=$?
     else
 	@PYTHON_EXECUTABLE@ $pythondir/x$index -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt 

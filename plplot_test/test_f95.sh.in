@@ -60,9 +60,9 @@ if [ "yes@HAVE_F77PARSE_CL_TRUE@" = "yes" ] ; then
 	    echo "x${index}f"
 	fi
 	if [ "${index}" = "14" ] ; then
-	    $DEBUG_CMD $f95dir/x${index}f -dev $device -o ${OUTPUT_DIR}/x${index}f95%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt << EOF
-${OUTPUT_DIR}/x${index}af95%n.$dsuffix
-EOF
+	    echo ${OUTPUT_DIR}/x${index}a${lang}%n.$dsuffix | \
+	    $DEBUG_CMD $f95dir/x${index}f -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix \
+      $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
       status_code=$?
 	else
 	    $DEBUG_CMD $f95dir/x${index}f -dev $device -o ${OUTPUT_DIR}/x${index}f95%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
