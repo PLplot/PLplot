@@ -166,7 +166,6 @@ class x15 {
 	int sh_cmap = 0, sh_width;
 	int min_color = 0, min_width = 0, max_color = 0, max_width = 0;
 	int i;
-	int[] nlin = {1, 1, 1, 1, 1, 2, 2, 2, 2, 2};
 	int[][] inc = { {450}, {-450}, {0}, {900}, {300}, 
 			{450,-450}, {0, 900}, {0, 450}, 
 			{450, -450}, {0, 900} };
