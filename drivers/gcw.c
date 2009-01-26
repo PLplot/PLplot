@@ -20,15 +20,15 @@ NOTICE
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
-  USA 
+  USA
 
 
 DESCRIPTION
 
-  This is the Gnome Canvas Widget driver, written by Thomas J. Duck 
-  following the heritage of the PLplot Gnome driver by Rafael Laboissiere.  
-  Like all PLplot drivers, this operates in standalone mode by default.  
-  However, this driver can also be used to write to a user-supplied 
+  This is the Gnome Canvas Widget driver, written by Thomas J. Duck
+  following the heritage of the PLplot Gnome driver by Rafael Laboissiere.
+  Like all PLplot drivers, this operates in standalone mode by default.
+  However, this driver can also be used to write to a user-supplied
   GnomeCanvas.
 
   Please see the PLplot documentation for more information.
@@ -37,17 +37,17 @@ DESCRIPTION
 DEVELOPMENT NOTES
 
   Truetype text is supplied using the PLPLOT_CANVAS_HACKTEXT item,
-  which was cloned from gnome-print.  This text item was chosen because 
+  which was cloned from gnome-print.  This text item was chosen because
   it rotates and scales under a zoom correctly and easily.
 
-  It would be better to use GNOME_CANVAS_TEXT, but currently 
-  (4 March 2005) it doesn't rotate or scale under a zoom on the 
+  It would be better to use GNOME_CANVAS_TEXT, but currently
+  (4 March 2005) it doesn't rotate or scale under a zoom on the
   GnomeCanvas.  GNOME_CANVAS_TEXT uses Pango, and rotations were only
   recently implemented in the Pango API (i.e., Fall 2004).  If the
-  Pango API is used directly, the bounding box doesn't rotate with the 
+  Pango API is used directly, the bounding box doesn't rotate with the
   text on GnomeCanvas, which results in clipping.  It is likely that
   GnomeCanvas is not querying the bounding box from Pango correctly,
-  and is not directing Pango to scale.  So, GnomeCanvas needs to be 
+  and is not directing Pango to scale.  So, GnomeCanvas needs to be
   updated to deal with Pango properly.
 
   Another problem is that drawing polylines on the Gnome Canvas sometimes
@@ -63,10 +63,10 @@ KNOWN BUGS
 
     1) Example x10c does not clip the text (there is no text clipping).
 
-    2) Example x17c, the strip chart demo, doesn't do a strip chart 
-       (try the xwin driver to see how it should work).  Strip charts 
+    2) Example x17c, the strip chart demo, doesn't do a strip chart
+       (try the xwin driver to see how it should work).  Strip charts
        are fundamentally incompatible with the tabbed window design of
-       the GCW driver.  Use the PlplotCanvas to create animations 
+       the GCW driver.  Use the PlplotCanvas to create animations
        instead.
 */
 
@@ -100,7 +100,7 @@ static PLINT text = 0;
 static PLINT hrshsym = 0;
 static PLINT replot = 1;
 
-static DrvOpt gcw_options[] = 
+static DrvOpt gcw_options[] =
   {
     {"text", DRV_INT, &text, "Use truetype fonts (text=0|1)"},
     {"hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)"},
@@ -200,7 +200,7 @@ void plD_init_gcw(PLStream *pls)
   pls->dev_fill0 = 1;	/* Handle solid fills */
 
   /* Create the device */
-  if((dev = g_malloc(sizeof(GcwPLdev))) == NULL) 
+  if((dev = g_malloc(sizeof(GcwPLdev))) == NULL)
     plexit("GCW driver <plD_init_gcw>: Cannot create device");
   pls->dev = dev;
 
@@ -229,8 +229,8 @@ void plD_init_gcw(PLStream *pls)
 
   /* Initialize the device colors */
   dev->color = plcolor_to_rgba(pls->cmap0[pls->icol0],0xFF);
-  dev->bgcolor.red=(guint16)(bgcolor.r/255.*65535); 
-  dev->bgcolor.green=(guint16)(bgcolor.b/255.*65535); 
+  dev->bgcolor.red=(guint16)(bgcolor.r/255.*65535);
+  dev->bgcolor.green=(guint16)(bgcolor.b/255.*65535);
   dev->bgcolor.blue=(guint16)(bgcolor.g/255.*65535);
 
   /* Set the device canvas and window pointers */
@@ -242,7 +242,7 @@ void plD_init_gcw(PLStream *pls)
   dev->notebook = NULL;
   dev->statusbar = NULL;
   dev->filew = NULL;
-    
+
   /* Initialize the Canvas groups.  All of the plplot plotting
    * commands are drawn to the hidden group.  When the page is finalized,
    * the group is made visible, and the old group destroyed. The persistent
@@ -263,7 +263,7 @@ void plD_init_gcw(PLStream *pls)
   /* Initialize gtk */
   gtk_init(0,NULL);
 
-  /* Set up the physical device in the next series of commands.  It is very 
+  /* Set up the physical device in the next series of commands.  It is very
    * important to do this properly, because many PLplot routines depend on
    * physical coordinates (e.g., dashed lines, hatched areas, the
    * replot mechanism, hidden line removal, etc.
@@ -283,7 +283,7 @@ void plD_init_gcw(PLStream *pls)
     width = pls->xlength;
     height = pls->ylength;
   }
-  else {    
+  else {
     width = (PLINT)(CANVAS_WIDTH*DEVICE_PIXELS_PER_IN);
     height = (PLINT)(CANVAS_HEIGHT*DEVICE_PIXELS_PER_IN);
   }
@@ -298,7 +298,7 @@ void plD_init_gcw(PLStream *pls)
   gcw_set_device_size(width,height);
 
   /* Install a canvas... unless plsc->hack is set, which is a driver-specific
-   * hack that indicates a PLESC_DEVINIT escape call will provide us with a 
+   * hack that indicates a PLESC_DEVINIT escape call will provide us with a
    * canvas to use.  This hack is used by the PlplotCanvas.
    */
   if(!pls->hack) {
@@ -350,8 +350,10 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
 
   if(dev->use_pixmap && !dev->use_persistence) { /* Write to bg pixmap */
 
-    if((gdkpoints = (GdkPoint*)malloc(npts*sizeof(GdkPoint)))==NULL)
+    if((gdkpoints = (GdkPoint*)malloc(npts*sizeof(GdkPoint)))==NULL) {
       plabort("GCW driver <plD_polyline_gcw>: Could not create gdkpoints");
+      return;
+    }
 
     if(!pls->portrait) {
       for(i=0;i<npts;i++) {
@@ -375,8 +377,10 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
   else { /* Draw Canvas lines */
 
     /* Put the data in a points structure */
-    if( (points = gnome_canvas_points_new(npts)) == NULL )
+    if( (points = gnome_canvas_points_new(npts)) == NULL ) {
       plabort("GCW driver <plD_polyline_gcw>: Cannot create points");
+      return;
+    }
     if(!pls->portrait) {
       for ( i = 0; i < npts; i++ ) {
 	points->coords[2*i] = (gdouble)(x[i]/VSCALE);
@@ -389,7 +393,7 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
 	points->coords[2*i + 1] = (gdouble)(-x[i]/VSCALE);
       }
     }
-    
+
     /* Get the pen width and color */
     width = pls->width;
     color = dev->color;
@@ -400,20 +404,20 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
      *
      *   Plot a series of line segments rather than a single polyline.
      *
-     * This slows rendering down a considerable amount.  However, it is 
-     * unclear what else can be done.  Libgnomecanvas should be able to 
+     * This slows rendering down a considerable amount.  However, it is
+     * unclear what else can be done.  Libgnomecanvas should be able to
      * deal with all valid data; bizarre plotting errors happen along with
      * this error.
      *
-     * Note that instead of allocating a series of points structures, 
-     * we just refer to the original one from a separate struct 
+     * Note that instead of allocating a series of points structures,
+     * we just refer to the original one from a separate struct
      * (GnomeCanvas does not hold a reference to the points structure).
      */
 
     pts.num_points = 2;
     pts.ref_count = 1;
     pts.coords = points->coords;
-      
+
     for(i=0;i<npts-1;i++) {
       pts.coords=&(points->coords[2*i]);
 
@@ -479,7 +483,7 @@ void plD_eop_gcw(PLStream *pls)
   gdouble dx, dy;
 
   gint count=1,n;
-  
+
   void *save_state;
 
   PLINT width,height;
@@ -550,6 +554,7 @@ void plD_eop_gcw(PLStream *pls)
 		       NULL)
     )) {
       plabort("GCW driver <pld_eop_gcw>: Canvas item not created");
+      return;
     }
   }
 
@@ -558,7 +563,7 @@ void plD_eop_gcw(PLStream *pls)
 
   /* Move the background to the back */
   if(GNOME_IS_CANVAS_ITEM(item)) gnome_canvas_item_lower_to_bottom(item);
-    
+
   /* Make the hidden group visible */
   gnome_canvas_item_show(GNOME_CANVAS_ITEM(dev->group_hidden));
 
@@ -574,16 +579,16 @@ void plD_eop_gcw(PLStream *pls)
   /* Name the hidden group as visible */
   dev->group_visible = dev->group_hidden;
   dev->group_hidden=NULL;
-  
+
   /* Update the canvas */
   canvas->need_update = 1;
   gnome_canvas_update_now(canvas);
 
   /*
-   * Copy the plot buffer for future reference, otherwise it is 
+   * Copy the plot buffer for future reference, otherwise it is
    * thrown out.
    */
- 
+
   save_state = g_object_get_data(G_OBJECT(canvas),"plotbuf");
   save_state = (void *)plbuf_save(pls, save_state);
 
@@ -601,7 +606,7 @@ void plD_eop_gcw(PLStream *pls)
     dev->group_hidden = NULL;
     dev->group_persistent = NULL;
   }
-  
+
 #ifdef DEBUG_GCW_1
   gcw_debug("</plD_eop_gcw>\n");
 #endif
@@ -639,7 +644,7 @@ void plD_bop_gcw(PLStream *pls)
   dev->plstate_width = FALSE;
   dev->plstate_color0 = FALSE;
   dev->plstate_color1 = FALSE;
-  
+
   /* Creat a new hidden group; all new drawing will be to this group */
   if(!GNOME_IS_CANVAS_ITEM(
     dev->group_hidden = GNOME_CANVAS_GROUP(gnome_canvas_item_new(
@@ -651,10 +656,10 @@ void plD_bop_gcw(PLStream *pls)
     )) {
     plexit("GCW driver <plD_bop_gcw>: Canvas group cannot be created");
   }
-  
+
   /* Set the clip to NULL */
   g_object_set(G_OBJECT(dev->group_hidden),"path",NULL,NULL);
-  
+
   /* Hide this group until drawing is done */
   gnome_canvas_item_hide(GNOME_CANVAS_ITEM(dev->group_hidden));
 
@@ -764,7 +769,7 @@ void plD_state_gcw(PLStream *pls, PLINT op)
     case PLSTATE_CMAP1:
       break;
 
-    default: 
+    default:
       break;
   }
 }
@@ -784,7 +789,7 @@ static void fill_polygon (PLStream* pls)
   GnomeCanvasItem* item;
   GcwPLdev* dev = pls->dev;
   GnomeCanvas* canvas;
-  
+
   PLINT i;
 
   GdkPoint* gdkpoints;
@@ -804,8 +809,10 @@ static void fill_polygon (PLStream* pls)
 
   if(dev->use_pixmap && !dev->use_persistence) { /* Write to a pixmap */
 
-    if((gdkpoints = (GdkPoint*)malloc(pls->dev_npts*sizeof(GdkPoint)))==NULL)
+    if((gdkpoints = (GdkPoint*)malloc(pls->dev_npts*sizeof(GdkPoint)))==NULL) {
       plabort("GCW driver <fill_polygon>: Could not create gdkpoints");
+      return;
+    }
 
     if(!pls->portrait) {
       for(i=0;i<pls->dev_npts;i++) {
@@ -821,15 +828,17 @@ static void fill_polygon (PLStream* pls)
     }
 
     gdk_draw_polygon(dev->background,dev->gc,TRUE,gdkpoints,pls->dev_npts);
-    
+
     dev->pixmap_has_data = TRUE;
 
     free(gdkpoints);
   }
   else { /* Use Gnome Canvas polygons */
 
-    if( (points = gnome_canvas_points_new (pls->dev_npts)) == NULL )
+    if( (points = gnome_canvas_points_new (pls->dev_npts)) == NULL ) {
       plabort("GCW driver <fill_polygon>: Could not create points");
+      return;
+    }
 
     if(!pls->portrait) {
       for (i=0; i<pls->dev_npts; i++) {
@@ -841,7 +850,7 @@ static void fill_polygon (PLStream* pls)
       for (i=0; i<pls->dev_npts; i++) {
 	points->coords[2*i] = (gdouble)(dev->height-pls->dev_y[i]/VSCALE);
 	points->coords[2*i + 1] = (gdouble)(-pls->dev_x[i]/VSCALE);
-      } 
+      }
     }
 
     if(!GNOME_IS_CANVAS_ITEM(
@@ -854,12 +863,12 @@ static void fill_polygon (PLStream* pls)
       )) {
       plwarn("GCW driver <fill_polygon>: Canvas item not created.");
     }
-  
+
     gnome_canvas_points_free(points);
 
 
     /* Draw a thin outline for each polygon; note that doing this
-     * using the "outline-color-rgba" property above can result in 
+     * using the "outline-color-rgba" property above can result in
      * Canvas errors.
      */
     tmp = pls->width;
@@ -934,7 +943,7 @@ static void proc_str(PLStream *pls, EscText *args)
 
   /* Put the transform matrix values in the order expected by libart.
    * Note that the plplot transform matrix only has a rotation and shear;
-   * plplot's rotation direction and shear are opposite from that expected 
+   * plplot's rotation direction and shear are opposite from that expected
    * by libart, hence the negative signs below.
    */
   affine_plplot[0] = t[0];  /* cos(theta) */
@@ -950,6 +959,7 @@ static void proc_str(PLStream *pls, EscText *args)
   fontname = plP_FCI2FontName(fci, FontLookup, N_TrueTypeLookup);
   if (fontname == NULL) {
     plabort("GCW driver <proc_str>: FCI inconsistent with TrueTypeLookup");
+    return;
   }
 
   /* Retrieve the font face */
@@ -975,6 +985,7 @@ static void proc_str(PLStream *pls, EscText *args)
       if (fontname == NULL) {
 	plabort("GCW driver <proc_str>: FCI inconsistent with "
 		"TrueTypeLookup");
+	return;
       }
 
       /* Retrieve the font face */
@@ -1061,7 +1072,7 @@ static void proc_str(PLStream *pls, EscText *args)
     /* Free the font */
     gnome_font_unref(font);
 
-    /* Move along to the next escape or FCI character, stuffing 
+    /* Move along to the next escape or FCI character, stuffing
      * everything else into the glyphlist.
      */
     Nglyphs=0;
@@ -1072,7 +1083,7 @@ static void proc_str(PLStream *pls, EscText *args)
 	if( !(i>0 && text[i-1]==esc) ) break;
       }
 
-      gnome_glyphlist_glyph(glyphlist, 
+      gnome_glyphlist_glyph(glyphlist,
 			    gnome_font_lookup_default(font,text[i]));
       i++; Nglyphs++;
     }
@@ -1099,23 +1110,26 @@ static void proc_str(PLStream *pls, EscText *args)
 				       NULL)
 	)) {
 	plabort("GCW driver <proc_str>: Canvas item not created");
+	return;
       }
 
       /* Free the glyphlist */
       gnome_glyphlist_unref(glyphlist);
-      
+
       /* Advance to next string segment */
       N++;
     } /* if(Nglyphs) */
 
 
     /* Don't overflow buffer */
-    if(N==200 && i<Ntext)
+    if(N==200 && i<Ntext) {
       plabort("GCW driver <proc_str>: too many text segments");
+      return;
+    }
 
   } /* while(i<Ntext) */
 
-  /* We have all of the string segments.  Place each on the canvas 
+  /* We have all of the string segments.  Place each on the canvas
    * appropriately.
    */
   for(i=0;i<N;i++) {
