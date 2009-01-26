@@ -1,4 +1,4 @@
---[[ $Id: $
+--[[ $Id$
 
  	 3-d plot demo.
 
@@ -20,7 +20,6 @@
    along with PLplot if not, write to the Free Software
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 --]]
-
 
 
 -- initialise Lua bindings to PLplot
@@ -56,8 +55,8 @@ function cmap1_init(gray)
   end
 
   pl.scmap1n(256)
-  pl.scmap1l(0, i, h, l, s)
-}
+  pl.scmap1l(0, i, h, l, s, {0} )
+end
 
 ----------------------------------------------------------------------------
 -- main
@@ -73,17 +72,15 @@ LEVELS = 10
 alt = { 60, 20 }
 az  = { 30, 60 }
 
-title[] = {
+title = {
     "#frPLplot Example 8 - Alt=60, Az=30",
-    "#frPLplot Example 8 - Alt=20, Az=60",
+    "#frPLplot Example 8 - Alt=20, Az=60"
 }
 
-
-PLFLT *x, *y, **z
-PLFLT xx, yy, r
 clevel = {}
-nlevel = {}
-rosen=1
+nlevel = LEVELS
+rosen = 1
+sombrero = 0
 
 -- Parse and process command line arguments 
 pl.parseopts(arg, pl.PL_PARSE_FULL)
@@ -93,91 +90,88 @@ if sombrero ~= 0 then rosen=0 end
 pl.init()
 
 -- Allocate data structures 
+x = {}
+y = {}
+z = {}
 
-  x = (PLFLT *) calloc(XPTS, sizeof(PLFLT))
-  y = (PLFLT *) calloc(YPTS, sizeof(PLFLT))
+for i=1, XPTS do
+  x[i] = (i-1-math.floor(XPTS/2)) / math.floor(XPTS/2)
+  if rosen~=0 then x[i]=x[i]*1.5 end 
+end
 
-  plAlloc2dGrid(&z, XPTS, YPTS)
+for i=1, YPTS do
+  y[i] = (i-1-math.floor(YPTS/2)) / math.floor(YPTS/2)
+  if rosen~=0 then y[i]=y[i]+0.5 end
+end
 
-  for (i = 0 i < XPTS i++) {
-    x[i] = ((double) (i - (XPTS / 2)) / (double) (XPTS / 2))
-    if (rosen)
-      x[i] *=  1.5
-  }
-
-  for (i = 0 i < YPTS i++) {
-    y[i] = (double) (i - (YPTS / 2)) / (double) (YPTS / 2)
-    if (rosen)
-      y[i] += 0.5
-  }
-
-  for (i = 0 i < XPTS i++) {
-    xx = x[i]
-    for (j = 0 j < YPTS j++) {
-      yy = y[j]
-      if (rosen) {
-	z[i][j] = pow(1. - xx, 2.) + 100. * pow(yy - pow(xx, 2.), 2.)
-	-- The log argument may be zero for just the right grid.  
-	if (z[i][j] > 0.)
-	  z[i][j] = log(z[i][j])
-	else
-	  z[i][j] = -5. -- -MAXFLOAT would mess-up up the scale 
-      }
-      else {
-	r = sqrt(xx * xx + yy * yy)
-	z[i][j] = exp(-r * r) * cos(2.0 * M_PI * r)
-      }
-    }
-  }
-
-  plMinMax2dGrid(z, XPTS, YPTS, &zmax, &zmin)
-  step = (zmax-zmin)/(nlevel+1)
-  for (i=0 i<nlevel i++)
-    clevel[i] = zmin + step + step*i
-
-  pllightsource(1.,1.,1.)
-
-  for (k = 0 k < 2 k++) {
-    for (ifshade = 0 ifshade < 4 ifshade++) {
-      pladv(0)
-      plvpor(0.0, 1.0, 0.0, 0.9)
-      plwind(-1.0, 1.0, -0.9, 1.1)
-      plcol0(3)
-      plmtex("t", 1.0, 0.5, 0.5, title[k])
-      plcol0(1)
-      if (rosen)
-	plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax, alt[k], az[k])
+for i=1, XPTS do
+  xx = x[i]
+  z[i]= {}
+  for j=1, YPTS do
+    yy = y[j]
+    if rosen~=0 then
+      z[i][j] = (1-xx)^2 + 100*(yy-xx^2)^2
+      -- The log argument may be zero for just the right grid.  
+      if z[i][j] > 0 then
+        z[i][j] = math.log(z[i][j])
       else
-	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax, alt[k], az[k])
+        z[i][j] = -5   -- MAXFLOAT would mess-up up the scale 
+      end
+    else
+      r = math.sqrt(xx^2 + yy^2)
+      z[i][j] = math.exp(-r^2) * math.cos(2*math.pi*r)
+    end
+  end
+end
 
-      plbox3("bnstu", "x axis", 0.0, 0,
-	     "bnstu", "y axis", 0.0, 0,
-	     "bcdmnstuv", "z axis", 0.0, 0)
-      plcol0(2)
+zmax, zmin = pl.MinMax2dGrid(z)
+step = (zmax-zmin)/(nlevel+1)
+for i=1, nlevel do
+  clevel[i] = zmin + step + step*(i-1)
+end
 
-      if (ifshade == 0) { -- diffuse light surface plot 
-	cmap1_init(1)
-	plsurf3d(x, y, z, XPTS, YPTS, 0, NULL, 0)
-      } else if (ifshade == 1) { -- magnitude colored plot 
-	cmap1_init(0)
-	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR, NULL, 0)
-      } else if (ifshade == 2) { --  magnitude colored plot with faceted squares 
-	cmap1_init(0)
-	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0)
-      } else {                    -- magnitude colored plot with contours 
-	cmap1_init(0)
-	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel)
-      }
-    }
-  }
+pl.lightsource(1, 1, 1)
+
+for k=1, 2 do
+  for ifshade = 1, 4 do
+    pl.adv(0)
+    pl.vpor(0, 1, 0, 0.9)
+    pl.wind(-1, 1, -0.9, 1.1)
+    pl.col0(3)
+    pl.mtex("t", 1, 0.5, 0.5, title[k])
+    pl.col0(1)
+    if rosen~=0 then
+      pl.w3d(1, 1, 1, -1.5, 1.5, -0.5, 1.5, zmin, zmax, alt[k], az[k])
+    else
+      pl.w3d(1, 1, 1, -1, 1, -1, 1, zmin, zmax, alt[k], az[k])
+    end
+
+    pl.box3("bnstu", "x axis", 0, 0,
+           "bnstu", "y axis", 0, 0,
+           "bcdmnstuv", "z axis", 0, 0)
+    pl.col0(2)
+
+    if ifshade==1 then -- diffuse light surface plot 
+      cmap1_init(1)
+      pl.surf3d(x, y, z, 0, clevel)
+    end
+     
+    if ifshade==2 then -- magnitude colored plot 
+      cmap1_init(0)
+      pl.surf3d(x, y, z, pl.MAG_COLOR, {})
+    end
+    
+    if ifshade==3 then --  magnitude colored plot with faceted squares 
+      cmap1_init(0)
+      pl.surf3d(x, y, z, pl.MAG_COLOR or pl.FACETED, {})
+    end
+    
+    if ifshade==4 then  -- magnitude colored plot with contours 
+      cmap1_init(0)
+      pl.surf3d(x, y, z, pl.MAG_COLOR or pl.SURF_CONT or pl.BASE_CONT, clevel)
+    end
+  end
+end
 
 -- Clean up 
-
-  free((void *) x)
-  free((void *) y)
-  plFree2dGrid(z, XPTS, YPTS)
-
-  plend()
-
-  exit(0)
-}
+pl.plend()
