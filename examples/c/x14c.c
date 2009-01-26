@@ -61,7 +61,10 @@ main(int argc, const char *argv[])
     char driver[80];
 
     PLINT fam, num, bmax;
-
+    PLFLT xp0, yp0;
+    PLINT xleng0, yleng0, xoff0, yoff0;
+    int valid_geometry;
+   
 /* plplot initialization */
 /* Parse and process command line arguments */
 
@@ -74,9 +77,16 @@ main(int argc, const char *argv[])
     printf("Running with the second stream as slave to the first.\n");
     printf("\n");
 
+    /* If valid geometry specified on command line, use it for both streams. */
+    plgpage(&xp0, &yp0, &xleng0, &yleng0, &xoff0, &yoff0);
+    valid_geometry = (xleng0 > 0 && yleng0 > 0);
+    
 /* Set up first stream */
 
-    plsetopt("geometry", geometry_master);
+    if (valid_geometry)
+      plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+    else
+      plsetopt("geometry", geometry_master);
 
     plsdev(driver);
     plssub(2, 2);
@@ -88,7 +98,10 @@ main(int argc, const char *argv[])
 
 /* Turn off pause to make this a slave (must follow master) */
 
-    plsetopt("geometry", geometry_slave);
+    if (valid_geometry)
+      plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+    else
+      plsetopt("geometry", geometry_slave);
     plspause(0);
     plsdev(driver);
     plsfam(fam,num,bmax);
