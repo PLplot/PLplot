@@ -397,13 +397,13 @@ int text2num( const char *text, char end, PLUNICODE *num)
   char *endptr2;
   char msgbuf[80];
 
-  *num = strtoul(text,&endptr,0); 
+  *num = strtoul(text,&endptr,0);
 
   if (end != endptr[0]) {
     sprintf(msgbuf,"text2num: invalid control string detected - %c expected",end);
     plwarn(msgbuf);
   }
-  
+
   return (int)(endptr - text);
 
 }
@@ -682,6 +682,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                     sprintf (buf, "UTF-8 string is malformed: %s%s",
                              buf, strlen (string) > 30 ? "[...]" : "");
                     plabort (buf);
+                    return;
                   }
                   unicode_buffer [j] = unichar;
                   i += ptr - (string + i) - 1;
@@ -1651,7 +1652,7 @@ c_plinit(void)
     plP_bop();
     plsc->level = 1;
 
-    
+
 /* The driver options are freed after driver initialisation,
  * since it is assumed that in this function options are
  * processed and stored somewhere else. For further driver
@@ -1709,7 +1710,7 @@ c_plinit(void)
     if (plsc->zdigmax == 0)
 	plsc->zdigmax = 3;
 
-    if (plsc->timefmt == NULL) 
+    if (plsc->timefmt == NULL)
         pltimefmt("%c");
 
 /* Switch to graphics mode and set color and arrow style*/
@@ -2552,7 +2553,7 @@ plLoadDriver(void)
     if (!driver->dlhand)
     {
         char drvspec[ 400 ];
-#ifdef LTDL_WIN32  
+#ifdef LTDL_WIN32
         sprintf( drvspec, "%s", driver->drvnam );
 #else
         sprintf( drvspec, "%s/%s", plGetDrvDir (), driver->drvnam );
@@ -3476,7 +3477,7 @@ plP_image(PLFLT *z , PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT
    * Until then, all plimage* rendering is done by the plimageslow
    * rendering path.
    */
-#if 0   /* BEGIN dev_fastimg COMMENT */  
+#if 0   /* BEGIN dev_fastimg COMMENT */
   PLINT i, npts;
   short *xscl, *yscl;
   int   plbuf_write;

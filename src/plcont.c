@@ -36,7 +36,7 @@ static void
 plcntr(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
        PLPointer plf2eval_data,
        PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-       PLINT ky, PLINT ly, PLFLT flev, PLINT **ipts, 
+       PLINT ky, PLINT ly, PLFLT flev, PLINT **ipts,
        void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
        PLPointer pltr_data);
 
@@ -487,6 +487,7 @@ c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
     if (pltr == NULL) {
         /* If pltr is undefined, abort with an error. */
         plabort("plcont: The pltr callback must be defined");
+        return;
     }
 
     grid.f = f;
@@ -594,14 +595,14 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     for (kcol = kx; kcol < lx; kcol++) {
         for (krow = ky; krow < ly; krow++) {
 	    ipts[kcol][krow] = 0;
-	} 
+	}
     }
 
 
     for (krow = ky; krow < ly; krow++) {
         for (kcol = kx; kcol < lx; kcol++) {
 	    if (ipts[kcol][krow] == 0) {
-	      
+	
 	        /* Follow and draw a contour */
 	        pldrawcn(f2eval, f2eval_data,
 		         nx, ny, kx, lx, ky, ly, flev, flabel, kcol, krow,
@@ -628,7 +629,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	 PLPointer f2eval_data,
 	 PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	 PLINT ky, PLINT ly, PLFLT flev, char *flabel, PLINT kcol, PLINT krow,
-	 PLFLT lastx, PLFLT lasty, PLINT startedge, PLINT **ipts, 
+	 PLFLT lastx, PLFLT lasty, PLINT startedge, PLINT **ipts,
 	 PLFLT *distance, PLINT *lastindex,
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data)
@@ -657,12 +658,12 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     ipts[kcol][krow] = 1;
 
     /* Check if no contour has been crossed i.e. iedge[i] = -1 */
-    if ((iedge[0] == -1) && (iedge[1] == -1) && (iedge[2] == -1) 
+    if ((iedge[0] == -1) && (iedge[1] == -1) && (iedge[2] == -1)
          && (iedge[3] == -1)) return;
 
-    /* Check if this is a completely flat square - in which case 
+    /* Check if this is a completely flat square - in which case
        ignore it */
-    if ( (f[0] == 0.0) && (f[1] == 0.0) && (f[2] == 0.0) && 
+    if ( (f[0] == 0.0) && (f[1] == 0.0) && (f[2] == 0.0) &&
 	 (f[3] == 0.0) ) return;
 
     /* Calculate intersection points */
@@ -728,15 +729,15 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		      (krownext >= ky) && (krownext < ly) &&
 		      (ipts[kcolnext][krownext] == 0)) {
 		      pldrawcn(f2eval, f2eval_data,
-			       nx, ny, kx, lx, ky, ly, flev, flabel, 
+			       nx, ny, kx, lx, ky, ly, flev, flabel,
 			       kcolnext, krownext,
-			       locx[num], locy[num], inext, ipts, 
+			       locx[num], locy[num], inext, ipts,
 			       distance, lastindex,
 			       pltr, pltr_data);
 		  }
       	      }
 	      /* Hard case where contour passes through corner */
-	      /* This is still not perfect - it may lose the contour 
+	      /* This is still not perfect - it may lose the contour
 	       * which won't upset the contour itself (we can find it
 	       * again later) but might upset the labelling */
 	      else {
@@ -751,13 +752,13 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		      (krownext >= ky) && (krownext < ly) &&
 		      (ipts[kcolnext][krownext] == 0)) {
 		      pldrawcn(f2eval, f2eval_data,
-			       nx, ny, kx, lx, ky, ly, flev, flabel, 
+			       nx, ny, kx, lx, ky, ly, flev, flabel,
 			       kcolnext, krownext,
-			       locx[num], locy[num], inext, ipts, 
+			       locx[num], locy[num], inext, ipts,
 			       distance, lastindex,
 			       pltr, pltr_data);
 		  }
-		  
+		
 	      }
 	      if (first == 1) {
 	 	  /* Move back to first point */
