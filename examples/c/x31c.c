@@ -32,9 +32,16 @@ main(int argc, const char *argv[])
   PLFLT xmid, ymid, wx, wy;
   PLFLT mar, aspect, jx, jy, ori;  
   PLINT win, level2, digmax, digits, compression1, compression2;
-  PLFLT xp1, yp1, xp2, yp2;
-  PLINT xleng1, yleng1, xoff1, yoff1, xleng2, yleng2, xoff2, yoff2;
-  PLINT fam1, num1, bmax1, fam2, num2, bmax2, r, g, b;
+  PLFLT xp0, yp0;
+  PLINT xleng0, yleng0, xoff0, yoff0;
+  PLFLT xp1, yp1;
+  PLINT xleng1, yleng1, xoff1, yoff1;
+  PLFLT xp2, yp2;
+  PLINT xleng2, yleng2, xoff2, yoff2;
+  PLINT fam0, num0, bmax0;
+  PLINT fam1, num1, bmax1;
+  PLINT fam2, num2, bmax2;
+  PLINT r, g, b;
   PLFLT a;
   PLINT r1[] = {0, 255};
   PLINT g1[] = {255, 0};
@@ -49,17 +56,27 @@ main(int argc, const char *argv[])
 
   (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
-  /* Test setting / getting compression parameter across plinit. */
-  compression1 = 95;
-  plscompression(compression1);
-
-  /* Test setting / getting familying parameters across plinit */
+  /* Test setting / getting familying parameters before plinit */
+  /* Save values set by plparseopts to be restored later. */
+  plgfam(&fam0, &num0, &bmax0);
   fam1 = 0;
   num1 = 10;
   bmax1 = 1000;
   plsfam(fam1, num1, bmax1);
 
-  /* Test setting / getting page parameters across plinit */
+  /* Retrieve the same values? */
+  plgfam(&fam2, &num2, &bmax2);
+  printf("family parameters: fam, num, bmax = %d %d %d\n", fam2, num2, bmax2);
+  if (fam2 != fam1 || num2 != num1 || bmax2 != bmax1) {
+    fputs("plgfam test failed\n",stderr);
+    status = 1;
+  }
+  /* Restore values set initially by plparseopts. */
+  plsfam(fam0, num0, bmax0);
+
+  /* Test setting / getting page parameters before plinit */
+  /* Save values set by plparseopts to be restored later. */
+  plgpage(&xp0, &yp0, &xleng0, &yleng0, &xoff0, &yoff0);
   xp1 = 200.;
   yp1 = 200.;
   xleng1 = 400;
@@ -67,6 +84,21 @@ main(int argc, const char *argv[])
   xoff1 = 10;
   yoff1 = 20;
   plspage(xp1, yp1, xleng1, yleng1, xoff1, yoff1);
+
+  /* Retrieve the same values? */
+  plgpage(&xp2, &yp2, &xleng2, &yleng2, &xoff2, &yoff2);
+  printf("page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n", xp2, yp2, xleng2, yleng2, xoff2, yoff2);
+  if (xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 || 
+      xoff2 != xoff1 || yoff2 != yoff1 ) {
+    fputs("plgpage test failed\n",stderr);
+    status = 1;
+  }
+  /* Restore values set initially by plparseopts. */
+  plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+
+  /* Test setting / getting compression parameter across plinit. */
+  compression1 = 95;
+  plscompression(compression1);
 
   /* Initialize plplot */
   plinit();
@@ -78,25 +110,6 @@ main(int argc, const char *argv[])
   printf("compression parameter = %d\n", compression2);
   if (compression2 != compression1) {
     fputs("plgcompression test failed\n",stderr);
-    status = 1;
-  }
-
-  /* Test if device initialization screwed around with any of the
-   * preset familying values. */
-  plgfam(&fam2, &num2, &bmax2);
-  printf("family parameters: fam, num, bmax = %d %d %d\n", fam2, num2, bmax2);
-  if (fam2 != fam1 || num2 != num1 || bmax2 != bmax1) {
-    fputs("plgfam test failed\n",stderr);
-    status = 1;
-  }
-
-  /* Test if device initialization screwed around with any of the
-   * preset page values. */
-  plgpage(&xp2, &yp2, &xleng2, &yleng2, &xoff2, &yoff2);
-  printf("page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n", xp2, yp2, xleng2, yleng2, xoff2, yoff2);
-  if (xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 || 
-      xoff2 != xoff1 || yoff2 != yoff1 ) {
-    fputs("plgpage test failed\n",stderr);
     status = 1;
   }
 
