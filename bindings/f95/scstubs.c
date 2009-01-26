@@ -29,8 +29,13 @@
 
 #include "plstubs.h"
 
-static void (*plmapform)(PLINT *, PLFLT *, PLFLT *) ; /* Note: slightly different prototype than
-                                                         (*mapform)! */
+#ifdef CVF
+#define STDCALL __stdcall
+#else
+#define STDCALL
+#endif
+static void (STDCALL *plmapform)(PLINT *, PLFLT *, PLFLT *) ; /* Note: slightly different prototype than
+                                                                 (*mapform)! */
 
 void
 PL_SETCONTLABELFORMAT(PLINT *lexp, PLINT *sigdig)
@@ -812,7 +817,7 @@ PLSESC(PLINT *esc)
 */
 #define    PLSETMAPFORMC	FNAME(PLSETMAPFORMC,plsetmapformc)
 void
-PLSETMAPFORMC( void (*mapform)(PLINT *, PLFLT *, PLFLT *) )
+PLSETMAPFORMC( void (STDCALL *mapform)(PLINT *, PLFLT *, PLFLT *) )
 {
     plmapform = mapform ;
 }
