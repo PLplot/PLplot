@@ -14,7 +14,7 @@ Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38), g++-4.1 [arm],
  python-gtk2-dev, libwxgtk2.6-dev, python-gnome2-dev,
  python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6),
  python-numpy (>= 1.0.4-4), ttf-freefont, default-jdk-builddep [!alpha !arm !hppa !hurd-i386],
- fastjar, swig, gnat [!alpha !arm !armeb !armel !mips !mipsel]
+ fastjar, swig, gnat [!alpha !arm !armeb !armel !mips !mipsel !kfreebsd-amd64]
 Build-Depends-Indep: docbook-xml, docbook, docbook-dsssl, docbook-xsl,
  docbook2x, opensp, jadetex
 Build-Conflicts: libplplot5,  octave2.1-headers

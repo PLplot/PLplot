@@ -1,0 +1,15 @@
+
+# Patch to fix build of plplot on debian kfreeBSD sustems.
+
+diff -ur plplot-5.9.2-orig/cmake/modules/xwin.cmake plplot-5.9.2/cmake/modules/xwin.cmake
+--- plplot-5.9.2-orig/cmake/modules/xwin.cmake	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/cmake/modules/xwin.cmake	2009-01-26 07:38:20.000000000 +0000
+@@ -49,6 +49,8 @@
+ 	cmake_link_flags(xwin_LINK_FLAGS "${xwin_LINK_FLAGS}")
+ 	if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+ 	  set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE_NP")
++ 	elseif(CMAKE_SYSTEM_NAME STREQUAL "kFreeBSD")
++ 	  set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE_NP")
+ 	else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+ 	  set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE")
+ 	endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")

@@ -1,3 +1,27 @@
+plplot (5.9.2-1) unstable; urgency=low
+
+  * New upstream release.
+
+  * debian/patches/series: Remove patches
+      09_pdftex-EC-encoding.diff
+      10_print-usage-octave-3.0.diff
+      12_cmake-2.6-fixes.diff
+    which are now incorporated upstream.
+
+  * debian/patches/07_octave_prune_examples.diff: 
+    Update patch to reflect upstream changes.
+
+  * debian/patches/13_fix-kfreeBSD-build.diff: 
+    debian/control.in: 
+      New patch to fix build of plplot on Debian kfreeBSD. Also disable 
+      ada packages on kfreeBSD-amd64. Fixes bug #497895.
+
+  * debian/rules: Explicitly enable tk driver. This is current disabled
+    upstream as there are some issues with segfaults for the interactive
+    tests. Use at your own risk until patches are forthcoming.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Sun, 25 Jan 2009 15:28:58 +0000
+
 plplot (5.9.0-9) UNRELEASED; urgency=low
 
   * Switch from dpatch to quilt

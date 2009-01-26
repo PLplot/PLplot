@@ -1,7 +1,5 @@
 02_unset-python-path.diff
 04_use-mkoctfile.diff
 07_octave_prune_examples.diff
-09_pdftex-EC-encoding.diff
-10_print-usage-octave-3.0.diff
 11_minus-sign-manpage.diff
-12_cmake-2.6-fixes.diff
+13_fix-kfreeBSD-build.diff
