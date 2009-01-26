@@ -268,43 +268,177 @@ Naming rules:
 %typemap(freearg) (PLFLT *ArrayY) { SWIG_FREE_ARRAY($1); }
 
 
+%{
+PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
+{
+  int i, j;
+  PLFLT** matrix;
+  
+	if (!lua_istable(L, index)) {
+		lua_pushstring(L,"expected a table");
+		return NULL;
+	}
+ 	*nx=SWIG_itable_size(L, index);
+	if (*nx<1) {
+		lua_pushstring(L,"table appears to be empty");
+		return NULL;
+	}
+ 	matrix=SWIG_ALLOC_ARRAY(PLFLT*,*nx);
+	for (i = 0; i < *nx; i++)
+    matrix[i] = NULL;
+
+	lua_rawgeti(L, index, 1);
+  *ny=SWIG_itable_size(L,-1);
+	if (*ny<1) {
+		lua_pushstring(L,"table appears to be empty");
+    SWIG_FREE_ARRAY(matrix);
+		return NULL;
+	}
+  lua_pop(L,1);
+
+	for (i = 0; i < *nx; i++) {
+		lua_rawgeti(L, index, i+1);
+		if (!lua_istable(L,-1)) {
+			lua_pop(L,1);
+      lua_pushstring(L,"expected a table");
+      for (j = 0; j < *ny; j++)
+        SWIG_FREE_ARRAY(matrix[j]);
+      SWIG_FREE_ARRAY(matrix);
+			return NULL;
+		}
+    if (*ny!=SWIG_itable_size(L,-1)) {
+      lua_pop(L,1);
+      lua_pushstring(L,"inconsistent table sizes");
+      for (j = 0; j < *ny; j++)
+        SWIG_FREE_ARRAY(matrix[j]);
+      SWIG_FREE_ARRAY(matrix);
+			return NULL;
+    }
+    matrix[i]=SWIG_ALLOC_ARRAY(PLFLT, *ny);
+    for (j = 0; j < *ny; j++) {
+      lua_rawgeti(L, -1, j+1);
+      if(lua_isnumber(L,-1)) {
+        matrix[i][j] = (PLFLT)lua_tonumber(L,-1);
+      } else {
+        lua_pop(L,1);
+        lua_pushstring(L,"table must contain numbers");
+        for (j = 0; j < *ny; j++)
+          SWIG_FREE_ARRAY(matrix[j]);
+        SWIG_FREE_ARRAY(matrix);
+        return NULL;
+      }
+      lua_pop(L,1);
+    }
+    lua_pop(L,1);
+  }
+  
+  return matrix;
+}
+%}
+
+
 /* 2D array with trailing dimensions, check consistency with previous */
-%typemap(in) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {
+%typemap(in) (PLFLT **MatrixCk, PLINT nx, PLINT ny) (int ii) {
+  int jj;
+  
+  $1 = read_double_Matrix(L, $input, &ii, &jj );
+  if(!$1) SWIG_fail;
+  $2 = ii;
+  $3 = jj;
+  if( ($2!=Xlen) || ($3!=Ylen) ) {
+    lua_pushfstring(L, "Vectors must match matrix.");
+    SWIG_fail;
+  }
 }
 %typemap(freearg) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {
+  int i;
+  
+  for (i = 0; i < ii$argnum; i++)
+    SWIG_FREE_ARRAY($1[i]);
+  SWIG_FREE_ARRAY($1);
 }
 
 
 /* 2D array with trailing dimensions, set the X, Y size for later checking */
-%typemap(in) (PLFLT **Matrix, PLINT nx, PLINT ny) {
+%typemap(in) (PLFLT **Matrix, PLINT nx, PLINT ny) (int ii) {
+  int jj;
+  
+  $1 = read_double_Matrix(L, $input, &ii, &jj );
+  if(!$1) SWIG_fail;
+  Xlen = $2 = ii;
+  Ylen = $3 = jj;
 }
 %typemap(freearg) (PLFLT **Matrix, PLINT nx, PLINT ny) {
+  int i;
+  
+  for (i = 0; i < ii$argnum; i++)
+    SWIG_FREE_ARRAY($1[i]);
+  SWIG_FREE_ARRAY($1);
 }
 
 
 /* 2D array with no dimensions, set the X, Y size for later checking */
-%typemap(in) PLFLT **Matrix {
+%typemap(in) PLFLT **Matrix (int ii) {
+  int jj;
+  
+  $1 = read_double_Matrix(L, $input, &ii, &jj );
+  if(!$1) SWIG_fail;
+  Xlen = ii;
+  Ylen = jj;
 }
 %typemap(freearg) PLFLT **Matrix {
+  int i;
+  
+  for (i = 0; i < ii$argnum; i++)
+    SWIG_FREE_ARRAY($1[i]);
+  SWIG_FREE_ARRAY($1);
 }
 
 
 /* for plshade1, note the difference in the type for the first arg */
-%typemap(in) (PLFLT *Matrix, PLINT nx, PLINT ny) {
+%typemap(in) (PLFLT *Matrix, PLINT nx, PLINT ny) (int ii) {
 }
 %typemap(freearg) (PLFLT *Matrix, PLINT nx, PLINT ny) {
 }
 
+
 /* 2D array, check for consistency */
-%typemap(in) PLFLT **MatrixCk {
+%typemap(in) PLFLT **MatrixCk (int ii) {
+  int jj;
+  
+  $1 = read_double_Matrix(L, $input, &ii, &jj );
+  if(!$1) SWIG_fail;
+  if( (ii!=Xlen) || (jj!=Ylen) ) {
+    lua_pushfstring(L, "Vectors must match matrix.");
+    SWIG_fail;
+  }
 }
 %typemap(freearg) PLFLT **MatrixCk {
+  int i;
+  
+  for (i = 0; i < ii$argnum; i++)
+    SWIG_FREE_ARRAY($1[i]);
+  SWIG_FREE_ARRAY($1);
 }
 
+
 /* 2D array, check for consistency input / output version */
-%typemap(in) PLFLT **OutMatrixCk {
+%typemap(in) PLFLT **OutMatrixCk (int ii) {
+  int jj;
+  
+  $1 = read_double_Matrix(L, $input, &ii, &jj );
+  if(!$1) SWIG_fail;
+  if( (ii!=Xlen) || (jj!=Ylen) ) {
+    lua_pushfstring(L, "Vectors must match matrix.");
+    SWIG_fail;
+  }
 }
 %typemap(freearg) PLFLT **OutMatrixCk {
+  int i;
+  
+  for (i = 0; i < ii$argnum; i++)
+    SWIG_FREE_ARRAY($1[i]);
+  SWIG_FREE_ARRAY($1);
 }
 
 
@@ -483,9 +617,9 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 %rename(mkstrm) plmkstrm;
 %rename(mtex) plmtex;
 %rename(mtex3) plmtex3;
-%rename(ot3d) plot3d;
-%rename(ot3dc) plot3dc;
-%rename(ot3dcl) plot3dcl;
+%rename(plot3d) plot3d;
+%rename(plot3dc) plot3dc;
+%rename(plot3dcl) plot3dcl;
 %rename(parseopts) plparseopts;
 %rename(pat) plpat;
 %rename(poin) plpoin;
@@ -565,6 +699,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 %rename(wid) plwid;
 %rename(wind) plwind;
 %rename(xormod) plxormod;
+%rename(MinMax2dGrid) plMinMax2dGrid;
 
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i
