@@ -37,6 +37,55 @@ This is known to work with swig-1.3.36.
 #include "plplotP.h"
 %}
 
+
+/* macro definitions */
+%{
+#define LUA_ALLOC_ARRAY(TYPE,LEN) 	(TYPE *)malloc(LEN*sizeof(TYPE))
+#define LUA_FREE_ARRAY(PTR)		if(PTR) {free(PTR); PTR=NULL;}
+
+/* super macro to declare array typemap helper fns */
+int SWIG_itable_size(lua_State* L, int index);
+#define LUA_DECLARE_TYPEMAP_ARR_FN(NAME,TYPE)\
+	SWIGINTERN int LUA_read_##NAME##_num_array(lua_State* L,int index,TYPE *array,int size){\
+		int i;\
+		for (i = 0; i < size; i++) {\
+			lua_rawgeti(L,index,i+1);\
+			if (lua_isnumber(L,-1)){\
+				array[i] = (TYPE)lua_tonumber(L,-1);\
+			} else {\
+				lua_pop(L,1);\
+				return 0;\
+			}\
+			lua_pop(L,1);\
+		}\
+		return 1;\
+	}\
+	SWIGINTERN TYPE* LUA_get_##NAME##_num_array_var(lua_State* L, int index, int* size)\
+	{\
+		TYPE *array;\
+		if (!lua_istable(L,index)) {\
+			lua_pushstring(L,"expected a table");\
+			return 0;\
+		}\
+		*size=SWIG_itable_size(L,index);\
+		if (*size<1){\
+      array=LUA_ALLOC_ARRAY(TYPE,1);\
+      array[0]=(TYPE)0;\
+			return array;\
+		}\
+		array=LUA_ALLOC_ARRAY(TYPE,*size);\
+		if (!LUA_read_##NAME##_num_array(L,index,array,*size)){\
+			lua_pushstring(L,"table must contain numbers");\
+			LUA_FREE_ARRAY(array);\
+			return 0;\
+		}\
+		return array;\
+	}
+  
+LUA_DECLARE_TYPEMAP_ARR_FN(double,double);
+LUA_DECLARE_TYPEMAP_ARR_FN(int,int);
+%}
+
 /* type definitions */
 typedef double PLFLT;
 typedef int PLINT;
@@ -79,16 +128,16 @@ Naming rules:
 
 /* With preceding count */
 %typemap(in) (PLINT n, PLINT *Array) {
-  $2 = (PLINT*)SWIG_get_int_num_array_var(L, $input, &$1);
+  $2 = (PLINT*)LUA_get_int_num_array_var(L, $input, &$1);
   if(!$2) SWIG_fail;
   Alen = $1;
 }
-%typemap(freearg) (PLINT n, PLINT *Array) { SWIG_FREE_ARRAY($2); }
+%typemap(freearg) (PLINT n, PLINT *Array) { LUA_FREE_ARRAY($2); }
 
 
 /* Trailing count and check consistency with previous */
 %typemap(in) (PLINT *ArrayCk, PLINT n) (int temp) {
-  $1 = (PLINT*)SWIG_get_int_num_array_var(L, $input, &temp);
+  $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp != Alen) {
     lua_pushfstring(L, "Tables must be of same length.");
@@ -96,50 +145,50 @@ Naming rules:
   }
   $2 = temp;
 }
-%typemap(freearg) (PLINT *ArrayCk, PLINT n) { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) (PLINT *ArrayCk, PLINT n) { LUA_FREE_ARRAY($1); }
 
 
 /* No count but check consistency with previous */
 %typemap(in) PLINT *ArrayCk (int temp) {
-  $1 = (PLINT*)SWIG_get_int_num_array_var(L, $input, &temp);
+  $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp != Alen) {
     lua_pushfstring(L, "Tables must be of same length.");
     SWIG_fail;
   }
 }
-%typemap(freearg) PLINT *ArrayCk { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) PLINT *ArrayCk { LUA_FREE_ARRAY($1); }
 
 
 /* Weird case to allow argument to be one shorter than others */
 %typemap(in) PLINT *ArrayCkMinus1 (int temp) {
-  $1 = (PLINT*)SWIG_get_int_num_array_var(L, $input, &temp);
+  $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp < Alen-1) {
     lua_pushfstring(L, "Tables must be at least length of others minus 1.");
     SWIG_fail;
   }
 }
-%typemap(freearg) PLINT *ArrayCkMinus1 { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) PLINT *ArrayCkMinus1 { LUA_FREE_ARRAY($1); }
 
 %typemap(in) PLINT *ArrayCkMinus1Null (int temp) {
-  $1 = (PLINT*)SWIG_get_int_num_array_var(L, $input, &temp);
+  $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp < Alen-1) {
     lua_pushfstring(L, "Tables must be at least length of others minus 1.");
     SWIG_fail;
   }
 }
-%typemap(freearg) PLINT *ArrayCkMinus1Null { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) PLINT *ArrayCkMinus1Null { LUA_FREE_ARRAY($1); }
 
 
 /* No length but remember size to check others */
 %typemap(in) PLINT *Array (int temp) {
-  $1 = (PLINT*)SWIG_get_int_num_array_var(L, $input, &temp);
+  $1 = (PLINT*)LUA_get_int_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   Alen = temp;
 }
-%typemap(freearg) (PLINT *Array) { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) (PLINT *Array) { LUA_FREE_ARRAY($1); }
 
 
 /******************************************************************************
@@ -149,17 +198,17 @@ Naming rules:
 /* with preceding count */
 %typemap(in) (PLINT n, PLFLT *Array) {
   int temp;
-  $2 = (PLFLT*)SWIG_get_double_num_array_var(L, $input, &temp);
+  $2 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$2) SWIG_fail;
   $1 = Alen = temp;
 }
-%typemap(freearg) (PLINT n, PLFLT *Array) { SWIG_FREE_ARRAY($2); }
+%typemap(freearg) (PLINT n, PLFLT *Array) { LUA_FREE_ARRAY($2); }
 
 
 /* Trailing count and check consistency with previous */
 %typemap(in) (PLFLT *ArrayCk, PLINT n) {
   int temp;
-  $1 = (PLFLT*)SWIG_get_double_num_array_var(L, $input, &temp);
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp != Alen) {
     lua_pushfstring(L, "Tables must be of same length.");
@@ -167,105 +216,105 @@ Naming rules:
   }
   $2 = temp;
 }
-%typemap(freearg) (PLFLT *ArrayCk, PLINT n) { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) (PLFLT *ArrayCk, PLINT n) { LUA_FREE_ARRAY($1); }
 
 
 /* no count, but check consistency with previous */
 %typemap(in) PLFLT *ArrayCk (int temp) {
-  $1 = (PLFLT*)SWIG_get_double_num_array_var(L, $input, &temp);
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp != Alen) {
     lua_pushfstring(L, "Tables must be of same length.");
     SWIG_fail;
   }
 }
-%typemap(freearg) PLFLT *ArrayCk { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) PLFLT *ArrayCk { LUA_FREE_ARRAY($1); }
 
 
 /* No length but remember size to check others */
 %typemap(in) PLFLT *Array {
   int temp;
-  $1 = (PLFLT*)SWIG_get_double_num_array_var(L, $input, &temp);
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   Alen = temp;
 }
-%typemap(freearg) (PLFLT *Array) { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) (PLFLT *Array) { LUA_FREE_ARRAY($1); }
 
 
 /* with trailing count */
 %typemap(in) (PLFLT *Array, PLINT n) {
   int temp;
-  $1 = (PLFLT*)SWIG_get_double_num_array_var(L, $input, &temp);
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   $2 = Alen = temp;
 }
-%typemap(freearg) (PLFLT *Array, PLINT n) { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) (PLFLT *Array, PLINT n) { LUA_FREE_ARRAY($1); }
 
 
 /* check consistency with X dimension of previous */
 %typemap(in) PLFLT *ArrayCkX {
   int temp;
-  $1 = (PLFLT*)SWIG_get_double_num_array_var(L, $input, &temp);
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp != Xlen) {
     lua_pushfstring(L, "Tables must be of same length.");
     SWIG_fail;
   }
 }
-%typemap(freearg) PLFLT *ArrayCkX { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) PLFLT *ArrayCkX { LUA_FREE_ARRAY($1); }
 
 
 /* check consistency with Y dimension of previous */
 %typemap(in) PLFLT *ArrayCkY {
   int temp;
-  $1 = (PLFLT*)SWIG_get_double_num_array_var(L, $input, &temp);
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   if(temp != Ylen) {
     lua_pushfstring(L, "Tables must be of same length.");
     SWIG_fail;
   }
 }
-%typemap(freearg) PLFLT *ArrayCkY { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) PLFLT *ArrayCkY { LUA_FREE_ARRAY($1); }
 
 
 /* set X length for later consistency checking, with trailing count */
 %typemap(in) (PLFLT *ArrayX, PLINT nx) {
   int temp;
-  $1 = (PLFLT*)SWIG_get_double_num_array_var(L, $input, &temp);
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   $2 = Xlen = temp;
 }
-%typemap(freearg) (PLFLT *ArrayX, PLINT nx) { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) (PLFLT *ArrayX, PLINT nx) { LUA_FREE_ARRAY($1); }
 
 
 /* set X length for later consistency checking */
 %typemap(in) PLFLT *ArrayX {
   int temp;
-  $1 = (PLFLT*)SWIG_get_double_num_array_var(L, $input, &temp);
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   Xlen = temp;
 }
-%typemap(freearg) PLFLT *ArrayX { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) PLFLT *ArrayX { LUA_FREE_ARRAY($1); }
 
 
 /* Set Y length for later consistency checking, with trailing count */
 %typemap(in) (PLFLT *ArrayY, PLINT ny) {
   int temp;
-  $1 = (PLFLT*)SWIG_get_double_num_array_var(L, $input, &temp);
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   $2 = Ylen = temp;
 }
-%typemap(freearg) (PLFLT *ArrayY, PLINT ny) { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) (PLFLT *ArrayY, PLINT ny) { LUA_FREE_ARRAY($1); }
 
 
 /* set Y length for later consistency checking */
 %typemap(in) PLFLT *ArrayY {
   int temp;
-  $1 = (PLFLT*)SWIG_get_double_num_array_var(L, $input, &temp);
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
   Ylen = temp;
 }
-%typemap(freearg) (PLFLT *ArrayY) { SWIG_FREE_ARRAY($1); }
+%typemap(freearg) (PLFLT *ArrayY) { LUA_FREE_ARRAY($1); }
 
 
 %{
@@ -273,6 +322,9 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 {
   int i, j;
   PLFLT** matrix;
+  
+  *nx=0;
+  *ny=0;
   
 	if (!lua_istable(L, index)) {
 		lua_pushstring(L,"expected a table");
@@ -283,15 +335,21 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 		lua_pushstring(L,"table appears to be empty");
 		return NULL;
 	}
- 	matrix=SWIG_ALLOC_ARRAY(PLFLT*,*nx);
+ 	matrix=LUA_ALLOC_ARRAY(PLFLT*,*nx);
 	for (i = 0; i < *nx; i++)
     matrix[i] = NULL;
 
 	lua_rawgeti(L, index, 1);
-  *ny=SWIG_itable_size(L,-1);
+  if (!lua_istable(L, -1)) {
+    lua_pop(L, 1);
+    lua_pushstring(L, "expected a table");
+    LUA_FREE_ARRAY(matrix);
+    return NULL;
+  }
+  *ny=SWIG_itable_size(L, -1);
 	if (*ny<1) {
 		lua_pushstring(L,"table appears to be empty");
-    SWIG_FREE_ARRAY(matrix);
+    LUA_FREE_ARRAY(matrix);
 		return NULL;
 	}
   lua_pop(L,1);
@@ -302,19 +360,19 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 			lua_pop(L,1);
       lua_pushstring(L,"expected a table");
       for (j = 0; j < *ny; j++)
-        SWIG_FREE_ARRAY(matrix[j]);
-      SWIG_FREE_ARRAY(matrix);
+        LUA_FREE_ARRAY(matrix[j]);
+      LUA_FREE_ARRAY(matrix);
 			return NULL;
 		}
     if (*ny!=SWIG_itable_size(L,-1)) {
       lua_pop(L,1);
       lua_pushstring(L,"inconsistent table sizes");
       for (j = 0; j < *ny; j++)
-        SWIG_FREE_ARRAY(matrix[j]);
-      SWIG_FREE_ARRAY(matrix);
+        LUA_FREE_ARRAY(matrix[j]);
+      LUA_FREE_ARRAY(matrix);
 			return NULL;
     }
-    matrix[i]=SWIG_ALLOC_ARRAY(PLFLT, *ny);
+    matrix[i]=LUA_ALLOC_ARRAY(PLFLT, *ny);
     for (j = 0; j < *ny; j++) {
       lua_rawgeti(L, -1, j+1);
       if(lua_isnumber(L,-1)) {
@@ -323,8 +381,8 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
         lua_pop(L,1);
         lua_pushstring(L,"table must contain numbers");
         for (j = 0; j < *ny; j++)
-          SWIG_FREE_ARRAY(matrix[j]);
-        SWIG_FREE_ARRAY(matrix);
+          LUA_FREE_ARRAY(matrix[j]);
+        LUA_FREE_ARRAY(matrix);
         return NULL;
       }
       lua_pop(L,1);
@@ -353,9 +411,11 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 %typemap(freearg) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {
   int i;
   
-  for (i = 0; i < ii$argnum; i++)
-    SWIG_FREE_ARRAY($1[i]);
-  SWIG_FREE_ARRAY($1);
+  if($1) {
+    for (i = 0; i < ii$argnum; i++)
+      LUA_FREE_ARRAY($1[i]);
+    LUA_FREE_ARRAY($1);
+  }
 }
 
 
@@ -371,9 +431,11 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 %typemap(freearg) (PLFLT **Matrix, PLINT nx, PLINT ny) {
   int i;
   
-  for (i = 0; i < ii$argnum; i++)
-    SWIG_FREE_ARRAY($1[i]);
-  SWIG_FREE_ARRAY($1);
+  if($1) {
+    for (i = 0; i < ii$argnum; i++)
+      LUA_FREE_ARRAY($1[i]);
+    LUA_FREE_ARRAY($1);
+  }
 }
 
 
@@ -389,9 +451,11 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 %typemap(freearg) PLFLT **Matrix {
   int i;
   
-  for (i = 0; i < ii$argnum; i++)
-    SWIG_FREE_ARRAY($1[i]);
-  SWIG_FREE_ARRAY($1);
+  if($1) {
+    for (i = 0; i < ii$argnum; i++)
+      LUA_FREE_ARRAY($1[i]);
+    LUA_FREE_ARRAY($1);
+  }
 }
 
 
@@ -416,9 +480,11 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 %typemap(freearg) PLFLT **MatrixCk {
   int i;
   
-  for (i = 0; i < ii$argnum; i++)
-    SWIG_FREE_ARRAY($1[i]);
-  SWIG_FREE_ARRAY($1);
+  if($1) {
+    for (i = 0; i < ii$argnum; i++)
+      LUA_FREE_ARRAY($1[i]);
+    LUA_FREE_ARRAY($1);
+  }
 }
 
 
@@ -436,9 +502,11 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 %typemap(freearg) PLFLT **OutMatrixCk {
   int i;
   
-  for (i = 0; i < ii$argnum; i++)
-    SWIG_FREE_ARRAY($1[i]);
-  SWIG_FREE_ARRAY($1);
+  if($1) {
+    for (i = 0; i < ii$argnum; i++)
+      LUA_FREE_ARRAY($1[i]);
+    LUA_FREE_ARRAY($1);
+  }
 }
 
 
@@ -513,7 +581,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   n=n+1; /* since lua only counts the options */
   $1 = &n;
   
-  $2 = SWIG_ALLOC_ARRAY(char*, (n+1));
+  $2 = LUA_ALLOC_ARRAY(char*, (n+1));
 
   for(i = 0; i < n; i++) {
     lua_rawgeti(L, $input, i);
@@ -530,7 +598,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   $2[n] = NULL;
 }
 %typemap(freearg) (int *p_argc, const char **argv) {
-  SWIG_FREE_ARRAY($2);
+  LUA_FREE_ARRAY($2);
 }
 
 
