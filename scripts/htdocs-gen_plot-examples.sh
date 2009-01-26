@@ -81,8 +81,7 @@ popd
 # hack, x20c needs lena in the current directory
 $CP examples/c/lena.pgm .
 
-# 14 skipped because it requires stdin to specify the second output file
-for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 17 18 19 20 21 22 \
+for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 \
     23 24 25 26 27 28 29 30 31; do
 
     if [ $exe = "08" -o $exe = "16" -o $exe = "20" -o $exe = "30" ] ; then
@@ -103,16 +102,27 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 17 18 19 20 21 22 \
     echo Working on example ${exe} using DRIVEROPT of $DRIVEROPT
 
     # generate standard and preview size images
-    $cexamples_dir/x${exe}c -dev pngcairo -o x${exe} -fam -fflen 2 \
-	$DRIVEROPT
-    $cexamples_dir/x${exe}c -dev pngcairo -o prev-x${exe} -fam -fflen 2 \
-	$DRIVEROPT -geometry 200x150
-
-    # give png extension
-    for i in `ls x${exe}.?? prev-x${exe}.??`; do
-	mv $i $i.png;
-    done;
-
+    if [ $exe = "14" ] ; then
+      echo x14a.%n.png | \
+      $cexamples_dir/x${exe}c -dev pngcairo -o x${exe}.%n.png \
+          -fam -fflen 2 $DRIVEROPT -geometry 800x600
+      echo prev-x14a.%n.png | \
+      $cexamples_dir/x${exe}c -dev pngcairo -o prev-x${exe}.%n.png \
+          -fam -fflen 2 $DRIVEROPT -geometry 200x150
+      # First and second pages of master stream are already stored as first
+      # and second pages of overall example.
+      # Move first and second pages of slave stream to third and fourth
+      # pages of overall example for easy web viewing.
+      mv x14a.01.png x14.03.png
+      mv x14a.02.png x14.04.png
+      mv prev-x14a.01.png prev-x14.03.png
+      mv prev-x14a.02.png prev-x14.04.png
+    else
+      $cexamples_dir/x${exe}c -dev pngcairo -o x${exe}.%n.png \
+          -fam -fflen 2 $DRIVEROPT -geometry 800x600
+      $cexamples_dir/x${exe}c -dev pngcairo -o prev-x${exe}.%n.png \
+          -fam -fflen 2 $DRIVEROPT -geometry 200x150
+    fi
     # move to www directory.
     echo populating www directory demo${exe}
     rm -rf $EXDIR/demo${exe}
