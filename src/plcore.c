@@ -2150,7 +2150,8 @@ PLDLLIMPEXP int plInBuildTree()
              inBuildTree = 1;
            }
          }
-         chdir(currdir);
+         if (chdir(currdir) != 0)
+           pldebug("plInBuildTree():", "Unable to chdir to current directory");
       }
     }
     inited = 1;

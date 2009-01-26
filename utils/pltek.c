@@ -36,6 +36,7 @@ main(int argc, char *argv[])
     long start[MAXPAGES];		/* start (offset) of each page */
     char buf[BUFSZ], xtra, lastchar = '\0';
     char c, ibuf[128], *t;
+    size_t nwrite;
 
     if (argc < 2) {
 	describe();
@@ -134,7 +135,10 @@ main(int argc, char *argv[])
 	istop = 0;
 	for (i = 0; i < 8196; i++) {	/* less than 8MB per page! */
 	    if (xtra) {
-		fwrite(&xtra, 1, 1, stdout);
+		if (fwrite(&xtra, 1, 1, stdout) != 1) {
+		    fprintf(stderr,"Error writing to stdout\n");
+                    exit(1);
+                }
 		xtra = '\0';
 	    }
 	    nb = fread(buf, 1, BUFSZ, fd);
@@ -143,7 +147,10 @@ main(int argc, char *argv[])
 	    ifirst = 0;
 	    for (j = 0; j < nb; j++) {
 		if (buf[j] == '\f') {
-		    fwrite(&buf[ifirst], 1, j - ifirst, stdout);
+		    if (fwrite(&buf[ifirst], 1, j - ifirst, stdout) != j-ifirst) {
+		        fprintf(stderr,"Error writing to stdout\n");
+                        exit(1);
+                    }
 		    fflush(stdout);
 		    istop = 1;
 		    break;
@@ -155,7 +162,10 @@ main(int argc, char *argv[])
 		xtra = ESC;
 		j--;
 	    }
-	    fwrite(&buf[ifirst], 1, j - ifirst, stdout);
+	    if (fwrite(&buf[ifirst], 1, j - ifirst, stdout) != j-ifirst ) {
+	        fprintf(stderr,"Error writing to stdout\n");
+                exit(1);
+            }
 	}
 	if ( termtype == xterm ) 
 	    tek_mode(ALPHA_MODE);

@@ -44,8 +44,7 @@ main()
     exit(1);
   }
 
-  while (! feof(fp)){
-    fgets(b, sizeof(b), fp);
+  while (! feof(fp) && fgets(b, sizeof(b), fp) != NULL ){
     if (strchr(b, '-'))
       strcpy(doc[item++], b);
   }
@@ -56,8 +55,7 @@ main()
     exit(1);
   }
 
-  while (! feof(fp)){
-    fgets(b, sizeof(b), fp);
+  while (! feof(fp) && fgets(b, sizeof(b), fp) != NULL){
     if ((p2 = strchr(b, '('))){		/* function ... = ...( */
       p1 = p2;
       while(*p1-- != ' ');
@@ -67,7 +65,10 @@ main()
       strncpy(tok, p1, p2-p1);
       *(tok+(int)(p2-p1))='\0';
       printf("%s", b);
-      fgets(b, sizeof(b), fp);
+      if (fgets(b, sizeof(b), fp) == NULL) {
+        fprintf(stderr,"Error reading line\n");
+        return 1;
+      }
       printf("%s%%\n", b);	/* % function ... = ...(*/
 				
       sprintf(b,"plplot_octave_txt/%s.txt", tok);
@@ -89,16 +90,24 @@ main()
       } else {
 	printf("%%   Original PLplot call documentation:\n%%\n");
 	fp1 = fopen(b,"r");
-	while(!feof(fp1)) {
-	  fgets(b, sizeof(b), fp1);
+	while(!feof(fp1) && fgets(b, sizeof(b), fp1) != NULL) {
 	  printf("%% %s", b);
 	}
 	fclose(fp1);
       }
-      fgets(b, sizeof(b), fp);	/* % No doc...*/
-      fgets(b, sizeof(b), fp);
+      if (fgets(b, sizeof(b), fp) == NULL) {	/* % No doc...*/
+        fprintf(stderr,"Error reading line\n");
+	return 1;
+      }
+      if (fgets(b, sizeof(b), fp) == NULL) {
+        fprintf(stderr,"Error reading line\n");
+	return 1;
+      }
       printf("%s", b);          /* plplot_oct...*/
-      fgets(b, sizeof(b), fp);
+      if (fgets(b, sizeof(b), fp) == NULL) {
+        fprintf(stderr,"Error reading line\n");
+	return 1;
+      }
       printf("%s\n", b);        /* endfunction*/
     }
   }

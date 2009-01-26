@@ -303,25 +303,41 @@ int read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num_col)
   if ((fp = fopen(fname,"rb")) == NULL)
     return 1;
 
-  fscanf(fp,"%s\n", ver); /* version */
+  if (fscanf(fp,"%s\n", ver) != 1) {   /* version */
+    fclose(fp);
+    return 1;
+  }
   /* printf("version: %s\n", ver);*/
 
-  if (strcmp(ver, "P5")) /* I only understand this! */
+  if (strcmp(ver, "P5")) { /* I only understand this! */
+    fclose(fp);
     return 1;
+  }
 
   while((i=fgetc(fp)) == '#') {
-    fgets(ver, 80, fp); /* comments */
+    if (fgets(ver, 80, fp) == NULL) { /* comments */
+      fclose(fp);
+      return 1;
+    }
     /* printf("%s", ver); */
   }
   ungetc(i, fp);
 
-  fscanf(fp,"%d%d%d\n", &w, &h, num_col); /* width, height num colors */
+  if (fscanf(fp,"%d%d%d\n", &w, &h, num_col) != 3) { /* width, height num colors */
+    fclose(fp);
+    return 1;
+  }
   /* printf("width=%d height=%d num_col=%d\n", w, h, *num_col); */
 
   img = (unsigned char *) malloc(w*h*sizeof(char));
   plAlloc2dGrid(&imf, w, h);
 
-  fread(img, sizeof(char), w*h, fp);
+  if (fread(img, sizeof(char), w*h, fp) != w*h) {
+    fclose(fp);
+    free(img);
+    plFree2dGrid(imf,w,h);
+    return 1;
+  }
   fclose(fp);
 
   for (i=0; i<w; i++)

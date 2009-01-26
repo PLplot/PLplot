@@ -1305,6 +1305,7 @@ void plD_eop_png(PLStream *pls)
     int im_size=0;
     int png_compression;
     void *im_ptr=NULL;
+    size_t nwrite;
 
     if (pls->family || pls->page == 1) {
 
@@ -1348,7 +1349,9 @@ void plD_eop_png(PLStream *pls)
          im_ptr = gdImagePngPtr(dev->im_out, &im_size);
        #endif
        if( im_ptr ) {
-         fwrite(im_ptr, sizeof(char), im_size, pls->OutFile);
+         nwrite = fwrite(im_ptr, sizeof(char), im_size, pls->OutFile);
+         if (nwrite != im_size) 
+           plabort("gd driver: Error writing png file");
          gdFree(im_ptr);
        }
 
@@ -1528,6 +1531,7 @@ void plD_eop_jpeg(PLStream *pls)
     png_Dev *dev=(png_Dev *)pls->dev;
     int im_size=0;
     void *im_ptr=NULL;
+    size_t nwrite;
 
     if (pls->family || pls->page == 1) {
        /* image is written to output file by the driver
@@ -1536,7 +1540,9 @@ void plD_eop_jpeg(PLStream *pls)
        /* gdImageJpeg(dev->im_out, pls->OutFile, pls->dev_compression); */
        im_ptr = gdImageJpegPtr(dev->im_out, &im_size, pls->dev_compression);
        if( im_ptr ) {
-         fwrite(im_ptr, sizeof(char), im_size, pls->OutFile);
+         nwrite = fwrite(im_ptr, sizeof(char), im_size, pls->OutFile);
+         if (nwrite != im_size) 
+           plabort("gd driver: Error writing png file");
          gdFree(im_ptr);
        }
 
@@ -1560,6 +1566,7 @@ void plD_eop_gif(PLStream *pls)
     png_Dev *dev=(png_Dev *)pls->dev;
     int im_size=0;
     void *im_ptr=NULL;
+    size_t nwrite;
 
     if (pls->family || pls->page == 1) {
        /* image is written to output file by the driver
@@ -1568,7 +1575,9 @@ void plD_eop_gif(PLStream *pls)
        /* gdImageGif(dev->im_out, pls->OutFile); */
        im_ptr = gdImageGifPtr(dev->im_out, &im_size);
        if( im_ptr ) {
-         fwrite(im_ptr, sizeof(char), im_size, pls->OutFile);
+         nwrite = fwrite(im_ptr, sizeof(char), im_size, pls->OutFile);
+         if (nwrite != im_size) 
+           plabort("gd driver: Error writing png file");
          gdFree(im_ptr);
        }
 

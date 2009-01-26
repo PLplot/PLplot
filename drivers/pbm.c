@@ -235,6 +235,7 @@ void
 plD_eop_pbm(PLStream *pls)
 {
     FILE *fp = pls->OutFile;
+    size_t im_size, nwrite;
 
     if (fp != NULL) {
 	fprintf(fp, "%s\n", "P6");
@@ -249,7 +250,10 @@ plD_eop_pbm(PLStream *pls)
 			fprintf(fp, "%c", cmap[i][j][k]);
 	}
     */
-	fwrite( cmap, 1, pls->xlength * pls->ylength * 3, fp );
+        im_size = pls->xlength*pls->ylength*3;
+	nwrite = fwrite( cmap, 1, im_size, fp );
+        if (nwrite != im_size) 
+            plabort("gd driver: Error writing png file");
 
 	fclose(fp);
     } 
