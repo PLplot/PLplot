@@ -5,43 +5,104 @@
 	# [ demo#, number of pages, particular thumbnail for top-level page, credits]
 	# if number of pages==0 the entry is ignored (currently none are ignored).
 	$demoArray = array(
-	  array( 1,  1, 1, ""),
-	  array( 2,  2, 1, ""),
-	  array( 3,  1, 1, ""),
-	  array( 4,  2, 1, ""),
-	  array( 5,  1, 1, ""),
-	  array( 6,  1, 1, ""),
-	  array( 7, 17, 1, ""),
-	  array( 8,  8, 1, ""),
-	  array( 9,  5, 1, ""),
-	  array(10,  1, 1, ""),
-	  array(11,  8, 1, ""),
-	  array(12,  1, 1, ""),
-	  array(13,  1, 1, ""),
-	  array(14,  4, 1, ""),
-	  array(15,  3, 1, ""),
-	  array(16,  5, 1, ""),
-	  array(17,  1, 1, ""),
-	  array(18,  8, 1, ""),
-	  array(19,  3, 1, ""),
-	  array(20,  6, 3, ""),
-	  array(21,  3, 3, ""),
-	  array(22,  4, 3, ""),
-	  array(23, 16, 1, ""),
+	  array( 1,  1, 1, "
+	<p>Simple line plot and multiple windows demo.</p>
+	\n"),
+	  array( 2,  2, 1, "
+	<p>Multiple window and color map 0 demo.</p>
+	\n"),
+	  array( 3,  1, 1, "
+	<p>Polar plot demo.</p>
+	\n"),
+	  array( 4,  2, 1, "
+	<p>Log plot demo.</p>
+	\n"),
+	  array( 5,  1, 1, "
+	<p>Histogram demo.</p>
+	\n"),
+	  array( 6,  1, 1, "
+	<p>Symbol demo.</p>
+	\n"),
+	  array( 7, 17, 1, "
+	<p>Font demo for Hershey encodings.</p>
+	\n"),
+	  array( 8,  8, 1, "
+	<p>3-d plot demo.</p>
+	\n"),
+	  array( 9,  5, 1, "
+	<p>Contour plot demo.</p>
+	\n"),
+	  array(10,  1, 1, "
+	<p>Window positioning demo.</p>
+	\n"),
+	  array(11,  8, 1, "
+	<p>Mesh plot demo.</p>
+	\n"),
+	  array(12,  1, 1, "
+	<p>Bar chart demo.</p>
+	\n"),
+	  array(13,  1, 1, "
+	<p>Pie chart demo.</p>
+	\n"),
+	  array(14,  4, 1, "
+	<p>Demo of multiple stream/window capability.  The two pages of the master stream appear as the first two pages here.  The two pages of the slave stream appear as pages 3 and 4 here.</p>
+	\n"),
+	  array(15,  3, 1, "
+	<p>Shade plot demo using color map 0 (discrete colors) (plshade).</p>
+	\n"),
+	  array(16,  5, 1, "
+	<p>Shade plot demo using color map 1 (continuous colours) (plshades).</p>
+	\n"),
+	  array(17,  1, 1, "
+	<p>4-pen strip chart demo.</p>
+	\n"),
+	  array(18,  8, 1, "
+	<p>3-d line and point plot demo.</p>
+	\n"),
+	  array(19,  3, 1, "
+	<p>Demo of backdrop plotting of world, US maps.</p>
+	\n"),
+	  array(20,  6, 3, "
+	<p>Demo of gray-scale image manipulation (plimage).</p>
+	\n"),
+	  array(21,  3, 3, "
+	<p>Grid data demo.</p>
+	\n"),
+	  array(22,  4, 3, "
+	<p>Demo of simple vector plotting.</p>
+	\n"),
+	  array(23, 16, 1, "
+	<p>Font demo for unicode encodings which shows Greek letters and math symbols.</p>
+	\n"),
 	  array(24,  1, 1, "
+	<p>Demo of unicode Pace Flag.</p>
 	<p>Credits:</p>
 	<ul class=\"arrowlist\">
 	<li><a href=\"http://www.columbia.edu/~fdc/pace/\">Say Peace in all languages!</a></li>
 	<li><a href=\"http://www.columbia.edu/~fdc/pace/flag.html\">Pace flag</a></li>
 	</ul>
 	\n"),
-	  array(25,  4, 1, ""),
-	  array(26,  2, 1, ""),
-	  array(27, 10, 1, ""),
-	  array(28,  5, 1, ""),
-	  array(29,  3, 1, ""),
-	  array(30,  2, 1, ""),
-	  array(31,  1, 1, ""));
+	  array(25,  4, 1, "
+	<p>Diagnostic demo of filling and clipping polygons.</p>
+	\n"),
+	  array(26,  2, 1, "
+	<p>Demo of multi-lingual unicode versions of the first page of example 4.</p>
+	\n"),
+	  array(27, 10, 1, "
+	<p>Demo of drawing 'spirograph' curves - epitrochoids, cycolids, roulettes.</p>
+	\n"),
+	  array(28,  5, 1, "
+	<p>Demo of 3-d writing of text (plmtex3 and plptex3).</p>
+	\n"),
+	  array(29,  3, 1, "
+	<p>Demo of date / time formatting for axes.</p>
+	\n"),
+	  array(30,  2, 1, "
+	<p>Demo of opacity/ transparency (or alpha channel).</p>
+	\n"),
+	  array(31,  1, 1, "
+	<p>Diagnostic demo to exercise all our set/get functions.  The result should be a properly-formatted empty plot with black background.</p>
+	\n"));
 ?>
 
 <!-- include the html header -->
