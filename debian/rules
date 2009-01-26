@@ -35,7 +35,7 @@ DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 # Disable java and ada build on arm - problems with java-gcj-compat-dev
 # at the moment. Also gnat not available on arm, mips, and mipsel.
 
-ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:alpha:arm:armeb:armel:mips:mipsel:))
+ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:alpha:arm:armeb:armel:mips:mipsel:kfreebsd-amd64:))
 BUILD_ADA = no
 else
 BUILD_ADA = yes
