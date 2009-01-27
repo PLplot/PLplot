@@ -18,7 +18,7 @@ project(simple_ada_test C)
 
 # First location where simple_ada_test looks for CMake Ada language
 # support files.
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake-2.4/Modules)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_working/Modules)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
