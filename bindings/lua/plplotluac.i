@@ -520,10 +520,10 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 %typemap(in, numinputs=0) char *OUTPUT ( char buff[1000] ) {
   $1 = buff;
 }
-/*%typemap(argout,fragment="t_output_helper") char *OUTPUT {
-   PyObject *o = PyString_FromString($1);
-   $result = t_output_helper($result,o);
-}*/
+%typemap(argout) char *OUTPUT {
+  lua_pushstring(L, $1);
+  SWIG_arg++;
+} 
 
 
 /******************************************************************************
@@ -628,7 +628,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 %rename(cont) plcont;
 %rename(cpstrm) plcpstrm;
 %rename(plend) plend;
-%rename(end1) plend1;
+%rename(plend1) plend1;
 %rename(env) plenv;
 %rename(env0) plenv0;
 %rename(eop) pleop;
