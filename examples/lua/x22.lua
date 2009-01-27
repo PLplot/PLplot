@@ -1,4 +1,4 @@
---[[ $Id: x22c.c 8033 2007-11-23 15:28:09Z andrewross $
+--[[ $Id$
 
     Simple vector plot example
     Copyright (C) 2004 Andrew Ross <andrewross@users.sourceforge.net>

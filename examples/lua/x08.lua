@@ -55,7 +55,7 @@ function cmap1_init(gray)
   end
 
   pl.scmap1n(256)
-  pl.scmap1l(0, i, h, l, s, {0} )
+  pl.scmap1l(0, i, h, l, s, { 0 } )  -- TODO: last table should actually be empty
 end
 
 ----------------------------------------------------------------------------
