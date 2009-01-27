@@ -44,10 +44,17 @@ if(ENABLE_lua)
   # Check for Lua libraries which defines
   #  LUA_LIBRARIES    = path to the lua library
   #  LUA_INCLUDE_DIR  = path to where lua.h is found
-  find_package(Lua50)
-  if(NOT LUA50_FOUND)
+  option(HAVE_lua51 "Lua version is 5.1" OFF)
+  if(HAVE_lua51)
+    find_package(Lua51)
+    set(LUA_FOUND ${LUA51_FOUND})
+  else(HAVE_lua51)
+    find_package(Lua50)
+    set(LUA_FOUND LUA50_FOUND)
+  endif(HAVE_lua51)
+  if(NOT LUA_FOUND)
     message(STATUS "WARNING: "
       "lua library and/or header not found. Disabling lua bindings")
     set(ENABLE_lua OFF CACHE BOOL "Enable LUA bindings" FORCE)
-  endif(NOT LUA50_FOUND)
+  endif(NOT LUA_FOUND)
 endif(ENABLE_lua)
