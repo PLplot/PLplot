@@ -566,6 +566,82 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   $1 = plfill;
 }
 
+/* you can omit the pltr func */
+%typemap(default) pltr_func pltr {
+  $1 = NULL;
+}
+
+
+
+//~ %typemap(in) PLPointer OBJECT_DATA {
+  //~ lua_pushstring(L, "n");
+  //~ lua_gettable(L, $input);
+  //~ if(!lua_isnumber(L, -1)) {
+    //~ lua_pushfstring(L, "Table doesn't contain key 'n'.");
+    //~ SWIG_fail;
+  //~ }
+  //~ n = (int)lua_tonumber(L, -1);
+  //~ lua_pop(L, 1);  /* remove number */
+
+
+   //~ jPLFLT **adat;
+   //~ jobject *ai;
+   //~ int nx = (*jenv)->GetArrayLength( jenv, $input );
+   //~ int ny = -1;
+   //~ int i, j;
+   //~ PLcGrid2 cgrid;
+   //~ ai = (jobject *) malloc( nx * sizeof(jobject) );
+   //~ adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+
+   //~ (*jenv)->EnsureLocalCapacity( jenv, nx );
+
+   //~ for( i=0; i < nx; i++ )
+     //~ {
+	//~ ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
+	//~ adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
+
+	//~ if (ny == -1)
+	  //~ ny = (*jenv)->GetArrayLength( jenv, ai[i] );
+	//~ else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
+	   //~ printf( "Misshapen a array.\n" );
+	   //~ for( j=0; j <= i; j++ )
+	     //~ (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
+	   //~ free(adat);
+	   //~ free(ai);
+	   //~ return;
+	//~ }
+     //~ }
+
+   //~ if( !((nx == Xlen && ny == Ylen) || (nx == Ylen && ny == 1 && ny == Alen))) {
+      //~ printf( "Xlen = %d, nx = %d, Ylen = %d, Alen = %d, ny = %d\n",
+	      //~ Xlen, nx, Ylen, Alen, ny );
+      //~ printf( "Y vector or matrix must match matrix dimensions.\n" );
+      //~ for( i=0; i < nx; i++ )
+	//~ (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      //~ free(adat);
+      //~ free(ai);
+      //~ return;
+   //~ }
+   //~ setup_array_2d_PLFLT( &yg, adat, nx, ny );
+   //~ for( i=0; i < nx; i++ ) {
+      //~ (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      //~ (*jenv)->DeleteLocalRef(jenv, ai[i]);
+   //~ }
+
+   //~ free(adat);
+   //~ free(ai);
+   //~ cgrid.xg = xg;
+   //~ cgrid.yg = yg;
+   //~ cgrid.nx = nx;
+   //~ cgrid.ny = ny;
+   //~ $1 = &cgrid;
+//~ }
+//~ %typemap(freearg) PLPointer OBJECT_DATA {
+   //~ free(yg[0]);
+   //~ free(yg);
+//~ } */
+
+
 /* Process options list using current options info. */
 %typemap(in, checkfn="lua_istable") (int *p_argc, const char **argv) {
   int i, n;
@@ -615,6 +691,8 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 				 Renames
 ******************************************************************************/
 %rename(parseopts) plparseopts;
+%rename(setcontlabelformat) pl_setcontlabelformat;
+%rename(setcontlabelparam) pl_setcontlabelparam;
 %rename(adv) pladv;
 %rename(axes) plaxes;
 %rename(bin) plbin;
