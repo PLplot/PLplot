@@ -76,31 +76,33 @@ function polar()
   pl.line(px, py)
 	       
 	--create data to be contoured.
-   plAlloc2dGrid(&cgrid2.xg, RPTS, THETAPTS)
-   plAlloc2dGrid(&cgrid2.yg, RPTS, THETAPTS)
-   plAlloc2dGrid(&z, RPTS, THETAPTS)
-   cgrid2.nx = RPTS
-   cgrid2.ny = THETAPTS
+  cgrid2["xg"] = {}
+  cgrid2["yg"] = {}
+  cgrid2["nx"] = RPTS
+  cgrid2["ny"] = THETAPTS
+  z = {}
    
-   for (i = 0 i < RPTS i++) {
-      r = i/(double)(RPTS-1)
-      for (j = 0 j < THETAPTS j++) {
-	 theta = (2.*M_PI/(double)(THETAPTS-1))*(double)j
-	 cgrid2.xg[i][j] = r*cos(theta)
-	 cgrid2.yg[i][j] = r*sin(theta)
-	 z[i][j] = r
-      }
-   }
+  for i = 1, RPTS do
+    r = (i-1)/(RPTS-1)
+    cgrid2["xg"][i] = {}
+    cgrid2["yg"][i] = {}
+    z = {}
+    for j = 1, THETAPTS do
+      theta = (2*math.pi/(THETAPTS-1))*(j-1)
+      cgrid2["xg"][i][j] = r*math.cos(theta)
+      cgrid2["yg"][i][j] = r*math.sin(theta)
+      z[i][j] = r
+    end
+  end
 
-   for (i = 0 i < 10 i++) {
-      lev[i] = 0.05 + 0.10*(double) i
-   }
+  for i = 1, 10 do
+    lev[i] = 0.05 + 0.10*(i-1)
+  end
 
-   pl.col0(2)
-   pl.cont(z, RPTS, THETAPTS, 1, RPTS, 1, THETAPTS, lev, 10,
-	              pltr2, (void *) &cgrid2)
-   pl.col0(1)
-   pl.lab("", "", "Polar Contour Plot")
+  pl.col0(2)
+  pl.cont(z, 1, RPTS, 1, THETAPTS, lev, cgrid2)
+  pl.col0(1)
+  pl.lab("", "", "Polar Contour Plot")
 end
 
 
@@ -121,134 +123,131 @@ function f2mnmx(f, nx, ny)
 	end
 		
 	return fmin, fmax
-}
+end
 
 
 --shielded potential contour plot example.
 function potential()
-   PLFLT dz, clevel, clevelneg[PNLEVEL], clevelpos[PNLEVEL]
-   PLFLT px[PPERIMETERPTS], py[PPERIMETERPTS]
+  clevelneg = {}
+  clevelpos = {}
+  px = {}
+  py = {}
 
-	--create data to be contoured.
-   plAlloc2dGrid(&cgrid2.xg, PRPTS, PTHETAPTS)
-   plAlloc2dGrid(&cgrid2.yg, PRPTS, PTHETAPTS)
-   plAlloc2dGrid(&z, PRPTS, PTHETAPTS)
-   cgrid2.nx = PRPTS
-   cgrid2.ny = PTHETAPTS
+  --create data to be contoured.
+  cgrid2["xg"] = {}
+  cgrid2["yg"] = {}
+  cgrid2["nx"] = PRPTS
+  cgrid2["ny"] = PTHETAPTS
+  z = {}
 
-   for (i = 0 i < PRPTS i++) {
-      r = 0.5 + (double) i
-      for (j = 0 j < PTHETAPTS j++) {
-	 theta = (2.*M_PI/(double)(PTHETAPTS-1))*(0.5 + (double) j)
-	 cgrid2.xg[i][j] = r*cos(theta)
-	 cgrid2.yg[i][j] = r*sin(theta)
-      }
-   }
+  for i = 1, PRPTS do
+    r = 0.5 + (i-1)
+    cgrid2["xg"][i] = {}
+    cgrid2["yg"][i] = {}
+    for j = 1, PTHETAPTS do
+      theta = 2*math.pi/(PTHETAPTS-1)*(j-0.5)
+      cgrid2["xg"][i][j] = r*cos(theta)
+      cgrid2["yg"][i][j] = r*sin(theta)
+    end
+  end
 
-   rmax = r
-   f2mnmx(cgrid2.xg, PRPTS, PTHETAPTS, &xmin, &xmax)
-   f2mnmx(cgrid2.yg, PRPTS, PTHETAPTS, &ymin, &ymax)
-   x0 = (xmin + xmax)/2.
-   y0 = (ymin + ymax)/2.
+  rmax = PRPTS-0.5
+  xmin, xmax = f2mnmx(cgrid2["xg"], PRPTS, PTHETAPTS)
+  ymin, ymax = f2mnmx(cgrid2["yg"], PRPTS, PTHETAPTS)
+  x0 = (xmin + xmax)/2
+  y0 = (ymin + ymax)/2
 
-   -- Expanded limits 
-   peps = 0.05
-   xpmin = xmin - fabs(xmin)*peps
-   xpmax = xmax + fabs(xmax)*peps
-   ypmin = ymin - fabs(ymin)*peps
-   ypmax = ymax + fabs(ymax)*peps
+  -- Expanded limits 
+  peps = 0.05
+  xpmin = xmin - math.abs(xmin)*peps
+  xpmax = xmax + math.abs(xmax)*peps
+  ypmin = ymin - math.abs(ymin)*peps
+  ypmax = ymax + math.abs(ymax)*peps
 
-   -- Potential inside a conducting cylinder (or sphere) by method of images.
-      Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
-      Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
-      Also put in smoothing term at small distances.
+  -- Potential inside a conducting cylinder (or sphere) by method of images.
+  --  Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+  --  Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+  --  Also put in smoothing term at small distances.
+  
+  eps = 2
+  q1 = 1
+  d1 = rmax/4
+
+  q1i = - q1*rmax/d1
+  d1i = rmax^2/d1
+
+  q2 = -1
+  d2 = rmax/4
+
+  q2i = - q2*rmax/d2
+  d2i = rmax^2/d2
+
+  for i = 1, PRPTS do
+    z[i] = {}
+    for j = 1, PTHETAPTS do
+      div1 = math.sqrt((cgrid2.xg[i][j]-d1)^2 + (cgrid2.yg[i][j]-d1)^2 + eps^2)
+      div1i = math.sqrt((cgrid2.xg[i][j]-d1i)^2 + (cgrid2.yg[i][j]-d1i)^2 + eps^2)
+      div2 = math.sqrt((cgrid2.xg[i][j]-d2)^2 + (cgrid2.yg[i][j]+d2)^2 + eps^2)
+      div2i = math.sqrt((cgrid2.xg[i][j]-d2i)^2 + (cgrid2.yg[i][j]+d2i)^2 + eps^2)
+      z[i][j] = q1/div1 + q1i/div1i + q2/div2 + q2i/div2i
+    end
+  end
+  zmin, zmax = f2mnmx(z, PRPTS, PTHETAPTS)
+
+  -- Positive and negative contour levels.
+  dz = (zmax-zmin)/PNLEVEL
+  nlevelneg = 1
+  nlevelpos = 1
+  for i = 1, PNLEVEL do
+    clevel = zmin + (i-0.5)*dz
+    if clevel <= 0 then
+      clevelneg[nlevelneg] = clevel
+      nlevelneg = nlevelneg + 1
+    else
+      clevelpos[nlevelpos] = clevel
+      nlevelpos = nlevelpos + 1
+    end
+  end
+  
+  -- Colours! 
+  ncollin = 11
+  ncolbox = 1
+  ncollab = 2
+
+  -- Finally start plotting this page! 
+  pl.adv(0)
+  pl.col0(ncolbox)
+
+  pl.vpas(0.1, 0.9, 0.1, 0.9, 1)
+  pl.wind(xpmin, xpmax, ypmin, ypmax)
+  pl.box("", 0, 0, "", 0, 0)
+
+  pl.col0(ncollin)
+  if nlevelneg>1 then
+    -- Negative contours 
+    pl.lsty(2)
+    pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelneg, pltr2, cgrid2)
+  end
+
+  if nlevelpos>1 then
+    -- Positive contours  
+    pl.lsty(1)
+    pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelpos, pltr2, cgrid2)
+  end
    
+  -- Draw outer boundary  
+  for i = 1, PPERIMETERPTS do
+    t = (2*math.pi/(PPERIMETERPTS-1))*(i-1)
+    px[i] = x0 + rmax*math.cos(t)
+    py[i] = y0 + rmax*math.sin(t)
+  end
 
-   eps = 2.
-
-   q1 = 1.
-   d1 = rmax/4.
-
-   q1i = - q1*rmax/d1
-   d1i = pow(rmax, 2.)/d1
-
-   q2 = -1.
-   d2 = rmax/4.
-
-   q2i = - q2*rmax/d2
-   d2i = pow(rmax, 2.)/d2
-
-   for (i = 0 i < PRPTS i++) {
-      for (j = 0 j < PTHETAPTS j++) {
-	 div1 = sqrt(pow(cgrid2.xg[i][j]-d1, 2.) + pow(cgrid2.yg[i][j]-d1, 2.) + pow(eps, 2.))
-	 div1i = sqrt(pow(cgrid2.xg[i][j]-d1i, 2.) + pow(cgrid2.yg[i][j]-d1i, 2.) + pow(eps, 2.))
-	 div2 = sqrt(pow(cgrid2.xg[i][j]-d2, 2.) + pow(cgrid2.yg[i][j]+d2, 2.) + pow(eps, 2.))
-	 div2i = sqrt(pow(cgrid2.xg[i][j]-d2i, 2.) + pow(cgrid2.yg[i][j]+d2i, 2.) + pow(eps, 2.))
-	 z[i][j] = q1/div1 + q1i/div1i + q2/div2 + q2i/div2i
-      }
-   }
-   f2mnmx(z, PRPTS, PTHETAPTS, &zmin, &zmax)
---   printf("%.15g %.15g %.15g %.15g %.15g %.15g %.15g %.15g \n",
-	  q1, d1, q1i, d1i, q2, d2, q2i, d2i)
-   printf("%.15g %.15g %.15g %.15g %.15g %.15g \n",
-	  xmin, xmax, ymin, ymax, zmin, zmax) 
-
-   -- Positive and negative contour levels.
-   dz = (zmax-zmin)/(double) PNLEVEL
-   nlevelneg = 0
-   nlevelpos = 0
-   for (i = 0 i < PNLEVEL i++) {
-      clevel = zmin + ((double) i + 0.5)*dz
-      if (clevel <= 0.)
-	clevelneg[nlevelneg++] = clevel
-      else
-	clevelpos[nlevelpos++] = clevel
-   }
-   -- Colours! 
-   ncollin = 11
-   ncolbox = 1
-   ncollab = 2
-
-   -- Finally start plotting this page! 
-   pladv(0)
-   plcol0(ncolbox)
-
-   plvpas(0.1, 0.9, 0.1, 0.9, 1.0)
-   plwind(xpmin, xpmax, ypmin, ypmax)
-   plbox("", 0., 0, "", 0., 0)
-
-   plcol0(ncollin)
-   if(nlevelneg >0) {
-      -- Negative contours 
-      pllsty(2)
-      plcont(z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
-	     clevelneg, nlevelneg, pltr2, (void *) &cgrid2)
-   }
-
-   if(nlevelpos >0) {
-      -- Positive contours  
-      pllsty(1)
-      plcont(z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
-	     clevelpos, nlevelpos, pltr2, (void *) &cgrid2)
-   }
-		 
-   -- Draw outer boundary  
-   for (i = 0 i < PPERIMETERPTS i++) {
-      t = (2.*M_PI/(PPERIMETERPTS-1))*(double)i
-      px[i] = x0 + rmax*cos(t)
-      py[i] = y0 + rmax*sin(t)
-   }
-
-   plcol0(ncolbox)
-   plline(PPERIMETERPTS, px, py)
-	       
-   plcol0(ncollab)
-   pllab("", "", "Shielded potential of charges in a conducting sphere")
-
-   plFree2dGrid(z, PRPTS, PTHETAPTS)
-   plFree2dGrid(cgrid2.xg, PRPTS, PTHETAPTS)
-   plFree2dGrid(cgrid2.yg, PRPTS, PTHETAPTS)
-}
+  pl.col0(ncolbox)
+  pl.line(px, py)
+       
+  pl.col0(ncollab)
+  pl.lab("", "", "Shielded potential of charges in a conducting sphere")
+end
   
 
 ----------------------------------------------------------------------------
@@ -256,10 +255,8 @@ function potential()
 --
 -- Does several contour plots using different coordinate mappings.
 ----------------------------------------------------------------------------
-mark = 1500
-space = 1500
-xg1 = {}
-yg1 = {}
+mark = { 1500 }
+space = { 1500 }
 
 -- Parse and process command line arguments 
 pl.parseopts(arg, pl.PL_PARSE_FULL)
@@ -271,148 +268,89 @@ pl.init()
 z = {}
 w = {}
 
-for (i = 0 i < XPTS i++) {
-	xx = (double) (i - (XPTS / 2)) / (double) (XPTS / 2)
-	for (j = 0 j < YPTS j++) {
-	    yy = (double) (j - (YPTS / 2)) / (double) (YPTS / 2) - 1.0
-	    z[i][j] = xx * xx - yy * yy
+for i = 1, XPTS do
+	xx = (i-1 - math.floor(XPTS/2)) / math.floor(XPTS/2)
+  z[i] = {}
+  w[i] = {}
+	for j = 1, YPTS do
+	    yy = (j-1 - math.floor(YPTS/2)) / math.floor(YPTS/2) - 1
+	    z[i][j] = xx^2 - yy^2
 	    w[i][j] = 2 * xx * yy
-	}
-    }
+	end
+end
 
 -- Set up grids 
+cgrid1 = {}
+cgrid1["xg"] = {}
+cgrid1["yg"] = {}
+cgrid1["nx"] = XPTS
+cgrid1["ny"] = YPTS
+cgrid2 = {}
+cgrid2["xg"] = {}
+cgrid2["yg"] = {}
+cgrid2["nx"] = XPTS
+cgrid2["ny"] = YPTS
 
-    cgrid1.xg = xg1
-    cgrid1.yg = yg1
-    cgrid1.nx = XPTS
-    cgrid1.ny = YPTS
+for i = 1, XPTS do
+  cgrid2["xg"][i] = {}
+  cgrid2["yg"][i] = {}
+	for j = 1, YPTS do
+    xx, yy = mypltr(i, j)
 
-    plAlloc2dGrid(&cgrid2.xg, XPTS, YPTS)
-    plAlloc2dGrid(&cgrid2.yg, XPTS, YPTS)
-    cgrid2.nx = XPTS
-    cgrid2.ny = YPTS
+    argx = xx * math.pi/2
+    argy = yy * math.pi/2
+    distort = 0.4
 
-    for (i = 0 i < XPTS i++) {
-	for (j = 0 j < YPTS j++) {
-	    mypltr((PLFLT) i, (PLFLT) j, &xx, &yy, NULL)
+    cgrid1["xg"][i] = xx + distort * math.cos(argx)
+    cgrid1["yg"][j] = yy - distort * math.cos(argy)
 
-	    argx = xx * M_PI/2
-	    argy = yy * M_PI/2
-	    distort = 0.4
-
-	    cgrid1.xg[i] = xx + distort * cos(argx)
-	    cgrid1.yg[j] = yy - distort * cos(argy)
-
-	    cgrid2.xg[i][j] = xx + distort * cos(argx) * cos(argy)
-	    cgrid2.yg[i][j] = yy - distort * cos(argx) * cos(argy)
-	}
-    }
+    cgrid2["xg"][i][j] = xx + distort * math.cos(argx) * math.cos(argy)
+    cgrid2["yg"][i][j] = yy - distort * math.cos(argx) * math.cos(argy)
+  end
+end
 
 -- Plot using identity transform 
---
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL)
-    plstyl(1, &mark, &space)
-    plcol0(3)
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL)
-    plstyl(0, &mark, &space)
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
-
-    pl_setcontlabelformat(4,3)
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL)
-    plstyl(1, &mark, &space)
-    plcol0(3)
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL)
-    plstyl(0, &mark, &space)
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
+pl.setcontlabelformat(4, 3)
+pl.setcontlabelparam(0.006, 0.3, 0.1, 1)
+pl.env(-1, 1, -1, 1, 0, 0)
+pl.col0(2)
+pl.cont(z, 1, XPTS, 1, YPTS, clevel, mypltr, nil)
+pl.styl(mark, space)
+pl.col0(3)
+pl.cont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, nil)
+pl.styl({}, {})
+pl.col0(1)
+pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")
+pl.setcontlabelparam(0.006, 0.3, 0.1, 0)
     
 -- Plot using 1d coordinate transform 
-
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr1, (void *) &cgrid1)
-
-    plstyl(1, &mark, &space)
-    plcol0(3)
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr1, (void *) &cgrid1)
-    plstyl(0, &mark, &space)
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
-    --
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr1, (void *) &cgrid1)
-
-    plstyl(1, &mark, &space)
-    plcol0(3)
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr1, (void *) &cgrid1)
-    plstyl(0, &mark, &space)
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
+pl.env(-1, 1, -1, 1, 0, 0)
+pl.col0(2)
+pl.cont(z, 1, XPTS, 1, YPTS, clevel, 11, pltr1, cgrid1)
+pl.styl(mark, space)
+pl.col0(3)
+pl.cont(w, 1, XPTS, 1, YPTS, clevel, 11, pltr1, cgrid1)
+pl.styl({}, {})
+pl.col0(1)
+pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")
     
 -- Plot using 2d coordinate transform 
+pl.env(-1, 1, -1, 1, 0, 0)
+pl.col0(2)
+pl.cont(z, 1, XPTS, 1, YPTS, clevel, pltr2, cgrid2)
 
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr2, (void *) &cgrid2)
+pl.styl(1, mark, space)
+pl.col0(3)
+pl.cont(w, 1, XPTS, 1, YPTS, clevel, pltr2, cgrid2)
+pl.styl({}, {})
+pl.col0(1)
+pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 
-    plstyl(1, &mark, &space)
-    plcol0(3)
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr2, (void *) &cgrid2)
-    plstyl(0, &mark, &space)
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
-    --
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr2, (void *) &cgrid2)
+pl.setcontlabelparam(0.006, 0.3, 0.1, 0)
+polar()
 
-    plstyl(1, &mark, &space)
-    plcol0(3)
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr2, (void *) &cgrid2)
-    plstyl(0, &mark, &space)
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
-    
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
-    polar()
-    --
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-    polar()
-    
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
-    potential()
-    --
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-    potential()
-    
+pl.setcontlabelparam(0.006, 0.3, 0.1, 0)
+potential()
 
 -- Clean up 
-           
-    plFree2dGrid(z, XPTS, YPTS)
-    plFree2dGrid(w, XPTS, YPTS)
-    plFree2dGrid(cgrid2.xg, XPTS, YPTS)
-    plFree2dGrid(cgrid2.yg, XPTS, YPTS)
-   
-    plend()
-
-    exit(0)
-}
+pl.plend()
