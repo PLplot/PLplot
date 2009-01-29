@@ -1,16 +1,29 @@
--- $Id$
+--[[ $Id$
 
---	Log plot demo.
+	Log plot demo.
+	Simple line plot and multiple windows demo.
 
+  Copyright (C) 2008  Werner Smekal
 
--- initialise Lua bindings to pl.pl.ot
-if string.sub(_VERSION,1,7)=='Lua 5.0' then
-	lib=loadlib('./plplotluac.so','luaopen_plplotluac') or loadlib('plplotluac.dll','luaopen_plplotluac')
-	assert(lib)()
-else
-	require('plplotluac')
-end
+  This file is part of PLplot.
 
+  PLplot is free software you can redistribute it and/or modify
+  it under the terms of the GNU General Library Public License as published
+  by the Free Software Foundation either version 2 of the License, or
+  (at your option) any later version.
+
+  PLplot is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Library General Public License for more details.
+
+  You should have received a copy of the GNU Library General Public License
+  along with PLplot if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+--]]
+
+-- initialise Lua bindings for PLplot examples.
+dofile("plplot_examples.lua")
 
 ----------------------------------------------------------------------------
 -- plot1

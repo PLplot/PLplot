@@ -21,15 +21,8 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 --]]
 
-
--- initialise Lua bindings to PLplot
-if string.sub(_VERSION,1,7)=='Lua 5.0' then
-	lib=loadlib('./plplotluac.so','luaopen_plplotluac') or loadlib('plplotluac.dll','luaopen_plplotluac')
-	assert(lib)()
-else
-	require('plplotluac')
-end
-
+-- initialise Lua bindings for PLplot examples.
+dofile("plplot_examples.lua")
 
 -- Variables and data arrays used by plot generators 
 x = {}
