@@ -1716,7 +1716,7 @@ static void
 strcat_delim(char *dirspec)
 {
     int ldirspec = strlen(dirspec);
-#if defined (MSDOS)
+#if defined (MSDOS) || defined(WIN32)
     if (dirspec[ldirspec-1] != '\\')
 	strcat(dirspec, "\\");
 #elif defined (macintosh)
