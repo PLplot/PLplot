@@ -38,12 +38,12 @@ for index in 02 03 04 05 06 07 10 11 12 13 18 24; do
     fi
     if [ "$index" = "14" ] ; then
 	echo ${results}/x${index}a${lang}%n.$dsuffix | \
-	lua x${index}.${lang} -dev $device -o ${results}/x${index}${lang}%n.$dsuffix \
+	@LUA_EXECUTABLE@ x${index}.${lang} -dev $device -o ${results}/x${index}${lang}%n.$dsuffix \
 	    $options 2> test.error >| ${results}/x${index}${lang}_${dsuffix}.txt
 	# Look for any status codes (segfaults, plexit) from the examples themselves.
 	status_code=$?
     else
-	lua x${index}.${lang} -dev $device -o ${results}/x${index}${lang}%n.$dsuffix \
+	@LUA_EXECUTABLE@ x${index}.${lang} -dev $device -o ${results}/x${index}${lang}%n.$dsuffix \
 	    $options 2> test.error >| ${results}/x${index}${lang}_${dsuffix}.txt
     # Look for any status codes (segfaults, plexit) from the examples themselves.
 	status_code=$?

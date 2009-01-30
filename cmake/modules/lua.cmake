@@ -58,3 +58,40 @@ if(ENABLE_lua)
     set(ENABLE_lua OFF CACHE BOOL "Enable LUA bindings" FORCE)
   endif(NOT LUA_FOUND)
 endif(ENABLE_lua)
+
+if(ENABLE_lua)
+  find_program(LUA_EXECUTABLE lua)
+  if(NOT LUA_EXECUTABLE)
+    message(STATUS "WARNING: "
+      "lua executable not found. Disabling lua bindings")
+    set(ENABLE_lua OFF CACHE BOOL "Enable LUA bindings" FORCE)
+  endif(NOT LUA_EXECUTABLE)
+endif(ENABLE_lua)
+
+if(ENABLE_lua)
+  # Check whether you have found a lua executable that is consistent 
+  # with the library version.
+  execute_process(COMMAND ${LUA_EXECUTABLE} -v
+    OUTPUT_VARIABLE LUA_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_VARIABLE LUA_VERSION
+    ERROR_STRIP_TRAILING_WHITESPACE
+    )
+  #message("(preliminary) LUA_VERSION = ${LUA_VERSION}")
+  string(REGEX MATCH "[0-9]\\.[0-9]\\.[0-9]" LUA_VERSION "${LUA_VERSION}")
+  message(STATUS "LUA_VERSION = ${LUA_VERSION}")
+  set(LUA_VERSION_VALID)
+  if(${LUA_VERSION} VERSION_LESS "5.1.0" AND NOT HAVE_lua51)
+    set(LUA_VERSION_VALID ON)
+  endif(${LUA_VERSION} VERSION_LESS "5.1.0" AND NOT HAVE_lua51)
+  if(${LUA_VERSION} VERSION_GREATER "5.0.9999999" AND HAVE_lua51)
+    set(LUA_VERSION_VALID ON)
+  endif(${LUA_VERSION} VERSION_GREATER "5.0.9999999" AND HAVE_lua51)
+
+  if(NOT LUA_VERSION_VALID)
+    message(STATUS "WARNING: "
+      "lua executable found but version not consistent with library. Disabling lua bindings")
+    set(ENABLE_lua OFF CACHE BOOL "Enable LUA bindings" FORCE)
+  endif(NOT LUA_VERSION_VALID)
+
+endif(ENABLE_lua)
