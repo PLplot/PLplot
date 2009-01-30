@@ -556,7 +556,7 @@ typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
-%}
+%}  
 
 %typemap(in, numinputs=0) defined_func df {
   $1 = NULL;
@@ -566,80 +566,193 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   $1 = plfill;
 }
 
+
+%typemap(in) pltr_func pltr {
+  $1 = NULL;
+  
+  if(lua_isstring(L, $input)) {
+    const char* funcstr = lua_tostring(L, $input); 
+    if(strcmp("pltr0", funcstr)==0) {
+      $1 = pltr0;
+    } else if(strcmp("pltr1", funcstr)==0) {
+      $1 = pltr1;
+    } else if(strcmp("pltr2", funcstr)==0) {
+      $1 = pltr2;
+    } else {
+      lua_pushfstring(L, "Unknown pltr function: %s", funcstr);
+      SWIG_fail;
+    }
+  } else if(lua_isfunction(L, $input)) {
+    lua_pushfstring(L, "Lua pltr function not supported right now.");
+    SWIG_fail;
+  } else 
+    SWIG_fail_arg("$symname", $argnum, "$1_type")
+}
+%typemap(freearg) pltr_func pltr {
+}
 /* you can omit the pltr func */
 %typemap(default) pltr_func pltr {
   $1 = NULL;
 }
 
 
+%typemap(in) PLPointer OBJECT_DATA (PLcGrid cgrid1, PLcGrid2 cgrid2, int gridmode) {
+  int nx, ny;
+  gridmode=0;
+  cgrid1.xg=NULL;
+  cgrid1.yg=NULL;
+  
+  lua_pushstring(L, "nx");
+  lua_gettable(L, $input);
+  if(!lua_isnumber(L, -1)) {
+    lua_pop(L, 1);  /* remove number nx */
+    lua_pushfstring(L, "Table doesn't contain a key 'nx'.");
+    SWIG_fail;
+  }
+  nx = (int)lua_tonumber(L, -1);
+  lua_pop(L, 1);  /* remove number nx */
 
-//~ %typemap(in) PLPointer OBJECT_DATA {
-  //~ lua_pushstring(L, "n");
-  //~ lua_gettable(L, $input);
-  //~ if(!lua_isnumber(L, -1)) {
-    //~ lua_pushfstring(L, "Table doesn't contain key 'n'.");
-    //~ SWIG_fail;
-  //~ }
-  //~ n = (int)lua_tonumber(L, -1);
-  //~ lua_pop(L, 1);  /* remove number */
+  lua_pushstring(L, "ny");
+  lua_gettable(L, $input);
+  if(!lua_isnumber(L, -1)) {
+    lua_pop(L, 1);  /* remove number ny */
+    lua_pushfstring(L, "Table doesn't contain a key 'ny'.");
+    SWIG_fail;
+  }
+  ny = (int)lua_tonumber(L, -1);
+  lua_pop(L, 1);  /* remove number */
+  
+  printf("nx=%d, ny=%d\n", nx, ny);
 
+  lua_pushstring(L, "xg");
+  lua_gettable(L, $input);
+  if (!lua_istable(L, -1)) {
+    lua_pop(L, 1);   /* pop "xg" */
+    lua_pushstring(L, "expected a table xg");
+    SWIG_fail;
+  }
+  printf("lua type=%s\n", lua_typename(L, lua_type(L, -1)));
+  lua_pushstring(L, "1");
+  lua_gettable(L, -2);
+  printf("lua type=%s\n", lua_typename(L, lua_type(L, -1)));
+  if (lua_istable(L, -1)) 
+    gridmode=2;  /* two dimensional array*/
+  else if (lua_isnumber(L, -1))
+    gridmode=1;  /* one dimensional array*/
+  else {
+    lua_pop(L, 1);  /* pop "1" */
+    lua_pop(L, 1);  /* pop "xg" */
+    lua_pushstring(L, "expected a one or two dimensional array/table in xg");
+    SWIG_fail;
+  }  
+  lua_pop(L, 1);  /* pop "1" */
+  if(gridmode==1) {
+    int temp;
+    cgrid1.xg = (PLFLT*)LUA_get_double_num_array_var(L, -1, &temp);
+    if(cgrid1.xg) SWIG_fail;
+    if(nx!=temp) {
+      lua_pushfstring(L, "Table xg must be of length nx=%d.", nx);
+      SWIG_fail;
+    }
+    cgrid1.nx = nx;
+  } else {
+  }
+  lua_pop(L, 1);  /* pop "xg" */
 
-   //~ jPLFLT **adat;
-   //~ jobject *ai;
-   //~ int nx = (*jenv)->GetArrayLength( jenv, $input );
-   //~ int ny = -1;
-   //~ int i, j;
-   //~ PLcGrid2 cgrid;
-   //~ ai = (jobject *) malloc( nx * sizeof(jobject) );
-   //~ adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+  lua_pushstring(L, "yg");
+  lua_gettable(L, $input);
+  if (!lua_istable(L, -1)) {
+    lua_pop(L, 1);
+    lua_pushstring(L, "expected a table yg");
+    SWIG_fail;
+  }
+  lua_pushstring(L, "1");
+  lua_gettable(L, -2);
+  if(gridmode=2) {
+    if (!lua_istable(L, -1)) {
+      lua_pop(L, 1);  /* pop "1" */
+      lua_pop(L, 1);  /* pop "yg" */
+      lua_pushstring(L, "expected a two dimensional array/table in yg");
+      SWIG_fail;
+    }
+  } else {
+    if (!lua_isnumber(L, -1)) {
+      lua_pop(L, 1);  /* pop "1" */
+      lua_pop(L, 1);  /* pop "yg" */
+      lua_pushstring(L, "expected a one dimensional array/table in yg");
+      SWIG_fail;
+    }
+  }
+  lua_pop(L, 1);  /* pop "1" */
+  if(gridmode==1) {
+    int temp;
+    cgrid1.yg = (PLFLT*)LUA_get_double_num_array_var(L, -1, &temp);
+    if(cgrid1.yg) SWIG_fail;
+    if(ny!=temp) {
+      lua_pushfstring(L, "Table yg must be of length ny=%d.", ny);
+      SWIG_fail;
+    }
+    cgrid1.ny = ny;
+  } else {
+  }
+  lua_pop(L, 1);  /* pop "yg" */
 
-   //~ (*jenv)->EnsureLocalCapacity( jenv, nx );
+  
+  /* jPLFLT **adat;
+   jobject *ai;
+   int nx = (*jenv)->GetArrayLength( jenv, $input );
+   int ny = -1;
+   int i, j;
+   ai = (jobject *) malloc( nx * sizeof(jobject) );
+   adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
 
-   //~ for( i=0; i < nx; i++ )
-     //~ {
-	//~ ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
-	//~ adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
+   (*jenv)->EnsureLocalCapacity( jenv, nx );
 
-	//~ if (ny == -1)
-	  //~ ny = (*jenv)->GetArrayLength( jenv, ai[i] );
-	//~ else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
-	   //~ printf( "Misshapen a array.\n" );
-	   //~ for( j=0; j <= i; j++ )
-	     //~ (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
-	   //~ free(adat);
-	   //~ free(ai);
-	   //~ return;
-	//~ }
-     //~ }
+   for( i=0; i < nx; i++ )
+     {
+	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
+	adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
 
-   //~ if( !((nx == Xlen && ny == Ylen) || (nx == Ylen && ny == 1 && ny == Alen))) {
-      //~ printf( "Xlen = %d, nx = %d, Ylen = %d, Alen = %d, ny = %d\n",
-	      //~ Xlen, nx, Ylen, Alen, ny );
-      //~ printf( "Y vector or matrix must match matrix dimensions.\n" );
-      //~ for( i=0; i < nx; i++ )
-	//~ (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
-      //~ free(adat);
-      //~ free(ai);
-      //~ return;
-   //~ }
-   //~ setup_array_2d_PLFLT( &yg, adat, nx, ny );
-   //~ for( i=0; i < nx; i++ ) {
-      //~ (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
-      //~ (*jenv)->DeleteLocalRef(jenv, ai[i]);
-   //~ }
+	if (ny == -1)
+	  ny = (*jenv)->GetArrayLength( jenv, ai[i] );
+	else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
+	   printf( "Misshapen a array.\n" );
+	   for( j=0; j <= i; j++ )
+	     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
+	   free(adat);
+	   free(ai);
+	   return;
+	}
+     }
 
-   //~ free(adat);
-   //~ free(ai);
-   //~ cgrid.xg = xg;
-   //~ cgrid.yg = yg;
-   //~ cgrid.nx = nx;
-   //~ cgrid.ny = ny;
-   //~ $1 = &cgrid;
-//~ }
-//~ %typemap(freearg) PLPointer OBJECT_DATA {
-   //~ free(yg[0]);
-   //~ free(yg);
-//~ } */
+   if( !((nx == Xlen && ny == Ylen) || (nx == Ylen && ny == 1 && ny == Alen))) {
+      printf( "Xlen = %d, nx = %d, Ylen = %d, Alen = %d, ny = %d\n",
+	      Xlen, nx, Ylen, Alen, ny );
+      printf( "Y vector or matrix must match matrix dimensions.\n" );
+      for( i=0; i < nx; i++ )
+	(*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      free(adat);
+      free(ai);
+      return;
+   }
+   setup_array_2d_PLFLT( &yg, adat, nx, ny );
+   for( i=0; i < nx; i++ ) {
+      (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      (*jenv)->DeleteLocalRef(jenv, ai[i]);
+   }
+   $1 = &cgrid; */
+   if(gridmode==1)
+     $1 = &cgrid1;
+   else if(gridmode==2)
+     $1 = &cgrid2;
+}
+%typemap(freearg) PLPointer OBJECT_DATA (PLcGrid cgrid1, PLcGrid2 cgrid2, int gridmode) {
+  if(gridmode==1) {
+    LUA_FREE_ARRAY(cgrid1.xg);
+    LUA_FREE_ARRAY(cgrid1.yg);
+  } else {
+  }
+}
 
 
 /* Process options list using current options info. */
@@ -685,7 +798,6 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 %ignore plfcont;
 %ignore plfshade;
 %ignore plimagefr;
-%ignore plcont;
 
 /******************************************************************************
 				 Renames
