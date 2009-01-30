@@ -66,8 +66,8 @@ end
 
 
 pl.col0(2)
-for i=0, 11 do
-	theta = 30 * i
+for i=1, 12 do
+	theta = 30 * (i-1)
 	dx = math.cos(dtr * theta)
 	dy = math.sin(dtr * theta)
 
@@ -96,7 +96,7 @@ end
 
 -- Draw the graph 
 for i=1, 361 do
-  r = math.sin(dtr * (5 * i-1))
+  r = math.sin(dtr * (5*(i-1)))
   x[i] = x0[i] * r
   y[i] = y0[i] * r
 end
