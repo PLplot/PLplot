@@ -25,8 +25,8 @@ ret=0
 xsuffix_c=
 
 # Compare C results with c++, f77, f95, java, octave, python, tcl, perl, 
-# ada and ocaml results
-for lang in c++ f77 f95 java octave python tcl perl ada adathick ocaml ; do
+# ada, ocaml, and lua results
+for lang in c++ f77 f95 java octave python tcl perl ada adathick ocaml lua; do
 
   # Check which suffix is used for this binding
     case $lang in 
@@ -73,6 +73,10 @@ for lang in c++ f77 f95 java octave python tcl perl ada adathick ocaml ; do
 	ocaml)
 	    xsuffix=
 	    suffix=ocaml
+	    ;;
+	lua)
+	    xsuffix=
+	    suffix=lua
 	    ;;
     esac
 

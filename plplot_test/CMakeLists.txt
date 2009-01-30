@@ -160,6 +160,18 @@ if(SH_EXECUTABLE)
       )
   endif(ENABLE_ocaml)
 
+  if(ENABLE_lua)
+    configure_file(
+      test_lua.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_lua.sh
+      @ONLY
+      )
+    list(APPEND SCRIPTS test_lua.sh)
+    add_test(examples_lua
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=lua"
+      )
+  endif(ENABLE_lua)
+
   # Run C examples with different drivers
   if(PLD_psc)
     if (NOT TEST_DEVICE STREQUAL "psc")
