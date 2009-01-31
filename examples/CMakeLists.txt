@@ -29,8 +29,8 @@ endif(USE_RPATH)
 # of example 20 in the various examples subdirectories can conveniently
 # access this file.
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
-DESTINATION ${DATA_DIR}/examples
-)
+  DESTINATION ${DATA_DIR}/examples
+  )
 
 # Do the same as above for the build tree for those who want to individually
 # run the various example 20 implementations from the examples subdirectories
@@ -38,15 +38,15 @@ DESTINATION ${DATA_DIR}/examples
 
 if(BUILD_TEST)
   add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-  ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
-  ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
-  )
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
+    ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
+    )
   add_custom_target(examples_lena_file ALL
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
-  )
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+    )
 endif(BUILD_TEST)
 
 add_subdirectory(c)
@@ -90,76 +90,103 @@ endif(ENABLE_lua)
 # Configure Makefile.examples with some specific variables
 
 if(PLD_ps)
-  set(PSC_ALL x01c.psc)
+  if(NOT ENABLE_ada)
+    set(PSC_ADA_COMMENT "#")
+  endif(NOT ENABLE_ada)
+
+  if(NOT ENABLE_cxx)
+    set(PSC_CXX_COMMENT "#")
+  endif(NOT ENABLE_cxx)
+
+  if(NOT ENABLE_f77)
+    set(PSC_F77_COMMENT "#")
+  endif(NOT ENABLE_f77)
+
+  if(NOT ENABLE_f95)
+    set(PSC_F95_COMMENT "#")
+  endif(NOT ENABLE_f95)
+
+  if(NOT ENABLE_java)
+    set(PSC_JAVA_COMMENT "#")
+  endif(NOT ENABLE_java)
+
+  if(NOT ENABLE_ocaml)
+    set(PSC_OCAML_COMMENT "#")
+  endif(NOT ENABLE_ocaml)
+
+  if(NOT ENABLE_octave)
+    set(PSC_OCTAVE_COMMENT "#")
+  endif(NOT ENABLE_octave)
+
+  if(NOT ENABLE_pdl)
+    set(PSC_PERL_COMMENT "#")
+  endif(NOT ENABLE_pdl)
+
+  if(NOT ENABLE_python)
+    set(PSC_PYTHON_COMMENT "#")
+  endif(NOT ENABLE_python)
+
+  if(NOT ENABLE_tcl)
+    set(PSC_TCL_COMMENT "#")
+  endif(NOT ENABLE_tcl)
+
 else(PLD_ps)
-  set(PSC_ALL_COMMENT "#")
+  set(PSC_ADA_COMMENT "#")
+  set(PSC_C_COMMENT "#")
+  set(PSC_CXX_COMMENT "#")
+  set(PSC_F77_COMMENT "#")
+  set(PSC_F95_COMMENT "#")
+  set(PSC_JAVA_COMMENT "#")
+  set(PSC_OCAML_COMMENT "#")
+  set(PSC_OCTAVE_COMMENT "#")
+  set(PSC_PERL_COMMENT "#")
+  set(PSC_PYTHON_COMMENT "#")
+  set(PSC_TCL_COMMENT "#")
 endif(PLD_ps)
 
-if(PLD_pdfcairo)
-  set(PDFCAIRO x01c.pdfcairo)
-else(PLD_pdfcairo)
+if(NOT PLD_pdfcairo)
   set(PDFCAIRO_COMMENT "#")
-endif(PLD_pdfcairo)
+endif(NOT PLD_pdfcairo)
 
-if(PLD_pngcairo)
-  set(PNGCAIRO x01c01.pngcairo)
-else(PLD_pngcairo)
+if(NOT PLD_pngcairo)
   set(PNGCAIRO_COMMENT "#")
-endif(PLD_pngcairo)
+endif(NOT PLD_pngcairo)
 
-if(PLD_pscairo)
-  set(PSCAIRO x01c.pscairo)
-else(PLD_pscairo)
+if(NOT PLD_pscairo)
   set(PSCAIRO_COMMENT "#")
-endif(PLD_pscairo)
+endif(NOT PLD_pscairo)
 
-if(PLD_svgcairo)
-  set(SVGCAIRO x01c01.svgcairo)
-else(PLD_svgcairo)
+if(NOT PLD_svgcairo)
   set(SVGCAIRO_COMMENT "#")
-endif(PLD_svgcairo)
+endif(NOT PLD_svgcairo)
 
-if(PLD_gif)
-  set(GIF x01c01.gif)
-else(PLD_gif)
+if(NOT PLD_gif)
   set(GIF_COMMENT "#")
-endif(PLD_gif)
+endif(NOT PLD_gif)
 
-if(PLD_jpeg)
-  set(JPEG x01c01.jpeg)
-else(PLD_jpeg)
+if(NOT PLD_jpeg)
   set(JPEG_COMMENT "#")
-endif(PLD_jpeg)
+endif(NOT PLD_jpeg)
 
-if(PLD_png)
-  set(PNG x01c01.png)
-else(PLD_png)
+if(NOT PLD_png)
   set(PNG_COMMENT "#")
-endif(PLD_png)
+endif(NOT PLD_png)
 
-if(PLD_psttf)
-  set(PSTTFC x01c.psttfc)
-else(PLD_psttf)
+if(NOT PLD_psttf)
   set(PSTTFC_COMMENT "#")
-endif(PLD_psttf)
+endif(NOT PLD_psttf)
 
-if(PLD_svg)
-  set(SVG x01c01.svg)
-else(PLD_svg)
+if(NOT PLD_svg)
   set(SVG_COMMENT "#")
-endif(PLD_svg)
+endif(NOT PLD_svg)
 
-if(PLD_xfig)
-  set(XFIG x01c01.xfig)
-else(PLD_xfig)
+if(NOT PLD_xfig)
   set(XFIG_COMMENT "#")
-endif(PLD_xfig)
+endif(NOT PLD_xfig)
 
-if(PLD_pstex)
-  set(PSTEX x01c.pstex)
-else(PLD_pstex)
+if(NOT PLD_pstex)
   set(PSTEX_COMMENT "#")
-endif(PLD_pstex)
+endif(NOT PLD_pstex)
 
 if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
   set(COMPARE compare)
@@ -174,6 +201,6 @@ configure_file(
   )
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
-DESTINATION ${DATA_DIR}/examples
-RENAME Makefile
-)
+  DESTINATION ${DATA_DIR}/examples
+  RENAME Makefile
+  )
