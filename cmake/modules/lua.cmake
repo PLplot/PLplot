@@ -94,4 +94,12 @@ if(ENABLE_lua)
     set(ENABLE_lua OFF CACHE BOOL "Enable LUA bindings" FORCE)
   endif(NOT LUA_VERSION_VALID)
 
+if(ENABLE_lua)
+  # Unless some better convention comes along, follow what Debian does for
+  # install location of Lua wrapper shared object.
+  if(HAVE_lua51)
+    set(LUA_DIR ${LIB_DIR}/lua/5.1/plplot)
+  else(HAVE_lua51)
+    set(LUA_DIR ${LIB_DIR}/lua/50/plplot)
+  endif(HAVE_lua51)
 endif(ENABLE_lua)

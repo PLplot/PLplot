@@ -51,13 +51,13 @@ if(USE_RPATH)
   plplotluac
   PROPERTIES
   INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-  INSTALL_NAME_DIR "${LIB_DIR}"
+  INSTALL_NAME_DIR "${LUA_DIR}"
   )
 else(USE_RPATH)
   set_target_properties(
   plplotluac
   PROPERTIES
-  INSTALL_NAME_DIR "${LIB_DIR}"
+  INSTALL_NAME_DIR "${LUA_DIR}"
   )
 endif(USE_RPATH)
 
@@ -70,6 +70,6 @@ if(APPLE)
   )
 endif(APPLE)
 
-install(TARGETS plplotluac LIBRARY DESTINATION ${LIB_DIR})
+install(TARGETS plplotluac LIBRARY DESTINATION ${LUA_DIR})
 
 endif(ENABLE_lua)

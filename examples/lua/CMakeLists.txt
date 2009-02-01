@@ -94,7 +94,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua
 @ONLY
 )
 
-set(lua_lib_location ${LIB_DIR})
+set(lua_lib_location ${LUA_DIR})
 configure_file(
 ${CMAKE_CURRENT_SOURCE_DIR}/plplot_examples.lua.in
 ${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua_install
