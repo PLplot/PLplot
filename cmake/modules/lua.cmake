@@ -93,6 +93,7 @@ if(ENABLE_lua)
       "lua executable found but version not consistent with library. Disabling lua bindings")
     set(ENABLE_lua OFF CACHE BOOL "Enable LUA bindings" FORCE)
   endif(NOT LUA_VERSION_VALID)
+endif(ENABLE_lua)
 
 if(ENABLE_lua)
   # Unless some better convention comes along, follow what Debian does for
