@@ -148,6 +148,10 @@ else(PLD_ps)
   set(PSC_TCL_COMMENT "#")
 endif(PLD_ps)
 
+if(NOT ENABLE_tk)
+  set(TK_COMMENT "#")
+endif(NOT ENABLE_tk)
+
 if(NOT PLD_pdfcairo)
   set(PDFCAIRO_COMMENT "#")
 endif(NOT PLD_pdfcairo)
@@ -192,11 +196,9 @@ if(NOT PLD_pstex)
   set(PSTEX_COMMENT "#")
 endif(NOT PLD_pstex)
 
-if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
-  set(COMPARE compare)
-else(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+if(NOT DIFF_EXECUTABLE OR NOT TAIL_EXECUTABLE)
   set(COMPARE_COMMENT "#")
-endif(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+endif(NOT DIFF_EXECUTABLE OR NOT TAIL_EXECUTABLE)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
