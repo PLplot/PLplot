@@ -33,7 +33,7 @@ c_clean:
 .PHONY: c_clean
 clean: c_clean
 x01c.psc: c/x01c@EXEEXT@
-	echo C front-end for psc
+	@echo Generate C results for psc device
 	./plplot-test.sh --verbose --front-end=c --device=psc
 test: x01c.psc
 @COMPARE_COMMENT@compare: x01c.psc
@@ -46,7 +46,7 @@ test: x01c.psc
 @PSC_ADA_COMMENT@.PHONY: ada_clean
 @PSC_ADA_COMMENT@clean: ada_clean
 @PSC_ADA_COMMENT@x01a.psc: ada/x01a@EXEEXT@
-@PSC_ADA_COMMENT@	echo Ada front-end for psc
+@PSC_ADA_COMMENT@	@echo Generate Ada results for psc device
 @PSC_ADA_COMMENT@	./plplot-test.sh --verbose --front-end=ada --device=psc
 @PSC_ADA_COMMENT@test: x01a.psc
 @PSC_ADA_COMMENT@@COMPARE_COMMENT@compare: x01a.psc
@@ -59,7 +59,7 @@ test: x01c.psc
 @PSC_CXX_COMMENT@.PHONY: cxx_clean
 @PSC_CXX_COMMENT@clean: cxx_clean
 @PSC_CXX_COMMENT@x01cxx.psc: c++/x01@EXEEXT@
-@PSC_CXX_COMMENT@	echo C++ front-end for psc
+@PSC_CXX_COMMENT@	@echo Generate C++ results for psc device
 @PSC_CXX_COMMENT@	./plplot-test.sh --verbose --front-end=cxx --device=psc
 @PSC_CXX_COMMENT@test: x01cxx.psc
 @PSC_CXX_COMMENT@@COMPARE_COMMENT@compare: x01cxx.psc
@@ -72,7 +72,7 @@ test: x01c.psc
 @PSC_F77_COMMENT@.PHONY: f77_clean
 @PSC_F77_COMMENT@clean: f77_clean
 @PSC_F77_COMMENT@x01f.psc: f77/x01f@EXEEXT@
-@PSC_F77_COMMENT@	echo F77 front-end for psc
+@PSC_F77_COMMENT@	@echo Generate Fortran 77 results for psc device
 @PSC_F77_COMMENT@	./plplot-test.sh --verbose --front-end=f77 --device=psc
 @PSC_F77_COMMENT@test: x01f.psc
 @PSC_F77_COMMENT@@COMPARE_COMMENT@compare: x01f.psc
@@ -85,7 +85,7 @@ test: x01c.psc
 @PSC_F95_COMMENT@.PHONY: f95_clean
 @PSC_F95_COMMENT@clean: f95_clean
 @PSC_F95_COMMENT@x01f95.psc: f95/x01f@EXEEXT@
-@PSC_F95_COMMENT@	echo F95 front-end for psc
+@PSC_F95_COMMENT@	@echo Generate Fortran 95 results for psc device
 @PSC_F95_COMMENT@	./plplot-test.sh --verbose --front-end=f95 --device=psc
 @PSC_F95_COMMENT@test: x01f95.psc
 @PSC_F95_COMMENT@@COMPARE_COMMENT@compare: x01f95.psc
@@ -98,7 +98,7 @@ test: x01c.psc
 @PSC_JAVA_COMMENT@.PHONY: java_clean
 @PSC_JAVA_COMMENT@clean: java_clean
 @PSC_JAVA_COMMENT@x01j.psc: java/x01.class
-@PSC_JAVA_COMMENT@	echo Java front-end for psc
+@PSC_JAVA_COMMENT@	@echo Generate Java results for psc device
 @PSC_JAVA_COMMENT@	./plplot-test.sh --verbose --front-end=java --device=psc
 @PSC_JAVA_COMMENT@test: x01j.psc
 @PSC_JAVA_COMMENT@@COMPARE_COMMENT@compare: x01j.psc
@@ -111,104 +111,111 @@ test: x01c.psc
 @PSC_OCAML_COMMENT@.PHONY: ocaml_clean
 @PSC_OCAML_COMMENT@clean: ocaml_clean
 @PSC_OCAML_COMMENT@x01ocaml.psc: ocaml/x01ocaml@EXEEXT@
-@PSC_OCAML_COMMENT@	echo OCaml front-end for psc
+@PSC_OCAML_COMMENT@	@echo Generate OCaml results for psc device
 @PSC_OCAML_COMMENT@	./plplot-test.sh --verbose --front-end=ocaml --device=psc
 @PSC_OCAML_COMMENT@test: x01ocaml.psc
 @PSC_OCAML_COMMENT@@COMPARE_COMMENT@compare: x01ocaml.psc
 
 @PSC_OCTAVE_COMMENT@x01o.psc: octave/x01c.m
-@PSC_OCTAVE_COMMENT@	echo Octave front-end for psc
+@PSC_OCTAVE_COMMENT@	@echo Generate Octave results for psc device
 @PSC_OCTAVE_COMMENT@	./plplot-test.sh --verbose --front-end=octave --device=psc
 @PSC_OCTAVE_COMMENT@test: x01o.psc
 @PSC_OCTAVE_COMMENT@@COMPARE_COMMENT@compare: x01o.psc
 
 @PSC_PERL_COMMENT@x01pdl.psc: perl/x01.pl
-@PSC_PERL_COMMENT@	echo Perl front-end for psc
+@PSC_PERL_COMMENT@	@echo Generate Perl/PDL results for psc device
 @PSC_PERL_COMMENT@	./plplot-test.sh --verbose --front-end=perl --device=psc
 @PSC_PERL_COMMENT@test: x01pdl.psc
 @PSC_PERL_COMMENT@@COMPARE_COMMENT@compare: x01pdl.psc
 
 @PSC_PYTHON_COMMENT@x01p.psc: python/x01
-@PSC_PYTHON_COMMENT@	echo Python front-end for psc
+@PSC_PYTHON_COMMENT@	@echo Generate Python results for psc device
 @PSC_PYTHON_COMMENT@	./plplot-test.sh --verbose --front-end=python --device=psc
 @PSC_PYTHON_COMMENT@test: x01p.psc
 @PSC_PYTHON_COMMENT@@COMPARE_COMMENT@compare: x01p.psc
 
 @PSC_TCL_COMMENT@x01t.psc: tcl/x01
-@PSC_TCL_COMMENT@	echo Tcl front-end for psc
+@PSC_TCL_COMMENT@	@echo Generate Tcl results for psc device
 @PSC_TCL_COMMENT@	./plplot-test.sh --verbose --front-end=tcl --device=psc
 @PSC_TCL_COMMENT@test: x01t.psc
 @PSC_TCL_COMMENT@@COMPARE_COMMENT@compare: x01t.psc
 
-@PDFCAIRO_COMMENT@x01pdfcairo.psc: c/x01c@EXEEXT@
-@PDFCAIRO_COMMENT@	echo pdfcairo
+@PSC_LUA_COMMENT@x01lua.psc: lua/x01.lua
+@PSC_LUA_COMMENT@	@echo Generate Lua results for psc device
+@PSC_LUA_COMMENT@	./plplot-test.sh --verbose --front-end=lua --device=psc
+@PSC_LUA_COMMENT@test: x01lua.psc
+@PSC_LUA_COMMENT@@COMPARE_COMMENT@compare: x01lua.psc
+
+@PDFCAIRO_COMMENT@x01c.pdfcairo: c/x01c@EXEEXT@
+@PDFCAIRO_COMMENT@	@echo Generate C results for pdfcairo device
 @PDFCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pdfcairo
-@PDFCAIRO_COMMENT@test: x01pdfcairo.psc
-@PDFCAIRO_COMMENT@@COMPARE_COMMENT@compare: x01pdfcairo.psc
+@PDFCAIRO_COMMENT@test: x01c.pdfcairo
+@PDFCAIRO_COMMENT@@COMPARE_COMMENT@compare: x01c.pdfcairo
 
 @PNGCAIRO_COMMENT@x01c01.pngcairo: c/x01c@EXEEXT@
-@PNGCAIRO_COMMENT@	echo pngcairo
+@PNGCAIRO_COMMENT@	@echo Generate C results for pngcairo device
 @PNGCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pngcairo
 @PNGCAIRO_COMMENT@test: x01c01.pngcairo
 @PNGCAIRO_COMMENT@@COMPARE_COMMENT@compare: x01c01.pngcairo
 
 @PSCAIRO_COMMENT@x01c.pscairo: c/x01c@EXEEXT@
-@PSCAIRO_COMMENT@	echo pscairo
+@PSCAIRO_COMMENT@	@echo Generate C results for pscairo device
 @PSCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pscairo
 @PSCAIRO_COMMENT@test: x01c.pscairo
 @PSCAIRO_COMMENT@@COMPARE_COMMENT@compare: x01c.pscairo
 
 @SVGCAIRO_COMMENT@x01c01.svgcairo: c/x01c@EXEEXT@
-@SVGCAIRO_COMMENT@	echo svgcairo
+@SVGCAIRO_COMMENT@	@echo Generate C results for svgcairo device
 @SVGCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=svgcairo
 @SVGCAIRO_COMMENT@test: x01c01.svgcairo
 @SVGCAIRO_COMMENT@@COMPARE_COMMENT@compare: x01c01.svgcairo
 
 @GIF_COMMENT@x01c01.gif : c/x01c@EXEEXT@
-@GIF_COMMENT@	echo gif
+@GIF_COMMENT@	@echo Generate C results for gif device
 @GIF_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=gif
 @GIF_COMMENT@test: x01c01.gif
 @GIF_COMMENT@@COMPARE_COMMENT@compare: x01c01.gif
 
 @JPEG_COMMENT@x01c01.jpeg: c/x01c@EXEEXT@
-@JPEG_COMMENT@	echo jpeg
+@JPEG_COMMENT@	@echo Generate C results for jpeg device
 @JPEG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=jpeg
 @JPEG_COMMENT@test: x01c01.jpeg
 @JPEG_COMMENT@@COMPARE_COMMENT@compare: x01c01.jpeg
 
 @PNG_COMMENT@x01c01.png: c/x01c@EXEEXT@
-@PNG_COMMENT@	echo png
+@PNG_COMMENT@	@echo Generate C results for png device
 @PNG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=png
 @PNG_COMMENT@test: x01c01.png
 @PNG_COMMENT@@COMPARE_COMMENT@compare: x01c01.png
 
 @PSTTFC_COMMENT@x01c.psttfc: c/x01c@EXEEXT@
-@PSTTFC_COMMENT@	echo psttfc
+@PSTTFC_COMMENT@	@echo Generate C results for psttfc device
 @PSTTFC_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=psttfc
 @PSTTFC_COMMENT@test: x01c.psttfc
 @PSTTFC_COMMENT@@COMPARE_COMMENT@compare: x01c.psttfc
 
 @SVG_COMMENT@x01c01.svg: c/x01c@EXEEXT@
-@SVG_COMMENT@	echo svg
+@SVG_COMMENT@	@echo Generate C results for svg device
 @SVG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=svg
 @SVG_COMMENT@test: x01c01.svg
 @SVG_COMMENT@@COMPARE_COMMENT@compare: x01c01.svg
 
 @XFIG_COMMENT@x01c01.xfig: c/x01c@EXEEXT@
-@XFIG_COMMENT@	echo xfig
+@XFIG_COMMENT@	@echo Generate C results for xfig device
 @XFIG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=xfig
 @XFIG_COMMENT@test: x01c01.xfig
 @XFIG_COMMENT@@COMPARE_COMMENT@compare: x01c01.xfig
 
 @PSTEX_COMMENT@x01c.pstex: c/x01c@EXEEXT@
-@PSTEX_COMMENT@	echo pstex
+@PSTEX_COMMENT@	@echo Generate C results for pstex device
 @PSTEX_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pstex
 @PSTEX_COMMENT@test: x01c.pstex
 @PSTEX_COMMENT@@COMPARE_COMMENT@compare: x01c.pstex
 
 @COMPARE_COMMENT@compare: 
-@COMPARE_COMMENT@	echo compare
-@COMPARE_COMMENT@	./test_diff.sh
+@COMPARE_COMMENT@	@echo Compare non-C language psc and stdout results with corresponding C results
+@COMPARE_COMMENT@	-./test_diff.sh
+@COMPARE_COMMENT@	touch compare
 @COMPARE_COMMENT@test: compare
 
 test_interactive: c/x01c@EXEEXT@
@@ -216,9 +223,10 @@ test_interactive: c/x01c@EXEEXT@
 
 test_clean:
 	rm -f *.psc *.pdfcairo *.pngcairo *.pscairo *.svgcairo \
-	*.gif *.jpeg *.png *.psttfc *.svg *.xfig *.pstex* *.txt test.error
+	*.gif *.jpeg *.png *.psttfc *.svg *.xfig *.pstex* *.txt test.error \
+	compare
 
 clean: test_clean
 
 
-.PHONY : all clean test test_clean test_interactive compare
+.PHONY : all clean test test_clean test_interactive
