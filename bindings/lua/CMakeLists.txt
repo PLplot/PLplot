@@ -45,4 +45,31 @@ ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
 swig_add_module(plplotluac lua plplotluac.i)
 swig_link_libraries(plplotluac plplot${LIB_TAG} ${LUA_LIBRARIES})
 
+if(USE_RPATH)
+  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+  set_target_properties(
+  plplotluac
+  PROPERTIES
+  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+else(USE_RPATH)
+  set_target_properties(
+  plplotluac
+  PROPERTIES
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
+endif(USE_RPATH)
+
+# Ensure we get the correct suffix for OS-X 
+if(APPLE)
+  set_target_properties(
+  plplotluac
+  PROPERTIES
+  SUFFIX ".dylib"
+  )
+endif(APPLE)
+
+install(TARGETS plplotluac LIBRARY DESTINATION ${LIB_DIR})
+
 endif(ENABLE_lua)
