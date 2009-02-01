@@ -21,7 +21,11 @@
 
 # Version 2.6.0 or above of cmake is required!
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
-cmake_policy(SET CMP0007 NEW)
+
+#foreach(policy RANGE 0 9)
+#  cmake_policy(GET CMP000${policy} policy_result)
+#  message(STATUS "Policy CMP000${policy} is ${policy_result}")
+#endforeach(policy RANGE 0 9)
 
 # Recommended way to do user overrides of C-related variables, is given at
 # http://public.kitware.com/pipermail/cmake/2006-July/010334.html.
