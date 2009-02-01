@@ -130,6 +130,10 @@ if(PLD_ps)
     set(PSC_TCL_COMMENT "#")
   endif(NOT ENABLE_tcl)
 
+  if(NOT ENABLE_lua)
+    set(PSC_LUA_COMMENT "#")
+  endif(NOT ENABLE_lua)
+
 else(PLD_ps)
   set(PSC_ADA_COMMENT "#")
   set(PSC_C_COMMENT "#")
