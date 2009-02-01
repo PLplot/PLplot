@@ -44,7 +44,7 @@ This is known to work with swig-1.3.36.
 #define LUA_FREE_ARRAY(PTR)		if(PTR) {free(PTR); PTR=NULL;}
 
 /* super macro to declare array typemap helper fns */
-int SWIG_itable_size(lua_State* L, int index);
+SWIGINTERN int SWIG_itable_size(lua_State* L, int index);
 #define LUA_DECLARE_TYPEMAP_ARR_FN(NAME,TYPE)\
 	SWIGINTERN int LUA_read_##NAME##_num_array(lua_State* L,int index,TYPE *array,int size){\
 		int i;\
