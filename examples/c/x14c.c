@@ -96,12 +96,12 @@ main(int argc, const char *argv[])
 
     plsstrm(1);
 
-/* Turn off pause to make this a slave (must follow master) */
-
     if (valid_geometry)
       plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
     else
       plsetopt("geometry", geometry_slave);
+
+/* Turn off pause to make this a slave (must follow master) */
     plspause(0);
     plsdev(driver);
     plsfam(fam,num,bmax);
