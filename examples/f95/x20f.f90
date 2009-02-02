@@ -268,7 +268,7 @@
            height_r, 0._plflt, 0._plflt, img_min + img_max * 0.25_plflt, &
            img_max - img_max * 0.25_plflt)
 
-!     Draw a distorted version of the original image, showing its 
+!     Draw a distorted version of the original image, showing its
 !     full dynamic range.
       call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
       call pllab("", "", "Distorted image example")
@@ -299,6 +299,27 @@
 
       contains
 
+!     Determine the unit of length for direct-access files
+      subroutine bytes_in_rec( bytes )
+      implicit none
+      integer     bytes
+
+      character*8 string
+      integer     i
+      integer     ierr
+
+      open( 10, file = '_x20f_.bin', access = 'direct', recl = 1 )
+      do i = 1,8
+          write( 10, rec = 1, iostat = ierr ) string(1:i)
+          if ( ierr /= 0 ) exit
+          bytes = i
+      enddo
+
+      close( 10, status = 'delete' )
+
+      end subroutine
+
+
 !     Read image from file in binary ppm format
       logical function read_img(fname, img_f, width, height, num_col)
 
@@ -307,13 +328,19 @@
       real(kind=plflt), dimension(:,:), pointer :: img_f
       integer      num_col
 
-      character    img
+      character, dimension(8) :: img
       character*80 ver
-      integer      i, j, k, w, h
+      integer      i, j, k, w, h, b
 
       integer      ierr
       integer      count
       integer      record
+
+      integer      bytes
+      integer      lastlf
+      integer      first
+      integer      last
+      integer      pixel
 
 !     Naive grayscale binary ppm reading. If you know how to, improve it
 
@@ -372,10 +399,14 @@
 !     Read the second part - we need to do it the hard way :(
 !
 !     Note:
-!     The algorithm only works if the unit of record length is a byte!
-!     (Some compilers use a word (4 bytes) instead, but often provide
-!     a compile switch to use bytes)
+!     The algorithm works if the unit of record length is a byte or
+!     if it is a multiple therefore (up to 8 bytes are allowed).
+!     Background: Some compilers use a word (4 bytes) as the unit of
+!     length instead, but often provide a compile switch to use bytes,
+!     we can not rely on this though.
 !
+      call bytes_in_rec( bytes )
+
       open( 10, file = fname, access = 'direct', recl = 1 )
 
       record = 0
@@ -384,12 +415,17 @@
 !     Look for the end of the line with sizes
 !
           record = record + 1
-          read( 10, rec = record, iostat = ierr ) img
-
-          if ( img .eq. char(10) ) count = count - 1
+          read( 10, rec = record, iostat = ierr ) (img(i), i = 1,bytes )
           if ( ierr .ne. 0 ) then
              exit
           endif
+
+          do i = 1,bytes
+              if ( img(i) == char(10) ) then
+                  count  = count - 1
+                  lastlf = i
+              endif
+          enddo
       enddo
 
 !
@@ -397,13 +433,26 @@
 !     The picture needs to be flipped vertically.
 !     So do that rightaway
 !
-!
-      do j = 1,h
-          do i = 1,w
-              record = record + 1
-              read( 10, rec = record ) img
-              img_f(i,h-j+1) = dble(ichar(img))
+      first = lastlf + 1
+      last  = bytes
+      pixel = 0
+
+      do
+          do b = first, last
+              pixel = pixel + 1
+              if ( pixel <= h*w ) then
+                  i     = 1 + mod(pixel-1,w)
+                  j     = 1 + (pixel-1)/w
+                  img_f(i,h-j+1) = dble(ichar(img(b)))
+              endif
           enddo
+          if ( pixel < h*w ) then
+              record = record + 1
+              read( 10, rec = record ) (img(b), b = 1,bytes )
+              first  = 1
+          else
+              exit
+          endif
       enddo
 
       width  = w
@@ -468,23 +517,23 @@
             call plxormod(.false., st)
             call plgetcursor(gin)
             call plxormod(.true., st)
-            
-            if (gin%button .eq. 1) then 
+
+            if (gin%button .eq. 1) then
                xxi = gin%wX
                yyi = gin%wY
                if (start) then
 !C                clear previous rectangle
                   call plline(sx, sy)
                endif
-               
+
                start = .false.
-               
+
                sx(1) = xxi
                sy(1) = yyi
                sx(5) = xxi
                sy(5) = yyi
             endif
-            
+
             if (iand(gin%state,Z'100').ne.0) then
                xxe = gin%wX
                yye = gin%wY
@@ -493,7 +542,7 @@
                   call plline(sx, sy)
                endif
                start = .true.
-             
+
                sx(3) = xxe
                sy(3) = yye
                sx(2) = xxe
