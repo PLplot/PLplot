@@ -276,15 +276,15 @@ C         Zoom in selection
 c     Base the dynamic range on the image contents.
 
       call a2mnmx(img_f,width,height,img_min,img_max,WDIM)
-      
+
       call plcol(2)
       call plenv(0.d0, width_r, 0.d0, height_r, 1, -1)
       call pllab("", "", "Reduced dynamic range image example")
-      call plimagefr0(img_f, width, height, 0.d0, width_r, 0.d0, 
-     &     height_r, 0.d0, 0.d0, img_min + img_max * 0.25d0, 
+      call plimagefr0(img_f, width, height, 0.d0, width_r, 0.d0,
+     &     height_r, 0.d0, 0.d0, img_min + img_max * 0.25d0,
      &     img_max - img_max * 0.25d0, WDIM)
 
-c     Draw a distorted version of the original image, showing its 
+c     Draw a distorted version of the original image, showing its
 c     full dynamic range.
       call plenv(0.d0, width_r, 0.d0, height_r, 1, -1)
       call pllab("", "", "Distorted image example")
@@ -303,10 +303,29 @@ c     since the coordinates are for the corner of each pixel.
             yg(i,j) = dble(j-1)
          enddo
       enddo
-      call plimagefr2(img_f, width, height, 0.d0, width_r, 0.d0, 
+      call plimagefr2(img_f, width, height, 0.d0, width_r, 0.d0,
      &     height_r, 0.d0, 0.d0, img_min, img_max, xg, yg, WDIM)
 
       call plend()
+
+      end
+
+C     Determine the unit of length for direct-access files
+      subroutine bytes_in_rec( bytes )
+      implicit none
+      integer     bytes
+
+      character*8 string
+      integer     i
+
+      open( 10, file = '_x20f_.bin', access = 'direct', recl = 1 )
+      do 110 i = 1,8
+          write( 10, rec = 1, err = 120 ) string(1:i)
+          bytes = i
+  110 continue
+
+  120 continue
+      close( 10, status = 'delete' )
 
       end
 
@@ -318,13 +337,19 @@ C     Read image from file in binary ppm format
       real*8       img_f(width,height)
       integer      num_col
 
-      character    img
+      character    img(8)
       character*80 ver
-      integer      i, j, k, w, h
+      integer      i, j, k, w, h, b
 
       integer      ierr
       integer      count
       integer      record
+
+      integer      bytes
+      integer      lastlf
+      integer      first
+      integer      last
+      integer      pixel
 
 C     Naive grayscale binary ppm reading. If you know how to, improve it
 
@@ -385,11 +410,14 @@ C
 C     Read the second part - we need to do it the hard way :(
 C
 C     Note:
-C     The algorithm only works if the unit of record length is a byte!
-C     (Some compilers use a word (4 bytes) instead, but often provide
-C     a compile switch to use bytes)
+C     The algorithm works if the unit of record length is a byte or
+C     if it is a multiple therefore (up to 8 bytes are allowed).
+C     Background: Some compilers use a word (4 bytes) as the unit of
+C     length instead, but often provide a compile switch to use bytes,
+C     we can not rely on this though.
 C
-C
+      call bytes_in_rec( bytes )
+
       open( 10, file = fname, access = 'direct', recl = 1 )
 
       record = 0
@@ -398,11 +426,15 @@ C
 C     Look for the end of the line with sizes
 C
       record = record + 1
-      read( 10, rec = record ) img
+      read( 10, rec = record ) (img(i), i = 1,bytes )
 
-      if ( img .eq. char(10) ) count = count - 1
+      do 210 i = 1,bytes
+          if ( img(i) .eq. char(10) ) then
+              count = count - 1
+              lastlf = i
+          endif
+  210 continue
       if ( count .gt. 0 ) goto 200
-
 
 C
 C     We have found the picture bytes!
@@ -410,13 +442,23 @@ C     The picture needs to be flipped vertically.
 C     So do that rightaway
 C
 C
-      do 220 j = 1,h
-          do 210 i = 1,w
-              record = record + 1
-              read( 10, rec = record ) img
-              img_f(i,h-j+1) = dble(ichar(img))
-  210     continue
+      first = lastlf + 1
+      last  = bytes
+      pixel = 0
+
   220 continue
+      do 230 b = first, last
+          pixel = pixel + 1
+          i     = 1 + mod(pixel-1,w)
+          j     = 1 + (pixel-1)/w
+          img_f(i,h-j+1) = dble(ichar(img(b)))
+  230 continue
+      if ( pixel .lt. h*w ) then
+          record = record + 1
+          read( 10, rec = record ) (img(b), b = 1,bytes )
+          first  = 1
+          goto 220
+      endif
 
       width  = w
       height = h
@@ -569,7 +611,7 @@ C     Set gray colormap
 
       pos(1) = 0.0
       pos(2) = 1.0
-    
+
       rev(1) = 0
       rev(2) = 0
 
