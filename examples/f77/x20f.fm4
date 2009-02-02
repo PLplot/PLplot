@@ -449,9 +449,11 @@ C
   220 continue
       do 230 b = first, last
           pixel = pixel + 1
-          i     = 1 + mod(pixel-1,w)
-          j     = 1 + (pixel-1)/w
-          img_f(i,h-j+1) = dble(ichar(img(b)))
+          if ( pixel .le. h*w ) then
+              i     = 1 + mod(pixel-1,w)
+              j     = 1 + (pixel-1)/w
+              img_f(i,h-j+1) = dble(ichar(img(b)))
+          endif
   230 continue
       if ( pixel .lt. h*w ) then
           record = record + 1
