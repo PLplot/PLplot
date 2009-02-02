@@ -191,6 +191,16 @@ if(HAVE_QHULL)
   )
 endif(HAVE_QHULL)
 
+set(
+  libplplot${LIB_TAG}_LINK_LIBRARIES
+  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+  qsastime
+  )
+set(
+  libplplot${LIB_TAG}_LINK_FLAGS
+  "${libplplot${LIB_TAG}_LINK_FLAGS} -lqsastime"
+  )
+
 if(WITH_FREETYPE)
   get_source_file_property(PLFREETYPE_COMPILE_PROPS plfreetype.c COMPILE_FLAGS)
   # Deal with NOTFOUND case.

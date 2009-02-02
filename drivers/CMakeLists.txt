@@ -46,6 +46,7 @@ if(ENABLE_DYNDRIVERS)
   ${CMAKE_BINARY_DIR}/src
   ${CMAKE_BINARY_DIR}/lib/csa
   ${CMAKE_BINARY_DIR}/lib/nn
+  ${CMAKE_BINARY_DIR}/lib/qsastime
   ${libplplot${LIB_TAG}_RPATH}
   )
   

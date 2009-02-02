@@ -33,6 +33,9 @@ set(csirocsa_VERSION ${csirocsa_SOVERSION}.0.1)
 set(csironn_SOVERSION 0)
 set(csironn_VERSION ${csironn_SOVERSION}.0.1)
 
+set(qsastime_SOVERSION 0)
+set(qsastime_VERSION ${qsastime_SOVERSION}.0.1)
+
 set(plplot_SOVERSION 9)
 set(plplot_VERSION ${plplot_SOVERSION}.6.1)
 
