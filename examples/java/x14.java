@@ -54,6 +54,11 @@ class x14 {
 	int fam[] = new int[1];
 	int num[] = new int[1];
 	int bmax[] = new int[1];
+        double xp0[] = new double[1], yp0[] = new double[1];
+        int xleng0[] = new int[1], yleng0[] = new int[1];
+        int xoff0[] = new int[1], yoff0[] = new int[1];
+	boolean valid_geometry;
+
 
     // Parse and process command line arguments.
 
@@ -68,9 +73,17 @@ class x14 {
 	System.out.println("Running with the second stream as slave to the first.");
 	System.out.println("");
 
+	//      If valid geometry specified on command line, use it for both streams.
+
+	pls1.gpage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+	valid_geometry = (xleng0[0] > 0 && yleng0[0] > 0);
+
 	// Set up first stream
 
-	pls1.setopt("geometry", geometry_master);
+	if (valid_geometry)
+	    pls1.spage(xp0[0], yp0[0], xleng0[0], yleng0[0], xoff0[0], yoff0[0]);
+	else
+	    pls1.setopt("geometry", geometry_master);
 
 	pls1.sdev(sdriver);
 	pls1.ssub(2, 2);
@@ -80,7 +93,10 @@ class x14 {
 	
 	// Turn off pause to make this a slave (must follow master)
 	
-	pls2.setopt("geometry", geometry_slave);
+	if (valid_geometry)
+	    pls2.spage(xp0[0], yp0[0], xleng0[0], yleng0[0], xoff0[0], yoff0[0]);
+	else
+	    pls2.setopt("geometry", geometry_slave);
 	pls2.spause(false);
 	pls2.sdev(sdriver);
 	pls2.sfam(fam[0],num[0],bmax[0]);
