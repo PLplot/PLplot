@@ -113,13 +113,13 @@ int main()
 
 
 	size_t used = strfMJD(&(buf[0]), 360, "   strfMJD():\n   --------\n '%+' \n %c\n %D %F \n %j \n %r \n %s \n %v\n\n",  &MJD2, 0);
-	printf("chars %d for \n%s\n" , used, buf);
+	printf("chars %d for \n%s\n" , (int) used, buf);
 
 	/* seconds since 01 Jan 1970 Gregorian for strftime use */				
 	time_t localt = MJD2.time_sec + (MJD2.base_day - 40587) * 86400;
 	struct tm *ptm;
 	ptm = gmtime(&localt);
-	strftime(&(buf[0]), 360, "  strftime(): (invalid before 1970)\n   ------\n '%+' \n %c\n %D %F \n %j \n %r \n %s \n %v", ptm);
+	strftime(&(buf[0]), 360, "  strftime(): (invalid before 1970)\n   ------\n '%a %b %e %H:%M:%S UTC %Y' \n %c\n %D %F \n %j \n %r \n %s \n %e-%b-%Y", ptm);
 	printf("%s\n" , buf);
 
 }

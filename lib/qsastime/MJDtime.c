@@ -527,9 +527,9 @@ const char * getISOString(MJDtime* MJD, int delim)
 	if(delim == 1)
 	{
 		if(ysign == 0)
-			sprintf(DateTime,  "%04d-%02d-%02dT%02d:%02d:%01d%-011.10g", y, m, d, hour, min, sec1, sec );
+			sprintf(DateTime,  "%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
 		else
-			sprintf(DateTime,  "-%04d-%02d-%02dT%02d:%02d:%01d%-011.10g", y, m, d, hour, min, sec1, sec );
+			sprintf(DateTime,  "-%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
 			
 		/* remove trailing white space */
 		char * ptr;
@@ -539,9 +539,9 @@ const char * getISOString(MJDtime* MJD, int delim)
 	else
 	{
 		if(ysign == 0)
-			sprintf(DateTime,  "%04d-%02d-%02d %02d:%02d:%01d%-011.10g", y, m, d, hour, min, sec1, sec );
+			sprintf(DateTime,  "%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
 		else
-			sprintf(DateTime,  "-%04d-%02d-%02d %02d:%02d:%01d%-011.10g", y, m, d, hour, min, sec1, sec );
+			sprintf(DateTime,  "-%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
 
 	}
 	return &(DateTime[0]);
