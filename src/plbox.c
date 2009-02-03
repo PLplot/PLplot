@@ -23,6 +23,7 @@
 */
 
 #include "plplotP.h"
+#include "../lib/qsastime/MJDtime.h"
 
 static PLFLT xlog[8] =
 {
@@ -1199,8 +1200,8 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     PLFLT pos, tn, tp, offset, height;
     PLFLT factor, tstart;
     const char *timefmt;
-    struct tm *tm;
-    time_t t;
+    MJDtime tm;
+    double t;
 
 /* Set plot options from input */
 
@@ -1246,9 +1247,9 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	  tp = xtick1 * (1. + floor(vpwxmi / xtick1));
 	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
             if (ldx) {
-              t = (time_t) tn;
-              tm = gmtime(&t);
-              strftime(string, 40, timefmt, tm);
+              t = (double) tn;
+              setFromUT(1970,1,1,0,0,t,&tm,0);
+              strfMJD(string, 40, timefmt, &tm, 0);
             }
             else {
 	      plform(tn, xscale, xprec, string, llx, lfx);
@@ -1295,9 +1296,9 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	  tp = ytick1 * (1. + floor(vpwymi / ytick1));
 	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
             if (ldy) {
-              t = (time_t) tn;
-              tm = gmtime(&t);
-              strftime(string, 40, timefmt, tm);
+              t = (double) tn;
+              setFromUT(1970,1,1,0,0,t,&tm,0);
+              strfMJD(string, 40, timefmt, &tm, 0);
             }
             else {
 	      plform(tn, yscale, yprec, string, lly, lfy);
