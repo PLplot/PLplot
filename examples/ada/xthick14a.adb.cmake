@@ -68,6 +68,9 @@ procedure xthick14a is
     mark1  : Integer_Array_1D(1 .. 1) := (Others => 1500);
     fam : Boolean;
     num, bmax : Integer;
+    xp0, yp0 : Long_Float;
+    xleng0, yleng0, xoff0, yoff0 : Integer;
+    valid_geometry : Boolean;
 
     procedure plot1 is
         xmin, xmax, ymin, ymax : Long_Float;
@@ -300,8 +303,16 @@ begin
     Put_Line("Running with the second stream as slave to the first.");
     New_Line;
 
+    -- If valid geometry specified on command line, use it for both streams.
+    Get_Page_Parameters(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+    valid_geometry := (xleng0 > 0 and yleng0 > 0);
+
     -- Set up first stream
-    Set_Command_Line_Option("geometry", geometry_master);
+    if valid_geometry then
+      Set_Page_Parameters(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+    else
+      Set_Command_Line_Option("geometry", geometry_master);
+    end if;
 
     Set_Device_Name(To_String(driver));
     Set_Number_Of_Subpages(2, 2);
@@ -310,8 +321,13 @@ begin
     -- Start next stream
     Set_Stream_Number(1);
 
+    if valid_geometry then
+      Set_Page_Parameters(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+    else
+      Set_Command_Line_Option("geometry", geometry_slave);
+    end if;
+
     -- Turn off pause to make this a slave (must follow master)
-    Set_Command_Line_Option("geometry", geometry_slave);
     Set_Pause(False);
     Set_Device_Name(To_String(driver));
     Get_File_Family_Parameters(fam, num, bmax);

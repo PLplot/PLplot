@@ -2,8 +2,8 @@
 
 -- Demo of multiple stream/window capability (requires Tk or Tcl-DP).
 
---	Maurice LeBrun
---	IFS, University of Texas at Austin
+--      Maurice LeBrun
+--      IFS, University of Texas at Austin
 
 -- Copyright (C) 2008 Jerry Bauck
 
@@ -49,13 +49,13 @@ use
 -- Plots several simple functions from other example programs.
 --
 -- This version sends the output of the first 4 plots (one page) to two
--- independent streams.  
+-- independent streams.
 ------------------------------------------------------------------------------
 
 procedure x14a is
-    -- Select either TK or DP driver and use a small window 
-    -- Using DP results in a crash at the end due to some odd cleanup problems 
-    -- The geometry strings MUST be in writable memory 
+    -- Select either TK or DP driver and use a small window
+    -- Using DP results in a crash at the end due to some odd cleanup problems
+    -- The geometry strings MUST be in writable memory
     geometry_master : String := "500x410+100+200";
     geometry_slave  : String := "500x410+650+200";
     driver : Unbounded_String;
@@ -68,6 +68,9 @@ procedure x14a is
     mark1  : Integer_Array_1D(1 .. 1) := (Others => 1500);
     fam : Boolean;
     num, bmax : Integer;
+    xp0, yp0 : Long_Float;
+    xleng0, yleng0, xoff0, yoff0 : Integer;
+    valid_geometry : Boolean;
 
     procedure plot1 is
         xmin, xmax, ymin, ymax : Long_Float;
@@ -88,26 +91,26 @@ procedure x14a is
             ys(i) := y(i * 10 + 3);
         end loop;
 
-        -- Set up the viewport and window using PLENV. The range in X is 
-        -- 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
-        -- scaled separately (just := 0), and we just draw a labelled 
-        -- box (axis := 0). 
+        -- Set up the viewport and window using PLENV. The range in X is
+        -- 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
+        -- scaled separately (just := 0), and we just draw a labelled
+        -- box (axis := 0).
         plcol0(1);
         plenv(xmin, xmax, ymin, ymax, 0, 0);
         plcol0(6);
         pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
-        -- Plot the data points 
+        -- Plot the data points
         plcol0(9);
         plpoin(xs, ys, 9);
 
-        -- Draw the line through the data 
+        -- Draw the line through the data
         plcol0(4);
         plline(x, y);
         plflush;
     end plot1;
 
-    -- ================================================================ 
+    -- ================================================================
 
 
     procedure plot2 is
@@ -115,13 +118,13 @@ procedure x14a is
     begin
         -- Set up the viewport and window using PLENV. The range in X is -2.0 to
         -- 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
-        -- (just = 0), and we draw a box with axes (axis = 1). 
+        -- (just = 0), and we draw a box with axes (axis = 1).
         plcol0(1);
         plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
         plcol0(2);
         pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
 
-        -- Fill up the arrays 
+        -- Fill up the arrays
         for i in x'range loop
             x(i) := (Long_Float(i) - 19.0) / 6.0;
             y(i) := 1.0;
@@ -130,33 +133,33 @@ procedure x14a is
             end if;
         end loop;
 
-        -- Draw the line 
+        -- Draw the line
         plcol0(3);
         plline(x, y);
         plflush;
     end plot2;
 
-    -- ================================================================ 
+    -- ================================================================
 
 
     procedure plot3 is
         x, y : Real_Vector(0 .. 100);
     begin
         -- For the final graph we wish to override the default tick intervals, and
-        -- so do not use PLENV 
+        -- so do not use PLENV
 
         pladv(0);
 
         -- Use standard viewport, and define X range from 0 to 360 degrees, Y range
-        -- from -1.2 to 1.2. 
+        -- from -1.2 to 1.2.
         plvsta;
         plwind(0.0, 360.0, -1.2, 1.2);
 
-        -- Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. 
+        -- Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
         plcol0(1);
         plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
-        -- Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
+        -- Superimpose a dashed line grid, with 1.5 mm marks and spaces.
         plstyl(mark1, space1);
         plcol0(2);
         plbox("g", 30.0, 0, "g", 0.2, 0);
@@ -175,7 +178,7 @@ procedure x14a is
         plflush;
         end plot3;
 
-    -- ================================================================ 
+    -- ================================================================
 
 
     procedure plot4 is
@@ -188,7 +191,7 @@ procedure x14a is
             y0(i) := sin(dtr * Long_Float(i));
         end loop;
 
-        -- Set up viewport and window, but do not draw box 
+        -- Set up viewport and window, but do not draw box
         plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
         for i in 1 .. 10 loop
             for j in x'range loop
@@ -196,7 +199,7 @@ procedure x14a is
                 y(j) := 0.1 * Long_Float(i) * y0(j);
             end loop;
 
-            -- Draw circles for polar grid 
+            -- Draw circles for polar grid
             plline(x, y);
         end loop;
 
@@ -206,11 +209,11 @@ procedure x14a is
             dx := cos(dtr * theta);
             dy := sin(dtr * theta);
 
-            -- Draw radial spokes for polar grid 
+            -- Draw radial spokes for polar grid
             pljoin(0.0, 0.0, dx, dy);
 
-            -- Write labels for angle 
-            -- Slightly off zero to avoid floating point logic flips at 90 and 270 deg. 
+            -- Write labels for angle
+            -- Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
             if dx >= -0.00001 then
                 plptex(dx, dy, dx, dy, -0.15, Trim(Integer'image(Integer(theta)), Left));
             else
@@ -218,7 +221,7 @@ procedure x14a is
             end if;
         end loop;
 
-        -- Draw the graph 
+        -- Draw the graph
         for i in x'range loop
             r := sin(dtr * Long_Float(5 * i));
             x(i) := x0(i) * r;
@@ -232,10 +235,10 @@ procedure x14a is
         plflush;
     end plot4;
 
-    -- ================================================================ 
+    -- ================================================================
 
 
-    -- Demonstration of contour plotting 
+    -- Demonstration of contour plotting
     procedure plot5 is
         XPTS : constant Integer := 35;
         YPTS : constant Integer := 46;
@@ -247,20 +250,20 @@ procedure x14a is
         mark  : Integer_Array_1D(1 .. 1) := (Others => 1500);
         space : Integer_Array_1D(1 .. 1) := (Others => 1500);
         z, w : Real_Matrix(0 .. XPTS -1, 0 .. YPTS - 1);
-        clevel : Real_Vector(0 .. 10) := 
+        clevel : Real_Vector(0 .. 10) :=
             (-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0);
 
         procedure mypltr -- This spec is necessary to accommodate pragma Convention(C...).
-           (x, y : Long_Float; 
-            tx, ty : out Long_Float; 
+           (x, y : Long_Float;
+            tx, ty : out Long_Float;
             pltr_data : PLpointer);
         pragma Convention(Convention => C, Entity => mypltr);
 
         procedure mypltr
-           (x, y : Long_Float; 
-            tx, ty : out Long_Float; 
+           (x, y : Long_Float;
+            tx, ty : out Long_Float;
             pltr_data : PLpointer)
-        is 
+        is
         begin
             tx := tr(0) * x + tr(1) * y + tr(2);
             ty := tr(3) * x + tr(4) * y + tr(5);
@@ -289,37 +292,50 @@ procedure x14a is
 
 
 begin
-    -- plplot initialization 
-    -- Parse and process command line arguments 
+    -- plplot initialization
+    -- Parse and process command line arguments
     plparseopts(PL_PARSE_FULL);
 
     driver := To_Unbounded_String(plgdev);
-    plgfam(fam, num, bmax);    
+    plgfam(fam, num, bmax);
 
     Put_Line("Demo of multiple output streams via the " & plgdev & " driver.");
     Put_Line("Running with the second stream as slave to the first.");
     New_Line;
 
-    -- Set up first stream 
-    plsetopt("geometry", geometry_master);
+    -- If valid geometry specified on command line, use it for both streams.
+    plgpage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+    valid_geometry := (xleng0 > 0 and yleng0 > 0);
+
+    -- Set up first stream
+    if valid_geometry then
+       plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+    else
+       plsetopt("geometry", geometry_master);
+    end if;
 
     plsdev(To_String(driver));
     plssub(2, 2);
     plinit;
 
-    -- Start next stream 
+    -- Start next stream
     plsstrm(1);
 
-    -- Turn off pause to make this a slave (must follow master) 
-    plsetopt("geometry", geometry_slave);
+    if valid_geometry then
+       plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+    else
+       plsetopt("geometry", geometry_slave);
+    end if;
+
+    -- Turn off pause to make this a slave (must follow master)
     plspause(False);
-    plgfam(fam, num, bmax);    
+    plgfam(fam, num, bmax);
     plsetopt("fflen","2");
     plsdev(To_String(driver));
     plinit;
 
-    -- Set up the data & plot 
-    -- Original case 
+    -- Set up the data & plot
+    -- Original case
     plsstrm(0);
 
     xscale := 6.0;
@@ -328,19 +344,19 @@ begin
     yoff := 0.0;
     plot1;
 
-    -- Set up the data & plot 
+    -- Set up the data & plot
     xscale := 1.0;
     yscale := 1.0e+6;
     plot1;
 
-    -- Set up the data & plot 
+    -- Set up the data & plot
     xscale := 1.0;
     yscale := 1.0e-6;
     digmax := 2;
     plsyax(digmax, 0);
     plot1;
 
-    -- Set up the data & plot 
+    -- Set up the data & plot
     xscale := 1.0;
     yscale := 0.0014;
     yoff := 0.0185;
@@ -348,26 +364,26 @@ begin
     plsyax(digmax, 0);
     plot1;
 
-    -- To slave 
-    -- The pleop ensures the eop indicator gets lit. 
+    -- To slave
+    -- The pleop ensures the eop indicator gets lit.
     plsstrm(1);
     plot4;
     pleop;
 
-    -- Back to master 
+    -- Back to master
     plsstrm(0);
     plot2;
     plot3;
 
-    -- To slave 
+    -- To slave
     plsstrm(1);
     plot5;
     pleop;
 
-    -- Back to master to wait for user to advance 
+    -- Back to master to wait for user to advance
     plsstrm(0);
     pleop;
 
-    -- Call plend to finish off. 
+    -- Call plend to finish off.
     plend;
 end x14a;

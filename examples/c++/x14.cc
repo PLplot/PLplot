@@ -99,6 +99,10 @@ x14::x14( int argc, const char ** argv ) {
   const char geometry_master[] = "500x410+100+200";
   const char geometry_slave[]  = "500x410+650+200";
 
+  PLFLT xp0, yp0;
+  PLINT xleng0, yleng0, xoff0, yoff0;
+  int valid_geometry;
+  
   // plplot initialization
 
   pls1 = new plstream();
@@ -113,9 +117,16 @@ x14::x14( int argc, const char ** argv ) {
     driver << " driver." << endl;
   cout << "Running with the second stream as slave to the first.\n" << endl;
 
+  //If valid geometry specified on command line, use it for both streams.
+  pls1->gpage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+  valid_geometry = (xleng0 > 0 && yleng0 > 0);
+    
   // Set up first stream
 
-  pls1->setopt("geometry", geometry_master);
+  if (valid_geometry)
+    pls1->spage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+  else
+    pls1->setopt("geometry", geometry_master);
 
   pls1->sdev(driver);
   pls1->ssub(2, 2);
@@ -124,9 +135,13 @@ x14::x14( int argc, const char ** argv ) {
   pls1->init();
 
   pls2 = new plstream();
-  // Turn off pause to make this a slave (must follow master)
 
-  pls2->setopt("geometry", geometry_slave);
+  if (valid_geometry)
+    pls2->spage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+  else
+    pls2->setopt("geometry", geometry_slave);
+
+  // Turn off pause to make this a slave (must follow master)
   pls2->spause(false);
   pls2->sdev(driver);
   pls2->sfam(fam,num,bmax);
