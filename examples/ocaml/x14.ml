@@ -229,13 +229,20 @@ let () =
 
   let driver = plgdev () in
   let fam, num, bmax = plgfam () in
+  
+  (* If valid geometry specified on command line, use it for both streams. *)
+  let xp0, yp0, xleng0, yleng0, xoff0, yoff0 = plgpage () in
+  let valid_geometry = ( xleng0 > 0 && yleng0 > 0 ) in
 
   printf "Demo of multiple output streams via the %s driver.\n" driver;
   printf "Running with the second stream as slave to the first.\n";
   printf "\n";
 
   (* Set up first stream *)
-  ignore (plsetopt "geometry" geometry_master);
+  if valid_geometry then
+    plspage xp0 yp0 xleng0 yleng0 xoff0 yoff0
+  else
+    ignore (plsetopt "geometry" geometry_master);
 
   plsdev driver;
   plssub 2 2;
@@ -244,8 +251,12 @@ let () =
   (* Start next stream *)
   plsstrm 1;
 
+  if valid_geometry then
+    plspage xp0 yp0 xleng0 yleng0 xoff0 yoff0
+  else
+    ignore (plsetopt "geometry" geometry_slave);
+
   (* Turn off pause to make this a slave (must follow master) *)
-  ignore (plsetopt "geometry" geometry_slave);
   plspause false;
   plsdev driver;
   plsfam fam num bmax;

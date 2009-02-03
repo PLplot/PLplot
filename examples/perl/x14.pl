@@ -63,9 +63,24 @@ sub main {
          . "Running with the second stream as slave to the first.\n"
          . "\n");
 
+  # If valid geometry specified on command line, use it for both streams.
+  my ($xp0, $yp0, $xleng0, $yleng0, $xoff0, $yoff0) = plgpage ();
+  printf("%s %i, %i\n", "xleng0, yleng0 = ", $xleng0, $yleng0);
+  my $valid_geometry;
+  if ($xleng0 > 0 && $yleng0 > 0) {
+    $valid_geometry = 1;
+  } else {
+    $valid_geometry = 0;
+  }
+  printf("%s %i\n", "valid_geometry = ", $valid_geometry);
+
   # Set up first stream
 
-  plsetopt ("geometry", $geometry_master);
+  if ($valid_geometry) {
+    plspage ($xp0, $yp0, $xleng0, $yleng0, $xoff0, $yoff0);
+  } else {
+    plsetopt ("geometry", $geometry_master);
+  }
 
   plsdev ($driver);
   plssub (2, 2);
@@ -75,9 +90,14 @@ sub main {
 
   plsstrm (1);
 
+  if ($valid_geometry) {
+    plspage ($xp0, $yp0, $xleng0, $yleng0, $xoff0, $yoff0);
+  } else {
+    plsetopt ("geometry", $geometry_slave);
+  }
+
   # Turn off pause to make this a slave (must follow master)
 
-  plsetopt ("geometry", $geometry_slave);
   plspause (0);
   plsdev ($driver);
   plsfam ($fam, $num, $bmax);
