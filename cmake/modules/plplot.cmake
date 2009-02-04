@@ -317,7 +317,6 @@ include(lua)
 # additional library support
 # =======================================================================
 include(freetype)
-include(csiro)
 # On windows systems the math library is not separated so do not specify
 # it unless you are on a non-windows system.
 if(NOT WIN32)
@@ -326,6 +325,9 @@ if(NOT WIN32)
     message(FATAL_ERROR "Cannot find required math library")
   endif(NOT MATH_LIB)
 endif(NOT WIN32)
+# Must come after MATH_LIB is defined (or not).
+include(csiro)
+
 
 # =======================================================================
 # libpango support
