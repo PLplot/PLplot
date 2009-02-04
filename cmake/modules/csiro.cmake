@@ -43,7 +43,7 @@ if(HAVE_QHULL OR WITH_CSA)
     try_run(NaNAwareCCompiler COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_SOURCE_DIR}/cmake/modules/TestNaNAware.c
-      CMAKE_FLAGS "-DCOMPILE_DEFINITIONS:STRING=${NAN_CFLAGS} -I${CMAKE_SOURCE_DIR}/lib/csa"
+      CMAKE_FLAGS "-DCOMPILE_DEFINITIONS:STRING=${NAN_CFLAGS} -I${CMAKE_SOURCE_DIR}/lib/csa -lm"
       OUTPUT_VARIABLE OUTPUT
       )
     if(NOT COMPILE_RESULT)
@@ -83,7 +83,7 @@ if(HAVE_QHULL)
       set(HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
     endif(QH_NEW_EXIST)
   else(QHULL_FOUND)
-    message(STATUS 
+    message(STATUS
       "WARNING: qhull library not found.  Setting HAVE_QHULL to OFF."
       )
     set(HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
