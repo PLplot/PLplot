@@ -3,7 +3,7 @@
 QSAS Support Team
 Cluster Science Centre, Imperial College
 csc-support-dl@imperial.ac.uk
-Provided under gnu public licence
+Provided under library gnu public licence (LGPL).
 
 	
 These routines convert between various date and time formats. The date and time is stored internally as a structure , MJDtime, containing an integer, as the integer part of the MJD date, and a double representing the seconds offset from the start of this day. Routines exist to also set and get MJD, JD, formatted date/time strings and NASA CDF epoch date/times from this structure.
