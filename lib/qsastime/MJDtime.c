@@ -45,7 +45,6 @@ double SecInDay = 86400; /* we ignore leap seconds */
 int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
 const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
-
 	
 void setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
 {	
@@ -511,6 +510,7 @@ const char * getISOString(MJDtime* MJD, int delim)
 	int y, m, d, hour, min;
 	int sec1, ysign;
 	double sec;
+	int slen;
 
 	breakDownMJD(&y, &m, &d, &hour, &min, &sec, MJD, 0);
 
@@ -543,6 +543,15 @@ const char * getISOString(MJDtime* MJD, int delim)
 		else
 			sprintf(DateTime,  "-%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
 
+                /* remove trailing white space */
+                char * ptr;
+                slen = strlen(DateTime)-1;
+                while( DateTime[slen] == ' ')
+                {
+                        DateTime[slen] ='\0';
+                        slen--;
+                }
+
 	}
 	return &(DateTime[0]);
 }
@@ -557,7 +566,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	
 	int year, month, day, hour, min, ysign, sec1, sec_fract, second;
 	int i, count;
-	int nplaces;
+	int nplaces, slen;
 	char * ptr;
 	double sec;
 	const char *dayText;
@@ -1031,7 +1040,15 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 
 				for(count=0; count<nplaces; count++) sec_fraction *= 10;
 				sprintf(DateTime, ".%d",  (int) sec_fraction);
-
+				
+				/* append 0 to pad to length */
+				slen = strlen(DateTime);
+				while(slen < nplaces+1)
+				{
+					DateTime[slen] = '0';
+					slen++;
+					DateTime[slen] = '\0';
+				}
 				strncat(&(buf[posn]), DateTime, last - posn);
 				posn = strlen(buf);
 				if(posn >= last) return posn;
@@ -1040,9 +1057,13 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			{
 				/* fractional part of seconds to maximum available accuracy */
 				double sec_fraction = sec - (double) second;
-				sprintf(DateTime, "%-11.9g",  sec_fraction);
-
-				while( ( ptr = strrchr(&(DateTime[0]), ' ')) != NULL)  ptr[0] ='\0'; /* remove trailing zeros */
+				sprintf(DateTime, "%-11.9f",  sec_fraction);
+				while( ( ptr = strrchr(&(DateTime[0]), ' ')) != NULL)  ptr[0] ='\0'; /* remove trailing white space */
+				slen = strlen(DateTime) -1;
+				while( DateTime[slen] == '0' && DateTime[slen-1] != '.') {
+					DateTime[slen] ='\0'; /* remove trailing zeros */
+					slen --;
+				}
 				
 				ptr = strchr(DateTime, '.'); /* remove possible lead 0 */
 				strncat(&(buf[posn]), ptr, last - posn);
