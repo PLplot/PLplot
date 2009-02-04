@@ -41,6 +41,9 @@
  #include <stdio.h>
  #include <stdlib.h>
  #include <string.h>
+/* include header file for dll definitions */
+ #include "qsastimedll.h"
+
 
 typedef struct MJDtimeStruct
 { 
@@ -55,25 +58,23 @@ typedef struct MJDtimeStruct
 }MJDtime;
 
 
-void setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
-void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
-void setFromBCE(int yearBCE, int month, int day, int hour, int min, double sec, MJDtime *MJD);
-void setFromMJD(double ModifiedJulianDate, MJDtime *MJD);
-void setFromCDFepoch(double cdfepoch, MJDtime *MJD);
-void setFromJD(double JulianDate, MJDtime *MJD);
-int setFromISOstring(const char* ISOstring, MJDtime *MJD);
-void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian);
-double getMJD(MJDtime *MJD);
-double getJD(MJDtime *MJD);
-double getDiffDays(MJDtime *MJD1, MJDtime *MJD2);
-double getDiffSecs(MJDtime *MJD1, MJDtime *MJD2);
-double getCDFepoch(MJDtime *MJD);
-const char * getISOString(MJDtime *MJD, int delim);
-const char * getDayOfWeek(const MJDtime *MJD);
-const char * getLongDayOfWeek( const MJDtime *MJD);
-const char * getMonth(int m);
-const char * getLongMonth(int m);
-int getDOY(const MJDtime *MJD, int forceJulian);
-size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian);
-
-
+QSASTIMEDLLIMPEXP void setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
+QSASTIMEDLLIMPEXP void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
+QSASTIMEDLLIMPEXP void setFromBCE(int yearBCE, int month, int day, int hour, int min, double sec, MJDtime *MJD);
+QSASTIMEDLLIMPEXP void setFromMJD(double ModifiedJulianDate, MJDtime *MJD);
+QSASTIMEDLLIMPEXP void setFromCDFepoch(double cdfepoch, MJDtime *MJD);
+QSASTIMEDLLIMPEXP void setFromJD(double JulianDate, MJDtime *MJD);
+QSASTIMEDLLIMPEXP int setFromISOstring(const char* ISOstring, MJDtime *MJD);
+QSASTIMEDLLIMPEXP void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian);
+QSASTIMEDLLIMPEXP double getMJD(MJDtime *MJD);
+QSASTIMEDLLIMPEXP double getJD(MJDtime *MJD);
+QSASTIMEDLLIMPEXP double getDiffDays(MJDtime *MJD1, MJDtime *MJD2);
+QSASTIMEDLLIMPEXP double getDiffSecs(MJDtime *MJD1, MJDtime *MJD2);
+QSASTIMEDLLIMPEXP double getCDFepoch(MJDtime *MJD);
+QSASTIMEDLLIMPEXP const char * getISOString(MJDtime *MJD, int delim);
+QSASTIMEDLLIMPEXP const char * getDayOfWeek(const MJDtime *MJD);
+QSASTIMEDLLIMPEXP const char * getLongDayOfWeek( const MJDtime *MJD);
+QSASTIMEDLLIMPEXP const char * getMonth(int m);
+QSASTIMEDLLIMPEXP const char * getLongMonth(int m);
+QSASTIMEDLLIMPEXP int getDOY(const MJDtime *MJD, int forceJulian);
+QSASTIMEDLLIMPEXP size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian);
