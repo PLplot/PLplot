@@ -203,14 +203,14 @@ double getJD(MJDtime *MJD)
 double getDiffDays(MJDtime *MJD1, MJDtime *MJD2)
 {
 	/* Return difference MJD1 - MJD2 in days as a double */
-	double diff = (double)(MJD1->base_day - MJD1->base_day) + (MJD1->time_sec - MJD1->time_sec) / SecInDay;
+	double diff = (double)(MJD1->base_day - MJD2->base_day) + (MJD1->time_sec - MJD2->time_sec) / SecInDay;
 	return diff;
 }
 
 double getDiffSecs(MJDtime *MJD1, MJDtime *MJD2)
 {
 	/* Return difference MJD1 - MJD2 in seconds as a double */
-	double diff = (double)(MJD1->base_day - MJD1->base_day) * SecInDay + (MJD1->time_sec - MJD1->time_sec) ;
+	double diff = (double)(MJD1->base_day - MJD2->base_day) * SecInDay + (MJD1->time_sec - MJD2->time_sec) ;
 	return diff;
 }
 
