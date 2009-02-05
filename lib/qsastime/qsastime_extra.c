@@ -26,22 +26,22 @@
 
 	/* MJD measures from the start of 17 Nov 1858 */
 	
-	/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregoriam 
-	 Note C libraries use Gregorian only from 14 Sept 1752 
+	/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregoriam
+	 Note C libraries use Gregorian only from 14 Sept 1752
 	 More detailed discussion can be found at http://aa.usno.navy.mil/data/docs/JulianDate.php
 	 These routines have been compared with the results of the US Naval Observatory online converter.
 	 Modified Julian Date (MJD) = Julian Date (JD) - 2400000.5
-	 
+	
 	 In all routines, specifying a day, hour, minute or second field greater than would be valid is
-	 handled with modulo arithmetic and safe. 
-	 Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0 
-	 
+	 handled with modulo arithmetic and safe.
+	 Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0
+	
 	*/
 
 #include "qsastime_extra.h"
- 
-double MJDtoJD = 2400000.5;
-double SecInDay = 86400; /* we ignore leap seconds */
+
+static double MJDtoJD = 2400000.5;
+static double SecInDay = 86400; /* we ignore leap seconds */
 	
 int setFromISOstring(const char* ISOstring, MJDtime *MJD)
 {
@@ -161,14 +161,14 @@ void setFromJD(double JulianDate, MJDtime *MJD)
 	   Note Julian Day starts Noon, so convert to MJD first */
 
 	MJD->base_day = (int) (JulianDate - MJDtoJD) ;
-	MJD->time_sec = (JulianDate - MJDtoJD - (double) MJD->base_day) * SecInDay; 
+	MJD->time_sec = (JulianDate - MJDtoJD - (double) MJD->base_day) * SecInDay;
 }
 
 void setFromCDFepoch(double cdfepoch, MJDtime *MJD){
 
-	/* convert cdf epoch double into MJD structure 
+	/* convert cdf epoch double into MJD structure
 	   Note that cdfepoch is msec from 0 AD on the Gregorian calendar */
-	   
+	
 	double seconds = cdfepoch * 0.001;
 
 	MJD->base_day = (int) (seconds / 86400.0);
@@ -179,9 +179,9 @@ void setFromCDFepoch(double cdfepoch, MJDtime *MJD){
 
 double getCDFepoch(MJDtime *MJD){
 
-	/* convert MJD structure into cdf epoch double 
+	/* convert MJD structure into cdf epoch double
 	   Note that cdfepoch is msec from 0 AD on the Gregorian Calendar */
-	   
+	
 	int days = MJD->base_day + 678941;
 	double seconds = days * SecInDay + MJD->time_sec;
 	return seconds * 1000.;
@@ -196,7 +196,7 @@ double getMJD(MJDtime *MJD)
 double getJD(MJDtime *MJD)
 {
 	/* Return JD as a double */
-	double JD = getMJD(MJD) + MJDtoJD; 
+	double JD = getMJD(MJD) + MJDtoJD;
 	return JD;
 }
 
@@ -218,12 +218,12 @@ const char * getISOString(MJDtime* MJD, int delim)
 {
 	/* ISO time string for UTC */
 	/* uses default behaviour for Julian/Gregorian switch over */
-    /*** 
+    /***
 	     Warning getISOString is not thread safe
-	     as it writes to a static variable DateTime  
+	     as it writes to a static variable DateTime
 	***/
 
-    static char DateTime[50]; 
+    static char DateTime[50];
 	int y, m, d, hour, min;
 	int sec1, ysign;
 	double sec;

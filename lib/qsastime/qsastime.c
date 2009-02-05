@@ -26,24 +26,24 @@
 
 	/* MJD measures from the start of 17 Nov 1858 */
 	
-	/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregoriam 
-	 Note C libraries use Gregorian only from 14 Sept 1752 
+	/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregoriam
+	 Note C libraries use Gregorian only from 14 Sept 1752
 	 More detailed discussion can be found at http://aa.usno.navy.mil/data/docs/JulianDate.php
 	 These routines have been compared with the results of the US Naval Observatory online converter.
 	 Modified Julian Date (MJD) = Julian Date (JD) - 2400000.5
-	 
+	
 	 In all routines, specifying a day, hour, minute or second field greater than would be valid is
-	 handled with modulo arithmetic and safe. 
-	 Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0 
-	 
+	 handled with modulo arithmetic and safe.
+	 Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0
+	
 	*/
 #include <ctype.h>
 #include "qsastime.h"
- 
-double SecInDay = 86400; /* we ignore leap seconds */
-int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
-const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
-const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
+
+static double SecInDay = 86400; /* we ignore leap seconds */
+static int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
+static const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+static const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
 	
 void setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
 {	
@@ -150,7 +150,7 @@ int getDOY(const MJDtime *MJD, int forceJulian)
 		/* allow for negative seconds push into previous day even if less than 1 day */
 		extra_days = (int) (MJD->time_sec / SecInDay) - 1 ;
 	}
-	 
+	
 
 	j = MJD->base_day + extra_days;
 	
@@ -158,8 +158,8 @@ int getDOY(const MJDtime *MJD, int forceJulian)
 	
 		/* BCE dates */
 
-		j += 678943; 
-		if( j > 0) 
+		j += 678943;
+		if( j > 0)
 		{
 			/* must be in year BCE 1 (CE year 0) */
 			year = 0;
@@ -177,21 +177,21 @@ int getDOY(const MJDtime *MJD, int forceJulian)
 	{
 		/* Julian Dates */
 		 j += 678943;
-		 
+		
 		 year = (int) ((float)j / 365.25);
 	
 		 doy = j - (int)(year * 365.25);
-		 
+		
 	}
-	else 
+	else
 	{
 		/* Gregorian Dates */
 		j += 678941;
-				 
+				
 		 year = (int) ((float)j / 365.2425);
 		 lastyear = year - 1;
 		 doy = j - year * 365 - lastyear / 4 + lastyear / 100 - lastyear / 400;
-		 
+		
 	}
 
 	return doy;	
@@ -223,8 +223,8 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 	
 		/* BCE dates */
 
-		j += 678943; 
-		if( j > 0) 
+		j += 678943;
+		if( j > 0)
 		{
 			/* must be in year BCE 1 (CE year 0) */
 			*year = 0;
@@ -239,10 +239,10 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 		
 		 /* j is now always positive */
 		 *month = 0;
-		 
+		
 		 if(*year%4 != 0)
 		 {
-			while(j > MonthStartDOY[*month]) 
+			while(j > MonthStartDOY[*month])
 			{
 				(*month)++;
 				if(*month == 12) break;
@@ -253,7 +253,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 		 {
 			/* put this year's leap day back as it is done here */
 			j++;
-			while(j > MonthStartDOY_L[*month])  
+			while(j > MonthStartDOY_L[*month])
 			{
 				(*month)++;
 				if(*month == 12) break;
@@ -265,15 +265,15 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 	{
 		/* Julian Dates */
 		 j += 678943;
-		 
+		
 		 *year = (int) ((float)j / 365.25);
 	
 		 j = j - (int)(*year * 365.25);
-		 
+		
 		 *month = 0;
 		 if(*year%4 != 0)
 		 {
-			while(j > MonthStartDOY[*month]) 
+			while(j > MonthStartDOY[*month])
 			{
 				(*month)++;
 				if(*month == 12) break;
@@ -284,7 +284,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 		 {
 			/* put leap day back for this year as done here */
 			j++;
-			while(j > MonthStartDOY_L[*month])  
+			while(j > MonthStartDOY_L[*month])
 			{
 				(*month)++;
 				if(*month == 12) break;
@@ -292,19 +292,19 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 			*day = j - MonthStartDOY_L[*month -1];
 		 }
 	}
-	else 
+	else
 	{
 		/* Gregorian Dates */
 		j += 678941;
-				 
+				
 		 *year = (int) ((float)j / 365.2425);
 		 lastyear = *year - 1;
 		 j = j - *year * 365 - lastyear / 4 + lastyear / 100 - lastyear / 400;
-		 
+		
 		 *month = 0;
 		 if((*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0) )
 		 {
-			while(j > MonthStartDOY_L[*month]) 
+			while(j > MonthStartDOY_L[*month])
 			{
 				(*month)++;
 				if(*month == 12) break;
@@ -313,7 +313,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 		 }
 		 else
 		 {
-			while(j > MonthStartDOY[*month])  
+			while(j > MonthStartDOY[*month])
 			{
 				(*month)++;
 				if(*month == 12) break;
@@ -335,7 +335,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian)
 {
 	/* Format a text string according to the format string.
-	   Uses the same syntax as strftime() but does not use current locale. 
+	   Uses the same syntax as strftime() but does not use current locale.
 	   The null terminator is included in len for safety. */
 	
         int year, month, day, hour, min, ysign, sec1, second,d,y;
@@ -637,7 +637,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			{
 				/* week of year as a number,  (00 - 53) start of week is Sunday */
 				doy = getDOY(MJD, forceJulian);
-				days_in_wk1 = (MJD->base_day - doy - 4) % 7; 
+				days_in_wk1 = (MJD->base_day - doy - 4) % 7;
 				
 				w = (doy + 6 - days_in_wk1) / 7;
 				
@@ -687,7 +687,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			{
 				/* week of year as a number,  (01 - 53) start of week is Monday and first week has at least 3 days in year */
 				int doy = getDOY(MJD, forceJulian);
-				int days_in_wk1 = (MJD->base_day - doy - 3) % 7; 
+				int days_in_wk1 = (MJD->base_day - doy - 3) % 7;
 				
 				if(days_in_wk1 <= 3) w = (doy +6 - days_in_wk1) / 7; /* ensure first week has at least 3 days in this year */
 				else w = 1 + (doy + 6 - days_in_wk1) / 7;
@@ -714,7 +714,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			{
 				/* week of year as a number,  (00 - 53) start of week is Monday */
 				doy = getDOY(MJD, forceJulian);
-				days_in_wk1 = (MJD->base_day - doy - 3) % 7; 
+				days_in_wk1 = (MJD->base_day - doy - 3) % 7;
 				
 				w =  (doy +6 - days_in_wk1) / 7;
 				
@@ -807,7 +807,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			}
 			else if( isdigit(next) != 0 )
 			{
-				nplaces = strtol(&(format[i]), NULL, 10); 
+				nplaces = strtol(&(format[i]), NULL, 10);
 				/* numeric value is number of decimal places ( > 0 ) */
 				sec_fraction = sec - (double) second;
 
