@@ -1,3 +1,5 @@
+#ifndef _QSASTIME_H_
+#define _QSASTIME_H_
 /*
   This software originally contributed under the LGPL in January 2009 to
   PLplot by the
@@ -69,3 +71,5 @@ QSASTIMEDLLIMPEXP const char * getLongDayOfWeek( const MJDtime *MJD);
 QSASTIMEDLLIMPEXP const char * getMonth(int m);
 QSASTIMEDLLIMPEXP const char * getLongMonth(int m);
 QSASTIMEDLLIMPEXP int getDOY(const MJDtime *MJD, int forceJulian);
+
+#endif

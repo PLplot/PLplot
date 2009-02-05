@@ -25,8 +25,6 @@ include_directories(
 
 set(qsastime_LIB_SRCS
 qsastime.c
-qsastime.h
-qsastimedll.h
 )
 
 if(BUILD_SHARED_LIBS)
@@ -43,6 +41,14 @@ SOVERSION ${qsastime_SOVERSION}
 VERSION ${qsastime_VERSION}
 INSTALL_NAME_DIR "${LIB_DIR}"
 )
+
+
+set(qsastime_INSTALLED_HEADERS
+   qsastime.h
+   qsastimedll.h
+)
+
+install(FILES ${qsastime_INSTALLED_HEADERS} DESTINATION ${INCLUDE_DIR})
 
 install(TARGETS qsastime
 ARCHIVE DESTINATION ${LIB_DIR}

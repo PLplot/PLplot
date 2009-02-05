@@ -37,7 +37,7 @@
 	 Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0 
 	 
 	*/
-
+#include <ctype.h>
 #include "qsastime.h"
  
 double SecInDay = 86400; /* we ignore leap seconds */
@@ -54,13 +54,15 @@ void setFromUT(int year, int month, int day, int hour, int min, double sec, MJDt
 	/* default is to use Gregorian after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian */
 	/* Note C libraries use Gregorian only from 14 Sept 1752 onwards */
 
+        int leaps, lastyear;
+
 	if(year <= 0)
 	{
 		/* count leap years on Julian Calendar */
 		/* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
 		/* negative CE (AD) years convert to BCE (BC) as  BCE = 1 - CE, e.g. 2 BCE = -1 CE */
 		
-		int leaps = year / 4 - 1 ; /* (note leaps is negative here and year 0 (1 BCE) was a leap year */
+		leaps = year / 4 - 1 ; /* (note leaps is negative here and year 0 (1 BCE) was a leap year */
 		if(year%4 == 0)
 			MJD->base_day = year * 365 + leaps + MonthStartDOY_L[month-1] + day - 678943;
 		else
@@ -72,7 +74,7 @@ void setFromUT(int year, int month, int day, int hour, int min, double sec, MJDt
 		/* count leap years on Julian Calendar */
 		/* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
 	
-		int leaps = (year -1 ) / 4;
+		leaps = (year -1 ) / 4;
 		if(year%4 == 0)
 			MJD->base_day = year * 365 + leaps + MonthStartDOY_L[month-1] + day - 678943;
 		else
@@ -84,8 +86,8 @@ void setFromUT(int year, int month, int day, int hour, int min, double sec, MJDt
 		/* Algorithm below for  17 Nov 1858 (0 MJD) gives */
 		/* leaps = 450 and hence base_day of 678941, so subtract it to give MJD day  */
 		
-		int lastyear = year - 1;
-		int leaps = lastyear / 4 - lastyear / 100 + lastyear / 400;
+		lastyear = year - 1;
+		leaps = lastyear / 4 - lastyear / 100 + lastyear / 400;
 		if( (year%4 == 0 && year%100 != 0) || (year%4 == 0 && year%400 == 0) )
 			MJD->base_day = year * 365 + leaps + MonthStartDOY_L[month-1] + day - 678941;
 		else
@@ -137,7 +139,7 @@ int getDOY(const MJDtime *MJD, int forceJulian)
 	/* Get from Day Of Year  */
 	int doy, year;
 	
-	int extra_days;
+	int extra_days,j,lastyear;
 	
 	if(MJD->time_sec >= 0)
 	{
@@ -150,7 +152,7 @@ int getDOY(const MJDtime *MJD, int forceJulian)
 	}
 	 
 
-	int j = MJD->base_day + extra_days;
+	j = MJD->base_day + extra_days;
 	
 	if( j <= -678943) {
 	
@@ -187,7 +189,7 @@ int getDOY(const MJDtime *MJD, int forceJulian)
 		j += 678941;
 				 
 		 year = (int) ((float)j / 365.2425);
-		int lastyear = year - 1;
+		 lastyear = year - 1;
 		 doy = j - year * 365 - lastyear / 4 + lastyear / 100 - lastyear / 400;
 		 
 	}
@@ -201,7 +203,8 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 	/* Note year 0 CE (AD) [1 BCE (BC)] is a leap year */
 	/* There are 678943 days from year 0 to MJD(0)   */
 	
-	int extra_days;
+        int extra_days,j,lastyear;
+        double seconds;
 	
 	if(MJD->time_sec >= 0)
 	{
@@ -214,7 +217,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 	}
 
 
-	int j = MJD->base_day + extra_days;
+	j = MJD->base_day + extra_days;
 	
 	if( j <= -678943) {
 	
@@ -295,7 +298,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 		j += 678941;
 				 
 		 *year = (int) ((float)j / 365.2425);
-		int lastyear = *year - 1;
+		 lastyear = *year - 1;
 		 j = j - *year * 365 - lastyear / 4 + lastyear / 100 - lastyear / 400;
 		 
 		 *month = 0;
@@ -322,7 +325,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 
 	/* Time part */
 	
-	double seconds = MJD->time_sec - extra_days * SecInDay;
+	seconds = MJD->time_sec - extra_days * SecInDay;
 	*hour = (int)( seconds / 3600.);
 	seconds -= (double) *hour * 3600.;
 	*min = (int) ( seconds / 60.);
@@ -335,11 +338,12 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	   Uses the same syntax as strftime() but does not use current locale. 
 	   The null terminator is included in len for safety. */
 	
-	int year, month, day, hour, min, ysign, sec1, sec_fract, second;
-	int i, count;
-	int nplaces, slen;
+        int year, month, day, hour, min, ysign, sec1, second,d,y;
+	int i, count,secsSince1970;
+	int nplaces,fmtlen,slen;
 	char * ptr;
-	double sec;
+	double sec,sec_fraction;
+	int w,doy,days_in_wk1;
 	const char *dayText;
 	const char *monthText;
 	char DateTime[80];
@@ -361,8 +365,9 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	sec -= (double) sec1*10;
 	
 	/* Read format string, character at a time */
+	fmtlen = strlen(format);
 	i=0;
-	while(i<strlen(format))
+	while(i<fmtlen)
 	{
 		char next = format[i];
 		if( next == '%')
@@ -605,8 +610,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			else if(next == 's')
 			{
 				/* seconds since 01 Jan 1970 Gregorian */
-				int s = MJD->time_sec + (MJD->base_day - MJD_1970) * SecInDay;
-				sprintf(DateTime, "%d", s);
+			        secsSince1970 = (int)(MJD->time_sec + (MJD->base_day - MJD_1970) * SecInDay);
+				sprintf(DateTime, "%d", secsSince1970);
 				
 				strncat(&(buf[posn]), DateTime, last - posn);
 				posn = strlen(buf);
@@ -631,9 +636,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			else if(next == 'U')
 			{
 				/* week of year as a number,  (00 - 53) start of week is Sunday */
-				int w;
-				int doy = getDOY(MJD, forceJulian);
-				int days_in_wk1 = (MJD->base_day - doy - 4) % 7; 
+				doy = getDOY(MJD, forceJulian);
+				days_in_wk1 = (MJD->base_day - doy - 4) % 7; 
 				
 				w = (doy + 6 - days_in_wk1) / 7;
 				
@@ -646,7 +650,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			else if(next == 'u')
 			{
 				/* weekday as a number,  0 = Monday */
-				int d = 1 + (MJD->base_day - 5) % 7;
+				d = 1 + (MJD->base_day - 5) % 7;
 
 				sprintf(DateTime, "%01d", d);
 				
@@ -682,7 +686,6 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			else if(next == 'V')
 			{
 				/* week of year as a number,  (01 - 53) start of week is Monday and first week has at least 3 days in year */
-				int w;
 				int doy = getDOY(MJD, forceJulian);
 				int days_in_wk1 = (MJD->base_day - doy - 3) % 7; 
 				
@@ -699,7 +702,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			else if(next == 'w')
 			{
 				/* weekday as a number,  0 = Sunday */
-				int d = (MJD->base_day - 4) % 7;
+				d = (MJD->base_day - 4) % 7;
 
 				sprintf(DateTime, "%01d", d);
 				
@@ -710,9 +713,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			else if(next == 'W')
 			{
 				/* week of year as a number,  (00 - 53) start of week is Monday */
-				int w;
-				int doy = getDOY(MJD, forceJulian);
-				int days_in_wk1 = (MJD->base_day - doy - 3) % 7; 
+				doy = getDOY(MJD, forceJulian);
+				days_in_wk1 = (MJD->base_day - doy - 3) % 7; 
 				
 				w =  (doy +6 - days_in_wk1) / 7;
 				
@@ -748,7 +750,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			else if(next == 'y')
 			{
 				/* 2 digit year */
-				int y = year %100;
+				y = year %100;
 				
 				if(ysign == 0)
 					sprintf(DateTime, "%02d", y );
@@ -807,7 +809,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			{
 				nplaces = strtol(&(format[i]), NULL, 10); 
 				/* numeric value is number of decimal places ( > 0 ) */
-				double sec_fraction = sec - (double) second;
+				sec_fraction = sec - (double) second;
 
 				for(count=0; count<nplaces; count++) sec_fraction *= 10;
 				sprintf(DateTime, ".%d",  (int) sec_fraction);
@@ -827,7 +829,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 			else if( next == '.' )
 			{
 				/* fractional part of seconds to maximum available accuracy */
-				double sec_fraction = sec - (double) second;
+				sec_fraction = sec - (double) second;
 				sprintf(DateTime, "%-11.9f",  sec_fraction);
 				while( ( ptr = strrchr(&(DateTime[0]), ' ')) != NULL)  ptr[0] ='\0'; /* remove trailing white space */
 				slen = strlen(DateTime) -1;

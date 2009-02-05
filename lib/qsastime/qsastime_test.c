@@ -43,6 +43,10 @@ int main()
 	double epoch;
 	int doy;
 	double zeroTest;
+
+	size_t used;
+	time_t localt;
+	struct tm *ptm;
 	
 	MJDtime MJD1;
 	MJDtime MJD2;
@@ -111,14 +115,30 @@ int main()
 /* Compare formatting from strftime() */
 
 
-	size_t used = strfMJD(&(buf[0]), 360, "   strfMJD():\n   --------\n '%+' \n %c\n %D %F \n %j \n %r \n %s \n %v\n\n",  &MJD2, 0);
+    used = strfMJD(&(buf[0]), 360, "   strfMJD():\n   --------\n '%+' \n %c\n %D %F \n %j \n %r \n %s \n %v\n\n",  &MJD2, 0);
 	printf("chars %d for \n%s\n" , (int) used, buf);
 
 	/* seconds since 01 Jan 1970 Gregorian for strftime use */				
-	time_t localt = MJD2.time_sec + (MJD2.base_day - 40587) * 86400;
-	struct tm *ptm;
+	localt = (int)MJD2.time_sec + (MJD2.base_day - 40587) * 86400;
 	ptm = gmtime(&localt);
-	strftime(&(buf[0]), 360, "  strftime(): (invalid before 1970)\n   ------\n '%a %b %e %H:%M:%S UTC %Y' \n %c\n %D %F \n %j \n %r \n %s \n %e-%b-%Y", ptm);
+#ifndef _MSC_VER
+        /* note %s not implement in cygwin 1.5 gcc 3.x nothing printed */
+	strftime(&(buf[0]), 360,
+		"  strftime(): (invalid before 1970)\n   ------\n '%a %b %e %H:%M:%S UTC %Y' \n %c\n %D %F \n %j \n %r \n %s \n %e-%b-%Y", ptm);
+#else
+	/* the following format options are not defined in MSVC (2008) 
+           and are replaced as follows
+	   %e -> %d     will print as 01 etc 
+	   %D -> %m/%d/%y
+	   %F -> %Y-%m-%d
+	   %r -> %I:%M:%S %p
+	   %s -> %%s - turned into literal as not implemented
+
+	   also %c and %p are locale dependent
+	   */
+	strftime(&(buf[0]), 360,
+		"  strftime(): (invalid before 1970)\n   ------\n '%a %b %d %H:%M:%S UTC %Y' \n %c\n %m/%d/%y %Y-%m-%d \n %j \n %I:%M:%S %p \n %%s not implemented \n %d-%b-%Y", ptm);
+#endif		
 	printf("%s\n" , buf);
 
 }

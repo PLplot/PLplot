@@ -1,3 +1,5 @@
+#ifndef _QSASTIME_EXTRA_H_
+#define _QSASTIME_EXTRA_H_
 /*
   This software originally contributed under the LGPL in January 2009 to
   PLplot by the
@@ -56,3 +58,7 @@ QSASTIMEDLLIMPEXP double getDiffDays(MJDtime *MJD1, MJDtime *MJD2);
 QSASTIMEDLLIMPEXP double getDiffSecs(MJDtime *MJD1, MJDtime *MJD2);
 QSASTIMEDLLIMPEXP double getCDFepoch(MJDtime *MJD);
 QSASTIMEDLLIMPEXP const char * getISOString(MJDtime *MJD, int delim);
+    /*** Warning getISOString is not thread safe ***/
+
+#endif
+

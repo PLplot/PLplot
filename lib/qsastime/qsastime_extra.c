@@ -47,7 +47,6 @@ int setFromISOstring(const char* ISOstring, MJDtime *MJD)
 {
 	double seconds;
 	int   y, m, d, h, min;
-	char* ptr;
 	int startAt=0;
 	int len = strlen(ISOstring);
 	
@@ -93,13 +92,15 @@ void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, 
 	/* default is to use Gregorian after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian */
 	/* Note C libraries use Gregorian only from 14 Sept 1752 onwards*/
 
+        int leaps, lastyear,extraDays;
+
 	if(year <= 0)
 	{
 		/* count leap years on Julian Calendar */
 		/* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
 		/* negative CE (AD) years convert to BCE (BC) as  BCE = 1 - CE, e.g. 2 BCE = -1 CE */
 		
-		int leaps = year / 4 - 1 ; /* (note leaps is negative here and year 0 (1 BCE) was a leap year */
+		leaps = year / 4 - 1 ; /* (note leaps is negative here and year 0 (1 BCE) was a leap year */
 		MJD->base_day = year * 365 + leaps + doy - 678943;
 
 	}
@@ -108,7 +109,7 @@ void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, 
 		/* count leap years on Julian Calendar */
 		/* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
 	
-		int leaps = (year -1 ) / 4;
+		leaps = (year -1 ) / 4;
 		MJD->base_day = year * 365 + leaps + doy - 678943;
 		
 	}
@@ -118,8 +119,8 @@ void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, 
 		/* Algorithm below for  17 Nov 1858 (0 MJD) gives */
 		/* leaps = 450 and hence base_day of 678941, so subtract it to give MJD day  */
 		
-		int lastyear = year - 1;
-		int leaps = lastyear / 4 - lastyear / 100 + lastyear / 400;
+		lastyear = year - 1;
+		leaps = lastyear / 4 - lastyear / 100 + lastyear / 400;
 		MJD->base_day = year * 365 + leaps + doy - 678941;
 	
 	}	
@@ -128,7 +129,7 @@ void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, 
 
 	if(MJD->time_sec >= SecInDay)
 	{
-		int extraDays = (int) (MJD->time_sec / SecInDay);
+		extraDays = (int) (MJD->time_sec / SecInDay);
 		MJD->base_day += extraDays;
 		MJD->time_sec -= extraDays * SecInDay;
 	}
@@ -217,11 +218,17 @@ const char * getISOString(MJDtime* MJD, int delim)
 {
 	/* ISO time string for UTC */
 	/* uses default behaviour for Julian/Gregorian switch over */
-	static char DateTime[50];
+    /*** 
+	     Warning getISOString is not thread safe
+	     as it writes to a static variable DateTime  
+	***/
+
+    static char DateTime[50]; 
 	int y, m, d, hour, min;
 	int sec1, ysign;
 	double sec;
 	int slen;
+	char* ptr;
 
 	breakDownMJD(&y, &m, &d, &hour, &min, &sec, MJD, 0);
 
@@ -243,7 +250,6 @@ const char * getISOString(MJDtime* MJD, int delim)
 			sprintf(DateTime,  "-%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
 			
 		/* remove trailing white space */
-		char * ptr;
 		while( ( ptr = strrchr(&(DateTime[0]), ' ')) != NULL)  	ptr[0] ='\0';
 		strcat(&(DateTime[0]), "Z");
 	}
@@ -255,7 +261,6 @@ const char * getISOString(MJDtime* MJD, int delim)
 			sprintf(DateTime,  "-%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
 
                 /* remove trailing white space */
-                char * ptr;
                 slen = strlen(DateTime)-1;
                 while( DateTime[slen] == ' ')
                 {
