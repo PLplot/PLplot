@@ -38,7 +38,7 @@
 	 
 	*/
 
-#include <MJDtime.h>
+#include <qsastime.h>
  
 double MJDtoJD = 2400000.5;
 double SecInDay = 86400; /* we ignore leap seconds */

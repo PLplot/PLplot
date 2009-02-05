@@ -24,8 +24,8 @@ include_directories(
   )
 
 set(qsastime_LIB_SRCS
-MJDtime.c
-MJDtime.h
+qsastime.c
+qsastime.h
 )
 
 if(BUILD_SHARED_LIBS)
@@ -49,5 +49,5 @@ LIBRARY DESTINATION ${LIB_DIR}
 RUNTIME DESTINATION ${BIN_DIR}
 )
 
-add_executable(test_qsastime MJDtime_test.c)
+add_executable(test_qsastime qsastime_test.c)
 target_link_libraries(test_qsastime qsastime)
