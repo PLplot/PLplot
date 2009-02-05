@@ -82,7 +82,7 @@ popd
 $CP examples/c/lena.pgm .
 
 for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 \
-    23 24 25 26 27 28 29 30 31; do
+    23 24 25 26 27 28 29 30 31 32; do
 
     if [ $exe = "08" -o $exe = "16" -o $exe = "20" -o $exe = "30" ] ; then
       # The default cairo graphics AA looks good for these examples now
