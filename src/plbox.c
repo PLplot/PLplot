@@ -23,7 +23,7 @@
 */
 
 #include "plplotP.h"
-#include "../lib/qsastime/MJDtime.h"
+#include "qsastime.h"
 
 static PLFLT xlog[8] =
 {

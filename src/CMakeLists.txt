@@ -132,6 +132,7 @@ endif(ENABLE_DYNDRIVERS)
 
 include_directories(
 ${CMAKE_SOURCE_DIR}/include
+${CMAKE_SOURCE_DIR}/lib/qsastime
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 )
