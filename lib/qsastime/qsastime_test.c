@@ -23,12 +23,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 */
- #include <qsastime.h>
+ #include "qsastime_extra.h"
  #include <time.h>
  #include <stdio.h>
  #include <stdlib.h>
 	/* Test program to run MJDtime */
-
 
 int main()
 {

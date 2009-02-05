@@ -42,30 +42,17 @@
  #include <stdlib.h>
  #include <string.h>
 /* include header file for dll definitions */
- #include "qsastimedll.h"
+ #include "qsastime.h"
 
-
-typedef struct MJDtimeStruct
-{ 
-	/* 
-	   MJD starts at 0h, so truncating MJD always gives the same day whatever the time (unlike JD).
-	   The MJD base day is arbitrary, i.e. seconds can be greater than one day or even negative.
-	*/
-	   
-	int base_day; /* integer part of MJD used as default */
-	double time_sec; /* seconds from start of base_day */
-	
-}MJDtime;
-
-
-QSASTIMEDLLIMPEXP void setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
-QSASTIMEDLLIMPEXP void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian);
-QSASTIMEDLLIMPEXP size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian);
-
-/* The following are externally accessible for now only because 
-   the test routine calls them directly */
-QSASTIMEDLLIMPEXP const char * getDayOfWeek(const MJDtime *MJD);
-QSASTIMEDLLIMPEXP const char * getLongDayOfWeek( const MJDtime *MJD);
-QSASTIMEDLLIMPEXP const char * getMonth(int m);
-QSASTIMEDLLIMPEXP const char * getLongMonth(int m);
-QSASTIMEDLLIMPEXP int getDOY(const MJDtime *MJD, int forceJulian);
+QSASTIMEDLLIMPEXP void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
+QSASTIMEDLLIMPEXP void setFromBCE(int yearBCE, int month, int day, int hour, int min, double sec, MJDtime *MJD);
+QSASTIMEDLLIMPEXP void setFromMJD(double ModifiedJulianDate, MJDtime *MJD);
+QSASTIMEDLLIMPEXP void setFromCDFepoch(double cdfepoch, MJDtime *MJD);
+QSASTIMEDLLIMPEXP void setFromJD(double JulianDate, MJDtime *MJD);
+QSASTIMEDLLIMPEXP int setFromISOstring(const char* ISOstring, MJDtime *MJD);
+QSASTIMEDLLIMPEXP double getMJD(MJDtime *MJD);
+QSASTIMEDLLIMPEXP double getJD(MJDtime *MJD);
+QSASTIMEDLLIMPEXP double getDiffDays(MJDtime *MJD1, MJDtime *MJD2);
+QSASTIMEDLLIMPEXP double getDiffSecs(MJDtime *MJD1, MJDtime *MJD2);
+QSASTIMEDLLIMPEXP double getCDFepoch(MJDtime *MJD);
+QSASTIMEDLLIMPEXP const char * getISOString(MJDtime *MJD, int delim);

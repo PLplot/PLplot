@@ -26,6 +26,7 @@ include_directories(
 set(qsastime_LIB_SRCS
 qsastime.c
 qsastime.h
+qsastimedll.h
 )
 
 if(BUILD_SHARED_LIBS)
@@ -49,5 +50,7 @@ LIBRARY DESTINATION ${LIB_DIR}
 RUNTIME DESTINATION ${BIN_DIR}
 )
 
-add_executable(test_qsastime qsastime_test.c)
-target_link_libraries(test_qsastime qsastime)
+# qsastime_extra.[ch] provides helper functions for qsastime_test that should
+# not be part of the library.
+add_executable(qsastime_test qsastime_test.c qsastime_extra.c qsastime_extra.h)
+target_link_libraries(qsastime_test qsastime)
