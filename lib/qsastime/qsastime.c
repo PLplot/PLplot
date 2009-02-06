@@ -55,15 +55,11 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
 	/* Note C libraries use Gregorian only from 14 Sept 1752 onwards */
 
         int leaps, lastyear;
+	double dbase_day, time_sec, dextraDays;
+	int extraDays;
 
-	/* Approximate precaution to avoid overflowing integer portion of 
-	   MJD.  MJD epoch is 1858-11-17.  The months, days, etc., portion
-	   of this calculation are only included to guard against
-	   extremely large values being used for some/all of them. */
-	if(abs(365.25*(year-1858) + 12.*(month-10) + (day-17) + hour/24. 
-	       + min/1440. + sec/86400.) > 2.e9)
+	if(month < 1 || month > 12)
 	  return 1;
-	
 	if(year <= 0)
 	{
 		/* count leap years on Julian Calendar */
@@ -72,9 +68,16 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
 		
 		leaps = year / 4 - 1 ; /* (note leaps is negative here and year 0 (1 BCE) was a leap year */
 		if(year%4 == 0)
-			MJD->base_day = year * 365 + leaps + MonthStartDOY_L[month-1] + day - 678943;
+		  /* left to right associativity means the double constant
+		     value of 365. propagates to make all calculations be
+		     done in double precision without the potential of
+		     integer overflow.  The result should be a double which
+		     stores the expected exact integer results of the
+		     calculation with exact representation unless the
+		     result is much larger than the integer overflow limit. */
+		  dbase_day = year * 365. + leaps + MonthStartDOY_L[month-1] + day - 678943;
 		else
-			MJD->base_day = year * 365 + leaps + MonthStartDOY[month-1] + day - 678943;
+			dbase_day = year * 365. + leaps + MonthStartDOY[month-1] + day - 678943;
 
 	}
 	else if(year < 1582 || (year == 1582 && month < 10) || (year == 1582 && month == 10 && day < 15) || forceJulian)
@@ -84,35 +87,50 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
 	
 		leaps = (year -1 ) / 4;
 		if(year%4 == 0)
-			MJD->base_day = year * 365 + leaps + MonthStartDOY_L[month-1] + day - 678943;
+			dbase_day = year * 365. + leaps + MonthStartDOY_L[month-1] + day - 678943;
 		else
-			MJD->base_day = year * 365 + leaps + MonthStartDOY[month-1] + day - 678943;
+			dbase_day = year * 365. + leaps + MonthStartDOY[month-1] + day - 678943;
 	}
 	else
 	{
 		/* count leap years Gregorian Calendar - modern dates */
 		/* Algorithm below for  17 Nov 1858 (0 MJD) gives */
-		/* leaps = 450 and hence base_day of 678941, so subtract it to give MJD day  */
+		/* leaps = 450 and hence dbase_day of 678941, so subtract it to give MJD day  */
 		
 		lastyear = year - 1;
 		leaps = lastyear / 4 - lastyear / 100 + lastyear / 400;
 		if( (year%4 == 0 && year%100 != 0) || (year%4 == 0 && year%400 == 0) )
-			MJD->base_day = year * 365 + leaps + MonthStartDOY_L[month-1] + day - 678941;
+			dbase_day = year * 365. + leaps + MonthStartDOY_L[month-1] + day - 678941;
 		else
-			MJD->base_day = year * 365 + leaps + MonthStartDOY[month-1] + day - 678941;
+			dbase_day = year * 365. + leaps + MonthStartDOY[month-1] + day - 678941;
 	
 	}	
 		
-	MJD->time_sec = sec + ( (double) min  +  (double) hour * 60. ) * 60.;
+	time_sec = sec + ( (double) min  +  (double) hour * 60. ) * 60.;
 
-	if(MJD->time_sec >= SecInDay)
+	if(time_sec >= SecInDay)
 	{
-		int extraDays = (int) (MJD->time_sec / SecInDay);
-		MJD->base_day += extraDays;
-		MJD->time_sec -= extraDays * SecInDay;
+	        dextraDays = (time_sec / SecInDay);
+		/* precaution against overflowing extraDays. */
+		if(abs(dextraDays) > 2.e9) {
+		  return 2;
+		    }
+		extraDays = (int) (dextraDays);
+		dbase_day += extraDays;
+		time_sec -= extraDays * SecInDay;
 	}
-	
-	return 0;
+	/* precaution against overflowing MJD->base_day. */
+	if(abs(dbase_day) > 2.e9){
+	  return 3;
+	} else {
+	  /* The exact integer result should be represented exactly in the
+	     double, dbase_day, and its absolute value should be less than
+	     the integer overflow limit.  So the cast to int should be
+	     exact. */
+	  MJD->base_day = (int) dbase_day;
+	  MJD->time_sec = time_sec;
+	  return 0;
+	}
 }
 
 const char * getDayOfWeek( const MJDtime *MJD)
