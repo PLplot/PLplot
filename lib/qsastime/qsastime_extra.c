@@ -24,19 +24,19 @@
 
 */
 
-	/* MJD measures from the start of 17 Nov 1858 */
+/* MJD measures from the start of 17 Nov 1858 */
 	
-	/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregoriam
-	 Note C libraries use Gregorian only from 14 Sept 1752
-	 More detailed discussion can be found at http://aa.usno.navy.mil/data/docs/JulianDate.php
-	 These routines have been compared with the results of the US Naval Observatory online converter.
-	 Modified Julian Date (MJD) = Julian Date (JD) - 2400000.5
+/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregoriam
+   Note C libraries use Gregorian only from 14 Sept 1752
+   More detailed discussion can be found at http://aa.usno.navy.mil/data/docs/JulianDate.php
+   These routines have been compared with the results of the US Naval Observatory online converter.
+   Modified Julian Date (MJD) = Julian Date (JD) - 2400000.5
 	
-	 In all routines, specifying a day, hour, minute or second field greater than would be valid is
-	 handled with modulo arithmetic and safe.
-	 Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0
+   In all routines, specifying a day, hour, minute or second field greater than would be valid is
+   handled with modulo arithmetic and safe.
+   Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0
 	
-	*/
+*/
 
 #include "qsastime_extra.h"
 
@@ -45,230 +45,229 @@ static double SecInDay = 86400; /* we ignore leap seconds */
 	
 int setFromISOstring(const char* ISOstring, MJDtime *MJD)
 {
-	double seconds;
-	int   y, m, d, h, min;
-	int startAt=0;
-	int len = strlen(ISOstring);
+  double seconds;
+  int   y, m, d, h, min;
+  int startAt=0;
+  int len = strlen(ISOstring);
 	
-	/* ISO is "1995-01-23 02:33:17.235" or "1995-01-23T02:33:17.235Z" */
+  /* ISO is "1995-01-23 02:33:17.235" or "1995-01-23T02:33:17.235Z" */
 	
-	/* parse off year */
+  /* parse off year */
 
-	y = strtol(&(ISOstring[startAt]), NULL, 10);
-	startAt += 5;
-	if(startAt > len) return 1;
+  y = strtol(&(ISOstring[startAt]), NULL, 10);
+  startAt += 5;
+  if(startAt > len) return 1;
 
-	m =  strtol(&(ISOstring[startAt]), NULL, 10);
-	startAt += 3;
-	if(startAt > len) return 1;
+  m =  strtol(&(ISOstring[startAt]), NULL, 10);
+  startAt += 3;
+  if(startAt > len) return 1;
 
-	d = strtol(&(ISOstring[startAt]), NULL, 10);
-	startAt += 3;
-	if(startAt > len) return 1;
+  d = strtol(&(ISOstring[startAt]), NULL, 10);
+  startAt += 3;
+  if(startAt > len) return 1;
 
-	h = strtol(&(ISOstring[startAt]), NULL, 10);
-	startAt += 3;
-	if(startAt > len) return 1;
+  h = strtol(&(ISOstring[startAt]), NULL, 10);
+  startAt += 3;
+  if(startAt > len) return 1;
 
-	min = strtol(&(ISOstring[startAt]), NULL, 10);
-	startAt += 3;
-	if(startAt > len) return 1;
+  min = strtol(&(ISOstring[startAt]), NULL, 10);
+  startAt += 3;
+  if(startAt > len) return 1;
 
-	seconds = strtod(&(ISOstring[startAt]), NULL);
-	setFromUT(y, m, d, h, min, seconds, MJD, 0);
+  seconds = strtod(&(ISOstring[startAt]), NULL);
+  setFromUT(y, m, d, h, min, seconds, MJD, 0);
 	
-	return 0;
+  return 0;
 }
 
 
 void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
 {	
-	/* Set from Day Of Year format */
+  /* Set from Day Of Year format */
 	
-	/* convert Gregorian date plus time to MJD */
-	/* MJD measures from the start of 17 Nov 1858 */
+  /* convert Gregorian date plus time to MJD */
+  /* MJD measures from the start of 17 Nov 1858 */
 	
-	/* the int flag forceJulian forces use of Julian  calendar whatever the year */
-	/* default is to use Gregorian after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian */
-	/* Note C libraries use Gregorian only from 14 Sept 1752 onwards*/
+  /* the int flag forceJulian forces use of Julian  calendar whatever the year */
+  /* default is to use Gregorian after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian */
+  /* Note C libraries use Gregorian only from 14 Sept 1752 onwards*/
 
-        int leaps, lastyear,extraDays;
+  int leaps, lastyear,extraDays;
 
-	if(year <= 0)
-	{
-		/* count leap years on Julian Calendar */
-		/* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
-		/* negative CE (AD) years convert to BCE (BC) as  BCE = 1 - CE, e.g. 2 BCE = -1 CE */
+  if(year <= 0)
+    {
+      /* count leap years on Julian Calendar */
+      /* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
+      /* negative CE (AD) years convert to BCE (BC) as  BCE = 1 - CE, e.g. 2 BCE = -1 CE */
 		
-		leaps = year / 4 - 1 ; /* (note leaps is negative here and year 0 (1 BCE) was a leap year */
-		MJD->base_day = year * 365 + leaps + doy - 678943;
+      leaps = year / 4 - 1 ; /* (note leaps is negative here and year 0 (1 BCE) was a leap year */
+      MJD->base_day = year * 365 + leaps + doy - 678943;
 
-	}
-	else if(year < 1582 || (year == 1582 && doy < 288)  || forceJulian == 1)
-	{
-		/* count leap years on Julian Calendar */
-		/* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
+    }
+  else if(year < 1582 || (year == 1582 && doy < 288)  || forceJulian == 1)
+    {
+      /* count leap years on Julian Calendar */
+      /* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
 	
-		leaps = (year -1 ) / 4;
-		MJD->base_day = year * 365 + leaps + doy - 678943;
+      leaps = (year -1 ) / 4;
+      MJD->base_day = year * 365 + leaps + doy - 678943;
 		
-	}
-	else
-	{
-		/* count leap years Gregorian Calendar - modern dates */
-		/* Algorithm below for  17 Nov 1858 (0 MJD) gives */
-		/* leaps = 450 and hence base_day of 678941, so subtract it to give MJD day  */
+    }
+  else
+    {
+      /* count leap years Gregorian Calendar - modern dates */
+      /* Algorithm below for  17 Nov 1858 (0 MJD) gives */
+      /* leaps = 450 and hence base_day of 678941, so subtract it to give MJD day  */
 		
-		lastyear = year - 1;
-		leaps = lastyear / 4 - lastyear / 100 + lastyear / 400;
-		MJD->base_day = year * 365 + leaps + doy - 678941;
+      lastyear = year - 1;
+      leaps = lastyear / 4 - lastyear / 100 + lastyear / 400;
+      MJD->base_day = year * 365 + leaps + doy - 678941;
 	
-	}	
+    }	
 		
-	MJD->time_sec = sec + ( (double) min  +  (double) hour * 60. ) * 60.;
+  MJD->time_sec = sec + ( (double) min  +  (double) hour * 60. ) * 60.;
 
-	if(MJD->time_sec >= SecInDay)
-	{
-		extraDays = (int) (MJD->time_sec / SecInDay);
-		MJD->base_day += extraDays;
-		MJD->time_sec -= extraDays * SecInDay;
-	}
+  if(MJD->time_sec >= SecInDay)
+    {
+      extraDays = (int) (MJD->time_sec / SecInDay);
+      MJD->base_day += extraDays;
+      MJD->time_sec -= extraDays * SecInDay;
+    }
 	
-	return;
+  return;
 
 }
 
 
 void setFromBCE(int yearBCE, int month, int day, int hour, int min, double sec, MJDtime *MJD)
 {
-	/* utility to allow user to input dates BCE (BC) */
+  /* utility to allow user to input dates BCE (BC) */
 	
-	int year = 1 - yearBCE;
-	setFromUT(year, month, day, hour, min, sec, MJD, 0);
+  int year = 1 - yearBCE;
+  setFromUT(year, month, day, hour, min, sec, MJD, 0);
 	
 }
 
 void setFromMJD(double ModifiedJulianDate, MJDtime *MJD)
 {
-	/* convert MJD double into MJD structure */
-	MJD->base_day = (int) ModifiedJulianDate;
-	MJD->time_sec = (ModifiedJulianDate - MJD->base_day) * SecInDay;
+  /* convert MJD double into MJD structure */
+  MJD->base_day = (int) ModifiedJulianDate;
+  MJD->time_sec = (ModifiedJulianDate - MJD->base_day) * SecInDay;
 }
 
 void setFromJD(double JulianDate, MJDtime *MJD)
 {
-	/* break JD double into MJD based structure
-	   Note Julian Day starts Noon, so convert to MJD first */
+  /* break JD double into MJD based structure
+     Note Julian Day starts Noon, so convert to MJD first */
 
-	MJD->base_day = (int) (JulianDate - MJDtoJD) ;
-	MJD->time_sec = (JulianDate - MJDtoJD - (double) MJD->base_day) * SecInDay;
+  MJD->base_day = (int) (JulianDate - MJDtoJD) ;
+  MJD->time_sec = (JulianDate - MJDtoJD - (double) MJD->base_day) * SecInDay;
 }
 
 void setFromCDFepoch(double cdfepoch, MJDtime *MJD){
 
-	/* convert cdf epoch double into MJD structure
-	   Note that cdfepoch is msec from 0 AD on the Gregorian calendar */
+  /* convert cdf epoch double into MJD structure
+     Note that cdfepoch is msec from 0 AD on the Gregorian calendar */
 	
-	double seconds = cdfepoch * 0.001;
+  double seconds = cdfepoch * 0.001;
 
-	MJD->base_day = (int) (seconds / 86400.0);
-	MJD->time_sec = seconds - MJD->base_day * SecInDay;
-	MJD->base_day -= 678941;
+  MJD->base_day = (int) (seconds / 86400.0);
+  MJD->time_sec = seconds - MJD->base_day * SecInDay;
+  MJD->base_day -= 678941;
 
 }
 
 double getCDFepoch(MJDtime *MJD){
 
-	/* convert MJD structure into cdf epoch double
-	   Note that cdfepoch is msec from 0 AD on the Gregorian Calendar */
+  /* convert MJD structure into cdf epoch double
+     Note that cdfepoch is msec from 0 AD on the Gregorian Calendar */
 	
-	int days = MJD->base_day + 678941;
-	double seconds = days * SecInDay + MJD->time_sec;
-	return seconds * 1000.;
+  int days = MJD->base_day + 678941;
+  double seconds = days * SecInDay + MJD->time_sec;
+  return seconds * 1000.;
 }
 
 double getMJD(MJDtime *MJD)
 {
-	/* Return MJD as a double */
-	return  (double) MJD->base_day + MJD->time_sec / SecInDay ;
+  /* Return MJD as a double */
+  return  (double) MJD->base_day + MJD->time_sec / SecInDay ;
 }
 
 double getJD(MJDtime *MJD)
 {
-	/* Return JD as a double */
-	double JD = getMJD(MJD) + MJDtoJD;
-	return JD;
+  /* Return JD as a double */
+  double JD = getMJD(MJD) + MJDtoJD;
+  return JD;
 }
 
 double getDiffDays(MJDtime *MJD1, MJDtime *MJD2)
 {
-	/* Return difference MJD1 - MJD2 in days as a double */
-	double diff = (double)(MJD1->base_day - MJD2->base_day) + (MJD1->time_sec - MJD2->time_sec) / SecInDay;
-	return diff;
+  /* Return difference MJD1 - MJD2 in days as a double */
+  double diff = (double)(MJD1->base_day - MJD2->base_day) + (MJD1->time_sec - MJD2->time_sec) / SecInDay;
+  return diff;
 }
 
 double getDiffSecs(MJDtime *MJD1, MJDtime *MJD2)
 {
-	/* Return difference MJD1 - MJD2 in seconds as a double */
-	double diff = (double)(MJD1->base_day - MJD2->base_day) * SecInDay + (MJD1->time_sec - MJD2->time_sec) ;
-	return diff;
+  /* Return difference MJD1 - MJD2 in seconds as a double */
+  double diff = (double)(MJD1->base_day - MJD2->base_day) * SecInDay + (MJD1->time_sec - MJD2->time_sec) ;
+  return diff;
 }
 
 const char * getISOString(MJDtime* MJD, int delim)
 {
-	/* ISO time string for UTC */
-	/* uses default behaviour for Julian/Gregorian switch over */
-    /***
-	     Warning getISOString is not thread safe
-	     as it writes to a static variable DateTime
-	***/
+  /* ISO time string for UTC */
+  /* uses default behaviour for Julian/Gregorian switch over */
+  /***
+      Warning getISOString is not thread safe
+      as it writes to a static variable DateTime
+  ***/
 
-    static char DateTime[50];
-	int y, m, d, hour, min;
-	int sec1, ysign;
-	double sec;
-	int slen;
-	char* ptr;
+  static char DateTime[50];
+  int y, m, d, hour, min;
+  int sec1, ysign;
+  double sec;
+  int slen;
+  char* ptr;
 
-	breakDownMJD(&y, &m, &d, &hour, &min, &sec, MJD, 0);
+  breakDownMJD(&y, &m, &d, &hour, &min, &sec, MJD, 0);
 
-	if(y < 0)
-	{
-		ysign = 1;
-		y=-y;
-	}
-	else ysign = 0;	
+  if(y < 0)
+    {
+      ysign = 1;
+      y=-y;
+    }
+  else ysign = 0;	
 	
-	sec1 = (int)sec/10;
-	sec -= (double) sec1*10;
+  sec1 = (int)sec/10;
+  sec -= (double) sec1*10;
 	
-	if(delim == 1)
-	{
-		if(ysign == 0)
-			sprintf(DateTime,  "%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
-		else
-			sprintf(DateTime,  "-%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
+  if(delim == 1)
+    {
+      if(ysign == 0)
+	sprintf(DateTime,  "%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
+      else
+	sprintf(DateTime,  "-%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
 			
-		/* remove trailing white space */
-		while( ( ptr = strrchr(&(DateTime[0]), ' ')) != NULL)  	ptr[0] ='\0';
-		strcat(&(DateTime[0]), "Z");
-	}
-	else
+      /* remove trailing white space */
+      while( ( ptr = strrchr(&(DateTime[0]), ' ')) != NULL)  	ptr[0] ='\0';
+      strcat(&(DateTime[0]), "Z");
+    }
+  else
+    {
+      if(ysign == 0)
+	sprintf(DateTime,  "%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
+      else
+	sprintf(DateTime,  "-%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
+
+      /* remove trailing white space */
+      slen = strlen(DateTime)-1;
+      while( DateTime[slen] == ' ')
 	{
-		if(ysign == 0)
-			sprintf(DateTime,  "%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
-		else
-			sprintf(DateTime,  "-%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
-
-                /* remove trailing white space */
-                slen = strlen(DateTime)-1;
-                while( DateTime[slen] == ' ')
-                {
-                        DateTime[slen] ='\0';
-                        slen--;
-                }
-
+	  DateTime[slen] ='\0';
+	  slen--;
 	}
-	return &(DateTime[0]);
-}
 
+    }
+  return &(DateTime[0]);
+}

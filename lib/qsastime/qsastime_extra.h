@@ -26,25 +26,25 @@
 
 */
 
-	/* MJD measures from the start of 17 Nov 1858 */
+/* MJD measures from the start of 17 Nov 1858 */
 	
-	/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian
-	 Note C libraries use Gregorian only from 14 Sept 1752 
-	 More detailed discussion can be found at http://aa.usno.navy.mil/data/docs/JulianDate.php
-	 These routines have been compared with the results of the US Naval Observatory online converter.
-	 Modified Julian Date (MJD) = Julian Date (JD) - 2400000.5
+/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian
+   Note C libraries use Gregorian only from 14 Sept 1752 
+   More detailed discussion can be found at http://aa.usno.navy.mil/data/docs/JulianDate.php
+   These routines have been compared with the results of the US Naval Observatory online converter.
+   Modified Julian Date (MJD) = Julian Date (JD) - 2400000.5
 	 
-	 In all routines, specifying a day, hour, minute or second field greater than would be valid is
-	 handled with modulo arithmetic and safe. 
-	 Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0 
+   In all routines, specifying a day, hour, minute or second field greater than would be valid is
+   handled with modulo arithmetic and safe. 
+   Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0 
 	 
-	*/
+*/
 
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 /* include header file for dll definitions */
- #include "qsastime.h"
+#include "qsastime.h"
 
 QSASTIMEDLLIMPEXP void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
 QSASTIMEDLLIMPEXP void setFromBCE(int yearBCE, int month, int day, int hour, int min, double sec, MJDtime *MJD);
@@ -58,7 +58,6 @@ QSASTIMEDLLIMPEXP double getDiffDays(MJDtime *MJD1, MJDtime *MJD2);
 QSASTIMEDLLIMPEXP double getDiffSecs(MJDtime *MJD1, MJDtime *MJD2);
 QSASTIMEDLLIMPEXP double getCDFepoch(MJDtime *MJD);
 QSASTIMEDLLIMPEXP const char * getISOString(MJDtime *MJD, int delim);
-    /*** Warning getISOString is not thread safe ***/
+/*** Warning getISOString is not thread safe ***/
 
 #endif
-

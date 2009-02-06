@@ -26,36 +26,36 @@
 
 */
 
-	/* MJD measures from the start of 17 Nov 1858 */
+/* MJD measures from the start of 17 Nov 1858 */
 	
-	/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian
-	 Note C libraries use Gregorian only from 14 Sept 1752 
-	 More detailed discussion can be found at http://aa.usno.navy.mil/data/docs/JulianDate.php
-	 These routines have been compared with the results of the US Naval Observatory online converter.
-	 Modified Julian Date (MJD) = Julian Date (JD) - 2400000.5
+/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian
+   Note C libraries use Gregorian only from 14 Sept 1752 
+   More detailed discussion can be found at http://aa.usno.navy.mil/data/docs/JulianDate.php
+   These routines have been compared with the results of the US Naval Observatory online converter.
+   Modified Julian Date (MJD) = Julian Date (JD) - 2400000.5
 	 
-	 In all routines, specifying a day, hour, minute or second field greater than would be valid is
-	 handled with modulo arithmetic and safe. 
-	 Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0 
+   In all routines, specifying a day, hour, minute or second field greater than would be valid is
+   handled with modulo arithmetic and safe. 
+   Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0 
 	 
-	*/
+*/
 
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 /* include header file for dll definitions */
- #include "qsastimedll.h"
+#include "qsastimedll.h"
 
 
 typedef struct MJDtimeStruct
 { 
-	/* 
-	   MJD starts at 0h, so truncating MJD always gives the same day whatever the time (unlike JD).
-	   The MJD base day is arbitrary, i.e. seconds can be greater than one day or even negative.
-	*/
+  /* 
+     MJD starts at 0h, so truncating MJD always gives the same day whatever the time (unlike JD).
+     The MJD base day is arbitrary, i.e. seconds can be greater than one day or even negative.
+  */
 	   
-	int base_day; /* integer part of MJD used as default */
-	double time_sec; /* seconds from start of base_day */
+  int base_day; /* integer part of MJD used as default */
+  double time_sec; /* seconds from start of base_day */
 	
 }MJDtime;
 
