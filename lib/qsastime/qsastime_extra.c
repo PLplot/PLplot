@@ -75,7 +75,7 @@ int setFromISOstring(const char* ISOstring, MJDtime *MJD)
   if(startAt > len) return 1;
 
   seconds = strtod(&(ISOstring[startAt]), NULL);
-  setFromUT(y, m, d, h, min, seconds, MJD, 0);
+  setFromUT(y, m-1, d, h, min, seconds, MJD, 0);
 	
   return 0;
 }
@@ -245,9 +245,9 @@ const char * getISOString(MJDtime* MJD, int delim)
   if(delim == 1)
     {
       if(ysign == 0)
-	sprintf(DateTime,  "%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
+	sprintf(DateTime,  "%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m+1, d, hour, min, sec1, sec );
       else
-	sprintf(DateTime,  "-%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
+	sprintf(DateTime,  "-%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m+1, d, hour, min, sec1, sec );
 			
       /* remove trailing white space */
       while( ( ptr = strrchr(&(DateTime[0]), ' ')) != NULL)  	ptr[0] ='\0';
@@ -256,9 +256,9 @@ const char * getISOString(MJDtime* MJD, int delim)
   else
     {
       if(ysign == 0)
-	sprintf(DateTime,  "%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
+	sprintf(DateTime,  "%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m+1, d, hour, min, sec1, sec );
       else
-	sprintf(DateTime,  "-%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m, d, hour, min, sec1, sec );
+	sprintf(DateTime,  "-%04d-%02d-%02d %02d:%02d:%01d%-11.10f", y, m+1, d, hour, min, sec1, sec );
 
       /* remove trailing white space */
       slen = strlen(DateTime)-1;

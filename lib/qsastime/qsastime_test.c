@@ -34,7 +34,7 @@ int main()
   char buf[360];
   char copy[360];
   int y = 2004;
-  int m = 1;
+  int m = 0;
   int d = 23;
   int hour = 13;
   int min =39;
@@ -52,12 +52,12 @@ int main()
   MJDtime MJD2;
 	
 	
-  printf("Start date/time components: %d-%d-%d %d:%d:%13.11g\n", y, m, d, hour, min, sec);
+  printf("Start date/time components: %d-%d-%d %d:%d:%13.11g\n", y, m+1, d, hour, min, sec);
 	
   setFromUT(y, m, d, hour, min, sec, &MJD2, 0);
 	
   breakDownMJD(&y,&m,&d,&hour,&min,&sec, &MJD2, 0);
-  printf("date/time components: %d-%d-%d %d:%d:%13.11g\n\n", y, m, d, hour, min, sec );
+  printf("date/time components: %d-%d-%d %d:%d:%13.11g\n\n", y, m+1, d, hour, min, sec );
 	
   printf("MJD = %d, seconds = %17.15g\n", MJD2.base_day, MJD2.time_sec);
   printf( " MJD = %18.10f \n", getMJD(&MJD2));
@@ -101,7 +101,7 @@ int main()
 
   /* try julian/gregorian changeover */
   y = 1752;
-  m = 9;
+  m = 8;
   d = 15;
   hour = 0;
 	
@@ -122,7 +122,7 @@ int main()
   localt = (int)MJD2.time_sec + (MJD2.base_day - 40587) * 86400;
   ptm = gmtime(&localt);
 #ifndef _MSC_VER
-  /* note %s not implement in cygwin 1.5 gcc 3.x nothing printed */
+  /* note %s not implemented in cygwin 1.5 gcc 3.x nothing printed */
   strftime(&(buf[0]), 360,
 	   "  strftime(): (invalid before 1970)\n   ------\n '%a %b %e %H:%M:%S UTC %Y' \n %c\n %D %F \n %j \n %r \n %s \n %e-%b-%Y", ptm);
 #else

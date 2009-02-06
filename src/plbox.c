@@ -1248,7 +1248,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
             if (ldx) {
               t = (double) tn;
-              setFromUT(1970,1,1,0,0,t,&tm,0);
+              setFromUT(1970,0,1,0,0,t,&tm,0);
               strfMJD(string, 40, timefmt, &tm, 0);
             }
             else {
@@ -1297,7 +1297,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
             if (ldy) {
               t = (double) tn;
-              setFromUT(1970,1,1,0,0,t,&tm,0);
+              setFromUT(1970,0,1,0,0,t,&tm,0);
               strfMJD(string, 40, timefmt, &tm, 0);
             }
             else {

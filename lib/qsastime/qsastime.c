@@ -58,7 +58,7 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
   double dbase_day, time_sec, dextraDays;
   int extraDays;
 
-  if(month < 1 || month > 12)
+  if(month < 0 || month > 11)
     return 1;
   if(year <= 0)
     {
@@ -75,21 +75,21 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
 	   stores the expected exact integer results of the
 	   calculation with exact representation unless the
 	   result is much larger than the integer overflow limit. */
-	dbase_day = year * 365. + leaps + MonthStartDOY_L[month-1] + day - 678943;
+	dbase_day = year * 365. + leaps + MonthStartDOY_L[month] + day - 678943;
       else
-	dbase_day = year * 365. + leaps + MonthStartDOY[month-1] + day - 678943;
+	dbase_day = year * 365. + leaps + MonthStartDOY[month] + day - 678943;
 
     }
-  else if(year < 1582 || (year == 1582 && month < 10) || (year == 1582 && month == 10 && day < 15) || forceJulian)
+  else if(year < 1582 || (year == 1582 && month < 9) || (year == 1582 && month == 9 && day < 15) || forceJulian)
     {
       /* count leap years on Julian Calendar */
       /* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
 	
       leaps = (year -1 ) / 4;
       if(year%4 == 0)
-	dbase_day = year * 365. + leaps + MonthStartDOY_L[month-1] + day - 678943;
+	dbase_day = year * 365. + leaps + MonthStartDOY_L[month] + day - 678943;
       else
-	dbase_day = year * 365. + leaps + MonthStartDOY[month-1] + day - 678943;
+	dbase_day = year * 365. + leaps + MonthStartDOY[month] + day - 678943;
     }
   else
     {
@@ -100,9 +100,9 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
       lastyear = year - 1;
       leaps = lastyear / 4 - lastyear / 100 + lastyear / 400;
       if( (year%4 == 0 && year%100 != 0) || (year%4 == 0 && year%400 == 0) )
-	dbase_day = year * 365. + leaps + MonthStartDOY_L[month-1] + day - 678941;
+	dbase_day = year * 365. + leaps + MonthStartDOY_L[month] + day - 678941;
       else
-	dbase_day = year * 365. + leaps + MonthStartDOY[month-1] + day - 678941;
+	dbase_day = year * 365. + leaps + MonthStartDOY[month] + day - 678941;
 	
     }	
 		
@@ -150,13 +150,13 @@ const char * getLongDayOfWeek( const MJDtime *MJD)
 const char * getMonth( int m)
 {
   static char *months = {"Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec"};
-  return &(months[(m-1)*4]);
+  return &(months[(m)*4]);
 }
 
 const char * getLongMonth( int m)
 {
   static char *months = {"January\0\0\0February\0\0March\0\0\0\0\0April\0\0\0\0\0May\0\0\0\0\0\0\0June\0\0\0\0\0\0July\0\0\0\0\0\0August\0\0\0\0September\0October\0\0\0November\0\0December"};
-  return &(months[(m-1)*10]);
+  return &(months[(m)*10]);
 }
 
 
@@ -264,27 +264,27 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
       }
 		
     /* j is now always positive */
-    *month = 0;
+    *month = -1;
 		
     if(*year%4 != 0)
       {
-	while(j > MonthStartDOY[*month])
+	while(j > MonthStartDOY[*month +1])
 	  {
 	    (*month)++;
-	    if(*month == 12) break;
+	    if(*month == 11) break;
 	  }
-	*day = j - MonthStartDOY[*month -1];
+	*day = j - MonthStartDOY[*month];
       }
     else
       {
 	/* put this year's leap day back as it is done here */
 	j++;
-	while(j > MonthStartDOY_L[*month])
+	while(j > MonthStartDOY_L[*month +1])
 	  {
 	    (*month)++;
-	    if(*month == 12) break;
+	    if(*month == 11) break;
 	  }
-	*day = j - MonthStartDOY_L[*month -1];
+	*day = j - MonthStartDOY_L[*month];
       }
   }
   else if( j < -100840 || forceJulian == 1)
@@ -296,26 +296,26 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 	
       j = j - (int)(*year * 365.25);
 		
-      *month = 0;
+      *month = -1;
       if(*year%4 != 0)
 	{
-	  while(j > MonthStartDOY[*month])
+	  while(j > MonthStartDOY[*month +1])
 	    {
 	      (*month)++;
-	      if(*month == 12) break;
+	      if(*month == 11) break;
 	    }
-	  *day = j - MonthStartDOY[*month -1];
+	  *day = j - MonthStartDOY[*month];
 	}
       else
 	{
 	  /* put leap day back for this year as done here */
 	  j++;
-	  while(j > MonthStartDOY_L[*month])
+	  while(j > MonthStartDOY_L[*month + 1])
 	    {
 	      (*month)++;
-	      if(*month == 12) break;
+	      if(*month == 11) break;
 	    }
-	  *day = j - MonthStartDOY_L[*month -1];
+	  *day = j - MonthStartDOY_L[*month];
 	}
     }
   else
@@ -327,24 +327,24 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
       lastyear = *year - 1;
       j = j - *year * 365 - lastyear / 4 + lastyear / 100 - lastyear / 400;
 		
-      *month = 0;
+      *month = -1;
       if((*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0) )
 	{
-	  while(j > MonthStartDOY_L[*month])
+	  while(j > MonthStartDOY_L[*month +1])
 	    {
 	      (*month)++;
-	      if(*month == 12) break;
+	      if(*month == 11) break;
 	    }
-	  *day = j - MonthStartDOY_L[*month -1];
+	  *day = j - MonthStartDOY_L[*month];
 	}
       else
 	{
-	  while(j > MonthStartDOY[*month])
+	  while(j > MonthStartDOY[*month +1])
 	    {
 	      (*month)++;
-	      if(*month == 12) break;
+	      if(*month == 11) break;
 	    }
-	  *day = j - MonthStartDOY[*month -1];
+	  *day = j - MonthStartDOY[*month];
 	}
 
     }
@@ -481,9 +481,9 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	      /* month/day/year */
 	      int y = year %100;
 	      if(ysign == 0)
-		sprintf(DateTime, "%02d/%02d/%02d", month, day, y );
+		sprintf(DateTime, "%02d/%02d/%02d", month+1, day, y );
 	      else
-		sprintf(DateTime, "%02d/%02d/-%02d", month, day, y );
+		sprintf(DateTime, "%02d/%02d/-%02d", month+1, day, y );
 					
 	      strncat(&(buf[posn]), DateTime, last - posn);
 	      posn = strlen(buf);
@@ -505,9 +505,9 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	    {
 	      /* year-month-day */
 	      if(ysign == 0)
-		sprintf(DateTime, "%04d-%02d-%02d", year, month, day );
+		sprintf(DateTime, "%04d-%02d-%02d", year, month+1, day );
 	      else
-		sprintf(DateTime, "-%04d-%02d-%02d", year, month, day );
+		sprintf(DateTime, "-%04d-%02d-%02d", year, month+1, day );
 					
 	      strncat(&(buf[posn]), DateTime, last - posn);
 	      posn = strlen(buf);
@@ -571,7 +571,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'm')
 	    {
 	      /* month (01 - 12) */
-	      sprintf(DateTime, "%02d", month);
+	      sprintf(DateTime, "%02d", month+1);
 				
 	      strncat(&(buf[posn]), DateTime, last - posn);
 	      posn = strlen(buf);
@@ -802,7 +802,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'Z')
 	    {
 	      /* time zone and calendar, alwaus UTC */
-	      if(year < 1582 || (year == 1582 && month < 10) || (year == 1582 && month == 10 && day < 15) || forceJulian == 1)
+	      if(year < 1582 || (year == 1582 && month < 9) || (year == 1582 && month == 9 && day < 15) || forceJulian == 1)
 		strncat(&(buf[posn]), "UTC Julian", last - posn);
 	      else
 		strncat(&(buf[posn]), "UTC Gregorian", last - posn);
