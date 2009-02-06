@@ -29,15 +29,15 @@
 /* MJD measures from the start of 17 Nov 1858 */
 	
 /* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian
-   Note C libraries use Gregorian only from 14 Sept 1752 
+   Note C libraries use Gregorian only from 14 Sept 1752
    More detailed discussion can be found at http://aa.usno.navy.mil/data/docs/JulianDate.php
    These routines have been compared with the results of the US Naval Observatory online converter.
    Modified Julian Date (MJD) = Julian Date (JD) - 2400000.5
-	 
+	
    In all routines, specifying a day, hour, minute or second field greater than would be valid is
-   handled with modulo arithmetic and safe. 
-   Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0 
-	 
+   handled with modulo arithmetic and safe.
+   Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0
+	
 */
 
 #include <stdio.h>
@@ -48,12 +48,12 @@
 
 
 typedef struct MJDtimeStruct
-{ 
-  /* 
+{
+  /*
      MJD starts at 0h, so truncating MJD always gives the same day whatever the time (unlike JD).
      The MJD base day is arbitrary, i.e. seconds can be greater than one day or even negative.
   */
-	   
+	
   int base_day; /* integer part of MJD used as default */
   double time_sec; /* seconds from start of base_day */
 	
@@ -64,7 +64,7 @@ QSASTIMEDLLIMPEXP int setFromUT(int year, int month, int day, int hour, int min,
 QSASTIMEDLLIMPEXP void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian);
 QSASTIMEDLLIMPEXP size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian);
 
-/* The following are externally accessible for now only because 
+/* The following are externally accessible for now only because
    the test routine calls them directly */
 QSASTIMEDLLIMPEXP const char * getDayOfWeek(const MJDtime *MJD);
 QSASTIMEDLLIMPEXP const char * getLongDayOfWeek( const MJDtime *MJD);

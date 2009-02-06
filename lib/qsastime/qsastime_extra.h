@@ -29,15 +29,15 @@
 /* MJD measures from the start of 17 Nov 1858 */
 	
 /* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian
-   Note C libraries use Gregorian only from 14 Sept 1752 
+   Note C libraries use Gregorian only from 14 Sept 1752
    More detailed discussion can be found at http://aa.usno.navy.mil/data/docs/JulianDate.php
    These routines have been compared with the results of the US Naval Observatory online converter.
    Modified Julian Date (MJD) = Julian Date (JD) - 2400000.5
-	 
+	
    In all routines, specifying a day, hour, minute or second field greater than would be valid is
-   handled with modulo arithmetic and safe. 
-   Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0 
-	 
+   handled with modulo arithmetic and safe.
+   Thus 2006-12-32 00:62:00.0 will safely, and correctly, be treated as 2007-01-01 01:02:00.0
+	
 */
 
 #include <stdio.h>

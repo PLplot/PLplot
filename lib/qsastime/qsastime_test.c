@@ -87,7 +87,7 @@ int main()
   printf("CDF epoch sec %18.3f\n", epoch);
   setFromCDFepoch(epoch, &MJD2);
   printf("from CDF ISO string (CDF epoch is accurate to msec only) = '%s'\n" , getISOString(&MJD2, 1));
-    
+
   printf("Day of week is/was %s\n\n", getDayOfWeek(&MJD2));
 	
   ISOstring = getISOString(&MJD1,0);
@@ -126,9 +126,9 @@ int main()
   strftime(&(buf[0]), 360,
 	   "  strftime(): (invalid before 1970)\n   ------\n '%a %b %e %H:%M:%S UTC %Y' \n %c\n %D %F \n %j \n %r \n %s \n %e-%b-%Y", ptm);
 #else
-  /* the following format options are not defined in MSVC (2008) 
+  /* the following format options are not defined in MSVC (2008)
      and are replaced as follows
-     %e -> %d     will print as 01 etc 
+     %e -> %d     will print as 01 etc
      %D -> %m/%d/%y
      %F -> %Y-%m-%d
      %r -> %I:%M:%S %p
