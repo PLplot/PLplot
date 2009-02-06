@@ -45,7 +45,7 @@ static int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
 static const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 static const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
 	
-void setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
+int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
 {	
 	/* convert Gregorian date plus time to MJD */
 	/* MJD measures from the start of 17 Nov 1858 */
@@ -56,6 +56,14 @@ void setFromUT(int year, int month, int day, int hour, int min, double sec, MJDt
 
         int leaps, lastyear;
 
+	/* Approximate precaution to avoid overflowing integer portion of 
+	   MJD.  MJD epoch is 1858-11-17.  The months, days, etc., portion
+	   of this calculation are only included to guard against
+	   extremely large values being used for some/all of them. */
+	if(abs(365.25*(year-1858) + 12.*(month-10) + (day-17) + hour/24. 
+	       + min/1440. + sec/86400.) > 2.e9)
+	  return 1;
+	
 	if(year <= 0)
 	{
 		/* count leap years on Julian Calendar */
@@ -104,7 +112,7 @@ void setFromUT(int year, int month, int day, int hour, int min, double sec, MJDt
 		MJD->time_sec -= extraDays * SecInDay;
 	}
 	
-	return;
+	return 0;
 }
 
 const char * getDayOfWeek( const MJDtime *MJD)
