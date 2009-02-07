@@ -1838,6 +1838,7 @@ plP_getmember(PLStream *pls)
     char tmp[256];
     char prefix[256];
     char* suffix;
+    char num[12];
 
     if (pls->FileName == NULL)
       {
@@ -1849,15 +1850,17 @@ plP_getmember(PLStream *pls)
 
     suffix = strstr (pls->BaseName, "%n");
 
+    sprintf(tmp, "%%0%1ii", (int) pls->fflen);
+    sprintf(num, tmp, pls->member);
+
     if (suffix == NULL)
-      sprintf (tmp, "%s.%%0%1ii", pls->BaseName, (int) pls->fflen);
+      sprintf (pls->FileName, "%s.%s", pls->BaseName, num);
     else {
       strncpy (prefix, pls->BaseName, 256);
       prefix [suffix - pls->BaseName] = 0;
-      sprintf (tmp, "%s%%0%1ii%s", prefix, (int) pls->fflen, suffix + 2);
+      sprintf (pls->FileName, "%s%s%s", prefix, num, suffix + 2);
     }
 
-    sprintf(pls->FileName, tmp, pls->member);
 }
 
 /*--------------------------------------------------------------------------*\
