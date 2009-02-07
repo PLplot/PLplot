@@ -238,6 +238,8 @@
       integer nx, ny, kx, lx, ky, ly, nlevel
       real*8 z(nx, ny), clevel(nlevel)
       real*8 tr(6)
+
+!DEC$ ATTRIBUTES DLLEXPORT :: PLPLOT
       common /plplot/ tr
 
       call plcont7(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,tr)

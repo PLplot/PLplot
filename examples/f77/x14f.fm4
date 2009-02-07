@@ -59,7 +59,7 @@ C      Process command-line arguments
 
       write(6,'(3A)') 'Demo of multiple output streams via the ',
      &  driver(:lnblnk(driver)), ' driver.'
-      write(6,'(A)') 'Running with the second stream as slave '// 
+      write(6,'(A)') 'Running with the second stream as slave '//
      &  'to the first.'
       write(6,*)
 C      flush unit 6 so this part of stdout is guaranteed to be written prior
@@ -407,6 +407,7 @@ C      arrays that is actually used.
      &  xg2(xdim, ydim), yg2(xdim, ydim)
       real*8 tr, xx, yy, argx, argy, distort
 
+!DEC$ ATTRIBUTES DLLIMPORT :: PLPLOT
       common /plplot/ tr(6)
 
       data clevel /-1.d0, -0.8d0, -0.6d0, -0.4d0, -0.2d0,

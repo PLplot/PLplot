@@ -34,6 +34,7 @@ C      arrays that is actually used.
      &  xg2(xdim, ydim), yg2(xdim, ydim)
       real*8 tr, xx, yy, argx, argy, distort
 
+CDEC$ ATTRIBUTES DLLIMPORT :: PLPLOT
       common /plplot/ tr(6)
 
       data clevel /-1.d0, -0.8d0, -0.6d0, -0.4d0, -0.2d0,
