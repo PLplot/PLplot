@@ -1,0 +1,163 @@
+The desired API for libqsastime should consist of just four functions that
+are actually publicly visible.  The
+names of these four functions are subject to change, but I hope we can
+finalize those names shortly.
+
+=========================
+
+int time_config(double offset1, double offset2, int year, int month,
+int day, int hour, int min, double sec, ifcoffset, double scale,
+int correction);
+
+This routine sets four global variable values for the libqsastime library to
+be used to configure the transformation between the continuous time scale
+and broken-down time scale used by the APIs of the btime,
+ctime, and time_qsas routines documented below.  The formal
+arguments offset1 and offset2 specify the offset of the chosen continuous
+time epoch from the MJD epoch. (The continuous time variable internal to
+libqsastime is MJD.) Normally epoch1 is integer (which can be exactly stored
+in a double for a very wide range of integers) and offset2 is normally a
+non-integer whose absolute value is less than 1.  This arrangement leads to
+high numerical precision for the continuous time variable for a wide dynamic
+range. The formal argument scale specifies how to multiply the internal unit
+of time (days) to get the desired unit of time in the continuous time
+variable.  ifcoffset non-zero (true) means offset1 and offset2 will be
+taken directly from the actual offset1 and offset2 arguments specified,
+and the broken-down year, month, day, hour, min, and sec variable values
+will be ignored.  
+For ifcoffset false (0) the actual values of offset1 and offset2 will be
+ignored, and the broken-down values will be used to calculate offset1 and
+offset2 that are actually used by libqsastime.
+
+The formal argument correction is a switch to allow control of
+optional additional corrections in the transformation between broken-down
+time and continuous time. Currently the two valid values of correction are 0
+and 1.  If the actual correction value is 0, then no additional corrections
+are done, and if the actual correction value is 1, then leap seconds are
+inserted as per the UTC definition into the broken down time to derive the
+continuous time.  Other correction values are reserved for future use (which
+might include, for example, putting in the time ephemeris correction to
+allow calculation of the component of TCB or JPL ephemeris time that is
+independent of observer position following the formulas in Irwin and
+Fukushima, 1999, http://adsabs.harvard.edu/full/1999A&A...348..642I). The
+routine returns 0 if a valid correction code has been specified. If an
+invalid correction code is specified, it does nothing and returns an error
+code (1).
+
+Although this API gives the user a large degree of flexibility in choosing
+the transformation between broken-down time and continuous time, a number of
+combinations of offset1, offset2, scale, and correction are documented
+below for some common time system transformations to guide the user.
+(Some of these are currently just placeholders.)
+
+Broken-    Contin-    offset1    offset2    scale    correction  Notes
+down	   uous
+time	   time
+
+Civil	   MJD (TT)   0.         0.         1.       1           1, 2, 3
+Civil	   JD (TT)    2400000.	 0.5	    1.	     1		 2, 3
+TT	   MJD (TT)   0.	 0.	    1.	     0		 4
+TT	   MJD (TAI)  0.	-0.0003725  1.	     0		 5
+TT	   TT  	      0.	 0.	    86400.   0		 6
+
+Specific notes for the table.
+
+1. These offset1, offset2, scale, and correction values are the
+library default if the user does not call time_config at all.
+
+2. We define civil time as the civil time on the prime meridian. (The user
+is responsible for converting their local time to civil time using their
+locale data for time zone and daylight savings time adjustment).  Currently,
+our civil time corresponds to UTC as defined in note 3. 
+
+3. We use the file at http://maia.usno.navy.mil/ser7/tai-utc.dat to define
+the relationship between UTC and TAI (and thus TT) for correction = 1.  
+
+For epochs prior to the starting date of that file (1961-01-01 = JD
+2437300.5 UTC) we assume the same TAI-UTC offset of 1.422818 seconds as for
+the starting date of that file.  This assumption of no variation in the
+earth rotation rate prior to 1961 is obviously not correct so that the TT
+derived from our code will not be reliable prior to that date.  That is, if
+you use GMT (a historical backwards extension of UTC corresponding to civil
+time for the prime meridian) for broken down time prior to 1961, the TT
+result you will get will not produce a good approximation to the historical
+ephemeris time that is the correct backwards extension of TT, see
+http://en.wikipedia.org/wiki/Ephemeris_time. 
+
+For epochs after the ending date of that file (currently 2009-01-01 = JD
+2454832.5 UTC) we assume the same TAI-UTC offset (currently 34 seconds) as
+for the ending date of that file, i.e., we assume no leap seconds after the
+ending date of the file. Insertion of leap seconds cannot be predicted years
+in advance (because future predictions of the earth rotation rate are not
+reliable on such time scales) so the transformation between civil time (UTC)
+and TT cannot be known years in advance.  However, the approximation of
+assuming no leap seconds after the end of the file should be correct on time
+scales less than roughly a year so when a decision is made in advance to
+insert an official leap second, there should be plenty of time for that
+decision to propagate to http://maia.usno.navy.mil/ser7/tai-utc.dat and
+ultimately our code releases. Thus, so long as we make releases on a timely
+basis, our calculation of TT for current epochs should always be reliable.
+
+2. I haven't checked the code yet, but I assume this relationship holds for
+all transformations between broken-down time and continuous time in MJD
+when the broken-down time and continuous time are defined on the same
+continuous time scale (TT in this case).  All other relationships are
+derived from the known offsets with respect to TT and differences between
+MJD epochs and native (TT, TAI, etc.) epochs.
+
+3. Offset derived from definition TT = TAI + 32.184 s = TAI + 0.0003725 d
+
+4. Continuous times (e.g., TT) without further designation are in seconds
+since the native (e.g., TT) epoch.  NEEDS WORK to figure out offset.
+
+5. the POSIX time standard of seconds since the Unix epoch is actually
+discontinuous (see remarks in http://en.wikipedia.org/wiki/Unix_Time).  So
+our "Unix (TAI)" continuous time scale (NOT YET IN THE TABLE) corresponds to
+the continuous "International Atomic Time-based variant" discussed in the
+above article.  NEEDS FURTHER INVESTIGATION.
+
+dTT/dTCG = 1-LG, where LG = 6.969290134D-10,
+IAU Resolution B1.9 Re-definition of Terrestrial Time TT,
+http://syrte.obspm.fr/IAU_resolutions/Resol-UAI.htm
+
+=========================
+
+void ctime (int year, int month, int day, int hour, int min,
+double sec, double *continuous, int  forceJulian);
+
+Determine continuous time (ctime).  Wraps the existing internal (not
+exported) setFromUT to use the four global variables discussed above in the
+transformation from broken-down-time to ctime.  Note, because of the
+transformation implied by the four variables mentioned above, the ctime
+result can be stored in just a double assuming the user has picked a
+reasonable epoch that is not so distant from his plotted range of times that
+it causes noticable loss of numerical precision.
+
+=========================
+
+void btime (int *year, int *month, int *day, int *hour, int *min,
+double *sec,  double continuous, int forceJulian);
+
+Determine broken-down time (btime). This is the inverse of ctime.  It wraps
+the existing internal (not exported) breakDownMJD to use the four global
+variables discussed above in the transformation from ctime to btime. Note,
+because of the transformation implied by the four variables mentioned above,
+the input ctime stored in the continuous variable can be just a double
+assuming the user has picked a reasonable epoch that is not so distant from
+his plotted range of times that it causes noticable loss of numerical
+precision.
+
+=========================
+
+size_t strfcsas (char * buf, size_t len,  const char * format, const
+double continuous);
+
+This wraps the existing internal (not exported) strfMJD to use the four global
+variables discussed above in the transformation from ctime to btime. Note,
+because of the transformation implied by the four variables mentioned above,
+the input ctime stored in the continuous variable can be just a double
+assuming the user has picked a reasonable epoch that is not so distant from
+his plotted range of times that it causes noticable loss of numerical
+precision.
+
+=========================
