@@ -26,7 +26,7 @@
 
 /* MJD measures from the start of 17 Nov 1858 */
 	
-/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregoriam
+/* These utilities use the Gregorian calendar after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian
    Note C libraries use Gregorian only from 14 Sept 1752
    More detailed discussion can be found at http://aa.usno.navy.mil/data/docs/JulianDate.php
    These routines have been compared with the results of the US Naval Observatory online converter.
@@ -60,7 +60,9 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
 
   if(month < 0 || month > 11)
     return 1;
-  if(year <= 0)
+  if(forceJulian < -1 || forceJulian > 1)
+    return 2;
+  if(year <= 0 && forceJulian != -1)
     {
       /* count leap years on Julian Calendar */
       /* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
@@ -80,7 +82,7 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
 	dbase_day = year * 365. + leaps + MonthStartDOY[month] + day - 678943;
 
     }
-  else if(year < 1582 || (year == 1582 && month < 9) || (year == 1582 && month == 9 && day < 15) || forceJulian)
+  else if((forceJulian == 0 && (year < 1582 || (year == 1582 && month < 9) || (year == 1582 && month == 9 && day < 15))) || forceJulian == 1)
     {
       /* count leap years on Julian Calendar */
       /* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
@@ -113,7 +115,7 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
       dextraDays = (time_sec / SecInDay);
       /* precaution against overflowing extraDays. */
       if(abs(dextraDays) > 2.e9) {
-	return 2;
+	return 3;
       }
       extraDays = (int) (dextraDays);
       dbase_day += extraDays;
@@ -121,7 +123,7 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
     }
   /* precaution against overflowing MJD->base_day. */
   if(abs(dbase_day) > 2.e9){
-    return 3;
+    return 4;
   } else {
     /* The exact integer result should be represented exactly in the
        double, dbase_day, and its absolute value should be less than
