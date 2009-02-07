@@ -58,5 +58,15 @@ RUNTIME DESTINATION ${BIN_DIR}
 
 # qsastime_extra.[ch] provides helper functions for qsastime_test that should
 # not be part of the library.
-add_executable(qsastime_test qsastime_test.c qsastime_extra.c qsastime_extra.h)
+
+add_executable(qsastime_test qsastime_test.c qsastime_extra.c)
 target_link_libraries(qsastime_test qsastime)
+
+# Routine for testing just the library functions against equivalent
+# Linux C library routines for 64-bit platforms.
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  # N.B. the routine immediately errors out if sizeof(time_t) < 8 so
+  # it effectively only works on 64-bit Linux platforms.
+  add_executable(qsastime_testlib qsastime_testlib.c)
+  target_link_libraries(qsastime_testlib qsastime)
+endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
