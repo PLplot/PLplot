@@ -54,57 +54,65 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
   /* default is to use Gregorian after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian */
   /* Note C libraries use Gregorian only from 14 Sept 1752 onwards */
 
-  int leaps, lastyear;
-  double dbase_day, time_sec, dextraDays;
+  int leaps, year4, year100, year400;
+  double dbase_day, non_leaps = 365.;
+  //int dbase_day, non_leaps = 365;
+  double time_sec, dextraDays;
   int extraDays;
 
   if(month < 0 || month > 11)
     return 1;
   if(forceJulian < -1 || forceJulian > 1)
     return 2;
-  if(year <= 0 && forceJulian != -1)
+  /* As year increases, year4/4 increments by 1 at 
+     year = -7, -3, 1, 5, 9, etc. */
+  /* As year increases, year100/100 increments by 1 at 
+     year = -299, -199, -99, 1, 101, 201, 301, etc. */
+  /* As year increases, year400/400 increments by 1 at 
+     year = -1199, -799, -399, 1, 401, 801, 1201, etc. */
+  if(year <=0) {
+    year4 = year - 4;
+    year100 = year - 100;
+    year400 = year - 400;
+  } else {
+    year4 = year - 1;
+    year100 = year - 1;
+    year400 = year - 1;
+  }  
+  if((forceJulian == 0 && (year < 1582 || (year == 1582 && month < 9) || (year == 1582 && month == 9 && day < 15))) || forceJulian == 1)
     {
-      /* count leap years on Julian Calendar */
-      /* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
-      /* negative CE (AD) years convert to BCE (BC) as  BCE = 1 - CE, e.g. 2 BCE = -1 CE */
-		
-      leaps = year / 4 - 1 ; /* (note leaps is negative here and year 0 (1 BCE) was a leap year */
-      if(year%4 == 0)
-	/* left to right associativity means the double constant
-	   value of 365. propagates to make all calculations be
-	   done in double precision without the potential of
-	   integer overflow.  The result should be a double which
-	   stores the expected exact integer results of the
-	   calculation with exact representation unless the
-	   result is much larger than the integer overflow limit. */
-	dbase_day = year * 365. + leaps + MonthStartDOY_L[month] + day - 678943;
-      else
-	dbase_day = year * 365. + leaps + MonthStartDOY[month] + day - 678943;
-
-    }
-  else if((forceJulian == 0 && (year < 1582 || (year == 1582 && month < 9) || (year == 1582 && month == 9 && day < 15))) || forceJulian == 1)
-    {
-      /* count leap years on Julian Calendar */
+      /* count leap years on proleptic Julian Calendar */
       /* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
 	
-      leaps = (year -1 ) / 4;
+      leaps = year4 / 4;
       if(year%4 == 0)
-	dbase_day = year * 365. + leaps + MonthStartDOY_L[month] + day - 678943;
+	dbase_day = year * non_leaps + leaps + MonthStartDOY_L[month] + day - 678943;
       else
-	dbase_day = year * 365. + leaps + MonthStartDOY[month] + day - 678943;
+	dbase_day = year * non_leaps + leaps + MonthStartDOY[month] + day - 678943;
     }
   else
     {
-      /* count leap years Gregorian Calendar - modern dates */
-      /* Algorithm below for  17 Nov 1858 (0 MJD) gives */
-      /* leaps = 450 and hence dbase_day of 678941, so subtract it to give MJD day  */
+      /* count leap years for proleptic Gregorian Calendar. */
+      /* Algorithm below for 1858-11-17 (0 MJD) gives */
+      /* leaps = 450 and hence dbase_day of 678941, so subtract that value */
+      /* to give MJD day.  Note this zero point is two days different from */
+      /* Julian zero point above, because proleptic Gregorian is behind */
+      /* Julian by two days at year = 1, see */
+      /* http://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar, */
 		
-      lastyear = year - 1;
-      leaps = lastyear / 4 - lastyear / 100 + lastyear / 400;
+      leaps = year4 / 4 - year100 / 100 + year400 / 400;
+       
+      /* left to right associativity means the double value of
+	 non_leaps propagate to make all calculations be
+	 done in double precision without the potential of
+	 integer overflow.  The result should be a double which
+	 stores the expected exact integer results of the
+	 calculation with exact representation unless the
+	 result is much larger than the integer overflow limit. */
       if( (year%4 == 0 && year%100 != 0) || (year%4 == 0 && year%400 == 0) )
-	dbase_day = year * 365. + leaps + MonthStartDOY_L[month] + day - 678941;
+	dbase_day = year * non_leaps + leaps + MonthStartDOY_L[month] + day - 678941;
       else
-	dbase_day = year * 365. + leaps + MonthStartDOY[month] + day - 678941;
+	dbase_day = year * non_leaps + leaps + MonthStartDOY[month] + day - 678941;
 	
     }	
 		
