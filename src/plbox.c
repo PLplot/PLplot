@@ -1428,6 +1428,7 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *string, PLINT len, PLINT ll, 
 
 	snprintf(form, FORMAT_LEN, "%%.%df", (int) prec);
 	snprintf(temp, TEMP_LEN, form, value);
-	strncpy(string, temp, len);
+	strncpy(string, temp, len-1);
+        string[len-1] = '\0';
     }
 }

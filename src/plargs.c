@@ -1668,6 +1668,7 @@ opt_wplt(const char *opt, const char *optarg, void *client_data)
     PLFLT xl, yl, xr, yr;
 
     strncpy(opttmp, optarg, OPTMAX-1);
+    opttmp[OPTMAX-1] = '\0';
 
     if ((field = strtok(opttmp, ",")) == NULL)
 	return 1;
@@ -2090,6 +2091,7 @@ opt_geo(const char *opt, const char *optarg, void *client_data)
 /* Set up plplot dimensions */
 
     strncpy(opttmp, optarg, OPTMAX-1);
+    opttmp[OPTMAX-1] = '\0';
     if (strchr (opttmp, 'x')) {
 
     /* -geometry WxH or -geometry WxH+Xoff+Yoff */
@@ -2162,6 +2164,7 @@ opt_dpi(const char *opt, const char *optarg, void *client_data)
     PLINT xwid = 0, ywid = 0, xoff = 0, yoff = 0;
 
     strncpy(opttmp, optarg, OPTMAX-1);
+    opttmp[OPTMAX-1] = '\0';
     if (strchr (opttmp, 'x')) {
 	field = strtok (opttmp, "x");
 	xdpi = atof (field);

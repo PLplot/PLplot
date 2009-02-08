@@ -683,6 +683,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                   if (ptr == NULL) {
                     char buf[BUFFER_SIZE];
                     strncpy (buf, string, 30);
+                    buf[30] = '\0';
                     snprintf (buf, BUFFER_SIZE, "UTF-8 string is malformed: %s%s",
                              buf, strlen (string) > 30 ? "[...]" : "");
                     plabort (buf);

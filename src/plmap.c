@@ -105,6 +105,7 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
      */
     strncpy(filename,type,100);
     strncat(filename,MAP_FILE,100);
+    filename[99] = '\0';
 
     if ((in = plLibOpenPdfstrm(filename)) == NULL)
 	return;

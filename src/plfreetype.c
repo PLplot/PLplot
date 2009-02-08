@@ -597,10 +597,11 @@ void plD_FreeType_init(PLStream *pls)
 #if defined(MSDOS) || defined(WIN32)
     static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.ttf",
 				       "symbol.ttf"};
-    char WINDIR_PATH[255];
+    char WINDIR_PATH[PLPLOT_MAX_PATH];
     char *b;
     b=getenv("WINDIR");
-    strncpy(WINDIR_PATH,b,255);
+    strncpy(WINDIR_PATH,b,PLPLOT_MAX_PATH-1);
+    WINDIR_PATH[PLPLOT_MAX_PATH-1] = '\0';
 #else
     const char *default_unix_font_dir=PL_FREETYPE_FONT_DIR;
 #endif
@@ -647,7 +648,7 @@ void plD_FreeType_init(PLStream *pls)
     }
     else
     {
-      strncat(WINDIR_PATH,"\\fonts\\arial.ttf",255);
+      strncat(WINDIR_PATH,"\\fonts\\arial.ttf",PLPLOT_MAX_PATH);
       if (access(WINDIR_PATH, F_OK)==0)
         {
           b=strrchr(WINDIR_PATH,'\\');
@@ -672,10 +673,11 @@ void plD_FreeType_init(PLStream *pls)
  */
 
     if ((a = getenv("PLPLOT_FREETYPE_FONT_DIR")) != NULL)
-        strncpy(font_dir,a,PLPLOT_MAX_PATH);
+        strncpy(font_dir,a,PLPLOT_MAX_PATH-1);
     else
-        strncpy(font_dir,default_unix_font_dir,PLPLOT_MAX_PATH);
+        strncpy(font_dir,default_unix_font_dir,PLPLOT_MAX_PATH-1);
 
+    font_dir[PLPLOT_MAX_PATH-1] = '\0';
 #endif
 
 /*
@@ -701,17 +703,18 @@ void plD_FreeType_init(PLStream *pls)
 #else
 	    if ((a[0]=='/')||(a[0]=='~')) /* check for unix abs path */
 #endif
-		strncpy(FT->font_name[i],a,PLPLOT_MAX_PATH);
+		strncpy(FT->font_name[i],a,PLPLOT_MAX_PATH-1);
 
 	    else {
-		strncpy(FT->font_name[i],font_dir,PLPLOT_MAX_PATH);
-		strncat(FT->font_name[i],a,PLPLOT_MAX_PATH);
+		strncpy(FT->font_name[i],font_dir,PLPLOT_MAX_PATH-1);
+		strncat(FT->font_name[i],a,PLPLOT_MAX_PATH-1);
 	    }
 
 	} else {
-	    strncpy(FT->font_name[i],font_dir,PLPLOT_MAX_PATH);
-	    strncat(FT->font_name[i],(char *)TrueTypeLookup[i].pfont,PLPLOT_MAX_PATH);
+	    strncpy(FT->font_name[i],font_dir,PLPLOT_MAX_PATH-1);
+	    strncat(FT->font_name[i],(char *)TrueTypeLookup[i].pfont,PLPLOT_MAX_PATH-1);
 	}
+        FT->font_name[i][PLPLOT_MAX_PATH-1] = '\0';
 
    {
    FILE *infile ;

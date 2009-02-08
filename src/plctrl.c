@@ -1619,12 +1619,12 @@ int
 plFindName(char *p)
 {
     int n;
-    char buf[1024], *cp;
+    char buf[PLPLOT_MAX_PATH], *cp;
     extern int errno;
     struct stat sbuf;
 
     pldebug("plFindName", "Trying to find %s\n", p);
-    while ((n = readlink(p, buf, 1024)) > 0) {
+    while ((n = readlink(p, buf, PLPLOT_MAX_PATH)) > 0) {
 	pldebug("plFindName", "Readlink read %d chars at: %s\n", n, p);
 	if (buf[0] == '/') {
 	/* Link is an absolute path */
@@ -1860,8 +1860,8 @@ plP_getmember(PLStream *pls)
     if (suffix == NULL)
       snprintf (pls->FileName, maxlen, "%s.%s", pls->BaseName, num);
     else {
-      strncpy (prefix, pls->BaseName, BUFFER_SIZE);
-      prefix [suffix - pls->BaseName] = 0;
+      strncpy (prefix, pls->BaseName, BUFFER_SIZE-1);
+      prefix [(suffix - pls->BaseName<BUFFER_SIZE)?(suffix-pls->BaseName):BUFFER_SIZE-1] = '\0';
       snprintf (pls->FileName, maxlen, "%s%s%s", prefix, num, suffix + 2);
     }
 
@@ -1894,10 +1894,11 @@ plP_sfnam(PLStream *pls, const char *fnam)
     suffix = strstr (fnam, "%n");
 
     if (suffix == NULL)
-      strncpy(pls->FileName, fnam, maxlen);
+      strncpy(pls->FileName, fnam, maxlen-1);
+      pls->FileName[maxlen-1] = '\0';
     else {
-      strncpy (prefix, fnam, BUFFER_SIZE);
-      prefix [suffix - fnam] = 0;
+      strncpy (prefix, fnam, BUFFER_SIZE-1);
+      prefix [(suffix - fnam)<BUFFER_SIZE?(suffix-fnam):BUFFER_SIZE-1] = '\0';
       snprintf (pls->FileName, maxlen, "%s%s", prefix, suffix + 2);
     }
 
@@ -1909,7 +1910,8 @@ plP_sfnam(PLStream *pls, const char *fnam)
         plexit("plP_sfnam: Insufficient memory");
       }
 
-    strncpy(pls->BaseName, fnam, maxlen);
+    strncpy(pls->BaseName, fnam, maxlen-1);
+    pls->BaseName[maxlen-1] = '\0';
 }
 
 /*--------------------------------------------------------------------------*\
