@@ -31,9 +31,12 @@ int main()
   char buf[360];
   char buf1[360];
   int year;
-  int month=0;
-  int day = 1;
+  //int month=0;
+  //int day = 1;
+  int month=10;
+  int day = 17;
   int hour = 0;
+  //int hour = 12;
   int min = 0;
   double sec = 0.;
   struct tm tm;
@@ -43,6 +46,8 @@ int main()
   MJDtime MJD1, *pMJD1 = &MJD1;
   MJDtime MJD2;
   static int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
+  double jd;
+
   printf("sizeof(int) = %d\n",(int)sizeof(int));
   printf("sizeof(time_t) = %d\n",(int)sizeof(time_t));
   if(sizeof(time_t) < 8) {
@@ -59,10 +64,15 @@ int main()
   //for (year=-2000000000; year<=2000000000; year+=1000000000) {
   // test small range which nevertheless exceeds 32-bit date range
   //for (year=1900; year<=2100; year++) {
+  // Span JD epoch.
+  //for (year=-4720; year<=-4710; year+=1) {
+  // Span year epoch
+  //for (year=-10; year<=10; year+=1) {
+  // Span MJD epoch.
+  //for (year=1855; year<=1861; year+=1) {
   // test reduced range of years that just barely misses overflowing
   // the MJD integer.  e.g., 6000000 overflows it. 
-  //for (year=-5000000; year<=5000000; year+=1000000) {
-  for (year=-10; year<=10; year+=1) {
+  for (year=-5000000; year<=5000000; year+=1000000) {
     ptm->tm_year = year-1900;
     ptm->tm_mon = month;
     ptm->tm_mday = day;
@@ -72,8 +82,12 @@ int main()
 
     printf("year = %d\n", year);
     setFromUT(year, month, day, hour, min, sec, pMJD1, -1);
+    jd = 2400000.5 + pMJD1->base_day + pMJD1->time_sec/86400.;
+    printf("setFromUT JD = %25.16f days\n", jd);
     secs_past_epoch1 = (time_t) (86400.*((double)pMJD1->base_day - (double) MJD_1970) + pMJD1->time_sec);
     secs_past_epoch = timegm(ptm);
+    printf("setFromUT secs_past_epoch = %lld seconds\n", secs_past_epoch1);
+    printf("   timegm secs_past_epoch = %lld seconds\n", secs_past_epoch);
     printf("delta secs_past_epoch = %d seconds\n", (secs_past_epoch1 - secs_past_epoch));
     strftime(&(buf[0]), 360, "strftime gives %Y-%m-%d %H:%M:%S", ptm);
     printf("%s\n", buf);
