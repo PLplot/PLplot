@@ -600,7 +600,7 @@ void plD_FreeType_init(PLStream *pls)
     char WINDIR_PATH[255];
     char *b;
     b=getenv("WINDIR");
-    strcpy(WINDIR_PATH,b);
+    strncpy(WINDIR_PATH,b,255);
 #else
     const char *default_unix_font_dir=PL_FREETYPE_FONT_DIR;
 #endif
@@ -647,7 +647,7 @@ void plD_FreeType_init(PLStream *pls)
     }
     else
     {
-      strcat(WINDIR_PATH,"\\fonts\\arial.ttf");
+      strncat(WINDIR_PATH,"\\fonts\\arial.ttf",255);
       if (access(WINDIR_PATH, F_OK)==0)
         {
           b=strrchr(WINDIR_PATH,'\\');
@@ -672,9 +672,9 @@ void plD_FreeType_init(PLStream *pls)
  */
 
     if ((a = getenv("PLPLOT_FREETYPE_FONT_DIR")) != NULL)
-        strcpy(font_dir,a);
+        strncpy(font_dir,a,1024);
     else
-        strcpy(font_dir,default_unix_font_dir);
+        strncpy(font_dir,default_unix_font_dir,1024);
 
 #endif
 
@@ -701,23 +701,23 @@ void plD_FreeType_init(PLStream *pls)
 #else
 	    if ((a[0]=='/')||(a[0]=='~')) /* check for unix abs path */
 #endif
-		strcpy(FT->font_name[i],a);
+		strncpy(FT->font_name[i],a,1024);
 
 	    else {
-		strcpy(FT->font_name[i],font_dir);
-		strcat(FT->font_name[i],a);
+		strncpy(FT->font_name[i],font_dir,1024);
+		strncat(FT->font_name[i],a,1024);
 	    }
 
 	} else {
-	    strcpy(FT->font_name[i],font_dir);
-	    strcat(FT->font_name[i],(char *)TrueTypeLookup[i].pfont);
+	    strncpy(FT->font_name[i],font_dir,1024);
+	    strncat(FT->font_name[i],(char *)TrueTypeLookup[i].pfont,1024);
 	}
 
    {
    FILE *infile ;
 	if ( (infile=fopen(FT->font_name[i], "r"))==NULL) {
 	    char msgbuf[1024];
-	    sprintf(msgbuf,
+	    snprintf(msgbuf, 1024,
 		    "plD_FreeType_init: Could not find the freetype compatible font:\n %s",
 		    FT->font_name[i]);
 	    plwarn(msgbuf);

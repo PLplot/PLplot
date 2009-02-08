@@ -400,7 +400,7 @@ int text2num( const char *text, char end, PLUNICODE *num)
   *num = strtoul(text,&endptr,0);
 
   if (end != endptr[0]) {
-    sprintf(msgbuf,"text2num: invalid control string detected - %c expected",end);
+    snprintf(msgbuf,80,"text2num: invalid control string detected - %c expected",end);
     plwarn(msgbuf);
   }
 
@@ -679,7 +679,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                   if (ptr == NULL) {
                     char buf[80];
                     strncpy (buf, string, 30);
-                    sprintf (buf, "UTF-8 string is malformed: %s%s",
+                    snprintf (buf, 80, "UTF-8 string is malformed: %s%s",
                              buf, strlen (string) > 30 ? "[...]" : "");
                     plabort (buf);
                     return;
@@ -2258,10 +2258,10 @@ plInitDispatchTable()
             FILE* fd;
 
 /* Open the driver's info file */
-            sprintf (path, "%s/%s", drvdir, name);
+            snprintf (path, 300, "%s/%s", drvdir, name);
             fd = fopen (path, "r");
             if (fd == NULL) {
-	        sprintf (buf,
+	        snprintf (buf, 300,
                   "plInitDispatchTable: Could not open driver info file %s\n",
                   name);
 	        plabort (buf);
@@ -2554,9 +2554,9 @@ plLoadDriver(void)
     {
         char drvspec[ 400 ];
 #ifdef LTDL_WIN32
-        sprintf( drvspec, "%s", driver->drvnam );
+        snprintf( drvspec, 400, "%s", driver->drvnam );
 #else
-        sprintf( drvspec, "%s/%s", plGetDrvDir (), driver->drvnam );
+        snprintf( drvspec, 400, "%s/%s", plGetDrvDir (), driver->drvnam );
 #endif /* LTDL_WIN32 */
 
 	pldebug("plLoadDriver", "Trying to load %s on %s\n",
@@ -2577,7 +2577,7 @@ plLoadDriver(void)
 /* Now we are ready to ask the driver's device dispatch init function to
    initialize the entries in the dispatch table. */
 
-    sprintf( sym, "plD_dispatch_init_%s", tag );
+    snprintf( sym, 60, "plD_dispatch_init_%s", tag );
     {
         PLDispatchInit dispatch_init = (PLDispatchInit) lt_dlsym( driver->dlhand, sym );
         if (!dispatch_init)

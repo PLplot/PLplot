@@ -103,8 +103,8 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
     /*
      * read map outline
      */
-    strcpy(filename,type);
-    strcat(filename,MAP_FILE);
+    strncpy(filename,type,100);
+    strncat(filename,MAP_FILE,100);
 
     if ((in = plLibOpenPdfstrm(filename)) == NULL)
 	return;

@@ -759,7 +759,7 @@ grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
   /* Could pass extra args to qhull through the 'data' argument of
      plgriddata() */
-  sprintf(flags, "qhull d Qbb Qt");
+  strcpy(flags, "qhull d Qbb Qt", 250);
   
   if ((points = (coordT *) malloc(npts * (dim+1) * sizeof(coordT)))==NULL)
     {

@@ -508,7 +508,7 @@ rdbuf_state(PLStream *pls)
 	else {
 	    if ((int) icol0 >= pls->ncol0) {
                 char buffer[256];
-                sprintf(buffer, "rdbuf_state: Invalid color map entry: %d", (int) icol0);
+                snprintf(buffer, 256, "rdbuf_state: Invalid color map entry: %d", (int) icol0);
                 plabort(buffer);
                 return;
 	    }

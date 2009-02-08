@@ -51,7 +51,7 @@ pldrawcn(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 	 PLPointer pltr_data);
 
 static void
-plfloatlabel(PLFLT value, char *string);
+plfloatlabel(PLFLT value, char *string, PLINT len);
 
 static PLFLT
 plP_pcwcx(PLINT x);
@@ -306,7 +306,7 @@ static void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance
  * print the label
  */
 
-static void plfloatlabel(PLFLT value, char *string)
+static void plfloatlabel(PLFLT value, char *string, PLINT len)
 {
     PLINT  setpre, precis;
     /* form[10] gives enough space for all non-malicious formats.
@@ -349,10 +349,10 @@ static void plfloatlabel(PLFLT value, char *string)
     if (mant != 0.0)
 	mant = (int )(mant*pow(10.0, prec-1) + 0.5*mant/fabs(mant))/pow(10.0, prec-1);
 
-    sprintf(form, "%%.%df", prec-1);
-    sprintf(string, form, mant);
-    sprintf(tmpstring, "#(229)10#u%d", exponent);
-    strcat(string, tmpstring);
+    snprintf(form, 10, "%%.%df", prec-1);
+    snprintf(string, len, form, mant);
+    snprintf(tmpstring, 15, "#(229)10#u%d", exponent);
+    strncat(string, tmpstring, len);
 
     if (abs(exponent) < limexp || value == 0.0) {
 	value = pow(10.0, exponent) * mant;
@@ -365,8 +365,8 @@ static void plfloatlabel(PLFLT value, char *string)
 	if (prec < 0)
             prec = 0;
 
-	sprintf(form, "%%.%df", (int) prec);
-	sprintf(string, form, value);
+	snprintf(form, 10, "%%.%df", (int) prec);
+	snprintf(string, len, form, value);
     }
 }
 
@@ -588,7 +588,7 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     cont_new_store(flev);
 
     /* format contour label for plptex and define the font height of the labels */
-    plfloatlabel(flev, flabel);
+    plfloatlabel(flev, flabel, 30);
     plschr(0.0, contlabel_size);
 
     /* Clear array for traversed squares */

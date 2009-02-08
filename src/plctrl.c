@@ -121,7 +121,7 @@ c_plcol0(PLINT icol0)
     }
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
 	char buffer[256];
-	sprintf(buffer, "plcol0: Invalid color map entry: %d", (int) icol0);
+	snprintf(buffer, 256, "plcol0: Invalid color map entry: %d", (int) icol0);
 	plabort(buffer);
 	return;
     }
@@ -153,7 +153,7 @@ c_plcol1(PLFLT col1)
     }
     if (col1 < 0 || col1 > 1) {
 	char buffer[256];
-	sprintf(buffer, "plcol1: Invalid color map position: %f", (PLFLT) col1);
+	snprintf(buffer, 256, "plcol1: Invalid color map position: %f", (PLFLT) col1);
 	plabort(buffer);
 	return;
     }
@@ -233,13 +233,13 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 	plscmap0n(0);
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
 	char buffer[256];
-	sprintf(buffer, "plscol0: Illegal color table value: %d", (int) icol0);
+	snprintf(buffer, 256, "plscol0: Illegal color table value: %d", (int) icol0);
 	plabort(buffer);
 	return;
     }
     if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
 	char buffer[256];
-	sprintf(buffer, "plscol0: Invalid RGB color: %d, %d, %d",
+	snprintf(buffer, 256, "plscol0: Invalid RGB color: %d, %d, %d",
 		(int) r, (int) g, (int) b);
 	plabort(buffer);
 	return;
@@ -262,13 +262,13 @@ c_plscol0a(PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a)
 	plscmap0n(0);
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
 	char buffer[256];
-	sprintf(buffer, "plscol0a: Illegal color table value: %d", (int) icol0);
+	snprintf(buffer, 256, "plscol0a: Illegal color table value: %d", (int) icol0);
 	plabort(buffer);
 	return;
     }
     if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255) || (a < 0 || a > 1.0)) {
 	char buffer[256];
-	sprintf(buffer, "plscol0a: Invalid RGB color: %d, %d, %d, %f",
+	snprintf(buffer, 256, "plscol0a: Invalid RGB color: %d, %d, %d, %f",
 		(int) r, (int) g, (int) b, (double) a);
 	plabort(buffer);
 	return;
@@ -302,7 +302,7 @@ c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
 
     if (icol0 < 0 || icol0 > plsc->ncol0) {
 	char buffer[256];
-	sprintf(buffer, "plgcol0: Invalid color index: %d", (int) icol0);
+	snprintf(buffer, 256, "plgcol0: Invalid color index: %d", (int) icol0);
 	plabort(buffer);
 	return;
     }
@@ -334,7 +334,7 @@ c_plgcol0a(PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a)
 
     if (icol0 < 0 || icol0 > plsc->ncol0) {
 	char buffer[256];
-	sprintf(buffer, "plgcol0: Invalid color index: %d", (int) icol0);
+	snprintf(buffer, 256, "plgcol0: Invalid color index: %d", (int) icol0);
 	plabort(buffer);
 	return;
     }
@@ -367,7 +367,7 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 	    (b[i] < 0 || b[i] > 255)) {
 
 	    char buffer[256];
-	    sprintf(buffer, "plscmap0: Invalid RGB color: %d, %d, %d",
+	    snprintf(buffer, 256, "plscmap0: Invalid RGB color: %d, %d, %d",
 		    (int) r[i], (int) g[i], (int) b[i]);
 	    plabort(buffer);
 	    return;
@@ -404,7 +404,7 @@ c_plscmap0a(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0)
 	    (a[i] < 0.0 || a[i] > 1.0)) {
 
 	    char buffer[256];
-	    sprintf(buffer, "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
+	    snprintf(buffer, 256, "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
 		    (int) r[i], (int) g[i], (int) b[i], (double) a[i]);
 	    plabort(buffer);
 	    return;
@@ -440,7 +440,7 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 	    (b[i] < 0 || b[i] > 255)) {
 
 	    char buffer[256];
-	    sprintf(buffer, "plscmap1: Invalid RGB color: %d, %d, %d",
+	    snprintf(buffer, 256, "plscmap1: Invalid RGB color: %d, %d, %d",
 		    (int) r[i], (int) g[i], (int) b[i]);
 	    plabort(buffer);
 	    return;
@@ -476,7 +476,7 @@ c_plscmap1a(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1)
 	    (a[i] < 0.0 || a[i] > 1.0)) {
 
 	    char buffer[256];
-	    sprintf(buffer, "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
+	    snprintf(buffer, 256, "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
 		    (int) r[i], (int) g[i], (int) b[i], (double) a[i]);
 	    plabort(buffer);
 	    return;
@@ -1838,11 +1838,13 @@ plP_getmember(PLStream *pls)
     char tmp[256];
     char prefix[256];
     char* suffix;
-    char num[12];
+    char num[256];
+    int maxlen;
 
+    maxlen = strlen(pls->BaseName) + 10;
     if (pls->FileName == NULL)
       {
-        if ((pls->FileName = (char *) malloc(10 + strlen(pls->BaseName)))==NULL)
+        if ((pls->FileName = (char *) malloc(maxlen))==NULL)
           {
             plexit("plP_getmember: Insufficient memory");
           }
@@ -1850,15 +1852,15 @@ plP_getmember(PLStream *pls)
 
     suffix = strstr (pls->BaseName, "%n");
 
-    sprintf(tmp, "%%0%1ii", (int) pls->fflen);
-    sprintf(num, tmp, pls->member);
+    snprintf(tmp, 256, "%%0%1ii", (int) pls->fflen);
+    snprintf(num, 256, tmp, pls->member);
 
     if (suffix == NULL)
-      sprintf (pls->FileName, "%s.%s", pls->BaseName, num);
+      snprintf (pls->FileName, maxlen, "%s.%s", pls->BaseName, num);
     else {
       strncpy (prefix, pls->BaseName, 256);
       prefix [suffix - pls->BaseName] = 0;
-      sprintf (pls->FileName, "%s%s%s", prefix, num, suffix + 2);
+      snprintf (pls->FileName, maxlen, "%s%s%s", prefix, num, suffix + 2);
     }
 
 }
@@ -1875,12 +1877,14 @@ plP_sfnam(PLStream *pls, const char *fnam)
 {
     char prefix[256];
     char* suffix;
+    int maxlen;
     pls->OutFile = NULL;
 
     if (pls->FileName != NULL)
 	free((void *) pls->FileName);
 
-    if ((pls->FileName = (char *) malloc(10 + strlen(fnam)))==NULL)
+    maxlen = 10 + strlen(fnam);
+    if ((pls->FileName = (char *) malloc(maxlen))==NULL)
       {
         plexit("plP_sfnam: Insufficient memory");
       }
@@ -1888,22 +1892,22 @@ plP_sfnam(PLStream *pls, const char *fnam)
     suffix = strstr (fnam, "%n");
 
     if (suffix == NULL)
-      strcpy(pls->FileName, fnam);
+      strncpy(pls->FileName, fnam, maxlen);
     else {
       strncpy (prefix, fnam, 256);
       prefix [suffix - fnam] = 0;
-      sprintf (pls->FileName, "%s%s", prefix, suffix + 2);
+      snprintf (pls->FileName, maxlen, "%s%s", prefix, suffix + 2);
     }
 
     if (pls->BaseName != NULL)
 	free((void *) pls->BaseName);
 
-    if ((pls->BaseName = (char *) malloc(10 + strlen(fnam)))==NULL)
+    if ((pls->BaseName = (char *) malloc(maxlen))==NULL)
       {
         plexit("plP_sfnam: Insufficient memory");
       }
 
-    strcpy(pls->BaseName, fnam);
+    strncpy(pls->BaseName, fnam, maxlen);
 }
 
 /*--------------------------------------------------------------------------*\

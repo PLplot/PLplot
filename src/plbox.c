@@ -52,7 +52,7 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text);
 
 static void
-plform(PLFLT value, PLINT scale, PLINT prec, char *result, PLINT ll, PLINT lf);
+plform(PLFLT value, PLINT scale, PLINT prec, char *result, PLINT len, PLINT ll, PLINT lf);
 
 static void
 grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
@@ -773,7 +773,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	tp = tick1 * (1. + floor(vmin / tick1));
 	for (tn = tp; BETW(tn, vmin, vmax); tn += tick1) {
 	   if(BETW(tn, vmin+tcrit, vmax-tcrit)) {
-	    plform(tn, scale, prec, string, ll, lf);
+	    plform(tn, scale, prec, string, 40, ll, lf);
 	    pos = (vmax_in > vmin_in)?
 	       (tn - vmin) / (vmax - vmin):
 	       (vmax - tn) / (vmax - vmin);
@@ -782,7 +782,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	}
 	*digits = 2;
 	if (!ll && mode) {
-	    sprintf(string, "(x10#u%d#d)", (int) scale);
+	    snprintf(string, 40, "(x10#u%d#d)", (int) scale);
 	    plxytx(wx1, wy1, wx2, wy2, height, 1.0, 0.5, string);
 	}
     }
@@ -989,7 +989,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	*digits = 0;
 	tp = tick1 * floor(vmin / tick1);
 	for (tn = tp + tick1; BETW(tn, vmin, vmax); tn += tick1) {
-	    plform(tn, scale, prec, string, ll, lf);
+	    plform(tn, scale, prec, string, 40, ll, lf);
 	    pos = (vmax_in > vmin_in)?
 	        (tn - vmin) / (vmax - vmin):
 	        (vmax - tn) / (vmax - vmin);
@@ -1003,7 +1003,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	    *digits = MAX(*digits, lstring);
 	}
 	if (!ll && mode) {
-	    sprintf(string, "(x10#u%d#d)", (int) scale);
+	    snprintf(string, 40, "(x10#u%d#d)", (int) scale);
 	    pos = 1.15;
 	    height = 0.5;
 	    if (ln && !right) {
@@ -1252,7 +1252,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
               strfMJD(string, 40, timefmt, &tm, 0);
             }
             else {
-	      plform(tn, xscale, xprec, string, llx, lfx);
+	      plform(tn, xscale, xprec, string, 40, llx, lfx);
             }
 	    height = lix ? 1.75 : 1.5;
 	    pos = (vpwxmax > vpwxmin)?
@@ -1271,7 +1271,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	if (!llx && !ldx && xmode) {
 	    pos = 1.0;
 	    height = 3.2;
-	    sprintf(string, "(x10#u%d#d)", (int) xscale);
+	    snprintf(string, 40, "(x10#u%d#d)", (int) xscale);
 	    if (lnx)
 		plmtex("b", height, pos, 0.5, string);
 	    if (lmx)
@@ -1301,7 +1301,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
               strfMJD(string, 40, timefmt, &tm, 0);
             }
             else {
-	      plform(tn, yscale, yprec, string, lly, lfy);
+	      plform(tn, yscale, yprec, string, 40, lly, lfy);
             }
 	    pos = (vpwymax > vpwymin)?
 	        (tn - vpwymi) / (vpwyma - vpwymi):
@@ -1334,7 +1334,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     /* Write separate exponential label if mode = 1. */
 
 	if (!lly && !ldy && ymode) {
-	    sprintf(string, "(x10#u%d#d)", (int) yscale);
+	    snprintf(string, 40, "(x10#u%d#d)", (int) yscale);
 	    offset = 0.02;
 	    height = 2.0;
 	    if (lny) {
@@ -1372,7 +1372,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 \*--------------------------------------------------------------------------*/
 
 static void
-plform(PLFLT value, PLINT scale, PLINT prec, char *string, PLINT ll, PLINT lf)
+plform(PLFLT value, PLINT scale, PLINT prec, char *string, PLINT len, PLINT ll, PLINT lf)
 {
     if (ll) {
 
@@ -1387,18 +1387,18 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *string, PLINT ll, PLINT lf)
 	    value = pow(10.0, exponent);
 	    if (exponent < 0) {
 		char form[10];
-		sprintf(form, "%%.%df", ABS(exponent));
-		sprintf(string, form, value);
+		snprintf(form, 10, "%%.%df", ABS(exponent));
+		snprintf(string, len, form, value);
 	    }
 	    else {
-		sprintf(string, "%d", (int) value);
+		snprintf(string, len, "%d", (int) value);
 	    }
 	}
 	else {
 
 	/* Exponential, i.e. 10^-1, 10^0, 10^1, etc */
 
-	    sprintf(string, "10#u%d", (int) ROUND(value));
+	    snprintf(string, len, "10#u%d", (int) ROUND(value));
 	}
     }
     else {
@@ -1422,8 +1422,8 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *string, PLINT ll, PLINT lf)
 	scale2 = pow(10., prec);
 	value = floor((value * scale2) + .5) / scale2;
 
-	sprintf(form, "%%.%df", (int) prec);
-	sprintf(temp, form, value);
-	strcpy(string, temp);
+	snprintf(form, 10, "%%.%df", (int) prec);
+	snprintf(temp, 30, form, value);
+	strncpy(string, temp, len);
     }
 }
