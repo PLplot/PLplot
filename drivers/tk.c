@@ -79,6 +79,9 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_tk = "tk:Tcl/TK Window:1:tk:7:tk"
 #define LOCATE_INVOKED_VIA_API		1
 #define LOCATE_INVOKED_VIA_DRIVER	2
 
+#define STR_LEN 10
+#define CMD_LEN 100
+
 /* A handy command wrapper */
 
 #define tk_wr(code) \
@@ -641,7 +644,7 @@ static void
 tk_di(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char str[10];
+    char str[STR_LEN];
 
     dbug_enter("tk_di");
 
@@ -659,7 +662,7 @@ tk_di(PLStream *pls)
 /* Change orientation */
 
     if (pls->difilt & PLDI_ORI) {
-	snprintf(str, 10, "%f", pls->diorot);
+	snprintf(str, STR_LEN, "%f", pls->diorot);
 	Tcl_SetVar(dev->interp, "rot", str, 0);
 
 	server_cmd( pls, "$plwidget cmd plsetopt -ori $rot", 1 );
@@ -669,13 +672,13 @@ tk_di(PLStream *pls)
 /* Change window into plot space */
 
     if (pls->difilt & PLDI_PLT) {
-	snprintf(str, 10, "%f", pls->dipxmin);
+	snprintf(str, STR_LEN, "%f", pls->dipxmin);
 	Tcl_SetVar(dev->interp, "xl", str, 0);
-	snprintf(str, 10, "%f", pls->dipymin);
+	snprintf(str, STR_LEN, "%f", pls->dipymin);
 	Tcl_SetVar(dev->interp, "yl", str, 0);
-	snprintf(str, 10, "%f", pls->dipxmax);
+	snprintf(str, STR_LEN, "%f", pls->dipxmax);
 	Tcl_SetVar(dev->interp, "xr", str, 0);
-	snprintf(str, 10, "%f", pls->dipymax);
+	snprintf(str, STR_LEN, "%f", pls->dipymax);
 	Tcl_SetVar(dev->interp, "yr", str, 0);
 
 	server_cmd( pls, "$plwidget cmd plsetopt -wplt $xl,$yl,$xr,$yr", 1 );
@@ -685,13 +688,13 @@ tk_di(PLStream *pls)
 /* Change window into device space */
 
     if (pls->difilt & PLDI_DEV) {
-	snprintf(str, 10, "%f", pls->mar);
+	snprintf(str, STR_LEN, "%f", pls->mar);
 	Tcl_SetVar(dev->interp, "mar", str, 0);
-	snprintf(str, 10, "%f", pls->aspect);
+	snprintf(str, STR_LEN, "%f", pls->aspect);
 	Tcl_SetVar(dev->interp, "aspect", str, 0);
-	snprintf(str, 10, "%f", pls->jx);
+	snprintf(str, STR_LEN, "%f", pls->jx);
 	Tcl_SetVar(dev->interp, "jx", str, 0);
-	snprintf(str, 10, "%f", pls->jy);
+	snprintf(str, STR_LEN, "%f", pls->jy);
 	Tcl_SetVar(dev->interp, "jy", str, 0);
 
 	server_cmd( pls, "$plwidget cmd plsetopt -mar $mar", 1 );
@@ -1324,7 +1327,7 @@ static void
 plwindow_init(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char command[100];
+    char command[CMD_LEN];
     unsigned int bg;
 
     dbug_enter("plwindow_init");
@@ -1346,7 +1349,7 @@ plwindow_init(PLStream *pls)
 
     bg = pls->cmap0[0].b | (pls->cmap0[0].g << 8) | (pls->cmap0[0].r << 16);
     if (bg > 0) {
-	snprintf(command, 100, "$plwidget configure -plbg #%06x", bg);
+	snprintf(command, CMD_LEN, "$plwidget configure -plbg #%06x", bg);
 	server_cmd( pls, command, 0 );
     }
 
@@ -1368,12 +1371,12 @@ plwindow_init(PLStream *pls)
 /* color map options */
 
     if (pls->ncol0) {
-	snprintf(command, 100, "$plwidget cmd plsetopt -ncol0 %d", pls->ncol0);
+	snprintf(command, CMD_LEN, "$plwidget cmd plsetopt -ncol0 %d", pls->ncol0);
 	server_cmd( pls, command, 0 );
     }
 
     if (pls->ncol1) {
-	snprintf(command, 100, "$plwidget cmd plsetopt -ncol1 %d", pls->ncol1);
+	snprintf(command, CMD_LEN, "$plwidget cmd plsetopt -ncol1 %d", pls->ncol1);
 	server_cmd( pls, command, 0 );
     }
 

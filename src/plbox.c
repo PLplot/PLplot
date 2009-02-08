@@ -25,6 +25,10 @@
 #include "plplotP.h"
 #include "qsastime.h"
 
+#define STRING_LEN 40
+#define FORMAT_LEN 10
+#define TEMP_LEN 30
+
 static PLFLT xlog[8] =
 {
     0.301030, 0.477121, 0.602060, 0.698970,
@@ -656,7 +660,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
        PLFLT wx2, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
        PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits)
 {
-    static char string[40];
+    static char string[STRING_LEN];
     PLINT lb, ld, lf, li, ll, ln, ls, lt, lu;
     PLINT major, minor, mode, prec, scale;
     PLINT i, i1, i2, i3, i4;
@@ -773,7 +777,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	tp = tick1 * (1. + floor(vmin / tick1));
 	for (tn = tp; BETW(tn, vmin, vmax); tn += tick1) {
 	   if(BETW(tn, vmin+tcrit, vmax-tcrit)) {
-	    plform(tn, scale, prec, string, 40, ll, lf);
+	    plform(tn, scale, prec, string, STRING_LEN, ll, lf);
 	    pos = (vmax_in > vmin_in)?
 	       (tn - vmin) / (vmax - vmin):
 	       (vmax - tn) / (vmax - vmin);
@@ -782,7 +786,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	}
 	*digits = 2;
 	if (!ll && mode) {
-	    snprintf(string, 40, "(x10#u%d#d)", (int) scale);
+	    snprintf(string, STRING_LEN, "(x10#u%d#d)", (int) scale);
 	    plxytx(wx1, wy1, wx2, wy2, height, 1.0, 0.5, string);
 	}
     }
@@ -867,7 +871,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
       PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
       PLFLT tick, PLINT nsub, PLINT *digits)
 {
-    static char string[40];
+    static char string[STRING_LEN];
     PLINT lb, lc, ld, lf, li, ll, lm, ln, ls, lt, lu, lv;
     PLINT i, mode, prec, scale;
     PLINT nsub1, lstring;
@@ -989,7 +993,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	*digits = 0;
 	tp = tick1 * floor(vmin / tick1);
 	for (tn = tp + tick1; BETW(tn, vmin, vmax); tn += tick1) {
-	    plform(tn, scale, prec, string, 40, ll, lf);
+	    plform(tn, scale, prec, string, STRING_LEN, ll, lf);
 	    pos = (vmax_in > vmin_in)?
 	        (tn - vmin) / (vmax - vmin):
 	        (vmax - tn) / (vmax - vmin);
@@ -1003,7 +1007,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	    *digits = MAX(*digits, lstring);
 	}
 	if (!ll && mode) {
-	    snprintf(string, 40, "(x10#u%d#d)", (int) scale);
+	    snprintf(string, STRING_LEN, "(x10#u%d#d)", (int) scale);
 	    pos = 1.15;
 	    height = 0.5;
 	    if (ln && !right) {
@@ -1192,7 +1196,7 @@ grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
 static void
 label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 {
-    static char string[40];
+    static char string[STRING_LEN];
     PLBOOL ldx, lfx, lix, llx, lmx, lnx, ltx;
     PLBOOL ldy, lfy, liy, lly, lmy, lny, lty, lvy;
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
@@ -1249,10 +1253,10 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
             if (ldx) {
               t = (double) tn;
               setFromUT(1970,0,1,0,0,t,&tm,0);
-              strfMJD(string, 40, timefmt, &tm, 0);
+              strfMJD(string, STRING_LEN, timefmt, &tm, 0);
             }
             else {
-	      plform(tn, xscale, xprec, string, 40, llx, lfx);
+	      plform(tn, xscale, xprec, string, STRING_LEN, llx, lfx);
             }
 	    height = lix ? 1.75 : 1.5;
 	    pos = (vpwxmax > vpwxmin)?
@@ -1271,7 +1275,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	if (!llx && !ldx && xmode) {
 	    pos = 1.0;
 	    height = 3.2;
-	    snprintf(string, 40, "(x10#u%d#d)", (int) xscale);
+	    snprintf(string, STRING_LEN, "(x10#u%d#d)", (int) xscale);
 	    if (lnx)
 		plmtex("b", height, pos, 0.5, string);
 	    if (lmx)
@@ -1298,10 +1302,10 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
             if (ldy) {
               t = (double) tn;
               setFromUT(1970,0,1,0,0,t,&tm,0);
-              strfMJD(string, 40, timefmt, &tm, 0);
+              strfMJD(string, STRING_LEN, timefmt, &tm, 0);
             }
             else {
-	      plform(tn, yscale, yprec, string, 40, lly, lfy);
+	      plform(tn, yscale, yprec, string, STRING_LEN, lly, lfy);
             }
 	    pos = (vpwymax > vpwymin)?
 	        (tn - vpwymi) / (vpwyma - vpwymi):
@@ -1334,7 +1338,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     /* Write separate exponential label if mode = 1. */
 
 	if (!lly && !ldy && ymode) {
-	    snprintf(string, 40, "(x10#u%d#d)", (int) yscale);
+	    snprintf(string, STRING_LEN, "(x10#u%d#d)", (int) yscale);
 	    offset = 0.02;
 	    height = 2.0;
 	    if (lny) {
@@ -1386,8 +1390,8 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *string, PLINT len, PLINT ll, 
 
 	    value = pow(10.0, exponent);
 	    if (exponent < 0) {
-		char form[10];
-		snprintf(form, 10, "%%.%df", ABS(exponent));
+		char form[FORMAT_LEN];
+		snprintf(form, FORMAT_LEN, "%%.%df", ABS(exponent));
 		snprintf(string, len, form, value);
 	    }
 	    else {
@@ -1406,7 +1410,7 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *string, PLINT len, PLINT ll, 
     /* Linear */
 
 	PLINT setpre, precis;
-	char form[10], temp[30];
+	char form[FORMAT_LEN], temp[TEMP_LEN];
 	double scale2;
 
 	plP_gprec(&setpre, &precis);
@@ -1422,8 +1426,8 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *string, PLINT len, PLINT ll, 
 	scale2 = pow(10., prec);
 	value = floor((value * scale2) + .5) / scale2;
 
-	snprintf(form, 10, "%%.%df", (int) prec);
-	snprintf(temp, 30, form, value);
+	snprintf(form, FORMAT_LEN, "%%.%df", (int) prec);
+	snprintf(temp, TEMP_LEN, form, value);
 	strncpy(string, temp, len);
     }
 }

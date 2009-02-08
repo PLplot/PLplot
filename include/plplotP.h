@@ -391,6 +391,9 @@ extern PLDLLIMPEXP_DATA(PLStream *)plsc;
 #define PLPLOT_TCL_ENV          "PLPLOT_TCL"
 #define PLPLOT_HOME_ENV         "PLPLOT_HOME"
 
+/* Maximum size for path strings in the plplot code */
+#define PLPLOT_MAX_PATH 1024
+
 /*
  *   Some stuff that is included (and compiled into) plsym.h
  *   Other modules might want this, so we will "extern" it

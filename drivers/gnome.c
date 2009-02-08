@@ -67,6 +67,8 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_gnome = "gnome:Gnome Canvas:1:gno
 /* Magnification factor for the PLplot physical dimensions */
 #define MAG_FACTOR 10
 
+#define BUFFER_LEN 128
+
 #ifndef ABS
 #define ABS(x) ((x < 0) ? (-(x)) : (x))
 #endif
@@ -248,7 +250,7 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
   static guint dragging;
   guint move;
   GdkCursor *cursor;
-  char buffer[128];
+  char buffer[BUFFER_LEN];
   PLGraphicsIn* gin = &(page->gin);
   ItemColor* color;
   GnomeCanvasItem* item_at_cursor;
@@ -345,10 +347,10 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
       buffer[0] = '\0';
     else
       if (color->cmap == 0)
-	snprintf (buffer, 128, "   x = %f   y = %f   color = %d (cmap0)",
+	snprintf (buffer, BUFFER_LEN, "   x = %f   y = %f   color = %d (cmap0)",
 		 gin->wX, gin->wY, (int) color->color);
       else
-	snprintf (buffer, 128, "   x = %f   y = %f   color = %f (cmap1)",
+	snprintf (buffer, BUFFER_LEN, "   x = %f   y = %f   color = %f (cmap1)",
 		 gin->wX, gin->wY, color->color);
 
     /*// FIXME : Terrible global variable hack*/
@@ -540,7 +542,7 @@ new_page (PLStream* pls)
   GnomeCanvasPoints* points;
   guint np;
   guint32 loclinecolor;
-  char buffer[32];
+  char buffer[BUFFER_LEN];
 
   dev = pls->dev;
   page = g_malloc (sizeof (GnomePLdevPage));
@@ -700,7 +702,7 @@ new_page (PLStream* pls)
 
   gtk_notebook_set_show_tabs (dev->notebook, (np > 0));
 
-  snprintf (buffer, 32, "Page %d", np+1);
+  snprintf (buffer, BUFFER_LEN, "Page %d", np+1);
   gtk_notebook_append_page (dev->notebook, GTK_WIDGET (page->sw),
 			    gtk_label_new (buffer));
 

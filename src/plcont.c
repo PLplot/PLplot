@@ -316,7 +316,9 @@ static void plfloatlabel(PLFLT value, char *string, PLINT len)
      * Obviously there are security issues here that
      * should be addressed as well.
      */
-    char   form[10], tmpstring[15];
+#define FORM_LEN 10
+#define TMPSTRING_LEN 15
+    char   form[FORM_LEN], tmpstring[TMPSTRING_LEN];
     PLINT  exponent = 0;
     PLFLT  mant, tmp;
 
@@ -349,9 +351,9 @@ static void plfloatlabel(PLFLT value, char *string, PLINT len)
     if (mant != 0.0)
 	mant = (int )(mant*pow(10.0, prec-1) + 0.5*mant/fabs(mant))/pow(10.0, prec-1);
 
-    snprintf(form, 10, "%%.%df", prec-1);
+    snprintf(form, FORM_LEN, "%%.%df", prec-1);
     snprintf(string, len, form, mant);
-    snprintf(tmpstring, 15, "#(229)10#u%d", exponent);
+    snprintf(tmpstring, TMPSTRING_LEN, "#(229)10#u%d", exponent);
     strncat(string, tmpstring, len);
 
     if (abs(exponent) < limexp || value == 0.0) {
@@ -365,7 +367,7 @@ static void plfloatlabel(PLFLT value, char *string, PLINT len)
 	if (prec < 0)
             prec = 0;
 
-	snprintf(form, 10, "%%.%df", (int) prec);
+	snprintf(form, FORM_LEN, "%%.%df", (int) prec);
 	snprintf(string, len, form, value);
     }
 }

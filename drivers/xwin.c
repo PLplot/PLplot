@@ -112,6 +112,8 @@ static int usepthreads = 1;     /* use "-drvopt usepth=0" to not use pthreads to
 #define ROMAP_CMAP1_COLORS 50
 #define TC_CMAP1_COLORS 200
 
+#define HEADER_LEN 1024
+
 /* Variables to hold RGB components of given colormap. */
 /* Used in an ugly hack to get past some X11R5 and TK limitations. */
 
@@ -1085,7 +1087,7 @@ InitMain(PLStream *pls)
     XSizeHints hint;
     int x, y;
     U_INT width, height, border, depth;
-    char header[1024];
+    char header[HEADER_LEN];
 
     dbug_enter("InitMain");
 
@@ -1129,13 +1131,13 @@ InitMain(PLStream *pls)
 /* Window title */
 
     if (pls->plwindow){    /* allow -plwindow to specify wm decoration name */
-	strncpy(header, pls->plwindow, 1024);
+	strncpy(header, pls->plwindow, HEADER_LEN);
     }
     else if(pls->program) {
-	strncpy(header, pls->program, 1024); /* else program name */
+	strncpy(header, pls->program, HEADER_LEN); /* else program name */
     }
     else
-	strncpy(header,"Plplot",1024);
+	strncpy(header,"Plplot",HEADER_LEN);
 
 /* Window creation */
 

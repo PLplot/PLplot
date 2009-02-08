@@ -72,7 +72,8 @@ static void  fill_polygon	(PLStream *pls);
 static void  proc_str           (PLStream *, EscText *);
 static void  esc_purge          (char *, char *);
 
-static char  outbuf[128];
+#define OUTBUF_LEN 128
+static char  outbuf[OUTBUF_LEN];
 static int text = 1;
 static int color;
 static int hrshsym = 0;
@@ -97,7 +98,8 @@ const char * EnvFamilyLookup[N_Pango_Lookup] = {
   "PLPLOT_FREETYPE_SYMBOL_FAMILY"
 };
 
-char FamilyLookup[N_Pango_Lookup][1024];
+#define FAMILY_LOOKUP_LEN 1024
+char FamilyLookup[N_Pango_Lookup][FAMILY_LOOKUP_LEN];
 
 const FontWeight WeightLookup[2] = {
   NORMAL_WEIGHT,
@@ -283,10 +285,10 @@ ps_init(PLStream *pls)
     // or defaults.
     for (i=0;i<N_Pango_Lookup;i++) {
       if ( (a = getenv(EnvFamilyLookup[i])) != NULL ) {
-	strncpy(FamilyLookup[i],a,1024);
+	strncpy(FamilyLookup[i],a,FAMILY_LOOKUP_LEN);
       }
       else {
-	strncpy(FamilyLookup[i],DefaultFamilyLookup[i],1024);
+	strncpy(FamilyLookup[i],DefaultFamilyLookup[i],FAMILY_LOOKUP_LEN);
       }
     }
 
@@ -471,7 +473,7 @@ plD_line_psttf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 	else
 	    doc->osBody() << ' ';
 
-	snprintf(outbuf, 128, "%d %d D", x2, y2);
+	snprintf(outbuf, OUTBUF_LEN, "%d %d D", x2, y2);
 	dev->ptcnt++;
 	pls->linepos += 12;
     }
@@ -480,9 +482,9 @@ plD_line_psttf(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 	pls->linepos = 0;
 
 	if (x1 == x2 && y1 == y2) /* must be a single dot, draw a circle */
-	  snprintf(outbuf, 128, "%d %d A", x1, y1);
+	  snprintf(outbuf, OUTBUF_LEN, "%d %d A", x1, y1);
 	else
-	  snprintf(outbuf, 128, "%d %d M %d %d D", x1, y1, x2, y2);
+	  snprintf(outbuf, OUTBUF_LEN, "%d %d M %d %d D", x1, y1, x2, y2);
 	dev->llx = MIN(dev->llx, x1);
 	dev->lly = MIN(dev->lly, y1);
 	dev->urx = MAX(dev->urx, x1);
@@ -734,7 +736,7 @@ fill_polygon(PLStream *pls)
 /* First time through start with a x y moveto */
 
 	if (n == 0) {
-	    snprintf(outbuf, 128, "N %d %d M", x, y);
+	    snprintf(outbuf, OUTBUF_LEN, "N %d %d M", x, y);
 	    dev->llx = MIN(dev->llx, x);
 	    dev->lly = MIN(dev->lly, y);
 	    dev->urx = MAX(dev->urx, x);
@@ -753,7 +755,7 @@ fill_polygon(PLStream *pls)
 
 	pls->bytecnt++;
 
-	snprintf(outbuf, 128, "%d %d D", x, y);
+	snprintf(outbuf, OUTBUF_LEN, "%d %d D", x, y);
 	dev->llx = MIN(dev->llx, x);
 	dev->lly = MIN(dev->lly, y);
 	dev->urx = MAX(dev->urx, x);

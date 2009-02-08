@@ -31,6 +31,9 @@
 #include <signal.h>
 #include <stdlib.h>
 
+#define SYM_LEN 300
+#define DRVSPEC_LEN 400
+
 /* SEGV signal handler */
 RETSIGTYPE
 catch_segv (int sig)
@@ -43,9 +46,9 @@ int
 main (int argc, char* argv[])
 {
   lt_dlhandle dlhand;
-  char sym[300];
+  char sym[SYM_LEN];
   char* drvnam = argv[1];
-  char drvspec[ 400 ];
+  char drvspec[ DRVSPEC_LEN ];
   char** info;
 
   /* Establish a handler for SIGSEGV signals. */
@@ -53,9 +56,9 @@ main (int argc, char* argv[])
 
   lt_dlinit ();
 #ifdef LTDL_WIN32  
-  snprintf( drvspec, 400, "%s", drvnam );
+  snprintf( drvspec, DRVSPEC_LEN, "%s", drvnam );
 #else
-  snprintf( drvspec, 400, "%s/%s", plGetDrvDir (), drvnam );
+  snprintf( drvspec, DRVSPEC_LEN, "%s/%s", plGetDrvDir (), drvnam );
 #endif /* LTDL_WIN32 */
   dlhand = lt_dlopenext (drvspec);
   if (dlhand == NULL) {
@@ -63,7 +66,7 @@ main (int argc, char* argv[])
                      "libltdl error: %s\n", drvspec, lt_dlerror ());
     return 1;
   }
-  snprintf (sym, 300, "plD_DEVICE_INFO_%s", drvnam);
+  snprintf (sym, SYM_LEN, "plD_DEVICE_INFO_%s", drvnam);
   info = (char **) lt_dlsym (dlhand, sym);
   if (info != NULL) {
     printf ("%s", *info);

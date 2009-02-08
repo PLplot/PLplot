@@ -45,6 +45,10 @@
   #endif
 #endif
 
+#define BUFFER_SIZE 80
+#define BUFFER2_SIZE 300
+#define DRVSPEC_SIZE 400
+
 /*--------------------------------------------------------------------------*\
  * Driver Interface
  *
@@ -395,12 +399,12 @@ int text2num( const char *text, char end, PLUNICODE *num)
 
   char *endptr;
   char *endptr2;
-  char msgbuf[80];
+  char msgbuf[BUFFER_SIZE];
 
   *num = strtoul(text,&endptr,0);
 
   if (end != endptr[0]) {
-    snprintf(msgbuf,80,"text2num: invalid control string detected - %c expected",end);
+    snprintf(msgbuf,BUFFER_SIZE,"text2num: invalid control string detected - %c expected",end);
     plwarn(msgbuf);
   }
 
@@ -677,9 +681,9 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		  char* ptr = utf8_to_ucs4 (string + i, &unichar);
 #endif
                   if (ptr == NULL) {
-                    char buf[80];
+                    char buf[BUFFER_SIZE];
                     strncpy (buf, string, 30);
-                    snprintf (buf, 80, "UTF-8 string is malformed: %s%s",
+                    snprintf (buf, BUFFER_SIZE, "UTF-8 string is malformed: %s%s",
                              buf, strlen (string) > 30 ? "[...]" : "");
                     plabort (buf);
                     return;
@@ -2125,8 +2129,8 @@ PLDLLIMPEXP int plInBuildTree()
   static int inBuildTree = 0;
 
   if (inited == 0) {
-    char currdir[256];
-    char builddir[256];
+    char currdir[PLPLOT_MAX_PATH];
+    char builddir[PLPLOT_MAX_PATH];
 
 /* AM: getcwd has a somewhat strange status on Windows, its proper
    name is _getcwd, this is a problem in the case of DLLs, like with
@@ -2136,14 +2140,14 @@ PLDLLIMPEXP int plInBuildTree()
 #define getcwd _getcwd
 #endif
 
-    if (getcwd(currdir, 256) == NULL) {
+    if (getcwd(currdir, PLPLOT_MAX_PATH) == NULL) {
       pldebug("plInBuildTree():", "Not enough buffer space");
     } else {
       /* The chdir / getcwd call is to ensure we get the physical
        * path without any symlinks */
       /* Ignore error in chdir - build tree may not exist */
       if (chdir(BUILD_DIR) == 0) {
-         if (getcwd(builddir, 256) == NULL) {
+         if (getcwd(builddir, PLPLOT_MAX_PATH) == NULL) {
            pldebug("plInBuildTree():", "Not enough buffer space");
          }
          else {
@@ -2214,7 +2218,7 @@ plInitDispatchTable()
     int n;
 
 #ifdef ENABLE_DYNDRIVERS
-    char buf[300];
+    char buf[BUFFER2_SIZE];
     char* drvdir;
     char *devnam, *devdesc, *devtype, *driver, *tag, *seqstr;
     int seq;
@@ -2253,15 +2257,14 @@ plInitDispatchTable()
 
 /* Only consider entries that have the ".rc" suffix */
 	if ((len > 0) && (strcmp (name + len, ".rc") == 0)) {
-	    char path[300];
-	    char buf[300];
+	    char path[PLPLOT_MAX_PATH];
             FILE* fd;
 
 /* Open the driver's info file */
-            snprintf (path, 300, "%s/%s", drvdir, name);
+            snprintf (path, PLPLOT_MAX_PATH, "%s/%s", drvdir, name);
             fd = fopen (path, "r");
             if (fd == NULL) {
-	        snprintf (buf, 300,
+	        snprintf (buf, BUFFER2_SIZE,
                   "plInitDispatchTable: Could not open driver info file %s\n",
                   name);
 	        plabort (buf);
@@ -2274,7 +2277,7 @@ plInitDispatchTable()
 
             pldebug ("plInitDispatchTable",
                      "Opened driver info file %s\n", name);
-            while (fgets (buf, 300, fd) != NULL)
+            while (fgets (buf, BUFFER2_SIZE, fd) != NULL)
 	    {
                 fprintf (fp_drvdb, "%s", buf);
 		if ( buf [strlen (buf) - 1] != '\n' )
@@ -2331,7 +2334,7 @@ plInitDispatchTable()
     i = 0;
     done = !(i < npldynamicdevices);
     while( !done ) {
-        char *p = fgets( buf, 300, fp_drvdb );
+        char *p = fgets( buf, BUFFER2_SIZE, fp_drvdb );
 
         if (p == 0) {
             done = 1;
@@ -2510,7 +2513,7 @@ plLoadDriver(void)
 {
 #ifdef ENABLE_DYNDRIVERS
     int i, drvidx;
-    char sym[60];
+    char sym[BUFFER_SIZE];
     char *tag;
 
     int n=plsc->device - 1;
@@ -2552,11 +2555,11 @@ plLoadDriver(void)
 /* Load the driver if it hasn't been loaded yet. */
     if (!driver->dlhand)
     {
-        char drvspec[ 400 ];
+        char drvspec[ DRVSPEC_SIZE ];
 #ifdef LTDL_WIN32
-        snprintf( drvspec, 400, "%s", driver->drvnam );
+        snprintf( drvspec, DRVSPEC_SIZE, "%s", driver->drvnam );
 #else
-        snprintf( drvspec, 400, "%s/%s", plGetDrvDir (), driver->drvnam );
+        snprintf( drvspec, DRVSPEC_SIZE, "%s/%s", plGetDrvDir (), driver->drvnam );
 #endif /* LTDL_WIN32 */
 
 	pldebug("plLoadDriver", "Trying to load %s on %s\n",
@@ -2577,7 +2580,7 @@ plLoadDriver(void)
 /* Now we are ready to ask the driver's device dispatch init function to
    initialize the entries in the dispatch table. */
 
-    snprintf( sym, 60, "plD_dispatch_init_%s", tag );
+    snprintf( sym, BUFFER_SIZE, "plD_dispatch_init_%s", tag );
     {
         PLDispatchInit dispatch_init = (PLDispatchInit) lt_dlsym( driver->dlhand, sym );
         if (!dispatch_init)

@@ -53,6 +53,8 @@
 /* Random number generator (Mersenne Twister) */
 #include "mt19937ar.h"
 
+#define BUFFER_SIZE 256
+
 /* Static functions */
 
 /* Used by any external init code to suggest a path */
@@ -120,8 +122,8 @@ c_plcol0(PLINT icol0)
 	return;
     }
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
-	char buffer[256];
-	snprintf(buffer, 256, "plcol0: Invalid color map entry: %d", (int) icol0);
+	char buffer[BUFFER_SIZE];
+	snprintf(buffer, BUFFER_SIZE, "plcol0: Invalid color map entry: %d", (int) icol0);
 	plabort(buffer);
 	return;
     }
@@ -152,8 +154,8 @@ c_plcol1(PLFLT col1)
 	return;
     }
     if (col1 < 0 || col1 > 1) {
-	char buffer[256];
-	snprintf(buffer, 256, "plcol1: Invalid color map position: %f", (PLFLT) col1);
+	char buffer[BUFFER_SIZE];
+	snprintf(buffer, BUFFER_SIZE, "plcol1: Invalid color map position: %f", (PLFLT) col1);
 	plabort(buffer);
 	return;
     }
@@ -232,14 +234,14 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
     if (plsc->cmap0 == NULL)
 	plscmap0n(0);
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
-	char buffer[256];
-	snprintf(buffer, 256, "plscol0: Illegal color table value: %d", (int) icol0);
+	char buffer[BUFFER_SIZE];
+	snprintf(buffer, BUFFER_SIZE, "plscol0: Illegal color table value: %d", (int) icol0);
 	plabort(buffer);
 	return;
     }
     if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
-	char buffer[256];
-	snprintf(buffer, 256, "plscol0: Invalid RGB color: %d, %d, %d",
+	char buffer[BUFFER_SIZE];
+	snprintf(buffer, BUFFER_SIZE, "plscol0: Invalid RGB color: %d, %d, %d",
 		(int) r, (int) g, (int) b);
 	plabort(buffer);
 	return;
@@ -261,14 +263,14 @@ c_plscol0a(PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a)
     if (plsc->cmap0 == NULL)
 	plscmap0n(0);
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
-	char buffer[256];
-	snprintf(buffer, 256, "plscol0a: Illegal color table value: %d", (int) icol0);
+	char buffer[BUFFER_SIZE];
+	snprintf(buffer, BUFFER_SIZE, "plscol0a: Illegal color table value: %d", (int) icol0);
 	plabort(buffer);
 	return;
     }
     if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255) || (a < 0 || a > 1.0)) {
-	char buffer[256];
-	snprintf(buffer, 256, "plscol0a: Invalid RGB color: %d, %d, %d, %f",
+	char buffer[BUFFER_SIZE];
+	snprintf(buffer, BUFFER_SIZE, "plscol0a: Invalid RGB color: %d, %d, %d, %f",
 		(int) r, (int) g, (int) b, (double) a);
 	plabort(buffer);
 	return;
@@ -301,8 +303,8 @@ c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
     *b = -1;
 
     if (icol0 < 0 || icol0 > plsc->ncol0) {
-	char buffer[256];
-	snprintf(buffer, 256, "plgcol0: Invalid color index: %d", (int) icol0);
+	char buffer[BUFFER_SIZE];
+	snprintf(buffer, BUFFER_SIZE, "plgcol0: Invalid color index: %d", (int) icol0);
 	plabort(buffer);
 	return;
     }
@@ -333,8 +335,8 @@ c_plgcol0a(PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a)
     *a = -1.0;
 
     if (icol0 < 0 || icol0 > plsc->ncol0) {
-	char buffer[256];
-	snprintf(buffer, 256, "plgcol0: Invalid color index: %d", (int) icol0);
+	char buffer[BUFFER_SIZE];
+	snprintf(buffer, BUFFER_SIZE, "plgcol0: Invalid color index: %d", (int) icol0);
 	plabort(buffer);
 	return;
     }
@@ -366,8 +368,8 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    char buffer[256];
-	    snprintf(buffer, 256, "plscmap0: Invalid RGB color: %d, %d, %d",
+	    char buffer[BUFFER_SIZE];
+	    snprintf(buffer, BUFFER_SIZE, "plscmap0: Invalid RGB color: %d, %d, %d",
 		    (int) r[i], (int) g[i], (int) b[i]);
 	    plabort(buffer);
 	    return;
@@ -403,8 +405,8 @@ c_plscmap0a(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0)
 	    (b[i] < 0 || b[i] > 255) ||
 	    (a[i] < 0.0 || a[i] > 1.0)) {
 
-	    char buffer[256];
-	    snprintf(buffer, 256, "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
+	    char buffer[BUFFER_SIZE];
+	    snprintf(buffer, BUFFER_SIZE, "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
 		    (int) r[i], (int) g[i], (int) b[i], (double) a[i]);
 	    plabort(buffer);
 	    return;
@@ -439,8 +441,8 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    char buffer[256];
-	    snprintf(buffer, 256, "plscmap1: Invalid RGB color: %d, %d, %d",
+	    char buffer[BUFFER_SIZE];
+	    snprintf(buffer, BUFFER_SIZE, "plscmap1: Invalid RGB color: %d, %d, %d",
 		    (int) r[i], (int) g[i], (int) b[i]);
 	    plabort(buffer);
 	    return;
@@ -475,8 +477,8 @@ c_plscmap1a(PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1)
 	    (b[i] < 0 || b[i] > 255) ||
 	    (a[i] < 0.0 || a[i] > 1.0)) {
 
-	    char buffer[256];
-	    snprintf(buffer, 256, "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
+	    char buffer[BUFFER_SIZE];
+	    snprintf(buffer, BUFFER_SIZE, "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
 		    (int) r[i], (int) g[i], (int) b[i], (double) a[i]);
 	    plabort(buffer);
 	    return;
@@ -1778,7 +1780,7 @@ plOpenFile(PLStream *pls)
 {
     int i = 0, count = 0;
     size_t len;
-    char line[256];
+    char line[BUFFER_SIZE];
 
     while (pls->OutFile == NULL) {
 
@@ -1835,10 +1837,10 @@ plOpenFile(PLStream *pls)
 void
 plP_getmember(PLStream *pls)
 {
-    char tmp[256];
-    char prefix[256];
+    char tmp[BUFFER_SIZE];
+    char prefix[BUFFER_SIZE];
     char* suffix;
-    char num[256];
+    char num[BUFFER_SIZE];
     int maxlen;
 
     maxlen = strlen(pls->BaseName) + 10;
@@ -1852,13 +1854,13 @@ plP_getmember(PLStream *pls)
 
     suffix = strstr (pls->BaseName, "%n");
 
-    snprintf(tmp, 256, "%%0%1ii", (int) pls->fflen);
-    snprintf(num, 256, tmp, pls->member);
+    snprintf(tmp, BUFFER_SIZE, "%%0%1ii", (int) pls->fflen);
+    snprintf(num, BUFFER_SIZE, tmp, pls->member);
 
     if (suffix == NULL)
       snprintf (pls->FileName, maxlen, "%s.%s", pls->BaseName, num);
     else {
-      strncpy (prefix, pls->BaseName, 256);
+      strncpy (prefix, pls->BaseName, BUFFER_SIZE);
       prefix [suffix - pls->BaseName] = 0;
       snprintf (pls->FileName, maxlen, "%s%s%s", prefix, num, suffix + 2);
     }
@@ -1875,7 +1877,7 @@ plP_getmember(PLStream *pls)
 void
 plP_sfnam(PLStream *pls, const char *fnam)
 {
-    char prefix[256];
+    char prefix[BUFFER_SIZE];
     char* suffix;
     int maxlen;
     pls->OutFile = NULL;
@@ -1894,7 +1896,7 @@ plP_sfnam(PLStream *pls, const char *fnam)
     if (suffix == NULL)
       strncpy(pls->FileName, fnam, maxlen);
     else {
-      strncpy (prefix, fnam, 256);
+      strncpy (prefix, fnam, BUFFER_SIZE);
       prefix [suffix - fnam] = 0;
       snprintf (pls->FileName, maxlen, "%s%s", prefix, suffix + 2);
     }
@@ -2057,7 +2059,7 @@ plGetInt(const char *s)
 {
     int m;
     int i = 0;
-    char line[256];
+    char line[BUFFER_SIZE];
 
     while (i++ < 10) {
 	fputs(s, stdout);
@@ -2088,7 +2090,7 @@ plGetFlt(const char *s)
     PLFLT m;
     double m1;
     int i = 0;
-    char line[256];
+    char line[BUFFER_SIZE];
 
     while (i++ < 10) {
 	fputs(s, stdout);

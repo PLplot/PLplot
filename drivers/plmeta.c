@@ -67,7 +67,8 @@ typedef struct {
 
 /* Used for constructing error messages */
 
-static char buffer[256];
+#define BUFFER_LEN 256
+static char buffer[BUFFER_LEN];
 
 /* Function prototypes */
 
@@ -410,7 +411,7 @@ UpdatePrevPagehdr(PLStream *pls)
     /* The forward byte offset is located exactly 7 bytes after the BOP */
 	fwbyte_offset = dev->lp_offset + 7;
 	if (pl_fsetpos(file, &fwbyte_offset)) {
-	    snprintf(buffer, 256, "UpdatePrevPagehdr (plmeta.c): fsetpos to fwbyte_offset (%d) failed",
+	    snprintf(buffer, BUFFER_LEN, "UpdatePrevPagehdr (plmeta.c): fsetpos to fwbyte_offset (%d) failed",
 		    (int) fwbyte_offset);
 	    plexit(buffer);
 	}
@@ -435,7 +436,7 @@ UpdatePrevPagehdr(PLStream *pls)
 
 #ifdef DEBUG
 	if (pl_fsetpos(file, &fwbyte_offset)) {
-	    snprintf(buffer, 256, "UpdatePrevPagehdr (plmeta.c): fsetpos to fwbyte_offset (%d) failed",
+	    snprintf(buffer, BUFFER_LEN, "UpdatePrevPagehdr (plmeta.c): fsetpos to fwbyte_offset (%d) failed",
 		    (int) fwbyte_offset);
 	    plexit(buffer);
 	}
@@ -450,7 +451,7 @@ UpdatePrevPagehdr(PLStream *pls)
     /* Return to current page offset */
 
 	if (pl_fsetpos(file, &cp_offset)) {
-	    snprintf(buffer, 256, "UpdatePrevPagehdr (plmeta.c): fsetpos to cp_offset (%d) failed",
+	    snprintf(buffer, BUFFER_LEN, "UpdatePrevPagehdr (plmeta.c): fsetpos to cp_offset (%d) failed",
 		    (int) cp_offset);
 	    plexit(buffer);
 	}
@@ -478,7 +479,7 @@ UpdateIndex(PLStream *pls, FPOS_T cp_offset)
 		(int) cp_offset, (int) dev->lp_offset);
 
 	if (pl_fsetpos(file, &dev->index_offset)) {
-	    snprintf(buffer, 256, "UpdateIndex (plmeta.c): fsetpos to index_offset (%d) failed",
+	    snprintf(buffer, BUFFER_LEN, "UpdateIndex (plmeta.c): fsetpos to index_offset (%d) failed",
 		    (int) dev->index_offset);
 	    plexit(buffer);
 	}
@@ -490,7 +491,7 @@ UpdateIndex(PLStream *pls, FPOS_T cp_offset)
 		(int) dev->lp_offset, (int) cp_offset);
 
 	if (pl_fsetpos(file, &cp_offset)) {
-	    snprintf(buffer, 256, "UpdateIndex (plmeta.c): fsetpos to cp_offset (%d) failed",
+	    snprintf(buffer, BUFFER_LEN, "UpdateIndex (plmeta.c): fsetpos to cp_offset (%d) failed",
 		    (int) cp_offset);
 	    plexit(buffer);
 	}

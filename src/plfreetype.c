@@ -558,7 +558,7 @@ void plD_FreeType_init(PLStream *pls)
     FT_Data *FT;
     char *a;
 /* font paths and file names can be long so leave generous (1024) room */
-    char font_dir[1024];
+    char font_dir[PLPLOT_MAX_PATH];
     /* N.B. must be in exactly same order as TrueTypeLookup */
     const char *env_font_names[N_TrueTypeLookup] = {
          "PLPLOT_FREETYPE_SANS_FONT",
@@ -672,9 +672,9 @@ void plD_FreeType_init(PLStream *pls)
  */
 
     if ((a = getenv("PLPLOT_FREETYPE_FONT_DIR")) != NULL)
-        strncpy(font_dir,a,1024);
+        strncpy(font_dir,a,PLPLOT_MAX_PATH);
     else
-        strncpy(font_dir,default_unix_font_dir,1024);
+        strncpy(font_dir,default_unix_font_dir,PLPLOT_MAX_PATH);
 
 #endif
 
@@ -701,16 +701,16 @@ void plD_FreeType_init(PLStream *pls)
 #else
 	    if ((a[0]=='/')||(a[0]=='~')) /* check for unix abs path */
 #endif
-		strncpy(FT->font_name[i],a,1024);
+		strncpy(FT->font_name[i],a,PLPLOT_MAX_PATH);
 
 	    else {
-		strncpy(FT->font_name[i],font_dir,1024);
-		strncat(FT->font_name[i],a,1024);
+		strncpy(FT->font_name[i],font_dir,PLPLOT_MAX_PATH);
+		strncat(FT->font_name[i],a,PLPLOT_MAX_PATH);
 	    }
 
 	} else {
-	    strncpy(FT->font_name[i],font_dir,1024);
-	    strncat(FT->font_name[i],(char *)TrueTypeLookup[i].pfont,1024);
+	    strncpy(FT->font_name[i],font_dir,PLPLOT_MAX_PATH);
+	    strncat(FT->font_name[i],(char *)TrueTypeLookup[i].pfont,PLPLOT_MAX_PATH);
 	}
 
    {

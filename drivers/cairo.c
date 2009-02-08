@@ -157,7 +157,10 @@ const char *envFamilyLookup[NPANGOLOOKUP] = {
   "PLPLOT_FREETYPE_SYMBOL_FAMILY"
 };
 
-char familyLookup[NPANGOLOOKUP][1024];
+#define FAMILY_LOOKUP_LEN 1024
+char familyLookup[NPANGOLOOKUP][FAMILY_LOOKUP_LEN];
+
+#define TAG_LEN 200
 
 const char *weightLookup[2] = {
   "normal",
@@ -566,20 +569,20 @@ void open_span_tag(char *pangoMarkupString, PLUNICODE fci, float fontSize, int u
 {
   int i;
   unsigned char fontFamily, fontStyle, fontWeight;
-  char openTag[200];
+  char openTag[TAG_LEN];
 
   /* Generate the font info for the open tag & concatenate this
      onto the markup string. */
   plP_fci2hex(fci, &fontFamily, PL_FCI_FAMILY);
   plP_fci2hex(fci, &fontStyle, PL_FCI_STYLE);
   plP_fci2hex(fci, &fontWeight, PL_FCI_WEIGHT);
-  snprintf(openTag, 200, "<span font_desc=\"%s %.2f\" ", familyLookup[fontFamily], fontSize);
+  snprintf(openTag, TAG_LEN, "<span font_desc=\"%s %.2f\" ", familyLookup[fontFamily], fontSize);
   strncat(pangoMarkupString, openTag, MAX_MARKUP_LEN);
 
-  snprintf(openTag, 200, "style=\"%s\" ", styleLookup[fontStyle]);
+  snprintf(openTag, TAG_LEN, "style=\"%s\" ", styleLookup[fontStyle]);
   strncat(pangoMarkupString, openTag, MAX_MARKUP_LEN);
 
-  snprintf(openTag, 200, "weight=\"%s\">", weightLookup[fontWeight]);
+  snprintf(openTag, TAG_LEN, "weight=\"%s\">", weightLookup[fontWeight]);
   strncat(pangoMarkupString, openTag, MAX_MARKUP_LEN);
 
   /* Move to the right sub/super-script level */
@@ -686,10 +689,10 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
      This was copied from the psttf driver. */
   for(i=0;i<NPANGOLOOKUP;i++){
     if((a = getenv(envFamilyLookup[i])) != NULL){
-      strncpy(familyLookup[i],a,1024);
+      strncpy(familyLookup[i],a,FAMILY_LOOKUP_LEN);
     }
     else {
-      strncpy(familyLookup[i],defaultFamilyLookup[i],1024);
+      strncpy(familyLookup[i],defaultFamilyLookup[i],FAMILY_LOOKUP_LEN);
     }
   }
 
