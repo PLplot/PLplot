@@ -648,7 +648,7 @@ void plD_FreeType_init(PLStream *pls)
     }
     else
     {
-      strncat(WINDIR_PATH,"\\fonts\\arial.ttf",PLPLOT_MAX_PATH);
+      strncat(WINDIR_PATH,"\\fonts\\arial.ttf",PLPLOT_MAX_PATH-1-strlen(WINDIR_PATH));
       if (access(WINDIR_PATH, F_OK)==0)
         {
           b=strrchr(WINDIR_PATH,'\\');
@@ -707,12 +707,12 @@ void plD_FreeType_init(PLStream *pls)
 
 	    else {
 		strncpy(FT->font_name[i],font_dir,PLPLOT_MAX_PATH-1);
-		strncat(FT->font_name[i],a,PLPLOT_MAX_PATH-1);
+		strncat(FT->font_name[i],a,PLPLOT_MAX_PATH-1-strlen(FT->font_name[i]));
 	    }
 
 	} else {
 	    strncpy(FT->font_name[i],font_dir,PLPLOT_MAX_PATH-1);
-	    strncat(FT->font_name[i],(char *)TrueTypeLookup[i].pfont,PLPLOT_MAX_PATH-1);
+	    strncat(FT->font_name[i],(char *)TrueTypeLookup[i].pfont,PLPLOT_MAX_PATH-1-strlen(FT->font_name[i]));
 	}
         FT->font_name[i][PLPLOT_MAX_PATH-1] = '\0';
 

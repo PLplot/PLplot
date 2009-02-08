@@ -354,7 +354,7 @@ static void plfloatlabel(PLFLT value, char *string, PLINT len)
     snprintf(form, FORM_LEN, "%%.%df", prec-1);
     snprintf(string, len, form, mant);
     snprintf(tmpstring, TMPSTRING_LEN, "#(229)10#u%d", exponent);
-    strncat(string, tmpstring, len);
+    strncat(string, tmpstring, len-strlen(string)-1);
 
     if (abs(exponent) < limexp || value == 0.0) {
 	value = pow(10.0, exponent) * mant;
