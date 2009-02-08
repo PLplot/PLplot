@@ -659,7 +659,7 @@ tk_di(PLStream *pls)
 /* Change orientation */
 
     if (pls->difilt & PLDI_ORI) {
-	sprintf(str, "%f", pls->diorot);
+	snprintf(str, 10, "%f", pls->diorot);
 	Tcl_SetVar(dev->interp, "rot", str, 0);
 
 	server_cmd( pls, "$plwidget cmd plsetopt -ori $rot", 1 );
@@ -669,13 +669,13 @@ tk_di(PLStream *pls)
 /* Change window into plot space */
 
     if (pls->difilt & PLDI_PLT) {
-	sprintf(str, "%f", pls->dipxmin);
+	snprintf(str, 10, "%f", pls->dipxmin);
 	Tcl_SetVar(dev->interp, "xl", str, 0);
-	sprintf(str, "%f", pls->dipymin);
+	snprintf(str, 10, "%f", pls->dipymin);
 	Tcl_SetVar(dev->interp, "yl", str, 0);
-	sprintf(str, "%f", pls->dipxmax);
+	snprintf(str, 10, "%f", pls->dipxmax);
 	Tcl_SetVar(dev->interp, "xr", str, 0);
-	sprintf(str, "%f", pls->dipymax);
+	snprintf(str, 10, "%f", pls->dipymax);
 	Tcl_SetVar(dev->interp, "yr", str, 0);
 
 	server_cmd( pls, "$plwidget cmd plsetopt -wplt $xl,$yl,$xr,$yr", 1 );
@@ -685,13 +685,13 @@ tk_di(PLStream *pls)
 /* Change window into device space */
 
     if (pls->difilt & PLDI_DEV) {
-	sprintf(str, "%f", pls->mar);
+	snprintf(str, 10, "%f", pls->mar);
 	Tcl_SetVar(dev->interp, "mar", str, 0);
-	sprintf(str, "%f", pls->aspect);
+	snprintf(str, 10, "%f", pls->aspect);
 	Tcl_SetVar(dev->interp, "aspect", str, 0);
-	sprintf(str, "%f", pls->jx);
+	snprintf(str, 10, "%f", pls->jx);
 	Tcl_SetVar(dev->interp, "jx", str, 0);
-	sprintf(str, "%f", pls->jy);
+	snprintf(str, 10, "%f", pls->jy);
 	Tcl_SetVar(dev->interp, "jy", str, 0);
 
 	server_cmd( pls, "$plwidget cmd plsetopt -mar $mar", 1 );
@@ -1346,7 +1346,7 @@ plwindow_init(PLStream *pls)
 
     bg = pls->cmap0[0].b | (pls->cmap0[0].g << 8) | (pls->cmap0[0].r << 16);
     if (bg > 0) {
-	sprintf(command, "$plwidget configure -plbg #%06x", bg);
+	snprintf(command, 100, "$plwidget configure -plbg #%06x", bg);
 	server_cmd( pls, command, 0 );
     }
 
@@ -1368,12 +1368,12 @@ plwindow_init(PLStream *pls)
 /* color map options */
 
     if (pls->ncol0) {
-	sprintf(command, "$plwidget cmd plsetopt -ncol0 %d", pls->ncol0);
+	snprintf(command, 100, "$plwidget cmd plsetopt -ncol0 %d", pls->ncol0);
 	server_cmd( pls, command, 0 );
     }
 
     if (pls->ncol1) {
-	sprintf(command, "$plwidget cmd plsetopt -ncol1 %d", pls->ncol1);
+	snprintf(command, 100, "$plwidget cmd plsetopt -ncol1 %d", pls->ncol1);
 	server_cmd( pls, command, 0 );
     }
 
@@ -1393,7 +1393,7 @@ static void
 set_windowname(PLStream *pls)
 {
   const char *pname;
-  int i;
+  int i, maxlen;
 
   /* Set to "plclient" if not initialized via plargs or otherwise */
 
@@ -1409,14 +1409,15 @@ set_windowname(PLStream *pls)
     pname = pls->program;
 
   if (pls->plwindow == NULL) { /* dont override -plwindow cmd line option */
-    pls->plwindow = (char *) malloc(10+(strlen(pname)) * sizeof(char));
+    maxlen = strlen(pname) + 10;
+    pls->plwindow = (char *) malloc(maxlen * sizeof(char));
 
     /* Allow for multiple widgets created by multiple streams */
 
     if (pls->ipls == 0)
-      sprintf(pls->plwindow, ".%s", pname);
+      snprintf(pls->plwindow, maxlen, ".%s", pname);
     else
-      sprintf(pls->plwindow, ".%s_%d", pname, (int) pls->ipls);
+      snprintf(pls->plwindow, maxlen, ".%s_%d", pname, (int) pls->ipls);
 
     /* Replace any ' 's with '_'s to avoid quoting problems. */
     /* Replace any '.'s (except leading) with '_'s to avoid bad window names. */

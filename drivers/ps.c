@@ -408,7 +408,7 @@ plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 	else
 	    putc(' ', OF);
 
-	sprintf(outbuf, "%d %d D", x2, y2);
+	snprintf(outbuf, 128, "%d %d D", x2, y2);
 	dev->ptcnt++;
 	pls->linepos += 12;
     }
@@ -417,9 +417,9 @@ plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 	pls->linepos = 0;
 
 	if (x1 == x2 && y1 == y2) /* must be a single dot, draw a circle */
-	  sprintf(outbuf, "%d %d A", x1, y1);
+	  snprintf(outbuf, 128, "%d %d A", x1, y1);
 	else
-	  sprintf(outbuf, "%d %d M %d %d D", x1, y1, x2, y2);
+	  snprintf(outbuf, 128, "%d %d M %d %d D", x1, y1, x2, y2);
 	dev->llx = MIN(dev->llx, x1);
 	dev->lly = MIN(dev->lly, y1);
 	dev->urx = MAX(dev->urx, x1);
@@ -657,7 +657,7 @@ fill_polygon(PLStream *pls)
 /* First time through start with a x y moveto */
 
 	if (n == 0) {
-	    sprintf(outbuf, "N %d %d M", x, y);
+	    snprintf(outbuf, 128, "N %d %d M", x, y);
 	    dev->llx = MIN(dev->llx, x);
 	    dev->lly = MIN(dev->lly, y);
 	    dev->urx = MAX(dev->urx, x);
@@ -676,7 +676,7 @@ fill_polygon(PLStream *pls)
 
 	pls->bytecnt++;
 
-	sprintf(outbuf, "%d %d D", x, y);
+	snprintf(outbuf, 128, "%d %d D", x, y);
 	dev->llx = MIN(dev->llx, x);
 	dev->lly = MIN(dev->lly, y);
 	dev->urx = MAX(dev->urx, x);

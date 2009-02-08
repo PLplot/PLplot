@@ -53,9 +53,9 @@ main (int argc, char* argv[])
 
   lt_dlinit ();
 #ifdef LTDL_WIN32  
-  sprintf( drvspec, "%s", drvnam );
+  snprintf( drvspec, 400, "%s", drvnam );
 #else
-  sprintf( drvspec, "%s/%s", plGetDrvDir (), drvnam );
+  snprintf( drvspec, 400, "%s/%s", plGetDrvDir (), drvnam );
 #endif /* LTDL_WIN32 */
   dlhand = lt_dlopenext (drvspec);
   if (dlhand == NULL) {
@@ -63,7 +63,7 @@ main (int argc, char* argv[])
                      "libltdl error: %s\n", drvspec, lt_dlerror ());
     return 1;
   }
-  sprintf (sym, "plD_DEVICE_INFO_%s", drvnam);
+  snprintf (sym, 300, "plD_DEVICE_INFO_%s", drvnam);
   info = (char **) lt_dlsym (dlhand, sym);
   if (info != NULL) {
     printf ("%s", *info);

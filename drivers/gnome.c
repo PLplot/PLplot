@@ -342,13 +342,13 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
     plTranslateCursor (gin);
 
     if (color == NULL)
-      sprintf (buffer, "");
+      buffer[0] = '\0';
     else
       if (color->cmap == 0)
-	sprintf (buffer, "   x = %f   y = %f   color = %d (cmap0)",
+	snprintf (buffer, 128, "   x = %f   y = %f   color = %d (cmap0)",
 		 gin->wX, gin->wY, (int) color->color);
       else
-	sprintf (buffer, "   x = %f   y = %f   color = %f (cmap1)",
+	snprintf (buffer, 128, "   x = %f   y = %f   color = %f (cmap1)",
 		 gin->wX, gin->wY, color->color);
 
     /*// FIXME : Terrible global variable hack*/
@@ -700,7 +700,7 @@ new_page (PLStream* pls)
 
   gtk_notebook_set_show_tabs (dev->notebook, (np > 0));
 
-  sprintf (buffer, "Page %d", np+1);
+  snprintf (buffer, 32, "Page %d", np+1);
   gtk_notebook_append_page (dev->notebook, GTK_WIDGET (page->sw),
 			    gtk_label_new (buffer));
 

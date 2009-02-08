@@ -107,7 +107,7 @@ wxPLDevAGG::wxPLDevAGG() :
     char WINDIR_PATH[255];
     char *b;
     b=getenv("WINDIR");
-    strcpy(WINDIR_PATH,b);*/
+    strncpy(WINDIR_PATH,b,255);*/
 
 /*
  * Work out if we have Win95+ or Win3.?... sort of.
@@ -129,7 +129,7 @@ wxPLDevAGG::wxPLDevAGG() :
     }
     else
     {
-      strcat(WINDIR_PATH,"\\fonts\\arial.ttf");
+      strncat(WINDIR_PATH,"\\fonts\\arial.ttf",255);
       if (access(WINDIR_PATH, F_OK)==0)
         {
           b=strrchr(WINDIR_PATH,'\\');

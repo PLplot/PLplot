@@ -726,7 +726,7 @@ void plD_state_gcw(PLStream *pls, PLINT op)
   else if(op==PLSTATE_CMAP0) strcpy(opname,"PLSTATE_CMAP0");
   else if(op==PLSTATE_CMAP1) strcpy(opname,"PLSTATE_CMAP1");
   else strcpy(opname,"unknown");
-  sprintf(msg,"<plD_state_gcw />: %s\n",opname);
+  snprintf(msg,100,"<plD_state_gcw />: %s\n",opname);
   gcw_debug(msg);
 #endif
 
@@ -1186,7 +1186,7 @@ void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
   else if(op==PLESC_HAS_TEXT) strcpy(opname,"PLESC_HAS_TEXT");
   else if(op==PLESC_GRAPH) strcpy(opname,"PLESC_GRAPH");
   else strcpy(opname,"unknown");
-  sprintf(msg,"<plD_esc_gcw />: %s\n",opname);
+  snprintf(msg,100,"<plD_esc_gcw />: %s\n",opname);
   gcw_debug(msg);
 #endif
 
