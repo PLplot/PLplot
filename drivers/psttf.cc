@@ -285,10 +285,12 @@ ps_init(PLStream *pls)
     // or defaults.
     for (i=0;i<N_Pango_Lookup;i++) {
       if ( (a = getenv(EnvFamilyLookup[i])) != NULL ) {
-	strncpy(FamilyLookup[i],a,FAMILY_LOOKUP_LEN);
+	strncpy(FamilyLookup[i],a,FAMILY_LOOKUP_LEN-1);
+        FamilyLookup[i][FAMILY_LOOKUP_LEN-1] = '\0';
       }
       else {
 	strncpy(FamilyLookup[i],DefaultFamilyLookup[i],FAMILY_LOOKUP_LEN);
+        FamilyLookup[i][FAMILY_LOOKUP_LEN-1] = '\0';
       }
     }
 

@@ -1893,9 +1893,10 @@ plP_sfnam(PLStream *pls, const char *fnam)
 
     suffix = strstr (fnam, "%n");
 
-    if (suffix == NULL)
+    if (suffix == NULL) {
       strncpy(pls->FileName, fnam, maxlen-1);
       pls->FileName[maxlen-1] = '\0';
+    }
     else {
       strncpy (prefix, fnam, BUFFER_SIZE-1);
       prefix [(suffix - fnam)<BUFFER_SIZE?(suffix-fnam):BUFFER_SIZE-1] = '\0';

@@ -498,17 +498,17 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
 	switch(ucs4[i])
 	  {
 	  case 38:
-	    strncat(pangoMarkupString, "&#38;", MAX_MARKUP_LEN);
+	    strncat(pangoMarkupString, "&#38;", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	    break;
 	  case 60:
-	    strncat(pangoMarkupString, "&#60;", MAX_MARKUP_LEN);
+	    strncat(pangoMarkupString, "&#60;", MAX_MARKUP_LEN)-1-strlen(pangoMarkupString);
 	    break;
 	  case 62:
-	    strncat(pangoMarkupString, "&#62;", MAX_MARKUP_LEN);
+	    strncat(pangoMarkupString, "&#62;", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	    break;
 	  default:
 	    ucs4_to_utf8(ucs4[i],utf8);
-	    strncat(pangoMarkupString, utf8, MAX_MARKUP_LEN);
+	    strncat(pangoMarkupString, utf8, MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	    break;
 	  }
 	i++;
@@ -517,24 +517,24 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
       i++;
       if (ucs4[i] == (PLUNICODE)plplotEsc){   /* a escape character to display */
 	ucs4_to_utf8(ucs4[i],utf8);
-	strncat(pangoMarkupString, utf8, MAX_MARKUP_LEN);
+	strncat(pangoMarkupString, utf8, MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	i++;
 	continue;
       }
       else {
 	if(ucs4[i] == (PLUNICODE)'u'){	/* Superscript */
 	  if(upDown < 0){
-	    strncat(pangoMarkupString, "</sub>", MAX_MARKUP_LEN);
+	    strncat(pangoMarkupString, "</sub>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	  } else {
-	    strncat(pangoMarkupString, "<sup>", MAX_MARKUP_LEN);
+	    strncat(pangoMarkupString, "<sup>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	  }
 	  upDown++;
 	}
 	if(ucs4[i] == (PLUNICODE)'d'){	/* Subscript */
 	  if(upDown > 0){
-	    strncat(pangoMarkupString, "</sup>", MAX_MARKUP_LEN);
+	    strncat(pangoMarkupString, "</sup>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	  } else {
-	    strncat(pangoMarkupString, "<sub>", MAX_MARKUP_LEN);
+	    strncat(pangoMarkupString, "<sub>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	  }
 	  upDown--;
 	}
@@ -577,24 +577,24 @@ void open_span_tag(char *pangoMarkupString, PLUNICODE fci, float fontSize, int u
   plP_fci2hex(fci, &fontStyle, PL_FCI_STYLE);
   plP_fci2hex(fci, &fontWeight, PL_FCI_WEIGHT);
   snprintf(openTag, TAG_LEN, "<span font_desc=\"%s %.2f\" ", familyLookup[fontFamily], fontSize);
-  strncat(pangoMarkupString, openTag, MAX_MARKUP_LEN);
+  strncat(pangoMarkupString, openTag, MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 
   snprintf(openTag, TAG_LEN, "style=\"%s\" ", styleLookup[fontStyle]);
-  strncat(pangoMarkupString, openTag, MAX_MARKUP_LEN);
+  strncat(pangoMarkupString, openTag, MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 
   snprintf(openTag, TAG_LEN, "weight=\"%s\">", weightLookup[fontWeight]);
-  strncat(pangoMarkupString, openTag, MAX_MARKUP_LEN);
+  strncat(pangoMarkupString, openTag, MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 
   /* Move to the right sub/super-script level */
   if(upDown > 0){
     while(upDown > 0){
-      strncat(pangoMarkupString, "<sup>", MAX_MARKUP_LEN);
+      strncat(pangoMarkupString, "<sup>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
       upDown--;
     }
   }
   if(upDown < 0){
     while(upDown < 0){
-      strncat(pangoMarkupString, "<sub>", MAX_MARKUP_LEN);
+      strncat(pangoMarkupString, "<sub>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
       upDown++;
     }
   }
@@ -610,18 +610,18 @@ void close_span_tag(char *pangoMarkupString, int upDown)
 {
   if(upDown > 0){
     while(upDown > 0){
-      strncat(pangoMarkupString, "</sup>", MAX_MARKUP_LEN);
+      strncat(pangoMarkupString, "</sup>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
       upDown--;
     }
   }
   if(upDown < 0){
     while(upDown < 0){
-      strncat(pangoMarkupString, "</sub>", MAX_MARKUP_LEN);
+      strncat(pangoMarkupString, "</sub>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
       upDown++;
     }
   }
 
-  strncat(pangoMarkupString, "</span>", MAX_MARKUP_LEN);
+  strncat(pangoMarkupString, "</span>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 }
 
 /*---------------------------------------------------------------------
@@ -689,10 +689,12 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
      This was copied from the psttf driver. */
   for(i=0;i<NPANGOLOOKUP;i++){
     if((a = getenv(envFamilyLookup[i])) != NULL){
-      strncpy(familyLookup[i],a,FAMILY_LOOKUP_LEN);
+      strncpy(familyLookup[i],a,FAMILY_LOOKUP_LEN-1);
+      familyLookup[i][FAMILY_LOOKUP_LEN-1] = '\0';
     }
     else {
-      strncpy(familyLookup[i],defaultFamilyLookup[i],FAMILY_LOOKUP_LEN);
+      strncpy(familyLookup[i],defaultFamilyLookup[i],FAMILY_LOOKUP_LEN-1);
+      familyLookup[i][FAMILY_LOOKUP_LEN-1] = '\0';
     }
   }
 
