@@ -79,6 +79,7 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
     year100 = year - 1;
     year400 = year - 1;
   }  
+  
   if((forceJulian == 0 && (year < 1582 || (year == 1582 && month < 9) || (year == 1582 && month == 9 && day < 15))) || forceJulian == 1)
     {
       /* count leap years on proleptic Julian Calendar */
@@ -147,6 +148,7 @@ const char * getDayOfWeek( const MJDtime *MJD)
 {
   static char *dow = {"Wed\0Thu\0Fri\0Sat\0Sun\0Mon\0Tue"};
   int d = MJD->base_day % 7;
+  if(d < 0) d += 7;
   return &(dow[d*4]);
 }
 
@@ -154,6 +156,7 @@ const char * getLongDayOfWeek( const MJDtime *MJD)
 {
   static char *dow = {"Wednesday\0Thursday\0\0Friday\0\0\0\0Saturday\0\0Sunday\0\0\0\0Monday\0\0\0\0Tuesday"};
   int d = MJD->base_day % 7;
+  if(d < 0) d += 7;
   return &(dow[d*10]);
 }
 
@@ -190,33 +193,37 @@ int getDOY(const MJDtime *MJD, int forceJulian)
 
   j = MJD->base_day + extra_days;
 	
-  if( j <= -678943) {
+	if( j < -678943) {
 	
-    /* BCE dates */
+		/* Negative CE dates */
 
-    j += 678943;
-    if( j > 0)
-      {
-	/* must be in year BCE 1 (CE year 0) */
-	year = 0;
-	/* subtract nothing from j */
-      }
-    else
-      {
-	/* negative years */
-	year = (int) ((float)j / 365.25) -1;
-	doy = j - (int)(year  * 365.25);
-      }
+		j += 678943; 
 		
-  }
+		/* negative years */
+		year = (int) ((float)(j-365) / 365.25);
+		doy = j +1 - year * 365.25;
+				
+	}
+	else if( j < -678577) {
+	
+		/* CE = 0, BCE = 1 dates */
+
+		j += 678943; 
+		
+		/* negative years */
+		year = 0;
+		doy = j +1;
+		
+	}
   else if( j < -100840 || forceJulian == 1)
     {
       /* Julian Dates */
       j += 678943;
 		
       year = (int) ((float)j / 365.25);
-	
-      doy = j - (int)(year * 365.25);
+	  lastyear = year - 1;
+	  doy = j - year * 365 - lastyear / 4;
+
 		
     }
   else
@@ -255,23 +262,22 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 
   j = MJD->base_day + extra_days;
 	
-  if( j <= -678943) {
+  if( j <= -678577) {
 	
     /* BCE dates */
 
     j += 678943;
-    if( j > 0)
-      {
-	/* must be in year BCE 1 (CE year 0) */
-	*year = 0;
-	/* subtract nothing from j */
-      }
-    else
-      {
-	/* negative years */
-	*year = (int) ((float)j / 365.25) -1;
-	j = j - (int)((*year)  * 365.25);
-      }
+	if( j>=0) 
+	{
+		*year = 0;
+		j++;
+	}
+	else
+	{
+		/* negative years */
+		*year = (int) ((float)(j-365) / 365.25);
+		j = j +1 - *year * 365.25;
+	}
 		
     /* j is now always positive */
     *month = -1;
@@ -287,8 +293,6 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
       }
     else
       {
-	/* put this year's leap day back as it is done here */
-	j++;
 	while(j > MonthStartDOY_L[*month +1])
 	  {
 	    (*month)++;
@@ -304,7 +308,8 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 		
       *year = (int) ((float)j / 365.25);
 	
-      j = j - (int)(*year * 365.25);
+		lastyear = *year - 1;
+		 j = j - *year * 365 - lastyear / 4;
 		
       *month = -1;
       if(*year%4 != 0)
@@ -318,8 +323,6 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 	}
       else
 	{
-	  /* put leap day back for this year as done here */
-	  j++;
 	  while(j > MonthStartDOY_L[*month + 1])
 	    {
 	      (*month)++;

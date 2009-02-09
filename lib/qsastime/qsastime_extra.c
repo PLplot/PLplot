@@ -55,6 +55,7 @@ int setFromISOstring(const char* ISOstring, MJDtime *MJD)
   /* parse off year */
 
   y = strtol(&(ISOstring[startAt]), NULL, 10);
+  if(ISOstring[startAt] == '-' || ISOstring[startAt] == '+') startAt++;
   startAt += 5;
   if(startAt > len) return 1;
 
@@ -100,7 +101,7 @@ void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, 
       /* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
       /* negative CE (AD) years convert to BCE (BC) as  BCE = 1 - CE, e.g. 2 BCE = -1 CE */
 		
-      leaps = year / 4 - 1 ; /* (note leaps is negative here and year 0 (1 BCE) was a leap year */
+      leaps = (year -4) / 4; /* (note leaps is negative here and year 0 (1 BCE) was a leap year */
       MJD->base_day = year * 365 + leaps + doy - 678943;
 
     }
