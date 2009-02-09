@@ -2151,6 +2151,10 @@ plsnprintf(char *buffer, int n, const char *format, ...)
   va_start(args, format);
 	ret=vsprintf(buffer, fmt, args);
   va_end( argptr );
+ 
+  /* Check if overrun occured */
+  if (ret > n-1) 
+    plabort("plsnprintf: buffer overrun");
   
   return ret;
 }
