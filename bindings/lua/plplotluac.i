@@ -755,19 +755,59 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 }
 
 
+/* this typemap takes a sequence of strings and converts them for plstripc 
+   also checks that previous Arrays were of length 4 
+*/
+%typemap(in, checkfn="lua_istable") char *legline[4] {
+  int i;
+  $1=NULL;
+  
+  if(SWIG_table_size(L, $input)!=4) {
+    lua_pushfstring(L, "Requires a sequence of 4 strings.");
+    SWIG_fail;
+  }
+  if(Alen!=4) {
+    lua_pushfstring(L, "colline and styline args must be length 4.");
+    SWIG_fail;
+  }
+
+  $1 = malloc(sizeof(char*)*4);
+  for(i = 1; i <= 4; i++) {
+    lua_rawgeti(L, $input, i);
+    if(lua_isstring(L, -1)) {
+      $1[i-1] = (char*)lua_tostring(L, -1);
+    } else {
+      lua_pop(L,1);
+      lua_pushfstring(L, "Requires a sequence of 4 strings.");
+      SWIG_fail;
+      /* $1 array is freed after 'fail:' */
+    }
+    lua_pop(L,1);
+  }
+}
+%typemap(freearg) char *legline[4] {
+  if($1) {free($1); $1=NULL;}
+}
+
+
 /* Process options list using current options info. */
 %typemap(in, checkfn="lua_istable") (int *p_argc, const char **argv) {
   int i, n;
 
-  lua_pushstring(L, "n");
-  lua_gettable(L, $input);
-  if(!lua_isnumber(L, -1)) {
-    lua_pushfstring(L, "Table doesn't contain key 'n'.");
-    SWIG_fail;
+  /* from lua 5.1 on there is no element "n" anymore,
+     so we need to find out the number of command line
+     options manually */
+  for(i = 1; ; i++) {
+    lua_rawgeti(L, $input, i);
+    if(lua_isnil(L, -1)) {
+      /* ok, this index doesn't exist anymore, we have i-1 
+         command line options */
+      lua_pop(L, 1);
+      break;
+    }
   }
-  n = (int)lua_tonumber(L, -1);
-  lua_pop(L, 1);  /* remove number */
-  n=n+1; /* since lua only counts the options */
+  n=i;
+  printf("number of options=%d\n", n);
   $1 = &n;
   
   $2 = LUA_ALLOC_ARRAY(char*, (n+1));
