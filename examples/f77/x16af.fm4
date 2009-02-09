@@ -1,57 +1,57 @@
-C      $Id$
-C      Demonstration of plshade plotting
-C      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
-C
-C      Copyright (C) 2004  Alan W. Irwin
-C
-C      This file is part of PLplot.
-C
-C      PLplot is free software; you can redistribute it and/or modify
-C      it under the terms of the GNU General Library Public License as
-C      published by the Free Software Foundation; either version 2 of the
-C      License, or (at your option) any later version.
-C
-C      PLplot is distributed in the hope that it will be useful,
-C      but WITHOUT ANY WARRANTY; without even the implied warranty of
-C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C      GNU Library General Public License for more details.
-C
-C      You should have received a copy of the GNU Library General Public
-C      License along with PLplot; if not, write to the Free Software
-C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c      $Id$
+c      Demonstration of plshade plotting
+c      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+c
+c      Copyright (C) 2004  Alan W. Irwin
+c
+c      This file is part of PLplot.
+c
+c      PLplot is free software; you can redistribute it and/or modify
+c      it under the terms of the GNU General Library Public License as
+c      published by the Free Software Foundation; either version 2 of the
+c      License, or (at your option) any later version.
+c
+c      PLplot is distributed in the hope that it will be useful,
+c      but WITHOUT ANY WARRANTY; without even the implied warranty of
+c      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c      GNU Library General Public License for more details.
+c
+c      You should have received a copy of the GNU Library General Public
+c      License along with PLplot; if not, write to the Free Software
+c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       implicit none
 
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
-C      Process command-line arguments
+c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
       call plscmap0n(3)
 
-C      Initialize plplot
+c      Initialize plplot
 
       call plinit()
 
-C      Rectangular coordinate plot
+c      Rectangular coordinate plot
 
       call rect()
 
-C      Polar coordinate plot
+c      Polar coordinate plot
 
       call polar()
 
       call plend
       end
 
-C      Plot function using the identity transform
+c      Plot function using the identity transform
 
       subroutine rect()
 
       implicit none
       integer   xdim, ydim, NX, NY, NCONTR
-C      xdim and ydim are the static dimensions of the 2D arrays while
-C      NX and NY are the defined area.
+c      xdim and ydim are the static dimensions of the 2D arrays while
+c      NX and NY are the defined area.
       parameter (xdim = 99, NX = 35, ydim = 100, NY = 46, NCONTR = 14)
 
       real*8    z(xdim, ydim), w(xdim, ydim), clevel(NCONTR)
@@ -65,7 +65,7 @@ C      NX and NY are the defined area.
       xmax =  1.d0
       ymax =  1.d0
 
-C      Set up for plshade call
+c      Set up for plshade call
 
       sh_cmap   = 1
       min_color = 1
@@ -73,7 +73,7 @@ C      Set up for plshade call
       max_color = 0
       max_width = 0
 
-C      Set up data arrays
+c      Set up data arrays
 
       do i = 1, NX
         x = (i - 1 - (NX/2)) / dble (NX/2)
@@ -90,7 +90,7 @@ C      Set up data arrays
      &    dble (NCONTR)
       enddo
 
-C      Plot using identity transform
+c      Plot using identity transform
 
       call pladv(0)
       call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
@@ -118,15 +118,15 @@ C      Plot using identity transform
 
       end
 
-C      Routine for demonstrating use_ of transformation arrays in contour plots.
+c      Routine for demonstrating use_ of transformation arrays in contour plots.
 
       subroutine polar()
 
       implicit none
       integer   xdim, ydim, NX, NY, NCONTR, NBDRY
       real*8    TWOPI
-C      xdim and ydim are the static dimensions of the 2D arrays while
-C      NX and NY are the defined area.
+c      xdim and ydim are the static dimensions of the 2D arrays while
+c      NX and NY are the defined area.
       parameter (xdim = 99, NX = 40, ydim = 100, NY = 64)
       parameter (NCONTR = 14, NBDRY=200)
       parameter (TWOPI=6.2831853071795864768d0)
@@ -150,7 +150,7 @@ C      NX and NY are the defined area.
       integer   min_color, min_width, max_color, max_width
       character*8 xopt, yopt
 
-C      Set up for plshade call
+c      Set up for plshade call
 
       sh_cmap = 1
       min_color = 1
@@ -163,8 +163,8 @@ C      Set up for plshade call
       ky = 1
       ly = NY
 
-C      Set up r-theta grids
-C      Tack on extra cell in theta to handle periodicity.
+c      Set up r-theta grids
+c      Tack on extra cell in theta to handle periodicity.
 
       do i = 1, NX
         r = i - 0.5d0
@@ -183,10 +183,10 @@ C      Tack on extra cell in theta to handle periodicity.
       x0 = (xmin + xmax)/2.d0
       y0 = (ymin + ymax)/2.d0
 
-C      Potential inside a conducting cylinder (or sphere) by method of images.
-C      Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
-C      Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
-C      Also put in smoothing term at small distances.
+c      Potential inside a conducting cylinder (or sphere) by method of images.
+c      Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+c      Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+c      Also put in smoothing term at small distances.
 
       eps = 2.d0
 
@@ -214,7 +214,7 @@ C      Also put in smoothing term at small distances.
         enddo
       enddo
 
-C      Tack on extra cell in theta to handle periodicity.
+c      Tack on extra cell in theta to handle periodicity.
 
       do i = 1, NX
         do j = 1, NY
@@ -224,13 +224,13 @@ C      Tack on extra cell in theta to handle periodicity.
       enddo
       call a2mnmx(z, NX, NY, zmin, zmax, xdim)
 
-C      Set up contour levels.
+c      Set up contour levels.
 
       do i = 1, NCONTR
         clevel(i) = zmin + (i-0.5d0)*abs(zmax - zmin)/dble(NCONTR)
       enddo
 
-C      Advance graphics frame and get ready to plot.
+c      Advance graphics frame and get ready to plot.
 
       ncolbox = 1
       ncollab = 2
@@ -238,8 +238,8 @@ C      Advance graphics frame and get ready to plot.
       call pladv(0)
       call plcol(ncolbox)
 
-C      Scale window to user coordinates.
-C      Make a bit larger so the boundary does not get clipped.
+c      Scale window to user coordinates.
+c      Make a bit larger so the boundary does not get clipped.
 
       eps = 0.05d0
       xpmin = xmin - abs(xmin)*eps
@@ -259,7 +259,7 @@ C      Make a bit larger so the boundary does not get clipped.
 
       call plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
 
-C      Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
+c      Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
 
       do i = 1, NCONTR
         shade_min = zmin + (zmax - zmin) * dble (i - 1) /
@@ -277,7 +277,7 @@ C      Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
      &    min_color, min_width, max_color, max_width, xg, yg, xdim)
       enddo
 
-C      Draw boundary.
+c      Draw boundary.
 
       do i = 1, NBDRY
         theta = (TWOPI)/(NBDRY-1) * dble(i-1)
@@ -293,9 +293,9 @@ C      Draw boundary.
 
       end
 
-C----------------------------------------------------------------------------
-C      Subroutine a2mnmx
-C      Minimum and the maximum elements of a 2-d array.
+c----------------------------------------------------------------------------
+c      Subroutine a2mnmx
+c      Minimum and the maximum elements of a 2-d array.
 
       subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
       implicit none

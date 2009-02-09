@@ -1,73 +1,73 @@
-C  -*- coding: utf-8; -*-
-C
-C  $Id$
-C
-C  Multi-lingual version of the first page of example 4.
-C
-C  Copyright (C) 2006 Alan Irwin
-C  Copyright (C) 2006 Andrew Ross
-C
-C  Thanks to the following for providing translated strings for this example:
-C  Valery Pipin (Russian)
-C
-C  This file is part of PLplot.
-C
-C  PLplot is free software; you can redistribute it and/or modify
-C  it under the terms of the GNU General Library Public License as published
-C  by the Free Software Foundation; either version 2 of the License, or
-C  (at your option) any later version.
-C
-C  PLplot is distributed in the hope that it will be useful,
-C  but WITHOUT ANY WARRANTY; without even the implied warranty of
-C  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C  GNU Library General Public License for more details.
-C
-C  You should have received a copy of the GNU Library General Public License
-C  along with PLplot; if not, write to the Free Software
-C  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-C
-C
+c  -*- coding: utf-8; -*-
+c
+c  $Id$
+c
+c  Multi-lingual version of the first page of example 4.
+c
+c  Copyright (C) 2006 Alan Irwin
+c  Copyright (C) 2006 Andrew Ross
+c
+c  Thanks to the following for providing translated strings for this example:
+c  Valery Pipin (Russian)
+c
+c  This file is part of PLplot.
+c
+c  PLplot is free software; you can redistribute it and/or modify
+c  it under the terms of the GNU General Library Public License as published
+c  by the Free Software Foundation; either version 2 of the License, or
+c  (at your option) any later version.
+c
+c  PLplot is distributed in the hope that it will be useful,
+c  but WITHOUT ANY WARRANTY; without even the implied warranty of
+c  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c  GNU Library General Public License for more details.
+c
+c  You should have received a copy of the GNU Library General Public License
+c  along with PLplot; if not, write to the Free Software
+c  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c
+c
 
-C
-C This example designed just for devices (e.g., psttfc and the
-C cairo-related devices) that utilise the pango and fontconfig libraries. The
-C best choice of glyph is selected by fontconfig and automatically rendered
-C by pango in way that is sensitive to complex text layout (CTL) language
-C issues for each unicode character in this example. Of course, you must
-C have the appropriate TrueType fonts installed to have access to all the
-C required glyphs.
-C
-C Translation instructions: The strings to be translated are given by
-C x_label, y_label, alty_label, title_label, and line_label below.  The
-C encoding used must be UTF-8.
-C
-C The following strings to be translated involve some scientific/mathematical
-C jargon which is now discussed further to help translators.
-C
-C (1) dB is a decibel unit, see http://en.wikipedia.org/wiki/Decibel .
-C (2) degrees is an angular measure, see
-C     http://en.wikipedia.org/wiki/Degree_(angle) .
-C (3) low-pass filter is one that transmits (passes) low frequencies.
-C (4) pole is in the mathematical sense, see
-C     http://en.wikipedia.org/wiki/Pole_(complex_analysis) .  "Single Pole"
-C     means a particular mathematical transformation of the filter function has
-C     a single pole, see
-C     http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .
-C     Furthermore, a single-pole filter must have an inverse square decline
-C     (or -20 db/decade). Since the filter plotted here does have that
-C     characteristic, it must by definition be a single-pole filter, see also
-C     http://www-k.ext.ti.com/SRVS/Data/ti/KnowledgeBases/analog/document/faqs/1p.htm
-C (5) decade represents a factor of 10, see
-C     http://en.wikipedia.org/wiki/Decade_(log_scale) .
-C
-C
-C
+c
+c This example designed just for devices (e.g., psttfc and the
+c cairo-related devices) that utilise the pango and fontconfig libraries. The
+c best choice of glyph is selected by fontconfig and automatically rendered
+c by pango in way that is sensitive to complex text layout (CTL) language
+c issues for each unicode character in this example. Of course, you must
+c have the appropriate TrueType fonts installed to have access to all the
+c required glyphs.
+c
+c Translation instructions: The strings to be translated are given by
+c x_label, y_label, alty_label, title_label, and line_label below.  The
+c encoding used must be UTF-8.
+c
+c The following strings to be translated involve some scientific/mathematical
+c jargon which is now discussed further to help translators.
+c
+c (1) dB is a decibel unit, see http://en.wikipedia.org/wiki/Decibel .
+c (2) degrees is an angular measure, see
+c     http://en.wikipedia.org/wiki/Degree_(angle) .
+c (3) low-pass filter is one that transmits (passes) low frequencies.
+c (4) pole is in the mathematical sense, see
+c     http://en.wikipedia.org/wiki/Pole_(complex_analysis) .  "Single Pole"
+c     means a particular mathematical transformation of the filter function has
+c     a single pole, see
+c     http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .
+c     Furthermore, a single-pole filter must have an inverse square decline
+c     (or -20 db/decade). Since the filter plotted here does have that
+c     characteristic, it must by definition be a single-pole filter, see also
+c     http://www-k.ext.ti.com/SRVS/Data/ti/KnowledgeBases/analog/document/faqs/1p.htm
+c (5) decade represents a factor of 10, see
+c     http://en.wikipedia.org/wiki/Decade_(log_scale) .
+c
+c
+c
 
-C --------------------------------------------------------------------------
-C  main
-C
-C  Illustration of logarithmic axes, and redefinition of window.
-C --------------------------------------------------------------------------
+c --------------------------------------------------------------------------
+c  main
+c
+c  Illustration of logarithmic axes, and redefinition of window.
+c --------------------------------------------------------------------------
 
       program x26f
 
@@ -108,16 +108,16 @@ C --------------------------------------------------------------------------
      &     '-20 dB/decade',
      &     '-20 dB/десяток'/
 
-C  Parse and process command line arguments
+c  Parse and process command line arguments
 
       call plparseopts(PL_PARSE_FULL)
 
-C  Initialize plplot
+c  Initialize plplot
 
       call plinit()
       call plfont(2)
 
-C  Make log plots using two different styles.
+c  Make log plots using two different styles.
 
       do 110 i = 1,nolangs
           call plot1(0, x_label(i), y_label(i), alty_label(i),
@@ -127,11 +127,11 @@ C  Make log plots using two different styles.
       call plend()
       end
 
-C --------------------------------------------------------------------------
-C  plot1
-C
-C  Log-linear plot.
-C --------------------------------------------------------------------------
+c --------------------------------------------------------------------------
+c  plot1
+c
+c  Log-linear plot.
+c --------------------------------------------------------------------------
 
       subroutine plot1( type, x_label, y_label, alty_label,
      &                  title_label, line_label )
@@ -150,7 +150,7 @@ C --------------------------------------------------------------------------
 
       call pladv(0)
 
-C  Set up data for log plot
+c  Set up data for log plot
 
       f0 = 1.0
       do 110 i = 1,101
@@ -163,7 +163,7 @@ C  Set up data for log plot
       call plvpor(0.15d0, 0.85d0, 0.1d0, 0.9d0)
       call plwind(-2.0d0, 3.0d0, -80.0d0, 0.0d0)
 
-C  Try different axis and labelling styles.
+c  Try different axis and labelling styles.
 
       call plcol0(1)
       if ( type .eq. 0 ) then
@@ -173,14 +173,14 @@ C  Try different axis and labelling styles.
           call plbox("bcfghlnst", 0.0d0, 0, "bcghnstv", 0.0d0, 0)
       endif
 
-C  Plot ampl vs freq
+c  Plot ampl vs freq
 
       call plcol0(2)
       call plline(101, freql, ampl)
       call plcol0(1)
       call plptex(1.6d0, -30.0d0, 1.0d0, -20.0d0, 0.5d0, line_label)
 
-C  Put labels on
+c  Put labels on
 
       call plcol0(1)
       call plmtex("b", 3.2d0, 0.5d0, 0.5d0, x_label)
@@ -188,7 +188,7 @@ C  Put labels on
       call plcol0(2)
       call plmtex("l", 5.0d0, 0.5d0, 0.5d0, y_label)
 
-C  For the gridless case, put phase vs freq on same plot
+c  For the gridless case, put phase vs freq on same plot
 
       if (type .eq. 0) then
           call plcol0(1)

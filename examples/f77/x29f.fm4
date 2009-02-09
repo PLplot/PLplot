@@ -1,25 +1,25 @@
-C  $Id$
-C
-C   Sample plots using date / time formatting for axes
-C
-C   Copyright (C) 2008  Andrew Ross
-C
-C   This file is part of PLplot.
-C
-C   PLplot is free software; you can redistribute it and/or modify
-C   it under the terms of the GNU General Library Public License as
-C   published by the Free Software Foundation; either version 2 of the
-C   License, or (at your option) any later version.
-C
-C   PLplot is distributed in the hope that it will be useful,
-C   but WITHOUT ANY WARRANTY; without even the implied warranty of
-C   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C   GNU Library General Public License for more details.
-C
-C   You should have received a copy of the GNU Library General Public
-C   License along with PLplot; if not, write to the Free Software
-C   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-C
+c  $Id$
+c
+c   Sample plots using date / time formatting for axes
+c
+c   Copyright (C) 2008  Andrew Ross
+c
+c   This file is part of PLplot.
+c
+c   PLplot is free software; you can redistribute it and/or modify
+c   it under the terms of the GNU General Library Public License as
+c   published by the Free Software Foundation; either version 2 of the
+c   License, or (at your option) any later version.
+c
+c   PLplot is distributed in the hope that it will be useful,
+c   but WITHOUT ANY WARRANTY; without even the implied warranty of
+c   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c   GNU Library General Public License for more details.
+c
+c   You should have received a copy of the GNU Library General Public
+c   License along with PLplot; if not, write to the Free Software
+c   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c
 
       program x29f
 
@@ -36,7 +36,7 @@ C
 
       call plinit()
 
-C     This is the ASCII value for character @
+c     This is the ASCII value for character @
       call plsesc(64)
 
       call plot1()
@@ -72,19 +72,19 @@ c
       do i = 1,npts
       	 x(i) = xmax*(dble(i-1)/dble(npts))
          y(i) = 15.0d0 - 5.0d0*cos(2.0d0*PI*dble(i-1)/dble(npts))
-C     Set x error bars to +/- 5 minute 
+c     Set x error bars to +/- 5 minute 
          xerr1(i) = x(i)-60.0d0*5.0d0
          xerr2(i) = x(i)+60.0d0*5.0d0
-C     Set y error bars to +/- 0.1 deg C
+c     Set y error bars to +/- 0.1 deg C
          yerr1(i) = y(i)-0.1d0
          yerr2(i) = y(i)+0.1d0
       enddo
 
       call pladv(0)
       
-C     Rescale major ticks marks by 0.5
+c     Rescale major ticks marks by 0.5
       call plsmaj(0.0d0,0.5d0)
-C     Rescale minor ticks and error bar marks by 0.5
+c     Rescale minor ticks and error bar marks by 0.5
       call plsmin(0.0d0,0.5d0)
    
       call plvsta()
@@ -108,7 +108,7 @@ c     Set time format to be hours:minutes
       call plcol0(3)
       call plerry(npts, x, yerr1, yerr2)
 
-C     Rescale major / minor tick marks back to default
+c     Rescale major / minor tick marks back to default
       call plsmin(0.0d0,1.0d0)
       call plsmaj(0.0d0,1.0d0)
 

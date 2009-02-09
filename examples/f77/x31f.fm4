@@ -1,30 +1,30 @@
-C      $Id$
-C      set / get tester.
-C
-C      Copyright (C) 2008  Alan W. Irwin
-C      Copyright (C) 2008  Andrew Ross
-C
-C      This file is part of PLplot.
-C
-C      PLplot is free software; you can redistribute it and/or modify
-C      it under the terms of the GNU General Library Public License as
-C      published by the Free Software Foundation; either version 2 of the
-C      License, or (at your option) any later version.
-C
-C      PLplot is distributed in the hope that it will be useful,
-C      but WITHOUT ANY WARRANTY; without even the implied warranty of
-C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C      GNU Library General Public License for more details.
-C
-C      You should have received a copy of the GNU Library General Public
-C      License along with PLplot; if not, write to the Free Software
-C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c      $Id$
+c      set / get tester.
+c
+c      Copyright (C) 2008  Alan W. Irwin
+c      Copyright (C) 2008  Andrew Ross
+c
+c      This file is part of PLplot.
+c
+c      PLplot is free software; you can redistribute it and/or modify
+c      it under the terms of the GNU General Library Public License as
+c      published by the Free Software Foundation; either version 2 of the
+c      License, or (at your option) any later version.
+c
+c      PLplot is distributed in the hope that it will be useful,
+c      but WITHOUT ANY WARRANTY; without even the implied warranty of
+c      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c      GNU Library General Public License for more details.
+c
+c      You should have received a copy of the GNU Library General Public
+c      License along with PLplot; if not, write to the Free Software
+c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-C--------------------------------------------------------------------------
-C main
-C
-C Demonstrates absolute positioning of graphs on a page.
-C--------------------------------------------------------------------------
+c--------------------------------------------------------------------------
+c main
+c
+c Demonstrates absolute positioning of graphs on a page.
+c--------------------------------------------------------------------------
 
       implicit none
       real*8 xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax
@@ -45,7 +45,7 @@ C--------------------------------------------------------------------------
       integer stderr
       integer status
 
-C     Parse and process command line arguments
+c     Parse and process command line arguments
 
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
@@ -56,17 +56,17 @@ C     Parse and process command line arguments
       stderr = 0
 
       call plparseopts(PL_PARSE_FULL)
-C     Test setting / getting compression parameter across plinit
+c     Test setting / getting compression parameter across plinit
       compression1 = 95
       call plscompression(compression1)
 
-C     Test setting / getting familying parameters across plinit
+c     Test setting / getting familying parameters across plinit
       fam1 = 0
       num1 = 10
       bmax1 = 1000
       call plsfam(fam1, num1, bmax1)
 
-C     Test setting / getting page parameters across plinit
+c     Test setting / getting page parameters across plinit
       xp1 = 200.d0
       yp1 = 200.d0
       xleng1 = 400
@@ -75,12 +75,12 @@ C     Test setting / getting page parameters across plinit
       yoff1 = 20
       call plspage(xp1, yp1, xleng1, yleng1, xoff1, yoff1)
 
-C     Initialize plplot
+c     Initialize plplot
 
       call plinit()
 
-C     Test if device initialization screwed around with the preset
-C     compression parameter. 
+c     Test if device initialization screwed around with the preset
+c     compression parameter. 
       call plgcompression(compression2)
       write(*,'(A)') 'Output various PLplot parameters'
       write(*,'(A,I2)') 'compression parameter = ', compression2
@@ -89,8 +89,8 @@ C     compression parameter.
          status = 1;
       endif
 
-C     Test if device initialization screwed around with any of the
-C     preset familying values.
+c     Test if device initialization screwed around with any of the
+c     preset familying values.
       call plgfam(fam2, num2, bmax2);
       write(*,'(A,I1,I3,I5)') 'family parameters: fam, num, bmax = ', 
      &     fam2, num2, bmax2
@@ -99,8 +99,8 @@ C     preset familying values.
          status = 1
       endif
 
-C     Test if device initialization screwed around with any of the
-C     preset page values.
+c     Test if device initialization screwed around with any of the
+c     preset page values.
       call plgpage(xp2, yp2, xleng2, yleng2, xoff2, yoff2)
       write(*,'(A,2F11.6, 2I4, 2I3)') 
      &     'page parameters: xp, yp, xleng, yleng, xoff, yoff =',
@@ -113,8 +113,8 @@ C     preset page values.
       endif
 
 
-C     Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
-C     they work without any obvious error messages.
+c     Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
+c     they work without any obvious error messages.
       call plscolor(1)
       call plscol0(1, 255, 0, 0)
       call plscmap1(r1,g1,b1,2)
@@ -150,7 +150,7 @@ C     they work without any obvious error messages.
          status = 1
       endif
 
-C     Get world coordinates for midpoint of viewport
+c     Get world coordinates for midpoint of viewport
       call plcalc_world(xmid,ymid,wx,wy,win)
       write(*,'(A,2F9.6,I2)') 'world parameters: wx, wy, win =', 
      &     wx, wy, win
@@ -159,7 +159,7 @@ C     Get world coordinates for midpoint of viewport
          status = 1
       endif
 
-C     Retrieve and print the name of the output file (if any)
+c     Retrieve and print the name of the output file (if any)
       call plgfnam(fnam)
       if (len(trim(fnam)) .eq. 0) then
          write(*,'(A)') 'No output file name is set'
@@ -168,10 +168,10 @@ C     Retrieve and print the name of the output file (if any)
       endif
       write(stderr,'(A,A)') 'Output file name is ',trim(fnam)
 
-C     Set and get the number of digits used to display axis labels
-C     Note digits is currently ignored in pls[xyz]ax and 
-C     therefore it does not make sense to test the returned 
-C     value
+c     Set and get the number of digits used to display axis labels
+c     Note digits is currently ignored in pls[xyz]ax and 
+c     therefore it does not make sense to test the returned 
+c     value
       call plsxax(3,0)
       call plgxax(digmax,digits)
       write(*,'(A,I2,I2)') 'x axis parameters: digmax, digits =', 

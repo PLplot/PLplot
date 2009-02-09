@@ -1,34 +1,34 @@
-C $Id$
-C
-C  Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
-C
-C  Copyright (C) 2007  Arjen Markus
-C
-C This file is part of PLplot.
-C
-C PLplot is free software; you can redistribute it and/or modify
-C it under the terms of the GNU General Library Public License as published
-C by the Free Software Foundation; either version 2 of the License, or
-C (at your option) any later version.
-C
-C PLplot is distributed in the hope that it will be useful,
-C but WITHOUT ANY WARRANTY; without even the implied warranty of
-C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C GNU Library General Public License for more details.
-C
-C You should have received a copy of the GNU Library General Public License
-C along with PLplot; if not, write to the Free Software
-C Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-C
-C
+c $Id$
+c
+c  Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
+c
+c  Copyright (C) 2007  Arjen Markus
+c
+c This file is part of PLplot.
+c
+c PLplot is free software; you can redistribute it and/or modify
+c it under the terms of the GNU General Library Public License as published
+c by the Free Software Foundation; either version 2 of the License, or
+c (at your option) any later version.
+c
+c PLplot is distributed in the hope that it will be useful,
+c but WITHOUT ANY WARRANTY; without even the implied warranty of
+c MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c GNU Library General Public License for more details.
+c
+c You should have received a copy of the GNU Library General Public License
+c along with PLplot; if not, write to the Free Software
+c Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c
+c
 
-C --------------------------------------------------------------------------
-C main
-C
-C Generates two kinds of plots:
-C   - construction of a cycloid (animated)
-C   - series of epitrochoids and hypotrochoids
-C --------------------------------------------------------------------------
+c --------------------------------------------------------------------------
+c main
+c
+c Generates two kinds of plots:
+c   - construction of a cycloid (animated)
+c   - series of epitrochoids and hypotrochoids
+c --------------------------------------------------------------------------
 
       program x27f
 
@@ -37,7 +37,7 @@ C --------------------------------------------------------------------------
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
 
-C     R, r, p, N
+c     R, r, p, N
 
       real*8 params(4,9)
 
@@ -54,22 +54,22 @@ C     R, r, p, N
      & 20.0d0, 13.0d0, 20.0d0, 20.0d0,
      & 20.0d0,-13.0d0, 20.0d0, 20.0d0/
 
-C  plplot initialization
+c  plplot initialization
 
-C  Parse and process command line arguments
+c  Parse and process command line arguments
 
       call plparseopts(PL_PARSE_FULL)
 
-C  Initialize plplot
+c  Initialize plplot
 
       call plinit()
 
-C  Illustrate the construction of a cycloid
+c  Illustrate the construction of a cycloid
 
       call cycloid()
 
-C  Loop over the various curves
-C  First an overview, then all curves one by one
+c  Loop over the various curves
+c  First an overview, then all curves one by one
 
       call plssub(3, 3)
 
@@ -88,20 +88,20 @@ C  First an overview, then all curves one by one
           call spiro( params(1,i) )
   120 continue
 
-C  Don't forget to call plend() to finish off!
+c  Don't forget to call plend() to finish off!
 
       call plend()
       end
 
-C  ===============================================================
+c  ===============================================================
 
       subroutine cycloid
 
-C     TODO
+c     TODO
 
       end
 
-C  ===============================================================
+c  ===============================================================
 
       subroutine spiro( params )
 
@@ -125,13 +125,13 @@ C  ===============================================================
       real*8      ymax
       real*8      scale
 
-C     Fill the coordinates
+c     Fill the coordinates
 
       windings = int(params(4))
       steps    = NPNT/windings
       dphi     = 8.0d0*acos(-1.0d0)/dble(steps)
 
-C     This initialisation is safe!
+c     This initialisation is safe!
       xmin = 0.0d0
       xmax = 0.0d0
       ymin = 0.0d0

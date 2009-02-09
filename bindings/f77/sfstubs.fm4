@@ -1,40 +1,40 @@
-!***********************************************************************
-!  $Id$
-!  sfstubs.f
-!
-!  Copyright (C) 2004  Alan W. Irwin
-!
-!  This file is part of PLplot.
-!
-!  PLplot is free software; you can redistribute it and/or modify
-!  it under the terms of the GNU General Library Public License as published
-!  by the Free Software Foundation; either version 2 of the License, or
-!  (at your option) any later version.
-!
-!  PLplot is distributed in the hope that it will be useful,
-!  but WITHOUT ANY WARRANTY; without even the implied warranty of
-!  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!  GNU Library General Public License for more details.
-!
-!  You should have received a copy of the GNU Library General Public License
-!  along with PLplot; if not, write to the Free Software
-!  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-!
-!
-!  This file contains the more complicated fortran stub routines
-!  that the more generic scstubs.c cannot handle.
-!  Typical stubs here must convert a fortran character string
-!  to C or vice versa.
-!  N.B. the called routines (that are defined in scstubs.c) have
-!  a suffix of '7' to avoid name clashes and also presumably as a
-!  signal in scstubs.c that they were called from these routines.
-!  Where arguments are floating-point we explicitly type them as real*8.
-!  This typing is never used since these arguments are
-!  actually passed by reference.  That implies these routines should
-!  work if the calling routine and libplplot itself are both
-!  double precision or both single precision.
-!
-!***********************************************************************
+c***********************************************************************
+c  $Id$
+c  sfstubs.f
+c
+c  Copyright (C) 2004  Alan W. Irwin
+c
+c  This file is part of PLplot.
+c
+c  PLplot is free software; you can redistribute it and/or modify
+c  it under the terms of the GNU General Library Public License as published
+c  by the Free Software Foundation; either version 2 of the License, or
+c  (at your option) any later version.
+c
+c  PLplot is distributed in the hope that it will be useful,
+c  but WITHOUT ANY WARRANTY; without even the implied warranty of
+c  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c  GNU Library General Public License for more details.
+c
+c  You should have received a copy of the GNU Library General Public License
+c  along with PLplot; if not, write to the Free Software
+c  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c
+c
+c  This file contains the more complicated fortran stub routines
+c  that the more generic scstubs.c cannot handle.
+c  Typical stubs here must convert a fortran character string
+c  to C or vice versa.
+c  N.B. the called routines (that are defined in scstubs.c) have
+c  a suffix of '7' to avoid name clashes and also presumably as a
+c  signal in scstubs.c that they were called from these routines.
+c  Where arguments are floating-point we explicitly type them as real*8.
+c  This typing is never used since these arguments are
+c  actually passed by reference.  That implies these routines should
+c  work if the calling routine and libplplot itself are both
+c  double precision or both single precision.
+c
+c***********************************************************************
 
       subroutine plsetopt(opt, optarg)
 
@@ -49,7 +49,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plabort(text)
 
@@ -63,7 +63,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plsdev(dnam)
 
@@ -77,7 +77,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plgdev(dnam)
 
@@ -91,7 +91,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plsfnam(fnam)
 
@@ -105,7 +105,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plgfnam(fnam)
 
@@ -119,7 +119,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plgver(ver)
 
@@ -133,7 +133,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plaxes(x0,y0,xopt,xtick,nxsub,yopt,ytick,nysub)
 
@@ -151,7 +151,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plbox(xopt,xtick,nxsub,yopt,ytick,nysub)
 
@@ -169,7 +169,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plbox3(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub,
      &  zopt,zlabel,ztick,nzsub)
@@ -194,7 +194,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plcon0(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
 
@@ -206,7 +206,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plcon1(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
 
@@ -218,7 +218,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plcon2(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
 
@@ -230,7 +230,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plcont(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
 
@@ -239,14 +239,14 @@
       real*8 z(nx, ny), clevel(nlevel)
       real*8 tr(6)
 
-!DEC$ ATTRIBUTES DLLEXPORT :: PLPLOT
+cDEC$ ATTRIBUTES DLLEXPORT :: PLPLOT
       common /plplot/ tr
 
       call plcont7(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,tr)
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plvec0(u, v, nx, ny, scale)
 
@@ -258,7 +258,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plvec1(u, v, nx, ny, scale, xg, yg)
 
@@ -270,7 +270,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plvec2(u, v, nx, ny, scale, xg, yg)
 
@@ -282,7 +282,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plvect(u, v, nx, ny, scale)
 
@@ -296,7 +296,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plshade0(z, nx, ny, defined,
      &  xmin, xmax, ymin, ymax,
@@ -313,7 +313,7 @@
 
       include 'sfstubs.h'
 
-!	call plstrf2c(dnam, string1, maxlen)
+c	call plstrf2c(dnam, string1, maxlen)
 
       call plshade07(z, nx, ny, s1,
      &  xmin, xmax, ymin, ymax,
@@ -323,7 +323,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plshade1(z, nx, ny, defined,
      &  xmin, xmax, ymin, ymax,
@@ -341,7 +341,7 @@
 
       include 'sfstubs.h'
 
-!	call plstrf2c(dnam, string1, maxlen)
+c	call plstrf2c(dnam, string1, maxlen)
 
       call plshade17(z, nx, ny, s1,
      &  xmin, xmax, ymin, ymax,
@@ -352,7 +352,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plshade2(z, nx, ny, defined,
      &  xmin, xmax, ymin, ymax,
@@ -370,7 +370,7 @@
 
       include 'sfstubs.h'
 
-!	call plstrf2c(dnam, string1, maxlen)
+c	call plstrf2c(dnam, string1, maxlen)
 
       call plshade27(z, nx, ny, s1,
      &  xmin, xmax, ymin, ymax,
@@ -381,7 +381,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plshade(z, nx, ny, defined,
      &  xmin, xmax, ymin, ymax,
@@ -408,7 +408,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plshades0(z, nx, ny, defined,
      &  xmin, xmax, ymin, ymax,
@@ -423,7 +423,7 @@
 
       include 'sfstubs.h'
 
-!	call plstrf2c(dnam, string1, maxlen)
+c	call plstrf2c(dnam, string1, maxlen)
 
       call plshades07(z, nx, ny, s1,
      &  xmin, xmax, ymin, ymax,
@@ -432,7 +432,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plshades1(z, nx, ny, defined,
      &  xmin, xmax, ymin, ymax,
@@ -447,7 +447,7 @@
 
       include 'sfstubs.h'
 
-!	call plstrf2c(dnam, string1, maxlen)
+c	call plstrf2c(dnam, string1, maxlen)
 
       call plshades17(z, nx, ny, s1,
      &  xmin, xmax, ymin, ymax,
@@ -456,7 +456,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plshades2(z, nx, ny, defined,
      &  xmin, xmax, ymin, ymax,
@@ -472,7 +472,7 @@
 
       include 'sfstubs.h'
 
-!	call plstrf2c(dnam, string1, maxlen)
+c	call plstrf2c(dnam, string1, maxlen)
 
       call plshades27(z, nx, ny, s1,
      &  xmin, xmax, ymin, ymax,
@@ -481,7 +481,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plshades(z, nx, ny, defined,
      &  xmin, xmax, ymin, ymax,
@@ -498,7 +498,7 @@
 
       include 'sfstubs.h'
 
-!	call plstrf2c(dnam, string1, maxlen)
+c	call plstrf2c(dnam, string1, maxlen)
 
       call plshades7(z, nx, ny, s1,
      &  xmin, xmax, ymin, ymax,
@@ -507,7 +507,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plimagefr0(z,nx,ny,xmin,xmax,ymin,ymax,zmin,zmax,
      &     valuemin,valuemax,lx)
@@ -522,7 +522,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plimagefr1(z,nx,ny,xmin,xmax,ymin,ymax,zmin,zmax,
      &     valuemin,valuemax,xg,yg,lx)
@@ -537,7 +537,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plimagefr2(z,nx,ny,xmin,xmax,ymin,ymax,zmin,zmax,
      &     valuemin,valuemax,xg,yg,lx)
@@ -552,7 +552,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plimagefr(z,nx,ny,xmin,xmax,ymin,ymax,zmin,zmax,
      &     valuemin,valuemax,lx)
@@ -569,7 +569,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine pllab(xlab,ylab,title)
 
@@ -586,7 +586,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plmtex(side,disp,pos,xjust,text)
 
@@ -603,7 +603,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plmtex3(side,disp,pos,xjust,text)
 
@@ -620,7 +620,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plptex(x,y,dx,dy,xjust,text)
 
@@ -636,7 +636,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plptex3(x,y,z,dx,dy,dz,sx,sy,sz,xjust,text)
 
@@ -652,7 +652,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plstart(devname, nx, ny)
 
@@ -668,7 +668,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plmap(mapform,mapname,minx,maxx,miny,maxy)
 
@@ -686,7 +686,7 @@
 
       end subroutine
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plmeridians(mapform,dlong,dlat,minlong,maxlong,
      &                       minlat,maxlat)
@@ -703,7 +703,7 @@
       end subroutine
 
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine plstripc(id, xspec, yspec, xmin, xmax, xjump,
      &  ymin, ymax, xlpos, ylpos, y_ascl, acc,
@@ -736,7 +736,7 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************
 
       subroutine pltimefmt(fmt)
 
@@ -750,4 +750,4 @@
 
       end
 
-!***********************************************************************
+c***********************************************************************

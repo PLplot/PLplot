@@ -1,33 +1,33 @@
-C      $Id$
-C      Illustration of logarithmic axes, and redefinition of window
-C
-C      Copyright (C) 2004  Alan W. Irwin
-C
-C      This file is part of PLplot.
-C
-C      PLplot is free software; you can redistribute it and/or modify
-C      it under the terms of the GNU General Library Public License as
-C      published by the Free Software Foundation; either version 2 of the
-C      License, or (at your option) any later version.
-C
-C      PLplot is distributed in the hope that it will be useful,
-C      but WITHOUT ANY WARRANTY; without even the implied warranty of
-C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C      GNU Library General Public License for more details.
-C
-C      You should have received a copy of the GNU Library General Public
-C      License along with PLplot; if not, write to the Free Software
-C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c      $Id$
+c      Illustration of logarithmic axes, and redefinition of window
+c
+c      Copyright (C) 2004  Alan W. Irwin
+c
+c      This file is part of PLplot.
+c
+c      PLplot is free software; you can redistribute it and/or modify
+c      it under the terms of the GNU General Library Public License as
+c      published by the Free Software Foundation; either version 2 of the
+c      License, or (at your option) any later version.
+c
+c      PLplot is distributed in the hope that it will be useful,
+c      but WITHOUT ANY WARRANTY; without even the implied warranty of
+c      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c      GNU Library General Public License for more details.
+c
+c      You should have received a copy of the GNU Library General Public
+c      License along with PLplot; if not, write to the Free Software
+c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       implicit none
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
-C      Process command-line arguments
+c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
       call plinit
       call plfont(2)
-C      Make log plots using two different styles.
+c      Make log plots using two different styles.
       call plot1(0)
       call plot1(1)
       call plend
@@ -41,7 +41,7 @@ C      Make log plots using two different styles.
       integer i, type
 
       call pladv(0)
-C      Set up data for log plot.
+c      Set up data for log plot.
       f0 = 1.d0
       do i=0,100
         freql(i)= -2.0d0 + dble (i)/20.0d0
@@ -52,7 +52,7 @@ C      Set up data for log plot.
       call plvpor(0.15d0, 0.85d0, 0.1d0, 0.9d0)
       call plwind(-2.0d0, 3.0d0, -80.0d0, 0.0d0)
       call plcol0(1)
-C      Try different axis and labelling styles.
+c      Try different axis and labelling styles.
       if (type.eq.0) then
         call plbox('bclnst', 0.0d0, 0, 'bnstv', 0.0d0, 0)
       elseif (type.eq.1) then
@@ -60,20 +60,20 @@ C      Try different axis and labelling styles.
       else
         stop 'plot1: invalid type'
       endif
-C      Plot ampl vs freq.
+c      Plot ampl vs freq.
       call plcol0(2)
       call plline(101,freql,ampl)
       call plcol0(1)
       call plptex(1.6d0, -30.0d0, 1.0d0, -20.0d0, 0.5d0,
      &            '-20 dB/decade')
-C      Put labels on.
+c      Put labels on.
       call plcol0(1)
       call plmtex('b', 3.2d0, 0.5d0, 0.5d0, 'Frequency')
       call plmtex('t', 2.0d0, 0.5d0, 0.5d0,
      &            'Single Pole Low-Pass Filter')
       call plcol0(2)
       call plmtex('l', 5.0d0, 0.5d0, 0.5d0, 'Amplitude (dB)')
-C      For the gridless case, put phase vs freq on same plot.
+c      For the gridless case, put phase vs freq on same plot.
       if(type.eq.0) then
         call plcol0(1)
         call plwind(-2.0d0, 3.0d0, -100.0d0, 0.0d0)

@@ -1,37 +1,37 @@
-C      $Id$
-C      Demonstrates multiple windows and color map 0 
-C
-C      Copyright (C) 2004  Alan W. Irwin
-C      Copyright (C) 2005  Andrew Ross
-C
-C      This file is part of PLplot.
-C
-C      PLplot is free software; you can redistribute it and/or modify
-C      it under the terms of the GNU General Library Public License as
-C      published by the Free Software Foundation; either version 2 of the
-C      License, or (at your option) any later version.
-C
-C      PLplot is distributed in the hope that it will be useful,
-C      but WITHOUT ANY WARRANTY; without even the implied warranty of
-C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C      GNU Library General Public License for more details.
-C
-C      You should have received a copy of the GNU Library General Public
-C      License along with PLplot; if not, write to the Free Software
-C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c      $Id$
+c      Demonstrates multiple windows and color map 0 
+c
+c      Copyright (C) 2004  Alan W. Irwin
+c      Copyright (C) 2005  Andrew Ross
+c
+c      This file is part of PLplot.
+c
+c      PLplot is free software; you can redistribute it and/or modify
+c      it under the terms of the GNU General Library Public License as
+c      published by the Free Software Foundation; either version 2 of the
+c      License, or (at your option) any later version.
+c
+c      PLplot is distributed in the hope that it will be useful,
+c      but WITHOUT ANY WARRANTY; without even the implied warranty of
+c      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c      GNU Library General Public License for more details.
+c
+c      You should have received a copy of the GNU Library General Public
+c      License along with PLplot; if not, write to the Free Software
+c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       implicit none
 
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
-C      Process command-line arguments
+c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
 
-C     Initialize plplot
+c     Initialize plplot
       call plinit()
 
-C     Run demos
+c     Run demos
       call demo1
       call demo2
 
@@ -40,17 +40,17 @@ C     Run demos
       end
 
 
-C--------------------------------------------------------------------------
-C     demo1
-C
-C     Demonstrates multiple windows and default color map 0 palette.
-C--------------------------------------------------------------------------
+c--------------------------------------------------------------------------
+c     demo1
+c
+c     Demonstrates multiple windows and default color map 0 palette.
+c--------------------------------------------------------------------------
       subroutine demo1
       implicit none
       
       call plbop
 
-C     Divide screen into 16 regions
+c     Divide screen into 16 regions
       call plssub(4,4)
 
       call draw_windows(16, 0)
@@ -60,12 +60,12 @@ C     Divide screen into 16 regions
       end 
 
 
-C--------------------------------------------------------------------------
-C     demo2
-C
-C     Demonstrates multiple windows, user-modified color map 0 palette,
-C     and HLS -> RGB translation. 
-C--------------------------------------------------------------------------
+c--------------------------------------------------------------------------
+c     demo2
+c
+c     Demonstrates multiple windows, user-modified color map 0 palette,
+c     and HLS -> RGB translation. 
+c--------------------------------------------------------------------------
       subroutine demo2
       implicit none
       integer r(116), g(116), b(116)
@@ -76,21 +76,21 @@ C--------------------------------------------------------------------------
 
       call plbop
 
-C     Divide screen into 100 regions
+c     Divide screen into 100 regions
       call plssub(10,10)
 
 
       do i=0,99
-C     Bounds on HLS, from plhlsrgb() commentary --
-C     hue		[0., 360.]	degrees
-C     lightness	        [0., 1.]	magnitude
-C     saturation	[0., 1.]	magnitude
+c     Bounds on HLS, from plhlsrgb() commentary --
+c     hue		[0., 360.]	degrees
+c     lightness	        [0., 1.]	magnitude
+c     saturation	[0., 1.]	magnitude
 
-C     Vary hue uniformly from left to right
+c     Vary hue uniformly from left to right
          h = (360.d0/10.d0)*mod(i,10)
-C     Vary lightness uniformly from top to bottom, between min and max
+c     Vary lightness uniformly from top to bottom, between min and max
          l = lmin + (lmax - lmin) * (i / 10) / 9.d0
-C     Use_ max saturation
+c     Use_ max saturation
          s = 1.d0
 
          call plhlsrgb(h, l, s, r1, g1, b1)
@@ -112,11 +112,11 @@ C     Use_ max saturation
 
       end 
 
-C--------------------------------------------------------------------------
-C     draw_windows
-C
-C     Draws a set of numbered boxes with colors according to cmap0 entry.
-C--------------------------------------------------------------------------
+c--------------------------------------------------------------------------
+c     draw_windows
+c
+c     Draws a set of numbered boxes with colors according to cmap0 entry.
+c--------------------------------------------------------------------------
       subroutine draw_windows( nw, cmap0_offset )
       implicit none
       integer nw, cmap0_offset

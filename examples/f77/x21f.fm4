@@ -1,24 +1,24 @@
-C      $Id$
-C      Grid data demo.
-C
-C      Copyright (C) 2004  Joao Cardoso
-C      Copyright (C) 2008  Andrew Ross
-C
-C      This file is part of PLplot.
-C
-C      PLplot is free software; you can redistribute it and/or modify
-C      it under the terms of the GNU General Library Public License as
-C      published by the Free Software Foundation; either version 2 of the
-C      License, or (at your option) any later version.
-C
-C      PLplot is distributed in the hope that it will be useful,
-C      but WITHOUT ANY WARRANTY; without even the implied warranty of
-C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C      GNU Library General Public License for more details.
-C
-C      You should have received a copy of the GNU Library General Public
-C      License along with PLplot; if not, write to the Free Software
-C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c      $Id$
+c      Grid data demo.
+c
+c      Copyright (C) 2004  Joao Cardoso
+c      Copyright (C) 2008  Andrew Ross
+c
+c      This file is part of PLplot.
+c
+c      PLplot is free software; you can redistribute it and/or modify
+c      it under the terms of the GNU General Library Public License as
+c      published by the Free Software Foundation; either version 2 of the
+c      License, or (at your option) any later version.
+c
+c      PLplot is distributed in the hope that it will be useful,
+c      but WITHOUT ANY WARRANTY; without even the implied warranty of
+c      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c      GNU Library General Public License for more details.
+c
+c      You should have received a copy of the GNU Library General Public
+c      License along with PLplot; if not, write to the Free Software
+c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       include 'plf77demos.inc'
 
@@ -47,7 +47,7 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       external plrandd
       real*8 plrandd
 
-C     The function myisnan is defined in plf77demos.h
+c     The function myisnan is defined in plf77demos.h
       external myisnan
       logical myisnan
 
@@ -295,9 +295,9 @@ c      return
 c      end function
 
 
-C----------------------------------------------------------------------------
-C      Subroutine a2mnmx
-C      Minimum and the maximum elements of a 2-d array.
+c----------------------------------------------------------------------------
+c      Subroutine a2mnmx
+c      Minimum and the maximum elements of a 2-d array.
 
       subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
       implicit none

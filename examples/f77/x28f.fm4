@@ -1,25 +1,25 @@
-C  $Id$
-C
-C   Demonstrates plotting text in 3D (plmtex3, plptex3)
-C
-C   Copyright (C) 2007  Alan W. Irwin
-C
-C   This file is part of PLplot.
-C
-C   PLplot is free software; you can redistribute it and/or modify
-C   it under the terms of the GNU General Library Public License as
-C   published by the Free Software Foundation; either version 2 of the
-C   License, or (at your option) any later version.
-C
-C   PLplot is distributed in the hope that it will be useful,
-C   but WITHOUT ANY WARRANTY; without even the implied warranty of
-C   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C   GNU Library General Public License for more details.
-C
-C   You should have received a copy of the GNU Library General Public
-C   License along with PLplot; if not, write to the Free Software
-C   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-C
+c  $Id$
+c
+c   Demonstrates plotting text in 3D (plmtex3, plptex3)
+c
+c   Copyright (C) 2007  Alan W. Irwin
+c
+c   This file is part of PLplot.
+c
+c   PLplot is free software; you can redistribute it and/or modify
+c   it under the terms of the GNU General Library Public License as
+c   published by the Free Software Foundation; either version 2 of the
+c   License, or (at your option) any later version.
+c
+c   PLplot is distributed in the hope that it will be useful,
+c   but WITHOUT ANY WARRANTY; without even the implied warranty of
+c   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c   GNU Library General Public License for more details.
+c
+c   You should have received a copy of the GNU Library General Public
+c   License along with PLplot; if not, write to the Free Software
+c   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c
 
       program x28f
 
@@ -80,13 +80,13 @@ C
         enddo
       enddo
 
-C      Parse and process command line arguments
+c      Parse and process command line arguments
 
       call plparseopts(PL_PARSE_FULL)
 
       call plinit()
 
-C      Page 1: Demonstrate inclination and shear capability pattern.
+c      Page 1: Demonstrate inclination and shear capability pattern.
 
       call pladv(0)
       call plvpor(-0.15d0, 1.15d0, -0.05d0, 1.05d0)
@@ -100,7 +100,7 @@ C      Page 1: Demonstrate inclination and shear capability pattern.
      & "b",   "", ymax-ymin, 0,
      & "bcd", "", zmax-zmin, 0)
 
-C      z = zmin.
+c      z = zmin.
       call plschr(0.d0, 1.0d0)
       do i = 1,NREVOLUTION
          omega = 2.d0*PI*(dble(i-1)/dble(NREVOLUTION))
@@ -119,7 +119,7 @@ C      z = zmin.
      &     0.0d0, "  revolution")
       enddo
 
-C      x = xmax.
+c      x = xmax.
       call plschr(0.d0, 1.0d0)
       do i = 1,NREVOLUTION
          omega = 2.d0*PI*(dble(i-1)/dble(NREVOLUTION))
@@ -138,7 +138,7 @@ C      x = xmax.
      &     0.0d0, "  revolution")
       enddo
 
-C      y = ymax.
+c      y = ymax.
       call plschr(0.d0, 1.0d0)
       do i = 1,NREVOLUTION
          omega = 2.d0*PI*(dble(i-1)/dble(NREVOLUTION))
@@ -156,10 +156,10 @@ C      y = ymax.
      &     x_shear, y_shear, z_shear,
      &     0.0d0, "  revolution")
       enddo
-C      Draw minimal 3D grid to finish defining the 3D box.
+c      Draw minimal 3D grid to finish defining the 3D box.
       call plmesh(x, y, z, XPTS, YPTS, DRAW_LINEXY, XPTS)
 
-C      Page 2: Demonstrate rotation of string around its axis.
+c      Page 2: Demonstrate rotation of string around its axis.
       call pladv(0)
       call plvpor(-0.15d0, 1.15d0, -0.05d0, 1.05d0)
       call plwind(-1.2d0, 1.2d0, -0.8d0, 1.5d0)
@@ -172,7 +172,7 @@ C      Page 2: Demonstrate rotation of string around its axis.
      & "b",   "", ymax-ymin, 0,
      & "bcd", "", zmax-zmin, 0)
 
-C      y = ymax.
+c      y = ymax.
       call plschr(0.d0, 1.0d0)
       x_inclination = 1.d0
       y_inclination = 0.d0
@@ -193,7 +193,7 @@ C      y = ymax.
      &     0.5d0, "rotation for y = y#dmax#u")
       enddo
 
-C      x = xmax.
+c      x = xmax.
       call plschr(0.d0, 1.0d0)
       x_inclination = 0.d0
       y_inclination = -1.d0
@@ -214,7 +214,7 @@ C      x = xmax.
      &     0.5d0, "rotation for x = x#dmax#u")
       enddo
 
-C      z = zmin.
+c      z = zmin.
       call plschr(0.d0, 1.0d0)
       x_inclination = 1.d0
       y_inclination = 0.d0
@@ -234,13 +234,13 @@ C      z = zmin.
      &     x_shear, y_shear, z_shear,
      &     0.5d0, "rotation for z = z#dmin#u")
       enddo
-C      Draw minimal 3D grid to finish defining the 3D box.
+c      Draw minimal 3D grid to finish defining the 3D box.
       call plmesh(x, y, z, XPTS, YPTS, DRAW_LINEXY, XPTS)
 
-C      Page 3: Demonstrate shear of string along its axis.
-C      Work around xcairo and pngcairo (but not pscairo) problems for
-C      shear vector too close to axis of string. (N.B. no workaround
-C      would be domega = 0.d0.)
+c      Page 3: Demonstrate shear of string along its axis.
+c      Work around xcairo and pngcairo (but not pscairo) problems for
+c      shear vector too close to axis of string. (N.B. no workaround
+c      would be domega = 0.d0.)
       domega = 0.05d0
       call pladv(0)
       call plvpor(-0.15d0, 1.15d0, -0.05d0, 1.05d0)
@@ -254,7 +254,7 @@ C      would be domega = 0.d0.)
      & "b",   "", ymax-ymin, 0,
      & "bcd", "", zmax-zmin, 0)
 
-C      y = ymax.
+c      y = ymax.
       call plschr(0.d0, 1.0d0)
       x_inclination = 1.d0
       y_inclination = 0.d0
@@ -275,7 +275,7 @@ C      y = ymax.
      &     0.5d0, "shear for y = y#dmax#u")
       enddo
 
-C      x = xmax.
+c      x = xmax.
       call plschr(0.d0, 1.0d0)
       x_inclination = 0.d0
       y_inclination = -1.d0
@@ -296,7 +296,7 @@ C      x = xmax.
      &     0.5d0, "shear for x = x#dmax#u")
       enddo
 
-C      z = zmin.
+c      z = zmin.
       call plschr(0.d0, 1.0d0)
       x_inclination = 1.d0
       y_inclination = 0.d0
@@ -317,10 +317,10 @@ C      z = zmin.
      &     0.5d0, "shear for z = z#dmin#u")
       enddo
 
-C      Draw minimal 3D grid to finish defining the 3D box.
+c      Draw minimal 3D grid to finish defining the 3D box.
       call plmesh(x, y, z, XPTS, YPTS, DRAW_LINEXY, XPTS)
 
-C      Page 4: Demonstrate drawing a string on a 3D path.
+c      Page 4: Demonstrate drawing a string on a 3D path.
       call pladv(0)
       call plvpor(-0.15d0, 1.15d0, -0.05d0, 1.05d0)
       call plwind(-1.2d0, 1.2d0, -0.8d0, 1.5d0)
@@ -334,12 +334,12 @@ C      Page 4: Demonstrate drawing a string on a 3D path.
      & "bcd", "", zmax-zmin, 0)
 
       call plschr(0.d0, 1.2d0)
-C      domega controls the spacing between the various characters of the
-C      string and also the maximum value of omega for the given number
-C      of characters in pstring.
+c      domega controls the spacing between the various characters of the
+c      string and also the maximum value of omega for the given number
+c      of characters in pstring.
       domega = 2.d0*PI/lnblnk(pstring)
       omega = 0.d0
-C      3D function is a helix of the given radius and pitch
+c      3D function is a helix of the given radius and pitch
       radius = 0.5d0
       pitch = 1.d0/(2.d0*PI)
       do i = 1,lnblnk(pstring)
@@ -348,14 +348,14 @@ C      3D function is a helix of the given radius and pitch
       	 xpos = xmid + radius*sin_omega
       	 ypos = ymid - radius*cos_omega
       	 zpos = zmin + pitch*omega
-C         In general, the inclination is proportional to the derivative of
-C         the position wrt theta.
+c         In general, the inclination is proportional to the derivative of
+c         the position wrt theta.
       	 x_inclination = radius*cos_omega
       	 y_inclination = radius*sin_omega
       	 z_inclination = pitch
-C         The shear vector should be perpendicular to the 3D line with Z
-C 	  component maximized, but for low pitch a good approximation is
-C 	  a constant vector that is parallel to the Z axis.
+c         The shear vector should be perpendicular to the 3D line with Z
+c 	  component maximized, but for low pitch a good approximation is
+c 	  a constant vector that is parallel to the Z axis.
          x_shear = 0.d0
          y_shear = 0.d0
          z_shear = 1.d0
@@ -366,10 +366,10 @@ C 	  a constant vector that is parallel to the Z axis.
      &     0.5d0, pstring(i:i))
       	   omega = omega + domega
       enddo
-C      Draw minimal 3D grid to finish defining the 3D box.
+c      Draw minimal 3D grid to finish defining the 3D box.
       call plmesh(x, y, z, XPTS, YPTS, DRAW_LINEXY, XPTS)
 
-C Page 5: Demonstrate plmtex3 axis labelling capability
+c Page 5: Demonstrate plmtex3 axis labelling capability
       call pladv(0)
       call plvpor(-0.15d0, 1.15d0, -0.05d0, 1.05d0)
       call plwind(-1.2d0, 1.2d0, -0.8d0, 1.5d0)
@@ -395,7 +395,7 @@ C Page 5: Demonstrate plmtex3 axis labelling capability
       call plmtex3("zp", 3.0d0, 0.5d0, 0.5d0, "primary Z-axis label")
       call plmtex3("zs", -2.5d0, 0.5d0, 0.5d0, "Arbitrarily displaced")
       call plmtex3("zs", -1.0d0, 0.5d0, 0.5d0, "secondary Z-axis label")
-C      Draw minimal 3D grid to finish defining the 3D box.
+c      Draw minimal 3D grid to finish defining the 3D box.
       call plmesh(x, y, z, XPTS, YPTS, DRAW_LINEXY, XPTS)
 
       call plend()

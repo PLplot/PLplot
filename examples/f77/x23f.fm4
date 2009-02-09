@@ -1,28 +1,28 @@
-C      $Id$
-C
-C   Displays Greek letters and mathematically interesting Unicode ranges
-C
-C   Copyright (C) 2005 Alan Irwin
-C   Copyright (C) 2005 Andrew Ross
-C
-C
-C   This file is part of PLplot.
-C
-C   PLplot is free software; you can redistribute it and/or modify
-C   it under the terms of the GNU General Library Public License as published
-C   by the Free Software Foundation; either version 2 of the License, or
-C   (at your option) any later version.
-C
-C   PLplot is distributed in the hope that it will be useful,
-C   but WITHOUT ANY WARRANTY; without even the implied warranty of
-C   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C   GNU Library General Public License for more details.
-C
-C   You should have received a copy of the GNU Library General Public License
-C   along with PLplot; if not, write to the Free Software
-C   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-C
-C
+c      $Id$
+c
+c   Displays Greek letters and mathematically interesting Unicode ranges
+c
+c   Copyright (C) 2005 Alan Irwin
+c   Copyright (C) 2005 Andrew Ross
+c
+c
+c   This file is part of PLplot.
+c
+c   PLplot is free software; you can redistribute it and/or modify
+c   it under the terms of the GNU General Library Public License as published
+c   by the Free Software Foundation; either version 2 of the License, or
+c   (at your option) any later version.
+c
+c   PLplot is distributed in the hope that it will be useful,
+c   but WITHOUT ANY WARRANTY; without even the implied warranty of
+c   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c   GNU Library General Public License for more details.
+c
+c   You should have received a copy of the GNU Library General Public License
+c   along with PLplot; if not, write to the Free Software
+c   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c
+c
 
       program x23f
       implicit none
@@ -35,16 +35,16 @@ C
       integer ifamily, istyle, iweight
       real*8 dy
       integer family_index, style_index, weight_index
-C     Must be big enough to contain the prefix strings, the font-changing
-C     commands, and the "The quick brown..." string.
+c     Must be big enough to contain the prefix strings, the font-changing
+c     commands, and the "The quick brown..." string.
       character*200 string
 
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
 
-C
-C  Displays Greek letters and mathematically interesting Unicode ranges
-C
+c
+c  Displays Greek letters and mathematically interesting Unicode ranges
+c
       integer      fci_combinations
       parameter(fci_combinations = 30)
 
@@ -180,7 +180,7 @@ C
      &8,
      &8 /
 
-C  non-zero values Must be consistent with nxcells and nycells. */
+c  non-zero values Must be consistent with nxcells and nycells. */
       data (offset(i) ,i=1,11) /
      &0,
      &0,
@@ -249,7 +249,7 @@ C  non-zero values Must be consistent with nxcells and nycells. */
       do 130 page = 1,11
          call pladv(0)
 
-C        Set up viewport and window
+c        Set up viewport and window
 
          call plvpor(0.02d0, 0.98d0, 0.02d0, 0.90d0)
          call plwind(0.0d0, 1.0d0, 0.0d0, 1.0d0)
@@ -257,12 +257,12 @@ C        Set up viewport and window
          call plschr(0.d0, 0.8d0)
          ycharacter_scale = (1.0d0 - 0.0d0)/(ymax-ymin)
 
-C        Factor should be 0.5, but heuristically it turns out to be larger.
+c        Factor should be 0.5, but heuristically it turns out to be larger.
 
          call plgchr(chardef, charht)
          yoffset = 1.0d0*charht*ycharacter_scale
 
-C        Draw the grid using plbox
+c        Draw the grid using plbox
 
          call plcol0(2)
          deltax = 1.0d0/nxcells(page)
@@ -281,16 +281,16 @@ C        Draw the grid using plbox
                   elseif (page .ge. 1 .and. page .le. 4) then
                      write(cmdString, '("##[0x",z4.4,"]")')
      &                 type1(offset(page)+slice)
-C                     Not required for command which is case insensitive,
-C                     but lowercase the command simply to get same
-C                     lowercase display of command as corresponding C example.
+c                     Not required for command which is case insensitive,
+c                     but lowercase the command simply to get same
+c                     lowercase display of command as corresponding C example.
                      call lowercase23(cmdString)
                   elseif (page .ge. 5) then
                      write(cmdString, '("##[0x",z4.4,"]")')
      &                  lo(page)+slice-1
-C                     Not required for command which is case insensitive,
-C                     but lowercase the command simply to get same
-C                     lowercase display of command as corresponding C example.
+c                     Not required for command which is case insensitive,
+c                     but lowercase the command simply to get same
+c                     lowercase display of command as corresponding C example.
                      call lowercase23(cmdString)
                   endif
                   call plptex(x,y+yoffset,1.d0,0.d0,0.5d0,
@@ -307,7 +307,7 @@ C                     lowercase display of command as corresponding C example.
          call plmtex("t", 1.5d0, 0.5d0, 0.5d0, title(page))
   130 continue
 
-C     Demonstrate methods of getting the current fonts 
+c     Demonstrate methods of getting the current fonts 
       call plgfci(fci_old)
       call plgfont(ifamily, istyle, iweight)
       write (*,'(a,z8)') 'For example 23 prior to page 12 the FCI is 0x'
@@ -400,7 +400,7 @@ C     Demonstrate methods of getting the current fonts
       call plschr(0.d0, 1.0d0)
  140  continue
 
-C     Restore defaults
+c     Restore defaults
 
       call plcol0(1)
 
@@ -415,7 +415,7 @@ C     Restore defaults
       do i = 1, len(string)
         iascii = iachar(string(i:i))
         if(65.le.iascii.and.iascii.le.90) then
-C          convert uppercase to lowercase.
+c          convert uppercase to lowercase.
           string(i:i) = achar(iascii+32)
         endif
       enddo

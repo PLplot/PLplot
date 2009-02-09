@@ -1,31 +1,31 @@
-C      $Id$
-C
-C      Copyright (C) 2004  Alan W. Irwin
-C
-C      This file is part of PLplot.
-C
-C      PLplot is free software; you can redistribute it and/or modify
-C      it under the terms of the GNU General Library Public License as
-C      published by the Free Software Foundation; either version 2 of the
-C      License, or (at your option) any later version.
-C
-C      PLplot is distributed in the hope that it will be useful,
-C      but WITHOUT ANY WARRANTY; without even the implied warranty of
-C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C      GNU Library General Public License for more details.
-C
-C      You should have received a copy of the GNU Library General Public
-C      License along with PLplot; if not, write to the Free Software
-C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c      $Id$
+c
+c      Copyright (C) 2004  Alan W. Irwin
+c
+c      This file is part of PLplot.
+c
+c      PLplot is free software; you can redistribute it and/or modify
+c      it under the terms of the GNU General Library Public License as
+c      published by the Free Software Foundation; either version 2 of the
+c      License, or (at your option) any later version.
+c
+c      PLplot is distributed in the hope that it will be useful,
+c      but WITHOUT ANY WARRANTY; without even the implied warranty of
+c      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c      GNU Library General Public License for more details.
+c
+c      You should have received a copy of the GNU Library General Public
+c      License along with PLplot; if not, write to the Free Software
+c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-!--------------------------------------------------------------------------
-! ident
-!
-! Defines identity transformation for example 19.
-! x(), y() are the coordinates to be plotted.
-! This is a 0-OP routine, to play the role of NULL in the C version!
-!--------------------------------------------------------------------------
+c--------------------------------------------------------------------------
+c ident
+c
+c Defines identity transformation for example 19.
+c x(), y() are the coordinates to be plotted.
+c This is a 0-OP routine, to play the role of NULL in the C version!
+c--------------------------------------------------------------------------
 
       subroutine ident(n, x, y)
       implicit none
@@ -37,13 +37,13 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       return
       end
 
-!--------------------------------------------------------------------------
-! mapform19
-!
-! Defines specific coordinate transformation for example 19.
-! Not to be confused with mapform in src/plmap.c.
-! x(), y() are the coordinates to be plotted.
-!--------------------------------------------------------------------------
+c--------------------------------------------------------------------------
+c mapform19
+c
+c Defines specific coordinate transformation for example 19.
+c Not to be confused with mapform in src/plmap.c.
+c x(), y() are the coordinates to be plotted.
+c--------------------------------------------------------------------------
 
       subroutine mapform19(n, x, y)
       implicit none
@@ -67,11 +67,11 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       return
       end
 
-!--------------------------------------------------------------------------
-! main
-!
-! Shows two views of the world map.
-!--------------------------------------------------------------------------
+c--------------------------------------------------------------------------
+c main
+c
+c Shows two views of the world map.
+c--------------------------------------------------------------------------
 
       program x19f
       implicit none
@@ -81,18 +81,18 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
 
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
-C      Process command-line arguments
+c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
-! Longitude (x) and latitude (y)
+c Longitude (x) and latitude (y)
 
       miny = -70
       maxy = 80
 
       call plinit()
 
-! Cartesian plots
-! Most of world
+c Cartesian plots
+c Most of world
 
       minx = 190
       maxx = 190+360
@@ -101,7 +101,7 @@ C      Process command-line arguments
       call plenv(minx, maxx, miny, maxy, 1, -1)
       call plmap(ident, 'usaglobe', minx, maxx, miny, maxy)
 
-! The Americas
+c The Americas
 
       minx = 190
       maxx = 340
@@ -110,7 +110,7 @@ C      Process command-line arguments
       call plenv(minx, maxx, miny, maxy, 1, -1)
       call plmap(ident, 'usaglobe', minx, maxx, miny, maxy)
 
-! Polar, Northern hemisphere
+c Polar, Northern hemisphere
 
       minx = 0
       maxx = 360

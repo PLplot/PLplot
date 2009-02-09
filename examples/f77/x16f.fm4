@@ -1,23 +1,23 @@
-C      $Id$
-C      plshades demo, using color fill
-C
-C      Copyright (C) 2004  Alan W. Irwin
-C
-C      This file is part of PLplot.
-C
-C      PLplot is free software; you can redistribute it and/or modify
-C      it under the terms of the GNU General Library Public License as
-C      published by the Free Software Foundation; either version 2 of the
-C      License, or (at your option) any later version.
-C
-C      PLplot is distributed in the hope that it will be useful,
-C      but WITHOUT ANY WARRANTY; without even the implied warranty of
-C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C      GNU Library General Public License for more details.
-C
-C      You should have received a copy of the GNU Library General Public
-C      License along with PLplot; if not, write to the Free Software
-C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c      $Id$
+c      plshades demo, using color fill
+c
+c      Copyright (C) 2004  Alan W. Irwin
+c
+c      This file is part of PLplot.
+c
+c      PLplot is free software; you can redistribute it and/or modify
+c      it under the terms of the GNU General Library Public License as
+c      published by the Free Software Foundation; either version 2 of the
+c      License, or (at your option) any later version.
+c
+c      PLplot is distributed in the hope that it will be useful,
+c      but WITHOUT ANY WARRANTY; without even the implied warranty of
+c      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c      GNU Library General Public License for more details.
+c
+c      You should have received a copy of the GNU Library General Public
+c      License along with PLplot; if not, write to the Free Software
+c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       implicit none
       real*8 PI
@@ -25,8 +25,8 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       real*8 xx, yy, argx, argy, distort, r, t
       integer NLEVEL, NX, NY, PERIMETERPTS, xdim, ydim
       parameter(NLEVEL = 20)
-C      xdim and ydim are the static dimensions of the 2D arrays while
-C      NX and NY are the defined area.
+c      xdim and ydim are the static dimensions of the 2D arrays while
+c      NX and NY are the defined area.
       parameter(xdim=99, NX = 35)
       parameter(ydim=100, NY = 46)
       parameter(PERIMETERPTS = 100)
@@ -36,23 +36,23 @@ C      NX and NY are the defined area.
      &  px(PERIMETERPTS), py(PERIMETERPTS)
       integer fill_width, cont_color, cont_width
       integer i, j
-C      dummy to fill argument list with something not currently used.
+c      dummy to fill argument list with something not currently used.
       character*1 defined
       real*8 tr(6)
       common /plplot/tr
 
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
-C      Process command-line arguments
+c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
-C      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+c      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
       call plscmap0n(3)
 
-C      Initialize plplot
+c      Initialize plplot
 
       call plinit()
-C      Set up transformation matrix
+c      Set up transformation matrix
 
       tr(1) = 2.d0/(NX-1)
       tr(2) = 0.d0
@@ -61,7 +61,7 @@ C      Set up transformation matrix
       tr(5) = 2.d0/(NY-1)
       tr(6) = -1.d0
 
-C      Calculate the data matrices.
+c      Calculate the data matrices.
       do i=1,NX
         xx = dble(i-1-(NX/2))/dble (NX/2)
         do j=1,NY
@@ -79,7 +79,7 @@ C      Calculate the data matrices.
         shedge(i) = zmin + (zmax - zmin) * dble(i-1) / dble(NLEVEL)
       enddo
 
-C      Build the 1-d coord arrays.
+c      Build the 1-d coord arrays.
       distort = 0.4d0
       do i=1,NX
         xx = -1.d0 + dble(i-1)*2.d0/dble(NX-1)
@@ -91,7 +91,7 @@ C      Build the 1-d coord arrays.
         yg1(j) = yy - distort*cos(0.5d0*PI*yy)
       enddo
 
-C      Build the 2-d coord arrays.
+c      Build the 2-d coord arrays.
       do i=1,NX
         xx = -1.d0 + dble(i-1)*2.d0/dble(NX-1)
         argx = 0.5d0*PI*xx
@@ -103,7 +103,7 @@ C      Build the 2-d coord arrays.
         enddo
       enddo
 
-C      Plot using transform of index range to xmin, xmax, ymin, ymax
+c      Plot using transform of index range to xmin, xmax, ymin, ymax
       call pladv(0)
       call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
       call plwind(-1.0d0, 1.0d0, -1.0d0, 1.0d0)
@@ -122,7 +122,7 @@ C      Plot using transform of index range to xmin, xmax, ymin, ymax
       call plcol0(2)
       call pllab('distance', 'altitude', 'Bogon density')
 
-C      Plot using 1d coordinate transform
+c      Plot using 1d coordinate transform
       call pladv(0)
       call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
       call plwind(-1.0d0, 1.0d0, -1.0d0, 1.0d0)
@@ -141,7 +141,7 @@ C      Plot using 1d coordinate transform
       call plcol0(2)
       call pllab('distance', 'altitude', 'Bogon density')
 
-C      Plot using 2d coordinate transform
+c      Plot using 2d coordinate transform
       call pladv(0)
       call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
       call plwind(-1.0d0, 1.0d0, -1.0d0, 1.0d0)
@@ -162,7 +162,7 @@ C      Plot using 2d coordinate transform
       call pllab('distance', 'altitude',
      &  'Bogon density, with streamlines')
 
-C      Plot using 2d coordinate transform and plshades contours.
+c      Plot using 2d coordinate transform and plshades contours.
       call pladv(0)
       call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
       call plwind(-1.0d0, 1.0d0, -1.0d0, 1.0d0)
@@ -181,14 +181,14 @@ C      Plot using 2d coordinate transform and plshades contours.
       call plcol0(2)
       call pllab('distance', 'altitude', 'Bogon density')
 
-C      Example with polar coordinates.
+c      Example with polar coordinates.
       call pladv(0)
       call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
       call plwind(-1.d0, 1.d0, -1.d0, 1.d0)
 
       call plpsty(0)
 
-C      Build new coordinate matrices.
+c      Build new coordinate matrices.
       do i = 1, NX
         r = dble(i-1)/dble(NX-1)
         do j = 1, NY
@@ -199,13 +199,13 @@ C      Build new coordinate matrices.
         enddo
       enddo
 
-C      Need a new shedge to go along with the new data set.
+c      Need a new shedge to go along with the new data set.
       call a2mnmx(z, NX, NY, zmin, zmax, xdim)
       do i = 1, NLEVEL+1
         shedge(i) = zmin + (zmax - zmin) * dble(i-1) / dble(NLEVEL)
       enddo
 
-C      Now we can shade the interior region.
+c      Now we can shade the interior region.
       fill_width = 2
       cont_color = 0
       cont_width = 0
@@ -213,7 +213,7 @@ C      Now we can shade the interior region.
      &  shedge, NLEVEL+1, fill_width,
      &  cont_color, cont_width, xg2, yg2, xdim)
 
-C      Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
+c      Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
       do i = 1, PERIMETERPTS
         t = (2.d0*PI/dble(PERIMETERPTS-1))*dble(i-1)
         px(i) = cos(t)
@@ -223,16 +223,16 @@ C      Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
       call plcol0(1)
       call plline(PERIMETERPTS, px, py)
 
-C      And label the plot.
+c      And label the plot.
       call plcol0(2)
       call pllab( '', '',  'Tokamak Bogon Instability' )
 
       call plend
       end
 
-C----------------------------------------------------------------------------
-C      Subroutine a2mnmx
-C      Minimum and the maximum elements of a 2-d array.
+c----------------------------------------------------------------------------
+c      Subroutine a2mnmx
+c      Minimum and the maximum elements of a 2-d array.
 
       subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
       implicit none

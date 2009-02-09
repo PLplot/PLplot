@@ -1,23 +1,23 @@
-C      $Id$
-C      Displays the plotter symbols for PLSYM
-C
-C      Copyright (C) 2004  Alan W. Irwin
-C
-C      This file is part of PLplot.
-C
-C      PLplot is free software; you can redistribute it and/or modify
-C      it under the terms of the GNU General Library Public License as
-C      published by the Free Software Foundation; either version 2 of the
-C      License, or (at your option) any later version.
-C
-C      PLplot is distributed in the hope that it will be useful,
-C      but WITHOUT ANY WARRANTY; without even the implied warranty of
-C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C      GNU Library General Public License for more details.
-C
-C      You should have received a copy of the GNU Library General Public
-C      License along with PLplot; if not, write to the Free Software
-C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c      $Id$
+c      Displays the plotter symbols for PLSYM
+c
+c      Copyright (C) 2004  Alan W. Irwin
+c
+c      This file is part of PLplot.
+c
+c      PLplot is free software; you can redistribute it and/or modify
+c      it under the terms of the GNU General Library Public License as
+c      published by the Free Software Foundation; either version 2 of the
+c      License, or (at your option) any later version.
+c
+c      PLplot is distributed in the hope that it will be useful,
+c      but WITHOUT ANY WARRANTY; without even the implied warranty of
+c      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c      GNU Library General Public License for more details.
+c
+c      You should have received a copy of the GNU Library General Public
+c      License along with PLplot; if not, write to the Free Software
+c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       implicit none
 
@@ -30,10 +30,10 @@ C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
       real*8 x, y
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
-C      Process command-line arguments
+c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
-C      Full sized page for display
+c      Full sized page for display
 
       call plinit()
       call plfontld(1)
@@ -42,17 +42,17 @@ C      Full sized page for display
 
         call plcol0(2)
 
-C        Set up viewport and window
+c        Set up viewport and window
 
         call plvpor(0.15d0, 0.95d0, 0.1d0, 0.9d0)
         call plwind(0.0d0, 1.0d0, 0.0d0, 1.0d0)
 
-C        Draw the grid using plbox
+c        Draw the grid using plbox
 
         call plbox('bcg', 0.1d0, 0,'bcg', 0.1d0, 0)
         call plcol0(15)
 
-C        Write the digits below the frame
+c        Write the digits below the frame
 
         do  i=0,9
           write (text,'(i1)') i
@@ -62,7 +62,7 @@ C        Write the digits below the frame
         k=0
         do i=0,9
 
-C          Write the digits to the left of the frame
+c          Write the digits to the left of the frame
 
           if(base(l)+10*i.eq.0) then
             write (text,'(i1)') base(l)+10*i
@@ -79,7 +79,7 @@ C          Write the digits to the left of the frame
             x=0.1d0*j+0.05d0
             y=0.95d0-0.1d0*i
 
-C            Display the symbols
+c            Display the symbols
 
             call plsym(1,x,y,base(l)+k)
             k=k+1

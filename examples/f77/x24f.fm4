@@ -1,47 +1,47 @@
-C   $Id$
-C   Unicode Pace Flag
-C
-C   Copyright (C) 2005 Rafael Laboissiere
-C
-C
-C   This file is part of PLplot.
-C
-C   PLplot is free software; you can redistribute it and/or modify
-C   it under the terms of the GNU General Library Public License as published
-C   by the Free Software Foundation; either version 2 of the License, or
-C   (at your option) any later version.
-C
-C   PLplot is distributed in the hope that it will be useful,
-C   but WITHOUT ANY WARRANTY; without even the implied warranty of
-C   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C   GNU Library General Public License for more details.
-C
-C   You should have received a copy of the GNU Library General Public License
-C   along with PLplot; if not, write to the Free Software
-C   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-C
-C
-C   In Debian, run like this:
-C
-C   ( TTFDIR=/usr/share/fonts/truetype ; \
-C     PLPLOT_FREETYPE_SANS_FONT=$TTFDIR/arphic/bkai00mp.ttf \
-C     PLPLOT_FREETYPE_SERIF_FONT=$TTFDIR/freefont/FreeSerif.ttf \
-C     PLPLOT_FREETYPE_MONO_FONT=$TTFDIR/ttf-devanagari-fonts/lohit_hi.ttf \
-C     PLPLOT_FREETYPE_SCRIPT_FONT=$TTFDIR/unfonts/UnBatang.ttf \
-C     PLPLOT_FREETYPE_SYMBOL_FONT=$TTFDIR/ttf-bengali-fonts/JamrulNormal.ttf \
-C     ./x24f -dev png -o x24f.png )
-C
-C   Packages needed:
-C
-C   ttf-arphic-bkai00mp
-C   ttf-freefont
-C   ttf-devanagari-fonts
-C   ttf-unfonts
-C   ttf-bengali-fonts
-C
-C   For the latest Ubuntu systems lohit_hi.ttf has been moved to the
-C   ttf-indic-fonts-core package instead of ttf-devanagari-fonts so you
-C   will have to install this package instead and update the font path.
+c   $Id$
+c   Unicode Pace Flag
+c
+c   Copyright (C) 2005 Rafael Laboissiere
+c
+c
+c   This file is part of PLplot.
+c
+c   PLplot is free software; you can redistribute it and/or modify
+c   it under the terms of the GNU General Library Public License as published
+c   by the Free Software Foundation; either version 2 of the License, or
+c   (at your option) any later version.
+c
+c   PLplot is distributed in the hope that it will be useful,
+c   but WITHOUT ANY WARRANTY; without even the implied warranty of
+c   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c   GNU Library General Public License for more details.
+c
+c   You should have received a copy of the GNU Library General Public License
+c   along with PLplot; if not, write to the Free Software
+c   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c
+c
+c   In Debian, run like this:
+c
+c   ( TTFDIR=/usr/share/fonts/truetype ; \
+c     PLPLOT_FREETYPE_SANS_FONT=$TTFDIR/arphic/bkai00mp.ttf \
+c     PLPLOT_FREETYPE_SERIF_FONT=$TTFDIR/freefont/FreeSerif.ttf \
+c     PLPLOT_FREETYPE_MONO_FONT=$TTFDIR/ttf-devanagari-fonts/lohit_hi.ttf \
+c     PLPLOT_FREETYPE_SCRIPT_FONT=$TTFDIR/unfonts/UnBatang.ttf \
+c     PLPLOT_FREETYPE_SYMBOL_FONT=$TTFDIR/ttf-bengali-fonts/JamrulNormal.ttf \
+c     ./x24f -dev png -o x24f.png )
+c
+c   Packages needed:
+c
+c   ttf-arphic-bkai00mp
+c   ttf-freefont
+c   ttf-devanagari-fonts
+c   ttf-unfonts
+c   ttf-bengali-fonts
+c
+c   For the latest Ubuntu systems lohit_hi.ttf has been moved to the
+c   ttf-indic-fonts-core package instead of ttf-devanagari-fonts so you
+c   will have to install this package instead and update the font path.
 
       program x24f
       implicit none
@@ -98,42 +98,42 @@ C   will have to install this package instead and update the font path.
      &  0.875/
 
 
-C  Taken from http://www.columbia.edu/~fdc/pace/
+c  Taken from http://www.columbia.edu/~fdc/pace/
 
-C  Mandarin
+c  Mandarin
       peace(1) = '#<0x00>和平'
 
-C  Hindi
+c  Hindi
       peace(2) = '#<0x20>शांति'
 
-C  English
+c  English
       peace(3) = '#<0x10>Peace'
 
-C  Hebrew
+c  Hebrew
       peace(4) = '#<0x10>שלום'
 
-C  Russian
+c  Russian
       peace(5) = '#<0x10>Мир'
 
-C  German
+c  German
       peace(6) = '#<0x10>Friede'
 
-C  Korean
+c  Korean
       peace(7) = '#<0x30>평화'
 
-C  French
+c  French
       peace(8) = '#<0x10>Paix'
 
-C  Spanish
+c  Spanish
       peace(9) = '#<0x10>Paz'
 
-C  Arabic
+c  Arabic
       peace(10) = '#<0x10>ﺳﻼم'
 
-C  Turkish
+c  Turkish
       peace(11) = '#<0x10>Barış'
 
-C  Kurdish
+c  Kurdish
       peace(12) = '#<0x10>Hasîtî'
 
       call plparseopts(PL_PARSE_FULL)

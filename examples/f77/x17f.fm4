@@ -1,27 +1,27 @@
-C      $Id$
-C
-C      Copyright (C) 2004  Alan W. Irwin
-C
-C      This file is part of PLplot.
-C
-C      PLplot is free software; you can redistribute it and/or modify
-C      it under the terms of the GNU General Library Public License as
-C      published by the Free Software Foundation; either version 2 of the
-C      License, or (at your option) any later version.
-C
-C      PLplot is distributed in the hope that it will be useful,
-C      but WITHOUT ANY WARRANTY; without even the implied warranty of
-C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C      GNU Library General Public License for more details.
-C
-C      You should have received a copy of the GNU Library General Public
-C      License along with PLplot; if not, write to the Free Software
-C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c      $Id$
+c
+c      Copyright (C) 2004  Alan W. Irwin
+c
+c      This file is part of PLplot.
+c
+c      PLplot is free software; you can redistribute it and/or modify
+c      it under the terms of the GNU General Library Public License as
+c      published by the Free Software Foundation; either version 2 of the
+c      License, or (at your option) any later version.
+c
+c      PLplot is distributed in the hope that it will be useful,
+c      but WITHOUT ANY WARRANTY; without even the implied warranty of
+c      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c      GNU Library General Public License for more details.
+c
+c      You should have received a copy of the GNU Library General Public
+c      License along with PLplot; if not, write to the Free Software
+c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-C--------------------------------------------------------------------------
-C      main program
-C--------------------------------------------------------------------------
+c--------------------------------------------------------------------------
+c      main program
+c--------------------------------------------------------------------------
 
       program x17f
       implicit none
@@ -44,44 +44,44 @@ C--------------------------------------------------------------------------
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
 
-C      Process command-line arguments
+c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
-C      plplot initialization
+c      plplot initialization
 
-C      If db is used the plot is much more smooth. However, because of the
-C      async X behaviour, one does not have a real-time scripcharter.
-C
-C     call plsetopt('db', '')
-C     call plsetopt('np', '')
+c      If db is used the plot is much more smooth. However, because of the
+c      async X behaviour, one does not have a real-time scripcharter.
+c
+c     call plsetopt('db', '')
+c     call plsetopt('np', '')
 
-C      User sets up plot completely except for window and data
-C      Eventually settings in place when strip chart is created will be
-C      remembered so that multiple strip charts can be used simultaneously.
+c      User sets up plot completely except for window and data
+c      Eventually settings in place when strip chart is created will be
+c      remembered so that multiple strip charts can be used simultaneously.
 
 
-C      Specify some reasonable defaults for ymin and ymax
-C      The plot will grow automatically if needed (but not shrink)
+c      Specify some reasonable defaults for ymin and ymax
+c      The plot will grow automatically if needed (but not shrink)
 
       ymin = -0.1d0
       ymax = 0.1d0
 
-C      Specify initial tmin and tmax -- this determines length of window.
-C      Also specify maximum jump in t
-C      This can accomodate adaptive timesteps
+c      Specify initial tmin and tmax -- this determines length of window.
+c      Also specify maximum jump in t
+c      This can accomodate adaptive timesteps
 
       tmin = 0.d0
       tmax = 10.d0
-C      percentage of plot to jump
+c      percentage of plot to jump
       tjump = 0.3d0
 
-C      Axes options same as plbox.
-C      Only automatic tick generation and label placement allowed
-C      Eventually I'll make this fancier
+c      Axes options same as plbox.
+c      Only automatic tick generation and label placement allowed
+c      Eventually I'll make this fancier
 
       colbox = 1
       collab = 3
-C      pens color and line style
+c      pens color and line style
       styline(1) = 2
       colline(1) = 2
       styline(2) = 3
@@ -91,32 +91,32 @@ C      pens color and line style
       styline(4) = 5
       colline(4) = 5
 
-C      pens legend
+c      pens legend
       legline(1) = 'sum'
       legline(2) = 'sin'
       legline(3) = 'sin*noi'
       legline(4) = 'sin+noi'
 
-C      legend position
+c      legend position
       xlab = 0.d0
       ylab = 0.25d0
 
-C      autoscale y
+c      autoscale y
       autoy = 1
-C      don't scrip, accumulate
+c      don't scrip, accumulate
       acc = 1
 
-C      Initialize plplot
+c      Initialize plplot
 
       call plinit()
 
       call pladv(0)
       call plvsta()
 
-C      Register our error variables with PLplot
-C      From here on, we're handling all errors here
+c      Register our error variables with PLplot
+c      From here on, we're handling all errors here
 
-C      TODO: call plsError(&pl_errcode, errmsg)
+c      TODO: call plsError(&pl_errcode, errmsg)
 
       call plstripc(id1, 'bcnst', 'bcnstv',
      &  tmin, tmax, tjump, ymin, ymax,
@@ -132,17 +132,17 @@ C      TODO: call plsError(&pl_errcode, errmsg)
         stop
       endif
 
-C      Let plplot handle errors from here on
+c      Let plplot handle errors from here on
 
-C      TODO: call plsError(NULL, NULL)
+c      TODO: call plsError(NULL, NULL)
 
-C      autoscale y
+c      autoscale y
       autoy = 0
-C      accumulate
+c      accumulate
       acc = 1
 
-C      This is to represent a loop over time
-C      Let's try a random walk process
+c      This is to represent a loop over time
+c      Let's try a random walk process
 
       y1 = 0.0d0
       y2 = 0.0d0
@@ -151,12 +151,12 @@ C      Let's try a random walk process
       dt = 0.1d0
 
       do n = 0,nsteps-1
-C        wait a little (10 ms) to simulate time elapsing.
-C        g77 sleep has resolution of 1 sec so the call below is commented out
-C        because it is like watching paint dry.  In any case,
-C        I like the resulting speedier output when
-C        you drop sleep altogether from this loop.
-!        call sleep(1)
+c        wait a little (10 ms) to simulate time elapsing.
+c        g77 sleep has resolution of 1 sec so the call below is commented out
+c        because it is like watching paint dry.  In any case,
+c        I like the resulting speedier output when
+c        you drop sleep altogether from this loop.
+c        call sleep(1)
 
         t = dble(n) * dt
         noise = plrandd() - 0.5d0
@@ -165,8 +165,8 @@ C        you drop sleep altogether from this loop.
         y3 = y2 * noise
         y4 = y2 + noise/3.d0
 
-C        There is no need for all pens to have the same number of
-C        points or beeing equally time spaced.
+c        There is no need for all pens to have the same number of
+c        points or beeing equally time spaced.
 
         if ( mod(n,2) .ne. 0 ) then
           call plstripa(id1, 0, t, y1)
@@ -180,11 +180,11 @@ C        points or beeing equally time spaced.
         if ( mod(n,5) .ne. 0 ) then
           call plstripa(id1, 3, t, y4)
         endif
-C        use_ double buffer (-db on command line)
-C       call pleop()
+c        use_ double buffer (-db on command line)
+c       call pleop()
       enddo
 
-C      Destroy strip chart and it's memory
+c      Destroy strip chart and it's memory
 
       call plstripd(id1)
       call plend()

@@ -1,32 +1,32 @@
-C      $Id$
-C      Contour plot demo.
-C
-C      Copyright (C) 2004  Alan W. Irwin
-C
-C      This file is part of PLplot.
-C
-C      PLplot is free software; you can redistribute it and/or modify
-C      it under the terms of the GNU General Library Public License as
-C      published by the Free Software Foundation; either version 2 of the
-C      License, or (at your option) any later version.
-C
-C      PLplot is distributed in the hope that it will be useful,
-C      but WITHOUT ANY WARRANTY; without even the implied warranty of
-C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-C      GNU Library General Public License for more details.
-C
-C      You should have received a copy of the GNU Library General Public
-C      License along with PLplot; if not, write to the Free Software
-C      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+c      $Id$
+c      Contour plot demo.
+c
+c      Copyright (C) 2004  Alan W. Irwin
+c
+c      This file is part of PLplot.
+c
+c      PLplot is free software; you can redistribute it and/or modify
+c      it under the terms of the GNU General Library Public License as
+c      published by the Free Software Foundation; either version 2 of the
+c      License, or (at your option) any later version.
+c
+c      PLplot is distributed in the hope that it will be useful,
+c      but WITHOUT ANY WARRANTY; without even the implied warranty of
+c      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+c      GNU Library General Public License for more details.
+c
+c      You should have received a copy of the GNU Library General Public
+c      License along with PLplot; if not, write to the Free Software
+c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-C      Does several contour plots using different coordinate mappings.
+c      Does several contour plots using different coordinate mappings.
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384d0)
       integer i, j, nptsx, nptsy, xdim, ydim
-C      xdim and ydim are the absolute static dimensions.
-C      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
-C      arrays that is actually used.
+c      xdim and ydim are the absolute static dimensions.
+c      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
+c      arrays that is actually used.
       parameter (xdim=99, ydim=100, nptsx=35,nptsy=46)
 
       real*8 z(xdim, ydim), w(xdim, ydim), clevel(11),
@@ -34,14 +34,14 @@ C      arrays that is actually used.
      &  xg2(xdim, ydim), yg2(xdim, ydim)
       real*8 tr, xx, yy, argx, argy, distort
 
-CDEC$ ATTRIBUTES DLLIMPORT :: PLPLOT
+cDEC$ ATTRIBUTES DLLIMPORT :: PLPLOT
       common /plplot/ tr(6)
 
       data clevel /-1.d0, -0.8d0, -0.6d0, -0.4d0, -0.2d0,
      &  0.d0, 0.2d0, 0.4d0, 0.6d0 ,0.8d0, 1.d0/
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
-C      Process command-line arguments
+c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
       tr(1) = 2.d0/dble(nptsx-1)
@@ -51,7 +51,7 @@ C      Process command-line arguments
       tr(5) = 2.d0/dble(nptsy-1)
       tr(6) = -1.0d0
 
-C      Calculate the data matrices.
+c      Calculate the data matrices.
       do i=1,nptsx
         xx = dble(i-1-(nptsx/2))/dble (nptsx/2)
         do j=1,nptsy
@@ -61,7 +61,7 @@ C      Calculate the data matrices.
         enddo
       enddo
 
-C      Build the 1-d coord arrays.
+c      Build the 1-d coord arrays.
       distort = 0.4d0
       do i=1,nptsx
         xx = -1.d0 + dble(i-1)*2.d0/dble(nptsx-1)
@@ -73,7 +73,7 @@ C      Build the 1-d coord arrays.
         yg1(j) = yy - distort*cos(0.5d0*PI*yy)
       enddo
 
-C      Build the 2-d coord arrays.
+c      Build the 2-d coord arrays.
       do i=1,nptsx
         xx = -1.d0 + dble(i-1)*2.d0/dble(nptsx-1)
         argx = 0.5d0*PI*xx
@@ -87,7 +87,7 @@ C      Build the 2-d coord arrays.
 
       call plinit
 
-C      Plot using identity transform
+c      Plot using identity transform
       call pl_setcontlabelformat(4,3)
       call pl_setcontlabelparam(0.006d0, 0.3d0, 0.1d0, 1)
       call plenv(-1.0d0, 1.0d0, -1.0d0, 1.0d0, 0, 0)
@@ -102,7 +102,7 @@ C      Plot using identity transform
      &  'Streamlines of flow')
       call pl_setcontlabelparam(0.006d0, 0.3d0, 0.1d0, 0)
 
-C      Plot using 1d coordinate transform
+c      Plot using 1d coordinate transform
       call plenv(-1.0d0, 1.0d0, -1.0d0, 1.0d0, 0, 0)
       call plcol0(2)
       call plcon1(z,xdim,ydim,1,nptsx,1,nptsy,clevel,11, xg1, yg1)
@@ -114,7 +114,7 @@ C      Plot using 1d coordinate transform
       call pllab('X Coordinate', 'Y Coordinate',
      &  'Streamlines of flow')
 
-C      Plot using 2d coordinate transform
+c      Plot using 2d coordinate transform
       call plenv(-1.0d0, 1.0d0, -1.0d0, 1.0d0, 0, 0)
       call plcol0(2)
       call plcon2(z,xdim,ydim,1,nptsx,1,nptsy,clevel,11, xg2, yg2)
@@ -132,16 +132,16 @@ C      Plot using 2d coordinate transform
       call plend
       end
 
-C      polar contour plot example.
+c      polar contour plot example.
       subroutine polar()
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384d0)
       integer PERIMETERPTS, RPTS, THETAPTS, NLEVEL, xdim, ydim
       parameter(PERIMETERPTS = 100)
-C      xdim and ydim are the absolute static size of the 2D arrays.
-C      RPTS and THETAPTS are associated with the part of the
-C      2D arrays that are defined.
+c      xdim and ydim are the absolute static size of the 2D arrays.
+c      RPTS and THETAPTS are associated with the part of the
+c      2D arrays that are defined.
       parameter(xdim=99, RPTS = 40)
       parameter(ydim=100, THETAPTS = 40)
       parameter(NLEVEL=10)
@@ -151,7 +151,7 @@ C      2D arrays that are defined.
      &  lev(NLEVEL), t, r, theta
       call plenv(-1.d0, 1.d0, -1.d0, 1.d0, 0, -2)
       call plcol0(1)
-C      perimeter.
+c      perimeter.
       do i = 1, PERIMETERPTS
         t = (2.d0*PI/(PERIMETERPTS-1))*dble(i-1)
         px(i) = cos(t)
@@ -159,7 +159,7 @@ C      perimeter.
       enddo
       call plline(PERIMETERPTS, px, py)
 
-C      create data to be contoured.
+c      create data to be contoured.
       do j = 1, THETAPTS
         theta = (2.d0*PI/dble(THETAPTS-1))*dble(j-1)
         do i = 1, RPTS
@@ -170,12 +170,12 @@ C      create data to be contoured.
         enddo
       enddo
 
-C      create contour values.
+c      create contour values.
       do i = 1, NLEVEL
         lev(i) = 0.05d0 + 0.10d0*dble(i-1)
       enddo
 
-C      plot the (polar) contours.
+c      plot the (polar) contours.
       call plcol0(2)
       call plcon2(z, xdim, ydim, 1, RPTS, 1, THETAPTS,
      &  lev, NLEVEL, xg, yg)
@@ -183,7 +183,7 @@ C      plot the (polar) contours.
       call pllab('', '', 'Polar Contour Plot')
       end
 
-C      shielded potential contour plot example
+c      shielded potential contour plot example
       subroutine potential()
       implicit none
 
@@ -196,9 +196,9 @@ C      shielded potential contour plot example
      &  q1i, d1i, q2, d2, q2i, d2i, div1, div1i, div2, div2i,
      &  zmin, zmax, dz, xpmin, xpmax, ypmin, ypmax,
      &  xtick, ytick
-C      xdim and ydim are the absolute static size of the 2D arrays.
-C      NCX and NCY are associated with the part of the
-C      2D arrays that are defined.
+c      xdim and ydim are the absolute static size of the 2D arrays.
+c      NCX and NCY are associated with the part of the
+c      2D arrays that are defined.
       parameter (xdim=99, NCX=40, ydim=100, NCY=64, NPLT=100)
       parameter (TWOPI=6.2831853071795864768d0)
 
@@ -216,8 +216,8 @@ C      2D arrays that are defined.
       ky = 1
       ly = ny
 
-C      Set up r-theta grids
-C      Tack on extra cell in theta to handle periodicity.
+c      Set up r-theta grids
+c      Tack on extra cell in theta to handle periodicity.
 
       do i = 1, nx
         r = i - 0.5d0
@@ -235,10 +235,10 @@ C      Tack on extra cell in theta to handle periodicity.
       x0 = (xmin + xmax)/2.d0
       y0 = (ymin + ymax)/2.d0
 
-C      Potential inside a conducting cylinder (or sphere) by method of images.
-C      Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
-C      Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
-C      Also put in smoothing term at small distances.
+c      Potential inside a conducting cylinder (or sphere) by method of images.
+c      Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+c      Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+c      Also put in smoothing term at small distances.
 
       eps = 2.d0
 
@@ -266,7 +266,7 @@ C      Also put in smoothing term at small distances.
         enddo
       enddo
 
-C      Tack on extra cell in theta to handle periodicity.
+c      Tack on extra cell in theta to handle periodicity.
 
       do i = 1, nx
         do j = 1, ny
@@ -276,7 +276,7 @@ C      Tack on extra cell in theta to handle periodicity.
       enddo
       call a2mnmx(z, nx, ny, zmin, zmax, xdim)
 
-C      Set up contour levels.
+c      Set up contour levels.
 
       nlevel = 20
       dz = abs(zmax - zmin)/dble (nlevel)
@@ -284,9 +284,9 @@ C      Set up contour levels.
         clevel(i) = zmin + (i-0.5d0)*dz
       enddo
 
-C      Split contours into two parts, z > 0, and z < 0.
-C      Dashed contours will be at levels 'ilevlt' through 'ilevlt+nlevlt'.
-C      Solid  contours will be at levels 'ilevgt' through 'ilevgt+nlevgt'.
+c      Split contours into two parts, z > 0, and z < 0.
+c      Dashed contours will be at levels 'ilevlt' through 'ilevlt+nlevlt'.
+c      Solid  contours will be at levels 'ilevgt' through 'ilevgt+nlevgt'.
 
       ilevlt = 1
       i = 1
@@ -297,7 +297,7 @@ C      Solid  contours will be at levels 'ilevgt' through 'ilevgt+nlevgt'.
       ilevgt = ilevlt + nlevlt
       nlevgt = nlevel - nlevlt
 
-C      Advance graphics frame and get ready to plot.
+c      Advance graphics frame and get ready to plot.
 
       ncollin = 11
       ncolbox = 1
@@ -306,8 +306,8 @@ C      Advance graphics frame and get ready to plot.
       call pladv(0)
       call plcol0(ncolbox)
 
-C      Scale window to user coordinates.
-C      Make a bit larger so the boundary doesn't get clipped.
+c      Scale window to user coordinates.
+c      Make a bit larger so the boundary doesn't get clipped.
 
       eps = 0.05d0
       xpmin = xmin - abs(xmin)*eps
@@ -328,7 +328,7 @@ C      Make a bit larger so the boundary doesn't get clipped.
 
       call plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
 
-C      Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
+c      Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
 
       call plcol0(ncollin)
       if(nlevlt .gt. 0) then
@@ -342,7 +342,7 @@ C      Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
      &    clevel(ilevgt), nlevgt, xg, yg)
       endif
 
-C      Draw boundary.
+c      Draw boundary.
 
       do i = 1, NPLT
         theta = (TWOPI)/(NPLT-1) * dble (i-1)
@@ -357,9 +357,9 @@ C      Draw boundary.
      &'Shielded potential of charges in a conducting sphere')
       end
 
-C----------------------------------------------------------------------------
-C      Subroutine a2mnmx
-C      Minimum and the maximum elements of a 2-d array.
+c----------------------------------------------------------------------------
+c      Subroutine a2mnmx
+c      Minimum and the maximum elements of a 2-d array.
 
       subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
       implicit none

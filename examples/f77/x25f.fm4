@@ -1,13 +1,13 @@
-C $Id$
-C
-C   Filling and clipping polygons.
-C
-C
-C --------------------------------------------------------------------------
-C main
-C
-C Test program for filling polygons and proper clipping
-C --------------------------------------------------------------------------
+c $Id$
+c
+c   Filling and clipping polygons.
+c
+c
+c --------------------------------------------------------------------------
+c main
+c
+c Test program for filling polygons and proper clipping
+c --------------------------------------------------------------------------
 
       program x25f
 
@@ -38,11 +38,11 @@ C --------------------------------------------------------------------------
 
       npts = 0
 
-C  Parse and process command line arguments
+c  Parse and process command line arguments
 
       call plparseopts(PL_PARSE_FULL)
 
-C  Initialize plplot
+c  Initialize plplot
 
       call plssub(3,3)
       call plinit()
@@ -51,7 +51,7 @@ C  Initialize plplot
       do 120 j = 1,4
 
           if ( j .eq. 1 ) then
-C  Polygon 1: a diamond
+c  Polygon 1: a diamond
               x0(1) =    0 ; y0(1) = -100
               x0(2) = -100 ; y0(2) =    0
               x0(3) =    0 ; y0(3) =  100
@@ -59,7 +59,7 @@ C  Polygon 1: a diamond
               npts = 4
           endif
           if ( j .eq. 2 ) then
-C  Polygon 1: a diamond - reverse direction
+c  Polygon 1: a diamond - reverse direction
               x0(4) =    0 ; y0(4) = -100
               x0(3) = -100 ; y0(3) =    0
               x0(2) =    0 ; y0(2) =  100
@@ -67,7 +67,7 @@ C  Polygon 1: a diamond - reverse direction
               npts = 4
           endif
           if ( j .eq. 3 ) then
-C  Polygon 2: a square with punctures
+c  Polygon 2: a square with punctures
               x0(1)  = -100 ; y0(1)  = -100
               x0(2)  = -100 ; y0(2)  =  -80
               x0(3)  =   80 ; y0(3)  =    0
@@ -81,7 +81,7 @@ C  Polygon 2: a square with punctures
               npts = 10
           endif
           if ( j .eq. 4 ) then
-C  Polygon 2: a square with punctures - reversed direction 
+c  Polygon 2: a square with punctures - reversed direction 
               x0(10) = -100 ; y0(10) = -100
               x0(9)  = -100 ; y0(9)  =  -80
               x0(8)  =   80 ; y0(8)  =    0
@@ -112,7 +112,7 @@ C  Polygon 2: a square with punctures - reversed direction
   110     continue
   120 continue
 
-C  Don't forget to call plend() to finish off!
+c  Don't forget to call plend() to finish off!
 
       call plend()
       end
