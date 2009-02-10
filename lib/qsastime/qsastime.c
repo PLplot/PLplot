@@ -210,7 +210,7 @@ int getDOY(const MJDtime *MJD, int forceJulian)
        Gregorian proleptic calendar. */
     j -= MJD_0000G;
 
-    year = (int) ((float)j / 365.2425);
+    year = (int) ((double)j / 365.2425);
     lastyear = year - 1;
     doy = j - year * 365 - lastyear / 4 + lastyear / 100 - lastyear / 400;
   }
@@ -223,7 +223,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
   /* Convert MJD struct into date/time elements */
   /* Note year 0 CE (AD) [1 BCE (BC)] is a leap year */
 	
-  int extra_days,j, year4, year100, year400;
+  int extra_days,j, year4, year100, year400, ifleapyear;
   double seconds;
 	
   if(forceJulian < -1 || forceJulian > 1) {
@@ -239,36 +239,20 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
   
   j = MJD->base_day + extra_days;
 	
-  if( forceJulian != -1 && j <= MJD_0001J) {
+  if( 0 && forceJulian != -1 && j < MJD_0001J) {
 	
-    /* BCE dates */
-
     j -= MJD_0000J;
     if( j>=0) {
 	*year = 0;
 	j++;
     } else {
       /* negative years */
-      *year = (int) ((float)(j-365) / 365.25);
-      j = j +1 - *year * 365.25;
+      *year = (int) ((double)(j-365) / 365.25);
+      j = j + 1 - *year * 365.25;
     }
-		
+    ifleapyear = *year%4 == 0;
     /* j is now always positive */
-    *month = -1;
-		
-    if(*year%4 != 0) {
-      while(j > MonthStartDOY[*month +1]) {
-	(*month)++;
-	if(*month == 11) break;
-      }
-      *day = j - MonthStartDOY[*month];
-    } else {
-      while(j > MonthStartDOY_L[*month +1]) {
-	(*month)++;
-	if(*month == 11) break;
-      }
-      *day = j - MonthStartDOY_L[*month];
-    }
+
   } else if( forceJulian !=-1 && (j < -100840 || forceJulian == 1)) {
     /* Shift j epoch to 0000-01-01 for the Julian proleptic calendar.*/
     j -= MJD_0000J;
@@ -278,30 +262,18 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
        i.e. years -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 start with j = 
        -1826 -1461, -1095, -730, -365, 0, 366, 731, 1096, 1461, 1827 */
     if(j >= 0) {
-      *year = (int) ((float)j / 365.25);
-      year4 = year-1;
+      *year = (int) ((double)(j) / 365.25);
+      year4 = *year-1;
     } else {
-      *year = (int) ((float)j/ 365.25) - 1;
-      year4 = year-4;
+      *year = (int) ((double)(j-365)/ 365.25);
+      year4 = *year-4;
     }
     
     /* shift j epoch to day of year */
     j = j - *year * 365 - year4 / 4;
     
-    *month = -1;
-    if(*year%4 != 0) {
-      while(j > MonthStartDOY[*month +1]) {
-	(*month)++;
-	if(*month == 11) break;
-      }
-      *day = j - MonthStartDOY[*month];
-    } else {
-      while(j > MonthStartDOY_L[*month + 1]) {
-	(*month)++;
-	if(*month == 11) break;
-      }
-      *day = j - MonthStartDOY_L[*month];
-    }
+    ifleapyear = *year%4 == 0;
+
   } else {
     /* forceJulian == -1 || (j >= -100840 && forceJulian == 0) */
     /* Shift j epoch to 0000-01-01 for the Gregorian proleptic calendar.*/
@@ -310,12 +282,12 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
        if exactly correct j offset is chosen (see above). */
     
     if(j >=0) {
-      *year = (int) ((float)j / 365.2425);
+      *year = (int) ((double)(j) / 365.2425);
       year4 = *year - 1;
       year100 = *year - 1;
       year400 = *year - 1;
     } else {
-      *year = (int) ((float)j / 365.2425) - 1;
+      *year = (int) ((double)(j-365) / 365.2425);
       year4 = *year - 4;
       year100 = *year - 100;
       year400 = *year - 400;
@@ -323,23 +295,25 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 
     j = j - *year * 365 - year4 / 4 + year100 / 100 - year400 / 400;
     
-    *month = -1;
-    if((*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0) ) {
-      while(j > MonthStartDOY_L[*month +1]) {
-	(*month)++;
-	if(*month == 11) break;
-      }
-      *day = j - MonthStartDOY_L[*month];
-    } else {
-      while(j > MonthStartDOY[*month +1]) {
-	(*month)++;
-	if(*month == 11) break;
-      }
-      *day = j - MonthStartDOY[*month];
-    }
-    
+    ifleapyear = (*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0);
   }
 
+  /* calculate month part with j already set to be the day number within
+     the year in the range from 1 to 366 */
+  *month = -1;
+  if(ifleapyear) {
+    while(j > MonthStartDOY_L[*month +1]) {
+      (*month)++;
+      if(*month == 11) break;
+    }
+    *day = j - MonthStartDOY_L[*month];
+  } else {
+    while(j > MonthStartDOY[*month +1]) {
+      (*month)++;
+      if(*month == 11) break;
+    }
+    *day = j - MonthStartDOY[*month];
+  }
   /* Time part */
 	
   seconds = MJD->time_sec - extra_days * SecInDay;
