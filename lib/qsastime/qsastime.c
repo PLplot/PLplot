@@ -193,36 +193,36 @@ int getDOY(const MJDtime *MJD, int forceJulian)
 
   j = MJD->base_day + extra_days;
 	
-	if( j < -678943) {
+  if( j < -678943) {
 	
-		/* Negative CE dates */
+    /* Negative CE dates */
 
-		j += 678943; 
+    j += 678943; 
 		
-		/* negative years */
-		year = (int) ((float)(j-365) / 365.25);
-		doy = j +1 - year * 365.25;
+    /* negative years */
+    year = (int) ((float)(j-365) / 365.25);
+    doy = j +1 - year * 365.25;
 				
-	}
-	else if( j < -678577) {
+  }
+  else if( j < -678577) {
 	
-		/* CE = 0, BCE = 1 dates */
+    /* CE = 0, BCE = 1 dates */
 
-		j += 678943; 
+    j += 678943; 
 		
-		/* negative years */
-		year = 0;
-		doy = j +1;
+    /* negative years */
+    year = 0;
+    doy = j +1;
 		
-	}
+  }
   else if( j < -100840 || forceJulian == 1)
     {
       /* Julian Dates */
       j += 678943;
 		
       year = (int) ((float)j / 365.25);
-	  lastyear = year - 1;
-	  doy = j - year * 365 - lastyear / 4;
+      lastyear = year - 1;
+      doy = j - year * 365 - lastyear / 4;
 
 		
     }
@@ -267,17 +267,17 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
     /* BCE dates */
 
     j += 678943;
-	if( j>=0) 
-	{
-		*year = 0;
-		j++;
-	}
-	else
-	{
-		/* negative years */
-		*year = (int) ((float)(j-365) / 365.25);
-		j = j +1 - *year * 365.25;
-	}
+    if( j>=0) 
+      {
+	*year = 0;
+	j++;
+      }
+    else
+      {
+	/* negative years */
+	*year = (int) ((float)(j-365) / 365.25);
+	j = j +1 - *year * 365.25;
+      }
 		
     /* j is now always positive */
     *month = -1;
@@ -303,13 +303,13 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
   }
   else if( j < -100840 || forceJulian == 1)
     {
-      /* Julian Dates */
+      /* Julian proleptic dates */
       j += 678943;
 		
       *year = (int) ((float)j / 365.25);
 	
-		lastyear = *year - 1;
-		 j = j - *year * 365 - lastyear / 4;
+      lastyear = *year - 1;
+      j = j - *year * 365 - lastyear / 4;
 		
       *month = -1;
       if(*year%4 != 0)
@@ -333,7 +333,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
     }
   else
     {
-      /* Gregorian Dates */
+      /* Gregorian proleptic Dates */
       j += 678941;
 				
       *year = (int) ((float)j / 365.2425);
