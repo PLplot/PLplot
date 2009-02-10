@@ -155,35 +155,6 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
   }
 }
 
-const char * getDayOfWeek( const MJDtime *MJD)
-{
-  static char *dow = {"Wed\0Thu\0Fri\0Sat\0Sun\0Mon\0Tue"};
-  int d = MJD->base_day % 7;
-  if(d < 0) d += 7;
-  return &(dow[d*4]);
-}
-
-const char * getLongDayOfWeek( const MJDtime *MJD)
-{
-  static char *dow = {"Wednesday\0Thursday\0\0Friday\0\0\0\0Saturday\0\0Sunday\0\0\0\0Monday\0\0\0\0Tuesday"};
-  int d = MJD->base_day % 7;
-  if(d < 0) d += 7;
-  return &(dow[d*10]);
-}
-
-const char * getMonth( int m)
-{
-  static char *months = {"Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec"};
-  return &(months[(m)*4]);
-}
-
-const char * getLongMonth( int m)
-{
-  static char *months = {"January\0\0\0February\0\0March\0\0\0\0\0April\0\0\0\0\0May\0\0\0\0\0\0\0June\0\0\0\0\0\0July\0\0\0\0\0\0August\0\0\0\0September\0October\0\0\0November\0\0December"};
-  return &(months[(m)*10]);
-}
-
-
 int getDOY(const MJDtime *MJD, int forceJulian)
 {	
   /* Get from Day Of Year  */
@@ -242,7 +213,6 @@ int getDOY(const MJDtime *MJD, int forceJulian)
     year = (int) ((float)j / 365.2425);
     lastyear = year - 1;
     doy = j - year * 365 - lastyear / 4 + lastyear / 100 - lastyear / 400;
-
   }
 
   return doy;	
@@ -378,6 +348,35 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
   *min = (int) ( seconds / 60.);
   *sec =  seconds - (double) *min * 60.;
 }
+
+const char * getDayOfWeek( const MJDtime *MJD)
+{
+  static char *dow = {"Wed\0Thu\0Fri\0Sat\0Sun\0Mon\0Tue"};
+  int d = MJD->base_day % 7;
+  if(d < 0) d += 7;
+  return &(dow[d*4]);
+}
+
+const char * getLongDayOfWeek( const MJDtime *MJD)
+{
+  static char *dow = {"Wednesday\0Thursday\0\0Friday\0\0\0\0Saturday\0\0Sunday\0\0\0\0Monday\0\0\0\0Tuesday"};
+  int d = MJD->base_day % 7;
+  if(d < 0) d += 7;
+  return &(dow[d*10]);
+}
+
+const char * getMonth( int m)
+{
+  static char *months = {"Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec"};
+  return &(months[(m)*4]);
+}
+
+const char * getLongMonth( int m)
+{
+  static char *months = {"January\0\0\0February\0\0March\0\0\0\0\0April\0\0\0\0\0May\0\0\0\0\0\0\0June\0\0\0\0\0\0July\0\0\0\0\0\0August\0\0\0\0September\0October\0\0\0November\0\0December"};
+  return &(months[(m)*10]);
+}
+
 
 size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian)
 {
