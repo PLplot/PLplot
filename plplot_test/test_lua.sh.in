@@ -30,9 +30,9 @@ results=`pwd`
 export results
 echo $results
 cd $luadir
-# 09, 15, 16, 17, 19, 22, 25, 30, 31 are implemented but do not currently work.
-# 14, 20, 21, 23, 26, 27, 28, 29, are not implemented.
-for index in 01 02 03 04 05 06 07 08 10 11 12 13 17 18 24 31; do
+# 09, 15, 16, 17, 19, 22, 25, 29, 30, 31 are implemented but do not currently work.
+# 14, 20, 21, 23, 26, 27, 28 are not implemented.
+for index in 01 02 03 04 05 06 07 08 10 11 12 13 17 18 24 29 31; do
     if [ "$verbose_test" ] ; then
 	echo "x${index}"
     fi

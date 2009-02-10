@@ -313,7 +313,7 @@ for i in $FRONT_END ; do
    echo "Testing front-end $i"
    script=$scripts_dir/test_$i.sh
    if [ "@WIN32@" = "1" ] ; then
-     critical_examples="14 17"
+     critical_examples="14 17 29"
    else
      critical_examples="14 17 29"
    fi
