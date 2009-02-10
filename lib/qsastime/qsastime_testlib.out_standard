@@ -1,0 +1,102 @@
+sizeof(time_t) = 8
+sizeof(int) = 4
+Test 01 of calendar dates in vicinity of Julian day epoch 
+input and output (strfMJD, Julian proleptic calendar) date/time
+-4717-01-01T12:00:00.000000000000000Z
+-4717-01-01T12:00:00Z
+setFromUT JD =    -1826.0000000000000000 days
+input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time
+-4717-01-01T12:00:00.000000000000000Z
+-4717-01-01T12:00:00Z
+-4717-01-01T12:00:00Z
+setFromUT JD =    -1788.0000000000000000 days
+input and output (strfMJD, Julian proleptic calendar) date/time
+-4716-01-01T12:00:00.000000000000000Z
+-4716-01-01T12:00:00Z
+setFromUT JD =    -1461.0000000000000000 days
+input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time
+-4716-01-01T12:00:00.000000000000000Z
+-4716-01-01T12:00:00Z
+-4716-01-01T12:00:00Z
+setFromUT JD =    -1423.0000000000000000 days
+input and output (strfMJD, Julian proleptic calendar) date/time
+-4715-01-01T12:00:00.000000000000000Z
+-4715-01-01T12:00:00Z
+setFromUT JD =    -1095.0000000000000000 days
+input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time
+-4715-01-01T12:00:00.000000000000000Z
+-4715-01-01T12:00:00Z
+-4715-01-01T12:00:00Z
+setFromUT JD =    -1057.0000000000000000 days
+input and output (strfMJD, Julian proleptic calendar) date/time
+-4714-01-01T12:00:00.000000000000000Z
+-4714-01-01T12:00:00Z
+setFromUT JD =     -730.0000000000000000 days
+input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time
+-4714-01-01T12:00:00.000000000000000Z
+-4714-01-01T12:00:00Z
+-4714-01-01T12:00:00Z
+setFromUT JD =     -692.0000000000000000 days
+input and output (strfMJD, Julian proleptic calendar) date/time
+-4713-01-01T12:00:00.000000000000000Z
+-4713-01-01T12:00:00Z
+setFromUT JD =     -365.0000000000000000 days
+input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time
+-4713-01-01T12:00:00.000000000000000Z
+-4713-01-01T12:00:00Z
+-4713-01-01T12:00:00Z
+setFromUT JD =     -327.0000000000000000 days
+input and output (strfMJD, Julian proleptic calendar) date/time
+-4712-01-01T12:00:00.000000000000000Z
+-4712-01-01T12:00:00Z
+setFromUT JD =        0.0000000000000000 days
+input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time
+-4712-01-01T12:00:00.000000000000000Z
+-4712-01-01T12:00:00Z
+-4712-01-01T12:00:00Z
+setFromUT JD =       38.0000000000000000 days
+input and output (strfMJD, Julian proleptic calendar) date/time
+-4711-01-01T12:00:00.000000000000000Z
+-4711-01-01T12:00:00Z
+setFromUT JD =      366.0000000000000000 days
+input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time
+-4711-01-01T12:00:00.000000000000000Z
+-4711-01-01T12:00:00Z
+-4711-01-01T12:00:00Z
+setFromUT JD =      404.0000000000000000 days
+input and output (strfMJD, Julian proleptic calendar) date/time
+-4710-01-01T12:00:00.000000000000000Z
+-4710-01-01T12:00:00Z
+setFromUT JD =      731.0000000000000000 days
+input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time
+-4710-01-01T12:00:00.000000000000000Z
+-4710-01-01T12:00:00Z
+-4710-01-01T12:00:00Z
+setFromUT JD =      769.0000000000000000 days
+input and output (strfMJD, Julian proleptic calendar) date/time
+-4709-01-01T12:00:00.000000000000000Z
+-4709-01-01T12:00:00Z
+setFromUT JD =     1096.0000000000000000 days
+input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time
+-4709-01-01T12:00:00.000000000000000Z
+-4709-01-01T12:00:00Z
+-4709-01-01T12:00:00Z
+setFromUT JD =     1134.0000000000000000 days
+input and output (strfMJD, Julian proleptic calendar) date/time
+-4708-01-01T12:00:00.000000000000000Z
+-4708-01-01T12:00:00Z
+setFromUT JD =     1461.0000000000000000 days
+input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time
+-4708-01-01T12:00:00.000000000000000Z
+-4708-01-01T12:00:00Z
+-4708-01-01T12:00:00Z
+setFromUT JD =     1499.0000000000000000 days
+input and output (strfMJD, Julian proleptic calendar) date/time
+-4707-01-01T12:00:00.000000000000000Z
+-4707-01-01T12:00:00Z
+setFromUT JD =     1827.0000000000000000 days
+input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time
+-4707-01-01T12:00:00.000000000000000Z
+-4707-01-01T12:00:00Z
+-4707-01-01T12:00:00Z
+setFromUT JD =     1865.0000000000000000 days
