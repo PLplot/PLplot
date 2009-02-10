@@ -41,7 +41,7 @@
 #define TEST16 0x8000
 
 /* Recommended (by Linux timegm man page) POSIX equivalent of Linux timegm C library function */
-my_timegm(struct tm *tm)
+time_t my_timegm(struct tm *tm)
 {
   time_t ret;
   char *tz;
@@ -125,7 +125,7 @@ int main()
       jd = 2400000.5 + pMJD1->base_day + pMJD1->time_sec/86400.;
       printf("setFromUT JD = %25.16f days\n", jd);
       breakDownMJD(&year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, 1);
-      if(year1-year != 0 || month1-month != 0 || day1-day != 0 || hour1-hour != 0 || min1-min !=0 || secs1-sec != 0.) {
+      if(year1-year != 0 || month1-month != 0 || day1-day != 0 || hour1-hour != 0 || min1-min !=0 || sec1-sec != 0.) {
 	printf("output date calculated with breakDownMJD for Julian proleptic calendar = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1+1, day1, hour1, min1, sec1);
 	printf("test1 failed with inconsistency between setFromUT and breakDownMJD for Julian proleptic calendar\n");
 	return 1;
@@ -141,7 +141,7 @@ int main()
       jd = 2400000.5 + pMJD1->base_day + pMJD1->time_sec/86400.;
       printf("setFromUT JD = %25.16f days\n", jd);
       breakDownMJD(&year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, -1);
-      if(year1-year != 0 || month1-month != 0 || day1-day != 0 || hour1-hour != 0 || min1-min !=0 || secs1-sec != 0.) {
+      if(year1-year != 0 || month1-month != 0 || day1-day != 0 || hour1-hour != 0 || min1-min !=0 || sec1-sec != 0.) {
 	printf("output date calculated with breakDownMJD for Gregorian proleptic calendar = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1+1, day1, hour1, min1, sec1);
 	printf("test1 failed with inconsistency between setFromUT and breakDownMJD for Gregorian proleptic calendar\n");
 	return 1;
