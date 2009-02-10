@@ -253,7 +253,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
   /* Convert MJD struct into date/time elements */
   /* Note year 0 CE (AD) [1 BCE (BC)] is a leap year */
 	
-  int extra_days,j,lastyear;
+  int extra_days,j, year4, year100, year400;
   double seconds;
 	
   if(forceJulian < -1 || forceJulian > 1) {
@@ -300,13 +300,23 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
       *day = j - MonthStartDOY_L[*month];
     }
   } else if( forceJulian !=-1 && (j < -100840 || forceJulian == 1)) {
-    /* Julian proleptic dates */
+    /* Shift j epoch to 0000-01-01 for the Julian proleptic calendar.*/
     j -= MJD_0000J;
     
-    *year = (int) ((float)j / 365.25);
+    /* 365.25 is exact period of Julian year so year will be correct if
+       day offset is set exactly right so that years -4, 0, 4 are leap years, 
+       i.e. years -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 start with j = 
+       -1826 -1461, -1095, -730, -365, 0, 366, 731, 1096, 1461, 1827 */
+    if(j >= 0) {
+      *year = (int) ((float)j / 365.25);
+      year4 = year-1;
+    } else {
+      *year = (int) ((float)j/ 365.25) - 1;
+      year4 = year-4;
+    }
     
-    lastyear = *year - 1;
-    j = j - *year * 365 - lastyear / 4;
+    /* shift j epoch to day of year */
+    j = j - *year * 365 - year4 / 4;
     
     *month = -1;
     if(*year%4 != 0) {
@@ -324,12 +334,24 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
     }
   } else {
     /* forceJulian == -1 || (j >= -100840 && forceJulian == 0) */
-    /* Gregorian proleptic Dates */
+    /* Shift j epoch to 0000-01-01 for the Gregorian proleptic calendar.*/
     j -= MJD_0000G;
+    /* 365.245 is exact period of Gregorian year so year will be correct
+       if exactly correct j offset is chosen (see above). */
     
-    *year = (int) ((float)j / 365.2425);
-    lastyear = *year - 1;
-    j = j - *year * 365 - lastyear / 4 + lastyear / 100 - lastyear / 400;
+    if(j >=0) {
+      *year = (int) ((float)j / 365.2425);
+      year4 = *year - 1;
+      year100 = *year - 1;
+      year400 = *year - 1;
+    } else {
+      *year = (int) ((float)j / 365.2425) - 1;
+      year4 = *year - 4;
+      year100 = *year - 100;
+      year400 = *year - 400;
+    }
+
+    j = j - *year * 365 - year4 / 4 + year100 / 100 - year400 / 400;
     
     *month = -1;
     if((*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0) ) {
