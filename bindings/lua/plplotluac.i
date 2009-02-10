@@ -807,7 +807,6 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
     }
   }
   n=i;
-  printf("number of options=%d\n", n);
   $1 = &n;
   
   $2 = LUA_ALLOC_ARRAY(char*, (n+1));
@@ -851,7 +850,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 %rename(bop) plbop;
 %rename(box) plbox;
 %rename(box3) plbox3;
-%rename(calworld) plcalworld;
+%rename(calc_world) plcalc_world;
 %rename(clear) plclear;
 %rename(col0) plcol0;
 %rename(col1) plcol1;
