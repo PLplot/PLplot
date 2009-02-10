@@ -126,8 +126,8 @@ int main()
       printf("setFromUT JD = %25.16f days\n", jd);
       breakDownMJD(&year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, 1);
       if(year1-year != 0 || month1-month != 0 || day1-day != 0 || hour1-hour != 0 || min1-min !=0 || secs1-sec != 0.) {
-	printf("output date calculated with breakDownMJD for Julian proleptic calendar = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
-	printf("test1 failed with inconsistency between setFromUT and breakDownMJD for Julian proleptic calendar/n");
+	printf("output date calculated with breakDownMJD for Julian proleptic calendar = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1+1, day1, hour1, min1, sec1);
+	printf("test1 failed with inconsistency between setFromUT and breakDownMJD for Julian proleptic calendar\n");
 	return 1;
       }
       /* Start of Gregorian proleptic section of test in loop. */
