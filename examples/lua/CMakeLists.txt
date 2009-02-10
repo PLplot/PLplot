@@ -40,6 +40,7 @@ set(lua_STRING_INDICES
 "22"
 "24"
 "25"
+"29"
 "30"
 "31"
 )
