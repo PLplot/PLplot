@@ -40,6 +40,25 @@
 #define TEST15 0x4000
 #define TEST16 0x8000
 
+/* Recommended (by Linux timegm man page) POSIX equivalent of Linux timegm C library function */
+my_timegm(struct tm *tm)
+{
+  time_t ret;
+  char *tz;
+
+  tz = getenv("TZ");
+  setenv("TZ", "", 1);
+  tzset();
+  ret = mktime(tm);
+  if (tz)
+    setenv("TZ", tz, 1);
+  else
+    unsetenv("TZ");
+  tzset();
+  return ret;
+}
+
+
 /* Test program to do extensive comparisons between setFromUT, breakDownMJD,
    and strfMJD and the closest corresponding _Linux_ C library routines,
    timegm, gmtime, and strftime.  */
@@ -144,9 +163,9 @@ int main()
   //for (year=-5000000; year<=5000000; year+=1) {
   max_delta_secs = 0;
   ptm->tm_year = 2008-1900;
-  secs1 = timegm(ptm);
+  secs1 = my_timegm(ptm);
   ptm->tm_year = 2010-1900;
-  secs2 = timegm(ptm);
+  secs2 = my_timegm(ptm);
   for (secs=secs1; secs<=secs2; secs+=1) {
     pMJD1->base_day = MJD_1970 + secs/86400;
     pMJD1->time_sec = secs % 86400;
@@ -167,21 +186,21 @@ int main()
     ptm->tm_year = year-1900;
     //printf("year = %d\n", year);
 
-    // Test to compare setFromUT and timegm results.
+    // Test to compare setFromUT and my_timegm results.
     setFromUT(year, month, day, hour, min, sec, pMJD1, -1);
     secs_past_epoch1 = (time_t) (86400.*((double)pMJD1->base_day - (double) MJD_1970) + pMJD1->time_sec);
     if(pMJD1->time_sec != 0.) {
       printf("non-zero pMJD1->time_sec value is %25.16f seconds so take early exit.\n", pMJD1->time_sec);
       return 2;
     }
-    secs_past_epoch = timegm(ptm);
+    secs_past_epoch = my_timegm(ptm);
     delta_secs = abs(secs_past_epoch1-secs_past_epoch);
     max_delta_secs = (max_delta_secs > delta_secs ? max_delta_secs: delta_secs);
     }
      
     if(0) {
     printf("setFromUT secs_past_epoch = %lld seconds\n", secs_past_epoch1);
-    printf("   timegm secs_past_epoch = %lld seconds\n", secs_past_epoch);
+    printf("my_timegm secs_past_epoch = %lld seconds\n", secs_past_epoch);
     printf("delta secs_past_epoch = %d seconds\n", (secs_past_epoch1 - secs_past_epoch));
     strftime(&(buf[0]), 360, "strftime gives %Y-%m-%d %H:%M:%S", ptm);
     printf("%s\n", buf);

@@ -62,11 +62,14 @@ RUNTIME DESTINATION ${BIN_DIR}
 add_executable(qsastime_test qsastime_test.c qsastime_extra.c)
 target_link_libraries(qsastime_test qsastime)
 
-# Routine for testing just the library functions against equivalent
-# Linux C library routines for 64-bit platforms.
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  # N.B. the routine immediately errors out if sizeof(time_t) < 8 so
-  # it effectively only works on 64-bit Linux platforms.
-  add_executable(qsastime_testlib qsastime_testlib.c)
-  target_link_libraries(qsastime_testlib qsastime)
-endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+# Routine for testing just the library functions against their library
+# inverses (to test self-consistency when such inverses exist) and also 
+# equivalent C library routines.
+# N.B. the routine immediately errors out if sizeof(time_t) < 8 or
+# sizeof(int) !=4.  The time_t constraint is because we want access to a large
+# C library date range to do the tests.  The int constraint is so we
+# emulate library results on 32-bit systems.
+# The test executable normally only passes these two criteria for
+# 64-bit platforms.
+add_executable(qsastime_testlib qsastime_testlib.c)
+target_link_libraries(qsastime_testlib qsastime)
