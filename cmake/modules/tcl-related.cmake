@@ -150,7 +150,7 @@ if(ENABLE_tcl)
         message(STATUS "Looking for itk library")
         set(itk_library_versions 3.4 3.3 3.2 3.1 3.0 2.1 2.0)
         foreach(version ${itk_library_versions})
-          find_library(ITK_LIBRARY itk${version} 
+          find_library(ITK_LIBRARY itk${version}
             PATH_SUFFIXES itk${version})
         endforeach(version ${itk_library_versions})
         if(ITK_LIBRARY)
@@ -179,7 +179,7 @@ if(ENABLE_tcl)
     set(ENABLE_itk OFF CACHE BOOL "Enable incr Tk interface code" FORCE)
   endif(TCL_FOUND AND TCL_TCLSH)
 else(ENABLE_tcl)
-  message(STATUS 
+  message(STATUS
     "ENABLE_tcl is OFF so disabling everything else that "
     "is Tcl/Tk related"
     )
