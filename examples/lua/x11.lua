@@ -37,6 +37,24 @@ title = {
     "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
     "#frPLplot Example 11 - Alt=17, Az=115, Opt=3" }
 
+
+-- bitwise or operator from http://lua-users.org/wiki/BaseSixtyFour
+-- (c) 2006-2008 by Alex Kloss
+-- licensed under the terms of the LGPL2
+
+-- return single bit (for OR)
+function bit(x,b)
+	return (math.mod(x, 2^b) - math.mod(x,2^(b-1)) > 0)
+end
+
+-- logic OR for number values
+function lor(x,y)
+	result = 0
+	for p=1,8 do result = result + (((bit(x,p) or bit(y,p)) == true) and 2^(p-1) or 0) end
+	return result
+end
+
+    
 function cmap1_init()
   i = { 0, 1 }      -- left boundary , right boundary
   h = { 240, 0 }    -- blue -> green -> yellow -> red
@@ -46,6 +64,7 @@ function cmap1_init()
   pl.scmap1n(256)
   pl.scmap1l(0, i, h, l, s, {0})
 end
+
 
 ----------------------------------------------------------------------------
 -- main
@@ -118,17 +137,17 @@ for k=1, 2 do
 
     -- magnitude colored wireframe plot 
     if i==2 then
-      pl.mesh(x, y, z, opt[k] or MAG_COLOR)
+      pl.mesh(x, y, z, lor(opt[k], pl.MAG_COLOR))
     end
 
     -- magnitude colored wireframe plot with sides 
     if i==3 then
-      pl.plot3d(x, y, z, opt[k] or MAG_COLOR, 1)
+      pl.plot3d(x, y, z, lor(opt[k], pl.MAG_COLOR), 1)
     end
 
     -- magnitude colored wireframe plot with base contour 
     if i==4 then
-      pl.meshc(x, y, z, opt[k] or MAG_COLOR or BASE_CONT, clevel)
+      pl.meshc(x, y, z, lor(lor(opt[k], pl.MAG_COLOR), pl.BASE_CONT), clevel)
     end
 
     pl.col0(3)
