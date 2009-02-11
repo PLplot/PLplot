@@ -79,7 +79,7 @@ int main()
   MJDtime MJD2;
   static int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
   double jd;
-  int test_choice;
+  int test_choice, ret=0;
 
   printf("sizeof(time_t) = %d\n",(int)sizeof(time_t));
   if(sizeof(time_t) < 8) {
@@ -128,13 +128,13 @@ int main()
       breakDownMJD(&year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, 1);
       if(year1-year != 0 || month1-month != 0 || day1-day != 0 || hour1-hour != 0 || min1-min !=0 || sec1-sec != 0.) {
 	printf("output date calculated with breakDownMJD for Julian proleptic calendar = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1+1, day1, hour1, min1, sec1);
-	printf("test1 failed with inconsistency between setFromUT and breakDownMJD for Julian proleptic calendar\n");
-	return 1;
+	printf("test failed with inconsistency between setFromUT and breakDownMJD for Julian proleptic calendar\n");
+	ret = 1;
       }
       /* Start of Gregorian proleptic section of test in loop. */
       printf("input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time\n");
       printf("%0.4d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
-      strftime(&(buf[0]), 360, "%05Y-%m-%dT%H:%M:%SZ\n", ptm);
+      strftime(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", ptm);
       printf("%s", buf);
       setFromUT(year, month, day, hour, min, sec, pMJD1, -1);
       strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", pMJD1, -1);
@@ -144,8 +144,8 @@ int main()
       breakDownMJD(&year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, -1);
       if(year1-year != 0 || month1-month != 0 || day1-day != 0 || hour1-hour != 0 || min1-min !=0 || sec1-sec != 0.) {
 	printf("output date calculated with breakDownMJD for Gregorian proleptic calendar = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1+1, day1, hour1, min1, sec1);
-	printf("test1 failed with inconsistency between setFromUT and breakDownMJD for Gregorian proleptic calendar\n");
-	return 1;
+	printf("test failed with inconsistency between setFromUT and breakDownMJD for Gregorian proleptic calendar\n");
+	ret = 1;
       }
     }
   }
@@ -178,13 +178,13 @@ int main()
       breakDownMJD(&year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, 1);
       if(year1-year != 0 || month1-month != 0 || day1-day != 0 || hour1-hour != 0 || min1-min !=0 || sec1-sec != 0.) {
 	printf("output date calculated with breakDownMJD for Julian proleptic calendar = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1+1, day1, hour1, min1, sec1);
-	printf("test1 failed with inconsistency between setFromUT and breakDownMJD for Julian proleptic calendar\n");
-	return 1;
+	printf("test failed with inconsistency between setFromUT and breakDownMJD for Julian proleptic calendar\n");
+	ret = 1;
       }
       /* Start of Gregorian proleptic section of test in loop. */
       printf("input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time\n");
       printf("%0.4d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
-      strftime(&(buf[0]), 360, "%05Y-%m-%dT%H:%M:%SZ\n", ptm);
+      strftime(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", ptm);
       printf("%s", buf);
       setFromUT(year, month, day, hour, min, sec, pMJD1, -1);
       strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", pMJD1, -1);
@@ -194,8 +194,8 @@ int main()
       breakDownMJD(&year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, -1);
       if(year1-year != 0 || month1-month != 0 || day1-day != 0 || hour1-hour != 0 || min1-min !=0 || sec1-sec != 0.) {
 	printf("output date calculated with breakDownMJD for Gregorian proleptic calendar = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1+1, day1, hour1, min1, sec1);
-	printf("test1 failed with inconsistency between setFromUT and breakDownMJD for Gregorian proleptic calendar\n");
-	return 1;
+	printf("test failed with inconsistency between setFromUT and breakDownMJD for Gregorian proleptic calendar\n");
+	ret = 1;
       }
     }
   }
@@ -228,13 +228,13 @@ int main()
       breakDownMJD(&year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, 1);
       if(year1-year != 0 || month1-month != 0 || day1-day != 0 || hour1-hour != 0 || min1-min !=0 || sec1-sec != 0.) {
 	printf("output date calculated with breakDownMJD for Julian proleptic calendar = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1+1, day1, hour1, min1, sec1);
-	printf("test1 failed with inconsistency between setFromUT and breakDownMJD for Julian proleptic calendar\n");
-	return 1;
+	printf("test failed with inconsistency between setFromUT and breakDownMJD for Julian proleptic calendar\n");
+	ret = 1;
       }
       /* Start of Gregorian proleptic section of test in loop. */
       printf("input and output (strftime), and output (strfMJD, Gregorian proleptic calendar) date/time\n");
       printf("%0.4d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
-      strftime(&(buf[0]), 360, "%04Y-%m-%dT%H:%M:%SZ\n", ptm);
+      strftime(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", ptm);
       printf("%s", buf);
       setFromUT(year, month, day, hour, min, sec, pMJD1, -1);
       strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", pMJD1, -1);
@@ -244,13 +244,13 @@ int main()
       breakDownMJD(&year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, -1);
       if(year1-year != 0 || month1-month != 0 || day1-day != 0 || hour1-hour != 0 || min1-min !=0 || sec1-sec != 0.) {
 	printf("output date calculated with breakDownMJD for Gregorian proleptic calendar = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1+1, day1, hour1, min1, sec1);
-	printf("test1 failed with inconsistency between setFromUT and breakDownMJD for Gregorian proleptic calendar\n");
-	return 1;
+	printf("test failed with inconsistency between setFromUT and breakDownMJD for Gregorian proleptic calendar\n");
+	ret = 1;
       }
     }
   }
 
-  return 0;
+  return ret;
  // test wide range of years that almost integer overflows on each end
   // and which definitely overflow the MJD integer.
   //for (year=-2000000000; year<=2000000000; year+=1000000000) {
@@ -319,5 +319,5 @@ int main()
     }
   }
   printf("max_delta_secs = %lld\n", max_delta_secs);
-  return 0;
+  return ret;
 }
