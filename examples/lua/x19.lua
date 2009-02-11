@@ -85,8 +85,8 @@ minx = 0
 maxx = 360
 
 pl.env(-75., 75., -75., 75., 1, -1)
-pl.map(mapform19,"globe", minx, maxx, miny, maxy)
+--pl.map(mapform19, "globe", minx, maxx, miny, maxy)
 
 pl.lsty(2)
-pl.meridians(mapform19, 10, 10, 0, 360, -10, 80)
+--pl.meridians(mapform19, 10, 10, 0, 360, -10, 80)
 pl.plend()

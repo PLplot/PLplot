@@ -81,7 +81,7 @@ function polar()
     r = (i-1)/(RPTS-1)
     cgrid2["xg"][i] = {}
     cgrid2["yg"][i] = {}
-    z = {}
+    z[i] = {}
     for j = 1, THETAPTS do
       theta = (2*math.pi/(THETAPTS-1))*(j-1)
       cgrid2["xg"][i][j] = r*math.cos(theta)
@@ -95,7 +95,7 @@ function polar()
   end
 
   pl.col0(2)
-  pl.cont(z, 1, RPTS, 1, THETAPTS, lev, cgrid2)
+  --pl.cont(z, 1, RPTS, 1, THETAPTS, lev, cgrid2)
   pl.col0(1)
   pl.lab("", "", "Polar Contour Plot")
 end
@@ -141,8 +141,8 @@ function potential()
     cgrid2["yg"][i] = {}
     for j = 1, PTHETAPTS do
       theta = 2*math.pi/(PTHETAPTS-1)*(j-0.5)
-      cgrid2["xg"][i][j] = r*cos(theta)
-      cgrid2["yg"][i][j] = r*sin(theta)
+      cgrid2["xg"][i][j] = r*math.cos(theta)
+      cgrid2["yg"][i][j] = r*math.sin(theta)
     end
   end
 
@@ -163,7 +163,6 @@ function potential()
   --  Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
   --  Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
   --  Also put in smoothing term at small distances.
-  
   eps = 2
   q1 = 1
   d1 = rmax/4
@@ -221,13 +220,13 @@ function potential()
   if nlevelneg>1 then
     -- Negative contours 
     pl.lsty(2)
-    pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelneg, pltr2, cgrid2)
+    --pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelneg, "pltr2", cgrid2)
   end
 
   if nlevelpos>1 then
     -- Positive contours  
     pl.lsty(1)
-    pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelpos, pltr2, cgrid2)
+    --pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelpos, "pltr2", cgrid2)
   end
    
   -- Draw outer boundary  
@@ -309,10 +308,10 @@ pl.setcontlabelformat(4, 3)
 pl.setcontlabelparam(0.006, 0.3, 0.1, 1)
 pl.env(-1, 1, -1, 1, 0, 0)
 pl.col0(2)
-pl.cont(z, 1, XPTS, 1, YPTS, clevel, mypltr, nil)
+--pl.cont(z, 1, XPTS, 1, YPTS, clevel, mypltr)
 pl.styl(mark, space)
 pl.col0(3)
-pl.cont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, nil)
+--pl.cont(w, 1, XPTS, 1, YPTS, clevel, mypltr)
 pl.styl({}, {})
 pl.col0(1)
 pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")
@@ -321,10 +320,10 @@ pl.setcontlabelparam(0.006, 0.3, 0.1, 0)
 -- Plot using 1d coordinate transform 
 pl.env(-1, 1, -1, 1, 0, 0)
 pl.col0(2)
-pl.cont(z, 1, XPTS, 1, YPTS, clevel, 11, pltr1, cgrid1)
+--pl.cont(z, 1, XPTS, 1, YPTS, clevel, 11, "pltr1", cgrid1)
 pl.styl(mark, space)
 pl.col0(3)
-pl.cont(w, 1, XPTS, 1, YPTS, clevel, 11, pltr1, cgrid1)
+--pl.cont(w, 1, XPTS, 1, YPTS, clevel, 11, "pltr1", cgrid1)
 pl.styl({}, {})
 pl.col0(1)
 pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")
@@ -332,11 +331,11 @@ pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 -- Plot using 2d coordinate transform 
 pl.env(-1, 1, -1, 1, 0, 0)
 pl.col0(2)
-pl.cont(z, 1, XPTS, 1, YPTS, clevel, pltr2, cgrid2)
+--pl.cont(z, 1, XPTS, 1, YPTS, clevel, "pltr2", cgrid2)
 
-pl.styl(1, mark, space)
+pl.styl(mark, space)
 pl.col0(3)
-pl.cont(w, 1, XPTS, 1, YPTS, clevel, pltr2, cgrid2)
+--pl.cont(w, 1, XPTS, 1, YPTS, clevel, "pltr2", cgrid2)
 pl.styl({}, {})
 pl.col0(1)
 pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")

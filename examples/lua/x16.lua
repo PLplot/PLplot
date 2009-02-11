@@ -56,7 +56,7 @@ function f2mnmx(f, nx, ny)
   fmin = fmax
 
   for i = 1, nx do
-    for j = 1,ny do
+    for j = 1, ny do
       fmax = math.max(fmax, f[i][j])
       fmin = math.min(fmin, f[i][j])
     end
@@ -96,12 +96,7 @@ pl.scmap0n(3)
 pl.init()
 
 -- Set up transformation function 
-tr[1] = 2/(nx-1)
-tr[2] = 0
-tr[3] = -1
-tr[4] = 0
-tr[5] = 2/(ny-1)
-tr[6] = -1
+tr = { 2/(nx-1), 0, -1, 0, 2/(ny-1), -1 }
 
 -- Allocate data structures 
 clevel = {}
@@ -111,14 +106,13 @@ w = {}
 
 -- Set up data array 
 for i = 1, nx do
-	x = (i-1 - math.floor(nx/2)) / math.floor(nx/2)
+	x = (i-1 - math.floor(nx/2))/math.floor(nx/2)
   z[i] = {}
   w[i] = {}
 	for j = 1, ny do
-    y = (j-1 - math.floor(ny/2)) / math.floor(ny/2) - 1
-
-    z[i][j] = - math.sin(7*x) * math.cos(7*y) + x^2 - y^2
-    w[i][j] = - math.cos(7*x) * math.sin(7*y) + 2*x*y
+    y = (j-1 - math.floor(ny/2))/math.floor(ny/2)-1
+    z[i][j] = -math.sin(7*x) * math.cos(7*y) + x^2 - y^2
+    w[i][j] = -math.cos(7*x) * math.sin(7*y) + 2*x*y
 	end
 end
 
@@ -132,11 +126,13 @@ for i = 1, ns+1 do
 end
 
 -- Set up coordinate grids 
+cgrid1 = {}
 cgrid1["xg"] = {}
 cgrid1["yg"] = {}
 cgrid1["nx"] = nx
 cgrid1["ny"] = ny
 
+cgrid2 = {}
 cgrid2["xg"] = {}
 cgrid2["yg"] = {}
 cgrid2["nx"] = nx
@@ -167,10 +163,7 @@ pl.wind(-1, 1, -1, 1)
 
 pl.psty(0)
 
-pl.shades(z, {}, -1, 1, -1, 1, 
-   shedge, fill_width,
-   cont_color, cont_width,
-   plfill, 1, {}, {})
+pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 1)
 
 pl.col0(1)
 pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
@@ -180,149 +173,108 @@ pl.col0(2)
 pl.lab("distance", "altitude", "Bogon density")
 
 -- Plot using 1d coordinate transform 
-    
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
+pl.adv(0)
+pl.vpor(0.1, 0.9, 0.1, 0.9)
+pl.wind(-1, 1, -1, 1)
 
-    plpsty(0)
+pl.psty(0)
 
-    plshades(z, nx, ny, NULL, -1., 1., -1., 1., 
-	     shedge, ns+1, fill_width,
-	     cont_color, cont_width,
-	     plfill, 1, pltr1, cgrid1)
+--pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 1, "pltr1", cgrid1)
 
-    plcol0(1)
-    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)
-    plcol0(2)
---
-    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr1, cgrid1)
-    
-    pllab("distance", "altitude", "Bogon density")
+pl.col0(1)
+pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
+pl.col0(2)
+pl.lab("distance", "altitude", "Bogon density")
 
 -- Plot using 2d coordinate transform 
+pl.adv(0)
+pl.vpor(0.1, 0.9, 0.1, 0.9)
+pl.wind(-1, 1, -1, 1)
 
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
+pl.psty(0)
 
-    plpsty(0)
+--pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 0, "pltr2", cgrid2)
 
-    plshades(z, nx, ny, NULL, -1., 1., -1., 1., 
-	     shedge, ns+1, fill_width,
-	     cont_color, cont_width,
-	     plfill, 0, pltr2, cgrid2)
+pl.col0(1)
+pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
+pl.col0(2)
+--pl.cont(w, 1, nx, 1, ny, clevel, "pltr2", cgrid2)
 
-    plcol0(1)
-    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)
-    plcol0(2)
-    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, cgrid2)
-
-    pllab("distance", "altitude", "Bogon density, with streamlines")
+pl.lab("distance", "altitude", "Bogon density, with streamlines")
 
 -- Plot using 2d coordinate transform 
+pl.adv(0)
+pl.vpor(0.1, 0.9, 0.1, 0.9)
+pl.wind(-1, 1, -1, 1)
 
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
+pl.psty(0)
 
-    plpsty(0)
+--pl.shades(z, -1, 1, -1, 1, shedge, fill_width, 2, 3, 0, "pltr2", cgrid2)
 
-    plshades(z, nx, ny, NULL, -1., 1., -1., 1., 
-	     shedge, ns+1, fill_width,
-	     2, 3,
-	     plfill, 0, pltr2, cgrid2)
+pl.col0(1)
+pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
+pl.col0(2)
 
-    plcol0(1)
-    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)
-    plcol0(2)
---    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2)
-
-    pllab("distance", "altitude", "Bogon density")
+pl.lab("distance", "altitude", "Bogon density")
 
 -- Note this exclusion API will probably change. 
 
 -- Plot using 2d coordinate transform and exclusion
+if exclude~=0 then
+  pl.adv(0)
+  pl.vpor(0.1, 0.9, 0.1, 0.9)
+  pl.wind(-1, 1, -1, 1)
 
-    if exclude~=0 then
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
+  plpsty(0)
 
-    plpsty(0)
+  pl.shades(z, zdefined, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width,
+            0, "pltr2", cgrid2)
 
-    plshades(z, nx, ny, zdefined, -1., 1., -1., 1., 
-	     shedge, ns+1, fill_width,
-	     cont_color, cont_width,
-	     plfill, 0, pltr2, cgrid2)
+  pl.col0(1)
+  pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
 
-    plcol0(1)
-    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)
+  pl.lab("distance", "altitude", "Bogon density with exclusion")
+end
 
-    pllab("distance", "altitude", "Bogon density with exclusion")
-
-    end
 -- Example with polar coordinates. 
+pl.adv(0)
+pl.vpor(.1, .9, .1, .9)
+pl.wind(-1, 1, -1, 1)
 
-    pladv(0)
-    plvpor( .1, .9, .1, .9 )
-    plwind( -1., 1., -1., 1. )
+pl.psty(0)
 
-    plpsty(0)
+-- Build new coordinate matrices. 
+for i = 1, nx do
+  r = (i-1)/(nx-1)
+	for j = 1, ny do
+	   t = 2*math.pi/(ny-1)*(j-1)
+	   cgrid2["xg"][i][j] = r*math.cos(t)
+	   cgrid2["yg"][i][j] = r*math.sin(t)
+	   z[i][j] = math.exp(-r^2)*math.cos(5*math.pi*r)*math.cos(5*t)
+	end
+end
 
-    -- Build new coordinate matrices. 
-    
-    for (i = 0 i < nx i++) {
-        r = ((PLFLT) i)/ (nx-1)
-	for (j = 0 j < ny j++) {
-	   t = (2.*M_PI/(ny-1.))*j
-	   cgrid2.xg[i][j] = r*cos(t)
-	   cgrid2.yg[i][j] = r*sin(t)
-	   z[i][j] = exp(-r*r)*cos(5.*M_PI*r)*cos(5.*t)
-	}
-    }
+-- Need a new shedge to go along with the new data set. 
+zmin, zmax = f2mnmx(z, nx, ny)
 
-    -- Need a new shedge to go along with the new data set. 
+for i = 1, ns+1 do
+	shedge[i] = zmin + (zmax-zmin)*(i-1)/ns
+end
 
-    f2mnmx(z, nx, ny, &zmin, &zmax)
-
-    for (i = 0 i < ns+1 i++)
-	shedge[i] = zmin + (zmax - zmin) * (PLFLT) i / (PLFLT) ns
-
-    --  Now we can shade the interior region. 
-    plshades(z, nx, ny, NULL, -1., 1., -1., 1., 
-	     shedge, ns+1, fill_width,
-	     cont_color, cont_width,
-	     plfill, 0, pltr2, (void *) &cgrid2)
+--  Now we can shade the interior region. 
+--pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 0, "pltr2", cgrid2)
 
 -- Now we can draw the perimeter.  (If do before, shade stuff may overlap.) 
-      for (i = 0 i < PERIMETERPTS i++) {
-	       t = (2.*M_PI/(PERIMETERPTS-1))*(double)i
-	       px[i] = cos(t)
-	       py[i] = sin(t)
-      }
-      plcol0(1)
-      plline(PERIMETERPTS, px, py)
-                  
-      -- And label the plot.
+for i = 1, PERIMETERPTS do
+   t = 2*math.pi/(PERIMETERPTS-1)*(i-1)
+   px[i] = math.cos(t)
+   py[i] = math.sin(t)
+end
+pl.col0(1)
+pl.line(px, py)
+            
+-- And label the plot.
+pl.col0(2)
+pl.lab( "", "",  "Tokamak Bogon Instability" )
 
-      plcol0(2)
-      pllab( "", "",  "Tokamak Bogon Instability" )
-
-
--- Clean up 
-
-    free((void *) clevel)
-    free((void *) shedge)
-    free((void *) xg1)
-    free((void *) yg1)
-    plFree2dGrid(z, nx, ny)
-    plFree2dGrid(w, nx, ny)
-    plFree2dGrid(cgrid2.xg, nx, ny)
-    plFree2dGrid(cgrid2.yg, nx, ny)
-
-    plend()
-
-    exit(0)
-}
-
+pl.plend()

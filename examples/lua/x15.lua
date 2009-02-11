@@ -31,178 +31,122 @@ z = {}
 
 -- Function prototypes 
 
-----------------------------------------------------------------------------*\
- * cmap1_init1
- *
- * Initializes color map 1 in HLS space.
-\*--------------------------------------------------------------------------
+----------------------------------------------------------------------------
+-- cmap1_init1
+--
+-- Initializes color map 1 in HLS space.
+----------------------------------------------------------------------------
 
-static void
-cmap1_init1(void)
-{
-    PLFLT i[4], h[4], l[4], s[4]
+function cmap1_init1()
+  i = { 0, 0,45, 0.55, 1 }	-- left boundary, just before center, 
+                            -- just after center, right boundary 
+  h = { 260, 260, 20, 20 }  -- hue -- low: blue-violet, only change as we go over vertex 
+                            -- hue -- high: red, keep fixed 
+  l = { 0.5, 0, 0, 0.5 }  -- lightness -- low, lightness -- center 
+                          -- lightness -- center, lightness -- high 
+  s = { 1, 1, 1, 1 }  -- maximum saturation 
 
-    i[0] = 0		-- left boundary 
-    i[1] = 0.45	-- just before center 
-    i[2] = 0.55	-- just after center 
-    i[3] = 1		-- right boundary 
+  pl.scmap1l(0, i, h, l, s, {})
+end
 
-    h[0] = 260		-- hue -- low: blue-violet 
-    h[1] = 260		-- only change as we go over vertex 
-    h[2] = 20		-- hue -- high: red 
-    h[3] = 20		-- keep fixed 
 
-#if 1
-    l[0] = 0.5		-- lightness -- low 
-    l[1] = 0.0		-- lightness -- center 
-    l[2] = 0.0		-- lightness -- center 
-    l[3] = 0.5		-- lightness -- high 
-#else
-    plscolbg(255,255,255)
-    l[0] = 0.5		-- lightness -- low 
-    l[1] = 1.0		-- lightness -- center 
-    l[2] = 1.0		-- lightness -- center 
-    l[3] = 0.5		-- lightness -- high 
-#endif
-    s[0] = 1		-- maximum saturation 
-    s[1] = 1		-- maximum saturation 
-    s[2] = 1		-- maximum saturation 
-    s[3] = 1		-- maximum saturation 
+----------------------------------------------------------------------------
+-- cmap1_init2
+--
+-- Initializes color map 1 in HLS space.
+----------------------------------------------------------------------------
 
-    c_plscmap1l(0, 4, i, h, l, s, NULL)
-}
+function cmap1_init2()
+  i = { 0, 0.45, 0.55, 1 }	-- left boundary, just before center, 
+                            -- just after center, right boundary 
+  h = { 260, 260, 20, 20 }  -- hue -- low: blue-violet, only change as we go over vertex 
+                            -- hue -- high: red, keep fixed 
+  l = { 0.6, 0, 0, 0.6 }  -- lightness -- low, lightness -- center 
+                          -- lightness -- center, lightness -- high 
+  s = { 1, 0.5, 0.5, 1 }  -- saturation -- low, saturation -- center
+                          -- saturation -- center, saturation -- high 
 
-----------------------------------------------------------------------------*\
- * cmap1_init2
- *
- * Initializes color map 1 in HLS space.
-\*--------------------------------------------------------------------------
+  pl.scmap1l(0, i, h, l, s, {0, 0, 0, 0})
+end
 
-static void
-cmap1_init2(void)
-{
-    PLFLT i[4], h[4], l[4], s[4]
 
-    i[0] = 0		-- left boundary 
-    i[1] = 0.45	-- just before center 
-    i[2] = 0.55	-- just after center 
-    i[3] = 1		-- right boundary 
+----------------------------------------------------------------------------
+-- plot1
+--
+-- Illustrates a single shaded region.
+----------------------------------------------------------------------------
 
-    h[0] = 260		-- hue -- low: blue-violet 
-    h[1] = 260		-- only change as we go over vertex 
-    h[2] = 20		-- hue -- high: red 
-    h[3] = 20		-- keep fixed 
+function plot1()
+  sh_cmap = 0
 
-#if 1
-    l[0] = 0.6		-- lightness -- low 
-    l[1] = 0.0		-- lightness -- center 
-    l[2] = 0.0		-- lightness -- center 
-    l[3] = 0.6		-- lightness -- high 
-#else
-    plscolbg(255,255,255)
-    l[0] = 0.5		-- lightness -- low 
-    l[1] = 1.0		-- lightness -- center 
-    l[2] = 1.0		-- lightness -- center 
-    l[3] = 0.5		-- lightness -- high 
-#endif
-    s[0] = 1		-- saturation -- low 
-    s[1] = 0.5		-- saturation -- center 
-    s[2] = 0.5		-- saturation -- center 
-    s[3] = 1		-- saturation -- high 
+  pl.adv(0)
+  pl.vpor(0.1, 0.9, 0.1, 0.9)
+  pl.wind(-1, 1, -1, 1)
 
-    c_plscmap1l(0, 4, i, h, l, s, NULL)
-}
+  -- Plot using identity transform 
+  shade_min = zmin + (zmax-zmin)*0.4
+  shade_max = zmin + (zmax-zmin)*0.6
+  sh_color = 7
+  sh_width = 2
+  min_color = 9
+  max_color = 2
+  min_width = 2
+  max_width = 2
 
-----------------------------------------------------------------------------*\
- * plot1
- *
- * Illustrates a single shaded region.
-\*--------------------------------------------------------------------------
+  pl.psty(8)
+  --pl.shade1(z, -1, 1, -1, 1, shade_min, shade_max, sh_cmap, sh_color, sh_width,
+  --          min_color, min_width, max_color, max_width, 1)
 
-static void 
-plot1(void)
-{
-    PLFLT shade_min, shade_max, sh_color
-    PLINT sh_cmap = 0, sh_width
-    PLINT min_color = 0, min_width = 0, max_color = 0, max_width = 0
+  pl.col0(1)
+  pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
+  pl.col0(2)
+  pl.lab("distance", "altitude", "Bogon flux")
+end
 
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1, 1, -1, 1.0)
 
--- Plot using identity transform 
+----------------------------------------------------------------------------
+-- plot2
+--
+-- Illustrates multiple adjacent shaded regions, using different fill
+-- patterns for each region. 
+----------------------------------------------------------------------------
 
-    shade_min = zmin + (zmax-zmin)*0.4
-    shade_max = zmin + (zmax-zmin)*0.6
-    sh_color = 7
-    sh_width = 2
-    min_color = 9
-    max_color = 2
-    min_width = 2
-    max_width = 2
+function plot2()
+  sh_cmap = 0
+  min_color = 0
+  min_width = 0
+  max_color = 0
+  max_width = 0
 
-    plpsty(8)
-    plshade1(&z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1., 
-	     shade_min, shade_max, 
-	     sh_cmap, sh_color, sh_width,
-	     min_color, min_width, max_color, max_width,
-	     plfill, 1, NULL, NULL)
+  inc = { {450}, {-450}, {0}, {900}, {300},
+          {450,-450}, {0, 900}, {0, 450}, {450, -450}, {0, 900} }
+  del = { {2000}, {2000}, {2000}, {2000}, {2000}, 
+          {2000, 2000}, {2000, 2000}, {2000, 2000}, {4000, 4000}, {4000, 2000} }
 
-    plcol0(1)
-    plbox("bcnst", 0, 0, "bcnstv", 0, 0)
-    plcol0(2)
-    pllab("distance", "altitude", "Bogon flux")
-}
+  sh_width = 2
 
-----------------------------------------------------------------------------*\
- * plot2
- *
- * Illustrates multiple adjacent shaded regions, using different fill
- * patterns for each region. 
-\*--------------------------------------------------------------------------
+  pl.adv(0)
+  pl.vpor(0.1, 0.9, 0.1, 0.9)
+  pl.wind(-1, 1, -1, 1)
 
-static void 
-plot2(void)
-{
-    PLFLT shade_min, shade_max, sh_color
-    PLINT sh_cmap = 0, sh_width
-    PLINT min_color = 0, min_width = 0, max_color = 0, max_width = 0
-    int i
-    static PLINT nlin[10] = {1, 1, 1, 1, 1, 2, 2, 2, 2, 2}
-    static PLINT inc[10][2] = { {450, 0}, {-450, 0}, {0, 0}, {900, 0}, 
-				{300, 0}, {450,-450}, {0, 900}, {0, 450}, 
-				{450, -450}, {0, 900} }
-    static PLINT del[10][2] = { {2000, 2000}, {2000, 2000}, {2000, 2000}, 
-				{2000, 2000}, {2000, 2000}, {2000, 2000}, 
-				{2000, 2000}, {2000, 2000}, {4000, 4000}, 
-				{4000, 2000} }
-
-    sh_width = 2
-
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1, 1, -1, 1.0)
-
--- Plot using identity transform 
+  -- Plot using identity transform 
     
-    for (i = 0 i < 10 i++) {
-	shade_min = zmin + (zmax - zmin) * i / 10.0
-	shade_max = zmin + (zmax - zmin) * (i +1) / 10.0
-	sh_color = i+6
-	plpat(nlin[i],inc[i],del[i])
+  for i = 1, 10 do
+    shade_min = zmin + (zmax - zmin) * (i-1)/10
+    shade_max = zmin + (zmax - zmin) * i/10
+    sh_color = i+5
+    pl.pat(inc[i], del[i])
 
-	plshade1(&z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1., 
-		 shade_min, shade_max, 
-		 sh_cmap, sh_color, sh_width,
-		 min_color, min_width, max_color, max_width,
-		 plfill, 1, NULL, NULL)
-    }
+    --pl.shade1(z, -1, 1, -1, 1, shade_min, shade_max, sh_cmap, sh_color, sh_width,
+    --         min_color, min_width, max_color, max_width, 1)
+  end
 
-    plcol0(1)
-    plbox("bcnst", 0, 0, "bcnstv", 0, 0)
-    plcol0(2)
-    pllab("distance", "altitude", "Bogon flux")
-}
+  pl.col0(1)
+  pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
+  pl.col0(2)
+  pl.lab("distance", "altitude", "Bogon flux")
+end
+
 
 ----------------------------------------------------------------------------
 -- plot3
@@ -219,7 +163,7 @@ function plot3()
   pl.adv(0)
   pl.vpor(0.1, 0.9, 0.1, 0.9)
   pl.wind(-1, 1, -1, 1.)
-  pl.w3d(1., 1., 1., -1, 1, -1, 1, 0, 1.5, 30, -40)
+  pl.w3d(1, 1, 1, -1, 1, -1, 1, 0, 1.5, 30, -40)
 
   -- Plot using identity transform 
   pl.col0(1)
@@ -236,26 +180,26 @@ function plot3()
   pl.fill3(xx[2], yy[2], zz[2])
 end
 
+
 ----------------------------------------------------------------------------
 -- f2mnmx
 --
 -- Returns min & max of input 2d array.
 ----------------------------------------------------------------------------
 
-function F(a,b) (f[a*ny+b])
+function f2mnmx(f, nx, ny)
+	fmax = f[1][1]
+	fmin = fmax
 
-function f2mnmx(PLFLT *f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax)
-  fmax = f[0] 
-  fmin = fmax
-
-  for i = 1, nx do
-    for j = 1,ny do
-      fmax = MAX(*fmax, F(i, j))
-      fmin = MIN(*fmin, F(i, j))
-    end
-  end
+	for i=1, nx do
+		for j=1, ny do
+	    fmax = math.max(fmax, f[i][j])
+	    fmin = math.min(fmin, f[i][j])
+		end
+	end
+		
+	return fmin, fmax
 end
-
 
 ----------------------------------------------------------------------------
 -- main
@@ -266,9 +210,6 @@ end
 -- Parse and process command line arguments 
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Set up color map 0 
-pl.scmap0n(3)
-    
 -- Set up color map 1 
 cmap1_init2()
 
@@ -277,12 +218,11 @@ pl.init()
 
 -- Set up data array 
 for i=1, XPTS do
-	xx = ((i-1) - math.floor(XPTS/2)) / math.floor(XPTS/2)
+	xx = ((i-1) - math.floor(XPTS/2))/math.floor(XPTS/2)
   z[i] = {}
-	for j=1, YPTS do
-	    yy = ((j-1) - math.floor(YPTS/2)) / math.floor(YPTS/2) - 1
-
-	    z[i][j] = xx*xx - yy*yy + (xx - yy)/(xx*xx+yy*yy + 0.1)
+	for j = 1, YPTS do
+    yy = ((j-1) - math.floor(YPTS/2))/math.floor(YPTS/2) - 1
+    z[i][j] = xx^2 - yy^2 + (xx - yy)/(xx^2+yy^2 + 0.1)
 	end
 end
 zmin, zmax = f2mnmx(z, XPTS, YPTS)
