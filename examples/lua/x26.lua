@@ -1,6 +1,6 @@
 --[[ -*- coding: utf-8 -*-
    
-   $Id: $
+   $Id$
 
    Multi-lingual version of the first page of example 4.
 
