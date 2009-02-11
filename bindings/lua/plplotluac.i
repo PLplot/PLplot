@@ -459,13 +459,6 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 }
 
 
-/* for plshade1, note the difference in the type for the first arg */
-%typemap(in) (PLFLT *Matrix, PLINT nx, PLINT ny) (int ii) {
-}
-%typemap(freearg) (PLFLT *Matrix, PLINT nx, PLINT ny) {
-}
-
-
 /* 2D array, check for consistency */
 %typemap(in) PLFLT **MatrixCk (int ii) {
   int jj;
@@ -830,14 +823,6 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 }
 
 
-%ignore plshades;
-%ignore plshade;
-%ignore plshade1;
-%ignore plvect;
-%ignore plfcont;
-%ignore plfshade;
-%ignore plimagefr;
-
 /******************************************************************************
 				 Renames
 ******************************************************************************/
@@ -960,7 +945,6 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 %rename(sfnam) plsfnam;
 %rename(sfont) plsfont;
 %rename(shade) plshade;
-%rename(shade1) plshade1;
 %rename(shades) plshades;
 %rename(smaj) plsmaj;
 %rename(smem) plsmem;
