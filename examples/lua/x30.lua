@@ -37,7 +37,7 @@ rcoord = { 1, 1 }
 gcoord = { 0, 0 }
 bcoord = { 0, 0 }
 acoord = { 0, 1 }
-rev = { false, false }
+rev = { 0, 0 }
 
 clevel = {}
 
@@ -123,27 +123,20 @@ end
 -- Create the color map with 128 colors and use plscmap1la to initialize
 -- the color values with a linear varying transparency (or alpha)
 pl.scmap1n(128)
-pl.scmap1la(1, 2, pos, rcoord, gcoord, bcoord, acoord, rev)
+pl.scmap1la(1, pos, rcoord, gcoord, bcoord, acoord, rev)
 
 -- Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will
 -- used for the shade plot. plshades will use linear interpolation to
 -- calculate the z values of all the intermediate points in this array.
---[[plAlloc2dGrid(&z, 2, 2);
-z[0][0] = 0.0;
-z[1][0] = 0.0;
-z[0][1] = 1.0;
-z[1][1] = 1.0;
+z = { {0, 1}, {0, 1} }
 
-/* Set the color levels array. These levels are also between 0.0 and 1.0 */
-for(i=0;i<101;i++){
-  clevel[i] = 0.01 * (PLFLT)i;
-}
+-- Set the color levels array. These levels are also between 0.0 and 1.0
+for i=1, 101 do
+  clevel[i] = 0.01 * (i-1)
+end
 
-/* Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate ranges */
-/* such that it fills the entire plotting area. */
-plshades(z, 2, 2, NULL, 0.0, 1.0, 0.0, 1.0, clevel, 101, 0, -1, 2, plfill, 1, NULL, NULL);
-
-plFree2dGrid(z,2,2);--]]
+-- Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate ranges
+-- such that it fills the entire plotting area.
+pl.shades(z, 0, 1, 0, 1, clevel, 0, -1, 2, 1);
 
 pl.plend()
-
