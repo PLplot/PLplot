@@ -214,7 +214,7 @@ weight = {
 }
 
 -- Parse and process command line arguments 
-pl.parseopts(arg, PL_PARSE_FULL)
+pl.parseopts(arg, pl.PL_PARSE_FULL)
 
 -- Initialize plplot 
 pl.init()
@@ -230,7 +230,7 @@ for page=1, 11 do
   ycharacter_scale = (1-0)/(ymax-ymin)
 
   -- Factor should be 0.5, but heuristically it turns out to be larger. 
-  chardef, charht = plgchr()
+  chardef, charht = pl.gchr()
   yoffset = charht*ycharacter_scale
 
   -- Draw the grid using plbox 
@@ -246,12 +246,12 @@ for page=1, 11 do
     y = (0.5+j)*deltay
     for i=1, nxcells[page] do
       x  = (i-0.5)*deltax
-      if (slice < length) {
+      if slice<=length then
         if page==1 then
           cmdString = "#" .. Greek[slice]
-        else if (page>=2) and (page<=4) then
-          cmdString = string.format("##[0x%.4x]", Type1[offset[page]+slice-1])
-        else if page>4 then
+        elseif (page>=2) and (page<=4) then
+          cmdString = string.format("##[0x%.4x]", Type1[offset[page]+slice])
+        elseif page>4 then
           cmdString = string.format("##[0x%.4x]", lo[page]+slice-1)
         end
         pl.ptex(x, y+yoffset, 1, 0, 0.5, string.sub(cmdString,2))
@@ -268,10 +268,10 @@ for page=1, 11 do
 end
 
 -- Demonstrate methods of getting the current fonts 
-fci_old = plgfci()
-ifamily, istyle, iweight = plgfont()
-print(string.format("For example 23 prior to page 12 the FCI is 0x%x\n", fci_old))
-print(string.format("For example 23 prior to page 12 the font family, style and weight are %s %s %s\n",
+fci_old = pl.gfci()
+ifamily, istyle, iweight = pl.gfont()
+print(string.format("For example 23 prior to page 12 the FCI is 0x%x", fci_old))
+print(string.format("For example 23 prior to page 12 the font family, style and weight are %s %s %s",
                     family[ifamily+1], style[istyle+1], weight[iweight+1]))
 
 for page=12, 16 do
@@ -284,37 +284,37 @@ for page=12, 16 do
   
   if page==12 then
     pl.mtex("t", 1.5, 0.5, 0.5, "#<0x10>PLplot Example 23 - Set Font with plsfci")
-  else if page==13 then
+  elseif page==13 then
     pl.mtex("t", 1.5, 0.5, 0.5, "#<0x10>PLplot Example 23 - Set Font with plsfont")
-  else if page==14 then
+  elseif page==14 then
     pl.mtex("t", 1.5, 0.5, 0.5, "#<0x10>PLplot Example 23 - Set Font with ##<0x8nnnnnnn> construct")
-  else if page==15 then
+  elseif page==15 then
     pl.mtex("t", 1.5, 0.5, 0.5, "#<0x10>PLplot Example 23 - Set Font with ##<0xmn> constructs")
-  else if page==15 then
+  elseif page==16 then
     pl.mtex("t", 1.5, 0.5, 0.5, "#<0x10>PLplot Example 23 - Set Font with ##<FCI COMMAND STRING/> constructs")
   end
   
   pl.schr(0, 0.75)
   for i=1, FCI_COMBINATIONS do
     family_index = math.mod(i-1, 5)+1
-    style_index = math.mod((i-1)/5, 3)+1
-    weight_index = math.mod((i-1)/5/3, 2)+1
+    style_index = math.mod(math.floor((i-1)/5), 3)+1
+    weight_index = math.mod(math.floor((i-1)/5/3), 2)+1
     if page==12 then
       pl.sfci(fci[i])
       str = string.format("Page 12, %s, %s, %s:  The quick brown fox jumps over the lazy dog",
                           family[family_index], style[style_index], weight[weight_index])
-    else if page==13 do
+    elseif page==13 then
       pl.sfont(family_index-1, style_index-1, weight_index-1)
       str = string.format("Page 13, %s, %s, %s:  The quick brown fox jumps over the lazy dog",
                           family[family_index], style[style_index], weight[weight_index])
-    else if page==14 do
+    elseif page==14 then
       str = string.format("Page 14, %s, %s, %s:  #<0x%x>The quick brown fox jumps over the lazy dog",
                           family[family_index], style[style_index], weight[weight_index], fci[i])
-    else if page==15 do
+    elseif page==15 then
       str = string.format("Page 15, %s, %s, %s:  #<0x%1x0>#<0x%1x1>#<0x%1x2>The quick brown fox jumps over the lazy dog",
                           family[family_index], style[style_index], weight[weight_index],
                           family_index-1, style_index-1, weight_index-1)
-    else if page==16 do
+    elseif page==16 then
       str = string.format("Page 16, %s, %s, %s:  #<%s/>#<%s/>#<%s/>The quick brown fox jumps over the lazy dog",
                           family[family_index], style[style_index], weight[weight_index],
                           family[family_index], style[style_index], weight[weight_index])
