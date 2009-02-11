@@ -51,6 +51,12 @@ end
 
 y0 = {}
 
+pos   = { 0, 0.25, 0.5, 0.75, 1 }
+red   = { 0, 0.25, 0.5,    1, 1 }
+green = { 1,  0.5, 0.5,  0.5, 1 }
+blue  = { 1,    1, 0.5, 0.25, 0 }
+
+
 -- Parse and process command line arguments 
 
 pl.parseopts(arg, pl.PL_PARSE_FULL);
@@ -65,22 +71,15 @@ pl.box("bc", 1.0, 0, "bcnv", 10.0, 0)
 pl.col0(2)
 pl.lab("Year", "Widget Sales (millions)", "#frPLplot Example 12")
 
-y0[1] = 5
-y0[2] = 15
-y0[3] = 12
-y0[4] = 24
-y0[5] = 28
-y0[6] = 30
-y0[7] = 20
-y0[8] = 8
-y0[9] = 12
-y0[10] = 3
+y0 = { 5, 15, 12, 24, 28, 30, 20, 8, 12, 3}
+
+pl.scmap1l(1, pos, red, green, blue, { 0, 0, 0, 0 });
 
 for i=1, 10 do
-	pl.col0(i);
+	pl.col0((i-1)/9.0);
 	pl.psty(0);
 	pl.fbox((1980. + i - 1), y0[i]);
-	pl.ptex((1980. + i - .5), (y0[i] + 1.), 1.0, 0.0, .5, tostring(y0[i]));
+	pl.ptex((1980. + i - .5), (y0[i] + 1.), 1, 0, .5, tostring(y0[i]));
 	pl.mtex("b", 1.0, (i * .1 - .05), 0.5, tostring(1980+i-1));
 end
 

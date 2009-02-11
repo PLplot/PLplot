@@ -83,7 +83,7 @@ for i = 1, 5 do
     just = 1
   end
 
-	pl.ptex((x[(j-1) / 2] + dx), (y[(j-1) / 2] + dy), 1.0, 0.0, just, text[i]);
+	pl.ptex((x[(j-1)/2] + dx), (y[(j-1)/2] + dy), 1, 0, just, text[i]);
 	theta0 = theta1 - dthet
 end
 
