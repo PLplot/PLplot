@@ -367,7 +367,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
     if (*ny!=SWIG_itable_size(L,-1)) {
       lua_pop(L,1);
       lua_pushstring(L,"inconsistent table sizes");
-      for (j = 0; j < *ny; j++)
+      for (j = 0; j < i; j++)
         LUA_FREE_ARRAY(matrix[j]);
       LUA_FREE_ARRAY(matrix);
 			return NULL;
@@ -380,7 +380,7 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
       } else {
         lua_pop(L,1);
         lua_pushstring(L,"table must contain numbers");
-        for (j = 0; j < *ny; j++)
+        for (j = 0; j < i+1; j++)
           LUA_FREE_ARRAY(matrix[j]);
         LUA_FREE_ARRAY(matrix);
         return NULL;
