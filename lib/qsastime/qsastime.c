@@ -261,7 +261,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
        day offset is set exactly right so that years -4, 0, 4 are leap years, 
        i.e. years -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 start with j = 
        -1826 -1461, -1095, -730, -365, 0, 366, 731, 1096, 1461, 1827 */
-    if(j >= 0) {
+    if(j >= 366) {
       *year = (int) ((double)(j) / 365.25);
       year4 = *year-1;
     } else {
@@ -281,7 +281,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
     /* 365.245 is exact period of Gregorian year so year will be correct
        if exactly correct j offset is chosen (see above). */
     
-    if(j >=0) {
+    if(j >=366) {
       *year = (int) ((double)(j) / 365.2425);
       year4 = *year - 1;
       year100 = *year - 1;
