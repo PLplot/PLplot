@@ -223,7 +223,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
   /* Convert MJD struct into date/time elements */
   /* Note year 0 CE (AD) [1 BCE (BC)] is a leap year */
 	
-  int extra_days,j, year4, year100, year400, ifleapyear;
+  int extra_days, j, doy, ifcorrect, year4, year100, year400, ifleapyear;
   double seconds;
 	
   if(forceJulian < -1 || forceJulian > 1) {
@@ -257,10 +257,10 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
     /* Shift j epoch to 0000-01-01 for the Julian proleptic calendar.*/
     j -= MJD_0000J;
     
-    /* 365.25 is exact period of Julian year so year will be correct if
-       day offset is set exactly right so that years -4, 0, 4 are leap years, 
-       i.e. years -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 start with j = 
-       -1826 -1461, -1095, -730, -365, 0, 366, 731, 1096, 1461, 1827 */
+    /* 365.25 is the exact period of the Julian year so year will be correct
+       if the day offset is set exactly right so that years -4, 0, 4 are
+       leap years, i.e. years -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 start with
+       j =  -1826 -1461, -1095, -730, -365, 0, 366, 731, 1096, 1461, 1827 */
     if(j >= 366) {
       *year = (int) ((double)(j) / 365.25);
       year4 = *year-1;
@@ -269,8 +269,7 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
       year4 = *year-4;
     }
     
-    /* shift j epoch to day of year */
-    j = j - *year * 365 - year4 / 4;
+    doy = j - *year * 365 - year4 / 4;
     
     ifleapyear = *year%4 == 0;
 
@@ -278,8 +277,10 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
     /* forceJulian == -1 || (j >= -100840 && forceJulian == 0) */
     /* Shift j epoch to 0000-01-01 for the Gregorian proleptic calendar.*/
     j -= MJD_0000G;
-    /* 365.245 is exact period of Gregorian year so year will be correct
-       if exactly correct j offset is chosen (see above). */
+    /* 365.245 is the exact period of the Gregorian year so year will be correct
+       on average, but because the leap year rule is irregular within
+       the 400-year Gregorian cycle, the first and last days of the
+       year may need further adjustment. */
     
     if(j >=366) {
       *year = (int) ((double)(j) / 365.2425);
@@ -293,26 +294,50 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
       year400 = *year - 400;
     }
 
-    j = j - *year * 365 - year4 / 4 + year100 / 100 - year400 / 400;
-    
+    doy = j - *year * 365 - year4 / 4 + year100 / 100 - year400 / 400;
     ifleapyear = (*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0);
+
+    /* Rare corrections to above average Gregorian relations. */
+    if(doy < 1) {
+      (*year)--;
+      ifcorrect = 1;
+    } else if(doy > 365 && (!ifleapyear || doy > 366)) {
+      (*year)++;
+      ifcorrect = 1;
+    } else {
+      ifcorrect = 0;
+    }
+    if(ifcorrect) {
+      if(j >=366) {
+	year4 = *year - 1;
+	year100 = *year - 1;
+	year400 = *year - 1;
+      } else {
+	year4 = *year - 4;
+	year100 = *year - 100;
+	year400 = *year - 400;
+      }
+
+      doy = j - *year * 365 - year4 / 4 + year100 / 100 - year400 / 400;
+      ifleapyear = (*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0);
+    }
   }
 
-  /* calculate month part with j already set to be the day number within
+  /* calculate month part with doy set to be the day within
      the year in the range from 1 to 366 */
   *month = -1;
   if(ifleapyear) {
-    while(j > MonthStartDOY_L[*month +1]) {
+    while(doy > MonthStartDOY_L[*month +1]) {
       (*month)++;
       if(*month == 11) break;
     }
-    *day = j - MonthStartDOY_L[*month];
+    *day = doy - MonthStartDOY_L[*month];
   } else {
-    while(j > MonthStartDOY[*month +1]) {
+    while(doy > MonthStartDOY[*month +1]) {
       (*month)++;
       if(*month == 11) break;
     }
-    *day = j - MonthStartDOY[*month];
+    *day = doy - MonthStartDOY[*month];
   }
   /* Time part */
 	
