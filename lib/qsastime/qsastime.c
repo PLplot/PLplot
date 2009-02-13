@@ -684,9 +684,10 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	    }
 	  else if(next == 'V')
 	    {
+        int days_in_wk1;
 	      /* week of year as a number,  (01 - 53) start of week is Monday and first week has at least 3 days in year */
 	      getYAD(&y1, &ifleapyear, &doy, pnMJD, forceJulian);
-	      int days_in_wk1 = (pnMJD->base_day - doy - 3) % 7;
+	      days_in_wk1 = (pnMJD->base_day - doy - 3) % 7;
 				
 	      if(days_in_wk1 <= 3) w = (doy +6 - days_in_wk1) / 7; /* ensure first week has at least 3 days in this year */
 	      else w = 1 + (doy + 6 - days_in_wk1) / 7;
