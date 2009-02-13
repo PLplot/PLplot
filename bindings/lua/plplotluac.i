@@ -559,7 +559,6 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   $1 = plfill;
 }
 
-
 %typemap(in) pltr_func pltr {
   $1 = NULL;
   
@@ -581,42 +580,23 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   } else 
     SWIG_fail_arg("$symname", $argnum, "$1_type")
 }
-%typemap(freearg) pltr_func pltr {
-}
 /* you can omit the pltr func */
 %typemap(default) pltr_func pltr {
   $1 = NULL;
 }
+%apply pltr_func pltr { pltr_func pltr_img };
 
 
-%typemap(in) PLPointer OBJECT_DATA (PLcGrid cgrid1, PLcGrid2 cgrid2, int gridmode) {
+%typemap(arginit) PLPointer OBJECT_DATA {
+  cgrid1$argnum.xg = cgrid1$argnum.yg = cgrid1$argnum.zg = NULL;
+  cgrid1$argnum.nx = cgrid1$argnum.ny = cgrid1$argnum.nz = 0;
+  cgrid2$argnum.xg = cgrid2$argnum.yg = cgrid2$argnum.zg = NULL;
+  cgrid2$argnum.nx = cgrid2$argnum.ny = 0;
+}
+%typemap(in) PLPointer OBJECT_DATA (PLcGrid cgrid1, PLcGrid2 cgrid2) {
   int nx, ny;
-  gridmode=0;
-  cgrid1.xg=NULL;
-  cgrid1.yg=NULL;
+  int gridmode=0;
   
-  lua_pushstring(L, "nx");
-  lua_gettable(L, $input);
-  if(!lua_isnumber(L, -1)) {
-    lua_pop(L, 1);  /* remove number nx */
-    lua_pushfstring(L, "Table doesn't contain a key 'nx'.");
-    SWIG_fail;
-  }
-  nx = (int)lua_tonumber(L, -1);
-  lua_pop(L, 1);  /* remove number nx */
-
-  lua_pushstring(L, "ny");
-  lua_gettable(L, $input);
-  if(!lua_isnumber(L, -1)) {
-    lua_pop(L, 1);  /* remove number ny */
-    lua_pushfstring(L, "Table doesn't contain a key 'ny'.");
-    SWIG_fail;
-  }
-  ny = (int)lua_tonumber(L, -1);
-  lua_pop(L, 1);  /* remove number */
-  
-  printf("nx=%d, ny=%d\n", nx, ny);
-
   lua_pushstring(L, "xg");
   lua_gettable(L, $input);
   if (!lua_istable(L, -1)) {
@@ -624,10 +604,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
     lua_pushstring(L, "expected a table xg");
     SWIG_fail;
   }
-  printf("lua type=%s\n", lua_typename(L, lua_type(L, -1)));
-  lua_pushstring(L, "1");
-  lua_gettable(L, -2);
-  printf("lua type=%s\n", lua_typename(L, lua_type(L, -1)));
+  lua_rawgeti(L, -1, 1);
   if (lua_istable(L, -1)) 
     gridmode=2;  /* two dimensional array*/
   else if (lua_isnumber(L, -1))
@@ -638,17 +615,31 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
     lua_pushstring(L, "expected a one or two dimensional array/table in xg");
     SWIG_fail;
   }  
-  lua_pop(L, 1);  /* pop "1" */
+  lua_pop(L, 1);  /* pop test element */
   if(gridmode==1) {
-    int temp;
-    cgrid1.xg = (PLFLT*)LUA_get_double_num_array_var(L, -1, &temp);
-    if(cgrid1.xg) SWIG_fail;
-    if(nx!=temp) {
-      lua_pushfstring(L, "Table xg must be of length nx=%d.", nx);
+    cgrid1.xg = (PLFLT*)LUA_get_double_num_array_var(L, -1, &nx);
+    if(!cgrid1.xg) {
+      lua_pop(L, 1);  /* pop "xg" */
+      SWIG_fail;
+    }
+    if(nx!=Xlen) {
+      lua_pushfstring(L, "Table xg must be of length %d.", Xlen);
       SWIG_fail;
     }
     cgrid1.nx = nx;
   } else {
+    cgrid2.xg = read_double_Matrix(L, -1, &nx, &ny );
+    if(!cgrid2.xg) {
+      lua_pop(L, 1);  /* pop "xg" */
+      SWIG_fail;
+    }
+    if( (nx!=Xlen) || (ny!=Ylen) ) {
+      lua_pop(L, 1);  /* pop "xg" */
+      lua_pushfstring(L, "Vectors must match matrix.");
+      SWIG_fail;
+    }
+    cgrid2.nx = nx;
+    cgrid2.ny = ny;
   }
   lua_pop(L, 1);  /* pop "xg" */
 
@@ -659,9 +650,8 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
     lua_pushstring(L, "expected a table yg");
     SWIG_fail;
   }
-  lua_pushstring(L, "1");
-  lua_gettable(L, -2);
-  if(gridmode=2) {
+  lua_rawgeti(L, -1, 1);
+  if(gridmode==2) {
     if (!lua_istable(L, -1)) {
       lua_pop(L, 1);  /* pop "1" */
       lua_pop(L, 1);  /* pop "yg" */
@@ -678,75 +668,58 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   }
   lua_pop(L, 1);  /* pop "1" */
   if(gridmode==1) {
-    int temp;
-    cgrid1.yg = (PLFLT*)LUA_get_double_num_array_var(L, -1, &temp);
-    if(cgrid1.yg) SWIG_fail;
-    if(ny!=temp) {
-      lua_pushfstring(L, "Table yg must be of length ny=%d.", ny);
+    cgrid1.yg = (PLFLT*)LUA_get_double_num_array_var(L, -1, &ny);
+    if(!cgrid1.yg) {
+      lua_pop(L, 1);  /* pop "yg" */
+      SWIG_fail;
+    }
+    if(ny!=Ylen) {
+      lua_pushfstring(L, "Table yg must be of length %d.", Ylen);
       SWIG_fail;
     }
     cgrid1.ny = ny;
   } else {
+    cgrid2.yg = read_double_Matrix(L, -1, &nx, &ny );
+    if(!cgrid2.yg) {
+      lua_pop(L, 1);  /* pop "xg" */
+      SWIG_fail;
+    }
+    if( (nx!=Xlen) || (ny!=Ylen) ) {
+      lua_pop(L, 1);  /* pop "xg" */
+      lua_pushfstring(L, "Vectors must match matrix.");
+      SWIG_fail;
+    }
+    /* cgrid2.nx/ny already set */
   }
   lua_pop(L, 1);  /* pop "yg" */
 
-  
-  /* jPLFLT **adat;
-   jobject *ai;
-   int nx = (*jenv)->GetArrayLength( jenv, $input );
-   int ny = -1;
-   int i, j;
-   ai = (jobject *) malloc( nx * sizeof(jobject) );
-   adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
-
-   (*jenv)->EnsureLocalCapacity( jenv, nx );
-
-   for( i=0; i < nx; i++ )
-     {
-	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
-	adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
-
-	if (ny == -1)
-	  ny = (*jenv)->GetArrayLength( jenv, ai[i] );
-	else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
-	   printf( "Misshapen a array.\n" );
-	   for( j=0; j <= i; j++ )
-	     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
-	   free(adat);
-	   free(ai);
-	   return;
-	}
-     }
-
-   if( !((nx == Xlen && ny == Ylen) || (nx == Ylen && ny == 1 && ny == Alen))) {
-      printf( "Xlen = %d, nx = %d, Ylen = %d, Alen = %d, ny = %d\n",
-	      Xlen, nx, Ylen, Alen, ny );
-      printf( "Y vector or matrix must match matrix dimensions.\n" );
-      for( i=0; i < nx; i++ )
-	(*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
-      free(adat);
-      free(ai);
-      return;
-   }
-   setup_array_2d_PLFLT( &yg, adat, nx, ny );
-   for( i=0; i < nx; i++ ) {
-      (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
-      (*jenv)->DeleteLocalRef(jenv, ai[i]);
-   }
-   $1 = &cgrid; */
-   if(gridmode==1)
-     $1 = &cgrid1;
-   else if(gridmode==2)
-     $1 = &cgrid2;
+  if(gridmode==1)
+    $1 = &cgrid1;
+  else if(gridmode==2)
+    $1 = &cgrid2;
 }
-%typemap(freearg) PLPointer OBJECT_DATA (PLcGrid cgrid1, PLcGrid2 cgrid2, int gridmode) {
-  if(gridmode==1) {
-    LUA_FREE_ARRAY(cgrid1.xg);
-    LUA_FREE_ARRAY(cgrid1.yg);
-  } else {
+%typemap(freearg) PLPointer OBJECT_DATA {
+  int i;
+  
+  LUA_FREE_ARRAY(cgrid1$argnum.xg);
+  LUA_FREE_ARRAY(cgrid1$argnum.yg);
+  
+  if(cgrid2$argnum.xg) {
+    for (i = 0; i<Xlen; i++)
+      LUA_FREE_ARRAY(cgrid2$argnum.xg[i]);
+    LUA_FREE_ARRAY(cgrid2$argnum.xg);
+  }
+  if(cgrid2$argnum.yg) {
+    for (i = 0; i<Xlen; i++)
+      LUA_FREE_ARRAY(cgrid2$argnum.yg[i]);
+    LUA_FREE_ARRAY(cgrid2$argnum.yg);
   }
 }
-
+/* you can omit the data too */
+%typemap(default) PLPointer OBJECT_DATA {
+  $1 = NULL;
+}
+%apply PLPointer OBJECT_DATA { PLPointer OBJECT_DATA_img };
 
 /* this typemap takes a sequence of strings and converts them for plstripc 
    also checks that previous Arrays were of length 4 
