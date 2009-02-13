@@ -41,7 +41,7 @@ int main()
   double sec = 2.345678901;
   const char *ISOstring;
   double epoch;
-  int doy;
+  int doy, ifleapyear, y1;
   double zeroTest;
 
   size_t used;
@@ -71,7 +71,7 @@ int main()
   strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%4Z",  &MJD2, 0);
   printf("strfMJD:ISO equiv:  '%s'\n", buf);
 	
-  doy = getDOY(&MJD2, 0);
+  getYAD(&y1, &ifleapyear, &doy, &MJD1, 0);
   setFromDOY(y, doy, hour, min, sec, &MJD1, 0);
 	
   zeroTest = getDiffSecs(&MJD1, &MJD2);

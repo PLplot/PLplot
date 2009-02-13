@@ -155,105 +155,19 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
   }
 }
 
-int getDOY(const MJDtime *MJD, int forceJulian)
+void getYAD(int *year, int *ifleapyear, int *doy, const MJDtime *MJD, int forceJulian)
 {	
-  /* Get from Day Of Year  */
-  int doy, year;
+  /* Get year and day of year from normalized MJD */
 	
-  int extra_days,j,lastyear;
-	
+  int j, ifcorrect, year4, year100, year400;
   if(forceJulian < -1 || forceJulian > 1) {
-    fprintf(stderr, "getDOY: invalid forceJulian value\n");
+    fprintf(stderr, "getYAD: invalid forceJulian value\n");
     exit(EXIT_FAILURE);
   }
-  if(MJD->time_sec >= 0)
-    {
-      extra_days  = (int) (MJD->time_sec / SecInDay);
-    }
-  else
-    {
-      /* allow for negative seconds push into previous day even if less than 1 day */
-      extra_days = (int) (MJD->time_sec / SecInDay) - 1 ;
-    }
-	
 
-  j = MJD->base_day + extra_days;
+  j = MJD->base_day;
 	
-  if(forceJulian != -1 && j < MJD_0000J) {
-	
-    /* Change epoch so j is measured in days after 0000-01-01 on the
-       Julian proleptic calendar. */
-
-    j -= MJD_0000J; 
-		
-    /* j must be strictly negative from above logic.  Therefore, year must be
-       strictly negative as well. */
-    year = (int) ((double)(j-365) / 365.25);
-    doy = j +1 - year * 365.25;
-				
-  } else if(forceJulian != -1 && j < MJD_0001J ) {
-    /* in year 0 which was a leap year. */
-	
-    j -= MJD_0000J; 
-		
-    year = 0;
-    doy = j +1;
-		
-  } else if( forceJulian != -1 && (j < -100840 || forceJulian == 1)) {
-    j -= MJD_0000J; 
-    year = (int) ((double)j / 365.25);
-    lastyear = year - 1;
-    doy = j - year * 365 - lastyear / 4;
-  } else {
-    /* forceJulian == -1 || (j >= -100840 && forceJulian == 0) */
-    /* Change epoch so j is measured in days after 0000-01-01 on the
-       Gregorian proleptic calendar. */
-    j -= MJD_0000G;
-
-    year = (int) ((double)j / 365.2425);
-    lastyear = year - 1;
-    doy = j - year * 365 - lastyear / 4 + lastyear / 100 - lastyear / 400;
-  }
-
-  return doy;	
-}
-
-void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian)
-{ 	
-  /* Convert MJD struct into date/time elements */
-  /* Note year 0 CE (AD) [1 BCE (BC)] is a leap year */
-	
-  int extra_days, j, doy, ifcorrect, year4, year100, year400, ifleapyear;
-  double seconds;
-	
-  if(forceJulian < -1 || forceJulian > 1) {
-    fprintf(stderr, "breakDownMJD: invalid forceJulian value\n");
-    exit(EXIT_FAILURE);
-  }
-  if(MJD->time_sec >= 0) {
-      extra_days  = (int) (MJD->time_sec / SecInDay);
-  } else {
-    /* allow for negative seconds push into previous day even if less than 1 day */
-    extra_days = (int) (MJD->time_sec / SecInDay) - 1 ;
-  }
-  
-  j = MJD->base_day + extra_days;
-	
-  if( 0 && forceJulian != -1 && j < MJD_0001J) {
-	
-    j -= MJD_0000J;
-    if( j>=0) {
-	*year = 0;
-	j++;
-    } else {
-      /* negative years */
-      *year = (int) ((double)(j-365) / 365.25);
-      j = j + 1 - *year * 365.25;
-    }
-    ifleapyear = *year%4 == 0;
-    /* j is now always positive */
-
-  } else if( forceJulian !=-1 && (j < -100840 || forceJulian == 1)) {
+  if( forceJulian !=-1 && (j < -100840 || forceJulian == 1)) {
     /* Shift j epoch to 0000-01-01 for the Julian proleptic calendar.*/
     j -= MJD_0000J;
     
@@ -269,9 +183,9 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
       year4 = *year-4;
     }
     
-    doy = j - *year * 365 - year4 / 4;
+    *doy = j - *year * 365 - year4 / 4;
     
-    ifleapyear = *year%4 == 0;
+    *ifleapyear = *year%4 == 0;
 
   } else {
     /* forceJulian == -1 || (j >= -100840 && forceJulian == 0) */
@@ -294,14 +208,14 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
       year400 = *year - 400;
     }
 
-    doy = j - *year * 365 - year4 / 4 + year100 / 100 - year400 / 400;
-    ifleapyear = (*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0);
+    *doy = j - *year * 365 - year4 / 4 + year100 / 100 - year400 / 400;
+    *ifleapyear = (*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0);
 
     /* Rare corrections to above average Gregorian relations. */
-    if(doy < 1) {
+    if(*doy < 1) {
       (*year)--;
       ifcorrect = 1;
-    } else if(doy > 365 && (!ifleapyear || doy > 366)) {
+    } else if(*doy > 365 && (!*ifleapyear || *doy > 366)) {
       (*year)++;
       ifcorrect = 1;
     } else {
@@ -318,10 +232,52 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
 	year400 = *year - 400;
       }
 
-      doy = j - *year * 365 - year4 / 4 + year100 / 100 - year400 / 400;
-      ifleapyear = (*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0);
+      *doy = j - *year * 365 - year4 / 4 + year100 / 100 - year400 / 400;
+      *ifleapyear = (*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0);
     }
   }
+
+}
+
+void normalize_MJD(MJDtime *MJDout, const MJDtime *MJDin)
+{
+  int extra_days;
+  /* Calculate MJDout as normalized version
+     (i.e., 0. <= MJDout->time_sec < 86400.) of MJDin. */
+  if(MJDin->time_sec >= 0) {
+    extra_days = (int) (MJDin->time_sec / SecInDay);
+  } else {
+    /* allow for negative seconds push into previous day even if less than 1 day */
+    extra_days = (int) (MJDin->time_sec / SecInDay) - 1 ;
+  }
+  
+  MJDout->base_day = MJDin->base_day + extra_days;
+  MJDout->time_sec = MJDin->time_sec - extra_days * SecInDay;
+}
+
+void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian)
+{ 	
+  /* Convert MJD struct into date/time elements */
+  /* Note year 0 CE (AD) [1 BCE (BC)] is a leap year */
+	
+  int doy, ifleapyear;
+  MJDtime nMJD, *pnMJD=&nMJD;
+	
+  if(forceJulian < -1 || forceJulian > 1) {
+    fprintf(stderr, "breakDownMJD: invalid forceJulian value\n");
+    exit(EXIT_FAILURE);
+  }
+
+  normalize_MJD(pnMJD, MJD);
+  /* Time part */
+	
+  *sec = pnMJD->time_sec;
+  *hour = (int)( *sec / 3600.);
+  *sec -= (double) *hour * 3600.;
+  *min = (int) ( *sec / 60.);
+  *sec -=  (double) *min * 60.;
+
+  getYAD(year, &ifleapyear, &doy, pnMJD, forceJulian);
 
   /* calculate month part with doy set to be the day within
      the year in the range from 1 to 366 */
@@ -339,13 +295,6 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
     }
     *day = doy - MonthStartDOY[*month];
   }
-  /* Time part */
-	
-  seconds = MJD->time_sec - extra_days * SecInDay;
-  *hour = (int)( seconds / 3600.);
-  seconds -= (double) *hour * 3600.;
-  *min = (int) ( seconds / 60.);
-  *sec =  seconds - (double) *min * 60.;
 }
 
 const char * getDayOfWeek( const MJDtime *MJD)
@@ -383,7 +332,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
      Uses the same syntax as strftime() but does not use current locale.
      The null terminator is included in len for safety. */
 	
-  int year, month, day, hour, min, ysign, sec1, second,d,y;
+  int year, month, day, hour, min, ysign, sec1, second, d, y;
+  int y1, ifleapyear;
   int i, count,secsSince1970;
   int nplaces,fmtlen,slen;
   char * ptr;
@@ -394,10 +344,14 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   char DateTime[80];
   size_t posn = 0;
   size_t last = len -1;
+  MJDtime nMJD, *pnMJD=&nMJD;
+
+  normalize_MJD(pnMJD, MJD);
+  
   buf[last] = '\0';
   buf[0] = '\0'; /* force overwrite of old buffer since strnctat() used hereafter */
 	
-  breakDownMJD(&year, &month, &day, &hour, &min, &sec,  MJD, forceJulian);
+  breakDownMJD(&year, &month, &day, &hour, &min, &sec,  pnMJD, forceJulian);
   if(year < 0)
     {
       ysign = 1;
@@ -430,7 +384,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'a')
 	    {
 	      /* short day name */
-	      dayText = getDayOfWeek(MJD);
+	      dayText = getDayOfWeek(pnMJD);
 	      strncat(&(buf[posn]), dayText, last - posn);
 	      posn = strlen(buf);
 	      if(posn >= last) return posn;
@@ -438,7 +392,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'A')
 	    {
 	      /* long day name */
-	      dayText = getLongDayOfWeek(MJD);
+	      dayText = getLongDayOfWeek(pnMJD);
 	      strncat(&(buf[posn]), dayText, last - posn);
 	      posn = strlen(buf);
 	      if(posn >= last) return posn;
@@ -462,7 +416,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'c')
 	    {
 	      /* Date and Time with day of week */
-	      dayText = getDayOfWeek(MJD);
+	      dayText = getDayOfWeek(pnMJD);
 	      monthText = getMonth(month);
 	      if(ysign == 0)
 		sprintf(DateTime, "%s %s %02d %02d:%02d:%02d %04d", dayText, monthText, day, hour, min, second, year );
@@ -555,7 +509,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'j')
 	    {
 	      /* day of year */
-	      int doy = getDOY(MJD, forceJulian);
+	      getYAD(&y1, &ifleapyear, &doy, pnMJD, forceJulian);
 	      sprintf(DateTime, "%03d", doy);
 				
 	      strncat(&(buf[posn]), DateTime, last - posn);
@@ -655,7 +609,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 's')
 	    {
 	      /* seconds since 01 Jan 1970 Gregorian */
-	      secsSince1970 = (int)(MJD->time_sec + (MJD->base_day - MJD_1970) * SecInDay);
+	      secsSince1970 = (int)(pnMJD->time_sec + (pnMJD->base_day - MJD_1970) * SecInDay);
 	      sprintf(DateTime, "%d", secsSince1970);
 				
 	      strncat(&(buf[posn]), DateTime, last - posn);
@@ -681,8 +635,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'U')
 	    {
 	      /* week of year as a number,  (00 - 53) start of week is Sunday */
-	      doy = getDOY(MJD, forceJulian);
-	      days_in_wk1 = (MJD->base_day - doy - 4) % 7;
+	      getYAD(&y1, &ifleapyear, &doy, pnMJD, forceJulian);
+	      days_in_wk1 = (pnMJD->base_day - doy - 4) % 7;
 				
 	      w = (doy + 6 - days_in_wk1) / 7;
 				
@@ -695,7 +649,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'u')
 	    {
 	      /* weekday as a number,  0 = Monday */
-	      d = 1 + (MJD->base_day - 5) % 7;
+	      d = 1 + (pnMJD->base_day - 5) % 7;
 
 	      sprintf(DateTime, "%01d", d);
 				
@@ -731,8 +685,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'V')
 	    {
 	      /* week of year as a number,  (01 - 53) start of week is Monday and first week has at least 3 days in year */
-	      int doy = getDOY(MJD, forceJulian);
-	      int days_in_wk1 = (MJD->base_day - doy - 3) % 7;
+	      getYAD(&y1, &ifleapyear, &doy, pnMJD, forceJulian);
+	      int days_in_wk1 = (pnMJD->base_day - doy - 3) % 7;
 				
 	      if(days_in_wk1 <= 3) w = (doy +6 - days_in_wk1) / 7; /* ensure first week has at least 3 days in this year */
 	      else w = 1 + (doy + 6 - days_in_wk1) / 7;
@@ -747,7 +701,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'w')
 	    {
 	      /* weekday as a number,  0 = Sunday */
-	      d = (MJD->base_day - 4) % 7;
+	      d = (pnMJD->base_day - 4) % 7;
 
 	      sprintf(DateTime, "%01d", d);
 				
@@ -758,8 +712,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'W')
 	    {
 	      /* week of year as a number,  (00 - 53) start of week is Monday */
-	      doy = getDOY(MJD, forceJulian);
-	      days_in_wk1 = (MJD->base_day - doy - 3) % 7;
+	      getYAD(&y1, &ifleapyear, &doy, pnMJD, forceJulian);
+	      days_in_wk1 = (pnMJD->base_day - doy - 3) % 7;
 				
 	      w =  (doy +6 - days_in_wk1) / 7;
 				
@@ -772,7 +726,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'x')
 	    {
 	      /* date string */
-	      dayText = getDayOfWeek(MJD);
+	      dayText = getDayOfWeek(pnMJD);
 	      monthText = getMonth(month);
 	      if(ysign == 0)
 		sprintf(DateTime, "%s %s %02d, %04d", dayText, monthText, day, year );
@@ -839,7 +793,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == '+')
 	    {
 	      /* date and time */
-	      dayText = getDayOfWeek(MJD);
+	      dayText = getDayOfWeek(pnMJD);
 	      monthText = getMonth(month);
 	      if(ysign == 0)
 		sprintf(DateTime, "%s %s %02d %02d:%02d:%02d UTC %04d",  dayText, monthText, day, hour, min, second, year );

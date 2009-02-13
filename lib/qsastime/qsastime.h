@@ -60,6 +60,9 @@ typedef struct MJDtimeStruct
 }MJDtime;
 
 
+/* internal helper function */
+void normalize_MJD(MJDtime *MJDout, const MJDtime *MJDin);
+/* externally accessible functions */
 QSASTIMEDLLIMPEXP int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
 QSASTIMEDLLIMPEXP void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian);
 QSASTIMEDLLIMPEXP size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian);
@@ -70,6 +73,6 @@ QSASTIMEDLLIMPEXP const char * getDayOfWeek(const MJDtime *MJD);
 QSASTIMEDLLIMPEXP const char * getLongDayOfWeek( const MJDtime *MJD);
 QSASTIMEDLLIMPEXP const char * getMonth(int m);
 QSASTIMEDLLIMPEXP const char * getLongMonth(int m);
-QSASTIMEDLLIMPEXP int getDOY(const MJDtime *MJD, int forceJulian);
+QSASTIMEDLLIMPEXP void getYAD(int *year, int *ifleapyear, int *doy, const MJDtime *MJD, int forceJulian);
 
 #endif
