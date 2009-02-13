@@ -142,7 +142,7 @@ for i = 1, nx do
   cgrid2["xg"][i] = {}
   cgrid2["yg"][i] = {}
 	for j = 1, ny do
-    x, y = mypltr(i, j, nil)
+    x, y = mypltr(i-1, j-1)
 
     argx = x*math.pi/2
     argy = y*math.pi/2
@@ -169,7 +169,7 @@ pl.col0(1)
 pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
 pl.col0(2)
 
---plcont(w, 1, nx, 1, ny, clevel, mypltr, {})
+--pl.cont(w, 1, nx, 1, ny, clevel, mypltr, {})
 pl.lab("distance", "altitude", "Bogon density")
 
 -- Plot using 1d coordinate transform 
@@ -179,7 +179,7 @@ pl.wind(-1, 1, -1, 1)
 
 pl.psty(0)
 
---pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 1, "pltr1", cgrid1)
+pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 1, "pltr1", cgrid1)
 
 pl.col0(1)
 pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
@@ -193,12 +193,12 @@ pl.wind(-1, 1, -1, 1)
 
 pl.psty(0)
 
---pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 0, "pltr2", cgrid2)
+pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 0, "pltr2", cgrid2)
 
 pl.col0(1)
 pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
 pl.col0(2)
---pl.cont(w, 1, nx, 1, ny, clevel, "pltr2", cgrid2)
+pl.cont(w, 1, nx, 1, ny, clevel, "pltr2", cgrid2)
 
 pl.lab("distance", "altitude", "Bogon density, with streamlines")
 
@@ -209,7 +209,7 @@ pl.wind(-1, 1, -1, 1)
 
 pl.psty(0)
 
---pl.shades(z, -1, 1, -1, 1, shedge, fill_width, 2, 3, 0, "pltr2", cgrid2)
+pl.shades(z, -1, 1, -1, 1, shedge, fill_width, 2, 3, 0, "pltr2", cgrid2)
 
 pl.col0(1)
 pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
@@ -262,7 +262,7 @@ for i = 1, ns+1 do
 end
 
 --  Now we can shade the interior region. 
---pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 0, "pltr2", cgrid2)
+pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 0, "pltr2", cgrid2)
 
 -- Now we can draw the perimeter.  (If do before, shade stuff may overlap.) 
 for i = 1, PERIMETERPTS do

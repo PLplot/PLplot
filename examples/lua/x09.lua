@@ -95,7 +95,7 @@ function polar()
   end
 
   pl.col0(2)
-  --pl.cont(z, 1, RPTS, 1, THETAPTS, lev, cgrid2)
+  pl.cont(z, 1, RPTS, 1, THETAPTS, lev, "pltr2", cgrid2)
   pl.col0(1)
   pl.lab("", "", "Polar Contour Plot")
 end
@@ -220,13 +220,13 @@ function potential()
   if nlevelneg>1 then
     -- Negative contours 
     pl.lsty(2)
-    --pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelneg, "pltr2", cgrid2)
+    pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelneg, "pltr2", cgrid2)
   end
 
   if nlevelpos>1 then
     -- Positive contours  
     pl.lsty(1)
-    --pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelpos, "pltr2", cgrid2)
+    pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelpos, "pltr2", cgrid2)
   end
    
   -- Draw outer boundary  
@@ -289,7 +289,7 @@ for i = 1, XPTS do
   cgrid2["xg"][i] = {}
   cgrid2["yg"][i] = {}
 	for j = 1, YPTS do
-    xx, yy = mypltr(i, j)
+    xx, yy = mypltr(i-1, j-1)
 
     argx = xx * math.pi/2
     argy = yy * math.pi/2
@@ -320,10 +320,10 @@ pl.setcontlabelparam(0.006, 0.3, 0.1, 0)
 -- Plot using 1d coordinate transform 
 pl.env(-1, 1, -1, 1, 0, 0)
 pl.col0(2)
---pl.cont(z, 1, XPTS, 1, YPTS, clevel, 11, "pltr1", cgrid1)
+pl.cont(z, 1, XPTS, 1, YPTS, clevel, "pltr1", cgrid1)
 pl.styl(mark, space)
 pl.col0(3)
---pl.cont(w, 1, XPTS, 1, YPTS, clevel, 11, "pltr1", cgrid1)
+pl.cont(w, 1, XPTS, 1, YPTS, clevel, "pltr1", cgrid1)
 pl.styl({}, {})
 pl.col0(1)
 pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")
@@ -331,11 +331,11 @@ pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 -- Plot using 2d coordinate transform 
 pl.env(-1, 1, -1, 1, 0, 0)
 pl.col0(2)
---pl.cont(z, 1, XPTS, 1, YPTS, clevel, "pltr2", cgrid2)
+pl.cont(z, 1, XPTS, 1, YPTS, clevel, "pltr2", cgrid2)
 
 pl.styl(mark, space)
 pl.col0(3)
---pl.cont(w, 1, XPTS, 1, YPTS, clevel, "pltr2", cgrid2)
+pl.cont(w, 1, XPTS, 1, YPTS, clevel, "pltr2", cgrid2)
 pl.styl({}, {})
 pl.col0(1)
 pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")

@@ -59,32 +59,33 @@ for i = 1, 5 do
   x = { 5 }
   y = { 5 }
   j = 2
-  -- n.b. the theta quantities multiplied by 2*M_PI/500 afterward so
+  -- n.b. the theta quantities multiplied by 2*math.pi/500 afterward so
   -- in fact per is interpreted as a percentage. 
 	theta1 = theta0 + 5 * per[i]
 	if i == 5 then theta1 = 500 end
   
 	for theta = theta0, theta1, dthet do
-	    x[j] = 5 + 3 * math.cos((2*math.pi/500)*theta)
-	    y[j] = 5 + 3 * math.sin((2*math.pi/500)*theta)
+	    x[j] = 5 + 3 * math.cos(2*math.pi/500*theta)
+	    y[j] = 5 + 3 * math.sin(2*math.pi/500*theta)
       j = j + 1
+      thetasave=theta
 	end
 	pl.col0(i)
 	pl.psty(math.mod((i + 2), 8) + 1)
 	pl.fill(x, y)
 	pl.col0(1)
 	pl.line(x, y)
-	just = (2*math.pi/500)*(theta0 + theta1)/2
-	dx = .25 * math.cos(just)
-	dy = .25 * math.sin(just)
+	just = 2*math.pi/500*(theta0 + theta1)/2
+	dx = 0.25 * math.cos(just)
+	dy = 0.25 * math.sin(just)
 	if (theta0 + theta1)<250 or (theta0 + theta1)>750 then
 	  just = 0
 	else 
     just = 1
   end
 
-	pl.ptex((x[(j-1)/2] + dx), (y[(j-1)/2] + dy), 1, 0, just, text[i]);
-	theta0 = theta1 - dthet
+	pl.ptex((x[(j-1)/2+1] + dx), (y[(j-1)/2+1] + dy), 1, 0, just, text[i]);
+	theta0 = thetasave
 end
 
 pl.font(2)

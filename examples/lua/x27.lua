@@ -37,7 +37,7 @@ function spiro( params )
 
   -- Fill the coordinates 
   windings = params[4] 
-  steps    = NPNT/windings 
+  steps    = math.floor(NPNT/windings)
   dphi     = 8*math.acos(-1)/steps 
 
   xmin = 0  -- This initialisation is safe! 
@@ -70,7 +70,7 @@ function spiro( params )
   pl.wind(xmin, xmax, ymin, ymax)
 
   pl.col0(1)
-  pl.line(xcoord, ycoord ) 
+  pl.line(xcoord, ycoord) 
 end
 
 
@@ -84,15 +84,15 @@ end
 
 -- R, r, p, N 
 params = {
-  { 21.0,  7.0,  7.0,  3.0 },  -- Deltoid 
-  { 21.0,  7.0, 10.0,  3.0 },
-  { 21.0, -7.0, 10.0,  3.0 },
-  { 20.0,  3.0,  7.0, 20.0 },
-  { 20.0,  3.0, 10.0, 20.0 },
-  { 20.0, -3.0, 10.0, 20.0 },
-  { 20.0, 13.0,  7.0, 20.0 },
-  { 20.0, 13.0, 20.0, 20.0 },
-  { 20.0,-13.0, 20.0, 20.0 } } 
+  { 21,  7,  7,  3 },  -- Deltoid 
+  { 21,  7, 10,  3 },
+  { 21, -7, 10,  3 },
+  { 20,  3,  7, 20 },
+  { 20,  3, 10, 20 },
+  { 20, -3, 10, 20 },
+  { 20, 13,  7, 20 },
+  { 20, 13, 20, 20 },
+  { 20,-13, 20, 20 } } 
 
 -- plplot initialization 
 

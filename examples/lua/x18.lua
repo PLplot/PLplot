@@ -39,38 +39,38 @@ function test_poly(k)
   pl.wind(-1, 1, -0.9, 1.1)
   pl.col0(1)
   pl.w3d(1, 1, 1, -1, 1, -1, 1, -1, 1, alt[k], az[k])
-  pl.box3("bnstu", "x axis", 0.0, 0,
-          "bnstu", "y axis", 0.0, 0,
-          "bcdmnstuv", "z axis", 0.0, 0)
+  pl.box3("bnstu", "x axis", 0, 0,
+          "bnstu", "y axis", 0, 0,
+          "bcdmnstuv", "z axis", 0, 0)
 
   pl.col0(2)
 
-  -- x = r math.sin(phi) math.cos(theta)
-  -- y = r math.sin(phi) math.sin(theta)
-  -- z = r math.cos(phi)
+  -- x = r sin(phi) cos(theta)
+  -- y = r sin(phi) sin(theta)
+  -- z = r cos(phi)
   -- r = 1 :=)
 
   for i=0, 19 do
     for j=0, 19 do
-	    x[0] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*i/20 )
-	    y[0] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*i/20 )
-	    z[0] = math.cos( math.pi*j/20.1 )
+	    x[1] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*i/20 )
+	    y[1] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*i/20 )
+	    z[1] = math.cos( math.pi*j/20.1 )
 	    
-	    x[1] = math.sin( math.pi*(j+1)/20.1 ) * math.cos( 2*math.pi*i/20 )
-	    y[1] = math.sin( math.pi*(j+1)/20.1 ) * math.sin( 2*math.pi*i/20 )
-	    z[1] = math.cos( math.pi*(j+1)/20.1 )
-	    
-	    x[2] = math.sin( math.pi*(j+1)/20.1 ) * math.cos( 2*math.pi*(i+1)/20 )
-	    y[2] = math.sin( math.pi*(j+1)/20.1 ) * math.sin( 2*math.pi*(i+1)/20 )
+	    x[2] = math.sin( math.pi*(j+1)/20.1 ) * math.cos( 2*math.pi*i/20 )
+	    y[2] = math.sin( math.pi*(j+1)/20.1 ) * math.sin( 2*math.pi*i/20 )
 	    z[2] = math.cos( math.pi*(j+1)/20.1 )
 	    
-	    x[3] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*(i+1)/20 )
-	    y[3] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*(i+1)/20 )
-	    z[3] = math.cos( math.pi*j/20.1 )
+	    x[3] = math.sin( math.pi*(j+1)/20.1 ) * math.cos( 2*math.pi*(i+1)/20 )
+	    y[3] = math.sin( math.pi*(j+1)/20.1 ) * math.sin( 2*math.pi*(i+1)/20 )
+	    z[3] = math.cos( math.pi*(j+1)/20.1 )
 	    
-	    x[4] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*i/20 )
-	    y[4] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*i/20 )
+	    x[4] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*(i+1)/20 )
+	    y[4] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*(i+1)/20 )
 	    z[4] = math.cos( math.pi*j/20.1 )
+	    
+	    x[5] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*i/20 )
+	    y[5] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*i/20 )
+	    z[5] = math.cos( math.pi*j/20.1 )
 
 	    pl.poly3( x, y, z, draw[k], 1 )
     end
@@ -110,14 +110,14 @@ z = {}
 
 -- From the mind of a sick and twisted physicist... 
 for i=1, NPTS do
-  z[i] = -1 + 2 * (i-1) / NPTS
+  z[i] = -1 + 2*(i-1)/NPTS
 
   -- Pick one ... 
   --	r  = 1 - (i-1) / NPTS
   r = z[i]
 
-  x[i] = r * math.cos( 2 * math.pi * 6 * (i-1) / NPTS )
-  y[i] = r * math.sin( 2 * math.pi * 6 * (i-1) / NPTS )
+  x[i] = r * math.cos( 12*math.pi*(i-1)/NPTS )
+  y[i] = r * math.sin( 12*math.pi*(i-1)/NPTS )
 end
 
 for k=1, 4 do
@@ -127,8 +127,8 @@ for k=1, 4 do
 	pl.col0(1)
 	pl.w3d(1, 1, 1, -1, 1, -1, 1, -1, 1, alt[k], az[k])
 	pl.box3("bnstu", "x axis", 0, 0,
-	       "bnstu", "y axis", 0, 0,
-	       "bcdmnstuv", "z axis", 0, 0)
+	        "bnstu", "y axis", 0, 0,
+	        "bcdmnstuv", "z axis", 0, 0)
 
 	pl.col0(2)
 

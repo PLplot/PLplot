@@ -264,7 +264,7 @@ img_max, img_min = pl.MinMax2dGrid(img_f)
 pl.col0(2)
 pl.env(0, width, 0, height, 1, -1)
 pl.lab("", "", "Reduced dynamic range image example")
---pl.imagefr(img_f, 0, width, 0, height, 0, 0, img_min + img_max*0.25, img_max - img_max*0.25)
+pl.imagefr(img_f, 0, width, 0, height, 0, 0, img_min + img_max*0.25, img_max - img_max*0.25)
 
 -- Draw a distorted version of the original image, showing its full dynamic range. 
 pl.env(0, width, 0, height, 1, -1)
@@ -281,7 +281,7 @@ stretch["stretch"] = 0.5
 -- mypltr. For compatibilty with other language bindings the same effect
 -- can be achieved by generating the transformed grid first and then
 -- using pltr2. 
--- plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch) 
+-- pl.imagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch) 
 
 cgrid2 = {}
 cgrid2["xg"] = {}
@@ -299,6 +299,6 @@ for i = 1, width+1 do
   end
 end
     
---plimagefr(img_f, 0, width, 0, height, 0, 0, img_min, img_max, "pltr2", cgrid2)
+--pl.imagefr(img_f, 0, width, 0, height, 0, 0, img_min, img_max, "pltr2", cgrid2)
 
 pl.plend()

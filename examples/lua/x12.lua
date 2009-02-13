@@ -25,17 +25,9 @@
 dofile("plplot_examples.lua")
 
 function pl.fbox(x0, y0)
-  x = {}
-  y = {}
+  x = { x0, x0, x0+1,x0+1 }
+  y = {  0, y0,   y0,   0 }
 
-  x[1] = x0;
-  y[1] = 0.;
-  x[2] = x0;
-  y[2] = y0;
-  x[3] = x0 + 1.;
-  y[3] = y0;
-  x[4] = x0 + 1.;
-  y[4] = 0.;
   pl.fill(x, y);
   pl.col0(1);
   pl.lsty(1);
@@ -66,8 +58,8 @@ pl.init()
 
 pl.adv(0)
 pl.vsta()
-pl.wind(1980.0, 1990.0, 0.0, 35.0)
-pl.box("bc", 1.0, 0, "bcnv", 10.0, 0)
+pl.wind(1980, 1990, 0, 35)
+pl.box("bc", 1, 0, "bcnv", 10, 0)
 pl.col0(2)
 pl.lab("Year", "Widget Sales (millions)", "#frPLplot Example 12")
 
@@ -76,11 +68,11 @@ y0 = { 5, 15, 12, 24, 28, 30, 20, 8, 12, 3}
 pl.scmap1l(1, pos, red, green, blue, { 0, 0, 0, 0 });
 
 for i=1, 10 do
-	pl.col0((i-1)/9.0);
+	pl.col1((i-1)/9.0);
 	pl.psty(0);
-	pl.fbox((1980. + i - 1), y0[i]);
-	pl.ptex((1980. + i - .5), (y0[i] + 1.), 1, 0, .5, tostring(y0[i]));
-	pl.mtex("b", 1.0, (i * .1 - .05), 0.5, tostring(1980+i-1));
+	pl.fbox((1980+i-1), y0[i]);
+	pl.ptex((1980+i-0.5), (y0[i]+1), 1, 0, 0.5, tostring(y0[i]));
+	pl.mtex("b", 1, (i*0.1-0.05), 0.5, tostring(1980+i-1));
 end
 
 pl.plend();

@@ -148,7 +148,7 @@ function plot3()
   
   for i = 1, npts do
     x[i] = xmin + (i-1)*60*60*24
-    y[i] = 1 + math.sin(2*math.pi*(i-1)/7) + math.exp(math.min(i-1,npts-i)/31)
+    y[i] = 1 + math.sin(2*math.pi*(i-1)/7) + math.exp(math.min(i-1,npts-i+1)/31)
   end
   pl.adv(0)
 

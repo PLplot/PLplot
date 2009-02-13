@@ -96,9 +96,9 @@ y3 = 0
 y4 = 0
 dt = 0.1
 
-for n = 1, nsteps do
+for n = 0, nsteps-1 do
 	for i = 0, 200000 do end
-	t = (n-1) * dt
+	t = n * dt
 	noise = pl.randd() - 0.5
 	y1 = y1 + noise
 	y2 = math.sin(t*math.pi/18)

@@ -51,9 +51,6 @@ zmax=1
 zmid = 0.5*(zmax + zmin)
 zrange = zmax - zmin
 
--- p1string must be exactly one character + the null termination 
---character. 
-p1string = "O"
 pstring = "The future of our civilization depends on software freedom."
 
 -- Allocate and define the minimal x, y, and z to insure 3D box 
@@ -304,8 +301,8 @@ omega = 0
 -- 3D function is a helix of the given radius and pitch 
 radius = 0.5
 pitch = 1/(2*math.pi)
---[[
-while(*pstring) {
+
+for i = 1, string.len(pstring) do
   sin_omega = math.sin(omega)
   cos_omega = math.cos(omega)
   xpos = xmid + radius*sin_omega
@@ -324,12 +321,10 @@ while(*pstring) {
   x_shear = 0
   y_shear = 0
   z_shear = 1
-  *p1string = *pstring
-  plptex3(xpos, ypos, zpos, x_inclination, y_inclination, z_inclination,
-          x_shear, y_shear, z_shear, 0.5, p1string)
-  pstring++
+  pl.ptex3(xpos, ypos, zpos, x_inclination, y_inclination, z_inclination,
+           x_shear, y_shear, z_shear, 0.5, string.sub(pstring, i, i))
   omega = omega + domega
-end --]]
+end
 
 -- Draw minimal 3D grid to finish defining the 3D box. 
 pl.mesh(x, y, z, pl.DRAW_LINEXY)

@@ -71,7 +71,7 @@ function circulation()
 	pl.env(xmin, xmax, ymin, ymax, 0, 0)
 	pl.lab("(x)", "(y)", "#frPLplot Example 22 - circulation")
 	pl.col0(2)
-	--pl.vect(u, v, 0, "pltr2", cgrid2 )
+	pl.vect(u, v, 0, "pltr2", cgrid2 )
 	pl.col0(1)
 end
 
@@ -122,7 +122,7 @@ function constriction()
 	pl.env(xmin, xmax, ymin, ymax, 0, 0)
 	pl.lab("(x)", "(y)", "#frPLplot Example 22 - constriction")
 	pl.col0(2)
-	--pl.vect(u, v, -0.5, "pltr2", cgrid2)
+	pl.vect(u, v, -0.5, "pltr2", cgrid2)
 	pl.col0(1)
 end
 
@@ -221,13 +221,13 @@ function potential()
   
   pl.col0(3)
   pl.lsty(2)
-  --pl.cont(z, 1, nr, 1, ntheta, clevel, "pltr2", cgrid2)
+  pl.cont(z, 1, nr, 1, ntheta, clevel, "pltr2", cgrid2)
   pl.lsty(1)
   pl.col0(1)
 
   -- Plot the vectors of the gradient of the potential 
   pl.col0(2)
-  --pl.vect(u, v, 25, "pltr2", cgrid2)
+  pl.vect(u, v, 25, "pltr2", cgrid2)
   pl.col0(1)
 
   -- Plot the perimeter of the cylinder 

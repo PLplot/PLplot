@@ -24,6 +24,24 @@
 -- initialise Lua bindings for PLplot examples.
 dofile("plplot_examples.lua")
 
+
+-- bitwise or operator from http://lua-users.org/wiki/BaseSixtyFour
+-- (c) 2006-2008 by Alex Kloss
+-- licensed under the terms of the LGPL2
+
+-- return single bit (for OR)
+function bit(x,b)
+	return (math.mod(x, 2^b) - math.mod(x,2^(b-1)) > 0)
+end
+
+-- logic OR for number values
+function lor(x,y)
+	result = 0
+	for p=1,8 do result = result + (((bit(x,p) or bit(y,p)) == true) and 2^(p-1) or 0) end
+	return result
+end
+
+
 ----------------------------------------------------------------------------
 -- cmap1_init1
 --
@@ -50,6 +68,7 @@ function cmap1_init(gray)
   pl.scmap1n(256)
   pl.scmap1l(0, i, h, l, s, { 0 } )  -- TODO: last table should actually be empty
 end
+
 
 ----------------------------------------------------------------------------
 -- main
@@ -156,12 +175,12 @@ for k=1, 2 do
     
     if ifshade==3 then --  magnitude colored plot with faceted squares 
       cmap1_init(0)
-      pl.surf3d(x, y, z, pl.MAG_COLOR or pl.FACETED, {})
+      pl.surf3d(x, y, z, lor(pl.MAG_COLOR, pl.FACETED), {})
     end
     
     if ifshade==4 then  -- magnitude colored plot with contours 
       cmap1_init(0)
-      pl.surf3d(x, y, z, pl.MAG_COLOR or pl.SURF_CONT or pl.BASE_CONT, clevel)
+      pl.surf3d(x, y, z, lor(lor(pl.MAG_COLOR, pl.SURF_CONT), pl.BASE_CONT), clevel)
     end
   end
 end
