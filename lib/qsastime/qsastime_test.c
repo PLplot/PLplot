@@ -71,7 +71,7 @@ int main()
   strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%4Z",  &MJD2, 0);
   printf("strfMJD:ISO equiv:  '%s'\n", buf);
 	
-  getYAD(&y1, &ifleapyear, &doy, &MJD1, 0);
+  getYAD(&y1, &ifleapyear, &doy, &MJD2, 0);
   setFromDOY(y, doy, hour, min, sec, &MJD1, 0);
 	
   zeroTest = getDiffSecs(&MJD1, &MJD2);
