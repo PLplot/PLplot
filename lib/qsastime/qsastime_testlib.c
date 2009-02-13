@@ -342,7 +342,6 @@ int main()
       // test reduced range of years that just barely misses overflowing
       // the MJD integer.  e.g., 6000000 overflows it. 
       for (year=-5000000; year<=5000000; year+=1) {
-	printf("\n");
 	ret = testlib_broken_down_time(year, month, day, hour, min, sec, 1, 0xffff, 0);
 	if(ret)
 	  return ret;
