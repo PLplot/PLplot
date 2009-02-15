@@ -21,7 +21,7 @@
 
 # Check if iargc() works
 IF(NOT DEFINED CMAKE_F77_CMD_LINE)
-  MESSAGE(STATUS "Check for using namespace support")
+  MESSAGE(STATUS "Check for f77 command line support")
   TRY_COMPILE(CMAKE_F77_CMD_LINE
     ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/cmake/modules/TestF77CmdLine.f
@@ -30,9 +30,10 @@ IF(NOT DEFINED CMAKE_F77_CMD_LINE)
 # Iargc support is broken for with g77 and shared libraries on cygwin
 # (as of 2005-12-05, but this problem has been known
 # for several years, see http://cygwin.com/ml/cygwin/2005-11/msg00891.html).
-  IF (CYGWIN AND CMAKE_COMPILER_IS_GNUG77)
+  IF (CYGWIN AND CMAKE_Fortran_COMPILER_ID MATCHES ".*g77.*")
+    MESSAGE(STATUS "Check for f77 command line support - turning off - ${CMAKE_Fortran_COMPILER_ID} ")
     SET (CMAKE_F77_CMD_LINE OFF)
-  ENDIF (CYGWIN AND CMAKE_COMPILER_IS_GNUG77)
+  ENDIF (CYGWIN AND CMAKE_Fortran_COMPILER_ID MATCHES ".*g77.*")
 
   IF (CMAKE_F77_CMD_LINE)
     MESSAGE(STATUS "Check for f77 command line support - found")
@@ -46,7 +47,7 @@ IF(NOT DEFINED CMAKE_F77_CMD_LINE)
     SET (F77_CMD_LINE 0 CACHE INTERNAL
       "Does the f77 compiler support command line arguments")
       FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
-      "Determining if the f77 compiler has command line argument support failedd with "
+      "Determining if the f77 compiler has command line argument support failed with "
       "the following output:\n${OUTPUT}\n\n")
   ENDIF (CMAKE_F77_CMD_LINE)
 ENDIF(NOT DEFINED CMAKE_F77_CMD_LINE)

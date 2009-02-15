@@ -13,9 +13,9 @@ c      arguments.)
 c     ran into one case (Cygwin) where under certain badly linked
 c     circumstances, iargc() could return -1
       if(narg.lt.0) then
-        call exit(1)
-      else
         call exit(0)
+      else
+        call exit(1)
       endif
       stop
       end
