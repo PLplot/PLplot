@@ -60,7 +60,7 @@ function read_img(fname)
   fp:seek("cur", -1)
   
   w, h, num_col = fp:read("*number", "*number", "*number")
-  if w==nil or h==nil or num_col==nil then -- width, height num colors 
+  if w==nil or h==nil or num_col==nil then -- width, height, num colors 
     fp:close()
     return 1
   end
@@ -69,17 +69,15 @@ function read_img(fname)
   imf = {}
 
   img = fp:read(w*h)
+  fp:close()
   if string.len(img)~=w*h then
-    fp:close()
     return 1
   end
-  fp:close()
 
   for i = 1, w do
     imf[i] = {}
     for j = 1, h do
-      index = (h-j)*w+i
-      imf[i][j] = img:byte(index) -- flip image up-down 
+      imf[i][j] = string.byte(img, (h-j)*w+i) -- flip image up-down 
     end
   end
 
