@@ -24,6 +24,7 @@
 
 */
 #include "qsastime_extra.h"
+#include "qsastimeP.h"
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
