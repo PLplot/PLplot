@@ -180,6 +180,7 @@ Naming rules:
   }
 }
 %typemap(freearg) PLINT *ArrayCkMinus1Null { LUA_FREE_ARRAY($1); }
+%typemap(default) PLINT *ArrayCkMinus1Null { $1=NULL; }
 
 
 /* No length but remember size to check others */
@@ -518,24 +519,73 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
   SWIG_arg++;
 } 
 
+%typemap(in, checkfn="lua_isstring") const char *message {
+  $1 = (char*)lua_tostring(L, $input);
+}
+
 
 /******************************************************************************
 				 Function calls
 ******************************************************************************/
 
-/* lua functions 
-%include <lua_fnptr.i>
-
 %{
-void mapform_fn(PLINT n, PLFLT* x, PLFLT* y)
+static lua_State* myL=NULL;
+static char mapform_funcstr[255];   
+
+void mapform(PLINT n, PLFLT* x, PLFLT* y)
 {
-  SWIGLUA_FN_GET(fn);
-  lua_pushnumber(fn.L, n);
-  SWIG_write_double_num_array(L, x, n)
-  SWIG_write_double_num_array(L, y, n)
-  lua_call(fn.L,3,0);    // 2 in, 1 out
+  PLFLT *xtemp, *ytemp;
+  int len, i;
+  
+  /* check Lua state */
+  if(myL==NULL) {
+    fprintf(stderr, "Lua state is not set!");
+    return;
+  }  
+  
+  /* push functions and arguments */
+  lua_getglobal(myL, mapform_funcstr);  /* function to be called */
+  lua_pushnumber(myL, n);   /* push 1st argument */
+  SWIG_write_double_num_array(myL, x, n);   /* push 2nd argument */
+  SWIG_write_double_num_array(myL, y, n);   /* push 3rd argument */
+
+  /* do the call (3 arguments, 2 result) */
+  if(lua_pcall(myL, 3, 2, 0) != 0)
+    fprintf(stderr, "error running function `%s': %s",
+            mapform_funcstr, lua_tostring(myL, -1));
+
+  /* retrieve results */
+  if(!lua_istable(myL, -2)) {
+    fprintf(stderr, "function `%s' must return a table as 1st result", mapform_funcstr);
+    return;
+  }
+  if(!lua_istable(myL, -1)) {
+    fprintf(stderr, "function `%s' must return a table as 2nd result", mapform_funcstr);
+    return;
+  }
+  xtemp = (PLFLT*)LUA_get_double_num_array_var(myL, -2, &len);
+  if(!xtemp || len!=n) {
+    fprintf(stderr, "function `%s' must return a table of length %d", mapform_funcstr, n);
+    return;
+  }
+  for(i=0; i<n; i++)
+    x[i]=xtemp[i];
+  LUA_FREE_ARRAY(xtemp);
+  
+  ytemp = (PLFLT*)LUA_get_double_num_array_var(myL, -1, &len);
+  if(!ytemp || len!=n) {
+    fprintf(stderr, "function `%s' must return a table of length %d", mapform_funcstr, n);
+    return;
+  }
+  for(i=0; i<n; i++)
+    y[i]=ytemp[i];
+  LUA_FREE_ARRAY(ytemp);
+  
+  lua_pop(myL, 2);  /* pop returned values */
+  
+  return;
 }
-%} */
+%}
 
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
@@ -549,6 +599,47 @@ typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
+
+static char mypltr_funcstr[255];   
+
+/* This is the callback that gets handed to the C code.
+   It, in turn, calls the Lua callback */
+void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
+{
+  *tx=0;
+  *ty=0;
+  
+  /* check Lua state */
+  if(myL==NULL) {
+    fprintf(stderr, "Lua state is not set!");
+    return;
+  }  
+  
+  /* push functions and arguments */
+  lua_getglobal(myL, mypltr_funcstr);  /* function to be called */
+  lua_pushnumber(myL, x);   /* push 1st argument */
+  lua_pushnumber(myL, y);   /* push 2nd argument */
+
+  /* do the call (2 arguments, 2 result) */
+  if(lua_pcall(myL, 2, 2, 0) != 0)
+    fprintf(stderr, "error running function `%s': %s",
+            mypltr_funcstr, lua_tostring(myL, -1));
+
+  /* retrieve results */
+  if(!lua_isnumber(myL, -2)) {
+    fprintf(stderr, "function `%s' must return a number as 1st result", mypltr_funcstr);
+    return;
+  }
+  if(!lua_isnumber(myL, -1)) {
+    fprintf(stderr, "function `%s' must return a number as 2nd result", mypltr_funcstr);
+    return;
+  }
+  *tx = lua_tonumber(myL, -2);
+  *ty = lua_tonumber(myL, -1);
+  lua_pop(myL, 2);  /* pop returned values */
+  
+  return;
+}
 %}  
 
 %typemap(in, numinputs=0) defined_func df {
@@ -559,8 +650,31 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   $1 = plfill;
 }
 
+%typemap(in) mapform_func mapform {
+  $1 = NULL;
+  mapform_funcstr[0]='\0';
+  myL=NULL;
+  
+  if(lua_isnil(L, $input)) {
+    $1 = NULL;
+  } else if(lua_isstring(L, $input)) {
+    $1 = mapform;
+    strncpy(mapform_funcstr, lua_tostring(L, $input), 255);
+    myL = L;
+  } else 
+    SWIG_fail_arg("$symname", $argnum, "$1_type")
+}
+%typemap(freearg) mapform_func mapform {
+  mapform_funcstr[0]='\0';
+  myL=NULL;
+}
+
+
+
 %typemap(in) pltr_func pltr {
   $1 = NULL;
+  mypltr_funcstr[0]='\0';
+  myL=NULL;
   
   if(lua_isstring(L, $input)) {
     const char* funcstr = lua_tostring(L, $input); 
@@ -571,14 +685,16 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
     } else if(strcmp("pltr2", funcstr)==0) {
       $1 = pltr2;
     } else {
-      lua_pushfstring(L, "Unknown pltr function: %s", funcstr);
-      SWIG_fail;
+      $1 = mypltr;
+      strncpy(mypltr_funcstr, funcstr, 255);
+      myL = L;
     }
-  } else if(lua_isfunction(L, $input)) {
-    lua_pushfstring(L, "Lua pltr function not supported right now.");
-    SWIG_fail;
   } else 
     SWIG_fail_arg("$symname", $argnum, "$1_type")
+}
+%typemap(freearg) pltr_func pltr {
+  mypltr_funcstr[0]='\0';
+  myL=NULL;
 }
 /* you can omit the pltr func */
 %typemap(default) pltr_func pltr {
@@ -720,6 +836,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   $1 = NULL;
 }
 %apply PLPointer OBJECT_DATA { PLPointer OBJECT_DATA_img };
+
 
 /* this typemap takes a sequence of strings and converts them for plstripc 
    also checks that previous Arrays were of length 4 
@@ -953,7 +1070,18 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 %rename(wid) plwid;
 %rename(wind) plwind;
 %rename(xormod) plxormod;
+%rename(warn) plwarn;
+%rename(abort) plabort;
 %rename(MinMax2dGrid) plMinMax2dGrid;
 
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i
+
+/* A handy way to issue warnings, if need be. */
+void
+plwarn(const char *message);
+
+/* Much the same as plwarn(), but appends ", aborting operation" to the
+   error message.  */
+void
+plabort(const char *message);
