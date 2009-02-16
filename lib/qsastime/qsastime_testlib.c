@@ -19,6 +19,7 @@
 
 */
 #include "qsastime.h"
+#include "qsastimeP.h"
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -90,21 +91,15 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
     } else {
       printf("Start of Gregorian proleptic inner test\n");
       printf("input and output (strftime), and output (strfMJD) date/time\n");
-      strftime(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", ptm);
-      printf("%s", buf);
     }
     printf("%0.4d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
   }
 
   setFromUT(year, month, day, hour, min, sec, pMJD1, forceJulian);
-  if(pMJD1->time_sec - (int)(pMJD1->time_sec) != 0.) {
-    printf("non-zero fractional part of pMJD1->time_sec value is %25.16f seconds so take early exit.\n", pMJD1->time_sec - (int)(pMJD1->time_sec));
-    return 2;
-  }
 
   /* Inner TEST01: compare setFromUT with my_timegm. */
   if(forceJulian == -1 && (inner_test_choice & TEST01)) {
-    secs_past_epoch1 = (time_t) (86400.*((double)pMJD1->base_day - (double) MJD_1970) + pMJD1->time_sec);
+    secs_past_epoch1 = (time_t) (86400.*((double)pMJD1->base_day - (double) MJD_1970) + (int)pMJD1->time_sec);
     secs_past_epoch = my_timegm(ptm);
     delta_secs = abs(secs_past_epoch1-secs_past_epoch);
     if(delta_secs !=0) {
@@ -116,9 +111,15 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
     }
   }
 
-  /* Inner TEST02: check minimal fields of strfMJD. */
+  /* Inner TEST02: check minimal fields of strfMJD (Julian) or 
+     strftime and strfMJD (Gregorian) */
   if(inner_test_choice & TEST02) {
-    strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", pMJD1, forceJulian);
+    if(forceJulian == -1) {
+      strftime(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", ptm);
+      if(verbose)
+	printf("%s", buf);
+    }
+    strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%.Z\n", pMJD1, forceJulian);
     if(verbose)
       printf("%s", buf);
   }
@@ -139,7 +140,7 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
   if(inner_test_choice & TEST03) {
     breakDownMJD(&year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, forceJulian);
     ifsamedate = (year1-year == 0 && ( ((!iffeb29 || ifleapday) && (month1-month == 0 && day1-day == 0)) || ((iffeb29 && !ifleapday) && (month1 == 2 && day1 == 1)) ));
-    ifsametime = (hour1-hour == 0 && min1-min ==0 && sec1-sec == 0.);
+    ifsametime = (hour1-hour == 0 && min1-min ==0 && fabs(sec1-sec) < 1.e-10);
   
     if(!(ifsamedate && ifsametime)) {
       printf("output date calculated with breakDownMJD = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1+1, day1, hour1, min1, sec1);
@@ -155,6 +156,111 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
     ifsametime = (ptm1->tm_hour == ptm->tm_hour && ptm1->tm_min == ptm->tm_min && ptm1->tm_sec == ptm->tm_sec);
   
     if(!(ifsamedate && ifsametime)) {
+      printf("test failed with inconsistency between my_timegm and its C library inverse gmtime");
+      return 1;
+    }
+  }
+  return 0;
+}
+
+int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int verbose)
+{
+  int year, month, day, hour, min;
+  double sec;
+  char buf[360];
+  int year1, month1, day1, hour1, min1;
+  double sec1;
+  struct tm tm;
+  struct tm *ptm = &tm;
+  struct tm tm1;
+  struct tm *ptm1 = &tm1;
+  time_t secs_past_epoch, secs_past_epoch1, delta_secs;
+  
+  MJDtime MJD1, *pMJD1 = &MJD1;
+  MJDtime MJD2, *pMJD2 = &MJD2;
+  static int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
+  double jd;
+  int ifleapyear, ifleapday, iffeb29, ifsamedate, ifsametime;
+  if(!(forceJulian == 1 || forceJulian == -1)) {
+    fprintf(stderr, "testlib_MJD: invalid forceJulian value\n");
+    exit(EXIT_FAILURE);
+  }
+
+  normalize_MJD(pMJD1, MJD);
+  secs_past_epoch = (time_t) (86400.*((double)pMJD1->base_day - (double) MJD_1970) + pMJD1->time_sec);
+  breakDownMJD(&year, &month, &day, &hour, &min, &sec, pMJD1, forceJulian);
+
+  ptm->tm_year = year-1900;
+  ptm->tm_mon = month;
+  ptm->tm_mday = day;
+  ptm->tm_hour = hour;
+  ptm->tm_min = min;
+  ptm->tm_sec = (int) sec;
+  if(verbose) {
+    if(forceJulian == 1) {
+      printf("Start of Julian proleptic inner test\n");
+      printf("input and output (strfMJD) date/time\n");
+    } else {
+      printf("Start of Gregorian proleptic inner test\n");
+      printf("input and output (strftime), and output (strfMJD) date/time\n");
+    }
+    printf("%0.4d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
+  }
+
+  /* Inner TEST01: compare breakDownMJD with gmtime. */
+  if(forceJulian == -1 && (inner_test_choice & TEST01)) {
+    ptm1 = gmtime(&secs_past_epoch);
+    if(!((ptm1->tm_year+1900) == year && ptm1->tm_mon == month && ptm1->tm_mday == day && ptm1->tm_hour == hour && ptm1->tm_min == min && ptm1->tm_sec == (int)sec)) { 
+      printf("date calculated with breakDownMJD = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
+      printf("date calculated with gmtime = %d-%02d-%02dT%02d:%02d:%02dZ\n", ptm1->tm_year+1900, ptm1->tm_mon+1, ptm1->tm_mday, ptm1->tm_hour, ptm1->tm_min, ptm1->tm_sec);
+
+      printf("test failed with inconsistency between breakDownMJD and gmtime\n");
+      return 1;
+    }
+  }
+
+  /* Inner TEST02: check minimal fields of strfMJD (Julian) or 
+     strftime and strfMJD (Gregorian) */
+  if(inner_test_choice & TEST02) {
+    if(forceJulian == -1) {
+      strftime(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", ptm);
+      if(verbose)
+	printf("%s", buf);
+    }
+    strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%.Z\n", pMJD1, forceJulian);
+    if(verbose)
+      printf("%s", buf);
+  }
+
+  if(verbose) {
+    jd = 2400000.5 + pMJD1->base_day + pMJD1->time_sec/86400.;
+    printf("JD = %25.16f days\n", jd);
+  }
+
+  if(forceJulian == 1)
+    ifleapyear = (year%4 == 0);
+  else
+    ifleapyear = ((year%4 == 0 && year%100 != 0) || year%400 == 0);
+  iffeb29 = month == 1 && day == 29;
+  ifleapday = (ifleapyear && iffeb29);
+
+  /* Inner TEST03: compare breakDownMJD with its inverse, setFromUT */
+  if(inner_test_choice & TEST03) {
+    setFromUT(year, month, day, hour, min, sec, pMJD2, forceJulian);
+    if(!(pMJD2->time_sec == pMJD1->time_sec && pMJD2->base_day == pMJD1->base_day)) {
+      printf("(normalized) input MJD components are = %d, %f\n", pMJD1->base_day, pMJD1->time_sec);
+      printf("(output pMJD2 components generated by setFromUT are = %d, %f\n", pMJD2->base_day, pMJD2->time_sec);
+      printf("test failed with inconsistency between breakDownMJD and setFromUT\n");
+      return 1;
+    }
+  }
+
+  /* Inner TEST04: compare breakDownMJD with its inverse, my_timegm */
+  if(forceJulian == -1 && (inner_test_choice & TEST04)) {
+    secs_past_epoch1 = my_timegm(ptm);
+    if(!(secs_past_epoch == secs_past_epoch1)) {
+      printf("secs_past_epoch calculated from input = %lld\n", secs_past_epoch); 
+      printf("secs_past_epoch calculated from my_timegm = %lld\n", secs_past_epoch1); 
       printf("test failed with inconsistency between my_timegm and its C library inverse gmtime");
       return 1;
     }
@@ -178,7 +284,7 @@ int main()
   struct tm *ptm = &tm;
   struct tm tm1;
   struct tm *ptm1 = &tm1;
-  time_t secs_past_epoch, secs_past_epoch1, delta_secs, max_delta_secs, secs, secs1, secs2;
+  int seconds;
   
   MJDtime MJD1, *pMJD1 = &MJD1;
   static int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
@@ -316,7 +422,60 @@ int main()
   }
 
   if(test_choice & TEST04) {
-    printf("Test 04 (non-verbose) of calendar dates for every year from -5000000 to 5000000\n");
+    printf("Test 04 of small second range near Year 0 (Julian)\n");
+
+    ret= setFromUT(0, 0, 1, 0, 0, 0., pMJD1, 1);
+    if(ret) {
+      printf("Test 04 cannot even start for Year 0 (Julian)");
+      return ret;
+    }
+
+    for (seconds=-5; seconds < 5; seconds++) {
+      printf("\n");
+      ret = testlib_MJD(pMJD1, 1, 0xffff, 1);
+      if(ret)
+	return ret;
+      pMJD1->time_sec ++;
+    }
+
+    printf("Test 04 of small second range near Year 0 (Gregorian)\n");
+
+
+    ret= setFromUT(0, 0, 1, 0, 0, 0., pMJD1, -1);
+    if(ret) {
+      printf("Test 04 cannot even start for Year 0 (Gregorian)");
+      return ret;
+    }
+
+    for (seconds=-5; seconds < 5; seconds++) {
+      printf("\n");
+      ret = testlib_MJD(pMJD1, -1, 0xffff, 1);
+      if(ret)
+	return ret;
+      pMJD1->time_sec ++;
+    }
+
+    printf("Test 04 of small second range near 2009-01-01 (Gregorian) when a leap second was inserted\n");
+
+
+    ret= setFromUT(2009, 0, 1, 0, 0, 0.1234567890123456-5., pMJD1, -1);
+    if(ret) {
+      printf("Test 04 cannot even start for Year 0 (Gregorian)");
+      return ret;
+    }
+
+    for (seconds=-5; seconds < 5; seconds++) {
+      printf("\n");
+      ret = testlib_MJD(pMJD1, -1, 0xffff, 1);
+      if(ret)
+	return ret;
+      pMJD1->time_sec ++;
+    }
+
+  }
+
+  if(test_choice & TEST05) {
+    printf("Test 05 (non-verbose) of calendar dates for every year from -5000000 to 5000000\n");
 
     for (date_choice=0; date_choice<5; date_choice++) {
       if(date_choice == 0) {
@@ -337,7 +496,7 @@ int main()
       }
       hour = 0;
       min = 0;
-      sec = 0.;
+      sec = 0.123456;
 
       // test reduced range of years that just barely misses overflowing
       // the MJD integer.  e.g., 6000000 overflows it. 
@@ -352,67 +511,27 @@ int main()
     }
   }
 
-  return 0;
-
-  max_delta_secs = 0;
-  ptm->tm_year = 2008-1900;
-  secs1 = my_timegm(ptm);
-  ptm->tm_year = 2010-1900;
-  secs2 = my_timegm(ptm);
-  for (secs=secs1; secs<=secs2; secs+=1) {
-    pMJD1->base_day = MJD_1970 + secs/86400;
-    pMJD1->time_sec = secs % 86400;
-    breakDownMJD(&year, &month, &day, &hour, &min, &sec, pMJD1, 0);
-    ptm = gmtime(&secs);
-    if(year-ptm->tm_year-1900 !=0 || month-ptm->tm_mon !=0 || day-ptm->tm_mday !=0 || hour-ptm->tm_hour !=0 || min-ptm->tm_min !=0 || ((int) sec)-ptm->tm_sec !=0) {
-      printf("ptm-> year+1900, month+1, day, hour, minute, sec = %d-%02d-%02dT%02d:%02d:%02dZ\n", ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
-      printf("non-zero (dyear, dmonth, dday, dhour, dmin, or d (int) sec) = (%d, %d, %d, %d, %d, %d)  so take early exit", year-ptm->tm_year-1900, month-ptm->tm_mon, day-ptm->tm_mday, hour-ptm->tm_hour, min-ptm->tm_min, ((int) sec)-ptm->tm_sec);
-      return 1;
+  if(test_choice & TEST06) {
+    printf("Test 06 (non-verbose) of all seconds from late 2007 to early 2009\n");
+    ret= setFromUT(2007, 11, 30, 0, 0, 0., pMJD1, -1);
+    if(ret) {
+      printf("Test 06 cannot even start");
+      return ret;
     }
-    if(sec - (int) sec !=0) {
-      printf("ptm-> year+1900, month+1, day, hour, minute, sec = %d-%02d-%02dT%02d:%02d:%02dZ\n", ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
-      printf("non-zero fractional part of sec = %f so take early exit\n", sec - (int) sec);
-      return 2;
-    }
-   
-    if(0) {
-    ptm->tm_year = year-1900;
-    //printf("year = %d\n", year);
 
-    // Test to compare setFromUT and my_timegm results.
-    setFromUT(year, month, day, hour, min, sec, pMJD1, -1);
-    secs_past_epoch1 = (time_t) (86400.*((double)pMJD1->base_day - (double) MJD_1970) + pMJD1->time_sec);
-    if(pMJD1->time_sec != 0.) {
-      printf("non-zero pMJD1->time_sec value is %25.16f seconds so take early exit.\n", pMJD1->time_sec);
-      return 2;
-    }
-    secs_past_epoch = my_timegm(ptm);
-    delta_secs = abs(secs_past_epoch1-secs_past_epoch);
-    max_delta_secs = (max_delta_secs > delta_secs ? max_delta_secs: delta_secs);
-    }
-     
-    if(0) {
-    printf("setFromUT secs_past_epoch = %lld seconds\n", secs_past_epoch1);
-    printf("my_timegm secs_past_epoch = %lld seconds\n", secs_past_epoch);
-    printf("delta secs_past_epoch = %d seconds\n", (secs_past_epoch1 - secs_past_epoch));
-    strftime(&(buf[0]), 360, "strftime gives %Y-%m-%d %H:%M:%S", ptm);
-    printf("%s\n", buf);
+    /* 430 days or ~ 37 million seconds should cover the complete next year for both Julian and Gregorian . */
+    for (seconds=0; seconds < 430*86400; seconds++) {
+      pMJD1->time_sec = (double)seconds;
+      ret = testlib_MJD(pMJD1, 1, 0xffff, 0);
+      if(ret)
+	return ret;
 
-    ptm = gmtime(&secs_past_epoch);
-    printf("ptm-> year, month, day, hour, minute, sec = %d-%d-%d %d:%d:%d\n", ptm->tm_year+1900, ptm->tm_mon, ptm->tm_mday, ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
-    
-    ptm->tm_mon = month;
-    ptm->tm_mday = day;
-    ptm->tm_hour = hour;
-    ptm->tm_min = min;
-    ptm->tm_sec = (int) sec;
-
-    /* next step for wide range of years loop alternative would overflow year so get out of loop this way. */
-    if(year==2000000000) {
-      break;
-      }
+      ret = testlib_MJD(pMJD1, -1, 0xffff, 0);
+      if(ret)
+	return ret;
     }
   }
-  printf("max_delta_secs = %lld\n", max_delta_secs);
+
+
   return 0;
 }
