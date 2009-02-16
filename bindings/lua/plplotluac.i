@@ -482,27 +482,48 @@ PLFLT** read_double_Matrix( lua_State* L, int index, int* nx, int *ny )
 }
 
 
-/* 2D array, check for consistency input / output version */
-%typemap(in) PLFLT **OutMatrixCk (int ii) {
-  int jj;
+/* Set Y length for later consistency checking, with trailing count */
+/* and 2D array, check for consistency input / output version */
+%typemap(in) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {
+  int temp, i;
   
-  $1 = read_double_Matrix(L, $input, &ii, &jj );
+  $1 = (PLFLT*)LUA_get_double_num_array_var(L, $input, &temp);
   if(!$1) SWIG_fail;
-  if( (ii!=Xlen) || (jj!=Ylen) ) {
-    lua_pushfstring(L, "Vectors must match matrix.");
-    SWIG_fail;
+  $2 = Ylen = temp;
+
+ 	$3=LUA_ALLOC_ARRAY(PLFLT*, Xlen);
+  if(!$3) SWIG_fail;
+	for (i = 0; i < Xlen; i++)
+    $3[i] = NULL;
+
+  for (i = 0; i < Xlen; i++) {
+    $3[i] = LUA_ALLOC_ARRAY(PLFLT, Ylen);
+    if(!$3[i]) SWIG_fail;
   }
 }
-%typemap(freearg) PLFLT **OutMatrixCk {
+%typemap(argout) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {
   int i;
   
-  if($1) {
-    for (i = 0; i < ii$argnum; i++)
-      LUA_FREE_ARRAY($1[i]);
-    LUA_FREE_ARRAY($1);
+  if($3) {
+    lua_newtable(L);
+    for (i = 0; i < Xlen; i++) {
+      SWIG_write_double_num_array(L, $3[i], Ylen);
+      lua_rawseti(L,-2,i+1); /* -1 is the inner table, -2 is the outer table*/
+    }
+    SWIG_arg++;
   }
 }
+%typemap(freearg) (PLFLT *ArrayY, PLINT ny, PLFLT **OutMatrixCk) {
+  int i;
+  
+  LUA_FREE_ARRAY($1);
 
+  if($3) {
+    for (i = 0; i < Xlen; i++)
+      LUA_FREE_ARRAY($3[i]);
+    LUA_FREE_ARRAY($3);
+  }
+}
 
 /******************************************************************************
 				 String returning functions
