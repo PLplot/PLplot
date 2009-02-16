@@ -60,7 +60,7 @@ function cmap1_init()
   s = { 0.8, 0.8 }
 
   pl.scmap1n(256)
-  pl.scmap1l(0, i, h, l, s, { 0 } )  -- TODO: last table should actually be empty
+  pl.scmap1l(0, i, h, l, s)
 end
 
 
@@ -81,9 +81,9 @@ end
 
 
 function create_data(pts)
-  x = {}
-  y = {}
-  z = {}
+  local x = {}
+  local y = {}
+  local z = {}
 
   for i = 1, pts do
     xt = (xM-xm)*pl.randd()
@@ -140,13 +140,6 @@ for i=2, pts do
 end
 
 xg, yg = create_grid(xp, yp) -- grid the data at 
-zg = {}
-for i = 1, xp do
-  zg[i] = {}
-  for j = 1, yp do
-    zg[i][j] = 0
-  end
-end
 clev = {}
 
 pl.col0(1)
@@ -162,7 +155,7 @@ pl.ssub(3, 2)
 for k = 1, 2 do
   pl.adv(0)
   for alg=1, 6 do
-    pl.griddata(x, y, z, xg, yg, zg, alg, opt[alg])
+    zg = pl.griddata(x, y, z, xg, yg, alg, opt[alg])
 
     --[[
        - CSA can generate NaNs (only interpolates?!).
@@ -178,7 +171,7 @@ for k = 1, 2 do
     if alg==pl.GRID_CSA or alg==pl.GRID_DTLI or alg==pl.GRID_NNLI or alg==pl.GRID_NNI then
       for i = 1, xp do
         for j = 1, yp do
-          if zg[i][j]==nil then -- average (IDW) over the 8 neighbors 
+          if zg[i][j]~=zg[i][j] then -- average (IDW) over the 8 neighbors 
             zg[i][j] = 0
             dist = 0
 
@@ -186,11 +179,11 @@ for k = 1, 2 do
               if ii<=xp then
                 for jj=j-1, j+1 do
                   if jj<=yp then
-                    if ii>=1 and jj>=1 and zg[ii][jj]~=nil then
+                    if ii>=1 and jj>=1 and zg[ii][jj]==zg[ii][jj] then
                       if (math.abs(ii-i) + math.abs(jj-j)) == 1 then 
                         d = 1
                       else
-                        d = 1.4141
+                        d = 1.4142
                       end
                       zg[i][j] = zg[i][j] + zg[ii][jj]/(d^2)
                       dist = dist + d
@@ -211,9 +204,9 @@ for k = 1, 2 do
 
     lzM, lzm = pl.MinMax2dGrid(zg)
 
-    lzm = math.min(lzm, zmin)
-    lzM = math.max(lzM, zmax)
-
+    if lzm~=lzm then lzm=zmin else lzm = math.min(lzm, zmin) end
+    if lzM~=lzM then lzM=zmax else lzM = math.max(lzM, zmax) end
+    
     -- Increase limits slightly to prevent spurious contours 
     -- due to rounding errors 
     lzm = lzm-0.01

@@ -46,7 +46,7 @@ function cmap1_init1()
                           -- lightness -- center, lightness -- high 
   s = { 1, 1, 1, 1 }  -- maximum saturation 
 
-  pl.scmap1l(0, i, h, l, s, {})
+  pl.scmap1l(0, i, h, l, s)
 end
 
 
@@ -66,7 +66,7 @@ function cmap1_init2()
   s = { 1, 0.5, 0.5, 1 }  -- saturation -- low, saturation -- center
                           -- saturation -- center, saturation -- high 
 
-  pl.scmap1l(0, i, h, l, s, {0, 0, 0, 0})
+  pl.scmap1l(0, i, h, l, s)
 end
 
 
@@ -94,8 +94,8 @@ function plot1()
   max_width = 2
 
   pl.psty(8)
-  --pl.shade1(z, -1, 1, -1, 1, shade_min, shade_max, sh_cmap, sh_color, sh_width,
-  --          min_color, min_width, max_color, max_width, 1)
+  pl.shade(z, -1, 1, -1, 1, shade_min, shade_max, sh_cmap, sh_color, sh_width,
+            min_color, min_width, max_color, max_width, 1)
 
   pl.col0(1)
   pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
@@ -137,8 +137,8 @@ function plot2()
     sh_color = i+5
     pl.pat(inc[i], del[i])
 
-    --pl.shade1(z, -1, 1, -1, 1, shade_min, shade_max, sh_cmap, sh_color, sh_width,
-    --         min_color, min_width, max_color, max_width, 1)
+    pl.shade(z, -1, 1, -1, 1, shade_min, shade_max, sh_cmap, sh_color, sh_width,
+             min_color, min_width, max_color, max_width, 1)
   end
 
   pl.col0(1)

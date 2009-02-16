@@ -65,7 +65,7 @@ pl.lab("Year", "Widget Sales (millions)", "#frPLplot Example 12")
 
 y0 = { 5, 15, 12, 24, 28, 30, 20, 8, 12, 3}
 
-pl.scmap1l(1, pos, red, green, blue, { 0, 0, 0, 0 });
+pl.scmap1l(1, pos, red, green, blue);
 
 for i=1, 10 do
 	pl.col1((i-1)/9.0);

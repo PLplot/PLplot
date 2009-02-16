@@ -99,7 +99,7 @@ pl.scmap1(r1, g1, b1)
 pl.scmap1a(r1, g1, b1, a1)
 
 level2 = pl.glevel()
-print("level parameter = %d" .. level2)
+print("level parameter = " .. level2)
 if level2~=1 then
   io.stderr:write("plglevel test failed.\n")
   status = 1

@@ -46,7 +46,7 @@ clevel = { -1, -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1}
 -- Transformation function 
 tr = { XSPA, 0, -1, 0, YSPA, -1 }
 
-function mypltr(x, y, pltr_data)
+function mypltr(x, y)
 	tx = tr[1] * x + tr[2] * y + tr[3]
 	ty = tr[4] * x + tr[5] * y + tr[6]
 	
@@ -308,10 +308,10 @@ pl.setcontlabelformat(4, 3)
 pl.setcontlabelparam(0.006, 0.3, 0.1, 1)
 pl.env(-1, 1, -1, 1, 0, 0)
 pl.col0(2)
---pl.cont(z, 1, XPTS, 1, YPTS, clevel, mypltr)
+pl.cont(z, 1, XPTS, 1, YPTS, clevel, "mypltr")
 pl.styl(mark, space)
 pl.col0(3)
---pl.cont(w, 1, XPTS, 1, YPTS, clevel, mypltr)
+pl.cont(w, 1, XPTS, 1, YPTS, clevel, "mypltr")
 pl.styl({}, {})
 pl.col0(1)
 pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")

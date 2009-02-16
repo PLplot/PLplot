@@ -39,7 +39,7 @@ PERIMETERPTS = 100
 -- Transformation function 
 tr = {}
 
-function mypltr(x, y, pltr_data)
+function mypltr(x, y)
 	tx = tr[1] * x + tr[2] * y + tr[3]
 	ty = tr[4] * x + tr[5] * y + tr[6]
 	

@@ -11,22 +11,17 @@ YDIM = 220
 
 dbg = 0
 nosombrero = 0
-nointeractive = 1
+nointeractive = 0
 f_name=""
-
---stretch_data = {
---   xmin, xmax, ymin, ymax
---   stretch
---}
 
 
 -- Transformation function 
-function mypltr( x,  y,  s)
-  x0 = (s["xmin"] + s["xmax"])*0.5
-  y0 = (s["ymin"] + s["ymax"])*0.5
-  dy = (s["ymax"]-s["ymin"])*0.5
-  tx = x0 + (x0-x)*(1.0 - s["stretch"]*math.cos((y-y0)/dy*math.pi*0.5))
-  ty = y
+function mypltr(x,  y)
+  local x0 = (stretch["xmin"] + stretch["xmax"])*0.5
+  local y0 = (stretch["ymin"] + stretch["ymax"])*0.5
+  local dy = (stretch["ymax"]-stretch["ymin"])*0.5
+  local tx = x0 + (x0-x)*(1 - stretch["stretch"]*math.cos((y-y0)/dy*math.pi*0.5))
+  local ty = y
     
   return tx, ty
 end
@@ -84,7 +79,7 @@ function read_img(fname)
     imf[i] = {}
     for j = 1, h do
       index = (h-j)*w+i
-      imf[i][j] = string.byte(img, index) -- flip image up-down 
+      imf[i][j] = img:byte(index) -- flip image up-down 
     end
   end
 
@@ -116,13 +111,13 @@ end
 
 -- set gray colormap 
 function gray_cmap(num_col)
-  r = { 0, 1 }
-  g = { 0, 1 }
-  b = { 0, 1 }
-  pos = { 0, 1 }
+  local r = { 0, 1 }
+  local g = { 0, 1 }
+  local b = { 0, 1 }
+  local pos = { 0, 1 }
 
   pl.scmap1n(num_col)
-  pl.scmap1l(1, pos, r, g, b, { 0 })
+  pl.scmap1l(1, pos, r, g, b)
 end
 
 
@@ -149,6 +144,8 @@ pl.parseopts(arg, pl.PL_PARSE_FULL)
 -- Initialize plplot 
 pl.init()
 
+z={}
+
 -- view image border pixels 
 if dbg~=0 then
   pl.env(1, XDIM, 1, YDIM, 1, 1) -- no plot box 
@@ -172,6 +169,7 @@ end
 
 -- sombrero-like demo 
 if nosombrero==0 then
+  r = {}
   pl.col0(2) -- draw a yellow plot box, useful for diagnostics! :( 
   pl.env(0, 2*math.pi, 0, 3*math.pi, 1, -1)
 
@@ -187,7 +185,7 @@ if nosombrero==0 then
     z[i] = {}
     for j=1, YDIM do
       r[i][j] = math.sqrt(x[i]^2+y[j]^2)+1e-3
-      z[i][j] = math.sin(r[i][j])/(r[i][j])
+      z[i][j] = math.sin(r[i][j])/r[i][j]
     end
   end
 
@@ -208,9 +206,7 @@ status, img_f, width, height, num_col = read_img("lena.pgm")
 if status~=0 then 
   status, img_f, width, height, num_col = read_img("../lena.pgm")
   if status~=0 then 
-    -- pl.abort("No such file")  TODO
-    print("No such file")
-    print( status, width, height )
+    pl.abort("No such file")
     pl.plend()
     os.exit()
   end
@@ -220,7 +216,7 @@ end
 gray_cmap(num_col)
 
 -- display Lena 
-pl.env(1., width, 1., height, 1, -1)
+pl.env(1, width, 1, height, 1, -1)
 
 if nointeractive==0 then
   pl.lab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Lena...")
@@ -293,12 +289,13 @@ for i = 1, width+1 do
   cgrid2["xg"][i] = {}
   cgrid2["yg"][i] = {}
   for j = 1, height+1 do
-    xx, yy = mypltr(i, j, stretch)
+    xx, yy = mypltr(i, j)
     cgrid2["xg"][i][j] = xx
     cgrid2["yg"][i][j] = yy
   end
 end
     
 --pl.imagefr(img_f, 0, width, 0, height, 0, 0, img_min, img_max, "pltr2", cgrid2)
+pl.imagefr(img_f, 0, width, 0, height, 0, 0, img_min, img_max, "mypltr")
 
 pl.plend()

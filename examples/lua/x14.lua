@@ -209,7 +209,7 @@ YSPA = 2/(YPTS-1)
 
 tr = { XSPA, 0, -1, 0, YSPA, -1 }
 
-function mypltr(x, y, pltr_data)
+function mypltr(x, y)
   tx = tr[1]*x + tr[2]*y + tr[3]
   ty = tr[4]*x + tr[5]*y + tr[6]
     
@@ -239,10 +239,10 @@ function plot5()
 
   pl.env(-1, 1, -1, 1, 0, 0)
   pl.col0(2)
-  --pl.cont(z, 1, XPTS, 1, YPTS, clevel, mypltr)
+  pl.cont(z, 1, XPTS, 1, YPTS, clevel, "mypltr")
   pl.styl(mark, space)
   pl.col0(3)
-  --pl.cont(w, 1, XPTS, 1, YPTS, clevel, mypltr)
+  pl.cont(w, 1, XPTS, 1, YPTS, clevel, "mypltr")
   pl.col0(1)
   pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")
   pl.flush()

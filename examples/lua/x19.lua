@@ -41,6 +41,8 @@ function mapform19(n, x, y)
     x[i] = xp
     y[i] = yp
   end
+  
+  return x, y
 end
 
 --------------------------------------------------------------------------
@@ -68,7 +70,7 @@ maxx = 190+360
 
 pl.col0(1)
 pl.env(minx, maxx, miny, maxy, 1, -1)
-pl.map(NULL, "usaglobe", minx, maxx, miny, maxy)
+pl.map(nil, "usaglobe", minx, maxx, miny, maxy)
 
 -- The Americas 
 
@@ -77,7 +79,7 @@ maxx = 340
 
 pl.col0(1)
 pl.env(minx, maxx, miny, maxy, 1, -1)
-pl.map(NULL, "usaglobe", minx, maxx, miny, maxy)
+pl.map(nil, "usaglobe", minx, maxx, miny, maxy)
 
 -- Polar, Northern hemisphere 
 
@@ -85,8 +87,8 @@ minx = 0
 maxx = 360
 
 pl.env(-75., 75., -75., 75., 1, -1)
---pl.map(mapform19, "globe", minx, maxx, miny, maxy)
+pl.map("mapform19", "globe", minx, maxx, miny, maxy)
 
 pl.lsty(2)
---pl.meridians(mapform19, 10, 10, 0, 360, -10, 80)
+pl.meridians("mapform19", 10, 10, 0, 360, -10, 80)
 pl.plend()
