@@ -36,43 +36,38 @@ function read_img(fname)
   end
 
   -- version
-  ver = fp:read("*line")
+  local ver = fp:read("*line")
   
-  if ver==nil then   -- version 
-    fp:close()
-    return 1
-  end
-
   if ver~="P5" then -- I only understand this! 
     fp:close()
     return 1
   end
 
-  c = fp:read(1)
-  while c=="#" do
-    com = fp:read("*line")
-    if com==nil then   -- version 
+  while fp:read(1)=="#" do
+    local com = fp:read("*line")
+    if com==nil then   
       fp:close()
       return 1
     end
-    c = fp:read(1)
   end
   fp:seek("cur", -1)
   
-  w, h, num_col = fp:read("*number", "*number", "*number")
+  local w, h, num_col = fp:read("*number", "*number", "*number")
   if w==nil or h==nil or num_col==nil then -- width, height, num colors 
     fp:close()
     return 1
   end
+  
+  -- read the rest of the line (only EOL)
+  fp:read("*line")
 
-  img = {}
-  imf = {}
-
-  img = fp:read(w*h)
+  local img = fp:read(w*h)
   fp:close()
-  if string.len(img)~=w*h then
+  if string.len(img)~=(w*h) then
     return 1
   end
+
+  local imf = {}
 
   for i = 1, w do
     imf[i] = {}
@@ -87,8 +82,8 @@ end
 
 -- save plot 
 function save_plot(fname)   
-  cur_strm = pl.gstrm() -- get current stream 
-  new_strm = pl.mkstrm() -- create a new one  
+  local cur_strm = pl.gstrm() -- get current stream 
+  local new_strm = pl.mkstrm() -- create a new one  
     
   pl.sdev("psc") -- new device type. Use a known existing driver 
   pl.sfnam(fname) -- file name 
