@@ -50,8 +50,8 @@
 typedef struct MJDtimeStruct
 {
   /*
-     MJD starts at 0h, so truncating MJD always gives the same day whatever the time (unlike JD).
-     The MJD base day is arbitrary, i.e. seconds can be greater than one day or even negative.
+    MJD starts at 0h, so truncating MJD always gives the same day whatever the time (unlike JD).
+    The MJD base day is arbitrary, i.e. seconds can be greater than one day or even negative.
   */
 	
   int base_day; /* integer part of MJD used as default */
@@ -59,10 +59,54 @@ typedef struct MJDtimeStruct
 	
 }MJDtime;
 
+typedef struct QSASConfigStruct
+{
+
+  /* Values used to define the transformation between broken down time
+     and continuous time for the public API of libqsastime, 
+     continuous_time_qsas, broken_down_time_qsas, and strfqsas.*/
+     
+  /* scale multiplies the continuous time variable to convert the units to
+     days. */
+  double scale;
+
+  /* offset1 and offset2 (in days) specifies the amount to add to the
+     scaled continuous time to derive the MJD time value that is used
+     internally by libqsastime.  Normally epoch1 is an integral
+     value (which can be exactly stored in a double for a very wide
+     range of integers) and offset2 is normally a non-integral value
+     whose absolute value is less than 1.  This arrangement allows the
+     continuous time variable in the API to be stored as a single double
+     without compromising numerical precision if epoch1 and epoch2
+     are chosen wisely. */
+  double offset1, offset2;
+
+  /* The various bits of correction are used as independent switches to 
+     control optional additional corrections which define the
+     transformation between continuous time and broken-down time.
+
+     If bit 0 (the lowest order bit of correction) is 1 the Julian
+     proleptic calendar is used for broken-down time. Otherwise the
+     Gregorian proleptic calendar is used for broken-down time.
+
+     If bit 1 is 1, an additional correction for the difference
+     between atomic-clock based times and UTC is applied to the broken-down
+     times.
+
+     We reserve other bits of correction for future use. */
+  int correction;
+  
+}QSASConfig;
+
+QSASTIMEDLLIMPEXP_DATA(QSASConfig) *qsasconfig;
 
 /* externally accessible functions */
+QSASTIMEDLLIMPEXP int ctimeqsas(int year, int month, int day, int hour, int min, double sec, double * ctime);
+QSASTIMEDLLIMPEXP void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec, double ctime);
+QSASTIMEDLLIMPEXP size_t strfqsas(char * buf, size_t len, const char *format, double ctime);
+
+/* Soon to move to qsastimeP.h */
 QSASTIMEDLLIMPEXP int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
 QSASTIMEDLLIMPEXP void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian);
 QSASTIMEDLLIMPEXP size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian);
-
 #endif
