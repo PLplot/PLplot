@@ -1204,7 +1204,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     PLFLT pos, tn, tp, offset, height;
     PLFLT factor, tstart;
     const char *timefmt;
-    MJDtime tm;
+    double tm;
     double t;
 
 /* Set plot options from input */
@@ -1252,8 +1252,10 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
             if (ldx) {
               t = (double) tn;
-              setFromUT(1970,0,1,0,0,t,&tm,0);
-              strfMJD(string, STRING_LEN, timefmt, &tm, 0);
+	      configqsas(0., 0., 0., 0x0);
+              ctimeqsas(1970,0,1,0,0,t,&tm);
+              strfqsas(string, STRING_LEN, timefmt, tm);
+	      closeqsas();
             }
             else {
 	      plform(tn, xscale, xprec, string, STRING_LEN, llx, lfx);
@@ -1301,8 +1303,10 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
             if (ldy) {
               t = (double) tn;
-              setFromUT(1970,0,1,0,0,t,&tm,0);
-              strfMJD(string, STRING_LEN, timefmt, &tm, 0);
+	      configqsas(0., 0., 0., 0x0);
+              ctimeqsas(1970,0,1,0,0,t,&tm);
+              strfqsas(string, STRING_LEN, timefmt, tm);
+	      closeqsas();
             }
             else {
 	      plform(tn, yscale, yprec, string, STRING_LEN, lly, lfy);
