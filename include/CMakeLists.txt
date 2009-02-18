@@ -73,4 +73,7 @@ plplotcanvas.h
 ${CMAKE_CURRENT_BINARY_DIR}/plConfig.h
 ${CMAKE_CURRENT_BINARY_DIR}/plDevs.h
 )
+if(MSVC)
+	set(include_INSTALLED_HEADERS ${include_INSTALLED_HEADERS} dirent_msvc.h)
+endif(MSVC)
 install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${INCLUDE_DIR})
