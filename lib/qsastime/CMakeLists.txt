@@ -59,18 +59,23 @@ RUNTIME DESTINATION ${BIN_DIR}
 
 # qsastime_extra.[ch] provides helper functions for qsastime_test that should
 # not be part of the library.
+# Add in qsastime.c rather than use the library because don't want
+# to make private library API visible.
 
-add_executable(qsastime_test qsastime_test.c qsastime_extra.c)
-target_link_libraries(qsastime_test qsastime)
+add_executable(qsastime_test qsastime_test.c qsastime_extra.c qsastime.c)
 
 # Routine for testing just the library functions against their library
 # inverses (to test self-consistency when such inverses exist) and also 
 # equivalent C library routines.
-# N.B. the routine immediately errors out if sizeof(time_t) < 8 or
+# N.B. the routine immediately errors out at run time if sizeof(time_t) < 8 or
 # sizeof(int) !=4.  The time_t constraint is because we want access to a large
 # C library date range to do the tests.  The int constraint is so we
 # emulate library results on 32-bit systems.
 # The test executable normally only passes these two criteria for
 # 64-bit platforms.
-add_executable(qsastime_testlib qsastime_testlib.c)
-target_link_libraries(qsastime_testlib qsastime ${MATH_LIB})
+# Add in qsastime.c rather than use the library because don't want
+# to make private library API visible.
+add_executable(qsastime_testlib qsastime_testlib.c qsastime.c)
+if(MATH_LIB)
+  target_link_libraries(qsastime_testlib ${MATH_LIB})
+endif(MATH_LIB)
