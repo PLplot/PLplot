@@ -52,9 +52,10 @@
    the year 0 is a leap year in both calendars.*/
 #define MJD_0001J -678577
 #define MJD_0001G -678575
+/* MJD for Jan 01, 1970 00:00:00 Gregorian, the Unix epoch.*/
+#define MJD_1970 40587
 
 static const double SecInDay = 86400; /* we ignore leap seconds */
-static const int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
 static const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 static const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
 	

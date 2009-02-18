@@ -41,6 +41,8 @@
 #define TEST14 0x2000
 #define TEST15 0x4000
 #define TEST16 0x8000
+/* MJD for Jan 01, 1970 00:00:00 Gregorian, the Unix epoch.*/
+#define MJD_1970 40587
 
 /* Recommended (by Linux timegm man page) POSIX equivalent of Linux timegm C library function */
 time_t my_timegm(struct tm *tm)
@@ -72,7 +74,6 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
   time_t secs_past_epoch, secs_past_epoch1, delta_secs;
   
   MJDtime MJD1, *pMJD1 = &MJD1;
-  static int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
   double jd;
   int ifleapyear, ifleapday, iffeb29, ifsamedate, ifsametime;
   if(!(forceJulian == 1 || forceJulian == -1)) {
@@ -179,7 +180,6 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
   
   MJDtime MJD1, *pMJD1 = &MJD1;
   MJDtime MJD2, *pMJD2 = &MJD2;
-  static int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
   double jd;
   int ifleapyear, ifleapday, iffeb29, ifsamedate, ifsametime;
   if(!(forceJulian == 1 || forceJulian == -1)) {
@@ -288,7 +288,6 @@ int main()
   int seconds;
   
   MJDtime MJD1, *pMJD1 = &MJD1;
-  static int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
   double jd;
   int test_choice, date_choice, ret; 
 
