@@ -81,11 +81,11 @@ typedef struct QSASConfigStruct
      are chosen wisely. */
   double offset1, offset2;
 
-  /* The various bits of correction are used as independent switches to 
+  /* The various bits of ccontrol are used as independent switches to 
      control optional additional corrections which define the
      transformation between continuous time and broken-down time.
 
-     If bit 0 (the lowest order bit of correction) is 1 the Julian
+     If bit 0 (the lowest order bit of ccontrol) is 1 the Julian
      proleptic calendar is used for broken-down time. Otherwise the
      Gregorian proleptic calendar is used for broken-down time.
 
@@ -93,20 +93,18 @@ typedef struct QSASConfigStruct
      between atomic-clock based times and UTC is applied to the broken-down
      times.
 
-     We reserve other bits of correction for future use. */
-  int correction;
+     We reserve other bits of ccontrol for future use. */
+  int ccontrol;
   
 }QSASConfig;
 
 QSASTIMEDLLIMPEXP_DATA(QSASConfig) *qsasconfig;
 
 /* externally accessible functions */
+QSASTIMEDLLIMPEXP void configqsas(double scale, double offset1, double offset2, int ccontrol);
+QSASTIMEDLLIMPEXP void closeqsas(void);
 QSASTIMEDLLIMPEXP int ctimeqsas(int year, int month, int day, int hour, int min, double sec, double * ctime);
 QSASTIMEDLLIMPEXP void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec, double ctime);
 QSASTIMEDLLIMPEXP size_t strfqsas(char * buf, size_t len, const char *format, double ctime);
 
-/* Soon to move to qsastimeP.h */
-QSASTIMEDLLIMPEXP int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
-QSASTIMEDLLIMPEXP void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian);
-QSASTIMEDLLIMPEXP size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian);
 #endif
