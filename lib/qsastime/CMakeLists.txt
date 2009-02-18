@@ -34,6 +34,9 @@ if(BUILD_SHARED_LIBS)
 endif(BUILD_SHARED_LIBS)
 
 add_library(qsastime ${qsastime_LIB_SRCS})
+if(MATH_LIB)
+  target_link_libraries(qsastime ${MATH_LIB})
+endif(MATH_LIB)
 set_target_properties(
 qsastime
 PROPERTIES
@@ -41,8 +44,6 @@ SOVERSION ${qsastime_SOVERSION}
 VERSION ${qsastime_VERSION}
 INSTALL_NAME_DIR "${LIB_DIR}"
 )
-
-
 set(qsastime_INSTALLED_HEADERS
    qsastime.h
    qsastimedll.h
@@ -72,4 +73,4 @@ target_link_libraries(qsastime_test qsastime)
 # The test executable normally only passes these two criteria for
 # 64-bit platforms.
 add_executable(qsastime_testlib qsastime_testlib.c)
-target_link_libraries(qsastime_testlib qsastime)
+target_link_libraries(qsastime_testlib qsastime ${MATH_LIB})
