@@ -79,6 +79,12 @@ static PyObject * pl_expose(PyObject *self, PyObject *args)
 #ifdef ENABLE_tk
 static char doc_Pltk_init[]="Initialize the Pltk Tcl extension.";
 
+/*--------------------------------------------------------------------------*\
+ * A python module method for initializing the PLtk extension.  This method
+ * must be called from python with a single argument, which is the address of
+ * the Tcl interpreter into which the Pltk extension is to be injected.
+\*--------------------------------------------------------------------------*/
+
 static PyObject *pl_Pltk_init(PyObject *self, PyObject *args)
 {
     printf( "in pl_Pltk_init()\n" );
