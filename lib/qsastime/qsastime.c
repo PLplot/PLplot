@@ -38,6 +38,7 @@
 	
 */
 #include <ctype.h>
+#include <math.h>
 #include "qsastime.h"
 #include "qsastimeP.h"
 /* MJD for 0000-01-01 (correctly Jan 01, BCE 1) */
@@ -58,6 +59,111 @@ static int MJD_1970 = 40587; /* MJD for Jan 01, 1970 00:00:00 */
 static const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 static const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
 	
+void configqsas(double scale, double offset1, double offset2, int ccontrol)
+{
+  /* Configure the transformation between continuous time and broken-down time
+     that is used for ctimeqsas, btimeqsas, and strfqsas. */
+
+  /* Allocate memory for qsasconfig if that hasn't been done by a 
+     previous call. */
+  if(qsasconfig == NULL) {
+    qsasconfig = (QSASConfig *) malloc((size_t) sizeof(QSASConfig));
+    if (qsasconfig == NULL) {
+      fprintf(stderr, "configqsas: out of memory\n");
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  if(scale != 0.) {
+    qsasconfig->scale = scale;
+    qsasconfig->offset1 = offset1;
+    qsasconfig->offset2 = offset2;
+    qsasconfig->ccontrol = ccontrol;
+  } else {
+    /* if scale is 0., then use default values.  Currently, that
+       default is continuous time (stored as a double) is seconds since
+       1970-01-01 while broken-down time is Gregorian with no other
+       additional corrections. */
+    qsasconfig->scale = 1./86400.;
+    qsasconfig->offset1 = (double) MJD_1970;
+    qsasconfig->offset2 = 0.;
+    qsasconfig->ccontrol = 0x0;
+  }
+}
+
+void closeqsas(void)
+{
+  /* Close library if it has been opened. */
+  if(qsasconfig != NULL) {
+    free((void *) qsasconfig);
+    qsasconfig = NULL;
+  }
+}
+
+int ctimeqsas(int year, int month, int day, int hour, int min, double sec, double * ctime){
+  MJDtime MJD_value, *MJD=&MJD_value;
+  int forceJulian, ret;
+  double integral_offset1, integral_offset2, integral_scaled_ctime;
+
+  if(qsasconfig == NULL) {
+    fprintf(stderr, "libqsastime (ctimeqsas) ERROR: configqsas must be called first.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  if(qsasconfig->ccontrol & 0x1)
+    forceJulian = 1;
+  else
+    forceJulian = -1;
+
+  ret = setFromUT(year, month, day, hour, min, sec, MJD, forceJulian);
+  if(ret)
+    return ret;
+  *ctime = (((double)(MJD->base_day) - qsasconfig->offset1) - qsasconfig->offset2 + MJD->time_sec/(double) SecInDay)/qsasconfig->scale;
+  return 0;
+
+}
+
+void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec, double ctime){
+  MJDtime MJD_value, *MJD=&MJD_value;
+  int forceJulian;
+  double integral_offset1, integral_offset2, integral_scaled_ctime;
+
+  if(qsasconfig == NULL) {
+    fprintf(stderr, "libqsastime (btimeqsas) ERROR: configqsas must be called first.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  MJD->time_sec = SecInDay*(modf(qsasconfig->offset1, &integral_offset1) + modf(qsasconfig->offset2, &integral_offset2) + modf(ctime*qsasconfig->scale, &integral_scaled_ctime));
+  MJD->base_day = (int) (integral_offset1+integral_offset2+integral_scaled_ctime);
+
+  if(qsasconfig->ccontrol & 0x1)
+    forceJulian = 1;
+  else
+    forceJulian = -1;
+
+  breakDownMJD(year, month, day, hour, min, sec, MJD, forceJulian);
+}
+
+size_t strfqsas(char * buf, size_t len, const char *format, double ctime){
+  MJDtime MJD_value, *MJD=&MJD_value;
+  int forceJulian;
+  double integral_offset1, integral_offset2, integral_scaled_ctime;
+
+  if(qsasconfig == NULL) {
+    fprintf(stderr, "libqsastime (strfqsas) ERROR: configqsas must be called first.\n");
+    exit(EXIT_FAILURE);
+  }
+  MJD->time_sec = SecInDay*(modf(qsasconfig->offset1, &integral_offset1) + modf(qsasconfig->offset2, &integral_offset2) + modf(ctime*qsasconfig->scale, &integral_scaled_ctime));
+  MJD->base_day = (int) (integral_offset1+integral_offset2+integral_scaled_ctime);
+
+  if(qsasconfig->ccontrol & 0x1)
+    forceJulian = 1;
+  else
+    forceJulian = -1;
+
+  return strfMJD(buf, len, format, MJD, forceJulian);
+}
+
 int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
 {	
   /* convert Gregorian date plus time to MJD */
