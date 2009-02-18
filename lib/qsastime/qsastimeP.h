@@ -5,6 +5,9 @@
    else */
 
 #include "qsastime.h"
+QSASTIMEDLLIMPEXP int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
+QSASTIMEDLLIMPEXP void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian);
+QSASTIMEDLLIMPEXP size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian);
 QSASTIMEDLLIMPEXP void normalize_MJD(MJDtime *MJDout, const MJDtime *MJDin);
 QSASTIMEDLLIMPEXP const char * getDayOfWeek(const MJDtime *MJD);
 QSASTIMEDLLIMPEXP const char * getLongDayOfWeek( const MJDtime *MJD);
