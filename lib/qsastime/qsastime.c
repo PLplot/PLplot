@@ -859,10 +859,12 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   return posn;
 }
 
-void configqsas(double scale, double offset1, double offset2, int ccontrol)
+void configqsas(double scale, double offset1, double offset2, int ccontrol, int ifbtime_offset, int year, int month, int day, int hour, int min, double sec)
 {
   /* Configure the transformation between continuous time and broken-down time
      that is used for ctimeqsas, btimeqsas, and strfqsas. */
+  int forceJulian, ret;
+  MJDtime MJD_value, *MJD=&MJD_value;
 
   /* Allocate memory for qsasconfig if that hasn't been done by a 
      previous call. */
@@ -875,6 +877,19 @@ void configqsas(double scale, double offset1, double offset2, int ccontrol)
   }
 
   if(scale != 0.) {
+    if(ifbtime_offset) {
+      if(ccontrol & 0x1)
+	forceJulian = 1;
+      else
+	forceJulian = -1;
+      ret = setFromUT(year, month, day, hour, min, sec, MJD, forceJulian);
+      if(ret) {
+	fprintf(stderr, "configqsas: some problem with broken-down arguments\n");
+	exit(EXIT_FAILURE);
+      }
+      offset1 = (double)MJD->base_day;
+      offset2 = MJD->time_sec/(double)SecInDay;
+    }
     qsasconfig->scale = scale;
     qsasconfig->offset1 = offset1;
     qsasconfig->offset2 = offset2;
@@ -884,7 +899,7 @@ void configqsas(double scale, double offset1, double offset2, int ccontrol)
        default is continuous time (stored as a double) is seconds since
        1970-01-01 while broken-down time is Gregorian with no other
        additional corrections. */
-    qsasconfig->scale = 1./86400.;
+    qsasconfig->scale = 1./(double)SecInDay;
     qsasconfig->offset1 = (double) MJD_1970;
     qsasconfig->offset2 = 0.;
     qsasconfig->ccontrol = 0x0;

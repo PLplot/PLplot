@@ -101,7 +101,7 @@ typedef struct QSASConfigStruct
 QSASTIMEDLLIMPEXP_DATA(QSASConfig) *qsasconfig;
 
 /* externally accessible functions */
-QSASTIMEDLLIMPEXP void configqsas(double scale, double offset1, double offset2, int ccontrol);
+QSASTIMEDLLIMPEXP void configqsas(double scale, double offset1, double offset2, int ccontrol, int ifbtime_offset, int year, int month, int day, int hour, int min, double sec);
 QSASTIMEDLLIMPEXP void closeqsas(void);
 QSASTIMEDLLIMPEXP int ctimeqsas(int year, int month, int day, int hour, int min, double sec, double * ctime);
 QSASTIMEDLLIMPEXP void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec, double ctime);

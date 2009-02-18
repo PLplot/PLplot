@@ -1252,7 +1252,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
             if (ldx) {
               t = (double) tn;
-	      configqsas(0., 0., 0., 0x0);
+	      configqsas(1./86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0.);
               ctimeqsas(1970,0,1,0,0,t,&tm);
               strfqsas(string, STRING_LEN, timefmt, tm);
 	      closeqsas();
@@ -1303,7 +1303,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
             if (ldy) {
               t = (double) tn;
-	      configqsas(0., 0., 0., 0x0);
+	      configqsas(1./86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0.);
               ctimeqsas(1970,0,1,0,0,t,&tm);
               strfqsas(string, STRING_LEN, timefmt, tm);
 	      closeqsas();
