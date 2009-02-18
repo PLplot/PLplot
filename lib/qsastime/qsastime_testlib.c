@@ -23,6 +23,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define TEST01 0x1
 #define TEST02 0x2
