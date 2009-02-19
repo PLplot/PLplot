@@ -30,7 +30,7 @@
 
 # Find wxWidgets needed for driver and bindings
 if(PLD_wxwidgets OR PLD_wxpng)
-  find_package(wxWidgets QUIET)
+  find_package(wxWidgets COMPONENTS base core QUIET)
   if(NOT wxWidgets_FOUND)
     message(STATUS
       "WARNING: wxWidgets not found so "
