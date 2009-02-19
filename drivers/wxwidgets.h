@@ -304,6 +304,8 @@ private: /* variables */
 
 
 #if wxUSE_GRAPHICS_CONTEXT
+#include <wx/graphics.h>
+
 class wxPLDevGC : public wxPLDevBase
 {
 public: /* methods */

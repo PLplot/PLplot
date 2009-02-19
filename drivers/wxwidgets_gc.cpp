@@ -38,7 +38,6 @@
 
 /* only compile code if wxGraphicsContext available */
 #if wxUSE_GRAPHICS_CONTEXT
-#include "wx/graphics.h"
   
 wxPLDevGC::wxPLDevGC( void ) : wxPLDevBase()
 {
@@ -297,8 +296,10 @@ void wxPLDevGC::PSDrawTextToDC( char* utf8_string, bool drawText )
     m_context->Translate( w, 0 );
   }
  
-  textWidth += w;
-  textHeight = textHeight>(h+yOffset/scaley) ? textHeight : (h+yOffset/scaley);
+  textWidth += static_cast<int>(w);
+  textHeight = textHeight > (h+yOffset/scaley)
+                ? textHeight
+                : static_cast<int>((h+yOffset/scaley));  
   memset( utf8_string, '\0', max_string_length );
 }
 
@@ -314,8 +315,9 @@ void wxPLDevGC::PSSetFont( PLUNICODE fci )
   plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );  
   if( m_font )
     delete m_font;
-  m_font=wxFont::New(fontSize*fontScale, fontFamilyLookup[fontFamily],
-                         fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
+  m_font=wxFont::New(static_cast<int>(fontSize*fontScale),
+                     fontFamilyLookup[fontFamily],
+                     fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
   m_font->SetUnderlined( underlined );
   m_context->SetFont( *m_font, wxColour(textRed, textGreen, textBlue) );
 }
