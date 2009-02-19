@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <errno.h>
 
 #define TEST01 0x1
 #define TEST02 0x2
@@ -43,6 +44,96 @@
 #define TEST16 0x8000
 /* MJD for Jan 01, 1970 00:00:00 Gregorian, the Unix epoch.*/
 #define MJD_1970 40587
+
+/*
+   MCVC and possibly other systems do not have functions setenv and unsetenv.
+
+   Below are versions of setenv and unsetenv implemented in terms of putenv.
+
+   Configuration :
+   1. Macro HAVE_SETENV
+   #define to 1 if system has SETENV Otherwise set to 0.
+
+   2. Macro HAVE_PUTENV
+   #define to 1 if system has PUTENV Otherwise set to 0.
+   Not used if HAVE_SETENV 1
+
+   3. Macro CAN_FREE_PUTENV_BUFFER
+
+   For some systems the string pointed to by the putenv argument becomes
+   part of the environment.  A program should not alter or free the string,
+   and should not use stack or other transient string variables as arguments
+   to putenv().
+
+   For MSVC it appears from testing that putenv copies its values,
+   so we can cleanup as we go.
+
+   Where the system copies the value, #define CAN_FREE_PUTENV_BUFFER 1
+
+   KNOWN PROBLEM
+   For MSVC setenv("ev","",1) UNSETS the environment variable rather than
+   setting it to and empty string.
+
+   */
+#ifdef _MSC_VER
+typedef __int64 longlong;
+#define HAVE_SETENV 0
+#define HAVE_PUTENV 1
+#define CAN_FREE_PUTENV_BUFFER 1
+#else
+typedef long long int longlong;
+#define HAVE_SETENV 1
+#define HAVE_PUTENV 0
+#endif
+
+
+#if defined(HAVE_SETENV) && defined(HAVE_PUTENV) && (!HAVE_SETENV && HAVE_PUTENV)
+
+static int putenv_wrapper(const char *name, const char *value)
+{
+  int rc = -1;
+  int len;
+  char* penvArg;
+
+  len = strlen(name) + strlen(value) +2;
+  penvArg = (char*)malloc(len);
+  if(!penvArg){
+    errno =ENOMEM;
+    return -1;
+  }
+
+  sprintf(penvArg,"%s=%s",name,value);
+  rc = _putenv(penvArg);
+
+#ifdef CAN_FREE_PUTENV_BUFFER
+  free(penvArg);
+#else
+  /* without more knowledge of putenv implementation
+     we cannot free penvArg */
+#endif
+
+  return rc;
+}
+int setenv(const char *name, const char *value, int overwrite)
+{
+  if (!overwrite && getenv(name)) {
+     /* what should errno be set to in this case*/
+    errno = EINVAL;
+    return -1;
+  }
+  return putenv_wrapper(name,value);
+}
+
+int unsetenv(const char *name)
+{
+  if (!getenv(name)) {
+    errno = EINVAL;
+    return -1;
+  }
+  return putenv_wrapper(name,"");
+}
+
+#endif
 
 /* Recommended (by Linux timegm man page) POSIX equivalent of Linux timegm C library function */
 time_t my_timegm(struct tm *tm)
@@ -72,7 +163,7 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
   struct tm tm1;
   struct tm *ptm1 = &tm1;
   time_t secs_past_epoch, secs_past_epoch1, delta_secs;
-  
+
   MJDtime MJD1, *pMJD1 = &MJD1;
   double jd;
   int ifleapyear, ifleapday, iffeb29, ifsamedate, ifsametime;
@@ -105,15 +196,15 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
     secs_past_epoch = my_timegm(ptm);
     delta_secs = abs(secs_past_epoch1-secs_past_epoch);
     if(delta_secs !=0) {
-      printf("setFromUT secs_past_epoch = %lld seconds\n", (long long int) secs_past_epoch1);
-      printf("my_timegm secs_past_epoch = %lld seconds\n", (long long int) secs_past_epoch);
-      printf("delta secs_past_epoch = %lld seconds\n", (long long int) (secs_past_epoch1 - secs_past_epoch));
+      printf("setFromUT secs_past_epoch = %lld seconds\n", (longlong) secs_past_epoch1);
+      printf("my_timegm secs_past_epoch = %lld seconds\n", (longlong) secs_past_epoch);
+      printf("delta secs_past_epoch = %lld seconds\n", (longlong) (secs_past_epoch1 - secs_past_epoch));
       printf("test failed with inconsistency between setFromUT and my_timegm\n");
       return 1;
     }
   }
 
-  /* Inner TEST02: check minimal fields of strfMJD (Julian) or 
+  /* Inner TEST02: check minimal fields of strfMJD (Julian) or
      strftime and strfMJD (Gregorian) */
   if(inner_test_choice & TEST02) {
     if(forceJulian == -1) {
@@ -143,7 +234,7 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
     breakDownMJD(&year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, forceJulian);
     ifsamedate = (year1-year == 0 && ( ((!iffeb29 || ifleapday) && (month1-month == 0 && day1-day == 0)) || ((iffeb29 && !ifleapday) && (month1 == 2 && day1 == 1)) ));
     ifsametime = (hour1-hour == 0 && min1-min ==0 && fabs(sec1-sec) < 1.e-10);
-  
+
     if(!(ifsamedate && ifsametime)) {
       printf("output date calculated with breakDownMJD = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1+1, day1, hour1, min1, sec1);
       printf("test failed with inconsistency between setFromUT and breakDownMJD\n");
@@ -156,7 +247,7 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
     ptm1 = gmtime(&secs_past_epoch);
     ifsamedate = (ptm1->tm_year == ptm->tm_year && ( ((!iffeb29 || ifleapday) && (ptm1->tm_mon == ptm->tm_mon && ptm1->tm_mday == ptm->tm_mday)) || ((iffeb29 && !ifleapday) && (ptm1->tm_mon == 2 && ptm1->tm_mday == 1)) ));
     ifsametime = (ptm1->tm_hour == ptm->tm_hour && ptm1->tm_min == ptm->tm_min && ptm1->tm_sec == ptm->tm_sec);
-  
+
     if(!(ifsamedate && ifsametime)) {
       printf("test failed with inconsistency between my_timegm and its C library inverse gmtime");
       return 1;
@@ -177,7 +268,7 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
   struct tm tm1;
   struct tm *ptm1 = &tm1;
   time_t secs_past_epoch, secs_past_epoch1;
-  
+
   MJDtime MJD1, *pMJD1 = &MJD1;
   MJDtime MJD2, *pMJD2 = &MJD2;
   double jd;
@@ -211,7 +302,7 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
   /* Inner TEST01: compare breakDownMJD with gmtime. */
   if(forceJulian == -1 && (inner_test_choice & TEST01)) {
     ptm1 = gmtime(&secs_past_epoch);
-    if(!((ptm1->tm_year+1900) == year && ptm1->tm_mon == month && ptm1->tm_mday == day && ptm1->tm_hour == hour && ptm1->tm_min == min && ptm1->tm_sec == (int)sec)) { 
+    if(!((ptm1->tm_year+1900) == year && ptm1->tm_mon == month && ptm1->tm_mday == day && ptm1->tm_hour == hour && ptm1->tm_min == min && ptm1->tm_sec == (int)sec)) {
       printf("date calculated with breakDownMJD = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
       printf("date calculated with gmtime = %d-%02d-%02dT%02d:%02d:%02dZ\n", ptm1->tm_year+1900, ptm1->tm_mon+1, ptm1->tm_mday, ptm1->tm_hour, ptm1->tm_min, ptm1->tm_sec);
       printf("test failed with inconsistency between breakDownMJD and gmtime\n");
@@ -219,7 +310,7 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
     }
   }
 
-  /* Inner TEST02: check minimal fields of strfMJD (Julian) or 
+  /* Inner TEST02: check minimal fields of strfMJD (Julian) or
      strftime and strfMJD (Gregorian) */
   if(inner_test_choice & TEST02) {
     if(forceJulian == -1) {
@@ -259,9 +350,9 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
   if(forceJulian == -1 && (inner_test_choice & TEST04)) {
     secs_past_epoch1 = my_timegm(ptm);
     if(!(secs_past_epoch == secs_past_epoch1)) {
-      printf("secs_past_epoch calculated from input = %lld\n", (long long int) secs_past_epoch); 
-      printf("secs_past_epoch calculated from my_timegm = %lld\n", (long long int) secs_past_epoch1); 
-      printf("delta secs_past_epoch = %lld seconds\n", (long long int) (secs_past_epoch1 - secs_past_epoch));
+      printf("secs_past_epoch calculated from input = %lld\n", (longlong) secs_past_epoch);
+      printf("secs_past_epoch calculated from my_timegm = %lld\n", (longlong) secs_past_epoch1);
+      printf("delta secs_past_epoch = %lld seconds\n", (longlong) (secs_past_epoch1 - secs_past_epoch));
       printf("test failed with inconsistency between breakDownMJD and its C library based inverse, my_timegm\n");
       return 1;
     }
@@ -286,10 +377,10 @@ int main()
   struct tm tm1;
   struct tm *ptm1 = &tm1;
   int seconds;
-  
+
   MJDtime MJD1, *pMJD1 = &MJD1;
   double jd;
-  int test_choice, date_choice, ret; 
+  int test_choice, date_choice, ret;
 
   printf("sizeof(time_t) = %d\n",(int)sizeof(time_t));
   if(sizeof(time_t) < 8) {
@@ -305,7 +396,7 @@ int main()
   /* strftime affected by locale so force 0 timezone for this complete test. */
   setenv("TZ", "", 1);
   tzset();
-  
+
   /* choose test(s) to be run using bit-pattern in test_choice that is
      input from stdin. */
   scanf("%i", &test_choice);
@@ -499,7 +590,7 @@ int main()
       sec = 0.123456;
 
       // test reduced range of years that just barely misses overflowing
-      // the MJD integer.  e.g., 6000000 overflows it. 
+      // the MJD integer.  e.g., 6000000 overflows it.
       for (year=-5000000; year<=5000000; year+=1) {
 	ret = testlib_broken_down_time(year, month, day, hour, min, sec, 1, 0xffff, 0);
 	if(ret)
