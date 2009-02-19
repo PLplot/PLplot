@@ -114,6 +114,7 @@ function shade(x, y, z, levels, cont )
   if (!isscalar(levels))
     n = length(levels)-1;
     clevel = levels;
+    cclevel = clevel;
   else
     n = levels;
     clevel = linspace(zm, zM, levels+1);
