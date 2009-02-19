@@ -22,8 +22,9 @@
 #include "plplotP.h"
 #include "wxPLplotwindow.h"
 #include "wxPLplotstream.h"
-#include "wx/window.h"
-//#include "wx/log.h"
+#include <wx/window.h>
+#include <wx/dcclient.h>
+
 
 BEGIN_EVENT_TABLE( wxPLplotwindow, wxWindow )
   EVT_SIZE( wxPLplotwindow::OnSize )
