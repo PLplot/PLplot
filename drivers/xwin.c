@@ -1138,6 +1138,7 @@ InitMain(PLStream *pls)
     }
     else
 	strncpy(header,"Plplot",HEADER_LEN);
+    header[HEADER_LEN-1] = '\0';
 
 /* Window creation */
 
