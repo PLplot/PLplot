@@ -3,5 +3,6 @@ if string.sub(_VERSION,1,7)=='Lua 5.0' then
 	lib=loadlib('@lua_lib_location@/plplotluac.so','luaopen_plplotluac') or loadlib('plplotluac.dll','luaopen_plplotluac')
 	assert(lib)()
 else
+	package.cpath = '@lua_lib_location@/?.so;' .. package.cpath
 	require('plplotluac')
 end
