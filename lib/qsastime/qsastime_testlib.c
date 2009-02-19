@@ -94,7 +94,7 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
       printf("Start of Gregorian proleptic inner test\n");
       printf("input and output (strftime), and output (strfMJD) date/time\n");
     }
-    printf("%04d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
+    printf("%.4d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
   }
 
   setFromUT(year, month, day, hour, min, sec, pMJD1, forceJulian);
@@ -205,7 +205,7 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
       printf("Start of Gregorian proleptic inner test\n");
       printf("input and output (strftime), and output (strfMJD) date/time\n");
     }
-    printf("%04d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
+    printf("%.4d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
   }
 
   /* Inner TEST01: compare breakDownMJD with gmtime. */
