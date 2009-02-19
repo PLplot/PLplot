@@ -94,7 +94,7 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
       printf("Start of Gregorian proleptic inner test\n");
       printf("input and output (strftime), and output (strfMJD) date/time\n");
     }
-    printf("%0.4d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
+    printf("%04d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
   }
 
   setFromUT(year, month, day, hour, min, sec, pMJD1, forceJulian);
@@ -105,9 +105,9 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
     secs_past_epoch = my_timegm(ptm);
     delta_secs = abs(secs_past_epoch1-secs_past_epoch);
     if(delta_secs !=0) {
-      printf("setFromUT secs_past_epoch = %lld seconds\n", secs_past_epoch1);
-      printf("my_timegm secs_past_epoch = %lld seconds\n", secs_past_epoch);
-      printf("delta secs_past_epoch = %lld seconds\n", (secs_past_epoch1 - secs_past_epoch));
+      printf("setFromUT secs_past_epoch = %lld seconds\n", (long long int) secs_past_epoch1);
+      printf("my_timegm secs_past_epoch = %lld seconds\n", (long long int) secs_past_epoch);
+      printf("delta secs_past_epoch = %lld seconds\n", (long long int) (secs_past_epoch1 - secs_past_epoch));
       printf("test failed with inconsistency between setFromUT and my_timegm\n");
       return 1;
     }
@@ -205,7 +205,7 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
       printf("Start of Gregorian proleptic inner test\n");
       printf("input and output (strftime), and output (strfMJD) date/time\n");
     }
-    printf("%0.4d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
+    printf("%04d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
   }
 
   /* Inner TEST01: compare breakDownMJD with gmtime. */
@@ -259,9 +259,9 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
   if(forceJulian == -1 && (inner_test_choice & TEST04)) {
     secs_past_epoch1 = my_timegm(ptm);
     if(!(secs_past_epoch == secs_past_epoch1)) {
-      printf("secs_past_epoch calculated from input = %lld\n", secs_past_epoch); 
-      printf("secs_past_epoch calculated from my_timegm = %lld\n", secs_past_epoch1); 
-      printf("delta secs_past_epoch = %lld seconds\n", (secs_past_epoch1 - secs_past_epoch));
+      printf("secs_past_epoch calculated from input = %lld\n", (long long int) secs_past_epoch); 
+      printf("secs_past_epoch calculated from my_timegm = %lld\n", (long long int) secs_past_epoch1); 
+      printf("delta secs_past_epoch = %lld seconds\n", (long long int) (secs_past_epoch1 - secs_past_epoch));
       printf("test failed with inconsistency between breakDownMJD and its C library based inverse, my_timegm\n");
       return 1;
     }
