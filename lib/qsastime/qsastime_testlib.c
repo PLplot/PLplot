@@ -382,24 +382,24 @@ int main()
   double jd;
   int test_choice, date_choice, ret;
 
+  /* choose test(s) to be run using bit-pattern in test_choice that is
+     input from stdin. */
+  scanf("%i", &test_choice);
+
   printf("sizeof(time_t) = %d\n",(int)sizeof(time_t));
   if(sizeof(time_t) < 8) {
-    printf("tests abandoned because time_t too small on this platform to run this programme\n");
+    printf("Tests abandoned because time_t is too small on this platform to represent the extremely large date range used for these tests.  Note, the limitation is in the C library routines (gmtime and mktime) used for these test comparisons and not libqsastime itself.\n");
     return 1;
   }
 
   printf("sizeof(int) = %d\n",(int)sizeof(int));
   if(sizeof(int) !=4) {
-    printf("tests abandoned because int must be 32-bits to test this library properly for how well it will potentially perform on 32-bit platforms\n");
+    printf("Tests abandoned because int must be 32-bits to test this library properly for how well it will potentially perform on 32-bit platforms\n");
     return 2;
   }
   /* strftime affected by locale so force 0 timezone for this complete test. */
   setenv("TZ", "", 1);
   tzset();
-
-  /* choose test(s) to be run using bit-pattern in test_choice that is
-     input from stdin. */
-  scanf("%i", &test_choice);
 
   if(test_choice & TEST01) {
     printf("Test 01 of calendar dates in the vicinity of the JD epoch \n");
