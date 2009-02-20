@@ -859,18 +859,18 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   return posn;
 }
 
-void configqsas(double scale, double offset1, double offset2, int ccontrol, int ifbtime_offset, int year, int month, int day, int hour, int min, double sec)
+void configqsas(double scale, double offset1, double offset2, int ccontrol, int ifbtime_offset, int year, int month, int day, int hour, int min, double sec, QSASConfig **qsasconfig)
 {
   /* Configure the transformation between continuous time and broken-down time
      that is used for ctimeqsas, btimeqsas, and strfqsas. */
   int forceJulian, ret;
   MJDtime MJD_value, *MJD=&MJD_value;
 
-  /* Allocate memory for qsasconfig if that hasn't been done by a 
+  /* Allocate memory for *qsasconfig if that hasn't been done by a 
      previous call. */
-  if(qsasconfig == NULL) {
-    qsasconfig = (QSASConfig *) malloc((size_t) sizeof(QSASConfig));
-    if (qsasconfig == NULL) {
+  if(*qsasconfig == NULL) {
+    *qsasconfig = (QSASConfig *) malloc((size_t) sizeof(QSASConfig));
+    if (*qsasconfig == NULL) {
       fprintf(stderr, "configqsas: out of memory\n");
       exit(EXIT_FAILURE);
     }
@@ -890,32 +890,32 @@ void configqsas(double scale, double offset1, double offset2, int ccontrol, int 
       offset1 = (double)MJD->base_day;
       offset2 = MJD->time_sec/(double)SecInDay;
     }
-    qsasconfig->scale = scale;
-    qsasconfig->offset1 = offset1;
-    qsasconfig->offset2 = offset2;
-    qsasconfig->ccontrol = ccontrol;
+    (*qsasconfig)->scale = scale;
+    (*qsasconfig)->offset1 = offset1;
+    (*qsasconfig)->offset2 = offset2;
+    (*qsasconfig)->ccontrol = ccontrol;
   } else {
     /* if scale is 0., then use default values.  Currently, that
        default is continuous time (stored as a double) is seconds since
        1970-01-01 while broken-down time is Gregorian with no other
        additional corrections. */
-    qsasconfig->scale = 1./(double)SecInDay;
-    qsasconfig->offset1 = (double) MJD_1970;
-    qsasconfig->offset2 = 0.;
-    qsasconfig->ccontrol = 0x0;
+    (*qsasconfig)->scale = 1./(double)SecInDay;
+    (*qsasconfig)->offset1 = (double) MJD_1970;
+    (*qsasconfig)->offset2 = 0.;
+    (*qsasconfig)->ccontrol = 0x0;
   }
 }
 
-void closeqsas(void)
+void closeqsas(QSASConfig **qsasconfig)
 {
   /* Close library if it has been opened. */
-  if(qsasconfig != NULL) {
-    free((void *) qsasconfig);
-    qsasconfig = NULL;
+  if(*qsasconfig != NULL) {
+    free((void *) *qsasconfig);
+    *qsasconfig = NULL;
   }
 }
 
-int ctimeqsas(int year, int month, int day, int hour, int min, double sec, double * ctime){
+int ctimeqsas(int year, int month, int day, int hour, int min, double sec, double * ctime, QSASConfig *qsasconfig){
   MJDtime MJD_value, *MJD=&MJD_value;
   int forceJulian, ret;
   double integral_offset1, integral_offset2, integral_scaled_ctime;
@@ -938,7 +938,7 @@ int ctimeqsas(int year, int month, int day, int hour, int min, double sec, doubl
 
 }
 
-void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec, double ctime){
+void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec, double ctime, QSASConfig *qsasconfig){
   MJDtime MJD_value, *MJD=&MJD_value;
   int forceJulian;
   double integral_offset1, integral_offset2, integral_scaled_ctime;
@@ -959,7 +959,8 @@ void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec
   breakDownMJD(year, month, day, hour, min, sec, MJD, forceJulian);
 }
 
-size_t strfqsas(char * buf, size_t len, const char *format, double ctime){
+size_t strfqsas(char * buf, size_t len, const char *format, double ctime, QSASConfig *qsasconfig)
+{
   MJDtime MJD_value, *MJD=&MJD_value;
   int forceJulian;
   double integral_offset1, integral_offset2, integral_scaled_ctime;
