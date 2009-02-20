@@ -103,10 +103,10 @@ QSASTIMEDLLIMPEXP void configqsas(double scale, double offset1, double offset2, 
 
 QSASTIMEDLLIMPEXP void closeqsas(QSASConfig **qsasconfig);
 
-QSASTIMEDLLIMPEXP int ctimeqsas(int year, int month, int day, int hour, int min, double sec, double * ctime, QSASConfig *qsasconfig);
+QSASTIMEDLLIMPEXP int ctimeqsas(int year, int month, int day, int hour, int min, double sec, double * ctime, const QSASConfig *qsasconfig);
 
-QSASTIMEDLLIMPEXP void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec, double ctime, QSASConfig *qsasconfig);
+QSASTIMEDLLIMPEXP void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec, double ctime, const QSASConfig *qsasconfig);
 
-QSASTIMEDLLIMPEXP size_t strfqsas(char * buf, size_t len, const char *format, double ctime, QSASConfig *qsasconfig);
+QSASTIMEDLLIMPEXP size_t strfqsas(char * buf, size_t len, const char *format, double ctime, const QSASConfig *qsasconfig);
 
 #endif

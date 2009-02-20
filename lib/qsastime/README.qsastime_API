@@ -120,7 +120,7 @@ order to change the external pointer.
 =========================
 
 void ctimeqsas (int year, int month, int day, int hour, int min,
-double sec, double *ctime, QSASCONFIG *qsasconfig);
+double sec, double *ctime, const QSASCONFIG *qsasconfig);
 
 Determine continuous time (ctime).  Wraps the existing internal (not
 visible by default) setFromUT to use the four variables in qsasconfig
@@ -134,7 +134,7 @@ numerical precision.
 =========================
 
 void btimeqsas (int *year, int *month, int *day, int *hour, int *min,
-double *sec, double ctime, QSASCONFIG *qsasconfig);
+double *sec, double ctime, const QSASCONFIG *qsasconfig);
 
 Determine broken-down time (btime). This is the inverse of ctimeqsas.
 It wraps the existing internal (not visible by default) breakDownMJD
@@ -148,7 +148,7 @@ noticable loss of numerical precision.
 =========================
 
 size_t strfqsas (char * buf, size_t len, const char * format, const
-double ctime, QSASCONFIG *qsasconfig);
+double ctime, const QSASCONFIG *qsasconfig);
 
 This wraps the existing internal (not visible by default) strfMJD to
 use the four variables in qsasconfig discussed above in the

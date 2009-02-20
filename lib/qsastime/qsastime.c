@@ -915,7 +915,7 @@ void closeqsas(QSASConfig **qsasconfig)
   }
 }
 
-int ctimeqsas(int year, int month, int day, int hour, int min, double sec, double * ctime, QSASConfig *qsasconfig){
+int ctimeqsas(int year, int month, int day, int hour, int min, double sec, double * ctime, const QSASConfig *qsasconfig){
   MJDtime MJD_value, *MJD=&MJD_value;
   int forceJulian, ret;
   double integral_offset1, integral_offset2, integral_scaled_ctime;
@@ -938,7 +938,7 @@ int ctimeqsas(int year, int month, int day, int hour, int min, double sec, doubl
 
 }
 
-void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec, double ctime, QSASConfig *qsasconfig){
+void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec, double ctime, const QSASConfig *qsasconfig){
   MJDtime MJD_value, *MJD=&MJD_value;
   int forceJulian;
   double integral_offset1, integral_offset2, integral_scaled_ctime;
@@ -959,7 +959,7 @@ void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec
   breakDownMJD(year, month, day, hour, min, sec, MJD, forceJulian);
 }
 
-size_t strfqsas(char * buf, size_t len, const char *format, double ctime, QSASConfig *qsasconfig)
+size_t strfqsas(char * buf, size_t len, const char *format, double ctime, const QSASConfig *qsasconfig)
 {
   MJDtime MJD_value, *MJD=&MJD_value;
   int forceJulian;
