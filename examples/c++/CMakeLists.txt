@@ -63,6 +63,7 @@ if(BUILD_TEST)
   include_directories(
   ${CMAKE_SOURCE_DIR}/bindings/c++
   ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/lib/qsastime
   ${CMAKE_BINARY_DIR}/include
   )
 endif(BUILD_TEST)

@@ -30,6 +30,7 @@
 
 #include "disptab.h"
 #include "pldll.h"
+#include "qsastime.h"
 
 /*--------------------------------------------------------------------------*\
  * Define the PLDev data structure.
@@ -478,6 +479,15 @@ typedef struct {
  * for hexpower = 4-6 so there is room for expansion of this scheme into more
  * font attributes if required.  (hexpower = 7 is reserved for the 0x8 marker
  * of the FCI.)
+ *
+ ****************************************************************************
+ *
+ * Time related variable
+ *
+ * qsasconfig is a pointer to a struct that keeps track of the details
+ * of the transformation between broken-down and continuous time used
+ * in the qsastime library.
+ *
 \*--------------------------------------------------------------------------*/
 
 #define PL_MAX_CMAP1CP 256
@@ -711,6 +721,11 @@ typedef struct {
    */
   void *psdoc;
 
+  /* pointer to a struct that keeps track of the details of the
+     transformation between broken-down and continuous time used in
+     the qsastime library. */
+
+     QSASConfig *qsasconfig;
 
 } PLStream;
 

@@ -29,6 +29,7 @@ dispatch begin function
       (* gcc needs to know where to find the needed #includes *)
       flag ["c"; "compile"]
         (S[A"-ccopt"; A"-I@SOURCE_DIR@/include";
+           A"-ccopt"; A"-I@SOURCE_DIR@/lib/qsastime";
            A"-ccopt"; A"-I@BUILD_DIR@/include"] );
 
       (* Custom tag for OCaml bytecode *)

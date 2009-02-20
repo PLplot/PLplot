@@ -67,6 +67,7 @@ PROPERTIES GENERATED ON)
 # Set the include path
 include_directories(
 ${CMAKE_CURRENT_SOURCE_DIR}
+${CMAKE_SOURCE_DIR}/lib/qsastime
 ${CMAKE_SOURCE_DIR}/include
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include

@@ -23,6 +23,7 @@ if(ENABLE_lua)
 # This is currently the include list for swig.
 set(lua_interface_INCLUDE_PATHS
 ${CMAKE_SOURCE_DIR}/include
+${CMAKE_SOURCE_DIR}/lib/qsastime
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 ${CMAKE_CURRENT_BINARY_DIR}

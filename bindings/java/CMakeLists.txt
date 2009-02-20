@@ -104,6 +104,7 @@ ${class_root}/PLCallback.class
 set(java_interface_INCLUDE_PATHS
 ${CMAKE_SOURCE_DIR}
 ${CMAKE_SOURCE_DIR}/include
+${CMAKE_SOURCE_DIR}/lib/qsastime
 ${CMAKE_CURRENT_BINARY_DIR}
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include

@@ -60,7 +60,11 @@ set(c_STRING_INDICES
 
 if(BUILD_TEST)
   remove_definitions("-DHAVE_CONFIG_H")
-  include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/lib/qsastime
+    ${CMAKE_BINARY_DIR}/include
+    )
 endif(BUILD_TEST)
 foreach(STRING_INDEX ${c_STRING_INDICES})
   set(c_SRCS ${c_SRCS} x${STRING_INDEX}c.c)

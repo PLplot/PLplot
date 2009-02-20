@@ -23,7 +23,6 @@
 */
 
 #include "plplotP.h"
-#include "qsastime.h"
 
 #define STRING_LEN 40
 #define FORMAT_LEN 10
@@ -1206,7 +1205,6 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     const char *timefmt;
     double tm;
     double t;
-    QSASConfig *qsasconfig = NULL;
 
 /* Set plot options from input */
 
@@ -1253,10 +1251,10 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
             if (ldx) {
               t = (double) tn;
-	      configqsas(1./86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0., &qsasconfig);
-              ctimeqsas(1970,0,1,0,0,t,&tm, qsasconfig);
-              strfqsas(string, STRING_LEN, timefmt, tm, qsasconfig);
-	      closeqsas(&qsasconfig);
+	      configqsas(1./86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0., &(plsc->qsasconfig));
+              ctimeqsas(1970,0,1,0,0,t,&tm, plsc->qsasconfig);
+              strfqsas(string, STRING_LEN, timefmt, tm, plsc->qsasconfig);
+	      closeqsas(&(plsc->qsasconfig));
             }
             else {
 	      plform(tn, xscale, xprec, string, STRING_LEN, llx, lfx);
@@ -1304,10 +1302,10 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
             if (ldy) {
               t = (double) tn;
-	      configqsas(1./86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0., &qsasconfig);
-              ctimeqsas(1970,0,1,0,0,t,&tm, qsasconfig);
-              strfqsas(string, STRING_LEN, timefmt, tm, qsasconfig);
-	      closeqsas(&qsasconfig);
+	      configqsas(1./86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0., &(plsc->qsasconfig));
+              ctimeqsas(1970,0,1,0,0,t,&tm, plsc->qsasconfig);
+              strfqsas(string, STRING_LEN, timefmt, tm, plsc->qsasconfig);
+	      closeqsas(&(plsc->qsasconfig));
             }
             else {
 	      plform(tn, yscale, yprec, string, STRING_LEN, lly, lfy);

@@ -39,6 +39,7 @@ if(ENABLE_wxwidgets)
   # Set the include path
   include_directories(
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_SOURCE_DIR}/bindings/c++
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include

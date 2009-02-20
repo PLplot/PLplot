@@ -45,6 +45,7 @@ PROPERTIES COMPILE_FLAGS "${PLGNOME2_COMPILE_PROPS} ${gcw_COMPILE_FLAGS}"
 # Set the include path
 include_directories(
 ${CMAKE_SOURCE_DIR}/include
+${CMAKE_SOURCE_DIR}/lib/qsastime
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 )
