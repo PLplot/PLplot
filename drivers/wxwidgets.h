@@ -125,6 +125,8 @@ public: /* variables */
   int comcount;
   
   wxPLplotFrame* m_frame;
+  PLINT xpos;
+  PLINT ypos;
   PLINT width;
   PLINT height;
   PLINT bm_width;

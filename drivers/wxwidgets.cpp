@@ -128,6 +128,8 @@ wxPLDevBase::wxPLDevBase( void )
   comcount = 0;
 
   m_frame=NULL;
+  xpos=0;
+  ypos=0;
   // width, height are set in plD_init_wxwidgets
   // bm_width, bm_height are set in install_buffer
   
@@ -405,7 +407,7 @@ wxPLDevBase* common_init(  PLStream *pls )
   }
 #endif
 
-  /* initialize device storage */
+  /* initialize frame size and position */
   if( pls->xlength <= 0 || pls->ylength <=0 )
     plspage( 0.0, 0.0, (PLINT)(CANVAS_WIDTH*DEVICE_PIXELS_PER_IN), 
                        (PLINT)(CANVAS_HEIGHT*DEVICE_PIXELS_PER_IN), 0, 0 );
@@ -414,6 +416,12 @@ wxPLDevBase* common_init(  PLStream *pls )
   dev->height=pls->ylength;
   dev->clipminx=pls->xlength;
   dev->clipminy=pls->ylength;
+  
+  if( pls->xoffset!=0 || pls->yoffset!=0) {
+    dev->xpos = (int)(pls->xoffset);
+    dev->ypos = (int)(pls->yoffset);
+  }
+
   
   /* If portrait mode, apply a rotation and set freeaspect */
   if( pls->portrait ) {
@@ -1224,7 +1232,14 @@ static void install_buffer( PLStream *pls )
   }
   dev->m_frame = new wxPLplotFrame( title, pls );
   wxPLGetApp().AddFrame( dev->m_frame );
+
+  /* set size and position of window */
   dev->m_frame->SetClientSize( dev->width, dev->height );
+  if( dev->xpos!=0 || dev->ypos!=0)
+    dev->m_frame->SetSize( dev->xpos, dev->ypos,
+                           wxDefaultCoord, wxDefaultCoord,
+                           wxSIZE_USE_EXISTING );    
+  
   if( dev->showGUI ) {
     dev->m_frame->Show( true );
     dev->m_frame->Raise();
