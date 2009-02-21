@@ -39,7 +39,8 @@
 */
 #include <ctype.h>
 #include <math.h>
-#include "qsastime.h"
+#include "qsastimeP.h"
+
 /* MJD for 0000-01-01 (correctly Jan 01, BCE 1) */
 /* Julian proleptic calendar value. */
 #define MJD_0000J -678943

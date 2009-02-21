@@ -44,7 +44,7 @@
 #include <stdlib.h>
 #include <string.h>
 /* include header file for dll definitions */
-#include "qsastime.h"
+#include "qsastimeP.h"
 
 QSASTIMEDLLIMPEXP void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
 QSASTIMEDLLIMPEXP void setFromBCE(int yearBCE, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
