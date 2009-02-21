@@ -1718,11 +1718,11 @@ c_plinit(void)
     if (plsc->timefmt == NULL)
         c_pltimefmt("%c");
 
-    /* Default transformation between continuous and broken-down time
-       (and vice versa) defined here for PLplot. */
-    /* Temporarily the default is defined to be seconds past the Unix epoch. */
+    /* Use default transformation between continuous and broken-down time
+       (and vice versa) if the transformation has not yet been defined
+       for this stream. */
     if (plsc->qsasconfig == NULL)
-      c_plconfigtime(1./86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0.);
+      c_plconfigtime(0., 0., 0., 0x0, 0, 0, 0, 0, 0, 0, 0.);
 
 /* Switch to graphics mode and set color and arrow style*/
 
