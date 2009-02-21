@@ -43,7 +43,7 @@
 static double MJDtoJD = 2400000.5;
 static double SecInDay = 86400; /* we ignore leap seconds */
 	
-int setFromISOstring(const char* ISOstring, MJDtime *MJD)
+int setFromISOstring(const char* ISOstring, MJDtime *MJD, int forceJulian)
 {
   double seconds;
   int   y, m, d, h, min;
@@ -76,7 +76,7 @@ int setFromISOstring(const char* ISOstring, MJDtime *MJD)
   if(startAt > len) return 1;
 
   seconds = strtod(&(ISOstring[startAt]), NULL);
-  setFromUT(y, m-1, d, h, min, seconds, MJD, 0);
+  setFromUT(y, m-1, d, h, min, seconds, MJD, forceJulian);
 	
   return 0;
 }
@@ -95,7 +95,12 @@ void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, 
 
   int leaps, lastyear,extraDays;
 
-  if(year <= 0)
+  /* N.B. There were known problems (both for the Julian and Gregorian
+     cases) with the following leap year logic that were completely fixed
+     in qsastime.c, but I (AWI) am not going to bother with these fixups
+     here since this code only used for a specific test routine for limited
+     date range and not for anything general. */
+  if(forceJulian && year <= 0)
     {
       /* count leap years on Julian Calendar */
       /* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
@@ -105,7 +110,7 @@ void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, 
       MJD->base_day = year * 365 + leaps + doy - 678943;
 
     }
-  else if(year < 1582 || (year == 1582 && doy < 288)  || forceJulian == 1)
+  else if(forceJulian)
     {
       /* count leap years on Julian Calendar */
       /* MJD for Jan 1 0000 (correctly Jan 01, BCE 1) is  - 678943, count from there */
@@ -140,12 +145,12 @@ void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, 
 }
 
 
-void setFromBCE(int yearBCE, int month, int day, int hour, int min, double sec, MJDtime *MJD)
+void setFromBCE(int yearBCE, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
 {
   /* utility to allow user to input dates BCE (BC) */
 	
   int year = 1 - yearBCE;
-  setFromUT(year, month, day, hour, min, sec, MJD, 0);
+  setFromUT(year, month, day, hour, min, sec, MJD, forceJulian);
 	
 }
 
@@ -215,7 +220,7 @@ double getDiffSecs(MJDtime *MJD1, MJDtime *MJD2)
   return diff;
 }
 
-const char * getISOString(MJDtime* MJD, int delim)
+const char * getISOString(MJDtime* MJD, int delim, int forceJulian)
 {
   /* ISO time string for UTC */
   /* uses default behaviour for Julian/Gregorian switch over */
@@ -231,7 +236,7 @@ const char * getISOString(MJDtime* MJD, int delim)
   int slen;
   char* ptr;
 
-  breakDownMJD(&y, &m, &d, &hour, &min, &sec, MJD, 0);
+  breakDownMJD(&y, &m, &d, &hour, &min, &sec, MJD, forceJulian);
 
   if(y < 0)
     {

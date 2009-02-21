@@ -58,7 +58,7 @@
 static const double SecInDay = 86400; /* we ignore leap seconds */
 static const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 static const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
-	
+
 int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
 {	
   /* convert Gregorian date plus time to MJD */
@@ -78,10 +78,6 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
     fprintf(stderr, "setfromUT: invalid month value\n");
     exit(EXIT_FAILURE);
   }
-  if(forceJulian < -1 || forceJulian > 1) {
-    fprintf(stderr, "setfromUT: invalid forceJulian value\n");
-    exit(EXIT_FAILURE);
-  }
   /* As year increases, year4/4 increments by 1 at 
      year = -7, -3, 1, 5, 9, etc. */
   /* As year increases, year100/100 increments by 1 at 
@@ -98,32 +94,29 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
     year400 = year - 1;
   }  
   
-  if((forceJulian == 0 && (year < 1582 || (year == 1582 && month < 9) || (year == 1582 && month == 9 && day < 15))) || forceJulian == 1)
-    {
-      /* count leap years on proleptic Julian Calendar starting from MJD_0000J */
+  if(forceJulian) {
+    /* count leap years on proleptic Julian Calendar starting from MJD_0000J */
       leaps = year4 / 4;
       if(year%4 == 0)
 	dbase_day = year * non_leaps + leaps + MonthStartDOY_L[month] + day + MJD_0000J;
       else
 	dbase_day = year * non_leaps + leaps + MonthStartDOY[month] + day + MJD_0000J;
-    }
-  else
-    {
-      /* count leap years for proleptic Gregorian Calendar. */
-      /* Algorithm below for 1858-11-17 (0 MJD) gives
-         leaps = 450 and hence dbase_day of 678941, so subtract that value
-	 or add MJD_0000G (which is two days different from MJD_0000J, see
-         above). */
-      leaps = year4 / 4 - year100 / 100 + year400 / 400;
-       
-      /* left to right associativity means the double value of
-	 non_leaps propagate to make all calculations be
-	 done in double precision without the potential of
-	 integer overflow.  The result should be a double which
-	 stores the expected exact integer results of the
-	 calculation with exact representation unless the
-	 result is much larger than the integer overflow limit. */
-      if( (year%4 == 0 && year%100 != 0) || (year%4 == 0 && year%400 == 0) )
+  } else {
+    /* count leap years for proleptic Gregorian Calendar. */
+    /* Algorithm below for 1858-11-17 (0 MJD) gives
+       leaps = 450 and hence dbase_day of 678941, so subtract that value
+       or add MJD_0000G (which is two days different from MJD_0000J, see
+       above). */
+    leaps = year4 / 4 - year100 / 100 + year400 / 400;
+    
+    /* left to right associativity means the double value of
+       non_leaps propagate to make all calculations be
+       done in double precision without the potential of
+       integer overflow.  The result should be a double which
+       stores the expected exact integer results of the
+       calculation with exact representation unless the
+       result is much larger than the integer overflow limit. */
+    if( (year%4 == 0 && year%100 != 0) || (year%4 == 0 && year%400 == 0) )
 	dbase_day = year * non_leaps + leaps + MonthStartDOY_L[month] + day + MJD_0000G;
       else
 	dbase_day = year * non_leaps + leaps + MonthStartDOY[month] + day + MJD_0000G;
@@ -162,14 +155,10 @@ void getYAD(int *year, int *ifleapyear, int *doy, const MJDtime *MJD, int forceJ
   /* Get year and day of year from normalized MJD */
 	
   int j, ifcorrect, year4, year100, year400;
-  if(forceJulian < -1 || forceJulian > 1) {
-    fprintf(stderr, "getYAD: invalid forceJulian value\n");
-    exit(EXIT_FAILURE);
-  }
 
   j = MJD->base_day;
 	
-  if( forceJulian !=-1 && (j < -100840 || forceJulian == 1)) {
+  if(forceJulian) {
     /* Shift j epoch to 0000-01-01 for the Julian proleptic calendar.*/
     j -= MJD_0000J;
     
@@ -190,7 +179,6 @@ void getYAD(int *year, int *ifleapyear, int *doy, const MJDtime *MJD, int forceJ
     *ifleapyear = *year%4 == 0;
 
   } else {
-    /* forceJulian == -1 || (j >= -100840 && forceJulian == 0) */
     /* Shift j epoch to 0000-01-01 for the Gregorian proleptic calendar.*/
     j -= MJD_0000G;
     /* 365.245 is the exact period of the Gregorian year so year will be correct
@@ -265,11 +253,6 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
   int doy, ifleapyear;
   MJDtime nMJD, *pnMJD=&nMJD;
 	
-  if(forceJulian < -1 || forceJulian > 1) {
-    fprintf(stderr, "breakDownMJD: invalid forceJulian value\n");
-    exit(EXIT_FAILURE);
-  }
-
   normalize_MJD(pnMJD, MJD);
   /* Time part */
 	
@@ -686,7 +669,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	    }
 	  else if(next == 'V')
 	    {
-        int days_in_wk1;
+	      int days_in_wk1;
 	      /* week of year as a number,  (01 - 53) start of week is Monday and first week has at least 3 days in year */
 	      getYAD(&y1, &ifleapyear, &doy, pnMJD, forceJulian);
 	      days_in_wk1 = (pnMJD->base_day - doy - 3) % 7;
@@ -777,8 +760,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	    }
 	  else if(next == 'Z')
 	    {
-	      /* time zone and calendar, alwaus UTC */
-	      if(year < 1582 || (year == 1582 && month < 9) || (year == 1582 && month == 9 && day < 15) || forceJulian == 1)
+	      /* time zone and calendar, always UTC */
+	      if(forceJulian)
 		strncat(&(buf[posn]), "UTC Julian", last - posn);
 	      else
 		strncat(&(buf[posn]), "UTC Gregorian", last - posn);
@@ -881,7 +864,7 @@ void configqsas(double scale, double offset1, double offset2, int ccontrol, int 
       if(ccontrol & 0x1)
 	forceJulian = 1;
       else
-	forceJulian = -1;
+	forceJulian = 0;
       ret = setFromUT(year, month, day, hour, min, sec, MJD, forceJulian);
       if(ret) {
 	fprintf(stderr, "configqsas: some problem with broken-down arguments\n");
@@ -928,7 +911,7 @@ int ctimeqsas(int year, int month, int day, int hour, int min, double sec, doubl
   if(qsasconfig->ccontrol & 0x1)
     forceJulian = 1;
   else
-    forceJulian = -1;
+    forceJulian = 0;
 
   ret = setFromUT(year, month, day, hour, min, sec, MJD, forceJulian);
   if(ret)
@@ -954,7 +937,7 @@ void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec
   if(qsasconfig->ccontrol & 0x1)
     forceJulian = 1;
   else
-    forceJulian = -1;
+    forceJulian = 0;
 
   breakDownMJD(year, month, day, hour, min, sec, MJD, forceJulian);
 }
@@ -975,7 +958,7 @@ size_t strfqsas(char * buf, size_t len, const char *format, double ctime, const 
   if(qsasconfig->ccontrol & 0x1)
     forceJulian = 1;
   else
-    forceJulian = -1;
+    forceJulian = 0;
 
   return strfMJD(buf, len, format, MJD, forceJulian);
 }

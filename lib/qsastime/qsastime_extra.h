@@ -47,17 +47,17 @@
 #include "qsastime.h"
 
 QSASTIMEDLLIMPEXP void setFromDOY(int year, int doy, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
-QSASTIMEDLLIMPEXP void setFromBCE(int yearBCE, int month, int day, int hour, int min, double sec, MJDtime *MJD);
+QSASTIMEDLLIMPEXP void setFromBCE(int yearBCE, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
 QSASTIMEDLLIMPEXP void setFromMJD(double ModifiedJulianDate, MJDtime *MJD);
 QSASTIMEDLLIMPEXP void setFromCDFepoch(double cdfepoch, MJDtime *MJD);
 QSASTIMEDLLIMPEXP void setFromJD(double JulianDate, MJDtime *MJD);
-QSASTIMEDLLIMPEXP int setFromISOstring(const char* ISOstring, MJDtime *MJD);
+QSASTIMEDLLIMPEXP int setFromISOstring(const char* ISOstring, MJDtime *MJD, int forceJulian);
 QSASTIMEDLLIMPEXP double getMJD(MJDtime *MJD);
 QSASTIMEDLLIMPEXP double getJD(MJDtime *MJD);
 QSASTIMEDLLIMPEXP double getDiffDays(MJDtime *MJD1, MJDtime *MJD2);
 QSASTIMEDLLIMPEXP double getDiffSecs(MJDtime *MJD1, MJDtime *MJD2);
 QSASTIMEDLLIMPEXP double getCDFepoch(MJDtime *MJD);
-QSASTIMEDLLIMPEXP const char * getISOString(MJDtime *MJD, int delim);
+QSASTIMEDLLIMPEXP const char * getISOString(MJDtime *MJD, int delim, int forceJulian);
 /*** Warning getISOString is not thread safe ***/
 
 #endif

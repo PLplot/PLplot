@@ -64,7 +64,7 @@ int main()
   printf( " MJD = %18.10f \n", getMJD(&MJD2));
   printf( " JD = %18.10f \n\n", getJD(&MJD2));
 	
-  ISOstring = getISOString(&MJD2, 0);
+  ISOstring = getISOString(&MJD2, 0, 0);
   printf("ISO string = '%s'\n\n" , ISOstring);
 
   strfMJD(&(buf[0]), 360, "%Y-%m-%d %H:%M:%S%.",  &MJD2, 0);
@@ -87,30 +87,30 @@ int main()
   epoch = getCDFepoch(&MJD2);
   printf("CDF epoch sec %18.3f\n", epoch);
   setFromCDFepoch(epoch, &MJD2);
-  printf("from CDF ISO string (CDF epoch is accurate to msec only) = '%s'\n" , getISOString(&MJD2, 1));
+  printf("from CDF ISO string (CDF epoch is accurate to msec only) = '%s'\n" , getISOString(&MJD2, 1, 0));
 
   printf("Day of week is/was %s\n\n", getDayOfWeek(&MJD2));
 	
-  ISOstring = getISOString(&MJD1,0);
+  ISOstring = getISOString(&MJD1,0, 0);
   printf("ISO string = '%s'\n\n" , ISOstring);
-  setFromISOstring(ISOstring, &MJD1);
+  setFromISOstring(ISOstring, &MJD1, 0);
   printf("for %s, MJD = %d, seconds = %17.11g\n", ISOstring, MJD1.base_day, MJD1.time_sec);
-  ISOstring = getISOString(&MJD1,1);
+  ISOstring = getISOString(&MJD1,1, 0);
   printf("ISO string = '%s'\n\n" , ISOstring);
-  setFromISOstring(ISOstring, &MJD1);
+  setFromISOstring(ISOstring, &MJD1, 0);
   printf("for %s, MJD = %d, seconds = %17.11g\n\n", ISOstring, MJD1.base_day, MJD1.time_sec);
 
   /* try julian/gregorian changeover */
   y = 1752;
   m = 8;
-  d = 15;
+  d = 14;
   hour = 0;
 	
   setFromUT(y, m, d, hour, min, sec, &MJD1, 0);
-  strcpy(&(copy[0]), getISOString(&MJD1,0)); /* copy because getISOString() returns a pointer to a static string */
+  strcpy(&(copy[0]), getISOString(&MJD1, 0, 0)); /* copy because getISOString() returns a pointer to a static string */
   printf("Gregorian = '%s'\n" , &(copy[0]));
-  setFromUT(y, m, d, hour, min, sec, &MJD1, 1); /* set from Julian date */
-  printf("%s Julian = '%s' Gregorian, (give us back our 11 days)\n" ,getISOString(&MJD1,1), &(copy[0]));
+  //setFromUT(y, m, d, hour, min, sec, &MJD1, 1); /* set from Julian date */
+  printf("%s Julian = '%s' Gregorian, (give us back our 11 days)\n" ,getISOString(&MJD1, 1, 1), &(copy[0]));
 
 
   /* Compare formatting from strftime() */
@@ -125,7 +125,7 @@ int main()
 #ifndef _MSC_VER
   /* note %s not implemented in cygwin 1.5 gcc 3.x nothing printed */
   strftime(&(buf[0]), 360,
-	   "  strftime(): (invalid before 1970)\n   ------\n '%a %b %e %H:%M:%S UTC %Y' \n %c\n %D %F \n %j \n %r \n %s \n %e-%b-%Y", ptm);
+	   "  strftime(): (invalid before 1970 on some systems and subject to time zones on all systems)\n   ------\n '%a %b %e %H:%M:%S UTC %Y' \n %c\n %D %F \n %j \n %r \n %s \n %e-%b-%Y", ptm);
 #else
   /* the following format options are not defined in MSVC (2008)
      and are replaced as follows

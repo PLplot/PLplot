@@ -167,10 +167,6 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
   MJDtime MJD1, *pMJD1 = &MJD1;
   double jd;
   int ifleapyear, ifleapday, iffeb29, ifsamedate, ifsametime;
-  if(!(forceJulian == 1 || forceJulian == -1)) {
-    fprintf(stderr, "testlib_broken_down_time: invalid forceJulian value\n");
-    exit(EXIT_FAILURE);
-  }
   ptm->tm_year = year-1900;
   ptm->tm_mon = month;
   ptm->tm_mday = day;
@@ -178,7 +174,7 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
   ptm->tm_min = min;
   ptm->tm_sec = (int) sec;
   if(verbose) {
-    if(forceJulian == 1) {
+    if(forceJulian) {
       printf("Start of Julian proleptic inner test\n");
       printf("input and output (strfMJD) date/time\n");
     } else {
@@ -191,7 +187,7 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
   setFromUT(year, month, day, hour, min, sec, pMJD1, forceJulian);
 
   /* Inner TEST01: compare setFromUT with my_timegm. */
-  if(forceJulian == -1 && (inner_test_choice & TEST01)) {
+  if(!forceJulian && (inner_test_choice & TEST01)) {
     secs_past_epoch1 = (time_t) (86400.*((double)pMJD1->base_day - (double) MJD_1970) + (int)pMJD1->time_sec);
     secs_past_epoch = my_timegm(ptm);
     delta_secs = abs(secs_past_epoch1-secs_past_epoch);
@@ -207,7 +203,7 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
   /* Inner TEST02: check minimal fields of strfMJD (Julian) or
      strftime and strfMJD (Gregorian) */
   if(inner_test_choice & TEST02) {
-    if(forceJulian == -1) {
+    if(!forceJulian) {
       strftime(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", ptm);
       if(verbose)
 	printf("%s", buf);
@@ -222,7 +218,7 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
     printf("setFromUT JD = %25.16f days\n", jd);
   }
 
-  if(forceJulian == 1)
+  if(forceJulian)
     ifleapyear = (year%4 == 0);
   else
     ifleapyear = ((year%4 == 0 && year%100 != 0) || year%400 == 0);
@@ -243,7 +239,7 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
   }
 
   /* Inner TEST04: compare setFromUT with its inverse, the C library gmtime.*/
-  if(forceJulian == -1 && (inner_test_choice & TEST04)) {
+  if(!forceJulian && (inner_test_choice & TEST04)) {
     ptm1 = gmtime(&secs_past_epoch);
     ifsamedate = (ptm1->tm_year == ptm->tm_year && ( ((!iffeb29 || ifleapday) && (ptm1->tm_mon == ptm->tm_mon && ptm1->tm_mday == ptm->tm_mday)) || ((iffeb29 && !ifleapday) && (ptm1->tm_mon == 2 && ptm1->tm_mday == 1)) ));
     ifsametime = (ptm1->tm_hour == ptm->tm_hour && ptm1->tm_min == ptm->tm_min && ptm1->tm_sec == ptm->tm_sec);
@@ -273,10 +269,6 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
   MJDtime MJD2, *pMJD2 = &MJD2;
   double jd;
   int ifleapyear, ifleapday, iffeb29, ifsamedate, ifsametime;
-  if(!(forceJulian == 1 || forceJulian == -1)) {
-    fprintf(stderr, "testlib_MJD: invalid forceJulian value\n");
-    exit(EXIT_FAILURE);
-  }
 
   normalize_MJD(pMJD1, MJD);
   secs_past_epoch = (time_t) (86400.*((double)pMJD1->base_day - (double) MJD_1970) + pMJD1->time_sec);
@@ -289,7 +281,7 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
   ptm->tm_min = min;
   ptm->tm_sec = (int) sec;
   if(verbose) {
-    if(forceJulian == 1) {
+    if(forceJulian) {
       printf("Start of Julian proleptic inner test\n");
       printf("input and output (strfMJD) date/time\n");
     } else {
@@ -300,7 +292,7 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
   }
 
   /* Inner TEST01: compare breakDownMJD with gmtime. */
-  if(forceJulian == -1 && (inner_test_choice & TEST01)) {
+  if(!forceJulian && (inner_test_choice & TEST01)) {
     ptm1 = gmtime(&secs_past_epoch);
     if(!((ptm1->tm_year+1900) == year && ptm1->tm_mon == month && ptm1->tm_mday == day && ptm1->tm_hour == hour && ptm1->tm_min == min && ptm1->tm_sec == (int)sec)) {
       printf("date calculated with breakDownMJD = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month+1, day, hour, min, sec);
@@ -313,7 +305,7 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
   /* Inner TEST02: check minimal fields of strfMJD (Julian) or
      strftime and strfMJD (Gregorian) */
   if(inner_test_choice & TEST02) {
-    if(forceJulian == -1) {
+    if(!forceJulian) {
       strftime(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%SZ\n", ptm);
       if(verbose)
 	printf("%s", buf);
@@ -328,7 +320,7 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
     printf("JD = %25.16f days\n", jd);
   }
 
-  if(forceJulian == 1)
+  if(forceJulian)
     ifleapyear = (year%4 == 0);
   else
     ifleapyear = ((year%4 == 0 && year%100 != 0) || year%400 == 0);
@@ -347,7 +339,7 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
   }
 
   /* Inner TEST04: compare breakDownMJD with its inverse, my_timegm */
-  if(forceJulian == -1 && (inner_test_choice & TEST04)) {
+  if(!forceJulian && (inner_test_choice & TEST04)) {
     secs_past_epoch1 = my_timegm(ptm);
     if(!(secs_past_epoch == secs_past_epoch1)) {
       printf("secs_past_epoch calculated from input = %lld\n", (longlong) secs_past_epoch);
@@ -430,7 +422,7 @@ int main()
 	ret = testlib_broken_down_time(year, month, day, hour, min, sec, 1, 0xffff, 1);
 	if(ret)
 	  return ret;
-	ret = testlib_broken_down_time(year, month, day, hour, min, sec, -1, 0xffff, 1);
+	ret = testlib_broken_down_time(year, month, day, hour, min, sec, 0, 0xffff, 1);
 	if(ret)
 	  return ret;
       }
@@ -466,7 +458,7 @@ int main()
 	ret = testlib_broken_down_time(year, month, day, hour, min, sec, 1, 0xffff, 1);
 	if(ret)
 	  return ret;
-	ret = testlib_broken_down_time(year, month, day, hour, min, sec, -1, 0xffff, 1);
+	ret = testlib_broken_down_time(year, month, day, hour, min, sec, 0, 0xffff, 1);
 	if(ret)
 	  return ret;
       }
@@ -505,7 +497,7 @@ int main()
 	ret = testlib_broken_down_time(year, month, day, hour, min, sec, 1, 0xffff, 1);
 	if(ret)
 	  return ret;
-	ret = testlib_broken_down_time(year, month, day, hour, min, sec, -1, 0xffff, 1);
+	ret = testlib_broken_down_time(year, month, day, hour, min, sec, 0, 0xffff, 1);
 	if(ret)
 	  return ret;
       }
@@ -532,7 +524,7 @@ int main()
     printf("Test 04 of small second range near Year 0 (Gregorian)\n");
 
 
-    ret= setFromUT(0, 0, 1, 0, 0, 0., pMJD1, -1);
+    ret= setFromUT(0, 0, 1, 0, 0, 0., pMJD1, 0);
     if(ret) {
       printf("Test 04 cannot even start for Year 0 (Gregorian)");
       return ret;
@@ -540,7 +532,7 @@ int main()
 
     for (seconds=-5; seconds < 5; seconds++) {
       printf("\n");
-      ret = testlib_MJD(pMJD1, -1, 0xffff, 1);
+      ret = testlib_MJD(pMJD1, 0, 0xffff, 1);
       if(ret)
 	return ret;
       pMJD1->time_sec ++;
@@ -549,7 +541,7 @@ int main()
     printf("Test 04 of small second range near 2009-01-01 (Gregorian) when a leap second was inserted\n");
 
 
-    ret= setFromUT(2009, 0, 1, 0, 0, 0.1234567890123456-5., pMJD1, -1);
+    ret= setFromUT(2009, 0, 1, 0, 0, 0.1234567890123456-5., pMJD1, 0);
     if(ret) {
       printf("Test 04 cannot even start for Year 0 (Gregorian)");
       return ret;
@@ -557,7 +549,7 @@ int main()
 
     for (seconds=-5; seconds < 5; seconds++) {
       printf("\n");
-      ret = testlib_MJD(pMJD1, -1, 0xffff, 1);
+      ret = testlib_MJD(pMJD1, 0, 0xffff, 1);
       if(ret)
 	return ret;
       pMJD1->time_sec ++;
@@ -595,7 +587,7 @@ int main()
 	ret = testlib_broken_down_time(year, month, day, hour, min, sec, 1, 0xffff, 0);
 	if(ret)
 	  return ret;
-	ret = testlib_broken_down_time(year, month, day, hour, min, sec, -1, 0xffff, 0);
+	ret = testlib_broken_down_time(year, month, day, hour, min, sec, 0, 0xffff, 0);
 	if(ret)
 	  return ret;
       }
@@ -604,7 +596,7 @@ int main()
 
   if(test_choice & TEST06) {
     printf("Test 06 (non-verbose) of all seconds from late 2007 to early 2009\n");
-    ret= setFromUT(2007, 11, 30, 0, 0, 0., pMJD1, -1);
+    ret= setFromUT(2007, 11, 30, 0, 0, 0., pMJD1, 0);
     if(ret) {
       printf("Test 06 cannot even start");
       return ret;
@@ -617,7 +609,7 @@ int main()
       if(ret)
 	return ret;
 
-      ret = testlib_MJD(pMJD1, -1, 0xffff, 0);
+      ret = testlib_MJD(pMJD1, 0, 0xffff, 0);
       if(ret)
 	return ret;
     }
