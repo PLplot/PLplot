@@ -490,6 +490,7 @@ typedef struct {
 #define    pladv	c_pladv
 #define    plaxes	c_plaxes
 #define    plbin	c_plbin
+#define    plbtime	c_plbtime
 #define    plbop	c_plbop
 #define    plbox	c_plbox
 #define    plbox3	c_plbox3
@@ -497,8 +498,10 @@ typedef struct {
 #define    plclear	c_plclear
 #define    plcol0	c_plcol0
 #define    plcol1	c_plcol1
+#define    plconfigtime	c_plconfigtime
 #define    plcont	c_plcont
 #define    plcpstrm	c_plcpstrm
+#define    plctime	c_plctime
 #define    plend	c_plend
 #define    plend1	c_plend1
 #define    plenv	c_plenv
@@ -716,6 +719,10 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 PLDLLIMPEXP void
 c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT opt);
 
+/* Calculate broken-down time from continuous time for current stream. */
+PLDLLIMPEXP void
+c_plbtime(PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT ctime);
+  
 /* Start new page.  Should only be used with pleop(). */
 
 PLDLLIMPEXP void
@@ -754,6 +761,11 @@ c_plcol0(PLINT icol0);
 PLDLLIMPEXP void
 c_plcol1(PLFLT col1);
 
+/* Configure transformation between continuous and broken-down time (and
+   vice versa) for current stream. */
+PLDLLIMPEXP void
+c_plconfigtime(PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOOL ifbtime_offset, PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec);
+  
 /* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
  * plfcont, with a particular choice for f2eval and f2eval_data.
  */
@@ -785,6 +797,10 @@ c_plcpstrm(PLINT iplsr, PLBOOL flags);
 /* Converts input values from relative device coordinates to relative plot */
 /* coordinates. */
 
+/* Calculate continuous time from broken-down time for current stream. */
+PLDLLIMPEXP void
+c_plctime(PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT *ctime);
+  
 PLDLLIMPEXP void
 pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax);
 
@@ -1544,7 +1560,7 @@ c_plszax(PLINT digmax, PLINT digits);
 PLDLLIMPEXP void
 c_pltext(void);
 
-/* Set the format for date / time labels */
+/* Set the format for date / time labels for current stream. */
 
 PLDLLIMPEXP void
 c_pltimefmt(const char *fmt);
