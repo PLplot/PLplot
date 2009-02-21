@@ -69,7 +69,6 @@ set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/plf95demos.inc
   PROPERTIES GENERATED ON)
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_SOURCE_DIR}/lib/qsastime
   )
 
 if(BUILD_TEST)

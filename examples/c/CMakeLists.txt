@@ -62,7 +62,6 @@ if(BUILD_TEST)
   remove_definitions("-DHAVE_CONFIG_H")
   include_directories(
     ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_BINARY_DIR}/include
     )
 endif(BUILD_TEST)

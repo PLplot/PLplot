@@ -87,7 +87,6 @@ if(BUILD_TEST)
   remove_definitions("-DHAVE_CONFIG_H")
   include_directories(
   ${CMAKE_BINARY_DIR}/examples/ada
-  ${CMAKE_SOURCE_DIR}/lib/qsastime
   ${CMAKE_BINARY_DIR}/bindings/ada
   )
 endif(BUILD_TEST)
