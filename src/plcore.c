@@ -1716,7 +1716,13 @@ c_plinit(void)
 	plsc->zdigmax = 3;
 
     if (plsc->timefmt == NULL)
-        pltimefmt("%c");
+        c_pltimefmt("%c");
+
+    /* Default transformation between continuous and broken-down time
+       (and vice versa) defined here for PLplot. */
+    /* Temporarily the default is defined to be seconds past the Unix epoch. */
+    if (plsc->qsasconfig == NULL)
+      c_plconfigtime(1./86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0.);
 
 /* Switch to graphics mode and set color and arrow style*/
 
@@ -1847,6 +1853,11 @@ c_plend1(void)
     if (plsc->arrow_y) free_mem(plsc->arrow_y);
 
     if (plsc->timefmt) free_mem(plsc->timefmt);
+
+    /* Close qsastime library for this stream that was opened by
+       plconfigtime call in plinit. */
+       
+    closeqsas(&(plsc->qsasconfig));
 
 /* Free malloc'ed stream if not in initial stream, else clear it out */
 
@@ -2955,17 +2966,6 @@ plP_gprec(PLINT *p_setp, PLINT *p_prec)
 {
     *p_setp = plsc->setpre;
     *p_prec = plsc->precis;
-}
-
-void
-c_pltimefmt(const char *fmt)
-{
-    if (plsc->timefmt)
-      free_mem(plsc->timefmt);
-
-    plsc->timefmt = (char *) malloc((size_t) (strlen(fmt)+1));
-    strcpy(plsc->timefmt, fmt);
-
 }
 
 const char *
