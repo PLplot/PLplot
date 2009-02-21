@@ -50,7 +50,10 @@ c_plconfigtime(PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOOL
 void
 c_plctime(PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT *ctime)
 {
-  ctimeqsas(year, month, day, hour, min, sec, ctime, plsc->qsasconfig);
+  int ret;
+  ret = ctimeqsas(year, month, day, hour, min, sec, ctime, plsc->qsasconfig);
+  if(ret)
+    plabort("plctime: ctimeqsas detected error");
 }
 
 /* Set format for date / time labels. */
