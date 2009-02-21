@@ -67,7 +67,7 @@ const char header[]=""\
   "  formula for the linear transformation between TAI and UTC: \n"\
   "    TAI-UTC (seconds) = offset1 + (MJD-offset2)*slope\n"\
   "  There are four essential fields per line in tai-utc.dat to represent\n"\
-  "  this formula.  They are the Julian date (TAI) where the linear\n"\
+  "  this formula.  They are the Julian date (UTC) where the linear\n"\
   "  transformation implied by the line is first applied;\n"\
   "  offset1 (seconds); offset2 (days), and slope (secs/day).\n"\
   "  \n"\
@@ -84,7 +84,6 @@ int main (int argc, char *argv[])
   int jd;
   int i=0;
   int number_of_lines=0;
-  char d1[20], d2[20], d3[20], d4[20], d5[20];
 
   if ((fr=fopen(argv[1],"r"))==NULL) {
     fprintf(stderr, "Cannot open first file as readable\n");
@@ -129,8 +128,7 @@ int main (int argc, char *argv[])
 
   while((fgets(readbuffer,255,fr)!=NULL))
     {
-      //      sscanf(readbuffer,"%*s %*s %*s %*s %*s %f %*s %f %*s %*s %*s %5d %*s %*s %f",&jd, (double *)&offset1[i], (int *)&offset2[i], (double *)&slope[i]);
-      sscanf(readbuffer,"%*s %*s %*s %*s %d.5 %*s %lf %*s %*s %*s %*s %d.) X %lf", (int *) &jd, (double *)&offset1[i],(int *)&offset2[i], (double *)&slope[i]);
+      sscanf(readbuffer,"%*s %*s %*s %*s %d.5 %*s %lf %*s %*s %*s %*s %d.) X %lf S", (int *) &jd, (double *)&offset1[i],(int *)&offset2[i], (double *)&slope[i]);
       /* Should be exact since all jd's in the file are integer+0.5 */
       MJDstart[i] = jd - 2400000;
       i++;
@@ -145,16 +143,16 @@ int main (int argc, char *argv[])
 
   fprintf(fw, "%s\n",header);
 
-  fprintf(fw, "const int number_of_entries_in_hershey_to_unicode_table=%d;\n\n",number_of_lines);
+  fprintf(fw, "const int number_of_entries_in_tai_utc_table=%d;\n\n",number_of_lines);
 
-  fprintf(fw, "typedef struct {\n\tunsigned int Hershey;\n\tPLUNICODE Unicode;\n\tchar Font;\n} Hershey_to_Unicode_table;\n\n");
-  fprintf(fw, "const Hershey_to_Unicode_table hershey_to_unicode_lookup_table[%d] = {\n",number_of_lines);
+  fprintf(fw, "typedef struct {\n\tint MJDstart;\n\tdouble offset1;\n\tint offset2;\n\tdouble scale\n} TAI_UTC;\n\n");
+  fprintf(fw, "const TAI_UTC tai_utc_lookup_table[%d] = {\n",number_of_lines);
 
   for (i=0;i<number_of_lines;i++) {
-    fprintf(fw,"{%d, %f, %d, %f}\n", (int)MJDstart[i], (double)offset1[i], (int)offset2[i], (double)slope[i]);
+    fprintf(fw,"{%d, %15.8f, %d, %15.8f},\n", (int)MJDstart[i], (double)offset1[i], (int)offset2[i], (double)slope[i]);
     }
 
-  fprintf(fw,"\n};\n");
+  fprintf(fw,"};\n");
 
   fclose(fw);
   free(MJDstart);
