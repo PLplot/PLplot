@@ -24,8 +24,6 @@
 
 #include "plcdemos.h"
 
-#include <time.h>
-
 static PLFLT x[365], y[365];
 static PLFLT xerr1[365], xerr2[365], yerr1[365], yerr2[365];
 
@@ -40,13 +38,18 @@ void plot3();
  * 
  * Draws several plots which demonstrate the use of date / time formats for
  * the axis labels.
- * Time formatting is done using the system strftime routine. See the 
- * documentation of this for full details of the available formats.
+ * Time formatting is done using the strfqsas routine from the qsastime
+ * library.  This is similar to strftime, but works for a broad
+ * date range even on 32-bit systems.  See the 
+ * documentation of strfqsas for full details of the available formats.
  *
  * 1) Plotting temperature over a day (using hours / minutes)
  * 2) Plotting 
  *
- * Note: Times are stored as seconds since the epoch (usually 1st Jan 1970). 
+ * Note: We currently use the default call for plconfigtime (done in
+ * plinit) which means continuous times are interpreted as seconds since
+ * 1970-01-01, but that may change in future, more extended versions of 
+ * this example.
  * 
 \*--------------------------------------------------------------------------*/
 
@@ -188,35 +191,8 @@ plot3()
   PLFLT tstart;
   char *tz;
 
-  struct tm tm;
-
-  /* Calculate seconds since the Unix epoch for 2005-12-01 UTC. */
-#if defined(WIN32)
-  /* Adopt the known result for POSIX-compliant systems. */
-  tstart = (PLFLT) 1133395200;
-#else
-  tm.tm_year = 105; /* Years since 1900 = 2005 */
-  tm.tm_mon = 11;   /* 0 == January, 11 = December */
-  tm.tm_mday = 1;   /* 1 = 1st of month */
-  tm.tm_hour = 0;
-  tm.tm_min = 0;
-  tm.tm_sec = 0;
-
-  /* Use POSIX-compliant equivalent of timegm GNU extension. */
-  tz = getenv("TZ");
-  setenv("TZ", "", 1);
-  tzset();
-  /* tstart is a time_t value (cast to PLFLT) which represents the number
-   * of seconds elapsed since 00:00:00 on January 1, 1970, Coordinated 
-   * Universal Time (UTC) on  2005-12-01 (UTC). */
-  tstart = (PLFLT) mktime(&tm);
-  if (tz)
-    setenv("TZ", tz, 1);
-  else
-    unsetenv("TZ");
-  tzset();
-#endif
-   
+  /* Calculate continuous time corresponding to 2005-12-01 UTC. */
+  plctime(2005, 11, 01, 0, 0, 0., &tstart);
   npts = 62;
 
   xmin = tstart;
@@ -235,9 +211,8 @@ plot3()
   plwind(xmin, xmax, ymin, ymax);
 
   plcol0(1);
-  /* Set time format to be ISO 8601 standard YYYY-MM-DD. Note that this is
-   * equivalent to %f for C99 compliant implementations of strftime. */
-  pltimefmt("%Y-%m-%d");
+  /* Set time format to be ISO 8601 standard YYYY-MM-DD. */
+  pltimefmt("%F");
   /* Draw a box with ticks spaced every 14 days in X and 1 hour in Y. */
   plbox("bcnstd", 14*24.0*60.0*60.0,14, "bcnstv", 1, 4);
 
