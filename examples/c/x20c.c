@@ -6,7 +6,6 @@
 
 #include "plcdemos.h"
 #include "plevent.h"
-#include "plplotP.h"
 #include <math.h>
 
 #define XDIM 260
