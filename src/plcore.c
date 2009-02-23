@@ -469,7 +469,7 @@ int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower
    return(0);
 }
 
-PLUNICODE unicode_buffer[1024];
+static PLUNICODE unicode_buffer[1024];
 
 void
 plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,

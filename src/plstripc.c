@@ -168,7 +168,6 @@ static void plstrip_legend(PLStrip *stripc, int first)
  * during rescaling.
 \*--------------------------------------------------------------------------*/
 
-PLFLT oxm,oxM, oym,oyM;
 static void plstrip_gen( PLStrip *strip )
 {
     int i;

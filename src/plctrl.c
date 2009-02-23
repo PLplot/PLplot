@@ -69,7 +69,7 @@ strcat_delim(char *dirspec);
 static int
 (*exit_handler) (const char *errormsg);
 
-void
+static void
 (*abort_handler) (const char *errormsg);
 
 static void
