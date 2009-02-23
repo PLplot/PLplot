@@ -98,8 +98,8 @@ for lang in c++ f77 f95 java octave python tcl perl ada adathick ocaml lua; do
 		if [ ! -f x${xsuffix}${index}${suffix}.psc ] ; then
 		    missing="${missing} ${index}"
 		else
-		    @TAIL_EXECUTABLE@ --lines=+9 x${xsuffix_c}${index}c.psc > test1.psc
-		    @TAIL_EXECUTABLE@ --lines=+9 x${xsuffix}${index}${suffix}.psc > test2.psc
+		    @TAIL_EXECUTABLE@ -n +9 x${xsuffix_c}${index}c.psc > test1.psc
+		    @TAIL_EXECUTABLE@ -n +9 x${xsuffix}${index}${suffix}.psc > test2.psc
 		    @DIFF_EXECUTABLE@ -q test1.psc test2.psc 2>&1 > /dev/null
 		    if [ $? != 0 ] ; then
 			different="${different} ${index}"
