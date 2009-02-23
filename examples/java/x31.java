@@ -45,13 +45,17 @@ class x31 {
 	int win[] = new int[1], level2[] = new int[1];
 	int digmax[] = new int[1], digits[] = new int[1];
 	int compression1[] = new int[1], compression2[] = new int[1];
-	double xp1[] = new double[1], yp1[] = new double[1];
+	double xp0[] = new double[1], yp0[] = new double[1];
+	double xp1, yp1;
 	double xp2[] = new double[1], yp2[] = new double[1];
-	int xleng1[] = new int[1], yleng1[] = new int[1];
-	int xoff1[] = new int[1], yoff1[] = new int[1];
+	int xleng0[] = new int[1], yleng0[] = new int[1];
+	int xoff0[] = new int[1], yoff0[] = new int[1];
+	int xleng1, yleng1;
+	int xoff1, yoff1;
 	int xleng2[] = new int[1], yleng2[] = new int[1];
 	int xoff2[] = new int[1], yoff2[] = new int[1];
-	int fam1[] = new int[1], num1[] = new int[1], bmax1[] = new int[1];
+	int fam0[] = new int[1], num0[] = new int[1], bmax0[] = new int[1];
+	int fam1, num1, bmax1;
 	int fam2[] = new int[1], num2[] = new int[1], bmax2[] = new int[1];
 	int r[] = new int[1], g[] = new int[1], b[] = new int[1];
 	double a[] = new double[1];
@@ -74,24 +78,53 @@ class x31 {
 
 	pls.parseopts(args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM);
 
+	// Test setting / getting familying parameters before plinit.
+	// Save values set by plparseopts to be restored later.
+	pls.gfam(fam0, num0, bmax0);
+	fam1 = 0;
+	num1 = 10;
+	bmax1 = 1000;
+	pls.sfam(fam1, num1, bmax1);
+	
+	// Retrieve the same values?
+	pls.gfam(fam2, num2, bmax2);
+	System.out.println("family parameters: fam, num, bmax = " + 
+			   fam2[0] + " " + num2[0] + " " + bmax2[0]);
+	if (fam2[0] != fam1 || num2[0] != num1 || bmax2[0] != bmax1) {
+	    System.err.println("plgfam test failed");
+	    status = 1;
+	}
+	// Restore values set initially by plparseopts.
+	pls.sfam(fam0[0], num0[0], bmax0[0]);
+	
+	// Test setting / getting page parameters before plinit.
+	// Save values set by plparseopts to be restored later.
+	pls.gpage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+	xp1 = 200.;
+	yp1 = 200.;
+	xleng1 = 400;
+	yleng1 = 200;
+	xoff1 = 10;
+	yoff1 = 20;
+	pls.spage(xp1, yp1, xleng1, yleng1, xoff1, yoff1);
+	
+	// Retrieve the same values?
+	pls.gpage(xp2, yp2, xleng2, yleng2, xoff2, yoff2);
+	System.out.println("page parameters: xp, yp, xleng, yleng, xoff, yoff = "
+			   + xp2[0] + " " + yp2[0] + " " + xleng2[0] + " " 
+			   + yleng2[0] + " " + xoff2[0] + " " + yoff2[0]);
+	if (xp2[0] != xp1 || yp2[0] != yp1 || 
+	    xleng2[0] != xleng1 || yleng2[0] != yleng1 || 
+	    xoff2[0] != xoff1 || yoff2[0] != yoff1 ) {
+	    System.err.println("plgpage test failed");
+	    status = 1;
+	}
+	// Restore values set initially by plparseopts.
+	pls.spage(xp0[0], yp0[0], xleng0[0], yleng0[0], xoff0[0], yoff0[0]);
+
 	// Test setting / getting compression parameter across plinit.
 	compression1[0] = 95;
 	pls.scompression(compression1[0]);
-
-	// Test setting / getting familying parameters across plinit
-	fam1[0] = 0;
-	num1[0] = 10;
-	bmax1[0] = 1000;
-	pls.sfam(fam1[0], num1[0], bmax1[0]);
-
-	// Test setting / getting page parameters across plinit
-	xp1[0] = 200.;
-	yp1[0] = 200.;
-	xleng1[0] = 400;
-	yleng1[0] = 200;
-	xoff1[0] = 10;
-	yoff1[0] = 20;
-	pls.spage(xp1[0], yp1[0], xleng1[0], yleng1[0], xoff1[0], yoff1[0]);
 
 	// Initialize plplot
 	pls.init();
@@ -105,28 +138,6 @@ class x31 {
 	    System.err.println("plgcompression test failed" );
 	    status = 1;
 	}
-
-	// Test if device initialization screwed around with any of the
-	// preset familying values.
-	pls.gfam(fam2, num2, bmax2);
-	System.out.println("family parameters: fam, num, bmax = " + 
-			   fam2[0] + " " + num2[0] + " " + bmax2[0] );
-	if (fam2[0] != fam1[0] || num2[0] != num1[0] || bmax2[0] != bmax1[0]) {
-	    System.err.println("plgfam test failed" );
-	    status = 1;
-	}
-
-	// Test if device initialization screwed around with any of the
-	// preset page values.
-	pls.gpage(xp2, yp2, xleng2, yleng2, xoff2, yoff2);
-	System.out.println("page parameters: xp, yp, xleng, yleng, xoff, yoff = " + nf.format(xp2[0]) + " " + nf.format(yp2[0]) + " " + xleng2[0] + " " + yleng2[0] + " " + xoff2[0] + " " + yoff2[0] );
-	if (xp2[0] != xp1[0] || yp2[0] != yp1[0] || 
-	    xleng2[0] != xleng1[0] || yleng2[0] != yleng1[0] || 
-	    xoff2[0] != xoff1[0] || yoff2[0] != yoff1[0] ) {
-	    System.err.println("plgpage test failed" );
-	    status = 1;
-	}
-
 
 	// Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
 	// they work without any obvious error messages.

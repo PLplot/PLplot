@@ -48,9 +48,16 @@ x31::x31(int argc, const char *argv[])
   PLFLT xmid, ymid, wx, wy;
   PLFLT mar, aspect, jx, jy, ori;  
   PLINT win, level2, digmax, digits, compression1, compression2;
-  PLFLT xp1, yp1, xp2, yp2;
-  PLINT xleng1, yleng1, xoff1, yoff1, xleng2, yleng2, xoff2, yoff2;
-  PLINT fam1, num1, bmax1, fam2, num2, bmax2, r, g, b;
+  PLFLT xp0, yp0;
+  PLINT xleng0, yleng0, xoff0, yoff0;
+  PLFLT xp1, yp1;
+  PLINT xleng1, yleng1, xoff1, yoff1;
+  PLFLT xp2, yp2;
+  PLINT xleng2, yleng2, xoff2, yoff2;
+  PLINT fam0, num0, bmax0;
+  PLINT fam1, num1, bmax1;
+  PLINT fam2, num2, bmax2;
+  PLINT r, g, b;
   PLFLT a;
   PLINT r1[] = {0, 255};
   PLINT g1[] = {255, 0};
@@ -70,17 +77,28 @@ x31::x31(int argc, const char *argv[])
 
   pls->parseopts(&argc, argv, PL_PARSE_FULL);
 
-  // Test setting / getting compression parameter across plinit.
-  compression1 = 95;
-  pls->scompression(compression1);
-
-  // Test setting / getting familying parameters across plinit
+  // Test setting / getting familying parameters before plinit.
+  // Save values set by plparseopts to be restored later.
+  pls->gfam(fam0, num0, bmax0);
   fam1 = 0;
   num1 = 10;
   bmax1 = 1000;
   pls->sfam(fam1, num1, bmax1);
 
-  // Test setting / getting page parameters across plinit
+  // Retrieve the same values?
+  pls->gfam(fam2, num2, bmax2);
+  cout << "family parameters: fam, num, bmax = " << fam2 << " " << 
+    num2 << " " << bmax2 << endl;
+  if (fam2 != fam1 || num2 != num1 || bmax2 != bmax1) {
+    cerr << "plgfam test failed" << endl;
+    status = 1;
+  }
+  // Restore values set initially by plparseopts.
+  pls->sfam(fam0, num0, bmax0);
+
+  // Test setting / getting page parameters before plinit.
+  // Save values set by plparseopts to be restored later.
+  pls->gpage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
   xp1 = 200.;
   yp1 = 200.;
   xleng1 = 400;
@@ -88,6 +106,23 @@ x31::x31(int argc, const char *argv[])
   xoff1 = 10;
   yoff1 = 20;
   pls->spage(xp1, yp1, xleng1, yleng1, xoff1, yoff1);
+
+  // Retrieve the same values?
+  pls->gpage(xp2, yp2, xleng2, yleng2, xoff2, yoff2);
+  cout << "page parameters: xp, yp, xleng, yleng, xoff, yoff = " << xp2 << 
+    " " << yp2 << " " << xleng2 << " " << yleng2 << " " << xoff2 << " " <<
+    yoff2 << endl;
+  if (xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 || 
+      xoff2 != xoff1 || yoff2 != yoff1 ) {
+    cerr << "plgpage test failed" << endl;
+    status = 1;
+  }
+  // Restore values set initially by plparseopts.
+  pls->spage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+
+  // Test setting / getting compression parameter across plinit.
+  compression1 = 95;
+  pls->scompression(compression1);
 
   // Initialize plplot
   pls->init();
@@ -101,27 +136,6 @@ x31::x31(int argc, const char *argv[])
     cerr << "plgcompression test failed" << endl;
     status = 1;
   }
-
-  // Test if device initialization screwed around with any of the
-  // preset familying values.
-  pls->gfam(fam2, num2, bmax2);
-  cout << "family parameters: fam, num, bmax = " << fam2 << " " << 
-    num2 << " " << bmax2 << endl;
-  if (fam2 != fam1 || num2 != num1 || bmax2 != bmax1) {
-    cerr << "plgfam test failed" << endl;
-    status = 1;
-  }
-
-  // Test if device initialization screwed around with any of the
-  // preset page values.
-  pls->gpage(xp2, yp2, xleng2, yleng2, xoff2, yoff2);
-  cout << "page parameters: xp, yp, xleng, yleng, xoff, yoff = " << xp2 << " " << yp2 << " " << xleng2 << " " << yleng2 << " " << xoff2 << " " << yoff2 << endl;
-  if (xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 || 
-      xoff2 != xoff1 || yoff2 != yoff1 ) {
-    cerr << "plgpage test failed" << endl;
-    status = 1;
-  }
-
 
   // Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
   // they work without any obvious error messages.
