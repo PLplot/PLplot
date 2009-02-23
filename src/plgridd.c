@@ -35,10 +35,6 @@
 #include <qhull/qhull_a.h>
 #endif
 
-#if !defined(HAVE_ISNAN)
-#define isnan(x) ((x) != (x))
-#endif
-
 /* forward declarations */
 static void
 grid_nnaidw (PLFLT *x, PLFLT *y, PLFLT *z, int npts,

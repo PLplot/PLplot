@@ -234,7 +234,7 @@ c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
       }
       else {
         datum = idata[ix][iy];
-        if (datum < zmin || datum > zmax) {
+        if (isnan(datum) || datum < zmin || datum > zmax) {
           /* Set to a guaranteed-not-to-plot value */
           z[ix * ny + iy] = COLOR_NO_PLOT;
         }

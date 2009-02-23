@@ -908,6 +908,7 @@ plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny)
  * MinMax2dGrid()
  *
  * Finds the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
+ * NaN and +/- infinity values are ignored.
 \*--------------------------------------------------------------------------*/
 
 void
@@ -916,10 +917,16 @@ plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin)
     int i, j;
     PLFLT m, M;
 
-    M = m = f[0][0];
+    if (isnan(f[0][0]) || isinf(f[0][0])) {
+        M = -INFINITY;
+        m = INFINITY;
+    }
+    else
+        M = m = f[0][0];
 
     for (i = 0; i < nx; i++) {
 	for (j = 0; j < ny; j++) {
+	    if (isnan(f[i][j]) || isinf(f[i][j])) continue;
 	    if (f[i][j] > M) M = f[i][j];
 	    if (f[i][j] < m) m = f[i][j];
 	}

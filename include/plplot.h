@@ -184,6 +184,29 @@ typedef PLINT PLBOOL;
 typedef void* PLPointer;
 
 /*--------------------------------------------------------------------------*\
+ * Add in missing isnan / isinf functions on some platforms
+\*--------------------------------------------------------------------------*/
+
+#if defined(WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
+#  define isnan _isnan
+#  define isinf _isinf
+#else
+#  if !defined(HAVE_ISNAN)
+#    define isnan(x) ((x) != (x))
+#  endif
+#  if !defined(HAVE_ISINF)
+#    define isinf(x) (!isnan(x) && isnan(x-x))
+#  endif
+#endif
+
+/* Check if C99 INFINITY macro is available - if not then 
+ * define a replacement */
+#ifndef INFINITY
+#define INFINITY (1.0/0.0)
+#endif
+
+
+/*--------------------------------------------------------------------------*\
  * Complex data types and other good stuff
 \*--------------------------------------------------------------------------*/
 
