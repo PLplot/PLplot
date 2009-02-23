@@ -18,6 +18,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 */
+#include "qsastime_testlib.h"
 #include "qsastime.h"
 #include "qsastimeP.h"
 #include <time.h>
@@ -75,19 +76,21 @@
    setting it to and empty string.
 
    */
-#ifdef _MSC_VER
-typedef __int64 longlong;
-#define HAVE_SETENV 0
-#define HAVE_PUTENV 1
-#define CAN_FREE_PUTENV_BUFFER 1
-#else
+#if !defined(NO_LONG_LONG) && !defined(NO_ENV_API)
+
+#ifdef LONGLONG
 typedef long long int longlong;
-#define HAVE_SETENV 1
-#define HAVE_PUTENV 0
+#endif
+#ifdef __INT64
+typedef __int64 longlong;
 #endif
 
+#ifdef HAVE_UNDERSCORE_PUTENV
+#define putenv _putenv
+#define HAVE_PUTENV
+#endif
 
-#if defined(HAVE_SETENV) && defined(HAVE_PUTENV) && (!HAVE_SETENV && HAVE_PUTENV)
+#if defined(HAVE_PUTENV)
 
 static int putenv_wrapper(const char *name, const char *value)
 {
@@ -618,3 +621,11 @@ int main()
 
   return 0;
 }
+
+#else /* !defined(NO_LONG_LONG) && !defined(NO_ENV_API) */
+int main() {
+
+   printf("test abandoned because there is no useable 64-bits integer type for this\n\
+compiler/platform or there is no useable environment API");
+}
+#endif /* !defined(NO_LONG_LONG) && !defined(NO_ENV_API) */

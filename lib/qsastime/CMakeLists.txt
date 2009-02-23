@@ -19,33 +19,89 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Routine for generating a header of data to be used by the
-# TAI-UTC transformation code.
+#
+# Test a few properties of the current C compiler
+#
+SET(INC_FILE "${CMAKE_CURRENT_BINARY_DIR}/qsastime_testlib.h")
+SET(C_FILE "${CMAKE_CURRENT_BINARY_DIR}/qsastime_probe.c")
+SET(MACROS LONGLONG __INT64)
+FOREACH(TYPE_MACRO ${MACROS})
+  FILE(WRITE "${C_FILE}"
+  "#define ${TYPE_MACRO}
+#ifdef LONGLONG
+typedef long long int longlong;
+#endif
+  #ifdef __INT64
+typedef __int64 longlong;
+#endif
+int main( int argc, char *argv[]) {
+  longlong l;
+  exit(0);
+}")
+  TRY_COMPILE(TYPE_FOUND
+    ${CMAKE_BINARY_DIR}
+    ${C_FILE}
+    OUTPUT_VARIABLE OUTPUT)
+  FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
+    "Determining if the C compiler has support for 64-bits integers failed with "
+    "the following output:\n${OUTPUT}\n\n")
+  IF (TYPE_FOUND)
+    MESSAGE(STATUS "Check for 64-bits integer type - found")
+    FILE(WRITE ${INC_FILE} "#define ${TYPE_MACRO}")
+  ELSE (TYPE_FOUND)
+    FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
+      "Determining if the C compiler has support for 64-bits integers failed with "
+      "the following output:\n${OUTPUT}\n\n")
+  ENDIF (TYPE_FOUND)
+ENDFOREACH(TYPE_MACRO ${MACROS})
+IF (NOT TYPE_FOUND)
+  FILE(WRITE ${INC_FILE} "#define NO_LONG_LONG")
+  MESSAGE(STATUS "Check for 64-bits integer type - failed")
+ENDIF (NOT TYPE_FOUND)
 
-add_executable(tai-utc-gen ${CMAKE_CURRENT_SOURCE_DIR}/tai-utc-gen.c)
+SET(MACROS HAVE_SETENV HAVE_PUTENV HAVE_UNDERSCORE_PUTENV)
+FOREACH(ENV_MACRO ${MACROS})
+  FILE(WRITE "${C_FILE}"
+  "#include <stdlib.h>
+#define ${ENV_MACRO}
+int main( int argc, char *argv[]) {
+  char *tz;
+  tz = getenv(\"TZ\");
+#ifdef HAVE_SETENV
+  setenv(\"TZ\", \"\", 1);
+  if (tz) {
+    setenv(\"TZ\", tz, 1);
+  }
+#endif
+#ifdef HAVE_PUTENV
+  putenv(\"TZ=\");
+#endif
+#ifdef HAVE_UNDERSCORE_PUTENV
+  _putenv(\"TZ=\");
+#endif
+  exit(0);
+}")
+  TRY_COMPILE(ENV_FOUND
+    ${CMAKE_BINARY_DIR}
+    ${C_FILE}
+    OUTPUT_VARIABLE OUTPUT)
+  IF (ENV_FOUND)
+    FILE(APPEND ${INC_FILE} "\n#define ${ENV_MACRO}")
+    MESSAGE(STATUS "Check for environment API - found")
+  ELSE (ENV_FOUND)
+    FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
+      "Determining if the C compiler has support for setting environment variables failed with "
+      "the following output:\n${OUTPUT}\n\n")
+  ENDIF (ENV_FOUND)
+ENDFOREACH(ENV_MACRO ${MACROS})
+IF (NOT ENV_FOUND)
+  FILE(APPEND ${INC_FILE} "\n#define NO_ENV_API")
+  MESSAGE(STATUS "Check for environment API - failed")
+ENDIF (NOT ENV_FOUND)
 
-get_target_property(
-  tai-utc-gen_LOCATION
-  tai-utc-gen
-  LOCATION
-  )
-
-add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tai-utc.h
-  COMMAND ${tai-utc-gen_LOCATION}
-  ${CMAKE_CURRENT_SOURCE_DIR}/tai-utc.dat
-  ${CMAKE_CURRENT_BINARY_DIR}/tai-utc.h
-  DEPENDS
-  ${tai-utc-gen_LOCATION}
-  ${CMAKE_CURRENT_SOURCE_DIR}/tai-utc.dat
-  )
-
-# This target-level dependency needed below.
-add_custom_target(
-  tai-utc.h_built
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tai-utc.h
-  )
-
+#
+# The header file has been written, now go on
+#
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -62,8 +118,6 @@ if(BUILD_SHARED_LIBS)
 endif(BUILD_SHARED_LIBS)
 
 add_library(qsastime ${qsastime_LIB_SRCS})
-add_dependencies(qsastime tai-utc.h_built)
-
 if(MATH_LIB)
   target_link_libraries(qsastime ${MATH_LIB})
 endif(MATH_LIB)
@@ -74,7 +128,6 @@ SOVERSION ${qsastime_SOVERSION}
 VERSION ${qsastime_VERSION}
 INSTALL_NAME_DIR "${LIB_DIR}"
 )
-
 set(qsastime_INSTALLED_HEADERS
    qsastime.h
    qsastimedll.h
@@ -107,15 +160,7 @@ add_executable(qsastime_test qsastime_test.c qsastime_extra.c qsastime.c)
 # Add in qsastime.c rather than use the library because don't want
 # to make private library API visible.
 
-option(
-  QSASTIME_TESTLIB
-  "Option for building qsastime_testlib which fails on some Windows platforms"
-  OFF
-  )
-
-if(QSASTIME_TESTLIB)
-  add_executable(qsastime_testlib qsastime_testlib.c qsastime.c)
-  if(MATH_LIB)
-    target_link_libraries(qsastime_testlib ${MATH_LIB})
-  endif(MATH_LIB)
-endif(QSASTIME_TESTLIB)
+add_executable(qsastime_testlib qsastime_testlib.c qsastime.c)
+if(MATH_LIB)
+  target_link_libraries(qsastime_testlib ${MATH_LIB})
+endif(MATH_LIB)
