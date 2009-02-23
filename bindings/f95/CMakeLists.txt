@@ -45,8 +45,10 @@ if(ENABLE_f95)
     FILE(APPEND "${INC_FILE}"
       "integer, parameter :: plflt   = kind(1.0)\n")
   endif(PL_DOUBLE)
+  # Only 4 bytes required in Fortran to represent an unsigned 32-bit
+  # PLUNICODE.
   FILE(APPEND "${INC_FILE}"
-    "integer, parameter :: plunicode  = selected_int_kind(10)\n")
+    "integer, parameter :: plunicode  = 4\n")
 
   # Mark the include file as being generated
   set_source_files_properties(plflt.inc PROPERTIES GENERATED ON)

@@ -187,37 +187,41 @@
       0, &
       0 /
 
+!    drop the leading '8' marker for FCI because some compilers (gfortran)
+!    have an implementation error (integer overflow error) for that case, and
+!    the marker is not needed, in any case, for calls to plsfci.
+
       data (fci(i), i=1,fci_combinations) / &
-	z'80000000', &
-	z'80000001', &
-	z'80000002', &
-	z'80000003', &
-	z'80000004', &
-	z'80000010', &
-	z'80000011', &
-	z'80000012', &
-	z'80000013', &
-	z'80000014', &
-	z'80000020', &
-	z'80000021', &
-	z'80000022', &
-	z'80000023', &
-	z'80000024', &
-	z'80000100', &
-	z'80000101', &
-	z'80000102', &
-	z'80000103', &
-	z'80000104', &
-	z'80000110', &
-	z'80000111', &
-	z'80000112', &
-	z'80000113', &
-	z'80000114', &
-	z'80000120', &
-	z'80000121', &
-	z'80000122', &
-	z'80000123', &
-	z'80000124' /
+	z'00000000', &
+	z'00000001', &
+	z'00000002', &
+	z'00000003', &
+	z'00000004', &
+	z'00000010', &
+	z'00000011', &
+	z'00000012', &
+	z'00000013', &
+	z'00000014', &
+	z'00000020', &
+	z'00000021', &
+	z'00000022', &
+	z'00000023', &
+	z'00000024', &
+	z'00000100', &
+	z'00000101', &
+	z'00000102', &
+	z'00000103', &
+	z'00000104', &
+	z'00000110', &
+	z'00000111', &
+	z'00000112', &
+	z'00000113', &
+	z'00000114', &
+	z'00000120', &
+	z'00000121', &
+	z'00000122', &
+	z'00000123', &
+	z'00000124' /
 
         data (family(i), i=1,5) / &
              "sans-serif", &
@@ -355,7 +359,8 @@
                  trim(weight(weight_index+1))//':  '// &
                  'The quick brown fox jumps over the lazy dog'
 	 elseif(page == 13) then
-	    write(string,'(a,"#<0x",z8,">",a)') &
+!           Note, must put in missing FCI marker for this particular case.
+	    write(string,'(a,"#<0x8",z7.7,">",a)') &
                  'Page 14, '//trim(family(family_index+1))//', '// &
                  trim(style(style_index+1))//', '// &
                  trim(weight(weight_index+1))//':  ', &
