@@ -5,6 +5,7 @@
   QSAS team,
   Imperial College, London
   Copyright (C) 2009 Imperial College, London
+  Copyright (C) 2009 Alan W. Irwin
 
   This file is part of PLplot.
 
@@ -59,6 +60,8 @@
 static const double SecInDay = 86400; /* we ignore leap seconds */
 static const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 static const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
+
+int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *index, int (*cmp)(const void *keyval, const void *datum));
 
 int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
 {	
@@ -962,4 +965,63 @@ size_t strfqsas(char * buf, size_t len, const char *format, double ctime, const 
     forceJulian = 0;
 
   return strfMJD(buf, len, format, MJD, forceJulian);
+}
+
+/* bhunt_search.  Search an ordered table with a binary hunt phase and a
+   binary search phase.
+
+   On entry *low is used to help the hunt phase speed up the binary
+   search when consecutive calls to bhunt_search are made with
+   similar key values.  On exit, *low is adjusted such that
+   base[*(low)-1] < key <= base[*low] with the special cases of
+   *low set to 0 to indicate the key <= base[0] and *low set to n
+   to indicate base[n-1] < key.  The function *gt must return true (1)
+   if its first argument (the search key) is greater than 
+   its second argument (a table entry).  Otherwise it returns false
+   (0).  Items in the array base must be in ascending order. */
+
+int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*gt)(const void *keyval, const void *datum)) {
+  const void *indexbase;
+  size_t mid, high, hunt_inc=1;
+  /* Protect against badly defined or undefined *low values. */
+  if(*low <= 0 || *low > n) {
+    *low = 0;
+    high = n+1;
+  } else {
+    /* hunt phase */
+    indexbase = (void *) (((const char *) base) + (size*(*low)));
+    if((*gt)(key, indexbase)) {
+      high = (*low) + hunt_inc; 
+      indexbase = (void *) (((const char *) base) + (size*high));
+      while( (high < n) && ((*gt)(key, indexbase)) ) {
+	*low = high;
+	hunt_inc+=hunt_inc;
+	high = high + hunt_inc;
+	indexbase = (void *) (((const char *) base) + (size*high));
+      }
+      if(high >= n)
+	high = n+1;
+    } else {
+      high = *low;
+      *low = high - hunt_inc;
+      indexbase = (void *) (((const char *) base) + (size*(*low)));
+      while( ((*low) >= 0) && ((*gt)(key, indexbase)) ) {
+	high = *low;
+	hunt_inc+=hunt_inc;
+	*low = (*low) - hunt_inc;
+	indexbase = (void *) (((const char *) base) + (size*(*low)));
+      }
+      if(*low < 0)
+	*low = 0;
+    }
+  }
+  /* search phase */
+  while(high - *low > 1) {
+    mid = *low + (high-*low)/2;
+    indexbase = (void *) (((const char *) base) + (size*mid));
+    if((*gt)(key, indexbase))
+      *low = mid;
+    else
+      high = mid;
+  }
 }
