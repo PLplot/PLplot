@@ -61,7 +61,7 @@ static const double SecInDay = 86400; /* we ignore leap seconds */
 static const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 static const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
 
-int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *index, int (*cmp)(const void *keyval, const void *datum));
+int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*cmp)(const void *keyval, const void *datum));
 
 int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
 {	
@@ -973,53 +973,66 @@ size_t strfqsas(char * buf, size_t len, const char *format, double ctime, const 
    On entry *low is used to help the hunt phase speed up the binary
    search when consecutive calls to bhunt_search are made with
    similar key values.  On exit, *low is adjusted such that
-   base[*(low)-1] < key <= base[*low] with the special cases of
-   *low set to 0 to indicate the key <= base[0] and *low set to n
-   to indicate base[n-1] < key.  The function *gt must return true (1)
-   if its first argument (the search key) is greater than 
+   base[*low] <= key < base[(*low+1)] with the special cases of
+   *low set to -1 to indicate the key < base[0] and *low set to n-1
+   to indicate base[n-1] <= key.  The function *ge must return true (1)
+   if its first argument (the search key) is greater than or equal to
    its second argument (a table entry).  Otherwise it returns false
    (0).  Items in the array base must be in ascending order. */
 
-int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*gt)(const void *keyval, const void *datum)) {
+int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum)) {
   const void *indexbase;
-  size_t mid, high, hunt_inc=1;
-  /* Protect against badly defined or undefined *low values. */
-  if(*low <= 0 || *low > n) {
+  int mid, high, hunt_inc=1;
+  /* If previous search found below range, then assure one hunt cycle
+     just in case new key is also below range. */
+  if(*low == -1)
     *low = 0;
-    high = n+1;
+  /* Protect against invalid or undefined *low values where hunt
+     is waste of time. */
+  if(*low < 0 || *low >= n) {
+    *low = -1;
+    high = n;
   } else {
-    /* hunt phase */
+    /* binary hunt phase where we are assured 0 <= *low < n */
     indexbase = (void *) (((const char *) base) + (size*(*low)));
-    if((*gt)(key, indexbase)) {
-      high = (*low) + hunt_inc; 
+    if((*ge)(key, indexbase)) {
+      high = (*low) + hunt_inc;
       indexbase = (void *) (((const char *) base) + (size*high));
-      while( (high < n) && ((*gt)(key, indexbase)) ) {
+      /* indexbase is valid if high < n. */
+      while( (high < n) && ((*ge)(key, indexbase)) ) {
 	*low = high;
 	hunt_inc+=hunt_inc;
 	high = high + hunt_inc;
 	indexbase = (void *) (((const char *) base) + (size*high));
       }
       if(high >= n)
-	high = n+1;
+	high = n;
+      /* At this point, low is valid and base[low] <= key
+         and either key < base[high] for valid high or high = n.  */
     } else {
       high = *low;
       *low = high - hunt_inc;
       indexbase = (void *) (((const char *) base) + (size*(*low)));
-      while( ((*low) >= 0) && ((*gt)(key, indexbase)) ) {
+      /* indexbase is valid if(*low) >= 0 */ 
+      while( ((*low) >= 0) && !((*ge)(key, indexbase)) ) {
 	high = *low;
 	hunt_inc+=hunt_inc;
 	*low = (*low) - hunt_inc;
 	indexbase = (void *) (((const char *) base) + (size*(*low)));
       }
-      if(*low < 0)
-	*low = 0;
+      if((*low) < 0)
+	*low = -1;
+      /* At this point high is valid and key < base[high] 
+	 and either base[low] <= key for valid low or low = -1. */
     }
   }
-  /* search phase */
+  /* binary search phase where we are assured base[low] <= key < base[high] 
+     when both low and high are valid with obvious special cases signalled
+     by low = -1 or high = n.  */
   while(high - *low > 1) {
     mid = *low + (high-*low)/2;
     indexbase = (void *) (((const char *) base) + (size*mid));
-    if((*gt)(key, indexbase))
+    if((*ge)(key, indexbase))
       *low = mid;
     else
       high = mid;
