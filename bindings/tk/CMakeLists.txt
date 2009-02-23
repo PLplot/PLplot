@@ -90,6 +90,7 @@ if(ENABLE_tk)
     ${TK_INCLUDE_PATH}
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/bindings/tcl
+    ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
