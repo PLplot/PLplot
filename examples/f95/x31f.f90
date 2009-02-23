@@ -34,9 +34,10 @@ program x31f95
   real(kind=plflt) xmid, ymid, wx, wy
   real(kind=plflt) mar, aspect, jx, jy, ori
   integer win, level2, digmax, digits, compression1, compression2
-  real(kind=plflt) xp1, yp1, xp2, yp2
-  integer xleng1, yleng1, xoff1, yoff1, xleng2, yleng2, xoff2, yoff2
-  integer fam1, num1, bmax1, fam2, num2, bmax2, r, g, b
+  real(kind=plflt) xp0, yp0, xp1, yp1, xp2, yp2
+  integer xleng0, yleng0, xoff0, yoff0, xleng1, yleng1, xoff1, yoff1 
+  integer xleng2, yleng2, xoff2, yoff2
+  integer fam0, num0, bmax0, fam1, num1, bmax1, fam2, num2, bmax2, r, g, b
   real(kind=plflt) a
   integer r1(2), g1(2), b1(2)
   data r1 /0, 255/
@@ -55,17 +56,27 @@ program x31f95
 
   call plparseopts(PL_PARSE_FULL)
   
-!     Test setting / getting compression parameter across plinit
-  compression1 = 95
-  call plscompression(compression1)
-  
-!     Test setting / getting familying parameters across plinit
+!     Test setting / getting familying parameters before plinit
+  call plgfam(fam0, num0, bmax0)
   fam1 = 0
   num1 = 10
   bmax1 = 1000
   call plsfam(fam1, num1, bmax1)
 
-!     Test setting / getting page parameters across plinit
+!     Retrieve the same values?
+  call plgfam(fam2, num2, bmax2)
+  write(*,'(A,I1,I3,I5)') 'family parameters: fam, num, bmax = ', &
+       fam2, num2, bmax2
+  if (fam2 .ne. fam1 .or. num2 .ne. num1 .or. bmax2 .ne. bmax1) then
+     write(stderr,*) 'plgfam test failed\n'
+     status = 1
+  endif
+!     Restore values set initially by plparseopts.
+  call plsfam(fam0, num0, bmax0)
+
+!     Test setting / getting page parameters before plinit
+!     Save values set by plparseopts to be restored later.
+  call plgpage(xp0, yp0, xleng0, yleng0, xoff0, yoff0)
   xp1 = 200._plflt
   yp1 = 200._plflt
   xleng1 = 400
@@ -73,7 +84,25 @@ program x31f95
   xoff1 = 10
   yoff1 = 20
   call plspage(xp1, yp1, xleng1, yleng1, xoff1, yoff1)
-  
+
+!     Retrieve the same values?
+  call plgpage(xp2, yp2, xleng2, yleng2, xoff2, yoff2)
+  write(*,'(A,2F11.6, 2I4, 2I3)')  &
+       'page parameters: xp, yp, xleng, yleng, xoff, yoff =', &
+       xp2, yp2, xleng2, yleng2, xoff2, yoff2
+  if (xp2 .ne. xp1 .or. yp2 .ne. yp1 .or. xleng2 .ne. xleng1 .or. &
+       yleng2 .ne. yleng1 .or. xoff2 .ne. xoff1 .or.  &
+       yoff2 .ne. yoff1 ) then
+     write(stderr,*) 'plgpage test failed'
+     status = 1
+  endif
+!     Restore values set initially by plparseopts.
+  call plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0)
+
+!     Test setting / getting compression parameter across plinit
+  compression1 = 95
+  call plscompression(compression1)
+    
 !     Initialize plplot
 
   call plinit()
@@ -85,33 +114,9 @@ program x31f95
   write(*,'(A,I2)') 'compression parameter = ', compression2
   if (compression2 .ne. compression1) then
      write(stderr,*) 'plgcompression test failed'
-     status = 1;
-  endif
-  
-!     Test if device initialization screwed around with any of the
-!     preset familying values.
-  call plgfam(fam2, num2, bmax2);
-  write(*,'(A,I1,I3,I5)') 'family parameters: fam, num, bmax = ', &
-       fam2, num2, bmax2
-  if (fam2 .ne. fam1 .or. num2 .ne. num1 .or. bmax2 .ne. bmax1) then
-     write(stderr,*) 'plgfam test failed\n'
      status = 1
   endif
   
-!     Test if device initialization screwed around with any of the
-!     preset page values.
-  call plgpage(xp2, yp2, xleng2, yleng2, xoff2, yoff2)
-  write(*,'(A,2F11.6, 2I4, 2I3)')  &
-       'page parameters: xp, yp, xleng, yleng, xoff, yoff =', &
-       xp2, yp2, xleng2, yleng2, xoff2, yoff2
-  if (xp2 .ne. xp1 .or. yp2 .ne. yp1 .or. xleng2 .ne. xleng1 .or. &
-       yleng2 .ne. yleng1 .or. xoff2 .ne. xoff1 .or.  &
-       yoff2 .ne. yoff1 ) then
-     write(stderr,*) 'plgpage test failed'
-     status = 1;
-  endif
-
-
 !     Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
 !     they work without any obvious error messages.
   call plscolor(1)
@@ -136,8 +141,8 @@ program x31f95
      write(stderr,*) 'plgvpd test failed'
      status = 1
   endif
-  xmid = 0.5*(xmin+xmax);
-  ymid = 0.5*(ymin+ymax);
+  xmid = 0.5*(xmin+xmax)
+  ymid = 0.5*(ymin+ymax)
   
   call plwind(0.2_plflt, 0.3_plflt, 0.4_plflt, 0.5_plflt)
   call plgvpw(xmin, xmax, ymin, ymax)

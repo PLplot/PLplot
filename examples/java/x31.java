@@ -111,8 +111,9 @@ class x31 {
 	// Retrieve the same values?
 	pls.gpage(xp2, yp2, xleng2, yleng2, xoff2, yoff2);
 	System.out.println("page parameters: xp, yp, xleng, yleng, xoff, yoff = "
-			   + xp2[0] + " " + yp2[0] + " " + xleng2[0] + " " 
-			   + yleng2[0] + " " + xoff2[0] + " " + yoff2[0]);
+			   + nf.format(xp2[0]) + " " + nf.format(yp2[0]) + " " 
+			   + xleng2[0] + " " + yleng2[0] + " " 
+			   + xoff2[0] + " " + yoff2[0]);
 	if (xp2[0] != xp1 || yp2[0] != yp1 || 
 	    xleng2[0] != xleng1 || yleng2[0] != yleng1 || 
 	    xoff2[0] != xoff1 || yoff2[0] != yoff1 ) {
