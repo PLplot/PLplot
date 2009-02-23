@@ -918,8 +918,8 @@ plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin)
     PLFLT m, M;
 
     if (isnan(f[0][0]) || isinf(f[0][0])) {
-        M = -INFINITY;
-        m = INFINITY;
+        M = -HUGE_VAL;
+        m = HUGE_VAL;
     }
     else
         M = m = f[0][0];

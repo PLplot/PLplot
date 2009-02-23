@@ -199,10 +199,10 @@ typedef void* PLPointer;
 #  endif
 #endif
 
-/* Check if C99 INFINITY macro is available - if not then 
+/* Check if C99 HUGE_VAL macro is available - if not then 
  * define a replacement */
-#ifndef INFINITY
-#define INFINITY (1.0/0.0)
+#ifndef HUGE_VAL
+#define HUGE_VAL (1.0/0.0)
 #endif
 
 
