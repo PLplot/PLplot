@@ -1076,6 +1076,11 @@ clipline(PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
 	(*p_y1 >= ymax && *p_y2 >= ymax))
 	return 1;
 
+/* If one of the coordinates is not finite then return with an error */
+    if ( (*p_x1 == PLINT_MIN) || (*p_y1 == PLINT_MIN) || 
+         (*p_x2 == PLINT_MIN) || (*p_y2 == PLINT_MIN) ) 
+        return 1;
+
     flipx = 0;
     flipy = 0;
 
