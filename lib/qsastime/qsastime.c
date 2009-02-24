@@ -61,7 +61,7 @@ static const double SecInDay = 86400; /* we ignore leap seconds */
 static const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 static const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
 
-int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*cmp)(const void *keyval, const void *datum));
+int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum));
 
 int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
 {	
