@@ -191,7 +191,7 @@ check_function_exists(usleep PL_HAVE_USLEEP)
 # are sometimes all that is available on windows
 check_symbol_exists(finite "math.h" HAVE_FINITE)
 if(NOT HAVE_FINITE)
-  check_symbolnction_exists(_finite "math.h" _HAVE_FINITE)
+  check_symbol_exists(_finite "math.h" _HAVE_FINITE)
   set(HAVE_FINITE ${_HAVE_FINITE} CACHE INTERNAL "Have function _finite")
 endif(NOT HAVE_FINITE)
 check_symbol_exists(isnan "math.h" HAVE_ISNAN)
