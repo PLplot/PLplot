@@ -187,16 +187,26 @@ typedef void* PLPointer;
  * Add in missing isnan / isinf functions on some platforms
 \*--------------------------------------------------------------------------*/
 
-#if defined(WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
+#if defined(_HAVE_ISNAN)
 #  define isnan _isnan
+#endif
+#if defined(_HAVE_ISINF)
 #  define isinf _isinf
-#else
-#  if !defined(HAVE_ISNAN)
-#    define isnan(x) ((x) != (x))
-#  endif
-#  if !defined(HAVE_ISINF)
-#    define isinf(x) (!isnan(x) && isnan(x-x))
-#  endif
+#endif
+#if defined(_HAVE_FINITE)
+#  define finite _finite
+#endif
+
+/* Note these replacements follow the old BSD convention and not
+ * C99. In particular isinf does not distinguish +/- inf.
+#if !defined(HAVE_ISNAN)
+#  define isnan(x) ((x) != (x))
+#endif
+#if !defined(HAVE_ISINF)
+#  define isinf(x) (!isnan(x) && isnan(x-x))
+#endif
+#if !defined(HAVE_FINITE)
+#  define finite(x) (!isnan(x-x)) 
 #endif
 
 /* Check if C99 HUGE_VAL macro is available - if not then 

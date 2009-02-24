@@ -917,7 +917,7 @@ plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin)
     int i, j;
     PLFLT m, M;
 
-    if (isnan(f[0][0]) || isinf(f[0][0])) {
+    if (!finite(f[0][0])) {
         M = -HUGE_VAL;
         m = HUGE_VAL;
     }
@@ -926,7 +926,7 @@ plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin)
 
     for (i = 0; i < nx; i++) {
 	for (j = 0; j < ny; j++) {
-	    if (isnan(f[i][j]) || isinf(f[i][j])) continue;
+	    if (!finite(f[i][j])) continue;
 	    if (f[i][j] > M) M = f[i][j];
 	    if (f[i][j] < m) m = f[i][j];
 	}
