@@ -242,12 +242,20 @@ proc x21 {{w loopback}} {
 #----------------------------------------------------------------------------
 #      isnan
 #
-# Note: the current string interface makes it necessary to check for the
-# special string "-1.#IND" - at least with MSVC 6.0
-# On linux it looks like the relevant string is nan.
+# Note: the current string interface exposes the string representation
+# of NaNs to the Tcl side. As there is a very wide variety of such
+# represetations (NAN, nan, "-1.#IND", "1.#QNAN" being but a few
+# - see also: http://wiki.apache.org/stdcxx/FloatingPoint)
+# we take a shortcut:
+# - x is supposed to be a valid number, finite or NaN
+# - if it is not recognised as a double precision number, it is assumed
+#   to be NaN
+# - if it is not equal to itself, it definitely is a NaN, as that is
+#   the distinguishing property of NaNs.
+#
 #
 proc isnan {x} {
-    if {$x == NaN || $x eq "nan" || $x eq "-1.#IND"} {
+    if {![string is double $x] || $x ne $x} {
         return 1
     } else {
         return 0
