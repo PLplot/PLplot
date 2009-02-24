@@ -53,6 +53,46 @@ function status = ix31c(strm)
 
   ## (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
+  ## Test setting / getting familying parameters before plinit.
+  ## Save values set by plparseopts to be restored later.
+  [fam0, num0, bmax0] = plgfam();
+  fam1 = 0;
+  num1 = 10;
+  bmax1 = 1000;
+  plsfam(fam1, num1, bmax1);
+
+  ## Retrieve the same values?
+  [fam2, num2, bmax2] = plgfam();
+  fprintf(strm,"family parameters: fam, num, bmax = %d %d %d\n", fam2, num2, bmax2);
+  if (fam2 != fam1 || num2 != num1 || bmax2 != bmax1)
+    fputs(stderr, "plgfam test failed\n");
+    status = 1;
+  endif
+  ## Restore values set initially by plparseopts.
+  plsfam(fam0, num0, bmax0);
+
+  ## Test setting / getting page parameters before plinit/
+  ## Save values set by plparseopts to be restored later.
+  [xp0, yp0, xleng0, yleng0, xoff0, yoff0] = plgpage();
+  xp1 = 200.;
+  yp1 = 200.;
+  xleng1 = 400;
+  yleng1 = 200;
+  xoff1 = 10;
+  yoff1 = 20;
+  plspage(xp1, yp1, xleng1, yleng1, xoff1, yoff1);
+
+  ## Retrieve the same values?
+  [xp2, yp2, xleng2, yleng2, xoff2, yoff2] = plgpage();
+  fprintf(strm,"page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n", xp2, yp2, xleng2, yleng2, xoff2, yoff2);
+  if (xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 || 
+      xoff2 != xoff1 || yoff2 != yoff1 )
+    fputs(stderr,"plgpage test failed\n");
+    status = 1;
+  endif
+  ## Restore values set initially by plparseopts.
+  plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+
   ## Test setting / getting compression parameter across plint 
   compression1 = 95;
   plscompression(compression1);
@@ -83,25 +123,6 @@ function status = ix31c(strm)
   fprintf(strm,"compression parameter = %d\n", compression2);
   if (compression2 != compression1) 
     fputs(stderr, "plgcompression test failed\n");
-    status = 1;
-  endif
-
-  ## Test if device initialization screwed around with any of the
-  ## preset familying values.
-  [fam2, num2, bmax2] = plgfam();
-  fprintf(strm,"family parameters: fam, num, bmax = %d %d %d\n", fam2, num2, bmax2);
-  if (fam2 != fam1 || num2 != num1 || bmax2 != bmax1)
-    fputs(stderr,"plgfam test failed\n");
-    status = 1;
-  endif
-
-  ## Test if device initialization screwed around with any of the
-  ## preset page values.
-  [xp2, yp2, xleng2, yleng2, xoff2, yoff2] = plgpage();
-  fprintf(strm,"page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n", xp2, yp2, xleng2, yleng2, xoff2, yoff2);
-  if (xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 || 
-      xoff2 != xoff1 || yoff2 != yoff1 ) 
-    fputs(stderr,"plgpage test failed\n");
     status = 1;
   endif
 
