@@ -148,6 +148,9 @@ RUNTIME DESTINATION ${BIN_DIR}
 
 add_executable(qsastime_test qsastime_test.c qsastime_extra.c qsastime.c)
 
+# Routine for testing bhunt_search function in qsastime.c.
+add_executable(bhunt_search_test bhunt_search_test.c qsastime.c)
+
 # Routine for testing just the library functions against their library
 # inverses (to test self-consistency when such inverses exist) and also
 # equivalent C library routines.
