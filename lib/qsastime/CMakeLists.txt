@@ -163,7 +163,15 @@ add_executable(bhunt_search_test bhunt_search_test.c qsastime.c)
 # Add in qsastime.c rather than use the library because don't want
 # to make private library API visible.
 
-add_executable(qsastime_testlib qsastime_testlib.c qsastime.c)
-if(MATH_LIB)
-  target_link_libraries(qsastime_testlib ${MATH_LIB})
-endif(MATH_LIB)
+option(
+  QSASTIME_TESTLIB
+  "Option for building qsastime_testlib"
+  OFF
+  )
+
+if(QSASTIME_TESTLIB)
+  add_executable(qsastime_testlib qsastime_testlib.c qsastime.c)
+  if(MATH_LIB)
+    target_link_libraries(qsastime_testlib ${MATH_LIB})
+  endif(MATH_LIB)
+endif(QSASTIME_TESTLIB)
