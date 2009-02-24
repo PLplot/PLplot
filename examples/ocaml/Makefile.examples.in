@@ -29,8 +29,8 @@ EXEEXT = @EXEEXT@
 @pkg_config_true@RPATHCMD = -ccopt "@RPATHCMD@"
 
 OCAML_CFLAGS = -g -I @OCAML_INSTALL_DIR@/plplot
-@pkg_config_true@OCAML_LIBS = $(RPATHCMD) -ccopt "-L @CMAKE_INSTALL_LIBDIR@" plplot.cma 
-@pkg_config_false@OCAML_LIBS = -ccopt "-L @CMAKE_INSTALL_LIBDIR@" plplot.cma
+@pkg_config_true@OCAML_LIBS = $(RPATHCMD) -ccopt "-L@CMAKE_INSTALL_LIBDIR@" plplot.cma 
+@pkg_config_false@OCAML_LIBS = -ccopt "-L@CMAKE_INSTALL_LIBDIR@" plplot.cma
 
 EXECUTABLES_list = \
 		 x01ocaml$(EXEEXT) \
