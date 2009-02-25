@@ -36,7 +36,6 @@ main(int argc, char *argv[])
     long start[MAXPAGES];		/* start (offset) of each page */
     char buf[BUFSZ], xtra, lastchar = '\0';
     char c, ibuf[128], *t;
-    size_t nwrite;
 
     if (argc < 2) {
 	describe();
