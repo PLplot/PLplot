@@ -6,9 +6,6 @@
 #ifndef __PLCXXDEMOS_H__
 #define __PLCXXDEMOS_H__
 
-/* common includes */
-#include "plstream.h"
-
 /* plplot actually includes the C versions of these 2, but
  * add here for completeness */
 #include <cstdio>
@@ -17,6 +14,9 @@
 #include <iostream>
 #include <cstring>
 #include <cmath>
+
+/* common includes */
+#include "plstream.h"
 
 /* common defines */
 #ifndef M_PI

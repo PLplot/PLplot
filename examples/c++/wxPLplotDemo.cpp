@@ -95,6 +95,7 @@ public:
 private:
   wxPLplotwindow* plotwindow;
   bool bgcolor;
+  int m_backend;
 
   DECLARE_EVENT_TABLE()
 };
@@ -168,13 +169,29 @@ MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 #if wxUSE_GRAPHICS_CONTEXT  
                                    wxPLPLOT_BACKEND_GC | wxPLPLOT_DRAW_TEXT );
 #else
-                                   wxPLPLOT_BACKEND_DC | wxPLPLOT_DRAW_TEXT );
+                                   wxPLPLOT_BACKEND_AGG | wxPLPLOT_DRAW_TEXT );
 #endif
 	box->Add( plotwindow, 1, wxALL | wxEXPAND, 0 );
   panel->SetSizer( box );
 	SetSize( 640, 500 );  // set frame size
   SetSizeHints( 220, 150 );  // set minimum frame size
-	
+
+  wxString m_title=title;
+  switch(plotwindow->getBackend()) {
+  case wxPLPLOT_BACKEND_DC:
+  	m_title += wxT(" (basic)");
+  	break;
+  case wxPLPLOT_BACKEND_GC:
+  	m_title += wxT(" (wxGC)");
+  	break;
+  case wxPLPLOT_BACKEND_AGG:
+  	m_title += wxT(" (AGG)");
+  	break;
+  default:
+  	break;
+  }
+  SetTitle( m_title );  
+
 	Plot();
 }
 

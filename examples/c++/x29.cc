@@ -198,15 +198,15 @@ x29::plot3()
   int i, npts;
   PLFLT xmin, xmax, ymin, ymax;
   PLFLT tstart;
-  char *tz;
-
-  struct tm tm;
 
   // Calculate seconds since the Unix epoch for 2005-12-01 UTC.
 #if defined(WIN32)
   // Adopt the known result for POSIX-compliant systems.
   tstart = (PLFLT) 1133395200;
 #else
+  char *tz;
+  struct tm tm;
+
   tm.tm_year = 105; // Years since 1900 = 2005
   tm.tm_mon = 11;   // 0 == January, 11 = December 
   tm.tm_mday = 1;   // 1 = 1st of month 
