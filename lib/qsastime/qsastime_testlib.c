@@ -383,14 +383,12 @@ int main()
 
   printf("sizeof(time_t) = %d\n",(int)sizeof(time_t));
   if(sizeof(time_t) < 8) {
-    printf("Tests abandoned because time_t is too small on this platform to represent the extremely large date range used for these tests.  Note, the limitation is in the C library routines (gmtime and mktime) used for these test comparisons and not libqsastime itself.\n");
-    return 1;
+    printf("WARNING: time_t is too small on this platform to represent the extremely large date range used for many of these tests.  Note, the limitation is in the C library routines (gmtime and mktime) used for these test comparisons and not libqsastime itself.\n");
   }
 
   printf("sizeof(int) = %d\n",(int)sizeof(int));
   if(sizeof(int) !=4) {
-    printf("Tests abandoned because int must be 32-bits to test this library properly for how well it will potentially perform on 32-bit platforms\n");
-    return 2;
+    printf("WARNING: int must be 32-bits to test this library properly for how well it will potentially perform on 32-bit platforms\n");
   }
   /* strftime affected by locale so force 0 timezone for this complete test. */
   setenv("TZ", "", 1);
@@ -561,7 +559,15 @@ int main()
   }
 
   if(test_choice & TEST05) {
-    printf("Test 05 (non-verbose) of calendar dates for every year from -5000000 to 5000000\n");
+    printf("Test 05 of normalization of breakDownMJD result");
+    pMJD1->base_day = 51910;
+    pMJD1->time_sec = 3600.;
+    breakDownMJD(&year, &month, &day, &hour, &min, &sec, pMJD1, 0);
+    printf("For MJD = {%d,%f}, year, month, day, hour, min, sec = %d, %d, %d, %d, %d, %f\n", pMJD1->base_day, pMJD1->time_sec, year, month, day, hour, min, sec); 
+  }
+
+  if(test_choice & TEST06) {
+    printf("Test 06 (non-verbose) of calendar dates for every year from -5000000 to 5000000\n");
 
     for (date_choice=0; date_choice<5; date_choice++) {
       if(date_choice == 0) {
@@ -597,8 +603,8 @@ int main()
     }
   }
 
-  if(test_choice & TEST06) {
-    printf("Test 06 (non-verbose) of all seconds from late 2007 to early 2009\n");
+  if(test_choice & TEST07) {
+    printf("Test 07 (non-verbose) of all seconds from late 2007 to early 2009\n");
     ret= setFromUT(2007, 11, 30, 0, 0, 0., pMJD1, 0);
     if(ret) {
       printf("Test 06 cannot even start");
@@ -626,6 +632,6 @@ int main()
 int main() {
 
    printf("test abandoned because there is no useable 64-bits integer type for this\n\
-compiler/platform or there is no useable environment API");
+compiler/platform or there is no useable environment API\n");
 }
 #endif /* !defined(NO_LONG_LONG) && !defined(NO_ENV_API) */
