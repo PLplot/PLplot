@@ -115,7 +115,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wxwidgets =
  *
  *  Contructor of base class of wxPLDev classes.
  *--------------------------------------------------------------------------*/
-wxPLDevBase::wxPLDevBase( void )
+wxPLDevBase::wxPLDevBase( int bcknd ) : backend(bcknd)
 {
   // Log_Verbose( "wxPLDevBase::wxPLDevBase()" );
 
@@ -852,6 +852,10 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
   case PLESC_GETC:
     if( dev->ownGUI )
       GetCursorCmd( pls, (PLGraphicsIn *) ptr );
+	  break;
+
+  case PLESC_GETBACKEND:
+    *((int*)ptr) = dev->backend;
 	  break;
 
   default:

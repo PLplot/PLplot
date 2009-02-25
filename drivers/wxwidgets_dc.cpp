@@ -45,9 +45,8 @@
  *  Constructor of the standard wxWidgets device based on the wxPLDevBase
  *  class. Only some initialisations are done.
  *--------------------------------------------------------------------------*/
-wxPLDevDC::wxPLDevDC( void ) : wxPLDevBase()
+wxPLDevDC::wxPLDevDC( void ) : wxPLDevBase(wxBACKEND_DC)
 {
-  backend=wxBACKEND_DC;
   m_dc=NULL;
   m_bitmap=NULL;
   m_font=NULL;

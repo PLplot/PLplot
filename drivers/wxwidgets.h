@@ -89,7 +89,7 @@ class wxPLplotFrame;
 class wxPLDevBase
 {
 public: /* methods */
-	wxPLDevBase( void );
+	wxPLDevBase( int bcknd );
 	virtual ~wxPLDevBase( void );
 
   // virtual functions which need to implemented
@@ -115,13 +115,13 @@ public: /* methods */
   virtual void PSSetFont( PLUNICODE fci )=0;
 
 public: /* variables */
+  const int backend;
   bool ready;
   bool ownGUI;
   bool showGUI;
   bool waiting;
   bool resizing;
   bool exit;
-  int backend;
   int comcount;
   
   wxPLplotFrame* m_frame;

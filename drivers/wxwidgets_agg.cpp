@@ -65,7 +65,7 @@
  *  class. Initialisations of variables and objects are done.
  *--------------------------------------------------------------------------*/
 wxPLDevAGG::wxPLDevAGG() :
-		wxPLDevBase(),
+		wxPLDevBase(wxBACKEND_AGG),
     mRenderingBuffer(),
     mPixFormat( mRenderingBuffer ),
     mRendererBase( mPixFormat ),
@@ -93,8 +93,6 @@ wxPLDevAGG::wxPLDevAGG() :
     mColorGreenFill( 0 ),
     mColorBlueFill( 0 )
 {
-  backend=wxBACKEND_AGG;
-	
   mCurves.approximation_scale( 2.0 );
   mContour.auto_detect_orientation( false );
   mConvStroke.line_join( agg::round_join );

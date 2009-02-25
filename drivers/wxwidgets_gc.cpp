@@ -39,11 +39,10 @@
 /* only compile code if wxGraphicsContext available */
 #if wxUSE_GRAPHICS_CONTEXT
   
-wxPLDevGC::wxPLDevGC( void ) : wxPLDevBase()
+wxPLDevGC::wxPLDevGC( void ) : wxPLDevBase(wxBACKEND_GC)
 {
   // Log_Verbose( "%s", __FUNCTION__ );
 
-  backend=wxBACKEND_GC;
   m_dc=NULL;
   m_bitmap=NULL;
   m_context=NULL;
