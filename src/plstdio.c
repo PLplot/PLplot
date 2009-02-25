@@ -108,7 +108,6 @@ plio_fread(void *buf, size_t size, size_t nmemb, FILE *stream)
 void
 plio_fgets(char *buf, int size, FILE *stream)
 {
-  size_t bytes;
   char *s;
 
   dbug_enter("plio_fgets");
