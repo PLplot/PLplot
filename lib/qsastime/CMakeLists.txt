@@ -22,12 +22,14 @@
 #
 # Test a few properties of the current C compiler
 #
-SET(INC_FILE "${CMAKE_CURRENT_BINARY_DIR}/qsastime_testlib.h")
-SET(C_FILE "${CMAKE_CURRENT_BINARY_DIR}/qsastime_probe.c")
-SET(MACROS LONGLONG __INT64)
-FOREACH(TYPE_MACRO ${MACROS})
-  FILE(WRITE "${C_FILE}"
-  "#define ${TYPE_MACRO}
+set(INC_FILE "${CMAKE_CURRENT_BINARY_DIR}/qsastime_testlib.h")
+set(C_FILE "${CMAKE_CURRENT_BINARY_DIR}/qsastime_probe.c")
+set(MACROS LONGLONG __INT64)
+set(CONTINUE ON)
+foreach(TYPE_MACRO ${MACROS})
+  if(CONTINUE)
+    file(WRITE "${C_FILE}"
+    "#define ${TYPE_MACRO}
 #ifdef LONGLONG
 typedef long long int longlong;
 #endif
@@ -37,32 +39,37 @@ typedef __int64 longlong;
 int main( int argc, char *argv[]) {
   longlong l;
   exit(0);
-}")
-  TRY_COMPILE(TYPE_FOUND
-    ${CMAKE_BINARY_DIR}
-    ${C_FILE}
-    OUTPUT_VARIABLE OUTPUT)
-  FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
-    "Determining if the C compiler has support for 64-bits integers failed with "
-    "the following output:\n${OUTPUT}\n\n")
-  IF (TYPE_FOUND)
-    MESSAGE(STATUS "Check for 64-bits integer type - found")
-    FILE(WRITE ${INC_FILE} "#define ${TYPE_MACRO}")
-  ELSE (TYPE_FOUND)
-    FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
-      "Determining if the C compiler has support for 64-bits integers failed with "
-      "the following output:\n${OUTPUT}\n\n")
-  ENDIF (TYPE_FOUND)
-ENDFOREACH(TYPE_MACRO ${MACROS})
-IF (NOT TYPE_FOUND)
-  FILE(WRITE ${INC_FILE} "#define NO_LONG_LONG")
-  MESSAGE(STATUS "Check for 64-bits integer type - failed")
-ENDIF (NOT TYPE_FOUND)
+}"
+    )
+    try_compile(TYPE_FOUND
+      ${CMAKE_BINARY_DIR}
+      ${C_FILE}
+      OUTPUT_VARIABLE OUTPUT)
+    if(TYPE_FOUND)
+      message(STATUS "Check for 64-bits integer type - found")
+      file(WRITE ${INC_FILE} "#define ${TYPE_MACRO}")
+      file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
+	"Determining if the C compiler has support for 64-bits integers succeeded with "
+	"the following output:\n${OUTPUT}\n\n")
+      set(CONTINUE OFF)
+    else(TYPE_FOUND)
+      file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
+	"Determining if the C compiler has support for 64-bits integers failed with "
+	"the following output:\n${OUTPUT}\n\n")
+    endif(TYPE_FOUND)
+  endif(CONTINUE)
+endforeach(TYPE_MACRO ${MACROS})
+if(NOT TYPE_FOUND)
+  file(WRITE ${INC_FILE} "#define NO_LONG_LONG")
+  message(STATUS "Check for 64-bits integer type - failed")
+endif(NOT TYPE_FOUND)
 
-SET(MACROS HAVE_SETENV HAVE_PUTENV HAVE_UNDERSCORE_PUTENV)
-FOREACH(ENV_MACRO ${MACROS})
-  FILE(WRITE "${C_FILE}"
-  "#include <stdlib.h>
+set(MACROS HAVE_SETENV HAVE_PUTENV HAVE_UNDERSCORE_PUTENV)
+set(CONTINUE ON)
+foreach(ENV_MACRO ${MACROS})
+  if(CONTINUE)
+    file(WRITE "${C_FILE}"
+      "#include <stdlib.h>
 #define ${ENV_MACRO}
 int main( int argc, char *argv[]) {
   char *tz;
@@ -81,23 +88,25 @@ int main( int argc, char *argv[]) {
 #endif
   exit(0);
 }")
-  TRY_COMPILE(ENV_FOUND
-    ${CMAKE_BINARY_DIR}
-    ${C_FILE}
-    OUTPUT_VARIABLE OUTPUT)
-  IF (ENV_FOUND)
-    FILE(APPEND ${INC_FILE} "\n#define ${ENV_MACRO}")
-    MESSAGE(STATUS "Check for environment API - found")
-  ELSE (ENV_FOUND)
-    FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
-      "Determining if the C compiler has support for setting environment variables failed with "
-      "the following output:\n${OUTPUT}\n\n")
-  ENDIF (ENV_FOUND)
-ENDFOREACH(ENV_MACRO ${MACROS})
-IF (NOT ENV_FOUND)
-  FILE(APPEND ${INC_FILE} "\n#define NO_ENV_API")
-  MESSAGE(STATUS "Check for environment API - failed")
-ENDIF (NOT ENV_FOUND)
+    try_compile(ENV_FOUND
+      ${CMAKE_BINARY_DIR}
+      ${C_FILE}
+      OUTPUT_VARIABLE OUTPUT)
+    if(ENV_FOUND)
+      file(APPEND ${INC_FILE} "\n#define ${ENV_MACRO}")
+      message(STATUS "Check for environment API - found")
+      set(CONTINUE OFF)
+    else(ENV_FOUND)
+      file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
+	"Determining if the C compiler has support for setting environment variables failed with "
+	"the following output:\n${OUTPUT}\n\n")
+    endif(ENV_FOUND)
+  endif(CONTINUE)
+endforeach(ENV_MACRO ${MACROS})
+if(NOT ENV_FOUND)
+  file(APPEND ${INC_FILE} "\n#define NO_ENV_API")
+  message(STATUS "Check for environment API - failed")
+endif(NOT ENV_FOUND)
 
 #
 # The header file ${INC_FILE} has been written, now go on
@@ -135,13 +144,13 @@ include_directories(
   )
 
 set(qsastime_LIB_SRCS
-qsastime.c
-)
+  qsastime.c
+  )
 
 if(BUILD_SHARED_LIBS)
   SET_SOURCE_FILES_PROPERTIES( ${qsastime_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-  )
+    PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+    )
 endif(BUILD_SHARED_LIBS)
 
 add_library(qsastime ${qsastime_LIB_SRCS})
@@ -151,24 +160,24 @@ if(MATH_LIB)
   target_link_libraries(qsastime ${MATH_LIB})
 endif(MATH_LIB)
 set_target_properties(
-qsastime
-PROPERTIES
-SOVERSION ${qsastime_SOVERSION}
-VERSION ${qsastime_VERSION}
-INSTALL_NAME_DIR "${LIB_DIR}"
-)
+  qsastime
+  PROPERTIES
+  SOVERSION ${qsastime_SOVERSION}
+  VERSION ${qsastime_VERSION}
+  INSTALL_NAME_DIR "${LIB_DIR}"
+  )
 set(qsastime_INSTALLED_HEADERS
-   qsastime.h
-   qsastimedll.h
-)
+  qsastime.h
+  qsastimedll.h
+  )
 
 install(FILES ${qsastime_INSTALLED_HEADERS} DESTINATION ${INCLUDE_DIR})
 
 install(TARGETS qsastime
-ARCHIVE DESTINATION ${LIB_DIR}
-LIBRARY DESTINATION ${LIB_DIR}
-RUNTIME DESTINATION ${BIN_DIR}
-)
+  ARCHIVE DESTINATION ${LIB_DIR}
+  LIBRARY DESTINATION ${LIB_DIR}
+  RUNTIME DESTINATION ${BIN_DIR}
+  )
 
 # qsastime_extra.[ch] provides helper functions for qsastime_test that should
 # not be part of the library.
