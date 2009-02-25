@@ -252,6 +252,7 @@ typedef void* PLPointer;
 #define PLESC_DEV2PLCOL		24	/* convert device color to PLColor */
 #define PLESC_SETBGFG		25	/* set BG, FG colors */
 #define PLESC_DEVINIT		26	/* alternate device initialization */
+#define PLESC_GETBACKEND		27	/* get used backend of (wxWidgets) driver */
 
 /* image operations */
 #define ZEROW2B   1
