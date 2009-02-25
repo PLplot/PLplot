@@ -45,7 +45,7 @@ source tkdemos.tcl
 2
 ....
 
-To find out more about the wish command (which comes as part of the tk
+To find out more about the wish command (which comes as part of the Tk
 package) use man wish.
 
 Both the plserver and wish methods execute the various x??.tcl examples
