@@ -7,11 +7,12 @@
 #ifndef __PLCDEMOS_H__
 #define __PLCDEMOS_H__
 
-#include "plConfig.h"
-#include "plplot.h"
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+
+#include "plConfig.h"
+#include "plplot.h"
 
 /* define PI if not defined by math.h */
 
