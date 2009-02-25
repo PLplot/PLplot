@@ -40,6 +40,9 @@
 /* Define if finite is available */
 #cmakedefine HAVE_FINITE
 
+/* Define if _finite is available */
+#cmakedefine _HAVE_FINITE
+
 /* Define if [freetype] is available */
 #cmakedefine HAVE_FREETYPE
 
@@ -61,8 +64,14 @@
 /* Define if isinf is available */
 #cmakedefine HAVE_ISINF
 
+/* Define if _isinf is available */
+#cmakedefine _HAVE_ISINF
+
 /* Define if isnan is available */
 #cmakedefine HAVE_ISNAN
+
+/* Define if _isnan is available */
+#cmakedefine _HAVE_ISNAN
 
 /* Define if snprintf is available */
 #ifndef PL_HAVE_SNPRINTF
