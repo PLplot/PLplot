@@ -67,13 +67,11 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
 #endif  
   
   int backend;
-#if wxUSE_GRAPHICS_CONTEXT  
   if( m_style & wxPLPLOT_BACKEND_GC )
     backend=2;
-  /* else if ( m_style & wxPLPLOT_BACKEND_AGG )
-    backend=0; */
+  else if ( m_style & wxPLPLOT_BACKEND_AGG )
+    backend=1; 
   else
-#endif
     backend=0;
     
   sprintf( buffer, "hrshsym=%d,text=%d,backend=%d",
@@ -85,20 +83,24 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
   SetOpt( "-drvopt", drvopt );
   
   init();
-//#ifdef HAVE_AGG	
-//	m_image = new wxImage( m_width, m_height );
-//  cmd( PLESC_DEVINIT, (void*)m_image );
-//#else
-  cmd( PLESC_DEVINIT, (void*)m_dc );
-//#endif
+
+  cmd( PLESC_GETBACKEND, &m_backend );
+  m_backend = 1 << (m_backend+2);
+  
+  if(m_backend==wxPLPLOT_BACKEND_AGG) {
+    m_image = new wxImage( m_width, m_height );
+    cmd( PLESC_DEVINIT, (void*)m_image );
+  } else
+    cmd( PLESC_DEVINIT, (void*)m_dc );
 }
 
 
 wxPLplotstream::~wxPLplotstream()
 {
-	if( m_image )
-		delete m_image;
+  if( m_image )
+    delete m_image;
 }
+
 
 /*! This is the overloaded set_stream() function, where we could have some
  *  code processed before every call of a plplot functions, since set_stream()
@@ -120,25 +122,23 @@ void wxPLplotstream::SetSize( int width, int height )
 		 the other way round if the buffer size decreases. There is no impact
 		 for the other backends. This is kind of hacky, but I have no better 
 		 idea in the moment */
-	//~ if( width*height>m_width*m_height ) {
-//~ #ifdef HAVE_AGG  
-		//~ if( m_image )
-			//~ delete m_image;	
-		//~ m_image = new wxImage( width, height );
-		//~ cmd( PLESC_DEVINIT, (void*)m_image );	
-//~ #endif	
+	if( width*height>m_width*m_height ) {
+    if( m_image ) {
+      delete m_image;	
+      m_image = new wxImage( width, height );
+      cmd( PLESC_DEVINIT, (void*)m_image );	
+    }
 		wxSize size( width, height );
 		cmd( PLESC_RESIZE, (void*)&size );
-	//~ } else {
-		//~ wxSize size( width, height );
-		//~ cmd( PLESC_RESIZE, (void*)&size );
-//~ #ifdef HAVE_AGG  
-		//~ if( m_image )
-			//~ delete m_image;	
-		//~ m_image = new wxImage( width, height );
-		//~ cmd( PLESC_DEVINIT, (void*)m_image );	
-//~ #endif	
-	//~ }
+	} else {
+		wxSize size( width, height );
+		cmd( PLESC_RESIZE, (void*)&size );
+		if( m_image ) {
+			delete m_image;	
+      m_image = new wxImage( width, height );
+      cmd( PLESC_DEVINIT, (void*)m_image );	
+    }
+	}
 
 	m_width=width;
 	m_height=height;
@@ -159,14 +159,11 @@ void wxPLplotstream::RenewPlot()
  */
 void wxPLplotstream::Update()
 {
-//~ #ifdef HAVE_AGG  
-  //~ if( m_style & wxPLPLOT_BACKEND_AGG ) {
-    //~ wxMemoryDC MemoryDC;
-    //~ wxBitmap bitmap( *m_image, -1 );
-    //~ MemoryDC.SelectObject( bitmap );
-    //~ m_dc->Blit( 0, 0, m_width, m_height, &MemoryDC, 0, 0 );
-    //~ MemoryDC.SelectObject( wxNullBitmap );
-  //~ }
-//~ #endif
+  if(m_image) {
+    wxMemoryDC MemoryDC;
+    wxBitmap bitmap( *m_image, -1 );
+    MemoryDC.SelectObject( bitmap );
+    m_dc->Blit( 0, 0, m_width, m_height, &MemoryDC, 0, 0 );
+    MemoryDC.SelectObject( wxNullBitmap );
+  }
 }
-

@@ -22,8 +22,9 @@
 #if !defined( WXPLPLOTWINDOW_H__INCLUDED_ )
 #define WXPLPLOTWINDOW_H__INCLUDED_
 
-#include "wx/window.h"
-#include "wx/dcmemory.h"
+#include <wx/window.h>
+#include <wx/dcmemory.h>
+
 #include "wxPLplotstream.h"
 
 
@@ -42,6 +43,7 @@ public:
   void RenewPlot( void );   //!< Redo plot.
 	bool SavePlot( const wxString& driver, const wxString& filename );  //!< Save plot using a different driver.
 	wxPLplotstream* GetStream()  { return m_stream; }  //!< Get pointer to wxPLplotstream of this widget.
+  int getBackend()  { return m_backend; }
 	
 protected:
   virtual void OnPaint( wxPaintEvent& event );           //!< Paint event
@@ -56,6 +58,7 @@ private:
   int bitmapWidth;                //!< Width of bitmap, only changed if plot gets bigger
   int bitmapHeight;               //!< Height of bitmap, only changed if plot gets bigger
   wxBitmap* MemPlotDCBitmap;  //!< Pointer to bitmap, used for double buffering.
+  int m_backend;
 
 protected:
   wxPLplotstream* m_stream;             //!< Pointer to the wxPLplotstream which belongs to this plot widget

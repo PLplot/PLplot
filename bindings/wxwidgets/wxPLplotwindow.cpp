@@ -19,11 +19,12 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-#include "plplotP.h"
-#include "wxPLplotwindow.h"
-#include "wxPLplotstream.h"
 #include <wx/window.h>
 #include <wx/dcclient.h>
+
+//#include "plplotP.h"
+#include "wxPLplotwindow.h"
+#include "wxPLplotstream.h"
 
 
 BEGIN_EVENT_TABLE( wxPLplotwindow, wxWindow )
@@ -57,6 +58,9 @@ wxPLplotwindow::wxPLplotwindow( wxWindow* parent, wxWindowID id, const wxPoint& 
 
 	m_stream = new wxPLplotstream( (wxDC*)MemPlotDC, m_width, m_height, pl_style );
 
+  m_stream->cmd( PLESC_GETBACKEND, &m_backend );
+  m_backend = 1 << (m_backend+2);
+  
 	// tell wxWidgets to leave the background painting to this control
 	SetBackgroundStyle( wxBG_STYLE_CUSTOM );
 }
