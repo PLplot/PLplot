@@ -559,14 +559,18 @@ int main()
   }
 
   if(test_choice & TEST05) {
-    printf("Test 05 of normalization of breakDownMJD result");
+    printf("Test 05 of normalization of breakDownMJD result and strfMJD results near the hour.\n");
     pMJD1->base_day = 51910;
-    pMJD1->time_sec = 3599.999999999;
-    /*pMJD1->time_sec = 3600.000000001;*/
-    breakDownMJD(&year, &month, &day, &hour, &min, &sec, pMJD1, 0);
-    printf("For MJD = {%d,%20.15f}, year, month, day, hour, min, sec = %d, %d, %d, %d, %d, %20.15f\n", pMJD1->base_day, pMJD1->time_sec, year, month, day, hour, min, sec); 
-    strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%.Z\n", pMJD1, 0);
-    printf("%s", buf);
+    pMJD1->time_sec = 3600.;
+    int iepsilon;
+    for(iepsilon = -1; iepsilon < 2; iepsilon++) {
+      pMJD1->time_sec = 3600. + 1.e-8*(double)iepsilon;
+      breakDownMJD(&year, &month, &day, &hour, &min, &sec, pMJD1, 0);
+      printf("MJD = {%d,%20.15f}\n", pMJD1->base_day, pMJD1->time_sec); 
+      printf("breakDownMJD result is year, month, day, hour, min, sec = %d, %d, %d, %d, %d, %20.15f\n", year, month, day, hour, min, sec); 
+      strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%.Z\n", pMJD1, 0);
+      printf("strMJD result is %s", buf);
+    }
   }
 
   if(test_choice & TEST06) {
