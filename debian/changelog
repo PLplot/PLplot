@@ -1,6 +1,6 @@
 plplot (5.9.2-1) unstable; urgency=low
 
-  * New upstream release. Fixes bug #517233.
+  * New upstream release. Closes: #517233.
 
   * debian/patches/series: Remove patches
       09_pdftex-EC-encoding.diff
@@ -14,7 +14,7 @@ plplot (5.9.2-1) unstable; urgency=low
   * debian/patches/13_fix-kfreeBSD-build.diff: 
     debian/control.in: 
       New patch to fix build of plplot on Debian kfreeBSD. Also disable 
-      ada packages on kfreeBSD-amd64. Fixes bug #497895.
+      ada packages on kfreeBSD-amd64. Closes: #497895.
 
   * debian/rules: Explicitly enable tk driver. This is current disabled
     upstream as there are some issues with segfaults for the interactive
