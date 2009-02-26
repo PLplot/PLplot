@@ -321,12 +321,12 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
      Uses the same syntax as strftime() but does not use current locale.
      The null terminator is included in len for safety. */
 	
-  int year, month, day, hour, min, ysign, sec1, second, d, y;
+  int year, month, day, hour, min, ysign, second, d, y;
   int y1, ifleapyear;
   int i, count,secsSince1970;
   int nplaces,fmtlen,slen;
   char * ptr;
-  double sec,sec_fraction;
+  double sec, sec_fraction;
   int w,doy,days_in_wk1;
   const char *dayText;
   const char *monthText;
@@ -349,8 +349,6 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   else ysign = 0;	
 	
   second = (int) sec;
-  sec1 = (int)sec/10;
-  sec -= (double) sec1*10;
 	
   /* Read format string, character at a time */
   fmtlen = strlen(format);
@@ -794,39 +792,31 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	      posn = strlen(buf);
 	      if(posn >= last) return posn;
 	    }
-	  else if( isdigit(next) != 0 )
+	  else if( next == '.' || isdigit(next) != 0)
 	    {
-	      nplaces = strtol(&(format[i]), NULL, 10);
-	      /* numeric value is number of decimal places ( > 0 ) */
-	      sec_fraction = sec - (double) second;
+	      /* nplaces is number of decimal places ( 0 < nplaces <= 9 ) */
+	      if( next == '.' )
+		/* maximum number of places*/
+		nplaces = 9;
+	      else
+		nplaces = strtol(&(format[i]), NULL, 10);
 
-	      for(count=0; count<nplaces; count++) sec_fraction *= 10;
-	      sprintf(DateTime, ".%d",  (int) sec_fraction);
-				
-	      /* append 0 to pad to length */
-	      slen = strlen(DateTime);
-	      while(slen < nplaces+1)
-		{
-		  DateTime[slen] = '0';
-		  slen++;
-		  DateTime[slen] = '\0';
-		}
-	      strncat(&(buf[posn]), DateTime, last - posn);
-	      posn = strlen(buf);
-	      if(posn >= last) return posn;
-	    }	
-	  else if( next == '.' )
-	    {
 	      /* fractional part of seconds to maximum available accuracy */
-	      sec_fraction = sec - (double) second;
-	      sprintf(DateTime, "%-11.9f",  sec_fraction);
+	      sec_fraction = sec - (int) sec;
+	      char dynamic_format[10];
+	      sprintf(dynamic_format, "%%-%d.%df", nplaces+2, nplaces);
+	      /*sprintf(DateTime, "%-11.9f",  sec_fraction);*/
+	      sprintf(DateTime, dynamic_format,  sec_fraction);
 	      while( ( ptr = strrchr(&(DateTime[0]), ' ')) != NULL)  ptr[0] ='\0'; /* remove trailing white space */
-	      slen = strlen(DateTime) -1;
-	      while( DateTime[slen] == '0' && DateTime[slen-1] != '.') {
-		DateTime[slen] ='\0'; /* remove trailing zeros */
-		slen --;
+
+	      if( next == '.' ) {
+		slen = strlen(DateTime) -1;
+		while( DateTime[slen] == '0' && DateTime[slen-1] != '.') {
+		  DateTime[slen] ='\0'; /* remove trailing zeros */
+		  slen --;
+		}
 	      }
-				
+
 	      ptr = strchr(DateTime, '.'); /* remove possible lead 0 */
 	      strncat(&(buf[posn]), ptr, last - posn);
 	      posn = strlen(buf);
