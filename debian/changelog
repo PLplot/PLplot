@@ -1,6 +1,6 @@
 plplot (5.9.2-1) unstable; urgency=low
 
-  * New upstream release.
+  * New upstream release. Fixes bug #517233.
 
   * debian/patches/series: Remove patches
       09_pdftex-EC-encoding.diff
