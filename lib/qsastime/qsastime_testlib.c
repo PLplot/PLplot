@@ -561,9 +561,12 @@ int main()
   if(test_choice & TEST05) {
     printf("Test 05 of normalization of breakDownMJD result");
     pMJD1->base_day = 51910;
-    pMJD1->time_sec = 3600.;
+    pMJD1->time_sec = 3599.999999999;
+    /*pMJD1->time_sec = 3600.000000001;*/
     breakDownMJD(&year, &month, &day, &hour, &min, &sec, pMJD1, 0);
-    printf("For MJD = {%d,%f}, year, month, day, hour, min, sec = %d, %d, %d, %d, %d, %f\n", pMJD1->base_day, pMJD1->time_sec, year, month, day, hour, min, sec); 
+    printf("For MJD = {%d,%20.15f}, year, month, day, hour, min, sec = %d, %d, %d, %d, %d, %20.15f\n", pMJD1->base_day, pMJD1->time_sec, year, month, day, hour, min, sec); 
+    strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%.Z\n", pMJD1, 0);
+    printf("%s", buf);
   }
 
   if(test_choice & TEST06) {
