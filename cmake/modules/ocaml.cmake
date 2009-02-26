@@ -36,7 +36,7 @@ if(ENABLE_ocaml)
   if (OCAMLBUILD)
     message(STATUS "OCAMLBUILD = ${OCAMLBUILD}")
   else (OCAMLBUILD)
-    message(STATUS "WARNING:"
+    message(STATUS "WARNING: "
       "ocamlbuild not found. Disabling ocaml bindings")
     set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
   endif (OCAMLBUILD)

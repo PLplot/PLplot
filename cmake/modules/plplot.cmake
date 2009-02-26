@@ -253,7 +253,7 @@ endif(NOT PL_HAVE_SNPRINTF)
 # Language bindings
 # =======================================================================
 
-# Find swig.  Required for python and java bindings.
+# Find swig.  Required for python, java and Lua bindings.
 # N.B. all version tests done below need experimental FindSWIG.cmake which
 # is currently carried in this directory by PLplot, but which eventually
 # should get into CMake.

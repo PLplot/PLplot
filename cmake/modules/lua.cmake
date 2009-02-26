@@ -1,6 +1,6 @@
 # cmake/modules/lua.cmake
 #
-# LUA binding configuration
+# Lua binding configuration
 #
 # Copyright (C) 2008  Werner Smekal
 #
@@ -19,30 +19,45 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Module for determining LUA bindings configuration options
+# Module for determining Lua bindings configuration options
 
-# Options to enable LUA bindings
+# Options to enable Lua bindings
 if(DEFAULT_NO_BINDINGS)
-  option(ENABLE_lua "Enable LUA bindings" OFF)
+  option(ENABLE_lua "Enable Lua bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_lua "Enable LUA bindings" ON)
+  option(ENABLE_lua "Enable Lua bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_lua AND NOT BUILD_SHARED_LIBS)
   message(STATUS "WARNING: "
-    "Lua requires shared libraries. Disabling lua bindings")
-  set(ENABLE_lua OFF CACHE BOOL "Enable LUA bindings" FORCE)
+    "Lua requires shared libraries. Disabling Lua bindings")
+  set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
 endif(ENABLE_lua AND NOT BUILD_SHARED_LIBS)
 
 if(ENABLE_lua AND NOT SWIG_FOUND)
   message(STATUS "WARNING: "
-    "swig not found. Disabling LUA bindings")
-  set(ENABLE_lua OFF CACHE BOOL "Enable LUA bindings" FORCE)
+    "swig not found. Disabling Lua bindings")
+  set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
 endif(ENABLE_lua AND NOT SWIG_FOUND)
 
 if(ENABLE_lua)
+  transform_version(NUMERICAL_SWIG_MINIMUM_VERSION_FOR_LUA "1.3.36")
+  transform_version(NUMERICAL_SWIG_VERSION "${SWIG_VERSION}")
+  if(NUMERICAL_SWIG_VERSION LESS "${NUMERICAL_SWIG_MINIMUM_VERSION_FOR_LUA}")
+    message(STATUS "WARNING: swig version too old for Lua bindings.   Disabling Lua bindings.")
+    set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
+  endif(NUMERICAL_SWIG_VERSION LESS "${NUMERICAL_SWIG_MINIMUM_VERSION_FOR_LUA}")
+endif(ENABLE_lua)
+
+if(ENABLE_lua AND NOT PL_DOUBLE)
+  message(STATUS "WARNING: "
+    "only single precision floating point. Disabling Lua bindings")
+  set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
+endif(ENABLE_lua AND NOT PL_DOUBLE)
+
+if(ENABLE_lua)
   # Check for Lua libraries which defines
-  #  LUA_LIBRARIES    = path to the lua library
+  #  LUA_LIBRARIES    = path to the Lua library
   #  LUA_INCLUDE_DIR  = path to where lua.h is found
   option(HAVE_lua51 "Lua version is 5.1" OFF)
   if(HAVE_lua51)
@@ -59,8 +74,8 @@ if(ENABLE_lua)
   endif(HAVE_lua51)
   if(NOT LUA_FOUND)
     message(STATUS "WARNING: "
-      "lua library and/or header not found. Disabling lua bindings")
-    set(ENABLE_lua OFF CACHE BOOL "Enable LUA bindings" FORCE)
+      "Lua library and/or header not found. Disabling Lua bindings")
+    set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
   endif(NOT LUA_FOUND)
 endif(ENABLE_lua)
 
@@ -68,13 +83,13 @@ if(ENABLE_lua)
   find_program(LUA_EXECUTABLE lua)
   if(NOT LUA_EXECUTABLE)
     message(STATUS "WARNING: "
-      "lua executable not found. Disabling lua bindings")
-    set(ENABLE_lua OFF CACHE BOOL "Enable LUA bindings" FORCE)
+      "Lua executable not found. Disabling Lua bindings")
+    set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
   endif(NOT LUA_EXECUTABLE)
 endif(ENABLE_lua)
 
 if(ENABLE_lua)
-  # Check whether you have found a lua executable that is consistent 
+  # Check whether you have found a Lua executable that is consistent 
   # with the library version.
   execute_process(COMMAND ${LUA_EXECUTABLE} -v
     OUTPUT_VARIABLE LUA_VERSION
@@ -97,8 +112,8 @@ if(ENABLE_lua)
 
   if(NOT LUA_VERSION_VALID)
     message(STATUS "WARNING: "
-      "lua executable found but version not consistent with library. Disabling lua bindings")
-    set(ENABLE_lua OFF CACHE BOOL "Enable LUA bindings" FORCE)
+      "Lua executable found but version not consistent with library. Disabling Lua bindings")
+    set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
   endif(NOT LUA_VERSION_VALID)
 endif(ENABLE_lua)
 
