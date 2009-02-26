@@ -568,8 +568,9 @@ int main()
       breakDownMJD(&year, &month, &day, &hour, &min, &sec, pMJD1, 0);
       printf("MJD = {%d,%20.15f}\n", pMJD1->base_day, pMJD1->time_sec); 
       printf("breakDownMJD result is year, month, day, hour, min, sec = %d, %d, %d, %d, %d, %20.15f\n", year, month, day, hour, min, sec); 
-      strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%.Z\n", pMJD1, 0);
-      printf("strMJD result is %s", buf);
+      /* strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%.Z\n", pMJD1, 0); */
+      strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%9Z\n", pMJD1, 0);
+      printf("strfMJD result is %s", buf);
     }
   }
 
