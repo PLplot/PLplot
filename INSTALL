@@ -98,12 +98,12 @@ which can be set for cmake to personalize your build. Use the ccmake front
 end to cmake to obtain documentation of all these options. In the above case
 we have specified a particular install prefix "/my/prefix". 
 
-Note in the above example an initially empty build directory called
-build_dir is used to insure a clean start, and ../plplot_cmake is a freshly
-checked out source tree from our svn repository or the name of the source
-tree created when you unpacked a PLplot source distribution tarball. Note,
-the name "plplot_cmake" is only for this example, and the name will most
-likely be something else on your system. 
+Note in the above example an initially empty build directory (arbitrarily)
+named build_dir is used to insure a clean start, and ../plplot_cmake is the
+(arbitrary) name of the top-level directory of a freshly checked out source
+tree from our svn repository. If instead you use a freshly unpacked PLplot
+source distribution tarball "../plplot_cmake" will need to be replaced by
+"../plplot-5.9.2" (for our latest release at time of writing).
 
 To start a fresh build, simply execute "cd build_dir; rm -rf *" before
 invoking cmake. Of course, "rm -rf *" is an extremely dangerous command
