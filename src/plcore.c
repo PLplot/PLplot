@@ -45,6 +45,33 @@
   #endif
 #endif
 
+#if HAVE_DIRENT_H
+/* The following conditional is a workaround for a bug in the MacOSX system.
+   When  the dirent.h file will be fixed upstream by Apple Inc, this should
+   go away. */
+# ifdef NEED_SYS_TYPE_H
+#  include <sys/types.h>
+# endif
+# include <dirent.h>
+# define NAMLEN(dirent) strlen((dirent)->d_name)
+#else
+# if defined(_MSC_VER)
+#  include "dirent_msvc.h"
+# else
+#  define dirent direct
+#  define NAMLEN(dirent) (dirent)->d_namlen
+#  if HAVE_SYS_NDIR_H
+#   include <sys/ndir.h>
+#  endif
+#  if HAVE_SYS_DIR_H
+#   include <sys/dir.h>
+#  endif
+#  if HAVE_NDIR_H
+#   include <ndir.h>
+#  endif
+# endif
+#endif
+
 #define BUFFER_SIZE 80
 #define BUFFER2_SIZE 300
 #define DRVSPEC_SIZE 400
