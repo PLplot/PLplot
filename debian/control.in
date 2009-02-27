@@ -23,7 +23,7 @@ Homepage: http://www.plplot.org
 Vcs-Svn: https://plplot.svn.sourceforge.net/svnroot/plplot/trunk/debian
 Vcs-Browser: http://plplot.svn.sourceforge.net/viewvc/plplot/trunk/debian/
 
-Package: libplplot9
+
 Architecture: any
 Section: libs
 Conflicts: libplplot5, plplot (<< 5)
@@ -39,8 +39,8 @@ Description: Scientific plotting library
  handful of function calls is typically required.  For more advanced use,
  virtually all aspects of plotting are configurable.
  .
- This package contains the PLplot libraries for C and Fortran77, as
- well as the necessary data files.
+ This package contains the PLplot library for C, as well as the necessary
+ data files.
 
 Package: libplplot-dev
 Architecture: any
@@ -49,11 +49,18 @@ Recommends: pkg-config
 Depends: libplplot9 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
  libltdl3-dev, libplplot-c++9c2 (= ${binary:Version}), plplot9-driver-gnome2
 Description: Scientific plotting library (development files)
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
  This package contains all that is needed for doing development in C, C++,
- and Fortran with PLplot, a scientific plotting library.  Examples of
- programs for these languages are also included.  For development in
- Tcl/Tk, Python, and Octave, install the plplot-tcl, python-plplot,
- and octave-plplot packages, respectively.
+ and Fortran with PLplot.  Examples of programs for these languages are 
+ also included.  For development in Tcl/Tk, Python, and Octave, install 
+ the plplot-tcl, python-plplot, and octave-plplot packages, respectively.
 
 Package: libplplot-c++9c2
 Architecture: any
@@ -61,23 +68,38 @@ Section: libs
 Conflicts: libplplot5, libplplot-c++9
 Replaces: libplplot-c++9
 Depends: ${shlibs:Depends}
-Description: Scientific plotting library
- This package contains the C++ binding for PLplot, a scientific plotting
- library.
+Description: Scientific plotting library (C++ binding)
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package contains the C++ binding for PLplot.
 
 Package: libplplot-fortran9
 Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}
-Description: Scientific plotting library
+Description: Scientific plotting library (fortran bindings)
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
  This package contains the Fortran 77 and Fortran 95 bindings for
- PLplot, a scientific plotting library.
+ PLplot.
 
 [JAVA:Package: libplplot9-java
 Architecture: any
 Section: libs
 Depends: java-gcj-compat, ${shlibs:Depends}
-Description: Scientific plotting library
+Description: Scientific plotting library (Java bindings)
  This packages contains the Java bindings for PLplot, a scientific
  plotting library.
 :]
@@ -86,7 +108,7 @@ Architecture: any
 Section: libs
 Conflicts: libplplot5, libplplot9 (<< 5.3.0.cvs.20040303)
 Depends: ${shlibs:Depends}
-Description: Scientific plotting library
+Description: Scientific plotting library (CSIRO libraries)
  This package contains two libraries developed by Pavel Sakov, from the
  CSIRO Marine Research, used in geometry applications:
  .
@@ -98,12 +120,18 @@ Description: Scientific plotting library
 
 Package: plplot-bin
 Architecture: any
-Section: math
 Conflicts: libplplot9 (<= 5.3.0-4), plplot (<< 5)
 Depends: ${shlibs:Depends}
 Description: Scientific plotting library (utilities)
- This package contains the following utilities associated with PLplot,
- a scientific plotting library:
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package contains the following utilities associated with PLplot.
  .
   * pltek - review a Tektronix vector file
   * plm2gif - converts PLplot metafiles to GIF files
@@ -115,8 +143,15 @@ Section: libs
 Depends: ${shlibs:Depends}
 Conflicts: plplot-lib, plplot (<< 5)
 Description: Scientific plotting library (X11 driver)
- This package provides the X11 driver module for PLplot, a scientific
- plotting library.
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package provides the X11 driver module for PLplot.
 
 Package: plplot9-driver-gnome2
 Architecture: any
@@ -125,28 +160,49 @@ Depends: libplplot9, ${shlibs:Depends}
 Conflicts: plplot9-driver-gnome
 Replaces: plplot9-driver-gnome
 Description: Scientific plotting library (GNOME Canvas Widget driver)
- This package provides the GNOME Canvas Widget driver module for PLplot, a
- scientific plotting library.  This package replaces the (now deprecated)
- plplot9-driver-gnome package.
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package provides the GNOME Canvas Widget driver module for PLplot.
+ This package replaces the (now deprecated) plplot9-driver-gnome package.
 
 Package: plplot9-driver-wxwidgets
 Architecture: any
 Section: libs
 Depends: libplplot9, ${shlibs:Depends}
 Description: Scientific plotting library (wxWidgets driver)
- This package provides the wxWidgets driver module for PLplot, a
- scientific plotting library.
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package provides the wxWidgets driver module for PLplot.
 
 Package: plplot-tcl
 Architecture: any
 Priority: extra
 Depends: plplot9-driver-xwin, iwidgets4, ${shlibs:Depends}
 Description: Tcl/Tk support for PLplot, a plotting library
- This package contains the Tcl/Tk support for PLplot, a scientific
- plotting library: shared libraries, Tcl modules, the Tk driver, and
- some programs for interactive use of PLplot (plserver and pltcl).
- Also included is the utility program plrender to render PLplot
- metafiles.
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package contains the Tcl/Tk support for PLplot: shared libraries,
+ Tcl modules, the Tk driver, and some programs for interactive use of
+ PLplot (plserver and pltcl). Also included is the utility program
+ plrender to render PLplot metafiles.
 
 Package: plplot-tcl-dev
 Architecture: any
@@ -154,9 +210,16 @@ Priority: extra
 Depends: libplplot9 (= ${binary:Version}), plplot-tcl
 Conflicts: plplot-tcl (<= 5.2.0.cvs.20030224-1)
 Description: Tcl/Tk development support for PLplot, a plotting library
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
  This package contains the necessary files to do development in Tcl/Tk
- with PLplot, a scientific plotting library: header files, shared
- libraries links, and examples.
+ with PLplot: header files, shared libraries links, and examples.
 
 Package: plplot9-driver-gd
 Architecture: any
@@ -164,9 +227,16 @@ Section: libs
 Depends: ${shlibs:Depends}
 Recommends: ttf-freefont
 Description: Scientific plotting library (GD driver)
- This package provides the GD driver module for PLplot, a scientific plotting
- library.  It allows the generation of PNG and JPEG files directly from
- PLplot programs.
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package provides the GD driver module for PLplot. It allows the
+ generation of PNG and JPEG files directly from PLplot programs.
 
 Package: plplot9-driver-cairo
 Architecture: any
@@ -175,10 +245,17 @@ Depends: ${shlibs:Depends}
 Conflicts: plplot9-driver-psttf
 Replaces: plplot9-driver-psttf
 Description: Scientific plotting library (Cairo driver)
- This package provides the Cairo driver module for PLplot, a
- scientific plotting library.  It is based on the Cairo 2D
- graphics library with supportting multiple output devices (X-Window,
- PDF, PostScript, and PNG).
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package provides the Cairo driver module for PLplot.  It is based
+ on the Cairo 2D graphics library with supportting multiple output devices
+ (X-Window, PDF, PostScript, and PNG).
 
 Package: python-plplot
 Architecture: any
@@ -188,6 +265,14 @@ Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends},
 Provides: ${python:Provides}
 XB-Python-Version: ${python:Versions}
 Description: Python support for PLplot, a plotting library
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
  This package contains the library plmodule.so for gluing the PLplot
  scientific plotting library into Python applications.  Examples are also
  provided.
@@ -197,24 +282,47 @@ Architecture: any
 Priority: extra
 Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends}, ${octave:Depends}
 Description: Octave support for PLplot, a plotting library
- This package contains the Octave bindings for PLplot, a scientific plotting
- library.  It provides an almost drop-in replacement for the traditional
- Gnuplot graphical interface in Octave. Examples are also provided.
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package contains the Octave bindings for PLplot.  It provides an
+ almost drop-in replacement for the traditional Gnuplot graphical
+ interface in Octave. Examples are also provided.
 
 [ADA:Package: libplplot-ada
 Architecture: any
 Priority: extra
 Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends}
 Description: Ada support for PLplot, a plotting library
- This package contains the Ada bindings for PLplot, a scientific plotting
- library. The ada bindings are currently under development and should be
- considered experimental.
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This package contains the Ada bindings for PLplot.  The ada bindings are
+ currently under development and should be considered experimental.
 :]
 Package: plplot-doc
 Architecture: all
 Section: doc
 Suggests: libplplot-dev
 Description: Documentation for PLplot, a plotting library
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
  This package contains the HTML, PDF, PostScript and info forms of the
  PLplot documentation.  It also contains the man pages for the API
  functions.

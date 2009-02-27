@@ -1,3 +1,10 @@
+plplot (5.9.2-2) unstable; urgency=low
+
+  * debian/control.in: Update package descriptions to fix lintian 
+    warnings.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 27 Feb 2009 22:14:07 +0000
+
 plplot (5.9.2-1) unstable; urgency=low
 
   * New upstream release. Closes: #517233.
