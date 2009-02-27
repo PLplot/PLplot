@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 
 /*--------------------------------------------------------------------------*\
@@ -81,6 +82,7 @@ int main (int argc, char *argv[])
   double *offset1=NULL;
   int *offset2=NULL;
   double *slope=NULL;
+  double sec, leap_sec;
   int jd;
   int i=0;
   int number_of_lines=0;
@@ -128,7 +130,7 @@ int main (int argc, char *argv[])
 
   while((fgets(readbuffer,255,fr)!=NULL))
     {
-      sscanf(readbuffer,"%*s %*s %*s %*s %d.5 %*s %lf %*s %*s %*s %*s %d.) X %lf S", (int *) &jd, (double *)&offset1[i],(int *)&offset2[i], (double *)&slope[i]);
+      sscanf(readbuffer,"%*s %*s %*s %*s %d.5 %*s %lf %*s %*s %*s %*s %d.) X %lf S", (int *) &jd, (double *) &offset1[i], (int *) &offset2[i], (double *) &slope[i]);
       /* Should be exact since all jd's in the file are integer+0.5 */
       MJDstart[i] = jd - 2400000;
       i++;
@@ -145,13 +147,31 @@ int main (int argc, char *argv[])
 
   fprintf(fw, "const int number_of_entries_in_tai_utc_table=%d;\n\n",number_of_lines);
 
-  fprintf(fw, "typedef struct {\n\tint MJDstart;\n\tdouble offset1;\n\tint offset2;\n\tdouble scale\n} TAI_UTC;\n\n");
-  fprintf(fw, "const TAI_UTC tai_utc_lookup_table[%d] = {\n",number_of_lines);
+  fprintf(fw, "typedef struct {\n\tint base_day;\n\tdouble time_sec;\n\tdouble size_prev_leap_sec;\n\tdouble offset1;\n\tint offset2;\n\tdouble scale;\n} C_TAI_UTC;\n\n");
 
+  fprintf(fw, "const C_TAI_UTC TAI_TO_UTC_lookup_table[%d] = {\n",number_of_lines);
   for (i=0;i<number_of_lines;i++) {
-    fprintf(fw,"{%d, %15.8f, %d, %15.8f},\n", (int)MJDstart[i], (double)offset1[i], (int)offset2[i], (double)slope[i]);
+    sec = offset1[i] + (double)(MJDstart[i]-offset2[i])*slope[i];
+    if(i==0)
+      leap_sec = 0.;
+    else
+      leap_sec = sec - (offset1[i-1] + (double)(MJDstart[i]-offset2[i-1])*slope[i-1]);
+    if(fabs(leap_sec) < 1.e-9) leap_sec = 0.;
+    fprintf(fw,"{%d, %15.8f, %15.8f, %15.8f, %d, %15.8f},\n", MJDstart[i], sec, leap_sec, offset1[i], offset2[i], slope[i]);
     }
+  fprintf(fw,"};\n");
 
+  fprintf(fw, "const C_TAI_UTC UTC_TO_TAI_lookup_table[%d] = {\n",number_of_lines);
+  for (i=0;i<number_of_lines;i++) {
+    sec = offset1[i] + (double)(MJDstart[i]-offset2[i])*slope[i];
+    if(i==0)
+      leap_sec = 0.;
+    else
+      leap_sec = sec - (offset1[i-1] + (double)(MJDstart[i]-offset2[i-1])*slope[i-1]);
+    
+    if(fabs(leap_sec) < 1.e-9) leap_sec = 0.;
+    fprintf(fw,"{%d, %15.8f, %15.8f, %15.8f, %d, %15.8f},\n", MJDstart[i], 0., leap_sec, offset1[i], offset2[i], slope[i]);
+    }
   fprintf(fw,"};\n");
 
   fclose(fw);
