@@ -175,7 +175,7 @@ main(int argc, const char *argv[])
    * examples is being run from the test_c.sh script */
   if (read_img("lena.pgm", &img_f, &width, &height, &num_col)) { 
     if (read_img("../lena.pgm", &img_f, &width, &height, &num_col)) {
-      plabort("No such file");
+      fprintf(stderr, "No such file");
       plend();
       exit(1);
     }

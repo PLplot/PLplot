@@ -189,7 +189,6 @@ plot3()
   int i, npts;
   PLFLT xmin, xmax, ymin, ymax;
   PLFLT tstart;
-  char *tz;
 
   /* Calculate continuous time corresponding to 2005-12-01 UTC. */
   plctime(2005, 11, 01, 0, 0, 0., &tstart);

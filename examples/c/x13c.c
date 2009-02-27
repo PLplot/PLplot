@@ -58,7 +58,7 @@ main(int argc, const char *argv[])
 	y[j++] = 5.;
         /* n.b. the theta quantities multiplied by 2*M_PI/500 afterward so
 	 * in fact per is interpreted as a percentage. */
-	theta1 = theta0 + 5 * per[i];
+	theta1 = (int)(theta0 + 5 * per[i]);
 	if (i == 4)
 	    theta1 = 500;
 	for (theta = theta0; theta <= theta1; theta += dthet) {
