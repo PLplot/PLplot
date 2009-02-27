@@ -97,7 +97,11 @@ endif(BUILD_TEST AND
 NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-set(lua_lib_location ${CMAKE_BINARY_DIR}/bindings/lua)
+if(WIN32)
+  set(lua_lib_location ${CMAKE_BINARY_DIR}/dll)
+else(WIN32)
+  set(lua_lib_location ${CMAKE_BINARY_DIR}/bindings/lua)
+endif(WIN32)
 configure_file(
 ${CMAKE_CURRENT_SOURCE_DIR}/plplot_examples.lua.in
 ${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua
