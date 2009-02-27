@@ -794,6 +794,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	    }
 	  else if( next == '.' || isdigit(next) != 0)
 	    {
+	      char dynamic_format[10];
+
 	      /* nplaces is number of decimal places ( 0 < nplaces <= 9 ) */
 	      if( next == '.' )
 		/* maximum number of places*/
@@ -803,7 +805,6 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 
 	      /* fractional part of seconds to maximum available accuracy */
 	      sec_fraction = sec - (int) sec;
-	      char dynamic_format[10];
 	      sprintf(dynamic_format, "%%-%d.%df", nplaces+2, nplaces);
 	      /*sprintf(DateTime, "%-11.9f",  sec_fraction);*/
 	      sprintf(DateTime, dynamic_format,  sec_fraction);
