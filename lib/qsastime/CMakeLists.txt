@@ -115,6 +115,10 @@ endif(NOT ENV_FOUND)
 # Routine for generating a header of data to be used by the
 # TAI-UTC transformation code.
 add_executable(tai-utc-gen ${CMAKE_CURRENT_SOURCE_DIR}/tai-utc-gen.c)
+if(MATH_LIB)
+  target_link_libraries(tai-utc-gen ${MATH_LIB})
+endif(MATH_LIB)
+
 get_target_property(
   tai-utc-gen_LOCATION
   tai-utc-gen
