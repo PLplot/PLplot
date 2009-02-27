@@ -191,6 +191,9 @@ typedef void* PLPointer;
 
 #if defined(_HAVE_ISNAN)
 #  define isnan _isnan
+#  if defined(_MSC_VER)
+#    include <float.h>
+#  endif
 #endif
 #if defined(_HAVE_ISINF)
 #  define isinf _isinf
