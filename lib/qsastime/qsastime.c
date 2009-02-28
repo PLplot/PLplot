@@ -334,6 +334,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   size_t posn = 0;
   size_t last = len -1;
   MJDtime nMJD, *pnMJD=&nMJD;
+  char dynamic_format[10];
 
   normalize_MJD(pnMJD, MJD);
   
@@ -586,8 +587,32 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	    }
 	  else if(next == 'S')
 	    {
-	      /* second (00 - 59) */
-	      sprintf(DateTime, "%02d", second);
+	      /* second (00 - 59 with optional decimal point and numbers after the decimal point.) */
+	      if(i+2 < fmtlen && format[i+1] == '%' && (format[i+2] == '.' || isdigit(format[i+2]) != 0)) {
+		/* nplaces is number of decimal places ( 0 < nplaces <= 9 ) */
+		if( format[i+2] == '.' )
+		  /* maximum number of places*/
+		  nplaces = 9;
+		else
+		  nplaces = strtol(&(format[i+2]), NULL, 10);
+		i+=2;
+	      } else {
+		nplaces = 0;
+	      }
+
+	      if(nplaces == 0) {
+		sprintf(DateTime, "%02d", (int) (sec + 0.5));
+	      }else {
+		sprintf(dynamic_format, "%%0%d.%df", nplaces+3, nplaces);
+		sprintf(DateTime, dynamic_format, sec);
+		if( format[i] == '.' ) {
+		  slen = strlen(DateTime) -1;
+		  while( DateTime[slen] == '0' && DateTime[slen-1] != '.') {
+		    DateTime[slen] ='\0'; /* remove trailing zeros */
+		    slen --;
+		  }
+		}
+	      }
 				
 	      strncat(&(buf[posn]), DateTime, last - posn);
 	      posn = strlen(buf);
@@ -794,8 +819,6 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	    }
 	  else if( next == '.' || isdigit(next) != 0)
 	    {
-	      char dynamic_format[10];
-
 	      /* nplaces is number of decimal places ( 0 < nplaces <= 9 ) */
 	      if( next == '.' )
 		/* maximum number of places*/
@@ -818,8 +841,11 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 		}
 	      }
 
-	      ptr = strchr(DateTime, '.'); /* remove possible lead 0 */
-	      strncat(&(buf[posn]), ptr, last - posn);
+	      ptr = strchr(DateTime, '.'); 
+	      /* remove everything in front of the decimal point, and
+		 ignore case (%0) where no decimal point exists at all. */
+	      if(ptr != NULL) 
+		strncat(&(buf[posn]), ptr, last - posn);
 	      posn = strlen(buf);
 	      if(posn >= last) return posn;
 	    }
