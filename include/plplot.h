@@ -833,13 +833,13 @@ plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 PLDLLIMPEXP void
 c_plcpstrm(PLINT iplsr, PLBOOL flags);
 
-/* Converts input values from relative device coordinates to relative plot */
-/* coordinates. */
-
 /* Calculate continuous time from broken-down time for current stream. */
 PLDLLIMPEXP void
 c_plctime(PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT *ctime);
   
+/* Converts input values from relative device coordinates to relative plot */
+/* coordinates. */
+
 PLDLLIMPEXP void
 pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax);
 
