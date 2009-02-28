@@ -137,11 +137,10 @@ def plot3():
 
 # number of seconds elapsed since the Unix epoch (1970-01-01, UTC) for
 # 2005-12-01, UTC.
-  tstart = calendar.timegm((2005,12,1,0,0,0))
+  xmin = plctime(2005,11,1,0,0,0.)
 
   npts = 62
 
-  xmin = float(tstart)
   xmax = xmin + npts*60.0*60.0*24.0
   ymin = 0.0
   ymax = 5.0

@@ -248,6 +248,10 @@ plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 void
 plbin(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLINT center);
 
+%feature("autodoc", "Calculate broken-down time from continuous time for current stream.") plbtime;
+void
+plbtime(PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLINT *OUTPUT, PLFLT *OUTPUT, PLFLT ctime);
+  
 %feature("autodoc", "Start new page.  Should only be used with pleop().") plbop;
 void
 plbop(void);
@@ -279,6 +283,10 @@ plcol0(PLINT icol0);
 void
 plcol1(PLFLT col1);
 
+%feature("autodoc", "Configure transformation between continuous and broken-down time (and vice versa) for current stream.") plconfigtime;
+void
+plconfigtime(PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOOL ifbtime_offset, PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec);
+  
 %feature("autodoc", "Draw a contour plot.") plcont;
 void
 plcont(PLFLT **Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
@@ -287,6 +295,10 @@ plcont(PLFLT **Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	 PLPointer SWIG_OBJECT_DATA);
 
 
+%feature("autodoc", "Calculate continuous time from broken-down time for current stream.") plctime;
+void
+plctime(PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT *OUTPUT);
+  
 %feature("autodoc", "Copy state parameters from the reference stream to the current stream.") plcpstrm;
 void
 plcpstrm(PLINT iplsr, PLBOOL flags);
