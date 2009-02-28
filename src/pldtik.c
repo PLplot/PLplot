@@ -113,90 +113,72 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld)
 void
 pldtfac(PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start) {
   PLFLT diff, tdiff;
-  time_t t, t2;
-  struct tm tm;
+  PLINT year, month, day, hour, min;
+  PLFLT sec;
 
   diff = vmax - vmin;
 
   if (start != NULL) {
-    struct tm* tmp;
-    
-    t = (time_t) vmin;
-    if(!(tmp=gmtime(&t))) {
-      plabort("pldtfac: gmtime() returned an invalid value");
-      return;
-    }
-    tm = *tmp;
-    t2 = mktime(&tm);
-    /* Arg! This is because mktime is in local time and we need to 
-       correct for the offset. C time handling really is broken... */
-    tdiff = difftime(t,t2);
-
+    plbtime(&year, &month, &day, &hour, &min, &sec, vmin);
   }
 
   if (diff < 3.0*60.0) {
     /* Seconds */
     *factor = 1.0;
     if (start != NULL) {
-      tm.tm_sec = 0;
-      t = mktime(&tm);
-      *start = (PLFLT)t+tdiff;
+      sec = 0.;
+      plctime(year, month, day, hour, min, sec, start);
     }
   }
   else if (diff < 3.0*60.0*60.0) {
     /* Minutes */
     *factor = 60.0;
     if (start != NULL) {
-      tm.tm_sec = 0;
-      tm.tm_min = 0;
-      t = mktime(&tm);
-      *start = (PLFLT)t+tdiff;
+      sec = 0.;
+      min = 0;
+      plctime(year, month, day, hour, min, sec, start);
     }
   }
   else if (diff < 3.0*60.0*60.0*24.0) {
     /* Hours */
     *factor = 60.0*60.0;
     if (start != NULL) {
-      tm.tm_sec = 0;
-      tm.tm_min = 0;
-      tm.tm_hour = 0;
-      t = mktime(&tm);
-      *start = (PLFLT)t+tdiff;
+      sec = 0.;
+      min = 0;
+      hour = 0;
+      plctime(year, month, day, hour, min, sec, start);
     }
   }
   else if (diff < 3.0*60.0*60.0*24.0*7.0) {
     /* Days */
     *factor = 60.0*60.0*24.0;
     if (start != NULL) {
-      tm.tm_sec = 0;
-      tm.tm_min = 0;
-      tm.tm_hour = 0;
-      t = mktime(&tm);
-      *start = (PLFLT)t+tdiff;
+      sec = 0.;
+      min = 0;
+      hour = 0;
+      plctime(year, month, day, hour, min, sec, start);
     }
   }
   else if (diff < 3.0*60.0*60.0*24.0*365) {
     /* Weeks */
     *factor = 60.0*60.0*24.0*7.0;
     if (start != NULL) {
-      tm.tm_sec = 0;
-      tm.tm_min = 0;
-      tm.tm_hour = 0;
-      t = mktime(&tm);
-      *start = (PLFLT)t+tdiff;
+      sec = 0.;
+      min = 0;
+      hour = 0;
+      plctime(year, month, day, hour, min, sec, start);
     }
   }
   else {
     /* Years */
     *factor = 60.0*60.0*24.0*365.25;
     if (start != NULL) {
-      tm.tm_sec = 0;
-      tm.tm_min = 0;
-      tm.tm_hour = 0;
-      tm.tm_mday = 1;
-      tm.tm_mon = 0;
-      t = mktime(&tm);
-      *start = (PLFLT)t+tdiff;
+      sec = 0.;
+      min = 0;
+      hour = 0;
+      day = 0;
+      month = 0;
+      plctime(year, month, day, hour, min, sec, start);
     }
   }
 
