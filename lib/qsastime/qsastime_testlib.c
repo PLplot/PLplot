@@ -568,9 +568,12 @@ int main()
       breakDownMJD(&year, &month, &day, &hour, &min, &sec, pMJD1, 0);
       printf("MJD = {%d,%20.15f}\n", pMJD1->base_day, pMJD1->time_sec); 
       printf("breakDownMJD result is year, month, day, hour, min, sec = %d, %d, %d, %d, %d, %20.15f\n", year, month, day, hour, min, sec); 
-      /* strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%.Z\n", pMJD1, 0); */
       strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%9Z\n", pMJD1, 0);
-      printf("strfMJD result is %s", buf);
+      printf("strfMJD %%S%%9 result is %s", buf);
+      strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%.Z\n", pMJD1, 0);
+      printf("strfMJD %%S%%. result is %s", buf);
+      strfMJD(&(buf[0]), 360, "%H:%M:%S, %H:%M:%S%0, %H:%M:%S%1, %H:%M:%S%2, %H:%M:%S%3, %H:%M:%S%4\n          %H:%M:%S %0,%H:%M:%S %1,%H:%M:%S %2,%H:%M:%S %3,%H:%M:%S %4\n", pMJD1, 0);
+      printf("strfMJD more heavily rounded results (the latter ones with a blank before the\ndecimal point to prove separated formatting works) for H:M:S are the following:\n%s", buf);
     }
   }
 
