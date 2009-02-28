@@ -325,6 +325,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   int y1, ifleapyear;
   int i, count,secsSince1970;
   int nplaces,fmtlen,slen;
+  int resolution;
+  double shiftPlaces;
   char * ptr;
   double sec, sec_fraction;
   int w,doy,days_in_wk1;
@@ -334,9 +336,40 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   size_t posn = 0;
   size_t last = len -1;
   MJDtime nMJD, *pnMJD=&nMJD;
+  MJDtime roundMJD;
   char dynamic_format[10];
 
-  normalize_MJD(pnMJD, MJD);
+  /* Find required resolution */
+  resolution = 0;
+  fmtlen = strlen(format);
+  i=0;
+  while(i<fmtlen)
+  {
+    char next = format[i];
+    if( next == '%')
+    {
+      /* find seconds format if used */
+      i++;
+      next = format[i];
+      if( isdigit(next) != 0 )
+      {
+        nplaces = strtol(&(format[i]), NULL, 10); 
+        if(nplaces > resolution) resolution = nplaces;
+      }	
+      else if( next == '.' )
+      {
+        resolution = 9; /* maximum resolution allowed */
+      }
+    }
+    i++;
+  }
+  
+  /* ensure rounding is done before breakdown */
+  shiftPlaces = pow(10,(double)resolution);	
+  roundMJD = *MJD;
+  roundMJD.time_sec += 0.5/shiftPlaces;
+
+  normalize_MJD(pnMJD, &roundMJD);
   
   buf[last] = '\0';
   buf[0] = '\0'; /* force overwrite of old buffer since strnctat() used hereafter */
@@ -349,10 +382,11 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
     }
   else ysign = 0;	
 	
+  /*truncate seconds to resolution to stop formatting rounding up */
+  sec = floor(sec *shiftPlaces) / shiftPlaces;
   second = (int) sec;
 	
   /* Read format string, character at a time */
-  fmtlen = strlen(format);
   i=0;
   while(i<fmtlen)
     {
