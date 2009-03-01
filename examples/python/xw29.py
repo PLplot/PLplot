@@ -48,6 +48,8 @@ def main():
 
   plot3()
 
+  plot4()
+
 
 # Plot a model diurnal cycle of temperature 
 def plot1():
@@ -168,6 +170,46 @@ def plot3():
 
   plssym(0.0,0.5)
   plpoin(x, y, 2)
+  plline(x, y)
+	    
+def plot4():
+
+  # TAI-UTC (seconds) as a function of time.
+  plconfigtime(1./86400., 0., 0., 0x1, 1, 1950, 0, 1, 0, 0, 0.)
+  xmin = plctime(1950,0,1,0,0,0.)
+  xmax = plctime(2020,0,1,0,0,0.)
+
+  npts = 70*12 + 1
+
+  ymin = 0.0
+  ymax = 36.0
+
+  i = arange(npts)
+  x = xmin + i*(xmax-xmin)/float(npts-1)
+  y = zeros(npts)
+  for j in range(npts):
+    plconfigtime(1./86400., 0., 0., 0x1, 1, 1950, 0, 1, 0, 0, 0.)
+    tai = x[j]
+    (tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec) = plbtime(tai)
+    plconfigtime(1./86400., 0., 0., 0x3, 1, 1950, 0, 1, 0, 0, 0.)
+    (utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec) = plbtime(tai)
+    plconfigtime(1./86400., 0., 0., 0x1, 1, 1950, 0, 1, 0, 0, 0.)
+    utc = plctime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec)
+    y[j]=tai-utc
+  pladv(0)
+
+  plvsta()
+  plwind(xmin, xmax, ymin, ymax)
+
+  plcol0(1)
+  pltimefmt("%Y")
+  plbox("bcnstd", 0.,0, "bcnstv", 0., 0)
+
+  plcol0(3)
+  pllab("Date", "TAI-UTC (sec)", "@frPLplot Example 29 - TAI-UTC from 1950 to 2020")
+  
+  plcol0(4)
+
   plline(x, y)
 	    
 main()
