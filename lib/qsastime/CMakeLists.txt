@@ -141,7 +141,6 @@ add_custom_target(
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tai-utc.h
   )
 
-
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -189,12 +188,14 @@ install(TARGETS qsastime
 # to make private library API visible.
 
 add_executable(qsastime_test qsastime_test.c qsastime_extra.c qsastime.c)
+add_dependencies(qsastime_test tai-utc.h_built)
 if(MATH_LIB)
   target_link_libraries(qsastime_test ${MATH_LIB})
 endif(MATH_LIB)
 
 # Routine for testing bhunt_search function in qsastime.c.
 add_executable(bhunt_search_test bhunt_search_test.c qsastime.c)
+add_dependencies(bhunt_search_test tai-utc.h_built)
 if(MATH_LIB)
   target_link_libraries(bhunt_search_test ${MATH_LIB})
 endif(MATH_LIB)
@@ -219,6 +220,7 @@ option(
 
 if(QSASTIME_TESTLIB)
   add_executable(qsastime_testlib qsastime_testlib.c qsastime.c)
+  add_dependencies(qsastime_testlib tai-utc.h_built)
   if(MATH_LIB)
     target_link_libraries(qsastime_testlib ${MATH_LIB})
   endif(MATH_LIB)
