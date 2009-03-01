@@ -63,6 +63,7 @@ static const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273,
 static const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
 
 static int geMJDtimeTAI_UTC(const MJDtime *number1, const TAI_UTC *number2);
+static double leap_second_TAI(const MJDtime *MJD_TAI);
 int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum));
 
 int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
@@ -911,6 +912,54 @@ int geMJDtimeTAI_UTC(const MJDtime *number1, const TAI_UTC *number2) {
   }
 }
 
+double leap_second_TAI(const MJDtime *MJD_TAI) {
+  /* Logic assumes input MJD_TAI is in TAI */
+  
+  MJDtime MJD_value, *MJD = &MJD_value;
+  int index;
+
+  /* N.B. geMJDtimeTAI_UTC only works for normalized values. */
+  normalize_MJD(MJD, MJD_TAI);
+  /* Search for index such that TAI_TO_UTC_lookup_table[index] <= MJD(TAI) < TAI_TO_UTC_lookup_table[index+1] */
+  bhunt_search(MJD, TAI_TO_UTC_lookup_table, number_of_entries_in_tai_utc_table, sizeof(TAI_UTC), &index, (int (*)(const void *, const void *)) geMJDtimeTAI_UTC);
+  if(index == -1) {
+    /* MJD is less than first table entry. */
+    /* Debug: check that condition is met */
+    if(geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[index+1])) {
+      fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for index = %d\n", index);
+      exit(EXIT_FAILURE);
+    }
+    /* Use initial offset for MJD values before first table entry. */
+    /* Calculate this offset strictly from offset1.  The slope term
+       doesn't enter because offset2 is the same as the UTC of the
+       first epoch of the table. */
+    return -TAI_TO_UTC_lookup_table[index+1].offset1;
+  } else if(index == number_of_entries_in_tai_utc_table-1) {
+    /* MJD is greater than or equal to last table entry. */ 
+    /* Debug: check that condition is met */
+    if(!geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[index])) {
+      fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for index = %d\n", index);
+      exit(EXIT_FAILURE);
+    }
+    /* Use final offset for MJD values after last table entry. 
+       The slope term doesn't enter because modern values of the slope
+       are zero.*/
+    return -TAI_TO_UTC_lookup_table[index].offset1;
+  } else if(index >= 0 && index < number_of_entries_in_tai_utc_table) {
+    /* table[index] <= MJD < table[index+1]. */ 
+    /* Debug: check that condition is met */
+    if(!(geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[index]) && !geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[index+1]))) {
+      fprintf(stderr, "MJD = {%d, %f}\n", MJD->base_day, MJD->time_sec);
+      fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for index = %d\n", index);
+      exit(EXIT_FAILURE);
+    }
+    return -(TAI_TO_UTC_lookup_table[index].offset1 + ((MJD->base_day-TAI_TO_UTC_lookup_table[index].offset2) + MJD->time_sec/SecInDay)*TAI_TO_UTC_lookup_table[index].slope)/(1. + TAI_TO_UTC_lookup_table[index].slope/SecInDay);
+  } else {
+    fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad index = %d\n", index);
+    exit(EXIT_FAILURE);
+  }
+}
+
 void configqsas(double scale, double offset1, double offset2, int ccontrol, int ifbtime_offset, int year, int month, int day, int hour, int min, double sec, QSASConfig **qsasconfig)
 {
   /* Configure the transformation between continuous time and broken-down time
@@ -991,10 +1040,9 @@ int ctimeqsas(int year, int month, int day, int hour, int min, double sec, doubl
 }
 
 void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec, double ctime, const QSASConfig *qsasconfig){
-  MJDtime MJD_value, *MJD=&MJD_value, MJD1_value;
+  MJDtime MJD_value, *MJD=&MJD_value;
   int forceJulian;
   double integral_offset1, integral_offset2, integral_scaled_ctime;
-  int index;
 
   if(qsasconfig == NULL) {
     fprintf(stderr, "libqsastime (btimeqsas) ERROR: configqsas must be called first.\n");
@@ -1010,48 +1058,7 @@ void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec
     forceJulian = 0;
 
   if(qsasconfig->ccontrol & 0x2) {
-    /* leap-second logic assuming the above offsets have converted time argument to MJD(TAI). */
-    /* N.B. geMJDtimeTAI_UTC only works for normalized values. */
-    MJD1_value = MJD_value;
-    normalize_MJD(MJD, &MJD1_value);
-    /* Search for index such that TAI_TO_UTC_lookup_table[index] <= MJD(TAI) < TAI_TO_UTC_lookup_table[index+1] */
-    bhunt_search(MJD, TAI_TO_UTC_lookup_table, number_of_entries_in_tai_utc_table, sizeof(TAI_UTC), &index, (int (*)(const void *, const void *)) geMJDtimeTAI_UTC);
-    if(index == -1) {
-      /* MJD is less than first table entry. */
-      /* Debug: check that condition is met */
-      if(geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[index+1])) {
-	fprintf(stderr, "libqsastime (btimeqsas) logic ERROR: bad condition for index = %d\n", index);
-	exit(EXIT_FAILURE);
-      }
-      /* Use initial offset for MJD values before first table entry. */
-      /* Calculate this offset strictly from offset1.  The slope term
-	 doesn't enter because offset2 is the same as the UTC of the
-	 first epoch of the table. */
-      MJD->time_sec -= TAI_TO_UTC_lookup_table[index+1].offset1;
-    } else if(index == number_of_entries_in_tai_utc_table-1) {
-      /* MJD is greater than or equal to last table entry. */ 
-      /* Debug: check that condition is met */
-      if(!geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[index])) {
-	fprintf(stderr, "libqsastime (btimeqsas) logic ERROR: bad condition for index = %d\n", index);
-	exit(EXIT_FAILURE);
-      }
-      /* Use final offset for MJD values after last table entry. 
-         The slope term doesn't enter because modern values of the slope
-         are zero.*/
-      MJD->time_sec -= TAI_TO_UTC_lookup_table[index].offset1;
-    } else if(index >= 0 && index < number_of_entries_in_tai_utc_table) {
-      /* table[index] <= MJD < table[index+1]. */ 
-      /* Debug: check that condition is met */
-      if(!(geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[index]) && !geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[index+1]))) {
-	fprintf(stderr, "MJD = {%d, %f}\n", MJD->base_day, MJD->time_sec);
-	fprintf(stderr, "libqsastime (btimeqsas) logic ERROR: bad condition for index = %d\n", index);
-	exit(EXIT_FAILURE);
-      }
-      MJD->time_sec -= (TAI_TO_UTC_lookup_table[index].offset1 + ((MJD->base_day-TAI_TO_UTC_lookup_table[index].offset2) + MJD->time_sec/SecInDay)*TAI_TO_UTC_lookup_table[index].slope)/(1. + TAI_TO_UTC_lookup_table[index].slope/SecInDay);
-    } else {
-      fprintf(stderr, "libqsastime (btimeqsas) logic ERROR: bad index = %d\n", index);
-      exit(EXIT_FAILURE);
-    } 
+    MJD->time_sec += leap_second_TAI(MJD);
   }
 
   breakDownMJD(year, month, day, hour, min, sec, MJD, forceJulian);
