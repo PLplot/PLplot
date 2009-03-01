@@ -175,41 +175,75 @@ def plot3():
 def plot4():
 
   # TAI-UTC (seconds) as a function of time.
-  plconfigtime(1./86400., 0., 0., 0x1, 1, 1950, 0, 1, 0, 0, 0.)
-  xmin = plctime(1950,0,1,0,0,0.)
-  xmax = plctime(2020,0,1,0,0,0.)
+  # Just for fun use Besselian epochs as the continuous time interval.
+  # Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
+  #
+  # B = 1900. + (JD -2415020.31352)/365.242198781 
+  # ==> (as calculated with aid of "bc -l" command)
+  # B = (MJD + 678940.364163900)/365.242198781
+  # ==>
+  # MJD = B*365.24219878 - 678940.364163900
+  scale = 365.242198781
+  offset1 = -678940.
+  offset2 = -0.3641639
+  plconfigtime(scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0.)
 
-  npts = 70*12 + 1
+  for kind in range(3):
+    if kind == 0:
+      xmin = plctime(1950,0,2,0,0,0.)
+      xmax = plctime(2020,0,2,0,0,0.)
+      npts = 70*12 + 1
+      ymin = 0.0
+      ymax = 36.0
+      time_format = "%Y%"
+      title_suffix = "from 1950 to 2020"
+      xtitle = "Year"
+      xlabel_step = 10.
+    elif kind == 1:
+      xmin = plctime(1961,7,1,0,0,1.64757000-5.)
+      xmax = plctime(1961,7,1,0,0,1.64757000+5.)
+      npts = 1001
+      ymin = 1.5
+      ymax = 1.8
+      time_format = "%S%2%"
+      title_suffix = "near 1961-08-01"
+      xtitle = "Seconds (TAI)"
+      xlabel_step = 1./(scale*86400.)
+    elif kind == 2:
+      xmin = plctime(2009,0,1,0,0,34.-5.)
+      xmax = plctime(2009,0,1,0,0,34.+5.)
+      npts = 1001
+      ymin = 32
+      ymax = 35
+      time_format = "%S%2%"
+      title_suffix = "near 2009-01-01"
+      xtitle = "Seconds (TAI)"
+      xlabel_step = 1./(scale*86400.)
 
-  ymin = 0.0
-  ymax = 36.0
+    i = arange(npts)
+    x = xmin + i*(xmax-xmin)/float(npts-1)
+    y = zeros(npts)
+    for j in range(npts):
+      plconfigtime(scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0.)
+      tai = x[j]
+      (tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec) = plbtime(tai)
+      plconfigtime(scale, offset1, offset2, 0x2, 0, 0, 0, 0, 0, 0, 0.)
+      (utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec) = plbtime(tai)
+      plconfigtime(scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0.)
+      utc = plctime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec)
+      y[j]=(tai-utc)*scale*86400.
 
-  i = arange(npts)
-  x = xmin + i*(xmax-xmin)/float(npts-1)
-  y = zeros(npts)
-  for j in range(npts):
-    plconfigtime(1./86400., 0., 0., 0x1, 1, 1950, 0, 1, 0, 0, 0.)
-    tai = x[j]
-    (tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec) = plbtime(tai)
-    plconfigtime(1./86400., 0., 0., 0x3, 1, 1950, 0, 1, 0, 0, 0.)
-    (utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec) = plbtime(tai)
-    plconfigtime(1./86400., 0., 0., 0x1, 1, 1950, 0, 1, 0, 0, 0.)
-    utc = plctime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec)
-    y[j]=tai-utc
-  pladv(0)
-
-  plvsta()
-  plwind(xmin, xmax, ymin, ymax)
-
-  plcol0(1)
-  pltimefmt("%Y")
-  plbox("bcnstd", 0.,0, "bcnstv", 0., 0)
-
-  plcol0(3)
-  pllab("Date", "TAI-UTC (sec)", "@frPLplot Example 29 - TAI-UTC from 1950 to 2020")
+    pladv(0)
+    plvsta()
+    plwind(xmin, xmax, ymin, ymax)
+    plcol0(1)
+    pltimefmt(time_format)
+    plbox("bcnstd", xlabel_step,0, "bcnstv", 0., 0)
+    plcol0(3)
+    pllab(xtitle, "TAI-UTC (sec)", "@frPLplot Example 29 - TAI-UTC " + title_suffix)
   
-  plcol0(4)
-
-  plline(x, y)
+    plcol0(4)
+    
+    plline(x, y)
 	    
 main()
