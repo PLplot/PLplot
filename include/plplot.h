@@ -203,7 +203,7 @@ typedef void* PLPointer;
 #endif
 
 /* Note these replacements follow the old BSD convention and not
- * C99. In particular isinf does not distinguish +/- inf.
+ * C99. In particular isinf does not distinguish +/- inf. */
 #if !defined(HAVE_ISNAN)
 #  define isnan(x) ((x) != (x))
 #endif
