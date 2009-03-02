@@ -2253,35 +2253,35 @@ Start of Gregorian proleptic inner test
 input and output (strftime), and output (strfMJD) date/time
 2008-12-31T23:59:55.123456789006013Z
 2008-12-31T23:59:55Z
-2008-12-31T23:59:55.876543211Z
+2008-12-31T23:59:55.123456789Z
 JD =  2454832.4999435585923493 days
 
 Start of Gregorian proleptic inner test
 input and output (strftime), and output (strfMJD) date/time
 2008-12-31T23:59:56.123456789006013Z
 2008-12-31T23:59:56Z
-2008-12-31T23:59:56.876543211Z
+2008-12-31T23:59:56.123456789Z
 JD =  2454832.4999551326036453 days
 
 Start of Gregorian proleptic inner test
 input and output (strftime), and output (strfMJD) date/time
 2008-12-31T23:59:57.123456789006013Z
 2008-12-31T23:59:57Z
-2008-12-31T23:59:57.876543211Z
+2008-12-31T23:59:57.123456789Z
 JD =  2454832.4999667066149414 days
 
 Start of Gregorian proleptic inner test
 input and output (strftime), and output (strfMJD) date/time
 2008-12-31T23:59:58.123456789006013Z
 2008-12-31T23:59:58Z
-2008-12-31T23:59:58.876543211Z
+2008-12-31T23:59:58.123456789Z
 JD =  2454832.4999782806262374 days
 
 Start of Gregorian proleptic inner test
 input and output (strftime), and output (strfMJD) date/time
 2008-12-31T23:59:59.123456789006013Z
 2008-12-31T23:59:59Z
-2008-12-31T23:59:59.876543211Z
+2008-12-31T23:59:59.123456789Z
 JD =  2454832.4999898546375334 days
 
 Start of Gregorian proleptic inner test
@@ -2318,5 +2318,30 @@ input and output (strftime), and output (strfMJD) date/time
 2009-01-01T00:00:04Z
 2009-01-01T00:00:04.123456789Z
 JD =  2454832.5000477251596749 days
-Test 05 (non-verbose) of calendar dates for every year from -5000000 to 5000000
-Test 06 (non-verbose) of all seconds from late 2007 to early 2009
+Test 05 of normalization of breakDownMJD result and strfMJD results near the hour.
+MJD = {51910,3599.999999990000106}
+breakDownMJD result is year, month, day, hour, min, sec = 2001, 0, 1, 0, 59,   59.999999990000106
+strfMJD %S%9 result is 2001-01-01T00:59:59.999999990Z
+strfMJD %S%. result is 2001-01-01T00:59:59.99999999Z
+strfMJD more heavily rounded results (the latter ones with a blank before the
+decimal point to prove separated formatting works) for H:M:S are the following:
+01:00:00, 01:00:00, 01:00:00.0, 01:00:00.00, 01:00:00.000, 01:00:00.0000
+          01:00:00 ,01:00:00 .0,01:00:00 .00,01:00:00 .000,01:00:00 .0000
+MJD = {51910,3600.000000000000000}
+breakDownMJD result is year, month, day, hour, min, sec = 2001, 0, 1, 1, 0,    0.000000000000000
+strfMJD %S%9 result is 2001-01-01T01:00:00.000000000Z
+strfMJD %S%. result is 2001-01-01T01:00:00.0Z
+strfMJD more heavily rounded results (the latter ones with a blank before the
+decimal point to prove separated formatting works) for H:M:S are the following:
+01:00:00, 01:00:00, 01:00:00.0, 01:00:00.00, 01:00:00.000, 01:00:00.0000
+          01:00:00 ,01:00:00 .0,01:00:00 .00,01:00:00 .000,01:00:00 .0000
+MJD = {51910,3600.000000009999894}
+breakDownMJD result is year, month, day, hour, min, sec = 2001, 0, 1, 1, 0,    0.000000009999894
+strfMJD %S%9 result is 2001-01-01T01:00:00.000000010Z
+strfMJD %S%. result is 2001-01-01T01:00:00.00000001Z
+strfMJD more heavily rounded results (the latter ones with a blank before the
+decimal point to prove separated formatting works) for H:M:S are the following:
+01:00:00, 01:00:00, 01:00:00.0, 01:00:00.00, 01:00:00.000, 01:00:00.0000
+          01:00:00 ,01:00:00 .0,01:00:00 .00,01:00:00 .000,01:00:00 .0000
+Test 06 (non-verbose) of calendar dates for every year from -5000000 to 5000000
+Test 07 (non-verbose) of all seconds from late 2007 to early 2009
