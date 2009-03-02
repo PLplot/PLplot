@@ -44,17 +44,27 @@ let () =
   (* Parse and process command line arguments *)
   ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
-  (* Test setting / getting compression parameter across plinit. *)
-  let compression1 = 95 in
-  plscompression compression1;
-
-  (* Test setting / getting familying parameters across plinit *)
+  (* Test setting / getting familying parameters before plinit *)
+  (* Save values set by plparseopts to be restored later. *)
+  let fam0, num0, bmax0 = plgfam () in
   let fam1 = 0 in
   let num1 = 10 in
   let bmax1 = 1000 in
   plsfam fam1 num1 bmax1;
 
-  (* Test setting / getting page parameters across plinit *)
+  (* Retrieve the same values? *)
+  let fam2, num2, bmax2 = plgfam () in
+  printf "family parameters: fam, num, bmax = %d %d %d\n" fam2 num2 bmax2;
+  failed_if
+    (fam2 <> fam1 || num2 <> num1 || bmax2 <> bmax1)
+    "plgfam test failed\n";
+  (* Restore values set initially by plparseopts. *)
+  plsfam fam0 num0 bmax0;
+
+  (* Test setting / getting page parameters before plinit *)
+  (* Save values set by plparseopts to be restored later. *)
+  let xp0, yp0, xleng0, yleng0, xoff0, yoff0 = plgpage () in
+
   let xp1 = 200. in
   let yp1 = 200. in
   let xleng1 = 400 in
@@ -62,6 +72,22 @@ let () =
   let xoff1 = 10 in
   let yoff1 = 20 in
   plspage xp1 yp1 xleng1 yleng1 xoff1 yoff1;
+
+  (* Retrieve the same values? *)
+  let xp2, yp2, xleng2, yleng2, xoff2, yoff2 = plgpage () in
+  printf
+    "page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n"
+    xp2 yp2 xleng2 yleng2 xoff2 yoff2;
+  failed_if
+    (xp2 <> xp1 || yp2 <> yp1 || xleng2 <> xleng1 || yleng2 <> yleng1 || 
+     xoff2 <> xoff1 || yoff2 <> yoff1)
+    "plgpage test failed\n";
+  (* Restore values set initially by plparseopts. *)
+  plspage xp0 yp0 xleng0 yleng0 xoff0 yoff0;
+
+  (* Test setting / getting compression parameter across plinit. *)
+  let compression1 = 95 in
+  plscompression compression1;
 
   (* Initialize plplot *)
   plinit ();
@@ -74,26 +100,6 @@ let () =
   failed_if
     (compression2 <> compression1)
     "plgcompression test failed\n";
-
-  (* Test if device initialization screwed around with any of the
-     preset familying values. *)
-  let fam2, num2, bmax2 = plgfam () in
-  printf "family parameters: fam, num, bmax = %d %d %d\n" fam2 num2 bmax2;
-  failed_if
-    (fam2 <> fam1 || num2 <> num1 || bmax2 <> bmax1)
-    "plgfam test failed\n";
-
-  (* Test if device initialization screwed around with any of the
-     preset page values. *)
-  let xp2, yp2, xleng2, yleng2, xoff2, yoff2 = plgpage () in
-  printf
-    "page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n"
-    xp2 yp2 xleng2 yleng2 xoff2 yoff2;
-  failed_if
-    (xp2 <> xp1 || yp2 <> yp1 || xleng2 <> xleng1 || yleng2 <> yleng1 || 
-     xoff2 <> xoff1 || yoff2 <> yoff1)
-    "plgpage test failed\n";
-
 
   (* Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
      they work without any obvious error messages. *)
