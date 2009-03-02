@@ -62,18 +62,22 @@ static const double SecInDay = 86400; /* we ignore leap seconds */
 static const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 static const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
 
+/* Static function declarations. */
 static int geMJDtimeTAI_UTC(const MJDtime *number1, const TAI_UTC *number2);
-static double leap_second_TAI(const MJDtime *MJD_TAI);
-int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum));
+static double leap_second_TAI(const MJDtime *MJD_TAI, int * inleap);
+/* End of static function declarations. */
 
 int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian)
 {	
-  /* convert Gregorian date plus time to MJD */
+  /* convert broken-down time to MJD */
   /* MJD measures from the start of 17 Nov 1858 */
 	
-  /* the int flag Julian forces use of Julian  calendar whatever the year */
-  /* default is to use Gregorian after 4 Oct 1582 (Julian) i.e. from 15 Oct 1582 Gregorian */
-  /* Note C libraries use Gregorian only from 14 Sept 1752 onwards */
+  /* If forceJulian is true (non-zero), the Julian proleptic calendar is
+     used whatever the year.  Otherwise, the Gregorian proleptic calendar
+     is used whatever the year. */
+  /* Note C libraries use Gregorian only (at least on Linux).  In contrast,
+     the Linux (and Unix?) cal application uses Julian for earlier dates
+     and Gregorian from 14 Sept 1752 onwards. */
 
   int leaps, year4, year100, year400;
   double dbase_day, non_leaps = 365.;
@@ -233,23 +237,22 @@ void getYAD(int *year, int *ifleapyear, int *doy, const MJDtime *MJD, int forceJ
       *ifleapyear = (*year%4 == 0 && *year%100 != 0) || (*year%4 == 0 && *year%400 == 0);
     }
   }
-
 }
 
-void normalize_MJD(MJDtime *MJDout, const MJDtime *MJDin)
+void normalize_MJD(MJDtime *MJD)
 {
   int extra_days;
   /* Calculate MJDout as normalized version
      (i.e., 0. <= MJDout->time_sec < 86400.) of MJDin. */
-  if(MJDin->time_sec >= 0) {
-    extra_days = (int) (MJDin->time_sec / SecInDay);
+  if(MJD->time_sec >= 0) {
+    extra_days = (int) (MJD->time_sec / SecInDay);
   } else {
     /* allow for negative seconds push into previous day even if less than 1 day */
-    extra_days = (int) (MJDin->time_sec / SecInDay) - 1 ;
+    extra_days = (int) (MJD->time_sec / SecInDay) - 1 ;
   }
   
-  MJDout->base_day = MJDin->base_day + extra_days;
-  MJDout->time_sec = MJDin->time_sec - extra_days * SecInDay;
+  MJD->base_day += extra_days;
+  MJD->time_sec -= extra_days * SecInDay;
 }
 
 void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian)
@@ -258,18 +261,19 @@ void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *
   /* Note year 0 CE (AD) [1 BCE (BC)] is a leap year */
 	
   int doy, ifleapyear;
-  MJDtime nMJD, *pnMJD=&nMJD;
+  MJDtime nMJD_value, *nMJD=&nMJD_value;
 	
-  normalize_MJD(pnMJD, MJD);
+  *nMJD = *MJD;
+  normalize_MJD(nMJD);
   /* Time part */
 	
-  *sec = pnMJD->time_sec;
+  *sec = nMJD->time_sec;
   *hour = (int)( *sec / 3600.);
   *sec -= (double) *hour * 3600.;
   *min = (int) ( *sec / 60.);
   *sec -=  (double) *min * 60.;
 
-  getYAD(year, &ifleapyear, &doy, pnMJD, forceJulian);
+  getYAD(year, &ifleapyear, &doy, nMJD, forceJulian);
 
   /* calculate month part with doy set to be the day within
      the year in the range from 1 to 366 */
@@ -318,11 +322,19 @@ const char * getLongMonth( int m)
 }
 
 
-size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian)
+size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian, int if60secformat)
 {
   /* Format a text string according to the format string.
      Uses the same syntax as strftime() but does not use current locale.
      The null terminator is included in len for safety. */
+
+  /* if if60secformat is true (non-zero) AND the time is somewhere in the
+     first second of a year, then renormalize to the previous year so that the
+     date/time comes out beyond the normal last second of the year with the
+     seconds greater than 60.  This form of normalization is used  as a flag
+     that a leap increment (recently always a second, but historically it
+     was sometimes smaller than that) was in the process of being inserted
+     for this particular epoch just prior to a discontinuity in TAI-UTC. */
 	
   int year, month, day, hour, min, ysign, second, d, y;
   int y1, ifleapyear;
@@ -338,8 +350,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   char DateTime[80];
   size_t posn = 0;
   size_t last = len -1;
-  MJDtime nMJD, *pnMJD=&nMJD;
-  MJDtime roundMJD;
+  MJDtime nMJD_value, *nMJD=&nMJD_value;
   char dynamic_format[10];
 
   /* Find required resolution */
@@ -369,15 +380,23 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   
   /* ensure rounding is done before breakdown */
   shiftPlaces = pow(10,(double)resolution);	
-  roundMJD = *MJD;
-  roundMJD.time_sec += 0.5/shiftPlaces;
+  *nMJD = *MJD;
+  nMJD->time_sec += 0.5/shiftPlaces;
 
-  normalize_MJD(pnMJD, &roundMJD);
+  normalize_MJD(nMJD);
   
   buf[last] = '\0';
   buf[0] = '\0'; /* force overwrite of old buffer since strnctat() used hereafter */
 	
-  breakDownMJD(&year, &month, &day, &hour, &min, &sec,  pnMJD, forceJulian);
+  breakDownMJD(&year, &month, &day, &hour, &min, &sec,  nMJD, forceJulian);
+  if(if60secformat && month == 0 && day == 1 && hour == 0 && min == 0 && (int) sec == 0) {
+    year = year-1;
+    month = 11;
+    day = 31;
+    hour = 23;
+    min = 59;
+    sec+= 60.;
+  }
   if(year < 0)
     {
       ysign = 1;
@@ -409,7 +428,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'a')
 	    {
 	      /* short day name */
-	      dayText = getDayOfWeek(pnMJD);
+	      dayText = getDayOfWeek(nMJD);
 	      strncat(&(buf[posn]), dayText, last - posn);
 	      posn = strlen(buf);
 	      if(posn >= last) return posn;
@@ -417,7 +436,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'A')
 	    {
 	      /* long day name */
-	      dayText = getLongDayOfWeek(pnMJD);
+	      dayText = getLongDayOfWeek(nMJD);
 	      strncat(&(buf[posn]), dayText, last - posn);
 	      posn = strlen(buf);
 	      if(posn >= last) return posn;
@@ -441,7 +460,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'c')
 	    {
 	      /* Date and Time with day of week */
-	      dayText = getDayOfWeek(pnMJD);
+	      dayText = getDayOfWeek(nMJD);
 	      monthText = getMonth(month);
 	      if(ysign == 0)
 		sprintf(DateTime, "%s %s %02d %02d:%02d:%02d %04d", dayText, monthText, day, hour, min, second, year );
@@ -534,7 +553,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'j')
 	    {
 	      /* day of year */
-	      getYAD(&y1, &ifleapyear, &doy, pnMJD, forceJulian);
+	      getYAD(&y1, &ifleapyear, &doy, nMJD, forceJulian);
 	      sprintf(DateTime, "%03d", doy);
 				
 	      strncat(&(buf[posn]), DateTime, last - posn);
@@ -658,7 +677,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 's')
 	    {
 	      /* seconds since 01 Jan 1970 Gregorian */
-	      secsSince1970 = (int)(pnMJD->time_sec + (pnMJD->base_day - MJD_1970) * SecInDay);
+	      secsSince1970 = (int)(nMJD->time_sec + (nMJD->base_day - MJD_1970) * SecInDay);
 	      sprintf(DateTime, "%d", secsSince1970);
 				
 	      strncat(&(buf[posn]), DateTime, last - posn);
@@ -684,8 +703,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'U')
 	    {
 	      /* week of year as a number,  (00 - 53) start of week is Sunday */
-	      getYAD(&y1, &ifleapyear, &doy, pnMJD, forceJulian);
-	      days_in_wk1 = (pnMJD->base_day - doy - 4) % 7;
+	      getYAD(&y1, &ifleapyear, &doy, nMJD, forceJulian);
+	      days_in_wk1 = (nMJD->base_day - doy - 4) % 7;
 				
 	      w = (doy + 6 - days_in_wk1) / 7;
 				
@@ -698,7 +717,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'u')
 	    {
 	      /* weekday as a number,  0 = Monday */
-	      d = 1 + (pnMJD->base_day - 5) % 7;
+	      d = 1 + (nMJD->base_day - 5) % 7;
 
 	      sprintf(DateTime, "%01d", d);
 				
@@ -735,8 +754,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	    {
 	      int days_in_wk1;
 	      /* week of year as a number,  (01 - 53) start of week is Monday and first week has at least 3 days in year */
-	      getYAD(&y1, &ifleapyear, &doy, pnMJD, forceJulian);
-	      days_in_wk1 = (pnMJD->base_day - doy - 3) % 7;
+	      getYAD(&y1, &ifleapyear, &doy, nMJD, forceJulian);
+	      days_in_wk1 = (nMJD->base_day - doy - 3) % 7;
 				
 	      if(days_in_wk1 <= 3) w = (doy +6 - days_in_wk1) / 7; /* ensure first week has at least 3 days in this year */
 	      else w = 1 + (doy + 6 - days_in_wk1) / 7;
@@ -751,7 +770,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'w')
 	    {
 	      /* weekday as a number,  0 = Sunday */
-	      d = (pnMJD->base_day - 4) % 7;
+	      d = (nMJD->base_day - 4) % 7;
 
 	      sprintf(DateTime, "%01d", d);
 				
@@ -762,8 +781,8 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'W')
 	    {
 	      /* week of year as a number,  (00 - 53) start of week is Monday */
-	      getYAD(&y1, &ifleapyear, &doy, pnMJD, forceJulian);
-	      days_in_wk1 = (pnMJD->base_day - doy - 3) % 7;
+	      getYAD(&y1, &ifleapyear, &doy, nMJD, forceJulian);
+	      days_in_wk1 = (nMJD->base_day - doy - 3) % 7;
 				
 	      w =  (doy +6 - days_in_wk1) / 7;
 				
@@ -776,7 +795,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == 'x')
 	    {
 	      /* date string */
-	      dayText = getDayOfWeek(pnMJD);
+	      dayText = getDayOfWeek(nMJD);
 	      monthText = getMonth(month);
 	      if(ysign == 0)
 		sprintf(DateTime, "%s %s %02d, %04d", dayText, monthText, day, year );
@@ -843,7 +862,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	  else if(next == '+')
 	    {
 	      /* date and time */
-	      dayText = getDayOfWeek(pnMJD);
+	      dayText = getDayOfWeek(nMJD);
 	      monthText = getMonth(month);
 	      if(ysign == 0)
 		sprintf(DateTime, "%s %s %02d %02d:%02d:%02d UTC %04d",  dayText, monthText, day, hour, min, second, year );
@@ -912,14 +931,17 @@ int geMJDtimeTAI_UTC(const MJDtime *number1, const TAI_UTC *number2) {
   }
 }
 
-double leap_second_TAI(const MJDtime *MJD_TAI) {
+double leap_second_TAI(const MJDtime *MJD_TAI, int * inleap) {
   /* Logic assumes input MJD_TAI is in TAI */
+  /* *inleap lets the calling routine know whether MJD_TAI corresponds
+     to an epoch when a positive leap increment is being inserted. */
   
   MJDtime MJD_value, *MJD = &MJD_value;
   int index;
-
+  double leap;
   /* N.B. geMJDtimeTAI_UTC only works for normalized values. */
-  normalize_MJD(MJD, MJD_TAI);
+  *MJD = *MJD_TAI;
+  normalize_MJD(MJD);
   /* Search for index such that TAI_TO_UTC_lookup_table[index] <= MJD(TAI) < TAI_TO_UTC_lookup_table[index+1] */
   bhunt_search(MJD, TAI_TO_UTC_lookup_table, number_of_entries_in_tai_utc_table, sizeof(TAI_UTC), &index, (int (*)(const void *, const void *)) geMJDtimeTAI_UTC);
   if(index == -1) {
@@ -929,6 +951,9 @@ double leap_second_TAI(const MJDtime *MJD_TAI) {
       fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for index = %d\n", index);
       exit(EXIT_FAILURE);
     }
+    /* There is (by assertion) no discontinuity at the start of the table.
+       Therefore, *inleap cannot be true. */
+    *inleap = 0;
     /* Use initial offset for MJD values before first table entry. */
     /* Calculate this offset strictly from offset1.  The slope term
        doesn't enter because offset2 is the same as the UTC of the
@@ -941,6 +966,8 @@ double leap_second_TAI(const MJDtime *MJD_TAI) {
       fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for index = %d\n", index);
       exit(EXIT_FAILURE);
     }
+    /* If beyond end of table, cannot be in middle of leap second insertion. */
+    *inleap = 0;
     /* Use final offset for MJD values after last table entry. 
        The slope term doesn't enter because modern values of the slope
        are zero.*/
@@ -953,7 +980,18 @@ double leap_second_TAI(const MJDtime *MJD_TAI) {
       fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for index = %d\n", index);
       exit(EXIT_FAILURE);
     }
-    return -(TAI_TO_UTC_lookup_table[index].offset1 + ((MJD->base_day-TAI_TO_UTC_lookup_table[index].offset2) + MJD->time_sec/SecInDay)*TAI_TO_UTC_lookup_table[index].slope)/(1. + TAI_TO_UTC_lookup_table[index].slope/SecInDay);
+    leap = -(TAI_TO_UTC_lookup_table[index].offset1 + ((MJD->base_day-TAI_TO_UTC_lookup_table[index].offset2) + MJD->time_sec/SecInDay)*TAI_TO_UTC_lookup_table[index].slope)/(1. + TAI_TO_UTC_lookup_table[index].slope/SecInDay);
+    /* Convert MJD(TAI) to normalized MJD(UTC). */
+    MJD->time_sec += leap;
+    normalize_MJD(MJD);
+    /* If MJD(UT) is in the next interval of the corresponding
+       UTC_TO_TAI_lookup_table, then we are right in the middle of a
+       leap interval (recently a second but for earlier epochs it could be
+       less) insertion.  Note this logic even works when leap intervals
+       are taken away from UTC (i.e., leap is positive) since in that
+       case the UTC index always corresponds to the TAI index. */
+    *inleap = geMJDtimeTAI_UTC(MJD, &UTC_TO_TAI_lookup_table[index+1]);
+    return leap;
   } else {
     fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad index = %d\n", index);
     exit(EXIT_FAILURE);
@@ -1043,6 +1081,7 @@ void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec
   MJDtime MJD_value, *MJD=&MJD_value;
   int forceJulian;
   double integral_offset1, integral_offset2, integral_scaled_ctime;
+  int inleap;
 
   if(qsasconfig == NULL) {
     fprintf(stderr, "libqsastime (btimeqsas) ERROR: configqsas must be called first.\n");
@@ -1058,7 +1097,7 @@ void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec
     forceJulian = 0;
 
   if(qsasconfig->ccontrol & 0x2) {
-    MJD->time_sec += leap_second_TAI(MJD);
+    MJD->time_sec += leap_second_TAI(MJD, &inleap);
   }
 
   breakDownMJD(year, month, day, hour, min, sec, MJD, forceJulian);
@@ -1069,6 +1108,7 @@ size_t strfqsas(char * buf, size_t len, const char *format, double ctime, const 
   MJDtime MJD_value, *MJD=&MJD_value;
   int forceJulian;
   double integral_offset1, integral_offset2, integral_scaled_ctime;
+  int inleap;
 
   if(qsasconfig == NULL) {
     fprintf(stderr, "libqsastime (strfqsas) ERROR: configqsas must be called first.\n");
@@ -1082,7 +1122,11 @@ size_t strfqsas(char * buf, size_t len, const char *format, double ctime, const 
   else
     forceJulian = 0;
 
-  return strfMJD(buf, len, format, MJD, forceJulian);
+  if(qsasconfig->ccontrol & 0x2) {
+    MJD->time_sec += leap_second_TAI(MJD, &inleap);
+  }
+
+  return strfMJD(buf, len, format, MJD, forceJulian, inleap);
 }
 
 /* bhunt_search.  Search an ordered table with a binary hunt phase and a
