@@ -67,9 +67,9 @@ int main()
   ISOstring = getISOString(&MJD2, 0, 0);
   printf("ISO string = '%s'\n\n" , ISOstring);
 
-  strfMJD(&(buf[0]), 360, "%Y-%m-%d %H:%M:%S%.",  &MJD2, 0);
+  strfMJD(&(buf[0]), 360, "%Y-%m-%d %H:%M:%S%.",  &MJD2, 0, 0);
   printf("strfMJD:ISO equiv:   '%s'\n", buf);
-  strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%4Z",  &MJD2, 0);
+  strfMJD(&(buf[0]), 360, "%Y-%m-%dT%H:%M:%S%4Z",  &MJD2, 0, 0);
   printf("strfMJD:ISO equiv:  '%s'\n", buf);
 	
   getYAD(&y1, &ifleapyear, &doy, &MJD2, 0);
@@ -116,7 +116,7 @@ int main()
   /* Compare formatting from strftime() */
 
 
-  used = strfMJD(&(buf[0]), 360, "   strfMJD():\n   --------\n '%+' \n %c\n %D %F \n %j \n %r \n %s \n %v\n\n",  &MJD2, 0);
+  used = strfMJD(&(buf[0]), 360, "   strfMJD():\n   --------\n '%+' \n %c\n %D %F \n %j \n %r \n %s \n %v\n\n",  &MJD2, 0, 0);
   printf("chars %d for \n%s\n" , (int) used, buf);
 
   /* seconds since 01 Jan 1970 Gregorian for strftime use */				
