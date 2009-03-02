@@ -224,5 +224,4 @@ let () =
 
   plend ();
 
-  exit !status;
-  ()
+  exit !status
