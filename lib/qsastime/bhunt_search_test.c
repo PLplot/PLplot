@@ -20,8 +20,7 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-
-int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum));
+#include "qsastimeP.h"
 
 int gedouble(double *number1, double *number2);
 
