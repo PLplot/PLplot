@@ -60,10 +60,14 @@ struct QSASConfigStruct
   
 };
 
+/* ToDo.  Configure these so all are static if testing is not
+   configured? */
+int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum));
+
 int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
 void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian);
-size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian);
-void normalize_MJD(MJDtime *MJDout, const MJDtime *MJDin);
+size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian, int if60secformat);
+void normalize_MJD(MJDtime *MJD);
 const char * getDayOfWeek(const MJDtime *MJD);
 const char * getLongDayOfWeek( const MJDtime *MJD);
 const char * getMonth(int m);
