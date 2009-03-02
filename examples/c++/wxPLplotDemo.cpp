@@ -80,25 +80,40 @@ public:
 };
 
 
+class MyPlotwindow : public wxPLplotwindow
+{
+public:
+  MyPlotwindow( wxFrame* frame, wxWindow* parent, wxWindowID id=-1, const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize, long style = 0,
+                int pl_style = wxPLPLOT_NONE );
+
+  void OnChar( wxKeyEvent& event );  
+
+private:
+  wxFrame* mframe;
+};
+
+
 // Define a new frame type: this is going to be our main frame
 class MyFrame : public wxFrame
 {
 public:
   MyFrame( const wxString& title );
-
-  void OnQuit( wxCommandEvent& event );
-  void OnAbout( wxCommandEvent& event );
-  void OnBackgroundColor( wxCommandEvent& event );
-  
   void Plot();
 
 private:
-  wxPLplotwindow* plotwindow;
+  void OnQuit( wxCommandEvent& event );
+  void OnAbout( wxCommandEvent& event );
+  void OnBackgroundColor( wxCommandEvent& event );
+
+private:
+  MyPlotwindow* plotwindow;
   bool bgcolor;
   int m_backend;
 
   DECLARE_EVENT_TABLE()
 };
+
 
 // ----------------------------------------------------------------------------
 // constants
@@ -142,6 +157,28 @@ bool MyApp::OnInit()
 }
 
 
+MyPlotwindow::MyPlotwindow( wxFrame* frame, wxWindow* parent, wxWindowID id, const wxPoint& pos,
+                            const wxSize& size, long style, int pl_style ) : 
+          wxPLplotwindow( parent, id, pos, size, style, pl_style )
+{
+  mframe = frame;
+}
+
+
+void MyPlotwindow::OnChar( wxKeyEvent& event )
+{
+  int keycode = event.GetKeyCode();
+  
+  if( keycode==WXK_RETURN ||
+      keycode==WXK_SPACE ||
+      keycode==WXK_RIGHT ||
+      keycode==WXK_ESCAPE )
+    mframe->Close( true );
+  else
+    event.Skip();
+}
+
+
 /*! Constructor of our custom frame, where the Menu is created and a
  *  a wxPLplotwindow is inserted into the frame. We plot some easy functions
  *  just to show how it works. wxPLplotwindow takes care of all the setup
@@ -165,12 +202,13 @@ MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 	// add the wxPLplot
 	wxPanel* panel = new wxPanel( this );
 	wxBoxSizer* box = new wxBoxSizer( wxVERTICAL );
-	plotwindow = new wxPLplotwindow( panel, -1, wxDefaultPosition, wxDefaultSize, 0,
+	plotwindow = new MyPlotwindow( this, panel, -1, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS,
 #if wxUSE_GRAPHICS_CONTEXT  
                                    wxPLPLOT_BACKEND_GC | wxPLPLOT_DRAW_TEXT );
 #else
                                    wxPLPLOT_BACKEND_AGG | wxPLPLOT_DRAW_TEXT );
 #endif
+  plotwindow->Connect( wxEVT_CHAR, wxKeyEventHandler(MyPlotwindow::OnChar) );
 	box->Add( plotwindow, 1, wxALL | wxEXPAND, 0 );
   panel->SetSizer( box );
 	SetSize( 640, 500 );  // set frame size
