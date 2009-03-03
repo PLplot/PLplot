@@ -43,20 +43,21 @@ use
 
 @Ada_Is_2007_With_and_Use_Numerics@
 
--- This example mostly outputs text. As part of the PLplot testing regime, we 
+-- This example mostly outputs text. As part of the PLplot testing regime, we
 -- require that the text output match that of the C version, x31c.c, exactly.
--- Therefore, certain extra measures were made in this Ada version to assure 
+-- Therefore, certain extra measures were made in this Ada version to assure
 -- that matching text is created.
 
 procedure xthick31a is
     xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax : Long_Float;
     xmid, ymid, wx, wy : Long_Float;
-    mar, aspect, jx, jy, ori : Long_Float;  
+    mar, aspect, jx, jy, ori : Long_Float;
     win, level2, digmax, digit, compression1, compression2 : Integer;
-    xp1, yp1, xp2, yp2 : Long_Float;
+    xp0, yp0, xp1, yp1, xp2, yp2 : Long_Float;
+    xleng0, yleng0, xoff0, yoff0 : Integer;
     xleng1, yleng1, xoff1, yoff1, xleng2, yleng2, xoff2, yoff2 : Integer;
-    num1, bmax1, num2, bmax2, r, g, b : Integer;
-    fam1, fam2 : Boolean;
+    num0, bmax0, num1, bmax1, num2, bmax2, r, g, b : Integer;
+    fam0, fam1, fam2 : Boolean;
     a : Long_Float;
     r1 : Integer_0_255_Array(0 .. 1) := (0, 255);
     g1 : Integer_0_255_Array(0 .. 1) := (0, 255);
@@ -64,7 +65,7 @@ procedure xthick31a is
     a1 : Real_Vector(0 .. 1) := (1.0, 1.0);
     status : Integer;
     fnam : Unbounded_String;
-    
+
     -- Convert a boolean to integers 0 or 1.
     function Boolean_To_Integer(B : Boolean) return Integer is
     begin
@@ -74,7 +75,7 @@ procedure xthick31a is
             return 0;
         end if;
     end Boolean_To_Integer;
-    
+
     -- Function to return a formated float that looks like what C does.
     function PF(x : Long_Float) return String is
         A_String : String(1 .. 30);
@@ -89,17 +90,29 @@ begin
 
     Parse_Command_Line_Arguments(Parse_Full);
 
-    -- Test setting / getting compression parameter across Initialize_PLplot.
-    compression1 := 95;
-    Set_Compression_Level(compression1);
-
-    -- Test setting / getting familying parameters across Initialize_PLplot.
+    -- Test setting / getting familying parameters before plinit.
+    -- Save values set by plparseopts to be restored later.
+    Get_File_Family_Parameters(fam0, num0, bmax0);
     fam1 := False;
     num1 := 10;
     bmax1 := 1000;
     Set_File_Family_Parameters(fam1, num1, bmax1);
 
-    -- Test setting / getting page parameters across Initialize_PLplot.
+    -- Retrieve the same values?
+    Get_File_Family_Parameters(fam2, num2, bmax2);
+    Put_Line("family parameters: fam, num, bmax ="
+        & Integer'image(Boolean_To_Integer(fam2))
+        & Integer'image(num2) & Integer'image(bmax2));
+    if fam2 /= fam1 or num2 /= num1 or bmax2 /= bmax1 then
+        Put_Line(Standard_Error, "Get_File_Family_Parameters test failed");
+        status := 1;
+    end if;
+    -- Restore values set initially by plparseopts.
+    Set_File_Family_Parameters(fam0, num0, bmax0);
+
+    -- Test setting / getting page parameters before plinit.
+    -- Save values set by plparseopts to be restored later.
+    Get_Page_Parameters(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
     xp1 := 200.0;
     yp1 := 200.0;
     xleng1 := 400;
@@ -107,6 +120,24 @@ begin
     xoff1 := 10;
     yoff1 := 20;
     Set_Page_Parameters(xp1, yp1, xleng1, yleng1, xoff1, yoff1);
+
+    -- Retrieve the same values?
+    Get_Page_Parameters(xp2, yp2, xleng2, yleng2, xoff2, yoff2);
+    Put("page parameters: xp, yp, xleng, yleng, xoff, yoff = "
+        & PF(xp2) & " " & PF(yp2));
+    Put_Line(Integer'image(xleng2) & Integer'image(yleng2)
+        & Integer'image(xoff2) & Integer'image(yoff2));
+    if xp2 /= xp1 or yp2 /= yp1 or xleng2 /= xleng1 or yleng2 /= yleng1 or
+      xoff2 /= xoff1 or yoff2 /= yoff1 then
+        Put_Line(Standard_Error, "Get_Page_Parameters test failed");
+        status := 1;
+    end if;
+    -- Restore values set initially by plparseopts.
+    Set_Page_Parameters(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
+
+    -- Test setting / getting compression parameter across Initialize_PLplot.
+    compression1 := 95;
+    Set_Compression_Level(compression1);
 
     -- Initialize plplot.
     Initialize_PLplot;
@@ -118,30 +149,6 @@ begin
     Put_Line("compression parameter =" & Integer'image(compression2));
     if (compression2 /= compression1) then
         Put_Line(Standard_Error, "Get_Compression_Level test failed");
-        status := 1;
-    end if;
-
-    -- Test if device initialization screwed around with any of the
-    -- preset familying values.
-    Get_File_Family_Parameters(fam2, num2, bmax2);
-    Put_Line("family parameters: fam, num, bmax =" 
-        & Integer'image(Boolean_To_Integer(fam2)) 
-        & Integer'image(num2) & Integer'image(bmax2));
-    if fam2 /= fam1 or num2 /= num1 or bmax2 /= bmax1 then
-        Put_Line(Standard_Error, "Get_File_Family_Parameters test failed");
-        status := 1;
-    end if;
-
-    -- Test if device initialization screwed around with any of the
-    -- preset page values.
-    Get_Page_Parameters(xp2, yp2, xleng2, yleng2, xoff2, yoff2);
-    Put("page parameters: xp, yp, xleng, yleng, xoff, yoff = " 
-        & PF(xp2) & " " & PF(yp2));
-    Put_Line(Integer'image(xleng2) & Integer'image(yleng2) 
-        & Integer'image(xoff2) & Integer'image(yoff2));
-    if xp2 /= xp1 or yp2 /= yp1 or xleng2 /= xleng1 or yleng2 /= yleng1 or 
-      xoff2 /= xoff1 or yoff2 /= yoff1 then
-        Put_Line(Standard_Error, "Get_Page_Parameters test failed");
         status := 1;
     end if;
 
@@ -162,7 +169,7 @@ begin
     Advance_To_Subpage(Next_Subpage);
     Set_Viewport_Normalized(0.01, 0.99, 0.02, 0.49);
     Get_Viewport_Normalized(xmin, xmax, ymin, ymax);
-    Put_Line("plvpor: xmin, xmax, ymin, ymax = " 
+    Put_Line("plvpor: xmin, xmax, ymin, ymax = "
         & PF(xmin) & " " & PF(xmax) & " " & PF(ymin) & " " & PF(ymax));
     if xmin /= 0.01 or xmax /= 0.99 or ymin /= 0.02 or ymax /= 0.49 then
         Put_Line(Standard_Error, "Get_Viewport_Normalized test failed");
@@ -173,7 +180,7 @@ begin
 
     Set_Viewport_World(0.2, 0.3, 0.4, 0.5);
     Get_Viewport_World(xmin, xmax, ymin, ymax);
-    Put_Line("plwind: xmin, xmax, ymin, ymax = "  
+    Put_Line("plwind: xmin, xmax, ymin, ymax = "
         & PF(xmin) & " " & PF(xmax) & " " & PF(ymin) & " " & PF(ymax));
     if xmin /= 0.2 or xmax /= 0.3 or ymin /= 0.4 or ymax /= 0.5 then
         Put_Line(Standard_Error, "Get_Viewport_World test failed");
@@ -182,15 +189,15 @@ begin
 
     -- Get world coordinates for middle of viewport.
     World_From_Relative_Coordinates(xmid,ymid,wx,wy,win);
-    Put_Line("world parameters: wx, wy, win = " 
+    Put_Line("world parameters: wx, wy, win = "
         & PF(wx) & " " & PF(wy) & Integer'image(win));
     if abs(wx-0.5*(xmin+xmax))>1.0E-5 or abs(wy-0.5*(ymin+ymax))>1.0E-5 then
         Put_Line(Standard_Error, "World_From_Relative_Coordinates test failed");
-        status := 1;    
+        status := 1;
     end if;
 
     -- Retrieve and print the name of the output file (if any).
-    -- This goes to stderr not stdout since it will vary between tests and 
+    -- This goes to stderr not stdout since it will vary between tests and
     -- we want stdout to be identical for compare test.
     fnam := To_Unbounded_String(Get_Output_File_Name);
     if fnam = Null_Unbounded_String then
@@ -201,11 +208,11 @@ begin
     Put_Line(Standard_Error, "Output file name is " & Get_Output_File_Name);
 
     -- Set and get the number of digits used to display axis labels.
-    -- Note digit is currently ignored in pls[xyz]ax and 
+    -- Note digit is currently ignored in pls[xyz]ax and
     -- therefore it does not make sense to test the returned value.
     Set_Floating_Point_Display_X(3, 0);
     Get_X_Label_Parameters(digmax, digit);
-    Put_Line("x axis parameters: digmax, digits =" 
+    Put_Line("x axis parameters: digmax, digits ="
         & Integer'image(digmax) & Integer'image(digit));
     if digmax /= 3 then
         Put_Line(Standard_Error, "Get_X_Label_Parameters test failed");
@@ -223,7 +230,7 @@ begin
 
     Set_Floating_Point_Display_Z(5, 0);
     Get_Z_Label_Parameters(digmax, digit);
-    Put_Line("z axis parameters: digmax, digits =" 
+    Put_Line("z axis parameters: digmax, digits ="
         & Integer'image(digmax) & Integer'image(digit));
     if digmax /= 5 then
         Put_Line(Standard_Error, "Get_Z_Label_Parameters test failed");
@@ -232,7 +239,7 @@ begin
 
     Set_Device_Window_Parameters(0.05, PL_NOTSET, 0.1, 0.2);
     Get_Device_Window_Parameters(mar, aspect, jx, jy);
-    Put_Line("device-space window parameters: mar, aspect, jx, jy = " 
+    Put_Line("device-space window parameters: mar, aspect, jx, jy = "
         & PF(mar) & " " & PF(aspect) & " " & PF(jx) & " " & PF(jy));
     if mar /= 0.05 or jx /= 0.1 or jy /= 0.2 then
         Put_Line(Standard_Error, "Get_Device_Window_Parameters test failed");
@@ -249,7 +256,7 @@ begin
 
     Set_Device_Window_Extrema(0.1, 0.2, 0.9, 0.8);
     Get_Device_Window_Extrema(xmin, ymin, xmax, ymax);
-    Put_Line("plot-space window parameters: xmin, ymin, xmax, ymax = " 
+    Put_Line("plot-space window parameters: xmin, ymin, xmax, ymax = "
         & PF(xmin) & " " & PF(ymin) & " " & PF(xmax) & " " & PF(ymax));
     if xmin /= 0.1 or xmax /= 0.9 or ymin /= 0.2 or ymax /= 0.8 then
         Put_Line(Standard_Error, "Get_Device_Window_Extrema test failed");
@@ -258,12 +265,12 @@ begin
 
     Set_Zoom(0.1, 0.1, 0.9, 0.9);
     Get_Device_Window_Extrema(zxmin, zymin, zxmax, zymax);
-    Put_Line("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = " 
+    Put_Line("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = "
         & PF(zxmin) & " " & PF(zymin) & " " & PF(zxmax) & " " & PF(zymax));
     if
-        abs(zxmin - (xmin + (xmax - xmin) * 0.1)) > 1.0E-5 or 
-        abs(zxmax - (xmin + (xmax - xmin) * 0.9)) > 1.0E-5 or 
-        abs(zymin - (ymin + (ymax - ymin) * 0.1)) > 1.0E-5 or 
+        abs(zxmin - (xmin + (xmax - xmin) * 0.1)) > 1.0E-5 or
+        abs(zxmax - (xmin + (xmax - xmin) * 0.9)) > 1.0E-5 or
+        abs(zymin - (ymin + (ymax - ymin) * 0.1)) > 1.0E-5 or
         abs(zymax - (ymin + (ymax - ymin) * 0.9)) > 1.0E-5
     then
         Put_Line(Standard_Error, "Set_Zoom test failed");
