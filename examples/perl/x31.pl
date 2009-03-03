@@ -4,7 +4,8 @@
 #
 # Window positioning demo.
 #
-# Copyright (C) 2004  Rafael Laboissiere
+# Copyright (C) 2008  Alan W. Irwin
+# Copyright (C) 2008  Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -29,29 +30,55 @@ use PDL::Graphics::PLplot;
 
 plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
-# Test setting / getting compression parameter across plinit.
-my $compression1 = 95;
-plscompression ($compression1);
+my $status = 0;
 
-# Test setting / getting familying parameters across plinit.
+# Test setting / getting familying parameters before plinit
+#z Save values set by plparseopts to be restored later.
+my ($fam0, $num0, $bmax0) = plgfam ();
 my $fam1 = 0;
 my $num1 = 10;
 my $bmax1 = 1000;
 plsfam ($fam1, $num1, $bmax1);
-          
-# Test setting / getting page parameters across plinit.
+
+# Retrieve the same values?
+my ($fam2, $num2, $bmax2) = plgfam ();
+printf("family parameters: fam, num, bmax = %d %d %d\n", $fam2, $num2, $bmax2);
+if ($fam2 != $fam1 || $num2 != $num1 || $bmax2 != $bmax1) {
+    printf STDERR ("plgfam test failed\n");
+    $status = 1;
+}
+# Restore values set initially by plparseopts.
+plsfam($fam0, $num0, $bmax0);
+
+# Test setting / getting page parameters before plinit
+# Save values set by plparseopts to be restored later.
+my ($xp0, $yp0, $xleng0, $yleng0, $xoff0, $yoff0) = plgpage ();
 my $xp1 = 200.;
 my $yp1 = 200.;
 my $xleng1 = 400;
 my $yleng1 = 200;
 my $xoff1 = 10;
 my $yoff1 = 20;
-plspage ($xp1, $yp1, $xleng1, $yleng1, $xoff1, $yoff1);
+plspage($xp1, $yp1, $xleng1, $yleng1, $xoff1, $yoff1);
+
+# Retrieve the same values?
+my ($xp2, $yp2, $xleng2, $yleng2, $xoff2, $yoff2) = plgpage ();
+printf("page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n", $xp2, $yp2, $xleng2, $yleng2, $xoff2, $yoff2);
+if ($xp2 != $xp1 || $yp2 != $yp1 || $xleng2 != $xleng1 || $yleng2 != $yleng1 || 
+    $xoff2 != $xoff1 || $yoff2 != $yoff1 ) {
+    printf STDERR ("plgpage test failed\n");
+    status = 1;
+}
+# Restore values set initially by plparseopts.
+plspage($xp0, $yp0, $xleng0, $yleng0, $xoff0, $yoff0);
+
+# Test setting / getting compression parameter across plinit.
+my $compression1 = 95;
+plscompression ($compression1);
+
+
 # Initialize plplot
-
 plinit ();
-
-my $status = 0;
 
 # Test if device initialization screwed around with the preset
 # compression parameter.
@@ -61,24 +88,6 @@ printf ("Output various PLplot parameters\n");
 printf ("compression parameter = %d\n", $compression2);
 if ($compression2 != $compression1) {
     printf STDERR ("plgcompression test failed\n");
-    $status = 1;
-}
-
-# Test if device initialization screwed around with any of the
-# preset familying values.
-my ($fam2, $num2, $bmax2) = plgfam ();
-printf ("family parameters: fam, num, bmax = %d %d %d\n", $fam2, $num2, $bmax2);
-if ($fam2 != $fam1 || $num2 != $num1 || $bmax2 != $bmax1) {
-    printf STDERR ("plgfam test failed\n");
-    $status = 1;
-}
-
-# Test if device initialization screwed around with any of the
-# preset page values.
-my ($xp2, $yp2, $xleng2, $yleng2, $xoff2, $yoff2) = plgpage ();
-printf ("page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n", $xp2, $yp2, $xleng2, $yleng2, $xoff2, $yoff2);
-if ($xp2 != $xp1 || $yp2 != $yp1 || $xleng2 != $xleng1 || $yleng2 != $yleng1 || $xoff2 != $xoff1 || $yoff2 != $yoff1) {
-    printf STDERR ("plgpage test failed\n");
     $status = 1;
 }
 

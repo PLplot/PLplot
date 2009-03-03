@@ -7,15 +7,28 @@ proc x31 {{w loopback}} {
     # this constant should be defined centrally.
     set PL_NOTSET -42
 
-    set compression1 95
-    $w cmd plscompression $compression1
-    # Test setting / getting familying parameters across plinit.
+    # Test setting / getting familying parameters before plinit.
+    # Save values set by plparseopts to be restored later.
+
+    $w cmd plgfam fam0 num0 bmax0
     set fam1 0
     set num1 10
     set bmax1 1000
     $w cmd plsfam $fam1 $num1 $bmax1
+
+    # Retrieve the same values?
+    $w cmd plgfam fam2 num2 bmax2
+    puts [ format "family parameters: fam, num, bmax = %d %d %d" $fam2 $num2 $bmax2 ]
+    if {$fam2 != $fam1 || $num2 != $num1 || $bmax2 != $bmax1} {
+        puts stderr "plgfam test failed"
+        set status 1
+    }
+    # Restore values set initially by plparseopts.
+    $w cmd plsfam $fam0 $num0 $bmax0
     
-    # Test setting / getting page parameters across plinit.
+    # Test setting / getting page parameters before plinit.
+    # Save values set by plparseopts to be restored later.
+    $w cmd plgpage xp0 yp0 xleng0 yleng0 xoff0 yoff0
     set xp1 200.
     set yp1 200.
     set xleng1 400
@@ -23,6 +36,20 @@ proc x31 {{w loopback}} {
     set xoff1 10
     set yoff1 20
     $w cmd plspage $xp1 $yp1 $xleng1 $yleng1 $xoff1 $yoff1
+
+    # Retrieve the same values?
+    $w cmd plgpage xp2 yp2 xleng2 yleng2 xoff2 yoff2
+    puts [ format "page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d" $xp2 $yp2 $xleng2 $yleng2 $xoff2 $yoff2 ]
+    if {$xp2 != $xp1 || $yp2 != $yp1 || $xleng2 != $xleng1 || $yleng2 != $yleng1 || $xoff2 != $xoff1 || $yoff2 != $yoff1} {
+        puts stderr "plgpage test failed"
+        set status 1
+    }
+    # Restore values set initially by plparseopts.
+    $w cmd plspage $xp0 $yp0 $xleng0 $yleng0 $xoff0 $yoff0
+
+    # Test setting / getting compression parameter across plinit.
+    set compression1 95
+    $w cmd plscompression $compression1
 
     $w cmd plinit
 
@@ -35,24 +62,6 @@ proc x31 {{w loopback}} {
     puts [ format "compression parameter = %d" $compression2 ]
     if {$compression2 != $compression1} {
         puts stderr "plgcompression test failed"
-        set status 1
-    }
-
-    # Test if device initialization screwed around with any of the
-    # preset familying values.
-    $w cmd plgfam fam2 num2 bmax2
-    puts [ format "family parameters: fam, num, bmax = %d %d %d" $fam2 $num2 $bmax2 ]
-    if {$fam2 != $fam1 || $num2 != $num1 || $bmax2 != $bmax1} {
-        puts stderr "plgfam test failed"
-        set status 1
-    }
-
-    # Test if device initialization screwed around with any of the
-    # preset page values.
-    $w cmd plgpage xp2 yp2 xleng2 yleng2 xoff2 yoff2
-    puts [ format "page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d" $xp2 $yp2 $xleng2 $yleng2 $xoff2 $yoff2 ]
-    if {$xp2 != $xp1 || $yp2 != $yp1 || $xleng2 != $xleng1 || $yleng2 != $yleng1 || $xoff2 != $xoff1 || $yoff2 != $yoff1} {
-        puts stderr "plgpage test failed"
         set status 1
     }
 
