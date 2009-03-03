@@ -72,6 +72,18 @@
 # endif
 #endif
 
+/* AM: getcwd has a somewhat strange status on Windows, its proper
+   name is _getcwd, this is a problem in the case of DLLs, like with
+   the Java bindings. The functions _getcwd() and chdir() are 
+   declared in direct.h for Visual C++. Since chdir() is deprecated 
+   (but still available) in Visual C++ we redefine chdir to _chdir.
+*/
+#if defined(_MSC_VER)
+#  include <direct.h>
+#  define getcwd _getcwd
+#  define chdir _chdir
+#endif
+
 #define BUFFER_SIZE 80
 #define BUFFER2_SIZE 300
 #define DRVSPEC_SIZE 400
@@ -425,7 +437,6 @@ int text2num( const char *text, char end, PLUNICODE *num)
 {
 
   char *endptr;
-  char *endptr2;
   char msgbuf[BUFFER_SIZE];
 
   *num = strtoul(text,&endptr,0);
@@ -2170,14 +2181,6 @@ PLDLLIMPEXP int plInBuildTree()
   if (inited == 0) {
     char currdir[PLPLOT_MAX_PATH];
     char builddir[PLPLOT_MAX_PATH];
-
-/* AM: getcwd has a somewhat strange status on Windows, its proper
-   name is _getcwd, this is a problem in the case of DLLs, like with
-   the Java bindings.
-*/
-#if defined(WIN32) && !defined(__BORLANDC__)
-#define getcwd _getcwd
-#endif
 
     if (getcwd(currdir, PLPLOT_MAX_PATH) == NULL) {
       pldebug("plInBuildTree():", "Not enough buffer space");
