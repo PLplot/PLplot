@@ -23,7 +23,7 @@ Homepage: http://www.plplot.org
 Vcs-Svn: https://plplot.svn.sourceforge.net/svnroot/plplot/trunk/debian
 Vcs-Browser: http://plplot.svn.sourceforge.net/viewvc/plplot/trunk/debian/
 
-
+Package: libplplot9
 Architecture: any
 Section: libs
 Conflicts: libplplot5, plplot (<< 5)
