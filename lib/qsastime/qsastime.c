@@ -322,19 +322,17 @@ const char * getLongMonth( int m)
 }
 
 
-size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian, int if60secformat)
+size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian, int inleap)
 {
   /* Format a text string according to the format string.
      Uses the same syntax as strftime() but does not use current locale.
      The null terminator is included in len for safety. */
 
-  /* if if60secformat is true (non-zero) AND the time is somewhere in the
-     first second of a year, then renormalize to the previous year so that the
-     date/time comes out beyond the normal last second of the year with the
-     seconds greater than 60.  This form of normalization is used  as a flag
-     that a leap increment (recently always a second, but historically it
-     was sometimes smaller than that) was in the process of being inserted
-     for this particular epoch just prior to a discontinuity in TAI-UTC. */
+  /* if inleap is true (non-zero) then renormalize so that (int) sec
+     is 60 to mark results as a flag that a leap increment (recently
+     always a second, but historically it was sometimes smaller than
+     that) was in the process of being inserted for this particular
+     epoch just prior to a positive discontinuity in TAI-UTC. */
 	
   int year, month, day, hour, min, ysign, second, d, y;
   int y1, ifleapyear;
@@ -383,20 +381,16 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   *nMJD = *MJD;
   nMJD->time_sec += 0.5/shiftPlaces;
 
-  normalize_MJD(nMJD);
-  
   buf[last] = '\0';
   buf[0] = '\0'; /* force overwrite of old buffer since strnctat() used hereafter */
 	
+  if(inleap)
+    nMJD->time_sec -= 1.;
+  
   breakDownMJD(&year, &month, &day, &hour, &min, &sec,  nMJD, forceJulian);
-  if(if60secformat && month == 0 && day == 1 && hour == 0 && min == 0 && (int) sec == 0) {
-    year = year-1;
-    month = 11;
-    day = 31;
-    hour = 23;
-    min = 59;
-    sec+= 60.;
-  }
+  if(inleap)
+    sec += 1.;
+
   if(year < 0)
     {
       ysign = 1;
@@ -1096,11 +1090,17 @@ void btimeqsas(int *year, int *month, int *day, int *hour, int *min, double *sec
   else
     forceJulian = 0;
 
-  if(qsasconfig->ccontrol & 0x2) {
+  if(qsasconfig->ccontrol & 0x2)
     MJD->time_sec += leap_second_TAI(MJD, &inleap);
-  }
+  else
+    inleap = 0;
 
+  if(inleap)
+    MJD->time_sec -= 1.;
+  
   breakDownMJD(year, month, day, hour, min, sec, MJD, forceJulian);
+  if(inleap)
+    *sec += 1.;
 }
 
 size_t strfqsas(char * buf, size_t len, const char *format, double ctime, const QSASConfig *qsasconfig)
@@ -1122,9 +1122,10 @@ size_t strfqsas(char * buf, size_t len, const char *format, double ctime, const 
   else
     forceJulian = 0;
 
-  if(qsasconfig->ccontrol & 0x2) {
+  if(qsasconfig->ccontrol & 0x2)
     MJD->time_sec += leap_second_TAI(MJD, &inleap);
-  }
+  else
+    inleap = 0;
 
   return strfMJD(buf, len, format, MJD, forceJulian, inleap);
 }
