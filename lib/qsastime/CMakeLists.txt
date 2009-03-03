@@ -114,26 +114,30 @@ endif(NOT ENV_FOUND)
 
 # Routine for generating a header of data to be used by the
 # TAI-UTC transformation code.
-add_executable(tai-utc-gen ${CMAKE_CURRENT_SOURCE_DIR}/tai-utc-gen.c)
-if(MATH_LIB)
-  target_link_libraries(tai-utc-gen ${MATH_LIB})
-endif(MATH_LIB)
 
-get_target_property(
-  tai-utc-gen_LOCATION
-  tai-utc-gen
-  LOCATION
-  )
+if(NOT CMAKE_CROSSCOMPILING)
+  add_executable(tai-utc-gen ${CMAKE_CURRENT_SOURCE_DIR}/tai-utc-gen.c)
+  if(MATH_LIB)
+    target_link_libraries(tai-utc-gen ${MATH_LIB})
+  endif(MATH_LIB)
+else(NOT CMAKE_CROSSCOMPILING)
+  set(IMPORT_EXECUTABLES ${CMAKE_NATIVE_BINARY_DIR}/lib/qsastime/ImportExecutables.cmake)
+  include(${IMPORT_EXECUTABLES})
+endif(NOT CMAKE_CROSSCOMPILING)
+
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tai-utc.h
-  COMMAND ${tai-utc-gen_LOCATION}
+  COMMAND tai-utc-gen
   ${CMAKE_CURRENT_SOURCE_DIR}/tai-utc.dat
   ${CMAKE_CURRENT_BINARY_DIR}/tai-utc.h
   DEPENDS
-  ${tai-utc-gen_LOCATION}
   ${CMAKE_CURRENT_SOURCE_DIR}/tai-utc.dat
   )
+
+if(NOT CMAKE_CROSSCOMPILING)
+    export(TARGETS tai-utc-gen FILE ${CMAKE_CURRENT_BINARY_DIR}/ImportExecutables.cmake )
+endif(NOT CMAKE_CROSSCOMPILING)
 
 # This target-level dependency needed below.
 add_custom_target(

@@ -37,6 +37,7 @@ if(ENABLE_DYNDRIVERS)
   ${CMAKE_BINARY_DIR}/include
   )
 
+  if(NOT CMAKE_CROSSCOMPILING)
   add_executable(get-drv-info get-drv-info.c)
   target_link_libraries(get-drv-info
   plplot${LIB_TAG}
@@ -57,9 +58,15 @@ if(ENABLE_DYNDRIVERS)
   INSTALL_RPATH "${get-drv-info_RPATH}"
   BUILD_WITH_INSTALL_RPATH ON
   )
-  
-  get_target_property(get-drv-info_LOCATION get-drv-info LOCATION)
+  else(NOT CMAKE_CROSSCOMPILING)
+    set(IMPORT_EXECUTABLES ${CMAKE_NATIVE_BINARY_DIR}/drivers/ImportExecutables.cmake)
+    include(${IMPORT_EXECUTABLES})
+  endif(NOT CMAKE_CROSSCOMPILING)
 
+  if(NOT CMAKE_CROSSCOMPILING)
+    export(TARGETS get-drv-info FILE ${CMAKE_CURRENT_BINARY_DIR}/ImportExecutables.cmake )
+  endif(NOT CMAKE_CROSSCOMPILING)
+  
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
@@ -140,11 +147,10 @@ if(ENABLE_DYNDRIVERS)
     )
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
-    COMMAND ${get-drv-info_LOCATION}
+    COMMAND get-drv-info
     ${SOURCE_ROOT_NAME}
     > ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
     DEPENDS
-    ${get-drv-info_LOCATION}
     ${${SOURCE_ROOT_NAME}_LOCATION}
     )
     add_custom_target(

@@ -227,3 +227,10 @@ set(CPACK_SOURCE_IGNORE_FILES
 )
 #message("CPACK_SOURCE_IGNORE_FILES = ${CPACK_SOURCE_IGNORE_FILES}")
 include(CPack)
+
+# Path to native build for executables required in the build process.
+# This is only required for cross compiling
+if (CMAKE_CROSSCOMPILING)
+  set(CMAKE_NATIVE_BINARY_DIR NATIVEDIR-NOTFOUND CACHE FILEPATH "Point to the native build directory")
+endif (CMAKE_CROSSCOMPILING)
+

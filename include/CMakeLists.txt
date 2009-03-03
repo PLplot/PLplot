@@ -33,23 +33,26 @@ set(plhershey-unicode-gen_SRCS
 ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode-gen.c
 )
 
+if(NOT CMAKE_CROSSCOMPILING)
 add_executable(plhershey-unicode-gen ${plhershey-unicode-gen_SRCS})
-
-get_target_property(
-plhershey-unicode-gen_LOCATION
-plhershey-unicode-gen
-LOCATION
-)
+else(NOT CMAKE_CROSSCOMPILING)
+  SET(IMPORT_EXECUTABLES ${CMAKE_NATIVE_BINARY_DIR}/include/ImportExecutables.cmake)
+  INCLUDE(${IMPORT_EXECUTABLES})
+endif(NOT CMAKE_CROSSCOMPILING)
 
 add_custom_command(
 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
-COMMAND ${plhershey-unicode-gen_LOCATION}
+COMMAND plhershey-unicode-gen
 ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
 ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
 DEPENDS
 ${plhershey-unicode-gen_LOCATION}
 ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
 )
+
+if(NOT CMAKE_CROSSCOMPILING) 
+  export(TARGETS plhershey-unicode-gen FILE ${CMAKE_CURRENT_BINARY_DIR}/ImportExecutables.cmake )
+endif(NOT CMAKE_CROSSCOMPILING) 
 
 # For cross-directory dependencies....
 add_custom_target(
