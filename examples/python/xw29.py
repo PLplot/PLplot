@@ -175,7 +175,9 @@ def plot3():
 def plot4():
 
   # TAI-UTC (seconds) as a function of time.
-  # Just for fun use Besselian epochs as the continuous time interval.
+  # Use Besselian epochs as the continuous time interval just to prove
+  # this does not introduce any issues.
+
   # Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
   #
   # B = 1900. + (JD -2415020.31352)/365.242198781 
@@ -188,7 +190,7 @@ def plot4():
   offset2 = -0.3641639
   plconfigtime(scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0.)
 
-  for kind in range(3):
+  for kind in range(7):
     if kind == 0:
       xmin = plctime(1950,0,2,0,0,0.)
       xmax = plctime(2020,0,2,0,0,0.)
@@ -196,29 +198,55 @@ def plot4():
       ymin = 0.0
       ymax = 36.0
       time_format = "%Y%"
+      if_TAI_time_format = True
       title_suffix = "from 1950 to 2020"
       xtitle = "Year"
       xlabel_step = 10.
-    elif kind == 1:
-      xmin = plctime(1961,7,1,0,0,1.64757000-5.)
-      xmax = plctime(1961,7,1,0,0,1.64757000+5.)
+    elif kind == 1 or kind ==2:
+      xmin = plctime(1961,7,1,0,0,1.64757-.20)
+      xmax = plctime(1961,7,1,0,0,1.64757+.20)
       npts = 1001
-      ymin = 1.5
-      ymax = 1.8
+      ymin = 1.625
+      ymax = 1.725
       time_format = "%S%2%"
-      title_suffix = "near 1961-08-01"
-      xtitle = "Seconds (TAI)"
-      xlabel_step = 1./(scale*86400.)
-    elif kind == 2:
+      title_suffix = "near 1961-08-01 (TAI)"
+      xlabel_step = 0.05/(scale*86400.)
+      if kind == 1:
+        if_TAI_time_format = True
+        xtitle = "Seconds (TAI)"
+      else:
+        if_TAI_time_format = False
+        xtitle = "Seconds (TAI) labelled with corresponding UTC"
+    elif kind == 3 or kind ==4:
+      xmin = plctime(1963,10,1,0,0,2.6972788-.20)
+      xmax = plctime(1963,10,1,0,0,2.6972788+.20)
+      npts = 1001
+      ymin = 2.55
+      ymax = 2.75
+      time_format = "%S%2%"
+      title_suffix = "near 1963-11-01 (TAI)"
+      xlabel_step = 0.05/(scale*86400.)
+      if kind == 3:
+        if_TAI_time_format = True
+        xtitle = "Seconds (TAI)"
+      else:
+        if_TAI_time_format = False
+        xtitle = "Seconds (TAI) labelled with corresponding UTC"
+    elif kind == 5 or kind == 6:
       xmin = plctime(2009,0,1,0,0,34.-5.)
       xmax = plctime(2009,0,1,0,0,34.+5.)
       npts = 1001
-      ymin = 32
-      ymax = 35
+      ymin = 32.5
+      ymax = 34.5
       time_format = "%S%2%"
-      title_suffix = "near 2009-01-01"
-      xtitle = "Seconds (TAI)"
+      title_suffix = "near 2009-01-01 (TAI)"
       xlabel_step = 1./(scale*86400.)
+      if kind == 5:
+        if_TAI_time_format = True
+        xtitle = "Seconds (TAI)"
+      else:
+        if_TAI_time_format = False
+        xtitle = "Seconds (TAI) labelled with corresponding UTC"
 
     i = arange(npts)
     x = xmin + i*(xmax-xmin)/float(npts-1)
@@ -237,8 +265,12 @@ def plot4():
     plvsta()
     plwind(xmin, xmax, ymin, ymax)
     plcol0(1)
+    if if_TAI_time_format:
+      plconfigtime(scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0.)
+    else:
+      plconfigtime(scale, offset1, offset2, 0x2, 0, 0, 0, 0, 0, 0, 0.)
     pltimefmt(time_format)
-    plbox("bcnstd", xlabel_step,0, "bcnstv", 0., 0)
+    plbox("bcnstd", xlabel_step, 0, "bcnstv", 0., 0)
     plcol0(3)
     pllab(xtitle, "TAI-UTC (sec)", "@frPLplot Example 29 - TAI-UTC " + title_suffix)
   
