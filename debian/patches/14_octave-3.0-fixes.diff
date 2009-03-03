@@ -1,0 +1,1150 @@
+# Patch to remove obsolete octave 2.0/2.1 support and fix automatic 
+# replotting. This is a backport from upstream svn.
+
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p10.m plplot-5.9.2/bindings/octave/demos/p10.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p10.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p10.m	2009-01-20 18:31:04.000000000 +0000
+@@ -15,10 +15,9 @@
+     
+ function p10
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   title("Comet");
+   xlabel "";
+@@ -26,9 +25,7 @@
+   t = -pi:pi/200:0;
+   comet(t,tan(sin(t))-sin(tan(t)));
+   
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+ 
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p11.m plplot-5.9.2/bindings/octave/demos/p11.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p11.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p11.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p11
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   title("Stripchart demo 1 (sliding)");
+   xlabel("Time");
+@@ -50,8 +49,6 @@
+   ## Destroy strip chart and it's memory */
+ 
+   stripc_del(id1);
+-  if (exist("automatic_replot"))
+-    automatic_replot = t; 
+-  endif
++  pl_automatic_replot = t; 
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p12.m plplot-5.9.2/bindings/octave/demos/p12.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p12.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p12.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p12
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   title("War Game");
+   legend("off");
+@@ -32,8 +31,6 @@
+   endif
+   legend("on");
+ 
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p13.m plplot-5.9.2/bindings/octave/demos/p13.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p13.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p13.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p13
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   legend("opaque");
+   title("Matrix with individual line attributes");
+@@ -36,8 +35,6 @@
+ 
+   ##  plot(randn(10,3),fmt)
+   plot(g,fmt)
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p14.m plplot-5.9.2/bindings/octave/demos/p14.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p14.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p14.m	2009-01-20 18:31:04.000000000 +0000
+@@ -17,10 +17,9 @@
+ 
+   ## And now, in the Theatre near you, "Octave, the movie"
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   if (!nargin)
+     plsetopt "db";
+@@ -64,9 +63,7 @@
+     closefig; # the "db" option has negative side effects on other plots.
+     plsetopt "reset"; # reset options
+   endif
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+ 
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p15.m plplot-5.9.2/bindings/octave/demos/p15.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p15.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p15.m	2009-01-20 18:31:04.000000000 +0000
+@@ -15,10 +15,9 @@
+     
+ function p15
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   title "Lighted and shaded surface";
+   xlabel "";
+@@ -35,9 +34,7 @@
+   surf(x, y, z);
+   colormap('default');
+ 
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+ 
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p16.m plplot-5.9.2/bindings/octave/demos/p16.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p16.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p16.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p16
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   multiplot(1, 2);
+   p1;
+@@ -31,8 +30,6 @@
+   shade(x, y, z);
+ 
+   oneplot;
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p17.m plplot-5.9.2/bindings/octave/demos/p17.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p17.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p17.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p17(fg)
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   title "Click and Drag button 1 to select";
+   xlabel "Button 2 to restart and button 3 to finish";
+@@ -32,8 +31,6 @@
+     plimage (img, x1, x2, y1, y2);
+   endif
+ 
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p18.m plplot-5.9.2/bindings/octave/demos/p18.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p18.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p18.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p18
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   plsetopt "db";
+   fig( free_fig); #  unused plot window
+@@ -33,8 +32,6 @@
+   set_view("meshc", x, y, z);
+   closefig
+ 
+-  if (exist("automatic_replot"))
+-    automatic_replot = 0;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p19.m plplot-5.9.2/bindings/octave/demos/p19.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p19.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p19.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p19
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   f0=figure;
+   multiplot(1,2);
+@@ -100,8 +99,6 @@
+   closefig(f1);
+   oneplot;
+ 
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p1.m plplot-5.9.2/bindings/octave/demos/p1.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p1.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p1.m	2009-01-20 18:31:04.000000000 +0000
+@@ -15,10 +15,9 @@
+ 
+ function p1
+     
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot;
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   xscale = 6.;
+   yscale = 1.;
+@@ -41,9 +40,7 @@
+ 
+   plot(x, y, xs, ys, 'og; ;');
+ 
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+   
+ endfunction
+ 
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p21.m plplot-5.9.2/bindings/octave/demos/p21.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p21.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p21.m	2009-01-20 18:31:04.000000000 +0000
+@@ -20,10 +20,9 @@
+   ##ocmap = colormap;
+   colormap(bgr);
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   gx = 30;
+   gy = 40;
+@@ -52,16 +51,15 @@
+     pladv(j++);
+     zg = griddata(x, y, z, xg, yg, i, opt(i));
+     ## zg(isnan(zg)) = 0;
+-    ofi = do_fortran_indexing;  do_fortran_indexing = 1;
++    old_dofi = warning("query","Octave:fortran-indexing");
++    warning("off","Octave:fortran-indexing");
+     zg(isnan(zg)) = 0;
+-    do_fortran_indexing = ofi;
++    warning(old_dofi.state,"Octave:fortran-indexing");
+     title(alg(i,:));
+     meshc(xg, yg, zg');
+   endfor
+ 
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+   ##colormap(ocmap);
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p2.m plplot-5.9.2/bindings/octave/demos/p2.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p2.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p2.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p2 
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot;
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   legend("opaque",0)
+   title("PLplot Example 2");
+@@ -30,9 +29,7 @@
+        x, y2, 'b;sin(x)*cos(2*x);',
+        x, y3, 'g;x*sin(x);');
+   
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+ 
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p3.m plplot-5.9.2/bindings/octave/demos/p3.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p3.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p3.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p3
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot;
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   xscale = 6.;
+   yscale = 1.;
+@@ -39,8 +38,6 @@
+   title("#frPLplot Example 3 - y=x#u2 #d(with error bars)");
+   plot(x, y, [xs' xe'], [ys' yel' yer'], '~g; ;');
+ 
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p4.m plplot-5.9.2/bindings/octave/demos/p4.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p4.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p4.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p4
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot;
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   x=0.01:0.1:10;
+   y=exp(x);
+@@ -27,8 +26,6 @@
+   loglog(x,y,'y')
+   grid (og);
+  
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p5.m plplot-5.9.2/bindings/octave/demos/p5.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p5.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p5.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p5
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   x=-pi:0.01:pi;
+   y=sin(x).+cos(3*x);
+@@ -27,8 +26,6 @@
+   polar(x,y,'y')
+   grid (og);
+ 
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p6.m plplot-5.9.2/bindings/octave/demos/p6.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p6.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p6.m	2009-01-20 18:31:04.000000000 +0000
+@@ -16,10 +16,9 @@
+ 
+   [x y z] = rosenbrock; z = log(z);
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   as = autostyle;
+   autostyle "off";
+@@ -28,8 +27,6 @@
+   contour(x,y,z)
+ 
+   autostyle(as);
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p7.m plplot-5.9.2/bindings/octave/demos/p7.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p7.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p7.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p7
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   [x y z]=rosenbrock;z=log(z);
+ 
+@@ -36,7 +35,5 @@
+   shade(x,y,z,15,3);
+   axis;
+ 
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p8.m plplot-5.9.2/bindings/octave/demos/p8.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p8.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p8.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p8
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   xlabel("X"); ylabel("Y");
+   title("Mesh example");
+@@ -27,9 +26,7 @@
+   pause(1);
+   meshc(x,y,z)
+ 
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+ 
+diff -ur plplot-5.9.2-orig/bindings/octave/demos/p9.m plplot-5.9.2/bindings/octave/demos/p9.m
+--- plplot-5.9.2-orig/bindings/octave/demos/p9.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/demos/p9.m	2009-01-20 18:31:04.000000000 +0000
+@@ -14,10 +14,9 @@
+ 
+ function p9
+ 
+-  if (exist("automatic_replot"))
+-    t = automatic_replot;
+-    automatic_replot = 0;
+-  endif
++  global pl_automatic_replot
++  t = pl_automatic_replot;
++  pl_automatic_replot = 0;
+ 
+   as = autostyle;
+   autostyle ("off");
+@@ -40,8 +39,6 @@
+ 
+   legend(ls);
+   autostyle(as); 
+-  if (exist("automatic_replot"))
+-    automatic_replot = t;
+-  endif
++  pl_automatic_replot = t;
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/octaverc.in plplot-5.9.2/bindings/octave/octaverc.in
+--- plplot-5.9.2-orig/bindings/octave/octaverc.in	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/octaverc.in	2009-01-20 18:31:04.000000000 +0000
+@@ -1,9 +1,4 @@
+-if (exist("LOADPATH"))
+-  automatic_replot=1;
+-  LOADPATH="@CMAKE_SOURCE_DIR@/bindings/octave//:@CMAKE_BINARY_DIR@/bindings/octave//:";
+-else
+-  addpath("@CMAKE_SOURCE_DIR@/bindings/octave/PLplot/","@CMAKE_SOURCE_DIR@/bindings/octave/PLplot/support/","@CMAKE_SOURCE_DIR@/bindings/octave/demos/","@CMAKE_SOURCE_DIR@/bindings/octave/misc/","@CMAKE_BINARY_DIR@/bindings/octave/","@CMAKE_BINARY_DIR@/bindings/octave/PLplot");
+-  # Suppress spurious warnings for the test.
+-  warning("off","Octave:built-in-variable-assignment");
+-endif
++addpath("@CMAKE_SOURCE_DIR@/bindings/octave/PLplot/","@CMAKE_SOURCE_DIR@/bindings/octave/PLplot/support/","@CMAKE_SOURCE_DIR@/bindings/octave/demos/","@CMAKE_SOURCE_DIR@/bindings/octave/misc/","@CMAKE_BINARY_DIR@/bindings/octave/","@CMAKE_BINARY_DIR@/bindings/octave/PLplot");
+ putenv("PLPLOT_LIB","@CMAKE_SOURCE_DIR@/data/");
++global pl_automatic_replot
++pl_automatic_replot=1;
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/autostyle.m plplot-5.9.2/bindings/octave/PLplot/autostyle.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/autostyle.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/autostyle.m	2009-01-20 18:31:04.000000000 +0000
+@@ -21,6 +21,7 @@
+ function st = autostyle(x)
+ 
+   global __pl
++  global pl_automatic_replot
+   strm = __pl_init;
+ 
+   if (nargin == 1)
+@@ -49,8 +50,8 @@
+ 
+   st = __pl.line_style(strm);
+ 
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+   endif
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/axis.m plplot-5.9.2/bindings/octave/PLplot/axis.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/axis.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/axis.m	2009-01-20 18:31:04.000000000 +0000
+@@ -61,6 +61,7 @@
+   ## as setup by the user, or automaticaly. It interacts with hold mode.
+ 
+   global __pl
++  global pl_automatic_replot
+   strm = __pl_init;
+ 
+   if (nargin == 0)
+@@ -193,8 +194,8 @@
+     endswitch
+   endif
+ 
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+   endif
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/colormap.m plplot-5.9.2/bindings/octave/PLplot/colormap.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/colormap.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/colormap.m	2009-01-20 18:31:04.000000000 +0000
+@@ -23,6 +23,7 @@
+ function ccmap = colormap(map)
+ 
+   global __pl
++  global pl_automatic_replot
+   __pl_init;
+ 
+   if (nargin == 0)
+@@ -68,8 +69,8 @@
+   plscmap1(map(:,1), map(:,2), map(:,3));
+   plflush;#pleop;
+   
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       ## can cause problems on plot scripts that dont support automatic _replot
+       __pl_plotit; 
+     endif
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/figure.m plplot-5.9.2/bindings/octave/PLplot/figure.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/figure.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/figure.m	2009-01-20 18:31:04.000000000 +0000
+@@ -46,15 +46,15 @@
+ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame)
+ 
+   global __pl __tk_name
++  global pl_automatic_replot
+ 
+   if (!exist("__pl") || !struct_contains (__pl,"inited"))
+     v = split(version ,'.');
+     if (! ((str2num(v(1,:)) > 2) ||
+-           (str2num(v(1,:)) == 2 && str2num(v(2,:)) > 1) ||
+-           (str2num(v(1,:)) == 2 && str2num(v(2,:)) == 1 &&
+-            str2num(v(3,:)) >= 57)))
++           (str2num(v(1,:)) == 2 && str2num(v(2,:)) == 9 &&
++            str2num(v(3,:)) >= 0)))
+         error("The PLplot-Octave scripts need an Octave version \n\
+-               greater than or equal to 2.1.57.\n");
++               greater than or equal to 2.9.0.\n");
+     endif
+ 
+     plplot_stub;
+@@ -65,13 +65,13 @@
+ 
+     __pl.inited = 1;
+ 
+-    if (exist("automatic_replot"))
+-      if (automatic_replot == 0)
+-        warning("It is recommended that you set 'automatic_replot=1' \n\
+-                 in your ~/.octaverc file.");
+-        ##automatic_replot = 1;
+-      endif
+-    endif
++##    if (exist("pl_automatic_replot"))
++##     if (pl_automatic_replot == 0)
++##        warning("It is recommended that you set 'pl_automatic_replot=1' \n\
++##                 in your ~/.octaverc file.");
++##        ##automatic_replot = 1;
++##      endif
++##    endif
+   endif
+ 
+   if (nargin == 0)
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/grid.m plplot-5.9.2/bindings/octave/PLplot/grid.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/grid.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/grid.m	2009-01-20 18:31:04.000000000 +0000
+@@ -23,6 +23,7 @@
+ function st = grid (x)
+ 
+   global __pl
++  global pl_automatic_replot
+   strm = __pl_init;
+ 
+   st = __pl.grid(strm);
+@@ -57,8 +58,8 @@
+     help grid
+   endif
+ 
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+   endif
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/legend.m plplot-5.9.2/bindings/octave/PLplot/legend.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/legend.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/legend.m	2009-01-20 18:31:04.000000000 +0000
+@@ -29,6 +29,7 @@
+ function st = legend (x, xpos, varargin)
+ 
+   global __pl
++  global pl_automatic_replot
+   strm = __pl_init;
+ 
+   if (nargin == 0)
+@@ -66,8 +67,8 @@
+     help "legend"
+   endif
+ 
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+   endif
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/plot_margin.m plplot-5.9.2/bindings/octave/PLplot/plot_margin.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/plot_margin.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/plot_margin.m	2009-01-20 18:31:04.000000000 +0000
+@@ -22,6 +22,7 @@
+ function ost = plot_margin(st)
+ 
+   global __pl
++  global pl_automatic_replot
+   n = __pl_init;
+ 
+   ost = __pl.margin(n);
+@@ -30,8 +31,8 @@
+     __pl.margin(n) = st;
+   endif
+ 
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+   endif
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/plplot_octave_path.m.in plplot-5.9.2/bindings/octave/PLplot/plplot_octave_path.m.in
+--- plplot-5.9.2-orig/bindings/octave/PLplot/plplot_octave_path.m.in	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/plplot_octave_path.m.in	2009-01-20 18:31:04.000000000 +0000
+@@ -22,7 +22,7 @@
+   global __pl_plplot_octave_path
+ 
+   if (!exist("__pl_plplot_octave_path") || isempty(__pl_plplot_octave_path))
+-    __pl_plplot_octave_path = "@PLPLOT_OCTAVE_DIR@//";
++    __pl_plplot_octave_path = "@PLPLOT_OCTAVE_DIR@";
+   endif
+ 
+   if (nargin == 0)
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/shade.m plplot-5.9.2/bindings/octave/PLplot/shade.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/shade.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/shade.m	2009-02-19 22:50:56.000000000 +0000
+@@ -28,13 +28,8 @@
+ 
+   unwind_protect
+     
+-  if (exist("warn_empty_list_elements"))
+-    old_empty_list_elements_ok = warn_empty_list_elements;
+-    warn_empty_list_elements = 0;
+-  else
+-    old_empty_list_elements_ok = warning("query", "Octave:empty-list-elements");
+-    warning("off","Octave:empty-list-elements");
+-  endif
++  old_empty_list_elements_ok = warning("query", "Octave:empty-list-elements");
++  warning("off","Octave:empty-list-elements");
+ 
+   if (nargin == 1 && ismatrix(x))
+     levels = 20;
+@@ -119,6 +114,7 @@
+   if (!isscalar(levels))
+     n = length(levels)-1;
+     clevel = levels;
++    cclevel = clevel;
+   else
+     n = levels;
+     clevel = linspace(zm, zM, levels+1);
+@@ -177,11 +173,7 @@
+ 
+   unwind_protect_cleanup  
+   
+-  if (exist("warn_empty_list_elements"))
+-    warn_empty_list_elements = old_empty_list_elements_ok;
+-  else
+-    warning(old_empty_list_elements_ok.state, "Octave:empty-list-elements");
+-  endif
++  warning(old_empty_list_elements_ok.state, "Octave:empty-list-elements");
+ 
+   end_unwind_protect  
+ 
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/shading.m plplot-5.9.2/bindings/octave/PLplot/shading.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/shading.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/shading.m	2009-01-20 18:31:04.000000000 +0000
+@@ -19,6 +19,7 @@
+ function type = shading(type)
+ 
+   global __pl
++  global pl_automatic_replot
+   strm = __pl_init;
+ 
+   if (nargin == 0)
+@@ -35,8 +36,8 @@
+     return;
+   endif
+   
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+   endif
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/support/__pl_contour.m plplot-5.9.2/bindings/octave/PLplot/support/__pl_contour.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/support/__pl_contour.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/support/__pl_contour.m	2009-01-20 18:31:04.000000000 +0000
+@@ -21,13 +21,8 @@
+ 
+   unwind_protect
+     
+-  if (exist("warn_empty_list_elements"))
+-    old_empty_list_elements_ok = warn_empty_list_elements;
+-  warn_empty_list_elements = 0;
+-  else
+-    old_empty_list_elements_ok = warning("query","Octave:empty-list-elements");
+-    warning("off","Octave:empty-list-elements");
+-  endif
++  old_empty_list_elements_ok = warning("query","Octave:empty-list-elements");
++  warning("off","Octave:empty-list-elements");
+ 
+   grid = 0;
+   if (__pl.grid(strm))
+@@ -117,11 +112,7 @@
+ 
+   unwind_protect_cleanup  
+   
+-  if (exist("warn_empty_list_elements"))
+-    warn_empty_list_elements = old_empty_list_elements_ok;
+-  else
+-    warning(old_empty_list_elements_ok.state,"Octave:empty-list-elements");
+-  endif
++  warning(old_empty_list_elements_ok.state,"Octave:empty-list-elements");
+ 
+   end_unwind_protect  
+ 
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/support/__pl_matstr.m plplot-5.9.2/bindings/octave/PLplot/support/__pl_matstr.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/support/__pl_matstr.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/support/__pl_matstr.m	2009-01-20 18:31:04.000000000 +0000
+@@ -34,17 +34,10 @@
+ 	out(nn,:) = "";
+       endif
+     endif
+-    if (exist("warn_fortran_indexing"))
+-      old_dofi = warn_fortran_indexing;
+-      warn_fortran_indexing = 0;
+-      out(toascii (out) == 0) = " ";
+-      warn_fortran_indexing = old_dofi;
+-    else
+-      old_dofi = warning("query","Octave:fortran-indexing");
+-      warning("off","Octave:fortran-indexing");
+-      out(toascii (out) == 0) = " ";
+-      warning(old_dofi.state,"Octave:fortran-indexing");
+-    endif
++    old_dofi = warning("query","Octave:fortran-indexing");
++    warning("off","Octave:fortran-indexing");
++    out(toascii (out) == 0) = " ";
++    warning(old_dofi.state,"Octave:fortran-indexing");
+ 
+   else
+     help __pl_matstr
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/support/__pl_plotit.m plplot-5.9.2/bindings/octave/PLplot/support/__pl_plotit.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/support/__pl_plotit.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/support/__pl_plotit.m	2009-01-20 18:31:04.000000000 +0000
+@@ -28,13 +28,8 @@
+ 
+   unwind_protect
+     
+-  if (exist("warn_empty_list_elements"))
+-    old_empty_list_elements_ok = warn_empty_list_elements;
+-    warn_empty_list_elements = 0;
+-  else
+-    old_empty_list_elements_ok = warning("query","Octave:empty-list-elements");
+-    warning("off","Octave:empty-list-elements");
+-  endif
++  old_empty_list_elements_ok = warning("query","Octave:empty-list-elements");
++  warning("off","Octave:empty-list-elements");
+ 
+   if (__pl.type(strm) >= 100 && __pl.type(strm) < 200)
+     __pl_meshplotit;
+@@ -286,11 +281,7 @@
+ 
+   unwind_protect_cleanup  
+ 
+-  if (exist("warn_empty_list_elements"))
+-    warn_empty_list_elements = old_empty_list_elements_ok;
+-  else
+-    warning(old_empty_list_elements_ok.state,"Octave:empty-list-elements");
+-  endif
++  warning(old_empty_list_elements_ok.state,"Octave:empty-list-elements");
+ 
+   end_unwind_protect  
+ 
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/title.m plplot-5.9.2/bindings/octave/PLplot/title.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/title.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/title.m	2009-01-20 18:31:04.000000000 +0000
+@@ -40,6 +40,7 @@
+ function text = title (text)
+ 
+   global __pl
++  global pl_automatic_replot
+ 
+   strm = __pl_init;
+ 
+@@ -57,8 +58,8 @@
+     __pl.tlabel = __pl_matstr(__pl.tlabel, text, strm);
+   endif
+ 
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+   endif
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/toggle_plplot_use.m plplot-5.9.2/bindings/octave/PLplot/toggle_plplot_use.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/toggle_plplot_use.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/toggle_plplot_use.m	2009-01-20 18:31:04.000000000 +0000
+@@ -3,7 +3,7 @@
+ ## Use this script to activate/deactivate the default library for the
+ ## PLplot plotting function (plot, mesh, etc.), as both the native
+ ## gnuplot and the new octave-plplot libraries use similar names to the
+-## functions. toggle_plplot_use post-/pre-pends to LOADPATH the path for
++## functions. toggle_plplot_use post-/pre-pends to the path for
+ ## the PLplot functions in successive calls.
+ 
+ ## File: toggle_plplot_use.m
+@@ -23,13 +23,6 @@
+ if ! exist ("use_plplot_state")
+   global use_plplot_state
+   use_plplot_state = "on";
+-  # Warn user about spurious warnings with octave 2.9
+-  ver = str2num(split(version,"."));
+-  if ((ver(1) == 2 && ver(2) == 9) || (ver(1) >= 3)) 
+-    if (warning("query","Octave:built-in-variable-assignment").state == "on")
+-      warning("You may want to call\n  warning(\"off\",\"Octave:built-in-variable-assignment\");\nto prevent spurious warnings from the plplot code for compatability with octave 2.0/2.1.\n");
+-    endif
+-  endif
+ else
+   if strcmp (use_plplot_state, "on")
+     use_plplot_state = "off";
+@@ -39,38 +32,22 @@
+ endif
+ 
+ use_plplot_path = plplot_octave_path;
+-# Strip of trailing // for octave >= 2.9
+-if (!exist("LOADPATH"))
+-  use_plplot_path = use_plplot_path(1:end-2);
+-endif
+-if (exist("LOADPATH"))
+-  use_plplot_i = findstr (LOADPATH, use_plplot_path);
+-  if (!isempty (use_plplot_i))
+-    LOADPATH (use_plplot_i(1):use_plplot_i(1)+length(use_plplot_path)-1)= "";
+-    LOADPATH = strrep (LOADPATH, "::", ":");
++plplot_path_to_remove = split(genpath(use_plplot_path),pathsep);
++for i=1:size(plplot_path_to_remove)(1)
++  if (findstr(path,deblank(plplot_path_to_remove(i,:))) > 0)
++    rmpath(deblank(plplot_path_to_remove(i,:)));
+   endif
+-else
+-  plplot_path_to_remove = split(genpath(use_plplot_path),pathsep);
+-  for i=1:size(plplot_path_to_remove)(1)
+-    if (findstr(path,deblank(plplot_path_to_remove(i,:))) > 0)
+-      rmpath(deblank(plplot_path_to_remove(i,:)));
+-    endif
+-  endfor
+-endif
++endfor
+ 
+ if (strcmp (use_plplot_state, "on"))
+-  if (exist("LOADPATH"))
+-    LOADPATH = [use_plplot_path, ":", LOADPATH];
+-  else
+-    addpath(genpath(use_plplot_path));
+-  endif
++  addpath(genpath(use_plplot_path));
+   plplot_stub;
+-elseif (strcmp (use_plplot_state, "off"))
+-  if (exist("LOADPATH"))
+-    LOADPATH = [LOADPATH, ":", use_plplot_path];
+-  else
+-    addpath(genpath(use_plplot_path),"-end");
++  if ! exist ("pl_automatic_replot")
++    global pl_automatic_replot
++    pl_automatic_replot = 1;
+   endif
++elseif (strcmp (use_plplot_state, "off"))
++  addpath(genpath(use_plplot_path),"-end");
+ endif
+ 
+ use_plplot_lcd = pwd;
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/xlabel.m plplot-5.9.2/bindings/octave/PLplot/xlabel.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/xlabel.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/xlabel.m	2009-01-20 18:31:04.000000000 +0000
+@@ -21,6 +21,7 @@
+ function text = xlabel (text)
+ 
+   global __pl
++  global pl_automatic_replot
+ 
+   strm = __pl_init;
+ 
+@@ -38,8 +39,8 @@
+     __pl.xlabel = __pl_matstr(__pl.xlabel, text, strm);
+   endif
+ 
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+   endif
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/xticks.m plplot-5.9.2/bindings/octave/PLplot/xticks.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/xticks.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/xticks.m	2009-01-20 18:31:04.000000000 +0000
+@@ -26,6 +26,7 @@
+ function xticks (int, num)
+ 
+   global __pl
++  global pl_automatic_replot
+ 
+   strm = __pl_init;
+ 
+@@ -55,8 +56,8 @@
+     endif
+   endif
+ 
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+   endif
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/ylabel.m plplot-5.9.2/bindings/octave/PLplot/ylabel.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/ylabel.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/ylabel.m	2009-01-20 18:31:04.000000000 +0000
+@@ -21,6 +21,7 @@
+ function text = ylabel (text)
+ 
+   global __pl
++  global pl_automatic_replot
+ 
+   strm = __pl_init;
+ 
+@@ -38,8 +39,8 @@
+     __pl.ylabel = __pl_matstr(__pl.ylabel, text, strm);
+   endif
+ 
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+   endif
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/yticks.m plplot-5.9.2/bindings/octave/PLplot/yticks.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/yticks.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/yticks.m	2009-01-20 18:31:04.000000000 +0000
+@@ -26,6 +26,7 @@
+ function yticks (int, num)
+ 
+   global __pl
++  global pl_automatic_replot
+ 
+   strm = __pl_init;
+   
+@@ -55,10 +56,10 @@
+     endif
+   endif
+ 
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+-  endif
++##  endif
+ 
+ endfunction
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/zlabel.m plplot-5.9.2/bindings/octave/PLplot/zlabel.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/zlabel.m	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/PLplot/zlabel.m	2009-01-20 18:31:04.000000000 +0000
+@@ -21,6 +21,7 @@
+ function text = zlabel (text)
+ 
+   global __pl
++  global pl_automatic_replot
+ 
+   strm =__pl_init;
+ 
+@@ -38,8 +39,8 @@
+     __pl.zlabel = __pl_matstr(__pl.zlabel, text, strm);
+   endif
+ 
+-  if (exist("automatic_replot"))
+-    if (automatic_replot)
++  if (exist("pl_automatic_replot"))
++    if (pl_automatic_replot)
+       __pl_plotit;
+     endif
+   endif
+diff -ur plplot-5.9.2-orig/bindings/octave/USAGE plplot-5.9.2/bindings/octave/USAGE
+--- plplot-5.9.2-orig/bindings/octave/USAGE	2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.2/bindings/octave/USAGE	2009-01-20 18:31:04.000000000 +0000
+@@ -78,18 +78,9 @@
+ 		   plfill(n, x, y) ...
+ 
+ NOTES: - You don't need to specify vector or matrix dimensions.
+-       - When setting Octave variable "automatic_replot = 1", changes take
+-	 effect immediately, otherwise they only take effect at the next plot.
+-	 (This does not yet apply to all plot types and does not work with 
+-         octave 2.9).
+-       - With octave 2.9 you will see various spurious warnings about variables
+-         which are no longer builtins. These warnings can safely be ignored.
+-         Plplot is just testing to see if these variables exist as part of
+-         the octave 2.1 compatibility code. To suppress these warnings add
+-         warning("off","Octave:built-in-variable-assignment"); 
+-         to your .octaverc.
+-         
+-
++       - When setting the plplot variable "pl_automatic_replot = 1", 
++         changes take effect immediately, otherwise they only take 
++         effect at the next plot.
+ 
+ --- Plot window control
+ fig,

@@ -3,6 +3,14 @@ plplot (5.9.2-2) unstable; urgency=low
   * debian/control.in: Update package descriptions to fix lintian 
     warnings.
 
+  * debian/patches/14_octave-3.0-fixes.diff: 
+      New patch ported from upstream to fix octave with octave 3.0. 
+      Patch removes support for octave 2.0/2.1 which gets rids of a 
+      large number of warnings. Also fixes automatic_replot support.
+
+  * debian/rules: Disable ocaml support to prevent ocaml bindings 
+    being build if ocamlc is installed.
+
  -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 27 Feb 2009 22:14:07 +0000
 
 plplot (5.9.2-1) unstable; urgency=low
