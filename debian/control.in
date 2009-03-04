@@ -17,7 +17,7 @@ Build-Depends: cmake (>= 2.4.5), debhelper (>= 5.0.38), g++-4.1 [arm],
  fastjar, swig, gnat [!alpha !arm !armeb !armel !mips !mipsel !kfreebsd-amd64]
 Build-Depends-Indep: docbook-xml, docbook, docbook-dsssl, docbook-xsl,
  docbook2x, opensp, jadetex
-Build-Conflicts: libplplot5,  octave2.1-headers
+Build-Conflicts: libplplot5,  octave2.1-headers, tcl8.5, tcl8.5-dev
 XS-Python-Version: all
 Homepage: http://www.plplot.org
 Vcs-Svn: https://plplot.svn.sourceforge.net/svnroot/plplot/trunk/debian
