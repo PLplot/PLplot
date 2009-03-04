@@ -22,6 +22,7 @@
 #
 # The following variables are set / modified
 #
+# PLD_extcairo            - ON means the extcairo device is enabled.
 # PLD_memcairo            - ON means the memcairo device is enabled.
 # PLD_pdfcairo		  - ON means the pdfcairo device is enabled.
 # PLD_pngcairo		  - ON means the pngcairo device is enabled.
@@ -53,6 +54,7 @@ OR PLD_pngcairo
 OR PLD_pscairo
 OR PLD_svgcairo 
 OR PLD_xcairo
+OR PLD_extcairo
 )
   if(NOT PKG_CONFIG_EXECUTABLE)
     message(STATUS 
@@ -64,6 +66,7 @@ OR PLD_xcairo
     set(PLD_pscairo OFF CACHE BOOL "Enable pscairo device" FORCE)
     set(PLD_svgcairo OFF CACHE BOOL "Enable svgcairo device" FORCE)
     set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
+    set(PLD_extcairo OFF CACHE BOOL "Enable extcairo device" FORCE)
   endif(NOT PKG_CONFIG_EXECUTABLE)
 endif(
    PLD_memcairo
@@ -72,6 +75,7 @@ OR PLD_pngcairo
 OR PLD_pscairo
 OR PLD_svgcairo 
 OR PLD_xcairo
+OR PLD_extcairo
 )
 
 if(
@@ -81,6 +85,7 @@ OR PLD_pngcairo
 OR PLD_pscairo
 OR PLD_svgcairo 
 OR PLD_xcairo
+OR PLD_extcairo
 )
   pkg_check_pkgconfig(
   pangocairo
@@ -130,6 +135,7 @@ OR PLD_xcairo
     set(PLD_pscairo OFF CACHE BOOL "Enable pscairo device" FORCE)
     set(PLD_svgcairo OFF CACHE BOOL "Enable svgcairo device" FORCE)
     set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
+    set(PLD_extcairo OFF CACHE BOOL "Enable extcairo device" FORCE)
   endif(linkflags)
 endif(
    PLD_memcairo
@@ -138,4 +144,5 @@ OR PLD_pngcairo
 OR PLD_pscairo
 OR PLD_svgcairo 
 OR PLD_xcairo
+OR PLD_extcairo
 )
