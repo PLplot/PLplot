@@ -100,8 +100,15 @@ Architecture: any
 Section: libs
 Depends: java-gcj-compat, ${shlibs:Depends}
 Description: Scientific plotting library (Java bindings)
- This packages contains the Java bindings for PLplot, a scientific
- plotting library.
+ PLplot is relatively small, portable, freely distributable, and is rich
+ enough to satisfy most users.  It has a wide range of plot types including
+ line (linear, log), contour, 3D, fill, and almost 1000 characters
+ (including Greek and mathematical) in its extended font set.  The package
+ is designed to make it easy to quickly get graphical output; only a
+ handful of function calls is typically required.  For more advanced use,
+ virtually all aspects of plotting are configurable.
+ .
+ This packages contains the Java bindings for PLplot.
 :]
 Package: libcsiro0
 Architecture: any
