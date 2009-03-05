@@ -58,6 +58,11 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
 	${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cc
 	${${DRIVER}_SOURCE}
 	)
+	elseif(DRIVER STREQUAL "qt")
+        set(${DRIVER}_SOURCE
+	${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cpp
+	${${DRIVER}_SOURCE}
+	)
       else(DRIVER STREQUAL "wxwidgets")
         set(${DRIVER}_SOURCE
 	${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.c

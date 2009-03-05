@@ -197,6 +197,9 @@
 /* Define if dg300 driver is present */
 #cmakedefine PLD_dg300
 
+/* Define if the EPS/PDF Qt driver is present */
+#cmakedefine PLD_epspdfqt
+
 /* Define if the Cario external context driver is present */
 #cmakedefine PLD_extcairo
 
@@ -278,11 +281,20 @@
 /* Define if psttf driver is present */
 #cmakedefine PLD_psttf
 
+/* Define if Qt Widgete driver is present */
+#cmakedefine PLD_qtwidget
+
+/* Define if raster Qt driver is present */
+#cmakedefine PLD_rasterqt
+
 /* Define if svg driver is present */
 #cmakedefine PLD_svg
 
 /* Define if Cairo SVG driver is present */
 #cmakedefine PLD_svgcairo
+
+/* Define if SVG Qt driver is present */
+#cmakedefine PLD_svgqt
 
 /* Define if tek4010 driver is present */
 #cmakedefine PLD_tek4010

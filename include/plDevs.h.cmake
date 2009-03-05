@@ -85,6 +85,9 @@
 #cmakedefine PLD_pngcairo
 #cmakedefine PLD_memcairo
 #cmakedefine PLD_extcairo
-
+#cmakedefine PLD_rasterqt
+#cmakedefine PLD_svgqt
+#cmakedefine PLD_epspdfqt
+#cmakedefine PLD_qtwidget
 
 #endif	/* __PLDEVS_H__ */

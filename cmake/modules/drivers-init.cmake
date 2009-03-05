@@ -83,6 +83,7 @@ set(DRIVERS_DEVICE_LIST
 "xcairo:cairo:ON"
 "cgm:cgm:ON"
 "dg300:dg300:OFF"
+"epspdfqt:qt:OFF"
 "gif:gd:ON"
 "jpeg:gd:ON"
 "png:gd:ON" 
@@ -113,7 +114,10 @@ set(DRIVERS_DEVICE_LIST
 # (psttf and pscairo) to get modern fonts for postscript results.
 "pstex:pstex:OFF"
 "psttf:psttf:ON"
+"qtwidget:qt:OFF"
+"rasterqt:qt:OFF"
 "svg:svg:ON"
+"svgqt:qt:OFF"
 "conex:tek:OFF" 
 "mskermit:tek:OFF"
 "tek4010:tek:OFF"

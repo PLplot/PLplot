@@ -296,7 +296,18 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_extcairo) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_extcairo,
 #endif
-
+#if defined(PLD_rasterqt) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_rasterqt,
+#endif
+#if defined(PLD_svgqt) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_svgqt,
+#endif
+#if defined(PLD_epspdfqt) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_epspdfqt,
+#endif
+#if defined(PLD_qtwidget) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_qtwidget,
+#endif
     NULL
 };
 
