@@ -21,16 +21,22 @@
   write to the Free Software Foundation, Inc., 
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
   
+  History:
+
+  
+  March 2009:  v1.00
+  Initial release.
+  
 */
 
 #include "qt.h"
-// #include "moc_qt.cxx"
 
+// Drivers declaration
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt = 
 #if defined(PLD_rasterqt)
   "rasterqt:Qt Raster driver:0:qt:66:rasterqt\n"
 #endif
-#if defined(PLD_svgqt)
+#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
   "svgqt:Qt SVG driver:0:qt:67:svgqt\n"
 #endif
 #if defined(PLD_epspdfqt)
@@ -41,13 +47,14 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
 #endif
 ;
 
+// Declaration of the driver-specific interface functions
 #if defined(PLD_rasterqt)
 void plD_dispatch_init_rasterqt(PLDispatchTable *pdt);
 void plD_init_rasterqt(PLStream *);
 void plD_eop_rasterqt(PLStream *);
 #endif
 
-#if defined(PLD_svgqt)
+#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 void plD_dispatch_init_svgqt(PLDispatchTable *pdt);
 void plD_init_svgqt(PLStream *);
 void plD_eop_svgqt(PLStream *);
@@ -64,6 +71,8 @@ void plD_dispatch_init_qtwidget(PLDispatchTable *pdt);
 void plD_init_qtwidget(PLStream *);
 void plD_eop_qtwidget(PLStream *);
 #endif
+
+// Declaration of the generic interface functions
 
 void plD_line_qt(PLStream *, short, short, short, short);
 void plD_polyline_qt(PLStream *, short*, short*, PLINT);
@@ -292,6 +301,7 @@ void QtPLBufferedDriver::savePlot(char* fileName)
 {
 }
 
+// Draw the content of the buffer
 void QtPLBufferedDriver::doPlot(QPainter* i_painterP, double x_fact, double y_fact, double x_offset, double y_offset)
 {
 	QLineF line;
@@ -395,15 +405,17 @@ void QtPLBufferedDriver::getPlotParameters(double & io_dXFact, double & io_dYFac
 	io_dYOffset=0.;
 }
 
-//////////////////// Generic driver interface ///////////////
+
+// Generic driver interface
 
 void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 {
 	QtPLDriver * widget=NULL;
+	// We have to dynamic_cast to make sure the good virtual functions are called
 #if defined(PLD_rasterqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
 #endif
-#if defined(PLD_svgqt)
+#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_epspdfqt)
@@ -424,7 +436,7 @@ void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
 #if defined(PLD_rasterqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
 #endif
-#if defined(PLD_svgqt)
+#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_epspdfqt)
@@ -447,7 +459,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 #if defined(PLD_rasterqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
 #endif
-#if defined(PLD_svgqt)
+#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_epspdfqt)
@@ -483,7 +495,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 			delete[] ya;
 			break;
             
-			default: break;
+		default: break;
 	}
 }
 
@@ -493,7 +505,7 @@ void plD_state_qt(PLStream * pls, PLINT op)
 #if defined(PLD_rasterqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
 #endif
-#if defined(PLD_svgqt)
+#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_epspdfqt)
@@ -523,20 +535,27 @@ void plD_state_qt(PLStream * pls, PLINT op)
 	}
 }
 
+////////////////// Raster driver-specific definitions: class and interface functions /////////
+
 #if defined(PLD_rasterqt)
 QtRasterDevice::QtRasterDevice(int i_iWidth, int i_iHeight):
 	QtPLDriver(i_iWidth, i_iHeight),
 	QImage(i_iWidth, i_iHeight, QImage::Format_RGB32)
 {
+	// Painter initialised in the constructor contrary
+	// to buffered drivers, which paint only in doPlot().
 	m_painterP=new QPainter(this);
 	QBrush b=m_painterP->brush();
 	b.setStyle(Qt::SolidPattern);
 	m_painterP->setBrush(b);
 	m_painterP->setRenderHint(QPainter::Antialiasing, true);
+	// Let's fill the background
 	m_painterP->fillRect(0, 0, width(), height(), QBrush(Qt::black));
+	// For page numbering
 	pageCounter=0;
 }
 
+// Used to append _page# when multiple pages
 QString QtRasterDevice::getFileName(char* fileName)
 {
 	QString fn(fileName);
@@ -593,8 +612,10 @@ void plD_init_rasterqt(PLStream * pls)
 	pls->dev_clear=1;
 	pls->termin=0;
 	
+	// Initialised with the default (A4) size
 	pls->dev=new QtRasterDevice;
 	
+	// Shamelessly copied on the Cairo stuff :)
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
 		pls->xlength = ((QtRasterDevice*)(pls->dev))->m_dWidth;
@@ -622,7 +643,7 @@ void plD_eop_rasterqt(PLStream *pls)
 #endif
 
 
-#if defined(PLD_svgqt)
+#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 QtSVGDevice::QtSVGDevice(int i_iWidth, int i_iHeight):
 	QtPLBufferedDriver(i_iWidth, i_iHeight)
 {
@@ -714,6 +735,8 @@ void plD_eop_svgqt(PLStream *pls)
 	QSize s;
 	
 	((QtSVGDevice *)pls->dev)->savePlot(pls->FileName);
+	// Once saved, we have to create a new device with the same properties
+	// to be able to plot another page.
 	downscale=((QtSVGDevice *)pls->dev)->downscale;
 	pageCounter=((QtSVGDevice *)pls->dev)->pageCounter;
 	s=((QtSVGDevice *)pls->dev)->size();
@@ -810,14 +833,15 @@ void plD_init_epspdfqt(PLStream * pls)
 	
 	int argc=0;
 	char argv[]={'\0'};
+	// QPrinter devices won't create if there is no QApplication declared...
 	QApplication * app=new QApplication(argc, (char**)&argv);
 	pls->dev=new QtEPSDevice;
 	delete app;
 	
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
-		pls->xlength = ((QtSVGDevice*)(pls->dev))->m_dWidth;
-		pls->ylength = ((QtSVGDevice*)(pls->dev))->m_dHeight;
+		pls->xlength = ((QtEPSDevice*)(pls->dev))->m_dWidth;
+		pls->ylength = ((QtEPSDevice*)(pls->dev))->m_dHeight;
 	}
 	
 	if (pls->xlength > pls->ylength)
@@ -843,8 +867,10 @@ void plD_eop_epspdfqt(PLStream *pls)
 	char argv[]={'\0'};
 	
 	((QtEPSDevice *)pls->dev)->savePlot(pls->FileName);
-	downscale=((QtSVGDevice *)pls->dev)->downscale;
-	pageCounter=((QtSVGDevice *)pls->dev)->pageCounter;
+	// Once saved, we have to create a new device with the same properties
+	// to be able to plot another page.
+	downscale=((QtEPSDevice *)pls->dev)->downscale;
+	pageCounter=((QtEPSDevice *)pls->dev)->pageCounter;
 	delete ((QtEPSDevice *)pls->dev);
 	
 	QApplication * app=new QApplication(argc, (char**)&argv);
@@ -954,7 +980,7 @@ void QtPLWidget::paintEvent( QPaintEvent * )
 	double x_fact, y_fact, x_offset(0.), y_offset(0.); //Parameters to scale and center the plot on the widget
 	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
 	
-	// If actual redraw
+	// If actual redraw, not just adding the cursor acquisition traces
 	if(m_bAwaitingRedraw || m_pixPixmap==NULL || m_listBuffer.size()!=m_iOldSize  )
 	{
 		if(m_pixPixmap!=NULL) delete m_pixPixmap;
@@ -1077,14 +1103,14 @@ void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, doubl
 	if(w/h>m_dAspectRatio) //Too wide, h is the limitating factor
 	{
 		io_dYFact=h/m_dHeight;
-		io_dXFact=h*m_dAspectRatio/m_dWidth;//io_dYFact*m_dAspectRatio;
+		io_dXFact=h*m_dAspectRatio/m_dWidth;
 		io_dYOffset=0.;
 		io_dXOffset=(w-io_dXFact*m_dWidth)/2.;
 	}
 	else
 	{
 		io_dXFact=w/m_dWidth;
-		io_dYFact=w/m_dAspectRatio/m_dHeight;//io_dXFact/m_dAspectRatio;
+		io_dYFact=w/m_dAspectRatio/m_dHeight;
 		io_dXOffset=0.;
 		io_dYOffset=(h-io_dYFact*m_dHeight)/2.;
 	}
