@@ -41,7 +41,7 @@ if(ENABLE_lua AND NOT SWIG_FOUND)
 endif(ENABLE_lua AND NOT SWIG_FOUND)
 
 if(ENABLE_lua)
-  transform_version(NUMERICAL_SWIG_MINIMUM_VERSION_FOR_LUA "1.3.36")
+  transform_version(NUMERICAL_SWIG_MINIMUM_VERSION_FOR_LUA "1.3.35")
   transform_version(NUMERICAL_SWIG_VERSION "${SWIG_VERSION}")
   if(NUMERICAL_SWIG_VERSION LESS "${NUMERICAL_SWIG_MINIMUM_VERSION_FOR_LUA}")
     message(STATUS "WARNING: swig version too old for Lua bindings.   Disabling Lua bindings.")
