@@ -33,28 +33,63 @@
 
 // Drivers declaration
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt = 
-#if defined(PLD_rasterqt)
-  "rasterqt:Qt Raster driver:0:qt:66:rasterqt\n"
+#if defined(PLD_bmpqt)
+  "bmpqt:Qt Windows bitmap driver:0:qt:66:bmpqt\n"
+#endif
+#if defined(PLD_jpgqt)
+  "jpgqt:Qt jpg driver:0:qt:67:jpgqt\n"
+#endif
+#if defined(PLD_pngqt)
+  "pngqt:Qt png driver:0:qt:68:pngqt\n"
+#endif
+#if defined(PLD_ppmqt)
+  "ppmqt:Qt ppm driver:0:qt:69:ppmqt\n"
+#endif
+#if defined(PLD_tiffqt)
+  "tiffqt:Qt tiff driver:0:qt:70:tiffqt\n"
 #endif
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
-  "svgqt:Qt SVG driver:0:qt:67:svgqt\n"
+  "svgqt:Qt SVG driver:0:qt:71:svgqt\n"
 #endif
 #if defined(PLD_qtwidget)
-  "qtwidget:Qt Widget:0:qt:68:qtwidget\n"
+  "qtwidget:Qt Widget:1:qt:72:qtwidget\n"
 #endif
 #if defined(PLD_epsqt)
-  "epsqt:Qt EPS driver:0:qt:69:epsqt\n"
+  "epsqt:Qt EPS driver:0:qt:73:epsqt\n"
 #endif
 #if defined(PLD_pdfqt)
-  "pdfqt:Qt PDF driver:0:qt:70:pdfqt\n"
+  "pdfqt:Qt PDF driver:0:qt:74:pdfqt\n"
 #endif
 ;
 
 // Declaration of the driver-specific interface functions
-#if defined(PLD_rasterqt)
-void plD_dispatch_init_rasterqt(PLDispatchTable *pdt);
+#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 void plD_init_rasterqt(PLStream *);
-void plD_eop_rasterqt(PLStream *);
+#endif
+
+#if defined (PLD_bmpqt)
+void plD_dispatch_init_bmpqt(PLDispatchTable *pdt);
+void plD_eop_bmpqt(PLStream *);
+#endif
+
+#if defined (PLD_jpgqt)
+void plD_dispatch_init_jpgqt(PLDispatchTable *pdt);
+void plD_eop_jpgqt(PLStream *);
+#endif
+
+#if defined (PLD_pngqt)
+void plD_dispatch_init_pngqt(PLDispatchTable *pdt);
+void plD_eop_pngqt(PLStream *);
+#endif
+
+#if defined (PLD_ppmqt)
+void plD_dispatch_init_ppmqt(PLDispatchTable *pdt);
+void plD_eop_ppmqt(PLStream *);
+#endif
+
+#if defined (PLD_tiffqt)
+void plD_dispatch_init_tiffqt(PLDispatchTable *pdt);
+void plD_eop_tiffqt(PLStream *);
 #endif
 
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
@@ -80,6 +115,7 @@ void plD_eop_pdfqt(PLStream *);
 void plD_dispatch_init_qtwidget(PLDispatchTable *pdt);
 void plD_init_qtwidget(PLStream *);
 void plD_eop_qtwidget(PLStream *);
+void plD_tidy_qtwidget(PLStream *);
 #endif
 
 // Declaration of the generic interface functions
@@ -422,7 +458,7 @@ void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 {
 	QtPLDriver * widget=NULL;
 	// We have to dynamic_cast to make sure the good virtual functions are called
-#if defined(PLD_rasterqt)
+#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
@@ -432,7 +468,7 @@ void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_qtwidget)
-	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
+	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
 	
@@ -443,7 +479,7 @@ void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
 	QtPLDriver * widget=NULL;
-#if defined(PLD_rasterqt)
+#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
@@ -453,7 +489,7 @@ void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_qtwidget)
-	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
+	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
 	
@@ -466,7 +502,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 	short *xa, *ya;
 	PLINT i, j;
 	QtPLDriver * widget=NULL;
-#if defined(PLD_rasterqt)
+#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
@@ -476,7 +512,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_qtwidget)
-	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
+	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
 		    
@@ -512,7 +548,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 void plD_state_qt(PLStream * pls, PLINT op)
 {
 	QtPLDriver * widget=NULL;
-#if defined(PLD_rasterqt)
+#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
@@ -522,7 +558,7 @@ void plD_state_qt(PLStream * pls, PLINT op)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_qtwidget)
-	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
+	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
     
@@ -547,7 +583,7 @@ void plD_state_qt(PLStream * pls, PLINT op)
 
 ////////////////// Raster driver-specific definitions: class and interface functions /////////
 
-#if defined(PLD_rasterqt)
+#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 QtRasterDevice::QtRasterDevice(int i_iWidth, int i_iHeight):
 	QtPLDriver(i_iWidth, i_iHeight),
 	QImage(i_iWidth, i_iHeight, QImage::Format_RGB32)
@@ -578,11 +614,11 @@ QString QtRasterDevice::getFileName(char* fileName)
 	return res;
 }
 
-void QtRasterDevice::savePlot(char* fileName)
+void QtRasterDevice::savePlot(char* fileName, const char* format)
 {
 	m_painterP->end();
-	save(getFileName(fileName), 0, 85);
-			
+	save(getFileName(fileName), format, 85);
+
 	++pageCounter;
 	m_painterP->begin(this);
 	m_painterP->setRenderHint(QPainter::Antialiasing, true);
@@ -590,24 +626,6 @@ void QtRasterDevice::savePlot(char* fileName)
 	b.setStyle(Qt::SolidPattern);
 	m_painterP->setBrush(b);
 	m_painterP->fillRect(0, 0, width(), height(), QBrush(Qt::black));
-}
-
-void plD_dispatch_init_rasterqt(PLDispatchTable *pdt)
-{
-#ifndef ENABLE_DYNDRIVERS
-	pdt->pl_MenuStr  = "Qt Raster Driver";
-	pdt->pl_DevName  = "rasterqt";
-#endif
-	pdt->pl_type     = plDevType_FileOriented;
-	pdt->pl_seq      = 66;
-	pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
-	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
-	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
-	pdt->pl_eop      = (plD_eop_fp)      plD_eop_rasterqt;
-	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
-	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
-	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
-	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
 }
 
 void plD_init_rasterqt(PLStream * pls)
@@ -641,14 +659,133 @@ void plD_init_rasterqt(PLStream * pls)
 	
 	plP_setpxl(DPI/25.4/((QtRasterDevice*)(pls->dev))->downscale, DPI/25.4/((QtRasterDevice*)(pls->dev))->downscale);
 	
-	printf("The file format will be determined by the file name extension\n");
-	printf("Possible extensions are: bmp, jpg, png, ppm, tiff, xbm, xpm\n");
 	plOpenFile(pls);
 }
 
-void plD_eop_rasterqt(PLStream *pls)
+#endif
+
+#if defined(PLD_bmpqt)
+void plD_dispatch_init_bmpqt(PLDispatchTable *pdt)
 {
-	((QtRasterDevice *)pls->dev)->savePlot(pls->FileName);
+#ifndef ENABLE_DYNDRIVERS
+	pdt->pl_MenuStr  = "Qt Windows bitmap Driver";
+	pdt->pl_DevName  = "bmpqt";
+#endif
+	pdt->pl_type     = plDevType_FileOriented;
+	pdt->pl_seq      = 66;
+	pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
+	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
+	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_bmpqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
+	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
+	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+}
+
+void plD_eop_bmpqt(PLStream *pls)
+{
+	((QtRasterDevice *)pls->dev)->savePlot(pls->FileName, "BMP");
+}
+#endif
+
+#if defined(PLD_jpgqt)
+void plD_dispatch_init_jpgqt(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+	pdt->pl_MenuStr  = "Qt jpg Driver";
+	pdt->pl_DevName  = "jpgqt";
+#endif
+	pdt->pl_type     = plDevType_FileOriented;
+	pdt->pl_seq      = 67;
+	pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
+	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
+	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_jpgqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
+	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
+	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+}
+
+void plD_eop_jpgqt(PLStream *pls)
+{
+	((QtRasterDevice *)pls->dev)->savePlot(pls->FileName, "JPG");
+}
+#endif
+
+#if defined(PLD_pngqt)
+void plD_dispatch_init_pngqt(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+	pdt->pl_MenuStr  = "Qt png Driver";
+	pdt->pl_DevName  = "pngqt";
+#endif
+	pdt->pl_type     = plDevType_FileOriented;
+	pdt->pl_seq      = 68;
+	pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
+	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
+	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_pngqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
+	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
+	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+}
+
+void plD_eop_pngqt(PLStream *pls)
+{
+	((QtRasterDevice *)pls->dev)->savePlot(pls->FileName, "PNG");
+}
+#endif
+
+#if defined(PLD_ppmqt)
+void plD_dispatch_init_ppmqt(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+	pdt->pl_MenuStr  = "Qt ppm Driver";
+	pdt->pl_DevName  = "ppmqt";
+#endif
+	pdt->pl_type     = plDevType_FileOriented;
+	pdt->pl_seq      = 69;
+	pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
+	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
+	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_ppmqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
+	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
+	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+}
+
+void plD_eop_ppmqt(PLStream *pls)
+{
+	((QtRasterDevice *)pls->dev)->savePlot(pls->FileName, "PPM");
+}
+#endif
+
+#if defined(PLD_tiffqt)
+void plD_dispatch_init_tiffqt(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+	pdt->pl_MenuStr  = "Qt tiff Driver";
+	pdt->pl_DevName  = "tiffqt";
+#endif
+	pdt->pl_type     = plDevType_FileOriented;
+	pdt->pl_seq      = 70;
+	pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
+	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
+	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_tiffqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
+	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
+	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+}
+
+void plD_eop_tiffqt(PLStream *pls)
+{
+	((QtRasterDevice *)pls->dev)->savePlot(pls->FileName, "TIFF");
 }
 #endif
 
@@ -695,7 +832,7 @@ void plD_dispatch_init_svgqt(PLDispatchTable *pdt)
 	pdt->pl_DevName  = "svgqt";
 #endif
 	pdt->pl_type     = plDevType_FileOriented;
-	pdt->pl_seq      = 67;
+	pdt->pl_seq      = 71;
 	pdt->pl_init     = (plD_init_fp)     plD_init_svgqt;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
@@ -814,7 +951,7 @@ void plD_dispatch_init_epsqt(PLDispatchTable *pdt)
 	pdt->pl_DevName  = "epsqt";
 #endif
 	pdt->pl_type     = plDevType_FileOriented;
-	pdt->pl_seq      = 69;
+	pdt->pl_seq      = 73;
 	pdt->pl_init     = (plD_init_fp)     plD_init_epspdfqt;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
@@ -834,7 +971,7 @@ void plD_dispatch_init_pdfqt(PLDispatchTable *pdt)
 	pdt->pl_DevName  = "pdfqt";
 #endif
 	pdt->pl_type     = plDevType_FileOriented;
-	pdt->pl_seq      = 70;
+	pdt->pl_seq      = 74;
 	pdt->pl_init     = (plD_init_fp)     plD_init_epspdfqt;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
@@ -1155,6 +1292,16 @@ void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, doubl
 	}
 }
 
+void QtPLTabWidget::newTab()
+{
+	QtPLWidget * plotWidget=new QtPLWidget;
+	plotWidget->downscale=downscale;
+	plotWidget->m_dWidth=m_dWidth;
+	plotWidget->m_dHeight=m_dHeight;
+	addTab(plotWidget, QString("page %1").arg(count()+1));
+	currentWidget=plotWidget;
+}
+
 
 void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 {
@@ -1163,41 +1310,42 @@ void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 	pdt->pl_DevName  = "qtwidget";
 #endif
 	pdt->pl_type     = plDevType_Interactive;
-	pdt->pl_seq      = 68;
+	pdt->pl_seq      = 72;
 	pdt->pl_init     = (plD_init_fp)     plD_init_qtwidget;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
 	pdt->pl_eop      = (plD_eop_fp)      plD_eop_qtwidget;
 	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
-	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
+	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qtwidget;
 	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
 }
 
-void plsqtdev(QtPLWidget* dev)
-{
-	if(dev==NULL) return;
-	
-	PLINT w, h;
-	plsc->dev = (void*)dev;
-	plsc->xlength = dev->m_dWidth;
-	plsc->ylength = dev->m_dHeight;
-	
-	if (plsc->xlength > plsc->ylength)
-		dev->downscale = (PLFLT)plsc->xlength/(PLFLT)(PIXELS_X-1);
-	else
-		dev->downscale = (PLFLT)plsc->ylength/(PLFLT)PIXELS_Y;
-	
-	plP_setphy((PLINT) 0, (PLINT) (plsc->xlength / dev->downscale), (PLINT) 0, (PLINT) (plsc->ylength / dev->downscale));
-	
-	plP_setpxl(DPI/25.4/dev->downscale, DPI/25.4/dev->downscale);
-}
+// global variables initialised in init(), used in tidy()
+QApplication* app;
+int argc=1; // argc and argv have to exist when tidy() is used, thus they are made global
+char argv[20];
 
 void plD_init_qtwidget(PLStream * pls)
 {
-	if ((pls->phyxma == 0) || (pls->dev == NULL)) {
-		plexit("Must call plsqtdev first to set user plotting widget!");
-	}
+	PLINT w, h;
+	argv[0]='\0';
+	app=new QApplication(argc, (char**)&argv);
+	QMainWindow * mw=new QMainWindow;
+	QtPLTabWidget* tabWidget=new QtPLTabWidget;
+
+	plsc->dev = (void*)tabWidget;
+	plsc->xlength = tabWidget->m_dWidth;
+	plsc->ylength = tabWidget->m_dHeight;
+	
+	if (plsc->xlength > plsc->ylength)
+		tabWidget->downscale = (PLFLT)plsc->xlength/(PLFLT)(PIXELS_X-1);
+	else
+		tabWidget->downscale = (PLFLT)plsc->ylength/(PLFLT)PIXELS_Y;
+	
+	plP_setphy((PLINT) 0, (PLINT) (plsc->xlength / tabWidget->downscale), (PLINT) 0, (PLINT) (plsc->ylength / tabWidget->downscale));
+	
+	plP_setpxl(DPI/25.4/tabWidget->downscale, DPI/25.4/tabWidget->downscale);
 
 	pls->color = 1;		/* Is a color device */
 	pls->plbuf_write=0;
@@ -1207,11 +1355,24 @@ void plD_init_qtwidget(PLStream * pls)
 	pls->dev_flush=1;
 	pls->dev_clear=1;
 	pls->termin=1;
+	
+	mw->setCentralWidget(tabWidget);
+	mw->setVisible(true);
+	mw->setWindowTitle("plplot");
+	mw->resize(plsc->xlength, plsc->ylength);
+	app->setActiveWindow(mw);
+	
 }
 
 void plD_eop_qtwidget(PLStream *pls)
 {
-	((QtPLWidget *)pls->dev)->clearWidget();
+	QtPLTabWidget* tabWidget=((QtPLTabWidget*)pls->dev);
+	tabWidget->currentWidget=NULL;
+}
+
+void plD_tidy_qtwidget(PLStream *pls)
+{
+    app->exec();
 }
 #endif
 

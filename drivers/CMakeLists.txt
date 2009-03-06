@@ -24,12 +24,13 @@ FILES README.drivers README.wxwidgets
 DESTINATION ${DOC_DIR}
 )
 
-if(PLD_rasterqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt)
+#qt.h only useful if anyone wants to build a Qt application with the Qt widget driver
+if(PLD_qtwidget)
 install(
 FILES qt.h 
 DESTINATION ${INCLUDE_DIR}
 )
-endif(PLD_rasterqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt)
+endif(PLD_qtwidget)
 
 if(ENABLE_DYNDRIVERS)
   set_source_files_properties(

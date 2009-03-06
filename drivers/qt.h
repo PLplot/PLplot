@@ -40,6 +40,8 @@
 #include <QApplication>
 #include <QWidget>
 #include <QMouseEvent>
+#include <QTabWidget>
+#include <QMainWindow>
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -179,7 +181,7 @@ class QtPLBufferedDriver: public QtPLDriver
 		QLinkedList<BufferElement> m_listBuffer;
 };
 
-#if defined (PLD_rasterqt)
+#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 // Driver painting whatever raster format Qt can save
 class QtRasterDevice: public QtPLDriver, public QImage
 {
@@ -191,7 +193,7 @@ class QtRasterDevice: public QtPLDriver, public QImage
 		
 		// Saves the plot to the fileName file, possibly appending
 		// _page# to the file name if not the 1st page
-		void savePlot(char* fileName);
+		void savePlot(char* fileName, const char* format);
 		
 	protected:
 		// Generates the actual file name, depending on fileName and pageCounter
@@ -308,16 +310,76 @@ class QtPLWidget: public QWidget, public QtPLBufferedDriver
 		int m_iOldSize;
 };
 
-// This function must be called between plinit to set up the widget
-// The widget is created within the Qt Application
-// e.g.:
-// QtPLWidget*plot=new QtPLWidget(QT_DEFAULT_X, QT_DEFAULT_Y, this);
-// plmkstrm(&strm);
-// plsqtdev(plot);
-// plsdev ("qtwidget");
-// plinit();
-// ...
-void plsqtdev(QtPLWidget *plotdev);
+
+// This widget wraps up various QtPLWidgets as tabs
+// The stream plots on currentWidget, which should be changed by eop()
+// Actually, setting currentWidget as NULL creates a new page when
+// the first plot instructions are issued. So eop() only has to set it as NULL;
+class QtPLTabWidget: public QTabWidget, public QtPLDriver
+{
+    public:
+		QtPLTabWidget()
+		{
+			currentWidget=NULL;
+		}
+		
+		virtual void drawLine(short x1, short y1, short x2, short y2)
+		{
+			if(currentWidget==NULL) newTab();
+			currentWidget->drawLine(x1, y1, x2, y2);
+		}
+
+		virtual void drawPolyline(short * x, short * y, PLINT npts)
+		{
+			if(currentWidget==NULL) newTab();
+			currentWidget->drawPolyline(x, y, npts);
+		}
+
+		virtual void drawPolygon(short * x, short * y, PLINT npts)
+		{
+			if(currentWidget==NULL) newTab();
+			currentWidget->drawPolygon(x, y, npts);
+		}
+
+		virtual void setColor(int r, int g, int b)
+		{
+			if(currentWidget==NULL) newTab();
+			currentWidget->setColor(r, g, b);
+		}
+
+		virtual void setWidth(PLINT w)
+		{
+			if(currentWidget==NULL) newTab();
+			currentWidget->setWidth(w);
+		}
+
+		virtual void setDashed(PLINT nms, PLINT* mark, PLINT* space)
+		{
+			if(currentWidget==NULL) newTab();
+			currentWidget->setDashed(nms, mark, space);
+		}
+
+		// Set pen to draw solid strokes (called after drawing dashed strokes)
+		virtual void setSolid()
+		{
+			if(currentWidget==NULL) newTab();
+			currentWidget->setSolid();
+		}
+		
+		void setSmooth(bool b)
+		{
+			if(currentWidget==NULL) newTab();
+			currentWidget->setSmooth(b);
+		}
+		
+		virtual void savePlot(char* fileName){}
+	
+		QtPLWidget* currentWidget;
+		
+		protected:
+			void newTab();
+};
+
 #endif
 
 #endif

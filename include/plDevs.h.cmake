@@ -85,7 +85,11 @@
 #cmakedefine PLD_pngcairo
 #cmakedefine PLD_memcairo
 #cmakedefine PLD_extcairo
-#cmakedefine PLD_rasterqt
+#cmakedefine PLD_bmpqt
+#cmakedefine PLD_jpgqt
+#cmakedefine PLD_pngqt
+#cmakedefine PLD_ppmqt
+#cmakedefine PLD_tiffqt
 #cmakedefine PLD_svgqt
 #cmakedefine PLD_epsqt
 #cmakedefine PLD_pdfqt

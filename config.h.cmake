@@ -338,11 +338,23 @@
 /* Define if Qt Widget driver is present */
 #cmakedefine PLD_qtwidget
 
-/* Define if raster Qt driver is present */
-#cmakedefine PLD_rasterqt
-
 /* Define if SVG Qt driver is present */
 #cmakedefine PLD_svgqt
+
+/* Define if bmp Qt driver is present */
+#cmakedefine PLD_bmpqt
+
+/* Define if jpg Qt driver is present */
+#cmakedefine PLD_jpgqt
+
+/* Define if png Qt driver is present */
+#cmakedefine PLD_pngqt
+
+/* Define if ppm Qt driver is present */
+#cmakedefine PLD_ppmqt
+
+/* Define if tiff Qt driver is present */
+#cmakedefine PLD_tiffqt
 
 /* Portable definition for PTHREAD_MUTEX_RECURSIVE */
 #define PLPLOT_MUTEX_RECURSIVE ${PLPLOT_MUTEX_RECURSIVE}
