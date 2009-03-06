@@ -302,8 +302,11 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_svgqt) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_svgqt,
 #endif
-#if defined(PLD_epspdfqt) && !defined(ENABLE_DYNDRIVERS)
-    plD_dispatch_init_epspdfqt,
+#if defined(PLD_epsqt) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_epsqt,
+#endif
+#if defined(PLD_pdfqt) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_pdfqt,
 #endif
 #if defined(PLD_qtwidget) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_qtwidget,

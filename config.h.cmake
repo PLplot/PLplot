@@ -197,12 +197,6 @@
 /* Define if dg300 driver is present */
 #cmakedefine PLD_dg300
 
-/* Define if the EPS/PDF Qt driver is present */
-#cmakedefine PLD_epspdfqt
-
-/* Define if the Cario external context driver is present */
-#cmakedefine PLD_extcairo
-
 /* Define if gcw driver is present */
 #cmakedefine PLD_gcw
 
@@ -254,26 +248,14 @@
 /* Define if pdf driver is present */
 #cmakedefine PLD_pdf
 
-/* Define if Cairo PDF driver is present */
-#cmakedefine PLD_pdfcairo
-
 /* Define if plmeta driver is present */
 #cmakedefine PLD_plmeta
-
-/* Define if Cairo memory driver is present */
-#cmakedefine PLD_memcairo
 
 /* Define if png driver is present */
 #cmakedefine PLD_png
 
-/* Define if Cairo PNG driver is present */
-#cmakedefine PLD_pngcairo
-
 /* Define if ps driver is present */
 #cmakedefine PLD_ps
-
-/* Define if Cairo PS driver is present */
-#cmakedefine PLD_pscairo
 
 /* Define if pstex driver is present */
 #cmakedefine PLD_pstex
@@ -281,20 +263,8 @@
 /* Define if psttf driver is present */
 #cmakedefine PLD_psttf
 
-/* Define if Qt Widgete driver is present */
-#cmakedefine PLD_qtwidget
-
-/* Define if raster Qt driver is present */
-#cmakedefine PLD_rasterqt
-
 /* Define if svg driver is present */
 #cmakedefine PLD_svg
-
-/* Define if Cairo SVG driver is present */
-#cmakedefine PLD_svgcairo
-
-/* Define if SVG Qt driver is present */
-#cmakedefine PLD_svgqt
 
 /* Define if tek4010 driver is present */
 #cmakedefine PLD_tek4010
@@ -329,9 +299,6 @@
 /* Define if wxwidgets png driver is present */
 #cmakedefine PLD_wxpng
 
-/* Define if the cairo X windows driver is present */
-#cmakedefine PLD_xcairo
-
 /* Define if xfig driver is present */
 #cmakedefine PLD_xfig
 
@@ -340,6 +307,42 @@
 
 /* Define if xwin driver is present */
 #cmakedefine PLD_xwin
+
+/* Define if the Cairo external context driver is present */
+#cmakedefine PLD_extcairo
+
+/* Define if Cairo PDF driver is present */
+#cmakedefine PLD_pdfcairo
+
+/* Define if Cairo memory driver is present */
+#cmakedefine PLD_memcairo
+
+/* Define if Cairo PNG driver is present */
+#cmakedefine PLD_pngcairo
+
+/* Define if Cairo PS driver is present */
+#cmakedefine PLD_pscairo
+
+/* Define if Cairo SVG driver is present */
+#cmakedefine PLD_svgcairo
+
+/* Define if the cairo X windows driver is present */
+#cmakedefine PLD_xcairo
+
+/* Define if the EPS Qt driver is present */
+#cmakedefine PLD_epsqt
+
+/* Define if the PDF Qt driver is present */
+#cmakedefine PLD_pdfqt
+
+/* Define if Qt Widget driver is present */
+#cmakedefine PLD_qtwidget
+
+/* Define if raster Qt driver is present */
+#cmakedefine PLD_rasterqt
+
+/* Define if SVG Qt driver is present */
+#cmakedefine PLD_svgqt
 
 /* Portable definition for PTHREAD_MUTEX_RECURSIVE */
 #define PLPLOT_MUTEX_RECURSIVE ${PLPLOT_MUTEX_RECURSIVE}

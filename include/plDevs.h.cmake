@@ -87,7 +87,8 @@
 #cmakedefine PLD_extcairo
 #cmakedefine PLD_rasterqt
 #cmakedefine PLD_svgqt
-#cmakedefine PLD_epspdfqt
+#cmakedefine PLD_epsqt
+#cmakedefine PLD_pdfqt
 #cmakedefine PLD_qtwidget
 
 #endif	/* __PLDEVS_H__ */

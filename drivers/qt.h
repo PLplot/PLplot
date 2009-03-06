@@ -220,7 +220,7 @@ class QtSVGDevice: public QtPLBufferedDriver, public QSvgGenerator
 };
 #endif
 
-#if defined (PLD_epspdfqt)
+#if defined (PLD_epsqt) || defined (PLD_pdfqt)
 // Driver painting on an EPS or PDF device, uses QPrinter
 // A (possibly dummy) QApplication must be declared before use
 class QtEPSDevice: public QtPLBufferedDriver, public QPrinter
@@ -232,7 +232,7 @@ class QtEPSDevice: public QtPLBufferedDriver, public QPrinter
 		
 		QString getFileName(char* fileName);
 			 
-		void savePlot(char* fileName);
+		void savePlot(char* fileName, int ifeps);
 			
 		int pageCounter;// public because read and written by plD_eop
 	protected:

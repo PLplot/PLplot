@@ -99,7 +99,8 @@ PLDLLIMPEXP_DRIVER void plD_dispatch_init_memcairo  ( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_extcairo  ( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_rasterqt  ( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_svgqt  ( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_epspdfqt  ( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_epsqt  ( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdfqt  ( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_qtwidget  ( PLDispatchTable *pdt );
 
 /* Prototypes for plot buffer calls. */

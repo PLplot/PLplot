@@ -39,11 +39,14 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
   "svgqt:Qt SVG driver:0:qt:67:svgqt\n"
 #endif
-#if defined(PLD_epspdfqt)
-  "epspdfqt:Qt EPS/PDF driver:0:qt:68:epspdfqt\n"
-#endif
 #if defined(PLD_qtwidget)
-  "qtwidget:Qt Widget:0:qt:69:qtwidget\n"
+  "qtwidget:Qt Widget:0:qt:68:qtwidget\n"
+#endif
+#if defined(PLD_epsqt)
+  "epsqt:Qt EPS driver:0:qt:69:epsqt\n"
+#endif
+#if defined(PLD_pdfqt)
+  "pdfqt:Qt PDF driver:0:qt:70:pdfqt\n"
 #endif
 ;
 
@@ -60,10 +63,17 @@ void plD_init_svgqt(PLStream *);
 void plD_eop_svgqt(PLStream *);
 #endif
 
-#if defined(PLD_epspdfqt)
-void plD_dispatch_init_epspdfqt(PLDispatchTable *pdt);
+#if defined(PLD_epsqt) || defined(PLD_pdfqt)
 void plD_init_epspdfqt(PLStream *);
-void plD_eop_epspdfqt(PLStream *);
+void plD_eop_epspdfqt_helper(PLStream *, int ifeps);
+#endif
+#if defined(PLD_epsqt)
+void plD_dispatch_init_epsqt(PLDispatchTable *pdt);
+void plD_eop_epsqt(PLStream *);
+#endif
+#if defined(PLD_pdfqt)
+void plD_dispatch_init_pdfqt(PLDispatchTable *pdt);
+void plD_eop_pdfqt(PLStream *);
 #endif
 
 #if defined(PLD_qtwidget)
@@ -418,7 +428,7 @@ void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
 #endif
-#if defined(PLD_epspdfqt)
+#if defined(PLD_epsqt) || defined(PLD_pdfqt)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_qtwidget)
@@ -439,7 +449,7 @@ void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
 #endif
-#if defined(PLD_epspdfqt)
+#if defined(PLD_epsqt) || defined(PLD_pdfqt)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_qtwidget)
@@ -462,7 +472,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
 #endif
-#if defined(PLD_epspdfqt)
+#if defined(PLD_epsqt) || defined(PLD_pdfqt)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_qtwidget)
@@ -508,7 +518,7 @@ void plD_state_qt(PLStream * pls, PLINT op)
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
 #endif
-#if defined(PLD_epspdfqt)
+#if defined(PLD_epsqt) || defined(PLD_pdfqt)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 #endif
 #if defined(PLD_qtwidget)
@@ -749,7 +759,7 @@ void plD_eop_svgqt(PLStream *pls)
 
 #endif
 
-#if defined (PLD_epspdfqt)
+#if defined (PLD_epsqt) || defined(PLD_pdfqt)
 QtEPSDevice::QtEPSDevice()
 {
 	pageCounter=0;
@@ -779,21 +789,16 @@ QString QtEPSDevice::getFileName(char* fileName)
 	return res;
 }
 
-void QtEPSDevice::savePlot(char* fileName)
+void QtEPSDevice::savePlot(char* fileName, int ifeps)
 {
 	setOutputFileName(getFileName(fileName));
-	if(QString(fileName).endsWith(".ps") || QString(fileName).endsWith(".eps"))
+	if(ifeps)
 	{
 		setOutputFormat(QPrinter::PostScriptFormat);
 	}
-	else if(QString(fileName).endsWith(".pdf"))
-	{
-		setOutputFormat(QPrinter::PdfFormat);
-	}
 	else
 	{
-		std::cerr << "Unhandled file format: " << fileName << std::endl;
-		return;
+		setOutputFormat(QPrinter::PdfFormat);
 	}
 				
 	m_painterP=new QPainter(this);
@@ -801,23 +806,45 @@ void QtEPSDevice::savePlot(char* fileName)
 	m_painterP->end();
 }
 
-void plD_dispatch_init_epspdfqt(PLDispatchTable *pdt)
+#if defined(PLD_epsqt)
+void plD_dispatch_init_epsqt(PLDispatchTable *pdt)
 {
 #ifndef ENABLE_DYNDRIVERS
-	pdt->pl_MenuStr  = "Qt EPS/PDF Driver";
-	pdt->pl_DevName  = "epspdfqt";
+	pdt->pl_MenuStr  = "Qt EPS Driver";
+	pdt->pl_DevName  = "epsqt";
 #endif
 	pdt->pl_type     = plDevType_FileOriented;
-	pdt->pl_seq      = 68;
+	pdt->pl_seq      = 69;
 	pdt->pl_init     = (plD_init_fp)     plD_init_epspdfqt;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
-	pdt->pl_eop      = (plD_eop_fp)      plD_eop_epspdfqt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_epsqt;
 	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
 	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
 	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
 }
+#endif
+
+#if defined(PLD_pdfqt)
+void plD_dispatch_init_pdfqt(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+	pdt->pl_MenuStr  = "Qt PDF Driver";
+	pdt->pl_DevName  = "pdfqt";
+#endif
+	pdt->pl_type     = plDevType_FileOriented;
+	pdt->pl_seq      = 70;
+	pdt->pl_init     = (plD_init_fp)     plD_init_epspdfqt;
+	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
+	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_pdfqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
+	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
+	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+}
+#endif
 
 void plD_init_epspdfqt(PLStream * pls)
 {
@@ -853,12 +880,10 @@ void plD_init_epspdfqt(PLStream * pls)
 	
 	plP_setpxl(DPI/25.4/((QtEPSDevice*)(pls->dev))->downscale, DPI/25.4/((QtEPSDevice*)(pls->dev))->downscale);
 	
-	printf("The file format will be determined by the file name extension\n");
-	printf("Possible extensions are: eps, pdf\n");
 	plOpenFile(pls);
 }
 
-void plD_eop_epspdfqt(PLStream *pls)
+void plD_eop_epspdfqt_helper(PLStream *pls, int ifeps)
 {
 	double downscale;
 	int pageCounter;
@@ -866,7 +891,7 @@ void plD_eop_epspdfqt(PLStream *pls)
 	int argc=0;
 	char argv[]={'\0'};
 	
-	((QtEPSDevice *)pls->dev)->savePlot(pls->FileName);
+	((QtEPSDevice *)pls->dev)->savePlot(pls->FileName, ifeps);
 	// Once saved, we have to create a new device with the same properties
 	// to be able to plot another page.
 	downscale=((QtEPSDevice *)pls->dev)->downscale;
@@ -879,6 +904,20 @@ void plD_eop_epspdfqt(PLStream *pls)
 	((QtEPSDevice *)pls->dev)->pageCounter=pageCounter+1;
 	delete app;
 }
+
+#if defined(PLD_epsqt)
+void plD_eop_epsqt(PLStream *pls)
+{
+  plD_eop_epspdfqt_helper(pls, 1);
+}
+#endif
+
+#if defined(PLD_pdfqt)
+void plD_eop_pdfqt(PLStream *pls)
+{
+  plD_eop_epspdfqt_helper(pls, 0);
+}
+#endif
 
 #if defined (PLD_qtwidget)
 
@@ -1124,7 +1163,7 @@ void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 	pdt->pl_DevName  = "qtwidget";
 #endif
 	pdt->pl_type     = plDevType_Interactive;
-	pdt->pl_seq      = 69;
+	pdt->pl_seq      = 68;
 	pdt->pl_init     = (plD_init_fp)     plD_init_qtwidget;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;

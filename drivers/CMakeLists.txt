@@ -24,12 +24,12 @@ FILES README.drivers README.wxwidgets
 DESTINATION ${DOC_DIR}
 )
 
-if(PLD_rasterqt)
+if(PLD_rasterqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt)
 install(
 FILES qt.h 
 DESTINATION ${INCLUDE_DIR}
 )
-endif(PLD_rasterqt)
+endif(PLD_rasterqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt)
 
 if(ENABLE_DYNDRIVERS)
   set_source_files_properties(
