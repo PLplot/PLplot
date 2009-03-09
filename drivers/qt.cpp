@@ -62,53 +62,81 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
 #endif
 ;
 
+/*---------------------------------------------------------------------
+  qt_family_check ()
+  
+  support function to help supress more than one page if family file
+  output not specified by the user  (e.g., with the -fam command-line option).
+  Adapted directly from svg.c
+  ---------------------------------------------------------------------*/
+static int already_warned = 0;
+static int qt_family_check(PLStream *pls)
+{
+	if (pls->family || pls->page == 1) 
+    {
+		return 0;
+    }
+	else 
+    {
+		if(! already_warned)
+		{
+			already_warned = 1;
+			plwarn("All pages after the first skipped because family file output not specified.\n");
+		}
+		return 1;
+    }
+}
+
 // Declaration of the driver-specific interface functions
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 void plD_init_rasterqt(PLStream *);
+void plD_eop_rasterqt(PLStream *);
 #endif
 
 #if defined (PLD_bmpqt)
 void plD_dispatch_init_bmpqt(PLDispatchTable *pdt);
-void plD_eop_bmpqt(PLStream *);
+void plD_bop_bmpqt(PLStream *);
 #endif
 
 #if defined (PLD_jpgqt)
 void plD_dispatch_init_jpgqt(PLDispatchTable *pdt);
-void plD_eop_jpgqt(PLStream *);
+void plD_bop_jpgqt(PLStream *);
 #endif
 
 #if defined (PLD_pngqt)
 void plD_dispatch_init_pngqt(PLDispatchTable *pdt);
-void plD_eop_pngqt(PLStream *);
+void plD_bop_pngqt(PLStream *);
 #endif
 
 #if defined (PLD_ppmqt)
 void plD_dispatch_init_ppmqt(PLDispatchTable *pdt);
-void plD_eop_ppmqt(PLStream *);
+void plD_bop_ppmqt(PLStream *);
 #endif
 
 #if defined (PLD_tiffqt)
 void plD_dispatch_init_tiffqt(PLDispatchTable *pdt);
-void plD_eop_tiffqt(PLStream *);
+void plD_bop_tiffqt(PLStream *);
 #endif
 
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 void plD_dispatch_init_svgqt(PLDispatchTable *pdt);
 void plD_init_svgqt(PLStream *);
+void plD_bop_svgqt(PLStream *);
 void plD_eop_svgqt(PLStream *);
 #endif
 
 #if defined(PLD_epsqt) || defined(PLD_pdfqt)
 void plD_init_epspdfqt(PLStream *);
-void plD_eop_epspdfqt_helper(PLStream *, int ifeps);
+void plD_bop_epspdfqt_helper(PLStream *, int ifeps);
+void plD_eop_epspdfqt(PLStream *);
 #endif
 #if defined(PLD_epsqt)
 void plD_dispatch_init_epsqt(PLDispatchTable *pdt);
-void plD_eop_epsqt(PLStream *);
+void plD_bop_epsqt(PLStream *);
 #endif
 #if defined(PLD_pdfqt)
 void plD_dispatch_init_pdfqt(PLDispatchTable *pdt);
-void plD_eop_pdfqt(PLStream *);
+void plD_bop_pdfqt(PLStream *);
 #endif
 
 #if defined(PLD_qtwidget)
@@ -212,10 +240,6 @@ void QtPLDriver::setSolid()
 	QPen p=m_painterP->pen();
 	p.setStyle(Qt::SolidLine);
 	m_painterP->setPen(p);
-}
-
-void QtPLDriver::savePlot(char* fileName)
-{
 }
 
 //////////// Buffered driver ///////////////////////
@@ -343,10 +367,6 @@ void QtPLBufferedDriver::setSolid()
 	m_listBuffer.append(el);
 }
 
-void QtPLBufferedDriver::savePlot(char* fileName)
-{
-}
-
 // Draw the content of the buffer
 void QtPLBufferedDriver::doPlot(QPainter* i_painterP, double x_fact, double y_fact, double x_offset, double y_offset)
 {
@@ -457,15 +477,19 @@ void QtPLBufferedDriver::getPlotParameters(double & io_dXFact, double & io_dYFac
 void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 {
 	QtPLDriver * widget=NULL;
+	
 	// We have to dynamic_cast to make sure the good virtual functions are called
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_epsqt) || defined(PLD_pdfqt)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_qtwidget)
 	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
@@ -479,14 +503,18 @@ void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
 	QtPLDriver * widget=NULL;
+
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_epsqt) || defined(PLD_pdfqt)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_qtwidget)
 	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
@@ -502,14 +530,18 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 	short *xa, *ya;
 	PLINT i, j;
 	QtPLDriver * widget=NULL;
+
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_epsqt) || defined(PLD_pdfqt)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_qtwidget)
 	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
@@ -550,12 +582,15 @@ void plD_state_qt(PLStream * pls, PLINT op)
 	QtPLDriver * widget=NULL;
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_epsqt) || defined(PLD_pdfqt)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
+	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_qtwidget)
 	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
@@ -597,29 +632,22 @@ QtRasterDevice::QtRasterDevice(int i_iWidth, int i_iHeight):
 	m_painterP->setRenderHint(QPainter::Antialiasing, true);
 	// Let's fill the background
 	m_painterP->fillRect(0, 0, width(), height(), QBrush(Qt::black));
-	// For page numbering
-	pageCounter=0;
 }
 
-// Used to append _page# when multiple pages
-QString QtRasterDevice::getFileName(char* fileName)
+void QtRasterDevice::definePlotName(const char* fileName, const char* format)
 {
-	QString fn(fileName);
-			
-	if(pageCounter==0) return fn;
-			
-	int pos=fn.lastIndexOf(".");
-	if(pos<0) pos=fn.length();
-	QString res=fn.insert(pos, QString("_page%1").arg(pageCounter+1));
-	return res;
+	// Avoid buffer overflows
+	strncpy(this->format, format, 4);
+	this->format[4]='\0';
+	
+	this->fileName=QString(fileName);
 }
 
-void QtRasterDevice::savePlot(char* fileName, const char* format)
+void QtRasterDevice::savePlot()
 {
 	m_painterP->end();
-	save(getFileName(fileName), format, 85);
+	save(fileName, format, 85);
 
-	++pageCounter;
 	m_painterP->begin(this);
 	m_painterP->setRenderHint(QPainter::Antialiasing, true);
 	QBrush b=m_painterP->brush();
@@ -639,6 +667,7 @@ void plD_init_rasterqt(PLStream * pls)
 	pls->dev_flush=1;
 	pls->dev_clear=1;
 	pls->termin=0;
+	pls->page = 0;
 	
 	// Initialised with the default (A4) size
 	pls->dev=new QtRasterDevice;
@@ -659,7 +688,16 @@ void plD_init_rasterqt(PLStream * pls)
 	
 	plP_setpxl(DPI/25.4/((QtRasterDevice*)(pls->dev))->downscale, DPI/25.4/((QtRasterDevice*)(pls->dev))->downscale);
 	
+	/* Initialize family file info */
+	plFamInit(pls);
+	
 	plOpenFile(pls);
+}
+
+void plD_eop_rasterqt(PLStream *pls)
+{
+	if(qt_family_check(pls)) {return;} 
+	((QtRasterDevice *)pls->dev)->savePlot();
 }
 
 #endif
@@ -676,16 +714,22 @@ void plD_dispatch_init_bmpqt(PLDispatchTable *pdt)
 	pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
-	pdt->pl_eop      = (plD_eop_fp)      plD_eop_bmpqt;
-	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_rasterqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_bmpqt;
 	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
 	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
 }
 
-void plD_eop_bmpqt(PLStream *pls)
+void plD_bop_bmpqt(PLStream *pls)
 {
-	((QtRasterDevice *)pls->dev)->savePlot(pls->FileName, "BMP");
+	/* Plot familying stuff. Not really understood, just copying gd.c */
+	plGetFam(pls);
+
+	pls->famadv = 1;
+	pls->page++;
+	if(qt_family_check(pls)) {return;} 
+	((QtRasterDevice *)pls->dev)->definePlotName(pls->FileName, "BMP");
 }
 #endif
 
@@ -701,16 +745,22 @@ void plD_dispatch_init_jpgqt(PLDispatchTable *pdt)
 	pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
-	pdt->pl_eop      = (plD_eop_fp)      plD_eop_jpgqt;
-	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_rasterqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_jpgqt;
 	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
 	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
 }
 
-void plD_eop_jpgqt(PLStream *pls)
+void plD_bop_jpgqt(PLStream *pls)
 {
-	((QtRasterDevice *)pls->dev)->savePlot(pls->FileName, "JPG");
+	/* Plot familying stuff. Not really understood, just copying gd.c */
+	plGetFam(pls);
+
+	pls->famadv = 1;
+	pls->page++;
+	if(qt_family_check(pls)) {return;} 
+	((QtRasterDevice *)pls->dev)->definePlotName(pls->FileName, "JPG");
 }
 #endif
 
@@ -726,16 +776,22 @@ void plD_dispatch_init_pngqt(PLDispatchTable *pdt)
 	pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
-	pdt->pl_eop      = (plD_eop_fp)      plD_eop_pngqt;
-	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_rasterqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_pngqt;
 	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
 	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
 }
 
-void plD_eop_pngqt(PLStream *pls)
+void plD_bop_pngqt(PLStream *pls)
 {
-	((QtRasterDevice *)pls->dev)->savePlot(pls->FileName, "PNG");
+	/* Plot familying stuff. Not really understood, just copying gd.c */
+	plGetFam(pls);
+
+	pls->famadv = 1;
+	pls->page++;
+	if(qt_family_check(pls)) {return;} 
+	((QtRasterDevice *)pls->dev)->definePlotName(pls->FileName, "PNG");
 }
 #endif
 
@@ -751,16 +807,22 @@ void plD_dispatch_init_ppmqt(PLDispatchTable *pdt)
 	pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
-	pdt->pl_eop      = (plD_eop_fp)      plD_eop_ppmqt;
-	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_rasterqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_ppmqt;
 	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
 	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
 }
 
-void plD_eop_ppmqt(PLStream *pls)
+void plD_bop_ppmqt(PLStream *pls)
 {
-	((QtRasterDevice *)pls->dev)->savePlot(pls->FileName, "PPM");
+	/* Plot familying stuff. Not really understood, just copying gd.c */
+	plGetFam(pls);
+
+	pls->famadv = 1;
+	pls->page++;
+	if(qt_family_check(pls)) {return;} 
+	((QtRasterDevice *)pls->dev)->definePlotName(pls->FileName, "PPM");
 }
 #endif
 
@@ -776,52 +838,48 @@ void plD_dispatch_init_tiffqt(PLDispatchTable *pdt)
 	pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
-	pdt->pl_eop      = (plD_eop_fp)      plD_eop_tiffqt;
-	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_rasterqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_tiffqt;
 	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
 	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
 }
 
-void plD_eop_tiffqt(PLStream *pls)
+void plD_bop_tiffqt(PLStream *pls)
 {
-	((QtRasterDevice *)pls->dev)->savePlot(pls->FileName, "TIFF");
+	/* Plot familying stuff. Not really understood, just copying gd.c */
+	plGetFam(pls);
+
+	pls->famadv = 1;
+	pls->page++;
+	if(qt_family_check(pls)) {return;} 
+	((QtRasterDevice *)pls->dev)->definePlotName(pls->FileName, "TIFF");
 }
 #endif
 
 
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 QtSVGDevice::QtSVGDevice(int i_iWidth, int i_iHeight):
-	QtPLBufferedDriver(i_iWidth, i_iHeight)
+	QtPLDriver(i_iWidth, i_iHeight)
 {
 	setSize(QSize(m_dWidth, m_dHeight));
-	pageCounter=0;
 }
 
 QtSVGDevice::~QtSVGDevice()
 {
-	clearBuffer();
 }
 
-QString QtSVGDevice::getFileName(char* fileName)
+void QtSVGDevice::definePlotName(const char* fileName)
 {
-	QString fn(fileName);
-			
-	if(pageCounter==0) return fn;
-			
-	int pos=fn.lastIndexOf(".");
-	if(pos<0) pos=fn.length();
-	QString res=fn.insert(pos, QString("_page%1").arg(pageCounter+1));
-	return res;
-}
-
-void QtSVGDevice::savePlot(char* fileName)
-{
-	setFileName(getFileName(fileName));
+	setFileName(QString(fileName));
 	setResolution(72);
 
 	m_painterP=new QPainter(this);
-	doPlot();
+	m_painterP->fillRect(0, 0, m_dWidth, m_dHeight, QBrush(Qt::black));
+}
+
+void QtSVGDevice::savePlot()
+{
 	m_painterP->end();
 }
 
@@ -837,7 +895,7 @@ void plD_dispatch_init_svgqt(PLDispatchTable *pdt)
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
 	pdt->pl_eop      = (plD_eop_fp)      plD_eop_svgqt;
-	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_svgqt;
 	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
 	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
@@ -854,6 +912,7 @@ void plD_init_svgqt(PLStream * pls)
 	pls->dev_flush=1;
 	pls->dev_clear=1;
 	pls->termin=0;
+	pls->page = 0;
 	
 	pls->dev=new QtSVGDevice;
 	
@@ -871,27 +930,38 @@ void plD_init_svgqt(PLStream * pls)
 	plP_setphy((PLINT) 0, (PLINT) (pls->xlength / ((QtSVGDevice*)(pls->dev))->downscale), (PLINT) 0, (PLINT) (pls->ylength / ((QtSVGDevice*)(pls->dev))->downscale));
 	
 	plP_setpxl(DPI/25.4/((QtSVGDevice*)(pls->dev))->downscale, DPI/25.4/((QtSVGDevice*)(pls->dev))->downscale);
-	
+
+	/* Initialize family file info */
+	plFamInit(pls);
+  
 	plOpenFile(pls);
+}
+
+void plD_bop_svgqt(PLStream *pls)
+{
+	/* Plot familying stuff. Not really understood, just copying gd.c */
+	plGetFam(pls);
+	
+	pls->famadv = 1;
+	pls->page++;
+	if(qt_family_check(pls)) {return;} 
+	((QtSVGDevice *)pls->dev)->definePlotName(pls->FileName);
 }
 
 void plD_eop_svgqt(PLStream *pls)
 {
 	double downscale;
-	int pageCounter;
 	QSize s;
 	
-	((QtSVGDevice *)pls->dev)->savePlot(pls->FileName);
+	((QtSVGDevice *)pls->dev)->savePlot();
 	// Once saved, we have to create a new device with the same properties
 	// to be able to plot another page.
 	downscale=((QtSVGDevice *)pls->dev)->downscale;
-	pageCounter=((QtSVGDevice *)pls->dev)->pageCounter;
 	s=((QtSVGDevice *)pls->dev)->size();
 	delete ((QtSVGDevice *)pls->dev);
 	
 	pls->dev=new QtSVGDevice(s.width(), s.height());
 	((QtSVGDevice *)pls->dev)->downscale=downscale;
-	((QtSVGDevice *)pls->dev)->pageCounter=pageCounter+1;
 }
 
 #endif
@@ -899,7 +969,6 @@ void plD_eop_svgqt(PLStream *pls)
 #if defined (PLD_epsqt) || defined(PLD_pdfqt)
 QtEPSDevice::QtEPSDevice()
 {
-	pageCounter=0;
 	setPageSize(QPrinter::A4);
 	setResolution(DPI);
 	setColorMode(QPrinter::Color);
@@ -911,24 +980,11 @@ QtEPSDevice::QtEPSDevice()
 
 QtEPSDevice::~QtEPSDevice()
 {
-	clearBuffer();
 }
 
-QString QtEPSDevice::getFileName(char* fileName)
+void QtEPSDevice::definePlotName(const char* fileName, int ifeps)
 {
-	QString fn(fileName);
-			
-	if(pageCounter==0) return fn;
-			
-	int pos=fn.lastIndexOf(".");
-	if(pos<0) pos=fn.length();
-	QString res=fn.insert(pos, QString("_page%1").arg(pageCounter+1));
-	return res;
-}
-
-void QtEPSDevice::savePlot(char* fileName, int ifeps)
-{
-	setOutputFileName(getFileName(fileName));
+	setOutputFileName(QString(fileName));
 	if(ifeps)
 	{
 		setOutputFormat(QPrinter::PostScriptFormat);
@@ -939,7 +995,11 @@ void QtEPSDevice::savePlot(char* fileName, int ifeps)
 	}
 				
 	m_painterP=new QPainter(this);
-	doPlot();
+	m_painterP->fillRect(0, 0, m_dWidth, m_dHeight, QBrush(Qt::black));
+}
+
+void QtEPSDevice::savePlot()
+{
 	m_painterP->end();
 }
 
@@ -955,8 +1015,8 @@ void plD_dispatch_init_epsqt(PLDispatchTable *pdt)
 	pdt->pl_init     = (plD_init_fp)     plD_init_epspdfqt;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
-	pdt->pl_eop      = (plD_eop_fp)      plD_eop_epsqt;
-	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_epspdfqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_epsqt;
 	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
 	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
@@ -975,8 +1035,8 @@ void plD_dispatch_init_pdfqt(PLDispatchTable *pdt)
 	pdt->pl_init     = (plD_init_fp)     plD_init_epspdfqt;
 	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
-	pdt->pl_eop      = (plD_eop_fp)      plD_eop_pdfqt;
-	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_epspdfqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_pdfqt;
 	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
 	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
@@ -994,6 +1054,7 @@ void plD_init_epspdfqt(PLStream * pls)
 	pls->dev_flush=1;
 	pls->dev_clear=1;
 	pls->termin=0;
+	pls->page = 0;
 	
 	int argc=0;
 	char argv[]={'\0'};
@@ -1017,42 +1078,54 @@ void plD_init_epspdfqt(PLStream * pls)
 	
 	plP_setpxl(DPI/25.4/((QtEPSDevice*)(pls->dev))->downscale, DPI/25.4/((QtEPSDevice*)(pls->dev))->downscale);
 	
+	/* Initialize family file info */
+	plFamInit(pls);
+	
 	plOpenFile(pls);
 }
 
-void plD_eop_epspdfqt_helper(PLStream *pls, int ifeps)
+void plD_bop_epspdfqt_helper(PLStream *pls, int ifeps)
+{
+	/* Plot familying stuff. Not really understood, just copying gd.c */
+	plGetFam(pls);
+
+	pls->famadv = 1;
+	pls->page++;
+	if(qt_family_check(pls)) {return;}
+	((QtEPSDevice *)pls->dev)->definePlotName(pls->FileName, ifeps);
+}
+
+void plD_eop_epspdfqt(PLStream *pls)
 {
 	double downscale;
-	int pageCounter;
-	
+
 	int argc=0;
 	char argv[]={'\0'};
 	
-	((QtEPSDevice *)pls->dev)->savePlot(pls->FileName, ifeps);
+	((QtEPSDevice *)pls->dev)->savePlot();
 	// Once saved, we have to create a new device with the same properties
 	// to be able to plot another page.
 	downscale=((QtEPSDevice *)pls->dev)->downscale;
-	pageCounter=((QtEPSDevice *)pls->dev)->pageCounter;
+
 	delete ((QtEPSDevice *)pls->dev);
 	
 	QApplication * app=new QApplication(argc, (char**)&argv);
 	pls->dev=new QtEPSDevice;
 	((QtEPSDevice *)pls->dev)->downscale=downscale;
-	((QtEPSDevice *)pls->dev)->pageCounter=pageCounter+1;
 	delete app;
 }
 
 #if defined(PLD_epsqt)
-void plD_eop_epsqt(PLStream *pls)
+void plD_bop_epsqt(PLStream *pls)
 {
-  plD_eop_epspdfqt_helper(pls, 1);
+  plD_bop_epspdfqt_helper(pls, 1);
 }
 #endif
 
 #if defined(PLD_pdfqt)
-void plD_eop_pdfqt(PLStream *pls)
+void plD_bop_pdfqt(PLStream *pls)
 {
-  plD_eop_epspdfqt_helper(pls, 0);
+  plD_bop_epspdfqt_helper(pls, 0);
 }
 #endif
 
@@ -1166,6 +1239,7 @@ void QtPLWidget::paintEvent( QPaintEvent * )
 		painter->fillRect(0, 0, width(), height(), QBrush(Qt::white));
 		painter->fillRect(0, 0, width(), height(), QBrush(Qt::gray, Qt::Dense4Pattern));
 		painter->fillRect((int)x_offset, (int)y_offset, (int)floor(x_fact*m_dWidth+0.5), (int)floor(y_fact*m_dHeight+0.5), QBrush(Qt::black));
+		painter->setRenderHint(QPainter::Antialiasing, true);
 		doPlot(painter, x_fact, y_fact, x_offset, y_offset);
 		painter->end();
 		m_bAwaitingRedraw=false;

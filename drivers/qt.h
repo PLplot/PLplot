@@ -122,8 +122,6 @@ class QtPLDriver
 		// Set pen to draw solid strokes (called after drawing dashed strokes)
 		virtual void setSolid();
 		
-		virtual void savePlot(char* fileName);
-		
 		// Conversion factor from internal plplot coordinates to device coordinates
 		double downscale;
 		double m_dWidth, m_dHeight;
@@ -132,9 +130,7 @@ class QtPLDriver
 		QPainter* m_painterP;
 };
 
-// This device is used in two situations:
-// - if the device can only start plotting when given a destination file (SVG, EPS, PDF), then we have to accumulate the plot commands before printing them when eop() is called
-// - If the device may have to redraw (Widget), then the accumulated commands are re-issued, possibly corrected to fit a new device size
+// This driver is used if the device may have to redraw (Widget), then the accumulated commands are re-issued, possibly corrected to fit a new device size
 class QtPLBufferedDriver: public QtPLDriver
 {
 	public:
@@ -156,8 +152,6 @@ class QtPLBufferedDriver: public QtPLDriver
 		virtual void setDashed(PLINT nms, PLINT* mark, PLINT* space);
 
 		virtual void setSolid();
-		
-		virtual void savePlot(char* fileName);
 		
 		// Actually plots on the device, using the p QPainter.
 		// if p is null, then the defaut QPainter m_painterP is used.
@@ -191,14 +185,13 @@ class QtRasterDevice: public QtPLDriver, public QImage
 		
 		virtual ~QtRasterDevice(){}
 		
-		// Saves the plot to the fileName file, possibly appending
-		// _page# to the file name if not the 1st page
-		void savePlot(char* fileName, const char* format);
+		void definePlotName(const char* fileName, const char* format);
+		
+		void savePlot();
 		
 	protected:
-		// Generates the actual file name, depending on fileName and pageCounter
-		QString getFileName(char* fileName);
-		int pageCounter;
+		char format[5];
+		QString fileName;
 		
 };
 #endif
@@ -206,7 +199,7 @@ class QtRasterDevice: public QtPLDriver, public QImage
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 #include <QSvgGenerator>
 // Driver painting on an SVG device
-class QtSVGDevice: public QtPLBufferedDriver, public QSvgGenerator
+class QtSVGDevice: public QtPLDriver, public QSvgGenerator
 {
 	public:
 		QtSVGDevice(int i_iWidth=QT_DEFAULT_X,
@@ -214,29 +207,27 @@ class QtSVGDevice: public QtPLBufferedDriver, public QSvgGenerator
 
 		virtual ~QtSVGDevice();
 
-		void savePlot(char* fileName);
-			
-		int pageCounter; // public because read and written by plD_eop
+		void definePlotName(const char* fileName);
+
+		void savePlot();
 	protected:
-		QString getFileName(char* fileName);
 };
 #endif
 
 #if defined (PLD_epsqt) || defined (PLD_pdfqt)
 // Driver painting on an EPS or PDF device, uses QPrinter
 // A (possibly dummy) QApplication must be declared before use
-class QtEPSDevice: public QtPLBufferedDriver, public QPrinter
+class QtEPSDevice: public QtPLDriver, public QPrinter
 {
 	public:
 		QtEPSDevice();
 		
 		virtual ~QtEPSDevice();
-		
-		QString getFileName(char* fileName);
-			 
-		void savePlot(char* fileName, int ifeps);
+	
+		void definePlotName(const char* fileName, int ifeps);
+	
+		void savePlot();
 			
-		int pageCounter;// public because read and written by plD_eop
 	protected:
 
 };
