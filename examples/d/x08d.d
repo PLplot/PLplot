@@ -103,7 +103,7 @@ int main( char[][] args )
   PLFLT[] az = [ 30.0, 60.0 ];
 
   char[] title[] = [ "#frPLplot Example 8 - Alt=60, Az=30",
-                   "#frPLplot Example 8 - Alt=20, Az=60" ];
+                      "#frPLplot Example 8 - Alt=20, Az=60" ];
 
   /* Parse and process command line arguments */
   plMergeOpts( cast(PLOptionTable*)options, "x08c options",  null );

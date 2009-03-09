@@ -26,25 +26,35 @@ set(d_STRING_INDICES
 "07"
 "08"
 "10"
+"11"
 "12"
 "13"
 )
 
+if(BUILD_TEST)
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/bindings/d
+    )
+endif(BUILD_TEST)
 foreach(STRING_INDEX ${d_STRING_INDICES})
   set(d_SRCS ${d_SRCS} x${STRING_INDEX}d.d)
+  if(BUILD_TEST)
+    add_executable(x${STRING_INDEX}d x${STRING_INDEX}d.d)
+    target_link_libraries(x${STRING_INDEX}d plplot${LIB_TAG})
+  endif(BUILD_TEST)
 endforeach(STRING_INDEX ${d_STRING_INDICES})
 
 install(FILES ${d_SRCS}
-DESTINATION ${DATA_DIR}/examples/d
+  DESTINATION ${DATA_DIR}/examples/d
 )
 
-#set(DD ${CMAKE_D_COMPILER})
-#configure_file(
-#${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
-#${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-#)
+set(DC ${CMAKE_D_COMPILER})
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+  ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+)
 
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-#DESTINATION ${DATA_DIR}/examples/d
-#RENAME Makefile
-#)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+  DESTINATION ${DATA_DIR}/examples/d
+  RENAME Makefile
+)
