@@ -29,9 +29,13 @@ if(PLD_cgm)
   set( cd_LIB_SRCS cd.c )
   set( cd_LIB_HDRS cd.h defines.h )
 
+  if(APPLE)
+    set( cd_ADD_DEFINES "-DNOMALLOCH" )
+  endif(APPLE)
+
   if(BUILD_SHARED_LIBS)
     set_source_files_properties( ${cd_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${cd_ADD_DEFINES}"
       )
   endif(BUILD_SHARED_LIBS)
 
@@ -50,6 +54,11 @@ if(PLD_cgm)
     set( cd_EXE color16 cdsimple cdtext cdmulti cdexpert )
     foreach(EXE ${cd_EXE})
       add_executable( ${EXE} ${EXE}.c )
+      if(APPLE)
+        set_source_files_properties( ${EXE}.c
+          PROPERTIES COMPILE_FLAGS "-DNOMALLOCH"
+          )
+      endif(APPLE)    
       target_link_libraries( ${EXE} nistcd )
     endforeach(EXE ${cd_EXE})
   endif(TEST_NISTCD)
