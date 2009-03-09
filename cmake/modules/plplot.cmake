@@ -388,6 +388,7 @@ include(pdl)
 include(ada)
 include(ocaml)
 include(lua)
+include(d)
 
 # =======================================================================
 # additional library support
