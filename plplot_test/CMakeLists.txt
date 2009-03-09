@@ -172,7 +172,19 @@ if(SH_EXECUTABLE)
       )
   endif(ENABLE_lua)
 
-  # Run C examples with different drivers
+  if(ENABLE_d)
+    configure_file(
+      test_d.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_d.sh
+      @ONLY
+      )
+    list(APPEND SCRIPTS test_d.sh)
+    add_test(examples_d
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=d"
+      )
+  endif(ENABLE_d)
+
+# Run C examples with different drivers
   if(PLD_psc)
     if (NOT TEST_DEVICE STREQUAL "psc")
       add_test(examples_psttfc

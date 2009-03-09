@@ -47,7 +47,7 @@ Usage: plplot-test.sh [OPTIONS]
 
 Options:
    [--device=DEVICE] (DEVICE = any cmake-enabled device.  psc is the default)
-   [--front-end=FE]  (FE = one of c, cxx, f77, f95 java, octave, python, tcl, perl, ada, ocaml, or lua)
+   [--front-end=FE]  (FE = one of c, cxx, f77, f95 java, octave, python, tcl, perl, ada, ocaml, lua or d)
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
                      this --front-end="c cxx"
@@ -115,6 +115,7 @@ while test $# -gt 0; do
              -o $i = "ada"    \
              -o $i = "ocaml"    \
              -o $i = "lua"    \
+             -o $i = "d"    \
            ] \
            || usage 0 1>&2
          done
@@ -169,6 +170,7 @@ javadir=$EXAMPLES_DIR/java
 adadir=$EXAMPLES_DIR/ada
 ocamldir=$EXAMPLES_DIR/ocaml
 luadir=$EXAMPLES_DIR/lua
+ddir=$EXAMPLES_DIR/d
 octave=@OCTAVE@
 octavedir=\
 $EXAMPLES_DIR/../bindings/octave:\
@@ -182,7 +184,7 @@ $SRC_EXAMPLES_DIR/octave:\
 @OCTAVE_M_DIR@/PLplot:\
 @OCTAVE_OCT_DIR@:
 PATH=$EXAMPLES_DIR/../utils:@BIN_DIR@:$PATH
-export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perldir adadir ocamldir luadir PATH
+export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perldir adadir ocamldir luadir ddir PATH
 
 fe=""
 
@@ -304,6 +306,7 @@ if [ -z "$FRONT_END" ] ; then
    test "@ENABLE_ada@" = "ON"    && FRONT_END="$FRONT_END ada"
    test "@ENABLE_ocaml@" = "ON"  && FRONT_END="$FRONT_END ocaml"
    test "@ENABLE_lua@" = "ON"  && FRONT_END="$FRONT_END lua"
+   test "@ENABLE_d@" = "ON"  && FRONT_END="$FRONT_END d"
 fi
 
 # Find where the front-end scripts are by looking at the directory name of the
