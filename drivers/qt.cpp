@@ -242,6 +242,210 @@ void QtPLDriver::setSolid()
 	m_painterP->setPen(p);
 }
 
+#if 0
+/*---------------------------------------------------------------------
+  Font style and weight lookup tables
+  ---------------------------------------------------------------------*/
+/*$$ These are lookup tables what the actual wxWidgets codes are needed
+     to set the font 
+const wxFontFamily fontFamilyLookup[5] = {
+  wxFONTFAMILY_SWISS,        // sans-serif
+  wxFONTFAMILY_ROMAN,        // serif
+  wxFONTFAMILY_TELETYPE,     // monospace
+  wxFONTFAMILY_SCRIPT,       // script
+  wxFONTFAMILY_ROMAN         // symbol
+};
+
+const int fontStyleLookup[3] = {
+  wxFONTFLAG_DEFAULT,        // upright
+  wxFONTFLAG_ITALIC,         // italic
+  wxFONTFLAG_SLANT           // oblique
+};
+
+const int fontWeightLookup[2] = {
+  wxFONTFLAG_DEFAULT,       // medium
+  wxFONTFLAG_BOLD           // bold
+};
+*/
+
+void ProcessString( PLStream* pls, EscText* args )
+{
+  /* Check that we got unicode, warning message and return if not */
+  if( args->unicode_array_len == 0 ) {
+    printf( "Non unicode string passed to a cairo driver, ignoring\n" );
+    return;
+  }
+	
+  /* Check that unicode string isn't longer then the max we allow */
+  if( args->unicode_array_len >= 500 ) {
+    printf( "Sorry, the QT drivers only handles strings of length < %d\n", 500 );
+    return;
+  }
+  
+  /* Calculate the font size (in pixels) */
+  /*$$ this is driver specific - we need the actual pixels if raster device
+       otherwise correct scaled size (determined more or less empirically
+  fontSize = pls->chrht * VIRTUAL_PIXELS_PER_MM/scaley * 1.3; */
+  
+  /* calculate rotation of text */
+  plRotationShear( args->xform, &rotation, &shear, &stride);
+  rotation -= pls->diorot * M_PI / 2.0;
+  cos_rot = cos( rotation );
+  sin_rot = sin( rotation );
+
+  /* Set font color */
+  //$$ don't know if needed
+
+  /* First just determine text width and height, by processing the whole code
+     without do the actual drawing */
+  posX = args->x;
+  posY = args->y;
+  PSDrawText( args->unicode_array, args->unicode_array_len, false );
+  
+  /* now process the text again, this time draw it */
+  posX = (PLINT) (args->x-(args->just*textWidth)*scalex*cos_rot-(0.5*textHeight)*scalex*sin_rot);
+  posY = (PLINT) (args->y-(args->just*textWidth)*scaley*sin_rot+(0.5*textHeight)*scaley*cos_rot);
+  PSDrawText( args->unicode_array, args->unicode_array_len, true );
+}
+
+void PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
+{
+  int i = 0;
+
+  char utf8_string[max_string_length];
+  char utf8[5];
+  memset( utf8_string, '\0', max_string_length );
+
+  /* Get PLplot escape character */
+  char plplotEsc;
+  plgesc( &plplotEsc );
+
+  /* Get the curent font */
+  fontScale = 1.0;
+  yOffset = 0.0;
+  PLUNICODE fci;
+  plgfci( &fci );
+  PSSetFont( fci );
+  textWidth=0;
+  textHeight=0;
+
+  while( i < ucs4Len ) {
+    if( ucs4[i] < PL_FCI_MARK ) {	/* not a font change */
+      if( ucs4[i] != (PLUNICODE)plplotEsc ) {  /* a character to display */
+        ucs4_to_utf8( ucs4[i], utf8 );
+        strncat( utf8_string, utf8, max_string_length );
+      	i++;
+      	continue;
+      }
+      i++;
+      if( ucs4[i] == (PLUNICODE)plplotEsc ) {   /* a escape character to display */
+        ucs4_to_utf8( ucs4[i], utf8 );
+        strncat( utf8_string, utf8, max_string_length );
+        i++;
+        continue;
+      } else {
+      	if( ucs4[i] == (PLUNICODE)'u' ) {	/* Superscript */
+          // draw string so far
+          PSDrawTextToDC( utf8_string, drawText );
+          
+          // change font scale
+      		if( yOffset<0.0 )
+            fontScale *= 1.25;  /* Subscript scaling parameter */
+      		else
+            fontScale *= 0.8;  /* Subscript scaling parameter */
+          PSSetFont( fci );
+
+      		yOffset += scaley * fontSize * fontScale / 2.;
+      	}
+      	if( ucs4[i] == (PLUNICODE)'d' ) {	/* Subscript */
+          // draw string so far
+          PSDrawTextToDC( utf8_string, drawText );
+
+          // change font scale
+          double old_fontScale=fontScale;
+      		if( yOffset>0.0 )
+            fontScale *= 1.25;  /* Subscript scaling parameter */
+      		else
+            fontScale *= 0.8;  /* Subscript scaling parameter */
+          PSSetFont( fci );
+
+      		yOffset -= scaley * fontSize * old_fontScale / 2.;
+      	}
+      	if( ucs4[i] == (PLUNICODE)'-' ) {	/* underline */
+          // draw string so far
+          PSDrawTextToDC( utf8_string, drawText );
+
+          underlined = !underlined; 
+          PSSetFont( fci );
+      	}
+      	if( ucs4[i] == (PLUNICODE)'+' ) {	/* overline */
+          /* not implemented yet */
+        }
+        i++;
+      }
+    } else { /* a font change */
+      // draw string so far
+      PSDrawTextToDC( utf8_string, drawText );
+
+      // get new font
+      fci = ucs4[i];
+      PSSetFont( fci );
+      i++;
+    }
+  }
+
+  PSDrawTextToDC( utf8_string, drawText );
+}
+
+void PSSetFont( PLUNICODE fci )
+{
+  unsigned char fontFamily, fontStyle, fontWeight;
+
+  plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
+  plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
+  plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );  
+
+  /*$$ In the next part I delete the old font, get a new font depending
+       on fontFamily, fontStyle, fontWeight, set underlined option
+       and set the font */
+  
+  /*if( m_font )
+    delete m_font;
+  
+  m_font=wxFont::New((int) (fontSize*fontScale<4 ? 4 : fontSize*fontScale),
+                     fontFamilyLookup[fontFamily],
+                     fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
+  m_font->SetUnderlined( underlined );
+  m_dc->SetFont( *m_font );*/
+}
+
+void PSDrawTextToDC( char* utf8_string, bool drawText )
+{
+  /*$$ width, height; d, l are not used here 
+  wxCoord w, h, d, l; */
+
+  /*$$ convert utf8 to current Encoding and get text extent
+  wxString str(wxConvUTF8.cMB2WC(utf8_string), *wxConvCurrent);
+  m_dc->GetTextExtent( str, &w, &h, &d, &l ); */
+  
+  /*$$ do the actual drawing (second time)
+  if( drawText )
+    m_dc->DrawRotatedText( str, (wxCoord) ((posX-yOffset*sin_rot)/scalex),
+                           (wxCoord) (height-(posY+yOffset*cos_rot)/scaley), 
+                           rotation*180.0/M_PI ); */
+  
+  /*$$ calculate the new position where the next text will be written,
+       and determine textWidth and textHeight
+  posX += (PLINT) (w*scalex*cos_rot);
+  posY += (PLINT) (w*scalex*sin_rot);
+  textWidth += w;
+  textHeight = (wxCoord) (textHeight>(h+yOffset/scaley) ? textHeight : (h+yOffset/scaley)); */
+  
+  /* clear string as we don't need it anymore */
+  memset( utf8_string, '\0', max_string_length );
+}
+#endif
+
 //////////// Buffered driver ///////////////////////
 
 QtPLBufferedDriver::QtPLBufferedDriver(PLINT i_iWidth, PLINT i_iHeight):
@@ -572,7 +776,12 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 			delete[] xa;
 			delete[] ya;
 			break;
-            
+      
+    case PLESC_HAS_TEXT:
+      /*$$ call the generic ProcessString function
+      ProcessString( pls, (EscText *)ptr ); */
+      break;        
+    
 		default: break;
 	}
 }
@@ -668,7 +877,16 @@ void plD_init_rasterqt(PLStream * pls)
 	pls->dev_clear=1;
 	pls->termin=0;
 	pls->page = 0;
-	
+
+  /*$$ these variables must be 1 so that we can process
+       unicode text on our own	
+  pls->dev_text = 1; // want to draw text
+  pls->dev_unicode = 1; // want unicode */
+
+  /*$$ if you want to use the hershey font only for the
+       symbols set this to 1
+  pls->dev_hrshsym = 1; */
+  
 	// Initialised with the default (A4) size
 	pls->dev=new QtRasterDevice;
 	
