@@ -90,18 +90,21 @@ if(ENABLE_DYNDRIVERS)
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
       )
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
-    if(SOURCE_ROOT_NAME STREQUAL "qt")
-      qt4_wrap_cpp(QT_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/qt.h)
-      # Temporary debugging message.
-      message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
+    if(SOURCE_ROOT_NAME STREQUAL "qt" AND PLD_qtwidget)
+      qt4_wrap_cpp(
+        QT_MOC_OUTFILES 
+	${CMAKE_CURRENT_SOURCE_DIR}/qt.h
+	OPTIONS "-DPLD_qtwidget=ON"
+	)
+      # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
       set_source_files_properties(
       ${QT_MOC_OUTFILES}
       PROPERTIES GENERATED "ON"
       )
       add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE} ${QT_MOC_OUTFILES})
-    else(SOURCE_ROOT_NAME STREQUAL "qt")
+    else(SOURCE_ROOT_NAME STREQUAL "qt" AND PLD_qtwidget)
         add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
-    endif(SOURCE_ROOT_NAME STREQUAL "qt")
+    endif(SOURCE_ROOT_NAME STREQUAL "qt" AND PLD_qtwidget)
     # ${SOURCE_ROOT_NAME}_LINK_FLAGS is ideally a list of the full path names
     # to libraries determined with find_library.  However, the list can also
     # include link flags such as the -L and -l form of specifying libraries,
