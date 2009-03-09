@@ -67,7 +67,7 @@ printf("page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n"
 if ($xp2 != $xp1 || $yp2 != $yp1 || $xleng2 != $xleng1 || $yleng2 != $yleng1 || 
     $xoff2 != $xoff1 || $yoff2 != $yoff1 ) {
     printf STDERR ("plgpage test failed\n");
-    status = 1;
+    $status = 1;
 }
 # Restore values set initially by plparseopts.
 plspage($xp0, $yp0, $xleng0, $yleng0, $xoff0, $yoff0);
