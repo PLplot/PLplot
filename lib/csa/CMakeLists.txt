@@ -21,38 +21,38 @@
 
 if(WITH_CSA)
 
-set(csirocsa_LIB_SRCS
-csa.c
-)
+  set(csirocsa_LIB_SRCS
+    csa.c
+    )
 
-if(BUILD_SHARED_LIBS)
-  SET_SOURCE_FILES_PROPERTIES(${csirocsa_LIB_SRCS}
+  if(BUILD_SHARED_LIBS)
+    set_source_files_properties(${csirocsa_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-  )
-endif(BUILD_SHARED_LIBS)
+      )
+  endif(BUILD_SHARED_LIBS)
 
-add_library(csirocsa ${csirocsa_LIB_SRCS})
+  add_library(csirocsa ${csirocsa_LIB_SRCS})
 
-SET_TARGET_PROPERTIES(csirocsa
-PROPERTIES SOVERSION ${csirocsa_SOVERSION} VERSION ${csirocsa_VERSION}
-INSTALL_NAME_DIR "${LIB_DIR}"
-)
+  set_target_properties(csirocsa
+    PROPERTIES SOVERSION ${csirocsa_SOVERSION} VERSION ${csirocsa_VERSION}
+    INSTALL_NAME_DIR "${LIB_DIR}"
+    )
 
-if(MATH_LIB)
-  target_link_libraries(csirocsa ${MATH_LIB})
-endif(MATH_LIB)  
+  if(MATH_LIB)
+    target_link_libraries(csirocsa ${MATH_LIB})
+  endif(MATH_LIB)  
 
-install(TARGETS csirocsa DESTINATION
-ARCHIVE DESTINATION ${LIB_DIR}
-LIBRARY DESTINATION ${LIB_DIR}
-RUNTIME DESTINATION ${BIN_DIR}
-)
+  install(TARGETS csirocsa DESTINATION
+    ARCHIVE DESTINATION ${LIB_DIR}
+    LIBRARY DESTINATION ${LIB_DIR}
+    RUNTIME DESTINATION ${BIN_DIR}
+    )
 
-set(csa_DOCFILES
-README
-README.1st
-)
-install(FILES README DESTINATION ${DOC_DIR} RENAME README.csa)
-install(FILES README.1st DESTINATION ${DOC_DIR} RENAME README.1st.csa)
+  set(csa_DOCFILES
+    README
+    README.1st
+    )
+  install(FILES README DESTINATION ${DOC_DIR} RENAME README.csa)
+  install(FILES README.1st DESTINATION ${DOC_DIR} RENAME README.1st.csa)
 
 endif(WITH_CSA)
