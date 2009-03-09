@@ -21,43 +21,43 @@
 
 if(HAVE_QHULL)
 
-set(csironn_LIB_SRCS
-delaunay.c
-hash.c
-istack.c
-lpi.c
-nnai.c
-nnpi.c
-nncommon.c
-)
+  set(csironn_LIB_SRCS
+    delaunay.c
+    hash.c
+    istack.c
+    lpi.c
+    nnai.c
+    nnpi.c
+    nncommon.c
+    )
 
-if(BUILD_SHARED_LIBS)
-  SET_SOURCE_FILES_PROPERTIES( ${csironn_LIB_SRCS}
+  if(BUILD_SHARED_LIBS)
+    set_source_files_properties( ${csironn_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-  )
-endif(BUILD_SHARED_LIBS)
+      )
+  endif(BUILD_SHARED_LIBS)
 
-add_library(csironn ${csironn_LIB_SRCS})
-set_target_properties(
-csironn
-PROPERTIES
-SOVERSION ${csironn_SOVERSION}
-VERSION ${csironn_VERSION}
-COMPILE_FLAGS "-I${QHULL_INCLUDE_DIRS}"
-INSTALL_NAME_DIR "${LIB_DIR}"
-)
-target_link_libraries(csironn ${QHULL_LIBRARIES})
-install(TARGETS csironn
-ARCHIVE DESTINATION ${LIB_DIR}
-LIBRARY DESTINATION ${LIB_DIR}
-RUNTIME DESTINATION ${BIN_DIR}
-)
+  add_library(csironn ${csironn_LIB_SRCS})
+  set_target_properties(
+    csironn
+    PROPERTIES
+    SOVERSION ${csironn_SOVERSION}
+    VERSION ${csironn_VERSION}
+    COMPILE_FLAGS "-I${QHULL_INCLUDE_DIRS}"
+    INSTALL_NAME_DIR "${LIB_DIR}"
+    )
+  target_link_libraries(csironn ${QHULL_LIBRARIES})
+  install(TARGETS csironn
+    ARCHIVE DESTINATION ${LIB_DIR}
+    LIBRARY DESTINATION ${LIB_DIR}
+    RUNTIME DESTINATION ${BIN_DIR}
+    )
 
-set(nn_DOCFILES
-README
-README.1st
-)
-install(FILES README DESTINATION ${DOC_DIR} RENAME README.nn)
-install(FILES README.1st DESTINATION ${DOC_DIR} RENAME README.1st.nn)
+  set(nn_DOCFILES
+    README
+    README.1st
+    )
+  install(FILES README DESTINATION ${DOC_DIR} RENAME README.nn)
+  install(FILES README.1st DESTINATION ${DOC_DIR} RENAME README.1st.nn)
 
 endif(HAVE_QHULL)
