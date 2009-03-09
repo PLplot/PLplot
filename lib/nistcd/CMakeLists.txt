@@ -29,9 +29,13 @@ if(PLD_cgm)
   set( cd_LIB_SRCS cd.c )
   set( cd_LIB_HDRS cd.h defines.h )
 
-  if(APPLE)
-    set( cd_ADD_DEFINES "-DNOMALLOCH" )
-  endif(APPLE)
+  # Bypass "#include <malloc.h>" in all code where it appears since
+  # being too specific like this fails on some platforms (e.g., OS X), and
+  # the proper form of the malloc.h include should be dragged in by 
+  # ""#include stdlib.h" in any case.
+  # There may be some arcane platforms where we should not define this,
+  # but for now, at least, try it for all platforms.
+  set( cd_ADD_DEFINES "-DNOMALLOCH" )
 
   if(BUILD_SHARED_LIBS)
     set_source_files_properties( ${cd_LIB_SRCS}
