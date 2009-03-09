@@ -19,12 +19,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 if(ENABLE_d)
-set(d_interface_INSTALLED_HEADERS
-plplot.d
-)
+  set(d_interface_INSTALLED_HEADERS plplot.d )
 
-install(FILES
-${d_interface_INSTALLED_HEADERS}
-DESTINATION ${INCLUDE_DIR}
-)
+  install(FILES ${d_interface_INSTALLED_HEADERS}
+    DESTINATION ${INCLUDE_DIR}
+  )
 endif(ENABLE_d)
