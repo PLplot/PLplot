@@ -21,28 +21,12 @@
 #
 # The following variables are set / modified
 #
-# PLD_cgm            - ON means the cgm devic is enabled.
-# cgm_COMPILE_FLAGS  - COMPILE_FLAGS (string) required to compile cgm
-# 		         device driver.
-# cgm_LINK_FLAGS     - LINK_FLAGS (string) for dynamic cgm device driver.
-# DRIVERS_LINK_FLAGS - list of LINK_FLAGS for all static device drivers.
-#
-# Include file searches use FindPath. To add extra search directories
-# set the environment variable CMAKE_INCLUDE_PATH.
-# Library searches use FindLibrary. To add extra search directories
-# set the environment variable CMAKE_LIBRARY_PATH.
-# See cmake documentation for further details.
+# cgm_TARGETS	     - list of targets which the cgm dynamic device
+# 		       depends on.
+# DRIVERS_LINK_FLAGS - list of targets which the cgm static device
+# 		       depends on.
 
 if(PLD_cgm)
-  find_package(CD)
-  if(CD_FOUND)
-    set(cgm_COMPILE_FLAGS "-I${CD_INCLUDE_DIRS}")
-    set(cgm_LINK_FLAGS ${CD_LIBRARIES})
-    set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${cgm_LINK_FLAGS})
-  else(CD_FOUND)
-    message(STATUS 
-    "WARNING: cd.h and/or libcd.a not found.  Setting PLD_cgm to OFF."
-    )
-    set(PLD_cgm OFF CACHE BOOL "Enable cgm device" FORCE)    
-  endif(CD_FOUND)
+  set(cgm_TARGETS nistcd)
+  set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} nistcd)
 endif(PLD_cgm)
