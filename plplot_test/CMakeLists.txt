@@ -184,7 +184,7 @@ if(SH_EXECUTABLE)
       )
   endif(ENABLE_d)
 
-# Run C examples with different drivers
+  # Run C examples with different drivers
   if(PLD_psc)
     if (NOT TEST_DEVICE STREQUAL "psc")
       add_test(examples_psttfc
@@ -194,76 +194,112 @@ if(SH_EXECUTABLE)
   endif(PLD_psc)
 
   if(PLD_psttf)
-    if (NOT TEST_DEVICE STREQUAL "psttfc")
-      add_test(examples_psttfc
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psttfc"
-	)
-    endif(NOT TEST_DEVICE STREQUAL "psttfc")
+    add_test(examples_psttfc
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psttfc"
+      )
   endif(PLD_psttf)
 
   if(PLD_pstex)
-    if (NOT TEST_DEVICE STREQUAL "pstex")
-      add_test(examples_pstex
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pstex"
-	)
-    endif(NOT TEST_DEVICE STREQUAL "pstex")
+    add_test(examples_pstex
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pstex"
+      )
   endif(PLD_pstex)
 
   if(PLD_png)
-    if (NOT TEST_DEVICE STREQUAL "png")
-      add_test(examples_png
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=png"
-	)
-    endif(NOT TEST_DEVICE STREQUAL "png")
+    add_test(examples_png
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=png"
+      )
   endif(PLD_png)
 
   if(PLD_svg)
-    if (NOT TEST_DEVICE STREQUAL "svg")
-      add_test(examples_svg
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svg"
-	)
-    endif(NOT TEST_DEVICE STREQUAL "svg")
+    add_test(examples_svg
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svg"
+      )
   endif(PLD_svg)
 
   if(PLD_plmeta)
-    if (NOT TEST_DEVICE STREQUAL "plmeta")
-      add_test(examples_plmeta
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=plmeta"
-	)
-    endif(NOT TEST_DEVICE STREQUAL "plmeta")
+    add_test(examples_plmeta
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=plmeta"
+      )
   endif(PLD_plmeta)
 
   if(PLD_pscairo)
-    if (NOT TEST_DEVICE STREQUAL "pscairo")
-      add_test(examples_pscairo
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pscairo"
-	)
-    endif(NOT TEST_DEVICE STREQUAL "pscairo")
+    add_test(examples_pscairo
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pscairo"
+      )
   endif(PLD_pscairo)
 
   if(PLD_pngcairo)
-    if (NOT TEST_DEVICE STREQUAL "pngcairo")
-      add_test(examples_pngcairo
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngcairo"
-	)
-    endif(NOT TEST_DEVICE STREQUAL "pngcairo")
+    add_test(examples_pngcairo
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngcairo"
+      )
   endif(PLD_pngcairo)
 
   if(PLD_xfig)
-    if (NOT TEST_DEVICE STREQUAL "xfig")
-      add_test(examples_xfig
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=xfig"
-	)
-    endif(NOT TEST_DEVICE STREQUAL "xfig")
+    add_test(examples_xfig
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=xfig"
+      )
   endif(PLD_xfig)
 
   if(PLD_gif)
-    if (NOT TEST_DEVICE STREQUAL "gif")
-      add_test(examples_gif
-	${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=gif"
-	)
-    endif(NOT TEST_DEVICE STREQUAL "gif")
+    add_test(examples_gif
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=gif"
+      )
   endif(PLD_gif)
+
+  if(PLD_cgm)
+    add_test(examples_cgm
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=cgm"
+      )
+  endif(PLD_cgm)
+
+  if(PLD_bmpqt)
+    add_test(examples_bmpqt
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=bmpqt"
+      )
+  endif(PLD_bmpqt)
+
+  if(PLD_jpgqt)
+    add_test(examples_jpgqt
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=jpgqt"
+      )
+  endif(PLD_jpgqt)
+
+  if(PLD_pngqt)
+    add_test(examples_pngqt
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngqt"
+      )
+  endif(PLD_pngqt)
+
+  if(PLD_ppmqt)
+    add_test(examples_ppmqt
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=ppmqt"
+      )
+  endif(PLD_ppmqt)
+
+  if(PLD_tiffqt)
+    add_test(examples_tiffqt
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=tiffqt"
+      )
+  endif(PLD_tiffqt)
+
+  if(PLD_svgqt)
+    add_test(examples_svgqt
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svgqt"
+      )
+  endif(PLD_svgqt)
+
+  if(PLD_epsqt)
+    add_test(examples_epsqt
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=epsqt"
+      )
+  endif(PLD_epsqt)
+
+  if(PLD_pdfqt)
+    add_test(examples_pdfqt
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pdfqt"
+      )
+  endif(PLD_pdfqt)
 
   if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
     configure_file(
