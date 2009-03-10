@@ -57,6 +57,7 @@ INDEX
 
 1. Changes relative to PLplot 5.9.2 (the previous development release)
 
+1.1 libnistcd (a.k.a. libcd) now built internally for -dev cgm
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -85,10 +86,41 @@ examples
 2.22 Internal changes to function visibility
 2.23 Dynamic driver support in Windows
 2.24 Documentation updates
+2.25 libnistcd (a.k.a. libcd) now built internally for -dev cgm
+
 
 
 1. Changes relative to PLplot 5.9.2 (the previous development release)
 
+1.1 libnistcd (a.k.a. libcd) now built internally for -dev cgm
+
+CGM format is a long-established (since 1987) open standard for vector
+graphics that is supported by w3c (see http://www.w3.org/Graphics/WebCGM/).
+PLplot has long had a cgm device driver which depended on the (mostly) 
+public domain libcd library that was distributed in the mid 90's by National
+Institute of Standards and Technology (NIST) and which is still available
+from http://www.pa.msu.edu/ftp/pub/unix/cd1.3.tar.gz.  As a convenience
+to our -dev cgm users, we have brought that
+source code in house under lib/nistcd and now build libnistcd routinely
+as part of our ordinary builds.  The only changes we have made to the
+cd1.3 source code is visibility changes in cd.h and swapping the sense of
+the return codes for the test executables so that 0 is returned on success
+and 1 on failure.  If you want to test libnistcd on your platform,
+please run
+
+make test_nistcd
+
+in the top-level build tree.  (That tests runs all the test executables
+that are built as part of cd1.3 and compares the results that are generated
+with the *.cgm files that are supplied as part of cd1.3.)
+
+Two applications that convert and/or display CGM results on Linux are
+ralcgm (which is called by the ImageMagick convert and display applications)
+and uniconvertor.
+
+Some additional work on -dev cgm is required to implement antialiasing and
+non-Hershey fonts, but both those should be possible using libnistcd according
+to the text that is shown by lib/nistcd/cdtext.cgm and lib/nistcd/cdexp1.cgm.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -386,4 +418,34 @@ The docbook documentation has been updated to include many of the
 C-specific functions (for example plAlloc2dGrid) which are not part 
 of the common API, but are used in the examples and may be helpful 
 for plplot users.
+
+2.25 libnistcd (a.k.a. libcd) now built internally for -dev cgm
+
+CGM format is a long-established (since 1987) open standard for vector
+graphics that is supported by w3c (see http://www.w3.org/Graphics/WebCGM/).
+PLplot has long had a cgm device driver which depended on the (mostly) 
+public domain libcd library that was distributed in the mid 90's by National
+Institute of Standards and Technology (NIST) and which is still available
+from http://www.pa.msu.edu/ftp/pub/unix/cd1.3.tar.gz.  As a convenience
+to our -dev cgm users, we have brought that
+source code in house under lib/nistcd and now build libnistcd routinely
+as part of our ordinary builds.  The only changes we have made to the
+cd1.3 source code is visibility changes in cd.h and swapping the sense of
+the return codes for the test executables so that 0 is returned on success
+and 1 on failure.  If you want to test libnistcd on your platform,
+please run
+
+make test_nistcd
+
+in the top-level build tree.  (That tests runs all the test executables
+that are built as part of cd1.3 and compares the results that are generated
+with the *.cgm files that are supplied as part of cd1.3.)
+
+Two applications that convert and/or display CGM results on Linux are
+ralcgm (which is called by the ImageMagick convert and display applications)
+and uniconvertor.
+
+Some additional work on -dev cgm is required to implement antialiasing and
+non-Hershey fonts, but both those should be possible using libnistcd according
+to the text that is shown by lib/nistcd/cdtext.cgm and lib/nistcd/cdexp1.cgm.
 
