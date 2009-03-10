@@ -200,6 +200,42 @@ if(NOT DIFF_EXECUTABLE OR NOT TAIL_EXECUTABLE)
   set(COMPARE_COMMENT "#")
 endif(NOT DIFF_EXECUTABLE OR NOT TAIL_EXECUTABLE)
 
+if(NOT PLD_cgm)
+  set(CGM_COMMENT "#")
+endif(NOT PLD_cgm)
+
+if(NOT PLD_bmpqt)
+  set(BMPQT_COMMENT "#")
+endif(NOT PLD_bmpqt)
+
+if(NOT PLD_jpgqt)
+  set(JPGQT_COMMENT "#")
+endif(NOT PLD_jpgqt)
+
+if(NOT PLD_pngqt)
+  set(PNGQT_COMMENT "#")
+endif(NOT PLD_pngqt)
+
+if(NOT PLD_ppmqt)
+  set(PPMQT_COMMENT "#")
+endif(NOT PLD_ppmqt)
+
+if(NOT PLD_tiffqt)
+  set(TIFFQT_COMMENT "#")
+endif(NOT PLD_tiffqt)
+
+if(NOT PLD_svgqt)
+  set(SVGQT_COMMENT "#")
+endif(NOT PLD_svgqt)
+
+if(NOT PLD_epsqt)
+  set(EPSQT_COMMENT "#")
+endif(NOT PLD_epsqt)
+
+if(NOT PLD_pdfqt)
+  set(PDFQT_COMMENT "#")
+endif(NOT PLD_pdfqt)
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
   ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples

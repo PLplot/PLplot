@@ -154,67 +154,101 @@ test_interactive: c/x01c@EXEEXT@
 @PDFCAIRO_COMMENT@	@echo Generate C results for pdfcairo device
 @PDFCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pdfcairo
 @PDFCAIRO_COMMENT@test: x01c.pdfcairo
-@PDFCAIRO_COMMENT@@COMPARE_COMMENT@compare: x01c.pdfcairo
 
 @PNGCAIRO_COMMENT@x01c01.pngcairo: c/x01c@EXEEXT@
 @PNGCAIRO_COMMENT@	@echo Generate C results for pngcairo device
 @PNGCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pngcairo
 @PNGCAIRO_COMMENT@test: x01c01.pngcairo
-@PNGCAIRO_COMMENT@@COMPARE_COMMENT@compare: x01c01.pngcairo
 
 @PSCAIRO_COMMENT@x01c.pscairo: c/x01c@EXEEXT@
 @PSCAIRO_COMMENT@	@echo Generate C results for pscairo device
 @PSCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pscairo
 @PSCAIRO_COMMENT@test: x01c.pscairo
-@PSCAIRO_COMMENT@@COMPARE_COMMENT@compare: x01c.pscairo
 
 @SVGCAIRO_COMMENT@x01c01.svgcairo: c/x01c@EXEEXT@
 @SVGCAIRO_COMMENT@	@echo Generate C results for svgcairo device
 @SVGCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=svgcairo
 @SVGCAIRO_COMMENT@test: x01c01.svgcairo
-@SVGCAIRO_COMMENT@@COMPARE_COMMENT@compare: x01c01.svgcairo
 
 @GIF_COMMENT@x01c01.gif : c/x01c@EXEEXT@
 @GIF_COMMENT@	@echo Generate C results for gif device
 @GIF_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=gif
 @GIF_COMMENT@test: x01c01.gif
-@GIF_COMMENT@@COMPARE_COMMENT@compare: x01c01.gif
 
 @JPEG_COMMENT@x01c01.jpeg: c/x01c@EXEEXT@
 @JPEG_COMMENT@	@echo Generate C results for jpeg device
 @JPEG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=jpeg
 @JPEG_COMMENT@test: x01c01.jpeg
-@JPEG_COMMENT@@COMPARE_COMMENT@compare: x01c01.jpeg
 
 @PNG_COMMENT@x01c01.png: c/x01c@EXEEXT@
 @PNG_COMMENT@	@echo Generate C results for png device
 @PNG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=png
 @PNG_COMMENT@test: x01c01.png
-@PNG_COMMENT@@COMPARE_COMMENT@compare: x01c01.png
 
 @PSTTFC_COMMENT@x01c.psttfc: c/x01c@EXEEXT@
 @PSTTFC_COMMENT@	@echo Generate C results for psttfc device
 @PSTTFC_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=psttfc
 @PSTTFC_COMMENT@test: x01c.psttfc
-@PSTTFC_COMMENT@@COMPARE_COMMENT@compare: x01c.psttfc
 
 @SVG_COMMENT@x01c01.svg: c/x01c@EXEEXT@
 @SVG_COMMENT@	@echo Generate C results for svg device
 @SVG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=svg
 @SVG_COMMENT@test: x01c01.svg
-@SVG_COMMENT@@COMPARE_COMMENT@compare: x01c01.svg
 
 @XFIG_COMMENT@x01c01.xfig: c/x01c@EXEEXT@
 @XFIG_COMMENT@	@echo Generate C results for xfig device
 @XFIG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=xfig
 @XFIG_COMMENT@test: x01c01.xfig
-@XFIG_COMMENT@@COMPARE_COMMENT@compare: x01c01.xfig
 
 @PSTEX_COMMENT@x01c.pstex: c/x01c@EXEEXT@
 @PSTEX_COMMENT@	@echo Generate C results for pstex device
 @PSTEX_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pstex
 @PSTEX_COMMENT@test: x01c.pstex
-@PSTEX_COMMENT@@COMPARE_COMMENT@compare: x01c.pstex
+
+@CGM_COMMENT@x01c.cgm : c/x01c@EXEEXT@
+@CGM_COMMENT@	@echo Generate C results for cgm device
+@CGM_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=cgm
+@CGM_COMMENT@test: x01c.cgm
+
+@BMPQT_COMMENT@x01c01.bmpqt : c/x01c@EXEEXT@
+@BMPQT_COMMENT@	@echo Generate C results for bmpqt device
+@BMPQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=bmpqt
+@BMPQT_COMMENT@test: x01c01.bmpqt
+
+@JPGQT_COMMENT@x01c01.jpgqt : c/x01c@EXEEXT@
+@JPGQT_COMMENT@	@echo Generate C results for jpgqt device
+@JPGQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=jpgqt
+@JPGQT_COMMENT@test: x01c01.jpgqt
+
+@PNGQT_COMMENT@x01c01.pngqt : c/x01c@EXEEXT@
+@PNGQT_COMMENT@	@echo Generate C results for pngqt device
+@PNGQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pngqt
+@PNGQT_COMMENT@test: x01c01.pngqt
+
+@PPMQT_COMMENT@x01c01.ppmqt : c/x01c@EXEEXT@
+@PPMQT_COMMENT@	@echo Generate C results for ppmqt device
+@PPMQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=ppmqt
+@PPMQT_COMMENT@test: x01c01.ppmqt
+
+@TIFFQT_COMMENT@x01c01.tiffqt : c/x01c@EXEEXT@
+@TIFFQT_COMMENT@	@echo Generate C results for tiffqt device
+@TIFFQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=tiffqt
+@TIFFQT_COMMENT@test: x01c01.tiffqt
+
+@SVGQT_COMMENT@x01c01.svgqt : c/x01c@EXEEXT@
+@SVGQT_COMMENT@	@echo Generate C results for svgqt device
+@SVGQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=svgqt
+@SVGQT_COMMENT@test: x01c01.svgqt
+
+@EPSQT_COMMENT@x01c01.epsqt : c/x01c@EXEEXT@
+@EPSQT_COMMENT@	@echo Generate C results for epsqt device
+@EPSQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=epsqt
+@EPSQT_COMMENT@test: x01c01.epsqt
+
+@PDFQT_COMMENT@x01c01.pdfqt : c/x01c@EXEEXT@
+@PDFQT_COMMENT@	@echo Generate C results for pdfqt device
+@PDFQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pdfqt
+@PDFQT_COMMENT@test: x01c01.pdfqt
 
 @COMPARE_COMMENT@compare: 
 @COMPARE_COMMENT@	@echo Compare non-C language psc and stdout results with corresponding C results
