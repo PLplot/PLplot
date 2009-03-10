@@ -13,7 +13,7 @@
 
 /* Device info */
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_pstex =
-  "pstex:Combined Postscript/LaTeX files:0:pstex:41:pstex";
+  "pstex:Combined Postscript/LaTeX files:0:pstex:41:pstex\n";
 
 /*--------------------------------------------------------------------------*\
  * plD_init_pstex()

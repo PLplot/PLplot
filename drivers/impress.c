@@ -10,7 +10,7 @@
 #include "drivers.h"
 
 /* Device info */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_impress = "imp:Impress File:0:impress:37:imp";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_impress = "imp:Impress File:0:impress:37:imp\n";
 
 /* Function prototypes */
 

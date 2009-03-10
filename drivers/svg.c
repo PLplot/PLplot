@@ -54,7 +54,7 @@
 
 /* local variables */
 
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_svg = "svg:Scalable Vector Graphics (SVG 1.1):1:svg:57:svg";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_svg = "svg:Scalable Vector Graphics (SVG 1.1):1:svg:57:svg\n";
 
 static int already_warned = 0;
 

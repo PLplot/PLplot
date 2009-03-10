@@ -80,7 +80,7 @@
 #endif
 
 /* Device info */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_tkwin = "tkwin:New tk driver:1:tkwin:45:tkwin";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_tkwin = "tkwin:New tk driver:1:tkwin:45:tkwin\n";
 
 
 void *	ckcalloc(size_t nmemb, size_t size);

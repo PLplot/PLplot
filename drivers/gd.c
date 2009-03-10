@@ -140,7 +140,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_gd =
   "jpeg:JPEG file:0:gd:40:jpeg\n"
 #endif
 #if defined(PLD_gif)
-  "gif:GIF file:0:gd:47:gif"
+  "gif:GIF file:0:gd:47:gif\n"
 #endif
 ;
 

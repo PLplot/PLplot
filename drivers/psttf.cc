@@ -58,7 +58,7 @@ using namespace std;
 
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_psttf = 
   "psttf:PostScript File (monochrome):0:psttf:55:psttfm\n"
-  "psttfc:PostScript File (color):0:psttf:56:psttfc";
+  "psttfc:PostScript File (color):0:psttf:56:psttfc\n";
 
 
 /* Prototypes for functions in this file. */

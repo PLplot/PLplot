@@ -37,7 +37,7 @@
 #include <string.h>
 
 /* Device info */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_plmeta = "plmeta:PLplot Native Meta-File:0:plmeta:26:plm";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_plmeta = "plmeta:PLplot Native Meta-File:0:plmeta:26:plm\n";
 
 
 void plD_dispatch_init_plm	( PLDispatchTable *pdt );

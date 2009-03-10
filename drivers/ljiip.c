@@ -28,7 +28,7 @@
 
 /* Device info */
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_ljiip =
-  "ljiip:LaserJet IIp/deskjet compressed graphics:0:ljiip:32:ljiip";
+  "ljiip:LaserJet IIp/deskjet compressed graphics:0:ljiip:32:ljiip\n";
 
 /* Function prototypes */
 

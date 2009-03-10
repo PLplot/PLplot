@@ -23,7 +23,7 @@
 
 /* Device info */
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_ljii =
-  "ljii:LaserJet II Bitmap File (150 dpi):0:ljii:33:ljii";
+  "ljii:LaserJet II Bitmap File (150 dpi):0:ljii:33:ljii\n";
 
 /* Function prototypes */
 

@@ -87,7 +87,7 @@ extern FCI_to_FontName_Table FontLookup[N_TrueTypeLookup];
 
 
 /* Device info */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_gcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw\n";
 
 /* Global driver options */
 

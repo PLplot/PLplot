@@ -49,7 +49,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_tek =
   "vlt:VLT vt100/tek emulator:1:tek:23:vlt\n"
 #endif
 #if defined(PLD_xterm)
-  "xterm:Xterm Window:1:tek:18:xterm"
+  "xterm:Xterm Window:1:tek:18:xterm\n"
 #endif
 ;
 

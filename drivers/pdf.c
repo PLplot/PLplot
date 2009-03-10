@@ -88,7 +88,7 @@ typedef struct {
 } pdfdev;
 
 /* local variables */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_pdf = "pdf:Portable Document Format PDF:1:pdf:58:pdf";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_pdf = "pdf:Portable Document Format PDF:1:pdf:58:pdf\n";
 static jmp_buf env;
 
 /***********************************************************************

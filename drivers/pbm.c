@@ -14,7 +14,7 @@
 #include "drivers.h"
 
 /* Device info */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_pbm = "pbm:PDB (PPM) Driver:0:pbm:38:pbm";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_pbm = "pbm:PDB (PPM) Driver:0:pbm:38:pbm\n";
 
 
 void plD_dispatch_init_pbm	( PLDispatchTable *pdt );

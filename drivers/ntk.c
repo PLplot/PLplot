@@ -34,7 +34,7 @@
 #include <tk.h>
 
 /* Device info */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_ntk = "ntk:New tk driver:1:ntk:43:ntk";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_ntk = "ntk:New tk driver:1:ntk:43:ntk\n";
 
 
 void plD_dispatch_init_ntk	( PLDispatchTable *pdt );

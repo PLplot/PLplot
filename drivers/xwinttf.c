@@ -57,7 +57,7 @@
 
 /* local variables */
 
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_xwinttf = "xwinttf:TrueType X Windows Driver:1:xwinttf:59:xwinttf";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_xwinttf = "xwinttf:TrueType X Windows Driver:1:xwinttf:59:xwinttf\n";
 
 static int currentPage = -1;
 static int XScreen;

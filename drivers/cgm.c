@@ -81,7 +81,7 @@
 #include <cd.h>
 
 /* Device info */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_cgm = "cgm:CGM file:0:cgm:44:cgm";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_cgm = "cgm:CGM file:0:cgm:44:cgm\n";
 
 /* Prototypes for functions in this file. */
 
