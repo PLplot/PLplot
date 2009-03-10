@@ -54,18 +54,90 @@ if(PLD_cgm)
 
   option(TEST_NISTCD "Test libnistcd" ON)
   if(TEST_NISTCD)
-    # build and run applications to test libnistcd.
-    set( cd_EXE color16 cdsimple cdtext cdmulti cdexpert )
+    # build applications to test libnistcd.
+    set( cd_EXE cdexpert cdmulti cdsimple cdtest cdtext color16 )
     foreach(EXE ${cd_EXE})
       add_executable( ${EXE} ${EXE}.c )
-      if(APPLE)
-        set_source_files_properties( ${EXE}.c
-          PROPERTIES COMPILE_FLAGS "-DNOMALLOCH"
-          )
-      endif(APPLE)    
+      set_source_files_properties( ${EXE}.c
+        PROPERTIES COMPILE_FLAGS "${cd_ADD_DEFINES}"
+        )
       target_link_libraries( ${EXE} nistcd )
+      get_target_property(${EXE}_LOC ${EXE} LOCATION)
     endforeach(EXE ${cd_EXE})
-  endif(TEST_NISTCD)
+    # Create tests for libnistcd.
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd)
+
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdexp1.cgm
+      COMMAND ${cdexpert_LOC}
+      COMMAND ${CMAKE_COMMAND} -E compare_files
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdexp1.cgm
+      ${CMAKE_CURRENT_SOURCE_DIR}/cdexp1.cgm
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd
+      DEPENDS ${cdexpert_LOC}
+      )
+    
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdmulti.cgm
+      COMMAND ${cdmulti_LOC}
+      COMMAND ${CMAKE_COMMAND} -E compare_files
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdmulti.cgm
+      ${CMAKE_CURRENT_SOURCE_DIR}/cdmulti.cgm
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd
+      DEPENDS ${cdmulti_LOC}
+      )
+    
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdsimple.cgm
+      COMMAND ${cdsimple_LOC}
+      COMMAND ${CMAKE_COMMAND} -E compare_files
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdsimple.cgm
+      ${CMAKE_CURRENT_SOURCE_DIR}/cdsimple.cgm
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd
+      DEPENDS ${cdsimple_LOC}
+      )
+    
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdout.cgm
+      COMMAND ${cdtest_LOC}
+      COMMAND ${CMAKE_COMMAND} -E compare_files
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdout.cgm
+      ${CMAKE_CURRENT_SOURCE_DIR}/cdout.cgm
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd
+      DEPENDS ${cdtest_LOC}
+      )
+    
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdtext.cgm
+      COMMAND ${cdtext_LOC}
+      COMMAND ${CMAKE_COMMAND} -E compare_files
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdtext.cgm
+      ${CMAKE_CURRENT_SOURCE_DIR}/cdtext.cgm
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd
+      DEPENDS ${cdtext_LOC}
+      )
+    
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/color16.cgm
+      COMMAND ${color16_LOC}
+      COMMAND ${CMAKE_COMMAND} -E compare_files
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/color16.cgm
+      ${CMAKE_CURRENT_SOURCE_DIR}/color16.cgm
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd
+      DEPENDS ${color16_LOC}
+      )
+
+    add_custom_target(test_nistcd
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdexp1.cgm
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdmulti.cgm
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdsimple.cgm
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdout.cgm
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/cdtext.cgm
+      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd/color16.cgm
+      )
+    
+  endif(TEST_NISTCD) 
 
   # install library and binaries
   install( TARGETS
