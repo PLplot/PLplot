@@ -60,14 +60,14 @@ int main () {
 	/* let's use blue for the fill color */
 	/* we are going to set it to solid, so the hatch pattern doesn't
 	 * matter.  we will signify no change by putting in -1 */
-	if (!(cdSetShapeFillAttrib(im, 1, blue, -1))) return 0;
+	if (!(cdSetShapeFillAttrib(im, 1, blue, -1))) return 1;
 
 	/* notice that we also checked to make sure the command actually
 	 * worked. */
 
 	/* we don't want the edges of our shapes to be a different color
 	 * so make them invisible.  0 means invisible, 1 means visible. */
-	if (!(cdSetEdgeVis(im, 0))) return 0;
+	if (!(cdSetEdgeVis(im, 0))) return 1;
 
 
 	/* set the text attributes */
@@ -78,24 +78,24 @@ int main () {
 	/* we will have black text for this one */
 	/* Size is a tough one,  but larger numbers give larger text.
 	 * 25 is a not too large size */
-	if (!(cdSetTextAttrib(im, 5, black, 25))) return 0;
+	if (!(cdSetTextAttrib(im, 5, black, 25))) return 1;
 
 
 
 	/* Now that we have set some attributes, lets do some drawing */
 
 	/* Draw a rectangle (10,450) is upper left, (350,350) is lower right */
-	if (!(cdRectangle(im, 10, 450, 350, 350))) return 0;
+	if (!(cdRectangle(im, 10, 450, 350, 350))) return 1;
 
 	/* lets put some text in the picture too. */
 	/* (100,100) is the point at the lower left corner of the text */
-	if (!(cdText(im, 100, 100, "Hello World"))) return 0;
+	if (!(cdText(im, 100, 100, "Hello World"))) return 1;
 
 
 
 	/* now write the file out, lets call it cdsimple.cgm */
 	outf = fopen("cdsimple.cgm", "wb");
-	if (!outf) return 0;
+	if (!outf) return 1;
 	cdImageCgm(im, outf);
 	fclose(outf);
 	outf = 0;
@@ -106,6 +106,6 @@ int main () {
 
 	printf("I just created a simple CGM!!!\n");
 
-	return 1;
+	return 0;
 
 }

@@ -56,77 +56,77 @@ int main () {
 	/* we will have black text for this one */
 	/* Size is a tough one,  but larger numbers give larger text.
 	 */
-	if (!(cdSetTextAttrib(im, 5, black, 20))) return 0;
+	if (!(cdSetTextAttrib(im, 5, black, 20))) return 1;
 
 	/* Set some line attributes,  lets make lines solid, width 1, and blue
 	 */
-	if (!(cdSetLineAttrib(im, 1, 1, blue))) return 0;
+	if (!(cdSetLineAttrib(im, 1, 1, blue))) return 1;
 
 	/* Draw a couple of grid lines */
-	if (!(cdLine(im, 0,200,799,200))) return 0;
-	if (!(cdLine(im, 200,0,200,399))) return 0;
-	if (!(cdLine(im, 600,0,600,399))) return 0;
+	if (!(cdLine(im, 0,200,799,200))) return 1;
+	if (!(cdLine(im, 200,0,200,399))) return 1;
+	if (!(cdLine(im, 600,0,600,399))) return 1;
 
 
 	/* Show Text going left, up, down, and right, all starting
 	 * from the same point */
 
 	/* Text going to the left */
-	if (!(cdSetTextPath(im, 1))) return 0;
-	if (!(cdText(im, 200, 200, "Text Left"))) return 0;
+	if (!(cdSetTextPath(im, 1))) return 1;
+	if (!(cdText(im, 200, 200, "Text Left"))) return 1;
 	
 	/* Text going UP */
-	if (!(cdSetTextPath(im, 2))) return 0;
-	if (!(cdText(im, 200, 200, "Text Up"))) return 0;
+	if (!(cdSetTextPath(im, 2))) return 1;
+	if (!(cdText(im, 200, 200, "Text Up"))) return 1;
 	
 	/* Text going DOWN */
-	if (!(cdSetTextPath(im, 3))) return 0;
-	if (!(cdText(im, 200, 200, "Text Down"))) return 0;
+	if (!(cdSetTextPath(im, 3))) return 1;
+	if (!(cdText(im, 200, 200, "Text Down"))) return 1;
 
 	/* Text going to the RIGHT */
-	if (!(cdSetTextPath(im, 0))) return 0;
-	if (!(cdText(im, 200, 200, "Text Right"))) return 0;
+	if (!(cdSetTextPath(im, 0))) return 1;
+	if (!(cdText(im, 200, 200, "Text Right"))) return 1;
 
 	/* Show text going at an angle of 0, 45, 90, 135, 180 Degrees
 	 */
 
 	/* Text at no angle */
-	if (!(cdText(im, 600, 200, "CGM Draw"))) return 0;
+	if (!(cdText(im, 600, 200, "CGM Draw"))) return 1;
 
 	/* Text, 45 Degree Angle */
-	if (!(cdSetTextOrient(im, -1, 1, 1, 1))) return 0;
-	if (!(cdText(im, 600, 200, "CGM Draw"))) return 0;
+	if (!(cdSetTextOrient(im, -1, 1, 1, 1))) return 1;
+	if (!(cdText(im, 600, 200, "CGM Draw"))) return 1;
 
 	/* Text, 90 Degree Angle */
-	if (!(cdSetTextOrient(im, -1, 0, 0, 1))) return 0;
-	if (!(cdText(im, 600, 200, "CGM Draw"))) return 0;
+	if (!(cdSetTextOrient(im, -1, 0, 0, 1))) return 1;
+	if (!(cdText(im, 600, 200, "CGM Draw"))) return 1;
 
 	/* Text, 135 Degree Angle */
-	if (!(cdSetTextOrient(im, -1, -1, -1, 1))) return 0;
-	if (!(cdText(im, 600, 200, "CGM Draw"))) return 0;
+	if (!(cdSetTextOrient(im, -1, -1, -1, 1))) return 1;
+	if (!(cdText(im, 600, 200, "CGM Draw"))) return 1;
 
 	/* Text, 180 Degree Angle */
-	if (!(cdSetTextOrient(im, 0, -1, -1, 0))) return 0;
-	if (!(cdText(im, 600, 200, "CGM Draw"))) return 0;
+	if (!(cdSetTextOrient(im, 0, -1, -1, 0))) return 1;
+	if (!(cdText(im, 600, 200, "CGM Draw"))) return 1;
 
 	/* Skewed Text, No Angle */
-	if (!(cdSetTextOrient(im, 1, 1, 1, 0))) {return 0;}
-	if (!(cdSetTextAttrib(im, -1, -1, 40))) {return 0;}
-	if (!(cdText(im, 300, 300, "CGM Draw"))) {return 0;}
+	if (!(cdSetTextOrient(im, 1, 1, 1, 0))) {return 1;}
+	if (!(cdSetTextAttrib(im, -1, -1, 40))) {return 1;}
+	if (!(cdText(im, 300, 300, "CGM Draw"))) {return 1;}
 	/* show some lines around it */
-	if (!(cdLine(im, 300,300,500,300))) return 0;
-	if (!(cdLine(im, 300,300,340,340))) return 0;
+	if (!(cdLine(im, 300,300,500,300))) return 1;
+	if (!(cdLine(im, 300,300,340,340))) return 1;
 
 	/* reset the text to 0 angle */
-	if (!(cdSetTextOrient(im, 0, 1, 1, 0))) return 0;
+	if (!(cdSetTextOrient(im, 0, 1, 1, 0))) return 1;
 
 	
-	if (!(cdSetTextAttrib(im, 5, -1, 20))) return 0;
-	if (!(cdText(im, 5, 5, "G. Edward Johnson"))) return 0;
+	if (!(cdSetTextAttrib(im, 5, -1, 20))) return 1;
+	if (!(cdText(im, 5, 5, "G. Edward Johnson"))) return 1;
 
 	/* now write the file out, lets call it cdtext.cgm */
 	outf = fopen("cdtext.cgm", "wb");
-	if (!outf) return 0;
+	if (!outf) return 1;
 	cdImageCgm(im, outf);
 	fclose(outf);
 	outf = 0;
@@ -137,6 +137,6 @@ int main () {
 
 	printf("CGM Text Example!!!\n");
 
-	return 1;
+	return 0;
 
 }

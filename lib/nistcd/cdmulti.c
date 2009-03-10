@@ -54,20 +54,20 @@ int main () {
 	/* we will have black text for this one */
 	/* Size is a tough one,  but larger numbers give larger text.
 	 * 25 is a not too large size */
-	if (!(cdSetTextAttrib(im, 5, black, 25))) return 0;
+	if (!(cdSetTextAttrib(im, 5, black, 25))) return 1;
 
 
 	/* Now that we have set some attributes, lets do some drawing */
 
 	/* lets put some text in the picture. */
 	/* (20,100) is the point at the lower left corner of the text */
-	if (!(cdText(im, 20, 100, "Hello World"))) return 0;
+	if (!(cdText(im, 20, 100, "Hello World"))) return 1;
 
 
 	/* Here's something special, put a second picture in the file */
 	/* we put in a second picture, and reset all defaults.  This means
 	 * we have to re-allocate the colors as well */
-	if (!(cdCgmNewPic(im, 0))) return 0;
+	if (!(cdCgmNewPic(im, 0))) return 1;
 
 	/* allocate some colors (Again!) */
 	/* the first color allocated is the background color */
@@ -75,13 +75,13 @@ int main () {
 	black = cdImageColorAllocate(im, 0, 0, 0);
 	blue = cdImageColorAllocate(im, 0, 0, 255);
 	/* set text attributes */
-	if (!(cdSetTextAttrib(im, 5, black, 25))) return 0;
-	if (!(cdText(im, 20, 100, "Goodbye World"))) return 0;
+	if (!(cdSetTextAttrib(im, 5, black, 25))) return 1;
+	if (!(cdText(im, 20, 100, "Goodbye World"))) return 1;
 
 
 	/* now write the file out. */
 	outf = fopen("cdmulti.cgm", "wb");
-	if (!outf) return 0;
+	if (!outf) return 1;
 	cdImageCgm(im, outf);
 	fclose(outf);
 	outf = 0;
@@ -92,6 +92,6 @@ int main () {
 
 	printf("I just created a multi picture CGM!!!\n");
 
-	return 1;
+	return 0;
 
 }

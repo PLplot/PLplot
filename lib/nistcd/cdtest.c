@@ -478,7 +478,7 @@ else {
 
 
 outf = fopen("cdout.cgm", "wb");
-if (!outf) return 0;
+if (!outf) return 1;
 cdImageCgm(myimage, outf);
 fclose(outf);
 outf = 0;
@@ -486,5 +486,5 @@ outf = 0;
 cdImageDestroy(myimage);
 
 
-return 1;  
+return 0;  
 }
