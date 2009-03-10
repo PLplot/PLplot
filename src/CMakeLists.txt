@@ -99,10 +99,20 @@ else(ENABLE_DYNDRIVERS)
   set(DRIVERS_RPATH)
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
-    set(plplot${LIB_TAG}_LIB_SRCS 
-    ${plplot${LIB_TAG}_LIB_SRCS} 
-    ${${SOURCE_ROOT_NAME}_SOURCE}
-    )
+    list(APPEND plplot${LIB_TAG}_LIB_SRCS ${${SOURCE_ROOT_NAME}_SOURCE})
+    if(SOURCE_ROOT_NAME STREQUAL "qt" AND PLD_qtwidget)
+      qt4_wrap_cpp(
+        QT_MOC_OUTFILES 
+	${CMAKE_SOURCE_DIR}/drivers/qt.h
+	OPTIONS "-DPLD_qtwidget=ON"
+	)
+      # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
+      set_source_files_properties(
+      ${QT_MOC_OUTFILES}
+      PROPERTIES GENERATED "ON"
+      )
+      list(APPEND plplot${LIB_TAG}_LIB_SRCS ${QT_MOC_OUTFILES})
+    endif(SOURCE_ROOT_NAME STREQUAL "qt" AND PLD_qtwidget)
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
       set_source_files_properties(
       ${${SOURCE_ROOT_NAME}_SOURCE}
@@ -137,6 +147,9 @@ ${CMAKE_SOURCE_DIR}/lib/qsastime
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 )
+if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
+  include_directories(${CMAKE_SOURCE_DIR}/lib/nistcd)
+endif(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
 add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 add_dependencies(plplot${LIB_TAG} plhershey-unicode.h_built)
 
