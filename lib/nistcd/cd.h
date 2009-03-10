@@ -239,7 +239,7 @@ CDDLLIMPEXP int cdImageEndCgm (cdImagePtr im);
  
 /* GeJ: these are helper functions I use in cd.  That means DON'T call
  * them from your program.  Yes, that means you.  */
-int cdImageColorClear(cdImagePtr im);
+CDDLLIMPEXP int cdImageColorClear(cdImagePtr im);
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }
