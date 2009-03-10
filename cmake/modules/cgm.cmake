@@ -23,10 +23,14 @@
 #
 # cgm_TARGETS	     - list of targets which the cgm dynamic device
 # 		       depends on.
+# cgm_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile cgm
+# 			    device.
 # DRIVERS_LINK_FLAGS - list of targets which the cgm static device
 # 		       depends on.
 
 if(PLD_cgm)
   set(cgm_TARGETS nistcd)
+  set(cgm_COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/lib/nistcd")
+  
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} nistcd)
 endif(PLD_cgm)
