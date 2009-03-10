@@ -147,9 +147,6 @@ ${CMAKE_SOURCE_DIR}/lib/qsastime
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 )
-if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
-  include_directories(${CMAKE_SOURCE_DIR}/lib/nistcd)
-endif(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
 add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 add_dependencies(plplot${LIB_TAG} plhershey-unicode.h_built)
 
@@ -205,6 +202,15 @@ if(HAVE_QHULL)
     ${QHULL_INCLUDE_DIRS}
   )
 endif(HAVE_QHULL)
+
+if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
+  list(APPEND  libplplot${LIB_TAG}_LINK_LIBRARIES nistcd)
+  set(
+  libplplot${LIB_TAG}_LINK_FLAGS
+  "${libplplot${LIB_TAG}_LINK_FLAGS} -lnistcd"
+  )
+  include_directories(${CMAKE_SOURCE_DIR}/lib/nistcd)
+endif(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
 
 set(
   libplplot${LIB_TAG}_LINK_LIBRARIES
