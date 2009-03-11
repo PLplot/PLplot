@@ -18,7 +18,7 @@
 #include <vga.h>
 
 /* Device info */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_linuxvga = "linuxvga:Linux VGA driver:0:linuxvga:8:vga";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_linuxvga = "linuxvga:Linux VGA driver:0:linuxvga:8:vga\n";
 
 
 /* Function prototypes */

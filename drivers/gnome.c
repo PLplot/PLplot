@@ -39,7 +39,7 @@
 #include <unistd.h>
 
 /* Device info */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_gnome = "gnome:Gnome Canvas:1:gnome:6:gnome";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_gnome = "gnome:Gnome Canvas:1:gnome:6:gnome\n";
 
 /*#undef DEBUG*/
 #define DEBUG

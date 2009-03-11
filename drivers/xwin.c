@@ -45,7 +45,7 @@ static int already = 0;
 #endif
 
 /* Device info */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_xwin = "xwin:X-Window (Xlib):1:xwin:5:xw";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_xwin = "xwin:X-Window (Xlib):1:xwin:5:xw\n";
 
 static int synchronize = 0;	/* change to 1 for X synchronized operation */
                                 /* Use "-drvopt sync" cmd line option to set. */

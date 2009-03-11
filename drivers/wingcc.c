@@ -62,7 +62,7 @@
 
 /* Device info */
 
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:9:wingcc";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:9:wingcc\n";
 
 /* Struct to hold device-specific info. */
 

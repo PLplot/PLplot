@@ -63,7 +63,7 @@
 #endif
 
 /* Device info */
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_tk = "tk:Tcl/TK Window:1:tk:7:tk";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_tk = "tk:Tcl/TK Window:1:tk:7:tk\n";
 
 
 /* Number of instructions to skip between updates */
