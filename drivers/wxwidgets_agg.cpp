@@ -24,15 +24,15 @@
  *   is commented out, since there are problems with the affine transformation 
  */
 
+/* wxwidgets headers */
+#include <wx/wx.h>
+#include <wx/strconv.h>
+
 #include "plDevs.h"
 
 /* plplot headers */
 #include "plplotP.h"
 #include "plfci-truetype.h"
-
-/* wxwidgets headers */
-#include <wx/wx.h>
-#include <wx/strconv.h>
    
 /* std and driver headers */
 #include "wxwidgets.h"

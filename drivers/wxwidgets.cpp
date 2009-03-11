@@ -25,6 +25,11 @@
  * - NA
  */
 
+/* wxwidgets headers */
+#include <wx/wx.h>
+#include <wx/wfstream.h>
+#include <wx/except.h>
+
 #include "plDevs.h"
 
 /* plplot headers */
@@ -33,11 +38,6 @@
 
 /* C/C++ headers */
 #include <cstdio>
-
-/* wxwidgets headers */
-#include <wx/wx.h>
-#include <wx/wfstream.h>
-#include <wx/except.h>
 
 #include "wxwidgets.h"
 

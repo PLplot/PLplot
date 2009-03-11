@@ -25,13 +25,13 @@
  * - implement AddToClipRegion for text correctly
  */
 
+/* wxwidgets headers */
+#include <wx/wx.h>
+
 #include "plDevs.h"
 
 /* plplot headers */
 #include "plplotP.h"
-
-/* wxwidgets headers */
-#include <wx/wx.h>
 
 /* std and driver headers */
 #include "wxwidgets.h"

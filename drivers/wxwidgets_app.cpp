@@ -23,6 +23,8 @@
  * - Add dialog to get width and height from user for plot size to save.
  */
 
+/* wxwidgets headers */
+#include "wx/wx.h"
 
 #include "plDevs.h"
 
@@ -33,9 +35,6 @@
 #include "drivers.h"
 #include "plevent.h"
 
-/* wxwidgets headers */
-#include "wx/wx.h"
-    
 /* std and driver headers */
 #include "wxwidgets.h"
 
