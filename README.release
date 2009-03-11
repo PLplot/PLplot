@@ -58,6 +58,7 @@ INDEX
 1. Changes relative to PLplot 5.9.2 (the previous development release)
 
 1.1 libnistcd (a.k.a. libcd) now built internally for -dev cgm
+1.2 get-drv-info now changed to test-drv-info
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -87,8 +88,7 @@ examples
 2.23 Dynamic driver support in Windows
 2.24 Documentation updates
 2.25 libnistcd (a.k.a. libcd) now built internally for -dev cgm
-
-
+2.26 get-drv-info now changed to test-drv-info
 
 1. Changes relative to PLplot 5.9.2 (the previous development release)
 
@@ -121,6 +121,19 @@ and uniconvertor.
 Some additional work on -dev cgm is required to implement antialiasing and
 non-Hershey fonts, but both those should be possible using libnistcd according
 to the text that is shown by lib/nistcd/cdtext.cgm and lib/nistcd/cdexp1.cgm.
+
+1.2 get-drv-info now changed to test-drv-info
+
+To make cross-building much easier for PLplot we now configure the *.rc
+files that are used to describe our various dynamic devices rather than
+generating the required *.rc files with get-drv-info.  We have changed the
+name of get-drv-info to test-drv-info.  That name is more appropriate
+because that executable has always tested dynamic loading of the driver
+plug-ins as well as generating the *.rc files from the information gleaned
+from that dynamic loading.  Now, we simply run test-drv-info as an option
+(defaults to ON unless cross-building is enabled) and compare the resulting
+*.rc file with the one configured by cmake to be sure the dynamic device
+has been built correctly.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -448,4 +461,17 @@ and uniconvertor.
 Some additional work on -dev cgm is required to implement antialiasing and
 non-Hershey fonts, but both those should be possible using libnistcd according
 to the text that is shown by lib/nistcd/cdtext.cgm and lib/nistcd/cdexp1.cgm.
+
+2.26 get-drv-info now changed to test-drv-info
+
+To make cross-building much easier for PLplot we now configure the *.rc
+files that are used to describe our various dynamic devices rather than
+generating the required *.rc files with get-drv-info.  We have changed the
+name of get-drv-info to test-drv-info.  That name is more appropriate
+because that executable has always tested dynamic loading of the driver
+plug-ins as well as generating the *.rc files from the information gleaned
+from that dynamic loading.  Now, we simply run test-drv-info as an option
+(defaults to ON unless cross-building is enabled) and compare the resulting
+*.rc file with the one configured by cmake to be sure the dynamic device
+has been built correctly.
 
