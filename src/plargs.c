@@ -1834,13 +1834,14 @@ opt_fsiz(const char *opt, const char *optarg, void *client_data)
     strncpy(spec, optarg, len);
     spec[len] = '\0';
 
-    bytemax = multiplier * atof(spec);
-    if (bytemax == 0) {
-	fprintf(stderr, "?invalid bytemax\n");
+    bytemax = (PLINT)(multiplier * atof(spec));
+    if (bytemax<=0) {
+	fprintf(stderr, "?invalid file size %d. 2.14G is the maximum.\n", bytemax);
 	return 1;
     }
     plsfam(1, -1, bytemax);
 
+    free(spec);
     return 0;
 }
 
