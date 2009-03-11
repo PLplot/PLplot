@@ -41,43 +41,40 @@ if(ENABLE_DYNDRIVERS)
     ${CMAKE_BINARY_DIR}/include
     )
 
-  option(TEST_DYNDRIVERS "Test dynamic drivers" OFF)
-  if(TEST_DYNDRIVERS)
+  option(TEST_DYNDRIVERS "Test dynamic drivers" ON)
+  if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir)
+
     set_source_files_properties(
-      get-drv-info.c
+      test-drv-info.c
       PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR} -DUSINGDLL"
       )
     
-    if(NOT CMAKE_CROSSCOMPILING)
-      add_executable(get-drv-info get-drv-info.c)
-      target_link_libraries(get-drv-info
-	plplot${LIB_TAG}
-	${LTDL_LIBRARIES}
-	)
-      set(get-drv-info_RPATH
-	${CMAKE_CURRENT_BINARY_DIR}
-	${CMAKE_BINARY_DIR}/src
-	${CMAKE_BINARY_DIR}/lib/csa
-	${CMAKE_BINARY_DIR}/lib/nn
-	${CMAKE_BINARY_DIR}/lib/qsastime
-	${libplplot${LIB_TAG}_RPATH}
-	)
-      
-      set_target_properties(
-	get-drv-info
-	PROPERTIES
-	INSTALL_RPATH "${get-drv-info_RPATH}"
-	BUILD_WITH_INSTALL_RPATH ON
-	)
-    else(NOT CMAKE_CROSSCOMPILING)
-      set(IMPORT_EXECUTABLES ${CMAKE_NATIVE_BINARY_DIR}/drivers/ImportExecutables.cmake)
-      include(${IMPORT_EXECUTABLES})
-    endif(NOT CMAKE_CROSSCOMPILING)
+    add_executable(test-drv-info test-drv-info.c)
+    target_link_libraries(test-drv-info
+      plplot${LIB_TAG}
+      ${LTDL_LIBRARIES}
+      )
+    set(test-drv-info_RPATH
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}/src
+      ${CMAKE_BINARY_DIR}/lib/csa
+      ${CMAKE_BINARY_DIR}/lib/nn
+      ${CMAKE_BINARY_DIR}/lib/qsastime
+      ${libplplot${LIB_TAG}_RPATH}
+      )
+    
+    set_target_properties(
+      test-drv-info
+      PROPERTIES
+      INSTALL_RPATH "${test-drv-info_RPATH}"
+      BUILD_WITH_INSTALL_RPATH ON
+      )
+    get_target_property(test-drv-info_LOCATION test-drv-info LOCATION)
+    set(test_dyndrivers_FDEPENDS)
+    set(test_dyndrivers_TDEPENDS test-drv-info)
 
-    if(NOT CMAKE_CROSSCOMPILING)
-      export(TARGETS get-drv-info FILE ${CMAKE_CURRENT_BINARY_DIR}/ImportExecutables.cmake )
-    endif(NOT CMAKE_CROSSCOMPILING)
-  endif(TEST_DYNDRIVERS)
+  endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
   
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
@@ -166,28 +163,29 @@ if(ENABLE_DYNDRIVERS)
 	SUFFIX ${DYNAMIC_SUFFIX}
 	)
     endif(USE_RPATH)
-    if(TEST_DYNDRIVERS)
+    if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
       get_target_property(
 	${SOURCE_ROOT_NAME}_LOCATION
 	${SOURCE_ROOT_NAME} 
 	LOCATION
 	)
       add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
-	COMMAND get-drv-info
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
+	COMMAND test-drv-info
 	${SOURCE_ROOT_NAME}
-	> ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+	> ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
+	COMMAND ${CMAKE_COMMAND} -E compare_files
+	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
+	${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
 	DEPENDS
 	${${SOURCE_ROOT_NAME}_LOCATION}
+	${test-drv-info_LOCATION}
 	)
-      add_custom_target(
-	${SOURCE_ROOT_NAME}_CHECK ALL
-	DEPENDS
-	${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+      list(APPEND test_dyndrivers_FDEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
 	)
-      # Workaround CMake 2-level make recursion issue for parallel builds.
-      add_dependencies(${SOURCE_ROOT_NAME}_CHECK ${SOURCE_ROOT_NAME})
-    endif(TEST_DYNDRIVERS)
+      list(APPEND test_dyndrivers_TDEPENDS ${SOURCE_ROOT_NAME})
+    endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
     
     install(TARGETS ${SOURCE_ROOT_NAME} DESTINATION ${DRV_DIR})
     install(
@@ -195,5 +193,11 @@ if(ENABLE_DYNDRIVERS)
       DESTINATION ${DRV_DIR}
       )
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
+  if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
+    add_custom_target(test_dyndrivers
+      DEPENDS ${test_dyndrivers_FDEPENDS}
+      )
+    add_dependencies(test_dyndrivers ${test_dyndrivers_TDEPENDS})
+  endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
 
 endif(ENABLE_DYNDRIVERS)
