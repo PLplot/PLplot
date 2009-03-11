@@ -39,10 +39,13 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
     endforeach(DRIVER_IN_LIST ${DRIVERS_LIST})
     if(APPEND_DRIVER)
       if(ENABLE_DYNDRIVERS)
-        file(STRINGS
-	  ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.rc.in
-	  ${DRIVER}_INFO
-	  )
+      	set(${DRIVER}_INFO)
+	if(EXISTS ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.rc.in)
+          file(STRINGS
+  	    ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.rc.in
+	    ${DRIVER}_INFO
+	    )
+	endif(EXISTS ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.rc.in)
       endif(ENABLE_DYNDRIVERS)
       set(DRIVERS_LIST ${DRIVERS_LIST} ${DRIVER})
       if(DRIVER STREQUAL "wxwidgets")
