@@ -194,7 +194,7 @@ if(ENABLE_DYNDRIVERS)
       )
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
   if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
-    add_custom_target(test_dyndrivers
+    add_custom_target(test_dyndrivers ALL
       DEPENDS ${test_dyndrivers_FDEPENDS}
       )
     add_dependencies(test_dyndrivers ${test_dyndrivers_TDEPENDS})

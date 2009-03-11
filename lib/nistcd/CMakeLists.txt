@@ -127,7 +127,7 @@ if(PLD_cgm)
       DEPENDS ${color16_LOC}
       )
 
-    add_custom_target(test_nistcd
+    add_custom_target(test_nistcd ALL
       DEPENDS
       ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdexp1.cgm
       ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdmulti.cgm
