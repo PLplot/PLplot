@@ -141,7 +141,7 @@ plD_init_xfig(PLStream *pls)
       pls->color = 1;         /* Is a color device */
 
     plP_setpxl(dev->xscale_dev, dev->xscale_dev); /* dpmm -- dots per mm */
-    plP_setphy(0, FIGX * dev->xscale_dev, 0, FIGY * dev->yscale_dev); /* physical dimension in mm */ 
+    plP_setphy(0, (PLINT)(FIGX * dev->xscale_dev), 0, (PLINT)(FIGY * dev->yscale_dev)); /* physical dimension in mm */ 
 
 /* Write out header */
 
@@ -541,8 +541,8 @@ proc_str (PLStream *pls, EscText *args)
     ref = DPI/72. * ft_ht / 2.;
 
   /* rotate point in xfig is lower left corner, compensate */
-  args->y = dev->offset + dev->ymax * (int)dev->xscale_dev - (args->y - ref*cos(alpha));
-  args->x = args->x + ref*sin(alpha);
+  args->y = (PLINT)(dev->offset + dev->ymax * (int)dev->xscale_dev - (args->y - ref*cos(alpha)));
+  args->x = (PLINT)(args->x + ref*sin(alpha));
 
   /*
    *  font family, serie and shape. Currently not supported by plplot

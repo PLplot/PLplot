@@ -161,6 +161,8 @@ static void UpdatePageMetrics ( PLStream *pls, char flag );
 
 #if defined(_MSC_VER)
   #define Debug(a) do {if (pls->debug){fprintf(stderr,(a));}}while(0)
+  #define Debug2(a,b) do {if (pls->debug){fprintf(stderr,(a),(b));}}while(0)
+  #define Debug3(a,b,c) do {if (pls->debug){fprintf(stderr,(a),(b),(c));}}while(0)
 #elif defined(__BORLANDC__)
   #define Debug if (pls->debug) printf
 #else
@@ -623,10 +625,10 @@ plD_state_wingcc(pls, PLSTATE_COLOR0);
         dev->scale=(PLFLT)PIXELS_Y/dev->height;
       }
 
-     Debug("Scale = %f (FLT)\n",dev->scale);
+     Debug2("Scale = %f (FLT)\n",dev->scale);
 
      plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4);
-     plP_setphy(0, dev->scale*dev->width, 0, dev->scale*dev->height);
+     plP_setphy(0, (PLINT)(dev->scale*dev->width), 0, (PLINT)(dev->scale*dev->height));
 
 #ifdef HAVE_FREETYPE
 if (pls->dev_text)
@@ -650,10 +652,10 @@ plD_line_wingcc(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
   POINT points[2];
 
 
-  points[0].x=x1a/dev->scale;
-  points[1].x=x2a/dev->scale;
-  points[0].y=dev->height - (y1a/dev->scale);
-  points[1].y=dev->height - (y2a/dev->scale);
+  points[0].x=(LONG)(x1a/dev->scale);
+  points[1].x=(LONG)(x2a/dev->scale);
+  points[0].y=(LONG)(dev->height - (y1a/dev->scale));
+  points[1].y=(LONG)(dev->height - (y2a/dev->scale));
 
   dev->oldobject = SelectObject (dev->hdc, dev->pen);
 
@@ -687,8 +689,8 @@ plD_polyline_wingcc(PLStream *pls, short *xa, short *ya, PLINT npts)
         {
           for (i = 0; i < npts; i++)
             {
-              points[i].x =  (unsigned long) xa[i]/dev->scale;
-              points[i].y =  (unsigned long) dev->height - (ya[i]/dev->scale);
+              points[i].x = (LONG)(xa[i]/dev->scale);
+              points[i].y = (LONG)(dev->height - (ya[i]/dev->scale));
             }
           dev->oldobject = SelectObject (dev->hdc, dev->pen);
           Polyline(dev->hdc,points,npts);
@@ -726,8 +728,8 @@ plD_fill_polygon_wingcc(PLStream *pls)
 
       for (i = 0; i < pls->dev_npts; i++)
         {
-          points[i].x = pls->dev_x[i]/dev->scale;
-          points[i].y = dev->height -(pls->dev_y[i]/dev->scale);
+          points[i].x = (PLINT)(pls->dev_x[i]/dev->scale);
+          points[i].y = (PLINT)(dev->height -(pls->dev_y[i]/dev->scale));
         }
 
       dev->fillbrush = CreateSolidBrush(dev->colour);
@@ -999,7 +1001,7 @@ static void Resize( PLStream *pls )
   	{
   	   memcpy(&dev->oldrect,&dev->rect,sizeof(RECT));
       GetClientRect(dev->hwnd,&dev->rect);
-      Debug("[%d %d]",dev->rect.right,dev->rect.bottom);
+      Debug3("[%d %d]",dev->rect.right,dev->rect.bottom);
 
    	if ((dev->rect.right>0)&&(dev->rect.bottom>0))    /* Check to make sure it isn't just minimised (i.e. zero size) */
         {
@@ -1322,8 +1324,7 @@ static void UpdatePageMetrics ( PLStream *pls, char flag )
   pls->xdpi=GetDeviceCaps(dev->hdc,HORZRES)/GetDeviceCaps(dev->hdc,HORZSIZE)*25.4;
   pls->ydpi=GetDeviceCaps(dev->hdc,VERTRES)/GetDeviceCaps(dev->hdc,VERTSIZE)*25.4;
   plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4);
-  plP_setphy(0, dev->scale*dev->width, 0, dev->scale*dev->height);
-
+  plP_setphy(0, (PLINT)(dev->scale*dev->width), 0, (PLINT)(dev->scale*dev->height));
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1342,8 +1343,6 @@ static void PrintPage ( PLStream *pls )
   #endif
   PRINTDLG  Printer;
   DOCINFO docinfo;
-  char *PrinterName;
-  BOOL ret;
 
   /*
    *    Reset the docinfo structure to 0 and set it's fields up
