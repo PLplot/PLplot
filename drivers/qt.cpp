@@ -6,6 +6,7 @@
   Imperial College, London
 
   Copyright (C) 2009  Imperial College, London
+  Copyright (C) 2009  Alan W. Irwin
 
   This is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Lesser Public License as published
@@ -202,14 +203,14 @@ void QtPLDriver::drawPolygon(short * x, short * y, PLINT npts)
 	delete[] polygon;
 }
 
-void QtPLDriver::setColor(int r, int g, int b)
+void QtPLDriver::setColor(int r, int g, int b, int a)
 {
 	QPen p=m_painterP->pen();
-	p.setColor(QColor(r, g, b));
+	p.setColor(QColor(r, g, b, a));
 	m_painterP->setPen(p);
 	
 	QBrush B=m_painterP->brush();
-	B.setColor(QColor(r, g, b));
+	B.setColor(QColor(r, g, b, a));
 	m_painterP->setBrush(B);
 }
 
@@ -530,13 +531,14 @@ void QtPLBufferedDriver::drawPolygon(short * x, short * y, PLINT npts)
 	m_listBuffer.append(el);
 }
 
-void QtPLBufferedDriver::setColor(int r, int g, int b)
+void QtPLBufferedDriver::setColor(int r, int g, int b, int a)
 {
 	BufferElement el;
 	el.Element=SET_COLOUR;
 	el.Data.ColourStruct.R=r;
 	el.Data.ColourStruct.G=g;
 	el.Data.ColourStruct.B=b;
+	el.Data.ColourStruct.A=a;
     
 	m_listBuffer.append(el);
 }
@@ -633,9 +635,9 @@ void QtPLBufferedDriver::doPlot(QPainter* i_painterP, double x_fact, double y_fa
 				break;
                 
 			case SET_COLOUR:
-				p.setColor(QColor(i->Data.ColourStruct.R, i->Data.ColourStruct.G, i->Data.ColourStruct.B));
+			  p.setColor(QColor(i->Data.ColourStruct.R, i->Data.ColourStruct.G, i->Data.ColourStruct.B, i->Data.ColourStruct.A));
 				i_painterP->setPen(p);
-				b.setColor(QColor(i->Data.ColourStruct.R, i->Data.ColourStruct.G, i->Data.ColourStruct.B));
+				b.setColor(QColor(i->Data.ColourStruct.R, i->Data.ColourStruct.G, i->Data.ColourStruct.B, i->Data.ColourStruct.A));
 				i_painterP->setBrush(b);
 				break;
                 
@@ -700,7 +702,7 @@ void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 #endif
 	if(widget==NULL) return;
 	
-	widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b);
+	widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
 	widget->drawLine(x1a, y1a, x2a, y2a);
 }
 
@@ -725,7 +727,7 @@ void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
 #endif
 	if(widget==NULL) return;
 	
-	widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b);
+	widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
 	widget->drawPolyline(xa, ya, npts);
 }
 
@@ -756,7 +758,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 	{
 		case PLESC_DASH:
 			widget->setDashed(pls->nms, pls->mark, pls->space);
-			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b);
+			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
 			widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
 			widget->setSolid();
 			break;
@@ -770,7 +772,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 				xa[i] = pls->dev_x[i];
 				ya[i] = pls->dev_y[i];
 			}
-			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b);
+			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
 			widget->drawPolygon(xa, ya, pls->dev_npts);
             
 			delete[] xa;
@@ -813,11 +815,11 @@ void plD_state_qt(PLStream * pls, PLINT op)
 			break;
        
 		case PLSTATE_COLOR0:
-			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b);
+		  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
 			break;
 			
 		case PLSTATE_COLOR1:
-			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b);
+		  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
 			break;
 
             

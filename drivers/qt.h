@@ -6,6 +6,7 @@
   Imperial College, London
 
   Copyright (C) 2009  Imperial College, London
+  Copyright (C) 2009  Alan W. Irwin
 
   This is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Lesser Public License as published
@@ -89,7 +90,7 @@ class BufferElement
         
 			struct ColourStruct_
 			{
-				PLINT R, G, B;
+			  PLINT R, G, B, A;
 			} ColourStruct;
         
 			PLINT intParam;
@@ -113,7 +114,7 @@ class QtPLDriver
 			
 		virtual void drawPolygon(short * x, short * y, PLINT npts);
 
-		virtual void setColor(int r, int g, int b);
+		virtual void setColor(int r, int g, int b, int a);
 
 		virtual void setWidth(PLINT w);
 
@@ -145,7 +146,7 @@ class QtPLBufferedDriver: public QtPLDriver
 			
 		virtual void drawPolygon(short * x, short * y, PLINT npts);
 
-		virtual void setColor(int r, int g, int b);
+		virtual void setColor(int r, int g, int b, int a);
 
 		virtual void setWidth(PLINT r);
 
@@ -332,10 +333,10 @@ class QtPLTabWidget: public QTabWidget, public QtPLDriver
 			currentWidget->drawPolygon(x, y, npts);
 		}
 
-		virtual void setColor(int r, int g, int b)
+		virtual void setColor(int r, int g, int b, int a)
 		{
 			if(currentWidget==NULL) newTab();
-			currentWidget->setColor(r, g, b);
+			currentWidget->setColor(r, g, b, a);
 		}
 
 		virtual void setWidth(PLINT w)
