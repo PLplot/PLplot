@@ -64,8 +64,8 @@ wxPLDevGC::~wxPLDevGC()
       delete m_bitmap;
   }
 
-  if( m_font )
-    delete m_font;
+  delete m_font;
+  delete m_context;
 }
 
 
