@@ -45,7 +45,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_hpgl =
   "hp7580:HP 7580 Plotter File (Large Plotter):0:hpgl:35:hp7580\n"
 #endif
 #if defined(PLD_lj_hpgl)        
-  "lj_hpgl:HP Laserjet III, HPGL emulation mode:0:hpgl:36:lj_hpgl"
+  "lj_hpgl:HP Laserjet III, HPGL emulation mode:0:hpgl:36:lj_hpgl\n"
 #endif
 ;
 
