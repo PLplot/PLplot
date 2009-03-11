@@ -20,75 +20,78 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 install(
-FILES README.drivers README.wxwidgets 
-DESTINATION ${DOC_DIR}
-)
+  FILES README.drivers README.wxwidgets 
+  DESTINATION ${DOC_DIR}
+  )
 
 #qt.h only useful if anyone wants to build a Qt application with the Qt widget driver
 if(PLD_qtwidget)
-install(
-FILES qt.h 
-DESTINATION ${INCLUDE_DIR}
-)
+  install(
+    FILES qt.h 
+    DESTINATION ${INCLUDE_DIR}
+    )
 endif(PLD_qtwidget)
 
 if(ENABLE_DYNDRIVERS)
-  set_source_files_properties(
-  get-drv-info.c
-  PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR} -DUSINGDLL"
-  )
-			   
   include_directories(
-  ${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/lib/qsastime
-  ${CMAKE_SOURCE_DIR}/lib/nistcd
-  ${CMAKE_BINARY_DIR}
-  ${CMAKE_BINARY_DIR}/include
-  )
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/lib/qsastime
+    ${CMAKE_SOURCE_DIR}/lib/nistcd
+    ${CMAKE_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/include
+    )
 
-  if(NOT CMAKE_CROSSCOMPILING)
-  add_executable(get-drv-info get-drv-info.c)
-  target_link_libraries(get-drv-info
-  plplot${LIB_TAG}
-  ${LTDL_LIBRARIES}
-  )
-  set(get-drv-info_RPATH
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_BINARY_DIR}/src
-  ${CMAKE_BINARY_DIR}/lib/csa
-  ${CMAKE_BINARY_DIR}/lib/nn
-  ${CMAKE_BINARY_DIR}/lib/qsastime
-  ${libplplot${LIB_TAG}_RPATH}
-  )
-  
-  set_target_properties(
-  get-drv-info
-  PROPERTIES
-  INSTALL_RPATH "${get-drv-info_RPATH}"
-  BUILD_WITH_INSTALL_RPATH ON
-  )
-  else(NOT CMAKE_CROSSCOMPILING)
-    set(IMPORT_EXECUTABLES ${CMAKE_NATIVE_BINARY_DIR}/drivers/ImportExecutables.cmake)
-    include(${IMPORT_EXECUTABLES})
-  endif(NOT CMAKE_CROSSCOMPILING)
+  option(TEST_DYNDRIVERS "Test dynamic drivers" OFF)
+  if(TEST_DYNDRIVERS)
+    set_source_files_properties(
+      get-drv-info.c
+      PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR} -DUSINGDLL"
+      )
+    
+    if(NOT CMAKE_CROSSCOMPILING)
+      add_executable(get-drv-info get-drv-info.c)
+      target_link_libraries(get-drv-info
+	plplot${LIB_TAG}
+	${LTDL_LIBRARIES}
+	)
+      set(get-drv-info_RPATH
+	${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_BINARY_DIR}/src
+	${CMAKE_BINARY_DIR}/lib/csa
+	${CMAKE_BINARY_DIR}/lib/nn
+	${CMAKE_BINARY_DIR}/lib/qsastime
+	${libplplot${LIB_TAG}_RPATH}
+	)
+      
+      set_target_properties(
+	get-drv-info
+	PROPERTIES
+	INSTALL_RPATH "${get-drv-info_RPATH}"
+	BUILD_WITH_INSTALL_RPATH ON
+	)
+    else(NOT CMAKE_CROSSCOMPILING)
+      set(IMPORT_EXECUTABLES ${CMAKE_NATIVE_BINARY_DIR}/drivers/ImportExecutables.cmake)
+      include(${IMPORT_EXECUTABLES})
+    endif(NOT CMAKE_CROSSCOMPILING)
 
-  if(NOT CMAKE_CROSSCOMPILING)
-    export(TARGETS get-drv-info FILE ${CMAKE_CURRENT_BINARY_DIR}/ImportExecutables.cmake )
-  endif(NOT CMAKE_CROSSCOMPILING)
+    if(NOT CMAKE_CROSSCOMPILING)
+      export(TARGETS get-drv-info FILE ${CMAKE_CURRENT_BINARY_DIR}/ImportExecutables.cmake )
+    endif(NOT CMAKE_CROSSCOMPILING)
+  endif(TEST_DYNDRIVERS)
   
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
       set_source_files_properties(
-      ${${SOURCE_ROOT_NAME}_SOURCE}
-      PROPERTIES COMPILE_FLAGS "${${SOURCE_ROOT_NAME}_COMPILE_FLAGS} -DUSINGDLL"
-      )
+	${${SOURCE_ROOT_NAME}_SOURCE}
+	PROPERTIES COMPILE_FLAGS "${${SOURCE_ROOT_NAME}_COMPILE_FLAGS} -DUSINGDLL"
+	)
       #message("${SOURCE_ROOT_NAME}_COMPILE_FLAGS = ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}")
     else(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
       set_source_files_properties(
-      ${${SOURCE_ROOT_NAME}_SOURCE}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-      )
+	${${SOURCE_ROOT_NAME}_SOURCE}
+	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+	)
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
     if(SOURCE_ROOT_NAME STREQUAL "qt" AND PLD_qtwidget)
       qt4_wrap_cpp(
@@ -98,12 +101,12 @@ if(ENABLE_DYNDRIVERS)
 	)
       # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
       set_source_files_properties(
-      ${QT_MOC_OUTFILES}
-      PROPERTIES GENERATED "ON"
-      )
+	${QT_MOC_OUTFILES}
+	PROPERTIES GENERATED "ON"
+	)
       add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE} ${QT_MOC_OUTFILES})
     else(SOURCE_ROOT_NAME STREQUAL "qt" AND PLD_qtwidget)
-        add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
+      add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
     endif(SOURCE_ROOT_NAME STREQUAL "qt" AND PLD_qtwidget)
     # ${SOURCE_ROOT_NAME}_LINK_FLAGS is ideally a list of the full path names
     # to libraries determined with find_library.  However, the list can also
@@ -116,22 +119,22 @@ if(ENABLE_DYNDRIVERS)
     # device driver depends on.  
     #message("${SOURCE_ROOT_NAME}_TARGETS = ${${SOURCE_ROOT_NAME}_TARGETS}")
     target_link_libraries(
-    ${SOURCE_ROOT_NAME}
-    plplot${LIB_TAG}
-    ${MATH_LIB}
-    ${${SOURCE_ROOT_NAME}_LINK_FLAGS}
-    ${${SOURCE_ROOT_NAME}_TARGETS}
-    )
+      ${SOURCE_ROOT_NAME}
+      plplot${LIB_TAG}
+      ${MATH_LIB}
+      ${${SOURCE_ROOT_NAME}_LINK_FLAGS}
+      ${${SOURCE_ROOT_NAME}_TARGETS}
+      )
     # ${SOURCE_ROOT_NAME}_RPATH originally set in cmake/modules files for
     # each driver in ${DRIVERS_LIST}.  This is only used for the 
     # install-tree rpath since cmake handles the build-tree rpath
     # automatically (so long as full pathnames to libraries are used).
     set(
-    ${SOURCE_ROOT_NAME}_RPATH
-    ${LIB_DIR}
-    ${${SOURCE_ROOT_NAME}_RPATH}
-    ${libplplot${LIB_TAG}_RPATH}
-    )
+      ${SOURCE_ROOT_NAME}_RPATH
+      ${LIB_DIR}
+      ${${SOURCE_ROOT_NAME}_RPATH}
+      ${libplplot${LIB_TAG}_RPATH}
+      )
     # Our implementation of dynamic loading using libltdl assumes
     # the prefix should always be nothing (rather than lib) and the suffix
     # should be set in a platform-dependent manner in order for libltdl
@@ -148,47 +151,49 @@ if(ENABLE_DYNDRIVERS)
     #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
     if(USE_RPATH)
       set_target_properties(
-      ${SOURCE_ROOT_NAME}
-      PROPERTIES
-      PREFIX ""
-      SUFFIX ${DYNAMIC_SUFFIX}
-      INSTALL_RPATH
-      "${${SOURCE_ROOT_NAME}_RPATH}"
-      )
+	${SOURCE_ROOT_NAME}
+	PROPERTIES
+	PREFIX ""
+	SUFFIX ${DYNAMIC_SUFFIX}
+	INSTALL_RPATH
+	"${${SOURCE_ROOT_NAME}_RPATH}"
+	)
     else(USE_RPATH)
       set_target_properties(
-      ${SOURCE_ROOT_NAME}
-      PROPERTIES
-      PREFIX ""
-      SUFFIX ${DYNAMIC_SUFFIX}
-      )
+	${SOURCE_ROOT_NAME}
+	PROPERTIES
+	PREFIX ""
+	SUFFIX ${DYNAMIC_SUFFIX}
+	)
     endif(USE_RPATH)
-    get_target_property(
-    ${SOURCE_ROOT_NAME}_LOCATION
-    ${SOURCE_ROOT_NAME} 
-    LOCATION
-    )
-    add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
-    COMMAND get-drv-info
-    ${SOURCE_ROOT_NAME}
-    > ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
-    DEPENDS
-    ${${SOURCE_ROOT_NAME}_LOCATION}
-    )
-    add_custom_target(
-    ${SOURCE_ROOT_NAME}_CHECK ALL
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
-    )
-    # Workaround CMake 2-level make recursion issue for parallel builds.
-    add_dependencies(${SOURCE_ROOT_NAME}_CHECK ${SOURCE_ROOT_NAME})
+    if(TEST_DYNDRIVERS)
+      get_target_property(
+	${SOURCE_ROOT_NAME}_LOCATION
+	${SOURCE_ROOT_NAME} 
+	LOCATION
+	)
+      add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+	COMMAND get-drv-info
+	${SOURCE_ROOT_NAME}
+	> ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+	DEPENDS
+	${${SOURCE_ROOT_NAME}_LOCATION}
+	)
+      add_custom_target(
+	${SOURCE_ROOT_NAME}_CHECK ALL
+	DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc
+	)
+      # Workaround CMake 2-level make recursion issue for parallel builds.
+      add_dependencies(${SOURCE_ROOT_NAME}_CHECK ${SOURCE_ROOT_NAME})
+    endif(TEST_DYNDRIVERS)
     
     install(TARGETS ${SOURCE_ROOT_NAME} DESTINATION ${DRV_DIR})
     install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc 
-    DESTINATION ${DRV_DIR}
-    )
+      FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc 
+      DESTINATION ${DRV_DIR}
+      )
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
 
 endif(ENABLE_DYNDRIVERS)
