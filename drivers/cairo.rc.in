@@ -1,0 +1,7 @@
+xcairo:Cairo X Windows Driver:1:cairo:59:xcairo
+pdfcairo:Cairo PDF Driver:0:cairo:60:pdfcairo
+pscairo:Cairo PS Driver:0:cairo:61:pscairo
+svgcairo:Cairo SVG Driver:0:cairo:62:svgcairo
+pngcairo:Cairo PNG Driver:0:cairo:63:pngcairo
+memcairo:Cairo Memory Driver:0:cairo:64:memcairo
+extcairo:Cairo External Context Driver:0:cairo:65:extcairo
