@@ -6,7 +6,6 @@
   Imperial College, London
 
   Copyright (C) 2009  Imperial College, London
-  Copyright (C) 2009  Alan W. Irwin
 
   This is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Lesser Public License as published
@@ -43,6 +42,7 @@
 #include <QMouseEvent>
 #include <QTabWidget>
 #include <QMainWindow>
+#include <QPicture>
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -50,53 +50,6 @@
 #define DPI 72
 #define QT_DEFAULT_X 842
 #define QT_DEFAULT_Y 598
-
-// Types of buffer elements for buffered widgets
-typedef enum ElementType_
-{
- LINE,
- POLYLINE,
- POLYGON,
- SET_WIDTH,
- SET_COLOUR,
- SET_DASHED,
- SET_SOLID,
- SET_SMOOTH
-} ElementType;
-
-// A buffer element in a buffered widget
-class BufferElement
-{
-	public:
-        
-		ElementType Element;
-    
-		union DataType
-		{
-			struct LineStruct_
-			{
-				PLFLT x1;
-				PLFLT x2;
-				PLFLT y1;
-				PLFLT y2;
-			} LineStruct;
-        
-			struct PolylineStruct_
-			{
-				PLINT npts;
-				PLFLT* x;
-				PLFLT* y;
-			} PolylineStruct;
-        
-			struct ColourStruct_
-			{
-			  PLINT R, G, B, A;
-			} ColourStruct;
-        
-			PLINT intParam;
-			PLFLT fltParam;
-		} Data;
-};
 
 // Basic class, offering the common interface to all Qt plplot devices
 class QtPLDriver
@@ -114,7 +67,9 @@ class QtPLDriver
 			
 		virtual void drawPolygon(short * x, short * y, PLINT npts);
 
-		virtual void setColor(int r, int g, int b, int a);
+		virtual void drawText(PLStream* pls, EscText* txt);
+
+		virtual void setColor(int r, int g, int b, double alpha);
 
 		virtual void setWidth(PLINT w);
 
@@ -122,58 +77,31 @@ class QtPLDriver
 
 		// Set pen to draw solid strokes (called after drawing dashed strokes)
 		virtual void setSolid();
-		
+
 		// Conversion factor from internal plplot coordinates to device coordinates
 		double downscale;
 		double m_dWidth, m_dHeight;
 	protected:
+	
+		// Returns font with the good size for a QPicture's resolution
+		QFont getFont(PLUNICODE code);
+		// Draws text in a QPicture using a sub-QPicture (!), updates the current xOffset
+		void drawTextInPicture(QPainter*, const QString&);
+		// Gets the QPicture displaying text, with the base chrht char height
+		QPicture getTextPicture(PLUNICODE* text, int len, int chrht);
+		
+		// Text-related variables
+		bool underlined;
+		bool overlined;
+		double currentFontScale;
+		double currentFontSize;
+		double yOffset;
+		double xOffset;
+		
+		double svgBugFactor; // factor to fix the oversized bounding boxes for texts in the SVG driver
+		double fontScalingFactor;// To have a nice font size on qtwidget
 		
 		QPainter* m_painterP;
-};
-
-// This driver is used if the device may have to redraw (Widget), then the accumulated commands are re-issued, possibly corrected to fit a new device size
-class QtPLBufferedDriver: public QtPLDriver
-{
-	public:
-		QtPLBufferedDriver(PLINT i_iWidth=QT_DEFAULT_X, PLINT i_iHeight=QT_DEFAULT_Y);
-
-		virtual ~QtPLBufferedDriver();
-			
-		// Accumulates a line command in the end of the buffer
-		virtual void drawLine(short x1, short y1, short x2, short y2);
-			
-		virtual void drawPolyline(short * x, short * y, PLINT npts);
-			
-		virtual void drawPolygon(short * x, short * y, PLINT npts);
-
-		virtual void setColor(int r, int g, int b, int a);
-
-		virtual void setWidth(PLINT r);
-
-		virtual void setDashed(PLINT nms, PLINT* mark, PLINT* space);
-
-		virtual void setSolid();
-		
-		// Actually plots on the device, using the p QPainter.
-		// if p is null, then the defaut QPainter m_painterP is used.
-		// x_fact, y_fact, x_offset and y_offset allow to center the plot
-		// on the device
-		// These 5 parameters are actually only used for widgets:
-		// widgets plot on a pixmap via p, and as the aspect ratio of 
-		// what's drawn is set constant yet taking as much space as possible,
-		// offsets and factors have to be set
-		virtual void doPlot(QPainter* p=NULL, double x_fact=1., double y_fact=1., double x_offset=0., double y_offset=0.);
-		
-	protected:
-		
-		// Gets the offsets and factors using the current size of the device
-		virtual void getPlotParameters(double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset);
-		
-		// Empties the buffer
-		void clearBuffer();
-		
-		// Here is the buffer
-		QLinkedList<BufferElement> m_listBuffer;
 };
 
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
@@ -184,7 +112,7 @@ class QtRasterDevice: public QtPLDriver, public QImage
 		QtRasterDevice(int i_iWidth=QT_DEFAULT_X,
 			    int i_iHeight=QT_DEFAULT_Y);
 		
-		virtual ~QtRasterDevice(){}
+		virtual ~QtRasterDevice();
 		
 		void definePlotName(const char* fileName, const char* format);
 		
@@ -235,12 +163,13 @@ class QtEPSDevice: public QtPLDriver, public QPrinter
 #endif
 
 #if defined (PLD_qtwidget)
+
 // This widget allows to use plplot as a plotting engine in a Qt Application
 // The aspect ratio of the plotted data is constant, so gray strips are used
 // to delimit the page when the widget aspect ratio is not the one of the plotted page
-class QtPLWidget: public QWidget, public QtPLBufferedDriver
+class QtPLWidget: public QWidget, public QtPLDriver
 {
-	Q_OBJECT
+// 	Q_OBJECT
 
 	public:
 		// Parameters are the actual size of the page, NOT the size of the widget
@@ -257,30 +186,31 @@ class QtPLWidget: public QWidget, public QtPLBufferedDriver
 		// plotWidget->setSmooth(false);
 		// plline(...)
 		// will only smooth the axes and their labels.
-		void setSmooth(bool);
+// 		void setSmooth(bool);
 		
 		// Clears the widget
 		void clearWidget();
 	
-	public slots:
+// 	public slots:
 		
 		// This slot can be used to select an x/y range interactively
 		// xi, yi, xf and yf are the initial and final points coordinates
 		// in their respective windows, 0 if outside a window
-		void captureMousePlotCoords(double* xi, double* yi, double* xf, double* yf);
+// 		void captureMousePlotCoords(double* xi, double* yi, double* xf, double* yf);
+// 		
+// 		// This slot can be used to select an x/y range interactively
+// 		// xi, yi, xf and yf are the initial and final points coordinates
+// 		// in the whole page (normalized between 0 and 1)
+// 		void captureMouseDeviceCoords(double* xi, double* yi, double* xf, double* yf);
 		
-		// This slot can be used to select an x/y range interactively
-		// xi, yi, xf and yf are the initial and final points coordinates
-		// in the whole page (normalized between 0 and 1)
-		void captureMouseDeviceCoords(double* xi, double* yi, double* xf, double* yf);
-		
-	protected slots:
+// 	protected slots:
+	protected:
 		
 		void resizeEvent(QResizeEvent*);
 		void paintEvent(QPaintEvent*);
-		void mousePressEvent(QMouseEvent*);
-		void mouseReleaseEvent(QMouseEvent*);
-		void mouseMoveEvent(QMouseEvent*);
+// 		void mousePressEvent(QMouseEvent*);
+// 		void mouseReleaseEvent(QMouseEvent*);
+// 		void mouseMoveEvent(QMouseEvent*);
 	
 	protected:
 		
@@ -300,6 +230,7 @@ class QtPLWidget: public QWidget, public QtPLBufferedDriver
 		QPixmap * m_pixPixmap; // to avoid redrawing everything
 		bool m_bAwaitingRedraw;
 		int m_iOldSize;
+		QPicture* pic;
 };
 
 
@@ -314,6 +245,8 @@ class QtPLTabWidget: public QTabWidget, public QtPLDriver
 		{
 			currentWidget=NULL;
 		}
+		
+		~QtPLTabWidget();
 		
 		virtual void drawLine(short x1, short y1, short x2, short y2)
 		{
@@ -333,10 +266,10 @@ class QtPLTabWidget: public QTabWidget, public QtPLDriver
 			currentWidget->drawPolygon(x, y, npts);
 		}
 
-		virtual void setColor(int r, int g, int b, int a)
+		virtual void setColor(int r, int g, int b, double alpha)
 		{
 			if(currentWidget==NULL) newTab();
-			currentWidget->setColor(r, g, b, a);
+			currentWidget->setColor(r, g, b, alpha);
 		}
 
 		virtual void setWidth(PLINT w)
@@ -358,18 +291,25 @@ class QtPLTabWidget: public QTabWidget, public QtPLDriver
 			currentWidget->setSolid();
 		}
 		
-		void setSmooth(bool b)
+		virtual void drawText(PLStream* pls, EscText* txt)
 		{
 			if(currentWidget==NULL) newTab();
-			currentWidget->setSmooth(b);
+			currentWidget->drawText(pls, txt);
 		}
 		
+// 		void setSmooth(bool b)
+// 		{
+// 			if(currentWidget==NULL) newTab();
+// 			currentWidget->setSmooth(b);
+// 		}
+
 		virtual void savePlot(char* fileName){}
 	
 		QtPLWidget* currentWidget;
 		
 		protected:
 			void newTab();
+			QList<QtPLWidget*> widgets;
 };
 
 #endif

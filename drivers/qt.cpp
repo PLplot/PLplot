@@ -6,7 +6,6 @@
   Imperial College, London
 
   Copyright (C) 2009  Imperial College, London
-  Copyright (C) 2009  Alan W. Irwin
 
   This is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Lesser Public License as published
@@ -31,6 +30,12 @@
 */
 
 #include "qt.h"
+
+// global variables initialised in init(), used in tidy()
+// QApplication* app=NULL;
+int argc; // argc and argv have to exist when tidy() is used, thus they are made global
+char ** argv;
+int appCounter=0; // to be rigorous, all uses should be placed between mutexes
 
 // Drivers declaration
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt = 
@@ -62,6 +67,35 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
   "pdfqt:Qt PDF driver:0:qt:74:pdfqt\n"
 #endif
 ;
+
+void initQtApp()
+{
+	++appCounter;
+	if(qApp==NULL && appCounter==1)
+	{
+		argc=1;
+		argv=new char*[2];
+		argv[0]=new char[10];
+		argv[1]=new char[1];
+		snprintf(argv[0], 10, "qt_driver");
+		argv[1][0]='\0';
+		/*app=*/new QApplication(argc, argv);
+	}
+}
+
+void closeQtApp()
+{
+	--appCounter;
+	if(qApp!=NULL && appCounter==0)
+	{
+		delete qApp;
+// 		qApp=NULL;
+		delete[] argv[0];
+		delete[] argv[1];
+		delete[] argv;
+		argv=NULL;
+	}
+}
 
 /*---------------------------------------------------------------------
   qt_family_check ()
@@ -152,7 +186,7 @@ void plD_tidy_qtwidget(PLStream *);
 void plD_line_qt(PLStream *, short, short, short, short);
 void plD_polyline_qt(PLStream *, short*, short*, PLINT);
 void plD_bop_qt(PLStream *){}
-void plD_tidy_qt(PLStream *){}
+void plD_tidy_qt(PLStream *);
 void plD_state_qt(PLStream *, PLINT);
 void plD_esc_qt(PLStream *, PLINT, void*);
 
@@ -163,6 +197,8 @@ QtPLDriver::QtPLDriver(PLINT i_iWidth, PLINT i_iHeight)
 	m_dWidth=i_iWidth;
 	m_dHeight=i_iHeight;
 	downscale=1.;
+	svgBugFactor=1.;
+// 	fontScalingFactor=1.;
 }
 
 QtPLDriver::~QtPLDriver()
@@ -203,14 +239,208 @@ void QtPLDriver::drawPolygon(short * x, short * y, PLINT npts)
 	delete[] polygon;
 }
 
-void QtPLDriver::setColor(int r, int g, int b, int a)
+// QRect getNewRect(const QRect& input, double yOffset, double fontSize)
+// {
+// 	return QRect(input.right(), -yOffset*fontSize, 2, 2);
+// }
+
+QFont QtPLDriver::getFont(PLUNICODE unicode)
+{
+	// Get new font parameters
+	unsigned char fontFamily, fontStyle, fontWeight;
+
+	plP_fci2hex(unicode, &fontFamily, PL_FCI_FAMILY);
+	plP_fci2hex(unicode, &fontStyle, PL_FCI_STYLE);
+	plP_fci2hex(unicode, &fontWeight, PL_FCI_WEIGHT);
+			
+	QFont f;
+	f.setPointSizeF(currentFontSize*currentFontScale<4 ? 4 : currentFontSize*currentFontScale);
+
+	switch(fontFamily)
+	{
+		case 1:	f.setFamily("serif"); break;
+		case 2: f.setFamily("monospace"); break;
+		case 3: f.setFamily("script"); break;
+		case 4: f.setFamily("symbol"); break;
+		case 0: default: f.setFamily("sans-serif"); break;
+	}
+	if(fontStyle) f.setItalic(true);
+	if(fontWeight) f.setWeight(QFont::Bold);
+	else f.setWeight(QFont::Normal);
+			
+	f.setUnderline(underlined);
+	f.setOverline(overlined);
+	
+	return f;
+}
+
+void QtPLDriver::drawTextInPicture(QPainter* p, const QString& text)
+{
+	QPicture tempPic;
+	QPainter tempPainter(&tempPic);
+	tempPainter.setFont(p->font());
+	QRectF rect(0., 0., 1., 1.);
+	QRectF bounding;
+	tempPainter.drawText(rect, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextDontClip, text, &bounding);
+
+// For svg debug
+// 	tempPainter.drawLine(bounding.left(), bounding.bottom(), bounding.right(), bounding.bottom());
+// 	tempPainter.drawLine(bounding.left(), bounding.top(), bounding.right(), bounding.top());
+// 	tempPainter.drawLine(bounding.left(), bounding.bottom(), bounding.left(), bounding.top());
+// 	tempPainter.drawLine(bounding.right(), bounding.bottom(), bounding.right(), bounding.top());
+// 	tempPainter.drawLine(0., bounding.bottom()+5., 0., bounding.top()-5.);
+	tempPainter.end();
+
+	p->drawPicture(xOffset+bounding.width()/2., -yOffset, tempPic);
+	
+
+	xOffset+=bounding.width()/svgBugFactor;
+}
+
+QPicture QtPLDriver::getTextPicture(PLUNICODE* text, int len, int chrht)
+{
+	char plplotEsc;
+	plgesc( &plplotEsc );
+	PLUNICODE fci;
+	plgfci( &fci );
+	
+	double old_fontScale;
+  
+	QPicture res;
+	QPainter p(&res);
+	
+	QString currentString;
+
+	yOffset=0.;
+	xOffset=0.;
+
+	currentFontSize=chrht*p.device()->logicalDpiY()/25.4*fontScalingFactor;
+	currentFontScale=1.;
+	underlined=false;
+	overlined=false;
+	
+	p.setFont(getFont(fci));
+	
+	int i=0;
+	while(i < len)
+	{
+		if(text[i]<PL_FCI_MARK) // Not a font change
+		{
+			if(text[i]!=(PLUNICODE)plplotEsc)
+			{
+				currentString.append(QString((QChar*)&(text[i]), 1));
+				++i;
+				continue;
+			}
+			++i; // Now analyse the escaped character
+			switch(text[i])
+			{
+				case 'd':
+					drawTextInPicture(&p, currentString);
+					
+					currentString.clear();
+					old_fontScale=currentFontScale;
+					if( yOffset>0.0 )
+						currentFontScale *= 1.25;  /* Subscript scaling parameter */
+					else
+						currentFontScale *= 0.8;  /* Subscript scaling parameter */
+
+					yOffset -= currentFontSize * old_fontScale / 2.;
+					
+					p.setFont(getFont(fci));
+					break;
+				case 'u':
+					drawTextInPicture(&p, currentString);
+					
+					currentString.clear();
+					if( yOffset<0.0 )
+						currentFontScale *= 1.25;  /* Subscript scaling parameter */
+					else
+						currentFontScale *= 0.8;  /* Subscript scaling parameter */
+
+					yOffset += currentFontSize * currentFontScale / 2.;
+					p.setFont(getFont(fci));
+					break;
+				case '-':
+					drawTextInPicture(&p, currentString);
+					
+					currentString.clear();
+					underlined=!underlined;
+					p.setFont(getFont(fci));
+					break;
+				case '+':
+					drawTextInPicture(&p, currentString);
+
+					currentString.clear();
+					overlined=!overlined;
+					p.setFont(getFont(fci));
+					break;
+				case '#':
+					currentString.append(QString((QChar*)&(text[i]), 1));
+					break;
+				default :
+					std::cout << "unknown escape char " << ((QChar)text[i]).toLatin1() << std::endl;
+					break;
+			}
+		}
+		else // Font change
+		{
+			drawTextInPicture(&p, currentString);
+
+			currentString.clear();
+			fci=text[i];
+			p.setFont(getFont(fci));
+		}
+		++i;
+	}
+	drawTextInPicture(&p, currentString);
+	
+	p.end();
+	return res;
+}
+
+void QtPLDriver::drawText(PLStream* pls, EscText* txt)
+{
+	/* Check that we got unicode, warning message and return if not */
+	if( txt->unicode_array_len == 0 ) {
+		printf( "Non unicode string passed to a Qt driver, ignoring\n" );
+		return;
+	}
+	
+	/* Check that unicode string isn't longer then the max we allow */
+	if( txt->unicode_array_len >= 500 ) {
+		printf( "Sorry, the Qt drivers only handle strings of length < %d\n", 500 );
+		return;
+	}
+
+	PLFLT rotation, shear, stride;
+	plRotationShear( txt->xform, &rotation, &shear, &stride);
+	
+	double picDpi;
+	QPicture picText=getTextPicture(txt->unicode_array, txt->unicode_array_len, pls->chrht);
+	picDpi=picText.logicalDpiY();
+
+	rotation -= pls->diorot * M_PI / 2.0;
+	m_painterP->translate(txt->x*downscale, m_dHeight-txt->y*downscale);
+	QMatrix rotShearMatrix(cos(rotation)*stride, -sin(rotation)*stride, cos(rotation)*sin(shear)+sin(rotation)*cos(shear), -sin(rotation)*sin(shear)+cos(rotation)*cos(shear), 0., 0.);
+
+	m_painterP->setWorldMatrix(rotShearMatrix, true);
+	m_painterP->translate(-txt->just*xOffset*m_painterP->device()->logicalDpiY()/picDpi, 0.);
+	m_painterP->drawPicture(0., 0., picText);
+
+	m_painterP->setWorldMatrix(QMatrix());
+	
+}
+
+void QtPLDriver::setColor(int r, int g, int b, double alpha)
 {
 	QPen p=m_painterP->pen();
-	p.setColor(QColor(r, g, b, a));
+	p.setColor(QColor(r, g, b, alpha*255));
 	m_painterP->setPen(p);
 	
 	QBrush B=m_painterP->brush();
-	B.setColor(QColor(r, g, b, a));
+	B.setColor(QColor(r, g, b, alpha*255));
+	B.setStyle(Qt::SolidPattern);
 	m_painterP->setBrush(B);
 }
 
@@ -223,13 +453,11 @@ void QtPLDriver::setWidth(PLINT w)
 
 void QtPLDriver::setDashed(PLINT nms, PLINT* mark, PLINT* space)
 {
-	// 72 dpi
-	// => 72/25400 = 0.00283 dot for 1 micron
 	QVector<qreal> vect;
 	for(int i=0; i<nms; ++i)
 	{
-		vect << (PLFLT)mark[i]*0.00283;
-		vect << (PLFLT)space[i]*0.00283;
+		vect << (PLFLT)mark[i]*m_painterP->device()->logicalDpiX()/25400.;
+		vect << (PLFLT)space[i]*m_painterP->device()->logicalDpiX()/25400.;
 	}
 	QPen p=m_painterP->pen();
 	p.setDashPattern(vect);
@@ -242,441 +470,6 @@ void QtPLDriver::setSolid()
 	p.setStyle(Qt::SolidLine);
 	m_painterP->setPen(p);
 }
-
-#if 0
-/*---------------------------------------------------------------------
-  Font style and weight lookup tables
-  ---------------------------------------------------------------------*/
-/*$$ These are lookup tables what the actual wxWidgets codes are needed
-     to set the font 
-const wxFontFamily fontFamilyLookup[5] = {
-  wxFONTFAMILY_SWISS,        // sans-serif
-  wxFONTFAMILY_ROMAN,        // serif
-  wxFONTFAMILY_TELETYPE,     // monospace
-  wxFONTFAMILY_SCRIPT,       // script
-  wxFONTFAMILY_ROMAN         // symbol
-};
-
-const int fontStyleLookup[3] = {
-  wxFONTFLAG_DEFAULT,        // upright
-  wxFONTFLAG_ITALIC,         // italic
-  wxFONTFLAG_SLANT           // oblique
-};
-
-const int fontWeightLookup[2] = {
-  wxFONTFLAG_DEFAULT,       // medium
-  wxFONTFLAG_BOLD           // bold
-};
-*/
-
-void ProcessString( PLStream* pls, EscText* args )
-{
-  /* Check that we got unicode, warning message and return if not */
-  if( args->unicode_array_len == 0 ) {
-    printf( "Non unicode string passed to a cairo driver, ignoring\n" );
-    return;
-  }
-	
-  /* Check that unicode string isn't longer then the max we allow */
-  if( args->unicode_array_len >= 500 ) {
-    printf( "Sorry, the QT drivers only handles strings of length < %d\n", 500 );
-    return;
-  }
-  
-  /* Calculate the font size (in pixels) */
-  /*$$ this is driver specific - we need the actual pixels if raster device
-       otherwise correct scaled size (determined more or less empirically
-  fontSize = pls->chrht * VIRTUAL_PIXELS_PER_MM/scaley * 1.3; */
-  
-  /* calculate rotation of text */
-  plRotationShear( args->xform, &rotation, &shear, &stride);
-  rotation -= pls->diorot * M_PI / 2.0;
-  cos_rot = cos( rotation );
-  sin_rot = sin( rotation );
-
-  /* Set font color */
-  //$$ don't know if needed
-
-  /* First just determine text width and height, by processing the whole code
-     without do the actual drawing */
-  posX = args->x;
-  posY = args->y;
-  PSDrawText( args->unicode_array, args->unicode_array_len, false );
-  
-  /* now process the text again, this time draw it */
-  posX = (PLINT) (args->x-(args->just*textWidth)*scalex*cos_rot-(0.5*textHeight)*scalex*sin_rot);
-  posY = (PLINT) (args->y-(args->just*textWidth)*scaley*sin_rot+(0.5*textHeight)*scaley*cos_rot);
-  PSDrawText( args->unicode_array, args->unicode_array_len, true );
-}
-
-void PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
-{
-  int i = 0;
-
-  char utf8_string[max_string_length];
-  char utf8[5];
-  memset( utf8_string, '\0', max_string_length );
-
-  /* Get PLplot escape character */
-  char plplotEsc;
-  plgesc( &plplotEsc );
-
-  /* Get the curent font */
-  fontScale = 1.0;
-  yOffset = 0.0;
-  PLUNICODE fci;
-  plgfci( &fci );
-  PSSetFont( fci );
-  textWidth=0;
-  textHeight=0;
-
-  while( i < ucs4Len ) {
-    if( ucs4[i] < PL_FCI_MARK ) {	/* not a font change */
-      if( ucs4[i] != (PLUNICODE)plplotEsc ) {  /* a character to display */
-        ucs4_to_utf8( ucs4[i], utf8 );
-        strncat( utf8_string, utf8, max_string_length );
-      	i++;
-      	continue;
-      }
-      i++;
-      if( ucs4[i] == (PLUNICODE)plplotEsc ) {   /* a escape character to display */
-        ucs4_to_utf8( ucs4[i], utf8 );
-        strncat( utf8_string, utf8, max_string_length );
-        i++;
-        continue;
-      } else {
-      	if( ucs4[i] == (PLUNICODE)'u' ) {	/* Superscript */
-          // draw string so far
-          PSDrawTextToDC( utf8_string, drawText );
-          
-          // change font scale
-      		if( yOffset<0.0 )
-            fontScale *= 1.25;  /* Subscript scaling parameter */
-      		else
-            fontScale *= 0.8;  /* Subscript scaling parameter */
-          PSSetFont( fci );
-
-      		yOffset += scaley * fontSize * fontScale / 2.;
-      	}
-      	if( ucs4[i] == (PLUNICODE)'d' ) {	/* Subscript */
-          // draw string so far
-          PSDrawTextToDC( utf8_string, drawText );
-
-          // change font scale
-          double old_fontScale=fontScale;
-      		if( yOffset>0.0 )
-            fontScale *= 1.25;  /* Subscript scaling parameter */
-      		else
-            fontScale *= 0.8;  /* Subscript scaling parameter */
-          PSSetFont( fci );
-
-      		yOffset -= scaley * fontSize * old_fontScale / 2.;
-      	}
-      	if( ucs4[i] == (PLUNICODE)'-' ) {	/* underline */
-          // draw string so far
-          PSDrawTextToDC( utf8_string, drawText );
-
-          underlined = !underlined; 
-          PSSetFont( fci );
-      	}
-      	if( ucs4[i] == (PLUNICODE)'+' ) {	/* overline */
-          /* not implemented yet */
-        }
-        i++;
-      }
-    } else { /* a font change */
-      // draw string so far
-      PSDrawTextToDC( utf8_string, drawText );
-
-      // get new font
-      fci = ucs4[i];
-      PSSetFont( fci );
-      i++;
-    }
-  }
-
-  PSDrawTextToDC( utf8_string, drawText );
-}
-
-void PSSetFont( PLUNICODE fci )
-{
-  unsigned char fontFamily, fontStyle, fontWeight;
-
-  plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
-  plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
-  plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );  
-
-  /*$$ In the next part I delete the old font, get a new font depending
-       on fontFamily, fontStyle, fontWeight, set underlined option
-       and set the font */
-  
-  /*if( m_font )
-    delete m_font;
-  
-  m_font=wxFont::New((int) (fontSize*fontScale<4 ? 4 : fontSize*fontScale),
-                     fontFamilyLookup[fontFamily],
-                     fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
-  m_font->SetUnderlined( underlined );
-  m_dc->SetFont( *m_font );*/
-}
-
-void PSDrawTextToDC( char* utf8_string, bool drawText )
-{
-  /*$$ width, height; d, l are not used here 
-  wxCoord w, h, d, l; */
-
-  /*$$ convert utf8 to current Encoding and get text extent
-  wxString str(wxConvUTF8.cMB2WC(utf8_string), *wxConvCurrent);
-  m_dc->GetTextExtent( str, &w, &h, &d, &l ); */
-  
-  /*$$ do the actual drawing (second time)
-  if( drawText )
-    m_dc->DrawRotatedText( str, (wxCoord) ((posX-yOffset*sin_rot)/scalex),
-                           (wxCoord) (height-(posY+yOffset*cos_rot)/scaley), 
-                           rotation*180.0/M_PI ); */
-  
-  /*$$ calculate the new position where the next text will be written,
-       and determine textWidth and textHeight
-  posX += (PLINT) (w*scalex*cos_rot);
-  posY += (PLINT) (w*scalex*sin_rot);
-  textWidth += w;
-  textHeight = (wxCoord) (textHeight>(h+yOffset/scaley) ? textHeight : (h+yOffset/scaley)); */
-  
-  /* clear string as we don't need it anymore */
-  memset( utf8_string, '\0', max_string_length );
-}
-#endif
-
-//////////// Buffered driver ///////////////////////
-
-QtPLBufferedDriver::QtPLBufferedDriver(PLINT i_iWidth, PLINT i_iHeight):
-	QtPLDriver(i_iWidth, i_iHeight)
-{}
-
-QtPLBufferedDriver::~QtPLBufferedDriver()
-{
-	clearBuffer();
-}
-
-void QtPLBufferedDriver::clearBuffer()
-{
-	for(QLinkedList<BufferElement>::iterator i=m_listBuffer.begin(); i!=m_listBuffer.end(); ++i)
-
-	{
-		switch(i->Element)
-		{
-			case POLYLINE:
-			case POLYGON:
-				delete[] i->Data.PolylineStruct.x;
-				delete[] i->Data.PolylineStruct.y;
-				break;
-                
-			case SET_DASHED:
-				delete[] i->Data.PolylineStruct.x;
-				break;
-            
-			default:
-				break;
-		}
-	}
-    
-	m_listBuffer.clear();
-}
-
-void QtPLBufferedDriver::drawLine(short x1, short y1, short x2, short y2)
-{
-	BufferElement el;
-	el.Element=LINE;
-	el.Data.LineStruct.x1=(PLFLT)x1*downscale;
-	el.Data.LineStruct.y1=m_dHeight-(PLFLT)(y1*downscale);
-	el.Data.LineStruct.x2=(PLFLT)x2*downscale;
-	el.Data.LineStruct.y2=m_dHeight-(PLFLT)(y2*downscale);
-    
-	m_listBuffer.append(el);
-}
-
-void QtPLBufferedDriver::drawPolyline(short * x, short * y, PLINT npts)
-{
-	BufferElement el;
-	el.Element=POLYLINE;
-	el.Data.PolylineStruct.npts=(PLINT)npts;
-	el.Data.PolylineStruct.x=new PLFLT[npts];
-	el.Data.PolylineStruct.y=new PLFLT[npts];
-	for(int i=0; i<npts; ++i)
-	{
-		el.Data.PolylineStruct.x[i]=(PLFLT)(x[i])*downscale;
-		el.Data.PolylineStruct.y[i]=m_dHeight-(PLFLT)((y[i])*downscale);
-	}
-    
-	m_listBuffer.append(el);
-}
-
-void QtPLBufferedDriver::drawPolygon(short * x, short * y, PLINT npts)
-{
-	BufferElement el;
-	el.Element=POLYGON;
-	el.Data.PolylineStruct.npts=(PLINT)npts;
-	el.Data.PolylineStruct.x=new PLFLT[npts];
-	el.Data.PolylineStruct.y=new PLFLT[npts];
-	for(int i=0; i<npts; ++i)
-	{
-		el.Data.PolylineStruct.x[i]=(PLFLT)(x[i])*downscale;
-		el.Data.PolylineStruct.y[i]=m_dHeight-(PLFLT)((y[i])*downscale);
-	}
-	if(el.Data.PolylineStruct.x[0]==el.Data.PolylineStruct.x[npts-1] && el.Data.PolylineStruct.y[0]==el.Data.PolylineStruct.y[npts-1])
-	{
-		--el.Data.PolylineStruct.npts;
-	}
-    
-	m_listBuffer.append(el);
-}
-
-void QtPLBufferedDriver::setColor(int r, int g, int b, int a)
-{
-	BufferElement el;
-	el.Element=SET_COLOUR;
-	el.Data.ColourStruct.R=r;
-	el.Data.ColourStruct.G=g;
-	el.Data.ColourStruct.B=b;
-	el.Data.ColourStruct.A=a;
-    
-	m_listBuffer.append(el);
-}
-
-void QtPLBufferedDriver::setWidth(PLINT w)
-{
-	BufferElement el;
-	el.Element=SET_WIDTH;
-	el.Data.intParam=w;
-	m_listBuffer.append(el);
-}
-
-void QtPLBufferedDriver::setDashed(PLINT nms, PLINT* mark, PLINT* space)
-{
-	BufferElement el;
-	el.Element=SET_DASHED;
-	el.Data.PolylineStruct.npts=2*nms;
-	el.Data.PolylineStruct.x=new PLFLT[2*nms];
-	for(int i=0; i<nms; i++)
-	{
-		el.Data.PolylineStruct.x[2*i]=(PLFLT)mark[i]*0.00283;
-		el.Data.PolylineStruct.x[2*i+1]=(PLFLT)space[i]*0.00283;
-	}
-    
-	m_listBuffer.append(el);
-}
-
-void QtPLBufferedDriver::setSolid()
-{
-	BufferElement el;
-	el.Element=SET_SOLID;
-	m_listBuffer.append(el);
-}
-
-// Draw the content of the buffer
-void QtPLBufferedDriver::doPlot(QPainter* i_painterP, double x_fact, double y_fact, double x_offset, double y_offset)
-{
-	QLineF line;
-	QPointF * polyline;
-	PLINT npts;
-	QVector<qreal> vect;
-	
-	if(i_painterP==NULL) i_painterP=m_painterP;
-	
-	QPen p=i_painterP->pen();
-	QBrush b=i_painterP->brush();
-	b.setStyle(Qt::SolidPattern);
-	i_painterP->setBrush(b);
-	
-	i_painterP->fillRect(x_offset, y_offset, m_dWidth*x_fact, m_dHeight*y_fact, QBrush(Qt::black));
-	
-	if(m_listBuffer.empty())
-	{
-		return;
-	}
-	for(QLinkedList<BufferElement>::const_iterator i=m_listBuffer.begin(); i!=m_listBuffer.end(); ++i)
-	{
-		switch(i->Element)
-		{
-			case LINE:
-				line=QLineF(i->Data.LineStruct.x1*x_fact+x_offset, i->Data.LineStruct.y1*y_fact+y_offset, i->Data.LineStruct.x2*x_fact+x_offset, i->Data.LineStruct.y2*y_fact+y_offset);
-				i_painterP->drawLine(line);
-				break;
-            
-			case POLYLINE:
-				npts=i->Data.PolylineStruct.npts;
-				polyline=new QPointF[npts];
-				for(int j=0; j<npts; ++j)
-				{
-					polyline[j].setX(i->Data.PolylineStruct.x[j]*x_fact+x_offset);
-					polyline[j].setY(i->Data.PolylineStruct.y[j]*y_fact+y_offset);
-				}
-				i_painterP->drawPolyline(polyline, npts);
-				delete[] polyline;
-				break;
-                
-			case POLYGON:
-				npts=i->Data.PolylineStruct.npts;
-				polyline=new QPointF[npts];
-				for(int j=0; j<npts; ++j)
-				{
-					polyline[j].setX(i->Data.PolylineStruct.x[j]*x_fact+x_offset);
-					polyline[j].setY(i->Data.PolylineStruct.y[j]*y_fact+y_offset);
-				}
-				i_painterP->drawPolygon(polyline, npts);
-
-				delete[] polyline;
-				break;
-                
-			case SET_WIDTH:
-				
-				p.setWidthF(i->Data.intParam);
-				i_painterP->setPen(p);
-				break;
-                
-			case SET_COLOUR:
-			  p.setColor(QColor(i->Data.ColourStruct.R, i->Data.ColourStruct.G, i->Data.ColourStruct.B, i->Data.ColourStruct.A));
-				i_painterP->setPen(p);
-				b.setColor(QColor(i->Data.ColourStruct.R, i->Data.ColourStruct.G, i->Data.ColourStruct.B, i->Data.ColourStruct.A));
-				i_painterP->setBrush(b);
-				break;
-                
-			case SET_DASHED:
-				vect.clear();
-				for(int j=0; j<i->Data.PolylineStruct.npts; j++)
-				{
-					if(i->Data.PolylineStruct.x[j]>=1.) //TODO remove that when bug #228554 of Qt is solved on Windows...
-						vect << i->Data.PolylineStruct.x[j];
-					else
-						vect <<1.;
-				}
-				p.setDashPattern(vect);
-				i_painterP->setPen(p);
-				break;
-                
-			case SET_SOLID:
-				p.setStyle(Qt::SolidLine);
-				i_painterP->setPen(p);
-				break;
-			
-			case SET_SMOOTH:
-				i_painterP->setRenderHint(QPainter::Antialiasing, i->Data.intParam);
-				break;
-                
-			default:
-				break;
-		}
-	}
-}
-
-void QtPLBufferedDriver::getPlotParameters(double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset)
-{
-	io_dXFact=1.;
-	io_dYFact=1.;
-	io_dXOffset=0.;
-	io_dYOffset=0.;
-}
-
 
 // Generic driver interface
 
@@ -702,7 +495,7 @@ void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 #endif
 	if(widget==NULL) return;
 	
-	widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
+	widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
 	widget->drawLine(x1a, y1a, x2a, y2a);
 }
 
@@ -727,7 +520,7 @@ void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
 #endif
 	if(widget==NULL) return;
 	
-	widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
+	widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
 	widget->drawPolyline(xa, ya, npts);
 }
 
@@ -758,7 +551,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 	{
 		case PLESC_DASH:
 			widget->setDashed(pls->nms, pls->mark, pls->space);
-			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
+			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
 			widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
 			widget->setSolid();
 			break;
@@ -772,7 +565,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 				xa[i] = pls->dev_x[i];
 				ya[i] = pls->dev_y[i];
 			}
-			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
+			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
 			widget->drawPolygon(xa, ya, pls->dev_npts);
             
 			delete[] xa;
@@ -782,6 +575,8 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
     case PLESC_HAS_TEXT:
       /*$$ call the generic ProcessString function
       ProcessString( pls, (EscText *)ptr ); */
+		widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+		widget->drawText(pls, (EscText *)ptr);
       break;        
     
 		default: break;
@@ -815,16 +610,38 @@ void plD_state_qt(PLStream * pls, PLINT op)
 			break;
        
 		case PLSTATE_COLOR0:
-		  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
+			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
 			break;
 			
 		case PLSTATE_COLOR1:
-		  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, (int)(255.*pls->curcolor.a));
+			widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
 			break;
 
             
 			default: break;
 	}
+}
+
+void plD_tidy_qt(PLStream * pls)
+{
+	QtPLDriver * widget=NULL;
+	#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
+	if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
+#endif
+#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
+	if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
+#endif
+#if defined(PLD_epsqt) || defined(PLD_pdfqt)
+	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
+#endif
+	
+	if(widget!=NULL)
+	{
+		delete widget;
+		pls->dev=NULL;
+	}
+	
+	closeQtApp();
 }
 
 ////////////////// Raster driver-specific definitions: class and interface functions /////////
@@ -841,8 +658,20 @@ QtRasterDevice::QtRasterDevice(int i_iWidth, int i_iHeight):
 	b.setStyle(Qt::SolidPattern);
 	m_painterP->setBrush(b);
 	m_painterP->setRenderHint(QPainter::Antialiasing, true);
+	int res=DPI/25.4*1000.;
+	setDotsPerMeterX(res);
+	setDotsPerMeterY(res);
+
 	// Let's fill the background
 	m_painterP->fillRect(0, 0, width(), height(), QBrush(Qt::black));
+
+	svgBugFactor=1.;
+	fontScalingFactor=1.;
+}
+
+QtRasterDevice::~QtRasterDevice()
+{
+	if(m_painterP!=NULL) delete m_painterP;
 }
 
 void QtRasterDevice::definePlotName(const char* fileName, const char* format)
@@ -879,24 +708,28 @@ void plD_init_rasterqt(PLStream * pls)
 	pls->dev_clear=1;
 	pls->termin=0;
 	pls->page = 0;
-
+	pls->dev_text = 1; // want to draw text
+	pls->dev_unicode = 1; // want unicode 
+  
+	initQtApp();
   /*$$ these variables must be 1 so that we can process
-       unicode text on our own	
-  pls->dev_text = 1; // want to draw text
-  pls->dev_unicode = 1; // want unicode */
+       unicode text on our own	*/
+
 
   /*$$ if you want to use the hershey font only for the
        symbols set this to 1
   pls->dev_hrshsym = 1; */
-  
-	// Initialised with the default (A4) size
-	pls->dev=new QtRasterDevice;
 	
 	// Shamelessly copied on the Cairo stuff :)
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
+		pls->dev=new QtRasterDevice;
 		pls->xlength = ((QtRasterDevice*)(pls->dev))->m_dWidth;
 		pls->ylength = ((QtRasterDevice*)(pls->dev))->m_dHeight;
+	}
+	else
+	{
+		pls->dev=new QtRasterDevice(pls->xlength, pls->ylength);
 	}
 	
 	if (pls->xlength > pls->ylength)
@@ -1083,16 +916,20 @@ QtSVGDevice::QtSVGDevice(int i_iWidth, int i_iHeight):
 	QtPLDriver(i_iWidth, i_iHeight)
 {
 	setSize(QSize(m_dWidth, m_dHeight));
+	m_painterP=NULL;
+	svgBugFactor=1.37;
+	fontScalingFactor=1.;
 }
 
 QtSVGDevice::~QtSVGDevice()
 {
+	if(m_painterP!=NULL) delete m_painterP;
 }
 
 void QtSVGDevice::definePlotName(const char* fileName)
 {
 	setFileName(QString(fileName));
-	setResolution(72);
+	setResolution(DPI);
 
 	m_painterP=new QPainter(this);
 	m_painterP->fillRect(0, 0, m_dWidth, m_dHeight, QBrush(Qt::black));
@@ -1133,13 +970,20 @@ void plD_init_svgqt(PLStream * pls)
 	pls->dev_clear=1;
 	pls->termin=0;
 	pls->page = 0;
+	pls->dev_text = 1; // want to draw text
+	pls->dev_unicode = 1; // want unicode 
 	
-	pls->dev=new QtSVGDevice;
+	initQtApp();
 	
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
+		pls->dev=new QtSVGDevice;
 		pls->xlength = ((QtSVGDevice*)(pls->dev))->m_dWidth;
 		pls->ylength = ((QtSVGDevice*)(pls->dev))->m_dHeight;
+	}
+	else
+	{
+		pls->dev=new QtSVGDevice(pls->xlength, pls->ylength);
 	}
 	
 	if (pls->xlength > pls->ylength)
@@ -1193,13 +1037,18 @@ QtEPSDevice::QtEPSDevice()
 	setResolution(DPI);
 	setColorMode(QPrinter::Color);
 	setOrientation(QPrinter::Landscape);
+	setPrintProgram(QString("lpr"));
 			
 	m_dWidth=pageRect().width();
 	m_dHeight=pageRect().height();
+	m_painterP=NULL;
+	svgBugFactor=1.;
+	fontScalingFactor=1.;
 }
 
 QtEPSDevice::~QtEPSDevice()
 {
+	if(m_painterP!=NULL) delete m_painterP;
 }
 
 void QtEPSDevice::definePlotName(const char* fileName, int ifeps)
@@ -1275,14 +1124,13 @@ void plD_init_epspdfqt(PLStream * pls)
 	pls->dev_clear=1;
 	pls->termin=0;
 	pls->page = 0;
+	pls->dev_text = 1; // want to draw text
+	pls->dev_unicode = 1; // want unicode 
 	
-	int argc=0;
-	char argv[]={'\0'};
 	// QPrinter devices won't create if there is no QApplication declared...
-	QApplication * app=new QApplication(argc, (char**)&argv);
-	pls->dev=new QtEPSDevice;
-	delete app;
+	initQtApp();
 	
+	pls->dev=new QtEPSDevice;
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
 		pls->xlength = ((QtEPSDevice*)(pls->dev))->m_dWidth;
@@ -1321,18 +1169,16 @@ void plD_eop_epspdfqt(PLStream *pls)
 
 	int argc=0;
 	char argv[]={'\0'};
-	
+	if(qt_family_check(pls)) {return;} 
 	((QtEPSDevice *)pls->dev)->savePlot();
 	// Once saved, we have to create a new device with the same properties
 	// to be able to plot another page.
 	downscale=((QtEPSDevice *)pls->dev)->downscale;
-
 	delete ((QtEPSDevice *)pls->dev);
-	
-	QApplication * app=new QApplication(argc, (char**)&argv);
+	//QApplication * app=new QApplication(argc, (char**)&argv);
 	pls->dev=new QtEPSDevice;
 	((QtEPSDevice *)pls->dev)->downscale=downscale;
-	delete app;
+	//delete app;
 }
 
 #if defined(PLD_epsqt)
@@ -1352,7 +1198,7 @@ void plD_bop_pdfqt(PLStream *pls)
 #if defined (PLD_qtwidget)
 
 QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
-	 QWidget(parent), QtPLBufferedDriver(i_iWidth, i_iHeight)
+	 QWidget(parent), QtPLDriver(i_iWidth, i_iHeight)
 {
 	m_painterP=new QPainter;
 	
@@ -1363,76 +1209,80 @@ QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
 	m_iOldSize=0;
 	
 	resize(i_iWidth, i_iHeight);
-
+	
+	pic=new QPicture;
+	m_painterP->begin(pic);
+	
+	svgBugFactor=1.;
+	fontScalingFactor=0.6;
+	
 }
 
 QtPLWidget::~QtPLWidget()
 {
-	clearBuffer();
+// 	clearBuffer();
 	if(m_pixPixmap!=NULL) delete m_pixPixmap;
-}
-
-void QtPLWidget::setSmooth(bool b)
-{
-	BufferElement el;
-	el.Element=SET_SMOOTH;
-	el.Data.intParam=b;
-	m_listBuffer.append(el);
+	if(m_painterP!=NULL) delete m_painterP;
+	if(pic!=NULL) delete pic;
 }
 
 void QtPLWidget::clearWidget()
 {
-	clearBuffer();
+// 	clearBuffer();
+	m_painterP->end();
+	delete pic;
+	pic=new QPicture;
+	m_painterP->begin(pic);
 	m_bAwaitingRedraw=true;
 	update();
 }
 
-void QtPLWidget::captureMousePlotCoords(double * xi, double* yi, double * xf, double * yf)
-{
-	setMouseTracking(true);
-	cursorParameters.isTracking=true;
-	cursorParameters.cursor_start_x=
-		cursorParameters.cursor_start_y=
-		cursorParameters.cursor_end_x=
-		cursorParameters.cursor_end_y=-1.;
-	cursorParameters.step=1;
-	do
-	{
-		QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
-        
-	} while(cursorParameters.isTracking);
-    
-	PLFLT a,b;
-	PLINT c;
-	plcalc_world(cursorParameters.cursor_start_x, 1.-cursorParameters.cursor_start_y, &a, &b, &c);
-	*xi=a;
-	*yi=b;
-	plcalc_world(cursorParameters.cursor_end_x, 1.-cursorParameters.cursor_end_y, &a, &b, &c);
-	*xf=a;
-	*yf=b;
-    
-}
-
-void QtPLWidget::captureMouseDeviceCoords(double * xi, double* yi, double * xf, double * yf)
-{
-	setMouseTracking(true);
-	cursorParameters.isTracking=true;
-	cursorParameters.cursor_start_x=
-			cursorParameters.cursor_start_y=
-			cursorParameters.cursor_end_x=
-			cursorParameters.cursor_end_y=-1.;
-	cursorParameters.step=1;
-	do
-	{
-		QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
-        
-	} while(cursorParameters.isTracking);
-    
-	*xi=cursorParameters.cursor_start_x;
-	*yi=cursorParameters.cursor_start_y;
-	*xf=cursorParameters.cursor_end_x;
-	*yf=cursorParameters.cursor_end_y;
-}
+// void QtPLWidget::captureMousePlotCoords(double * xi, double* yi, double * xf, double * yf)
+// {
+// 	setMouseTracking(true);
+// 	cursorParameters.isTracking=true;
+// 	cursorParameters.cursor_start_x=
+// 		cursorParameters.cursor_start_y=
+// 		cursorParameters.cursor_end_x=
+// 		cursorParameters.cursor_end_y=-1.;
+// 	cursorParameters.step=1;
+// 	do
+// 	{
+// 		QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+//         
+// 	} while(cursorParameters.isTracking);
+//     
+// 	PLFLT a,b;
+// 	PLINT c;
+// 	plcalc_world(cursorParameters.cursor_start_x, 1.-cursorParameters.cursor_start_y, &a, &b, &c);
+// 	*xi=a;
+// 	*yi=b;
+// 	plcalc_world(cursorParameters.cursor_end_x, 1.-cursorParameters.cursor_end_y, &a, &b, &c);
+// 	*xf=a;
+// 	*yf=b;
+//     
+// }
+// 
+// void QtPLWidget::captureMouseDeviceCoords(double * xi, double* yi, double * xf, double * yf)
+// {
+// 	setMouseTracking(true);
+// 	cursorParameters.isTracking=true;
+// 	cursorParameters.cursor_start_x=
+// 			cursorParameters.cursor_start_y=
+// 			cursorParameters.cursor_end_x=
+// 			cursorParameters.cursor_end_y=-1.;
+// 	cursorParameters.step=1;
+// 	do
+// 	{
+// 		QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+//         
+// 	} while(cursorParameters.isTracking);
+//     
+// 	*xi=cursorParameters.cursor_start_x;
+// 	*yi=cursorParameters.cursor_start_y;
+// 	*xf=cursorParameters.cursor_end_x;
+// 	*yf=cursorParameters.cursor_end_y;
+// }
 
 void QtPLWidget::resizeEvent( QResizeEvent * )
 {
@@ -1446,124 +1296,125 @@ void QtPLWidget::resizeEvent( QResizeEvent * )
 
 void QtPLWidget::paintEvent( QPaintEvent * )
 {
+	if(m_painterP->isActive()) m_painterP->end();
 	double x_fact, y_fact, x_offset(0.), y_offset(0.); //Parameters to scale and center the plot on the widget
 	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
-	
+	QPainter * painter=new QPainter;
 	// If actual redraw, not just adding the cursor acquisition traces
-	if(m_bAwaitingRedraw || m_pixPixmap==NULL || m_listBuffer.size()!=m_iOldSize  )
+	if(m_bAwaitingRedraw || m_pixPixmap==NULL)
 	{
 		if(m_pixPixmap!=NULL) delete m_pixPixmap;
 		m_pixPixmap=new QPixmap(width(), height());
-		QPainter * painter=new QPainter;
 		painter->begin(m_pixPixmap);
 		painter->fillRect(0, 0, width(), height(), QBrush(Qt::white));
 		painter->fillRect(0, 0, width(), height(), QBrush(Qt::gray, Qt::Dense4Pattern));
 		painter->fillRect((int)x_offset, (int)y_offset, (int)floor(x_fact*m_dWidth+0.5), (int)floor(y_fact*m_dHeight+0.5), QBrush(Qt::black));
 		painter->setRenderHint(QPainter::Antialiasing, true);
-		doPlot(painter, x_fact, y_fact, x_offset, y_offset);
+		painter->setWorldMatrix(QMatrix(x_fact, 0., 0., y_fact, x_offset, y_offset));
+		pic->play(painter);
 		painter->end();
 		m_bAwaitingRedraw=false;
-		m_iOldSize=m_listBuffer.size();
 	}
 	
-	m_painterP->begin(this);
-	
-	// repaint plot
-	m_painterP->drawPixmap(0, 0, *m_pixPixmap);
+	painter->begin(this);
+// 	
+// 	// repaint plot
+	painter->drawPixmap(0, 0, *m_pixPixmap);
 
 	// now paint the cursor tracking patterns
-	if(cursorParameters.isTracking)
-	{
-		QPen p=m_painterP->pen();
-		p.setColor(Qt::white);
-		if(cursorParameters.step==1)
-		{
-			m_painterP->setPen(p);
-			m_painterP->drawLine((int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), 0, (int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), height());
-			m_painterP->drawLine(0, (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset), width(), (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset));
-		}
-		else
-		{
-			p.setStyle(Qt::DotLine);
-			m_painterP->setPen(p);
-			m_painterP->drawLine((int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), 0, (int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), height());
-			m_painterP->drawLine(0, (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset), width(), (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset));
-			p.setStyle(Qt::SolidLine);
-			m_painterP->setPen(p);
-			m_painterP->drawLine((int)(cursorParameters.cursor_end_x*x_fact*m_dWidth+x_offset), 0, (int)(cursorParameters.cursor_end_x*x_fact*m_dWidth+x_offset), height());
-			m_painterP->drawLine(0, (int)(cursorParameters.cursor_end_y*y_fact*m_dHeight+y_offset), width(), (int)(cursorParameters.cursor_end_y*y_fact*m_dHeight+y_offset));
-		}
-	}
+// 	if(cursorParameters.isTracking)
+// 	{
+// 		QPen p=painter->pen();
+// 		p.setColor(Qt::white);
+// 		if(cursorParameters.step==1)
+// 		{
+// 			painter->setPen(p);
+// 			painter->drawLine((int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), 0, (int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), height());
+// 			painter->drawLine(0, (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset), width(), (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset));
+// 		}
+// 		else
+// 		{
+// 			p.setStyle(Qt::DotLine);
+// 			painter->setPen(p);
+// 			painter->drawLine((int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), 0, (int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), height());
+// 			painter->drawLine(0, (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset), width(), (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset));
+// 			p.setStyle(Qt::SolidLine);
+// 			painter->setPen(p);
+// 			painter->drawLine((int)(cursorParameters.cursor_end_x*x_fact*m_dWidth+x_offset), 0, (int)(cursorParameters.cursor_end_x*x_fact*m_dWidth+x_offset), height());
+// 			painter->drawLine(0, (int)(cursorParameters.cursor_end_y*y_fact*m_dHeight+y_offset), width(), (int)(cursorParameters.cursor_end_y*y_fact*m_dHeight+y_offset));
+// 		}
+// 	}
     
-	m_painterP->end();
+	painter->end();
+	delete painter;
 }
 
-void QtPLWidget::mousePressEvent(QMouseEvent* event)
-{
-	if(!cursorParameters.isTracking) return;
-    
-	double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
-    
-	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
-	
-	PLFLT X=(PLFLT)(event->x()-x_offset)/(m_dWidth*x_fact);
-	PLFLT Y=(PLFLT)(event->y()-y_offset)/(m_dHeight*y_fact);
-	
-	if(cursorParameters.step==1)
-	{
-		cursorParameters.cursor_start_x=X;
-		cursorParameters.cursor_start_y=Y;
-		cursorParameters.step=2; // First step of selection done, going to the next one
-		update();
-	}
-}
-
-void QtPLWidget::mouseReleaseEvent(QMouseEvent* event)
-{
-	double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
-    
-	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
-	
-	PLFLT X=(PLFLT)(event->x()-x_offset)/(m_dWidth*x_fact);
-	PLFLT Y=(PLFLT)(event->y()-y_offset)/(m_dHeight*y_fact);
-    
-	if(cursorParameters.step!=1)
-	{
-		cursorParameters.cursor_end_x=X;
-		cursorParameters.cursor_end_y=Y;
-		cursorParameters.isTracking=false;
-		setMouseTracking(false);
-		update();
-	}
-}
-
-void QtPLWidget::mouseMoveEvent(QMouseEvent* event)
-{
-	this->activateWindow();
-	this->raise();
-	
-	if(!cursorParameters.isTracking) return;
-    
-	double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
-    
-	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
-	
-	PLFLT X=(PLFLT)(event->x()-x_offset)/(m_dWidth*x_fact);
-	PLFLT Y=(PLFLT)(event->y()-y_offset)/(m_dHeight*y_fact);
-    
-	if(cursorParameters.step==1)
-	{
-		cursorParameters.cursor_start_x=X;
-		cursorParameters.cursor_start_y=Y;
-	}
-	else
-	{
-		cursorParameters.cursor_end_x=X;
-		cursorParameters.cursor_end_y=Y;
-	}
-
-	update();
-}
+// void QtPLWidget::mousePressEvent(QMouseEvent* event)
+// {
+// 	if(!cursorParameters.isTracking) return;
+//     
+// 	double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
+//     
+// 	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
+// 	
+// 	PLFLT X=(PLFLT)(event->x()-x_offset)/(m_dWidth*x_fact);
+// 	PLFLT Y=(PLFLT)(event->y()-y_offset)/(m_dHeight*y_fact);
+// 	
+// 	if(cursorParameters.step==1)
+// 	{
+// 		cursorParameters.cursor_start_x=X;
+// 		cursorParameters.cursor_start_y=Y;
+// 		cursorParameters.step=2; // First step of selection done, going to the next one
+// 		update();
+// 	}
+// }
+// 
+// void QtPLWidget::mouseReleaseEvent(QMouseEvent* event)
+// {
+// 	double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
+//     
+// 	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
+// 	
+// 	PLFLT X=(PLFLT)(event->x()-x_offset)/(m_dWidth*x_fact);
+// 	PLFLT Y=(PLFLT)(event->y()-y_offset)/(m_dHeight*y_fact);
+//     
+// 	if(cursorParameters.step!=1)
+// 	{
+// 		cursorParameters.cursor_end_x=X;
+// 		cursorParameters.cursor_end_y=Y;
+// 		cursorParameters.isTracking=false;
+// 		setMouseTracking(false);
+// 		update();
+// 	}
+// }
+// 
+// void QtPLWidget::mouseMoveEvent(QMouseEvent* event)
+// {
+// 	this->activateWindow();
+// 	this->raise();
+// 	
+// 	if(!cursorParameters.isTracking) return;
+//     
+// 	double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
+//     
+// 	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
+// 	
+// 	PLFLT X=(PLFLT)(event->x()-x_offset)/(m_dWidth*x_fact);
+// 	PLFLT Y=(PLFLT)(event->y()-y_offset)/(m_dHeight*y_fact);
+//     
+// 	if(cursorParameters.step==1)
+// 	{
+// 		cursorParameters.cursor_start_x=X;
+// 		cursorParameters.cursor_start_y=Y;
+// 	}
+// 	else
+// 	{
+// 		cursorParameters.cursor_end_x=X;
+// 		cursorParameters.cursor_end_y=Y;
+// 	}
+// 
+// 	update();
+// }
 
 void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset)
 {
@@ -1586,6 +1437,14 @@ void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, doubl
 	}
 }
 
+QtPLTabWidget::~QtPLTabWidget()
+{
+	for(QList<QtPLWidget*>::iterator iter=widgets.begin(); iter!=widgets.end(); ++iter)
+	{
+		if(*iter!=NULL) delete (*iter);
+	}
+}
+
 void QtPLTabWidget::newTab()
 {
 	QtPLWidget * plotWidget=new QtPLWidget;
@@ -1594,6 +1453,7 @@ void QtPLTabWidget::newTab()
 	plotWidget->m_dHeight=m_dHeight;
 	addTab(plotWidget, QString("page %1").arg(count()+1));
 	currentWidget=plotWidget;
+	widgets.push_back(plotWidget);
 }
 
 
@@ -1615,16 +1475,10 @@ void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
 }
 
-// global variables initialised in init(), used in tidy()
-QApplication* app;
-int argc=1; // argc and argv have to exist when tidy() is used, thus they are made global
-char argv[20];
-
 void plD_init_qtwidget(PLStream * pls)
 {
 	PLINT w, h;
-	argv[0]='\0';
-	app=new QApplication(argc, (char**)&argv);
+	initQtApp();
 	QMainWindow * mw=new QMainWindow;
 	QtPLTabWidget* tabWidget=new QtPLTabWidget;
 
@@ -1649,12 +1503,14 @@ void plD_init_qtwidget(PLStream * pls)
 	pls->dev_flush=1;
 	pls->dev_clear=1;
 	pls->termin=1;
+	pls->dev_text = 1; // want to draw text
+	pls->dev_unicode = 1; // want unicode 
 	
 	mw->setCentralWidget(tabWidget);
 	mw->setVisible(true);
 	mw->setWindowTitle("plplot");
 	mw->resize(plsc->xlength, plsc->ylength);
-	app->setActiveWindow(mw);
+	qApp->setActiveWindow(mw);
 	
 }
 
@@ -1666,7 +1522,11 @@ void plD_eop_qtwidget(PLStream *pls)
 
 void plD_tidy_qtwidget(PLStream *pls)
 {
-    app->exec();
+    qApp->exec();
+	delete ((QtPLTabWidget*)pls->dev);
+	pls->dev=NULL;
+	
+	closeQtApp();
 }
 #endif
 
