@@ -735,7 +735,7 @@ proc_str (PLStream *pls, EscText *args)
   #define PROC_STR_STRING_LENGTH 1000
   unsigned char *strp, str[PROC_STR_STRING_LENGTH], *cur_strp, 
      cur_str[PROC_STR_STRING_LENGTH];
-  float font_factor = 1.4;
+  float font_factor = 1.4f;
   PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
   PLINT clipx[4],clipy[4]; /* Current clip limits */
 
@@ -852,8 +852,8 @@ proc_str (PLStream *pls, EscText *args)
 	
 	/* Determine the adjustment for page orientation */
 	theta -= 90.*pls->diorot;
-	args->y += offset*cos(theta*PI/180.);
-	args->x -= offset*sin(theta*PI/180.);
+	args->y += (PLINT)(offset*cos(theta*PI/180.));
+	args->x -= (PLINT)(offset*sin(theta*PI/180.));
 		
 	/* ps driver is rotated by default */
 	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, 
@@ -1019,10 +1019,10 @@ proc_str (PLStream *pls, EscText *args)
 	l1 *= 0.6;
 	l2 *= 0.6;
 	
-	dev->llx = MIN(dev->llx, args->x + (MIN(l1*cs,l2*cs)-1.5) * font_factor * ft_ht * ENLARGE );
-	dev->lly = MIN(dev->lly, args->y + (MIN(l1*sn,l2*sn)-1.5) * font_factor * ft_ht * ENLARGE );
-	dev->urx = MAX(dev->urx, args->x + (MAX(l1*cs,l2*cs)+1.5) * font_factor * ft_ht * ENLARGE );
-	dev->ury = MAX(dev->ury, args->y + (MAX(l1*sn,l2*sn)+1.5) * font_factor * ft_ht * ENLARGE );
+	dev->llx = (int)(MIN(dev->llx, args->x + (MIN(l1*cs,l2*cs)-1.5) * font_factor * ft_ht * ENLARGE));
+	dev->lly = (int)(MIN(dev->lly, args->y + (MIN(l1*sn,l2*sn)-1.5) * font_factor * ft_ht * ENLARGE));
+	dev->urx = (int)(MAX(dev->urx, args->x + (MAX(l1*cs,l2*cs)+1.5) * font_factor * ft_ht * ENLARGE));
+	dev->ury = (int)(MAX(dev->ury, args->y + (MAX(l1*sn,l2*sn)+1.5) * font_factor * ft_ht * ENLARGE));
 
      }
 }

@@ -185,7 +185,6 @@ static void
 plD_init_cgm_Dev(PLStream *pls)
 {
     cgm_Dev *dev;
-    int i;
     
 /* Allocate and initialize device-specific data */
 
@@ -208,8 +207,6 @@ plD_init_cgm_Dev(PLStream *pls)
     dev->fill_colour=dev->colour; /* initially set fill and line colour the same */
     dev->last_fill_colour=-1;  /* set to -1 = unallocated */
     dev->last_line_colour=-1;  /* set to -1 = unallocated */
-
-
 }
 
 /*----------------------------------------------------------------------*\
