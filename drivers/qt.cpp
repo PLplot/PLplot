@@ -257,11 +257,11 @@ QFont QtPLDriver::getFont(PLUNICODE unicode)
 
 	switch(fontFamily)
 	{
-		case 1:	f.setFamily("serif"); break;
-		case 2: f.setFamily("monospace"); break;
-		case 3: f.setFamily("script"); break;
-		case 4: f.setFamily("symbol"); break;
-		case 0: default: f.setFamily("sans-serif"); break;
+		case 1:	f.setFamily("Times"); break;
+		case 2: f.setFamily("Courier"); break;
+		case 3: f.setFamily("Helvetica"); break;
+		case 4: f.setFamily("Helvetica"); break;
+		case 0: default: f.setFamily("Helvetica"); break;
 	}
 	if(fontStyle) f.setItalic(true);
 	if(fontWeight) f.setWeight(QFont::Bold);
