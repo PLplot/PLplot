@@ -255,7 +255,8 @@ void c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig)
 
 static void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance, PLINT *lastindex)
 {
-    PLFLT currx_old, curry_old,	delta_x, delta_y;
+    PLFLT delta_x, delta_y;
+    PLINT currx_old, curry_old;
 
     delta_x = plP_pcdcx(plsc->currx)-plP_pcdcx(plP_wcpcx(tpx));
     delta_y = plP_pcdcy(plsc->curry)-plP_pcdcy(plP_wcpcy(tpy));

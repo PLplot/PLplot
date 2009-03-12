@@ -151,10 +151,10 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
     /* transform arrow -> a */
 
 	for (j = 0; j < npts; j++) {
-	    a_x[j] = arrow_x[j] * dpx -
-		arrow_y[j] * dpy + px0;
-	    a_y[j] = arrow_x[j] * dpy +
-		arrow_y[j] * dpx + py0;
+	    a_x[j] = (PLINT)(arrow_x[j] * dpx -
+		arrow_y[j] * dpy + px0);
+	    a_y[j] = (PLINT)(arrow_x[j] * dpy +
+		arrow_y[j] * dpx + py0);
 	}
 
     /* draw the arrow */

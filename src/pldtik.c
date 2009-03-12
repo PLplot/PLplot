@@ -112,7 +112,7 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld)
 \*----------------------------------------------------------------------*/
 void
 pldtfac(PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start) {
-  PLFLT diff, tdiff;
+  PLFLT diff;
   PLINT year, month, day, hour, min;
   PLFLT sec;
 

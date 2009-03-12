@@ -97,7 +97,7 @@ plimageslow(PLFLT *idata, PLINT nx, PLINT ny,
   /* Translated (by pltr) coordinates */
   PLFLT tx, ty;
   /* The corners of a single filled region */
-  int corners[4];
+  /* int corners[4]; - unreferenced */
   /* The color to use in the fill */
   PLFLT color;
 
@@ -332,14 +332,14 @@ c_plimage(PLFLT **idata, PLINT nx, PLINT ny,
     dy = (ymax - ymin) / (PLFLT)ny;
 
     /* Pixel dimensions of the (Dxmin, Dymin) to (Dxmax, Dymax) box */
-    nnx = ceil((Dxmax - Dxmin) / dx);
-    nny = ceil((Dymax - Dymin) / dy);
+    nnx = (PLINT)ceil((Dxmax - Dxmin) / dx);
+    nny = (PLINT)ceil((Dymax - Dymin) / dy);
 
     /* Call plimagefr with the value -> color range mapped to the minimum
        Offsets for the idata indices to select
        (Dxmin, Dymin) to (Dxmax, Dymax) */
-    xm = floor((Dxmin - xmin) / dx);
-    ym = floor((Dymin - ymin) / dy);
+    xm = (PLINT)floor((Dxmin - xmin) / dx);
+    ym = (PLINT)floor((Dymin - ymin) / dy);
 
     /* Allocate space for the sub-image */
     plAlloc2dGrid(&z, nnx, nny);

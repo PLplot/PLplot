@@ -74,7 +74,7 @@ plerx1(PLFLT xmin, PLFLT xmax, PLFLT y)
 {
     PLINT yminor;
 
-    yminor = MAX(1.0, plsc->minht * plsc->ypmm);
+    yminor = (PLINT)(MAX(1.0, plsc->minht * plsc->ypmm));
     plxtik(plP_wcpcx(xmin), plP_wcpcy(y), yminor, yminor);
     plP_movwor(xmin, y);
     plP_drawor(xmax, y);
@@ -92,7 +92,7 @@ plery1(PLFLT x, PLFLT ymin, PLFLT ymax)
 {
     PLINT xminor;
 
-    xminor = MAX(1.0, plsc->minht * plsc->xpmm);
+    xminor = (PLINT)(MAX(1.0, plsc->minht * plsc->xpmm));
     plytik(plP_wcpcx(x), plP_wcpcy(ymin), xminor, xminor);
     plP_movwor(x, ymin);
     plP_drawor(x, ymax);

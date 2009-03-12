@@ -160,7 +160,7 @@ c_plcol1(PLFLT col1)
 	return;
     }
 
-    icol1 = col1 * plsc->ncol1;
+    icol1 = (PLINT)(col1 * plsc->ncol1);
     icol1 = MIN(icol1, plsc->ncol1-1);
 
     plsc->icol1 = icol1;
@@ -1745,7 +1745,7 @@ plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol)
     int il, ir;
 
     x = (double) (i * (pls->ncol1-1)) / (double) (ncol-1);
-    il = x;
+    il = (int)x;
     ir = il + 1;
     delta = x - il;
 
@@ -1759,9 +1759,9 @@ plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol)
 	newcolor->a = pls->cmap1[il].a;
     }
     else {
-	newcolor->r = (1.-delta) * pls->cmap1[il].r + delta * pls->cmap1[ir].r;
-	newcolor->g = (1.-delta) * pls->cmap1[il].g + delta * pls->cmap1[ir].g;
-	newcolor->b = (1.-delta) * pls->cmap1[il].b + delta * pls->cmap1[ir].b;
+	newcolor->r = (unsigned char)((1.-delta) * pls->cmap1[il].r + delta * pls->cmap1[ir].r);
+	newcolor->g = (unsigned char)((1.-delta) * pls->cmap1[il].g + delta * pls->cmap1[ir].g);
+	newcolor->b = (unsigned char)((1.-delta) * pls->cmap1[il].b + delta * pls->cmap1[ir].b);
 	newcolor->a = (1.-delta) * pls->cmap1[il].a + delta * pls->cmap1[ir].a;
     }
 }

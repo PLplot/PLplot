@@ -1007,7 +1007,7 @@ void * plbuf_save(PLStream *pls, void *state)
 {
     size_t save_size;
     struct _state *plot_state = (struct _state *)state;
-    unsigned int i;
+    PLINT i;
     U_CHAR *buf;      /* Assume that this is byte-sized */
    
     if(pls->plbuf_write) {

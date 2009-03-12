@@ -89,8 +89,8 @@ plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale) {
     /* transform arrow -> a */
 
     for (j = 0; j < plsc->arrow_npts; j++) {
-        a_x[j] = plsc->arrow_x[j] * dpx - plsc->arrow_y[j] * dpy + px0;
-	a_y[j] = plsc->arrow_x[j] * dpy + plsc->arrow_y[j] * dpx + py0;
+        a_x[j] = (PLINT)(plsc->arrow_x[j] * dpx - plsc->arrow_y[j] * dpy + px0);
+	a_y[j] = (PLINT)(plsc->arrow_x[j] * dpy + plsc->arrow_y[j] * dpx + py0);
     }
 
     /* draw the arrow */

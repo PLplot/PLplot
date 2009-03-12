@@ -191,8 +191,8 @@ plfill_soft(short *x, short *y, PLINT n)
 	si /= temp;
 	ci /= temp;
 
-	dinc = plsc->delta[k] * SSQR(plsc->ypmm * ABS(ci),
-				     plsc->xpmm * ABS(si)) / 1000.;
+	dinc = (PLINT)(plsc->delta[k] * SSQR(plsc->ypmm * ABS(ci),
+				     plsc->xpmm * ABS(si)) / 1000.);
 
 	if (dinc < 0) dinc = -dinc;
 	if (dinc == 0) dinc = 1;
@@ -265,8 +265,8 @@ tran(PLINT *a, PLINT *b, PLFLT c, PLFLT d)
     ta = *a;
     tb = *b;
 
-    *a = floor((double) (ta * c + tb * d + 0.5));
-    *b = floor((double) (tb * c - ta * d + 0.5));
+    *a = (PLINT)floor((double) (ta * c + tb * d + 0.5));
+    *b = (PLINT)floor((double) (tb * c - ta * d + 0.5));
 }
 
 static void
@@ -310,7 +310,7 @@ buildlist(PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
 	    if (cstep == -nstep) continue;
 	    if (yp2 == yp3 && yp1 > yp2) continue;
 	}
-	plotx = xp1 + floor(((double) (ploty - yp1) * dx) / dy + 0.5);
+	plotx = xp1 + (PLINT)floor(((double) (ploty - yp1) * dx) / dy + 0.5);
 	addcoord(plotx, ploty);
     }
 }

@@ -75,7 +75,7 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
     }
 
     for (i = 0; i < n; i++) {
-	bin = (data[i] - datmin) / dx;
+	bin = (PLINT)((data[i] - datmin) / dx);
 	if ((flags & 2) == 0) {
 	    bin = bin > 0 ? bin : 0;
 	    bin = bin < nbin ? bin : nbin - 1;
@@ -142,7 +142,7 @@ c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags)
 	}
 	if (flags & 2) {
 	    if (!(flags & 4) || (y[i] != vpwymi)) {
-		int xm = x[i] + (x[i] - x[i-1]);
+		int xm = (int)(x[i] + (x[i] - x[i-1]));
 		pljoin(x[i], vpwymi, x[i], y[i]);
 		pljoin(x[i], y[i], xm, y[i]);
 		pljoin(xm, y[i], xm, vpwymi);
