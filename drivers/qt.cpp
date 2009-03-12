@@ -197,7 +197,6 @@ QtPLDriver::QtPLDriver(PLINT i_iWidth, PLINT i_iHeight)
 	m_dWidth=i_iWidth;
 	m_dHeight=i_iHeight;
 	downscale=1.;
-	svgBugFactor=1.;
 // 	fontScalingFactor=1.;
 }
 
@@ -294,7 +293,7 @@ void QtPLDriver::drawTextInPicture(QPainter* p, const QString& text)
 	p->drawPicture(xOffset+bounding.width()/2., -yOffset, tempPic);
 	
 
-	xOffset+=bounding.width()/svgBugFactor;
+	xOffset+=bounding.width();
 }
 
 QPicture QtPLDriver::getTextPicture(PLUNICODE* text, int len, int chrht)
@@ -665,7 +664,6 @@ QtRasterDevice::QtRasterDevice(int i_iWidth, int i_iHeight):
 	// Let's fill the background
 	m_painterP->fillRect(0, 0, width(), height(), QBrush(Qt::black));
 
-	svgBugFactor=1.;
 	fontScalingFactor=1.;
 }
 
@@ -917,7 +915,7 @@ QtSVGDevice::QtSVGDevice(int i_iWidth, int i_iHeight):
 {
 	setSize(QSize(m_dWidth, m_dHeight));
 	m_painterP=NULL;
-	svgBugFactor=1.37;
+
 	fontScalingFactor=1.;
 }
 
@@ -1042,7 +1040,7 @@ QtEPSDevice::QtEPSDevice()
 	m_dWidth=pageRect().width();
 	m_dHeight=pageRect().height();
 	m_painterP=NULL;
-	svgBugFactor=1.;
+
 	fontScalingFactor=1.;
 }
 
@@ -1213,7 +1211,6 @@ QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
 	pic=new QPicture;
 	m_painterP->begin(pic);
 	
-	svgBugFactor=1.;
 	fontScalingFactor=0.6;
 	
 }

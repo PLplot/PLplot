@@ -98,7 +98,6 @@ class QtPLDriver
 		double yOffset;
 		double xOffset;
 		
-		double svgBugFactor; // factor to fix the oversized bounding boxes for texts in the SVG driver
 		double fontScalingFactor;// To have a nice font size on qtwidget
 		
 		QPainter* m_painterP;
