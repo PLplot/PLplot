@@ -28,7 +28,10 @@ else(DEFAULT_NO_BINDINGS)
   OPTION(ENABLE_cxx "Enable C++ bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
-IF (ENABLE_cxx)
+# Always carry out C++ checks, since some drivers also use these as
+# well as the C++ bindings
+# IF (ENABLE_cxx)
+
 # Check if "using namespace std;" works
 INCLUDE(TestForNamespace)
 
@@ -42,4 +45,4 @@ INCLUDE(TestBrokenIsnanCXX)
 # Need to add check if stdint.h can be used from c++ (HAVE_CXX_STDINT_H)
 INCLUDE(TestForStdintCXX)
 
-ENDIF(ENABLE_cxx)
+# ENDIF(ENABLE_cxx)
