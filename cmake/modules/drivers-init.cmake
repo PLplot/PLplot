@@ -91,7 +91,8 @@ set(DRIVERS_DEVICE_LIST
 "pngqt:qt:ON"
 "ppmqt:qt:ON"
 "tiffqt:qt:ON"
-"svgqt:qt:ON"
+# Currently does not validate and has text positioning errors.
+"svgqt:qt:OFF"
 "gif:gd:ON"
 "jpeg:gd:ON"
 "png:gd:ON" 
