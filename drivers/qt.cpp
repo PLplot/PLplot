@@ -68,7 +68,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
 #endif
 ;
 
-void initQtApp()
+void initQtApp(bool isGUI)
 {
 	++appCounter;
 	if(qApp==NULL && appCounter==1)
@@ -79,7 +79,7 @@ void initQtApp()
 		argv[1]=new char[1];
 		snprintf(argv[0], 10, "qt_driver");
 		argv[1][0]='\0';
-		/*app=*/new QApplication(argc, argv);
+		/*app=*/new QApplication(argc, argv, isGUI );
 	}
 }
 
@@ -709,7 +709,7 @@ void plD_init_rasterqt(PLStream * pls)
 	pls->dev_text = 1; // want to draw text
 	pls->dev_unicode = 1; // want unicode 
   
-	initQtApp();
+	initQtApp(false);
   /*$$ these variables must be 1 so that we can process
        unicode text on our own	*/
 
@@ -971,7 +971,7 @@ void plD_init_svgqt(PLStream * pls)
 	pls->dev_text = 1; // want to draw text
 	pls->dev_unicode = 1; // want unicode 
 	
-	initQtApp();
+	initQtApp(false);
 	
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
@@ -1126,7 +1126,7 @@ void plD_init_epspdfqt(PLStream * pls)
 	pls->dev_unicode = 1; // want unicode 
 	
 	// QPrinter devices won't create if there is no QApplication declared...
-	initQtApp();
+	initQtApp(false);
 	
 	pls->dev=new QtEPSDevice;
 	if (pls->xlength <= 0 || pls->ylength <= 0)
@@ -1475,7 +1475,7 @@ void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 void plD_init_qtwidget(PLStream * pls)
 {
 	PLINT w, h;
-	initQtApp();
+	initQtApp(true);
 	QMainWindow * mw=new QMainWindow;
 	QtPLTabWidget* tabWidget=new QtPLTabWidget;
 
