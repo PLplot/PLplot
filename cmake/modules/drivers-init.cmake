@@ -91,8 +91,15 @@ set(DRIVERS_DEVICE_LIST
 "pngqt:qt:ON"
 "ppmqt:qt:ON"
 "tiffqt:qt:ON"
-# Currently does not validate and has text positioning errors.
-"svgqt:qt:OFF"
+# Currently does not validate at http://validator.w3.org/, but that appears
+# to be a result of the validator being unfamiliar with SVG-1.2 (a draft
+# SVG standard that has not been finalized yet) which is produced
+# by Qt4.  The validation errors
+# referred to the version number (1.2) and one attribute (vector-effect)
+# which is clearly documented in the 1.2 draft.  Also, text offset issues
+# which were in SVG results produced by QT-4.4.3 are gone for QT-4.5.0.
+# Therefore, the conclusion is to enable svgqt by default.
+"svgqt:qt:ON"
 "gif:gd:ON"
 "jpeg:gd:ON"
 "png:gd:ON" 
