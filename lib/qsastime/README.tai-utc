@@ -20,12 +20,12 @@ following general relationship that holds between the discontinuities in UTC.
 
 MJD(TAI) - MJD(UTC) = (offset1 + (MJD(UTC) - offset2)*slope)/86400    (1)
 
-The tai-utc-gen application reads in these (UTC) epoch, offset1,
-offset2, and slope data from tai-utc.dat, calculates the discontinuous
-change in UTC at the UTC epoch of the discontinuity, and stores the
-results in the header file tai-utc.h with two tables which have
-identical offset1, offset2, slope, and discontinuous change data, but
-which have epochs of the discontinuity expressed in MJD(TAI) for
+The tai-utc-gen application reads in these (UTC) epoch, offset1, offset2,
+and slope data from tai-utc.dat, calculates the discontinuous change in UTC
+at the unique TAI epoch of the UTC discontinuity using equation 2 below, and
+stores the results in the header file tai-utc.h with two tables which have
+identical offset1, offset2, slope, and discontinuous change data, but which
+have epochs of the discontinuity expressed in MJD(TAI) for
 TAI_TO_UTC_lookup_table and MJD(UTC) for UTC_TO_TAI_lookup_table.
 
 The qsastime library uses equation 1 to calculate MJD(TAI) as a
