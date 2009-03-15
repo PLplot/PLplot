@@ -82,7 +82,7 @@ int main (int argc, char *argv[])
   double *offset1=NULL;
   int *offset2=NULL;
   double *slope=NULL;
-  double sec, leap_sec;
+  double sec, *leap_sec=NULL;
   int jd;
   int i=0;
   int number_of_lines=0;
@@ -122,6 +122,9 @@ int main (int argc, char *argv[])
   if ((slope=(double *)calloc(number_of_lines, (size_t)sizeof(double)))==NULL)
     MemError1("Allocating memory to the slope table");
 
+  if ((leap_sec=(double *)calloc(number_of_lines, (size_t)sizeof(double)))==NULL)
+    MemError1("Allocating memory to the leap_sec table");
+
   rewind(fr);   /* Go back to the start of the file */
 
   /*
@@ -153,24 +156,23 @@ int main (int argc, char *argv[])
   for (i=0;i<number_of_lines;i++) {
     sec = offset1[i] + (double)(MJDstart[i]-offset2[i])*slope[i];
     if(i==0)
-      leap_sec = 0.;
+      leap_sec[i] = 0.;
     else
-      leap_sec = sec - (offset1[i-1] + (double)(MJDstart[i]-offset2[i-1])*slope[i-1]);
-    if(fabs(leap_sec) < 1.e-9) leap_sec = 0.;
-    fprintf(fw,"{%d, %15.8f, %15.8f, %15.8f, %d, %15.8f},\n", MJDstart[i], sec, leap_sec, offset1[i], offset2[i], slope[i]);
+      /* sec is TAI-UTC in seconds calculated from UTC transformation 
+	 (equation 1 in README.tai-utc).  This calculation must be correct
+	 for start of epoch range.  However, near end of epoch range where
+	 ambiguities in UTC occur, must use equivalent TAI transformation
+	 (equation 2 from same source) to calculate the UTC discontinuity
+	 unambiguously. */
+      leap_sec[i] = sec - (offset1[i-1] + (double)(MJDstart[i]+sec/86400.-offset2[i-1])*slope[i-1])/(1. + slope[i-1]/86400.);
+    if(fabs(leap_sec[i]) < 1.e-14) leap_sec[i] = 0.;
+    fprintf(fw,"{%d, %15.8f, %20.14f, %15.8f, %d, %15.8f},\n", MJDstart[i], sec, leap_sec[i], offset1[i], offset2[i], slope[i]);
     }
   fprintf(fw,"};\n");
 
   fprintf(fw, "const TAI_UTC UTC_TO_TAI_lookup_table[%d] = {\n",number_of_lines);
   for (i=0;i<number_of_lines;i++) {
-    sec = offset1[i] + (double)(MJDstart[i]-offset2[i])*slope[i];
-    if(i==0)
-      leap_sec = 0.;
-    else
-      leap_sec = sec - (offset1[i-1] + (double)(MJDstart[i]-offset2[i-1])*slope[i-1]);
-    
-    if(fabs(leap_sec) < 1.e-9) leap_sec = 0.;
-    fprintf(fw,"{%d, %15.8f, %15.8f, %15.8f, %d, %15.8f},\n", MJDstart[i], 0., leap_sec, offset1[i], offset2[i], slope[i]);
+    fprintf(fw,"{%d, %15.8f, %20.14f, %15.8f, %d, %15.8f},\n", MJDstart[i], 0., leap_sec[i], offset1[i], offset2[i], slope[i]);
     }
   fprintf(fw,"};\n");
 
