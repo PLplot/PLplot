@@ -125,7 +125,6 @@ else(NOT CMAKE_CROSSCOMPILING)
   include(${IMPORT_EXECUTABLES})
 endif(NOT CMAKE_CROSSCOMPILING)
 
-
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tai-utc.h
   COMMAND tai-utc-gen
@@ -133,6 +132,7 @@ add_custom_command(
   ${CMAKE_CURRENT_BINARY_DIR}/tai-utc.h
   DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/tai-utc.dat
+  tai-utc-gen
   )
 
 if(NOT CMAKE_CROSSCOMPILING)
