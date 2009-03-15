@@ -33,16 +33,17 @@
 # 			    device.
 # qt_LINK_FLAGS	  	  - list of full path names of libraries and
 # 			    linker flags for dynamic wxwidgets device driver.
+# qt_RPATH	       	  - RPATH directory list for qt device driver.
 # DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS for case
 # 			    when ENABLE_DYNDRIVERS OFF.
 
 find_package(Qt4)
 if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt)
   if(QT4_FOUND)
-		if(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
-			set(QT_USE_QTSVG 1)
-		endif(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
-		include(${QT_USE_FILE})
+    if(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
+      set(QT_USE_QTSVG 1)
+    endif(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
+    include(${QT_USE_FILE})
     set(qt_COMPILE_FLAGS)
     foreach(DIR ${QT_INCLUDES})
       set(qt_COMPILE_FLAGS "${qt_COMPILE_FLAGS} -I${DIR}")
@@ -50,6 +51,8 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
     
     set(qt_LINK_FLAGS ${QT_LIBRARIES})
     #message("qt_LINK_FLAGS = ${qt_LINK_FLAGS}")
+    set(qt_RPATH ${QT_LIBRARY_DIR})
+    #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${qt_LINK_FLAGS})
   else(QT4_FOUND)
     set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
