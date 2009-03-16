@@ -389,8 +389,8 @@ c_plaxes(PLFLT x0, PLFLT y0,
 /* Draw the horizontal axis */
 
     if (lax) {
-	plP_movphy(vppxmi, yp0);
-	plP_draphy(vppxma, yp0);
+	plP_movphy(vppxmi, (PLINT)yp0);
+	plP_draphy(vppxma, (PLINT)yp0);
 	if (ltx) {
 	    tp = xtick1 * floor(vpwxmi / xtick1);
 	    for (;;) {
@@ -400,20 +400,20 @@ c_plaxes(PLFLT x0, PLFLT y0,
 			for (i = 0; i <= 7; i++) {
 			    temp = tp + xlog[i];
 			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(plP_wcpcx(temp), yp0, xminor, xminor);
+				plxtik(plP_wcpcx(temp), (PLINT)yp0, xminor, xminor);
 			}
 		    }
 		    else {
 			for (i = 1; i <= nxsub1 - 1; i++) {
 			    temp = tp + i * xtick1 / nxsub1;
 			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(plP_wcpcx(temp), yp0, xminor, xminor);
+				plxtik(plP_wcpcx(temp), (PLINT)yp0, xminor, xminor);
 			}
 		    }
 		}
 		if (!BETW(tn, vpwxmi, vpwxma))
 		    break;
-		plxtik(plP_wcpcx(tn), yp0, xmajor, xmajor);
+		plxtik(plP_wcpcx(tn), (PLINT)yp0, xmajor, xmajor);
 		tp = tn;
 	    }
 	}
@@ -422,8 +422,8 @@ c_plaxes(PLFLT x0, PLFLT y0,
 /* Draw the vertical axis */
 
     if (lay) {
-	plP_movphy(xp0, vppymi);
-	plP_draphy(xp0, vppyma);
+	plP_movphy((PLINT)xp0, vppymi);
+	plP_draphy((PLINT)xp0, vppyma);
 	if (lty) {
 	    tp = ytick1 * floor(vpwymi / ytick1);
 	    for (;;) {
@@ -433,20 +433,20 @@ c_plaxes(PLFLT x0, PLFLT y0,
 			for (i = 0; i <= 7; i++) {
 			    temp = tp + xlog[i];
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(xp0, plP_wcpcy(temp), yminor, yminor);
+				plytik((PLINT)xp0, plP_wcpcy(temp), yminor, yminor);
 			}
 		    }
 		    else {
 			for (i = 1; i <= nysub1 - 1; i++) {
 			    temp = tp + i * ytick1 / nysub1;
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(xp0, plP_wcpcy(temp), yminor, yminor);
+				plytik((PLINT)xp0, plP_wcpcy(temp), yminor, yminor);
 			}
 		    }
 		}
 		if (!BETW(tn, vpwymi, vpwyma))
 		    break;
-		plytik(xp0, plP_wcpcy(tn), ymajor, ymajor);
+		plytik((PLINT)xp0, plP_wcpcy(tn), ymajor, ymajor);
 		tp = tn;
 	    }
 	}
@@ -1203,7 +1203,6 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     PLFLT pos, tn, tp, offset, height;
     PLFLT factor, tstart;
     const char *timefmt;
-    double t;
 
 /* Set plot options from input */
 

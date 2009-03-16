@@ -177,8 +177,8 @@ c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
 	v0 = plP_wcpcy(plP_w3wcy( p0[0], p0[1], p0[2] ));
 	u1 = plP_wcpcx(plP_w3wcx( p1[0], p1[1], p1[2] ));
 	v1 = plP_wcpcy(plP_w3wcy( p1[0], p1[1], p1[2] ));
-	plP_movphy(u0,v0);
-	plP_draphy(u1,v1);
+	plP_movphy((PLINT)u0,(PLINT)v0);
+	plP_draphy((PLINT)u1,(PLINT)v1);
       }
     }
     return;
@@ -315,8 +315,8 @@ c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc)
 	v0 = plP_wcpcy(plP_w3wcy( p0[0], p0[1], p0[2] ));
 	u1 = plP_wcpcx(plP_w3wcx( p1[0], p1[1], p1[2] ));
 	v1 = plP_wcpcy(plP_w3wcy( p1[0], p1[1], p1[2] ));
-	plP_movphy(u0,v0);
-	plP_draphy(u1,v1);
+	plP_movphy((PLINT)u0,(PLINT)v0);
+	plP_draphy((PLINT)u1,(PLINT)v1);
       }
     }
     return;
@@ -1251,7 +1251,7 @@ grdashline(short *x, short *y)
 
     nxstep = nxp * plsc->umx;
     nystep = nyp * plsc->umy;
-    tstep = sqrt( nxstep * nxstep + nystep * nystep ) / modulo;
+    tstep = (PLINT)(sqrt( nxstep * nxstep + nystep * nystep ) / modulo);
     if (tstep < 1) tstep = 1;
 
     /* tstep is distance per pixel moved */

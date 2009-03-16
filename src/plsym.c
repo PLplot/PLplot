@@ -176,8 +176,8 @@ c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 	     z[i] >= zmin && z[i] <= zmax) {
 	    u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
 	    v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
-	    plP_movphy(u,v);
-	    plP_draphy(u,v);
+	    plP_movphy((PLINT)u,(PLINT)v);
+	    plP_draphy((PLINT)u,(PLINT)v);
 	  }
 	}
     }
@@ -192,7 +192,7 @@ c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 	     z[i] >= zmin && z[i] <= zmax) {
 	    u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
 	    v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
-	    plhrsh(sym, u, v);
+	    plhrsh(sym, (PLINT)u, (PLINT)v);
 	  }
 	}
     }
@@ -1174,9 +1174,12 @@ int plhershey2unicode ( int in )
 	 * jlo < jmid < jhi and jmid must be in valid range.
 	 */
 	jmid = (jlo+jhi)/2;
-	if (in > hershey_to_unicode_lookup_table[jmid].Hershey)
+  /* convert hershey_to_unicode_lookup_table[jmid].Hershey to signed 
+     integer since we don't loose information - the number range
+     is from 1 and 2932 at the moment */
+	if (in > (int)(hershey_to_unicode_lookup_table[jmid].Hershey))
 	  jlo = jmid;
-	else if (in < hershey_to_unicode_lookup_table[jmid].Hershey)
+	else if (in < (int)(hershey_to_unicode_lookup_table[jmid].Hershey))
 	  jhi = jmid;
 	else
 	  /* We have found it!
@@ -1370,8 +1373,8 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 		 *  The calculation is also dependent of the orientation
 		 *   (perpendicular or parallel) of the text. */
 
-		xpc = plP_dcmmx(plP_pcdcx(xpc));
-		ypc = plP_dcmmy(plP_pcdcy(ypc)) - dispy;
+		xpc = plP_dcmmx(plP_pcdcx((PLINT)xpc));  
+		ypc = plP_dcmmy(plP_pcdcy((PLINT)ypc)) - dispy;
 		
 		shift = plstrl(text) * just;
 		
@@ -1397,7 +1400,7 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
     		xform[1] = -cos(theta);
     		xform[2] = 1.0;
     		xform[3] = -sin(theta);
-			plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);
+			plP_text(0, just, xform, (PLINT)xpc, (PLINT)ypc, (PLINT)xrefpc, (PLINT)yrefpc, text);
     	}
 
     	/* parallel, rotate & shear by angle */
@@ -1407,7 +1410,7 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
     		xform[2] = sin(theta);
     		xform[3] = 1.0;
 
-			plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);
+			plP_text(0, just, xform, (PLINT)xpc, (PLINT)ypc, (PLINT)xrefpc, (PLINT)yrefpc, text);
 		}
 	}
 
@@ -1532,8 +1535,8 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 		
 		/* 4. Compute the reference point. */
 
-		xpc = plP_dcmmx(plP_pcdcx(xpc)) + dispx;
-		ypc = plP_dcmmy(plP_pcdcy(ypc)) + dispy;
+		xpc = plP_dcmmx(plP_pcdcx((PLINT)xpc)) + dispx;
+		ypc = plP_dcmmy(plP_pcdcy((PLINT)ypc)) + dispy;
 		
 		shift = plstrl(text) * just;
 
@@ -1558,7 +1561,7 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
     		xform[2] = sin(theta);
     		xform[3] = 1.0;
 
-			plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);
+			plP_text(0, just, xform, (PLINT)xpc, (PLINT)ypc, (PLINT)xrefpc, (PLINT)yrefpc, text);
     	}
 
     	else {
@@ -1567,7 +1570,7 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
     		xform[2] = 1.0;
     		xform[3] = -sin(theta);
 
-			plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);
+			plP_text(0, just, xform, (PLINT)xpc, (PLINT)ypc, (PLINT)xrefpc, (PLINT)yrefpc, text);
 		}
 
 	}
@@ -1655,8 +1658,8 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
   stride = stride/sqrt(x_dx*x_dx + y_dy*y_dy + z_dz*z_dz);
 
   /* compute the reference point */	
-  xpc = plP_dcmmx(plP_pcdcx(xpc));
-  ypc = plP_dcmmy(plP_pcdcy(ypc));
+  xpc = plP_dcmmx(plP_pcdcx((PLINT)xpc));
+  ypc = plP_dcmmy(plP_pcdcy((PLINT)ypc));
   
   shift = plstrl(text) * just;
   xrefpc = xpc - cos(theta) * shift;
@@ -1673,7 +1676,7 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
   xform[2] = sin(theta) * stride;
   xform[3] = sin(theta) * sin(phi) + cos(theta) * cos(phi);
 
-  plP_text(0, just, xform, xpc, ypc, xrefpc, yrefpc, text);	
+  plP_text(0, just, xform, (PLINT)xpc, (PLINT)ypc, (PLINT)xrefpc, (PLINT)yrefpc, text);	
 }
 
 /*------------------------------------------------------------------------*\

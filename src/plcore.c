@@ -921,8 +921,8 @@ difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
 
     if (plsc->difilt & PLDI_MAP) {
 	for (i = 0; i < npts; i++) {
-	    xscl[i] = plsc->dimxax * xscl[i] + plsc->dimxb;
-	    yscl[i] = plsc->dimyay * yscl[i] + plsc->dimyb;
+	    xscl[i] = (PLINT)(plsc->dimxax * xscl[i] + plsc->dimxb);
+	    yscl[i] = (PLINT)(plsc->dimyay * yscl[i] + plsc->dimyb);
 	}
     }
 
@@ -930,8 +930,8 @@ difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
 
     if (plsc->difilt & PLDI_ORI) {
 	for (i = 0; i < npts; i++) {
-	    x = plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] + plsc->dioxb;
-	    y = plsc->dioyax * xscl[i] + plsc->dioyay * yscl[i] + plsc->dioyb;
+	    x = (PLINT)(plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] + plsc->dioxb);
+	    y = (PLINT)(plsc->dioyax * xscl[i] + plsc->dioyay * yscl[i] + plsc->dioyb);
 	    xscl[i] = x;
 	    yscl[i] = y;
 	}
@@ -941,8 +941,8 @@ difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
 
     if (plsc->difilt & PLDI_PLT) {
 	for (i = 0; i < npts; i++) {
-	    xscl[i] = plsc->dipxax * xscl[i] + plsc->dipxb;
-	    yscl[i] = plsc->dipyay * yscl[i] + plsc->dipyb;
+	    xscl[i] = (PLINT)(plsc->dipxax * xscl[i] + plsc->dipxb);
+	    yscl[i] = (PLINT)(plsc->dipyay * yscl[i] + plsc->dipyb);
 	}
     }
 
@@ -951,8 +951,8 @@ difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
 
     if (plsc->difilt & PLDI_DEV) {
 	for (i = 0; i < npts; i++) {
-	    xscl[i] = plsc->didxax * xscl[i] + plsc->didxb;
-	    yscl[i] = plsc->didyay * yscl[i] + plsc->didyb;
+	    xscl[i] = (PLINT)(plsc->didxax * xscl[i] + plsc->didxb);
+	    yscl[i] = (PLINT)(plsc->didyay * yscl[i] + plsc->didyb);
 	}
 	*clpxmi = plsc->diclpxmi;
 	*clpxma = plsc->diclpxma;
@@ -978,8 +978,8 @@ sdifilt(short *xscl, short *yscl, PLINT npts,
 
     if (plsc->difilt & PLDI_MAP) {
     for (i = 0; i < npts; i++) {
-        xscl[i] = plsc->dimxax * xscl[i] + plsc->dimxb;
-        yscl[i] = plsc->dimyay * yscl[i] + plsc->dimyb;
+        xscl[i] = (PLINT)(plsc->dimxax * xscl[i] + plsc->dimxb);
+        yscl[i] = (PLINT)(plsc->dimyay * yscl[i] + plsc->dimyb);
     }
     }
 
@@ -987,8 +987,8 @@ sdifilt(short *xscl, short *yscl, PLINT npts,
 
     if (plsc->difilt & PLDI_ORI) {
     for (i = 0; i < npts; i++) {
-        x = plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] + plsc->dioxb;
-        y = plsc->dioyax * xscl[i] + plsc->dioyay * yscl[i] + plsc->dioyb;
+        x = (PLINT)(plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] + plsc->dioxb);
+        y = (PLINT)(plsc->dioyax * xscl[i] + plsc->dioyay * yscl[i] + plsc->dioyb);
         xscl[i] = x;
         yscl[i] = y;
     }
@@ -998,8 +998,8 @@ sdifilt(short *xscl, short *yscl, PLINT npts,
 
     if (plsc->difilt & PLDI_PLT) {
     for (i = 0; i < npts; i++) {
-        xscl[i] = plsc->dipxax * xscl[i] + plsc->dipxb;
-        yscl[i] = plsc->dipyay * yscl[i] + plsc->dipyb;
+        xscl[i] = (PLINT)(plsc->dipxax * xscl[i] + plsc->dipxb);
+        yscl[i] = (PLINT)(plsc->dipyay * yscl[i] + plsc->dipyb);
     }
     }
 
@@ -1008,13 +1008,13 @@ sdifilt(short *xscl, short *yscl, PLINT npts,
 
     if (plsc->difilt & PLDI_DEV) {
     for (i = 0; i < npts; i++) {
-        xscl[i] = plsc->didxax * xscl[i] + plsc->didxb;
-        yscl[i] = plsc->didyay * yscl[i] + plsc->didyb;
+        xscl[i] = (PLINT)(plsc->didxax * xscl[i] + plsc->didxb);
+        yscl[i] = (PLINT)(plsc->didyay * yscl[i] + plsc->didyb);
     }
-    *clpxmi = plsc->diclpxmi;
-    *clpxma = plsc->diclpxma;
-    *clpymi = plsc->diclpymi;
-    *clpyma = plsc->diclpyma;
+    *clpxmi = (PLINT)(plsc->diclpxmi);
+    *clpxma = (PLINT)(plsc->diclpxma);
+    *clpymi = (PLINT)(plsc->diclpymi);
+    *clpyma = (PLINT)(plsc->diclpyma);
     }
     else {
     *clpxmi = plsc->phyxmi;
@@ -1111,10 +1111,10 @@ pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 	sxmax = (pxmax - plsc->didxb) / plsc->didxax;
 	symax = (pymax - plsc->didyb) / plsc->didyay;
 
-	rxmin = plP_pcdcx(sxmin);
-	rymin = plP_pcdcy(symin);
-	rxmax = plP_pcdcx(sxmax);
-	rymax = plP_pcdcy(symax);
+	rxmin = plP_pcdcx((PLINT)sxmin);
+	rymin = plP_pcdcy((PLINT)symin);
+	rxmax = plP_pcdcx((PLINT)sxmax);
+	rymax = plP_pcdcy((PLINT)symax);
 
 	*xmin = (rxmin < 0) ? 0 : rxmin;
 	*xmax = (rxmax > 1) ? 1 : rxmax;
@@ -1157,10 +1157,10 @@ pldip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 	sxmax = pxmax * plsc->didxax + plsc->didxb;
 	symax = pymax * plsc->didyay + plsc->didyb;
 
-	rxmin = plP_pcdcx(sxmin);
-	rymin = plP_pcdcy(symin);
-	rxmax = plP_pcdcx(sxmax);
-	rymax = plP_pcdcy(symax);
+	rxmin = plP_pcdcx((PLINT)sxmin);
+	rymin = plP_pcdcy((PLINT)symin);
+	rxmax = plP_pcdcx((PLINT)sxmax);
+	rymax = plP_pcdcy((PLINT)symax);
 
 	*xmin = (rxmin < 0) ? 0 : rxmin;
 	*xmax = (rxmax > 1) ? 1 : rxmax;
@@ -1377,10 +1377,10 @@ calc_didev(void)
 
 /* Set clip limits to conform to new page size */
 
-    plsc->diclpxmi = plsc->didxax * plsc->phyxmi + plsc->didxb;
-    plsc->diclpxma = plsc->didxax * plsc->phyxma + plsc->didxb;
-    plsc->diclpymi = plsc->didyay * plsc->phyymi + plsc->didyb;
-    plsc->diclpyma = plsc->didyay * plsc->phyyma + plsc->didyb;
+    plsc->diclpxmi = (PLINT)(plsc->didxax * plsc->phyxmi + plsc->didxb);
+    plsc->diclpxma = (PLINT)(plsc->didxax * plsc->phyxma + plsc->didxb);
+    plsc->diclpymi = (PLINT)(plsc->didyay * plsc->phyymi + plsc->didyb);
+    plsc->diclpyma = (PLINT)(plsc->didyay * plsc->phyyma + plsc->didyb);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -3362,8 +3362,8 @@ plP_setpxl(PLFLT xpmm, PLFLT ypmm)
 {
     plsc->xpmm = xpmm;
     plsc->ypmm = ypmm;
-    plsc->umx = 1000.0 / plsc->xpmm;
-    plsc->umy = 1000.0 / plsc->ypmm;
+    plsc->umx = (PLINT)(1000.0 / plsc->xpmm);
+    plsc->umy = (PLINT)(1000.0 / plsc->ypmm);
 }
 
 /* Sets up physical limits of plotting device. */
