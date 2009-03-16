@@ -253,6 +253,7 @@ QFont QtPLDriver::getFont(PLUNICODE unicode)
 	plP_fci2hex(unicode, &fontWeight, PL_FCI_WEIGHT);
 			
 	QFont f;
+
 	f.setPointSizeF(currentFontSize*currentFontScale<4 ? 4 : currentFontSize*currentFontScale);
 
 	switch(fontFamily)
@@ -313,7 +314,7 @@ QPicture QtPLDriver::getTextPicture(PLUNICODE* text, int len, int chrht)
 	yOffset=0.;
 	xOffset=0.;
 
-	currentFontSize=chrht*p.device()->logicalDpiY()/25.4*fontScalingFactor;
+	currentFontSize=chrht*72./25.4*1.5;
 	currentFontScale=1.;
 	underlined=false;
 	overlined=false;
@@ -424,11 +425,11 @@ void QtPLDriver::drawText(PLStream* pls, EscText* txt)
 	QMatrix rotShearMatrix(cos(rotation)*stride, -sin(rotation)*stride, cos(rotation)*sin(shear)+sin(rotation)*cos(shear), -sin(rotation)*sin(shear)+cos(rotation)*cos(shear), 0., 0.);
 
 	m_painterP->setWorldMatrix(rotShearMatrix, true);
+
 	m_painterP->translate(-txt->just*xOffset*m_painterP->device()->logicalDpiY()/picDpi, 0.);
 	m_painterP->drawPicture(0., 0., picText);
 
 	m_painterP->setWorldMatrix(QMatrix());
-	
 }
 
 void QtPLDriver::setColor(int r, int g, int b, double alpha)
@@ -657,14 +658,14 @@ QtRasterDevice::QtRasterDevice(int i_iWidth, int i_iHeight):
 	b.setStyle(Qt::SolidPattern);
 	m_painterP->setBrush(b);
 	m_painterP->setRenderHint(QPainter::Antialiasing, true);
-	int res=DPI/25.4*1000.;
-	setDotsPerMeterX(res);
-	setDotsPerMeterY(res);
+// 	int res=DPI/25.4/downscale*1000.;
+// 	setDotsPerMeterX(res);
+// 	setDotsPerMeterY(res);
 
 	// Let's fill the background
 	m_painterP->fillRect(0, 0, width(), height(), QBrush(Qt::black));
 
-	fontScalingFactor=1.;
+// 	fontScalingFactor=1.;
 }
 
 QtRasterDevice::~QtRasterDevice()
@@ -710,13 +711,6 @@ void plD_init_rasterqt(PLStream * pls)
 	pls->dev_unicode = 1; // want unicode 
   
 	initQtApp(false);
-  /*$$ these variables must be 1 so that we can process
-       unicode text on our own	*/
-
-
-  /*$$ if you want to use the hershey font only for the
-       symbols set this to 1
-  pls->dev_hrshsym = 1; */
 	
 	// Shamelessly copied on the Cairo stuff :)
 	if (pls->xlength <= 0 || pls->ylength <= 0)
@@ -739,6 +733,8 @@ void plD_init_rasterqt(PLStream * pls)
 	
 	plP_setpxl(DPI/25.4/((QtRasterDevice*)(pls->dev))->downscale, DPI/25.4/((QtRasterDevice*)(pls->dev))->downscale);
 	
+	((QtRasterDevice*)(pls->dev))->setResolution(pls->xpmm);
+
 	/* Initialize family file info */
 	plFamInit(pls);
 	
@@ -916,7 +912,7 @@ QtSVGDevice::QtSVGDevice(int i_iWidth, int i_iHeight):
 	setSize(QSize(m_dWidth, m_dHeight));
 	m_painterP=NULL;
 
-	fontScalingFactor=1.;
+// 	fontScalingFactor=1.;
 }
 
 QtSVGDevice::~QtSVGDevice()
@@ -1041,7 +1037,7 @@ QtEPSDevice::QtEPSDevice()
 	m_dHeight=pageRect().height();
 	m_painterP=NULL;
 
-	fontScalingFactor=1.;
+// 	fontScalingFactor=1.;
 }
 
 QtEPSDevice::~QtEPSDevice()
@@ -1211,7 +1207,7 @@ QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
 	pic=new QPicture;
 	m_painterP->begin(pic);
 	
-	fontScalingFactor=0.6;
+// 	fontScalingFactor=1.;//0.6;
 	
 }
 
@@ -1490,7 +1486,10 @@ void plD_init_qtwidget(PLStream * pls)
 	
 	plP_setphy((PLINT) 0, (PLINT) (plsc->xlength / tabWidget->downscale), (PLINT) 0, (PLINT) (plsc->ylength / tabWidget->downscale));
 	
-	plP_setpxl(DPI/25.4/tabWidget->downscale, DPI/25.4/tabWidget->downscale);
+	QPicture temp;
+	QPainter tempPainter(&temp);
+	
+	plP_setpxl(temp.logicalDpiX()/25.4/tabWidget->downscale, temp.logicalDpiY()/25.4/tabWidget->downscale);
 
 	pls->color = 1;		/* Is a color device */
 	pls->plbuf_write=0;
@@ -1523,7 +1522,7 @@ void plD_tidy_qtwidget(PLStream *pls)
 	delete ((QtPLTabWidget*)pls->dev);
 	pls->dev=NULL;
 	
-	closeQtApp();
+// 	closeQtApp();
 }
 #endif
 

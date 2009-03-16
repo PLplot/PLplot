@@ -98,7 +98,7 @@ class QtPLDriver
 		double yOffset;
 		double xOffset;
 		
-		double fontScalingFactor;// To have a nice font size on qtwidget
+// 		double fontScalingFactor;// To have a nice font size on qtwidget
 		
 		QPainter* m_painterP;
 };
@@ -116,6 +116,12 @@ class QtRasterDevice: public QtPLDriver, public QImage
 		void definePlotName(const char* fileName, const char* format);
 		
 		void savePlot();
+		
+		virtual void setResolution(double dotsPerMM)
+		{
+			setDotsPerMeterX(dotsPerMM*1000.*downscale);
+			setDotsPerMeterY(dotsPerMM*1000.*downscale);
+		}
 		
 	protected:
 		char format[5];
@@ -309,6 +315,8 @@ class QtPLTabWidget: public QTabWidget, public QtPLDriver
 		protected:
 			void newTab();
 			QList<QtPLWidget*> widgets;
+			
+			double resolution;
 };
 
 #endif
