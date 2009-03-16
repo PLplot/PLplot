@@ -1,4 +1,4 @@
-# cmake/modules/TestForNamespace.cmake
+# cmake/modules/TestBrokenIsnanCXX.cmake
 #
 # C++ binding configuration
 #
