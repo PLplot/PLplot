@@ -1690,7 +1690,7 @@ plstream::shade( Contourable_Data& d, PLFLT xmin, PLFLT xmax,
 		xmin, xmax, ymin, ymax, shade_min, shade_max,
 		sh_cmap, sh_color, sh_width,
 		min_color, min_width, max_color, max_width,
-		::plfill, (bool) rectangular,
+		::plfill, rectangular!=0,
 		Coord_Xform_evaluator, pcxf );
 }
 
@@ -2132,7 +2132,7 @@ void plstream::xormod(bool mode, bool *status)
 
    plxormod((PLBOOL) mode, &loc_status);
 
-   *status = (bool) loc_status;
+   *status = (loc_status!=0);
 }
 
 // Deprecated version using PLINT not bool
