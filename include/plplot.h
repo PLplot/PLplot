@@ -167,7 +167,20 @@ typedef int64_t PLINT64;
 typedef unsigned int PLUINT;
 typedef int PLINT;
 typedef __int64 PLINT64;
-#define PLINT_MIN -2147483648
+/* for Visual C++ 2003 and later INT_MIN must be used, otherwise
+    PLINT_MIN is unsigned and 2147483648 NOT -2147483648, see 
+    http://msdn.microsoft.com/en-us/library/4kh09110(VS.71).aspx for
+    details */
+#ifdef _MSC_VER
+  #if _MSC_VER>1309
+    #include <Limits.h>
+    #define PLINT_MIN INT_MIN
+  #else
+    #define PLINT_MIN -2147483648
+  #endif
+#else
+  #define PLINT_MIN -2147483648
+#endif
 /*
 typedef unsigned int PLUINT;
 typedef int PLINT;
