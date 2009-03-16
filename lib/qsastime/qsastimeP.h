@@ -57,6 +57,8 @@ struct QSASConfigStruct
 
      We reserve other bits of ccontrol for future use. */
   int ccontrol;
+  /* index keeps track of latest bhunt_search index. */
+  int index;
   
 };
 
