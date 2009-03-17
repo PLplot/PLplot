@@ -258,11 +258,11 @@ QFont QtPLDriver::getFont(PLUNICODE unicode)
 
 	switch(fontFamily)
 	{
-		case 1:	f.setFamily("Times"); break;
-		case 2: f.setFamily("Courier"); break;
-		case 3: f.setFamily("Helvetica"); break;
-		case 4: f.setFamily("Helvetica"); break;
-		case 0: default: f.setFamily("Helvetica"); break;
+		case 1:	f.setFamily("Times"); f.setStyleHint(QFont::Times); break;
+		case 2: f.setFamily("Courier"); f.setStyleHint(QFont::Courier); break;
+		case 3: f.setFamily("Helvetica"); f.setStyleHint(QFont::SansSerif); break;
+		case 4: f.setFamily("Helvetica"); f.setStyleHint(QFont::SansSerif); break;
+		case 0: default: f.setFamily("Helvetica"); f.setStyleHint(QFont::SansSerif); break;
 	}
 	if(fontStyle) f.setItalic(true);
 	if(fontWeight) f.setWeight(QFont::Bold);
@@ -284,6 +284,8 @@ void QtPLDriver::drawTextInPicture(QPainter* p, const QString& text)
 	tempPainter.drawText(rect, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextDontClip, text, &bounding);
 
 // For svg debug
+// std::cout << bounding.left()+bounding.right() << std::endl;
+bounding.adjust(-0.5, bounding.height(), -0.5, -bounding.height()/5.); // Empiric adjustment of the true bounding box
 // 	tempPainter.drawLine(bounding.left(), bounding.bottom(), bounding.right(), bounding.bottom());
 // 	tempPainter.drawLine(bounding.left(), bounding.top(), bounding.right(), bounding.top());
 // 	tempPainter.drawLine(bounding.left(), bounding.bottom(), bounding.left(), bounding.top());
@@ -314,7 +316,7 @@ QPicture QtPLDriver::getTextPicture(PLUNICODE* text, int len, int chrht)
 	yOffset=0.;
 	xOffset=0.;
 
-	currentFontSize=chrht*72./25.4*1.5;
+	currentFontSize=chrht*72./25.4*1.6;
 	currentFontScale=1.;
 	underlined=false;
 	overlined=false;
@@ -1025,16 +1027,24 @@ void plD_eop_svgqt(PLStream *pls)
 #endif
 
 #if defined (PLD_epsqt) || defined(PLD_pdfqt)
-QtEPSDevice::QtEPSDevice()
+QtEPSDevice::QtEPSDevice(int i_iWidth, int i_iHeight)
 {
 	setPageSize(QPrinter::A4);
 	setResolution(DPI);
 	setColorMode(QPrinter::Color);
 	setOrientation(QPrinter::Landscape);
 	setPrintProgram(QString("lpr"));
-			
-	m_dWidth=pageRect().width();
-	m_dHeight=pageRect().height();
+	
+	if(i_iWidth<=0 || i_iHeight<=0)
+	{
+		m_dWidth=pageRect().width();
+		m_dHeight=pageRect().height();
+	}
+	else
+	{
+		m_dWidth=i_iWidth;
+		m_dHeight=i_iHeight;
+	}
 	m_painterP=NULL;
 
 // 	fontScalingFactor=1.;
@@ -1124,11 +1134,15 @@ void plD_init_epspdfqt(PLStream * pls)
 	// QPrinter devices won't create if there is no QApplication declared...
 	initQtApp(false);
 	
-	pls->dev=new QtEPSDevice;
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
+		pls->dev=new QtEPSDevice;
 		pls->xlength = ((QtEPSDevice*)(pls->dev))->m_dWidth;
 		pls->ylength = ((QtEPSDevice*)(pls->dev))->m_dHeight;
+	}
+	else
+	{
+		pls->dev=new QtEPSDevice(pls->xlength, pls->ylength);
 	}
 	
 	if (pls->xlength > pls->ylength)
@@ -1197,12 +1211,11 @@ QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
 	m_painterP=new QPainter;
 	
 	m_dAspectRatio=(double)i_iWidth/(double)i_iHeight;
-	
 	cursorParameters.isTracking=false;
 	m_pixPixmap=NULL;
 	m_iOldSize=0;
 	
-	resize(i_iWidth, i_iHeight);
+// 	resize(i_iWidth, i_iHeight);
 	
 	pic=new QPicture;
 	m_painterP->begin(pic);
@@ -1413,7 +1426,7 @@ void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, doubl
 {
 	double w=(double)width();
 	double h=(double)height();
-	
+
 	if(w/h>m_dAspectRatio) //Too wide, h is the limitating factor
 	{
 		io_dYFact=h/m_dHeight;
@@ -1440,10 +1453,10 @@ QtPLTabWidget::~QtPLTabWidget()
 
 void QtPLTabWidget::newTab()
 {
-	QtPLWidget * plotWidget=new QtPLWidget;
+	QtPLWidget * plotWidget=new QtPLWidget(m_iWidth, m_iHeight);
 	plotWidget->downscale=downscale;
-	plotWidget->m_dWidth=m_dWidth;
-	plotWidget->m_dHeight=m_dHeight;
+// 	plotWidget->m_dWidth=m_dWidth;
+// 	plotWidget->m_dHeight=m_dHeight;
 	addTab(plotWidget, QString("page %1").arg(count()+1));
 	currentWidget=plotWidget;
 	widgets.push_back(plotWidget);
@@ -1473,11 +1486,24 @@ void plD_init_qtwidget(PLStream * pls)
 	PLINT w, h;
 	initQtApp(true);
 	QMainWindow * mw=new QMainWindow;
-	QtPLTabWidget* tabWidget=new QtPLTabWidget;
+	QtPLTabWidget* tabWidget;//=new QtPLTabWidget;
 
-	plsc->dev = (void*)tabWidget;
-	plsc->xlength = tabWidget->m_dWidth;
-	plsc->ylength = tabWidget->m_dHeight;
+// 	plsc->dev = (void*)tabWidget;
+// 	plsc->xlength = tabWidget->m_dWidth;
+// 	plsc->ylength = tabWidget->m_dHeight;
+	
+	if (pls->xlength <= 0 || pls->ylength <= 0)
+	{
+		tabWidget=new QtPLTabWidget;
+		pls->dev=(void*) tabWidget;
+		pls->xlength = tabWidget->m_iWidth;
+		pls->ylength = tabWidget->m_iHeight;
+	}
+	else
+	{
+		tabWidget=new QtPLTabWidget(pls->xlength, pls->ylength);
+		pls->dev=(void*) tabWidget;
+	}
 	
 	if (plsc->xlength > plsc->ylength)
 		tabWidget->downscale = (PLFLT)plsc->xlength/(PLFLT)(PIXELS_X-1);

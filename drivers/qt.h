@@ -47,7 +47,7 @@
 #include "plplotP.h"
 #include "drivers.h"
 
-#define DPI 72
+#define DPI 120 //72
 #define QT_DEFAULT_X 842
 #define QT_DEFAULT_Y 598
 
@@ -136,8 +136,8 @@ class QtRasterDevice: public QtPLDriver, public QImage
 class QtSVGDevice: public QtPLDriver, public QSvgGenerator
 {
 	public:
-		QtSVGDevice(int i_iWidth=QT_DEFAULT_X,
-			    int i_iHeight=QT_DEFAULT_Y);
+		QtSVGDevice(int i_iWidth=-1,
+			    int i_iHeight=-1);
 
 		virtual ~QtSVGDevice();
 
@@ -154,7 +154,8 @@ class QtSVGDevice: public QtPLDriver, public QSvgGenerator
 class QtEPSDevice: public QtPLDriver, public QPrinter
 {
 	public:
-		QtEPSDevice();
+		QtEPSDevice(int i_iWidth=QT_DEFAULT_X,
+			    int i_iHeight=QT_DEFAULT_Y);
 		
 		virtual ~QtEPSDevice();
 	
@@ -246,8 +247,11 @@ class QtPLWidget: public QWidget, public QtPLDriver
 class QtPLTabWidget: public QTabWidget, public QtPLDriver
 {
     public:
-		QtPLTabWidget()
+		QtPLTabWidget(int i_iWidth=QT_DEFAULT_X, int i_iHeight=QT_DEFAULT_Y)
 		{
+			
+			m_iWidth=i_iWidth;
+			m_iHeight=i_iHeight; 
 			currentWidget=NULL;
 		}
 		
@@ -312,11 +316,15 @@ class QtPLTabWidget: public QTabWidget, public QtPLDriver
 	
 		QtPLWidget* currentWidget;
 		
+		int m_iWidth, m_iHeight;
+		
 		protected:
 			void newTab();
 			QList<QtPLWidget*> widgets;
 			
 			double resolution;
+			
+			
 };
 
 #endif
