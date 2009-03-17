@@ -256,13 +256,10 @@ QFont QtPLDriver::getFont(PLUNICODE unicode)
 
 	f.setPointSizeF(currentFontSize*currentFontScale<4 ? 4 : currentFontSize*currentFontScale);
 
-	switch(fontFamily)
-	{
-		case 1:	f.setFamily("Times"); f.setStyleHint(QFont::Times); break;
-		case 2: f.setFamily("Courier"); f.setStyleHint(QFont::Courier); break;
-		case 3: f.setFamily("Helvetica"); f.setStyleHint(QFont::SansSerif); break;
-		case 4: f.setFamily("Helvetica"); f.setStyleHint(QFont::SansSerif); break;
-		case 0: default: f.setFamily("Helvetica"); f.setStyleHint(QFont::SansSerif); break;
+	switch(fontFamily) {
+	  case 1:	f.setFamily("Times"); f.setStyleHint(QFont::Serif); break;
+	  case 2: f.setFamily("Courier"); f.setStyleHint(QFont::TypeWriter); break;
+	  case 0: case3: case4: default: f.setFamily("Helvetica"); f.setStyleHint(QFont::SansSerif); break;
 	}
 	if(fontStyle) f.setItalic(true);
 	if(fontWeight) f.setWeight(QFont::Bold);
