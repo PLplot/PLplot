@@ -29,6 +29,7 @@
   
 */
 
+
 #include "qt.h"
 
 // global variables initialised in init(), used in tidy()
@@ -908,7 +909,6 @@ void plD_bop_tiffqt(PLStream *pls)
 QtSVGDevice::QtSVGDevice(int i_iWidth, int i_iHeight):
 	QtPLDriver(i_iWidth, i_iHeight)
 {
-	setSize(QSize(m_dWidth, m_dHeight));
 	m_painterP=NULL;
 
 // 	fontScalingFactor=1.;
@@ -923,6 +923,7 @@ void QtSVGDevice::definePlotName(const char* fileName)
 {
 	setFileName(QString(fileName));
 	setResolution(DPI);
+	setSize(QSize(m_dWidth, m_dHeight));
 
 	m_painterP=new QPainter(this);
 	m_painterP->fillRect(0, 0, m_dWidth, m_dHeight, QBrush(Qt::black));
@@ -1026,7 +1027,12 @@ void plD_eop_svgqt(PLStream *pls)
 #if defined (PLD_epsqt) || defined(PLD_pdfqt)
 QtEPSDevice::QtEPSDevice(int i_iWidth, int i_iHeight)
 {
+#if QT_VERSION < 0x040400
 	setPageSize(QPrinter::A4);
+#else
+	setFullPage(true);
+	setPaperSize(QSizeF(i_iWidth, i_iHeight), QPrinter::Point);
+#endif
 	setResolution(DPI);
 	setColorMode(QPrinter::Color);
 	setOrientation(QPrinter::Landscape);

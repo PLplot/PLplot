@@ -29,6 +29,16 @@
   
 */
 
+/*
+Interpretation of the -geometry factor for the various devices:
+- bmpqt, jpgqt, pngqt, ppmqt, tiffqt:
+  The geometry parameter defines the size in pixels
+- svgqt, epsqt, pdfqt:
+  The geometry parameter defines the size in points (1/72 of inches). EPS and PDF files will be drawn in A4 pages for Qt versions before 4.4
+- qtwidget:
+  The geometry factor defines the default size of the widget, as well as its aspect ratio, which is kept when the widget is resized.
+ */
+
 #ifndef QT_H
 #define QT_H
 
@@ -47,7 +57,7 @@
 #include "plplotP.h"
 #include "drivers.h"
 
-#define DPI 120 //72
+#define DPI 72
 #define QT_DEFAULT_X 842
 #define QT_DEFAULT_Y 598
 
@@ -136,8 +146,8 @@ class QtRasterDevice: public QtPLDriver, public QImage
 class QtSVGDevice: public QtPLDriver, public QSvgGenerator
 {
 	public:
-		QtSVGDevice(int i_iWidth=-1,
-			    int i_iHeight=-1);
+		QtSVGDevice(int i_iWidth=QT_DEFAULT_X,
+			    int i_iHeight=QT_DEFAULT_Y);
 
 		virtual ~QtSVGDevice();
 
@@ -154,8 +164,8 @@ class QtSVGDevice: public QtPLDriver, public QSvgGenerator
 class QtEPSDevice: public QtPLDriver, public QPrinter
 {
 	public:
-		QtEPSDevice(int i_iWidth=QT_DEFAULT_X,
-			    int i_iHeight=QT_DEFAULT_Y);
+		QtEPSDevice(int i_iWidth=-1,
+			    int i_iHeight=-1);
 		
 		virtual ~QtEPSDevice();
 	
