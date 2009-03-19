@@ -20,6 +20,10 @@
 /* include header file for dll definitions */
 #include "csadll.h"
 
+#if _MSC_VER>1309
+  #define hypot _hypot
+#endif
+
 #if !defined(_POINT_STRUCT)
 #define _POINT_STRUCT
 typedef struct {

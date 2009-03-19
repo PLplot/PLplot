@@ -466,8 +466,8 @@ static void csa_squarize(csa* a)
         h = dx * a->nppc / npoints;
     a->h = h;
 
-    a->ni = ceil(dx / h) + 2;
-    a->nj = ceil(dy / h) + 2;
+    a->ni = (int)(ceil(dx / h) + 2);
+    a->nj = (int)(ceil(dy / h) + 2);
 
     if (csa_verbose) {
         fprintf(stderr, "  %d x %d squares\n", a->ni, a->nj);
@@ -488,8 +488,8 @@ static void csa_squarize(csa* a)
     for (ii = 0; ii < npoints; ++ii) {
         point* p = a->points[ii];
 
-        i = floor((p->x - a->xmin) / h) + 1;
-        j = floor((p->y - a->ymin) / h) + 1;
+        i = (int)(floor((p->x - a->xmin) / h) + 1);
+        j = (int)(floor((p->y - a->ymin) / h) + 1);
         square_addpoint(a->squares[j][i], p);
     }
 
@@ -567,10 +567,10 @@ static void csa_squarize(csa* a)
  */
 static void getsquares(csa* a, triangle* t, int* n, square*** squares)
 {
-    int imin = floor((t->middle.x - t->r - a->xmin) / t->h);
-    int imax = ceil((t->middle.x + t->r - a->xmin) / t->h);
-    int jmin = floor((t->middle.y - t->r - a->ymin) / t->h);
-    int jmax = ceil((t->middle.y + t->r - a->ymin) / t->h);
+    int imin = (int)floor((t->middle.x - t->r - a->xmin) / t->h);
+    int imax = (int)ceil((t->middle.x + t->r - a->xmin) / t->h);
+    int jmin = (int)floor((t->middle.y - t->r - a->ymin) / t->h);
+    int jmax = (int)ceil((t->middle.y + t->r - a->ymin) / t->h);
     int i, j;
 
     if (imin < 0)
@@ -613,7 +613,7 @@ static double distance(point* p1, point* p2)
 static void thindata(triangle* t, int npmax)
 {
     csa* a = t->parent->parent;
-    int imax = ceil(sqrt((double) (npmax * 3 / 2)));
+    int imax = (int)ceil(sqrt((double) (npmax * 3 / 2)));
     square*** squares = alloc2d(imax, imax, sizeof(void*));
     double h = t->r * 2.0 / imax;
     double h2 = h / 2.0;
@@ -627,8 +627,8 @@ static void thindata(triangle* t, int npmax)
 
     for (ii = 0; ii < t->npoints; ++ii) {
         point* p = t->points[ii];
-        int i = floor((p->x - xmin) / h);
-        int j = floor((p->y - ymin) / h);
+        int i = (int)floor((p->x - xmin) / h);
+        int j = (int)floor((p->y - ymin) / h);
         square* s = squares[j][i];
 
         if (s->npoints == 0)
@@ -1554,8 +1554,8 @@ void csa_approximate_point(csa* a, point* p)
         return;
     }
 
-    i = floor(ii);
-    j = floor(jj);
+    i = (int)floor(ii);
+    j = (int)floor(jj);
     s = a->squares[j][i];
     fi = ii - i;
     fj = jj - j;
@@ -1629,7 +1629,7 @@ void csa_setk(csa* a, int k)
 
 void csa_setnppc(csa* a, double nppc)
 {
-    a->nppc = nppc;
+    a->nppc = (int)nppc;
 }
 
 #if defined(STANDALONE)
