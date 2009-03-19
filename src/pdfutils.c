@@ -723,7 +723,8 @@ pdf_wr_ieeef(PDFstrm *pdfs, float f)
 	value = 0;
 	return (pdf_wr_4bytes(pdfs, value));
     }
-    fsgl = fdbl = f;
+    fdbl = f;
+    fsgl = (float)fdbl;
     fmant = frexp(fdbl, &exp);
 
     if (fmant < 0)
@@ -738,13 +739,13 @@ pdf_wr_ieeef(PDFstrm *pdfs, float f)
     if (e_new < 1 - bias) {
 	e_off = e_new - (1 - bias);
 	e_ieee = 0;
-	f_tmp = f_new * pow((double) 2.0, (double) e_off);
+	f_tmp = (float)(f_new * pow((double) 2.0, (double) e_off));
     }
     else {
 	e_ieee = e_new + bias;
-	f_tmp = f_new - 1;
+	f_tmp = (float)(f_new - 1);
     }
-    f_ieee = f_tmp * 8388608;		/* multiply by 2^23 */
+    f_ieee = (U_LONG)(f_tmp * 8388608);		/* multiply by 2^23 */
 
     if (e_ieee > 255) {
 	if (debug)
@@ -800,7 +801,7 @@ pdf_rd_ieeef(PDFstrm *pdfs, float *pf)
 	f_new = 1.0 + f_tmp;
     }
 
-    fsgl = f_new * pow(2.0, (double) exp);
+    fsgl = (float)(f_new * pow(2.0, (double) exp));
     if (s_ieee == 1)
 	fsgl = -fsgl;
 

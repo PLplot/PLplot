@@ -89,9 +89,22 @@ const char* lt_dlerror()
 /* load symbol from library */
 void* lt_dlsym( lt_dlhandle dlhandle, const char* symbol )
 {
-  if( dlhandle->hinstLib )
+  if( dlhandle->hinstLib ) {
+#ifdef __BORLANDC__  
+    unsigned int bufferLength = strlen(symbol)+2;
+    char* buffer = (char*)malloc(bufferLength);
+    void* retPointer;
+    
+    buffer[0]='_';
+    strncpy( &buffer[1], symbol, bufferLength-2 );
+    buffer[bufferLength-1]='\0';
+    retPointer=GetProcAddress( dlhandle->hinstLib, buffer );
+    free(buffer);
+    return retPointer;
+#else
     return GetProcAddress( dlhandle->hinstLib, symbol );
-  else
+#endif
+  } else
     return NULL;
   
 }
