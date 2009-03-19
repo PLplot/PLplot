@@ -130,11 +130,22 @@ sfstubs.f
 configurable.f
 )
 
-if(WIN32 AND BUILD_SHARED_LIBS)
-  SET(plplotf77${LIB_TAG}_LIB_SRCS ${plplotf77${LIB_TAG}_LIB_SRCS} plplotf77.def)
-endif(WIN32 AND BUILD_SHARED_LIBS)
+if(WIN32 AND BUILD_SHARED_LIBS AND NOT MINGW)
+  set(plplotf77${LIB_TAG}_LIB_SRCS ${plplotf77${LIB_TAG}_LIB_SRCS} plplotf77.def)
+endif(WIN32 AND BUILD_SHARED_LIBS AND NOT MINGW)
 
 add_library(plplotf77${LIB_TAG} ${plplotf77${LIB_TAG}_LIB_SRCS})
+
+if(MINGW AND BUILD_SHARED_LIBS)
+  add_custom_command(
+    TARGET plplotf77${LIB_TAG}
+    POST_BUILD
+    COMMAND dlltool libplplotf77${LIB_TAG}.dll -d ${CMAKE_CURRENT_SOURCE_DIR}/plplotf77_mingw.def -l libplplotf77${LIB_TAG}.dll.a
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/dll 
+    COMMENT "Creating library file: libplplotf77${LIB_TAG}.dll.a"
+  )
+endif(MINGW AND BUILD_SHARED_LIBS)
+
 
 target_link_libraries(plplotf77${LIB_TAG}  plplotf77c${LIB_TAG})
 
