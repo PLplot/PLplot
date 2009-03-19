@@ -128,7 +128,9 @@ mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 }
 
 x20::x20( int argc, const char ** argv ) {
-  PLFLT x[XDIM], y[YDIM], **z, **r;
+  PLFLT *x = new PLFLT[XDIM];
+  PLFLT *y = new PLFLT[YDIM];
+  PLFLT **z, **r;
   PLFLT xi, yi, xe, ye;
   int i, j, width, height, num_col;
   PLFLT **img_f;
@@ -326,7 +328,9 @@ x20::x20( int argc, const char ** argv ) {
   pls->Free2dGrid(img_f, width, height);
 
   delete pls;
-
+  
+  delete y;
+  delete x;
 }
 
 // read image from file in binary ppm format

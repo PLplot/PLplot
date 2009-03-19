@@ -101,8 +101,8 @@ x09::x09( int argc, const char **argv ) {
 
   int i, j;
 
-  PLFLT xg1[XPTS];
-  PLFLT yg1[YPTS];
+  PLFLT *xg1 = new PLFLT[XPTS];
+  PLFLT *yg1 = new PLFLT[YPTS];
   PLcGrid cgrid1;
   PLcGrid2 cgrid2;
   PLFLT **z;
@@ -264,6 +264,9 @@ x09::x09( int argc, const char **argv ) {
   pls->Free2dGrid(w,XPTS,YPTS);
 
   delete pls;
+
+  delete yg1;
+  delete xg1;
 }
 
 void x09::polar()
