@@ -80,7 +80,7 @@ main(int argc, const char *argv[])
     plbox("bc", 1.0, 0, "bcgnst", 0, 0);
     pllab("Group", "Value", "#frPLplot Example 32");
 
-    //plscmap1l(1,5,pos,red,green,blue,NULL);
+    /* plscmap1l(1,5,pos,red,green,blue,NULL); */
 
     for (i = 0; i < 10; i++) {
 	plcol1(i/9.0);

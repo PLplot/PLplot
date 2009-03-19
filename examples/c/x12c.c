@@ -5,6 +5,8 @@
 
 #include "plcdemos.h"
 
+#define STRING_SIZE 20
+
 void
 plfbox(PLFLT x0, PLFLT y0);
 
@@ -19,7 +21,7 @@ int
 main(int argc, const char *argv[])
 {
     int i;
-    char string[20];
+    char string[STRING_SIZE];
     PLFLT y0[10];
 
     static PLFLT pos[] = {0.0, 0.25, 0.5, 0.75, 1.0};
@@ -60,9 +62,9 @@ main(int argc, const char *argv[])
 	plcol1(i/9.0);
 	plpsty(0);
 	plfbox((1980. + i), y0[i]);
-	sprintf(string, "%.0f", y0[i]);
+	snprintf(string, STRING_SIZE, "%.0f", y0[i]);
 	plptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, string);
-	sprintf(string, "%d", 1980 + i);
+	snprintf(string, STRING_SIZE, "%d", 1980 + i);
 	plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string);
     }
 
