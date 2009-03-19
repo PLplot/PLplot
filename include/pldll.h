@@ -55,7 +55,7 @@
        defined(pstex_EXPORTS) || defined(psttf_EXPORTS) || defined(svg_EXPORTS) || \
        defined(tek_EXPORTS) || defined(tk_EXPORTS) || defined(tkwin_EXPORTS) || \
        defined(wingcc_EXPORTS) || defined(wxwidgets_EXPORTS) || defined(xfig_EXPORTS) || \
-       defined(xwin_EXPORTS)
+       defined(xwin_EXPORTS) || defined(qt_EXPORTS)
     #define PLDLLIMPEXP_DRIVER PLDLLEXPORT
     #define PLDLLIMPEXP_DRIVER_DATA(type) PLDLLEXPORT type
   #else

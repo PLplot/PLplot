@@ -171,13 +171,9 @@ typedef __int64 PLINT64;
     PLINT_MIN is unsigned and 2147483648 NOT -2147483648, see 
     http://msdn.microsoft.com/en-us/library/4kh09110(VS.71).aspx for
     details */
-#ifdef _MSC_VER
-  #if _MSC_VER>1309
-    #include <Limits.h>
-    #define PLINT_MIN INT_MIN
-  #else
-    #define PLINT_MIN -2147483648
-  #endif
+#if defined(_MSC_VER) && _MSC_VER >= 1310
+  #include <Limits.h>
+  #define PLINT_MIN INT_MIN
 #else
   #define PLINT_MIN -2147483648
 #endif
