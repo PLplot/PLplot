@@ -46,6 +46,7 @@ c--------------------------------------------------------------------------
       character*80 fnam
       integer stderr
       integer status
+      integer lnblnk
 
 c     Parse and process command line arguments
 
@@ -184,12 +185,12 @@ c     Get world coordinates for midpoint of viewport
 
 c     Retrieve and print the name of the output file (if any)
       call plgfnam(fnam)
-      if (len(trim(fnam)) .eq. 0) then
+      if (lnblnk(fnam) .eq. 0) then
          write(*,'(A)') 'No output file name is set'
       else 
          write(*,'(A)') 'Output file name read'
       endif
-      write(stderr,'(A,A)') 'Output file name is ',trim(fnam)
+      write(stderr,'(A,A)') 'Output file name is ', fnam(:lnblnk(fnam))
 
 c     Set and get the number of digits used to display axis labels
 c     Note digits is currently ignored in pls[xyz]ax and 

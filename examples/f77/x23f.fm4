@@ -244,6 +244,7 @@ c    the marker is not needed, in any case, for calls to plsfci.
         data (weight(i), i=1,2) /
      &       "medium",
      &       "bold" /
+      integer lnblnk    
 
       call plparseopts(PL_PARSE_FULL)
 
@@ -317,8 +318,12 @@ c     Demonstrate methods of getting the current fonts
      &     ,fci_old
       write (*,'(a)') 'For example 23 prior to page 12 the '//
      &     'font family, style and weight are '// 
-     &     trim(family(ifamily+1))//' '//trim(style(istyle+1))//' '//
-     &     trim(weight(iweight+1))
+     &  family(ifamily+1)
+     &	(:lnblnk(family(ifamily+1)))//' '//
+     &  style(istyle+1)
+     &  (:lnblnk(style(istyle+1)))//' '//
+     &  weight(iweight+1)
+     &  (:lnblnk(weight(iweight+1)))
 
       do 140 page=11,15
          dy = 0.030d0
@@ -357,32 +362,44 @@ c     Demonstrate methods of getting the current fonts
 	    call plsfci(fci(i+1))
 	    write(string,'(a)')
      &           'Page 12, '//
-     &           trim(family(family_index+1))//', '//
-     &           trim(style(style_index+1))//', '//
-     &           trim(weight(weight_index+1))//':  '//
+     &        family(family_index+1)
+     &  (:lnblnk(family(family_index+1)))//', '//
+     &        style(style_index+1)
+     &  (:lnblnk(style(style_index+1)))//', '//
+     &        weight(weight_index+1)
+     &  (:lnblnk(weight(weight_index+1)))//':  '//
      &           'The quick brown fox jumps over the lazy dog'
 	 elseif(page == 12) then
 	    call plsfont(family_index, style_index, weight_index)
 	    write(string,'(a)')
      &           'Page 13, '//
-     &           trim(family(family_index+1))//', '//
-     &           trim(style(style_index+1))//', '//
-     &           trim(weight(weight_index+1))//':  '//
+     &        family(family_index+1)
+     &  (:lnblnk(family(family_index+1)))//', '//
+     &        style(style_index+1)
+     &  (:lnblnk(style(style_index+1)))//', '//
+     &        weight(weight_index+1)
+     &  (:lnblnk(weight(weight_index+1)))//':  '//
      &           'The quick brown fox jumps over the lazy dog'
 	 elseif(page == 13) then
 C 	    Note, must put in missing FCI marker for this particular case.
 	    write(string,'(a,"#<0x8",z7.7,">",a)')
-     &           'Page 14, '//trim(family(family_index+1))//', '//
-     &           trim(style(style_index+1))//', '//
-     &           trim(weight(weight_index+1))//':  ',
+     &        'Page 14, '//family(family_index+1)
+     &  (:lnblnk(family(family_index+1)))//', '//
+     &        style(style_index+1)
+     &  (:lnblnk(style(style_index+1)))//', '//
+     &        weight(weight_index+1)
+     &  (:lnblnk(weight(weight_index+1)))//':  ',
      &           fci(i+1),
      &           'The quick brown fox jumps over the lazy dog'
 	 elseif(page == 14) then
 	    write(string,'(a,"#<0x",z1,"0>#<0x",z1,"1>#<0x",z1,"2>",a)')
      &           'Page 15, '//
-     &           trim(family(family_index+1))//', '//
-     &           trim(style(style_index+1))//', '//
-     &           trim(weight(weight_index+1))//':  ',
+     &        family(family_index+1)
+     &  (:lnblnk(family(family_index+1)))//', '//
+     &        style(style_index+1)
+     &  (:lnblnk(style(style_index+1)))//', '//
+     &        weight(weight_index+1)
+     &  (:lnblnk(weight(weight_index+1)))//':  ',
      &           family_index,
      &           style_index,
      &           weight_index,
@@ -390,12 +407,18 @@ C 	    Note, must put in missing FCI marker for this particular case.
 	 elseif(page == 15) then
 	    write(string,'(a)')
      &           'Page 16, '//
-     &           trim(family(family_index+1))//', '//
-     &           trim(style(style_index+1))//', '//
-     &           trim(weight(weight_index+1))//':  '//
-     &           '#<'//trim(family(family_index+1))//'/>#<'//
-     &           trim(style(style_index+1))//'/>#<'//
-     &           trim(weight(weight_index+1))//'/>'//
+     &        family(family_index+1)
+     &  (:lnblnk(family(family_index+1)))//', '//
+     &        style(style_index+1)
+     &  (:lnblnk(style(style_index+1)))//', '//
+     &        weight(weight_index+1)
+     &  (:lnblnk(weight(weight_index+1)))//':  '//
+     &        '#<'//family(family_index+1)
+     &  (:lnblnk(family(family_index+1)))//'/>#<'//
+     &        style(style_index+1)
+     &  (:lnblnk(style(style_index+1)))//'/>#<'//
+     &        weight(weight_index+1)
+     &  (:lnblnk(weight(weight_index+1)))//'/>'//
      &           'The quick brown fox jumps over the lazy dog'
          endif
          call plptex (0.d0, 1.d0 - (i+0.5d0)*dy, 1.d0,
