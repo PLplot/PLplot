@@ -71,6 +71,7 @@ xw14.py
 xw17.py
 xw31.py
 plplot_logo.py
+test_circle.py
 )
 
 if(ENABLE_pygcw)
