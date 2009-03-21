@@ -71,6 +71,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
 
 void initQtApp(bool isGUI)
 {
+	QtPLDriver::mutex.lock();
 	++appCounter;
 	if(qApp==NULL && appCounter==1)
 	{
@@ -82,10 +83,12 @@ void initQtApp(bool isGUI)
 		argv[1][0]='\0';
 		/*app=*/new QApplication(argc, argv, isGUI );
 	}
+	QtPLDriver::mutex.unlock();
 }
 
 void closeQtApp()
 {
+	QtPLDriver::mutex.lock();
 	--appCounter;
 	if(qApp!=NULL && appCounter==0)
 	{
@@ -96,6 +99,7 @@ void closeQtApp()
 		delete[] argv;
 		argv=NULL;
 	}
+	QtPLDriver::mutex.unlock();
 }
 
 /*---------------------------------------------------------------------
@@ -1465,6 +1469,21 @@ void QtPLTabWidget::newTab()
 	widgets.push_back(plotWidget);
 }
 
+void QtPLTabWidget::exec()
+{
+	mutex.lock();
+	if(!alreadyRun) // This tab widget has never been run
+	{
+		qApp->exec();
+		foreach(QtPLTabWidget* tab, runningDevices) // All the tab widgets created before have been run in the same time. Let's tag them.
+		{
+			tab->alreadyRun=true;
+		}
+		
+	}
+	runningDevices.removeAll(this); // cleaning up
+	mutex.unlock();
+}
 
 void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 {
@@ -1547,11 +1566,11 @@ void plD_eop_qtwidget(PLStream *pls)
 
 void plD_tidy_qtwidget(PLStream *pls)
 {
-    qApp->exec();
+	QtPLTabWidget * w=((QtPLTabWidget*)pls->dev);
+	w->exec();
+	// At this point, the widget has been run, we can delete it
 	delete ((QtPLTabWidget*)pls->dev);
 	pls->dev=NULL;
-	
-// 	closeQtApp();
 }
 #endif
 

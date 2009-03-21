@@ -53,6 +53,7 @@ Interpretation of the -geometry factor for the various devices:
 #include <QTabWidget>
 #include <QMainWindow>
 #include <QPicture>
+#include <QMutex>
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -91,6 +92,8 @@ class QtPLDriver
 		// Conversion factor from internal plplot coordinates to device coordinates
 		double downscale;
 		double m_dWidth, m_dHeight;
+		
+		static QMutex mutex; // All-purpose mutex
 	protected:
 	
 		// Returns font with the good size for a QPicture's resolution
@@ -112,6 +115,8 @@ class QtPLDriver
 		
 		QPainter* m_painterP;
 };
+
+QMutex QtPLDriver::mutex;
 
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 // Driver painting whatever raster format Qt can save
@@ -263,6 +268,11 @@ class QtPLTabWidget: public QTabWidget, public QtPLDriver
 			m_iWidth=i_iWidth;
 			m_iHeight=i_iHeight; 
 			currentWidget=NULL;
+			
+			mutex.lock(); // All QtPLTabWidgets are registered
+			alreadyRun=false;
+			runningDevices.push_back(this);
+			mutex.unlock();
 		}
 		
 		~QtPLTabWidget();
@@ -324,9 +334,14 @@ class QtPLTabWidget: public QTabWidget, public QtPLDriver
 
 		virtual void savePlot(char* fileName){}
 	
+		void exec();
+	
 		QtPLWidget* currentWidget;
 		
 		int m_iWidth, m_iHeight;
+		
+		static QList<QtPLTabWidget*> runningDevices;
+		bool alreadyRun;
 		
 		protected:
 			void newTab();
@@ -336,6 +351,8 @@ class QtPLTabWidget: public QTabWidget, public QtPLDriver
 			
 			
 };
+
+QList<QtPLTabWidget*> QtPLTabWidget::runningDevices;
 
 #endif
 
