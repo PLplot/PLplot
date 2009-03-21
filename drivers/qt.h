@@ -169,8 +169,11 @@ class QtSVGDevice: public QtPLDriver, public QSvgGenerator
 class QtEPSDevice: public QtPLDriver, public QPrinter
 {
 	public:
-		QtEPSDevice(int i_iWidth=-1,
-			    int i_iHeight=-1);
+#if QT_VERSION < 0x040400
+		QtEPSDevice(int i_iWidth=-1, int i_iHeight=-1);
+#else
+		QtEPSDevice(int i_iWidth=QT_DEFAULT_X, int i_iHeight=QT_DEFAULT_Y);
+#endif
 		
 		virtual ~QtEPSDevice();
 	

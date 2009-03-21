@@ -1035,7 +1035,7 @@ QtEPSDevice::QtEPSDevice(int i_iWidth, int i_iHeight)
 	setPageSize(QPrinter::A4);
 #else
 	setFullPage(true);
-	setPaperSize(QSizeF(i_iWidth, i_iHeight), QPrinter::Point);
+	setPaperSize(QSizeF(i_iHeight, i_iWidth), QPrinter::Point);
 #endif
 	setResolution(DPI);
 	setColorMode(QPrinter::Color);
@@ -1510,10 +1510,6 @@ void plD_init_qtwidget(PLStream * pls)
 	QMainWindow * mw=new QMainWindow;
 	QtPLTabWidget* tabWidget;//=new QtPLTabWidget;
 
-// 	plsc->dev = (void*)tabWidget;
-// 	plsc->xlength = tabWidget->m_dWidth;
-// 	plsc->ylength = tabWidget->m_dHeight;
-	
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
 		tabWidget=new QtPLTabWidget;
