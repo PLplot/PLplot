@@ -60,7 +60,7 @@ Interpretation of the -geometry factor for the various devices:
 
 #define DPI 72
 #define QT_DEFAULT_X 842
-#define QT_DEFAULT_Y 598
+#define QT_DEFAULT_Y 595
 
 // Basic class, offering the common interface to all Qt plplot devices
 class QtPLDriver
