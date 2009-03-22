@@ -350,11 +350,9 @@ void plD_esc_cairo(PLStream *pls, PLINT op, void *ptr)
       filled_polygon(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
       break;
 
-      /*
-    case PLESC_HAS_TEXT: /* render rext
+    case PLESC_HAS_TEXT: /* render rext */
       proc_str(pls, (EscText *) ptr);
       break;
-      */
     }
 }
 
@@ -857,7 +855,6 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   pls->color = 1;            /* Supports color */
   pls->dev_text = 1;         /* Handles text */
   pls->dev_unicode = 1;      /* Wants unicode text */
-  pls->new_unicode = 1;      /* Use the new unicode text display mode */
   pls->page = 0;
   pls->dev_fill0 = 1;        /* Supports hardware solid fills */
   pls->plbuf_write = 1;      /* Activate plot buffer */
@@ -1117,6 +1114,8 @@ static signed int xcairo_init_cairo(PLStream *pls)
 {
   PLCairo *aStream;
   Visual *defaultVisual;
+
+  pls->new_unicode = 1;      /* Use the new unicode text display mode */
 
   aStream = (PLCairo *)pls->dev;
 
