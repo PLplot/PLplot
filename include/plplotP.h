@@ -319,6 +319,12 @@ extern PLDLLIMPEXP_DATA(PLStream *)plsc;
 #define PL_SFONT	"plstnd4.fnt"
 #endif
 
+/* Font changes, superscript and subscript. */
+
+#define PL_FONTCHANGE 1
+#define PL_SUPERSCRIPT 2
+#define PL_SUBSCRIPT 3
+
 /*--------------------------------------------------------------------------*\
  * The following environment variables are defined:
  *
@@ -537,6 +543,8 @@ typedef struct {
   PLINT refx; /* processed ref. point--after justification, displacement, etc, processing */
   PLINT refy;
   char font_face; /* font face OPTIONALLY used for rendering hershey codes */
+  PLUNICODE n_fci; /* font storage for new unicode font handling */
+  PLUNICODE n_char; /* character storage for new unicode font handling */
   PLUNICODE  unicode_char;   /* an int to hold either a Hershey, ASC-II, or Unicode value for plsym calls */
   PLUNICODE  *unicode_array;   /* a pointer to an array of ints holding either a Hershey, ASC-II, or Unicode value for cached plsym */
   unsigned short unicode_array_len;

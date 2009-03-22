@@ -9,6 +9,7 @@
 #include "plConfig.h"
 
 struct PLStream_struct;
+struct EscText;
 
 enum {
     plDevType_FileOriented = 0,
@@ -73,20 +74,28 @@ typedef void (*plD_bop_fp)     (struct PLStream_struct *);
 typedef void (*plD_tidy_fp)    (struct PLStream_struct *);
 typedef void (*plD_state_fp)   (struct PLStream_struct *, PLINT);
 typedef void (*plD_esc_fp)     (struct PLStream_struct *, PLINT, void *);
+typedef void (*plD_textbgn_fp) (struct PLStream_struct *, struct EscText *);
+typedef void (*plD_textchr_fp) (struct PLStream_struct *, struct EscText *);
+typedef void (*plD_textesc_fp) (struct PLStream_struct *, PLINT, struct EscText *);
+typedef void (*plD_textend_fp) (struct PLStream_struct *, struct EscText *);
 
 typedef struct {
-    const char *pl_MenuStr;
-    const char *pl_DevName;
-    int  pl_type;
-    int  pl_seq;
-    plD_init_fp     pl_init;
-    plD_line_fp     pl_line;
-    plD_polyline_fp pl_polyline;
-    plD_eop_fp      pl_eop;
-    plD_bop_fp      pl_bop;
-    plD_tidy_fp     pl_tidy;
-    plD_state_fp    pl_state;
-    plD_esc_fp     pl_esc;
+  const char *pl_MenuStr;
+  const char *pl_DevName;
+  int  pl_type;
+  int  pl_seq;
+  plD_init_fp     pl_init;
+  plD_line_fp     pl_line;
+  plD_polyline_fp pl_polyline;
+  plD_eop_fp      pl_eop;
+  plD_bop_fp      pl_bop;
+  plD_tidy_fp     pl_tidy;
+  plD_state_fp    pl_state;
+  plD_esc_fp      pl_esc;
+  plD_textbgn_fp  pl_textbgn;
+  plD_textchr_fp  pl_textchr;
+  plD_textesc_fp  pl_textesc;
+  plD_textend_fp  pl_textend;
 } PLDispatchTable;
 
 #endif /* __DISPATCH_H__ */

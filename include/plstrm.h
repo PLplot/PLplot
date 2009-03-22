@@ -156,6 +156,7 @@ typedef struct {
  * dev_fill0	PLINT	Set if driver can do solid area fills
  * dev_text	PLINT	Set if driver want to do it's only text drawing
  * dev_unicode	PLINT	Set if driver wants unicode
+ * new_unicode  PLINT   Set if driver wants to use the new unicode interface
  * dev_hrshsym	PLINT	Set for Hershey symbols to be used
  * dev_fill1	PLINT	Set if driver can do pattern area fills
  * dev_dash     PLINT   Set if driver can do dashed lines
@@ -703,6 +704,9 @@ typedef struct {
 
 
 /* Unicode section */
+
+  /* The new unicode interface */
+  PLINT new_unicode;
 
   PLINT dev_unicode;
 

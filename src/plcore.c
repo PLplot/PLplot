@@ -249,6 +249,53 @@ plP_esc(PLINT op, void *ptr)
   (*plsc->dispatch_table->pl_esc) ((struct PLStream_struct *) plsc, op, ptr);
 }
 
+/* "New" unicode text handling system 
+ *
+ * This moves some of the text handling into PLplot core.
+ *
+ */
+
+/* Begin text */
+
+void
+plP_textbgn(void *ptr)
+{
+  if(plsc->new_unicode){
+    (*plsc->dispatch_table->pl_textbgn) ((struct PLStream_struct *) plsc, ptr);
+  }
+}
+
+/* Add a character to the string */
+
+void
+plP_textchr(void *ptr)
+{
+  if(plsc->new_unicode){
+    (*plsc->dispatch_table->pl_textchr) ((struct PLStream_struct *) plsc, ptr);
+  }
+}
+
+/* Perform what in the past we would have referred to as a text esc function */
+
+void
+plP_textesc(PLINT op, void *ptr)
+{
+  if(plsc->new_unicode){
+    (*plsc->dispatch_table->pl_textesc) ((struct PLStream_struct *) plsc, op, ptr);
+  }
+}
+
+/* End text. At this point the driver should probably draw the string */
+
+void
+plP_textend(void *ptr)
+{
+  if(plsc->new_unicode){
+    (*plsc->dispatch_table->pl_textend) ((struct PLStream_struct *) plsc, ptr);
+  }
+}
+
+
 /* Set up plot window parameters. */
 /* The plot buffer must be called first */
 /* Some drivers (metafile, Tk) need access to this data */
@@ -538,7 +585,6 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	 unsigned char hexdigit, hexpower;
 
 	 /* Now process the text string */
-
 	 if (string!=NULL) {        /* If the string isn't blank, then we will
                                      * continue
 				     */
@@ -555,10 +601,11 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	     * rid of the esc character sequence, just replacing it with
 	     * unicode.
 	     */
-	
 	    /* Obtain FCI (font characterization integer) for start of
 	     * string. */
 	    plgfci(&fci);
+	    args.n_fci = fci;
+	    plP_textbgn(&args);
 	    for (j=i=0;i<len;i++) {    /* Walk through the string, and convert
 					* some stuff to unicode on the fly */
 	       skip=0;
@@ -570,11 +617,16 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     idx=plhershey2unicode(code);
 		     /* momentarily switch to symbol font. */
 		     fcisave = fci;
-		     plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);
+		     plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);		     
 		     unicode_buffer[j++]= fci;
 		     unicode_buffer[j++] = \
 		       (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
 
+		     args.n_fci = fci;
+		     plP_textesc(PL_FONTCHANGE, &args);
+		     args.n_char = \
+		       (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+		     plP_textchr(&args);
 		     /* if unicode_buffer[j-1] corresponds to the escape
 		      * character must unescape it by appending one more.
 		      * This will probably always be necessary since it is
@@ -595,6 +647,12 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);
 		     unicode_buffer[j++]= fci;
 		     unicode_buffer[j++]=code;
+
+		     args.n_fci = fci;
+		     plP_textesc(PL_FONTCHANGE, &args);
+		     args.n_char = \
+		       (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+		     plP_textchr(&args);
 		     /* if unicode_buffer[j-1] corresponds to the escape
 		      * character must unescape it by appending one more.
 		      * This will probably always be necessary since it is
@@ -618,6 +676,8 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			   fci = code;
 			   unicode_buffer[j]=fci;
 			   skip=1;
+			   args.n_fci = fci;
+			   plP_textesc(PL_FONTCHANGE, &args);
 			}
 			else {
 			   /* code is not complete FCI. Change
@@ -630,6 +690,8 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			   plP_hex2fci(hexdigit, hexpower, &fci);
 			   unicode_buffer[j]=fci;
 			   skip=1;
+			   args.n_fci = fci;
+			   plP_textesc(PL_FONTCHANGE, &args);
 			}
 		     }
 		
@@ -639,6 +701,8 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			   plP_hex2fci(hexdigit, hexpower, &fci);
 			   unicode_buffer[j]=fci;
 			   skip=1;
+			   args.n_fci = fci;
+			   plP_textesc(PL_FONTCHANGE, &args);
 			}
 		     }
 		     break;
@@ -672,6 +736,8 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			i+=2;
 			unicode_buffer[j] = fci;
 			skip = 1;
+			args.n_fci = fci;
+			plP_textesc(PL_FONTCHANGE, &args);
 		     }
 		     break;
 		
@@ -685,6 +751,8 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     fcisave = fci;
 		     plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);
 		     unicode_buffer[j++]= fci;
+		     args.n_fci = fci;
+		     plP_textesc(PL_FONTCHANGE, &args);
 		     ig = plP_strpos(plP_greek_mnemonic, string[i+2]);
 		     if (ig >= 0) {
 			if (ig >= 24)
@@ -692,6 +760,9 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			idx=plhershey2unicode(ig+527);
 			unicode_buffer[j++] = \
 			  (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+			args.n_char =					\
+			  (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+			plP_textchr(&args);
 			i+=2;
 			skip=1;  /* skip is set if we have copied something
 				  * into the unicode table */
@@ -700,14 +771,33 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			/* Use "unknown" unicode character if string[i+2]
 			 * is not in the Greek array.*/
 			unicode_buffer[j++]=(PLUNICODE)0x00;
+			args.n_char = (PLUNICODE)0x00;
+			plP_textchr(&args);
 			i+=2;
 			skip=1;  /* skip is set if we have copied something
 				  * into  the unicode table */
 		     }
 		     fci = fcisave;
 		     unicode_buffer[j]= fci;
+		     args.n_fci = fci;
+		     plP_textesc(PL_FONTCHANGE, &args);
 		     break;
-		
+		     
+		  case 'u':
+		    if(plsc->new_unicode){
+		      plP_textesc(PL_SUPERSCRIPT, &args);
+		      i += 1;
+		      skip = 1;
+		    }
+		    break;
+
+		  case 'd':
+		    if(plsc->new_unicode){
+		      plP_textesc(PL_SUBSCRIPT, &args);
+		      i += 1;
+		      skip = 1;
+		    }
+		    break;
 		  }
 	       }
 	
@@ -736,7 +826,11 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		  if (unicode_buffer[j] == esc && string[i+1] == esc) {
 		    i++;
 		    unicode_buffer[++j] = esc;
+		    args.n_char = esc;
+		  } else {
+		    args.n_char = unichar;
 		  }
+		  plP_textchr(&args);
 	       }
 	       j++;
 	    }
@@ -751,6 +845,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	      /* Don't print anything, if there is no unicode to print! */
 	      return;
 	 }
+	 plP_textend(&args);
       }
 
       if (plsc->dev_unicode) {
