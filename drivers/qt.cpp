@@ -6,6 +6,7 @@
   Imperial College, London
 
   Copyright (C) 2009  Imperial College, London
+  Copyright (C) 2009  Alan W. Irwin
 
   This is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Lesser Public License as published
@@ -201,7 +202,7 @@ QtPLDriver::QtPLDriver(PLINT i_iWidth, PLINT i_iHeight)
 {
 	m_dWidth=i_iWidth;
 	m_dHeight=i_iHeight;
-	downscale=1.;
+//	downscale=1.;
 // 	fontScalingFactor=1.;
 }
 
@@ -318,7 +319,11 @@ QPicture QtPLDriver::getTextPicture(PLUNICODE* text, int len, int chrht)
 	yOffset=0.;
 	xOffset=0.;
 
-	currentFontSize=chrht*72./25.4*1.6;
+	// Scaling factor of 1.6 determined empirically to make all qt results
+	// have the same character size as cairo results (taking into account
+	// the slightly different actual glyph sizes for the different
+        // default fonts found by cairo and qt).
+	currentFontSize=chrht*POINTS_PER_INCH/25.4*1.6;
 	currentFontScale=1.;
 	underlined=false;
 	overlined=false;
@@ -662,9 +667,6 @@ QtRasterDevice::QtRasterDevice(int i_iWidth, int i_iHeight):
 	b.setStyle(Qt::SolidPattern);
 	m_painterP->setBrush(b);
 	m_painterP->setRenderHint(QPainter::Antialiasing, true);
-// 	int res=DPI/25.4/downscale*1000.;
-// 	setDotsPerMeterX(res);
-// 	setDotsPerMeterY(res);
 
 	// Let's fill the background
 	m_painterP->fillRect(0, 0, width(), height(), QBrush(Qt::black));
@@ -701,6 +703,7 @@ void QtRasterDevice::savePlot()
 
 void plD_init_rasterqt(PLStream * pls)
 {
+        double dpi;
 	/* Stream setup */
 	pls->color = 1;
 	pls->plbuf_write=0;
@@ -716,6 +719,13 @@ void plD_init_rasterqt(PLStream * pls)
   
 	initQtApp(false);
 	
+	if (pls->xdpi <=0.)
+	  dpi = DEFAULT_DPI;
+	else
+	  dpi = pls->xdpi;
+	// For raster debug
+	// std::cout << dpi << std::endl;
+
 	// Shamelessly copied on the Cairo stuff :)
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
@@ -735,9 +745,9 @@ void plD_init_rasterqt(PLStream * pls)
 	
 	plP_setphy((PLINT) 0, (PLINT) (pls->xlength / ((QtRasterDevice*)(pls->dev))->downscale), (PLINT) 0, (PLINT) (pls->ylength / ((QtRasterDevice*)(pls->dev))->downscale));
 	
-	plP_setpxl(DPI/25.4/((QtRasterDevice*)(pls->dev))->downscale, DPI/25.4/((QtRasterDevice*)(pls->dev))->downscale);
+	plP_setpxl(dpi/25.4/((QtRasterDevice*)(pls->dev))->downscale, dpi/25.4/((QtRasterDevice*)(pls->dev))->downscale);
 	
-	((QtRasterDevice*)(pls->dev))->setResolution(pls->xpmm);
+	((QtRasterDevice*)(pls->dev))->setResolution(dpi);
 
 	/* Initialize family file info */
 	plFamInit(pls);
@@ -926,7 +936,7 @@ QtSVGDevice::~QtSVGDevice()
 void QtSVGDevice::definePlotName(const char* fileName)
 {
 	setFileName(QString(fileName));
-	setResolution(DPI);
+	setResolution(POINTS_PER_INCH);
 	setSize(QSize(m_dWidth, m_dHeight));
 
 	m_painterP=new QPainter(this);
@@ -991,7 +1001,7 @@ void plD_init_svgqt(PLStream * pls)
 	
 	plP_setphy((PLINT) 0, (PLINT) (pls->xlength / ((QtSVGDevice*)(pls->dev))->downscale), (PLINT) 0, (PLINT) (pls->ylength / ((QtSVGDevice*)(pls->dev))->downscale));
 	
-	plP_setpxl(DPI/25.4/((QtSVGDevice*)(pls->dev))->downscale, DPI/25.4/((QtSVGDevice*)(pls->dev))->downscale);
+	plP_setpxl(POINTS_PER_INCH/25.4/((QtSVGDevice*)(pls->dev))->downscale, POINTS_PER_INCH/25.4/((QtSVGDevice*)(pls->dev))->downscale);
 
 	/* Initialize family file info */
 	plFamInit(pls);
@@ -1037,7 +1047,7 @@ QtEPSDevice::QtEPSDevice(int i_iWidth, int i_iHeight)
 	setFullPage(true);
 	setPaperSize(QSizeF(i_iHeight, i_iWidth), QPrinter::Point);
 #endif
-	setResolution(DPI);
+	setResolution(POINTS_PER_INCH);
 	setColorMode(QPrinter::Color);
 	setOrientation(QPrinter::Landscape);
 	setPrintProgram(QString("lpr"));
@@ -1159,7 +1169,7 @@ void plD_init_epspdfqt(PLStream * pls)
 	
 	plP_setphy((PLINT) 0, (PLINT) (pls->xlength / ((QtEPSDevice*)(pls->dev))->downscale), (PLINT) 0, (PLINT) (pls->ylength / ((QtEPSDevice*)(pls->dev))->downscale));
 	
-	plP_setpxl(DPI/25.4/((QtEPSDevice*)(pls->dev))->downscale, DPI/25.4/((QtEPSDevice*)(pls->dev))->downscale);
+	plP_setpxl(POINTS_PER_INCH/25.4/((QtEPSDevice*)(pls->dev))->downscale, POINTS_PER_INCH/25.4/((QtEPSDevice*)(pls->dev))->downscale);
 	
 	/* Initialize family file info */
 	plFamInit(pls);

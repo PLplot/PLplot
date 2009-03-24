@@ -6,6 +6,7 @@
   Imperial College, London
 
   Copyright (C) 2009  Imperial College, London
+  Copyright (C) 2009  Alan W. Irwin
 
   This is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Lesser Public License as published
@@ -30,13 +31,25 @@
 */
 
 /*
-Interpretation of the -geometry factor for the various devices:
-- bmpqt, jpgqt, pngqt, ppmqt, tiffqt:
-  The geometry parameter defines the size in pixels
-- svgqt, epsqt, pdfqt:
-  The geometry parameter defines the size in points (1/72 of inches). EPS and PDF files will be drawn in A4 pages for Qt versions before 4.4
+Interpretation of the -geometry XSIZExYSIZE option (or the third and fourth 
+  parameters of plspage if those are specified by the user instead) for
+  the various devices:
+- the raster devices (bmpqt, jpgqt, pngqt, ppmqt, tiffqt):
+  XSIZE and YSIZE define the x and y size in pixels
 - qtwidget:
-  The geometry factor defines the default size of the widget, as well as its aspect ratio, which is kept when the widget is resized.
+  XSIZE and YSIZE define the default x and y size of the widget in 
+  pixels, as well as its aspect ratio, which is kept when the widget is
+  resized.
+- svgqt, epsqt, pdfqt:
+  XSIZE and YSIZE define the x and y size in points (1/72 of inches).
+  EPS and PDF files will be drawn in A4 pages for Qt versions before 4.4
+
+Interpretation of the -dpi DPI option (or the first parameter of
+  plspage if that is specified by the user instead).
+  DPI is ignored for all but the raster devices.  For those devices 
+  DPI should be set to the DPI value of the monitor being used to view
+  the results if exact character sizes are desired.  Otherwise, DEFAULT_DPI
+  (set to an average value for modern monitors) is used instead.
  */
 
 #ifndef QT_H
@@ -58,7 +71,20 @@ Interpretation of the -geometry factor for the various devices:
 #include "plplotP.h"
 #include "drivers.h"
 
-#define DPI 72
+// Used for devices (epsqt, pdfqt, svgqt) with known physical size in points.
+#define POINTS_PER_INCH 72
+
+// Average value of dots per inch assumed for modern monitors if the user
+// does not specify a value appropriate to their monitor with plspage or
+// the -dpi option.  Used only for devices with size specified in pixels 
+// but not qtwidget since it has independent access to information (e.g.,
+// delivered by X) about the DPI of the monitor.  So this value is only
+// used for the raster devices (bmpqt, jpgqt, pngqt, ppmqt, tiffqt).
+#define DEFAULT_DPI 80
+
+// These values are in units of pixels (the raster devices and qtwidget)
+// or points (epsqt, pdfqt, svgqt).  In the points case, this corresponds
+// to the A4 paper size.
 #define QT_DEFAULT_X 842
 #define QT_DEFAULT_Y 595
 
@@ -132,10 +158,10 @@ class QtRasterDevice: public QtPLDriver, public QImage
 		
 		void savePlot();
 		
-		virtual void setResolution(double dotsPerMM)
+		virtual void setResolution(double dotsPerInch)
 		{
-			setDotsPerMeterX(dotsPerMM*1000.*downscale);
-			setDotsPerMeterY(dotsPerMM*1000.*downscale);
+			setDotsPerMeterX((dotsPerInch/25.4)*1000.);
+			setDotsPerMeterY((dotsPerInch/25.4)*1000.);
 		}
 		
 	protected:
