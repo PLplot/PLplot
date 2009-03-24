@@ -1,4 +1,4 @@
-;
+LIBRARY libplplotf95d.dll
 EXPORTS
 	plparseopts_
 	__plplotp_MOD_plaxes

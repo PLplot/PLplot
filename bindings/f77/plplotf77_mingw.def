@@ -1,4 +1,5 @@
 ; dlltool -z plplotf77_mingw.def --export-all-symbol libplplotf77d.dll
+LIBRARY libplplotf77d.dll
 EXPORTS
 	plabort_
 	plaxes_
