@@ -938,6 +938,9 @@ void QtSVGDevice::definePlotName(const char* fileName)
 	setFileName(QString(fileName));
 	setResolution(POINTS_PER_INCH);
 	setSize(QSize(m_dWidth, m_dHeight));
+#if QT_VERSION >=  0x040500
+        setViewBox(QRect(0, 0, (int)m_dWidth, (int)m_dHeight));
+#endif
 
 	m_painterP=new QPainter(this);
 	m_painterP->fillRect(0, 0, m_dWidth, m_dHeight, QBrush(Qt::black));
