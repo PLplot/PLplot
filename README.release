@@ -59,6 +59,7 @@ INDEX
 
 1.1 libnistcd (a.k.a. libcd) now built internally for -dev cgm
 1.2 get-drv-info now changed to test-drv-info
+1.3 Text clipping now enabled by default for the cairo devices
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -89,6 +90,7 @@ examples
 2.24 Documentation updates
 2.25 libnistcd (a.k.a. libcd) now built internally for -dev cgm
 2.26 get-drv-info now changed to test-drv-info
+2.27 Text clipping now enabled by default for the cairo devices
 
 1. Changes relative to PLplot 5.9.2 (the previous development release)
 
@@ -134,6 +136,18 @@ from that dynamic loading.  Now, we simply run test-drv-info as an option
 (defaults to ON unless cross-building is enabled) and compare the resulting
 *.rc file with the one configured by cmake to be sure the dynamic device
 has been built correctly.
+
+1.3 Text clipping now enabled by default for the cairo devices
+
+When correct text clipping was first implemented for cairo devices, it was
+discovered that the libcairo library of that era (2007-08) did that clipping
+quite inefficiently so text clipping was disabled by default.  Recent tests
+of text clipping for the cairo devices using libcairo 1.6.4 (released in
+2008-04) shows text clipping is quite efficient now.  Therefore, it is now
+enabled by default.  If you notice a significant slowdown for some libcairo
+version prior to 1.6.4 you can use the option -drvopt text_clipping=0 for
+your cairo device plots (and accept the improperly clipped text results that
+might occur with that option).  Better yet, use libcairo 1.6.4 or later.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -474,4 +488,16 @@ from that dynamic loading.  Now, we simply run test-drv-info as an option
 (defaults to ON unless cross-building is enabled) and compare the resulting
 *.rc file with the one configured by cmake to be sure the dynamic device
 has been built correctly.
+
+2.27 Text clipping now enabled by default for the cairo devices
+
+When correct text clipping was first implemented for cairo devices, it was
+discovered that the libcairo library of that era (2007-08) did that clipping
+quite inefficiently so text clipping was disabled by default.  Recent tests
+of text clipping for the cairo devices using libcairo 1.6.4 (released in
+2008-04) shows text clipping is quite efficient now.  Therefore, it is now
+enabled by default.  If you notice a significant slowdown for some libcairo
+version prior to 1.6.4 you can use the option -drvopt text_clipping=0 for
+your cairo device plots (and accept the improperly clipped text results that
+might occur with that option).  Better yet, use libcairo 1.6.4 or later.
 
