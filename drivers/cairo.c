@@ -708,18 +708,19 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   aStream->cairoContext = NULL;
   aStream->downscale = downscale;
 
-  /* Set text clipping off as this makes the driver pretty slow */
-  aStream->text_clipping = 0;
-  text_clipping = 0;
+  /* Set text clipping on by default since it makes little difference in
+     speed for a modern cairo stack.*/
+  aStream->text_clipping = 1;
+  text_clipping = 1;
   text_anti_aliasing = 0;     // use 'default' text aliasing by default
   graphics_anti_aliasing = 0; // use 'default' graphics aliasing by default
 
   /* Check for cairo specific options */
   plParseDrvOpts(cairo_options);
 
-  /* Turn on text clipping if the user desires this */
-  if(text_clipping){
-    aStream->text_clipping = 1;
+  /* Turn off text clipping if the user desires this */
+  if(!text_clipping){
+    aStream->text_clipping = 0;
   }
 
   /* Record users desired text and graphics aliasing */
