@@ -80,7 +80,7 @@ Interpretation of the -dpi DPI option (or the first parameter of
 // but not qtwidget since it has independent access to information (e.g.,
 // delivered by X) about the DPI of the monitor.  So this value is only
 // used for the raster devices (bmpqt, jpgqt, pngqt, ppmqt, tiffqt).
-#define DEFAULT_DPI 80
+#define DEFAULT_DPI 72
 
 // These values are in units of pixels (the raster devices and qtwidget)
 // or points (epsqt, pdfqt, svgqt).  In the points case, this corresponds
