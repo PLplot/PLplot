@@ -709,7 +709,10 @@ void plD_init_rasterqt(PLStream * pls)
 	pls->plbuf_write=0;
 	pls->dev_fill0 = 1;
 	pls->dev_fill1 = 0;
-	pls->dev_dash=1;
+        /* Let the PLplot core handle dashed lines since
+	 * the driver results for this capability have a number of issues.
+	pls->dev_dash=1; */
+	pls->dev_dash=0;
 	pls->dev_flush=1;
 	pls->dev_clear=1;
 	pls->termin=0;
@@ -976,7 +979,10 @@ void plD_init_svgqt(PLStream * pls)
 	pls->plbuf_write=0;
 	pls->dev_fill0 = 1;
 	pls->dev_fill1 = 0;
-	pls->dev_dash=1;
+        /* Let the PLplot core handle dashed lines since
+	 * the driver results for this capability have a number of issues.
+	pls->dev_dash=1; */
+	pls->dev_dash=0;
 	pls->dev_flush=1;
 	pls->dev_clear=1;
 	pls->termin=0;
@@ -1143,7 +1149,10 @@ void plD_init_epspdfqt(PLStream * pls)
 	pls->plbuf_write=0;
 	pls->dev_fill0 = 1;
 	pls->dev_fill1 = 0;
-	pls->dev_dash=1;
+        /* Let the PLplot core handle dashed lines since
+	 * the driver results for this capability have a number of issues.
+	pls->dev_dash=1; */
+	pls->dev_dash=0;
 	pls->dev_flush=1;
 	pls->dev_clear=1;
 	pls->termin=0;
@@ -1552,7 +1561,10 @@ void plD_init_qtwidget(PLStream * pls)
 	pls->plbuf_write=0;
 	pls->dev_fill0 = 1;	/* Handle solid fills */
 	pls->dev_fill1 = 0;
-	pls->dev_dash=1;
+        /* Let the PLplot core handle dashed lines since
+	 * the driver results for this capability have a number of issues.
+	pls->dev_dash=1; */
+	pls->dev_dash=0;
 	pls->dev_flush=1;
 	pls->dev_clear=1;
 	pls->termin=1;
