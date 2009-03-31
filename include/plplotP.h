@@ -727,7 +727,7 @@ plP_stindex(const char *str1, const char *str2);
 
 /* Searches string str for first occurence of character chr.  */
 
-PLINT
+PLDLLIMPEXP PLINT
 plP_strpos(const char *str, int chr);
 
 /* Searches string str for character chr (case insensitive). */
