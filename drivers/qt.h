@@ -88,6 +88,57 @@ Interpretation of the -dpi DPI option (or the first parameter of
 #define QT_DEFAULT_X 842
 #define QT_DEFAULT_Y 595
 
+class QtPLDriver;
+
+// Master Device Handler for multiple streams
+// Only handles multiple Qt devices
+class MasterHandler:public QObject
+{
+	Q_OBJECT
+	
+	public:
+		MasterHandler():QObject()
+		{
+			masterDevice=NULL;
+		}
+
+		~MasterHandler(){}
+
+		bool isMasterDevice(QtPLDriver* d)
+		{
+			return d==masterDevice;
+		}
+
+		void setMasterDevice(QtPLDriver* d)
+		{
+			masterDevice=d;
+		}
+		
+		void DeviceChangedPage(QtPLDriver* d)
+		{
+			if(d==masterDevice)
+			{
+				emit MasterChangedPage();
+			}
+		}
+
+		void DeviceClosed(QtPLDriver* d)
+		{
+			if(d==masterDevice)
+			{
+				emit MasterClosed();
+				masterDevice=NULL;
+			}
+		}
+	signals:
+		void MasterChangedPage();	
+
+		void MasterClosed();
+
+	protected:
+		QtPLDriver* masterDevice;
+};
+
 // Basic class, offering the common interface to all Qt plplot devices
 class QtPLDriver
 {
@@ -95,7 +146,7 @@ class QtPLDriver
 		// Constructor, taking the device size as arguments
 		QtPLDriver(PLINT i_iWidth=QT_DEFAULT_X, PLINT i_iHeight=QT_DEFAULT_Y);
 		
-		virtual ~QtPLDriver();
+		virtual ~QtPLDriver(); // does not delete emitter!
 		
 		// Draws a line from (x1, y1) to (x2, y2) in internal plplot coordinates
 		virtual void drawLine(short x1, short y1, short x2, short y2);
@@ -120,6 +171,7 @@ class QtPLDriver
 		double m_dWidth, m_dHeight;
 		
 		static QMutex mutex; // All-purpose mutex
+
 	protected:
 	
 		// Returns font with the good size for a QPicture's resolution
@@ -141,8 +193,6 @@ class QtPLDriver
 		
 		QPainter* m_painterP;
 };
-
-QMutex QtPLDriver::mutex;
 
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 // Driver painting whatever raster format Qt can save
@@ -219,7 +269,7 @@ class QtEPSDevice: public QtPLDriver, public QPrinter
 // to delimit the page when the widget aspect ratio is not the one of the plotted page
 class QtPLWidget: public QWidget, public QtPLDriver
 {
-// 	Q_OBJECT
+	Q_OBJECT
 
 	public:
 		// Parameters are the actual size of the page, NOT the size of the widget
@@ -228,160 +278,29 @@ class QtPLWidget: public QWidget, public QtPLDriver
 		
 		virtual ~QtPLWidget();
 		
-		// This is an addition to plplot drawing routines.
-		// Calling setSmooth(...) will (de)activate anti-aliasing in plotting
-		// For example:
-		// plotWidget->setSmooth(true);
-		// plbox(...);
-		// plotWidget->setSmooth(false);
-		// plline(...)
-		// will only smooth the axes and their labels.
-// 		void setSmooth(bool);
-		
-		// Clears the widget
 		void clearWidget();
-	
-// 	public slots:
 		
-		// This slot can be used to select an x/y range interactively
-		// xi, yi, xf and yf are the initial and final points coordinates
-		// in their respective windows, 0 if outside a window
-// 		void captureMousePlotCoords(double* xi, double* yi, double* xf, double* yf);
-// 		
-// 		// This slot can be used to select an x/y range interactively
-// 		// xi, yi, xf and yf are the initial and final points coordinates
-// 		// in the whole page (normalized between 0 and 1)
-// 		void captureMouseDeviceCoords(double* xi, double* yi, double* xf, double* yf);
-		
-// 	protected slots:
+		int pageNumber;
+
 	protected:
 		
 		void resizeEvent(QResizeEvent*);
 		void paintEvent(QPaintEvent*);
-// 		void mousePressEvent(QMouseEvent*);
-// 		void mouseReleaseEvent(QMouseEvent*);
-// 		void mouseMoveEvent(QMouseEvent*);
-	
-	protected:
 		
 		// Used to center the plot on the page
 		void getPlotParameters(double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset);
-		
-		// Used for cursor tracking (capture[...] slots)
-		struct
-		{
-			bool isTracking;
-			int step; //1 for first part, 2 for second part
-			double cursor_start_x, cursor_start_y;
-			double cursor_end_x, cursor_end_y;
-		} cursorParameters;
 		
 		double m_dAspectRatio;
 		QPixmap * m_pixPixmap; // to avoid redrawing everything
 		bool m_bAwaitingRedraw;
 		int m_iOldSize;
 		QPicture* pic;
+
+	protected slots:
+		void mouseReleaseEvent ( QMouseEvent * event );
+		void closeEvent(QCloseEvent* event);
+		void nextPage();
 };
-
-
-// This widget wraps up various QtPLWidgets as tabs
-// The stream plots on currentWidget, which should be changed by eop()
-// Actually, setting currentWidget as NULL creates a new page when
-// the first plot instructions are issued. So eop() only has to set it as NULL;
-class QtPLTabWidget: public QTabWidget, public QtPLDriver
-{
-    public:
-		QtPLTabWidget(int i_iWidth=QT_DEFAULT_X, int i_iHeight=QT_DEFAULT_Y)
-		{
-			
-			m_iWidth=i_iWidth;
-			m_iHeight=i_iHeight; 
-			currentWidget=NULL;
-			
-			mutex.lock(); // All QtPLTabWidgets are registered
-			alreadyRun=false;
-			runningDevices.push_back(this);
-			mutex.unlock();
-		}
-		
-		~QtPLTabWidget();
-		
-		virtual void drawLine(short x1, short y1, short x2, short y2)
-		{
-			if(currentWidget==NULL) newTab();
-			currentWidget->drawLine(x1, y1, x2, y2);
-		}
-
-		virtual void drawPolyline(short * x, short * y, PLINT npts)
-		{
-			if(currentWidget==NULL) newTab();
-			currentWidget->drawPolyline(x, y, npts);
-		}
-
-		virtual void drawPolygon(short * x, short * y, PLINT npts)
-		{
-			if(currentWidget==NULL) newTab();
-			currentWidget->drawPolygon(x, y, npts);
-		}
-
-		virtual void setColor(int r, int g, int b, double alpha)
-		{
-			if(currentWidget==NULL) newTab();
-			currentWidget->setColor(r, g, b, alpha);
-		}
-
-		virtual void setWidth(PLINT w)
-		{
-			if(currentWidget==NULL) newTab();
-			currentWidget->setWidth(w);
-		}
-
-		virtual void setDashed(PLINT nms, PLINT* mark, PLINT* space)
-		{
-			if(currentWidget==NULL) newTab();
-			currentWidget->setDashed(nms, mark, space);
-		}
-
-		// Set pen to draw solid strokes (called after drawing dashed strokes)
-		virtual void setSolid()
-		{
-			if(currentWidget==NULL) newTab();
-			currentWidget->setSolid();
-		}
-		
-		virtual void drawText(PLStream* pls, EscText* txt)
-		{
-			if(currentWidget==NULL) newTab();
-			currentWidget->drawText(pls, txt);
-		}
-		
-// 		void setSmooth(bool b)
-// 		{
-// 			if(currentWidget==NULL) newTab();
-// 			currentWidget->setSmooth(b);
-// 		}
-
-		virtual void savePlot(char* fileName){}
-	
-		void exec();
-	
-		QtPLWidget* currentWidget;
-		
-		int m_iWidth, m_iHeight;
-		
-		static QList<QtPLTabWidget*> runningDevices;
-		bool alreadyRun;
-		
-		protected:
-			void newTab();
-			QList<QtPLWidget*> widgets;
-			
-			double resolution;
-			
-			
-};
-
-QList<QtPLTabWidget*> QtPLTabWidget::runningDevices;
 
 #endif
 

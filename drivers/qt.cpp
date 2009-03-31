@@ -70,9 +70,12 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
 #endif
 ;
 
-void initQtApp(bool isGUI)
+MasterHandler handler;
+
+bool initQtApp(bool isGUI)
 {
 	QtPLDriver::mutex.lock();
+	bool res=false;
 	++appCounter;
 	if(qApp==NULL && appCounter==1)
 	{
@@ -82,9 +85,11 @@ void initQtApp(bool isGUI)
 		argv[1]=new char[1];
 		snprintf(argv[0], 10, "qt_driver");
 		argv[1][0]='\0';
-		/*app=*/new QApplication(argc, argv, isGUI );
+		new QApplication(argc, argv, isGUI);
+		res=true;
 	}
 	QtPLDriver::mutex.unlock();
+	return res;
 }
 
 void closeQtApp()
@@ -94,7 +99,6 @@ void closeQtApp()
 	if(qApp!=NULL && appCounter==0)
 	{
 		delete qApp;
-// 		qApp=NULL;
 		delete[] argv[0];
 		delete[] argv[1];
 		delete[] argv;
@@ -184,7 +188,6 @@ void plD_bop_pdfqt(PLStream *);
 void plD_dispatch_init_qtwidget(PLDispatchTable *pdt);
 void plD_init_qtwidget(PLStream *);
 void plD_eop_qtwidget(PLStream *);
-void plD_tidy_qtwidget(PLStream *);
 #endif
 
 // Declaration of the generic interface functions
@@ -198,19 +201,21 @@ void plD_esc_qt(PLStream *, PLINT, void*);
 
 ///////////// Generic Qt driver class /////////////////
 
+QMutex QtPLDriver::mutex;
+
 QtPLDriver::QtPLDriver(PLINT i_iWidth, PLINT i_iHeight)
 {
 	m_dWidth=i_iWidth;
 	m_dHeight=i_iHeight;
-//	downscale=1.;
-// 	fontScalingFactor=1.;
 }
 
 QtPLDriver::~QtPLDriver()
-{}
+{
+}
 
 void QtPLDriver::drawLine(short x1, short y1, short x2, short y2)
 {
+	if(!m_painterP->isActive()) return;
 	QLineF line(	(PLFLT)x1*downscale,
 			m_dHeight-(PLFLT)y1*downscale,
 			(PLFLT)x2*downscale,
@@ -222,6 +227,7 @@ void QtPLDriver::drawLine(short x1, short y1, short x2, short y2)
 
 void QtPLDriver::drawPolyline(short * x, short * y, PLINT npts)
 {
+	if(!m_painterP->isActive()) return;
 	QPointF * polyline=new QPointF[npts];
 	for(int i=0; i<npts; ++i)
 	{
@@ -234,6 +240,7 @@ void QtPLDriver::drawPolyline(short * x, short * y, PLINT npts)
 
 void QtPLDriver::drawPolygon(short * x, short * y, PLINT npts)
 {
+	if(!m_painterP->isActive()) return;
 	QPointF * polygon=new QPointF[npts];
 	for(int i=0; i<npts; ++i)
 	{
@@ -244,10 +251,6 @@ void QtPLDriver::drawPolygon(short * x, short * y, PLINT npts)
 	delete[] polygon;
 }
 
-// QRect getNewRect(const QRect& input, double yOffset, double fontSize)
-// {
-// 	return QRect(input.right(), -yOffset*fontSize, 2, 2);
-// }
 
 QFont QtPLDriver::getFont(PLUNICODE unicode)
 {
@@ -279,6 +282,8 @@ QFont QtPLDriver::getFont(PLUNICODE unicode)
 
 void QtPLDriver::drawTextInPicture(QPainter* p, const QString& text)
 {
+	if(!m_painterP->isActive()) return;
+
 	QPicture tempPic;
 	QPainter tempPainter(&tempPic);
 	tempPainter.setFont(p->font());
@@ -286,18 +291,11 @@ void QtPLDriver::drawTextInPicture(QPainter* p, const QString& text)
 	QRectF bounding;
 	tempPainter.drawText(rect, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextDontClip, text, &bounding);
 
-// For svg debug
-// std::cout << bounding.left()+bounding.right() << std::endl;
-bounding.adjust(-0.5, bounding.height(), -0.5, -bounding.height()/5.); // Empiric adjustment of the true bounding box
-// 	tempPainter.drawLine(bounding.left(), bounding.bottom(), bounding.right(), bounding.bottom());
-// 	tempPainter.drawLine(bounding.left(), bounding.top(), bounding.right(), bounding.top());
-// 	tempPainter.drawLine(bounding.left(), bounding.bottom(), bounding.left(), bounding.top());
-// 	tempPainter.drawLine(bounding.right(), bounding.bottom(), bounding.right(), bounding.top());
-// 	tempPainter.drawLine(0., bounding.bottom()+5., 0., bounding.top()-5.);
+	bounding.adjust(-0.5, bounding.height(), -0.5, -bounding.height()/5.); // Empiric adjustment of the true bounding box
+
 	tempPainter.end();
 
 	p->drawPicture(xOffset+bounding.width()/2., -yOffset, tempPic);
-	
 
 	xOffset+=bounding.width();
 }
@@ -329,7 +327,7 @@ QPicture QtPLDriver::getTextPicture(PLUNICODE* text, int len, int chrht)
 	overlined=false;
 	
 	p.setFont(getFont(fci));
-	
+
 	int i=0;
 	while(i < len)
 	{
@@ -410,6 +408,8 @@ QPicture QtPLDriver::getTextPicture(PLUNICODE* text, int len, int chrht)
 
 void QtPLDriver::drawText(PLStream* pls, EscText* txt)
 {
+	if(!m_painterP->isActive()) return;
+
 	/* Check that we got unicode, warning message and return if not */
 	if( txt->unicode_array_len == 0 ) {
 		printf( "Non unicode string passed to a Qt driver, ignoring\n" );
@@ -429,6 +429,9 @@ void QtPLDriver::drawText(PLStream* pls, EscText* txt)
 	QPicture picText=getTextPicture(txt->unicode_array, txt->unicode_array_len, pls->chrht);
 	picDpi=picText.logicalDpiY();
 
+	m_painterP->setClipping(true);
+	m_painterP->setClipRect(QRect(pls->clpxmi*downscale, m_dHeight-pls->clpyma*downscale, (pls->clpxma-pls->clpxmi)*downscale, (pls->clpyma-pls->clpymi)*downscale), Qt::ReplaceClip);
+
 	rotation -= pls->diorot * M_PI / 2.0;
 	m_painterP->translate(txt->x*downscale, m_dHeight-txt->y*downscale);
 	QMatrix rotShearMatrix(cos(rotation)*stride, -sin(rotation)*stride, cos(rotation)*sin(shear)+sin(rotation)*cos(shear), -sin(rotation)*sin(shear)+cos(rotation)*cos(shear), 0., 0.);
@@ -436,13 +439,17 @@ void QtPLDriver::drawText(PLStream* pls, EscText* txt)
 	m_painterP->setWorldMatrix(rotShearMatrix, true);
 
 	m_painterP->translate(-txt->just*xOffset*m_painterP->device()->logicalDpiY()/picDpi, 0.);
+
 	m_painterP->drawPicture(0., 0., picText);
 
 	m_painterP->setWorldMatrix(QMatrix());
+	m_painterP->setClipping(false);
 }
 
 void QtPLDriver::setColor(int r, int g, int b, double alpha)
 {
+	if(!m_painterP->isActive()) return;
+
 	QPen p=m_painterP->pen();
 	p.setColor(QColor(r, g, b, alpha*255));
 	m_painterP->setPen(p);
@@ -455,6 +462,8 @@ void QtPLDriver::setColor(int r, int g, int b, double alpha)
 
 void QtPLDriver::setWidth(PLINT w)
 {
+	if(!m_painterP->isActive()) return;
+
 	QPen p=m_painterP->pen();
 	p.setWidth(w);
 	m_painterP->setPen(p);
@@ -462,6 +471,8 @@ void QtPLDriver::setWidth(PLINT w)
 
 void QtPLDriver::setDashed(PLINT nms, PLINT* mark, PLINT* space)
 {
+	if(!m_painterP->isActive()) return;
+
 	QVector<qreal> vect;
 	for(int i=0; i<nms; ++i)
 	{
@@ -475,6 +486,8 @@ void QtPLDriver::setDashed(PLINT nms, PLINT* mark, PLINT* space)
 
 void QtPLDriver::setSolid()
 {
+	if(!m_painterP->isActive()) return;
+
 	QPen p=m_painterP->pen();
 	p.setStyle(Qt::SolidLine);
 	m_painterP->setPen(p);
@@ -500,7 +513,7 @@ void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_qtwidget)
-	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
+	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
 	
@@ -525,7 +538,7 @@ void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
 	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_qtwidget)
-	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
+	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
 	
@@ -552,7 +565,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_qtwidget)
-	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
+	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
 		    
@@ -608,7 +621,7 @@ void plD_state_qt(PLStream * pls, PLINT op)
 	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_qtwidget)
-	if(widget==NULL) widget=dynamic_cast<QtPLTabWidget*>((QWidget *) pls->dev);
+	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
     
@@ -643,9 +656,13 @@ void plD_tidy_qt(PLStream * pls)
 #if defined(PLD_epsqt) || defined(PLD_pdfqt)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 #endif
+#if defined(PLD_qtwidget)
+	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QtPLWidget *) pls->dev);
+#endif
 	
 	if(widget!=NULL)
 	{
+		handler.DeviceClosed(widget);
 		delete widget;
 		pls->dev=NULL;
 	}
@@ -720,7 +737,7 @@ void plD_init_rasterqt(PLStream * pls)
 	pls->dev_text = 1; // want to draw text
 	pls->dev_unicode = 1; // want unicode 
   
-	initQtApp(false);
+	bool isMaster=initQtApp(/*false*/true); // Is it still a problem?
 	
 	if (pls->xdpi <=0.)
 	  dpi = DEFAULT_DPI;
@@ -740,7 +757,9 @@ void plD_init_rasterqt(PLStream * pls)
 	{
 		pls->dev=new QtRasterDevice(pls->xlength, pls->ylength);
 	}
-	
+
+	if(isMaster) handler.setMasterDevice((QtRasterDevice*)(pls->dev));
+
 	if (pls->xlength > pls->ylength)
 		((QtRasterDevice*)(pls->dev))->downscale = (PLFLT)pls->xlength/(PLFLT)(PIXELS_X-1);
 	else
@@ -762,6 +781,7 @@ void plD_eop_rasterqt(PLStream *pls)
 {
 	if(qt_family_check(pls)) {return;} 
 	((QtRasterDevice *)pls->dev)->savePlot();
+	handler.DeviceChangedPage((QtRasterDevice *)pls->dev);
 }
 
 #endif
@@ -990,7 +1010,7 @@ void plD_init_svgqt(PLStream * pls)
 	pls->dev_text = 1; // want to draw text
 	pls->dev_unicode = 1; // want unicode 
 	
-	initQtApp(false);
+	bool isMaster=initQtApp(/*false*/ true); // Is is still a problem?
 	
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
@@ -1002,7 +1022,9 @@ void plD_init_svgqt(PLStream * pls)
 	{
 		pls->dev=new QtSVGDevice(pls->xlength, pls->ylength);
 	}
-	
+
+	if(isMaster) handler.setMasterDevice((QtSVGDevice*)(pls->dev));
+
 	if (pls->xlength > pls->ylength)
 		((QtSVGDevice*)(pls->dev))->downscale = (PLFLT)pls->xlength/(PLFLT)(PIXELS_X-1);
 	else
@@ -1039,10 +1061,14 @@ void plD_eop_svgqt(PLStream *pls)
 	// to be able to plot another page.
 	downscale=((QtSVGDevice *)pls->dev)->downscale;
 	s=((QtSVGDevice *)pls->dev)->size();
+	bool isMaster=(handler.isMasterDevice((QtSVGDevice *)pls->dev));
 	delete ((QtSVGDevice *)pls->dev);
 	
 	pls->dev=new QtSVGDevice(s.width(), s.height());
 	((QtSVGDevice *)pls->dev)->downscale=downscale;
+	
+	if(isMaster) handler.setMasterDevice((QtSVGDevice *)pls->dev);
+	handler.DeviceChangedPage((QtSVGDevice *)pls->dev);
 }
 
 #endif
@@ -1161,7 +1187,7 @@ void plD_init_epspdfqt(PLStream * pls)
 	pls->dev_unicode = 1; // want unicode 
 	
 	// QPrinter devices won't create if there is no QApplication declared...
-	initQtApp(false);
+	bool isMaster=initQtApp(/*false*/true); //Is it still a problem?
 	
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
@@ -1173,7 +1199,9 @@ void plD_init_epspdfqt(PLStream * pls)
 	{
 		pls->dev=new QtEPSDevice(pls->xlength, pls->ylength);
 	}
-	
+
+	if(isMaster) handler.setMasterDevice((QtEPSDevice*)(pls->dev));
+
 	if (pls->xlength > pls->ylength)
 		((QtEPSDevice*)(pls->dev))->downscale = (PLFLT)pls->xlength/(PLFLT)(PIXELS_X-1);
 	else
@@ -1211,11 +1239,14 @@ void plD_eop_epspdfqt(PLStream *pls)
 	// Once saved, we have to create a new device with the same properties
 	// to be able to plot another page.
 	downscale=((QtEPSDevice *)pls->dev)->downscale;
+	bool isMaster=handler.isMasterDevice((QtEPSDevice *)pls->dev);
 	delete ((QtEPSDevice *)pls->dev);
-	//QApplication * app=new QApplication(argc, (char**)&argv);
+
 	pls->dev=new QtEPSDevice;
 	((QtEPSDevice *)pls->dev)->downscale=downscale;
-	//delete app;
+
+	if(isMaster) handler.setMasterDevice((QtEPSDevice *)pls->dev);
+	handler.DeviceChangedPage((QtEPSDevice *)pls->dev);
 }
 
 #if defined(PLD_epsqt)
@@ -1240,22 +1271,18 @@ QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
 	m_painterP=new QPainter;
 	
 	m_dAspectRatio=(double)i_iWidth/(double)i_iHeight;
-	cursorParameters.isTracking=false;
 	m_pixPixmap=NULL;
 	m_iOldSize=0;
 	
-// 	resize(i_iWidth, i_iHeight);
-	
 	pic=new QPicture;
 	m_painterP->begin(pic);
-	
-// 	fontScalingFactor=1.;//0.6;
+	m_painterP->setRenderHint(QPainter::Antialiasing, true);
+	pageNumber=1;
 	
 }
 
 QtPLWidget::~QtPLWidget()
 {
-// 	clearBuffer();
 	if(m_pixPixmap!=NULL) delete m_pixPixmap;
 	if(m_painterP!=NULL) delete m_painterP;
 	if(pic!=NULL) delete pic;
@@ -1263,61 +1290,34 @@ QtPLWidget::~QtPLWidget()
 
 void QtPLWidget::clearWidget()
 {
-// 	clearBuffer();
-	m_painterP->end();
+	if(m_painterP->isActive()) m_painterP->end();
 	delete pic;
 	pic=new QPicture;
 	m_painterP->begin(pic);
+	m_painterP->setRenderHint(QPainter::Antialiasing, true);
 	m_bAwaitingRedraw=true;
 	update();
 }
 
-// void QtPLWidget::captureMousePlotCoords(double * xi, double* yi, double * xf, double * yf)
-// {
-// 	setMouseTracking(true);
-// 	cursorParameters.isTracking=true;
-// 	cursorParameters.cursor_start_x=
-// 		cursorParameters.cursor_start_y=
-// 		cursorParameters.cursor_end_x=
-// 		cursorParameters.cursor_end_y=-1.;
-// 	cursorParameters.step=1;
-// 	do
-// 	{
-// 		QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
-//         
-// 	} while(cursorParameters.isTracking);
-//     
-// 	PLFLT a,b;
-// 	PLINT c;
-// 	plcalc_world(cursorParameters.cursor_start_x, 1.-cursorParameters.cursor_start_y, &a, &b, &c);
-// 	*xi=a;
-// 	*yi=b;
-// 	plcalc_world(cursorParameters.cursor_end_x, 1.-cursorParameters.cursor_end_y, &a, &b, &c);
-// 	*xf=a;
-// 	*yf=b;
-//     
-// }
-// 
-// void QtPLWidget::captureMouseDeviceCoords(double * xi, double* yi, double * xf, double * yf)
-// {
-// 	setMouseTracking(true);
-// 	cursorParameters.isTracking=true;
-// 	cursorParameters.cursor_start_x=
-// 			cursorParameters.cursor_start_y=
-// 			cursorParameters.cursor_end_x=
-// 			cursorParameters.cursor_end_y=-1.;
-// 	cursorParameters.step=1;
-// 	do
-// 	{
-// 		QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
-//         
-// 	} while(cursorParameters.isTracking);
-//     
-// 	*xi=cursorParameters.cursor_start_x;
-// 	*yi=cursorParameters.cursor_start_y;
-// 	*xf=cursorParameters.cursor_end_x;
-// 	*yf=cursorParameters.cursor_end_y;
-// }
+void QtPLWidget::mouseReleaseEvent ( QMouseEvent * event )
+{
+	if(event->button()==Qt::RightButton)
+	{
+		handler.DeviceChangedPage(this);
+	}
+}
+
+void QtPLWidget::closeEvent(QCloseEvent* event)
+{
+	handler.DeviceClosed(this);
+	event->ignore();
+}
+
+void QtPLWidget::nextPage()
+{
+	clearWidget();
+	pageNumber++;
+}
 
 void QtPLWidget::resizeEvent( QResizeEvent * )
 {
@@ -1335,7 +1335,7 @@ void QtPLWidget::paintEvent( QPaintEvent * )
 	double x_fact, y_fact, x_offset(0.), y_offset(0.); //Parameters to scale and center the plot on the widget
 	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
 	QPainter * painter=new QPainter;
-	// If actual redraw, not just adding the cursor acquisition traces
+
 	if(m_bAwaitingRedraw || m_pixPixmap==NULL)
 	{
 		if(m_pixPixmap!=NULL) delete m_pixPixmap;
@@ -1352,104 +1352,12 @@ void QtPLWidget::paintEvent( QPaintEvent * )
 	}
 	
 	painter->begin(this);
-// 	
-// 	// repaint plot
+
 	painter->drawPixmap(0, 0, *m_pixPixmap);
 
-	// now paint the cursor tracking patterns
-// 	if(cursorParameters.isTracking)
-// 	{
-// 		QPen p=painter->pen();
-// 		p.setColor(Qt::white);
-// 		if(cursorParameters.step==1)
-// 		{
-// 			painter->setPen(p);
-// 			painter->drawLine((int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), 0, (int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), height());
-// 			painter->drawLine(0, (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset), width(), (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset));
-// 		}
-// 		else
-// 		{
-// 			p.setStyle(Qt::DotLine);
-// 			painter->setPen(p);
-// 			painter->drawLine((int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), 0, (int)(cursorParameters.cursor_start_x*x_fact*m_dWidth+x_offset), height());
-// 			painter->drawLine(0, (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset), width(), (int)(cursorParameters.cursor_start_y*y_fact*m_dHeight+y_offset));
-// 			p.setStyle(Qt::SolidLine);
-// 			painter->setPen(p);
-// 			painter->drawLine((int)(cursorParameters.cursor_end_x*x_fact*m_dWidth+x_offset), 0, (int)(cursorParameters.cursor_end_x*x_fact*m_dWidth+x_offset), height());
-// 			painter->drawLine(0, (int)(cursorParameters.cursor_end_y*y_fact*m_dHeight+y_offset), width(), (int)(cursorParameters.cursor_end_y*y_fact*m_dHeight+y_offset));
-// 		}
-// 	}
-    
 	painter->end();
 	delete painter;
 }
-
-// void QtPLWidget::mousePressEvent(QMouseEvent* event)
-// {
-// 	if(!cursorParameters.isTracking) return;
-//     
-// 	double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
-//     
-// 	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
-// 	
-// 	PLFLT X=(PLFLT)(event->x()-x_offset)/(m_dWidth*x_fact);
-// 	PLFLT Y=(PLFLT)(event->y()-y_offset)/(m_dHeight*y_fact);
-// 	
-// 	if(cursorParameters.step==1)
-// 	{
-// 		cursorParameters.cursor_start_x=X;
-// 		cursorParameters.cursor_start_y=Y;
-// 		cursorParameters.step=2; // First step of selection done, going to the next one
-// 		update();
-// 	}
-// }
-// 
-// void QtPLWidget::mouseReleaseEvent(QMouseEvent* event)
-// {
-// 	double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
-//     
-// 	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
-// 	
-// 	PLFLT X=(PLFLT)(event->x()-x_offset)/(m_dWidth*x_fact);
-// 	PLFLT Y=(PLFLT)(event->y()-y_offset)/(m_dHeight*y_fact);
-//     
-// 	if(cursorParameters.step!=1)
-// 	{
-// 		cursorParameters.cursor_end_x=X;
-// 		cursorParameters.cursor_end_y=Y;
-// 		cursorParameters.isTracking=false;
-// 		setMouseTracking(false);
-// 		update();
-// 	}
-// }
-// 
-// void QtPLWidget::mouseMoveEvent(QMouseEvent* event)
-// {
-// 	this->activateWindow();
-// 	this->raise();
-// 	
-// 	if(!cursorParameters.isTracking) return;
-//     
-// 	double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
-//     
-// 	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
-// 	
-// 	PLFLT X=(PLFLT)(event->x()-x_offset)/(m_dWidth*x_fact);
-// 	PLFLT Y=(PLFLT)(event->y()-y_offset)/(m_dHeight*y_fact);
-//     
-// 	if(cursorParameters.step==1)
-// 	{
-// 		cursorParameters.cursor_start_x=X;
-// 		cursorParameters.cursor_start_y=Y;
-// 	}
-// 	else
-// 	{
-// 		cursorParameters.cursor_end_x=X;
-// 		cursorParameters.cursor_end_y=Y;
-// 	}
-// 
-// 	update();
-// }
 
 void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset)
 {
@@ -1472,41 +1380,6 @@ void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, doubl
 	}
 }
 
-QtPLTabWidget::~QtPLTabWidget()
-{
-	for(QList<QtPLWidget*>::iterator iter=widgets.begin(); iter!=widgets.end(); ++iter)
-	{
-		if(*iter!=NULL) delete (*iter);
-	}
-}
-
-void QtPLTabWidget::newTab()
-{
-	QtPLWidget * plotWidget=new QtPLWidget(m_iWidth, m_iHeight);
-	plotWidget->downscale=downscale;
-// 	plotWidget->m_dWidth=m_dWidth;
-// 	plotWidget->m_dHeight=m_dHeight;
-	addTab(plotWidget, QString("page %1").arg(count()+1));
-	currentWidget=plotWidget;
-	widgets.push_back(plotWidget);
-}
-
-void QtPLTabWidget::exec()
-{
-	mutex.lock();
-	if(!alreadyRun) // This tab widget has never been run
-	{
-		qApp->exec();
-		foreach(QtPLTabWidget* tab, runningDevices) // All the tab widgets created before have been run in the same time. Let's tag them.
-		{
-			tab->alreadyRun=true;
-		}
-		
-	}
-	runningDevices.removeAll(this); // cleaning up
-	mutex.unlock();
-}
-
 void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -1520,7 +1393,7 @@ void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
 	pdt->pl_eop      = (plD_eop_fp)      plD_eop_qtwidget;
 	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
-	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qtwidget;
+	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
 	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
 	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
 }
@@ -1528,34 +1401,35 @@ void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 void plD_init_qtwidget(PLStream * pls)
 {
 	PLINT w, h;
-	initQtApp(true);
-	QMainWindow * mw=new QMainWindow;
-	QtPLTabWidget* tabWidget;//=new QtPLTabWidget;
+	bool isMaster=initQtApp(true);
+	QtPLWidget* widget;
 
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
-		tabWidget=new QtPLTabWidget;
-		pls->dev=(void*) tabWidget;
-		pls->xlength = tabWidget->m_iWidth;
-		pls->ylength = tabWidget->m_iHeight;
+		widget=new QtPLWidget;
+		pls->dev=(void*) widget;
+		pls->xlength = (int)widget->m_dWidth;
+		pls->ylength = (int)widget->m_dHeight;
 	}
 	else
 	{
-		tabWidget=new QtPLTabWidget(pls->xlength, pls->ylength);
-		pls->dev=(void*) tabWidget;
+		widget=new QtPLWidget(pls->xlength, pls->ylength);
+		pls->dev=(void*) widget;
 	}
-	
+
+	if(isMaster) handler.setMasterDevice(widget);	
+
 	if (plsc->xlength > plsc->ylength)
-		tabWidget->downscale = (PLFLT)plsc->xlength/(PLFLT)(PIXELS_X-1);
+		widget->downscale = (PLFLT)plsc->xlength/(PLFLT)(PIXELS_X-1);
 	else
-		tabWidget->downscale = (PLFLT)plsc->ylength/(PLFLT)PIXELS_Y;
+		widget->downscale = (PLFLT)plsc->ylength/(PLFLT)PIXELS_Y;
 	
-	plP_setphy((PLINT) 0, (PLINT) (plsc->xlength / tabWidget->downscale), (PLINT) 0, (PLINT) (plsc->ylength / tabWidget->downscale));
+	plP_setphy((PLINT) 0, (PLINT) (plsc->xlength / widget->downscale), (PLINT) 0, (PLINT) (plsc->ylength / widget->downscale));
 	
 	QPicture temp;
 	QPainter tempPainter(&temp);
 	
-	plP_setpxl(temp.logicalDpiX()/25.4/tabWidget->downscale, temp.logicalDpiY()/25.4/tabWidget->downscale);
+	plP_setpxl(temp.logicalDpiX()/25.4/widget->downscale, temp.logicalDpiY()/25.4/widget->downscale);
 
 	pls->color = 1;		/* Is a color device */
 	pls->plbuf_write=0;
@@ -1567,32 +1441,28 @@ void plD_init_qtwidget(PLStream * pls)
 	pls->dev_dash=0;
 	pls->dev_flush=1;
 	pls->dev_clear=1;
-	pls->termin=1;
+// 	pls->termin=1;
 	pls->dev_text = 1; // want to draw text
 	pls->dev_unicode = 1; // want unicode 
 	
-	mw->setCentralWidget(tabWidget);
-	mw->setVisible(true);
-	mw->setWindowTitle("plplot");
-	mw->resize(plsc->xlength, plsc->ylength);
-	qApp->setActiveWindow(mw);
+	widget->setVisible(true);
+	widget->resize(plsc->xlength, plsc->ylength);
+
+	qApp->connect(&handler, SIGNAL(MasterChangedPage()), widget, SLOT(nextPage()));
+	qApp->connect(&handler, SIGNAL(MasterClosed()), widget, SLOT(close()));
 	
 }
 
 void plD_eop_qtwidget(PLStream *pls)
 {
-	QtPLTabWidget* tabWidget=((QtPLTabWidget*)pls->dev);
-	tabWidget->currentWidget=NULL;
+	QtPLWidget* widget=((QtPLWidget*)pls->dev);
+	int currentPage=widget->pageNumber;
+	while(currentPage==widget->pageNumber && handler.isMasterDevice(widget))
+	{
+		qApp->processEvents(QEventLoop::WaitForMoreEvents);
+	}
 }
 
-void plD_tidy_qtwidget(PLStream *pls)
-{
-	QtPLTabWidget * w=((QtPLTabWidget*)pls->dev);
-	w->exec();
-	// At this point, the widget has been run, we can delete it
-	delete ((QtPLTabWidget*)pls->dev);
-	pls->dev=NULL;
-}
 #endif
 
 #endif
