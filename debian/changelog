@@ -1,4 +1,4 @@
-plplot (5.9.2-2) UNRELEASED; urgency=low
+plplot (5.9.2-3) UNRELEASED; urgency=low
 
   * debian/control (libplplot-dev): Depend on libplplot-fortran9
     libplplot-ada, avoiding dangling symlinks (closes: #522125)
