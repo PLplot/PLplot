@@ -47,7 +47,8 @@ Architecture: any
 Section: libdevel
 Recommends: pkg-config
 Depends: libplplot9 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
- libltdl3-dev, libplplot-c++9c2 (= ${binary:Version}), plplot9-driver-gnome2
+ libltdl3-dev, libplplot-c++9c2 (= ${binary:Version}), plplot9-driver-gnome2,
+ libplplot-fortran9 (= ${binary:Version}), libplplot-ada (= ${binary:Version})
 Description: Scientific plotting library (development files)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -58,8 +59,8 @@ Description: Scientific plotting library (development files)
  virtually all aspects of plotting are configurable.
  .
  This package contains all that is needed for doing development in C, C++,
- and Fortran with PLplot.  Examples of programs for these languages are 
- also included.  For development in Tcl/Tk, Python, and Octave, install 
+ and Fortran with PLplot.  Examples of programs for these languages are
+ also included.  For development in Tcl/Tk, Python, and Octave, install
  the plplot-tcl, python-plplot, and octave-plplot packages, respectively.
 
 Package: libplplot-c++9c2

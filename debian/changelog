@@ -1,14 +1,21 @@
+plplot (5.9.2-2) UNRELEASED; urgency=low
+
+  * debian/control (libplplot-dev): Depend on libplplot-fortran9
+    libplplot-ada, avoiding dangling symlinks (closes: #522125)
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 02 Apr 2009 00:21:46 +0200
+
 plplot (5.9.2-2) unstable; urgency=low
 
-  * debian/control.in: Update package descriptions to fix lintian 
+  * debian/control.in: Update package descriptions to fix lintian
     warnings.
 
-  * debian/patches/14_octave-3.0-fixes.diff: 
-      New patch ported from upstream to fix octave with octave 3.0. 
-      Patch removes support for octave 2.0/2.1 which gets rids of a 
+  * debian/patches/14_octave-3.0-fixes.diff:
+      New patch ported from upstream to fix octave with octave 3.0.
+      Patch removes support for octave 2.0/2.1 which gets rids of a
       large number of warnings. Also fixes automatic_replot support.
 
-  * debian/rules: Disable ocaml support to prevent ocaml bindings 
+  * debian/rules: Disable ocaml support to prevent ocaml bindings
     being build if ocamlc is installed.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 27 Feb 2009 22:14:07 +0000
@@ -23,12 +30,12 @@ plplot (5.9.2-1) unstable; urgency=low
       12_cmake-2.6-fixes.diff
     which are now incorporated upstream.
 
-  * debian/patches/07_octave_prune_examples.diff: 
+  * debian/patches/07_octave_prune_examples.diff:
     Update patch to reflect upstream changes.
 
-  * debian/patches/13_fix-kfreeBSD-build.diff: 
-    debian/control.in: 
-      New patch to fix build of plplot on Debian kfreeBSD. Also disable 
+  * debian/patches/13_fix-kfreeBSD-build.diff:
+    debian/control.in:
+      New patch to fix build of plplot on Debian kfreeBSD. Also disable
       ada packages on kfreeBSD-amd64. Closes: #497895.
 
   * debian/rules: Explicitly enable tk driver. This is current disabled
