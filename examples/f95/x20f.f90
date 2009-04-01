@@ -380,20 +380,21 @@
 
 !     Found the line with the sizes, copy this one and the next
 
-      open( 11, status = 'scratch' )
+      open( 11, file = '_x20f_.bin' )
       write( 11, '(a)' ) ver
 
       count = count + 1
       read( 10, '(a)', iostat = ierr ) ver
       write( 11, '(a)' ) ver
 
-      rewind( 11 )
+      close( 11 )
+      open( 11, file = '_x20f_.bin' )
       read( 11, * ) w, h, num_col
 
       allocate( img_f(w,h) )
 
       close( 10 )
-      close( 11 )
+      close( 11, status = 'delete' )
 
 !
 !     Read the second part - we need to do it the hard way :(
