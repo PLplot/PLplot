@@ -10,7 +10,7 @@
 if(PKG_CONFIG_EXECUTABLE)
   # Use pkg-config (if available) to provide location of AGG headers and
   # libraries and also provide basis for defining AGG_DEFINITIONS.
-  pkg_check_pkgconfig(libagg _AGGIncDir _AGGLinkDir _AGGLinkFlags _AGGCflags _AGG)
+  pkg_check_pkgconfig(libagg _AGGIncDir _AGGLinkDir _AGGLinkFlags _AGGCflags _AGGVersion _AGG)
   #message(STATUS "_AGGIncDir = ${_AGGIncDir}")
   #message(STATUS "_AGGLinkDir = ${_AGGLinkDir}")
   #message(STATUS "_AGGLinkFlags = ${_AGGLinkFlags}")

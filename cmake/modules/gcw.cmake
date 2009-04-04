@@ -48,9 +48,9 @@ if(PLD_gcw)
 # there is a question whether all that ton of extra potentially interfering
 # libraries might be causing a segfault that is observed for the
 # dynamic devices case.
-#  pkg_check_pkgconfig(libgnomeui-2.0 includedir libdir linkflags cflags _GCW1)
+#  pkg_check_pkgconfig(libgnomeui-2.0 includedir libdir linkflags cflags version _GCW1)
 #  if(linkflags)
-    pkg_check_pkgconfig(libgnomeprintui-2.2 includedir libdir linkflags1 cflags1 _GCW2)
+    pkg_check_pkgconfig(libgnomeprintui-2.2 includedir libdir linkflags1 cflags1 version1 _GCW2)
     if(linkflags1)
       # Requires blank-delimited list.
       string(REGEX REPLACE ";" " " gcw_COMPILE_FLAGS "${cflags1}")
@@ -79,7 +79,7 @@ endif(PLD_gcw)
 if(PLD_gcw)
 #  Check for gthread-2.0 done in cf/gcw.ac, but result not actually used
 #  anywhere in the autotools configuration so we comment it out here.
-#  pkg_check_pkgconfig(gthread-2.0 includedir libdir linkflags cflags _GCW3)
+#  pkg_check_pkgconfig(gthread-2.0 includedir libdir linkflags cflags version _GCW3)
   set(include_files_to_check
   "math.h"
   "glib.h"

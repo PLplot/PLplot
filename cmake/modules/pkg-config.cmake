@@ -59,7 +59,7 @@ else(PKG_CONFIG_EXECUTABLE)
   set(pkg_config_true "#")
 endif(PKG_CONFIG_EXECUTABLE)
 
-macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags)
+macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _version)
   # Similar to legacy pkgconfig only these results are derived
   # from pkg_check_modules and therefore are returned as lists rather than
   # blank-delimited strings.  Also, the _link_FLAGS value is converted
@@ -79,12 +79,14 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags)
     set(${_link_DIR}    ${${_prefix}_LIBRARY_DIRS})
     cmake_link_flags(${_link_FLAGS}  "${${_prefix}_LDFLAGS}")
     set(${_cflags}      ${${_prefix}_CFLAGS})
+    set(${_version}     ${${_prefix}_VERSION})
     set(_return_VALUE 0)
   else(${_prefix}_FOUND)
     set(${_include_DIR})
     set(${_link_DIR})
     set(${_link_FLAGS})
     set(${_cflags})
+    set(${_version})
     set(_return_VALUE 1)
   endif(${_prefix}_FOUND)
   #message("${_prefix}_FOUND = ${${_prefix}_FOUND}")
@@ -223,3 +225,4 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
     #message("${_link_flags_out} = ${${_link_flags_out}}")
   endif("${_link_flags_in}" STREQUAL "")
 endmacro(cmake_link_flags)
+

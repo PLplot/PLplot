@@ -93,9 +93,18 @@ OR PLD_extcairo
   linkdir
   linkflags 
   cflags
+  version
   _CAIRO
   )
   if(linkflags)
+    # Check that the pangocairo library version is recent 
+    # enough to efficiently handle text clipping.
+    # If it is not then we print a warning.
+    transform_version(NUMERICAL_PANGOCAIRO_MINIMUM_VERSION "1.20.5")
+    transform_version(NUMERICAL_PANGOCAIRO_VERSION "${version}")
+    if(NUMERICAL_PANGOCAIRO_VERSION LESS "${NUMERICAL_PANGOCAIRO_MINIMUM_VERSION}")
+      message("Pango Cairo version (${version}) < 1.20.5, if text rendering is slow recommend turning off text clipping")
+    endif(NUMERICAL_PANGOCAIRO_VERSION LESS "${NUMERICAL_PANGOCAIRO_MINIMUM_VERSION}")
     set(cairo_RPATH ${linkdir})
     if(PLD_xcairo AND X11_COMPILE_FLAGS)
       # Blank-delimited required.
