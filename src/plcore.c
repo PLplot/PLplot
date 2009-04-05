@@ -237,7 +237,8 @@ plP_esc(PLINT op, void *ptr)
   if(plsc->plbuf_write) plbuf_esc(plsc, op, ptr);
 
   /* Text coordinates must pass through the driver interface filter */
-  if(op==PLESC_HAS_TEXT && plsc->dev_unicode) {
+  if((op==PLESC_HAS_TEXT && plsc->dev_unicode)||
+     (op==PLESC_END_TEXT && plsc->alt_unicode)){
 
     /* Apply the driver interface filter */
     if (plsc->difilt) {
@@ -559,6 +560,11 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	    /* Obtain FCI (font characterization integer) for start of
 	     * string. */
 	    plgfci(&fci);
+
+	    if(plsc->alt_unicode){
+	      args.n_fci = fci;
+	      plP_esc(PLESC_BEGIN_TEXT, &args);
+	    }
 	    for (j=i=0;i<len;i++) {    /* Walk through the string, and convert
 					* some stuff to unicode on the fly */
 	       skip=0;
@@ -574,6 +580,15 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     unicode_buffer[j++]= fci;
 		     unicode_buffer[j++] = \
 		       (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+
+		     if(plsc->alt_unicode){
+		       args.n_fci = fci;
+		       args.n_ctrl_char = PLTEXT_FONTCHANGE;
+		       plP_esc(PLESC_CONTROL_CHAR, &args);
+		       args.n_char =					\
+			 (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+		       plP_esc(PLESC_TEXT_CHAR, &args);
+		     }
 
 		     /* if unicode_buffer[j-1] corresponds to the escape
 		      * character must unescape it by appending one more.
@@ -595,6 +610,16 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);
 		     unicode_buffer[j++]= fci;
 		     unicode_buffer[j++]=code;
+
+		     if(plsc->alt_unicode){
+		       args.n_fci = fci;
+		       args.n_ctrl_char = PLTEXT_FONTCHANGE;
+		       plP_esc(PLESC_CONTROL_CHAR, &args);
+		       args.n_char =					\
+			 (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+		       plP_esc(PLESC_TEXT_CHAR, &args);
+		     }
+
 		     /* if unicode_buffer[j-1] corresponds to the escape
 		      * character must unescape it by appending one more.
 		      * This will probably always be necessary since it is
@@ -618,6 +643,12 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			   fci = code;
 			   unicode_buffer[j]=fci;
 			   skip=1;
+
+			   if(plsc->alt_unicode){
+			     args.n_fci = fci;
+			     args.n_ctrl_char = PLTEXT_FONTCHANGE;
+			     plP_esc(PLESC_CONTROL_CHAR, &args);
+			   }
 			}
 			else {
 			   /* code is not complete FCI. Change
@@ -630,6 +661,12 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			   plP_hex2fci(hexdigit, hexpower, &fci);
 			   unicode_buffer[j]=fci;
 			   skip=1;
+
+			   if(plsc->alt_unicode){
+			     args.n_fci = fci;
+			     args.n_ctrl_char = PLTEXT_FONTCHANGE;
+			     plP_esc(PLESC_CONTROL_CHAR, &args);
+			   }
 			}
 		     }
 		
@@ -639,6 +676,12 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			   plP_hex2fci(hexdigit, hexpower, &fci);
 			   unicode_buffer[j]=fci;
 			   skip=1;
+			   
+			   if(plsc->alt_unicode){
+			     args.n_fci = fci;
+			     args.n_ctrl_char = PLTEXT_FONTCHANGE;
+			     plP_esc(PLESC_CONTROL_CHAR, &args);
+			   }
 			}
 		     }
 		     break;
@@ -672,6 +715,12 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			i+=2;
 			unicode_buffer[j] = fci;
 			skip = 1;
+
+			if(plsc->alt_unicode){
+			  args.n_fci = fci;
+			  args.n_ctrl_char = PLTEXT_FONTCHANGE;
+			  plP_esc(PLESC_CONTROL_CHAR, &args);
+			}
 		     }
 		     break;
 		
@@ -685,6 +734,13 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     fcisave = fci;
 		     plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);
 		     unicode_buffer[j++]= fci;
+
+		     if(plsc->alt_unicode){
+		       args.n_fci = fci;
+		       args.n_ctrl_char = PLTEXT_FONTCHANGE;
+		       plP_esc(PLESC_CONTROL_CHAR, &args);
+		     }
+
 		     ig = plP_strpos(plP_greek_mnemonic, string[i+2]);
 		     if (ig >= 0) {
 			if (ig >= 24)
@@ -695,6 +751,12 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			i+=2;
 			skip=1;  /* skip is set if we have copied something
 				  * into the unicode table */
+
+			if(plsc->alt_unicode){
+			  args.n_char =					\
+			    (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+			  plP_esc(PLESC_TEXT_CHAR, &args);
+			}
 		     }
 		     else {
 			/* Use "unknown" unicode character if string[i+2]
@@ -703,11 +765,40 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			i+=2;
 			skip=1;  /* skip is set if we have copied something
 				  * into  the unicode table */
+
+			if(plsc->alt_unicode){
+			  args.n_char =					\
+			    (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+			  plP_esc(PLESC_TEXT_CHAR, &args);
+			}
 		     }
 		     fci = fcisave;
 		     unicode_buffer[j]= fci;
-		     break;
-		
+
+		     if(plsc->alt_unicode){
+		       args.n_fci = fci;
+		       args.n_ctrl_char = PLTEXT_FONTCHANGE;
+		       plP_esc(PLESC_CONTROL_CHAR, &args);
+		     }
+		      break;
+
+		  case 'u':
+		    if(plsc->alt_unicode){
+		      args.n_ctrl_char = PLTEXT_SUPERSCRIPT;
+		      plP_esc(PLESC_CONTROL_CHAR, &args);
+		      i += 1;
+		      skip = 1;
+		    }
+		    break;
+
+		  case 'd':
+		    if(plsc->alt_unicode){
+		      args.n_ctrl_char = PLTEXT_SUBSCRIPT;
+		      plP_esc(PLESC_CONTROL_CHAR, &args);
+		      i += 1;
+		      skip = 1;
+		    }
+		    break;
 		  }
 	       }
 	
@@ -736,6 +827,12 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		  if (unicode_buffer[j] == esc && string[i+1] == esc) {
 		    i++;
 		    unicode_buffer[++j] = esc;
+		    args.n_char = esc;
+		  } else {
+		    args.n_char = unichar;
+		  }
+		  if(plsc->alt_unicode){
+		    plP_esc(PLESC_TEXT_CHAR, &args);
 		  }
 	       }
 	       j++;
@@ -751,6 +848,10 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	      /* Don't print anything, if there is no unicode to print! */
 	      return;
 	 }
+
+	 if(plsc->alt_unicode){
+	   plP_esc(PLESC_END_TEXT, &args);
+	 }
       }
 
       if (plsc->dev_unicode) {
@@ -760,7 +861,9 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	args.string = string;
       }
 
-      plP_esc(PLESC_HAS_TEXT, &args);
+      if (!plsc->alt_unicode){
+	plP_esc(PLESC_HAS_TEXT, &args);
+      }
 #ifndef DEBUG_TEXT
    } else {
 #endif

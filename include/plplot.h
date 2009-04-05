@@ -264,7 +264,16 @@ typedef void* PLPointer;
 #define PLESC_DEV2PLCOL		24	/* convert device color to PLColor */
 #define PLESC_SETBGFG		25	/* set BG, FG colors */
 #define PLESC_DEVINIT		26	/* alternate device initialization */
-#define PLESC_GETBACKEND		27	/* get used backend of (wxWidgets) driver */
+#define PLESC_GETBACKEND        27	/* get used backend of (wxWidgets) driver */
+#define PLESC_BEGIN_TEXT        28      /* get ready to draw a line of text */
+#define PLESC_TEXT_CHAR         29      /* render a character of text */
+#define PLESC_CONTROL_CHAR      30      /* handle a text control character (super/subscript, etc.) */
+#define PLESC_END_TEXT          31      /* finish a drawing a line of text */
+
+/* Alternative unicode text handling control characters */
+#define PLTEXT_FONTCHANGE       0       /* font change in the text stream */
+#define PLTEXT_SUPERSCRIPT      1       /* superscript in the text stream */
+#define PLTEXT_SUBSCRIPT        2       /* subscript in the text stream */
 
 /* image operations */
 #define ZEROW2B   1

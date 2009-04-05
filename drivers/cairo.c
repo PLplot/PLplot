@@ -85,7 +85,10 @@ typedef struct {
   short text_clipping;
   short text_anti_aliasing;
   short graphics_anti_aliasing;
-  PLFLT downscale;
+  double downscale;
+  char *pangoMarkupString;
+  short upDown;
+  float fontSize;
 #if defined(PLD_xcairo)
   short exit_event_loop;
   Display *XDisplay;
@@ -194,6 +197,10 @@ cairo_status_t write_to_stream(void *, unsigned char *, unsigned int);
 /* String processing */
 
 static void proc_str(PLStream *, EscText *);
+static void text_begin_cairo(PLStream *pls, EscText *args);
+static void text_char_cairo(PLStream *pls, EscText *args);
+static void text_esc_cairo(PLStream *pls, EscText *args);
+static void text_end_cairo(PLStream *pls, EscText *args);
 static char *ucs4_to_pango_markup_format(PLUNICODE *, int, float);
 static void open_span_tag(char *, PLUNICODE, float, int);
 static void close_span_tag(char *, int);
@@ -341,10 +348,207 @@ void plD_esc_cairo(PLStream *pls, PLINT op, void *ptr)
     case PLESC_FILL:     /* filled polygon */
       filled_polygon(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
       break;
-    case PLESC_HAS_TEXT: /* render rext */
+    case PLESC_HAS_TEXT:
       proc_str(pls, (EscText *) ptr);
       break;
+    case PLESC_BEGIN_TEXT: /* get ready to get a handle a string of text */
+      text_begin_cairo(pls, (EscText *) ptr);
+      break;
+    case PLESC_TEXT_CHAR: /* handle a character of text to display */
+      text_char_cairo(pls, (EscText *) ptr);
+      break;
+    case PLESC_CONTROL_CHAR: /* handle a control character (super/subscript of fontchange) */
+      text_esc_cairo(pls, (EscText *) ptr);
+      break;
+    case PLESC_END_TEXT: /* finish a string of text */
+      text_end_cairo(pls, (EscText *) ptr);
+      break;
     }
+}
+
+/*---------------------------------------------------------------------
+  text_begin_cairo()
+  
+  Begin text.
+  ---------------------------------------------------------------------*/
+
+void text_begin_cairo(PLStream *pls, EscText *args)
+{
+  int i;
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+  aStream->upDown = 0;
+  aStream->pangoMarkupString = (char *) malloc (sizeof(char) * MAX_MARKUP_LEN);
+  aStream->fontSize = pls->chrht * DPI/25.4;
+  for(i = 0; i < MAX_MARKUP_LEN; i++){
+    aStream->pangoMarkupString[i] = 0;
+  }
+  open_span_tag(aStream->pangoMarkupString, args->n_fci, aStream->fontSize, 0);
+}
+
+/*---------------------------------------------------------------------
+  text_char_cairo()
+  
+  Add text.
+  ---------------------------------------------------------------------*/
+
+void text_char_cairo(PLStream *pls, EscText *args)
+{
+  char utf8[5];
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+  /* make sure we are not too close to the end of the string */
+  if(strlen(aStream->pangoMarkupString) < (MAX_MARKUP_LEN - 50)){
+    switch (args->n_char)
+      {
+      case 38:
+	strncat(aStream->pangoMarkupString, "&#38;", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
+	break;
+      case 60:
+	strncat(aStream->pangoMarkupString, "&#60;", MAX_MARKUP_LEN)-1-strlen(aStream->pangoMarkupString);
+	break;
+      case 62:
+	strncat(aStream->pangoMarkupString, "&#62;", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
+	break;
+      default:
+	ucs4_to_utf8(args->n_char,utf8);
+	strncat(aStream->pangoMarkupString, utf8, MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
+	break;
+      }
+  }
+}
+
+/*---------------------------------------------------------------------
+  text_esc_cairo()
+  
+  A font change, superscript, subscript, etc...
+  ---------------------------------------------------------------------*/
+
+void text_esc_cairo(PLStream *pls, EscText *args)
+{
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+  switch(args->n_ctrl_char)
+    {
+    case PLTEXT_FONTCHANGE:
+      close_span_tag(aStream->pangoMarkupString, aStream->upDown);
+      open_span_tag(aStream->pangoMarkupString, args->n_fci, aStream->fontSize, aStream->upDown);
+      break;
+    case PLTEXT_SUPERSCRIPT:
+      if(aStream->upDown < 0){
+	strncat(aStream->pangoMarkupString, "</sub>", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
+      } else {
+	strncat(aStream->pangoMarkupString, "<sup>", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
+      }
+      aStream->upDown++;
+      break;
+    case PLTEXT_SUBSCRIPT:
+      if(aStream->upDown > 0){
+	strncat(aStream->pangoMarkupString, "</sup>", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
+      } else {
+	strncat(aStream->pangoMarkupString, "<sub>", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
+      }
+      aStream->upDown--;
+      break;
+    }
+}
+
+/*---------------------------------------------------------------------
+  text_end_cairo()
+  
+  Draw the text and clean up.
+  ---------------------------------------------------------------------*/
+
+void text_end_cairo(PLStream *pls, EscText *args)
+{
+  int textXExtent, textYExtent;
+  char *textWithPangoMarkup;
+  PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
+  cairo_matrix_t *cairoTransformMatrix;
+  cairo_font_options_t *cairoFontOptions;
+  PangoContext *context;
+  PangoLayout *layout;
+  PangoFontDescription *fontDescription;
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  set_current_context(pls);
+
+  /* Close the last span tag. */
+  close_span_tag(aStream->pangoMarkupString, aStream->upDown);
+
+  /* Create the Pango text layout so we can figure out how big it is */
+  layout = pango_cairo_create_layout(aStream->cairoContext);
+  pango_layout_set_markup(layout, aStream->pangoMarkupString, -1);
+  pango_layout_get_pixel_size(layout, &textXExtent, &textYExtent);
+
+  /* Set font aliasing */
+  context = pango_layout_get_context(layout);
+  cairoFontOptions = cairo_font_options_create();
+  cairo_font_options_set_antialias(cairoFontOptions, aStream->text_anti_aliasing);
+  pango_cairo_context_set_font_options(context, cairoFontOptions);
+  pango_layout_context_changed(layout);
+  cairo_font_options_destroy(cairoFontOptions);
+
+  /* Save current transform matrix & clipping region */
+  cairo_save(aStream->cairoContext);
+
+  /* Set up the clipping region if we are doing text clipping */
+  if(aStream->text_clipping){
+    cairo_rectangle(aStream->cairoContext, aStream->downscale * pls->clpxmi, aStream->downscale * pls->clpymi, aStream->downscale * (pls->clpxma - pls->clpxmi), aStream->downscale * (pls->clpyma - pls->clpymi));
+    cairo_clip(aStream->cairoContext);
+  }
+
+  /* Move to the string reference point */
+  cairo_move_to(aStream->cairoContext, aStream->downscale * (double) args->x, aStream->downscale * (double) args->y);
+
+  /* Move to the string reference point */
+  /*
+  cairo_move_to(aStream->cairoContext, aStream->refx, aStream->refy);
+  */
+
+  /* Invert the coordinate system so that the text is drawn right side up */
+  cairoTransformMatrix = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
+  cairo_matrix_init(cairoTransformMatrix, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0);
+  cairo_transform(aStream->cairoContext, cairoTransformMatrix);
+
+  /* Extract rotation angle and shear from the PLplot tranformation matrix.
+     Compute sines and cosines of the angles as an optimization. */
+  plRotationShear(args->xform, &rotation, &shear, &stride);
+  rotation -= pls->diorot * 3.14159 / 2.0;
+  cos_rot = cos(rotation);
+  sin_rot = sin(rotation);
+  cos_shear = cos(shear);
+  sin_shear = sin(shear);
+
+  /* Apply the transform matrix */
+  cairo_matrix_init(cairoTransformMatrix,             
+		    cos_rot * stride,
+		    -sin_rot * stride,
+		    cos_rot * sin_shear + sin_rot * cos_shear,
+		    -sin_rot * sin_shear + cos_rot * cos_shear,
+		    0,0);
+  cairo_transform(aStream->cairoContext, cairoTransformMatrix);
+  free(cairoTransformMatrix);
+  
+  /* Move to the text starting point */
+  cairo_rel_move_to(aStream->cairoContext, 
+		    (double)(-1.0 * args->just * (double)textXExtent), 
+		    (double)(-0.5 * textYExtent));
+
+  /* Render the text */
+  pango_cairo_show_layout(aStream->cairoContext, layout);
+
+  /* Restore the transform matrix to its state prior to the text transform. */
+  cairo_restore(aStream->cairoContext);
+  
+  /* Free the layout object and the markup string. */
+  g_object_unref(layout);
+  free(aStream->pangoMarkupString);
 }
 
 /*---------------------------------------------------------------------
@@ -667,6 +871,7 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   pls->color = 1;            /* Supports color */
   pls->dev_text = 1;         /* Handles text */
   pls->dev_unicode = 1;      /* Wants unicode text */
+  pls->alt_unicode = 1;      /* Wants to handle unicode character by character */
   pls->page = 0;
   pls->dev_fill0 = 1;        /* Supports hardware solid fills */
   pls->plbuf_write = 1;      /* Activate plot buffer */
@@ -679,9 +884,9 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   /* Calculate ratio of (smaller) external coordinates used for cairo
      devices to (larger) internal PLplot coordinates. */
   if (pls->xlength > pls->ylength)
-    downscale = (PLFLT)pls->xlength/(PLFLT)(PIXELS_X-1);
+    downscale = (double)pls->xlength/(double)(PIXELS_X-1);
   else
-    downscale = (PLFLT)pls->ylength/(PLFLT)PIXELS_Y;
+    downscale = (double)pls->ylength/(double)PIXELS_Y;
   plP_setphy((PLINT) 0, (PLINT) (pls->xlength / downscale), (PLINT) 0, (PLINT) (pls->ylength / downscale));
   plP_setpxl(DPI/25.4/downscale, DPI/25.4/downscale);
 
@@ -1079,12 +1284,6 @@ void plD_esc_xcairo(PLStream *pls, PLINT op, void *ptr)
 
   switch(op)
     {
-    case PLESC_FILL:     /* filled polygon */
-      filled_polygon(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
-      break;
-    case PLESC_HAS_TEXT: /* render rext */
-      proc_str(pls, (EscText *) ptr);
-      break;
     case PLESC_FLUSH:    /* forced update of the window */
       XFlush(aStream->XDisplay);
       break;
@@ -1123,7 +1322,10 @@ void plD_esc_xcairo(PLStream *pls, PLINT op, void *ptr)
         plbop();
 
         break;
-      }
+    }
+    default:
+      plD_esc_cairo(pls, op, ptr);
+      break;
     }
 }
 

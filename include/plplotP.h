@@ -537,6 +537,11 @@ typedef struct {
   PLINT refx; /* processed ref. point--after justification, displacement, etc, processing */
   PLINT refy;
   char font_face; /* font face OPTIONALLY used for rendering hershey codes */
+  /* The following 3 fields are used by the alternative text handling pathway.
+     See drivers/cairo.h for details about how this works. */
+  PLUNICODE n_fci; /* font storage for unicode font handling */
+  PLUNICODE n_char; /* character storage for unicode font handling */
+  PLINT n_ctrl_char; /* control character code storage for unicode font handling */
   PLUNICODE  unicode_char;   /* an int to hold either a Hershey, ASC-II, or Unicode value for plsym calls */
   PLUNICODE  *unicode_array;   /* a pointer to an array of ints holding either a Hershey, ASC-II, or Unicode value for cached plsym */
   unsigned short unicode_array_len;

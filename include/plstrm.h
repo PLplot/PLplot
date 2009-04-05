@@ -706,6 +706,8 @@ typedef struct {
 
   PLINT dev_unicode;
 
+  PLINT alt_unicode; /* The alternative interface for unicode text rendering. */
+
   PLUNICODE fci;
 
   PLINT dev_hrshsym;
