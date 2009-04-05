@@ -3,7 +3,7 @@
 plplotdoc.xml.in: Master file for the PLplot documentation
 
 Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005  Alan W. Irwin
+Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009  Alan W. Irwin
 Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
 Copyright (C) 2003  Joao Cardoso
 Copyright (C) 2004  Andrew Roach
@@ -69,6 +69,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY chap-api-compat SYSTEM "api-compat.xml">
 <!ENTITY chap-api-obsolete SYSTEM "api-obsolete.xml">
 <!ENTITY chap-api-internal SYSTEM "api-internal.xml">
+<!ENTITY chap-libraries SYSTEM "libraries.xml">
 <!ENTITY plplot-symbols SYSTEM "plplot-symbols.txt">
 <!ENTITY plplot-structs SYSTEM "plplot-structs.txt">
 <!ENTITY chap-os-notes SYSTEM "os_notes.xml">
@@ -84,6 +85,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plbop '<link linkend="plbop"><function>plbop</function></link>'>
 <!ENTITY plbox '<link linkend="plbox"><function>plbox</function></link>'>
 <!ENTITY plbox3 '<link linkend="plbox3"><function> plbox3</function></link>'>
+<!ENTITY plbtime '<link linkend="plbox3"><function> plbox3</function></link>'>
 <!ENTITY plcalc_world '<link linkend="plcalc_world"><function> plcalc_world</function></link>'>
 <!ENTITY plclear '<link linkend="plclear"><function>plclear</function></link>'>
 <!ENTITY plClearOpts '<link linkend="plClearOpts"><function>plClearOpts</function></link>'>
@@ -93,10 +95,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plcon1 '<link linkend="plcon1"><function>plcon1</function></link>'>
 <!ENTITY plcon2 '<link linkend="plcon2"><function>plcon2</function></link>'>
 <!ENTITY plconf '<link linkend="plconf"><function>plconf</function></link>'>
+<!ENTITY plconfigtime '<link linkend="plconfigtime"><function>plconf</function></link>'>
 <!ENTITY plcont '<link linkend="plcont"><function>plcont</function></link>'>
 <!ENTITY plcontfortran95 '<link linkend="plcontfortran95"><function>plcontfortran95</function></link>'>
 <!ENTITY plcontfortran77 '<link linkend="plcontfortran77"><function>plcontfortran77</function></link>'>
 <!ENTITY plcpstrm '<link linkend="plcpstrm"><function>plcpstrm</function></link>'>
+<!ENTITY plctime '<link linkend="plctime"><function>plend</function></link>'>
 <!ENTITY plend '<link linkend="plend"><function>plend</function></link>'>
 <!ENTITY plend1 '<link linkend="plend1"><function>plend1</function></link>'>
 <!ENTITY plenv0 '<link linkend="plenv0"><function>plenv0</function></link>'>
@@ -226,6 +230,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plsym '<link linkend="plsym"><function>plsym</function></link>'>
 <!ENTITY plszax '<link linkend="plszax"><function>plszax</function></link>'>
 <!ENTITY pltext '<link linkend="pltext"><function>pltext</function></link>'>
+<!ENTITY pltimefmt '<link linkend="pltimefmt"><function>pltr0</function></link>'>
 <!ENTITY pltr0 '<link linkend="pltr0"><function>pltr0</function></link>'>
 <!ENTITY pltr1 '<link linkend="pltr1"><function>pltr1</function></link>'>
 <!ENTITY pltr2 '<link linkend="pltr2"><function>pltr2</function></link>'>
@@ -292,7 +297,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <holder>Geoffrey Furnish, Maurice LeBrun</holder>
     </copyright>
     <copyright>
-      <year>1999, 2000, 2001, 2002, 2003, 2004, 2005</year>
+      <year>1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009</year>
       <holder>Alan W. Irwin</holder>
     </copyright>
     <copyright>
@@ -411,6 +416,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     &chap-api-obsolete;
     &chap-api-internal;
     &chap-os-notes;
+    &chap-libraries;
   </part>
 
 </book>
