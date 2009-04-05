@@ -19,6 +19,7 @@
   <uri resource="fortran95.xml" typeId="DocBook"/>
   <uri resource="gui.xml" typeId="DocBook"/>
   <uri resource="intro.xml" typeId="DocBook"/>
+  <uri resource="libraries.xml" typeId="DocBook"/>
   <uri resource="ocaml.xml" typeId="DocBook"/>
   <uri resource="os_notes.xml" typeId="DocBook"/>
   <uri resource="perl.xml" typeId="DocBook"/>
