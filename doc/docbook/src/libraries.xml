@@ -36,35 +36,130 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <title>The PLplot Libraries</title>
 
   <para>
-    The purpose of this chapter is to document the libraries that
-    are created as part of a PLplot build.  These consist of language
-    bindings libraries to make the PLplot API accessible for various
-    computer languages or GUI environments, the PLplot core library
-    which implements the PLplot API in C, drivers libraries which help to
-    implement some of our device drivers, and enhancement libraries which add
-    key functionality required by the PLplot core library.  
+    The purpose of this chapter is give an overview of the libraries that
+    are created as part of a PLplot build.  These consist of bindings
+    libraries to make the PLplot API accessible for various computer
+    languages or GUI environments, the PLplot core library which
+    implements the PLplot API in C, enhancement libraries which add
+    essential functionality the PLplot core library, and device-driver
+    libraries which help to implement some of our device drivers.
   </para>
 
   <sect1 id="bindings-libraries">
-    <title>Language Bindings Libraries</title>
+    <title>Bindings Libraries</title>
     <para>
+      The purpose of the PLplot bindings is to make the PLplot API
+      documented in <xref linkend="API"/> accessible from various computer
+      languages and GUI environments.  For compiled applications (GUI or
+      otherwise) this is implemented using bindings libraries which must be
+      specifically linked by the application.  (See the Makefiles in the
+      installed examples tree for comprehensive examples of how we use
+      <command>pkg-config</command> to supply the necessary linking
+      information.)  In turn these bindings libraries are linked to the
+      PLplot core library described in <xref linkend="core-library"/>.
+      We tabulate below the bindings library or libraries associated with
+      the compiled languages and GUI environments we support.  (In contrast,
+      for non-compiled languages such as Python or Tcl, the PLplot bindings
+      are made accessible using shared objects or plugins which are
+      dynamically loaded by the language at user request.)
     </para>
+    <table id="tab_bindings_libraries">
+      <title>Bindings Libraries</title>
+      <tgroup cols="2" align="center">
+      <thead>
+	<row>
+	  <entry>
+	    Bindings
+	  </entry>
+	  <entry>
+	    Libraries
+	  </entry>
+	</row>
+      </thead>
+      <tbody>
+	<row>
+	  <entry>
+	    Ada
+	  </entry>
+	  <entry>
+	    libplplotada
+	  </entry>
+	</row>
+	<row>
+	  <entry>
+	    C++
+	  </entry>
+	  <entry>
+	    libplplotcxx
+	  </entry>
+	</row>
+	<row>
+	  <entry>
+	    Fortran 77
+	  </entry>
+	  <entry>
+	    libplplotf77, libplplotf77c
+	  </entry>
+	</row>
+	<row>
+	  <entry>
+	    Fortran 95
+	  </entry>
+	  <entry>
+	    libplplotf95, libplplotf95c
+	  </entry>
+	</row>
+	<row>
+	  <entry>
+	    GNOME2 GUI
+	  </entry>
+	  <entry>
+	    libplplotgnome2
+	  </entry>
+	</row>
+	<row>
+	  <entry>
+	    Tk GUI
+	  </entry>
+	  <entry>
+	    libplplottcltk, libtclmatrix
+	  </entry>
+	</row>
+	<row>
+	  <entry>
+	    wxWidgets GUI
+	  </entry>
+	  <entry>
+	    libplplotwxwidgets
+	  </entry>
+	</row>
+      </tbody>
+      </tgroup>
+    </table>
   </sect1>
 
   <sect1 id="core-library">
     <title>The PLplot Core Library</title>
     <para>
-    </para>
-  </sect1>
-
-  <sect1 id="drivers-libraries">
-    <title>Drivers Libraries</title>
-    <para>
+      The PLplot core library is written in C and implements the PLplot API
+      documented in <xref linkend="API"/>.  The name of that core
+      library is libplplot.  libplplot links to the enhancement libraries
+      documented in <xref linkend="enhancement-libraries"/>.  libplplot
+      also normally dynamically loads devices (a build mode is also available
+      to put the driver code right into the core library) which in
+      turn can potentially link to device-driver libraries that are
+      described in <xref linkend="device-driver-libraries"/>.
     </para>
   </sect1>
 
   <sect1 id="enhancement-libraries">
     <title>Enhancement Libraries</title>
+    <para>
+    </para>
+  </sect1>
+
+  <sect1 id="device-driver-libraries">
+    <title>Device-driver Libraries</title>
     <para>
     </para>
   </sect1>
