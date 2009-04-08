@@ -266,17 +266,28 @@ QFont QtPLDriver::getFont(PLUNICODE unicode)
 	f.setPointSizeF(currentFontSize*currentFontScale<4 ? 4 : currentFontSize*currentFontScale);
 
 	switch(fontFamily) {
-	  case 1:	f.setFamily("Times"); f.setStyleHint(QFont::Serif); break;
-	  case 2: f.setFamily("Courier"); f.setStyleHint(QFont::TypeWriter); break;
-	  case 0: case3: case4: default: f.setFamily("Helvetica"); f.setStyleHint(QFont::SansSerif); break;
+	  case 1:
+		f.setStyleHint(QFont::Serif);
+// 		f.setFamily("Times");
+		break;
+	  case 2:
+		f.setStyleHint(QFont::TypeWriter);
+// 		f.setFamily("Courier");
+		break;
+	  case 0: case 3: case 4:default:
+		f.setStyleHint(QFont::SansSerif);
+// 		f.setFamily("Helvetica");
+		break;
 	}
+	f.setFamily(""); // no family name, forcing Qt to find an appropriate font by itself
+
 	if(fontStyle) f.setItalic(true);
 	if(fontWeight) f.setWeight(QFont::Bold);
 	else f.setWeight(QFont::Normal);
 			
 	f.setUnderline(underlined);
 	f.setOverline(overlined);
-	
+
 	return f;
 }
 
@@ -287,11 +298,14 @@ void QtPLDriver::drawTextInPicture(QPainter* p, const QString& text)
 	QPicture tempPic;
 	QPainter tempPainter(&tempPic);
 	tempPainter.setFont(p->font());
-	QRectF rect(0., 0., 1., 1.);
+	QRectF rect(0., 0., 0., 0.);
 	QRectF bounding;
 	tempPainter.drawText(rect, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextDontClip, text, &bounding);
 
-	bounding.adjust(-0.5, bounding.height(), -0.5, -bounding.height()/5.); // Empiric adjustment of the true bounding box
+// 	tempPainter.drawLine(bounding.left()+1, bounding.bottom(), bounding.right()-1, bounding.bottom());
+// tempPainter.drawLine(bounding.left()+1, bounding.top(), bounding.right()-1, bounding.top());
+
+// 	bounding.adjust(-0.5, bounding.height(), -0.5, -bounding.height()/5.); // Empiric adjustment of the true bounding box
 
 	tempPainter.end();
 
@@ -321,7 +335,7 @@ QPicture QtPLDriver::getTextPicture(PLUNICODE* text, int len, int chrht)
 	// have the same character size as cairo results (taking into account
 	// the slightly different actual glyph sizes for the different
         // default fonts found by cairo and qt).
-	currentFontSize=chrht*POINTS_PER_INCH/25.4*1.6;
+	currentFontSize=chrht*POINTS_PER_INCH/25.4*1.45;
 	currentFontScale=1.;
 	underlined=false;
 	overlined=false;
