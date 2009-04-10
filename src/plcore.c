@@ -615,8 +615,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		       args.n_fci = fci;
 		       args.n_ctrl_char = PLTEXT_FONTCHANGE;
 		       plP_esc(PLESC_CONTROL_CHAR, &args);
-		       args.n_char =					\
-			 (PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
+		       args.n_char = code;
 		       plP_esc(PLESC_TEXT_CHAR, &args);
 		     }
 
