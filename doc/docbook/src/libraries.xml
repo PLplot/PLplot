@@ -236,6 +236,29 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="device-driver-libraries">
     <title>Device-driver Libraries</title>
     <para>
+      Device-driver libraries are libraries which are built as part to the
+      PLplot build and which are linked by PLplot device drivers.  At this
+      time we only have one example of this, the NIST cd library which makes
+      it easy to create files in CGM format.  The original name of this
+      library was libcd, but we call it libnistcd to distinguish it from all
+      other "cd" libraries out there.  This library is linked by our cgm
+      device driver.
+    </para>
+    <para>
+      CGM format is a long-established (since 1987) open standard for vector
+      graphics (see http://www.w3.org/Graphics/WebCGM/).  The libnistcd
+      software was developed by G. Edward Johnson at NIST to provide
+      convenient access to the CGM format.  The library is no longer
+      maintained (the last official release was in 1997), but the software
+      is mature and works well.  Furthermore, it is in the public domain
+      except for the small part licensed under the libgd open-source license
+      (see lib/nistcd/cd.html in the PLplot source tree).  PLplot developers
+      have added a modern CMake-based build system for libnistcd and also
+      have done some visibility support so the code builds properly
+      under Windows and also under Linux with gcc when the
+      -fvisibility=hidden option for gcc is used.  Otherwise, the code is
+      identical to the 1997 version.  For documentation of the libnistcd API
+      see lib/nistcd/cd.html in the PLplot source tree.
     </para>
   </sect1>
 
