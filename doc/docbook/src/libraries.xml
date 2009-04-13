@@ -154,7 +154,83 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="enhancement-libraries">
     <title>Enhancement Libraries</title>
     <para>
+      The enhancement libraries add essential functionality to the PLplot core
+      library (see <xref linkend="core-library"/>).  They consist of a
+      cubic spline approximation library, libcsirocsa; a natural neighbours
+      interpolation library, libcsironn; and a time format conversion library
+      libqsastime.
     </para>
+    <sect2 id="csirocsa-library">
+      <title>The CSIRO Cubic Spline Approximation Library</title>
+      <para>
+	libcsirocsa NEEDS DOCUMENTATION.
+      </para>
+    </sect2>
+    <sect2 id="csironn-library">
+      <title>The CSIRO Natural Neighbours Interpolation Library</title>
+      <para>
+	libcsironn NEEDS DOCUMENTATION.
+      </para>
+    </sect2>
+    <sect2 id="qsastime-library">
+      <title>The QSAS Time Format Conversion Library</title>
+      <para>
+	This library grew out of a discussion with Steve Schwartz of the QSAS
+	Support Team, Cluster Science Centre, Imperial College and our mutual
+	frustrations with the poor time conversion capabilities of 
+	POSIX-compliant computer operating systems.  For such systems, the
+	continuous time variable is often stored internally as a 32-bit
+	integer containing the number of seconds since 1970.  This gives a
+	limited date range of only 136 years, and a limited numerical
+	precision of only a second.  Furthermore, although the POSIX standard
+	includes gmtime which provides a conversion between broken-down time
+	(year, month, day, hour, min, sec), and the continuous time variable,
+	the inverse of gmtime (called timegm on Linux) is not a POSIX
+	standard.  Finally, the POSIX standard ignores leap seconds.  All
+	these limitations are not acceptable for plotting of scientific time
+	series and are addressed by the qsastime library which was originally
+	donated under the LGPL to the PLplot project in early 2009 by Anthony
+	J. Allen of the QSAS team and substantially modifed after that by a
+	PLplot developer, Alan W. Irwin (e.g., to add leap-second
+	functionality).
+      </para>
+      <para>
+	The qsastime library uses MJD (modified Julian Date = Julian Date -
+	2400000.5) for the internal continuous time variable.  This variable
+	is stored as a signed int (to hold the integer part) and a double (to
+	hold the seconds since midnight).  On 32-bit systems, this combination
+	gives an effective date range of roughly +/- 6 million years
+	from the MJD epoch in late 1858 and an effective numerical time
+	precision of 0.01 ns.  This should cover most range and precision
+	requirements of those doing plots of scientific time series.
+      </para>
+      <para>
+	The qsastime library provides internal routines to convert between the
+	broken-down time representation and the internal continuous time
+	variable and vice versa using the formal rules of either the Gregorian
+	or Julian calendars.  These routines have been tested extensively for
+	the internal consistency of the routines both for the Gregorian and
+	Julian calendars and also by comparing the Gregorian results against the
+	equivalent Linux C library gmtime and timegm routines on a 64-bit
+	platform.  These tests were done for a number of epochs including every
+	year from -5000000 to 5000000 for critical dates in the year (January
+	1, February 28, February 29, March 1, and December 31).  These extensive 
+	tests give some confidence that the formal conversion from broken-down
+	to continuous time (and vice versa) should be reliable for the
+	qsastime library on all 32-bit and 64-bit platforms.
+      </para>
+      <para>
+	The qsastime library also provides an internal routine that gives
+	formatted time results as a function of continuous time.  This routine
+	has been lightly tested against the results of the C library strftime
+	routine on Linux.
+      </para>
+      <para>
+	The three internal routines described above are wrapped by functions
+	that provide the externally visible API for the qsastime library.
+	This API is described below.
+      </para>
+    </sect2>
   </sect1>
 
   <sect1 id="device-driver-libraries">
