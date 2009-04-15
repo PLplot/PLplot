@@ -262,7 +262,7 @@ class QtEPSDevice: public QtPLDriver, public QPrinter
 };
 #endif
 
-#if defined (PLD_qtwidget)
+#if defined (PLD_qtwidget) || defined (PLD_extqt)
 
 // This widget allows to use plplot as a plotting engine in a Qt Application
 // The aspect ratio of the plotted data is constant, so gray strips are used
@@ -301,6 +301,42 @@ class QtPLWidget: public QWidget, public QtPLDriver
 		void closeEvent(QCloseEvent* event);
 		void nextPage();
 };
+
+#endif
+
+#if defined (PLD_extqt)
+class QtExtWidget: public QtPLWidget
+{
+	Q_OBJECT
+
+	public:
+		QtExtWidget(int i_iWidth=QT_DEFAULT_X, int i_iHeight=QT_DEFAULT_Y, QWidget* parent=0);
+
+		virtual ~QtExtWidget();
+
+		void captureMousePlotCoords(PLFLT* x, PLFLT* y);
+
+	public slots:
+
+		void mouseMoveEvent(QMouseEvent* event);
+		void mouseReleaseEvent(QMouseEvent* event);
+		void mousePressEvent(QMouseEvent* event);
+
+	protected:
+		void paintEvent(QPaintEvent*);
+
+		struct
+		{
+			bool isTracking;
+			double cursor_x, cursor_y;
+		} cursorParameters;
+
+		bool killed;
+};
+
+void plsetqtdev(QtExtWidget* widget); // Registers the widget as plot device, as the widget has to be created in the Qt application GUI, prior to any plplot call. Must be called before plinit().
+
+void plfreeqtdev(); // Deletes and unregisters the device. 
 
 #endif
 

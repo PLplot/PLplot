@@ -356,6 +356,9 @@
 /* Define if tiff Qt driver is present */
 #cmakedefine PLD_tiffqt
 
+/* Define if external context Qt driver is present */
+#cmakedefine PLD_extqt
+
 /* Portable definition for PTHREAD_MUTEX_RECURSIVE */
 #define PLPLOT_MUTEX_RECURSIVE ${PLPLOT_MUTEX_RECURSIVE}
 

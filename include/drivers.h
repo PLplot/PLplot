@@ -106,6 +106,7 @@ PLDLLIMPEXP_DRIVER void plD_dispatch_init_svgqt  ( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_epsqt  ( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdfqt  ( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_qtwidget  ( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_extqt  ( PLDispatchTable *pdt );
 
 /* Prototypes for plot buffer calls. */
 

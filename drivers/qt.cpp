@@ -68,6 +68,9 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
 #if defined(PLD_pdfqt)
   "pdfqt:Qt PDF driver:0:qt:74:pdfqt\n"
 #endif
+#if defined(PLD_extqt)
+  "extqt:External Qt driver:0:qt:75:extqt\n"
+#endif
 ;
 
 MasterHandler handler;
@@ -188,6 +191,12 @@ void plD_bop_pdfqt(PLStream *);
 void plD_dispatch_init_qtwidget(PLDispatchTable *pdt);
 void plD_init_qtwidget(PLStream *);
 void plD_eop_qtwidget(PLStream *);
+#endif
+
+#if defined(PLD_extqt)
+void plD_dispatch_init_extqt(PLDispatchTable *pdt);
+void plD_init_extqt(PLStream *);
+void plD_eop_extqt(PLStream *);
 #endif
 
 // Declaration of the generic interface functions
@@ -1277,7 +1286,7 @@ void plD_bop_pdfqt(PLStream *pls)
 }
 #endif
 
-#if defined (PLD_qtwidget)
+#if defined (PLD_qtwidget) || defined(PLD_extqt)
 
 QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
 	 QWidget(parent), QtPLDriver(i_iWidth, i_iHeight)
@@ -1300,6 +1309,9 @@ QtPLWidget::~QtPLWidget()
 	if(m_pixPixmap!=NULL) delete m_pixPixmap;
 	if(m_painterP!=NULL) delete m_painterP;
 	if(pic!=NULL) delete pic;
+	m_pixPixmap=NULL;
+	m_painterP=NULL;
+	pic=NULL;
 }
 
 void QtPLWidget::clearWidget()
@@ -1477,6 +1489,198 @@ void plD_eop_qtwidget(PLStream *pls)
 	}
 }
 
+#endif
+
+#if defined(PLD_extqt)
+QtExtWidget::QtExtWidget(int i_iWidth, int i_iHeight, QWidget* parent):
+	QtPLWidget(i_iWidth, i_iHeight, parent)
+{
+	killed=false;
+}
+
+QtExtWidget::~QtExtWidget()
+{
+	killed=true;
+	QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+	if(m_pixPixmap!=NULL) delete m_pixPixmap;
+	if(m_painterP!=NULL) delete m_painterP;
+	if(pic!=NULL) delete pic;
+	m_pixPixmap=NULL;
+	m_painterP=NULL;
+	pic=NULL;
+}
+
+void QtExtWidget::captureMousePlotCoords(PLFLT* x, PLFLT* y)
+{
+	setMouseTracking(true);
+	cursorParameters.isTracking=true;
+	cursorParameters.cursor_x=
+	cursorParameters.cursor_y=-1.;
+	do
+	{
+		QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+	} while(cursorParameters.isTracking && !killed);
+    
+	*x=cursorParameters.cursor_x;
+	*y=cursorParameters.cursor_y;
+}
+
+void QtExtWidget::mouseMoveEvent(QMouseEvent* event)
+{
+	if(!cursorParameters.isTracking) return;
+
+	double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
+    
+	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
+    
+	cursorParameters.cursor_x=(PLFLT)event->x();
+	cursorParameters.cursor_y=(PLFLT)event->y();
+
+	double ratio_x;
+	double ratio_y;
+	ratio_x=(cursorParameters.cursor_x-x_offset)/(width()-2.*x_offset);
+	ratio_y=(cursorParameters.cursor_y-y_offset)/(height()-2.*y_offset);
+
+	PLFLT a,b;
+	PLINT c;
+	plcalc_world(ratio_x, 1.-ratio_y, &a, &b, &c);
+
+	if(c<0)
+	{
+		cursorParameters.cursor_x=-1.;
+		cursorParameters.cursor_y=-1.;
+	}
+
+	update();
+}
+
+void QtExtWidget::mousePressEvent(QMouseEvent* event)
+{
+}
+
+void QtExtWidget::mouseReleaseEvent(QMouseEvent* event)
+{	
+	if(!cursorParameters.isTracking) return;
+
+ 	double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
+	
+	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
+
+	cursorParameters.cursor_x=(PLFLT)event->x();
+	cursorParameters.cursor_y=(PLFLT)event->y();
+	cursorParameters.isTracking=false;
+	setMouseTracking(false);
+
+	double ratio_x;
+	double ratio_y;
+	ratio_x=(cursorParameters.cursor_x-x_offset)/(width()-2.*x_offset);
+	ratio_y=(cursorParameters.cursor_y-y_offset)/(height()-2.*y_offset);
+
+	PLFLT a,b;
+	PLINT c;
+	plcalc_world(ratio_x, 1.-ratio_y, &a, &b, &c);
+
+	if(c<0)
+	{
+		cursorParameters.cursor_x=-1.;
+		cursorParameters.cursor_y=-1.;
+	}
+	else
+	{
+		cursorParameters.cursor_x=a;
+		cursorParameters.cursor_y=b;
+	}
+
+	update();
+}
+
+void QtExtWidget::paintEvent(QPaintEvent* event)
+{
+	QtPLWidget::paintEvent(event);
+
+	if(!cursorParameters.isTracking || cursorParameters.cursor_x<0) return;
+
+	QPainter p(this);
+
+	p.setPen(QPen(Qt::white));
+
+	p.drawLine(cursorParameters.cursor_x, 0., cursorParameters.cursor_x, height());
+	p.drawLine(0., cursorParameters.cursor_y, width(), cursorParameters.cursor_y);
+
+	p.end();
+}
+
+void plD_dispatch_init_extqt(PLDispatchTable *pdt)
+{
+#ifndef ENABLE_DYNDRIVERS
+	pdt->pl_MenuStr  = "External Qt Widget";
+	pdt->pl_DevName  = "extqt";
+#endif
+	pdt->pl_type     = plDevType_Interactive;
+	pdt->pl_seq      = 75;
+	pdt->pl_init     = (plD_init_fp)     plD_init_extqt;
+	pdt->pl_line     = (plD_line_fp)     plD_line_qt;
+	pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+	pdt->pl_eop      = (plD_eop_fp)      plD_eop_extqt;
+	pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+	pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
+	pdt->pl_state    = (plD_state_fp)    plD_state_qt;
+	pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+}
+
+void plD_init_extqt(PLStream * pls)
+{
+	if(pls->dev==NULL/* || pls->xlength <= 0 || pls->ylength <= 0*/)
+	{
+		printf("Error: use plsetqtdev to set up the Qt device before calling plinit()\n");
+		return;
+	}
+
+	QtExtWidget* widget=(QtExtWidget*)(pls->dev);
+
+	if (widget->m_dWidth > widget->m_dHeight)
+		widget->downscale = (PLFLT)widget->m_dWidth/(PLFLT)(PIXELS_X-1);
+	else
+		widget->downscale = (PLFLT)widget->m_dHeight/(PLFLT)PIXELS_Y;
+	
+	plP_setphy((PLINT) 0, (PLINT) (widget->m_dWidth / widget->downscale), (PLINT) 0, (PLINT) (widget->m_dHeight / widget->downscale));
+	
+	QPicture temp;
+	QPainter tempPainter(&temp);
+	
+	plP_setpxl(temp.logicalDpiX()/25.4/widget->downscale, temp.logicalDpiY()/25.4/widget->downscale);
+
+	pls->color = 1;		/* Is a color device */
+	pls->plbuf_write=0;
+	pls->dev_fill0 = 1;	/* Handle solid fills */
+	pls->dev_fill1 = 0;
+        /* Let the PLplot core handle dashed lines since
+	 * the driver results for this capability have a number of issues.
+	pls->dev_dash=1; */
+	pls->dev_dash=0;
+	pls->dev_flush=1;
+	pls->dev_clear=1;
+	pls->dev_text = 1; // want to draw text
+	pls->dev_unicode = 1; // want unicode 
+
+	
+}
+
+void plD_eop_extqt(PLStream *pls)
+{
+
+}
+
+void plsetqtdev(QtExtWidget* widget)
+{
+	plsc->dev = (void*)widget;
+}
+
+void plfreeqtdev()
+{
+	delete ((QtExtWidget*)plsc->dev);
+	plsc->dev=NULL;
+}
 #endif
 
 #endif

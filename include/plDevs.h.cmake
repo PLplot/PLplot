@@ -94,5 +94,6 @@
 #cmakedefine PLD_epsqt
 #cmakedefine PLD_pdfqt
 #cmakedefine PLD_qtwidget
+#cmakedefine PLD_extqt
 
 #endif	/* __PLDEVS_H__ */

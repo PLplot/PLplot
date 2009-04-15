@@ -91,6 +91,8 @@ set(DRIVERS_DEVICE_LIST
 "pngqt:qt:ON"
 "ppmqt:qt:ON"
 "tiffqt:qt:ON"
+# Default OFF until build error is fixed.
+"extqt:qt:OFF"
 # Currently does not validate at http://validator.w3.org/, but that appears
 # to be a result of the validator being unfamiliar with SVG-1.2 (a draft
 # SVG standard that has not been finalized yet) which is produced
