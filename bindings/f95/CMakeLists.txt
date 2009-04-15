@@ -116,25 +116,11 @@ if(ENABLE_f95)
     sfstubs.h
     )
 
-  if(WIN32 AND BUILD_SHARED_LIBS AND NOT MINGW)
-    SET(plplotf95${LIB_TAG}_LIB_SRCS ${plplotf95${LIB_TAG}_LIB_SRCS} plplotf95.def)
-  endif(WIN32 AND BUILD_SHARED_LIBS AND NOT MINGW)
-
   # Explicitly include dependencies for sfstubsf95.f90
   include(AddFileDependencies)
   add_file_dependencies(sfstubsf95.f90 ${CMAKE_CURRENT_BINARY_DIR}/plflt.inc)
 
   add_library(plplotf95${LIB_TAG} ${plplotf95${LIB_TAG}_LIB_SRCS})
-
-  if(MINGW AND BUILD_SHARED_LIBS)
-    add_custom_command(
-      TARGET plplotf95${LIB_TAG}
-      POST_BUILD
-      COMMAND dlltool libplplotf95${LIB_TAG}.dll -d ${CMAKE_CURRENT_SOURCE_DIR}/plplotf95_mingw.def -l libplplotf95${LIB_TAG}.dll.a
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/dll 
-      COMMENT "Creating library file: libplplotf95${LIB_TAG}.dll.a"
-    )
-  endif(MINGW AND BUILD_SHARED_LIBS)
 
   target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
 
