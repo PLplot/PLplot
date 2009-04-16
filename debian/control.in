@@ -98,7 +98,7 @@ Description: Scientific plotting library (fortran bindings)
 
 [JAVA:Package: libplplot9-java
 Architecture: any
-Section: libs
+Section: java
 Depends: java-gcj-compat, ${shlibs:Depends}
 Description: Scientific plotting library (Java bindings)
  PLplot is relatively small, portable, freely distributable, and is rich
