@@ -91,24 +91,32 @@ if(ENABLE_DYNDRIVERS)
 	)
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
     if(SOURCE_ROOT_NAME STREQUAL "qt")
-      if(PLD_qtwidget OR PLD_extqt)
-      qt4_wrap_cpp(
-        QT_MOC_OUTFILES 
-	${CMAKE_CURRENT_SOURCE_DIR}/qt.h
-	OPTIONS -DPLD_qtwidget=${PLD_qtwidget} -DPLD_extqt=${PLD_extqt}
-	)
-      # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
-      set_source_files_properties(
-	${QT_MOC_OUTFILES}
-	PROPERTIES GENERATED "ON"
-	)
-      add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE} ${QT_MOC_OUTFILES})
-      else(PLD_qtwidget OR PLD_extqt)
+      set(MOC_OPTIONS)
+      if(PLD_qtwidget)
+	list(APPEND MOC_OPTIONS -DPLD_qtwidget)
+      endif(PLD_qtwidget)
+      if(PLD_extqt)
+	list(APPEND MOC_OPTIONS -DPLD_extqt)
+      endif(PLD_extqt)
+      if(MOC_OPTIONS)
+	qt4_wrap_cpp(
+          QT_MOC_OUTFILES
+          ${CMAKE_CURRENT_SOURCE_DIR}/qt.h
+          OPTIONS ${MOC_OPTIONS}
+          )
+	# message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
+	set_source_files_properties(
+          ${QT_MOC_OUTFILES}
+          PROPERTIES GENERATED "ON"
+          )
+	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE} ${QT_MOC_OUTFILES})
+      else(MOC_OPTIONS)
         add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
-      endif(PLD_qtwidget OR PLD_extqt)
+      endif(MOC_OPTIONS)
     else(SOURCE_ROOT_NAME STREQUAL "qt")
-        add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
+      add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
     endif(SOURCE_ROOT_NAME STREQUAL "qt")
+
     # ${SOURCE_ROOT_NAME}_LINK_FLAGS is ideally a list of the full path names
     # to libraries determined with find_library.  However, the list can also
     # include link flags such as the -L and -l form of specifying libraries,

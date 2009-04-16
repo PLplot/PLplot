@@ -100,20 +100,27 @@ else(ENABLE_DYNDRIVERS)
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
     list(APPEND plplot${LIB_TAG}_LIB_SRCS ${${SOURCE_ROOT_NAME}_SOURCE})
-   if(SOURCE_ROOT_NAME STREQUAL "qt")
-      if(PLD_qtwidget OR PLD_extqt)
-      qt4_wrap_cpp(
-        QT_MOC_OUTFILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/qt.h
-        OPTIONS -DPLD_qtwidget=${PLD_qtwidget} -DPLD_extqt=${PLD_extqt}
-        )
-      # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
-      set_source_files_properties(
-        ${QT_MOC_OUTFILES}
-        PROPERTIES GENERATED "ON"
-        )
-      list(APPEND plplot${LIB_TAG}_LIB_SRCS ${QT_MOC_OUTFILES})
-      endif(PLD_qtwidget OR PLD_extqt)
+    if(SOURCE_ROOT_NAME STREQUAL "qt")
+      set(MOC_OPTIONS)
+      if(PLD_qtwidget)
+	list(APPEND MOC_OPTIONS -DPLD_qtwidget)
+      endif(PLD_qtwidget)
+      if(PLD_extqt)
+	list(APPEND MOC_OPTIONS -DPLD_extqt)
+      endif(PLD_extqt)
+      if(MOC_OPTIONS)
+	qt4_wrap_cpp(
+          QT_MOC_OUTFILES
+          ${CMAKE_CURRENT_SOURCE_DIR}/qt.h
+          OPTIONS ${MOC_OPTIONS}
+          )
+	# message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
+	set_source_files_properties(
+          ${QT_MOC_OUTFILES}
+          PROPERTIES GENERATED "ON"
+          )
+	list(APPEND plplot${LIB_TAG}_LIB_SRCS ${QT_MOC_OUTFILES})
+      endif(MOC_OPTIONS)
     endif(SOURCE_ROOT_NAME STREQUAL "qt")
 
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
