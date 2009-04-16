@@ -936,8 +936,8 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 //     void tr2f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data );
 
 /* Example linear transformation function for contour plotter. */
-
-    void  xform( PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty );
+/* This is not actually part of the core library any more */
+    //void  xform( PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty );
 
 	/* Function evaluators */
 

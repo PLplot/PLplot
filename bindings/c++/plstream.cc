@@ -2260,13 +2260,15 @@ void plstream::tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty,
 // }
 
 /* Example linear transformation function for contour plotter. */
-
+/* This is not actually a part of the core library any more */
+/*
 void  plstream::xform( PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty )
 {
     set_stream();
 
     xform(x,y,tx,ty);
 }
+*/
 
 	/* Function evaluators */
 
