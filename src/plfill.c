@@ -75,7 +75,7 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
     }
 
     if (x[0] != x[n-1] || y[0] != y[n-1]) {
-	n++;
+	if(n < PL_MAXPOLY) n++;
 	xpoly[n-1] = plP_wcpcx(x[0]);
 	ypoly[n-1] = plP_wcpcy(y[0]);
     }
@@ -123,8 +123,8 @@ c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
       tx[i] = x[i]; ty[i] = y[i]; tz[i] = z[i];
     }
     if (tx[0] != tx[n-1] || ty[0] != ty[n-1] || tz[0] != tz[n-1]) {
-      tx[n] = tx[0]; ty[n] = ty[0]; tz[n] = tz[0];
-      n++;
+      if(n < PL_MAXPOLY) n++;
+      tx[n-1] = tx[0]; ty[n-1] = ty[0]; tz[n-1] = tz[0];
     }
     V[0] = tx; V[1] = ty; V[2] = tz;
     n = plP_clip_poly(n, V, 0,  1, -xmin);
