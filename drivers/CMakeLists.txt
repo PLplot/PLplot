@@ -95,7 +95,7 @@ if(ENABLE_DYNDRIVERS)
       qt4_wrap_cpp(
         QT_MOC_OUTFILES 
 	${CMAKE_CURRENT_SOURCE_DIR}/qt.h
-	OPTIONS "-DPLD_qtwidget=${PLD_qtwidget} -DPLD_extqt=${PLD_extqt}"
+	OPTIONS -DPLD_qtwidget=${PLD_qtwidget} -DPLD_extqt=${PLD_extqt}
 	)
       # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
       set_source_files_properties(
