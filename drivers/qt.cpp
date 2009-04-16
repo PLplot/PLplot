@@ -535,7 +535,7 @@ void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
-#if defined(PLD_qtwidget)
+#if defined(PLD_qtwidget) || defined(PLD_extqt)
 	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
@@ -560,7 +560,7 @@ void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
-#if defined(PLD_qtwidget)
+#if defined(PLD_qtwidget) || defined(PLD_extqt)
 	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
@@ -587,7 +587,7 @@ void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
-#if defined(PLD_qtwidget)
+#if defined(PLD_qtwidget) || defined(PLD_extqt)
 	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
@@ -643,7 +643,7 @@ void plD_state_qt(PLStream * pls, PLINT op)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 	if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
-#if defined(PLD_qtwidget)
+#if defined(PLD_qtwidget) || defined(PLD_extqt)
 	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
 #endif
 	if(widget==NULL) return;
@@ -679,7 +679,7 @@ void plD_tidy_qt(PLStream * pls)
 #if defined(PLD_epsqt) || defined(PLD_pdfqt)
 	if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
 #endif
-#if defined(PLD_qtwidget)
+#if defined(PLD_qtwidget) || defined(PLD_extqt)
 	if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QtPLWidget *) pls->dev);
 #endif
 	
@@ -1405,7 +1405,9 @@ void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, doubl
 		io_dYOffset=(h-io_dYFact*m_dHeight)/2.;
 	}
 }
+#endif
 
+#if defined (PLD_qtwidget)
 void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 {
 #ifndef ENABLE_DYNDRIVERS
