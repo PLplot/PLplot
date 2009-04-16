@@ -25,12 +25,12 @@ install(
   )
 
 #qt.h only useful if anyone wants to build a Qt application with the Qt widget driver
-if(PLD_qtwidget)
+if(PLD_qtwidget OR PLD_extqt)
   install(
     FILES qt.h 
     DESTINATION ${INCLUDE_DIR}
     )
-endif(PLD_qtwidget)
+endif(PLD_qtwidget OR PLD_extqt)
 
 if(ENABLE_DYNDRIVERS)
   include_directories(
