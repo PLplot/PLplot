@@ -29,6 +29,7 @@
 # PLD_pdfqt		  - ON means the pdfqt device is enabled.
 # PLD_qtwidget		  - ON means the qtwidget device is enabled.
 # PLD_svgqt		  - ON means the svgqt device is enabled.
+# PLD_extqt		  - ON means the extqt device is enabled.
 # qt_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile wxwidgets
 # 			    device.
 # qt_LINK_FLAGS	  	  - list of full path names of libraries and
@@ -38,7 +39,7 @@
 # 			    when ENABLE_DYNDRIVERS OFF.
 
 find_package(Qt4)
-if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt)
+if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
   if(QT4_FOUND)
     if(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
       set(QT_USE_QTSVG 1)
@@ -64,5 +65,6 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
     set(PLD_pdfqt OFF CACHE BOOL "Enable Qt PDF device" FORCE)
     set(PLD_qtwidget OFF CACHE BOOL "Enable Qt interactive device" FORCE)
     set(PLD_svgqt OFF CACHE BOOL "Enable Qt SVG device" FORCE)
+    set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
   endif(QT4_FOUND)
-endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt)
+endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
