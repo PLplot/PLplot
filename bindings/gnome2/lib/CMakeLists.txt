@@ -86,7 +86,7 @@ RUNTIME DESTINATION ${BIN_DIR}
 # Transform "${gcw_LINK_FLAGS}" to the 
 # standard pkg-config form.
 pkg_config_link_flags(
-libplplot${LIB_TAG}_LINK_FLAGS
+libplplotgnome2${LIB_TAG}_LINK_FLAGS
 "${gcw_LINK_FLAGS}"
 )
 
