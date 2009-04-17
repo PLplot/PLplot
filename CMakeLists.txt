@@ -129,6 +129,9 @@ add_subdirectory(src)
 add_subdirectory(data)
 add_subdirectory(bindings)
 add_subdirectory(drivers)
+# Must be processed after drivers since depends on qt target created by
+# drivers.
+add_subdirectory(bindings/qt_gui)
 add_subdirectory(examples)
 add_subdirectory(utils)
 add_subdirectory(plplot_test)
