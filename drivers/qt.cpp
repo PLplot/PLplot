@@ -1286,6 +1286,8 @@ void plD_bop_pdfqt(PLStream *pls)
 }
 #endif
 
+#endif
+
 #if defined (PLD_qtwidget) || defined(PLD_extqt)
 
 QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
@@ -1683,6 +1685,4 @@ void plfreeqtdev()
 	delete ((QtExtWidget*)plsc->dev);
 	plsc->dev=NULL;
 }
-#endif
-
 #endif
