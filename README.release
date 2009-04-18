@@ -61,6 +61,7 @@ INDEX
 1.2 get-drv-info now changed to test-drv-info
 1.3 Text clipping now enabled by default for the cairo devices
 1.4 A powerful qt device driver has been implemented
+1.5 The PLplot API is now accessible from Qt GUI applications
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -93,6 +94,7 @@ examples
 2.26 get-drv-info now changed to test-drv-info
 2.27 Text clipping now enabled by default for the cairo devices
 2.28 A powerful qt device driver has been implemented
+2.29 The PLplot API is now accessible from Qt GUI applications
 
 1. Changes relative to PLplot 5.9.2 (the previous development release)
 
@@ -166,7 +168,7 @@ svgqt are file devices whose overall sizes are specified in points (1/72 of
 an inch) and whose output is EPS (encapsulated PostScript), PDF, and SVG
 formatted files.  The qt device driver is based on the powerful facilities
 of Qt4 so all qt devices implement variable opacity (alpha channel) effects
-(see example 3).  The qt devices also use system unicode fonts, and deal
+(see example 30).  The qt devices also use system unicode fonts, and deal
 with CTL (complex text layout) languages automatically without any
 intervention required by the user.  (To show this, try qt device results
 from examples 23 [mathematical symbols] and 24 [CTL languages].)
@@ -180,6 +182,16 @@ version (downloadable from http://www.qtsoftware.com/downloads for Linux,
 Mac OS X, and Windows) for svgqt.  Qt-4.5 is the version we have used for
 most of our testing, but limited testing for Qt-4.4 indicates that version
 should be fine for qt devices other than svgqt.
+
+1.5 The PLplot API is now accessible from Qt GUI applications
+
+This important new feature has been implemented by Alban Rochel of the QSAS
+team as a spin-off of the qt device driver project using the extqt device
+(which constitutes the tenth qt device).  See examples/c++/README.qt_example
+for a brief description of a simple Qt example which accesses the PLplot API
+and which is built in the installed examples tree using the pkg-config
+approach. Our build system has been enhanced to configure the necessary
+plplotd-qt.pc file.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -548,7 +560,7 @@ svgqt are file devices whose overall sizes are specified in points (1/72 of
 an inch) and whose output is EPS (encapsulated PostScript), PDF, and SVG
 formatted files.  The qt device driver is based on the powerful facilities
 of Qt4 so all qt devices implement variable opacity (alpha channel) effects
-(see example 3).  The qt devices also use system unicode fonts, and deal
+(see example 30).  The qt devices also use system unicode fonts, and deal
 with CTL (complex text layout) languages automatically without any
 intervention required by the user.  (To show this, try qt device results
 from examples 23 [mathematical symbols] and 24 [CTL languages].)
@@ -562,4 +574,14 @@ version (downloadable from http://www.qtsoftware.com/downloads for Linux,
 Mac OS X, and Windows) for svgqt.  Qt-4.5 is the version we have used for
 most of our testing, but limited testing for Qt-4.4 indicates that version
 should be fine for qt devices other than svgqt.
+
+2.29 The PLplot API is now accessible from Qt GUI applications
+
+This important new feature has been implemented by Alban Rochel of the QSAS
+team as a spin-off of the qt device driver project using the extqt device
+(which constitutes the tenth qt device).  See examples/c++/README.qt_example
+for a brief description of a simple Qt example which accesses the PLplot API
+and which is built in the installed examples tree using the pkg-config
+approach. Our build system has been enhanced to configure the necessary
+plplotd-qt.pc file.
 
