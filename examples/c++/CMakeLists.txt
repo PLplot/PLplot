@@ -97,7 +97,11 @@ if(ENABLE_wxwidgets)
   set(wxPLplotDemo_SRCS wxPLplotDemo.cpp)
 endif(ENABLE_wxwidgets)
 
-install(FILES ${cxx_SRCS} ${wxPLplotDemo_SRCS} DESTINATION ${DATA_DIR}/examples/c++)
+if(PLD_extqt)
+  set(qt_INSTALLED_FILES qt_PlotWindow.cpp qt_PlotWindow.h qt_example.cpp README.qt_example)
+endif(PLD_extqt)
+
+install(FILES ${cxx_SRCS} ${wxPLplotDemo_SRCS} ${qt_INSTALLED_FILES} DESTINATION ${DATA_DIR}/examples/c++)
 
 set(CXX ${CMAKE_CXX_COMPILER})
 configure_file(

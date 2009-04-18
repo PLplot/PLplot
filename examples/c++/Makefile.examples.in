@@ -27,9 +27,14 @@ EXEEXT = @EXEEXT@
 @pkg_config_true@LIB_TAG = @LIB_TAG@
 @pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 @pkg_config_true@RPATHCMD = @RPATHCMD@
+@qt_gui_true@QT_MOC_EXECUTABLE = @QT_MOC_EXECUTABLE@
+@qt_gui_true@@pkg_config_true@qt_RPATHCMD = @qt_RPATHCMD@
 
 @wxwidgets_true@@pkg_config_true@PLPLOTWXWIDGETS_EXECUTABLES_list = \
 @wxwidgets_true@@pkg_config_true@	wxPLplotDemo$(EXEEXT)
+
+@qt_gui_true@@pkg_config_true@qt_gui_EXECUTABLES_list = \
+@qt_gui_true@@pkg_config_true@	qt_example$(EXEEXT)
 
 EXECUTABLES_list = \
 		 x01cc$(EXEEXT) \
@@ -64,7 +69,9 @@ EXECUTABLES_list = \
 		 x29$(EXEEXT) \
 		 x30$(EXEEXT) \
 		 x31$(EXEEXT) \
-		 $(PLPLOTWXWIDGETS_EXECUTABLES_list)
+		 $(PLPLOTWXWIDGETS_EXECUTABLES_list) \
+		 $(qt_gui_EXECUTABLES_list)
+		 
 		 
 all: $(EXECUTABLES_list)
 
@@ -73,6 +80,12 @@ clean:
 
 @wxwidgets_true@@pkg_config_true@wxPLplotDemo$(EXEEXT): wxPLplotDemo.cpp
 @wxwidgets_true@@pkg_config_true@	$(CXX) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-wxwidgets`
+
+@qt_gui_true@@pkg_config_true@moc_qt_PlotWindow.cpp: qt_PlotWindow.h
+@qt_gui_true@@pkg_config_true@	$(QT_MOC_EXECUTABLE) `$(PKG_CONFIG_ENV) pkg-config --cflags plplot$(LIB_TAG)-qt` $< -o $@
+
+@qt_gui_true@@pkg_config_true@qt_example$(EXEEXT): qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp
+@qt_gui_true@@pkg_config_true@	$(CXX) qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(qt_RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-qt`
 
 .cc$(EXEEXT):
 @pkg_config_true@	$(CXX) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-c++`
