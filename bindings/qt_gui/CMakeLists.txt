@@ -66,7 +66,7 @@ if(PLD_extqt)
       set(qt_LOCATION)
     endif(ENABLE_DYNDRIVERS)
     set(PC_LINK_FLAGS "${qt_LOCATION} ${lib${PC_LIBRARY_NAME}_LINK_FLAGS}")
-    set(PC_COMPILE_FLAGS "${qt_COMPILE_FLAGS}")
+    set(PC_COMPILE_FLAGS "-DPLD_extqt ${qt_COMPILE_FLAGS}")
     set(PC_CONFIGURED_FILE
       ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
       )
