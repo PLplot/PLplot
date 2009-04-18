@@ -68,3 +68,9 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
     set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
   endif(QT4_FOUND)
 endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
+
+if(PLD_extqt)
+  set(qt_gui_true "")
+else(PLD_extqt)
+  set(qt_gui_true "#")
+endif(PLD_extqt)
