@@ -88,7 +88,19 @@ if(ENABLE_gnome2)
     )
 endif(ENABLE_gnome2)
 
-install(FILES ${c_SRCS} ${plplotcanvas_SRCS} ${plplotcanvas_DOCS}
+if(PLD_xcairo)
+  set(extXdrawable_SRC extXdrawable_demo.c)
+endif(PLD_xcairo)
+
+if(PLD_extcairo)
+  set(extcairo_SRC ext-cairo-test.c)
+endif(PLD_extcairo)
+
+if(PLD_xcairo OR PLD_extcairo)
+  set(cairo_DOCS README.cairo)
+endif(PLD_xcairo OR PLD_extcairo)
+
+install(FILES ${c_SRCS} ${plplotcanvas_SRCS} ${plplotcanvas_DOCS} ${extXdrawable_SRC} ${extcairo_SRC} ${cairo_DOCS}
   DESTINATION ${DATA_DIR}/examples/c
   )
 

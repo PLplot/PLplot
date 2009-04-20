@@ -47,6 +47,20 @@ done
 
 INDEX_LIST=
 COUNT=0
+if [ "@PLD_xcairo@" = "ON" ] ; then
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="c"
+    COMMAND[$COUNT]="./extXdrawable_demo"
+    COUNT=$(( $COUNT + 1 ))
+fi
+
+if [ "@PLD_extcairo@" = "ON" ] ; then
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="c"
+    COMMAND[$COUNT]="./ext-cairo-test"
+    COUNT=$(( $COUNT + 1 ))
+fi
+
 if [ "@ENABLE_wxwidgets@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="c++"

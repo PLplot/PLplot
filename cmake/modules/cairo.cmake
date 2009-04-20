@@ -155,3 +155,11 @@ OR PLD_svgcairo
 OR PLD_xcairo
 OR PLD_extcairo
 )
+
+if(NOT PLD_xcairo)
+  set(extXdrawable_true "#")
+endif(NOT PLD_xcairo)
+
+if(NOT PLD_extcairo)
+  set(extcairo_true "#")
+endif(NOT PLD_extcairo)

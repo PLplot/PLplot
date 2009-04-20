@@ -32,6 +32,12 @@ EXEEXT = @EXEEXT@
 @gcw_true@		 plplotcanvas_demo$(EXEEXT) \
 @gcw_true@		 plplotcanvas_animation$(EXEEXT)
 
+@extXdrawable_true@@pkg_config_true@extXdrawable_EXECUTABLES_list = \
+@extXdrawable_true@@pkg_config_true@	extXdrawable_demo$(EXEEXT)
+
+@extcairo_true@@pkg_config_true@extcairo_EXECUTABLES_list = \
+@extcairo_true@@pkg_config_true@	ext-cairo-test$(EXEEXT)
+
 EXECUTABLES_list = \
 		 x01c$(EXEEXT) \
 		 x02c$(EXEEXT) \
@@ -64,7 +70,9 @@ EXECUTABLES_list = \
 		 x29c$(EXEEXT) \
 		 x30c$(EXEEXT) \
 		 x31c$(EXEEXT) \
-		 $(PLPLOTCANVAS_EXECUTABLES_list)
+		 $(PLPLOTCANVAS_EXECUTABLES_list) \
+		 $(extXdrawable_EXECUTABLES_list) \
+		 $(extcairo_EXECUTABLES_list)
 
 all: $(EXECUTABLES_list)
 
@@ -84,6 +92,14 @@ clean:
 @gcw_true@@pkg_config_false@	$(CC) $< -o \
 @gcw_true@@pkg_config_false@			$@ `plplot-config --cflags --libs --with-gcw` \
 @gcw_true@@pkg_config_false@			@GCWTHREAD_CFLAGS@ @GCWTHREAD_LIBS@
+
+@extXdrawable_true@@pkg_config_true@extXdrawable_demo$(EXEEXT): extXdrawable_demo.c
+@extXdrawable_true@@pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) \
+@extXdrawable_true@@pkg_config_true@	`$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG) gtk+-x11-2.0`
+
+@extcairo_true@@pkg_config_true@ext-cairo-test$(EXEEXT): ext-cairo-test.c
+@extcairo_true@@pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) \
+@extcairo_true@@pkg_config_true@	`$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG) cairo`
 
 .c$(EXEEXT):
 @pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)`
