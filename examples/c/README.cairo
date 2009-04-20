@@ -1,5 +1,5 @@
-Some examples demonstrating how to use the PLplot xcairo and extcairo to
-draw into an externally supplied XDrawable or Cairo context.
+Some examples demonstrating how to use the PLplot xcairo and extcairo
+devices to draw into an externally supplied XDrawable or Cairo context.
 
 EXTERNAL X DRAWABLE EXAMPLES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -17,7 +17,7 @@ EXTERNAL CAIRO CONTEXT EXAMPLES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The C program ext-cairo-test.c demonstrates how to pass in an external
-Cairo Context that PLplot can use for plotting.
+Cairo Context that PLplot can use for plotting using the extcairo device.
 
 To build this demo, install PLplot with the "make install" command and then
 run 'make ext-cairo-test' in the installed .../examples/c directory.
