@@ -53,6 +53,35 @@ directly (only possible in C/C++) or use plgvpw.
 V. This is official notice that (as of release 5.9.3) our  build system
 requires CMake version 2.6.0 or higher.
 
+VI. This is official notice that (as of release 5.9.3) we have deprecated
+the gcw device driver and the related gnome2 and pygcw bindings since these
+are essentially unmaintained. For example, the gcw device and associated
+bindings still depends on the plfreetype approach for accessing unicode
+fonts which has known issues (inconsistent text offsets, inconvenient font
+setting capabilities, and incorrect rendering of CTL languages).  To avoid
+these issues we advise using the xcairo device and the externally supplied
+XDrawable or Cairo context associated with the xcairo device and the
+extcairo device (see examples/c/README.cairo) instead. If you still
+absolutely must use -dev gcw or the related gnome2 or pygcw bindings despite
+the known problems, then they can still be accessed by setting PLD_gcw,
+ENABLE_gnome2, and/or ENABLE_pygcw to ON.
+
+VII. This is official notice that (as of release 5.9.3) we have deprecated
+the gd device driver which implements the png, jpeg, and gif devices.  This
+device driver is essentially unmaintained. For example, it still depends on
+the plfreetype approach for accessing unicode fonts which has known issues
+(inconsistent text offsets, inconvenient font setting capabilities, and
+incorrect rendering of CTL languages).  To avoid these issues for PNG
+format, we advise using the pngcairo or pngqt devices.  To avoid these
+issues for the JPEG format, we advise using the jpgqt device.  PNG is
+normally considered a better raster format than GIF, but if you absolutely
+require GIF format, we advise using the pngcairo or pngqt devices and then
+downgrading the results to the GIF format using the ImageMagick "convert"
+application.  For those platforms where libgd (the dependency of the gd
+device driver) is accessible while the required dependencies of the cairo
+and/or qt devices are not accessible, you can still use these deprecated
+devices by setting PLD_png, PLD_jpeg, or PLD_gif to ON.
+
 INDEX
 
 1. Changes relative to PLplot 5.9.2 (the previous development release)

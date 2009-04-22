@@ -102,10 +102,12 @@ set(DRIVERS_DEVICE_LIST
 # which were in SVG results produced by QT-4.4.3 are gone for QT-4.5.0.
 # Therefore, the conclusion is to enable svgqt by default.
 "svgqt:qt:ON"
-"gif:gd:ON"
-"jpeg:gd:ON"
-"png:gd:ON" 
-"gcw:gcw:ON"
+# gd related devices are not maintained.
+"gif:gd:OFF"
+"jpeg:gd:OFF"
+"png:gd:OFF" 
+# gcw is not maintained.
+"gcw:gcw:OFF"
 # Do not implement gnome which is superseded by gcw
 #"gnome:gnome:OFF"
 "hp7470:hpgl:ON"
