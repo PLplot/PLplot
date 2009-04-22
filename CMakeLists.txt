@@ -19,8 +19,14 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Version 2.6.0 or above of cmake is required!
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
+message(STATUS "CMake version = ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
+if(MSYS)
+  # Version 2.6.3 or above of cmake is required for MSYS
+  CMAKE_MINIMUM_REQUIRED(VERSION 2.6.3 FATAL_ERROR)
+else(MSYS)
+  # Version 2.6.0 or above of cmake is required for all other platforms
+  CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
+endif(MSYS)
 
 #foreach(policy RANGE 0 9)
 #  cmake_policy(GET CMP000${policy} policy_result)
