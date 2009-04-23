@@ -1,6 +1,0 @@
-conex:Conex vt320/tek emulator:1:tek:24:conex
-mskermit:MS-Kermit emulator:1:tek:21:mskermit
-tek4107f:Tektronix File (4105/4107):0:tek:28:tek4107f
-versaterm:Versaterm vt100/tek emulator:1:tek:22:versaterm
-vlt:VLT vt100/tek emulator:1:tek:23:vlt
-xterm:Xterm Window:1:tek:18:xterm
