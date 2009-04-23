@@ -1,0 +1,8 @@
+README.source for plplot
+========================
+
+This package uses quilt to manage all modifications to the upstream sources.
+See `/usr/share/doc/quilt/README.source' to get more information on how to
+use it.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 23 Apr 2009 09:13:07 +0100

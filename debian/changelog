@@ -28,6 +28,8 @@ plplot (5.9.2-2) UNRELEASED; urgency=low
   [ Rafael Laboissiere ]
   * debian/control (libplplot-dev): Depend on libplplot-fortran9
     libplplot-ada, avoiding dangling symlinks (closes: #522125)
+  * debian/control.in: Bump Standards-Version to 3.8.1 (add needed file
+    debian/README.source explaining the patch system)
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 23 Apr 2009 09:13:07 +0100
 

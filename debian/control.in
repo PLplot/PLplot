@@ -3,7 +3,7 @@ Section: math
 Priority: optional
 Maintainer: Andrew Ross <andrewross@users.sourceforge.net>
 Uploaders: Rafael Laboissiere <rafael@debian.org>
-Standards-Version: 3.8.0
+Standards-Version: 3.8.1
 Build-Depends: cmake (>= 2.4.5), debhelper (>= 7), g++-4.1 [arm],
  tcl8.4-dev, tk8.4-dev, itcl3-dev, libx11-dev, libxext-dev,
  libxi-dev, gfortran, itk3-dev, octave3.0-headers (>= 3.0.0-2),
