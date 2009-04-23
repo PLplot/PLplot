@@ -2026,12 +2026,6 @@ void plD_esc_extcairo(PLStream *pls, PLINT op, void *ptr)
 
   switch(op)
     {
-    case PLESC_FILL:     /* filled polygon */
-      filled_polygon(pls, pls->dev_x, pls->dev_y, pls->dev_npts);
-      break;
-    case PLESC_HAS_TEXT: /* render text */
-      proc_str(pls, (EscText *) ptr);
-      break;
     case PLESC_DEVINIT: /* Set external context */
       aStream->cairoContext = (cairo_t *)ptr;
       /* Set graphics aliasing */
@@ -2043,6 +2037,9 @@ void plD_esc_extcairo(PLStream *pls, PLINT op, void *ptr)
       /* Should adjust plot size to fit in the given cairo context?
          Cairo does not provide a way to query the dimensions of a context? */
 
+      break;
+    default: /* Fall back on default Cairo actions */
+      plD_esc_cairo(pls, op, ptr);
       break;
     }
 }

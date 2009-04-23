@@ -75,7 +75,7 @@ set(DRIVERS_DEVICE_LIST
 # memcairo does not work so turn it off by default.
 # The remaining cairo devices work well so turn them on by default.
 "memcairo:cairo:OFF"
-"extcairo:cairo:OFF"
+"extcairo:cairo:ON"
 "pdfcairo:cairo:ON"
 "pngcairo:cairo:ON"
 "pscairo:cairo:ON"
