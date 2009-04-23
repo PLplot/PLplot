@@ -1,23 +1,13 @@
-plplot (5.9.2-4) UNRELEASED; urgency=low
+plplot (5.9.2-2) UNRELEASED; urgency=low
 
-  * debian/compat: Update compatibility version for debhelper to 
+  [ Andrew Ross ]
+  * debian/compat: Update compatibility version for debhelper to
     remove lintian warning.
-  * debian/control: Change section for libplplot9-java to match 
+  * debian/control: Change section for libplplot9-java to match
     override in debian archives. Fixes lintian warning
-  * debian/patches/15_octave-toggle-plplot-use.diff: 
+  * debian/patches/15_octave-toggle-plplot-use.diff:
      New patch ported from upstream to fix namespace clash in the
      toggle_plplot_use.m script. (closes: #525198)
-
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 23 Apr 2009 09:13:07 +0100
-
-plplot (5.9.2-3) UNRELEASED; urgency=low
-
-  * debian/control (libplplot-dev): Depend on libplplot-fortran9
-    libplplot-ada, avoiding dangling symlinks (closes: #522125)
-
- -- Rafael Laboissiere <rafael@debian.org>  Thu, 02 Apr 2009 00:21:46 +0200
-
-plplot (5.9.2-2) unstable; urgency=low
 
   * debian/control.in: Update package descriptions to fix lintian
     warnings.
@@ -25,13 +15,17 @@ plplot (5.9.2-2) unstable; urgency=low
   * debian/patches/14_octave-3.0-fixes.diff:
       New patch ported from upstream to fix octave with octave 3.0.
       Patch removes support for octave 2.0/2.1 which gets rids of a
-      large number of warnings. Also fixes automatic_replot support. 
+      large number of warnings. Also fixes automatic_replot support.
       (closes: #522423)
 
   * debian/rules: Disable ocaml support to prevent ocaml bindings
     being build if ocamlc is installed.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 27 Feb 2009 22:14:07 +0000
+  [ Rafael Laboissiere ]
+  * debian/control (libplplot-dev): Depend on libplplot-fortran9
+    libplplot-ada, avoiding dangling symlinks (closes: #522125)
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 23 Apr 2009 09:13:07 +0100
 
 plplot (5.9.2-1) unstable; urgency=low
 
