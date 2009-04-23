@@ -8,6 +8,10 @@ plplot (5.9.2-2) UNRELEASED; urgency=low
   * debian/patches/15_octave-toggle-plplot-use.diff:
      New patch ported from upstream to fix namespace clash in the
      toggle_plplot_use.m script. (closes: #525198)
+  * debian/plplot-doc.postinst, debian/plplot-doc.prerm:
+     Remove obsolete scripts. Handling of index updates for info 
+     file installs is now done automatically by dpkg. Removes
+     lintian warning.
 
   * debian/control.in: Update package descriptions to fix lintian
     warnings.
