@@ -33,9 +33,9 @@ endif
 
 use_plplot_path = plplot_octave_path;
 plplot_path_to_remove = split(genpath(use_plplot_path),pathsep);
-for i=1:size(plplot_path_to_remove)(1)
-  if (findstr(path,deblank(plplot_path_to_remove(i,:))) > 0)
-    rmpath(deblank(plplot_path_to_remove(i,:)));
+for use_plplot_i=1:size(plplot_path_to_remove)(1)
+  if (findstr(path,deblank(plplot_path_to_remove(use_plplot_i,:))) > 0)
+    rmpath(deblank(plplot_path_to_remove(use_plplot_i,:)));
   endif
 endfor
 
