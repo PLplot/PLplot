@@ -4,8 +4,11 @@ plplot (5.9.2-4) UNRELEASED; urgency=low
     remove lintian warning.
   * debian/control: Change section for libplplot9-java to match 
     override in debian archives. Fixes lintian warning
+  * debian/patches/15_octave-toggle-plplot-use.diff: 
+     New patch ported from upstream to fix namespace clash in the
+     toggle_plplot_use.m script. (closes: #525198)
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 16 Apr 2009 15:16:07 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 23 Apr 2009 09:13:07 +0100
 
 plplot (5.9.2-3) UNRELEASED; urgency=low
 

@@ -1,0 +1,20 @@
+# Patch from upstream svn to rename the variable i to use_plplot_i in 
+# the toggle_plplot_use script to prevent namespace clash with the 
+# octave constant i = sqrt(-1).
+
+diff -ur plplot-5.9.2-orig/bindings/octave/PLplot/toggle_plplot_use.m plplot-5.9.2/bindings/octave/PLplot/toggle_plplot_use.m
+--- plplot-5.9.2-orig/bindings/octave/PLplot/toggle_plplot_use.m	(revision 9829)
++++ plplot-5.9.2/bindings/octave/PLplot/toggle_plplot_use.m	(working copy)
+@@ -33,9 +33,9 @@
+ 
+ use_plplot_path = plplot_octave_path;
+ plplot_path_to_remove = split(genpath(use_plplot_path),pathsep);
+-for i=1:size(plplot_path_to_remove)(1)
+-  if (findstr(path,deblank(plplot_path_to_remove(i,:))) > 0)
+-    rmpath(deblank(plplot_path_to_remove(i,:)));
++for use_plplot_i=1:size(plplot_path_to_remove)(1)
++  if (findstr(path,deblank(plplot_path_to_remove(use_plplot_i,:))) > 0)
++    rmpath(deblank(plplot_path_to_remove(use_plplot_i,:)));
+   endif
+ endfor
+ 
