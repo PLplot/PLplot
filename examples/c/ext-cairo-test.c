@@ -22,5 +22,6 @@ int main(int argc, char *argv[])
 
    cairo_destroy(cairoContext);
    cairo_surface_destroy(cairoSurface);
+   exit(0);
 }
 
