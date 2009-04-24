@@ -34,7 +34,7 @@
    cmake didn't set the corresponding macro xxxx_EXPORTS when the
    corresponding library is built (DLLIMPEXP is set to DLLEXPORT
    then) */
-#if defined(plplotd_EXPORTS)
+#if defined(plplot${LIB_TAG}_EXPORTS)
   #define PLDLLIMPEXP PLDLLEXPORT
   #define PLDLLIMPEXP_DATA(type) PLDLLEXPORT type
 #else
@@ -67,7 +67,7 @@
   #define PLDLLIMPEXP_DRIVER_DATA(type) PLDLLIMPEXP_DATA(type)
 #endif
 
-#if defined(plplotcxxd_EXPORTS)
+#if defined(plplotcxx${LIB_TAG}_EXPORTS)
   #define PLDLLIMPEXP_CXX PLDLLEXPORT
   #define PLDLLIMPEXP_CXX_DATA(type) PLDLLEXPORT type
 #else
@@ -75,7 +75,7 @@
   #define PLDLLIMPEXP_CXX_DATA(type) PLDLLIMPORT type
 #endif
 
-#if defined(plplotf77cd_EXPORTS)
+#if defined(plplotf77c${LIB_TAG}_EXPORTS)
   #define PLDLLIMPEXP_F77C PLDLLEXPORT
   #define PLDLLIMPEXP_F77C_DATA(type) PLDLLEXPORT type
 #else
@@ -83,7 +83,7 @@
   #define PLDLLIMPEXP_F77C_DATA(type) PLDLLIMPORT type
 #endif
 
-#if defined(plplotf95cd_EXPORTS)
+#if defined(plplotf95c${LIB_TAG}_EXPORTS)
   #define PLDLLIMPEXP_F95C PLDLLEXPORT
   #define PLDLLIMPEXP_F95C_DATA(type) PLDLLEXPORT type
 #else
@@ -91,7 +91,7 @@
   #define PLDLLIMPEXP_F95C_DATA(type) PLDLLIMPORT type
 #endif
 
-#if defined(plplotwxwidgetsd_EXPORTS)
+#if defined(plplotwxwidgets${LIB_TAG}_EXPORTS)
   #define PLDLLIMPEXP_WX PLDLLEXPORT
   #define PLDLLIMPEXP_WX_DATA(type) PLDLLEXPORT type
 #else
@@ -99,7 +99,7 @@
   #define PLDLLIMPEXP_WX_DATA(type) PLDLLIMPORT type
 #endif
 
-#if defined(tclmatrixd_EXPORTS)
+#if defined(tclmatrix${LIB_TAG}_EXPORTS)
   #define PLDLLIMPEXP_TCLMAT PLDLLEXPORT
   #define PLDLLIMPEXP_TCLMAT_DATA(type) PLDLLEXPORT type
 #else
@@ -107,7 +107,7 @@
   #define PLDLLIMPEXP_TCLMAT_DATA(type) PLDLLIMPORT type
 #endif
 
-#if defined(plplottcltkd_EXPORTS)
+#if defined(plplottcltk${LIB_TAG}_EXPORTS)
   #define PLDLLIMPEXP_TCLTK PLDLLEXPORT
   #define PLDLLIMPEXP_TCLTK_DATA(type) PLDLLEXPORT type
 #else
@@ -115,7 +115,7 @@
   #define PLDLLIMPEXP_TCLTK_DATA(type) PLDLLIMPORT type
 #endif
 
-#if defined(plplotgnome2d_EXPORTS)
+#if defined(plplotgnome2${LIB_TAG}_EXPORTS)
   #define PLDLLIMPEXP_GNOME2 PLDLLEXPORT
   #define PLDLLIMPEXP_GNOME2_DATA(type) PLDLLEXPORT type
 #else

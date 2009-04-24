@@ -29,6 +29,11 @@ ${CMAKE_CURRENT_SOURCE_DIR}/plDevs.h.cmake
 ${CMAKE_CURRENT_BINARY_DIR}/plDevs.h
 )
 
+configure_file(
+${CMAKE_CURRENT_SOURCE_DIR}/pldll.h.in
+${CMAKE_CURRENT_BINARY_DIR}/pldll.h
+)
+
 set(plhershey-unicode-gen_SRCS
 ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode-gen.c
 )
@@ -65,7 +70,7 @@ disptab.h
 drivers.h
 pdf.h
 pldebug.h
-pldll.h
+${CMAKE_CURRENT_BINARY_DIR}/pldll.h
 plevent.h
 plplot.h
 plplotP.h
