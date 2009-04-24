@@ -25,6 +25,10 @@ if [ "@PLD_wxwidgets@" = "ON" ] ; then
     DEVICE_LIST="$DEVICE_LIST wxwidgets"
 fi
 
+if [ "@PLD_qtwidget@" = "ON" ] ; then
+    DEVICE_LIST="$DEVICE_LIST qtwidget"
+fi
+
 for device in $DEVICE_LIST ; do
     for index in $INDEX_LIST ; do
 	echo "c/x${index}c -dev $device"
@@ -65,6 +69,13 @@ if [ "@ENABLE_wxwidgets@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="c++"
     COMMAND[$COUNT]="./wxPLplotDemo"
+    COUNT=$(( $COUNT + 1 ))
+fi
+
+if [ "@PLD_extqt@" = "ON" ] ; then
+    INDEX_LIST="$INDEX_LIST $COUNT"
+    DIRECTORY[$COUNT]="c++"
+    COMMAND[$COUNT]="./qt_example"
     COUNT=$(( $COUNT + 1 ))
 fi
 
