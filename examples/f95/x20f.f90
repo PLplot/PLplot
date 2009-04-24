@@ -369,12 +369,12 @@
 
           if (ierr .ne. 0) then
               read_img = .false.
+              write(*,*) 'Error!'
               return
           endif
 
           if (ver(1:1) .ne. '#' ) then
-              read_img = .false.
-              return
+              exit
           endif
       enddo
 
@@ -418,8 +418,7 @@
           record = record + 1
           read( 10, rec = record, iostat = ierr ) (img(i), i = 1,bytes )
           if ( ierr .ne. 0 ) then
-              read_img = .false.
-              return
+             exit
           endif
 
           do i = 1,bytes
@@ -453,8 +452,7 @@
               read( 10, rec = record ) (img(b), b = 1,bytes )
               first  = 1
           else
-              read_img = .false.
-              return
+              exit
           endif
       enddo
 
