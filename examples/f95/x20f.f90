@@ -311,7 +311,7 @@
       open( 10, file = '_x20f_.bin', access = 'direct', recl = 1 )
       do i = 1,8
           write( 10, rec = 1, iostat = ierr ) string(1:i)
-          if ( ierr /= 0 ) exit
+          if ( ierr /= 0 ) call exit(1)
           bytes = i
       enddo
 
@@ -369,12 +369,12 @@
 
           if (ierr .ne. 0) then
               read_img = .false.
-              write(*,*) 'Error!'
               return
           endif
 
           if (ver(1:1) .ne. '#' ) then
-              exit
+              read_img = .false.
+              return
           endif
       enddo
 
@@ -418,7 +418,8 @@
           record = record + 1
           read( 10, rec = record, iostat = ierr ) (img(i), i = 1,bytes )
           if ( ierr .ne. 0 ) then
-             exit
+              read_img = .false.
+              return
           endif
 
           do i = 1,bytes
@@ -452,7 +453,8 @@
               read( 10, rec = record ) (img(b), b = 1,bytes )
               first  = 1
           else
-              exit
+              read_img = .false.
+              return
           endif
       enddo
 
