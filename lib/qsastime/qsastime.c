@@ -140,7 +140,7 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
     {
       dextraDays = (time_sec / SecInDay);
       /* precaution against overflowing extraDays. */
-      if(abs(dextraDays) > 2.e9) {
+      if(fabs(dextraDays) > 2.e9) {
 	return 3;
       }
       extraDays = (int) (dextraDays);
@@ -148,7 +148,7 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
       time_sec -= extraDays * SecInDay;
     }
   /* precaution against overflowing MJD->base_day. */
-  if(abs(dbase_day) > 2.e9){
+  if(fabs(dbase_day) > 2.e9){
     return 4;
   } else {
     /* The exact integer result should be represented exactly in the
@@ -336,7 +336,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
 	
   int year, month, day, hour, min, ysign, second, d, y;
   int y1, ifleapyear;
-  int i, count,secsSince1970;
+  int i, secsSince1970;
   int nplaces,fmtlen,slen;
   int resolution;
   double shiftPlaces;
@@ -1053,7 +1053,6 @@ void closeqsas(QSASConfig **qsasconfig)
 int ctimeqsas(int year, int month, int day, int hour, int min, double sec, double * ctime, QSASConfig *qsasconfig){
   MJDtime MJD_value, *MJD=&MJD_value;
   int forceJulian, ret;
-  double integral_offset1, integral_offset2, integral_scaled_ctime;
 
   if(qsasconfig == NULL) {
     fprintf(stderr, "libqsastime (ctimeqsas) ERROR: configqsas must be called first.\n");
@@ -1149,7 +1148,7 @@ size_t strfqsas(char * buf, size_t len, const char *format, double ctime, QSASCo
    its second argument (a table entry).  Otherwise it returns false
    (0).  Items in the array base must be in ascending order. */
 
-int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum)) {
+void bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum)) {
   const void *indexbase;
   int mid, high, hunt_inc=1;
   /* If previous search found below range, then assure one hunt cycle
@@ -1158,7 +1157,7 @@ int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *
     *low = 0;
   /* Protect against invalid or undefined *low values where hunt
      is waste of time. */
-  if(*low < 0 || *low >= n) {
+  if(*low < 0 || *low >= (int) n) {
     *low = -1;
     high = n;
   } else {
@@ -1168,13 +1167,13 @@ int bhunt_search(const void *key, const void *base, size_t n, size_t size, int *
       high = (*low) + hunt_inc;
       indexbase = (void *) (((const char *) base) + (size*high));
       /* indexbase is valid if high < n. */
-      while( (high < n) && ((*ge)(key, indexbase)) ) {
+      while( (high < (int) n) && ((*ge)(key, indexbase)) ) {
 	*low = high;
 	hunt_inc+=hunt_inc;
 	high = high + hunt_inc;
 	indexbase = (void *) (((const char *) base) + (size*high));
       }
-      if(high >= n)
+      if(high >= (int) n)
 	high = n;
       /* At this point, low is valid and base[low] <= key
          and either key < base[high] for valid high or high = n.  */
