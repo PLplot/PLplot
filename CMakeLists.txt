@@ -28,6 +28,7 @@ else(MSYS)
   CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
 endif(MSYS)
 
+
 #foreach(policy RANGE 0 9)
 #  cmake_policy(GET CMP000${policy} policy_result)
 #  message(STATUS "Policy CMP000${policy} is ${policy_result}")
@@ -45,6 +46,12 @@ ${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
 )
 
 project(plplot)
+
+# For use under MSYS version 2.6.3 or above of cmake is required!
+# The variable MSYS is first known at this point in the build process
+IF(MSYS)
+  CMAKE_MINIMUM_REQUIRED(VERSION 2.6.3 FATAL_ERROR)
+ENDIF(MSYS)
 
 set(PACKAGE plplot)
 
