@@ -311,7 +311,7 @@
       open( 10, file = '_x20f_.bin', access = 'direct', recl = 1 )
       do i = 1,8
           write( 10, rec = 1, iostat = ierr ) string(1:i)
-          if ( ierr /= 0 ) call exit(1)
+          if ( ierr /= 0 ) exit
           bytes = i
       enddo
 
