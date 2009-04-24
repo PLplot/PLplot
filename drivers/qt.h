@@ -267,7 +267,7 @@ class QtEPSDevice: public QtPLDriver, public QPrinter
 // This widget allows to use plplot as a plotting engine in a Qt Application
 // The aspect ratio of the plotted data is constant, so gray strips are used
 // to delimit the page when the widget aspect ratio is not the one of the plotted page
-class QtPLWidget: public QWidget, public QtPLDriver
+class PLDLLIMPEXP_DRIVER QtPLWidget: public QWidget, public QtPLDriver
 {
 	Q_OBJECT
 
@@ -305,7 +305,7 @@ class QtPLWidget: public QWidget, public QtPLDriver
 #endif
 
 #if defined (PLD_extqt)
-class QtExtWidget: public QtPLWidget
+class PLDLLIMPEXP_DRIVER QtExtWidget: public QtPLWidget
 {
 	Q_OBJECT
 
@@ -334,9 +334,9 @@ class QtExtWidget: public QtPLWidget
 		bool killed;
 };
 
-void plsetqtdev(QtExtWidget* widget); // Registers the widget as plot device, as the widget has to be created in the Qt application GUI, prior to any plplot call. Must be called before plinit().
+PLDLLIMPEXP_DRIVER void plsetqtdev(QtExtWidget* widget); // Registers the widget as plot device, as the widget has to be created in the Qt application GUI, prior to any plplot call. Must be called before plinit().
 
-void plfreeqtdev(); // Deletes and unregisters the device. 
+PLDLLIMPEXP_DRIVER void plfreeqtdev(); // Deletes and unregisters the device. 
 
 #endif
 
