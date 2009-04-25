@@ -506,11 +506,6 @@ void text_end_cairo(PLStream *pls, EscText *args)
   /* Move to the string reference point */
   cairo_move_to(aStream->cairoContext, aStream->downscale * (double) args->x, aStream->downscale * (double) args->y);
 
-  /* Move to the string reference point */
-  /*
-  cairo_move_to(aStream->cairoContext, aStream->refx, aStream->refy);
-  */
-
   /* Invert the coordinate system so that the text is drawn right side up */
   cairoTransformMatrix = (cairo_matrix_t *) malloc (sizeof(cairo_matrix_t));
   cairo_matrix_init(cairoTransformMatrix, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0);
