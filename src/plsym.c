@@ -285,7 +285,15 @@ PLUNICODE unicode_char;
           plsc->chrht=plsc->symht;
           plsc->chrdef=plsc->symdef;
 
-          plP_esc(PLESC_HAS_TEXT, &args);
+	  if (plsc->alt_unicode){
+	    args.n_fci = fci;
+	    args.n_char = unicode_char;
+	    plP_esc(PLESC_BEGIN_TEXT, &args);
+	    plP_esc(PLESC_TEXT_CHAR, &args);
+	    plP_esc(PLESC_END_TEXT, &args);
+	  } else {
+	    plP_esc(PLESC_HAS_TEXT, &args);
+	  }
 
           plsc->chrht=plsc->original_chrht;
           plsc->chrdef=plsc->original_chrdef;

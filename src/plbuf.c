@@ -308,6 +308,49 @@ plbuf_text(PLStream *pls, EscText *text)
 }
 
 /*--------------------------------------------------------------------------*\
+ * plbuf_text_unicode()
+ *
+ * Handle text buffering for the new unicode pathway.
+\*--------------------------------------------------------------------------*/
+
+static void
+plbuf_text_unicode(PLStream *pls, EscText *text)
+{
+  PLUNICODE fci;
+
+  dbug_enter("plbuf_text");
+  
+  /* Retrieve the font characterization integer */
+  plgfci(&fci);
+
+  /* Write the text information */
+
+  wr_data(pls, &fci, sizeof(PLUNICODE));
+
+  wr_data(pls, &pls->chrht, sizeof(PLFLT));
+  wr_data(pls, &pls->diorot, sizeof(PLFLT));
+  wr_data(pls, &pls->clpxmi, sizeof(PLFLT));
+  wr_data(pls, &pls->clpxma, sizeof(PLFLT));
+  wr_data(pls, &pls->clpymi, sizeof(PLFLT));
+  wr_data(pls, &pls->clpyma, sizeof(PLFLT));
+    
+  wr_data(pls, &text->base, sizeof(PLINT));
+  wr_data(pls, &text->just, sizeof(PLFLT));
+  wr_data(pls, text->xform, sizeof(PLFLT) * 4);
+  wr_data(pls, &text->x, sizeof(PLINT));
+  wr_data(pls, &text->y, sizeof(PLINT));
+  wr_data(pls, &text->refx, sizeof(PLINT));
+  wr_data(pls, &text->refy, sizeof(PLINT));
+
+  wr_data(pls, &text->n_fci, sizeof(PLUNICODE));
+  wr_data(pls, &text->n_char, sizeof(PLUNICODE));
+  wr_data(pls, &text->n_ctrl_char, sizeof(PLINT));
+
+  wr_data(pls, &text->unicode_array_len, sizeof(PLINT));
+}
+
+
+/*--------------------------------------------------------------------------*\
  * plbuf_esc()
  *
  * Escape function.  Note that any data written must be in device
@@ -344,6 +387,12 @@ plbuf_esc(PLStream *pls, PLINT op, void *ptr)
       if(ptr!=NULL) /* Check required by GCW driver, please don't remove */
 	  plbuf_text(pls, (EscText *) ptr);
 	break;
+    case PLESC_BEGIN_TEXT:
+    case PLESC_TEXT_CHAR:
+    case PLESC_CONTROL_CHAR:
+    case PLESC_END_TEXT:
+      plbuf_text_unicode(pls, (EscText *) ptr);
+      break;
     }
 }
 
@@ -568,8 +617,12 @@ rdbuf_state(PLStream *pls)
  *
  *	PLESC_FILL	    Fill polygon
  *	PLESC_SWIN	    Set plot window parameters
- *  PLESC_IMAGE     Draw image
- *  PLESC_HAS_TEXT  Draw PostScript text
+ *      PLESC_IMAGE         Draw image
+ *      PLESC_HAS_TEXT      Draw PostScript text
+ *      PLESC_BEGIN_TEXT    Commands for the alternative unicode text handling path
+ *      PLESC_TEXT_CHAR
+ *      PLESC_CONTROL_CHAR
+ *      PLESC_END_TEXT 
  *	PLESC_CLEAR	    Clear Background
 \*--------------------------------------------------------------------------*/
 
@@ -578,6 +631,9 @@ rdbuf_image(PLStream *pls);
 
 static void
 rdbuf_text(PLStream *pls);
+
+static void
+rdbuf_text_unicode(PLINT op, PLStream *pls);
 
 static void
 rdbuf_esc(PLStream *pls)
@@ -601,10 +657,16 @@ rdbuf_esc(PLStream *pls)
     case PLESC_HAS_TEXT:
         rdbuf_text(pls);
 	break;
+    case PLESC_BEGIN_TEXT:
+    case PLESC_TEXT_CHAR:
+    case PLESC_CONTROL_CHAR:
+    case PLESC_END_TEXT:
+      rdbuf_text_unicode(op, pls);
+      break;
     case PLESC_CLEAR:
 	plP_esc(PLESC_CLEAR,NULL);
 	break;
-		}
+    }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -758,6 +820,54 @@ rdbuf_text(PLStream *pls)
   if(pls->dev_unicode) {
     plsfci(fci);
     plP_esc(PLESC_HAS_TEXT,&text);
+  }
+}
+
+/*--------------------------------------------------------------------------*\
+ * rdbuf_text_unicode()
+ *
+ * Draw text for the new unicode handling pathway.
+\*--------------------------------------------------------------------------*/
+
+static void
+rdbuf_text_unicode(PLINT op, PLStream *pls)
+{
+  PLUNICODE(fci);
+  EscText text;
+  PLFLT xform[4];
+  PLUNICODE* unicode;
+
+  text.xform = xform;
+
+
+  /* Read in the data */
+
+  rd_data(pls, &fci, sizeof(PLUNICODE));
+
+  rd_data(pls, &pls->chrht, sizeof(PLFLT));
+  rd_data(pls, &pls->diorot, sizeof(PLFLT));
+  rd_data(pls, &pls->clpxmi, sizeof(PLFLT));
+  rd_data(pls, &pls->clpxma, sizeof(PLFLT));
+  rd_data(pls, &pls->clpymi, sizeof(PLFLT));
+  rd_data(pls, &pls->clpyma, sizeof(PLFLT));
+
+  rd_data(pls, &text.base, sizeof(PLINT));
+  rd_data(pls, &text.just, sizeof(PLFLT));
+  rd_data(pls, text.xform, sizeof(PLFLT) * 4);
+  rd_data(pls, &text.x, sizeof(PLINT));
+  rd_data(pls, &text.y, sizeof(PLINT));
+  rd_data(pls, &text.refx, sizeof(PLINT));
+  rd_data(pls, &text.refy, sizeof(PLINT));
+
+  rd_data(pls, &text.n_fci, sizeof(PLUNICODE));
+  rd_data(pls, &text.n_char, sizeof(PLUNICODE));
+  rd_data(pls, &text.n_ctrl_char, sizeof(PLINT));
+
+  rd_data(pls, &text.unicode_array_len, sizeof(PLINT));
+
+  if(pls->dev_unicode) {
+    plsfci(fci);
+    plP_esc(op,&text);
   }
 }
 
