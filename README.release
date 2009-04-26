@@ -20,16 +20,7 @@ I. This is the official notice that our deprecated autotools-based build
 system has been removed as of release 5.9.1.  Instead, use the CMake-based
 build system following the directions in the INSTALL file.
 
-II. This is official notice that the tk, itk, and itcl components of PLplot
-have been disabled by default as of 5.9.1.  We reluctantly took this step
-for these venerable PLplot components because we found segfaults with most
-of our Tk-related interactive tests for this release which we have been, as
-yet, unable to address. For now, if you want to try these components of
-PLplot to help us debug the problem, you must specifically use the cmake
-options -DENABLE_tk=ON -DENABLE_itk=ON -DENABLE_itcl=ON to build and install
-these components.
-
-III. This is official notice that we (as of 5.9.1) no longer support
+II. This is official notice that we (as of 5.9.1) no longer support
 Octave-2.1.73 which has a variety of run-time issues in our tests of the
 Octave examples on different platforms.  In contrast our tests show we get
 good run-time results with all our Octave examples for Octave-3.0.1. Also,
@@ -37,7 +28,7 @@ that is the recommended stable version of Octave at
 http://www.gnu.org/software/octave/download.html so that is the only version
 of Octave we support at this time.
 
-IV. This is official notice that the PLplot team have decided (as of release
+III. This is official notice that the PLplot team have decided (as of release
 5.9.1) for consistency sake to change the PLplot stream variables
 plsc->vpwxmi, plsc->vpwxma, plsc->vpwymi, and plsc->vpwyma and the results
 returned by plgvpw to reflect the exact window limit values input by users
@@ -50,10 +41,10 @@ ranges so most users results will be identical.  However, you may notice
 some small changes to your plot results if you use these stream variables
 directly (only possible in C/C++) or use plgvpw.
 
-V. This is official notice that (as of release 5.9.3) our  build system
+IV. This is official notice that (as of release 5.9.3) our  build system
 requires CMake version 2.6.0 or higher.
 
-VI. This is official notice that (as of release 5.9.3) we have deprecated
+V. This is official notice that (as of release 5.9.3) we have deprecated
 the gcw device driver and the related gnome2 and pygcw bindings since these
 are essentially unmaintained. For example, the gcw device and associated
 bindings still depends on the plfreetype approach for accessing unicode
@@ -66,7 +57,7 @@ absolutely must use -dev gcw or the related gnome2 or pygcw bindings despite
 the known problems, then they can still be accessed by setting PLD_gcw,
 ENABLE_gnome2, and/or ENABLE_pygcw to ON.
 
-VII. This is official notice that (as of release 5.9.3) we have deprecated
+VI. This is official notice that (as of release 5.9.3) we have deprecated
 the gd device driver which implements the png, jpeg, and gif devices.  This
 device driver is essentially unmaintained. For example, it still depends on
 the plfreetype approach for accessing unicode fonts which has known issues
@@ -81,6 +72,21 @@ application.  For those platforms where libgd (the dependency of the gd
 device driver) is accessible while the required dependencies of the cairo
 and/or qt devices are not accessible, you can still use these deprecated
 devices by setting PLD_png, PLD_jpeg, or PLD_gif to ON.
+
+VII. This is official notice that (as of release 5.9.3) we have set
+HAVE_PTHREAD to OFF by default.  (It was first turned ON by default for
+release 5.9.2 for all platforms other than Darwin).  By experiment we have
+recently found our pthread code causes segfaults in the Tk components of
+PLplot on Linux (which is the platform for which our original pthread
+support was implemented).  Until this issue is addressed we consider our
+pthread code to be experimental which is why we are turning if OFF by
+default now for all platforms.
+
+VIII. This is official notice that the tk, itk, and itcl components of
+PLplot have been reenabled again by default (as of release 5.9.3) after
+being disabled by default as of release 5.9.1 due to segfaults which we have
+now experimentally determined to be due to our pthread code.  See
+announcement VII above.
 
 INDEX
 
