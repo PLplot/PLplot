@@ -224,7 +224,7 @@
 
           if (get_clip(xi, xe, yi, ye)) then
               call plend()
-              call exit(0)
+              call myexit(0)
           endif
 
 !
@@ -295,7 +295,7 @@
       deallocate( img_f, xg, yg )
 
       call plend()
-      call exit(0)
+      call myexit(0)
 
       contains
 
@@ -639,4 +639,14 @@
           fmin = min(fmin, f(i, j))
         enddo
       enddo
+      end
+
+!----------------------------------------------------------------------------
+!      Subroutine myexit
+!      Just calls exit - works around bug in gfortran <= 4.1
+      subroutine myexit(icode)
+      implicit none
+      integer icode
+
+      call exit(icode)
       end
