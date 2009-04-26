@@ -27,15 +27,14 @@ EXEEXT = @EXEEXT@
 @pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 @pkg_config_true@RPATHCMD = @RPATHCMD@
 
-EXECUTABLES_list = \
-		 xtk01$(EXEEXT) \
-		 xtk02$(EXEEXT) \
-		 xtk04$(EXEEXT)
+EXECUTABLES_list = xtk01$(EXEEXT)
+# Second and fourth examples depend on itk.
+@itk_true@itk_EXECUTABLES_list = xtk02$(EXEEXT) xtk04$(EXEEXT)
 
-all: $(EXECUTABLES_list)
+all: $(EXECUTABLES_list) $(itk_EXECUTABLES_list)
 
 clean:
-	rm -f $(EXECUTABLES_list)
+	rm -f $(EXECUTABLES_list) $(itk_EXECUTABLES_list)
 
 .c$(EXEEXT):
 @pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-tcl`

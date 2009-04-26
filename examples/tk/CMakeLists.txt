@@ -110,20 +110,16 @@ add_custom_command(
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex DESTINATION ${DATA_DIR}/examples/tk)
 
-set(tk_SCRIPTS
-  tk01
-  tk02
-  tk03
-  tk04
-  )
+# The second and fourth Tk examples depend on Itk to work.
+set(tk_SCRIPTS tk01 tk03)
+set(tk_SRC xtk01.c)
+  
+if(ENABLE_itk)
+  list(APPEND tk_SCRIPTS tk02 tk04)
+  list(APPEND tk_SRC xtk02.c xtk04.c)
+endif(ENABLE_itk)
 
 install(PROGRAMS ${tk_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tk)
-
-set(tk_SRC
-  xtk01.c
-  xtk02.c
-  xtk04.c
-  )
 
 install(FILES ${tk_SRC} DESTINATION ${DATA_DIR}/examples/tk)
 

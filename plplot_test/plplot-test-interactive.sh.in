@@ -108,17 +108,23 @@ if [ "@ENABLE_tk@" = "ON" ] ; then
     DIRECTORY[$COUNT]="tk"
     COMMAND[$COUNT]="./xtk01 -f tk01"
     COUNT=$(( $COUNT + 1 ))
+fi
 
+if [ "@ENABLE_itk@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="tk"
     COMMAND[$COUNT]="./xtk02 -f tk02"
     COUNT=$(( $COUNT + 1 ))
+fi
 
+if [ "@ENABLE_tk@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="tk"
-    COMMAND[$COUNT]="plserver  -f tk03"
+    COMMAND[$COUNT]="plserver -f tk03"
     COUNT=$(( $COUNT + 1 ))
+fi
 
+if [ "@ENABLE_itk@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="tk"
     COMMAND[$COUNT]="./xtk04 -f tk04"
