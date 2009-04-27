@@ -25,6 +25,10 @@ set(tk_SRC_FILES
   runAllDemos.tcl
   runExtendedDemos.tcl
   tkdemos.tcl
+  tk01
+  tk02
+  tk03
+  tk04
   )
 
 set(tk_STRING_INDICES
@@ -118,6 +122,27 @@ if(ENABLE_itk)
   list(APPEND tk_SCRIPTS tk02 tk04)
   list(APPEND tk_SRC xtk02.c xtk04.c)
 endif(ENABLE_itk)
+
+if(BUILD_TEST)
+  remove_definitions("-DHAVE_CONFIG_H")
+  include_directories(
+    ${TCL_INCLUDE_PATH}
+    ${TK_INCLUDE_PATH}
+    ${CMAKE_SOURCE_DIR}/bindings/tcl
+    ${CMAKE_SOURCE_DIR}/bindings/tk
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_BINARY_DIR}/include
+    )
+  foreach(TK_SRC_FILE ${tk_SRC})
+   string(REGEX REPLACE ".c$" "" TK_EXE ${TK_SRC_FILE})
+   add_executable(${TK_EXE} ${TK_SRC_FILE})
+    if(BUILD_SHARED_LIBS)
+      SET_SOURCE_FILES_PROPERTIES(${TK_SRC_FILE}
+        PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
+    endif(BUILD_SHARED_LIBS)
+    target_link_libraries(${TK_EXE} plplottcltk${LIB_TAG} tclmatrix${LIB_TAG} plplot${LIB_TAG} ${MATH_LIB})
+  endforeach(TK_SRC_FILE ${tk_SRC})
+endif(BUILD_TEST)
 
 install(PROGRAMS ${tk_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tk)
 
