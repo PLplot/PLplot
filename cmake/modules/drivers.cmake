@@ -25,7 +25,7 @@
 # ENABLE_DYNDRIVERS (ON or OFF): whether to dynamically load device drivers.
 # PLD_devicename (ON or OFF): whether each PLplot-related device is enabled
 #   or not.  devicename is png, jpeg, etc.
-# devicename_COMPILE_FLAGS: compile (e.g., -I) options for each individual 
+# devicename_COMPILE_FLAGS: compile (e.g., -I) options for each individual
 #   device.
 # devicename_LINK_FLAGS: link options (e.g., -L  and -l) for each
 #   individual device.
@@ -37,17 +37,17 @@
 set(DRIVERS_LINK_FLAGS)
 option(ENABLE_DYNDRIVERS "Enable dynamic loading of device drivers" ON)
 if(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
-  message(STATUS 
+  message(STATUS
     "WARNING: Shared libraries not built. Setting ENABLE_DYNDRIVERS OFF."
     )
-  set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
+  set(ENABLE_DYNDRIVERS OFF CACHE BOOL
     "Enable dynamic loading of device drivers" FORCE)
 endif(ENABLE_DYNDRIVERS AND NOT BUILD_SHARED_LIBS)
 if(ENABLE_DYNDRIVERS AND WIN32)
-  if(NOT CYGWIN AND NOT MSYS)
+  if(NOT CYGWIN)
     set(LTDL_WIN32 ON)
     set(LTDL_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
-  endif(NOT CYGWIN AND NOT MSYS)
+  endif(NOT CYGWIN)
 endif(ENABLE_DYNDRIVERS AND WIN32)
 if(ENABLE_DYNDRIVERS AND NOT LTDL_WIN32)
   find_package(LTDL)
@@ -57,12 +57,12 @@ if(ENABLE_DYNDRIVERS AND NOT LTDL_WIN32)
     message(STATUS "LTDL_LIBRARY_DIR = ${LTDL_LIBRARY_DIR}")
     message(STATUS "LTDL_LIBRARIES = ${LTDL_LIBRARIES}")
   else(LTDL_FOUND)
-    message(STATUS 
+    message(STATUS
       "WARNING: libltdl library not found. Setting ENABLE_DYNDRIVERS OFF.\n"
       "   Please install that library and/or set the environment variables\n"
       "   CMAKE_INCLUDE_PATH and CMAKE_LIBRARY_PATH appropriately."
       )
-    set(ENABLE_DYNDRIVERS OFF CACHE BOOL 
+    set(ENABLE_DYNDRIVERS OFF CACHE BOOL
       "Enable dynamic loading of device drivers" FORCE)
   endif(LTDL_FOUND)
 endif(ENABLE_DYNDRIVERS AND NOT LTDL_WIN32)
@@ -74,7 +74,7 @@ endif(ENABLE_DYNDRIVERS AND NOT LTDL_WIN32)
 include(drivers-init)
 
 # Find *_COMPILE_FLAGS and *_LINK_FLAGS resources for device drivers that need them,
-# and set appropriate PLD_devicename to OFF if the required resources are 
+# and set appropriate PLD_devicename to OFF if the required resources are
 # not available.
 include(cairo)
 include(cgm)
