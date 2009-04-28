@@ -107,11 +107,11 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
   
   if(forceJulian) {
     /* count leap years on proleptic Julian Calendar starting from MJD_0000J */
-      leaps = year4 / 4;
-      if(year%4 == 0)
-	dbase_day = year * non_leaps + leaps + MonthStartDOY_L[month] + day + MJD_0000J;
-      else
-	dbase_day = year * non_leaps + leaps + MonthStartDOY[month] + day + MJD_0000J;
+    leaps = year4 / 4;
+    if(year%4 == 0)
+      dbase_day = year * non_leaps + leaps + MonthStartDOY_L[month] + day + MJD_0000J;
+    else
+      dbase_day = year * non_leaps + leaps + MonthStartDOY[month] + day + MJD_0000J;
   } else {
     /* count leap years for proleptic Gregorian Calendar. */
     /* Algorithm below for 1858-11-17 (0 MJD) gives
@@ -128,11 +128,11 @@ int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDti
        calculation with exact representation unless the
        result is much larger than the integer overflow limit. */
     if( (year%4 == 0 && year%100 != 0) || (year%4 == 0 && year%400 == 0) )
-	dbase_day = year * non_leaps + leaps + MonthStartDOY_L[month] + day + MJD_0000G;
-      else
-	dbase_day = year * non_leaps + leaps + MonthStartDOY[month] + day + MJD_0000G;
+      dbase_day = year * non_leaps + leaps + MonthStartDOY_L[month] + day + MJD_0000G;
+    else
+      dbase_day = year * non_leaps + leaps + MonthStartDOY[month] + day + MJD_0000G;
 	
-    }	
+  }	
 		
   time_sec = sec + ( (double) min  +  (double) hour * 60. ) * 60.;
 
@@ -356,25 +356,25 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   fmtlen = strlen(format);
   i=0;
   while(i<fmtlen)
-  {
-    char next = format[i];
-    if( next == '%')
     {
-      /* find seconds format if used */
+      char next = format[i];
+      if( next == '%')
+	{
+	  /* find seconds format if used */
+	  i++;
+	  next = format[i];
+	  if( isdigit(next) != 0 )
+	    {
+	      nplaces = strtol(&(format[i]), NULL, 10); 
+	      if(nplaces > resolution) resolution = nplaces;
+	    }	
+	  else if( next == '.' )
+	    {
+	      resolution = 9; /* maximum resolution allowed */
+	    }
+	}
       i++;
-      next = format[i];
-      if( isdigit(next) != 0 )
-      {
-        nplaces = strtol(&(format[i]), NULL, 10); 
-        if(nplaces > resolution) resolution = nplaces;
-      }	
-      else if( next == '.' )
-      {
-        resolution = 9; /* maximum resolution allowed */
-      }
     }
-    i++;
-  }
   
   /* ensure rounding is done before breakdown */
   shiftPlaces = pow(10,(double)resolution);	
