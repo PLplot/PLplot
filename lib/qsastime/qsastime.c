@@ -1148,7 +1148,7 @@ size_t strfqsas(char * buf, size_t len, const char *format, double ctime, QSASCo
    its second argument (a table entry).  Otherwise it returns false
    (0).  Items in the array base must be in ascending order. */
 
-void bhunt_search(const void *key, const void *base, size_t n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum)) {
+void bhunt_search(const void *key, const void *base, int n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum)) {
   const void *indexbase;
   int mid, high, hunt_inc=1;
   /* If previous search found below range, then assure one hunt cycle
@@ -1157,7 +1157,7 @@ void bhunt_search(const void *key, const void *base, size_t n, size_t size, int 
     *low = 0;
   /* Protect against invalid or undefined *low values where hunt
      is waste of time. */
-  if(*low < 0 || *low >= (int) n) {
+  if(*low < 0 || *low >= n) {
     *low = -1;
     high = n;
   } else {
@@ -1167,13 +1167,13 @@ void bhunt_search(const void *key, const void *base, size_t n, size_t size, int 
       high = (*low) + hunt_inc;
       indexbase = (void *) (((const char *) base) + (size*high));
       /* indexbase is valid if high < n. */
-      while( (high < (int) n) && ((*ge)(key, indexbase)) ) {
+      while( (high < n) && ((*ge)(key, indexbase)) ) {
 	*low = high;
 	hunt_inc+=hunt_inc;
 	high = high + hunt_inc;
 	indexbase = (void *) (((const char *) base) + (size*high));
       }
-      if(high >= (int) n)
+      if(high >= n)
 	high = n;
       /* At this point, low is valid and base[low] <= key
          and either key < base[high] for valid high or high = n.  */
