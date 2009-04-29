@@ -130,6 +130,10 @@ sfstubs.f
 configurable.f
 )
 
+if(WIN32 AND BUILD_SHARED_LIBS AND NOT CYGWIN AND NOT MINGW)
+  SET(plplotf77${LIB_TAG}_LIB_SRCS ${plplotf77${LIB_TAG}_LIB_SRCS} plplotf77.def)
+endif(WIN32 AND BUILD_SHARED_LIBS AND NOT CYGWIN AND NOT MINGW)
+
 add_library(plplotf77${LIB_TAG} ${plplotf77${LIB_TAG}_LIB_SRCS})
 
 target_link_libraries(plplotf77${LIB_TAG}  plplotf77c${LIB_TAG})
