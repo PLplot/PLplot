@@ -59,11 +59,8 @@ if(ENABLE_f95)
     # correct case and calling convention for the Fortran compiler
     IF(TARGET_FORTRAN MATCHES "IVF")
       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DIVF")
-      #
-      # (AM) This flag make the C compiler create __cdecl style routines.
-      # This is not the default for Compaq Visual Fortran.
-      #ELSEIF(TARGET_FORTRAN MATCHES "CVF")
-      #  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DCVF")
+    ELSEIF(TARGET_FORTRAN MATCHES "CVF")
+      SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DCVF")
     ENDIF(TARGET_FORTRAN MATCHES "IVF")
   endif(WIN32)
 
@@ -115,6 +112,10 @@ if(ENABLE_f95)
     sfstubsf95.f90
     sfstubs.h
     )
+
+  if(WIN32 AND BUILD_SHARED_LIBS AND NOT MINGW AND NOT CYGWIN)
+    SET(plplotf95${LIB_TAG}_LIB_SRCS ${plplotf95${LIB_TAG}_LIB_SRCS} plplotf95.def)
+  endif(WIN32 AND BUILD_SHARED_LIBS AND NOT MINGW AND NOT CYGWIN)
 
   # Explicitly include dependencies for sfstubsf95.f90
   include(AddFileDependencies)
