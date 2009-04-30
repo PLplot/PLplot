@@ -40,10 +40,9 @@ if(PLD_xwin)
       # get a clear report that official X works for 10.5.
       option(HAVE_PTHREAD "Use pthreads with the xwin driver" OFF)
     else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-      # Turn HAVE_PTHREAD OFF by default everywhere else as well since it
-      # has been discovered it interacts so poorly with the Tk components
-      # of PLplot on Linux that it causes segfaults for those components.
-      option(HAVE_PTHREAD "Use pthreads with the xwin driver" OFF)
+      # Turn HAVE_PTHREAD ON by default for other platforms now that
+      # the tk segmentation fault has been cured.
+      option(HAVE_PTHREAD "Use pthreads with the xwin driver" ON)
     endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     if(HAVE_PTHREAD)
       find_package(Threads)
