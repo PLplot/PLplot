@@ -185,6 +185,10 @@ pltkMain(int argc, const char **argv, char *RcFileName,
     char buf[20];
     int code;
 
+#ifdef HAVE_PTHREAD
+    XInitThreads();
+#endif
+
     Tcl_FindExecutable(argv[0]);
     interp = Tcl_CreateInterp();
 #ifdef TCL_MEM_DEBUG
