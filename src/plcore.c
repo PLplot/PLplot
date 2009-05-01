@@ -2700,7 +2700,7 @@ plLoadDriver(void)
     if (!driver->dlhand)
     {
         char drvspec[ DRVSPEC_SIZE ];
-#ifdef LTDL_WIN32
+#if defined(LTDL_WIN32) || defined(__CYGWIN__)
         snprintf( drvspec, DRVSPEC_SIZE, "%s", driver->drvnam );
 #else
         snprintf( drvspec, DRVSPEC_SIZE, "%s/%s", plGetDrvDir (), driver->drvnam );
