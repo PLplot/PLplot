@@ -55,7 +55,7 @@ main (int argc, char* argv[])
   signal (SIGSEGV, catch_segv);
 
   lt_dlinit ();
-#ifdef LTDL_WIN32  
+#if defined(LTDL_WIN32) || defined(__CYGWIN__)
   snprintf( drvspec, DRVSPEC_LEN, "%s", drvnam );
 #else
   snprintf( drvspec, DRVSPEC_LEN, "%s/%s", plGetDrvDir (), drvnam );
