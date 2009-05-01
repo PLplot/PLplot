@@ -41,10 +41,14 @@ ranges so most users results will be identical.  However, you may notice
 some small changes to your plot results if you use these stream variables
 directly (only possible in C/C++) or use plgvpw.
 
-IV. This is official notice that (as of release 5.9.3) our  build system
+IV. This is official notice that (as of release 5.9.2) we have set
+HAVE_PTHREAD to ON by default for all platforms other than Darwin.  Darwin
+will follow later once it appears the Apple version of X supports it.
+
+V. This is official notice that (as of release 5.9.3) our  build system
 requires CMake version 2.6.0 or higher.
 
-V. This is official notice that (as of release 5.9.3) we have deprecated
+VI. This is official notice that (as of release 5.9.3) we have deprecated
 the gcw device driver and the related gnome2 and pygcw bindings since these
 are essentially unmaintained. For example, the gcw device and associated
 bindings still depends on the plfreetype approach for accessing unicode
@@ -57,7 +61,7 @@ absolutely must use -dev gcw or the related gnome2 or pygcw bindings despite
 the known problems, then they can still be accessed by setting PLD_gcw,
 ENABLE_gnome2, and/or ENABLE_pygcw to ON.
 
-VI. This is official notice that (as of release 5.9.3) we have deprecated
+VII. This is official notice that (as of release 5.9.3) we have deprecated
 the gd device driver which implements the png, jpeg, and gif devices.  This
 device driver is essentially unmaintained. For example, it still depends on
 the plfreetype approach for accessing unicode fonts which has known issues
@@ -73,20 +77,11 @@ device driver) is accessible while the required dependencies of the cairo
 and/or qt devices are not accessible, you can still use these deprecated
 devices by setting PLD_png, PLD_jpeg, or PLD_gif to ON.
 
-VII. This is official notice that (as of release 5.9.3) we have set
-HAVE_PTHREAD to OFF by default.  (It was first turned ON by default for
-release 5.9.2 for all platforms other than Darwin).  By experiment we have
-recently found our pthread code causes segfaults in the Tk components of
-PLplot on Linux (which is the platform for which our original pthread
-support was implemented).  Until this issue is addressed we consider our
-pthread code to be experimental which is why we are turning if OFF by
-default now for all platforms.
-
 VIII. This is official notice that the tk, itk, and itcl components of
 PLplot have been reenabled again by default (as of release 5.9.3) after
-being disabled by default as of release 5.9.1 due to segfaults which we have
-now experimentally determined to be due to our pthread code.  See
-announcement VII above.
+being disabled by default as of release 5.9.1 due to segfaults.  The cause
+of the segfaults was a bug (now fixed) in how pthread support was
+implemented for the Tk-related components of PLplot.
 
 INDEX
 
