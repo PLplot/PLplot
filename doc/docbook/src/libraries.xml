@@ -50,17 +50,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       The purpose of the PLplot bindings is to make the PLplot API
       documented in <xref linkend="API"/> accessible from various computer
-      languages and GUI environments.  For applications (GUI or otherwise)
-      written in compiled languages, the PLplot bindings are implemented
-      using bindings libraries which must be specifically linked by the
-      application.  (See the Makefiles in the installed examples tree for
-      comprehensive examples of how we use <command>pkg-config</command> to
-      supply the necessary linking information.)  In turn these bindings
-      libraries (and also the shared object plugins used by non-compiled
-      languages such as python to access the PLplot API) are linked to the
+      languages and GUI environments.  Some bindings (e.g., qt and cairo)
+      are implemented by a special form of "external" device.  Other
+      bindings (e.g., python) are implemented as shared objects which are
+      dynamically loaded by the language in question.  However, the majority
+      of our bindings are implemented as bindings libraries which
+      must be specifically linked by the application.  (See the Makefiles in
+      the installed examples tree for comprehensive examples of how we use
+      <command>pkg-config</command> to supply the necessary linking
+      information.)  In turn these bindings libraries are linked to the
       PLplot core library described in <xref linkend="core-library"/>.  We
       tabulate below the bindings library or libraries associated with the
-      compiled languages and GUI environments we support.
+      compiled languages and GUI environments we support in this specific way.
     </para>
     <table id="tab_bindings_libraries">
       <title>Bindings Libraries</title>
