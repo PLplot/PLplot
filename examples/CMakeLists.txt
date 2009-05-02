@@ -91,9 +91,6 @@ endif(ENABLE_ocaml)
 if(ENABLE_lua)
   add_subdirectory(lua)
 endif(ENABLE_lua)
-if(ENABLE_d)
-  add_subdirectory(d)
-endif(ENABLE_d)
 
 # Configure Makefile.examples with some specific variables
 
