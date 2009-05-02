@@ -44,7 +44,7 @@ PlbasicInit( Tcl_Interp *interp );
 /* tkshell.c */
 /* Sets up auto_path variable */
 
-int
+PLDLLIMPEXP_TCLTK int
 pls_auto_path(Tcl_Interp *interp);
 
 /* Tcl command -- wait until the specified condition is satisfied. */

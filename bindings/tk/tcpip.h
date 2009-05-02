@@ -15,7 +15,7 @@
 
 /* Modified version of the "Tdp_PacketSend" command. */
 
-int
+PLDLLIMPEXP_TCLTK int
 pl_PacketSend		PLARGS((Tcl_Interp *interp, PLiodev *iodev,
 				PDFstrm *pdfs));
 
