@@ -988,9 +988,18 @@ void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
   int i;
   PLCairo *aStream;
-
+  cairo_line_join_t old_line_join;
+  cairo_line_cap_t old_line_cap;
+ 
   aStream = (PLCairo *)pls->dev;
 
+  /* Save the previous line drawing style */
+  old_line_cap = cairo_get_line_cap(aStream->cairoContext);
+  old_line_join = cairo_get_line_join(aStream->cairoContext);
+  cairo_set_line_cap(aStream->cairoContext, CAIRO_LINE_CAP_BUTT);
+  cairo_set_line_join(aStream->cairoContext, CAIRO_LINE_JOIN_BEVEL);
+
+  /* Draw the polygons */
   cairo_move_to(aStream->cairoContext, aStream->downscale * (double) xa[0], aStream->downscale * (double) ya[0]);
   for(i=1;i<npts;i++)
     cairo_line_to(aStream->cairoContext, aStream->downscale * (double) xa[i], aStream->downscale * (double) ya[i]);
@@ -1005,6 +1014,10 @@ void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts)
     cairo_stroke(aStream->cairoContext);
   } else
     cairo_fill(aStream->cairoContext);
+
+  /* Restore the previous line drawing style */
+  cairo_set_line_cap(aStream->cairoContext, old_line_cap);
+  cairo_set_line_join(aStream->cairoContext, old_line_join);
 }
 
 /*---------------------------------------------------------------------
@@ -2051,4 +2064,3 @@ void plD_tidy_extcairo(PLStream *pls)
 }
 
 #endif
-
