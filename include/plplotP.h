@@ -445,7 +445,7 @@ plP_fci2hex(PLUNICODE fci, unsigned char *phexdigit, unsigned char hexpower);
 
 /* Pattern fills in software the polygon bounded by the input points. */
 
-void
+PLDLLIMPEXP void
 plfill_soft(short *x, short *y, PLINT npts);
 
 /* In case of an abort this routine is called.  It just prints out an */
