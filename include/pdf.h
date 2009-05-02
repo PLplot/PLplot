@@ -98,15 +98,15 @@ PLDLLIMPEXP int  pdf_rd_header	PLARGS((PDFstrm *pdfs, char *header));
 PLDLLIMPEXP int  pdf_wr_header	PLARGS((PDFstrm *pdfs, char *header));
 int  pdf_wr_string	PLARGS((PDFstrm *pdfs, const char *string));
 int  pdf_rd_string	PLARGS((PDFstrm *pdfs, char *string, int nmax));
-int  pdf_wr_1byte	PLARGS((PDFstrm *pdfs, U_CHAR s));
+PLDLLIMPEXP int  pdf_wr_1byte	PLARGS((PDFstrm *pdfs, U_CHAR s));
 PLDLLIMPEXP int  pdf_rd_1byte	PLARGS((PDFstrm *pdfs, U_CHAR *ps));
 PLDLLIMPEXP int  pdf_wr_2bytes	PLARGS((PDFstrm *pdfs, U_SHORT s));
 PLDLLIMPEXP int  pdf_rd_2bytes 	PLARGS((PDFstrm *pdfs, U_SHORT *ps));
 PLDLLIMPEXP int  pdf_wr_2nbytes	PLARGS((PDFstrm *pdfs, U_SHORT *s, PLINT n));
 PLDLLIMPEXP int  pdf_rd_2nbytes 	PLARGS((PDFstrm *pdfs, U_SHORT *s, PLINT n));
-int  pdf_wr_4bytes	PLARGS((PDFstrm *pdfs, U_LONG s));
+PLDLLIMPEXP int  pdf_wr_4bytes	PLARGS((PDFstrm *pdfs, U_LONG s));
 PLDLLIMPEXP int  pdf_rd_4bytes 	PLARGS((PDFstrm *pdfs, U_LONG *ps));
-int  pdf_wr_ieeef	PLARGS((PDFstrm *pdfs, float f));
+PLDLLIMPEXP int  pdf_wr_ieeef	PLARGS((PDFstrm *pdfs, float f));
 PLDLLIMPEXP int  pdf_rd_ieeef	PLARGS((PDFstrm *pdfs, float *pf));
 
 #endif	/* __PDF_H__ */
