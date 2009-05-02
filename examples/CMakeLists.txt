@@ -91,6 +91,9 @@ endif(ENABLE_ocaml)
 if(ENABLE_lua)
   add_subdirectory(lua)
 endif(ENABLE_lua)
+if(ENABLE_d)
+  add_subdirectory(d)
+endif(ENABLE_d)
 
 # Configure Makefile.examples with some specific variables
 
@@ -102,6 +105,10 @@ if(PLD_ps)
   if(NOT ENABLE_cxx)
     set(PSC_CXX_COMMENT "#")
   endif(NOT ENABLE_cxx)
+
+  if(NOT ENABLE_d)
+    set(PSC_D_COMMENT "#")
+  endif(NOT ENABLE_d)
 
   if(NOT ENABLE_f77)
     set(PSC_F77_COMMENT "#")
@@ -143,6 +150,7 @@ else(PLD_ps)
   set(PSC_ADA_COMMENT "#")
   set(PSC_C_COMMENT "#")
   set(PSC_CXX_COMMENT "#")
+  set(PSC_D_COMMENT "#")
   set(PSC_F77_COMMENT "#")
   set(PSC_F95_COMMENT "#")
   set(PSC_JAVA_COMMENT "#")
