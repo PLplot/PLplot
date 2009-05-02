@@ -89,13 +89,19 @@ for lang in c++ f77 f95 java octave python tcl perl ada adathick ocaml lua d; do
     diffstdout=""
     missingstdout=""
 
-  # Assume that if example 1 is missing then the language is
-  # not implemented.
-    if [ -f x${xsuffix}01${suffix}.psc ] ; then
-	
-  # Standard non-interactive examples
-	for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 14a 15 16 17 18 19 20 \
-	    21 22 23 24 25 26 27 28 29 30 31 ; do
+    # List of standard examples
+    INDEX_LIST="01 02 03 04 05 06 07 08 09 10 11 12 13 14 14a 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31"
+    # Check if any examples exist for this language.
+    EXAMPLES_EXIST="no"
+    for index in ${INDEX_LIST} ; do
+	if [ -f x${xsuffix}${index}${suffix}.psc ] ; then
+	    EXAMPLES_EXIST="yes"
+	    # Commented out for release in case win-bash doesn't have this.
+	    # break
+	fi
+    done
+    if [ "$EXAMPLES_EXIST" = "yes" ] ; then
+	for index in ${INDEX_LIST} ; do
 	    if [ ! -f x${xsuffix_c}${index}c.psc ] ; then
 		echo "C example ${index} is missing"
 	    else
