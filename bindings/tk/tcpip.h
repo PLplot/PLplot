@@ -21,7 +21,7 @@ pl_PacketSend		PLARGS((Tcl_Interp *interp, PLiodev *iodev,
 
 /* Modified version of the "Tdp_PacketReceive" command. */
 
-int
+PLDLLIMPEXP_TCLTK int
 pl_PacketReceive	PLARGS((Tcl_Interp *interp, PLiodev *iodev,
 				PDFstrm *pdfs));
 

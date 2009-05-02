@@ -43,12 +43,12 @@ plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
 /* plr.c */
 /* Set default state parameters before anyone else has a chance to. */
 
-void
+PLDLLIMPEXP_TCLTK void
 plr_start(PLRDev *plr);
 
 /* Read & process commands until "nbyte_max" bytes have been read. */
 
-int
+PLDLLIMPEXP_TCLTK int
 plr_process(PLRDev *plr);
 
 #endif	/* __PLSERVER_H__ */

@@ -22,23 +22,23 @@ extern "C" {
 /* tclMain.c */
 /* Main program for a Tcl-based shell that reads Tcl commands from stdin. */
 
-int PLDLLIMPEXP_TCLTK
+PLDLLIMPEXP_TCLTK int
 pltclMain(int argc, const char **argv, char *RcFileName,
 	  int (*AppInit)(Tcl_Interp *interp));
 
 /* tclAPI.c */
 /* Front-end to PLplot/Tcl API for use from Tcl commands (e.g. plframe). */
 
-int
+PLDLLIMPEXP_TCLTK int
 plTclCmd(char *cmdlist, Tcl_Interp *interp,
 	 int argc, const char **argv);
 
 /* Initialization routine for PLplot-extended tclsh's (like pltcl). */
 
-int PLDLLIMPEXP_TCLTK
+PLDLLIMPEXP_TCLTK int
 Pltcl_Init( Tcl_Interp *interp );
 
-int
+PLDLLIMPEXP_TCLTK int
 PlbasicInit( Tcl_Interp *interp );
 
 /* tkshell.c */
