@@ -135,7 +135,7 @@ else(ENABLE_DYNDRIVERS)
       if(MOC_OPTIONS)
 	qt4_wrap_cpp(
           QT_MOC_OUTFILES
-          ${CMAKE_CURRENT_SOURCE_DIR}/qt.h
+          ${CMAKE_SOURCE_DIR}/drivers/qt.h
           OPTIONS ${MOC_OPTIONS}
           )
 	# message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
@@ -194,6 +194,7 @@ else(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${DRIVERS_RPATH})
 endif(ENABLE_DYNDRIVERS)
+#message("LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
 
 if(MATH_LIB)
   set(
