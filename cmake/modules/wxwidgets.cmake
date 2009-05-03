@@ -57,6 +57,9 @@ if(PLD_wxwidgets OR PLD_wxpng)
     )
   # Convert wxWidgets_LIBRARIES to full pathname form.
   cmake_link_flags(wxwidgets_LINK_FLAGS "${wxWidgets_LIBRARIES}")
+  message(STATUS "wxWidgets found")
+  message(STATUS "wxwidgets_COMPILE_FLAGS = ${wxwidgets_COMPILE_FLAGS}")
+  message(STATUS "wxwidgets_LINK_FLAGS = ${wxwidgets_LINK_FLAGS}")
   include(agg)
   if(HAVE_AGG)
     set(
