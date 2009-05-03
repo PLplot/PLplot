@@ -1,4 +1,4 @@
-PLplot Release 5.9.3
+PLplot Release 5.9.4
 ~~~~~~~~~~~~~~~~~~~~
 This is a development release of PLplot. It represents the ongoing efforts
 of the community to improve the PLplot plotting package. Development 
@@ -85,14 +85,8 @@ implemented for the Tk-related components of PLplot.
 
 INDEX
 
-1. Changes relative to PLplot 5.9.2 (the previous development release)
+1. Changes relative to PLplot 5.9.3 (the previous development release)
 
-1.1 libnistcd (a.k.a. libcd) now built internally for -dev cgm
-1.2 get-drv-info now changed to test-drv-info
-1.3 Text clipping now enabled by default for the cairo devices
-1.4 A powerful qt device driver has been implemented
-1.5 The PLplot API is now accessible from Qt GUI applications
-1.6 NaN / Inf support for some PLplot functions
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -128,110 +122,8 @@ examples
 2.29 The PLplot API is now accessible from Qt GUI applications
 2.30 NaN / Inf support for some PLplot functions
 
-1. Changes relative to PLplot 5.9.2 (the previous development release)
 
-1.1 libnistcd (a.k.a. libcd) now built internally for -dev cgm
-
-CGM format is a long-established (since 1987) open standard for vector
-graphics that is supported by w3c (see http://www.w3.org/Graphics/WebCGM/).
-PLplot has long had a cgm device driver which depended on the (mostly) 
-public domain libcd library that was distributed in the mid 90's by National
-Institute of Standards and Technology (NIST) and which is still available
-from http://www.pa.msu.edu/ftp/pub/unix/cd1.3.tar.gz.  As a convenience
-to our -dev cgm users, we have brought that
-source code in house under lib/nistcd and now build libnistcd routinely
-as part of our ordinary builds.  The only changes we have made to the
-cd1.3 source code is visibility changes in cd.h and swapping the sense of
-the return codes for the test executables so that 0 is returned on success
-and 1 on failure.  If you want to test libnistcd on your platform,
-please run
-
-make test_nistcd
-
-in the top-level build tree.  (That tests runs all the test executables
-that are built as part of cd1.3 and compares the results that are generated
-with the *.cgm files that are supplied as part of cd1.3.)
-
-Two applications that convert and/or display CGM results on Linux are
-ralcgm (which is called by the ImageMagick convert and display applications)
-and uniconvertor.
-
-Some additional work on -dev cgm is required to implement antialiasing and
-non-Hershey fonts, but both those should be possible using libnistcd according
-to the text that is shown by lib/nistcd/cdtext.cgm and lib/nistcd/cdexp1.cgm.
-
-1.2 get-drv-info now changed to test-drv-info
-
-To make cross-building much easier for PLplot we now configure the *.rc
-files that are used to describe our various dynamic devices rather than
-generating the required *.rc files with get-drv-info.  We have changed the
-name of get-drv-info to test-drv-info.  That name is more appropriate
-because that executable has always tested dynamic loading of the driver
-plug-ins as well as generating the *.rc files from the information gleaned
-from that dynamic loading.  Now, we simply run test-drv-info as an option
-(defaults to ON unless cross-building is enabled) and compare the resulting
-*.rc file with the one configured by cmake to be sure the dynamic device
-has been built correctly.
-
-1.3 Text clipping now enabled by default for the cairo devices
-
-When correct text clipping was first implemented for cairo devices, it was
-discovered that the libcairo library of that era (2007-08) did that clipping
-quite inefficiently so text clipping was disabled by default.  Recent tests
-of text clipping for the cairo devices using libcairo 1.6.4 (released in
-2008-04) shows text clipping is quite efficient now.  Therefore, it is now
-enabled by default.  If you notice a significant slowdown for some libcairo
-version prior to 1.6.4 you can use the option -drvopt text_clipping=0 for
-your cairo device plots (and accept the improperly clipped text results that
-might occur with that option).  Better yet, use libcairo 1.6.4 or later.
-
-1.4 A powerful qt device driver has been implemented
-
-Thanks to the efforts of Alban Rochel of the QSAS team, we now have a qt
-device driver which delivers the following 9 (!) devices: qtwidget, bmpqt,
-jpgqt, pngqt, ppmqt, tiffqt, epsqt, pdfqt, and svgqt. qtwidget is an
-elementary interactive device where, for now, the possible interactions
-consist of resizing the window and right clicking with the mouse to control
-paging.  The qtwidget overall size is expressed in pixels. bmpqt, jpgqt,
-pngqt, ppmqt, and tiffqt are file devices whose overal sizes are specified
-in pixels and whose output is BMP (Windows bitmap), JPEG, PNG, PPM (portable
-pixmap), and TIFF (tagged image file format) formatted files. epsqt, pdfqt,
-svgqt are file devices whose overall sizes are specified in points (1/72 of
-an inch) and whose output is EPS (encapsulated PostScript), PDF, and SVG
-formatted files.  The qt device driver is based on the powerful facilities
-of Qt4 so all qt devices implement variable opacity (alpha channel) effects
-(see example 30).  The qt devices also use system unicode fonts, and deal
-with CTL (complex text layout) languages automatically without any
-intervention required by the user.  (To show this, try qt device results
-from examples 23 [mathematical symbols] and 24 [CTL languages].)
-
-Our exhaustive Linux testing of the qt devices (which consisted of detailed
-comparisons for all our standard examples between qt device results and the
-corresponding cairo device results) indicates this device driver is mature,
-but testing on other platforms is requested to confirm that maturity.
-Qt-4.5 has some essential SVG functionality so we recommend that
-version (downloadable from http://www.qtsoftware.com/downloads for Linux,
-Mac OS X, and Windows) for svgqt.  Qt-4.5 is the version we have used for
-most of our testing, but limited testing for Qt-4.4 indicates that version
-should be fine for qt devices other than svgqt.
-
-1.5 The PLplot API is now accessible from Qt GUI applications
-
-This important new feature has been implemented by Alban Rochel of the QSAS
-team as a spin-off of the qt device driver project using the extqt device
-(which constitutes the tenth qt device).  See examples/c++/README.qt_example
-for a brief description of a simple Qt example which accesses the PLplot API
-and which is built in the installed examples tree using the pkg-config
-approach. Our build system has been enhanced to configure the necessary
-plplotd-qt.pc file.
-
-1.6 NaN / Inf support for some PLplot functions
-
-Some PLplot now correctly handle Nan or Inf values in the data to be plotted.
-Line plotting (plline etc) and image plotting (plimage, plimagefr) will 
-now ignore NaN / Inf values. Currently some of the contour plotting / 3-d 
-routines do not handle NaN / Inf values. This functionality will 
-depend on whether the language binding used supports NaN / Inf values.
+1. Changes relative to PLplot 5.9.3 (the previous development release)
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
