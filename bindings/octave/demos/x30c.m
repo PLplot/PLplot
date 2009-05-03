@@ -1,4 +1,4 @@
-## $Id:$
+## $Id$
 ##
 ## Alpha color values demonstration.
 ##
