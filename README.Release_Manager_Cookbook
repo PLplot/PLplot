@@ -283,8 +283,9 @@ Prepare a file release:
 
 Login to sf.net.
 Go to the PLplot project page.
-Select file releases in the drop down admin menu at the top of the page.
-Click add release at the bottom of the page.
+Select "Download" from the list of links at the top of the page.
+Click "Manage Packages / Releases" on the downloads page.
+Click add release in the middle of the page.
 Enter the new release name and click "create this release".
 
 N.B. Release names guide our users to the release they want when they browse
@@ -314,7 +315,7 @@ monitoring the PLplot releases.
 
 Prepare the release notes:
 Return to the PLplot project page
-Select Admin -> News
+Select Summary -> News
 Click on submit to create a new news item.
 Load an old release news item in another browser window and use that as a 
 template for creating your new release news item. Make sure that you get
@@ -329,5 +330,7 @@ Immediate preparation for next release cycle
      significant changes between versions of PLplot.
   b. Update README.release file to reflect significant changes made between
      the current release and the last release.
+
+Update the web page following the instructions in sections (3) and (4)
 
 DONE!!!
