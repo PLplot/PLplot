@@ -30,6 +30,10 @@ set(d_STRING_INDICES
 "11"
 "12"
 "13"
+"17"
+"24"
+"25"
+"30"
 )
 
 if(BUILD_TEST)
