@@ -21,18 +21,10 @@ IF(CMAKE_USER_MAKE_RULES_OVERRIDE_Ada)
    INCLUDE(${CMAKE_USER_MAKE_RULES_OVERRIDE_Ada})
 ENDIF(CMAKE_USER_MAKE_RULES_OVERRIDE_Ada)
 
-
-# for most systems a module is the same as a shared library
-# so unless the variable CMAKE_MODULE_EXISTS is set just
-# copy the values from the LIBRARY variables
-IF(NOT CMAKE_MODULE_EXISTS)
-  SET(CMAKE_SHARED_MODULE_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_Ada_FLAGS})
-  SET(CMAKE_SHARED_MODULE_CREATE_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS})
-ENDIF(NOT CMAKE_MODULE_EXISTS)
-
 # Create a set of shared library variable specific to Ada
 # For 90% of the systems, these are the same flags as the C versions
 # so if these are not set just copy the flags from the c version
+
 IF(NOT CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS)
   SET(CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS})
 ENDIF(NOT CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS)
