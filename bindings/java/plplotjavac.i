@@ -1456,9 +1456,9 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(javaout) (int *p_argc, char **argv) {
    return $jnicall;
 }
-%typemap(in) (int *p_argc, char **argv) (jint size) {
+%typemap(in) (int *p_argc, char **argv) (int size) {
    int i = 0;
-   size = (*jenv)->GetArrayLength(jenv, $input);
+   size = (int)((*jenv)->GetArrayLength(jenv, $input));
    $1 = &size;
    $2 = (char **) malloc((size+1)*sizeof(char *));
    /* make a copy of each string */

@@ -64,7 +64,9 @@ woody).
 #define  PyArray_PLINT PyArray_INT
 #endif
 /* python-1.5 compatibility mode? */
-#define PySequence_Fast_GET_ITEM PySequence_GetItem
+#if !defined(PySequence_Fast_GET_ITEM)
+  #define PySequence_Fast_GET_ITEM PySequence_GetItem
+#endif
 #define PySequence_Size PySequence_Length
 %}
 
