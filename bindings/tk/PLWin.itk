@@ -67,6 +67,10 @@ itcl::class PLWin {
 	eval $plwin cmd plshade $args
     }
 
+    method plrandd {args} {
+        eval $plwin cmd plrandd $args
+    }
+
 # From here on down, we just insert what comes out of plitclgen (file
 # gen.itcl).  If you don't like the handling of one of these for some
 # reason, then add the method name to the ignore list in plitclgen,

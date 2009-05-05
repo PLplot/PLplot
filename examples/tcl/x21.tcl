@@ -85,8 +85,8 @@ proc x21 {{w loopback}} {
     $w cmd plseed 5489
 
     for {set i 0} {$i < $pts} {incr i} {
-        set xt [expr {($xmax-$xmin)*[plrandd]}]
-        set yt [expr {($ymax-$ymin)*[plrandd]}]
+        set xt [expr {($xmax-$xmin)*[$w cmd plrandd]}]
+        set yt [expr {($ymax-$ymin)*[$w cmd plrandd]}]
         if {$randn == 0} {
             x $i = [expr {$xt + $xmin}]
             y $i = [expr {$yt + $ymin}]

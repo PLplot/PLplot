@@ -101,7 +101,7 @@ proc x17 {{w loopback}} {
         after 10 ;# Wait for 10 ms
 
         set t       [expr {double($n) * $dt}]
-        set noise   [expr {[plrandd] - 0.5}]
+        set noise   [expr {[$w cmd plrandd] - 0.5}]
         set y1      [expr {$y1 + $noise}]
         set y2      [expr {sin($t*$PI/18.)}]
         set y3      [expr {$y2 * $noise}]
