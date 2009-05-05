@@ -96,8 +96,7 @@ for lang in c++ f77 f95 java octave python tcl perl ada adathick ocaml lua d; do
     for index in ${INDEX_LIST} ; do
 	if [ -f x${xsuffix}${index}${suffix}.psc ] ; then
 	    EXAMPLES_EXIST="yes"
-	    # Commented out for release in case win-bash doesn't have this.
-	    # break
+	    break
 	fi
     done
     if [ "$EXAMPLES_EXIST" = "yes" ] ; then
