@@ -28,7 +28,7 @@ set(CPACK_PACKAGE_VERSION_PATCH 3)
 #     library version numbers the same for the release.
 
 set(nistcd_SOVERSION 0)
-set(nistcd_VERSION ${nist_SOVERSION}.0.1)
+set(nistcd_VERSION ${nistcd_SOVERSION}.0.1)
 
 set(csirocsa_SOVERSION 0)
 set(csirocsa_VERSION ${csirocsa_SOVERSION}.0.1)
