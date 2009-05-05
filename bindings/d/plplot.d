@@ -366,6 +366,7 @@ alias c_plcol0 plcol0;
 alias c_plcol1 plcol1;
 alias c_plcont plcont;
 alias c_plcpstrm plcpstrm;
+alias c_plctime plctime;
 alias c_plend plend;
 alias c_plend1 plend1;
 alias c_plenv plenv;
@@ -604,9 +605,11 @@ void  c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky, PLIN
 void  plfcont(PLFLT  function(PLINT , PLINT , PLPointer )f2eval, PLPointer f2eval_data, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
 
 /* Copies state parameters from the reference stream to the current stream. */
+void c_plcpstrm(PLINT iplsr, PLBOOL flags);
 
-void  c_plcpstrm(PLINT iplsr, PLBOOL flags);
-
+/* Calculate continuous time from broken-down time for current stream. */
+void c_plctime(PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT *ctime);
+  
 /* Converts input values from relative device coordinates to relative plot */
 /* coordinates. */
 
