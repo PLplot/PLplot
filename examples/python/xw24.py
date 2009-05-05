@@ -1,5 +1,5 @@
-# $Id$
 # -*- coding: utf-8; -*-
+# $Id$
 #
 #  Unicode Pace Flag
 #
