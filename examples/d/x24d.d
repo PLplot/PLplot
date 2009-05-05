@@ -46,8 +46,9 @@
  */
 
 
-import plplot;
 import std.string;
+
+import plplot;
 
 static PLINT[] red   = [ 240, 204, 204, 204,   0,  39, 125 ];
 static PLINT[] green = [ 240,   0, 125, 204, 204,  80,   0 ];
