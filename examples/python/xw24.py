@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# $Id$
 # -*- coding: utf-8; -*-
 #
 #  Unicode Pace Flag
