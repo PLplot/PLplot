@@ -70,6 +70,7 @@ EXECUTABLES_list = \
 		 x29c$(EXEEXT) \
 		 x30c$(EXEEXT) \
 		 x31c$(EXEEXT) \
+		 x32c$(EXEEXT) \
 		 $(PLPLOTCANVAS_EXECUTABLES_list) \
 		 $(extXdrawable_EXECUTABLES_list) \
 		 $(extcairo_EXECUTABLES_list)
