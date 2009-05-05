@@ -146,6 +146,13 @@ else(ENABLE_DYNDRIVERS)
 	list(APPEND plplot${LIB_TAG}_LIB_SRCS ${QT_MOC_OUTFILES})
       endif(MOC_OPTIONS)
     endif(SOURCE_ROOT_NAME STREQUAL "qt")
+    
+    # qt device driver code within libplplot has some symbols that need to be
+    # visible for qt_example in installed examples/c++ directory to link 
+    # properly. 
+    if(BUILD_SHARED_LIBS AND SOURCE_ROOT_NAME STREQUAL "qt")
+      set(${SOURCE_ROOT_NAME}_COMPILE_FLAGS "${${SOURCE_ROOT_NAME}_COMPILE_FLAGS} -DUSINGDLL")
+    endif(BUILD_SHARED_LIBS AND SOURCE_ROOT_NAME STREQUAL "qt")
 
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
       set_source_files_properties(
