@@ -126,8 +126,8 @@ proc x24 {{w loopback}} {
     $w cmd plscmap0n 7
     $w cmd plscmap0 red green blue 7
 
-    plschr 0 4.0
-    plfont 1
+    $w cmd plschr 0 4.0
+    $w cmd plfont 1
 
     for {set i 0} {$i < 4} {incr i} {
 	$w cmd plcol0 [expr {$i + 1}]

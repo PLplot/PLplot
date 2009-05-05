@@ -71,7 +71,7 @@ proc x02_demo2 {w} {
     # Use max saturation
         set s 1.0
 
-        plhlsrgb $h $l $s r1 g1 b1
+        $w cmd plhlsrgb $h $l $s r1 g1 b1
 	# puts [format "%3d %15.9f %15.9f %15.9f %15.9f %15.9f %15.9f" $i1 $h $l $s $r1 $g1 $b1]
         if $see_the_bug {
             r $i1 = [expr int($r1 * 255.001)]
@@ -82,7 +82,7 @@ proc x02_demo2 {w} {
             set g2 [expr int($g1 * 255.001)]
             set b2 [expr int($b1 * 255.001)]
   	    # puts [format "%3d %3d %3d %3d" $i1 $r2 $g2 $b2]
-            plscol0 $i1 $r2 $g2 $b2
+            $w cmd plscol0 $i1 $r2 $g2 $b2
         }
     }
 
@@ -102,7 +102,7 @@ proc x02_demo2 {w} {
   	  puts [format "%3d %3d %3d %3d" $i $r1 $g1 $b1]
        }
        # The following call currently segfaults.
-       plscmap0 r g b $ntot
+       $w cmd plscmap0 r g b $ntot
     }
 
     x02_draw_windows $w 100 $offset

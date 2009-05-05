@@ -165,13 +165,12 @@ exit
 EOF
     cd ../tk
     pwd
-# Drop 2 to avoid 'invalid command name "plhlsrgb"' error.
 # Drop 14 because multiple devices do not seem to work in this context.
-# Drop 24 to avoid 'invalid command name "plschr"' error.
 # Drop 31 since it produces empty plot (by design).
     plserver <<EOF
 source tkdemos.tcl
 1
+2
 3
 4
 5
@@ -192,6 +191,7 @@ source tkdemos.tcl
 21
 22
 23
+24
 25
 26
 27
