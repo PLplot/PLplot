@@ -104,7 +104,7 @@
 	<p>Diagnostic demo to exercise all our set/get functions.  The result should be a properly-formatted empty plot with black background.</p>
 	\n"),
 	  array(32,  1, 1, "
-	<p>Demo of how to draw box-whisker / candlestick plots using plplot. These are commonly used for financial data.</p>
+	<p>Demo of how to draw box-whisker / candlestick plots using PLplot. These are commonly used for financial data.</p>
 	\n"));
 ?>
 
