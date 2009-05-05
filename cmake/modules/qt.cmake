@@ -40,7 +40,7 @@
 
 find_package(Qt4)
 if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
-  if(ENABLE_DYNDRIVERS AND QT4_FOUND)
+  if(QT4_FOUND)
     if(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
       set(QT_USE_QTSVG 1)
     endif(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
@@ -55,7 +55,7 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
     set(qt_RPATH ${QT_LIBRARY_DIR})
     #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${qt_LINK_FLAGS})
-  else(ENABLE_DYNDRIVERS AND QT4_FOUND)
+  else(QT4_FOUND)
     set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
     set(PLD_jpgqt OFF CACHE BOOL "Enable Qt jpg device" FORCE)
     set(PLD_pngqt OFF CACHE BOOL "Enable Qt png device" FORCE)
@@ -66,7 +66,7 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
     set(PLD_qtwidget OFF CACHE BOOL "Enable Qt interactive device" FORCE)
     set(PLD_svgqt OFF CACHE BOOL "Enable Qt SVG device" FORCE)
     set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
-  endif(ENABLE_DYNDRIVERS AND QT4_FOUND)
+  endif(QT4_FOUND)
 endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
 
 if(PLD_extqt)
