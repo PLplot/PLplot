@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# $Id$
 # Copyright 2002 Gary Bishop
 # Copyright 2004 Alan W. Irwin
 # This file is part of PLplot.
