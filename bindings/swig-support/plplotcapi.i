@@ -710,7 +710,7 @@ plseed(unsigned int s);
 void
 plsesc(char esc);
 
-%feature("autodoc", "Process input strings, treating them as an option and argument pair. The first is for the external API, the second the work routine declared here for backward compatibilty.") plsetopt;
+%feature("autodoc", "Process input strings, treating them as an option and argument pair. The first is for the external API, the second the work routine declared here for backward compatibility.") plsetopt;
 PLINT
 plsetopt(const char *opt, const char *optarg);
 
