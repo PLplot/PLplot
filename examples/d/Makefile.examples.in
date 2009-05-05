@@ -37,6 +37,7 @@ EXECUTABLES_list = \
 		 x11d$(EXEEXT) \
 		 x12d$(EXEEXT) \
 		 x13d$(EXEEXT) \
+		 x23d$(EXEEXT) \
 		 x24d$(EXEEXT) \
 		 x25d$(EXEEXT) \
 		 x27d$(EXEEXT) \
