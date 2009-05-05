@@ -1257,7 +1257,6 @@ void plD_eop_xcairo(PLStream *pls)
   XFlush(aStream->XDisplay);
 
   /* Loop, handling selected events, till the user elects to close the plot. */
-  printf("Click on the plot and key <Return> to exit.\n");
   event_mask = ButtonPressMask | KeyPressMask | ExposureMask;
   XSelectInput(aStream->XDisplay, aStream->XWindow, event_mask);
   while(!aStream->exit_event_loop){
@@ -1279,8 +1278,6 @@ void plD_eop_xcairo(PLStream *pls)
   }
   aStream->exit_event_loop = 0;
 
-  /*  printf("Key <Return> to finish\n"); */
-  /* getc(stdin); */
 }
 
 /*---------------------------------------------------------------------
