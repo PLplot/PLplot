@@ -255,17 +255,41 @@ void plD_bop_cairo(PLStream *pls)
   Draw a line in the current color from (x1,y1) to (x2,y2).
   ----------------------------------------------------------------------*/
 
+/*---------------------------------------------------------------------
+  (get|set)_line_properties
+
+  (Get|Set) the current Cairo line drawing properties.
+  ---------------------------------------------------------------------*/
+void get_line_properties(PLCairo *aStream, cairo_line_join_t *join, cairo_line_cap_t *cap)
+{
+  *join = cairo_get_line_join(aStream->cairoContext);
+  *cap = cairo_get_line_cap(aStream->cairoContext);
+}
+
+void set_line_properties(PLCairo *aStream, cairo_line_join_t join, cairo_line_cap_t cap)
+{
+    cairo_set_line_join(aStream->cairoContext, join);
+    cairo_set_line_cap(aStream->cairoContext, cap);
+}
+
 void plD_line_cairo(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
   PLCairo *aStream;
+  cairo_line_join_t old_join;
+  cairo_line_cap_t old_cap;
 
   aStream = (PLCairo *)pls->dev;
 
   set_current_context(pls);
 
+  get_line_properties(aStream, &old_join, &old_cap);
+  set_line_properties(aStream, old_join, CAIRO_LINE_CAP_ROUND);
+
   cairo_move_to(aStream->cairoContext, aStream->downscale * (double) x1a, aStream->downscale * (double) y1a);
   cairo_line_to(aStream->cairoContext, aStream->downscale * (double) x2a, aStream->downscale * (double) y2a);
   cairo_stroke(aStream->cairoContext);
+
+  set_line_properties(aStream, old_join, old_cap);
 }
 
 /*---------------------------------------------------------------------
@@ -277,11 +301,18 @@ void plD_line_cairo(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 void plD_polyline_cairo(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
   PLCairo *aStream;
+  cairo_line_join_t old_join;
+  cairo_line_cap_t old_cap;
 
   aStream = (PLCairo *)pls->dev;
 
+  get_line_properties(aStream, &old_join, &old_cap);
+  set_line_properties(aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_BUTT);
+
   poly_line(pls, xa, ya, npts);
   cairo_stroke(aStream->cairoContext);
+
+  set_line_properties(aStream, old_join, old_cap);
 }
 
 /*---------------------------------------------------------------------
@@ -994,10 +1025,10 @@ void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts)
   aStream = (PLCairo *)pls->dev;
 
   /* Save the previous line drawing style */
-  old_line_cap = cairo_get_line_cap(aStream->cairoContext);
-  old_line_join = cairo_get_line_join(aStream->cairoContext);
-  cairo_set_line_cap(aStream->cairoContext, CAIRO_LINE_CAP_BUTT);
-  cairo_set_line_join(aStream->cairoContext, CAIRO_LINE_JOIN_BEVEL);
+  get_line_properties(aStream, &old_line_join, &old_line_cap);
+
+  /* These line properties make for a nicer looking polygon mesh */
+  set_line_properties(aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_BUTT);
 
   /* Draw the polygons */
   cairo_move_to(aStream->cairoContext, aStream->downscale * (double) xa[0], aStream->downscale * (double) ya[0]);
@@ -1016,8 +1047,7 @@ void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts)
     cairo_fill(aStream->cairoContext);
 
   /* Restore the previous line drawing style */
-  cairo_set_line_cap(aStream->cairoContext, old_line_cap);
-  cairo_set_line_join(aStream->cairoContext, old_line_join);
+  set_line_properties(aStream, old_line_join, old_line_cap);
 }
 
 /*---------------------------------------------------------------------
