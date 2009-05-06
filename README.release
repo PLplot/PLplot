@@ -87,6 +87,9 @@ INDEX
 
 1. Changes relative to PLplot 5.9.3 (the previous development release)
 
+1.1 Various bug fixes
+1.2 Cairo driver improvements
+
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -121,9 +124,24 @@ examples
 2.28 A powerful qt device driver has been implemented
 2.29 The PLplot API is now accessible from Qt GUI applications
 2.30 NaN / Inf support for some PLplot functions
-
+2.31 Various bug fixes
+2.32 Cairo driver improvements
 
 1. Changes relative to PLplot 5.9.3 (the previous development release)
+
+1.1 Various bug fixes
+
+Various bugs in the 5.9.3 release have been fixed including:
+
+- Include missing file needed for the aqt driver on Mac OS X
+- Missing library version number for nistcd
+- Fixes for the qt examples with dynamic drivers disabled
+- Fixes to several tcl examples so they work with plserver
+
+1.2 Cairo driver improvements
+
+Improvements to the cairo driver to give better results for bitmap 
+formats when used with anti-aliasing file viewers.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -525,3 +543,16 @@ now ignore NaN / Inf values. Currently some of the contour plotting / 3-d
 routines do not handle NaN / Inf values. This functionality will 
 depend on whether the language binding used supports NaN / Inf values.
 
+2.31 Various bug fixes
+
+Various bugs in the 5.9.3 release have been fixed including:
+
+- Include missing file needed for the aqt driver on Mac OS X
+- Missing library version number for nistcd
+- Fixes for the qt examples with dynamic drivers disabled
+- Fixes to several tcl examples so they work with plserver
+
+2.32 Cairo driver improvements
+
+Improvements to the cairo driver to give better results for bitmap 
+formats when used with anti-aliasing file viewers.
