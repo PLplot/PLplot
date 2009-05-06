@@ -1335,6 +1335,14 @@ void QtPLWidget::mouseReleaseEvent ( QMouseEvent * event )
 	}
 }
 
+void QtPLWidget::keyPressEvent(QKeyEvent* event)
+{
+	if(event->key()==Qt::Key_Enter || event->key()==Qt::Key_Return)
+	{
+		handler.DeviceChangedPage(this);
+	}
+}
+
 void QtPLWidget::closeEvent(QCloseEvent* event)
 {
 	handler.DeviceClosed(this);

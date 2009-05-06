@@ -298,6 +298,7 @@ class PLDLLIMPEXP_DRIVER QtPLWidget: public QWidget, public QtPLDriver
 
 	protected slots:
 		void mouseReleaseEvent ( QMouseEvent * event );
+		void keyPressEvent(QKeyEvent* event);
 		void closeEvent(QCloseEvent* event);
 		void nextPage();
 };
