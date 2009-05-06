@@ -18,7 +18,6 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 */
-#include "qsastime_testlib.h"
 #include "qsastime.h"
 #include "qsastimeP.h"
 #include <time.h>
@@ -45,98 +44,6 @@
 #define TEST16 0x8000
 /* MJD for Jan 01, 1970 00:00:00 Gregorian, the Unix epoch.*/
 #define MJD_1970 40587
-
-/*
-   MCVC and possibly other systems do not have functions setenv and unsetenv.
-
-   Below are versions of setenv and unsetenv implemented in terms of putenv.
-
-   Configuration :
-   1. Macro HAVE_SETENV
-   #define to 1 if system has SETENV Otherwise set to 0.
-
-   2. Macro HAVE_PUTENV
-   #define to 1 if system has PUTENV Otherwise set to 0.
-   Not used if HAVE_SETENV 1
-
-   3. Macro CAN_FREE_PUTENV_BUFFER
-
-   For some systems the string pointed to by the putenv argument becomes
-   part of the environment.  A program should not alter or free the string,
-   and should not use stack or other transient string variables as arguments
-   to putenv().
-
-   For MSVC it appears from testing that putenv copies its values,
-   so we can cleanup as we go.
-
-   Where the system copies the value, #define CAN_FREE_PUTENV_BUFFER 1
-
-   KNOWN PROBLEM
-   For MSVC setenv("ev","",1) UNSETS the environment variable rather than
-   setting it to and empty string.
-
-   */
-#if !defined(NO_LONG_LONG) && !defined(NO_ENV_API)
-
-#ifdef LONGLONG
-typedef long long int longlong;
-#endif
-#ifdef __INT64
-typedef __int64 longlong;
-#endif
-
-#ifdef HAVE_UNDERSCORE_PUTENV
-#define putenv _putenv
-#define HAVE_PUTENV
-#endif
-
-#if defined(HAVE_PUTENV)
-
-static int putenv_wrapper(const char *name, const char *value)
-{
-  int rc = -1;
-  int len;
-  char* penvArg;
-
-  len = strlen(name) + strlen(value) +2;
-  penvArg = (char*)malloc(len);
-  if(!penvArg){
-    errno =ENOMEM;
-    return -1;
-  }
-
-  sprintf(penvArg,"%s=%s",name,value);
-  rc = _putenv(penvArg);
-
-#ifdef CAN_FREE_PUTENV_BUFFER
-  free(penvArg);
-#else
-  /* without more knowledge of putenv implementation
-     we cannot free penvArg */
-#endif
-
-  return rc;
-}
-int setenv(const char *name, const char *value, int overwrite)
-{
-  if (!overwrite && getenv(name)) {
-     /* what should errno be set to in this case*/
-    errno = EINVAL;
-    return -1;
-  }
-  return putenv_wrapper(name,value);
-}
-
-int unsetenv(const char *name)
-{
-  if (!getenv(name)) {
-    errno = EINVAL;
-    return -1;
-  }
-  return putenv_wrapper(name,"");
-}
-
-#endif
 
 /* Recommended (by Linux timegm man page) POSIX equivalent of Linux timegm C library function */
 time_t my_timegm(struct tm *tm)
@@ -195,9 +102,9 @@ int testlib_broken_down_time(int year, int month, int day, int hour, int min, do
     secs_past_epoch = my_timegm(ptm);
     delta_secs = abs(secs_past_epoch1-secs_past_epoch);
     if(delta_secs !=0) {
-      printf("setFromUT secs_past_epoch = %lld seconds\n", (longlong) secs_past_epoch1);
-      printf("my_timegm secs_past_epoch = %lld seconds\n", (longlong) secs_past_epoch);
-      printf("delta secs_past_epoch = %lld seconds\n", (longlong) (secs_past_epoch1 - secs_past_epoch));
+      printf("setFromUT secs_past_epoch = %lld seconds\n", (long long) secs_past_epoch1);
+      printf("my_timegm secs_past_epoch = %lld seconds\n", (long long) secs_past_epoch);
+      printf("delta secs_past_epoch = %lld seconds\n", (long long) (secs_past_epoch1 - secs_past_epoch));
       printf("test failed with inconsistency between setFromUT and my_timegm\n");
       return 1;
     }
@@ -346,9 +253,9 @@ int testlib_MJD(const MJDtime *MJD, int forceJulian, int inner_test_choice, int 
   if(!forceJulian && (inner_test_choice & TEST04)) {
     secs_past_epoch1 = my_timegm(ptm);
     if(!(secs_past_epoch == secs_past_epoch1)) {
-      printf("secs_past_epoch calculated from input = %lld\n", (longlong) secs_past_epoch);
-      printf("secs_past_epoch calculated from my_timegm = %lld\n", (longlong) secs_past_epoch1);
-      printf("delta secs_past_epoch = %lld seconds\n", (longlong) (secs_past_epoch1 - secs_past_epoch));
+      printf("secs_past_epoch calculated from input = %lld\n", (long long) secs_past_epoch);
+      printf("secs_past_epoch calculated from my_timegm = %lld\n", (long long) secs_past_epoch1);
+      printf("delta secs_past_epoch = %lld seconds\n", (long long) (secs_past_epoch1 - secs_past_epoch));
       printf("test failed with inconsistency between breakDownMJD and its C library based inverse, my_timegm\n");
       return 1;
     }
@@ -384,12 +291,14 @@ int main()
 
   printf("sizeof(time_t) = %d\n",(int)sizeof(time_t));
   if(sizeof(time_t) < 8) {
-    printf("WARNING: time_t is too small on this platform to represent the extremely large date range used for many of these tests.  Note, the limitation is in the C library routines (gmtime and mktime) used for these test comparisons and not libqsastime itself.\n");
+    printf("tests abandoned because time_t is too small on this platform to represent the extremely large date range used for many of these tests.  Note, the limitation is in the C library routines (gmtime and mktime) used for these test comparisons and not libqsastime itself.\n");
+    return 1;
   }
 
   printf("sizeof(int) = %d\n",(int)sizeof(int));
   if(sizeof(int) !=4) {
-    printf("WARNING: int must be 32-bits to test this library properly for how well it will potentially perform on 32-bit platforms\n");
+    printf("tests abandoned because int must be 32-bits to test this library properly for how well it will potentially perform on 32-bit platforms\n");
+    return 2; 
   }
   /* strftime affected by locale so force 0 timezone for this complete test. */
   setenv("TZ", "", 1);
@@ -639,11 +548,3 @@ int main()
 
   return 0;
 }
-
-#else /* !defined(NO_LONG_LONG) && !defined(NO_ENV_API) */
-int main() {
-
-   printf("test abandoned because there is no useable 64-bits integer type for this\n\
-compiler/platform or there is no useable environment API\n");
-}
-#endif /* !defined(NO_LONG_LONG) && !defined(NO_ENV_API) */
