@@ -1021,7 +1021,8 @@ void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts)
   PLCairo *aStream;
   cairo_line_join_t old_line_join;
   cairo_line_cap_t old_line_cap;
- 
+  cairo_antialias_t aa_state;
+
   aStream = (PLCairo *)pls->dev;
 
   /* Save the previous line drawing style */
@@ -1039,9 +1040,12 @@ void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts)
       (double)pls->curcolor.g/255.0,
       (double)pls->curcolor.b/255.0,
       (double)pls->curcolor.a);
-  cairo_set_line_width(aStream->cairoContext, 1.0);
-  if(pls->curcolor.a>0.99) {
+  aa_state = cairo_get_antialias(aStream->cairoContext);
+  /* Add an extra outline stroke to the polygon unless the plotting color is
+     not opaque or antialiasing is disabled. */
+  if((pls->curcolor.a > 0.99) || (aa_state != CAIRO_ANTIALIAS_NONE)) {
     cairo_fill_preserve(aStream->cairoContext);
+    cairo_set_line_width(aStream->cairoContext, 1.0);
     cairo_stroke(aStream->cairoContext);
   } else
     cairo_fill(aStream->cairoContext);
