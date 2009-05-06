@@ -62,18 +62,25 @@ struct QSASConfigStruct
   
 };
 
-/* ToDo.  Configure these so all are static if testing is not
-   configured? */
-void bhunt_search(const void *key, const void *base, int n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum));
+/* Set if the qsastime library is being tested. */
+#cmakedefine TEST_QSASTIME
 
-int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
-void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian);
-size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian, int if60secformat);
-void normalize_MJD(MJDtime *MJD);
-const char * getDayOfWeek(const MJDtime *MJD);
-const char * getLongDayOfWeek( const MJDtime *MJD);
-const char * getMonth(int m);
-const char * getLongMonth(int m);
-void getYAD(int *year, int *ifleapyear, int *doy, const MJDtime *MJD, int forceJulian);
+#ifdef TEST_QSASTIME
+#define QSASTIME_static
+#else
+#define QSASTIME_static static
+#endif
+
+QSASTIME_static void bhunt_search(const void *key, const void *base, int n, size_t size, int *low, int (*ge)(const void *keyval, const void *datum));
+
+QSASTIME_static int setFromUT(int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian);
+QSASTIME_static void breakDownMJD(int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian);
+QSASTIME_static size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, int forceJulian, int if60secformat);
+QSASTIME_static void normalize_MJD(MJDtime *MJD);
+QSASTIME_static const char * getDayOfWeek(const MJDtime *MJD);
+QSASTIME_static const char * getLongDayOfWeek( const MJDtime *MJD);
+QSASTIME_static const char * getMonth(int m);
+QSASTIME_static const char * getLongMonth(int m);
+QSASTIME_static void getYAD(int *year, int *ifleapyear, int *doy, const MJDtime *MJD, int forceJulian);
 
 #endif
