@@ -160,3 +160,6 @@ be identical in all cases because the C library time routines that
 qsastime_testlib calls are made independent of time zone issues by forcing a
 zero time zone.  (The qsastime library itself is, of course, independent of
 time zone issues.)
+
+N.B. this comprehensive test of the qsastime library takes 12
+minutes to run on a 2.4GHz PC.
