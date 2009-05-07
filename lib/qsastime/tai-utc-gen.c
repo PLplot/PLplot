@@ -148,11 +148,11 @@ int main (int argc, char *argv[])
 
   fprintf(fw, "%s\n",header);
 
+  fprintf(fw, "typedef struct {\n\tint base_day;\n\tdouble time_sec_tai;\n\tdouble time_sec_utc;\n\tdouble size_prev_leap_sec;\n\tdouble offset1;\n\tint offset2;\n\tdouble slope;\n} TAI_UTC;\n\n");
+
   fprintf(fw, "const int number_of_entries_in_tai_utc_table=%d;\n\n",number_of_lines);
 
-  fprintf(fw, "typedef struct {\n\tint base_day;\n\tdouble time_sec;\n\tdouble size_prev_leap_sec;\n\tdouble offset1;\n\tint offset2;\n\tdouble slope;\n} TAI_UTC;\n\n");
-
-  fprintf(fw, "const TAI_UTC TAI_TO_UTC_lookup_table[%d] = {\n",number_of_lines);
+  fprintf(fw, "const TAI_UTC TAI_UTC_lookup_table[%d] = {\n",number_of_lines);
   for (i=0;i<number_of_lines;i++) {
     sec = offset1[i] + (double)(MJDstart[i]-offset2[i])*slope[i];
     if(i==0)
@@ -166,13 +166,7 @@ int main (int argc, char *argv[])
 	 unambiguously. */
       leap_sec[i] = sec - (offset1[i-1] + (double)(MJDstart[i]+sec/86400.-offset2[i-1])*slope[i-1])/(1. + slope[i-1]/86400.);
     if(fabs(leap_sec[i]) < 1.e-14) leap_sec[i] = 0.;
-    fprintf(fw,"{%d, %15.8f, %20.14f, %15.8f, %d, %15.8f},\n", MJDstart[i], sec, leap_sec[i], offset1[i], offset2[i], slope[i]);
-    }
-  fprintf(fw,"};\n");
-
-  fprintf(fw, "const TAI_UTC UTC_TO_TAI_lookup_table[%d] = {\n",number_of_lines);
-  for (i=0;i<number_of_lines;i++) {
-    fprintf(fw,"{%d, %15.8f, %20.14f, %15.8f, %d, %15.8f},\n", MJDstart[i], 0., leap_sec[i], offset1[i], offset2[i], slope[i]);
+    fprintf(fw,"{%d, %15.8f, 0., %20.14f, %15.8f, %d, %15.8f},\n", MJDstart[i], sec, leap_sec[i], offset1[i], offset2[i], slope[i]);
     }
   fprintf(fw,"};\n");
 

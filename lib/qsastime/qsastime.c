@@ -63,7 +63,8 @@ static const int MonthStartDOY[] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273,
 static const int MonthStartDOY_L[] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
 
 /* Static function declarations. */
-static int geMJDtimeTAI_UTC(const MJDtime *number1, const TAI_UTC *number2);
+static int geMJDtime_TAI(const MJDtime *number1, const TAI_UTC *number2);
+static int geMJDtime_UTC(const MJDtime *number1, const TAI_UTC *number2);
 static double leap_second_TAI(const MJDtime *MJD_TAI, int *inleap, int *index);
 /* End of static function declarations. */
 
@@ -913,7 +914,7 @@ size_t strfMJD(char * buf, size_t len, const char *format, const MJDtime *MJD, i
   return posn;
 }
 
-int geMJDtimeTAI_UTC(const MJDtime *number1, const TAI_UTC *number2) {
+int geMJDtime_TAI(const MJDtime *number1, const TAI_UTC *number2) {
   /* Returns true if number1 >= number2. */
   /* N.B. both number1 and number2  must be normalized. */
   if(number1->base_day > number2->base_day) {
@@ -921,7 +922,19 @@ int geMJDtimeTAI_UTC(const MJDtime *number1, const TAI_UTC *number2) {
   } else if (number1->base_day < number2->base_day) {
     return 0;
   } else {
-    return (number1->time_sec >= number2->time_sec);
+    return (number1->time_sec >= number2->time_sec_tai);
+  }
+}
+
+int geMJDtime_UTC(const MJDtime *number1, const TAI_UTC *number2) {
+  /* Returns true if number1 >= number2. */
+  /* N.B. both number1 and number2  must be normalized. */
+  if(number1->base_day > number2->base_day) {
+    return 1;
+  } else if (number1->base_day < number2->base_day) {
+    return 0;
+  } else {
+    return (number1->time_sec >= number2->time_sec_utc);
   }
 }
 
@@ -933,17 +946,17 @@ double leap_second_TAI(const MJDtime *MJD_TAI, int *inleap, int *index) {
   MJDtime MJD_value, *MJD = &MJD_value;
   double leap;
   int debug=0;
-  /* N.B. geMJDtimeTAI_UTC only works for normalized values. */
+  /* N.B. geMJDtime_TAI only works for normalized values. */
   *MJD = *MJD_TAI;
   normalize_MJD(MJD);
-  /* Search for index such that TAI_TO_UTC_lookup_table[*index] <= MJD(TAI) < TAI_TO_UTC_lookup_table[*index+1] */
-  bhunt_search(MJD, TAI_TO_UTC_lookup_table, number_of_entries_in_tai_utc_table, sizeof(TAI_UTC), index, (int (*)(const void *, const void *)) geMJDtimeTAI_UTC);
+  /* Search for index such that TAI_UTC_lookup_table[*index] <= MJD(TAI) < TAI_UTC_lookup_table[*index+1] */
+  bhunt_search(MJD, TAI_UTC_lookup_table, number_of_entries_in_tai_utc_table, sizeof(TAI_UTC), index, (int (*)(const void *, const void *)) geMJDtime_TAI);
   if(debug == 2)
     fprintf(stderr, "*index = %d\n", *index);
   if(*index == -1) {
     /* MJD is less than first table entry. */
     /* Debug: check that condition is met */
-    if(debug && geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[*index+1])) {
+    if(debug && geMJDtime_TAI(MJD, &TAI_UTC_lookup_table[*index+1])) {
       fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for *index = %d\n", *index);
       exit(EXIT_FAILURE);
     }
@@ -954,11 +967,11 @@ double leap_second_TAI(const MJDtime *MJD_TAI, int *inleap, int *index) {
     /* Calculate this offset strictly from offset1.  The slope term
        doesn't enter because offset2 is the same as the UTC of the
        first epoch of the table. */
-    return -TAI_TO_UTC_lookup_table[*index+1].offset1;
+    return -TAI_UTC_lookup_table[*index+1].offset1;
   } else if(*index == number_of_entries_in_tai_utc_table-1) {
     /* MJD is greater than or equal to last table entry. */ 
     /* Debug: check that condition is met */
-    if(debug && !geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[*index])) {
+    if(debug && !geMJDtime_TAI(MJD, &TAI_UTC_lookup_table[*index])) {
       fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for *index = %d\n", *index);
       exit(EXIT_FAILURE);
     }
@@ -967,26 +980,26 @@ double leap_second_TAI(const MJDtime *MJD_TAI, int *inleap, int *index) {
     /* Use final offset for MJD values after last table entry. 
        The slope term doesn't enter because modern values of the slope
        are zero.*/
-    return -TAI_TO_UTC_lookup_table[*index].offset1;
+    return -TAI_UTC_lookup_table[*index].offset1;
   } else if(*index >= 0 && *index < number_of_entries_in_tai_utc_table) {
     /* table[*index] <= MJD < table[*index+1]. */ 
     /* Debug: check that condition is met */
-    if(debug && !(geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[*index]) && !geMJDtimeTAI_UTC(MJD, &TAI_TO_UTC_lookup_table[*index+1]))) {
+    if(debug && !(geMJDtime_TAI(MJD, &TAI_UTC_lookup_table[*index]) && !geMJDtime_TAI(MJD, &TAI_UTC_lookup_table[*index+1]))) {
       fprintf(stderr, "MJD = {%d, %f}\n", MJD->base_day, MJD->time_sec);
       fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for *index = %d\n", *index);
       exit(EXIT_FAILURE);
     }
-    leap = -(TAI_TO_UTC_lookup_table[*index].offset1 + ((MJD->base_day-TAI_TO_UTC_lookup_table[*index].offset2) + MJD->time_sec/SecInDay)*TAI_TO_UTC_lookup_table[*index].slope)/(1. + TAI_TO_UTC_lookup_table[*index].slope/SecInDay);
+    leap = -(TAI_UTC_lookup_table[*index].offset1 + ((MJD->base_day-TAI_UTC_lookup_table[*index].offset2) + MJD->time_sec/SecInDay)*TAI_UTC_lookup_table[*index].slope)/(1. + TAI_UTC_lookup_table[*index].slope/SecInDay);
     /* Convert MJD(TAI) to normalized MJD(UTC). */
     MJD->time_sec += leap;
     normalize_MJD(MJD);
     /* If MJD(UT) is in the next interval of the corresponding
-       UTC_TO_TAI_lookup_table, then we are right in the middle of a
+       TAI_UTC_lookup_table, then we are right in the middle of a
        leap interval (recently a second but for earlier epochs it could be
        less) insertion.  Note this logic even works when leap intervals
        are taken away from UTC (i.e., leap is positive) since in that
        case the UTC *index always corresponds to the TAI *index. */
-    *inleap = geMJDtimeTAI_UTC(MJD, &UTC_TO_TAI_lookup_table[*index+1]);
+    *inleap = geMJDtime_UTC(MJD, &TAI_UTC_lookup_table[*index+1]);
     return leap;
   } else {
     fprintf(stderr, "libqsastime (leap_second_TAI) logic ERROR: bad *index = %d\n", *index);
