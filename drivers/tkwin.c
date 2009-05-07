@@ -364,8 +364,7 @@ plD_open_tkwin(PLStream *pls)
 	 * abort operations now
 	 */
 	if (pls->plPlotterPtr == NULL) {
-	    fprintf(stderr, "No tk plframe widget to connect to\n");
-	    exit(1);
+	    plexit("No tk plframe widget to connect to");
 	}
 	/* Old version for MacOS Tk8.0 */
 	/*
@@ -389,8 +388,7 @@ plD_open_tkwin(PLStream *pls)
 	tkwd->display = XOpenDisplay(pls->FileName);
 #endif
 	if (tkwd->display == NULL) {
-	    fprintf(stderr, "Can't open display\n");
-	    exit(1);
+	    plexit( "Can't open display");
 	}
 	tkwd->displayName = pls->FileName;
 	tkwd->screen = DefaultScreen(tkwd->display);

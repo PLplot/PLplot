@@ -925,12 +925,11 @@ OpenXwin(PLStream *pls)
 #ifdef HAVE_PTHREAD
 	if (usepthreads)
 	  if (! XInitThreads())
-	    plexit("xwin: XInitThreads() not successful.\n");
+	    plexit("xwin: XInitThreads() not successful.");
 #endif
 	xwd->display = XOpenDisplay(pls->FileName);
 	if (xwd->display == NULL) {
-	    fprintf(stderr, "Can't open display\n");
-	    exit(1);
+	    plexit("Can't open display");
 	}
 	xwd->displayName = pls->FileName;
 	xwd->screen = DefaultScreen(xwd->display);
@@ -2453,8 +2452,7 @@ GetVisual(PLStream *pls)
 		}
 	    }
 	    if (!found) {
-		printf( "Unable to get a StaticColor visual.\n" );
-		exit(1);
+		plexit( "Unable to get a StaticColor visual." );
 	    }
 	    printf( "Found StaticColor visual, depth=%d\n", xwd->depth );
 	}

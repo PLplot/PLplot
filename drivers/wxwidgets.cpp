@@ -360,8 +360,7 @@ wxPLDevBase* common_init(  PLStream *pls )
     break;
   }
 	if( dev == NULL) {
-    fprintf( stderr, "Insufficient memory\n" );
-    exit( 0 );
+    plexit( "Insufficient memory" );
   }
   pls->dev = (void*)dev;
  
@@ -1215,7 +1214,7 @@ static void install_buffer( PLStream *pls )
     wxTRY {
       wxPLGetApp().CallOnInit();
     }
-    wxCATCH_ALL( wxPLGetApp().OnUnhandledException(); fprintf(stderr, "Can't init wxWidgets!\n"); exit(0); )
+    wxCATCH_ALL( wxPLGetApp().OnUnhandledException(); plexit( "Can't init wxWidgets!"); )
     initApp=true;
   }
   
@@ -1301,7 +1300,7 @@ static void wxRunApp( PLStream *pls, bool runonce )
 		wxPLGetApp().OnRun();   /* start wxWidgets application */
     callOnExit.exit=false;
   }
-  wxCATCH_ALL( wxPLGetApp().OnUnhandledException(); fprintf(stderr, "Problem running wxWidgets!\n"); exit(0); )
+  wxCATCH_ALL( wxPLGetApp().OnUnhandledException(); plexit("Problem running wxWidgets!"); )
 
   if( dev->exit ) {
     wxPLGetApp().OnExit();
