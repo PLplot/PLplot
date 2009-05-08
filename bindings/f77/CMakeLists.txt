@@ -124,11 +124,23 @@ RUNTIME DESTINATION ${BIN_DIR}
 )
 
 ## Build fortran part of F77 bindings
-set(plplotf77${LIB_TAG}_LIB_SRCS
-strutil.f
-sfstubs.f
-configurable.f
-)
+if(STATIC_OPTS)
+  # Put the file configurable.f in a separate static library
+  set(plplotf77opts${LIB_TAG}_LIB_SRCS
+  configurable.f
+  )
+  set(plplotf77${LIB_TAG}_LIB_SRCS
+  strutil.f
+  sfstubs.f
+  )
+else(STATIC_OPTS)
+  set(plplotf77${LIB_TAG}_LIB_SRCS
+  strutil.f
+  sfstubs.f
+  configurable.f
+  )
+endif(STATIC_OPTS)
+
 
 if(WIN32 AND BUILD_SHARED_LIBS AND NOT CYGWIN AND NOT MINGW)
   SET(plplotf77${LIB_TAG}_LIB_SRCS ${plplotf77${LIB_TAG}_LIB_SRCS} plplotf77.def)
@@ -136,7 +148,13 @@ endif(WIN32 AND BUILD_SHARED_LIBS AND NOT CYGWIN AND NOT MINGW)
 
 add_library(plplotf77${LIB_TAG} ${plplotf77${LIB_TAG}_LIB_SRCS})
 
-target_link_libraries(plplotf77${LIB_TAG}  plplotf77c${LIB_TAG})
+if(STATIC_OPTS)
+  add_library(plplotf77opts${LIB_TAG} STATIC ${plplotf77opts${LIB_TAG}_LIB_SRCS})
+  target_link_libraries(plplotf77${LIB_TAG} plplotf77c${LIB_TAG})
+  target_link_libraries(plplotf77opts${LIB_TAG} plplotf77${LIB_TAG} plplotf77c${LIB_TAG})
+else(STATIC_OPTS)
+  target_link_libraries(plplotf77${LIB_TAG}  plplotf77c${LIB_TAG})
+endif(STATIC_OPTS)
 
 if(USE_RPATH)
   set_target_properties(plplotf77${LIB_TAG}
