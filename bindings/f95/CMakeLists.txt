@@ -106,12 +106,23 @@ if(ENABLE_f95)
 
 
   ## Build fortran part of F95 bindings
-  set(plplotf95${LIB_TAG}_LIB_SRCS
-    strutil.f90
-    configurable.f90
-    sfstubsf95.f90
-    sfstubs.h
+  if(STATIC_OPTS)
+    set(plplotf95opts${LIB_TAG}_LIB_SRCS
+      configurable.f90
     )
+    set(plplotf95${LIB_TAG}_LIB_SRCS
+      strutil.f90
+      sfstubsf95.f90
+      sfstubs.h
+      )
+  else(STATIC_OPTS)
+    set(plplotf95${LIB_TAG}_LIB_SRCS
+      strutil.f90
+      configurable.f90
+      sfstubsf95.f90
+      sfstubs.h
+      )
+  endif(STATIC_OPTS)
 
   if(WIN32 AND BUILD_SHARED_LIBS AND NOT MINGW AND NOT CYGWIN)
     SET(plplotf95${LIB_TAG}_LIB_SRCS ${plplotf95${LIB_TAG}_LIB_SRCS} plplotf95.def)
@@ -123,7 +134,13 @@ if(ENABLE_f95)
 
   add_library(plplotf95${LIB_TAG} ${plplotf95${LIB_TAG}_LIB_SRCS})
 
-  target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
+  if(STATIC_OPTS)
+    add_library(plplotf95opts${LIB_TAG} STATIC ${plplotf95opts${LIB_TAG}_LIB_SRCS})
+    target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
+    target_link_libraries(plplotf95opts${LIB_TAG}  plplotf95${LIB_TAG} plplotf95c${LIB_TAG})
+  else(STATIC_OPTS)
+    target_link_libraries(plplotf95${LIB_TAG}  plplotf95c${LIB_TAG})
+  endif(STATIC_OPTS)
 
   if(USE_RPATH)
     set_target_properties(plplotf95${LIB_TAG}
