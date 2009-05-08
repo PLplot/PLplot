@@ -57,10 +57,8 @@ if(ENABLE_f77 OR ENABLE_f95)
   # Set installation location for f95 modules.
   set(F95_MOD_DIR ${LIB_DIR}/fortran/modules/${PACKAGE})
 
-  # Check if f77 command line parsing is possible
-  if(ENABLE_f77)
-    include(TestF77CmdLine)
-  endif(ENABLE_f77)
+  # Check if f77/f95 style command line parsing is possible
+  include(TestF77CmdLine)
 
   # Check if isnan is available as an fortran function
   include(TestFortranIsnan)

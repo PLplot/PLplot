@@ -52,3 +52,19 @@ IF(NOT DEFINED CMAKE_F77_CMD_LINE)
   ENDIF (CMAKE_F77_CMD_LINE)
 ENDIF(NOT DEFINED CMAKE_F77_CMD_LINE)
 
+# On some Windows platforms the plparseopts routine should be in a
+# static library
+
+SET(STATIC OFF)
+IF(WIN32)
+  IF(MINGW OR CYGWIN)
+    IF(BUILD_SHARED_LIBS)
+      SET(STATIC ON)
+    ENDIF(BUILD_SHARED_LIBS)
+  ENDIF(MINGW OR CYGWIN)
+ENDIF(WIN32)
+IF(STATIC)
+  SET(STATIC_OPTS ON CACHE BOOL "Command-line parsing in static library")
+ELSE(STATIC)
+  SET(STATIC_OPTS OFF CACHE BOOL "Command-line parsing in static library")
+ENDIF(STATIC)
