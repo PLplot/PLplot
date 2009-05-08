@@ -28,6 +28,8 @@ include(CheckFunctionExists)
 include(CheckSymbolExists)
 include(CheckPrototypeExists)
 
+# Useful macros....
+
 macro(TRANSFORM_VERSION _numerical_result _version)
 # _version must be a period-delimited triplet string of the form
 # "major.minor.patch".
@@ -43,6 +45,30 @@ else(${_version} MATCHES "^[0-9]*\\.[0-9]*\\.[0-9]*$")
   set(${_numerical_result} 0)
 endif(${_version} MATCHES "^[0-9]*\\.[0-9]*\\.[0-9]*$")
 endmacro(TRANSFORM_VERSION)
+
+macro(split_libraries_list _list _list_general _list_debug _list_optimized)
+  # Macro for splitting a libraries list into its keyword denoted general,
+  # debug, and optimized lists.
+  set(${_list_general})
+  set(${_list_debug})
+  set(${_list_optimized})
+
+  set(_keyword "general")
+  foreach(_element ${${_list}})
+    if(_element STREQUAL "general" OR _element STREQUAL "debug" OR _element STREQUAL "optimized" )
+      set(_keyword ${_element})
+    else(_element STREQUAL "general" OR _element STREQUAL "debug" OR _element STREQUAL "optimized" )
+      if(_keyword STREQUAL "general")
+	list(APPEND ${_list_general} ${_element})
+      elseif(_keyword STREQUAL "debug")
+	list(APPEND ${_list_debug} ${_element})
+      elseif(_keyword STREQUAL "optimized")
+	list(APPEND ${_list_optimized} ${_element})
+      endif(_keyword STREQUAL "general")
+    endif(_element STREQUAL "general" OR _element STREQUAL "debug" OR _element STREQUAL "optimized" )
+  endforeach(_element)
+
+endmacro(split_libraries_list _list _list_general _list_debug _list_optimized)
 
 # =======================================================================
 # Compilation and build options (PLFLT, install locations, and rpath)
