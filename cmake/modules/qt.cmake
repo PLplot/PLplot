@@ -50,6 +50,33 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
       set(qt_COMPILE_FLAGS "${qt_COMPILE_FLAGS} -I${DIR}")
     endforeach(DIR ${QT_INCLUDES})
     
+    split_libraries_list(QT_LIBRARIES QT_LIBRARIES_general QT_LIBRARIES_debug QT_LIBRARIES_optimized)
+
+    # There is a complicated interpretation issue to be considered here.
+    # FindQt4.cmake associates "debug" with the Qt4 library DEBUG suffix (with
+    # currently unknown criteria for which libraries are labelled that way),
+    # and "optimized" with the Qt4 library RELEASE suffix (again with 
+    # currently unknown criteria).  Furthermore, CMake documentation is
+    # is not completely clear on how the debug and optimized keywords are to
+    # be interpreted by target_link_libraries for the Debug, Release,
+    # RelWithDebInfo and MinSizeRes possibilities for CMAKE_BUILD_TYPE.  For
+    # example with gcc, the C options are Debug=-g, Release=-O3,
+    # RelWithDebInfo = -g -O2, and MinSizeRes=-Os.  For that compiler, some of
+    # the options are clearly debug (Debug), some of the options are clearly
+    # optimized (Release), but the rest are ambiguous.  This decision may
+    # be changed in the future, but for now choose the debug or optimized
+    # Qt4 libraries only for the cases which are clearly justified, and 
+    # otherwise just use the general Qt4 libraries.
+    message(STATUS "QT_LIBRARIES (mixed for all CMAKE_BUILD_TYPES) = ${QT_LIBRARIES}")
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+      set(QT_LIBRARIES ${QT_LIBRARIES_debug})
+    elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+      set(QT_LIBRARIES ${QT_LIBRARIES_optimized})
+    else(CMAKE_BUILD_TYPE STREQUAL "Debug")
+      set(QT_LIBRARIES ${QT_LIBRARIES_general})
+    endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "specific QT_LIBRARIES results used for this CMAKE_BUILD_TYPE = ${QT_LIBRARIES}")
+
     set(qt_LINK_FLAGS ${QT_LIBRARIES})
     #message("qt_LINK_FLAGS = ${qt_LINK_FLAGS}")
     set(qt_RPATH ${QT_LIBRARY_DIR})
