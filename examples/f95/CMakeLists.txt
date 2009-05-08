@@ -87,7 +87,11 @@ foreach(STRING_INDEX ${f95_STRING_INDICES})
       x${STRING_INDEX}f95 PROPERTIES
       OUTPUT_NAME x${STRING_INDEX}f
       )
-    target_link_libraries(x${STRING_INDEX}f95 plplotf95${LIB_TAG})
+    if(STATIC_OPTS)
+       target_link_libraries(x${STRING_INDEX}f95 plplotf95opts${LIB_TAG} plplotf95${LIB_TAG})
+    else(STATIC_OPTS)
+       target_link_libraries(x${STRING_INDEX}f95 plplotf95${LIB_TAG})
+    endif(STATIC_OPTS)
   endif(BUILD_TEST)
 endforeach(STRING_INDEX ${f95_STRING_INDICES})
 
