@@ -102,18 +102,21 @@ macro(pkg_config_link_flags _link_flags_out _link_flags_in)
   # N.B. ${_link_flags_in} must be a string and not a list.
 
   # First strip out optimized / debug options which are not needed
-  # Currently only FindQt4 seems to need this.
-  if(CMAKE_BUILD_TYPE MATCHES "Debug")
-    string(REGEX REPLACE "(^|;)optimized;[^;]*;" "\\1" ${_link_flags_out} "${_link_flags_in}")
-    string(REGEX REPLACE "(^|;)debug;" "\\1" ${_link_flags_out} "${${_link_flags_out}}")
-  else(CMAKE_BUILD_TYPE MATCHES "Debug")
-    string(REGEX REPLACE "(^|;)debug;[^;]*;" "\\1" ${_link_flags_out} "${_link_flags_in}")
-    string(REGEX REPLACE "(^|;)optimized;" "\\1" ${_link_flags_out} "${${_link_flags_out}}")
-  endif(CMAKE_BUILD_TYPE MATCHES "Debug")
+  # Currently only FindQt4 seems to need this so it is handled 
+  # explicitly in the Qt code.
+  # Leave this for reference in case it turns out there is a more
+  # general need for it.
+  #if(CMAKE_BUILD_TYPE MATCHES "Debug")
+  #  string(REGEX REPLACE "(^|;)optimized;[^;]*;" "\\1" ${_link_flags_out} "${_link_flags_in}")
+  #  string(REGEX REPLACE "(^|;)debug;" "\\1" ${_link_flags_out} "${${_link_flags_out}}")
+  #else(CMAKE_BUILD_TYPE MATCHES "Debug")
+  #  string(REGEX REPLACE "(^|;)debug;[^;]*;" "\\1" ${_link_flags_out} "${_link_flags_in}")
+  #  string(REGEX REPLACE "(^|;)optimized;" "\\1" ${_link_flags_out} "${${_link_flags_out}}")
+  #endif(CMAKE_BUILD_TYPE MATCHES "Debug")
 
   #message("(original link flags) = ${_link_flags_in}")
   # Convert link flags to a blank-delimited string.
-  string(REGEX REPLACE ";" " " ${_link_flags_out} "${${_link_flags_out}}")
+  string(REGEX REPLACE ";" " " ${_link_flags_out} "${_link_flags_in}")
   #message("(blanks) ${_link_flags_out} = ${${_link_flags_out}}")
 
   # Replace actual library names with the -LPATHNAME and -lLIBRARYNAME form
