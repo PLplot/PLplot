@@ -1260,6 +1260,10 @@ void plD_eop_xcairo(PLStream *pls)
 
   XFlush(aStream->XDisplay);
 
+  /* Only pause if nopause is unset. */
+  if (pls->nopause)
+    aStream->exit_event_loop = 1;
+
   /* Loop, handling selected events, till the user elects to close the plot. */
   event_mask = ButtonPressMask | KeyPressMask | ExposureMask;
   XSelectInput(aStream->XDisplay, aStream->XWindow, event_mask);
