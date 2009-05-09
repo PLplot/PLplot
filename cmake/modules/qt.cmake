@@ -45,6 +45,8 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
       set(QT_USE_QTSVG 1)
     endif(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
     include(${QT_USE_FILE})
+  endif(QT4_FOUND)
+  if(QT4_FOUND AND QT_LIBRARIES)
     set(qt_COMPILE_FLAGS)
     foreach(DIR ${QT_INCLUDES})
       set(qt_COMPILE_FLAGS "${qt_COMPILE_FLAGS} -I${DIR}")
@@ -63,26 +65,34 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
     # example with gcc, the C options are Debug=-g, Release=-O3,
     # RelWithDebInfo = -g -O2, and MinSizeRes=-Os.  For that compiler, some of
     # the options are clearly debug (Debug), some of the options are clearly
-    # optimized (Release), but the rest are ambiguous.  This decision may
-    # be changed in the future, but for now choose the debug or optimized
-    # Qt4 libraries only for the cases which are clearly justified, and 
-    # otherwise just use the general Qt4 libraries.
-    message(STATUS "QT_LIBRARIES (mixed for all CMAKE_BUILD_TYPES) = ${QT_LIBRARIES}")
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-      set(QT_LIBRARIES ${QT_LIBRARIES_debug})
-    elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    # optimized (Release), but the rest are ambiguous.  For now we will assign
+    # the ambiguous ones to debug, but we may change that interpretation
+    # in the future.  It is also clear from analysis of FindQt4.cmake that any
+    # of QT_LIBRARIES_general, QT_LIBRARIES_debug, or QT_LIBRARIES_optimized
+    # could be empty depending on the Qt install and whether CMAKE_BUILD_TYPE
+    # is specified or not.  Therefore, specifically deal with the empty cases.
+    message(STATUS "QT_LIBRARIES = ${QT_LIBRARIES}")
+    if(CMAKE_BUILD_TYPE STREQUAL "Release" AND QT_LIBRARIES_optimized)
       set(QT_LIBRARIES ${QT_LIBRARIES_optimized})
-    else(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    elseif(QT_LIBRARIES_debug)
+      set(QT_LIBRARIES ${QT_LIBRARIES_debug})
+    elseif(QT_LIBRARIES_general)
       set(QT_LIBRARIES ${QT_LIBRARIES_general})
-    endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(STATUS "specific QT_LIBRARIES results used for this CMAKE_BUILD_TYPE = ${QT_LIBRARIES}")
+    else(CMAKE_BUILD_TYPE STREQUAL "Release" AND QT_LIBRARIES_optimized)
+      # This should be impossible because of the above check on QT_LIBRARIES
+      # being true (i.e., non-empty).
+      message(FATAL_ERROR "qt.cmake QT_LIBRARIES logic error")
+    endif(CMAKE_BUILD_TYPE STREQUAL "Release" AND QT_LIBRARIES_optimized)
+    message(STATUS "revised QT_LIBRARIES (based on keyword interpretation for
+the CMAKE_BUILD_TYPE that is specified) = ${QT_LIBRARIES}")
 
     set(qt_LINK_FLAGS ${QT_LIBRARIES})
     #message("qt_LINK_FLAGS = ${qt_LINK_FLAGS}")
     set(qt_RPATH ${QT_LIBRARY_DIR})
     #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${qt_LINK_FLAGS})
-  else(QT4_FOUND)
+  else(QT4_FOUND AND QT_LIBRARIES)
+    message(STATUS "QT_LIBRARIES not found so disabling all qt devices")
     set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
     set(PLD_jpgqt OFF CACHE BOOL "Enable Qt jpg device" FORCE)
     set(PLD_pngqt OFF CACHE BOOL "Enable Qt png device" FORCE)
@@ -93,7 +103,7 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
     set(PLD_qtwidget OFF CACHE BOOL "Enable Qt interactive device" FORCE)
     set(PLD_svgqt OFF CACHE BOOL "Enable Qt SVG device" FORCE)
     set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
-  endif(QT4_FOUND)
+  endif(QT4_FOUND AND QT_LIBRARIES)
 endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
 
 if(PLD_extqt)
