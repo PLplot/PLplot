@@ -113,7 +113,7 @@ END;
 
 			<h3>Links</h3>
 			<ul class="arrowlist">
-//        <li><a href="http://www.hbabcock.org/plplot/readme.html">Try PLplot online!</a></li>
+			        /* <li><a href="http://www.hbabcock.org/plplot/readme.html">Try PLplot online!</a></li> */
 				<li><a href="http://sourceforge.net/project/?group_id=2915">SF project page</a></li>
 			</ul>
 		</div>
