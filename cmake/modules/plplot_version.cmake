@@ -1,15 +1,15 @@
 # For now, must set this by hand before each release.  This value affects
 # at least the documentation build and perhaps other parts of the release.
-set(RELEASE_DATE "2009-05-03")
+set(RELEASE_DATE "2009-05-10")
 
 # Version data that need review and possible modification for each release.
 
-set(VERSION 5.9.3)
+set(VERSION 5.9.4)
 
 # CPack version numbers for release tarball name.
 set(CPACK_PACKAGE_VERSION_MAJOR 5)
 set(CPACK_PACKAGE_VERSION_MINOR 9)
-set(CPACK_PACKAGE_VERSION_PATCH 3)
+set(CPACK_PACKAGE_VERSION_PATCH 4)
 
 # PLplot library version information.
 
