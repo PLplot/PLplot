@@ -529,11 +529,17 @@ svgqt.  One of our developers found that pdfqt was orders of magnitude
 slower than the other qt devices for Qt-4.4.3 on Ubuntu 8.10 installed on a
 64 bit box.  That problem was completely cured by moving to the downloadable
 Qt-4.5 version.  However, we have also had good Qt-4.4.3 pdfqt reports on
-other platforms.  So probably Qt-4.4.3 is worth trying if it is already
-installed on your machine, but if you run into any difficulty with it please
-switch to Qt-4.5.x (once Qt-4.5.x is installed all you have to do is to put
-the 4.5.x version of qmake in your path, and cmake does the rest) before
-reporting a qt bug.
+other platforms.  One of our developers also found that all first pages of
+examples were black for just the qtwidget device for Qt-4.5.1 on Mac OS X.
+From the other improvements we see in Qt-4.5.1 relative to Qt-4.4.3 we
+assume this black first page for qtwidget problem also exists for Qt-4.4.3,
+but we haven't tested that combination.
+
+In sum, Qt-4.4.3 is worth trying if it is already installed on your machine,
+but if you run into any difficulty with it please switch to Qt-4.5.x (once
+Qt-4.5.x is installed all you have to do is to put the 4.5.x version of
+qmake in your path, and cmake does the rest).  If the problem persists for
+Qt-4.5, then it is worth reporting a qt bug.
 
 2.29 The PLplot API is now accessible from Qt GUI applications
 
