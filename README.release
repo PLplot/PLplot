@@ -1,4 +1,4 @@
-PLplot Release 5.9.4
+PLplot Release 5.9.5
 ~~~~~~~~~~~~~~~~~~~~
 This is a development release of PLplot. It represents the ongoing efforts
 of the community to improve the PLplot plotting package. Development 
@@ -85,10 +85,7 @@ implemented for the Tk-related components of PLplot.
 
 INDEX
 
-1. Changes relative to PLplot 5.9.3 (the previous development release)
-
-1.1 Various bug fixes
-1.2 Cairo driver improvements
+1. Changes relative to PLplot 5.9.4 (the previous development release)
 
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -127,23 +124,6 @@ examples
 2.31 Various bug fixes
 2.32 Cairo driver improvements
 
-1. Changes relative to PLplot 5.9.3 (the previous development release)
-
-1.1 Various bug fixes
-
-Various bugs in the 5.9.3 release have been fixed including:
-
-- Include missing file needed for the aqt driver on Mac OS X
-- Missing library version number for nistcd
-- Fixes for the qt examples with dynamic drivers disabled
-- Fixes to several tcl examples so they work with plserver
-- Fix pkg-config files to work correctly with Debug / Release build types set
-- Make fortran command line argument parsing work with shared libraries on Windows
-
-1.2 Cairo driver improvements
-
-Improvements to the cairo driver to give better results for bitmap 
-formats when used with anti-aliasing file viewers.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
