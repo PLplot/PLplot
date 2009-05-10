@@ -499,13 +499,14 @@ might occur with that option).  Better yet, use libcairo 1.6.4 or later.
 
 2.28 A powerful qt device driver has been implemented
 
-Thanks to the efforts of Alban Rochel of the QSAS team, we now have a qt
+Thanks to the efforts of Alban Rochel of the QSAS team, we now have a new qt
 device driver which delivers the following 9 (!) devices: qtwidget, bmpqt,
 jpgqt, pngqt, ppmqt, tiffqt, epsqt, pdfqt, and svgqt. qtwidget is an
 elementary interactive device where, for now, the possible interactions
-consist of resizing the window and right clicking with the mouse to control
+consist of resizing the window and right clicking with the mouse (or hitting
+<return> to be consistent with other PLplot interactive devices) to control
 paging.  The qtwidget overall size is expressed in pixels. bmpqt, jpgqt,
-pngqt, ppmqt, and tiffqt are file devices whose overal sizes are specified
+pngqt, ppmqt, and tiffqt are file devices whose overall sizes are specified
 in pixels and whose output is BMP (Windows bitmap), JPEG, PNG, PPM (portable
 pixmap), and TIFF (tagged image file format) formatted files. epsqt, pdfqt,
 svgqt are file devices whose overall sizes are specified in points (1/72 of
@@ -520,12 +521,19 @@ from examples 23 [mathematical symbols] and 24 [CTL languages].)
 Our exhaustive Linux testing of the qt devices (which consisted of detailed
 comparisons for all our standard examples between qt device results and the
 corresponding cairo device results) indicates this device driver is mature,
-but testing on other platforms is requested to confirm that maturity.
-Qt-4.5 has some essential SVG functionality so we recommend that
-version (downloadable from http://www.qtsoftware.com/downloads for Linux,
-Mac OS X, and Windows) for svgqt.  Qt-4.5 is the version we have used for
-most of our testing, but limited testing for Qt-4.4 indicates that version
-should be fine for qt devices other than svgqt.
+but testing on other platforms is requested to confirm that maturity. Qt-4.5
+(the version we used for most of our tests) has some essential SVG
+functionality so we recommend that version (downloadable from
+http://www.qtsoftware.com/downloads for Linux, Mac OS X, and Windows) for
+svgqt.  One of our developers found that pdfqt was orders of magnitude
+slower than the other qt devices for Qt-4.4.3 on Ubuntu 8.10 installed on a
+64 bit box.  That problem was completely cured by moving to the downloadable
+Qt-4.5 version.  However, we have also had good Qt-4.4.3 pdfqt reports on
+other platforms.  So probably Qt-4.4.3 is worth trying if it is already
+installed on your machine, but if you run into any difficulty with it please
+switch to Qt-4.5.x (once Qt-4.5.x is installed all you have to do is to put
+the 4.5.x version of qmake in your path, and cmake does the rest) before
+reporting a qt bug.
 
 2.29 The PLplot API is now accessible from Qt GUI applications
 
