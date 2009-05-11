@@ -80,7 +80,7 @@ int main( char[][] args )
       plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
       plcol0(1);
       plpsty(0);
-      plfill(x0.length, cast(PLFLT*)x0, cast(PLFLT*)y0);
+      plfill(x0, y0);
       plcol0(2);
       pllsty(1);
       plline(x0, y0);

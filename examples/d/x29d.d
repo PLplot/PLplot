@@ -132,9 +132,9 @@ class plot {
 
     plline(x, y);
     plcol0(2);
-    plerrx(npts, cast(PLFLT*)xerr1, cast(PLFLT*)xerr2, cast(PLFLT*)y);
+    plerrx(xerr1, xerr2, y);
     plcol0(3);
-    plerry(npts, cast(PLFLT*)x, cast(PLFLT*)yerr1, cast(PLFLT*)yerr2);
+    plerry(x, yerr1, yerr2);
 
     /* Rescale major / minor tick marks back to default */
     plsmin(0.0, 1.0); 

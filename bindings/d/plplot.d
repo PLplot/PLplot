@@ -40,15 +40,25 @@ int plparseopts(char[][] args, PLINT mode)
 void plbin(PLFLT[] x, PLFLT[] y, PLINT opt)
 {
   PLINT nbin = x.length;
-  assert(nbin==y.length, "Arrays must be of same length!");
-  c_plbin(nbin, cast(PLFLT*)x, cast(PLFLT*)y, opt); 
+  assert(nbin==y.length, "plbin(): Arrays must be of same length!");
+  c_plbin(nbin, x.ptr, y.ptr, opt); 
 }
 
 /* This draws a box around the current viewport. */
-//void  c_plbox(char *xopt, PLFLT xtick, PLINT nxsub, char *yopt, PLFLT ytick, PLINT nysub);
+void plbox(string xopt, PLFLT xtick, PLINT nxsub, string yopt, PLFLT ytick, PLINT nysub)
+{
+  c_plbox(toStringz(xopt), xtick, nxsub, toStringz(yopt), ytick, nysub);
+}
 
 /* This is the 3-d analogue of plbox(). */
-//void  c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx, char *yopt, char *ylabel, PLFLT ytick, PLINT nsuby, char *zopt, char *zlabel, PLFLT ztick, PLINT nsubz);
+void plbox3(string xopt, string xlabel, PLFLT xtick, PLINT nsubx,
+            string yopt, string ylabel, PLFLT ytick, PLINT nsuby,
+            string zopt, string zlabel, PLFLT ztick, PLINT nsubz)
+{
+  c_plbox3(toStringz(xopt), toStringz(xlabel), xtick, nsubx,
+           toStringz(yopt), toStringz(ylabel), ytick, nsuby,
+           toStringz(zopt), toStringz(zlabel), ztick, nsubz);
+}
 
 /* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
  * plfcont, with a particular choice for f2eval and f2eval_data.
@@ -62,16 +72,39 @@ void plbin(PLFLT[] x, PLFLT[] y, PLINT opt)
 //void  plfcont(PLFLT  function(PLINT , PLINT , PLPointer )f2eval, PLPointer f2eval_data, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
 
 /* Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i)) */
-//void  c_plerrx(PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y);
+void plerrx(PLFLT[] xmin, PLFLT[] xmax, PLFLT[] y)
+{
+  PLINT n=y.length;
+  assert(n==xmin.length, "plerrx(): Arrays must be of same length!");
+  assert(n==xmax.length, "plerrx(): Arrays must be of same length!");
+  c_plerrx(n, xmin.ptr, xmax.ptr, y.ptr);
+}
 
 /* Plot vertical error bars (x,ymin(i)) to (x(i),ymax(i)) */
-//void  c_plerry(PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax);
+void plerry(PLFLT[] x, PLFLT[] ymin, PLFLT[] ymax)
+{
+  PLINT n=x.length;
+  assert(n==ymin.length, "plerry(): Arrays must be of same length!");
+  assert(n==ymax.length, "plerry(): Arrays must be of same length!");
+  c_plerry(n, x.ptr, ymin.ptr, ymax.ptr);
+}
 
 /* Pattern fills the polygon bounded by the input points. */
-//void  c_plfill(PLINT n, PLFLT *x, PLFLT *y);
+void plfill(PLFLT[] x, PLFLT[] y)
+{
+  PLINT n=x.length;
+  assert(n==y.length, "plfill(): Arrays must be of same length!");
+  c_plfill(n, x.ptr, y.ptr);
+}
 
 /* Pattern fills the 3d polygon bounded by the input points. */
-//void  c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z);
+void plfill3(PLFLT[] x, PLFLT[] y, PLFLT[] z)
+{
+  PLINT n=x.length;
+  assert(n==y.length, "plfill3(): Arrays must be of same length!");
+  assert(n==z.length, "plfill3(): Arrays must be of same length!");
+  c_plfill3(n, x.ptr, y.ptr, z.ptr);
+}
 
 /* Get the current device (keyword) name */
 //void  c_plgdev(char *p_dev);
@@ -89,14 +122,17 @@ void plbin(PLFLT[] x, PLFLT[] y, PLINT opt)
 //void  c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax, PLINT nbin, PLINT opt);
 
 /* Simple routine for labelling graphs. */
-//void  c_pllab(char *xlabel, char *ylabel, char *tlabel);
+void pllab(string xlabel, string ylabel, string tlabel)
+{
+  c_pllab(toStringz(xlabel), toStringz(ylabel), toStringz(tlabel));
+}
 
 /* Draws line segments connecting a series of points. */
 void plline(PLFLT[] x, PLFLT[] y)
 {
   PLINT n = x.length;
-  assert(n==y.length, "Arrays must be of same length!");
-  c_plline(n, cast(PLFLT*)x, cast(PLFLT*)y); 
+  assert(n==y.length, "plline(): Arrays must be of same length!");
+  c_plline(n, x.ptr, y.ptr); 
 }
 
 /* Draws a line in 3 space.  */
@@ -684,8 +720,8 @@ alias c_pladv pladv;
 alias c_plaxes plaxes;
 //alias c_plbin plbin;
 alias c_plbop plbop;
-alias c_plbox plbox;
-alias c_plbox3 plbox3;
+//alias c_plbox plbox;
+//alias c_plbox3 plbox3;
 alias c_plcalc_world plcalc_world;
 alias c_plclear plclear;
 alias c_plcol0 plcol0;
@@ -698,11 +734,11 @@ alias c_plend1 plend1;
 alias c_plenv plenv;
 alias c_plenv0 plenv0;
 alias c_pleop pleop;
-alias c_plerrx plerrx;
-alias c_plerry plerry;
+//alias c_plerrx plerrx;
+//alias c_plerry plerry;
 alias c_plfamadv plfamadv;
-alias c_plfill plfill;
-alias c_plfill3 plfill3;
+//alias c_plfill plfill;
+//alias c_plfill3 plfill3;
 alias c_plflush plflush;
 alias c_plfont plfont;
 alias c_plfontld plfontld;
@@ -739,7 +775,7 @@ alias c_plimage plimage;
 alias c_plimagefr plimagefr;
 alias c_plinit plinit;
 alias c_pljoin pljoin;
-alias c_pllab pllab;
+//alias c_pllab pllab;
 alias c_pllightsource pllightsource;
 //alias c_plline plline;
 alias c_plline3 plline3;
@@ -876,7 +912,6 @@ void  c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
 
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
-
 void  c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub, char *yopt, PLFLT ytick, PLINT nysub);
 
 /* Flags for plbin() - opt argument */
@@ -893,12 +928,10 @@ void c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT opt);
 void  c_plbop();
 
 /* This draws a box around the current viewport. */
-
-void  c_plbox(char *xopt, PLFLT xtick, PLINT nxsub, char *yopt, PLFLT ytick, PLINT nysub);
+void c_plbox(char *xopt, PLFLT xtick, PLINT nxsub, char *yopt, PLFLT ytick, PLINT nysub);
 
 /* This is the 3-d analogue of plbox(). */
-
-void  c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx, char *yopt, char *ylabel, PLFLT ytick, PLINT nsuby, char *zopt, char *zlabel, PLFLT ztick, PLINT nsubz);
+void c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx, char *yopt, char *ylabel, PLFLT ytick, PLINT nsuby, char *zopt, char *zlabel, PLFLT ztick, PLINT nsubz);
 
 /* Calculate world coordinates and subpage from relative device coordinates. */
 
@@ -968,24 +1001,20 @@ void  c_plenv0(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLINT just, PLINT
 void  c_pleop();
 
 /* Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i)) */
-
-void  c_plerrx(PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y);
+void c_plerrx(PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y);
 
 /* Plot vertical error bars (x,ymin(i)) to (x(i),ymax(i)) */
-
-void  c_plerry(PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax);
+void c_plerry(PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax);
 
 /* Advance to the next family file on the next new page */
 
 void  c_plfamadv();
 
 /* Pattern fills the polygon bounded by the input points. */
-
-void  c_plfill(PLINT n, PLFLT *x, PLFLT *y);
+void c_plfill(PLINT n, PLFLT *x, PLFLT *y);
 
 /* Pattern fills the 3d polygon bounded by the input points. */
-
-void  c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z);
+void c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z);
 
 /* Flushes the output stream.  Use sparingly, if at all. */
 
@@ -1141,8 +1170,7 @@ void  c_plinit();
 void  c_pljoin(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2);
 
 /* Simple routine for labelling graphs. */
-
-void  c_pllab(char *xlabel, char *ylabel, char *tlabel);
+void c_pllab(char *xlabel, char *ylabel, char *tlabel);
 
 /* Sets position of the light source */
 void  c_pllightsource(PLFLT x, PLFLT y, PLFLT z);

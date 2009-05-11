@@ -139,7 +139,7 @@ int main( char[][] args )
 
   for(int i = 0; i < 4; i++ ) {
     plcol0(i + 1);
-    plfill(4, cast(PLFLT*)px, cast(PLFLT*)py);
+    plfill(px, py);
 
     for(int j = 0; j < py.length; j++)
       py[j] += 1.0/4.0;

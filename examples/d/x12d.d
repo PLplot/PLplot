@@ -54,7 +54,7 @@ void plfbox( PLFLT x0, PLFLT y0 )
   PLFLT[4] x = [x0, x0, x0+1.0, x0+1.0];;
   PLFLT[4] y = [0.0, y0, y0, 0.0];
 
-  plfill( 4, cast(PLFLT*)x, cast(PLFLT*)y );
+  plfill(x, y);
   plcol0( 1 );
   pllsty( 1 );
   plline(x, y);

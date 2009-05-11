@@ -52,7 +52,7 @@ int main( char[][] args )
 	  }
 	  plcol0( i+1 );
 	  plpsty( (i+3)%8+1 );
-	  plfill( j, cast(PLFLT*)x, cast(PLFLT*)y );
+	  plfill(x, y);
 	  plcol0( 1 );
 	  plline(x, y);
 	  just = (2.*PI/500.)*(theta0 + theta1)/2.;

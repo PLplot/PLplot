@@ -81,7 +81,7 @@ int main( char[][] args )
     plcol0(icol);
 
     /* Draw the rectangle */
-    plfill(4, cast(PLFLT*)px, cast(PLFLT*)py);
+    plfill(px, py);
 
     /* Shift the rectangles coordinates */
     for(int j=0; j<4; j++) {
@@ -125,7 +125,7 @@ int main( char[][] args )
       py[1] = py[0];
       py[2] = py[0] + 0.1;
       py[3] = py[2];
-      plfill(4, cast(PLFLT*)px, cast(PLFLT*)py);
+      plfill(px, py);
     }
   }
 
