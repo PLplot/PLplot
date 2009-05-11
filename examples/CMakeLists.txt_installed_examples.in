@@ -26,6 +26,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4 FATAL_ERROR)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
 #Configurable items.
+set(LIB_TAG "@LIB_TAG@")
 set(INCLUDE_DIR @INCLUDE_DIR@)
 
 include(export_plplot)
