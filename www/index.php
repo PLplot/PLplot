@@ -42,12 +42,13 @@
 				  <li>C/C++/D</li>
 				  <li>Fortran 77/90</li>
 				  <li>Java</li>
+				  <li><a href="http://common-lisp.net/project/cl-plplot/">Lisp</a></li>
+				  <li>Lua</li>
 				  <li>OCaml</li>
 				  <li>Octave</li>
 				  <li>Perl</li>
 				  <li>Python</li>
 				  <li>Tcl/Tk</li>
-				  <li>wxWidgets</li>
 				</ul>
 			</div>
 			<div class="splitcontentright">
@@ -68,11 +69,13 @@
 				<h4><a name="interactive">Interactive Platforms</a></h4>
 				<p>PLplot device drivers support a number of platforms that are suitable for interactive plotting.</p>
 				<ul class="arrowlist">
-				  <li>X</li>
 				  <li>GNOME</li>
-				  <li>Tcl/Tk</li>
+				  <li>Gtk+</li>
 				  <li>PyQt</li>
+				  <li>Qt</li>
+				  <li>Tcl/Tk</li>
 				  <li>wxWidgets</li>
+				  <li>X</li>
 				</ul>
 			</div>
 			<div class="clear"></div>
