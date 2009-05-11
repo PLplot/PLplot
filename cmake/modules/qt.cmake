@@ -52,39 +52,7 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
       set(qt_COMPILE_FLAGS "${qt_COMPILE_FLAGS} -I${DIR}")
     endforeach(DIR ${QT_INCLUDES})
     
-    split_libraries_list(QT_LIBRARIES QT_LIBRARIES_general QT_LIBRARIES_debug QT_LIBRARIES_optimized)
-
-    # There is a complicated interpretation issue to be considered here.
-    # FindQt4.cmake associates "debug" with the Qt4 library DEBUG suffix (with
-    # currently unknown criteria for which libraries are labelled that way),
-    # and "optimized" with the Qt4 library RELEASE suffix (again with 
-    # currently unknown criteria).  Furthermore, CMake documentation is
-    # is not completely clear on how the debug and optimized keywords are to
-    # be interpreted by target_link_libraries for the Debug, Release,
-    # RelWithDebInfo and MinSizeRes possibilities for CMAKE_BUILD_TYPE.  For
-    # example with gcc, the C options are Debug=-g, Release=-O3,
-    # RelWithDebInfo = -g -O2, and MinSizeRes=-Os.  For that compiler, some of
-    # the options are clearly debug (Debug), some of the options are clearly
-    # optimized (Release), but the rest are ambiguous.  For now we will assign
-    # the ambiguous ones to debug, but we may change that interpretation
-    # in the future.  It is also clear from analysis of FindQt4.cmake that any
-    # of QT_LIBRARIES_general, QT_LIBRARIES_debug, or QT_LIBRARIES_optimized
-    # could be empty depending on the Qt install and whether CMAKE_BUILD_TYPE
-    # is specified or not.  Therefore, specifically deal with the empty cases.
     message(STATUS "QT_LIBRARIES = ${QT_LIBRARIES}")
-    if(CMAKE_BUILD_TYPE STREQUAL "Release" AND QT_LIBRARIES_optimized)
-      set(QT_LIBRARIES ${QT_LIBRARIES_optimized})
-    elseif(QT_LIBRARIES_debug)
-      set(QT_LIBRARIES ${QT_LIBRARIES_debug})
-    elseif(QT_LIBRARIES_general)
-      set(QT_LIBRARIES ${QT_LIBRARIES_general})
-    else(CMAKE_BUILD_TYPE STREQUAL "Release" AND QT_LIBRARIES_optimized)
-      # This should be impossible because of the above check on QT_LIBRARIES
-      # being true (i.e., non-empty).
-      message(FATAL_ERROR "qt.cmake QT_LIBRARIES logic error")
-    endif(CMAKE_BUILD_TYPE STREQUAL "Release" AND QT_LIBRARIES_optimized)
-    message(STATUS "revised QT_LIBRARIES (based on keyword interpretation for
-the CMAKE_BUILD_TYPE that is specified) = ${QT_LIBRARIES}")
 
     set(qt_LINK_FLAGS ${QT_LIBRARIES})
     #message("qt_LINK_FLAGS = ${qt_LINK_FLAGS}")
