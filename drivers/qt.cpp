@@ -318,12 +318,12 @@ void QtPLDriver::drawTextInPicture(QPainter* p, const QString& text)
 
 	tempPainter.end();
 
-	p->drawPicture(xOffset+bounding.width()/2., -yOffset, tempPic);
+	p->drawPicture((int)(xOffset+bounding.width()/2.), -yOffset, tempPic);
 
 	xOffset+=bounding.width();
 }
 
-QPicture QtPLDriver::getTextPicture(PLUNICODE* text, int len, int chrht)
+QPicture QtPLDriver::getTextPicture(PLUNICODE* text, int len, PLFLT chrht)
 {
 	char plplotEsc;
 	plgesc( &plplotEsc );
@@ -453,7 +453,7 @@ void QtPLDriver::drawText(PLStream* pls, EscText* txt)
 	picDpi=picText.logicalDpiY();
 
 	m_painterP->setClipping(true);
-	m_painterP->setClipRect(QRect(pls->clpxmi*downscale, m_dHeight-pls->clpyma*downscale, (pls->clpxma-pls->clpxmi)*downscale, (pls->clpyma-pls->clpymi)*downscale), Qt::ReplaceClip);
+	m_painterP->setClipRect(QRect((int)(pls->clpxmi*downscale), (int)(m_dHeight-pls->clpyma*downscale), (int)((pls->clpxma-pls->clpxmi)*downscale), (int)((pls->clpyma-pls->clpymi)*downscale)), Qt::ReplaceClip);
 
 	rotation -= pls->diorot * M_PI / 2.0;
 	m_painterP->translate(txt->x*downscale, m_dHeight-txt->y*downscale);
@@ -463,7 +463,7 @@ void QtPLDriver::drawText(PLStream* pls, EscText* txt)
 
 	m_painterP->translate(-txt->just*xOffset*m_painterP->device()->logicalDpiY()/picDpi, 0.);
 
-	m_painterP->drawPicture(0., 0., picText);
+	m_painterP->drawPicture(0, 0, picText);
 
 	m_painterP->setWorldMatrix(QMatrix());
 	m_painterP->setClipping(false);
@@ -474,11 +474,11 @@ void QtPLDriver::setColor(int r, int g, int b, double alpha)
 	if(!m_painterP->isActive()) return;
 
 	QPen p=m_painterP->pen();
-	p.setColor(QColor(r, g, b, alpha*255));
+	p.setColor(QColor(r, g, b, (int)(alpha*255)));
 	m_painterP->setPen(p);
 	
 	QBrush B=m_painterP->brush();
-	B.setColor(QColor(r, g, b, alpha*255));
+	B.setColor(QColor(r, g, b, (int)(alpha*255)));
 	B.setStyle(Qt::SolidPattern);
 	m_painterP->setBrush(B);
 }
@@ -773,8 +773,8 @@ void plD_init_rasterqt(PLStream * pls)
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
 		pls->dev=new QtRasterDevice;
-		pls->xlength = ((QtRasterDevice*)(pls->dev))->m_dWidth;
-		pls->ylength = ((QtRasterDevice*)(pls->dev))->m_dHeight;
+		pls->xlength = (PLINT)(((QtRasterDevice*)(pls->dev))->m_dWidth);
+		pls->ylength = (PLINT)(((QtRasterDevice*)(pls->dev))->m_dHeight);
 	}
 	else
 	{
@@ -983,13 +983,13 @@ void QtSVGDevice::definePlotName(const char* fileName)
 {
 	setFileName(QString(fileName));
 	setResolution(POINTS_PER_INCH);
-	setSize(QSize(m_dWidth, m_dHeight));
+	setSize(QSize((int)m_dWidth, (int)m_dHeight));
 #if QT_VERSION >=  0x040500
         setViewBox(QRect(0, 0, (int)m_dWidth, (int)m_dHeight));
 #endif
 
 	m_painterP=new QPainter(this);
-	m_painterP->fillRect(0, 0, m_dWidth, m_dHeight, QBrush(Qt::black));
+	m_painterP->fillRect(0, 0, (int)m_dWidth, (int)m_dHeight, QBrush(Qt::black));
 }
 
 void QtSVGDevice::savePlot()
@@ -1038,8 +1038,8 @@ void plD_init_svgqt(PLStream * pls)
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
 		pls->dev=new QtSVGDevice;
-		pls->xlength = ((QtSVGDevice*)(pls->dev))->m_dWidth;
-		pls->ylength = ((QtSVGDevice*)(pls->dev))->m_dHeight;
+		pls->xlength = (int)(((QtSVGDevice*)(pls->dev))->m_dWidth);
+		pls->ylength = (int)(((QtSVGDevice*)(pls->dev))->m_dHeight);
 	}
 	else
 	{
@@ -1143,7 +1143,7 @@ void QtEPSDevice::definePlotName(const char* fileName, int ifeps)
 	}
 				
 	m_painterP=new QPainter(this);
-	m_painterP->fillRect(0, 0, m_dWidth, m_dHeight, QBrush(Qt::black));
+	m_painterP->fillRect(0, 0, (int)m_dWidth, (int)m_dHeight, QBrush(Qt::black));
 }
 
 void QtEPSDevice::savePlot()
@@ -1215,8 +1215,8 @@ void plD_init_epspdfqt(PLStream * pls)
 	if (pls->xlength <= 0 || pls->ylength <= 0)
 	{
 		pls->dev=new QtEPSDevice;
-		pls->xlength = ((QtEPSDevice*)(pls->dev))->m_dWidth;
-		pls->ylength = ((QtEPSDevice*)(pls->dev))->m_dHeight;
+		pls->xlength = (int)(((QtEPSDevice*)(pls->dev))->m_dWidth);
+		pls->ylength = (int)(((QtEPSDevice*)(pls->dev))->m_dHeight);
 	}
 	else
 	{
@@ -1616,8 +1616,8 @@ void QtExtWidget::paintEvent(QPaintEvent* event)
 
 	p.setPen(QPen(Qt::white));
 
-	p.drawLine(cursorParameters.cursor_x, 0., cursorParameters.cursor_x, height());
-	p.drawLine(0., cursorParameters.cursor_y, width(), cursorParameters.cursor_y);
+	p.drawLine((int)cursorParameters.cursor_x, 0, (int)cursorParameters.cursor_x, height());
+	p.drawLine(0, (int)cursorParameters.cursor_y, width(), (int)cursorParameters.cursor_y);
 
 	p.end();
 }

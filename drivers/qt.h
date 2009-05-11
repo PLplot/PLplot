@@ -179,7 +179,7 @@ class QtPLDriver
 		// Draws text in a QPicture using a sub-QPicture (!), updates the current xOffset
 		void drawTextInPicture(QPainter*, const QString&);
 		// Gets the QPicture displaying text, with the base chrht char height
-		QPicture getTextPicture(PLUNICODE* text, int len, int chrht);
+		QPicture getTextPicture(PLUNICODE* text, int len, PLFLT chrht);
 		
 		// Text-related variables
 		bool underlined;
@@ -210,8 +210,8 @@ class QtRasterDevice: public QtPLDriver, public QImage
 		
 		virtual void setResolution(double dotsPerInch)
 		{
-			setDotsPerMeterX((dotsPerInch/25.4)*1000.);
-			setDotsPerMeterY((dotsPerInch/25.4)*1000.);
+			setDotsPerMeterX((int)((dotsPerInch/25.4)*1000.));
+			setDotsPerMeterY((int)((dotsPerInch/25.4)*1000.));
 		}
 		
 	protected:
