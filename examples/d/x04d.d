@@ -15,12 +15,7 @@ import std.string;
 int main( char[][] args )
 {
   /* Parse and process command line arguments */
-  char*[] c_args = new char*[args.length];
-  foreach( size_t i, char[] arg; args ) {
-    c_args[i] = toStringz(arg);
-  }
-  int argc = c_args.length;
-  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
+  plparseopts(args, PL_PARSE_FULL);
 
   /* Initialize plplot */
   plinit();
@@ -72,7 +67,7 @@ void plot1( int type )
 
   /* Plot ampl vs freq */
   plcol0( 2 );
-  plline( 101, cast(PLFLT*)freql, cast(PLFLT*)ampl );
+  plline(freql, ampl);
   plcol0( 1 );
   plptex( 1.6, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade" );
 
@@ -89,7 +84,7 @@ void plot1( int type )
     plwind( -2.0, 3.0, -100.0, 0.0 );
     plbox( "", 0.0, 0, "cmstv", 30.0, 3 );
     plcol0( 3 );
-    plline( 101, cast(PLFLT*)freql, cast(PLFLT*)phase );
+    plline(freql, phase);
     plcol0( 3 );
     plmtex( "r", 5.0, 0.5, 0.5, "Phase shift (degrees)" );
     }

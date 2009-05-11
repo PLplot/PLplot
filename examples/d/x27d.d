@@ -52,13 +52,7 @@ int main( char[][] args )
   /* plplot initialization */
 
   /* Parse and process command line arguments */
-  char*[] c_args = new char*[args.length];
-  foreach( size_t i, char[] arg; args ) {
-    c_args[i] = toStringz(arg);
-  }
-  int argc = c_args.length;
-  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
-
+  plparseopts(args, PL_PARSE_FULL);
 
   /* Initialize plplot */
   plinit();
@@ -102,9 +96,8 @@ void cycloid()
 void spiro(PLFLT[] params)
 {
   const int npnt=20000;
-  static PLFLT xcoord[npnt+1];
-  static PLFLT ycoord[npnt+1];
-
+  PLFLT[] xcoord, ycoord;
+  
   /* Fill the coordinates */
   int windings = cast(int)(params[3]);
   int steps = npnt/windings;
@@ -117,6 +110,8 @@ void spiro(PLFLT[] params)
 
   PLFLT phi;
   PLFLT phiw;
+  xcoord.length=windings*steps+1;
+  ycoord.length=windings*steps+1;
   for(int i=0; i<=windings*steps; i++ ) {
     phi = i*dphi;
     phiw = (params[0]-params[1])/params[1]*phi;
@@ -142,5 +137,5 @@ void spiro(PLFLT[] params)
   plwind(xmin, xmax, ymin, ymax) ;
 
   plcol0(1);
-  plline(1+steps*windings, cast(PLFLT*)xcoord, cast(PLFLT*)ycoord ) ;
+  plline(xcoord, ycoord ) ;
 }

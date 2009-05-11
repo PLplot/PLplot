@@ -106,13 +106,8 @@ int main( char[][] args )
                       "#frPLplot Example 8 - Alt=20, Az=60" ];
 
   /* Parse and process command line arguments */
-  plMergeOpts( cast(PLOptionTable*)options, "x08c options",  null );
-  char*[] c_args = new char*[args.length];
-  foreach( size_t i, char[] arg; args ) {
-    c_args[i] = toStringz(arg);
-  }
-  int argc = c_args.length;
-  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
+  plparseopts(args, PL_PARSE_FULL);
+
   if( sombrero )
     rosen=false;
 
@@ -168,7 +163,7 @@ int main( char[][] args )
       plvpor( 0.0, 1.0, 0.0, 0.9 );
       plwind( -1.0, 1.0, -0.9, 1.1 );
       plcol0( 3 );
-      plmtex( "t", 1.0, 0.5, 0.5, toStringz(title[k]) );
+      plmtex("t", 1.0, 0.5, 0.5, title[k]);
       plcol0( 1 );
       if( rosen )
         plw3d( 1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax, alt[k], az[k] );

@@ -121,12 +121,7 @@ static char[][] peace = [
 int main( char[][] args )
 {
   /* Parse and process command line arguments */
-  char*[] c_args = new char*[args.length];
-  foreach( size_t i, char[] arg; args ) {
-    c_args[i] = toStringz(arg);
-  }
-  int argc = c_args.length;
-  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
+  plparseopts(args, PL_PARSE_FULL);
 
   plinit();
 
@@ -152,7 +147,7 @@ int main( char[][] args )
 
   plcol0(0);
   for(int i = 0; i < 12; i++)
-    plptex(sx[i], sy[i], 1.0, 0.0, 0.5, toStringz(peace[i]));
+    plptex(sx[i], sy[i], 1.0, 0.0, 0.5, peace[i]);
 
   plend();
   return 0;

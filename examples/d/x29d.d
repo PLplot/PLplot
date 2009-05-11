@@ -50,12 +50,7 @@ import plplot;
 int main( char[][] args )
 {
   /* Parse and process command line arguments */
-  char*[] c_args = new char*[args.length];
-  foreach( size_t i, char[] arg; args ) {
-    c_args[i] = toStringz(arg);
-  }
-  int argc = c_args.length;
-  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
+  plparseopts(args, PL_PARSE_FULL);
 
   /* Initialize plplot */
   plinit();
@@ -135,7 +130,7 @@ class plot {
     
     plcol0(4);
 
-    plline(npts, cast(PLFLT*)x, cast(PLFLT*)y);
+    plline(x, y);
     plcol0(2);
     plerrx(npts, cast(PLFLT*)xerr1, cast(PLFLT*)xerr2, cast(PLFLT*)y);
     plcol0(3);
@@ -186,7 +181,7 @@ class plot {
     
     plcol0(4);
 
-    plline(npts, cast(PLFLT*)x, cast(PLFLT*)y);
+    plline(x, y);
     
     plprec(0,0);
   }
@@ -229,6 +224,6 @@ class plot {
     /* Rescale symbol size (used by plpoin) by 0.5 */
     plssym(0.0,0.5);
     plpoin(npts, cast(PLFLT*)x, cast(PLFLT*)y, 2);
-    plline(npts, cast(PLFLT*)x, cast(PLFLT*)y);
+    plline(x, y);
   }  
 }

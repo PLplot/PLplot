@@ -26,12 +26,7 @@ int main( char[][] args )
   PLFLT[5] per = [ 10.0, 32.0, 12.0, 30.0, 16.0 ];
 
   /* Parse and process command line arguments */
-  char*[] c_args = new char*[args.length];
-  foreach( size_t i, char[] arg; args ) {
-    c_args[i] = toStringz(arg);
-  }
-  int argc = c_args.length;
-  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
+  plparseopts(args, PL_PARSE_FULL);
 
   /* Initialize plplot */
   plinit();
@@ -59,7 +54,7 @@ int main( char[][] args )
 	  plpsty( (i+3)%8+1 );
 	  plfill( j, cast(PLFLT*)x, cast(PLFLT*)y );
 	  plcol0( 1 );
-	  plline( j, cast(PLFLT*)x, cast(PLFLT*)y );
+	  plline(x, y);
 	  just = (2.*PI/500.)*(theta0 + theta1)/2.;
 	  dx = .25*cos(just);
 	  dy = .25*sin(just);
@@ -68,12 +63,12 @@ int main( char[][] args )
 	  else 
 	    just = 1.;
 
-	  plptex( (x[j/2]+dx), (y[j/2]+dy), 1.0, 0.0, just, toStringz(text[i]) );
+	  plptex((x[j/2]+dx), (y[j/2]+dy), 1.0, 0.0, just, text[i]);
 	  theta0 = theta-dthet;
   }
   plfont( 2 );
   plschr( 0., 1.3 );
-  plptex( 5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales" );
+  plptex(5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales");
 
   /* Don't forget to call PLEND to finish off! */
   plend();

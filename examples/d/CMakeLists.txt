@@ -20,6 +20,7 @@
 
 set(d_SRCS)
 set(d_STRING_INDICES
+"02"
 "03"
 "04"
 "05"
@@ -43,21 +44,18 @@ if(BUILD_TEST)
   remove_definitions("-DHAVE_CONFIG_H")
   include_directories(
     ${CMAKE_SOURCE_DIR}/bindings/d
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_BINARY_DIR}/include
     )
 endif(BUILD_TEST)
 foreach(STRING_INDEX ${d_STRING_INDICES})
   set(d_SRCS ${d_SRCS} x${STRING_INDEX}d.d)
   if(BUILD_TEST)
     add_executable(x${STRING_INDEX}d x${STRING_INDEX}d.d)
-    if(BUILD_SHARED_LIBS)
-      SET_SOURCE_FILES_PROPERTIES(x${STRING_INDEX}d.d
-        PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-    endif(BUILD_SHARED_LIBS)
-    target_link_libraries(x${STRING_INDEX}d plplot${LIB_TAG} ${MATH_LIB})
+    target_link_libraries(x${STRING_INDEX}d plplotdmd${LIB_TAG} plplot${LIB_TAG} ${MATH_LIB})
   endif(BUILD_TEST)
 endforeach(STRING_INDEX ${d_STRING_INDICES})
+
+set_source_files_properties(${d_SRCS}
+  PROPERTIES OBJECT_DEPENDS ${CMAKE_SOURCE_DIR}/bindings/d/plplot.d)
 
 install(FILES ${d_SRCS}
   DESTINATION ${DATA_DIR}/examples/d

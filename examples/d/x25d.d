@@ -16,12 +16,7 @@ import std.string;
 int main( char[][] args )
 {
   /* Parse and process command line arguments */
-  char*[] c_args = new char*[args.length];
-  foreach( size_t i, char[] arg; args ) {
-    c_args[i] = toStringz(arg);
-  }
-  int argc = c_args.length;
-  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
+  plparseopts(args, PL_PARSE_FULL);
 
   /* Initialize plplot */
   plssub(3, 3);
@@ -88,7 +83,7 @@ int main( char[][] args )
       plfill(x0.length, cast(PLFLT*)x0, cast(PLFLT*)y0);
       plcol0(2);
       pllsty(1);
-      plline(y0.length, cast(PLFLT*)x0, cast(PLFLT*)y0);
+      plline(x0, y0);
     }
   }
 

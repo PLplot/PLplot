@@ -3,8 +3,9 @@
 	Bar chart demo.
 */
 
-import plplot;
 import std.string;
+
+import plplot;
 
 /*--------------------------------------------------------------------------*\
  * main
@@ -12,18 +13,13 @@ import std.string;
  * Does a simple bar chart, using color fill.  If color fill is
  * unavailable, pattern fill is used instead (automatic).
 \*--------------------------------------------------------------------------*/
-int main( char[][] args )
+int main(char[][] args)
 {
-  char[] string;
+  string text;
   PLFLT[10] y0;
 
   /* Parse and process command line arguments */
-  char*[] c_args = new char*[args.length];
-  foreach( size_t i, char[] arg; args ) {
-    c_args[i] = toStringz(arg);
-  }
-  int argc = c_args.length;
-  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
+  plparseopts(args, PL_PARSE_FULL);
 
   /* Initialize plplot */
   plinit();
@@ -41,10 +37,10 @@ int main( char[][] args )
   	plcol0( i+1 );
     plpsty( 0 );
     plfbox( (1980.+i), y0[i] );
-    string = format( "%.0f", y0[i] );
-    plptex( (1980.+i+.5), (y0[i]+1.), 1.0, 0.0, .5, toStringz(string) );
-    string = format( "%d", 1980+i );
-    plmtex( "b", 1.0, ((i+1)*.1-.05), 0.5, toStringz(string) );
+    text = format( "%.0f", y0[i] );
+    plptex( (1980.+i+.5), (y0[i]+1.), 1.0, 0.0, .5, text);
+    text = format( "%d", 1980+i );
+    plmtex("b", 1.0, ((i+1)*.1-.05), 0.5, text);
   }
 
   /* Don't forget to call plend() to finish off! */
@@ -61,5 +57,5 @@ void plfbox( PLFLT x0, PLFLT y0 )
   plfill( 4, cast(PLFLT*)x, cast(PLFLT*)y );
   plcol0( 1 );
   pllsty( 1 );
-  plline( 4, cast(PLFLT*)x, cast(PLFLT*)y );
+  plline(x, y);
 }

@@ -48,12 +48,7 @@ static PLBOOL[] rev = [ 0, 0 ];
 int main( char[][] args )
 {
   /* Parse and process command line arguments */
-  char*[] c_args = new char*[args.length];
-  foreach( size_t i, char[] arg; args ) {
-    c_args[i] = toStringz(arg);
-  }
-  int argc = c_args.length;
-  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
+  plparseopts(args, PL_PARSE_FULL);
 
   plinit();
   plscmap0n(4);

@@ -224,12 +224,7 @@ int main( char[][] args )
   string cmdString;
 
   /* Parse and process command line arguments */
-  char*[] c_args = new char*[args.length];
-  foreach( size_t i, char[] arg; args ) {
-    c_args[i] = toStringz(arg);
-  }
-  int argc = c_args.length;
-  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
+  plparseopts(args, PL_PARSE_FULL);
 
   plinit();
 
@@ -271,8 +266,8 @@ int main( char[][] args )
             cmdString = format("##[0x%.4x]", Type1[offset[page]+slice]);
           else if(page>=4)
             cmdString = format("##[0x%.4x]", lo[page]+slice);
-          plptex(x, y+yoffset, 1., 0., 0.5, &toStringz(cmdString)[1]);
-          plptex(x, y-yoffset, 1., 0., 0.5, toStringz(cmdString));
+          plptex(x, y+yoffset, 1., 0., 0.5, cmdString[1..cmdString.length]);
+          plptex(x, y-yoffset, 1., 0., 0.5, cmdString);
         }
         slice++;
       }
@@ -280,7 +275,7 @@ int main( char[][] args )
 
     /* Page title */
     plschr(0., 1.0);
-    plmtex("t", 1.5, 0.5, 0.5, toStringz(title[page]));
+    plmtex("t", 1.5, 0.5, 0.5, title[page]);
   }
 
   /* Demonstrate methods of getting the current fonts */
@@ -340,7 +335,7 @@ int main( char[][] args )
                       family[family_index], style[style_index], weight[weight_index],
                       family[family_index], style[style_index], weight[weight_index]);
       }
-      plptex(0., 1.-(i+0.5)*dy, 1., 0., 0., toStringz(text));
+      plptex(0., 1.-(i+0.5)*dy, 1., 0., 0., text);
     }
 
     plschr(0., 1.0);

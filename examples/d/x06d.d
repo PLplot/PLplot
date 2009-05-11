@@ -17,12 +17,7 @@ int main( char[][] args )
   PLFLT x, y;
 
   /* Parse and process command line arguments */
-  char*[] c_args = new char*[args.length];
-  foreach( size_t i, char[] arg; args ) {
-    c_args[i] = toStringz(arg);
-  }
-  int argc = c_args.length;
-  plparseopts( &argc, cast(char**)c_args, PL_PARSE_FULL );
+  plparseopts(args, PL_PARSE_FULL);
 
   /* Initialize plplot */
   plinit();
@@ -40,14 +35,14 @@ int main( char[][] args )
   plcol0( 15 );
   for( size_t i=0; i<=9; i++ ) {
     text = format( "%d", i );
-    plmtex("b", 1.5, (0.1*i+0.05), 0.5, toStringz(text) );
+    plmtex("b", 1.5, (0.1*i+0.05), 0.5, text);
   }
 
   size_t k = 0;
   for( size_t i=0; i<=12; i++ ) {
     /* Write the digits to the left of the frame */
     text = format( "%d", 10*i );
-    plmtex( "lv", 1.0, (1.0-(2*i+1)/26.0), 1.0, toStringz(text) );
+    plmtex("lv", 1.0, (1.0-(2*i+1)/26.0), 1.0, text);
     for( size_t j=0; j<=9; j++ ) {
 	    x = 0.1*j+0.05;
 	    y = 1.25-0.1*i;
