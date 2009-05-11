@@ -24,4 +24,17 @@ if(ENABLE_d)
   install(FILES ${d_interface_INSTALLED_HEADERS}
     DESTINATION ${INCLUDE_DIR}
   )
+
+  # Build d bindings
+  set(plplotdmd${LIB_TAG}_LIB_SRCS
+    plplot.d
+  )
+
+  add_library(plplotdmd${LIB_TAG} STATIC ${plplotdmd${LIB_TAG}_LIB_SRCS})
+
+  install(TARGETS plplotdmd${LIB_TAG}
+    ARCHIVE DESTINATION ${LIB_DIR}
+    LIBRARY DESTINATION ${LIB_DIR}
+    RUNTIME DESTINATION ${BIN_DIR}
+  )
 endif(ENABLE_d)
