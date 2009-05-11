@@ -48,6 +48,7 @@ if(HAVE_QHULL)
     )
   target_link_libraries(csironn ${QHULL_LIBRARIES})
   install(TARGETS csironn
+    EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}

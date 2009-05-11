@@ -42,7 +42,8 @@ if(WITH_CSA)
     target_link_libraries(csirocsa ${MATH_LIB})
   endif(MATH_LIB)  
 
-  install(TARGETS csirocsa DESTINATION
+  install(TARGETS csirocsa
+    EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}

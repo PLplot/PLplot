@@ -260,3 +260,14 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
   DESTINATION ${DATA_DIR}/examples
   RENAME Makefile
   )
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt_installed_examples.in
+  ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt_installed_examples
+  @ONLY
+  )
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CMakeLists.txt_installed_examples
+  DESTINATION ${DATA_DIR}/examples
+  RENAME CMakeLists.txt
+  )

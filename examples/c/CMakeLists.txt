@@ -104,6 +104,11 @@ install(FILES ${c_SRCS} ${plplotcanvas_SRCS} ${plplotcanvas_DOCS} ${extXdrawable
   DESTINATION ${DATA_DIR}/examples/c
   )
 
+install(FILES CMakeLists.txt_installed_examples_c 
+  DESTINATION ${DATA_DIR}/examples/c
+  RENAME CMakeLists.txt
+  )
+
 set(CC ${CMAKE_C_COMPILER})
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
