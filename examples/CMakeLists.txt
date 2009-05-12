@@ -281,22 +281,32 @@ install(FILES
 # Install PLplot-specific language support files needed for CMake-based
 # build of installed examples.
 
-set(LANG_SUPPORT_FILES
-  CMakeD_Copyright.txt
-  CMakeDCompiler.cmake.in
-  CMakeDInformation.cmake
-  CMakeDetermineDCompiler.cmake
-  CMakeTestDCompiler.cmake
+set(LANG_SUPPORT_FILES)
 
-  CMakeAdaCompiler.cmake.in
-  CMakeAdaInformation.cmake
-  CMakeDetermineAdaCompiler.cmake
-  CMakeTestAdaCompiler.cmake
-  )
-
-foreach(LANG_SUPPORT_FILE ${LANG_SUPPORT_FILES})
-  install(FILES
-    ${CMAKE_SOURCE_DIR}/cmake/modules/${LANG_SUPPORT_FILE}
-    DESTINATION ${DATA_DIR}/examples/cmake/modules
+if(ENABLE_d)
+  set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
+    CMakeD_Copyright.txt
+    CMakeDCompiler.cmake.in
+    CMakeDInformation.cmake
+    CMakeDetermineDCompiler.cmake
+    CMakeTestDCompiler.cmake
     )
-endforeach(LANG_SUPPORT_FILE ${LANG_SUPPORT_FILES})
+endif(ENABLE_d)
+
+if(ENABLE_ada)
+  set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
+    CMakeAdaCompiler.cmake.in
+    CMakeAdaInformation.cmake
+    CMakeDetermineAdaCompiler.cmake
+    CMakeTestAdaCompiler.cmake
+    )
+endif(ENABLE_ada)
+
+if(LANG_SUPPORT_FILES)
+  foreach(LANG_SUPPORT_FILE ${LANG_SUPPORT_FILES})
+    install(FILES
+      ${CMAKE_SOURCE_DIR}/cmake/modules/${LANG_SUPPORT_FILE}
+      DESTINATION ${DATA_DIR}/examples/cmake/modules
+      )
+  endforeach(LANG_SUPPORT_FILE ${LANG_SUPPORT_FILES})
+endif(LANG_SUPPORT_FILES)
