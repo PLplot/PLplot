@@ -19,25 +19,25 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 set(d_STRING_INDICES
-"02"
-"03"
-"04"
-"05"
-"06"
-"07"
-"08"
-"10"
-"11"
-"12"
-"13"
-"17"
-"23"
-"24"
-"25"
-"27"
-"29"
-"30"
-)
+  "02"
+  "03"
+  "04"
+  "05"
+  "06"
+  "07"
+  "08"
+  "10"
+  "11"
+  "12"
+  "13"
+  "17"
+  "23"
+  "24"
+  "25"
+  "27"
+  "29"
+  "30"
+  )
 
 include_directories(${INCLUDE_DIR})
 foreach(STRING_INDEX ${d_STRING_INDICES})
