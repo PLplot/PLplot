@@ -326,7 +326,7 @@ ARCHIVE DESTINATION ${LIB_DIR}
 LIBRARY DESTINATION ${LIB_DIR}
 RUNTIME DESTINATION ${BIN_DIR}
 )
-install(EXPORT export_plplot DESTINATION ${DATA_DIR}/examples)
+install(EXPORT export_plplot DESTINATION ${DATA_DIR}/examples/cmake/modules)
 
 #message("libplplot${LIB_TAG}_LINK_FLAGS = ${libplplot${LIB_TAG}_LINK_FLAGS}")
 

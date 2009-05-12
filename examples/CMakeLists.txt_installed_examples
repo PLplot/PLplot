@@ -23,11 +23,10 @@ project(installed_plplot_examples)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4 FATAL_ERROR)
 # Location where PLplot cmake build system first looks for cmake modules.
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 #Configurable items.
-set(LIB_TAG "@LIB_TAG@")
-set(INCLUDE_DIR @INCLUDE_DIR@)
+include(plplot_configure)
 
 include(export_plplot)
 add_subdirectory(c)

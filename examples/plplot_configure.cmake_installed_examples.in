@@ -1,0 +1,4 @@
+# This file used to configure CMake variables that are used to build the
+# installed examples.
+set(LIB_TAG "@LIB_TAG@")
+set(INCLUDE_DIR @INCLUDE_DIR@)
