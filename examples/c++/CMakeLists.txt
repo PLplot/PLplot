@@ -113,3 +113,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
 DESTINATION ${DATA_DIR}/examples/c++
 RENAME Makefile
 )
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt_installed_examples_cxx
+DESTINATION ${DATA_DIR}/examples/c++
+RENAME CMakeLists.txt
+)
+
