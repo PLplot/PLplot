@@ -47,3 +47,7 @@ if(ENABLE_d)
   add_subdirectory(d)
 endif(ENABLE_d)
 
+if(ENABLE_ada)
+  add_subdirectory(ada)
+endif(ENABLE_ada)
+

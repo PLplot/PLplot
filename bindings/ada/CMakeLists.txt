@@ -21,15 +21,15 @@
 if(ENABLE_ada)
 
   set(SOURCE_LIST
-  plplot.adb
-  plplot.ads
-  plplot_thin.adb
-  plplot_thin.ads
-  plplot_traditional.adb
-  plplot_traditional.ads
-  plplot_auxiliary.adb
-  plplot_auxiliary.ads
-  )
+    plplot.adb
+    plplot.ads
+    plplot_thin.adb
+    plplot_thin.ads
+    plplot_traditional.adb
+    plplot_traditional.ads
+    plplot_auxiliary.adb
+    plplot_auxiliary.ads
+    )
   
   # These are Ada library information files built by gnat.  I am not 
   # sure whether the name suffixes correspond to the *.adb or *.ads files
@@ -38,66 +38,72 @@ if(ENABLE_ada)
   # N.B. the absolute location prefix of these files may have to be changed
   # in the future since this is a CMake internal.
   set(ALI_PREFIX 
-  ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/plplotada${LIB_TAG}.dir
-  )
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/plplotada${LIB_TAG}.dir
+    )
   set(ALI_LIST
-  ${ALI_PREFIX}/plplot.ali
-  ${ALI_PREFIX}/plplot_thin.ali
-  ${ALI_PREFIX}/plplot_traditional.ali
-  ${ALI_PREFIX}/plplot_auxiliary.ali
-  )
+    ${ALI_PREFIX}/plplot.ali
+    ${ALI_PREFIX}/plplot_thin.ali
+    ${ALI_PREFIX}/plplot_traditional.ali
+    ${ALI_PREFIX}/plplot_auxiliary.ali
+    )
 
   set(plplotada${LIB_TAG}_LIB_SRCS)
   foreach(SOURCE_FILE ${SOURCE_LIST})
     configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
-    )
+      ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+      )
     list(APPEND plplotada${LIB_TAG}_LIB_SRCS 
-    ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
-    )
+      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+      )
   endforeach(SOURCE_FILE ${SOURCE_LIST})
 
   add_library(plplotada${LIB_TAG} ${plplotada${LIB_TAG}_LIB_SRCS})
 
   target_link_libraries(plplotada${LIB_TAG}
-  plplot${LIB_TAG} ${GNAT_LIB}
-  )
+    plplot${LIB_TAG} ${GNAT_LIB}
+    )
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
     set_target_properties(plplotada${LIB_TAG}
-    PROPERTIES
-    SOVERSION ${plplotada_SOVERSION}
-    VERSION ${plplotada_VERSION}
-    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-    INSTALL_NAME_DIR "${LIB_DIR}"
-    )
+      PROPERTIES
+      SOVERSION ${plplotada_SOVERSION}
+      VERSION ${plplotada_VERSION}
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      INSTALL_NAME_DIR "${LIB_DIR}"
+      )
   else(USE_RPATH)
     set_target_properties(plplotada${LIB_TAG}
-    PROPERTIES
-    SOVERSION ${plplotada_SOVERSION}
-    VERSION ${plplotada_VERSION}
-    INSTALL_NAME_DIR "${LIB_DIR}"
-    )
+      PROPERTIES
+      SOVERSION ${plplotada_SOVERSION}
+      VERSION ${plplotada_VERSION}
+      INSTALL_NAME_DIR "${LIB_DIR}"
+      )
   endif(USE_RPATH)
 
   install(FILES ${plplotada${LIB_TAG}_LIB_SRCS} 
-  DESTINATION ${ADA_INCLUDE_DIR}
-  )
+    DESTINATION ${ADA_INCLUDE_DIR}
+    )
   
   # Permissions of *.ali files in accordance with
   # http://www.ada-france.org/debian/debian-ada-policy.html
   install(FILES ${ALI_LIST}
-  DESTINATION ${ADA_LIB_DIR}
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-  )
+    DESTINATION ${ADA_LIB_DIR}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    )
   
   install(TARGETS plplotada${LIB_TAG}
-  ARCHIVE DESTINATION ${LIB_DIR}
-  LIBRARY DESTINATION ${LIB_DIR}
-  RUNTIME DESTINATION ${BIN_DIR}
-  )
+    EXPORT export_plplot
+    ARCHIVE DESTINATION ${LIB_DIR}
+    LIBRARY DESTINATION ${LIB_DIR}
+    RUNTIME DESTINATION ${BIN_DIR}
+    )
+  install(EXPORT export_plplot
+    DESTINATION ${DATA_DIR}/examples/cmake/modules
+    FILE export_plplotada.cmake
+    )
+
 
   # Configure pkg-config *.pc file corresponding to libplplotada${LIB_TAG}
   if(PKG_CONFIG_EXECUTABLE)
@@ -121,7 +127,7 @@ if(ENABLE_ada)
     #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
     #			    fields.
     set(PC_DATA "ada:Ada:Ada bindings, :plplotada${LIB_TAG}")
-  
+    
     string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
     set(PC_FILE_SUFFIX "-${BINDING}")
     set(PC_REQUIRES "plplot${LIB_TAG}")
@@ -132,13 +138,13 @@ if(ENABLE_ada)
     set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
     set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
     set(PC_CONFIGURED_FILE
-    ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
-    )
+      ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
+      )
     configure_file(
-    ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.cmake
-    ${PC_CONFIGURED_FILE}
-    @ONLY
-    )
+      ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.cmake
+      ${PC_CONFIGURED_FILE}
+      @ONLY
+      )
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
   endif(PKG_CONFIG_EXECUTABLE)
 

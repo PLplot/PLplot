@@ -147,3 +147,8 @@ DESTINATION ${DATA_DIR}/examples/ada
 RENAME Makefile
 )
 
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt_installed_examples_ada
+DESTINATION ${DATA_DIR}/examples/ada
+RENAME CMakeLists.txt
+)
+
