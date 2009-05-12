@@ -132,3 +132,8 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plf77demos.inc
 DESTINATION ${DATA_DIR}/examples/f77
 )
 
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt_installed_examples_f77
+DESTINATION ${DATA_DIR}/examples/f77
+RENAME CMakeLists.txt
+)
+

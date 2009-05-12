@@ -99,17 +99,17 @@ if(ENABLE_f95)
   endif(USE_RPATH)
 
   install(TARGETS plplotf95c${LIB_TAG}
+    EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-
   ## Build fortran part of F95 bindings
   if(STATIC_OPTS)
     set(plplotf95opts${LIB_TAG}_LIB_SRCS
       configurable.f90
-    )
+      )
     set(plplotf95${LIB_TAG}_LIB_SRCS
       strutil.f90
       sfstubsf95.f90
@@ -170,9 +170,24 @@ if(ENABLE_f95)
   endif(CYGWIN)
 
   install(TARGETS plplotf95${LIB_TAG}
+    EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
+    )
+
+  if(STATIC_OPTS)
+    install(TARGETS plplotf95opts${LIB_TAG}
+      EXPORT export_plplot
+      ARCHIVE DESTINATION ${LIB_DIR}
+      LIBRARY DESTINATION ${LIB_DIR}
+      RUNTIME DESTINATION ${BIN_DIR}
+      )
+  endif(STATIC_OPTS)
+
+  install(EXPORT export_plplot
+    DESTINATION ${DATA_DIR}/examples/cmake/modules
+    FILE export_plplotf95.cmake
     )
 
   # For CMake-2.6.0 and above, the module files are created by

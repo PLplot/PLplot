@@ -114,3 +114,8 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plf95demos.inc
   DESTINATION ${DATA_DIR}/examples/f95
   )
 
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt_installed_examples_f95
+DESTINATION ${DATA_DIR}/examples/f95
+RENAME CMakeLists.txt
+)
+
