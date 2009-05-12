@@ -42,7 +42,7 @@ static PLFLT[] rcoord = [ 1.0, 1.0 ];
 static PLFLT[] gcoord = [ 0.0, 0.0 ];
 static PLFLT[] bcoord = [ 0.0, 0.0 ];
 static PLFLT[] acoord = [ 0.0, 1.0 ];
-static PLBOOL[] rev = [ 0, 0 ];
+static PLBOOL[] rev = [ 0 ];
 
 
 int main( char[][] args )
@@ -52,7 +52,7 @@ int main( char[][] args )
 
   plinit();
   plscmap0n(4);
-  plscmap0a(cast(PLINT*)red, cast(PLINT*)green, cast(PLINT*)blue, cast(PLFLT*)alpha, 4);
+  plscmap0a(red, green, blue, alpha);
 
   /* 
      Page 1:
@@ -135,8 +135,7 @@ int main( char[][] args )
   /* Create the color map with 128 colors and use plscmap1la to initialize */
   /* the color values with a linear varying transparency (or alpha) */
   plscmap1n(128);
-  plscmap1la(1, 2, cast(PLFLT*)pos, cast(PLFLT*)rcoord, cast(PLFLT*)gcoord,
-                   cast(PLFLT*)bcoord, cast(PLFLT*)acoord, cast(PLBOOL*)rev);
+  plscmap1la(1, pos, rcoord, gcoord, bcoord, acoord, rev);
 
   /* Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will */
   /* used for the shade plot. plshades will use linear interpolation to */

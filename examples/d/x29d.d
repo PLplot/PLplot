@@ -223,7 +223,7 @@ class plot {
 
     /* Rescale symbol size (used by plpoin) by 0.5 */
     plssym(0.0,0.5);
-    plpoin(npts, cast(PLFLT*)x, cast(PLFLT*)y, 2);
+    plpoin(x, y, 2);
     plline(x, y);
   }  
 }

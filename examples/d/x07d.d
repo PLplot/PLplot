@@ -17,8 +17,8 @@ int[17] base = [    0,  200,  500,  600,  700,  800,  900,
 \*--------------------------------------------------------------------------*/
 int main( char[][] args )
 {
-  char[] text;
-  PLFLT x, y;
+  string text;
+  PLFLT[1] x, y;
 
   /* Parse and process command line arguments */
   plparseopts(args, PL_PARSE_FULL);
@@ -26,8 +26,8 @@ int main( char[][] args )
   /* Initialize plplot */
   plinit();
 
-  plfontld( 1 );
-  for( size_t l=0; l<17; l++) {
+  plfontld(1);
+  for(size_t l=0; l<17; l++) {
     pladv( 0 );
 
     /* Set up viewport and window */
@@ -51,11 +51,11 @@ int main( char[][] args )
 	    text = format( "%d", base[l] + 10 * i );
 	    plmtex("lv", 1.0, (0.95-0.1*i), 1.0, text);
 	    for( size_t j=0; j<=9; j++ ) {
-        x = 0.1*j+0.05;
-        y = 0.95-0.1*i;
+        x[0] = 0.1*j+0.05;
+        y[0] = 0.95-0.1*i;
 
         /* Display the symbols */
-        plsym( 1, &x, &y, base[l]+k );
+        plsym(x, y, base[l]+k);
         k = k+1;
 	    }
     }

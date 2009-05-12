@@ -97,7 +97,7 @@ class plot {
       plgcol0(i, &r[i], &g[i], &b[i]);
 
     /* Now set cmap0 all at once (faster, since fewer driver calls) */
-    plscmap0(cast(int*)r, cast(int*)g, cast(int*)b, 116);
+    plscmap0(r, g, b);
 
     draw_windows(100, 16);
 
