@@ -33,8 +33,14 @@ if(ENABLE_d)
   add_library(plplotdmd${LIB_TAG} STATIC ${plplotdmd${LIB_TAG}_LIB_SRCS})
 
   install(TARGETS plplotdmd${LIB_TAG}
+    EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
   )
+  install(EXPORT export_plplot
+    DESTINATION ${DATA_DIR}/examples/cmake/modules
+    FILE export_plplotd.cmake
+    )
+
 endif(ENABLE_d)

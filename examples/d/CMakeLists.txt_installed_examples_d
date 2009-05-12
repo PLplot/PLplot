@@ -1,7 +1,7 @@
-# examples/d/CMakeLists.txt
+# d/CMakeLists.txt for installed PLplot examples
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2008 Werner Smekal
+# Copyright (C) 2009 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -18,7 +18,6 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-set(d_SRCS)
 set(d_STRING_INDICES
 "02"
 "03"
@@ -40,40 +39,9 @@ set(d_STRING_INDICES
 "30"
 )
 
-if(BUILD_TEST)
-  remove_definitions("-DHAVE_CONFIG_H")
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/bindings/d
-    )
-endif(BUILD_TEST)
+include_directories(${INCLUDE_DIR})
 foreach(STRING_INDEX ${d_STRING_INDICES})
   set(d_SRCS ${d_SRCS} x${STRING_INDEX}d.d)
-  if(BUILD_TEST)
-    add_executable(x${STRING_INDEX}d x${STRING_INDEX}d.d)
-    target_link_libraries(x${STRING_INDEX}d plplotdmd${LIB_TAG} plplot${LIB_TAG} ${MATH_LIB})
-  endif(BUILD_TEST)
+  add_executable(x${STRING_INDEX}d x${STRING_INDEX}d.d)
+  target_link_libraries(x${STRING_INDEX}d plplotdmd${LIB_TAG} plplot${LIB_TAG} ${MATH_LIB})
 endforeach(STRING_INDEX ${d_STRING_INDICES})
-
-set_source_files_properties(${d_SRCS}
-  PROPERTIES OBJECT_DEPENDS ${CMAKE_SOURCE_DIR}/bindings/d/plplot.d)
-
-install(FILES ${d_SRCS}
-  DESTINATION ${DATA_DIR}/examples/d
-)
-
-set(DC ${CMAKE_D_COMPILER})
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
-  ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-  DESTINATION ${DATA_DIR}/examples/d
-  RENAME Makefile
-)
-
-install(FILES CMakeLists.txt_installed_examples_d
-  DESTINATION ${DATA_DIR}/examples/d
-  RENAME CMakeLists.txt
-  )
-
