@@ -3,25 +3,25 @@
    Plots a simple stripchart with four pens.
  */
 
-import plplot;
 import std.string;
 import std.math;
 import std.stdio;
 import std.c.stdlib;
+import plplot;
 
 
 /*--------------------------------------------------------------------------*\
  * main program
 \*--------------------------------------------------------------------------*/
-int main( char[][] args )
+int main(char[][] args)
 {
   /* Parse and process command line arguments */
   plparseopts(args, PL_PARSE_FULL);
 
   /* If db is used the plot is much more smooth. However, because of the
      async X behaviour, one does not have a real-time scripcharter. */
-  plsetopt( "db", "" );
-  plsetopt( "np", "" );
+  plsetopt("db", "");
+  plsetopt("np", "");
 
   /* User sets up plot completely except for window and data 
    * Eventually settings in place when strip chart is created will be
@@ -49,7 +49,7 @@ int main( char[][] args )
   PLINT[4] colline = [ 2, 3, 4, 5 ];
 
   /* pens legend */
-  char[][4] legline = [ "sum", "sin", "sin*noi", "sin+noi" ];
+  string[4] legline = [ "sum", "sin", "sin*noi", "sin+noi" ];
 
   PLFLT xlab = 0.; /* legend position */
   PLFLT ylab = 0.25;	
@@ -60,7 +60,7 @@ int main( char[][] args )
   /* Initialize plplot */
   plinit();
 
-  pladv( 0 );    
+  pladv(0);    
   plvsta();    
 
   /* Register our error variables with PLplot */
@@ -70,38 +70,37 @@ int main( char[][] args )
   plsError( &pl_errcode, cast(char*)errmsg );
 
   PLINT id1;
-  plstripc( &id1, "bcnst", "bcnstv",
-	          tmin, tmax, tjump, ymin, ymax,
-	          xlab, ylab,
-	          autoy, acc,
-	          colbox, collab,
-	          cast(PLINT*)colline, cast(PLINT*)styline, cast(char**)legline, 
-	          "t", "", "Strip chart demo" ); 
+  plstripc(&id1, "bcnst", "bcnstv",
+           tmin, tmax, tjump, ymin, ymax,
+	         xlab, ylab,
+	         autoy, acc,
+	         colbox, collab,
+	         colline, styline, legline, 
+	         "t", "", "Strip chart demo"); 
 
-  if( pl_errcode ) {
-	  writefln( "%s\n", errmsg );  // TODO: to stderr
+  if(pl_errcode) {
+	  writefln("%s\n", errmsg);  // TODO: to stderr
 	  return 1;
   }
 
   /* Let plplot handle errors from here on */
-  plsError( null, null );
+  plsError(null, null);
 
   autoy = 0;	/* autoscale y */
   acc = 1;	/* accumulate */
 
   /* This is to represent a loop over time */
   /* Let's try a random walk process */
-
   PLFLT y1=0.0, y2=0.0, y3=0.0, y4=0.0;
   PLFLT dt=0.1;
 
-  const nsteps=1000;
+  const int nsteps=1000;
   PLFLT t, noise;
-  for( size_t n=0; n<nsteps; n++ ) {
+  for(size_t n=0; n<nsteps; n++) {
     // todo: usleep?
     // todo: poll?
-    t = cast(PLFLT)n*dt;
-    noise = (cast(PLFLT)std.c.stdlib.rand()/(std.c.stdlib.RAND_MAX+1.0))-0.5;
+    t = n*dt;
+    noise = (rand()/(RAND_MAX+1.0))-0.5;
     y1 += noise;
     y2 = sin(t*PI/18.);
     y3 = y2*noise;

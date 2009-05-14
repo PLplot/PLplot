@@ -18,11 +18,21 @@ int plparseopts(char[][] args, PLINT mode)
 
 /* simple arrow plotter. */
 //void  c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
-//void  c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
+
+void plsvect(PLFLT[] arrowx, PLFLT[] arrowy, PLBOOL fill)
+{
+  PLINT npts=arrowx.length;
+  assert(npts==arrowy.length, "plsvect(): Arrays must be of same length!");
+  c_plsvect(arrowx.ptr, arrowy.ptr, npts, fill); 
+}
 
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
-//void  c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub, char *yopt, PLFLT ytick, PLINT nysub);
+void plaxes(PLFLT x0, PLFLT y0, string xopt, PLFLT xtick, PLINT nxsub,
+                                string yopt, PLFLT ytick, PLINT nysub)
+{
+  c_plaxes(x0, y0, toStringz(xopt), xtick, nxsub, toStringz(yopt), ytick, nysub);
+}
 
 /* Plot a histogram using x to store data values and y to store frequencies */
 void plbin(PLFLT[] x, PLFLT[] y, PLINT opt)
@@ -95,19 +105,37 @@ void plfill3(PLFLT[] x, PLFLT[] y, PLFLT[] z)
 }
 
 /* Get the current device (keyword) name */
-//void  c_plgdev(char *p_dev);
+void plgdev(out string p_dev) 
+{
+  char[1024] temp;
+  c_plgdev(temp.ptr);
+  p_dev=toString(temp.ptr);
+}
 
 /* Get the (current) output file name.  Must be preallocated to >80 bytes */
-//void  c_plgfnam(char *fnam);
+void plgfnam(out string fnam)
+{
+  char[1024] temp;
+  c_plgfnam(temp.ptr);
+  fnam=toString(temp.ptr);
+}
 
 /* grid irregularly sampled data */
 //void  c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts, PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy, PLFLT **zg, PLINT type, PLFLT data);
 
 /* Get the current library version number */
-//void  c_plgver(char *p_ver);
+void plgver(out string p_ver)
+{
+  char[1024] temp;
+  c_plgver(temp.ptr);
+  p_ver=toString(temp.ptr);
+}
 
 /* Draws a histogram of n values of a variable in array data[0..n-1] */
-//void  c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax, PLINT nbin, PLINT opt);
+void plhist(PLFLT[] data, PLFLT datmin, PLFLT datmax, PLINT nbin, PLINT opt)
+{
+  c_plhist(data.length, data.ptr, datmin, datmax, nbin, opt);
+}
 
 /* Simple routine for labelling graphs. */
 void pllab(string xlabel, string ylabel, string tlabel)
@@ -306,7 +334,24 @@ void plstart(string devname, PLINT nx, PLINT ny)
 }
 
 /* Create 1d stripchart */
-//void  c_plstripc(PLINT *id, char *xspec, char *yspec, PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax, PLFLT xlpos, PLFLT ylpos, PLBOOL y_ascl, PLBOOL acc, PLINT colbox, PLINT collab, PLINT *colline, PLINT *styline, char **legline, char *labx, char *laby, char *labtop);
+void plstripc(PLINT* id, string xspec, string yspec, PLFLT xmin, PLFLT xmax, PLFLT xjump,
+              PLFLT ymin, PLFLT ymax, PLFLT xlpos, PLFLT ylpos, PLBOOL y_ascl, PLBOOL acc,
+              PLINT colbox, PLINT collab, PLINT[] colline, PLINT[] styline, string[] legline,
+              string labx, string laby, string labtop)
+{
+  assert(4==colline.length, "plstripc(): Arrays must be of length 4!");
+  assert(4==styline.length, "plstripc(): Arrays must be of length 4!");
+  assert(4==legline.length, "plstripc(): Arrays must be of length 4!");
+  
+  char*[4] leglinez;
+  for(int i=0; i<4; i++) {
+    leglinez[i] = toStringz(legline[i]);
+  }
+  
+  c_plstripc(id, toStringz(xspec), toStringz(yspec), xmin, xmax, xjump, ymin, ymax,
+             xlpos, ylpos, y_ascl, acc, colbox, collab, colline.ptr, styline.ptr, leglinez.ptr,
+             toStringz(labx), toStringz(laby), toStringz(labtop));
+}
 
 /* plots a 2d image (or a matrix too large for plshade() ) */
 //void  c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax, PLFLT valuemin, PLFLT valuemax);
@@ -817,7 +862,7 @@ const PLESC_DOUBLEBUFFERING_QUERY = 3;
 alias c_pl_setcontlabelformat pl_setcontlabelformat;
 alias c_pl_setcontlabelparam pl_setcontlabelparam;
 alias c_pladv pladv;
-alias c_plaxes plaxes;
+//alias c_plaxes plaxes;
 //alias c_plbin plbin;
 alias c_plbop plbop;
 //alias c_plbox plbox;
@@ -848,13 +893,13 @@ alias c_plgcolbg plgcolbg;
 alias c_plgcol0a plgcol0a;
 alias c_plgcolbga plgcolbga;
 alias c_plgcompression plgcompression;
-alias c_plgdev plgdev;
+//alias c_plgdev plgdev;
 alias c_plgdidev plgdidev;
 alias c_plgdiori plgdiori;
 alias c_plgdiplt plgdiplt;
 alias c_plgfam plgfam;
 alias c_plgfci plgfci;
-alias c_plgfnam plgfnam;
+//alias c_plgfnam plgfnam;
 alias c_plgfont plgfont;
 alias c_plglevel plglevel;
 alias c_plgpage plgpage;
@@ -862,13 +907,13 @@ alias c_plgra plgra;
 alias c_plgriddata plgriddata;
 alias c_plgspa plgspa;
 alias c_plgstrm plgstrm;
-alias c_plgver plgver;
+//alias c_plgver plgver;
 alias c_plgvpd plgvpd;
 alias c_plgvpw plgvpw;
 alias c_plgxax plgxax;
 alias c_plgyax plgyax;
 alias c_plgzax plgzax;
-alias c_plhist plhist;
+//alias c_plhist plhist;
 alias c_plhls plhls;
 alias c_plhlsrgb plhlsrgb;
 alias c_plimage plimage;
@@ -945,12 +990,12 @@ alias c_plssym plssym;
 alias c_plstar plstar;
 //alias c_plstart plstart;
 alias c_plstripa plstripa;
-alias c_plstripc plstripc;
+//alias c_plstripc plstripc;
 alias c_plstripd plstripd;
 //alias c_plstyl plstyl;
 alias c_plsurf3d plsurf3d;
 alias c_plsurf3dl plsurf3dl;
-alias c_plsvect plsvect;
+//alias c_plsvect plsvect;
 alias c_plsvpa plsvpa;
 alias c_plsxax plsxax;
 alias c_plsyax plsyax;
@@ -1005,10 +1050,8 @@ void  c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT acti
 void  c_pladv(PLINT page);
 
 /* simple arrow plotter. */
-
-void  c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
-
-void  c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
+void c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
+void c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
 
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
@@ -1153,8 +1196,7 @@ void  c_plgcolbga(PLINT *r, PLINT *g, PLINT *b, PLFLT *a);
 void  c_plgcompression(PLINT *compression);
 
 /* Get the current device (keyword) name */
-
-void  c_plgdev(char *p_dev);
+void c_plgdev(char *p_dev);
 
 /* Retrieve current window into device space */
 
@@ -1177,8 +1219,7 @@ void  c_plgfci(PLUNICODE *pfci);
 void  c_plgfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax);
 
 /* Get the (current) output file name.  Must be preallocated to >80 bytes */
-
-void  c_plgfnam(char *fnam);
+void c_plgfnam(char *fnam);
 
 /* Get the current font family, style and weight */
 
@@ -1200,48 +1241,37 @@ void  c_plgra();
 
 void  c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts, PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy, PLFLT **zg, PLINT type, PLFLT data);
 
-  /* type of gridding algorithm for plgriddata() */
-
+/* type of gridding algorithm for plgriddata() */
 const GRID_CSA = 1;
 const GRID_DTLI = 2;
 const GRID_NNI = 3;
 const GRID_NNIDW = 4;
 const GRID_NNLI = 5;
-
 const GRID_NNAIDW = 6;
-/* Get subpage boundaries in absolute coordinates */
 
-void  c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax);
+/* Get subpage boundaries in absolute coordinates */
+void c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax);
 
 /* Get current stream number. */
-
-void  c_plgstrm(PLINT *p_strm);
+void c_plgstrm(PLINT *p_strm);
 
 /* Get the current library version number */
-
-void  c_plgver(char *p_ver);
+void c_plgver(char *p_ver);
 
 /* Get viewport boundaries in normalized device coordinates */
-
-void  c_plgvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
+void c_plgvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
 
 /* Get viewport boundaries in world coordinates */
-
-void  c_plgvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
+void c_plgvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
 
 /* Get x axis labeling parameters */
-
-void  c_plgxax(PLINT *p_digmax, PLINT *p_digits);
+void c_plgxax(PLINT *p_digmax, PLINT *p_digits);
 
 /* Get y axis labeling parameters */
-
-void  c_plgyax(PLINT *p_digmax, PLINT *p_digits);
+void c_plgyax(PLINT *p_digmax, PLINT *p_digits);
 
 /* Get z axis labeling parameters */
-
-void  c_plgzax(PLINT *p_digmax, PLINT *p_digits);
-
-/* Draws a histogram of n values of a variable in array data[0..n-1] */
+void c_plgzax(PLINT *p_digmax, PLINT *p_digits);
 
 /* Flags for plhist() - opt argument; note: some flags are passed to
    plbin() for the actual plotting */
@@ -1249,31 +1279,28 @@ const PL_HIST_DEFAULT = 0;
 const PL_HIST_NOSCALING = 1;
 const PL_HIST_IGNORE_OUTLIERS = 2;
 const PL_HIST_NOEXPAND = 8;
-
 const PL_HIST_NOEMPTY = 16;
-void  c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax, PLINT nbin, PLINT opt);
+
+/* Draws a histogram of n values of a variable in array data[0..n-1] */
+void c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax, PLINT nbin, PLINT opt);
 
 /* Set current color (map 0) by hue, lightness, and saturation. */
-
-void  c_plhls(PLFLT h, PLFLT l, PLFLT s);
+void c_plhls(PLFLT h, PLFLT l, PLFLT s);
 
 /* Functions for converting between HLS and RGB color space */
-
-void  c_plhlsrgb(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
+void c_plhlsrgb(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
 
 /* Initializes PLplot, using preset or default options */
-
-void  c_plinit();
+void c_plinit();
 
 /* Draws a line segment from (x1, y1) to (x2, y2). */
-
-void  c_pljoin(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2);
+void c_pljoin(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2);
 
 /* Simple routine for labelling graphs. */
 void c_pllab(char *xlabel, char *ylabel, char *tlabel);
 
 /* Sets position of the light source */
-void  c_pllightsource(PLFLT x, PLFLT y, PLFLT z);
+void c_pllightsource(PLFLT x, PLFLT y, PLFLT z);
 
 /* Draws line segments connecting a series of points. */
 void c_plline(PLINT n, PLFLT *x, PLFLT *y);
@@ -1282,12 +1309,10 @@ void c_plline(PLINT n, PLFLT *x, PLFLT *y);
 void c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z);
 
 /* Set line style. */
-
-void  c_pllsty(PLINT lin);
+void c_pllsty(PLINT lin);
 
 /* plot continental outline in world coordinates */
-
-void  c_plmap(void  function(PLINT , PLFLT *, PLFLT *)mapform, char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+void c_plmap(void  function(PLINT , PLFLT *, PLFLT *)mapform, char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
 
 /* Plot the latitudes and longitudes on the background. */
 
@@ -1532,23 +1557,19 @@ void  c_plssub(PLINT nx, PLINT ny);
 void  c_plssym(PLFLT def, PLFLT scale);
 
 /* Initialize PLplot, passing in the windows/page settings. */
-
-void  c_plstar(PLINT nx, PLINT ny);
+void c_plstar(PLINT nx, PLINT ny);
 
 /* Initialize PLplot, passing the device name and windows/page settings. */
 void c_plstart(char *devname, PLINT nx, PLINT ny);
 
 /* Add a point to a stripchart.  */
-
-void  c_plstripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);
+void c_plstripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);
 
 /* Create 1d stripchart */
-
-void  c_plstripc(PLINT *id, char *xspec, char *yspec, PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax, PLFLT xlpos, PLFLT ylpos, PLBOOL y_ascl, PLBOOL acc, PLINT colbox, PLINT collab, PLINT *colline, PLINT *styline, char **legline, char *labx, char *laby, char *labtop);
+void c_plstripc(PLINT *id, char *xspec, char *yspec, PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax, PLFLT xlpos, PLFLT ylpos, PLBOOL y_ascl, PLBOOL acc, PLINT colbox, PLINT collab, PLINT *colline, PLINT *styline, char **legline, char *labx, char *laby, char *labtop);
 
 /* Deletes and releases memory used by a stripchart.  */
-
-void  c_plstripd(PLINT id);
+void c_plstripd(PLINT id);
 
 /* plots a 2d image (or a matrix too large for plshade() ) */
 
