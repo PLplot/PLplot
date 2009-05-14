@@ -73,6 +73,11 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
 #endif
 ;
 
+static int vectorize=0;
+
+static DrvOpt qt_options[]={	{"text_vectorize", DRV_INT, &vectorize, "Vectorize fonts on output (0|1)"},
+				{NULL, DRV_INT, NULL, NULL}};
+
 MasterHandler handler;
 
 bool initQtApp(bool isGUI)
@@ -304,22 +309,37 @@ void QtPLDriver::drawTextInPicture(QPainter* p, const QString& text)
 {
 	if(!m_painterP->isActive()) return;
 
+	QRectF rect(0., 0., 0., 0.);
+	QRectF bounding;
 	QPicture tempPic;
 	QPainter tempPainter(&tempPic);
 	tempPainter.setFont(p->font());
-	QRectF rect(0., 0., 0., 0.);
-	QRectF bounding;
-	tempPainter.drawText(rect, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextDontClip, text, &bounding);
-
-// 	tempPainter.drawLine(bounding.left()+1, bounding.bottom(), bounding.right()-1, bounding.bottom());
-// tempPainter.drawLine(bounding.left()+1, bounding.top(), bounding.right()-1, bounding.top());
-
-// 	bounding.adjust(-0.5, bounding.height(), -0.5, -bounding.height()/5.); // Empiric adjustment of the true bounding box
-
+	
+	if(vectorize)
+	{
+		bounding=tempPainter.boundingRect(rect, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextDontClip, text);
+		
+		QPen savePen=tempPainter.pen();
+		QPen pen=savePen;
+		pen.setStyle(Qt::NoPen);
+		tempPainter.setPen(pen);
+		
+		double offset=QFontMetrics(tempPainter.font(), &tempPic).boundingRect(text).top(); // Distance between the baseline and the top of the bounding box
+		
+		QPainterPath path;
+		path.addText(QPointF(bounding.left(), bounding.top()-offset), tempPainter.font(), text);
+		tempPainter.drawPath(path);
+		tempPainter.setPen(pen);
+	}
+	else
+	{
+		tempPainter.drawText(rect, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextDontClip, text, &bounding);
+	}
+	
 	tempPainter.end();
-
+	
 	p->drawPicture((int)(xOffset+bounding.width()/2.), -yOffset, tempPic);
-
+	
 	xOffset+=bounding.width();
 }
 
@@ -744,6 +764,10 @@ void QtRasterDevice::savePlot()
 void plD_init_rasterqt(PLStream * pls)
 {
         double dpi;
+	
+	vectorize=0;
+	plParseDrvOpts(qt_options);
+	
 	/* Stream setup */
 	pls->color = 1;
 	pls->plbuf_write=0;
@@ -1017,6 +1041,9 @@ void plD_dispatch_init_svgqt(PLDispatchTable *pdt)
 
 void plD_init_svgqt(PLStream * pls)
 {
+	vectorize=1;
+	plParseDrvOpts(qt_options);
+
 	/* Stream setup */
 	pls->color = 1;
 	pls->plbuf_write=0;
@@ -1193,6 +1220,9 @@ void plD_dispatch_init_pdfqt(PLDispatchTable *pdt)
 
 void plD_init_epspdfqt(PLStream * pls)
 {
+	vectorize=0;
+	plParseDrvOpts(qt_options);
+	
 	/* Stream setup */
 	pls->color = 1;
 	pls->plbuf_write=0;
@@ -1438,6 +1468,9 @@ void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 
 void plD_init_qtwidget(PLStream * pls)
 {
+	vectorize=0;
+	plParseDrvOpts(qt_options);
+	
 	PLINT w, h;
 	bool isMaster=initQtApp(true);
 	QtPLWidget* widget;
@@ -1642,6 +1675,9 @@ void plD_dispatch_init_extqt(PLDispatchTable *pdt)
 
 void plD_init_extqt(PLStream * pls)
 {
+	vectorize=0;
+	plParseDrvOpts(qt_options);
+	
 	if(pls->dev==NULL/* || pls->xlength <= 0 || pls->ylength <= 0*/)
 	{
 		printf("Error: use plsetqtdev to set up the Qt device before calling plinit()\n");
