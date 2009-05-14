@@ -3,23 +3,37 @@
 set(LIB_TAG "@LIB_TAG@")
 set(INCLUDE_DIR @INCLUDE_DIR@)
 set(MATH_LIB @MATH_LIB@)
+
+# What computer languages do we have configured?
+set(ENABLE_ada @ENABLE_ada@)
 set(ENABLE_cxx @ENABLE_cxx@)
+set(ENABLE_d @ENABLE_d@)
 set(ENABLE_f77 @ENABLE_f77@)
 set(ENABLE_f95 @ENABLE_f95@)
-if(ENABLE_F77 OR ENABLE_f95)
-  set(STATIC_OPTS @STATIC_OPTS@)
-  enable_language(Fortran)
-endif(ENABLE_F77 OR ENABLE_f95)
-if(ENABLE_f95)
-  set(F95_MOD_DIR @F95_MOD_DIR@)
-endif(ENABLE_f95)
-set(ENABLE_d @ENABLE_d@)
-if(ENABLE_d)
-  enable_language(D)
-endif(ENABLE_d)
-set(ENABLE_ada @ENABLE_ada@)
+
+# Always enable C language.
+enable_language(C)
+
 if(ENABLE_ada)
   enable_language(Ada)
   set(ADA_INCLUDE_DIR @ADA_INCLUDE_DIR@)
   set(ADA_LIB_DIR @ADA_LIB_DIR@)
 endif(ENABLE_ada)
+
+if(ENABLE_cxx)
+  enable_language(CXX)
+endif(ENABLE_cxx)
+
+if(ENABLE_d)
+  enable_language(D)
+endif(ENABLE_d)
+
+if(ENABLE_F77 OR ENABLE_f95)
+  set(STATIC_OPTS @STATIC_OPTS@)
+  enable_language(Fortran)
+endif(ENABLE_F77 OR ENABLE_f95)
+
+if(ENABLE_f95)
+  set(F95_MOD_DIR @F95_MOD_DIR@)
+endif(ENABLE_f95)
+

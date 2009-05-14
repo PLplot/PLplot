@@ -112,4 +112,5 @@ foreach(STRING_INDEX ${ada_STRING_INDICES})
   "-aI${CMAKE_SOURCE_DIR}/ada -aI${ADA_INCLUDE_DIR} -aL${ADA_LIB_DIR}"
   )
   target_link_libraries(${TARGET_NAME} plplotada${LIB_TAG})
+  set_property(GLOBAL APPEND PROPERTY TARGETS_examples_ada ${TARGET_NAME})
 endforeach(STRING_INDEX ${ada_STRING_INDICES})

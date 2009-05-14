@@ -19,35 +19,95 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-project(installed_plplot_examples)
+project(installed_plplot_examples NONE)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4 FATAL_ERROR)
 # Location where PLplot cmake build system first looks for cmake modules.
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 
-#Configurable items.
+#Configure variables and enable languages as needed.
 include(plplot_configure)
 
 include(export_plplot)
 add_subdirectory(c)
+get_property(targets_examples_c GLOBAL PROPERTY TARGETS_examples_c)
+set(language_info_LIST c:c)
+
+if(ENABLE_ada)
+  add_subdirectory(ada)
+  get_property(targets_examples_ada GLOBAL PROPERTY TARGETS_examples_ada)
+  list(APPEND language_info_LIST ada:a)
+endif(ENABLE_ada)
 
 if(ENABLE_cxx)
   add_subdirectory(c++)
+  get_property(targets_examples_cxx GLOBAL PROPERTY TARGETS_examples_cxx)
+  list(APPEND language_info_LIST cxx:cxx)
 endif(ENABLE_cxx)
 
 if(ENABLE_f77)
   add_subdirectory(f77)
+  get_property(targets_examples_f77 GLOBAL PROPERTY TARGETS_examples_f77)
+  list(APPEND language_info_LIST f77:f)
 endif(ENABLE_f77)
 
 if(ENABLE_f95)
   add_subdirectory(f95)
+  get_property(targets_examples_f95 GLOBAL PROPERTY TARGETS_examples_f95)
+  list(APPEND language_info_LIST f95:f95)
 endif(ENABLE_f95)
 
 if(ENABLE_d)
   add_subdirectory(d)
+  get_property(targets_examples_d GLOBAL PROPERTY TARGETS_examples_d)
+  list(APPEND language_info_LIST d:d)
 endif(ENABLE_d)
 
-if(ENABLE_ada)
-  add_subdirectory(ada)
-endif(ENABLE_ada)
+# Octave not configured yet so the following stanza ignored for now.
+if(ENABLE_octave)
+  add_subdirectory(octave)
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${CMAKE_CURRENT_SOURCE_DIR}/lena.img
+    ${CMAKE_CURRENT_BINARY_DIR}/lena.img
+    )
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${CMAKE_CURRENT_SOURCE_DIR}/octave/lena.img
+    ${CMAKE_CURRENT_BINARY_DIR}/octave/lena.img
+    )
+endif(ENABLE_octave)
 
+execute_process(
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm 
+  ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+  )
+
+set(output_LIST)
+foreach(language_info ${language_info_LIST})
+  string(REGEX REPLACE "^(.*):.*$" "\\1" language ${language_info})
+  string(REGEX REPLACE "^.*:(.*)$" "\\1" suffix ${language_info})
+
+  # Will change from x03 to x01 as the representative result below when
+  # standard example 1 is implemented in d.
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x03${suffix}.psc
+    COMMAND ${CMAKE_COMMAND} -E echo "Generate ${language} results for psc device"
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh --verbose --front-end=${language} --device=psc
+    DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh
+    ${targets_examples_${language}}
+    )
+  list(APPEND output_LIST ${CMAKE_CURRENT_BINARY_DIR}/x03${suffix}.psc)
+endforeach(language_info ${language_info_LIST})
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/compare
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/compare
+  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test_diff.sh
+  DEPENDS ${output_LIST}
+  )
+
+add_custom_target(test_noninteractive 
+DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/compare)
