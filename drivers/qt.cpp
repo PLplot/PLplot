@@ -307,7 +307,7 @@ QFont QtPLDriver::getFont(PLUNICODE unicode)
 
 void QtPLDriver::drawTextInPicture(QPainter* p, const QString& text)
 {
-	if(!m_painterP->isActive()) return;
+// 	if(!m_painterP->isActive()) return;
 
 	QRectF rect(0., 0., 0., 0.);
 	QRectF bounding;
@@ -343,12 +343,10 @@ void QtPLDriver::drawTextInPicture(QPainter* p, const QString& text)
 	xOffset+=bounding.width();
 }
 
-QPicture QtPLDriver::getTextPicture(PLUNICODE* text, int len, PLFLT chrht)
+QPicture QtPLDriver::getTextPicture(PLUNICODE fci, PLUNICODE* text, int len, PLFLT chrht)
 {
 	char plplotEsc;
 	plgesc( &plplotEsc );
-	PLUNICODE fci;
-	plgfci( &fci );
 	
 	double old_fontScale;
   
@@ -469,7 +467,9 @@ void QtPLDriver::drawText(PLStream* pls, EscText* txt)
 	plRotationShear( txt->xform, &rotation, &shear, &stride);
 	
 	double picDpi;
-	QPicture picText=getTextPicture(txt->unicode_array, txt->unicode_array_len, pls->chrht);
+	PLUNICODE fci;
+	plgfci( &fci );
+	QPicture picText=getTextPicture(fci, txt->unicode_array, txt->unicode_array_len, pls->chrht);
 	picDpi=picText.logicalDpiY();
 
 	m_painterP->setClipping(true);
@@ -1325,36 +1325,221 @@ QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
 {
 	m_painterP=new QPainter;
 	
-	m_dAspectRatio=(double)i_iWidth/(double)i_iHeight;
+	m_dAspectRatio=m_dWidth/m_dHeight;
+	
 	m_pixPixmap=NULL;
 	m_iOldSize=0;
-	
-	pic=new QPicture;
-	m_painterP->begin(pic);
-	m_painterP->setRenderHint(QPainter::Antialiasing, true);
-	pageNumber=1;
-	
+	resize(i_iWidth, i_iHeight);
 }
 
 QtPLWidget::~QtPLWidget()
 {
+	clearBuffer();
 	if(m_pixPixmap!=NULL) delete m_pixPixmap;
-	if(m_painterP!=NULL) delete m_painterP;
-	if(pic!=NULL) delete pic;
-	m_pixPixmap=NULL;
-	m_painterP=NULL;
-	pic=NULL;
 }
 
 void QtPLWidget::clearWidget()
 {
-	if(m_painterP->isActive()) m_painterP->end();
-	delete pic;
-	pic=new QPicture;
-	m_painterP->begin(pic);
-	m_painterP->setRenderHint(QPainter::Antialiasing, true);
+	clearBuffer();
 	m_bAwaitingRedraw=true;
 	update();
+}
+
+void QtPLWidget::clearBuffer()
+{
+	for(QLinkedList<BufferElement>::iterator i=m_listBuffer.begin(); i!=m_listBuffer.end(); ++i)
+	{
+		switch(i->Element)
+		{
+			case POLYLINE:
+			case POLYGON:
+				delete[] i->Data.PolylineStruct->x;
+				delete[] i->Data.PolylineStruct->y;
+				delete i->Data.PolylineStruct;
+				break;
+				
+			case LINE:
+				delete i->Data.LineStruct;
+				break;
+            
+			case SET_COLOUR:
+				delete i->Data.ColourStruct;
+				break;
+				
+			case TEXT:
+				delete[] i->Data.TextStruct->text;
+				delete i->Data.TextStruct;
+				break;
+			default:
+				break;
+		}
+	}
+    
+	m_listBuffer.clear();
+}
+
+void QtPLWidget::drawLine(short x1, short y1, short x2, short y2)
+{
+	BufferElement el;
+	el.Element=LINE;
+	el.Data.LineStruct=new struct LineStruct_;
+	el.Data.LineStruct->x1=(PLFLT)x1*downscale;
+	el.Data.LineStruct->y1=m_dHeight-(PLFLT)y1*downscale;
+	el.Data.LineStruct->x2=(PLFLT)x2*downscale;
+	el.Data.LineStruct->y2=m_dHeight-(PLFLT)y2*downscale;
+
+	m_listBuffer.append(el);
+}
+
+void QtPLWidget::drawPolyline(short * x, short * y, PLINT npts)
+{
+	BufferElement el;
+	el.Element=POLYLINE;
+	el.Data.PolylineStruct=new struct PolylineStruct_;
+	el.Data.PolylineStruct->npts=(PLINT)npts;
+	el.Data.PolylineStruct->x=new PLFLT[npts];
+	el.Data.PolylineStruct->y=new PLFLT[npts];
+	for(int i=0; i<npts; ++i)
+	{
+		el.Data.PolylineStruct->x[i]=(PLFLT)x[i]*downscale;
+		el.Data.PolylineStruct->y[i]=m_dHeight-(PLFLT)y[i]*downscale;
+	}
+    
+	m_listBuffer.append(el);
+}
+
+void QtPLWidget::drawPolygon(short * x, short * y, PLINT npts)
+{
+	BufferElement el;
+	el.Element=POLYGON;
+	el.Data.PolylineStruct=new struct PolylineStruct_;
+	el.Data.PolylineStruct->npts=(PLINT)npts;
+	el.Data.PolylineStruct->x=new PLFLT[npts];
+	el.Data.PolylineStruct->y=new PLFLT[npts];
+	for(int i=0; i<npts; ++i)
+	{
+		el.Data.PolylineStruct->x[i]=(PLFLT)x[i]*downscale;
+		el.Data.PolylineStruct->y[i]=m_dHeight-(PLFLT)y[i]*downscale;
+	}
+    
+	m_listBuffer.append(el);
+}
+
+void QtPLWidget::setColor(int r, int g, int b, double alpha)
+{
+	BufferElement el;
+	el.Element=SET_COLOUR;
+	el.Data.ColourStruct=new struct ColourStruct_;
+	el.Data.ColourStruct->R=r;
+	el.Data.ColourStruct->G=g;
+	el.Data.ColourStruct->B=b;
+	el.Data.ColourStruct->A=alpha*255.;
+
+	m_listBuffer.append(el);
+}
+
+void QtPLWidget::setSolid()
+{
+	BufferElement el;
+	el.Element=SET_SOLID;
+	m_listBuffer.append(el);
+}
+
+void QtPLWidget::setWidth(PLINT w)
+{
+	BufferElement el;
+	el.Element=SET_WIDTH;
+	el.Data.intParam=w;
+	m_listBuffer.append(el);
+}
+
+void QtPLWidget::drawText(PLStream* pls, EscText* txt)
+{
+	BufferElement el;
+	el.Element=TEXT;
+	el.Data.TextStruct=new struct TextStruct_;
+	el.Data.TextStruct->x=txt->x*downscale;
+	el.Data.TextStruct->y=m_dHeight-txt->y*downscale;
+	el.Data.TextStruct->clipxmin=pls->clpxmi*downscale;
+	el.Data.TextStruct->clipymin=m_dHeight-pls->clpymi*downscale;
+	el.Data.TextStruct->clipxmax=pls->clpxma*downscale;
+	el.Data.TextStruct->clipymax=m_dHeight-pls->clpyma*downscale;
+	PLUNICODE fci;
+	plgfci(&fci);
+	el.Data.TextStruct->fci=fci;
+	PLFLT rotation, shear, stride;
+	plRotationShear( txt->xform, &rotation, &shear, &stride);
+	rotation -= pls->diorot * M_PI / 2.0;
+	el.Data.TextStruct->rotation=rotation;
+	el.Data.TextStruct->shear=shear;
+	el.Data.TextStruct->stride=stride;
+	el.Data.TextStruct->just=txt->just;
+	el.Data.TextStruct->text=new PLUNICODE[txt->unicode_array_len];
+	memcpy(el.Data.TextStruct->text, txt->unicode_array, txt->unicode_array_len*sizeof(PLUNICODE));
+	el.Data.TextStruct->len=txt->unicode_array_len;
+	el.Data.TextStruct->chrht=pls->chrht;
+	
+	m_listBuffer.append(el);
+
+}
+
+void QtPLWidget::drawTextInPicture(QPainter* p, const QString& text)
+{
+	QRectF rect(0., 0., 0., 0.);
+	QRectF bounding;
+	QPicture tempPic;
+	QPainter tempPainter(&tempPic);
+	tempPainter.setFont(p->font());
+	
+	if(vectorize)
+	{
+		bounding=tempPainter.boundingRect(rect, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextDontClip, text);
+		
+		QPen savePen=tempPainter.pen();
+		QPen pen=savePen;
+		pen.setStyle(Qt::NoPen);
+		tempPainter.setPen(pen);
+		
+		double offset=QFontMetrics(tempPainter.font(), &tempPic).boundingRect(text).top(); // Distance between the baseline and the top of the bounding box
+		
+		QPainterPath path;
+		path.addText(QPointF(bounding.left(), bounding.top()-offset), tempPainter.font(), text);
+		tempPainter.drawPath(path);
+		tempPainter.setPen(pen);
+	}
+	else
+	{
+		tempPainter.drawText(rect, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextDontClip, text, &bounding);
+		
+	}
+	
+	tempPainter.end();
+	
+	p->drawPicture((int)(xOffset+bounding.width()/2.), -yOffset, tempPic);
+	xOffset+=bounding.width();
+}
+
+void QtPLWidget::renderText(QPainter* p, struct TextStruct_* s, double x_fact, double x_offset, double y_fact, double y_offset)
+{
+	if(s->len<=0 || s->len>=500) return;
+	QPicture picText=getTextPicture(s->fci, s->text, s->len, s->chrht*y_fact);
+	
+	double picDpi=picText.logicalDpiY();
+
+	p->setClipping(true);
+	p->setClipRect(QRectF(s->clipxmin*x_fact+x_offset, s->clipymax*y_fact+y_offset, (s->clipxmax-s->clipxmin)*x_fact, (-s->clipymax+s->clipymin)*y_fact), Qt::ReplaceClip);
+	
+	p->translate(s->x*x_fact+x_offset, s->y*y_fact+y_offset);
+	QMatrix rotShearMatrix(cos(s->rotation)*s->stride, -sin(s->rotation)*s->stride, cos(s->rotation)*sin(s->shear)+sin(s->rotation)*cos(s->shear), -sin(s->rotation)*sin(s->shear)+cos(s->rotation)*cos(s->shear), 0.,0.);
+	p->setWorldMatrix(rotShearMatrix, true);
+
+	p->translate(-s->just*xOffset*p->device()->logicalDpiY()/picDpi, 0.);
+	
+	p->drawPicture(0., 0., picText);
+	
+	p->setWorldMatrix(QMatrix());
+
+	p->setClipping(false);
 }
 
 void QtPLWidget::mouseReleaseEvent ( QMouseEvent * event )
@@ -1397,39 +1582,121 @@ void QtPLWidget::resizeEvent( QResizeEvent * )
 
 void QtPLWidget::paintEvent( QPaintEvent * )
 {
-	if(m_painterP->isActive()) m_painterP->end();
 	double x_fact, y_fact, x_offset(0.), y_offset(0.); //Parameters to scale and center the plot on the widget
+	
 	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
-	QPainter * painter=new QPainter;
-
-	if(m_bAwaitingRedraw || m_pixPixmap==NULL)
+	if(m_bAwaitingRedraw || m_pixPixmap==NULL || m_listBuffer.size()!=m_iOldSize) // If must regenerate image, draw it in the pixmap
 	{
 		if(m_pixPixmap!=NULL) delete m_pixPixmap;
 		m_pixPixmap=new QPixmap(width(), height());
+		QPainter* painter=new QPainter;
 		painter->begin(m_pixPixmap);
+		
+		// Draw the margins and the background
 		painter->fillRect(0, 0, width(), height(), QBrush(Qt::white));
 		painter->fillRect(0, 0, width(), height(), QBrush(Qt::gray, Qt::Dense4Pattern));
 		painter->fillRect((int)x_offset, (int)y_offset, (int)floor(x_fact*m_dWidth+0.5), (int)floor(y_fact*m_dHeight+0.5), QBrush(Qt::black));
-		painter->setRenderHint(QPainter::Antialiasing, true);
-		painter->setWorldMatrix(QMatrix(x_fact, 0., 0., y_fact, x_offset, y_offset));
-		pic->play(painter);
+		
+		// Draw the plot
+		doPlot(painter, x_fact, y_fact, x_offset, y_offset);
 		painter->end();
+		
 		m_bAwaitingRedraw=false;
+		m_iOldSize=m_listBuffer.size();
+		
+		delete painter;
 	}
 	
-	painter->begin(this);
+	// draw the current pixmap
+	m_painterP->begin(this);
+	
+	m_painterP->drawPixmap(0, 0, *m_pixPixmap);
+	
+	m_painterP->end();
+}
 
-	painter->drawPixmap(0, 0, *m_pixPixmap);
+void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offset, double y_offset)
+{
+	QLineF line;
+	QPointF * polyline;
+	PLINT npts;
+	QVector<qreal> vect;
+	QPen pen=p->pen();
+	QBrush brush=p->brush();
+	brush.setStyle(Qt::SolidPattern);
+	p->setBrush(brush);
+	p->setRenderHints(QPainter::Antialiasing, true);
+	
+	if(m_listBuffer.empty())
+	{
+		p->fillRect(0, 0, (int)(x_fact+2.*x_offset), (int)(y_fact+2.*y_offset), QBrush());
+		return;
+	}
+	// unrolls the buffer and draws each element accordingly
+	for(QLinkedList<BufferElement>::const_iterator i=m_listBuffer.begin(); i!=m_listBuffer.end(); ++i)
+	{
+		switch(i->Element)
+		{
+			case LINE:
+				line=QLineF(i->Data.LineStruct->x1*x_fact+x_offset, i->Data.LineStruct->y1*y_fact+y_offset, i->Data.LineStruct->x2*x_fact+x_offset, i->Data.LineStruct->y2*y_fact+y_offset);
+				p->drawLine(line);
+				break;
+            
+			case POLYLINE:
+				npts=i->Data.PolylineStruct->npts;
+				polyline=new QPointF[npts];
+				for(int j=0; j<npts; ++j)
+				{
+					polyline[j].setX(i->Data.PolylineStruct->x[j]*x_fact+x_offset);
+					polyline[j].setY(i->Data.PolylineStruct->y[j]*y_fact+y_offset);
+				}
+				p->drawPolyline(polyline, npts);
+				delete[] polyline;
+				break;
+                
+			case POLYGON:
+				npts=i->Data.PolylineStruct->npts;
+				polyline=new QPointF[npts];
+				for(int j=0; j<npts; ++j)
+				{
+					polyline[j].setX(i->Data.PolylineStruct->x[j]*x_fact+x_offset);
+					polyline[j].setY(i->Data.PolylineStruct->y[j]*y_fact+y_offset);
+				}
+				p->drawPolygon(polyline, npts);
+				delete[] polyline;
+				break;
+                
+			case TEXT:
+				renderText(p, i->Data.TextStruct, x_fact, x_offset, y_fact, y_offset);
+				break;
+				
+			case SET_WIDTH:
+				pen.setWidth(i->Data.intParam);
+				p->setPen(pen);
+				break;
 
-	painter->end();
-	delete painter;
+			case SET_COLOUR:
+				pen.setColor(QColor(i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A));
+				p->setPen(pen);
+				brush.setColor(QColor(i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A));
+				p->setBrush(brush);
+				break;
+
+			case SET_SOLID:
+				pen.setStyle(Qt::SolidLine);
+				p->setPen(pen);
+				break;
+			
+			default:
+				break;
+		}
+	}
 }
 
 void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset)
 {
 	double w=(double)width();
 	double h=(double)height();
-
 	if(w/h>m_dAspectRatio) //Too wide, h is the limitating factor
 	{
 		io_dYFact=h/m_dHeight;
@@ -1445,6 +1712,8 @@ void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, doubl
 		io_dYOffset=(h-io_dYFact*m_dHeight)/2.;
 	}
 }
+
+
 #endif
 
 #if defined (PLD_qtwidget)
@@ -1549,10 +1818,10 @@ QtExtWidget::~QtExtWidget()
 	QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
 	if(m_pixPixmap!=NULL) delete m_pixPixmap;
 	if(m_painterP!=NULL) delete m_painterP;
-	if(pic!=NULL) delete pic;
+// 	if(pic!=NULL) delete pic;
 	m_pixPixmap=NULL;
 	m_painterP=NULL;
-	pic=NULL;
+// 	pic=NULL;
 }
 
 void QtExtWidget::captureMousePlotCoords(PLFLT* x, PLFLT* y)

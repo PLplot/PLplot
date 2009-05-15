@@ -179,7 +179,7 @@ class QtPLDriver
 		// Draws text in a QPicture using a sub-QPicture (!), updates the current xOffset
 		void drawTextInPicture(QPainter*, const QString&);
 		// Gets the QPicture displaying text, with the base chrht char height
-		QPicture getTextPicture(PLUNICODE* text, int len, PLFLT chrht);
+		QPicture getTextPicture(PLUNICODE fci, PLUNICODE* text, int len, PLFLT chrht);
 		
 		// Text-related variables
 		bool underlined;
@@ -264,6 +264,75 @@ class QtEPSDevice: public QtPLDriver, public QPrinter
 
 #if defined (PLD_qtwidget) || defined (PLD_extqt)
 
+typedef enum ElementType_
+{
+	LINE,
+	POLYLINE,
+	POLYGON,
+	SET_WIDTH,
+	SET_COLOUR,
+	SET_SOLID,
+	TEXT
+} ElementType; // Identifiers for elements of the buffer
+
+struct LineStruct_
+{
+	PLFLT x1;
+	PLFLT x2;
+	PLFLT y1;
+	PLFLT y2;
+};
+
+struct PolylineStruct_
+{
+	PLINT npts;
+	PLFLT* x;
+	PLFLT* y;
+};
+
+struct ColourStruct_
+{
+	PLINT R, G, B, A;
+};
+
+struct TextStruct_
+{
+	PLFLT x;
+	PLFLT y;
+	PLFLT clipxmin;
+	PLFLT clipymin;
+	PLFLT clipxmax;
+	PLFLT clipymax;
+	PLFLT rotation;
+	PLFLT shear;
+	PLFLT stride;
+	PLFLT just;
+	PLUNICODE* text;
+	PLUNICODE fci;
+	PLINT len;
+	PLFLT chrht;
+};
+
+class BufferElement
+{
+	public:
+        
+		ElementType Element;
+    
+		union DataType
+		{
+			struct LineStruct_* LineStruct;
+        
+			struct PolylineStruct_* PolylineStruct;
+        
+			struct ColourStruct_* ColourStruct;
+	
+			struct TextStruct_* TextStruct;
+        
+			PLINT intParam;
+		} Data;
+};
+
 // This widget allows to use plplot as a plotting engine in a Qt Application
 // The aspect ratio of the plotted data is constant, so gray strips are used
 // to delimit the page when the widget aspect ratio is not the one of the plotted page
@@ -279,28 +348,43 @@ class PLDLLIMPEXP_DRIVER QtPLWidget: public QWidget, public QtPLDriver
 		virtual ~QtPLWidget();
 		
 		void clearWidget();
+		void clearBuffer();
 		
 		int pageNumber;
+		
+		void drawLine(short x1, short y1, short x2, short y2);
+		void drawPolyline(short * x, short * y, PLINT npts);
+		void drawPolygon(short * x, short * y, PLINT npts);
+		void setColor(int r, int g, int b, double alpha);
+		void setWidth(PLINT r);
+		void setSolid();
+		void drawText(PLStream* pls, EscText* txt);
 
 	protected:
 		
 		void resizeEvent(QResizeEvent*);
 		void paintEvent(QPaintEvent*);
 		
-		// Used to center the plot on the page
-		void getPlotParameters(double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset);
+		void getPlotParameters(double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset); // gives the parameters to scale and center the plot on the page
+		void doPlot(QPainter* p, double x_fact, double y_fact, double x_offset, double y_offset); // Actually draws the plot. Deported in a function for readability
+		void drawTextInPicture(QPainter* p, const QString& text);
+		void renderText(QPainter* p, struct TextStruct_* s, double x_fact, double x_offset, double y_fact, double y_offset);
 		
-		double m_dAspectRatio;
-		QPixmap * m_pixPixmap; // to avoid redrawing everything
-		bool m_bAwaitingRedraw;
-		int m_iOldSize;
-		QPicture* pic;
+		double m_dAspectRatio; // Is kept constant during resizes
+		QPixmap * m_pixPixmap; // stores the drawn image as long as it does not have to be regenerated
 
+		QLinkedList<BufferElement> m_listBuffer; // Buffer holding the draw instructions
+		bool m_bAwaitingRedraw;
+		int m_iOldSize; // Holds the size of the buffer. Modified => image has to be redrawn
+
+		
 	protected slots:
 		void mouseReleaseEvent ( QMouseEvent * event );
 		void keyPressEvent(QKeyEvent* event);
 		void closeEvent(QCloseEvent* event);
 		void nextPage();
+		
+
 };
 
 #endif
