@@ -1125,6 +1125,7 @@ static Window rootWindow;
 
 void plD_dispatch_init_xcairo    (PLDispatchTable *pdt);
 void plD_init_xcairo             (PLStream *);
+void plD_bop_xcairo              (PLStream *);
 void plD_eop_xcairo              (PLStream *);
 void plD_tidy_xcairo             (PLStream *);
 void plD_esc_xcairo              (PLStream *, PLINT, void *);
@@ -1148,7 +1149,7 @@ void plD_dispatch_init_xcairo(PLDispatchTable *pdt)
    pdt->pl_line     = (plD_line_fp)     plD_line_cairo;
    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
    pdt->pl_eop      = (plD_eop_fp)      plD_eop_xcairo;
-   pdt->pl_bop      = (plD_bop_fp)      plD_bop_cairo;
+   pdt->pl_bop      = (plD_bop_fp)      plD_bop_xcairo;
    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_xcairo;
    pdt->pl_state    = (plD_state_fp)    plD_state_cairo;
    pdt->pl_esc      = (plD_esc_fp)      plD_esc_xcairo;
@@ -1237,6 +1238,29 @@ void plD_init_xcairo(PLStream *pls)
 
 }
 
+/*----------------------------------------------------------------------
+  plD_bop_xcairo()
+
+  X Windows specific start of page.
+  ----------------------------------------------------------------------*/
+
+void plD_bop_xcairo(PLStream *pls)
+{
+  PLCairo *aStream;
+
+  aStream = (PLCairo *)pls->dev;
+
+  plD_bop_cairo(pls);
+
+  if (aStream->xdrawable_mode)
+    return;
+
+  /* Be sure the window title is set appropriately. */
+  XStoreName(aStream->XDisplay, aStream->XWindow, "PLplot");
+
+  XFlush(aStream->XDisplay);
+}
+
 /*---------------------------------------------------------------------
   plD_eop_xcairo()
   
@@ -1263,6 +1287,8 @@ void plD_eop_xcairo(PLStream *pls)
   /* Only pause if nopause is unset. */
   if (pls->nopause)
     aStream->exit_event_loop = 1;
+  else
+    XStoreName(aStream->XDisplay, aStream->XWindow, "PLplot - Press Enter or right-click to continue");
 
   /* Loop, handling selected events, till the user elects to close the plot. */
   event_mask = ButtonPressMask | KeyPressMask | ExposureMask;
