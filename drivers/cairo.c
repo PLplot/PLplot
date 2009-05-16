@@ -1277,6 +1277,10 @@ void plD_eop_xcairo(PLStream *pls)
 	aStream->exit_event_loop = 1;
       }
       break;
+    case ButtonPress:
+      if (((XButtonEvent *)&event)->button == Button3)
+        aStream->exit_event_loop = 1;
+      break;
     case Expose:
       plD_bop_cairo(pls);
       plRemakePlot(pls);
