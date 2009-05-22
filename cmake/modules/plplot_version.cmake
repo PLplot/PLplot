@@ -45,6 +45,9 @@ set(plplot_VERSION ${plplot_SOVERSION}.6.2)
 set(plplotcxx_SOVERSION 9)
 set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.3.0)
 
+set(plplotdmd_SOVERSION 0)
+set(plplotdmd_VERSION ${plplotdmd_SOVERSION}.0.0)
+
 set(plplotf77_SOVERSION 9)
 set(plplotf77_VERSION ${plplotf77_SOVERSION}.1.1)
 

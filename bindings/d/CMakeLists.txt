@@ -29,8 +29,39 @@ if(ENABLE_d)
   set(plplotdmd${LIB_TAG}_LIB_SRCS
     plplot.d
   )
+  # STATIC library the only one that seems to work for now (at least
+  # on Debian Lenny) so use that rather than shared alternative
+  set(plplotdmd_SHARED)
+  if(plplotdm_SHARED)
+    add_library(plplotdmd${LIB_TAG} ${plplotdmd${LIB_TAG}_LIB_SRCS})
 
-  add_library(plplotdmd${LIB_TAG} STATIC ${plplotdmd${LIB_TAG}_LIB_SRCS})
+    if(BUILD_SHARED_LIBS)
+      SET_SOURCE_FILES_PROPERTIES(${plplotdmd${LIB_TAG}_LIB_SRCS}
+	PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
+    endif(BUILD_SHARED_LIBS)
+
+    target_link_libraries(plplotdmd${LIB_TAG} plplot${LIB_TAG})
+
+    if(USE_RPATH)
+      get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+      set_target_properties(plplotdmd${LIB_TAG}
+	PROPERTIES
+	SOVERSION ${plplotdmd_SOVERSION}
+	VERSION ${plplotdmd_VERSION}
+	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+	INSTALL_NAME_DIR "${LIB_DIR}"
+	)
+    else(USE_RPATH)
+      set_target_properties(plplotdmd${LIB_TAG}
+	PROPERTIES
+	SOVERSION ${plplotdmd_SOVERSION}
+	VERSION ${plplotdmd_VERSION}
+	INSTALL_NAME_DIR "${LIB_DIR}"
+	)
+    endif(USE_RPATH)
+  else(plplotdm_SHARED)
+    add_library(plplotdmd${LIB_TAG} STATIC ${plplotdmd${LIB_TAG}_LIB_SRCS})
+  endif(plplotdm_SHARED)
 
   install(TARGETS plplotdmd${LIB_TAG}
     EXPORT export_plplot
