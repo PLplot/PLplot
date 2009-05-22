@@ -35,7 +35,7 @@ clean: c_clean
 x01c.psc: c/x01c@EXEEXT@
 	@echo Generate C results for psc device
 	./plplot-test.sh --verbose --front-end=c --device=psc
-test: x01c.psc
+test_noninteractive: x01c.psc
 @COMPARE_COMMENT@compare: x01c.psc
 # Just for c, c++, and tk directories
 test_interactive: c/x01c@EXEEXT@
@@ -50,7 +50,7 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_ADA_COMMENT@x01a.psc: ada/x01a@EXEEXT@
 @PSC_ADA_COMMENT@	@echo Generate Ada results for psc device
 @PSC_ADA_COMMENT@	./plplot-test.sh --verbose --front-end=ada --device=psc
-@PSC_ADA_COMMENT@test: x01a.psc
+@PSC_ADA_COMMENT@test_noninteractive: x01a.psc
 @PSC_ADA_COMMENT@@COMPARE_COMMENT@compare: x01a.psc
 
 @PSC_CXX_COMMENT@all: c++/x01@EXEEXT@
@@ -63,7 +63,7 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_CXX_COMMENT@x01cxx.psc: c++/x01@EXEEXT@
 @PSC_CXX_COMMENT@	@echo Generate C++ results for psc device
 @PSC_CXX_COMMENT@	./plplot-test.sh --verbose --front-end=cxx --device=psc
-@PSC_CXX_COMMENT@test: x01cxx.psc
+@PSC_CXX_COMMENT@test_noninteractive: x01cxx.psc
 @PSC_CXX_COMMENT@@COMPARE_COMMENT@compare: x01cxx.psc
 # Just for c, c++, and tk directories
 @PSC_CXX_COMMENT@test_interactive: c++/x01@EXEEXT@
@@ -79,7 +79,7 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_D_COMMENT@x03d.psc: d/x03d@EXEEXT@
 @PSC_D_COMMENT@	@echo Generate d results for psc device
 @PSC_D_COMMENT@	./plplot-test.sh --verbose --front-end=d --device=psc
-@PSC_D_COMMENT@test: x03d.psc
+@PSC_D_COMMENT@test_noninteractive: x03d.psc
 @PSC_D_COMMENT@@COMPARE_COMMENT@compare: x03d.psc
 
 @PSC_F77_COMMENT@all: f77/x01f@EXEEXT@
@@ -92,7 +92,7 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_F77_COMMENT@x01f.psc: f77/x01f@EXEEXT@
 @PSC_F77_COMMENT@	@echo Generate Fortran 77 results for psc device
 @PSC_F77_COMMENT@	./plplot-test.sh --verbose --front-end=f77 --device=psc
-@PSC_F77_COMMENT@test: x01f.psc
+@PSC_F77_COMMENT@test_noninteractive: x01f.psc
 @PSC_F77_COMMENT@@COMPARE_COMMENT@compare: x01f.psc
 
 @PSC_F95_COMMENT@all: f95/x01f@EXEEXT@
@@ -105,7 +105,7 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_F95_COMMENT@x01f95.psc: f95/x01f@EXEEXT@
 @PSC_F95_COMMENT@	@echo Generate Fortran 95 results for psc device
 @PSC_F95_COMMENT@	./plplot-test.sh --verbose --front-end=f95 --device=psc
-@PSC_F95_COMMENT@test: x01f95.psc
+@PSC_F95_COMMENT@test_noninteractive: x01f95.psc
 @PSC_F95_COMMENT@@COMPARE_COMMENT@compare: x01f95.psc
 
 @PSC_JAVA_COMMENT@all: java/x01.class
@@ -118,7 +118,7 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_JAVA_COMMENT@x01j.psc: java/x01.class
 @PSC_JAVA_COMMENT@	@echo Generate Java results for psc device
 @PSC_JAVA_COMMENT@	./plplot-test.sh --verbose --front-end=java --device=psc
-@PSC_JAVA_COMMENT@test: x01j.psc
+@PSC_JAVA_COMMENT@test_noninteractive: x01j.psc
 @PSC_JAVA_COMMENT@@COMPARE_COMMENT@compare: x01j.psc
 
 @PSC_OCAML_COMMENT@all: ocaml/x01ocaml@EXEEXT@
@@ -131,144 +131,144 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_OCAML_COMMENT@x01ocaml.psc: ocaml/x01ocaml@EXEEXT@
 @PSC_OCAML_COMMENT@	@echo Generate OCaml results for psc device
 @PSC_OCAML_COMMENT@	./plplot-test.sh --verbose --front-end=ocaml --device=psc
-@PSC_OCAML_COMMENT@test: x01ocaml.psc
+@PSC_OCAML_COMMENT@test_noninteractive: x01ocaml.psc
 @PSC_OCAML_COMMENT@@COMPARE_COMMENT@compare: x01ocaml.psc
 
 @PSC_OCTAVE_COMMENT@x01o.psc: octave/x01c.m
 @PSC_OCTAVE_COMMENT@	@echo Generate Octave results for psc device
 @PSC_OCTAVE_COMMENT@	./plplot-test.sh --verbose --front-end=octave --device=psc
-@PSC_OCTAVE_COMMENT@test: x01o.psc
+@PSC_OCTAVE_COMMENT@test_noninteractive: x01o.psc
 @PSC_OCTAVE_COMMENT@@COMPARE_COMMENT@compare: x01o.psc
 
 @PSC_PERL_COMMENT@x01pdl.psc: perl/x01.pl
 @PSC_PERL_COMMENT@	@echo Generate Perl/PDL results for psc device
 @PSC_PERL_COMMENT@	./plplot-test.sh --verbose --front-end=perl --device=psc
-@PSC_PERL_COMMENT@test: x01pdl.psc
+@PSC_PERL_COMMENT@test_noninteractive: x01pdl.psc
 @PSC_PERL_COMMENT@@COMPARE_COMMENT@compare: x01pdl.psc
 
 @PSC_PYTHON_COMMENT@x01p.psc: python/x01
 @PSC_PYTHON_COMMENT@	@echo Generate Python results for psc device
 @PSC_PYTHON_COMMENT@	./plplot-test.sh --verbose --front-end=python --device=psc
-@PSC_PYTHON_COMMENT@test: x01p.psc
+@PSC_PYTHON_COMMENT@test_noninteractive: x01p.psc
 @PSC_PYTHON_COMMENT@@COMPARE_COMMENT@compare: x01p.psc
 
 @PSC_TCL_COMMENT@x01t.psc: tcl/x01
 @PSC_TCL_COMMENT@	@echo Generate Tcl results for psc device
 @PSC_TCL_COMMENT@	./plplot-test.sh --verbose --front-end=tcl --device=psc
-@PSC_TCL_COMMENT@test: x01t.psc
+@PSC_TCL_COMMENT@test_noninteractive: x01t.psc
 @PSC_TCL_COMMENT@@COMPARE_COMMENT@compare: x01t.psc
 
 @PSC_LUA_COMMENT@x01lua.psc: lua/x01.lua
 @PSC_LUA_COMMENT@	@echo Generate Lua results for psc device
 @PSC_LUA_COMMENT@	./plplot-test.sh --verbose --front-end=lua --device=psc
-@PSC_LUA_COMMENT@test: x01lua.psc
+@PSC_LUA_COMMENT@test_noninteractive: x01lua.psc
 @PSC_LUA_COMMENT@@COMPARE_COMMENT@compare: x01lua.psc
 
 @PDFCAIRO_COMMENT@x01c.pdfcairo: c/x01c@EXEEXT@
 @PDFCAIRO_COMMENT@	@echo Generate C results for pdfcairo device
 @PDFCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pdfcairo
-@PDFCAIRO_COMMENT@test: x01c.pdfcairo
+@PDFCAIRO_COMMENT@test_noninteractive: x01c.pdfcairo
 
 @PNGCAIRO_COMMENT@x01c01.pngcairo: c/x01c@EXEEXT@
 @PNGCAIRO_COMMENT@	@echo Generate C results for pngcairo device
 @PNGCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pngcairo
-@PNGCAIRO_COMMENT@test: x01c01.pngcairo
+@PNGCAIRO_COMMENT@test_noninteractive: x01c01.pngcairo
 
 @PSCAIRO_COMMENT@x01c.pscairo: c/x01c@EXEEXT@
 @PSCAIRO_COMMENT@	@echo Generate C results for pscairo device
 @PSCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pscairo
-@PSCAIRO_COMMENT@test: x01c.pscairo
+@PSCAIRO_COMMENT@test_noninteractive: x01c.pscairo
 
 @SVGCAIRO_COMMENT@x01c01.svgcairo: c/x01c@EXEEXT@
 @SVGCAIRO_COMMENT@	@echo Generate C results for svgcairo device
 @SVGCAIRO_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=svgcairo
-@SVGCAIRO_COMMENT@test: x01c01.svgcairo
+@SVGCAIRO_COMMENT@test_noninteractive: x01c01.svgcairo
 
 @GIF_COMMENT@x01c01.gif : c/x01c@EXEEXT@
 @GIF_COMMENT@	@echo Generate C results for gif device
 @GIF_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=gif
-@GIF_COMMENT@test: x01c01.gif
+@GIF_COMMENT@test_noninteractive: x01c01.gif
 
 @JPEG_COMMENT@x01c01.jpeg: c/x01c@EXEEXT@
 @JPEG_COMMENT@	@echo Generate C results for jpeg device
 @JPEG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=jpeg
-@JPEG_COMMENT@test: x01c01.jpeg
+@JPEG_COMMENT@test_noninteractive: x01c01.jpeg
 
 @PNG_COMMENT@x01c01.png: c/x01c@EXEEXT@
 @PNG_COMMENT@	@echo Generate C results for png device
 @PNG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=png
-@PNG_COMMENT@test: x01c01.png
+@PNG_COMMENT@test_noninteractive: x01c01.png
 
 @PSTTFC_COMMENT@x01c.psttfc: c/x01c@EXEEXT@
 @PSTTFC_COMMENT@	@echo Generate C results for psttfc device
 @PSTTFC_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=psttfc
-@PSTTFC_COMMENT@test: x01c.psttfc
+@PSTTFC_COMMENT@test_noninteractive: x01c.psttfc
 
 @SVG_COMMENT@x01c01.svg: c/x01c@EXEEXT@
 @SVG_COMMENT@	@echo Generate C results for svg device
 @SVG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=svg
-@SVG_COMMENT@test: x01c01.svg
+@SVG_COMMENT@test_noninteractive: x01c01.svg
 
 @XFIG_COMMENT@x01c01.xfig: c/x01c@EXEEXT@
 @XFIG_COMMENT@	@echo Generate C results for xfig device
 @XFIG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=xfig
-@XFIG_COMMENT@test: x01c01.xfig
+@XFIG_COMMENT@test_noninteractive: x01c01.xfig
 
 @PSTEX_COMMENT@x01c.pstex: c/x01c@EXEEXT@
 @PSTEX_COMMENT@	@echo Generate C results for pstex device
 @PSTEX_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pstex
-@PSTEX_COMMENT@test: x01c.pstex
+@PSTEX_COMMENT@test_noninteractive: x01c.pstex
 
 @CGM_COMMENT@x01c.cgm : c/x01c@EXEEXT@
 @CGM_COMMENT@	@echo Generate C results for cgm device
 @CGM_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=cgm
-@CGM_COMMENT@test: x01c.cgm
+@CGM_COMMENT@test_noninteractive: x01c.cgm
 
 @BMPQT_COMMENT@x01c01.bmpqt : c/x01c@EXEEXT@
 @BMPQT_COMMENT@	@echo Generate C results for bmpqt device
 @BMPQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=bmpqt
-@BMPQT_COMMENT@test: x01c01.bmpqt
+@BMPQT_COMMENT@test_noninteractive: x01c01.bmpqt
 
 @JPGQT_COMMENT@x01c01.jpgqt : c/x01c@EXEEXT@
 @JPGQT_COMMENT@	@echo Generate C results for jpgqt device
 @JPGQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=jpgqt
-@JPGQT_COMMENT@test: x01c01.jpgqt
+@JPGQT_COMMENT@test_noninteractive: x01c01.jpgqt
 
 @PNGQT_COMMENT@x01c01.pngqt : c/x01c@EXEEXT@
 @PNGQT_COMMENT@	@echo Generate C results for pngqt device
 @PNGQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pngqt
-@PNGQT_COMMENT@test: x01c01.pngqt
+@PNGQT_COMMENT@test_noninteractive: x01c01.pngqt
 
 @PPMQT_COMMENT@x01c01.ppmqt : c/x01c@EXEEXT@
 @PPMQT_COMMENT@	@echo Generate C results for ppmqt device
 @PPMQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=ppmqt
-@PPMQT_COMMENT@test: x01c01.ppmqt
+@PPMQT_COMMENT@test_noninteractive: x01c01.ppmqt
 
 @TIFFQT_COMMENT@x01c01.tiffqt : c/x01c@EXEEXT@
 @TIFFQT_COMMENT@	@echo Generate C results for tiffqt device
 @TIFFQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=tiffqt
-@TIFFQT_COMMENT@test: x01c01.tiffqt
+@TIFFQT_COMMENT@test_noninteractive: x01c01.tiffqt
 
 @SVGQT_COMMENT@x01c01.svgqt : c/x01c@EXEEXT@
 @SVGQT_COMMENT@	@echo Generate C results for svgqt device
 @SVGQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=svgqt
-@SVGQT_COMMENT@test: x01c01.svgqt
+@SVGQT_COMMENT@test_noninteractive: x01c01.svgqt
 
 @EPSQT_COMMENT@x01c01.epsqt : c/x01c@EXEEXT@
 @EPSQT_COMMENT@	@echo Generate C results for epsqt device
 @EPSQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=epsqt
-@EPSQT_COMMENT@test: x01c01.epsqt
+@EPSQT_COMMENT@test_noninteractive: x01c01.epsqt
 
 @PDFQT_COMMENT@x01c01.pdfqt : c/x01c@EXEEXT@
 @PDFQT_COMMENT@	@echo Generate C results for pdfqt device
 @PDFQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pdfqt
-@PDFQT_COMMENT@test: x01c01.pdfqt
+@PDFQT_COMMENT@test_noninteractive: x01c01.pdfqt
 
 @COMPARE_COMMENT@compare: 
 @COMPARE_COMMENT@	@echo Compare non-C language psc and stdout results with corresponding C results
 @COMPARE_COMMENT@	-./test_diff.sh
 @COMPARE_COMMENT@	touch compare
-@COMPARE_COMMENT@test: compare
+@COMPARE_COMMENT@test_noninteractive: compare
 
 @TK_COMMENT@all: tk/xtk01$(EXEEXT)
 @TK_COMMENT@tk/xtk01$(EXEEXT):
@@ -290,4 +290,4 @@ test_clean:
 
 clean: test_clean
 
-.PHONY : all clean test test_clean test_interactive
+.PHONY : all clean test_noninteractive test_clean test_interactive
