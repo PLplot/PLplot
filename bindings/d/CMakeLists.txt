@@ -29,10 +29,12 @@ if(ENABLE_d)
   set(plplotdmd${LIB_TAG}_LIB_SRCS
     plplot.d
   )
-  # STATIC library the only one that seems to work for now (at least
-  # on Debian Lenny) so use that rather than shared alternative
-  set(plplotdmd_SHARED)
-  if(plplotdm_SHARED)
+  # Set this option to OFF by default since the STATIC library is
+  # the only one that seems to work for now on Debian Lenny and
+  # potentially other Linux systems.
+  option(plplotdmd_SHARED "Treat libplplotdmd as a shared library" OFF)
+  
+  if(plplotdmd_SHARED)
     add_library(plplotdmd${LIB_TAG} ${plplotdmd${LIB_TAG}_LIB_SRCS})
 
     if(BUILD_SHARED_LIBS)
@@ -59,7 +61,7 @@ if(ENABLE_d)
 	INSTALL_NAME_DIR "${LIB_DIR}"
 	)
     endif(USE_RPATH)
-  else(plplotdm_SHARED)
+  else(plplotdmd_SHARED)
     add_library(plplotdmd${LIB_TAG} STATIC ${plplotdmd${LIB_TAG}_LIB_SRCS})
     target_link_libraries(plplotdmd${LIB_TAG} plplot${LIB_TAG})
   endif(plplotdm_SHARED)
