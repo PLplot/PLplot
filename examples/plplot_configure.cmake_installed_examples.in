@@ -16,6 +16,7 @@ set(ENABLE_ocaml @ENABLE_ocaml@)
 set(ENABLE_octave @ENABLE_octave@)
 set(ENABLE_pdl @ENABLE_pdl@)
 set(ENABLE_python @ENABLE_python@)
+set(ENABLE_tcl @ENABLE_tcl@)
 
 # Always enable C language.
 enable_language(C)
@@ -58,4 +59,10 @@ endif(ENABLE_ocaml)
 if(ENABLE_python)
   set(ENABLE_pygcw @ENABLE_pygcw@)
 endif(ENABLE_python)
+
+if(ENABLE_tcl)
+  set(TCL_TCLSH @TCL_TCLSH@)
+  set(MKTCLINDEX @MKTCLINDEX@)
+  set(MKTCLINDEX_ARGS @MKTCLINDEX_ARGS@)
+endif(ENABLE_tcl)
 

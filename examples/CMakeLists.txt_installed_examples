@@ -106,6 +106,12 @@ if(ENABLE_python)
   list(APPEND language_info_LIST python:p)
 endif(ENABLE_python)
 
+if(ENABLE_tcl)
+  add_subdirectory(tcl)
+  get_property(targets_examples_tcl GLOBAL PROPERTY TARGETS_examples_tcl)
+  list(APPEND language_info_LIST tcl:t)
+endif(ENABLE_tcl)
+
 execute_process(
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
   ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm 

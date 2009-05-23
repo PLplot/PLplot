@@ -1,7 +1,7 @@
-# examples/tcl/CMakeLists.txt
+# tcl/CMakeLists.txt for installed PLplot examples
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2009 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -68,11 +68,8 @@ foreach(STRING_INDEX ${tcl_STRING_INDICES})
   set(tcl_SCRIPTS ${tcl_SCRIPTS} x${STRING_INDEX})
 endforeach(STRING_INDEX ${tcl_STRING_INDICES})
 
-install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
-install(PROGRAMS ${tcl_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
-
 # Copy file and scripts to the binary directory if different to the
-# source directory. Needed for ctest, but also so the tclIndex file
+# source directory. Needed because the tclIndex file
 # is generated in the binary tree not the source tree.
 if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   set(tclIndex_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -103,14 +100,10 @@ DEPENDS ${tclIndex_DEPENDS}
 WORKING_DIRECTORY ${tclIndex_WORKING_DIRECTORY}
 )
 
-install(
-FILES ${tclIndex_WORKING_DIRECTORY}/tclIndex
-DESTINATION ${DATA_DIR}/examples/tcl
-)
-
 add_custom_target(tclIndex_examples_tcl ALL
   DEPENDS ${tclIndex_DEPENDS} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
 )
+set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tcl tclIndex_examples_tcl)
 
 # Workaround CMake 2-level make recursion issue where independent
 # file dependency chains that refer to the same files must have
@@ -119,9 +112,3 @@ add_custom_target(tclIndex_examples_tcl ALL
 if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   add_dependencies(tclIndex_examples_tcl tcl_examples)
 endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-
-install(FILES CMakeLists.txt_installed_examples_tcl
-  DESTINATION ${DATA_DIR}/examples/tcl
-  RENAME CMakeLists.txt
-  )
-
