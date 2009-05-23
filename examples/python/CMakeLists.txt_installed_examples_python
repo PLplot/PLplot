@@ -1,7 +1,7 @@
-# examples/python/CMakeLists.txt
+# python/CMakeLists.txt for installed PLplot examples
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2009 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -51,14 +51,16 @@ set(python_STRING_INDICES
 )
 
 set(python_SCRIPTS)
-set(python_DATA)
+# Add some additional installed module files to list of what is normally
+# copied to examples/python in the build tree.
+set(python_DATA plplot_py_demos.py plplot_python_start.py)
 foreach(STRING_INDEX ${python_STRING_INDICES})
   set(python_SCRIPTS ${python_SCRIPTS} x${STRING_INDEX})
   set(python_DATA ${python_DATA} xw${STRING_INDEX}.py)
 endforeach(STRING_INDEX ${python_STRING_INDICES})
 
 # This list contains standalone scripts which are executable and which
-# should be installed in the examples/python directory.
+# should be copied to the installed examples build directory.
 set(
 python_SCRIPTS
 ${python_SCRIPTS}
@@ -83,22 +85,8 @@ if(ENABLE_pygcw)
  )
 endif(ENABLE_pygcw)
 
-set(PERM_SCRIPTS
-OWNER_READ
-OWNER_WRITE
-OWNER_EXECUTE
-GROUP_READ
-GROUP_EXECUTE
-WORLD_READ
-WORLD_EXECUTE
-)
-install(FILES ${python_SCRIPTS} 
-DESTINATION ${DATA_DIR}/examples/python
-PERMISSIONS ${PERM_SCRIPTS}
-)
-
 # This list contains python modules which are not executable on their own and
-# data files that should be installed in the examples/python directory.
+# data files that should be copied to the installed examples build tree.
 
 set(
 python_DATA
@@ -117,24 +105,10 @@ if(ENABLE_pygcw)
   )
 endif(ENABLE_pygcw)
 
-set(PERM_DATA
-OWNER_READ
-OWNER_WRITE
-GROUP_READ
-WORLD_READ
-)
-install(FILES ${python_DATA} 
-DESTINATION ${DATA_DIR}/examples/python
-PERMISSIONS ${PERM_DATA}
-)
-
-if(BUILD_TEST AND
-NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
-)
+if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   # equivalent to install commands but at "make" time rather than
   # "make install" time, to the build tree if different than the source
-  # tree, and skipping plplot_python_start.py since it is already
-  # in the build tree.
+  # tree.
   set(command_depends)
   foreach(file ${python_SCRIPTS} ${python_DATA})
     set(
@@ -150,45 +124,6 @@ NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
     )
   endforeach(file ${python_SCRIPTS} ${python_DATA})
   add_custom_target(python_examples ALL DEPENDS ${command_DEPENDS})
-endif(BUILD_TEST AND 
-NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
-)
-
-set(python_location1 ${CMAKE_SOURCE_DIR}/bindings/python)
-set(python_location2 ${CMAKE_BINARY_DIR}/bindings/python)
-configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
-${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
-@ONLY
-)
-
-set(python_location1 ${PYTHON_INSTDIR})
-set(python_location2)
-configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
-${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
-@ONLY
-)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
-DESTINATION ${DATA_DIR}/examples/python
-PERMISSIONS ${PERM_DATA}
-RENAME plplot_python_start.py
-)
-
-if (HAVE_NUMPY)
-  configure_file(plplot_py_demos.py.numpy ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py COPYONLY)
-else (HAVE_NUMPY)
-  configure_file(plplot_py_demos.py.numeric ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py COPYONLY)
-endif (HAVE_NUMPY)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py
-DESTINATION ${DATA_DIR}/examples/python
-PERMISSIONS ${PERM_DATA}
-)
-
-install(FILES CMakeLists.txt_installed_examples_python
-  DESTINATION ${DATA_DIR}/examples/python
-  RENAME CMakeLists.txt
-  )
+  set_property(GLOBAL APPEND PROPERTY TARGETS_examples_python python_examples)
+endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 

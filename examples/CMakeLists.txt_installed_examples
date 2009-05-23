@@ -85,6 +85,12 @@ if(ENABLE_pdl)
   list(APPEND language_info_LIST perl:pdl)
 endif(ENABLE_pdl)
 
+if(ENABLE_python)
+  add_subdirectory(python)
+  get_property(targets_examples_python GLOBAL PROPERTY TARGETS_examples_python)
+  list(APPEND language_info_LIST python:p)
+endif(ENABLE_python)
+
 # Octave not configured yet so the following stanza ignored for now.
 if(ENABLE_octave)
   add_subdirectory(octave)

@@ -14,6 +14,7 @@ set(ENABLE_java @ENABLE_java@)
 set(ENABLE_lua @ENABLE_lua@)
 set(ENABLE_ocaml @ENABLE_ocaml@)
 set(ENABLE_pdl @ENABLE_pdl@)
+set(ENABLE_python @ENABLE_python@)
 
 # Always enable C language.
 enable_language(C)
@@ -52,3 +53,8 @@ if(ENABLE_ocaml)
   set(CMAKE_INSTALL_LIBDIR @CMAKE_INSTALL_LIBDIR@)
   set(OCAML_INSTALL_DIR @OCAML_INSTALL_DIR@)
 endif(ENABLE_ocaml)
+
+if(ENABLE_python)
+  set(ENABLE_pygcw @ENABLE_pygcw@)
+endif(ENABLE_python)
+
