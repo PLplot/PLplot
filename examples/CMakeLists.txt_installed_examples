@@ -71,9 +71,15 @@ endif(ENABLE_java)
 
 if(ENABLE_lua)
   add_subdirectory(lua)
-  get_property(targets_examples_java GLOBAL PROPERTY TARGETS_examples_lua)
+  get_property(targets_examples_lua GLOBAL PROPERTY TARGETS_examples_lua)
   list(APPEND language_info_LIST lua:lua)
 endif(ENABLE_lua)
+
+if(ENABLE_ocaml)
+  add_subdirectory(ocaml)
+  get_property(targets_examples_ocaml GLOBAL PROPERTY TARGETS_examples_ocaml)
+  list(APPEND language_info_LIST ocaml:ocaml)
+endif(ENABLE_ocaml)
 
 if(ENABLE_pdl)
   list(APPEND language_info_LIST perl:pdl)

@@ -105,3 +105,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
   DESTINATION ${DATA_DIR}/examples/ocaml
   RENAME Makefile
   )
+
+install(FILES CMakeLists.txt_installed_examples_ocaml
+  DESTINATION ${DATA_DIR}/examples/ocaml
+  RENAME CMakeLists.txt
+  )
+

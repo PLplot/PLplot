@@ -12,6 +12,7 @@ set(ENABLE_f77 @ENABLE_f77@)
 set(ENABLE_f95 @ENABLE_f95@)
 set(ENABLE_java @ENABLE_java@)
 set(ENABLE_lua @ENABLE_lua@)
+set(ENABLE_ocaml @ENABLE_ocaml@)
 set(ENABLE_pdl @ENABLE_pdl@)
 
 # Always enable C language.
@@ -46,3 +47,8 @@ if(ENABLE_java)
   set(JAR_DIR @JAR_DIR@)
 endif(ENABLE_java)
 
+if(ENABLE_ocaml)
+  set(OCAMLC @OCAMLC@)
+  set(CMAKE_INSTALL_LIBDIR @CMAKE_INSTALL_LIBDIR@)
+  set(OCAML_INSTALL_DIR @OCAML_INSTALL_DIR@)
+endif(ENABLE_ocaml)
