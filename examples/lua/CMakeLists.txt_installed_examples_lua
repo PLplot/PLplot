@@ -1,4 +1,4 @@
-# examples/lua/CMakeLists.txt
+# lua/CMakeLists.txt for installed PLplot examples
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2009 Alan W. Irwin
@@ -52,27 +52,12 @@ set(lua_STRING_INDICES
 "31"
 )
 
-set(lua_SCRIPTS)
+set(lua_SCRIPTS plplot_examples.lua)
 foreach(STRING_INDEX ${lua_STRING_INDICES})
   set(lua_SCRIPTS ${lua_SCRIPTS} x${STRING_INDEX}.lua)
 endforeach(STRING_INDEX ${lua_STRING_INDICES})
 
-# These permissions because lua scripts are not standalone.
-set(PERM_DATA
-  OWNER_READ
-  OWNER_WRITE
-  GROUP_READ
-  WORLD_READ
-  )
-
-install(FILES ${lua_SCRIPTS} 
-DESTINATION ${DATA_DIR}/examples/lua
-PERMISSIONS ${PERM_DATA}
-)
-
-if(BUILD_TEST AND
-NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
-)
+if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   # equivalent to install commands but at "make" time rather than
   # "make install" time, to the build tree if different than the source
   # tree.
@@ -91,36 +76,6 @@ NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
     )
   endforeach(file ${lua_SCRIPTS} ${lua_DATA})
   add_custom_target(lua_examples ALL DEPENDS ${command_DEPENDS})
-endif(BUILD_TEST AND 
-NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
-)
-
-if(WIN32)
-  set(lua_lib_location ${CMAKE_BINARY_DIR}/dll)
-else(WIN32)
-  set(lua_lib_location ${CMAKE_BINARY_DIR}/bindings/lua)
-endif(WIN32)
-configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/plplot_examples.lua.in
-${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua
-@ONLY
-)
-
-set(lua_lib_location ${LUA_DIR})
-configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/plplot_examples.lua.in
-${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua_install
-@ONLY
-)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua_install
-DESTINATION ${DATA_DIR}/examples/lua
-PERMISSIONS ${PERM_DATA}
-RENAME plplot_examples.lua
-)
-
-install(FILES CMakeLists.txt_installed_examples_lua
-  DESTINATION ${DATA_DIR}/examples/lua
-  RENAME CMakeLists.txt
-  )
+  set_property(GLOBAL APPEND PROPERTY TARGETS_examples_lua lua_examples)
+endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 

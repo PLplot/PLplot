@@ -69,6 +69,16 @@ if(ENABLE_java)
   list(APPEND language_info_LIST java:j)
 endif(ENABLE_java)
 
+if(ENABLE_lua)
+  add_subdirectory(lua)
+  get_property(targets_examples_java GLOBAL PROPERTY TARGETS_examples_lua)
+  list(APPEND language_info_LIST lua:lua)
+endif(ENABLE_lua)
+
+if(ENABLE_pdl)
+  list(APPEND language_info_LIST perl:pdl)
+endif(ENABLE_pdl)
+
 # Octave not configured yet so the following stanza ignored for now.
 if(ENABLE_octave)
   add_subdirectory(octave)
@@ -101,12 +111,14 @@ foreach(language_info ${language_info_LIST})
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x03${suffix}.psc
     COMMAND ${CMAKE_COMMAND} -E echo "Generate ${language} results for psc device"
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh --verbose --front-end=${language} --device=psc
+    COMMAND SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh --verbose --front-end=${language} --device=psc
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh
     )
   list(APPEND output_LIST ${CMAKE_CURRENT_BINARY_DIR}/x03${suffix}.psc)
-  list(APPEND targets_LIST ${targets_examples_${language}))
+  if(targets_examples_${language})
+    list(APPEND targets_LIST ${targets_examples_${language}})
+  endif(targets_examples_${language})
 endforeach(language_info ${language_info_LIST})
 
 add_custom_command(

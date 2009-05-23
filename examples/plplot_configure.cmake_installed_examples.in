@@ -11,6 +11,8 @@ set(ENABLE_d @ENABLE_d@)
 set(ENABLE_f77 @ENABLE_f77@)
 set(ENABLE_f95 @ENABLE_f95@)
 set(ENABLE_java @ENABLE_java@)
+set(ENABLE_lua @ENABLE_lua@)
+set(ENABLE_pdl @ENABLE_pdl@)
 
 # Always enable C language.
 enable_language(C)
