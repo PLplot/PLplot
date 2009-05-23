@@ -13,6 +13,7 @@ set(ENABLE_f95 @ENABLE_f95@)
 set(ENABLE_java @ENABLE_java@)
 set(ENABLE_lua @ENABLE_lua@)
 set(ENABLE_ocaml @ENABLE_ocaml@)
+set(ENABLE_octave @ENABLE_octave@)
 set(ENABLE_pdl @ENABLE_pdl@)
 set(ENABLE_python @ENABLE_python@)
 

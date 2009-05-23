@@ -45,6 +45,12 @@ if(ENABLE_cxx)
   list(APPEND language_info_LIST cxx:cxx)
 endif(ENABLE_cxx)
 
+if(ENABLE_d)
+  add_subdirectory(d)
+  get_property(targets_examples_d GLOBAL PROPERTY TARGETS_examples_d)
+  list(APPEND language_info_LIST d:d)
+endif(ENABLE_d)
+
 if(ENABLE_f77)
   add_subdirectory(f77)
   get_property(targets_examples_f77 GLOBAL PROPERTY TARGETS_examples_f77)
@@ -56,12 +62,6 @@ if(ENABLE_f95)
   get_property(targets_examples_f95 GLOBAL PROPERTY TARGETS_examples_f95)
   list(APPEND language_info_LIST f95:f95)
 endif(ENABLE_f95)
-
-if(ENABLE_d)
-  add_subdirectory(d)
-  get_property(targets_examples_d GLOBAL PROPERTY TARGETS_examples_d)
-  list(APPEND language_info_LIST d:d)
-endif(ENABLE_d)
 
 if(ENABLE_java)
   add_subdirectory(java)
@@ -81,18 +81,8 @@ if(ENABLE_ocaml)
   list(APPEND language_info_LIST ocaml:ocaml)
 endif(ENABLE_ocaml)
 
-if(ENABLE_pdl)
-  list(APPEND language_info_LIST perl:pdl)
-endif(ENABLE_pdl)
-
-if(ENABLE_python)
-  add_subdirectory(python)
-  get_property(targets_examples_python GLOBAL PROPERTY TARGETS_examples_python)
-  list(APPEND language_info_LIST python:p)
-endif(ENABLE_python)
-
-# Octave not configured yet so the following stanza ignored for now.
 if(ENABLE_octave)
+  list(APPEND language_info_LIST octave:o)
   add_subdirectory(octave)
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -105,6 +95,16 @@ if(ENABLE_octave)
     ${CMAKE_CURRENT_BINARY_DIR}/octave/lena.img
     )
 endif(ENABLE_octave)
+
+if(ENABLE_pdl)
+  list(APPEND language_info_LIST perl:pdl)
+endif(ENABLE_pdl)
+
+if(ENABLE_python)
+  add_subdirectory(python)
+  get_property(targets_examples_python GLOBAL PROPERTY TARGETS_examples_python)
+  list(APPEND language_info_LIST python:p)
+endif(ENABLE_python)
 
 execute_process(
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
