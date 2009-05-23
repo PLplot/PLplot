@@ -124,3 +124,8 @@ RENAME Makefile
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar
 DESTINATION ${JAR_DIR}
 )
+
+install(FILES CMakeLists.txt_installed_examples_java
+  DESTINATION ${DATA_DIR}/examples/java
+  RENAME CMakeLists.txt
+  )

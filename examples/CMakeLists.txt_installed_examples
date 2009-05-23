@@ -63,6 +63,12 @@ if(ENABLE_d)
   list(APPEND language_info_LIST d:d)
 endif(ENABLE_d)
 
+if(ENABLE_java)
+  add_subdirectory(java)
+  get_property(targets_examples_java GLOBAL PROPERTY TARGETS_examples_java)
+  list(APPEND language_info_LIST java:j)
+endif(ENABLE_java)
+
 # Octave not configured yet so the following stanza ignored for now.
 if(ENABLE_octave)
   add_subdirectory(octave)
@@ -85,6 +91,7 @@ execute_process(
   )
 
 set(output_LIST)
+set(targets_LIST)
 foreach(language_info ${language_info_LIST})
   string(REGEX REPLACE "^(.*):.*$" "\\1" language ${language_info})
   string(REGEX REPLACE "^.*:(.*)$" "\\1" suffix ${language_info})
@@ -97,9 +104,9 @@ foreach(language_info ${language_info_LIST})
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh --verbose --front-end=${language} --device=psc
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh
-    ${targets_examples_${language}}
     )
   list(APPEND output_LIST ${CMAKE_CURRENT_BINARY_DIR}/x03${suffix}.psc)
+  list(APPEND targets_LIST ${targets_examples_${language}))
 endforeach(language_info ${language_info_LIST})
 
 add_custom_command(
@@ -111,3 +118,4 @@ add_custom_command(
 
 add_custom_target(test_noninteractive 
 DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/compare)
+add_dependencies(test_noninteractive ${targets_LIST})

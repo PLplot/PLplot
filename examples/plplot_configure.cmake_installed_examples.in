@@ -10,6 +10,7 @@ set(ENABLE_cxx @ENABLE_cxx@)
 set(ENABLE_d @ENABLE_d@)
 set(ENABLE_f77 @ENABLE_f77@)
 set(ENABLE_f95 @ENABLE_f95@)
+set(ENABLE_java @ENABLE_java@)
 
 # Always enable C language.
 enable_language(C)
@@ -36,4 +37,10 @@ endif(ENABLE_F77 OR ENABLE_f95)
 if(ENABLE_f95)
   set(F95_MOD_DIR @F95_MOD_DIR@)
 endif(ENABLE_f95)
+
+if(ENABLE_java)
+  enable_language(Java)
+  find_package(JNI)
+  set(JAR_DIR @JAR_DIR@)
+endif(ENABLE_java)
 
