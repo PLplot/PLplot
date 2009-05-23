@@ -149,3 +149,9 @@ add_custom_command(
 add_custom_target(test_noninteractive 
 DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/compare)
 add_dependencies(test_noninteractive ${targets_LIST})
+
+if(ENABLE_tk)
+  add_subdirectory(tk)
+  get_property(targets_examples_tk GLOBAL PROPERTY TARGETS_examples_tk)
+endif(ENABLE_tk)
+    
