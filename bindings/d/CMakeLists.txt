@@ -64,7 +64,7 @@ if(ENABLE_d)
   else(plplotdmd_SHARED)
     add_library(plplotdmd${LIB_TAG} STATIC ${plplotdmd${LIB_TAG}_LIB_SRCS})
     target_link_libraries(plplotdmd${LIB_TAG} plplot${LIB_TAG})
-  endif(plplotdm_SHARED)
+  endif(plplotdmd_SHARED)
 
   install(TARGETS plplotdmd${LIB_TAG}
     EXPORT export_plplot
