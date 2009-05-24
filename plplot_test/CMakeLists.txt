@@ -13,9 +13,19 @@ if(SH_EXECUTABLE)
 
   set(JAVA_TEST_ENVIRONMENT "${TEST_ENVIRONMENT} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar")
 
+  #Build-tree configuration
+  set(CONFIGURED_EXAMPLES_DIR EXAMPLES_DIR)
   configure_file(
     plplot-test.sh.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh
+    @ONLY
+    )
+
+  #Install-tree configuration
+  set(CONFIGURED_EXAMPLES_DIR SRC_EXAMPLES_DIR)
+  configure_file(
+    plplot-test.sh.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh_install
     @ONLY
     )
 
@@ -357,9 +367,10 @@ if(SH_EXECUTABLE)
   endforeach(SCRIPT ${SCRIPTS})
 
   install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh_install
     DESTINATION ${DATA_DIR}/examples
     PERMISSIONS ${PERM_SCRIPTS}
+    RENAME plplot-test.sh
     )
 
   install(

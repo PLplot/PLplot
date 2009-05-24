@@ -70,8 +70,6 @@ if(ENABLE_java)
 endif(ENABLE_java)
 
 if(ENABLE_lua)
-  add_subdirectory(lua)
-  get_property(targets_examples_lua GLOBAL PROPERTY TARGETS_examples_lua)
   list(APPEND language_info_LIST lua:lua)
 endif(ENABLE_lua)
 
@@ -101,14 +99,10 @@ if(ENABLE_pdl)
 endif(ENABLE_pdl)
 
 if(ENABLE_python)
-  add_subdirectory(python)
-  get_property(targets_examples_python GLOBAL PROPERTY TARGETS_examples_python)
   list(APPEND language_info_LIST python:p)
 endif(ENABLE_python)
 
 if(ENABLE_tcl)
-  add_subdirectory(tcl)
-  get_property(targets_examples_tcl GLOBAL PROPERTY TARGETS_examples_tcl)
   list(APPEND language_info_LIST tcl:t)
 endif(ENABLE_tcl)
 

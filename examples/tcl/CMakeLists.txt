@@ -120,8 +120,3 @@ if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   add_dependencies(tclIndex_examples_tcl tcl_examples)
 endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 
-install(FILES CMakeLists.txt_installed_examples_tcl
-  DESTINATION ${DATA_DIR}/examples/tcl
-  RENAME CMakeLists.txt
-  )
-

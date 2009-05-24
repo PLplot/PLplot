@@ -119,8 +119,3 @@ PERMISSIONS ${PERM_DATA}
 RENAME plplot_examples.lua
 )
 
-install(FILES CMakeLists.txt_installed_examples_lua
-  DESTINATION ${DATA_DIR}/examples/lua
-  RENAME CMakeLists.txt
-  )
-

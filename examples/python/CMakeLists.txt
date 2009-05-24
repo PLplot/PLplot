@@ -187,8 +187,3 @@ DESTINATION ${DATA_DIR}/examples/python
 PERMISSIONS ${PERM_DATA}
 )
 
-install(FILES CMakeLists.txt_installed_examples_python
-  DESTINATION ${DATA_DIR}/examples/python
-  RENAME CMakeLists.txt
-  )
-
