@@ -83,6 +83,15 @@ being disabled by default as of release 5.9.1 due to segfaults.  The cause
 of the segfaults was a bug (now fixed) in how pthread support was
 implemented for the Tk-related components of PLplot.
 
+IX. This is official notice that the hpgl device driver (containing the
+hp7470, hp7580, and lj_hpgl devices) has been deprecated as of release 5.9.4.
+hp7450 and hp7580 produce many "Invalid pen selection." messages on our
+standard examples and lj_hpgl segfaults.
+
+X. This is official notice that the pbm device driver (containing the
+pbm device) has been deprecated as of release 5.9.4 because glibc detects
+a catastrophic double free.
+
 INDEX
 
 1. Changes relative to PLplot 5.9.4 (the previous development release)

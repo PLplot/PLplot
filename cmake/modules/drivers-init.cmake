@@ -109,9 +109,12 @@ set(DRIVERS_DEVICE_LIST
 "gcw:gcw:OFF"
 # Do not implement gnome which is superseded by gcw
 #"gnome:gnome:OFF"
-"hp7470:hpgl:ON"
-"hp7580:hpgl:ON"
-"lj_hpgl:hpgl:ON"
+# Produces ton of "Invalid pen selection." messages
+"hp7470:hpgl:OFF"
+# Produces ton of "Invalid pen selection." messages
+"hp7580:hpgl:OFF"
+# Segfaults.
+"lj_hpgl:hpgl:OFF"
 "imp:impress:OFF"
 # Default off because poorly maintained (colours are incorrect)
 # must use software fill, and must run as root.
@@ -121,7 +124,8 @@ set(DRIVERS_DEVICE_LIST
 "mem:mem:ON"
 "ntk:ntk:OFF"
 "null:null:ON"
-"pbm:pbm:ON"
+# glibc detects double free
+"pbm:pbm:OFF"
 "pdf:pdf:OFF"
 # (2007-09-01) As discussed on list, don't enable plmeta until we sort
 # out the known issues (e.g., strings, aspect ratio, and TrueType fonts).
