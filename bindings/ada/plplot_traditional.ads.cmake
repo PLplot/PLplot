@@ -588,6 +588,7 @@ package PLplot_Traditional is
     -- for other user-written mask functions. This should be the same as 
     -- passing null for the second argument in Shade_Regions.
     function Mask_Function_No_Mask(x, y : Long_Float) return Integer;
+    pragma Convention(Convention => C, Entity => Mask_Function_No_Mask);
 
 
     -- Given an array to hold contour levels and function minimum and maximum,

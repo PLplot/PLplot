@@ -118,13 +118,14 @@ package PLplot_Thin is
     -- supplemented in the future. 
     type Fill_Procedure_Pointer_Type is access
         procedure(length : Integer; x, y : Real_Vector);
-    pragma Convention (Convention => C, Entity => Fill_Procedure_Pointer_Type);
+    pragma Convention(Convention => C, Entity => Fill_Procedure_Pointer_Type);
         
 
     -- Access-to-function type for Shade_Regions (aka plshades).
     -- Returns 1 if point is to be plotted, 0 if not.
     type Mask_Function_Pointer_Type is access
         function (x, y : PLFLT) return Integer;
+    pragma Convention(Convention => C, Entity => Mask_Function_Pointer_Type);
 
     -- Make a constrained array for use by plmap (Draw_Map) and 
     -- plmeridians (Draw_Latitude_Longitude). The reason that this is necessary 
@@ -152,6 +153,7 @@ package PLplot_Thin is
     -- plf2eval2, plf2evalr.
     type Function_Evaluator_Pointer_Type is access
         function (ix, iy : PLINT; Irregular_Data : PLpointer) return PLFLT;
+    pragma Convention(Convention => C, Entity => Function_Evaluator_Pointer_Type);
 
 
 --------------------------------------------------------------------------------
