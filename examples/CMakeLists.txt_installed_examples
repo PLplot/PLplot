@@ -146,8 +146,23 @@ add_custom_command(
   DEPENDS ${output_LIST}
   )
 
+set(output_LIST)
+foreach(device ${noninteractive_devices_LIST})
+  if(PLD_${device})
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x01c.${device}
+      COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} device"
+      COMMAND SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh --verbose --front-end=c --device=${device}
+      DEPENDS
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh
+    )
+  list(APPEND output_LIST ${CMAKE_CURRENT_BINARY_DIR}/x01c.${device})
+  endif(PLD_${device})
+endforeach(device ${noninteractive_devices_LIST})
+
 add_custom_target(test_noninteractive 
-DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/compare)
+  DEPENDS ${output_LIST} ${CMAKE_CURRENT_BINARY_DIR}/compare
+  )
 add_dependencies(test_noninteractive ${targets_LIST})
 
 if(ENABLE_tk)

@@ -73,3 +73,82 @@ if(ENABLE_tk)
   set(TK_INCLUDE_PATH @TK_INCLUDE_PATH@)
 endif(ENABLE_tk)
 
+# Exclude psc since that already has been used for comparisons above.
+# Exclude some other devices (linuxvga, conex?) in plplot-test.sh where it is
+# unlikely they are interactive.
+set(noninteractive_devices_LIST
+  pdfcairo
+  pngcairo
+  pscairo
+  svgcairo
+  cgm
+  dg300
+  epsqt
+  pdfqt
+  bmpqt
+  jpgqt
+  pngqt
+  ppmqt
+  tiffqt
+  svgqt
+  gif
+  jpeg
+  png
+# All hp7xxx devices are semi-broken (Invalid pen selection warnings)
+#  hp7470
+#  hp7580
+# lj_hpgl is severely broken (segfaults).
+#  lj_hpgl
+  imp
+  ljii
+  ljiip
+# pbm is severely broken (glibc double free detected)
+#  pbm
+  pdf
+  ps
+  pstex
+  psttf
+  psttfc
+  svg
+  tek4010f
+  tek4107f
+  wxpng
+  xfig
+  )
+
+# These are taken from the above list.
+set(PLD_pdfcairo @PLD_pdfcairo@)
+set(PLD_pngcairo @PLD_pngcairo@)
+set(PLD_pscairo @PLD_pscairo@)
+set(PLD_svgcairo @PLD_svgcairo@)
+set(PLD_cgm @PLD_cgm@)
+set(PLD_dg300 @PLD_dg300@)
+set(PLD_epsqt @PLD_epsqt@)
+set(PLD_pdfqt @PLD_pdfqt@)
+set(PLD_bmpqt @PLD_bmpqt@)
+set(PLD_jpgqt @PLD_jpgqt@)
+set(PLD_pngqt @PLD_pngqt@)
+set(PLD_ppmqt @PLD_ppmqt@)
+set(PLD_tiffqt @PLD_tiffqt@)
+set(PLD_svgqt @PLD_svgqt@)
+set(PLD_gif @PLD_gif@)
+set(PLD_jpeg @PLD_jpeg@)
+set(PLD_png @PLD_png@)
+set(PLD_hp7470 @PLD_hp7470@)
+set(PLD_hp7580 @PLD_hp7580@)
+set(PLD_lj_hpgl @PLD_lj_hpgl@)
+set(PLD_imp @PLD_imp@)
+set(PLD_ljii @PLD_ljii@)
+set(PLD_ljiip @PLD_ljiip@)
+set(PLD_pbm @PLD_pbm@)
+set(PLD_pdf @PLD_pdf@)
+set(PLD_ps @PLD_ps@)
+set(PLD_pstex @PLD_pstex@)
+set(PLD_psttf @PLD_psttf@)
+# PLD_psttfc is a special case which must be set to PLD_psttf. 
+set(PLD_psttfc @PLD_psttf@)
+set(PLD_svg @PLD_svg@)
+set(PLD_tek4010f @PLD_tek4010f@)
+set(PLD_tek4107f @PLD_tek4107f@)
+set(PLD_wxpng @PLD_wxpng@)
+set(PLD_xfig @PLD_xfig@)
