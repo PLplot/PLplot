@@ -73,18 +73,23 @@ static int text_clipping;
 static int text_anti_aliasing;
 static int graphics_anti_aliasing;
 static int external_drawable;
+static int rasterize_image;
 static DrvOpt cairo_options[] = {{"text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)"},
 				 {"text_anti_aliasing", DRV_INT, &text_anti_aliasing, "Set desired text anti-aliasing (text_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t)"},
 				 {"graphics_anti_aliasing", DRV_INT, &graphics_anti_aliasing, "Set desired graphics anti-aliasing (graphics_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t"},
 				 {"external_drawable", DRV_INT, &external_drawable, "Plot to external X drawable"},
+                                 {"rasterize_image", DRV_INT, &rasterize_image, "Raster or vector image rendering (rasterize_image=0|1)"},
                                  {NULL, DRV_INT, NULL, NULL}};
 
 typedef struct {
   cairo_surface_t *cairoSurface;
   cairo_t *cairoContext;
+  cairo_surface_t *cairoSurface_raster;
+  cairo_t *cairoContext_raster;
   short text_clipping;
   short text_anti_aliasing;
   short graphics_anti_aliasing;
+  short rasterize_image;
   double downscale;
   char *pangoMarkupString;
   short upDown;
@@ -211,6 +216,9 @@ static void set_current_context(PLStream *);
 static void poly_line(PLStream *, short *, short *, PLINT);
 static void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts);
 static void rotate_cairo_surface(PLStream *, float, float, float, float, float, float);
+/* Rasterization of plotted material */
+static void start_raster(PLStream*);
+static void end_raster(PLStream*);
 
 /* PLplot interface functions */
 
@@ -222,6 +230,84 @@ void plD_esc_cairo               (PLStream *, PLINT, void *);
 void plD_tidy_cairo              (PLStream *);
 void plD_line_cairo              (PLStream *, short, short, short, short);
 void plD_polyline_cairo          (PLStream *, short *, short *, PLINT);
+
+/*----------------------------------------------------------------------
+  start_raster()
+
+  Set up off-screen rasterized rendering
+  ----------------------------------------------------------------------*/
+
+void start_raster(PLStream *pls)
+{
+  PLCairo *aStream;
+  cairo_surface_t *tmp_sfc;
+  cairo_t *tmp_context;
+
+  aStream = (PLCairo *)pls->dev;
+
+  /* Do not use the external surface if the user says not to */
+  if (!aStream->rasterize_image)
+    return;
+
+  /* Create an image surface and context for the offscreen rendering */
+  aStream->cairoSurface_raster =
+    cairo_image_surface_create(CAIRO_FORMAT_ARGB32, pls->xlength, pls->ylength);
+  aStream->cairoContext_raster = cairo_create(aStream->cairoSurface_raster);
+
+  /* Disable antialiasing for the raster surface.  The output seems to look
+     better that way. */
+  cairo_set_antialias(aStream->cairoContext_raster, CAIRO_ANTIALIAS_NONE);
+
+  /* Swap the raster and main plot surfaces and contexts */
+  tmp_sfc = aStream->cairoSurface;
+  tmp_context = aStream->cairoContext;
+  aStream->cairoSurface = aStream->cairoSurface_raster;
+  aStream->cairoContext = aStream->cairoContext_raster;
+  /* Save the main plot surface and context for when we are finished */
+  aStream->cairoSurface_raster = tmp_sfc;
+  aStream->cairoContext_raster = tmp_context;
+}
+
+/*----------------------------------------------------------------------
+  end_raster()
+
+  Finish off-screen rasterized rendering and copy the result on to the
+  main plot surface.
+  ----------------------------------------------------------------------*/
+
+void end_raster(PLStream *pls)
+{
+  PLCairo *aStream;
+  cairo_surface_t *tmp_sfc;
+  cairo_t *tmp_context;
+
+  aStream = (PLCairo *)pls->dev;
+
+  /* Do not use the external surface if the user says not to */
+  if (!aStream->rasterize_image)
+    return;
+
+  /* Some Cairo devices support delayed device setup (eg: xcairo with
+     external drawable and extcairo with an external context). */
+  if (aStream->cairoContext == NULL)
+    plexit("Can not plot to a Cairo device with no context");
+
+  /* Restore the main plot surface and context for future plotting */
+  tmp_sfc = aStream->cairoSurface;
+  tmp_context = aStream->cairoContext;
+  aStream->cairoSurface = aStream->cairoSurface_raster;
+  aStream->cairoContext = aStream->cairoContext_raster;
+  aStream->cairoSurface_raster = tmp_sfc;
+  aStream->cairoContext_raster = tmp_context;
+
+  /* Blit the raster surface on to the main plot */
+  cairo_set_source_surface(aStream->cairoContext, aStream->cairoSurface_raster, 0.0, 0.0);
+  cairo_paint(aStream->cairoContext);
+
+  /* Free the now extraneous surface and context */
+  cairo_destroy(aStream->cairoContext_raster);
+  cairo_surface_destroy(aStream->cairoSurface_raster);
+}
 
 /*----------------------------------------------------------------------
   plD_bop_cairo()
@@ -393,6 +479,12 @@ void plD_esc_cairo(PLStream *pls, PLINT op, void *ptr)
       break;
     case PLESC_END_TEXT: /* finish a string of text */
       text_end_cairo(pls, (EscText *) ptr);
+      break;
+    case PLESC_START_RASTERIZE: /* Start offscreen/rasterized rendering */
+      start_raster(pls);
+      break;
+    case PLESC_END_RASTERIZE: /* End offscreen/rasterized rendering */
+      end_raster(pls);
       break;
     }
 }
@@ -943,8 +1035,9 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
      speed for a modern cairo stack.*/
   aStream->text_clipping = 1;
   text_clipping = 1;
-  text_anti_aliasing = 0;     // use 'default' text aliasing by default
-  graphics_anti_aliasing = 0; // use 'default' graphics aliasing by default
+  text_anti_aliasing = 0;     /* use 'default' text aliasing by default */
+  graphics_anti_aliasing = 0; /* use 'default' graphics aliasing by default */
+  rasterize_image = 1; /* Enable rasterization by default */
 
   /* Check for cairo specific options */
   plParseDrvOpts(cairo_options);
@@ -954,9 +1047,10 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
     aStream->text_clipping = 0;
   }
 
-  /* Record users desired text and graphics aliasing */
+  /* Record users desired text and graphics aliasing and rasterization */
   aStream->text_anti_aliasing = text_anti_aliasing;
   aStream->graphics_anti_aliasing = graphics_anti_aliasing;
+  aStream->rasterize_image = rasterize_image;
 
   return aStream;
 }

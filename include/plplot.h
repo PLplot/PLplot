@@ -269,6 +269,8 @@ typedef void* PLPointer;
 #define PLESC_TEXT_CHAR         29      /* render a character of text */
 #define PLESC_CONTROL_CHAR      30      /* handle a text control character (super/subscript, etc.) */
 #define PLESC_END_TEXT          31      /* finish a drawing a line of text */
+#define PLESC_START_RASTERIZE   32      /* start rasterized rendering */
+#define PLESC_END_RASTERIZE     33      /* end rasterized rendering */
 
 /* Alternative unicode text handling control characters */
 #define PLTEXT_FONTCHANGE       0       /* font change in the text stream */

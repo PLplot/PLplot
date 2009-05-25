@@ -101,6 +101,7 @@ plimageslow(PLFLT *idata, PLINT nx, PLINT ny,
   /* The color to use in the fill */
   PLFLT color;
 
+  plP_esc(PLESC_START_RASTERIZE, NULL);
   for (ix = 0; ix < nx ; ix++) {
     for (iy = 0; iy < ny ; iy++) {
       /* Only plot values within in appropriate range */
@@ -134,6 +135,7 @@ plimageslow(PLFLT *idata, PLINT nx, PLINT ny,
       plfill(4, xf, yf);
     }
   }
+  plP_esc(PLESC_END_RASTERIZE, NULL);
 }
 
 void
