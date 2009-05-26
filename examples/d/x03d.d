@@ -13,10 +13,8 @@ import plplot;
  *
  * Generates polar plot, with 1-1 scaling.
 \*--------------------------------------------------------------------------*/
-int main( char[][] args )
+int main(char[][] args)
 {
-  string text;
-
   PLFLT dtr = PI/180.0;
   PLFLT[361] x0, y0;
   for(size_t i=0; i<x0.length; i++) {
@@ -52,9 +50,11 @@ int main( char[][] args )
 
     /* Draw radial spokes for polar grid */
     pljoin(0.0, 0.0, dx, dy);
-    text = format("%.0f", round(theta));
-
+    
     /* Write labels for angle */
+    string text;
+    text = format("%d", lrint(theta));
+
     PLFLT offset;
     if(theta<9.99)
       offset = 0.45;

@@ -19,6 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 set(d_STRING_INDICES
+  "01"
   "02"
   "03"
   "04"
@@ -30,6 +31,7 @@ set(d_STRING_INDICES
   "11"
   "12"
   "13"
+  "14"
   "17"
   "23"
   "24"

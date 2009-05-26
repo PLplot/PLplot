@@ -470,7 +470,10 @@ void pltimefmt(string fmt)
 /* Process input strings, treating them as an option and argument pair. */
 /* The first is for the external API, the second the work routine declared
    here for backward compatibilty. */
-//int  c_plsetopt(char *opt, char *optarg);
+int plsetopt(string opt, string optarg)
+{
+  return c_plsetopt(toStringz(opt), toStringz(optarg));
+}
 
 /* Miscellaneous */
 
@@ -970,7 +973,7 @@ alias c_plsdiori plsdiori;
 alias c_plsdiplt plsdiplt;
 alias c_plsdiplz plsdiplz;
 alias c_plsesc plsesc;
-alias c_plsetopt plsetopt;
+//alias c_plsetopt plsetopt;
 alias c_plsfam plsfam;
 alias c_plsfci plsfci;
 // alias c_plsfnam plsfnam;
@@ -1742,15 +1745,12 @@ PLFLT  plf2eval(PLINT ix, PLINT iy, PLPointer plf2eval_data);
 
 PLFLT  plf2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data);
 
-	/* Command line parsing utilities */
-
+/* Command line parsing utilities */
 /* Clear internal option table info structure. */
-
-void  plClearOpts();
+void plClearOpts();
 
 /* Reset internal option table info structure. */
-
-void  plResetOpts();
+void plResetOpts();
 
 /* Merge user option table into internal info structure. */
 
@@ -1763,10 +1763,9 @@ void  plSetUsage(char *program_string, char *usage_string);
 /* Process input strings, treating them as an option and argument pair. */
 /* The first is for the external API, the second the work routine declared
    here for backward compatibilty. */
+int c_plsetopt(char *opt, char *optarg);
 
-int  c_plsetopt(char *opt, char *optarg);
-
-int  plSetOpt(char *opt, char *optarg);
+int plSetOpt(char *opt, char *optarg);
 
 /* Process options list using current options info. */
 int c_plparseopts(int *p_argc, char **argv, PLINT mode);
