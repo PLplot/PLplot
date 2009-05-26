@@ -28,7 +28,9 @@
 # Do the standard non-interactive examples.
 lang="d"
 export index lang
-for index in 03 04 05 06 07 08 10 11 12 13 23 24 25 27 29 30; do
+# 9, 15-16, 18-22, 26, 28, and 31 not implemented yet.
+# drop 14 (run-time errors).
+for index in 01 02 03 04 05 06 07 08 10 11 12 13 17 23 24 25 27 29 30; do
     if [ "$verbose_test" ] ; then
 	echo "x${index}${lang}"
     fi
