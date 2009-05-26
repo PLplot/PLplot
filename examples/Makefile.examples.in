@@ -68,19 +68,18 @@ test_interactive: c/x01c@EXEEXT@
 # Just for c, c++, and tk directories
 @PSC_CXX_COMMENT@test_interactive: c++/x01@EXEEXT@
 
-# Temporary use 3rd example until first example is done.
-@PSC_D_COMMENT@all: d/x03d@EXEEXT@
-@PSC_D_COMMENT@d/x03d@EXEEXT@:
+@PSC_D_COMMENT@all: d/x01d@EXEEXT@
+@PSC_D_COMMENT@d/x01d@EXEEXT@:
 @PSC_D_COMMENT@	cd d; $(MAKE)
 @PSC_D_COMMENT@d_clean:
 @PSC_D_COMMENT@	cd d; $(MAKE) clean
 @PSC_D_COMMENT@.PHONY: d_clean
 @PSC_D_COMMENT@clean: d_clean
-@PSC_D_COMMENT@x03d.psc: d/x03d@EXEEXT@
+@PSC_D_COMMENT@x01d.psc: d/x01d@EXEEXT@
 @PSC_D_COMMENT@	@echo Generate d results for psc device
 @PSC_D_COMMENT@	./plplot-test.sh --verbose --front-end=d --device=psc
-@PSC_D_COMMENT@test_noninteractive: x03d.psc
-@PSC_D_COMMENT@@COMPARE_COMMENT@compare: x03d.psc
+@PSC_D_COMMENT@test_noninteractive: x01d.psc
+@PSC_D_COMMENT@@COMPARE_COMMENT@compare: x01d.psc
 
 @PSC_F77_COMMENT@all: f77/x01f@EXEEXT@
 @PSC_F77_COMMENT@f77/x01f@EXEEXT@:

@@ -118,16 +118,14 @@ foreach(language_info ${language_info_LIST})
   string(REGEX REPLACE "^(.*):.*$" "\\1" language ${language_info})
   string(REGEX REPLACE "^.*:(.*)$" "\\1" suffix ${language_info})
 
-  # Will change from x03 to x01 as the representative result below when
-  # standard example 1 is implemented in d.
   add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x03${suffix}.psc
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x01${suffix}.psc
     COMMAND ${CMAKE_COMMAND} -E echo "Generate ${language} results for psc device"
     COMMAND SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh --verbose --front-end=${language} --device=psc
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh
     )
-  list(APPEND output_LIST ${CMAKE_CURRENT_BINARY_DIR}/x03${suffix}.psc)
+  list(APPEND output_LIST ${CMAKE_CURRENT_BINARY_DIR}/x01${suffix}.psc)
   if(targets_examples_${language})
     list(APPEND targets_LIST ${targets_examples_${language}})
   endif(targets_examples_${language})
