@@ -58,6 +58,10 @@ main(int argc, const char *argv[])
     static PLFLT uw[] = { 1.071, 1.062, 1.093, 1.045, 1.072, 
 			  1.067, 1.085, 1.024, 1.057, 1.071 };
 
+    /* outliers */
+    static PLFLT outx[] = { 3.5, 6.5 };
+    static PLFLT outy[] = { 0.89, 1.09 };
+
     static PLFLT pos[] = {0.0, 0.25, 0.5, 0.75, 1.0};
     static PLFLT red[] = {0.0, 0.25, 0.5, 1.0, 1.0};
     static PLFLT green[] = {1.0, 0.5, 0.5, 0.5, 1.0};
@@ -90,9 +94,9 @@ main(int argc, const char *argv[])
 	plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string);
     }
 
-    /* some outliers */
-    plcircle(3.5, 0.89);
-    plcircle(6.5, 1.09);
+    /* some outliers plotted with intermediate-sized circles, see PLplot
+     example 06 for other possibilities.*/
+     plpoin(2, outx, outy, 22); 
 
 /* Don't forget to call plend() to finish off! */
 
@@ -178,34 +182,4 @@ plfbox(PLFLT x, PLFLT y25, PLFLT y50, PLFLT y75, PLFLT lw, PLFLT uw)
 
     pllsty(1);
     plline(2, barx, bary);
-}
-
-void
-plcircle(PLFLT x, PLFLT y)
-{
-    PLFLT vpxmin, vpxmax, vpymin, vpymax; 
-    PLFLT px, py;
-    PLINT pxlen, pylen, pxoff, pyoff;
-    PLFLT axisratio, pageratio, circleratio, rx, ry;
-    int i;
-    static PLFLT cx[31], cy[31];
-
-    /* get circle axis ratio */
-    plgvpw(&vpxmin, &vpxmax, &vpymin, &vpymax);
-    axisratio = (vpxmax -vpxmin) / (vpymax -vpymin);
-    
-    plgpage(&px, &py, &pxlen, &pylen, &pxoff, &pyoff);
-    pageratio = pxlen * 1. / pylen;
-
-    circleratio = axisratio / pageratio;
-
-    ry = 0.001;
-    rx = circleratio * ry;
-    for (i = 0; i <= 30; ++i) {
-	cx[i] = x + cos(i / 30. * 2. * M_PI) * rx;
-	cy[i] = y + sin(i / 30. * 2. * M_PI) * ry;
-    }
-
-    pllsty(1);
-    plline(31, cx, cy);
 }
