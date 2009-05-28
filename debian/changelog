@@ -1,3 +1,12 @@
+plplot (5.9.2-3) unstable; urgency=low
+
+  [ Andrew Ross ]
+  * debian/control.in: Ensure libplplot-dev only depends on 
+    libplplot-ada for architectures where that exists. 
+    (closes: #530847) 
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 28 May 2009 10:22:07 +0100
+
 plplot (5.9.2-2) unstable; urgency=low
 
   [ Andrew Ross ]

@@ -48,7 +48,8 @@ Section: libdevel
 Recommends: pkg-config
 Depends: libplplot9 (= ${binary:Version}), libqhull-dev, libfreetype6-dev,
  libltdl3-dev, libplplot-c++9c2 (= ${binary:Version}), plplot9-driver-gnome2,
- libplplot-fortran9 (= ${binary:Version}), libplplot-ada (= ${binary:Version})
+ libplplot-fortran9 (= ${binary:Version}), 
+ libplplot-ada (= ${binary:Version}) [!alpha !arm !armeb !armel !mips !mipsel !kfreebsd-amd64]
 Description: Scientific plotting library (development files)
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
