@@ -6,6 +6,31 @@ private import std.string;
 
 // improved D interface
 
+// helper function to convert D dynamic arrays in C dynamic arrays
+private PLFLT** convert_array(PLFLT[][] a)
+{
+  size_t nx=a.length;
+  size_t ny=a[0].length;
+
+  PLFLT** c_a = (new PLFLT*[nx]).ptr;
+  for(size_t i=0; i<nx; i++) {
+    assert(ny==a[i].length, "convert_array(): Array must be 2 dimensional!");
+    c_a[i] = a[i].ptr;
+  }
+  
+  return c_a;
+}
+
+// certain functions must be declared as C functions so that PLplot
+// can handle them
+extern (C) {
+  alias PLINT function(PLFLT, PLFLT) def_func;
+  alias void function(PLINT, PLFLT* , PLFLT*) fill_func;
+  alias void function(PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer) pltr_func;
+}
+
+
+
 /* Process options list using current options info. */
 int plparseopts(char[][] args, PLINT mode)
 {
@@ -283,13 +308,14 @@ void plscmap1a(PLINT[] r, PLINT[] g, PLINT[] b, PLFLT[] a)
 /* Set color map 1 colors using a piece-wise linear relationship between */
 /* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
 void plscmap1l(PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
-                PLFLT[] coord2, PLFLT[] coord3, PLBOOL[] rev)
+                PLFLT[] coord2, PLFLT[] coord3, PLBOOL[] rev=null)
 {
   PLINT npts=intensity.length;
   assert(npts==coord1.length, "plscmap1l(): Arrays must be of same length!");
   assert(npts==coord2.length, "plscmap1l(): Arrays must be of same length!");
   assert(npts==coord3.length, "plscmap1l(): Arrays must be of same length!");
-  assert(npts-1==rev.length, "plscmap1l(): Array rev must be of same length then other arrays minus 1!");
+  if(rev!=null)
+    assert(npts-1==rev.length, "plscmap1l(): Array rev must be of same length then other arrays minus 1!");
   c_plscmap1l(itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, rev.ptr);
 }
 
@@ -298,14 +324,15 @@ void plscmap1l(PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
 /* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space. */
 /* Will also linear interpolate alpha values. */
 void plscmap1la(PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
-                PLFLT[] coord2, PLFLT[] coord3, PLFLT[] a, PLBOOL[] rev)
+                PLFLT[] coord2, PLFLT[] coord3, PLFLT[] a, PLBOOL[] rev=null)
 {
   PLINT npts=intensity.length;
   assert(npts==coord1.length, "plscmap1la(): Arrays must be of same length!");
   assert(npts==coord2.length, "plscmap1la(): Arrays must be of same length!");
   assert(npts==coord3.length, "plscmap1la(): Arrays must be of same length!");
   assert(npts==a.length, "plscmap1la(): Arrays must be of same length!");
-  assert(npts-1==rev.length, "plscmap1la(): Array rev must be of same length then other arrays minus 1!");
+  if(rev!=null)
+    assert(npts-1==rev.length, "plscmap1la(): Array rev must be of same length then other arrays minus 1!");
   c_plscmap1la(itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, a.ptr, rev.ptr);
 }
 
@@ -314,7 +341,7 @@ void plsdev(string devname)
 {
   c_plsdev(toStringz(devname));
 }
-
+ 
 /* Set the output file name. */
 void plsfnam(string fnam)
 {
@@ -322,10 +349,30 @@ void plsfnam(string fnam)
 }
 
 /* Shade region. */
-//void  c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT  function(PLFLT , PLFLT )defined, PLFLT left, PLFLT right, PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap, PLFLT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width, PLINT max_color, PLINT max_width, void  function(PLINT , PLFLT *, PLFLT *)fill, PLBOOL rectangular, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
-//void  c_plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT  function(PLFLT , PLFLT )defined, PLFLT left, PLFLT right, PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap, PLFLT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width, PLINT max_color, PLINT max_width, void  function(PLINT , PLFLT *, PLFLT *)fill, PLBOOL rectangular, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
-//void  c_plshades(PLFLT **a, PLINT nx, PLINT ny, PLINT  function(PLFLT , PLFLT )defined, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT *clevel, PLINT nlevel, PLINT fill_width, PLINT cont_color, PLINT cont_width, void  function(PLINT , PLFLT *, PLFLT *)fill, PLBOOL rectangular, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
-//void  plfshade(PLFLT  function(PLINT , PLINT , PLPointer )f2eval, PLPointer f2eval_data, PLFLT  function(PLINT , PLINT , PLPointer )c2eval, PLPointer c2eval_data, PLINT nx, PLINT ny, PLFLT left, PLFLT right, PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap, PLFLT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width, PLINT max_color, PLINT max_width, void  function(PLINT , PLFLT *, PLFLT *)fill, PLBOOL rectangular, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
+void plshade(PLFLT[][] a, def_func defined, PLFLT left, PLFLT right,
+             PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap,
+             PLFLT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width, PLINT max_color,
+             PLINT max_width, PLBOOL rectangular,
+             pltr_func pltr=null, PLPointer pltr_data=null)
+{
+  PLINT nx=a.length;
+  PLINT ny=a[0].length;
+  
+  c_plshade(convert_array(a), nx, ny, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap,
+            sh_color, sh_width, min_color, min_width, max_color, max_width, &c_plfill,
+            rectangular, pltr, pltr_data);
+}
+
+void plshades(PLFLT[][] a, def_func defined, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+              PLFLT[] clevel, PLINT fill_width, PLINT cont_color, PLINT cont_width,
+              PLBOOL rectangular, pltr_func pltr=null, PLPointer pltr_data=null)
+{
+  PLINT nx=a.length;
+  PLINT ny=a[0].length;
+
+  c_plshades(convert_array(a), nx, ny, defined, xmin, xmax, ymin, ymax, clevel.ptr, clevel.length,
+             fill_width, cont_color, cont_width, &c_plfill, rectangular, pltr, pltr_data);
+}
 
 /* Initialize PLplot, passing the device name and windows/page settings. */
 void plstart(string devname, PLINT nx, PLINT ny)
@@ -978,9 +1025,8 @@ alias c_plsfam plsfam;
 alias c_plsfci plsfci;
 // alias c_plsfnam plsfnam;
 alias c_plsfont plsfont;
-alias c_plshade plshade;
-alias c_plshade1 plshade1;
-alias c_plshades plshades;
+//alias c_plshade plshade;
+//alias c_plshades plshades;
 alias c_plsmaj plsmaj;
 alias c_plsmem plsmem;
 alias c_plsmin plsmin;
@@ -1153,8 +1199,7 @@ void c_plerrx(PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y);
 void c_plerry(PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax);
 
 /* Advance to the next family file on the next new page */
-
-void  c_plfamadv();
+void c_plfamadv();
 
 /* Pattern fills the polygon bounded by the input points. */
 void c_plfill(PLINT n, PLFLT *x, PLFLT *y);
@@ -1514,12 +1559,17 @@ void c_plsfnam(char *fnam);
 void  c_plsfont(PLINT family, PLINT style, PLINT weight);
 
 /* Shade region. */
+void c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT function(PLFLT, PLFLT) defined, PLFLT left,
+               PLFLT right, PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap,
+               PLFLT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width, PLINT max_color,
+               PLINT max_width, void function(PLINT, PLFLT*, PLFLT*) fill, PLBOOL rectangular,
+               void function(PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer) pltr, PLPointer pltr_data);
 
-void  c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT  function(PLFLT , PLFLT )defined, PLFLT left, PLFLT right, PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap, PLFLT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width, PLINT max_color, PLINT max_width, void  function(PLINT , PLFLT *, PLFLT *)fill, PLBOOL rectangular, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
-
-void  c_plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT  function(PLFLT , PLFLT )defined, PLFLT left, PLFLT right, PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap, PLFLT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width, PLINT max_color, PLINT max_width, void  function(PLINT , PLFLT *, PLFLT *)fill, PLBOOL rectangular, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
-
-void  c_plshades(PLFLT **a, PLINT nx, PLINT ny, PLINT  function(PLFLT , PLFLT )defined, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT *clevel, PLINT nlevel, PLINT fill_width, PLINT cont_color, PLINT cont_width, void  function(PLINT , PLFLT *, PLFLT *)fill, PLBOOL rectangular, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
+void c_plshades(PLFLT **a, PLINT nx, PLINT ny, PLINT function(PLFLT, PLFLT) defined, PLFLT xmin,
+                PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                PLINT cont_color, PLINT cont_width, void function(PLINT, PLFLT*, PLFLT*) fill,
+                PLBOOL rectangular, void function(PLFLT, PLFLT, PLFLT*, PLFLT *, PLPointer) pltr,
+                PLPointer pltr_data);
 
 void  plfshade(PLFLT  function(PLINT , PLINT , PLPointer )f2eval, PLPointer f2eval_data, PLFLT  function(PLINT , PLINT , PLPointer )c2eval, PLPointer c2eval_data, PLINT nx, PLINT ny, PLFLT left, PLFLT right, PLFLT bottom, PLFLT top, PLFLT shade_min, PLFLT shade_max, PLINT sh_cmap, PLFLT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width, PLINT max_color, PLINT max_width, void  function(PLINT , PLFLT *, PLFLT *)fill, PLBOOL rectangular, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
 

@@ -29,24 +29,25 @@
 import plplot;
 import std.string;
 
-static PLINT[] red   = [   0, 255,   0,   0 ];
-static PLINT[] green = [   0,   0, 255,   0 ];
-static PLINT[] blue  = [   0,   0,   0, 255 ];
-static PLFLT[] alpha = [ 1.0, 1.0, 1.0, 1.0 ];
-
-static PLFLT[] px = [ 0.1, 0.5, 0.5, 0.1 ];
-static PLFLT[] py = [ 0.1, 0.1, 0.5, 0.5 ];
-
-static PLFLT[] pos = [ 0.0, 1.0 ];
-static PLFLT[] rcoord = [ 1.0, 1.0 ];
-static PLFLT[] gcoord = [ 0.0, 0.0 ];
-static PLFLT[] bcoord = [ 0.0, 0.0 ];
-static PLFLT[] acoord = [ 0.0, 1.0 ];
-static PLBOOL[] rev = [ 0 ];
 
 
-int main( char[][] args )
+int main(char[][] args)
 {
+  PLINT[] red   = [   0, 255,   0,   0 ];
+  PLINT[] green = [   0,   0, 255,   0 ];
+  PLINT[] blue  = [   0,   0,   0, 255 ];
+  PLFLT[] alpha = [ 1.0, 1.0, 1.0, 1.0 ];
+
+  PLFLT[] px = [ 0.1, 0.5, 0.5, 0.1 ];
+  PLFLT[] py = [ 0.1, 0.1, 0.5, 0.5 ];
+
+  PLFLT[] pos = [ 0.0, 1.0 ];
+  PLFLT[] rcoord = [ 1.0, 1.0 ];
+  PLFLT[] gcoord = [ 0.0, 0.0 ];
+  PLFLT[] bcoord = [ 0.0, 0.0 ];
+  PLFLT[] acoord = [ 0.0, 1.0 ];
+  PLBOOL[] rev = [ 0 ];
+
   /* Parse and process command line arguments */
   plparseopts(args, PL_PARSE_FULL);
 
@@ -140,24 +141,18 @@ int main( char[][] args )
   /* Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will */
   /* used for the shade plot. plshades will use linear interpolation to */
   /* calculate the z values of all the intermediate points in this array. */
-  PLFLT[2][2] z;
-
-  z[0][0] = 0.0;
-  z[1][0] = 0.0;
-  z[0][1] = 1.0;
-  z[1][1] = 1.0;
+  PLFLT[][] z = [ [0.0, 1.0], [0.0, 1.0] ];
 
   /* Set the color levels array. These levels are also between 0.0 and 1.0 */
-  PLFLT[101] clevel;
+  PLFLT[] clevel;
+  clevel.length=101;
   for(int i=0; i<clevel.length; i++)
     clevel[i] = 0.01*i;
 
   /* Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate ranges */
   /* such that it fills the entire plotting area. */
-  //plshades(cast(PLFLT**)z, 2, 2, null, 0.0, 1.0, 0.0, 1.0, cast(PLFLT*)clevel,
-  //         101, 0, -1, 2, plfill, 1, null, null);
+  plshades(z, null, 0.0, 1.0, 0.0, 1.0, clevel, 0, -1, 2, 1);
 
   plend();
   return 0;
 }
-
