@@ -6,6 +6,15 @@ private import std.string;
 
 // improved D interface
 
+// certain functions must be declared as C functions so that PLplot
+// can handle them
+extern (C) {
+  alias PLINT function(PLFLT, PLFLT) def_func;
+  alias void function(PLINT, PLFLT* , PLFLT*) fill_func;
+  alias void function(PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer) pltr_func;
+  alias void function(PLINT, PLFLT*, PLFLT*) mapform_func;
+}
+
 // helper function to convert D dynamic arrays in C dynamic arrays
 private PLFLT** convert_array(PLFLT[][] a)
 {
@@ -20,16 +29,6 @@ private PLFLT** convert_array(PLFLT[][] a)
   
   return c_a;
 }
-
-// certain functions must be declared as C functions so that PLplot
-// can handle them
-extern (C) {
-  alias PLINT function(PLFLT, PLFLT) def_func;
-  alias void function(PLINT, PLFLT* , PLFLT*) fill_func;
-  alias void function(PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer) pltr_func;
-}
-
-
 
 /* Process options list using current options info. */
 int plparseopts(char[][] args, PLINT mode)
@@ -186,10 +185,11 @@ void plline3(PLFLT[] x, PLFLT[] y, PLFLT[] z)
 }
 
 /* plot continental outline in world coordinates */
-//void  c_plmap(void  function(PLINT , PLFLT *, PLFLT *)mapform, char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
-
-/* Plot the latitudes and longitudes on the background. */
-//void  c_plmeridians(void  function(PLINT , PLFLT *, PLFLT *)mapform, PLFLT dlong, PLFLT dlat, PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+void plmap(mapform_func mapform, string type, PLFLT minlong, PLFLT maxlong,
+           PLFLT minlat, PLFLT maxlat)
+{
+  c_plmap(mapform, toStringz(type), minlong, maxlong, minlat, maxlat);
+}
 
 /* Plots a mesh representation of the function z[x][y]. */
 //void  c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt);
@@ -468,29 +468,6 @@ void pltimefmt(string fmt)
 
 /* Sets an optional user abort handler. */
 //void  plsabort(void  function(char *)handler);
-
-/* Transformation routines */
-
-/* Identity transformation. */
-//void  pltr0(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
-
-/* Does linear interpolation from singly dimensioned coord arrays. */
-//void  pltr1(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
-
-/* Does linear interpolation from doubly dimensioned coord arrays */
-/* (column dominant, as per normal C 2d arrays). */
-//void  pltr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
-
-/* Just like pltr2() but uses pointer arithmetic to get coordinates from */
-/* 2d grid tables.  */
-//void  pltr2p(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
-
-/* Identity transformation for plots from Fortran. */
-//void  pltr0f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data);
-
-/* Does linear interpolation from doubly dimensioned coord arrays */
-/* (row dominant, i.e. Fortran ordering). */
-//void  pltr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data);
 
 /* Function evaluators */
 
@@ -975,7 +952,7 @@ alias c_pllightsource pllightsource;
 //alias c_plline plline;
 //alias c_plline3 plline3;
 alias c_pllsty pllsty;
-alias c_plmap plmap;
+//alias c_plmap plmap;
 alias c_plmeridians plmeridians;
 alias c_plmesh plmesh;
 alias c_plmeshc plmeshc;
@@ -1360,15 +1337,15 @@ void c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z);
 void c_pllsty(PLINT lin);
 
 /* plot continental outline in world coordinates */
-void c_plmap(void  function(PLINT , PLFLT *, PLFLT *)mapform, char *type, PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+void c_plmap(void function(PLINT, PLFLT*, PLFLT*) mapform, char *type, PLFLT minlong,
+             PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
 
 /* Plot the latitudes and longitudes on the background. */
-
-void  c_plmeridians(void  function(PLINT , PLFLT *, PLFLT *)mapform, PLFLT dlong, PLFLT dlat, PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+void c_plmeridians(void function(PLINT, PLFLT*, PLFLT*) mapform, PLFLT dlong, PLFLT dlat,
+                   PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
 
 /* Plots a mesh representation of the function z[x][y]. */
-
-void  c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt);
+void c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt);
 
 /* Plots a mesh representation of the function z[x][y] with contour */
 
@@ -1749,36 +1726,30 @@ void  plsexit(int  function(char *)handler);
 
 void  plsabort(void  function(char *)handler);
 
-	/* Transformation routines */
+/* Transformation routines */
 
 /* Identity transformation. */
-
-void  pltr0(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
+void pltr0(PLFLT x, PLFLT y, PLFLT* tx, PLFLT* ty, PLPointer pltr_data);
 
 /* Does linear interpolation from singly dimensioned coord arrays. */
-
-void  pltr1(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
+void pltr1(PLFLT x, PLFLT y, PLFLT* tx, PLFLT* ty, PLPointer pltr_data);
 
 /* Does linear interpolation from doubly dimensioned coord arrays */
 /* (column dominant, as per normal C 2d arrays). */
-
-void  pltr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
+void pltr2(PLFLT x, PLFLT y, PLFLT* tx, PLFLT* ty, PLPointer pltr_data);
 
 /* Just like pltr2() but uses pointer arithmetic to get coordinates from */
 /* 2d grid tables.  */
-
-void  pltr2p(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
+void pltr2p(PLFLT x, PLFLT y, PLFLT* tx, PLFLT* ty, PLPointer pltr_data);
 
 /* Identity transformation for plots from Fortran. */
-
-void  pltr0f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data);
+void pltr0f(PLFLT x, PLFLT y, PLFLT* tx, PLFLT* ty, void* pltr_data);
 
 /* Does linear interpolation from doubly dimensioned coord arrays */
 /* (row dominant, i.e. Fortran ordering). */
+void pltr2f(PLFLT x, PLFLT y, PLFLT* tx, PLFLT* ty, void* pltr_data);
 
-void  pltr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data);
-
-	/* Function evaluators */
+/* Function evaluators */
 
 /* Does a lookup from a 2d function array.  Array is of type (PLFLT **), */
 /* and is column dominant (normal C ordering). */
