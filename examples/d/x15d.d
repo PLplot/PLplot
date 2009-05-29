@@ -1,4 +1,4 @@
-/* $Id: $
+/* $Id$
 
 	Shade plot demo.
 

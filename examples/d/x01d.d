@@ -1,4 +1,4 @@
-/* $Id: $
+/* $Id$
 
 	Simple line plot and multiple windows demo.
 
