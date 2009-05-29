@@ -78,10 +78,16 @@ else(USE_RPATH)
 endif(USE_RPATH)
 
 install(TARGETS plplotgnome2${LIB_TAG}
+EXPORT export_plplot
 ARCHIVE DESTINATION ${LIB_DIR}
 LIBRARY DESTINATION ${LIB_DIR}
 RUNTIME DESTINATION ${BIN_DIR}
 )
+
+install(EXPORT export_plplot
+  DESTINATION ${DATA_DIR}/examples/cmake/modules
+  FILE export_plplotgnome2.cmake
+  )
 
 # Transform "${gcw_LINK_FLAGS}" to the 
 # standard pkg-config form.
