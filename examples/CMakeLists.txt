@@ -278,6 +278,13 @@ install(FILES
   RENAME plplot_configure.cmake
   )
 
+# pkg-config support for CMake-based build system for installed examples.
+install(FILES
+  ${CMAKE_SOURCE_DIR}/cmake/modules/pkg-config.cmake
+  ${CMAKE_SOURCE_DIR}/cmake/modules/FindPkgConfig.cmake
+  DESTINATION ${DATA_DIR}/examples/cmake/modules
+  )
+  
 # Install PLplot-specific language support files needed for CMake-based
 # build of installed examples.
 
