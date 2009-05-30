@@ -1,9 +1,12 @@
+# -*- mode: cmake -*-
 # This file used to configure CMake variables that are used to build the
 # installed examples.
 
 # =======================================================================
 # pkg-config support as well as macros to put link flags in standard
 # *.pc (pkg-config) form as well as standard fullpath form used by cmake.
+# PKG_CONFIG_EXECUTABLE can be used to discover whether pkg-config was
+# found or not.
 # =======================================================================
 include(pkg-config)
 
@@ -80,14 +83,6 @@ if(ENABLE_tk)
   set(TCL_INCLUDE_PATH @TCL_INCLUDE_PATH@)
   set(TK_INCLUDE_PATH @TK_INCLUDE_PATH@)
 endif(ENABLE_tk)
-
-# Some example builds depend on pkg-config
-if(NOT PKG_CONFIG_EXECUTABLE)
-  message(STATUS 
-    "WARNING: pkg-config not found. Setting ENABLE_GNOME2 to OFF."
-    )
-  set(ENABLE_gnome2 OFF)
-endif(NOT PKG_CONFIG_EXECUTABLE)
 
 # Exclude psc since that already has been used for comparisons above.
 # Exclude some other devices (linuxvga, conex?) in plplot-test.sh where it is

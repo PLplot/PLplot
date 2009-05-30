@@ -1,3 +1,4 @@
+# -*- mode: cmake -*-
 # c/CMakeLists.txt for installed PLplot examples
 ###
 ### Process this file with cmake to produce Makefile
@@ -61,50 +62,54 @@ foreach(STRING_INDEX ${c_STRING_INDICES})
   set_property(GLOBAL APPEND PROPERTY TARGETS_examples_c x${STRING_INDEX}c)
 endforeach(STRING_INDEX ${c_STRING_INDICES})
 
-if(ENABLE_gnome2)
-  # plplotcanvas_demo.c and plplotcanvas_animation.c both
-  # contain "#include <gtk/gtk.h>" which occurs in the
-  # /usr/include/gtk-2.0 directory.  They also contain 
-  # "#include <plplotcanvas.h>".  These issues are both taken care of
-  # by the libgnomeprintui-2.2 pkg-config module.
-  pkg_check_pkgconfig(libgnomeprintui-2.2 includedir libdir linkflags1 cflags1 version1 _GNOMEPRINTUI)
-  if(linkflags1)
-    # Requires blank-delimited list.
-    string(REGEX REPLACE ";" " " GNOMEPRINTUI_COMPILE_FLAGS "${cflags1}")
-    set(GNOMEPRINTUI_LINK_FLAGS "${linkflags1}")
-  else(linkflags1)
-    message(STATUS "WARNING: libgnomeprintui-2.2 not found.  plplotcanvas_demo and plplotcanvas_animation not built.")
-    set(ENABLE_gnome2 OFF)
-  endif(linkflags1)
+if(PKG_CONFIG_EXECUTABLE)
+  if(ENABLE_gnome2)
+    # plplotcanvas_demo.c and plplotcanvas_animation.c both
+    # contain "#include <gtk/gtk.h>" which occurs in the
+    # /usr/include/gtk-2.0 directory.  They also contain 
+    # "#include <plplotcanvas.h>".  These issues are both taken care of
+    # by the libgnomeprintui-2.2 pkg-config module.
+    pkg_check_pkgconfig(libgnomeprintui-2.2 includedir libdir linkflags1 cflags1 version1 _GNOMEPRINTUI)
+    if(linkflags1)
+      # Requires blank-delimited list.
+      string(REGEX REPLACE ";" " " GNOMEPRINTUI_COMPILE_FLAGS "${cflags1}")
+      set(GNOMEPRINTUI_LINK_FLAGS "${linkflags1}")
+    else(linkflags1)
+      message(STATUS "WARNING: libgnomeprintui-2.2 not found.  plplotcanvas_demo and plplotcanvas_animation not built.")
+      set(ENABLE_gnome2 OFF)
+    endif(linkflags1)
 
-  # plplotcanvas_animation.c contains a reference to gthread_init and also
-  # contains '#include <glib.h>'.  Analysis shows both these issues are
-  # taken care of by the gthread-2.0 pkg-config module.
-  pkg_check_pkgconfig(gthread-2.0 includedir libdir linkflags2 cflags2 version2 _GTHREAD_2.0)
-  if(linkflags2)
-    # Requires blank-delimited list.
-    string(REGEX REPLACE ";" " " GTHREAD_2.0_COMPILE_FLAGS "${cflags2}")
-    set(GTHREAD_2.0_LINK_FLAGS "${linkflags2}")
-    set(ENABLE_plplotcanvas_animation ON)
-  else(linkflags2)
-    message(STATUS "WARNING: gthread-2.0 not found.  plplotcanvas_animation not built")
-    set(ENABLE_plplotcanvas_animation OFF)
-  endif(linkflags2)
-endif(ENABLE_gnome2)
-		      
-if(ENABLE_gnome2)
-  set_source_files_properties(
-    plplotcanvas_demo.c
-    PROPERTIES COMPILE_FLAGS "${GNOMEPRINTUI_COMPILE_FLAGS}"
-    )
-  add_executable(plplotcanvas_demo plplotcanvas_demo.c)
-  target_link_libraries(plplotcanvas_demo ${GNOMEPRINTUI_LINK_FLAGS} plplotgnome2${LIB_TAG})
-  if(ENABLE_plplotcanvas_animation)
+    # plplotcanvas_animation.c contains a reference to gthread_init and also
+    # contains '#include <glib.h>'.  Analysis shows both these issues are
+    # taken care of by the gthread-2.0 pkg-config module.
+    pkg_check_pkgconfig(gthread-2.0 includedir libdir linkflags2 cflags2 version2 _GTHREAD_2.0)
+    if(linkflags2)
+      # Requires blank-delimited list.
+      string(REGEX REPLACE ";" " " GTHREAD_2.0_COMPILE_FLAGS "${cflags2}")
+      set(GTHREAD_2.0_LINK_FLAGS "${linkflags2}")
+      set(ENABLE_plplotcanvas_animation ON)
+    else(linkflags2)
+      message(STATUS "WARNING: gthread-2.0 not found.  plplotcanvas_animation not built")
+      set(ENABLE_plplotcanvas_animation OFF)
+    endif(linkflags2)
+  endif(ENABLE_gnome2)
+  
+  if(ENABLE_gnome2)
     set_source_files_properties(
-      plplotcanvas_animation.c
-      PROPERTIES COMPILE_FLAGS "${GNOMEPRINTUI_COMPILE_FLAGS} ${GTHREAD_2.0_COMPILE_FLAGS}"
+      plplotcanvas_demo.c
+      PROPERTIES COMPILE_FLAGS "${GNOMEPRINTUI_COMPILE_FLAGS}"
       )
-    add_executable(plplotcanvas_animation plplotcanvas_animation.c)
-    target_link_libraries(plplotcanvas_animation ${GNOMEPRINTUI_LINK_FLAGS} ${GTHREAD_2.0_LINK_FLAGS} plplotgnome2${LIB_TAG})
-  endif(ENABLE_plplotcanvas_animation)
-endif(ENABLE_gnome2)
+    add_executable(plplotcanvas_demo plplotcanvas_demo.c)
+    target_link_libraries(plplotcanvas_demo ${GNOMEPRINTUI_LINK_FLAGS} plplotgnome2${LIB_TAG})
+    if(ENABLE_plplotcanvas_animation)
+      set_source_files_properties(
+	plplotcanvas_animation.c
+	PROPERTIES COMPILE_FLAGS "${GNOMEPRINTUI_COMPILE_FLAGS} ${GTHREAD_2.0_COMPILE_FLAGS}"
+	)
+      add_executable(plplotcanvas_animation plplotcanvas_animation.c)
+      target_link_libraries(plplotcanvas_animation ${GNOMEPRINTUI_LINK_FLAGS} ${GTHREAD_2.0_LINK_FLAGS} plplotgnome2${LIB_TAG})
+    endif(ENABLE_plplotcanvas_animation)
+  endif(ENABLE_gnome2)
+else(PKG_CONFIG_EXECUTABLE)
+  message(STATUS "WARNING: pkg-config not found so plplotcanvas_demo and plplotcanvas_animation not built.")
+endif(PKG_CONFIG_EXECUTABLE)
