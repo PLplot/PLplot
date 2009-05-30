@@ -107,7 +107,7 @@ if(PKG_CONFIG_EXECUTABLE)
 	PROPERTIES COMPILE_FLAGS "${GNOMEPRINTUI_COMPILE_FLAGS} ${GTHREAD_2.0_COMPILE_FLAGS}"
 	)
       add_executable(plplotcanvas_animation plplotcanvas_animation.c)
-      target_link_libraries(plplotcanvas_animation ${GNOMEPRINTUI_LINK_FLAGS} ${GTHREAD_2.0_LINK_FLAGS} plplotgnome2${LIB_TAG})
+      target_link_libraries(plplotcanvas_animation ${GNOMEPRINTUI_LINK_FLAGS} ${GTHREAD_2.0_LINK_FLAGS} plplotgnome2${LIB_TAG} ${MATH_LIB})
     endif(ENABLE_plplotcanvas_animation)
   endif(ENABLE_gnome2)
 
