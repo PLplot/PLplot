@@ -110,6 +110,22 @@ if(PKG_CONFIG_EXECUTABLE)
       target_link_libraries(plplotcanvas_animation ${GNOMEPRINTUI_LINK_FLAGS} ${GTHREAD_2.0_LINK_FLAGS} plplotgnome2${LIB_TAG})
     endif(ENABLE_plplotcanvas_animation)
   endif(ENABLE_gnome2)
+  if(PLD_xcairo)
+    pkg_check_pkgconfig(gtk+-x11-2.0 includedir libdir linkflags3 cflags3 version1 _GTK_X11)
+    if(linkflags3)
+      # Requires blank-delimited list.
+      string(REGEX REPLACE ";" " " GTK_X11_COMPILE_FLAGS "${cflags3}")
+      set(GTK_X11_LINK_FLAGS "${linkflags3}")
+      set_source_files_properties(
+	extXdrawable_demo.c
+	PROPERTIES COMPILE_FLAGS "${GTK_X11_COMPILE_FLAGS}"
+	)
+      add_executable(extXdrawable_demo extXdrawable_demo.c)
+      target_link_libraries(extXdrawable_demo ${GTK_X11_LINK_FLAGS} plplot${LIB_TAG})
+    else(linkflags3)
+      message(STATUS "WARNING: gtk+-x11-2.0 not found.  extXdrawable_demo not built.")
+    endif(linkflags3)
+  endif(PLD_xcairo)
 else(PKG_CONFIG_EXECUTABLE)
   message(STATUS "WARNING: pkg-config not found so plplotcanvas_demo and plplotcanvas_animation not built.")
 endif(PKG_CONFIG_EXECUTABLE)

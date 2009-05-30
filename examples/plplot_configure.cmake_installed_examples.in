@@ -164,3 +164,5 @@ set(PLD_tek4107f @PLD_tek4107f@)
 set(PLD_wxpng @PLD_wxpng@)
 set(PLD_xfig @PLD_xfig@)
 
+# Set interactive devices
+set(PLD_xcairo @PLD_xcairo@)
