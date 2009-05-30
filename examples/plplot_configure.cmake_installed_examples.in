@@ -166,3 +166,4 @@ set(PLD_xfig @PLD_xfig@)
 
 # Set interactive devices
 set(PLD_xcairo @PLD_xcairo@)
+set(PLD_extcairo @PLD_extcairo@)

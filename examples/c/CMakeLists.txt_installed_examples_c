@@ -110,8 +110,9 @@ if(PKG_CONFIG_EXECUTABLE)
       target_link_libraries(plplotcanvas_animation ${GNOMEPRINTUI_LINK_FLAGS} ${GTHREAD_2.0_LINK_FLAGS} plplotgnome2${LIB_TAG})
     endif(ENABLE_plplotcanvas_animation)
   endif(ENABLE_gnome2)
+
   if(PLD_xcairo)
-    pkg_check_pkgconfig(gtk+-x11-2.0 includedir libdir linkflags3 cflags3 version1 _GTK_X11)
+    pkg_check_pkgconfig(gtk+-x11-2.0 includedir libdir linkflags3 cflags3 version3 _GTK_X11)
     if(linkflags3)
       # Requires blank-delimited list.
       string(REGEX REPLACE ";" " " GTK_X11_COMPILE_FLAGS "${cflags3}")
@@ -126,6 +127,23 @@ if(PKG_CONFIG_EXECUTABLE)
       message(STATUS "WARNING: gtk+-x11-2.0 not found.  extXdrawable_demo not built.")
     endif(linkflags3)
   endif(PLD_xcairo)
+
+  if(PLD_extcairo)
+    pkg_check_pkgconfig(cairo includedir libdir linkflags4 cflags4 version4 _CAIRO)
+    if(linkflags4)
+      # Requires blank-delimited list.
+      string(REGEX REPLACE ";" " " CAIRO_COMPILE_FLAGS "${cflags4}")
+      set(CAIRO_LINK_FLAGS "${linkflags4}")
+      set_source_files_properties(
+	ext-cairo-test.c
+	PROPERTIES COMPILE_FLAGS "${CAIRO_COMPILE_FLAGS}"
+	)
+      add_executable(ext-cairo-test ext-cairo-test.c)
+      target_link_libraries(ext-cairo-test ${CAIRO_LINK_FLAGS} plplot${LIB_TAG})
+    else(linkflags4)
+      message(STATUS "WARNING: cairo not found.  ext-cairo-test not built.")
+    endif(linkflags3)
+  endif(PLD_xcairo)
 else(PKG_CONFIG_EXECUTABLE)
-  message(STATUS "WARNING: pkg-config not found so plplotcanvas_demo and plplotcanvas_animation not built.")
+  message(STATUS "WARNING: pkg-config not found so plplotcanvas_demo, plplotcanvas_animation,  extXdrawable_demo, and ext-cairo-test not built.")
 endif(PKG_CONFIG_EXECUTABLE)
