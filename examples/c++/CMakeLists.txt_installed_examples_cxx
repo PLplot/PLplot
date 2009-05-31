@@ -1,3 +1,4 @@
+# -*- mode: cmake -*-
 # c++/CMakeLists.txt for installed PLplot examples
 ### Process this file with cmake to produce Makefile
 ###
@@ -19,39 +20,39 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 set(cxx_STRING_INDICES
-"01cc"
-"01"
-"02"
-"03"
-"04"
-"05"
-"06"
-"07"
-"08"
-"09"
-"10"
-"11"
-"12"
-"13"
-"14"
-"15"
-"16"
-"17"
-"18"
-"19"
-"20"
-"21"
-"22"
-"23"
-"24"
-"25"
-"26"
-"27"
-"28"
-"29"
-"30"
-"31"
-)
+  "01cc"
+  "01"
+  "02"
+  "03"
+  "04"
+  "05"
+  "06"
+  "07"
+  "08"
+  "09"
+  "10"
+  "11"
+  "12"
+  "13"
+  "14"
+  "15"
+  "16"
+  "17"
+  "18"
+  "19"
+  "20"
+  "21"
+  "22"
+  "23"
+  "24"
+  "25"
+  "26"
+  "27"
+  "28"
+  "29"
+  "30"
+  "31"
+  )
 
 include_directories(${INCLUDE_DIR})
 foreach(STRING_INDEX ${cxx_STRING_INDICES})
@@ -59,3 +60,14 @@ foreach(STRING_INDEX ${cxx_STRING_INDICES})
   target_link_libraries(x${STRING_INDEX} plplotcxx${LIB_TAG} ${MATH_LIB})
   set_property(GLOBAL APPEND PROPERTY TARGETS_examples_cxx x${STRING_INDEX})
 endforeach(STRING_INDEX ${cxx_STRING_INDICES})
+
+if(ENABLE_wxwidgets)
+  # Build wxwidgets applications with same wxwidgets compile and link flags
+  # as used with the PLplot wxwidgets device driver.
+  set_source_files_properties(
+    wxPLplotDemo.cpp
+    PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}"
+    )
+  add_executable(wxPLplotDemo wxPLplotDemo.cpp)
+  target_link_libraries(wxPLplotDemo ${wxwidgets_LINK_FLAGS} plplotwxwidgets${LIB_TAG})
+endif(ENABLE_wxwidgets)

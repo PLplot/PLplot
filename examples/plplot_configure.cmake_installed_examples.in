@@ -29,6 +29,7 @@ set(ENABLE_python @ENABLE_python@)
 set(ENABLE_tcl @ENABLE_tcl@)
 set(ENABLE_tk @ENABLE_tk@)
 set(ENABLE_gnome2 @ENABLE_gnome2@)
+set(ENABLE_wxwidgets @ENABLE_wxwidgets@)
 
 # Always enable C language.
 enable_language(C)
@@ -84,6 +85,13 @@ if(ENABLE_tk)
   set(TK_INCLUDE_PATH @TK_INCLUDE_PATH@)
 endif(ENABLE_tk)
 
+if(ENABLE_wxwidgets)
+  # Use identical compile and link flags to build wxwidgets application.
+  set(wxwidgets_COMPILE_FLAGS "@wxwidgets_COMPILE_FLAGS@")
+  set(wxwidgets_LINK_FLAGS @wxwidgets_LINK_FLAGS@)
+endif(ENABLE_wxwidgets)
+
+# List of all non-interactive devices.
 # Exclude psc since that already has been used for comparisons above.
 # Exclude some other devices (linuxvga, conex?) in plplot-test.sh where it is
 # unlikely they are interactive.
