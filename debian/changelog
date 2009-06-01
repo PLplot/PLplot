@@ -1,4 +1,4 @@
-plplot (5.9.2-3) UNRELEASED; urgency=low
+plplot (5.9.2-3) unstable; urgency=low
 
   * debian/control.in: Ensure libplplot-dev only depends on
     libplplot-ada for architectures where that exists.
