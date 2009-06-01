@@ -91,7 +91,18 @@ if(ENABLE_wxwidgets)
   set(wxwidgets_LINK_FLAGS @wxwidgets_LINK_FLAGS@)
 endif(ENABLE_wxwidgets)
 
-# List of all non-interactive devices.
+# Set interactive/external devices that are needed to build certain examples.
+set(PLD_xcairo @PLD_xcairo@)
+set(PLD_extcairo @PLD_extcairo@)
+set(PLD_extqt @PLD_extqt@)
+
+if(PLD_extqt)
+  set(CORE_QT_VERSION_MAJOR @QT_VERSION_MAJOR@)
+  set(CORE_QT_VERSION_MINOR @QT_VERSION_MINOR@)
+  set(CORE_QT_VERSION_PATCH @QT_VERSION_PATCH@)
+endif(PLD_extqt)
+
+# List of all devices that will be used for non_interactive tests.
 # Exclude psc since that already has been used for comparisons above.
 # Exclude some other devices (linuxvga, conex?) in plplot-test.sh where it is
 # unlikely they are interactive.
@@ -172,6 +183,3 @@ set(PLD_tek4107f @PLD_tek4107f@)
 set(PLD_wxpng @PLD_wxpng@)
 set(PLD_xfig @PLD_xfig@)
 
-# Set interactive devices
-set(PLD_xcairo @PLD_xcairo@)
-set(PLD_extcairo @PLD_extcairo@)

@@ -71,3 +71,36 @@ if(ENABLE_wxwidgets)
   add_executable(wxPLplotDemo wxPLplotDemo.cpp)
   target_link_libraries(wxPLplotDemo ${wxwidgets_LINK_FLAGS} plplotwxwidgets${LIB_TAG})
 endif(ENABLE_wxwidgets)
+
+if(PLD_extqt AND TARGET qt)
+  # Must find Qt4 all over again here rather than simply copying variables
+  # from the core build to this installed examples build so that we can
+  # access the qt4_wrap_cpp macro here.
+  find_package(Qt4)
+  # To avoid Qt4 version mismatch make sure the Qt version matches that
+  # used by the core build.
+  if(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
+    if(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
+      set(QT_USE_QTSVG 1)
+    endif(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
+
+    include(${QT_USE_FILE})
+    add_definitions(-DPLD_extqt)
+    qt4_wrap_cpp(
+      QT_MOC_OUTFILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/qt_PlotWindow.h
+      )
+    # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
+    set_source_files_properties(
+      ${QT_MOC_OUTFILES}
+      PROPERTIES GENERATED "ON"
+      )
+    add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
+    # Use file location + plplot${LIB_TAG} rather than the "qt" target
+    # because otherwise rpath is not set properly for the qt module.
+    get_target_property(qt_LOCATION qt IMPORTED_LOCATION_NOCONFIG)
+    target_link_libraries(qt_example ${QT_LIBRARIES} ${qt_LOCATION} plplot${LIB_TAG})
+  else(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
+    message(STATUS "WARNING: Qt4 not found or wrong version.  qt_example not built")
+  endif(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
+endif(PLD_extqt AND TARGET qt)
