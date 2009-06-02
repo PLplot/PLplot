@@ -1,6 +1,20 @@
 #!@SH_EXECUTABLE@
 # Test suite of PLplot interactive stuff that cannot be tested with
 # file output device drivers.
+EXAMPLES_DIR=${EXAMPLES_DIR:-.}
+SRC_EXAMPLES_DIR=${SRC_EXAMPLES_DIR:-.}
+
+# This script is only designed to work when EXAMPLES_DIR is a directory
+# with a subdirectory called "c".  Check whether this conditions is true.
+
+if [ ! -d $EXAMPLES_DIR/c ] ; then
+echo '
+This script is only designed to work when the EXAMPLES_DIR environment
+variable (overridden by option --examples-dir) is a directory with a
+subdirectory called "c".  This condition has been violated.
+'
+exit 1
+fi
 
 OVERALL_STATUS_CODE=0
 INDEX_LIST="01 04 08 14 16 17 23"
@@ -31,8 +45,8 @@ fi
 
 for device in $DEVICE_LIST ; do
     for index in $INDEX_LIST ; do
-	echo "c/x${index}c -dev $device"
-	c/x${index}c -dev $device 2> test.error
+	echo "${EXAMPLES_DIR}/c/x${index}c -dev $device"
+	${EXAMPLES_DIR}/c/x${index}c -dev $device 2> test.error
 	# Look for any status codes (segfaults, plexit) from the examples themselves
 	status_code=$?
 	if [ "$status_code" -ne 0 ] ; then
@@ -53,80 +67,80 @@ INDEX_LIST=
 COUNT=0
 if [ "@PLD_xcairo@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="c"
+    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c"
     COMMAND[$COUNT]="./extXdrawable_demo"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@PLD_extcairo@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="c"
+    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c"
     COMMAND[$COUNT]="./ext-cairo-test"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_wxwidgets@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="c++"
+    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c++"
     COMMAND[$COUNT]="./wxPLplotDemo"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@PLD_extqt@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="c++"
+    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c++"
     COMMAND[$COUNT]="./qt_example"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_gnome2@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="c"
+    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c"
     COMMAND[$COUNT]="./plplotcanvas_demo"
     COUNT=$(( $COUNT + 1 ))
 
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="c"
+    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c"
     COMMAND[$COUNT]="./plplotcanvas_animation"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_pygcw@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="python"
+    DIRECTORY[$COUNT]="${SRC_EXAMPLES_DIR}/python"
     COMMAND[$COUNT]="./plplotcanvas_demo.py"
     COUNT=$(( $COUNT + 1 ))
 
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="python"
+    DIRECTORY[$COUNT]="${SRC_EXAMPLES_DIR}/python"
     COMMAND[$COUNT]="./plplotcanvas_animation.py"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_tk@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="tk"
+    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
     COMMAND[$COUNT]="./xtk01 -f tk01"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_itk@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="tk"
+    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
     COMMAND[$COUNT]="./xtk02 -f tk02"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_tk@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="tk"
+    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
     COMMAND[$COUNT]="plserver -f tk03"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_itk@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="tk"
+    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
     COMMAND[$COUNT]="./xtk04 -f tk04"
     COUNT=$(( $COUNT + 1 ))
 fi
@@ -153,7 +167,7 @@ for index in $INDEX_LIST ; do
 done
 
 if [ "@ENABLE_tk@" = "ON" ] ; then
-    cd tcl
+    cd ${SRC_EXAMPLES_DIR}/tcl
     plserver <<EOF
 plstdwin .
 plxframe .plw
@@ -163,7 +177,7 @@ proc 1 {} "plgrid .plw.plwin"
 1
 exit
 EOF
-    cd ../tk
+    cd ${EXAMPLES_DIR}/tk
     pwd
 # Drop 14 because multiple devices do not seem to work in this context.
 # Drop 31 since it produces empty plot (by design).
