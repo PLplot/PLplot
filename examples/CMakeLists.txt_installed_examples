@@ -113,7 +113,7 @@ execute_process(
   )
 
 set(output_LIST)
-set(targets_LIST)
+set(noninteractive_targets_LIST)
 foreach(language_info ${language_info_LIST})
   string(REGEX REPLACE "^(.*):.*$" "\\1" language ${language_info})
   string(REGEX REPLACE "^.*:(.*)$" "\\1" suffix ${language_info})
@@ -127,7 +127,7 @@ foreach(language_info ${language_info_LIST})
     )
   list(APPEND output_LIST ${CMAKE_CURRENT_BINARY_DIR}/x01${suffix}.psc)
   if(targets_examples_${language})
-    list(APPEND targets_LIST ${targets_examples_${language}})
+    list(APPEND noninteractive_targets_LIST ${targets_examples_${language}})
   endif(targets_examples_${language})
 endforeach(language_info ${language_info_LIST})
 
@@ -155,10 +155,45 @@ endforeach(device ${noninteractive_devices_LIST})
 add_custom_target(test_noninteractive 
   DEPENDS ${output_LIST} ${CMAKE_CURRENT_BINARY_DIR}/compare
   )
-add_dependencies(test_noninteractive ${targets_LIST})
+add_dependencies(test_noninteractive ${noninteractive_targets_LIST})
 
 if(ENABLE_tk)
   add_subdirectory(tk)
   get_property(targets_examples_tk GLOBAL PROPERTY TARGETS_examples_tk)
 endif(ENABLE_tk)
     
+set(interactive_targets_LIST ${targets_examples_c})
+
+if(targets_examples_tk)
+  list(APPEND interactive_targets_LIST ${targets_examples_tk})
+endif(targets_examples_tk)
+
+if(TARGET plplotcanvas_demo)
+  list(APPEND interactive_targets_LIST plplotcanvas_demo)
+endif(TARGET plplotcanvas_demo)
+
+if(TARGET plplotcanvas_animation)
+  list(APPEND interactive_targets_LIST plplotcanvas_animation)
+endif(TARGET plplotcanvas_animation)
+
+if(TARGET extXdrawable_demo)
+  list(APPEND interactive_targets_LIST extXdrawable_demo)
+endif(TARGET extXdrawable_demo)
+
+if(TARGET ext-cairo-test)
+  list(APPEND interactive_targets_LIST ext-cairo-test)
+endif(TARGET ext-cairo-test)
+
+if(TARGET wxPLplotDemo)
+  list(APPEND interactive_targets_LIST wxPLplotDemo)
+endif(TARGET wxPLplotDemo)
+
+if(TARGET qt_example)
+  list(APPEND interactive_targets_LIST qt_example)
+endif(TARGET qt_example)
+
+add_custom_target(test_interactive
+  COMMAND SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} EXAMPLES_DIR=${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test-interactive.sh
+  )
+
+add_dependencies(test_interactive ${interactive_targets_LIST})
