@@ -15,9 +15,26 @@ extern (C) {
   alias void function(PLINT, PLFLT*, PLFLT*) mapform_func;
 }
 
+// D definition of PLcGrid and PLcGrid2
+struct PLcGrid
+{
+    PLFLT[] xg;
+    PLFLT[] yg;
+    PLFLT[] zg;
+}
+struct PLcGrid2
+{
+    PLFLT[][] xg;
+    PLFLT[][] yg;
+    PLFLT[][] zg;
+}
+
 // helper function to convert D dynamic arrays in C dynamic arrays
 private PLFLT** convert_array(PLFLT[][] a)
 {
+  if(!a) 
+    return null;
+  
   size_t nx=a.length;
   size_t ny=a[0].length;
 
@@ -85,7 +102,58 @@ void plbox3(string xopt, string xlabel, PLFLT xtick, PLINT nsubx,
 /* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
  * plfcont, with a particular choice for f2eval and f2eval_data.
  */
-//void  c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
+void plcont(PLFLT[][] f, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT[] clevel,
+            pltr_func pltr, PLPointer pltr_data=null)
+{
+  PLINT nx=f.length;
+  PLINT ny=f[0].length;
+
+  c_plcont(convert_array(f), nx, ny, kx, lx, ky, ly, clevel.ptr, clevel.length,
+           pltr, pltr_data);  
+}
+
+void plcont(PLFLT[][] f, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT[] clevel,
+            ref PLcGrid cgrid)
+{
+  PLINT nx=f.length;
+  PLINT ny=f[0].length;
+
+  c_PLcGrid c;
+  c.xg = cgrid.xg.ptr;
+  c.nx = cgrid.xg.length;
+  c.yg = cgrid.yg.ptr;
+  c.ny = cgrid.yg.length;
+  c.zg = cgrid.zg.ptr;
+  c.nz = cgrid.zg.length;
+  
+  c_plcont(convert_array(f), nx, ny, kx, lx, ky, ly, clevel.ptr, clevel.length,
+           &pltr1, &c);  
+}
+
+void plcont(PLFLT[][] f, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT[] clevel,
+            ref PLcGrid2 cgrid2)
+{
+  PLINT nx=f.length;
+  PLINT ny=f[0].length;
+
+  c_PLcGrid2 c2;
+  c2.xg = convert_array(cgrid2.xg);
+  c2.yg = convert_array(cgrid2.yg);
+  c2.zg = convert_array(cgrid2.zg);
+  c2.nx = cgrid2.xg.length;
+  c2.ny = cgrid2.xg[0].length;
+  if(cgrid2.yg) {
+    assert(c2.nx==cgrid2.yg.length, "plcont(): Arrays must be of same length!");
+    assert(c2.ny==cgrid2.yg[0].length, "plcont(): Arrays must be of same length!");
+  }
+  if(cgrid2.zg) {
+    assert(c2.nx==cgrid2.zg.length, "plcont(): Arrays must be of same length!");
+    assert(c2.ny==cgrid2.zg[0].length, "plcont(): Arrays must be of same length!");
+  }
+
+  c_plcont(convert_array(f), nx, ny, kx, lx, ky, ly, clevel.ptr, clevel.length,
+           &pltr2, &c2);  
+}
 
 /* Draws a contour plot using the function evaluator f2eval and data stored
  * by way of the f2eval_data pointer.  This allows arbitrary organizations
@@ -772,7 +840,7 @@ struct _N7
     PLINT ny;
     PLINT nz;
 }
-alias _N7 PLcGrid;
+alias _N7 c_PLcGrid;
 
 /*
  * PLcGrid2 is for passing (as arrays of pointers) 2d coordinate
@@ -788,7 +856,7 @@ struct _N8
     PLINT nx;
     PLINT ny;
 }
-alias _N8 PLcGrid2;
+alias _N8 c_PLcGrid2;
 
 /*
  * NOTE: a PLcGrid3 is a good idea here but there is no way to exploit it yet
@@ -898,7 +966,7 @@ alias c_plcalc_world plcalc_world;
 alias c_plclear plclear;
 alias c_plcol0 plcol0;
 alias c_plcol1 plcol1;
-alias c_plcont plcont;
+//alias c_plcont plcont;
 alias c_plcpstrm plcpstrm;
 alias c_plctime plctime;
 alias c_plend plend;
@@ -1103,33 +1171,29 @@ void c_plbox(char *xopt, PLFLT xtick, PLINT nxsub, char *yopt, PLFLT ytick, PLIN
 void c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx, char *yopt, char *ylabel, PLFLT ytick, PLINT nsuby, char *zopt, char *zlabel, PLFLT ztick, PLINT nsubz);
 
 /* Calculate world coordinates and subpage from relative device coordinates. */
-
-void  c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window);
+void c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window);
 
 /* Clear current subpage. */
-
-void  c_plclear();
+void c_plclear();
 
 /* Set color, map 0.  Argument is integer between 0 and 15. */
-
-void  c_plcol0(PLINT icol0);
+void c_plcol0(PLINT icol0);
 
 /* Set color, map 1.  Argument is a float between 0. and 1. */
-
-void  c_plcol1(PLFLT col1);
+void c_plcol1(PLFLT col1);
 
 /* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
  * plfcont, with a particular choice for f2eval and f2eval_data.
  */
-
-void  c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
+void c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky, PLINT ly,
+              PLFLT *clevel, PLINT nlevel,
+              void function(PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer) pltr, PLPointer pltr_data);
 
 /* Draws a contour plot using the function evaluator f2eval and data stored
  * by way of the f2eval_data pointer.  This allows arbitrary organizations
  * of 2d array data to be used.
  */
-
-void  plfcont(PLFLT  function(PLINT , PLINT , PLPointer )f2eval, PLPointer f2eval_data, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
+void plfcont(PLFLT function(PLINT , PLINT , PLPointer )f2eval, PLPointer f2eval_data, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
 
 /* Copies state parameters from the reference stream to the current stream. */
 void c_plcpstrm(PLINT iplsr, PLBOOL flags);

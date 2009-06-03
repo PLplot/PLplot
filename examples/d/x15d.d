@@ -229,7 +229,7 @@ class plot {
     fmn = fmx;
 
     for(int i=0; i<f.length; i++) {
-      for(int j=0; j<f[0].length; j++) {
+      for(int j=0; j<f[i].length; j++) {
         fmx = fmax(fmx, f[i][j]);
         fmn = fmin(fmn, f[i][j]);
       }

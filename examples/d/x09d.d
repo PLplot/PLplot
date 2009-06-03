@@ -21,32 +21,15 @@
 */
 
 import std.string;
+import std.math;
 import plplot;
 
-#define XPTS    35		/* Data points in x */
-#define YPTS    46		/* Data points in y */
-
-#define XSPA    2./(XPTS-1)
-#define YSPA    2./(YPTS-1)
-
-/* polar plot data */
-#define PERIMETERPTS 100
-#define RPTS 40
-#define THETAPTS 40
-
-/* potential plot data */
-#define PPERIMETERPTS 100
-#define PRPTS 40
-#define PTHETAPTS 64
-#define PNLEVEL 20
-
-static PLFLT clevel[11] =
-{-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
+const int XPTS=35;		/* Data points in x */
+const int YPTS=46;		/* Data points in y */
 
 /* Transformation function */
-
 extern (C) {
-  PLFLT[] tr = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
+  PLFLT[] tr = [ 2./(XPTS-1), 0.0, -1.0, 0.0, 2./(YPTS-1), -1.0 ];
 
   void mypltr(PLFLT x, PLFLT y, PLFLT* tx, PLFLT* ty, void* pltr_data)
   {
@@ -55,56 +38,61 @@ extern (C) {
   }
 }
 
-static void polar()
 /*polar contour plot example.*/
+void polar()
 {
-   int i,j;
-   PLcGrid2 cgrid2;
-   PLFLT **z;
-   PLFLT px[PERIMETERPTS], py[PERIMETERPTS];
-   PLFLT t, r, theta;
-   PLFLT lev[10];
+  const int PERIMETERPTS=100;
+  const int RPTS=40;
+  const int THETAPTS=40;
 
-   plenv(-1., 1., -1., 1., 0, -2);
-   plcol0(1);
+  plenv(-1., 1., -1., 1., 0, -2);
+  plcol0(1);
        
-/*Perimeter*/
-   for (i = 0; i < PERIMETERPTS; i++) {
-      t = (2.*M_PI/(PERIMETERPTS-1))*(double)i;
-      px[i] = cos(t);
-      py[i] = sin(t);
-   }
-   plline(PERIMETERPTS, px, py);
+  /*Perimeter*/
+  PLFLT[] px, py;
+  px.length = PERIMETERPTS;
+  py.length = PERIMETERPTS;
+  PLFLT t;
+  for(int i=0; i<PERIMETERPTS; i++) {
+    t = 2.*PI/(PERIMETERPTS-1)*i;
+    px[i] = cos(t);
+    py[i] = sin(t);
+  }
+  plline(px, py);
 	       
-/*create data to be contoured.*/
-   plAlloc2dGrid(&cgrid2.xg, RPTS, THETAPTS);
-   plAlloc2dGrid(&cgrid2.yg, RPTS, THETAPTS);
-   plAlloc2dGrid(&z, RPTS, THETAPTS);
-   cgrid2.nx = RPTS;
-   cgrid2.ny = THETAPTS;
+  /*create data to be contoured.*/
+  PLcGrid2 cgrid2;
+  cgrid2.xg = new PLFLT[][RPTS];
+  for(int i=0; i<RPTS; i++)
+    cgrid2.xg[i] = new PLFLT[THETAPTS];
+  cgrid2.yg = new PLFLT[][RPTS];
+  for(int i=0; i<RPTS; i++)
+    cgrid2.yg[i] = new PLFLT[THETAPTS];
    
-   for (i = 0; i < RPTS; i++) {
-      r = i/(double)(RPTS-1);
-      for (j = 0; j < THETAPTS; j++) {
-	 theta = (2.*M_PI/(double)(THETAPTS-1))*(double)j;
-	 cgrid2.xg[i][j] = r*cos(theta);
-	 cgrid2.yg[i][j] = r*sin(theta);
-	 z[i][j] = r;
-      }
-   }
+  PLFLT[][] z = new PLFLT[][RPTS];
+  for(int i=0; i<RPTS; i++)
+    z[i] = new PLFLT[THETAPTS];
 
-   for (i = 0; i < 10; i++) {
-      lev[i] = 0.05 + 0.10*(double) i;
-   }
+  PLFLT r, theta;
+  for(int i=0; i<RPTS; i++) {
+    r = i/cast(double)(RPTS-1);
+    for(int j=0; j<THETAPTS; j++) {
+      theta = 2.*PI/(THETAPTS-1)*j;
+      cgrid2.xg[i][j] = r*cos(theta);
+      cgrid2.yg[i][j] = r*sin(theta);
+      z[i][j] = r;
+    }
+  }
 
-   plcol0(2);
-   plcont(z, RPTS, THETAPTS, 1, RPTS, 1, THETAPTS, lev, 10,
-	              pltr2, (void *) &cgrid2);
-   plcol0(1);
-   pllab("", "", "Polar Contour Plot");
-   plFree2dGrid(z, RPTS, THETAPTS);
-   plFree2dGrid(cgrid2.xg, RPTS, THETAPTS);
-   plFree2dGrid(cgrid2.yg, RPTS, THETAPTS);
+  PLFLT[] lev;
+  lev.length=10;
+  for(int i=0; i<10; i++)
+    lev[i] = 0.05 + 0.10*i;
+
+  plcol0(2);
+  plcont(z, 1, RPTS, 1, THETAPTS, lev, cgrid2);
+  plcol0(1);
+  pllab("", "", "Polar Contour Plot");
 }
 
 /*--------------------------------------------------------------------------*\
@@ -112,89 +100,87 @@ static void polar()
  *
  * Returns min & max of input 2d array.
 \*--------------------------------------------------------------------------*/
-
-static void
-f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax)
+void f2mnmx(PLFLT[][] f, out PLFLT fmn, out PLFLT fmx)
 {
-    int i, j;
+  fmx = f[0][0];
+  fmn = fmx;
 
-    *fmax = f[0][0];
-    *fmin = *fmax;
-
-    for (i = 0; i < nx; i++) {
-	for (j = 0; j < ny; j++) {
-            *fmax = MAX(*fmax, f[i][j]);
-            *fmin = MIN(*fmin, f[i][j]);
-	}
-    }
-}
-
-static void potential()
-/*shielded potential contour plot example.*/
-{
-  PLcGrid2 cgrid2;
-  PLFLT rmax, xmin, xmax, x0, ymin, ymax, y0, zmin, zmax;
-  PLFLT peps, xpmin, xpmax, ypmin, ypmax;
-  PLFLT eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
-  PLFLT div1, div1i, div2, div2i;
-  PLFLT **z;
-  PLINT nlevelneg, nlevelpos;
-  PLFLT dz, clevel, clevelneg[PNLEVEL], clevelpos[PNLEVEL];
-  PLINT ncollin, ncolbox, ncollab;
-  PLFLT px[PPERIMETERPTS], py[PPERIMETERPTS];
-  PLFLT t, r, theta;
-
-  /*create data to be contoured.*/
-  plAlloc2dGrid(&cgrid2.xg, PRPTS, PTHETAPTS);
-  plAlloc2dGrid(&cgrid2.yg, PRPTS, PTHETAPTS);
-  plAlloc2dGrid(&z, PRPTS, PTHETAPTS);
-  cgrid2.nx = PRPTS;
-  cgrid2.ny = PTHETAPTS;
-
-  for (i = 0; i < PRPTS; i++) {
-    r = 0.5 + (double) i;
-    for (j = 0; j < PTHETAPTS; j++) {
-  theta = (2.*M_PI/(double)(PTHETAPTS-1))*(0.5 + (double) j);
-  cgrid2.xg[i][j] = r*cos(theta);
-  cgrid2.yg[i][j] = r*sin(theta);
+  for(int i=0; i<f.length; i++) {
+    for(int j=0; j<f[i].length; j++) {
+      fmx = fmax(fmx, f[i][j]);
+      fmn = fmin(fmn, f[i][j]);
     }
   }
+}
 
-  rmax = r;
-  f2mnmx(cgrid2.xg, PRPTS, PTHETAPTS, &xmin, &xmax);
-  f2mnmx(cgrid2.yg, PRPTS, PTHETAPTS, &ymin, &ymax);
-  x0 = (xmin + xmax)/2.;
-  y0 = (ymin + ymax)/2.;
+
+/*shielded potential contour plot example.*/
+void potential()
+{
+  const int PERIMETERPTS=100;
+  const int RPTS=40;
+  const int THETAPTS=64;
+  const int NLEVEL=20;
+
+  /*create data to be contoured.*/
+  PLcGrid2 cgrid2;
+  cgrid2.xg = new PLFLT[][RPTS];
+  for(int i=0; i<RPTS; i++)
+    cgrid2.xg[i] = new PLFLT[THETAPTS];
+  cgrid2.yg = new PLFLT[][RPTS];
+  for(int i=0; i<RPTS; i++)
+    cgrid2.yg[i] = new PLFLT[THETAPTS];
+   
+  PLFLT[][] z = new PLFLT[][RPTS];
+  for(int i=0; i<RPTS; i++)
+    z[i] = new PLFLT[THETAPTS];
+
+  PLFLT r, theta;
+  for(int i=0; i<RPTS; i++) {
+    r = 0.5+i;
+    for(int j=0; j<THETAPTS; j++) {
+      theta = 2.*PI/(THETAPTS-1)*(0.5+j);
+      cgrid2.xg[i][j] = r*cos(theta);
+      cgrid2.yg[i][j] = r*sin(theta);
+    }
+  }
+  PLFLT rmax = r;
+  
+  PLFLT xmin, xmax, ymin, ymax;
+  f2mnmx(cgrid2.xg, xmin, xmax);
+  f2mnmx(cgrid2.yg, ymin, ymax);
+  PLFLT x0 = (xmin+xmax)/2.;
+  PLFLT y0 = (ymin+ymax)/2.;
 
   /* Expanded limits */
-  peps = 0.05;
-  xpmin = xmin - fabs(xmin)*peps;
-  xpmax = xmax + fabs(xmax)*peps;
-  ypmin = ymin - fabs(ymin)*peps;
-  ypmax = ymax + fabs(ymax)*peps;
+  PLFLT peps = 0.05;
+  PLFLT xpmin = xmin - fabs(xmin)*peps;
+  PLFLT xpmax = xmax + fabs(xmax)*peps;
+  PLFLT ypmin = ymin - fabs(ymin)*peps;
+  PLFLT ypmax = ymax + fabs(ymax)*peps;
 
   /* Potential inside a conducting cylinder (or sphere) by method of images.
     Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
     Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
     Also put in smoothing term at small distances.
   */
+  PLFLT eps = 2.;
 
-  eps = 2.;
+  PLFLT q1 = 1.;
+  PLFLT d1 = rmax/4.;
 
-  q1 = 1.;
-  d1 = rmax/4.;
+  PLFLT q1i = - q1*rmax/d1;
+  PLFLT d1i = pow(rmax, 2.)/d1;
 
-  q1i = - q1*rmax/d1;
-  d1i = pow(rmax, 2.)/d1;
+  PLFLT q2 = -1.;
+  PLFLT d2 = rmax/4.;
 
-  q2 = -1.;
-  d2 = rmax/4.;
+  PLFLT q2i = - q2*rmax/d2;
+  PLFLT d2i = pow(rmax, 2.)/d2;
 
-  q2i = - q2*rmax/d2;
-  d2i = pow(rmax, 2.)/d2;
-
-  for(int i=0; i<PRPTS; i++) {
-    for(int j=0; j<PTHETAPTS; j++) {
+  PLFLT div1, div1i, div2, div2i;
+  for(int i=0; i<RPTS; i++) {
+    for(int j=0; j<THETAPTS; j++) {
       div1 = sqrt(pow(cgrid2.xg[i][j]-d1, 2.) + pow(cgrid2.yg[i][j]-d1, 2.) + pow(eps, 2.));
       div1i = sqrt(pow(cgrid2.xg[i][j]-d1i, 2.) + pow(cgrid2.yg[i][j]-d1i, 2.) + pow(eps, 2.));
       div2 = sqrt(pow(cgrid2.xg[i][j]-d2, 2.) + pow(cgrid2.yg[i][j]+d2, 2.) + pow(eps, 2.));
@@ -202,13 +188,18 @@ static void potential()
       z[i][j] = q1/div1 + q1i/div1i + q2/div2 + q2i/div2i;
     }
   }
+  PLFLT zmin, zmax;
   f2mnmx(z, zmin, zmax);
 
   /* Positive and negative contour levels.*/
-  dz = (zmax-zmin)/PNLEVEL;
-  nlevelneg = 0;
-  nlevelpos = 0;
-  for(int i=0; i<PNLEVEL; i++) {
+  PLFLT dz = (zmax-zmin)/NLEVEL;
+  PLFLT[] clevelneg, clevelpos;
+  PLFLT clevel;
+  clevelneg.length = NLEVEL;
+  clevelpos.length = NLEVEL;
+  int nlevelneg = 0;
+  int nlevelpos = 0;
+  for(int i=0; i<NLEVEL; i++) {
     clevel = zmin + (i+0.5)*dz;
     if(clevel<=0.)
       clevelneg[nlevelneg++] = clevel;
@@ -216,9 +207,9 @@ static void potential()
       clevelpos[nlevelpos++] = clevel;
   }
   /* Colours! */
-  ncollin = 11;
-  ncolbox = 1;
-  ncollab = 2;
+  PLINT ncollin = 11;
+  PLINT ncolbox = 1;
+  PLINT ncollab = 2;
 
   /* Finally start plotting this page! */
   pladv(0);
@@ -232,18 +223,22 @@ static void potential()
   if(nlevelneg >0) {
     /* Negative contours */
     pllsty(2);
-    plcont(z, 1, PRPTS, 1, PTHETAPTS, clevelneg, pltr2, (void*)&cgrid2);
+    plcont(z, 1, RPTS, 1, THETAPTS, clevelneg, cgrid2);
   }
 
   if(nlevelpos >0) {
     /* Positive contours  */
     pllsty(1);
-    plcont(z, 1, PRPTS, 1, PTHETAPTS, clevelpos, pltr2, (void*)&cgrid2);
+    plcont(z, 1, RPTS, 1, THETAPTS, clevelpos, cgrid2);
   }
    
   /* Draw outer boundary  */
-  for(int i=0; i<PPERIMETERPTS; i++) {
-    t = (2.*PI/(PPERIMETERPTS-1))*i;
+  PLFLT[] px, py;
+  px.length = PERIMETERPTS;
+  py.length = PERIMETERPTS;
+  PLFLT t;
+  for(int i=0; i<PERIMETERPTS; i++) {
+    t = (2.*PI/(PERIMETERPTS-1))*i;
     px[i] = x0 + rmax*cos(t);
     py[i] = y0 + rmax*sin(t);
   }
@@ -264,6 +259,7 @@ static void potential()
 int main(char[][] args)
 {
   PLINT[] mark = [ 1500 ], space = [ 1500 ];
+  PLFLT[] clevel = [ -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. ];
 
   /* Parse and process command line arguments */
   plparseopts(args, PL_PARSE_FULL);
@@ -272,7 +268,6 @@ int main(char[][] args)
   plinit();
 
   /* Set up function arrays */
-  PLFLT xx, yy;
   PLFLT[][] z = new PLFLT[][XPTS];
   for(int i=0; i<XPTS; i++)
     z[i] = new PLFLT[YPTS];
@@ -281,6 +276,7 @@ int main(char[][] args)
   for(int i=0; i<XPTS; i++)
     w[i] = new PLFLT[YPTS];
 
+  PLFLT xx, yy;
   for(int i=0; i<XPTS; i++) {
     xx = cast(double)(i-(XPTS/2))/(XPTS/2);
     for(int j=0; j<YPTS; j++) {
@@ -291,14 +287,16 @@ int main(char[][] args)
   }
 
   /* Set up grids */
-  cgrid1.xg = (new PLFLT[XPTS]).ptr;
-  cgrid1.yg = (new PLFLT[XPTS]).ptr;
+  PLcGrid cgrid1;
+  cgrid1.xg = new PLFLT[XPTS];
+  cgrid1.yg = new PLFLT[YPTS];
 
-  PLFLT[][] cgrid2.xg = new PLFLT[][XPTS];
+  PLcGrid2 cgrid2;
+  cgrid2.xg = new PLFLT[][XPTS];
   for(int i=0; i<XPTS; i++)
     cgrid2.xg[i] = new PLFLT[YPTS];
 
-  PLFLT[][] cgrid2.yg = new PLFLT[][XPTS];
+  cgrid2.yg = new PLFLT[][XPTS];
   for(int i=0; i<XPTS; i++)
     cgrid2.yg[i] = new PLFLT[YPTS];
 
@@ -307,8 +305,8 @@ int main(char[][] args)
     for(int j=0; j<YPTS; j++) {
       mypltr(cast(PLFLT)i, cast(PLFLT)j, &xx, &yy, null);
 
-      argx = xx * M_PI/2;
-      argy = yy * M_PI/2;
+      argx = xx*PI/2;
+      argy = yy*PI/2;
       distort = 0.4;
 
       cgrid1.xg[i] = xx + distort * cos(argx);
@@ -320,14 +318,15 @@ int main(char[][] args)
   }
 
   /* Plot using identity transform */
+  pl_setcontlabelformat(4, 3);
   pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
   plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
   plcol0(2);
-  plcont(z, 1, XPTS, 1, YPTS, clevel, mypltr);
+  plcont(z, 1, XPTS, 1, YPTS, clevel, &mypltr);
   
   plstyl(mark, space);
   plcol0(3);
-  plcont(w, 1, XPTS, 1, YPTS, clevel, mypltr);
+  plcont(w, 1, XPTS, 1, YPTS, clevel, &mypltr);
   plstyl(null, null);
   plcol0(1);
   pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
@@ -336,11 +335,11 @@ int main(char[][] args)
   /* Plot using 1d coordinate transform */
   plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
   plcol0(2);
-  plcont(z, 1, XPTS, 1, YPTS, clevel, pltr1, cast(void*)&cgrid1);
+  plcont(z, 1, XPTS, 1, YPTS, clevel, cgrid1);
 
-  plstyl(1, mark, space);
+  plstyl(mark, space);
   plcol0(3);
-  plcont(w, 1, XPTS, 1, YPTS, clevel, pltr1, cast(void*)&cgrid1);
+  plcont(w, 1, XPTS, 1, YPTS, clevel, cgrid1);
   plstyl(null, null);
   plcol0(1);
   pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
@@ -348,11 +347,11 @@ int main(char[][] args)
   /* Plot using 2d coordinate transform */
   plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
   plcol0(2);
-  plcont(z, 1, XPTS, 1, YPTS, clevel, pltr2, (void *)&cgrid2);
+  plcont(z, 1, XPTS, 1, YPTS, clevel, cgrid2);
 
   plstyl(mark, space);
   plcol0(3);
-  plcont(w, 1, XPTS, 1, YPTS, clevel, pltr2, (void *)&cgrid2);
+  plcont(w, 1, XPTS, 1, YPTS, clevel, cgrid2);
   plstyl(null, null);
   plcol0(1);
   pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
