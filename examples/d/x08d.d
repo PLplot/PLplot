@@ -86,17 +86,13 @@ void cmap1_init( bool gray )
  * Does a series of 3-d plots for a given data set, with different
  * viewing options in each plot.
 \*--------------------------------------------------------------------------*/
-int main( char[][] args )
+int main(char[][] args)
 {
   const nlevel=10;
   const XPTS=35;		/* Data points in x */
   const YPTS=46;		/* Data points in y */
 
-  PLFLT* x, y;
-  PLFLT** z;
   PLFLT xx, yy, r;
-  PLFLT zmin, zmax, step;
-  PLFLT[nlevel] clevel;
   bool rosen=true;
 
   PLFLT[] alt = [ 60.0, 20.0 ];
@@ -115,10 +111,12 @@ int main( char[][] args )
   plinit();
 
   /* Allocate data structures */
-  x = cast(PLFLT*)std.c.stdlib.calloc( XPTS, PLFLT.sizeof );
-  y = cast(PLFLT*)std.c.stdlib.calloc( YPTS, PLFLT.sizeof );
+  PLFLT[XPTS] x;
+  PLFLT[YPTS] y;
 
-  plAlloc2dGrid( &z, XPTS, YPTS );
+  PLFLT[][] z = new PLFLT[][XPTS];
+  for(int i=0; i<XPTS; i++)
+    z[i] = new PLFLT[YPTS];
 
   for( int i=0; i<XPTS; i++)  {
     x[i] = (cast(PLFLT)(i-(XPTS/2))/cast(PLFLT)(XPTS/2));
@@ -150,9 +148,12 @@ int main( char[][] args )
     }
   }
 
-  plMinMax2dGrid( z, XPTS, YPTS, &zmax, &zmin );
-  step = (zmax-zmin)/(nlevel+1);
-  for( size_t i=0; i<nlevel; i++ )
+  PLFLT zmin, zmax;
+  f2mnmx(z, zmin, zmax);
+  
+  PLFLT step = (zmax-zmin)/(nlevel+1);
+  PLFLT[nlevel] clevel;
+  for(size_t i=0; i<nlevel; i++)
     clevel[i] = zmin+step+step*i;
 
   pllightsource( 1.,1.,1. );
@@ -179,33 +180,45 @@ int main( char[][] args )
       case 0:
         /* diffuse light surface plot */
         cmap1_init( 1 );
-        plsurf3d( x, y, z, XPTS, YPTS, 0, null, 0 );
+        plsurf3d(x, y, z, 0);
         break;
       case 1:
         /* magnitude colored plot */
         cmap1_init( 0 );
-        plsurf3d( x, y, z, XPTS, YPTS, MAG_COLOR, null, 0 );
+        plsurf3d(x, y, z, MAG_COLOR);
         break;
       case 2:
         /*  magnitude colored plot with faceted squares */
         cmap1_init( 0 );
-        plsurf3d( x, y, z, XPTS, YPTS, MAG_COLOR | FACETED, null, 0 );
+        plsurf3d(x, y, z, MAG_COLOR | FACETED);
         break;
       default:
         /* magnitude colored plot with contours */
         cmap1_init( 0 );
-        plsurf3d( x, y, z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT,
-                  cast(PLFLT*)clevel, nlevel );
+        plsurf3d(x, y, z, MAG_COLOR | SURF_CONT | BASE_CONT, clevel);
         break;
       }
     }
   }
 
-  /* Clean up */
-  std.c.stdlib.free( x );
-  std.c.stdlib.free( y );
-  plFree2dGrid( z, XPTS, YPTS );
-
   plend();
   return 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * f2mnmx
+ *
+ * Returns min & max of input 2d array.
+\*--------------------------------------------------------------------------*/
+void f2mnmx(PLFLT[][] f, out PLFLT fmn, out PLFLT fmx)
+{
+  fmx = f[0][0];
+  fmn = fmx;
+
+  for(int i=0; i<f.length; i++) {
+    for(int j=0; j<f[i].length; j++) {
+      fmx = fmax(fmx, f[i][j]);
+      fmn = fmin(fmn, f[i][j]);
+    }
+  }
 }

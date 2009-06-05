@@ -25,6 +25,10 @@ int main(char[][] args)
   /* Parse and process command line arguments */
   plparseopts(args, PL_PARSE_FULL);
 
+  /* Set orientation to landscape - note not all device drivers 
+   * support this, in particular most interactive drivers do not */
+  plsori(1);
+
   /* Initialize plplot */
   plinit();
 
@@ -52,8 +56,7 @@ int main(char[][] args)
     pljoin(0.0, 0.0, dx, dy);
     
     /* Write labels for angle */
-    string text;
-    text = format("%d", lrint(theta));
+    string text = format("%d", lrint(theta));
 
     PLFLT offset;
     if(theta<9.99)

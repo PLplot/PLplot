@@ -58,7 +58,58 @@ int plparseopts(char[][] args, PLINT mode)
 }
 
 /* simple arrow plotter. */
-//void  c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
+void plvect(PLFLT[][] u, PLFLT[][] v, PLFLT scale, pltr_func pltr=null, PLPointer pltr_data=null)
+{
+  PLINT nx=u.length;
+  PLINT ny=u[0].length;
+  assert(nx==v.length, "plvect(): Arrays must be of same length!");
+  assert(ny==v[0].length, "plvect(): Arrays must be of same length!");
+  
+  c_plvect(convert_array(u), convert_array(v), nx, ny, scale, pltr, pltr_data);
+}
+
+void plvect(PLFLT[][] u, PLFLT[][] v, PLFLT scale, ref PLcGrid cgrid)
+{
+  PLINT nx=u.length;
+  PLINT ny=u[0].length;
+  assert(nx==v.length, "plvect(): Arrays must be of same length!");
+  assert(ny==v[0].length, "plvect(): Arrays must be of same length!");
+
+  c_PLcGrid c;
+  c.xg = cgrid.xg.ptr;
+  c.nx = cgrid.xg.length;
+  c.yg = cgrid.yg.ptr;
+  c.ny = cgrid.yg.length;
+  c.zg = cgrid.zg.ptr;
+  c.nz = cgrid.zg.length;
+
+  c_plvect(convert_array(u), convert_array(v), nx, ny, scale, &pltr1, &c);
+}
+
+void plvect(PLFLT[][] u, PLFLT[][] v, PLFLT scale, ref PLcGrid2 cgrid2)
+{
+  PLINT nx=u.length;
+  PLINT ny=u[0].length;
+  assert(nx==v.length, "plvect(): Arrays must be of same length!");
+  assert(ny==v[0].length, "plvect(): Arrays must be of same length!");
+
+  c_PLcGrid2 c2;
+  c2.xg = convert_array(cgrid2.xg);
+  c2.yg = convert_array(cgrid2.yg);
+  c2.zg = convert_array(cgrid2.zg);
+  c2.nx = cgrid2.xg.length;
+  c2.ny = cgrid2.xg[0].length;
+  if(cgrid2.yg) {
+    assert(c2.nx==cgrid2.yg.length, "plcont(): Arrays must be of same length!");
+    assert(c2.ny==cgrid2.yg[0].length, "plcont(): Arrays must be of same length!");
+  }
+  if(cgrid2.zg) {
+    assert(c2.nx==cgrid2.zg.length, "plcont(): Arrays must be of same length!");
+    assert(c2.ny==cgrid2.zg[0].length, "plcont(): Arrays must be of same length!");
+  }
+
+  c_plvect(convert_array(u), convert_array(v), nx, ny, scale, &pltr2, &c2);
+}
 
 void plsvect(PLFLT[] arrowx, PLFLT[] arrowy, PLBOOL fill)
 {
@@ -213,7 +264,19 @@ void plgfnam(out string fnam)
 }
 
 /* grid irregularly sampled data */
-//void  c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts, PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy, PLFLT **zg, PLINT type, PLFLT data);
+void  plgriddata(PLFLT[] x, PLFLT[] y, PLFLT[] z, PLFLT[] xg, PLFLT[] yg, PLFLT[][] zg, PLINT type, PLFLT data)
+{
+  PLINT npts = x.length;
+  assert(npts==y.length, "plgriddata(): Arrays must be of same length!");
+  assert(npts==z.length, "plgriddata(): Arrays must be of same length!");
+  
+  PLINT nxg = xg.length;
+  PLINT nyg = yg.length;
+  assert(nxg==zg.length, "plgriddata(): Arrays must be of same length!");
+  assert(nyg==zg[0].length, "plgriddata(): Arrays must be of same length!");
+  
+  c_plgriddata(x.ptr, y.ptr, z.ptr, npts, xg.ptr, nxg, yg.ptr, nyg, convert_array(zg), type, data);
+}
 
 /* Get the current library version number */
 void plgver(out string p_ver)
@@ -260,10 +323,28 @@ void plmap(mapform_func mapform, string type, PLFLT minlong, PLFLT maxlong,
 }
 
 /* Plots a mesh representation of the function z[x][y]. */
-//void  c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt);
+void plmesh(PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt)
+{
+  PLINT nx=z.length;
+  PLINT ny=z[0].length;
+  
+  assert(nx==x.length, "plmesh(): Arrays must be of same length!");
+  assert(ny==y.length, "plmesh(): Arrays must be of same length!");
+
+  c_plmesh(x.ptr, y.ptr, convert_array(z), nx, ny, opt);
+}
 
 /* Plots a mesh representation of the function z[x][y] with contour */
-//void  c_plmeshc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel);
+void plmeshc(PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel)
+{
+  PLINT nx=z.length;
+  PLINT ny=z[0].length;
+  
+  assert(nx==x.length, "plmeshc(): Arrays must be of same length!");
+  assert(ny==y.length, "plmeshc(): Arrays must be of same length!");
+
+  c_plmeshc(x.ptr, y.ptr, convert_array(z), nx, ny, opt, clevel.ptr, clevel.length);
+}
 
 /* Prints out "text" at specified position relative to viewport */
 void plmtex(string side, PLFLT disp, PLFLT pos, PLFLT just, string text)
@@ -278,14 +359,43 @@ void plmtex3(string side, PLFLT disp, PLFLT pos, PLFLT just, string text)
 }
 	 
 /* Plots a 3-d representation of the function z[x][y]. */
-//void  c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLBOOL side);
+void plot3d(PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLBOOL side)
+{
+  PLINT nx=z.length;
+  PLINT ny=z[0].length;
+  
+  assert(nx==x.length, "plot3d(): Arrays must be of same length!");
+  assert(ny==y.length, "plot3d(): Arrays must be of same length!");
+
+  c_plot3d(x.ptr, y.ptr, convert_array(z), nx, ny, opt, side);
+}
 
 /* Plots a 3-d representation of the function z[x][y] with contour. */
-//void  c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel);
+void plot3dc(PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel)
+{
+  PLINT nx=z.length;
+  PLINT ny=z[0].length;
+  
+  assert(nx==x.length, "plot3dc(): Arrays must be of same length!");
+  assert(ny==y.length, "plot3dc(): Arrays must be of same length!");
+
+  c_plot3dc(x.ptr, y.ptr, convert_array(z), nx, ny, opt, clevel.ptr, clevel.length);
+}
 
 /* Plots a 3-d representation of the function z[x][y] with contour and
  * y index limits. */
-//void  c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel, PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax);
+void plot3dcl(PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel,
+              PLINT ixstart, PLINT ixn, PLINT[] indexymin, PLINT[] indexymax)
+{
+  PLINT nx=z.length;
+  PLINT ny=z[0].length;
+  
+  assert(nx==x.length, "plot3dcl(): Arrays must be of same length!");
+  assert(ny==y.length, "plot3dcl(): Arrays must be of same length!");
+
+  c_plot3dcl(x.ptr, y.ptr, convert_array(z), nx, ny, opt, clevel.ptr, clevel.length,
+             ixstart, ixn, indexymin.ptr, indexymax.ptr);
+}
 
 /* Set fill pattern directly. */
 void plpat(PLINT[] inc, PLINT[] del)
@@ -442,6 +552,51 @@ void plshades(PLFLT[][] a, def_func defined, PLFLT xmin, PLFLT xmax, PLFLT ymin,
              fill_width, cont_color, cont_width, &c_plfill, rectangular, pltr, pltr_data);
 }
 
+void plshades(PLFLT[][] a, def_func defined, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+              PLFLT[] clevel, PLINT fill_width, PLINT cont_color, PLINT cont_width,
+              PLBOOL rectangular, ref PLcGrid cgrid)
+{
+  PLINT nx=a.length;
+  PLINT ny=a[0].length;
+
+  c_PLcGrid c;
+  c.xg = cgrid.xg.ptr;
+  c.nx = cgrid.xg.length;
+  c.yg = cgrid.yg.ptr;
+  c.ny = cgrid.yg.length;
+  c.zg = cgrid.zg.ptr;
+  c.nz = cgrid.zg.length;
+  
+  c_plshades(convert_array(a), nx, ny, defined, xmin, xmax, ymin, ymax, clevel.ptr, clevel.length,
+             fill_width, cont_color, cont_width, &c_plfill, rectangular, &pltr1, &c);
+}
+
+void plshades(PLFLT[][] a, def_func defined, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+              PLFLT[] clevel, PLINT fill_width, PLINT cont_color, PLINT cont_width,
+              PLBOOL rectangular, ref PLcGrid2 cgrid2)
+{
+  PLINT nx=a.length;
+  PLINT ny=a[0].length;
+
+  c_PLcGrid2 c2;
+  c2.xg = convert_array(cgrid2.xg);
+  c2.yg = convert_array(cgrid2.yg);
+  c2.zg = convert_array(cgrid2.zg);
+  c2.nx = cgrid2.xg.length;
+  c2.ny = cgrid2.xg[0].length;
+  if(cgrid2.yg) {
+    assert(c2.nx==cgrid2.yg.length, "plcont(): Arrays must be of same length!");
+    assert(c2.ny==cgrid2.yg[0].length, "plcont(): Arrays must be of same length!");
+  }
+  if(cgrid2.zg) {
+    assert(c2.nx==cgrid2.zg.length, "plcont(): Arrays must be of same length!");
+    assert(c2.ny==cgrid2.zg[0].length, "plcont(): Arrays must be of same length!");
+  }
+
+  c_plshades(convert_array(a), nx, ny, defined, xmin, xmax, ymin, ymax, clevel.ptr, clevel.length,
+             fill_width, cont_color, cont_width, &c_plfill, rectangular, &pltr2, &c2);
+}
+
 /* Initialize PLplot, passing the device name and windows/page settings. */
 void plstart(string devname, PLINT nx, PLINT ny)
 {
@@ -469,11 +624,28 @@ void plstripc(PLINT* id, string xspec, string yspec, PLFLT xmin, PLFLT xmax, PLF
 }
 
 /* plots a 2d image (or a matrix too large for plshade() ) */
-//void  c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax, PLFLT valuemin, PLFLT valuemax);
+void plimagefr(PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+               PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
+               PLFLT valuemin, PLFLT valuemax)
+{
+  PLINT nx=idata.length;
+  PLINT ny=idata[0].length;
+
+  c_plimagefr(convert_array(idata), nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax,
+              Dymin, Dymax, valuemin, valuemax);
+}
 
 /* plots a 2d image (or a matrix too large for plshade() ) - colors
    automatically scaled */
-//void  c_plimage(PLFLT **idata, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
+void plimage(PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+             PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
+{
+  PLINT nx=idata.length;
+  PLINT ny=idata[0].length;
+
+  c_plimage(convert_array(idata), nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax,
+            Dymin, Dymax);
+}
 
 /* Set up a new line style */
 void plstyl(PLINT[] mark, PLINT[] space)
@@ -484,11 +656,32 @@ void plstyl(PLINT[] mark, PLINT[] space)
 }
 
 /* Plots the 3d surface representation of the function z[x][y]. */
-//void  c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel);
+void plsurf3d(PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel=null)
+{
+  PLINT nx=z.length;
+  PLINT ny=z[0].length;
+  assert(nx==x.length, "plsurf3d(): Arrays must be of same length!");
+  assert(ny==y.length, "plsurf3d(): Arrays must be of same length!");
+  
+  if(clevel)
+    c_plsurf3d(x.ptr, y.ptr, convert_array(z), nx, ny, opt, clevel.ptr, clevel.length);
+  else
+    c_plsurf3d(x.ptr, y.ptr, convert_array(z), nx, ny, opt, null, 0);
+}
 
 /* Plots the 3d surface representation of the function z[x][y] with y
  * index limits. */
-//void  c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel, PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax);
+void plsurf3dl(PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel,
+               PLINT ixstart, PLINT ixn, PLINT[] indexymin, PLINT[] indexymax)
+{
+  PLINT nx=z.length;
+  PLINT ny=z[0].length;
+  assert(nx==x.length, "plsurf3d(): Arrays must be of same length!");
+  assert(ny==y.length, "plsurf3d(): Arrays must be of same length!");
+
+  c_plsurf3dl(x.ptr, y.ptr, convert_array(z), nx, ny, opt, clevel.ptr, clevel.length,
+              ixstart, ixn, indexymin.ptr, indexymax.ptr);
+}
 
 /* Plots array y against x for n points using Hershey symbol "code" */
 void plsym(PLFLT[] x, PLFLT[] y, PLINT code)
@@ -999,7 +1192,7 @@ alias c_plgfont plgfont;
 alias c_plglevel plglevel;
 alias c_plgpage plgpage;
 alias c_plgra plgra;
-alias c_plgriddata plgriddata;
+//alias c_plgriddata plgriddata;
 alias c_plgspa plgspa;
 alias c_plgstrm plgstrm;
 //alias c_plgver plgver;
@@ -1011,8 +1204,8 @@ alias c_plgzax plgzax;
 //alias c_plhist plhist;
 alias c_plhls plhls;
 alias c_plhlsrgb plhlsrgb;
-alias c_plimage plimage;
-alias c_plimagefr plimagefr;
+//alias c_plimage plimage;
+//alias c_plimagefr plimagefr;
 alias c_plinit plinit;
 alias c_pljoin pljoin;
 //alias c_pllab pllab;
@@ -1022,14 +1215,14 @@ alias c_pllightsource pllightsource;
 alias c_pllsty pllsty;
 //alias c_plmap plmap;
 alias c_plmeridians plmeridians;
-alias c_plmesh plmesh;
-alias c_plmeshc plmeshc;
+//alias c_plmesh plmesh;
+//alias c_plmeshc plmeshc;
 alias c_plmkstrm plmkstrm;
 //alias c_plmtex plmtex;
 //alias c_plmtex3 plmtex3;
-alias c_plot3d plot3d;
-alias c_plot3dc plot3dc;
-alias c_plot3dcl plot3dcl;
+//alias c_plot3d plot3d;
+//alias c_plot3dc plot3dc;
+//alias c_plot3dcl plot3dcl;
 //alias c_plparseopts plparseopts;
 //alias c_plpat plpat;
 //alias c_plpoin plpoin;
@@ -1087,8 +1280,8 @@ alias c_plstripa plstripa;
 //alias c_plstripc plstripc;
 alias c_plstripd plstripd;
 //alias c_plstyl plstyl;
-alias c_plsurf3d plsurf3d;
-alias c_plsurf3dl plsurf3dl;
+//alias c_plsurf3d plsurf3d;
+//alias c_plsurf3dl plsurf3dl;
 //alias c_plsvect plsvect;
 alias c_plsvpa plsvpa;
 alias c_plsxax plsxax;
@@ -1098,7 +1291,7 @@ alias c_plszax plszax;
 alias c_pltext pltext;
 //alias c_pltimefmt pltimefmt;
 alias c_plvasp plvasp;
-alias c_plvect plvect;
+//alias c_plvect plvect;
 alias c_plvpas plvpas;
 alias c_plvpor plvpor;
 alias c_plvsta plvsta;
@@ -1127,29 +1320,27 @@ alias plgvpw plP_gvpw;
 \*--------------------------------------------------------------------------*/
 
 
-	/* All void types */
-
-	/* C routines callable from stub routines come first */
+/* All void types */
+/* C routines callable from stub routines come first */
 
 /* set the format of the contour labels */
-
-void  c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig);
+void c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig);
 
 /* set offset and spacing of contour labels */
-
-void  c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
+void c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
 
 /* Advance to subpage "page", or to the next one if "page" = 0. */
-
-void  c_pladv(PLINT page);
+void c_pladv(PLINT page);
 
 /* simple arrow plotter. */
-void c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
+void c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+              void function(PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer) pltr, PLPointer pltr_data);
 void c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
 
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
-void  c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub, char *yopt, PLFLT ytick, PLINT nysub);
+void c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
+              char *yopt, PLFLT ytick, PLINT nysub);
 
 /* Flags for plbin() - opt argument */
 const PL_BIN_DEFAULT = 0;
@@ -1161,8 +1352,7 @@ const PL_BIN_NOEMPTY = 4;
 void c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT opt);
 
 /* Start new page.  Should only be used with pleop(). */
-
-void  c_plbop();
+void c_plbop();
 
 /* This draws a box around the current viewport. */
 void c_plbox(char *xopt, PLFLT xtick, PLINT nxsub, char *yopt, PLFLT ytick, PLINT nysub);
@@ -1193,7 +1383,9 @@ void c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky, PLINT
  * by way of the f2eval_data pointer.  This allows arbitrary organizations
  * of 2d array data to be used.
  */
-void plfcont(PLFLT function(PLINT , PLINT , PLPointer )f2eval, PLPointer f2eval_data, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, void  function(PLFLT , PLFLT , PLFLT *, PLFLT *, PLPointer )pltr, PLPointer pltr_data);
+void plfcont(PLFLT function(PLINT, PLINT, PLPointer) f2eval, PLPointer f2eval_data, PLINT nx, PLINT ny,
+             PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+             void function(PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer) pltr, PLPointer pltr_data);
 
 /* Copies state parameters from the reference stream to the current stream. */
 void c_plcpstrm(PLINT iplsr, PLBOOL flags);
@@ -1203,35 +1395,27 @@ void c_plctime(PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT 
   
 /* Converts input values from relative device coordinates to relative plot */
 /* coordinates. */
-
-void  pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax);
+void pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax);
 
 /* Converts input values from relative plot coordinates to relative */
 /* device coordinates. */
-
-void  pldip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax);
+void pldip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax);
 
 /* End a plotting session for all open streams. */
-
-void  c_plend();
+void c_plend();
 
 /* End a plotting session for the current stream only. */
-
-void  c_plend1();
+void c_plend1();
 
 /* Simple interface for defining viewport and window. */
-
-void  c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLINT just, PLINT axis);
-
+void c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLINT just, PLINT axis);
 
 /* similar to plenv() above, but in multiplot mode does not advance the subpage,
  instead the current subpage is cleared */
-
-void  c_plenv0(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLINT just, PLINT axis);
+void c_plenv0(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLINT just, PLINT axis);
 
 /* End current page.  Should only be used with plbop(). */
-
-void  c_pleop();
+void c_pleop();
 
 /* Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i)) */
 void c_plerrx(PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y);
@@ -1249,55 +1433,43 @@ void c_plfill(PLINT n, PLFLT *x, PLFLT *y);
 void c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z);
 
 /* Flushes the output stream.  Use sparingly, if at all. */
-
-void  c_plflush();
+void c_plflush();
 
 /* Sets the global font flag to 'ifont'. */
-
-void  c_plfont(PLINT ifont);
+void c_plfont(PLINT ifont);
 
 /* Load specified font set. */
-
-void  c_plfontld(PLINT fnt);
+void c_plfontld(PLINT fnt);
 
 /* Get character default height and current (scaled) height */
-
-void  c_plgchr(PLFLT *p_def, PLFLT *p_ht);
+void c_plgchr(PLFLT *p_def, PLFLT *p_ht);
 
 /* Returns 8 bit RGB values for given color from color map 0 */
-
-void  c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b);
+void c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b);
 
 /* Returns 8 bit RGB values for given color from color map 0 and alpha value */
-
-void  c_plgcol0a(PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a);
+void c_plgcol0a(PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a);
 
 /* Returns the background color by 8 bit RGB value */
-
-void  c_plgcolbg(PLINT *r, PLINT *g, PLINT *b);
+void c_plgcolbg(PLINT *r, PLINT *g, PLINT *b);
 
 /* Returns the background color by 8 bit RGB value and alpha value */
-
-void  c_plgcolbga(PLINT *r, PLINT *g, PLINT *b, PLFLT *a);
+void c_plgcolbga(PLINT *r, PLINT *g, PLINT *b, PLFLT *a);
 
 /* Returns the current compression setting */
-
-void  c_plgcompression(PLINT *compression);
+void c_plgcompression(PLINT *compression);
 
 /* Get the current device (keyword) name */
 void c_plgdev(char *p_dev);
 
 /* Retrieve current window into device space */
-
-void  c_plgdidev(PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy);
+void c_plgdidev(PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy);
 
 /* Get plot orientation */
-
-void  c_plgdiori(PLFLT *p_rot);
+void c_plgdiori(PLFLT *p_rot);
 
 /* Retrieve current window into plot space */
-
-void  c_plgdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax);
+void c_plgdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax);
 
 /* Get FCI (font characterization integer) */
 
@@ -1311,24 +1483,21 @@ void  c_plgfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax);
 void c_plgfnam(char *fnam);
 
 /* Get the current font family, style and weight */
-
-void  c_plgfont(PLINT *p_family, PLINT *p_style, PLINT *p_weight);
+void c_plgfont(PLINT *p_family, PLINT *p_style, PLINT *p_weight);
 
 /* Get the (current) run level.  */
-
-void  c_plglevel(PLINT *p_level);
+void c_plglevel(PLINT *p_level);
 
 /* Get output device parameters. */
-
-void  c_plgpage(PLFLT *p_xp, PLFLT *p_yp, PLINT *p_xleng, PLINT *p_yleng, PLINT *p_xoff, PLINT *p_yoff);
+void c_plgpage(PLFLT *p_xp, PLFLT *p_yp, PLINT *p_xleng, PLINT *p_yleng,
+               PLINT *p_xoff, PLINT *p_yoff);
 
 /* Switches to graphics screen. */
-
-void  c_plgra();
+void c_plgra();
 
   /* grid irregularly sampled data */
-
-void  c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts, PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy, PLFLT **zg, PLINT type, PLFLT data);
+void c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts, PLFLT *xg, PLINT nptsx,
+                  PLFLT *yg, PLINT nptsy, PLFLT **zg, PLINT type, PLFLT data);
 
 /* type of gridding algorithm for plgriddata() */
 const GRID_CSA = 1;
@@ -1412,12 +1581,11 @@ void c_plmeridians(void function(PLINT, PLFLT*, PLFLT*) mapform, PLFLT dlong, PL
 void c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt);
 
 /* Plots a mesh representation of the function z[x][y] with contour */
-
-void  c_plmeshc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel);
+void c_plmeshc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+               PLFLT *clevel, PLINT nlevel);
 
 /* Creates a new stream and makes it the default.  */
-
-void  c_plmkstrm(PLINT *p_strm);
+void c_plmkstrm(PLINT *p_strm);
 
 /* Prints out "text" at specified position relative to viewport */
 void c_plmtex(char *side, PLFLT disp, PLFLT pos, PLFLT just, char *text);
@@ -1426,17 +1594,17 @@ void c_plmtex(char *side, PLFLT disp, PLFLT pos, PLFLT just, char *text);
 void c_plmtex3(char *side, PLFLT disp, PLFLT pos, PLFLT just, char *text);
 	 
 /* Plots a 3-d representation of the function z[x][y]. */
-
-void  c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLBOOL side);
+void c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLBOOL side);
 
 /* Plots a 3-d representation of the function z[x][y] with contour. */
-
-void  c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel);
+void c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+               PLFLT *clevel, PLINT nlevel);
 
 /* Plots a 3-d representation of the function z[x][y] with contour and
  * y index limits. */
-
-void  c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel, PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax);
+void c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+                PLFLT *clevel, PLINT nlevel, PLINT ixstart, PLINT ixn, 
+                PLINT *indexymin, PLINT *indexymax);
 
 /*
  * definitions for the opt argument in plot3dc() and plsurf3d()
@@ -1454,16 +1622,16 @@ const DRAW_SIDES=1<<6; /* draw sides */
 const FACETED=1<<7; /* draw outline for each square that makes up the surface */
 const MESH=1<<8; /* draw mesh */
 
-  /*
-   *  valid options for plot3dc():
-   *
-   *  DRAW_SIDES, BASE_CONT, TOP_CONT (not yet),
-   *  MAG_COLOR, DRAW_LINEX, DRAW_LINEY, DRAW_LINEXY.
-   *
-   *  valid options for plsurf3d():
-   *
-   *  MAG_COLOR, BASE_CONT, SURF_CONT, FACETED, DRAW_SIDES.
-   */
+/*
+ *  valid options for plot3dc():
+ *
+ *  DRAW_SIDES, BASE_CONT, TOP_CONT (not yet),
+ *  MAG_COLOR, DRAW_LINEX, DRAW_LINEY, DRAW_LINEXY.
+ *
+ *  valid options for plsurf3d():
+ *
+ *  MAG_COLOR, BASE_CONT, SURF_CONT, FACETED, DRAW_SIDES.
+ */
 
 /* Set fill pattern directly. */
 void c_plpat(PLINT nlin, PLINT *inc, PLINT *del);
@@ -1478,8 +1646,7 @@ void c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code);
 void c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc);
 
 /* Set the floating point precision (in number of places) in numeric labels. */
-
-void  c_plprec(PLINT setp, PLINT prec);
+void c_plprec(PLINT setp, PLINT prec);
 
 /* Set fill pattern, using one of the predefined patterns.*/
 void c_plpsty(PLINT patt);
@@ -1666,41 +1833,38 @@ void c_plstripc(PLINT *id, char *xspec, char *yspec, PLFLT xmin, PLFLT xmax, PLF
 void c_plstripd(PLINT id);
 
 /* plots a 2d image (or a matrix too large for plshade() ) */
-
-void  c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax, PLFLT valuemin, PLFLT valuemax);
+void c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+                 PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
+                 PLFLT valuemin, PLFLT valuemax);
 
 /* plots a 2d image (or a matrix too large for plshade() ) - colors
    automatically scaled */
-
-void  c_plimage(PLFLT **idata, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
+void c_plimage(PLFLT **idata, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+               PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
 
 /* Set up a new line style */
 void c_plstyl(PLINT nms, PLINT *mark, PLINT *space);
 
 /* Plots the 3d surface representation of the function z[x][y]. */
-
-void  c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel);
+void c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, 
+                 PLFLT *clevel, PLINT nlevel);
 
 /* Plots the 3d surface representation of the function z[x][y] with y
  * index limits. */
-
-void  c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel, PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax);
+void c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel,
+                 PLINT nlevel, PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax);
 
 /* Sets the edges of the viewport to the specified absolute coordinates */
-
-void  c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
+void c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 
 /* Set x axis labeling parameters */
-
-void  c_plsxax(PLINT digmax, PLINT digits);
+void c_plsxax(PLINT digmax, PLINT digits);
 
 /* Set inferior X window */
-
-void  plsxwin(PLINT window_id);
+void plsxwin(PLINT window_id);
 
 /* Set y axis labeling parameters */
-
-void  c_plsyax(PLINT digmax, PLINT digits);
+void c_plsyax(PLINT digmax, PLINT digits);
 
 /* Plots array y against x for n points using Hershey symbol "code" */
 void c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code);
