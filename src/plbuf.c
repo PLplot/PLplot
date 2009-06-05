@@ -363,6 +363,8 @@ plbuf_text_unicode(PLStream *pls, EscText *text)
  *  PLESC_IMAGE     Draw image
  *  PLESC_HAS_TEXT  Draw PostScript text
  *	PLESC_CLEAR	    Clear Background
+ *	PLESC_START_RASTERIZE
+ *	PLESC_END_RASTERIZE Start and stop rasterization
 \*--------------------------------------------------------------------------*/
 
 void
@@ -393,6 +395,13 @@ plbuf_esc(PLStream *pls, PLINT op, void *ptr)
     case PLESC_END_TEXT:
       plbuf_text_unicode(pls, (EscText *) ptr);
       break;
+#if 0
+    /* These are a no-op.  They just need an entry in the buffer. */
+    case PLESC_CLEAR:
+    case PLESC_START_RASTERIZE:
+    case PLESC_END_RASTERIZE:
+      break;
+#endif
     }
 }
 
@@ -666,6 +675,12 @@ rdbuf_esc(PLStream *pls)
     case PLESC_CLEAR:
 	plP_esc(PLESC_CLEAR,NULL);
 	break;
+    case PLESC_START_RASTERIZE:
+        plP_esc(PLESC_START_RASTERIZE, NULL);
+        break;
+    case PLESC_END_RASTERIZE:
+        plP_esc(PLESC_END_RASTERIZE, NULL);
+        break;
     }
 }
 
