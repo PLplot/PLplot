@@ -25,8 +25,10 @@
 # define MAX(a,b)    (((a) > (b)) ? (a) : (b))
 # define MIN(a,b)    (((a) < (b)) ? (a) : (b))
 
+/*int dsplint(double *xa, double *ya, double *y2a,
+	    int n, double x, double *y, double *dy, double *d2y) */
 int dsplint(double *xa, double *ya, double *y2a,
-	    int n, double x, double *y, double *dy, double *d2y)
+	    int n, double x, double *y)
 {
     /* Initialized data */
 
@@ -99,9 +101,9 @@ int dsplint(double *xa, double *ya, double *y2a,
     b = (x - xa[klo]) / h__;
     *y = a * ya[klo] + b * ya[khi] + (a * (a * a - 1.) * y2a[klo] + b * (b * 
 	    b - 1.) * y2a[khi]) * (h__ * h__) / 6.;
-    *dy = (-ya[klo] + ya[khi] + (-(a * 3. * a - 1.) * y2a[klo] + (b * 3. * b 
+/*    *dy = (-ya[klo] + ya[khi] + (-(a * 3. * a - 1.) * y2a[klo] + (b * 3. * b 
 	    - 1.) * y2a[khi]) * (h__ * h__) / 6.) / h__;
-    *d2y = a * y2a[klo] + b * y2a[khi];
+    *d2y = a * y2a[klo] + b * y2a[khi]; */
     return 0;
 }
 
