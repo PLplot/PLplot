@@ -92,6 +92,7 @@ include(wingcc)
 include(aqt)
 include(wxwidgets)
 include(pdf)
+include(pyqt4)
 
 # Finalize device options.
 include(drivers-finish)

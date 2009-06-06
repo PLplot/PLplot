@@ -115,4 +115,7 @@ FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.
 DESTINATION ${PYTHON_INSTDIR}
 )
 
+# This is for building the pyqt4 bindings to plplot
+add_subdirectory(pyqt4)
+
 endif(ENABLE_python)

@@ -7,7 +7,7 @@
 class QtPLDriver {
 
 %TypeHeaderCode
-#include "plplot/my_qt.h"
+#include "plplot/qt.h"
 %End
 
   public:
@@ -18,7 +18,7 @@ class QtPLDriver {
 class QtPLWidget: QWidget, QtPLDriver {
 
 %TypeHeaderCode
-#include "plplot/my_qt.h"
+#include "plplot/qt.h"
 %End
     
   public:
@@ -35,15 +35,12 @@ class QtPLWidget: QWidget, QtPLDriver {
     void resizeEvent(QResizeEvent *);
     void paintEvent(QPaintEvent *);
     void getPlotParameters(double &io_dXFact, double &io_dYFact, double &io_dXOffset, double &io_dYOffset);
-
-
-
 };
 
 class QtExtWidget: QtPLWidget {
     
 %TypeHeaderCode
-#include "plplot/my_qt.h"
+#include "plplot/qt.h"
 %End
 
   public:
