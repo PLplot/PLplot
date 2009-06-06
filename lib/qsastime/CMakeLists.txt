@@ -86,7 +86,7 @@ add_custom_target(
   )
 
 set(qsastime_LIB_SRCS
-  qsastime.c
+  qsastime.c dsplint.c
   )
 
 if(BUILD_SHARED_LIBS)
@@ -153,6 +153,13 @@ if(TEST_QSASTIME)
   if(MATH_LIB)
     target_link_libraries(bhunt_search_test ${MATH_LIB})
   endif(MATH_LIB)
+
+  # Routine for generating interpolated values for delta T (difference between
+  # ephemeris time and GMT) on standard grid.
+  # Add in dsplint.c rather than use the library because don't want
+  # to make the private library API visible.
+  add_executable(deltaT_test deltaT_test.c dsplint.c)
+  add_dependencies(deltaT_test deltaT.h_built)
 
   # Routine for testing just the library functions against their library
   # inverses (to test self-consistency when such inverses exist) and also
