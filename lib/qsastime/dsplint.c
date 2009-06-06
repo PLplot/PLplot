@@ -22,24 +22,18 @@
   Fortran to C with the aid of f2c and relicensed for PLplot under the LGPL
   with the permission of the FreeEOS copyright holder (Alan W. Irwin).
 */
+# define MAX(a,b)    (((a) > (b)) ? (a) : (b))
+# define MIN(a,b)    (((a) < (b)) ? (a) : (b))
 
-int dsplint_(doublereal *xa, doublereal *ya, doublereal *y2a,
-	 integer *n, doublereal *x, doublereal *y, doublereal *dy, doublereal 
-	*d2y)
+int dsplint(double *xa, double *ya, double *y2a,
+	    int n, double x, double *y, double *dy, double *d2y)
 {
     /* Initialized data */
 
-    static integer nsave = 0;
+  static int nsave = 0, khi, klo;
 
-    /* System generated locals */
-    integer i__1, i__2;
-
-    /* Builtin functions */
-    /* Subroutine */ int s_stop(char *, ftnlen);
-
-    /* Local variables */
-    static doublereal a, b, h__;
-    static integer k, khi, klo;
+    int i__1, i__2, k;
+    double a, b, h__;
 
 /*      evaluate spline = y and its derivatives dy and d2y at x given */
 /*      xa, ya, y2a from dspline. */
@@ -49,49 +43,49 @@ int dsplint_(doublereal *xa, doublereal *ya, doublereal *y2a,
     --xa;
 
     /* Function Body */
-    if (*n != nsave) {
+    if (n != nsave) {
 /*        if call with different n value, then redo range */
-	nsave = *n;
+	nsave = n;
 	klo = 1;
-	khi = *n;
-	if (xa[klo] > *x) {
-	    s_stop("dsplint: x too low", (ftnlen)18);
+	khi = n;
+	if (xa[klo] > x) {
+	    return 1;
 	}
-	if (xa[khi] < *x) {
-	    s_stop("dsplint: x too high", (ftnlen)19);
+	if (xa[khi] < x) {
+	    return 2;
 	}
     } else {
 /*        optimize range assuming continuous (ascending or */
 /*        descending x calls. */
-	if (xa[klo] > *x) {
+	if (xa[klo] > x) {
 /*          x is descending so try next range. */
-	    khi = max(2,klo);
+	    khi = MAX(2,klo);
 	    klo = khi - 1;
 /*          if x smaller than next range try lower limit. */
-	    if (xa[klo] > *x) {
+	    if (xa[klo] > x) {
 		klo = 1;
 	    }
-	    if (xa[klo] > *x) {
-		s_stop("dsplint: x too low", (ftnlen)18);
+	    if (xa[klo] > x) {
+		return 1;
 	    }
-	} else if (xa[khi] <= *x) {
+	} else if (xa[khi] <= x) {
 /*          x is ascending so try next range. */
 /* Computing MIN */
-	    i__1 = khi, i__2 = *n - 1;
-	    klo = min(i__1,i__2);
+	    i__1 = khi, i__2 = n - 1;
+	    klo = MIN(i__1,i__2);
 	    khi = klo + 1;
 /*          if x larger than next range try upper limit. */
-	    if (xa[khi] <= *x) {
-		khi = *n;
+	    if (xa[khi] <= x) {
+		khi = n;
 	    }
-	    if (xa[khi] < *x) {
-		s_stop("dsplint: x too high", (ftnlen)19);
+	    if (xa[khi] < x) {
+		return 2;
 	    }
 	}
     }
     while(khi - klo > 1) {
 	k = (khi + klo) / 2;
-	if (xa[k] > *x) {
+	if (xa[k] > x) {
 	    khi = k;
 	} else {
 	    klo = k;
@@ -99,15 +93,15 @@ int dsplint_(doublereal *xa, doublereal *ya, doublereal *y2a,
     }
     h__ = xa[khi] - xa[klo];
     if (h__ <= 0.) {
-	s_stop("dsplint: bad xa input.", (ftnlen)22);
+	return 3;
     }
-    a = (xa[khi] - *x) / h__;
-    b = (*x - xa[klo]) / h__;
+    a = (xa[khi] - x) / h__;
+    b = (x - xa[klo]) / h__;
     *y = a * ya[klo] + b * ya[khi] + (a * (a * a - 1.) * y2a[klo] + b * (b * 
 	    b - 1.) * y2a[khi]) * (h__ * h__) / 6.;
     *dy = (-ya[klo] + ya[khi] + (-(a * 3. * a - 1.) * y2a[klo] + (b * 3. * b 
 	    - 1.) * y2a[khi]) * (h__ * h__) / 6.) / h__;
     *d2y = a * y2a[klo] + b * y2a[khi];
     return 0;
-} /* dsplint_ */
+}
 

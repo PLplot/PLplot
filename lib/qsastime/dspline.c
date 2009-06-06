@@ -22,19 +22,11 @@
   Fortran to C with the aid of f2c and relicensed for PLplot under the LGPL
   with the permission of the FreeEOS copyright holder (Alan W. Irwin).
 */
-int dspline_(doublereal *x, doublereal *y, integer *n, 
-	integer *if1, doublereal *cond1, integer *ifn, doublereal *condn, 
-	doublereal *y2)
+int dspline(double *x, double *y, int n, 
+	int if1, double cond1, int ifn, double condn, double *y2)
 {
-    /* System generated locals */
-    integer i__1;
-
-    /* Builtin functions */
-    /* Subroutine */ int s_stop(char *, ftnlen);
-
-    /* Local variables */
-    static integer i__, k;
-    static doublereal p, u[2000], qn, un, sig;
+  int i__1, i__, k;
+  double p, u[2000], qn, un, sig;
 
 /*      input parameters: */
 /*      x(n) are the spline knot points */
@@ -56,18 +48,18 @@ int dspline_(doublereal *x, doublereal *y, integer *n,
     --x;
 
     /* Function Body */
-    if (*n > 2000) {
-	s_stop("dspline: dimensions too large", (ftnlen)29);
+    if (n > 2000) {
+	return 1;
     }
 /*      y2(i) = u(i) + d(i)*y2(i+1), where */
 /*      d(i) is temporarily stored in y2(i) (see below). */
-    if (*if1 == 2) {
+    if (if1 == 2) {
 /*        cond1 is second derivative at first point. */
 /*        these two values assure that for above equation with d(i) temporarily */
 /*        stored in y2(i) */
 	y2[1] = 0.;
-	u[0] = *cond1;
-    } else if (*if1 == 1) {
+	u[0] = cond1;
+    } else if (if1 == 1) {
 /*        cond1 is first derivative at first point. */
 /*        special case (Press et al 3.3.5 with A = 1, and B=0) */
 /*        of equations below where */
@@ -79,9 +71,9 @@ int dspline_(doublereal *x, doublereal *y, integer *n,
 /*        d(i) = -c(i)/b(i) */
 /*        N.B. d(i) is temporarily stored in y2. */
 	y2[1] = -.5;
-	u[0] = 3. / (x[2] - x[1]) * ((y[2] - y[1]) / (x[2] - x[1]) - *cond1);
+	u[0] = 3. / (x[2] - x[1]) * ((y[2] - y[1]) / (x[2] - x[1]) - cond1);
     } else {
-	s_stop("dspline: incorrect if1 value specified", (ftnlen)38);
+	return 2;
     }
 /*      if original tri-diagonal system is characterized as */
 /*      a_j y2_j-1 + b_j y2_j + c_j y2_j+1 = r_j */
@@ -99,7 +91,7 @@ int dspline_(doublereal *x, doublereal *y, integer *n,
 /*      u(i) = [r(i) - a(i) u(i-1)]/[b(i) + a(i) d(i-1)] */
 /*      d(i) = -c(i)/[b(i) + a(i) d(i-1)] */
 /*      N.B. d(i) is temporarily stored in y2. */
-    i__1 = *n - 1;
+    i__1 = n - 1;
     for (i__ = 2; i__ <= i__1; ++i__) {
 /*        sig is scaled a(i) */
 	sig = (x[i__] - x[i__ - 1]) / (x[i__ + 1] - x[i__ - 1]);
@@ -113,12 +105,12 @@ int dspline_(doublereal *x, doublereal *y, integer *n,
 		 - y[i__ - 1]) / (x[i__] - x[i__ - 1])) * 6. / (x[i__ + 1] - 
 		x[i__ - 1]) - sig * u[i__ - 2]) / p;
     }
-    if (*ifn == 2) {
+    if (ifn == 2) {
 /*        condn is second derivative at nth point. */
 /*        These two values assure that in the equation below. */
 	qn = 0.;
-	un = *condn;
-    } else if (*ifn == 1) {
+	un = condn;
+    } else if (ifn == 1) {
 /*        specify condn is first derivative at nth point. */
 /*        special case (Press et al 3.3.5 with A = 0, and B=1) */
 /*        implies a_n y2(n-1) + b_n y2(n) = r_n, where */
@@ -131,19 +123,19 @@ int dspline_(doublereal *x, doublereal *y, integer *n,
 /*        qn is scaled a_n */
 	qn = .5;
 /*        un is scaled r_n (N.B. un is not u(n))!  Sorry for the mixed notation. */
-	un = 3. / (x[*n] - x[*n - 1]) * (*condn - (y[*n] - y[*n - 1]) / (x[*n]
-		 - x[*n - 1]));
+	un = 3. / (x[n] - x[n - 1]) * (condn - (y[n] - y[n - 1]) / (x[n]
+		 - x[n - 1]));
     } else {
-	s_stop("dspline: incorrect ifn value specified", (ftnlen)38);
+	return 3;
     }
 /*      N.B. d(i) is temporarily stored in y2, and everything is */
 /*      scaled by b_n. */
 /*     qn is scaled a_n, 1.d0 is scaled b_n, and un is scaled r_n. */
-    y2[*n] = (un - qn * u[*n - 2]) / (qn * y2[*n - 1] + 1.);
+    y2[n] = (un - qn * u[n - 2]) / (qn * y2[n - 1] + 1.);
 /*      back substitution. */
-    for (k = *n - 1; k >= 1; --k) {
+    for (k = n - 1; k >= 1; --k) {
 	y2[k] = y2[k] * y2[k + 1] + u[k - 1];
     }
     return 0;
-} /* dspline_ */
+}
 
