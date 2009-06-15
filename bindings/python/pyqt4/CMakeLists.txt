@@ -19,11 +19,63 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 if(ENABLE_pyqt4)
-  message(" ENABLE_pyqt4")
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/config.py.in "")
+  #message(" ENABLE_pyqt4")
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pyqt4_config)
+
+  set(PYQT4_CONFIG_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pyqt4_config)
+
   add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/config.py.in
+    COMMAND ${CMAKE_COMMAND} -E touch ${PYQT4_CONFIG_DIRECTORY}/config.py.in
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt.sip ${PYQT4_CONFIG_DIRECTORY}/.
     COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/config.py
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    WORKING_DIRECTORY ${PYQT4_CONFIG_DIRECTORY}/
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/config.py ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt.sip
     )
+  add_custom_target(generate_pyqt_source
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/config.py.in
+    )
+
+  set_source_files_properties(
+    ${PYQT4_CONFIG_DIRECTORY}/sipAPIplplot_pyqt.h
+    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtcmodule.cpp
+    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtExtWidget.cpp
+    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLDriver.cpp
+    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLWidget.cpp
+    PROPERTIES GENERATED ON
+    )
+
+  add_library(
+    plplot_pyqt 
+    MODULE
+    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtcmodule.cpp
+    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtExtWidget.cpp
+    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLDriver.cpp
+    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLWidget.cpp
+    )
+
+  set_target_properties(plplot_pyqt PROPERTIES PREFIX "")
+
+  if(ENABLE_DYNDRIVERS)
+#    include_directories(
+#      ${CMAKE_BINARY_DIR}/drivers
+#      )
+    get_target_property(qt_LOCATION qt LOCATION)
+
+    target_link_libraries(
+      plplot_pyqt
+      ${qt_location}
+      plplot${LIB_TAG}
+      ${QT_LIBRARIES}    
+      )
+  endif(ENABLE_DYNDRIVERS)
+
+  #message(${PYTHON_INSTDIR})
+
+  install(
+    TARGETS plplot_pyqt
+    LIBRARY
+    DESTINATION ${PYTHON_INSTDIR}
+    )
+
 endif(ENABLE_pyqt4)
