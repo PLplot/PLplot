@@ -25,15 +25,15 @@ if(ENABLE_pyqt4)
   set(PYQT4_CONFIG_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pyqt4_config)
 
   add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/config.py.in
+    OUTPUT ${PYQT4_CONFIG_DIRECTORY}/config.py.in
     COMMAND ${CMAKE_COMMAND} -E touch ${PYQT4_CONFIG_DIRECTORY}/config.py.in
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt.sip ${PYQT4_CONFIG_DIRECTORY}/.
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt.sip ${PYQT4_CONFIG_DIRECTORY}/plplot_pyqt.sip
     COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/config.py
     WORKING_DIRECTORY ${PYQT4_CONFIG_DIRECTORY}/
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/config.py ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt.sip
     )
   add_custom_target(generate_pyqt_source
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/config.py.in
+    DEPENDS ${PYQT4_CONFIG_DIRECTORY}/config.py.in
     )
 
   set_source_files_properties(
@@ -43,6 +43,16 @@ if(ENABLE_pyqt4)
     ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLDriver.cpp
     ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLWidget.cpp
     PROPERTIES GENERATED ON
+    )
+
+  # Assume sip.h can be found in PYTHON_INCLUDE_PATH
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/drivers
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/lib/qsastime
+    ${CMAKE_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/include
+    ${PYTHON_INCLUDE_PATH}
     )
 
   add_library(
@@ -57,17 +67,23 @@ if(ENABLE_pyqt4)
   set_target_properties(plplot_pyqt PROPERTIES PREFIX "")
 
   if(ENABLE_DYNDRIVERS)
-#    include_directories(
-#      ${CMAKE_BINARY_DIR}/drivers
-#      )
     get_target_property(qt_LOCATION qt LOCATION)
+    #message("DEBUG: qt_LOCATION = ${qt_LOCATION}")
 
     target_link_libraries(
       plplot_pyqt
-      ${qt_location}
+      ${qt_LOCATION}
       plplot${LIB_TAG}
       ${QT_LIBRARIES}    
       )
+    add_dependencies(plplot_pyqt generate_pyqt_source qt)
+  else(ENABLE_DYNDRIVERS)
+    target_link_libraries(
+      plplot_pyqt
+      plplot${LIB_TAG}
+      ${QT_LIBRARIES}    
+      )
+    add_dependencies(plplot_pyqt generate_pyqt_source)
   endif(ENABLE_DYNDRIVERS)
 
   #message(${PYTHON_INSTDIR})
