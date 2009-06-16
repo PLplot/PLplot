@@ -7,7 +7,7 @@
 class QtPLDriver {
 
 %TypeHeaderCode
-#include "plplot/qt.h"
+#include "qt.h"
 %End
 
   public:
@@ -18,7 +18,7 @@ class QtPLDriver {
 class QtPLWidget: QWidget, QtPLDriver {
 
 %TypeHeaderCode
-#include "plplot/qt.h"
+#include "qt.h"
 %End
     
   public:
@@ -40,7 +40,7 @@ class QtPLWidget: QWidget, QtPLDriver {
 class QtExtWidget: QtPLWidget {
     
 %TypeHeaderCode
-#include "plplot/qt.h"
+#include "qt.h"
 %End
 
   public:
