@@ -137,9 +137,10 @@ add_subdirectory(src)
 add_subdirectory(data)
 add_subdirectory(bindings)
 add_subdirectory(drivers)
-# Must be processed after drivers since depends on qt target created by
-# drivers.
+# qt_gui and pyqt4 subdirectories must be processed after drivers since they
+# depend on qt target created by drivers.
 add_subdirectory(bindings/qt_gui)
+add_subdirectory(bindings/python/pyqt4)
 add_subdirectory(examples)
 add_subdirectory(utils)
 add_subdirectory(plplot_test)
