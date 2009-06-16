@@ -22,17 +22,13 @@
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_pyqt4 "Enable PyQt4 bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_pyqt4 "Enable PyQt4 bindings" ON)
+  option(ENABLE_pyqt4 "Enable PyQt4 bindings" OFF)
 endif(DEFAULT_NO_BINDINGS)
 
 if(NOT ENABLE_python AND NOT PLD_extqt)
   set(ENABLE_pyqt4 OFF CACHE BOOL "Enable PyQt4 bindings" FORCE)
 endif(NOT ENABLE_python AND NOT PLD_extqt)
 
-set(ENABLE_pyqt4 OFF CACHE BOOL "Enable PyQt4 bindings" FORCE)
-
 if(ENABLE_pyqt4)
   message(STATUS "Checking for PyQt4")
 endif(ENABLE_pyqt4)
-
-
