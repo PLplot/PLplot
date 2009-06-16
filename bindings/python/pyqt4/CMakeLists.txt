@@ -67,24 +67,22 @@ if(ENABLE_pyqt4)
   set_target_properties(plplot_pyqt PROPERTIES PREFIX "")
 
   if(ENABLE_DYNDRIVERS)
-    get_target_property(qt_LOCATION qt LOCATION)
-    #message("DEBUG: qt_LOCATION = ${qt_LOCATION}")
-
     target_link_libraries(
       plplot_pyqt
-      ${qt_LOCATION}
+      plplotqt${LIB_TAG}
       plplot${LIB_TAG}
       ${QT_LIBRARIES}    
+      ${PYTHON_LIBRARIES}
       )
-    add_dependencies(plplot_pyqt generate_pyqt_source qt)
   else(ENABLE_DYNDRIVERS)
     target_link_libraries(
       plplot_pyqt
       plplot${LIB_TAG}
-      ${QT_LIBRARIES}    
+      ${QT_LIBRARIES}
+      ${PYTHON_LIBRARIES}
       )
-    add_dependencies(plplot_pyqt generate_pyqt_source)
   endif(ENABLE_DYNDRIVERS)
+  add_dependencies(plplot_pyqt generate_pyqt_source)
 
   #message(${PYTHON_INSTDIR})
 

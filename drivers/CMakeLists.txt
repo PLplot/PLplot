@@ -223,18 +223,7 @@ if(ENABLE_DYNDRIVERS)
       list(APPEND test_dyndrivers_TDEPENDS ${SOURCE_ROOT_NAME})
     endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
     
-    if(SOURCE_ROOT_NAME STREQUAL "qt")
-      install(TARGETS ${SOURCE_ROOT_NAME}
-	EXPORT export_plplot
-	DESTINATION ${DRV_DIR}
-	)
-      install(EXPORT export_plplot
-	DESTINATION ${DATA_DIR}/examples/cmake/modules
-	FILE export_plplotqt.cmake
-	)
-    else(SOURCE_ROOT_NAME STREQUAL "qt")
-      install(TARGETS ${SOURCE_ROOT_NAME} DESTINATION ${DRV_DIR})
-    endif(SOURCE_ROOT_NAME STREQUAL "qt")
+    install(TARGETS ${SOURCE_ROOT_NAME} DESTINATION ${DRV_DIR})
     install(
       FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc 
       DESTINATION ${DRV_DIR}

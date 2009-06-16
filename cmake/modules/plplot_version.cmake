@@ -27,6 +27,9 @@ set(CPACK_PACKAGE_VERSION_PATCH 4)
 # (4) If there are no library source code changes at all, then leave all
 #     library version numbers the same for the release.
 
+set(plplotqt_SOVERSION 0)
+set(plplotqt_VERSION ${plplotqt_SOVERSION}.0.1)
+
 set(nistcd_SOVERSION 0)
 set(nistcd_VERSION ${nistcd_SOVERSION}.0.1)
 

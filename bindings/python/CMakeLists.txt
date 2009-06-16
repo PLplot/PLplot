@@ -115,8 +115,6 @@ FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.
 DESTINATION ${PYTHON_INSTDIR}
 )
 
-# Processing the subdirectory below must be done from the top-level 
-# CMakeLists.txt (see comment there).
-# add_subdirectory(pyqt4)
+add_subdirectory(pyqt4)
 
 endif(ENABLE_python)

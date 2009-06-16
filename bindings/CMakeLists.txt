@@ -34,6 +34,7 @@ add_subdirectory(ada)
 add_subdirectory(d)
 add_subdirectory(ocaml)
 add_subdirectory(lua)
+add_subdirectory(qt_gui)
 
 set(index)
 if(ENABLE_tcl)
