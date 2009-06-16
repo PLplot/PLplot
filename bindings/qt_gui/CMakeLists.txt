@@ -93,14 +93,14 @@ if(PLD_extqt)
     ${MATH_LIB}
     ${qt_LINK_FLAGS}
     )
-  # qt_RPATH originally set in cmake/modules files for
-  # each driver in ${DRIVERS_LIST}.  This is only used for the 
+  # qt_RPATH set in cmake/modules/qt.cmake. This is only used for the 
   # install-tree rpath since cmake handles the build-tree rpath
   # automatically (so long as full pathnames to libraries are used).
-  #message("qt_RPATH = ${qt_RPATH}")
+  # message("qt_RPATH = ${qt_RPATH}")
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-    list(APPEND LIB_INSTALL_RPATH ${qt_RPATH})
+    # Must prepend qt_RPATH because /usr/lib is sometimes in LIB_INSTALL_RPATH.
+    set(LIB_INSTALL_RPATH ${qt_RPATH} ${LIB_INSTALL_RPATH})
     set_target_properties(plplotqt${LIB_TAG}
       PROPERTIES
       SOVERSION ${plplotqt_SOVERSION}
@@ -118,7 +118,9 @@ if(PLD_extqt)
   endif(USE_RPATH)
   install(TARGETS plplotqt${LIB_TAG}
     EXPORT export_plplot
-    DESTINATION ${DRV_DIR}
+    ARCHIVE DESTINATION ${LIB_DIR}
+    LIBRARY DESTINATION ${LIB_DIR}
+    RUNTIME DESTINATION ${BIN_DIR}
     )
   install(EXPORT export_plplot
     DESTINATION ${DATA_DIR}/examples/cmake/modules
