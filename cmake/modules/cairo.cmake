@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # Configuration for the cairo device driver (supporting the memcairo,
-# pdfcairo, pngcairo, pscairo, svgcairo, memcairo, and xcairo devices).
+# pdfcairo, pngcairo, pscairo, svgcairo and xcairo devices).
 #
 # The following variables are set / modified
 #
