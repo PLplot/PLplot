@@ -215,6 +215,7 @@ static void close_span_tag(char *, int);
 static void set_current_context(PLStream *);
 static void poly_line(PLStream *, short *, short *, PLINT);
 static void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts);
+static void arc(PLStream *, arc_struct *);
 static void rotate_cairo_surface(PLStream *, float, float, float, float, float, float);
 /* Rasterization of plotted material */
 static void start_raster(PLStream*);
@@ -485,6 +486,9 @@ void plD_esc_cairo(PLStream *pls, PLINT op, void *ptr)
       break;
     case PLESC_END_RASTERIZE: /* End offscreen/rasterized rendering */
       end_raster(pls);
+      break;
+    case PLESC_ARC: /* Draw an arc, either filled or outline */
+      arc(pls, (arc_struct *) ptr);
       break;
     }
 }
@@ -992,6 +996,7 @@ PLCairo *stream_and_font_setup(PLStream *pls, int interactive)
   pls->alt_unicode = 1;      /* Wants to handle unicode character by character */
   pls->page = 0;
   pls->dev_fill0 = 1;        /* Supports hardware solid fills */
+  pls->dev_arc = 1;          /* Supports driver-level arcs */
   pls->plbuf_write = 1;      /* Activate plot buffer */
   
   
@@ -1146,6 +1151,60 @@ void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts)
 
   /* Restore the previous line drawing style */
   set_line_properties(aStream, old_line_join, old_line_cap);
+}
+
+/*---------------------------------------------------------------------
+  arc()
+
+  Draws an arc, possibly filled.
+  ---------------------------------------------------------------------*/
+
+void arc(PLStream *pls, arc_struct *arc_info)
+{
+  /*
+     TODO:
+     - Decide on a direction for increasing angles and make sure this Cairo
+       implementation matches the software/fallback implementation.
+     - Add clipping to viewport boundaries
+  */
+  PLCairo *aStream;
+  double x, y, a, b;
+  double angle1, angle2;
+  double rotation;
+
+  set_current_context(pls);
+
+  aStream = (PLCairo *)pls->dev;
+
+  /* Scale to the proper Cairo coordinates */
+  x = aStream->downscale * arc_info->x;
+  y = aStream->downscale * arc_info->y;
+  a = aStream->downscale * arc_info->a;
+  b = aStream->downscale * arc_info->b;
+
+  /* Degrees to radians */
+  angle1 = arc_info->angle1 * M_PI / 180.0;
+  angle2 = arc_info->angle2 * M_PI / 180.0;
+  rotation = - arc_info->rotation * M_PI / 180.0;
+
+  /* Make sure the arc is properly shaped */
+  cairo_save(aStream->cairoContext);
+  cairo_translate(aStream->cairoContext, x, y);
+  cairo_rotate(aStream->cairoContext, rotation);
+  cairo_scale(aStream->cairoContext, a, b);
+  cairo_arc(aStream->cairoContext, 0.0, 0.0, 1.0, angle1, angle2);
+  cairo_restore(aStream->cairoContext);
+  cairo_set_source_rgba(aStream->cairoContext,
+      (double)pls->curcolor.r/255.0,
+      (double)pls->curcolor.g/255.0,
+      (double)pls->curcolor.b/255.0,
+      (double)pls->curcolor.a);
+  if (arc_info->fill) {
+    cairo_fill(aStream->cairoContext);
+  }
+  else {
+    cairo_stroke(aStream->cairoContext);
+  }
 }
 
 /*---------------------------------------------------------------------
@@ -1553,9 +1612,9 @@ void xcairo_get_cursor(PLStream *pls, PLGraphicsIn *gin)
   gin->state = xButtonEvent->state;
   gin->button = xButtonEvent->button;
   gin->pX = event.xbutton.x;
-  gin->pY = event.xbutton.y;
+  gin->pY = pls->ylength - event.xbutton.y;
   gin->dX = (PLFLT)event.xbutton.x/((PLFLT)(pls->xlength));
-  gin->dY = (PLFLT)event.xbutton.y/((PLFLT)(pls->ylength));
+  gin->dY = (PLFLT)(pls->ylength - event.xbutton.y)/((PLFLT)(pls->ylength));
 
   /* Switch back to normal cursor */
   XUndefineCursor(aStream->XDisplay, aStream->XWindow);
