@@ -32,6 +32,7 @@
 
 
 #include "qt.h"
+#include <QMutexLocker>
 
 // global variables initialised in init(), used in tidy()
 // QApplication* app=NULL;
@@ -82,7 +83,7 @@ MasterHandler handler;
 
 bool initQtApp(bool isGUI)
 {
-	QtPLDriver::mutex.lock();
+	QMutexLocker locker(&QtPLDriver::mutex);
 	bool res=false;
 	++appCounter;
 	if(qApp==NULL && appCounter==1)
@@ -96,13 +97,12 @@ bool initQtApp(bool isGUI)
 		new QApplication(argc, argv, isGUI);
 		res=true;
 	}
-	QtPLDriver::mutex.unlock();
 	return res;
 }
 
 void closeQtApp()
 {
-	QtPLDriver::mutex.lock();
+	QMutexLocker locker(&QtPLDriver::mutex);
 	--appCounter;
 	if(qApp!=NULL && appCounter==0)
 	{
@@ -112,7 +112,6 @@ void closeQtApp()
 		delete[] argv;
 		argv=NULL;
 	}
-	QtPLDriver::mutex.unlock();
 }
 
 /*---------------------------------------------------------------------
