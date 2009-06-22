@@ -18,7 +18,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # Module for determining all configuration variables related to the qt
-# device driver.
+# device driver, the plplotqt library, and the plplot_pyqt4 Python extension
+# module.
 # The following variables are set/modified:
 # PLD_bmpqt		  - ON means the bmpqt device is enabled.
 # PLD_jpgqt		  - ON means the jpgqt device is enabled.
@@ -37,6 +38,9 @@
 # qt_RPATH	       	  - RPATH directory list for qt device driver.
 # DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS for case
 # 			    when ENABLE_DYNDRIVERS OFF.
+# ENABLE_qt		  - ON means the plplot_qt library is enabled.
+# ENABLE_pyqt4		  - ON means the plplot_pyqt4 Python extension module
+# 			    is enabled.
 
 find_package(Qt4)
 if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
@@ -74,8 +78,32 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
   endif(QT4_FOUND AND QT_LIBRARIES)
 endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
 
-if(PLD_extqt)
+if(DEFAULT_NO_BINDINGS)
+  option(ENABLE_qt "Enable Qt bindings" OFF)
+  option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" OFF)
+else(DEFAULT_NO_BINDINGS)
+  option(ENABLE_qt "Enable Qt bindings" ON)
+  option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" ON)
+endif(DEFAULT_NO_BINDINGS)
+
+if(ENABLE_qt AND NOT PLD_extqt)
+  message(STATUS
+  "WARNING: PLD_extqt is OFF so "
+  "setting ENABLE_qt to OFF."
+  )
+  set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
+endif(ENABLE_qt AND NOT PLD_extqt)
+
+if(ENABLE_pyqt4 AND NOT ENABLE_python AND NOT ENABLE_qt)
+  message(STATUS
+  "WARNING: ENABLE_python OR ENABLE_qt is OFF so "
+  "setting ENABLE_pyqt4 to OFF."
+  )
+  set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
+endif(ENABLE_pyqt4 AND NOT ENABLE_python AND NOT ENABLE_qt)
+
+if(ENABLE_qt)
   set(qt_gui_true "")
-else(PLD_extqt)
+else(ENABLE_qt)
   set(qt_gui_true "#")
-endif(PLD_extqt)
+endif(ENABLE_qt)
