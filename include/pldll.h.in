@@ -46,6 +46,8 @@
    but dyanmic drivers disabled, the driver dll macros are the same as the
    plplot dll macros */
 #ifdef ENABLE_DYNDRIVERS
+  /* Treat plplotqt library just like the qt device since the same source code
+     is used. */
   #if defined(aqt_EXPORTS) || defined(cairo_EXPORTS) || defined(cgm_EXPORTS) || \
        defined(dg300_EXPORTS) || defined(gd_EXPORTS) || defined(gcw_EXPORTS) || \
        defined(hpgl_EXPORTS) || defined(impress_EXPORTS) || defined(linuxvga_EXPORTS) || \
@@ -55,7 +57,7 @@
        defined(pstex_EXPORTS) || defined(psttf_EXPORTS) || defined(svg_EXPORTS) || \
        defined(tek_EXPORTS) || defined(tk_EXPORTS) || defined(tkwin_EXPORTS) || \
        defined(wingcc_EXPORTS) || defined(wxwidgets_EXPORTS) || defined(xfig_EXPORTS) || \
-       defined(xwin_EXPORTS) || defined(qt_EXPORTS)
+       defined(xwin_EXPORTS) || defined(qt_EXPORTS) || defined(plplotqt${LIB_TAG}_EXPORTS)
     #define PLDLLIMPEXP_DRIVER PLDLLEXPORT
     #define PLDLLIMPEXP_DRIVER_DATA(type) PLDLLEXPORT type
   #else

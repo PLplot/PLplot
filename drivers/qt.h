@@ -140,7 +140,7 @@ class MasterHandler:public QObject
 };
 
 // Basic class, offering the common interface to all Qt plplot devices
-class QtPLDriver
+class PLDLLIMPEXP_DRIVER QtPLDriver
 {
 	public:
 		// Constructor, taking the device size as arguments
