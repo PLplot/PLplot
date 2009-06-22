@@ -2,6 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2009 Hazen Babcock
+# Copyright (C) 2009 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -27,22 +28,33 @@ if(ENABLE_pyqt4)
   add_custom_command(
     OUTPUT ${PYQT4_CONFIG_DIRECTORY}/config.py.in
     COMMAND ${CMAKE_COMMAND} -E touch ${PYQT4_CONFIG_DIRECTORY}/config.py.in
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt.sip ${PYQT4_CONFIG_DIRECTORY}/plplot_pyqt.sip
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt4.sip ${PYQT4_CONFIG_DIRECTORY}/plplot_pyqt4.sip
     COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/config.py
     WORKING_DIRECTORY ${PYQT4_CONFIG_DIRECTORY}/
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/config.py ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt.sip
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/config.py
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt4.sip
     )
-  add_custom_target(generate_pyqt_source
+  add_custom_target(generate_pyqt4_source
     DEPENDS ${PYQT4_CONFIG_DIRECTORY}/config.py.in
     )
 
   set_source_files_properties(
     ${PYQT4_CONFIG_DIRECTORY}/sipAPIplplot_pyqt.h
+    PROPERTIES
+    GENERATED ON
+    )
+
+  set(plplot_pyqt4_SRC
     ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtcmodule.cpp
     ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtExtWidget.cpp
     ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLDriver.cpp
     ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLWidget.cpp
-    PROPERTIES GENERATED ON
+   )
+  set_source_files_properties(
+    ${plplot_pyqt4_SRC}
+    PROPERTIES
+    GENERATED ON
+    COMPILE_FLAGS "-DUSINGDLL"
     )
 
   # Assume sip.h can be found in PYTHON_INCLUDE_PATH
@@ -56,38 +68,41 @@ if(ENABLE_pyqt4)
     )
 
   add_library(
-    plplot_pyqt 
+    plplot_pyqt4
     MODULE
-    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtcmodule.cpp
-    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtExtWidget.cpp
-    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLDriver.cpp
-    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLWidget.cpp
+    ${plplot_pyqt4_SRC}
     )
 
-  set_target_properties(plplot_pyqt PROPERTIES PREFIX "")
+  set_target_properties(plplot_pyqt4 PROPERTIES PREFIX "")
 
-  if(ENABLE_DYNDRIVERS)
-    target_link_libraries(
-      plplot_pyqt
-      plplotqt${LIB_TAG}
-      plplot${LIB_TAG}
-      ${QT_LIBRARIES}    
-      ${PYTHON_LIBRARIES}
-      )
-  else(ENABLE_DYNDRIVERS)
-    target_link_libraries(
-      plplot_pyqt
-      plplot${LIB_TAG}
-      ${QT_LIBRARIES}
-      ${PYTHON_LIBRARIES}
-      )
-  endif(ENABLE_DYNDRIVERS)
-  add_dependencies(plplot_pyqt generate_pyqt_source)
+  target_link_libraries(
+    plplot_pyqt4
+    plplotqt${LIB_TAG}
+    plplot${LIB_TAG}
+    ${QT_LIBRARIES}    
+    ${PYTHON_LIBRARIES}
+    )
+  add_dependencies(plplot_pyqt4 generate_pyqt4_source)
+
+  if(USE_RPATH)
+    set_target_properties(
+    plplot_pyqt4
+    PROPERTIES
+    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+    INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
+    )
+  else(USE_RPATH)
+    set_target_properties(
+    plplot_pyqt4
+    PROPERTIES
+    INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
+    )
+  endif(USE_RPATH)
 
   #message(${PYTHON_INSTDIR})
 
   install(
-    TARGETS plplot_pyqt
+    TARGETS plplot_pyqt4
     LIBRARY
     DESTINATION ${PYTHON_INSTDIR}
     )

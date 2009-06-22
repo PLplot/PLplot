@@ -18,7 +18,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-if(PLD_extqt)
+if(ENABLE_qt)
   include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/lib/qsastime
@@ -176,4 +176,6 @@ if(PLD_extqt)
       )
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
   endif(PKG_CONFIG_EXECUTABLE)
-endif(PLD_extqt)
+  
+  add_subdirectory(pyqt4)
+endif(ENABLE_qt)
