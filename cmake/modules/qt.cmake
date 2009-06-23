@@ -41,6 +41,9 @@
 # ENABLE_qt		  - ON means the plplot_qt library is enabled.
 # ENABLE_pyqt4		  - ON means the plplot_pyqt4 Python extension module
 # 			    is enabled.
+# SIP_EXECUTABLE	  - full path for sip
+# PYQT_SIP_DIR		  - sip system directory
+# PYQT_SIP_FLAGS	  - sip command flags
 
 find_package(Qt4)
 if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
@@ -88,17 +91,17 @@ endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_qt AND NOT PLD_extqt)
   message(STATUS
-  "WARNING: PLD_extqt is OFF so "
-  "setting ENABLE_qt to OFF."
-  )
+    "WARNING: PLD_extqt is OFF so "
+    "setting ENABLE_qt to OFF."
+    )
   set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
 endif(ENABLE_qt AND NOT PLD_extqt)
 
 if(ENABLE_pyqt4 AND NOT ENABLE_python AND NOT ENABLE_qt)
   message(STATUS
-  "WARNING: ENABLE_python OR ENABLE_qt is OFF so "
-  "setting ENABLE_pyqt4 to OFF."
-  )
+    "WARNING: ENABLE_python OR ENABLE_qt is OFF so "
+    "setting ENABLE_pyqt4 to OFF."
+    )
   set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
 endif(ENABLE_pyqt4 AND NOT ENABLE_python AND NOT ENABLE_qt)
 
@@ -107,3 +110,47 @@ if(ENABLE_qt)
 else(ENABLE_qt)
   set(qt_gui_true "#")
 endif(ENABLE_qt)
+
+if(ENABLE_pyqt4)
+  find_program(SIP_EXECUTABLE sip)
+  if(NOT SIP_EXECUTABLE)
+    message(STATUS
+      "WARNING: sip not found so setting ENABLE_pyqt4 to OFF."
+      )
+    set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
+  endif(NOT SIP_EXECUTABLE)
+endif(ENABLE_pyqt4)
+
+if(ENABLE_pyqt4)
+  execute_process(
+    COMMAND ${PYTHON_EXECUTABLE} -c "from PyQt4 import pyqtconfig; print pyqtconfig.Configuration().pyqt_sip_dir"
+    OUTPUT_VARIABLE PYQT_SIP_DIR
+    RESULT_VARIABLE PYQT_SIP_DIR_ERR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  if(PYQT_SIP_DIR_ERR)
+    message(STATUS
+      "WARNING: could not find sip directory so setting ENABLE_pyqt4 to OFF."
+      )
+    set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
+  endif(PYQT_SIP_DIR_ERR)
+endif(ENABLE_pyqt4)
+
+if(ENABLE_pyqt4)
+  execute_process(
+    COMMAND ${PYTHON_EXECUTABLE} -c "from PyQt4 import pyqtconfig; print pyqtconfig.Configuration().pyqt_sip_flags"
+    OUTPUT_VARIABLE PYQT_SIP_FLAGS
+    RESULT_VARIABLE PYQT_SIP_FLAGS_ERR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  if(PYQT_SIP_FLAGS_ERR)
+    message(STATUS
+      "WARNING: could not find sip flags so setting ENABLE_pyqt4 to OFF."
+      )
+    set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
+  endif(PYQT_SIP_DIR_ERR)
+  # Must change from blank-delimited string to CMake list so that sip
+  # COMMAND will work properly with these flags later on.
+  string(REGEX REPLACE " " ";"PYQT_SIP_FLAGS "${PYQT_SIP_FLAGS}") 
+endif(ENABLE_pyqt4)
+
