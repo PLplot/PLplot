@@ -20,41 +20,38 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 if(ENABLE_pyqt4)
-  #message(" ENABLE_pyqt4")
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pyqt4_config)
 
-  set(PYQT4_CONFIG_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pyqt4_config)
-
-  add_custom_command(
-    OUTPUT ${PYQT4_CONFIG_DIRECTORY}/config.py.in
-    COMMAND ${CMAKE_COMMAND} -E touch ${PYQT4_CONFIG_DIRECTORY}/config.py.in
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt4.sip ${PYQT4_CONFIG_DIRECTORY}/plplot_pyqt4.sip
-    COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/config.py
-    WORKING_DIRECTORY ${PYQT4_CONFIG_DIRECTORY}/
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/config.py
-    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt4.sip
-    )
-  add_custom_target(generate_pyqt4_source
-    DEPENDS ${PYQT4_CONFIG_DIRECTORY}/config.py.in
-    )
+  set(plplot_pyqt4_HDR ${CMAKE_CURRENT_BINARY_DIR}/sipAPIplplot_pyqt4.h)
 
   set_source_files_properties(
-    ${PYQT4_CONFIG_DIRECTORY}/sipAPIplplot_pyqt.h
+    ${plplot_pyqt4_HDR}
     PROPERTIES
     GENERATED ON
     )
 
   set(plplot_pyqt4_SRC
-    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtcmodule.cpp
-    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtExtWidget.cpp
-    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLDriver.cpp
-    ${PYQT4_CONFIG_DIRECTORY}/sipplplot_pyqtQtPLWidget.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/sipplplot_pyqt4cmodule.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/sipplplot_pyqt4QtExtWidget.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/sipplplot_pyqt4QtPLDriver.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/sipplplot_pyqt4QtPLWidget.cpp
    )
   set_source_files_properties(
     ${plplot_pyqt4_SRC}
     PROPERTIES
     GENERATED ON
     COMPILE_FLAGS "-DUSINGDLL"
+    )
+
+  #message("DEBUG: PYQT_SIP_DIR = ${PYQT_SIP_DIR}")
+  #message("DEBUG: PYQT_SIP_FLAGS = ${PYQT_SIP_FLAGS}")
+  
+  add_custom_command(
+    OUTPUT ${plplot_pyqt4_HDR} ${plplot_pyqt4_SRC}
+    COMMAND ${SIP_EXECUTABLE} -c . -b plplot_pyqt4.sbf -I${PYQT_SIP_DIR} ${PYQT_SIP_FLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt4.sip
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt4.sip
+    )
+  add_custom_target(generate_pyqt4_source
+    DEPENDS ${plplot_pyqt4_HDR} ${plplot_pyqt4_SRC}
     )
 
   # Assume sip.h can be found in PYTHON_INCLUDE_PATH
@@ -98,8 +95,6 @@ if(ENABLE_pyqt4)
     INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
     )
   endif(USE_RPATH)
-
-  #message(${PYTHON_INSTDIR})
 
   install(
     TARGETS plplot_pyqt4
