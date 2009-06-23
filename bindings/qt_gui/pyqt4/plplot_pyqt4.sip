@@ -1,5 +1,5 @@
 
-%Module plplot_pyqt 0
+%Module plplot_pyqt4 0
 
 %Import QtCore/QtCoremod.sip
 %Import QtGui/QtGuimod.sip

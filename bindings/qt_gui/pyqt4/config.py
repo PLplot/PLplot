@@ -49,13 +49,13 @@ makefile.generate()
 content = {
     # Publish where the SIP specifications for this module will be
     # installed.
-    "plplot_pyqt_sip_dir":    config.default_sip_dir,
+    "plplot_pyqt4_sip_dir":    config.default_sip_dir,
 
     # Publish the set of SIP flags needed by this module.  As these are the
     # same flags needed by the qt module we could leave it out, but this
     # allows us to change the flags at a later date without breaking
     # scripts that import the configuration module.
-    "plplot_pyqt_sip_flags":  qt_sip_flags
+    "plplot_pyqt4_sip_flags":  qt_sip_flags
 }
 
 # This creates the qtermwidgetconfig.py module from the qtermwidgetconfig.py.in
