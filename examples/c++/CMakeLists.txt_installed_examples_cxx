@@ -72,7 +72,7 @@ if(ENABLE_wxwidgets)
   target_link_libraries(wxPLplotDemo ${wxwidgets_LINK_FLAGS} plplotwxwidgets${LIB_TAG})
 endif(ENABLE_wxwidgets)
 
-if(PLD_extqt AND TARGET qt)
+if(ENABLE_qt)
   # Must find Qt4 all over again here rather than simply copying variables
   # from the core build to this installed examples build so that we can
   # access the qt4_wrap_cpp macro here.
@@ -96,11 +96,8 @@ if(PLD_extqt AND TARGET qt)
       PROPERTIES GENERATED "ON"
       )
     add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
-    # Use file location + plplot${LIB_TAG} rather than the "qt" target
-    # because otherwise rpath is not set properly for the qt module.
-    get_target_property(qt_LOCATION qt IMPORTED_LOCATION_NOCONFIG)
-    target_link_libraries(qt_example ${QT_LIBRARIES} ${qt_LOCATION} plplot${LIB_TAG})
+    target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt${LIB_TAG} plplot${LIB_TAG})
   else(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
     message(STATUS "WARNING: Qt4 not found or wrong version.  qt_example not built")
   endif(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
-endif(PLD_extqt AND TARGET qt)
+endif(ENABLE_qt)

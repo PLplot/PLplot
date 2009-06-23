@@ -30,6 +30,7 @@ set(ENABLE_tcl @ENABLE_tcl@)
 set(ENABLE_tk @ENABLE_tk@)
 set(ENABLE_gnome2 @ENABLE_gnome2@)
 set(ENABLE_wxwidgets @ENABLE_wxwidgets@)
+set(ENABLE_qt @ENABLE_qt@)
 
 # Always enable C language.
 enable_language(C)
@@ -94,13 +95,12 @@ endif(ENABLE_wxwidgets)
 # Set interactive/external devices that are needed to build certain examples.
 set(PLD_xcairo @PLD_xcairo@)
 set(PLD_extcairo @PLD_extcairo@)
-set(PLD_extqt @PLD_extqt@)
 
-if(PLD_extqt)
+if(ENABLE_qt)
   set(CORE_QT_VERSION_MAJOR @QT_VERSION_MAJOR@)
   set(CORE_QT_VERSION_MINOR @QT_VERSION_MINOR@)
   set(CORE_QT_VERSION_PATCH @QT_VERSION_PATCH@)
-endif(PLD_extqt)
+endif(ENABLE_qt)
 
 # List of all devices that will be used for non_interactive tests.
 # Exclude psc since that already has been used for comparisons above.
@@ -182,4 +182,3 @@ set(PLD_tek4010f @PLD_tek4010f@)
 set(PLD_tek4107f @PLD_tek4107f@)
 set(PLD_wxpng @PLD_wxpng@)
 set(PLD_xfig @PLD_xfig@)
-
