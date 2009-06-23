@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # A simple PLplot/PyQt example
 #
@@ -24,26 +24,32 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
+from plplot_python_start import *
 import plplot
-import plplot_pyqt
+import plplot_pyqt4
 
 class QPlot(QtGui.QMainWindow):
     def __init__(self):
         print "init"
         QtGui.QMainWindow.__init__(self, None)
 
-        self.plot = plplot_pyqt.QtExtWidget(800, 800, self)
+        self.plot = plplot_pyqt4.QtExtWidget(800, 800, self)
         self.setCentralWidget(self.plot)
 
-        plplot_pyqt.plsetqtdev(self.plot)
+        plplot_pyqt4.plsetqtdev(self.plot)
         plplot.plsdev("extqt")
         plplot.plinit()
+        plplot.pladv(0)
+        plplot.plvsta()
+        plplot.plwind(0.0, 1.0, 0., 1.0)
+        plplot.plcol0(1)
+        plplot.plbox("bcnst", 0., 0, "bcnstv", 0., 0)
 
         self.resize(400,400)
 
     def cleanup(self):
         plplot.plend()
-        plplot_pyqt.plfreeqtdev()
+        plplot_pyqt4.plfreeqtdev()
 
     def paintEvent(self, event):
         plplot.pladv(0)
