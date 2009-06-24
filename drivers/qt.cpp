@@ -1334,6 +1334,7 @@ QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
 	
 	m_pixPixmap=NULL;
 	m_iOldSize=0;
+	pageNumber=0;
 	resize(i_iWidth, i_iHeight);
 }
 
@@ -1816,6 +1817,9 @@ void plD_eop_qtwidget(PLStream *pls)
 QtExtWidget::QtExtWidget(int i_iWidth, int i_iHeight, QWidget* parent):
 	QtPLWidget(i_iWidth, i_iHeight, parent)
 {
+	cursorParameters.isTracking=false;
+	cursorParameters.cursor_x=-1.0;
+	cursorParameters.cursor_y=-1.0;
 	killed=false;
 }
 
