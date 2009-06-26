@@ -34,10 +34,15 @@
 # qt_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile wxwidgets
 # 			    device.
 # qt_LINK_FLAGS	  	  - list of full path names of libraries and
+# qt_TARGETS		  - list of targets which the qt dynamic device
+#			    depends on.
 # 			    linker flags for dynamic wxwidgets device driver.
 # qt_RPATH	       	  - RPATH directory list for qt device driver.
-# DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS for case
-# 			    when ENABLE_DYNDRIVERS OFF.
+# DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS for case when
+#			    ENABLE_DYNDRIVERS OFF.  (qt_TARGETS not included
+#			    since source code used instead of this target
+#			    for ENABLE_DYNDRIVERS OFF.)
+# qt_SOURCE		  - list of source files to be appended to qt.cpp.
 # ENABLE_qt		  - ON means the plplot_qt library is enabled.
 # ENABLE_pyqt4		  - ON means the plplot_pyqt4 Python extension module
 # 			    is enabled.
@@ -47,6 +52,10 @@
 
 find_package(Qt4)
 if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
+  set(ANY_QT_DEVICE ON)
+endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
+
+if(ANY_QT_DEVICE)
   if(QT4_FOUND)
     if(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
       set(QT_USE_QTSVG 1)
@@ -65,7 +74,6 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
     #message("qt_LINK_FLAGS = ${qt_LINK_FLAGS}")
     set(qt_RPATH ${QT_LIBRARY_DIR})
     #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
-    set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${qt_LINK_FLAGS})
   else(QT4_FOUND AND QT_LIBRARIES)
     message(STATUS "QT_LIBRARIES not found so disabling all qt devices")
     set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
@@ -79,7 +87,7 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
     set(PLD_svgqt OFF CACHE BOOL "Enable Qt SVG device" FORCE)
     set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
   endif(QT4_FOUND AND QT_LIBRARIES)
-endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
+endif(ANY_QT_DEVICE)
 
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_qt "Enable Qt bindings" OFF)
@@ -110,6 +118,24 @@ if(ENABLE_qt)
 else(ENABLE_qt)
   set(qt_gui_true "#")
 endif(ENABLE_qt)
+
+if(ANY_QT_DEVICE)
+  if(ENABLE_DYNDRIVERS)
+    if(ENABLE_qt)
+      set(qt_SOURCE)
+      set(qt_TARGETS plplotqt${LIB_TAG})
+    else(ENABLE_qt)
+      # if qt disabled, then must include full source and forget
+      # qt_TARGETS for this dynamic device.
+      set(qt_SOURCE ${CMAKE_SOURCE_DIR}/bindings/qt_gui/plqt.cpp)
+    endif(ENABLE_qt)
+  else(ENABLE_DYNDRIVERS)
+    # N.B. no qt_TARGETS here since use appropriate source code (see below)
+    # instead to break circular linking.
+    set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${qt_LINK_FLAGS})
+    set(qt_SOURCE ${CMAKE_SOURCE_DIR}/bindings/qt_gui/plqt.cpp)
+  endif(ENABLE_DYNDRIVERS)
+endif(ANY_QT_DEVICE)
 
 if(ENABLE_pyqt4)
   find_program(SIP_EXECUTABLE sip)
