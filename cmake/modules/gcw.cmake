@@ -31,7 +31,7 @@
 #			    ENABLE_DYNDRIVERS OFF.  (gcw_TARGETS not included
 #			    since source code used instead of this target
 #			    for ENABLE_DYNDRIVERS OFF.)
-# gcw_SOURCE		  - list of source files other than gcw.c
+# gcw_SOURCE		  - list of source files to be appended to gcw.c
 # PYGCW_CFLAGS		  - blank-separated COMPILE_FLAGS required to 
 #			    compile pygcw bindings.
 # PYGCW_LIBS		  - list of LINK_FLAGS for pygcw bindings.
