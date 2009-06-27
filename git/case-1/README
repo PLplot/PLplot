@@ -19,7 +19,7 @@ In case 1, we examine a specific, stylized way to do this.
 
 [Somebody fill in comments on the svn client itself]
 
-Obtain git.  
+Obtain git.
     On Fedora 11:  yum install git-all
     [Need guidance for other systems, especially non-Linux systems]
 
@@ -27,7 +27,7 @@ Note that in older versions of git (1.5.x and prior), there were many
 commands with names of the form git-xyz installed.  In git 1.6 this practice
 is dropped.  Instead, there is just the git wrapper command, and all git
 subcommands are activated by passing the sub command as the second token on
-the command line.  
+the command line.
 
 With specific reference to the git-svn gateway, in git 1.5.x and prior this
 was called "git-svn", but in git 1.6.x+, it is invoked as "git svn".
@@ -100,3 +100,37 @@ git checkout -b w_trunk svn/trunk
 
 Then watch for the commit notice to propagate to plplot-cvs.
 
+----------------------------
+Working with a repo that has been setup by git svn
+
+[Fill this in.]
+
+
+----------------------------
+Issues
+
+1) git svn --authors-file gone stale
+
+We know that if you are running the svn import ("git svn clone ..."), with
+the --authors-file=<filename> option, and git svn encounters a commit by
+someone not listed in the authors-file, then git svn import (clone) balks.
+
+    Aside:  If that happens to you, what you need to do is update the
+    authors-file with the new biographical entry or entries, and then rerun
+    the git svn clone step.  It will continue where it left off.  There is no
+    need to rm the under-construction repo and start over from the
+    beginning.
+
+Question:  What if your authors-file is up to date at the time you run the
+repo import, but then new team members make new commits to the svn master?
+What happens when you next do a git svn fetch?
+
+Answer:  Not yet completely clear.  Some careful tests are in order.  But one
+thing is clear, git svn fetch is not looking in the authors file, and does
+not stop the way git svn clone does when there's a mising entry in the
+authors file.  So it would seem then that the git svn fetch is clearly
+producing a repo that is in some ways different than if you did a fresh
+clone.
+
+To me, this seems quite contrary to the "git way", and is yet another reason
+to be irked with the whole git svn approach to mirroring an svn repo.
