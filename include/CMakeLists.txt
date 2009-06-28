@@ -81,4 +81,11 @@ plplotcanvas.h
 ${CMAKE_CURRENT_BINARY_DIR}/plConfig.h
 ${CMAKE_CURRENT_BINARY_DIR}/plDevs.h
 )
+
+#qt.h only useful if anyone wants to build a Qt application with the Qt widget driver
+if(PLD_qtwidget OR PLD_extqt)
+    list(APPEND include_INSTALLED_HEADERS qt.h)
+endif(PLD_qtwidget OR PLD_extqt)
+
+
 install(FILES ${include_INSTALLED_HEADERS} DESTINATION ${INCLUDE_DIR})

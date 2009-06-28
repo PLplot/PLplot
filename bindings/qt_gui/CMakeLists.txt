@@ -74,7 +74,7 @@ if(ENABLE_qt)
   if(MOC_OPTIONS)
     qt4_wrap_cpp(
       QT_MOC_OUTFILES
-      ${CMAKE_SOURCE_DIR}/drivers/qt.h
+      ${CMAKE_SOURCE_DIR}/include/qt.h
       OPTIONS ${MOC_OPTIONS}
       )
     # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")

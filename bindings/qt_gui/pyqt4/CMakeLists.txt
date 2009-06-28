@@ -56,7 +56,6 @@ if(ENABLE_pyqt4)
 
   # Assume sip.h can be found in PYTHON_INCLUDE_PATH
   include_directories(
-    ${CMAKE_SOURCE_DIR}/drivers
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_BINARY_DIR}

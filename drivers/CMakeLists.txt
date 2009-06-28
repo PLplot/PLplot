@@ -24,14 +24,6 @@ install(
   DESTINATION ${DOC_DIR}
   )
 
-#qt.h only useful if anyone wants to build a Qt application with the Qt widget driver
-if(PLD_qtwidget OR PLD_extqt)
-  install(
-    FILES qt.h 
-    DESTINATION ${INCLUDE_DIR}
-    )
-endif(PLD_qtwidget OR PLD_extqt)
-
 if(ENABLE_DYNDRIVERS)
   include_directories(
     ${CMAKE_SOURCE_DIR}/include
@@ -125,7 +117,7 @@ if(ENABLE_DYNDRIVERS)
       if(MOC_OPTIONS)
 	qt4_wrap_cpp(
           QT_MOC_OUTFILES
-          ${CMAKE_CURRENT_SOURCE_DIR}/qt.h
+          ${CMAKE_SOURCE_DIR}/include/qt.h
           OPTIONS ${MOC_OPTIONS}
           )
 	# message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
