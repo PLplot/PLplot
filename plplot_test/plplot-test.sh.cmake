@@ -47,7 +47,7 @@ Usage: plplot-test.sh [OPTIONS]
 
 Options:
    [--device=DEVICE] (DEVICE = any cmake-enabled device.  psc is the default)
-   [--front-end=FE]  (FE = one of c, cxx, f77, f95 java, octave, python, tcl, perl, ada, ocaml, lua or d)
+   [--front-end=FE]  (FE = one of c, cxx, f77, f95 java, octave, python, tcl, pdl, ada, ocaml, lua or d)
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
                      this --front-end="c cxx"
@@ -111,7 +111,7 @@ while test $# -gt 0; do
              -o $i = "octave" \
              -o $i = "python" \
              -o $i = "tcl"    \
-             -o $i = "perl"    \
+             -o $i = "pdl"    \
              -o $i = "ada"    \
              -o $i = "ocaml"    \
              -o $i = "lua"    \
@@ -302,7 +302,7 @@ if [ -z "$FRONT_END" ] ; then
    test "@ENABLE_octave@" = "ON" && FRONT_END="$FRONT_END octave"
    test "@ENABLE_python@" = "ON" && FRONT_END="$FRONT_END python"
    test "@ENABLE_tcl@" = "ON"    && FRONT_END="$FRONT_END tcl"
-   test "@ENABLE_pdl@" = "ON"    && FRONT_END="$FRONT_END perl"
+   test "@ENABLE_pdl@" = "ON"    && FRONT_END="$FRONT_END pdl"
    test "@ENABLE_ada@" = "ON"    && FRONT_END="$FRONT_END ada"
    test "@ENABLE_ocaml@" = "ON"  && FRONT_END="$FRONT_END ocaml"
    test "@ENABLE_lua@" = "ON"  && FRONT_END="$FRONT_END lua"

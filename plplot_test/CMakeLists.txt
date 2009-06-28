@@ -136,13 +136,13 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_pdl)
     configure_file(
-      test_perl.sh.in
-      ${CMAKE_CURRENT_BINARY_DIR}/test_perl.sh
+      test_pdl.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_pdl.sh
       @ONLY
       )
-    list(APPEND SCRIPTS test_perl.sh)
-    add_test(examples_perl
-      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=perl"
+    list(APPEND SCRIPTS test_pdl.sh)
+    add_test(examples_pdl
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=pdl"
       )
   endif(ENABLE_pdl)
 
