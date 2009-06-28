@@ -213,31 +213,7 @@ endif(interactive_targets_LIST)
 set(summary_results "
 Summary of CMake build system results for the installed examples
 
-Noninteractive bindings:
-
-ENABLE_ada:		${ENABLE_ada}
-ENABLE_c:		${ENABLE_c}
-ENABLE_cxx:		${ENABLE_cxx}
-ENABLE_d:		${ENABLE_d}
-ENABLE_f77:		${ENABLE_f77}
-ENABLE_f95:		${ENABLE_f95}
-ENABLE_java:		${ENABLE_java}
-ENABLE_lua:		${ENABLE_lua}
-ENABLE_ocaml:		${ENABLE_ocaml}
-ENABLE_octave:		${ENABLE_octave}
-ENABLE_pdl:		${ENABLE_pdl}
-ENABLE_python:		${ENABLE_python}
-ENABLE_tcl:		${ENABLE_tcl}
-
-Interactive bindings:
-
-ENABLE_tk:		${ENABLE_tk}
-ENABLE_gnome2:		${ENABLE_gnome2}
-ENABLE_wxwidgets:	${ENABLE_wxwidgets}
-ENABLE_qt:		${ENABLE_qt}
-
-
-Noninteractive device drivers that control noninteractive tests:
+Noninteractive device drivers:
 
 PLD_pdfcairo:		${PLD_pdfcairo}
 PLD_pngcairo:		${PLD_pngcairo}
@@ -275,20 +251,45 @@ PLD_tek4107f:		${PLD_tek4107f}
 PLD_wxpng:		${PLD_wxpng}
 PLD_xfig:		${PLD_xfig}
 
-Interactive device drivers that control certain special example builds:
+Interactive device drivers:
 
 PLD_xcairo:		${PLD_xcairo}
 PLD_extcairo:		${PLD_extcairo}
 
-N.B. Additional interactive device drivers are likely supplied by the
-PLplot core and configured as part of plplot-test-interactive.sh that
-is run as the result of running
+N.B. The above devices are all that are currently configurable by the
+installed examples build system.  Additional interactive device
+drivers are likely supplied by the PLplot core and configured as part
+of plplot-test-interactive.sh that is run by
 
 make test_interactive
 
 
-but the build system for the installed examples has no control over
-those device drivers so we don't bother outputting them in this summary.
+but the build system for the installed examples cannot configure anything
+with those device drivers so we don't bother to retreive them from the
+core build system or output them here.
+
+Noninteractive bindings:
+
+ENABLE_ada:		${ENABLE_ada}
+ENABLE_c:		${ENABLE_c}
+ENABLE_cxx:		${ENABLE_cxx}
+ENABLE_d:		${ENABLE_d}
+ENABLE_f77:		${ENABLE_f77}
+ENABLE_f95:		${ENABLE_f95}
+ENABLE_java:		${ENABLE_java}
+ENABLE_lua:		${ENABLE_lua}
+ENABLE_ocaml:		${ENABLE_ocaml}
+ENABLE_octave:		${ENABLE_octave}
+ENABLE_pdl:		${ENABLE_pdl}
+ENABLE_python:		${ENABLE_python}
+ENABLE_tcl:		${ENABLE_tcl}
+
+Interactive bindings:
+
+ENABLE_tk:		${ENABLE_tk}
+ENABLE_gnome2:		${ENABLE_gnome2}
+ENABLE_wxwidgets:	${ENABLE_wxwidgets}
+ENABLE_qt:		${ENABLE_qt}
 ")
 
 message("${summary_results}")
