@@ -178,6 +178,6 @@ if(ENABLE_qt)
       )
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
   endif(PKG_CONFIG_EXECUTABLE)
-  
+
   add_subdirectory(pyqt4)
 endif(ENABLE_qt)

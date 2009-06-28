@@ -34,7 +34,7 @@ if(ENABLE_pyqt4)
     ${CMAKE_CURRENT_BINARY_DIR}/sipplplot_pyqt4QtExtWidget.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/sipplplot_pyqt4QtPLDriver.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/sipplplot_pyqt4QtPLWidget.cpp
-   )
+    )
   set_source_files_properties(
     ${plplot_pyqt4_SRC}
     PROPERTIES
@@ -83,17 +83,17 @@ if(ENABLE_pyqt4)
 
   if(USE_RPATH)
     set_target_properties(
-    plplot_pyqt4
-    PROPERTIES
-    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-    INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
-    )
+      plplot_pyqt4
+      PROPERTIES
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
+      )
   else(USE_RPATH)
     set_target_properties(
-    plplot_pyqt4
-    PROPERTIES
-    INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
-    )
+      plplot_pyqt4
+      PROPERTIES
+      INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
+      )
   endif(USE_RPATH)
 
   install(
