@@ -50,12 +50,12 @@
 # PYQT_SIP_DIR		  - sip system directory
 # PYQT_SIP_FLAGS	  - sip command flags
 
-find_package(Qt4)
 if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
   set(ANY_QT_DEVICE ON)
 endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
 
 if(ANY_QT_DEVICE)
+  find_package(Qt4)
   if(QT4_FOUND)
     if(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
       set(QT_USE_QTSVG 1)
