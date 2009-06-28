@@ -20,44 +20,44 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 set(plplot${LIB_TAG}_LIB_SRCS
-pdfutils.c
-plargs.c
-plbox.c
-plcont.c
-plcore.c
-plctrl.c
-plcvt.c
-pldeprecated.c
-pldtik.c
-plfill.c
-plfreetype.c
-plhist.c
-plimage.c
-plline.c
-plmap.c
-plot3d.c
-plpage.c
-plsdef.c
-plshade.c
-plstdio.c
-plstripc.c
-plsym.c
-pltick.c
-plvpor.c
-plwind.c
-plbuf.c
-plgridd.c
-plvect.c
-mt19937ar.c
-pltime.c
-)
+  pdfutils.c
+  plargs.c
+  plbox.c
+  plcont.c
+  plcore.c
+  plctrl.c
+  plcvt.c
+  pldeprecated.c
+  pldtik.c
+  plfill.c
+  plfreetype.c
+  plhist.c
+  plimage.c
+  plline.c
+  plmap.c
+  plot3d.c
+  plpage.c
+  plsdef.c
+  plshade.c
+  plstdio.c
+  plstripc.c
+  plsym.c
+  pltick.c
+  plvpor.c
+  plwind.c
+  plbuf.c
+  plgridd.c
+  plvect.c
+  mt19937ar.c
+  pltime.c
+  )
 if(LTDL_WIN32)
   set(plplot${LIB_TAG}_LIB_SRCS ${plplot${LIB_TAG}_LIB_SRCS} ltdl_win32.c)
 endif(LTDL_WIN32)
 
 if(BUILD_SHARED_LIBS)
   SET_SOURCE_FILES_PROPERTIES(${plplot${LIB_TAG}_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
+    PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
 endif(BUILD_SHARED_LIBS)
 
 if(ENABLE_DYNDRIVERS)
@@ -67,32 +67,32 @@ if(ENABLE_DYNDRIVERS)
     set(PLCORE_COMPILE_PROPS)
   endif(NOT PLCORE_COMPILE_PROPS)
   set_source_files_properties(
-  plcore.c
-  PROPERTIES COMPILE_FLAGS "${PLCORE_COMPILE_PROPS} -I${LTDL_INCLUDE_DIR}"
-  )
+    plcore.c
+    PROPERTIES COMPILE_FLAGS "${PLCORE_COMPILE_PROPS} -I${LTDL_INCLUDE_DIR}"
+    )
 else(ENABLE_DYNDRIVERS)
   if(ENABLE_tcl)
     set(
-    tclgenfiles
-    ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen.h
-    ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen_s.h
-    ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen.c
-    )
+      tclgenfiles
+      ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen.h
+      ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen_s.h
+      ${CMAKE_BINARY_DIR}/bindings/tcl/tclgen.c
+      )
 
     # Only need to set up this special command if either the tk and tkwin
     # non-dynamic devices are enabled (see below) since at build time
     # this special command is only fired in that case.
     add_custom_command(
-    OUTPUT ${tclgenfiles}
-    COMMAND ${TCL_TCLSH}
-    ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
-    ${CMAKE_SOURCE_DIR}/bindings/tcl
-    DEPENDS
-    ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
-    ${CMAKE_SOURCE_DIR}/bindings/tcl/plapi.tpl
-    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclcmd.tpl
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bindings/tcl
-    )
+      OUTPUT ${tclgenfiles}
+      COMMAND ${TCL_TCLSH}
+      ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
+      ${CMAKE_SOURCE_DIR}/bindings/tcl
+      DEPENDS
+      ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
+      ${CMAKE_SOURCE_DIR}/bindings/tcl/plapi.tpl
+      ${CMAKE_SOURCE_DIR}/bindings/tcl/tclcmd.tpl
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bindings/tcl
+      )
   endif(ENABLE_tcl)
 
   # Static device drivers must be included in the core PLplot library.
@@ -135,7 +135,7 @@ else(ENABLE_DYNDRIVERS)
       if(MOC_OPTIONS)
 	qt4_wrap_cpp(
           QT_MOC_OUTFILES
-          ${CMAKE_SOURCE_DIR}/drivers/qt.h
+          ${CMAKE_SOURCE_DIR}/include/qt.h
           OPTIONS ${MOC_OPTIONS}
           )
 	# message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
@@ -156,24 +156,24 @@ else(ENABLE_DYNDRIVERS)
 
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
       set_source_files_properties(
-      ${${SOURCE_ROOT_NAME}_SOURCE}
-      PROPERTIES COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
-      )
+	${${SOURCE_ROOT_NAME}_SOURCE}
+	PROPERTIES COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
+	)
       set(libplplot${LIB_TAG}_COMPILE_FLAGS
-      ${libplplot${LIB_TAG}_COMPILE_FLAGS}
-      ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
-      )
+	${libplplot${LIB_TAG}_COMPILE_FLAGS}
+	${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
+	)
       if(SOURCE_ROOT_NAME STREQUAL "tk")
         set_source_files_properties(
-	${${SOURCE_ROOT_NAME}_SOURCE}
-	PROPERTIES OBJECT_DEPENDS ${tclgenfiles}
-	)
+	  ${${SOURCE_ROOT_NAME}_SOURCE}
+	  PROPERTIES OBJECT_DEPENDS ${tclgenfiles}
+	  )
       endif(SOURCE_ROOT_NAME STREQUAL "tk")
       if(SOURCE_ROOT_NAME STREQUAL "tkwin")
         set_source_files_properties(
-	${${SOURCE_ROOT_NAME}_SOURCE}
-	PROPERTIES OBJECT_DEPENDS ${tclgenfiles}
-	)
+	  ${${SOURCE_ROOT_NAME}_SOURCE}
+	  PROPERTIES OBJECT_DEPENDS ${tclgenfiles}
+	  )
       endif(SOURCE_ROOT_NAME STREQUAL "tkwin")
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
     if(${SOURCE_ROOT_NAME}_RPATH)
@@ -183,11 +183,11 @@ else(ENABLE_DYNDRIVERS)
 endif(ENABLE_DYNDRIVERS)
 
 include_directories(
-${CMAKE_SOURCE_DIR}/include
-${CMAKE_SOURCE_DIR}/lib/qsastime
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/include
-)
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/lib/qsastime
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/include
+  )
 add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
 add_dependencies(plplot${LIB_TAG} plhershey-unicode.h_built)
 
@@ -205,52 +205,52 @@ endif(ENABLE_DYNDRIVERS)
 
 if(MATH_LIB)
   set(
-  libplplot${LIB_TAG}_LINK_LIBRARIES
-  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
-  ${MATH_LIB}
-  )
+    libplplot${LIB_TAG}_LINK_LIBRARIES
+    ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+    ${MATH_LIB}
+    )
 endif(MATH_LIB)
 
 # Transform "${libplplot${LIB_TAG}_LINK_LIBRARIES}" string to the 
 # standard pkg-config form.
 pkg_config_link_flags(
-libplplot${LIB_TAG}_LINK_FLAGS
-"${libplplot${LIB_TAG}_LINK_LIBRARIES}"
-)
+  libplplot${LIB_TAG}_LINK_FLAGS
+  "${libplplot${LIB_TAG}_LINK_LIBRARIES}"
+  )
 
 if(WITH_CSA)
   set(
-  libplplot${LIB_TAG}_LINK_LIBRARIES
-  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
-  csirocsa
-  )
+    libplplot${LIB_TAG}_LINK_LIBRARIES
+    ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+    csirocsa
+    )
   set(
-  libplplot${LIB_TAG}_LINK_FLAGS
-  "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsirocsa"
-  )
+    libplplot${LIB_TAG}_LINK_FLAGS
+    "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsirocsa"
+    )
 endif(WITH_CSA)
 
 if(HAVE_QHULL)
   set(
-  libplplot${LIB_TAG}_LINK_LIBRARIES
-  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
-  csironn
-  )
+    libplplot${LIB_TAG}_LINK_LIBRARIES
+    ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+    csironn
+    )
   set(
-  libplplot${LIB_TAG}_LINK_FLAGS
-  "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -lqhull"
-  )
+    libplplot${LIB_TAG}_LINK_FLAGS
+    "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -lqhull"
+    )
   include_directories(
     ${QHULL_INCLUDE_DIRS}
-  )
+    )
 endif(HAVE_QHULL)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
   list(APPEND  libplplot${LIB_TAG}_LINK_LIBRARIES nistcd)
   set(
-  libplplot${LIB_TAG}_LINK_FLAGS
-  "${libplplot${LIB_TAG}_LINK_FLAGS} -lnistcd"
-  )
+    libplplot${LIB_TAG}_LINK_FLAGS
+    "${libplplot${LIB_TAG}_LINK_FLAGS} -lnistcd"
+    )
   include_directories(${CMAKE_SOURCE_DIR}/lib/nistcd)
 endif(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
 
@@ -272,24 +272,24 @@ if(WITH_FREETYPE)
   endif(NOT PLFREETYPE_COMPILE_PROPS)
   set_source_files_properties(plfreetype.c PROPERTIES COMPILE_FLAGS "${PLFREETYPE_COMPILE_PROPS} -I${FREETYPE_INCLUDE_DIR}")
   set(
-  libplplot${LIB_TAG}_LINK_LIBRARIES
-  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
-  ${FREETYPE_LIBRARIES}
-  )
+    libplplot${LIB_TAG}_LINK_LIBRARIES
+    ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+    ${FREETYPE_LIBRARIES}
+    )
   
   # Convert to -L... -l... form.
   string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
-  _FREETYPE_LINK_FLAGS
-  ${FREETYPE_LIBRARIES}
-  )
+    _FREETYPE_LINK_FLAGS
+    ${FREETYPE_LIBRARIES}
+    )
   string(REGEX REPLACE "(/[^ ]*)/lib([^ ]*)\\.so" "-L\\1 -l\\2"
-  FREETYPE_LINK_FLAGS
-  ${_FREETYPE_LINK_FLAGS}
-  )
+    FREETYPE_LINK_FLAGS
+    ${_FREETYPE_LINK_FLAGS}
+    )
   set(
-  libplplot${LIB_TAG}_LINK_FLAGS
-  "${libplplot${LIB_TAG}_LINK_FLAGS} ${FREETYPE_LINK_FLAGS}"
-  )
+    libplplot${LIB_TAG}_LINK_FLAGS
+    "${libplplot${LIB_TAG}_LINK_FLAGS} ${FREETYPE_LINK_FLAGS}"
+    )
 endif(WITH_FREETYPE)
 
 #message(STATUS
@@ -297,43 +297,43 @@ endif(WITH_FREETYPE)
 #)
 
 target_link_libraries(
-plplot${LIB_TAG}
-${libplplot${LIB_TAG}_LINK_LIBRARIES}
-)
+  plplot${LIB_TAG}
+  ${libplplot${LIB_TAG}_LINK_LIBRARIES}
+  )
 
 if(USE_RPATH)
   set_target_properties(
-  plplot${LIB_TAG}
-  PROPERTIES 
-  SOVERSION ${plplot_SOVERSION}
-  VERSION ${plplot_VERSION}
-  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-  INSTALL_NAME_DIR "${LIB_DIR}"
-  )
+    plplot${LIB_TAG}
+    PROPERTIES 
+    SOVERSION ${plplot_SOVERSION}
+    VERSION ${plplot_VERSION}
+    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+    INSTALL_NAME_DIR "${LIB_DIR}"
+    )
 else(USE_RPATH)
   set_target_properties(
-  plplot${LIB_TAG}
-  PROPERTIES 
-  SOVERSION ${plplot_SOVERSION}
-  VERSION ${plplot_VERSION}
-  INSTALL_NAME_DIR "${LIB_DIR}"
-  )
+    plplot${LIB_TAG}
+    PROPERTIES 
+    SOVERSION ${plplot_SOVERSION}
+    VERSION ${plplot_VERSION}
+    INSTALL_NAME_DIR "${LIB_DIR}"
+    )
 endif(USE_RPATH)
 
 install(TARGETS plplot${LIB_TAG}
-EXPORT export_plplot
-ARCHIVE DESTINATION ${LIB_DIR}
-LIBRARY DESTINATION ${LIB_DIR}
-RUNTIME DESTINATION ${BIN_DIR}
-)
+  EXPORT export_plplot
+  ARCHIVE DESTINATION ${LIB_DIR}
+  LIBRARY DESTINATION ${LIB_DIR}
+  RUNTIME DESTINATION ${BIN_DIR}
+  )
 install(EXPORT export_plplot DESTINATION ${DATA_DIR}/examples/cmake/modules)
 
 #message("libplplot${LIB_TAG}_LINK_FLAGS = ${libplplot${LIB_TAG}_LINK_FLAGS}")
 
 string(REGEX REPLACE ";" " " 
-libplplot${LIB_TAG}_COMPILE_FLAGS
-"${libplplot${LIB_TAG}_COMPILE_FLAGS}"
-)
+  libplplot${LIB_TAG}_COMPILE_FLAGS
+  "${libplplot${LIB_TAG}_COMPILE_FLAGS}"
+  )
 #message("libplplot${LIB_TAG}_COMPILE_FLAGS = ${libplplot${LIB_TAG}_COMPILE_FLAGS}")
 
 # Configure pkg-config *.pc file corresponding to libplplot${LIB_TAG}
@@ -369,13 +369,12 @@ if(PKG_CONFIG_EXECUTABLE)
   set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
   set(PC_COMPILE_FLAGS "${lib${PC_LIBRARY_NAME}_COMPILE_FLAGS}")
   set(PC_CONFIGURED_FILE
-  ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
-  )
+    ${CMAKE_BINARY_DIR}/pkgcfg/plplot${LIB_TAG}${PC_FILE_SUFFIX}.pc
+    )
   configure_file(
-  ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.cmake
-  ${PC_CONFIGURED_FILE}
-  @ONLY
-  )
+    ${CMAKE_SOURCE_DIR}/pkgcfg/plplot-template.pc.cmake
+    ${PC_CONFIGURED_FILE}
+    @ONLY
+    )
   install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
 endif(PKG_CONFIG_EXECUTABLE)
-
