@@ -174,7 +174,7 @@ if(ENABLE_pyqt4)
       "WARNING: could not find sip flags so setting ENABLE_pyqt4 to OFF."
       )
     set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
-  endif(PYQT_SIP_DIR_ERR)
+  endif(PYQT_SIP_FLAGS_ERR)
   # Must change from blank-delimited string to CMake list so that sip
   # COMMAND will work properly with these flags later on.
   string(REGEX REPLACE " " ";"PYQT_SIP_FLAGS "${PYQT_SIP_FLAGS}") 
