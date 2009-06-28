@@ -14,26 +14,86 @@ set(LIB_TAG "@LIB_TAG@")
 set(INCLUDE_DIR @INCLUDE_DIR@)
 set(MATH_LIB @MATH_LIB@)
 
-# What computer languages do we have configured?
-set(ENABLE_ada @ENABLE_ada@)
-set(ENABLE_cxx @ENABLE_cxx@)
-set(ENABLE_d @ENABLE_d@)
-set(ENABLE_f77 @ENABLE_f77@)
-set(ENABLE_f95 @ENABLE_f95@)
-set(ENABLE_java @ENABLE_java@)
-set(ENABLE_lua @ENABLE_lua@)
-set(ENABLE_ocaml @ENABLE_ocaml@)
-set(ENABLE_octave @ENABLE_octave@)
-set(ENABLE_pdl @ENABLE_pdl@)
-set(ENABLE_python @ENABLE_python@)
-set(ENABLE_tcl @ENABLE_tcl@)
-set(ENABLE_tk @ENABLE_tk@)
-set(ENABLE_gnome2 @ENABLE_gnome2@)
-set(ENABLE_wxwidgets @ENABLE_wxwidgets@)
-set(ENABLE_qt @ENABLE_qt@)
+# language_info_LIST contains information about the languages used
+# in the noninteractive tests.
+# First field is language (which must be consistent with following
+# configured set commands).
+# Second field is suffix on plplot-test.sh results for that language.
 
-# Always enable C language.
-enable_language(C)
+set(language_info_LIST
+  ada:a
+  c:c
+  cxx:cxx
+  d:d
+  f77:f
+  f95:f95
+  java:j
+  lua:lua
+  ocaml:ocaml
+  octave:o
+  pdl:pdl
+  python:p
+  tcl:t
+  )
+  
+# This list of set commands must be consistent with the above list which
+# potentially is a maintenance issue.  However, cannot make this list
+# automatically with a foreach loop because explicit configuration of
+# each name is required.
+# N.B. c handled separately below so it is excluded from this list of
+# set commands.  (Also, the core never sets ENABLE_c since C is always
+# on for the core.)
+set(CORE_ENABLE_ada @ENABLE_ada@)
+set(CORE_ENABLE_cxx @ENABLE_cxx@)
+set(CORE_ENABLE_d @ENABLE_d@)
+set(CORE_ENABLE_f77 @ENABLE_f77@)
+set(CORE_ENABLE_f95 @ENABLE_f95@)
+set(CORE_ENABLE_java @ENABLE_java@)
+set(CORE_ENABLE_lua @ENABLE_lua@)
+set(CORE_ENABLE_ocaml @ENABLE_ocaml@)
+set(CORE_ENABLE_octave @ENABLE_octave@)
+set(CORE_ENABLE_pdl @ENABLE_pdl@)
+set(CORE_ENABLE_python @ENABLE_python@)
+set(CORE_ENABLE_tcl @ENABLE_tcl@)
+
+# Interactive bindings
+set(CORE_ENABLE_tk @ENABLE_tk@)
+set(CORE_ENABLE_gnome2 @ENABLE_gnome2@)
+set(CORE_ENABLE_wxwidgets @ENABLE_wxwidgets@)
+set(CORE_ENABLE_qt @ENABLE_qt@)
+
+# What computer languages do we have configured by the core build system?
+option(DEFAULT_NO_BINDINGS
+  "All language bindings are disabled by default"
+  OFF
+  )
+
+if(DEFAULT_NO_BINDINGS)
+  set(PRESET_DEFAULT ON)
+  set(DEFAULT OFF)
+else(DEFAULT_NO_BINDINGS)
+  set(PRESET_DEFAULT OFF)
+endif(DEFAULT_NO_BINDINGS)
+
+# Add interactive bindings to list for option processing
+foreach(language_info tk:? gnome2:? wxwidgets:? qt:? ${language_info_LIST})
+  string(REGEX REPLACE "^(.*):.*$" "\\1" language ${language_info})
+  #message("DEBUG: language = ${language}")
+  if(language STREQUAL "c")
+    # Special case where C is always on by definition since PLplot core
+    # library is written in C.
+    set(ENABLE_c ON)
+  else(language STREQUAL "c")
+    if(NOT PRESET_DEFAULT)
+      set(DEFAULT ${CORE_ENABLE_${language}})
+    endif(NOT PRESET_DEFAULT)
+    option(ENABLE_${language} "Enable ${language} device" ${DEFAULT})
+  endif(language STREQUAL "c")
+endforeach(language_info ${language_info_LIST})
+
+if(ENABLE_c)
+  enable_language(C)
+endif(ENABLE_c)
 
 if(ENABLE_ada)
   enable_language(Ada)
@@ -92,93 +152,131 @@ if(ENABLE_wxwidgets)
   set(wxwidgets_LINK_FLAGS @wxwidgets_LINK_FLAGS@)
 endif(ENABLE_wxwidgets)
 
-# Set interactive/external devices that are needed to build certain examples.
-set(PLD_xcairo @PLD_xcairo@)
-set(PLD_extcairo @PLD_extcairo@)
-
 if(ENABLE_qt)
   set(CORE_QT_VERSION_MAJOR @QT_VERSION_MAJOR@)
   set(CORE_QT_VERSION_MINOR @QT_VERSION_MINOR@)
   set(CORE_QT_VERSION_PATCH @QT_VERSION_PATCH@)
 endif(ENABLE_qt)
 
-# List of all devices that will be used for non_interactive tests.
-# Exclude psc since that already has been used for comparisons above.
-# Exclude some other devices (linuxvga, conex?) in plplot-test.sh where it is
-# unlikely they are interactive.
-set(noninteractive_devices_LIST
-  pdfcairo
-  pngcairo
-  pscairo
-  svgcairo
-  cgm
-  dg300
-  epsqt
-  pdfqt
-  bmpqt
-  jpgqt
-  pngqt
-  ppmqt
-  tiffqt
-  svgqt
-  gif
-  jpeg
-  png
+# List of all devices that will be used for noninteractive device tests.
+# Exclude some devices (linuxvga, conex?) in plplot-test.sh
+# where it is likely they are interactive.
+# The first field is the device, the second field is whether it produces
+# familied output (to help keep track of file dependencies).  That field must
+# be consistent with the shell logic which deploys the -fam option for
+# certain devices in plplot-test.sh.cmake.
+# N.B. That field has nothing to do with whether the device is turned ON
+# or not.
+set(noninteractive_devices_info_LIST
+  pdfcairo:OFF
+  pngcairo:ON
+  pscairo:OFF
+  svgcairo:ON
+  cgm:OFF
+  dg300:OFF
+  epsqt:ON
+  pdfqt:ON
+  bmpqt:ON
+  jpgqt:ON
+  pngqt:ON
+  ppmqt:ON
+  tiffqt:ON
+  svgqt:ON
+  gif:ON
+  jpeg:ON
+  png:ON
 # All hp7xxx devices are semi-broken (Invalid pen selection warnings)
-#  hp7470
-#  hp7580
+#  hp7470:OFF
+#  hp7580:OFF
 # lj_hpgl is severely broken (segfaults).
-#  lj_hpgl
-  imp
-  ljii
-  ljiip
+#  lj_hpgl:OFF
+  imp:OFF
+  ljii:OFF
+  ljiip:OFF
 # pbm is severely broken (glibc double free detected)
-#  pbm
-  pdf
-  ps
-  pstex
-  psttf
-  psttfc
-  svg
-  tek4010f
-  tek4107f
-  wxpng
-  xfig
+#  pbm:OFF
+  pdf:OFF
+# Include ps in list because we want to test monochromatic results, but
+# exclude psc because that already done with noninteractive language tests.
+  ps:OFF
+#  psc:OFF
+  pstex:OFF
+  psttf:OFF
+  psttfc:OFF
+  svg:ON
+  tek4010f:OFF
+  tek4107f:OFF
+  wxpng:OFF
+  xfig:ON
   )
 
-# These are taken from the above list.
-set(PLD_pdfcairo @PLD_pdfcairo@)
-set(PLD_pngcairo @PLD_pngcairo@)
-set(PLD_pscairo @PLD_pscairo@)
-set(PLD_svgcairo @PLD_svgcairo@)
-set(PLD_cgm @PLD_cgm@)
-set(PLD_dg300 @PLD_dg300@)
-set(PLD_epsqt @PLD_epsqt@)
-set(PLD_pdfqt @PLD_pdfqt@)
-set(PLD_bmpqt @PLD_bmpqt@)
-set(PLD_jpgqt @PLD_jpgqt@)
-set(PLD_pngqt @PLD_pngqt@)
-set(PLD_ppmqt @PLD_ppmqt@)
-set(PLD_tiffqt @PLD_tiffqt@)
-set(PLD_svgqt @PLD_svgqt@)
-set(PLD_gif @PLD_gif@)
-set(PLD_jpeg @PLD_jpeg@)
-set(PLD_png @PLD_png@)
-set(PLD_hp7470 @PLD_hp7470@)
-set(PLD_hp7580 @PLD_hp7580@)
-set(PLD_lj_hpgl @PLD_lj_hpgl@)
-set(PLD_imp @PLD_imp@)
-set(PLD_ljii @PLD_ljii@)
-set(PLD_ljiip @PLD_ljiip@)
-set(PLD_pbm @PLD_pbm@)
-set(PLD_pdf @PLD_pdf@)
-set(PLD_ps @PLD_ps@)
-set(PLD_pstex @PLD_pstex@)
-set(PLD_psttf @PLD_psttf@)
-# PLD_psttfc is a special case which must be set to PLD_psttf. 
-set(PLD_psttfc @PLD_psttf@)
-set(PLD_svg @PLD_svg@)
-set(PLD_tek4010f @PLD_tek4010f@)
-set(PLD_tek4107f @PLD_tek4107f@)
-set(PLD_wxpng @PLD_wxpng@)
-set(PLD_xfig @PLD_xfig@)
+# This list of set commands must be consistent with the above list which
+# potentially is a maintenance issue.  However, cannot make this list
+# automatically with a foreach loop because explicit configuration of
+# each name is required.
+set(CORE_PLD_pdfcairo @PLD_pdfcairo@)
+set(CORE_PLD_pngcairo @PLD_pngcairo@)
+set(CORE_PLD_pscairo @PLD_pscairo@)
+set(CORE_PLD_svgcairo @PLD_svgcairo@)
+set(CORE_PLD_cgm @PLD_cgm@)
+set(CORE_PLD_dg300 @PLD_dg300@)
+set(CORE_PLD_epsqt @PLD_epsqt@)
+set(CORE_PLD_pdfqt @PLD_pdfqt@)
+set(CORE_PLD_bmpqt @PLD_bmpqt@)
+set(CORE_PLD_jpgqt @PLD_jpgqt@)
+set(CORE_PLD_pngqt @PLD_pngqt@)
+set(CORE_PLD_ppmqt @PLD_ppmqt@)
+set(CORE_PLD_tiffqt @PLD_tiffqt@)
+set(CORE_PLD_svgqt @PLD_svgqt@)
+set(CORE_PLD_gif @PLD_gif@)
+set(CORE_PLD_jpeg @PLD_jpeg@)
+set(CORE_PLD_png @PLD_png@)
+set(CORE_PLD_hp7470 @PLD_hp7470@)
+set(CORE_PLD_hp7580 @PLD_hp7580@)
+set(CORE_PLD_lj_hpgl @PLD_lj_hpgl@)
+set(CORE_PLD_imp @PLD_imp@)
+set(CORE_PLD_ljii @PLD_ljii@)
+set(CORE_PLD_ljiip @PLD_ljiip@)
+set(CORE_PLD_pbm @PLD_pbm@)
+set(CORE_PLD_pdf @PLD_pdf@)
+set(CORE_PLD_ps @PLD_ps@)
+set(CORE_PLD_pstex @PLD_pstex@)
+set(CORE_PLD_psttf @PLD_psttf@)
+set(CORE_PLD_svg @PLD_svg@)
+set(CORE_PLD_tek4010f @PLD_tek4010f@)
+set(CORE_PLD_tek4107f @PLD_tek4107f@)
+set(CORE_PLD_wxpng @PLD_wxpng@)
+set(CORE_PLD_xfig @PLD_xfig@)
+
+# Special case where core configures both ps and psc with PLD_ps.
+set(CORE_PLD_psc @PLD_ps@)
+# Special case where core configures both psttf and psttfc with PLD_psttf.
+set(CORE_PLD_psttfc @PLD_psttf@)
+
+# Set interactive/external devices that are needed to build certain examples.
+set(CORE_PLD_xcairo @PLD_xcairo@)
+set(CORE_PLD_extcairo @PLD_extcairo@)
+
+option(DEFAULT_NO_DEVICES
+  "Disable all (ON) or enable individually (OFF) devices by default"
+  OFF
+  )
+
+if(DEFAULT_NO_DEVICES)
+  set(PRESET_DEFAULT ON)
+  set(DEFAULT OFF)
+else(DEFAULT_NO_DEVICES)
+  set(PRESET_DEFAULT OFF)
+endif(DEFAULT_NO_DEVICES)
+
+# Generate psc, xcairo, and extcairo options in addition to everything on
+# noninteractive_devices_info_LIST
+
+foreach(noninteractive_devices_info psc:? xcairo:? extcairo:? ${noninteractive_devices_info_LIST})
+  string(REGEX REPLACE "^(.*):.*$" "\\1" DEVICE ${noninteractive_devices_info})
+  #message("DEBUG: DEVICE = ${DEVICE}")
+  if(NOT PRESET_DEFAULT)
+    set(DEFAULT ${CORE_PLD_${DEVICE}})
+  endif(NOT PRESET_DEFAULT)
+  option(PLD_${DEVICE} "Enable ${DEVICE} device" ${DEFAULT})
+endforeach(noninteractive_devices_info psc:OFF xcairo:OFF extcairo:OFF ${noninteractive_devices_info_LIST})
