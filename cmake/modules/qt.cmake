@@ -105,13 +105,21 @@ if(ENABLE_qt AND NOT PLD_extqt)
   set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
 endif(ENABLE_qt AND NOT PLD_extqt)
 
-if(ENABLE_pyqt4 AND NOT ENABLE_python AND NOT ENABLE_qt)
+if(ENABLE_pyqt4 AND NOT ENABLE_python)
   message(STATUS
-    "WARNING: ENABLE_python OR ENABLE_qt is OFF so "
+    "WARNING: ENABLE_python is OFF so "
     "setting ENABLE_pyqt4 to OFF."
     )
   set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
-endif(ENABLE_pyqt4 AND NOT ENABLE_python AND NOT ENABLE_qt)
+endif(ENABLE_pyqt4 AND NOT ENABLE_python)
+
+if(ENABLE_pyqt4 AND NOT ENABLE_qt)
+  message(STATUS
+    "WARNING: ENABLE_qt is OFF so "
+    "setting ENABLE_pyqt4 to OFF."
+    )
+  set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
+endif(ENABLE_pyqt4 AND NOT ENABLE_qt)
 
 if(ENABLE_qt)
   set(qt_gui_true "")
