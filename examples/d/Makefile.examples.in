@@ -27,19 +27,29 @@ EXEEXT = @EXEEXT@
 @pkg_config_true@RPATHCMD = @RPATHCMD@
 
 EXECUTABLES_list = \
+		 x01d$(EXEEXT) \
+		 x02d$(EXEEXT) \
 		 x03d$(EXEEXT) \
 		 x04d$(EXEEXT) \
 		 x05d$(EXEEXT) \
 		 x06d$(EXEEXT) \
 		 x07d$(EXEEXT) \
 		 x08d$(EXEEXT) \
+		 x09d$(EXEEXT) \
 		 x10d$(EXEEXT) \
 		 x11d$(EXEEXT) \
 		 x12d$(EXEEXT) \
 		 x13d$(EXEEXT) \
+		 x14d$(EXEEXT) \
+		 x15d$(EXEEXT) \
+		 x16d$(EXEEXT) \
+		 x17d$(EXEEXT) \
+		 x18d$(EXEEXT) \
+		 x19d$(EXEEXT) \
 		 x23d$(EXEEXT) \
 		 x24d$(EXEEXT) \
 		 x25d$(EXEEXT) \
+		 x26d$(EXEEXT) \
 		 x27d$(EXEEXT) \
 		 x29d$(EXEEXT) \
 		 x30d$(EXEEXT)
