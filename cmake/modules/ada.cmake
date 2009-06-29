@@ -26,6 +26,22 @@ else(DEFAULT_NO_BINDINGS)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_ada)
+  # Find and check Ada compiler
+  enable_language(Ada OPTIONAL)
+  if(NOT CMAKE_Ada_COMPILER_WORKS)
+    message(STATUS "WARNING: no working Ada compiler so disabling Ada bindings and examples.")
+    set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
+  endif(NOT CMAKE_Ada_COMPILER_WORKS)
+endif(ENABLE_ada)
+
+if(ENABLE_ada)
+  if(NOT CMAKE_Ada_COMPILER)
+    message(STATUS "WARNING: Ada compiler not found so disabling Ada bindings and examples.")
+    set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
+  endif(NOT CMAKE_Ada_COMPILER)
+endif(ENABLE_ada)
+
+if(ENABLE_ada)
   find_library(GNAT_LIB NAMES gnat gnat-4.1 gnat-4.2 gnat-4.3 gnat-4.4)
   if(NOT GNAT_LIB)
     message(STATUS "WARNING: "
@@ -34,10 +50,6 @@ if(ENABLE_ada)
   else(NOT GNAT_LIB)
     message(STATUS "FOUND gnat library ${GNAT_LIB}")
   endif(NOT GNAT_LIB)
-endif(ENABLE_ada)
-
-if(ENABLE_ada)
-  enable_language(Ada)
 endif(ENABLE_ada)
 
 

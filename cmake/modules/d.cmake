@@ -29,17 +29,18 @@ else(DEFAULT_NO_BINDINGS)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_d)
-  # Check for gdc or dmd compiler
-  include(CMakeDetermineDCompiler)
+  # Find and check D compiler
+  enable_language(D OPTIONAL)
+  if(NOT CMAKE_D_COMPILER_WORKS)
+    message(STATUS "WARNING: no working D compiler so disabling D bindings and examples.")
+    set(ENABLE_d OFF CACHE BOOL "Enable D bindings" FORCE)
+  endif(NOT CMAKE_D_COMPILER_WORKS)
+endif(ENABLE_d)
+
+if(ENABLE_d)
   if(NOT CMAKE_D_COMPILER)
-    message(STATUS "WARNING: "
-    "D compiler not found. Disabling D bindings"
-    )
+    message(STATUS "WARNING: D compiler not found so disabling D bindings and examples.")
     set(ENABLE_d OFF CACHE BOOL "Enable D bindings" FORCE)
   endif(NOT CMAKE_D_COMPILER)
 endif(ENABLE_d)
 
-if(ENABLE_d)
-  # Enable D language
-  enable_language(D)
-endif(ENABLE_d)

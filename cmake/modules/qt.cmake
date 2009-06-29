@@ -55,6 +55,25 @@ if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt O
 endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
 
 if(ANY_QT_DEVICE)
+  if(NOT CMAKE_CXX_COMPILER_WORKS)
+    message(STATUS "WARNING: no working C++ compiler so "
+      "disabling all qt devices."
+      )
+    set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
+    set(PLD_jpgqt OFF CACHE BOOL "Enable Qt jpg device" FORCE)
+    set(PLD_pngqt OFF CACHE BOOL "Enable Qt png device" FORCE)
+    set(PLD_ppmqt OFF CACHE BOOL "Enable Qt ppm device" FORCE)
+    set(PLD_tiffqt OFF CACHE BOOL "Enable Qt tiff device" FORCE)
+    set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)
+    set(PLD_pdfqt OFF CACHE BOOL "Enable Qt PDF device" FORCE)
+    set(PLD_qtwidget OFF CACHE BOOL "Enable Qt interactive device" FORCE)
+    set(PLD_svgqt OFF CACHE BOOL "Enable Qt SVG device" FORCE)
+    set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
+    set(ANY_QT_DEVICE OFF)
+  endif(NOT CMAKE_CXX_COMPILER_WORKS)
+endif(ANY_QT_DEVICE)
+
+if(ANY_QT_DEVICE)
   find_package(Qt4)
   if(QT4_FOUND)
     if(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)

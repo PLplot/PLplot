@@ -29,12 +29,23 @@
 # 			    when ENABLE_DYNDRIVERS OFF.
 
 # Find wxWidgets needed for driver and bindings
+
+if(PLD_wxwidgets OR PLD_wxpng)
+  if(NOT CMAKE_CXX_COMPILER_WORKS)
+    message(STATUS "WARNING: no working C++ compiler so "
+      "setting all wxwidgets devices to OFF."
+      )
+    set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
+    set(PLD_wxpng OFF CACHE BOOL "Enable wxwidgets png device" FORCE)
+  endif(NOT CMAKE_CXX_COMPILER_WORKS)
+endif(PLD_wxwidgets OR PLD_wxpng)
+
 if(PLD_wxwidgets OR PLD_wxpng)
   find_package(wxWidgets COMPONENTS base core QUIET)
   if(NOT wxWidgets_FOUND)
     message(STATUS
       "WARNING: wxWidgets not found so "
-      "setting PLD_wxwidgets to OFF."
+      "setting all wxwidgets devices to OFF."
       )
     set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
     set(PLD_wxpng OFF CACHE BOOL "Enable wxwidgets png device" FORCE)
@@ -43,6 +54,7 @@ if(PLD_wxwidgets OR PLD_wxpng)
     include(TestForStdintCXX)
   endif(NOT wxWidgets_FOUND)  
 endif(PLD_wxwidgets OR PLD_wxpng)
+
 if(PLD_wxwidgets OR PLD_wxpng)
   string(REGEX REPLACE ";" " -I" 
     wxwidgets_COMPILE_FLAGS
@@ -88,6 +100,7 @@ if(PLD_wxwidgets OR PLD_wxpng)
     ${wxwidgets_LINK_FLAGS}
     )
 endif(PLD_wxwidgets OR PLD_wxpng)
+
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_wxwidgets "Enable wxwidgets bindings" OFF)
 else(DEFAULT_NO_BINDINGS)

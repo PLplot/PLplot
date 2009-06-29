@@ -30,7 +30,24 @@ endif(DEFAULT_NO_BINDINGS)
 
 # Always carry out C++ checks, since some drivers also use these as
 # well as the C++ bindings
-# IF (ENABLE_cxx)
+
+# Find and check C++ compiler.
+enable_language(CXX OPTIONAL)
+
+if(NOT CMAKE_CXX_COMPILER_WORKS)
+  # This is fatal error message rather than a warning because C++ absolutely
+  # required for check_prototype_exists test (and perhaps other preliminary
+  # tests as well).
+  message(FATAL_ERROR "No working C++ compiler found so PLplot cannot be built.")
+  set(ENABLE_cxx OFF CACHE BOOL "Enable C++ bindings" FORCE)
+endif(NOT CMAKE_CXX_COMPILER_WORKS)
+
+if(ENABLE_cxx)
+  if(NOT CMAKE_CXX_COMPILER)
+    message(STATUS "WARNING: C++ compiler not found so disabling C++ bindings and examples.")
+    set(ENABLE_cxx OFF CACHE BOOL "Enable C++ bindings" FORCE)
+  endif(NOT CMAKE_CXX_COMPILER)
+endif(ENABLE_cxx)
 
 # Check if "using namespace std;" works
 INCLUDE(TestForNamespace)
@@ -47,5 +64,3 @@ endif(NOT MSVC)
 
 # Need to add check if stdint.h can be used from c++ (HAVE_CXX_STDINT_H)
 INCLUDE(TestForStdintCXX)
-
-# ENDIF(ENABLE_cxx)

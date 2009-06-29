@@ -30,7 +30,12 @@ CMAKE_USER_MAKE_RULES_OVERRIDE
 ${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
 )
 
-project(plplot)
+# It is a fatal error if no working C compiler is available to build
+# the PLplot core C library and core C examples.  All other compilers
+# required by our bindings are optional in that if no working compiler
+# of the kind needed is available, the associated bindings and
+# examples are disabled.  
+project(plplot C)
 
 # For use under MSYS version 2.6.3 or above of cmake is required!
 # The variable MSYS is first known at this point in the build process

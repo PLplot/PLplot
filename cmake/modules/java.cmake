@@ -41,23 +41,30 @@ if(ENABLE_java AND NOT SWIG_FOUND)
 endif(ENABLE_java AND NOT SWIG_FOUND)
 
 if(ENABLE_java)
-  # Check for java compiler
-  include(CMakeDetermineJavaCompiler)
+  # Find and check Java compiler.
+  enable_language(Java OPTIONAL)
+  if(NOT CMAKE_Java_COMPILER_WORKS)
+    message(STATUS "WARNING: no working Java compiler so disabling Java bindings and examples.")
+    set(ENABLE_java OFF CACHE BOOL "Enable java bindings" FORCE)
+  endif(NOT CMAKE_Java_COMPILER_WORKS)
+endif(ENABLE_java)
+
+if(ENABLE_java)
   if(NOT CMAKE_Java_COMPILER)
-    message(STATUS "WARNING: "
-      "java compiler not found. Disabling java bindings")
+    message(STATUS "WARNING: Java compiler not found so disabling Java bindings and examples.")
     set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
   endif(NOT CMAKE_Java_COMPILER)
+endif(ENABLE_java)
+
+if(ENABLE_java)
   if(NOT CMAKE_Java_ARCHIVE)
-    message(STATUS "WARNING: "
-      "java archiver (jar) not found. Disabling java bindings")
+    message(STATUS "WARNING: java archiver (jar) not found. Disabling java bindings")
     set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
   endif(NOT CMAKE_Java_ARCHIVE)
 endif(ENABLE_java)
 
 if(ENABLE_java)
   # Check for java environment
-  enable_language(Java)
   find_package(JNI)
   # If CMake doesn't find jni.h you need set CMAKE_INCLUDE_PATH
   if(NOT JAVA_INCLUDE_PATH)
