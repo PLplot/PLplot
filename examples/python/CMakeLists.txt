@@ -74,6 +74,31 @@ set(
   test_circle.py
   )
 
+if(ENABLE_tk)
+  set(python_SCRIPTS ${python_SCRIPTS}
+    pytkdemo
+    x01.py
+    x02.py
+    x03.py
+    x04.py
+    x05.py
+    x06.py
+    x07.py
+    x08.py
+    x09.py
+    x10.py
+    x11.py
+    x12.py
+    x13.py
+    x14.py
+    x15.py
+    x16.py
+    x17.py
+    x18.py
+    x19.py
+    )
+endif(ENABLE_tk)
+
 if(ENABLE_pyqt4)
   set(
     python_SCRIPTS
