@@ -78,28 +78,63 @@ endif(DEFAULT_NO_BINDINGS)
 foreach(language_info tk:? gnome2:? wxwidgets:? qt:? ${language_info_LIST})
   string(REGEX REPLACE "^(.*):.*$" "\\1" language ${language_info})
   #message("DEBUG: language = ${language}")
-  if(CORE_ENABLE_${language})
-    if(NOT PRESET_DEFAULT)
-      set(DEFAULT ${CORE_ENABLE_${language}})
-    endif(NOT PRESET_DEFAULT)
-    option(ENABLE_${language} "Enable ${language} bindings" ${DEFAULT})
-  else(CORE_ENABLE_${language})
-    set(ENABLE_${language} OFF CACHE BOOL "Enable ${language} bindings" FORCE)
-  endif(CORE_ENABLE_${language})
+  if(language STREQUAL "c")
+    #special case where the build system requires C.
+    set(ENABLE_${language} ON CACHE BOOL "Enable ${language} bindings" FORCE)
+  else(language STREQUAL "c")
+    if(CORE_ENABLE_${language})
+      if(NOT PRESET_DEFAULT)
+	set(DEFAULT ${CORE_ENABLE_${language}})
+      endif(NOT PRESET_DEFAULT)
+      option(ENABLE_${language} "Enable ${language} bindings" ${DEFAULT})
+    else(CORE_ENABLE_${language})
+      set(ENABLE_${language} OFF CACHE BOOL "Enable ${language} bindings" FORCE)
+    endif(CORE_ENABLE_${language})
+  endif(language STREQUAL "c")
 endforeach(language_info ${language_info_LIST})
 
-if(ENABLE_c)
+# Always carry out C checks because build system requires a C compiler
+# for some of the automatic checking that is done.
+set(alwaysc ON)
+
+# OPTIONAL below currently does not work properly with CMake so attempt
+# to deal with a possibly missing compiler first as a workaround.
+if(alwaysc OR ENABLE_c)
+  include(CMakeDetermineCCompiler)
+  if(NOT CMAKE_C_COMPILER)
+    # This is a FATAL_ERROR rather than STATUS message because C compiler
+    # absolutely required for some of the automatic checking that is done.
+    message(FATAL_ERROR "C compiler absolutely required to build this project.")
+    message(STATUS "WARNING: C compiler not found so disabling C examples.")
+    set(ENABLE_c OFF CACHE BOOL "Enable c bindings" FORCE)
+  endif(NOT CMAKE_C_COMPILER)
+endif(alwaysc OR ENABLE_c)
+
+if(alwaysc OR ENABLE_c)
   enable_language(C OPTIONAL)
   if(NOT CMAKE_C_COMPILER_WORKS)
-    message(STATUS: "WARNING: C compiler does not work so disabling C examples.")
+    # This is a FATAL_ERROR rather than STATUS message because C compiler
+    # absolutely required for some of the automatic checking that is done.
+    message(FATAL_ERROR "C compiler absolutely required to build this project.")
+    message(STATUS "WARNING: C compiler does not work so disabling C examples.")
     set(ENABLE_c OFF CACHE BOOL "Enable c bindings" FORCE)
   endif(NOT CMAKE_C_COMPILER_WORKS)
-endif(ENABLE_c)
+endif(alwaysc OR ENABLE_c)
+
+# OPTIONAL below currently does not work properly with CMake so attempt
+# to deal with a possibly missing compiler first as a workaround.
+if(ENABLE_ada)
+  include(CMakeDetermineAdaCompiler)
+  if(NOT CMAKE_Ada_COMPILER)
+    message(STATUS "WARNING: Ada compiler not found so disabling Ada examples.")
+    set(ENABLE_ada OFF CACHE BOOL "Enable ada bindings" FORCE)
+  endif(NOT CMAKE_Ada_COMPILER)
+endif(ENABLE_ada)
 
 if(ENABLE_ada)
   enable_language(Ada OPTIONAL)
   if(NOT CMAKE_Ada_COMPILER_WORKS)
-    message(STATUS: "WARNING: Ada compiler does not work so disabling Ada examples.")
+    message(STATUS "WARNING: Ada compiler does not work so disabling Ada examples.")
     set(ENABLE_ada OFF CACHE BOOL "Enable ada bindings" FORCE)
   endif(NOT CMAKE_Ada_COMPILER_WORKS)
 endif(ENABLE_ada)
@@ -109,43 +144,84 @@ if(ENABLE_ada)
   set(ADA_LIB_DIR @ADA_LIB_DIR@)
 endif(ENABLE_ada)
 
+# OPTIONAL below currently does not work properly with CMake so attempt
+# to deal with a possibly missing compiler first as a workaround.
+if(ENABLE_cxx)
+  include(CMakeDetermineCXXCompiler)
+  if(NOT CMAKE_CXX_COMPILER)
+    message(STATUS "WARNING: C++ compiler not found so disabling C++ examples.")
+    set(ENABLE_cxx OFF CACHE BOOL "Enable cxx bindings" FORCE)
+  endif(NOT CMAKE_CXX_COMPILER)
+endif(ENABLE_cxx)
+
 if(ENABLE_cxx)
   enable_language(CXX OPTIONAL)
   if(NOT CMAKE_CXX_COMPILER_WORKS)
-    message(STATUS: "WARNING: C++ compiler does not work so disabling C++ examples.")
+    message(STATUS "WARNING: C++ compiler does not work so disabling C++ examples.")
     set(ENABLE_cxx OFF CACHE BOOL "Enable cxx bindings" FORCE)
   endif(NOT CMAKE_CXX_COMPILER_WORKS)
 endif(ENABLE_cxx)
 
+# OPTIONAL below currently does not work properly with CMake so attempt
+# to deal with a possibly missing compiler first as a workaround.
+if(ENABLE_d)
+  include(CMakeDetermineDCompiler)
+  if(NOT CMAKE_D_COMPILER)
+    message(STATUS "WARNING: D compiler not found so disabling D examples.")
+    set(ENABLE_d OFF CACHE BOOL "Enable d bindings" FORCE)
+  endif(NOT CMAKE_D_COMPILER)
+endif(ENABLE_d)
+
 if(ENABLE_d)
   enable_language(D OPTIONAL)
   if(NOT CMAKE_D_COMPILER_WORKS)
-    message(STATUS: "WARNING: D compiler does not work so disabling D examples.")
+    message(STATUS "WARNING: D compiler does not work so disabling D examples.")
     set(ENABLE_d OFF CACHE BOOL "Enable d bindings" FORCE)
   endif(NOT CMAKE_D_COMPILER_WORKS)
 endif(ENABLE_d)
 
+# OPTIONAL below currently does not work properly with CMake so attempt
+# to deal with a possibly missing compiler first as a workaround.
 if(ENABLE_f77 OR ENABLE_f95)
-  set(STATIC_OPTS @STATIC_OPTS@)
+  include(CMakeDetermineFortranCompiler)
+  if(NOT CMAKE_Fortran_COMPILER)
+    message(STATUS "WARNING: Fortran compiler not found so disabling Fortran examples.")
+    set(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
+    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
+  endif(NOT CMAKE_Fortran_COMPILER)
 endif(ENABLE_f77 OR ENABLE_f95)
 
 if(ENABLE_f77 OR ENABLE_f95)
   enable_language(Fortran OPTIONAL)
   if(NOT CMAKE_Fortran_COMPILER_WORKS)
-    message(STATUS: "WARNING: Fortran compiler does not work so disabling Fortran examples.")
+    message(STATUS "WARNING: Fortran compiler does not work so disabling Fortran examples.")
     set(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
     set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
   endif(NOT CMAKE_Fortran_COMPILER_WORKS)
+endif(ENABLE_f77 OR ENABLE_f95)
+
+if(ENABLE_f77 OR ENABLE_f95)
+  set(STATIC_OPTS @STATIC_OPTS@)
 endif(ENABLE_f77 OR ENABLE_f95)
 
 if(ENABLE_f95)
   set(F95_MOD_DIR @F95_MOD_DIR@)
 endif(ENABLE_f95)
 
+# OPTIONAL below currently does not work properly with CMake so attempt
+# to deal with a possibly missing compiler first as a workaround.
+if(ENABLE_java)
+  include(CMakeDetermineJavaCompiler)
+  if(NOT CMAKE_Java_COMPILER)
+    message(STATUS "WARNING: Java compiler not found so disabling Java examples.")
+    set(ENABLE_java OFF CACHE BOOL "Enable java bindings" FORCE)
+  endif(NOT CMAKE_Java_COMPILER)
+endif(ENABLE_java)
+
 if(ENABLE_java)
   enable_language(Java OPTIONAL)
   if(NOT CMAKE_Java_COMPILER_WORKS)
-    message(STATUS: "WARNING: Java compiler does not work so disabling Java examples.")
+    message(STATUS "WARNING: Java compiler does not work so disabling Java examples.")
     set(ENABLE_java OFF CACHE BOOL "Enable java bindings" FORCE)
   endif(NOT CMAKE_Java_COMPILER_WORKS)
 endif(ENABLE_java)

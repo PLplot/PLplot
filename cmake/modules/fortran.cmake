@@ -30,6 +30,17 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_f95 "Enable f95 bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
+# OPTIONAL below currently does not work properly with CMake so attempt
+# to deal with a possibly missing compiler first as a workaround.
+if(ENABLE_f77 OR ENABLE_f95)
+  include(CMakeDetermineFortranCompiler)
+  if(NOT CMAKE_Fortran_COMPILER)
+    message(STATUS "WARNING: Fortran compiler not found so disabling Fortran bindings and examples.")
+    set(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
+    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
+  endif(NOT CMAKE_Fortran_COMPILER)
+endif(ENABLE_f77 OR ENABLE_f95)
+
 if(ENABLE_f77 OR ENABLE_f95)
   # Find and check Fortran compiler.
   enable_language(Fortran OPTIONAL)
@@ -38,14 +49,6 @@ if(ENABLE_f77 OR ENABLE_f95)
     set(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
     set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
   endif(NOT CMAKE_Fortran_COMPILER_WORKS)
-endif(ENABLE_f77 OR ENABLE_f95)
-
-if(ENABLE_f77 OR ENABLE_f95)
-  if(NOT CMAKE_Fortran_COMPILER)
-    message(STATUS "WARNING: Fortran compiler not found so disabling Fortran bindings and examples.")
-    set(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
-    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
-  endif(NOT CMAKE_Fortran_COMPILER)
 endif(ENABLE_f77 OR ENABLE_f95)
 
 if(ENABLE_f77 OR ENABLE_f95)
