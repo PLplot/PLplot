@@ -8,7 +8,9 @@
 #include "plplot.h"
 #include "plplotP.h"
 
+#ifdef ENABLE_tk
 #include <tcl.h>
+#endif
 
 #define TRY(E) if(! (E)) return NULL
 
