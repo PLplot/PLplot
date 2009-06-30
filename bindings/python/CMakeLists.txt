@@ -20,114 +20,139 @@
 
 if(ENABLE_python)
 
-# Configure the python scripts to use the correct version of the Numeric library
-if (HAVE_NUMPY)
-  configure_file(plplot.py.numpy ${CMAKE_CURRENT_BINARY_DIR}/plplot.py COPYONLY)
-else (HAVE_NUMPY)
-  configure_file(plplot.py.Numeric ${CMAKE_CURRENT_BINARY_DIR}/plplot.py COPYONLY)
-endif (HAVE_NUMPY)
+  # Configure the python scripts to use the correct version of the Numeric library
+  if (HAVE_NUMPY)
+    configure_file(plplot.py.numpy ${CMAKE_CURRENT_BINARY_DIR}/plplot.py COPYONLY)
+  else (HAVE_NUMPY)
+    configure_file(plplot.py.Numeric ${CMAKE_CURRENT_BINARY_DIR}/plplot.py COPYONLY)
+  endif (HAVE_NUMPY)
 
 
-# This is currently the include list for swig, the C wrapper and the
-# the Python headers. Not particular pretty...
-set(python_interface_INCLUDE_PATHS
-${CMAKE_SOURCE_DIR}/include
-${CMAKE_SOURCE_DIR}/lib/qsastime
-${CMAKE_SOURCE_DIR}/bindings/tcl
-${CMAKE_SOURCE_DIR}/bindings/tk
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/include
-${CMAKE_CURRENT_BINARY_DIR}
-${TCL_INCLUDE_PATH}
-${PYTHON_INCLUDE_PATH}
-${CMAKE_SOURCE_DIR}/bindings/swig-support
-)
-include_directories(${python_interface_INCLUDE_PATHS})
+  # This is currently the include list for swig, the C wrapper and the
+  # the Python headers. Not particular pretty...
+  if(ENABLE_tk)
+    set(python_interface_INCLUDE_PATHS
+      ${CMAKE_SOURCE_DIR}/include
+      ${CMAKE_SOURCE_DIR}/lib/qsastime
+      ${CMAKE_SOURCE_DIR}/bindings/tcl
+      ${CMAKE_SOURCE_DIR}/bindings/tk
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}/include
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${TCL_INCLUDE_PATH}
+      ${PYTHON_INCLUDE_PATH}
+      ${CMAKE_SOURCE_DIR}/bindings/swig-support
+      )
+  else(ENABLE_tk)
+    set(python_interface_INCLUDE_PATHS
+      ${CMAKE_SOURCE_DIR}/include
+      ${CMAKE_SOURCE_DIR}/lib/qsastime
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}/include
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${PYTHON_INCLUDE_PATH}
+      ${CMAKE_SOURCE_DIR}/bindings/swig-support
+      )
+  endif(ENABLE_tk)
+  include_directories(${python_interface_INCLUDE_PATHS})
 
-if(PL_DOUBLE)
-  set(CMAKE_SWIG_FLAGS -DPL_DOUBLE_INTERFACE -DSWIG_PYTHON)
-else(PL_DOUBLE)
-  set(CMAKE_SWIG_FLAGS -DSWIG_PYTHON)
-endif(PL_DOUBLE)
+  if(PL_DOUBLE)
+    set(CMAKE_SWIG_FLAGS -DPL_DOUBLE_INTERFACE -DSWIG_PYTHON)
+  else(PL_DOUBLE)
+    set(CMAKE_SWIG_FLAGS -DSWIG_PYTHON)
+  endif(PL_DOUBLE)
 
-set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
+  set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
-set(SWIG_MODULE_plplotcmodule_EXTRA_DEPS
-${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
+  set(SWIG_MODULE_plplotcmodule_EXTRA_DEPS
+    ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
 
-set_source_files_properties(plplotcmodule.i 
-PROPERTIES SWIG_MODULE_NAME plplotc
-)
-
-# Set up swig + c wrapper.
-# N.B. the python target has an underscore prepended automatically.
-swig_add_module(plplotcmodule python plplotcmodule.i)
-
-swig_link_libraries(plplotcmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
-# FIXME: Previously I found this should be retwritten as:
-#swig_link_libraries(plplotcmodule plplot${LIB_TAG})
-# Investigate before changing.
-
-if(USE_RPATH)
-  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-  set_target_properties(
-  _plplotcmodule
-  PROPERTIES
-  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-  )
-endif(USE_RPATH)
-
-add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
-set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
-set_source_files_properties( 
-  plplot_widgetmodule.c 
-  PROPERTIES COMPILE_FLAGS
-  "-DUSINGDLL"
-)
-
-# FIXME: It remains unclear why PYTHON_LIBRARIES is in this list.  This
-# might be system dependent.  Doesn't seem to be needed for Linux.  Is it
-# really needed for other platforms?  Further investigation required.
-target_link_libraries( plplot_widgetmodule
-    plplot${LIB_TAG}
-    plplottcltk${LIB_TAG}
-    ${PYTHON_LIBRARIES}
+  set_source_files_properties(plplotcmodule.i 
+    PROPERTIES SWIG_MODULE_NAME plplotc
     )
 
-if(USE_RPATH)
-  set_target_properties(
-  plplot_widgetmodule
-  PROPERTIES
-  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-  INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
-  )
-else(USE_RPATH)
-  set_target_properties(
-  plplot_widgetmodule
-  PROPERTIES
-  INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
-  )
-endif(USE_RPATH)
+  # Set up swig + c wrapper.
+  # N.B. the python target has an underscore prepended automatically.
+  swig_add_module(plplotcmodule python plplotcmodule.i)
 
-install(
-TARGETS plplot_widgetmodule _plplotcmodule 
-LIBRARY 
-DESTINATION ${PYTHON_INSTDIR}
-)
+  swig_link_libraries(plplotcmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
+  # FIXME: Previously I found this should be retwritten as:
+  #swig_link_libraries(plplotcmodule plplot${LIB_TAG})
+  # Investigate before changing.
 
-set(PERM_SCRIPTS
-OWNER_READ
-OWNER_WRITE
-OWNER_EXECUTE
-GROUP_READ
-GROUP_EXECUTE
-WORLD_READ
-WORLD_EXECUTE
-)
-install(
-FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
-Plframe.py TclSup.py
-DESTINATION ${PYTHON_INSTDIR}
-)
+  if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    set_target_properties(
+      _plplotcmodule
+      PROPERTIES
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      )
+  endif(USE_RPATH)
+
+  add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
+  set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
+  set_source_files_properties( 
+    plplot_widgetmodule.c 
+    PROPERTIES COMPILE_FLAGS
+    "-DUSINGDLL"
+    )
+
+  # FIXME: It remains unclear why PYTHON_LIBRARIES is in this list.  This
+  # might be system dependent.  Doesn't seem to be needed for Linux.  Is it
+  # really needed for other platforms?  Further investigation required.
+  if(ENABLE_tk)
+    target_link_libraries( plplot_widgetmodule
+      plplot${LIB_TAG}
+      plplottcltk${LIB_TAG}
+      ${PYTHON_LIBRARIES}
+      )
+  else(ENABLE_tk)
+    target_link_libraries( plplot_widgetmodule
+      plplot${LIB_TAG}
+      ${PYTHON_LIBRARIES}
+      )
+  endif(ENABLE_tk)
+
+  if(USE_RPATH)
+    set_target_properties(
+      plplot_widgetmodule
+      PROPERTIES
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
+      )
+  else(USE_RPATH)
+    set_target_properties(
+      plplot_widgetmodule
+      PROPERTIES
+      INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
+      )
+  endif(USE_RPATH)
+
+  install(
+    TARGETS plplot_widgetmodule _plplotcmodule 
+    LIBRARY 
+    DESTINATION ${PYTHON_INSTDIR}
+    )
+
+  set(PERM_SCRIPTS
+    OWNER_READ
+    OWNER_WRITE
+    OWNER_EXECUTE
+    GROUP_READ
+    GROUP_EXECUTE
+    WORLD_READ
+    WORLD_EXECUTE
+    )
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
+    DESTINATION ${PYTHON_INSTDIR}
+    )
+  if(ENABLE_tk)
+    install(
+      FILES
+      Plframe.py TclSup.py
+      DESTINATION ${PYTHON_INSTDIR}
+      )
+  endif(ENABLE_tk)
 
 endif(ENABLE_python)
