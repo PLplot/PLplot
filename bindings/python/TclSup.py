@@ -1,6 +1,7 @@
 # Tcl Support module.  For coping with Tcl-esque things in Python.
 
-from regsub import *
+#from regsub import *
+import re;
 
 def TclList2Py(s):
     r = []
@@ -26,6 +27,6 @@ def TclList2Py(s):
 
     else:
 	# List elements delimited by spaces
-	r = split( s, ' ')
+	r = re.split( s, ' ')
 
     return r
