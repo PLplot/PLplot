@@ -16,8 +16,8 @@ if module_dir[0] == '@':
 
 sys.path.insert (0, module_dir)
 
-from Numeric import *
-from pl import *
+from numpy import *
+from plplot import *
 
 # main
 #
@@ -104,6 +104,7 @@ def plot1(w):
 
 	global x, y, xscale, yscale, xoff, yoff, xs, ys
 
+        w.plbop()
 ##	x = []
 ##	y = []
 ##	for i in range(60):
@@ -159,6 +160,7 @@ def plot2(w):
 
 	global x, y, xscale, yscale, xoff, yoff, xs, ys
 
+        w.plbop()
 	# Set up the viewport and window using pl.env. The range in X
 	# is -2.0 to 10.0, and the range in Y is -0.4 to 2.0. The axes
 	# are scaled separately (just = 0), and we draw a box with

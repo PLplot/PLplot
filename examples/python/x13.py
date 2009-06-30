@@ -5,7 +5,6 @@
 #	Pie chart demo.
 
 import math
-#import pl
 import sys
 import os
 

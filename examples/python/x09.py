@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import math
-from Numeric import *
+from numpy import *
 from pl import *
 import sys
 import os

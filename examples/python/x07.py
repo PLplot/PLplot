@@ -4,7 +4,7 @@
 #
 #	Font demo.
 
-import pl
+#import pl
 import sys
 import os
 

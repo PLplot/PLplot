@@ -4,7 +4,6 @@
 #
 #	Window positioning demo.
 
-import pl
 import sys
 import os
 
