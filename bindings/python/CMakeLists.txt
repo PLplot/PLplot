@@ -33,9 +33,12 @@ endif (HAVE_NUMPY)
 set(python_interface_INCLUDE_PATHS
 ${CMAKE_SOURCE_DIR}/include
 ${CMAKE_SOURCE_DIR}/lib/qsastime
+${CMAKE_SOURCE_DIR}/bindings/tcl
+${CMAKE_SOURCE_DIR}/bindings/tk
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/include
 ${CMAKE_CURRENT_BINARY_DIR}
+${TCL_INCLUDE_PATH}
 ${PYTHON_INCLUDE_PATH}
 ${CMAKE_SOURCE_DIR}/bindings/swig-support
 )
@@ -61,6 +64,9 @@ PROPERTIES SWIG_MODULE_NAME plplotc
 swig_add_module(plplotcmodule python plplotcmodule.i)
 
 swig_link_libraries(plplotcmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
+# FIXME: Previously I found this should be retwritten as:
+#swig_link_libraries(plplotcmodule plplot${LIB_TAG})
+# Investigate before changing.
 
 if(USE_RPATH)
   get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
@@ -79,7 +85,15 @@ set_source_files_properties(
   "-DUSINGDLL"
 )
 
-target_link_libraries(plplot_widgetmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
+# FIXME: It remains unclear why PYTHON_LIBRARIES is in this list.  This
+# might be system dependent.  Doesn't seem to be needed for Linux.  Is it
+# really needed for other platforms?  Further investigation required.
+target_link_libraries( plplot_widgetmodule
+    plplot${LIB_TAG}
+    plplottcltk${LIB_TAG}
+    ${PYTHON_LIBRARIES}
+    )
+
 if(USE_RPATH)
   set_target_properties(
   plplot_widgetmodule
@@ -112,6 +126,7 @@ WORLD_EXECUTE
 )
 install(
 FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
+Plframe.py TclSup.py
 DESTINATION ${PYTHON_INSTDIR}
 )
 
