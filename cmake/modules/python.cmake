@@ -43,7 +43,7 @@ if(ENABLE_python)
   find_package(PythonInterp)
   if(NOT PYTHONINTERP_FOUND)
     message(STATUS "WARNING: "
-    "python interpreter not found. Disabling python bindings")
+      "python interpreter not found. Disabling python bindings")
     set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
   endif(NOT PYTHONINTERP_FOUND)
 endif(ENABLE_python)
@@ -55,7 +55,7 @@ if(ENABLE_python)
   find_package(PythonLibs)
   if(NOT PYTHON_LIBRARIES OR NOT PYTHON_INCLUDE_PATH)
     message(STATUS "WARNING: "
-    "python library and/or header not found. Disabling python bindings")
+      "python library and/or header not found. Disabling python bindings")
     set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
   endif(NOT PYTHON_LIBRARIES OR NOT PYTHON_INCLUDE_PATH)
 endif(ENABLE_python)
@@ -66,12 +66,12 @@ if(ENABLE_python AND NOT NUMERIC_INCLUDE_PATH)
   if(HAVE_NUMPY)
     # First check for new version of numpy (replaces Numeric)
     execute_process(
-    COMMAND
-    ${PYTHON_EXECUTABLE} -c "import numpy; print numpy.get_include()"
-    OUTPUT_VARIABLE NUMPY_INCLUDE_PATH
-    RESULT_VARIABLE NUMPY_ERR
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
+      COMMAND
+      ${PYTHON_EXECUTABLE} -c "import numpy; print numpy.get_include()"
+      OUTPUT_VARIABLE NUMPY_INCLUDE_PATH
+      RESULT_VARIABLE NUMPY_ERR
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
     if(NUMPY_ERR)
       set(HAVE_NUMPY OFF CACHE BOOL "Use numpy rather than deprecated Numeric" FORCE)
     endif(NUMPY_ERR)
@@ -84,38 +84,46 @@ if(ENABLE_python AND NOT NUMERIC_INCLUDE_PATH)
     # Check for Python Numeric header in same include path or Numeric
     # subdirectory of that path to avoid version mismatch.
     find_path(
-    NUMERIC_INCLUDE_PATH
-    arrayobject.h
-    ${PYTHON_INCLUDE_PATH} ${PYTHON_INCLUDE_PATH}/Numeric
-    )
+      NUMERIC_INCLUDE_PATH
+      arrayobject.h
+      ${PYTHON_INCLUDE_PATH} ${PYTHON_INCLUDE_PATH}/Numeric
+      )
     if (NUMERIC_INCLUDE_PATH)
       set(PYTHON_NUMERIC_NAME Numeric CACHE INTERNAL "")
     endif (NUMERIC_INCLUDE_PATH)
   endif(HAVE_NUMPY)
   if(NUMERIC_INCLUDE_PATH)
     set(
-    PYTHON_INCLUDE_PATH
-    ${PYTHON_INCLUDE_PATH} ${NUMERIC_INCLUDE_PATH}
-    CACHE INTERNAL "")
+      PYTHON_INCLUDE_PATH
+      ${PYTHON_INCLUDE_PATH} ${NUMERIC_INCLUDE_PATH}
+      CACHE INTERNAL "")
   else(NUMERIC_INCLUDE_PATH)
     if(HAVE_NUMPY)
       message(STATUS "WARNING: "
-      "NumPy header not found. Disabling python bindings")
+	"NumPy header not found. Disabling python bindings")
     else(HAVE_NUMPY)
       message(STATUS "WARNING: "
-      "Numeric header not found. Disabling python bindings")
+	"Numeric header not found. Disabling python bindings")
     endif(HAVE_NUMPY)
     set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
   endif(NUMERIC_INCLUDE_PATH)
 endif(ENABLE_python AND NOT NUMERIC_INCLUDE_PATH)
 
+if(ENABLE_python AND HAVE_NUMPY)
+  # This numpy installation bug found by Geoff.
+  option(EXCLUDE_PYTHON_LIBRARIES "Linux temporary workaround for numpy installation bug for non-system Python install prefix" OFF)
+  if(EXCLUDE_PYTHON_LIBRARIES)
+    set(PYTHON_LIBRARIES)
+  endif(EXCLUDE_PYTHON_LIBRARIES)
+endif(ENABLE_python AND HAVE_NUMPY)
+
 if(ENABLE_python)
   # N.B. This is a nice way to obtain all sorts of python information
   # using distutils.
   execute_process(
-  COMMAND
-  ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_EXEC_PREFIX}')"
-  OUTPUT_VARIABLE PYTHON_INSTDIR
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
+    COMMAND
+    ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_EXEC_PREFIX}')"
+    OUTPUT_VARIABLE PYTHON_INSTDIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
 endif(ENABLE_python)
