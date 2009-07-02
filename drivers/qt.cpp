@@ -238,7 +238,6 @@ void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 #endif
 #if defined(PLD_qtwidget) || defined(PLD_extqt)
   if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
-  //  if(widget==NULL) widget=(QtPLWidget*)pls->dev;
 #endif
   if(widget==NULL) return;
 	
@@ -263,7 +262,7 @@ void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
   if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_qtwidget) || defined(PLD_extqt)
-  if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QtPLDriver *) pls->dev);
+  if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
 #endif
   if(widget==NULL) return;
 	
