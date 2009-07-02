@@ -103,7 +103,7 @@ if(ENABLE_pyqt4)
   set(
     python_SCRIPTS
     ${python_SCRIPTS}
-    pyqt4_test.py
+    pyqt4_example.py
     )
 endif(ENABLE_pyqt4)
 
