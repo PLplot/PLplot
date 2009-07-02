@@ -200,6 +200,11 @@ void plD_eop_qtwidget(PLStream *);
 void plD_dispatch_init_extqt(PLDispatchTable *pdt);
 void plD_init_extqt(PLStream *);
 void plD_eop_extqt(PLStream *);
+void plD_line_extqt(PLStream *, short, short, short, short);
+void plD_polyline_extqt(PLStream *, short*, short*, PLINT);
+void plD_tidy_extqt(PLStream *);
+void plD_state_extqt(PLStream *, PLINT);
+void plD_esc_extqt(PLStream *, PLINT, void*);
 #endif
 
 // Declaration of the generic interface functions
@@ -233,6 +238,7 @@ void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
 #endif
 #if defined(PLD_qtwidget) || defined(PLD_extqt)
   if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
+  //  if(widget==NULL) widget=(QtPLWidget*)pls->dev;
 #endif
   if(widget==NULL) return;
 	
@@ -257,7 +263,7 @@ void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
   if(widget!=NULL && qt_family_check(pls)) {return;} 
 #endif
 #if defined(PLD_qtwidget) || defined(PLD_extqt)
-  if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QWidget *) pls->dev);
+  if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QtPLDriver *) pls->dev);
 #endif
   if(widget==NULL) return;
 	
@@ -965,13 +971,13 @@ void plD_dispatch_init_extqt(PLDispatchTable *pdt)
   pdt->pl_type     = plDevType_Interactive;
   pdt->pl_seq      = 75;
   pdt->pl_init     = (plD_init_fp)     plD_init_extqt;
-  pdt->pl_line     = (plD_line_fp)     plD_line_qt;
-  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+  pdt->pl_line     = (plD_line_fp)     plD_line_extqt;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_extqt;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_extqt;
   pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
-  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
-  pdt->pl_state    = (plD_state_fp)    plD_state_qt;
-  pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_extqt;
+  pdt->pl_state    = (plD_state_fp)    plD_state_extqt;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_extqt;
 }
 
 void plD_init_extqt(PLStream * pls)
@@ -1013,6 +1019,112 @@ void plD_init_extqt(PLStream * pls)
   pls->dev_clear=0;
   pls->dev_text = 1; // want to draw text
   pls->dev_unicode = 1; // want unicode 
+}
+
+/*
+  These functions are separated out (instead of using dynamic_cast)
+  for the benefit of the PyQt4 bindings. C++ QtExtWidgets created
+  by PyQt4 are not properly type resolved. 
+ */
+
+void plD_line_extqt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
+{
+  QtExtWidget * widget=NULL;
+
+  widget=(QtExtWidget*)pls->dev;
+  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+  widget->drawLine(x1a, y1a, x2a, y2a);
+}
+
+void plD_polyline_extqt(PLStream *pls, short *xa, short *ya, PLINT npts)
+{
+  QtExtWidget * widget=NULL;
+
+  widget=(QtExtWidget*)pls->dev;
+  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+  widget->drawPolyline(xa, ya, npts);
+}
+
+void plD_esc_extqt(PLStream * pls, PLINT op, void* ptr)
+{
+  short *xa, *ya;
+  PLINT i, j;
+  QtExtWidget * widget=NULL;
+
+  widget=(QtExtWidget*)pls->dev;
+  switch(op)
+  {
+    case PLESC_DASH:
+      widget->setDashed(pls->nms, pls->mark, pls->space);
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
+      widget->setSolid();
+      break;
+        
+    case PLESC_FILL:
+      xa=new short[pls->dev_npts];
+      ya=new short[pls->dev_npts];
+            
+      for (i = 0; i < pls->dev_npts; i++)
+      {
+        xa[i] = pls->dev_x[i];
+        ya[i] = pls->dev_y[i];
+      }
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawPolygon(xa, ya, pls->dev_npts);
+            
+      delete[] xa;
+      delete[] ya;
+      break;
+      
+    case PLESC_HAS_TEXT:
+      /*$$ call the generic ProcessString function
+	ProcessString( pls, (EscText *)ptr ); */
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawText(pls, (EscText *)ptr);
+      break;        
+    
+    default: break;
+  }
+}
+
+void plD_state_extqt(PLStream * pls, PLINT op)
+{
+  QtExtWidget * widget=NULL;
+
+  widget=(QtExtWidget*)pls->dev;    
+  switch(op)
+  {
+    case PLSTATE_WIDTH:
+      widget->setWidth(pls->width);
+      break;
+       
+    case PLSTATE_COLOR0:
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      break;
+			
+    case PLSTATE_COLOR1:
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      break;
+
+            
+    default: break;
+  }
+}
+
+void plD_tidy_extqt(PLStream * pls)
+{
+  QtExtWidget * widget=NULL;
+
+  widget=(QtExtWidget*)pls->dev;
+  if(widget!=NULL)
+  {
+    handler.DeviceClosed(widget);
+    delete widget;
+    pls->dev=NULL;
+  }
+	
+  closeQtApp();
 }
 
 void plD_eop_extqt(PLStream *pls)
