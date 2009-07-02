@@ -24,6 +24,7 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
+from plplot_python_start import *
 import plplot
 import plplot_pyqt4
 
@@ -47,7 +48,7 @@ class QPlot(QtGui.QMainWindow):
     def paintEvent(self, event):
         plplot.pladv(0)
         plplot.plenv(0, 10, 0, 10, 0, 0)
-        plplot.pllab("X", "Y", "X vs Y")
+        plplot.pllab("X", "Y", "Y vs X")
         self.plot.show()
 
 
