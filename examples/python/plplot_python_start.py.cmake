@@ -7,3 +7,4 @@
 import sys
 sys.path.insert (0, "@python_location1@")
 sys.path.insert (0, "@python_location2@")
+sys.path.insert (0, "@python_location3@")

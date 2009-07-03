@@ -189,6 +189,7 @@ endif(BUILD_TEST AND
 
 set(python_location1 ${CMAKE_SOURCE_DIR}/bindings/python)
 set(python_location2 ${CMAKE_BINARY_DIR}/bindings/python)
+set(python_location3 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
@@ -197,6 +198,7 @@ configure_file(
 
 set(python_location1 ${PYTHON_INSTDIR})
 set(python_location2)
+set(python_location3)
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
