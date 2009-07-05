@@ -26,7 +26,7 @@ import sys
 from PyQt4 import QtCore, QtGui
 import numpy
 
-#from plplot_python_start import *
+from plplot_python_start import *
 import plplot
 import plplot_pyqt4
 
