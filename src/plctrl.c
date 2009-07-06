@@ -1210,6 +1210,112 @@ c_plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
 }
 
 /*--------------------------------------------------------------------------*\
+ * void c_plspal0(filename)
+ *
+ * Set the palette for color map 0 using a cmap0*.pal format file.
+ * filename: the name of the cmap0*.pal file to use.
+\*--------------------------------------------------------------------------*/
+
+void
+c_plspal0(const char *filename)
+{
+  int i, r, g, b, a;
+  int number_colors;
+  char color_info[30];
+  FILE *fp;
+  
+  fp = fopen(filename, "r");
+  fscanf(fp, "%d\n", &number_colors);
+  for(i=0;i<number_colors;i++){
+    fgets(color_info, 30, fp);
+    color_info[strlen(color_info)-1] = '\0'; /* remove return character */
+    if(strlen(color_info) == 7){
+      sscanf(color_info, "#%2x%2x%2x", &r, &g, &b);
+      c_plscol0(i, r, g, b);
+    }
+    else if(strlen(color_info) == 9){
+      sscanf(color_info, "#%2x%2x%2x%2x", &r, &g, &b, &a);
+      c_plscol0a(i, r, g, b, a);
+    }
+    else{
+      printf("Unrecognized cmap0 format %s\n", color_info);
+    }
+    
+  }
+  fclose(fp);
+}
+
+/*--------------------------------------------------------------------------*\
+ * void c_plspal1(filename)
+ *
+ * Set the palette for color map 1 using a cmap1*.pal format file.
+ * filename: the name of the cmap1*.pal file to use.
+\*--------------------------------------------------------------------------*/
+
+void
+c_plspal1(const char *filename)
+{
+  int i;
+  int number_colors;
+  int have_alpha;
+  char color_info[30];
+  int r_i, g_i, b_i, a_i, pos_i;
+  PLFLT *r, *g, *b, *a, *pos;
+  FILE *fp;
+
+  have_alpha = 1;
+  fp = fopen(filename, "r");
+  fscanf(fp, "%d\n", &number_colors);
+  r = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
+  g = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
+  b = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
+  a = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
+  pos = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
+
+  for(i=0;i<number_colors;i++){
+    fgets(color_info, 30, fp);
+    color_info[strlen(color_info)-1] = '\0';
+    if(color_info[7] == ' '){
+      have_alpha = 0;
+      sscanf(color_info, "#%2x%2x%2x %d", &r_i, &g_i, &b_i, &pos_i);
+      r[i] = (PLFLT)r_i;
+      g[i] = (PLFLT)g_i;
+      b[i] = (PLFLT)b_i;
+      pos[i] = 0.01 * (PLFLT)pos_i;
+    }
+    else if(color_info[9] ==  ' '){
+      sscanf(color_info, "#%2x%2x%2x%2x %d", &r_i, &g_i, &b_i, &a_i, &pos_i);
+      r[i] = (PLFLT)r_i;
+      g[i] = (PLFLT)g_i;
+      b[i] = (PLFLT)b_i;
+      a[i] = (PLFLT)a_i;
+      pos[i] = 0.01 * (PLFLT)pos_i;
+    }
+    else{
+      printf("Unrecognized cmap1 format %s\n", color_info);
+    }
+  }
+  fclose(fp);
+
+  /* Set the first control point position to 0.0 and the last */
+  /* to 1.0 to deal with any possible round off errors. */
+  pos[0] = 0.0;
+  pos[number_colors-1] = 1.0;
+
+  if (have_alpha == 1){
+    c_plscmap1la(1, number_colors, pos, r, g, b, a, NULL);
+  } else {
+    c_plscmap1l(1, number_colors, pos, r, g, b, NULL);
+  }
+
+  free(r);
+  free(g);
+  free(b);
+  free(a);
+  free(pos);
+}
+
+/*--------------------------------------------------------------------------*\
  * A grab-bag of various control routines.
 \*--------------------------------------------------------------------------*/
 

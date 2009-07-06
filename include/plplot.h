@@ -672,6 +672,8 @@ typedef struct {
 #define    plsmin	c_plsmin
 #define    plsori	c_plsori
 #define    plspage	c_plspage
+#define    plspal0      c_plspal0
+#define    plspal1      c_plspal1
 #define    plspause	c_plspause
 #define    plsstrm	c_plsstrm
 #define    plssub	c_plssub
@@ -1496,6 +1498,16 @@ c_plsori(PLINT ori);
 PLDLLIMPEXP void
 c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 	  PLINT xoff, PLINT yoff);
+
+/* Set the colors for color table 0 from a cmap0 file */
+
+PLDLLIMPEXP void
+c_plspal0(const char *filename);
+
+/* Set the colors for color table 1 from a cmap1 file */
+
+PLDLLIMPEXP void
+c_plspal1(const char *filename);
 
 /* Set the pause (on end-of-page) status */
 
