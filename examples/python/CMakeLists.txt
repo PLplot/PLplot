@@ -66,7 +66,6 @@ set(
   x14
   x17
   x31
-  prova.py
   xw14.py
   xw17.py
   xw31.py
@@ -139,7 +138,6 @@ set(
   README.pythondemos
   README.logo
   svg_760x120_gradient.patch
-  qplplot.py
   )
 
 if(ENABLE_pygcw)

@@ -92,10 +92,29 @@ X. This is official notice that the pbm device driver (containing the
 pbm device) has been deprecated as of release 5.9.4 because glibc detects
 a catastrophic double free.
 
+XI. This is official notice that we have removed pyqt3 access to PLplot and
+replaced it by pyqt4 access to PLplot as of PLplot-5.9.5.
+
 INDEX
 
 1. Changes relative to PLplot 5.9.4 (the previous development release)
 
+1.1 pyqt changes
+
+1.1 pyqt changes
+
+Years ago we got a donation of a hand-crafted pyqt3 interface to PLplot 
+(some of the functions in plplot_widgetmodule.c in bindings/python) and a
+proof-of-concept example (prova.py and qplplot.py in examples/python), but
+this code did not gain any developer interest and was therefore not
+understood or maintained. Recently one of our core developers has
+implemented a sip-generated pyqt4 interface to PLplot (controlled by
+plplot_pyqt4.sip in bindings/qt_gui/pyqt4) that builds without problems as a
+python extension module, and a good-looking pyqt4 example (pyqt4_example.py
+in examples/python) that works well.  Since this pyqt4 approach is
+maintained by a PLplot developer it appears to have a good future, and we
+have therefore decided to concentrate on pyqt4 and remove the pyqt3 PLplot
+interface and example completely.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -108,7 +127,7 @@ examples
 2.6 Date / time labels for axes
 2.7 Alpha value support
 2.8 New PLplot functions
-2.9 External libLASi library improvements affecting our psttf device.
+2.9 External libLASi library improvements affecting our psttf device
 2.10 Improvements to the cairo driver family.
 2.11 wxWidgets driver improvements
 2.12 pdf driver improvements
@@ -132,6 +151,7 @@ examples
 2.30 NaN / Inf support for some PLplot functions
 2.31 Various bug fixes
 2.32 Cairo driver improvements
+2.33 pyqt changes
 
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -239,7 +259,7 @@ language bindings PLplot now includes a small random number generator within
 the library. plrandd will return a PLFLT random number in the range 0.0-1.0. 
 plseed will allow the random number generator to be seeded.
 
-2.9 External libLASi library improvements affecting our psttf device.
+2.9 External libLASi library improvements affecting our psttf device
 
 Our psttf device depends on the libLASi library. libLASi-1.1.0 has just been
 released at http://sourceforge.net/svn/?group_id=187113 .  We recommend
@@ -563,3 +583,19 @@ Various bugs in the 5.9.3 release have been fixed including:
 
 Improvements to the cairo driver to give better results for bitmap 
 formats when used with anti-aliasing file viewers.
+
+2.33 pyqt changes
+
+Years ago we got a donation of a hand-crafted pyqt3 interface to PLplot 
+(some of the functions in plplot_widgetmodule.c in bindings/python) and a
+proof-of-concept example (prova.py and qplplot.py in examples/python), but
+this code did not gain any developer interest and was therefore not
+understood or maintained. Recently one of our core developers has
+implemented a sip-generated pyqt4 interface to PLplot (controlled by
+plplot_pyqt4.sip in bindings/qt_gui/pyqt4) that builds without problems as a
+python extension module, and a good-looking pyqt4 example (pyqt4_example.py
+in examples/python) that works well.  Since this pyqt4 approach is
+maintained by a PLplot developer it appears to have a good future, and we
+have therefore decided to concentrate on pyqt4 and remove the pyqt3 PLplot
+interface and example completely.
+

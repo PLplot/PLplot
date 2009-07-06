@@ -24,12 +24,9 @@ useful variations on the python argument lists).
 II. plplot_widgetmodule.so
 
 This extension module is built and installed directly by our build system
-from the hand-crafted plplot_widgetmodule.c.  That source code originally
-just implemented pyqt3 support for PLplot (demonstrated by prova.py in
-examples/python), but since then it has also included other functionality
-such as the 2009-06 addition of support for loading plframe from python
-(demonstrated by pytkdemo in examples/python and supported by Plframe.py and
-TclSup.py).
+from the hand-crafted plplot_widgetmodule.c.  That source code supports
+loading plframe from python (demonstrated by pytkdemo in examples/python and
+supported by Plframe.py and TclSup.py).
 
 III. plplot_pyqt4.so
 
