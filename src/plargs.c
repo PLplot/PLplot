@@ -150,6 +150,8 @@ static int opt_server_name	(const char *, const char *, void *);
 static int opt_tk_file          (const char *, const char *, void *);
 static int opt_dpi		(const char *, const char *, void *);
 static int opt_dev_compression	(const char *, const char *, void *);
+static int opt_cmap0	        (const char *, const char *, void *);
+static int opt_cmap1	        (const char *, const char *, void *);
 
 /* Global variables */
 
@@ -557,6 +559,22 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_FUNC | PL_OPT_ARG,
     "-compression num",
     "Sets compression level in supporting devices" },
+{
+    "cmap0",
+    opt_cmap0,
+    NULL,
+    NULL,
+    PL_OPT_ARG | PL_OPT_FUNC,
+    "-cmap0 path/to/cmap0.pal",
+    "Initializes color table 0 from a cmap0.pal format file."},
+{
+    "cmap1",
+    opt_cmap1,
+    NULL,
+    NULL,
+    PL_OPT_ARG | PL_OPT_FUNC,
+    "-cmap1 path/to/cmap1.pal",
+    "Initializes color table 1 from a cmap1.pal format file."},
 {
     "drvopt",			/* Driver specific options */
     opt_drvopt,
@@ -2210,4 +2228,46 @@ opt_dev_compression(const char *opt, const char *optarg, void *client_data)
     return 0;
 }
 
+/*--------------------------------------------------------------------------*\
+ * opt_cmap0()
+ *
+ * Sets color table 0 based on a cmap0.pal file.
+\*--------------------------------------------------------------------------*/
 
+static int
+opt_cmap0(const char *opt, const char *optarg, void *client_data)
+{
+  FILE *file;
+
+  file = fopen(optarg, "r");
+  if (file){
+    fclose(file);
+    plspal0(optarg);
+    return 0;
+  }
+  else{
+    fprintf(stderr, "cmap0 file not found: %s\n", optarg);
+  }
+}
+
+/*--------------------------------------------------------------------------*\
+ * opt_cmap1()
+ *
+ * Sets color table 1 based on a cmap1.pal file.
+\*--------------------------------------------------------------------------*/
+
+static int
+opt_cmap1(const char *opt, const char *optarg, void *client_data)
+{
+  FILE *file;
+
+  file = fopen(optarg, "r");
+  if (file){
+    fclose(file);
+    plspal1(optarg);
+    return 0;
+  }
+  else{
+    fprintf(stderr, "cmap1 file not found: %s\n", optarg);
+  }
+}
