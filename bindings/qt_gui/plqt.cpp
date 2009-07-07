@@ -381,7 +381,7 @@ QtRasterDevice::QtRasterDevice(int i_iWidth, int i_iHeight):
 
 QtRasterDevice::~QtRasterDevice()
 {
-	if(m_painterP!=NULL) delete m_painterP;
+	delete m_painterP;
 }
 
 void QtRasterDevice::definePlotName(const char* fileName, const char* format)
@@ -418,7 +418,7 @@ QtSVGDevice::QtSVGDevice(int i_iWidth, int i_iHeight):
 
 QtSVGDevice::~QtSVGDevice()
 {
-	if(m_painterP!=NULL) delete m_painterP;
+	delete m_painterP;
 }
 
 void QtSVGDevice::definePlotName(const char* fileName)
@@ -471,7 +471,7 @@ QtEPSDevice::QtEPSDevice(int i_iWidth, int i_iHeight)
 
 QtEPSDevice::~QtEPSDevice()
 {
-	if(m_painterP!=NULL) delete m_painterP;
+	delete m_painterP;
 }
 
 void QtEPSDevice::definePlotName(const char* fileName, int ifeps)
@@ -513,7 +513,7 @@ QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
 QtPLWidget::~QtPLWidget()
 {
 	clearBuffer();
-	if(m_pixPixmap!=NULL) delete m_pixPixmap;
+	delete m_pixPixmap;
 }
 
 void QtPLWidget::clearWidget()
@@ -751,11 +751,8 @@ void QtPLWidget::nextPage()
 void QtPLWidget::resizeEvent( QResizeEvent * )
 {
 	m_bAwaitingRedraw=true;
-	if(m_pixPixmap!=NULL)
-	{
-		delete m_pixPixmap;
-		m_pixPixmap=NULL;
-	}
+	delete m_pixPixmap;
+	m_pixPixmap=NULL;
 }
 
 void QtPLWidget::paintEvent( QPaintEvent * )
@@ -765,7 +762,7 @@ void QtPLWidget::paintEvent( QPaintEvent * )
 	getPlotParameters(x_fact, y_fact, x_offset, y_offset);
 	if(m_bAwaitingRedraw || m_pixPixmap==NULL || m_listBuffer.size()!=m_iOldSize) // If must regenerate image, draw it in the pixmap
 	{
-		if(m_pixPixmap!=NULL) delete m_pixPixmap;
+		delete m_pixPixmap;
 		m_pixPixmap=new QPixmap(width(), height());
 		QPainter* painter=new QPainter;
 		painter->begin(m_pixPixmap);
@@ -906,8 +903,8 @@ QtExtWidget::~QtExtWidget()
 {
 	killed=true;
 	QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
-	if(m_pixPixmap!=NULL) delete m_pixPixmap;
-	if(m_painterP!=NULL) delete m_painterP;
+	delete m_pixPixmap;
+	delete m_painterP;
 // 	if(pic!=NULL) delete pic;
 	m_pixPixmap=NULL;
 	m_painterP=NULL;
