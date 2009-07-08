@@ -1224,7 +1224,7 @@ c_plspal0(const char *filename)
   char color_info[30];
   FILE *fp;
   
-  fp = fopen(filename, "r");
+  fp = (FILE *)plLibOpen(filename);
   fscanf(fp, "%d\n", &number_colors);
   for(i=0;i<number_colors;i++){
     fgets(color_info, 30, fp);
@@ -1264,7 +1264,7 @@ c_plspal1(const char *filename)
   FILE *fp;
 
   have_alpha = 1;
-  fp = fopen(filename, "r");
+  fp = (FILE *)plLibOpen(filename);
   fscanf(fp, "%d\n", &number_colors);
   r = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
   g = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
@@ -1646,8 +1646,9 @@ plLibOpenPdfstrm(const char *fn)
 
 /****	search current directory	****/
 
-    if ((file = pdf_fopen(fn, "rb")) != NULL)
+    if ((file = pdf_fopen(fn, "rb")) != NULL){
         goto done;
+    }
 
 /****	search PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib	****/
 
