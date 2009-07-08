@@ -1,7 +1,8 @@
 #!@SH_EXECUTABLE@
+# -*- mode: shell-script -*-
 # $Id$
 #
-# Copyright (C) 2004, 2007  Alan W. Irwin
+# Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009  Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
 #
 # This file is part of PLplot.
@@ -75,6 +76,8 @@ Environment variables:
 '
    exit $1
 }
+
+# Figure out what script options were specified by the user.
 
 while test $# -gt 0; do
    if [ "@HAVE_BASH@" = "ON" ] ; then
