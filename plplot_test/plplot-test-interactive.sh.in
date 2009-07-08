@@ -1,49 +1,154 @@
 #!@SH_EXECUTABLE@
+# -*- mode: shell-script -*-
+# $Id$
+#
+# Copyright (C) 2009 Alan W. Irwin
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Library Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
 # Test suite of PLplot interactive stuff that cannot be tested with
 # file output device drivers.
+
 EXAMPLES_DIR=${EXAMPLES_DIR:-.}
 SRC_EXAMPLES_DIR=${SRC_EXAMPLES_DIR:-.}
 
+usage()
+{
+echo '
+Usage: plplot-test-interactive.sh [OPTIONS]
+
+Options:
+   [--device=DEVICES_LIST] 
+       where DEVICES_LIST is one of more devices specified as a
+       blank-delimited string (e.g., --device=xwin or
+       --device="qtwidget extqt").  Note each specified device must be
+       taken from the following list of eligible interactive devices:
+
+       xwin, tk, xcairo, gcw, wxwidgets, qtwidget, extcairo or extqt.
+
+   [--help]
+
+Environment variables:
+   DEVICES_LIST can be used to specify the device(s).
+   This environment variable is overridden by the option --device.
+
+N.B. All members of DEVICES_LIST (whether specified by the
+DEVICES_LIST environment variable or by the --device option _must_ be
+configured.  If neither the environment variable or --device option is
+specified, then every _configured_ device from the above list is used.
+'
+   exit $1
+}
+
+# Figure out what script options were specified by the user.
+
+while test $# -gt 0; do
+   if [ "@HAVE_BASH@" = "ON" ] ; then
+      case "$1" in
+      -*=*) optarg=${1#*=} ;;
+      *) optarg= ;;
+      esac
+   else
+      case "$1" in
+      -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+      *) optarg= ;;
+      esac
+   fi
+
+   case $1 in
+      --device=*)
+         DEVICES_LIST=$optarg
+	 ;;
+      --help)
+         usage 0 1>&2
+         ;;
+      *)
+         usage 1 1>&2
+         ;;
+   esac
+   shift
+done
+
 # This script is only designed to work when EXAMPLES_DIR is a directory
 # with a subdirectory called "c".  Check whether this conditions is true.
-
 if [ ! -d $EXAMPLES_DIR/c ] ; then
-echo '
+    echo '
 This script is only designed to work when the EXAMPLES_DIR environment
 variable (overridden by option --examples-dir) is a directory with a
 subdirectory called "c".  This condition has been violated.
 '
-exit 1
+    exit 1
 fi
+
+# Set up interactive and/or external devices that are used for tests.
+# Cannot use loop for this because of configuration.
+
+PLD_xwin=@PLD_xwin@
+PLD_tk=@PLD_tk@
+PLD_xcairo=@PLD_xcairo@
+PLD_gcw=@PLD_gcw@
+PLD_wxwidgets=@PLD_wxwidgets@
+PLD_qtwidget=@PLD_qtwidget@
+PLD_extcairo=@PLD_extcairo@
+PLD_extqt=@PLD_extqt@
+
+# These blank-delimited strings must be consistent with previous configured
+# list of devices.
+POSSIBLE_INTERACTIVE_DEVICES_LIST="xwin tk xcairo gcw wxwidgets qtwidget"
+POSSIBLE_DEVICES_LIST="$POSSIBLE_INTERACTIVE_DEVICES_LIST extcairo extqt"
+
+# Default DEVICES_LIST is all eligible devices if environment variable
+# not specified and --devices option not specified.
+if [ -z "$DEVICES_LIST" ] ; then
+    DEVICES_LIST=
+    for device in $POSSIBLE_DEVICES_LIST ; do
+	eval pld_device='$'PLD_$device
+	test "$pld_device" = "ON" && DEVICES_LIST="$DEVICES_LIST $device"
+    done
+fi
+
+# Check that everything in DEVICES_LIST is a configured  device.
+for device in $DEVICES_LIST ; do
+    eval pld_device='$'PLD_$device
+    if [ ! "$pld_device" = "ON" ] ; then
+	echo "$device is either not configured or not used for interactive tests."
+	usage 1 1>&2 
+    fi
+done
+
+# Turn off all devices not mentioned in DEVICES_LIST.
+for device in $POSSIBLE_DEVICES_LIST ; do
+    eval "PLD_$device=OFF"
+done
+
+for device in $DEVICES_LIST ; do
+    eval "PLD_$device=ON"
+done
+
+INTERACTIVE_DEVICES_LIST=
+for device in $POSSIBLE_INTERACTIVE_DEVICES_LIST ; do
+    eval pld_device='$'PLD_$device
+    test "$pld_device" = "ON" && \
+	INTERACTIVE_DEVICES_LIST="$INTERACTIVE_DEVICES_LIST $device"
+done
 
 OVERALL_STATUS_CODE=0
 INDEX_LIST="01 04 08 14 16 17 23"
-DEVICE_LIST=
-if [ "@PLD_xwin@" = "ON" ] ; then
-    DEVICE_LIST="$DEVICE_LIST xwin"
-fi
-
-if [ "@PLD_tk@" = "ON" ] ; then
-    DEVICE_LIST="$DEVICE_LIST tk"
-fi
-
-if [ "@PLD_xcairo@" = "ON" ] ; then
-    DEVICE_LIST="$DEVICE_LIST xcairo"
-fi
-
-if [ "@PLD_gcw@" = "ON" ] ; then
-    DEVICE_LIST="$DEVICE_LIST gcw"
-fi
-
-if [ "@PLD_wxwidgets@" = "ON" ] ; then
-    DEVICE_LIST="$DEVICE_LIST wxwidgets"
-fi
-
-if [ "@PLD_qtwidget@" = "ON" ] ; then
-    DEVICE_LIST="$DEVICE_LIST qtwidget"
-fi
-
-for device in $DEVICE_LIST ; do
+for device in $INTERACTIVE_DEVICES_LIST ; do
     for index in $INDEX_LIST ; do
 	echo "${EXAMPLES_DIR}/c/x${index}c -dev $device"
 	${EXAMPLES_DIR}/c/x${index}c -dev $device 2> test.error
