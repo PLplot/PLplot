@@ -565,16 +565,16 @@ static PLOptionTable ploption_table[] = {
     NULL,
     NULL,
     PL_OPT_ARG | PL_OPT_FUNC,
-    "-cmap0 path/to/cmap0.pal",
-    "Initializes color table 0 from a cmap0.pal format file."},
+    "-cmap0 file name",
+    "Initializes color table 0 from a cmap0.pal format file in one of standard PLplot paths."},
 {
     "cmap1",
     opt_cmap1,
     NULL,
     NULL,
     PL_OPT_ARG | PL_OPT_FUNC,
-    "-cmap1 path/to/cmap1.pal",
-    "Initializes color table 1 from a cmap1.pal format file."},
+    "-cmap1 file name",
+    "Initializes color table 1 from a cmap1.pal format file in one of standard PLplot paths."},
 {
     "drvopt",			/* Driver specific options */
     opt_drvopt,
@@ -2237,17 +2237,7 @@ opt_dev_compression(const char *opt, const char *optarg, void *client_data)
 static int
 opt_cmap0(const char *opt, const char *optarg, void *client_data)
 {
-  FILE *file;
-
-  file = fopen(optarg, "r");
-  if (file){
-    fclose(file);
-    plspal0(optarg);
-    return 0;
-  }
-  else{
-    fprintf(stderr, "cmap0 file not found: %s\n", optarg);
-  }
+  plspal0(optarg);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2259,15 +2249,5 @@ opt_cmap0(const char *opt, const char *optarg, void *client_data)
 static int
 opt_cmap1(const char *opt, const char *optarg, void *client_data)
 {
-  FILE *file;
-
-  file = fopen(optarg, "r");
-  if (file){
-    fclose(file);
-    plspal1(optarg);
-    return 0;
-  }
-  else{
-    fprintf(stderr, "cmap1 file not found: %s\n", optarg);
-  }
+  plspal1(optarg);
 }
