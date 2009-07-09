@@ -1219,7 +1219,8 @@ c_plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
 void
 c_plspal0(const char *filename)
 {
-  int i, r, g, b, a;
+  int i, r, g, b, nread;
+  double a;
   int number_colors;
   char color_info[30];
   FILE *fp;
@@ -1227,12 +1228,12 @@ c_plspal0(const char *filename)
   
   fp = plLibOpen(filename);
   if (fp == NULL) {
-    snprintf(msgbuf,1024,"Unable to open cmap1 file %s\n",filename);
+    snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",filename);
     plwarn(msgbuf);
     return;
   }
   if (fscanf(fp, "%d\n", &number_colors) != 1) {
-    snprintf(msgbuf,1024,"Unrecognized cmap1 header\n");
+    snprintf(msgbuf,1024,"Unrecognized cmap0 header\n");
     plwarn(msgbuf);
     fclose(fp);
     return;
@@ -1248,13 +1249,13 @@ c_plspal0(const char *filename)
       }
       c_plscol0(i, r, g, b);
     }
-    else if(strlen(color_info) == 9){
-      if (sscanf(color_info, "#%2x%2x%2x%2x", &r, &g, &b, &a) != 4) {
+    else if(strlen(color_info) > 9){
+      if (sscanf(color_info, "#%2x%2x%2x %lf", &r, &g, &b, &a) != 4) {
         snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
         plwarn(msgbuf);
         break;
       }
-      c_plscol0a(i, r, g, b, a);
+      c_plscol0a(i, r, g, b, (PLFLT) a);
     }
     else{
       snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
