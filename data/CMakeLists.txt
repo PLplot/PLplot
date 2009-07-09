@@ -27,6 +27,7 @@ plxtnd5.fnt
 usa.map
 usaglobe.map
 cmap0_white_bg.pal
+cmap0_black_on_white.pal
 cmap1_blue_yellow.pal
 )
 
