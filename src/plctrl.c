@@ -1223,22 +1223,43 @@ c_plspal0(const char *filename)
   int number_colors;
   char color_info[30];
   FILE *fp;
+  char msgbuf[1024];
   
-  fp = (FILE *)plLibOpen(filename);
-  fscanf(fp, "%d\n", &number_colors);
+  fp = plLibOpen(filename);
+  if (fp == NULL) {
+    snprintf(msgbuf,1024,"Unable to open cmap1 file %s\n",filename);
+    plwarn(msgbuf);
+    return;
+  }
+  if (fscanf(fp, "%d\n", &number_colors) != 1) {
+    snprintf(msgbuf,1024,"Unrecognized cmap1 header\n");
+    plwarn(msgbuf);
+    fclose(fp);
+    return;
+  }
   for(i=0;i<number_colors;i++){
     fgets(color_info, 30, fp);
     color_info[strlen(color_info)-1] = '\0'; /* remove return character */
     if(strlen(color_info) == 7){
-      sscanf(color_info, "#%2x%2x%2x", &r, &g, &b);
+      if (sscanf(color_info, "#%2x%2x%2x", &r, &g, &b) != 3) {
+        snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
+        plwarn(msgbuf);
+        break;
+      }
       c_plscol0(i, r, g, b);
     }
     else if(strlen(color_info) == 9){
-      sscanf(color_info, "#%2x%2x%2x%2x", &r, &g, &b, &a);
+      if (sscanf(color_info, "#%2x%2x%2x%2x", &r, &g, &b, &a) != 4) {
+        snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
+        plwarn(msgbuf);
+        break;
+      }
       c_plscol0a(i, r, g, b, a);
     }
     else{
-      printf("Unrecognized cmap0 format %s\n", color_info);
+      snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
+      plwarn(msgbuf);
+      break;
     }
     
   }
@@ -1257,55 +1278,105 @@ c_plspal1(const char *filename)
 {
   int i;
   int number_colors;
-  int have_alpha;
-  char color_info[30];
-  int r_i, g_i, b_i, a_i, pos_i;
+  int format_version, err;
+  PLBOOL rgb;
+  char color_info[160];
+  int r_i, g_i, b_i, pos_i, rev_i;
+  double r_d, g_d, b_d, a_d, pos_d;
   PLFLT *r, *g, *b, *a, *pos;
+  PLBOOL *rev;
   FILE *fp;
+  char msgbuf[1024];
 
-  have_alpha = 1;
-  fp = (FILE *)plLibOpen(filename);
-  fscanf(fp, "%d\n", &number_colors);
+  rgb = TRUE;
+  rev = NULL;
+  err = 0;
+  format_version = 0;
+  fp = plLibOpen(filename);
+  if (fp == NULL) {
+    snprintf(msgbuf,1024,"Unable to open cmap1 .pal file %s\n",filename);
+    plwarn(msgbuf);
+    return;
+  }
+ 
+  /* Check for new file format */
+  fgets(color_info, 160, fp);
+  if (strncmp(color_info,"v2 ",2) == 0) {
+    format_version = 1;
+    if (strncmp(&color_info[3],"hls",3) == 0)
+      rgb = FALSE;
+    else if (strncmp(&color_info[3],"rgb",3) == 0)
+      rgb = TRUE;
+    else {
+      snprintf(msgbuf,1024,"Invalid color space %s - assuming RGB\n",&color_info[3]);
+      plwarn(msgbuf);
+      rgb = TRUE;
+    }
+    fgets(color_info, 160, fp);
+  }
+
+  if (sscanf(color_info, "%d\n", &number_colors) != 1) {
+    snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
+    plwarn(msgbuf);
+    fclose(fp);
+    return;
+  }
+
   r = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
   g = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
   b = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
   a = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
   pos = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
+  if (format_version > 0) {
+    rev = (PLBOOL *)malloc(number_colors * sizeof(PLBOOL));
+  }
 
-  for(i=0;i<number_colors;i++){
-    fgets(color_info, 30, fp);
-    color_info[strlen(color_info)-1] = '\0';
-    if(color_info[7] == ' '){
-      have_alpha = 0;
-      sscanf(color_info, "#%2x%2x%2x %d", &r_i, &g_i, &b_i, &pos_i);
+  if (format_version == 0) {
+    /* Old tk file format */
+    for(i=0;i<number_colors;i++){
+      fgets(color_info, 160, fp);
+      /* Ensure string is null terminated if > 160 characters */
+      color_info[159] = '\0';
+      if (sscanf(color_info, "#%2x%2x%2x %d", &r_i, &g_i, &b_i, &pos_i) < 4) {
+	snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
+	plwarn(msgbuf);
+	err = 1;
+	break;
+      }  
       r[i] = (PLFLT)r_i;
       g[i] = (PLFLT)g_i;
       b[i] = (PLFLT)b_i;
-      pos[i] = 0.01 * (PLFLT)pos_i;
+      a[i] = 1.0;
+      pos[i] = 0.01*(PLFLT)pos_i;
     }
-    else if(color_info[9] ==  ' '){
-      sscanf(color_info, "#%2x%2x%2x%2x %d", &r_i, &g_i, &b_i, &a_i, &pos_i);
-      r[i] = (PLFLT)r_i;
-      g[i] = (PLFLT)g_i;
-      b[i] = (PLFLT)b_i;
-      a[i] = (PLFLT)a_i;
-      pos[i] = 0.01 * (PLFLT)pos_i;
-    }
-    else{
-      printf("Unrecognized cmap1 format %s\n", color_info);
+  }
+  else {
+    /* New floating point file version with support for alpha and rev values */
+    for(i=0;i<number_colors;i++){
+      fgets(color_info, 160, fp);
+      if (sscanf(color_info, "%lf %lf %lf %lf %lf %d", &pos_d, &r_d, &g_d, &b_d, &a_d, &rev_i) < 6) {
+	snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
+	plwarn(msgbuf);
+	err = 1;
+	break;
+      }  
+      r[i] = (PLFLT)r_d;
+      g[i] = (PLFLT)g_d;
+      b[i] = (PLFLT)b_d;
+      a[i] = (PLFLT)a_d;
+      rev[i] = (PLBOOL)rev_i;
+      pos[i] = (PLFLT)pos_d;
     }
   }
   fclose(fp);
 
-  /* Set the first control point position to 0.0 and the last */
-  /* to 1.0 to deal with any possible round off errors. */
-  pos[0] = 0.0;
-  pos[number_colors-1] = 1.0;
+  if (err == 0) {
+    /* Set the first control point position to 0.0 and the last */
+    /* to 1.0 to deal with any possible round off errors. */
+    pos[0] = 0.0;
+    pos[number_colors-1] = 1.0;
 
-  if (have_alpha == 1){
-    c_plscmap1la(1, number_colors, pos, r, g, b, a, NULL);
-  } else {
-    c_plscmap1l(1, number_colors, pos, r, g, b, NULL);
+    c_plscmap1la(rgb, number_colors, pos, r, g, b, a, rev);
   }
 
   free(r);

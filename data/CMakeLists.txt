@@ -26,6 +26,7 @@ plstnd5.fnt
 plxtnd5.fnt
 usa.map
 usaglobe.map
+cmap1_blue_yellow.pal
 )
 
 install(FILES ${data_DATAFILES} DESTINATION ${DATA_DIR})
