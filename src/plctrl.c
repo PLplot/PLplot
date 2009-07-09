@@ -1290,7 +1290,6 @@ c_plspal1(const char *filename)
   char msgbuf[1024];
 
   rgb = TRUE;
-  rev = NULL;
   err = 0;
   format_version = 0;
   fp = plLibOpen(filename);
@@ -1328,27 +1327,37 @@ c_plspal1(const char *filename)
   b = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
   a = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
   pos = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
-  if (format_version > 0) {
-    rev = (PLBOOL *)malloc(number_colors * sizeof(PLBOOL));
-  }
+  rev = (PLBOOL *)malloc(number_colors * sizeof(PLBOOL));
 
   if (format_version == 0) {
+    int return_sscanf, return_sscanf_old=0;
     /* Old tk file format */
     for(i=0;i<number_colors;i++){
       fgets(color_info, 160, fp);
       /* Ensure string is null terminated if > 160 characters */
       color_info[159] = '\0';
-      if (sscanf(color_info, "#%2x%2x%2x %d", &r_i, &g_i, &b_i, &pos_i) < 4) {
+      return_sscanf = sscanf(color_info, "#%2x%2x%2x %d %d", &r_i, &g_i, &b_i, &pos_i, &rev_i);
+      if(return_sscanf < 4 || (return_sscanf_old != 0 && return_sscanf != return_sscanf_old)) {
 	snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
 	plwarn(msgbuf);
 	err = 1;
 	break;
-      }  
+      }
+      return_sscanf_old = return_sscanf;
       r[i] = (PLFLT)r_i;
       g[i] = (PLFLT)g_i;
       b[i] = (PLFLT)b_i;
       a[i] = 1.0;
       pos[i] = 0.01*(PLFLT)pos_i;
+      if(return_sscanf == 5) {
+        /* Next to oldest tk format with rev specified. */
+        rev[i] = (PLBOOL)rev_i;
+      }
+    }
+    if(return_sscanf == 4) {
+      /* Oldest tk format.  No rev specified. */
+      free(rev);
+      rev = NULL;
     }
   }
   else {
@@ -1365,8 +1374,8 @@ c_plspal1(const char *filename)
       g[i] = (PLFLT)g_d;
       b[i] = (PLFLT)b_d;
       a[i] = (PLFLT)a_d;
-      rev[i] = (PLBOOL)rev_i;
       pos[i] = (PLFLT)pos_d;
+      rev[i] = (PLBOOL)rev_i;
     }
   }
   fclose(fp);
@@ -1385,6 +1394,7 @@ c_plspal1(const char *filename)
   free(b);
   free(a);
   free(pos);
+  free(rev);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1719,7 +1729,8 @@ plLibOpenPdfstrm(const char *fn)
 /****	search current directory	****/
 
     if ((file = pdf_fopen(fn, "rb")) != NULL){
-        goto done;
+      pldebug("plLibOpenPdfstr", "Found file %s in current directory.\n", fn);
+      return (file);
     }
 
 /****	search PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib	****/
@@ -1867,7 +1878,6 @@ plGetName(const char *dir, const char *subdir, const char *filename, char **file
 /* Malloc space for filespec */
 
     free_mem(*filespec);
-    lfilespec = 10;
     lfilespec = strlen(dir) + strlen(subdir) + strlen(filename) + 10;
     if ((*filespec = (char *) malloc(lfilespec))==NULL)
       {
@@ -1884,6 +1894,8 @@ plGetName(const char *dir, const char *subdir, const char *filename, char **file
 	strcat_delim(*filespec);
 	strcat(*filespec, filename);
     }
+    pldebug("plGetName", "Length of full pathname of file to be found is %d\n", lfilespec);
+    pldebug("plGetName", "Full pathname of file to be found is %s\n", *filespec);
 }
 
 /*--------------------------------------------------------------------------*\
