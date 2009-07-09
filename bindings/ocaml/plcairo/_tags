@@ -1,0 +1,2 @@
+<**/*.{ml,mli}> : pkg_cairo, pkg_plplot
+<plcairo.{cma,cmxa}> : pkg_cairo, pkg_plplot
