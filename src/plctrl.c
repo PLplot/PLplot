@@ -1344,9 +1344,11 @@ c_plspal1(const char *filename)
 	break;
       }
       return_sscanf_old = return_sscanf;
-      r[i] = (PLFLT)r_i;
-      g[i] = (PLFLT)g_i;
-      b[i] = (PLFLT)b_i;
+      /* For old format, input colours range from 0 to 255 and
+         need to be renormalized to the range from 0. to 1.. */
+      r[i] = (PLFLT)r_i/255.;
+      g[i] = (PLFLT)g_i/255.;
+      b[i] = (PLFLT)b_i/255.;
       a[i] = 1.0;
       pos[i] = 0.01*(PLFLT)pos_i;
       if(return_sscanf == 5) {
@@ -1369,7 +1371,9 @@ c_plspal1(const char *filename)
 	plwarn(msgbuf);
 	err = 1;
 	break;
-      }  
+      }
+      /* For rgb case of new format colours are already normalized from
+         0., to 1. */
       r[i] = (PLFLT)r_d;
       g[i] = (PLFLT)g_d;
       b[i] = (PLFLT)b_d;
