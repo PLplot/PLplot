@@ -1232,12 +1232,13 @@ c_plspal0(const char *filename)
     plwarn(msgbuf);
     return;
   }
-  if (fscanf(fp, "%d\n", &number_colors) != 1) {
+  if (fscanf(fp, "%d\n", &number_colors) != 1 || number_colors < 16) {
     snprintf(msgbuf,1024,"Unrecognized cmap0 header\n");
     plwarn(msgbuf);
     fclose(fp);
     return;
   }
+  plscmap0n(number_colors);
   for(i=0;i<number_colors;i++){
     fgets(color_info, 30, fp);
     color_info[strlen(color_info)-1] = '\0'; /* remove return character */
@@ -1251,6 +1252,11 @@ c_plspal0(const char *filename)
     }
     else if(strlen(color_info) > 9){
       if (sscanf(color_info, "#%2x%2x%2x %lf", &r, &g, &b, &a) != 4) {
+        snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
+        plwarn(msgbuf);
+        break;
+      }
+      if(a < 0. || a > 1.) {
         snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
         plwarn(msgbuf);
         break;
@@ -1315,7 +1321,7 @@ c_plspal1(const char *filename)
     fgets(color_info, 160, fp);
   }
 
-  if (sscanf(color_info, "%d\n", &number_colors) != 1) {
+  if (sscanf(color_info, "%d\n", &number_colors) != 1 || number_colors < 2) {
     snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
     plwarn(msgbuf);
     fclose(fp);
@@ -1351,6 +1357,12 @@ c_plspal1(const char *filename)
       b[i] = (PLFLT)b_i/255.;
       a[i] = 1.0;
       pos[i] = 0.01*(PLFLT)pos_i;
+      if(pos[i] < 0. || pos[i] > 1.) {
+	snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
+	plwarn(msgbuf);
+	err = 1;
+	break;
+      }
       if(return_sscanf == 5) {
         /* Next to oldest tk format with rev specified. */
         rev[i] = (PLBOOL)rev_i;
@@ -1372,8 +1384,21 @@ c_plspal1(const char *filename)
 	err = 1;
 	break;
       }
-      /* For rgb case of new format colours are already normalized from
-         0., to 1. */
+      /* Check that all rgba and pos data within range from 0. to
+         1. except for the hls colour space case where the first
+         coordinate is checked within range from 0. to 360.*/
+      if((rgb && (r_d < 0. || r_d > 1.)) ||
+         (!rgb && (r_d < 0. || r_d > 360.)) ||
+         g_d < 0. || g_d > 1. ||
+         b_d < 0. || b_d > 1. ||
+         a_d < 0. || a_d > 1. ||
+         pos_d < 0. || pos_d > 1.) {
+	snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
+	plwarn(msgbuf);
+	err = 1;
+	break;
+      }
+             
       r[i] = (PLFLT)r_d;
       g[i] = (PLFLT)g_d;
       b[i] = (PLFLT)b_d;
