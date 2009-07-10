@@ -1736,7 +1736,7 @@ plLibOpenPdfstrm(const char *fn)
 /****   search build tree               ****/
 
     if (plInBuildTree() == 1) {
-      plGetName(BUILD_DIR, "data", fn, &fs);
+      plGetName(SOURCE_DIR, "data", fn, &fs);
 
       if ((file = pdf_fopen(fs, "rb")) != NULL)
         goto done;

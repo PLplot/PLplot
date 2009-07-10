@@ -462,6 +462,9 @@
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE ${RETSIGTYPE}
 
+/* Location of Source tree */
+#define SOURCE_DIR "${SOURCE_DIR}"
+
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
 
