@@ -9638,7 +9638,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <funcsynopsis>
 	<funcprototype>
 	  <funcdef>
-	    <function>plscol0</function>
+	    <function>plscol0a</function>
 	  </funcdef>
 	  <paramdef><parameter>icol0</parameter></paramdef>
 	  <paramdef><parameter>r</parameter></paramdef>
