@@ -23,7 +23,6 @@
 if(ENABLE_octave)
 
 add_subdirectory(PLplot)
-add_subdirectory(demos)
 add_subdirectory(misc)
 
 # Install renamed documentation files.

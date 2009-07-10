@@ -1,4 +1,4 @@
-# bindings/octave/demos/CMakeLists.txt for PLplot
+# examples/octave/CMakeLists.txt for PLplot
 ###
 ### Process this file with cmake to produce Makefile
 ###

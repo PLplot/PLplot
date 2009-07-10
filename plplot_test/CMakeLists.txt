@@ -340,9 +340,9 @@ if(SH_EXECUTABLE)
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.img
 	COMMAND ${CMAKE_COMMAND} -E copy
-	${CMAKE_SOURCE_DIR}/bindings/octave/demos/lena.img
+	${CMAKE_SOURCE_DIR}/examples/octave/lena.img
 	${CMAKE_CURRENT_BINARY_DIR}/lena.img
-	DEPENDS ${CMAKE_SOURCE_DIR}/bindings/octave/demos/lena.img
+	DEPENDS ${CMAKE_SOURCE_DIR}/examples/octave/lena.img
 	)
       add_custom_target(lena_octave_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.img)
     endif(ENABLE_octave)

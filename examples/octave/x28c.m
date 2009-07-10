@@ -1,4 +1,4 @@
-## $Id:$
+## $Id$
 ##
 ## plmtex3, plptex3 demo
 ##
