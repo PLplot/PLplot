@@ -1232,13 +1232,21 @@ c_plspal0(const char *filename)
     plwarn(msgbuf);
     return;
   }
-  if (fscanf(fp, "%d\n", &number_colors) != 1 || number_colors < 16) {
+  if (fscanf(fp, "%d\n", &number_colors) != 1 || number_colors < 1) {
     snprintf(msgbuf,1024,"Unrecognized cmap0 header\n");
     plwarn(msgbuf);
     fclose(fp);
     return;
   }
-  plscmap0n(number_colors);
+
+  /* Allocate default number of cmap0 colours if cmap0 allocation not
+     done already. */
+  plscmap0n(0);
+  /* Allocate sufficient cmap0 colours to contain present data. */
+  if(number_colors > plsc->ncol0) {
+    plscmap0n(number_colors);
+  }
+
   for(i=0;i<number_colors;i++){
     fgets(color_info, 30, fp);
     color_info[strlen(color_info)-1] = '\0'; /* remove return character */
