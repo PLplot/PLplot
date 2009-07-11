@@ -29,6 +29,7 @@ usaglobe.map
 cmap0_white_bg.pal
 cmap0_black_on_white.pal
 cmap1_blue_yellow.pal
+cmap1_blue_red.pal
 cmap1_gray.pal
 )
 
