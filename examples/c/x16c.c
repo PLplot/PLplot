@@ -124,6 +124,9 @@ main(int argc, const char *argv[])
     plMergeOpts(options, "x16c options", notes);
     plparseopts(&argc, argv, PL_PARSE_FULL);
 
+/* Load user color map for cmap1 */
+    plspal0("cmap0_black_on_white.pal");
+
 /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
 
     plscmap0n(3);
@@ -303,9 +306,13 @@ main(int argc, const char *argv[])
     }
 /* Example with polar coordinates. */
 
+    /* Load user color map for cmap1 */
+    plspal1("cmap1_blue_yellow.pal");
+
     pladv(0);
     plvpor( .1, .9, .1, .9 );
     plwind( -1., 1., -1., 1. );
+
 
     plpsty(0);
 
