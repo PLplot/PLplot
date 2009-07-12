@@ -97,6 +97,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	-dpi dpi             Resolution, in dots per inch (e.g. -dpi 360x360)
 	-compression num     Sets compression level in supporting devices
 	-drvopt option[=value][,option[=value]]* Driver specific options
+	-cmap0 name          Sets PLplot color table 0 using the file name
+	-cmap1 name          Sets PLplot color table 1 using the file name
       </screen>
     </para>
 
