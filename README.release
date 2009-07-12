@@ -99,9 +99,10 @@ INDEX
 
 1. Changes relative to PLplot 5.9.4 (the previous development release)
 
-1.1 pyqt changes
+1.1 PyQt changes
+1.2 Color Palettes
 
-1.1 pyqt changes
+1.1 PyQt changes
 
 Years ago we got a donation of a hand-crafted pyqt3 interface to PLplot 
 (some of the functions in plplot_widgetmodule.c in bindings/python) and a
@@ -115,6 +116,19 @@ in examples/python) that works well.  Since this pyqt4 approach is
 maintained by a PLplot developer it appears to have a good future, and we
 have therefore decided to concentrate on pyqt4 and remove the pyqt3 PLplot
 interface and example completely.
+
+1.2 Color Palettes
+
+Support has been added to PLplot for user defined color palette files.
+These files can be loaded at the command line using the -cmap0 or
+-cmap1 commands, or via the API using the plspal0 and plspal1 commands.
+The commands cmap0 / plspal0 are used to load cmap0 type files which
+specify the colors in PLplots color table 0. The commands cmap1 /
+plspal1 are used to load cmap1 type files which specify PLplots color
+table 1. Examples of both types of files can be found in either the
+plplot-source/data directory or the PLplot installed directory 
+(typically /usr/local/share/plplotx.y.z/ on linux).
+
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -151,7 +165,7 @@ examples
 2.30 NaN / Inf support for some PLplot functions
 2.31 Various bug fixes
 2.32 Cairo driver improvements
-2.33 pyqt changes
+2.33 PyQt changes
 
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -584,7 +598,7 @@ Various bugs in the 5.9.3 release have been fixed including:
 Improvements to the cairo driver to give better results for bitmap 
 formats when used with anti-aliasing file viewers.
 
-2.33 pyqt changes
+2.33 PyQt changes
 
 Years ago we got a donation of a hand-crafted pyqt3 interface to PLplot 
 (some of the functions in plplot_widgetmodule.c in bindings/python) and a
