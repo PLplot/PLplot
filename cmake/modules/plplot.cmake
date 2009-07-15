@@ -123,9 +123,6 @@ endif(DEVPAK AND BUILD_TEST)
 # the ctype.h' macros work on characters with the high bit set, as
 # ANSI C requires.
 
-# check_prototype_exists requires C++
-include(c++)
-
 message(STATUS "Checking whether system has ANSI C header files")
 check_include_files("stdlib.h;stdarg.h;string.h;float.h" StandardHeadersExist)
 if(StandardHeadersExist)
@@ -382,8 +379,7 @@ option(DEFAULT_NO_BINDINGS
 "All language bindings are disabled by default"
 OFF
 )
-# Load language specific files
-# C++ done much earlier because check_prototype_exists macro requires it.
+include(c++)
 include(fortran)
 include(java)
 include(python)
