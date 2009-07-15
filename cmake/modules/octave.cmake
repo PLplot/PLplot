@@ -26,6 +26,12 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_octave "Enable Octave bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
+if(ENABLE_octave AND NOT CMAKE_CXX_COMPILER_WORKS)
+  message(STATUS "WARNING: "
+    "Octave requires working C++ compiler to build.  Disabling octave bindings")
+  set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+endif(ENABLE_octave AND NOT CMAKE_CXX_COMPILER_WORKS)
+
 if(ENABLE_octave AND NOT BUILD_SHARED_LIBS)
   message(STATUS "WARNING: "
     "Octave requires shared libraries. Disabling octave bindings")

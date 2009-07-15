@@ -36,6 +36,15 @@
 # set the environment variable CMAKE_LIBRARY_PATH.
 # See cmake documentation for further details.
 
+if(PLD_psttf)
+  if(NOT CMAKE_CXX_COMPILER_WORKS)
+    message(STATUS "WARNING: no working C++ compiler so "
+      "setting psttf device to OFF."
+      )
+    set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
+  endif(NOT CMAKE_CXX_COMPILER_WORKS)
+endif(PLD_psttf)
+
 # Look for psttf headers and libraries with pkg-config
 if(PLD_psttf)
   if(NOT PKG_CONFIG_EXECUTABLE)
