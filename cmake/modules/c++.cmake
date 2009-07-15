@@ -43,7 +43,7 @@ if(ENABLE_cxx)
   enable_language(CXX OPTIONAL)
   
   if(NOT CMAKE_CXX_COMPILER_WORKS)
-    message(STATUS "No working C++ compiler found so PLplot cannot be built.")
+    message(STATUS "No working C++ compiler found so disabling C++ bindings and examples.")
     set(ENABLE_cxx OFF CACHE BOOL "Enable C++ bindings" FORCE)
   endif(NOT CMAKE_CXX_COMPILER_WORKS)
 endif(ENABLE_cxx)
