@@ -10,7 +10,8 @@
 #  VARIABLE - variable to store the result
 #
 
-INCLUDE(CheckCXXSourceCompiles)
+# AWI further change from C++ to C since that is the core PLplot language.
+INCLUDE(CheckCSourceCompiles)
 
 MACRO(CHECK_PROTOTYPE_EXISTS _SYMBOL _HEADER _RESULT)
    SET(_INCLUDE_FILES)
@@ -33,6 +34,6 @@ int main()
   return 0;
 }
 ")
-   CHECK_CXX_SOURCE_COMPILES("${_CHECK_PROTO_EXISTS_SOURCE_CODE}" ${_RESULT})
+   CHECK_C_SOURCE_COMPILES("${_CHECK_PROTO_EXISTS_SOURCE_CODE}" ${_RESULT})
 ENDMACRO(CHECK_PROTOTYPE_EXISTS _SYMBOL _HEADER _RESULT)
 
