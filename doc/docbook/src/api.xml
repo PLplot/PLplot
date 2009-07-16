@@ -7,7 +7,7 @@ Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2008  Alan W. Irwin
 Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
 Copyright (C) 2003  Joao Cardoso
 Copyright (C) 2004, 2007  Andrew Ross
-Copyright (C) 2007, 2009  Hazen Babcock
+Copyright (C) 2007  Hazen Babcock
 
 Redistribution and use in source (XML DocBook) and "compiled" forms
 (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -10243,14 +10243,24 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Set plot orientation parameter which is multiplied by 90&deg; to
-      obtain the angle of rotation.  Note, arbitrary rotation parameters such as 0.2
-      (corresponding to 18&deg;) are possible, but the usual values for
-      the rotation parameter are 0., 1., 2., and 3. corresponding to 0&deg;
-      (landscape mode), 90&deg; (portrait mode), 180&deg; (seascape
-      mode), and 270&deg; (upside-down mode).
-      If &plsdiori; is not called the default value
-      of <literal><parameter>rot</parameter></literal>
-      is 0.
+      obtain the angle of rotation.  Note, arbitrary rotation parameters
+      such as 0.2 (corresponding to 18&deg;) are possible, but the usual
+      values for the rotation parameter are 0., 1., 2., and 3. corresponding
+      to 0&deg; (landscape mode), 90&deg; (portrait mode), 180&deg;
+      (seascape mode), and 270&deg; (upside-down mode).  If &plsdiori; is
+      not called the default value of
+      <literal><parameter>rot</parameter></literal> is 0.
+    </para>
+    <para>
+      N.B. aspect ratio is unaffected by calls to &plsdiori;.  So you will
+      probably want to change the aspect ratio to a value suitable for the
+      plot orientation using a call to &plsdidev; or the command-line
+      options <literal><parameter>-a</parameter></literal> or
+      <literal><parameter>-freeaspect</parameter></literal>.  For more
+      documentation of those options see <xref linkend="arguments"/>.  Such
+      command-line options can be set internally using &plsetopt; or set
+      directly using the command line and parsed using a call to 
+      &plparseopts;.
     </para>
 
     <variablelist>
@@ -12091,13 +12101,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Sets the current orientation.  If
-      <literal><parameter>ori</parameter></literal> is equal to zero
-      (default) then landscape is used (x axis is parallel to the longest
-      edge of the page), otherwise portrait is used.  This option is not
-      supported by all output drivers (in particular, most interactive
-      screen drivers ignore the orientation).  This routine, if used, must
-      be called before initializing PLplot.
+      Set integer plot orientation parameter.  This function is
+      identical to &plsdiori; except for the type of the argument, and
+      should be used in the same way.  See <xref linkend="plsdiori"/> for
+      details.
     </para>
 
     <variablelist>
@@ -12108,8 +12115,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Orientation value (0 for landscape, 1 for portrait; the value is
-	    multiplied by 90 degrees to get the angle)
+	    Orientation value (0 for landscape, 1 for portrait, etc.)
+	    The value is multiplied by 90 degrees to get the angle.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -12124,7 +12131,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
   </sect1>
-
 
   <sect1 id="plspage" renderas="sect3">
     <title>
@@ -12235,105 +12241,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       This function is used in example 31.
-    </para>
-
-  </sect1>
-
-  <sect1 id="plspal0" renderas="sect3">
-    <title>
-      <function>plspal0</function>: Set PLplot color table 0 using a PLplot cmap0 palette file.
-    </title>
-
-    <para>
-      <funcsynopsis>
-	<funcprototype>
-	  <funcdef>
-	    <function>plspal0</function>
-	  </funcdef>
-	  <paramdef><parameter>filename</parameter></paramdef>
-	</funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Sets color table 0 using the PLplot palette file specified by
-      filename. Example palette files for color table 0 can be found
-      in the installed PLplot directory. Note also that you don't need
-      to include the path in the filename if the file is located in the
-      directories that are searched by default by PLplot.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>filename</parameter>
-	  (<literal>const char *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    A string containing the filename of the desired color table 0
-	    palette file.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-    <para>
-      Redacted form: <function>plspal0(filename)</function>
-    </para>
-
-    <para>
-      This function is used in example 16.
-    </para>
-
-  </sect1>
-
-
-  <sect1 id="plspal1" renderas="sect3">
-    <title>
-      <function>plspal1</function>: Set PLplot color table 1 using a PLplot cmap1 palette file.
-    </title>
-
-    <para>
-      <funcsynopsis>
-	<funcprototype>
-	  <funcdef>
-	    <function>plspal1</function>
-	  </funcdef>
-	  <paramdef><parameter>filename</parameter></paramdef>
-	</funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Sets color table 1 using the PLplot palette file specified by
-      filename. Example palette files for color table 1 can be found
-      in the installed PLplot directory. Note also that you don't need
-      to include the path in the filename if the file is located in the
-      directories that are searched by default by PLplot.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>filename</parameter>
-	  (<literal>const char *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    A string containing the filename of the desired color table 1
-	    palette file.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-    <para>
-      Redacted form: <function>plspal1(filename)</function>
-    </para>
-
-    <para>
-      This function is used in example 16.
     </para>
 
   </sect1>
