@@ -95,6 +95,43 @@ a catastrophic double free.
 XI. This is official notice that we have removed pyqt3 access to PLplot and
 replaced it by pyqt4 access to PLplot as of PLplot-5.9.5.
 
+XII.  This is official notice that as of PLplot-5.9.5 we no longer attempt
+to deal with the issue of missing compilers for any of our supported
+compiled languages (Ada, C++, D, Fortran, and Java) beyond our core C
+language by automatically disabling that component of PLplot with a warning
+message and moving on.  This "soft-landing" approach was implemented by
+using a subset of the official CMake language support files to search for
+the compiler.  If the compiler was found to be missing this way we could
+avoid the enable_language call that errors out for missing compilers in a
+different subset of the official CMake language support files.  However, we
+have had to drop this soft-landing approach because it turns out that the
+ccmake CLI, and cmake-gui GUI applications (which are alternatives that can
+be chosen by the user to configure PLplot) are completely confused by this
+implementation with the result that important language-related variables
+were left undefined.
+
+The current situation is that either the PLplot builder must have a working
+development environment (compilers and libraries) for Ada, C++, D, Fortran,
+and Java) or the PLplot builder must specifically disable the language where
+the development environment is missing/broken by setting ENABLE_ada,
+ENABLE_cxx, ENABLE_d, ENABLE_f77, ENABLE_f95, and/or ENABLE_java to OFF as
+appropriate (or alternatively set DEFAULT_NO_BINDINGS to ON and set
+ENABLE_<language> to ON for the language components of PLplot that you want).
+If there is a missing/broken language development environment that is
+not avoided with the appropriate option, then a hard landing (CMake error)
+is the current result.
+
+For now we have chosen this hard landing approach because we wanted ccmake
+and cmake-gui to produce correct configuration of language support for
+PLplot.  However, once CMake bug 9220
+(http://public.kitware.com/Bug/view.php?id=9220) has been addressed, then
+the current build system logic will automatically turn into a soft-landing
+approach since the current enable_language(<language> OPTIONAL) use will no
+longer error out, and our current build system logic will have a chance to
+disable the language and move on whenever there is a language development
+environment problem that has been detected by the CMake enable_language
+command.
+
 INDEX
 
 1. Changes relative to PLplot 5.9.4 (the previous development release)
