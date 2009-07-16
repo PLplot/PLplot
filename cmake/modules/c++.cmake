@@ -28,16 +28,6 @@ else(DEFAULT_NO_BINDINGS)
   OPTION(ENABLE_cxx "Enable C++ bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
-# OPTIONAL below currently does not work properly with CMake so attempt
-# to deal with a possibly missing compiler first as a workaround.
-if(ENABLE_cxx)
-  include(CMakeDetermineCXXCompiler)
-  if(NOT CMAKE_CXX_COMPILER)
-    message(STATUS "WARNING: C++ compiler not found so disabling C++ bindings and examples.")
-    set(ENABLE_cxx OFF CACHE BOOL "Enable C++ bindings" FORCE)
-  endif(NOT CMAKE_CXX_COMPILER)
-endif(ENABLE_cxx)
-
 if(ENABLE_cxx)
   # Find and check C++ compiler.
   enable_language(CXX OPTIONAL)

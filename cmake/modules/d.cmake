@@ -28,16 +28,6 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_d "Enable D bindings" OFF)
 endif(DEFAULT_NO_BINDINGS)
 
-# OPTIONAL below currently does not work properly with CMake so attempt
-# to deal with a possibly missing compiler first as a workaround.
-if(ENABLE_d)
-  include(CMakeDetermineDCompiler)
-  if(NOT CMAKE_D_COMPILER)
-    message(STATUS "WARNING: D compiler not found so disabling D bindings and examples.")
-    set(ENABLE_d OFF CACHE BOOL "Enable D bindings" FORCE)
-  endif(NOT CMAKE_D_COMPILER)
-endif(ENABLE_d)
-
 if(ENABLE_d)
   # Find and check D compiler
   enable_language(D OPTIONAL)

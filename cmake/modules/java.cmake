@@ -40,16 +40,6 @@ if(ENABLE_java AND NOT SWIG_FOUND)
   set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
 endif(ENABLE_java AND NOT SWIG_FOUND)
 
-# OPTIONAL below currently does not work properly with CMake so attempt
-# to deal with a possibly missing compiler first as a workaround.
-if(ENABLE_java)
-  include(CMakeDetermineJavaCompiler)
-  if(NOT CMAKE_Java_COMPILER)
-    message(STATUS "WARNING: Java compiler not found so disabling Java bindings and examples.")
-    set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
-  endif(NOT CMAKE_Java_COMPILER)
-endif(ENABLE_java)
-
 if(ENABLE_java)
   # Find and check Java compiler.
   enable_language(Java OPTIONAL)

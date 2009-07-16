@@ -25,16 +25,6 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_ada "Enable Ada bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
-# OPTIONAL below currently does not work properly with CMake so attempt
-# to deal with a possibly missing compiler first as a workaround.
-if(ENABLE_ada)
-  include(CMakeDetermineAdaCompiler)
-  if(NOT CMAKE_Ada_COMPILER)
-    message(STATUS "WARNING: Ada compiler not found so disabling Ada bindings and examples.")
-    set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
-  endif(NOT CMAKE_Ada_COMPILER)
-endif(ENABLE_ada)
-
 if(ENABLE_ada)
   # Find and check Ada compiler
   enable_language(Ada OPTIONAL)
