@@ -589,7 +589,7 @@ void text_end_cairo(PLStream *pls, EscText *args)
 {
   int textXExtent, textYExtent;
   char *textWithPangoMarkup;
-  PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
+  PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear, diorot_rad;
   cairo_matrix_t *cairoTransformMatrix;
   cairo_font_options_t *cairoFontOptions;
   PangoContext *context;
@@ -617,14 +617,24 @@ void text_end_cairo(PLStream *pls, EscText *args)
   pango_layout_context_changed(layout);
   cairo_font_options_destroy(cairoFontOptions);
 
-  /* Save current transform matrix & clipping region */
-  cairo_save(aStream->cairoContext);
-
   /* Set up the clipping region if we are doing text clipping */
   if(aStream->text_clipping){
+    cairo_save(aStream->cairoContext);
+    diorot_rad = pls->diorot * 2.0/3.14159;
+    rotate_cairo_surface(pls,
+			 cos(diorot_rad),
+			 sin(diorot_rad),
+			 -sin(diorot_rad),
+			 cos(diorot_rad),
+			 0.5 * pls->xlength,
+			 0.5 * pls->ylength);
     cairo_rectangle(aStream->cairoContext, aStream->downscale * pls->clpxmi, aStream->downscale * pls->clpymi, aStream->downscale * (pls->clpxma - pls->clpxmi), aStream->downscale * (pls->clpyma - pls->clpymi));
     cairo_clip(aStream->cairoContext);
+    cairo_restore(aStream->cairoContext);
   }
+
+  /* Save current transform matrix & clipping region */
+  cairo_save(aStream->cairoContext);
 
   /* Move to the string reference point */
   cairo_move_to(aStream->cairoContext, aStream->downscale * (double) args->x, aStream->downscale * (double) args->y);
