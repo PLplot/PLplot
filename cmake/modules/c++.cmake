@@ -28,6 +28,14 @@ else(DEFAULT_NO_BINDINGS)
   OPTION(ENABLE_cxx "Enable C++ bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
+if(ENABLE_cxx AND NOT PLPLOT_CXX_COMPILER_WORKS)
+  workaround_9220(CXX PLPLOT_CXX_COMPILER_WORKS)
+  if(NOT PLPLOT_CXX_COMPILER_WORKS)
+    message(STATUS "WARNING: no working C++ compiler so disabling C++ bindings and examples.")
+    set(ENABLE_cxx OFF CACHE BOOL "Enable C++ bindings" FORCE)
+  endif(NOT PLPLOT_CXX_COMPILER_WORKS)
+endif(ENABLE_cxx AND NOT PLPLOT_CXX_COMPILER_WORKS)
+
 if(ENABLE_cxx)
   # Find and check C++ compiler.
   enable_language(CXX OPTIONAL)

@@ -40,6 +40,14 @@ if(ENABLE_java AND NOT SWIG_FOUND)
   set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
 endif(ENABLE_java AND NOT SWIG_FOUND)
 
+if(ENABLE_java AND NOT PLPLOT_Java_COMPILER_WORKS)
+  workaround_9220(Java PLPLOT_Java_COMPILER_WORKS)
+  if(NOT PLPLOT_Java_COMPILER_WORKS)
+    message(STATUS "WARNING: no working Java compiler so disabling Java bindings and examples.")
+    set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
+  endif(NOT PLPLOT_Java_COMPILER_WORKS)
+endif(ENABLE_java AND NOT PLPLOT_Java_COMPILER_WORKS)
+
 if(ENABLE_java)
   # Find and check Java compiler.
   enable_language(Java OPTIONAL)

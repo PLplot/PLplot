@@ -379,6 +379,10 @@ option(DEFAULT_NO_BINDINGS
 "All language bindings are disabled by default"
 OFF
 )
+# Temporary workaround for language support that is required.
+include(language_support)
+
+# Individual language support.
 include(c++)
 include(fortran)
 include(java)

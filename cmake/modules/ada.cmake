@@ -25,6 +25,14 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_ada "Enable Ada bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
+if(ENABLE_ada AND NOT PLPLOT_Ada_COMPILER_WORKS)
+  workaround_9220(Ada PLPLOT_Ada_COMPILER_WORKS)
+  if(NOT PLPLOT_Ada_COMPILER_WORKS)
+    message(STATUS "WARNING: no working Ada compiler so disabling Ada bindings and examples.")
+    set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
+  endif(NOT PLPLOT_Ada_COMPILER_WORKS)
+endif(ENABLE_ada AND NOT PLPLOT_Ada_COMPILER_WORKS)
+
 if(ENABLE_ada)
   # Find and check Ada compiler
   enable_language(Ada OPTIONAL)

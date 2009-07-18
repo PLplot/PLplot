@@ -28,6 +28,14 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_d "Enable D bindings" OFF)
 endif(DEFAULT_NO_BINDINGS)
 
+if(ENABLE_d AND NOT PLPLOT_D_COMPILER_WORKS)
+  workaround_9220(D PLPLOT_D_COMPILER_WORKS)
+  if(NOT PLPLOT_D_COMPILER_WORKS)
+    message(STATUS "WARNING: no working D compiler so disabling D bindings and examples.")
+    set(ENABLE_d OFF CACHE BOOL "Enable D bindings" FORCE)
+  endif(NOT PLPLOT_D_COMPILER_WORKS)
+endif(ENABLE_d AND NOT PLPLOT_D_COMPILER_WORKS)
+
 if(ENABLE_d)
   # Find and check D compiler
   enable_language(D OPTIONAL)

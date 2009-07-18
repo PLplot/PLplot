@@ -31,6 +31,19 @@ else(DEFAULT_NO_BINDINGS)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_f77 OR ENABLE_f95)
+  set(ENABLE_fortran ON)
+endif(ENABLE_f77 OR ENABLE_f95)
+
+if(ENABLE_fortran AND NOT PLPLOT_Fortran_COMPILER_WORKS)
+  workaround_9220(Fortran PLPLOT_Fortran_COMPILER_WORKS)
+  if(NOT PLPLOT_Fortran_COMPILER_WORKS)
+    message(STATUS "WARNING: no working Fortran compiler so disabling Fortran bindings and examples.")
+    set(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
+    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
+  endif(NOT PLPLOT_Fortran_COMPILER_WORKS)
+endif(ENABLE_fortran AND NOT PLPLOT_Fortran_COMPILER_WORKS)
+
+if(ENABLE_f77 OR ENABLE_f95)
   # Find and check Fortran compiler.
   enable_language(Fortran OPTIONAL)
   if(NOT CMAKE_Fortran_COMPILER_WORKS)
