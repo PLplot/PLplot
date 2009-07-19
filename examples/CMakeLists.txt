@@ -287,21 +287,14 @@ install(FILES
   ${CMAKE_SOURCE_DIR}/cmake/modules/FindPkgConfig.cmake
   DESTINATION ${DATA_DIR}/examples/cmake/modules
   )
-  
+
 # Install PLplot-specific language support files needed for CMake-based
 # build of installed examples.
+# N.B. This list of files must be maintained consistently with the file
+# lists in cmake/modules/language_support.cmake.
 
 set(LANG_SUPPORT_FILES)
-
-if(ENABLE_d)
-  set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
-    CMakeD_Copyright.txt
-    CMakeDCompiler.cmake.in
-    CMakeDInformation.cmake
-    CMakeDetermineDCompiler.cmake
-    CMakeTestDCompiler.cmake
-    )
-endif(ENABLE_d)
+set(PLATFORM_SUPPORT_FILES)
 
 if(ENABLE_ada)
   set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
@@ -312,6 +305,34 @@ if(ENABLE_ada)
     )
 endif(ENABLE_ada)
 
+if(ENABLE_d)
+  set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
+    CMakeD_Copyright.txt
+    CMakeDCompiler.cmake.in
+    CMakeDInformation.cmake
+    CMakeDetermineDCompiler.cmake
+    CMakeTestDCompiler.cmake
+    )
+  set(PLATFORM_SUPPORT_FILES ${PLATFORM_SUPPORT_FILES}
+    Platform/Linux-dmd.cmake
+    Platform/Linux-gdc.cmake
+    Platform/Windows-dmd.cmake
+    Platform/Windows-gdc.cmake
+    )
+endif(ENABLE_d)
+
+if(ENABLE_f77 OR ENABLE_f95)
+  set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
+    CMakeFortranInformation.cmake
+    )
+  set(PLATFORM_SUPPORT_FILES ${PLATFORM_SUPPORT_FILES}
+    Platform/Cygwin-GNU-Fortran.cmake
+    Platform/Windows-GNU-Fortran.cmake
+    Platform/Windows-df.cmake
+    Platform/Windows-f90.cmake
+    )
+endif(ENABLE_f77 OR ENABLE_f95)
+
 if(LANG_SUPPORT_FILES)
   foreach(LANG_SUPPORT_FILE ${LANG_SUPPORT_FILES})
     install(FILES
@@ -320,3 +341,13 @@ if(LANG_SUPPORT_FILES)
       )
   endforeach(LANG_SUPPORT_FILE ${LANG_SUPPORT_FILES})
 endif(LANG_SUPPORT_FILES)
+
+if(PLATFORM_SUPPORT_FILES)
+  foreach(PLATFORM_SUPPORT_FILE ${PLATFORM_SUPPORT_FILES})
+    install(FILES
+      ${CMAKE_SOURCE_DIR}/cmake/modules/${PLATFORM_SUPPORT_FILE}
+      DESTINATION ${DATA_DIR}/examples/cmake/modules/Platform
+      )
+  endforeach(PLATFORM_SUPPORT_FILE ${PLATFORM_SUPPORT_FILES})
+endif(PLATFORM_SUPPORT_FILES)
+
