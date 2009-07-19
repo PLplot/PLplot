@@ -332,7 +332,7 @@ void plD_bop_cairo(PLStream *pls)
 		       (double)pls->cmap0[0].r/255.0,
 		       (double)pls->cmap0[0].g/255.0,
 		       (double)pls->cmap0[0].b/255.0);
-  cairo_fill(aStream->cairoContext);  
+  cairo_fill(aStream->cairoContext);
 }
 
 /*---------------------------------------------------------------------
@@ -620,7 +620,7 @@ void text_end_cairo(PLStream *pls, EscText *args)
   /* Set up the clipping region if we are doing text clipping */
   if(aStream->text_clipping){
     cairo_save(aStream->cairoContext);
-    diorot_rad = pls->diorot * 2.0/3.14159;
+    diorot_rad = pls->diorot * PI/2.0;
     rotate_cairo_surface(pls,
 			 cos(diorot_rad),
 			 sin(diorot_rad),
@@ -647,7 +647,7 @@ void text_end_cairo(PLStream *pls, EscText *args)
   /* Extract rotation angle and shear from the PLplot tranformation matrix.
      Compute sines and cosines of the angles as an optimization. */
   plRotationShear(args->xform, &rotation, &shear, &stride);
-  rotation -= pls->diorot * 3.14159 / 2.0;
+  rotation -= pls->diorot * PI / 2.0;
   cos_rot = cos(rotation);
   sin_rot = sin(rotation);
   cos_shear = cos(shear);
@@ -754,7 +754,7 @@ void proc_str(PLStream *pls, EscText *args)
   /* Extract rotation angle and shear from the PLplot tranformation matrix.
      Compute sines and cosines of the angles as an optimization. */
   plRotationShear(args->xform, &rotation, &shear, &stride);
-  rotation -= pls->diorot * 3.14159 / 2.0;
+  rotation -= pls->diorot * PI / 2.0;
   cos_rot = cos(rotation);
   sin_rot = sin(rotation);
   cos_shear = cos(shear);
