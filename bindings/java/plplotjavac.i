@@ -259,9 +259,10 @@ setup_array_2d_d( PLFLT ***pa, jdouble **adat, int nx, int ny )
 
 /* Create a jdoubleArray and fill it from the C PLFLT array dat */
 static jdoubleArray
-setup_java_array_1d_PLFLT( JNIEnv *jenv, PLFLT *dat, PLINT n) 
+setup_java_array_1d_PLFLT( JNIEnv *jenv, PLFLT *dat, PLINT n)
 {
    double *x;
+   jdoubleArray jadat;
 #ifdef PL_DOUBLE
    x = (double *) dat;
 #else
@@ -270,7 +271,7 @@ setup_java_array_1d_PLFLT( JNIEnv *jenv, PLFLT *dat, PLINT n)
       x[i] = (double) dat[i];
    }
 #endif
-   jdoubleArray jadat = (*jenv)->NewDoubleArray(jenv, n);
+   jadat = (*jenv)->NewDoubleArray(jenv, n);
    (*jenv)->SetDoubleArrayRegion(jenv, jadat, 0, n, x);
 #ifndef PL_DOUBLE
    free(x);
