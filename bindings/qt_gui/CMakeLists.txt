@@ -97,11 +97,15 @@ if(ENABLE_qt)
   # qt_RPATH set in cmake/modules/qt.cmake. This is only used for the 
   # install-tree rpath since cmake handles the build-tree rpath
   # automatically (so long as full pathnames to libraries are used).
-  # message("qt_RPATH = ${qt_RPATH}")
+  #message("qt_RPATH = ${qt_RPATH}")
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-    # Must prepend qt_RPATH because /usr/lib is sometimes in LIB_INSTALL_RPATH.
-    set(LIB_INSTALL_RPATH ${qt_RPATH} ${LIB_INSTALL_RPATH})
+    # Order is important here because of /usr/lib concerns.
+    set(LIB_INSTALL_RPATH 
+      ${LIB_DIR}
+      ${qt_RPATH}
+      ${libplplot${LIB_TAG}_RPATH}
+      )
+    #message("LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
     set_target_properties(plplotqt${LIB_TAG}
       PROPERTIES
       SOVERSION ${plplotqt_SOVERSION}
