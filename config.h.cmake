@@ -10,7 +10,7 @@
 #define BIN_DIR "${BIN_DIR}"
 
 /* isnan is in math.h but not cmath */
-#cmakedefine BROKEN_ISNAN_CXX
+#cmakedefine PL_BROKEN_ISNAN_CXX
 
 /* Location of Build tree */
 #define BUILD_DIR "${BUILD_DIR}"
@@ -28,7 +28,7 @@
 #cmakedefine HAVE_CMATH 1
 
 /* Define if you have c++ accessible stdint.h */
-#cmakedefine HAVE_CXX_STDINT_H
+#cmakedefine PL_HAVE_CXX_STDINT_H
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
@@ -38,10 +38,10 @@
 #cmakedefine HAVE_DLFCN_H 1
 
 /* Define if finite is available */
-#cmakedefine HAVE_FINITE
+#cmakedefine PL_HAVE_FINITE
 
 /* Define if _finite is available */
-#cmakedefine _HAVE_FINITE
+#cmakedefine PL__HAVE_FINITE
 
 /* Define if [freetype] is available */
 #cmakedefine HAVE_FREETYPE
@@ -62,16 +62,16 @@
 #cmakedefine HAVE_INTTYPES_H 1
 
 /* Define if isinf is available */
-#cmakedefine HAVE_ISINF
+#cmakedefine PL_HAVE_ISINF
 
 /* Define if _isinf is available */
-#cmakedefine _HAVE_ISINF
+#cmakedefine PL__HAVE_ISINF
 
 /* Define if isnan is available */
-#cmakedefine HAVE_ISNAN
+#cmakedefine PL_HAVE_ISNAN
 
 /* Define if _isnan is available */
-#cmakedefine _HAVE_ISNAN
+#cmakedefine PL__HAVE_ISNAN
 
 /* Define if snprintf is available */
 #ifndef PL_HAVE_SNPRINTF
@@ -139,7 +139,7 @@
 #cmakedefine HAVE_QHULL
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#cmakedefine HAVE_STDINT_H 1
+#cmakedefine PL_HAVE_STDINT_H 1
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #cmakedefine HAVE_STDLIB_H 1
@@ -165,7 +165,7 @@
 #cmakedefine HAVE_TERMIOS_H 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#cmakedefine HAVE_UNISTD_H 1
+#cmakedefine PL_HAVE_UNISTD_H 1
 
 /* Define if usleep is available */
 #cmakedefine PL_HAVE_USLEEP
@@ -472,7 +472,7 @@
 #define TCL_DIR "${TCL_DIR}"
 
 /* Define if C++ compiler accepts using namespace */
-#cmakedefine USE_NAMESPACE
+#cmakedefine PL_USE_NAMESPACE
 
 /* Version number of package */
 #define VERSION "${VERSION}"

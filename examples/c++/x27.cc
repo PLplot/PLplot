@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-// $Id:$
+// $Id$
 // Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
 //---------------------------------------------------------------------------//
 //
@@ -28,7 +28,7 @@
 
 #include "plc++demos.h"
 
-#ifdef USE_NAMESPACE
+#ifdef PL_USE_NAMESPACE
 using namespace std;
 #endif
 

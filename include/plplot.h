@@ -154,8 +154,8 @@ typedef float PLFLT;
 #define PLFLT_MIN  FLT_MIN
 #endif
 
-#if (defined(HAVE_STDINT_H) && !defined(__cplusplus)) ||\
-(defined(__cplusplus) && defined(HAVE_CXX_STDINT_H))
+#if (defined(PL_HAVE_STDINT_H) && !defined(__cplusplus)) ||\
+(defined(__cplusplus) && defined(PL_HAVE_CXX_STDINT_H))
 #include <stdint.h>
 /* This is apparently portable if stdint.h exists. */
 typedef uint32_t PLUINT;
@@ -193,42 +193,6 @@ typedef PLINT PLBOOL;
 /* For passing user data, as with X's XtPointer */
 
 typedef void* PLPointer;
-
-/*--------------------------------------------------------------------------*\
- * Add in missing isnan / isinf functions on some platforms
-\*--------------------------------------------------------------------------*/
-
-#if defined(_HAVE_ISNAN)
-#  define isnan _isnan
-#  if defined(_MSC_VER)
-#    include <float.h>
-#  endif
-#endif
-#if defined(_HAVE_ISINF)
-#  define isinf _isinf
-#endif
-#if defined(_HAVE_FINITE)
-#  define finite _finite
-#endif
-
-/* Note these replacements follow the old BSD convention and not
- * C99. In particular isinf does not distinguish +/- inf. */
-#if !defined(HAVE_ISNAN)
-#  define isnan(x) ((x) != (x))
-#endif
-#if !defined(HAVE_ISINF)
-#  define isinf(x) (!isnan(x) && isnan(x-x))
-#endif
-#if !defined(HAVE_FINITE)
-#  define finite(x) (!isnan(x-x)) 
-#endif
-
-/* Check if C99 HUGE_VAL macro is available - if not then 
- * define a replacement */
-#ifndef HUGE_VAL
-#define HUGE_VAL (1.0/0.0)
-#endif
-
 
 /*--------------------------------------------------------------------------*\
  * Complex data types and other good stuff

@@ -46,7 +46,7 @@
 #include "metadefs.h"
 #include "plevent.h"
 
-#if HAVE_UNISTD_H
+#if PL_HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 #include <sys/types.h>

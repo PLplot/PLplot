@@ -29,11 +29,11 @@
 #include "plc++demos.h"
 
 // Need for some Mac OSX systems with broken <cmath> header
-#ifdef BROKEN_ISNAN_CXX
+#ifdef PL_BROKEN_ISNAN_CXX
 extern "C" int isnan (double);
 #endif
 
-#ifdef USE_NAMESPACE
+#ifdef PL_USE_NAMESPACE
 using namespace std;
 #endif
 

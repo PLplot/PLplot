@@ -30,7 +30,7 @@
 #include "plevent.h"
 #include <fstream>
 
-#ifdef USE_NAMESPACE
+#ifdef PL_USE_NAMESPACE
 using namespace std;
 #endif
 

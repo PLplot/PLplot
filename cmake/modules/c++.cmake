@@ -55,11 +55,11 @@ if(ENABLE_cxx)
   CHECK_INCLUDE_FILE_CXX(cmath HAVE_CMATH)
 
   if(NOT MSVC)
-    # Need to add check for broken cmath with isnan missing (BROKEN_ISNAN_CXX)
+    # Need to add check for broken cmath with isnan missing (PL_BROKEN_ISNAN_CXX)
     # but not for Visual C++ compilers
     include(TestBrokenIsnanCXX)
   endif(NOT MSVC)
 
-  # Need to add check if stdint.h can be used from c++ (HAVE_CXX_STDINT_H)
+  # Need to add check if stdint.h can be used from c++ (PL_HAVE_CXX_STDINT_H)
   INCLUDE(TestForStdintCXX)
 endif(ENABLE_cxx)

@@ -41,44 +41,20 @@
 #  include <config.h>
 #endif
 
-/* Define if dynamic drivers are enabled.*/
-#cmakedefine ENABLE_DYNDRIVERS
-
-/* Define if [incr Tcl] is available */
-#cmakedefine HAVE_ITCL
-
-/* Define if [incr Tk] is available */
-#cmakedefine HAVE_ITK
-
-/* Define if [freetype] is available */
-#cmakedefine HAVE_FREETYPE
-
-/* Define if finite is available */
-#cmakedefine HAVE_FINITE
-
-/* Define if _finite is available */
-#cmakedefine _HAVE_FINITE
+/* Define if you have c++ accessible stdint.h */
+#cmakedefine PL_HAVE_CXX_STDINT_H
 
 /* Define if isinf is available */
-#cmakedefine HAVE_ISINF
+#cmakedefine PL_HAVE_ISNAN
 
 /* Define if _isinf is available */
-#cmakedefine _HAVE_ISINF
-
-/* Define if isnan is available */
-#cmakedefine HAVE_ISNAN
-
-/* Define if _isnan is available */
-#cmakedefine _HAVE_ISNAN
-
-/* Define if you have c++ accessible stdint.h */
-#cmakedefine HAVE_CXX_STDINT_H
+#cmakedefine PL__HAVE_ISNAN
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#cmakedefine HAVE_STDINT_H 1
+#cmakedefine PL_HAVE_STDINT_H 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#cmakedefine HAVE_UNISTD_H 1
+#cmakedefine PL_HAVE_UNISTD_H 1
 
 /* Define if usleep is available */
 #cmakedefine PL_HAVE_USLEEP
@@ -87,13 +63,10 @@
 #cmakedefine PL_DOUBLE
 
 /* Define if C++ compiler accepts using namespace */
-#cmakedefine USE_NAMESPACE
-
-/* Define to 1 if <cmath> header file is available */
-#cmakedefine HAVE_CMATH 1
+#cmakedefine PL_USE_NAMESPACE
 
 /* Define if isnan is present in <math.h> but not in <cmath> 
  * - broken Mac OSX systems */
-#cmakedefine BROKEN_ISNAN_CXX
+#cmakedefine PL_BROKEN_ISNAN_CXX
 
 #endif	/* __PLCONFIG_H__ */

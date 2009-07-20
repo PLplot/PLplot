@@ -23,7 +23,7 @@
 
 #include "plc++demos.h"
 
-#ifdef USE_NAMESPACE
+#ifdef PL_USE_NAMESPACE
 using namespace std;
 #endif 
 

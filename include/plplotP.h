@@ -241,6 +241,41 @@ extern PLDLLIMPEXP_DATA(PLStream *)plsc;
 #endif /* PL_HAVE_SNPRINTF */
 
 /*--------------------------------------------------------------------------*\
+ * Add in missing isnan / isinf functions on some platforms
+\*--------------------------------------------------------------------------*/
+
+#if defined(PL__HAVE_ISNAN)
+#  define isnan _isnan
+#  if defined(_MSC_VER)
+#    include <float.h>
+#  endif
+#endif
+#if defined(PL__HAVE_ISINF)
+#  define isinf _isinf
+#endif
+#if defined(PL__HAVE_FINITE)
+#  define finite _finite
+#endif
+
+/* Note these replacements follow the old BSD convention and not
+ * C99. In particular isinf does not distinguish +/- inf. */
+#if !defined(PL_HAVE_ISNAN)
+#  define isnan(x) ((x) != (x))
+#endif
+#if !defined(PL_HAVE_ISINF)
+#  define isinf(x) (!isnan(x) && isnan(x-x))
+#endif
+#if !defined(PL_HAVE_FINITE)
+#  define finite(x) (!isnan(x-x)) 
+#endif
+
+/* Check if C99 HUGE_VAL macro is available - if not then 
+ * define a replacement */
+#ifndef HUGE_VAL
+#define HUGE_VAL (1.0/0.0)
+#endif
+
+/*--------------------------------------------------------------------------*\
  *                       PLPLOT control macros
 \*--------------------------------------------------------------------------*/
 

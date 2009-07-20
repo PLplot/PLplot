@@ -31,11 +31,11 @@
 #include "plevent.h"
 #include <cctype>
 
-#ifdef HAVE_UNISTD_H
+#ifdef PL_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
-#ifdef USE_NAMESPACE
+#ifdef PL_USE_NAMESPACE
 using namespace std;
 #endif
 

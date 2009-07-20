@@ -28,14 +28,14 @@ IF(NOT DEFINED CMAKE_USE_NAMESPACE)
     OUTPUT_VARIABLE OUTPUT)
   IF (CMAKE_USE_NAMESPACE)
     MESSAGE(STATUS "Check for using namespace - found")
-    SET (USE_NAMESPACE 1 CACHE INTERNAL
+    SET (PL_USE_NAMESPACE 1 CACHE INTERNAL
       "Does the compiler support using namespace")
       FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
       "Determining if the CXX compiler has using namespace passed with "
       "the following output:\n${OUTPUT}\n\n")
   ELSE (CMAKE_USE_NAMESPACE)
     MESSAGE(STATUS "Check for using namespace - not found")
-    SET (USE_NAMESPACE 0 CACHE INTERNAL
+    SET (PL_USE_NAMESPACE 0 CACHE INTERNAL
       "Does the compiler support using namespace")
       FILE(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
       "Determining if the CXX compiler has using namespace failed with "

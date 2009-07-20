@@ -24,7 +24,7 @@
 
 #include "plcdemos.h"
 #include "plevent.h"
-#ifdef HAVE_UNISTD_H
+#ifdef PL_HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 

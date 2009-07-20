@@ -39,4 +39,16 @@
 #define ROUND(a)    (PLINT)((a)<0. ? ((a)-.5) : ((a)+.5))
 #endif
 
+/* Add in missing isnan definition if required */
+#if defined(PL__HAVE_ISNAN)
+#  define isnan _isnan
+#  if defined(_MSC_VER)
+#    include <float.h>
+#  endif
+#endif
+
+#if !defined(PL_HAVE_ISNAN)
+#  define isnan(x) ((x) != (x))
+#endif
+
 #endif	/* __PLCDEMOS_H__ */

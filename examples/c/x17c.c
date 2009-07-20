@@ -5,10 +5,10 @@
 
 #include "plcdemos.h"
 #include <stdlib.h>
-#ifdef HAVE_UNISTD_H
+#ifdef PL_HAVE_UNISTD_H
 # include <unistd.h>
 #else
-# ifdef HAS_POLL
+# ifdef PL_HAVE_POLL
 #  include <poll.h>
 # endif
 #endif
@@ -130,7 +130,7 @@ main(int argc, const char *argv[])
 #ifdef PL_HAVE_USLEEP
 	usleep(10000);	/* wait a little (10 ms) to simulate time elapsing */
 #else
-# ifdef HAS_POLL
+# ifdef PL_HAVE_POLL
 	poll(0,0,10);
 # else
 	{ int i; for( i=0; i<1000000; i++ ); }

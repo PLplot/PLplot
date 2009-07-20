@@ -93,7 +93,7 @@
 #if defined(__sgi) && !defined(SVR3)
 #include <sys/select.h>
 #endif
-#ifdef HAVE_UNISTD_H
+#ifdef PL_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 

@@ -82,7 +82,7 @@
 #endif
 
 #ifndef __WIN32__
-#ifdef HAVE_UNISTD_H
+#ifdef PL_HAVE_UNISTD_H
 #include <unistd.h>
 #include <fcntl.h>
 #endif
