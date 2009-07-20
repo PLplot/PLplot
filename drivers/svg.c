@@ -465,9 +465,8 @@ void proc_str (PLStream *pls, EscText *args)
   short lastOffset;
   double ftHt;
   PLUNICODE fci;
-  PLFLT diorot_rad, x1c, y1c, x2c, y2c;
-  PLFLT rcx[4];
-  PLFLT rcy[4];
+  PLINT x1c, y1c, x2c, y2c;
+  PLINT rcx[4], rcy[4];
   PLFLT rotation, shear, stride, cos_rot, sin_rot, sin_shear, cos_shear;
   PLFLT t[4];
   int glyph_size, sum_glyph_size;
@@ -496,42 +495,35 @@ void proc_str (PLStream *pls, EscText *args)
     svg_attr_values(aStream, "id","text-clipping%d", which_clip);
     svg_general(aStream, ">\n");
 
-    /* Rotation occurs around the center of the plot so 
-       set origin of the clipping points appropriately. */
-    x1c = pls->clpxmi/aStream->scale - 0.5 * aStream->canvasXSize;
-    y1c = pls->clpymi/aStream->scale - 0.5 * aStream->canvasYSize;
-    x2c = pls->clpxma/aStream->scale - 0.5 * aStream->canvasXSize;
-    y2c = pls->clpyma/aStream->scale - 0.5 * aStream->canvasYSize;
-
-    /*
-    rcx[0] = pls->dioxax * x1c + pls->dioxay * y1c + 0.5 * aStream->canvasXSize;
-    rcx[1] = pls->dioxax * x1c + pls->dioxay * y2c + 0.5 * aStream->canvasXSize;
-    rcx[2] = pls->dioxax * x2c + pls->dioxay * y2c + 0.5 * aStream->canvasXSize;
-    rcx[3] = pls->dioxax * x2c + pls->dioxay * y1c + 0.5 * aStream->canvasXSize;
-    rcy[0] = pls->dioyax * x1c + pls->dioyay * y1c + 0.5 * aStream->canvasXSize;
-    rcy[1] = pls->dioyax * x1c + pls->dioyay * y1c + 0.5 * aStream->canvasXSize;
-    rcy[2] = pls->dioyax * x1c + pls->dioyay * y1c + 0.5 * aStream->canvasXSize;
-    rcy[3] = pls->dioyax * x1c + pls->dioyay * y1c + 0.5 * aStream->canvasXSize;
-    */
-
-    /* Rotate the clipping region by angle around the center of the plot.
-       FIXME: This is not really correct since PLplot seems to also be doing
-       some additional transformations beyond rotation so the clipping region
-       will not be exactly centered on the plot, possibly leading to some loss
-       of text around the edges. */
-    diorot_rad = pls->diorot * 3.14159/2.0;
-    rcx[0] = cos(diorot_rad) * x1c + sin(diorot_rad) * y1c + 0.5 * aStream->canvasXSize;
-    rcx[1] = cos(diorot_rad) * x1c + sin(diorot_rad) * y2c + 0.5 * aStream->canvasXSize;
-    rcx[2] = cos(diorot_rad) * x2c + sin(diorot_rad) * y2c + 0.5 * aStream->canvasXSize;
-    rcx[3] = cos(diorot_rad) * x2c + sin(diorot_rad) * y1c + 0.5 * aStream->canvasXSize;
-    rcy[0] = -sin(diorot_rad) * x1c + cos(diorot_rad) * y1c + 0.5 * aStream->canvasYSize;
-    rcy[1] = -sin(diorot_rad) * x1c + cos(diorot_rad) * y2c + 0.5 * aStream->canvasYSize;
-    rcy[2] = -sin(diorot_rad) * x2c + cos(diorot_rad) * y2c + 0.5 * aStream->canvasYSize;
-    rcy[3] = -sin(diorot_rad) * x2c + cos(diorot_rad) * y1c + 0.5 * aStream->canvasYSize;
+    /* Use PLplot core routine to appropriately transform the
+       coordinates of the clipping rectangle */
+    x1c = pls->clpxmi;
+    y1c = pls->clpymi;
+    x2c = pls->clpxma;
+    y2c = pls->clpyma;
+    rcx[0] = x1c;
+    rcx[1] = x1c;
+    rcx[2] = x2c;
+    rcx[3] = x2c;
+    rcy[0] = y1c;
+    rcy[1] = y2c;
+    rcy[2] = y2c;
+    rcy[3] = y1c;    
+    difilt(rcx, rcy, 4, &x1c, &x2c, &y1c, &y2c);
 
     /* Output a polygon to represent the clipping region. */
     svg_open(aStream, "polygon");
-    svg_attr_values(aStream, "points", "%f,%f %f,%f %f,%f %f,%f", rcx[0], rcy[0], rcx[1], rcy[1], rcx[2], rcy[2], rcx[3], rcy[3]);
+    svg_attr_values(aStream, 
+		    "points", 
+		    "%f,%f %f,%f %f,%f %f,%f",
+ 		    ((PLFLT)rcx[0])/aStream->scale,
+		    ((PLFLT)rcy[0])/aStream->scale, 
+		    ((PLFLT)rcx[1])/aStream->scale, 
+		    ((PLFLT)rcy[1])/aStream->scale, 
+		    ((PLFLT)rcx[2])/aStream->scale, 
+		    ((PLFLT)rcy[2])/aStream->scale, 
+		    ((PLFLT)rcx[3])/aStream->scale, 
+		    ((PLFLT)rcy[3])/aStream->scale);
     svg_open_end(aStream);
 
     svg_close(aStream, "clipPath");     
@@ -546,7 +538,17 @@ void proc_str (PLStream *pls, EscText *args)
      be very helpful for debugging. */
   /*
   svg_open(aStream, "polygon");
-  svg_attr_values(aStream, "points", "%f,%f %f,%f %f,%f %f,%f", rcx[0], rcy[0], rcx[1], rcy[1], rcx[2], rcy[2], rcx[3], rcy[3]);
+  svg_attr_values(aStream, 
+		  "points", 
+		  "%f,%f %f,%f %f,%f %f,%f",
+		  ((PLFLT)rcx[0])/aStream->scale,
+		  ((PLFLT)rcy[0])/aStream->scale, 
+		  ((PLFLT)rcx[1])/aStream->scale, 
+		  ((PLFLT)rcy[1])/aStream->scale, 
+		  ((PLFLT)rcx[2])/aStream->scale, 
+		  ((PLFLT)rcy[2])/aStream->scale, 
+		  ((PLFLT)rcx[3])/aStream->scale, 
+		  ((PLFLT)rcy[3])/aStream->scale);
   svg_stroke_width(pls);
   svg_stroke_color(pls);
   svg_attr_value(aStream, "fill", "none");
