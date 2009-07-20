@@ -142,6 +142,11 @@ static int qt_family_check(PLStream *pls)
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 void plD_init_rasterqt(PLStream *);
 void plD_eop_rasterqt(PLStream *);
+void plD_line_rasterqt(PLStream *, short, short, short, short);
+void plD_polyline_rasterqt(PLStream *, short*, short*, PLINT);
+void plD_tidy_rasterqt(PLStream *);
+void plD_state_rasterqt(PLStream *, PLINT);
+void plD_esc_rasterqt(PLStream *, PLINT, void*);
 #endif
 
 #if defined (PLD_bmpqt)
@@ -174,12 +179,22 @@ void plD_dispatch_init_svgqt(PLDispatchTable *pdt);
 void plD_init_svgqt(PLStream *);
 void plD_bop_svgqt(PLStream *);
 void plD_eop_svgqt(PLStream *);
+void plD_line_svgqt(PLStream *, short, short, short, short);
+void plD_polyline_svgqt(PLStream *, short*, short*, PLINT);
+void plD_tidy_svgqt(PLStream *);
+void plD_state_svgqt(PLStream *, PLINT);
+void plD_esc_svgqt(PLStream *, PLINT, void*);
 #endif
 
 #if defined(PLD_epsqt) || defined(PLD_pdfqt)
 void plD_init_epspdfqt(PLStream *);
 void plD_bop_epspdfqt_helper(PLStream *, int ifeps);
 void plD_eop_epspdfqt(PLStream *);
+void plD_line_epspdfqt(PLStream *, short, short, short, short);
+void plD_polyline_epspdfqt(PLStream *, short*, short*, PLINT);
+void plD_tidy_epspdfqt(PLStream *);
+void plD_state_epspdfqt(PLStream *, PLINT);
+void plD_esc_epspdfqt(PLStream *, PLINT, void*);
 #endif
 #if defined(PLD_epsqt)
 void plD_dispatch_init_epsqt(PLDispatchTable *pdt);
@@ -194,6 +209,11 @@ void plD_bop_pdfqt(PLStream *);
 void plD_dispatch_init_qtwidget(PLDispatchTable *pdt);
 void plD_init_qtwidget(PLStream *);
 void plD_eop_qtwidget(PLStream *);
+void plD_line_qtwidget(PLStream *, short, short, short, short);
+void plD_polyline_qtwidget(PLStream *, short*, short*, PLINT);
+void plD_tidy_qtwidget(PLStream *);
+void plD_state_qtwidget(PLStream *, PLINT);
+void plD_esc_qtwidget(PLStream *, PLINT, void*);
 #endif
 
 #if defined(PLD_extqt)
@@ -209,190 +229,7 @@ void plD_esc_extqt(PLStream *, PLINT, void*);
 
 // Declaration of the generic interface functions
 
-void plD_line_qt(PLStream *, short, short, short, short);
-void plD_polyline_qt(PLStream *, short*, short*, PLINT);
 void plD_bop_qt(PLStream *){}
-void plD_tidy_qt(PLStream *);
-void plD_state_qt(PLStream *, PLINT);
-void plD_esc_qt(PLStream *, PLINT, void*);
-
-
-// Generic driver interface
-
-void plD_line_qt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
-{
-  QtPLDriver * widget=NULL;
-	
-  // We have to dynamic_cast to make sure the good virtual functions are called
-#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
-  if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
-  if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_epsqt) || defined(PLD_pdfqt)
-  if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_qtwidget) || defined(PLD_extqt)
-  if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QtPLWidget *) pls->dev);
-#endif
-  if(widget==NULL) return;
-	
-  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-  widget->drawLine(x1a, y1a, x2a, y2a);
-}
-
-void plD_polyline_qt(PLStream *pls, short *xa, short *ya, PLINT npts)
-{
-  QtPLDriver * widget=NULL;
-
-#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
-  if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
-  if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_epsqt) || defined(PLD_pdfqt)
-  if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_qtwidget) || defined(PLD_extqt)
-  if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QtPLWidget *) pls->dev);
-#endif
-  if(widget==NULL) return;
-	
-  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-  widget->drawPolyline(xa, ya, npts);
-}
-
-void plD_esc_qt(PLStream * pls, PLINT op, void* ptr)
-{
-  short *xa, *ya;
-  PLINT i, j;
-  QtPLDriver * widget=NULL;
-
-#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
-  if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
-  if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_epsqt) || defined(PLD_pdfqt)
-  if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_qtwidget) || defined(PLD_extqt)
-  if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QtPLWidget *) pls->dev);
-#endif
-  if(widget==NULL) return;
-		    
-  switch(op)
-  {
-    case PLESC_DASH:
-      widget->setDashed(pls->nms, pls->mark, pls->space);
-      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-      widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
-      widget->setSolid();
-      break;
-        
-    case PLESC_FILL:
-      xa=new short[pls->dev_npts];
-      ya=new short[pls->dev_npts];
-            
-      for (i = 0; i < pls->dev_npts; i++)
-      {
-        xa[i] = pls->dev_x[i];
-        ya[i] = pls->dev_y[i];
-      }
-      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-      widget->drawPolygon(xa, ya, pls->dev_npts);
-            
-      delete[] xa;
-      delete[] ya;
-      break;
-      
-    case PLESC_HAS_TEXT:
-      /*$$ call the generic ProcessString function
-	ProcessString( pls, (EscText *)ptr ); */
-      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-      widget->drawText(pls, (EscText *)ptr);
-      break;        
-    
-    default: break;
-  }
-}
-
-void plD_state_qt(PLStream * pls, PLINT op)
-{
-  QtPLDriver * widget=NULL;
-#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
-  if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
-  if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_epsqt) || defined(PLD_pdfqt)
-  if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
-  if(widget!=NULL && qt_family_check(pls)) {return;} 
-#endif
-#if defined(PLD_qtwidget) || defined(PLD_extqt)
-  if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QtPLWidget *) pls->dev);
-#endif
-  if(widget==NULL) return;
-    
-  switch(op)
-  {
-    case PLSTATE_WIDTH:
-      widget->setWidth(pls->width);
-      break;
-       
-    case PLSTATE_COLOR0:
-      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-      break;
-			
-    case PLSTATE_COLOR1:
-      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-      break;
-
-            
-    default: break;
-  }
-}
-
-void plD_tidy_qt(PLStream * pls)
-{
-  QtPLDriver * widget=NULL;
-#if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
-  if(widget==NULL) widget=dynamic_cast<QtRasterDevice*>((QtPLDriver *) pls->dev);
-#endif
-#if defined(PLD_svgqt) && QT_VERSION >= 0x040300
-  if(widget==NULL) widget=dynamic_cast<QtSVGDevice*>((QtPLDriver *) pls->dev);
-#endif
-#if defined(PLD_epsqt) || defined(PLD_pdfqt)
-  if(widget==NULL) widget=dynamic_cast<QtEPSDevice*>((QtPLDriver *) pls->dev);
-#endif
-#if defined(PLD_qtwidget) || defined(PLD_extqt)
-  if(widget==NULL) widget=dynamic_cast<QtPLWidget*>((QtPLWidget *) pls->dev);
-#endif
-	
-  if(widget!=NULL)
-  {
-    handler.DeviceClosed(widget);
-    delete widget;
-    pls->dev=NULL;
-  }
-	
-  closeQtApp();
-}
 
 ////////////////// Raster driver-specific definitions: class and interface functions /////////
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
@@ -467,6 +304,109 @@ void plD_eop_rasterqt(PLStream *pls)
   ((QtRasterDevice *)pls->dev)->savePlot();
   handler.DeviceChangedPage((QtRasterDevice *)pls->dev);
 }
+
+void plD_line_rasterqt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
+{
+  QtRasterDevice* widget=(QtRasterDevice*)pls->dev;  
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+
+  widget->QtPLDriver::setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+  widget->drawLine(x1a, y1a, x2a, y2a);
+}
+
+void plD_polyline_rasterqt(PLStream *pls, short *xa, short *ya, PLINT npts)
+{
+  QtRasterDevice * widget=(QtRasterDevice *) pls->dev;
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+
+  widget->QtPLDriver::setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+  widget->drawPolyline(xa, ya, npts);
+}
+
+void plD_esc_rasterqt(PLStream * pls, PLINT op, void* ptr)
+{
+  short *xa, *ya;
+  PLINT i, j;
+  QtRasterDevice * widget=(QtRasterDevice *) pls->dev;
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+	    
+  switch(op)
+  {
+    case PLESC_DASH:
+      widget->setDashed(pls->nms, pls->mark, pls->space);
+      widget->QtPLDriver::setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
+      widget->setSolid();
+      break;
+        
+    case PLESC_FILL:
+      xa=new short[pls->dev_npts];
+      ya=new short[pls->dev_npts];
+            
+      for (i = 0; i < pls->dev_npts; i++)
+      {
+        xa[i] = pls->dev_x[i];
+        ya[i] = pls->dev_y[i];
+      }
+      widget->QtPLDriver::setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawPolygon(xa, ya, pls->dev_npts);
+            
+      delete[] xa;
+      delete[] ya;
+      break;
+      
+    case PLESC_HAS_TEXT:
+      /*$$ call the generic ProcessString function
+	ProcessString( pls, (EscText *)ptr ); */
+      widget->QtPLDriver::setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawText(pls, (EscText *)ptr);
+      break;        
+    
+    default: break;
+  }
+}
+
+void plD_state_rasterqt(PLStream * pls, PLINT op)
+{
+  QtRasterDevice * widget=(QtRasterDevice *)pls->dev;
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+
+  switch(op)
+  {
+    case PLSTATE_WIDTH:
+      widget->setWidth(pls->width);
+      break;
+       
+    case PLSTATE_COLOR0:
+      ((QtPLDriver*)widget)->QtPLDriver::setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      break;
+			
+    case PLSTATE_COLOR1:
+      ((QtPLDriver*)widget)->QtPLDriver::setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      break;
+
+            
+    default: break;
+  }
+}
+
+void plD_tidy_rasterqt(PLStream * pls)
+{
+  QtRasterDevice * widget=(QtRasterDevice*)pls->dev;
+	
+  if(widget!=NULL)
+  {
+    handler.DeviceClosed(widget);
+    delete widget;
+    pls->dev=NULL;
+  }
+	
+  closeQtApp();
+}
 #endif
 
 #if defined(PLD_bmpqt)
@@ -479,13 +419,13 @@ void plD_dispatch_init_bmpqt(PLDispatchTable *pdt)
   pdt->pl_type     = plDevType_FileOriented;
   pdt->pl_seq      = 66;
   pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
-  pdt->pl_line     = (plD_line_fp)     plD_line_qt;
-  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+  pdt->pl_line     = (plD_line_fp)     plD_line_rasterqt;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_rasterqt;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_rasterqt;
   pdt->pl_bop      = (plD_bop_fp)      plD_bop_bmpqt;
-  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
-  pdt->pl_state    = (plD_state_fp)    plD_state_qt;
-  pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_rasterqt;
+  pdt->pl_state    = (plD_state_fp)    plD_state_rasterqt;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_rasterqt;
 }
 
 void plD_bop_bmpqt(PLStream *pls)
@@ -510,13 +450,13 @@ void plD_dispatch_init_jpgqt(PLDispatchTable *pdt)
   pdt->pl_type     = plDevType_FileOriented;
   pdt->pl_seq      = 67;
   pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
-  pdt->pl_line     = (plD_line_fp)     plD_line_qt;
-  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+  pdt->pl_line     = (plD_line_fp)     plD_line_rasterqt;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_rasterqt;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_rasterqt;
   pdt->pl_bop      = (plD_bop_fp)      plD_bop_jpgqt;
-  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
-  pdt->pl_state    = (plD_state_fp)    plD_state_qt;
-  pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_rasterqt;
+  pdt->pl_state    = (plD_state_fp)    plD_state_rasterqt;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_rasterqt;
 }
 
 void plD_bop_jpgqt(PLStream *pls)
@@ -541,13 +481,13 @@ void plD_dispatch_init_pngqt(PLDispatchTable *pdt)
   pdt->pl_type     = plDevType_FileOriented;
   pdt->pl_seq      = 68;
   pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
-  pdt->pl_line     = (plD_line_fp)     plD_line_qt;
-  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+  pdt->pl_line     = (plD_line_fp)     plD_line_rasterqt;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_rasterqt;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_rasterqt;
   pdt->pl_bop      = (plD_bop_fp)      plD_bop_pngqt;
-  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
-  pdt->pl_state    = (plD_state_fp)    plD_state_qt;
-  pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_rasterqt;
+  pdt->pl_state    = (plD_state_fp)    plD_state_rasterqt;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_rasterqt;
 }
 
 void plD_bop_pngqt(PLStream *pls)
@@ -572,13 +512,13 @@ void plD_dispatch_init_ppmqt(PLDispatchTable *pdt)
   pdt->pl_type     = plDevType_FileOriented;
   pdt->pl_seq      = 69;
   pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
-  pdt->pl_line     = (plD_line_fp)     plD_line_qt;
-  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+  pdt->pl_line     = (plD_line_fp)     plD_line_rasterqt;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_rasterqt;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_rasterqt;
   pdt->pl_bop      = (plD_bop_fp)      plD_bop_ppmqt;
-  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
-  pdt->pl_state    = (plD_state_fp)    plD_state_qt;
-  pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_rasterqt;
+  pdt->pl_state    = (plD_state_fp)    plD_state_rasterqt;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_rasterqt;
 }
 
 void plD_bop_ppmqt(PLStream *pls)
@@ -603,13 +543,13 @@ void plD_dispatch_init_tiffqt(PLDispatchTable *pdt)
   pdt->pl_type     = plDevType_FileOriented;
   pdt->pl_seq      = 70;
   pdt->pl_init     = (plD_init_fp)     plD_init_rasterqt;
-  pdt->pl_line     = (plD_line_fp)     plD_line_qt;
-  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+  pdt->pl_line     = (plD_line_fp)     plD_line_rasterqt;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_rasterqt;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_rasterqt;
   pdt->pl_bop      = (plD_bop_fp)      plD_bop_tiffqt;
-  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
-  pdt->pl_state    = (plD_state_fp)    plD_state_qt;
-  pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_rasterqt;
+  pdt->pl_state    = (plD_state_fp)    plD_state_rasterqt;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_rasterqt;
 }
 
 void plD_bop_tiffqt(PLStream *pls)
@@ -634,13 +574,13 @@ void plD_dispatch_init_svgqt(PLDispatchTable *pdt)
   pdt->pl_type     = plDevType_FileOriented;
   pdt->pl_seq      = 71;
   pdt->pl_init     = (plD_init_fp)     plD_init_svgqt;
-  pdt->pl_line     = (plD_line_fp)     plD_line_qt;
-  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+  pdt->pl_line     = (plD_line_fp)     plD_line_svgqt;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_svgqt;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_svgqt;
   pdt->pl_bop      = (plD_bop_fp)      plD_bop_svgqt;
-  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
-  pdt->pl_state    = (plD_state_fp)    plD_state_qt;
-  pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_svgqt;
+  pdt->pl_state    = (plD_state_fp)    plD_state_svgqt;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_svgqt;
 }
 
 void plD_init_svgqt(PLStream * pls)
@@ -726,6 +666,109 @@ void plD_eop_svgqt(PLStream *pls)
   if(isMaster) handler.setMasterDevice((QtSVGDevice *)pls->dev);
   handler.DeviceChangedPage((QtSVGDevice *)pls->dev);
 }
+
+void plD_line_svgqt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
+{
+  QtSVGDevice* widget=(QtSVGDevice*)pls->dev;  
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+
+  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+  widget->drawLine(x1a, y1a, x2a, y2a);
+}
+
+void plD_polyline_svgqt(PLStream *pls, short *xa, short *ya, PLINT npts)
+{
+  QtSVGDevice * widget=(QtSVGDevice *) pls->dev;
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+
+  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+  widget->drawPolyline(xa, ya, npts);
+}
+
+void plD_esc_svgqt(PLStream * pls, PLINT op, void* ptr)
+{
+  short *xa, *ya;
+  PLINT i, j;
+  QtSVGDevice * widget=(QtSVGDevice *) pls->dev;
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+	    
+  switch(op)
+  {
+    case PLESC_DASH:
+      widget->setDashed(pls->nms, pls->mark, pls->space);
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
+      widget->setSolid();
+      break;
+        
+    case PLESC_FILL:
+      xa=new short[pls->dev_npts];
+      ya=new short[pls->dev_npts];
+            
+      for (i = 0; i < pls->dev_npts; i++)
+      {
+        xa[i] = pls->dev_x[i];
+        ya[i] = pls->dev_y[i];
+      }
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawPolygon(xa, ya, pls->dev_npts);
+            
+      delete[] xa;
+      delete[] ya;
+      break;
+      
+    case PLESC_HAS_TEXT:
+      /*$$ call the generic ProcessString function
+	ProcessString( pls, (EscText *)ptr ); */
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawText(pls, (EscText *)ptr);
+      break;        
+    
+    default: break;
+  }
+}
+
+void plD_state_svgqt(PLStream * pls, PLINT op)
+{
+  QtSVGDevice * widget=(QtSVGDevice *) pls->dev;
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+
+  switch(op)
+  {
+    case PLSTATE_WIDTH:
+      widget->setWidth(pls->width);
+      break;
+       
+    case PLSTATE_COLOR0:
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      break;
+			
+    case PLSTATE_COLOR1:
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      break;
+
+            
+    default: break;
+  }
+}
+
+void plD_tidy_svgqt(PLStream * pls)
+{
+  QtSVGDevice * widget=(QtSVGDevice *) pls->dev;
+	
+  if(widget!=NULL)
+  {
+    handler.DeviceClosed(widget);
+    delete widget;
+    pls->dev=NULL;
+  }
+	
+  closeQtApp();
+}
 #endif
 
 #if defined(PLD_epsqt)
@@ -738,13 +781,13 @@ void plD_dispatch_init_epsqt(PLDispatchTable *pdt)
   pdt->pl_type     = plDevType_FileOriented;
   pdt->pl_seq      = 73;
   pdt->pl_init     = (plD_init_fp)     plD_init_epspdfqt;
-  pdt->pl_line     = (plD_line_fp)     plD_line_qt;
-  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+  pdt->pl_line     = (plD_line_fp)     plD_line_epspdfqt;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_epspdfqt;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_epspdfqt;
   pdt->pl_bop      = (plD_bop_fp)      plD_bop_epsqt;
-  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
-  pdt->pl_state    = (plD_state_fp)    plD_state_qt;
-  pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_epspdfqt;
+  pdt->pl_state    = (plD_state_fp)    plD_state_epspdfqt;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_epspdfqt;
 }
 #endif
 
@@ -758,13 +801,13 @@ void plD_dispatch_init_pdfqt(PLDispatchTable *pdt)
   pdt->pl_type     = plDevType_FileOriented;
   pdt->pl_seq      = 74;
   pdt->pl_init     = (plD_init_fp)     plD_init_epspdfqt;
-  pdt->pl_line     = (plD_line_fp)     plD_line_qt;
-  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+  pdt->pl_line     = (plD_line_fp)     plD_line_epspdfqt;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_epspdfqt;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_epspdfqt;
   pdt->pl_bop      = (plD_bop_fp)      plD_bop_pdfqt;
-  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
-  pdt->pl_state    = (plD_state_fp)    plD_state_qt;
-  pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_epspdfqt;
+  pdt->pl_state    = (plD_state_fp)    plD_state_epspdfqt;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_epspdfqt;
 }
 #endif
 
@@ -854,6 +897,109 @@ void plD_eop_epspdfqt(PLStream *pls)
   if(isMaster) handler.setMasterDevice((QtEPSDevice *)pls->dev);
   handler.DeviceChangedPage((QtEPSDevice *)pls->dev);
 }
+
+void plD_line_epspdfqt(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
+{
+  QtEPSDevice* widget=(QtEPSDevice*)pls->dev;  
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+
+  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+  widget->drawLine(x1a, y1a, x2a, y2a);
+}
+
+void plD_polyline_epspdfqt(PLStream *pls, short *xa, short *ya, PLINT npts)
+{
+  QtEPSDevice * widget=(QtEPSDevice *) pls->dev;
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+
+  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+  widget->drawPolyline(xa, ya, npts);
+}
+
+void plD_esc_epspdfqt(PLStream * pls, PLINT op, void* ptr)
+{
+  short *xa, *ya;
+  PLINT i, j;
+  QtEPSDevice * widget=(QtEPSDevice *) pls->dev;
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+    
+  switch(op)
+  {
+    case PLESC_DASH:
+      widget->setDashed(pls->nms, pls->mark, pls->space);
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
+      widget->setSolid();
+      break;
+        
+    case PLESC_FILL:
+      xa=new short[pls->dev_npts];
+      ya=new short[pls->dev_npts];
+            
+      for (i = 0; i < pls->dev_npts; i++)
+      {
+        xa[i] = pls->dev_x[i];
+        ya[i] = pls->dev_y[i];
+      }
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawPolygon(xa, ya, pls->dev_npts);
+            
+      delete[] xa;
+      delete[] ya;
+      break;
+      
+    case PLESC_HAS_TEXT:
+      /*$$ call the generic ProcessString function
+	ProcessString( pls, (EscText *)ptr ); */
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawText(pls, (EscText *)ptr);
+      break;        
+    
+    default: break;
+  }
+}
+
+void plD_state_epspdfqt(PLStream * pls, PLINT op)
+{
+  QtEPSDevice * widget=(QtEPSDevice *) pls->dev;
+  if(widget!=NULL && qt_family_check(pls)) {return;} 
+  if(widget==NULL) return;
+
+  switch(op)
+  {
+    case PLSTATE_WIDTH:
+      widget->setWidth(pls->width);
+      break;
+       
+    case PLSTATE_COLOR0:
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      break;
+			
+    case PLSTATE_COLOR1:
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      break;
+
+            
+    default: break;
+  }
+}
+
+void plD_tidy_epspdfqt(PLStream * pls)
+{
+  QtEPSDevice * widget=(QtEPSDevice *) pls->dev;
+	
+  if(widget!=NULL)
+  {
+    handler.DeviceClosed(widget);
+    delete widget;
+    pls->dev=NULL;
+  }
+	
+  closeQtApp();
+}
 #endif
 
 #if defined(PLD_epsqt)
@@ -880,13 +1026,13 @@ void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
   pdt->pl_type     = plDevType_Interactive;
   pdt->pl_seq      = 72;
   pdt->pl_init     = (plD_init_fp)     plD_init_qtwidget;
-  pdt->pl_line     = (plD_line_fp)     plD_line_qt;
-  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qt;
+  pdt->pl_line     = (plD_line_fp)     plD_line_qtwidget;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qtwidget;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_qtwidget;
   pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
-  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qt;
-  pdt->pl_state    = (plD_state_fp)    plD_state_qt;
-  pdt->pl_esc      = (plD_esc_fp)      plD_esc_qt;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qtwidget;
+  pdt->pl_state    = (plD_state_fp)    plD_state_qtwidget;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_qtwidget;
 }
 
 void plD_init_qtwidget(PLStream * pls)
@@ -957,6 +1103,105 @@ void plD_eop_qtwidget(PLStream *pls)
   {
     qApp->processEvents(QEventLoop::WaitForMoreEvents);
   }
+}
+
+void plD_line_qtwidget(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
+{
+  QtPLWidget* widget=(QtPLWidget*)pls->dev;  
+  if(widget==NULL) return;
+
+  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+  widget->drawLine(x1a, y1a, x2a, y2a);
+}
+
+void plD_polyline_qtwidget(PLStream *pls, short *xa, short *ya, PLINT npts)
+{
+  QtPLWidget * widget=(QtPLWidget *) pls->dev;
+  if(widget==NULL) return;
+	
+  widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+  widget->drawPolyline(xa, ya, npts);
+}
+
+void plD_esc_qtwidget(PLStream * pls, PLINT op, void* ptr)
+{
+  short *xa, *ya;
+  PLINT i, j;
+  QtPLWidget * widget=(QtPLWidget *) pls->dev;
+  if(widget==NULL) return;
+		    
+  switch(op)
+  {
+    case PLESC_DASH:
+      widget->setDashed(pls->nms, pls->mark, pls->space);
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
+      widget->setSolid();
+      break;
+        
+    case PLESC_FILL:
+      xa=new short[pls->dev_npts];
+      ya=new short[pls->dev_npts];
+            
+      for (i = 0; i < pls->dev_npts; i++)
+      {
+        xa[i] = pls->dev_x[i];
+        ya[i] = pls->dev_y[i];
+      }
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawPolygon(xa, ya, pls->dev_npts);
+            
+      delete[] xa;
+      delete[] ya;
+      break;
+      
+    case PLESC_HAS_TEXT:
+      /*$$ call the generic ProcessString function
+	ProcessString( pls, (EscText *)ptr ); */
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      widget->drawText(pls, (EscText *)ptr);
+      break;        
+    
+    default: break;
+  }
+}
+
+void plD_state_qtwidget(PLStream * pls, PLINT op)
+{
+  QtPLWidget * widget=(QtPLWidget *) pls->dev;
+  if(widget==NULL) return;
+    
+  switch(op)
+  {
+    case PLSTATE_WIDTH:
+      widget->setWidth(pls->width);
+      break;
+       
+    case PLSTATE_COLOR0:
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      break;
+			
+    case PLSTATE_COLOR1:
+      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+      break;
+
+            
+    default: break;
+  }
+}
+
+void plD_tidy_qtwidget(PLStream * pls)
+{
+  QtPLWidget * widget=(QtPLWidget *) pls->dev;
+	
+  if(widget!=NULL)
+  {
+    handler.DeviceClosed(widget);
+    delete widget;
+    pls->dev=NULL;
+  }
+	
+  closeQtApp();
 }
 #endif
 
