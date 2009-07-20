@@ -34,8 +34,42 @@
 #include "qt.h"
 
 // Global variables for Qt driver.
-int vectorize = 0;
-MasterHandler handler;
+PLDLLIMPEXP_QT_DATA(int) vectorize = 0;
+PLDLLIMPEXP_QT_DATA(MasterHandler) handler;
+
+// Master Device Handler for multiple streams
+// Only handles multiple Qt devices
+MasterHandler::MasterHandler():QObject()
+{
+  masterDevice=NULL;
+}
+
+bool MasterHandler::isMasterDevice(QtPLDriver* d)
+{
+  return d==masterDevice;
+}
+
+void MasterHandler::setMasterDevice(QtPLDriver* d)
+{
+  masterDevice=d;
+}
+
+void MasterHandler::DeviceChangedPage(QtPLDriver* d)
+{
+  if(d==masterDevice)
+    {
+      emit MasterChangedPage();
+    }
+}
+
+void MasterHandler::DeviceClosed(QtPLDriver* d)
+{
+  if(d==masterDevice)
+    {
+      emit MasterClosed();
+      masterDevice=NULL;
+    }
+}
 
 ///////////// Generic Qt driver class /////////////////
 QMutex QtPLDriver::mutex;

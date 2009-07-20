@@ -88,48 +88,25 @@ Interpretation of the -dpi DPI option (or the first parameter of
 #define QT_DEFAULT_X 842
 #define QT_DEFAULT_Y 595
 
-class QtPLDriver;
+class PLDLLIMPEXP_QT QtPLDriver;
 
 // Master Device Handler for multiple streams
 // Only handles multiple Qt devices
-class MasterHandler:public QObject
+class PLDLLIMPEXP_QT MasterHandler:public QObject
 {
 	Q_OBJECT
 	
 	public:
-		MasterHandler():QObject()
-		{
-			masterDevice=NULL;
-		}
+                 MasterHandler();
 
-		~MasterHandler(){}
+		 bool isMasterDevice(QtPLDriver* d);
 
-		bool isMasterDevice(QtPLDriver* d)
-		{
-			return d==masterDevice;
-		}
-
-		void setMasterDevice(QtPLDriver* d)
-		{
-			masterDevice=d;
-		}
+		 void setMasterDevice(QtPLDriver* d);
 		
-		void DeviceChangedPage(QtPLDriver* d)
-		{
-			if(d==masterDevice)
-			{
-				emit MasterChangedPage();
-			}
-		}
+		 void DeviceChangedPage(QtPLDriver* d);
 
-		void DeviceClosed(QtPLDriver* d)
-		{
-			if(d==masterDevice)
-			{
-				emit MasterClosed();
-				masterDevice=NULL;
-			}
-		}
+		 void DeviceClosed(QtPLDriver* d);
+
 	signals:
 		void MasterChangedPage();	
 
@@ -140,7 +117,7 @@ class MasterHandler:public QObject
 };
 
 // Basic class, offering the common interface to all Qt plplot devices
-class PLDLLIMPEXP_DRIVER QtPLDriver
+class PLDLLIMPEXP_QT QtPLDriver
 {
 	public:
 		// Constructor, taking the device size as arguments
@@ -196,7 +173,7 @@ class PLDLLIMPEXP_DRIVER QtPLDriver
 
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
 // Driver painting whatever raster format Qt can save
-class QtRasterDevice: public QtPLDriver, public QImage
+class PLDLLIMPEXP_QT QtRasterDevice: public QtPLDriver, public QImage
 {
 	public:
 		QtRasterDevice(int i_iWidth=QT_DEFAULT_X,
@@ -224,7 +201,7 @@ class QtRasterDevice: public QtPLDriver, public QImage
 #if defined(PLD_svgqt) && QT_VERSION >= 0x040300
 #include <QSvgGenerator>
 // Driver painting on an SVG device
-class QtSVGDevice: public QtPLDriver, public QSvgGenerator
+class PLDLLIMPEXP_QT QtSVGDevice: public QtPLDriver, public QSvgGenerator
 {
 	public:
 		QtSVGDevice(int i_iWidth=QT_DEFAULT_X,
@@ -242,7 +219,7 @@ class QtSVGDevice: public QtPLDriver, public QSvgGenerator
 #if defined (PLD_epsqt) || defined (PLD_pdfqt)
 // Driver painting on an EPS or PDF device, uses QPrinter
 // A (possibly dummy) QApplication must be declared before use
-class QtEPSDevice: public QtPLDriver, public QPrinter
+class PLDLLIMPEXP_QT QtEPSDevice: public QtPLDriver, public QPrinter
 {
 	public:
 #if QT_VERSION < 0x040400
@@ -336,7 +313,7 @@ class BufferElement
 // This widget allows to use plplot as a plotting engine in a Qt Application
 // The aspect ratio of the plotted data is constant, so gray strips are used
 // to delimit the page when the widget aspect ratio is not the one of the plotted page
-class PLDLLIMPEXP_DRIVER QtPLWidget: public QWidget, public QtPLDriver
+class PLDLLIMPEXP_QT QtPLWidget: public QWidget, public QtPLDriver
 {
 	Q_OBJECT
 
@@ -390,7 +367,7 @@ class PLDLLIMPEXP_DRIVER QtPLWidget: public QWidget, public QtPLDriver
 #endif
 
 #if defined (PLD_extqt)
-class PLDLLIMPEXP_DRIVER QtExtWidget: public QtPLWidget
+class PLDLLIMPEXP_QT QtExtWidget: public QtPLWidget
 {
 	Q_OBJECT
 
@@ -419,9 +396,9 @@ class PLDLLIMPEXP_DRIVER QtExtWidget: public QtPLWidget
 		bool killed;
 };
 
-PLDLLIMPEXP_DRIVER void plsetqtdev(QtExtWidget* widget); // Registers the widget as plot device, as the widget has to be created in the Qt application GUI, prior to any plplot call. Must be called before plinit().
+PLDLLIMPEXP_QT void plsetqtdev(QtExtWidget* widget); // Registers the widget as plot device, as the widget has to be created in the Qt application GUI, prior to any plplot call. Must be called before plinit().
 
-PLDLLIMPEXP_DRIVER void plfreeqtdev(); // Deletes and unregisters the device. 
+PLDLLIMPEXP_QT void plfreeqtdev(); // Deletes and unregisters the device. 
 
 #endif
 

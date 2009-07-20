@@ -141,4 +141,12 @@
   #define PLDLLIMPEXP_PLPLOT_MODULE_DATA(type) PLDLLIMPORT type
 #endif
 
+#if defined(plplotqt${LIB_TAG}_EXPORTS)
+  #define PLDLLIMPEXP_QT PLDLLEXPORT
+  #define PLDLLIMPEXP_QT_DATA(type) PLDLLEXPORT type
+#else
+  #define PLDLLIMPEXP_QT PLDLLIMPORT
+  #define PLDLLIMPEXP_QT_DATA(type) PLDLLIMPORT type
+#endif
+
 #endif /* __PL_DLL_H */
