@@ -154,6 +154,7 @@ if(ENABLE_DYNDRIVERS)
     # each driver in ${DRIVERS_LIST}.  This is only used for the 
     # install-tree rpath since cmake handles the build-tree rpath
     # automatically (so long as full pathnames to libraries are used).
+    # Order is important here because of /usr/lib concerns.
     set(
       ${SOURCE_ROOT_NAME}_RPATH
       ${LIB_DIR}
