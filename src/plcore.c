@@ -1127,6 +1127,34 @@ sdifilt(short *xscl, short *yscl, PLINT npts,
 }
 
 /*--------------------------------------------------------------------------*\
+ * void difilt_clip
+ *
+ * This provides the transformed text clipping region for the benefit of
+ * those drivers that render their own text.
+\*--------------------------------------------------------------------------*/
+
+void
+difilt_clip(PLINT *x_coords, PLINT *y_coords)
+{
+  PLINT x1c, x2c, y1c, y2c;
+
+  x1c = plsc->clpxmi;
+  y1c = plsc->clpymi;
+  x2c = plsc->clpxma;
+  y2c = plsc->clpyma;
+  x_coords[0] = x1c;
+  x_coords[1] = x1c;
+  x_coords[2] = x2c;
+  x_coords[3] = x2c;
+  y_coords[0] = y1c;
+  y_coords[1] = y2c;
+  y_coords[2] = y2c;
+  y_coords[3] = y1c;
+  difilt(x_coords, y_coords, 4, &x1c, &x2c, &y1c, &y2c);
+}
+
+  
+/*--------------------------------------------------------------------------*\
  * void pldi_ini
  *
  * Updates driver interface, making sure everything is in order.

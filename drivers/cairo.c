@@ -596,6 +596,7 @@ void text_end_cairo(PLStream *pls, EscText *args)
   PangoLayout *layout;
   PangoFontDescription *fontDescription;
   PLCairo *aStream;
+  PLINT rcx[4], rcy[4];
 
   aStream = (PLCairo *)pls->dev;
 
@@ -617,24 +618,36 @@ void text_end_cairo(PLStream *pls, EscText *args)
   pango_layout_context_changed(layout);
   cairo_font_options_destroy(cairoFontOptions);
 
-  /* Set up the clipping region if we are doing text clipping */
-  if(aStream->text_clipping){
-    cairo_save(aStream->cairoContext);
-    diorot_rad = pls->diorot * PI/2.0;
-    rotate_cairo_surface(pls,
-			 cos(diorot_rad),
-			 sin(diorot_rad),
-			 -sin(diorot_rad),
-			 cos(diorot_rad),
-			 0.5 * pls->xlength,
-			 0.5 * pls->ylength);
-    cairo_rectangle(aStream->cairoContext, aStream->downscale * pls->clpxmi, aStream->downscale * pls->clpymi, aStream->downscale * (pls->clpxma - pls->clpxmi), aStream->downscale * (pls->clpyma - pls->clpymi));
-    cairo_clip(aStream->cairoContext);
-    cairo_restore(aStream->cairoContext);
-  }
-
   /* Save current transform matrix & clipping region */
   cairo_save(aStream->cairoContext);
+
+  /* Set up the clipping region if we are doing text clipping */
+  if(aStream->text_clipping){
+   
+    /* Use PLplot core routine to get the corners of the clipping rectangle */
+    difilt_clip(rcx, rcy);
+
+    /* Layout the bounds of the clipping region */
+    /* Should we convert PLINT to short and use the polyline routine? */
+    cairo_move_to(aStream->cairoContext, 
+		  aStream->downscale * (double) rcx[0],
+		  aStream->downscale * (double) rcy[0]);
+    cairo_line_to(aStream->cairoContext,
+		  aStream->downscale * (double) rcx[1],
+		  aStream->downscale * (double) rcy[1]);
+    cairo_line_to(aStream->cairoContext,
+		  aStream->downscale * (double) rcx[2],
+		  aStream->downscale * (double) rcy[2]);
+    cairo_line_to(aStream->cairoContext,
+		  aStream->downscale * (double) rcx[3],
+		  aStream->downscale * (double) rcy[3]);
+    cairo_line_to(aStream->cairoContext,
+		  aStream->downscale * (double) rcx[0],
+		  aStream->downscale * (double) rcy[0]);
+
+    /* Set the clipping region */
+    cairo_clip(aStream->cairoContext);
+  }
 
   /* Move to the string reference point */
   cairo_move_to(aStream->cairoContext, aStream->downscale * (double) args->x, aStream->downscale * (double) args->y);

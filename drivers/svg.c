@@ -465,7 +465,6 @@ void proc_str (PLStream *pls, EscText *args)
   short lastOffset;
   double ftHt;
   PLUNICODE fci;
-  PLINT x1c, y1c, x2c, y2c;
   PLINT rcx[4], rcy[4];
   PLFLT rotation, shear, stride, cos_rot, sin_rot, sin_shear, cos_shear;
   PLFLT t[4];
@@ -495,21 +494,9 @@ void proc_str (PLStream *pls, EscText *args)
     svg_attr_values(aStream, "id","text-clipping%d", which_clip);
     svg_general(aStream, ">\n");
 
-    /* Use PLplot core routine to appropriately transform the
-       coordinates of the clipping rectangle */
-    x1c = pls->clpxmi;
-    y1c = pls->clpymi;
-    x2c = pls->clpxma;
-    y2c = pls->clpyma;
-    rcx[0] = x1c;
-    rcx[1] = x1c;
-    rcx[2] = x2c;
-    rcx[3] = x2c;
-    rcy[0] = y1c;
-    rcy[1] = y2c;
-    rcy[2] = y2c;
-    rcy[3] = y1c;    
-    difilt(rcx, rcy, 4, &x1c, &x2c, &y1c, &y2c);
+    /* Use PLplot core routine difilt_clip to appropriately 
+       transform the coordinates of the clipping rectangle */
+    difilt_clip(rcx, rcy);
 
     /* Output a polygon to represent the clipping region. */
     svg_open(aStream, "polygon");
@@ -536,6 +523,7 @@ void proc_str (PLStream *pls, EscText *args)
 
   /* This draws the clipping region on the screen which can
      be very helpful for debugging. */
+
   /*
   svg_open(aStream, "polygon");
   svg_attr_values(aStream, 

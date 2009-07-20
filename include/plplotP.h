@@ -518,6 +518,12 @@ PLDLLIMPEXP void
 difilt(PLINT *, PLINT *, PLINT,
        PLINT *, PLINT *, PLINT *, PLINT *);
 
+  /* Transforms the clipping region coordinates as necessary
+     based on the current plot orientation, etc. */
+
+PLDLLIMPEXP void
+difilt_clip(PLINT *, PLINT *);
+
   /* Driver draws text */
 
 void
