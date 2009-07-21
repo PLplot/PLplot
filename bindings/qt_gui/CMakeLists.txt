@@ -79,14 +79,13 @@ if(ENABLE_qt)
       ${CMAKE_SOURCE_DIR}/include/qt.h
       OPTIONS ${MOC_OPTIONS}
       )
-    # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
-    #set_source_files_properties(
-    #  ${QT_MOC_OUTFILES}
-    #  PROPERTIES GENERATED "ON"
-    #  )
-    #add_library(plplotqt${LIB_TAG} ${qt_SOURCE} ${QT_MOC_OUTFILES})
+    # CMake does not handle dependendencies correctly for GENERATED source
+    # code that is #included by a header that is created at cmake time.
+    # Therefore, use fundamental means to force correct dependencies.
+    add_custom_target(moc_outfile_generated DEPENDS ${QT_MOC_OUTFILES})
     file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "#include \"${QT_MOC_OUTFILES}\"\n")
     add_library(plplotqt${LIB_TAG} ${qt_SOURCE})
+    add_dependencies(plplotqt${LIB_TAG} moc_outfile_generated)
   else(MOC_OPTIONS)
     add_library(plplotqt${LIB_TAG} ${qt_SOURCE})
   endif(MOC_OPTIONS)
