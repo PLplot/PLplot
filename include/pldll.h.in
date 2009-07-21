@@ -147,4 +147,12 @@
   #define PLDLLIMPEXP_QT_DATA(type) PLDLLIMPORT type
 #endif
 
+#if defined(plplot_pyqt4_EXPORTS)
+  #define PLDLLIMPEXP_PYQT4 PLDLLEXPORT
+  #define PLDLLIMPEXP_PYQT4_DATA(type) PLDLLEXPORT type
+#else
+  #define PLDLLIMPEXP_PYQT4 PLDLLIMPORT
+  #define PLDLLIMPEXP_PYQT4_DATA(type) PLDLLIMPORT type
+#endif
+
 #endif /* __PL_DLL_H */
