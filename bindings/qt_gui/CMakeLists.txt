@@ -27,6 +27,7 @@ if(ENABLE_qt)
     ${CMAKE_SOURCE_DIR}/drivers
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_CURRENT_BINARY_DIR}
     )
   if(qt_COMPILE_FLAGS)
     set_source_files_properties(
@@ -71,6 +72,7 @@ if(ENABLE_qt)
   if(PLD_extqt)
     list(APPEND MOC_OPTIONS -DPLD_extqt)
   endif(PLD_extqt)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "/* Generated header file listing the moc generated files to include in plqt.cpp. */ \n#ifndef __MOC_FILES_H__\n#define __MOC_FILES_H__\n\n")
   if(MOC_OPTIONS)
     qt4_wrap_cpp(
       QT_MOC_OUTFILES
@@ -78,14 +80,17 @@ if(ENABLE_qt)
       OPTIONS ${MOC_OPTIONS}
       )
     # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
-    set_source_files_properties(
-      ${QT_MOC_OUTFILES}
-      PROPERTIES GENERATED "ON"
-      )
-    add_library(plplotqt${LIB_TAG} ${qt_SOURCE} ${QT_MOC_OUTFILES})
+    #set_source_files_properties(
+    #  ${QT_MOC_OUTFILES}
+    #  PROPERTIES GENERATED "ON"
+    #  )
+    #add_library(plplotqt${LIB_TAG} ${qt_SOURCE} ${QT_MOC_OUTFILES})
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "#include \"${QT_MOC_OUTFILES}\"\n")
+    add_library(plplotqt${LIB_TAG} ${qt_SOURCE})
   else(MOC_OPTIONS)
     add_library(plplotqt${LIB_TAG} ${qt_SOURCE})
   endif(MOC_OPTIONS)
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "#endif  /* __MOC_FILES_H__i */ \n")
 
   #message("qt_LINK_FLAGS = ${qt_LINK_FLAGS}")
   target_link_libraries(
