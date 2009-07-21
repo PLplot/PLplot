@@ -402,4 +402,8 @@ PLDLLIMPEXP_QT void plfreeqtdev(); // Deletes and unregisters the device.
 
 #endif
 
+#if defined(plplot_pyqt4_EXPORTS)
+#define initplplot_pyqt4 PLDLLIMPEXP_PYQT4 initplplot_pyqt4
+#endif
+
 #endif
