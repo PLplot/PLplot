@@ -13,6 +13,7 @@ function(workaround_9220 language language_works)
 # Location where PLplot cmake build system first looks for cmake modules.
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
 cmake_minimum_required(VERSION 2.6.0)
+message(STATUS \"CMAKE_GENERATOR = ${CMAKE_GENERATOR}\")
 enable_language(${language} OPTIONAL)
 "
     )
@@ -69,15 +70,21 @@ enable_language(${language} OPTIONAL)
   endif(language_special)
 
   execute_process(
-    COMMAND ${CMAKE_COMMAND} .
+    COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/language_tests/${language}
     RESULT_VARIABLE return_code
-    OUTPUT_QUIET
-    ERROR_QUIET)
+    #OUTPUT_VARIABLE output
+    #ERROR_VARIABLE error
+    #OUTPUT_STRIP_TRAILING_WHITESPACE
+    #ERROR_STRIP_TRAILING_WHITESPACE
+    )
   if(return_code EQUAL 0)
     set(${language_works} ON CACHE INTERNAL "")
   else(return_code EQUAL 0)
     set(${language_works} OFF CACHE INTERNAL "")
+    #message(STATUS "A test cmake run with language = ${language} enabled failed with the following stdout and stderr:")
+    #message(STATUS "stdout = ${output}")
+    #message(STATUS "stderr = ${error}")
   endif(return_code EQUAL 0)
 endfunction(workaround_9220)
 
@@ -94,5 +101,7 @@ endfunction(workaround_9220)
 #message("Fortran_language_works = ${Fortran_language_works}")
 #workaround_9220(Java Java_language_works)
 #message("Java_language_works = ${Java_language_works}")
+# Just to terminate temporary test for convenience.
+#message(FATAL_ERROR "")
 
 
