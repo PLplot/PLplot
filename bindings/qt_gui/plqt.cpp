@@ -233,7 +233,7 @@ QPicture QtPLDriver::getTextPicture(PLUNICODE fci, PLUNICODE* text, int len, PLF
 		{
 			if(text[i]!=(PLUNICODE)plplotEsc)
 			{
-				currentString.append(QString((QChar*)&(text[i]), 1));
+				currentString.append(QString(QChar(text[i])));
 				++i;
 				continue;
 			}
