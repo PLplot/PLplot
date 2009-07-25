@@ -14,123 +14,95 @@ mailing lists at http://sourceforge.net/mail/?group_id=2915 .
 file.
 
 
-Notices for Users.
+Official Notices for Users.
 
-I. This is the official notice that our deprecated autotools-based build
-system has been removed as of release 5.9.1.  Instead, use the CMake-based
-build system following the directions in the INSTALL file.
+I. As of release 5.9.1 we have removed our previously deprecated
+autotools-based build system.  Instead, use the CMake-based build system
+following the directions in the INSTALL file.
 
-II. This is official notice that we (as of 5.9.1) no longer support
-Octave-2.1.73 which has a variety of run-time issues in our tests of the
-Octave examples on different platforms.  In contrast our tests show we get
-good run-time results with all our Octave examples for Octave-3.0.1. Also,
-that is the recommended stable version of Octave at
-http://www.gnu.org/software/octave/download.html so that is the only version
-of Octave we support at this time.
+II. As of release 5.9.1 we no longer support Octave-2.1.73 which has a
+variety of run-time issues in our tests of the Octave examples on different
+platforms. In contrast our tests show we get good run-time results with all
+our Octave examples for Octave-3.0.1. Also, that is the recommended stable
+version of Octave at http://www.gnu.org/software/octave/download.html so
+that is the only version of Octave we support at this time.
 
-III. This is official notice that the PLplot team have decided (as of release
-5.9.1) for consistency sake to change the PLplot stream variables
-plsc->vpwxmi, plsc->vpwxma, plsc->vpwymi, and plsc->vpwyma and the results
-returned by plgvpw to reflect the exact window limit values input by users
-using plwind. Previously to this change, the stream variables and the values
-returned by plgvpw reflected the internal slightly expanded range of window
-limits used by PLplot so that the user's specified limits would be on the
-graph.  Two users noted this slight difference, and we agree with them it
-should not be there. Note that internally, PLplot still uses the expanded
-ranges so most users results will be identical.  However, you may notice
-some small changes to your plot results if you use these stream variables
-directly (only possible in C/C++) or use plgvpw.
+III. As of release 5.9.1 we have decided for consistency sake to change the
+PLplot stream variables plsc->vpwxmi, plsc->vpwxma, plsc->vpwymi, and
+plsc->vpwyma and the results returned by plgvpw to reflect the exact window
+limit values input by users using plwind. Previously to this change, the
+stream variables and the values returned by plgvpw reflected the internal
+slightly expanded range of window limits used by PLplot so that the user's
+specified limits would be on the graph.  Two users noted this slight
+difference, and we agree with them it should not be there. Note that
+internally, PLplot still uses the expanded ranges so most users results will
+be identical.  However, you may notice some small changes to your plot
+results if you use these stream variables directly (only possible in C/C++)
+or use plgvpw.
 
-IV. This is official notice that (as of release 5.9.2) we have set
-HAVE_PTHREAD to ON by default for all platforms other than Darwin.  Darwin
-will follow later once it appears the Apple version of X supports it.
+IV. As of release 5.9.2 we have set HAVE_PTHREAD to ON by default for all
+platforms other than Darwin.  Darwin will follow later once it appears the
+Apple version of X supports it.
 
-V. This is official notice that (as of release 5.9.3) our  build system
-requires CMake version 2.6.0 or higher.
+V. As of release 5.9.3 our build system requires CMake version 2.6.0 or
+higher.
 
-VI. This is official notice that (as of release 5.9.3) we have deprecated
-the gcw device driver and the related gnome2 and pygcw bindings since these
-are essentially unmaintained. For example, the gcw device and associated
-bindings still depends on the plfreetype approach for accessing unicode
-fonts which has known issues (inconsistent text offsets, inconvenient font
-setting capabilities, and incorrect rendering of CTL languages).  To avoid
-these issues we advise using the xcairo device and the externally supplied
-XDrawable or Cairo context associated with the xcairo device and the
-extcairo device (see examples/c/README.cairo) instead. If you still
-absolutely must use -dev gcw or the related gnome2 or pygcw bindings despite
-the known problems, then they can still be accessed by setting PLD_gcw,
-ENABLE_gnome2, and/or ENABLE_pygcw to ON.
-
-VII. This is official notice that (as of release 5.9.3) we have deprecated
-the gd device driver which implements the png, jpeg, and gif devices.  This
-device driver is essentially unmaintained. For example, it still depends on
-the plfreetype approach for accessing unicode fonts which has known issues
+VI. As of release 5.9.3 we have deprecated the gcw device driver and the
+related gnome2 and pygcw bindings since these are essentially unmaintained.
+For example, the gcw device and associated bindings still depends on the
+plfreetype approach for accessing unicode fonts which has known issues
 (inconsistent text offsets, inconvenient font setting capabilities, and
-incorrect rendering of CTL languages).  To avoid these issues for PNG
-format, we advise using the pngcairo or pngqt devices.  To avoid these
-issues for the JPEG format, we advise using the jpgqt device.  PNG is
-normally considered a better raster format than GIF, but if you absolutely
-require GIF format, we advise using the pngcairo or pngqt devices and then
-downgrading the results to the GIF format using the ImageMagick "convert"
-application.  For those platforms where libgd (the dependency of the gd
-device driver) is accessible while the required dependencies of the cairo
-and/or qt devices are not accessible, you can still use these deprecated
-devices by setting PLD_png, PLD_jpeg, or PLD_gif to ON.
+incorrect rendering of CTL languages).  To avoid these issues we advise
+using the xcairo device and the externally supplied XDrawable or Cairo
+context associated with the xcairo device and the extcairo device (see
+examples/c/README.cairo) instead. If you still absolutely must use -dev gcw
+or the related gnome2 or pygcw bindings despite the known problems, then
+they can still be accessed by setting PLD_gcw, ENABLE_gnome2, and/or
+ENABLE_pygcw to ON.
 
-VIII. This is official notice that the tk, itk, and itcl components of
-PLplot have been reenabled again by default (as of release 5.9.3) after
-being disabled by default as of release 5.9.1 due to segfaults.  The cause
-of the segfaults was a bug (now fixed) in how pthread support was
-implemented for the Tk-related components of PLplot.
+VII. As of release 5.9.3 we have deprecated the gd device driver which
+implements the png, jpeg, and gif devices.  This device driver is
+essentially unmaintained. For example, it still depends on the plfreetype
+approach for accessing unicode fonts which has known issues (inconsistent
+text offsets, inconvenient font setting capabilities, and incorrect
+rendering of CTL languages).  To avoid these issues for PNG format, we
+advise using the pngcairo or pngqt devices.  To avoid these issues for the
+JPEG format, we advise using the jpgqt device.  PNG is normally considered a
+better raster format than GIF, but if you absolutely require GIF format, we
+advise using the pngcairo or pngqt devices and then downgrading the results
+to the GIF format using the ImageMagick "convert" application.  For those
+platforms where libgd (the dependency of the gd device driver) is accessible
+while the required dependencies of the cairo and/or qt devices are not
+accessible, you can still use these deprecated devices by setting PLD_png,
+PLD_jpeg, or PLD_gif to ON.
 
-IX. This is official notice that the hpgl device driver (containing the
-hp7470, hp7580, and lj_hpgl devices) has been deprecated as of release 5.9.4.
-hp7450 and hp7580 produce many "Invalid pen selection." messages on our
-standard examples and lj_hpgl segfaults.
+VIII. As of release 5.9.3 we have reenabled the tk, itk, and itcl components
+of PLplot by default that were disabled by default as of release 5.9.1 due
+to segfaults.  The cause of the segfaults was a bug (now fixed) in how
+pthread support was implemented for the Tk-related components of PLplot.
 
-X. This is official notice that the pbm device driver (containing the
-pbm device) has been deprecated as of release 5.9.4 because glibc detects
-a catastrophic double free.
+IX. As of release 5.9.4 we have deprecated the hpgl device driver
+(containing the hp7470, hp7580, and lj_hpgl devices). hp7450 and hp7580
+produce many "Invalid pen selection." messages on our standard examples and
+lj_hpgl segfaults.
 
-XI. This is official notice that we have removed pyqt3 access to PLplot and
-replaced it by pyqt4 access to PLplot as of PLplot-5.9.5.
+X. As of release 5.9.4 we have deprecated the pbm device driver (containing
+the pbm device) because glibc detects a catastrophic double free.
 
-XII.  This is official notice that as of PLplot-5.9.5 we no longer attempt
-to deal with the issue of missing compilers for any of our supported
-compiled languages (Ada, C++, D, Fortran, and Java) beyond our core C
-language by automatically disabling that component of PLplot with a warning
-message and moving on.  This "soft-landing" approach was implemented by
-using a subset of the official CMake language support files to search for
-the compiler.  If the compiler was found to be missing this way we could
-avoid the enable_language call that errors out for missing compilers in a
-different subset of the official CMake language support files.  However, we
-have had to drop this soft-landing approach because it turns out that the
-ccmake CLI, and cmake-gui GUI applications (which are alternatives that can
-be chosen by the user to configure PLplot) are completely confused by this
-implementation with the result that important language-related variables
-were left undefined.
+XI. As of release 5.9.5 we have removed pyqt3 access to PLplot and
+replaced it by pyqt4 access to PLplot (see details below).
 
-The current situation is that either the PLplot builder must have a working
-development environment (compilers and libraries) for Ada, C++, D, Fortran,
-and Java) or the PLplot builder must specifically disable the language where
-the development environment is missing/broken by setting ENABLE_ada,
-ENABLE_cxx, ENABLE_d, ENABLE_f77, ENABLE_f95, and/or ENABLE_java to OFF as
-appropriate (or alternatively set DEFAULT_NO_BINDINGS to ON and set
-ENABLE_<language> to ON for the language components of PLplot that you want).
-If there is a missing/broken language development environment that is
-not avoided with the appropriate option, then a hard landing (CMake error)
-is the current result.
+XII. As of release 5.9.5 the only method of specifying a non-default compiler
+(and associated compiler options) that we support is the environment
+variable approach, e.g.,
 
-For now we have chosen this hard landing approach because we wanted ccmake
-and cmake-gui to produce correct configuration of language support for
-PLplot.  However, once CMake bug 9220
-(http://public.kitware.com/Bug/view.php?id=9220) has been addressed, then
-the current build system logic will automatically turn into a soft-landing
-approach since the current enable_language(<language> OPTIONAL) use will no
-longer error out, and our current build system logic will have a chance to
-disable the language and move on whenever there is a language development
-environment problem that has been detected by the CMake enable_language
-command.
+export CC='gcc -g -fvisibility=hidden'
+export CXX='g++ -g -fvisibility=hidden'
+export FC='gfortran -g -fvisibility=hidden'
+
+All other CMake methods of specifying a non-default compiler and associated
+compiler options will not be supported until CMake bug 9220 is fixed, see
+discussion below of the soft-landing reimplementation for details.
 
 INDEX
 
@@ -138,6 +110,8 @@ INDEX
 
 1.1 PyQt changes
 1.2 Color Palettes
+1.3 Reimplementation of a "soft landing" when a bad/missing compiler is
+detected
 
 1.1 PyQt changes
 
@@ -166,6 +140,31 @@ table 1. Examples of both types of files can be found in either the
 plplot-source/data directory or the PLplot installed directory 
 (typically /usr/local/share/plplotx.y.z/ on linux).
 
+1.3 Reimplementation of a "soft landing" when a bad/missing compiler is
+detected.
+
+The PLplot core library is written in C so our CMake-based build system will
+error out if it doesn't detect a working C compiler.  However all other
+compiled languages (Ada, C++, D, Fortran, Java, and OCaml) we support are
+optional.  If a working compiler is not available, we give a "soft landing"
+(give a warning message, disable the optional component, and keep going).
+The old implementation of the soft landing was not applied consistently (C++
+was unnecessarily mandatory before) and also caused problems for ccmake (a
+CLI front-end to the cmake application) and cmake-gui (a CMake GUI front-end
+to the cmake application) which incorrectly dropped languages as a result
+even when there was a working compiler.  
+
+We now have completely reimplemented the soft landing logic.  The result
+works well for cmake, ccmake, and cmake-gui.  The one limitation of this new
+method that we are aware of is it only recognizes either the default
+compiler chosen by the generator or else a compiler specified by the
+environment variable approach (see Official Notice XII above).  Once CMake
+bug 9220 has been fixed (so that the OPTIONAL signature of the
+enable_language command actually works without erroring out), then our
+soft-landing approach (which is a workaround for bug 9220) will be replaced
+by the OPTIONAL signature of enable_language, and all CMake methods of
+specifying compilers and compiler options will automatically be recognized
+as a result.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -204,6 +203,8 @@ examples
 2.32 Cairo driver improvements
 2.33 PyQt changes
 2.34 Color Palettes
+2.35 Reimplementation of a "soft landing" when a bad/missing compiler is
+detected.
 
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -662,3 +663,29 @@ plspal1 are used to load cmap1 type files which specify PLplots color
 table 1. Examples of both types of files can be found in either the
 plplot-source/data directory or the PLplot installed directory 
 (typically /usr/local/share/plplotx.y.z/ on linux).
+
+2.35 Reimplementation of a "soft landing" when a bad/missing compiler is
+detected.
+
+The PLplot core library is written in C so our CMake-based build system will
+error out if it doesn't detect a working C compiler.  However all other
+compiled languages (Ada, C++, D, Fortran, Java, and OCaml) we support are
+optional.  If a working compiler is not available, we give a "soft landing"
+(give a warning message, disable the optional component, and keep going).
+The old implementation of the soft landing was not applied consistently (C++
+was unnecessarily mandatory before) and also caused problems for ccmake (a
+CLI front-end to the cmake application) and cmake-gui (a CMake GUI front-end
+to the cmake application) which incorrectly dropped languages as a result
+even when there was a working compiler.  
+
+We now have completely reimplemented the soft landing logic.  The result
+works well for cmake, ccmake, and cmake-gui.  The one limitation of this new
+method that we are aware of is it only recognizes either the default
+compiler chosen by the generator or else a compiler specified by the
+environment variable approach (see Official Notice XII above).  Once CMake
+bug 9220 has been fixed (so that the OPTIONAL signature of the
+enable_language command actually works without erroring out), then our
+soft-landing approach (which is a workaround for bug 9220) will be replaced
+by the OPTIONAL signature of enable_language, and all CMake methods of
+specifying compilers and compiler options will automatically be recognized
+as a result.
