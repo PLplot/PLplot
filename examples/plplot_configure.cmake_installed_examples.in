@@ -1,6 +1,9 @@
 # -*- mode: cmake -*-
 # This file used to configure CMake variables that are used to build the
 # installed examples.
+# Identify that this is the build system for the installed examples.
+set(BUILD_TEST ON)
+set(CORE_BUILD OFF)
 
 # =======================================================================
 # pkg-config support as well as macros to put link flags in standard
