@@ -58,46 +58,61 @@ if(BUILD_TEST)
     )
 endif(BUILD_TEST)
 
+# Compiled example directories first.
 add_subdirectory(c)
-if(ENABLE_cxx)
-  add_subdirectory(c++)
-endif(ENABLE_cxx)
-if(ENABLE_f77)
-  add_subdirectory(f77)
-endif(ENABLE_f77)
-if(ENABLE_f95)
-  add_subdirectory(f95)
-endif(ENABLE_f95)
-if(ENABLE_python)
-  add_subdirectory(python)
-endif(ENABLE_python)
-if(ENABLE_tcl)
-  add_subdirectory(tcl)
-endif(ENABLE_tcl)
-if(ENABLE_tk)
-  add_subdirectory(tk)
-endif(ENABLE_tk)
-if(ENABLE_java)
-  add_subdirectory(java)
-endif(ENABLE_java)
-if(ENABLE_pdl)
-  add_subdirectory(perl)
-endif(ENABLE_pdl)
+
 if(ENABLE_ada)
   add_subdirectory(ada)
 endif(ENABLE_ada)
+
+if(ENABLE_cxx)
+  add_subdirectory(c++)
+endif(ENABLE_cxx)
+
 if(ENABLE_d)
   add_subdirectory(d)
 endif(ENABLE_d)
+
+if(ENABLE_f77)
+  add_subdirectory(f77)
+endif(ENABLE_f77)
+
+if(ENABLE_f95)
+  add_subdirectory(f95)
+endif(ENABLE_f95)
+
+if(ENABLE_java)
+  add_subdirectory(java)
+endif(ENABLE_java)
+
 if(ENABLE_ocaml)
   add_subdirectory(ocaml)
 endif(ENABLE_ocaml)
+
+if(ENABLE_tk)
+  add_subdirectory(tk)
+endif(ENABLE_tk)
+
+# Non-compiled example directories next.
 if(ENABLE_lua)
   add_subdirectory(lua)
 endif(ENABLE_lua)
+
+if(ENABLE_pdl)
+  add_subdirectory(perl)
+endif(ENABLE_pdl)
+
+if(ENABLE_python)
+  add_subdirectory(python)
+endif(ENABLE_python)
+
 if(ENABLE_octave)
   add_subdirectory(octave)
 endif(ENABLE_octave)
+
+if(ENABLE_tcl)
+  add_subdirectory(tcl)
+endif(ENABLE_tcl)
 
 # Configure Makefile.examples with some specific variables
 

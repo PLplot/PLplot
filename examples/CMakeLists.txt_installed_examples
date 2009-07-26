@@ -66,13 +66,17 @@ if(ENABLE_java)
   get_property(targets_examples_java GLOBAL PROPERTY TARGETS_examples_java)
 endif(ENABLE_java)
 
+if(ENABLE_tk)
+  add_subdirectory(tk)
+  get_property(targets_examples_tk GLOBAL PROPERTY TARGETS_examples_tk)
+endif(ENABLE_tk)
+    
 if(ENABLE_ocaml)
   add_subdirectory(ocaml)
   get_property(targets_examples_ocaml GLOBAL PROPERTY TARGETS_examples_ocaml)
 endif(ENABLE_ocaml)
 
 if(ENABLE_octave)
-  add_subdirectory(octave)
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${CMAKE_CURRENT_SOURCE_DIR}/lena.img
@@ -167,11 +171,6 @@ if(noninteractive_targets_LIST)
   add_dependencies(test_noninteractive ${noninteractive_targets_LIST})
 endif(noninteractive_targets_LIST)
 
-if(ENABLE_tk)
-  add_subdirectory(tk)
-  get_property(targets_examples_tk GLOBAL PROPERTY TARGETS_examples_tk)
-endif(ENABLE_tk)
-    
 set(interactive_targets_LIST ${targets_examples_c})
 
 if(targets_examples_tk)
