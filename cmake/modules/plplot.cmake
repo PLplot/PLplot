@@ -60,11 +60,11 @@ include(double)
 include(instdirs)
 include(rpath)
 
-# Common CMakeList.txt files are used to build the examples in the build
+# Common CMakeLists.txt files are used to build the examples in the build
 # tree and also to build the installed examples by the new CMake-based build
 # system devoted to that purpose. Set this fundamental identification to
 # distinguish the two cases.
-set(core_build ON)
+set(CORE_BUILD ON)
 
 option(BUILD_TEST "Compile examples in the build tree and enable ctest" OFF)
 
