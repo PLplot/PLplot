@@ -1225,12 +1225,21 @@ c_plspal0(const char *filename)
   char color_info[30];
   FILE *fp;
   char msgbuf[1024];
-  
-  fp = plLibOpen(filename);
-  if (fp == NULL) {
-    snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",filename);
-    plwarn(msgbuf);
-    return;
+
+  if(strlen(filename) == 0) {
+    fp = plLibOpen("cmap0_default.pal");
+    if (fp == NULL) {
+      snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n","cmap0_default.pal");
+      plwarn(msgbuf);
+      return;
+    }
+  } else {
+    fp = plLibOpen(filename);
+    if (fp == NULL) {
+      snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",filename);
+      plwarn(msgbuf);
+      return;
+    }
   }
   if (fscanf(fp, "%d\n", &number_colors) != 1 || number_colors < 1) {
     snprintf(msgbuf,1024,"Unrecognized cmap0 header\n");
@@ -1306,13 +1315,21 @@ c_plspal1(const char *filename)
   rgb = TRUE;
   err = 0;
   format_version = 0;
-  fp = plLibOpen(filename);
-  if (fp == NULL) {
-    snprintf(msgbuf,1024,"Unable to open cmap1 .pal file %s\n",filename);
-    plwarn(msgbuf);
-    return;
+  if(strlen(filename) == 0) {
+    fp = plLibOpen("cmap1_default.pal");
+    if (fp == NULL) {
+      snprintf(msgbuf,1024,"Unable to open cmap1 .pal file %s\n","cmap1_default.pal");
+      plwarn(msgbuf);
+      return;
+    }
+  } else {
+    fp = plLibOpen(filename);
+    if (fp == NULL) {
+      snprintf(msgbuf,1024,"Unable to open cmap1 .pal file %s\n",filename);
+      plwarn(msgbuf);
+      return;
+    }
   }
- 
   /* Check for new file format */
   fgets(color_info, 160, fp);
   if (strncmp(color_info,"v2 ",2) == 0) {
