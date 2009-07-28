@@ -124,13 +124,11 @@ main(int argc, const char *argv[])
     plMergeOpts(options, "x16c options", notes);
     plparseopts(&argc, argv, PL_PARSE_FULL);
 
-/* Load user color map for cmap1 */
+/* Load colour palettes*/
     plspal0("cmap0_black_on_white.pal");
-
+    plspal1("cmap1_gray.pal");
 /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
-
     plscmap0n(3);
-
 /* Initialize plplot */
 
     plinit();
@@ -223,6 +221,12 @@ main(int argc, const char *argv[])
 
 /* Plot using 1d coordinate transform */
     
+/* Load colour palettes*/
+    plspal0("cmap0_black_on_white.pal");
+    plspal1("cmap1_blue_yellow.pal");
+/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    plscmap0n(3);
+
     pladv(0);
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
@@ -244,6 +248,12 @@ main(int argc, const char *argv[])
 
 /* Plot using 2d coordinate transform */
 
+/* Load colour palettes*/
+    plspal0("cmap0_black_on_white.pal");
+    plspal1("cmap1_blue_red.pal");
+/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    plscmap0n(3);
+
     pladv(0);
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
@@ -263,6 +273,12 @@ main(int argc, const char *argv[])
     pllab("distance", "altitude", "Bogon density, with streamlines");
 
 /* Plot using 2d coordinate transform */
+
+/* Load colour palettes*/
+    plspal0("");
+    plspal1("");
+/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    plscmap0n(3);
 
     pladv(0);
     plvpor(0.1, 0.9, 0.1, 0.9);
@@ -287,6 +303,12 @@ main(int argc, const char *argv[])
 /* Plot using 2d coordinate transform and exclusion*/
 
     if(exclude) {
+/* Load colour palettes*/
+    plspal0("cmap0_black_on_white.pal");
+    plspal1("cmap1_gray.pal");
+/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    plscmap0n(3);
+
     pladv(0);
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
@@ -306,8 +328,11 @@ main(int argc, const char *argv[])
     }
 /* Example with polar coordinates. */
 
-    /* Load user color map for cmap1 */
-    plspal1("cmap1_blue_yellow.pal");
+/* Load colour palettes*/
+    plspal0("cmap0_black_on_white.pal");
+    plspal1("cmap1_gray.pal");
+/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    plscmap0n(3);
 
     pladv(0);
     plvpor( .1, .9, .1, .9 );
