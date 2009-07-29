@@ -406,7 +406,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG,
     "-bg color",
-    "Background color (000000=black, FFFFFF=white)" },
+    "Background color (FF0000=opaque red, 0000FF_0.1=blue with alpha of 0.1)" },
 {
     "ncol0",			/* Allocated colors in cmap 0 */
     opt_ncol0,
@@ -1594,30 +1594,46 @@ opt_width(const char *opt, const char *optarg, void *client_data)
  * opt_bg()
  *
  * Performs appropriate action for option "bg":
- * Sets background color
+ * Sets background color (rgb represented in hex on command line) and alpha
+ * (represented as floating point on the command line with underscore
+ * delimiter), e.g., 
+ * -bg ff0000 (set background to red with an alpha value of 1.0)
+ * -bg ff0000_0.1 (set background to red with an alpha value of 0.1
 \*--------------------------------------------------------------------------*/
 
 static int
 opt_bg(const char *opt, const char *optarg, void *client_data)
 {
     const char *rgb;
-    long bgcolor, r, g, b;
+    char *color_field, *alpha_field;
+    long bgcolor, r, g, b, length;
+    PLFLT a;
 
-/* Always in hex!  Strip off leading "#" (TK-ism) if present. */
+/* Strip off leading "#" (TK-ism) if present. */
 
     if (*optarg == '#')
 	rgb = optarg + 1;
     else
 	rgb = optarg;
 
-/* Get number in hex */
+    strncpy(opttmp, optarg, OPTMAX-1);
+    opttmp[OPTMAX-1] = '\0';
 
-    bgcolor = strtol(rgb, NULL, 16);
+    if (strchr (opttmp, '_')) {
+      /* e.g., -bg ff0000_0.1 */
+      color_field = strtok (opttmp, "_");
+      alpha_field = strtok (NULL, "_");
+    } else {
+      color_field = rgb;
+      alpha_field = NULL;
+    }
+      
+    bgcolor = strtol(color_field, NULL, 16);
 
 /* Must be either a 3 or 6 digit hex number */
 /* If 3 digits, each is "doubled" (i.e. ABC becomes AABBCC). */
 
-    switch (strlen(rgb)) {
+    switch (strlen(color_field)) {
     case 3:
 	r = (bgcolor & 0xF00) >> 8;
 	g = (bgcolor & 0x0F0) >> 4;
@@ -1635,11 +1651,16 @@ opt_bg(const char *opt, const char *optarg, void *client_data)
 	break;
 
     default:
-	fprintf(stderr, "Unrecognized background color value %s\n", rgb);
+	fprintf(stderr, "Unrecognized background color value %s\n", color_field);
 	return 1;
     }
 
-    plscolbg(r, g, b);
+    if(alpha_field)
+      a = atof(alpha_field);
+    else
+      a = 1.;
+
+    plscolbga(r, g, b, a);
 
     return 0;
 }
