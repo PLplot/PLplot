@@ -328,10 +328,11 @@ void plD_bop_cairo(PLStream *pls)
 
   /* Fill in the window with the background color. */
   cairo_rectangle(aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength);
-  cairo_set_source_rgb(aStream->cairoContext,
+  cairo_set_source_rgba(aStream->cairoContext,
 		       (double)pls->cmap0[0].r/255.0,
 		       (double)pls->cmap0[0].g/255.0,
-		       (double)pls->cmap0[0].b/255.0);
+		       (double)pls->cmap0[0].b/255.0,
+		       (double)pls->cmap0[0].a);
   cairo_fill(aStream->cairoContext);
 }
 
@@ -1219,10 +1220,11 @@ void plD_bop_famcairo(PLStream *pls)
 
   /* Fill in the window with the background color. */
   cairo_rectangle(aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength);
-  cairo_set_source_rgb(aStream->cairoContext,
+  cairo_set_source_rgba(aStream->cairoContext,
 		       (double)pls->cmap0[0].r/255.0,
 		       (double)pls->cmap0[0].g/255.0,
-		       (double)pls->cmap0[0].b/255.0);
+		       (double)pls->cmap0[0].b/255.0,
+		       (double)pls->cmap0[0].a);
   cairo_fill(aStream->cairoContext);
 }
 

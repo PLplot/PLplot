@@ -931,6 +931,8 @@ void svg_fill_background_color(PLStream *pls)
   write_hex(aStream->svgFile, pls->cmap0[0].g);
   write_hex(aStream->svgFile, pls->cmap0[0].b);
   fprintf(aStream->svgFile, "\"\n");
+  svg_indent(aStream);
+  fprintf(aStream->svgFile, "fill-opacity=\"%f\"\n", pls->cmap0[0].a);
 }
 
 /*---------------------------------------------------------------------
