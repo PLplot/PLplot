@@ -136,6 +136,8 @@ class PLDLLIMPEXP_QT QtPLDriver
 
 		virtual void setColor(int r, int g, int b, double alpha);
 
+		virtual void setBackgroundColor(int r, int g, int b, double alpha){}
+
 		virtual void setWidth(PLINT w);
 
 		virtual void setDashed(PLINT nms, PLINT* mark, PLINT* space);
@@ -180,6 +182,8 @@ class PLDLLIMPEXP_QT QtRasterDevice: public QtPLDriver, public QImage
 			    int i_iHeight=QT_DEFAULT_Y);
 		
 		virtual ~QtRasterDevice();
+
+		virtual void setBackgroundColor(int r, int g, int b, double alpha);
 		
 		void definePlotName(const char* fileName, const char* format);
 		
@@ -209,6 +213,8 @@ class PLDLLIMPEXP_QT QtSVGDevice: public QtPLDriver, public QSvgGenerator
 
 		virtual ~QtSVGDevice();
 
+		virtual void setBackgroundColor(int r, int g, int b, double alpha);
+
 		void definePlotName(const char* fileName);
 
 		void savePlot();
@@ -229,7 +235,9 @@ class PLDLLIMPEXP_QT QtEPSDevice: public QtPLDriver, public QPrinter
 #endif
 		
 		virtual ~QtEPSDevice();
-	
+
+		virtual void setBackgroundColor(int r, int g, int b, double alpha);
+		
 		void definePlotName(const char* fileName, int ifeps);
 	
 		void savePlot();
@@ -249,7 +257,8 @@ typedef enum ElementType_
 	SET_WIDTH,
 	SET_COLOUR,
 	SET_SOLID,
-	TEXT
+	TEXT,
+	SET_BG_COLOUR
 } ElementType; // Identifiers for elements of the buffer
 
 struct LineStruct_
@@ -333,6 +342,7 @@ class PLDLLIMPEXP_QT QtPLWidget: public QWidget, public QtPLDriver
 		void drawPolyline(short * x, short * y, PLINT npts);
 		void drawPolygon(short * x, short * y, PLINT npts);
 		void setColor(int r, int g, int b, double alpha);
+		void setBackgroundColor(int r, int g, int b, double alpha);
 		void setWidth(PLINT r);
 		void setSolid();
 		void drawText(PLStream* pls, EscText* txt);

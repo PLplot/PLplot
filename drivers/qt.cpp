@@ -214,6 +214,7 @@ void plD_polyline_qtwidget(PLStream *, short*, short*, PLINT);
 void plD_tidy_qtwidget(PLStream *);
 void plD_state_qtwidget(PLStream *, PLINT);
 void plD_esc_qtwidget(PLStream *, PLINT, void*);
+void plD_bop_qtwidget(PLStream *);
 #endif
 
 #if defined(PLD_extqt)
@@ -225,11 +226,8 @@ void plD_polyline_extqt(PLStream *, short*, short*, PLINT);
 void plD_tidy_extqt(PLStream *);
 void plD_state_extqt(PLStream *, PLINT);
 void plD_esc_extqt(PLStream *, PLINT, void*);
+void plD_bop_extqt(PLStream *);
 #endif
-
-// Declaration of the generic interface functions
-
-void plD_bop_qt(PLStream *){}
 
 ////////////////// Raster driver-specific definitions: class and interface functions /////////
 #if defined (PLD_bmpqt) || defined(PLD_jpgqt) || defined (PLD_pngqt) || defined(PLD_ppmqt) || defined(PLD_tiffqt)
@@ -437,6 +435,7 @@ void plD_bop_bmpqt(PLStream *pls)
   pls->page++;
   if(qt_family_check(pls)) {return;} 
   ((QtRasterDevice *)pls->dev)->definePlotName(pls->FileName, "BMP");
+  ((QtRasterDevice *)pls->dev)->setBackgroundColor(pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a);
 }
 #endif
 
@@ -468,6 +467,7 @@ void plD_bop_jpgqt(PLStream *pls)
   pls->page++;
   if(qt_family_check(pls)) {return;} 
   ((QtRasterDevice *)pls->dev)->definePlotName(pls->FileName, "JPG");
+  ((QtRasterDevice *)pls->dev)->setBackgroundColor(pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a);
 }
 #endif
 
@@ -499,6 +499,7 @@ void plD_bop_pngqt(PLStream *pls)
   pls->page++;
   if(qt_family_check(pls)) {return;} 
   ((QtRasterDevice *)pls->dev)->definePlotName(pls->FileName, "PNG");
+  ((QtRasterDevice *)pls->dev)->setBackgroundColor(pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a);
 }
 #endif
 
@@ -530,6 +531,7 @@ void plD_bop_ppmqt(PLStream *pls)
   pls->page++;
   if(qt_family_check(pls)) {return;} 
   ((QtRasterDevice *)pls->dev)->definePlotName(pls->FileName, "PPM");
+  ((QtRasterDevice *)pls->dev)->setBackgroundColor(pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a);
 }
 #endif
 
@@ -561,6 +563,7 @@ void plD_bop_tiffqt(PLStream *pls)
   pls->page++;
   if(qt_family_check(pls)) {return;} 
   ((QtRasterDevice *)pls->dev)->definePlotName(pls->FileName, "TIFF");
+  ((QtRasterDevice *)pls->dev)->setBackgroundColor(pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a);
 }
 #endif
 
@@ -645,6 +648,7 @@ void plD_bop_svgqt(PLStream *pls)
   pls->page++;
   if(qt_family_check(pls)) {return;} 
   ((QtSVGDevice *)pls->dev)->definePlotName(pls->FileName);
+  ((QtSVGDevice *)pls->dev)->setBackgroundColor(pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a);
 }
 
 void plD_eop_svgqt(PLStream *pls)
@@ -875,6 +879,7 @@ void plD_bop_epspdfqt_helper(PLStream *pls, int ifeps)
   pls->page++;
   if(qt_family_check(pls)) {return;}
   ((QtEPSDevice *)pls->dev)->definePlotName(pls->FileName, ifeps);
+  ((QtEPSDevice *)pls->dev)->setBackgroundColor(pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a);
 }
 
 void plD_eop_epspdfqt(PLStream *pls)
@@ -1029,7 +1034,7 @@ void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
   pdt->pl_line     = (plD_line_fp)     plD_line_qtwidget;
   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_qtwidget;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_qtwidget;
-  pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+  pdt->pl_bop      = (plD_bop_fp)      plD_bop_qtwidget;
   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_qtwidget;
   pdt->pl_state    = (plD_state_fp)    plD_state_qtwidget;
   pdt->pl_esc      = (plD_esc_fp)      plD_esc_qtwidget;
@@ -1103,6 +1108,12 @@ void plD_eop_qtwidget(PLStream *pls)
   {
     qApp->processEvents(QEventLoop::WaitForMoreEvents);
   }
+}
+
+void plD_bop_qtwidget(PLStream *pls)
+{
+	QtPLWidget* widget=((QtPLWidget*)pls->dev);
+	widget->setBackgroundColor(pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a);
 }
 
 void plD_line_qtwidget(PLStream * pls, short x1a, short y1a, short x2a, short y2a)
@@ -1218,7 +1229,7 @@ void plD_dispatch_init_extqt(PLDispatchTable *pdt)
   pdt->pl_line     = (plD_line_fp)     plD_line_extqt;
   pdt->pl_polyline = (plD_polyline_fp) plD_polyline_extqt;
   pdt->pl_eop      = (plD_eop_fp)      plD_eop_extqt;
-  pdt->pl_bop      = (plD_bop_fp)      plD_bop_qt;
+  pdt->pl_bop      = (plD_bop_fp)      plD_bop_extqt;
   pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_extqt;
   pdt->pl_state    = (plD_state_fp)    plD_state_extqt;
   pdt->pl_esc      = (plD_esc_fp)      plD_esc_extqt;
@@ -1373,5 +1384,12 @@ void plD_tidy_extqt(PLStream * pls)
 
 void plD_eop_extqt(PLStream *pls)
 {
+}
+
+void plD_bop_extqt(PLStream *pls)
+{
+	QtExtWidget * widget=NULL;
+	widget=(QtExtWidget*)pls->dev;
+	widget->setBackgroundColor(pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a);
 }
 #endif

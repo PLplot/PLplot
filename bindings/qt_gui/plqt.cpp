@@ -408,7 +408,7 @@ QtRasterDevice::QtRasterDevice(int i_iWidth, int i_iHeight):
 	m_painterP->setRenderHint(QPainter::Antialiasing, true);
 
 	// Let's fill the background
-	m_painterP->fillRect(0, 0, width(), height(), QBrush(Qt::black));
+// 	m_painterP->fillRect(0, 0, width(), height(), QBrush(Qt::black));
 
 // 	fontScalingFactor=1.;
 }
@@ -437,7 +437,15 @@ void QtRasterDevice::savePlot()
 	QBrush b=m_painterP->brush();
 	b.setStyle(Qt::SolidPattern);
 	m_painterP->setBrush(b);
-	m_painterP->fillRect(0, 0, width(), height(), QBrush(Qt::black));
+// 	m_painterP->fillRect(0, 0, width(), height(), QBrush(Qt::black));
+}
+
+void QtRasterDevice::setBackgroundColor(int r, int g, int b, double alpha)
+{
+	if(!m_painterP->isActive()) return;
+
+	QBrush brush(QColor(r, g, b, (int)(alpha*255)));
+	m_painterP->fillRect(0, 0, width(), height(), brush);
 }
 #endif
 
@@ -465,12 +473,20 @@ void QtSVGDevice::definePlotName(const char* fileName)
 #endif
 
 	m_painterP=new QPainter(this);
-	m_painterP->fillRect(0, 0, (int)m_dWidth, (int)m_dHeight, QBrush(Qt::black));
+// 	m_painterP->fillRect(0, 0, (int)m_dWidth, (int)m_dHeight, QBrush(Qt::black));
 }
 
 void QtSVGDevice::savePlot()
 {
 	m_painterP->end();
+}
+
+void QtSVGDevice::setBackgroundColor(int r, int g, int b, double alpha)
+{
+	if(!m_painterP->isActive()) return;
+
+	QBrush brush(QColor(r, g, b, (int)(alpha*255)));
+	m_painterP->fillRect(0, 0, width(), height(), brush);
 }
 #endif
 
@@ -521,12 +537,20 @@ void QtEPSDevice::definePlotName(const char* fileName, int ifeps)
 	}
 				
 	m_painterP=new QPainter(this);
-	m_painterP->fillRect(0, 0, (int)m_dWidth, (int)m_dHeight, QBrush(Qt::black));
+// 	m_painterP->fillRect(0, 0, (int)m_dWidth, (int)m_dHeight, QBrush(Qt::black));
 }
 
 void QtEPSDevice::savePlot()
 {
 	m_painterP->end();
+}
+
+void QtEPSDevice::setBackgroundColor(int r, int g, int b, double alpha)
+{
+	if(!m_painterP->isActive()) return;
+
+	QBrush brush(QColor(r, g, b, (int)(alpha*255)));
+	m_painterP->fillRect(0, 0, width(), height(), brush);
 }
 #endif
 
@@ -575,6 +599,10 @@ void QtPLWidget::clearBuffer()
 				break;
             
 			case SET_COLOUR:
+				delete i->Data.ColourStruct;
+				break;
+
+			case SET_BG_COLOUR:
 				delete i->Data.ColourStruct;
 				break;
 				
@@ -641,6 +669,19 @@ void QtPLWidget::setColor(int r, int g, int b, double alpha)
 {
 	BufferElement el;
 	el.Element=SET_COLOUR;
+	el.Data.ColourStruct=new struct ColourStruct_;
+	el.Data.ColourStruct->R=r;
+	el.Data.ColourStruct->G=g;
+	el.Data.ColourStruct->B=b;
+	el.Data.ColourStruct->A=alpha*255.;
+
+	m_listBuffer.append(el);
+}
+
+void QtPLWidget::setBackgroundColor(int r, int g, int b, double alpha)
+{
+	BufferElement el;
+	el.Element=SET_BG_COLOUR;
 	el.Data.ColourStruct=new struct ColourStruct_;
 	el.Data.ColourStruct->R=r;
 	el.Data.ColourStruct->G=g;
@@ -804,7 +845,7 @@ void QtPLWidget::paintEvent( QPaintEvent * )
 		// Draw the margins and the background
 		painter->fillRect(0, 0, width(), height(), QBrush(Qt::white));
 		painter->fillRect(0, 0, width(), height(), QBrush(Qt::gray, Qt::Dense4Pattern));
-		painter->fillRect((int)x_offset, (int)y_offset, (int)floor(x_fact*m_dWidth+0.5), (int)floor(y_fact*m_dHeight+0.5), QBrush(Qt::black));
+// 		painter->fillRect((int)x_offset, (int)y_offset, (int)floor(x_fact*m_dWidth+0.5), (int)floor(y_fact*m_dHeight+0.5), QBrush(Qt::black));
 		
 		// Draw the plot
 		doPlot(painter, x_fact, y_fact, x_offset, y_offset);
@@ -889,6 +930,11 @@ void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offs
 				p->setPen(pen);
 				brush.setColor(QColor(i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A));
 				p->setBrush(brush);
+				break;
+
+			case SET_BG_COLOUR:
+				brush.setColor(QColor(i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A));
+				p->fillRect((int)x_offset, (int)y_offset, (int)floor(x_fact*m_dWidth+0.5), (int)floor(y_fact*m_dHeight+0.5), brush);
 				break;
 
 			case SET_SOLID:
