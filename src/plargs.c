@@ -1624,7 +1624,7 @@ opt_bg(const char *opt, const char *optarg, void *client_data)
       color_field = strtok (opttmp, "_");
       alpha_field = strtok (NULL, "_");
     } else {
-      color_field = rgb;
+      color_field = opttmp;
       alpha_field = NULL;
     }
       
