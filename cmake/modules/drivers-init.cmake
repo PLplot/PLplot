@@ -112,7 +112,8 @@ set(DRIVERS_DEVICE_LIST
   "pscairo:cairo:ON"
   "svgcairo:cairo:ON"
   "xcairo:cairo:ON"
-  "cgm:cgm:ON"
+  # new example 16 shows severe valgrind issues with this device.
+  "cgm:cgm:OFF"
   "dg300:dg300:OFF"
   "epsqt:qt:ON"
   "pdfqt:qt:ON"
