@@ -38,7 +38,6 @@ PlotWindow::PlotWindow(QWidget* parent):
 	plot=new QtExtWidget(QT_DEFAULT_X, QT_DEFAULT_Y, this);
 	setCentralWidget(plot);
 
-
 	// One window = One plot widget = one stream
 	plmkstrm(&strm);
 	plsdev ("extqt");
@@ -46,6 +45,8 @@ PlotWindow::PlotWindow(QWidget* parent):
 	plinit();
 	
 	resize(600, 600);
+
+    pladv(0);
 }
 
 PlotWindow::~PlotWindow()
@@ -78,6 +79,7 @@ void PlotWindow::plotCurves()
 	}
 	
 	pladv(0);
+    plot->setBackgroundColor(50, 100, 200, 1.);
 	plvpor(0.05, 0.95, 0.05, 0.45);
 	plwind(0., 360., -1.2, 1.2);
 	
@@ -126,7 +128,6 @@ void PlotWindow::plotCurves()
 	plcol0(2);
 	
 	plmtex("t", 1., 0.5, 0.5, "Square & Cubic");
-	
 }
 
 void
@@ -161,12 +162,9 @@ void PlotWindow::plotHistogram()
 	
 	plot->clearWidget();
 	
-	
 	pladv(0);
 	plvsta();
-	
 	plcol0(2);
-	
 	plwind(1980.0, 1990.0, 0.0, 35.0);
 	plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
 	plcol0(2);

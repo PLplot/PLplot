@@ -100,16 +100,12 @@ class PLDLLIMPEXP_QT MasterHandler:public QObject
                  MasterHandler();
 
 		 bool isMasterDevice(QtPLDriver* d);
-
 		 void setMasterDevice(QtPLDriver* d);
-		
 		 void DeviceChangedPage(QtPLDriver* d);
-
 		 void DeviceClosed(QtPLDriver* d);
 
 	signals:
 		void MasterChangedPage();	
-
 		void MasterClosed();
 
 	protected:
@@ -127,32 +123,20 @@ class PLDLLIMPEXP_QT QtPLDriver
 		
 		// Draws a line from (x1, y1) to (x2, y2) in internal plplot coordinates
 		virtual void drawLine(short x1, short y1, short x2, short y2);
-
 		virtual void drawPolyline(short * x, short * y, PLINT npts);
-			
 		virtual void drawPolygon(short * x, short * y, PLINT npts);
-
 		virtual void drawText(PLStream* pls, EscText* txt);
-
 		virtual void setColor(int r, int g, int b, double alpha);
-
 		virtual void setBackgroundColor(int r, int g, int b, double alpha){}
-
 		virtual void setWidth(PLINT w);
-
-		virtual void setDashed(PLINT nms, PLINT* mark, PLINT* space);
-
 		// Set pen to draw solid strokes (called after drawing dashed strokes)
 		virtual void setSolid();
-
 		// Conversion factor from internal plplot coordinates to device coordinates
 		double downscale;
 		double m_dWidth, m_dHeight;
-		
 		static QMutex mutex; // All-purpose mutex
 
 	protected:
-	
 		// Returns font with the good size for a QPicture's resolution
 		QFont getFont(PLUNICODE code);
 		// Draws text in a QPicture using a sub-QPicture (!), updates the current xOffset
@@ -168,8 +152,6 @@ class PLDLLIMPEXP_QT QtPLDriver
 		double yOffset;
 		double xOffset;
 		
-// 		double fontScalingFactor;// To have a nice font size on qtwidget
-		
 		QPainter* m_painterP;
 };
 
@@ -180,15 +162,11 @@ class PLDLLIMPEXP_QT QtRasterDevice: public QtPLDriver, public QImage
 	public:
 		QtRasterDevice(int i_iWidth=QT_DEFAULT_X,
 			    int i_iHeight=QT_DEFAULT_Y);
-		
 		virtual ~QtRasterDevice();
 
 		virtual void setBackgroundColor(int r, int g, int b, double alpha);
-		
 		void definePlotName(const char* fileName, const char* format);
-		
 		void savePlot();
-		
 		virtual void setResolution(double dotsPerInch)
 		{
 			setDotsPerMeterX((int)((dotsPerInch/25.4)*1000.));
@@ -198,7 +176,6 @@ class PLDLLIMPEXP_QT QtRasterDevice: public QtPLDriver, public QImage
 	protected:
 		char format[5];
 		QString fileName;
-		
 };
 #endif
 
@@ -214,10 +191,9 @@ class PLDLLIMPEXP_QT QtSVGDevice: public QtPLDriver, public QSvgGenerator
 		virtual ~QtSVGDevice();
 
 		virtual void setBackgroundColor(int r, int g, int b, double alpha);
-
 		void definePlotName(const char* fileName);
-
 		void savePlot();
+        
 	protected:
 };
 #endif
@@ -237,13 +213,10 @@ class PLDLLIMPEXP_QT QtEPSDevice: public QtPLDriver, public QPrinter
 		virtual ~QtEPSDevice();
 
 		virtual void setBackgroundColor(int r, int g, int b, double alpha);
-		
 		void definePlotName(const char* fileName, int ifeps);
-	
 		void savePlot();
 			
 	protected:
-
 };
 #endif
 
@@ -254,27 +227,13 @@ typedef enum ElementType_
 	LINE,
 	POLYLINE,
 	POLYGON,
+    RECTANGLE,
 	SET_WIDTH,
 	SET_COLOUR,
-	SET_SOLID,
+    SET_SMOOTH,
 	TEXT,
 	SET_BG_COLOUR
 } ElementType; // Identifiers for elements of the buffer
-
-struct LineStruct_
-{
-	PLFLT x1;
-	PLFLT x2;
-	PLFLT y1;
-	PLFLT y2;
-};
-
-struct PolylineStruct_
-{
-	PLINT npts;
-	PLFLT* x;
-	PLFLT* y;
-};
 
 struct ColourStruct_
 {
@@ -299,23 +258,21 @@ struct TextStruct_
 	PLFLT chrht;
 };
 
+
 class BufferElement
 {
 	public:
-        
 		ElementType Element;
     
 		union DataType
 		{
-			struct LineStruct_* LineStruct;
-        
-			struct PolylineStruct_* PolylineStruct;
-        
+            QLineF* Line;
+            QPolygonF* Polyline;
+            QRectF * Rect;
 			struct ColourStruct_* ColourStruct;
-	
 			struct TextStruct_* TextStruct;
-        
 			PLINT intParam;
+            PLFLT fltParam;
 		} Data;
 };
 
@@ -344,7 +301,6 @@ class PLDLLIMPEXP_QT QtPLWidget: public QWidget, public QtPLDriver
 		void setColor(int r, int g, int b, double alpha);
 		void setBackgroundColor(int r, int g, int b, double alpha);
 		void setWidth(PLINT r);
-		void setSolid();
 		void drawText(PLStream* pls, EscText* txt);
 
 	protected:
@@ -354,7 +310,6 @@ class PLDLLIMPEXP_QT QtPLWidget: public QWidget, public QtPLDriver
 		
 		void getPlotParameters(double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset); // gives the parameters to scale and center the plot on the page
 		void doPlot(QPainter* p, double x_fact, double y_fact, double x_offset, double y_offset); // Actually draws the plot. Deported in a function for readability
-		void drawTextInPicture(QPainter* p, const QString& text);
 		void renderText(QPainter* p, struct TextStruct_* s, double x_fact, double x_offset, double y_fact, double y_offset);
 		
 		double m_dAspectRatio; // Is kept constant during resizes
@@ -364,14 +319,20 @@ class PLDLLIMPEXP_QT QtPLWidget: public QWidget, public QtPLDriver
 		bool m_bAwaitingRedraw;
 		int m_iOldSize; // Holds the size of the buffer. Modified => image has to be redrawn
 
+        struct
+        {
+            int r;
+            int g;
+            int b;
+            double alpha;
+        } lastColour;
 		
+                
 	protected slots:
 		void mouseReleaseEvent ( QMouseEvent * event );
 		void keyPressEvent(QKeyEvent* event);
 		void closeEvent(QCloseEvent* event);
 		void nextPage();
-		
-
 };
 
 #endif

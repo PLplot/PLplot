@@ -262,8 +262,6 @@ void plD_init_rasterqt(PLStream * pls)
     dpi = DEFAULT_DPI;
   else
     dpi = pls->xdpi;
-  // For raster debug
-  // std::cout << dpi << std::endl;
 
   // Shamelessly copied on the Cairo stuff :)
   if (pls->xlength <= 0 || pls->ylength <= 0)
@@ -333,12 +331,12 @@ void plD_esc_rasterqt(PLStream * pls, PLINT op, void* ptr)
 	    
   switch(op)
   {
-    case PLESC_DASH:
-      widget->setDashed(pls->nms, pls->mark, pls->space);
-      widget->QtPLDriver::setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-      widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
-      widget->setSolid();
-      break;
+    //     case PLESC_DASH:
+    //       widget->setDashed(pls->nms, pls->mark, pls->space);
+    //       widget->QtPLDriver::setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+    //       widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
+    //       widget->setSolid();
+    //       break;
         
     case PLESC_FILL:
       xa=new short[pls->dev_npts];
@@ -701,13 +699,6 @@ void plD_esc_svgqt(PLStream * pls, PLINT op, void* ptr)
 	    
   switch(op)
   {
-    case PLESC_DASH:
-      widget->setDashed(pls->nms, pls->mark, pls->space);
-      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-      widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
-      widget->setSolid();
-      break;
-        
     case PLESC_FILL:
       xa=new short[pls->dev_npts];
       ya=new short[pls->dev_npts];
@@ -731,7 +722,8 @@ void plD_esc_svgqt(PLStream * pls, PLINT op, void* ptr)
       widget->drawText(pls, (EscText *)ptr);
       break;        
     
-    default: break;
+        default:
+            break;
   }
 }
 
@@ -755,7 +747,6 @@ void plD_state_svgqt(PLStream * pls, PLINT op)
       widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
       break;
 
-            
     default: break;
   }
 }
@@ -933,13 +924,6 @@ void plD_esc_epspdfqt(PLStream * pls, PLINT op, void* ptr)
     
   switch(op)
   {
-    case PLESC_DASH:
-      widget->setDashed(pls->nms, pls->mark, pls->space);
-      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-      widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
-      widget->setSolid();
-      break;
-        
     case PLESC_FILL:
       xa=new short[pls->dev_npts];
       ya=new short[pls->dev_npts];
@@ -1088,7 +1072,6 @@ void plD_init_qtwidget(PLStream * pls)
   /* Driver does not have a clear capability so use (good) PLplot core
    * fallback for that instead.  */
   pls->dev_clear=0;
-  // 	pls->termin=1;
   pls->dev_text = 1; // want to draw text
   pls->dev_unicode = 1; // want unicode 
 	
@@ -1097,7 +1080,6 @@ void plD_init_qtwidget(PLStream * pls)
 
   qApp->connect(&handler, SIGNAL(MasterChangedPage()), widget, SLOT(nextPage()));
   qApp->connect(&handler, SIGNAL(MasterClosed()), widget, SLOT(close()));
-	
 }
 
 void plD_eop_qtwidget(PLStream *pls)
@@ -1143,13 +1125,6 @@ void plD_esc_qtwidget(PLStream * pls, PLINT op, void* ptr)
 		    
   switch(op)
   {
-    case PLESC_DASH:
-      widget->setDashed(pls->nms, pls->mark, pls->space);
-      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-      widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
-      widget->setSolid();
-      break;
-        
     case PLESC_FILL:
       xa=new short[pls->dev_npts];
       ya=new short[pls->dev_npts];
@@ -1309,13 +1284,6 @@ void plD_esc_extqt(PLStream * pls, PLINT op, void* ptr)
   widget=(QtExtWidget*)pls->dev;
   switch(op)
   {
-    case PLESC_DASH:
-      widget->setDashed(pls->nms, pls->mark, pls->space);
-      widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-      widget->drawPolyline(pls->dev_x, pls->dev_y, pls->dev_npts);
-      widget->setSolid();
-      break;
-        
     case PLESC_FILL:
       xa=new short[pls->dev_npts];
       ya=new short[pls->dev_npts];
