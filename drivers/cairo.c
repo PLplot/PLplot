@@ -198,6 +198,7 @@ const char *styleLookup[3] = {
 
 PLCairo *stream_and_font_setup(PLStream *, int);
 cairo_status_t write_to_stream(void *, unsigned char *, unsigned int);
+void set_clip(PLStream *pls);
 
 /* String processing */
 
@@ -601,7 +602,6 @@ void text_end_cairo(PLStream *pls, EscText *args)
   PangoLayout *layout;
   PangoFontDescription *fontDescription;
   PLCairo *aStream;
-  PLINT rcx[4], rcy[4];
 
   aStream = (PLCairo *)pls->dev;
 
@@ -628,30 +628,7 @@ void text_end_cairo(PLStream *pls, EscText *args)
 
   /* Set up the clipping region if we are doing text clipping */
   if(aStream->text_clipping){
-   
-    /* Use PLplot core routine to get the corners of the clipping rectangle */
-    difilt_clip(rcx, rcy);
-
-    /* Layout the bounds of the clipping region */
-    /* Should we convert PLINT to short and use the polyline routine? */
-    cairo_move_to(aStream->cairoContext, 
-		  aStream->downscale * (double) rcx[0],
-		  aStream->downscale * (double) rcy[0]);
-    cairo_line_to(aStream->cairoContext,
-		  aStream->downscale * (double) rcx[1],
-		  aStream->downscale * (double) rcy[1]);
-    cairo_line_to(aStream->cairoContext,
-		  aStream->downscale * (double) rcx[2],
-		  aStream->downscale * (double) rcy[2]);
-    cairo_line_to(aStream->cairoContext,
-		  aStream->downscale * (double) rcx[3],
-		  aStream->downscale * (double) rcy[3]);
-    cairo_line_to(aStream->cairoContext,
-		  aStream->downscale * (double) rcx[0],
-		  aStream->downscale * (double) rcy[0]);
-
-    /* Set the clipping region */
-    cairo_clip(aStream->cairoContext);
+    set_clip(pls);
   }
 
   /* Move to the string reference point */
@@ -757,8 +734,7 @@ void proc_str(PLStream *pls, EscText *args)
 
   /* Set up the clipping region if we are doing text clipping */
   if(aStream->text_clipping){
-    cairo_rectangle(aStream->cairoContext, aStream->downscale * pls->clpxmi, aStream->downscale * pls->clpymi, aStream->downscale * (pls->clpxma - pls->clpxmi), aStream->downscale * (pls->clpyma - pls->clpymi));
-    cairo_clip(aStream->cairoContext);
+    set_clip(pls);
   }
 
   /* Move to the string reference point */
@@ -1175,6 +1151,49 @@ void filled_polygon(PLStream *pls, short *xa, short *ya, PLINT npts)
 
   /* Restore the previous line drawing style */
   set_line_properties(aStream, old_line_join, old_line_cap);
+}
+
+/*---------------------------------------------------------------------
+  set_clip()
+
+  Set the clipping region to the plot window.
+  NOTE: cairo_save() and cairo_restore() should probably be called before
+  and after this, respectively.
+  ---------------------------------------------------------------------*/
+
+void set_clip(PLStream *pls)
+{
+  PLINT rcx[4], rcy[4];
+  PLCairo *aStream;
+  aStream = (PLCairo *)pls->dev;
+
+  /* Use PLplot core routine to get the corners of the clipping rectangle */
+  difilt_clip(rcx, rcy);
+
+  /* Layout the bounds of the clipping region */
+  /* Should we convert PLINT to short and use the polyline routine? */
+  cairo_move_to(aStream->cairoContext, 
+      	  aStream->downscale * (double) rcx[0],
+      	  aStream->downscale * (double) rcy[0]);
+  cairo_line_to(aStream->cairoContext,
+      	  aStream->downscale * (double) rcx[1],
+      	  aStream->downscale * (double) rcy[1]);
+  cairo_line_to(aStream->cairoContext,
+      	  aStream->downscale * (double) rcx[2],
+      	  aStream->downscale * (double) rcy[2]);
+  cairo_line_to(aStream->cairoContext,
+      	  aStream->downscale * (double) rcx[3],
+      	  aStream->downscale * (double) rcy[3]);
+  cairo_line_to(aStream->cairoContext,
+      	  aStream->downscale * (double) rcx[0],
+      	  aStream->downscale * (double) rcy[0]);
+
+  /* Set the clipping region */
+  cairo_clip(aStream->cairoContext);
+
+  /* Apparently, in some older Cairo versions, cairo_clip does not consume
+     the current path. */
+  cairo_new_path(aStream->cairoContext);
 }
 
 /*---------------------------------------------------------------------
