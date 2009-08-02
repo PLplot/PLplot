@@ -8,6 +8,7 @@
 [mlname(plbox)] void c_plbox ( [string] const char * xopt, double xtick, int nxsub, [string] const char * yopt, double ytick, int nysub );
 [mlname(plbox3)] void c_plbox3 ( [string] const char * xopt, [string] const char * xlabel, double xtick, int nsubx, [string] const char * yopt, [string] const char * ylabel, double ytick, int nsuby, [string] const char * zopt, [string] const char * zlabel, double ztick, int nsubz );
 [mlname(plcalc_world)] void c_plcalc_world ( double rx, double ry, [out] double * wx, [out] double * wy, [out] int * window );
+[mlname(plarc)] void c_plarc ( double x, double y, double a, double b, double angle1, double angle2, boolean fill );
 [mlname(plclear)] void c_plclear ( void );
 [mlname(plcol0)] void c_plcol0 ( int icol0 );
 [mlname(plcol1)] void c_plcol1 ( double col1 );

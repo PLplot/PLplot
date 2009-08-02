@@ -1,7 +1,7 @@
 (* $Id$
 
   Polar plot demo.
-   Copyright (C) 2008  Hezekiah M. Carty
+   Copyright (C) 2008, 2009  Hezekiah M. Carty
 
   This file is part of PLplot.
 
@@ -48,10 +48,9 @@ let main () =
   (* Set up viewport and window, but do not draw box *)
   plenv (-1.3) 1.3 (-1.3) 1.3 1 (-2);
   for i = 1 to 10 do
-    let x = Array.init 361 (fun j -> 0.1 *. float_of_int i *. x0.(j)) in
-    let y = Array.init 361 (fun j -> 0.1 *. float_of_int i *. y0.(j)) in
     (* Draw circles for polar grid *)
-    plline x y;
+    let r = 0.1 *. float_of_int i in
+    plarc 0.0 0.0 r r 0.0 360.0 false;
   done;
 
   plcol0 2;

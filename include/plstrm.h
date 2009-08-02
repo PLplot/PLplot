@@ -531,7 +531,7 @@ typedef struct {
     PLINT color, colorset;
     PLINT family, member, finc, fflen, bytemax, famadv;
     PLINT dev_fill0, dev_fill1, dev_dash, dev_di, dev_flush, dev_swin;
-    PLINT dev_text, dev_xor, dev_clear, dev_fastimg;
+    PLINT dev_text, dev_xor, dev_clear, dev_fastimg, dev_arc;
 
     char DevName[80];
     FILE *OutFile;

@@ -21,6 +21,7 @@
 
 set(plplot${LIB_TAG}_LIB_SRCS
   pdfutils.c
+  plarc.c
   plargs.c
   plbox.c
   plcont.c

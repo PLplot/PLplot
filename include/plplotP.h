@@ -932,6 +932,17 @@ void
 plP_image(PLFLT *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
         void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer), PLPointer pltr_data);
 
+/* Structure for holding arc data */
+typedef struct {
+    PLFLT x;
+    PLFLT y;
+    PLFLT a;
+    PLFLT b;
+    PLFLT angle1;
+    PLFLT angle2;
+    PLBOOL fill;
+} arc_struct;
+
 /* End of page */
 
 PLDLLIMPEXP void

@@ -235,6 +235,7 @@ typedef void* PLPointer;
 #define PLESC_END_TEXT          31      /* finish a drawing a line of text */
 #define PLESC_START_RASTERIZE   32      /* start rasterized rendering */
 #define PLESC_END_RASTERIZE     33      /* end rasterized rendering */
+#define PLESC_ARC               34      /* render an arc */
 
 /* Alternative unicode text handling control characters */
 #define PLTEXT_FONTCHANGE       0       /* font change in the text stream */
@@ -518,6 +519,7 @@ typedef struct {
 #define    plbox	c_plbox
 #define    plbox3	c_plbox3
 #define    plcalc_world	c_plcalc_world
+#define    plarc	c_plarc
 #define    plclear	c_plclear
 #define    plcol0	c_plcol0
 #define    plcol1	c_plcol1
@@ -770,6 +772,12 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 PLDLLIMPEXP void
 c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window);
+
+/* Plot an arc */
+
+PLDLLIMPEXP void
+c_plarc(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
+        PLBOOL fill);
 
 /* Clear current subpage. */
 
