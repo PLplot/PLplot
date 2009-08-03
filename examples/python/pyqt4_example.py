@@ -55,6 +55,7 @@ class QPlot(QtGui.QMainWindow):
         plplot.plinit()
 
         self.resize(600,600)
+        plplot.pladv(0)
 
     def cleanup(self):
         plplot.plend()
