@@ -107,6 +107,13 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_wxwidgets "Enable wxwidgets bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
+if(ENABLE_wxwidgets AND NOT CMAKE_CXX_COMPILER_WORKS)
+  message(STATUS "WARNING: no working C++ compiler so "
+    "setting ENABLE_wxwidgets to OFF."
+    )
+  set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
+endif(ENABLE_wxwidgets AND NOT CMAKE_CXX_COMPILER_WORKS)
+
 if(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
   message(STATUS
     "WARNING: PLD_wxwidgets is OFF so "
@@ -115,13 +122,6 @@ if(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
   set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
 endif(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
 
-if(ENABLE_wxwidgets AND NOT ENABLE_cxx)
-  message(STATUS
-    "WARNING: ENABLE_cxx is OFF so "
-    "setting ENABLE_wxwidgets to OFF."
-    )
-  set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
-endif(ENABLE_wxwidgets AND NOT ENABLE_cxx)
 if(ENABLE_wxwidgets)
   set(wxwidgets_true "")
 else(ENABLE_wxwidgets)
