@@ -28,15 +28,15 @@ else(DEFAULT_NO_BINDINGS)
   OPTION(ENABLE_cxx "Enable C++ bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
-if(ENABLE_cxx AND NOT PLPLOT_CXX_COMPILER_WORKS)
+if(NOT PLPLOT_CXX_COMPILER_WORKS)
   workaround_9220(CXX PLPLOT_CXX_COMPILER_WORKS)
   if(NOT PLPLOT_CXX_COMPILER_WORKS)
     message(STATUS "WARNING: no working C++ compiler so disabling C++ bindings and examples.")
     set(ENABLE_cxx OFF CACHE BOOL "Enable C++ bindings" FORCE)
   endif(NOT PLPLOT_CXX_COMPILER_WORKS)
-endif(ENABLE_cxx AND NOT PLPLOT_CXX_COMPILER_WORKS)
+endif(NOT PLPLOT_CXX_COMPILER_WORKS)
 
-if(ENABLE_cxx)
+if(PLPLOT_CXX_COMPILER_WORKS)
   # Find and check C++ compiler.
   enable_language(CXX OPTIONAL)
   
@@ -44,9 +44,9 @@ if(ENABLE_cxx)
     message(STATUS "No working C++ compiler found so disabling C++ bindings and examples.")
     set(ENABLE_cxx OFF CACHE BOOL "Enable C++ bindings" FORCE)
   endif(NOT CMAKE_CXX_COMPILER_WORKS)
-endif(ENABLE_cxx)
+endif(PLPLOT_CXX_COMPILER_WORKS)
 
-if(ENABLE_cxx)
+if(CMAKE_CXX_COMPILER_WORKS)
   # Check if "using namespace std;" works
   INCLUDE(TestForNamespace)
 
@@ -62,4 +62,4 @@ if(ENABLE_cxx)
 
   # Need to add check if stdint.h can be used from c++ (PL_HAVE_CXX_STDINT_H)
   INCLUDE(TestForStdintCXX)
-endif(ENABLE_cxx)
+endif(CMAKE_CXX_COMPILER_WORKS)
