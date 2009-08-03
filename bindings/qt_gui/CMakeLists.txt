@@ -79,7 +79,7 @@ if(ENABLE_qt)
       ${CMAKE_SOURCE_DIR}/include/qt.h
       OPTIONS ${MOC_OPTIONS}
       )
-    # CMake does not handle dependendencies correctly for GENERATED source
+    # CMake does not handle dependencies correctly for GENERATED source
     # code that is #included by a header that is created at cmake time.
     # Therefore, use fundamental means to force correct dependencies.
     add_custom_target(moc_outfile_generated DEPENDS ${QT_MOC_OUTFILES})
