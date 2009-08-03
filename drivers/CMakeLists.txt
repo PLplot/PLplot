@@ -30,7 +30,6 @@ if(ENABLE_DYNDRIVERS)
     ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_SOURCE_DIR}/lib/nistcd
     ${CMAKE_BINARY_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
     )
 
@@ -84,55 +83,12 @@ if(ENABLE_DYNDRIVERS)
 	)
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
     if(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
-      set(MOC_OPTIONS)
-      if(PLD_bmpqt)
-	list(APPEND MOC_OPTIONS -DPLD_bmpqt)
-      endif(PLD_bmpqt)
-      if(PLD_jpgqt)
-	list(APPEND MOC_OPTIONS -DPLD_jpgqt)
-      endif(PLD_jpgqt)
-      if(PLD_pngqt)
-	list(APPEND MOC_OPTIONS -DPLD_pngqt)
-      endif(PLD_pngqt)
-      if(PLD_ppmqt)
-	list(APPEND MOC_OPTIONS -DPLD_ppmqt)
-      endif(PLD_ppmqt)
-      if(PLD_tiffqt)
-	list(APPEND MOC_OPTIONS -DPLD_tiffqt)
-      endif(PLD_tiffqt)
-      if(PLD_svgqt)
-	list(APPEND MOC_OPTIONS -DPLD_svgqt)
-      endif(PLD_svgqt)
-      if(PLD_epsqt)
-	list(APPEND MOC_OPTIONS -DPLD_epsqt)
-      endif(PLD_epsqt)
-      if(PLD_pdfqt)
-	list(APPEND MOC_OPTIONS -DPLD_pdfqt)
-      endif(PLD_pdfqt)
-      if(PLD_qtwidget)
-	list(APPEND MOC_OPTIONS -DPLD_qtwidget)
-      endif(PLD_qtwidget)
-      if(PLD_extqt)
-	list(APPEND MOC_OPTIONS -DPLD_extqt)
-      endif(PLD_extqt)
-      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "/* Generated header file listing the moc generated files to include in plqt.cpp. */ \n#ifndef __MOC_FILES_H__\n#define __MOC_FILES_H__\n\n")
-      if(MOC_OPTIONS)
-	qt4_wrap_cpp(
-          QT_MOC_OUTFILES
-          ${CMAKE_SOURCE_DIR}/include/qt.h
-          OPTIONS ${MOC_OPTIONS}
-          )
-	# CMake does not handle dependencies correctly for GENERATED source
-	# code that is #included by a header that is created at cmake time.
-	# Therefore, use fundamental means to force correct dependencies.
-	add_custom_target(moc_outfile_generated DEPENDS ${QT_MOC_OUTFILES})
-	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "#include \"${QT_MOC_OUTFILES}\"\n")
+      if(ANY_QT_DEVICE)
 	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
 	add_dependencies(${SOURCE_ROOT_NAME} moc_outfile_generated)
-      else(MOC_OPTIONS)
-        add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
-      endif(MOC_OPTIONS)
-      file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "#endif  /* __MOC_FILES_H__i */ \n")
+      else(ANY_QT_DEVICE)
+	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
+      endif(ANY_QT_DEVICE)
     else(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
       add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
     endif(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)

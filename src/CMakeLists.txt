@@ -102,50 +102,13 @@ else(ENABLE_DYNDRIVERS)
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
     list(APPEND plplot${LIB_TAG}_LIB_SRCS ${${SOURCE_ROOT_NAME}_SOURCE})
     if(SOURCE_ROOT_NAME STREQUAL "qt")
-      set(MOC_OPTIONS)
-      if(PLD_bmpqt)
-	list(APPEND MOC_OPTIONS -DPLD_bmpqt)
-      endif(PLD_bmpqt)
-      if(PLD_jpgqt)
-	list(APPEND MOC_OPTIONS -DPLD_jpgqt)
-      endif(PLD_jpgqt)
-      if(PLD_pngqt)
-	list(APPEND MOC_OPTIONS -DPLD_pngqt)
-      endif(PLD_pngqt)
-      if(PLD_ppmqt)
-	list(APPEND MOC_OPTIONS -DPLD_ppmqt)
-      endif(PLD_ppmqt)
-      if(PLD_tiffqt)
-	list(APPEND MOC_OPTIONS -DPLD_tiffqt)
-      endif(PLD_tiffqt)
-      if(PLD_svgqt)
-	list(APPEND MOC_OPTIONS -DPLD_svgqt)
-      endif(PLD_svgqt)
-      if(PLD_epsqt)
-	list(APPEND MOC_OPTIONS -DPLD_epsqt)
-      endif(PLD_epsqt)
-      if(PLD_pdfqt)
-	list(APPEND MOC_OPTIONS -DPLD_pdfqt)
-      endif(PLD_pdfqt)
-      if(PLD_qtwidget)
-	list(APPEND MOC_OPTIONS -DPLD_qtwidget)
-      endif(PLD_qtwidget)
-      if(PLD_extqt)
-	list(APPEND MOC_OPTIONS -DPLD_extqt)
-      endif(PLD_extqt)
-      if(MOC_OPTIONS)
-	qt4_wrap_cpp(
-          QT_MOC_OUTFILES
-          ${CMAKE_SOURCE_DIR}/include/qt.h
-          OPTIONS ${MOC_OPTIONS}
-          )
-	# message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
-	set_source_files_properties(
-          ${QT_MOC_OUTFILES}
-          PROPERTIES GENERATED "ON"
-          )
-	list(APPEND plplot${LIB_TAG}_LIB_SRCS ${QT_MOC_OUTFILES})
-      endif(MOC_OPTIONS)
+      if(ANY_QT_DEVICE)
+	# For this case libplot must have a target dependency on the
+	# moc files generated in the binary include directory.
+	set(qt_dependency moc_outfile_generated)
+      else(ANY_QT_DEVICE)
+	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build static qt device when ANY_QT_DEVICE is false.")
+      endif(ANY_QT_DEVICE)
     endif(SOURCE_ROOT_NAME STREQUAL "qt")
     
     # qt device driver code within libplplot has some symbols that need to be
@@ -190,7 +153,7 @@ include_directories(
   ${CMAKE_BINARY_DIR}/include
   )
 add_library(plplot${LIB_TAG} ${plplot${LIB_TAG}_LIB_SRCS})
-add_dependencies(plplot${LIB_TAG} plhershey-unicode.h_built)
+add_dependencies(plplot${LIB_TAG} plhershey-unicode.h_built ${qt_dependency})
 
 set(LIB_INSTALL_RPATH ${LIB_DIR})
 if(ENABLE_DYNDRIVERS)
