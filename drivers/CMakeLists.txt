@@ -30,6 +30,7 @@ if(ENABLE_DYNDRIVERS)
     ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_SOURCE_DIR}/lib/nistcd
     ${CMAKE_BINARY_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
     )
 
@@ -82,7 +83,7 @@ if(ENABLE_DYNDRIVERS)
 	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
 	)
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
-    if(SOURCE_ROOT_NAME STREQUAL "qt")
+    if(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
       set(MOC_OPTIONS)
       if(PLD_bmpqt)
 	list(APPEND MOC_OPTIONS -DPLD_bmpqt)
@@ -114,24 +115,27 @@ if(ENABLE_DYNDRIVERS)
       if(PLD_extqt)
 	list(APPEND MOC_OPTIONS -DPLD_extqt)
       endif(PLD_extqt)
+      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "/* Generated header file listing the moc generated files to include in plqt.cpp. */ \n#ifndef __MOC_FILES_H__\n#define __MOC_FILES_H__\n\n")
       if(MOC_OPTIONS)
 	qt4_wrap_cpp(
           QT_MOC_OUTFILES
           ${CMAKE_SOURCE_DIR}/include/qt.h
           OPTIONS ${MOC_OPTIONS}
           )
-	# message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
-	set_source_files_properties(
-          ${QT_MOC_OUTFILES}
-          PROPERTIES GENERATED "ON"
-          )
-	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE} ${QT_MOC_OUTFILES})
+	# CMake does not handle dependencies correctly for GENERATED source
+	# code that is #included by a header that is created at cmake time.
+	# Therefore, use fundamental means to force correct dependencies.
+	add_custom_target(moc_outfile_generated DEPENDS ${QT_MOC_OUTFILES})
+	file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "#include \"${QT_MOC_OUTFILES}\"\n")
+	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
+	add_dependencies(${SOURCE_ROOT_NAME} moc_outfile_generated)
       else(MOC_OPTIONS)
         add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
       endif(MOC_OPTIONS)
-    else(SOURCE_ROOT_NAME STREQUAL "qt")
+      file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "#endif  /* __MOC_FILES_H__i */ \n")
+    else(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
       add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
-    endif(SOURCE_ROOT_NAME STREQUAL "qt")
+    endif(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
 
     # ${SOURCE_ROOT_NAME}_LINK_FLAGS is ideally a list of the full path names
     # to libraries determined with find_library.  However, the list can also
