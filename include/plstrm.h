@@ -656,6 +656,8 @@ typedef struct {
     PLINT xdigmax, ydigmax, zdigmax;
     PLINT xdigits, ydigits, zdigits;
     char *timefmt;
+    void (*label_func)(PLINT, PLFLT, const char *, PLPointer);
+    PLPointer label_data;
 
 /* Variables governing physical coordinate system */
 

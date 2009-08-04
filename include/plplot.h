@@ -253,6 +253,11 @@ typedef void* PLPointer;
 #define PLSWIN_DEVICE		1	/* device coordinates */
 #define PLSWIN_WORLD		2	/* world coordinates */
 
+/* Axis label tags */
+#define PL_X_AXIS               1       /* The x-axis */
+#define PL_Y_AXIS               2       /* The y-axis */
+#define PL_Z_AXIS               3       /* The z-axis */
+
 /* PLplot Option table & support constants */
 
 /* Option-specific settings */
@@ -451,6 +456,11 @@ typedef struct {
 #define PLESC_DOUBLEBUFFERING_DISABLE    2
 #define PLESC_DOUBLEBUFFERING_QUERY      3
 
+typedef struct {
+    PLFLT exp_label_disp;
+    PLFLT exp_label_pos;
+    PLFLT exp_label_just;
+} PLLabelDefaults;
 
 /*--------------------------------------------------------------------------*\
  *		BRAINDEAD-ness
@@ -518,6 +528,7 @@ typedef struct {
 #define    plbop	c_plbop
 #define    plbox	c_plbox
 #define    plbox3	c_plbox3
+#define    plslabelfunc c_plslabelfunc
 #define    plcalc_world	c_plcalc_world
 #define    plarc	c_plarc
 #define    plclear	c_plclear
@@ -767,6 +778,11 @@ PLDLLIMPEXP void
 c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
 	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz);
+
+/* Setup a user-provided custom labeling function */
+PLDLLIMPEXP void
+c_plslabelfunc(void (*label_func)(PLINT, PLFLT, const char *, PLPointer),
+               PLPointer label_data);
 
 /* Calculate world coordinates and subpage from relative device coordinates. */
 

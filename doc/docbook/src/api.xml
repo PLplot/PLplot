@@ -11887,6 +11887,64 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
+  <sect1 id="plslabelfunc" renderas="sect3">
+    <title>
+      <function>plslabelfunc</function>: Assign a function to use for generating custom axis labels
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plslabelfunc</function>
+	  </funcdef>
+	  <paramdef><parameter>label_func</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      This function allows a user to provide their own function to provide
+      axis label text.  The user function is given the numeric value for a
+      point on an axis and returns a string label to correspond with that
+      value.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>label_func</parameter>
+	  (<literal>void (*) (PLINT, PLFLT, const char *, void *)</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            This is the custom label function.  In order to reset to the
+            default labeling, set this to <literal>NULL</literal>.  The
+            <literal>const char*</literal> argument should be set to point to
+            the appropriate label text.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>label_data</parameter>
+	  (<literal>void *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            This parameter may be used to pass data to the label_func
+            function.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      This function is used in examples 1 and 19.
+    </para>
+
+  </sect1>
+
   <sect1 id="plsmaj" renderas="sect3">
     <title>
       <function>plsmaj</function>: Set length of major ticks

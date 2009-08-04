@@ -81,6 +81,10 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
  *	axis=61 : Same as 1 except date / time X,Y tick marks. 
  *	axis=62 : Same as 2 except date / time X,Y tick marks. 
  *      axis=63 : Same as 62, but the grid will be also at the minor ticks.
+ *      axis=70 : Same as 0 except custom X,Y labels.
+ *      axis=71 : Same as 1 except custom X,Y labels.
+ *      axis=72 : Same as 2 except custom X,Y labels.
+ *      axis=73 : Same as 72, but the grid will be also at the minor ticks.
 \*--------------------------------------------------------------------------*/
 
 void
@@ -268,6 +272,18 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	break;
     case 63:
 	plbox("abcgdnsth", (PLFLT) 0.0, 0, "abcgdnstvh", (PLFLT) 0.0, 0);
+	break;
+    case 70:
+	plbox("bcnost", (PLFLT) 0.0, 0, "bcnostv", (PLFLT) 0.0, 0);
+	break;
+    case 71:
+	plbox("abcnost", (PLFLT) 0.0, 0, "abcnostv", (PLFLT) 0.0, 0);
+	break;
+    case 72:
+	plbox("abcgnost", (PLFLT) 0.0, 0, "abcgnostv", (PLFLT) 0.0, 0);
+	break;
+    case 73:
+	plbox("abcgnosth", (PLFLT) 0.0, 0, "abcgnostvh", (PLFLT) 0.0, 0);
 	break;
     default:
 	plwarn("plenv: Invalid axis argument");
