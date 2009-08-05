@@ -820,6 +820,16 @@ yleng	PLINT
 xoff	PLINT
 yoff	PLINT
 
+# Set color map 0 using a palette file
+
+pltclcmd plspal0 void
+filename	const char *
+
+# Set color map 1 using a palette file
+
+pltclcmd plspal1 void
+filename	const char *
+
 # Set the pause (on end-of-page) status.
 
 pltclcmd plspause void

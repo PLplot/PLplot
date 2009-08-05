@@ -22,6 +22,9 @@ proc x16 {{w loopback}} {
     matrix zz f $nx $ny
     matrix ww f $nx $ny
 
+    $w cmd plspal0 "cmap0_black_on_white.pal"
+    $w cmd plspal1 "cmap1_gray.pal"
+
 # Set up data array
 
     for {set i 0} {$i < $nx} {incr i} {
@@ -102,6 +105,9 @@ proc x16 {{w loopback}} {
 
 # Plot using 1d coordinate transform
 
+    $w cmd plspal0 "cmap0_black_on_white.pal"
+    $w cmd plspal1 "cmap1_blue_yellow.pal"
+
     $w cmd pladv 0
     $w cmd plvpor 0.1 0.9 0.1 0.9
     $w cmd plwind -1.0 1.0 -1.0 1.0
@@ -122,6 +128,9 @@ proc x16 {{w loopback}} {
 
 # Plot using 2d coordinate transform
 
+    $w cmd plspal0 "cmap0_black_on_white.pal"
+    $w cmd plspal1 "cmap1_blue_red.pal"
+
     $w cmd pladv 0
     $w cmd plvpor 0.1 0.9 0.1 0.9
     $w cmd plwind -1.0 1.0 -1.0 1.0
@@ -141,6 +150,9 @@ proc x16 {{w loopback}} {
 
 # Plot using 2d coordinate transform with both shades and contours.
 
+#    $w cmd plspal0 ""
+#    $w cmd plspal1 ""
+
     $w cmd pladv 0
     $w cmd plvpor 0.1 0.9 0.1 0.9
     $w cmd plwind -1.0 1.0 -1.0 1.0
@@ -158,6 +170,9 @@ proc x16 {{w loopback}} {
     $w cmd pllab "distance" "altitude" "Bogon density"
 
 # Polar plot example demonstrating wrapping support.
+
+    $w cmd plspal0 "cmap0_black_on_white.pal"
+    $w cmd plspal1 "cmap1_gray.pal"
 
 # Build the new coordinate matrices.
 

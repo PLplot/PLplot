@@ -336,6 +336,14 @@ itcl::class PLWin {
         eval $plwin cmd plspage $args
     }
 
+    method plspal0 {args} {
+        eval $plwin cmd plspal0 $args
+    }
+
+    method plspal1 {args} {
+        eval $plwin cmd plspal1 $args
+    }
+
     method plspause {args} {
         eval $plwin cmd plspause $args
     }
