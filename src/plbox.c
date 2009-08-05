@@ -1400,12 +1400,9 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 static void
 plform(PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *string, PLINT len, PLBOOL ll, PLBOOL lf, PLBOOL lo)
 {
-    const char *custom_string;
-
     /* Check to see if a custom labeling function is defined.  If not, */
     if (lo && plsc->label_func) {
-        (*plsc->label_func)(axis, value, custom_string, plsc->label_data);
-        snprintf(string, len, "%s", custom_string);
+        (*plsc->label_func)(axis, value, string, len, plsc->label_data);
     }
     else {
         if (lo) {
@@ -1491,7 +1488,7 @@ plform(PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *string, PLINT len
  *
 \*--------------------------------------------------------------------------*/
 void
-c_plslabelfunc(void (*label_func)(PLINT, PLFLT, const char *, PLPointer), PLPointer label_data)
+c_plslabelfunc(void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer), PLPointer label_data)
 {
     plsc->label_func = label_func;
     plsc->label_data = label_data;

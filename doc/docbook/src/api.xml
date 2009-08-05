@@ -11914,14 +11914,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>label_func</parameter>
-	  (<literal>void (*) (PLINT, PLFLT, const char *, void *)</literal>, input)
+	  (<literal>void (*) (PLINT, PLFLT, char *, PLINT, void *)</literal>, input)
 	</term>
 	<listitem>
 	  <para>
             This is the custom label function.  In order to reset to the
             default labeling, set this to <literal>NULL</literal>.  The
-            <literal>const char*</literal> argument should be set to point to
-            the appropriate label text.
+            <literal>char*</literal> argument should be set to the appropriate
+            label text.
 	  </para>
 	</listitem>
       </varlistentry>

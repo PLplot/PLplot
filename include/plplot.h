@@ -781,7 +781,7 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 /* Setup a user-provided custom labeling function */
 PLDLLIMPEXP void
-c_plslabelfunc(void (*label_func)(PLINT, PLFLT, const char *, PLPointer),
+c_plslabelfunc(void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer),
                PLPointer label_data);
 
 /* Calculate world coordinates and subpage from relative device coordinates. */

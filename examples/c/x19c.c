@@ -48,9 +48,8 @@ PLFLT normalize_longitude(PLFLT lon) {
 
 /* A custom axis labeling function for longitudes and latitudes. */
 void
-geolocation_labeler(PLINT axis, PLFLT value, const char *label, PLPointer data) {
+geolocation_labeler(PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data) {
     const char *direction_label;
-    char *custom_label;
     PLFLT label_val;
 
     if (axis == PL_Y_AXIS) {
@@ -79,12 +78,11 @@ geolocation_labeler(PLINT axis, PLFLT value, const char *label, PLPointer data) 
     }
     if (axis == PL_Y_AXIS && value == 0.0) {
         /* A special case for the equator */
-        sprintf(custom_label, "%s", direction_label);
+        snprintf(label, length, "%s", direction_label);
     }
     else {
-        sprintf(custom_label, "%.0f%s", fabs(label_val), direction_label);
+        snprintf(label, length, "%.0f%s", fabs(label_val), direction_label);
     }
-    label = custom_label;
 }
 
 /*--------------------------------------------------------------------------*\
