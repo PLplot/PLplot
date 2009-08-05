@@ -158,6 +158,10 @@ x16::x16( int argc, const char ** argv ) {
   pls->MergeOpts(options, "x16c options", notes);
   pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
+  // Load colour palettes
+  pls->spal0("cmap0_black_on_white.pal");
+  pls->spal1("cmap1_gray.pal");
+
   // Reduce colors in cmap 0 so that cmap 1 is useful on a
   //16-color display
   pls->scmap0n(3);
@@ -242,6 +246,10 @@ x16::x16( int argc, const char ** argv ) {
 
   // Plot using 1d coordinate transform
 
+  pls->spal0("cmap0_black_on_white.pal");
+  pls->spal1("cmap1_blue_yellow.pal");
+  pls->scmap0n(3);
+
   pls->adv(0);
   pls->vpor(0.1, 0.9, 0.1, 0.9);
   pls->wind(-1.0, 1.0, -1.0, 1.0);
@@ -260,6 +268,10 @@ x16::x16( int argc, const char ** argv ) {
   pls->lab("distance", "altitude", "Bogon density");
 
   // Plot using 2d coordinate transform
+
+  pls->spal0("cmap0_black_on_white.pal");
+  pls->spal1("cmap1_blue_red.pal");
+  pls->scmap0n(3);
 
   pls->adv(0);
   pls->vpor(0.1, 0.9, 0.1, 0.9);
@@ -280,6 +292,10 @@ x16::x16( int argc, const char ** argv ) {
   pls->lab("distance", "altitude", "Bogon density, with streamlines");
 
   // Plot using 2d coordinate transform
+
+  pls->spal0("");
+  pls->spal1("");
+  pls->scmap0n(3);
 
   pls->adv(0);
   pls->vpor(0.1, 0.9, 0.1, 0.9);
@@ -302,6 +318,10 @@ x16::x16( int argc, const char ** argv ) {
   // Plot using 2d coordinate transform and exclusion
 
   if(exclude) {
+    pls->spal0("cmap0_black_on_white.pal");
+    pls->spal1("cmap1_gray.pal");
+    pls->scmap0n(3);
+
     pls->adv(0);
     pls->vpor(0.1, 0.9, 0.1, 0.9);
     pls->wind(-1.0, 1.0, -1.0, 1.0);
@@ -321,6 +341,10 @@ x16::x16( int argc, const char ** argv ) {
     }
 
   //Example with polar coordinates.
+
+  pls->spal0("cmap0_black_on_white.pal");
+  pls->spal1("cmap1_gray.pal");
+  pls->scmap0n(3);
 
   pls->adv(0);
   pls->vpor( .1, .9, .1, .9 );

@@ -826,6 +826,18 @@ PLSPAGE(PLFLT *xpmm, PLFLT *ypmm,
 }
 
 void
+PLSPAL07(const char *filename)
+{
+  c_plspal0(filename);
+}
+
+void
+PLSPAL17(const char *filename)
+{
+  c_plspal1(filename);
+}
+
+void
 PLSPAUSE(PLBOOL *pause)
 {
     c_plspause(*pause);

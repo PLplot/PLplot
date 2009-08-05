@@ -1829,6 +1829,24 @@ void plstream::spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
     plspage(xp,yp,xleng,yleng,xoff,yoff);
 }
 
+/* Set the colors for color table 0 from a cmap0 file */
+
+void plstream::spal0(const char *filename)
+{
+  set_stream();
+
+  plspal0(filename);
+}
+
+/* Set the colors for color table 1 from a cmap1 file */
+
+void plstream::spal1(const char *filename)
+{
+  set_stream();
+
+  plspal1(filename);
+}
+
 /* Set the pause (on end-of-page) status */
 
 void plstream::spause( bool pause )

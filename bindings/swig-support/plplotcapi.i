@@ -779,6 +779,14 @@ void
 plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 	  PLINT xoff, PLINT yoff);
 
+%feature("autodoc", "Set the color map 0 colors using a cmap0 color palette file.") plspal0;
+void
+plspal0(const char *filename);
+
+%feature("autodoc", "Set the color map 1 colors using a cmap1 color palette file.") plspal1;
+void
+plspal1(const char *filename);
+
 %feature("autodoc", "Set the pause (on end-of-page) status.") plspause;
 void
 plspause(PLBOOL pause);

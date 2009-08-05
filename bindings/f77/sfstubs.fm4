@@ -588,6 +588,36 @@ c***********************************************************************
 
 c***********************************************************************
 
+      subroutine plspal0(filename)
+
+      implicit none
+      character*(*) filename
+
+      include 'sfstubs.h'
+
+      call plstrf2c(filename, string1, maxlen)
+
+      call plspal07(s1)
+
+      end
+
+c***********************************************************************
+
+      subroutine plspal1(filename)
+
+      implicit none
+      character*(*) filename
+
+      include 'sfstubs.h'
+
+      call plstrf2c(filename, string1, maxlen)
+
+      call plspal17(s1)
+
+      end
+
+c***********************************************************************
+
       subroutine plmtex(side,disp,pos,xjust,text)
 
       implicit none

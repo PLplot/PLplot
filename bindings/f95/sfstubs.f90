@@ -671,6 +671,38 @@
 
 !***********************************************************************
 
+      subroutine plspal0(filename)
+
+      implicit none
+      character*(*) filename
+
+      include 'sfstubs.h'
+
+      call plstrf2c(filename, string1, maxlen)
+
+      s1 = transfer( string1, s1 )
+      call plspal07(s1)
+
+      end subroutine
+
+!***********************************************************************
+
+      subroutine plspal1(filename)
+
+      implicit none
+      character*(*) filename
+
+      include 'sfstubs.h'
+
+      call plstrf2c(filename, string1, maxlen)
+
+      s1 = transfer( string1, s1 )
+      call plspal17(s1)
+
+      end subroutine
+
+!***********************************************************************
+
       subroutine plmtex(side,disp,pos,xjust,text)
 
       implicit none

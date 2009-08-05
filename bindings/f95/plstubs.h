@@ -314,6 +314,8 @@
 #define    PLSMIN	FNAME(PLSMIN,plsmin)
 #define    PLSORI	FNAME(PLSORI,plsori)
 #define    PLSPAGE	FNAME(PLSPAGE,plspage)
+#define    PLSPAL07     FNAME(PLSPAL07,plspal07)
+#define    PLSPAL17     FNAME(PLSPAL17,plspal17)
 #define    PLSPAUSE	FNAME(PLSPAUSEF77,plspausef77)
 #define    PLSSTRM	FNAME(PLSSTRM,plsstrm)
 #define    PLSSUB	FNAME(PLSSUB,plssub)

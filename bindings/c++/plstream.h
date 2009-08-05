@@ -744,6 +744,14 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
     void spause( bool pause );
 
+/* Set the colors for color table 0 from a cmap0 file */
+
+    void spal0(const char *filename);
+
+/* Set the colors for color table 1 from a cmap1 file */
+
+    void spal1(const char *filename);
+
 /* Set stream number.  */
 
     void sstrm( PLINT strm );

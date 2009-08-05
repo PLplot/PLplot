@@ -46,6 +46,10 @@ c      dummy to fill argument list with something not currently used.
 c      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
+c      Load color palettes
+      call plspal0('cmap0_black_on_white.pal')
+      call plspal1('cmap1_gray.pal')
+
 c      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
       call plscmap0n(3)
 
@@ -123,6 +127,11 @@ c      Plot using transform of index range to xmin, xmax, ymin, ymax
       call pllab('distance', 'altitude', 'Bogon density')
 
 c      Plot using 1d coordinate transform
+
+      call plspal0('cmap0_black_on_white.pal')
+      call plspal1('cmap1_blue_yellow.pal')
+      call plscmap0n(3)
+
       call pladv(0)
       call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
       call plwind(-1.0d0, 1.0d0, -1.0d0, 1.0d0)
@@ -142,6 +151,11 @@ c      Plot using 1d coordinate transform
       call pllab('distance', 'altitude', 'Bogon density')
 
 c      Plot using 2d coordinate transform
+
+      call plspal0('cmap0_black_on_white.pal')
+      call plspal1('cmap1_blue_red.pal')
+      call plscmap0n(3)
+
       call pladv(0)
       call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
       call plwind(-1.0d0, 1.0d0, -1.0d0, 1.0d0)
@@ -163,6 +177,10 @@ c      Plot using 2d coordinate transform
      &  'Bogon density, with streamlines')
 
 c      Plot using 2d coordinate transform and plshades contours.
+      call plspal0('')
+      call plspal1('')
+      call plscmap0n(3)
+
       call pladv(0)
       call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
       call plwind(-1.0d0, 1.0d0, -1.0d0, 1.0d0)
@@ -182,6 +200,10 @@ c      Plot using 2d coordinate transform and plshades contours.
       call pllab('distance', 'altitude', 'Bogon density')
 
 c      Example with polar coordinates.
+      call plspal0('cmap0_black_on_white.pal')
+      call plspal1('cmap1_gray.pal')
+      call plscmap0n(3)
+
       call pladv(0)
       call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
       call plwind(-1.d0, 1.d0, -1.d0, 1.d0)

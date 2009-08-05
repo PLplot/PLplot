@@ -42,6 +42,10 @@
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
+!      Load color palettes
+      call plspal0('cmap0_black_on_white.pal')
+      call plspal1('cmap1_gray.pal')
+
 !      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
       call plscmap0n(3)
 
@@ -120,6 +124,11 @@
       call pllab('distance', 'altitude', 'Bogon density')
 
 !      Plot using 1d coordinate transform
+
+      call plspal0('cmap0_black_on_white.pal')
+      call plspal1('cmap1_blue_yellow.pal')
+      call plscmap0n(3)
+
       call pladv(0)
       call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
       call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
@@ -140,6 +149,11 @@
       call pllab('distance', 'altitude', 'Bogon density')
 
 !      Plot using 2d coordinate transform
+
+      call plspal0('cmap0_black_on_white.pal')
+      call plspal1('cmap1_blue_red.pal')
+      call plscmap0n(3)
+
       call pladv(0)
       call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
       call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
@@ -162,6 +176,10 @@
         'Bogon density, with streamlines')
 
 !      Plot using 2d coordinate transform and plshades contours.
+      call plspal0('')
+      call plspal1('')
+      call plscmap0n(3)
+
       call pladv(0)
       call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
       call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
@@ -182,9 +200,13 @@
       call pllab('distance', 'altitude', 'Bogon density')
 
 !      Example with polar coordinates.
+      call plspal0('cmap0_black_on_white.pal')
+      call plspal1('cmap1_gray.pal')
+      call plscmap0n(3)
+
       call pladv(0)
-      call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
-      call plwind(-1._plflt, 1._plflt, -1._plflt, 1._plflt)
+      call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
+      call plwind(-1.d0, 1.d0, -1.d0, 1.d0)
 
       call plpsty(0)
 
