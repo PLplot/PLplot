@@ -25,10 +25,6 @@
 # and CORE_BUILD always ON.  The installed examples build always has
 # BUILD_TEST ON and CORE_BUILD OFF.
 
-if(CORE_BUILD)
-  set(cxx_SRCS plc++demos.h)
-endif(CORE_BUILD)
-
 set(cxx_STRING_INDICES
   "01cc"
   "01"
@@ -65,9 +61,35 @@ set(cxx_STRING_INDICES
   )
 
 if(CORE_BUILD)
+  set(cxx_SRCS plc++demos.h)
   foreach(STRING_INDEX ${cxx_STRING_INDICES})
     set(cxx_SRCS ${cxx_SRCS} x${STRING_INDEX}.cc)
   endforeach(STRING_INDEX ${cxx_STRING_INDICES})
+
+  if(ENABLE_wxwidgets)
+    set(wxPLplotDemo_SRCS wxPLplotDemo.cpp)
+  endif(ENABLE_wxwidgets)
+
+  if(PLD_extqt)
+    set(qt_INSTALLED_FILES qt_PlotWindow.cpp qt_PlotWindow.h qt_example.cpp README.qt_example)
+  endif(PLD_extqt)
+
+  install(FILES ${cxx_SRCS} ${wxPLplotDemo_SRCS} ${qt_INSTALLED_FILES} DESTINATION ${DATA_DIR}/examples/c++)
+
+  set(CXX ${CMAKE_CXX_COMPILER})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
+    DESTINATION ${DATA_DIR}/examples/c++
+    RENAME Makefile
+    )
+
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+    DESTINATION ${DATA_DIR}/examples/c++
+    )
 endif(CORE_BUILD)
 
 if(BUILD_TEST)
@@ -84,8 +106,8 @@ if(BUILD_TEST)
   endif(CORE_BUILD)
 endif(BUILD_TEST)
 
-set_property(GLOBAL PROPERTY TARGETS_examples_cxx)
 if(BUILD_TEST)
+  set_property(GLOBAL PROPERTY TARGETS_examples_cxx)
   foreach(STRING_INDEX ${cxx_STRING_INDICES})
     if(CORE_BUILD AND BUILD_SHARED_LIBS)
       SET_SOURCE_FILES_PROPERTIES(x${STRING_INDEX}.cc
@@ -157,30 +179,3 @@ if(BUILD_TEST)
     endif(BUILD_qt_example)
   endif(ENABLE_qt)
 endif(BUILD_TEST)
-
-if(CORE_BUILD)
-  if(ENABLE_wxwidgets)
-    set(wxPLplotDemo_SRCS wxPLplotDemo.cpp)
-  endif(ENABLE_wxwidgets)
-
-  if(PLD_extqt)
-    set(qt_INSTALLED_FILES qt_PlotWindow.cpp qt_PlotWindow.h qt_example.cpp README.qt_example)
-  endif(PLD_extqt)
-
-  install(FILES ${cxx_SRCS} ${wxPLplotDemo_SRCS} ${qt_INSTALLED_FILES} DESTINATION ${DATA_DIR}/examples/c++)
-
-  set(CXX ${CMAKE_CXX_COMPILER})
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-    )
-
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
-    DESTINATION ${DATA_DIR}/examples/c++
-    RENAME Makefile
-    )
-
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
-    DESTINATION ${DATA_DIR}/examples/c++
-    )
-endif(CORE_BUILD)

@@ -25,69 +25,97 @@
 # BUILD_TEST ON and CORE_BUILD OFF.
 
 set(ada_STRING_INDICES
-"01"
-"02"
-"03"
-"04"
-"05"
-"06"
-"07"
-"08"
-"09"
-"10"
-"11"
-"12"
-"13"
-"14"
-"15"
-"16"
-"17"
-"18"
-"19"
-"20"
-"21"
-"22"
-"23"
-"24"
-"25"
-"26"
-"27"
-"28"
-"29"
-"30"
-"31"
-"thick01"
-"thick02"
-"thick03"
-"thick04"
-"thick05"
-"thick06"
-"thick07"
-"thick08"
-"thick09"
-"thick10"
-"thick11"
-"thick12"
-"thick13"
-"thick14"
-"thick15"
-"thick16"
-"thick17"
-"thick18"
-"thick19"
-"thick20"
-"thick21"
-"thick22"
-"thick23"
-"thick24"
-"thick25"
-"thick26"
-"thick27"
-"thick28"
-"thick29"
-"thick30"
-"thick31"
-)
+  "01"
+  "02"
+  "03"
+  "04"
+  "05"
+  "06"
+  "07"
+  "08"
+  "09"
+  "10"
+  "11"
+  "12"
+  "13"
+  "14"
+  "15"
+  "16"
+  "17"
+  "18"
+  "19"
+  "20"
+  "21"
+  "22"
+  "23"
+  "24"
+  "25"
+  "26"
+  "27"
+  "28"
+  "29"
+  "30"
+  "31"
+  "thick01"
+  "thick02"
+  "thick03"
+  "thick04"
+  "thick05"
+  "thick06"
+  "thick07"
+  "thick08"
+  "thick09"
+  "thick10"
+  "thick11"
+  "thick12"
+  "thick13"
+  "thick14"
+  "thick15"
+  "thick16"
+  "thick17"
+  "thick18"
+  "thick19"
+  "thick20"
+  "thick21"
+  "thick22"
+  "thick23"
+  "thick24"
+  "thick25"
+  "thick26"
+  "thick27"
+  "thick28"
+  "thick29"
+  "thick30"
+  "thick31"
+  )
+
+if(CORE_BUILD)
+  set(ada_SRCS)
+  foreach(STRING_INDEX ${ada_STRING_INDICES})
+    set(SOURCE_FILE x${STRING_INDEX}a.adb)
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+      )
+    list(APPEND ada_SRCS ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE})
+  endforeach(STRING_INDEX ${ada_STRING_INDICES})
+
+  install(FILES ${ada_SRCS} DESTINATION ${DATA_DIR}/examples/ada)
+
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
+    DESTINATION ${DATA_DIR}/examples/ada
+    RENAME Makefile
+    )
+
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+    DESTINATION ${DATA_DIR}/examples/ada
+    )
+endif(CORE_BUILD)
 
 if(BUILD_TEST)
   if(CORE_BUILD)
@@ -99,20 +127,7 @@ if(BUILD_TEST)
   else(CORE_BUILD)
     include_directories(${INCLUDE_DIR} ${ADA_INCLUDE_DIR})
   endif(CORE_BUILD)
-endif(BUILD_TEST)
 
-if(CORE_BUILD)
-  foreach(STRING_INDEX ${ada_STRING_INDICES})
-    set(SOURCE_FILE x${STRING_INDEX}a.adb)
-    configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}.cmake
-      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
-      )
-    list(APPEND ada_SRCS ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE})
-  endforeach(STRING_INDEX ${ada_STRING_INDICES})
-endif(CORE_BUILD)
-
-if(BUILD_TEST)
   # The first -aI option in adalinkflags is required to find <TARGET>.adb
   # (see comment below). The second -aI option gives access to the
   # libplplotada spec files. The -aL option gives access to the
@@ -155,21 +170,3 @@ if(BUILD_TEST)
 
   set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ada_extra_clean_files}")
 endif(BUILD_TEST)
-
-if(CORE_BUILD)
-  install(FILES ${ada_SRCS} DESTINATION ${DATA_DIR}/examples/ada)
-
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-    )
-
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
-    DESTINATION ${DATA_DIR}/examples/ada
-    RENAME Makefile
-    )
-
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
-    DESTINATION ${DATA_DIR}/examples/ada
-    )
-endif(CORE_BUILD)
