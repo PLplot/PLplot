@@ -2,6 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2008 Werner Smekal
+# Copyright (C) 2009 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -18,7 +19,12 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-set(d_SRCS)
+# N.B. This file is used for both the core build (which installs the examples
+# and optionally [depending on BUILD_TEST} builds them) and the installed
+# examples build.  The core build has BUILD_TEST OFF or ON at user option
+# and CORE_BUILD always ON.  The installed examples build always has
+# BUILD_TEST ON and CORE_BUILD OFF.
+
 set(d_STRING_INDICES
   "01"
   "02"
@@ -44,45 +50,52 @@ set(d_STRING_INDICES
   "25"
   "26"
   "27"
-#  "28"
+  #  "28"
   "29"
   "30"
   )
 
-if(BUILD_TEST)
-  remove_definitions("-DHAVE_CONFIG_H")
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/bindings/d
+if(CORE_BUILD) 
+  set(d_SRCS)
+  foreach(STRING_INDEX ${d_STRING_INDICES})
+    set(d_SRCS ${d_SRCS} x${STRING_INDEX}d.d)
+  endforeach(STRING_INDEX ${d_STRING_INDICES})
+
+  install(FILES ${d_SRCS}
+    DESTINATION ${DATA_DIR}/examples/d
     )
-endif(BUILD_TEST)
-foreach(STRING_INDEX ${d_STRING_INDICES})
-  set(d_SRCS ${d_SRCS} x${STRING_INDEX}d.d)
-  if(BUILD_TEST)
+
+  set(DC ${CMAKE_D_COMPILER})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    DESTINATION ${DATA_DIR}/examples/d
+    RENAME Makefile
+    )
+
+  install(FILES CMakeLists.txt
+    DESTINATION ${DATA_DIR}/examples/d
+    )
+endif(CORE_BUILD) 
+
+if(BUILD_TEST)
+  if(CORE_BUILD)
+    remove_definitions("-DHAVE_CONFIG_H")
+    include_directories(
+      ${CMAKE_SOURCE_DIR}/bindings/d
+      )
+  else(CORE_BUILD)
+    include_directories(${INCLUDE_DIR})
+  endif(CORE_BUILD)
+
+  set_property(GLOBAL PROPERTY TARGETS_examples_d)
+  foreach(STRING_INDEX ${d_STRING_INDICES})
     add_executable(x${STRING_INDEX}d x${STRING_INDEX}d.d)
     target_link_libraries(x${STRING_INDEX}d plplotdmd${LIB_TAG} plplot${LIB_TAG} ${MATH_LIB})
-  endif(BUILD_TEST)
-endforeach(STRING_INDEX ${d_STRING_INDICES})
-
-set_source_files_properties(${d_SRCS}
-  PROPERTIES OBJECT_DEPENDS ${CMAKE_SOURCE_DIR}/bindings/d/plplot.d)
-
-install(FILES ${d_SRCS}
-  DESTINATION ${DATA_DIR}/examples/d
-)
-
-set(DC ${CMAKE_D_COMPILER})
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
-  ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-  DESTINATION ${DATA_DIR}/examples/d
-  RENAME Makefile
-)
-
-install(FILES CMakeLists.txt_installed_examples_d
-  DESTINATION ${DATA_DIR}/examples/d
-  RENAME CMakeLists.txt
-  )
+    set_property(GLOBAL APPEND PROPERTY TARGETS_examples_d x${STRING_INDEX}d)
+  endforeach(STRING_INDEX ${d_STRING_INDICES})
+endif(BUILD_TEST)
 
