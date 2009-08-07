@@ -1,7 +1,7 @@
 # examples/f95/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006, 2007, 2008, 2009 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -18,7 +18,11 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-set(f95_SRCS)
+# N.B. This file is used for both the core build (which installs the examples
+# and optionally [depending on BUILD_TEST} builds them) and the installed
+# examples build.  The core build has BUILD_TEST OFF or ON at user option
+# and CORE_BUILD always ON.  The installed examples build always has
+# BUILD_TEST ON and CORE_BUILD OFF.
 
 set(f95_STRING_INDICES
   "01"
@@ -55,32 +59,65 @@ set(f95_STRING_INDICES
   "31"
   )
 
-# Process fortran header file to define isnan
-if(FORTRAN_HAVE_ISNAN)
-  set(HAVE_F77_ISNAN_FALSE !)
-else(FORTRAN_HAVE_ISNAN)
-  set(HAVE_F77_ISNAN_TRUE !)
-endif(FORTRAN_HAVE_ISNAN)
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/plf95demos.inc.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/plf95demos.inc
-  )
-set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/plf95demos.inc
-  PROPERTIES GENERATED ON)
-include_directories(
-  ${CMAKE_CURRENT_BINARY_DIR}
-  )
+if(CORE_BUILD)
+  set(f95_SRCS)
+  foreach(STRING_INDEX ${f95_STRING_INDICES})
+    set(f95_SRCS ${f95_SRCS} x${STRING_INDEX}f.f90)
+  endforeach(STRING_INDEX ${f95_STRING_INDICES})
+
+  # Process fortran header file to define isnan
+  if(FORTRAN_HAVE_ISNAN)
+    set(HAVE_F77_ISNAN_FALSE !)
+  else(FORTRAN_HAVE_ISNAN)
+    set(HAVE_F77_ISNAN_TRUE !)
+  endif(FORTRAN_HAVE_ISNAN)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/plf95demos.inc.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/plf95demos.inc
+    )
+  set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/plf95demos.inc
+    PROPERTIES GENERATED ON)
+  include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
+    )
+
+  install(FILES ${f95_SRCS}
+    DESTINATION ${DATA_DIR}/examples/f95
+    )
+
+  set(FC ${CMAKE_Fortran_COMPILER})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    DESTINATION ${DATA_DIR}/examples/f95
+    RENAME Makefile
+    )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plf95demos.inc
+    DESTINATION ${DATA_DIR}/examples/f95
+    )
+
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+    DESTINATION ${DATA_DIR}/examples/f95
+    )
+endif(CORE_BUILD)
 
 if(BUILD_TEST)
-  remove_definitions("-DHAVE_CONFIG_H")
+  if(CORE_BUILD)
+    remove_definitions("-DHAVE_CONFIG_H")
 
-  # For CMake-2.6.0 and above, the module files are created by
-  # default during the library build in the bindings/f95 directory.
-  include_directories(${CMAKE_BINARY_DIR}/bindings/f95)
-endif(BUILD_TEST)
-foreach(STRING_INDEX ${f95_STRING_INDICES})
-  set(f95_SRCS ${f95_SRCS} x${STRING_INDEX}f.f90)
-  if(BUILD_TEST)
+    # For CMake-2.6.0 and above, the module files are created by
+    # default during the library build in the bindings/f95 directory.
+    include_directories(${CMAKE_BINARY_DIR}/bindings/f95)
+  else(CORE_BUILD)
+    include_directories(${INCLUDE_DIR} ${F95_MOD_DIR})
+  endif(CORE_BUILD)
+
+  set_property(GLOBAL PROPERTY TARGETS_examples_f95)
+  foreach(STRING_INDEX ${f95_STRING_INDICES})
     # Need unique target name
     add_executable(x${STRING_INDEX}f95 x${STRING_INDEX}f.f90)
     set_target_properties(
@@ -88,34 +125,11 @@ foreach(STRING_INDEX ${f95_STRING_INDICES})
       OUTPUT_NAME x${STRING_INDEX}f
       )
     if(STATIC_OPTS)
-       target_link_libraries(x${STRING_INDEX}f95 plplotf95opts${LIB_TAG} plplotf95${LIB_TAG})
+      target_link_libraries(x${STRING_INDEX}f95 plplotf95opts${LIB_TAG} plplotf95${LIB_TAG})
     else(STATIC_OPTS)
-       target_link_libraries(x${STRING_INDEX}f95 plplotf95${LIB_TAG})
+      target_link_libraries(x${STRING_INDEX}f95 plplotf95${LIB_TAG})
     endif(STATIC_OPTS)
-  endif(BUILD_TEST)
-endforeach(STRING_INDEX ${f95_STRING_INDICES})
-
-install(FILES ${f95_SRCS}
-  DESTINATION ${DATA_DIR}/examples/f95
-  )
-
-set(FC ${CMAKE_Fortran_COMPILER})
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
-  ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-  )
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-  DESTINATION ${DATA_DIR}/examples/f95
-  RENAME Makefile
-  )
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plf95demos.inc
-  DESTINATION ${DATA_DIR}/examples/f95
-  )
-
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt_installed_examples_f95
-DESTINATION ${DATA_DIR}/examples/f95
-RENAME CMakeLists.txt
-)
+    set_property(GLOBAL APPEND PROPERTY TARGETS_examples_f95 x${STRING_INDEX}f95)
+  endforeach(STRING_INDEX ${f95_STRING_INDICES})
+endif(BUILD_TEST)
 
