@@ -1,7 +1,7 @@
 # examples/f77/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006, 2007, 2008, 2009 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
