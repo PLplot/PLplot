@@ -87,6 +87,7 @@ if(CORE_BUILD)
   # Build all java examples regardless of BUILD_test to allow putting
   # the class files in the jar file that will be created and installed.
   set(java_CLASSES)
+  set_property(GLOBAL PROPERTY TARGETS_examples_java)
   foreach(STRING_INDEX ${java_STRING_INDICES})
     set(in_file ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java)
     set(
@@ -100,6 +101,9 @@ if(CORE_BUILD)
       -classpath ${CMAKE_BINARY_DIR}/bindings/java ${in_file} -d ${CMAKE_CURRENT_BINARY_DIR} -encoding utf8
       DEPENDS ${in_file}
       )
+    add_custom_target(x${STRING_INDEX}j ALL DEPENDS ${out_file})
+    add_dependencies(x${STRING_INDEX}j plplot_core)
+    set_property(GLOBAL APPEND PROPERTY TARGETS_examples_java x${STRING_INDEX}j)
   endforeach(STRING_INDEX ${java_STRING_INDICES})
 
   add_custom_target(plplot_examples DEPENDS ${java_CLASSES})
@@ -139,6 +143,7 @@ if(CORE_BUILD)
     )
 else(CORE_BUILD)
   set(INSTALLED_JAR_FILE ${JAR_DIR}/plplot.jar)
+  set_property(GLOBAL PROPERTY TARGETS_examples_java)
   foreach(STRING_INDEX ${java_STRING_INDICES})
     set(in_file ${CMAKE_CURRENT_SOURCE_DIR}/x${STRING_INDEX}.java)
     set(
