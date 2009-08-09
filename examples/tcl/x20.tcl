@@ -177,7 +177,7 @@ proc x20 {{w loopback}} {
         if { ![read_img "../lena.pgm" img_f width height num_col] } {
 #C          $w cmd plabort "No such file"
             puts "Image could not be read"
-            $w cmd plend
+#            $w cmd plend
             return
         }
     }
@@ -205,7 +205,7 @@ proc x20 {{w loopback}} {
         set ye 220.0
 
         if { [get_clip $w $xi $xe $yi $ye] } {
-            $w cmd plend
+#            $w cmd plend
             return
         }
 
@@ -276,7 +276,7 @@ proc x20 {{w loopback}} {
     $w cmd plimagefr img_f 0. $width 0. $height 0. 0. $img_min \
         $img_max xg yg
 
-    $w cmd plend
+#    $w cmd plend
 }
 
 # -------------------------------------------
