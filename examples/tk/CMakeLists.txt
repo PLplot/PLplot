@@ -1,7 +1,7 @@
 # examples/tk/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006, 2007, 2008, 2009 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -18,18 +18,11 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-set(tk_FILES)
-
-set(tk_SRC_FILES
-  README.tkdemos
-  runAllDemos.tcl
-  runExtendedDemos.tcl
-  tkdemos.tcl
-  tk01
-  tk02
-  tk03
-  tk04
-  )
+# N.B. This file is used for both the core build (which installs the examples
+# and optionally [depending on BUILD_TEST} builds them) and the installed
+# examples build.  The core build has BUILD_TEST OFF or ON at user option
+# and CORE_BUILD always ON.  The installed examples build always has
+# BUILD_TEST ON and CORE_BUILD OFF.
 
 set(tk_STRING_INDICES
   "01"
@@ -64,31 +57,47 @@ set(tk_STRING_INDICES
   "30"
   )
 
+set(tk_SRC_FILES
+  README.tkdemos
+  runAllDemos.tcl
+  runExtendedDemos.tcl
+  tkdemos.tcl
+  tk01
+  tk02
+  tk03
+  tk04
+  )
+
 # Copy files to the binary directory (if different) for generating tclIndex
 # This ensures no files are created in the source tree.
-if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-  foreach(_file ${tk_SRC_FILES})
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_file}
-      COMMAND ${CMAKE_COMMAND}
-      -E copy
-      ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
-      ${CMAKE_CURRENT_BINARY_DIR}/${_file}
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
-      )
-    set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${_file})
-  endforeach(_file ${tk_SRC_FILES})
-endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")  
+set(tk_FILES)
+foreach(_file ${tk_SRC_FILES})
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_file}
+    COMMAND ${CMAKE_COMMAND}
+    -E copy_if_different
+    ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
+    ${CMAKE_CURRENT_BINARY_DIR}/${_file}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
+    )
+  set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${_file})
+endforeach(_file ${tk_SRC_FILES})
+
+if(CORE_BUILD)
+  set(tcl_EXAMPLES_DIR ${CMAKE_SOURCE_DIR}/examples/tcl)
+else(CORE_BUILD)
+  set(tcl_EXAMPLES_DIR ${CMAKE_SOURCE_DIR}/tcl)
+endif(CORE_BUILD)
 
 foreach(STRING_INDEX ${tk_STRING_INDICES})
   set(_file x${STRING_INDEX}.tcl)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_file}
     COMMAND ${CMAKE_COMMAND}
-    -E copy
-    ${CMAKE_SOURCE_DIR}/examples/tcl/${_file}
+    -E copy_if_different
+    ${tcl_EXAMPLES_DIR}/${_file}
     ${CMAKE_CURRENT_BINARY_DIR}/${_file}
-    DEPENDS ${CMAKE_SOURCE_DIR}/examples/tcl/${_file}
+    DEPENDS ${tcl_EXAMPLES_DIR}/${_file}
     )
   set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${_file})
 endforeach(STRING_INDEX ${tk_STRING_INDICES})
@@ -96,14 +105,12 @@ endforeach(STRING_INDEX ${tk_STRING_INDICES})
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plgrid.tcl
   COMMAND ${CMAKE_COMMAND}
-  -E copy
-  ${CMAKE_SOURCE_DIR}/examples/tcl/plgrid.tcl
+  -E copy_if_different
+  ${tcl_EXAMPLES_DIR}/plgrid.tcl
   ${CMAKE_CURRENT_BINARY_DIR}/plgrid.tcl
-  DEPENDS ${CMAKE_SOURCE_DIR}/examples/tcl/plgrid.tcl
+  DEPENDS ${tcl_EXAMPLES_DIR}/plgrid.tcl
   )
 set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/plgrid.tcl)
-
-install(FILES ${tk_FILES} DESTINATION ${DATA_DIR}/examples/tk)
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
@@ -112,60 +119,73 @@ add_custom_command(
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex DESTINATION ${DATA_DIR}/examples/tk)
+add_custom_target(tclIndex_examples_tk ALL
+  DEPENDS ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+  )
 
 # The second and fourth Tk examples depend on Itk to work.
 set(tk_SCRIPTS tk01 tk03)
 set(tk_SRC xtk01.c)
-  
+
 if(ENABLE_itk)
   list(APPEND tk_SCRIPTS tk02 tk04)
   list(APPEND tk_SRC xtk02.c xtk04.c)
 endif(ENABLE_itk)
 
-if(BUILD_TEST)
-  remove_definitions("-DHAVE_CONFIG_H")
-  include_directories(
-    ${TCL_INCLUDE_PATH}
-    ${TK_INCLUDE_PATH}
-    ${CMAKE_SOURCE_DIR}/bindings/tcl
-    ${CMAKE_SOURCE_DIR}/bindings/tk
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_BINARY_DIR}/include
+if(CORE_BUILD)
+  install(FILES ${tk_FILES} DESTINATION ${DATA_DIR}/examples/tk)
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex DESTINATION ${DATA_DIR}/examples/tk)
+
+  install(PROGRAMS ${tk_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tk)
+  install(FILES ${tk_SRC} DESTINATION ${DATA_DIR}/examples/tk)
+
+  set(CC ${CMAKE_C_COMPILER})
+
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
     )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    DESTINATION ${DATA_DIR}/examples/tk
+    RENAME Makefile
+    )
+
+  install(FILES CMakeLists.txt
+    DESTINATION ${DATA_DIR}/examples/tk
+    )
+endif(CORE_BUILD)
+
+if(BUILD_TEST)
+  if(CORE_BUILD)
+    remove_definitions("-DHAVE_CONFIG_H")
+    include_directories(
+      ${TCL_INCLUDE_PATH}
+      ${TK_INCLUDE_PATH}
+      ${CMAKE_SOURCE_DIR}/bindings/tcl
+      ${CMAKE_SOURCE_DIR}/bindings/tk
+      ${CMAKE_SOURCE_DIR}/include
+      ${CMAKE_BINARY_DIR}/include
+      )
+  else(CORE_BUILD)
+    include_directories(
+      ${TCL_INCLUDE_PATH}
+      ${TK_INCLUDE_PATH}
+      ${INCLUDE_DIR}
+      )
+  endif(CORE_BUILD)
+
+  set_property(GLOBAL PROPERTY TARGETS_examples_tk)
   foreach(TK_SRC_FILE ${tk_SRC})
-   string(REGEX REPLACE ".c$" "" TK_EXE ${TK_SRC_FILE})
-   add_executable(${TK_EXE} ${TK_SRC_FILE})
-    if(BUILD_SHARED_LIBS)
-      SET_SOURCE_FILES_PROPERTIES(${TK_SRC_FILE}
+    string(REGEX REPLACE ".c$" "" TK_EXE ${TK_SRC_FILE})
+    add_executable(${TK_EXE} ${TK_SRC_FILE})
+    if(BUILD_SHARED_LIBS AND CORE_BUILD)
+      set_source_files_properties(${TK_SRC_FILE}
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-    endif(BUILD_SHARED_LIBS)
+    endif(BUILD_SHARED_LIBS AND CORE_BUILD)
     target_link_libraries(${TK_EXE} plplottcltk${LIB_TAG} tclmatrix${LIB_TAG} plplot${LIB_TAG} ${MATH_LIB})
+    set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk ${TK_EXE})
   endforeach(TK_SRC_FILE ${tk_SRC})
+  set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk tclIndex_examples_tk)
 endif(BUILD_TEST)
-
-install(PROGRAMS ${tk_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tk)
-
-install(FILES ${tk_SRC} DESTINATION ${DATA_DIR}/examples/tk)
-
-set(CC ${CMAKE_C_COMPILER})
-
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
-  ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-  )
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-  DESTINATION ${DATA_DIR}/examples/tk
-  RENAME Makefile
-  )
-
-add_custom_target(tclIndex_examples_tk ALL
-  DEPENDS ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-  )
-
-install(FILES CMakeLists.txt_installed_examples_tk
-  DESTINATION ${DATA_DIR}/examples/tk
-  RENAME CMakeLists.txt
-  )
-
