@@ -26,5 +26,5 @@ pack append . .plw {left expand fill}
 for {set i 1} {$i <= 30} {incr i} {
     set demo x[format "%02d" $i]
     source $demo.tcl
-    proc $i {} "$demo .plw.plwin"
+    proc $i {} "$demo .plw.plwin; .plw.plwin cmd plspal0 cmap0_default.pal; .plw.plwin cmd plspal1 cmap1_default.pal"
 }
