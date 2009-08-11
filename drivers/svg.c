@@ -98,7 +98,6 @@ static int svg_family_check(PLStream *);
 static void poly_line(PLStream *, short *, short *, PLINT, short);
 static void write_hex(FILE *, unsigned char);
 static void write_unicode(FILE *, PLUNICODE);
-static short desired_offset(short, double);
 static void specify_font(FILE *, PLUNICODE);
 
 /* String processing */
@@ -462,13 +461,12 @@ void proc_str (PLStream *pls, EscText *args)
   short upDown;
   short totalTags = 1;
   short ucs4Len = args->unicode_array_len;
-  short lastOffset;
-  double ftHt;
+  double ftHt, scaled_offset, scaled_ftHt;
   PLUNICODE fci;
   PLINT rcx[4], rcy[4];
   PLFLT rotation, shear, stride, cos_rot, sin_rot, sin_shear, cos_shear;
   PLFLT t[4];
-  double glyph_size, sum_glyph_size;
+  int glyph_size, sum_glyph_size;
   short if_write;
   /*   PLFLT *t = args->xform; */
   PLUNICODE *ucs4 = args->unicode_array;
@@ -597,8 +595,8 @@ void proc_str (PLStream *pls, EscText *args)
    * is then used to figure out the initial x position from text-anchor and
    * args->just that is used to write out the SVG xml for if_write = 1. */
 
-  glyph_size = ftHt;
-  sum_glyph_size = 0.;
+  glyph_size = (int)ftHt;
+  sum_glyph_size = 0;
   if_write = 0;
   while (if_write < 2) {
     if(if_write == 1) {
@@ -633,7 +631,7 @@ void proc_str (PLStream *pls, EscText *args)
 
     }
     i = 0;
-    lastOffset = 0;
+    scaled_ftHt = ftHt;
     upDown = 0;
     while (i < ucs4Len){
       if (ucs4[i] < PL_FCI_MARK){	/* not a font change */
@@ -659,27 +657,32 @@ void proc_str (PLStream *pls, EscText *args)
 	  continue;
 	}
 	else {
+          /* super/subscript logic follows that in plstr routine (plsym.c)
+             for Hershey fonts. Factor of FONT_SHIFT_RATIO*0.75 is empirical
+             adjustment.*/
 	  if(ucs4[i] == (PLUNICODE)'u'){	/* Superscript */
 	    upDown++;
+            scaled_offset = -FONT_SHIFT_RATIO*0.75*scaled_ftHt;
+            scaled_ftHt = ftHt*pow(0.75, (double)abs(upDown));
 	    if(if_write) {
 	      totalTags++;
-	      fprintf(aStream->svgFile, "<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
+	      fprintf(aStream->svgFile, "<tspan dy=\"%f\" font-size=\"%d\">", scaled_offset, (int)scaled_ftHt);
 	    }
 	    else{
-	      glyph_size = ftHt * pow(0.8, abs(upDown));
+	      glyph_size = (int)scaled_ftHt;
 	    }
-	    lastOffset = desired_offset(upDown, ftHt);
 	  }
 	  if(ucs4[i] == (PLUNICODE)'d'){	/* Subscript */
 	    upDown--;
+            scaled_ftHt = ftHt*pow(0.75, (double)abs(upDown));
+            scaled_offset = FONT_SHIFT_RATIO*0.75*scaled_ftHt;
 	    if(if_write) {
 	      totalTags++;
-	      fprintf(aStream->svgFile, "<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
+	      fprintf(aStream->svgFile, "<tspan dy=\"%f\" font-size=\"%d\">", scaled_offset, (int)scaled_ftHt);
 	    }
 	    else{
-	      glyph_size = ftHt * pow(0.8, abs(upDown));
+	      glyph_size = (int)scaled_ftHt;
 	    }
-	    lastOffset = desired_offset(upDown, ftHt);
 	  }
 	  i++;
 	}
@@ -983,22 +986,6 @@ void write_hex(FILE *svgFile, unsigned char val)
 void write_unicode(FILE *svgFile, PLUNICODE ucs4_char)
 {
   fprintf(svgFile, "&#x%x;", ucs4_char);
-}
-
-/*---------------------------------------------------------------------
-  desired_offset ()
-  
-  calculate the desired offset given font height and super/subscript level
-  ---------------------------------------------------------------------*/
-
-short desired_offset(short level, double ftHt)
-{
-  if(level != 0){
-    return (short)(-level * ftHt * pow(0.6, abs(level)));
-  }
-  else{
-    return 0;
-  }
 }
 
 /*---------------------------------------------------------------------
