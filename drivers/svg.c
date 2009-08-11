@@ -468,7 +468,7 @@ void proc_str (PLStream *pls, EscText *args)
   PLINT rcx[4], rcy[4];
   PLFLT rotation, shear, stride, cos_rot, sin_rot, sin_shear, cos_shear;
   PLFLT t[4];
-  int glyph_size, sum_glyph_size;
+  double glyph_size, sum_glyph_size;
   short if_write;
   /*   PLFLT *t = args->xform; */
   PLUNICODE *ucs4 = args->unicode_array;
@@ -597,12 +597,12 @@ void proc_str (PLStream *pls, EscText *args)
    * is then used to figure out the initial x position from text-anchor and
    * args->just that is used to write out the SVG xml for if_write = 1. */
 
-  glyph_size = (int)ftHt;
-  sum_glyph_size = 0;
+  glyph_size = ftHt;
+  sum_glyph_size = 0.;
   if_write = 0;
   while (if_write < 2) {
     if(if_write == 1) {
-      /*printf("number of characters = %f\n", sum_glyph_size/(double)(int)ftHt);*/
+      /*printf("number of characters = %f\n", sum_glyph_size/ftHt);*/
       /* The above coordinate transform defines the _raw_ x position of the 
        * text without justification so this attribute value depends on
        * text-anchor and args->just*sum_glyph_size */
@@ -666,7 +666,7 @@ void proc_str (PLStream *pls, EscText *args)
 	      fprintf(aStream->svgFile, "<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
 	    }
 	    else{
-	      glyph_size = (int)(ftHt * pow(0.8, abs(upDown)));
+	      glyph_size = ftHt * pow(0.8, abs(upDown));
 	    }
 	    lastOffset = desired_offset(upDown, ftHt);
 	  }
@@ -677,7 +677,7 @@ void proc_str (PLStream *pls, EscText *args)
 	      fprintf(aStream->svgFile, "<tspan dy=\"%d\" font-size=\"%d\">", desired_offset(upDown, ftHt) - lastOffset, (int)(ftHt * pow(0.8, abs(upDown))));
 	    }
 	    else{
-	      glyph_size = (int)(ftHt * pow(0.8, abs(upDown)));
+	      glyph_size = ftHt * pow(0.8, abs(upDown));
 	    }
 	    lastOffset = desired_offset(upDown, ftHt);
 	  }
