@@ -71,6 +71,8 @@ set(
   xw31.py
   plplot_logo.py
   test_circle.py
+  testh.py
+  test_superscript_subscript.py
   )
 
 if(ENABLE_tk)
@@ -136,6 +138,7 @@ set(
   python_DATA
   ${python_DATA}
   README.pythondemos
+  README.rendering_tests
   README.logo
   svg_760x120_gradient.patch
   )
