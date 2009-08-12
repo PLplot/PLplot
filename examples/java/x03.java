@@ -77,14 +77,7 @@ class x03 {
 
         pls.env(-1.3, 1.3, -1.3, 1.3, 1, -2);
         for (i = 1; i <= 10; i++) {
-            for (j = 0; j <= 360; j++) {
-                x[j] = 0.1 * i * x0[j];
-                y[j] = 0.1 * i * y0[j];
-            }
-
-        // Draw circles for polar grid.
-
-            pls.line(x, y);
+	    pls.arc(0.0, 0.0, 0.1*i, 0.1*i, 0.0, 360.0, false);
         }
 
         pls.col0(2);
