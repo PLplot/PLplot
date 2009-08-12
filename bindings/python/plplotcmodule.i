@@ -617,7 +617,7 @@ typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
-typedef char * (*label_func)(PLINT, PLFLT, PLPointer);
+typedef char * (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
 
 %{
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
@@ -951,12 +951,17 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
   %}
      
 %typemap(in) pltr_func pltr {
-  /* it must be a callable */
-  if(!PyCallable_Check((PyObject*)$input)) {
-    PyErr_SetString(PyExc_ValueError, "pltr argument must be callable");
-    return NULL;
+  /* it must be a callable or None */
+  if($input == Py_None) {
+    $1 = NULL;
   }
-  $1 = marshal_pltr($input);
+  else {
+    if(!PyCallable_Check((PyObject*)$input)) {
+      PyErr_SetString(PyExc_ValueError, "pltr argument must be callable");
+      return NULL;
+    }
+    $1 = marshal_pltr($input);
+  }
 }
 %typemap(freearg) pltr_func pltr {
   cleanup_pltr();
@@ -969,12 +974,17 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
 }
 
 %typemap(in) mapform_func mapform {
-  /* it must be a callable */
-  if(!PyCallable_Check((PyObject*)$input)) {
-    PyErr_SetString(PyExc_ValueError, "mapform argument must be callable");
-    return NULL;
+  /* it must be a callable or none */
+  if($input == Py_None) {
+    $1 = NULL;
   }
-  $1 = marshal_mapform($input);
+  else {
+    if(!PyCallable_Check((PyObject*)$input)) {
+      PyErr_SetString(PyExc_ValueError, "mapform argument must be callable");
+      return NULL;
+    }
+    $1 = marshal_mapform($input);
+  }
 }
 %typemap(freearg) mapform_func mapform {
   cleanup_mapform();
@@ -1022,35 +1032,45 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
 
 /* marshall the f2eval function pointer argument */
 %typemap(in) f2eval_func f2eval {
-  /* it must be a callable */
-  if(!PyCallable_Check((PyObject*)$input)) {
-    PyErr_SetString(PyExc_ValueError, "pltr argument must be callable");
-    return NULL;
+  /* it must be a callable or None */
+  if($input == Py_None) {
+    $1 = NULL;
   }
-  /* hold a reference to it */
-  Py_XINCREF((PyObject*)$input);
-  python_f2eval = (PyObject*)$input;
-  /* this function handles calling the python function */
-  $1 = do_f2eval_callback;
+  else {
+    if(!PyCallable_Check((PyObject*)$input)) {
+      PyErr_SetString(PyExc_ValueError, "pltr argument must be callable");
+      return NULL;
+    }
+    /* hold a reference to it */
+    Py_XINCREF((PyObject*)$input);
+    python_f2eval = (PyObject*)$input;
+    /* this function handles calling the python function */
+    $1 = do_f2eval_callback;
+  }
 }
 %typemap(freearg) f2eval_func f2eval {
   Py_XDECREF(python_f2eval);
   python_f2eval = 0;
 }
 /* marshall the label function pointer argument */
-%typemap(in) label_func label {
-  /* it must be a callable */
-  if(!PyCallable_Check((PyObject*)$input)) {
-    PyErr_SetString(PyExc_ValueError, "label_func argument must be callable");
-    return NULL;
+%typemap(in) label_func lf {
+  /* it must be a callable or None */
+  if($input == Py_None) {
+    $1 = NULL;
   }
-  /* hold a reference to it */
-  Py_XINCREF((PyObject*)$input);
-  python_label = (PyObject*)$input;
-  /* this function handles calling the python function */
-  $1 = do_label_callback;
+  else {
+    if(!PyCallable_Check((PyObject*)$input)) {
+      PyErr_SetString(PyExc_ValueError, "label_func argument must be callable");
+      return NULL;
+    }
+    /* hold a reference to it */
+    Py_XINCREF((PyObject*)$input);
+    python_label = (PyObject*)$input;
+    /* this function handles calling the python function */
+    $1 = do_label_callback;
+  }
 }
-%typemap(freearg) label_func label {
+%typemap(freearg) label_func lf {
   Py_XDECREF(python_label);
   python_label = 0;
 }

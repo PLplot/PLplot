@@ -38,10 +38,46 @@ def mapform19(n, x, y):
 	y[i] = yp
     return [x,y]
 
-# Null coordinate transform (equivalent to passing NULL to C
-# version of plmap / plmeridians.
-def nullmapform(n,x,y):
-    return [x,y]
+## "Normalize" longitude values so that they always fall between -180.0 and
+## 180.0
+def normalize_longitude(lon):
+    if ((lon >= -180.0) and (lon <= 180.0)):
+        return lon
+    else :
+        times = floor ((fabs(lon) + 180.0) / 360.0)
+        if (lon < 0.0) :
+            return(lon + 360.0 * times)
+        else :
+            return(lon - 360.0 * times)
+
+
+## A custom axis labeling function for longitudes and latitudes.
+def geolocation_labeler(axis, value, data):
+    if (axis == PL_Y_AXIS) :
+        label_val = value
+        if (label_val > 0.0) :
+            direction_label = " N"
+        elif (label_val < 0.0) :
+            direction_label = " S"
+        
+        else :
+            direction_label = "Eq"
+    elif (axis == PL_X_AXIS) :
+        label_val = normalize_longitude(value)
+        if (label_val > 0.0) :
+            direction_label = " E"
+        elif (label_val < 0.0) :
+            direction_label = " W"
+        else :
+            direction_label = ""
+
+    if (axis == PL_Y_AXIS and value == 0.0) :
+        # A special case for the equator
+        snprintf(label, length, "%s", direction_label)
+    else :
+        snprintf(label, length, "%.0f%s", fabs(label_val), direction_label)
+    return label
+
 
 # main
 #
@@ -61,9 +97,12 @@ def main():
     minx = 190
     maxx = 190+360
 
+    # Setup a custom latitude and longitude-based scaling function.
+    plslabelfunc(geolocation_labeler, None)
+
     plcol0(1)
-    plenv(minx, maxx, miny, maxy, 1, -1)
-    plmap(nullmapform,"usaglobe", minx, maxx, miny, maxy)
+    plenv(minx, maxx, miny, maxy, 1, 70)
+    plmap(None,"usaglobe", minx, maxx, miny, maxy)
 
     # The Americas
 
@@ -71,8 +110,11 @@ def main():
     maxx = 340
 
     plcol0(1)
-    plenv(minx, maxx, miny, maxy, 1, -1)
-    plmap(nullmapform, "usaglobe", minx, maxx, miny, maxy)
+    plenv(minx, maxx, miny, maxy, 1, 70)
+    plmap(None, "usaglobe", minx, maxx, miny, maxy)
+
+    # Clear the labeling function
+    plslabelfunc(None, None)
 
     # Polar, Northern hemisphere
 
