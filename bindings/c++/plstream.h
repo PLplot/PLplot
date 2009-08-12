@@ -121,6 +121,11 @@ class PLDLLIMPEXP_CXX plstream {
 
     void adv( PLINT page );
 
+// Plot an arc
+
+    void arc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
+                  PLBOOL fill );
+
 // Simple arrow plotter
     void arrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
                  PLFLT scale, PLFLT dx, PLFLT dy );
@@ -722,6 +727,11 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 		 void (*fill) (PLINT, PLFLT *, PLFLT *), bool rectangular,
 		 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 		 PLPointer pltr_data );
+
+/* Setup a user-provided custom labeling function */
+
+    void slabelfunc( void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer),
+                         PLPointer label_data );
 
 /* Set up lengths of major tick marks. */
 

@@ -66,6 +66,66 @@ mapform19(PLINT n, PLFLT *x, PLFLT *y)
     }
 }
 
+// "Normalize" longitude values so that they always fall between -180.0 and
+// 180.0 
+PLFLT 
+normalize_longitude(PLFLT lon) 
+{
+    PLFLT times;
+    if (lon >= -180.0 && lon <= 180.0) {
+        return(lon);
+    }
+    else {
+        times = floor ((fabs(lon) + 180.0) / 360.0);
+        if (lon < 0.0) {
+            return(lon + 360.0 * times);
+        }
+        else {
+            return(lon - 360.0 * times);
+        }
+    }
+}
+
+// A custom axis labeling function for longitudes and latitudes. 
+void
+geolocation_labeler(PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data) 
+{
+    const char *direction_label;
+    PLFLT label_val;
+
+    if (axis == PL_Y_AXIS) {
+        label_val = value;
+        if (label_val > 0.0) {
+            direction_label = " N";
+        }
+        else if (label_val < 0.0) {
+            direction_label = " S";
+        }
+        else {
+            direction_label = "Eq";
+        }
+    }
+    else if (axis == PL_X_AXIS) {
+        label_val = normalize_longitude(value);
+        if (label_val > 0.0) {
+            direction_label = " E";
+        }
+        else if (label_val < 0.0) {
+            direction_label = " W";
+        }
+        else {
+            direction_label = "";
+        }
+    }
+    if (axis == PL_Y_AXIS && value == 0.0) {
+        /* A special case for the equator */
+        snprintf(label, length, "%s", direction_label);
+    }
+    else {
+        snprintf(label, length, "%.0f%s", fabs(label_val), direction_label);
+    }
+}
+
 
 x19::x19( int argc, const char ** argv ) {
 
@@ -91,8 +151,11 @@ x19::x19( int argc, const char ** argv ) {
   minx = 190;
   maxx = 190+360;
 
+  // Setup a custom latitude and longitude-based scaling function.
+  pls->slabelfunc(geolocation_labeler, NULL);
+
   pls->col0(1);
-  pls->env(minx, maxx, miny, maxy, 1, -1);
+  pls->env(minx, maxx, miny, maxy, 1, 70);
   pls->map(NULL, "usaglobe", minx, maxx, miny, maxy);
 
   // The Americas
@@ -101,8 +164,11 @@ x19::x19( int argc, const char ** argv ) {
   maxx = 340;
 
   pls->col0(1);
-  pls->env(minx, maxx, miny, maxy, 1, -1);
+  pls->env(minx, maxx, miny, maxy, 1, 70);
   pls->map(NULL, "usaglobe", minx, maxx, miny, maxy);
+
+  // Clear the labeling function
+  pls->slabelfunc(NULL, NULL);
 
   // Polar, Northern hemisphere
   minx = 0;

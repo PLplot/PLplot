@@ -313,6 +313,15 @@ plstream::adv( PLINT page )
 }
 
 void
+plstream::arc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
+        PLBOOL fill )
+{
+    set_stream();
+
+    plarc(x, y, a, b, angle1, angle2, fill);
+}
+
+void
 plstream::arrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
                  PLFLT scale, PLFLT dx, PLFLT dy)
 {
@@ -1790,6 +1799,16 @@ plstream::fshade( PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	      sh_cmap, sh_color, sh_width,
 	      min_color, min_width, max_color, max_width,
 	      fill, (PLBOOL) rectangular, pltr, pltr_data );
+}
+
+/* Setup a user-provided custom labeling function */
+
+void plstream::slabelfunc( void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer),
+                             PLPointer label_data)
+{
+    set_stream();
+
+    plslabelfunc(label_func, label_data);
 }
 
 /* Set up lengths of major tick marks. */

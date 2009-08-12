@@ -81,15 +81,9 @@ x03::x03( int argc, const char ** argv ) {
   // Set up viewport and window, but do not draw box.
 
   pls->env(-1.3, 1.3, -1.3, 1.3, 1, -2);
+  // Draw circles for polar grid
   for (i = 1; i <= 10; i++) {
-    for (j = 0; j <= 360; j++) {
-      x[j] = 0.1 * i * x0[j];
-      y[j] = 0.1 * i * y0[j];
-    }
-
-    // Draw circles for polar grid.
-
-    pls->line(361, x, y);
+      pls->arc(0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0);
   }
 
   pls->col0(2);
