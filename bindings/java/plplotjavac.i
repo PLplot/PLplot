@@ -1072,6 +1072,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
    typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
    typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
+   typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
    %}
 
 /* First of two object arrays, where we check X and Y with previous.
@@ -1180,6 +1181,50 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(jtype) mapform_func "PLCallback"
 %typemap(jstype) mapform_func "PLCallback"
 %typemap(javain) mapform_func mapform "$javainput"
+
+%{
+   
+   jobject labelClass;
+   jmethodID labelID;
+   JNIEnv *cbenv;
+
+   /* C label plotting callback function which calls the java
+    * label function in a PLCallback object. */
+   void label_java(PLINT axis, PLFLT value, char *string, PLINT len, PLPointer data) {
+	jstring javaString;
+	const char *nativeString;
+	
+        javaString = (*cbenv)->CallObjectMethod(cbenv,labelClass, labelID, axis, value);
+	nativeString = (*cbenv)->GetStringUTFChars(cbenv,javaString,0);
+	strncpy(string,nativeString,len);
+	(*cbenv)->ReleaseStringUTFChars(cbenv,javaString,nativeString);
+   }
+%}
+
+
+/* Handle function pointers to label function using an java class */
+%typemap(in) (label_func lf, PLPointer data) {
+
+   jobject obj = $input;
+   if (obj != NULL) {
+      jclass cls = (*jenv)->GetObjectClass(jenv,obj);
+      labelID = (*jenv)->GetMethodID(jenv,cls, "label","([I[D)Ljava/lang/String" );
+      labelClass = obj;
+      cbenv = jenv;
+      $1 = label_java;
+      $2 = NULL;
+   }
+   else {
+      $1 = NULL;
+      $2 = NULL;
+   }
+
+}
+
+%typemap(jni) (label_func lf, PLPointer data) "jobject"
+%typemap(jtype) (label_func lf, PLPointer data) "PLCallback"
+%typemap(jstype) (label_func lf, PLPointer data) "PLCallback"
+%typemap(javain) (label_func lf, PLPointer data) "$javainput"
 
 /* Second of two object arrays, where we check X and Y with previous object. */
 %typemap(in) PLPointer OBJECT_DATA {

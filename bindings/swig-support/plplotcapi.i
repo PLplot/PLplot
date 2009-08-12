@@ -239,6 +239,11 @@ pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
 void
 pladv(PLINT page);
 
+%feature("autodoc", "Plot an arc") plarc;
+void
+plarc(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
+        PLBOOL fill);
+
 %feature("autodoc", "This functions similarly to plbox() except that the origin of the axes is placed at the user-specified point (x0, y0).") plaxes;
 void
 plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
@@ -751,6 +756,10 @@ plshade(PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
 	  fill_func ff, PLBOOL rectangular,
 	  pltr_func pltr,
 	  PLPointer SWIG_OBJECT_DATA);
+
+%feature("autodoc", "Set up a user-provided custom labeling function") plslabelfunc;
+void
+plslabelfunc(label_func lf, PLPointer data);
 
 %feature("autodoc", "Set up lengths of major tick marks.") plsmaj;
 void

@@ -617,6 +617,7 @@ typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
+typedef char * (*label_func)(PLINT, PLFLT, PLPointer);
 
 %{
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
@@ -624,6 +625,7 @@ typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
+typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
   %}
 
 #if 0
@@ -647,6 +649,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
  PyObject* python_pltr = NULL;
  PyObject* python_f2eval = NULL;
  PyObject* python_mapform = NULL;
+ PyObject* python_label = NULL;
 
 #if 0
 #define MY_BLOCK_THREADS { \
@@ -739,7 +742,7 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 	/* build the argument list */
 	arglist = Py_BuildValue("(iiO)", x, y, pdata);
 	/* call the python function */
-	result = PyEval_CallObject(python_pltr, arglist);
+	result = PyEval_CallObject(python_f2eval, arglist);
 	/* release the argument list */
 	Py_DECREF(arglist);
 	/* check and unpack the result */
@@ -756,6 +759,45 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 	MY_UNBLOCK_THREADS
       }	
       return fresult;
+    }
+
+  void do_label_callback(PLINT axis, PLFLT value, char *string, PLINT len, PLPointer data)
+    {
+      PyObject *pdata, *arglist, *result;
+      char *pystring;
+      PLFLT fresult = 0.0;
+
+      /* the data argument is acutally a pointer to a python object */
+      pdata = (PyObject*)data;
+      if(python_label) { /* if not something is terribly wrong */
+	/* hold a reference to the data object */
+	Py_XINCREF(pdata);
+	/* grab the Global Interpreter Lock to be sure threads don't mess us up */
+	MY_BLOCK_THREADS
+	/* build the argument list */
+#ifdef PL_DOUBLE
+	arglist = Py_BuildValue("(idO)", axis, value, pdata);
+#else
+	arglist = Py_BuildValue("(ifO)", axis, value, pdata);
+#endif
+	/* call the python function */
+	result = PyEval_CallObject(python_label, arglist);
+	/* release the argument list */
+	Py_DECREF(arglist);
+	/* check and unpack the result */
+	if(!PyFloat_Check(result)) {
+	  fprintf(stderr, "label callback must return a string\n");
+	  PyErr_SetString(PyExc_RuntimeError, "label callback must return a string.");
+	} else {
+	  /* should I test the type here? */
+	  pystring = PyString_AsString(result);
+	  strncpy(string,pystring,len);
+	}
+	/* release the result */
+	Py_XDECREF(result);
+	/* release the global interpreter lock */
+	MY_UNBLOCK_THREADS
+      }	
     }
 
   void do_mapform_callback(PLINT n, PLFLT *x, PLFLT *y)
@@ -994,6 +1036,23 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 %typemap(freearg) f2eval_func f2eval {
   Py_XDECREF(python_f2eval);
   python_f2eval = 0;
+}
+/* marshall the label function pointer argument */
+%typemap(in) label_func label {
+  /* it must be a callable */
+  if(!PyCallable_Check((PyObject*)$input)) {
+    PyErr_SetString(PyExc_ValueError, "label_func argument must be callable");
+    return NULL;
+  }
+  /* hold a reference to it */
+  Py_XINCREF((PyObject*)$input);
+  python_label = (PyObject*)$input;
+  /* this function handles calling the python function */
+  $1 = do_label_callback;
+}
+%typemap(freearg) label_func label {
+  Py_XDECREF(python_label);
+  python_label = 0;
 }
 %typemap(in, numinputs=0) defined_func df {
   $1 = NULL;

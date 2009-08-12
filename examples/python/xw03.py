@@ -36,17 +36,10 @@ def main():
     # Set up viewport and window, but do not draw box
 
     plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
-
-    i = 0.1*arange(1,11)
-    #outerproduct(i,x0) and outerproduct(i,y0) is what we are 
-    #mocking up here since old Numeric version does not have outerproduct.
-    i.shape = (-1,1)
-    x=i*x0
-    y=i*y0
     
     # Draw circles for polar grid
     for i in range(10):
-	plline(x[i], y[i])
+	plarc(0.0, 0.0, 0.1*(i+1), 0.1*(i+1), 0.0, 360.0, 0)
 
     plcol0(2)
     for i in range(12):
