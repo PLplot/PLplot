@@ -2,7 +2,6 @@
 module plplot;
 
 private import std.string;
-private import std.c.stdlib;
 
 
 // improved D interface
@@ -251,19 +250,17 @@ void plfill3(PLFLT[] x, PLFLT[] y, PLFLT[] z)
 /* Get the current device (keyword) name */
 void plgdev(out string p_dev) 
 {
-  char* temp = cast(char*)malloc(1024);
-  c_plgdev(temp);
-  p_dev=toString(temp);
-  free(temp);
+	p_dev.length = 1024;
+  c_plgdev(p_dev.ptr);
+  p_dev=toString(p_dev.ptr);
 }
 
 /* Get the (current) output file name.  Must be preallocated to >80 bytes */
 void plgfnam(out string fnam)
 {
-  char* temp = cast(char*)malloc(1024);
-  c_plgfnam(temp);
-  fnam=toString(temp);
-  free(temp);
+	fnam.length = 1024;
+  c_plgfnam(fnam.ptr);
+  fnam=toString(fnam.ptr);
 }
 
 /* grid irregularly sampled data */
@@ -284,10 +281,9 @@ void  plgriddata(PLFLT[] x, PLFLT[] y, PLFLT[] z, PLFLT[] xg, PLFLT[] yg, PLFLT[
 /* Get the current library version number */
 void plgver(out string p_ver)
 {
-  char* temp = cast(char*)malloc(1024);
-  c_plgver(temp);
-  p_ver=toString(temp);
-  free(temp);
+	p_ver.length = 1024;
+  c_plgver(p_ver.ptr);
+  p_ver=toString(p_ver.ptr);
 }
 
 /* Draws a histogram of n values of a variable in array data[0..n-1] */

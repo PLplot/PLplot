@@ -140,17 +140,27 @@ int main(char[][] args)
 }
 
 
+/* special variables for plot5() and mypltr */
+const int XPTS=35;
+const int YPTS=46;
+const double XSPA=2.0/(XPTS-1);
+const double YSPA=2.0/(YPTS-1);
+
+/* Transformation function */
+extern (C) {
+	PLFLT[] tr = [ XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 ];
+
+  void mypltr(PLFLT x, PLFLT y, PLFLT* tx, PLFLT* ty, void* pltr_data)
+  {
+    *tx = tr[0]*x + tr[1]*y + tr[2];
+    *ty = tr[3]*x + tr[4]*y + tr[5];
+  }
+}
+
 class plot {
   private PLFLT[] x, y, x0, y0;
   private PLFLT[6] xs, ys;
   private PLINT[1] space1 = [ 1500 ], mark1 = [ 1500 ];
-
-  // special variables for plot5() and mypltr
-  private const int XPTS=35;
-  private const int YPTS=46;
-  private const double XSPA=2.0/(XPTS-1);
-  private const double YSPA=2.0/(YPTS-1);
-  private PLFLT[6] tr = [ XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 ];
 
   public void plot1(PLFLT xscale, PLFLT yscale, PLFLT xoff, PLFLT yoff)
   {
@@ -316,15 +326,9 @@ class plot {
 
   /* =============================================================== */
   /* Demonstration of contour plotting */
-  private void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
-  {
-    *tx = tr[0]*x + tr[1]*y + tr[2];
-    *ty = tr[3]*x + tr[4]*y + tr[5];
-  }
-
   public void plot5()
   {
-    PLFLT[11] clevel = [ -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. ];
+    PLFLT[] clevel = [ -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. ];
 
     /* Set up function arrays */
     PLFLT[][] z, w;
@@ -343,10 +347,10 @@ class plot {
 
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
     plcol0(2);
-    //plcont(z, 1, XPTS, 1, YPTS, clevel, mypltr, null);
+    plcont(z, 1, XPTS, 1, YPTS, clevel, &mypltr);
     plstyl(mark1, space1);
     plcol0(3);
-    //plcont(w, 1, XPTS, 1, YPTS, clevel, mypltr, null);
+    plcont(w, 1, XPTS, 1, YPTS, clevel, &mypltr);
     plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
     plflush();
