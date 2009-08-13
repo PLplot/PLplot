@@ -1,4 +1,4 @@
-/* 
+/* $Id:$
 
 	Bar chart demo.
 */
@@ -16,7 +16,6 @@ import plplot;
 int main(char[][] args)
 {
   string text;
-  PLFLT[10] y0;
 
   /* Parse and process command line arguments */
   plparseopts(args, PL_PARSE_FULL);
@@ -31,10 +30,15 @@ int main(char[][] args)
   plcol0( 2 );
   pllab( "Year", "Widget Sales (millions)", "#frPLplot Example 12" );
 
-  y0[] = [5.0, 15.0, 12.0, 24.0, 28.0, 30.0, 20.0, 8.0, 12.0, 3.0];
+  PLFLT[] pos = [ 0.0, 0.25, 0.5, 0.75, 1.0 ];
+  PLFLT[] red = [ 0.0, 0.25, 0.5, 1.0, 1.0 ];
+  PLFLT[] green = [ 1.0, 0.5, 0.5, 0.5, 1.0 ];
+  PLFLT[] blue = [ 1.0, 1.0, 0.5, 0.25, 0.0 ];
+  plscmap1l( 1, pos, red, green, blue );
 
+  PLFLT[] y0 = [ 5.0, 15.0, 12.0, 24.0, 28.0, 30.0, 20.0, 8.0, 12.0, 3.0 ];
   for( size_t i=0; i<10; i++ ) {
-  	plcol0( i+1 );
+		plcol1( i/9.0 );
     plpsty( 0 );
     plfbox( (1980.+i), y0[i] );
     text = format( "%.0f", y0[i] );
