@@ -768,7 +768,10 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
       PLFLT fresult = 0.0;
 
       /* the data argument is acutally a pointer to a python object */
-      pdata = (PyObject*)data;
+      if (data)
+        pdata = (PyObject*)data;
+      else
+        pdata = Py_None;
       if(python_label) { /* if not something is terribly wrong */
 	/* hold a reference to the data object */
 	Py_XINCREF(pdata);
@@ -776,16 +779,20 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
 	MY_BLOCK_THREADS
 	/* build the argument list */
 #ifdef PL_DOUBLE
-	arglist = Py_BuildValue("(idO)", axis, value, pdata);
+	arglist = Py_BuildValue("(ldO)", axis, value, pdata);
 #else
-	arglist = Py_BuildValue("(ifO)", axis, value, pdata);
+	arglist = Py_BuildValue("(lfO)", axis, value, pdata);
 #endif
 	/* call the python function */
 	result = PyEval_CallObject(python_label, arglist);
 	/* release the argument list */
-	Py_DECREF(arglist);
+	//Py_DECREF(arglist);
 	/* check and unpack the result */
-	if(!PyFloat_Check(result)) {
+        if (result == NULL) {
+	  fprintf(stderr, "label callback failed with 3 arguments\n");
+	  PyErr_SetString(PyExc_RuntimeError, "label callback must take 3 arguments.");
+        }
+	else if(!PyString_Check(result)) {
 	  fprintf(stderr, "label callback must return a string\n");
 	  PyErr_SetString(PyExc_RuntimeError, "label callback must return a string.");
 	} else {
@@ -1054,6 +1061,11 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
 }
 /* marshall the label function pointer argument */
 %typemap(in) label_func lf {
+  /* Release reference to previous function if applicable */
+  if (python_label) {
+    Py_XDECREF(python_label);
+    python_label = 0;
+  }  
   /* it must be a callable or None */
   if($input == Py_None) {
     $1 = NULL;
@@ -1069,10 +1081,6 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
     /* this function handles calling the python function */
     $1 = do_label_callback;
   }
-}
-%typemap(freearg) label_func lf {
-  Py_XDECREF(python_label);
-  python_label = 0;
 }
 %typemap(in, numinputs=0) defined_func df {
   $1 = NULL;
