@@ -16,7 +16,8 @@ import plplot;
 int main(char[][] args)
 {
   PLFLT dtr = PI/180.0;
-  PLFLT[361] x0, y0;
+  PLFLT[] x0, y0;
+  x0.length = y0.length = 361;
   for(size_t i=0; i<x0.length; i++) {
     x0[i] = cos(dtr*i);
     y0[i] = sin(dtr*i);
@@ -35,16 +36,9 @@ int main(char[][] args)
   /* Set up viewport and window, but do not draw box */
   plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
 
-  PLFLT[361] x, y;
-  for(size_t i=1; i<=10; i++) {
-    for(size_t j=0; j<x.length; j++) {
-      x[j] = 0.1*i*x0[j];
-	    y[j] = 0.1*i*y0[j];
-    }
-
-    /* Draw circles for polar grid */
-  	plline(x, y);
-  }
+	/* Draw circles for polar grid */
+	for(size_t i=1; i<11; i++)
+		plarc(0.0, 0.0, 0.1*i, 0.1*i, 0.0, 360.0, 0);
 
   plcol0(2);
   for(size_t i=0; i<=11; i++) {
@@ -75,6 +69,8 @@ int main(char[][] args)
 
   /* Draw the graph */
   PLFLT r;
+  PLFLT[] x, y;
+  x.length = y.length = 361;
   for(size_t i=0; i<x.length; i++) {
     r = sin(dtr*(5*i));
     x[i] = x0[i]*r;

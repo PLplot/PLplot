@@ -79,7 +79,7 @@ class plot {
       PLFLT h = (360./10.)*(i%10);
       
       /* Vary lightness uniformly from top to bottom, between min & max */
-      PLFLT l = lmin + (lmax-lmin)*(i/10)/9.;
+      PLFLT l = lmin + (lmax-lmin)*(i/10)/9.0;
       
       /* Use max saturation */
       PLFLT s = 1.0;
@@ -87,9 +87,10 @@ class plot {
       PLFLT r1, g1, b1;
       plhlsrgb(h, l, s, &r1, &g1, &b1);
 
-      r[i+16] = cast(PLINT)(r1*255);
-      g[i+16] = cast(PLINT)(g1*255);
-      b[i+16] = cast(PLINT)(b1*255);
+      /* Use 255.001 to avoid close truncation decisions in this example. */
+      r[i+16] = cast(PLINT)(r1*255.001);
+      g[i+16] = cast(PLINT)(g1*255.001);
+      b[i+16] = cast(PLINT)(b1*255.001);
     }
 
     /* Load default cmap0 colors into our custom set */

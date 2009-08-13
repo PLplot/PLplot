@@ -1156,6 +1156,7 @@ alias c_plbop plbop;
 //alias c_plbox plbox;
 //alias c_plbox3 plbox3;
 alias c_plcalc_world plcalc_world;
+alias c_plarc plarc;
 alias c_plclear plclear;
 alias c_plcol0 plcol0;
 alias c_plcol1 plcol1;
@@ -1359,10 +1360,16 @@ void c_plbop();
 void c_plbox(char *xopt, PLFLT xtick, PLINT nxsub, char *yopt, PLFLT ytick, PLINT nysub);
 
 /* This is the 3-d analogue of plbox(). */
-void c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx, char *yopt, char *ylabel, PLFLT ytick, PLINT nsuby, char *zopt, char *zlabel, PLFLT ztick, PLINT nsubz);
+void c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx, char *yopt,
+              char *ylabel, PLFLT ytick, PLINT nsuby, char *zopt, char *zlabel,
+              PLFLT ztick, PLINT nsubz);
 
 /* Calculate world coordinates and subpage from relative device coordinates. */
 void c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window);
+
+/* Plot an arc */
+void c_plarc(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
+             PLBOOL fill);
 
 /* Clear current subpage. */
 void c_plclear();
