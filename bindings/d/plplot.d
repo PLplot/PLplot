@@ -1232,6 +1232,7 @@ alias c_plprec plprec;
 alias c_plpsty plpsty;
 //alias c_plptex plptex;
 //alias c_plptex3 plptex3;
+alias c_plrandd plrandd;
 alias c_plreplot plreplot;
 alias c_plrgb plrgb;
 alias c_plrgb1 plrgb1;
@@ -1657,9 +1658,12 @@ void c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, char *text);
 /* Prints out "text" at world cooordinate (x,y,z). */
 void c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz, PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, char *text);
 
-/* Replays contents of plot buffer to current device/file. */
+/* Random number generator based on Mersenne Twister.
+   Obtain real random number in range [0,1]. */
+PLFLT c_plrandd();
 
-void  c_plreplot();
+/* Replays contents of plot buffer to current device/file. */
+void c_plreplot();
 
 /* Set line color by red, green, blue from  0. to 1. */
 
