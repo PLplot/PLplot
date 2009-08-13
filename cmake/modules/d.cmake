@@ -38,6 +38,7 @@ endif(ENABLE_d AND NOT PLPLOT_D_COMPILER_WORKS)
 
 if(ENABLE_d)
   # Find and check D compiler
+  set(CMAKE_D_USE_PHOBOS ON)
   enable_language(D OPTIONAL)
   if(NOT CMAKE_D_COMPILER_WORKS)
     message(STATUS "WARNING: no working D compiler so disabling D bindings and examples.")
