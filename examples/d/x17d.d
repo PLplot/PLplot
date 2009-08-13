@@ -20,8 +20,8 @@ int main(char[][] args)
 
   /* If db is used the plot is much more smooth. However, because of the
      async X behaviour, one does not have a real-time scripcharter. */
-  plsetopt("db", "");
-  plsetopt("np", "");
+  /* plsetopt("db", ""); */
+  /* plsetopt("np", ""); */
 
   /* User sets up plot completely except for window and data 
    * Eventually settings in place when strip chart is created will be
@@ -67,7 +67,7 @@ int main(char[][] args)
   /* From here on, we're handling all errors here */
   PLINT pl_errcode;
   char[160] errmsg;
-  plsError( &pl_errcode, cast(char*)errmsg );
+  plsError( &pl_errcode, errmsg.ptr );
 
   PLINT id1;
   plstripc(&id1, "bcnst", "bcnstv",
@@ -79,7 +79,7 @@ int main(char[][] args)
 	         "t", "", "Strip chart demo"); 
 
   if(pl_errcode) {
-	  writefln("%s\n", errmsg);  // TODO: to stderr
+	  writefln("%s", errmsg);  // TODO: to stderr
 	  return 1;
   }
 
@@ -116,7 +116,8 @@ int main(char[][] args)
       plstripa( id1, 2, t, y3 );
     if( n%5 )
       plstripa( id1, 3, t, y4 );
-  	pleop();  /* use double buffer (-db on command line) */
+      
+  	/* pleop(); */  /* use double buffer (-db on command line) */
   }
 
   /* Destroy strip chart and it's memory */
