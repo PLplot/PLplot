@@ -106,6 +106,14 @@ else(ENABLE_DYNDRIVERS)
 	# For this case libplot must have a target dependency on the
 	# moc files generated in the binary include directory.
 	set(qt_dependency moc_outfile_generated)
+
+	# Set up Qt4-based build environment.
+	include(${QT_USE_FILE})
+	if(NOT QT_LIBRARIES)
+	  message(FATAL_ERROR "include(${QT_USE_FILE}) failed in src subdirectory.")
+	endif(NOT QT_LIBRARIES)
+	set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${QT_LIBRARIES})
+	
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build static qt device when ANY_QT_DEVICE is false.")
       endif(ANY_QT_DEVICE)

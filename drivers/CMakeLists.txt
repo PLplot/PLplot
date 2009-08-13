@@ -82,16 +82,6 @@ if(ENABLE_DYNDRIVERS)
 	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
 	)
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
-    if(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
-      if(ANY_QT_DEVICE)
-	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
-	add_dependencies(${SOURCE_ROOT_NAME} moc_outfile_generated)
-      else(ANY_QT_DEVICE)
-	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
-      endif(ANY_QT_DEVICE)
-    else(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
-      add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
-    endif(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
 
     # ${SOURCE_ROOT_NAME}_LINK_FLAGS is ideally a list of the full path names
     # to libraries determined with find_library.  However, the list can also
@@ -103,13 +93,39 @@ if(ENABLE_DYNDRIVERS)
     # ${SOURCE_ROOT_NAME}_TARGETS is a list of PLplot CMake targets that the
     # device driver depends on.  
     #message("${SOURCE_ROOT_NAME}_TARGETS = ${${SOURCE_ROOT_NAME}_TARGETS}")
-    target_link_libraries(
-      ${SOURCE_ROOT_NAME}
-      plplot${LIB_TAG}
-      ${MATH_LIB}
-      ${${SOURCE_ROOT_NAME}_LINK_FLAGS}
-      ${${SOURCE_ROOT_NAME}_TARGETS}
-      )
+
+    if(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
+      if(ANY_QT_DEVICE)
+	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
+	add_dependencies(${SOURCE_ROOT_NAME} moc_outfile_generated)
+	# Set up Qt4-based build environment.
+	include(${QT_USE_FILE})
+	if(NOT QT_LIBRARIES)
+	  message(FATAL_ERROR "include(${QT_USE_FILE}) failed in drivers subdirectory.")
+	endif(NOT QT_LIBRARIES)
+	
+	target_link_libraries(
+	  ${SOURCE_ROOT_NAME}
+	  plplot${LIB_TAG}
+	  ${MATH_LIB}
+	  ${${SOURCE_ROOT_NAME}_LINK_FLAGS}
+	  ${${SOURCE_ROOT_NAME}_TARGETS}
+	  ${QT_LIBRARIES}
+	  )
+      else(ANY_QT_DEVICE)
+	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
+      endif(ANY_QT_DEVICE)
+    else(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
+      add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
+      target_link_libraries(
+	${SOURCE_ROOT_NAME}
+	plplot${LIB_TAG}
+	${MATH_LIB}
+	${${SOURCE_ROOT_NAME}_LINK_FLAGS}
+	${${SOURCE_ROOT_NAME}_TARGETS}
+	)
+    endif(SOURCE_ROOT_NAME STREQUAL "qt" AND NOT ENABLE_qt)
+
     # ${SOURCE_ROOT_NAME}_RPATH originally set in cmake/modules files for
     # each driver in ${DRIVERS_LIST}.  This is only used for the 
     # install-tree rpath since cmake handles the build-tree rpath

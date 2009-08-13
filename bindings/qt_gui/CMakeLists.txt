@@ -19,6 +19,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 if(ENABLE_qt)
+  # Set up Qt4-based build environment.
+  include(${QT_USE_FILE})
+  if(NOT QT_LIBRARIES)
+    message(FATAL_ERROR "include(${QT_USE_FILE}) failed in bindings/qt_gui subdirectory.")
+  endif(NOT QT_LIBRARIES)
   set(qt_SOURCE plqt.cpp)
   include_directories(
     ${CMAKE_SOURCE_DIR}/include
@@ -46,12 +51,11 @@ if(ENABLE_qt)
   else(ANY_QT_DEVICE)
     message(FATAL_ERROR "Internal build system inconsistency between ENABLE_qt true and ANY_QT_DEVICE false.")
   endif(ANY_QT_DEVICE)
-  #message("qt_LINK_FLAGS = ${qt_LINK_FLAGS}")
   target_link_libraries(
     plplotqt${LIB_TAG}
     plplot${LIB_TAG}
     ${MATH_LIB}
-    ${qt_LINK_FLAGS}
+    ${QT_LIBRARIES}
     )
   # qt_RPATH set in cmake/modules/qt.cmake. This is only used for the 
   # install-tree rpath since cmake handles the build-tree rpath
@@ -91,11 +95,10 @@ if(ENABLE_qt)
     FILE export_plplotqt.cmake
     )
 
-  # Transform "${qt_LINK_FLAGS}" to the 
-  # standard pkg-config form.
+  # Transform "${QT_LIBRARIES}" to the standard pkg-config form.
   pkg_config_link_flags(
     libplplotqt${LIB_TAG}_LINK_FLAGS
-    "${qt_LINK_FLAGS}"
+    "${QT_LIBRARIES}"
     )
 
   # Configure pkg-config *.pc file corresponding to the compile and link
@@ -120,7 +123,7 @@ if(ENABLE_qt)
     #                         Also used to determine PC_LINK_FLAGS and
     #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
     #			    fields.
-    set(PC_DATA "qt:QT:QT4 bindings, :plplotqt${LIB_TAG}")
+    set(PC_DATA "qt:Qt:Qt4 bindings, :plplotqt${LIB_TAG}")
 
     string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" BINDING ${PC_DATA})
     set(PC_FILE_SUFFIX "-${BINDING}")

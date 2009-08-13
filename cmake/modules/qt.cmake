@@ -69,24 +69,19 @@ if(ANY_QT_DEVICE)
     if(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
       set(QT_USE_QTSVG 1)
     endif(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
-    include(${QT_USE_FILE})
-  endif(QT4_FOUND)
-  if(QT4_FOUND AND QT_LIBRARIES)
+    # Do not include(${QT_USE_FILE}) here because it contaminates ALL 
+    # build environments with Qt flags from the top-level directory on
+    # down.  Instead include(${QT_USE_FILE}) only in certain subdirectories
+    # where it is necessary.
     set(qt_COMPILE_FLAGS)
     foreach(DIR ${QT_INCLUDES})
       set(qt_COMPILE_FLAGS "${qt_COMPILE_FLAGS} -I${DIR}")
     endforeach(DIR ${QT_INCLUDES})
     
-    message(STATUS "QT_LIBRARIES = ${QT_LIBRARIES}")
-
-    set(qt_LINK_FLAGS ${QT_LIBRARIES})
-    #message("qt_LINK_FLAGS = ${qt_LINK_FLAGS}")
+    set(qt_LINK_FLAGS)
     set(qt_RPATH ${QT_LIBRARY_DIR})
     #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
-  else(QT4_FOUND AND QT_LIBRARIES)
-    message(STATUS "QT_LIBRARIES not found so disabling all qt devices")
-    set(ANY_QT_DEVICE OFF)
-  endif(QT4_FOUND AND QT_LIBRARIES)
+  endif(QT4_FOUND)
 endif(ANY_QT_DEVICE)
 
 if(NOT ANY_QT_DEVICE)
