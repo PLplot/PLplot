@@ -100,7 +100,7 @@ int main(char[][] args)
     // todo: usleep?
     // todo: poll?
     t = n*dt;
-    noise = (rand()/(RAND_MAX+1.0))-0.5;
+    noise = plrandd() - 0.5;
     y1 += noise;
     y2 = sin(t*PI/18.);
     y3 = y2*noise;
