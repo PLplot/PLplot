@@ -53,7 +53,8 @@ set(
 JAVA_FILES_FULL
 ${JAVA_GEN_FILES_FULL}
 ${CMAKE_CURRENT_SOURCE_DIR}/PLStream.java
-${CMAKE_CURRENT_SOURCE_DIR}/PLCallback.java
+${CMAKE_CURRENT_SOURCE_DIR}/PLCallbackMapform.java
+${CMAKE_CURRENT_SOURCE_DIR}/PLCallbackLabel.java
 
 )
 
@@ -70,7 +71,8 @@ set(class_root ${CMAKE_CURRENT_BINARY_DIR}/plplot/core)
 
 set(
 ${class_root}/plplotjavacJNI.class_DEPENDS
-${class_root}/PLCallback.class
+${class_root}/PLCallbackMapform.class
+${class_root}/PLCallbackLabel.class
 )
 
 set(
@@ -88,7 +90,8 @@ ${class_root}/plplotjavac.class_DEPENDS
 ${class_root}/plplotjavacConstants.class
 ${class_root}/PLGraphicsIn.class
 ${class_root}/plplotjavacJNI.class
-${class_root}/PLCallback.class
+${class_root}/PLCallbackMapform.class
+${class_root}/PLCallbackLabel.class
 )
 
 set(
@@ -96,7 +99,8 @@ ${class_root}/PLStream.class_DEPENDS
 ${class_root}/plplotjavacConstants.class
 ${class_root}/config.class
 ${class_root}/plplotjavac.class
-${class_root}/PLCallback.class
+${class_root}/PLCallbackMapform.class
+${class_root}/PLCallbackLabel.class
 )
 
 # This is currently the include list for swig, the C wrapper and the

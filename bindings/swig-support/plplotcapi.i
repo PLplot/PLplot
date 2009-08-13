@@ -100,6 +100,11 @@ typedef void* PLPointer;
 #define PLSWIN_DEVICE		1	/* device coordinates */
 #define PLSWIN_WORLD		2	/* world coordinates */
 
+/* Axis label tags */
+#define PL_X_AXIS               1       /* The x-axis */
+#define PL_Y_AXIS               2       /* The y-axis */
+#define PL_Z_AXIS               3       /* The z-axis */
+
 /* PLplot Option table & support constants */
 
 /* Option-specific settings */

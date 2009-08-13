@@ -53,7 +53,7 @@ def normalize_longitude(lon):
 
 ## A custom axis labeling function for longitudes and latitudes.
 def geolocation_labeler(axis, value, data):
-    if (axis == 2) :
+    if (axis == PL_Y_AXIS) :
         label_val = value
         if (label_val > 0.0) :
             direction_label = " N"
@@ -62,7 +62,7 @@ def geolocation_labeler(axis, value, data):
         
         else :
             direction_label = "Eq"
-    elif (axis == 1) :
+    elif (axis == PL_X_AXIS) :
         label_val = normalize_longitude(value)
         if (label_val > 0.0) :
             direction_label = " E"
@@ -71,7 +71,7 @@ def geolocation_labeler(axis, value, data):
         else :
             direction_label = ""
 
-    if (axis == 2 and value == 0.0) :
+    if (axis == PL_Y_AXIS and value == 0.0) :
         # A special case for the equator
         label = direction_label
     else :

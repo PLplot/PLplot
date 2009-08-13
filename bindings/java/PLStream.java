@@ -450,12 +450,12 @@ public void lsty(int lin) {
     plplotjavac.pllsty(lin);
 }
 
-public void map(PLCallback mapform, String type, double minlong, double maxlong, double minlat, double maxlat) {
+public void map(PLCallbackMapform mapform, String type, double minlong, double maxlong, double minlat, double maxlat) {
     if (set_stream() == -1) return;
     plplotjavac.plmap(mapform, type, minlong, maxlong, minlat, maxlat);
 }
 
-public void meridians(PLCallback mapform, double dlong, double dlat, double minlong, double maxlong, double minlat, double maxlat) {
+public void meridians(PLCallbackMapform mapform, double dlong, double dlat, double minlong, double maxlong, double minlat, double maxlat) {
     if (set_stream() == -1) return;
     plplotjavac.plmeridians(mapform, dlong, dlat, minlong, maxlong, minlat, maxlat);
 }
@@ -747,6 +747,16 @@ public void shade(double[][] a, double left, double right, double bottom,
     plplotjavac.plshade(a, left, right, bottom, top, shade_min, shade_max,
 		    sh_cmap, sh_color, sh_width, min_color, min_width, 
 		    max_color, max_width, rectangular, pltr, OBJECT_DATA);
+}
+
+public void slabelfunc(PLCallbackLabel label, Object obj) {
+   if (set_stream() == -1) return;
+   plplotjavac.plslabelfunc(label,obj);
+}
+
+public void slabelfunc(PLCallbackLabel label) {
+   if (set_stream() == -1) return;
+   plplotjavac.plslabelfunc(label,null);
 }
 
 public void smaj(double def, double scale) {

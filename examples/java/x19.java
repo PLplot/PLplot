@@ -31,7 +31,7 @@ import plplot.core.*;
 
 import java.lang.Math;
 
-class Mapform19 implements PLCallback {
+class Mapform19 implements PLCallbackMapform {
 
     public void mapform(double[] x, double[] y) {
 	int i;
@@ -49,6 +49,70 @@ class Mapform19 implements PLCallback {
 
 }
 
+class LabelFunc19 implements PLCallbackLabel {
+
+    // A custom axis labeling function for longitudes and latitudes. 
+    public String label(int axis, double value) {
+	String label = "";
+	String direction_label = "";
+	double label_val = 0.0;
+
+	System.err.println("Entered callback function");
+	if (axis == PLStream.PL_Y_AXIS) {
+	    label_val = value;
+	    if (label_val > 0.0) {
+		direction_label = " N";
+	    }
+	    else if (label_val < 0.0) {
+		direction_label = " S";
+	    }
+	    else {
+		direction_label = "Eq";
+	    }
+	}
+	else if (axis == PLStream.PL_X_AXIS) {
+	    label_val = normalize_longitude(value);
+	    if (label_val > 0.0) {
+		direction_label = " E";
+	    }
+	    else if (label_val < 0.0) {
+		direction_label = " W";
+	    }
+	    else {
+		direction_label = "";
+	    }
+	}
+	if (axis == PLStream.PL_Y_AXIS && value == 0.0) {
+	    /* A special case for the equator */
+	    label = direction_label;
+	}
+	else {
+	    label = ""+((int)Math.abs(label_val))+direction_label;
+	}
+	return label;
+    }
+
+    // "Normalize" longitude values so that they always fall between -180.0
+    // and 180.0 
+    double normalize_longitude(double lon) {
+	double times;
+
+	if (lon >= -180.0 && lon <= 180.0) {
+	    return(lon);
+	}
+	else {
+	    times = Math.floor ((Math.abs(lon) + 180.0) / 360.0);
+	    if (lon < 0.0) {
+		return(lon + 360.0 * times);
+	    }
+	    else {
+		return(lon - 360.0 * times);
+	    }
+	}
+    }
+    
+}
+
 class x19 {
 
     PLStream pls = new PLStream();
@@ -61,7 +125,9 @@ class x19 {
     public x19 (String[] args) 
     {
 	double minx, maxx, miny,maxy;
-        PLCallback nullCallback = null;
+        PLCallbackMapform nullCallback = null;
+	PLCallbackLabel nullLabelCallback = null;
+	LabelFunc19 geolocation_labeler = new LabelFunc19();
 
 	// Parse and process command line arguments.
 	pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
@@ -79,8 +145,11 @@ class x19 {
 	minx = 190;
 	maxx = 190+360;
 	
+	// Setup a custom latitude and longitude-based scaling function.
+	pls.slabelfunc(geolocation_labeler);
+
 	pls.col0(1);
-	pls.env(minx, maxx, miny, maxy, 1, -1);
+	pls.env(minx, maxx, miny, maxy, 1, 70);
 	pls.map(nullCallback, "usaglobe", minx, maxx, miny, maxy);
 
 	// The Americas
@@ -89,8 +158,11 @@ class x19 {
 	maxx = 340;
 
 	pls.col0(1);
-	pls.env(minx, maxx, miny, maxy, 1, -1);
+	pls.env(minx, maxx, miny, maxy, 1, 70);
 	pls.map(nullCallback, "usaglobe", minx, maxx, miny, maxy);
+
+	// Clear the labelling function.
+	pls.slabelfunc(nullLabelCallback);
 
 	// Polar, Northern hemisphere
         

@@ -1149,7 +1149,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    JNIEnv *cbenv;
 
    /* C mapform callback function which calls the java
-    * mapform function in a PLCallback object. */
+    * mapform function in a PLCallbackMapform object. */
    void mapform_java(PLINT n, PLFLT *x, PLFLT *y) {
       jdoubleArray jx = setup_java_array_1d_PLFLT(cbenv,x,n);
       jdoubleArray jy = setup_java_array_1d_PLFLT(cbenv,y,n);
@@ -1178,8 +1178,8 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 }
 
 %typemap(jni) mapform_func "jobject"
-%typemap(jtype) mapform_func "PLCallback"
-%typemap(jstype) mapform_func "PLCallback"
+%typemap(jtype) mapform_func "PLCallbackMapform"
+%typemap(jstype) mapform_func "PLCallbackMapform"
 %typemap(javain) mapform_func mapform "$javainput"
 
 %{
@@ -1189,42 +1189,53 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    JNIEnv *cbenv;
 
    /* C label plotting callback function which calls the java
-    * label function in a PLCallback object. */
+    * label function in a PLCallbackLabel object. */
    void label_java(PLINT axis, PLFLT value, char *string, PLINT len, PLPointer data) {
 	jstring javaString;
 	const char *nativeString;
+	jint jaxis;
+	jdouble jvalue;
 	
-        javaString = (*cbenv)->CallObjectMethod(cbenv,labelClass, labelID, axis, value);
+	jaxis = (jint) axis;
+	jvalue = (jdouble) value;
+        /* javaString = (jstring)(*cbenv)->CallObjectMethod(cbenv,labelClass, labelID, jaxis, jvalue);
 	nativeString = (*cbenv)->GetStringUTFChars(cbenv,javaString,0);
 	strncpy(string,nativeString,len);
-	(*cbenv)->ReleaseStringUTFChars(cbenv,javaString,nativeString);
+	(*cbenv)->ReleaseStringUTFChars(cbenv,javaString,nativeString);*/
+	strncpy(string,"",len);
    }
 %}
 
 
 /* Handle function pointers to label function using an java class */
-%typemap(in) (label_func lf, PLPointer data) {
+%typemap(in) label_func lf {
 
    jobject obj = $input;
    if (obj != NULL) {
       jclass cls = (*jenv)->GetObjectClass(jenv,obj);
-      labelID = (*jenv)->GetMethodID(jenv,cls, "label","([I[D)Ljava/lang/String" );
+      labelID = (*jenv)->GetMethodID(jenv,cls, "label","(ID)Ljava/lang/String;" );
       labelClass = obj;
       cbenv = jenv;
       $1 = label_java;
-      $2 = NULL;
    }
    else {
       $1 = NULL;
-      $2 = NULL;
    }
 
 }
 
-%typemap(jni) (label_func lf, PLPointer data) "jobject"
-%typemap(jtype) (label_func lf, PLPointer data) "PLCallback"
-%typemap(jstype) (label_func lf, PLPointer data) "PLCallback"
-%typemap(javain) (label_func lf, PLPointer data) "$javainput"
+%typemap(jni) label_func lf "jobject"
+%typemap(jtype) label_func lf "PLCallbackLabel"
+%typemap(jstype) label_func lf "PLCallbackLabel"
+%typemap(javain) label_func lf "$javainput"
+
+%typemap(in) PLPointer data {
+    $1 = NULL;
+}
+%typemap(jni) PLPointer data "jobject"
+%typemap(jtype) PLPointer data "Object"
+%typemap(jstype) PLPointer data "Object"
+%typemap(javain) PLPointer data "$javainput"
 
 /* Second of two object arrays, where we check X and Y with previous object. */
 %typemap(in) PLPointer OBJECT_DATA {
