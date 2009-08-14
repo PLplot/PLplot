@@ -57,7 +57,6 @@ class LabelFunc19 implements PLCallbackLabel {
 	String direction_label = "";
 	double label_val = 0.0;
 
-	System.err.println("Entered callback function");
 	if (axis == PLStream.PL_Y_AXIS) {
 	    label_val = value;
 	    if (label_val > 0.0) {

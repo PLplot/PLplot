@@ -779,6 +779,16 @@ public void spage(double xp, double yp, int xleng, int yleng, int xoff, int yoff
     plplotjavac.plspage(xp, yp, xleng, yleng, xoff, yoff);
 }
 
+public void spal0(String filename) {
+    if (set_stream() == -1) return;
+    plplotjavac.plspal0(filename);
+}
+
+public void spal1(String filename) {
+    if (set_stream() == -1) return;
+    plplotjavac.plspal1(filename);
+}
+
 public void spause(boolean pause) {
     if (set_stream() == -1) return;
     plplotjavac.plspause(pause);

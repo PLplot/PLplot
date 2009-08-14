@@ -92,6 +92,9 @@ class x16 {
 	// Parse and process command line arguments.
 	pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
+	// Load colour palettes
+	pls.spal0("cmap0_black_on_white.pal");
+	pls.spal1("cmap1_gray.pal");
 	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
 	//16-color display
 	pls.scmap0n(3);
@@ -166,6 +169,13 @@ class x16 {
 
 	// Plot using 1d coordinate transform
     
+	// Load colour palettes
+	pls.spal0("cmap0_black_on_white.pal");
+	pls.spal1("cmap1_blue_yellow.pal");
+	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
+	//16-color display
+	pls.scmap0n(3);
+
 	pls.adv(0);
 	pls.vpor(0.1, 0.9, 0.1, 0.9);
 	pls.wind(-1.0, 1.0, -1.0, 1.0);
@@ -184,6 +194,13 @@ class x16 {
 	pls.lab("distance", "altitude", "Bogon density");
 
 	// Plot using 2d coordinate transform
+
+	// Load colour palettes
+	pls.spal0("cmap0_black_on_white.pal");
+	pls.spal1("cmap1_blue_red.pal");
+	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
+	//16-color display
+	pls.scmap0n(3);
 
 	pls.adv(0);
 	pls.vpor(0.1, 0.9, 0.1, 0.9);
@@ -204,6 +221,13 @@ class x16 {
 	pls.lab("distance", "altitude", "Bogon density, with streamlines");
 
 	// Plot using 2d coordinate transform
+
+	// Load colour palettes
+	pls.spal0("");
+	pls.spal1("");
+	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
+	//16-color display
+	pls.scmap0n(3);
 
 	pls.adv(0);
 	pls.vpor(0.1, 0.9, 0.1, 0.9);
@@ -227,6 +251,13 @@ class x16 {
 
 
 	//Example with polar coordinates.
+
+	// Load colour palettes
+	pls.spal0("cmap0_black_on_white.pal");
+	pls.spal1("cmap1_gray.pal");
+	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
+	//16-color display
+	pls.scmap0n(3);
 
 	pls.adv(0);
 	pls.vpor( .1, .9, .1, .9 );

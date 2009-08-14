@@ -1198,11 +1198,11 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 	
 	jaxis = (jint) axis;
 	jvalue = (jdouble) value;
-        /* javaString = (jstring)(*cbenv)->CallObjectMethod(cbenv,labelClass, labelID, jaxis, jvalue);
+        javaString = (jstring)(*cbenv)->CallObjectMethod(cbenv,labelClass, labelID, jaxis, jvalue);
 	nativeString = (*cbenv)->GetStringUTFChars(cbenv,javaString,0);
 	strncpy(string,nativeString,len);
-	(*cbenv)->ReleaseStringUTFChars(cbenv,javaString,nativeString);*/
-	strncpy(string,"",len);
+	(*cbenv)->ReleaseStringUTFChars(cbenv,javaString,nativeString);
+	/*strncpy(string,"",len);*/
    }
 %}
 
