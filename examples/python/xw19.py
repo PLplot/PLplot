@@ -75,7 +75,7 @@ def geolocation_labeler(axis, value, data):
         # A special case for the equator
         label = direction_label
     else :
-        label = ""+`abs(label_val)` + direction_label
+        label = `int(abs(label_val))` + direction_label
     return label
 
 
