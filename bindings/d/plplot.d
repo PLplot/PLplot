@@ -445,6 +445,18 @@ void plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
   c_plptex3(wx, wy, wz, dx, dy, dz, sx, sy, sz, just, toStringz(text));
 }
 
+/* Set the colors for color table 0 from a cmap0 file */
+void plspal0(string filename)
+{
+	c_plspal0(toStringz(filename));
+}
+
+/* Set the colors for color table 1 from a cmap1 file */
+void plspal1(string filename)
+{
+	c_plspal1(toStringz(filename));
+}
+
 /* Set color map 0 colors by 8 bit RGB values */
 void plscmap0(PLINT[] r, PLINT[] g, PLINT[] b)
 {
@@ -855,6 +867,11 @@ const ONEW2D = 4;
 const PLSWIN_DEVICE = 1;
 const PLSWIN_WORLD = 2;
 
+/* Axis label tags */
+const PL_X_AXIS = 1;       /* The x-axis */
+const PL_Y_AXIS = 2;       /* The y-axis */
+const PL_Z_AXIS = 3;       /* The z-axis */
+
 /* PLplot Option table & support constants */
 
 /* Option-specific settings */
@@ -1155,6 +1172,7 @@ alias c_pladv pladv;
 alias c_plbop plbop;
 //alias c_plbox plbox;
 //alias c_plbox3 plbox3;
+alias c_plslabelfunc plslabelfunc;
 alias c_plcalc_world plcalc_world;
 alias c_plarc plarc;
 alias c_plclear plclear;
@@ -1272,6 +1290,8 @@ alias c_plsmem plsmem;
 alias c_plsmin plsmin;
 alias c_plsori plsori;
 alias c_plspage plspage;
+// alias c_plspal0 plspal0;
+// alias c_plspal1 plspal1;
 alias c_plspause plspause;
 alias c_plsstrm plsstrm;
 alias c_plssub plssub;
@@ -1363,6 +1383,10 @@ void c_plbox(char *xopt, PLFLT xtick, PLINT nxsub, char *yopt, PLFLT ytick, PLIN
 void c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx, char *yopt,
               char *ylabel, PLFLT ytick, PLINT nsuby, char *zopt, char *zlabel,
               PLFLT ztick, PLINT nsubz);
+
+/* Setup a user-provided custom labeling function */
+void c_plslabelfunc(void function(PLINT, PLFLT, char*, PLINT, PLPointer) labelfunc,
+                    PLPointer label_data);
 
 /* Calculate world coordinates and subpage from relative device coordinates. */
 void c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window);
@@ -1809,12 +1833,16 @@ void  c_plsmin(PLFLT def, PLFLT scale);
 void  c_plsori(PLINT ori);
 
 /* Set output device parameters.  Usually ignored by the driver. */
+void c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff);
 
-void  c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff);
+/* Set the colors for color table 0 from a cmap0 file */
+void c_plspal0(char* filename);
+
+/* Set the colors for color table 1 from a cmap1 file */
+void c_plspal1(char *filename);
 
 /* Set the pause (on end-of-page) status */
-
-void  c_plspause(PLBOOL pause);
+void c_plspause(PLBOOL pause);
 
 /* Set stream number.  */
 
