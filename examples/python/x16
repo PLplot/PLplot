@@ -30,6 +30,11 @@ from plplot import *
 # Parse and process command line arguments
 plparseopts(sys.argv, PL_PARSE_FULL)
 
+# Load colour palettes
+plspal0("cmap0_black_on_white.pal")
+plspal1("cmap1_gray.pal")
+plscmap0n(3)
+
 # Initialize plplot
 plinit()
 

@@ -79,10 +79,6 @@ def main():
     xg2 = xx + distort*cos((0.5*pi)*xx)*cos((0.5*pi)*yy)
     yg2 = yy - distort*cos((0.5*pi)*xx)*cos((0.5*pi)*yy)
 
-    # Load colour palettes
-    plspal0("cmap0_black_on_white.pal")
-    plspal1("cmap1_gray.pal")
-
     # Plot using identity transform
 
     pladv(0)
@@ -114,6 +110,7 @@ def main():
 
     plspal0("cmap0_black_on_white.pal")
     plspal1("cmap1_blue_yellow.pal")
+    plscmap0n(3)
 
     pladv(0)
     plvpor(0.1, 0.9, 0.1, 0.9)
@@ -132,6 +129,7 @@ def main():
 
     plspal0("cmap0_black_on_white.pal")
     plspal1("cmap1_blue_red.pal")
+    plscmap0n(3)
 
     pladv(0)
     plvpor(0.1, 0.9, 0.1, 0.9)
@@ -151,6 +149,7 @@ def main():
 
     plspal0("")
     plspal1("")
+    plscmap0n(3)
 
     pladv(0)
     plvpor(0.1, 0.9, 0.1, 0.9)
@@ -174,6 +173,7 @@ def main():
 
     plspal0("cmap0_black_on_white.pal")
     plspal1("cmap1_gray.pal")
+    plscmap0n(3)
 
     pladv(0)
     plvpor(0.1, 0.9, 0.1, 0.9)
