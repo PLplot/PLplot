@@ -45,9 +45,15 @@
 #cmakedefine PL_HAVE_CXX_STDINT_H
 
 /* Define if isinf is available */
-#cmakedefine PL_HAVE_ISNAN
+#cmakedefine PL_HAVE_ISINF
 
 /* Define if _isinf is available */
+#cmakedefine PL__HAVE_ISINF
+
+/* Define if isnan is available */
+#cmakedefine PL_HAVE_ISNAN
+
+/* Define if _isnan is available */
 #cmakedefine PL__HAVE_ISNAN
 
 /* Define to 1 if you have the <stdint.h> header file. */
