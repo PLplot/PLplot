@@ -5,6 +5,8 @@
 */
 
 import std.math;
+import std.string;
+import std.c.string;
 
 import plplot;
 
@@ -28,6 +30,54 @@ extern (C) {
       y[i] = yp;
     }	
   }
+
+	/* A custom axis labeling function for longitudes and latitudes. */
+	void geolocation_labeler(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
+	{
+		string direction_label;
+		PLFLT label_val;
+		char* mlabel;
+	
+		if(axis==PL_Y_AXIS) {
+			label_val = value;
+			if(label_val>0.0)
+				direction_label = " N";
+			else if(label_val<0.0)
+				direction_label = " S";
+			else
+					direction_label = "Eq";
+		}	else if(axis==PL_X_AXIS) {
+			label_val = normalize_longitude(value);
+			if(label_val>0.0)
+				direction_label = " E";
+			else if(label_val<0.0)
+				direction_label = " W";
+			else
+				direction_label = "";
+		}
+	
+		if(axis==PL_Y_AXIS && value==0.0)
+			/* A special case for the equator */
+			strcpy(label, toStringz(direction_label));
+		else
+			strcpy(label, toStringz(format("%.0f%s", fabs(label_val), direction_label)));
+	}
+}
+
+
+/* "Normalize" longitude values so that they always fall between -180.0 and
+   180.0 */
+PLFLT normalize_longitude(PLFLT lon)
+{
+	if(lon>=-180.0 && lon<=180.0)
+		return(lon);
+	else {
+		PLFLT times = floor((fabs(lon)+180.0)/360.0);
+		if(lon<0.0)
+			return(lon+360.0*times);
+		else
+			return(lon-360.0*times);
+	}
 }
 
 
@@ -52,8 +102,11 @@ int main(char[][] args)
   PLFLT minx = 190;
   PLFLT maxx = 190+360;
 
+	/* Setup a custom latitude and longitude-based scaling function. */
+	plslabelfunc(&geolocation_labeler, null);
+
   plcol0(1);
-  plenv(minx, maxx, miny, maxy, 1, -1);
+  plenv(minx, maxx, miny, maxy, 1, 70);
   plmap(null, "usaglobe", minx, maxx, miny, maxy);
 
   /* The Americas */
@@ -61,8 +114,11 @@ int main(char[][] args)
   maxx = 340;
 
   plcol0(1);
-  plenv(minx, maxx, miny, maxy, 1, -1);
+  plenv(minx, maxx, miny, maxy, 1, 70);
   plmap(null, "usaglobe", minx, maxx, miny, maxy);
+
+	/* Clear the labeling function */
+	plslabelfunc(null, null);
 
   /* Polar, Northern hemisphere */
   minx = 0;

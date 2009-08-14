@@ -22,10 +22,10 @@ int exclude = 0;  /* By default do not plot a page illustrating
                    * anyway, and cannot be reproduced by any
                    * front end other than the C one. */
 
-/* Transformation function */
-PLFLT[] tr;
-
 extern (C) {
+	/* Transformation function */
+	PLFLT[] tr;
+
   void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void* pltr_data)
   {
     *tx = tr[0] * x+tr[1] * y+tr[2];
@@ -108,6 +108,13 @@ int main(char[][] args)
 
   /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
   plscmap0n(3);
+
+	/* Load colour palettes*/
+	plspal0("cmap0_black_on_white.pal");
+	plspal1("cmap1_gray.pal");
+
+	/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+	plscmap0n(3);
 
   /* Initialize plplot */
   plinit();
@@ -195,6 +202,14 @@ int main(char[][] args)
   pllab("distance", "altitude", "Bogon density");
 
   /* Plot using 1d coordinate transform */
+
+	/* Load colour palettes*/
+	plspal0("cmap0_black_on_white.pal");
+	plspal1("cmap1_blue_yellow.pal");
+
+	/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+	plscmap0n(3);
+
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
   plwind(-1.0, 1.0, -1.0, 1.0);
@@ -210,6 +225,14 @@ int main(char[][] args)
   pllab("distance", "altitude", "Bogon density");
 
   /* Plot using 2d coordinate transform */
+
+	/* Load colour palettes*/
+	plspal0("cmap0_black_on_white.pal");
+	plspal1("cmap1_blue_red.pal");
+
+	/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+	plscmap0n(3);
+  
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
   plwind(-1.0, 1.0, -1.0, 1.0);
@@ -227,6 +250,14 @@ int main(char[][] args)
   pllab("distance", "altitude", "Bogon density, with streamlines");
 
   /* Plot using 2d coordinate transform */
+  
+	/* Load colour palettes*/
+	plspal0("");
+	plspal1("");
+
+	/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+	plscmap0n(3);
+
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
   plwind(-1.0, 1.0, -1.0, 1.0);
@@ -246,6 +277,13 @@ int main(char[][] args)
 
   /* Plot using 2d coordinate transform and exclusion*/
   if(exclude) {
+		/* Load colour palettes*/
+    plspal0("cmap0_black_on_white.pal");
+    plspal1("cmap1_gray.pal");
+
+		/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    plscmap0n(3);
+
     pladv(0);
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
@@ -262,6 +300,14 @@ int main(char[][] args)
   }
   
   /* Example with polar coordinates. */
+  
+	/* Load colour palettes*/
+	plspal0("cmap0_black_on_white.pal");
+	plspal1("cmap1_gray.pal");
+
+	/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+	plscmap0n(3);
+  
   pladv(0);
   plvpor( .1, .9, .1, .9 );
   plwind( -1., 1., -1., 1. );
