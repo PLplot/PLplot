@@ -144,6 +144,11 @@ if(BUILD_TEST)
   if(ENABLE_qt)
     if(CORE_BUILD)
       set(BUILD_qt_example ON)
+      # Set up Qt4-based build environment.
+      include(${QT_USE_FILE})
+      if(NOT QT_LIBRARIES)
+        message(FATAL_ERROR "include(${QT_USE_FILE}) failed in core build examples/c++ subdirectory.")
+      endif(NOT QT_LIBRARIES)
     else(CORE_BUILD)
       # Must find Qt4 all over again here rather than simply copying variables
       # from the core build to this installed examples build so that we can
@@ -156,7 +161,11 @@ if(BUILD_TEST)
 	  set(QT_USE_QTSVG 1)
 	endif(PLD_svgqt AND ${QT_VERSION_MINOR} GREATER 2)
 
+	# Set up Qt4-based build environment.
 	include(${QT_USE_FILE})
+	if(NOT QT_LIBRARIES)
+          message(FATAL_ERROR "include(${QT_USE_FILE}) failed in installed examples build examples/c++ subdirectory.")
+	endif(NOT QT_LIBRARIES)
 	set(BUILD_qt_example ON)
       else(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
 	message(STATUS "WARNING: Qt4 not found or wrong version.  qt_example not built")
