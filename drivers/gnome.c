@@ -811,7 +811,7 @@ plD_init_gnome (PLStream *pls)
   pls->termin = 1;		/* Is an interactive terminal */
   pls->dev_flush = 1;		/* Handle our own flushes */
   pls->dev_fill0 = 1;		/* Handle solid fills */
-  pls->dev_fill1 = 1;		/* Handle pattern fills */
+  pls->dev_fill1 = 1;		/* Driver handles pattern fills */
   pls->dev_dash = 1;		/* Handle dashed lines */
   pls->plbuf_write = 1;	        /* Use plot buffer to replot to another device */
   pls->width = 1;

@@ -83,8 +83,8 @@ plD_init_mem(PLStream *pls)
   
   pls->color = 1;		/* Is a color device */
   pls->dev_fill0 = 0;		/* Handle solid fills */
-  pls->dev_fill1 = 0;		/* Handle pattern fills */
-  pls->nopause = 1;		/* Don`t pause between frames */
+  pls->dev_fill1 = 0;		/* Use PLplot core fallback for pattern fills */
+  pls->nopause = 1;		/* Don't pause between frames */
 
 }
 

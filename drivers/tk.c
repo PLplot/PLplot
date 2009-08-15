@@ -229,7 +229,7 @@ init(PLStream *pls)
     pls->dev_di = 1;		/* Handle driver interface commands */
     pls->dev_flush = 1;		/* Handle our own flushes */
     pls->dev_fill0 = 1;		/* Handle solid fills */
-    pls->dev_fill1 = 1;		/* Handle pattern fills */
+    pls->dev_fill1 = 1;		/* Driver handles pattern fills */
     pls->server_nokill = 1;     /* don't kill if ^C */
     pls->dev_xor = 1;           /* device support xor mode */
 

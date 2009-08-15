@@ -160,7 +160,7 @@ void plD_init_svg(PLStream *pls)
   pls->dev_unicode = 1; 	/* wants text as unicode */
   pls->page = 0;
   pls->dev_fill0 = 1;		/* driver generates solid fills */
-  pls->dev_fill1 = 0;		/* PLplot core software generates pattern fills */
+  pls->dev_fill1 = 0;		/* Use PLplot core fallback for pattern fills */
 
   pls->graphx = GRAPHICS_MODE;
 

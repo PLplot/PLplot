@@ -136,7 +136,7 @@ plD_init_plm(PLStream *pls)
 
     pls->color = 1;		/* Is a color device */
     pls->dev_fill0 = 1;		/* Handle solid fills */
-    pls->dev_fill1 = 1;		/* Handle pattern fills */
+    pls->dev_fill1 = 1;		/* Driver handles pattern fills */
 
 /* Initialize family file info */
 
