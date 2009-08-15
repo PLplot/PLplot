@@ -5,7 +5,8 @@
 #  hpdf_FOUND, if false, do not try to use haru pdf.
 #  hpdf_INCLUDE_DIRS, where to find hpdf.h.
 #  hpdf_LIBRARIES, the libraries to link against to use haru pdf
-#  hpdf_LIBRARY_DIRS, the directory where libhpdf.a is found.
+#  hpdf_LIBRARY_DIRS, the directory where libhpdf (either shared or static)
+#  is found.
 
 find_path(hpdf_INCLUDE_DIR hpdf.h /usr/local/include /usr/include)
 
@@ -26,10 +27,10 @@ endif(hpdf_INCLUDE_DIR)
 	    
 if(hpdf_FOUND)
   if(NOT hpdf_FIND_QUIETLY)
-    message(STATUS "Findhpdf: Found both hpdf.h and libhpdf.a")
+    message(STATUS "Findhpdf: Found haru header directory, ${hpdf_INCLUDE_DIR}, and library, ${hpdf_LIBRARIES}.")
   endif(NOT hpdf_FIND_QUIETLY)
 else(hpdf_FOUND)
   if(hpdf_FIND_REQUIRED)
-    message(FATAL_ERROR "Findhpdf: Could not find hpdf.h and/or libhpdf.a")
+    message(FATAL_ERROR "Findhpdf: Could not find haru (hpdf) header and/or library.")
   endif(hpdf_FIND_REQUIRED)
 endif(hpdf_FOUND)
