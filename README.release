@@ -81,18 +81,13 @@ of PLplot by default that were disabled by default as of release 5.9.1 due
 to segfaults.  The cause of the segfaults was a bug (now fixed) in how
 pthread support was implemented for the Tk-related components of PLplot.
 
-IX. As of release 5.9.4 we have deprecated the hpgl device driver
-(containing the hp7470, hp7580, and lj_hpgl devices). hp7450 and hp7580
-produce many "Invalid pen selection." messages on our standard examples and
-lj_hpgl segfaults.
-
-X. As of release 5.9.4 we have deprecated the pbm device driver (containing
+IX. As of release 5.9.4 we have deprecated the pbm device driver (containing
 the pbm device) because glibc detects a catastrophic double free.
 
-XI. As of release 5.9.5 we have removed pyqt3 access to PLplot and
+X. As of release 5.9.5 we have removed pyqt3 access to PLplot and
 replaced it by pyqt4 access to PLplot (see details below).
 
-XII. As of release 5.9.5 the only method of specifying a non-default compiler
+XI. As of release 5.9.5 the only method of specifying a non-default compiler
 (and associated compiler options) that we support is the environment
 variable approach, e.g.,
 
@@ -103,6 +98,15 @@ export FC='gfortran -g -fvisibility=hidden'
 All other CMake methods of specifying a non-default compiler and associated
 compiler options will not be supported until CMake bug 9220 is fixed, see
 discussion below of the soft-landing reimplementation for details.
+
+XII. As of release 5.9.5 we have retired the hpgl driver (containing the
+hp7470, hp7580, and lj_hpgl devices), the impress driver (containing the imp
+device), and the ljii driver (containing the ljii and ljiip devices).
+Retirement means we have removed the build options which would allow these
+devices to build and install.  Recent tests have shown a number of run-time
+issues with these devices, and as far as we know there is no more user
+interest in them. Therefore, we have decided to retire these devices rather
+than fix them.
 
 INDEX
 

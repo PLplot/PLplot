@@ -114,7 +114,10 @@ set(DRIVERS_DEVICE_LIST
   "xcairo:cairo:ON"
   # new example 16 shows severe valgrind issues with this device.
   "cgm:cgm:OFF"
-  "dg300:dg300:OFF"
+  # This unmaintained device driver builds but does not actually work 
+  # (with error message: "Unable to locate dispatch table initialization
+  # function for driver: dg300.") so retire it.
+  # "dg300:dg300:OFF"
   "epsqt:qt:ON"
   "pdfqt:qt:ON"
   "qtwidget:qt:ON"
@@ -141,18 +144,23 @@ set(DRIVERS_DEVICE_LIST
   "gcw:gcw:OFF"
   # Do not implement gnome which is superseded by gcw
   #"gnome:gnome:OFF"
-  # Produces ton of "Invalid pen selection." messages
-  "hp7470:hpgl:OFF"
-  # Produces ton of "Invalid pen selection." messages
-  "hp7580:hpgl:OFF"
-  # Segfaults.
-  "lj_hpgl:hpgl:OFF"
-  "imp:impress:OFF"
-  # Default off because poorly maintained (colours are incorrect)
+  # hpgl devices produce tons of "Invalid pen selection." messages and the
+  # lj_hpgl device produces the error message "Unable to locate dispatch
+  # table initialization function for driver: hpgl."
+  # Retire this elderly device driver rather than fixing it.
+  #"hp7470:hpgl:OFF"
+  #"hp7580:hpgl:OFF"
+  #"lj_hpgl:hpgl:OFF"
+  # This unmaintained driver generates double frees for example 14.
+  # Retire this elderly device driver rather than fixing it.
+  # "imp:impress:OFF"
+  # Default off because poorly maintained (e.g., colours are incorrect)
   # must use software fill, and must run as root.
   "linuxvga:linuxvga:OFF"
-  "ljii:ljii:OFF"
-  "ljiip:ljiip:OFF"
+  # ljii is unmaintained and both the ljii and ljiip segfault on example 14.
+  # Retire this elderly device driver rather than fixing it.
+  #"ljii:ljii:OFF"
+  #"ljiip:ljiip:OFF"
   "mem:mem:ON"
   "ntk:ntk:OFF"
   "null:null:ON"
