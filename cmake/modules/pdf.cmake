@@ -33,8 +33,15 @@ if(PLD_pdf)
     message(STATUS "Looking for haru pdf header and library - found")
     if(WIN32)
       set(pdf_COMPILE_FLAGS "-I${hpdf_INCLUDE_DIRS} -DHPDF_DLL")
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+      # -DHPDF_SHARED really screws up a Linux build of the pdf device driver.
+      # I noticed the Linux build of libharu had no HPDF_ macros defined so
+      # don't set any here, and that seems to work.
+      set(pdf_COMPILE_FLAGS "-I${hpdf_INCLUDE_DIRS}")
     else(WIN32)
-      set(pdf_COMPILE_FLAGS "-I${hpdf_INCLUDE_DIRS} -DHPDF_SHARED")
+      # Guess no HPDF_ macros should be defined for platforms other than
+      # Windows or Linux.
+      set(pdf_COMPILE_FLAGS "-I${hpdf_INCLUDE_DIRS}")
     endif(WIN32)
     set(pdf_LINK_FLAGS "${hpdf_LIBRARIES}")
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${pdf_LINK_FLAGS})
