@@ -216,7 +216,7 @@ void plD_init_pdf( PLStream *pls )
 
   pls->page = 0;
   pls->dev_fill0 = 1;		/* supports hardware solid fills */
-  pls->dev_fill1 = 1;
+  pls->dev_fill1 = 0;		/* Use PLplot core fallback for pattern fills */
 
   pls->graphx = GRAPHICS_MODE;
 
