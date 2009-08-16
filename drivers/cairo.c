@@ -35,6 +35,7 @@
 
 /* PLplot header files (must occur before driver-dependent includes) */
 
+#include "plDevs.h"
 #include "plplotP.h"
 #include "drivers.h"
 

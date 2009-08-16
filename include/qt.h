@@ -68,6 +68,7 @@ the results if exact character sizes are desired.  Otherwise, DEFAULT_DPI
 #include <QPicture>
 #include <QMutex>
 
+#include "plDevs.h"
 #include "plplotP.h"
 #include "drivers.h"
 
