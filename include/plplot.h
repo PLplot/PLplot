@@ -522,15 +522,14 @@ typedef struct {
 #define    pl_setcontlabelformat c_pl_setcontlabelformat
 #define    pl_setcontlabelparam c_pl_setcontlabelparam
 #define    pladv	c_pladv
+#define    plarc	c_plarc
 #define    plaxes	c_plaxes
 #define    plbin	c_plbin
-#define    plbtime	c_plbtime
 #define    plbop	c_plbop
 #define    plbox	c_plbox
 #define    plbox3	c_plbox3
-#define    plslabelfunc c_plslabelfunc
+#define    plbtime	c_plbtime
 #define    plcalc_world	c_plcalc_world
-#define    plarc	c_plarc
 #define    plclear	c_plclear
 #define    plcol0	c_plcol0
 #define    plcol1	c_plcol1
@@ -553,8 +552,8 @@ typedef struct {
 #define    plfontld	c_plfontld
 #define    plgchr	c_plgchr
 #define    plgcol0	c_plgcol0
-#define    plgcolbg	c_plgcolbg
 #define    plgcol0a	c_plgcol0a
+#define    plgcolbg	c_plgcolbg
 #define    plgcolbga	c_plgcolbga
 #define    plgcompression	c_plgcompression
 #define    plgdev	c_plgdev
@@ -644,6 +643,7 @@ typedef struct {
 #define    plshade	c_plshade
 #define    plshade1	c_plshade1
 #define    plshades	c_plshades
+#define    plslabelfunc c_plslabelfunc
 #define    plsmaj	c_plsmaj
 #define    plsmem	c_plsmem
 #define    plsmin	c_plsmin
@@ -729,15 +729,11 @@ c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
 PLDLLIMPEXP void
 c_pladv(PLINT page);
 
-/* simple arrow plotter. */
+/* Plot an arc */
 
 PLDLLIMPEXP void
-c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
-	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-       	PLPointer pltr_data);
-
-PLDLLIMPEXP void
-c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
+c_plarc(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
+        PLBOOL fill);
 
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
@@ -779,21 +775,10 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
 	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz);
 
-/* Setup a user-provided custom labeling function */
-PLDLLIMPEXP void
-c_plslabelfunc(void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer),
-               PLPointer label_data);
-
 /* Calculate world coordinates and subpage from relative device coordinates. */
 
 PLDLLIMPEXP void
 c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window);
-
-/* Plot an arc */
-
-PLDLLIMPEXP void
-c_plarc(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
-        PLBOOL fill);
 
 /* Clear current subpage. */
 
@@ -1461,6 +1446,12 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data);
 
+/* Setup a user-provided custom labeling function */
+
+PLDLLIMPEXP void
+c_plslabelfunc(void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer),
+               PLPointer label_data);
+
 /* Set up lengths of major tick marks. */
 
 PLDLLIMPEXP void
@@ -1584,6 +1575,9 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	   PLINT opt, PLFLT *clevel, PLINT nlevel,
 	   PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax);
 
+PLDLLIMPEXP void
+c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
+
 /* Sets the edges of the viewport to the specified absolute coordinates */
 
 PLDLLIMPEXP void
@@ -1632,6 +1626,13 @@ c_plvasp(PLFLT aspect);
 
 /* Creates the largest viewport of the specified aspect ratio that fits */
 /* within the specified normalized subpage coordinates. */
+
+/* simple arrow plotter. */
+
+PLDLLIMPEXP void
+c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+       	PLPointer pltr_data);
 
 PLDLLIMPEXP void
 c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect);
