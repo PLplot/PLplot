@@ -162,6 +162,11 @@ class PLDLLIMPEXP_CXX plstream {
 	       const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
 	       const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz );
 
+// Calculate broken-down time from continuous time for current stream.
+
+    void btime( PLINT &year, PLINT &month, PLINT &day, PLINT &hour, 
+		  PLINT &min, PLFLT &sec, PLFLT ctime );
+
 // Calculate world coordinates and subpage from relative device coordinates.
     
     void calc_world(PLFLT rx, PLFLT ry, PLFLT& wx, PLFLT& wy, PLINT& window);
@@ -188,6 +193,12 @@ class PLDLLIMPEXP_CXX plstream {
 // avoided in new code.
     void col( PLFLT c );
 
+// Configure transformation between continuous and broken-down time (and
+// vice versa) for current stream.
+    void configtime( PLFLT scale, PLFLT offset1, PLFLT offset2, 
+		     PLINT ccontrol, PLBOOL ifbtime_offset, PLINT year, 
+		     PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec);
+  
 // Draws a contour plot from data in f(nx,ny).  Is just a front-end to
 // plfcont, with a particular choice for f2eval and f2eval_data.
 
@@ -212,6 +223,9 @@ class PLDLLIMPEXP_CXX plstream {
 
      void cpstrm( plstream &pls, bool flags );
 
+// Calculate continuous time from broken-down time for current stream.
+     void ctime(PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT &ctime);
+  
 // Converts input values from relative device coordinates to relative plot
 // coordinates.
 

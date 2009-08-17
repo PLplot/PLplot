@@ -43,6 +43,7 @@ private:
   void plot1();
   void plot2();
   void plot3();
+  void plot4();
 
   PLFLT MIN(PLFLT x, PLFLT y) { return (x<y?x:y);};
   PLFLT MAX(PLFLT x, PLFLT y) { return (x>y?x:y);};
@@ -82,6 +83,8 @@ x29::x29(int argc, const char *argv[])
   plot2();
 
   plot3();
+
+  plot4();
 
   delete pls;
 }
@@ -263,6 +266,138 @@ x29::plot3()
   pls->poin(npts, x, y, 2);
   pls->line(npts, x, y);
  
+}
+
+void
+x29::plot4() 
+{
+  /* TAI-UTC (seconds) as a function of time.
+     Use Besselian epochs as the continuous time interval just to prove
+     this does not introduce any issues. */
+  
+  PLFLT scale, offset1, offset2;  
+  PLFLT xmin, xmax, ymin, ymax, xlabel_step;
+  int kind, npts, if_TAI_time_format, i;
+  char time_format[10];
+  char title_suffix[100];
+  char xtitle[100];
+  char title[100];
+  PLFLT x[1001], y[1001];
+  PLINT tai_year, tai_month, tai_day, tai_hour, tai_min;
+  PLFLT tai_sec, tai;
+  PLINT utc_year, utc_month, utc_day, utc_hour, utc_min;
+  PLFLT utc_sec, utc;
+
+  /* Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
+   * B = 1900. + (JD -2415020.31352)/365.242198781 
+   * ==> (as calculated with aid of "bc -l" command)
+   * B = (MJD + 678940.364163900)/365.242198781
+   * ==>
+   * MJD = B*365.24219878 - 678940.364163900 */
+  scale = 365.242198781;
+  offset1 = -678940.;
+  offset2 = -0.3641639;
+  pls->configtime(scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0.);
+
+  for (kind=0;kind<7;kind++) {
+    if (kind == 0) {
+      pls->ctime(1950,0,2,0,0,0.,xmin);
+      pls->ctime(2020,0,2,0,0,0.,xmax);
+      npts = 70*12 + 1;
+      ymin = 0.0;
+      ymax = 36.0;
+      strncpy(time_format,"%Y%",10);
+      if_TAI_time_format = 1;
+      strncpy(title_suffix,"from 1950 to 2020",100);
+      strncpy(xtitle,  "Year", 100);
+      xlabel_step = 10.;
+    }
+    else if (kind == 1 || kind ==2) {
+      pls->ctime(1961,7,1,0,0,1.64757-.20, xmin);
+      pls->ctime(1961,7,1,0,0,1.64757+.20, xmax);
+      npts = 1001;
+      ymin = 1.625;
+      ymax = 1.725;
+      strncpy(time_format, "%S%2%", 10);
+      strncpy(title_suffix, "near 1961-08-01 (TAI)", 100);
+      xlabel_step = 0.05/(scale*86400.);
+      if (kind == 1) {
+        if_TAI_time_format = 1;
+        strncpy(xtitle, "Seconds (TAI)", 100);
+      }
+      else {
+        if_TAI_time_format = 0;
+        strncpy(xtitle, "Seconds (TAI) labelled with corresponding UTC", 100);
+      }
+    }
+    else if (kind == 3 || kind ==4) {
+      pls->ctime(1963,10,1,0,0,2.6972788-.20, xmin);
+      pls->ctime(1963,10,1,0,0,2.6972788+.20, xmax);
+      npts = 1001;
+      ymin = 2.55;
+      ymax = 2.75;
+      strncpy(time_format, "%S%2%", 10);
+      strncpy(title_suffix, "near 1963-11-01 (TAI)", 100);
+      xlabel_step = 0.05/(scale*86400.);
+      if (kind == 3) {
+	if_TAI_time_format = 1;
+	strncpy(xtitle, "Seconds (TAI)",100);
+      }
+      else {
+	if_TAI_time_format = 0;
+	strncpy(xtitle, "Seconds (TAI) labelled with corresponding UTC", 100);
+      }
+    }
+    else if (kind == 5 || kind == 6) {
+      pls->ctime(2009,0,1,0,0,34.-5.,xmin);
+      pls->ctime(2009,0,1,0,0,34.+5.,xmax);
+      npts = 1001;
+      ymin = 32.5;
+      ymax = 34.5;
+      strncpy(time_format, "%S%2%", 10);
+      strncpy(title_suffix, "near 2009-01-01 (TAI)",100);
+      xlabel_step = 1./(scale*86400.);
+      if (kind == 5) {
+        if_TAI_time_format = 1;
+        strncpy(xtitle, "Seconds (TAI)", 100);
+      }
+      else {
+        if_TAI_time_format = 0;
+        strncpy(xtitle, "Seconds (TAI) labelled with corresponding UTC", 100);
+      }
+    }
+
+    for (i=0;i<npts;i++) {
+      x[i] = xmin + i*(xmax-xmin)/((double)(npts-1));
+      pls->configtime(scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0.);
+      tai = x[i];
+      pls->btime(tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec, tai);
+      pls->configtime(scale, offset1, offset2, 0x2, 0, 0, 0, 0, 0, 0, 0.);
+      pls->btime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec, tai);
+      pls->configtime(scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0.);
+      pls->ctime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec, utc);
+      y[i]=(tai-utc)*scale*86400.;
+    }
+
+    pls->adv(0);
+    pls->vsta();
+    pls->wind(xmin, xmax, ymin, ymax);
+    pls->col0(1);
+    if (if_TAI_time_format) 
+      pls->configtime(scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0.);
+    else
+      pls->configtime(scale, offset1, offset2, 0x2, 0, 0, 0, 0, 0, 0, 0.);
+    pls->timefmt(time_format);
+    pls->box("bcnstd", xlabel_step, 0, "bcnstv", 0., 0);
+    pls->col0(3);
+    strncpy(title,"@frPLplot Example 29 - TAI-UTC ", 100);
+    strncat(title,title_suffix,100);
+    pls->lab(xtitle, "TAI-UTC (sec)", title);
+    
+    pls->col0(4);
+    
+    pls->line(npts, x, y);
+  }
 }
 
 int main( int argc, const char **argv )

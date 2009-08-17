@@ -397,6 +397,7 @@ void plstream::box( const char *xopt, PLFLT xtick, PLINT nxsub,
     plbox( xopt, xtick, nxsub, yopt, ytick, nysub );
 }
 
+
 // This is the 3-d analogue of plbox().
 
 void
@@ -411,6 +412,13 @@ plstream::box3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	    zopt, zlabel, ztick, nsubz );
 }
 
+// Calculate broken-down time from continuous time for current stream.
+void plstream::btime(PLINT &year, PLINT &month, PLINT &day, PLINT &hour, PLINT &min, PLFLT &sec, PLFLT ctime) {
+    set_stream();
+
+    plbtime( &year, &month, &day, &hour, &min, &sec, ctime );
+}
+  
 // Calculate world coordinates and subpage from relative device coordinates.
 
 void plstream::calc_world(PLFLT rx, PLFLT ry, PLFLT& wx, PLFLT& wy, 
@@ -467,6 +475,21 @@ void plstream::col( PLFLT c )
     plcol1( c );
 }
 
+// Configure transformation between continuous and broken-down time (and
+// vice versa) for current stream.
+void plstream::configtime( PLFLT scale, PLFLT offset1, PLFLT offset2, 
+			   PLINT ccontrol, PLBOOL ifbtime_offset, PLINT year, 
+			   PLINT month, PLINT day, PLINT hour, PLINT min, 
+			   PLFLT sec) 
+{
+    set_stream();
+
+    plconfigtime(scale, offset1, offset2, ccontrol, ifbtime_offset, year, 
+		 month, day, hour, min, sec);
+}
+  
+
+
 // Draws a contour plot from data in f(nx,ny).  Is just a front-end to
 // plfcont, with a particular choice for f2eval and f2eval_data.
 
@@ -517,6 +540,14 @@ void plstream::cpstrm( plstream &pls, PLINT flags )
     plcpstrm(pls.stream,(PLBOOL)flags);
 }
 
+// Calculate continuous time from broken-down time for current stream.
+void plstream::ctime(PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT &ctime) 
+{
+    set_stream();
+
+    plctime( year, month, day, hour, min, sec, &ctime);
+}
+  
 // Converts input values from relative device coordinates to relative plot
 // coordinates.
 
