@@ -3,7 +3,6 @@ module plplot;
 
 private import std.string;
 
-
 // improved D interface
 
 // certain functions must be declared as C functions so that PLplot
@@ -504,9 +503,11 @@ void plscmap1l(PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
   assert(npts==coord1.length, "plscmap1l(): Arrays must be of same length!");
   assert(npts==coord2.length, "plscmap1l(): Arrays must be of same length!");
   assert(npts==coord3.length, "plscmap1l(): Arrays must be of same length!");
-  if(rev!=null)
+  if(rev!=null) {
     assert(npts-1==rev.length, "plscmap1l(): Array rev must be of same length then other arrays minus 1!");
-  c_plscmap1l(itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, rev.ptr);
+	  c_plscmap1l(itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, rev.ptr);
+	} else 
+	  c_plscmap1l(itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, null);
 }
 
 
@@ -521,9 +522,11 @@ void plscmap1la(PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
   assert(npts==coord2.length, "plscmap1la(): Arrays must be of same length!");
   assert(npts==coord3.length, "plscmap1la(): Arrays must be of same length!");
   assert(npts==a.length, "plscmap1la(): Arrays must be of same length!");
-  if(rev!=null)
+  if(rev!=null) {
     assert(npts-1==rev.length, "plscmap1la(): Array rev must be of same length then other arrays minus 1!");
-  c_plscmap1la(itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, a.ptr, rev.ptr);
+	  c_plscmap1la(itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, a.ptr, rev.ptr);
+	} else
+	  c_plscmap1la(itype, npts, intensity.ptr, coord1.ptr, coord2.ptr, coord3.ptr, a.ptr, null);
 }
 
 /* Set the device (keyword) name */
@@ -797,7 +800,10 @@ int plsetopt(string opt, string optarg)
 //PLFLT  plGetFlt(char *s);
 
 /* Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid(). */
-//void  plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
+void plMinMax2dGrid(PLFLT[][] f, out PLFLT fmax, out PLFLT fmin)
+{
+	plMinMax2dGrid(convert_array(f), f.length, f[0].length, &fmax, &fmin);
+}
 
 /* Wait for graphics input event and translate to world coordinates */
 //int  plGetCursor(PLGraphicsIn *gin);
@@ -1278,6 +1284,7 @@ alias c_plsdimap plsdimap;
 alias c_plsdiori plsdiori;
 alias c_plsdiplt plsdiplt;
 alias c_plsdiplz plsdiplz;
+alias c_plseed plseed;
 alias c_plsesc plsesc;
 //alias c_plsetopt plsetopt;
 alias c_plsfam plsfam;
@@ -1780,12 +1787,13 @@ void  c_plsdiori(PLFLT rot);
 void  c_plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
 
 /* Set window into plot space incrementally (zoom) */
+void c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
 
-void  c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
+/* Set seed for internal random number generator */
+void c_plseed(uint s);
 
 /* Set the escape character for text strings. */
-
-void  c_plsesc(char esc);
+void c_plsesc(char esc);
 
 /* Set family file parameters */
 
@@ -2105,8 +2113,7 @@ void  plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny);
 void  plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);
 
 /* Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid(). */
-
-void  plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
+void plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
 
 /* Wait for graphics input event and translate to world coordinates */
 
