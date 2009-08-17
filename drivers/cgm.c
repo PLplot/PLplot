@@ -484,7 +484,7 @@ if (ncol0>0)  /* make sure the program actually asked for cmap0 first */
  *
  */
 
-if ((pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
+if ((pls->ncol0>15) && (pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
    {
     if (pls->hack!=1)   /* just set colour 15 to black */
        {
