@@ -999,6 +999,7 @@ alias _N4 PLDisplay;
 /* Macro used (in some cases) to ignore value of argument */
 /* I don't plan on changing the value so you can hard-code it */
 
+const int PL_NOTSET = -42;
 
 /* See plcont.c for examples of the following */
 

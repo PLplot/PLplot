@@ -50,9 +50,10 @@ set(d_STRING_INDICES
   "25"
   "26"
   "27"
-  #  "28"
+  "28"
   "29"
   "30"
+  "31"
   )
 
 if(CORE_BUILD) 
