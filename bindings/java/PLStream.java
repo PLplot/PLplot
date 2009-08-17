@@ -153,6 +153,11 @@ public void box3(String xopt, String xlabel, double xtick, int nsubx,
 		    zopt, zlabel, ztick, nsubz);
 }
 
+public void btime(int year[], int month[], int day[], int hour[], int min[], double sec[], double ctime) {
+    if (set_stream() == -1) return;
+    plplotjavac.plbtime(year, month, day, hour, min, sec, ctime);
+}
+
 public void calc_world(double rx, double ry, double[] wx, double[] wy, int[] window) {
     if (set_stream() == -1) return;
     plplotjavac.plcalc_world(rx, ry, wx, wy, window);
@@ -173,6 +178,15 @@ public void col1(double col1) {
     plplotjavac.plcol1(col1);
 }
 
+public void configtime( double scale, double offset1, double offset2, 
+			int ccontrol, boolean ifbtime_offset, int year, 
+			int month, int day, int hour, int min, 
+			double sec) {
+    if (set_stream() == -1) return;
+    plplotjavac.plconfigtime(scale, offset1, offset2, ccontrol, ifbtime_offset,
+			     year, month, day, hour, min, sec);
+}
+
 public void cont(double[][] f, int kx, int lx, int ky, int ly, 
 		double[] clevel, double[][] pltr, double[][] OBJECT_DATA) {
     if (set_stream() == -1) return;
@@ -182,6 +196,11 @@ public void cont(double[][] f, int kx, int lx, int ky, int ly,
 public void cpstrm(PLStream pls, boolean flags) {
     if (set_stream() == -1) return;
     plplotjavac.plcpstrm(pls.stream_id, flags);
+}
+
+public void ctime(int year, int month, int day, int hour, int min, double sec, double ctime[]) {
+    if (set_stream() == -1) return;
+    plplotjavac.plctime(year, month, day, hour, min, sec, ctime);
 }
 
 // The end / end1 functions have extra code in to keep track of the

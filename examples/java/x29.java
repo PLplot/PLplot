@@ -65,6 +65,8 @@ class x29 {
 	
 	plot3();
 
+	plot4();
+
 	pls.end();
 	
     }
@@ -235,6 +237,145 @@ class x29 {
 	pls.poin(x, y, 2);
 	pls.line(x, y);
  
+    }
+
+    void plot4() 
+    {
+	/* TAI-UTC (seconds) as a function of time.
+	   Use Besselian epochs as the continuous time interval just to prove
+	   this does not introduce any issues. */
+	
+	double scale, offset1, offset2;  
+	double xmin[] = new double[1], xmax[] = new double[1];
+	double ymin = 0.0, ymax = 0.0, xlabel_step = 0.0;
+	int kind, npts = 1001, i;
+	boolean if_TAI_time_format = false;
+	String time_format = "";
+	String title_suffix = "";
+	String xtitle = "";
+	String title = "";
+	double x[];
+	double y[];
+	int tai_year[] = new int[1], tai_month[] = new int[1], 
+	    tai_day[] = new int[1], tai_hour[] = new int[1], 
+	    tai_min[] = new int[1];
+	double tai_sec[] = new double[1], tai;
+	int utc_year[] = new int[1], utc_month[] = new int[1], 
+	    utc_day[] = new int[1], utc_hour[] = new int[1], 
+	    utc_min[] = new int[1];
+	double utc_sec[] = new double[1], utc[] = new double[1];
+
+	/* Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
+	 * B = 1900. + (JD -2415020.31352)/365.242198781 
+	 * ==> (as calculated with aid of "bc -l" command)
+	 * B = (MJD + 678940.364163900)/365.242198781
+	 * ==>
+	 * MJD = B*365.24219878 - 678940.364163900 */
+	scale = 365.242198781;
+	offset1 = -678940.;
+	offset2 = -0.3641639;
+	pls.configtime(scale, offset1, offset2, 0x0, false, 0, 0, 0, 0, 0, 0.);
+
+	for (kind=0;kind<7;kind++) {
+	    if (kind == 0) {
+		pls.ctime(1950,0,2,0,0,0.,xmin);
+		pls.ctime(2020,0,2,0,0,0.,xmax);
+		npts = 70*12 + 1;
+		ymin = 0.0;
+		ymax = 36.0;
+		time_format = "%Y%";
+		if_TAI_time_format = true;
+		title_suffix = "from 1950 to 2020";
+		xtitle = "Year";
+		xlabel_step = 10.;
+	    }
+	    else if (kind == 1 || kind ==2) {
+		pls.ctime(1961,7,1,0,0,1.64757-.20, xmin);
+		pls.ctime(1961,7,1,0,0,1.64757+.20, xmax);
+		npts = 1001;
+		ymin = 1.625;
+		ymax = 1.725;
+		time_format = "%S%2%";
+		title_suffix = "near 1961-08-01 (TAI)";
+		xlabel_step = 0.05/(scale*86400.);
+		if (kind == 1) {
+		    if_TAI_time_format = true;
+		    xtitle = "Seconds (TAI)";
+		}
+		else {
+		    if_TAI_time_format = false;
+		    xtitle = "Seconds (TAI) labelled with corresponding UTC";
+		}
+	    }
+	    else if (kind == 3 || kind ==4) {
+		pls.ctime(1963,10,1,0,0,2.6972788-.20, xmin);
+		pls.ctime(1963,10,1,0,0,2.6972788+.20, xmax);
+		npts = 1001;
+		ymin = 2.55;
+		ymax = 2.75;
+		time_format = "%S%2%";
+		title_suffix = "near 1963-11-01 (TAI)";
+		xlabel_step = 0.05/(scale*86400.);
+		if (kind == 3) {
+		    if_TAI_time_format = true;
+		    xtitle = "Seconds (TAI)";
+		}
+		else {
+		    if_TAI_time_format = false;
+		    xtitle = "Seconds (TAI) labelled with corresponding UTC";
+		}
+	    }
+	    else if (kind == 5 || kind == 6) {
+		pls.ctime(2009,0,1,0,0,34.-5.,xmin);
+		pls.ctime(2009,0,1,0,0,34.+5.,xmax);
+		npts = 1001;
+		ymin = 32.5;
+		ymax = 34.5;
+		time_format = "%S%2%";
+		title_suffix = "near 2009-01-01 (TAI)";
+		xlabel_step = 1./(scale*86400.);
+		if (kind == 5) {
+		    if_TAI_time_format = true;
+		    xtitle = "Seconds (TAI)";
+		}
+		else {
+		    if_TAI_time_format = false;
+		    xtitle = "Seconds (TAI) labelled with corresponding UTC";
+		}
+	    }
+
+	    x = new double[npts];
+	    y = new double[npts];
+	    for (i=0;i<npts;i++) {
+		x[i] = xmin[0] + i*(xmax[0]-xmin[0])/((double)(npts-1));
+		pls.configtime(scale, offset1, offset2, 0x0, false, 0, 0, 0, 0, 0, 0.);
+		tai = x[i];
+		pls.btime(tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec, tai);
+		pls.configtime(scale, offset1, offset2, 0x2, false, 0, 0, 0, 0, 0, 0.);
+		pls.btime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec, tai);
+		pls.configtime(scale, offset1, offset2, 0x0, false, 0, 0, 0, 0, 0, 0.);
+		pls.ctime(utc_year[0], utc_month[0], utc_day[0], utc_hour[0], utc_min[0], utc_sec[0], utc);
+		y[i]=(tai-utc[0])*scale*86400.;
+	    }
+
+	    pls.adv(0);
+	    pls.vsta();
+	    pls.wind(xmin[0], xmax[0], ymin, ymax);
+	    pls.col0(1);
+	    if (if_TAI_time_format) 
+		pls.configtime(scale, offset1, offset2, 0x0, false, 0, 0, 0, 0, 0, 0.);
+	    else
+		pls.configtime(scale, offset1, offset2, 0x2, false, 0, 0, 0, 0, 0, 0.);
+	    pls.timefmt(time_format);
+	    pls.box("bcnstd", xlabel_step, 0, "bcnstv", 0., 0);
+	    pls.col0(3);
+	    title = "@frPLplot Example 29 - TAI-UTC "+title_suffix;
+	    pls.lab(xtitle, "TAI-UTC (sec)", title);
+    
+	    pls.col0(4);
+    
+	    pls.line(x, y);
+	}
     }
 
 
