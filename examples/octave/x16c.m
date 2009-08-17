@@ -60,6 +60,9 @@ function ix16c
 
   ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display 
 
+  ## Load colour palettes
+  plspal0("cmap0_black_on_white.pal");
+  plspal1("cmap1_gray.pal");
   plscmap0n(3);
 
   ## Initialize plplot 
@@ -126,6 +129,12 @@ function ix16c
 
   ## Plot using 1d coordinate transform 
 
+  ##  Load colour palettes
+  plspal0("cmap0_black_on_white.pal");
+  plspal1("cmap1_blue_yellow.pal");
+  ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+  plscmap0n(3);
+
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
   plwind(-1.0, 1.0, -1.0, 1.0);
@@ -146,6 +155,12 @@ function ix16c
 
   ## Plot using 2d coordinate transform 
 
+  ## Load colour palettes
+  plspal0("cmap0_black_on_white.pal");
+  plspal1("cmap1_blue_red.pal");
+  ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+  plscmap0n(3);
+
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
   plwind(-1.0, 1.0, -1.0, 1.0);
@@ -164,6 +179,12 @@ function ix16c
   pllab("distance", "altitude", "Bogon density, with streamlines");
 
   ## Plot using 2d coordinate transform 
+
+  ## Load colour palettes
+  plspal0("");
+  plspal1("");
+  ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+  plscmap0n(3);
 
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
@@ -186,6 +207,12 @@ function ix16c
   
   ## Plot using 2d coordinate transform and exclusion
   if (0) ## exclusion not implemented
+    ## Load colour palettes
+    plspal0("cmap0_black_on_white.pal");
+    plspal1("cmap1_gray.pal");
+    ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+    plscmap0n(3);
+
     pladv(0);
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
@@ -204,6 +231,12 @@ function ix16c
 ### Example with polar coordinates. 
 
   PERIMETERPTS=100;
+  ## Load colour palettes
+  plspal0("cmap0_black_on_white.pal");
+  plspal1("cmap1_gray.pal");
+  ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+  plscmap0n(3);
+
   pladv(0);
   plvpor( .1, .9, .1, .9 );
   plwind( -1., 1., -1., 1. );

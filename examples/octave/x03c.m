@@ -46,13 +46,11 @@ function x03c
   ## Set up viewport and window, but do not draw box */
 
   plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
-  for i=1:10
-    x(:) = 0.1 * i * x0(:);
-    y(:) = 0.1 * i * y0(:);
-    
-    ## Draw circles for polar grid */
-    plline(x', y');
-  endfor
+  ## Draw circles for polar grid
+    for i=1:10
+      plarc(0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0);
+    endfor
+  
 
   plcol0(2);
   for i=0:11

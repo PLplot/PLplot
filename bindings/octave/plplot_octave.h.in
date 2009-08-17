@@ -424,21 +424,24 @@ typedef struct {
 
 #ifndef __PLSTUBS_H__	/* i.e. do not expand this in the stubs */
 
+#define    pl_setcontlabelformat c_pl_setcontlabelformat
+#define    pl_setcontlabelparam c_pl_setcontlabelparam
 #define    pladv	c_pladv
-#define    plclear	c_plclear
+#define    plarc	c_plarc
 #define    plaxes	c_plaxes
 #define    plbin	c_plbin
 #define    plbop	c_plbop
 #define    plbox	c_plbox
 #define    plbox3	c_plbox3
+#define    plbtime	c_plbtime
+#define    plcalc_world	c_plcalc_world
+#define    plclear	c_plclear
 #define    plcol0	c_plcol0
 #define    plcol1	c_plcol1
-#define    plxormod	c_plxormod
-#define    plcalc_world	c_plcalc_world
+#define    plconfigtime	c_plconfigtime
 #define    plcont	c_plcont
 #define    plcpstrm	c_plcpstrm
-#define    pl_setcontlabelparam c_pl_setcontlabelparam
-#define    pl_setcontlabelformat c_pl_setcontlabelformat
+#define    plctime	c_plctime
 #define    plend	c_plend
 #define    plend1	c_plend1
 #define    plenv	c_plenv
@@ -498,7 +501,6 @@ typedef struct {
 #define    plot3d	c_plot3d
 #define    plot3dc	c_plot3dc
 #define    plparseopts  c_plparseopts
-#define    plsurf3d	c_plsurf3d
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
 #define    plpoin3	c_plpoin3
@@ -514,10 +516,13 @@ typedef struct {
 #define    plrgbhls     c_plrgbhls
 #define    plschr	c_plschr
 #define    plscmap0	c_plscmap0
-#define    plscmap1	c_plscmap1
+#define    plscmap0a	c_plscmap0a
 #define    plscmap0n	c_plscmap0n
-#define    plscmap1n	c_plscmap1n
+#define    plscmap1	c_plscmap1
+#define    plscmap1a	c_plscmap1a
 #define    plscmap1l	c_plscmap1l
+#define    plscmap1la	c_plscmap1la
+#define    plscmap1n	c_plscmap1n
 #define    plscol0	c_plscol0
 #define    plscol0a	c_plscol0a
 #define    plscolbg	c_plscolbg
@@ -525,11 +530,11 @@ typedef struct {
 #define    plscolor	c_plscolor
 #define    plscompression	c_plscompression
 #define    plsdev	c_plsdev
-#define    plsdiplt	c_plsdiplt
-#define    plsdiplz	c_plsdiplz
 #define    plsdidev	c_plsdidev
 #define    plsdimap	c_plsdimap
 #define    plsdiori	c_plsdiori
+#define    plsdiplt	c_plsdiplt
+#define    plsdiplz	c_plsdiplz
 #define    plseed       c_plseed
 #define    plsesc	c_plsesc
 #define    plsfam	c_plsfam
@@ -539,10 +544,13 @@ typedef struct {
 #define    plshades	c_plshades
 #define    plshade	c_plshade
 #define    plshade1	c_plshade1
+#define    plslabelfunc c_plslabelfunc
 #define    plsmaj	c_plsmaj
 #define    plsmin	c_plsmin
 #define    plsori	c_plsori
 #define    plspage	c_plspage
+#define    plspal0      c_plspal0
+#define    plspal1      c_plspal1
 #define    plspause	c_plspause
 #define    plsstrm	c_plsstrm
 #define    plssub	c_plssub
@@ -553,6 +561,7 @@ typedef struct {
 #define    plstripc	c_plstripc
 #define    plstripd	c_plstripd
 #define    plstyl	c_plstyl
+#define    plsurf3d	c_plsurf3d
 #define    plsvect      c_plsvect
 #define    plsvpa	c_plsvpa
 #define    plsxax	c_plsxax
@@ -569,6 +578,7 @@ typedef struct {
 #define    plw3d	c_plw3d
 #define    plwid	c_plwid
 #define    plwind	c_plwind
+#define    plxormod	c_plxormod
 
 #endif /* __PLSTUBS_H__ */
 
@@ -605,6 +615,11 @@ extern "C" {
 
 void c_pladv(PLINT page); //%name pladv
 
+/* Plot an arc */
+
+void c_plarc(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
+	     PLBOOL fill); //%name plarc
+
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
 
@@ -630,6 +645,12 @@ void c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
 	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz); //%name plbox3
 
+/* Calculate broken-down time from continuous time for current stream. */
+  void c_plbtime(PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT ctime); //%name plbtime //%output year, month, day, hour, min, sec
+  
+/* Start new page.  Should only be used with pleop(). */
+
+
 /* Set xor mode; 1-enter, 0-leave */
 
 void c_plxormod(PLINT mode, PLINT *status); //%name plxormod //%output status
@@ -652,6 +673,10 @@ inline void my_plcol(PLINT icol0) {
 /* Set color, map 1.  Argument is a float between 0. and 1. */
 
 void c_plcol1(PLFLT col1); //%name plcol1
+
+/* Configure transformation between continuous and broken-down time (and
+   vice versa) for current stream. */
+  void c_plconfigtime(PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOOL ifbtime_offset, PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec); //%name plconfigtime
 
 /* Identity transformation. */
 
@@ -752,6 +777,9 @@ void my_plcont2p(PLFLT *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky,
 
 void c_plcpstrm(PLINT iplsr, PLINT flags); //%name plcpstrm
 
+/* Calculate continuous time from broken-down time for current stream. */
+  void c_plctime(PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT *ctime);  //%name plctime  //%output ctime
+  
 /* Converts input values from relative device coordinates to relative plot */
 /* coordinates. */
 
@@ -1359,6 +1387,14 @@ void c_plsori(PLINT ori); //%name plsori
 
 void c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 	  PLINT xoff, PLINT yoff); //%name plspage
+
+/* Set the colors for color table 0 from a cmap0 file */
+
+  void c_plspal0(const char *filename); //%name plspal0
+
+/* Set the colors for color table 1 from a cmap1 file */
+
+void c_plspal1(const char *filename); //%name plspal1
 
 /* Set the pause (on end-of-page) status */
 
