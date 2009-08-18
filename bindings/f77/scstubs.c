@@ -62,7 +62,7 @@ PL_SETCONTLABELPARAMa(PLFLT *offset, PLFLT *size, PLFLT *spacing, PLINT *active)
 }
 
 void
-PLABORT7(char *text)
+PLABORT7(const char *text)
 {
     plabort(text);
 }

@@ -270,7 +270,7 @@ c     MJD = B*365.24219878 - 678940.364163900
       offset1 = -678940.0d0
       offset2 = -0.3641639d0
       call plconfigtime(scale, offset1, offset2, z'0', 0, 0, 0, 0, 0, 
-     1     0, 0.)
+     1     0, 0.d0)
 
       do kind = 0,6
          if (kind .eq. 0) then
@@ -358,10 +358,10 @@ c     MJD = B*365.24219878 - 678940.364163900
          call plcol0(1)
          if (if_TAI_time_format) then
             call plconfigtime(scale, offset1, offset2, z'0', 0, 0, 0, 
-     1           0, 0, 0, 0.)
+     1           0, 0, 0, 0.d0)
          else
             call plconfigtime(scale, offset1, offset2, z'2', 0, 0, 0, 
-     1           0, 0, 0, 0.)
+     1           0, 0, 0, 0.d0)
          endif
          call pltimefmt(time_format)
          call plbox("bcnstd", xlabel_step, 0, "bcnstv", 0.d0, 0)
