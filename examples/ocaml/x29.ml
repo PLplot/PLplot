@@ -24,6 +24,7 @@
 *)
 
 open Plplot
+open Printf
 
 let pi = atan 1.0 *. 4.0
 
@@ -183,6 +184,148 @@ let plot3 () =
   plline x y;
   ()
 
+let plot4 () =
+  (* TAI-UTC (seconds) as a function of time.
+     Use Besselian epochs as the continuous time interval just to prove
+     this does not introduce any issues. *)
+
+  (* Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
+   * B = 1900. + (JD -2415020.31352)/365.242198781
+   * ==> (as calculated with aid of "bc -l" command)
+   * B = (MJD + 678940.364163900)/365.242198781
+   * ==>
+   * MJD = B*365.24219878 - 678940.364163900 *)
+  let scale = 365.242198781 in
+  let offset1 = -678940.0 in
+  let offset2 = -0.3641639 in
+  plconfigtime scale offset1 offset2 0x0 false 0 0 0 0 0 0.0;
+
+  let xmin = ref 0.0 in
+  let xmax = ref 0.0 in
+  let npts = ref 0 in
+  let ymin = ref 0.0 in
+  let ymax = ref 0.0 in
+  let time_format = ref "" in
+  let if_TAI_time_format = ref false in
+  let title_suffix = ref "" in
+  let xtitle = ref "" in
+  let xlabel_step = ref 0.0 in
+
+  for kind = 0 to 6 do
+    let () =
+      match kind with
+      | 0 ->
+          xmin := plctime 1950 0 2 0 0 0.0;
+          xmax := plctime 2020 0 2 0 0 0.0;
+          npts := 70 * 12 + 1;
+          ymin := 0.0;
+          ymax := 36.0;
+          time_format := "%Y%";
+          if_TAI_time_format := true;
+          title_suffix := "from 1950 to 2020";
+          xtitle := "Year";
+          xlabel_step := 10.0;
+      | 1
+      | 2 ->
+          xmin := plctime 1961 7 1 0 0 (1.64757 -. 0.20);
+          xmax := plctime 1961 7 1 0 0 (1.64757 +. 0.20);
+          npts := 1001;
+          ymin := 1.625;
+          ymax := 1.725;
+          time_format := "%S%2%";
+          title_suffix := "near 1961-08-01 (TAI)";
+          xlabel_step := 0.05 /. (scale *. 86400.0);
+          if kind = 1 then (
+            if_TAI_time_format := true;
+            xtitle := "Seconds (TAI)";
+          )
+          else (
+            if_TAI_time_format := false;
+            xtitle := "Seconds (TAI) labelled with corresponding UTC";
+          )
+      | 3
+      | 4 ->
+          xmin := plctime 1963 10 1 0 0 (2.6972788 -. 0.20);
+          xmax := plctime 1963 10 1 0 0 (2.6972788 +. 0.20);
+          npts := 1001;
+          ymin := 2.55;
+          ymax := 2.75;
+          time_format := "%S%2%";
+          title_suffix := "near 1963-11-01 (TAI)";
+          xlabel_step := 0.05 /. (scale *. 86400.0);
+          if kind = 3 then (
+            if_TAI_time_format := true;
+            xtitle := "Seconds (TAI)";
+          )
+          else (
+            if_TAI_time_format := false;
+            xtitle := "Seconds (TAI) labelled with corresponding UTC";
+          )
+      | 5
+      | 6 ->
+          xmin := plctime 2009 0 1 0 0 (34.0 -. 5.0);
+          xmax := plctime 2009 0 1 0 0 (34.0 +. 5.0);
+          npts := 1001;
+          ymin := 32.5;
+          ymax := 34.5;
+          time_format := "%S%2%";
+          title_suffix := "near 2009-01-01 (TAI)";
+          xlabel_step := 1.0 /. (scale *. 86400.0);
+          if kind = 5 then (
+            if_TAI_time_format := true;
+            xtitle := "Seconds (TAI)";
+          )
+          else (
+            if_TAI_time_format := false;
+            xtitle := "Seconds (TAI) labelled with corresponding UTC";
+          )
+      | _ -> failwith "Bad plot kind"
+    in
+
+    let x = Array.make 1001 0.0 in
+    let y = Array.make 1001 0.0 in
+
+    for i = 0 to !npts - 1 do
+      x.(i) <-
+        !xmin +. float_of_int i *. (!xmax -. !xmin) /. (float_of_int (!npts - 1));
+      plconfigtime scale offset1 offset2 0x0 false 0 0 0 0 0 0.0;
+      let tai = x.(i) in
+      (* The "full" calls to plbtime are commented out to avoid OCaml
+         compilation warnings. *)
+      (*
+      let tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec =
+        plbtime tai
+      in
+      *)
+      ignore (plbtime tai);
+      plconfigtime scale offset1 offset2 0x2 false 0 0 0 0 0 0.0;
+      let utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec =
+        plbtime tai
+      in
+      plconfigtime scale offset1 offset2 0x0 false 0 0 0 0 0 0.0;
+      let utc = plctime utc_year utc_month utc_day utc_hour utc_min utc_sec in
+      y.(i) <- (tai -. utc) *. scale *. 86400.0;
+    done;
+
+    pladv 0;
+    plvsta ();
+    plwind !xmin !xmax !ymin !ymax;
+    plcol0 1;
+    plconfigtime scale offset1 offset2
+      (if !if_TAI_time_format then 0x0 else 0x2)
+      false 0 0 0 0 0 0.0;
+    pltimefmt !time_format;
+    plbox "bcnstd" !xlabel_step 0 "bcnstv" 0.0 0;
+    plcol0 3;
+    let title = sprintf "#frPLplot Example 29 - TAI-UTC %s" !title_suffix in
+    pllab !xtitle "TAI-UTC (sec)" title;
+
+    plcol0 4;
+
+    plline (Array.sub x 0 !npts) (Array.sub y 0 !npts);
+  done;
+  ()
+
 (*--------------------------------------------------------------------------*\
  * Draws several plots which demonstrate the use of date / time formats for
  * the axis labels.
@@ -206,6 +349,8 @@ let () =
   plot2 ();
 
   plot3 ();
+
+  plot4 ();
 
   (* Don't forget to call plend() to finish off! *)
   plend();

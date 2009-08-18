@@ -18,19 +18,9 @@ c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
  void
 c_pladv(PLINT page);
 
-/*
  void
-c_plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
-           PLFLT scale, PLFLT dx, PLFLT dy) ;
-
- void
-c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
- void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-        PLPointer pltr_data);
-*/
-
- void
-c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
+c_plarc(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
+        PLBOOL fill);
 
  void
 c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
@@ -38,6 +28,9 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 
  void
 c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, plplot_bin_style opt);
+
+ void
+c_plbtime(PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT ctime);
 
  void
 c_plbop(void);
@@ -55,10 +48,6 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window);
 
  void
-c_plarc(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
-        PLBOOL fill);
-
- void
 c_plclear(void);
 
  void
@@ -66,6 +55,9 @@ c_plcol0(PLINT icol0);
 
  void
 c_plcol1(PLFLT col1);
+
+ void
+c_plconfigtime(PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOOL ifbtime_offset, PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec);
 
 /*
  void
@@ -85,6 +77,9 @@ plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
  void
 c_plcpstrm(PLINT iplsr, PLBOOL flags);
+
+ void
+c_plctime(PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT *ctime);
 
 /*
  void
@@ -223,9 +218,6 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
   PLINT nbin, plplot_hist_style opt);
 
  void
-c_plhls(PLFLT h, PLFLT l, PLFLT s);
-
- void
 c_plhlsrgb(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
 
  void
@@ -322,6 +314,9 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text);
 c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
       PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text);
 
+ PLFLT
+c_plrandd(void);
+
  void
 c_plreplot(void);
 
@@ -395,6 +390,9 @@ c_plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
 c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
 
  void
+c_plseed(unsigned int s);
+
+ void
 c_plsesc(char esc);
 
  void
@@ -455,6 +453,10 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
   void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
   void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
   PLPointer pltr_data);
+
+ void
+c_plslabelfunc(void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer),
+               PLPointer label_data);
 */
 
  void
@@ -519,9 +521,10 @@ c_plstripd(PLINT id);
 /*
  void
 c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
-  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-  PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
-         PLFLT valuemin, PLFLT valuemax);
+        PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+        PLFLT valuemin, PLFLT valuemax,
+        void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+        PLPointer pltr_data);
 */
 
  void
@@ -542,6 +545,9 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     PLINT opt, PLFLT *clevel, PLINT nlevel,
     PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax);
 */
+
+ void
+c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
 
  void
 c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
@@ -570,6 +576,13 @@ c_pltimefmt(const char *fmt);
  void
 c_plvasp(PLFLT aspect);
 
+/*
+ void
+c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+ void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+        PLPointer pltr_data);
+*/
+
  void
 c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect);
 
@@ -592,12 +605,6 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
 
  void
 c_plxormod(PLBOOL mode, PLBOOL *status);
-
- void
-c_plseed(unsigned int s);
-
- PLFLT
-c_plrandd(void);
 
 /*
  void
@@ -666,7 +673,6 @@ plMergeOpts(PLOptionTable *options, const char *name, const char **notes);
 
  void
 plSetUsage(const char *program_string, const char *usage_string);
-
 */
 
  int

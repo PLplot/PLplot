@@ -77,6 +77,11 @@ let manual_function_attributes =
       parameter_attrs = Some ["inc", ["in"; "size_is(nlin)"];
                               "del", ["in"; "size_is(nlin)"]];
     };
+    {
+      function_name = "c_plctime";
+      function_attrs = None;
+      parameter_attrs = Some ["ctime", ["out"]];
+    };
     (* For now, this will be wrapped by hand...
     {
       function_name = "c_plgriddata";
@@ -311,6 +316,12 @@ let parameter_attributes function_name types names =
       function_name = "c_plcalc_world",
       pmatch "\\*" p_type,
       List.mem p_name ["wx"; "wy"; "window"],
+      true,
+      ["out"];
+      (* Time conversion *)
+      function_name = "c_plbtime",
+      pmatch "\\*" p_type,
+      true,
       true,
       ["out"];
     ]
