@@ -171,14 +171,13 @@ static void plstrip_legend(PLStrip *stripc, int first)
 static void plstrip_gen( PLStrip *strip )
 {
     int i;
-    PLFLT x[]={0.,1.,1.,0.}, y[]={0.,0.,1.,1.};
 
 /* Set up window */
 
     plvpor(0,1,0,1);
     plwind(0,1,0,1);
     plcol(0);plpsty(0);
-    plfill(4, &x[0], &y[0]);
+    plclear();
     plvsta();
 
 /* Draw box and same window dimensions */
