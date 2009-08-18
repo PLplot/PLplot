@@ -23,6 +23,7 @@ along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 *)
 
 open Plplot
+open Printf
 
 (*--------------------------------------------------------------------------*\
  * mapform19
@@ -42,6 +43,48 @@ let mapform19 x y =
   let xp = radius *. cos (x *. pi /. 180.0) in
   let yp = radius *. sin (x *. pi /. 180.0) in
   (xp, yp)
+
+(* "Normalize" longitude values so that they always fall between -180.0 and
+   180.0 *)
+let normalize_longitude lon =
+  if lon >= -180.0 && lon <= 180.0 then
+    lon
+  else
+    let times = floor ((abs_float lon +. 180.0) /. 360.0) in
+    if lon < 0.0 then
+      lon +. 360.0 *. times
+    else
+      lon -. 360.0 *. times
+
+(* A custom axis labeling function for longitudes and latitudes. *)
+let geolocation_labeler axis value =
+  let label_val, direction_label =
+    match axis with
+    | PL_Y_AXIS ->
+        let label_val = value in
+        label_val,
+          if label_val > 0.0 then
+            " N"
+          else if label_val < 0.0 then
+            " S"
+          else
+            "Eq"
+    | PL_X_AXIS ->
+        let label_val = normalize_longitude value in
+        label_val,
+          if label_val > 0.0 then
+            " E"
+          else if label_val < 0.0 then
+            " W"
+          else
+            ""
+    | PL_Z_AXIS -> invalid_arg "Invalid axis - only X or Y are supported"
+  in
+  if axis = PL_Y_AXIS && label_val = 0.0 then
+    (* A special case for the equator *)
+    sprintf "%s" direction_label
+  else
+    sprintf "%.0f%s" (abs_float label_val) direction_label
 
 (*--------------------------------------------------------------------------*\
  * main
@@ -65,8 +108,11 @@ let () =
   let minx = 190.0 in
   let maxx = 190.0 +. 360.0 in
 
+  (* Setup a custom latitude and longitude-based scaling function. *)
+  plslabelfunc geolocation_labeler;
+
   plcol0 1;
-  plenv minx maxx miny maxy 1 (-1);
+  plenv minx maxx miny maxy 1 70;
   (* No transform function is passed to plmap.  Since we have not set one yet,
      it defaults to using an identity function (xp = x, yp = y) *)
   plmap "usaglobe" minx maxx miny maxy;
@@ -76,10 +122,13 @@ let () =
   let maxx = 340.0 in
 
   plcol0 1;
-  plenv minx maxx miny maxy 1 (-1);
+  plenv minx maxx miny maxy 1 70;
   (* Again, we have not set a transform.  Everything remains in a Cartesian
      projection. *)
   plmap "usaglobe" minx maxx miny maxy;
+
+  (* Clear the labeling function *)
+  plunset_labelfunc ();
 
   (* Polar, Northern hemisphere *)
   let minx = 0.0 in

@@ -178,6 +178,25 @@ quote(mlmli, "type plplot_parse_method_type = \
                 PL_PARSE_NODASH | \
                 PL_PARSE_SKIP");
 
+// Data type to reference axes
+quote(mlmli, "type plplot_axis_type = \
+                PL_X_AXIS | \
+                PL_Y_AXIS | \
+                PL_Z_AXIS");
+
+// Custom axis labeling
+quote(ml, "external ml_plslabelfunc : unit -> unit = \"ml_plslabelfunc\"");
+quote(ml,
+"let plslabelfunc (f : plplot_axis_type -> float -> string) =\
+  Callback.register \"caml_plplot_customlabel\" f;\
+  ml_plslabelfunc ()");
+quote(mli, "val plslabelfunc : (plplot_axis_type -> float -> string) -> unit");
+quote(ml,
+"let plunset_labelfunc () =\
+  Callback.register \"caml_plplot_customlabel\" 0;\
+  ml_plslabelfunc ()");
+quote(mli, "val plunset_labelfunc : unit -> unit");
+
 RAW_ML(external plgriddata : float array -> float array -> float array -> float array -> float array -> plplot_grid_method_type -> float -> float array array = "ml_plgriddata_bytecode" "ml_plgriddata")
 RAW_ML(external plparseopts : string array -> plplot_parse_method_type list -> int = "ml_plparseopts")
 

@@ -17,8 +17,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <plplotP.h>
-
 /* The "usual" OCaml includes */
 #include <caml/alloc.h>
 #include <caml/callback.h>
@@ -28,7 +26,10 @@ along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 #include <caml/mlvalues.h>
 #include <caml/bigarray.h>
 
+#include <plplotP.h>
 #include <plplot.h>
+
+#undef snprintf
 
 #include <stdio.h>
 
@@ -36,10 +37,12 @@ along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 #define CAML_PLPLOT_PLOTTER_FUNC_NAME "caml_plplot_plotter"
 #define CAML_PLPLOT_MAPFORM_FUNC_NAME "caml_plplot_mapform"
 #define CAML_PLPLOT_DEFINED_FUNC_NAME "caml_plplot_defined"
+#define CAML_PLPLOT_LABEL_FUNC_NAME "caml_plplot_customlabel"
 
 typedef void(*ML_PLOTTER_FUNC)(PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer);
 typedef PLINT(*ML_DEFINED_FUNC)(PLFLT, PLFLT);
 typedef void(*ML_MAPFORM_FUNC)(PLINT, PLFLT*, PLFLT*);
+typedef void(*ML_LABEL_FUNC)(PLINT, PLFLT, char*, PLINT, PLPointer);
 
 /*
 
@@ -130,6 +133,28 @@ void ml_mapform(PLINT n, PLFLT *x, PLFLT *y) {
     CAMLreturn0;
 }
 
+// A simple routine to wrap a properly registered OCaml callback in a form
+// usable by PLPlot routines.
+void ml_labelfunc(PLINT axis, PLFLT n, char *label, PLINT length, PLPointer d) {
+    CAMLparam0();
+    CAMLlocal1(result);
+
+    // Get the OCaml callback function (if there is one)
+    static value * callback = NULL;
+    if (callback == NULL)
+        callback = caml_named_value(CAML_PLPLOT_LABEL_FUNC_NAME);
+
+    // No check to see if a callback function has been designated yet,
+    // because that is checked before we get to this point.
+    result =
+        caml_callback2(*callback, Val_int(axis - 1), caml_copy_double(n));
+
+    // Copy the OCaml callback output to the proper location.
+    snprintf(label, length, "%s", String_val(result));
+
+    CAMLreturn0;
+}
+
 // Check if the matching OCaml callback is defined.  Return NULL if it is not,
 // and the proper function pointer if it is.
 ML_PLOTTER_FUNC get_ml_plotter_func() {
@@ -175,6 +200,24 @@ ML_MAPFORM_FUNC get_ml_mapform_func() {
     }
 }
 
+// Custom wrapper for plslabelfunc
+value ml_plslabelfunc(value unit) {
+    CAMLparam1(unit);
+    static value * label = NULL;
+    if (label == NULL)
+        label = caml_named_value(CAML_PLPLOT_LABEL_FUNC_NAME);
+
+    if (label == NULL || Val_int(0) == *label) {
+        // No plotter defined
+        plslabelfunc(NULL, NULL);
+    }
+    else {
+        // Plotter is defined
+        plslabelfunc(ml_labelfunc, NULL);
+    }
+
+    CAMLreturn(Val_unit);
+}
 
 /*
 
