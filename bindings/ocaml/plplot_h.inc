@@ -107,6 +107,8 @@
 [mlname(plsmin)] void c_plsmin ( double def, double scale );
 [mlname(plsori)] void c_plsori ( int ori );
 [mlname(plspage)] void c_plspage ( double xp, double yp, int xleng, int yleng, int xoff, int yoff );
+[mlname(plspal0)] void c_plspal0 ( [string] const char * filename );
+[mlname(plspal1)] void c_plspal1 ( [string] const char * filename );
 [mlname(plspause)] void c_plspause ( boolean pause );
 [mlname(plsstrm)] void c_plsstrm ( int strm );
 [mlname(plssub)] void c_plssub ( int nx, int ny );

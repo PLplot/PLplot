@@ -58,6 +58,10 @@ let () =
   (* Parse and process command line arguments *)
   ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
 
+  (* Load color palettes *)
+  plspal0 "cmap0_black_on_white.pal";
+  plspal1 "cmap1_gray.pal";
+
   (* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display *)
   plscmap0n 3;
 
@@ -135,6 +139,11 @@ let () =
   pllab "distance" "altitude" "Bogon density";
 
   (* Plot using 1d coordinate transform *)
+
+  (* Load color palettes *)
+  plspal0 "cmap0_black_on_white.pal";
+  plspal1 "cmap1_blue_yellow.pal";
+
   pladv 0;
   plvpor 0.1 0.9 0.1 0.9;
   plwind (-1.0) 1.0 (-1.0) 1.0;
@@ -150,6 +159,11 @@ let () =
   pllab "distance" "altitude" "Bogon density";
 
   (* Plot using 2d coordinate transform *)
+
+  (* Load color palettes *)
+  plspal0 "cmap0_black_on_white.pal";
+  plspal1 "cmap1_blue_red.pal";
+
   pladv 0;
   plvpor 0.1 0.9 0.1 0.9;
   plwind (-1.0) 1.0 (-1.0) 1.0;
@@ -167,6 +181,11 @@ let () =
   pllab "distance" "altitude" "Bogon density, with streamlines";
 
   (* Plot using 2d coordinate transform *)
+
+  (* Load color palettes *)
+  plspal0 "";
+  plspal1 "";
+
   pladv 0;
   plvpor 0.1 0.9 0.1 0.9;
   plwind (-1.0) 1.0 (-1.0) 1.0;
@@ -201,6 +220,11 @@ let () =
     pllab "distance" "altitude" "Bogon density with exclusion";
   );
   (* Example with polar coordinates. *)
+
+  (* Load colour palettes*)
+  plspal0 "cmap0_black_on_white.pal";
+  plspal1 "cmap1_gray.pal";
+
   pladv 0;
   plvpor 0.1 0.9 0.1 0.9;
   plwind (-1.0) 1.0 (-1.0) 1.0;
