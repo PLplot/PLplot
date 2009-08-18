@@ -49,15 +49,12 @@ c      Initialize PLplot
 c      Set up viewport and window, but do not draw box
 
       call plenv(-1.3d0, 1.3d0, -1.3d0, 1.3d0, 1, -2)
-      do i = 1,10
-        do j = 0,360
-          x(j) = 0.1d0*i*x0(j)
-          y(j) = 0.1d0*i*y0(j)
-        enddo
-c        Draw circles for polar grid
 
-        call plline(361,x,y)
+c     Draw circles for polar grid
+      do i = 1,10
+         call plarc(0.0d0, 0.0d0, 0.1d0*i, 0.1d0*i, 0.0d0, 360.0d0, 0)
       enddo
+
       call plcol0(2)
       do i = 0,11
         theta = 30.0d0*i

@@ -42,6 +42,7 @@ c     This is the ASCII value for character @
       call plot1()
       call plot2()
       call plot3()
+      call plot4()
 
       call plend()
       end
@@ -233,4 +234,144 @@ c     Draw a box with ticks spaced every 14 days in X and 1 hour in Y.
       call plpoin(npts, x, y, 2)
       call plline(npts, x, y)
  
+      end
+
+c
+c
+c
+      subroutine plot4() 
+      implicit none
+
+c     TAI-UTC (seconds) as a function of time.
+c     Use Besselian epochs as the continuous time interval just to prove
+c     this does not introduce any issues.
+  
+      real*8 scale, offset1, offset2
+      real*8 xmin, xmax, ymin, ymax, xlabel_step
+      integer kind, npts, i
+      logical if_TAI_time_format
+      character*10 time_format
+      character*100 title_suffix
+      character*100 xtitle
+      character*100 title
+      real*8 x(1001), y(1001)
+      integer tai_year, tai_month, tai_day, tai_hour, tai_min;
+      real*8 tai_sec, tai;
+      integer utc_year, utc_month, utc_day, utc_hour, utc_min;
+      real*8 utc_sec, utc;
+      
+c     Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
+c     B = 1900. + (JD -2415020.31352)/365.242198781 
+c     ==> (as calculated with aid of "bc -l" command)
+c     B = (MJD + 678940.364163900)/365.242198781
+c     ==>
+c     MJD = B*365.24219878 - 678940.364163900
+      scale = 365.242198781d0
+      offset1 = -678940.0d0
+      offset2 = -0.3641639d0
+      call plconfigtime(scale, offset1, offset2, z'0', 0, 0, 0, 0, 0, 
+     1     0, 0.)
+
+      do kind = 0,6
+         if (kind .eq. 0) then
+            call plctime(1950,0,2,0,0,0.,xmin)
+            call plctime(2020,0,2,0,0,0.,xmax)
+            npts = 70*12 + 1
+            ymin = 0.0d0
+            ymax = 36.0d0
+            time_format="%Y%"
+            if_TAI_time_format = .true.
+            title_suffix = "from 1950 to 2020"
+            xtitle =  "Year"
+            xlabel_step = 10.0d0
+         elseif ((kind .eq. 1) .or. (kind .eq. 2)) then
+            call plctime(1961,7,1,0,0,1.64757d0-.20d0, xmin)
+            call plctime(1961,7,1,0,0,1.64757d0+.20d0, xmax)
+            npts = 1001
+            ymin = 1.625d0
+            ymax = 1.725d0
+            time_format = "%S%2%"
+            title_suffix = "near 1961-08-01 (TAI)"
+            xlabel_step = 0.05d0/(scale*86400.0d0)
+            if (kind .eq. 1) then
+               if_TAI_time_format = .true.
+               xtitle = "Seconds (TAI)"
+            else
+               if_TAI_time_format = .false.
+               xtitle = "Seconds (TAI) labelled with corresponding UTC"
+            endif
+         elseif ((kind .eq. 3) .or. (kind .eq. 4)) then
+            call plctime(1963,10,1,0,0,2.6972788d0-.20d0, xmin)
+            call plctime(1963,10,1,0,0,2.6972788d0+.20d0, xmax)
+            npts = 1001
+            ymin = 2.55d0
+            ymax = 2.75d0
+            time_format = "%S%2%"
+            title_suffix = "near 1963-11-01 (TAI)"
+            xlabel_step = 0.05d0/(scale*86400.0d0)
+            if (kind .eq. 3) then
+               if_TAI_time_format = .true.
+               xtitle = "Seconds (TAI)"
+            else
+               if_TAI_time_format = .false.
+               xtitle = "Seconds (TAI) labelled with corresponding UTC"
+            endif
+         elseif ((kind .eq. 5) .or. (kind .eq. 6)) then
+            call plctime(2009,0,1,0,0,34.d0-5.d0,xmin)
+            call plctime(2009,0,1,0,0,34.d0+5.d0,xmax)
+            npts = 1001
+            ymin = 32.5d0
+            ymax = 34.5d0
+            time_format = "%S%2%"
+            title_suffix = "near 2009-01-01 (TAI)"
+            xlabel_step = 1.d0/(scale*86400.d0)
+            if (kind .eq. 5) then
+               if_TAI_time_format = .true.
+               xtitle = "Seconds (TAI)"
+            else 
+               if_TAI_time_format = .false.
+               xtitle = "Seconds (TAI) labelled with corresponding UTC"
+            endif
+         endif
+
+         do i=0,npts-1
+            x(i+1) = xmin + i*(xmax-xmin)/(dble(npts-1))
+            call plconfigtime(scale, offset1, offset2, z'0', 0, 0, 0, 0, 
+     1           0, 0, 0.d0)
+            tai = x(i+1);
+            call plbtime(tai_year, tai_month, tai_day, tai_hour, 
+     1           tai_min, tai_sec, tai)
+            call plconfigtime(scale, offset1, offset2, z'2', 0, 0, 0, 
+     1           0, 0, 0, 0.d0)
+            call plbtime(utc_year, utc_month, utc_day, utc_hour, 
+     1           utc_min, utc_sec, tai)
+            call plconfigtime(scale, offset1, offset2, z'0', 0, 0, 0, 
+     1           0, 0, 0, 0.d0)
+            call plctime(utc_year, utc_month, utc_day, utc_hour, 
+     1           utc_min, utc_sec, utc)
+            y(i+1)=(tai-utc)*scale*86400.d0
+         enddo
+
+         call pladv(0)
+         call plvsta()
+         call plwind(xmin, xmax, ymin, ymax)
+         call plcol0(1)
+         if (if_TAI_time_format) then
+            call plconfigtime(scale, offset1, offset2, z'0', 0, 0, 0, 
+     1           0, 0, 0, 0.)
+         else
+            call plconfigtime(scale, offset1, offset2, z'2', 0, 0, 0, 
+     1           0, 0, 0, 0.)
+         endif
+         call pltimefmt(time_format)
+         call plbox("bcnstd", xlabel_step, 0, "bcnstv", 0.d0, 0)
+         call plcol0(3)
+         title = "@frPLplot Example 29 - TAI-UTC "//
+     1        title_suffix(:lnblnk(title_suffix))
+         call pllab(xtitle, "TAI-UTC (sec)", title)
+    
+         call plcol0(4)
+         
+         call plline(npts, x, y)
+      enddo
       end
