@@ -61,6 +61,8 @@ package body PLplot_Traditional is
     -- This might look better on anti-aliased displays.
     -- fix this Darken some colors which have low contrast on white background, e.g. Yellow.
     -- fix this Make a version that draws on white and converts _all_ colors to black for publications.
+    -- fix this Make this so that it works on Color Map 1 because as of now, it does
+    -- not change the background color for e.g. surface plots. See also Draw_On_Black.
     procedure Draw_On_White is
     begin
         plscol0(Black, 255, 255, 255);
@@ -904,7 +906,7 @@ package body PLplot_Traditional is
                     Reverse_Hue_3(2) := False;
                     plscmap1l(HLS, Controls_3, Hue_3, Lightness_3, Saturation_3, Reverse_Hue_3);
                 end;
-            when Blue_Green_Red =>
+            when Blue_Green_Red => -- This appears to be the PLplot default color theme.
                 begin
                     Blue_3(0) := 1.0;
                     Blue_3(1) := 0.0;
