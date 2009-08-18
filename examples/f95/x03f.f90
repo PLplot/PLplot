@@ -46,14 +46,10 @@
 !      Set up viewport and window, but do not draw box
 
       call plenv(-1.3_plflt, 1.3_plflt, -1.3_plflt, 1.3_plflt, 1, -2)
+!     Draw circles for polar grid
       do i = 1,10
-        do j = 0,360
-          x(j) = 0.1_plflt*i*x0(j)
-          y(j) = 0.1_plflt*i*y0(j)
-        enddo
-!        Draw circles for polar grid
-
-        call plline(x,y)
+        call plarc(0.0_plflt, 0.0_plflt, 0.1_plflt*i, 0.1_plflt*i, &
+             0.0_plflt, 360.0_plflt, 0)
       enddo
       call plcol0(2)
       do i = 0,11
