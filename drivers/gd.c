@@ -1532,13 +1532,22 @@ void plD_eop_jpeg(PLStream *pls)
     int im_size=0;
     void *im_ptr=NULL;
     size_t nwrite;
+    int jpeg_compression;
 
     if (pls->family || pls->page == 1) {
+      /*  Set the compression/quality level for JPEG files
+       *  The higher the value, the bigger/better the image is
+       */
+      if ( (pls->dev_compression<=0)||(pls->dev_compression>99) )
+        jpeg_compression=90;
+      else
+        jpeg_compression = pls->dev_compression;
+
        /* image is written to output file by the driver
           since if the gd.dll is linked to a different c
           lib a crash occurs - this fix works also in Linux */
-       /* gdImageJpeg(dev->im_out, pls->OutFile, pls->dev_compression); */
-       im_ptr = gdImageJpegPtr(dev->im_out, &im_size, pls->dev_compression);
+       /* gdImageJpeg(dev->im_out, pls->OutFile, jpeg_compression); */
+       im_ptr = gdImageJpegPtr(dev->im_out, &im_size, jpeg_compression);
        if( im_ptr ) {
          nwrite = fwrite(im_ptr, sizeof(char), im_size, pls->OutFile);
          if (nwrite != im_size) 
