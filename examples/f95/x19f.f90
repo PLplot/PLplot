@@ -65,7 +65,70 @@
          y(i) = yp
       enddo
       return
-      end
+      end subroutine
+
+!     "Normalize" longitude values so that they always fall between 
+!      -180.0 and 180.0
+      function normalize_longitude(lon)
+      use plplot
+      implicit none
+      real(kind=plflt) :: normalize_longitude
+      real(kind=plflt) :: lon, times
+
+      if ((lon .ge. -180.0d0) .and. (lon .le. 180.0d0)) then
+         normalize_longitude = lon
+      else 
+         times = floor ((abs(lon) + 180.0d0) / 360.0d0)
+        if (lon .lt. 0.0d0) then
+           normalize_longitude = lon + 360.0d0 * times
+        else
+           normalize_longitude = lon - 360.0d0 * times
+        endif
+      endif
+      return
+      end function
+
+!
+! A custom axis labeling function for longitudes and latitudes.
+!
+      subroutine geolocation_labeler(axis, value, label, length)
+      use plplot
+      implicit none
+      integer :: axis, length
+      real(kind=plflt) :: value
+      character*(length) label
+      character*5 direction_label
+      real(kind=plflt) :: label_val
+      real(kind=plflt) :: normalize_longitude
+
+      if (axis .eq. 2) then
+         label_val = value
+         if (label_val .gt. 0.0d0) then
+            direction_label = ' N'
+         else if (label_val .lt. 0.0d0) then
+            direction_label = ' S'
+         else
+            direction_label = 'Eq'
+         endif
+      else if (axis .eq. 1) then
+         label_val = normalize_longitude(value)
+         if (label_val .gt. 0.0d0) then
+            direction_label = ' E'
+         else if (label_val .lt. 0.0d0) then
+            direction_label = ' W'
+         else
+            direction_label = ''
+         endif
+      endif    
+      if (axis .eq. 2 .and. value .eq. 0.0d0) then
+!     A special case for the equator
+         label = direction_label    
+      else if (abs(label_val) .lt. 100.0d0) then
+         write(label,'(I2.1,A2)') iabs(int(label_val)),direction_label
+      else
+        write(label,'(I3.1,A2)') iabs(int(label_val)),direction_label
+      endif
+      end subroutine
 
 !--------------------------------------------------------------------------
 ! main
@@ -80,6 +143,7 @@
       integer c
       external ident
       external mapform19
+      external geolocation_labeler
 
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
@@ -97,8 +161,11 @@
       minx = 190
       maxx = 190+360
 
+! Setup a custom latitude and longitude-based scaling function.
+      call plslabelfunc(geolocation_labeler)
+
       call plcol0(1)
-      call plenv(minx, maxx, miny, maxy, 1, -1)
+      call plenv(minx, maxx, miny, maxy, 1, 70)
       call plmap(ident, 'usaglobe', minx, maxx, miny, maxy)
 
 ! The Americas
@@ -107,8 +174,11 @@
       maxx = 340
 
       call plcol0(1)
-      call plenv(minx, maxx, miny, maxy, 1, -1)
+      call plenv(minx, maxx, miny, maxy, 1, 70)
       call plmap(ident, 'usaglobe', minx, maxx, miny, maxy)
+
+! Clear the labeling function
+      call plslabelfunc(0)
 
 ! Polar, Northern hemisphere
 
@@ -124,4 +194,4 @@
               0.0_plflt, 360.0_plflt, -10.0_plflt, &
               80.0_plflt)
       call plend()
-      end
+      end program x19f

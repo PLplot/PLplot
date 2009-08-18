@@ -303,6 +303,7 @@
 #define    PLSHADES17	FNAME(PLSHADES17,plshades17)
 #define    PLSHADES27	FNAME(PLSHADES27,plshades27)
 #define    PLSHADES7	FNAME(PLSHADES7,plshades7)
+#define    PLSLABELFUNC FNAME(PLSLABELFUNC,plslabelfunc)
 #define    PLSMAJ	FNAME(PLSMAJ,plsmaj)
 #define    PLSMEM	FNAME(PLSMEM,plsmem)
 #define    PLSMIN	FNAME(PLSMIN,plsmin)

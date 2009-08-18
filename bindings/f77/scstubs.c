@@ -36,6 +36,9 @@
 #endif
 static void (STDCALL *plmapform)(PLINT *, PLFLT *, PLFLT *) ; /* Note: slightly different prototype than
                                                                  (*mapform)! */
+/* Slightly different to (*label_func) as we don't support PLPointer for
+ * additional data in f77. */
+static void (STDCALL *pllabelfunc)(PLINT *, PLFLT *, char *, PLINT *);
 
 void
 PL_SETCONTLABELFORMAT(PLINT *lexp, PLINT *sigdig)
@@ -471,6 +474,21 @@ PLLAB7(const char *xlab, const char *ylab, const char *title)
     c_pllab(xlab, ylab, title);
 }
 
+static void
+pllabelfuncf2c( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data)
+{
+    int i;
+
+    (*pllabelfunc)( &axis, &value, label, &length );
+
+    /* Ensure string is null terminated */
+    i = length-1;
+    while ((i >= 0) && (label[i]== ' '))
+      i--;
+    label[i+1] = '\0';
+
+}
+
 void
 PLLIGHTSOURCE(PLFLT *x, PLFLT *y, PLFLT *z)
 {
@@ -816,6 +834,14 @@ void
 PLSFONT(PLINT *family, PLINT *style, PLINT *weight)
 {
     c_plsfont(*family, *style, *weight);
+}
+
+void
+PLSLABELFUNC( void (STDCALL *labelfunc)(PLINT *, PLFLT *, char *, PLINT *))
+{
+    pllabelfunc = labelfunc;
+    /* N.B. neglect pointer to additional data for f77 */
+    c_plslabelfunc(pllabelfuncf2c, NULL);
 }
 
 void
