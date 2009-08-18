@@ -36,6 +36,17 @@ active	PLINT
 pltclcmd pladv void
 page	PLINT Def: 0
 
+# Plot an arc
+
+pltclcmd plarc void
+x	PLFLT
+y	PLFLT
+a	PLFLT
+b	PLFLT
+angle1	PLFLT
+angle2	PLFLT
+fill	PLINT
+
 # This functions similarly to plbox() except that the origin of the axes
 # is placed at the user-specified point (x0, y0).
 
@@ -87,6 +98,17 @@ zlabel	const char *
 ztick	PLFLT
 nsubz	PLINT
 
+# Calculate broken-down time from continuous time for current stream.
+
+pltclcmd plbtime void
+year PLINT&
+month PLINT&
+day PLINT&
+hour PLINT&
+min PLINT&
+sec PLFLT&
+ctime PLFLT
+
 # Calculate world coordinates and subpage from relative device coordinates.
 
 pltclcmd plcalc_world void
@@ -110,11 +132,38 @@ icol0	PLINT
 pltclcmd plcol1 void
 col1	PLFLT
 
+# Configure transformation between continuous and broken-down time (and
+# vice versa) for current stream. 
+
+pltclcmd plconfigtime void
+scale	PLFLT
+offset1	PLFLT
+offset2	PLFLT
+ccontrol	PLINT
+ifbtime_offset	PLINT
+year	PLINT
+month	PLINT
+day	PLINT
+hour	PLINT
+min	PLINT
+sec	PLFLT
+
 # Copies state parameters from the reference stream to the current stream.
 
 pltclcmd plcpstrm void
 iplsr   PLINT
 flags	PLINT
+
+# Calculate continuous time from broken-down time for current stream.
+
+pltclcmd plctime void
+year PLINT
+month PLINT
+day PLINT
+hour PLINT
+min PLINT
+sec PLFLT
+ctime PLFLT&
 
 # Converts input values from relative device coordinates to relative plot
 # coordinates.

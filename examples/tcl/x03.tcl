@@ -21,13 +21,7 @@ proc x03 {{w loopback}} {
     matrix yj f $nj1
 
     for {set i 1} {$i <= $ni} {incr i} {
-	for {set j 0} {$j < $nj1} {incr j} {
-	    set r     [expr $i * $dr]
-	    set theta [expr $j * $dtheta]
-	    xj $j = [expr $r * cos($theta)]
-	    yj $j = [expr $r * sin($theta)]
-	}
-	$w cmd plline $nj1 xj yj
+        $w cmd plarc 0.0 0.0 [expr 0.1 * $i]] [expr 0.1 * $i] 0.0 360.0 0
     }
 
 # Draw radial spokes for polar grid and write labels for angle
