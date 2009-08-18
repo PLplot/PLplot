@@ -74,6 +74,12 @@ PLADV(PLINT *sub)
 }
 
 void
+PLARC(PLFLT *x, PLFLT *y, PLFLT *a, PLFLT *b, PLFLT *angle1, PLFLT *angle2, PLBOOL *fill)
+{
+  c_plarc(*x, *y, *a, *b, *angle1, *angle2, *fill);
+}
+
+void
 PLAXES7(PLFLT *x0, PLFLT *y0, const char *xopt, PLFLT *xtick,
 	PLINT *nxsub, const char *yopt, PLFLT *ytick, PLINT *nysub)
 {
@@ -84,6 +90,12 @@ void
 PLBIN(PLINT *nbin, PLFLT *x, PLFLT *y, PLINT *center)
 {
     c_plbin(*nbin, x, y, *center);
+}
+
+void
+PLBTIME(PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT *ctime)
+{
+  c_plbtime(year, month, day, hour, min, sec, *ctime);
 }
 
 void
@@ -148,9 +160,21 @@ PLCOL(PLINT *icol)
 }
 
 void
+PLCONFIGTIME(PLFLT *scale, PLFLT *offset1, PLFLT *offset2, PLINT *ccontrol, PLBOOL *ifbtime_offset, PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec) 
+{
+    c_plconfigtime(*scale, *offset1, *offset2, *ccontrol, *ifbtime_offset, *year, *month, *day, *hour, *min, *sec);
+}
+
+void
 PLCPSTRM(PLINT *iplsr, PLBOOL *flags)
 {
     c_plcpstrm(*iplsr, *flags);
+}
+
+void
+PLCTIME(PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT *ctime)
+{
+    c_plctime(*year, *month, *day, *hour, *min, *sec, ctime);
 }
 
 void
