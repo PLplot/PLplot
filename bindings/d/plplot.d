@@ -640,14 +640,59 @@ void plstripc(PLINT* id, string xspec, string yspec, PLFLT xmin, PLFLT xmax, PLF
 
 /* plots a 2d image (or a matrix too large for plshade() ) */
 void plimagefr(PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-               PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
-               PLFLT valuemin, PLFLT valuemax)
+               PLFLT zmin, PLFLT zmax, PLFLT valuemin, PLFLT valuemax,
+               pltr_func pltr=null, PLPointer pltr_data=null)
 {
   PLINT nx=idata.length;
   PLINT ny=idata[0].length;
 
-  c_plimagefr(convert_array(idata), nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax,
-              Dymin, Dymax, valuemin, valuemax);
+  c_plimagefr(convert_array(idata), nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
+              valuemin, valuemax, pltr, pltr_data);
+}
+
+/* plots a 2d image (or a matrix too large for plshade() ) */
+void plimagefr(PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+               PLFLT zmin, PLFLT zmax, PLFLT valuemin, PLFLT valuemax, PLcGrid cgrid)
+{
+  PLINT nx=idata.length;
+  PLINT ny=idata[0].length;
+
+  c_PLcGrid c;
+  c.xg = cgrid.xg.ptr;
+  c.nx = cgrid.xg.length;
+  c.yg = cgrid.yg.ptr;
+  c.ny = cgrid.yg.length;
+  c.zg = cgrid.zg.ptr;
+  c.nz = cgrid.zg.length;
+  
+  c_plimagefr(convert_array(idata), nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
+              valuemin, valuemax, &pltr1, &c);
+}
+
+/* plots a 2d image (or a matrix too large for plshade() ) */
+void plimagefr(PLFLT[][] idata, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+               PLFLT zmin, PLFLT zmax, PLFLT valuemin, PLFLT valuemax, PLcGrid2 cgrid2)
+{
+  PLINT nx=idata.length;
+  PLINT ny=idata[0].length;
+
+  c_PLcGrid2 c2;
+  c2.xg = convert_array(cgrid2.xg);
+  c2.yg = convert_array(cgrid2.yg);
+  c2.zg = convert_array(cgrid2.zg);
+  c2.nx = cgrid2.xg.length;
+  c2.ny = cgrid2.xg[0].length;
+  if(cgrid2.yg) {
+    assert(c2.nx==cgrid2.yg.length, "plcont(): Arrays must be of same length!");
+    assert(c2.ny==cgrid2.yg[0].length, "plcont(): Arrays must be of same length!");
+  }
+  if(cgrid2.zg) {
+    assert(c2.nx==cgrid2.zg.length, "plcont(): Arrays must be of same length!");
+    assert(c2.ny==cgrid2.zg[0].length, "plcont(): Arrays must be of same length!");
+  }
+
+  c_plimagefr(convert_array(idata), nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
+  						valuemin, valuemax, &pltr2, &c2);
 }
 
 /* plots a 2d image (or a matrix too large for plshade() ) - colors
@@ -1179,12 +1224,14 @@ alias c_pladv pladv;
 alias c_plbop plbop;
 //alias c_plbox plbox;
 //alias c_plbox3 plbox3;
+alias c_plbtime plbtime;
 alias c_plslabelfunc plslabelfunc;
 alias c_plcalc_world plcalc_world;
 alias c_plarc plarc;
 alias c_plclear plclear;
 alias c_plcol0 plcol0;
 alias c_plcol1 plcol1;
+alias c_plconfigtime plconfigtime;
 //alias c_plcont plcont;
 alias c_plcpstrm plcpstrm;
 alias c_plctime plctime;
@@ -1392,6 +1439,9 @@ void c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx, char *yopt,
               char *ylabel, PLFLT ytick, PLINT nsuby, char *zopt, char *zlabel,
               PLFLT ztick, PLINT nsubz);
 
+/* Calculate broken-down time from continuous time for current stream. */
+void c_plbtime(PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT ctime);
+  
 /* Setup a user-provided custom labeling function */
 void c_plslabelfunc(void function(PLINT, PLFLT, char*, PLINT, PLPointer) labelfunc,
                     PLPointer label_data);
@@ -1412,6 +1462,11 @@ void c_plcol0(PLINT icol0);
 /* Set color, map 1.  Argument is a float between 0. and 1. */
 void c_plcol1(PLFLT col1);
 
+/* Configure transformation between continuous and broken-down time (and
+   vice versa) for current stream. */
+void c_plconfigtime(PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOOL ifbtime_offset,
+                    PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec);
+  
 /* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
  * plfcont, with a particular choice for f2eval and f2eval_data.
  */
@@ -1882,8 +1937,8 @@ void c_plstripd(PLINT id);
 
 /* plots a 2d image (or a matrix too large for plshade() ) */
 void c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-                 PLFLT zmin, PLFLT zmax, PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax,
-                 PLFLT valuemin, PLFLT valuemax);
+								 PLFLT zmin, PLFLT zmax, PLFLT valuemin, PLFLT valuemax,
+								 void function(PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer), PLPointer pltr_data);
 
 /* plots a 2d image (or a matrix too large for plshade() ) - colors
    automatically scaled */
