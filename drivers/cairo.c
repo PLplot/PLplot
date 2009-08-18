@@ -211,6 +211,7 @@ static void text_end_cairo(PLStream *pls, EscText *args);
 static char *ucs4_to_pango_markup_format(PLUNICODE *, int, float);
 static void open_span_tag(char *, PLUNICODE, float, int);
 static void close_span_tag(char *, int);
+static char *rise_span_tag(int, int);
 
 /* Graphics */
 
@@ -569,17 +570,17 @@ void text_esc_cairo(PLStream *pls, EscText *args)
       break;
     case PLTEXT_SUPERSCRIPT:
       if(aStream->upDown < 0){
-	strncat(aStream->pangoMarkupString, "</sub>", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
+	strncat(aStream->pangoMarkupString, "</span>", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
       } else {
-	strncat(aStream->pangoMarkupString, "<sup>", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
+	strncat(aStream->pangoMarkupString, rise_span_tag(aStream->upDown, 1), MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
       }
       aStream->upDown++;
       break;
     case PLTEXT_SUBSCRIPT:
       if(aStream->upDown > 0){
-	strncat(aStream->pangoMarkupString, "</sup>", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
+	strncat(aStream->pangoMarkupString, "</span>", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
       } else {
-	strncat(aStream->pangoMarkupString, "<sub>", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
+	strncat(aStream->pangoMarkupString, rise_span_tag(aStream->upDown, -1), MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
       }
       aStream->upDown--;
       break;
@@ -851,17 +852,17 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
       else {
 	if(ucs4[i] == (PLUNICODE)'u'){	/* Superscript */
 	  if(upDown < 0){
-	    strncat(pangoMarkupString, "</sub>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
+	    strncat(pangoMarkupString, "</span>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	  } else {
-	    strncat(pangoMarkupString, "<sup>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
+	    strncat(pangoMarkupString, rise_span_tag(upDown, 1), MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	  }
 	  upDown++;
 	}
 	if(ucs4[i] == (PLUNICODE)'d'){	/* Subscript */
 	  if(upDown > 0){
-	    strncat(pangoMarkupString, "</sup>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
+	    strncat(pangoMarkupString, "</span>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	  } else {
-	    strncat(pangoMarkupString, "<sub>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
+	    strncat(pangoMarkupString, rise_span_tag(upDown, -1), MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	  }
 	  upDown--;
 	}
@@ -915,13 +916,13 @@ void open_span_tag(char *pangoMarkupString, PLUNICODE fci, float fontSize, int u
   /* Move to the right sub/super-script level */
   if(upDown > 0){
     while(upDown > 0){
-      strncat(pangoMarkupString, "<sup>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
+      strncat(pangoMarkupString, rise_span_tag(upDown, 1), MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
       upDown--;
     }
   }
   if(upDown < 0){
     while(upDown < 0){
-      strncat(pangoMarkupString, "<sub>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
+      strncat(pangoMarkupString, rise_span_tag(upDown, -1), MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
       upDown++;
     }
   }
@@ -937,18 +938,47 @@ void close_span_tag(char *pangoMarkupString, int upDown)
 {
   if(upDown > 0){
     while(upDown > 0){
-      strncat(pangoMarkupString, "</sup>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
+      strncat(pangoMarkupString, "</span>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
       upDown--;
     }
   }
   if(upDown < 0){
     while(upDown < 0){
-      strncat(pangoMarkupString, "</sub>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
+      strncat(pangoMarkupString, "</span>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
       upDown++;
     }
   }
 
   strncat(pangoMarkupString, "</span>", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
+}
+
+/*---------------------------------------------------------------------
+  rise_span_tag
+  
+  Create a rise span tag w/ appropriate font size & baseline offset
+  ---------------------------------------------------------------------*/
+
+#define STEPSIZE 7500.0
+
+char *rise_span_tag(int level, int direction)
+{
+  int i;
+  float multiplier = 1.0;
+  float rise = STEPSIZE;
+  static char tag[100];
+
+  for(i=0;i<abs(level);i++){
+    multiplier = multiplier * 0.9;
+    rise += STEPSIZE * multiplier;
+  }
+  if(direction>0){
+    sprintf(tag, "<span rise=\"%d\" size=\"smaller\">", (int)rise);
+  }
+  else{
+    sprintf(tag, "<span rise=\"%d\" size=\"smaller\">", (int)-rise);
+  }
+
+  return(tag);
 }
 
 /*---------------------------------------------------------------------
