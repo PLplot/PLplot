@@ -76,8 +76,6 @@
 [mlname(plptex)] void c_plptex ( double x, double y, double dx, double dy, double just, [string] const char * text );
 [mlname(plptex3)] void c_plptex3 ( double wx, double wy, double wz, double dx, double dy, double dz, double sx, double sy, double sz, double just, [string] const char * text );
 [mlname(plreplot)] void c_plreplot ( void );
-[mlname(plrgb)] void c_plrgb ( double r, double g, double b );
-[mlname(plrgb1)] void c_plrgb1 ( int r, int g, int b );
 [mlname(plrgbhls)] void c_plrgbhls ( double r, double g, double b, [out] double * p_h, [out] double * p_l, [out] double * p_s );
 [mlname(plschr)] void c_plschr ( double def, double scale );
 [mlname(plscmap0)] void c_plscmap0 ( [size_is(ncol0), in] int * r, [size_is(ncol0), in] int * g, [size_is(ncol0), in] int * b, int ncol0 );

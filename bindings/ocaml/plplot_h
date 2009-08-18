@@ -326,12 +326,6 @@ c_plptex3(PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
 c_plreplot(void);
 
  void
-c_plrgb(PLFLT r, PLFLT g, PLFLT b);
-
- void
-c_plrgb1(PLINT r, PLINT g, PLINT b);
-
- void
 c_plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 
  void
