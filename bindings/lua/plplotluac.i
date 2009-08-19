@@ -611,8 +611,9 @@ void mapform(PLINT n, PLFLT* x, PLFLT* y)
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
-typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
+typedef void (*mapform_func)(PLINT, PLFLT*, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
+typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
 
 %{
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
@@ -620,6 +621,7 @@ typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
+typedef void (*label_func)(PLINT, PLFLT, char*, PLINT, PLPointer);
 
 static char mypltr_funcstr[255];   
 
@@ -661,6 +663,41 @@ void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
   
   return;
 }
+
+static char label_funcstr[255];   
+
+void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
+{
+  PLFLT *xtemp, *ytemp;
+  int len, i;
+  
+  /* check Lua state */
+  if(myL==NULL) {
+    fprintf(stderr, "Lua state is not set!");
+    return;
+  }  
+  
+  /* push functions and arguments */
+  lua_getglobal(myL, label_funcstr);  /* function to be called */
+  lua_pushnumber(myL, axis);   /* push 1st argument */
+  lua_pushnumber(myL, value);   /* push 1st argument */
+
+  /* do the call (2 arguments, 1 result) */
+  if(lua_pcall(myL, 2, 1, 0) != 0)
+    fprintf(stderr, "error running function `%s': %s",
+            label_funcstr, lua_tostring(myL, -1));
+
+  /* retrieve results */
+  if(!lua_isstring(myL, -1)) {
+    fprintf(stderr, "function `%s' must return a string as result", label_funcstr);
+    return;
+  }
+  strncpy(label, lua_tostring(myL, -1), length);
+  
+  lua_pop(myL, 1);  /* pop returned values */
+  
+  return;
+}
 %}  
 
 %typemap(in, numinputs=0) defined_func df {
@@ -674,7 +711,6 @@ void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 %typemap(in) mapform_func mapform {
   $1 = NULL;
   mapform_funcstr[0]='\0';
-  myL=NULL;
   
   if(lua_isnil(L, $input)) {
     $1 = NULL;
@@ -687,15 +723,32 @@ void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 }
 %typemap(freearg) mapform_func mapform {
   mapform_funcstr[0]='\0';
-  myL=NULL;
 }
 
+/* you can omit PLPointer data */
+%typemap(in, numinputs=0) PLPointer data {
+  $1 = NULL;
+}
 
+%typemap(in) label_func lf {
+  $1 = NULL;
+  label_funcstr[0]='\0';
+  
+  if(lua_isnil(L, $input)) {
+    $1 = NULL;
+  } else if(lua_isstring(L, $input)) {
+    $1 = mylabel;
+    strncpy(label_funcstr, lua_tostring(L, $input), 255);
+    myL = L;
+  } else 
+    SWIG_fail_arg("$symname", $argnum, "$1_type")
+}
+%typemap(freearg) label_func lf {
+}
 
 %typemap(in) pltr_func pltr {
   $1 = NULL;
   mypltr_funcstr[0]='\0';
-  myL=NULL;
   
   if(lua_isstring(L, $input)) {
     const char* funcstr = lua_tostring(L, $input); 
@@ -715,7 +768,6 @@ void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 }
 %typemap(freearg) pltr_func pltr {
   mypltr_funcstr[0]='\0';
-  myL=NULL;
 }
 /* you can omit the pltr func */
 %typemap(default) pltr_func pltr {
@@ -941,6 +993,7 @@ void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 %rename(setcontlabelformat) pl_setcontlabelformat;
 %rename(setcontlabelparam) pl_setcontlabelparam;
 %rename(adv) pladv;
+%rename(arc) plarc;
 %rename(axes) plaxes;
 %rename(bin) plbin;
 %rename(bop) plbop;
@@ -1057,11 +1110,14 @@ void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 %rename(sfont) plsfont;
 %rename(shade) plshade;
 %rename(shades) plshades;
+%rename(slabelfunc) plslabelfunc;
 %rename(smaj) plsmaj;
 %rename(smem) plsmem;
 %rename(smin) plsmin;
 %rename(sori) plsori;
 %rename(spage) plspage;
+%rename(spal0) plspal0;
+%rename(spal1) plspal1;
 %rename(spause) plspause;
 %rename(sstrm) plsstrm;
 %rename(ssub) plssub;
