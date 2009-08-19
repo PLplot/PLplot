@@ -8871,7 +8871,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <funcsynopsis>
 	<funcprototype>
 	  <funcdef>
-	    <function>plscmap0</function>
+	    <function>plscmap0a</function>
 	  </funcdef>
 	  <paramdef><parameter>r</parameter></paramdef>
 	  <paramdef><parameter>g</parameter></paramdef>
@@ -9109,7 +9109,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <funcsynopsis>
 	<funcprototype>
 	  <funcdef>
-	    <function>plscmap1</function>
+	    <function>plscmap1a</function>
 	  </funcdef>
 	  <paramdef><parameter>r</parameter></paramdef>
 	  <paramdef><parameter>g</parameter></paramdef>
@@ -9375,7 +9375,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <funcsynopsis>
 	<funcprototype>
 	  <funcdef>
-	    <function>plscmap1l</function>
+	    <function>plscmap1la</function>
 	  </funcdef>
 	  <paramdef><parameter>itype</parameter></paramdef>
 	  <paramdef><parameter>npts</parameter></paramdef>
