@@ -628,6 +628,13 @@ package PLplot is
     procedure Advance_To_Subpage(Page : Natural);
 
 
+    -- Plot an arc.
+    -- plarc
+    procedure Draw_Arc
+       (x, y, a, b, angle1, angle2 : Long_Float;
+        fill : Boolean);
+
+
     -- Draw a 2D vector plot.
     -- plvect
     procedure Vector_Plot
@@ -636,7 +643,8 @@ package PLplot is
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
         Transformation_Data_Pointer      : PLpointer);
 
-    -- Set the style for the arrow used by plvect to plot vectors.
+ 
+       -- Set the style for the arrow used by plvect to plot vectors.
     -- plsvect
     procedure Set_Arrow_Style_For_Vector_Plots
        (X_Vertices, Y_Vertices : Real_Vector;

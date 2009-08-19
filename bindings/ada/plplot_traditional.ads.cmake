@@ -624,12 +624,19 @@ package PLplot_Traditional is
     procedure pladv(Page : Natural);
 
 
+    -- Plot an arc.
+    procedure plarc
+       (x, y, a, b, angle1, angle2 : Long_Float;
+        fill : Boolean);
+
+
     -- Draw a 2D vector plot.
     procedure plvect
        (u, v                             : Real_Matrix;
         Scale                            : Long_Float;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
         Transformation_Data_Pointer      : PLpointer);
+
 
     -- Set the style for the arrow used by plvect to plot vectors.
     procedure plsvect

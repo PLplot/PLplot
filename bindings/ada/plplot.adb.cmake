@@ -1084,6 +1084,24 @@ package body PLplot is
     end Advance_To_Subpage;
 
 
+    -- Plot an arc.
+    -- plarc
+    procedure Draw_Arc
+       (x, y, a, b, angle1, angle2 : Long_Float;
+        fill : Boolean) is
+
+        fill_arc : PLBOOL;
+
+    begin
+        if fill then
+            fill_arc := PLtrue;
+        else
+            fill_arc := PLfalse;
+        end if;
+        plarc(x, y, a, b, angle1, angle2, fill_arc);
+    end Draw_Arc;
+
+
     -- Draw a 2D vector plot.
     -- plvect
     procedure Vector_Plot

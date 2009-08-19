@@ -62,14 +62,10 @@ begin
 
     -- Set up viewport and window, but do not draw box. 
     plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
-    for i in 1..10 loop
-        for j in x'range loop
-            x(j) := 0.1 * Long_Float(i) * x0(j);
-            y(j) := 0.1 * Long_Float(i) * y0(j);
-        end loop;
 
         -- Draw circles for polar grid. 
-        plline(x, y);
+    for i in 1 .. 10 loop
+        plarc(0.0, 0.0, 0.1 * Long_Float(i), 0.1 * Long_Float(i), 0.0, 360.0, False);
     end loop;
 
     plcol0(2);

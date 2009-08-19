@@ -1082,6 +1082,23 @@ package body PLplot_Traditional is
     end pladv;
 
 
+    -- Plot an arc.
+    procedure plarc
+       (x, y, a, b, angle1, angle2 : Long_Float;
+        fill : Boolean) is
+
+        fill_arc : PLBOOL;
+
+    begin
+        if fill then
+            fill_arc := PLtrue;
+        else
+            fill_arc := PLfalse;
+        end if;
+        PLplot_Thin.plarc(x, y, a, b, angle1, angle2, fill_arc);
+    end plarc;
+
+
     -- Draw a 2D vector plot.
     procedure plvect
        (u, v                             : Real_Matrix;

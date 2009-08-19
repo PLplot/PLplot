@@ -461,6 +461,12 @@ package PLplot_Thin is
     pragma Import(C, pladv, "c_pladv");
 
 
+    -- Plot an arc.
+    procedure
+    plarc(x : PLFLT; y : PLFLT; a : PLFLT; b : PLFLT; angle1 : PLFLT; angle2 : PLFLT; fill : PLBOOL);
+    pragma Import(C, plarc, "c_plarc");
+
+
     -- simple arrow plotter. 
 
     procedure
