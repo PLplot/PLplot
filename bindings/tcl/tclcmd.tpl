@@ -11,7 +11,7 @@ static int
 
     pl_errcode = 0; errmsg[0] = '\0';
 
-    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
+    if ( (argc == 2) && (strlen(argv[1])>0) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
 	Tcl_AppendResult( interp, "command syntax: \"",
 			  "%cmd% %args%", "\"",
 			  (char *) NULL);
