@@ -883,11 +883,6 @@ color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, char *name )
  * plcmap0_def()
  *
  * Initializes specified color map 0 color entry to its default.
- *
- * Initial RGB values for color map 0 taken from X11R6
- * (XFree86-3.3.6) X-windows
- * rgb.txt file, and may not accurately represent the described colors on
- * all systems.
 \*--------------------------------------------------------------------------*/
 
 #define color_def(i, r, g, b, a, n)			\
@@ -898,44 +893,9 @@ plcmap0_def(int imin, int imax)
 {
     int i;
 
-    color_def(0,    0,   0,   0, 1.0, "black" );        /* black */
-    color_def(1,  255,   0,   0, 1.0, "red");           /* red */
-    color_def(2,  255, 255,   0, 1.0, "yellow" );       /* yellow */
-    color_def(3,    0, 255,   0, 1.0, "green" );	/* green */
-    color_def(4,  127, 255, 212, 1.0, "aquamarine" );	/* aquamarine */
-    color_def(5,  255, 192, 203, 1.0, "pink" );	        /* pink */
-    color_def(6,  245, 222, 179, 1.0, "wheat" );	/* wheat */
-    color_def(7,  190, 190, 190, 1.0, "grey" );	        /* grey */
-    color_def(8,  165,  42,  42, 1.0, "brown" );	/* brown */
-    color_def(9,    0,   0, 255, 1.0, "blue" );	        /* blue */
-    color_def(10, 138,  43, 226, 1.0, "BlueViolet" );	/* Blue Violet */
-    color_def(11,   0, 255, 255, 1.0, "cyan" );	        /* cyan */
-    color_def(12,  64, 224, 208, 1.0, "turquoise" );	/* turquoise */
-    color_def(13, 255,   0, 255, 1.0, "magenta" );	/* magenta */
-    color_def(14, 250, 128, 114, 1.0, "salmon" );	/* salmon */
-    color_def(15, 255, 255, 255, 1.0, "white" );	/* white */
-
-/*     color_def(0, 255, 255, 255, "white" );	/\* white *\/ */
-/*     color_def(1,    0,   0,   0, "black" );	/\* black *\/ */
-/*     color_def(2,    0,   0, 255, "blue" );	/\* blue *\/ */
-/*     color_def(3,  255,   0,   0, "red");	/\* red *\/ */
-/*     color_def(4,  165,  42,  42, "brown" );	/\* brown *\/ */
-/*     color_def(5, 250, 128, 114, "salmon" );	/\* salmon *\/ */
-/*     color_def(6,  255, 192, 203, "pink" );	/\* pink *\/ */
-/*     color_def(7,  127, 255, 212, "aquamarine" );	/\* aquamarine *\/ */
-/*     color_def(8,  245, 222, 179, "wheat" );	/\* wheat *\/ */
-/*     color_def(9,  64, 224, 208, "turquoise" );	/\* turquoise *\/ */
-/*     color_def(10,  190, 190, 190, "grey" );	/\* grey *\/ */
-/*     color_def(11,   0, 255, 255, "cyan" );	/\* cyan *\/ */
-/*     color_def(12,    0, 255,   0, "green" );	/\* green *\/ */
-/*     color_def(13,  255, 255,   0, "yellow" );	/\* yellow *\/ */
-/*     color_def(14, 255,   0, 255, "magenta" );	/\* magenta *\/ */
-/*     color_def(15, 138,  43, 226, "BlueViolet" );	/\* Blue Violet *\/ */
-
-/* Any others are just arbitrarily set */
-
-    for (i = 16; i <= imax; i++)
-      color_def(i, 255, 0, 0, 1.0, "red"); 	/* red */
+    /* Initialize all colors to black. */
+    for (i = imin; i <= imax; i++)
+      color_def(i, 255, 0, 0, 1.0, "black");
 }
 
 /*--------------------------------------------------------------------------*\
@@ -966,7 +926,7 @@ plcmap1_def(void)
     i[5] = 1;		/* right boundary */
 
 /* For center control points, pick black or white, whichever is closer to bg */
-/* Be carefult to pick just short of top or bottom else hue info is lost */
+/* Be careful to pick just short of top or bottom else hue info is lost */
 
     if (plsc->cmap0 != NULL)
 	vertex = ((PLFLT) plsc->cmap0[0].r +
@@ -1227,9 +1187,9 @@ c_plspal0(const char *filename)
   char msgbuf[1024];
 
   if(strlen(filename) == 0) {
-    fp = plLibOpen("cmap0_default.pal");
+    fp = plLibOpen(PL_DEFAULT_CMAP0_FILE);
     if (fp == NULL) {
-      snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n","cmap0_default.pal");
+      snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",PL_DEFAULT_CMAP0_FILE);
       plwarn(msgbuf);
       return;
     }
@@ -1316,9 +1276,9 @@ c_plspal1(const char *filename)
   err = 0;
   format_version = 0;
   if(strlen(filename) == 0) {
-    fp = plLibOpen("cmap1_default.pal");
+    fp = plLibOpen(PL_DEFAULT_CMAP1_FILE);
     if (fp == NULL) {
-      snprintf(msgbuf,1024,"Unable to open cmap1 .pal file %s\n","cmap1_default.pal");
+      snprintf(msgbuf,1024,"Unable to open cmap1 .pal file %s\n",PL_DEFAULT_CMAP1_FILE);
       plwarn(msgbuf);
       return;
     }

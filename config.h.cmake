@@ -21,6 +21,12 @@
 /* Location of dynamically loaded drivers */
 #define DRV_DIR "${DRV_DIR}"
 
+/* Name of the default cmap0 palette to use */
+#define PL_DEFAULT_CMAP0_FILE "${DEFAULT_CMAP0_FILE}"
+
+/* Name of the default cmap1 palette to use */
+#define PL_DEFAULT_CMAP1_FILE "${DEFAULT_CMAP1_FILE}"
+
 /* Define if there is support for dynamically loaded drivers */
 #cmakedefine ENABLE_DYNDRIVERS
 

@@ -2137,10 +2137,10 @@ plstrm_init(void)
 	plsc->initialized = 1;
 
 	if (plsc->cmap0 == NULL)
-	    plscmap0n(0);
+            plspal0("");
 
 	if (plsc->cmap1 == NULL)
-	    plscmap1n(0);
+            plspal1("");
     }
 
     plsc->psdoc = NULL;

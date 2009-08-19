@@ -22,6 +22,15 @@
 # libraries are all shared by default
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
+# Color maps (discrete and continuous) to use by default
+if(NOT DEFAULT_CMAP0_FILE)
+  set(DEFAULT_CMAP0_FILE "cmap0_default.pal")
+endif(NOT DEFAULT_CMAP0_FILE)
+
+if(NOT DEFAULT_CMAP1_FILE)
+  set(DEFAULT_CMAP1_FILE "cmap1_default.pal")
+endif(NOT DEFAULT_CMAP1_FILE)
+
 # Need these modules to do subsequent checks.
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
