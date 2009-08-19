@@ -43,6 +43,10 @@ proc x29 {{w loopback}} {
 
     x29_plot3 $w
 
+    # Additional pages disabled for now - rounding errors
+    # are leading to a crash
+    # x29_plot4 $w
+
 }
 
 # Plot a model diurnal cycle of temperature
@@ -204,6 +208,125 @@ proc x29_plot3 {{w loopback}} {
 
     $w cmd plssym 0.0 0.5
     $w cmd plpoin $npts x y 2
-    $w cmd plline $npts x y
- 
+    $w cmd plline $npts x y 
 }
+
+proc x29_plot4 {{w loopback}} {
+    # TAI-UTC (seconds) as a function of time.
+    # Use Besselian epochs as the continuous time interval just to prove
+    # this does not introduce any issues.
+    
+    # Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
+    # B = 1900. + (JD -2415020.31352)/365.242198781 
+    # ==> (as calculated with aid of "bc -l" command)
+    # B = (MJD + 678940.364163900)/365.242198781
+    # ==>
+    # MJD = B*365.24219878 - 678940.364163900
+
+    set scale 365.242198781
+    set offset1 -678940.0
+    set offset2 -0.3641639
+
+    matrix x f 1001
+    matrix y f 1001	
+
+    $w cmd plconfigtime $scale $offset1 $offset2 0x0 0 0 0 0 0 0 0.
+
+    for {set kind 0} {$kind < 7} {incr kind} {
+	if {$kind == 0} {
+	    $w cmd plctime 1950 0 2 0 0 0. xmin
+	    $w cmd plctime 2020 0 2 0 0 0. xmax
+	    set npts [expr {70*12 + 1}]
+	    set ymin 0.0
+	    set ymax 36.0
+	    set time_format "%Y%"
+	    set if_TAI_time_format 1
+	    set title_suffix "from 1950 to 2020"
+	    set xtitle "Year"
+	    set xlabel_step 10.
+	} elseif {$kind == 1 || $kind == 2} {
+	    $w cmd plctime 1961 7 1 0 0 [expr {1.64757-0.20}] xmin
+	    $w cmd plctime 1961 7 1 0 0 [expr {1.64757+0.20}] xmax
+	    set npts 1001
+	    set ymin 1.625
+	    set ymax 1.725
+	    set time_format "%S%2%"
+	    set title_suffix "near 1961-08-01 (TAI)"
+	    set xlabel_step [expr {0.05/($scale*86400.)}]
+	    if {$kind == 1} {
+		set if_TAI_time_format 1
+		set xtitle "Seconds (TAI)"
+	    } else {
+		set if_TAI_time_format 0
+		set xtitle "Seconds (TAI) labelled with corresponding UTC"
+	    }
+	} elseif {$kind == 3 || $kind == 4} {
+	    $w cmd plctime 1963 10 1 0 0 [expr {2.6972788-.20}] xmin
+	    $w cmd plctime 1963 10 1 0 0 [expr {2.6972788+.20}] xmax
+	    set npts 1001
+	    set ymin 2.55
+	    set ymax 2.75
+	    set time_format "%S%2%"
+	    set title_suffix "near 1963-11-01 (TAI)"
+	    set xlabel_step [expr {0.05/($scale*86400.)}]
+	    if {$kind == 3} {
+		set if_TAI_time_format 1
+		set xtitle "Seconds (TAI)"
+	    } else {
+		set if_TAI_time_format 0
+		set xtitle "Seconds (TAI) labelled with corresponding UTC"
+	    }
+	} elseif {$kind == 5 || $kind == 6} {
+	    $w cmd plctime 2009 0 1 0 0 [expr {34.-5.}] xmin
+	    $w cmd plctime 2009 0 1 0 0 [expr {34.+5.}] xmax
+	    set npts 1001
+	    set ymin 32.5
+	    set ymax 34.5
+	    set time_format "%S%2%"
+	    set title_suffix "near 2009-01-01 (TAI)"
+	    set xlabel_step [expr {1./($scale*86400.)}]
+	    if {$kind == 5} {
+		set if_TAI_time_format 1
+		set xtitle "Seconds (TAI)"
+	    } else {
+		set if_TAI_time_format 0
+		set xtitle "Seconds (TAI) labelled with corresponding UTC"
+	    }
+	}
+
+	for {set i 0} {$i<$npts} {incr i} {
+	    set tai [expr {$xmin + $i*($xmax-$xmin)/double($npts-1)}]
+	    x $i = $tai
+	    $w cmd plconfigtime $scale $offset1 $offset2 0x0 0 0 0 0 0 0 0.
+	    $w cmd plbtime tai_year tai_month tai_day tai_hour tai_min tai_sec $tai
+	    $w cmd plconfigtime $scale $offset1 $offset2 0x2 0 0 0 0 0 0 0.
+	    $w cmd plbtime utc_year utc_month utc_day utc_hour utc_min utc_sec $tai
+	    $w cmd plconfigtime $scale $offset1 $offset2 0x0 0 0 0 0 0 0 0.
+	    $w cmd plctime $utc_year $utc_month $utc_day $utc_hour $utc_min $utc_sec utc
+	    set yy [expr {($tai-$utc)*$scale*86400.}]
+	    y $i = $yy
+	}
+
+	$w cmd pladv 0
+	$w cmd plvsta
+	$w cmd plwind $xmin $xmax $ymin $ymax
+	$w cmd plcol0 1
+	if {$if_TAI_time_format == 1} {
+	    $w cmd plconfigtime $scale $offset1 $offset2 0x0 0 0 0 0 0 0 0.
+	} else {
+	    $w cmd plconfigtime $scale $offset1 $offset2 0x2 0 0 0 0 0 0 0.
+	}
+	$w cmd pltimefmt $time_format
+	$w cmd plbox "bcnstd" $xlabel_step 0 "bcnstv" 0. 0
+	$w cmd plcol0 3
+	set title "@frPLplot Example 29 - TAI-UTC "
+	append title $title_suffix
+	$w cmd pllab $xtitle "TAI-UTC (sec)" $title
+	
+	$w cmd plcol0 4
+	
+	$w cmd plline $npts x y
+    }
+    
+}
+
