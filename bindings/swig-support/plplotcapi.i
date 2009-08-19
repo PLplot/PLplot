@@ -762,11 +762,9 @@ plshade(PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
 	  pltr_func pltr,
 	  PLPointer SWIG_OBJECT_DATA);
 
-#if !defined(SWIG_LUA)
 %feature("autodoc", "Set up a user-provided custom labeling function") plslabelfunc;
 void
 plslabelfunc(label_func lf, PLPointer data);
-#endif
 
 %feature("autodoc", "Set up lengths of major tick marks.") plsmaj;
 void
