@@ -89,6 +89,10 @@ cont_width = 0
 -- Parse and process command line arguments 
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
+-- Load colour palettes
+pl.spal0("cmap0_black_on_white.pal");
+pl.spal1("cmap1_gray.pal");
+
 -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display 
 pl.scmap0n(3)
 
@@ -173,6 +177,14 @@ pl.col0(2)
 pl.lab("distance", "altitude", "Bogon density")
 
 -- Plot using 1d coordinate transform 
+
+-- Load colour palettes
+pl.spal0("cmap0_black_on_white.pal");
+pl.spal1("cmap1_blue_yellow.pal");
+
+-- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+pl.scmap0n(3);
+
 pl.adv(0)
 pl.vpor(0.1, 0.9, 0.1, 0.9)
 pl.wind(-1, 1, -1, 1)
@@ -187,6 +199,14 @@ pl.col0(2)
 pl.lab("distance", "altitude", "Bogon density")
 
 -- Plot using 2d coordinate transform 
+
+-- Load colour palettes
+pl.spal0("cmap0_black_on_white.pal");
+pl.spal1("cmap1_blue_red.pal");
+
+-- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+pl.scmap0n(3);
+
 pl.adv(0)
 pl.vpor(0.1, 0.9, 0.1, 0.9)
 pl.wind(-1, 1, -1, 1)
@@ -203,6 +223,14 @@ pl.cont(w, 1, nx, 1, ny, clevel, "pltr2", cgrid2)
 pl.lab("distance", "altitude", "Bogon density, with streamlines")
 
 -- Plot using 2d coordinate transform 
+
+-- Load colour palettes
+pl.spal0("");
+pl.spal1("");
+
+-- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+pl.scmap0n(3);
+
 pl.adv(0)
 pl.vpor(0.1, 0.9, 0.1, 0.9)
 pl.wind(-1, 1, -1, 1)
@@ -221,6 +249,14 @@ pl.lab("distance", "altitude", "Bogon density")
 
 -- Plot using 2d coordinate transform and exclusion
 if exclude~=0 then
+
+	-- Load colour palettes
+  pl.spal0("cmap0_black_on_white.pal");
+  pl.spal1("cmap1_gray.pal");
+    
+	-- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+  pl.scmap0n(3);
+
   pl.adv(0)
   pl.vpor(0.1, 0.9, 0.1, 0.9)
   pl.wind(-1, 1, -1, 1)
@@ -237,6 +273,14 @@ if exclude~=0 then
 end
 
 -- Example with polar coordinates. 
+
+-- Load colour palettes
+pl.spal0("cmap0_black_on_white.pal");
+pl.spal1("cmap1_gray.pal");
+
+-- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+pl.scmap0n(3);
+
 pl.adv(0)
 pl.vpor(.1, .9, .1, .9)
 pl.wind(-1, 1, -1, 1)

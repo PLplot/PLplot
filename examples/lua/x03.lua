@@ -54,16 +54,11 @@ pl.init()
 
 -- Set up viewport and window, but do not draw box 
 pl.env(-1.3, 1.3, -1.3, 1.3, 1, -2)
+
+-- Draw circles for polar grid
 for i = 1, 10 do
-	for j = 1, 361 do
-	    x[j] = 0.1 * i * x0[j]
-	    y[j] = 0.1 * i * y0[j]
-	end
-
-  -- Draw circles for polar grid 
-  pl.line(x, y)
+		pl.arc(0, 0, 0.1*i, 0.1*i, 0, 360, 0);
 end
-
 
 pl.col0(2)
 for i=1, 12 do

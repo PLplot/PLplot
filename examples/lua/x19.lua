@@ -45,6 +45,59 @@ function mapform19(n, x, y)
   return x, y
 end
 
+-- "Normalize" longitude values so that they always fall between
+-- -180.0 and 180.0
+function normalize_longitude(lon)
+	if lon>=-180 and lon<=180 then
+		return lon;
+	else
+			times = math.floor((math.abs(lon)+180)/360)
+			if lon<0 then
+				return lon+360*times
+			else 
+				return lon-360*times
+			end
+	end
+end
+
+-- A custom axis labeling function for longitudes and latitudes.
+function geolocation_labeler(axis, value) 
+	if axis==pl.PL_Y_AXIS then
+		label_val = value
+		if label_val>0 then
+			direction_label = " N"
+		else
+			if label_val<0 then
+				direction_label = " S"
+			else 
+				direction_label = "Eq"
+			end
+		end
+	else
+		if axis==pl.PL_X_AXIS then
+			label_val = normalize_longitude(value);
+			if label_val>0 then
+				direction_label = " E"
+			else
+				if label_val<0 then
+					direction_label = " W"
+				else
+					direction_label = ""
+				end
+			end
+		end
+	end
+	
+	if axis==pl.PL_Y_AXIS and value==0 then
+		-- A special case for the equator
+		label = direction_label
+	else
+		label = math.abs(label_val) .. direction_label
+	end
+	
+	return label
+end
+
 --------------------------------------------------------------------------
 -- main
 --
@@ -68,8 +121,11 @@ pl.init()
 minx = 190
 maxx = 190+360
 
+-- Setup a custom latitude and longitude-based scaling function.
+pl.slabelfunc("geolocation_labeler");
+
 pl.col0(1)
-pl.env(minx, maxx, miny, maxy, 1, -1)
+pl.env(minx, maxx, miny, maxy, 1, 70)
 pl.map(nil, "usaglobe", minx, maxx, miny, maxy)
 
 -- The Americas 
@@ -78,8 +134,11 @@ minx = 190
 maxx = 340
 
 pl.col0(1)
-pl.env(minx, maxx, miny, maxy, 1, -1)
+pl.env(minx, maxx, miny, maxy, 1, 70)
 pl.map(nil, "usaglobe", minx, maxx, miny, maxy)
+
+-- Clear the labeling function
+pl.slabelfunc(nil);
 
 -- Polar, Northern hemisphere 
 
