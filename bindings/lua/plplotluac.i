@@ -999,12 +999,15 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
 %rename(bop) plbop;
 %rename(box) plbox;
 %rename(box3) plbox3;
+%rename(btime) plbtime;
 %rename(calc_world) plcalc_world;
 %rename(clear) plclear;
 %rename(col0) plcol0;
 %rename(col1) plcol1;
+%rename(configtime) plconfigtime;
 %rename(cont) plcont;
 %rename(cpstrm) plcpstrm;
+%rename(ctime) plctime;
 %rename(plend) plend;
 %rename(plend1) plend1;
 %rename(env) plenv;
