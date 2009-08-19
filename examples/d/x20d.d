@@ -77,7 +77,7 @@ int main(char[][] args)
 
     pllab("...around a blue square."," ","A red border should appear...");
 
-    plimage(z, 1.0, XDIM, 1.0, YDIM, 0., 0., 1.0, XDIM, 1., YDIM);
+    plimage(z, 1.0, XDIM, 1.0, YDIM, 0., 0., 1.0, XDIM, 1.0, YDIM);
   }
 
 	PLFLT[] x = new PLFLT[XDIM];
@@ -130,15 +130,15 @@ int main(char[][] args)
   gray_cmap(num_col);
 
   /* display Lena */
-  plenv(1., width, 1., height, 1, -1);
+  plenv(1.0, width, 1.0, height, 1, -1);
 
   if(!nointeractive)
     pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Lena...");
   else
     pllab(""," ","Lena...");
 
-  plimage(img_f, 1., width, 1., height, 0., 0.,
-	  			1., width, 1., height);
+  plimage(img_f, 1.0, width, 1.0, height, 0.0, 0.0,
+	  			1.0, width, 1.0, height);
 
   /* selection/expansion demo */
   if(!nointeractive) { 
@@ -156,13 +156,13 @@ int main(char[][] args)
     pladv(0);
 
     /* display selection only */
-    plimage(img_f, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
+    plimage(img_f, 1.0, width, 1.0, height, 0.0, 0.0, xi, xe, ye, yi);
 
     plspause(1);
 
     /* zoom in selection */
     plenv(xi, xe, ye, yi, 1, -1);
-    plimage(img_f, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
+    plimage(img_f, 1.0, width, 1.0, height, 0.0, 0.0, xi, xe, ye, yi);
   }
 
   /* Base the dynamic range on the image contents. */
@@ -174,7 +174,7 @@ int main(char[][] args)
   plcol0(2);
   plenv(0, width, 0, height, 1, -1);
   pllab("", "", "Reduced dynamic range image example");
-  plimagefr(img_f, 0.0, cast(PLFLT)width, 0.0, cast(PLFLT)height, 0.0, 0.0,
+  plimagefr(img_f, 0.0, width, 0.0, height, 0.0, 0.0,
             img_min+img_max*0.25, img_max-img_max*0.25);
 
   /* Draw a distorted version of the original image, showing its full dynamic range. */
@@ -198,7 +198,7 @@ int main(char[][] args)
 /* read image from file in binary ppm format */
 int read_img(string fname, out PLFLT[][] img_f, out int width, out int height, out int num_col)
 {
-	char* img;
+	ubyte[] img;
 
 	BufferedFile input = new BufferedFile;
   try {
@@ -224,14 +224,15 @@ int read_img(string fname, out PLFLT[][] img_f, out int width, out int height, o
 		if(input.readf("%d %d %d", &width, &height, &num_col) != 9) /* width, height num colors */
 			return 1;
 	
-		img = (new char[width*height]).ptr;
+		img = new ubyte[width*height];
 	
 		img_f = new PLFLT[][width];
 		for(int i=0; i<width; i++)
 			img_f[i] = new PLFLT[height];
 	
-		input.readExact(img, width*height);
-	} catch(OpenException exception) {
+		if(input.read(img) != width*height)
+			return 1;
+	} catch(Exception except) {
 		return 1;
 	} finally {
 	  input.close();
@@ -279,6 +280,6 @@ void gray_cmap(PLINT num_col)
 	PLFLT[] b = [ 0.0, 1.0 ];
 	PLFLT[] pos = [ 0.0, 1.0 ];
 
-  plscmap1n(256);
+  plscmap1n(num_col);
   plscmap1l(1, pos, r, g, b);
 }
