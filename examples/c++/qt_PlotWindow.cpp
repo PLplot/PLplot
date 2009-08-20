@@ -25,7 +25,7 @@ write to the Free Software Foundation, Inc.,
 
 #include "qt_PlotWindow.h"
 
-PlotWindow::PlotWindow(QWidget* parent):
+PlotWindow::PlotWindow(int argc, char** argv, QWidget* parent):
         QMainWindow(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -41,7 +41,17 @@ PlotWindow::PlotWindow(QWidget* parent):
     // One window = One plot widget = one stream
     plmkstrm(&strm);
     plsdev ("extqt");
-    plsetqtdev(plot);
+
+    // Get all the application arguments as argc, argv
+
+    if(argc==0 || argv==NULL)
+    {
+        plsetqtdev(plot);
+    }
+    else
+    {
+        plsetqtdev(plot, argc, argv);
+    }
     plinit();
         
     resize(600, 600);
@@ -79,7 +89,7 @@ void PlotWindow::plotCurves()
     }
         
     pladv(0);
-    plot->setBackgroundColor(50, 100, 200, 1.);
+    plot->clear();
     plvpor(0.05, 0.95, 0.05, 0.45);
     plwind(0., 360., -1.2, 1.2);
 

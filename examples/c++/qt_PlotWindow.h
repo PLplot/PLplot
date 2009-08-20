@@ -52,7 +52,7 @@ class PlotWindow : public QMainWindow
 		/// \param pageSize Print size
 		/// \param orientation Print orientation
 		/// \param parent Parent widget, if any.
-		PlotWindow(QWidget* parent=NULL);
+		PlotWindow(int argc=0, char** argv=NULL, QWidget* parent=NULL);
 		
 		~PlotWindow();
 

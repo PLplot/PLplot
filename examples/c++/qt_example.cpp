@@ -28,7 +28,7 @@
 int main(int argc, char** argv)
 {
 	QApplication a( argc, argv );
-	PlotWindow* win=new PlotWindow;
+	PlotWindow* win=new PlotWindow(argc, argv);
 	a.setActiveWindow( win );
 	win->setVisible(true);
 

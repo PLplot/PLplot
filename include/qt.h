@@ -303,6 +303,8 @@ class PLDLLIMPEXP_QT QtPLWidget: public QWidget, public QtPLDriver
         void setBackgroundColor(int r, int g, int b, double alpha);
         void setWidth(PLINT r);
         void drawText(PLStream* pls, EscText* txt);
+        void flush();
+        void clear();
 
     protected:
                 
@@ -319,7 +321,7 @@ class PLDLLIMPEXP_QT QtPLWidget: public QWidget, public QtPLDriver
         QLinkedList<BufferElement> m_listBuffer; // Buffer holding the draw instructions
         bool m_bAwaitingRedraw;
         int m_iOldSize; // Holds the size of the buffer. Modified => image has to be redrawn
-
+        
         struct
         {
             int r;
@@ -328,7 +330,14 @@ class PLDLLIMPEXP_QT QtPLWidget: public QWidget, public QtPLDriver
             double alpha;
         } lastColour;
 
-                
+        struct
+        {
+            int r;
+            int g;
+            int b;
+            double alpha;
+        } bgColour;
+        
     protected slots:
         void mouseReleaseEvent ( QMouseEvent * event );
         void keyPressEvent(QKeyEvent* event);
@@ -369,6 +378,8 @@ class PLDLLIMPEXP_QT QtExtWidget: public QtPLWidget
 };
 
 PLDLLIMPEXP_QT void plsetqtdev(QtExtWidget* widget); // Registers the widget as plot device, as the widget has to be created in the Qt application GUI, prior to any plplot call. Must be called before plinit().
+
+PLDLLIMPEXP_QT void plsetqtdev(QtExtWidget* widget, int argc, char** argv); // Registers the widget as plot device, as the widget has to be created in the Qt application GUI, prior to any plplot call. Must be called before plinit().
 
 PLDLLIMPEXP_QT void plfreeqtdev(); // Deletes and unregisters the device. 
 

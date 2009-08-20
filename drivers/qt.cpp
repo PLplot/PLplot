@@ -35,6 +35,7 @@ Initial release.
 #include <QMutexLocker>
 
 extern int vectorize;
+extern int lines_aa;
 extern MasterHandler handler;
 
 // global variables initialised in init(), used in tidy()
@@ -78,6 +79,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
     ;
 
 static DrvOpt qt_options[]={    {"text_vectorize", DRV_INT, &vectorize, "Vectorize fonts on output (0|1)"},
+                                {"lines_antialiasing", DRV_INT, &lines_aa, "Toggles antialiasing on lines (0|1)"},
                                 {NULL, DRV_INT, NULL, NULL}};
 
 bool initQtApp(bool isGUI)
@@ -236,6 +238,7 @@ void plD_init_rasterqt(PLStream * pls)
     double dpi;
             
     vectorize=0;
+    lines_aa=1;
     plParseDrvOpts(qt_options);
             
     /* Stream setup */
@@ -587,6 +590,7 @@ void plD_dispatch_init_svgqt(PLDispatchTable *pdt)
 void plD_init_svgqt(PLStream * pls)
 {
     vectorize=1;
+    lines_aa=1;
     plParseDrvOpts(qt_options);
 
     /* Stream setup */
@@ -810,6 +814,7 @@ void plD_dispatch_init_pdfqt(PLDispatchTable *pdt)
 void plD_init_epspdfqt(PLStream * pls)
 {
     vectorize=0;
+    lines_aa=1;
     plParseDrvOpts(qt_options);
             
     /* Stream setup */
@@ -1027,6 +1032,7 @@ void plD_dispatch_init_qtwidget(PLDispatchTable *pdt)
 void plD_init_qtwidget(PLStream * pls)
 {
     vectorize=0;
+    lines_aa=1;
     plParseDrvOpts(qt_options);
             
     PLINT w, h;
@@ -1071,7 +1077,7 @@ void plD_init_qtwidget(PLStream * pls)
     pls->dev_flush=1;
     /* Driver does not have a clear capability so use (good) PLplot core
     * fallback for that instead.  */
-    pls->dev_clear=0;
+    pls->dev_clear=1;
     pls->dev_text = 1; // want to draw text
     pls->dev_unicode = 1; // want unicode
             
@@ -1119,24 +1125,32 @@ void plD_polyline_qtwidget(PLStream *pls, short *xa, short *ya, PLINT npts)
 void plD_esc_qtwidget(PLStream * pls, PLINT op, void* ptr)
 {
     short *xa, *ya;
+    short xmin, xmax, ymin, ymax;
     PLINT i, j;
     QtPLWidget * widget=(QtPLWidget *) pls->dev;
     if(widget==NULL) return;
                         
     switch(op)
     {
+        case PLESC_CLEAR:
+            widget->clear();
+//             widget->clearBuffer();
+//             widget->setBackgroundColor(pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a);
+            break;
         case PLESC_FILL:
+//             std::cout << "fill " <<pls->dev_npts<< std::endl;
         xa=new short[pls->dev_npts];
         ya=new short[pls->dev_npts];
-                
+
         for (i = 0; i < pls->dev_npts; i++)
         {
             xa[i] = pls->dev_x[i];
             ya[i] = pls->dev_y[i];
         }
+
         widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
         widget->drawPolygon(xa, ya, pls->dev_npts);
-                
+
         delete[] xa;
         delete[] ya;
         break;
@@ -1147,6 +1161,13 @@ void plD_esc_qtwidget(PLStream * pls, PLINT op, void* ptr)
         widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
         widget->drawText(pls, (EscText *)ptr);
         break;
+
+        case PLESC_FLUSH:
+//             std::cout << "flush" << std::endl;
+            widget->flush();
+            break;
+
+		    
         
         default: break;
     }
@@ -1213,8 +1234,8 @@ void plD_dispatch_init_extqt(PLDispatchTable *pdt)
 void plD_init_extqt(PLStream * pls)
 {
     vectorize=0;
-    plParseDrvOpts(qt_options);
-            
+    lines_aa=1;
+    
     if(pls->dev==NULL/* || pls->xlength <= 0 || pls->ylength <= 0*/)
     {
         printf("Error: use plsetqtdev to set up the Qt device before calling plinit()\n");
@@ -1234,7 +1255,7 @@ void plD_init_extqt(PLStream * pls)
     QPainter tempPainter(&temp);
             
     plP_setpxl(temp.logicalDpiX()/25.4/widget->downscale, temp.logicalDpiY()/25.4/widget->downscale);
-
+    
     pls->color = 1;		/* Is a color device */
     pls->plbuf_write=0;
     pls->dev_fill0 = 1;	/* Handle solid fills */

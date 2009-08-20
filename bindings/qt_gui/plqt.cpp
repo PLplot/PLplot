@@ -35,6 +35,7 @@ Initial release.
 
 // Global variables for Qt driver.
 PLDLLIMPEXP_QT_DATA(int) vectorize = 0;
+PLDLLIMPEXP_QT_DATA(int) lines_aa = 1;
 PLDLLIMPEXP_QT_DATA(MasterHandler) handler;
 
 // Master Device Handler for multiple streams
@@ -240,7 +241,7 @@ QPicture QtPLDriver::getTextPicture(PLUNICODE fci, PLUNICODE* text, int len, PLF
                     drawTextInPicture(&p, currentString);
                     currentString.clear();
                     old_fontScale=currentFontScale;
-                    if( yOffset>-0.000000000001 ) // I've already encountered precision issues here, so changed 0 into -epsilon
+                    if( yOffset>0.000000000001 ) // I've already encountered precision issues here, so changed 0 into epsilon
                     {
                         currentFontScale *= 1.25;  /* Subscript scaling parameter */
                     }
@@ -416,7 +417,7 @@ QtRasterDevice::QtRasterDevice(int i_iWidth, int i_iHeight):
     QBrush b=m_painterP->brush();
     b.setStyle(Qt::SolidPattern);
     m_painterP->setBrush(b);
-    m_painterP->setRenderHint(QPainter::Antialiasing, true);
+    m_painterP->setRenderHint(QPainter::Antialiasing, (bool)lines_aa);
 }
 
 QtRasterDevice::~QtRasterDevice()
@@ -439,7 +440,7 @@ void QtRasterDevice::savePlot()
     save(fileName, format, 85);
 
     m_painterP->begin(this);
-    m_painterP->setRenderHint(QPainter::Antialiasing, true);
+    m_painterP->setRenderHint(QPainter::Antialiasing, (bool)lines_aa);
     QBrush b=m_painterP->brush();
     b.setStyle(Qt::SolidPattern);
     m_painterP->setBrush(b);
@@ -566,6 +567,8 @@ QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
     pageNumber=0;
     resize(i_iWidth, i_iHeight);
     lastColour.r=-1;
+    setVisible(true);
+    QApplication::processEvents();
 }
 
 QtPLWidget::~QtPLWidget()
@@ -576,9 +579,14 @@ QtPLWidget::~QtPLWidget()
 
 void QtPLWidget::clearWidget()
 {
-    clearBuffer();
+    clear();
     m_bAwaitingRedraw=true;
     update();
+}
+
+void QtPLWidget::flush()
+{
+    repaint();
 }
 
 void QtPLWidget::clearBuffer()
@@ -745,6 +753,11 @@ void QtPLWidget::setBackgroundColor(int r, int g, int b, double alpha)
     el.Data.ColourStruct->G=g;
     el.Data.ColourStruct->B=b;
     el.Data.ColourStruct->A=alpha*255.;
+
+    bgColour.r=r;
+    bgColour.g=g;
+    bgColour.b=b;
+    bgColour.alpha=alpha;
     
     m_listBuffer.append(el);
 }
@@ -858,7 +871,7 @@ void QtPLWidget::paintEvent( QPaintEvent * )
         // Draw the margins and the background
         painter->fillRect(0, 0, width(), height(), QBrush(Qt::white));
         painter->fillRect(0, 0, width(), height(), QBrush(Qt::gray, Qt::Dense4Pattern));
-                
+
         // Draw the plot
         doPlot(painter, x_fact, y_fact, x_offset, y_offset);
         painter->end();
@@ -892,7 +905,7 @@ void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offs
     p->setPen(SolidPen);
     bool hasPen=true;
         
-    p->setRenderHints(QPainter::Antialiasing, true);
+    p->setRenderHints(QPainter::Antialiasing, (bool)lines_aa);
 
     QBrush SolidBrush(Qt::SolidPattern);
     p->setBrush(SolidBrush);
@@ -902,17 +915,28 @@ void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offs
     trans=trans.scale(x_fact, y_fact);
         
     p->setTransform(trans);
-        
+
     if(m_listBuffer.empty())
     {
         p->fillRect(0, 0, 1, 1, QBrush());
         return;
     }
+
     // unrolls the buffer and draws each element accordingly
-    for(QLinkedList<BufferElement>::const_iterator i=m_listBuffer.begin(); i!=m_listBuffer.end(); ++i)
+    for(QLinkedList<BufferElement>::const_iterator i=m_listBuffer.constBegin(); i!=m_listBuffer.constEnd(); ++i)
     {
         switch(i->Element)
         {
+            case SET_COLOUR:
+                SolidPen.setColor(QColor(i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A));
+                if(hasPen)
+                {
+                    p->setPen(SolidPen);
+                }
+                SolidBrush.setColor(QColor(i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A));
+                p->setBrush(SolidBrush);
+                break;
+                
             case LINE:
                 if(!hasPen)
                 {
@@ -939,7 +963,7 @@ void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offs
                     hasPen=false;
                 }
                 p->drawRect(*(i->Data.Rect));
-                p->setRenderHints(QPainter::Antialiasing, true);
+                p->setRenderHints(QPainter::Antialiasing, (bool)lines_aa);
                 break;
                                 
             case POLYGON:
@@ -950,7 +974,7 @@ void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offs
                     hasPen=false;
                 }
                 p->drawConvexPolygon(*(i->Data.Polyline));
-                p->setRenderHints(QPainter::Antialiasing, true);
+                p->setRenderHints(QPainter::Antialiasing, (bool)lines_aa);
                 break;
                 
             case TEXT:
@@ -972,16 +996,6 @@ void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offs
                 {
                     p->setPen(SolidPen);
                 }
-                break;
-                
-            case SET_COLOUR:
-                SolidPen.setColor(QColor(i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A));
-                if(hasPen)
-                {
-                    p->setPen(SolidPen);
-                }
-                SolidBrush.setColor(QColor(i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A));
-                p->setBrush(SolidBrush);
                 break;
 
             case SET_BG_COLOUR:
@@ -1014,6 +1028,13 @@ void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, doubl
         io_dYOffset=(h-io_dYFact*m_dHeight)/2.;
     }
 }
+
+void QtPLWidget::clear()
+{
+    clearBuffer();
+    setBackgroundColor(bgColour.r, bgColour.g, bgColour.b, bgColour.alpha);
+}
+
 #endif
 
 #if defined(PLD_extqt)
@@ -1138,6 +1159,12 @@ void QtExtWidget::paintEvent(QPaintEvent* event)
 
 void plsetqtdev(QtExtWidget* widget)
 {
+    plsc->dev = (void*)widget;
+}
+
+void plsetqtdev(QtExtWidget* widget, int argc, char** argv)
+{
+    plparseopts( &argc, (const char**)argv, PL_PARSE_FULL );
     plsc->dev = (void*)widget;
 }
 
