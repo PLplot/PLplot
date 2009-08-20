@@ -1224,7 +1224,7 @@ bject. */
         (*cached_jvm)->GetEnv(cached_jvm,(void **)&cbenv,JNI_VERSION_1_2);
         if (cbenv == NULL) {
           fprintf(stderr,"Thread not attached\n");
-          if (AttachCurrentThread(cached_jvm, &cbenv, NULL) != 0) {
+          if ((*cached_jvm)->AttachCurrentThread(cached_jvm, (void **)&cbenv, NULL) != 0) {
             fprintf(stderr,"Error attaching to JVM\n");
             return;
           }
