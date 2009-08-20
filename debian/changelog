@@ -1,3 +1,10 @@
+plplot (5.9.2-4) unstable; urgency=low
+
+  * debian/patches/02_unset-python-path.diff: Fix offset in patch
+    to remove quilt warning.  (closes: #538533)
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 20 Aug 2009 13:40:07 +0100
+
 plplot (5.9.2-3) unstable; urgency=low
 
   * debian/control.in: Ensure libplplot-dev only depends on

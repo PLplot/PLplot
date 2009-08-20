@@ -9,7 +9,7 @@
 
 --- plplot/examples/python/CMakeLists.txt.old
 +++ plplot/examples/python/CMakeLists.txt
-@@ -147,7 +147,7 @@
+@@ -161,7 +161,7 @@
  @ONLY
  )
  
