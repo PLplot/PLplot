@@ -60,7 +60,7 @@ let () =
 
   (* Load color palettes *)
   plspal0 "cmap0_black_on_white.pal";
-  plspal1 "cmap1_gray.pal";
+  plspal1 "cmap1_gray.pal" true;
 
   (* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display *)
   plscmap0n 3;
@@ -142,7 +142,7 @@ let () =
 
   (* Load color palettes *)
   plspal0 "cmap0_black_on_white.pal";
-  plspal1 "cmap1_blue_yellow.pal";
+  plspal1 "cmap1_blue_yellow.pal" true;
 
   pladv 0;
   plvpor 0.1 0.9 0.1 0.9;
@@ -162,7 +162,7 @@ let () =
 
   (* Load color palettes *)
   plspal0 "cmap0_black_on_white.pal";
-  plspal1 "cmap1_blue_red.pal";
+  plspal1 "cmap1_blue_red.pal" true;
 
   pladv 0;
   plvpor 0.1 0.9 0.1 0.9;
@@ -184,7 +184,7 @@ let () =
 
   (* Load color palettes *)
   plspal0 "";
-  plspal1 "";
+  plspal1 "" true;
 
   pladv 0;
   plvpor 0.1 0.9 0.1 0.9;
@@ -223,7 +223,7 @@ let () =
 
   (* Load colour palettes*)
   plspal0 "cmap0_black_on_white.pal";
-  plspal1 "cmap1_gray.pal";
+  plspal1 "cmap1_gray.pal" true;
 
   pladv 0;
   plvpor 0.1 0.9 0.1 0.9;

@@ -481,7 +481,7 @@ c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 c_plspal0(const char *filename);
 
  void
-c_plspal1(const char *filename);
+c_plspal1(const char *filename, PLBOOL interpolate);
 
  void
 c_plspause(PLBOOL pause);
