@@ -32,7 +32,7 @@ plparseopts(sys.argv, PL_PARSE_FULL)
 
 # Load colour palettes
 plspal0("cmap0_black_on_white.pal")
-plspal1("cmap1_gray.pal")
+plspal1("cmap1_gray.pal",1)
 plscmap0n(3)
 
 # Initialize plplot
