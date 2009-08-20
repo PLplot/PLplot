@@ -1258,7 +1258,7 @@ c_plspal0(const char *filename)
 \*--------------------------------------------------------------------------*/
 
 void
-c_plspal1(const char *filename)
+c_plspal1(const char *filename, PLBOOL interpolate)
 {
   int i;
   int number_colors;
@@ -1268,6 +1268,7 @@ c_plspal1(const char *filename)
   int r_i, g_i, b_i, pos_i, rev_i;
   double r_d, g_d, b_d, a_d, pos_d;
   PLFLT *r, *g, *b, *a, *pos;
+  PLINT *ri, *gi, *bi;
   PLBOOL *rev;
   FILE *fp;
   char msgbuf[1024];
@@ -1316,6 +1317,9 @@ c_plspal1(const char *filename)
   r = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
   g = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
   b = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
+  ri = (PLINT *)malloc(number_colors * sizeof(PLINT));
+  gi = (PLINT *)malloc(number_colors * sizeof(PLINT));
+  bi = (PLINT *)malloc(number_colors * sizeof(PLINT));
   a = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
   pos = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
   rev = (PLBOOL *)malloc(number_colors * sizeof(PLBOOL));
@@ -1400,12 +1404,25 @@ c_plspal1(const char *filename)
     pos[0] = 0.0;
     pos[number_colors-1] = 1.0;
 
-    c_plscmap1la(rgb, number_colors, pos, r, g, b, a, rev);
+    if (interpolate) {
+        c_plscmap1la(rgb, number_colors, pos, r, g, b, a, rev);
+    }
+    else {
+        for (i = 0; i < number_colors; i++) {
+            ri[i] = r[i] * 255.0;
+            gi[i] = g[i] * 255.0;
+            bi[i] = b[i] * 255.0;
+        }
+        c_plscmap1a(ri, gi, bi, a, number_colors);
+    }
   }
 
   free(r);
   free(g);
   free(b);
+  free(ri);
+  free(gi);
+  free(bi);
   free(a);
   free(pos);
   free(rev);

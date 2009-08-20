@@ -1486,7 +1486,7 @@ c_plspal0(const char *filename);
 /* Set the colors for color table 1 from a cmap1 file */
 
 PLDLLIMPEXP void
-c_plspal1(const char *filename);
+c_plspal1(const char *filename, PLBOOL interpolate);
 
 /* Set the pause (on end-of-page) status */
 

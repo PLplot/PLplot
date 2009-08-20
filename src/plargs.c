@@ -2270,5 +2270,5 @@ opt_cmap0(const char *opt, const char *optarg, void *client_data)
 static int
 opt_cmap1(const char *opt, const char *optarg, void *client_data)
 {
-  plspal1(optarg);
+  plspal1(optarg, TRUE);
 }
