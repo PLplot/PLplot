@@ -94,7 +94,7 @@ class x16 {
 
 	// Load colour palettes
 	pls.spal0("cmap0_black_on_white.pal");
-	pls.spal1("cmap1_gray.pal");
+	pls.spal1("cmap1_gray.pal", true);
 	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
 	//16-color display
 	pls.scmap0n(3);
@@ -171,7 +171,7 @@ class x16 {
     
 	// Load colour palettes
 	pls.spal0("cmap0_black_on_white.pal");
-	pls.spal1("cmap1_blue_yellow.pal");
+	pls.spal1("cmap1_blue_yellow.pal",true);
 	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
 	//16-color display
 	pls.scmap0n(3);
@@ -197,7 +197,7 @@ class x16 {
 
 	// Load colour palettes
 	pls.spal0("cmap0_black_on_white.pal");
-	pls.spal1("cmap1_blue_red.pal");
+	pls.spal1("cmap1_blue_red.pal",true);
 	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
 	//16-color display
 	pls.scmap0n(3);
@@ -224,7 +224,7 @@ class x16 {
 
 	// Load colour palettes
 	pls.spal0("");
-	pls.spal1("");
+	pls.spal1("",true);
 	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
 	//16-color display
 	pls.scmap0n(3);
@@ -254,7 +254,7 @@ class x16 {
 
 	// Load colour palettes
 	pls.spal0("cmap0_black_on_white.pal");
-	pls.spal1("cmap1_gray.pal");
+	pls.spal1("cmap1_gray.pal",true);
 	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
 	//16-color display
 	pls.scmap0n(3);

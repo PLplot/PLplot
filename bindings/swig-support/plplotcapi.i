@@ -799,7 +799,7 @@ plspal0(const char *filename);
 
 %feature("autodoc", "Set the color map 1 colors using a cmap1 color palette file.") plspal1;
 void
-plspal1(const char *filename);
+plspal1(const char *filename, PLBOOL interpolate);
 
 %feature("autodoc", "Set the pause (on end-of-page) status.") plspause;
 void

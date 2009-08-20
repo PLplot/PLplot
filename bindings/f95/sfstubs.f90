@@ -687,17 +687,18 @@
 
 !***********************************************************************
 
-      subroutine plspal1(filename)
+      subroutine plspal1(filename,interpolate)
 
       implicit none
       character*(*) filename
+      integer interpolate
 
       include 'sfstubs.h'
 
       call plstrf2c(filename, string1, maxlen)
 
       s1 = transfer( string1, s1 )
-      call plspal17(s1)
+      call plspal17(s1,interpolate)
 
       end subroutine
 

@@ -91,7 +91,7 @@ pl.parseopts(arg, pl.PL_PARSE_FULL)
 
 -- Load colour palettes
 pl.spal0("cmap0_black_on_white.pal");
-pl.spal1("cmap1_gray.pal");
+pl.spal1("cmap1_gray.pal",1);
 
 -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display 
 pl.scmap0n(3)
@@ -180,7 +180,7 @@ pl.lab("distance", "altitude", "Bogon density")
 
 -- Load colour palettes
 pl.spal0("cmap0_black_on_white.pal");
-pl.spal1("cmap1_blue_yellow.pal");
+pl.spal1("cmap1_blue_yellow.pal",1);
 
 -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
 pl.scmap0n(3);
@@ -202,7 +202,7 @@ pl.lab("distance", "altitude", "Bogon density")
 
 -- Load colour palettes
 pl.spal0("cmap0_black_on_white.pal");
-pl.spal1("cmap1_blue_red.pal");
+pl.spal1("cmap1_blue_red.pal",1);
 
 -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
 pl.scmap0n(3);
@@ -226,7 +226,7 @@ pl.lab("distance", "altitude", "Bogon density, with streamlines")
 
 -- Load colour palettes
 pl.spal0("");
-pl.spal1("");
+pl.spal1("",1);
 
 -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
 pl.scmap0n(3);
@@ -252,7 +252,7 @@ if exclude~=0 then
 
 	-- Load colour palettes
   pl.spal0("cmap0_black_on_white.pal");
-  pl.spal1("cmap1_gray.pal");
+  pl.spal1("cmap1_gray.pal",1);
     
 	-- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
   pl.scmap0n(3);
@@ -276,7 +276,7 @@ end
 
 -- Load colour palettes
 pl.spal0("cmap0_black_on_white.pal");
-pl.spal1("cmap1_gray.pal");
+pl.spal1("cmap1_gray.pal",1);
 
 -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
 pl.scmap0n(3);

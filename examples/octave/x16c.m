@@ -62,7 +62,7 @@ function ix16c
 
   ## Load colour palettes
   plspal0("cmap0_black_on_white.pal");
-  plspal1("cmap1_gray.pal");
+  plspal1("cmap1_gray.pal",1);
   plscmap0n(3);
 
   ## Initialize plplot 
@@ -131,7 +131,7 @@ function ix16c
 
   ##  Load colour palettes
   plspal0("cmap0_black_on_white.pal");
-  plspal1("cmap1_blue_yellow.pal");
+  plspal1("cmap1_blue_yellow.pal",1);
   ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
   plscmap0n(3);
 
@@ -157,7 +157,7 @@ function ix16c
 
   ## Load colour palettes
   plspal0("cmap0_black_on_white.pal");
-  plspal1("cmap1_blue_red.pal");
+  plspal1("cmap1_blue_red.pal",1);
   ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
   plscmap0n(3);
 
@@ -182,7 +182,7 @@ function ix16c
 
   ## Load colour palettes
   plspal0("");
-  plspal1("");
+  plspal1("",1);
   ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
   plscmap0n(3);
 
@@ -209,7 +209,7 @@ function ix16c
   if (0) ## exclusion not implemented
     ## Load colour palettes
     plspal0("cmap0_black_on_white.pal");
-    plspal1("cmap1_gray.pal");
+    plspal1("cmap1_gray.pal",1);
     ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n(3);
 
@@ -233,7 +233,7 @@ function ix16c
   PERIMETERPTS=100;
   ## Load colour palettes
   plspal0("cmap0_black_on_white.pal");
-  plspal1("cmap1_gray.pal");
+  plspal1("cmap1_gray.pal",1);
   ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
   plscmap0n(3);
 

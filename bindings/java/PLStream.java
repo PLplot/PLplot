@@ -803,9 +803,9 @@ public void spal0(String filename) {
     plplotjavac.plspal0(filename);
 }
 
-public void spal1(String filename) {
+public void spal1(String filename, boolean interpolate) {
     if (set_stream() == -1) return;
-    plplotjavac.plspal1(filename);
+    plplotjavac.plspal1(filename,interpolate);
 }
 
 public void spause(boolean pause) {

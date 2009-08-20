@@ -160,7 +160,7 @@ x16::x16( int argc, const char ** argv ) {
 
   // Load colour palettes
   pls->spal0("cmap0_black_on_white.pal");
-  pls->spal1("cmap1_gray.pal");
+  pls->spal1("cmap1_gray.pal",true);
 
   // Reduce colors in cmap 0 so that cmap 1 is useful on a
   //16-color display
@@ -247,7 +247,7 @@ x16::x16( int argc, const char ** argv ) {
   // Plot using 1d coordinate transform
 
   pls->spal0("cmap0_black_on_white.pal");
-  pls->spal1("cmap1_blue_yellow.pal");
+  pls->spal1("cmap1_blue_yellow.pal",true);
   pls->scmap0n(3);
 
   pls->adv(0);
@@ -270,7 +270,7 @@ x16::x16( int argc, const char ** argv ) {
   // Plot using 2d coordinate transform
 
   pls->spal0("cmap0_black_on_white.pal");
-  pls->spal1("cmap1_blue_red.pal");
+  pls->spal1("cmap1_blue_red.pal",true);
   pls->scmap0n(3);
 
   pls->adv(0);
@@ -294,7 +294,7 @@ x16::x16( int argc, const char ** argv ) {
   // Plot using 2d coordinate transform
 
   pls->spal0("");
-  pls->spal1("");
+  pls->spal1("",true);
   pls->scmap0n(3);
 
   pls->adv(0);
@@ -319,7 +319,7 @@ x16::x16( int argc, const char ** argv ) {
 
   if(exclude) {
     pls->spal0("cmap0_black_on_white.pal");
-    pls->spal1("cmap1_gray.pal");
+    pls->spal1("cmap1_gray.pal",true);
     pls->scmap0n(3);
 
     pls->adv(0);
@@ -343,7 +343,7 @@ x16::x16( int argc, const char ** argv ) {
   //Example with polar coordinates.
 
   pls->spal0("cmap0_black_on_white.pal");
-  pls->spal1("cmap1_gray.pal");
+  pls->spal1("cmap1_gray.pal",true);
   pls->scmap0n(3);
 
   pls->adv(0);

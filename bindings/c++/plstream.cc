@@ -1890,11 +1890,11 @@ void plstream::spal0(const char *filename)
 
 /* Set the colors for color table 1 from a cmap1 file */
 
-void plstream::spal1(const char *filename)
+void plstream::spal1(const char *filename, bool interpolate)
 {
   set_stream();
 
-  plspal1(filename);
+  plspal1(filename, (PLBOOL) interpolate);
 }
 
 /* Set the pause (on end-of-page) status */

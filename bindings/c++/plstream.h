@@ -774,7 +774,7 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 /* Set the colors for color table 1 from a cmap1 file */
 
-    void spal1(const char *filename);
+    void spal1(const char *filename, bool interpolate = true);
 
 /* Set stream number.  */
 

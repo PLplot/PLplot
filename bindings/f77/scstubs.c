@@ -882,9 +882,9 @@ PLSPAL07(const char *filename)
 }
 
 void
-PLSPAL17(const char *filename)
+PLSPAL17(const char *filename, PLBOOL *interpolate)
 {
-  c_plspal1(filename);
+  c_plspal1(filename,*interpolate);
 }
 
 void

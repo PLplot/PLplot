@@ -878,6 +878,7 @@ filename	const char *
 
 pltclcmd plspal1 void
 filename	const char *
+interpolate	PLINT
 
 # Set the pause (on end-of-page) status.
 
