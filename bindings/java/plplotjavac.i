@@ -52,6 +52,16 @@ typedef int PLINT;
 typedef unsigned int PLUNICODE;
 typedef PLINT PLBOOL;
 
+/* Set jni version and cache JVM - needed for callbacks */
+%{
+static JavaVM *cached_jvm = NULL;
+  
+SWIGEXPORT JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
+  cached_jvm = jvm;
+  return JNI_VERSION_1_2;
+}
+%}  
+
 /* Simple (input) PLBOOL arguments */
 /* Use macro style similar to INPUT_TYPEMAP defined in typemaps.i, but
  * actually follow what is done in java.swg for bool C type except 
@@ -1146,16 +1156,16 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    
    jobject mapformClass;
    jmethodID mapformID;
-   JNIEnv *cbenv;
+   JNIEnv *cbenvMapform;
 
    /* C mapform callback function which calls the java
     * mapform function in a PLCallbackMapform object. */
    void mapform_java(PLINT n, PLFLT *x, PLFLT *y) {
-      jdoubleArray jx = setup_java_array_1d_PLFLT(cbenv,x,n);
-      jdoubleArray jy = setup_java_array_1d_PLFLT(cbenv,y,n);
-      (*cbenv)->CallVoidMethod(cbenv,mapformClass, mapformID,jx,jy);
-      release_java_array_1d_PLFLT(cbenv,jx,x,n);
-      release_java_array_1d_PLFLT(cbenv,jy,y,n);
+      jdoubleArray jx = setup_java_array_1d_PLFLT(cbenvMapform,x,n);
+      jdoubleArray jy = setup_java_array_1d_PLFLT(cbenvMapform,y,n);
+      (*cbenvMapform)->CallVoidMethod(cbenvMapform,mapformClass, mapformID,jx,jy);
+      release_java_array_1d_PLFLT(cbenvMapform,jx,x,n);
+      release_java_array_1d_PLFLT(cbenvMapform,jy,y,n);
    }
 %}
 
@@ -1168,7 +1178,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
       jclass cls = (*jenv)->GetObjectClass(jenv,obj);
       mapformID = (*jenv)->GetMethodID(jenv,cls, "mapform","([D[D)V" );
       mapformClass = obj;
-      cbenv = jenv;
+      cbenvMapform = jenv;
       $1 = mapform_java;
    }
    else {
@@ -1184,25 +1194,61 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 
 %{
    
-   jobject labelClass;
-   jmethodID labelID;
-   JNIEnv *cbenv;
+   jobject labelClass = 0;
+   jobject labelClassRef = 0;
 
    /* C label plotting callback function which calls the java
-    * label function in a PLCallbackLabel object. */
+    * label function in a PLCallbackLabel labelClassobelID
+bject. */
    void label_java(PLINT axis, PLFLT value, char *string, PLINT len, PLPointer data) {
 	jstring javaString;
 	const char *nativeString;
 	jint jaxis;
 	jdouble jvalue;
+        JNIEnv *cbenv;
+        jmethodID labelID = 0;
 	
 	jaxis = (jint) axis;
 	jvalue = (jdouble) value;
-        javaString = (jstring)(*cbenv)->CallObjectMethod(cbenv,labelClass, labelID, jaxis, jvalue);
-	nativeString = (*cbenv)->GetStringUTFChars(cbenv,javaString,0);
-	strncpy(string,nativeString,len);
-	(*cbenv)->ReleaseStringUTFChars(cbenv,javaString,nativeString);
-	/*strncpy(string,"",len);*/
+        
+        if ((string == NULL ) || (len == 0)) {
+          return;
+        }
+
+        string[0] = '\0';
+
+        if (cached_jvm == NULL) {
+           fprintf(stderr,"Error! NULL jvm\n");
+           return;
+        }
+        (*cached_jvm)->GetEnv(cached_jvm,(void **)&cbenv,JNI_VERSION_1_2);
+        if (cbenv == NULL) {
+          fprintf(stderr,"Thread not attached\n");
+          if (AttachCurrentThread(cached_jvm, &cbenv, NULL) != 0) {
+            fprintf(stderr,"Error attaching to JVM\n");
+            return;
+          }
+        }
+        if (labelClass == 0) {
+          fprintf(stderr,"Error - callback undefined\n");
+          return;
+        }
+        jclass cls = (*cbenv)->GetObjectClass(cbenv,labelClass);
+        if (cls == 0) {
+          fprintf(stderr,"Error getting callback class\n");
+          return;
+        }
+        labelID = (*cbenv)->GetMethodID(cbenv,cls, "label","(ID)Ljava/lang/String;" );
+        if (labelID != 0) {
+          javaString = (jstring)(*cbenv)->CallObjectMethod(cbenv,labelClass, labelID, jaxis, jvalue);
+	  nativeString = (*cbenv)->GetStringUTFChars(cbenv,javaString,0);
+	  strncpy(string,nativeString,len);
+	  (*cbenv)->ReleaseStringUTFChars(cbenv,javaString,nativeString);
+        }
+        else {
+          fprintf(stderr,"Java callback not found\n");
+          string[0] = '\0';
+        }
    }
 %}
 
@@ -1211,11 +1257,18 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(in) label_func lf {
 
    jobject obj = $input;
+
+   /* Delete any old references */
+   if (labelClass != 0) {
+     (*jenv)->DeleteGlobalRef(jenv,labelClass);
+     labelClass = 0;
+   }
+   /* Need a reference to this object to ensure it is
+    * valid when we reach the callback */
    if (obj != NULL) {
-      jclass cls = (*jenv)->GetObjectClass(jenv,obj);
-      labelID = (*jenv)->GetMethodID(jenv,cls, "label","(ID)Ljava/lang/String;" );
-      labelClass = obj;
-      cbenv = jenv;
+      labelClass = (*jenv)->NewGlobalRef(jenv,obj);
+   }
+   if (labelClass != 0) {
       $1 = label_java;
    }
    else {
