@@ -104,8 +104,12 @@ begin
     -- Does several shade plots using different coordinate mappings.
     ----------------------------------------------------------------------------
 
-    -- Parse and process command line arguments
+    -- Parse and process command line arguments.
     plparseopts(PL_PARSE_FULL);
+
+    -- Load colour palettes
+    plspal0("cmap0_black_on_white.pal");
+    plspal1("cmap1_gray.pal", True);
 
     -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     plscmap0n(3);
@@ -178,6 +182,14 @@ begin
     pllab("distance", "altitude", "Bogon density");
 
     -- Plot using 1d coordinate transform
+    
+    -- Load colour palettes
+    plspal0("cmap0_black_on_white.pal");
+    plspal1("cmap1_blue_yellow.pal", True);
+
+    -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+    plscmap0n(3);
+
     pladv(0); -- page 2
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
@@ -196,6 +208,14 @@ begin
     pllab("distance", "altitude", "Bogon density");
 
     -- Plot using 2d coordinate transform
+
+    -- Load colour palettes
+    plspal0("cmap0_black_on_white.pal");
+    plspal1("cmap1_blue_red.pal", True);
+
+    -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+    plscmap0n(3);
+
     pladv(0); -- page 3
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
@@ -215,6 +235,14 @@ begin
     pllab("distance", "altitude", "Bogon density, with streamlines");
 
     -- Plot using 2d coordinate transform
+
+    -- Load colour palettes
+    plspal0("");
+    plspal1("", True);
+
+    -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+    plscmap0n(3);
+
     pladv(0); -- page 4
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
@@ -241,6 +269,14 @@ begin
     -- the input parser which handling is not implemented in this Ada example.
 --    exclude := True;
 --    if exclude then
+--
+--        -- Load colour palettes.
+--        plspal0("cmap0_black_on_white.pal");
+--        plspal1("cmap1_gray.pal", 1);
+--
+--        -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+--        plscmap0n(3);
+--
 --        pladv(0);
 --        plvpor(0.1, 0.9, 0.1, 0.9);
 --        plwind(-1.0, 1.0, -1.0, 1.0);
@@ -259,6 +295,14 @@ begin
 --    end if;
 
     -- Example with polar coordinates.
+
+    -- Load colour palettes.
+    plspal0("cmap0_black_on_white.pal");
+    plspal1("cmap1_gray.pal", True);
+
+    -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+    plscmap0n(3);
+
     pladv(0); -- page 5
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);

@@ -107,6 +107,10 @@ begin
     -- Parse and process command line arguments
     Parse_Command_Line_Arguments(Parse_Full);
 
+    -- Load colour palettes
+    Set_Color_Map_0_From_File("cmap0_black_on_white.pal");
+    Set_Color_Map_1_From_File("cmap1_gray.pal", True);
+
     -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
     Set_Number_Of_Colors_Map_0(3);
 
@@ -178,6 +182,14 @@ begin
     Write_Labels("distance", "altitude", "Bogon density");
 
     -- Plot using 1d coordinate transform
+    
+    -- Load colour palettes
+    Set_Color_Map_0_From_File("cmap0_black_on_white.pal");
+    Set_Color_Map_1_From_File("cmap1_blue_yellow.pal", True);
+
+    -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+    Set_Number_Of_Colors_Map_0(3);
+
     Advance_To_Subpage(Next_Subpage);
     Set_Viewport_Normalized(0.1, 0.9, 0.1, 0.9);
     Set_Viewport_World(-1.0, 1.0, -1.0, 1.0);
@@ -196,6 +208,14 @@ begin
     Write_Labels("distance", "altitude", "Bogon density");
 
     -- Plot using 2d coordinate transform
+
+    -- Load colour palettes
+    Set_Color_Map_0_From_File("cmap0_black_on_white.pal");
+    Set_Color_Map_1_From_File("cmap1_blue_red.pal", True);
+
+    -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+    Set_Number_Of_Colors_Map_0(3);
+
     Advance_To_Subpage(Next_Subpage);
     Set_Viewport_Normalized(0.1, 0.9, 0.1, 0.9);
     Set_Viewport_World(-1.0, 1.0, -1.0, 1.0);
@@ -215,6 +235,14 @@ begin
     Write_Labels("distance", "altitude", "Bogon density, with streamlines");
 
     -- Plot using 2d coordinate transform
+
+    -- Load colour palettes
+    Set_Color_Map_0_From_File("");
+    Set_Color_Map_1_From_File("", True);
+
+    -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+    Set_Number_Of_Colors_Map_0(3);
+
     Advance_To_Subpage(Next_Subpage);
     Set_Viewport_Normalized(0.1, 0.9, 0.1, 0.9);
     Set_Viewport_World(-1.0, 1.0, -1.0, 1.0);
@@ -241,6 +269,14 @@ begin
     -- the input parser which handling is not implemented in this Ada example.
 --    exclude := True;
 --    if exclude then
+--
+--        -- Load colour palettes.
+--        Set_Color_Map_0_From_File("cmap0_black_on_white.pal");
+--        Set_Color_Map_1_From_File("cmap1_gray.pal", True);
+--
+--        -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+--        Set_Number_Of_Colors_Map_0(3);
+--
 --        Advance_To_Subpage(Next_Subpage);
 --        Set_Viewport_Normalized(0.1, 0.9, 0.1, 0.9);
 --        Set_Viewport_World(-1.0, 1.0, -1.0, 1.0);
@@ -259,6 +295,14 @@ begin
 --    end if;
 
     -- Example with polar coordinates.
+
+    -- Load colour palettes.
+    Set_Color_Map_0_From_File("cmap0_black_on_white.pal");
+    Set_Color_Map_1_From_File("cmap1_gray.pal", True);
+
+    -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+    Set_Number_Of_Colors_Map_0(3);
+
     Advance_To_Subpage(Next_Subpage);
     Set_Viewport_Normalized(0.1, 0.9, 0.1, 0.9);
     Set_Viewport_World(-1.0, 1.0, -1.0, 1.0);

@@ -1498,6 +1498,14 @@ package PLplot_Traditional is
         x_Offset, y_Offset : Integer);
 
 
+    -- Set the colors for color table 0 from a cmap0 file.
+    procedure plspal0(Color_File_Name : String);
+
+
+    -- Set the colors for color table 1 from a cmap1 file.
+    procedure plspal1(Color_File_Name : String; Interpolate : Boolean);
+
+
     -- Set the pause (on end-of-page) status
     procedure plspause(Pause : Boolean);
 

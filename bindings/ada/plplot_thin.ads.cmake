@@ -1454,6 +1454,19 @@ package PLplot_Thin is
     pragma Import(C, plspage, "c_plspage");
 
 
+    -- Set the colors for color table 0 from a cmap0 file.
+
+    procedure
+    plspal0(filename : char_array);
+    pragma Import(C, plspal0, "c_plspal0");
+
+    
+    -- Set the colors for color table 1 from a cmap1 file.
+    procedure
+    plspal1(filename : char_array; interpolate : PLBOOL);
+    pragma Import(C, plspal1, "c_plspal1");
+
+
     -- Set the pause (on end-of-page) status 
 
     procedure

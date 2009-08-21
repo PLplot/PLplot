@@ -2734,6 +2734,30 @@ package body PLplot is
     end Set_Page_Parameters;
 
 
+    -- Set the colors for color table 0 from a cmap0 file.
+    -- plspal0
+    procedure Set_Color_Map_0_From_File(Color_File_Name : String) is
+    begin
+        plspal0(To_C(Color_File_Name, True));
+    end Set_Color_Map_0_From_File;
+
+
+    -- Set the colors for color table 1 from a cmap1 file.
+    -- plspal1
+    procedure Set_Color_Map_1_From_File(Color_File_Name : String; Interpolate : Boolean) is
+    
+        PL_Interpolate : PLBOOL;
+        
+    begin
+        if Interpolate then
+            PL_Interpolate := PLtrue;
+        else
+            PL_Interpolate := PLfalse;
+        end if;
+        plspal1(To_C(Color_File_Name, True), PL_Interpolate);
+    end Set_Color_Map_1_From_File;
+
+
     -- Set the pause (on end-of-page) status
     -- plspause
     procedure Set_Pause(Pause : Boolean) is

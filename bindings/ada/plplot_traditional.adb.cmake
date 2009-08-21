@@ -2605,6 +2605,28 @@ package body PLplot_Traditional is
     end plspage;
 
 
+    -- Set the colors for color table 0 from a cmap0 file.
+    procedure plspal0(Color_File_Name : String) is
+    begin
+        PLplot_Thin.plspal0(To_C(Color_File_Name, True));
+    end plspal0;
+
+
+    -- Set the colors for color table 1 from a cmap1 file.
+    procedure plspal1(Color_File_Name : String; Interpolate : Boolean) is
+    
+        PL_Interpolate : PLBOOL;
+        
+    begin
+        if Interpolate then
+            PL_Interpolate := PLtrue;
+        else
+            PL_Interpolate := PLfalse;
+        end if;
+        PLplot_Thin.plspal1(To_C(Color_File_Name, True), PL_Interpolate);
+    end plspal1;
+
+
     -- Set the pause (on end-of-page) status
     procedure plspause(Pause : Boolean) is
     
