@@ -658,11 +658,11 @@ void proc_str (PLStream *pls, EscText *args)
 	}
 	else {
           /* super/subscript logic follows that in plstr routine (plsym.c)
-             for Hershey fonts. Factor of FONT_SHIFT_RATIO*0.75 is empirical
+             for Hershey fonts. Factor of FONT_SHIFT_RATIO*0.80 is empirical
              adjustment.*/
 	  if(ucs4[i] == (PLUNICODE)'u'){	/* Superscript */
 	    upDown++;
-            scaled_offset = -FONT_SHIFT_RATIO*0.75*scaled_ftHt;
+            scaled_offset = -FONT_SHIFT_RATIO*0.80*scaled_ftHt;
             scaled_ftHt = ftHt*pow(0.75, (double)abs(upDown));
 	    if(if_write) {
 	      totalTags++;
@@ -675,7 +675,7 @@ void proc_str (PLStream *pls, EscText *args)
 	  if(ucs4[i] == (PLUNICODE)'d'){	/* Subscript */
 	    upDown--;
             scaled_ftHt = ftHt*pow(0.75, (double)abs(upDown));
-            scaled_offset = FONT_SHIFT_RATIO*0.75*scaled_ftHt;
+            scaled_offset = FONT_SHIFT_RATIO*0.80*scaled_ftHt;
 	    if(if_write) {
 	      totalTags++;
 	      fprintf(aStream->svgFile, "<tspan dy=\"%f\" font-size=\"%d\">", scaled_offset, (int)scaled_ftHt);
