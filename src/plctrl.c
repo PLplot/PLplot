@@ -893,9 +893,9 @@ plcmap0_def(int imin, int imax)
 {
     int i;
 
-    /* Initialize all colors to black. */
+    /* Initialize all unknown colours to red as a warning. */
     for (i = imin; i <= imax; i++)
-      color_def(i, 255, 0, 0, 1.0, "black");
+      color_def(i, 255, 0, 0, 1.0, "red");
 }
 
 /*--------------------------------------------------------------------------*\
