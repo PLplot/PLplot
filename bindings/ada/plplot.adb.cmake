@@ -3231,26 +3231,32 @@ begin -- package body for PLplot
 
     -- NOTE: One would ordinarily call the initialization procedure at this point.
     -- However, PLplot has several optional procedures that, if used, must be
-    -- called _before_ the initializaiton, here called Initialize_PLplot.
-    -- Therefore, Initialize_PLplot MUST BE CALLED FROM THE USER'S PROGRAM, 
+    -- called _before_ the initializaiton, here called Initialize_PLplot (plinit).
+    -- Therefore, Initialize_PLplot (plinit) MUST BE CALLED FROM THE USER'S PROGRAM, 
     -- before beginning normal plotting but AFTER any optional pre-initialization.
 
-    -- The following lines are some examples of how the entire initialzation 
-    -- can be done here if the user wants to do so, and is willing to uncomment 
-    -- these lines and/or add new lines.
+    -- The following lines marked by ========= are some examples of how the 
+    -- entire initialzation can be done here if the user wants to do so, and is 
+    -- willing to uncomment these lines and/or add new lines.
 
-
-    -- plscompression should be called before plinit when it is needed.
-    -- There should be a list of devices which use compression, and plscompression
-    -- called conditioned on the current device being in that list.
+    -- =========================================================================
+    -- Set_Compression_Level (plscompression) should be called before 
+    -- Initialize_PLplot (plinit) when it is needed.
+    -- There should be a list of devices which use compression, and
+    -- Set_Compression_Level (plscompression) called conditioned on the current 
+    -- device being in that list.
     
-    -- Optionally call plsetopt (Set_Command_Line_Option) before Initialize_PLplot.
+    -- Optionally call Set_Command_Line_Option (plsetopt) before Initialize_PLplot
+    -- (plinit).
     
     -- Parse_Command_Line_Arguments(1);
-    -- Set_File_Family_Parameters(False); -- Default off; other args are don't-cares here.
-    -- Set_Orientation(Landscape); -- Optional; before Initialize_PLplot if used.
+    -- Set_File_Family_Parameters(False); -- (plsfam(False)). Default off; 
+    -- other args are don't-cares here.
+    -- Set_Orientation(Landscape); -- (plsori(Landscape)). Optional; before
+    -- Initialize_PLplot if used.
 
     -- Initialize_PLplot;
+    -- =========================================================================
 
 
     -- Capture the initial, default, settings of color map 0 since these will be  
