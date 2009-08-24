@@ -202,35 +202,8 @@ x29::plot3()
   PLFLT xmin, xmax, ymin, ymax;
   PLFLT tstart;
 
-  // Calculate seconds since the Unix epoch for 2005-12-01 UTC.
-#if defined(WIN32)
-  // Adopt the known result for POSIX-compliant systems.
-  tstart = (PLFLT) 1133395200;
-#else
-  char *tz;
-  struct tm tm;
-
-  tm.tm_year = 105; // Years since 1900 = 2005
-  tm.tm_mon = 11;   // 0 == January, 11 = December 
-  tm.tm_mday = 1;   // 1 = 1st of month 
-  tm.tm_hour = 0;
-  tm.tm_min = 0;
-  tm.tm_sec = 0;
-
-  // Use POSIX-compliant equivalent of timegm GNU extension.
-  tz = getenv("TZ");
-  setenv("TZ", "", 1);
-  tzset();
-  // tstart is a time_t value (cast to PLFLT) which represents the number
-  // of seconds elapsed since 00:00:00 on January 1, 1970, Coordinated 
-  // Universal Time (UTC) on  2005-12-01 (UTC).
-  tstart = (PLFLT) mktime(&tm);
-  if (tz)
-    setenv("TZ", tz, 1);
-  else
-    unsetenv("TZ");
-  tzset();
-#endif
+  /* Calculate continuous time corresponding to 2005-12-01 UTC. */
+  pls->ctime(2005, 11, 01, 0, 0, 0., tstart);
 
   npts = 62;
 
