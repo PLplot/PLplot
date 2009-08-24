@@ -27,15 +27,19 @@
 # DRIVERS_LINK_FLAGS  - list of LINK_FLAGS for all static device drivers.
 #
 
-include(FindAQT)
+# Darwin-only device driver.
+if(PLD_aqt AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  set(PLD_aqt OFF CACHE BOOL "Enable aqt device" FORCE)
+endif(PLD_aqt AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
-IF (AQT_FOUND)
-	MESSAGE(STATUS "Found AQT: ${AQT_FRAMEWORK}")
-	IF (PLD_aqt)
-		SET(aqt_COMPILE_FLAGS "-ObjC")
-		SET(aqt_LINK_FLAGS "-framework AquaTerm -framework Foundation")
-		SET(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${aqt_LINK_FLAGS})
-	ENDIF (PLD_aqt)
-ELSE (AQT_FOUND)
-	SET(PLD_aqt OFF CACHE BOOL "Enable aqt device" FORCE)
-ENDIF (AQT_FOUND)
+if(PLD_aqt)
+  include(FindAQT)
+  if(AQT_FOUND)
+    message(STATUS "Found AQT: ${AQT_FRAMEWORK}")
+    set(aqt_COMPILE_FLAGS "-ObjC")
+    set(aqt_LINK_FLAGS "-framework AquaTerm -framework Foundation")
+    set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${aqt_LINK_FLAGS})
+  else(AQT_FOUND)
+  set(PLD_aqt OFF CACHE BOOL "Enable aqt device" FORCE)
+  endif(AQT_FOUND)
+endif(PLD_aqt)

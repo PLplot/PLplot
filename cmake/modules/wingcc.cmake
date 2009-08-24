@@ -27,6 +27,11 @@
 # 			    wingcc device.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 
+# Windows-only device driver.
+if(PLD_wingcc AND NOT WIN32)
+  set(PLD_wingcc OFF CACHE BOOL "Enable wingcc device" FORCE)
+endif(PLD_wingcc AND NOT WIN32)
+
 if(PLD_wingcc)
   message(STATUS "Looking for gdi32 header and library")
   find_library(GDI32_LIBRARY gdi32 HINTS ${MINGWLIBPATH} ${BORLANDLIBPATH})
