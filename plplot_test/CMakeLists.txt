@@ -311,6 +311,12 @@ if(SH_EXECUTABLE)
       )
   endif(PLD_pdfqt)
 
+  if(PLD_pdf)
+    add_test(examples_pdf
+      ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pdf"
+      )
+  endif(PLD_pdf)
+
   if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
     configure_file(
       test_diff.sh.in
