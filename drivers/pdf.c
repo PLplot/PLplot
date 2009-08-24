@@ -48,6 +48,12 @@
 #include "plunicode-type1.h"
 #include "plfci-type1.h"
 
+/* Workaround for caseless string comparison */
+#ifndef WIN32 
+	#define stricmp strcasecmp 
+	#define strnicmp strncasecmp 
+#endif
+
 /* constants */
 
 /* We define a virtual page and scale it down to the 
@@ -498,12 +504,12 @@ static unsigned char plunicode2type1( const PLUNICODE index,
 
 
 /***********************************************************************
- * PSDrawTextToCanvas( pdfdev* dev, char* type1_string, short drawText )
+ * PSDrawTextToCanvas( pdfdev* dev, unsigned char* type1_string, short drawText )
  *
  * This function determines the extend of the string and does
  * the actual drawing to the page if drawText is true.
  ***********************************************************************/
-void PSDrawTextToCanvas( pdfdev* dev, char* type1_string, short drawText )
+void PSDrawTextToCanvas( pdfdev* dev, unsigned char* type1_string, short drawText )
 {
   HPDF_REAL th;
 
@@ -513,13 +519,13 @@ void PSDrawTextToCanvas( pdfdev* dev, char* type1_string, short drawText )
     HPDF_Page_SetTextRenderingMode( dev->page, HPDF_FILL );
     HPDF_Page_SetRGBFill( dev->page, dev->textRed, dev->textGreen, dev->textBlue );
     HPDF_Page_MoveTextPos( dev->page, dev->textWidth, dev->yOffset );
-    HPDF_Page_ShowText( dev->page, type1_string );
+    HPDF_Page_ShowText( dev->page, (char*)type1_string );  // TODO: this conversion must be wrong
     HPDF_Page_EndText( dev->page );
   }
 
   /* determine text width and height */
-  dev->textWidth += HPDF_Page_TextWidth( dev->page, type1_string );
-  th = (HPDF_REAL)(HPDF_Font_GetCapHeight( dev->m_font )*dev->fontSize/1000.0);
+  dev->textWidth += HPDF_Page_TextWidth( dev->page, (char*)type1_string );  // TODO: this conversion must be wrong
+  th = (HPDF_REAL)(HPDF_Font_GetCapHeight( dev->m_font )*dev->fontSize*dev->fontScale/1000.0);
   dev->textHeight = dev->textHeight>(th+dev->yOffset) ? dev->textHeight : (th+dev->yOffset);
   
   /* clear string */
@@ -541,7 +547,7 @@ void PSSetFont( pdfdev* dev, PLUNICODE fci )
   
   if( !(dev->m_font = HPDF_GetFont(dev->pdf, font, NULL)) )
     plexit( "ERROR: Couldn't open font\n" );
-  HPDF_Page_SetFontAndSize( dev->page, dev->m_font, dev->fontSize );
+  HPDF_Page_SetFontAndSize( dev->page, dev->m_font, dev->fontSize*dev->fontScale );
   
 	if( !strcmp(font, "Symbol") ) {
 	   dev->nlookup = number_of_entries_in_unicode_to_symbol_table;
