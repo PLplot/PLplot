@@ -451,9 +451,9 @@ void plspal0(string filename)
 }
 
 /* Set the colors for color table 1 from a cmap1 file */
-void plspal1(string filename)
+void plspal1(string filename, PLBOOL interpolate)
 {
-	c_plspal1(toStringz(filename));
+	c_plspal1(toStringz(filename), interpolate);
 }
 
 /* Set color map 0 colors by 8 bit RGB values */
@@ -1903,7 +1903,7 @@ void c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT y
 void c_plspal0(char* filename);
 
 /* Set the colors for color table 1 from a cmap1 file */
-void c_plspal1(char *filename);
+void c_plspal1(char *filename, PLBOOL interpolate);
 
 /* Set the pause (on end-of-page) status */
 void c_plspause(PLBOOL pause);
