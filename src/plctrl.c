@@ -7,6 +7,7 @@
    Copyright (C) 2004  Joao Cardoso
    Copyright (C) 2004  Rafael Laboissiere
    Copyright (C) 2008  Hazen Babcock
+   Copyright (C) 2009  Alan W. Irwin
 
    This file is part of PLplot.
 
@@ -55,6 +56,9 @@
 
 #define BUFFER_SIZE 256
 
+#define color_def(i, r, g, b, a, n)			\
+  if (i >= imin && i <= imax) color_set(i, r, g, b, a, n);
+
 /* Static functions */
 
 /* Used by any external init code to suggest a path */
@@ -81,6 +85,9 @@ plcmap1_def(void);
 static PLFLT
 value(double n1, double n2, double hue);
 
+static int 
+cmap0_palette_read(const char *filename,
+                   int *number_colors, int **r, int **g, int **b, double **a);
 /* An additional hardwired location for lib files. */
 /* I have no plans to change these again, ever. */
 
@@ -783,7 +790,7 @@ c_plscmap0n(PLINT ncol0)
 /* Allocate the space */
 
     if (plsc->cmap0 == NULL) {
-	if ((plsc->cmap0 = (PLColor *) calloc(1, size))==NULL)
+      if ((plsc->cmap0 = (PLColor *) calloc(1, size))==NULL)
      {
        plexit("c_plscmap0n: Insufficient memory");
      }
@@ -804,6 +811,75 @@ c_plscmap0n(PLINT ncol0)
 
     if (plsc->level > 0)
 	plP_state(PLSTATE_CMAP0);
+}
+
+/*--------------------------------------------------------------------------*\
+ * color_set()
+ *
+ * Initializes color table entry by RGB values.
+\*--------------------------------------------------------------------------*/
+
+void
+color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, char *name )
+{
+    plsc->cmap0[i].r = r;
+    plsc->cmap0[i].g = g;
+    plsc->cmap0[i].b = b;
+    plsc->cmap0[i].a = a;
+    plsc->cmap0[i].name = name;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plcmap0_def()
+ *
+ * Initializes specified color map 0 color entry to its default.
+\*--------------------------------------------------------------------------*/
+
+void
+plcmap0_def(int imin, int imax)
+{
+  int i, rc, *r, *g, *b;
+  double *a;
+  int number_colors;
+  char msgbuf[1024];
+  if(imin <= imax) {
+    rc = cmap0_palette_read("", &number_colors, &r, &g, &b, &a);
+    if(rc == 1) {
+      snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",PL_DEFAULT_CMAP0_FILE);
+      plwarn(msgbuf);
+      return;
+    } else if(rc == 2) {
+      /* Should never get this return code for null string (default)
+         filename. */
+      snprintf(msgbuf,1024,"plcmap0_def: internal logic error \n");
+      plwarn(msgbuf);
+      return;
+    } else if(rc == 3) {
+      snprintf(msgbuf,1024,"Unrecognized cmap0 header\n");
+      plwarn(msgbuf);
+      return;
+    } else if(rc > 3) {
+      snprintf(msgbuf,1024,"Unrecognized cmap0 format\n");
+      plwarn(msgbuf);
+      return;
+    }
+    for(i=imin;i<MIN(number_colors, imax+1);i++)
+      color_def(i, r[i], g[i], b[i], a[i], "color defined by palette file");
+
+    free(r);
+    free(g);
+    free(b);
+    free(a);
+    
+  } else {
+    number_colors = 0;
+  }
+
+  /* Initialize all colours undefined by the default colour palette file
+     to opaque red as a warning. */
+  for (i = MAX(number_colors, imin); i <= imax; i++)
+    color_def(i, 255, 0, 0, 1.0,
+              "opaque red to mark not defined by palette file");
 }
 
 /*--------------------------------------------------------------------------*\
@@ -864,41 +940,6 @@ c_plscmap1n(PLINT ncol1)
 }
 
 /*--------------------------------------------------------------------------*\
- * color_set()
- *
- * Initializes color table entry by RGB values.
-\*--------------------------------------------------------------------------*/
-
-static void
-color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, char *name )
-{
-    plsc->cmap0[i].r = r;
-    plsc->cmap0[i].g = g;
-    plsc->cmap0[i].b = b;
-    plsc->cmap0[i].a = a;
-    plsc->cmap0[i].name = name;
-}
-
-/*--------------------------------------------------------------------------*\
- * plcmap0_def()
- *
- * Initializes specified color map 0 color entry to its default.
-\*--------------------------------------------------------------------------*/
-
-#define color_def(i, r, g, b, a, n)			\
-  if (i >= imin && i <= imax) color_set(i, r, g, b, a, n);
-
-static void
-plcmap0_def(int imin, int imax)
-{
-    int i;
-
-    /* Initialize all unknown colours to red as a warning. */
-    for (i = imin; i <= imax; i++)
-      color_def(i, 255, 0, 0, 1.0, "red");
-}
-
-/*--------------------------------------------------------------------------*\
  * plcmap1_def()
  *
  * Initializes color map 1.
@@ -911,7 +952,7 @@ plcmap0_def(int imin, int imax)
  * palette editor.  If you don't like these settings.. change them!
 \*--------------------------------------------------------------------------*/
 
-static void
+void
 plcmap1_def(void)
 {
     PLFLT i[6], h[6], l[6], s[6], midpt = 0., vertex = 0.;
@@ -1062,7 +1103,7 @@ c_plhls(PLFLT h, PLFLT l, PLFLT s)
  * Auxiliary function used by c_plhlsrgb().
 \*--------------------------------------------------------------------------*/
 
-static PLFLT
+PLFLT
 value(double n1, double n2, double hue)
 {
     PLFLT val;
@@ -1170,6 +1211,75 @@ c_plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
 }
 
 /*--------------------------------------------------------------------------*\
+ * int cmap0_palette_read()
+ *
+ * Read and check r, g, b, a data from a cmap0*.pal format file.
+ * Non-zero return code means some error occurred.
+ * The caller must free the returned malloc'ed space for r, g, b, and a.
+\*--------------------------------------------------------------------------*/
+
+int 
+cmap0_palette_read(const char *filename,
+                   int *number_colors, int **r, int **g, int **b, double **a)
+{
+  int i;
+  char color_info[30];
+  FILE *fp;
+
+  if(strlen(filename) == 0) {
+    fp = plLibOpen(PL_DEFAULT_CMAP0_FILE);
+    if (fp == NULL) return 1;
+  } else {
+    fp = plLibOpen(filename);
+    if (fp == NULL) return 2;
+  }
+  if (fscanf(fp, "%d\n", number_colors) != 1 || *number_colors < 1) {
+    fclose(fp);
+    return 3;
+  }
+
+  /* Allocate arrays to hold r, g, b, and a data for calling routine.
+     The caller must free these after it is finished with them. */
+  if(((*r = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
+     ((*g = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
+     ((*b = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
+     ((*a = (double *)malloc(*number_colors * sizeof(double))) == NULL)) {
+    fclose(fp);
+    plexit("cmap0_palette_read: insufficient memory");
+  }
+          
+  for(i=0;i<*number_colors;i++){
+    fgets(color_info, 30, fp);
+    color_info[strlen(color_info)-1] = '\0'; /* remove return character */
+    if(strlen(color_info) == 7){
+      if (sscanf(color_info, "#%2x%2x%2x",
+                 (int *) (*r+i), (int *) (*g+i), (int *) (*b+i)) != 3) {
+        fclose(fp);
+        return 4;
+      }
+      *(*a+i) = 1.0;
+    }
+    else if(strlen(color_info) > 9){
+      if (sscanf(color_info, "#%2x%2x%2x %lf",
+                 (int *) (*r+i), (int *) (*g+i), (int *) (*b+i),
+                 (double *) (*a+i)) != 4) {
+        fclose(fp);
+        return 5;
+      }
+      if(*(*a+i) < 0. || *(*a+i) > 1.) {
+        fclose(fp);
+        return 6;
+      }
+    } else {
+      fclose(fp);
+      return 7;
+    }
+  }
+  fclose(fp);
+  return 0;
+}
+
+/*--------------------------------------------------------------------------*\
  * void c_plspal0(filename)
  *
  * Set the palette for color map 0 using a cmap0*.pal format file.
@@ -1179,32 +1289,26 @@ c_plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
 void
 c_plspal0(const char *filename)
 {
-  int i, r, g, b, nread;
-  double a;
+  int i, *r, *g, *b;
+  double *a;
   int number_colors;
-  char color_info[30];
-  FILE *fp;
   char msgbuf[1024];
-
-  if(strlen(filename) == 0) {
-    fp = plLibOpen(PL_DEFAULT_CMAP0_FILE);
-    if (fp == NULL) {
-      snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",PL_DEFAULT_CMAP0_FILE);
-      plwarn(msgbuf);
-      return;
-    }
-  } else {
-    fp = plLibOpen(filename);
-    if (fp == NULL) {
-      snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",filename);
-      plwarn(msgbuf);
-      return;
-    }
-  }
-  if (fscanf(fp, "%d\n", &number_colors) != 1 || number_colors < 1) {
+  int rc = cmap0_palette_read(filename, &number_colors, &r, &g, &b, &a);
+  if(rc == 1) {
+    snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",PL_DEFAULT_CMAP0_FILE);
+    plwarn(msgbuf);
+    return;
+  } else if(rc == 2) {
+    snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",filename);
+    plwarn(msgbuf);
+    return;
+  } else if(rc == 3) {
     snprintf(msgbuf,1024,"Unrecognized cmap0 header\n");
     plwarn(msgbuf);
-    fclose(fp);
+    return;
+  } else if(rc > 3) {
+    snprintf(msgbuf,1024,"Unrecognized cmap0 format\n");
+    plwarn(msgbuf);
     return;
   }
 
@@ -1215,39 +1319,13 @@ c_plspal0(const char *filename)
   if(number_colors > plsc->ncol0) {
     plscmap0n(number_colors);
   }
-
   for(i=0;i<number_colors;i++){
-    fgets(color_info, 30, fp);
-    color_info[strlen(color_info)-1] = '\0'; /* remove return character */
-    if(strlen(color_info) == 7){
-      if (sscanf(color_info, "#%2x%2x%2x", &r, &g, &b) != 3) {
-        snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
-        plwarn(msgbuf);
-        break;
-      }
-      c_plscol0(i, r, g, b);
-    }
-    else if(strlen(color_info) > 9){
-      if (sscanf(color_info, "#%2x%2x%2x %lf", &r, &g, &b, &a) != 4) {
-        snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
-        plwarn(msgbuf);
-        break;
-      }
-      if(a < 0. || a > 1.) {
-        snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
-        plwarn(msgbuf);
-        break;
-      }
-      c_plscol0a(i, r, g, b, (PLFLT) a);
-    }
-    else{
-      snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
-      plwarn(msgbuf);
-      break;
-    }
-    
+    c_plscol0a(i, r[i], g[i], b[i], a[i]);
   }
-  fclose(fp);
+  free(r);
+  free(g);
+  free(b);
+  free(a);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1936,7 +2014,7 @@ plGetName(const char *dir, const char *subdir, const char *filename, char **file
  * there already, or if dealing with a colon-terminated device name).
 \*--------------------------------------------------------------------------*/
 
-static void
+void
 strcat_delim(char *dirspec)
 {
     int ldirspec = strlen(dirspec);
