@@ -916,14 +916,14 @@ void open_span_tag(char *pangoMarkupString, PLUNICODE fci, float fontSize, int u
   /* Move to the right sub/super-script level */
   if(upDown > 0){
     while(upDown > 0){
-      strncat(pangoMarkupString, rise_span_tag(upDown, 1), MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
       upDown--;
+      strncat(pangoMarkupString, rise_span_tag(upDown, 1), MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
     }
   }
   if(upDown < 0){
     while(upDown < 0){
-      strncat(pangoMarkupString, rise_span_tag(upDown, -1), MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
       upDown++;
+      strncat(pangoMarkupString, rise_span_tag(upDown, -1), MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
     }
   }
 }
