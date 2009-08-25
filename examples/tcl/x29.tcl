@@ -43,9 +43,7 @@ proc x29 {{w loopback}} {
 
     x29_plot3 $w
 
-    # Additional pages disabled for now - rounding errors
-    # are leading to a crash
-    # x29_plot4 $w
+    x29_plot4 $w
 
 }
 
@@ -223,6 +221,8 @@ proc x29_plot4 {{w loopback}} {
     # ==>
     # MJD = B*365.24219878 - 678940.364163900
 
+    set tcl_precision 17
+
     set scale 365.242198781
     set offset1 -678940.0
     set offset2 -0.3641639
@@ -230,7 +230,7 @@ proc x29_plot4 {{w loopback}} {
     matrix x f 1001
     matrix y f 1001	
 
-    $w cmd plconfigtime $scale $offset1 $offset2 0x0 0 0 0 0 0 0 0.
+    $w cmd plconfigtime $scale $offset1 $offset2 0 0 0 0 0 0 0 0.
 
     for {set kind 0} {$kind < 7} {incr kind} {
 	if {$kind == 0} {
@@ -297,11 +297,11 @@ proc x29_plot4 {{w loopback}} {
 	for {set i 0} {$i<$npts} {incr i} {
 	    set tai [expr {$xmin + $i*($xmax-$xmin)/double($npts-1)}]
 	    x $i = $tai
-	    $w cmd plconfigtime $scale $offset1 $offset2 0x0 0 0 0 0 0 0 0.
+	    $w cmd plconfigtime $scale $offset1 $offset2 0 0 0 0 0 0 0 0.
 	    $w cmd plbtime tai_year tai_month tai_day tai_hour tai_min tai_sec $tai
-	    $w cmd plconfigtime $scale $offset1 $offset2 0x2 0 0 0 0 0 0 0.
+	    $w cmd plconfigtime $scale $offset1 $offset2 2 0 0 0 0 0 0 0.
 	    $w cmd plbtime utc_year utc_month utc_day utc_hour utc_min utc_sec $tai
-	    $w cmd plconfigtime $scale $offset1 $offset2 0x0 0 0 0 0 0 0 0.
+	    $w cmd plconfigtime $scale $offset1 $offset2 0 0 0 0 0 0 0 0.
 	    $w cmd plctime $utc_year $utc_month $utc_day $utc_hour $utc_min $utc_sec utc
 	    set yy [expr {($tai-$utc)*$scale*86400.}]
 	    y $i = $yy
@@ -312,9 +312,9 @@ proc x29_plot4 {{w loopback}} {
 	$w cmd plwind $xmin $xmax $ymin $ymax
 	$w cmd plcol0 1
 	if {$if_TAI_time_format == 1} {
-	    $w cmd plconfigtime $scale $offset1 $offset2 0x0 0 0 0 0 0 0 0.
+	    $w cmd plconfigtime $scale $offset1 $offset2 0 0 0 0 0 0 0 0.
 	} else {
-	    $w cmd plconfigtime $scale $offset1 $offset2 0x2 0 0 0 0 0 0 0.
+	    $w cmd plconfigtime $scale $offset1 $offset2 2 0 0 0 0 0 0 0.
 	}
 	$w cmd pltimefmt $time_format
 	$w cmd plbox "bcnstd" $xlabel_step 0 "bcnstv" 0. 0
