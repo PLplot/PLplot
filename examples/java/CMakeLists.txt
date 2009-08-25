@@ -137,6 +137,7 @@ if(CORE_BUILD)
   # builds (and possibly some visual studio builds).
 
   add_dependencies(plplot_jar plplot_examples plplot_core)
+  set_property(GLOBAL APPEND PROPERTY TARGETS_examples_java plplot_jar)
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot.jar
     DESTINATION ${JAR_DIR}
