@@ -73,7 +73,8 @@ if(ENABLE_lua)
 
   install(TARGETS plplotluac
     EXPORT export_plplot
-    LIBRARY DESTINATION ${LUA_DIR}
+    LIBRARY
+    DESTINATION ${LUA_DIR}
     )
 
   install(EXPORT export_plplot DESTINATION ${DATA_DIR}/examples/cmake/modules)
