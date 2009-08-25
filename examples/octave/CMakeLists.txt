@@ -77,6 +77,12 @@ x31c.m
 lena.img
 )
 
+if(BUILD_TEST)
+  set_property(GLOBAL PROPERTY TARGETS_examples_octave 
+    octave_examples plplot_octave plplot_stub.m_built
+    )
+endif(BUILD_TEST)
+
 install(FILES ${examples_octave} DESTINATION ${DATA_DIR}/examples/octave)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lena.img
