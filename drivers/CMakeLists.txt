@@ -192,7 +192,12 @@ if(ENABLE_DYNDRIVERS)
       list(APPEND test_dyndrivers_TDEPENDS ${SOURCE_ROOT_NAME})
     endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
     
-    install(TARGETS ${SOURCE_ROOT_NAME} DESTINATION ${DRV_DIR})
+    install(TARGETS ${SOURCE_ROOT_NAME} 
+      EXPORT export_plplot
+      DESTINATION ${DRV_DIR}
+      )
+    install(EXPORT export_plplot DESTINATION ${DATA_DIR}/examples/cmake/modules)
+
     install(
       FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc 
       DESTINATION ${DRV_DIR}
