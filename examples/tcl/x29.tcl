@@ -221,7 +221,7 @@ proc x29_plot4 {{w loopback}} {
     # ==>
     # MJD = B*365.24219878 - 678940.364163900
 
-    set tcl_precision 17
+    set ::tcl_precision 17
 
     set scale 365.242198781
     set offset1 -678940.0
