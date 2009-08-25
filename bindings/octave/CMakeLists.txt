@@ -55,9 +55,8 @@ if(ENABLE_octave)
 	${CMAKE_BINARY_DIR}/bindings/octave/plplot_octave_txt
 	)
     endif(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
-    add_custom_target(
-      make_documentation ALL
-      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/${rep_doc}
+    set(make_documentation_DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/${rep_doc}
       )
   else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_txt/${rep_doc})
     # Generate full on-line help for plplot_octave
@@ -85,21 +84,24 @@ if(ENABLE_octave)
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt
 	)
       
-      add_custom_target(
-	make_documentation ALL
-	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/${rep_doc}
+      set(make_documentation_DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/${rep_doc}
 	)
     else(PERL_XML_DOM AND PERL_XML_PARSER)
       message(STATUS 
 	"WARNING: Perl modules XML::Parser and/or XML::DOM not available\n"
 	"   so cannot generate full online help for plplot_octave"
 	)
-      add_custom_target(
-	make_documentation ALL
-	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
+      set(make_documentation_DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_txt/plplot.doc
 	)
     endif(PERL_XML_DOM AND PERL_XML_PARSER)
   endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_txt/${rep_doc})
+
+  add_custom_target(
+    make_documentation ALL
+    DEPENDS ${make_documentation_DEPENDS}
+      )
 
   # Generate source code for octave interface to PLplot.
   configure_file(
@@ -225,6 +227,7 @@ if(ENABLE_octave)
     ${CMAKE_CURRENT_BINARY_DIR}/tmp_stub
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave_def
     ${massage_LOCATION}
+    ${make_documentation_DEPENDS}
     )
 
   add_custom_target(
@@ -232,6 +235,9 @@ if(ENABLE_octave)
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
     )
+  # Both these targets file depend on ${make_documentation_DEPENDS}
+  # so must serialize for parallel builds.
+  add_dependencies(plplot_stub.m_built make_documentation)
 
   install(FILES 
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
