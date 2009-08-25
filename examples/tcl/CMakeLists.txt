@@ -85,7 +85,7 @@ if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
     )
     add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
-    COMMAND ${CMAKE_COMMAND} -E copy
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
     )
@@ -120,3 +120,8 @@ if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   add_dependencies(tclIndex_examples_tcl tcl_examples)
 endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 
+if(BUILD_TEST)
+  set_property(GLOBAL PROPERTY TARGETS_examples_tcl tcl_examples 
+    tclIndex_examples_tcl pltcl plplot.tcl_target
+    )
+endif(BUILD_TEST)
