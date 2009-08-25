@@ -96,6 +96,8 @@ typedef struct {
   short upDown;
   float fontSize;
 #if defined(PLD_xcairo)
+  cairo_surface_t *cairoSurface_X;
+  cairo_t *cairoContext_X;
   short exit_event_loop;
   Display *XDisplay;
   Window XWindow;
@@ -1405,7 +1407,11 @@ static signed int xcairo_init_cairo(PLStream *pls)
   /* Create an cairo surface & context that are associated with the X window. */
   defaultVisual = DefaultVisual(aStream->XDisplay, 0);
   /* Dimension units are pixels from cairo documentation. */
-  aStream->cairoSurface = cairo_xlib_surface_create(aStream->XDisplay, aStream->XWindow, defaultVisual, pls->xlength, pls->ylength);
+  /* This is the X window Cairo surface. */
+  aStream->cairoSurface_X = cairo_xlib_surface_create(aStream->XDisplay, aStream->XWindow, defaultVisual, pls->xlength, pls->ylength);
+  aStream->cairoContext_X = cairo_create(aStream->cairoSurface_X);
+  /* This is the Cairo surface PLplot will actually plot to. */
+  aStream->cairoSurface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, pls->xlength, pls->ylength);
   aStream->cairoContext = cairo_create(aStream->cairoSurface);
 
   /* Invert the surface so that the graphs are drawn right side up. */
@@ -1466,6 +1472,18 @@ void plD_init_xcairo(PLStream *pls)
 
 }
 
+/*---------------------------------------------------------------------
+  blit_to_x()
+
+  Blit the offscreen image to the X window.
+  ---------------------------------------------------------------------*/
+
+void blit_to_x(PLCairo *aStream)
+{
+  cairo_set_source_surface(aStream->cairoContext_X, aStream->cairoSurface, 0.0, 0.0);
+  cairo_paint(aStream->cairoContext_X);
+}
+
 /*----------------------------------------------------------------------
   plD_bop_xcairo()
 
@@ -1510,6 +1528,9 @@ void plD_eop_xcairo(PLStream *pls)
   if (aStream->xdrawable_mode)
     return;
 
+  /* Blit the offscreen image to the X window. */
+  blit_to_x(aStream);
+
   XFlush(aStream->XDisplay);
 
   /* Only pause if nopause is unset. */
@@ -1536,8 +1557,8 @@ void plD_eop_xcairo(PLStream *pls)
         aStream->exit_event_loop = 1;
       break;
     case Expose:
-      plD_bop_cairo(pls);
-      plRemakePlot(pls);
+      /* Blit the image again after an expose event. */
+      blit_to_x(aStream);
       XFlush(aStream->XDisplay);
       break;
     }
@@ -1559,6 +1580,10 @@ void plD_tidy_xcairo(PLStream *pls)
   aStream = (PLCairo *)pls->dev;
 
   plD_tidy_cairo(pls);
+
+  /* Also free up the Cairo X surface and context */
+  cairo_destroy(aStream->cairoContext_X);
+  cairo_surface_destroy(aStream->cairoSurface_X);
 
   if (aStream->xdrawable_mode)
     return;
@@ -1586,6 +1611,7 @@ void plD_esc_xcairo(PLStream *pls, PLINT op, void *ptr)
   switch(op)
     {
     case PLESC_FLUSH:    /* forced update of the window */
+      blit_to_x(aStream);
       XFlush(aStream->XDisplay);
       break;
     case PLESC_GETC:     /* get cursor position */
