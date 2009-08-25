@@ -162,9 +162,7 @@ install(FILES ${python_DATA}
   PERMISSIONS ${PERM_DATA}
   )
 
-if(BUILD_TEST AND
-    NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
-    )
+if(BUILD_TEST)
   # equivalent to install commands but at "make" time rather than
   # "make install" time, to the build tree if different than the source
   # tree, and skipping plplot_python_start.py since it is already
@@ -178,15 +176,15 @@ if(BUILD_TEST AND
       )
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
-      COMMAND ${CMAKE_COMMAND} -E copy 
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
       ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
       )
   endforeach(file ${python_SCRIPTS} ${python_DATA})
   add_custom_target(python_examples ALL DEPENDS ${command_DEPENDS})
-endif(BUILD_TEST AND 
-  NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
-  )
+  set_property(GLOBAL PROPERTY TARGETS_examples_python python_examples
+    _plplotcmodule plplot_widgetmodule)
+endif(BUILD_TEST)
 
 set(python_location1 ${CMAKE_SOURCE_DIR}/bindings/python)
 set(python_location2 ${CMAKE_BINARY_DIR}/bindings/python)
