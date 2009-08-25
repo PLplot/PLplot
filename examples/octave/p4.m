@@ -21,7 +21,7 @@ function p4
   x=0.01:0.1:10;
   y=exp(x);
 
-  og = grid "minor";
+  og = grid ("minor");
   title("Log-log example");
   loglog(x,y,'y')
   grid (og);
