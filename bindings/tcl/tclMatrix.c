@@ -642,7 +642,8 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	    Mat_float max = matPtr->fdata[0];
 	    for (i = 1; i < len; i++)
 		max = MAX(max, matPtr->fdata[i]);
-	    sprintf(tmp, "%.17g", max);
+	    /*sprintf(tmp, "%.17g", max);*/
+            Tcl_PrintDouble(interp, max, tmp);
 	    Tcl_AppendResult(interp, tmp, (char *) NULL);
 	    break;
 	}
@@ -678,7 +679,8 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	    Mat_float min = matPtr->fdata[0];
 	    for (i = 1; i < len; i++)
 		min = MIN(min, matPtr->fdata[i]);
-	    sprintf(tmp, "%.17g", min);
+	    /*sprintf(tmp, "%.17g", min);*/
+            Tcl_PrintDouble(interp, min, tmp);
 	    Tcl_AppendResult(interp, tmp, (char *) NULL);
 	    break;
 	}
@@ -891,7 +893,8 @@ MatrixGet_f(ClientData clientData, Tcl_Interp* interp, int index, char *string)
     tclMatrix *matPtr = (tclMatrix *) clientData;
     double value = matPtr->fdata[index];
 
-    sprintf(string, "%.17g", value);
+    /*sprintf(string, "%.17g", value);*/
+    Tcl_PrintDouble(interp, value, string);
 }
 
 static void

@@ -281,7 +281,7 @@ proc process_pltclcmd {cmd rtype} {
                              # precision standard (global var tcl_precision).
 
                              "PLFLT&" {
-                                 puts $GENFILE "    sprintf( buf, \"%.20g\", $argname($i) );"
+                                 puts $GENFILE "    Tcl_PrintDouble( interp, $argname($i), buf );"
                                  puts $GENFILE "    if (argc > 1)"
                                  puts $GENFILE "        Tcl_SetVar( interp, argv\[1+$i\], buf, 0 );"
                                  puts $GENFILE "    else";
