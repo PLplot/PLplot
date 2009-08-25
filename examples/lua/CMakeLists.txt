@@ -19,38 +19,38 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 set(lua_STRING_INDICES
-"01"
-"02"
-"03"
-"04"
-"05"
-"06"
-"07"
-"08"
-"09"
-"10"
-"11"
-"12"
-"13"
-"14"
-"15"
-"16"
-"17"
-"18"
-"19"
-"20"
-"21"
-"22"
-"23"
-"24"
-"25"
-"26"
-"27"
-"28"
-"29"
-"30"
-"31"
-)
+  "01"
+  "02"
+  "03"
+  "04"
+  "05"
+  "06"
+  "07"
+  "08"
+  "09"
+  "10"
+  "11"
+  "12"
+  "13"
+  "14"
+  "15"
+  "16"
+  "17"
+  "18"
+  "19"
+  "20"
+  "21"
+  "22"
+  "23"
+  "24"
+  "25"
+  "26"
+  "27"
+  "28"
+  "29"
+  "30"
+  "31"
+  )
 
 set(lua_SCRIPTS)
 foreach(STRING_INDEX ${lua_STRING_INDICES})
@@ -66,34 +66,32 @@ set(PERM_DATA
   )
 
 install(FILES ${lua_SCRIPTS} 
-DESTINATION ${DATA_DIR}/examples/lua
-PERMISSIONS ${PERM_DATA}
-)
+  DESTINATION ${DATA_DIR}/examples/lua
+  PERMISSIONS ${PERM_DATA}
+  )
 
-if(BUILD_TEST AND
-NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
-)
+if(BUILD_TEST)
   # equivalent to install commands but at "make" time rather than
   # "make install" time, to the build tree if different than the source
   # tree.
   set(command_depends)
   foreach(file ${lua_SCRIPTS})
     set(
-    command_DEPENDS
-    ${command_DEPENDS}
-    ${CMAKE_CURRENT_BINARY_DIR}/${file}
-    )
+      command_DEPENDS
+      ${command_DEPENDS}
+      ${CMAKE_CURRENT_BINARY_DIR}/${file}
+      )
     add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
-    COMMAND ${CMAKE_COMMAND} -E copy 
-    ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    )
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+      )
   endforeach(file ${lua_SCRIPTS} ${lua_DATA})
   add_custom_target(lua_examples ALL DEPENDS ${command_DEPENDS})
-endif(BUILD_TEST AND 
-NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"
-)
+  set_property(GLOBAL PROPERTY TARGETS_examples_lua lua_examples plplotluac)
+
+endif(BUILD_TEST)
 
 if(WIN32)
   set(lua_lib_location ${CMAKE_BINARY_DIR}/dll)
@@ -101,21 +99,20 @@ else(WIN32)
   set(lua_lib_location ${CMAKE_BINARY_DIR}/bindings/lua)
 endif(WIN32)
 configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/plplot_examples.lua.in
-${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua
-@ONLY
-)
+  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_examples.lua.in
+  ${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua
+  @ONLY
+  )
 
 set(lua_lib_location ${LUA_DIR})
 configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/plplot_examples.lua.in
-${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua_install
-@ONLY
-)
+  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_examples.lua.in
+  ${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua_install
+  @ONLY
+  )
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_examples.lua_install
-DESTINATION ${DATA_DIR}/examples/lua
-PERMISSIONS ${PERM_DATA}
-RENAME plplot_examples.lua
-)
-
+  DESTINATION ${DATA_DIR}/examples/lua
+  PERMISSIONS ${PERM_DATA}
+  RENAME plplot_examples.lua
+  )
