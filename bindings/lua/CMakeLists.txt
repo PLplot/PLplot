@@ -20,57 +20,62 @@
 
 if(ENABLE_lua)
 
-# This is currently the include list for swig.
-set(lua_interface_INCLUDE_PATHS
-${CMAKE_SOURCE_DIR}/include
-${CMAKE_SOURCE_DIR}/lib/qsastime
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/include
-${CMAKE_CURRENT_BINARY_DIR}
-${LUA_INCLUDE_DIR}
-${CMAKE_SOURCE_DIR}/bindings/swig-support
-)
-include_directories(${lua_interface_INCLUDE_PATHS})
+  # This is currently the include list for swig.
+  set(lua_interface_INCLUDE_PATHS
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/lib/qsastime
+    ${CMAKE_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${LUA_INCLUDE_DIR}
+    ${CMAKE_SOURCE_DIR}/bindings/swig-support
+    )
+  include_directories(${lua_interface_INCLUDE_PATHS})
 
-set(CMAKE_SWIG_FLAGS -DSWIG_LUA)
-set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
+  set(CMAKE_SWIG_FLAGS -DSWIG_LUA)
+  set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
-set_source_files_properties(plplotluac.i 
-PROPERTIES SWIG_MODULE_NAME plplotluac
-)
+  set_source_files_properties(plplotluac.i 
+    PROPERTIES SWIG_MODULE_NAME plplotluac
+    )
 
-set(SWIG_MODULE_plplotluac_EXTRA_DEPS
-${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
+  set(SWIG_MODULE_plplotluac_EXTRA_DEPS
+    ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
 
-# Set up swig + c wrapper.
-swig_add_module(plplotluac lua plplotluac.i)
-swig_link_libraries(plplotluac plplot${LIB_TAG} ${LUA_LIBRARIES})
+  # Set up swig + c wrapper.
+  swig_add_module(plplotluac lua plplotluac.i)
+  swig_link_libraries(plplotluac plplot${LIB_TAG} ${LUA_LIBRARIES})
 
-if(USE_RPATH)
-  get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-  set_target_properties(
-  plplotluac
-  PROPERTIES
-  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-  INSTALL_NAME_DIR "${LUA_DIR}"
-  )
-else(USE_RPATH)
-  set_target_properties(
-  plplotluac
-  PROPERTIES
-  INSTALL_NAME_DIR "${LUA_DIR}"
-  )
-endif(USE_RPATH)
+  if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    set_target_properties(
+      plplotluac
+      PROPERTIES
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      INSTALL_NAME_DIR "${LUA_DIR}"
+      )
+  else(USE_RPATH)
+    set_target_properties(
+      plplotluac
+      PROPERTIES
+      INSTALL_NAME_DIR "${LUA_DIR}"
+      )
+  endif(USE_RPATH)
 
-# Ensure we get the correct suffix for OS-X 
-if(APPLE)
-  set_target_properties(
-  plplotluac
-  PROPERTIES
-  SUFFIX ".dylib"
-  )
-endif(APPLE)
+  # Ensure we get the correct suffix for OS-X 
+  if(APPLE)
+    set_target_properties(
+      plplotluac
+      PROPERTIES
+      SUFFIX ".dylib"
+      )
+  endif(APPLE)
 
-install(TARGETS plplotluac LIBRARY DESTINATION ${LUA_DIR})
+  install(TARGETS plplotluac
+    EXPORT export_plplot
+    LIBRARY DESTINATION ${LUA_DIR}
+    )
+
+  install(EXPORT export_plplot DESTINATION ${DATA_DIR}/examples/cmake/modules)
 
 endif(ENABLE_lua)
