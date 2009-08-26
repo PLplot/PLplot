@@ -185,11 +185,6 @@ if(ENABLE_f95)
       )
   endif(STATIC_OPTS)
 
-  install(EXPORT export_plplot
-    DESTINATION ${DATA_DIR}/examples/cmake/modules
-    FILE export_plplotf95.cmake
-    )
-
   # For CMake-2.6.0 and above, the module files are created by
   # default during the library build in the bindings/f95 directory.
   install(

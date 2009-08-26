@@ -196,8 +196,6 @@ if(ENABLE_DYNDRIVERS)
       EXPORT export_plplot
       DESTINATION ${DRV_DIR}
       )
-    install(EXPORT export_plplot DESTINATION ${DATA_DIR}/examples/cmake/modules)
-
     install(
       FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.rc 
       DESTINATION ${DRV_DIR}

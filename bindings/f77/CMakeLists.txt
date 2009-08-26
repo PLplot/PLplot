@@ -190,11 +190,6 @@ if(ENABLE_f77)
       )
   endif(STATIC_OPTS)
 
-  install(EXPORT export_plplot
-    DESTINATION ${DATA_DIR}/examples/cmake/modules
-    FILE export_plplotf77.cmake
-    )
-
   # Configure pkg-config *.pc file corresponding to libplplotf77${LIB_TAG}
   if(PKG_CONFIG_EXECUTABLE)
     if(LIB_TAG)

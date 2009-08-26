@@ -77,6 +77,4 @@ if(ENABLE_lua)
     DESTINATION ${LUA_DIR}
     )
 
-  install(EXPORT export_plplot DESTINATION ${DATA_DIR}/examples/cmake/modules)
-
 endif(ENABLE_lua)

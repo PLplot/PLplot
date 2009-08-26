@@ -298,6 +298,10 @@ install(TARGETS plplot${LIB_TAG}
   LIBRARY DESTINATION ${LIB_DIR}
   RUNTIME DESTINATION ${BIN_DIR}
   )
+
+# This exports information for every target in the whole build that
+# has the EXPORT export_plplot signature (as above) for the 
+# install(TARGETS ... # command.
 install(EXPORT export_plplot DESTINATION ${DATA_DIR}/examples/cmake/modules)
 
 #message("libplplot${LIB_TAG}_LINK_FLAGS = ${libplplot${LIB_TAG}_LINK_FLAGS}")

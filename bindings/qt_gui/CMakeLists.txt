@@ -90,10 +90,6 @@ if(ENABLE_qt)
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
     )
-  install(EXPORT export_plplot
-    DESTINATION ${DATA_DIR}/examples/cmake/modules
-    FILE export_plplotqt.cmake
-    )
 
   # Transform "${QT_LIBRARIES}" to the standard pkg-config form.
   pkg_config_link_flags(

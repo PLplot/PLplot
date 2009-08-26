@@ -237,11 +237,6 @@ LIBRARY DESTINATION ${LIB_DIR}
 RUNTIME DESTINATION ${BIN_DIR}
 )
 
-install(EXPORT export_plplot
-  DESTINATION ${DATA_DIR}/examples/cmake/modules
-  FILE export_plplottcltk.cmake
-  )
-
 set(plplottcltk${LIB_TAG}_INSTALLED_HEADERS
 pltcl.h
 )

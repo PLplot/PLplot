@@ -69,11 +69,6 @@ if(ENABLE_cxx)
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
     )
-  install(EXPORT export_plplot
-    DESTINATION ${DATA_DIR}/examples/cmake/modules
-    FILE export_plplotcxx.cmake
-    )
-
   install(FILES
     ${plplotcxx${LIB_TAG}_INSTALLED_HEADERS}
     DESTINATION ${INCLUDE_DIR}

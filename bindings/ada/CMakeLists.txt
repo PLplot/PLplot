@@ -99,11 +99,6 @@ if(ENABLE_ada)
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
     )
-  install(EXPORT export_plplot
-    DESTINATION ${DATA_DIR}/examples/cmake/modules
-    FILE export_plplotada.cmake
-    )
-
 
   # Configure pkg-config *.pc file corresponding to libplplotada${LIB_TAG}
   if(PKG_CONFIG_EXECUTABLE)

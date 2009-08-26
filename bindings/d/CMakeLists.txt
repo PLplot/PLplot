@@ -72,10 +72,6 @@ if(ENABLE_d)
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
   )
-  install(EXPORT export_plplot
-    DESTINATION ${DATA_DIR}/examples/cmake/modules
-    FILE export_plplotd.cmake
-    )
 
   # Configure pkg-config *.pc file corresponding to libplplotdmd${LIB_TAG}
   if(PKG_CONFIG_EXECUTABLE)
