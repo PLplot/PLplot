@@ -93,11 +93,9 @@ if(BUILD_TEST)
   if(CORE_BUILD)
     set(I_OPTION ${CMAKE_BINARY_DIR}/bindings/ocaml/${OCAML_BUILD_DIR})
     set(ccopt_OPTION "-L ${CMAKE_BINARY_DIR}/src -Wl,-rpath -Wl,${CMAKE_BINARY_DIR}/src ")
-    set(core_DEPENDS plplot${LIB_TAG})
   else(CORE_BUILD)
     set(I_OPTION ${OCAML_INSTALL_DIR}/plplot)
     set(ccopt_OPTION "-L ${CMAKE_INSTALL_LIBDIR} -Wl,-rpath -Wl,${CMAKE_INSTALL_LIBDIR} ")
-    set(core_DEPENDS)
   endif(CORE_BUILD)
 
   set_property(GLOBAL PROPERTY TARGETS_examples_ocaml)
@@ -122,7 +120,7 @@ if(BUILD_TEST)
       plplot.cma 
       -o ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME} 
       ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
-      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE} ${core_DEPENDS}
+      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       VERBATIM
       )
@@ -130,6 +128,9 @@ if(BUILD_TEST)
       target_${EXECUTABLE_NAME} ALL 
       DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
       )
+    if(CORE_BUILD)
+      add_dependencies(target_${EXECUTABLE_NAME} plplot_ocaml)
+    endif(CORE_BUILD)
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_ocaml target_${EXECUTABLE_NAME})
   endforeach(STRING_INDEX ${ocaml_STRING_INDICES})
   set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ocaml_EXTRA_CLEAN_FILES}")
