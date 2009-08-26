@@ -2259,6 +2259,7 @@ static int
 opt_cmap0(const char *opt, const char *optarg, void *client_data)
 {
   plspal0(optarg);
+  return 0;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2271,4 +2272,5 @@ static int
 opt_cmap1(const char *opt, const char *optarg, void *client_data)
 {
   plspal1(optarg, TRUE);
+  return 0;
 }
