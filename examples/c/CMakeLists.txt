@@ -63,6 +63,7 @@ if(CORE_BUILD)
   set(c_SRCS
     plcdemos.h
     tutor.c
+    test_plend.c
     )
   foreach(STRING_INDEX ${c_STRING_INDICES})
     set(c_SRCS ${c_SRCS} x${STRING_INDEX}c.c)
@@ -133,6 +134,10 @@ if(BUILD_TEST)
     target_link_libraries(x${STRING_INDEX}c plplot${LIB_TAG} ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_c x${STRING_INDEX}c)
   endforeach(STRING_INDEX ${c_STRING_INDICES})
+  
+  # Build simple test routines which nothing else depends on.
+  add_executable(test_plend test_plend.c)
+  target_link_libraries(test_plend plplot${LIB_TAG} ${MATH_LIB})
   
   if(PKG_CONFIG_EXECUTABLE)
     if(ENABLE_gnome2)
