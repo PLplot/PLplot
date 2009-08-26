@@ -540,7 +540,7 @@ void text_char_cairo(PLStream *pls, EscText *args)
 	strncat(aStream->pangoMarkupString, "&#38;", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
 	break;
       case 60:
-	strncat(aStream->pangoMarkupString, "&#60;", MAX_MARKUP_LEN)-1-strlen(aStream->pangoMarkupString);
+	strncat(aStream->pangoMarkupString, "&#60;", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
 	break;
       case 62:
 	strncat(aStream->pangoMarkupString, "&#62;", MAX_MARKUP_LEN-1-strlen(aStream->pangoMarkupString));
@@ -831,7 +831,7 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
 	    strncat(pangoMarkupString, "&#38;", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	    break;
 	  case 60:
-	    strncat(pangoMarkupString, "&#60;", MAX_MARKUP_LEN)-1-strlen(pangoMarkupString);
+	    strncat(pangoMarkupString, "&#60;", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
 	    break;
 	  case 62:
 	    strncat(pangoMarkupString, "&#62;", MAX_MARKUP_LEN-1-strlen(pangoMarkupString));
