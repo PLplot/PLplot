@@ -1077,7 +1077,7 @@ void plD_init_qtwidget(PLStream * pls)
     pls->dev_flush=1;
     /* Driver does not have a clear capability so use (good) PLplot core
     * fallback for that instead.  */
-    pls->dev_clear=1;
+    pls->dev_clear=0;
     pls->dev_text = 1; // want to draw text
     pls->dev_unicode = 1; // want unicode
             
@@ -1132,38 +1132,29 @@ void plD_esc_qtwidget(PLStream * pls, PLINT op, void* ptr)
                         
     switch(op)
     {
-        case PLESC_CLEAR:
-            widget->clear();
-//             widget->clearBuffer();
-//             widget->setBackgroundColor(pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a);
-            break;
         case PLESC_FILL:
-//             std::cout << "fill " <<pls->dev_npts<< std::endl;
-        xa=new short[pls->dev_npts];
-        ya=new short[pls->dev_npts];
+            xa=new short[pls->dev_npts];
+            ya=new short[pls->dev_npts];
 
-        for (i = 0; i < pls->dev_npts; i++)
-        {
-            xa[i] = pls->dev_x[i];
-            ya[i] = pls->dev_y[i];
-        }
+            for (i = 0; i < pls->dev_npts; i++)
+            {
+                xa[i] = pls->dev_x[i];
+                ya[i] = pls->dev_y[i];
+            }
 
-        widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-        widget->drawPolygon(xa, ya, pls->dev_npts);
+            widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+            widget->drawPolygon(xa, ya, pls->dev_npts);
 
-        delete[] xa;
-        delete[] ya;
+            delete[] xa;
+            delete[] ya;
         break;
 
         case PLESC_HAS_TEXT:
-        /*$$ call the generic ProcessString function
-            ProcessString( pls, (EscText *)ptr ); */
-        widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
-        widget->drawText(pls, (EscText *)ptr);
+            widget->setColor(pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a);
+            widget->drawText(pls, (EscText *)ptr);
         break;
 
         case PLESC_FLUSH:
-//             std::cout << "flush" << std::endl;
             widget->flush();
             break;
 

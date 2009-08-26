@@ -27,10 +27,32 @@
 
 int main(int argc, char** argv)
 {
+    int res;
+    
+    // Deep copy of the arguments before QApplication alters them
+    int Argc=argc;
+    char** Argv;
+
+    Argv=new char*[argc];
+    for(int i=0; i<Argc; ++i)
+    {
+        int len=strlen(argv[i])+1;
+        Argv[i]=new char[len];
+        strncpy(Argv[i], argv[i], len);
+    }
+    
 	QApplication a( argc, argv );
-	PlotWindow* win=new PlotWindow(argc, argv);
+	PlotWindow* win=new PlotWindow(Argc, Argv);
 	a.setActiveWindow( win );
 	win->setVisible(true);
 
-	return a.exec();
+	res=a.exec();
+
+    for(int i=0; i<Argc; ++i)
+    {
+        delete[] Argv[i];
+    }
+    delete[] Argv;
+    
+    return res;
 }

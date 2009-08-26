@@ -304,7 +304,6 @@ class PLDLLIMPEXP_QT QtPLWidget: public QWidget, public QtPLDriver
         void setWidth(PLINT r);
         void drawText(PLStream* pls, EscText* txt);
         void flush();
-        void clear();
 
     protected:
                 
@@ -314,13 +313,26 @@ class PLDLLIMPEXP_QT QtPLWidget: public QWidget, public QtPLDriver
         void getPlotParameters(double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset); // gives the parameters to scale and center the plot on the page
         void doPlot(QPainter* p, double x_fact, double y_fact, double x_offset, double y_offset); // Actually draws the plot. Deported in a function for readability
         void renderText(QPainter* p, struct TextStruct_* s, double x_fact, double x_offset, double y_fact, double y_offset);
-                
+
+        void resetPensAndBrushes(QPainter*);
+        
         double m_dAspectRatio; // Is kept constant during resizes
         QPixmap * m_pixPixmap; // stores the drawn image as long as it does not have to be regenerated
 
         QLinkedList<BufferElement> m_listBuffer; // Buffer holding the draw instructions
-        bool m_bAwaitingRedraw;
-        int m_iOldSize; // Holds the size of the buffer. Modified => image has to be redrawn
+//         bool m_bAwaitingRedraw;
+//         int m_iOldSize; // Holds the size of the buffer. Modified => image has to be redrawn
+        bool redrawFromLastFlush;
+        bool redrawAll;
+
+        // Pens and brushes required to maintain the status between 2 flushes
+        QPen SolidPen;
+        QPen NoPen;
+        bool hasPen;
+        QBrush SolidBrush;
+        // end parameters
+
+        QLinkedList<BufferElement>::const_iterator start_iterator;
         
         struct
         {

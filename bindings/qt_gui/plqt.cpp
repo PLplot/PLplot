@@ -563,12 +563,17 @@ QtPLWidget::QtPLWidget(int i_iWidth, int i_iHeight, QWidget* parent):
     m_dAspectRatio=m_dWidth/m_dHeight;
 
     m_pixPixmap=NULL;
-    m_iOldSize=0;
+//     m_iOldSize=0;
     pageNumber=0;
     resize(i_iWidth, i_iHeight);
     lastColour.r=-1;
     setVisible(true);
     QApplication::processEvents();
+    redrawFromLastFlush=false;
+    redrawAll=true;
+
+    NoPen=QPen(Qt::NoPen);
+    NoPen.setWidthF(0.);
 }
 
 QtPLWidget::~QtPLWidget()
@@ -579,8 +584,10 @@ QtPLWidget::~QtPLWidget()
 
 void QtPLWidget::clearWidget()
 {
-    clear();
-    m_bAwaitingRedraw=true;
+    clearBuffer();
+    setBackgroundColor(bgColour.r, bgColour.g, bgColour.b, bgColour.alpha);
+    redrawAll=true;
+//     m_bAwaitingRedraw=true;
     update();
 }
 
@@ -624,6 +631,8 @@ void QtPLWidget::clearBuffer()
     }
 
     m_listBuffer.clear();
+    start_iterator=m_listBuffer.constBegin();
+    redrawAll=true;
 }
 
 void QtPLWidget::drawLine(short x1, short y1, short x2, short y2)
@@ -633,6 +642,7 @@ void QtPLWidget::drawLine(short x1, short y1, short x2, short y2)
     el.Data.Line=new QLineF(QPointF((PLFLT)x1*downscale, (PLFLT)(m_dHeight-y1*downscale)), QPointF((PLFLT)x2*downscale, (PLFLT)(m_dHeight-y2*downscale)));
 
     m_listBuffer.append(el);
+    redrawFromLastFlush=true;
 }
 
 void QtPLWidget::drawPolyline(short * x, short * y, PLINT npts)
@@ -646,6 +656,7 @@ void QtPLWidget::drawPolyline(short * x, short * y, PLINT npts)
     }
 
     m_listBuffer.append(el);
+    redrawFromLastFlush=true;
 }
 
 void QtPLWidget::drawPolygon(short * x, short * y, PLINT npts)
@@ -721,6 +732,7 @@ void QtPLWidget::drawPolygon(short * x, short * y, PLINT npts)
     }
 
     m_listBuffer.append(el);
+    redrawFromLastFlush=true;
 }
 
 void QtPLWidget::setColor(int r, int g, int b, double alpha)
@@ -742,6 +754,8 @@ void QtPLWidget::setColor(int r, int g, int b, double alpha)
         lastColour.b=b;
         lastColour.alpha=alpha;
     }
+    // No need to ask for a redraw at this point. The color only affects subsequent items
+//     redrawFromLastFlush=true;
 }
 
 void QtPLWidget::setBackgroundColor(int r, int g, int b, double alpha)
@@ -758,8 +772,12 @@ void QtPLWidget::setBackgroundColor(int r, int g, int b, double alpha)
     bgColour.g=g;
     bgColour.b=b;
     bgColour.alpha=alpha;
-    
+    if(alpha>=0.999)
+    {
+        clearBuffer();
+    }
     m_listBuffer.append(el);
+    redrawFromLastFlush=true;
 }
 
 void QtPLWidget::setWidth(PLINT w)
@@ -768,6 +786,7 @@ void QtPLWidget::setWidth(PLINT w)
     el.Element=SET_WIDTH;
     el.Data.intParam=w;
     m_listBuffer.append(el);
+//     redrawFromLastFlush=true;
 }
 
 void QtPLWidget::drawText(PLStream* pls, EscText* txt)
@@ -797,6 +816,7 @@ void QtPLWidget::drawText(PLStream* pls, EscText* txt)
     el.Data.TextStruct->chrht=pls->chrht;
     
     m_listBuffer.append(el);
+    redrawFromLastFlush=true;
 }
 
 void QtPLWidget::renderText(QPainter* p, struct TextStruct_* s, double x_fact, double x_offset, double y_fact, double y_offset)
@@ -819,6 +839,14 @@ void QtPLWidget::renderText(QPainter* p, struct TextStruct_* s, double x_fact, d
     p->resetTransform();
 
     p->setClipping(false);
+}
+
+void QtPLWidget::resetPensAndBrushes(QPainter* painter)
+{
+    SolidPen=QPen();
+    hasPen=true;
+    painter->setPen(SolidPen);
+    SolidBrush=QBrush(Qt::SolidPattern);
 }
 
 void QtPLWidget::mouseReleaseEvent ( QMouseEvent * event )
@@ -851,43 +879,65 @@ void QtPLWidget::nextPage()
 
 void QtPLWidget::resizeEvent( QResizeEvent * )
 {
-    m_bAwaitingRedraw=true;
+//     m_bAwaitingRedraw=true;
+    redrawAll=true;
     delete m_pixPixmap;
     m_pixPixmap=NULL;
 }
 
 void QtPLWidget::paintEvent( QPaintEvent * )
 {
-    double x_fact, y_fact, x_offset(0.), y_offset(0.); //Parameters to scale and center the plot on the widget
+        double x_fact, y_fact, x_offset(0.), y_offset(0.); //Parameters to scale and center the plot on the widget
 
-    getPlotParameters(x_fact, y_fact, x_offset, y_offset);
-    if(m_bAwaitingRedraw || m_pixPixmap==NULL || m_listBuffer.size()!=m_iOldSize) // If must regenerate image, draw it in the pixmap
-    {
-        delete m_pixPixmap;
-        m_pixPixmap=new QPixmap(width(), height());
-        QPainter* painter=new QPainter;
-        painter->begin(m_pixPixmap);
-                
-        // Draw the margins and the background
-        painter->fillRect(0, 0, width(), height(), QBrush(Qt::white));
-        painter->fillRect(0, 0, width(), height(), QBrush(Qt::gray, Qt::Dense4Pattern));
+        getPlotParameters(x_fact, y_fact, x_offset, y_offset);
 
-        // Draw the plot
-        doPlot(painter, x_fact, y_fact, x_offset, y_offset);
-        painter->end();
-                
-        m_bAwaitingRedraw=false;
-        m_iOldSize=m_listBuffer.size();
-                
-        delete painter;
-    }
-        
-    // draw the current pixmap
-    m_painterP->begin(this);
+        if(redrawAll || m_pixPixmap==NULL)
+        {
+            if(m_pixPixmap!=NULL)
+            {
+                delete m_pixPixmap;
+            }
+            m_pixPixmap=new QPixmap(width(), height());
+            QPainter* painter=new QPainter;
+            painter->begin(m_pixPixmap);
 
-    m_painterP->drawPixmap(0, 0, *m_pixPixmap);
+            // Draw the margins and the background
+            painter->fillRect(0, 0, width(), height(), QBrush(Qt::white));
+            painter->fillRect(0, 0, width(), height(), QBrush(Qt::gray, Qt::Dense4Pattern));
 
-    m_painterP->end();
+            // Re-initialise pens etc.
+            resetPensAndBrushes(painter);
+
+            start_iterator=m_listBuffer.constBegin();
+            
+            // Draw the plot
+            doPlot(painter, x_fact, y_fact, x_offset, y_offset);
+            painter->end();
+
+//             m_iOldSize=m_listBuffer.size();
+
+            delete painter;
+        }
+        else
+        {
+            QPainter* painter=new QPainter;
+            painter->begin(m_pixPixmap);
+            if(hasPen)
+                painter->setPen(SolidPen);
+            else
+                painter->setPen(NoPen);
+
+            // Draw the plot
+            doPlot(painter, x_fact, y_fact, x_offset, y_offset);
+            painter->end();
+        }
+
+        // draw the current pixmap
+        m_painterP->begin(this);
+
+        m_painterP->drawPixmap(0, 0, *m_pixPixmap);
+
+        m_painterP->end();
 }
 
 void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offset, double y_offset)
@@ -898,16 +948,16 @@ void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offs
     QVector<qreal> vect;
     QRectF rect;
         
-    QPen SolidPen;
-    
-    QPen NoPen(Qt::NoPen);
-    NoPen.setWidthF(0.); // Cosmetic pen
-    p->setPen(SolidPen);
-    bool hasPen=true;
+//     QPen SolidPen;
+// 
+//     QPen NoPen(Qt::NoPen);
+//     NoPen.setWidthF(0.); // Cosmetic pen
+//     p->setPen(SolidPen);
+//     bool hasPen=true;
         
     p->setRenderHints(QPainter::Antialiasing, (bool)lines_aa);
 
-    QBrush SolidBrush(Qt::SolidPattern);
+//     QBrush SolidBrush(Qt::SolidPattern);
     p->setBrush(SolidBrush);
         
     QTransform trans;
@@ -923,7 +973,7 @@ void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offs
     }
 
     // unrolls the buffer and draws each element accordingly
-    for(QLinkedList<BufferElement>::const_iterator i=m_listBuffer.constBegin(); i!=m_listBuffer.constEnd(); ++i)
+    for(QLinkedList<BufferElement>::const_iterator i=start_iterator; i!=m_listBuffer.constEnd(); ++i)
     {
         switch(i->Element)
         {
@@ -944,6 +994,7 @@ void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offs
                     hasPen=true;
                 }
                 p->drawLine(*(i->Data.Line));
+
                 break;
         
             case POLYLINE:
@@ -1007,6 +1058,12 @@ void QtPLWidget::doPlot(QPainter* p, double x_fact, double y_fact, double x_offs
                 break;
         }
     }
+
+    start_iterator=m_listBuffer.constEnd();
+    --start_iterator;
+    redrawFromLastFlush=false;
+    redrawAll=false;
+
 }
 
 void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset)
@@ -1027,12 +1084,6 @@ void QtPLWidget::getPlotParameters(double & io_dXFact, double & io_dYFact, doubl
         io_dXOffset=0.;
         io_dYOffset=(h-io_dYFact*m_dHeight)/2.;
     }
-}
-
-void QtPLWidget::clear()
-{
-    clearBuffer();
-    setBackgroundColor(bgColour.r, bgColour.g, bgColour.b, bgColour.alpha);
 }
 
 #endif

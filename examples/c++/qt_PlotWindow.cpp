@@ -89,7 +89,6 @@ void PlotWindow::plotCurves()
     }
         
     pladv(0);
-    plot->clear();
     plvpor(0.05, 0.95, 0.05, 0.45);
     plwind(0., 360., -1.2, 1.2);
 
