@@ -29,7 +29,9 @@ int main(int argc, char** argv)
 {
     int res;
     
-    // Deep copy of the arguments before QApplication alters them
+    // Command-line options are only to be interpreted by PLplot.  Thus,
+    // make a deep copy of the arguments for PLplot use before QApplication 
+    // has a chance to alter them.
     int Argc=argc;
     char** Argv;
 
@@ -41,6 +43,12 @@ int main(int argc, char** argv)
         strncpy(Argv[i], argv[i], len);
     }
     
+        // Limit QApplication's interpretation of argv to just the first
+	// argument (the application name) so that all command-line
+        // options such as the PLplot -bg command-line option (which would
+        // generate a warning message when misinterpreted by QApplication)
+        // are completely ignored.
+	argc = 1;
 	QApplication a( argc, argv );
 	PlotWindow* win=new PlotWindow(Argc, Argv);
 	a.setActiveWindow( win );
