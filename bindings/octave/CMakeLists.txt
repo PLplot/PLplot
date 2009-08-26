@@ -195,8 +195,6 @@ if(ENABLE_octave)
     PERMISSIONS ${PERM_MODULES}
     )
 
-  install(EXPORT export_plplot DESTINATION ${DATA_DIR}/examples/cmake/modules)
-
   # Build and install plplot_stub.m
   add_executable(massage massage.c)
   get_target_property(
@@ -243,24 +241,4 @@ if(ENABLE_octave)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
     DESTINATION ${PLPLOT_OCTAVE_DIR}
     )
-
-  if(never)
-    add_custom_command(
-      OUTPUT 
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.oct
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.o
-      COMMAND
-      touch
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.oct
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.o
-      DEPENDS
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc
-      )
-
-    # Link octave interface.
-    add_custom_target(
-      plplot_octave-libdir.oct ALL
-      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.o
-      )
-  endif(never)
 endif(ENABLE_octave)
