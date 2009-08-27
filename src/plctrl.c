@@ -56,9 +56,6 @@
 
 #define BUFFER_SIZE 256
 
-#define color_def(i, r, g, b, a, n)			\
-  if (i >= imin && i <= imax) color_set(i, r, g, b, a, n);
-
 /* Static functions */
 
 /* Used by any external init code to suggest a path */
@@ -829,6 +826,9 @@ color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, char *name )
     plsc->cmap0[i].name = name;
 }
 
+#define color_def(i, r, g, b, a, n)			\
+  if (i >= imin && i <= imax) color_set(i, r, g, b, a, n);
+
 /*--------------------------------------------------------------------------*\
  * plcmap0_def()
  *
@@ -1328,6 +1328,21 @@ c_plspal0(const char *filename)
   free(a);
 }
 
+/* This code fragment used a lot in plspal1 to deal with
+   floating-point range checking of a value and the adjustment of that
+   value when close to the range when there is floating-point errors.
+*/
+#define fuzzy_range_check(value, min, max, fuzz)                        \
+  if(value < min - fuzz || value > max + fuzz) {                        \
+    snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info); \
+    plwarn(msgbuf);                                                     \
+    err = 1;                                                            \
+    break;                                                              \
+  } else if (value < min) {                                             \
+    value = min;                                                        \
+  } else if (value > max) {                                             \
+    value = max;                                                        \
+  }
 /*--------------------------------------------------------------------------*\
  * void c_plspal1(filename)
  *
@@ -1424,16 +1439,10 @@ c_plspal1(const char *filename, PLBOOL interpolate)
       b[i] = (PLFLT)b_i/255.;
       a[i] = 1.0;
       pos[i] = 0.01*(PLFLT)pos_i;
-      if(pos[i] < -1.e-12 || pos[i] > 1. + 1.e-12) {
-	snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
-	plwarn(msgbuf);
-	err = 1;
-	break;
-      } else if (pos[i] < 0.) {
-        pos[i] = 0.;
-      } else if (pos[i] > 1.) {
-        pos[i] = 1.;
-      }
+      fuzzy_range_check(r[i], 0., 1., 1.e-12);
+      fuzzy_range_check(g[i], 0., 1., 1.e-12);
+      fuzzy_range_check(b[i], 0., 1., 1.e-12);
+      fuzzy_range_check(pos[i], 0., 1., 1.e-12);
       if(return_sscanf == 5) {
         /* Next to oldest tk format with rev specified. */
         rev[i] = (PLBOOL)rev_i;
@@ -1455,37 +1464,31 @@ c_plspal1(const char *filename, PLBOOL interpolate)
 	err = 1;
 	break;
       }
-      /* Check that all rgba and pos data within range from 0. to
-         1. except for the hls colour space case where the first
-         coordinate is checked within range from 0. to 360.*/
-      if((rgb && (r_d < 0. || r_d > 1.)) ||
-         (!rgb && (r_d < 0. || r_d > 360.)) ||
-         g_d < 0. || g_d > 1. ||
-         b_d < 0. || b_d > 1. ||
-         a_d < 0. || a_d > 1. ||
-         pos_d < 0. || pos_d > 1.) {
-	snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
-	plwarn(msgbuf);
-	err = 1;
-	break;
-      }
              
       r[i] = (PLFLT)r_d;
       g[i] = (PLFLT)g_d;
       b[i] = (PLFLT)b_d;
       a[i] = (PLFLT)a_d;
       pos[i] = (PLFLT)pos_d;
+      /* Check that all rgba and pos data within range from 0. to
+         1. except for the hls colour space case where the first
+         coordinate is checked within range from 0. to 360.*/
+      if(rgb) {
+        fuzzy_range_check(r[i], 0., 1., 1.e-12);
+      } else {
+        fuzzy_range_check(r[i], 0., 360., 360.e-12);
+      }
+      fuzzy_range_check(g[i], 0., 1., 1.e-12);
+      fuzzy_range_check(b[i], 0., 1., 1.e-12);
+      fuzzy_range_check(a[i], 0., 1., 1.e-12);
+      fuzzy_range_check(pos[i], 0., 1., 1.e-12);
+      
       rev[i] = (PLBOOL)rev_i;
     }
   }
   fclose(fp);
 
   if (err == 0) {
-    /* Set the first control point position to 0.0 and the last */
-    /* to 1.0 to deal with any possible round off errors. */
-    pos[0] = 0.0;
-    pos[number_colors-1] = 1.0;
-
     if (interpolate) {
         c_plscmap1la(rgb, number_colors, pos, r, g, b, a, rev);
     }
@@ -1497,6 +1500,26 @@ c_plspal1(const char *filename, PLBOOL interpolate)
         }
         c_plscmap1a(ri, gi, bi, a, number_colors);
     }
+  } else {
+    /* Fall back to grey scale if some problem occurred above. */
+    free(r);
+    free(g);
+    free(b);
+    free(pos);
+    number_colors = 2;
+    r = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
+    g = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
+    b = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
+    pos = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
+    r[0] = 0.;
+    r[1] = 1.;
+    g[0] = 0.;
+    g[1] = 1.;
+    b[0] = 0.;
+    b[1] = 1.;
+    pos[0] = 0.;
+    pos[1] = 1.;
+    c_plscmap1l(TRUE, number_colors, pos, r, g, b, NULL);
   }
 
   free(r);
