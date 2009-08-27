@@ -81,6 +81,11 @@ if(ANY_QT_DEVICE)
     set(qt_LINK_FLAGS)
     set(qt_RPATH ${QT_LIBRARY_DIR})
     #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
+  else(QT4_FOUND)
+    message(STATUS "WARNING: Qt4 development environment not found so "
+      "disabling all qt devices."
+      )
+    set(ANY_QT_DEVICE OFF)
   endif(QT4_FOUND)
 endif(ANY_QT_DEVICE)
 
