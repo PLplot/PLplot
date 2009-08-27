@@ -1424,11 +1424,15 @@ c_plspal1(const char *filename, PLBOOL interpolate)
       b[i] = (PLFLT)b_i/255.;
       a[i] = 1.0;
       pos[i] = 0.01*(PLFLT)pos_i;
-      if(pos[i] < 0. || pos[i] > 1.) {
+      if(pos[i] < -1.e-12 || pos[i] > 1. + 1.e-12) {
 	snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
 	plwarn(msgbuf);
 	err = 1;
 	break;
+      } else if (pos[i] < 0.) {
+        pos[i] = 0.;
+      } else if (pos[i] > 1.) {
+        pos[i] = 1.;
       }
       if(return_sscanf == 5) {
         /* Next to oldest tk format with rev specified. */
