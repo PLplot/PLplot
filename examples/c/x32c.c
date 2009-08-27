@@ -61,12 +61,12 @@ main(int argc, const char *argv[])
     /* outliers */
     static PLFLT outx[] = { 3.5, 6.5 };
     static PLFLT outy[] = { 0.89, 1.09 };
-
+/*
     static PLFLT pos[] = {0.0, 0.25, 0.5, 0.75, 1.0};
     static PLFLT red[] = {0.0, 0.25, 0.5, 1.0, 1.0};
     static PLFLT green[] = {1.0, 0.5, 0.5, 0.5, 1.0};
     static PLFLT blue[] = {1.0, 1.0, 0.5, 0.25, 0.0};
-
+*/
 /* Parse and process command line arguments */
 
     (void) plparseopts(&argc, argv, PL_PARSE_FULL);

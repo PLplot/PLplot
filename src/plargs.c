@@ -1606,7 +1606,7 @@ opt_bg(const char *opt, const char *optarg, void *client_data)
 {
     const char *rgb;
     char *color_field, *alpha_field;
-    long bgcolor, r, g, b, length;
+    long bgcolor, r, g, b;
     PLFLT a;
 
 /* Strip off leading "#" (TK-ism) if present. */

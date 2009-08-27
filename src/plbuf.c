@@ -850,7 +850,6 @@ rdbuf_text_unicode(PLINT op, PLStream *pls)
   PLUNICODE(fci);
   EscText text;
   PLFLT xform[4];
-  PLUNICODE* unicode;
 
   text.xform = xform;
 

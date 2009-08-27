@@ -14,7 +14,7 @@
 int
 main(int argc, const char *argv[])
 {
-    int i, j;
+    int i;
     PLFLT dtr, theta, dx, dy, r, offset;
     char text[4];
     static PLFLT x0[361], y0[361];

@@ -105,7 +105,6 @@ c_plarc(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLBOOL f
 {
     PLINT xscl[2], yscl[2];
     PLINT clpxmi, clpxma, clpymi, clpyma;
-    PLFLT orientation_offset, orientation;
     arc_struct *arc_info;
 
     /* TODO: For now, only unrotated plots use the driver-accelerated path. */

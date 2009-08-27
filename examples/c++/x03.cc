@@ -47,7 +47,7 @@ private:
 
 x03::x03( int argc, const char ** argv ) {
 
-  int i, j;
+  int i;
   char text[4];
   PLFLT dtr, theta, dx, dy, r, offset;
 

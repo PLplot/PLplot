@@ -598,13 +598,11 @@ void text_esc_cairo(PLStream *pls, EscText *args)
 void text_end_cairo(PLStream *pls, EscText *args)
 {
   int textXExtent, textYExtent;
-  char *textWithPangoMarkup;
-  PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear, diorot_rad;
+  PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
   cairo_matrix_t *cairoTransformMatrix;
   cairo_font_options_t *cairoFontOptions;
   PangoContext *context;
   PangoLayout *layout;
-  PangoFontDescription *fontDescription;
   PLCairo *aStream;
 
   aStream = (PLCairo *)pls->dev;
@@ -686,7 +684,6 @@ void text_end_cairo(PLStream *pls, EscText *args)
 
 void proc_str(PLStream *pls, EscText *args)
 {
-  int i;
   float fontSize;
   int textXExtent, textYExtent;
   char *textWithPangoMarkup;
@@ -695,7 +692,6 @@ void proc_str(PLStream *pls, EscText *args)
   cairo_font_options_t *cairoFontOptions;
   PangoContext *context;
   PangoLayout *layout;
-  PangoFontDescription *fontDescription;
   PLCairo *aStream;
 
   aStream = (PLCairo *)pls->dev;
@@ -897,7 +893,6 @@ char *ucs4_to_pango_markup_format(PLUNICODE *ucs4, int ucs4Len, float fontSize)
 
 void open_span_tag(char *pangoMarkupString, PLUNICODE fci, float fontSize, int upDown)
 {
-  int i;
   unsigned char fontFamily, fontStyle, fontWeight;
   char openTag[TAG_LEN];
 
@@ -1432,7 +1427,6 @@ static signed int xcairo_init_cairo(PLStream *pls)
 void plD_init_xcairo(PLStream *pls)
 {
   char plotTitle[40];
-  XGCValues values;
   PLCairo *aStream;
 
   /* Setup the PLStream and the font lookup table. */

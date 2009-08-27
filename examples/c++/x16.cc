@@ -48,10 +48,6 @@ private:
   static int ny;
   static int exclude;
   const static int PERIMETERPTS;
-
-  // calculated constants and array that depends on them
-  PLFLT xspa;
-  PLFLT ypsa;
 public:
   static PLFLT tr[];
 
@@ -172,11 +168,6 @@ x16::x16( int argc, const char ** argv ) {
 
   pls->Alloc2dGrid(&z,nx,ny);
   pls->Alloc2dGrid(&w,nx,ny);
-
-  // calculated constants and array that depends on them
-  PLFLT xspa =  2./(nx-1);
-  PLFLT yspa =  2./(ny-1);
-
 
   // Set up data array
 
