@@ -82,7 +82,7 @@ plcmap1_def(void);
 static PLFLT
 value(double n1, double n2, double hue);
 
-static int 
+static void
 cmap0_palette_read(const char *filename,
                    int *number_colors, int **r, int **g, int **b, double **a);
 /* An additional hardwired location for lib files. */
@@ -838,34 +838,11 @@ color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, char *name )
 void
 plcmap0_def(int imin, int imax)
 {
-  int i, rc, *r, *g, *b;
+  int i, *r, *g, *b;
   double *a;
   int number_colors;
-  char msgbuf[1024];
   if(imin <= imax) {
-    rc = cmap0_palette_read("", &number_colors, &r, &g, &b, &a);
-    if(rc == 1) {
-      snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",PL_DEFAULT_CMAP0_FILE);
-      plwarn(msgbuf);
-      return;
-    } else if(rc == 2) {
-      /* Should never get this return code for null string (default)
-         filename. */
-      snprintf(msgbuf,1024,"plcmap0_def: internal logic error \n");
-      plwarn(msgbuf);
-      return;
-    } else if(rc == 3) {
-      snprintf(msgbuf,1024,"Unrecognized cmap0 header\n");
-      plwarn(msgbuf);
-      return;
-    } else if(rc > 3) {
-      snprintf(msgbuf,1024,"Unrecognized cmap0 format\n");
-      plwarn(msgbuf);
-      return;
-    }
-    for(i=imin;i<MIN(number_colors, imax+1);i++)
-      color_def(i, r[i], g[i], b[i], a[i], "color defined by palette file");
-
+    cmap0_palette_read("", &number_colors, &r, &g, &b, &a);
     free(r);
     free(g);
     free(b);
@@ -1211,72 +1188,116 @@ c_plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
 }
 
 /*--------------------------------------------------------------------------*\
- * int cmap0_palette_read()
+ * cmap0_palette_read()
  *
  * Read and check r, g, b, a data from a cmap0*.pal format file.
- * Non-zero return code means some error occurred.
  * The caller must free the returned malloc'ed space for r, g, b, and a.
 \*--------------------------------------------------------------------------*/
 
-int 
+void
 cmap0_palette_read(const char *filename,
                    int *number_colors, int **r, int **g, int **b, double **a)
 {
-  int i;
+  int i, err = 0;
   char color_info[30];
+  char msgbuf[1024];
   FILE *fp;
 
   if(strlen(filename) == 0) {
     fp = plLibOpen(PL_DEFAULT_CMAP0_FILE);
-    if (fp == NULL) return 1;
+    if (fp == NULL) {
+      snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",PL_DEFAULT_CMAP0_FILE);
+      plwarn(msgbuf);
+      err = 1;
+    }
   } else {
     fp = plLibOpen(filename);
-    if (fp == NULL) return 2;
+    if (fp == NULL) {
+      snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",filename);
+      plwarn(msgbuf);
+      err = 1;
+    }
   }
-  if (fscanf(fp, "%d\n", number_colors) != 1 || *number_colors < 1) {
+  if (!err &&(fscanf(fp, "%d\n", number_colors) != 1 || *number_colors < 1)) {
     fclose(fp);
-    return 3;
+    snprintf(msgbuf,1024,"Unrecognized cmap0 header\n");
+    plwarn(msgbuf);
+    err = 1;
   }
 
-  /* Allocate arrays to hold r, g, b, and a data for calling routine.
-     The caller must free these after it is finished with them. */
-  if(((*r = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
-     ((*g = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
-     ((*b = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
-     ((*a = (double *)malloc(*number_colors * sizeof(double))) == NULL)) {
-    fclose(fp);
-    plexit("cmap0_palette_read: insufficient memory");
-  }
-          
-  for(i=0;i<*number_colors;i++){
-    fgets(color_info, 30, fp);
-    color_info[strlen(color_info)-1] = '\0'; /* remove return character */
-    if(strlen(color_info) == 7){
-      if (sscanf(color_info, "#%2x%2x%2x",
-                 (int *) (*r+i), (int *) (*g+i), (int *) (*b+i)) != 3) {
-        fclose(fp);
-        return 4;
-      }
-      *(*a+i) = 1.0;
-    }
-    else if(strlen(color_info) > 9){
-      if (sscanf(color_info, "#%2x%2x%2x %lf",
-                 (int *) (*r+i), (int *) (*g+i), (int *) (*b+i),
-                 (double *) (*a+i)) != 4) {
-        fclose(fp);
-        return 5;
-      }
-      if(*(*a+i) < 0. || *(*a+i) > 1.) {
-        fclose(fp);
-        return 6;
-      }
-    } else {
+  if(!err) {
+    /* Allocate arrays to hold r, g, b, and a data for calling routine.
+       The caller must free these after it is finished with them. */
+    if(((*r = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
+       ((*g = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
+       ((*b = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
+       ((*a = (double *)malloc(*number_colors * sizeof(double))) == NULL)) {
       fclose(fp);
-      return 7;
+      plexit("cmap0_palette_read: insufficient memory");
+    }
+          
+    for(i=0;i<*number_colors;i++){
+      fgets(color_info, 30, fp);
+      color_info[strlen(color_info)-1] = '\0'; /* remove return character */
+      if(strlen(color_info) == 7){
+        if (sscanf(color_info, "#%2x%2x%2x",
+                   (int *) (*r+i), (int *) (*g+i), (int *) (*b+i)) != 3) {
+          err = 1;
+          break;
+        }
+        *(*a+i) = 1.0;
+      } else if(strlen(color_info) > 9) {
+        if (sscanf(color_info, "#%2x%2x%2x %lf",
+                   (int *) (*r+i), (int *) (*g+i), (int *) (*b+i),
+                   (double *) (*a+i)) != 4) {
+          err = 1;
+          break;
+        }
+        /* fuzzy range check. */
+        if(*(*a+i) < -1.e-12 || *(*a+i) > 1. + 1.e-12) {
+          err = 1;
+          break;
+        } else if(*(*a+i) < 0.) {
+          *(*a+i) = 0.;
+        } else if(*(*a+i) > 1.) {
+          *(*a+i) = 1.;
+        }
+      } else {
+        err = 1;
+        break;
+      }
+    }
+    fclose(fp);
+    if(err) {
+      snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
+      plwarn(msgbuf);
+      free(*r);
+      free(*g);
+      free(*b);
+      free(*a);
     }
   }
-  fclose(fp);
-  return 0;
+  /* Fall back to opaque red on opaque white as visual warning of any
+     error above. */
+  if(err) {
+    *number_colors = 16;
+    if(((*r = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
+       ((*g = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
+       ((*b = (int *)malloc(*number_colors * sizeof(int))) == NULL) ||
+       ((*a = (double *)malloc(*number_colors * sizeof(double))) == NULL)) {
+      plexit("cmap0_palette_read: insufficient memory");
+    }
+    **r = 255;
+    **g = 255;
+    **b = 255;
+    **a = 1.;
+    for(i=1;i<*number_colors;i++){
+        *(*r+i) = 255;
+        *(*g+i) = 0;
+        *(*b+i) = 0;
+        *(*a+i) = 1.0;
+    }
+  }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1292,26 +1313,7 @@ c_plspal0(const char *filename)
   int i, *r, *g, *b;
   double *a;
   int number_colors;
-  char msgbuf[1024];
-  int rc = cmap0_palette_read(filename, &number_colors, &r, &g, &b, &a);
-  if(rc == 1) {
-    snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",PL_DEFAULT_CMAP0_FILE);
-    plwarn(msgbuf);
-    return;
-  } else if(rc == 2) {
-    snprintf(msgbuf,1024,"Unable to open cmap0 file %s\n",filename);
-    plwarn(msgbuf);
-    return;
-  } else if(rc == 3) {
-    snprintf(msgbuf,1024,"Unrecognized cmap0 header\n");
-    plwarn(msgbuf);
-    return;
-  } else if(rc > 3) {
-    snprintf(msgbuf,1024,"Unrecognized cmap0 format\n");
-    plwarn(msgbuf);
-    return;
-  }
-
+  cmap0_palette_read(filename, &number_colors, &r, &g, &b, &a);
   /* Allocate default number of cmap0 colours if cmap0 allocation not
      done already. */
   plscmap0n(0);
@@ -1488,7 +1490,7 @@ c_plspal1(const char *filename, PLBOOL interpolate)
   }
   fclose(fp);
 
-  if (err == 0) {
+  if (!err) {
     if (interpolate) {
         c_plscmap1la(rgb, number_colors, pos, r, g, b, a, rev);
     }
@@ -1501,7 +1503,8 @@ c_plspal1(const char *filename, PLBOOL interpolate)
         c_plscmap1a(ri, gi, bi, a, number_colors);
     }
   } else {
-    /* Fall back to grey scale if some problem occurred above. */
+    /* Fall back to red scale as visual warning if some problem occurred
+       above. */
     free(r);
     free(g);
     free(b);
@@ -1514,9 +1517,9 @@ c_plspal1(const char *filename, PLBOOL interpolate)
     r[0] = 0.;
     r[1] = 1.;
     g[0] = 0.;
-    g[1] = 1.;
+    g[1] = 0.;
     b[0] = 0.;
-    b[1] = 1.;
+    b[1] = 0.;
     pos[0] = 0.;
     pos[1] = 1.;
     c_plscmap1l(TRUE, number_colors, pos, r, g, b, NULL);
@@ -1857,7 +1860,6 @@ plLibOpenPdfstrm(const char *fn)
 
         if ((file = pdf_fopen(fs, "rb")) != NULL)
             goto done;
-
         fprintf(stderr, PLPLOT_LIB_ENV"=\"%s\"\n", dn); /* what IS set? */
     }
 #endif  /* PLPLOT_LIB_ENV */
@@ -1866,6 +1868,7 @@ plLibOpenPdfstrm(const char *fn)
 
     if ((file = pdf_fopen(fn, "rb")) != NULL){
       pldebug("plLibOpenPdfstr", "Found file %s in current directory.\n", fn);
+      free_mem(fs);
       return (file);
     }
 
@@ -1909,11 +1912,11 @@ plLibOpenPdfstrm(const char *fn)
 	plGetName(plplotLibDir, "", fn, &fs);
 	if ((file = pdf_fopen(fs, "rb")) != NULL)
 	    goto done;
-
     }
 
 /**** 	not found, give up 	****/
     pldebug("plLibOpenPdfstr", "File %s not found.\n", fn);
+    free_mem(fs);
     return NULL;
 
  done:
