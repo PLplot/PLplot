@@ -1254,7 +1254,7 @@ cmap0_palette_read(const char *filename,
           break;
         }
         /* fuzzy range check. */
-        if(*(*a+i) < -1.e-12 || *(*a+i) > 1. + 1.e-12) {
+        if(*(*a+i) < -1.e-12 || *(*a+i) > (1. + 1.e-12)) {
           err = 1;
           break;
         } else if(*(*a+i) < 0.) {
@@ -1269,7 +1269,8 @@ cmap0_palette_read(const char *filename,
     }
     fclose(fp);
     if(err) {
-      snprintf(msgbuf,1024,"Unrecognized cmap0 format %s\n", color_info);
+      snprintf(msgbuf,1024,"Unrecognized cmap0 format data line.  Line is %s\n",
+               color_info);
       plwarn(msgbuf);
       free(*r);
       free(*g);
@@ -1334,9 +1335,9 @@ c_plspal0(const char *filename)
    floating-point range checking of a value and the adjustment of that
    value when close to the range when there is floating-point errors.
 */
-#define fuzzy_range_check(value, min, max, fuzz)                        \
-  if(value < min - fuzz || value > max + fuzz) {                        \
-    snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info); \
+#define fuzzy_range_check(value, min, max, fuzz, err_number)            \
+  if(value < (min - fuzz) || value > (max + fuzz)) {                    \
+    snprintf(msgbuf,1024,"Unrecognized cmap1 format data line.  Error number is %d. Line is %s\n", err_number, color_info);                                   \
     plwarn(msgbuf);                                                     \
     err = 1;                                                            \
     break;                                                              \
@@ -1403,7 +1404,7 @@ c_plspal1(const char *filename, PLBOOL interpolate)
   }
 
   if (sscanf(color_info, "%d\n", &number_colors) != 1 || number_colors < 2) {
-    snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
+    snprintf(msgbuf,1024,"Unrecognized cmap1 format (wrong number of colors) %s\n", color_info);
     plwarn(msgbuf);
     fclose(fp);
     return;
@@ -1428,7 +1429,7 @@ c_plspal1(const char *filename, PLBOOL interpolate)
       color_info[159] = '\0';
       return_sscanf = sscanf(color_info, "#%2x%2x%2x %d %d", &r_i, &g_i, &b_i, &pos_i, &rev_i);
       if(return_sscanf < 4 || (return_sscanf_old != 0 && return_sscanf != return_sscanf_old)) {
-	snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
+	snprintf(msgbuf,1024,"Unrecognized cmap1 format (wrong number of items for version 1 of format) %s\n", color_info);
 	plwarn(msgbuf);
 	err = 1;
 	break;
@@ -1441,10 +1442,10 @@ c_plspal1(const char *filename, PLBOOL interpolate)
       b[i] = (PLFLT)b_i/255.;
       a[i] = 1.0;
       pos[i] = 0.01*(PLFLT)pos_i;
-      fuzzy_range_check(r[i], 0., 1., 1.e-12);
-      fuzzy_range_check(g[i], 0., 1., 1.e-12);
-      fuzzy_range_check(b[i], 0., 1., 1.e-12);
-      fuzzy_range_check(pos[i], 0., 1., 1.e-12);
+      fuzzy_range_check(r[i], 0., 1., 1.e-12, 1);
+      fuzzy_range_check(g[i], 0., 1., 1.e-12, 2);
+      fuzzy_range_check(b[i], 0., 1., 1.e-12, 3);
+      fuzzy_range_check(pos[i], 0., 1., 1.e-12, 4);
       if(return_sscanf == 5) {
         /* Next to oldest tk format with rev specified. */
         rev[i] = (PLBOOL)rev_i;
@@ -1460,8 +1461,8 @@ c_plspal1(const char *filename, PLBOOL interpolate)
     /* New floating point file version with support for alpha and rev values */
     for(i=0;i<number_colors;i++){
       fgets(color_info, 160, fp);
-      if (sscanf(color_info, "%lf %lf %lf %lf %lf %d", &pos_d, &r_d, &g_d, &b_d, &a_d, &rev_i) < 6) {
-	snprintf(msgbuf,1024,"Unrecognized cmap1 format %s\n", color_info);
+      if (sscanf(color_info, "%lf %lf %lf %lf %lf %d", &pos_d, &r_d, &g_d, &b_d, &a_d, &rev_i) != 6) {
+	snprintf(msgbuf,1024,"Unrecognized cmap1 format (wrong number of items for version 2 of format) %s\n", color_info);
 	plwarn(msgbuf);
 	err = 1;
 	break;
@@ -1476,14 +1477,14 @@ c_plspal1(const char *filename, PLBOOL interpolate)
          1. except for the hls colour space case where the first
          coordinate is checked within range from 0. to 360.*/
       if(rgb) {
-        fuzzy_range_check(r[i], 0., 1., 1.e-12);
+        fuzzy_range_check(r[i], 0., 1., 1.e-12, 5);
       } else {
-        fuzzy_range_check(r[i], 0., 360., 360.e-12);
+        fuzzy_range_check(r[i], 0., 360., 360.e-12, 6);
       }
-      fuzzy_range_check(g[i], 0., 1., 1.e-12);
-      fuzzy_range_check(b[i], 0., 1., 1.e-12);
-      fuzzy_range_check(a[i], 0., 1., 1.e-12);
-      fuzzy_range_check(pos[i], 0., 1., 1.e-12);
+      fuzzy_range_check(g[i], 0., 1., 1.e-12, 7);
+      fuzzy_range_check(b[i], 0., 1., 1.e-12, 8);
+      fuzzy_range_check(a[i], 0., 1., 1.e-12, 9);
+      fuzzy_range_check(pos[i], 0., 1., 1.e-12, 10);
       
       rev[i] = (PLBOOL)rev_i;
     }
