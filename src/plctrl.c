@@ -56,6 +56,10 @@
 
 #define BUFFER_SIZE 256
 
+/* small epsilon for fuzzy range checks that is still large enough to
+   work even in the single precision floating point case.*/
+#define FUZZ_EPSILON 1.e-4
+
 /* Static functions */
 
 /* Used by any external init code to suggest a path */
@@ -1254,7 +1258,7 @@ cmap0_palette_read(const char *filename,
           break;
         }
         /* fuzzy range check. */
-        if(*(*a+i) < -1.e-12 || *(*a+i) > (1. + 1.e-12)) {
+        if(*(*a+i) < -FUZZ_EPSILON || *(*a+i) > (1. + FUZZ_EPSILON)) {
           err = 1;
           break;
         } else if(*(*a+i) < 0.) {
@@ -1442,10 +1446,10 @@ c_plspal1(const char *filename, PLBOOL interpolate)
       b[i] = (PLFLT)b_i/255.;
       a[i] = 1.0;
       pos[i] = 0.01*(PLFLT)pos_i;
-      fuzzy_range_check(r[i], 0., 1., 1.e-12, 1);
-      fuzzy_range_check(g[i], 0., 1., 1.e-12, 2);
-      fuzzy_range_check(b[i], 0., 1., 1.e-12, 3);
-      fuzzy_range_check(pos[i], 0., 1., 1.e-12, 4);
+      fuzzy_range_check(r[i], 0., 1., FUZZ_EPSILON, 1);
+      fuzzy_range_check(g[i], 0., 1., FUZZ_EPSILON, 2);
+      fuzzy_range_check(b[i], 0., 1., FUZZ_EPSILON, 3);
+      fuzzy_range_check(pos[i], 0., 1., FUZZ_EPSILON, 4);
       if(return_sscanf == 5) {
         /* Next to oldest tk format with rev specified. */
         rev[i] = (PLBOOL)rev_i;
@@ -1477,14 +1481,14 @@ c_plspal1(const char *filename, PLBOOL interpolate)
          1. except for the hls colour space case where the first
          coordinate is checked within range from 0. to 360.*/
       if(rgb) {
-        fuzzy_range_check(r[i], 0., 1., 1.e-12, 5);
+        fuzzy_range_check(r[i], 0., 1., FUZZ_EPSILON, 5);
       } else {
-        fuzzy_range_check(r[i], 0., 360., 360.e-12, 6);
+        fuzzy_range_check(r[i], 0., 360., (360.*FUZZ_EPSILON), 6);
       }
-      fuzzy_range_check(g[i], 0., 1., 1.e-12, 7);
-      fuzzy_range_check(b[i], 0., 1., 1.e-12, 8);
-      fuzzy_range_check(a[i], 0., 1., 1.e-12, 9);
-      fuzzy_range_check(pos[i], 0., 1., 1.e-12, 10);
+      fuzzy_range_check(g[i], 0., 1., FUZZ_EPSILON, 7);
+      fuzzy_range_check(b[i], 0., 1., FUZZ_EPSILON, 8);
+      fuzzy_range_check(a[i], 0., 1., FUZZ_EPSILON, 9);
+      fuzzy_range_check(pos[i], 0., 1., FUZZ_EPSILON, 10);
       
       rev[i] = (PLBOOL)rev_i;
     }
