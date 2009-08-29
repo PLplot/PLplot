@@ -57,31 +57,44 @@ if(ENABLE_pdl)
           "PDL version < 2.4.1. Disabling Perl/PDL examples in tests")
         set(ENABLE_pdl OFF CACHE BOOL "Enable Perl/PDL examples in tests" FORCE)
       else(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
-        message(STATUS 
-	  "PDL version >= 2.4.1.  Enabling Perl/PDL examples in tests"
-	  )
         execute_process(
 	  COMMAND ${PERL_EXECUTABLE}
 	  -MPDL::Graphics::PLplot "-e print \"$PDL::Graphics::PLplot::VERSION\""
-          OUTPUT_VARIABLE PDL_PLPLOT_VERSION
-          ERROR_VARIABLE PDL_PLPLOT_VERSION
+	  RESULT_VARIABLE PDL_GRAPHICS_PLPLOT_RETURN_CODE
+          OUTPUT_QUIET
+          ERROR_QUIET
           )
-        message(STATUS "PDL_PLPLOT_VERSION = ${PDL_PLPLOT_VERSION}")
-        transform_version(NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION "0.47.0")
-        transform_version(NUMERICAL_PDL_PLPLOT_VERSION "${PDL_PLPLOT_VERSION}.0")
-	#message("NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION = ${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
-	#message("NUMERICAL_PDL_PLPLOT_VERSION = ${NUMERICAL_PDL_PLPLOT_VERSION}")
-        if(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
-          message(STATUS "WARNING: "
-            "perl PDL PLplot version < 0.47\n"
-            "   Using limited set of Perl/PDL examples that work with this old version")
-          set(HAVE_PDL_GRAPHICS_PLPLOT_40 OFF CACHE BOOL "PDL-Graphics-PLplot version is 0.47 or higher" FORCE)
-        else(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
-          message(STATUS
-            "perl PDL PLplot version >= 0.47\n"
-            "   Using full set of Perl/PDL examples that work with this version")
-          set(HAVE_PDL_GRAPHICS_PLPLOT_40 ON CACHE BOOL "PDL-Graphics-PLplot version is 0.47 or higher" FORCE)
-        endif(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
+	if(NOT PDL_GRAPHICS_PLPLOT_RETURN_CODE)
+          message(STATUS 
+	    "PDL version >= 2.4.1 and  PDL::Graphics::PLplot found."
+	    )
+          execute_process(
+	    COMMAND ${PERL_EXECUTABLE}
+	    -MPDL::Graphics::PLplot "-e print \"$PDL::Graphics::PLplot::VERSION\""
+            OUTPUT_VARIABLE PDL_PLPLOT_VERSION
+            ERROR_VARIABLE PDL_PLPLOT_VERSION
+            )
+          message(STATUS "PDL_PLPLOT_VERSION = ${PDL_PLPLOT_VERSION}")
+          transform_version(NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION "0.47.0")
+          transform_version(NUMERICAL_PDL_PLPLOT_VERSION "${PDL_PLPLOT_VERSION}.0")
+	  #message("NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION = ${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
+	  #message("NUMERICAL_PDL_PLPLOT_VERSION = ${NUMERICAL_PDL_PLPLOT_VERSION}")
+          if(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
+            message(STATUS "WARNING: "
+              "perl PDL PLplot version < 0.47\n"
+              "   Using limited set of Perl/PDL examples that work with this old version")
+            set(HAVE_PDL_GRAPHICS_PLPLOT_40 OFF CACHE BOOL "PDL-Graphics-PLplot version is 0.47 or higher" FORCE)
+          else(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
+            message(STATUS
+              "perl PDL PLplot version >= 0.47\n"
+              "   Using full set of Perl/PDL examples that work with this version")
+            set(HAVE_PDL_GRAPHICS_PLPLOT_40 ON CACHE BOOL "PDL-Graphics-PLplot version is 0.47 or higher" FORCE)
+          endif(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
+	else(NOT PDL_GRAPHICS_PLPLOT_RETURN_CODE)
+	  message(STATUS "WARNING: "
+	    "perl PDL::GRAPHICS_PLplot module not found. Disabling Perl/PDL examples")
+	  set(ENABLE_pdl OFF CACHE BOOL "Enable Perl/PDL examples in tests" FORCE)
+	endif(NOT PDL_GRAPHICS_PLPLOT_RETURN_CODE)
       endif(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
     else(NOT PDL_RETURNCODE)
       message(STATUS "WARNING: "
