@@ -131,18 +131,64 @@ void wxPLDevGC::FillPolygon( PLStream *pls )
 {
   // Log_Verbose( "%s", __FUNCTION__ );
 
-  wxGraphicsPath path=m_context->CreatePath();
-  path.MoveToPoint( pls->dev_x[0]/scalex, height-pls->dev_y[0]/scaley );
-  for( int i=1; i < pls->dev_npts; i++ )
-    path.AddLineToPoint( pls->dev_x[i]/scalex, height-pls->dev_y[i]/scaley );
-  path.CloseSubpath();
-  
-  m_context->DrawPath( path );
+	bool isRect=false;
+	short* x = pls->dev_x;
+	short* y = pls->dev_y;
+	
+	if(pls->dev_npts==4)  {   // Check if it's a rectangle. If so, it can be made faster to display
+		if(x[0]==x[1] && x[2]==x[3] && y[0]==y[3] && y[1]==y[2])
+			isRect=true;
+		else if(x[0]==x[3] && x[1]==x[2] && y[0]==y[1] && y[2]==y[3])
+			isRect=true;
+	}
+	if(pls->dev_npts==5) {
+		if(x[0]==x[4] && y[0]==y[4]) {
+			if(x[0]==x[1] && x[2]==x[3] && y[0]==y[3] && y[1]==y[2])
+				isRect=true;
+			else if(x[0]==x[3] && x[1]==x[2] && y[0]==y[1] && y[2]==y[3])
+				isRect=true;
+		}
+	}
+			
+	if(isRect) { //isRect) {
+		double x1, y1, x2, y2, x0, y0, w, h;
 
-  wxDouble x, y, w, h;
-  path.GetBox( &x, &y, &w, &h );
-  
-  AddtoClipRegion( (int)x, (int)y, (int)(x+w), (int)(y+h) );  
+		x1=x[0]/scalex;
+		x2=x[2]/scalex;
+		y1=height-y[0]/scaley;
+		y2=height-y[2]/scaley;
+		
+		if(x1<x2) {
+			x0=x1;
+			w=x2-x1;
+		}	else {
+			x0=x2;
+			w=x1-x2;
+		}
+		if(y1<y2) {
+			y0=y1;
+			h=y2-y1;
+		}	else{
+			y0=y2;
+			h=y1-y2;
+		}
+		m_context->DrawRectangle( x0, y0, w, h );
+		AddtoClipRegion( (int)x0, (int)y0, (int)w, (int)h );  
+	} else {
+		wxGraphicsPath path=m_context->CreatePath();
+		path.MoveToPoint( x[0]/scalex, height-y[0]/scaley );
+		for( int i=1; i < pls->dev_npts; i++ )
+			path.AddLineToPoint( x[i]/scalex, height-y[i]/scaley );
+		path.CloseSubpath();
+		
+		m_context->DrawPath( path );
+	
+		wxDouble x, y, w, h;
+		path.GetBox( &x, &y, &w, &h );
+		
+		AddtoClipRegion( (int)x, (int)y, (int)(x+w), (int)(y+h) );  
+	}
+
 }
 
 
@@ -341,6 +387,17 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
   /* Calculate the font size (in pixels) */
   fontSize = pls->chrht * VIRTUAL_PIXELS_PER_MM/scaley * 1.3;
 
+  /* Use PLplot core routine to get the corners of the clipping rectangle */
+  PLINT rcx[4], rcy[4];
+  difilt_clip(rcx, rcy);
+
+	wxPoint cpoints[4];
+	for( int i=0; i<4; i++ ) {
+		cpoints[i].x = rcx[i]/scalex;
+		cpoints[i].y = height-rcy[i]/scaley;
+	}		
+	m_context->Clip( wxRegion(4, cpoints) );
+
   /* text color */
   textRed=pls->cmap0[pls->icol0].r;
   textGreen=pls->cmap0[pls->icol0].g;
@@ -370,6 +427,8 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
   m_context->PopState();
 
   AddtoClipRegion( 0, 0, width, height );        
+  
+  m_context->ResetClip();
 }
 
 #endif

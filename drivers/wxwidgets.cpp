@@ -374,6 +374,7 @@ wxPLDevBase* common_init(  PLStream *pls )
 #endif
 
   pls->color = 1;		    /* Is a color device */
+  pls->dev_flush = 1;   /* Handles flushes */
   pls->dev_fill0 = 1;		/* Can handle solid fills */
   pls->dev_fill1 = 0;		/* Can't handle pattern fills */
   pls->dev_dash = 0;
@@ -549,6 +550,7 @@ void plD_init_wxpng( PLStream *pls )
   plOpenFile( pls );  
 
   pls->plbuf_write = 1;        /* use the plot buffer! */
+  pls->dev_flush = 0;          /* No need for flushes */
   pls->termin = 0;             /* file oriented device */
   pls->graphx = GRAPHICS_MODE; /*  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination) */
   pls->page = 0;
@@ -578,7 +580,7 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
   dev->DrawLine( x1a, y1a, x2a, y2a );
     
   if( !(dev->resizing) && dev->ownGUI ) {
-		dev->comcount+=10;
+		dev->comcount++;
 		if( dev->comcount>MAX_COMCOUNT ) {
 			wxRunApp( pls, true );
 			dev->comcount=0;
@@ -606,7 +608,7 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
   dev->DrawPolyline( xa, ya, npts );
 
   if( !(dev->resizing) && dev->ownGUI ) {
-    dev->comcount+=10;
+    dev->comcount++;
 		if( dev->comcount>MAX_COMCOUNT ) {
 			wxRunApp( pls, true );
 			dev->comcount=0;
@@ -848,6 +850,13 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 													pls->sppxmi, pls->sppymi, pls->sppxma, pls->sppyma );
 		break;
   
+	case PLESC_FLUSH:    /* forced update of the window */
+		if( !(dev->resizing) && dev->ownGUI ) {
+			wxRunApp( pls, true );
+			dev->comcount=0;
+		}
+		break;
+
   case PLESC_GETC:
     if( dev->ownGUI )
       GetCursorCmd( pls, (PLGraphicsIn *) ptr );

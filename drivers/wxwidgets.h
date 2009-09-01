@@ -363,7 +363,7 @@ struct dev_entry {
 
 
 /* after how many commands the window should be refreshed */
-#define MAX_COMCOUNT 5000
+#define MAX_COMCOUNT 10000
 
 /* wxwidgets application definition (if needed) */
 WX_DEFINE_ARRAY( wxPLplotFrame*, wxArrayOfwxPLplotFrame );
