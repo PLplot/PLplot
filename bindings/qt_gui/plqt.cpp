@@ -594,6 +594,7 @@ void QtPLWidget::clearWidget()
 void QtPLWidget::flush()
 {
     repaint();
+    QApplication::processEvents();
 }
 
 void QtPLWidget::clearBuffer()
