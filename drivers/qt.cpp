@@ -96,6 +96,7 @@ bool initQtApp(bool isGUI)
         snprintf(argv[0], 10, "qt_driver");
         argv[1][0]='\0';
         new QApplication(argc, argv, isGUI);
+        setlocale(LC_NUMERIC, "C");
         res=true;
     }
     return res;
