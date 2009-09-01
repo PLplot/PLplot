@@ -1093,6 +1093,7 @@ void plD_eop_qtwidget(PLStream *pls)
     QtPLWidget* widget=((QtPLWidget*)pls->dev);
     int currentPage=widget->pageNumber;
     widget->flush();
+    widget->raise();
     while(currentPage==widget->pageNumber && handler.isMasterDevice(widget) && ! pls->nopause)
     {
         qApp->processEvents(QEventLoop::WaitForMoreEvents);
