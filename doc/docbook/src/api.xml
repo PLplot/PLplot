@@ -2629,6 +2629,30 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		  <literal>x</literal> and <literal>y</literal> labels.
 		</para>
 	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>70</literal>: same as 0 except custom
+		  <literal>x</literal> and <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>71</literal>: same as 1 except custom
+		  <literal>x</literal> and <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>72</literal>: same as 2 except custom
+		  <literal>x</literal> and <literal>y</literal> labels. 
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>73</literal>: same as 3 except custom
+		  <literal>x</literal> and <literal>y</literal> labels.
+		</para>
+	      </listitem>
 	    </itemizedlist>
 	  </para>
 	</listitem>
