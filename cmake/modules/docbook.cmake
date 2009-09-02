@@ -53,6 +53,12 @@ set(XML_DECL /usr/share/xml/declaration/xml.dcl)
 set(DOCBOOK_DTD_PUBID "-//OASIS//DTD DocBook XML V4.2//EN")
 find_program(ONSGMLS onsgmls)
 
+if(ONSGMLS )
+  message(STATUS "validate target will be available to check for syntax errors in the PLplot DocBook documentation using ${ONSGMLS}.")
+else(ONSGMLS )
+  message(STATUS "WARNING: validate target will not be available to check for syntax errors in the PLplot DocBook documentation because onsgmls was not found.")
+endif(ONSGMLS )
+
 # Check for required programs and perl libraries.
 if(BUILD_DOC)
   # EC_PDFTEX needed to configure pdftex.map which is used in general for
