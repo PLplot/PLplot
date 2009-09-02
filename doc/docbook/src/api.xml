@@ -8,6 +8,7 @@ Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
 Copyright (C) 2003  Joao Cardoso
 Copyright (C) 2004, 2007  Andrew Ross
 Copyright (C) 2007  Hazen Babcock
+Copyright (C) 2008, 2009  Hezekiah M. Carty
 
 Redistribution and use in source (XML DocBook) and "compiled" forms
 (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -490,6 +491,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
+                  <literal>o</literal>: Use custom labeling function to
+                  generate axis label text.  The custom labeling function
+                  can be defined with the plslabelfuncplslabelfunc; command.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
 		  <literal>s</literal>: Enables subticks between major
 		  ticks, only valid if <literal>t</literal> is also
 		  specified.
@@ -906,6 +914,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
+                  <literal>o</literal>: Use custom labeling function to
+                  generate axis label text.  The custom labeling function
+                  can be defined with the plslabelfuncplslabelfunc; command.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
 		  <literal>s</literal>: Enables subticks between major
 		  ticks, only valid if <literal>t</literal> is also
 		  specified.
@@ -1100,6 +1115,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
+                  <literal>o</literal>: Use custom labeling function to
+                  generate axis label text.  The custom labeling function
+                  can be defined with the plslabelfuncplslabelfunc; command.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
 		  <literal>s</literal>: Enables subticks between major
 		  ticks, only valid if <literal>t</literal> is also
 		  specified.
@@ -1271,6 +1293,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<para>
 		  <literal>n</literal>: Writes numeric labels at major tick
 		  intervals on the left-hand vertical axis.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+                  <literal>o</literal>: Use custom labeling function to
+                  generate axis label text.  The custom labeling function
+                  can be defined with the plslabelfuncplslabelfunc; command.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -2300,6 +2329,30 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		  <literal>x</literal> and <literal>y</literal> labels.
 		</para>
 	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>70</literal>: same as 0 except custom
+		  <literal>x</literal> and <literal>y</literal> labels.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>71</literal>: same as 1 except custom
+		  <literal>x</literal> and <literal>y</literal> labels.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>72</literal>: same as 2 except custom
+		  <literal>x</literal> and <literal>y</literal> labels.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>73</literal>: same as 3 except custom
+		  <literal>x</literal> and <literal>y</literal> labels.
+		</para>
+	      </listitem>
 	    </itemizedlist>
 	  </para>
 	</listitem>
@@ -2632,19 +2685,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      <listitem>
 		<para>
 		  <literal>70</literal>: same as 0 except custom
-		  <literal>x</literal> and <literal>y</literal> labels. 
+		  <literal>x</literal> and <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>71</literal>: same as 1 except custom
-		  <literal>x</literal> and <literal>y</literal> labels. 
+		  <literal>x</literal> and <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>72</literal>: same as 2 except custom
-		  <literal>x</literal> and <literal>y</literal> labels. 
+		  <literal>x</literal> and <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -11923,6 +11976,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    <function>plslabelfunc</function>
 	  </funcdef>
 	  <paramdef><parameter>label_func</parameter></paramdef>
+	  <paramdef><parameter>label_data</parameter></paramdef>
 	</funcprototype>
       </funcsynopsis>
     </para>
@@ -11931,7 +11985,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       This function allows a user to provide their own function to provide
       axis label text.  The user function is given the numeric value for a
       point on an axis and returns a string label to correspond with that
-      value.
+      value.  Custom axis labels can be enabled by passing appropriate
+      arguments to &plenv;, &plbox;, &plbox3; and similar functions.
     </para>
 
     <variablelist>
@@ -11943,9 +11998,47 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
             This is the custom label function.  In order to reset to the
-            default labeling, set this to <literal>NULL</literal>.  The
-            <literal>char*</literal> argument should be set to the appropriate
-            label text.
+            default labeling, set this to <literal>NULL</literal>.
+            The labeling function parameters are, in order:
+            <variablelist>
+              <varlistentry>
+                <term><parameter>axis</parameter></term>
+                <listitem>
+                  <para>
+                    This indicates which axis a label is being requested for.
+                    The value will be one of <literal>PL_X_AXIS</literal>,
+                    <literal>PL_Y_AXIS</literal> or
+                    <literal>PL_Z_AXIS</literal>.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term><parameter>value</parameter></term>
+                <listitem>
+                  <para>
+                    This is the value along the axis which is being labeled.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term><parameter>label_text</parameter></term>
+                <listitem>
+                  <para>
+                    The string representation of the label
+                    <literal>value</literal>.
+                  </para>
+                </listitem>
+              </varlistentry>
+              <varlistentry>
+                <term><parameter>length</parameter></term>
+                <listitem>
+                  <para>
+                    The maximum length in characters allowed for
+                    <literal>label_text</literal>.
+                  </para>
+                </listitem>
+              </varlistentry>
+            </variablelist>
 	  </para>
 	</listitem>
       </varlistentry>
@@ -11956,15 +12049,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-            This parameter may be used to pass data to the label_func
-            function.
+            This parameter may be used to pass data to the
+            <literal>label_func</literal> function.
 	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
 
     <para>
-      This function is used in examples 1 and 19.
+      This function is used in example 19.
     </para>
 
   </sect1>
