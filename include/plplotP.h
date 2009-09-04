@@ -120,6 +120,8 @@ typedef char * caddr_t;
 #include <unistd.h>
 #endif
 
+#include <locale.h>
+
 /* (AM) Define M_PI if the platform does not include it
    (MSVC for instance) */
 #if !defined(M_PI)
@@ -423,6 +425,13 @@ extern Hershey_to_Unicode_table hershey_to_unicode_lookup_table[];
 
 /* Greek character translation array (defined in plcore.c) */
 extern const char plP_greek_mnemonic[];
+
+/* plinit calls setlocale to establish this pointer to a character string
+   that stores the LC_NUMERIC locale set by any library or application before
+   it calls plinit.  This character string is used to restore the LC_NUMERIC
+   locale to the original one after anything (such as colour palette file
+   reading) within PLplot that temporarily changes the locale. 
+   extern PLDLLIMPEXP_DATA(char *) plplot_default_lc_numeric_locale; */
 
 
 /*--------------------------------------------------------------------------*\

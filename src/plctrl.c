@@ -1207,6 +1207,9 @@ cmap0_palette_read(const char *filename,
   char msgbuf[1024];
   FILE *fp;
 
+  if(!(setlocale(LC_NUMERIC, "C"))) {
+    plexit("cmap0_palette_read: LC_NUMERIC locale could not be set for \"C\"");
+  }
   if(strlen(filename) == 0) {
     fp = plLibOpen(PL_DEFAULT_CMAP0_FILE);
     if (fp == NULL) {
@@ -1303,6 +1306,12 @@ cmap0_palette_read(const char *filename,
         *(*a+i) = 1.0;
     }
   }
+
+  /* Restore default LC_NUMERIC locale since we fiddled with it above.
+  if(!(setlocale(LC_NUMERIC, plplot_default_lc_numeric_locale))) {
+    snprintf(msgbuf,1024,"cmap0_palette_read: LC_NUMERIC could not be restored to the default \"%s\" locale.\n", *plplot_default_lc_numeric_locale);
+    plexit(msgbuf);
+    } */
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1373,6 +1382,9 @@ c_plspal1(const char *filename, PLBOOL interpolate)
   FILE *fp;
   char msgbuf[1024];
 
+  if(!(setlocale(LC_NUMERIC, "C"))) {
+    plexit("plspal1: LC_NUMERIC locale could not be set for \"C\"");
+  }
   rgb = TRUE;
   err = 0;
   format_version = 0;

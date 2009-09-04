@@ -128,6 +128,9 @@ enum {AT_BOP, DRAWING, AT_EOP};
  */
 const char plP_greek_mnemonic[] = "ABGDEZYHIKLMNCOPRSTUFXQWabgdezyhiklmncoprstufxqw";
 
+/* Must define this pointer once.  Corresponding declaration is in plplotP.h
+   char * plplot_default_lc_numeric_locale; */
+
 void
 plP_init(void)
 {
@@ -1801,6 +1804,14 @@ c_plinit(void)
     PLFLT def_arrow_y[6] = {0.0, 0.0,   0.2, 0.0, -0.2, 0.0};
     PLFLT lx, ly, xpmm_loc, ypmm_loc, aspect_old, aspect_new;
     PLINT mk = 0, sp = 0, inc = 0, del = 2000;
+    /* Save current LC_NUMERIC locale string pointer in
+       plplot_default_lc_numeric_locale for purposes of restoring the
+       current LC_NUMERIC locale after the PLplot library temporarily
+       fiddles with it. 
+
+    if(!(plplot_default_lc_numeric_locale = setlocale(LC_NUMERIC, NULL))) {
+      plexit("plinit: LC_NUMERIC has no default name of locale");
+      } */
 
     pllib_init();
 
