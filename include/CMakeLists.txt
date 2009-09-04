@@ -20,40 +20,40 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/plConfig.h.cmake
-${CMAKE_CURRENT_BINARY_DIR}/plConfig.h
-)
+  ${CMAKE_CURRENT_SOURCE_DIR}/plConfig.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/plConfig.h
+  )
 
 configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/plDevs.h.cmake
-${CMAKE_CURRENT_BINARY_DIR}/plDevs.h
-)
+  ${CMAKE_CURRENT_SOURCE_DIR}/plDevs.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/plDevs.h
+  )
 
 configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/pldll.h.in
-${CMAKE_CURRENT_BINARY_DIR}/pldll.h
-)
+  ${CMAKE_CURRENT_SOURCE_DIR}/pldll.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/pldll.h
+  )
 
 set(plhershey-unicode-gen_SRCS
-${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode-gen.c
-)
+  ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode-gen.c
+  )
 
 if(NOT CMAKE_CROSSCOMPILING)
-add_executable(plhershey-unicode-gen ${plhershey-unicode-gen_SRCS})
+  add_executable(plhershey-unicode-gen ${plhershey-unicode-gen_SRCS})
 else(NOT CMAKE_CROSSCOMPILING)
   SET(IMPORT_EXECUTABLES ${CMAKE_NATIVE_BINARY_DIR}/include/ImportExecutables.cmake)
   INCLUDE(${IMPORT_EXECUTABLES})
 endif(NOT CMAKE_CROSSCOMPILING)
 
 add_custom_command(
-OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
-COMMAND plhershey-unicode-gen
-${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
-${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
-DEPENDS
-${plhershey-unicode-gen_LOCATION}
-${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
-)
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
+  COMMAND plhershey-unicode-gen
+  ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
+  ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
+  DEPENDS
+  ${plhershey-unicode-gen_LOCATION}
+  ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
+  )
 
 if(NOT CMAKE_CROSSCOMPILING) 
   export(TARGETS plhershey-unicode-gen FILE ${CMAKE_CURRENT_BINARY_DIR}/ImportExecutables.cmake )
@@ -61,30 +61,30 @@ endif(NOT CMAKE_CROSSCOMPILING)
 
 # For cross-directory dependencies....
 add_custom_target(
-plhershey-unicode.h_built
-DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
-)
+  plhershey-unicode.h_built
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
+  )
 
 set(include_INSTALLED_HEADERS
-disptab.h
-drivers.h
-pdf.h
-pldebug.h
-${CMAKE_CURRENT_BINARY_DIR}/pldll.h
-plevent.h
-plplot.h
-plplotP.h
-plstrm.h
-plxwd.h
-gcw.h
-plplotcanvas.h
-${CMAKE_CURRENT_BINARY_DIR}/plConfig.h
-${CMAKE_CURRENT_BINARY_DIR}/plDevs.h
-)
+  disptab.h
+  drivers.h
+  pdf.h
+  pldebug.h
+  ${CMAKE_CURRENT_BINARY_DIR}/pldll.h
+  plevent.h
+  plplot.h
+  plplotP.h
+  plstrm.h
+  plxwd.h
+  gcw.h
+  plplotcanvas.h
+  ${CMAKE_CURRENT_BINARY_DIR}/plConfig.h
+  ${CMAKE_CURRENT_BINARY_DIR}/plDevs.h
+  )
 
 #qt.h only useful if anyone wants to build a Qt application with the Qt widget driver
 if(PLD_qtwidget OR PLD_extqt)
-    list(APPEND include_INSTALLED_HEADERS qt.h)
+  list(APPEND include_INSTALLED_HEADERS qt.h)
 endif(PLD_qtwidget OR PLD_extqt)
 
 if(ANY_QT_DEVICE)
