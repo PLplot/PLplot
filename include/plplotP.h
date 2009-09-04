@@ -120,7 +120,7 @@ typedef char * caddr_t;
 #include <unistd.h>
 #endif
 
-#include <locale.h>
+/*#include <locale.h> */
 
 /* (AM) Define M_PI if the platform does not include it
    (MSVC for instance) */
