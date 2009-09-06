@@ -126,6 +126,7 @@ file prefix location), the result looks good.  In particular, the Ada plplot
 documentation is there and all the previous problems with source code
 accessibility for the Ada, f77, and OCaml examples are now fixed.
 
+
 (4) Upload the local website to SourceForge.
 
 Once you are satisfied with the local website, you should upload it to
@@ -155,6 +156,7 @@ will happen without actually doing it.
 N.B. log files for the website build can be found in the /tmp/plplotdoc/build
 directory. This can be useful for finding problems with the build of the
 website.
+
 
 (5) Creating a PLplot Release
 
@@ -226,7 +228,7 @@ The commit the new tag:
 cd tags/vX_Y_Z
 svn commit -m "Adding a tag for the X.Y.Z release."
 
-cd to tags/ and enter the following command: 
+cd to tags/ and enter the following commands: 
 
 export WWW_USER=your_sf_user_name
 ../trunk/scripts/make_tarball.sh -c -i /tmp/vX_Y_Z -t vX_Y_Z 2>&1 | tee build.log
@@ -267,61 +269,37 @@ svn log -v > ChangeLog.release
 Edit ChangeLog.release to be the appropriate date range (i.e. only the
 changes that were made since the last release should be included).
 
-(See also:
-http://alexandria.wiki.sourceforge.net/File+Release+System+-+Offering+Files+for+Download)
-
-Upload the plplot-X.X.X.tar.gz.* files to the SF upload section
-
-sftp frs.sourceforge.net
-cd uploads 
-put plplot-X.X.X.tar.gz
-put plplot-X.X.X.tar.gz.asc
-quit
-
 
 Prepare a file release:
 
 Login to sf.net.
-Go to the PLplot project page.
-Select "Download" from the list of links at the top of the page.
-Click "Manage Packages / Releases" on the downloads page.
-Click add release in the middle of the page.
-Enter the new release name and click "create this release".
+Go to the PLplot SourceForge project page.
 
-N.B. Release names guide our users to the release they want when they browse
-our file release area.  The source release names should be of the form
-"5.x.y Source" (e.g., "5.6.1 Source").  The reason for this suggestion is to
-keep source release names distinct from binary release names.
+Upload the Release:
+Select Project Admin / File Manager.
+Right click on the plplot folder & select "New folder" from the pop-up menu.
+Enter the release name as the "New folder name:", e.g. X.Y.Z Source.
+Right click on the release folder & select "Uploads here".
+Click on "Upload File" under File Manager & upload the source tarball and 
+the signature file.
+Concatenate the README.release and ChangeLog.release files into a single 
+README.release file.
+Click on "Upload File" again to upload the concatenated README.release file.
+Click on this file and mark it as "Release Note".
+Click on the source tarball & the signature file & select README.release in
+the "Release Notes for this file" drop down menu.
 
-In the file release GUI (Step1):
-Browse to README.release in "Upload Release Notes".
-Browse to ChangeLog.release in "Upload Change Log".
-Select "preserve my pre-formatted text"
-Click "Submit/Refresh"
 
-In the file release GUI (Step2):
-Select (and only select) the uploaded plplot files.
-Click "Add Files and/or Refresh View"
+Create a news item for the Release:
+Select Develop / News
+Click "Admin", select any older News Item and copy the test.
+Click "Submit"
+  Enter "PLplot Release X.Y.Z" as the subject.
+  Paste in the text from the older release as the Details.
+    Be sure to update the text as appropriate, particularly
+    the release numbers.
 
-In the edit file in release GUI (Step3):
-For plplot-X.X.X.tar.gz select "any" for the processor type and "source.gz" for
-the file type.
-For plplot-X.X.X.tar.gz.asc select "any" for the processor type and
-"other source" for the file type.
 
-In the e-mail notification GUI (Step4):
-Select that you are sure that you want to send an e-mail to those who are
-monitoring the PLplot releases.
-
-Prepare the release notes:
-Return to the PLplot project page
-Select Summary -> News
-Click on submit to create a new news item.
-Load an old release news item in another browser window and use that as a 
-template for creating your new release news item. Make sure that you get
-the link to the release notes correct (none of the other links need to be
-changed).
-Click on submit.
 
 Immediate preparation for next release cycle
 
