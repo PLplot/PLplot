@@ -43,7 +43,7 @@ set(qsastime_SOVERSION 0)
 set(qsastime_VERSION ${qsastime_SOVERSION}.0.1)
 
 set(plplot_SOVERSION 9)
-set(plplot_VERSION ${plplot_SOVERSION}.6.2)
+set(plplot_VERSION ${plplot_SOVERSION}.7.0)
 
 set(plplotcxx_SOVERSION 9)
 set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.3.0)
