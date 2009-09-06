@@ -1,9 +1,9 @@
-PLplot Release 5.9.5
+PLplot Release 5.10.0
 ~~~~~~~~~~~~~~~~~~~~
-This is a development release of PLplot. It represents the ongoing efforts
+This is a stable release of PLplot. It represents the ongoing efforts
 of the community to improve the PLplot plotting package. Development 
-releases in the 5.9.x series will be available every few months. The next 
-stable release will be 5.10.0.
+releases in the 5.11.x series will be available every few months. The next 
+stable release will be 5.12.0.
 
      If you encounter a problem that is not already documented in the
 PROBLEMS file, then please send bug reports to PLplot developers via the
@@ -110,67 +110,11 @@ impress, and ljii) or build-time issues (tek) with these devices, and as far
 as we know there is no more user interest in them. Therefore, we have
 decided to retire these devices rather than fix them.
 
+
 INDEX
 
-1. Changes relative to PLplot 5.9.4 (the previous development release)
+1. Changes relative to PLplot 5.9.5 (the previous development release)
 
-1.1 PyQt changes
-1.2 Color Palettes
-1.3 Reimplementation of a "soft landing" when a bad/missing compiler is
-detected
-
-1.1 PyQt changes
-
-Years ago we got a donation of a hand-crafted pyqt3 interface to PLplot 
-(some of the functions in plplot_widgetmodule.c in bindings/python) and a
-proof-of-concept example (prova.py and qplplot.py in examples/python), but
-this code did not gain any developer interest and was therefore not
-understood or maintained. Recently one of our core developers has
-implemented a sip-generated pyqt4 interface to PLplot (controlled by
-plplot_pyqt4.sip in bindings/qt_gui/pyqt4) that builds without problems as a
-python extension module, and a good-looking pyqt4 example (pyqt4_example.py
-in examples/python) that works well.  Since this pyqt4 approach is
-maintained by a PLplot developer it appears to have a good future, and we
-have therefore decided to concentrate on pyqt4 and remove the pyqt3 PLplot
-interface and example completely.
-
-1.2 Color Palettes
-
-Support has been added to PLplot for user defined color palette files.
-These files can be loaded at the command line using the -cmap0 or
--cmap1 commands, or via the API using the plspal0 and plspal1 commands.
-The commands cmap0 / plspal0 are used to load cmap0 type files which
-specify the colors in PLplots color table 0. The commands cmap1 /
-plspal1 are used to load cmap1 type files which specify PLplots color
-table 1. Examples of both types of files can be found in either the
-plplot-source/data directory or the PLplot installed directory 
-(typically /usr/local/share/plplotx.y.z/ on linux).
-
-1.3 Reimplementation of a "soft landing" when a bad/missing compiler is
-detected.
-
-The PLplot core library is written in C so our CMake-based build system will
-error out if it doesn't detect a working C compiler.  However all other
-compiled languages (Ada, C++, D, Fortran, Java, and OCaml) we support are
-optional.  If a working compiler is not available, we give a "soft landing"
-(give a warning message, disable the optional component, and keep going).
-The old implementation of the soft landing was not applied consistently (C++
-was unnecessarily mandatory before) and also caused problems for ccmake (a
-CLI front-end to the cmake application) and cmake-gui (a CMake GUI front-end
-to the cmake application) which incorrectly dropped languages as a result
-even when there was a working compiler.  
-
-We now have completely reimplemented the soft landing logic.  The result
-works well for cmake, ccmake, and cmake-gui.  The one limitation of this new
-method that we are aware of is it only recognizes either the default
-compiler chosen by the generator or else a compiler specified by the
-environment variable approach (see Official Notice XII above).  Once CMake
-bug 9220 has been fixed (so that the OPTIONAL signature of the
-enable_language command actually works without erroring out), then our
-soft-landing approach (which is a workaround for bug 9220) will be replaced
-by the OPTIONAL signature of enable_language, and all CMake methods of
-specifying compilers and compiler options will automatically be recognized
-as a result.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
