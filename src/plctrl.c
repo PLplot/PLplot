@@ -51,6 +51,10 @@
 #include <errno.h>
 #endif
 
+/* extern declaration in plplotP.h, but defined here once for all of
+ libplplot. */
+char * plsaved_lc_numeric_locale;
+
 /* Random number generator (Mersenne Twister) */
 #include "mt19937ar.h"
 
@@ -1207,9 +1211,8 @@ cmap0_palette_read(const char *filename,
   char msgbuf[1024];
   FILE *fp;
 
-  /*  if(!(setlocale(LC_NUMERIC, "C"))) {
-    plexit("cmap0_palette_read: LC_NUMERIC locale could not be set for \"C\"");
-    } */
+  plsave_set_locale();
+
   if(strlen(filename) == 0) {
     fp = plLibOpen(PL_DEFAULT_CMAP0_FILE);
     if (fp == NULL) {
@@ -1307,11 +1310,7 @@ cmap0_palette_read(const char *filename,
     }
   }
 
-  /* Restore default LC_NUMERIC locale since we fiddled with it above.
-  if(!(setlocale(LC_NUMERIC, plplot_default_lc_numeric_locale))) {
-    snprintf(msgbuf,1024,"cmap0_palette_read: LC_NUMERIC could not be restored to the default \"%s\" locale.\n", *plplot_default_lc_numeric_locale);
-    plexit(msgbuf);
-    } */
+  plrestore_locale();
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1382,9 +1381,8 @@ c_plspal1(const char *filename, PLBOOL interpolate)
   FILE *fp;
   char msgbuf[1024];
 
-  /*  if(!(setlocale(LC_NUMERIC, "C"))) {
-    plexit("plspal1: LC_NUMERIC locale could not be set for \"C\"");
-    }*/
+  plsave_set_locale();
+
   rgb = TRUE;
   err = 0;
   format_version = 0;
@@ -1393,14 +1391,14 @@ c_plspal1(const char *filename, PLBOOL interpolate)
     if (fp == NULL) {
       snprintf(msgbuf,1024,"Unable to open cmap1 .pal file %s\n",PL_DEFAULT_CMAP1_FILE);
       plwarn(msgbuf);
-      return;
+      goto finish;
     }
   } else {
     fp = plLibOpen(filename);
     if (fp == NULL) {
       snprintf(msgbuf,1024,"Unable to open cmap1 .pal file %s\n",filename);
       plwarn(msgbuf);
-      return;
+      goto finish;
     }
   }
   /* Check for new file format */
@@ -1423,7 +1421,7 @@ c_plspal1(const char *filename, PLBOOL interpolate)
     snprintf(msgbuf,1024,"Unrecognized cmap1 format (wrong number of colors) %s\n", color_info);
     plwarn(msgbuf);
     fclose(fp);
-    return;
+    goto finish;
   }
 
   r = (PLFLT *)malloc(number_colors * sizeof(PLFLT));
@@ -1551,6 +1549,8 @@ c_plspal1(const char *filename, PLBOOL interpolate)
   free(a);
   free(pos);
   free(rev);
+
+finish: plrestore_locale();
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1936,7 +1936,7 @@ plLibOpenPdfstrm(const char *fn)
     free_mem(fs);
     return NULL;
 
- done:
+done:
     pldebug("plLibOpenPdfstr", "Found file %s\n", fs);
     free_mem(fs);
     return (file);
@@ -2552,3 +2552,59 @@ c_plrandd(void)
 {
   return (PLFLT)(genrand_real1());
 }
+
+/*--------------------------------------------------------------------------*\
+ * plsave_set_locale()
+ *
+ * For LC_NUMERIC save current locale string in the global
+ * pointer, plsaved_lc_numeric_locale, then set "C" locale.
+ * n.b. plsave_set_locale and plrestore_locale should always be used as
+ * a pair to surround PLplot code that absolutely requires the
+ * LC_NUMERIC "C" locale to be in effect.  It is one of plrestore_locale's
+ * responsibilities to free the memory allocated here for the locale
+ * string.
+\*--------------------------------------------------------------------------*/
+
+void
+plsave_set_locale(void) {
+  char * setlocale_ptr;
+  char msgbuf[1024];
+
+  if(!(plsaved_lc_numeric_locale = (char *) malloc(100*sizeof(char)))) {
+    plexit("plsave_set_locale: out of memory");
+  }
+
+  /*save original LC_NUMERIC locale for restore below. */
+  if(!(setlocale_ptr = setlocale(LC_NUMERIC, NULL))) {
+    snprintf(msgbuf,1024,"plsave_set_locale: LC_NUMERIC locale could not be determined for NULL locale.\n");
+    plexit(msgbuf);
+  }
+  strncpy(plsaved_lc_numeric_locale, setlocale_ptr, 100);
+  plsaved_lc_numeric_locale[99] = '\0';
+  pldebug("plsave_set_locale", "LC_NUMERIC locale to be restored is \"%s\"\n", plsaved_lc_numeric_locale);
+  if(!(setlocale(LC_NUMERIC, "C"))) {
+    plexit("plsave_set_locale: LC_NUMERIC locale could not be set to \"C\"");
+  }
+}
+
+/*--------------------------------------------------------------------------*\
+ * plrestore_locale()
+ *
+ * For LC_NUMERIC restore the locale string that was determined by
+ * plsave_set_locale with a pointer to that string stored in the global
+ * variable plsaved_lc_numeric_locale and free the memory for that string.
+\*--------------------------------------------------------------------------*/
+
+void
+plrestore_locale(void) {
+  char msgbuf[1024];
+
+  pldebug("plrestore_locale", "LC_NUMERIC locale to be restored is \"%s\"\n", plsaved_lc_numeric_locale);
+
+  if(!(setlocale(LC_NUMERIC, plsaved_lc_numeric_locale))) {
+    snprintf(msgbuf,1024,"plrestore_locale: LC_NUMERIC could not be restored to the default \"%s\" locale.\n", plsaved_lc_numeric_locale);
+    plexit(msgbuf);
+  }
+  free(plsaved_lc_numeric_locale);
+}
+
