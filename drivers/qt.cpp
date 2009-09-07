@@ -96,13 +96,6 @@ bool initQtApp(bool isGUI)
         snprintf(argv[0], 10, "qt_driver");
         argv[1][0]='\0';
         new QApplication(argc, argv, isGUI);
-        /* Restore default LC_NUMERIC locale since Qt4 fiddles with it
-           on some platforms.
-        if(!(setlocale(LC_NUMERIC, plplot_default_lc_numeric_locale))) {
-          char msgbuf[1024];
-          snprintf(msgbuf,1024,"cmap0_palette_read: LC_NUMERIC could not be restored to the default \"%s\" locale.\n", plplot_default_lc_numeric_locale);
-          plexit(msgbuf);
-          }*/
         res=true;
     }
     return res;
