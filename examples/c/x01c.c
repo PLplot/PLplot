@@ -28,13 +28,15 @@
 # include <unistd.h>
 #endif
 
+#include <locale.h>
+
 /* Variables and data arrays used by plot generators */
 
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
 static PLGraphicsIn gin;
 
-static int locate_mode;
+static int locate_mode, locale_mode;
 static int test_xor;
 static int fontset = 1;
 static char *f_name = NULL;
@@ -75,6 +77,14 @@ static PLOptionTable options[] = {
     "-save filename",
       "Save plot in color postscript `file'" },
 {
+    "locale",			/* Turns on test of setting LC_NUMERIC locale */
+    NULL,
+    NULL,
+    &locale_mode,
+    PL_OPT_BOOL,
+    "-locale",
+    "Turns on test of setting LC_NUMERIC locale" },
+{
     NULL,			/* option */
     NULL,			/* handler */
     NULL,			/* client data */
@@ -109,6 +119,7 @@ main(int argc, const char *argv[])
 {
     PLINT digmax, cur_strm, new_strm;
     char ver[80];
+    char * locale;
 
 /* plplot initialization */
 
@@ -117,6 +128,14 @@ main(int argc, const char *argv[])
     plMergeOpts(options, "x01c options", notes);
     plparseopts(&argc, argv, PL_PARSE_FULL);
 
+    if(locale_mode) {
+      if(locale = setlocale(LC_NUMERIC, "")) {
+        printf("LC_NUMERIC locale set to \"%s\"\n", locale);
+      } else {
+        plwarn("LC_NUMERIC could not be set for locale of \"\". Using \"C\" locale instead.\n");
+        setlocale(LC_NUMERIC, "C");
+      }
+    }   
 /* Get version number, just for kicks */
 
     plgver(ver);
