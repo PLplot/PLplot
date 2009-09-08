@@ -233,6 +233,10 @@ module Plot :
     val polygon :
       ?fill:bool -> color_t -> float array -> float array -> plot_t
 
+    (** [rectangle ?fill color (x0, y0) (x1, y1) *)
+    val rectangle :
+      ?fill:bool -> color_t -> float * float -> float * float -> plot_t
+
     (** [text ?dx ?dy ?just ?color string x y] writes the text [string] inside
         the plot window, at an optional angle defined by the offsets [dx] and
         [dy]. *)
@@ -248,6 +252,13 @@ module Plot :
       ?just:float ->
       ?perp:bool ->
       ?color:color_t -> float plot_side_t -> float -> string -> plot_t
+
+    (** [func ?point ?step color f (min, max)] plots the function [f] from 
+        [x = min] to [x = max].  [step] can be used to tighten or coarsen the
+        sampling of plot points. *)
+    val func :
+      ?point:int ->
+      ?step:float -> color_t -> (float -> float) -> float * float -> plot_t
 
     (** [transform f] Set the coordinate transformation function used by
         {!imagefr} and other functions affected by {!Plplot.plset_pltr}. *)
@@ -351,6 +362,16 @@ module Quick_plot :
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
       ?log:bool -> ?palette:Plot.color_palette_t -> float array array -> unit
+
+    (** [func ?point ?step fs (min, max)] plots the functions [fs] from
+        [x = min] to [x = max].  [step] can be used to tighten or coarsen the
+        sampling of plot points. *)
+    val func :
+      ?filename:string ->
+      ?device:Plot.plot_device_t ->
+      ?labels:string * string * string ->
+      ?point:int ->
+      ?step:float -> (float -> float) list -> float * float -> unit
   end
 
 (** {3:core The standard PLplot API} *)

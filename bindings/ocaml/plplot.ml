@@ -437,8 +437,12 @@ module Plot = struct
   let points ?label ?scale color xs ys symbol =
     Points (label, color, xs, ys, symbol, scale |? 1.0)
 
-  (** [polygon color xs ys fill] *)
+  (** [polygon ?fill color xs ys fill] *)
   let polygon ?(fill = false) color xs ys = Polygon (color, xs, ys, fill)
+
+  (** [rectangle ?fill color (x0, y0) (x1, y1)] *)
+  let rectangle ?(fill = false) color (x0, y0) (x1, y1) =
+    polygon ~fill color [|x0; x1; x1; x0; x0|] [|y0; y0; y1; y1; y0|]
 
   (** [text ?dx ?dy ?just ?color s x y] *)
   let text ?(dx = 0.0) ?(dy = 0.0) ?(just = 0.5) ?(color = Black) s x y =
@@ -447,6 +451,23 @@ module Plot = struct
   (** [text_outside ?just side displacement s] *)
   let text_outside ?(just = 0.5) ?(perp = false) ?(color = Black) side displacement s =
     Text_outside (color, s, side, displacement, just, perp)
+
+  (** [func ?point ?step color f (min, max)] plots the function [f] from 
+      [x = min] to [x = max].  [step] can be used to tighten or coarsen the
+      sampling of plot points. *)
+  let func ?point ?step color f (min, max) =
+    let step =
+      match step with
+      | None -> (max -. min) /. 100.0
+      | Some s -> s
+    in
+    let xs =
+      Array_ext.range ~n:(int_of_float ((max -. min) /. step) + 1) min max
+    in
+    let ys = Array.map f xs in
+    match point with
+    | Some p -> points color xs ys p
+    | None -> lines color xs ys
 
   (** [transform f] *)
   let transform f = Set_transform f
@@ -967,6 +988,37 @@ module Quick_plot = struct
     colorbar ~stream:p ?log ~pos:(Right 0.12)
       (Array_ext.range ~n:100 m_min m_max);
     finish ~stream:p 0.0 0.0;
+    ()
+
+  (** [func ?point ?step fs (min, max)] plots the functions [fs] from [x = min]
+      to [x = max].  [step] can be used to tighten or coarsen the sampling of
+      plot points. *)
+  let func
+        ?filename ?(device = Window Cairo) ?labels ?point ?step
+        fs (xmin, xmax) =
+    let plot_content =
+      Array.to_list (
+        Array.mapi (
+          fun i f ->
+            func ?point ?step (Index_color (i + 1)) f (xmin, xmax)
+        ) (Array.of_list fs)
+      )
+    in
+    let ys =
+      Array.of_list (
+        List.map (
+          function
+            | Lines (_, _, _, y)
+            | Points (_, _, _, y, _, _) -> y
+            | _ -> invalid_arg "Invalid function output"
+        ) plot_content
+      )
+    in
+    let ymax, ymin = plMinMax2dGrid ys in
+    let stream = init ?filename xmin xmax ymin ymax Greedy device in
+    plot ~stream plot_content;
+    Option.may (fun (x, y, t) -> label ~stream x y t) labels;
+    finish ~stream 0.0 0.0;
     ()
 end
 
