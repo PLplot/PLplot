@@ -35,6 +35,8 @@ cmap1_blue_yellow.pal
 cmap1_blue_red.pal
 cmap1_gray.pal
 cmap1_radar.pal
+cmap1_highfreq.pal
+cmap1_lowfreq.pal
 )
 
 install(FILES ${data_DATAFILES} DESTINATION ${DATA_DIR})
