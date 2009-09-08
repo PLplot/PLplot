@@ -994,14 +994,16 @@ module Quick_plot = struct
       to [x = max].  [step] can be used to tighten or coarsen the sampling of
       plot points. *)
   let func
-        ?filename ?(device = Window Cairo) ?labels ?point ?step
+        ?filename ?(device = Window Cairo) ?labels ?names ?point ?step
         fs (xmin, xmax) =
+    let fs_array = Array.of_list fs in
+    let colors = Array.mapi (fun i _ -> Index_color (i + 1)) fs_array in
     let plot_content =
       Array.to_list (
         Array.mapi (
           fun i f ->
-            func ?point ?step (Index_color (i + 1)) f (xmin, xmax)
-        ) (Array.of_list fs)
+            func ?point ?step colors.(i) f (xmin, xmax)
+        ) fs_array
       )
     in
     let ys =
@@ -1017,6 +1019,7 @@ module Quick_plot = struct
     let ymax, ymin = plMinMax2dGrid ys in
     let stream = init ?filename xmin xmax ymin ymax Greedy device in
     plot ~stream plot_content;
+    Option.may (fun n -> draw_legend ~stream n (Array.to_list colors)) names;
     Option.may (fun (x, y, t) -> label ~stream x y t) labels;
     finish ~stream 0.0 0.0;
     ()

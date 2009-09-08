@@ -213,7 +213,7 @@ module Plot :
       scale:float * float ->
       float * float -> float * float -> float array array -> plot_t
 
-    (** [join color x0 y1 x1 y1] *)
+    (** [join color x0 y0 x1 y1] *)
     val join : color_t -> float -> float -> float -> float -> plot_t
 
     (** [lines ?label color xs ys] *)
@@ -370,6 +370,7 @@ module Quick_plot :
       ?filename:string ->
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
+      ?names:string list ->
       ?point:int ->
       ?step:float -> (float -> float) list -> float * float -> unit
   end
