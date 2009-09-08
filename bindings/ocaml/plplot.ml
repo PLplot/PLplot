@@ -961,10 +961,7 @@ module Quick_plot = struct
     let xmax, ymax = Array_ext.matrix_dims m in
     let xmax, ymax = float_of_int xmax, float_of_int ymax in
     let p = init ?filename xmin xmax ymin ymax Equal_square device in
-    Option.may (
-      fun palette_file ->
-        with_stream ~stream:p (fun () -> plspal1 palette_file false);
-    ) palette;
+    Option.may (load_palette ~stream:p) palette;
     plot ~stream:p [image (xmin, ymin) (xmax, ymax) m];
     Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
     colorbar ~stream:p ?log ~pos:(Right 0.12)

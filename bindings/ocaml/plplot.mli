@@ -350,7 +350,7 @@ module Quick_plot :
       ?filename:string ->
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
-      ?log:bool -> ?palette:string -> float array array -> unit
+      ?log:bool -> ?palette:Plot.color_palette_t -> float array array -> unit
   end
 
 (** {3:core The standard PLplot API} *)
