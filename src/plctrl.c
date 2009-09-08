@@ -51,10 +51,6 @@
 #include <errno.h>
 #endif
 
-/* extern declaration in plplotP.h, but defined here once for all of
- libplplot. */
-char * plsaved_lc_numeric_locale;
-
 /* Random number generator (Mersenne Twister) */
 #include "mt19937ar.h"
 
@@ -1210,8 +1206,7 @@ cmap0_palette_read(const char *filename,
   char color_info[30];
   char msgbuf[1024];
   FILE *fp;
-
-  plsave_set_locale();
+  char * save_locale = plsave_set_locale();
 
   if(strlen(filename) == 0) {
     fp = plLibOpen(PL_DEFAULT_CMAP0_FILE);
@@ -1310,7 +1305,7 @@ cmap0_palette_read(const char *filename,
     }
   }
 
-  plrestore_locale();
+  plrestore_locale(save_locale);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1380,8 +1375,7 @@ c_plspal1(const char *filename, PLBOOL interpolate)
   PLBOOL *rev;
   FILE *fp;
   char msgbuf[1024];
-
-  plsave_set_locale();
+  char * save_locale = plsave_set_locale();
 
   rgb = TRUE;
   err = 0;
@@ -1550,7 +1544,7 @@ c_plspal1(const char *filename, PLBOOL interpolate)
   free(pos);
   free(rev);
 
-finish: plrestore_locale();
+finish: plrestore_locale(save_locale);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2556,8 +2550,8 @@ c_plrandd(void)
 /*--------------------------------------------------------------------------*\
  * plsave_set_locale()
  *
- * For LC_NUMERIC save current locale string in the global
- * pointer, plsaved_lc_numeric_locale, then set "C" locale.
+ * Save LC_NUMERIC locale in a string.  The pointer to that string is
+ * returned. Then set LC_NUMERIC to "C" locale.
  * n.b. plsave_set_locale and plrestore_locale should always be used as
  * a pair to surround PLplot code that absolutely requires the
  * LC_NUMERIC "C" locale to be in effect.  It is one of plrestore_locale's
@@ -2565,46 +2559,60 @@ c_plrandd(void)
  * string.
 \*--------------------------------------------------------------------------*/
 
-void
+char *
 plsave_set_locale(void) {
   char * setlocale_ptr;
-  char msgbuf[1024];
+  char * saved_lc_numeric_locale;
 
-  if(!(plsaved_lc_numeric_locale = (char *) malloc(100*sizeof(char)))) {
+  if(!(saved_lc_numeric_locale = (char *) malloc(100*sizeof(char)))) {
     plexit("plsave_set_locale: out of memory");
   }
 
   /*save original LC_NUMERIC locale for restore below. */
   if(!(setlocale_ptr = setlocale(LC_NUMERIC, NULL))) {
-    snprintf(msgbuf,1024,"plsave_set_locale: LC_NUMERIC locale could not be determined for NULL locale.\n");
-    plexit(msgbuf);
+    plexit("plsave_set_locale: LC_NUMERIC locale could not be determined for NULL locale.\n");
   }
-  strncpy(plsaved_lc_numeric_locale, setlocale_ptr, 100);
-  plsaved_lc_numeric_locale[99] = '\0';
-  pldebug("plsave_set_locale", "LC_NUMERIC locale to be restored is \"%s\"\n", plsaved_lc_numeric_locale);
+  strncpy(saved_lc_numeric_locale, setlocale_ptr, 100);
+  saved_lc_numeric_locale[99] = '\0';
+
+  /* Do not use pldebug since get overflowed stack (infinite recursion)
+     if device is interactive (i.e., pls->termin is set). */
+  /* comment out fprintf (unless there is some emergency debugging to do)
+     because output is too voluminous. */
+  /*
+fprintf(stderr, "plsave_set_locale: saved LC_NUMERIC locale is \"%s\"\n", saved_lc_numeric_locale);
+  */
+
   if(!(setlocale(LC_NUMERIC, "C"))) {
     plexit("plsave_set_locale: LC_NUMERIC locale could not be set to \"C\"");
   }
+  return saved_lc_numeric_locale;
 }
 
 /*--------------------------------------------------------------------------*\
  * plrestore_locale()
  *
- * For LC_NUMERIC restore the locale string that was determined by
- * plsave_set_locale with a pointer to that string stored in the global
- * variable plsaved_lc_numeric_locale and free the memory for that string.
+ * Restore LC_NUMERIC locale string that was determined by
+ * plsave_set_locale with the pointer to that string as the argument.
+ * Also, free the memory for that string.
 \*--------------------------------------------------------------------------*/
 
 void
-plrestore_locale(void) {
-  char msgbuf[1024];
+plrestore_locale(char *saved_lc_numeric_locale) {
 
-  pldebug("plrestore_locale", "LC_NUMERIC locale to be restored is \"%s\"\n", plsaved_lc_numeric_locale);
+  /* Do not use pldebug since get overflowed stack (infinite recursion)
+     if device is interactive (i.e., pls->termin is set). */
+  /* comment out fprintf (unless there is some emergency debugging to do)
+     because output is too voluminous. */
+  /*
+    fprintf(stderr, "plrestore_locale: restored LC_NUMERIC locale is \"%s\"\n", saved_lc_numeric_locale);
+  */
 
-  if(!(setlocale(LC_NUMERIC, plsaved_lc_numeric_locale))) {
-    snprintf(msgbuf,1024,"plrestore_locale: LC_NUMERIC could not be restored to the default \"%s\" locale.\n", plsaved_lc_numeric_locale);
+  if(!(setlocale(LC_NUMERIC, saved_lc_numeric_locale))) {
+    char msgbuf[1024];
+    snprintf(msgbuf,1024,"plrestore_locale: LC_NUMERIC could not be restored to the default \"%s\" locale.\n", saved_lc_numeric_locale);
     plexit(msgbuf);
   }
-  free(plsaved_lc_numeric_locale);
+  free(saved_lc_numeric_locale);
 }
 

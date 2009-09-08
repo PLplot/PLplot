@@ -566,19 +566,16 @@ void
 plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		 PLINT refx, PLINT refy, const char *string);
 
-  /* Used to save locale string to be used for later restore of locale. */
-extern PLDLLIMPEXP_DATA(char *)plsaved_lc_numeric_locale;
-
-  /* For LC_NUMERIC save current locale string, then set "C" locale to protect
+  /* Save LC_NUMERIC locale string, then set "C" locale to protect
      parts of PLplot which absolutely demand the LC_NUMERIC "C" locale. */
 
-PLDLLIMPEXP void
+PLDLLIMPEXP char *
 plsave_set_locale(void);
 
   /* Restore LC_NUMERIC locale that was determined by plsave_set_locale. */
 
 PLDLLIMPEXP void
-plrestore_locale(void);
+plrestore_locale(char * save_lc_numeric_locale);
 
   /* where should structure definitions that must be seen by drivers and core source files, be? */
 
