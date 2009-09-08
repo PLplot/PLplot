@@ -138,7 +138,7 @@ module Plot = struct
     | Red
     | Yellow
     | Green
-    | Grey
+    | Gray
     | Blue
     | Light_blue
     | Purple
@@ -206,7 +206,7 @@ module Plot = struct
     | Red -> 255, 0, 0
     | Yellow -> 255, 255, 0
     | Green -> 0, 255, 0
-    | Grey -> 200, 200, 200
+    | Gray -> 200, 200, 200
     | Blue -> 0, 0, 255
     | Light_blue -> 0, 255, 255
     | Purple -> 160, 0, 213
@@ -299,7 +299,7 @@ module Plot = struct
       | Red -> 3
       | Yellow -> 13
       | Green -> 12
-      | Grey -> 10
+      | Gray -> 10
       | Blue -> 2
       | Light_blue -> 11
       | Purple -> 15

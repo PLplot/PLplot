@@ -73,7 +73,7 @@ module Plot :
       | Red
       | Yellow
       | Green
-      | Grey
+      | Gray
       | Blue
       | Light_blue
       | Purple
