@@ -131,9 +131,12 @@ const char plP_greek_mnemonic[] = "ABGDEZYHIKLMNCOPRSTUFXQWabgdezyhiklmncoprstuf
 void
 plP_init(void)
 {
+    char * save_locale;
     plsc->page_status = AT_EOP;
 
+    save_locale = plsave_set_locale();
     (*plsc->dispatch_table->pl_init) ((struct PLStream_struct *) plsc);
+    plrestore_locale(save_locale);
 
     if (plsc->plbuf_write)
 	plbuf_init(plsc);
@@ -161,8 +164,11 @@ plP_eop(void)
     if (plsc->eop_handler != NULL)
 	(*plsc->eop_handler) (plsc->eop_data, &skip_driver_eop);
 
-    if (!skip_driver_eop)
-	(*plsc->dispatch_table->pl_eop) ((struct PLStream_struct *) plsc);
+    if (!skip_driver_eop) {
+      char *save_locale = plsave_set_locale();
+      (*plsc->dispatch_table->pl_eop) ((struct PLStream_struct *) plsc);
+      plrestore_locale(save_locale);
+    }
 }
 
 /* Set up new page. */
@@ -187,8 +193,11 @@ plP_bop(void)
     if (plsc->bop_handler != NULL)
 	(*plsc->bop_handler) (plsc->bop_data, &skip_driver_bop);
 
-    if (!skip_driver_bop)
-	(*plsc->dispatch_table->pl_bop) ((struct PLStream_struct *) plsc);
+    if (!skip_driver_bop) {
+      char *save_locale = plsave_set_locale();
+      (*plsc->dispatch_table->pl_bop) ((struct PLStream_struct *) plsc);
+      plrestore_locale(save_locale);
+    }
 
     if (plsc->plbuf_write)
 	plbuf_bop(plsc);
@@ -199,13 +208,16 @@ plP_bop(void)
 void
 plP_tidy(void)
 {
+    char * save_locale;
     if (plsc->tidy) {
 	(*plsc->tidy) (plsc->tidy_data);
 	plsc->tidy = NULL;
 	plsc->tidy_data = NULL;
     }
 
+    save_locale = plsave_set_locale();
     (*plsc->dispatch_table->pl_tidy) ((struct PLStream_struct *) plsc);
+    plrestore_locale(save_locale);
 
     if (plsc->plbuf_write) {
 	plbuf_tidy(plsc);
@@ -220,9 +232,12 @@ plP_tidy(void)
 void
 plP_state(PLINT op)
 {
+    char * save_locale;
     if (plsc->plbuf_write) plbuf_state(plsc, op);
 
+    save_locale = plsave_set_locale();
     (*plsc->dispatch_table->pl_state) ((struct PLStream_struct *) plsc, op);
+    plrestore_locale(save_locale);
 }
 
 /* Escape function, for driver-specific commands. */
@@ -230,6 +245,7 @@ plP_state(PLINT op)
 void
 plP_esc(PLINT op, void *ptr)
 {
+  char * save_locale;
   PLINT clpxmi, clpxma, clpymi, clpyma;
   EscText* args;
 
@@ -247,7 +263,9 @@ plP_esc(PLINT op, void *ptr)
     }
   }
 
+  save_locale = plsave_set_locale();
   (*plsc->dispatch_table->pl_esc) ((struct PLStream_struct *) plsc, op, ptr);
+  plrestore_locale(save_locale);
 }
 
 /* Set up plot window parameters. */
@@ -295,8 +313,10 @@ plP_swin(PLWindow *plwin)
 /* It must use the filtered data, which it can get from *plsc */
 
     if (plsc->dev_swin) {
-	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
-                                          PLESC_SWIN, NULL );
+      char *save_locale = plsave_set_locale();
+      (*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                        PLESC_SWIN, NULL );
+      plrestore_locale(save_locale);
     }
 }
 
@@ -971,26 +991,33 @@ ucs4_to_utf8(PLUNICODE unichar, char *ptr)
 static void
 grline(short *x, short *y, PLINT npts)
 {
-   (*plsc->dispatch_table->pl_line) ( (struct PLStream_struct *) plsc,
-				      x[0], y[0], x[1], y[1] );
+  char *save_locale = plsave_set_locale();
+  (*plsc->dispatch_table->pl_line) ( (struct PLStream_struct *) plsc,
+                                     x[0], y[0], x[1], y[1] );
+  plrestore_locale(save_locale);
 }
 
 static void
 grpolyline(short *x, short *y, PLINT npts)
 {
-   (*plsc->dispatch_table->pl_polyline) ( (struct PLStream_struct *) plsc,
-					  x, y, npts );
+  char *save_locale = plsave_set_locale();
+  (*plsc->dispatch_table->pl_polyline) ( (struct PLStream_struct *) plsc,
+                                         x, y, npts );
+  plrestore_locale(save_locale);
 }
 
 static void
 grfill(short *x, short *y, PLINT npts)
 {
+  char * save_locale;
    plsc->dev_npts = npts;
    plsc->dev_x = x;
    plsc->dev_y = y;
 
+   save_locale = plsave_set_locale();
    (*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
 				     PLESC_FILL, NULL );
+   plrestore_locale(save_locale);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1362,8 +1389,10 @@ calc_diplt(void)
     PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
 
     if (plsc->dev_di) {
-	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
-                                          PLESC_DI, NULL );
+      char *save_locale = plsave_set_locale();
+      (*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                        PLESC_DI, NULL );
+      plrestore_locale(save_locale);
     }
 
     if ( ! (plsc->difilt & PLDI_PLT))
@@ -1444,8 +1473,10 @@ calc_didev(void)
     PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
 
     if (plsc->dev_di) {
-	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
-                                          PLESC_DI, NULL );
+      char *save_locale = plsave_set_locale();
+      (*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                        PLESC_DI, NULL );
+      plrestore_locale(save_locale);
     }
 
     if ( ! (plsc->difilt & PLDI_DEV))
@@ -1562,8 +1593,10 @@ calc_diori(void)
     PLFLT x0, y0, lx, ly, aspect;
 
     if (plsc->dev_di) {
-	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
-                                          PLESC_DI, NULL );
+      char *save_locale = plsave_set_locale();
+      (*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                        PLESC_DI, NULL );
+      plrestore_locale(save_locale);
     }
 
     if ( ! (plsc->difilt & PLDI_ORI))
@@ -1711,8 +1744,10 @@ void
 c_plflush(void)
 {
     if (plsc->dev_flush) {
-	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
-                                          PLESC_FLUSH, NULL );
+      char *save_locale = plsave_set_locale();
+      (*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                        PLESC_FLUSH, NULL );
+      plrestore_locale(save_locale);
     }
     else {
 	if (plsc->OutFile != NULL)
