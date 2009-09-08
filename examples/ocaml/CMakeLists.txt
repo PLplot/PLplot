@@ -59,6 +59,7 @@ set(ocaml_STRING_INDICES
   "29"
   "30"
   "31"
+  "plot01"
   )
 
 if(CORE_BUILD)
