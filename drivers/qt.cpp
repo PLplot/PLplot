@@ -1078,6 +1078,7 @@ void plD_init_qtwidget(PLStream * pls)
     /* Driver does not have a clear capability so use (good) PLplot core
     * fallback for that instead.  */
     pls->dev_clear=0;
+    pls->termin=1;
     pls->dev_text = 1; // want to draw text
     pls->dev_unicode = 1; // want unicode
             
@@ -1261,6 +1262,7 @@ void plD_init_extqt(PLStream * pls)
     /* Driver does not have a clear capability so use (good) PLplot core
     * fallback for that instead.  */
     pls->dev_clear=0;
+    pls->termin=0;
     pls->dev_text = 1; // want to draw text
     pls->dev_unicode = 1; // want unicode
 }
