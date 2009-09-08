@@ -26,8 +26,10 @@ if(ENABLE_ocaml)
     libplplot_stubs.clib
     plplot_h
     plplot_h.inc
-    plplot.idl
+    plplot_core.idl
     plplot_impl.c
+    plplot.ml
+    plplot.mli
     touchup.ml
     )
   set(GEN_SOURCE_LIST
@@ -40,6 +42,7 @@ if(ENABLE_ocaml)
     plplot.a
     plplot.cmi
     libplplot_stubs.a
+    plplot.mli
     )
   
   set(OCAML_FULL_INSTALL_FILES)
