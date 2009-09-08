@@ -154,7 +154,7 @@ module Plot :
         {!Plplot.plscmap1l} is used internally to set the color scale. *)
     val set_color_scale : ?stream:stream_t -> bool -> color_t array -> unit
 
-    (** [start_page ?stream x0 y0 x1 y1 scaling] starts a new plot page with the
+    (** [start_page ?stream x0 x1 y0 y1 scaling] starts a new plot page with the
         given dimensions and scaling. *)
     val start_page :
       ?stream:stream_t ->
