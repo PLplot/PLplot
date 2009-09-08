@@ -110,11 +110,11 @@ impress, and ljii) or build-time issues (tek) with these devices, and as far
 as we know there is no more user interest in them. Therefore, we have
 decided to retire these devices rather than fix them.
 
-
 INDEX
 
 1. Changes relative to PLplot 5.9.5 (the previous development release)
 
+1.1 Make PLplot aware of LC_NUMERIC locale
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -128,7 +128,7 @@ examples
 2.7 Alpha value support
 2.8 New PLplot functions
 2.9 External libLASi library improvements affecting our psttf device
-2.10 Improvements to the cairo driver family.
+2.10 Improvements to the cairo driver family
 2.11 wxWidgets driver improvements
 2.12 pdf driver improvements
 2.13 svg driver improvements
@@ -154,8 +154,73 @@ examples
 2.33 PyQt changes
 2.34 Color Palettes
 2.35 Reimplementation of a "soft landing" when a bad/missing compiler is
-detected.
+detected
+2.36 Make PLplot aware of LC_NUMERIC locale
 
+1. Changes relative to PLplot 5.9.5 (the previous development release)
+
+1.1 Make PLplot aware of LC_NUMERIC locale
+
+For POSIX-compliant systems, locale is set globally so any external
+applications or libraries that use the PLplot library or any external
+libraries used by the PLplot library or PLplot device drivers could
+potentially change the LC_NUMERIC locale used by PLplot to anything those
+external applications and libraries choose. The principal consequence of
+such choice is the decimal separator could be a comma (for some locales)
+rather than the period assumed for the "C" locale.  For previous versions of
+PLplot a comma decimal separator would have lead to a large number of
+errors, but this issue is now addressed with a side benefit that our plots
+now have the capability of displaying the comma (e.g., in axis labels) for
+the decimal separator for those locales which require that.
+
+If you are not satisfied with the results for the default PLplot locale set
+by external applications and libraries, then you can now choose the
+LC_NUMERIC locale for PLplot by (a) specifying the new -locale command-line
+option for PLplot (if you do not specify that option, a default locale is
+chosen depending on applications and libraries external to PLplot (see
+comments above), and (b) setting an environment variable (LC_ALL,
+LC_NUMERIC, or LANG on Linux, for example) to some locale that has been
+installed on your system.  On Linux, to find what locales are installed, use
+the "locale -a" option. The "C" locale is always installed, but usually
+there is also a principal locale that works on a platform such as
+en_US.UTF8, nl_NL.UTF8, etc.  Furthermore, it is straightforward to build
+and install any additional locale you desire.  (For example, on Debian Linux
+you do that by running "dpkg-reconfigure locales".)
+
+Normally, users will not use the -locale option since the period
+decimal separator that you get for the normal LC_NUMERIC default "C"
+locale used by external applications and libraries is fine for their needs.
+However, if the resulting decimal separator is not what the user
+wants, then they would do something like the following to (a) use a period
+decimal separator for command-line input and plots:
+
+LC_ALL=C examples/c/x09c -locale -dev psc -o test.psc -ori 0.5
+
+or (b) use a comma decimal separator for command-line input and plots:
+
+LC_ALL=nl_NL.UTF8 examples/c/x09c -locale -dev psc -o test.psc -ori 0,5
+
+N.B. in either case if the wrong separator is used for input (e.g., -ori 0,5
+in the first case or -ori 0.5 in the second) the floating-point conversion
+(using atof) is silently terminated at the wrong separator for the locale,
+i.e., the fractional part of the number is silently dropped.  This is
+obviously not ideal, but on the other hand there are relatively few
+floating-point command-line options for PLplot, and we also expect those who
+use the -locale option to specifically ask for a given separator for plots
+(e.g., axis labels) will then use it for command-line input of
+floating-point values as well.
+
+Certain critical areas of the PLplot library (e.g., our colour palette file
+reading routines and much of the code in our device drivers) absolutely
+require a period for the decimal separator.  We now protect those critical
+areas by saving the normal PLplot LC_NUMERIC locale (established with the
+above -locale option or by default by whatever is set by external
+applications or libraries), setting the LC_NUMERIC "C" locale, executing the
+critical code, then restoring back to the normal PLplot LC_NUMERIC locale.
+Previous versions of PLplot did not have this protection of the critical
+areas so were vulnerable to default LC_NUMERIC settings of external
+applications that resulted in a comma decimal separator that did not work
+correctly for the critical areas.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -271,7 +336,7 @@ device since this version of libLASi is more robust against glyph
 information returned by pango/cairo/fontconfig that on rare occasions is not
 suitable for use by libLASi.
 
-2.10 Improvements to the cairo driver family.
+2.10 Improvements to the cairo driver family
 
 Jonathan Woithe improved the xcairo driver so that it can optionally be 
 used with an external user supplied X Drawable. This enables a nice 
@@ -615,7 +680,7 @@ plplot-source/data directory or the PLplot installed directory
 (typically /usr/local/share/plplotx.y.z/ on linux).
 
 2.35 Reimplementation of a "soft landing" when a bad/missing compiler is
-detected.
+detected
 
 The PLplot core library is written in C so our CMake-based build system will
 error out if it doesn't detect a working C compiler.  However all other
@@ -639,3 +704,66 @@ soft-landing approach (which is a workaround for bug 9220) will be replaced
 by the OPTIONAL signature of enable_language, and all CMake methods of
 specifying compilers and compiler options will automatically be recognized
 as a result.
+
+2.36 Make PLplot aware of LC_NUMERIC locale
+
+For POSIX-compliant systems, locale is set globally so any external
+applications or libraries that use the PLplot library or any external
+libraries used by the PLplot library or PLplot device drivers could
+potentially change the LC_NUMERIC locale used by PLplot to anything those
+external applications and libraries choose. The principal consequence of
+such choice is the decimal separator could be a comma (for some locales)
+rather than the period assumed for the "C" locale.  For previous versions of
+PLplot a comma decimal separator would have lead to a large number of
+errors, but this issue is now addressed with a side benefit that our plots
+now have the capability of displaying the comma (e.g., in axis labels) for
+the decimal separator for those locales which require that.
+
+If you are not satisfied with the results for the default PLplot locale set
+by external applications and libraries, then you can now choose the
+LC_NUMERIC locale for PLplot by (a) specifying the new -locale command-line
+option for PLplot (if you do not specify that option, a default locale is
+chosen depending on applications and libraries external to PLplot (see
+comments above), and (b) setting an environment variable (LC_ALL,
+LC_NUMERIC, or LANG on Linux, for example) to some locale that has been
+installed on your system.  On Linux, to find what locales are installed, use
+the "locale -a" option. The "C" locale is always installed, but usually
+there is also a principal locale that works on a platform such as
+en_US.UTF8, nl_NL.UTF8, etc.  Furthermore, it is straightforward to build
+and install any additional locale you desire.  (For example, on Debian Linux
+you do that by running "dpkg-reconfigure locales".)
+
+Normally, users will not use the -locale option since the period
+decimal separator that you get for the normal LC_NUMERIC default "C"
+locale used by external applications and libraries is fine for their needs.
+However, if the resulting decimal separator is not what the user
+wants, then they would do something like the following to (a) use a period
+decimal separator for command-line input and plots:
+
+LC_ALL=C examples/c/x09c -locale -dev psc -o test.psc -ori 0.5
+
+or (b) use a comma decimal separator for command-line input and plots:
+
+LC_ALL=nl_NL.UTF8 examples/c/x09c -locale -dev psc -o test.psc -ori 0,5
+
+N.B. in either case if the wrong separator is used for input (e.g., -ori 0,5
+in the first case or -ori 0.5 in the second) the floating-point conversion
+(using atof) is silently terminated at the wrong separator for the locale,
+i.e., the fractional part of the number is silently dropped.  This is
+obviously not ideal, but on the other hand there are relatively few
+floating-point command-line options for PLplot, and we also expect those who
+use the -locale option to specifically ask for a given separator for plots
+(e.g., axis labels) will then use it for command-line input of
+floating-point values as well.
+
+Certain critical areas of the PLplot library (e.g., our colour palette file
+reading routines and much of the code in our device drivers) absolutely
+require a period for the decimal separator.  We now protect those critical
+areas by saving the normal PLplot LC_NUMERIC locale (established with the
+above -locale option or by default by whatever is set by external
+applications or libraries), setting the LC_NUMERIC "C" locale, executing the
+critical code, then restoring back to the normal PLplot LC_NUMERIC locale.
+Previous versions of PLplot did not have this protection of the critical
+areas so were vulnerable to default LC_NUMERIC settings of external
+applications that resulted in a comma decimal separator that did not work
+correctly for the critical areas.

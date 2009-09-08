@@ -152,6 +152,7 @@ static int opt_dpi		(const char *, const char *, void *);
 static int opt_dev_compression	(const char *, const char *, void *);
 static int opt_cmap0	        (const char *, const char *, void *);
 static int opt_cmap1	        (const char *, const char *, void *);
+static int opt_locale	        (const char *, const char *, void *);
 
 /* Global variables */
 
@@ -575,6 +576,14 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_ARG | PL_OPT_FUNC,
     "-cmap1 file name",
     "Initializes color table 1 from a cmap1.pal format file in one of standard PLplot paths."},
+{
+    "locale",
+    opt_locale,
+    NULL,
+    NULL,
+    PL_OPT_FUNC,
+    "-locale",
+    "Use locale environment (e.g., LC_ALL, LC_NUMERIC, or LANG) to set LC_NUMERIC locale (which affects decimal point separator)."},
 {
     "drvopt",			/* Driver specific options */
     opt_drvopt,
@@ -2274,3 +2283,25 @@ opt_cmap1(const char *opt, const char *optarg, void *client_data)
   plspal1(optarg, TRUE);
   return 0;
 }
+
+/*--------------------------------------------------------------------------*\
+ * opt_locale()
+ *
+ * Make PLplot portable to all LC_NUMERIC locales.
+\*--------------------------------------------------------------------------*/
+
+static int
+opt_locale(const char *opt, const char *optarg, void *client_data)
+{
+  char *locale;
+  if(locale = setlocale(LC_NUMERIC, "")) {
+    printf("LC_NUMERIC locale set to \"%s\"\n", locale);
+  } else {
+    plwarn("Could not use invalid environment (e.g., LC_ALL, LC_NUMERIC, or LANG) to set LC_NUMERIC locale.  Falling back to LC_NUMERIC \"C\" locale instead.\n");
+    if(!(locale = setlocale(LC_NUMERIC, "C"))) {
+      plexit("Your platform is seriously broken.  Not even a \"C\" locale could be set.");
+    }
+  }
+  return 0;
+}
+
