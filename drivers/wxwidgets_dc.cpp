@@ -317,11 +317,11 @@ void wxPLDevDC::PSDrawTextToDC( char* utf8_string, bool drawText )
   wxString str(wxConvUTF8.cMB2WC(utf8_string), *wxConvCurrent);
   m_dc->GetTextExtent( str, &w, &h, &d, &l );
   if( drawText )
-    m_dc->DrawRotatedText( str, (wxCoord) ((posX-yOffset*sin_rot)/scalex),
+    m_dc->DrawRotatedText( str, (wxCoord) (posX/scalex-yOffset/scaley*sin_rot),
                            (wxCoord) (height-(posY+yOffset*cos_rot)/scaley), 
                            rotation*180.0/M_PI );
   posX += (PLINT) (w*scalex*cos_rot);
-  posY += (PLINT) (w*scalex*sin_rot);
+  posY += (PLINT) (w*scaley*sin_rot);
   textWidth += w;
   textHeight = (wxCoord) (textHeight>(h+yOffset/scaley) ? textHeight : (h+yOffset/scaley));
   memset( utf8_string, '\0', max_string_length );
@@ -363,7 +363,7 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
 {
   /* Check that we got unicode, warning message and return if not */
   if( args->unicode_array_len == 0 ) {
-    printf( "Non unicode string passed to a cairo driver, ignoring\n" );
+    printf( "Non unicode string passed to the wxWidgets driver, ignoring\n" );
     return;
   }
 	
@@ -377,7 +377,7 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
   fontSize = pls->chrht * VIRTUAL_PIXELS_PER_MM/scaley * 1.3;
   
   /* calculate rotation of text */
-  plRotationShear( args->xform, &rotation, &shear, &stride);
+  plRotationShear( args->xform, &rotation, &shear, &stride );
   rotation -= pls->diorot * M_PI / 2.0;
   cos_rot = cos( rotation );
   sin_rot = sin( rotation );
@@ -391,8 +391,8 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
   posY = args->y;
   PSDrawText( args->unicode_array, args->unicode_array_len, false );
   
-  posX = (PLINT) (args->x-(args->just*textWidth)*scalex*cos_rot-(0.5*textHeight)*scalex*sin_rot);
-  posY = (PLINT) (args->y-(args->just*textWidth)*scaley*sin_rot+(0.5*textHeight)*scaley*cos_rot);
+  posX = (PLINT) (args->x-((args->just*textWidth)*cos_rot-(0.5*textHeight)*sin_rot)*scalex);
+  posY = (PLINT) (args->y-((args->just*textWidth)*sin_rot+(0.5*textHeight)*cos_rot)*scaley);
   PSDrawText( args->unicode_array, args->unicode_array_len, true );
 
   AddtoClipRegion( 0, 0, width, height );        
