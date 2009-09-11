@@ -391,8 +391,8 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
   posY = args->y;
   PSDrawText( args->unicode_array, args->unicode_array_len, false );
   
-  posX = (PLINT) (args->x-((args->just*textWidth)*cos_rot-(0.5*textHeight)*sin_rot)*scalex);
-  posY = (PLINT) (args->y-((args->just*textWidth)*sin_rot+(0.5*textHeight)*cos_rot)*scaley);
+  posX = (PLINT) (args->x-((args->just*textWidth)*cos_rot+(0.5*textHeight)*sin_rot)*scalex);
+  posY = (PLINT) (args->y-((args->just*textWidth)*sin_rot-(0.5*textHeight)*cos_rot)*scaley);
   PSDrawText( args->unicode_array, args->unicode_array_len, true );
 
   AddtoClipRegion( 0, 0, width, height );        
