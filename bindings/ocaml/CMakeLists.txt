@@ -32,9 +32,6 @@ if(ENABLE_ocaml)
     plplot.mli
     touchup.ml
     )
-  set(GEN_SOURCE_LIST
-    ${CMAKE_CURRENT_BINARY_DIR}/myocamlbuild.ml
-    )
   
   set(OCAML_INSTALL_FILES
     plplot.cma
@@ -50,7 +47,7 @@ if(ENABLE_ocaml)
     set(OCAML_FULL_INSTALL_FILES ${OCAML_FULL_INSTALL_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/${OCAML_FILE})
   endforeach(OCAML_FILE ${OCAML_INSTALL_FILES})
     
-  # Configure the META file 
+# Configure the META file 
 # Configure pkg-config *.pc file corresponding to plplot.cma
 if(PKG_CONFIG_EXECUTABLE)
   if(LIB_TAG)
@@ -97,7 +94,9 @@ endif(PKG_CONFIG_EXECUTABLE)
 
   # Configure the file controlling the ocamlbuild process
   configure_file(myocamlbuild.ml.cmake ${CMAKE_CURRENT_BINARY_DIR}/myocamlbuild.ml)
-  set(DEPENDS_LIST ${GEN_SOURCE_LIST})
+  # Don't bother with dependency on configured myocamlbuild.ml since
+  # that file is created at initial cmake time.
+  set(DEPENDS_LIST)
 
   # Copy all source into the build tree since the whole project must be in
   # the same directory
@@ -105,40 +104,68 @@ endif(PKG_CONFIG_EXECUTABLE)
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SRC_FILE}
       COMMAND ${CMAKE_COMMAND}
-      -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${SRC_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SRC_FILE}
+      -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${SRC_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SRC_FILE}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${SRC_FILE}
       )
-    set(DEPENDS_LIST ${DEPENDS_LIST} ${CMAKE_CURRENT_BINARY_DIR}/${SRC_FILE})
+    list(APPEND DEPENDS_LIST ${CMAKE_CURRENT_BINARY_DIR}/${SRC_FILE})
   endforeach(SRC_FILE ${SOURCE_LIST})
   
   # Note: ocamlbuild requires build-dir to be a relative path
   # Also the build-dir must not be the project root - hence the 
   # new subdirectory
-  # Build bytecode version
+
+  # N.B. "touch_nocreate" commands below are used to always update the
+  # date on the OUTPUT files since under certain circumstances (a
+  # rebuild with new plplot${LIB_TAG}) ${OCAMLBUILD} does not update
+  # the date itself which screws up file dependencies.
+
+  # Build bytecode version.
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cma 
     COMMAND ${OCAMLBUILD} -tag debug -classic-display
     -build-dir ${OCAML_BUILD_DIR} plplot.cma
+    COMMAND ${CMAKE_COMMAND} -E touch_nocreate
+    ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cma
     DEPENDS ${DEPENDS_LIST} plplot${LIB_TAG}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
+  add_custom_target(
+    plplot_ocaml_bytecode
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cma
+    )
   
-  # Build native version.  Use DEPENDS to serialize against plplot.cma
-  # since the two ocamlbuilds interfere with each other when in parallel
-  # build mode.
+  # Build native version.
   add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cmxa 
+    OUTPUT 
+    ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cmxa 
     ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.a
     COMMAND ${OCAMLBUILD} -tag debug -classic-display
     -build-dir ${OCAML_BUILD_DIR} plplot.cmxa
+    COMMAND ${CMAKE_COMMAND} -E touch_nocreate
+    ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cmxa 
+    COMMAND ${CMAKE_COMMAND} -E touch_nocreate
+    ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.a
     DEPENDS ${DEPENDS_LIST} plplot${LIB_TAG}
-    ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cma
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
-
   add_custom_target(
-    plplot_ocaml ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.a
+    plplot_ocaml_native
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cmxa 
+    ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.a
+    )
+  # Serialize these two with a target dependency since the two builds
+  # interfere with each other if done in parallel.
+  add_dependencies(plplot_ocaml_native plplot_ocaml_bytecode)
+
+  add_custom_target(plplot_ocaml ALL)
+  add_dependencies(plplot_ocaml plplot_ocaml_native)
+
+  # Need to keep track of file dependencies since this is a custom target.
+  set_property(GLOBAL PROPERTY FILES_plplot_ocaml
+    ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cma
+    ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cmxa 
+    ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.a
     )
   
   # Most files go in the plplot subdirectory
@@ -151,11 +178,12 @@ endif(PKG_CONFIG_EXECUTABLE)
     DESTINATION ${OCAML_INSTALL_DIR}/stublibs
     )
 
-  # This does not work as the clean rule will not remove directories which
-  # are not empty
+  # Remove entire contents of ${OCAML_BUILD_DIR} when the clean target
+  # is run.  This proved to work fine on cmake-2.6.4, but may not for
+  # earlier versions according to a remark made here before.
   set_directory_properties(PROPERTIES 
     ADDITIONAL_MAKE_CLEAN_FILES 
     ${OCAML_BUILD_DIR}
-  )
+    )
 
 endif(ENABLE_ocaml)

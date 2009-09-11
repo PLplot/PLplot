@@ -65,8 +65,7 @@ set(ocaml_STRING_INDICES
 if(CORE_BUILD)
   set(ocaml_SRCS)
   foreach(STRING_INDEX ${ocaml_STRING_INDICES})
-    set(SOURCE_FILE x${STRING_INDEX}.ml)
-    set(ocaml_SRCS ${ocaml_SRCS} ${SOURCE_FILE})
+    list(APPEND ocaml_SRCS x${STRING_INDEX}.ml)
   endforeach(STRING_INDEX ${ocaml_STRING_INDICES})
 
   configure_file(
@@ -99,7 +98,9 @@ if(BUILD_TEST)
     set(ccopt_OPTION "-L ${CMAKE_INSTALL_LIBDIR} -Wl,-rpath -Wl,${CMAKE_INSTALL_LIBDIR} ")
   endif(CORE_BUILD)
 
+  get_property(files_plplot_ocaml GLOBAL PROPERTY FILES_plplot_ocaml)
   set_property(GLOBAL PROPERTY TARGETS_examples_ocaml)
+  set_property(GLOBAL PROPERTY FILES_examples_ocaml)
   foreach(STRING_INDEX ${ocaml_STRING_INDICES})
     set(EXECUTABLE_NAME x${STRING_INDEX}ocaml)
     set(SOURCE_FILE x${STRING_INDEX}.ml)
@@ -121,7 +122,9 @@ if(BUILD_TEST)
       plplot.cma 
       -o ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME} 
       ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
-      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+      ${files_plplot_ocaml}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       VERBATIM
       )
@@ -133,6 +136,7 @@ if(BUILD_TEST)
       add_dependencies(target_${EXECUTABLE_NAME} plplot_ocaml)
     endif(CORE_BUILD)
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_ocaml target_${EXECUTABLE_NAME})
+    set_property(GLOBAL APPEND PROPERTY FILES_examples_ocaml ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME})
   endforeach(STRING_INDEX ${ocaml_STRING_INDICES})
   set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ocaml_EXTRA_CLEAN_FILES}")
 endif(BUILD_TEST)
