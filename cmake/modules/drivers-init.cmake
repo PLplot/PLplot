@@ -92,41 +92,65 @@ if(DEFAULT_ALL_DEVICES)
   endif(DEFAULT_NO_CAIRO_DEVICES)
 endif(DEFAULT_ALL_DEVICES)
 
-# The DRIVERS_DEVICE_LIST defined below is a list of
-# <device>:<drive>:<enable_default> items.  <enable_default> should be
-# "ON" or "OFF" and this will reflect in inclusion/exclusion by default
-# (as shown by ccmake).
-#
+# The DRIVERS_DEVICE_LIST defined below is a colon-separated list of
+# <device>:<driver>:<enable_default>:<kind>:<familied> items.  
+
+# <device> is the name of the device (e.g., epsqt).
+
+# <driver> is the name of the device driver (e.g., qt).
+
+# <enable_default> should be ON or OFF and this will reflect in
+# inclusion/exclusion by default (as shown by ccmake). 
+
+# <kind> should be one of F (file), I (interactive), M (memory), E
+# (external), or N (null, i.e., valid prototype drive that produces
+# no results.)
+
+# <familed> should be either ON or OFF depending on whether familying is
+# a necessity for this device to generate multipage plots.
+
+# <device>, <driver>, and <enable_default> are fundamental data that
+# help to determine the list of enabled drivers, DRIVERS_LIST (used in
+# the summary), and list of enabled devices, DEVICES_LIST (used in the
+# summary and also when iterating over enabled devices in the build
+# system).  <kind> is used (in drivers-finish.cmake) to determine
+# which enabled devices are included in the FILE_DEVICES_LIST (which
+# also includes <familied> information), and <kind> is used to
+# determine (again in drivers-finish.cmake) which enabled devices are
+# included in the INTERACTIVE_DEVICES_LIST.  Both FILE_DEVICES_LIST
+# and INTERACTIVE_DEVICES_LIST are used in the examples subdirectory
+# to set up testing of file devices and interactive devices.
+
 # Ordered alphabetically by second in each pair (the driver) and then
 # alphabetically by device (the first in each pair) for human
 # consumption, but this is not necessary.
 
 set(DRIVERS_DEVICE_LIST
-  "aqt:aqt:ON"
+  "aqt:aqt:ON:I:OFF"
   # memcairo does not work so turn it off by default.
   # The remaining cairo devices work well so turn them on by default.
-  "memcairo:cairo:OFF"
-  "extcairo:cairo:ON"
-  "pdfcairo:cairo:ON"
-  "pngcairo:cairo:ON"
-  "pscairo:cairo:ON"
-  "svgcairo:cairo:ON"
-  "xcairo:cairo:ON"
+  "memcairo:cairo:OFF:M:OFF"
+  "extcairo:cairo:ON:E:OFF"
+  "pdfcairo:cairo:ON:F:OFF"
+  "pngcairo:cairo:ON:F:ON"
+  "pscairo:cairo:ON:F:OFF"
+  "svgcairo:cairo:ON:F:ON"
+  "xcairo:cairo:ON:I:OFF"
   # new example 16 shows severe valgrind issues with this device.
-  "cgm:cgm:OFF"
+  "cgm:cgm:OFF:F:OFF"
   # This unmaintained device driver builds but does not actually work 
   # (with error message: "Unable to locate dispatch table initialization
   # function for driver: dg300.") so retire it.
-  # "dg300:dg300:OFF"
-  "epsqt:qt:ON"
-  "pdfqt:qt:ON"
-  "qtwidget:qt:ON"
-  "bmpqt:qt:ON"
-  "jpgqt:qt:ON"
-  "pngqt:qt:ON"
-  "ppmqt:qt:ON"
-  "tiffqt:qt:ON"
-  "extqt:qt:ON"
+  # "dg300:dg300:OFF:F:OFF"
+  "epsqt:qt:ON:F:ON"
+  "pdfqt:qt:ON:F:ON"
+  "qtwidget:qt:ON:I:OFF"
+  "bmpqt:qt:ON:F:ON"
+  "jpgqt:qt:ON:F:ON"
+  "pngqt:qt:ON:F:ON"
+  "ppmqt:qt:ON:F:ON"
+  "tiffqt:qt:ON:F:ON"
+  "extqt:qt:ON:E:OFF"
   # Currently does not validate at http://validator.w3.org/, but that appears
   # to be a result of the validator being unfamiliar with SVG-1.2 (a draft
   # SVG standard that has not been finalized yet) which is produced
@@ -135,68 +159,68 @@ set(DRIVERS_DEVICE_LIST
   # which is clearly documented in the 1.2 draft.  Also, text offset issues
   # which were in SVG results produced by QT-4.4.3 are gone for QT-4.5.0.
   # Therefore, the conclusion is to enable svgqt by default.
-  "svgqt:qt:ON"
+  "svgqt:qt:ON:F:ON"
   # gd related devices are not maintained.
-  "gif:gd:OFF"
-  "jpeg:gd:OFF"
-  "png:gd:OFF" 
+  "gif:gd:OFF:F:ON"
+  "jpeg:gd:OFF:F:ON"
+  "png:gd:OFF:F:ON" 
   # gcw is not maintained.
-  "gcw:gcw:OFF"
+  "gcw:gcw:OFF:I:OFF"
   # Do not implement gnome which is superseded by gcw
-  #"gnome:gnome:OFF"
+  #"gnome:gnome:OFF:I:OFF"
   # hpgl devices produce tons of "Invalid pen selection." messages and the
   # lj_hpgl device produces the error message "Unable to locate dispatch
   # table initialization function for driver: hpgl."
   # Retire this elderly device driver rather than fixing it.
-  #"hp7470:hpgl:OFF"
-  #"hp7580:hpgl:OFF"
-  #"lj_hpgl:hpgl:OFF"
+  #"hp7470:hpgl:OFF:F:OFF"
+  #"hp7580:hpgl:OFF:F:OFF"
+  #"lj_hpgl:hpgl:OFF:F:OFF"
   # This unmaintained driver generates double frees for example 14.
   # Retire this elderly device driver rather than fixing it.
-  # "imp:impress:OFF"
+  # "imp:impress:OFF:I:OFF"
   # Default off because poorly maintained (e.g., colours are incorrect)
   # must use software fill, and must run as root.
-  "linuxvga:linuxvga:OFF"
+  "linuxvga:linuxvga:OFF:I:OFF"
   # ljii is unmaintained and both the ljii and ljiip segfault on example 14.
   # Retire this elderly device driver rather than fixing it.
-  #"ljii:ljii:OFF"
-  #"ljiip:ljiip:OFF"
-  "mem:mem:ON"
-  "ntk:ntk:OFF"
-  "null:null:ON"
+  #"ljii:ljii:OFF:F:OFF"
+  #"ljiip:ljiip:OFF:F:OFF"
+  "mem:mem:ON:M:OFF"
+  "ntk:ntk:OFF:I:OFF"
+  "null:null:ON:N:OFF"
   # glibc detects double free
-  "pbm:pbm:OFF"
-  "pdf:pdf:OFF"
+  "pbm:pbm:OFF:F:OFF"
+  "pdf:pdf:OFF:F:OFF"
   # (2007-09-01) As discussed on list, don't enable plmeta until we sort
   # out the known issues (e.g., strings, aspect ratio, and TrueType fonts).
   # This is going to take time/energy for some volunteer who has not volunteered
   # yet.... :-)
-  "plmeta:plmeta:OFF"
-  "ps:ps:ON"
+  "plmeta:plmeta:OFF:F:OFF"
+  "ps:ps:ON:F:OFF"
   # No longer segfaults, but still default OFF because cleaner/better ways 
   # (psttf and pscairo) to get modern fonts for postscript results.
-  "pstex:pstex:OFF"
-  "psttf:psttf:ON"
-  "svg:svg:ON"
+  "pstex:pstex:OFF:F:OFF"
+  "psttf:psttf:ON:F:OFF"
+  "svg:svg:ON:F:ON"
   # Build issues (inconsistent use of PLD names).  We believe there is no
   # user interest in the tek devices any more so retire them rather than
   # fix them.
-  #"conex:tek:OFF" 
-  #"mskermit:tek:OFF"
-  #"tek4010:tek:OFF"
-  #"tek4010f:tek:OFF"
-  #"tek4107:tek:OFF"
-  #"tek4107f:tek:OFF"
-  #"versaterm:tek:OFF"
-  #"vlt:tek:OFF"
-  #"xterm:tek:OFF" 
-  "tk:tk:ON"
-  "tkwin:tkwin:ON"
-  "wingcc:wingcc:ON"
-  "wxwidgets:wxwidgets:ON"
-  "wxpng:wxwidgets:OFF"
-  "xfig:xfig:ON"
-  "xwin:xwin:ON"
+  #"conex:tek:OFF:I:OFF" 
+  #"mskermit:tek:OFF:I:OFF"
+  #"tek4010:tek:OFF:I:OFF"
+  #"tek4010f:tek:OFF:F:OFF"
+  #"tek4107:tek:OFF:I:OFF"
+  #"tek4107f:tek:OFF:F:OFF"
+  #"versaterm:tek:OFF:I:OFF"
+  #"vlt:tek:OFF:I:OFF"
+  #"xterm:tek:OFF:I:OFF" 
+  "tk:tk:ON:I:OFF"
+  "tkwin:tkwin:ON:E:OFF"
+  "wingcc:wingcc:ON:I:OFF"
+  "wxwidgets:wxwidgets:ON:I:OFF"
+  "wxpng:wxwidgets:OFF:F:ON"
+  "xfig:xfig:ON:F:ON"
+  "xwin:xwin:ON:I:OFF"
   )
 
 if(DEFAULT_ALL_DEVICES)
@@ -210,15 +234,25 @@ else(DEFAULT_ALL_DEVICES)
 endif(DEFAULT_ALL_DEVICES)
 
 foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
-  string(REGEX REPLACE "^(.*):.*:.*$" "\\1" DEVICE ${DRIVERS_DEVICE})
+  string(REGEX REPLACE "^(.*):.*:.*:.*:.*$" "\\1" DEVICE ${DRIVERS_DEVICE})
+  string(REGEX REPLACE "^.*:.*:.*:(.*):.*$" "\\1" KIND ${DRIVERS_DEVICE})
+  string(REGEX REPLACE "^.*:.*:.*:.*:(.*)$" "\\1" REQUIRE_FAMILYING ${DRIVERS_DEVICE})
+  # Check that you don't have the invalid combination of a non-file device
+  # that requires familying.
+  if(REQUIRE_FAMILYING AND NOT KIND STREQUAL "F")
+    message(FATAL_ERROR "Invalid combination of REQUIRE_FAMILYING = ${REQUIRE_FAMILYING} AND KIND = ${KIND} for DEVICE = ${DEVICE}")
+  endif(REQUIRE_FAMILYING AND NOT KIND STREQUAL "F")
+
   if(NOT PRESET_DEFAULT)
     if(DEFAULT_NO_QT_DEVICES AND DEVICE MATCHES ".*qt.*" AND NOT DEVICE STREQUAL "aqt")
       set(DEFAULT OFF)
     elseif(DEFAULT_NO_CAIRO_DEVICES AND DEVICE MATCHES ".*cairo.*")
       set(DEFAULT OFF)
     else(DEFAULT_NO_QT_DEVICES AND DEVICE MATCHES ".*qt.*" AND NOT DEVICE STREQUAL "aqt")
-      string(REGEX REPLACE "^.*:.*:(.*)$" "\\1" DEFAULT ${DRIVERS_DEVICE})
+      string(REGEX REPLACE "^.*:.*:(.*):.*:.*$" "\\1" DEFAULT ${DRIVERS_DEVICE})
     endif(DEFAULT_NO_QT_DEVICES AND DEVICE MATCHES ".*qt.*" AND NOT DEVICE STREQUAL "aqt")
   endif(NOT PRESET_DEFAULT)
+  #message(STATUS "DEBUG: DEVICE = ${DEVICE}")
+  #message(STATUS "DEBUG: DEFAULT= ${DEFAULT}")
   option(PLD_${DEVICE} "Enable ${DEVICE} device" ${DEFAULT})
 endforeach(DRIVERS_DEVICE)

@@ -22,15 +22,38 @@
 # Module to finalize device options.
 
 # Results are contained in the following variables:
-# DEVICES_LIST: list of devices (e.g. png, jpeg),where PLD_devicename is ON
 # DRIVERS_LIST: list of device drivers (e.g., gd for the png and jpeg devices)
-#   where at least one of the associated devices is enabled.
+# where at least one of the associated devices is enabled.
+# DEVICES_LIST: list of devices (e.g. png, jpeg), where device is enabled.
+# FILE_DEVICES_LIST: list of colon-separated information
+# (<devicename>:<familied>, where familied is ON or OFF (depending on whether
+# familying is required for multi-page results) for enabled file # devices.
+# INTERACTIVE_DEVICES_LIST: list of enabled interactive devices.
 
+# N.B. DRIVERS_LIST is used below to create data to help test plug-in
+# devices.  Also, it is output in the summary.  DEVICES_LIST is used
+# to iterate through all enabled devices (notably in the drivers and
+# src subdirectories).  Also, it is output in the summary. Both
+# FILE_DEVICES_LIST and INTERACTIVE_DEVICES_LIST are used in the
+# examples subdirectory to set up testing of file devices and
+# interactive devices.
+set(DRIVERS_LIST)
+set(DEVICES_LIST)
+set(FILE_DEVICES_LIST)
+set(INTERACTIVE_DEVICES_LIST)
 foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
-  string(REGEX REPLACE "^(.*):.*:.*$" "\\1" DEVICE ${DRIVERS_DEVICE})
-  string(REGEX REPLACE "^.*:(.*):.*$" "\\1" DRIVER ${DRIVERS_DEVICE})
+  string(REGEX REPLACE "^(.*):.*:.*:.*:.*$" "\\1" DEVICE ${DRIVERS_DEVICE})
+  string(REGEX REPLACE "^.*:(.*):.*:.*:.*$" "\\1" DRIVER ${DRIVERS_DEVICE})
   if(PLD_${DEVICE})
-    set(DEVICES_LIST ${DEVICES_LIST} ${DEVICE})
+    list(APPEND DEVICES_LIST ${DEVICE})
+    string(REGEX REPLACE "^.*:.*:.*:(.*):.*$" "\\1" KIND ${DRIVERS_DEVICE})
+    string(REGEX REPLACE "^.*:.*:.*:.*:(.*)$" "\\1" REQUIRE_FAMILYING ${DRIVERS_DEVICE})
+    if(KIND STREQUAL "F")
+      list(APPEND FILE_DEVICES_LIST "${DEVICE}:${REQUIRE_FAMILYING}")
+    elseif(KIND STREQUAL "I")
+      list(APPEND INTERACTIVE_DEVICES_LIST ${DEVICE})
+    endif(KIND STREQUAL "F")
+
     set(APPEND_DRIVER ON)
     foreach(DRIVER_IN_LIST ${DRIVERS_LIST})
       if(DRIVER STREQUAL "${DRIVER_IN_LIST}")
@@ -47,11 +70,17 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
 	    )
 	endif(EXISTS ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.rc.in)
       endif(ENABLE_DYNDRIVERS)
-      set(DRIVERS_LIST ${DRIVERS_LIST} ${DRIVER})
+      list(APPEND DRIVERS_LIST ${DRIVER})
+
+      # Prepend driver's source code in the drivers directory to
+      # anything set specially for the driver in question in the
+      # various special CMake modules for drivers included by
+      # drivers.cmake before this module (drivers-finish.cmake) is
+      # included by drivers.cmake.
       if(DRIVER STREQUAL "wxwidgets")
         set(${DRIVER}_SOURCE 
           ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cpp
-	        ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_app.cpp
+	  ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_app.cpp
           ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_dc.cpp
           ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_gc.cpp
           ${${DRIVER}_SOURCE}
@@ -82,16 +111,22 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
   endif(PLD_${DEVICE})
 endforeach(DRIVERS_DEVICE)
 
+# Calculate driver information and store it in 
+# ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.rc for each driver to be compared
+# at run-time with the same information obtained from the actual
+# driver plug-in by test-drv-info as a check of the validity of
+# that plug-in (and consistency of the driver code with DRIVERS_DEVICE_LIST
+# maintained in drivers-init.cmake).
 foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
-  string(REGEX REPLACE "^(.*):.*:.*$" "\\1" DEVICE ${DRIVERS_DEVICE})
-  string(REGEX REPLACE "^.*:(.*):.*$" "\\1" DRIVER ${DRIVERS_DEVICE})
+  string(REGEX REPLACE "^(.*):.*:.*:.*:.*$" "\\1" DEVICE ${DRIVERS_DEVICE})
+  string(REGEX REPLACE "^.*:(.*):.*:.*:.*$" "\\1" DRIVER ${DRIVERS_DEVICE})
   if(${DRIVER}_INFO)
     if(NOT PLD_${DEVICE})
       set(DEVICE_INFO_MATCHED)
       # Must remove corresponding data from ${DRIVER}_INFO
       #message("DEVICE = ${DEVICE}")
       foreach(DEVICE_INFO ${${DRIVER}_INFO})
-        string(REGEX REPLACE "^(.*):.*:.*:.*:.*:.*$" "\\1" DEVICE_INFO_NAME ${DEVICE_INFO})
+        string(REGEX REPLACE "^(.*):.*:.*:.*:.*:.*:.*:.*$" "\\1" DEVICE_INFO_NAME ${DEVICE_INFO})
         #message("DEVICE_INFO_NAME = ${DEVICE_INFO_NAME}")
 	if(DEVICE STREQUAL "${DEVICE_INFO_NAME}")
 	  #There should one and only one match.
@@ -108,7 +143,7 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
 endforeach(DRIVERS_DEVICE)
 
 foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
-  string(REGEX REPLACE "^.*:(.*):.*$" "\\1" DRIVER ${DRIVERS_DEVICE})
+  string(REGEX REPLACE "^.*:(.*):.*:.*:.*$" "\\1" DRIVER ${DRIVERS_DEVICE})
   if(${DRIVER}_INFO)
     file(WRITE ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.rc "")
     foreach(DEVICE_INFO ${${DRIVER}_INFO})
