@@ -127,7 +127,7 @@ if(BUILD_TEST)
   set_property(GLOBAL PROPERTY TARGETS_examples_c)
   foreach(STRING_INDEX ${c_STRING_INDICES})
     if(CORE_BUILD AND BUILD_SHARED_LIBS)
-      SET_SOURCE_FILES_PROPERTIES(x${STRING_INDEX}c.c
+      set_source_files_properties(x${STRING_INDEX}c.c
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
     endif(CORE_BUILD AND BUILD_SHARED_LIBS)
     add_executable(x${STRING_INDEX}c x${STRING_INDEX}c.c)
