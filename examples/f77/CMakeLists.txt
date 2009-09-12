@@ -83,7 +83,9 @@ if(CORE_BUILD)
 
   set(f77_SRCS)
   foreach(STRING_INDEX ${f77_STRING_INDICES})
-    set(f77_SRCS ${f77_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}f.f)
+    list(APPEND f77_SRCS ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}f.f)
+    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}f.f
+      PROPERTIES GENERATED ON)
   endforeach(STRING_INDEX ${c_STRING_INDICES})
   add_custom_target(f77_examples ALL DEPENDS ${f77_SRCS})
 
@@ -124,16 +126,12 @@ endif(CORE_BUILD)
 
 if(BUILD_TEST)
   if(CORE_BUILD)
-    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/plf77demos.inc
-      PROPERTIES GENERATED ON)
-
     remove_definitions("-DHAVE_CONFIG_H")
     include_directories(
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_BINARY_DIR}/include
       )
     set(f77_directory ${CMAKE_CURRENT_BINARY_DIR})
-    set(f77_target f77_examples)
   else(CORE_BUILD)
     include_directories(${INCLUDE_DIR})
     set(f77_directory ${CMAKE_CURRENT_SOURCE_DIR})
@@ -148,7 +146,6 @@ if(BUILD_TEST)
     else(STATIC_OPTS)
       target_link_libraries(x${STRING_INDEX}f plplotf77${LIB_TAG})
     endif(STATIC_OPTS)
-    add_dependencies(x${STRING_INDEX}f "${f77_target}")
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_f77 x${STRING_INDEX}f)
   endforeach(STRING_INDEX ${f77_STRING_INDICES})
 endif(BUILD_TEST)
