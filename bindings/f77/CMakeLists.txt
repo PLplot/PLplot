@@ -27,7 +27,7 @@ if(ENABLE_f77)
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
       COMMAND ${CMAKE_COMMAND}
-      -E copy ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4 ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
+      -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4 ${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4
       )
   else(PL_DOUBLE)
@@ -40,6 +40,8 @@ if(ENABLE_f77)
       ${CMAKE_CURRENT_SOURCE_DIR}/sfstubs.fm4
       )
   endif(PL_DOUBLE)
+  set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/sfstubs.f
+    PROPERTIES GENERATED ON)
 
   if(WIN32)
     # Set the flags for the C compiler. The C stubs need to have the
@@ -61,8 +63,6 @@ if(ENABLE_f77)
     ${CMAKE_CURRENT_SOURCE_DIR}/configurable.f.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/configurable.f
     )
-  set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/configurable.f
-    PROPERTIES GENERATED ON)
 
   # Set the include path
   include_directories(
