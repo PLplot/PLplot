@@ -126,8 +126,8 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
       # Must remove corresponding data from ${DRIVER}_INFO
       #message("DEVICE = ${DEVICE}")
       foreach(DEVICE_INFO ${${DRIVER}_INFO})
-        string(REGEX REPLACE "^(.*):.*:.*:.*:.*:.*:.*:.*$" "\\1" DEVICE_INFO_NAME ${DEVICE_INFO})
-        #message("DEVICE_INFO_NAME = ${DEVICE_INFO_NAME}")
+        string(REGEX REPLACE "^(.*):.*:.*:.*:.*:.*$" "\\1" DEVICE_INFO_NAME ${DEVICE_INFO})
+        #message(STATUS "DEBUG: DEVICE_INFO_NAME = ${DEVICE_INFO_NAME}")
 	if(DEVICE STREQUAL "${DEVICE_INFO_NAME}")
 	  #There should one and only one match.
 	  set(DEVICE_INFO_MATCHED ${DEVICE_INFO})
