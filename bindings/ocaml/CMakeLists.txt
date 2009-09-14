@@ -22,6 +22,70 @@
 
 if(ENABLE_ocaml)
 
+  option(OCAML_EXPERIMENTAL_BUILD "Try experimental OCaml build?" OFF)
+  if(OCAML_EXPERIMENTAL_BUILD)
+  #experimental CMake logic to build ocaml bindings for PLplot.
+  set(camlidl_GENERATED_SOURCE
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.h
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.ml
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.mli
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
+  )
+  # file must occur in the directory where
+  # the output files are generated.
+  add_custom_command(
+    OUTPUT 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.idl
+#    ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.c
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot_core.idl ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.idl
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.c
+    DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_core.idl
+#    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
+    )
+
+  add_custom_command(
+    OUTPUT ${camlidl_GENERATED_SOURCE}
+    COMMAND camlidl -header -I ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.idl
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.idl
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o
+    COMMAND ocamlc -verbose -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
+    COMMAND ocamlc -verbose -ccopt -I${CMAKE_SOURCE_DIR}/include -ccopt -I${CMAKE_BINARY_DIR}/include -ccopt -I${CMAKE_SOURCE_DIR}/lib/qsastime  -c ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
+    DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+
+  add_custom_command(
+    OUTPUT 
+    ${CMAKE_CURRENT_BINARY_DIR}/dllplplot_stubs.so
+    ${CMAKE_CURRENT_BINARY_DIR}/libplplot_stubs.a
+    COMMAND ocamlmklib -v -o plplot_stubs -dllpath ${CMAKE_BINARY_DIR}/src -L${CAMLIDL_LIB_DIR} -lcamlidl -L${CMAKE_BINARY_DIR}/src -lplplot${LIB_TAG} ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
+    plplot${LIB_TAG}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+
+  add_custom_target(experimental DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/dllplplot_stubs.so
+
+    )
+  #end of experiment
+  else(OCAML_EXPERIMENTAL_BUILD)
+
   set(SOURCE_LIST
     libplplot_stubs.clib
     plplot_h
@@ -185,5 +249,6 @@ endif(PKG_CONFIG_EXECUTABLE)
     ADDITIONAL_MAKE_CLEAN_FILES 
     ${OCAML_BUILD_DIR}
     )
+  endif(OCAML_EXPERIMENTAL_BUILD)
 
 endif(ENABLE_ocaml)
