@@ -44,6 +44,16 @@
 /* Define if you have c++ accessible stdint.h */
 #cmakedefine PL_HAVE_CXX_STDINT_H
 
+/* Define if snprintf is available */
+#ifndef PL_HAVE_SNPRINTF
+#cmakedefine PL_HAVE_SNPRINTF
+#endif
+
+/* Define if _snprintf is available */
+#ifndef _PL_HAVE_SNPRINTF
+#cmakedefine _PL_HAVE_SNPRINTF
+#endif
+
 /* Define if isinf is available */
 #cmakedefine PL_HAVE_ISINF
 
