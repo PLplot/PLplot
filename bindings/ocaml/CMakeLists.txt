@@ -71,7 +71,7 @@ if(ENABLE_ocaml)
     OUTPUT 
     ${CMAKE_CURRENT_BINARY_DIR}/dllplplot_stubs.so
     ${CMAKE_CURRENT_BINARY_DIR}/libplplot_stubs.a
-    COMMAND ocamlmklib -v -o plplot_stubs -dllpath ${CMAKE_BINARY_DIR}/src -L${CAMLIDL_LIB_DIR} -lcamlidl -L${CMAKE_BINARY_DIR}/src -lplplot${LIB_TAG} ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
+    COMMAND ocamlmklib -v -o plplot_stubs -L${CAMLIDL_LIB_DIR} -dllpath ${CAMLIDL_LIB_DIR} -lcamlidl -lcamlrun_shared -L${CMAKE_BINARY_DIR}/src -dllpath ${CMAKE_BINARY_DIR}/src -lplplot${LIB_TAG} ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
@@ -81,7 +81,7 @@ if(ENABLE_ocaml)
 
   add_custom_target(experimental DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/dllplplot_stubs.so
-
+    ${CMAKE_CURRENT_BINARY_DIR}/libplplot_stubs.a
     )
   #end of experiment
   else(OCAML_EXPERIMENTAL_BUILD)
