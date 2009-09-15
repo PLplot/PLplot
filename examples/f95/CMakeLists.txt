@@ -107,7 +107,6 @@ endif(CORE_BUILD)
 
 if(BUILD_TEST)
   if(CORE_BUILD)
-    remove_definitions("-DHAVE_CONFIG_H")
 
     # For CMake-2.6.0 and above, the module files are created by
     # default during the library build in the bindings/f95 directory.

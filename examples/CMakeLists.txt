@@ -25,6 +25,10 @@
 # BUILD_TEST ON and CORE_BUILD OFF.
 
 if(CORE_BUILD)
+  if(BUILD_TEST)
+    remove_definitions("-DHAVE_CONFIG_H")
+  endif(BUILD_TEST)
+
   # Sort out RPATH issues for traditional build of installed examples using
   # */Makefiles configured in each * subdirectory from */Makefile.examples.in.
   if(USE_RPATH)

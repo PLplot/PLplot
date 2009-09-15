@@ -94,7 +94,6 @@ endif(CORE_BUILD)
 
 if(BUILD_TEST)
   if(CORE_BUILD)
-    remove_definitions("-DHAVE_CONFIG_H")
     include_directories(
       ${CMAKE_SOURCE_DIR}/bindings/c++
       ${CMAKE_SOURCE_DIR}/include

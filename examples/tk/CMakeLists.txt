@@ -159,7 +159,6 @@ endif(CORE_BUILD)
 
 if(BUILD_TEST)
   if(CORE_BUILD)
-    remove_definitions("-DHAVE_CONFIG_H")
     include_directories(
       ${TCL_INCLUDE_PATH}
       ${TK_INCLUDE_PATH}
