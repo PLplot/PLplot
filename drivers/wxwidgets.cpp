@@ -230,7 +230,7 @@ void wxPLDevBase::PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
           PSDrawTextToDC( utf8_string, drawText );
           
           // change font scale
-      		if( yOffset<0.0 )
+      		if( yOffset<-0.0001 )
             fontScale *= 1.25;  /* Subscript scaling parameter */
       		else
             fontScale *= 0.8;  /* Subscript scaling parameter */
@@ -244,7 +244,7 @@ void wxPLDevBase::PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText )
 
           // change font scale
           double old_fontScale=fontScale;
-      		if( yOffset>0.0 )
+      		if( yOffset>0.0001 )
             fontScale *= 1.25;  /* Subscript scaling parameter */
       		else
             fontScale *= 0.8;  /* Subscript scaling parameter */
