@@ -1,16 +1,24 @@
-/* Generated from configure.ac by autoheader as of 2006-07-08
- * and converted to cmake form.  cmake has no equivalent to
- * autoheader yet so this file must be maintained manually from
- * now on, i.e., if there is an addition of a configurable symbol,
- * (all done from the top-level CMakeLists.txt file)
- * it must be entered here as well in order for C/C++ programmes
- * to have access to the configured symbol.*/
+/* Configured (by CMake) macros for PLplot that are required for the
+   core build but _not_ required for the build of the installed
+   examples (and presumably any user applications).  Therefore, the
+   configured config.h should not be installed.  In contrast,
+   include/plConfig.h.cmake (note, plConfig.h #includes config.h for
+   the core build because HAVE_CONFIG_H is #defined in that case)
+   contains configured macros that are required for the core build,
+   installed examples build, and build of user applications.
+   Therefore, in contrast to config.h, plConfig.h should be installed.
+
+   Maintenance issue: in makes no sense to configure duplicate macros
+   for both config.h and plConfig.h.  Therefore, when adding a macro
+   decide which file to put it in depending on whether the result is
+   needed for the installed examples build or not.  Furthermore, move
+   configured macros from one file to the other as needed depending on
+   that criterion, but do not copy them.
+   
+*/
 
 /* Location of executables */
 #define BIN_DIR "${BIN_DIR}"
-
-/* isnan is in math.h but not cmath */
-#cmakedefine PL_BROKEN_ISNAN_CXX
 
 /* Location of Build tree */
 #define BUILD_DIR "${BUILD_DIR}"
@@ -32,9 +40,6 @@
 
 /* Define to 1 if you have the <cmath> header file. */
 #cmakedefine HAVE_CMATH 1
-
-/* Define if you have c++ accessible stdint.h */
-#cmakedefine PL_HAVE_CXX_STDINT_H
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
@@ -66,28 +71,6 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine HAVE_INTTYPES_H 1
-
-/* Define if isinf is available */
-#cmakedefine PL_HAVE_ISINF
-
-/* Define if _isinf is available */
-#cmakedefine PL__HAVE_ISINF
-
-/* Define if isnan is available */
-#cmakedefine PL_HAVE_ISNAN
-
-/* Define if _isnan is available */
-#cmakedefine PL__HAVE_ISNAN
-
-/* Define if snprintf is available */
-#ifndef PL_HAVE_SNPRINTF
-#cmakedefine PL_HAVE_SNPRINTF
-#endif
-
-/* Define if _snprintf is available */
-#ifndef _PL_HAVE_SNPRINTF
-#cmakedefine _PL_HAVE_SNPRINTF
-#endif
 
 /* Define if [incr], [Tcl] is available */
 #cmakedefine HAVE_ITCL
@@ -144,9 +127,6 @@
 /* Define if Qhull is available */
 #cmakedefine HAVE_QHULL
 
-/* Define to 1 if you have the <stdint.h> header file. */
-#cmakedefine PL_HAVE_STDINT_H 1
-
 /* Define to 1 if you have the <stdlib.h> header file. */
 #cmakedefine HAVE_STDLIB_H 1
 
@@ -170,12 +150,6 @@
 /* Define to 1 if you have the <termios.h> header file. */
 #cmakedefine HAVE_TERMIOS_H 1
 
-/* Define to 1 if you have the <unistd.h> header file. */
-#cmakedefine PL_HAVE_UNISTD_H 1
-
-/* Define if usleep is available */
-#cmakedefine PL_HAVE_USLEEP
-
 /* Define to 1 if you have the `vfork' function. */
 #cmakedefine HAVE_VFORK 1
 
@@ -193,10 +167,6 @@
 
 /* Portable definition for PTHREAD_MUTEX_RECURSIVE */
 #define PLPLOT_MUTEX_RECURSIVE ${PLPLOT_MUTEX_RECURSIVE}
-
-/* PLplot's PLFLT floating-point is "double" by default, undefine PL_DOUBLE if
-   single precision is required */
-#cmakedefine PL_DOUBLE
 
 /* Directory containing fonts that are accessible from freetype */
 #define PL_FREETYPE_FONT_DIR "${PL_FREETYPE_FONT_DIR}"
@@ -302,9 +272,6 @@
 
 /* Location of Tcl stuff */
 #define TCL_DIR "${TCL_DIR}"
-
-/* Define if C++ compiler accepts using namespace */
-#cmakedefine PL_USE_NAMESPACE
 
 /* Version number of package */
 #define VERSION "${VERSION}"
