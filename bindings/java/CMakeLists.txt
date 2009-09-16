@@ -210,9 +210,6 @@ if(ENABLE_java)
   # the java files created by swig (amongst others).
   add_dependencies(plplot_core plplotjavac_wrap)
 
-  # Java compiler doesn't support -D option.
-  remove_definitions("-DHAVE_CONFIG_H")
-
   # Installed as part of the example/java directory
   #install(FILES ${CMAKE_BINARY_DIR}/plplot.jar DESTINATION ${JAR_DIR})
 
