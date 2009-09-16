@@ -22,7 +22,6 @@
 
 if(ENABLE_ocaml)
 
-  option(OCAML_NEW_BUILD "Try new detailed OCaml build method?" OFF)
   if(OCAML_NEW_BUILD)
 
     #Detailed CMake logic to build ocaml bindings for PLplot.
@@ -115,9 +114,8 @@ if(ENABLE_ocaml)
       ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma
       ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa
       ${CMAKE_CURRENT_BINARY_DIR}/plplot.a
-      COMMAND ocamlc -verbose -a -custom -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG} -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo
-#      COMMAND ocamlc -verbose -a -custom -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo
-      COMMAND ocamlopt -verbose -a -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG} -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx
+      COMMAND ocamlc -verbose -a -custom -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG} -dllpath ${CMAKE_BINARY_DIR}/src -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo
+      COMMAND ocamlopt -verbose -a -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG} -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx
       DEPENDS
       ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo
       ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo
