@@ -376,6 +376,17 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
   /* Calculate the font size (in pixels) */
   fontSize = pls->chrht * VIRTUAL_PIXELS_PER_MM/scaley * 1.3;
   
+  /* Use PLplot core routine to get the corners of the clipping rectangle */
+  PLINT rcx[4], rcy[4];
+  difilt_clip(rcx, rcy);
+
+	wxPoint cpoints[4];
+	for( int i=0; i<4; i++ ) {
+		cpoints[i].x = rcx[i]/scalex;
+		cpoints[i].y = height-rcy[i]/scaley;
+	}		
+	wxDCClipper clip( *m_dc, wxRegion(4, cpoints) );
+
   /* calculate rotation of text */
   plRotationShear( args->xform, &rotation, &shear, &stride );
   rotation -= pls->diorot * M_PI / 2.0;
