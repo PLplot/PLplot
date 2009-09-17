@@ -46,6 +46,54 @@ proc mapform19 {n matx maty} {
     }
 }
 
+# "Normalize" longitude values so that they always fall between -180.0 and
+# 180.0
+proc normalize_longitude {lon} {
+    if {$lon >= -180.0 && $lon <= 180.0} {
+        return $lon
+    } else {
+        set times [expr {floor ((abs($lon) + 180.0) / 360.0)}]
+        if {$lon < 0.0} {
+            return [expr {($lon + 360.0 * $times)}]
+        } else {
+            return [expr {($lon - 360.0 * $times)}]
+        }
+    }
+
+}
+
+# A custom axis labeling function for longitudes and latitudes.
+proc geolocation_labeler {axis value} {
+
+    if {$axis == 2} {
+        set label_val $value
+        if {$label_val > 0.0} {
+            set direction_label " N"
+        } elseif {$label_val < 0.0} {
+            set direction_label " S"
+        } else {
+            set direction_label "Eq"
+        }
+    } elseif {$axis == 1} {
+        set label_val [normalize_longitude $value]
+        if {$label_val > 0.0} {
+            set direction_label " E"
+        } elseif {$label_val < 0.0} {
+            set direction_label " W"
+        } else {
+            set direction_label ""
+        }
+    }
+    if {$axis == 2 && $value == 0.0} {
+        # A special case for the equator
+        set label $direction_label
+    } else {
+        set label [ format "%.0f%s" [expr {abs($label_val)}] $direction_label]
+    }
+
+    return $label
+}
+
 proc x19 {{w loopback}} {
     set miny -70
     set maxy 80
@@ -56,8 +104,11 @@ proc x19 {{w loopback}} {
     set minx 190
     set maxx 550
 
+    # Setup a custom latitude and longitude-based scaling function.
+    $w cmd plslabelfunc "geolocation_labeler"
+
     $w cmd plcol0 1
-    $w cmd plenv $minx $maxx $miny $maxy 1 -1
+    $w cmd plenv $minx $maxx $miny $maxy 1 70
     $w cmd plmap usaglobe $minx $maxx $miny $maxy
 
 #   The Americas
@@ -66,8 +117,11 @@ proc x19 {{w loopback}} {
     set maxx 340
 
     $w cmd plcol0 1
-    $w cmd plenv $minx $maxx $miny $maxy 1 -1
+    $w cmd plenv $minx $maxx $miny $maxy 1 70
     $w cmd plmap usaglobe $minx $maxx $miny $maxy
+
+    # Clear the labeling function
+    plslabelfunc ""
 
 #   Polar, Northern hemisphere
 #   Note: the first argument now is the name of the procedure

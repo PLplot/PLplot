@@ -66,6 +66,7 @@ static int plgriddataCmd  (ClientData, Tcl_Interp *, int, const char **);
 static int plimageCmd  (ClientData, Tcl_Interp *, int, const char **);
 static int plimagefrCmd(ClientData, Tcl_Interp *, int, const char **);
 static int plstripcCmd (ClientData, Tcl_Interp *, int, const char **);
+static int plslabelfuncCmd (ClientData, Tcl_Interp *, int, const char **);
 
 /*
  * The following structure defines all of the commands in the PLplot/Tcl
@@ -109,6 +110,7 @@ static CmdInfo Cmds[] = {
     {"plimage",        plimageCmd},
     {"plimagefr",      plimagefrCmd},
     {"plstripc",       plstripcCmd},
+    {"plslabelfunc",    plslabelfuncCmd},
     {NULL,		NULL}
 };
 
@@ -3369,4 +3371,93 @@ list of at least four items - ", argv[17], (char *) NULL);
     Tcl_Free( (char *)legline );
 
     return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * labelform
+ *
+ * Call the Tcl custom label function.
+\*--------------------------------------------------------------------------*/
+
+static Tcl_Obj *label_objs[4] = {NULL,NULL,NULL,NULL};   /* Arguments for the Tcl procedure
+                                          that handles the custom labels */
+
+void
+labelform(PLINT axis, PLFLT value, char *string, PLINT string_length, PLPointer data)
+{
+    int objc;
+
+    label_objs[1] = Tcl_NewIntObj(axis);
+    label_objs[2] = Tcl_NewDoubleObj((double) value);
+
+    Tcl_IncrRefCount( label_objs[1] );
+    Tcl_IncrRefCount( label_objs[2] );
+
+    /* Call the Tcl procedure and store the result */
+    objc = 3;
+    if (label_objs[3] != NULL) {
+        objc = 4;
+    }
+
+    return_code = Tcl_EvalObjv(tcl_interp, objc, label_objs, 0);
+
+    if (return_code != TCL_OK) {
+        strncpy(string, "ERROR", string_length);
+    } else {
+        strncpy(string, Tcl_GetStringResult(tcl_interp), string_length);
+    }
+
+    Tcl_DecrRefCount( label_objs[1] );
+    Tcl_DecrRefCount( label_objs[2] );
+}
+
+/*--------------------------------------------------------------------------*\
+ * plslabelfuncCmd
+ *
+ * Processes plslabelfunc Tcl command.
+ * C version takes:
+ *    function, data
+ * (data argument is optional)
+\*--------------------------------------------------------------------------*/
+
+static int
+plslabelfuncCmd( ClientData clientData, Tcl_Interp *interp,
+	    int argc, const char *argv[] )
+{
+    if (argc < 2 || argc > 3) {
+	Tcl_AppendResult(interp, "bogus syntax for plslabelfunc, see doc.",
+			 (char *) NULL );
+	return TCL_ERROR;
+    }
+
+    tcl_interp = interp;
+
+    if (label_objs[0] != NULL) {
+        Tcl_DecrRefCount(label_objs[0]);
+    }
+    if (label_objs[3] != NULL) {
+        Tcl_DecrRefCount(label_objs[3]);
+        label_objs[3] = NULL;
+    }
+
+    if (strlen(argv[1]) == 0) {
+        plslabelfunc(NULL,NULL);
+        return TCL_OK;
+    }
+    else {
+        plslabelfunc(labelform,NULL);
+        label_objs[0] = Tcl_NewStringObj(argv[1],strlen(argv[1]));
+        Tcl_IncrRefCount(label_objs[0]);
+    }
+
+    if (argc == 3) {
+        label_objs[3] = Tcl_NewStringObj(argv[2],strlen(argv[2])); /* Should change with Tcl_Obj interface */
+        Tcl_IncrRefCount(label_objs[3]);
+    }
+    else {
+        label_objs[3] = NULL;
+    }
+
+    return TCL_OK;
+
 }
