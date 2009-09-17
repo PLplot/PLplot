@@ -836,7 +836,8 @@ color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, char *name )
 /*--------------------------------------------------------------------------*\
  * plcmap0_def()
  *
- * Initializes specified color map 0 color entry to its default.
+ * Initializes specified color map 0 color entry to its default for
+ * index range from imin to imax.
 \*--------------------------------------------------------------------------*/
 
 void
@@ -847,6 +848,9 @@ plcmap0_def(int imin, int imax)
   int number_colors;
   if(imin <= imax) {
     cmap0_palette_read("", &number_colors, &r, &g, &b, &a);
+    for (i = imin; i <= MIN((number_colors-1),imax); i++)
+      color_def(i, r[i], g[i], b[i], a[i],
+              "colors defined by default cmap0 palette file");
     free(r);
     free(g);
     free(b);
@@ -860,7 +864,7 @@ plcmap0_def(int imin, int imax)
      to opaque red as a warning. */
   for (i = MAX(number_colors, imin); i <= imax; i++)
     color_def(i, 255, 0, 0, 1.0,
-              "opaque red to mark not defined by palette file");
+              "opaque red colour to mark not defined by palette file");
 }
 
 /*--------------------------------------------------------------------------*\
