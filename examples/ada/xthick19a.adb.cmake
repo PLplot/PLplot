@@ -22,13 +22,23 @@
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 with
+    Text_IO,
+    Interfaces.C,
+    System.Storage_Elements,
+    Ada.Strings,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
+    Ada.Strings.Unbounded,
     PLplot_Auxiliary,
     PLplot;
 use
+    Text_IO,
+    Interfaces.C,
+    System.Storage_Elements,
+    Ada.Strings,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
+    Ada.Strings.Unbounded,
     PLplot_Auxiliary,
     PLplot;
 
@@ -69,6 +79,101 @@ procedure xthick19a is
         end loop;
     end mapform19;
 
+
+    -- This spec is necessary in order to enforce C calling conventions, used 
+    -- in the callback by intervening C code.
+    -- See Ada note above, for mapform19.
+    -- a_length is used only for bounds checking against the C-allocated memory
+    -- for label.
+    procedure geolocation_labeler
+       (axis     : Integer; 
+        a_value  : Long_Float;
+        label    : out Label_String_Type;
+        a_length : size_t;
+        data     : PLpointer);
+    pragma Convention(C, geolocation_labeler);
+
+    -- A custom axis labeling function for longitudes and latitudes.
+    procedure geolocation_labeler
+       (axis     : Integer; 
+        a_value  : Long_Float;
+        label    : out Label_String_Type;
+        a_length : size_t;
+        data     : PLpointer) 
+    is
+        direction_label : Unbounded_String;
+        label_val : Long_Float;
+
+
+        -- "Normalize" longitude values so that they always fall between -180.0 and 180.0.
+        function normalize_longitude(lon : Long_Float) return Long_Float is
+            times : Long_Float;
+        begin -- normalize_longitude
+            if lon >= -180.0 and lon <= 180.0 then
+                return lon;
+            else
+                times := Long_Float'Floor((abs(lon) + 180.0) / 360.0);
+                if lon < 0.0 then
+                    return lon + 360.0 * times;
+                else
+                    return lon - 360.0 * times;
+                end if;
+            end if;
+        end normalize_longitude;
+        
+        
+        -- Function to convert an unbounded string to a fixed-length C string with the 
+        -- null terminator somewhere in the middle and spaces after. The result, of type
+        -- Label_String_Type, is fixed to a length by C, currently at 41, and is 
+        -- indexed in Ada as 0 .. PLplot_Traditional.Label_String_Length.
+        function Unbounded_To_Weird_C
+           (Item     : Unbounded_String;
+            C_Length : size_t) return Label_String_Type 
+        is
+            Temp : Unbounded_String;
+        begin
+            -- Check length and adjust if necessary. Put_Line doesn't work here.
+            if Length(Item) >= Integer(C_Length) then
+                Put_Line("*** Warning: Custom label was truncated to" 
+                    & Integer'Image(Integer(C_Length)) & " characters. ***");
+                Temp := Head(Item, Integer(C_Length));
+                return To_C(To_String(Temp), True);
+            else
+               return To_C(To_String(Item & ASCII.nul & 
+                    (Label_String_Length - Length(Item)) * " "), False);
+            end if;
+        end Unbounded_To_Weird_C;
+
+     begin -- geolocation_labeler
+        if axis = Label_Y_Axis then
+            label_val := a_value;
+            if label_val > 0.0 then
+                direction_label := To_Unbounded_String(" N");
+            elsif label_val < 0.0 then
+                direction_label := To_Unbounded_String(" S");
+            else
+                direction_label := To_Unbounded_String("Eq");
+            end if;
+        elsif axis = Label_X_Axis then
+            label_val := normalize_longitude(a_value);
+            if label_val > 0.0 then
+                direction_label := To_Unbounded_String(" E");
+            elsif label_val < 0.0 then
+                direction_label := To_Unbounded_String(" W");
+            else
+                direction_label := To_Unbounded_String("");
+            end if;
+        end if;
+        
+        if axis = Label_Y_Axis and a_value = 0.0 then
+            -- A special case for the equator
+            null;
+        else
+            direction_label := Trim(Integer'Image(Integer(abs(label_val))) & direction_label, Left);
+        end if;
+        label := Unbounded_To_Weird_C(direction_label, a_length);
+    end geolocation_labeler;
+
 begin
 
     -- Parse and process command line arguments 
@@ -85,8 +190,11 @@ begin
     minx := 190.0;
     maxx := 190.0 + 360.0;
 
+    -- Setup a custom latitude and longitude-based scaling function.
+    Set_Custom_Label(geolocation_labeler'Unrestricted_Access, System.Null_Address);
+
     Set_Pen_Color(Red);
-    Set_Environment(minx, maxx, miny, maxy, Justified, Box);
+    Set_Environment(minx, maxx, miny, maxy, Justified, Custom_Labels_Linear_Box_Plus);
     Draw_Map(null, USA_States_and_Continents, minx, maxx, miny, maxy);
 
     -- The Americas 
@@ -94,8 +202,13 @@ begin
     maxx := 340.0;
 
     Set_Pen_Color(Red);
-    Set_Environment(minx, maxx, miny, maxy, Justified, Box);
+    Set_Environment(minx, maxx, miny, maxy, Justified, Custom_Labels_Linear_Box_Plus);
     Draw_Map(null, USA_States_and_Continents, minx, maxx, miny, maxy);
+
+    -- Clear the labeling function.
+    Use_Default_Labels;
+    -- or...
+    -- plslabelfunc(Null, System.Null_Address);
 
     -- Polar, Northern hemisphere 
     minx := 0.0;

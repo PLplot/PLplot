@@ -2561,6 +2561,22 @@ package body PLplot_Traditional is
     --         PLPointer pltr_data);
 
 
+    -- Setup a user-provided custom labeling function.
+    procedure plslabelfunc
+       (Custom_Label_Procedure_Pointer : Custom_Label_Procedure_Pointer_Type;
+        label_data                     : PLPointer) is
+    begin
+        PLplot_Thin.plslabelfunc(Custom_Label_Procedure_Pointer, label_data);
+    end plslabelfunc;
+    
+    
+    -- Reset to default labeling. Not part of the C API.
+    procedure Use_Default_Labels is
+    begin
+        plslabelfunc(null, System.Null_Address);
+    end Use_Default_Labels;
+
+
     -- Set up lengths of major tick marks.
     procedure plsmaj(Default_Length, Scale_Factor : Long_Float) is
     begin

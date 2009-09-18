@@ -34,6 +34,7 @@
 
 with
     Interfaces.C,
+    Interfaces.C.Strings,
     Interfaces.C.Pointers,
     PLplot_Auxiliary,
     System,
@@ -42,6 +43,7 @@ with
     Ada.Strings.Unbounded;
 use
     Interfaces.C,
+    Interfaces.C.Strings,
     PLplot_Auxiliary,
     Ada.Text_IO,
     Ada.Strings.Bounded,
@@ -154,6 +156,24 @@ package PLplot_Thin is
     type Function_Evaluator_Pointer_Type is access
         function (ix, iy : PLINT; Irregular_Data : PLpointer) return PLFLT;
     pragma Convention(Convention => C, Entity => Function_Evaluator_Pointer_Type);
+    
+    
+    -- Fixed-length string for use with custom label procedures 
+    -- in Custom_Label_Procedure_Pointer_Type, and plslabelfunc (Set_Custom_Label).
+    -- This length, 0 .. 40, is hardwired in the PLplot C code; this type will
+    -- fail if that length is ever changed.
+    Label_String_Length : constant Integer := 40;
+    subtype Label_String_Type is Interfaces.C.char_array (0 .. size_t(Label_String_Length));
+
+    -- Access-to-function type for making custom labels such as with plslabelfunc.
+    type Custom_Label_Procedure_Pointer_Type is access
+        procedure 
+           (axis    : Integer;
+            a_value : Long_Float;
+            label   : out Label_String_Type;
+            length  : size_t;
+            data    : PLPointer);
+    pragma Convention(Convention => C, Entity => Custom_Label_Procedure_Pointer_Type);
 
 
 --------------------------------------------------------------------------------
@@ -212,6 +232,11 @@ package PLplot_Thin is
 
     PLSWIN_DEVICE : constant Integer := 1; -- device coordinates 
     PLSWIN_WORLD  : constant Integer := 2; -- world coordinates 
+
+    -- Axis label tags
+    PL_X_AXIS : constant Integer := 1; -- The x-axis
+    PL_Y_AXIS : constant Integer := 2; -- The y-axis
+    PL_Z_AXIS : constant Integer := 3; -- The z-axis
 
     -- PLplot Option table & support constants 
 
@@ -1417,6 +1442,14 @@ package PLplot_Thin is
 --         void (*pltr) ( : PLFLT;  : PLFLT;  : PL_Float_Array;  : PL_Float_Array; PLPointer),
 --         PLPointer pltr_data);
 --    pragma Import(C, plfshade, "plfshade");
+
+
+    -- Setup a user-provided custom labeling function.
+
+    procedure
+    plslabelfunc(label_func : Custom_Label_Procedure_Pointer_Type; label_data : PLPointer);
+    pragma Import(C, plslabelfunc, "c_plslabelfunc");
+
 
     -- Set up lengths of major tick marks. 
 

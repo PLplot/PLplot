@@ -83,6 +83,17 @@ package PLplot is
     
     -- "Rename" the necessarily constrained array for mapping longitudes and latitudes.
     subtype Map_Form_Constrained_Array is PLplot_Thin.Map_Form_Constrained_Array;
+    
+    -- This is a fixed-length string for use with custom label procedures 
+    -- in Custom_Label_Procedure_Pointer_Type, and plslabelfunc (Set_Custom_Label).
+    -- This length, 0 .. 40, is hardwired in the PLplot C code; this type will
+    -- fail if that length is ever changed.
+    Label_String_Length : Integer renames PLplot_Thin.Label_String_Length;
+    subtype Label_String_Type is PLplot_Thin.Label_String_Type;
+
+    -- "Rename" callback for custom label functions.
+    subtype Custom_Label_Procedure_Pointer_Type is 
+        PLplot_Thin.Custom_Label_Procedure_Pointer_Type;
 
 --------------------------------------------------------------------------------
 --        Types and constants for thick binding                               --
@@ -146,7 +157,7 @@ package PLplot is
     Justified_Square_Box : constant Justification_Type := 2;
 
     -- Axis styles
-    subtype Axis_Style_Type is Integer range -2..63; -- Not all values are used.
+    subtype Axis_Style_Type is Integer range -2..73; -- Not all values are used. fix this in docs
 
     No_Box            : constant Axis_Style_Type := -2;
     Box               : constant Axis_Style_Type := -1;
@@ -185,6 +196,11 @@ package PLplot is
     Date_Time_XY_Linear_Zero_Axes  : constant Axis_Style_Type := 61;
     Date_Time_XY_Linear_Major_Grid : constant Axis_Style_Type := 62;
     Date_Time_XY_Linear_Minor_Grid : constant Axis_Style_Type := 63;
+    
+    Custom_Labels_Linear_Box_Plus   : constant Axis_Style_Type := 70;
+    Custom_Labels_Linear_Zero_Axes  : constant Axis_Style_Type := 71;
+    Custom_Labels_Linear_Major_Grid : constant Axis_Style_Type := 72;
+    Custom_Labels_Linear_Minor_Grid : constant Axis_Style_Type := 73;
 
     -- Integer constrained to 0..255
     subtype Integer_0_255_Type is Integer range 0 .. 255;
@@ -258,6 +274,10 @@ package PLplot is
     Grid_Nearest_Neighbors_Linear_Interpolation             : constant Gridding_Algorithm_Type := 5; -- GRID_NNLI
     Grid_Nearest_Neighbors_Around_Inverse_Distance_Weighted : constant Gridding_Algorithm_Type := 6; -- GRID_NNAIDW
 
+    -- Axis label tags
+    x_axis : constant Integer := 1; -- The x-axis
+    y_axis : constant Integer := 2; -- The y-axis
+    z_axis : constant Integer := 3; -- The z-axis
 
 --------------------------------------------------------------------------------
 -- Constants copied from PLplot_Thin.ads so that it doesn't have to be seen.  --
@@ -295,6 +315,18 @@ package PLplot is
     GRID_NNIDW  : constant Gridding_Algorithm_Type := 4;
     GRID_NNLI   : constant Gridding_Algorithm_Type := 5;
     GRID_NNAIDW : constant Gridding_Algorithm_Type := 6;
+
+    -- Axis label tags
+    -- "PLplot style" names
+    -- This version for custom labels in plslabelfunc. Compare with e.g. "x_axis" above.
+    PL_X_AXIS : constant Integer := 1; -- The x-axis
+    PL_Y_AXIS : constant Integer := 2; -- The y-axis
+    PL_Z_AXIS : constant Integer := 3; -- The z-axis
+    -- "Ada style" names
+    Label_X_Axis : constant Integer := 1; -- The x-axis
+    Label_Y_Axis : constant Integer := 2; -- The y-axis
+    Label_Z_Axis : constant Integer := 3; -- The z-axis
+
 --------------------------------------------------------------------------------
 
 
@@ -1597,6 +1629,18 @@ package PLplot is
     --         void (*pltr) ( : PLFLT;  : PLFLT;  : PL_Float_Array;  : PL_Float_Array; PLPointer),
     --         PLPointer pltr_data);
     --
+
+
+    -- Setup a user-provided custom labeling function.
+    -- plslabelfunc
+    procedure Set_Custom_Label
+       (Custom_Label_Procedure_Pointer : Custom_Label_Procedure_Pointer_Type;
+        label_data : PLPointer);
+    
+    
+    -- Reset to default labeling. Not part of the C API.
+    procedure Use_Default_Labels;
+
 
     -- Set up lengths of major tick marks.
     -- plsmaj
