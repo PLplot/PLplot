@@ -195,12 +195,12 @@ if(ENABLE_ocaml)
       )
     
     set(OCAML_FULL_INSTALL_FILES
-      plplot.cma
-      plplot.cmxa
-      plplot.a
-      plplot.cmi
-      libplplot_stubs.a
-      plplot.mli
+      ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cma
+      ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cmxa
+      ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.a
+      ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.cmi
+      ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/libplplot_stubs.a
+      ${CMAKE_CURRENT_BINARY_DIR}/${OCAML_BUILD_DIR}/plplot.mli
       )
   
     # Most files go in the plplot subdirectory
