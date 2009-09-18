@@ -18,6 +18,12 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+# N.B. This file is used for both the core build (which installs the examples
+# and optionally [depending on BUILD_TEST} builds them) and the installed
+# examples build.  The core build has BUILD_TEST OFF or ON at user option
+# and CORE_BUILD always ON.  The installed examples build always has
+# BUILD_TEST ON and CORE_BUILD OFF.
+
 # N.B. examples 14 and 17 handled independently.
 set(python_STRING_INDICES
   "01"
@@ -117,20 +123,6 @@ if(ENABLE_pygcw)
     )
 endif(ENABLE_pygcw)
 
-set(PERM_SCRIPTS
-  OWNER_READ
-  OWNER_WRITE
-  OWNER_EXECUTE
-  GROUP_READ
-  GROUP_EXECUTE
-  WORLD_READ
-  WORLD_EXECUTE
-  )
-install(FILES ${python_SCRIPTS} 
-  DESTINATION ${DATA_DIR}/examples/python
-  PERMISSIONS ${PERM_SCRIPTS}
-  )
-
 # This list contains python modules which are not executable on their own and
 # data files that should be installed in the examples/python directory.
 
@@ -151,73 +143,98 @@ if(ENABLE_pygcw)
     )
 endif(ENABLE_pygcw)
 
-set(PERM_DATA
-  OWNER_READ
-  OWNER_WRITE
-  GROUP_READ
-  WORLD_READ
-  )
-install(FILES ${python_DATA} 
-  DESTINATION ${DATA_DIR}/examples/python
-  PERMISSIONS ${PERM_DATA}
-  )
+if(CORE_BUILD)
 
-if(BUILD_TEST)
-  # equivalent to install commands but at "make" time rather than
-  # "make install" time, to the build tree if different than the source
-  # tree, and skipping plplot_python_start.py since it is already
-  # in the build tree.
-  set(command_depends)
-  foreach(file ${python_SCRIPTS} ${python_DATA})
-    set(
-      command_DEPENDS
-      ${command_DEPENDS}
-      ${CMAKE_CURRENT_BINARY_DIR}/${file}
+  if(BUILD_TEST)
+    # equivalent to install commands but at "make" time rather than
+    # "make install" time, to the build tree if different than the source
+    # tree, and skipping plplot_python_start.py since it is already
+    # in the build tree.
+    set(command_depends)
+    foreach(file ${python_SCRIPTS} ${python_DATA})
+      add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
+	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+	)
+      list(APPEND command_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${file})
+    endforeach(file ${python_SCRIPTS} ${python_DATA})
+    add_custom_target(python_examples ALL DEPENDS ${command_DEPENDS})
+    set_property(GLOBAL PROPERTY TARGETS_examples_python python_examples
+      _plplotcmodule plplot_widgetmodule)
+    set_property(GLOBAL PROPERTY FILES_examples_python ${command_DEPENDS})
+  endif(BUILD_TEST)
+
+  set(PERM_SCRIPTS
+    OWNER_READ
+    OWNER_WRITE
+    OWNER_EXECUTE
+    GROUP_READ
+    GROUP_EXECUTE
+    WORLD_READ
+    WORLD_EXECUTE
+    )
+  install(FILES ${python_SCRIPTS} 
+    DESTINATION ${DATA_DIR}/examples/python
+    PERMISSIONS ${PERM_SCRIPTS}
+    )
+
+  set(PERM_DATA
+    OWNER_READ
+    OWNER_WRITE
+    GROUP_READ
+    WORLD_READ
+    )
+  install(FILES ${python_DATA} 
+    DESTINATION ${DATA_DIR}/examples/python
+    PERMISSIONS ${PERM_DATA}
+    )
+
+  set(python_location1 ${CMAKE_SOURCE_DIR}/bindings/python)
+  set(python_location2 ${CMAKE_BINARY_DIR}/bindings/python)
+  set(python_location3 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
+    @ONLY
+    )
+
+  set(python_location1 ${PYTHON_INSTDIR})
+  set(python_location2)
+  set(python_location3)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
+    @ONLY
+    )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
+    DESTINATION ${DATA_DIR}/examples/python
+    PERMISSIONS ${PERM_DATA}
+    RENAME plplot_python_start.py
+    )
+
+  if (HAVE_NUMPY)
+    configure_file(plplot_py_demos.py.numpy ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py COPYONLY)
+  else (HAVE_NUMPY)
+    configure_file(plplot_py_demos.py.numeric ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py COPYONLY)
+  endif (HAVE_NUMPY)
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py
+    DESTINATION ${DATA_DIR}/examples/python
+    PERMISSIONS ${PERM_DATA}
+    )
+
+  install(FILES CMakeLists.txt 
+    DESTINATION ${DATA_DIR}/examples/python
+    )
+
+else(CORE_BUILD)
+  set_property(GLOBAL PROPERTY FILES_examples_python)
+  foreach(file ${python_SCRIPTS} ${python_DATA} plplot_python_start.py plplot_py_demos.py)
+    set_property(GLOBAL APPEND PROPERTY FILES_examples_python
+      ${CMAKE_CURRENT_SOURCE_DIR}/${file}
       )
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-      )
-  endforeach(file ${python_SCRIPTS} ${python_DATA})
-  add_custom_target(python_examples ALL DEPENDS ${command_DEPENDS})
-  set_property(GLOBAL PROPERTY TARGETS_examples_python python_examples
-    _plplotcmodule plplot_widgetmodule)
-endif(BUILD_TEST)
-
-set(python_location1 ${CMAKE_SOURCE_DIR}/bindings/python)
-set(python_location2 ${CMAKE_BINARY_DIR}/bindings/python)
-set(python_location3 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
-  @ONLY
-  )
-
-set(python_location1 ${PYTHON_INSTDIR})
-set(python_location2)
-set(python_location3)
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
-  @ONLY
-  )
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
-  DESTINATION ${DATA_DIR}/examples/python
-  PERMISSIONS ${PERM_DATA}
-  RENAME plplot_python_start.py
-  )
-
-if (HAVE_NUMPY)
-  configure_file(plplot_py_demos.py.numpy ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py COPYONLY)
-else (HAVE_NUMPY)
-  configure_file(plplot_py_demos.py.numeric ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py COPYONLY)
-endif (HAVE_NUMPY)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_py_demos.py
-  DESTINATION ${DATA_DIR}/examples/python
-  PERMISSIONS ${PERM_DATA}
-  )
-
+  endforeach(file ${python_SCRIPTS} ${python_DATA} plplot_python_start.py plplot_py_demos.py)
+endif(CORE_BUILD)
