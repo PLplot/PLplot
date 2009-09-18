@@ -319,7 +319,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG,
     "-geometry geom",
-    "Window size, in pixels (e.g. -geometry 400x300)" },
+    "Window size (and optional position), in pixels (e.g. -geometry 400x300 or -geometry 400x300+100+200)" },
 {
     "geo",			/* Geometry (alias) */
     opt_geo,
