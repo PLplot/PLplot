@@ -101,9 +101,9 @@ if(ENABLE_octave)
   add_custom_target(
     make_documentation ALL
     DEPENDS ${make_documentation_DEPENDS}
-      )
+    )
 
-  # Generate source code for octave interface to PLplot.
+  # Configure source code for octave interface to PLplot.
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_octave.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
@@ -133,6 +133,8 @@ if(ENABLE_octave)
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
     )
+  set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc
+    PROPERTIES GENERATED ON)
 
   # Build octave interface.
   set(octave_interface_INCLUDE_PATHS
@@ -233,9 +235,19 @@ if(ENABLE_octave)
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
     )
-  # Both these targets file depend on ${make_documentation_DEPENDS}
-  # so must serialize for parallel builds.
+
+  # Both these targets file-depend on custom commands which in turn
+  # file-depend on ${make_documentation_DEPENDS}.  Therefore, must
+  # serialize these custom targets so that parallel build jobs
+  # don't interfere with each other.
   add_dependencies(plplot_stub.m_built make_documentation)
+
+  # Need access elsewhere (examples/octave) to the file depends of
+  # this custom target.
+  set_property(GLOBAL PROPERTY 
+    FILES_plplot_stub.m_built
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+    )
 
   install(FILES 
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
