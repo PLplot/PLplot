@@ -94,13 +94,13 @@ if(ENABLE_ocaml)
     set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
   endif(CAMLIDL_LIB_DIR)
   
-  # Subdirectory for ocamlbuild to use for build
-  option(OCAML_NEW_BUILD "Try new detailed OCaml build method?" OFF)
-  if(OCAML_NEW_BUILD)
-    set(OCAML_BUILD_DIR "" CACHE PATH "Subdirectory to use for ocamlbuild")
-  else(OCAML_NEW_BUILD)
+  option(OCAML_NEW_BUILD "Try new detailed OCaml build method?" ON)
+
+  if(NOT OCAML_NEW_BUILD)
+    # For the old-style build, a subdirectory is required for ocamlbuild
+    # to use for the build. 
     set(OCAML_BUILD_DIR _build CACHE PATH "Subdirectory to use for ocamlbuild")
-  endif(OCAML_NEW_BUILD)
+  endif(NOT OCAML_NEW_BUILD)
   
   # Installation follows the Debian ocaml policy for want of a better
   # standard.
