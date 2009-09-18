@@ -76,9 +76,6 @@ if(ENABLE_python)
   swig_add_module(plplotcmodule python plplotcmodule.i)
 
   swig_link_libraries(plplotcmodule plplot${LIB_TAG} ${PYTHON_LIBRARIES})
-  # FIXME: Previously I found this should be retwritten as:
-  #swig_link_libraries(plplotcmodule plplot${LIB_TAG})
-  # Investigate before changing.
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
@@ -97,9 +94,6 @@ if(ENABLE_python)
     "-DUSINGDLL"
     )
 
-  # FIXME: It remains unclear why PYTHON_LIBRARIES is in this list.  This
-  # might be system dependent.  Doesn't seem to be needed for Linux.  Is it
-  # really needed for other platforms?  Further investigation required.
   if(ENABLE_tk)
     target_link_libraries( plplot_widgetmodule
       plplot${LIB_TAG}
