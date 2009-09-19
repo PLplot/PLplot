@@ -251,22 +251,44 @@ DESTINATION ${INCLUDE_DIR}
 # Generate plplot.tcl and tclIndex in build tree.  At least the first one
 # is always needed for build-tree tests of tcl examples.
 
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  ${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
+  ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
+  DEPENDS
+  ${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
+  )
+
 # _target suffix to avoid nameclash with filename plplot.tcl.  This
 # nameclash screwed up ../tk/configuration which had a non-generated file
 # of the same name which was a dependency of a custom target.
-add_custom_target(plplot.tcl_target ALL
-COMMAND ${CMAKE_COMMAND}
--E copy
-${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
-plplot.tcl
-DEPENDS
-${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
-)
+add_custom_target(plplot.tcl_target ALL 
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
+  )
+set_property(GLOBAL PROPERTY 
+  FILES_plplot.tcl_target ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
+  )
+
+# A Tcl expert should insert the file depends here.
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+  COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  )
 
 add_custom_target(tclIndex_tcl ALL
-COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
-WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-)
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+  )
+set_property(GLOBAL PROPERTY 
+  FILES_tclIndex_tcl ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+  )
+
+
+# I don't think this is necessary, but I am not sure of the file
+# depends of the custom_command associated with tclIndex_tcl and
+# serializing these targets doesn't slow down parallel builds very
+# much.
 add_dependencies(tclIndex_tcl plplot.tcl_target)
 
 if(NOT ENABLE_tk)
