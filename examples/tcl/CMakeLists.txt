@@ -18,6 +18,12 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+# N.B. This file is used for both the core build (which installs the examples
+# and optionally [depending on BUILD_TEST} builds them) and the installed
+# examples build.  The core build has BUILD_TEST OFF or ON at user option
+# and CORE_BUILD always ON.  The installed examples build always has
+# BUILD_TEST ON and CORE_BUILD OFF.
+
 set(tcl_FILES
 README.tcldemos
 plgrid.tcl
@@ -68,60 +74,83 @@ foreach(STRING_INDEX ${tcl_STRING_INDICES})
   set(tcl_SCRIPTS ${tcl_SCRIPTS} x${STRING_INDEX})
 endforeach(STRING_INDEX ${tcl_STRING_INDICES})
 
-install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
-install(PROGRAMS ${tcl_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
-
-# Copy file and scripts to the binary directory if different to the
-# source directory. Needed for ctest, but also so the tclIndex file
-# is generated in the binary tree not the source tree.
-if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-  set(tclIndex_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+if(CORE_BUILD)
+  # Copy file and scripts to the binary directory if different to the
+  # source directory. Needed for ctest, but also so the tclIndex file
+  # is generated in the binary tree not the source tree.
   set(tclIndex_DEPENDS)
   foreach(file ${tcl_SCRIPTS} ${tcl_FILES})
-    set(
-    tclIndex_DEPENDS
-    ${tclIndex_DEPENDS}
-    ${CMAKE_CURRENT_BINARY_DIR}/${file}
-    )
     add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    )
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+      )
+    list(APPEND tclIndex_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${file})
   endforeach(file ${tcl_SCRIPTS} ${tcl_FILES})
   add_custom_target(tcl_examples ALL DEPENDS ${tclIndex_DEPENDS})
-else(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-  set(tclIndex_DEPENDS ${tcl_FILES} ${tcl_SCRIPTS})
-  set(tclIndex_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 
-add_custom_command(
-OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
-DEPENDS ${tclIndex_DEPENDS}
-WORKING_DIRECTORY ${tclIndex_WORKING_DIRECTORY}
-)
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+    COMMAND ${TCL_TCLSH} ${MKTCLINDEX} ${MKTCLINDEX_ARGS}
+    DEPENDS ${tclIndex_DEPENDS}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+  add_custom_target(tclIndex_examples_tcl ALL
+    DEPENDS ${tclIndex_DEPENDS} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+    )
 
-install(
-FILES ${tclIndex_WORKING_DIRECTORY}/tclIndex
-DESTINATION ${DATA_DIR}/examples/tcl
-)
-
-add_custom_target(tclIndex_examples_tcl ALL
-  DEPENDS ${tclIndex_DEPENDS} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-)
-
-# Workaround CMake 2-level make recursion issue where independent
-# file dependency chains that refer to the same files must have
-# target dependencies between them in order to work for parallel
-# builds (and possibly some visual studio builds).
-if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+  # These two custom targets file-depend on common files so must serialize.
   add_dependencies(tclIndex_examples_tcl tcl_examples)
-endif(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
+    DESTINATION ${DATA_DIR}/examples/tcl
+    )
+
+  install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
+  install(PROGRAMS ${tcl_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
+
+  install(FILES CMakeLists.txt 
+    DESTINATION ${DATA_DIR}/examples/tcl
+    )
+
+else(CORE_BUILD)
+  set(tclIndex_DEPENDS)
+  foreach(file ${tcl_SCRIPTS} ${tcl_FILES})
+    list(APPEND tclIndex_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+  endforeach(file ${tcl_SCRIPTS} ${tcl_FILES})
+  add_custom_target(tcl_examples ALL DEPENDS ${tclIndex_DEPENDS})
+
+endif(CORE_BUILD)
 
 if(BUILD_TEST)
-  set_property(GLOBAL PROPERTY TARGETS_examples_tcl tcl_examples 
-    tclIndex_examples_tcl pltcl plplot.tcl_target
-    )
+  if(CORE_BUILD)
+    set_property(GLOBAL PROPERTY TARGETS_examples_tcl
+      tcl_examples
+      tclIndex_examples_tcl 
+      plplottcltk${LIB_TAG}
+      pltcl 
+      plplot.tcl_target
+      tclIndex_tcl
+      )
+    get_property(files_plplot.tcl_target GLOBAL PROPERTY FILES_plplot.tcl_target)
+    get_property(files_tclIndex_tcl GLOBAL PROPERTY FILES_tclIndex_tcl)
+    set_property(GLOBAL PROPERTY FILES_examples_tcl
+      ${tclIndex_DEPENDS}
+      ${CMAKE_CURRENT_BINARY_DIR}/tclIndex 
+      plplottcltk${LIB_TAG}
+      pltcl 
+      ${files_plplot.tcl_target}
+      ${files_tclIndex_tcl}
+      )
+  else(CORE_BUILD)
+    set_property(GLOBAL PROPERTY TARGETS_examples_tcl
+      tcl_examples
+      plplottcltk${LIB_TAG}
+      )
+    set_property(GLOBAL PROPERTY FILES_examples_tcl
+      ${tclIndex_DEPENDS}
+      plplottcltk${LIB_TAG}
+      )
+  endif(CORE_BUILD)
 endif(BUILD_TEST)
