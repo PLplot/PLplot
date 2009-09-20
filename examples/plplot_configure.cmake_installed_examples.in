@@ -25,119 +25,44 @@ set(language_info_LIST @language_info_LIST@)
 # commands must be done on the rare occasions when a language is added
 # to PLplot.  Cannot make the list of set commands automatically with
 # a foreach loop because explicit configuration of each name is required.
-set(CORE_ENABLE_ada @ENABLE_ada@)
-# N.B. The core never sets ENABLE_c since C is always on for the core.
-set(CORE_ENABLE_c ON)
-set(CORE_ENABLE_cxx @ENABLE_cxx@)
-set(CORE_ENABLE_d @ENABLE_d@)
-set(CORE_ENABLE_f77 @ENABLE_f77@)
-set(CORE_ENABLE_f95 @ENABLE_f95@)
-set(CORE_ENABLE_java @ENABLE_java@)
-set(CORE_ENABLE_lua @ENABLE_lua@)
-set(CORE_ENABLE_ocaml @ENABLE_ocaml@)
-set(CORE_ENABLE_octave @ENABLE_octave@)
-set(CORE_ENABLE_pdl @ENABLE_pdl@)
-set(CORE_ENABLE_python @ENABLE_python@)
-set(CORE_ENABLE_tcl @ENABLE_tcl@)
+set(ENABLE_ada @ENABLE_ada@)
+set(ENABLE_c @ENABLE_c@)
+set(ENABLE_cxx @ENABLE_cxx@)
+set(ENABLE_d @ENABLE_d@)
+set(ENABLE_f77 @ENABLE_f77@)
+set(ENABLE_f95 @ENABLE_f95@)
+set(ENABLE_java @ENABLE_java@)
+set(ENABLE_lua @ENABLE_lua@)
+set(ENABLE_ocaml @ENABLE_ocaml@)
+set(ENABLE_octave @ENABLE_octave@)
+set(ENABLE_pdl @ENABLE_pdl@)
+set(ENABLE_python @ENABLE_python@)
+set(ENABLE_tcl @ENABLE_tcl@)
 
 # Interactive bindings
-set(CORE_ENABLE_tk @ENABLE_tk@)
-set(CORE_ENABLE_gnome2 @ENABLE_gnome2@)
-set(CORE_ENABLE_wxwidgets @ENABLE_wxwidgets@)
-set(CORE_ENABLE_qt @ENABLE_qt@)
+set(ENABLE_tk @ENABLE_tk@)
+set(ENABLE_gnome2 @ENABLE_gnome2@)
+set(ENABLE_wxwidgets @ENABLE_wxwidgets@)
+set(ENABLE_qt @ENABLE_qt@)
 
-# What computer languages do we have configured by the core build system?
-option(DEFAULT_NO_BINDINGS
-  "All language bindings are disabled by default"
-  OFF
-  )
+# Check for all officially supported CMake compilers that we use with
+# soft-landing support.
+include(language_support)
 
-if(DEFAULT_NO_BINDINGS)
-  set(PRESET_DEFAULT ON)
-  set(DEFAULT OFF)
-else(DEFAULT_NO_BINDINGS)
-  set(PRESET_DEFAULT OFF)
-endif(DEFAULT_NO_BINDINGS)
-
-# Add interactive bindings to list for option processing
-foreach(language_info tk:? gnome2:? wxwidgets:? qt:? ${language_info_LIST})
-  string(REGEX REPLACE "^(.*):.*:.*$" "\\1" language ${language_info})
-  #message("DEBUG: language = ${language}")
-  if(language STREQUAL "c")
-    #special case where the build system requires C.
-    set(ENABLE_${language} ON CACHE BOOL "Enable ${language} bindings" FORCE)
-  else(language STREQUAL "c")
-    if(CORE_ENABLE_${language})
-      if(NOT PRESET_DEFAULT)
-	set(DEFAULT ${CORE_ENABLE_${language}})
-      endif(NOT PRESET_DEFAULT)
-      option(ENABLE_${language} "Enable ${language} bindings" ${DEFAULT})
-    else(CORE_ENABLE_${language})
-      set(ENABLE_${language} OFF CACHE BOOL "Enable ${language} bindings" FORCE)
-    endif(CORE_ENABLE_${language})
-  endif(language STREQUAL "c")
-endforeach(language_info ${language_info_LIST})
-
-# Always carry out C checks because build system requires a C compiler
-# for some of the automatic checking that is done.
-set(alwaysc ON)
-
-# OPTIONAL below currently does not work properly with CMake so attempt
-# to deal with a possibly missing compiler first as a workaround.
-if(alwaysc OR ENABLE_c)
-  include(CMakeDetermineCCompiler)
-  if(NOT CMAKE_C_COMPILER)
-    # This is a FATAL_ERROR rather than STATUS message because C compiler
-    # absolutely required for some of the automatic checking that is done.
-    message(FATAL_ERROR "C compiler absolutely required to build this project.")
-    message(STATUS "WARNING: C compiler not found so disabling C examples.")
-    set(ENABLE_c OFF CACHE BOOL "Enable c bindings" FORCE)
-  endif(NOT CMAKE_C_COMPILER)
-endif(alwaysc OR ENABLE_c)
-
-if(alwaysc OR ENABLE_c)
-  enable_language(C OPTIONAL)
-  if(NOT CMAKE_C_COMPILER_WORKS)
-    # This is a FATAL_ERROR rather than STATUS message because C compiler
-    # absolutely required for some of the automatic checking that is done.
-    message(FATAL_ERROR "C compiler absolutely required to build this project.")
-    message(STATUS "WARNING: C compiler does not work so disabling C examples.")
-    set(ENABLE_c OFF CACHE BOOL "Enable c bindings" FORCE)
-  endif(NOT CMAKE_C_COMPILER_WORKS)
-endif(alwaysc OR ENABLE_c)
-
-# OPTIONAL below currently does not work properly with CMake so attempt
-# to deal with a possibly missing compiler first as a workaround.
-if(ENABLE_ada)
-  include(CMakeDetermineAdaCompiler)
-  if(NOT CMAKE_Ada_COMPILER)
-    message(STATUS "WARNING: Ada compiler not found so disabling Ada examples.")
-    set(ENABLE_ada OFF CACHE BOOL "Enable ada bindings" FORCE)
-  endif(NOT CMAKE_Ada_COMPILER)
-endif(ENABLE_ada)
-
-if(ENABLE_ada)
-  enable_language(Ada OPTIONAL)
-  if(NOT CMAKE_Ada_COMPILER_WORKS)
-    message(STATUS "WARNING: Ada compiler does not work so disabling Ada examples.")
-    set(ENABLE_ada OFF CACHE BOOL "Enable ada bindings" FORCE)
-  endif(NOT CMAKE_Ada_COMPILER_WORKS)
-endif(ENABLE_ada)
-
-if(ENABLE_ada)
-  set(ADA_INCLUDE_DIR @ADA_INCLUDE_DIR@)
-  set(ADA_LIB_DIR @ADA_LIB_DIR@)
-endif(ENABLE_ada)
-
-# OPTIONAL below currently does not work properly with CMake so attempt
-# to deal with a possibly missing compiler first as a workaround.
-if(ENABLE_cxx)
-  include(CMakeDetermineCXXCompiler)
-  if(NOT CMAKE_CXX_COMPILER)
-    message(STATUS "WARNING: C++ compiler not found so disabling C++ examples.")
-    set(ENABLE_cxx OFF CACHE BOOL "Enable cxx bindings" FORCE)
-  endif(NOT CMAKE_CXX_COMPILER)
-endif(ENABLE_cxx)
+# First field is lower-case language string, second field is
+# mixed-case language string used for official CMake variables, third
+# field is language string to be used in output messages, and final
+# field is whether it is a fatal error if this language is missing/not
+# working.
+set(COMPILED_LANGUAGE_INFO_LIST
+"c:C:C:ON"
+"ada:Ada:Ada:OFF"
+"cxx:CXX:C++:OFF"
+"d:D:D:OFF"
+"f77:Fortran:Fortran:OFF"
+"f95:Fortran:Fortran:OFF"
+"java:Java:Java:OFF"
+)
 
 if(ENABLE_cxx)
   enable_language(CXX OPTIONAL)
@@ -147,16 +72,6 @@ if(ENABLE_cxx)
   endif(NOT CMAKE_CXX_COMPILER_WORKS)
 endif(ENABLE_cxx)
 
-# OPTIONAL below currently does not work properly with CMake so attempt
-# to deal with a possibly missing compiler first as a workaround.
-if(ENABLE_d)
-  include(CMakeDetermineDCompiler)
-  if(NOT CMAKE_D_COMPILER)
-    message(STATUS "WARNING: D compiler not found so disabling D examples.")
-    set(ENABLE_d OFF CACHE BOOL "Enable d bindings" FORCE)
-  endif(NOT CMAKE_D_COMPILER)
-endif(ENABLE_d)
-
 if(ENABLE_d)
   enable_language(D OPTIONAL)
   if(NOT CMAKE_D_COMPILER_WORKS)
@@ -165,25 +80,39 @@ if(ENABLE_d)
   endif(NOT CMAKE_D_COMPILER_WORKS)
 endif(ENABLE_d)
 
-# OPTIONAL below currently does not work properly with CMake so attempt
-# to deal with a possibly missing compiler first as a workaround.
-if(ENABLE_f77 OR ENABLE_f95)
-  include(CMakeDetermineFortranCompiler)
-  if(NOT CMAKE_Fortran_COMPILER)
-    message(STATUS "WARNING: Fortran compiler not found so disabling Fortran examples.")
-    set(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
-    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
-  endif(NOT CMAKE_Fortran_COMPILER)
-endif(ENABLE_f77 OR ENABLE_f95)
+foreach(COMPILED_LANGUAGE_INFO ${COMPILED_LANGUAGE_INFO_LIST})
+  string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" language ${COMPILED_LANGUAGE_INFO})
+  string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" Language ${COMPILED_LANGUAGE_INFO})
+  string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" language_output ${COMPILED_LANGUAGE_INFO})
+  string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" fatal_language ${COMPILED_LANGUAGE_INFO})
+  if(ENABLE_${language} AND NOT PLPLOT_${Language}_COMPILER_WORKS)
+    workaround_9220(${Language} PLPLOT_${Language}_COMPILER_WORKS)
+    if(NOT PLPLOT_${Language}_COMPILER_WORKS)
+      if(fatal_language)
+	message(FATAL_ERROR "${language_output} compiler absolutely required to build this project.")
+      endif(fatal_language)
+      message(STATUS "WARNING: no working ${language_output} compiler so disabling ${language} examples.")
+      set(ENABLE_${language} OFF CACHE BOOL "Enable ${language} bindings" FORCE)
+    endif(NOT PLPLOT_${Language}_COMPILER_WORKS)
+  endif(ENABLE_${language} AND NOT PLPLOT_${Language}_COMPILER_WORKS)
 
-if(ENABLE_f77 OR ENABLE_f95)
-  enable_language(Fortran OPTIONAL)
-  if(NOT CMAKE_Fortran_COMPILER_WORKS)
-    message(STATUS "WARNING: Fortran compiler does not work so disabling Fortran examples.")
-    set(ENABLE_f77 OFF CACHE BOOL "Enable f77 bindings" FORCE)
-    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
-  endif(NOT CMAKE_Fortran_COMPILER_WORKS)
-endif(ENABLE_f77 OR ENABLE_f95)
+  if(ENABLE_${language})
+    # Find and check ${Language} compiler
+    enable_language(${Language} OPTIONAL)
+    if(NOT CMAKE_${Language}_COMPILER_WORKS)
+      if(fatal_language)
+	message(FATAL_ERROR "${language_output} compiler absolutely required to build this project.")
+      endif(fatal_language)
+      message(STATUS "WARNING: no working ${language_output} compiler so disabling ${language} examples.")
+      set(ENABLE_${language} OFF CACHE BOOL "Enable ${language} bindings" FORCE)
+    endif(NOT CMAKE_${Language}_COMPILER_WORKS)
+  endif(ENABLE_${language})
+endforeach(COMPILED_LANGUAGE_INFO ${COMPILED_LANGUAGE_INFO_LIST})
+
+if(ENABLE_ada)
+  set(ADA_INCLUDE_DIR @ADA_INCLUDE_DIR@)
+  set(ADA_LIB_DIR @ADA_LIB_DIR@)
+endif(ENABLE_ada)
 
 if(ENABLE_f77 OR ENABLE_f95)
   set(STATIC_OPTS @STATIC_OPTS@)
@@ -192,24 +121,6 @@ endif(ENABLE_f77 OR ENABLE_f95)
 if(ENABLE_f95)
   set(F95_MOD_DIR @F95_MOD_DIR@)
 endif(ENABLE_f95)
-
-# OPTIONAL below currently does not work properly with CMake so attempt
-# to deal with a possibly missing compiler first as a workaround.
-if(ENABLE_java)
-  include(CMakeDetermineJavaCompiler)
-  if(NOT CMAKE_Java_COMPILER)
-    message(STATUS "WARNING: Java compiler not found so disabling Java examples.")
-    set(ENABLE_java OFF CACHE BOOL "Enable java bindings" FORCE)
-  endif(NOT CMAKE_Java_COMPILER)
-endif(ENABLE_java)
-
-if(ENABLE_java)
-  enable_language(Java OPTIONAL)
-  if(NOT CMAKE_Java_COMPILER_WORKS)
-    message(STATUS "WARNING: Java compiler does not work so disabling Java examples.")
-    set(ENABLE_java OFF CACHE BOOL "Enable java bindings" FORCE)
-  endif(NOT CMAKE_Java_COMPILER_WORKS)
-endif(ENABLE_java)
 
 if(ENABLE_java)
   find_package(JNI)
@@ -251,6 +162,7 @@ if(ENABLE_qt)
 endif(ENABLE_qt)
 
 set(ENABLE_DYNDRIVERS @ENABLE_DYNDRIVERS@)
+
 # List of all devices that will be used for noninteractive device tests.
 # Exclude some devices (linuxvga, conex?) in plplot-test.sh
 # where it is likely they are interactive.
@@ -307,74 +219,43 @@ set(noninteractive_devices_info_LIST
 # potentially is a maintenance issue.  However, cannot make this list
 # automatically with a foreach loop because explicit configuration of
 # each name is required.
-set(CORE_PLD_pdfcairo @PLD_pdfcairo@)
-set(CORE_PLD_pngcairo @PLD_pngcairo@)
-set(CORE_PLD_pscairo @PLD_pscairo@)
-set(CORE_PLD_svgcairo @PLD_svgcairo@)
-set(CORE_PLD_cgm @PLD_cgm@)
-set(CORE_PLD_dg300 @PLD_dg300@)
-set(CORE_PLD_epsqt @PLD_epsqt@)
-set(CORE_PLD_pdfqt @PLD_pdfqt@)
-set(CORE_PLD_bmpqt @PLD_bmpqt@)
-set(CORE_PLD_jpgqt @PLD_jpgqt@)
-set(CORE_PLD_pngqt @PLD_pngqt@)
-set(CORE_PLD_ppmqt @PLD_ppmqt@)
-set(CORE_PLD_tiffqt @PLD_tiffqt@)
-set(CORE_PLD_svgqt @PLD_svgqt@)
-set(CORE_PLD_gif @PLD_gif@)
-set(CORE_PLD_jpeg @PLD_jpeg@)
-set(CORE_PLD_png @PLD_png@)
-set(CORE_PLD_hp7470 @PLD_hp7470@)
-set(CORE_PLD_hp7580 @PLD_hp7580@)
-set(CORE_PLD_lj_hpgl @PLD_lj_hpgl@)
-set(CORE_PLD_imp @PLD_imp@)
-set(CORE_PLD_ljii @PLD_ljii@)
-set(CORE_PLD_ljiip @PLD_ljiip@)
-set(CORE_PLD_pbm @PLD_pbm@)
-set(CORE_PLD_pdf @PLD_pdf@)
-set(CORE_PLD_ps @PLD_ps@)
-set(CORE_PLD_pstex @PLD_pstex@)
-set(CORE_PLD_psttf @PLD_psttf@)
-set(CORE_PLD_svg @PLD_svg@)
-set(CORE_PLD_tek4010f @PLD_tek4010f@)
-set(CORE_PLD_tek4107f @PLD_tek4107f@)
-set(CORE_PLD_wxpng @PLD_wxpng@)
-set(CORE_PLD_xfig @PLD_xfig@)
-
-# Special case where core configures both ps and psc with PLD_ps.
-set(CORE_PLD_psc @PLD_ps@)
-# Special case where core configures both psttf and psttfc with PLD_psttf.
-set(CORE_PLD_psttfc @PLD_psttf@)
+set(PLD_pdfcairo @PLD_pdfcairo@)
+set(PLD_pngcairo @PLD_pngcairo@)
+set(PLD_pscairo @PLD_pscairo@)
+set(PLD_svgcairo @PLD_svgcairo@)
+set(PLD_cgm @PLD_cgm@)
+set(PLD_dg300 @PLD_dg300@)
+set(PLD_epsqt @PLD_epsqt@)
+set(PLD_pdfqt @PLD_pdfqt@)
+set(PLD_bmpqt @PLD_bmpqt@)
+set(PLD_jpgqt @PLD_jpgqt@)
+set(PLD_pngqt @PLD_pngqt@)
+set(PLD_ppmqt @PLD_ppmqt@)
+set(PLD_tiffqt @PLD_tiffqt@)
+set(PLD_svgqt @PLD_svgqt@)
+set(PLD_gif @PLD_gif@)
+set(PLD_jpeg @PLD_jpeg@)
+set(PLD_png @PLD_png@)
+set(PLD_hp7470 @PLD_hp7470@)
+set(PLD_hp7580 @PLD_hp7580@)
+set(PLD_lj_hpgl @PLD_lj_hpgl@)
+set(PLD_imp @PLD_imp@)
+set(PLD_ljii @PLD_ljii@)
+set(PLD_ljiip @PLD_ljiip@)
+set(PLD_pbm @PLD_pbm@)
+set(PLD_pdf @PLD_pdf@)
+set(PLD_ps @PLD_ps@)
+set(PLD_psc @PLD_psc@)
+set(PLD_pstex @PLD_pstex@)
+set(PLD_psttf @PLD_psttf@)
+set(PLD_psttfc @PLD_psttfc@)
+set(PLD_svg @PLD_svg@)
+set(PLD_tek4010f @PLD_tek4010f@)
+set(PLD_tek4107f @PLD_tek4107f@)
+set(PLD_wxpng @PLD_wxpng@)
+set(PLD_xfig @PLD_xfig@)
 
 # Set interactive/external devices that are needed to build certain examples.
-set(CORE_PLD_xcairo @PLD_xcairo@)
-set(CORE_PLD_extcairo @PLD_extcairo@)
+set(PLD_xcairo @PLD_xcairo@)
+set(PLD_extcairo @PLD_extcairo@)
 
-option(DEFAULT_NO_DEVICES
-  "Disable all (ON) or enable individually (OFF) devices by default"
-  OFF
-  )
-
-if(DEFAULT_NO_DEVICES)
-  set(PRESET_DEFAULT ON)
-  set(DEFAULT OFF)
-else(DEFAULT_NO_DEVICES)
-  set(PRESET_DEFAULT OFF)
-endif(DEFAULT_NO_DEVICES)
-
-# Generate psc, xcairo, and extcairo options in addition to everything on
-# noninteractive_devices_info_LIST
-
-foreach(noninteractive_devices_info psc:? xcairo:? extcairo:? ${noninteractive_devices_info_LIST})
-  string(REGEX REPLACE "^(.*):.*$" "\\1" DEVICE ${noninteractive_devices_info})
-  #message("DEBUG: DEVICE = ${DEVICE}")
-  if(CORE_PLD_${DEVICE})
-    if(NOT PRESET_DEFAULT)
-      set(DEFAULT ${CORE_PLD_${DEVICE}})
-    endif(NOT PRESET_DEFAULT)
-    option(PLD_${DEVICE} "Enable ${DEVICE} device" ${DEFAULT})
-  else(CORE_PLD_${DEVICE})
-    set(PLD_${DEVICE} OFF CACHE BOOL "Enable ${device} device" FORCE)
-  endif(CORE_PLD_${DEVICE})
-
-endforeach(noninteractive_devices_info psc:OFF xcairo:OFF extcairo:OFF ${noninteractive_devices_info_LIST})
