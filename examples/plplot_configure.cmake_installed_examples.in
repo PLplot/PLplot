@@ -64,22 +64,6 @@ set(COMPILED_LANGUAGE_INFO_LIST
 "java:Java:Java:OFF"
 )
 
-if(ENABLE_cxx)
-  enable_language(CXX OPTIONAL)
-  if(NOT CMAKE_CXX_COMPILER_WORKS)
-    message(STATUS "WARNING: C++ compiler does not work so disabling C++ examples.")
-    set(ENABLE_cxx OFF CACHE BOOL "Enable cxx bindings" FORCE)
-  endif(NOT CMAKE_CXX_COMPILER_WORKS)
-endif(ENABLE_cxx)
-
-if(ENABLE_d)
-  enable_language(D OPTIONAL)
-  if(NOT CMAKE_D_COMPILER_WORKS)
-    message(STATUS "WARNING: D compiler does not work so disabling D examples.")
-    set(ENABLE_d OFF CACHE BOOL "Enable d bindings" FORCE)
-  endif(NOT CMAKE_D_COMPILER_WORKS)
-endif(ENABLE_d)
-
 foreach(COMPILED_LANGUAGE_INFO ${COMPILED_LANGUAGE_INFO_LIST})
   string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" language ${COMPILED_LANGUAGE_INFO})
   string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" Language ${COMPILED_LANGUAGE_INFO})
