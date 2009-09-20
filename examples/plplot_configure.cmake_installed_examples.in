@@ -17,32 +17,14 @@ set(LIB_TAG "@LIB_TAG@")
 set(INCLUDE_DIR @INCLUDE_DIR@)
 set(MATH_LIB @MATH_LIB@)
 
-# language_info_LIST contains information about the languages used
-# in the noninteractive tests.
-# First field is language (which must be consistent with following
-# configured set commands).
-# Second field is suffix on plplot-test.sh results for that language.
+set(language_info_LIST @language_info_LIST@)
 
-set(language_info_LIST
-  ada:a
-  c:c
-  cxx:cxx
-  d:d
-  f77:f
-  f95:f95
-  java:j
-  lua:lua
-  ocaml:ocaml
-  octave:o
-  pdl:pdl
-  python:p
-  tcl:t
-  )
-
-# This list of set commands must be consistent with the above list which
-# potentially is a maintenance issue.  However, cannot make this list
-# automatically with a foreach loop because explicit configuration of
-# each name is required.
+# This list of set commands must be consistent with language_info_LIST
+# set in examples/CMakeLists.txt and configured just above.  Thus,
+# some consistent maintenance of that list and the current list of set
+# commands must be done on the rare occasions when a language is added
+# to PLplot.  Cannot make the list of set commands automatically with
+# a foreach loop because explicit configuration of each name is required.
 set(CORE_ENABLE_ada @ENABLE_ada@)
 # N.B. The core never sets ENABLE_c since C is always on for the core.
 set(CORE_ENABLE_c ON)
@@ -79,7 +61,7 @@ endif(DEFAULT_NO_BINDINGS)
 
 # Add interactive bindings to list for option processing
 foreach(language_info tk:? gnome2:? wxwidgets:? qt:? ${language_info_LIST})
-  string(REGEX REPLACE "^(.*):.*$" "\\1" language ${language_info})
+  string(REGEX REPLACE "^(.*):.*:.*$" "\\1" language ${language_info})
   #message("DEBUG: language = ${language}")
   if(language STREQUAL "c")
     #special case where the build system requires C.
@@ -268,6 +250,7 @@ if(ENABLE_qt)
   set(CORE_QT_VERSION_PATCH @QT_VERSION_PATCH@)
 endif(ENABLE_qt)
 
+set(ENABLE_DYNDRIVERS @ENABLE_DYNDRIVERS@)
 # List of all devices that will be used for noninteractive device tests.
 # Exclude some devices (linuxvga, conex?) in plplot-test.sh
 # where it is likely they are interactive.

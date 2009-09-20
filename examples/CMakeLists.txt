@@ -25,118 +25,8 @@
 # BUILD_TEST ON and CORE_BUILD OFF.
 
 if(CORE_BUILD)
-  if(BUILD_TEST)
-    remove_definitions("-DHAVE_CONFIG_H")
-  endif(BUILD_TEST)
-
-  # Sort out RPATH issues for traditional build of installed examples using
-  # */Makefiles configured in each * subdirectory from */Makefile.examples.in.
-  if(USE_RPATH)
-    get_target_property(_LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-    string(REGEX REPLACE ";" ":" LIB_INSTALL_RPATH "${_LIB_INSTALL_RPATH}")
-    set(RPATHCMD "-Wl,-rpath -Wl,${LIB_INSTALL_RPATH}")
-    if(PLD_extqt)
-      if(ENABLE_DYNDRIVERS)
-	get_target_property(_qt_INSTALL_RPATH qt INSTALL_RPATH)
-	string(REGEX REPLACE ";" ":" qt_INSTALL_RPATH "${_qt_INSTALL_RPATH}")
-	set(qt_RPATHCMD "-Wl,-rpath -Wl,${qt_INSTALL_RPATH}:${DRV_DIR}")
-      else(ENABLE_DYNDRIVERS)
-	set(qt_RPATHCMD ${RPATHCMD})
-      endif(ENABLE_DYNDRIVERS)
-    endif(PLD_extqt)
-  endif(USE_RPATH)
-
-  # Install lena.pgm in installed examples directory so that all implementations
-  # of example 20 in the various examples subdirectories can conveniently
-  # access this file.
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
-    DESTINATION ${DATA_DIR}/examples
-    )
-
-  # Do the same as above for the build tree for those who want to individually
-  # run the various example 20 implementations from the examples subdirectories
-  # of the build tree.
-
-  if(BUILD_TEST)
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
-      ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
-      )
-    add_custom_target(examples_lena_file ALL
-      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
-      )
-  endif(BUILD_TEST)
-
-  # Compiled example directories first.
-  add_subdirectory(c)
-  get_property(targets_examples_c GLOBAL PROPERTY TARGETS_examples_c)
-
-  if(ENABLE_ada)
-    add_subdirectory(ada)
-    get_property(targets_examples_ada GLOBAL PROPERTY TARGETS_examples_ada)
-  endif(ENABLE_ada)
-
-  if(ENABLE_cxx)
-    add_subdirectory(c++)
-    get_property(targets_examples_cxx GLOBAL PROPERTY TARGETS_examples_cxx)
-  endif(ENABLE_cxx)
-
-  if(ENABLE_d)
-    add_subdirectory(d)
-    get_property(targets_examples_d GLOBAL PROPERTY TARGETS_examples_d)
-  endif(ENABLE_d)
-
-  if(ENABLE_f77)
-    add_subdirectory(f77)
-    get_property(targets_examples_f77 GLOBAL PROPERTY TARGETS_examples_f77)
-  endif(ENABLE_f77)
-
-  if(ENABLE_f95)
-    add_subdirectory(f95)
-    get_property(targets_examples_f95 GLOBAL PROPERTY TARGETS_examples_f95)
-  endif(ENABLE_f95)
-
-  if(ENABLE_java)
-    add_subdirectory(java)
-    get_property(targets_examples_java GLOBAL PROPERTY TARGETS_examples_java)
-  endif(ENABLE_java)
-
-  if(ENABLE_ocaml)
-    add_subdirectory(ocaml)
-    get_property(targets_examples_ocaml GLOBAL PROPERTY TARGETS_examples_ocaml)
-  endif(ENABLE_ocaml)
-
-  if(ENABLE_tk)
-    add_subdirectory(tk)
-    get_property(targets_examples_tk GLOBAL PROPERTY TARGETS_examples_tk)
-  endif(ENABLE_tk)
-  
-  # Non-compiled example directories next.
-  if(ENABLE_lua)
-    add_subdirectory(lua)
-  endif(ENABLE_lua)
-
-  if(ENABLE_pdl)
-    add_subdirectory(perl)
-  endif(ENABLE_pdl)
-
-  if(ENABLE_python)
-    add_subdirectory(python)
-  endif(ENABLE_python)
-
-  if(ENABLE_octave)
-    add_subdirectory(octave)
-  endif(ENABLE_octave)
-
-  if(ENABLE_tcl)
-    add_subdirectory(tcl)
-  endif(ENABLE_tcl)
-
-  # Configure Makefile.examples with some specific variables
-
+  # Configure Makefile.examples with some specific variables for the
+  # traditional Makefile + pkg-config installed examples build.
   if(PLD_ps)
     if(NOT ENABLE_ada)
       set(PSC_ADA_COMMENT "#")
@@ -300,10 +190,75 @@ if(CORE_BUILD)
     RENAME Makefile
     )
 
+  # Sort out RPATH issues for traditional build of installed examples using
+  # */Makefiles configured in each * subdirectory from */Makefile.examples.in.
+  if(USE_RPATH)
+    get_target_property(_LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
+    string(REGEX REPLACE ";" ":" LIB_INSTALL_RPATH "${_LIB_INSTALL_RPATH}")
+    set(RPATHCMD "-Wl,-rpath -Wl,${LIB_INSTALL_RPATH}")
+    if(PLD_extqt)
+      if(ENABLE_DYNDRIVERS)
+	get_target_property(_qt_INSTALL_RPATH qt INSTALL_RPATH)
+	string(REGEX REPLACE ";" ":" qt_INSTALL_RPATH "${_qt_INSTALL_RPATH}")
+	set(qt_RPATHCMD "-Wl,-rpath -Wl,${qt_INSTALL_RPATH}:${DRV_DIR}")
+      else(ENABLE_DYNDRIVERS)
+	set(qt_RPATHCMD ${RPATHCMD})
+      endif(ENABLE_DYNDRIVERS)
+    endif(PLD_extqt)
+  endif(USE_RPATH)
+
+  # Install lena.pgm in installed examples directory so that all implementations
+  # of example 20 in the various examples subdirectories can conveniently
+  # access this file.
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
+    DESTINATION ${DATA_DIR}/examples
+    )
+
+endif(CORE_BUILD)
+
+if(CORE_BUILD)
+  # These variables (normally not set or needed for a core build) 
+  # are needed below for the tests of the languages and devices.
+  # For the installed examples tree case (where CORE_BUILD is not defined),
+  # these variables are set in the configured file
+  # (whose template is plplot_configure.cmake_installed_examples.in) that
+  # is installed as examples/cmake/module/plplot_configure.cmake.
+  set(ENABLE_c ON)
+  if(BUILD_TEST)
+    set(PLD_psc ${PLD_ps})
+    set(PLD_psttfc ${PLD_psttf})
+  endif(BUILD_TEST)
+
   # Start configuration/installation of CMake-based build system for
   # installed examples.
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples
+    )
+
+  # language_info_LIST contains information about the languages used in
+  # the noninteractive tests.  The first field is language (which must be
+  # consistent with the list of languages configured by set commands in
+  # examples/plplot_configure.cmake_installed_examples.in).  The second
+  # field is the subdirectory corresponding to the language.  The third
+  # field is the file suffix on plplot-test.sh results for that language.
+  # N.B. this list is configured in plplot_configure.cmake below and
+  # is therefore available both for the core build of the tests and
+  # the installed-examples build of the tests below.
+
+  set(language_info_LIST
+    ada:ada:a
+    c:c:c
+    cxx:c++:cxx
+    d:d:d
+    f77:f77:f
+    f95:f95:f95
+    java:java:j
+    lua:lua:lua
+    ocaml:ocaml:ocaml
+    octave:octave:o
+    pdl:perl:pdl
+    python:python:p
+    tcl:tcl:t
     )
 
   configure_file(
@@ -400,64 +355,31 @@ else(CORE_BUILD)
 
   include(export_plplot)
 
-  if(ENABLE_c)
-    add_subdirectory(c)
-    get_property(targets_examples_c GLOBAL PROPERTY TARGETS_examples_c)
-  endif(ENABLE_c)
+endif(CORE_BUILD)
 
-  if(ENABLE_ada)
-    add_subdirectory(ada)
-    get_property(targets_examples_ada GLOBAL PROPERTY TARGETS_examples_ada)
-  endif(ENABLE_ada)
+if(CORE_BUILD AND BUILD_TEST)
+  remove_definitions("-DHAVE_CONFIG_H")
+endif(CORE_BUILD AND BUILD_TEST)
 
-  if(ENABLE_cxx)
-    add_subdirectory(c++)
-    get_property(targets_examples_cxx GLOBAL PROPERTY TARGETS_examples_cxx)
-  endif(ENABLE_cxx)
+# language_info_LIST excludes the tk subdirectly since noninteractive
+# tests and file results do not involve tk.  However, the tk
+# subdirectory does have to be processed just like the rest
+# so add it to this loop.
+foreach(language_info ${language_info_LIST} "tk:tk:nothing")
+  string(REGEX REPLACE "^(.*):.*:.*$" "\\1" language ${language_info})
+  string(REGEX REPLACE "^.*:(.*):.*$" "\\1" subdir ${language_info})
+  #message(STATUS "DEBUG: language, subdir = ${language},${subdir}")
+  if(ENABLE_${language})
+    add_subdirectory(${subdir})
+    get_property(targets_examples_${language} GLOBAL PROPERTY TARGETS_examples_${language})
+    get_property(files_examples_${language} GLOBAL PROPERTY FILES_examples_${language})
+  endif(ENABLE_${language})
+endforeach(language_info ${language_info_LIST} "tk:tk:nothing")
 
-  if(ENABLE_d)
-    add_subdirectory(d)
-    get_property(targets_examples_d GLOBAL PROPERTY TARGETS_examples_d)
-  endif(ENABLE_d)
-
-  if(ENABLE_f77)
-    add_subdirectory(f77)
-    get_property(targets_examples_f77 GLOBAL PROPERTY TARGETS_examples_f77)
-  endif(ENABLE_f77)
-
-  if(ENABLE_f95)
-    add_subdirectory(f95)
-    get_property(targets_examples_f95 GLOBAL PROPERTY TARGETS_examples_f95)
-  endif(ENABLE_f95)
-
-  if(ENABLE_java)
-    add_subdirectory(java)
-    get_property(targets_examples_java GLOBAL PROPERTY TARGETS_examples_java)
-  endif(ENABLE_java)
-
-  if(ENABLE_ocaml)
-    add_subdirectory(ocaml)
-    get_property(targets_examples_ocaml GLOBAL PROPERTY TARGETS_examples_ocaml)
-  endif(ENABLE_ocaml)
-
-  if(ENABLE_tk)
-    add_subdirectory(tk)
-    get_property(targets_examples_tk GLOBAL PROPERTY TARGETS_examples_tk)
-  endif(ENABLE_tk)
-  
-  if(ENABLE_octave)
-    execute_process(
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${CMAKE_CURRENT_SOURCE_DIR}/lena.img
-      ${CMAKE_CURRENT_BINARY_DIR}/lena.img
-      )
-    execute_process(
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${CMAKE_CURRENT_SOURCE_DIR}/octave/lena.img
-      ${CMAKE_CURRENT_BINARY_DIR}/octave/lena.img
-      )
-  endif(ENABLE_octave)
-
+if(BUILD_TEST)
+  # lena.pgm needed in build tree for the examples that are run from there.
+  # Done at cmake time without dependencies because cannot see how this
+  # file will ever change on short time scales.
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm 
@@ -465,41 +387,104 @@ else(CORE_BUILD)
     )
 
   if(PLD_psc)
-    set(output_LIST)
-    set(noninteractive_targets_LIST)
-    # language_info_LIST set in plplot_configure.cmake.  Each list
-    # member consists of a colon-separated language name and the associated
-    # filename suffix used by plplot-test.sh.
+    if(CORE_BUILD)
+      set(custom_test_command ${CMAKE_BINARY_DIR}/plplot_test/plplot-test.sh)
+      set(custom_env EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples)
+      set(java_custom_env ${custom_env} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar)
+      set(compare_command ${CMAKE_BINARY_DIR}/plplot_test/test_diff.sh)
+    else(CORE_BUILD)
+      set(custom_test_command ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh)
+      set(custom_env SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR})
+      set(java_custom_env ${custom_env})
+      set(compare_command ${CMAKE_CURRENT_SOURCE_DIR}/test_diff.sh)
+    endif(CORE_BUILD)
+
+    set(compare_file_depends ${custom_test_command})
+    if(ENABLE_DYNDRIVERS)
+      list(APPEND compare_file_depends ps)
+    endif(ENABLE_DYNDRIVERS)
+
+    set(diff_targets_LIST)
+    set(diff_files_LIST)
+    # language_info_LIST set above. Each list member consists of a
+    # colon-separated language name, subdirectory name,
+    # and the associated filename suffix used by plplot-test.sh.
     foreach(language_info ${language_info_LIST})
-      string(REGEX REPLACE "^(.*):.*$" "\\1" language ${language_info})
-      string(REGEX REPLACE "^.*:(.*)$" "\\1" suffix ${language_info})
+      string(REGEX REPLACE "^(.*):.*:.*$" "\\1" language ${language_info})
+      string(REGEX REPLACE "^.*:.*:(.*)$" "\\1" suffix ${language_info})
 
       if(ENABLE_${language})
+	set(compare_file_depends_${language} ${compare_file_depends})
+        #message(STATUS "DEBUG: files_examples_${language} = ${file_examples_${language}}")
+        #message(STATUS "DEBUG: targets_examples_${language} = ${targets_examples_${language}}")
+	if(files_examples_${language})
+	  # files_examples_${language} is true if the
+	  # subdirectory created targets with add_custom_target which
+	  # depended on an add_custom_command.  For this special case,
+	  # you cannot use the created targets for file dependencies
+	  # because of CMake implementation constraints.  Instead you
+	  # must use _files_ (contained in files_examples_${language}
+	  # for file dependencies.
+	  # Another case covered here is when the subdirectory
+          # contains non-generated files  In this case also you must
+	  # (of course) use _files_ for file dependencies.
+	  list(APPEND compare_file_depends_${language} ${files_examples_${language}})
+	else(files_examples_${language})
+	  # files_examples_${language} is only false if the
+	  # subdirectory creates targets with add_executable.  For
+	  # this special case, CMake allows use of the created targets
+	  # for file dependencies.
+	  if(targets_examples_${language})
+	    list(APPEND compare_file_depends_${language} ${targets_examples_${language}})
+	  endif(targets_examples_${language})
+	endif(files_examples_${language})
+	#message(STATUS "DEBUG: compare_file_depends_${language} = ${compare_file_depends_${language}}")
+
+	if(language STREQUAL "java")
+	  set(environment ${java_custom_env})
+	else(language STREQUAL "java")
+	  set(environment ${custom_env})
+	endif(language STREQUAL "java")
+
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x01${suffix}.psc
 	  COMMAND ${CMAKE_COMMAND} -E echo "Generate ${language} results for psc device"
-	  COMMAND SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh --verbose --front-end=${language} --device=psc
-	  DEPENDS
-	  ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh
+	  COMMAND ${environment} ${custom_test_command} --verbose --front-end=${language} --device=psc
+	  DEPENDS ${compare_file_depends_${language}}
 	  )
-	list(APPEND output_LIST ${CMAKE_CURRENT_BINARY_DIR}/x01${suffix}.psc)
-	if(targets_examples_${language})
-	  list(APPEND noninteractive_targets_LIST ${targets_examples_${language}})
-	endif(targets_examples_${language})
+	add_custom_target(test_${language}_psc
+	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x01${suffix}.psc
+	  )
+	list(APPEND diff_targets_LIST test_${language}_psc)
+	list(APPEND diff_files_LIST ${CMAKE_CURRENT_BINARY_DIR}/x01${suffix}.psc)
+
+	# If the subdirectory used an add_custom_target (as indicated
+	# by both files_examples_${language} and targets_examples_${language}
+	# being true), then for that special case must add a target-level
+	# dependency as demanded by the CMake implementation.
+	if(files_examples_${language} AND targets_examples_${language})
+	  #message(STATUS "DEBUG: targets_examples_${language} = ${targets_examples_${language}}")
+	  add_dependencies(test_${language}_psc ${targets_examples_${language}})
+	endif(files_examples_${language} AND targets_examples_${language})
       endif(ENABLE_${language})
     endforeach(language_info ${language_info_LIST})
 
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/compare
-      COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/compare
-      COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test_diff.sh
-      DEPENDS ${output_LIST}
+    # Note no target or file dependencies for test_some_diff_psc since
+    # we want to execute this target like it is done in ctest, i.e.,
+    # whenever we like for whatever test_${language}_psc targets we
+    # have run first.
+    add_custom_target(test_some_diff_psc COMMAND ${compare_command})
+
+    # Note this target does have complete file and target dependencies to
+    # force a complete comparison of stdout and PostScript results.
+    add_custom_target(test_all_diff_psc COMMAND ${compare_command}
+      DEPENDS ${diff_files_LIST}
       )
-    set(output_LIST ${CMAKE_CURRENT_BINARY_DIR}/compare)
-  else(PLD_psc)
-    set(output_LIST)
+    add_dependencies(test_all_diff_psc ${diff_targets_LIST})
+
   endif(PLD_psc)
 
+  set(output_LIST)
   # noninteractive_devices_info_LIST set in plplot_configure.cmake.  Each list
   # member consists of a colon-separated device name and a Boolean variable
   # that indicates if device has familied output in plplot-test.sh.
@@ -578,6 +563,9 @@ else(CORE_BUILD)
     add_dependencies(test_interactive ${interactive_targets_LIST})
   endif(interactive_targets_LIST)
 
+endif(BUILD_TEST)
+
+if(NOT CORE_BUILD)
   set(summary_results "
 Summary of CMake build system results for the installed examples
 
@@ -662,4 +650,4 @@ ENABLE_qt:		${ENABLE_qt}
 
   message("${summary_results}")
 
-endif(CORE_BUILD)
+endif(NOT CORE_BUILD)
