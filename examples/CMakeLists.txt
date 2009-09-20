@@ -217,17 +217,14 @@ if(CORE_BUILD)
 endif(CORE_BUILD)
 
 if(CORE_BUILD)
-  # These variables (normally not set or needed for a core build) 
-  # are needed below for the tests of the languages and devices.
-  # For the installed examples tree case (where CORE_BUILD is not defined),
-  # these variables are set in the configured file
-  # (whose template is plplot_configure.cmake_installed_examples.in) that
-  # is installed as examples/cmake/module/plplot_configure.cmake.
+  # These variables (normally not set or needed for a core build) are
+  # needed below for the tests of the languages and devices.  They
+  # are also needed to configure plplot_configure.cmake whose template
+  # file is plplot_configure.cmake_installed_examples.in and which
+  # ends up installed in examples/cmake/module.
   set(ENABLE_c ON)
-  if(BUILD_TEST)
-    set(PLD_psc ${PLD_ps})
-    set(PLD_psttfc ${PLD_psttf})
-  endif(BUILD_TEST)
+  set(PLD_psc ${PLD_ps})
+  set(PLD_psttfc ${PLD_psttf})
 
   # Start configuration/installation of CMake-based build system for
   # installed examples.
