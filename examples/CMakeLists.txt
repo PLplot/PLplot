@@ -277,6 +277,12 @@ if(CORE_BUILD)
     DESTINATION ${DATA_DIR}/examples/cmake/modules
     )
 
+  # Install soft-landing support for compiler detection/testing.
+  install(FILES
+   ${CMAKE_SOURCE_DIR}/cmake/modules/language_support.cmake 
+   DESTINATION ${DATA_DIR}/examples/cmake/modules
+   )
+
   # Install PLplot-specific language support files needed for CMake-based
   # build of installed examples.
   # N.B. This list of files must be maintained consistently with the file
