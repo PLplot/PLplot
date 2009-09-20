@@ -66,7 +66,7 @@ endforeach(STRING_INDEX ${c_STRING_INDICES})
 # Target that must be run before any pdl tests.
 set_property(GLOBAL PROPERTY TARGETS_examples_pdl plplot${LIB_TAG})
 # File dependencies for any pdl tests.
-set_property(GLOBAL PROPERTY FILES_examples_pdl ${perl_SCRIPTS})
+set_property(GLOBAL PROPERTY FILES_examples_pdl plplot${LIB_TAG} ${perl_SCRIPTS})
 
 if(CORE_BUILD)
   set(PERM_SCRIPTS
