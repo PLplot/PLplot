@@ -101,3 +101,46 @@ if(ENABLE_ocaml)
     )
 
 endif(ENABLE_ocaml)
+
+if(ENABLE_ocaml)
+  option(GENERATE_PLPLOT_H_INC "Generate generated_plplot_h.inc" OFF)
+
+  if(GENERATE_PLPLOT_H_INC)
+    find_program(OCAML ocaml)
+    if (OCAML)
+      message(STATUS "OCAML = ${OCAML}")
+    else (OCAML)
+      message(STATUS "WARNING:"
+	"ocaml not found. Disabling generation of generated_plplot_h.inc")
+      set(GENERATE_PLPLOT_H_INC OFF CACHE BOOL "Generate generated_plplot_h.inc" FORCE)
+    endif (OCAML)
+  endif(GENERATE_PLPLOT_H_INC)
+
+  # Test for availability of topfind and pcre (and unix).
+  if(GENERATE_PLPLOT_H_INC)
+    set(text
+"#use \"topfind\";;
+#require \"unix\";;
+#require \"pcre\";;
+"
+      )
+    file(WRITE ${CMAKE_BINARY_DIR}/test_ocaml.ml ${text})
+    # For some reason the return code is not set if an error occurs
+    # with test_ocaml.ml so look for any stdout or stderr output as a sign
+    # of an error condition.
+    execute_process(
+      COMMAND ${OCAML} test_ocaml.ml
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      OUTPUT_VARIABLE output
+      ERROR_VARIABLE error
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_STRIP_TRAILING_WHITESPACE
+      )
+    if(output OR error)
+      message(STATUS "WARNING:"
+	"One or all of topfind, unix, or pcre components of ocaml are not installed.  Disabling generation of generated_plplot_h.inc")
+      set(GENERATE_PLPLOT_H_INC OFF CACHE BOOL "Generate generated_plplot_h.inc" FORCE)
+    endif(output OR error)
+    
+  endif(GENERATE_PLPLOT_H_INC)
+endif(ENABLE_ocaml)
