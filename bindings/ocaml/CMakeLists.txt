@@ -36,7 +36,7 @@ if(ENABLE_ocaml)
     ${camlidl_GENERATED_SOURCE}
     # camlidl source file must be in ${CMAKE_CURRENT_BINARY_DIR}. 
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot_core.idl ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.idl
-    COMMAND camlidl -header -I ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.idl
+    COMMAND ${CAMLIDL} -header -I ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.idl
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_core.idl
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -47,9 +47,9 @@ if(ENABLE_ocaml)
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
     ${CMAKE_CURRENT_BINARY_DIR}/dllplplot_stubs.so
     ${CMAKE_CURRENT_BINARY_DIR}/libplplot_stubs.a
-    COMMAND ocamlc -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
-    COMMAND ocamlc -ccopt -I${CMAKE_SOURCE_DIR}/include -ccopt -I${CMAKE_BINARY_DIR}/include -ccopt -I${CMAKE_SOURCE_DIR}/lib/qsastime  -c ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
-    COMMAND ocamlmklib -o plplot_stubs -L${CAMLIDL_LIB_DIR} -lcamlidl -L${CMAKE_BINARY_DIR}/src -lplplot${LIB_TAG} ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
+    COMMAND ${OCAMLC} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
+    COMMAND ${OCAMLC} -ccopt -I${CMAKE_SOURCE_DIR}/include -ccopt -I${CMAKE_BINARY_DIR}/include -ccopt -I${CMAKE_SOURCE_DIR}/lib/qsastime  -c ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
+    COMMAND ${OCAMLMKLIB} -o plplot_stubs -L${CAMLIDL_LIB_DIR} -lcamlidl -L${CMAKE_BINARY_DIR}/src -lplplot${LIB_TAG} ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
@@ -67,10 +67,10 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmi
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.mli
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmi
-    COMMAND ocamlc -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.mli
+    COMMAND ${OCAMLC} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.mli
     # ocamlc *.mli source file must be in ${CMAKE_CURRENT_BINARY_DIR}.
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot.mli ${CMAKE_CURRENT_BINARY_DIR}/plplot.mli
-    COMMAND ocamlc -c ${CMAKE_CURRENT_BINARY_DIR}/plplot.mli
+    COMMAND ${OCAMLC} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot.mli
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.mli
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot.mli
@@ -89,13 +89,13 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.o
-    COMMAND ocamlc -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.ml
-    COMMAND ocamlopt -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.ml
+    COMMAND ${OCAMLC} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.ml
+    COMMAND ${OCAMLOPT} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.ml
     # ocamlc and ocamlopt *.ml source file must be in 
     # ${CMAKE_CURRENT_BINARY_DIR}.
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ml ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
-    COMMAND ocamlc -c ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
-    COMMAND ocamlopt -c ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
+    COMMAND ${OCAMLC} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
+    COMMAND ${OCAMLOPT} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.ml
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ml
@@ -112,8 +112,8 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.a
-    COMMAND ocamlc -a -custom -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo -dllib -lplplot_stubs -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG} -dllpath ${CMAKE_BINARY_DIR}/src
-    COMMAND ocamlopt -a -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG}
+    COMMAND ${OCAMLC} -a -custom -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo -dllib -lplplot_stubs -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG} -dllpath ${CMAKE_BINARY_DIR}/src
+    COMMAND ${OCAMLOPT} -a -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG}
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo
