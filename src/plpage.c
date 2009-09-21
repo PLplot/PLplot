@@ -1,7 +1,5 @@
 /* $Id$
 
-	Page/subpage handling routines
-
    Copyright (C) 2004  Alan W. Irwin
 
    This file is part of PLplot.
@@ -21,14 +19,20 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
+/*! @file
+ *
+ *  Page/subpage handling routines. 
+ */
+
+
 #include "plplotP.h"
 
-/*--------------------------------------------------------------------------*\
- * void pladv()
- *
- * Advance to subpage "page", or to the next one if "page" = 0.
-\*--------------------------------------------------------------------------*/
 
+/*--------------------------------------------------------------------------*/
+/*! Advance to subpage "page", or to the next one if "page" = 0.
+ *
+ *  @param page : subpage identifier or 0
+ */
 void
 c_pladv(PLINT page)
 {
@@ -57,13 +61,11 @@ c_pladv(PLINT page)
     plP_setsub();
 }
 
-/*--------------------------------------------------------------------------*\
- * void plclear()
- *
- * Clear current subpage.  Subpages can be set with pladv before
- * calling plclear. Not all drivers support this.
-\*--------------------------------------------------------------------------*/
 
+/*--------------------------------------------------------------------------*/
+/*! Clear current subpage.  Subpages can be set with pladv before
+ *  calling plclear. Not all drivers support this.
+ */
 void
 c_plclear(void)
 {
@@ -89,12 +91,10 @@ c_plclear(void)
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void pleop()
- *
- * End current page.
-\*--------------------------------------------------------------------------*/
 
+/*--------------------------------------------------------------------------*/
+/*! End current page.
+ */
 void
 c_pleop(void)
 {
@@ -107,12 +107,10 @@ c_pleop(void)
     plP_eop();
 }
 
-/*--------------------------------------------------------------------------*\
- * void plbop()
- *
- * Start new page.  Should only be used with pleop().
-\*--------------------------------------------------------------------------*/
 
+/*--------------------------------------------------------------------------*/
+/*! Start new page. Should only be used with pleop().
+ */
 void
 c_plbop(void)
 {
@@ -125,12 +123,10 @@ c_plbop(void)
     plP_setsub();
 }
 
-/*--------------------------------------------------------------------------*\
- * void plP_subpInit()
- *
- * Set up plot parameters according to the number of subpages.
-\*--------------------------------------------------------------------------*/
 
+/*--------------------------------------------------------------------------*/
+/*! Set up plot parameters according to the number of subpages.
+ */
 void
 plP_subpInit(void)
 {
@@ -182,12 +178,10 @@ plP_subpInit(void)
     plsc->mindef = plsc->minht = size_min * scale;
 }
 
-/*--------------------------------------------------------------------------*\
- * void plP_setsub()
- *
- * Set up the subpage boundaries according to the current subpage selected.
-\*--------------------------------------------------------------------------*/
 
+/*--------------------------------------------------------------------------*/
+/*! Set up the subpage boundaries according to the current subpage selected.
+ */
 void
 plP_setsub(void)
 {
@@ -209,13 +203,16 @@ plP_setsub(void)
     plP_sclp(plsc->sppxmi, plsc->sppxma, plsc->sppymi, plsc->sppyma);
 }
 
-/*--------------------------------------------------------------------------*\
- * void plgspa()
- *
- * Get subpage boundaries in absolute coordinates (mm from bottom
- * left-hand corner of page.
-\*--------------------------------------------------------------------------*/
 
+/*--------------------------------------------------------------------------*/
+/*! Get subpage boundaries in absolute coordinates (mm from bottom
+ *  left-hand corner of page).
+ *
+ *  @param xmin : pointer to PLFLT containing minimal x boundary after call
+ *  @param xmax : pointer to PLFLT containing maximal x boundary after call
+ *  @param ymin : pointer to PLFLT containing minimal y boundary after call
+ *  @param ymax : pointer to PLFLT containing maximal y boundary after call
+ */
 void
 c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 {
@@ -229,14 +226,15 @@ c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
     *ymax = plP_dcmmy(plsc->spdyma);
 }
 
-/*--------------------------------------------------------------------------*\
- * int plGetCursor()
- *
- * Wait for graphics input event and translate to world coordinates.
- * Returns 0 if no translation to world coordinates is possible.
- * Written by Paul Casteels.
-\*--------------------------------------------------------------------------*/
 
+/*--------------------------------------------------------------------------*/
+/*! Wait for graphics input event and translate to world coordinates.
+ *
+ *  @author Paul Casteels.
+ *  @param plg : pointer to PLGraphicsIn
+ *  @return 0 if no translation to world coordinates is possible.
+ *  @see PLGraphicsIn
+ */
 int
 plGetCursor(PLGraphicsIn *plg)
 {
@@ -244,14 +242,15 @@ plGetCursor(PLGraphicsIn *plg)
     return plTranslateCursor(plg);
 }
 
-/*--------------------------------------------------------------------------*\
- * int plTranslateCursor()
- *
- * Translates cursor position from relative device coordinates to world
- * coordinates.  Returns 0 if no translation to world coordinates is
- * possible.  Written by Paul Casteels and modified by Alan W. Irwin.
-\*--------------------------------------------------------------------------*/
 
+/*--------------------------------------------------------------------------*/
+/*! Translates cursor position from relative device coordinates to world
+ *  coordinates.  
+ *
+ *  @author Paul Casteels, modified by Alan W. Irwin
+ *  @param plg : pointer to PLGraphicsIn
+ *  @return 0 if no translation to world coordinates is possible.
+ */
 int
 plTranslateCursor(PLGraphicsIn *plg)
 {
@@ -266,16 +265,21 @@ plTranslateCursor(PLGraphicsIn *plg)
 	return 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * void c_plcalc_world
- *
- * Calculate world coordinates wx, and wy from relative device coordinates, rx
- * and ry.  Also, return the window index for which the world coordinates
- * are valid. window is set to -1 and wx and wy to 0. if rx and ry do not
- * correspond to valid world coordinates for any currently existing window.
- * Originally written by Paul Casteels and modified by Alan W. Irwin.
-\*--------------------------------------------------------------------------*/
 
+/*--------------------------------------------------------------------------*/
+/*! Calculate world coordinates wx, and wy from relative device coordinates,
+ *  rx and ry.  Also, return the window index for which the world coordinates
+ *  are valid. window is set to -1 and wx and wy to 0. if rx and ry do not
+ *  correspond to valid world coordinates for any currently existing window.
+ *
+ *  @author Paul Casteels, modified by Alan W. Irwin.
+ *  @param rx : relative x device coordinates
+ *  @param ry : relative y device coordinates
+ *  @param wx : Pointer to x world coordinate (after call)
+ *  @param wy : Pointer to y world coordinate (after call)
+ *  @param window : Pointer index of window for which the world coordinates
+ *                  are valid
+ */
 void
 c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window)
 {
