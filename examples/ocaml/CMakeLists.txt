@@ -107,6 +107,12 @@ if(BUILD_TEST)
     set(ocaml_EXTRA_CLEAN_FILES ${ocaml_EXTRA_CLEAN_FILES} x${STRING_INDEX}.cmo x${STRING_INDEX}.cmi)
     # Copy source code to build tree since ocamlc is a bit broken and will 
     # otherwise litter the source tree with intermediate files
+    if(STRING_INDEX STREQUAL "17")
+      set(unix_bytecode_lib unix.cma)
+    else(STRING_INDEX STREQUAL "17")
+      set(unix_bytecode_lib)
+    endif(STRING_INDEX STREQUAL "17")
+
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
       COMMAND ${CMAKE_COMMAND}
@@ -120,6 +126,7 @@ if(BUILD_TEST)
       -I ${I_OPTION}
       -ccopt ${ccopt_OPTION}
       plplot.cma 
+      ${unix_bytecode_lib}
       -o ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME} 
       ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
       DEPENDS

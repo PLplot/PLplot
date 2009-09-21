@@ -26,6 +26,10 @@ open Plplot
 
 let pi = atan 1.0 *. 4.0
 
+(** [sleep time] sleeps for [time] seconds. *)
+let sleep time =
+  ignore (Unix.select [] [] [] time)
+
 let () =
   let nsteps = 1000 in
 
@@ -127,17 +131,8 @@ let () =
   let dt = 0.1 in
 
   for n = 0 to nsteps - 1 do
-    (* TODO : Add some sort of sleeping here
-#ifdef PL_HAVE_USLEEP
-	usleep(10000);	/* wait a little (10 ms) to simulate time elapsing */
-#else
-# ifdef HAS_POLL
-	poll(0,0,10);
-# else
-	{ int i; for( i=0; i<1000000; i++ ); }
-# endif
-#endif
-    *)
+    (* Wait a little (10 ms) to simulate time elapsing *)
+    sleep 1e-2;
     let t = float_of_int n *. dt in
     let noise = plrandd () -. 0.5 in
     y1 := !y1 +. noise;
