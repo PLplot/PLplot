@@ -69,6 +69,16 @@ if(CORE_BUILD)
     list(APPEND ocaml_SRCS x${STRING_INDEX}.ml)
   endforeach(STRING_INDEX ${ocaml_STRING_INDICES})
 
+  # Use ocamlopt if it is available, otherwise ocamlc.
+  # Make sure the libraries match the compiler.
+  set(OCAML_EXAMPLE_COMPILER ${OCAMLC})
+  set(OCAML_EXAMPLE_LIBEXT cma)
+  set(OCAML_EXAMPLE_CLEAN "*.cm?")
+  if (OCAMLOPT)
+    set(OCAML_EXAMPLE_COMPILER ${OCAMLOPT})
+    set(OCAML_EXAMPLE_LIBEXT cmxa)
+    set(OCAML_EXAMPLE_CLEAN "*.cm? *.o")
+  endif (OCAMLOPT)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples

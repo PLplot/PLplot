@@ -21,7 +21,7 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-OCAMLC = @OCAMLC@
+OCAMLC = @OCAML_EXAMPLE_COMPILER@
 EXEEXT = @EXEEXT@
 
 @pkg_config_true@LIB_TAG = @LIB_TAG@
@@ -29,8 +29,8 @@ EXEEXT = @EXEEXT@
 @pkg_config_true@RPATHCMD = -ccopt "@RPATHCMD@"
 
 OCAML_CFLAGS = -g -I @OCAML_INSTALL_DIR@/plplot
-@pkg_config_true@OCAML_LIBS = $(RPATHCMD) -ccopt "-L@CMAKE_INSTALL_LIBDIR@" plplot.cma 
-@pkg_config_false@OCAML_LIBS = -ccopt "-L@CMAKE_INSTALL_LIBDIR@" plplot.cma
+@pkg_config_true@OCAML_LIBS = $(RPATHCMD) -ccopt "-L@CMAKE_INSTALL_LIBDIR@" plplot.@OCAML_EXAMPLE_LIBEXT@ unix.@OCAML_EXAMPLE_LIBEXT@
+@pkg_config_false@OCAML_LIBS = -ccopt "-L@CMAKE_INSTALL_LIBDIR@" plplot.@OCAML_EXAMPLE_LIBEXT@ unix.@OCAML_EXAMPLE_LIBEXT@
 
 EXECUTABLES_list = \
 		 x01ocaml$(EXEEXT) \
@@ -68,7 +68,7 @@ EXECUTABLES_list = \
 all: $(EXECUTABLES_list)
 
 clean:
-	rm -f $(EXECUTABLES_list) *.cm?
+	rm -f $(EXECUTABLES_list) @OCAML_EXAMPLE_CLEAN@
 
 
 .mlocaml$(EXEEXT):
