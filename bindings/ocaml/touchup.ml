@@ -427,10 +427,17 @@ let write_file filename lines =
   close_out fout;
   ()
 
-(** Given "file", write out "file.inc" which should be ready for consumption by
-    camlidl. *)
-let process_file filename =
-  read_file filename
+(** Given input and output filenames, process the contents of the input file
+    and write the results to the output file, which should be ready for
+    consumption by camlidl. *)
+let process_file () =
+  let infile, outfile =
+    if Array.length Sys.argv = 3 then
+      Sys.argv.(1), Sys.argv.(2)
+    else
+      "plplot_h", "plplot_h.inc"
+  in
+  read_file infile
   |> cleanup_lines
   |> Pcre.split ~pat:"\n"
   |> List.map minimize_whitespace
@@ -444,11 +451,11 @@ let process_file filename =
      )
   |> List.map minimize_whitespace
   |> List.map (fun l -> l ^ "\n")
-  |> write_file (filename ^ ".inc")
+  |> write_file outfile
 
 let () =
   if !Sys.interactive then
     ()
   else
-    process_file "plplot_h";
+    process_file ();
     ()
