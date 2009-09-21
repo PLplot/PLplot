@@ -1,4 +1,4 @@
-[mlname(pl_setcontlabelformat)] void c_pl_setcontlabelformat(int lexp, int sigdig);
+[mlname(pl_setcontlabelformat)] void c_pl_setcontlabelformat ( int lexp, int sigdig );
 [mlname(pl_setcontlabelparam)] void c_pl_setcontlabelparam ( double offset, double size, double spacing, int active );
 [mlname(pladv)] void c_pladv ( int page );
 [mlname(plarc)] void c_plarc ( double x, double y, double a, double b, double angle1, double angle2, boolean fill );

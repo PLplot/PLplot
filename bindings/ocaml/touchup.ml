@@ -8,17 +8,14 @@ type attribute_spec = {
   parameter_attrs: (string * string list) list option;
 }
 
+(* These functions all require special handling beyond the more general rules
+   below. *)
 let manual_function_attributes =
   [
     {
       function_name = "c_plhist";
       function_attrs = None;
       parameter_attrs = Some ["data", ["size_is(n)"]];
-    };
-    {
-      function_name = "c_plimagefr";
-      function_attrs = None;
-      parameter_attrs = Some ["idata", ["in"; "size_is(nx, ny)"]];
     };
     {
       function_name = "c_plimage";
@@ -96,6 +93,8 @@ let max_string_length = "1024"
 
 (* Functions to read in everything on STDOUT from a given command. *)
 (* Many thanks to Richard M. Jones for the following two functions! *)
+
+(** Read in all of the lines from an input source *)
 let rec input_all_lines chan =
   try
     let line = input_line chan in
@@ -103,6 +102,7 @@ let rec input_all_lines chan =
   with
       End_of_file -> []
 
+(** Read everything output on STDOUT from a given command-line *)
 let pget cmd =
   let chan = Unix.open_process_in cmd in
   let lines = input_all_lines chan in
@@ -117,6 +117,8 @@ let pget cmd =
          failwith ("command stopped by signal " ^ string_of_int i));
   lines
 
+(** Read in a file, pre-processed with cpp, and return the output as a list of
+    lines. *)
 let read_file filename =
   let preprocessed_text = pget ("cpp " ^ filename) in
   let l = List.map (fun l -> l ^ "\n") preprocessed_text in
@@ -129,14 +131,17 @@ let read_file filename =
   *)
   l
 
+(** Utility functions *)
 let (|>) x f = f x
 let id x = x
 
+(** Clean up the text a bit, minimizing whitespace and cutting out leftover
+    cruft from the preprocessor. *)
 let cleanup_lines l =
   (* Strip out #-started preprocessor lines, as well as lines with only
      whitespace. *)
   let blob =
-    let filtered = 
+    let filtered =
       List.filter (
         fun line ->
           if Pcre.pmatch ~pat:"^#|^\\s+$" line then
@@ -148,23 +153,28 @@ let cleanup_lines l =
     List.fold_left (^) "" filtered
   in
   blob
-    (* Compress lengths of whitespace down to a single character *)
-    |> Pcre.replace ~pat:"\\s+" ~templ:" "
-    (* Put newlines back in after each ; *)
-    |> Pcre.replace ~pat:"; " ~templ:";\n"
+  (* Compress lengths of whitespace down to a single character *)
+  |> Pcre.replace ~pat:"\\s+" ~templ:" "
+  (* Put newlines back in after each ; *)
+  |> Pcre.replace ~pat:"; " ~templ:";\n"
 
+(** Given a list of attributes, return a camlidl-ready string representing those
+    attributes. *)
 let make_attribute_string attributes =
   match attributes with
       [] -> ""
     | a ->
         "[" ^ String.concat ", " a ^"]"
 
+(** Get rid of extraneous whitespace (leading, trailing, runs) *)
 let minimize_whitespace s =
   s
-    |> Pcre.replace ~pat:"^\\s+" ~templ:""
-    |> Pcre.replace ~pat:"\\s$" ~templ:""
-    |> Pcre.replace ~pat:"\\s+" ~templ:" "
+  |> Pcre.replace ~pat:"^\\s+" ~templ:""
+  |> Pcre.replace ~pat:"\\s$" ~templ:""
+  |> Pcre.replace ~pat:"\\s+" ~templ:" "
 
+(** Generate attributes specific to a given function, based in its return type
+    and name. *)
 let function_attributes return_type name =
   let check_re re =
     if Pcre.pmatch ~pat:re name then
@@ -203,16 +213,17 @@ let function_attributes return_type name =
 
   (* Attributes based on the function name *)
   let name_attrs =
-    List.map
-      (fun (re,attrf) -> let a = check_re re in if Array.length a > 0 then attrf a else [])
-      name_checks
+    List.map (
+      fun (re,attrf) ->
+        let a = check_re re in if Array.length a > 0 then attrf a else []
+    ) name_checks
     |> List.flatten
   in
   (* Attributes based on the function type *)
   let type_attrs =
-    List.map
-      (fun (re,attrs) -> if Pcre.pmatch ~pat:re return_type then attrs else [])
-      type_checks
+    List.map (
+      fun (re,attrs) -> if Pcre.pmatch ~pat:re return_type then attrs else []
+    ) type_checks
     |> List.flatten
   in
   (* Any other attributes, specified manually *)
@@ -222,19 +233,21 @@ let function_attributes return_type name =
         List.find (fun fa -> fa.function_name = name) manual_function_attributes
       in
       match fa.function_attrs with
-          Some a -> a
-        | None -> []
+      | Some a -> a
+      | None -> []
     with
-        Not_found -> []
+    | Not_found -> []
   in
   name_attrs @ type_attrs @ manual_attrs
 
+(** Generate attributes for function parameters *)
 let parameter_attributes function_name types names =
   let pmatch re str = Pcre.pmatch ~pat:re str in
   let non_get_functions = ["c_plgriddata"; "c_plgra"] in
 
   (* If all of the pieces are true, then the attribute(s) is(are) appropriate
-     for this parameter. *)
+     for this parameter.  This is basically a long list of special cases
+     which usually, but not always, apply to multiple functions. *)
   let checks p_type p_name =
     [
       (* Order goes:
@@ -334,14 +347,14 @@ let parameter_attributes function_name types names =
     let manual_attrs =
       try
         let fa =
-          List.find (fun fa -> fa.function_name = function_name) manual_function_attributes
+          List.find (fun fa -> fa.function_name = function_name)
+            manual_function_attributes
         in
         match fa.parameter_attrs with
-            Some a -> 
-              List.assoc param_name a
-          | None -> []
+        | Some a -> List.assoc param_name a
+        | None -> []
       with
-          Not_found -> []
+      | Not_found -> []
     in
     Hashtbl.add attr_hash param_name manual_attrs;
     (* Check for attributes, filter the ones we don't want, then add the rest
@@ -356,13 +369,18 @@ let parameter_attributes function_name types names =
   List.iter2 perform_check types names;
   attr_hash
 
+(** Build a string from a list of attributes *)
 let build_attribute_list l =
   List.map (
     fun (attrs, t, n) ->
       String.concat " " [make_attribute_string attrs; t; n]
   ) l
 
+(** Given a C function prototype, chop it up and find out what camlidl
+    attributes it should have. *)
 let process_prototype line =
+  (* This is an ugly, but for now effective, regexp to parse the PLplot function
+     prototypes. *)
   let pieces =
     line
     |> Pcre.extract ~pat:"^((?:(?:const|unsigned) )?\\w+ (?:\\*\\s*)?)(\\w+)\\s*\\(([\\w\\s\\*\\[\\],]*)\\)" ~full_match:false
@@ -402,22 +420,31 @@ let process_prototype line =
     @ [");"]
   )
 
+(** Write a list of lines out to the given filename *)
 let write_file filename lines =
   let fout = open_out filename in
   List.iter (output_string fout) lines;
   close_out fout;
   ()
 
+(** Given "file", write out "file.inc" which should be ready for consumption by
+    camlidl. *)
 let process_file filename =
-  let lines = read_file filename in
-  let lines' = cleanup_lines lines |> Pcre.split ~pat:"\n" in
-  lines'
-    |> List.map (
-         fun l -> try process_prototype l with Not_found -> l
-       )
-    |> List.map minimize_whitespace
-    |> List.map (fun l -> l ^ "\n")
-    |> write_file (filename ^ ".inc")
+  read_file filename
+  |> cleanup_lines
+  |> Pcre.split ~pat:"\n"
+  |> List.map minimize_whitespace
+  |> List.map (
+       fun l ->
+         try
+           process_prototype l
+         with
+         | Not_found ->
+             failwith ("Unhandled or malformed prototype: \n" ^ l)
+     )
+  |> List.map minimize_whitespace
+  |> List.map (fun l -> l ^ "\n")
+  |> write_file (filename ^ ".inc")
 
 let () =
   if !Sys.interactive then
