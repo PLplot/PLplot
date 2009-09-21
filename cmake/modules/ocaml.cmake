@@ -1,6 +1,7 @@
 # cmake/modules/ocaml.cmake
 #
 # Copyright (C) 2008 Andrew Ross
+# Copyright (C) 2009 Hezekiah M. Carty
 #
 # This file is part of PLplot.
 #
@@ -32,7 +33,7 @@ if(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
 endif(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
 
 if(ENABLE_ocaml)
-  find_program(OCAMLC ocamlc)
+  find_program(OCAMLC NAMES ocamlc.opt ocamlc)
   if (OCAMLC)
     message(STATUS "OCAMLC = ${OCAMLC}")
   else (OCAMLC)
@@ -65,13 +66,12 @@ if(ENABLE_ocaml)
 endif(ENABLE_ocaml)
 
 if(ENABLE_ocaml)
-  find_program(OCAMLOPT ocamlopt)
+  find_program(OCAMLOPT NAMES ocamlopt.opt ocamlopt)
   if (OCAMLOPT)
     message(STATUS "OCAMLOPT = ${OCAMLOPT}")
   else (OCAMLOPT)
     message(STATUS "WARNING:"
-      "ocamlopt not found. Disabling ocaml bindings")
-    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
+      "ocamlopt not found. Disabling native code OCaml bindings")
   endif (OCAMLOPT)
 endif(ENABLE_ocaml)
 
@@ -93,7 +93,7 @@ if(ENABLE_ocaml)
       "camlidl library not found. Disabling ocaml bindings")
     set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
   endif(CAMLIDL_LIB_DIR)
-  
+
   # Installation follows the Debian ocaml policy for want of a better
   # standard.
   set(OCAML_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/ocaml/${OCAML_VERSION}
@@ -141,6 +141,6 @@ if(ENABLE_ocaml)
 	"One or all of topfind, unix, or pcre components of ocaml are not installed.  Disabling generation of generated_plplot_h.inc")
       set(GENERATE_PLPLOT_H_INC OFF CACHE BOOL "Generate generated_plplot_h.inc" FORCE)
     endif(output OR error)
-    
+
   endif(GENERATE_PLPLOT_H_INC)
 endif(ENABLE_ocaml)

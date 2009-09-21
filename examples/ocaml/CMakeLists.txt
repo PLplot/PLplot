@@ -5,6 +5,7 @@
 #
 # Copyright (C) 2008 Andrew Ross
 # Copyright (C) 2009 Alan W. Irwin
+# Copyright (C) 2009 Hezekiah M. Carty
 #
 # This file is part of PLplot.
 #
@@ -89,6 +90,17 @@ if(CORE_BUILD)
 endif(CORE_BUILD)
 
 if(BUILD_TEST)
+  # Default to using ocaml if ocamlopt is not available.  Make sure the proper
+  # files are cleaned up after a build, depending on the compiler used.
+  set(ocaml_lib_extension cma)
+  set(ocaml_cleanup_extensions cmo cmi)
+  set(ocaml_compiler ${OCAMLC})
+  if (OCAMLOPT)
+    set(ocaml_lib_extension cmxa)
+    set(ocaml_cleanup_extensions cmx cmi o)
+    set(ocaml_compiler ${OCAMLOPT})
+  endif (OCAMLOPT)
+
   set(ocaml_EXTRA_CLEAN_FILES)
   if(CORE_BUILD)
     set(I_OPTION ${CMAKE_BINARY_DIR}/bindings/ocaml)
@@ -104,11 +116,13 @@ if(BUILD_TEST)
   foreach(STRING_INDEX ${ocaml_STRING_INDICES})
     set(EXECUTABLE_NAME x${STRING_INDEX}ocaml)
     set(SOURCE_FILE x${STRING_INDEX}.ml)
-    set(ocaml_EXTRA_CLEAN_FILES ${ocaml_EXTRA_CLEAN_FILES} x${STRING_INDEX}.cmo x${STRING_INDEX}.cmi)
-    # Copy source code to build tree since ocamlc is a bit broken and will 
+    foreach(EXTENSION ${ocaml_cleanup_extensions})
+      set(ocaml_EXTRA_CLEAN_FILES ${ocaml_EXTRA_CLEAN_FILES} x${STRING_INDEX}.${EXTENSION})
+    endforeach(EXTENSION ocaml_cleanup_extensions)
+    # Copy source code to build tree since ocamlc is a bit broken and will
     # otherwise litter the source tree with intermediate files
     if(STRING_INDEX STREQUAL "17")
-      set(unix_bytecode_lib unix.cma)
+      set(unix_bytecode_lib unix.${ocaml_lib_extension})
     else(STRING_INDEX STREQUAL "17")
       set(unix_bytecode_lib)
     endif(STRING_INDEX STREQUAL "17")
@@ -121,13 +135,13 @@ if(BUILD_TEST)
       )
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
-      COMMAND ${OCAMLC} 
+      COMMAND ${ocaml_compiler}
       -g
       -I ${I_OPTION}
       -ccopt ${ccopt_OPTION}
-      plplot.cma 
+      plplot.${ocaml_lib_extension}
       ${unix_bytecode_lib}
-      -o ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME} 
+      -o ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
       ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
       DEPENDS
       ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
@@ -136,7 +150,7 @@ if(BUILD_TEST)
       VERBATIM
       )
     add_custom_target(
-      target_${EXECUTABLE_NAME} ALL 
+      target_${EXECUTABLE_NAME} ALL
       DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
       )
     if(CORE_BUILD)
