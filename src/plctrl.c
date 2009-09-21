@@ -161,7 +161,7 @@ c_plcol1(PLFLT col1)
 	plabort("plcol1: Please call plinit first");
 	return;
     }
-    if (col1 < 0 || col1 > 1) {
+    if (col1 < 0 || col1 > 1 || isnan(col1)) {
 	char buffer[BUFFER_SIZE];
 	snprintf(buffer, BUFFER_SIZE, "plcol1: Invalid color map position: %f", (PLFLT) col1);
 	plabort(buffer);
