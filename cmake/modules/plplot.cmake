@@ -461,6 +461,7 @@ include(drivers)
 # Miscellaneous other features - including docbook documentation
 # =======================================================================
 include(docbook)
+include(doxygen)
 include(summary)
 
 
