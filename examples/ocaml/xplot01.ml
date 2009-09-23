@@ -37,7 +37,7 @@ let pi = atan 1.0 *. 4.0
 
 (* This function will be called just before PLplot is initialized. *)
 let pre () =
-  P.load_palette (P.Indexed "cmap0_alternate.pal");
+  P.load_palette (P.indexed_palette "cmap0_alternate.pal");
   ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
   ()
 
@@ -68,8 +68,8 @@ let plot1 ?stream ?fontset (do_test, test_xor) params =
           (* Divide page into 2x2 plots *)
           (* plplot initialization *)
           let stream =
-            P.init ~pre ~pages:(2, 2) xmin xmax ymin ymax
-              P.Greedy (P.Window P.Cairo)
+            P.init ~pre ~pages:(2, 2) (xmin, ymin) (xmax, ymax)
+              P.Greedy P.Prompt_user
           in
 
           (* Select font set as per input flag *)
@@ -81,7 +81,7 @@ let plot1 ?stream ?fontset (do_test, test_xor) params =
              0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
              scaled separately, and we just draw a labelled box. *)
           P.set_color ~stream:s P.Black;
-          P.start_page ~stream:s xmin xmax ymin ymax P.Greedy;
+          P.start_page ~stream:s (xmin, ymin) (xmax, ymax) P.Greedy;
           s
         )
     | _ -> invalid_arg "Provide a stream or font option, not both"
@@ -95,7 +95,7 @@ let plot1 ?stream ?fontset (do_test, test_xor) params =
 
   P.plot ~stream [
     (* Plot the data points *)
-    P.points P.Green xs ys 9;
+    P.points ~symbol:P.Solar_symbol P.Green xs ys;
     (* Draw the line through the data *)
     P.lines P.Red x y;
   ];
@@ -111,7 +111,7 @@ let plot2 stream =
      10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately,
      and we draw a box with axes. *)
   P.set_color ~stream P.Black;
-  P.start_page ~stream (-2.0) 10.0 (-0.4) 1.2 P.Greedy;
+  P.start_page ~stream (-2.0, -0.4) (10.0, 1.2) P.Greedy;
 
   P.set_color ~stream P.Blue;
   P.label ~stream "(x)" "sin(x)/x" "#frPLplot Example 1 - Sinc Function";
@@ -129,11 +129,14 @@ let plot2 stream =
   in
 
   (* Draw the line *)
-  (* TODO: Add width support to Plot.lines *)
-  P.plot ~stream [P.lines P.Brown x y];
+  P.plot ~stream [P.lines ~width:2 P.Red x y];
 
   (* Show the axes *)
-  P.finish_page ~stream 0.0 0.0;
+  let axis =
+    P.Axis :: P.default_axis_options,
+    P.Axis :: P.default_axis_options
+  in
+  P.finish_page ~stream ~axis 0.0 0.0;
 
   (* All done. *)
   ()
@@ -144,7 +147,7 @@ let plot3 stream =
 
   (* Use standard viewport, and define X range from 0 to 360 degrees, Y range
      from -1.2 to 1.2.*)
-  P.start_page ~stream  0.0 360.0 (-1.2) 1.2 P.Greedy;
+  P.start_page ~stream  (0.0, -1.2) (360.0, 1.2) P.Greedy;
 
   (* Superimpose a dashed line grid, with 1.5 mm marks and spaces. *)
   P.with_stream ~stream (
@@ -162,23 +165,22 @@ let plot3 stream =
   let x = Array.init 101 (fun i -> 3.6 *. float_of_int i) in
   let y = Array.init 101 (fun i -> sin (x.(i) *. pi /. 180.0)) in
 
-  P.plot ~stream [P.lines P.Red x y];
+  P.plot ~stream [P.lines P.Brown x y];
 
   (* For the final graph we wish to override the default axis attributes,
      including tick intervals.
      Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. *)
-  let stream =
-    {
-      stream with
-        P.x_axis = [P.Frame0; P.Frame1; P.Label; P.Minor_ticks; P.Major_ticks];
-        P.y_axis = [
-          P.Frame0; P.Frame1; P.Label; P.Minor_ticks; P.Major_ticks;
-          P.Vertical_label
-        ];
-    }
+  let axis =
+    (* x-axis *)
+    [P.Frame0; P.Frame1; P.Label; P.Minor_ticks; P.Major_ticks],
+    (* y-axis *)
+    [
+      P.Frame0; P.Frame1; P.Label; P.Minor_ticks; P.Major_ticks;
+      P.Vertical_label
+    ]
   in
 
-  P.finish_page ~stream 60.0 0.2;
+  P.finish_page ~stream ~axis 60.0 0.2;
 
   (* All done. *)
   ()

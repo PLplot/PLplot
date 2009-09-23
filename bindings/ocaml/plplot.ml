@@ -129,8 +129,6 @@ module Plot = struct
 
   type stream_t = {
     stream : int;
-    x_axis : axis_options_t list;
-    y_axis : axis_options_t list;
   }
 
   type color_t =
@@ -155,20 +153,45 @@ module Plot = struct
 
   type pltr_t = float -> float -> float * float
 
+  (** Line plotting styles/patterns. *)
+  type line_style_t =
+    | Solid_line
+    | Line1 | Line2 | Line3 | Line4
+    | Line5 | Line6 | Line7 | Line8
+    | Custom_line of ((int * int) list)
+
+  (** Point/symbol styles *)
+  type symbol_t =
+    | Point_symbol
+    | Box_symbol
+    | Dot_symbol
+    | Plus_symbol
+    | Circle_symbol
+    | X_symbol
+    | Solar_symbol
+    | Diamond_symbol
+    | Open_star_symbol
+    | Big_dot_symbol
+    | Star_symbol
+    | Open_dot_symbol
+    | Index_symbol of int
+
   type plot_t =
     (* Standard plot elements *)
     | Arc of (color_t * float * float * float * float * float * float * bool)
     | Contours of (color_t * pltr_t * float array * float array array)
     | Image of image_t
     | Image_fr of (image_t * (float * float))
-    | Join of (color_t * float * float * float * float)
-    | Lines of (string option * color_t * float array * float array)
+    | Join of (color_t * float * float * float * float * int * line_style_t)
+    | Lines of
+      (string option * color_t * float array * float array * int * line_style_t)
     | Map of (color_t * map_t * float * float * float * float)
     | Points of
-      (string option * color_t * float array * float array * int * float)
+      (string option * color_t * float array * float array * symbol_t * float)
     | Polygon of (color_t * float array * float array * bool)
     | Text of (color_t * string * float * float * float * float * float)
-    | Text_outside of (color_t * string * float plot_side_t * float * float * bool)
+    | Text_outside of
+      (color_t * string * float plot_side_t * float * float * bool)
     (* Set/clear coordinate transforms *)
     | Set_transform of pltr_t
     | Clear_transform
@@ -189,13 +212,18 @@ module Plot = struct
     | Ps of plot_device_family_t
     | Svg of plot_device_family_t
     | Window of plot_device_family_t
+    | Prompt_user
     | External of int
     | Other_device of string
   type plot_scaling_t = Preset | Greedy | Equal | Equal_square
 
   type color_palette_t =
-    | Indexed of string
-    | Continuous of (string * bool)
+    | Indexed_palette of string
+    | Continuous_palette of (string * bool)
+
+  let indexed_palette filename = Indexed_palette filename
+  let continuous_palette ?(interpolate = true) filename =
+    Continuous_palette (filename, interpolate)
 
   let default_axis_options =
     [Frame0; Frame1; Major_ticks; Minor_ticks; Invert_ticks; Label]
@@ -240,7 +268,8 @@ module Plot = struct
   (** Returns the string to pass to plsdev and a boolean value indicating if
       the device is interactive or not. *)
   let devstring_of_plot_device = function
-    | External _ -> "N/A", false
+    | Prompt_user -> "", false
+    | External _ -> invalid_arg "External device"
     | Other_device s -> s, false
     | Pdf family -> "pdf" ^ string_of_device_family family, false
     | Png family -> "png" ^ string_of_device_family family , false
@@ -259,9 +288,10 @@ module Plot = struct
     | Ps _ -> ".ps"
     | Pdf _ -> ".pdf"
     | Svg _ -> ".svg"
-    | Window _ -> invalid_arg "interactive plot device"
-    | External _ -> invalid_arg "external plot device"
+    | Window _ -> invalid_arg "interactive plot device, no extension"
+    | External _ -> invalid_arg "external plot device, unknown extension"
     | Other_device _ -> invalid_arg "other device, unknown extension"
+    | Prompt_user -> invalid_arg "user prompted for device, unknown extension"
 
   (** Make a new stream, without disturbing the current plot state. *)
   let make_stream ?stream () =
@@ -274,8 +304,7 @@ module Plot = struct
           new_stream
       | Some s -> s
     in
-    { stream = this_stream;
-      x_axis = default_axis_options; y_axis = default_axis_options; }
+    { stream = this_stream }
 
   (** [with_stream ?stream f] calls [f ()] with [stream] as the active
       plotting stream if [stream] is present.  Otherwise it just calls
@@ -289,6 +318,48 @@ module Plot = struct
         let result = f () in
         plsstrm old_stream;
         result
+
+  (** Get the integer representation of the line style for use with pllsty *)
+  let int_of_line_style = function
+    | Solid_line -> 1
+    | Line1 -> 1
+    | Line2 -> 2
+    | Line3 -> 3
+    | Line4 -> 4
+    | Line5 -> 5
+    | Line6 -> 6
+    | Line7 -> 7
+    | Line8 -> 8
+    | Custom_line _ -> assert false
+
+  (** Set the line drawing style *)
+  let set_line_style ?stream style =
+    with_stream ?stream (
+      fun () ->
+        match style with
+        | Custom_line l ->
+            let marks, spaces = List.split l in
+            let marks = Array.of_list marks in
+            let spaces = Array.of_list spaces in
+            plstyl marks spaces
+        | s -> pllsty (int_of_line_style s)
+    )
+
+  (** Get the integer representation of the line style for use with plssym *)
+  let int_of_symbol = function
+    | Point_symbol -> ~-1
+    | Box_symbol -> 0
+    | Dot_symbol -> 1
+    | Plus_symbol -> 2
+    | Circle_symbol -> 4
+    | X_symbol -> 5
+    | Solar_symbol -> 9
+    | Diamond_symbol -> 11
+    | Open_star_symbol -> 12
+    | Big_dot_symbol -> 17
+    | Star_symbol -> 18
+    | Open_dot_symbol -> 20
+    | Index_symbol i -> i
 
   (** Set the plotting color (color scale 0). NOTE that these are for the
       ALTERNATE color palette, not the DEFAULT color palette. *)
@@ -328,7 +399,7 @@ module Plot = struct
     ()
 
   (** Start a new page *)
-  let start_page ?stream x0 x1 y0 y1 axis_scaling =
+  let start_page ?stream (x0, y0) (x1, y1) axis_scaling =
     with_stream ?stream (
       fun () ->
         (* Start with a black plotting color. *)
@@ -341,16 +412,12 @@ module Plot = struct
     with_stream ?stream (
       fun () ->
         match which with
-        | Indexed file -> plspal0 file
-        | Continuous (file, segmented) -> plspal1 file segmented
+        | Indexed_palette file -> plspal0 file
+        | Continuous_palette (file, segmented) -> plspal1 file segmented
     )
 
-  (** [init ?filename ?size ?pages x0 x1 y0 y1 axis_scaling device] creates a
-    new plot instance.  [size] is the size of the plot device.  If a [filename]
-    is provided then an appropriate file extension will be added, based on the
-    given [device]. [pages] determines how many plots will be on a single
-    device page. *)
-  let init ?filename ?size ?pages ?pre x0 x1 y0 y1 axis_scaling device =
+  (** Create a new plot instance *)
+  let make ?stream ?filename ?size ?pre device =
     (* Make a new plot stream. *)
     let stream, init =
       match device with
@@ -392,14 +459,20 @@ module Plot = struct
         Option.may (fun f -> f ()) pre;
         plinit ();
     );
+    stream
+
+  (** Create a new plot instance and initialize it. *)
+  let init ?filename ?size ?pages ?pre (x0, y0) (x1, y1) axis_scaling device =
+    (* Creat a new plot stream and set it up. *)
+    let stream = make ?filename ?size ?pre device in
     (* If requested, set up multiple sub-pages. *)
     Option.may (fun (x, y) -> with_stream ~stream (fun () -> plssub x y)) pages;
-    start_page ~stream x0 x1 y0 y1 axis_scaling;
+    start_page ~stream (x0, y0) (x1, y1) axis_scaling;
     stream
 
   (** [make_stream_active stream] makes [stream] the active plot stream.  If
       there is another active plot stream its identity is not saved. *)
-  let make_stream_active stream = plsstrm stream.stream
+  let make_stream_active ~stream = plsstrm stream.stream
 
   (** {3 Simplified plotting interface} *)
 
@@ -422,10 +495,12 @@ module Plot = struct
     Image_fr ((range, x0, y0, x1, y1, data), scale)
 
   (** [join color x0 y0 x1 y1] *)
-  let join color x0 y0 x1 y1 = Join (color, x0, y0, x1, y1)
+  let join ?style ?width color x0 y0 x1 y1 =
+    Join (color, x0, y0, x1, y1, width |? 1, style |? Solid_line)
 
   (** [lines ?label color xs ys] *)
-  let lines ?label color xs ys = Lines (label, color, xs, ys)
+  let lines ?label ?style ?width color xs ys =
+    Lines (label, color, xs, ys, width |? 1, style |? Solid_line)
 
   (** [map ?sw ?ne color outline] *)
   let map ?sw ?ne color outline =
@@ -433,9 +508,9 @@ module Plot = struct
     let x1, y1 = ne |? (180.0, 90.0) in
     Map (color, outline, x0, y0, x1, y1)
 
-  (** [points ?label ?scale color xs ys symbol] *)
-  let points ?label ?scale color xs ys symbol =
-    Points (label, color, xs, ys, symbol, scale |? 1.0)
+  (** [points ?label ?scale color xs ys] *)
+  let points ?label ?symbol ?scale color xs ys =
+    Points (label, color, xs, ys, symbol |? Open_dot_symbol, scale |? 1.0)
 
   (** [polygon ?fill color xs ys fill] *)
   let polygon ?(fill = false) color xs ys = Polygon (color, xs, ys, fill)
@@ -445,17 +520,17 @@ module Plot = struct
     polygon ~fill color [|x0; x1; x1; x0; x0|] [|y0; y0; y1; y1; y0|]
 
   (** [text ?dx ?dy ?just ?color s x y] *)
-  let text ?(dx = 0.0) ?(dy = 0.0) ?(just = 0.5) ?(color = Black) s x y =
+  let text ?(dx = 0.0) ?(dy = 0.0) ?(just = 0.5) color x y s =
     Text (color, s, x, y, dx, dy, just)
 
   (** [text_outside ?just side displacement s] *)
-  let text_outside ?(just = 0.5) ?(perp = false) ?(color = Black) side displacement s =
+  let text_outside ?(just = 0.5) ?(perp = false) color side displacement s =
     Text_outside (color, s, side, displacement, just, perp)
 
   (** [func ?point ?step color f (min, max)] plots the function [f] from 
       [x = min] to [x = max].  [step] can be used to tighten or coarsen the
       sampling of plot points. *)
-  let func ?point ?step color f (min, max) =
+  let func ?symbol ?step color f (min, max) =
     let step =
       match step with
       | None -> (max -. min) /. 100.0
@@ -465,8 +540,8 @@ module Plot = struct
       Array_ext.range ~n:(int_of_float ((max -. min) /. step) + 1) min max
     in
     let ys = Array.map f xs in
-    match point with
-    | Some p -> points color xs ys p
+    match symbol with
+    | Some s -> points ~symbol:s color xs ys
     | None -> lines color xs ys
 
   (** [transform f] *)
@@ -544,6 +619,18 @@ module Plot = struct
       ()
     )
 
+  (** Set the drawing color in [f], and restore the previous drawing color
+      when [f] is complete. *)
+  let set_color_in ?stream c f =
+    with_stream ?stream (
+      fun () ->
+        let old_color = plg_current_col0 () in
+        set_color c;
+        f ();
+        plcol0 old_color;
+        ()
+    )
+
   (** [plot stream l] plots the data in [l] to the plot [stream]. *)
   let rec plot ?stream plottable_list =
     (* TODO: Add legend support. *)
@@ -573,13 +660,6 @@ module Plot = struct
         (xmin, ymin), (xmax, ymax)
     in
     *)
-    let set_color_in c f =
-      let old_color = plg_current_col0 () in
-      set_color c;
-      f ();
-      plcol0 old_color;
-      ()
-    in
     let plot_arc (color, x, y, a, b, angle1, angle2, fill) =
       set_color_in color (
         fun () -> plarc x y a b angle1 angle2 fill;
@@ -607,11 +687,27 @@ module Plot = struct
         x0 x1 y0 y1 range_min range_max scale_min scale_max;
       ()
     in
-    let plot_join (color, x0, y0, x1, y1) =
-      set_color_in color (fun () -> pljoin x0 y0 x1 y1)
+    let plot_join (color, x0, y0, x1, y1, width, style) =
+      set_color_in color (
+        fun () ->
+          let old_width = plgwid () in
+          plwid width;
+          set_line_style style;
+          pljoin x0 y0 x1 y1;
+          set_line_style Solid_line;
+          plwid old_width;
+      )
     in
-    let plot_lines (label, color, xs, ys) =
-      set_color_in color (fun () -> plline xs ys)
+    let plot_lines (label, color, xs, ys, width, style) =
+      set_color_in color (
+        fun () ->
+          let old_width = plgwid () in
+          plwid width;
+          set_line_style style;
+          plline xs ys;
+          set_line_style Solid_line;
+          plwid old_width;
+      )
     in
     let plot_map (color, outline, x0, y0, x1, y1) =
       set_color_in color (
@@ -623,7 +719,7 @@ module Plot = struct
       set_color_in color (
         fun () ->
           plssym 0.0 scale;
-          plpoin xs ys symbol;
+          plpoin xs ys (int_of_symbol symbol);
           plssym 0.0 1.0;
       )
     in
@@ -823,7 +919,7 @@ module Plot = struct
     with_stream ?stream (fun () -> colorbar ?label ?log ?pos ?width values)
 
   (** An easier to deduce alternative to {Plplot.plbox} *)
-  let plot_axes ~xtick ~xsub ~ytick ~ysub ~xoptions ~yoptions =
+  let plot_axes ?stream ~xtick ~xsub ~ytick ~ysub ~xoptions ~yoptions =
     let map_axis_options ol =
       List.map (
         function
@@ -846,47 +942,51 @@ module Plot = struct
     in
     let xopt = String.concat "" (map_axis_options xoptions) in
     let yopt = String.concat "" (map_axis_options yoptions) ^ "v" in
-    plbox xopt xtick xsub yopt ytick ysub
+    with_stream ?stream (fun () -> plbox xopt xtick xsub yopt ytick ysub)
 
-  (** Default page ending steps *)
-  let default_finish ?stream xstep ystep () =
+  (** Default page ending steps.  Just draw the plot axes. *)
+  let default_finish ?stream ?axis xstep ystep =
     let xopt, yopt =
-      match stream with
+      match axis with
       | None -> default_axis_options, default_axis_options
-      | Some s -> s.x_axis, s.y_axis
+      | Some s -> s
     in
-    with_stream ?stream (
+    set_color_in ?stream Black (
       fun () ->
-        set_color Black;
-        plot_axes
+        plot_axes ?stream
           ~xtick:xstep ~xsub:0 ~xoptions:xopt
           ~ytick:ystep ~ysub:0 ~yoptions:yopt;
     )
 
   (** Plot axes, but don't advance the page or end the session.  This is used
       internally by [finish]. *)
-  let finish_page ?stream ?f ?post xstep ystep =
+  let finish_page ?stream ?f ?post ?axis xstep ystep =
     with_stream ?stream (
       fun () ->
         let actual_finish =
           match f with
           | Some custom_finish -> custom_finish
-          | None -> default_finish ?stream xstep ystep
+          | None -> (fun () -> default_finish ?stream ?axis xstep ystep)
         in
         actual_finish ();
         Option.may (fun f -> f ()) post;
     )
 
   (** Finish the current page, start a new one. *)
-  let next_page ?stream ?f ?post x0 x1 y0 y1 axis_scaling =
-    finish_page ?stream ?f ?post 0.0 0.0;
-    start_page ?stream x0 x1 y0 y1 axis_scaling;
+  let next_page ?stream ?f ?post ?axis ?(xstep = 0.0) ?(ystep = 0.0)
+                (x0, y0) (x1, y1) axis_scaling =
+    finish_page ?stream ?f ?post ?axis xstep ystep;
+    start_page ?stream (x0, y0) (x1, y1) axis_scaling;
     ()
+
+  (** End the current plot stream *)
+  let end_stream ~stream =
+    with_stream ~stream plend1
 
   (** Finish up the plot by plotting axes and ending the session.  This must
       be called after plotting is complete. *)
-  let finish ?stream ?f ?post xstep ystep =
-    finish_page ?stream ?f ?post xstep ystep;
+  let finish ?stream ?f ?post ?axis xstep ystep =
+    finish_page ?stream ?f ?post ?axis xstep ystep;
     with_stream ?stream plend1
 end
 
@@ -924,42 +1024,43 @@ module Quick_plot = struct
     List.fold_left min infinity (List.map (safe_array_reduce min) ys_list),
     List.fold_left max neg_infinity (List.map (safe_array_reduce max) ys_list)
 
-  let maybe_log log p =
+  let maybe_log log =
+    let x_axis = default_axis_options in
+    let y_axis = default_axis_options in
     Option.map_default (
       fun (x_log, y_log) ->
-        {
-          p with
-          x_axis = if x_log then Log :: p.x_axis else p.x_axis;
-          y_axis = if y_log then Log :: p.y_axis else p.y_axis;
-        }
-    ) p log
+        (if x_log then Log :: x_axis else x_axis),
+        (if y_log then Log :: y_axis else y_axis)
+    ) (x_axis, y_axis) log
 
-  (** [points xs ys] plots the points described by the coordinates [xs]
+  (** [points [xs, ys; ...] plots the points described by the coordinates [xs]
       and [ys]. *)
-  let points ?filename ?(device = Window Cairo) ?labels ?log xs_list ys_list =
+  let points ?filename ?(device = Window Cairo) ?labels ?log xs_ys_list =
+    let xs_list, ys_list = List.split xs_ys_list in
     let xmin, xmax, ymin, ymax = extents xs_list ys_list in
     let ys_array = Array.of_list ys_list in
-    let p = init ?filename xmin xmax ymin ymax Greedy device in
+    let p = init ?filename (xmin, ymin) (xmax, ymax) Greedy device in
     let plottable_points =
       Array.to_list (
         Array.mapi (
-          fun i xs -> points (Index_color (i + 1)) xs ys_array.(i) i
+          fun i xs ->
+            points ~symbol:(Index_symbol i) (Index_color (i + 1))
+              xs ys_array.(i)
         ) (Array.of_list xs_list)
       )
     in
     plot ~stream:p plottable_points;
     Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
-    finish ~stream:(maybe_log log p) 0.0 0.0;
+    finish ~stream:p ~axis:(maybe_log log) 0.0 0.0;
     ()
 
-  (** [lines xs ys] plots the line segments described by the coordinates
+  (** [lines [xs, ys; ...] plots the line segments described by the coordinates
       [xs] and [ys]. *)
-  let lines
-        ?filename ?(device = Window Cairo) ?labels ?names ?log
-        xs_list ys_list =
+  let lines ?filename ?(device = Window Cairo) ?labels ?names ?log xs_ys_list =
+    let xs_list, ys_list = List.split xs_ys_list in
     let xmin, xmax, ymin, ymax = extents xs_list ys_list in
     let ys_array = Array.of_list ys_list in
-    let p = init ?filename xmin xmax ymin ymax Greedy device in
+    let p = init ?filename (xmin, ymin) (xmax, ymax) Greedy device in
     let colors = Array.mapi (fun i _ -> Index_color (i + 1)) ys_array in
     let plottable_lines =
       Array.to_list (
@@ -971,7 +1072,7 @@ module Quick_plot = struct
     plot ~stream:p plottable_lines;
     Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
     Option.may (fun n -> draw_legend ~stream:p n (Array.to_list colors)) names;
-    finish ~stream:(maybe_log log p) 0.0 0.0;
+    finish ~stream:p ~axis:(maybe_log log) 0.0 0.0;
     ()
 
   (** [image ?log m] plots the image [m] with a matching colorbar.  If [log] is
@@ -981,7 +1082,7 @@ module Quick_plot = struct
     let xmin, ymin = 0.0, 0.0 in
     let xmax, ymax = Array_ext.matrix_dims m in
     let xmax, ymax = float_of_int xmax, float_of_int ymax in
-    let p = init ?filename xmin xmax ymin ymax Equal_square device in
+    let p = init ?filename (xmin, ymin) (xmax, ymax) Equal_square device in
     Option.may (load_palette ~stream:p) palette;
     plot ~stream:p [image (xmin, ymin) (xmax, ymax) m];
     Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
@@ -994,7 +1095,7 @@ module Quick_plot = struct
       to [x = max].  [step] can be used to tighten or coarsen the sampling of
       plot points. *)
   let func
-        ?filename ?(device = Window Cairo) ?labels ?names ?point ?step
+        ?filename ?(device = Window Cairo) ?labels ?names ?symbol ?step
         fs (xmin, xmax) =
     let fs_array = Array.of_list fs in
     let colors = Array.mapi (fun i _ -> Index_color (i + 1)) fs_array in
@@ -1002,7 +1103,7 @@ module Quick_plot = struct
       Array.to_list (
         Array.mapi (
           fun i f ->
-            func ?point ?step colors.(i) f (xmin, xmax)
+            func ?symbol ?step colors.(i) f (xmin, xmax)
         ) fs_array
       )
     in
@@ -1010,14 +1111,14 @@ module Quick_plot = struct
       Array.of_list (
         List.map (
           function
-            | Lines (_, _, _, y)
+            | Lines (_, _, _, y, _, _)
             | Points (_, _, _, y, _, _) -> y
             | _ -> invalid_arg "Invalid function output"
         ) plot_content
       )
     in
     let ymax, ymin = plMinMax2dGrid ys in
-    let stream = init ?filename xmin xmax ymin ymax Greedy device in
+    let stream = init ?filename (xmin, ymin) (xmax, ymax) Greedy device in
     plot ~stream plot_content;
     Option.may (fun n -> draw_legend ~stream n (Array.to_list colors)) names;
     Option.may (fun (x, y, t) -> label ~stream x y t) labels;

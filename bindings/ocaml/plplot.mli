@@ -20,7 +20,7 @@ along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 (** {1 PLplot - A library for creating scientific plots} *)
 
 (** {e Note:} The API for the {!Plot} and {!Quick_plot} modules is not yet
-    fixed and may change.
+    fixed and may change between now and the 5.10.0 PLplot release.
 
     {!core} is {b not} expected to change. *)
 
@@ -28,7 +28,7 @@ along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 module Plot :
   sig
 
-    (** {b THIS API IS NOT FIXED AND MAY CHANGE} *)
+    (** {b THIS API IS NOT FIXED AND MAY CHANGE BEFORE THE 5.10.0 RELEASE} *)
 
     (** The different sides of a (2D) plot.  These values are used to
         represent, e.g., offsets along axes and text placement. *)
@@ -59,11 +59,7 @@ module Plot :
       | Vertical_label
 
     (** A plot stream. *)
-    type stream_t = {
-      stream : int; (** The plot stream index as used by PLplot *)
-      x_axis : axis_options_t list; (** Axis drawing options for the X-axis *)
-      y_axis : axis_options_t list; (** Axis drawing options for the Y-axis *)
-    }
+    type stream_t
 
     (** Colors from the indexed color map (color map 0), from the
         [cmapo_alternate.pal] file!  Note that these will NOT match up with
@@ -111,6 +107,7 @@ module Plot :
       | Ps of plot_device_family_t
       | Svg of plot_device_family_t
       | Window of plot_device_family_t
+      | Prompt_user (** Ask for the correct device to use at run-time *)
       | External of int (** Pre-defined plot streams *)
       | Other_device of string (** PLplot plotting devices otherwise not
                                    available from this list *)
@@ -118,11 +115,37 @@ module Plot :
     (** Type of scaling to use for plot axes, as in {!Plplot.plenv}. *)
     type plot_scaling_t = Preset | Greedy | Equal | Equal_square
 
-    (** PLplot has two color palettes - indexed (color map 0) and
-        continuous (color map 1). *)
-    type color_palette_t =
-      | Indexed of string
-      | Continuous of (string * bool)
+    (** A color palette, usually loaded from disk *)
+    type color_palette_t
+
+    (** Line plotting styles/patterns. *)
+    type line_style_t =
+      | Solid_line
+      | Line1 | Line2 | Line3 | Line4
+      | Line5 | Line6 | Line7 | Line8 (** These correspond to PLplot's
+                                          pre-defined line styles as set by
+                                          {!pllsty}. *)
+      | Custom_line of ((int * int) list) (** A custom line style, with each
+                                                (mark, space) pair defining the
+                                                length of one segment and gap
+                                                in the line drawing pattern. *)
+
+    (** Point/symbol styles *)
+    type symbol_t =
+      | Point_symbol
+      | Box_symbol
+      | Dot_symbol
+      | Plus_symbol
+      | Circle_symbol
+      | X_symbol
+      | Solar_symbol
+      | Diamond_symbol
+      | Open_star_symbol
+      | Big_dot_symbol
+      | Star_symbol
+      | Open_dot_symbol
+      | Index_symbol of int (** The index value here is the same value used in
+                                {!plssym}. *)
 
     (** The default list of axis rendering options, used for all plots generated
         with {!init} if no custom options are provided. *)
@@ -136,37 +159,32 @@ module Plot :
         device. *)
     val recommended_extension : plot_device_t -> string
 
-    (** Make a new {!stream_t}, possibly using an existing plot stream index. *)
+    (** {4 Plot streams}*)
+
+    (** Make a new {!stream_t}, possibly using an existing plot stream index.
+        If no [stream] argument is provided then a new plot stream is
+        created. *)
     val make_stream : ?stream:int -> unit -> stream_t
 
-    (** [with_stream ?stream f] performs [f] with [stream] as the active plot
-        stream.  If [stream] is not provided then the currently active plot
-        stream is left active.  Once [f] is complete, the previously active plot
-        stream is restored. *)
-    val with_stream : ?stream:stream_t -> (unit -> 'a) -> 'a
-
-    (** [set_color ?stream color] sets the current active plot color to
-        [color]. *)
-    val set_color : ?stream:stream_t -> color_t -> unit
-
-    (** [set_color_scale ?stream reverse colors] sets the continuous color map
-        (color map 1) to a scale determined by interpolating between [colors].
-        {!Plplot.plscmap1l} is used internally to set the color scale. *)
-    val set_color_scale : ?stream:stream_t -> bool -> color_t array -> unit
-
-    (** [start_page ?stream x0 x1 y0 y1 scaling] starts a new plot page with the
-        given dimensions and scaling. *)
+    (** [start_page ?stream (x0, y0) (x1, y1) scaling] starts a new plot page
+        with the given dimensions and scaling. *)
     val start_page :
       ?stream:stream_t ->
-      float -> float -> float -> float -> plot_scaling_t -> unit
+      float * float -> float * float -> plot_scaling_t -> unit
 
-    (** [load_palette ?stream palette] loads either indexed or continuous
-        color palette information from a file on disk. *)
-    val load_palette : ?stream:stream_t -> color_palette_t -> unit
+    (** Create a new plot instance.  See {!init} for a description of the
+        parameters. *)
+    val make :
+      ?stream:stream_t ->
+      ?filename:string ->
+      ?size:int * int ->
+      ?pre:(unit -> unit) ->
+      plot_device_t -> stream_t
 
-    (** [init ?filename ?size ?pages x0 x1 y0 y1 scale device] - Start a new
-        plot stream for a 2D plot with plot axis extents given by [(x0, y0)] to
-        [(x1, y1)].
+    (** [init ?filename ?size ?pages (x0, y0) (x1, y1) scale device] - Start a
+        new plot stream for a 2D plot with plot axis extents given by [(x0, y0)]
+        to [(x1, y1)].  A call to [init] is roughly equivalent to calling
+        {!make} and then {!start_page}.
         @param filename Plot output filename.  A suitable file extension
                         will be added if it does not already exist.
         @param size Dimension of the plot in physical units (e.g., pixels
@@ -181,12 +199,45 @@ module Plot :
       ?size:int * int ->
       ?pages:int * int ->
       ?pre:(unit -> unit) ->
-      float ->
-      float -> float -> float -> plot_scaling_t -> plot_device_t -> stream_t
+      float * float -> float * float ->
+      plot_scaling_t -> plot_device_t -> stream_t
+
+    (** [with_stream ?stream f] performs [f] with [stream] as the active plot
+        stream.  If [stream] is not provided then the currently active plot
+        stream is left active.  Once [f] is complete, the previously active plot
+        stream is restored. *)
+    val with_stream : ?stream:stream_t -> (unit -> 'a) -> 'a
 
     (** [make_stream_active stream] makes [stream] in to the currently active
-        plot stream. *)
-    val make_stream_active : stream_t -> unit
+        plot stream for {!core} calls or any function which is not
+        provided with an explicit [stream] argument. *)
+    val make_stream_active : stream:stream_t -> unit
+
+    (** {4 Colors} *)
+
+    (** [set_color ?stream color] sets the current active plot color to
+        [color]. *)
+    val set_color : ?stream:stream_t -> color_t -> unit
+
+    (** [set_color_scale ?stream reverse colors] sets the continuous color map
+        (color map 1) to a scale determined by interpolating between [colors].
+        {!Plplot.plscmap1l} is used internally to set the color scale. *)
+    val set_color_scale : ?stream:stream_t -> bool -> color_t array -> unit
+
+    (** PLplot has two color palettes - indexed (color map 0) and
+        continuous (color map 1).  These functions can be used with
+        {!load_palette} to set custom indexed and continuous color palettes. *)
+    val indexed_palette : string -> color_palette_t
+
+    (** [continuous_palette ?interpolate filename] - If [interpolate] is true
+        (the default) then a smooth palette is generated using the color
+        definitions in the palette file [filename].  Otherwise, the colors
+        are considered to be discrete, giving a segmented palette. *)
+    val continuous_palette : ?interpolate:bool -> string -> color_palette_t
+
+    (** [load_palette ?stream palette] loads either indexed or continuous
+        color palette information from a file on disk. *)
+    val load_palette : ?stream:stream_t -> color_palette_t -> unit
 
     (** {4 Plot elements} *)
 
@@ -213,21 +264,29 @@ module Plot :
       scale:float * float ->
       float * float -> float * float -> float array array -> plot_t
 
-    (** [join color x0 y0 x1 y1] *)
-    val join : color_t -> float -> float -> float -> float -> plot_t
+    (** [join ?style color x0 y0 x1 y1] *)
+    val join :
+      ?style:line_style_t ->
+      ?width:int ->
+      color_t -> float -> float -> float -> float -> plot_t
 
-    (** [lines ?label color xs ys] *)
+    (** [lines ?label ?style color xs ys] *)
     val lines :
-      ?label:string -> color_t -> float array -> float array -> plot_t
+      ?label:string ->
+      ?style:line_style_t ->
+      ?width:int ->
+      color_t -> float array -> float array -> plot_t
 
     (** [map ?sw ?ne color outline_type] *)
     val map :
       ?sw:float * float -> ?ne:float * float -> color_t -> map_t -> plot_t
 
-    (** [points ?label ?scale color xs ys symbol] *)
+    (** [points ?label ?symbol ?scale color xs ys] *)
     val points :
       ?label:string ->
-      ?scale:float -> color_t -> float array -> float array -> int -> plot_t
+      ?symbol:symbol_t ->
+      ?scale:float ->
+      color_t -> float array -> float array -> plot_t
 
     (** [polygon ?fill color xs ys] *)
     val polygon :
@@ -237,28 +296,30 @@ module Plot :
     val rectangle :
       ?fill:bool -> color_t -> float * float -> float * float -> plot_t
 
-    (** [text ?dx ?dy ?just ?color string x y] writes the text [string] inside
+    (** [text ?dx ?dy ?just color x y string ] writes the text [string] inside
         the plot window, at an optional angle defined by the offsets [dx] and
         [dy]. *)
     val text :
       ?dx:float ->
       ?dy:float ->
-      ?just:float -> ?color:color_t -> string -> float -> float -> plot_t
+      ?just:float ->
+      color_t -> float -> float -> string -> plot_t
 
-    (** [text_outside ?just ?perp ?color side offset string] writes text
+    (** [text_outside ?just ?perp color side offset string] writes text
         outside of the plot window, along [side], displaced from the axis by
         [offset] * character height. *)
     val text_outside :
       ?just:float ->
       ?perp:bool ->
-      ?color:color_t -> float plot_side_t -> float -> string -> plot_t
+      color_t -> float plot_side_t -> float -> string -> plot_t
 
-    (** [func ?point ?step color f (min, max)] plots the function [f] from 
+    (** [func ?symbol ?step color f (min, max)] plots the function [f] from 
         [x = min] to [x = max].  [step] can be used to tighten or coarsen the
         sampling of plot points. *)
     val func :
-      ?point:int ->
-      ?step:float -> color_t -> (float -> float) -> float * float -> plot_t
+      ?symbol:symbol_t ->
+      ?step:float ->
+      color_t -> (float -> float) -> float * float -> plot_t
 
     (** [transform f] Set the coordinate transformation function used by
         {!imagefr} and other functions affected by {!Plplot.plset_pltr}. *)
@@ -307,6 +368,7 @@ module Plot :
 
     (** Draw the plot axes on the current plot page *)
     val plot_axes :
+      ?stream:stream_t ->
       xtick:float ->
       xsub:int ->
       ytick:float ->
@@ -315,28 +377,40 @@ module Plot :
 
     (** {4 Finishing up a plot page} *)
 
-    val default_finish : ?stream:stream_t -> float -> float -> unit -> unit
+    (** Plot axes, but don't advance the page or end the session.  This is used
+        internally by [finish]. *)
     val finish_page :
       ?stream:stream_t ->
-      ?f:(unit -> unit) -> ?post:(unit -> unit) -> float -> float -> unit
+      ?f:(unit -> unit) ->
+      ?post:(unit -> unit) ->
+      ?axis:axis_options_t list * axis_options_t list ->
+      float -> float -> unit
+
+    (** Finish the current page, start a new one. *)
     val next_page :
       ?stream:stream_t ->
       ?f:(unit -> unit) ->
       ?post:(unit -> unit) ->
-      float -> float -> float -> float -> plot_scaling_t -> unit
+      ?axis:axis_options_t list * axis_options_t list ->
+      ?xstep:float ->
+      ?ystep:float ->
+      float * float -> float * float -> plot_scaling_t -> unit
 
     (** [finish ?stream xstep ystep] finishes up the plot [stream], using
         [xstep] and [ystep] for the axis tick. *)
     val finish :
       ?stream:stream_t ->
-      ?f:(unit -> unit) -> ?post:(unit -> unit) -> float -> float -> unit
+      ?f:(unit -> unit) ->
+      ?post:(unit -> unit) ->
+      ?axis:axis_options_t list * axis_options_t list ->
+      float -> float -> unit
   end
 
 (** {3 A module for quick, "throw-away" plots} *)
 module Quick_plot :
   sig
 
-    (** {b THIS API IS NOT FIXED AND MAY CHANGE} *)
+    (** {b THIS API IS NOT FIXED AND MAY CHANGE BEFORE THE 5.10.0 RELEASE} *)
 
     (** [points xs ys] plots the points described by the coordinates [xs]
         and [ys]. *)
@@ -344,7 +418,7 @@ module Quick_plot :
       ?filename:string ->
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
-      ?log:bool * bool -> float array list -> float array list -> unit
+      ?log:bool * bool -> (float array * float array) list -> unit
 
     (** [lines xs ys] plots the line segments described by the coordinates
         [xs] and [ys]. *)
@@ -353,7 +427,7 @@ module Quick_plot :
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
       ?names:string list ->
-      ?log:bool * bool -> float array list -> float array list -> unit
+      ?log:bool * bool -> (float array * float array) list -> unit
 
     (** [image ?log m] plots the image [m] with a matching colorbar.  If [log]
         is true then the data in [m] are assumed to be [log10(x)] values. *)
@@ -371,7 +445,7 @@ module Quick_plot :
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
       ?names:string list ->
-      ?point:int ->
+      ?symbol:Plot.symbol_t ->
       ?step:float -> (float -> float) list -> float * float -> unit
   end
 
