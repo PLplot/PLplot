@@ -225,7 +225,7 @@ let () =
 
   (* plplot initialization *)
   (* Parse and process command line arguments *)
-  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
+  plparseopts Sys.argv [PL_PARSE_FULL];
 
   let driver = plgdev () in
   let fam, num, bmax = plgfam () in
@@ -242,7 +242,7 @@ let () =
   if valid_geometry then
     plspage xp0 yp0 xleng0 yleng0 xoff0 yoff0
   else
-    ignore (plsetopt "geometry" geometry_master);
+    plsetopt "geometry" geometry_master;
 
   plsdev driver;
   plssub 2 2;
@@ -254,13 +254,13 @@ let () =
   if valid_geometry then
     plspage xp0 yp0 xleng0 yleng0 xoff0 yoff0
   else
-    ignore (plsetopt "geometry" geometry_slave);
+    plsetopt "geometry" geometry_slave;
 
   (* Turn off pause to make this a slave (must follow master) *)
   plspause false;
   plsdev driver;
   plsfam fam num bmax;
-  ignore (plsetopt "fflen" "2");
+  plsetopt "fflen" "2";
   plinit ();
 
   (* Set up the data & plot *)

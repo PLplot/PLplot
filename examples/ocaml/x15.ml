@@ -184,7 +184,7 @@ let plot3 () =
 \*--------------------------------------------------------------------------*)
 let () =
   (* Parse and process command line arguments *)
-  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
+  plparseopts Sys.argv [PL_PARSE_FULL];
 
   (* Set up color map 1 *)
   cmap1_init2 ();

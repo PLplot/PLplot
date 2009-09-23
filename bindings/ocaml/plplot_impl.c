@@ -448,6 +448,16 @@ void ml_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT ndraw, PLBOOL *draw
     plpoly3(n, x, y, z, draw, ifcc);
 }
 
+/* Raise Invalid_argument if the given value is <> 0 */
+void plplot_check_nonzero_result(int result) {
+    if (result != 0) {
+        char exception_message[MAX_EXCEPTION_MESSAGE_LENGTH];
+        sprintf(exception_message, "Error, return code %d", result);
+        caml_invalid_argument(exception_message);
+    }
+    return;
+}
+
 /* Translate the integer version of the OCaml variant to the appropriate
    PLplot constant. */
 int translate_parse_option(int parse_option) {
@@ -489,7 +499,12 @@ value ml_plparseopts(value argv, value parse_method) {
         parse_method = Field(parse_method, 1);
     }
     result = plparseopts(&argv_length, argv_copy, combined_parse_method);
-    CAMLreturn( Val_int(result) );
+    if (result != 0) {
+        char exception_message[MAX_EXCEPTION_MESSAGE_LENGTH];
+        sprintf(exception_message, "Invalid arguments in plparseopts, error %d", result);
+        caml_invalid_argument(exception_message);
+    }
+    CAMLreturn( Val_unit );
 }
 
 value ml_plstripc(value xspec, value yspec, value xmin, value xmax, value xjump,

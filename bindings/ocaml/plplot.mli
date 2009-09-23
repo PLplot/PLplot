@@ -746,7 +746,7 @@ external plwid : int -> unit = "camlidl_plplot_core_c_plwid"
 external plwind : float -> float -> float -> float -> unit
   = "camlidl_plplot_core_c_plwind"
 external plxormod : bool -> bool = "camlidl_plplot_core_c_plxormod"
-external plsetopt : string -> string -> int
+external plsetopt : string -> string -> unit
   = "camlidl_plplot_core_c_plsetopt"
 external plMinMax2dGrid : float array array -> float * float
   = "camlidl_plplot_core_plMinMax2dGrid"
@@ -851,7 +851,7 @@ external plgriddata :
   float array ->
   float array -> plplot_grid_method_type -> float -> float array array
   = "ml_plgriddata_bytecode" "ml_plgriddata"
-external plparseopts : string array -> plplot_parse_method_type list -> int
+external plparseopts : string array -> plplot_parse_method_type list -> unit
   = "ml_plparseopts"
 
 (** {3 Non-standard convenience functions (not part of the standard PLplot

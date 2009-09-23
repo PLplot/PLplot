@@ -339,7 +339,7 @@ let plot4 () =
 \*--------------------------------------------------------------------------*)
 let () =
   (* Parse command line arguments *)
-  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
+  plparseopts Sys.argv [PL_PARSE_FULL];
 
   (* Initialize plplot *)
   plinit ();

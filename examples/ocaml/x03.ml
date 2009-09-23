@@ -36,7 +36,7 @@ let main () =
   let y0 = Array.init 361 (fun i -> sin (dtr *. float_of_int i)) in
 
   (* Parse and process command line arguments *)
-  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
+  plparseopts Sys.argv [PL_PARSE_FULL];
 
   (* Set orientation to landscape - note not all device drivers 
    * support this, in particular most interactive drivers do not *)

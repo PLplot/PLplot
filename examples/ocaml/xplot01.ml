@@ -38,7 +38,7 @@ let pi = atan 1.0 *. 4.0
 (* This function will be called just before PLplot is initialized. *)
 let pre () =
   P.load_palette (P.indexed_palette "cmap0_alternate.pal");
-  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
+  plparseopts Sys.argv [PL_PARSE_FULL];
   ()
 
 let plot1 ?stream ?fontset (do_test, test_xor) params =

@@ -50,6 +50,10 @@ enum plplot_hist_enum {
 };
 typedef [set] enum plplot_hist_enum plplot_hist_style;
 
+// Any function which has a nonzero_error_int return type will raise
+// an Invalid_argument error if the return value is <> 0.
+typedef [errorcheck(plplot_check_nonzero_result), errorcode] int nonzero_error_int;
+
 // This is a simplified and modified version of the plplot.h file.
 #include "plplot_h.inc"
 
@@ -198,5 +202,5 @@ quote(ml,
 quote(mli, "val plunset_labelfunc : unit -> unit");
 
 RAW_ML(external plgriddata : float array -> float array -> float array -> float array -> float array -> plplot_grid_method_type -> float -> float array array = "ml_plgriddata_bytecode" "ml_plgriddata")
-RAW_ML(external plparseopts : string array -> plplot_parse_method_type list -> int = "ml_plparseopts")
+RAW_ML(external plparseopts : string array -> plplot_parse_method_type list -> unit = "ml_plparseopts")
 

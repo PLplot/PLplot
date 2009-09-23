@@ -116,7 +116,7 @@ let peace = [|
 |]
 
 let () =
-  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
+  plparseopts Sys.argv [PL_PARSE_FULL];
 
   plinit ();
 

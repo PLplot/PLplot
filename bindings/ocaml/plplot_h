@@ -675,7 +675,9 @@ plMergeOpts(PLOptionTable *options, const char *name, const char **notes);
 plSetUsage(const char *program_string, const char *usage_string);
 */
 
- int
+/* NOTE WARNING XXX: The return type is changed MANUALLY to indicate that any
+   non-zero return value is an error. */
+ nonzero_error_int
 c_plsetopt(const char *opt, const char *optarg);
 
 /*

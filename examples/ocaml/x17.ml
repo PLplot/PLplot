@@ -36,13 +36,13 @@ let () =
   (* plplot initialization *)
   (* Parse and process command line arguments *)
 
-  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
+  plparseopts Sys.argv [PL_PARSE_FULL];
 
   (* If db is used the plot is much more smooth. However, because of the
      async X behaviour, one does not have a real-time scripcharter. *)
   (*
-  ignore (plsetopt "db" "");
-  ignore (plsetopt "np" "");
+  plsetopt "db" "";
+  plsetopt "np" "";
   *)
 
   (* User sets up plot completely except for window and data 

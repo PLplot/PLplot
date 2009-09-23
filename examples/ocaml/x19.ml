@@ -98,7 +98,7 @@ let () =
   let maxy = 80.0 in
 
   (* Parse and process command line arguments *)
-  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
+  plparseopts Sys.argv [PL_PARSE_FULL];
 
   plinit();
 

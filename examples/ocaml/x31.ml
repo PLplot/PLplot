@@ -42,7 +42,7 @@ let () =
   in
 
   (* Parse and process command line arguments *)
-  ignore (plparseopts Sys.argv [PL_PARSE_FULL]);
+  plparseopts Sys.argv [PL_PARSE_FULL];
 
   (* Test setting / getting familying parameters before plinit *)
   (* Save values set by plparseopts to be restored later. *)
