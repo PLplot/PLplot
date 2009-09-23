@@ -42,7 +42,7 @@
 [mlname(plgfam)] void c_plgfam ( [out] int * p_fam, [out] int * p_num, [out] int * p_bmax );
 [mlname(plgfnam)] void c_plgfnam ( [string, out, length_is(1024)] char * fnam );
 [mlname(plgfont)] void c_plgfont ( [out] int * p_family, [out] int * p_style, [out] int * p_weight );
-[mlname(plglevel)] void c_plglevel ( [out] int * p_level );
+[mlname(plglevel)] void c_plglevel ( [out] plplot_run_level * p_level );
 [mlname(plgpage)] void c_plgpage ( [out] double * p_xp, [out] double * p_yp, [out] int * p_xleng, [out] int * p_yleng, [out] int * p_xoff, [out] int * p_yoff );
 [mlname(plgra)] void c_plgra ( void );
 [mlname(plgspa)] void c_plgspa ( [out] double * xmin, [out] double * xmax, [out] double * ymin, [out] double * ymax );

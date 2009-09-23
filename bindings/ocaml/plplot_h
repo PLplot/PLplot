@@ -173,7 +173,7 @@ c_plgfnam(char *fnam);
 c_plgfont(PLINT *p_family, PLINT *p_style, PLINT *p_weight);
 
  void
-c_plglevel(PLINT *p_level);
+c_plglevel(plplot_run_level *p_level);
 
  void
 c_plgpage(PLFLT *p_xp, PLFLT *p_yp,

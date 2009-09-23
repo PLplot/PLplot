@@ -107,10 +107,14 @@ let () =
   plscol0 1 255 0 0;
   plscmap1 r1 g1 b1;
   plscmap1a r1 g1 b1 a1;
-  
+
   let level2 = plglevel () in
-  printf "level parameter = %d\n" level2;
-  failed_if (level2 != 1) "plglevel test failed.\n";
+  (* WARNING: The use of Obj.magic here is a cheat.  This really should be
+     replaced by a proper int_of_plplot_run_level function.  This example is
+     the only place it would be needed though, so it is not worth it at
+     this time. *)
+  printf "level parameter = %d\n" (Obj.magic level2);
+  failed_if (level2 <> PL_INITIALIZED) "plglevel test failed.\n";
 
   pladv 0;
   plvpor 0.01 0.99 0.02 0.49;

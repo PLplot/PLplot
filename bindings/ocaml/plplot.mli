@@ -480,6 +480,12 @@ and plplot_hist_enum =
   | PL_HIST_NOEXPAND
   | PL_HIST_NOEMPTY
 and plplot_hist_style = plplot_hist_enum list
+and plplot_run_level_enum =
+  | PL_UNINITIALIZED
+  | PL_INITIALIZED
+  | PL_VIEWPORT_DEFINED
+  | PL_WORLD_COORDINATES_DEFINED
+and plplot_run_level = plplot_run_level_enum
 external pl_setcontlabelformat : int -> int -> unit
   = "camlidl_plplot_core_c_pl_setcontlabelformat"
 external pl_setcontlabelparam : float -> float -> float -> int -> unit
@@ -559,7 +565,7 @@ external plgfci : unit -> int64 = "camlidl_plplot_core_c_plgfci"
 external plgfam : unit -> int * int * int = "camlidl_plplot_core_c_plgfam"
 external plgfnam : unit -> string = "camlidl_plplot_core_c_plgfnam"
 external plgfont : unit -> int * int * int = "camlidl_plplot_core_c_plgfont"
-external plglevel : unit -> int = "camlidl_plplot_core_c_plglevel"
+external plglevel : unit -> plplot_run_level = "camlidl_plplot_core_c_plglevel"
 external plgpage : unit -> float * float * int * int * int * int
   = "camlidl_plplot_core_c_plgpage"
 external plgra : unit -> unit = "camlidl_plplot_core_c_plgra"

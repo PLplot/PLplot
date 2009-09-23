@@ -50,6 +50,14 @@ enum plplot_hist_enum {
 };
 typedef [set] enum plplot_hist_enum plplot_hist_style;
 
+enum plplot_run_level_enum {
+    PL_UNINITIALIZED = 0,
+    PL_INITIALIZED = 1,
+    PL_VIEWPORT_DEFINED = 2,
+    PL_WORLD_COORDINATES_DEFINED = 3,
+};
+typedef enum plplot_run_level_enum plplot_run_level;
+
 // Any function which has a nonzero_error_int return type will raise
 // an Invalid_argument error if the return value is <> 0.
 typedef [errorcheck(plplot_check_nonzero_result), errorcode] int nonzero_error_int;
