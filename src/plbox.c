@@ -1,32 +1,32 @@
 /* $Id$
-
-	Routines for drawing axes & box around the current viewport.
-
-   Copyright (C) 2004  Joao Cardoso
-   Copyright (C) 2004  Alan W. Irwin
-
-   This file is part of PLplot.
-
-   PLplot is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Library Public License as published
-   by the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
-
-   PLplot is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU Library General Public License for more details.
-
-   You should have received a copy of the GNU Library General Public License
-   along with PLplot; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-*/
+ *
+ *      Routines for drawing axes & box around the current viewport.
+ *
+ * Copyright (C) 2004  Joao Cardoso
+ * Copyright (C) 2004  Alan W. Irwin
+ *
+ * This file is part of PLplot.
+ *
+ * PLplot is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Library Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * PLplot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with PLplot; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
 
 #include "plplotP.h"
 
-#define STRING_LEN 40
-#define FORMAT_LEN 10
-#define TEMP_LEN 30
+#define STRING_LEN    40
+#define FORMAT_LEN    10
+#define TEMP_LEN      30
 
 static PLFLT xlog[8] =
 {
@@ -37,32 +37,40 @@ static PLFLT xlog[8] =
 /* Static function prototypes */
 
 static void
-plxybx(const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
-       PLFLT wx2, PLFLT wy2, PLFLT vmin, PLFLT vmax,
-       PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits);
+plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
+        PLFLT wx2, PLFLT wy2, PLFLT vmin, PLFLT vmax,
+        PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits );
 
 static void
-plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
-      PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin, PLFLT vmax,
-      PLFLT tick, PLINT nsub, PLINT *digits);
+plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
+       PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin, PLFLT vmax,
+       PLFLT tick, PLINT nsub, PLINT *digits );
 
 static void
-plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
-       PLFLT disp, PLFLT pos, PLFLT just, const char *text);
+plxytx( PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
+        PLFLT disp, PLFLT pos, PLFLT just, const char *text );
 
 static void
-plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
-      PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text);
+plztx( const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
+       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text );
 
 static void
-plform(PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *result, PLINT len, PLBOOL ll, PLBOOL lf, PLBOOL lo);
+plform( PLINT axis,
+        PLFLT value,
+        PLINT scale,
+        PLINT prec,
+        char *result,
+        PLINT len,
+        PLBOOL ll,
+        PLBOOL lf,
+        PLBOOL lo );
 
 static void
-grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
-	 const char *yopt, PLFLT ytick1, PLINT nysub1);
+grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
+          const char *yopt, PLFLT ytick1, PLINT nysub1 );
 
 static void
-label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1);
+label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 );
 
 /*--------------------------------------------------------------------------*\
  * void plbox()
@@ -72,13 +80,13 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1);
  * front-end to plaxes(), which allows arbitrary placement of coordinate
  * axes when plotted (here the origin is at 0,0).  See the documentation for
  * plaxes() for more info.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 void
-c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
-	const char *yopt, PLFLT ytick, PLINT nysub)
+c_plbox( const char *xopt, PLFLT xtick, PLINT nxsub,
+         const char *yopt, PLFLT ytick, PLINT nysub )
 {
-    c_plaxes(0.0, 0.0, xopt, xtick, nxsub, yopt, ytick, nysub);
+    c_plaxes( 0.0, 0.0, xopt, xtick, nxsub, yopt, ytick, nysub );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -112,36 +120,37 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
  *
  * nxsub, nysub are the number of subtick intervals in a major tick
  * interval
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 void
-c_plaxes(PLFLT x0, PLFLT y0,
-	 const char *xopt, PLFLT xtick, PLINT nxsub,
-	 const char *yopt, PLFLT ytick, PLINT nysub)
+c_plaxes( PLFLT x0, PLFLT y0,
+          const char *xopt, PLFLT xtick, PLINT nxsub,
+          const char *yopt, PLFLT ytick, PLINT nysub )
 {
     PLBOOL lax, lbx, lcx, ldx, lgx, lix, llx, lsx, ltx;
     PLBOOL lay, lby, lcy, ldy, lgy, liy, lly, lsy, lty;
-    PLINT xmajor, xminor, ymajor, yminor;
-    PLINT i, i1x, i2x, i3x, i4x, i1y, i2y, i3y, i4y;
-    PLINT nxsub1, nysub1;
-    PLINT lxmin, lxmax, lymin, lymax;
-    PLINT pxmin, pxmax, pymin, pymax;
-    PLINT vppxmi, vppxma, vppymi, vppyma;
-    PLFLT xtick1, ytick1, vpwxmi, vpwxma, vpwymi, vpwyma;
-    PLFLT vpwxmin, vpwxmax, vpwymin, vpwymax;
-    PLFLT xp0, yp0, tn, tp, temp;
-    PLFLT factor, tstart;
+    PLINT  xmajor, xminor, ymajor, yminor;
+    PLINT  i, i1x, i2x, i3x, i4x, i1y, i2y, i3y, i4y;
+    PLINT  nxsub1, nysub1;
+    PLINT  lxmin, lxmax, lymin, lymax;
+    PLINT  pxmin, pxmax, pymin, pymax;
+    PLINT  vppxmi, vppxma, vppymi, vppyma;
+    PLFLT  xtick1, ytick1, vpwxmi, vpwxma, vpwymi, vpwyma;
+    PLFLT  vpwxmin, vpwxmax, vpwymin, vpwymax;
+    PLFLT  xp0, yp0, tn, tp, temp;
+    PLFLT  factor, tstart;
 
-    if (plsc->level < 3) {
-	plabort("plbox: Please set up window first");
-	return;
+    if ( plsc->level < 3 )
+    {
+        plabort( "plbox: Please set up window first" );
+        return;
     }
 
 /* Open the clip limits to the subpage limits */
 
-    plP_gclp(&lxmin, &lxmax, &lymin, &lymax);
-    plP_gphy(&pxmin, &pxmax, &pymin, &pymax);
-    plP_sclp(pxmin, pxmax, pymin, pymax);
+    plP_gclp( &lxmin, &lxmax, &lymin, &lymax );
+    plP_gphy( &pxmin, &pxmax, &pymin, &pymax );
+    plP_sclp( pxmin, pxmax, pymin, pymax );
 
     vppxmi = plsc->vppxmi;
     vppxma = plsc->vppxma;
@@ -150,332 +159,394 @@ c_plaxes(PLFLT x0, PLFLT y0,
 
 /* Convert world coordinates to physical */
 
-    xp0 = plP_wcpcx(x0);
-    yp0 = plP_wcpcy(y0);
+    xp0 = plP_wcpcx( x0 );
+    yp0 = plP_wcpcy( y0 );
 
 /* Set plot options from input */
 
-    lax = plP_stsearch(xopt, 'a');
-    lbx = plP_stsearch(xopt, 'b');
-    lcx = plP_stsearch(xopt, 'c');
-    ldx = plP_stsearch(xopt, 'd');
-    lgx = plP_stsearch(xopt, 'g');
-    lix = plP_stsearch(xopt, 'i');
-    llx = plP_stsearch(xopt, 'l');
-    lsx = plP_stsearch(xopt, 's');
-    ltx = plP_stsearch(xopt, 't');
+    lax = plP_stsearch( xopt, 'a' );
+    lbx = plP_stsearch( xopt, 'b' );
+    lcx = plP_stsearch( xopt, 'c' );
+    ldx = plP_stsearch( xopt, 'd' );
+    lgx = plP_stsearch( xopt, 'g' );
+    lix = plP_stsearch( xopt, 'i' );
+    llx = plP_stsearch( xopt, 'l' );
+    lsx = plP_stsearch( xopt, 's' );
+    ltx = plP_stsearch( xopt, 't' );
 
-    lay = plP_stsearch(yopt, 'a');
-    lby = plP_stsearch(yopt, 'b');
-    lcy = plP_stsearch(yopt, 'c');
-    ldy = plP_stsearch(yopt, 'd');
-    lgy = plP_stsearch(yopt, 'g');
-    liy = plP_stsearch(yopt, 'i');
-    lly = plP_stsearch(yopt, 'l');
-    lsy = plP_stsearch(yopt, 's');
-    lty = plP_stsearch(yopt, 't');
+    lay = plP_stsearch( yopt, 'a' );
+    lby = plP_stsearch( yopt, 'b' );
+    lcy = plP_stsearch( yopt, 'c' );
+    ldy = plP_stsearch( yopt, 'd' );
+    lgy = plP_stsearch( yopt, 'g' );
+    liy = plP_stsearch( yopt, 'i' );
+    lly = plP_stsearch( yopt, 'l' );
+    lsy = plP_stsearch( yopt, 's' );
+    lty = plP_stsearch( yopt, 't' );
 
 /* Tick and subtick sizes in device coords */
 
-    xmajor = MAX(ROUND(plsc->majht * plsc->ypmm), 1);
-    ymajor = MAX(ROUND(plsc->majht * plsc->xpmm), 1);
-    xminor = MAX(ROUND(plsc->minht * plsc->ypmm), 1);
-    yminor = MAX(ROUND(plsc->minht * plsc->xpmm), 1);
+    xmajor = MAX( ROUND( plsc->majht * plsc->ypmm ), 1 );
+    ymajor = MAX( ROUND( plsc->majht * plsc->xpmm ), 1 );
+    xminor = MAX( ROUND( plsc->minht * plsc->ypmm ), 1 );
+    yminor = MAX( ROUND( plsc->minht * plsc->xpmm ), 1 );
 
     nxsub1 = nxsub;
     nysub1 = nysub;
     xtick1 = llx ? 1.0 : xtick;
     ytick1 = lly ? 1.0 : ytick;
 
-    plP_xgvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
+    plP_xgvpw( &vpwxmin, &vpwxmax, &vpwymin, &vpwymax );
 /* n.b. large change; vpwxmi always numerically less than vpwxma, and
  * similarly for vpwymi */
-    vpwxmi = (vpwxmax > vpwxmin) ? vpwxmin : vpwxmax;
-    vpwxma = (vpwxmax > vpwxmin) ? vpwxmax : vpwxmin;
-    vpwymi = (vpwymax > vpwymin) ? vpwymin : vpwymax;
-    vpwyma = (vpwymax > vpwymin) ? vpwymax : vpwymin;
+    vpwxmi = ( vpwxmax > vpwxmin ) ? vpwxmin : vpwxmax;
+    vpwxma = ( vpwxmax > vpwxmin ) ? vpwxmax : vpwxmin;
+    vpwymi = ( vpwymax > vpwymin ) ? vpwymin : vpwymax;
+    vpwyma = ( vpwymax > vpwymin ) ? vpwymax : vpwymin;
 
-    lax = lax && vpwymi < y0 && y0 < vpwyma ;
-    lay = lay && vpwxmi < x0 && x0 < vpwxma ;
+    lax = lax && vpwymi < y0 && y0 < vpwyma;
+    lay = lay && vpwxmi < x0 && x0 < vpwxma;
 
 /* Calculate tick spacing */
 
-    if (ltx || lgx)
-	pldtik(vpwxmi, vpwxma, &xtick1, &nxsub1, ldx);
+    if ( ltx || lgx )
+        pldtik( vpwxmi, vpwxma, &xtick1, &nxsub1, ldx );
 
-    if (lty || lgy)
-	pldtik(vpwymi, vpwyma, &ytick1, &nysub1, ldy);
+    if ( lty || lgy )
+        pldtik( vpwymi, vpwyma, &ytick1, &nysub1, ldy );
 /* n.b. large change; xtick1, nxsub1, ytick1, nysub1 always positive. */
 
 /* Set up tick variables */
 
-    if (lix) {
-	i1x = xminor;
-	i2x = 0;
-	i3x = xmajor;
-	i4x = 0;
+    if ( lix )
+    {
+        i1x = xminor;
+        i2x = 0;
+        i3x = xmajor;
+        i4x = 0;
     }
-    else {
-	i1x = 0;
-	i2x = xminor;
-	i3x = 0;
-	i4x = xmajor;
+    else
+    {
+        i1x = 0;
+        i2x = xminor;
+        i3x = 0;
+        i4x = xmajor;
     }
 
-    if (liy) {
-	i1y = yminor;
-	i2y = 0;
-	i3y = ymajor;
-	i4y = 0;
+    if ( liy )
+    {
+        i1y = yminor;
+        i2y = 0;
+        i3y = ymajor;
+        i4y = 0;
     }
-    else {
-	i1y = 0;
-	i2y = yminor;
-	i3y = 0;
-	i4y = ymajor;
+    else
+    {
+        i1y = 0;
+        i2y = yminor;
+        i3y = 0;
+        i4y = ymajor;
     }
 
 /* Draw the bottom edge of the box */
 
-    if (lbx) {
-	plP_movphy(vppxmi, vppymi);
-	plP_draphy(vppxma, vppymi);
-	if (ltx) {
-	    if (ldx) {
-	      pldtfac(vpwxmi, vpwxma, &factor, &tstart);
-	      tp = xtick1 * (floor((vpwxmi-tstart) / xtick1)) + tstart;
-	    }
-	    else
-	      tp = xtick1 * floor(vpwxmi / xtick1);
-	    for (;;) {
-		tn = tp + xtick1;
-		if (lsx) {
-		    if (llx) {
-			for (i = 0; i <= 7; i++) {
-			    temp = tp + xlog[i];
-			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(plP_wcpcx(temp), vppymi, i1x, i2x);
-			}
-		    }
-		    else {
-			for (i = 1; i <= nxsub1 - 1; i++) {
-			    temp = tp + i * xtick1 / nxsub1;
-			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(plP_wcpcx(temp), vppymi, i1x, i2x);
-			}
-		    }
-		}
-		if (!BETW(tn, vpwxmi, vpwxma))
-		    break;
-		plxtik(plP_wcpcx(tn), vppymi, i3x, i4x);
-		tp = tn;
-	    }
-	}
+    if ( lbx )
+    {
+        plP_movphy( vppxmi, vppymi );
+        plP_draphy( vppxma, vppymi );
+        if ( ltx )
+        {
+            if ( ldx )
+            {
+                pldtfac( vpwxmi, vpwxma, &factor, &tstart );
+                tp = xtick1 * ( floor(( vpwxmi - tstart ) / xtick1 )) + tstart;
+            }
+            else
+                tp = xtick1 * floor( vpwxmi / xtick1 );
+            for (;; )
+            {
+                tn = tp + xtick1;
+                if ( lsx )
+                {
+                    if ( llx )
+                    {
+                        for ( i = 0; i <= 7; i++ )
+                        {
+                            temp = tp + xlog[i];
+                            if ( BETW( temp, vpwxmi, vpwxma ))
+                                plxtik( plP_wcpcx( temp ), vppymi, i1x, i2x );
+                        }
+                    }
+                    else
+                    {
+                        for ( i = 1; i <= nxsub1 - 1; i++ )
+                        {
+                            temp = tp + i * xtick1 / nxsub1;
+                            if ( BETW( temp, vpwxmi, vpwxma ))
+                                plxtik( plP_wcpcx( temp ), vppymi, i1x, i2x );
+                        }
+                    }
+                }
+                if ( !BETW( tn, vpwxmi, vpwxma ))
+                    break;
+                plxtik( plP_wcpcx( tn ), vppymi, i3x, i4x );
+                tp = tn;
+            }
+        }
     }
 
 /* Draw right-hand edge of box */
 
-    if (lcy) {
-	plP_movphy(vppxma, vppymi);
-	plP_draphy(vppxma, vppyma);
-	if (lty) {
-	    if (ldy) {
-	      pldtfac(vpwymi, vpwyma, &factor, &tstart);
-	      tp = ytick1 * (floor((vpwymi-tstart) / ytick1)) + tstart;
-	    }
-	    else
-	      tp = ytick1 * floor(vpwymi / ytick1);
-	    for (;;) {
-		tn = tp + ytick1;
-		if (lsy) {
-		    if (lly) {
-			for (i = 0; i <= 7; i++) {
-			    temp = tp + xlog[i];
-			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(vppxma, plP_wcpcy(temp), i2y, i1y);
-			}
-		    }
-		    else {
-			for (i = 1; i <= nysub1 - 1; i++) {
-			    temp = tp + i * ytick1 / nysub1;
-			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(vppxma, plP_wcpcy(temp), i2y, i1y);
-			}
-		    }
-		}
-		if (!BETW(tn, vpwymi, vpwyma))
-		    break;
-		plytik(vppxma, plP_wcpcy(tn), i4y, i3y);
-		tp = tn;
-	    }
-	}
+    if ( lcy )
+    {
+        plP_movphy( vppxma, vppymi );
+        plP_draphy( vppxma, vppyma );
+        if ( lty )
+        {
+            if ( ldy )
+            {
+                pldtfac( vpwymi, vpwyma, &factor, &tstart );
+                tp = ytick1 * ( floor(( vpwymi - tstart ) / ytick1 )) + tstart;
+            }
+            else
+                tp = ytick1 * floor( vpwymi / ytick1 );
+            for (;; )
+            {
+                tn = tp + ytick1;
+                if ( lsy )
+                {
+                    if ( lly )
+                    {
+                        for ( i = 0; i <= 7; i++ )
+                        {
+                            temp = tp + xlog[i];
+                            if ( BETW( temp, vpwymi, vpwyma ))
+                                plytik( vppxma, plP_wcpcy( temp ), i2y, i1y );
+                        }
+                    }
+                    else
+                    {
+                        for ( i = 1; i <= nysub1 - 1; i++ )
+                        {
+                            temp = tp + i * ytick1 / nysub1;
+                            if ( BETW( temp, vpwymi, vpwyma ))
+                                plytik( vppxma, plP_wcpcy( temp ), i2y, i1y );
+                        }
+                    }
+                }
+                if ( !BETW( tn, vpwymi, vpwyma ))
+                    break;
+                plytik( vppxma, plP_wcpcy( tn ), i4y, i3y );
+                tp = tn;
+            }
+        }
     }
 
 /* Draw the top edge of the box */
 
-    if (lcx) {
-	plP_movphy(vppxma, vppyma);
-	plP_draphy(vppxmi, vppyma);
-	if (ltx) {
-	    if (ldx) {
-	      pldtfac(vpwxmi, vpwxma, &factor, &tstart);
-	      tp = xtick1 * (floor((vpwxma-tstart) / xtick1) + 1) + tstart;
-	    }
-	    else
-	      tp = xtick1 * (floor(vpwxma / xtick1) + 1);
-	    for (;;) {
-		tn = tp - xtick1;
-		if (lsx) {
-		    if (llx) {
-			for (i = 7; i >= 0; i--) {
-			    temp = tn + xlog[i];
-			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(plP_wcpcx(temp), vppyma, i2x, i1x);
-			}
-		    }
-		    else {
-			for (i = nxsub1 - 1; i >= 1; i--) {
-			    temp = tn + i * xtick1 / nxsub1;
-			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(plP_wcpcx(temp), vppyma, i2x, i1x);
-			}
-		    }
-		}
-		if (!BETW(tn, vpwxmi, vpwxma))
-		    break;
-		plxtik(plP_wcpcx(tn), vppyma, i4x, i3x);
-		tp = tn;
-	    }
-	}
+    if ( lcx )
+    {
+        plP_movphy( vppxma, vppyma );
+        plP_draphy( vppxmi, vppyma );
+        if ( ltx )
+        {
+            if ( ldx )
+            {
+                pldtfac( vpwxmi, vpwxma, &factor, &tstart );
+                tp = xtick1 *
+                     ( floor(( vpwxma - tstart ) / xtick1 ) + 1 ) + tstart;
+            }
+            else
+                tp = xtick1 * ( floor( vpwxma / xtick1 ) + 1 );
+            for (;; )
+            {
+                tn = tp - xtick1;
+                if ( lsx )
+                {
+                    if ( llx )
+                    {
+                        for ( i = 7; i >= 0; i-- )
+                        {
+                            temp = tn + xlog[i];
+                            if ( BETW( temp, vpwxmi, vpwxma ))
+                                plxtik( plP_wcpcx( temp ), vppyma, i2x, i1x );
+                        }
+                    }
+                    else
+                    {
+                        for ( i = nxsub1 - 1; i >= 1; i-- )
+                        {
+                            temp = tn + i * xtick1 / nxsub1;
+                            if ( BETW( temp, vpwxmi, vpwxma ))
+                                plxtik( plP_wcpcx( temp ), vppyma, i2x, i1x );
+                        }
+                    }
+                }
+                if ( !BETW( tn, vpwxmi, vpwxma ))
+                    break;
+                plxtik( plP_wcpcx( tn ), vppyma, i4x, i3x );
+                tp = tn;
+            }
+        }
     }
 
 /* Draw left-hand edge of box */
 
-    if (lby) {
-	plP_movphy(vppxmi, vppyma);
-	plP_draphy(vppxmi, vppymi);
-	if (lty) {
-	    if (ldy) {
-	      pldtfac(vpwymi, vpwyma, &factor, &tstart);
-	      tp = ytick1 * (floor((vpwymi-tstart) / ytick1)+1) + tstart;
-	    }
-	    else
-	      tp = ytick1 * (floor(vpwyma / ytick1) + 1);
-	    for (;;) {
-		tn = tp - ytick1;
-		if (lsy) {
-		    if (lly) {
-			for (i = 7; i >= 0; i--) {
-			    temp = tn + xlog[i];
-			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(vppxmi, plP_wcpcy(temp), i1y, i2y);
-			}
-		    }
-		    else {
-			for (i = nysub1 - 1; i >= 1; i--) {
-			    temp = tn + i * ytick1 / nysub1;
-			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(vppxmi, plP_wcpcy(temp), i1y, i2y);
-			}
-		    }
-		}
-		if (!BETW(tn, vpwymi, vpwyma))
-		    break;
-		plytik(vppxmi, plP_wcpcy(tn), i3y, i4y);
-		tp = tn;
-	    }
-	}
+    if ( lby )
+    {
+        plP_movphy( vppxmi, vppyma );
+        plP_draphy( vppxmi, vppymi );
+        if ( lty )
+        {
+            if ( ldy )
+            {
+                pldtfac( vpwymi, vpwyma, &factor, &tstart );
+                tp = ytick1 *
+                     ( floor(( vpwymi - tstart ) / ytick1 ) + 1 ) + tstart;
+            }
+            else
+                tp = ytick1 * ( floor( vpwyma / ytick1 ) + 1 );
+            for (;; )
+            {
+                tn = tp - ytick1;
+                if ( lsy )
+                {
+                    if ( lly )
+                    {
+                        for ( i = 7; i >= 0; i-- )
+                        {
+                            temp = tn + xlog[i];
+                            if ( BETW( temp, vpwymi, vpwyma ))
+                                plytik( vppxmi, plP_wcpcy( temp ), i1y, i2y );
+                        }
+                    }
+                    else
+                    {
+                        for ( i = nysub1 - 1; i >= 1; i-- )
+                        {
+                            temp = tn + i * ytick1 / nysub1;
+                            if ( BETW( temp, vpwymi, vpwyma ))
+                                plytik( vppxmi, plP_wcpcy( temp ), i1y, i2y );
+                        }
+                    }
+                }
+                if ( !BETW( tn, vpwymi, vpwyma ))
+                    break;
+                plytik( vppxmi, plP_wcpcy( tn ), i3y, i4y );
+                tp = tn;
+            }
+        }
     }
 
 /* Draw the horizontal axis */
 
-    if (lax) {
-	plP_movphy(vppxmi, (PLINT)yp0);
-	plP_draphy(vppxma, (PLINT)yp0);
-	if (ltx) {
-	    tp = xtick1 * floor(vpwxmi / xtick1);
-	    for (;;) {
-		tn = tp + xtick1;
-		if (lsx) {
-		    if (llx) {
-			for (i = 0; i <= 7; i++) {
-			    temp = tp + xlog[i];
-			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(plP_wcpcx(temp), (PLINT)yp0, xminor, xminor);
-			}
-		    }
-		    else {
-			for (i = 1; i <= nxsub1 - 1; i++) {
-			    temp = tp + i * xtick1 / nxsub1;
-			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(plP_wcpcx(temp), (PLINT)yp0, xminor, xminor);
-			}
-		    }
-		}
-		if (!BETW(tn, vpwxmi, vpwxma))
-		    break;
-		plxtik(plP_wcpcx(tn), (PLINT)yp0, xmajor, xmajor);
-		tp = tn;
-	    }
-	}
+    if ( lax )
+    {
+        plP_movphy( vppxmi, (PLINT) yp0 );
+        plP_draphy( vppxma, (PLINT) yp0 );
+        if ( ltx )
+        {
+            tp = xtick1 * floor( vpwxmi / xtick1 );
+            for (;; )
+            {
+                tn = tp + xtick1;
+                if ( lsx )
+                {
+                    if ( llx )
+                    {
+                        for ( i = 0; i <= 7; i++ )
+                        {
+                            temp = tp + xlog[i];
+                            if ( BETW( temp, vpwxmi, vpwxma ))
+                                plxtik( plP_wcpcx(
+                                            temp ), (PLINT) yp0, xminor, xminor );
+                        }
+                    }
+                    else
+                    {
+                        for ( i = 1; i <= nxsub1 - 1; i++ )
+                        {
+                            temp = tp + i * xtick1 / nxsub1;
+                            if ( BETW( temp, vpwxmi, vpwxma ))
+                                plxtik( plP_wcpcx(
+                                            temp ), (PLINT) yp0, xminor, xminor );
+                        }
+                    }
+                }
+                if ( !BETW( tn, vpwxmi, vpwxma ))
+                    break;
+                plxtik( plP_wcpcx( tn ), (PLINT) yp0, xmajor, xmajor );
+                tp = tn;
+            }
+        }
     }
 
 /* Draw the vertical axis */
 
-    if (lay) {
-	plP_movphy((PLINT)xp0, vppymi);
-	plP_draphy((PLINT)xp0, vppyma);
-	if (lty) {
-	    tp = ytick1 * floor(vpwymi / ytick1);
-	    for (;;) {
-		tn = tp + ytick1;
-		if (lsy) {
-		    if (lly) {
-			for (i = 0; i <= 7; i++) {
-			    temp = tp + xlog[i];
-			    if (BETW(temp, vpwymi, vpwyma))
-				plytik((PLINT)xp0, plP_wcpcy(temp), yminor, yminor);
-			}
-		    }
-		    else {
-			for (i = 1; i <= nysub1 - 1; i++) {
-			    temp = tp + i * ytick1 / nysub1;
-			    if (BETW(temp, vpwymi, vpwyma))
-				plytik((PLINT)xp0, plP_wcpcy(temp), yminor, yminor);
-			}
-		    }
-		}
-		if (!BETW(tn, vpwymi, vpwyma))
-		    break;
-		plytik((PLINT)xp0, plP_wcpcy(tn), ymajor, ymajor);
-		tp = tn;
-	    }
-	}
+    if ( lay )
+    {
+        plP_movphy((PLINT) xp0, vppymi );
+        plP_draphy((PLINT) xp0, vppyma );
+        if ( lty )
+        {
+            tp = ytick1 * floor( vpwymi / ytick1 );
+            for (;; )
+            {
+                tn = tp + ytick1;
+                if ( lsy )
+                {
+                    if ( lly )
+                    {
+                        for ( i = 0; i <= 7; i++ )
+                        {
+                            temp = tp + xlog[i];
+                            if ( BETW( temp, vpwymi, vpwyma ))
+                                plytik((PLINT) xp0, plP_wcpcy(
+                                           temp ), yminor, yminor );
+                        }
+                    }
+                    else
+                    {
+                        for ( i = 1; i <= nysub1 - 1; i++ )
+                        {
+                            temp = tp + i * ytick1 / nysub1;
+                            if ( BETW( temp, vpwymi, vpwyma ))
+                                plytik((PLINT) xp0, plP_wcpcy(
+                                           temp ), yminor, yminor );
+                        }
+                    }
+                }
+                if ( !BETW( tn, vpwymi, vpwyma ))
+                    break;
+                plytik((PLINT) xp0, plP_wcpcy( tn ), ymajor, ymajor );
+                tp = tn;
+            }
+        }
     }
 
 /* Draw grids */
 
-    grid_box(xopt, xtick1, nxsub1, yopt, ytick1, nysub1);
+    grid_box( xopt, xtick1, nxsub1, yopt, ytick1, nysub1 );
 
 /* Write labels */
 
-    label_box(xopt, xtick1, yopt, ytick1);
+    label_box( xopt, xtick1, yopt, ytick1 );
 
 /* Restore the clip limits to viewport edge */
 
-    plP_sclp(lxmin, lxmax, lymin, lymax);
+    plP_sclp( lxmin, lxmax, lymin, lymax );
 }
 
 /*--------------------------------------------------------------------------*\
  * void plbox3()
  *
  * This is the 3-d analogue of plbox().
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 void
-c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
-	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
-	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz)
+c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
+          const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
+          const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz )
 {
     PLFLT dx, dy, tx, ty, ux, uy;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
@@ -487,18 +558,19 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
     PLINT ydigmax, ydigits;
     PLINT zdigmax, zdigits;
 
-    if (plsc->level < 3) {
-	plabort("plbox3: Please set up window first");
-	return;
+    if ( plsc->level < 3 )
+    {
+        plabort( "plbox3: Please set up window first" );
+        return;
     }
 
-    plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
-    plP_gdom(&xmin, &xmax, &ymin, &ymax);
-    plP_grange(&zscale, &zmin, &zmax);
+    plP_gw3wc( &cxx, &cxy, &cyx, &cyy, &cyz );
+    plP_gdom( &xmin, &xmax, &ymin, &ymax );
+    plP_grange( &zscale, &zmin, &zmax );
 
-    plgxax(&xdigmax, &xdigits);
-    plgyax(&ydigmax, &ydigits);
-    plgzax(&zdigmax, &zdigits);
+    plgxax( &xdigmax, &xdigits );
+    plgyax( &ydigmax, &ydigits );
+    plgzax( &zdigmax, &zdigits );
 
     xdigits = xdigmax;
     ydigits = ydigmax;
@@ -507,134 +579,155 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 /* We have to wait until after the plot is drawn to draw back */
 /* grid so store this stuff. */
 
-    plP_gzback(&zbflg, &zbcol, &zbtck, &zbwidth);
-    *zbflg = plP_stsearch(zopt, 'd');
-    if (*zbflg) {
-	*zbtck = ztick;		/* save tick spacing */
-	*zbcol = plsc->icol0;	/* and color */
-	*zbwidth = plsc->width;	/* and line width */
+    plP_gzback( &zbflg, &zbcol, &zbtck, &zbwidth );
+    *zbflg = plP_stsearch( zopt, 'd' );
+    if ( *zbflg )
+    {
+        *zbtck   = ztick;       /* save tick spacing */
+        *zbcol   = plsc->icol0; /* and color */
+        *zbwidth = plsc->width; /* and line width */
     }
 
-    if (cxx >= 0.0 && cxy <= 0.0) {
-	ln = plP_stsearch(xopt, 'n');
-	tx = plP_w3wcx(xmin, ymin, zmin);
-	ty = plP_w3wcy(xmin, ymin, zmin);
-	ux = plP_w3wcx(xmax, ymin, zmin);
-	uy = plP_w3wcy(xmax, ymin, zmin);
-	plxybx(xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
-	       xmin, xmax, xtick, nsubx, 0, &xdigits);
+    if ( cxx >= 0.0 && cxy <= 0.0 )
+    {
+        ln = plP_stsearch( xopt, 'n' );
+        tx = plP_w3wcx( xmin, ymin, zmin );
+        ty = plP_w3wcy( xmin, ymin, zmin );
+        ux = plP_w3wcx( xmax, ymin, zmin );
+        uy = plP_w3wcy( xmax, ymin, zmin );
+        plxybx( xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
+                xmin, xmax, xtick, nsubx, 0, &xdigits );
 
-	dx = ux - tx;
-	dy = uy - ty;
-	plzbx(zopt, zlabel, 1, dx, dy, ux, uy,
-	      plP_w3wcy(xmax, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+        dx = ux - tx;
+        dy = uy - ty;
+        plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
+               plP_w3wcy( xmax,
+                          ymin,
+                          zmax ), zmin, zmax, ztick, nsubz, &zdigits );
 
-	tx = plP_w3wcx(xmin, ymax, zmin);
-	ty = plP_w3wcy(xmin, ymax, zmin);
-	ux = plP_w3wcx(xmin, ymin, zmin);
-	uy = plP_w3wcy(xmin, ymin, zmin);
-	plxybx(yopt, ylabel, PL_Y_AXIS, tx, ty, ux, uy,
-	       ymax, ymin, ytick, nsuby, ln, &ydigits);
+        tx = plP_w3wcx( xmin, ymax, zmin );
+        ty = plP_w3wcy( xmin, ymax, zmin );
+        ux = plP_w3wcx( xmin, ymin, zmin );
+        uy = plP_w3wcy( xmin, ymin, zmin );
+        plxybx( yopt, ylabel, PL_Y_AXIS, tx, ty, ux, uy,
+                ymax, ymin, ytick, nsuby, ln, &ydigits );
 
-	dx = ux - tx;
-	dy = uy - ty;
+        dx = ux - tx;
+        dy = uy - ty;
 /* restore zdigits to initial value for second call */
         zdigits = zdigmax;
-	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
-	      plP_w3wcy(xmin, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+        plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
+               plP_w3wcy( xmin,
+                          ymax,
+                          zmax ), zmin, zmax, ztick, nsubz, &zdigits );
     }
-    else if (cxx <= 0.0 && cxy <= 0.0) {
-	ln = plP_stsearch(yopt, 'n');
-	tx = plP_w3wcx(xmin, ymax, zmin);
-	ty = plP_w3wcy(xmin, ymax, zmin);
-	ux = plP_w3wcx(xmin, ymin, zmin);
-	uy = plP_w3wcy(xmin, ymin, zmin);
-	plxybx(yopt, ylabel, PL_Y_AXIS, tx, ty, ux, uy,
-	       ymax, ymin, ytick, nsuby, 0, &ydigits);
+    else if ( cxx <= 0.0 && cxy <= 0.0 )
+    {
+        ln = plP_stsearch( yopt, 'n' );
+        tx = plP_w3wcx( xmin, ymax, zmin );
+        ty = plP_w3wcy( xmin, ymax, zmin );
+        ux = plP_w3wcx( xmin, ymin, zmin );
+        uy = plP_w3wcy( xmin, ymin, zmin );
+        plxybx( yopt, ylabel, PL_Y_AXIS, tx, ty, ux, uy,
+                ymax, ymin, ytick, nsuby, 0, &ydigits );
 
-	dx = ux - tx;
-	dy = uy - ty;
-	plzbx(zopt, zlabel, 1, dx, dy, ux, uy,
-	      plP_w3wcy(xmin, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+        dx = ux - tx;
+        dy = uy - ty;
+        plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
+               plP_w3wcy( xmin,
+                          ymin,
+                          zmax ), zmin, zmax, ztick, nsubz, &zdigits );
 
-	tx = plP_w3wcx(xmax, ymax, zmin);
-	ty = plP_w3wcy(xmax, ymax, zmin);
-	ux = plP_w3wcx(xmin, ymax, zmin);
-	uy = plP_w3wcy(xmin, ymax, zmin);
-	plxybx(xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
-	       xmax, xmin, xtick, nsubx, ln, &xdigits);
+        tx = plP_w3wcx( xmax, ymax, zmin );
+        ty = plP_w3wcy( xmax, ymax, zmin );
+        ux = plP_w3wcx( xmin, ymax, zmin );
+        uy = plP_w3wcy( xmin, ymax, zmin );
+        plxybx( xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
+                xmax, xmin, xtick, nsubx, ln, &xdigits );
 
-	dx = ux - tx;
-	dy = uy - ty;
+        dx = ux - tx;
+        dy = uy - ty;
 /* restore zdigits to initial value for second call */
         zdigits = zdigmax;
-	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
-	      plP_w3wcy(xmax, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+        plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
+               plP_w3wcy( xmax,
+                          ymax,
+                          zmax ), zmin, zmax, ztick, nsubz, &zdigits );
     }
-    else if (cxx <= 0.0 && cxy >= 0.0) {
-	ln = plP_stsearch(xopt, 'n');
-	tx = plP_w3wcx(xmax, ymax, zmin);
-	ty = plP_w3wcy(xmax, ymax, zmin);
-	ux = plP_w3wcx(xmin, ymax, zmin);
-	uy = plP_w3wcy(xmin, ymax, zmin);
-	plxybx(xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
-	       xmax, xmin, xtick, nsubx, 0, &xdigits);
+    else if ( cxx <= 0.0 && cxy >= 0.0 )
+    {
+        ln = plP_stsearch( xopt, 'n' );
+        tx = plP_w3wcx( xmax, ymax, zmin );
+        ty = plP_w3wcy( xmax, ymax, zmin );
+        ux = plP_w3wcx( xmin, ymax, zmin );
+        uy = plP_w3wcy( xmin, ymax, zmin );
+        plxybx( xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
+                xmax, xmin, xtick, nsubx, 0, &xdigits );
 
-	dx = ux - tx;
-	dy = uy - ty;
-	plzbx(zopt, zlabel, 1, dx, dy, ux, uy,
-	      plP_w3wcy(xmin, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+        dx = ux - tx;
+        dy = uy - ty;
+        plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
+               plP_w3wcy( xmin,
+                          ymax,
+                          zmax ), zmin, zmax, ztick, nsubz, &zdigits );
 
-	tx = plP_w3wcx(xmax, ymin, zmin);
-	ty = plP_w3wcy(xmax, ymin, zmin);
-	ux = plP_w3wcx(xmax, ymax, zmin);
-	uy = plP_w3wcy(xmax, ymax, zmin);
-	plxybx(yopt, ylabel, PL_Y_AXIS, tx, ty, ux, uy,
-	       ymin, ymax, ytick, nsuby, ln, &ydigits);
+        tx = plP_w3wcx( xmax, ymin, zmin );
+        ty = plP_w3wcy( xmax, ymin, zmin );
+        ux = plP_w3wcx( xmax, ymax, zmin );
+        uy = plP_w3wcy( xmax, ymax, zmin );
+        plxybx( yopt, ylabel, PL_Y_AXIS, tx, ty, ux, uy,
+                ymin, ymax, ytick, nsuby, ln, &ydigits );
 
-	dx = ux - tx;
-	dy = uy - ty;
+        dx = ux - tx;
+        dy = uy - ty;
 /* restore zdigits to initial value for second call */
         zdigits = zdigmax;
-	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
-	      plP_w3wcy(xmax, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+        plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
+               plP_w3wcy( xmax,
+                          ymin,
+                          zmax ), zmin, zmax, ztick, nsubz, &zdigits );
     }
-    else if (cxx >= 0.0 && cxy >= 0.0) {
-	ln = plP_stsearch(yopt, 'n');
-	tx = plP_w3wcx(xmax, ymin, zmin);
-	ty = plP_w3wcy(xmax, ymin, zmin);
-	ux = plP_w3wcx(xmax, ymax, zmin);
-	uy = plP_w3wcy(xmax, ymax, zmin);
-	plxybx(yopt, ylabel, PL_X_AXIS, tx, ty, ux, uy,
-	       ymin, ymax, ytick, nsuby, 0, &ydigits);
+    else if ( cxx >= 0.0 && cxy >= 0.0 )
+    {
+        ln = plP_stsearch( yopt, 'n' );
+        tx = plP_w3wcx( xmax, ymin, zmin );
+        ty = plP_w3wcy( xmax, ymin, zmin );
+        ux = plP_w3wcx( xmax, ymax, zmin );
+        uy = plP_w3wcy( xmax, ymax, zmin );
+        plxybx( yopt, ylabel, PL_X_AXIS, tx, ty, ux, uy,
+                ymin, ymax, ytick, nsuby, 0, &ydigits );
 
-	dx = ux - tx;
-	dy = uy - ty;
-	plzbx(zopt, zlabel, 1, dx, dy, ux, uy,
-	      plP_w3wcy(xmax, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+        dx = ux - tx;
+        dy = uy - ty;
+        plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
+               plP_w3wcy( xmax,
+                          ymax,
+                          zmax ), zmin, zmax, ztick, nsubz, &zdigits );
 
-	tx = plP_w3wcx(xmin, ymin, zmin);
-	ty = plP_w3wcy(xmin, ymin, zmin);
-	ux = plP_w3wcx(xmax, ymin, zmin);
-	uy = plP_w3wcy(xmax, ymin, zmin);
-	plxybx(xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
-	       xmin, xmax, xtick, nsubx, ln, &xdigits);
+        tx = plP_w3wcx( xmin, ymin, zmin );
+        ty = plP_w3wcy( xmin, ymin, zmin );
+        ux = plP_w3wcx( xmax, ymin, zmin );
+        uy = plP_w3wcy( xmax, ymin, zmin );
+        plxybx( xopt, xlabel, PL_X_AXIS, tx, ty, ux, uy,
+                xmin, xmax, xtick, nsubx, ln, &xdigits );
 
-	dx = ux - tx;
-	dy = uy - ty;
+        dx = ux - tx;
+        dy = uy - ty;
 /* restore zdigits to initial value for second call */
         zdigits = zdigmax;
-	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
-	      plP_w3wcy(xmin, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+        plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
+               plP_w3wcy( xmin,
+                          ymin,
+                          zmax ), zmin, zmax, ztick, nsubz, &zdigits );
     }
-    plsxax(xdigmax, xdigits);
-    plsyax(ydigmax, ydigits);
-    plszax(zdigmax, zdigits);
+    plsxax( xdigmax, xdigits );
+    plsyax( ydigmax, ydigits );
+    plszax( zdigmax, zdigits );
 }
 
 /*--------------------------------------------------------------------------*\
  * Support routines for 3d box draw.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------*\
  * void plxybx()
@@ -654,143 +747,158 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
  * t: Draw major tick marks
  * s: Draw minor tick marks
  * u: Write label on line
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 static void
-plxybx(const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
-       PLFLT wx2, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
-       PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits)
+plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
+        PLFLT wx2, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
+        PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits )
 {
     static char string[STRING_LEN];
-    PLINT lb, ld, lf, li, ll, ln, ls, lt, lu, lo;
-    PLINT major, minor, mode, prec, scale;
-    PLINT i, i1, i2, i3, i4;
-    PLINT nsub1;
-    PLFLT pos, tn, tp, temp, height, tick1, vmin, vmax;
+    PLINT       lb, ld, lf, li, ll, ln, ls, lt, lu, lo;
+    PLINT       major, minor, mode, prec, scale;
+    PLINT       i, i1, i2, i3, i4;
+    PLINT       nsub1;
+    PLFLT       pos, tn, tp, temp, height, tick1, vmin, vmax;
 /* Note that 'tspace' is the minimim distance away (in fractional number
  * of ticks) from the boundary that an X or Y numerical label can be drawn. */
     PLFLT dwx, dwy, lambda, tcrit, tspace = 0.1;
 
-    vmin = (vmax_in > vmin_in) ? vmin_in : vmax_in;
-    vmax = (vmax_in > vmin_in) ? vmax_in : vmin_in;
+    vmin = ( vmax_in > vmin_in ) ? vmin_in : vmax_in;
+    vmax = ( vmax_in > vmin_in ) ? vmax_in : vmin_in;
 
     dwx = wx2 - wx1;
     dwy = wy2 - wy1;
 
 /* Tick and subtick sizes in device coords */
 
-    major = MAX(ROUND(plsc->majht * plsc->ypmm), 1);
-    minor = MAX(ROUND(plsc->minht * plsc->ypmm), 1);
+    major = MAX( ROUND( plsc->majht * plsc->ypmm ), 1 );
+    minor = MAX( ROUND( plsc->minht * plsc->ypmm ), 1 );
 
     tick1 = tick;
     nsub1 = nsub;
 
-    lb = plP_stsearch(opt, 'b');
-    ld = plP_stsearch(opt, 'd');
-    lf = plP_stsearch(opt, 'f');
-    li = plP_stsearch(opt, 'i');
-    ll = plP_stsearch(opt, 'l');
-    ln = plP_stsearch(opt, 'n');
-    ls = plP_stsearch(opt, 's');
-    lt = plP_stsearch(opt, 't');
-    lu = plP_stsearch(opt, 'u');
-    lo = plP_stsearch(opt, 'o');
+    lb = plP_stsearch( opt, 'b' );
+    ld = plP_stsearch( opt, 'd' );
+    lf = plP_stsearch( opt, 'f' );
+    li = plP_stsearch( opt, 'i' );
+    ll = plP_stsearch( opt, 'l' );
+    ln = plP_stsearch( opt, 'n' );
+    ls = plP_stsearch( opt, 's' );
+    lt = plP_stsearch( opt, 't' );
+    lu = plP_stsearch( opt, 'u' );
+    lo = plP_stsearch( opt, 'o' );
 
-    if (lu)
-	plxytx(wx1, wy1, wx2, wy2, 3.2, 0.5, 0.5, label);
-    if (!lb)
-	return;
+    if ( lu )
+        plxytx( wx1, wy1, wx2, wy2, 3.2, 0.5, 0.5, label );
+    if ( !lb )
+        return;
 
-    if (ll)
-	tick1 = (vmax > vmin) ? 1.0 : -1.0 ;
-    if (lt)
-	pldtik(vmin, vmax, &tick1, &nsub1, ld);
+    if ( ll )
+        tick1 = ( vmax > vmin ) ? 1.0 : -1.0;
+    if ( lt )
+        pldtik( vmin, vmax, &tick1, &nsub1, ld );
 
-    if (li) {
-	i1 = minor;
-	i2 = 0;
-	i3 = major;
-	i4 = 0;
+    if ( li )
+    {
+        i1 = minor;
+        i2 = 0;
+        i3 = major;
+        i4 = 0;
     }
-    else {
-	i1 = 0;
-	i2 = minor;
-	i3 = 0;
-	i4 = major;
+    else
+    {
+        i1 = 0;
+        i2 = minor;
+        i3 = 0;
+        i4 = major;
     }
 
 /* Draw the line */
 
-    plP_movwor(wx1, wy1);
-    plP_drawor(wx2, wy2);
-    if (lt) {
-	tp = tick1 * floor(vmin / tick1);
-	for (;;) {
-	    tn = tp + tick1;
-	    if (ls) {
-		if (ll) {
-		    for (i = 0; i <= 7; i++) {
-			temp = tp + xlog[i];
-			if (BETW(temp, vmin, vmax)) {
-			    lambda = (vmax_in > vmin_in)?
-			       (temp - vmin) / (vmax - vmin):
-			       (vmax - temp) / (vmax - vmin);
-			    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
-				   plP_wcpcy((PLFLT) (wy1 + lambda * dwy)),
-				   i1, i2);
-			}
-		    }
-		}
-		else {
-		    for (i = 1; i <= nsub1 - 1; i++) {
-			temp = tp + i * (tn - tp) / nsub1;
-			if (BETW(temp, vmin, vmax)) {
-			    lambda = (vmax_in > vmin_in)?
-			       (temp - vmin) / (vmax - vmin):
-			       (vmax - temp) / (vmax - vmin);
-			    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
-				   plP_wcpcy((PLFLT) (wy1 + lambda * dwy)),
-				   i1, i2);
-			}
-		    }
-		}
-	    }
-	    temp = tn;
-	    if (!BETW(temp, vmin, vmax))
-		break;
+    plP_movwor( wx1, wy1 );
+    plP_drawor( wx2, wy2 );
+    if ( lt )
+    {
+        tp = tick1 * floor( vmin / tick1 );
+        for (;; )
+        {
+            tn = tp + tick1;
+            if ( ls )
+            {
+                if ( ll )
+                {
+                    for ( i = 0; i <= 7; i++ )
+                    {
+                        temp = tp + xlog[i];
+                        if ( BETW( temp, vmin, vmax ))
+                        {
+                            lambda = ( vmax_in > vmin_in ) ?
+                                     ( temp - vmin ) / ( vmax - vmin ) :
+                                     ( vmax - temp ) / ( vmax - vmin );
+                            plxtik( plP_wcpcx((PLFLT) ( wx1 + lambda * dwx )),
+                                    plP_wcpcy((PLFLT) ( wy1 + lambda * dwy )),
+                                    i1, i2 );
+                        }
+                    }
+                }
+                else
+                {
+                    for ( i = 1; i <= nsub1 - 1; i++ )
+                    {
+                        temp = tp + i * ( tn - tp ) / nsub1;
+                        if ( BETW( temp, vmin, vmax ))
+                        {
+                            lambda = ( vmax_in > vmin_in ) ?
+                                     ( temp - vmin ) / ( vmax - vmin ) :
+                                     ( vmax - temp ) / ( vmax - vmin );
+                            plxtik( plP_wcpcx((PLFLT) ( wx1 + lambda * dwx )),
+                                    plP_wcpcy((PLFLT) ( wy1 + lambda * dwy )),
+                                    i1, i2 );
+                        }
+                    }
+                }
+            }
+            temp = tn;
+            if ( !BETW( temp, vmin, vmax ))
+                break;
 
-	    lambda = (vmax_in > vmin_in)?
-	       (temp - vmin) / (vmax - vmin):
-	       (vmax - temp) / (vmax - vmin);
-	    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
-		   plP_wcpcy((PLFLT) (wy1 + lambda * dwy)), i3, i4);
-	    tp = tn;
-	}
+            lambda = ( vmax_in > vmin_in ) ?
+                     ( temp - vmin ) / ( vmax - vmin ) :
+                     ( vmax - temp ) / ( vmax - vmin );
+            plxtik( plP_wcpcx((PLFLT) ( wx1 + lambda * dwx )),
+                    plP_wcpcy((PLFLT) ( wy1 + lambda * dwy )), i3, i4 );
+            tp = tn;
+        }
     }
 
 
 /* Label the line */
 
-    if (ln && lt) {
-	pldprec(vmin, vmax, tick1, lf, &mode, &prec, *digits, &scale);
-	pos = 1.0;
-	height = 3.2;
-        tcrit = tspace*tick1;
-	tp = tick1 * (1. + floor(vmin / tick1));
-	for (tn = tp; BETW(tn, vmin, vmax); tn += tick1) {
-	   if(BETW(tn, vmin+tcrit, vmax-tcrit)) {
-	    plform(axis, tn, scale, prec, string, STRING_LEN, ll, lf, lo);
-	    pos = (vmax_in > vmin_in)?
-	       (tn - vmin) / (vmax - vmin):
-	       (vmax - tn) / (vmax - vmin);
-	    plxytx(wx1, wy1, wx2, wy2, 1.5, pos, 0.5, string);
-	   }
-	}
-	*digits = 2;
-	if (!ll && !lo && mode) {
-	    snprintf(string, STRING_LEN, "(x10#u%d#d)", (int) scale);
-	    plxytx(wx1, wy1, wx2, wy2, height, 1.0, 0.5, string);
-	}
+    if ( ln && lt )
+    {
+        pldprec( vmin, vmax, tick1, lf, &mode, &prec, *digits, &scale );
+        pos    = 1.0;
+        height = 3.2;
+        tcrit  = tspace * tick1;
+        tp     = tick1 * ( 1. + floor( vmin / tick1 ));
+        for ( tn = tp; BETW( tn, vmin, vmax ); tn += tick1 )
+        {
+            if ( BETW( tn, vmin + tcrit, vmax - tcrit ))
+            {
+                plform( axis, tn, scale, prec, string, STRING_LEN, ll, lf, lo );
+                pos = ( vmax_in > vmin_in ) ?
+                      ( tn - vmin ) / ( vmax - vmin ) :
+                      ( vmax - tn ) / ( vmax - vmin );
+                plxytx( wx1, wy1, wx2, wy2, 1.5, pos, 0.5, string );
+            }
+        }
+        *digits = 2;
+        if ( !ll && !lo && mode )
+        {
+            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) scale );
+            plxytx( wx1, wy1, wx2, wy2, height, 1.0, 0.5, string );
+        }
     }
 }
 
@@ -799,11 +907,11 @@ plxybx(const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
  *
  * Prints out text along a sloping axis joining world coordinates
  * (wx1,wy1) to (wx2,wy2). Parameters are as for plmtext.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 static void
-plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
-       PLFLT disp, PLFLT pos, PLFLT just, const char *text)
+plxytx( PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
+        PLFLT disp, PLFLT pos, PLFLT just, const char *text )
 {
     PLINT x, y, refx, refy;
     PLFLT shift, cc, ss, wx, wy;
@@ -811,39 +919,39 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
     PLFLT dispx, dispy;
     PLFLT chrdef, chrht;
 
-    cc = plsc->wmxscl * (wx2 - wx1);
-    ss = plsc->wmyscl * (wy2 - wy1);
-    diag = sqrt(cc * cc + ss * ss);
-    cc /= diag;
-    ss /= diag;
-    wx = wx1 + pos * (wx2 - wx1);
-    wy = wy1 + pos * (wy2 - wy1);
+    cc   = plsc->wmxscl * ( wx2 - wx1 );
+    ss   = plsc->wmyscl * ( wy2 - wy1 );
+    diag = sqrt( cc * cc + ss * ss );
+    cc  /= diag;
+    ss  /= diag;
+    wx   = wx1 + pos * ( wx2 - wx1 );
+    wy   = wy1 + pos * ( wy2 - wy1 );
 
     xform[0] = cc;
     xform[1] = 0.0;
     xform[2] = ss;
     xform[3] = 1.0;
 
-    xdv = plP_wcdcx(wx);
-    ydv = plP_wcdcy(wy);
+    xdv = plP_wcdcx( wx );
+    ydv = plP_wcdcy( wy );
 
     dispx = 0.;
     dispy = -disp;
 
-    plgchr(&chrdef, &chrht);
-    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
+    plgchr( &chrdef, &chrht );
+    shift = ( just == 0.0 ) ? 0.0 : plstrl( text ) * just;
 
-    xmm = plP_dcmmx(xdv) + dispx * chrht;
-    ymm = plP_dcmmy(ydv) + dispy * chrht;
+    xmm    = plP_dcmmx( xdv ) + dispx * chrht;
+    ymm    = plP_dcmmy( ydv ) + dispy * chrht;
     refxmm = xmm - shift * xform[0];
     refymm = ymm - shift * xform[2];
 
-    x = plP_mmpcx(xmm);
-    y = plP_mmpcy(ymm);
-    refx = plP_mmpcx(refxmm);
-    refy = plP_mmpcy(refymm);
+    x    = plP_mmpcx( xmm );
+    y    = plP_mmpcy( ymm );
+    refx = plP_mmpcx( refxmm );
+    refy = plP_mmpcy( refymm );
 
-    plP_text(0, just, xform, x, y, refx, refy, text);
+    plP_text( 0, just, xform, x, y, refx, refy, text );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -867,23 +975,23 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
  * t: Draw major tick marks
  * u: Writes left-hand label
  * v: Writes right-hand label
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 static void
-plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
-      PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
-      PLFLT tick, PLINT nsub, PLINT *digits)
+plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
+       PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
+       PLFLT tick, PLINT nsub, PLINT *digits )
 {
     static char string[STRING_LEN];
-    PLINT lb, lc, ld, lf, li, ll, lm, ln, ls, lt, lu, lv, lo;
-    PLINT i, mode, prec, scale;
-    PLINT nsub1, lstring;
-    PLFLT pos, tn, tp, temp, height, tick1;
-    PLFLT dwy, lambda, diag, major, minor, xmajor, xminor;
-    PLFLT ymajor, yminor, dxm, dym, vmin, vmax;
+    PLINT       lb, lc, ld, lf, li, ll, lm, ln, ls, lt, lu, lv, lo;
+    PLINT       i, mode, prec, scale;
+    PLINT       nsub1, lstring;
+    PLFLT       pos, tn, tp, temp, height, tick1;
+    PLFLT       dwy, lambda, diag, major, minor, xmajor, xminor;
+    PLFLT       ymajor, yminor, dxm, dym, vmin, vmax;
 
-    vmin = (vmax_in > vmin_in) ? vmin_in : vmax_in;
-    vmax = (vmax_in > vmin_in) ? vmax_in : vmin_in;
+    vmin = ( vmax_in > vmin_in ) ? vmin_in : vmax_in;
+    vmax = ( vmax_in > vmin_in ) ? vmax_in : vmin_in;
 
     dwy = wy2 - wy1;
 
@@ -895,46 +1003,47 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
     tick1 = tick;
     nsub1 = nsub;
 
-    lb = plP_stsearch(opt, 'b');
-    lc = plP_stsearch(opt, 'c');
-    ld = plP_stsearch(opt, 'd');
-    lf = plP_stsearch(opt, 'f');
-    li = plP_stsearch(opt, 'i');
-    ll = plP_stsearch(opt, 'l');
-    lm = plP_stsearch(opt, 'm');
-    ln = plP_stsearch(opt, 'n');
-    ls = plP_stsearch(opt, 's');
-    lt = plP_stsearch(opt, 't');
-    lu = plP_stsearch(opt, 'u');
-    lv = plP_stsearch(opt, 'v');
-    lo = plP_stsearch(opt, 'o');
+    lb = plP_stsearch( opt, 'b' );
+    lc = plP_stsearch( opt, 'c' );
+    ld = plP_stsearch( opt, 'd' );
+    lf = plP_stsearch( opt, 'f' );
+    li = plP_stsearch( opt, 'i' );
+    ll = plP_stsearch( opt, 'l' );
+    lm = plP_stsearch( opt, 'm' );
+    ln = plP_stsearch( opt, 'n' );
+    ls = plP_stsearch( opt, 's' );
+    lt = plP_stsearch( opt, 't' );
+    lu = plP_stsearch( opt, 'u' );
+    lv = plP_stsearch( opt, 'v' );
+    lo = plP_stsearch( opt, 'o' );
 
-    if (lu && !right)
-	plztx("h", dx, dy, wx, wy1, wy2, 5.0, 0.5, 0.5, label);
+    if ( lu && !right )
+        plztx( "h", dx, dy, wx, wy1, wy2, 5.0, 0.5, 0.5, label );
 
-    if (lv && right)
-	plztx("h", dx, dy, wx, wy1, wy2, -5.0, 0.5, 0.5, label);
+    if ( lv && right )
+        plztx( "h", dx, dy, wx, wy1, wy2, -5.0, 0.5, 0.5, label );
 
-    if (right && !lc)
-	return;
+    if ( right && !lc )
+        return;
 
-    if (!right && !lb)
-	return;
+    if ( !right && !lb )
+        return;
 
-    if (ll)
-	tick1 = 1.0;
+    if ( ll )
+        tick1 = 1.0;
 
-    if (lt)
-	pldtik(vmin, vmax, &tick1, &nsub1, ld);
+    if ( lt )
+        pldtik( vmin, vmax, &tick1, &nsub1, ld );
 
-    if ((li && !right) || (!li && right)) {
-	minor = -minor;
-	major = -major;
+    if (( li && !right ) || ( !li && right ))
+    {
+        minor = -minor;
+        major = -major;
     }
 
-    dxm = dx * plsc->wmxscl;
-    dym = dy * plsc->wmyscl;
-    diag = sqrt(dxm * dxm + dym * dym);
+    dxm  = dx * plsc->wmxscl;
+    dym  = dy * plsc->wmyscl;
+    diag = sqrt( dxm * dxm + dym * dym );
 
     xminor = minor * dxm / diag;
     xmajor = major * dxm / diag;
@@ -943,85 +1052,99 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 
 /* Draw the line */
 
-    plP_movwor(wx, wy1);
-    plP_drawor(wx, wy2);
-    if (lt) {
-	tp = tick1 * floor(vmin / tick1);
-	for (;;) {
-	    tn = tp + tick1;
-	    if (ls) {
-		if (ll) {
-		    for (i = 0; i <= 7; i++) {
-			temp = tp + xlog[i];
-			if (BETW(temp, vmin, vmax)) {
-			    lambda = (vmax_in > vmin_in)?
-			       (temp - vmin) / (vmax - vmin):
-			       (vmax - temp) / (vmax - vmin);
-			    plstik(plP_wcmmx(wx),
-				   plP_wcmmy((PLFLT) (wy1 + lambda * dwy)),
-				   xminor, yminor);
-			}
-		    }
-		}
-		else {
-		    for (i = 1; i <= nsub1 - 1; i++) {
-			temp = tp + i * tick1 / nsub1;
-			if (BETW(temp, vmin, vmax)) {
-			    lambda = (vmax_in > vmin_in)?
-			       (temp - vmin) / (vmax - vmin):
-			       (vmax - temp) / (vmax - vmin);
-			    plstik(plP_wcmmx(wx),
-				   plP_wcmmy((PLFLT) (wy1 + lambda * dwy)),
-				   xminor, yminor);
-			}
-		    }
-		}
-	    }
-	    temp = tn;
-	    if (!BETW(temp, vmin, vmax))
-		break;
-	    lambda = (vmax_in > vmin_in)?
-	        (temp - vmin) / (vmax - vmin):
-	        (vmax - temp) / (vmax - vmin);
-	    plstik(plP_wcmmx(wx), plP_wcmmy((PLFLT) (wy1 + lambda * dwy)),
-		   xmajor, ymajor);
-	    tp = tn;
-	}
+    plP_movwor( wx, wy1 );
+    plP_drawor( wx, wy2 );
+    if ( lt )
+    {
+        tp = tick1 * floor( vmin / tick1 );
+        for (;; )
+        {
+            tn = tp + tick1;
+            if ( ls )
+            {
+                if ( ll )
+                {
+                    for ( i = 0; i <= 7; i++ )
+                    {
+                        temp = tp + xlog[i];
+                        if ( BETW( temp, vmin, vmax ))
+                        {
+                            lambda = ( vmax_in > vmin_in ) ?
+                                     ( temp - vmin ) / ( vmax - vmin ) :
+                                     ( vmax - temp ) / ( vmax - vmin );
+                            plstik( plP_wcmmx( wx ),
+                                    plP_wcmmy((PLFLT) ( wy1 + lambda * dwy )),
+                                    xminor, yminor );
+                        }
+                    }
+                }
+                else
+                {
+                    for ( i = 1; i <= nsub1 - 1; i++ )
+                    {
+                        temp = tp + i * tick1 / nsub1;
+                        if ( BETW( temp, vmin, vmax ))
+                        {
+                            lambda = ( vmax_in > vmin_in ) ?
+                                     ( temp - vmin ) / ( vmax - vmin ) :
+                                     ( vmax - temp ) / ( vmax - vmin );
+                            plstik( plP_wcmmx( wx ),
+                                    plP_wcmmy((PLFLT) ( wy1 + lambda * dwy )),
+                                    xminor, yminor );
+                        }
+                    }
+                }
+            }
+            temp = tn;
+            if ( !BETW( temp, vmin, vmax ))
+                break;
+            lambda = ( vmax_in > vmin_in ) ?
+                     ( temp - vmin ) / ( vmax - vmin ) :
+                     ( vmax - temp ) / ( vmax - vmin );
+            plstik( plP_wcmmx( wx ), plP_wcmmy((PLFLT) ( wy1 + lambda * dwy )),
+                    xmajor, ymajor );
+            tp = tn;
+        }
     }
 
 
 /* Label the line */
 
-    if ((ln || lm) && lt) {
-	pldprec(vmin, vmax, tick1, lf, &mode, &prec, *digits, &scale);
-	*digits = 0;
-	tp = tick1 * floor(vmin / tick1);
-	for (tn = tp + tick1; BETW(tn, vmin, vmax); tn += tick1) {
-	    plform(PL_Z_AXIS, tn, scale, prec, string, STRING_LEN, ll, lf, lo);
-	    pos = (vmax_in > vmin_in)?
-	        (tn - vmin) / (vmax - vmin):
-	        (vmax - tn) / (vmax - vmin);
-	    if (ln && !right)
-		plztx("v", dx, dy, wx, wy1, wy2, 0.5, pos, 1.0, string);
+    if (( ln || lm ) && lt )
+    {
+        pldprec( vmin, vmax, tick1, lf, &mode, &prec, *digits, &scale );
+        *digits = 0;
+        tp      = tick1 * floor( vmin / tick1 );
+        for ( tn = tp + tick1; BETW( tn, vmin, vmax ); tn += tick1 )
+        {
+            plform( PL_Z_AXIS, tn, scale, prec, string, STRING_LEN, ll, lf, lo );
+            pos = ( vmax_in > vmin_in ) ?
+                  ( tn - vmin ) / ( vmax - vmin ) :
+                  ( vmax - tn ) / ( vmax - vmin );
+            if ( ln && !right )
+                plztx( "v", dx, dy, wx, wy1, wy2, 0.5, pos, 1.0, string );
 
-	    if (lm && right)
-		plztx("v", dx, dy, wx, wy1, wy2, -0.5, pos, 0.0, string);
+            if ( lm && right )
+                plztx( "v", dx, dy, wx, wy1, wy2, -0.5, pos, 0.0, string );
 
-	    lstring = strlen(string);
-	    *digits = MAX(*digits, lstring);
-	}
-	if (!ll && !lo && mode) {
-	    snprintf(string, STRING_LEN, "(x10#u%d#d)", (int) scale);
-	    pos = 1.15;
-	    height = 0.5;
-	    if (ln && !right) {
-		plztx("v", dx, dy, wx, wy1, wy2, height, pos, 0.5, string);
-	    }
-	    if (lm && right) {
-		plztx("v", dx, dy, wx, wy1, wy2,
-		      (PLFLT) -height, pos, 0.5, string);
-	    }
-	}
+            lstring = strlen( string );
+            *digits = MAX( *digits, lstring );
+        }
+        if ( !ll && !lo && mode )
+        {
+            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) scale );
+            pos    = 1.15;
+            height = 0.5;
+            if ( ln && !right )
+            {
+                plztx( "v", dx, dy, wx, wy1, wy2, height, pos, 0.5, string );
+            }
+            if ( lm && right )
+            {
+                plztx( "v", dx, dy, wx, wy1, wy2,
+                       (PLFLT) -height, pos, 0.5, string );
+            }
+        }
     }
 }
 
@@ -1030,11 +1153,11 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
  *
  * Prints out text along a vertical axis for a 3d plot joining
  * world coordinates (wx,wy1) to (wx,wy2).
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 static void
-plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
-      PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
+plztx( const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
+       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text )
 {
     PLINT refx = 0, refy = 0, x = 0, y = 0, vert = 0;
     PLFLT shift, cc, ss, wy;
@@ -1042,50 +1165,53 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
     PLFLT dispx, dispy;
     PLFLT chrdef, chrht;
 
-    cc = plsc->wmxscl * dx;
-    ss = plsc->wmyscl * dy;
-    diag = sqrt(cc * cc + ss * ss);
-    cc /= diag;
-    ss /= diag;
-    wy = wy1 + pos * (wy2 - wy1);
+    cc   = plsc->wmxscl * dx;
+    ss   = plsc->wmyscl * dy;
+    diag = sqrt( cc * cc + ss * ss );
+    cc  /= diag;
+    ss  /= diag;
+    wy   = wy1 + pos * ( wy2 - wy1 );
 
-    if (plP_stsearch(opt, 'v'))
-	vert = 0;
-    else if (plP_stsearch(opt, 'h'))
-	vert = 1;
+    if ( plP_stsearch( opt, 'v' ))
+        vert = 0;
+    else if ( plP_stsearch( opt, 'h' ))
+        vert = 1;
 
-    if (vert) {
-	xform[0] = 0.0;
-	xform[1] = -cc;
-	xform[2] = 1.0;
-	xform[3] = -ss;
-    } else {
-	xform[0] = cc;
-	xform[1] = 0.0;
-	xform[2] = ss;
-	xform[3] = 1.0;
+    if ( vert )
+    {
+        xform[0] = 0.0;
+        xform[1] = -cc;
+        xform[2] = 1.0;
+        xform[3] = -ss;
+    }
+    else
+    {
+        xform[0] = cc;
+        xform[1] = 0.0;
+        xform[2] = ss;
+        xform[3] = 1.0;
     }
 
-    xdv = plP_wcdcx(wx);
-    ydv = plP_wcdcy(wy);
+    xdv = plP_wcdcx( wx );
+    ydv = plP_wcdcy( wy );
 
     dispx = -disp * cc;
     dispy = -disp * ss;
 
-    plgchr(&chrdef, &chrht);
-    shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
+    plgchr( &chrdef, &chrht );
+    shift = ( just == 0.0 ) ? 0.0 : plstrl( text ) * just;
 
-    xmm = plP_dcmmx(xdv) + dispx * chrht;
-    ymm = plP_dcmmy(ydv) + dispy * chrht;
+    xmm    = plP_dcmmx( xdv ) + dispx * chrht;
+    ymm    = plP_dcmmy( ydv ) + dispy * chrht;
     refxmm = xmm - shift * xform[0];
     refymm = ymm - shift * xform[2];
 
-    x = plP_mmpcx(xmm);
-    y = plP_mmpcy(ymm);
-    refx = plP_mmpcx(refxmm);
-    refy = plP_mmpcy(refymm);
+    x    = plP_mmpcx( xmm );
+    y    = plP_mmpcy( ymm );
+    refx = plP_mmpcx( refxmm );
+    refy = plP_mmpcy( refymm );
 
-    plP_text(0, just, xform, x, y, refx, refy, text);
+    plP_text( 0, just, xform, x, y, refx, refy, text );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1096,11 +1222,11 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
  * Note that 'tspace' is the minimim distance away (in fractional number
  * of ticks or subticks) from the boundary a grid line can be drawn.  If
  * you are too close, it looks bad.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 static void
-grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
-	 const char *yopt, PLFLT ytick1, PLINT nysub1)
+grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
+          const char *yopt, PLFLT ytick1, PLINT nysub1 )
 {
     PLINT lgx, lhx, llx;
     PLINT lgy, lhy, lly;
@@ -1111,83 +1237,97 @@ grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
 
 /* Set plot options from input */
 
-    lgx = plP_stsearch(xopt, 'g');
-    lhx = plP_stsearch(xopt, 'h');
-    llx = plP_stsearch(xopt, 'l');
+    lgx = plP_stsearch( xopt, 'g' );
+    lhx = plP_stsearch( xopt, 'h' );
+    llx = plP_stsearch( xopt, 'l' );
 
-    lgy = plP_stsearch(yopt, 'g');
-    lhy = plP_stsearch(yopt, 'h');
-    lly = plP_stsearch(yopt, 'l');
+    lgy = plP_stsearch( yopt, 'g' );
+    lhy = plP_stsearch( yopt, 'h' );
+    lly = plP_stsearch( yopt, 'l' );
 
-    plP_xgvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
+    plP_xgvpw( &vpwxmin, &vpwxmax, &vpwymin, &vpwymax );
 /* n.b. large change; vpwxmi always numerically less than vpwxma, and
  * similarly for vpwymi */
-    vpwxmi = (vpwxmax > vpwxmin) ? vpwxmin : vpwxmax;
-    vpwxma = (vpwxmax > vpwxmin) ? vpwxmax : vpwxmin;
-    vpwymi = (vpwymax > vpwymin) ? vpwymin : vpwymax;
-    vpwyma = (vpwymax > vpwymin) ? vpwymax : vpwymin;
+    vpwxmi = ( vpwxmax > vpwxmin ) ? vpwxmin : vpwxmax;
+    vpwxma = ( vpwxmax > vpwxmin ) ? vpwxmax : vpwxmin;
+    vpwymi = ( vpwymax > vpwymin ) ? vpwymin : vpwymax;
+    vpwyma = ( vpwymax > vpwymin ) ? vpwymax : vpwymin;
 
 /* Draw grid in x direction. */
 
-    if (lgx) {
-	for (tn = xtick1 * floor(vpwxmi/xtick1);
-	     tn <= vpwxma; tn += xtick1) {
-	    if (lhx) {
-		if (llx) {
-		    PLFLT otemp = tn;
-		    for (i = 0; i <= 7; i++) {
-			temp = tn + xlog[i];
-			tcrit = (temp - otemp)*tspace;
-			otemp = temp;
-			if (BETW(temp, vpwxmi+tcrit, vpwxma-tcrit))
-			    pljoin(temp, vpwymi, temp, vpwyma);
-		    }
-		}
-		else {
-		    for (i = 1; i <= nxsub1 - 1; i++) {
-			temp = tn + i * xtick1 / nxsub1;
-			tcrit = xtick1 / nxsub1 * tspace;
-			if (BETW(temp, vpwxmi+tcrit, vpwxma-tcrit))
-			    pljoin(temp, vpwymi, temp, vpwyma);
-		    }
-		}
-	    }
-	    tcrit = xtick1*tspace;
-	    if (BETW(tn, vpwxmi+tcrit, vpwxma-tcrit))
-	        pljoin(tn, vpwymi, tn, vpwyma);
-	}
+    if ( lgx )
+    {
+        for ( tn = xtick1 * floor( vpwxmi / xtick1 );
+              tn <= vpwxma; tn += xtick1 )
+        {
+            if ( lhx )
+            {
+                if ( llx )
+                {
+                    PLFLT otemp = tn;
+                    for ( i = 0; i <= 7; i++ )
+                    {
+                        temp  = tn + xlog[i];
+                        tcrit = ( temp - otemp ) * tspace;
+                        otemp = temp;
+                        if ( BETW( temp, vpwxmi + tcrit, vpwxma - tcrit ))
+                            pljoin( temp, vpwymi, temp, vpwyma );
+                    }
+                }
+                else
+                {
+                    for ( i = 1; i <= nxsub1 - 1; i++ )
+                    {
+                        temp  = tn + i * xtick1 / nxsub1;
+                        tcrit = xtick1 / nxsub1 * tspace;
+                        if ( BETW( temp, vpwxmi + tcrit, vpwxma - tcrit ))
+                            pljoin( temp, vpwymi, temp, vpwyma );
+                    }
+                }
+            }
+            tcrit = xtick1 * tspace;
+            if ( BETW( tn, vpwxmi + tcrit, vpwxma - tcrit ))
+                pljoin( tn, vpwymi, tn, vpwyma );
+        }
     }
 
 /* Draw grid in y direction */
 
-    if (lgy) {
-	tn = ytick1 * floor(vpwymi / ytick1 + tspace);
-	for (tn = ytick1 * floor(vpwymi/ytick1);
-	     tn <= vpwyma; tn += ytick1) {
-	    if (lhy) {
-		if (lly) {
-		    PLFLT otemp = tn;
-		    for (i = 0; i <= 7; i++) {
-			temp = tn + xlog[i];
-			tcrit = (temp - otemp)*tspace;
-			otemp = temp;
-			if (BETW(temp, vpwymi+tcrit, vpwyma-tcrit))
-			    pljoin(vpwxmi, temp, vpwxma, temp);
-		    }
-		}
-		else {
-		    for (i = 1; i <= nysub1 - 1; i++) {
-			temp = tn + i * ytick1 / nysub1;
-			tcrit = ytick1 / nysub1 * tspace;
-			if (BETW(temp, vpwymi+tcrit, vpwyma-tcrit))
-			    pljoin(vpwxmi, temp, vpwxma, temp);
-		    }
-		}
-	    }
-	    tcrit = ytick1*tspace;
-	    if (BETW(tn, vpwymi+tcrit, vpwyma-tcrit))
-	    pljoin(vpwxmi, tn, vpwxma, tn);
-	}
+    if ( lgy )
+    {
+        tn = ytick1 * floor( vpwymi / ytick1 + tspace );
+        for ( tn = ytick1 * floor( vpwymi / ytick1 );
+              tn <= vpwyma; tn += ytick1 )
+        {
+            if ( lhy )
+            {
+                if ( lly )
+                {
+                    PLFLT otemp = tn;
+                    for ( i = 0; i <= 7; i++ )
+                    {
+                        temp  = tn + xlog[i];
+                        tcrit = ( temp - otemp ) * tspace;
+                        otemp = temp;
+                        if ( BETW( temp, vpwymi + tcrit, vpwyma - tcrit ))
+                            pljoin( vpwxmi, temp, vpwxma, temp );
+                    }
+                }
+                else
+                {
+                    for ( i = 1; i <= nysub1 - 1; i++ )
+                    {
+                        temp  = tn + i * ytick1 / nysub1;
+                        tcrit = ytick1 / nysub1 * tspace;
+                        if ( BETW( temp, vpwymi + tcrit, vpwyma - tcrit ))
+                            pljoin( vpwxmi, temp, vpwxma, temp );
+                    }
+                }
+            }
+            tcrit = ytick1 * tspace;
+            if ( BETW( tn, vpwymi + tcrit, vpwyma - tcrit ))
+                pljoin( vpwxmi, tn, vpwxma, tn );
+        }
     }
 }
 
@@ -1195,179 +1335,233 @@ grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
  * void label_box()
  *
  * Writes numeric labels on side(s) of box.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 static void
-label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
+label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
 {
     static char string[STRING_LEN];
-    PLBOOL ldx, lfx, lix, llx, lmx, lnx, ltx, lox;
-    PLBOOL ldy, lfy, liy, lly, lmy, lny, lty, lvy, loy;
-    PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
-    PLFLT vpwxmin, vpwxmax, vpwymin, vpwymax;
-    PLFLT pos, tn, tp, offset, height, just;
-    PLFLT factor, tstart;
-    const char *timefmt;
+    PLBOOL      ldx, lfx, lix, llx, lmx, lnx, ltx, lox;
+    PLBOOL      ldy, lfy, liy, lly, lmy, lny, lty, lvy, loy;
+    PLFLT       vpwxmi, vpwxma, vpwymi, vpwyma;
+    PLFLT       vpwxmin, vpwxmax, vpwymin, vpwymax;
+    PLFLT       pos, tn, tp, offset, height, just;
+    PLFLT       factor, tstart;
+    const char  *timefmt;
 
 /* Set plot options from input */
 
-    ldx = plP_stsearch(xopt, 'd');
-    lfx = plP_stsearch(xopt, 'f');
-    lix = plP_stsearch(xopt, 'i');
-    llx = plP_stsearch(xopt, 'l');
-    lmx = plP_stsearch(xopt, 'm');
-    lnx = plP_stsearch(xopt, 'n');
-    ltx = plP_stsearch(xopt, 't');
-    lox = plP_stsearch(xopt, 'o');
+    ldx = plP_stsearch( xopt, 'd' );
+    lfx = plP_stsearch( xopt, 'f' );
+    lix = plP_stsearch( xopt, 'i' );
+    llx = plP_stsearch( xopt, 'l' );
+    lmx = plP_stsearch( xopt, 'm' );
+    lnx = plP_stsearch( xopt, 'n' );
+    ltx = plP_stsearch( xopt, 't' );
+    lox = plP_stsearch( xopt, 'o' );
 
-    ldy = plP_stsearch(yopt, 'd');
-    lfy = plP_stsearch(yopt, 'f');
-    liy = plP_stsearch(yopt, 'i');
-    lly = plP_stsearch(yopt, 'l');
-    lmy = plP_stsearch(yopt, 'm');
-    lny = plP_stsearch(yopt, 'n');
-    lty = plP_stsearch(yopt, 't');
-    lvy = plP_stsearch(yopt, 'v');
-    loy = plP_stsearch(yopt, 'o');
+    ldy = plP_stsearch( yopt, 'd' );
+    lfy = plP_stsearch( yopt, 'f' );
+    liy = plP_stsearch( yopt, 'i' );
+    lly = plP_stsearch( yopt, 'l' );
+    lmy = plP_stsearch( yopt, 'm' );
+    lny = plP_stsearch( yopt, 'n' );
+    lty = plP_stsearch( yopt, 't' );
+    lvy = plP_stsearch( yopt, 'v' );
+    loy = plP_stsearch( yopt, 'o' );
 
-    plP_xgvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
+    plP_xgvpw( &vpwxmin, &vpwxmax, &vpwymin, &vpwymax );
 /* n.b. large change; vpwxmi always numerically less than vpwxma, and
  * similarly for vpwymi */
-    vpwxmi = (vpwxmax > vpwxmin) ? vpwxmin : vpwxmax;
-    vpwxma = (vpwxmax > vpwxmin) ? vpwxmax : vpwxmin;
-    vpwymi = (vpwymax > vpwymin) ? vpwymin : vpwymax;
-    vpwyma = (vpwymax > vpwymin) ? vpwymax : vpwymin;
+    vpwxmi = ( vpwxmax > vpwxmin ) ? vpwxmin : vpwxmax;
+    vpwxma = ( vpwxmax > vpwxmin ) ? vpwxmax : vpwxmin;
+    vpwymi = ( vpwymax > vpwymin ) ? vpwymin : vpwymax;
+    vpwyma = ( vpwymax > vpwymin ) ? vpwymax : vpwymin;
 
 /* Write horizontal label(s) */
 
-    if ((lmx || lnx) && ltx) {
-	PLINT xmode, xprec, xdigmax, xdigits, xscale;
+    if (( lmx || lnx ) && ltx )
+    {
+        PLINT xmode, xprec, xdigmax, xdigits, xscale;
 
-	plgxax(&xdigmax, &xdigits);
-	pldprec(vpwxmi, vpwxma, xtick1, lfx, &xmode, &xprec, xdigmax, &xscale);
+        plgxax( &xdigmax, &xdigits );
+        pldprec( vpwxmi, vpwxma, xtick1, lfx, &xmode, &xprec, xdigmax, &xscale );
         timefmt = plP_gtimefmt();
 
-	if (ldx) {
-	  pldtfac(vpwxmi, vpwxma, &factor, &tstart);
-	  tp = xtick1 * (1. + floor((vpwxmi-tstart) / xtick1)) + tstart;
-	}
-	else
-	  tp = xtick1 * (1. + floor(vpwxmi / xtick1));
-	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
-            if (ldx) {
-              strfqsas(string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig);
+        if ( ldx )
+        {
+            pldtfac( vpwxmi, vpwxma, &factor, &tstart );
+            tp = xtick1 * ( 1. + floor(( vpwxmi - tstart ) / xtick1 )) + tstart;
+        }
+        else
+            tp = xtick1 * ( 1. + floor( vpwxmi / xtick1 ));
+        for ( tn = tp; BETW( tn, vpwxmi, vpwxma ); tn += xtick1 )
+        {
+            if ( ldx )
+            {
+                strfqsas( string,
+                          STRING_LEN,
+                          timefmt,
+                          (double) tn,
+                          plsc->qsasconfig );
             }
-            else {
-              plform(PL_X_AXIS, tn, xscale, xprec, string, STRING_LEN, llx, lfx, lox);
+            else
+            {
+                plform( PL_X_AXIS,
+                        tn,
+                        xscale,
+                        xprec,
+                        string,
+                        STRING_LEN,
+                        llx,
+                        lfx,
+                        lox );
             }
-	    height = lix ? 1.75 : 1.5;
-	    pos = (vpwxmax > vpwxmin)?
-	        (tn - vpwxmi) / (vpwxma - vpwxmi):
-	        (vpwxma - tn) / (vpwxma - vpwxmi);
-  	    if (lnx)
-		plmtex("b", height, pos, 0.5, string);
-	    if (lmx)
-		plmtex("t", height, pos, 0.5, string);
-	}
-	xdigits = 2;
-	plsxax(xdigmax, xdigits);
+            height = lix ? 1.75 : 1.5;
+            pos    = ( vpwxmax > vpwxmin ) ?
+                     ( tn - vpwxmi ) / ( vpwxma - vpwxmi ) :
+                     ( vpwxma - tn ) / ( vpwxma - vpwxmi );
+            if ( lnx )
+                plmtex( "b", height, pos, 0.5, string );
+            if ( lmx )
+                plmtex( "t", height, pos, 0.5, string );
+        }
+        xdigits = 2;
+        plsxax( xdigmax, xdigits );
 
-    /* Write separate exponential label if mode = 1. */
+        /* Write separate exponential label if mode = 1. */
 
-	if (!llx && !ldx && !lox && xmode) {
+        if ( !llx && !ldx && !lox && xmode )
+        {
             /* Assume label data is for placement of exponents if no custom
-               label function is provided. */
-            if (plsc->label_data) {
-                height = ((PLLabelDefaults *)plsc->label_data)->exp_label_disp;
-                pos = ((PLLabelDefaults *)plsc->label_data)->exp_label_pos;
-                just = ((PLLabelDefaults *)plsc->label_data)->exp_label_just;
+             * label function is provided. */
+            if ( plsc->label_data )
+            {
+                height =
+                    ((PLLabelDefaults *) plsc->label_data )->exp_label_disp;
+                pos  = ((PLLabelDefaults *) plsc->label_data )->exp_label_pos;
+                just =
+                    ((PLLabelDefaults *) plsc->label_data )->exp_label_just;
             }
-            else {
+            else
+            {
                 height = 3.2;
-                pos = 1.0;
-                just = 0.5;
+                pos    = 1.0;
+                just   = 0.5;
             }
-	    snprintf(string, STRING_LEN, "(x10#u%d#d)", (int) xscale);
-	    if (lnx)
-		plmtex("b", height, pos, just, string);
-	    if (lmx)
-		plmtex("t", height, pos, just, string);
-	}
+            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) xscale );
+            if ( lnx )
+                plmtex( "b", height, pos, just, string );
+            if ( lmx )
+                plmtex( "t", height, pos, just, string );
+        }
     }
 
 /* Write vertical label(s) */
 
-    if ((lmy || lny) && lty) {
-	PLINT ymode, yprec, ydigmax, ydigits, yscale;
+    if (( lmy || lny ) && lty )
+    {
+        PLINT ymode, yprec, ydigmax, ydigits, yscale;
 
-	plgyax(&ydigmax, &ydigits);
-	pldprec(vpwymi, vpwyma, ytick1, lfy, &ymode, &yprec, ydigmax, &yscale);
+        plgyax( &ydigmax, &ydigits );
+        pldprec( vpwymi, vpwyma, ytick1, lfy, &ymode, &yprec, ydigmax, &yscale );
 
-	ydigits = 0;
-	if (ldy) {
-	  pldtfac(vpwymi, vpwyma, &factor, &tstart);
-	  tp = ytick1 * (1. + floor((vpwymi-tstart) / ytick1)) + tstart;
-	}
-	else
-	  tp = ytick1 * (1. + floor(vpwymi / ytick1));
-	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
-            if (ldy) {
-              strfqsas(string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig);
+        ydigits = 0;
+        if ( ldy )
+        {
+            pldtfac( vpwymi, vpwyma, &factor, &tstart );
+            tp = ytick1 * ( 1. + floor(( vpwymi - tstart ) / ytick1 )) + tstart;
+        }
+        else
+            tp = ytick1 * ( 1. + floor( vpwymi / ytick1 ));
+        for ( tn = tp; BETW( tn, vpwymi, vpwyma ); tn += ytick1 )
+        {
+            if ( ldy )
+            {
+                strfqsas( string,
+                          STRING_LEN,
+                          timefmt,
+                          (double) tn,
+                          plsc->qsasconfig );
             }
-            else {
-	      plform(PL_Y_AXIS, tn, yscale, yprec, string, STRING_LEN, lly, lfy, loy);
+            else
+            {
+                plform( PL_Y_AXIS,
+                        tn,
+                        yscale,
+                        yprec,
+                        string,
+                        STRING_LEN,
+                        lly,
+                        lfy,
+                        loy );
             }
-	    pos = (vpwymax > vpwymin)?
-	        (tn - vpwymi) / (vpwyma - vpwymi):
-	        (vpwyma - tn) / (vpwyma - vpwymi);
-	    if (lny) {
-		if (lvy) {
-		    height = liy ? 1.0 : 0.5;
-		    plmtex("lv", height, pos, 1.0, string);
-		} else {
-		    height = liy ? 1.75 : 1.5;
-		    plmtex("l", height, pos, 0.5, string);
-		}
-	    }
-	    if (lmy) {
-		if (lvy) {
-		    height = liy ? 1.0 : 0.5;
-		    plmtex("rv", height, pos, 0.0, string);
-		} else {
-		    height = liy ? 1.75 : 1.5;
-		    plmtex("r", height, pos, 0.5, string);
-		}
-	    }
-	    ydigits = MAX(ydigits, (PLINT) strlen(string));
-	}
-	if (!lvy)
-	    ydigits = 2;
-
-	plsyax(ydigmax, ydigits);
-
-    /* Write separate exponential label if mode = 1. */
-
-	if (!lly && !ldy && !loy && ymode) {
-	    snprintf(string, STRING_LEN, "(x10#u%d#d)", (int) yscale);
-            if (plsc->label_data) {
-                height = ((PLLabelDefaults *)plsc->label_data)->exp_label_disp;
-                pos = ((PLLabelDefaults *)plsc->label_data)->exp_label_pos;
-                just = ((PLLabelDefaults *)plsc->label_data)->exp_label_just;
+            pos = ( vpwymax > vpwymin ) ?
+                  ( tn - vpwymi ) / ( vpwyma - vpwymi ) :
+                  ( vpwyma - tn ) / ( vpwyma - vpwymi );
+            if ( lny )
+            {
+                if ( lvy )
+                {
+                    height = liy ? 1.0 : 0.5;
+                    plmtex( "lv", height, pos, 1.0, string );
+                }
+                else
+                {
+                    height = liy ? 1.75 : 1.5;
+                    plmtex( "l", height, pos, 0.5, string );
+                }
             }
-            else {
+            if ( lmy )
+            {
+                if ( lvy )
+                {
+                    height = liy ? 1.0 : 0.5;
+                    plmtex( "rv", height, pos, 0.0, string );
+                }
+                else
+                {
+                    height = liy ? 1.75 : 1.5;
+                    plmtex( "r", height, pos, 0.5, string );
+                }
+            }
+            ydigits = MAX( ydigits, (PLINT) strlen( string ));
+        }
+        if ( !lvy )
+            ydigits = 2;
+
+        plsyax( ydigmax, ydigits );
+
+        /* Write separate exponential label if mode = 1. */
+
+        if ( !lly && !ldy && !loy && ymode )
+        {
+            snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
+            if ( plsc->label_data )
+            {
+                height =
+                    ((PLLabelDefaults *) plsc->label_data )->exp_label_disp;
+                pos  = ((PLLabelDefaults *) plsc->label_data )->exp_label_pos;
+                just =
+                    ((PLLabelDefaults *) plsc->label_data )->exp_label_just;
+            }
+            else
+            {
                 offset = 0.02;
                 height = 2.0;
-                if (lny) {
-                    pos = 0.0 - offset;
+                if ( lny )
+                {
+                    pos  = 0.0 - offset;
                     just = 1.0;
                 }
-                if (lmy) {
-                    pos = 1.0 + offset;
+                if ( lmy )
+                {
+                    pos  = 1.0 + offset;
                     just = 0.0;
                 }
             }
-            plmtex("t", height, pos, just, string);
-	}
+            plmtex( "t", height, pos, just, string );
+        }
     }
 }
 
@@ -1395,72 +1589,86 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
  * The axis argument is included to support PLplot's custom axis labeling.  It
  * is passed on to the custom labeling function if it exists.  Otherwise, it
  * is ignored.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 static void
-plform(PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *string, PLINT len, PLBOOL ll, PLBOOL lf, PLBOOL lo)
+plform( PLINT axis,
+        PLFLT value,
+        PLINT scale,
+        PLINT prec,
+        char *string,
+        PLINT len,
+        PLBOOL ll,
+        PLBOOL lf,
+        PLBOOL lo )
 {
     /* Check to see if a custom labeling function is defined.  If not, */
-    if (lo && plsc->label_func) {
-        (*plsc->label_func)(axis, value, string, len, plsc->label_data);
+    if ( lo && plsc->label_func )
+    {
+        ( *plsc->label_func )( axis, value, string, len, plsc->label_data );
     }
-    else {
-        if (lo) {
-            plwarn("Custom axis labels requested without a labeling function \
-                    - using default.");
+    else
+    {
+        if ( lo )
+        {
+            plwarn(
+                "Custom axis labels requested without a labeling function \
+                    - using default."                                                                             );
         }
-        if (ll) {
+        if ( ll )
+        {
+            /* Logarithmic */
 
-        /* Logarithmic */
+            if ( lf )
+            {
+                /* Fixed point, i.e. .1, 1, 10, etc */
 
-            if (lf) {
+                int exponent = ROUND( value );
 
-            /* Fixed point, i.e. .1, 1, 10, etc */
-
-                int exponent = ROUND(value);
-
-                value = pow(10.0, exponent);
-                if (exponent < 0) {
+                value = pow( 10.0, exponent );
+                if ( exponent < 0 )
+                {
                     char form[FORMAT_LEN];
-                    snprintf(form, FORMAT_LEN, "%%.%df", ABS(exponent));
-                    snprintf(string, len, form, value);
+                    snprintf( form, FORMAT_LEN, "%%.%df", ABS( exponent ));
+                    snprintf( string, len, form, value );
                 }
-                else {
-                    snprintf(string, len, "%d", (int) value);
+                else
+                {
+                    snprintf( string, len, "%d", (int) value );
                 }
             }
-            else {
+            else
+            {
+                /* Exponential, i.e. 10^-1, 10^0, 10^1, etc */
 
-            /* Exponential, i.e. 10^-1, 10^0, 10^1, etc */
-
-                snprintf(string, len, "10#u%d", (int) ROUND(value));
+                snprintf( string, len, "10#u%d", (int) ROUND( value ));
             }
         }
-        else {
+        else
+        {
+            /* Linear */
 
-        /* Linear */
-
-            PLINT setpre, precis;
-            char form[FORMAT_LEN], temp[TEMP_LEN];
+            PLINT  setpre, precis;
+            char   form[FORMAT_LEN], temp[TEMP_LEN];
             double scale2;
 
-            plP_gprec(&setpre, &precis);
+            plP_gprec( &setpre, &precis );
 
-            if (setpre)
+            if ( setpre )
                 prec = precis;
 
-            if (scale)
-                value /= pow(10.,(double)scale);
+            if ( scale )
+                value /= pow( 10., (double) scale );
 
-        /* This is necessary to prevent labels like "-0.0" on some systems */
+            /* This is necessary to prevent labels like "-0.0" on some systems */
 
-            scale2 = pow(10., prec);
-            value = floor((value * scale2) + .5) / scale2;
+            scale2 = pow( 10., prec );
+            value  = floor(( value * scale2 ) + .5 ) / scale2;
 
-            snprintf(form, FORMAT_LEN, "%%.%df", (int) prec);
-            snprintf(temp, TEMP_LEN, form, value);
-            strncpy(string, temp, len-1);
-            string[len-1] = '\0';
+            snprintf( form, FORMAT_LEN, "%%.%df", (int) prec );
+            snprintf( temp, TEMP_LEN, form, value );
+            strncpy( string, temp, len - 1 );
+            string[len - 1] = '\0';
         }
     }
 }
@@ -1486,9 +1694,13 @@ plform(PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *string, PLINT len
  * data: A pointer to whatever extra information the custom plotting function
  *       requires
  *
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 void
-c_plslabelfunc(void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer), PLPointer label_data)
+c_plslabelfunc( void ( *label_func )( PLINT,
+                                      PLFLT,
+                                      char *,
+                                      PLINT,
+                                      PLPointer ), PLPointer label_data )
 {
     plsc->label_func = label_func;
     plsc->label_data = label_data;

@@ -1,26 +1,26 @@
 /* $Id$
-
-	Determines tick spacing and mode (fixed or floating) of
-	numeric axis labels.
-
-   Copyright (C) 2004  Alan W. Irwin
-
-   This file is part of PLplot.
-
-   PLplot is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Library Public License as published
-   by the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
-
-   PLplot is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU Library General Public License for more details.
-
-   You should have received a copy of the GNU Library General Public License
-   along with PLplot; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-*/
+ *
+ *      Determines tick spacing and mode (fixed or floating) of
+ *      numeric axis labels.
+ *
+ * Copyright (C) 2004  Alan W. Irwin
+ *
+ * This file is part of PLplot.
+ *
+ * PLplot is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Library Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * PLplot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with PLplot; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
 
 #include "plplotP.h"
 
@@ -32,156 +32,179 @@
  * range vmin to vmax.  The recommended number of subticks is returned in
  * "nsubt" unless the routine is entered with a non-zero value of "nsubt".
  * n.b. big change: now returns only positive values of tick and nsubt
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
 void
-pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld)
+pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
 {
     PLFLT t1, t2, tick_reasonable;
     PLINT np, ns;
     PLFLT factor;
 
 
-    if (ld) {
-      /* Check suitable units for tick spacing */
-      pldtfac(vmin, vmax, &factor, NULL);
+    if ( ld )
+    {
+        /* Check suitable units for tick spacing */
+        pldtfac( vmin, vmax, &factor, NULL );
 
-      *tick = *tick / factor;
-      vmin = vmin / factor;
-      vmax = vmax / factor;
+        *tick = *tick / factor;
+        vmin  = vmin / factor;
+        vmax  = vmax / factor;
     }
 
 /* Magnitude of min/max difference to get tick spacing */
 
-    t1 = (PLFLT) log10(ABS(vmax - vmin));
-    np = (PLINT) floor(t1);
+    t1 = (PLFLT) log10( ABS( vmax - vmin ));
+    np = (PLINT) floor( t1 );
     t1 = t1 - np;
 
 /* Get tick spacing. */
 
-    if (t1 > 0.7781512503) {
-	t2 = 2.0;
-	ns = 4;
+    if ( t1 > 0.7781512503 )
+    {
+        t2 = 2.0;
+        ns = 4;
     }
-    else if (t1 > 0.4771212549) {
-	t2 = 1.0;
-	ns = 5;
+    else if ( t1 > 0.4771212549 )
+    {
+        t2 = 1.0;
+        ns = 5;
     }
-    else if (t1 > 0.1760912591) {
-	t2 = 5.0;
-	ns = 5;
-	np = np - 1;
+    else if ( t1 > 0.1760912591 )
+    {
+        t2 = 5.0;
+        ns = 5;
+        np = np - 1;
     }
-    else {
-	t2 = 2.0;
-	ns = 4;
-	np = np - 1;
+    else
+    {
+        t2 = 2.0;
+        ns = 4;
+        np = np - 1;
     }
 
 /* Now compute reasonable tick spacing */
 
-    tick_reasonable = t2 * pow(10.0, (double) np);
-    if (*tick == 0) {
-	*tick = t2 * pow(10.0, (double) np);
+    tick_reasonable = t2 * pow( 10.0, (double) np );
+    if ( *tick == 0 )
+    {
+        *tick = t2 * pow( 10.0, (double) np );
     }
-    else {
-        *tick = ABS(*tick);
-        if(*tick < 1.e-4*tick_reasonable) {
-	   plexit("pldtik: magnitude of specified tick spacing is much too small");
-	   return;
-	}
+    else
+    {
+        *tick = ABS( *tick );
+        if ( *tick < 1.e-4 * tick_reasonable )
+        {
+            plexit(
+                "pldtik: magnitude of specified tick spacing is much too small" );
+            return;
+        }
     }
-    if (*nsubt == 0)
-	*nsubt = ns;
+    if ( *nsubt == 0 )
+        *nsubt = ns;
 
-    *nsubt = ABS(*nsubt);
+    *nsubt = ABS( *nsubt );
 
-    if (ld) {
-      *tick = *tick*factor;
+    if ( ld )
+    {
+        *tick = *tick * factor;
     }
 }
 
-/*----------------------------------------------------------------------*\ 
+/*----------------------------------------------------------------------*\
  * PLFLT pldtfac()
- * 
+ *
  * Calculate factor to convert a date/time interval in seconds
  * into a more natural units (minutes, hours, days, week, years).
- * Also optionally calculate the sensible start time for counting ticks 
+ * Also optionally calculate the sensible start time for counting ticks
  * from (e.g. beginning of day, beginning of year).
  * Used to calculate sensible tick and label spacings.
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 void
-pldtfac(PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start) {
-  PLFLT diff;
-  PLINT year, month, day, hour, min;
-  PLFLT sec;
+pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
+{
+    PLFLT diff;
+    PLINT year, month, day, hour, min;
+    PLFLT sec;
 
-  diff = vmax - vmin;
+    diff = vmax - vmin;
 
-  if (start != NULL) {
-    plbtime(&year, &month, &day, &hour, &min, &sec, vmin);
-  }
+    if ( start != NULL )
+    {
+        plbtime( &year, &month, &day, &hour, &min, &sec, vmin );
+    }
 
-  if (diff < 3.0*60.0) {
-    /* Seconds */
-    *factor = 1.0;
-    if (start != NULL) {
-      sec = 0.;
-      plctime(year, month, day, hour, min, sec, start);
+    if ( diff < 3.0 * 60.0 )
+    {
+        /* Seconds */
+        *factor = 1.0;
+        if ( start != NULL )
+        {
+            sec = 0.;
+            plctime( year, month, day, hour, min, sec, start );
+        }
     }
-  }
-  else if (diff < 3.0*60.0*60.0) {
-    /* Minutes */
-    *factor = 60.0;
-    if (start != NULL) {
-      sec = 0.;
-      min = 0;
-      plctime(year, month, day, hour, min, sec, start);
+    else if ( diff < 3.0 * 60.0 * 60.0 )
+    {
+        /* Minutes */
+        *factor = 60.0;
+        if ( start != NULL )
+        {
+            sec = 0.;
+            min = 0;
+            plctime( year, month, day, hour, min, sec, start );
+        }
     }
-  }
-  else if (diff < 3.0*60.0*60.0*24.0) {
-    /* Hours */
-    *factor = 60.0*60.0;
-    if (start != NULL) {
-      sec = 0.;
-      min = 0;
-      hour = 0;
-      plctime(year, month, day, hour, min, sec, start);
+    else if ( diff < 3.0 * 60.0 * 60.0 * 24.0 )
+    {
+        /* Hours */
+        *factor = 60.0 * 60.0;
+        if ( start != NULL )
+        {
+            sec  = 0.;
+            min  = 0;
+            hour = 0;
+            plctime( year, month, day, hour, min, sec, start );
+        }
     }
-  }
-  else if (diff < 3.0*60.0*60.0*24.0*7.0) {
-    /* Days */
-    *factor = 60.0*60.0*24.0;
-    if (start != NULL) {
-      sec = 0.;
-      min = 0;
-      hour = 0;
-      plctime(year, month, day, hour, min, sec, start);
+    else if ( diff < 3.0 * 60.0 * 60.0 * 24.0 * 7.0 )
+    {
+        /* Days */
+        *factor = 60.0 * 60.0 * 24.0;
+        if ( start != NULL )
+        {
+            sec  = 0.;
+            min  = 0;
+            hour = 0;
+            plctime( year, month, day, hour, min, sec, start );
+        }
     }
-  }
-  else if (diff < 3.0*60.0*60.0*24.0*365) {
-    /* Weeks */
-    *factor = 60.0*60.0*24.0*7.0;
-    if (start != NULL) {
-      sec = 0.;
-      min = 0;
-      hour = 0;
-      plctime(year, month, day, hour, min, sec, start);
+    else if ( diff < 3.0 * 60.0 * 60.0 * 24.0 * 365 )
+    {
+        /* Weeks */
+        *factor = 60.0 * 60.0 * 24.0 * 7.0;
+        if ( start != NULL )
+        {
+            sec  = 0.;
+            min  = 0;
+            hour = 0;
+            plctime( year, month, day, hour, min, sec, start );
+        }
     }
-  }
-  else {
-    /* Years */
-    *factor = 60.0*60.0*24.0*365.25;
-    if (start != NULL) {
-      sec = 0.;
-      min = 0;
-      hour = 0;
-      day = 0;
-      month = 0;
-      plctime(year, month, day, hour, min, sec, start);
+    else
+    {
+        /* Years */
+        *factor = 60.0 * 60.0 * 24.0 * 365.25;
+        if ( start != NULL )
+        {
+            sec   = 0.;
+            min   = 0;
+            hour  = 0;
+            day   = 0;
+            month = 0;
+            plctime( year, month, day, hour, min, sec, start );
+        }
     }
-  }
-
 }
 
 /*----------------------------------------------------------------------*\
@@ -192,9 +215,9 @@ pldtfac(PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start) {
  * written in scientific format.  For mode = 1, the exponent will be
  * placed at:
  *
- * 	top left	for vertical axis on left
- * 	top right	for vertical axis on right
- * 	bottom right	for horizontal axis
+ *      top left	for vertical axis on left
+ *      top right	for vertical axis on right
+ *      bottom right	for horizontal axis
  *
  * The digmax flag can be set by the user, and represents the maximum
  * number of digits a label may occupy including sign and decimal point.
@@ -221,63 +244,67 @@ pldtfac(PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start) {
  * Finally, if 'digmax' is set, 'prec' is reduced in size if necessary so
  * that the labels fit the requested field length, where prec is the number of
  * places after the decimal place.
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
-#define MIN_FLTDIG	3	/* disregarded if fractional part is 0 */
-#define MAX_FIXDIG_POS	6
-#define MAX_FIXDIG_NEG	4
-#define DIGMAX_DEF	5
+#define MIN_FLTDIG        3     /* disregarded if fractional part is 0 */
+#define MAX_FIXDIG_POS    6
+#define MAX_FIXDIG_NEG    4
+#define DIGMAX_DEF        5
 
 void
-pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
-	PLINT *mode, PLINT *prec, PLINT digmax, PLINT *scale)
+pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
+         PLINT *mode, PLINT *prec, PLINT digmax, PLINT *scale )
 {
     PLFLT chosen, notchosen, vmod, t0;
     PLINT msd, notmsd, np, digmin, digfix;
 
-    *mode = 0;
+    *mode  = 0;
     *scale = 0;
 
-    if (digmax == 0)
-	digmax = DIGMAX_DEF;
+    if ( digmax == 0 )
+        digmax = DIGMAX_DEF;
 
 /* Choose vmin or vmax depending on magnitudes of vmin and vmax. */
-    chosen = (ABS(vmax) >= ABS(vmin))? vmax: vmin;
-    notchosen = (ABS(vmax) >= ABS(vmin))? vmin: vmax;
+    chosen    = ( ABS( vmax ) >= ABS( vmin )) ? vmax : vmin;
+    notchosen = ( ABS( vmax ) >= ABS( vmin )) ? vmin : vmax;
 /* Magnitute of chosen to get number of significant digits */
 
-    if(ABS(chosen) > 0.) {
-        vmod = ABS(chosen);
-        t0 = (PLFLT) log10(vmod);
-        msd = (PLINT) floor(t0);
+    if ( ABS( chosen ) > 0. )
+    {
+        vmod = ABS( chosen );
+        t0   = (PLFLT) log10( vmod );
+        msd  = (PLINT) floor( t0 );
     }
-    else {
+    else
+    {
 /* this branch occurs only when 0. --- 0. range put in */
         vmod = 1.;
-        t0 = (PLFLT) log10(vmod);
-        msd = (PLINT) floor(t0);
+        t0   = (PLFLT) log10( vmod );
+        msd  = (PLINT) floor( t0 );
     }
 
-    if(ABS(notchosen) > 0.)
-	notmsd = (PLINT) floor( (PLFLT) log10(ABS(notchosen)));
+    if ( ABS( notchosen ) > 0. )
+        notmsd = (PLINT) floor((PLFLT) log10( ABS( notchosen )));
     else
-	notmsd = msd;
+        notmsd = msd;
 /* Autoselect the mode flag */
 /* 'digmin' is the minimum number of places taken up by the label */
 
-    if (msd >= 0) {
+    if ( msd >= 0 )
+    {
 /* n.b. no decimal point in the minimal case  */
-	digmin = msd + 1;
-	digfix = MAX_FIXDIG_POS;
-	if (digmax > 0)
-	    digfix = MIN(digmax, MAX_FIXDIG_POS);
+        digmin = msd + 1;
+        digfix = MAX_FIXDIG_POS;
+        if ( digmax > 0 )
+            digfix = MIN( digmax, MAX_FIXDIG_POS );
     }
-    else {
+    else
+    {
 /* adjust digmin to account for leading 0 and decimal point */
-	digmin = -msd + 2;
-	digfix = MAX_FIXDIG_NEG;
-	if (digmax > 0)
-	    digfix = MIN(digmax, MAX_FIXDIG_NEG);
+        digmin = -msd + 2;
+        digfix = MAX_FIXDIG_NEG;
+        if ( digmax > 0 )
+            digfix = MIN( digmax, MAX_FIXDIG_NEG );
     }
 /* adjust digmin to account for sign on the chosen end of axis or sign on the
  * nonchosen end of axis if notmsd = msd or (msd <= 0 and notmsd < 0)
@@ -286,40 +313,45 @@ pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
  * since notmsd <= msd always and the equal part is selected by the first
  * condition.
  */
-    if(chosen < 0.||(notchosen < 0. && (notmsd == msd || msd <= 0)))
+    if ( chosen < 0. || ( notchosen < 0. && ( notmsd == msd || msd <= 0 )))
         digmin = digmin + 1;
 
-    if (digmin > digfix && !lf) {
-	*mode = 1;
-	*scale = msd;
+    if ( digmin > digfix && !lf )
+    {
+        *mode  = 1;
+        *scale = msd;
     }
 
 /* Establish precision.  */
 /* It must be fine enough to resolve the tick spacing */
 
-    np = (PLINT) floor(log10(ABS(tick)));
+    np = (PLINT) floor( log10( ABS( tick )));
 
-    if (*mode != 0)
-	*prec = msd - np;
+    if ( *mode != 0 )
+        *prec = msd - np;
     else
-	*prec = MAX(-np, 0);
+        *prec = MAX( -np, 0 );
 
 /* One last hack required: if exponent < 0, i.e. number has leading '0.',
  * it's better to change to floating point form if the number of digits
  * is insufficient to represent the tick spacing.
-*/
-    if (*mode == 0 && digmax > 0 && !lf) {
-	if (t0 < 0.0) {
-	    if (digmax - 2 - *prec < 0) {
-		*mode = 1;
-		*scale = msd;
-	    }
-	}
-	else
-	    *prec = MAX(MIN(*prec, digmax - msd - 1), 0);
+ */
+    if ( *mode == 0 && digmax > 0 && !lf )
+    {
+        if ( t0 < 0.0 )
+        {
+            if ( digmax - 2 - *prec < 0 )
+            {
+                *mode  = 1;
+                *scale = msd;
+            }
+        }
+        else
+            *prec = MAX( MIN( *prec, digmax - msd - 1 ), 0 );
     }
-    if (*mode != 0) {
-	*prec = msd - np;
-	*prec = MAX(MIN(*prec, MAX(digmax-1, MIN_FLTDIG)), 0);
+    if ( *mode != 0 )
+    {
+        *prec = msd - np;
+        *prec = MAX( MIN( *prec, MAX( digmax - 1, MIN_FLTDIG )), 0 );
     }
 }

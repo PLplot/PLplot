@@ -21,11 +21,11 @@
 
 #include "plplotP.h"
 
-#define CIRCLE_SEGMENTS PL_MAXPOLY
-#define DEG_TO_RAD(x) ((x) * M_PI / 180.0)
+#define CIRCLE_SEGMENTS    PL_MAXPOLY
+#define DEG_TO_RAD( x )                    (( x ) * M_PI / 180.0 )
 
-#define PLARC_POINT_X(x, a, b, theta) ((x) + ((a) * cos(theta)))
-#define PLARC_POINT_Y(y, a, b, theta) ((y) + ((b) * sin(theta)))
+#define PLARC_POINT_X( x, a, b, theta )    (( x ) + (( a ) * cos( theta )))
+#define PLARC_POINT_Y( y, a, b, theta )    (( y ) + (( b ) * sin( theta )))
 
 /*-------------------------------------------------------------------------
  * plarc_approx : Plot an approximated arc with a series of lines
@@ -34,7 +34,13 @@
  *
  *-------------------------------------------------------------------------*/
 void
-plarc_approx(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLBOOL fill)
+plarc_approx( PLFLT x,
+              PLFLT y,
+              PLFLT a,
+              PLFLT b,
+              PLFLT angle1,
+              PLFLT angle2,
+              PLBOOL fill )
 {
     PLINT i;
     PLFLT theta0, theta_step, theta, d_angle;
@@ -42,40 +48,44 @@ plarc_approx(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLB
     PLFLT xs[CIRCLE_SEGMENTS], ys[CIRCLE_SEGMENTS];
 
     /* The difference between the start and end angles */
-    d_angle = DEG_TO_RAD(angle2 - angle1);
-    if (fabs(d_angle) > M_PI * 2.0)
+    d_angle = DEG_TO_RAD( angle2 - angle1 );
+    if ( fabs( d_angle ) > M_PI * 2.0 )
         d_angle = M_PI * 2.0;
 
     /* The number of line segments used to approximate the arc */
-    segments = d_angle / (2.0 * M_PI) * CIRCLE_SEGMENTS;
+    segments = d_angle / ( 2.0 * M_PI ) * CIRCLE_SEGMENTS;
     /* Always use at least 2 arc points, otherwise fills will break. */
-    if (segments < 2)
+    if ( segments < 2 )
         segments = 2;
     /* The start angle in radians and number of radians in each approximating
-       segment. */
-    theta0 = DEG_TO_RAD(angle1);
+     * segment. */
+    theta0 = DEG_TO_RAD( angle1 );
 
-    theta_step = d_angle / (segments - 1);
+    theta_step = d_angle / ( segments - 1 );
 
     /* The coordinates for the circle outline */
-    for (i = 0; i < segments; i++) {
+    for ( i = 0; i < segments; i++ )
+    {
         theta = theta0 + theta_step * (PLFLT) i;
-        xs[i] = PLARC_POINT_X(x, a, b, theta);
-        ys[i] = PLARC_POINT_Y(y, a, b, theta);
+        xs[i] = PLARC_POINT_X( x, a, b, theta );
+        ys[i] = PLARC_POINT_Y( y, a, b, theta );
     }
 
-    if (fill) {
+    if ( fill )
+    {
         /* Add the center point if we aren't drawing a circle */
-        if (fabs(d_angle) < M_PI * 2.0) {
+        if ( fabs( d_angle ) < M_PI * 2.0 )
+        {
             xs[segments - 1] = x;
             ys[segments - 1] = y;
         }
         /* Draw a filled arc */
-        plfill(segments, xs, ys);
+        plfill( segments, xs, ys );
     }
-    else {
+    else
+    {
         /* Draw the arc outline */
-        plline(segments, xs, ys);
+        plline( segments, xs, ys );
     }
 }
 
@@ -101,37 +111,45 @@ plarc_approx(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLB
  *
  *-------------------------------------------------------------------------*/
 void
-c_plarc(PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLBOOL fill)
+c_plarc( PLFLT x,
+         PLFLT y,
+         PLFLT a,
+         PLFLT b,
+         PLFLT angle1,
+         PLFLT angle2,
+         PLBOOL fill )
 {
-    PLINT xscl[2], yscl[2];
-    PLINT clpxmi, clpxma, clpymi, clpyma;
+    PLINT      xscl[2], yscl[2];
+    PLINT      clpxmi, clpxma, clpymi, clpyma;
     arc_struct *arc_info;
 
     /* TODO: For now, only unrotated plots use the driver-accelerated path. */
-    if (plsc->dev_arc && plsc->diorot == 0) {
-        arc_info = (arc_struct *) malloc((size_t) sizeof(arc_struct));
+    if ( plsc->dev_arc && plsc->diorot == 0 )
+    {
+        arc_info = (arc_struct *) malloc((size_t) sizeof ( arc_struct ));
 
-        xscl[0] = plP_wcpcx(x-a);
-        xscl[1] = plP_wcpcx(x+a);
-        yscl[0] = plP_wcpcy(y-b);
-        yscl[1] = plP_wcpcy(y+b);
-        difilt(xscl,yscl,2,&clpxmi,&clpxma,&clpymi,&clpyma);
+        xscl[0] = plP_wcpcx( x - a );
+        xscl[1] = plP_wcpcx( x + a );
+        yscl[0] = plP_wcpcy( y - b );
+        yscl[1] = plP_wcpcy( y + b );
+        difilt( xscl, yscl, 2, &clpxmi, &clpxma, &clpymi, &clpyma );
 
-        arc_info->x = 0.5 * (xscl[1] + xscl[0]);
-        arc_info->y = 0.5 * (yscl[1] + yscl[0]);
-        arc_info->a = 0.5 * (xscl[1] - xscl[0]);
-        arc_info->b = 0.5 * (yscl[1] - yscl[0]);
+        arc_info->x = 0.5 * ( xscl[1] + xscl[0] );
+        arc_info->y = 0.5 * ( yscl[1] + yscl[0] );
+        arc_info->a = 0.5 * ( xscl[1] - xscl[0] );
+        arc_info->b = 0.5 * ( yscl[1] - yscl[0] );
 
         arc_info->angle1 = angle1;
         arc_info->angle2 = angle2;
-        arc_info->fill = fill;
+        arc_info->fill   = fill;
 
-        plP_esc(PLESC_ARC, arc_info);
+        plP_esc( PLESC_ARC, arc_info );
 
-        free(arc_info);
+        free( arc_info );
     }
-    else {
-        plarc_approx(x, y, a, b, angle1, angle2, fill);
+    else
+    {
+        plarc_approx( x, y, a, b, angle1, angle2, fill );
     }
 }
 

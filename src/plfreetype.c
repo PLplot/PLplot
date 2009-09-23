@@ -65,24 +65,33 @@
  *
  */
 
-#if !defined(WIN32) || defined(__GNUC__)
+#if !defined ( WIN32 ) || defined ( __GNUC__ )
   #include <unistd.h>
 #else
-  #define F_OK 1
+  #define F_OK    1
   #include <stdio.h>
-  int access( char *filename, int flag ) {
-      FILE *infile ;
-      infile = fopen( filename, "r" ) ;
-      if ( infile != NULL ) {
-          fclose(infile) ;
-          return 0 ;
-      } else {
-          return 1 ;
-      }
-  }
+int access( char *filename, int flag )
+{
+    FILE *infile;
+    infile = fopen( filename, "r" );
+    if ( infile != NULL )
+    {
+        fclose( infile );
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+}
 #endif
 
-#define makeunixslash( b ) do { char *I; for (I=b;*I!=0;*I++) if (*I=='\\') *I='/';}while(0)
+#define makeunixslash( b )    do        \
+    {                                   \
+        char *I;                        \
+        for ( I = b; *I != 0; *I++ )    \
+            if ( *I == '\\' ) *I = '/'; \
+    } while ( 0 )
 
 #include "plDevs.h"
 #include "plplotP.h"
@@ -91,10 +100,10 @@
 #include "plfreetype.h"
 #include "plfci-truetype.h"
 
-#define FT_Data _FT_Data_
+#define FT_Data    _FT_Data_
 
 /* Font lookup table that is constructed in plD_FreeType_init*/
-PLDLLIMPEXP_DATA(FCI_to_FontName_Table) FontLookup[N_TrueTypeLookup];
+PLDLLIMPEXP_DATA( FCI_to_FontName_Table ) FontLookup[N_TrueTypeLookup];
 /*              TOP LEVEL DEFINES       */
 
 /*  Freetype lets you set the text size absolutely. It also takes into
@@ -105,46 +114,65 @@ PLDLLIMPEXP_DATA(FCI_to_FontName_Table) FontLookup[N_TrueTypeLookup];
  *  set a scaling factor to try and square things up a bit.
  */
 
-#define TEXT_SCALING_FACTOR .7
+#define TEXT_SCALING_FACTOR    .7
 
 /* default size of temporary text buffer */
 /* If we wanted to be fancy we could add sizing, but this should be big enough */
 
-#define NTEXT_ALLOC 1024
+#define NTEXT_ALLOC    1024
 
 /*--------------------------------------------------------------------------*\
  *  Some debugging macros
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
-#define Debug6(a,b,c,d,e,f) do {if (pls->debug){fprintf(stderr,a,b,c,d,e,f);}}while(0)
+#define Debug6( a, b, c, d, e, f )    do \
+    {                                    \
+        if ( pls->debug )                \
+        { fprintf( stderr, a, b, c,      \
+                   d, e, f );            \
+        }                                \
+    } while ( 0 )
 
 
 /*              FUNCTION PROTOTYPES    */
 
 /*  Public prototypes, generally available to the API  */
 
-void plD_FreeType_init(PLStream *pls);
-void plD_render_freetype_text (PLStream *pls, EscText *args);
-void plD_FreeType_Destroy(PLStream *pls);
-void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org);
-void pl_RemakeFreeType_text_from_buffer (PLStream *pls);
-void plD_render_freetype_sym (PLStream *pls, EscText *args);
+void plD_FreeType_init( PLStream *pls );
+void plD_render_freetype_text( PLStream *pls, EscText *args );
+void plD_FreeType_Destroy( PLStream *pls );
+void pl_set_extended_cmap0( PLStream *pls, int ncol0_width, int ncol0_org );
+void pl_RemakeFreeType_text_from_buffer( PLStream *pls );
+void plD_render_freetype_sym( PLStream *pls, EscText *args );
 
 /*  Private prototypes for use in this file only */
 
-static void FT_PlotChar(PLStream *pls,FT_Data *FT, FT_GlyphSlot  slot, int x, int y, short colour );
+static void FT_PlotChar( PLStream *pls,
+                         FT_Data *FT,
+                         FT_GlyphSlot slot,
+                         int x,
+                         int y,
+                         short colour );
 static void FT_SetFace( PLStream *pls, PLUNICODE fci );
-static PLFLT CalculateIncrement( int bg, int fg, int levels);
+static PLFLT CalculateIncrement( int bg, int fg, int levels );
 
 /* These are never defined, maybe they will be used in the future?
+ *
+ * static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args);
+ * static FT_ULong hershey_to_unicode (char in);
+ *
+ */
 
-static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args);
-static FT_ULong hershey_to_unicode (char in);
-
-*/
-
-static void FT_WriteStrW(PLStream *pls,const PLUNICODE  *text, short len, int x, int y);
-static void FT_StrX_YW(PLStream *pls,const PLUNICODE *text, short len, int *xx, int *yy);
+static void FT_WriteStrW( PLStream *pls,
+                          const PLUNICODE  *text,
+                          short len,
+                          int x,
+                          int y );
+static void FT_StrX_YW( PLStream *pls,
+                        const PLUNICODE *text,
+                        short len,
+                        int *xx,
+                        int *yy );
 
 /*----------------------------------------------------------------------*\
  * FT_StrX_YW()
@@ -154,18 +182,18 @@ static void FT_StrX_YW(PLStream *pls,const PLUNICODE *text, short len, int *xx, 
  * but draw the text. This seems, to me, the easiest and most accurate
  * way of determining the text's dimensions. If/when caching is added,
  * the CPU hit for this "double processing" will be minimal.
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
 void
-FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
+FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
 {
-    FT_Data *FT=(FT_Data *)pls->FT;
-    short i=0;
-    FT_Vector  akerning;
-    int x=0,y=0;
-    char esc;
+    FT_Data   *FT = (FT_Data *) pls->FT;
+    short     i   = 0;
+    FT_Vector akerning;
+    int       x = 0, y = 0;
+    char      esc;
 
-    plgesc(&esc);
+    plgesc( &esc );
 
 /*
  * Things seems to work better with this line than without it;
@@ -177,56 +205,63 @@ FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
     y -= FT->face->size->metrics.height;
 
 /* walk through the text character by character */
-    for (i=0;i<len;i++) {
-	if ((text[i]==esc)&&(text[i-1]!=esc)) {
-	    if (text[i+1]==esc) continue;
+    for ( i = 0; i < len; i++ )
+    {
+        if (( text[i] == esc ) && ( text[i - 1] != esc ))
+        {
+            if ( text[i + 1] == esc ) continue;
 
-	    switch(text[i+1]) {
-
-	    case 'u': /* super script */
-	    case 'd': /* subscript */
-	    case 'U':
-	    case 'D':
+            switch ( text[i + 1] )
+            {
+            case 'u': /* super script */
+            case 'd': /* subscript */
+            case 'U':
+            case 'D':
                 i++;
                 break;
-	    }
+            }
+        }
+        else if ( text[i] & PL_FCI_MARK )
+        {
+            /* FCI in text stream; change font accordingly. */
+            FT_SetFace( pls, text[i] );
+        }
+        else
+        {
+            /* see if we have kerning for the particular character pair */
+            if (( i > 0 ) && FT_HAS_KERNING( FT->face ))
+            {
+                FT_Get_Kerning( FT->face,
+                                text[i - 1],
+                                text[i],
+                                ft_kerning_default,
+                                &akerning );
+                x += ( akerning.x >> 6 );        /* add (or subtract) the kerning */
+            }
 
-        } else if (text[i] & PL_FCI_MARK) {
-	   /* FCI in text stream; change font accordingly. */
-	   FT_SetFace(pls , text[i]);
-        } else {
+            /*
+             * Next we load the char. This also draws the char, transforms it, and
+             * converts it to a bitmap. At present this is a bit wasteful, but
+             * if/when I add cache support, then this data won't go to waste.
+             * Since there is no sense in going to the trouble of doing anti-aliasing
+             * calculations since we aren't REALLY plotting anything, we will render
+             * this as monochrome since it is probably marginally quicker. If/when
+             * cache support is added, naturally this will have to change.
+             */
 
-	/* see if we have kerning for the particular character pair */
-	    if ((i>0)&&FT_HAS_KERNING(FT->face)) {
-		FT_Get_Kerning( FT->face,
-				text[i-1],
-				text[i],
-				ft_kerning_default,
-				&akerning );
-		x+= (akerning.x >> 6);        /* add (or subtract) the kerning */
-	    }
+            FT_Load_Char( FT->face,
+                          text[i],
+                          FT_LOAD_MONOCHROME + FT_LOAD_RENDER );
 
-     /*
-      * Next we load the char. This also draws the char, transforms it, and
-      * converts it to a bitmap. At present this is a bit wasteful, but
-      * if/when I add cache support, then this data won't go to waste.
-      * Since there is no sense in going to the trouble of doing anti-aliasing
-      * calculations since we aren't REALLY plotting anything, we will render
-      * this as monochrome since it is probably marginally quicker. If/when
-      * cache support is added, naturally this will have to change.
-      */
+            /*
+             * Add in the "advancement" needed to position the cursor for the next
+             * character. Unless the text is transformed, "y" will always be zero.
+             * Y is negative because freetype does things upside down
+             */
 
-	    FT_Load_Char( FT->face, text[i], FT_LOAD_MONOCHROME+FT_LOAD_RENDER);
-
-     /*
-      * Add in the "advancement" needed to position the cursor for the next
-      * character. Unless the text is transformed, "y" will always be zero.
-      * Y is negative because freetype does things upside down
-      */
-
-	    x += (FT->face->glyph->advance.x);
-	    y -= (FT->face->glyph->advance.y);
-	}
+            x += ( FT->face->glyph->advance.x );
+            y -= ( FT->face->glyph->advance.y );
+        }
     }
 
 /*
@@ -237,12 +272,11 @@ FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
 
 /* (RL, on 2005-01-23) Removed the shift bellow to avoid truncation errors
  * later.
-    *yy=y>> 6;
-    *xx=x>> 6;
+ *yy=y>> 6;
+ *xx=x>> 6;
  */
     *yy = y;
     *xx = x;
-
 }
 
 /*----------------------------------------------------------------------*\
@@ -251,17 +285,17 @@ FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
  * Writes a string of FT text at the current cursor location.
  * most of the code here is identical to "FT_StrX_Y" and I will probably
  * collapse the two into some more efficient code eventually.
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
 void
-FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
+FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
 {
-    FT_Data *FT=(FT_Data *)pls->FT;
-    short i=0,last_char=-1;
-    FT_Vector  akerning, adjust;
-    char esc;
+    FT_Data   *FT = (FT_Data *) pls->FT;
+    short     i   = 0, last_char = -1;
+    FT_Vector akerning, adjust;
+    char      esc;
 
-    plgesc(&esc);
+    plgesc( &esc );
 
 
 /*
@@ -281,9 +315,9 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
  */
 
 #ifdef DODGIE_DECENDER_HACK
-    adjust.y= (FT->face->descender >> 6)*3;
+    adjust.y = ( FT->face->descender >> 6 ) * 3;
 #else
-    adjust.y= (FT->face->descender >> 6);
+    adjust.y = ( FT->face->descender >> 6 );
 #endif
 
 /* (RL) adjust.y is zeroed below,, making the code above (around
@@ -292,11 +326,11 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
  * in function plD_render_freetype_text now.
  */
 
-    adjust.x=0;
-    adjust.y=0;
-    FT_Vector_Transform( &adjust, &FT->matrix);
-    x+=adjust.x;
-    y-=adjust.y;
+    adjust.x = 0;
+    adjust.y = 0;
+    FT_Vector_Transform( &adjust, &FT->matrix );
+    x += adjust.x;
+    y -= adjust.y;
 
 /* (RL, on 2005-01-25) The computation of cumulated glyph width within
  * the text is done now with full precision, using 26.6 Freetype
@@ -306,76 +340,86 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
  * converted to integers when passed to FT_PlotChar.  Notrice that we
  * are using ROUND and float division instead of ">> 6" now.  This
  * minimizes truncation errors.
-*/
+ */
 
     x <<= 6;
     y <<= 6;
 
 /* walk through the text character by character */
 
-    for (i=0; i<len; i++) {
-	if ((text[i]==esc)&&(text[i-1]!=esc)) {
-	    if (text[i+1]==esc) continue;
+    for ( i = 0; i < len; i++ )
+    {
+        if (( text[i] == esc ) && ( text[i - 1] != esc ))
+        {
+            if ( text[i + 1] == esc ) continue;
 
-	    switch(text[i+1]) {
+            switch ( text[i + 1] )
+            {
+            /*
+             *  We run the OFFSET for the super-script and sub-script through the
+             *  transformation matrix so we can calculate nice and easy the required
+             *  offset no matter what's happened rotation wise. Everything else, like
+             *  kerning and advancing from character to character is transformed
+             *  automatically by freetype, but since the superscript/subscript is a
+             *  feature of plplot, and not freetype, we have to make allowances.
+             */
 
-/*
- *  We run the OFFSET for the super-script and sub-script through the
- *  transformation matrix so we can calculate nice and easy the required
- *  offset no matter what's happened rotation wise. Everything else, like
- *  kerning and advancing from character to character is transformed
- *  automatically by freetype, but since the superscript/subscript is a
- *  feature of plplot, and not freetype, we have to make allowances.
- */
-
-	    case 'u': /* super script */
-	    case 'U': /* super script */
+            case 'u': /* super script */
+            case 'U': /* super script */
                 adjust.y = FT->face->size->metrics.height / 2;
-                adjust.x=0;
-                FT_Vector_Transform( &adjust, &FT->matrix);
-                x+=adjust.x;
-                y-=adjust.y;
+                adjust.x = 0;
+                FT_Vector_Transform( &adjust, &FT->matrix );
+                x += adjust.x;
+                y -= adjust.y;
                 i++;
                 break;
 
-	    case 'd': /* subscript */
-	    case 'D': /* subscript */
+            case 'd': /* subscript */
+            case 'D': /* subscript */
                 adjust.y = -FT->face->size->metrics.height / 2;
-                adjust.x=0;
-                FT_Vector_Transform( &adjust, &FT->matrix);
-                x+=adjust.x;
-                y-=adjust.y;
+                adjust.x = 0;
+                FT_Vector_Transform( &adjust, &FT->matrix );
+                x += adjust.x;
+                y -= adjust.y;
                 i++;
                 break;
-	    }
-
-        } else if (text[i] & PL_FCI_MARK) {
-	   /* FCI in text stream; change font accordingly. */
-	   FT_SetFace(pls , text[i]);
-	   FT=(FT_Data *)pls->FT;
-	   FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
-        } else {
-	/* see if we have kerning for the particular character pair */
-	    if ((last_char!=-1)&&(i>0)&&FT_HAS_KERNING(FT->face)) {
-		FT_Get_Kerning( FT->face,
-				text[last_char],
-				text[i],
-				ft_kerning_default, &akerning );
-		x += akerning.x;        /* add (or subtract) the kerning */
+            }
+        }
+        else if ( text[i] & PL_FCI_MARK )
+        {
+            /* FCI in text stream; change font accordingly. */
+            FT_SetFace( pls, text[i] );
+            FT = (FT_Data *) pls->FT;
+            FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
+        }
+        else
+        {
+            /* see if we have kerning for the particular character pair */
+            if (( last_char != -1 ) && ( i > 0 ) && FT_HAS_KERNING( FT->face ))
+            {
+                FT_Get_Kerning( FT->face,
+                                text[last_char],
+                                text[i],
+                                ft_kerning_default, &akerning );
+                x += akerning.x;        /* add (or subtract) the kerning */
                 y -= akerning.y;        /* Do I need this in case of rotation ? */
-
             }
 
 
-       FT_Load_Char( FT->face, text[i], (FT->smooth_text==0) ? FT_LOAD_MONOCHROME+FT_LOAD_RENDER : FT_LOAD_RENDER|FT_LOAD_FORCE_AUTOHINT);
-       FT_PlotChar(pls,FT, FT->face->glyph,
-                   ROUND (x / 64.0), ROUND (y / 64.0), 2 ); /* render the text */
+            FT_Load_Char(
+                FT->face,
+                text[i],
+                ( FT->smooth_text ==
+                  0 ) ? FT_LOAD_MONOCHROME + FT_LOAD_RENDER : FT_LOAD_RENDER |
+                FT_LOAD_FORCE_AUTOHINT );
+            FT_PlotChar( pls, FT, FT->face->glyph,
+                         ROUND( x / 64.0 ), ROUND( y / 64.0 ), 2 ); /* render the text */
 
-	    x += FT->face->glyph->advance.x;
+            x += FT->face->glyph->advance.x;
             y -= FT->face->glyph->advance.y;
 
-	    last_char=i;
-	}
+            last_char = i;
+        }
     } /* end for */
 }
 
@@ -384,165 +428,198 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
  *
  * Plots an individual character. I know some of this stuff, like colour
  * could be parsed from plstream, but it was just quicker this way.
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
 void
-FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
-	    int x, int y, short colour )
+FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
+             int x, int y, short colour )
 {
     unsigned char bittest;
-    short i,k,j;
-    int n=slot->bitmap.pitch;
-    int current_pixel_colour;
-    int R,G,B;
-    PLFLT alpha_a,alpha_b;
-    int xx;
-    short imin, imax, kmin, kmax;
+    short         i, k, j;
+    int           n = slot->bitmap.pitch;
+    int           current_pixel_colour;
+    int           R, G, B;
+    PLFLT         alpha_a, alpha_b;
+    int           xx;
+    short         imin, imax, kmin, kmax;
 
     /* Corners of the clipping rectangle */
-    PLINT clipxmin, clipymin, clipxmax,clipymax, tmp;
+    PLINT clipxmin, clipymin, clipxmax, clipymax, tmp;
     PLINT clpxmi, clpxma, clpymi, clpyma;
 
     /* Convert clipping box into normal coordinates */
-    clipxmin=pls->clpxmi;
-    clipxmax=pls->clpxma;
-    clipymin=pls->clpymi;
-    clipymax=pls->clpyma;
+    clipxmin = pls->clpxmi;
+    clipxmax = pls->clpxma;
+    clipymin = pls->clpymi;
+    clipymax = pls->clpyma;
 
-    if (plsc->difilt) {
-      difilt(&clipxmin,&clipymin,1,&clpxmi,&clpxma,&clpymi,&clpyma);
-      difilt(&clipxmax,&clipymax,1,&clpxmi,&clpxma,&clpymi,&clpyma);
+    if ( plsc->difilt )
+    {
+        difilt( &clipxmin, &clipymin, 1, &clpxmi, &clpxma, &clpymi, &clpyma );
+        difilt( &clipxmax, &clipymax, 1, &clpxmi, &clpxma, &clpymi, &clpyma );
     }
 
 
-    if( FT->scale!=0.0 ) {  /* scale was set */
-      clipxmin = clipxmin/FT->scale;
-      clipxmax = clipxmax/FT->scale;
-      if (FT->invert_y==1) {
-	clipymin=FT->ymax-(clipymin/FT->scale);
-	clipymax=FT->ymax-(clipymax/FT->scale);
-      }
-      else {
-	clipymin=clipymin/FT->scale;
-	clipymax=clipymax/FT->scale;
-      }
-    } 
-    else {
-      clipxmin=clipxmin/FT->scalex;
-      clipxmax=clipxmax/FT->scalex;
-      
-      if (FT->invert_y==1) {
-	clipymin=FT->ymax-(clipymin/FT->scaley);
-	clipymax=FT->ymax-(clipymax/FT->scaley);
-      } 
-      else {
-	clipymin=clipymin/FT->scaley;
-	clipymax=clipymax/FT->scaley;
-      }
+    if ( FT->scale != 0.0 )    /* scale was set */
+    {
+        clipxmin = clipxmin / FT->scale;
+        clipxmax = clipxmax / FT->scale;
+        if ( FT->invert_y == 1 )
+        {
+            clipymin = FT->ymax - ( clipymin / FT->scale );
+            clipymax = FT->ymax - ( clipymax / FT->scale );
+        }
+        else
+        {
+            clipymin = clipymin / FT->scale;
+            clipymax = clipymax / FT->scale;
+        }
     }
-    if (clipxmin > clipxmax) {
-      tmp = clipxmax;
-      clipxmax = clipxmin;
-      clipxmin = tmp;
+    else
+    {
+        clipxmin = clipxmin / FT->scalex;
+        clipxmax = clipxmax / FT->scalex;
+
+        if ( FT->invert_y == 1 )
+        {
+            clipymin = FT->ymax - ( clipymin / FT->scaley );
+            clipymax = FT->ymax - ( clipymax / FT->scaley );
+        }
+        else
+        {
+            clipymin = clipymin / FT->scaley;
+            clipymax = clipymax / FT->scaley;
+        }
     }
-    if (clipymin > clipymax) {
-      tmp = clipymax;
-      clipymax = clipymin;
-      clipymin = tmp;
+    if ( clipxmin > clipxmax )
+    {
+        tmp      = clipxmax;
+        clipxmax = clipxmin;
+        clipxmin = tmp;
+    }
+    if ( clipymin > clipymax )
+    {
+        tmp      = clipymax;
+        clipymax = clipymin;
+        clipymin = tmp;
     }
 
     /* Comment this out as it fails for cases where we want to plot text
-     * in the background font, i.e. example 24. 
+     * in the background font, i.e. example 24.
      */
     /*if ((slot->bitmap.pixel_mode==ft_pixel_mode_mono)||(pls->icol0==0)) {*/
-    if (slot->bitmap.pixel_mode==ft_pixel_mode_mono) {
-	x+=slot->bitmap_left;
-	y-=slot->bitmap_top;
+    if ( slot->bitmap.pixel_mode == ft_pixel_mode_mono )
+    {
+        x += slot->bitmap_left;
+        y -= slot->bitmap_top;
 
-        imin = MAX(0,clipymin-y);
-        imax = MIN(slot->bitmap.rows,clipymax-y);
-	for(i=imin;i<imax;i++) {
-	    for (k=0;k<n;k++) {
-		bittest=128;
-		for (j=0;j<8;j++) {
-		    if ((bittest&(unsigned char)slot->bitmap.buffer[(i*n)+k])==bittest) {
-			xx = x+(k*8)+j;
-			if ( (xx >= clipxmin) && (xx <= clipxmax) )
-			  FT->pixel(pls, xx, y+i);
+        imin = MAX( 0, clipymin - y );
+        imax = MIN( slot->bitmap.rows, clipymax - y );
+        for ( i = imin; i < imax; i++ )
+        {
+            for ( k = 0; k < n; k++ )
+            {
+                bittest = 128;
+                for ( j = 0; j < 8; j++ )
+                {
+                    if (( bittest &
+                          (unsigned char) slot->bitmap.buffer[( i *
+                                                                n ) + k] ) ==
+                        bittest )
+                    {
+                        xx = x + ( k * 8 ) + j;
+                        if (( xx >= clipxmin ) && ( xx <= clipxmax ))
+                            FT->pixel( pls, xx, y + i );
                     }
-		    bittest>>=1;
-		}
+                    bittest >>= 1;
+                }
             }
         }
     }
 
 /* this is the anti-aliased stuff */
 
-    else {
-           x+=slot->bitmap_left;
-           y-=slot->bitmap_top;
+    else
+    {
+        x += slot->bitmap_left;
+        y -= slot->bitmap_top;
 
-          imin = MAX(0,clipymin-y);
-          imax = MIN(slot->bitmap.rows,clipymax-y);
-          kmin = MAX(0,clipxmin-x);
-          kmax = MIN(slot->bitmap.width,clipxmax-x);
-           for(i=imin;i<imax;i++)
-              {
-                for (k=kmin;k<kmax;k++)
-                  {
-                    FT->shade=(slot->bitmap.buffer[(i*slot->bitmap.width)+k]);
-                    if (FT->shade>0)
-                      {
-                        if ((FT->BLENDED_ANTIALIASING==1)&&(FT->read_pixel!=NULL))
-                          /* The New anti-aliasing technique */
-                          {
-                            if (FT->shade==255)
-                              {
-                                FT->pixel(pls,x+k,y+i);
-                              }
-                            else
-                              {
-                                current_pixel_colour=FT->read_pixel(pls,x+k,y+i);
+        imin = MAX( 0, clipymin - y );
+        imax = MIN( slot->bitmap.rows, clipymax - y );
+        kmin = MAX( 0, clipxmin - x );
+        kmax = MIN( slot->bitmap.width, clipxmax - x );
+        for ( i = imin; i < imax; i++ )
+        {
+            for ( k = kmin; k < kmax; k++ )
+            {
+                FT->shade =
+                    ( slot->bitmap.buffer[( i * slot->bitmap.width ) + k] );
+                if ( FT->shade > 0 )
+                {
+                    if (( FT->BLENDED_ANTIALIASING == 1 ) &&
+                        ( FT->read_pixel != NULL ))
+                    /* The New anti-aliasing technique */
+                    {
+                        if ( FT->shade == 255 )
+                        {
+                            FT->pixel( pls, x + k, y + i );
+                        }
+                        else
+                        {
+                            current_pixel_colour = FT->read_pixel( pls,
+                                                                   x + k,
+                                                                   y + i );
 
-                                G=GetGValue(current_pixel_colour);
-                                R=GetRValue(current_pixel_colour);
-                                B=GetBValue(current_pixel_colour);
-                                alpha_a=(float)FT->shade/255.0;
+                            G       = GetGValue( current_pixel_colour );
+                            R       = GetRValue( current_pixel_colour );
+                            B       = GetBValue( current_pixel_colour );
+                            alpha_a = (float) FT->shade / 255.0;
 
-                                /* alpha_b=1.0-alpha_a;
-                                R=(plsc->cmap0[pls->icol0].r*alpha_a)+(R*alpha_b);
-                                G=(plsc->cmap0[pls->icol0].g*alpha_a)+(G*alpha_b);
-                                B=(plsc->cmap0[pls->icol0].b*alpha_a)+(B*alpha_b);
-                                 */
+                            /* alpha_b=1.0-alpha_a;
+                             * R=(plsc->cmap0[pls->icol0].r*alpha_a)+(R*alpha_b);
+                             * G=(plsc->cmap0[pls->icol0].g*alpha_a)+(G*alpha_b);
+                             * B=(plsc->cmap0[pls->icol0].b*alpha_a)+(B*alpha_b);
+                             */
 
-                                /*  This next bit of code is, I *think*, computationally
-                                 *  more efficient than the bit above. It results in
-                                 *  an indistinguishable plot, but file sizes are different
-                                 *  suggesting subtle variations doubtless caused by rounding
-                                 *  and/or floating point conversions. Questions are - which is
-                                 *  better ? Which is more "correct" ? Does it make a difference ?
-                                 *  Is one faster than the other so that you'd ever notice ?
-                                 */
+                            /*  This next bit of code is, I *think*, computationally
+                             *  more efficient than the bit above. It results in
+                             *  an indistinguishable plot, but file sizes are different
+                             *  suggesting subtle variations doubtless caused by rounding
+                             *  and/or floating point conversions. Questions are - which is
+                             *  better ? Which is more "correct" ? Does it make a difference ?
+                             *  Is one faster than the other so that you'd ever notice ?
+                             */
 
-                                R=(((plsc->cmap0[pls->icol0].r-R)*alpha_a)+R);
-                                G=(((plsc->cmap0[pls->icol0].g-G)*alpha_a)+G);
-                                B=(((plsc->cmap0[pls->icol0].b-B)*alpha_a)+B);
+                            R =
+                                ((( plsc->cmap0[pls->icol0].r -
+                                    R ) * alpha_a ) + R );
+                            G =
+                                ((( plsc->cmap0[pls->icol0].g -
+                                    G ) * alpha_a ) + G );
+                            B =
+                                ((( plsc->cmap0[pls->icol0].b -
+                                    B ) * alpha_a ) + B );
 
-                                FT->set_pixel(pls,x+k,y+i,RGB(R>255 ? 255 : R,G>255 ? 255 : G,B>255 ? 255 : B));
-                              }
-                          }
-                        else /* The old anti-aliasing technique */
-                          {
-                            FT->col_idx=FT->ncol0_width-((FT->ncol0_width*FT->shade)/255);
-                            FT->last_icol0=pls->icol0;
-                            plcol0(pls->icol0+(FT->col_idx*(FT->ncol0_org-1)));
-                            FT->pixel(pls,x+k,y+i);
-                            plcol0(FT->last_icol0);
-                          }
-                      }
-                  }
-              }
+                            FT->set_pixel( pls, x + k, y + i,
+                                           RGB( R > 255 ? 255 : R, G >
+                                                255 ? 255 : G, B >
+                                                255 ? 255 : B ));
+                        }
+                    }
+                    else     /* The old anti-aliasing technique */
+                    {
+                        FT->col_idx = FT->ncol0_width -
+                                      (( FT->ncol0_width * FT->shade ) / 255 );
+                        FT->last_icol0 = pls->icol0;
+                        plcol0( pls->icol0 +
+                                ( FT->col_idx * ( FT->ncol0_org - 1 )));
+                        FT->pixel( pls, x + k, y + i );
+                        plcol0( FT->last_icol0 );
+                    }
+                }
+            }
         }
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -551,82 +628,84 @@ FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
  * Allocates memory to Freetype structure
  * Initialises the freetype library.
  * Initialises freetype structure
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
-void plD_FreeType_init(PLStream *pls)
+void plD_FreeType_init( PLStream *pls )
 {
-    FT_Data *FT;
-    char *a;
+    FT_Data    *FT;
+    char       *a;
 /* font paths and file names can be long so leave generous (1024) room */
-    char font_dir[PLPLOT_MAX_PATH];
+    char       font_dir[PLPLOT_MAX_PATH];
     /* N.B. must be in exactly same order as TrueTypeLookup */
     const char *env_font_names[N_TrueTypeLookup] = {
-         "PLPLOT_FREETYPE_SANS_FONT",
-         "PLPLOT_FREETYPE_SERIF_FONT",
-         "PLPLOT_FREETYPE_MONO_FONT",
-         "PLPLOT_FREETYPE_SCRIPT_FONT",
-         "PLPLOT_FREETYPE_SYMBOL_FONT",
-         "PLPLOT_FREETYPE_SANS_ITALIC_FONT",
-         "PLPLOT_FREETYPE_SERIF_ITALIC_FONT",
-         "PLPLOT_FREETYPE_MONO_ITALIC_FONT",
-         "PLPLOT_FREETYPE_SCRIPT_ITALIC_FONT",
-         "PLPLOT_FREETYPE_SYMBOL_ITALIC_FONT",
-         "PLPLOT_FREETYPE_SANS_OBLIQUE_FONT",
-         "PLPLOT_FREETYPE_SERIF_OBLIQUE_FONT",
-         "PLPLOT_FREETYPE_MONO_OBLIQUE_FONT",
-         "PLPLOT_FREETYPE_SCRIPT_OBLIQUE_FONT",
-         "PLPLOT_FREETYPE_SYMBOL_OBLIQUE_FONT",
-         "PLPLOT_FREETYPE_SANS_BOLD_FONT",
-         "PLPLOT_FREETYPE_SERIF_BOLD_FONT",
-         "PLPLOT_FREETYPE_MONO_BOLD_FONT",
-         "PLPLOT_FREETYPE_SCRIPT_BOLD_FONT",
-         "PLPLOT_FREETYPE_SYMBOL_BOLD_FONT",
-         "PLPLOT_FREETYPE_SANS_BOLD_ITALIC_FONT",
-         "PLPLOT_FREETYPE_SERIF_BOLD_ITALIC_FONT",
-         "PLPLOT_FREETYPE_MONO_BOLD_ITALIC_FONT",
-         "PLPLOT_FREETYPE_SCRIPT_BOLD_ITALIC_FONT",
-         "PLPLOT_FREETYPE_SYMBOL_BOLD_ITALIC_FONT",
-         "PLPLOT_FREETYPE_SANS_BOLD_OBLIQUE_FONT",
-         "PLPLOT_FREETYPE_SERIF_BOLD_OBLIQUE_FONT",
-         "PLPLOT_FREETYPE_MONO_BOLD_OBLIQUE_FONT",
-         "PLPLOT_FREETYPE_SCRIPT_BOLD_OBLIQUE_FONT",
-         "PLPLOT_FREETYPE_SYMBOL_BOLD_OBLIQUE_FONT"
+        "PLPLOT_FREETYPE_SANS_FONT",
+        "PLPLOT_FREETYPE_SERIF_FONT",
+        "PLPLOT_FREETYPE_MONO_FONT",
+        "PLPLOT_FREETYPE_SCRIPT_FONT",
+        "PLPLOT_FREETYPE_SYMBOL_FONT",
+        "PLPLOT_FREETYPE_SANS_ITALIC_FONT",
+        "PLPLOT_FREETYPE_SERIF_ITALIC_FONT",
+        "PLPLOT_FREETYPE_MONO_ITALIC_FONT",
+        "PLPLOT_FREETYPE_SCRIPT_ITALIC_FONT",
+        "PLPLOT_FREETYPE_SYMBOL_ITALIC_FONT",
+        "PLPLOT_FREETYPE_SANS_OBLIQUE_FONT",
+        "PLPLOT_FREETYPE_SERIF_OBLIQUE_FONT",
+        "PLPLOT_FREETYPE_MONO_OBLIQUE_FONT",
+        "PLPLOT_FREETYPE_SCRIPT_OBLIQUE_FONT",
+        "PLPLOT_FREETYPE_SYMBOL_OBLIQUE_FONT",
+        "PLPLOT_FREETYPE_SANS_BOLD_FONT",
+        "PLPLOT_FREETYPE_SERIF_BOLD_FONT",
+        "PLPLOT_FREETYPE_MONO_BOLD_FONT",
+        "PLPLOT_FREETYPE_SCRIPT_BOLD_FONT",
+        "PLPLOT_FREETYPE_SYMBOL_BOLD_FONT",
+        "PLPLOT_FREETYPE_SANS_BOLD_ITALIC_FONT",
+        "PLPLOT_FREETYPE_SERIF_BOLD_ITALIC_FONT",
+        "PLPLOT_FREETYPE_MONO_BOLD_ITALIC_FONT",
+        "PLPLOT_FREETYPE_SCRIPT_BOLD_ITALIC_FONT",
+        "PLPLOT_FREETYPE_SYMBOL_BOLD_ITALIC_FONT",
+        "PLPLOT_FREETYPE_SANS_BOLD_OBLIQUE_FONT",
+        "PLPLOT_FREETYPE_SERIF_BOLD_OBLIQUE_FONT",
+        "PLPLOT_FREETYPE_MONO_BOLD_OBLIQUE_FONT",
+        "PLPLOT_FREETYPE_SCRIPT_BOLD_OBLIQUE_FONT",
+        "PLPLOT_FREETYPE_SYMBOL_BOLD_OBLIQUE_FONT"
     };
-    short i;
+    short      i;
 
-#if defined(MSDOS) || defined(WIN32)
-    static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.ttf",
-				       "symbol.ttf"};
-    char WINDIR_PATH[PLPLOT_MAX_PATH];
-    char *b;
-    b=getenv("WINDIR");
-    strncpy(WINDIR_PATH,b,PLPLOT_MAX_PATH-1);
-    WINDIR_PATH[PLPLOT_MAX_PATH-1] = '\0';
+#if defined ( MSDOS ) || defined ( WIN32 )
+    static char *default_font_names[] =
+    { "arial.ttf", "times.ttf", "timesi.ttf", "arial.ttf",
+      "symbol.ttf" };
+    char        WINDIR_PATH[PLPLOT_MAX_PATH];
+    char        *b;
+    b = getenv( "WINDIR" );
+    strncpy( WINDIR_PATH, b, PLPLOT_MAX_PATH - 1 );
+    WINDIR_PATH[PLPLOT_MAX_PATH - 1] = '\0';
 #else
-    const char *default_unix_font_dir=PL_FREETYPE_FONT_DIR;
+    const char *default_unix_font_dir = PL_FREETYPE_FONT_DIR;
 #endif
 
 
-    if (pls->FT) {
-	plwarn("Freetype seems already to have been initialised!");
-	return;
+    if ( pls->FT )
+    {
+        plwarn( "Freetype seems already to have been initialised!" );
+        return;
     }
 
-    if ((pls->FT=calloc(1, (size_t)sizeof(FT_Data)))==NULL)
-	plexit("Could not allocate memory for Freetype");
+    if (( pls->FT = calloc( 1, (size_t) sizeof ( FT_Data ))) == NULL )
+        plexit( "Could not allocate memory for Freetype" );
 
-    FT=(FT_Data *)pls->FT;
+    FT = (FT_Data *) pls->FT;
 
-    if ((FT->textbuf=calloc(NTEXT_ALLOC, 1))==NULL)
-	plexit("Could not allocate memory for Freetype text buffer");
+    if (( FT->textbuf = calloc( NTEXT_ALLOC, 1 )) == NULL )
+        plexit( "Could not allocate memory for Freetype text buffer" );
 
-    if ( FT_Init_FreeType( &FT->library ) )
-	plexit("Could not initialise Freetype library");
+    if ( FT_Init_FreeType( &FT->library ))
+        plexit( "Could not initialise Freetype library" );
 
     /* set to an impossible value for an FCI */
-    FT->fci=PL_FCI_IMPOSSIBLE;
+    FT->fci = PL_FCI_IMPOSSIBLE;
 
-#if defined(MSDOS) || defined(WIN32)
+#if defined ( MSDOS ) || defined ( WIN32 )
 
 /*
  * Work out if we have Win95+ or Win3.?... sort of.
@@ -635,33 +714,39 @@ void plD_FreeType_init(PLStream *pls)
  * At present, it only looks in two places, on one drive. I might change this
  * soon.
  */
-    if (WINDIR_PATH==NULL)
+    if ( WINDIR_PATH == NULL )
     {
-        if (access("c:\\windows\\fonts\\arial.ttf", F_OK)==0) {
-            strcpy(font_dir,"c:/windows/fonts/");
+        if ( access( "c:\\windows\\fonts\\arial.ttf", F_OK ) == 0 )
+        {
+            strcpy( font_dir, "c:/windows/fonts/" );
         }
-        else if ( access("c:\\windows\\system\\arial.ttf", F_OK)==0) {
-            strcpy(font_dir,"c:/windows/system/");
+        else if ( access( "c:\\windows\\system\\arial.ttf", F_OK ) == 0 )
+        {
+            strcpy( font_dir, "c:/windows/system/" );
         }
         else
-        plwarn("Could not find font path; I sure hope you have defined fonts manually !");
+            plwarn(
+                "Could not find font path; I sure hope you have defined fonts manually !" );
     }
     else
     {
-      strncat(WINDIR_PATH,"\\fonts\\arial.ttf",PLPLOT_MAX_PATH-1-strlen(WINDIR_PATH));
-      if (access(WINDIR_PATH, F_OK)==0)
+        strncat( WINDIR_PATH,
+                 "\\fonts\\arial.ttf",
+                 PLPLOT_MAX_PATH - 1 - strlen( WINDIR_PATH ));
+        if ( access( WINDIR_PATH, F_OK ) == 0 )
         {
-          b=strrchr(WINDIR_PATH,'\\');
-          b++;
-          *b=0;
-          makeunixslash(WINDIR_PATH);
-          strcpy(font_dir,WINDIR_PATH);
+            b = strrchr( WINDIR_PATH, '\\' );
+            b++;
+            *b = 0;
+            makeunixslash( WINDIR_PATH );
+            strcpy( font_dir, WINDIR_PATH );
         }
-      else
-        plwarn("Could not find font path; I sure hope you have defined fonts manually !");
+        else
+            plwarn(
+                "Could not find font path; I sure hope you have defined fonts manually !" );
     }
 
-    if (pls->debug) fprintf( stderr, "%s\n", font_dir ) ;
+    if ( pls->debug ) fprintf( stderr, "%s\n", font_dir );
 #else
 
 /*
@@ -672,12 +757,12 @@ void plD_FreeType_init(PLStream *pls)
  *  NOTE WELL - the trailing slash must be added for now !
  */
 
-    if ((a = getenv("PLPLOT_FREETYPE_FONT_DIR")) != NULL)
-        strncpy(font_dir,a,PLPLOT_MAX_PATH-1);
+    if (( a = getenv( "PLPLOT_FREETYPE_FONT_DIR" )) != NULL )
+        strncpy( font_dir, a, PLPLOT_MAX_PATH - 1 );
     else
-        strncpy(font_dir,default_unix_font_dir,PLPLOT_MAX_PATH-1);
+        strncpy( font_dir, default_unix_font_dir, PLPLOT_MAX_PATH - 1 );
 
-    font_dir[PLPLOT_MAX_PATH-1] = '\0';
+    font_dir[PLPLOT_MAX_PATH - 1] = '\0';
 #endif
 
 /*
@@ -686,9 +771,10 @@ void plD_FreeType_init(PLStream *pls)
  * overriding the configured default values.
  */
 
-    for (i=0; i<N_TrueTypeLookup; i++) {
-	if ((a = getenv(env_font_names[i])) != NULL) {
-
+    for ( i = 0; i < N_TrueTypeLookup; i++ )
+    {
+        if (( a = getenv( env_font_names[i] )) != NULL )
+        {
 /*
  *  Work out if we have been given an absolute path to a font name, or just
  *  a font name sans-path. To do this we will look for a directory separator
@@ -699,43 +785,52 @@ void plD_FreeType_init(PLStream *pls)
  */
 
 #ifdef MSDOS
-	    if (a[1]==':') /* check for MS-DOS absolute path */
+            if ( a[1] == ':' )                      /* check for MS-DOS absolute path */
 #else
-	    if ((a[0]=='/')||(a[0]=='~')) /* check for unix abs path */
+            if (( a[0] == '/' ) || ( a[0] == '~' )) /* check for unix abs path */
 #endif
-		strncpy(FT->font_name[i],a,PLPLOT_MAX_PATH-1);
+                strncpy( FT->font_name[i], a, PLPLOT_MAX_PATH - 1 );
 
-	    else {
-		strncpy(FT->font_name[i],font_dir,PLPLOT_MAX_PATH-1);
-		strncat(FT->font_name[i],a,PLPLOT_MAX_PATH-1-strlen(FT->font_name[i]));
-	    }
+            else
+            {
+                strncpy( FT->font_name[i], font_dir, PLPLOT_MAX_PATH - 1 );
+                strncat( FT->font_name[i], a, PLPLOT_MAX_PATH - 1 -
+                         strlen( FT->font_name[i] ));
+            }
+        }
+        else
+        {
+            strncpy( FT->font_name[i], font_dir, PLPLOT_MAX_PATH - 1 );
+            strncat( FT->font_name[i],
+                     (char *) TrueTypeLookup[i].pfont,
+                     PLPLOT_MAX_PATH - 1 - strlen( FT->font_name[i] ));
+        }
+        FT->font_name[i][PLPLOT_MAX_PATH - 1] = '\0';
 
-	} else {
-	    strncpy(FT->font_name[i],font_dir,PLPLOT_MAX_PATH-1);
-	    strncat(FT->font_name[i],(char *)TrueTypeLookup[i].pfont,PLPLOT_MAX_PATH-1-strlen(FT->font_name[i]));
-	}
-        FT->font_name[i][PLPLOT_MAX_PATH-1] = '\0';
-
-   {
-   FILE *infile ;
-	if ( (infile=fopen(FT->font_name[i], "r"))==NULL) {
-	    char msgbuf[1024];
-	    snprintf(msgbuf, 1024,
-		    "plD_FreeType_init: Could not find the freetype compatible font:\n %s",
-		    FT->font_name[i]);
-	    plwarn(msgbuf);
-	} else {
-        fclose(infile);
-   }
-   }
-        FontLookup[i].fci = TrueTypeLookup[i].fci;
-        FontLookup[i].pfont = (unsigned char *)FT->font_name[i];
+        {
+            FILE *infile;
+            if (( infile = fopen( FT->font_name[i], "r" )) == NULL )
+            {
+                char msgbuf[1024];
+                snprintf(
+                    msgbuf,
+                    1024,
+                    "plD_FreeType_init: Could not find the freetype compatible font:\n %s",
+                    FT->font_name[i] );
+                plwarn( msgbuf );
+            }
+            else
+            {
+                fclose( infile );
+            }
+        }
+        FontLookup[i].fci   = TrueTypeLookup[i].fci;
+        FontLookup[i].pfont = (unsigned char *) FT->font_name[i];
     }
 /*
  * Next, we check to see if -drvopt has been used on the command line to
  * over-ride any settings
  */
-
 }
 
 
@@ -743,42 +838,49 @@ void plD_FreeType_init(PLStream *pls)
  * FT_SetFace( PLStream *pls, PLUNICODE fci )
  *
  * Sets up the font face and size
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
-void FT_SetFace( PLStream *pls, PLUNICODE fci)
+void FT_SetFace( PLStream *pls, PLUNICODE fci )
 {
-   FT_Data *FT=(FT_Data *)pls->FT;
-   double font_size = pls->chrht * 72/25.4; /* font_size in points, chrht is in mm */
+    FT_Data *FT       = (FT_Data *) pls->FT;
+    double  font_size = pls->chrht * 72 / 25.4; /* font_size in points, chrht is in mm */
 
-   /* save a copy of character height and resolution */
-   FT->chrht=pls->chrht;
-   FT->xdpi=pls->xdpi;
-   FT->ydpi=pls->ydpi;
+    /* save a copy of character height and resolution */
+    FT->chrht = pls->chrht;
+    FT->xdpi  = pls->xdpi;
+    FT->ydpi  = pls->ydpi;
 
-   if (fci != FT->fci) {
-      char *font_name = plP_FCI2FontName(fci, FontLookup, N_TrueTypeLookup);
-      if (font_name == NULL) {
-	 if (FT->fci == PL_FCI_IMPOSSIBLE)
-	   plexit("FT_SetFace: Bad FCI and no previous valid font to fall back on");
-	 else
-	   plwarn("FT_SetFace: Bad FCI.  Falling back to previous font.");
-      } else {
-	 FT->fci=fci;
+    if ( fci != FT->fci )
+    {
+        char *font_name = plP_FCI2FontName( fci, FontLookup, N_TrueTypeLookup );
+        if ( font_name == NULL )
+        {
+            if ( FT->fci == PL_FCI_IMPOSSIBLE )
+                plexit(
+                    "FT_SetFace: Bad FCI and no previous valid font to fall back on" );
+            else
+                plwarn( "FT_SetFace: Bad FCI.  Falling back to previous font." );
+        }
+        else
+        {
+            FT->fci = fci;
 
-	 if (FT->face!=NULL) {
-	    FT_Done_Face(FT->face);
-	    FT->face=NULL;
-	 }
+            if ( FT->face != NULL )
+            {
+                FT_Done_Face( FT->face );
+                FT->face = NULL;
+            }
 
-	 if (FT->face==NULL) {
-	    if (FT_New_Face( FT->library,font_name, 0,&FT->face))
-	      plexit("FT_SetFace: Error loading a font in freetype");
-	 }
-      }
-   }
-   FT_Set_Char_Size(FT->face,0,
-		    font_size * 64/TEXT_SCALING_FACTOR,pls->xdpi,
-		    pls->ydpi );
+            if ( FT->face == NULL )
+            {
+                if ( FT_New_Face( FT->library, font_name, 0, &FT->face ))
+                    plexit( "FT_SetFace: Error loading a font in freetype" );
+            }
+        }
+    }
+    FT_Set_Char_Size( FT->face, 0,
+                      font_size * 64 / TEXT_SCALING_FACTOR, pls->xdpi,
+                      pls->ydpi );
 }
 
 /*----------------------------------------------------------------------*\
@@ -787,47 +889,50 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci)
  * Transforms the font
  * calculates real-world bitmap coordinates from plplot ones
  * renders text using freetype
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
-void plD_render_freetype_text (PLStream *pls, EscText *args)
+void plD_render_freetype_text( PLStream *pls, EscText *args )
 {
-    FT_Data *FT=(FT_Data *)pls->FT;
-    int x,y;
-    int w=0,h=0;
-    PLFLT *t = args->xform;
+    FT_Data   *FT = (FT_Data *) pls->FT;
+    int       x, y;
+    int       w  = 0, h = 0;
+    PLFLT     *t = args->xform;
     FT_Matrix matrix;
-    PLFLT angle=PI*pls->diorot/2;
+    PLFLT     angle = PI * pls->diorot / 2;
 /*
-  Used later in a commented out section (See Rotate The Page), if that
-  section will never be used again, remove these as well.
-	PLINT clxmin, clxmax, clymin, clymax; 
-*/
-    PLFLT Sin_A,Cos_A;
+ * Used later in a commented out section (See Rotate The Page), if that
+ * section will never be used again, remove these as well.
+ *      PLINT clxmin, clxmax, clymin, clymax;
+ */
+    PLFLT     Sin_A, Cos_A;
     FT_Vector adjust;
     PLUNICODE fci;
-    FT_Fixed height;
-    PLFLT height_factor;
+    FT_Fixed  height;
+    PLFLT     height_factor;
 
-if ((args->string!=NULL)||(args->unicode_array_len>0))
-{
-
+    if (( args->string != NULL ) || ( args->unicode_array_len > 0 ))
+    {
 /*
  *   Work out if either the font size, the font face or the
  *   resolution has changed.
  *   If either has, then we will reload the font face.
  */
-    plgfci(&fci);
-    if ((FT->fci!=fci)||(FT->chrht!=pls->chrht)||(FT->xdpi!=pls->xdpi)||(FT->ydpi!=pls->ydpi))
-        FT_SetFace(pls,fci);
+        plgfci( &fci );
+        if (( FT->fci != fci ) || ( FT->chrht != pls->chrht ) ||
+            ( FT->xdpi != pls->xdpi ) || ( FT->ydpi != pls->ydpi ))
+            FT_SetFace( pls, fci );
 
 
 /*  this will help work out underlining and overlining*/
 
-    Debug6("%s %d %d %d %d\n","plD_render_freetype_text:",
-	   FT->face->underline_position>>6,
-	   FT->face->descender>>6,
-	   FT->face->ascender>>6,
-	   ((FT->face->underline_position*-1)+FT->face->ascender)>>6);
+        Debug6(
+            "%s %d %d %d %d\n",
+            "plD_render_freetype_text:",
+            FT->face->underline_position >> 6,
+            FT->face->descender >> 6,
+            FT->face->ascender >> 6,
+            (( FT->face->underline_position *
+               -1 ) + FT->face->ascender ) >> 6 );
 
 
 
@@ -839,15 +944,15 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  *  that calculates the text size.
  */
 
-    FT->matrix.xx =0x10000;
-    FT->matrix.xy =0x00000;
-    FT->matrix.yx =0x00000;
-    FT->matrix.yy =0x10000;
+        FT->matrix.xx = 0x10000;
+        FT->matrix.xy = 0x00000;
+        FT->matrix.yx = 0x00000;
+        FT->matrix.yy = 0x10000;
 
-    FT_Vector_Transform( &FT->pos, &FT->matrix);
-    FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
+        FT_Vector_Transform( &FT->pos, &FT->matrix );
+        FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
 
-    FT_StrX_YW(pls,args->unicode_array,args->unicode_array_len,&w, &h);
+        FT_StrX_YW( pls, args->unicode_array, args->unicode_array_len, &w, &h );
 
 /*
  *      Set up the transformation Matrix
@@ -872,20 +977,20 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  * always a negative quantity.
  */
 
-    height_factor = (PLFLT) (FT->face->ascender - FT->face->descender)
-                    / FT->face->ascender;
-    height = (FT_Fixed) (0x10000 * height_factor);
+        height_factor = (PLFLT) ( FT->face->ascender - FT->face->descender )
+                        / FT->face->ascender;
+        height = (FT_Fixed) ( 0x10000 * height_factor );
 
 #ifdef DJGPP
-    FT->matrix.xx = height * t[0];
-    FT->matrix.xy = height * t[2];
-    FT->matrix.yx = height * t[1];
-    FT->matrix.yy = height * t[3];
+        FT->matrix.xx = height * t[0];
+        FT->matrix.xy = height * t[2];
+        FT->matrix.yx = height * t[1];
+        FT->matrix.yy = height * t[3];
 #else
-    FT->matrix.xx = height * t[0];
-    FT->matrix.xy = height * t[1];
-    FT->matrix.yx = height * t[2];
-    FT->matrix.yy = height * t[3];
+        FT->matrix.xx = height * t[0];
+        FT->matrix.xy = height * t[1];
+        FT->matrix.yx = height * t[2];
+        FT->matrix.yy = height * t[3];
 #endif
 
 
@@ -896,22 +1001,22 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  *  will use freetypes matrix math stuff to do this for us.
  */
 
-    Cos_A=cos(angle);
-    Sin_A=sin(angle);
+        Cos_A = cos( angle );
+        Sin_A = sin( angle );
 
-    matrix.xx =(FT_Fixed)0x10000*Cos_A;
+        matrix.xx = (FT_Fixed) 0x10000 * Cos_A;
 
 #ifdef DJGPP
-    matrix.xy =(FT_Fixed)0x10000*Sin_A*-1;
-    matrix.yx =(FT_Fixed)0x10000*Sin_A;
+        matrix.xy = (FT_Fixed) 0x10000 * Sin_A * -1;
+        matrix.yx = (FT_Fixed) 0x10000 * Sin_A;
 #else
-    matrix.xy =(FT_Fixed)0x10000*Sin_A;
-    matrix.yx =(FT_Fixed)0x10000*Sin_A*-1;
+        matrix.xy = (FT_Fixed) 0x10000 * Sin_A;
+        matrix.yx = (FT_Fixed) 0x10000 * Sin_A * -1;
 #endif
 
-    matrix.yy =(FT_Fixed)0x10000*Cos_A;
+        matrix.yy = (FT_Fixed) 0x10000 * Cos_A;
 
-    FT_Matrix_Multiply(&matrix,&FT->matrix);
+        FT_Matrix_Multiply( &matrix, &FT->matrix );
 
 
 /*       Calculate a Vector from the matrix
@@ -923,7 +1028,7 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  */
 
 
-    FT_Vector_Transform( &FT->pos, &FT->matrix);
+        FT_Vector_Transform( &FT->pos, &FT->matrix );
 
 
 /*    Transform the font face
@@ -935,7 +1040,7 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  * it is asked for.
  */
 
-    FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
+        FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
 
 
 /*                            Rotate the Page
@@ -951,48 +1056,51 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  *   Convert into normal coordinates from virtual coordinates
  */
 
-  if( FT->scale!=0.0 ) {  /* scale was set */
-      x=args->x/FT->scale;
+        if ( FT->scale != 0.0 ) /* scale was set */
+        {
+            x = args->x / FT->scale;
 
-     if (FT->invert_y==1)
-        y=FT->ymax-(args->y/FT->scale);
-     else
-        y=args->y/FT->scale;
-  } else {
-      x=args->x/FT->scalex;
+            if ( FT->invert_y == 1 )
+                y = FT->ymax - ( args->y / FT->scale );
+            else
+                y = args->y / FT->scale;
+        }
+        else
+        {
+            x = args->x / FT->scalex;
 
-     if (FT->invert_y==1)
-        y=FT->ymax-(args->y/FT->scaley);
-     else
-        y=args->y/FT->scaley;
- }
+            if ( FT->invert_y == 1 )
+                y = FT->ymax - ( args->y / FT->scaley );
+            else
+                y = args->y / FT->scaley;
+        }
 
- /*          Adjust for the justification and character height
-  *
-  *  Eeeksss... this wasn't a nice bit of code to work out, let me tell you.
-  *  I could not work out an entirely satisfactory solution that made
-  *  logical sense, so came up with an "illogical" one as well.
-  *  The logical one works fine for text in the normal "portrait"
-  *  orientation, and does so for reasons you might expect it to work; But
-  *  for all other orientations, the text's base line is either a little
-  *  high, or a little low. This is because of the way the base-line pos
-  *  is calculated from the decender height. The "dodgie" way of calculating
-  *  the position is to use the character height here, then adjust for the
-  *  decender height by a three-fold factor later on. That approach seems to
-  *  work a little better for rotated pages, but why it should be so, I
-  *  don't understand. You can compile in or out which way you want it by
-  *  defining "DODGIE_DECENDER_HACK".
-  *
-  *  note: the logic of the page rotation coming up next is that we pump in
-  *  the justification factor and then use freetype to rotate and transform
-  *  the values, which we then use to change the plotting location.
-  */
+        /*          Adjust for the justification and character height
+         *
+         *  Eeeksss... this wasn't a nice bit of code to work out, let me tell you.
+         *  I could not work out an entirely satisfactory solution that made
+         *  logical sense, so came up with an "illogical" one as well.
+         *  The logical one works fine for text in the normal "portrait"
+         *  orientation, and does so for reasons you might expect it to work; But
+         *  for all other orientations, the text's base line is either a little
+         *  high, or a little low. This is because of the way the base-line pos
+         *  is calculated from the decender height. The "dodgie" way of calculating
+         *  the position is to use the character height here, then adjust for the
+         *  decender height by a three-fold factor later on. That approach seems to
+         *  work a little better for rotated pages, but why it should be so, I
+         *  don't understand. You can compile in or out which way you want it by
+         *  defining "DODGIE_DECENDER_HACK".
+         *
+         *  note: the logic of the page rotation coming up next is that we pump in
+         *  the justification factor and then use freetype to rotate and transform
+         *  the values, which we then use to change the plotting location.
+         */
 
 
 #ifdef DODGIE_DECENDER_HACK
-    adjust.y=h;
+        adjust.y = h;
 #else
-    adjust.y=0;
+        adjust.y = 0;
 #endif
 
 /* (RL, on 2005-01-24) The code below uses floating point and division
@@ -1013,15 +1121,15 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  * only one glyph in the string in this case, we are okay here).
  */
 
-    if ((args->unicode_array_len == 2)
-      && (args->unicode_array[0] == (PL_FCI_MARK |0x004)))
-    {
-        adjust.x = args->just * ROUND (FT->face->glyph->metrics.width / 64.0);
-        adjust.y = (FT_Pos) ROUND (FT->face->glyph->metrics.height / 128.0);
-    }
-    else
-    {
-
+        if (( args->unicode_array_len == 2 )
+            && ( args->unicode_array[0] == ( PL_FCI_MARK | 0x004 )))
+        {
+            adjust.x = args->just * ROUND(
+                FT->face->glyph->metrics.width / 64.0 );
+            adjust.y = (FT_Pos) ROUND( FT->face->glyph->metrics.height / 128.0 );
+        }
+        else
+        {
 /* (RL, on 2005-01-21) The vertical adjustment is set below, making
  * the DODGIE conditional moot.  I use the value of h as return by FT_StrX_YW,
  * which should correspond to the total height of the text being
@@ -1031,24 +1139,23 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  * height_factor below.
  */
 
-      adjust.y = (FT_Pos)
-          ROUND (FT->face->size->metrics.height / height_factor / 128.0);
-      adjust.x = (FT_Pos) (args->just * ROUND (w / 64.0));
+            adjust.y = (FT_Pos)
+                       ROUND(
+                FT->face->size->metrics.height / height_factor / 128.0 );
+            adjust.x = (FT_Pos) ( args->just * ROUND( w / 64.0 ));
+        }
 
+        FT_Vector_Transform( &adjust, &FT->matrix ); /* was /&matrix); -  was I using the wrong matrix all this time ?*/
+
+        x -= adjust.x;
+        y += adjust.y;
+
+        FT_WriteStrW( pls, args->unicode_array, args->unicode_array_len, x, y ); /* write it out */
     }
-
-    FT_Vector_Transform( &adjust, &FT->matrix);    /* was /&matrix); -  was I using the wrong matrix all this time ?*/
-
-    x-=adjust.x;
-    y+=adjust.y;
-
-    FT_WriteStrW(pls,args->unicode_array,args->unicode_array_len,x,y); /* write it out */
-}
-else
-{
-plD_render_freetype_sym (pls, args);
-}
-
+    else
+    {
+        plD_render_freetype_sym( pls, args );
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -1057,20 +1164,22 @@ plD_render_freetype_sym (pls, args);
  * Restores cmap0 if it had been modifed for anti-aliasing
  * closes the freetype library.
  * Deallocates memory to the Freetype structure
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
-void plD_FreeType_Destroy(PLStream *pls)
+void plD_FreeType_Destroy( PLStream *pls )
 {
-    FT_Data *FT=(FT_Data *)pls->FT;
-    extern int FT_Done_Library( FT_Library  library );
+    FT_Data *FT = (FT_Data *) pls->FT;
+    extern int FT_Done_Library( FT_Library library );
 
-    if (FT) {
-	if ((FT->smooth_text==1)&&(FT->BLENDED_ANTIALIASING==0)) plscmap0n(FT->ncol0_org);
-        if (FT->textbuf)
-          free(FT->textbuf);
-	FT_Done_Library(FT->library);
-	free(pls->FT);
-	pls->FT=NULL;
+    if ( FT )
+    {
+        if (( FT->smooth_text == 1 ) &&
+            ( FT->BLENDED_ANTIALIASING == 0 )) plscmap0n( FT->ncol0_org );
+        if ( FT->textbuf )
+            free( FT->textbuf );
+        FT_Done_Library( FT->library );
+        free( pls->FT );
+        pls->FT = NULL;
     }
 }
 
@@ -1081,19 +1190,20 @@ void plD_FreeType_Destroy(PLStream *pls)
  * given the number of desired steps, calculates how much to incriment
  * a value to transition from fg to bg.
  * This function only does it for one colour channel at a time.
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
-static PLFLT CalculateIncrement( int bg, int fg, int levels)
+static PLFLT CalculateIncrement( int bg, int fg, int levels )
 {
-    PLFLT ret=0;
+    PLFLT ret = 0;
 
-    if (levels>1) {
-	if (fg>bg)
-	    ret=((fg+1)-bg)/levels;
-	else if (fg<bg)
-	    ret=(((fg-1)-bg)/levels);
+    if ( levels > 1 )
+    {
+        if ( fg > bg )
+            ret = (( fg + 1 ) - bg ) / levels;
+        else if ( fg < bg )
+            ret = ((( fg - 1 ) - bg ) / levels );
     }
-    return(ret);
+    return ( ret );
 }
 
 /*----------------------------------------------------------------------*\
@@ -1109,32 +1219,36 @@ static PLFLT CalculateIncrement( int bg, int fg, int levels)
  *  NOTES
  *  We don't bother calculating an entry for CMAP[0], the background.
  *  It is assumed the caller has already expanded the size of CMAP[0]
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
-void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org)
+void pl_set_extended_cmap0( PLStream *pls, int ncol0_width, int ncol0_org )
 {
-    int i,j,k;
-    int r,g,b;
-    PLFLT r_inc,g_inc,b_inc;
+    int   i, j, k;
+    int   r, g, b;
+    PLFLT r_inc, g_inc, b_inc;
 
-    for (i=1;i<ncol0_org;i++) {
+    for ( i = 1; i < ncol0_org; i++ )
+    {
+        r = pls->cmap0[i].r;
+        g = pls->cmap0[i].g;
+        b = pls->cmap0[i].b;
 
-	r=pls->cmap0[i].r;
-	g=pls->cmap0[i].g;
-	b=pls->cmap0[i].b;
+        r_inc = CalculateIncrement( pls->cmap0[0].r, r, ncol0_width );
+        g_inc = CalculateIncrement( pls->cmap0[0].g, g, ncol0_width );
+        b_inc = CalculateIncrement( pls->cmap0[0].b, b, ncol0_width );
 
-	r_inc=CalculateIncrement(pls->cmap0[0].r,r,ncol0_width);
-	g_inc=CalculateIncrement(pls->cmap0[0].g,g,ncol0_width);
-	b_inc=CalculateIncrement(pls->cmap0[0].b,b,ncol0_width);
-
-	for (j=0,k=ncol0_org+i-1;j<ncol0_width;j++,k+=(ncol0_org-1)) {
-	    r-=r_inc;
-	    g-=g_inc;
-	    b-=b_inc;
-	    if ((r<0)||(g<0)||(b<0))
-		plscol0 (k, 0, 0, 0);
-	    else
-		plscol0 (k, (r > 0xff ? 0xff : r), (g > 0xff ? 0xff : g), (b > 0xff ? 0xff : b));
+        for ( j = 0, k = ncol0_org + i - 1;
+              j < ncol0_width;
+              j++, k += ( ncol0_org - 1 ))
+        {
+            r -= r_inc;
+            g -= g_inc;
+            b -= b_inc;
+            if (( r < 0 ) || ( g < 0 ) || ( b < 0 ))
+                plscol0( k, 0, 0, 0 );
+            else
+                plscol0( k, ( r > 0xff ? 0xff : r ), ( g > 0xff ? 0xff : g ),
+                         ( b > 0xff ? 0xff : b ));
         }
     }
 }
@@ -1149,30 +1263,33 @@ void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org)
  *  character at a time. The function is an alternative to the text
  *  functions which are considerably, and needlessly, more complicated
  *  than what we need here.
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
 
-void plD_render_freetype_sym (PLStream *pls, EscText *args)
+void plD_render_freetype_sym( PLStream *pls, EscText *args )
 {
-    FT_Data *FT=(FT_Data *)pls->FT;
-    int x,y;
-    FT_Vector  adjust;
+    FT_Data   *FT = (FT_Data *) pls->FT;
+    int       x, y;
+    FT_Vector adjust;
     PLUNICODE fci;
 
-    if( FT->scale!=0.0 ) {  /* scale was set */
-      x=args->x/FT->scale;
+    if ( FT->scale != 0.0 )    /* scale was set */
+    {
+        x = args->x / FT->scale;
 
-      if (FT->invert_y==1)
-        y=FT->ymax-(args->y/FT->scale);
-      else
-        y=args->y/FT->scale;
-    } else {
-      x=args->x/FT->scalex;
+        if ( FT->invert_y == 1 )
+            y = FT->ymax - ( args->y / FT->scale );
+        else
+            y = args->y / FT->scale;
+    }
+    else
+    {
+        x = args->x / FT->scalex;
 
-      if (FT->invert_y==1)
-        y=FT->ymax-(args->y/FT->scaley);
-      else
-        y=args->y/FT->scaley;
+        if ( FT->invert_y == 1 )
+            y = FT->ymax - ( args->y / FT->scaley );
+        else
+            y = args->y / FT->scaley;
     }
 
 
@@ -1193,23 +1310,28 @@ void plD_render_freetype_sym (PLStream *pls, EscText *args)
  */
 
 #ifdef DODGIE_DECENDER_HACK
-    adjust.y= (FT->face->descender >> 6)*3;
+    adjust.y = ( FT->face->descender >> 6 ) * 3;
 #else
-    adjust.y= (FT->face->descender >> 6);
+    adjust.y = ( FT->face->descender >> 6 );
 #endif
 
-    adjust.x=0;
-    FT_Vector_Transform( &adjust, &FT->matrix);
-    x+=adjust.x;
-    y-=adjust.y;
+    adjust.x = 0;
+    FT_Vector_Transform( &adjust, &FT->matrix );
+    x += adjust.x;
+    y -= adjust.y;
 
-    plgfci(&fci);
-    FT_SetFace(pls,fci);
+    plgfci( &fci );
+    FT_SetFace( pls, fci );
 
-    FT=(FT_Data *)pls->FT;
+    FT = (FT_Data *) pls->FT;
     FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
 
-    FT_Load_Char( FT->face, args->unicode_char, (FT->smooth_text==0) ? FT_LOAD_MONOCHROME+FT_LOAD_RENDER : FT_LOAD_RENDER|FT_LOAD_FORCE_AUTOHINT );
+    FT_Load_Char(
+        FT->face,
+        args->unicode_char,
+        ( FT->smooth_text ==
+          0 ) ? FT_LOAD_MONOCHROME + FT_LOAD_RENDER : FT_LOAD_RENDER |
+        FT_LOAD_FORCE_AUTOHINT );
 
 /*
  * Now we have to try and componsate for the fact that the freetype glyphs are left
@@ -1219,9 +1341,8 @@ void plD_render_freetype_sym (PLStream *pls, EscText *args)
  * but it is as good a way as I can think of.
  */
 
-    x -= (FT->face->glyph->advance.x >> 6)/2;
-    FT_PlotChar(pls,FT, FT->face->glyph,  x, y, pls->icol0 ); /* render the text */
-
+    x -= ( FT->face->glyph->advance.x >> 6 ) / 2;
+    FT_PlotChar( pls, FT, FT->face->glyph, x, y, pls->icol0 ); /* render the text */
 }
 
 
