@@ -2,8 +2,15 @@ plplot (5.9.2-4) unstable; urgency=low
 
   * debian/patches/02_unset-python-path.diff: Fix offset in patch
     to remove quilt warning.  (closes: #538533)
+  * debian/control.in: 
+    + Remove arm build dependency on g++-4.1. (closes: #533806)
+    + Update build dependency on tcl / tk to 8.5 (compatible with 
+      latest itcl). (closes: #545302)
+    + Add dpkg (>=1.15.4) dependency for plplot-doc to correctly 
+      handle info install triggers. Fixes lintian warning.
+    + Bump debian standards version to 3.8.3.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 20 Aug 2009 13:40:07 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 23 Aug 2009 12:05:07 +0100
 
 plplot (5.9.2-3) unstable; urgency=low
 
