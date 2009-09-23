@@ -87,7 +87,7 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
     }
 
     plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
-                plsc->clpymi, plsc->clpyma, plP_fill );
+        plsc->clpymi, plsc->clpyma, plP_fill );
 }
 
 /*----------------------------------------------------------------------*\
@@ -163,7 +163,7 @@ c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
  * plw3d() in x08c. But let's keep it, although 10% slower...
  */
     plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
-                plsc->clpymi, plsc->clpyma, plP_fill );
+        plsc->clpymi, plsc->clpyma, plP_fill );
 }
 
 /*----------------------------------------------------------------------*\
@@ -206,7 +206,7 @@ plfill_soft( short *x, short *y, PLINT n )
         ci  /= temp;
 
         dinc = (PLINT) ( plsc->delta[k] * SSQR( plsc->ypmm * ABS( ci ),
-                                                plsc->xpmm * ABS( si )) / 1000. );
+                             plsc->xpmm * ABS( si )) / 1000. );
 
         if ( dinc < 0 ) dinc = -dinc;
         if ( dinc == 0 ) dinc = 1;
@@ -236,7 +236,7 @@ plfill_soft( short *x, short *y, PLINT n )
 /* Sort list by y then x */
 
         qsort((void *) buffer, (size_t) bufferleng / 2,
-              (size_t) sizeof ( struct point ), compar );
+            (size_t) sizeof ( struct point ), compar );
 
 /* OK, now do the hatching */
 
@@ -260,7 +260,7 @@ plfill_soft( short *x, short *y, PLINT n )
                 for ( j = 0; j < bufferleng; j += 2 )
                 {
                     fprintf( stderr, "plfill: %d %d\n",
-                             (int) buffer[j], (int) buffer[j + 1] );
+                        (int) buffer[j], (int) buffer[j + 1] );
                 }
                 continue;       /* Uh oh we're lost */
             }
@@ -289,7 +289,7 @@ tran( PLINT *a, PLINT *b, PLFLT c, PLFLT d )
 
 static void
 buildlist( PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
-           PLINT dinc )
+    PLINT dinc )
 {
     PLINT min_y, max_y;
     PLINT dx, dy, cstep, nstep, ploty, plotx;
@@ -347,7 +347,7 @@ addcoord( PLINT xp1, PLINT yp1 )
     {
         buffersize += 2 * BINC;
         temp        = (PLINT *) realloc((void *) buffer,
-                                        (size_t) buffersize * sizeof ( PLINT ));
+            (size_t) buffersize * sizeof ( PLINT ));
         if ( !temp )
         {
             free((void *) buffer );

@@ -41,7 +41,7 @@
 
 void
 c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
-          PLINT nbin, PLINT flags )
+    PLINT nbin, PLINT flags )
 {
     PLINT i, bin;
     PLFLT *x, *y, dx, ymax;

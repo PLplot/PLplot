@@ -101,15 +101,15 @@
 /* Support functions */
 
 static int  ParseOpt( int *,
-                      const char ***,
-                      int *,
-                      const char ***,
-                      PLOptionTable * );
+    const char ***,
+    int *,
+    const char ***,
+    PLOptionTable * );
 static int  ProcessOpt( const char *,
-                        PLOptionTable *,
-                        int *,
-                        const char ***,
-                        int * );
+    PLOptionTable *,
+    int *,
+    const char ***,
+    int * );
 static int  GetOptarg( const char **, int *, const char ***, int * );
 static void Help( void );
 static void Syntax( void );
@@ -877,7 +877,7 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
             /* Check option table for option */
 
             status = ParseOpt( &myargc, &argv, p_argc, &argsave,
-                               ploption_info[i].options );
+                ploption_info[i].options );
 
             if ( !status ) break;
         }
@@ -948,10 +948,10 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
 
 static int
 ParseOpt( int *p_myargc,
-          const char ***p_argv,
-          int *p_argc,
-          const char ***p_argsave,
-          PLOptionTable *option_table )
+    const char ***p_argv,
+    int *p_argc,
+    const char ***p_argsave,
+    PLOptionTable *option_table )
 {
     PLOptionTable *tab;
     const char    *opt;
@@ -1003,10 +1003,10 @@ ParseOpt( int *p_myargc,
 
 static int
 ProcessOpt( const char *opt,
-            PLOptionTable *tab,
-            int *p_myargc,
-            const char ***p_argv,
-            int *p_argc )
+    PLOptionTable *tab,
+    int *p_myargc,
+    const char ***p_argv,
+    int *p_argc )
 {
     int        need_arg, res;
     const char *optarg = NULL;
@@ -1032,8 +1032,8 @@ ProcessOpt( const char *opt,
         if ( tab->handler == NULL )
         {
             fprintf( stderr,
-                     "ProcessOpt: no handler specified for option %s\n",
-                     tab->opt );
+                "ProcessOpt: no handler specified for option %s\n",
+                tab->opt );
             return 1;
         }
 
@@ -1065,8 +1065,8 @@ ProcessOpt( const char *opt,
         if ( tab->var == NULL )
         {
             fprintf( stderr,
-                     "ProcessOpt: no variable specified for option %s\n",
-                     tab->opt );
+                "ProcessOpt: no variable specified for option %s\n",
+                tab->opt );
             return 1;
         }
         *(int *) tab->var = 1;
@@ -1079,8 +1079,8 @@ ProcessOpt( const char *opt,
         if ( tab->var == NULL )
         {
             fprintf( stderr,
-                     "ProcessOpt: no variable specified for option %s\n",
-                     tab->opt );
+                "ProcessOpt: no variable specified for option %s\n",
+                tab->opt );
             return 1;
         }
         *(int *) tab->var = atoi( optarg );
@@ -1093,8 +1093,8 @@ ProcessOpt( const char *opt,
         if ( tab->var == NULL )
         {
             fprintf( stderr,
-                     "ProcessOpt: no variable specified for option %s\n",
-                     tab->opt );
+                "ProcessOpt: no variable specified for option %s\n",
+                tab->opt );
             return 1;
         }
         *(PLFLT *) tab->var = atof( optarg );
@@ -1112,8 +1112,8 @@ ProcessOpt( const char *opt,
         /* Somebody messed up.. */
 
         fprintf( stderr,
-                 "ProcessOpt: invalid processing mode for option %s\n",
-                 tab->opt );
+            "ProcessOpt: invalid processing mode for option %s\n",
+            tab->opt );
         return 1;
     }
     return 0;
@@ -1128,9 +1128,9 @@ ProcessOpt( const char *opt,
 
 static int
 GetOptarg( const char **poptarg,
-           int *p_myargc,
-           const char ***p_argv,
-           int *p_argc )
+    int *p_myargc,
+    const char ***p_argv,
+    int *p_argc )
 {
     int result = 0;
 
@@ -1159,8 +1159,8 @@ GetOptarg( const char **poptarg,
         if ( !mode_quiet )
         {
             fprintf( stderr,
-                     "Argument missing for %s option.\n",
-                     ( *p_argv )[0] );
+                "Argument missing for %s option.\n",
+                ( *p_argv )[0] );
             plOptUsage();
         }
     }
@@ -1200,7 +1200,7 @@ plOptUsage( void )
     Syntax();
 
     fprintf( stderr, "\n\nType %s -h for a full description.\n\n",
-             program );
+        program );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1366,7 +1366,7 @@ plParseDrvOpts( DrvOpt *acc_opt )
                     *(char **) ( t->var_ptr ) = ( drvp->value );
 #ifdef DEBUG
                     fprintf( stderr, "plParseDrvOpts: %s %s\n", t->opt,
-                             *(char**) t->var_ptr );
+                        *(char**) t->var_ptr );
 #endif
                     break;
 
@@ -1374,16 +1374,16 @@ plParseDrvOpts( DrvOpt *acc_opt )
                     if ( sscanf( drvp->value, "%d", (int *) t->var_ptr ) != 1 )
                     {
                         snprintf( msg,
-                                  sizeof ( msg ) - 1,
-                                  "Incorrect argument to '%s' option",
-                                  drvp->option );
+                            sizeof ( msg ) - 1,
+                            "Incorrect argument to '%s' option",
+                            drvp->option );
                         plexit( msg );
                     }
 #ifdef DEBUG
                     fprintf( stderr,
-                             "plParseDrvOpts: %s %d\n",
-                             t->opt,
-                             *(int *) t->var_ptr );
+                        "plParseDrvOpts: %s %d\n",
+                        t->opt,
+                        *(int *) t->var_ptr );
 #endif
                     break;
 
@@ -1391,14 +1391,14 @@ plParseDrvOpts( DrvOpt *acc_opt )
                     if ( sscanf( drvp->value, "%f", (float *) t->var_ptr ) != 1 )
                     {
                         snprintf( msg,
-                                  sizeof ( msg ) - 1,
-                                  "Incorrect argument to '%s' option",
-                                  drvp->option );
+                            sizeof ( msg ) - 1,
+                            "Incorrect argument to '%s' option",
+                            drvp->option );
                         plexit( msg );
                     }
 #ifdef DEBUG
                     fprintf( stderr, "plParseDrvOpts: %s %f\n", t->opt,
-                             *(float *) t->var_ptr );
+                        *(float *) t->var_ptr );
 #endif
                     break;
                 }
@@ -1786,8 +1786,8 @@ opt_bg( const char *opt, const char *optarg, void *client_data )
 
     default:
         fprintf( stderr,
-                 "Unrecognized background color value %s\n",
-                 color_field );
+            "Unrecognized background color value %s\n",
+            color_field );
         return 1;
     }
 
@@ -2018,8 +2018,8 @@ opt_fsiz( const char *opt, const char *optarg, void *client_data )
     if ( bytemax <= 0 )
     {
         fprintf( stderr,
-                 "?invalid file size %d. 2.14G is the maximum.\n",
-                 bytemax );
+            "?invalid file size %d. 2.14G is the maximum.\n",
+            bytemax );
         return 1;
     }
     plsfam( 1, -1, bytemax );
@@ -2170,7 +2170,7 @@ opt_plwindow( const char *opt, const char *optarg, void *client_data )
     if (( plsc->plwindow =
               (char *) malloc((size_t) ( 1 +
                                          strlen( optarg )) *
-                              sizeof ( char ))) == NULL )
+                  sizeof ( char ))) == NULL )
     {
         plexit( "opt_plwindow: Insufficient memory" );
     }
@@ -2276,7 +2276,7 @@ opt_geo( const char *opt, const char *optarg, void *client_data )
     if (( plsc->geometry =
               (char *) malloc((size_t) ( 1 +
                                          strlen( optarg )) *
-                              sizeof ( char ))) == NULL )
+                  sizeof ( char ))) == NULL )
     {
         plexit( "opt_geo: Insufficient memory" );
     }
@@ -2335,7 +2335,7 @@ opt_tk_file( const char *opt, const char *optarg, void *client_data )
     if (( plsc->tk_file =
               (char *) malloc((size_t) ( 1 +
                                          strlen( optarg )) *
-                              sizeof ( char ))) == NULL )
+                  sizeof ( char ))) == NULL )
     {
         plexit( "opt_tk_file: Insufficient memory" );
     }

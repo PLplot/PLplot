@@ -129,7 +129,7 @@ PLDLLIMPEXP_DATA( FCI_to_FontName_Table ) FontLookup[N_TrueTypeLookup];
     {                                    \
         if ( pls->debug )                \
         { fprintf( stderr, a, b, c,      \
-                   d, e, f );            \
+              d, e, f );                 \
         }                                \
     } while ( 0 )
 
@@ -148,11 +148,11 @@ void plD_render_freetype_sym( PLStream *pls, EscText *args );
 /*  Private prototypes for use in this file only */
 
 static void FT_PlotChar( PLStream *pls,
-                         FT_Data *FT,
-                         FT_GlyphSlot slot,
-                         int x,
-                         int y,
-                         short colour );
+    FT_Data *FT,
+    FT_GlyphSlot slot,
+    int x,
+    int y,
+    short colour );
 static void FT_SetFace( PLStream *pls, PLUNICODE fci );
 static PLFLT CalculateIncrement( int bg, int fg, int levels );
 
@@ -164,15 +164,15 @@ static PLFLT CalculateIncrement( int bg, int fg, int levels );
  */
 
 static void FT_WriteStrW( PLStream *pls,
-                          const PLUNICODE  *text,
-                          short len,
-                          int x,
-                          int y );
+    const PLUNICODE  *text,
+    short len,
+    int x,
+    int y );
 static void FT_StrX_YW( PLStream *pls,
-                        const PLUNICODE *text,
-                        short len,
-                        int *xx,
-                        int *yy );
+    const PLUNICODE *text,
+    short len,
+    int *xx,
+    int *yy );
 
 /*----------------------------------------------------------------------*\
  * FT_StrX_YW()
@@ -232,10 +232,10 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
             if (( i > 0 ) && FT_HAS_KERNING( FT->face ))
             {
                 FT_Get_Kerning( FT->face,
-                                text[i - 1],
-                                text[i],
-                                ft_kerning_default,
-                                &akerning );
+                    text[i - 1],
+                    text[i],
+                    ft_kerning_default,
+                    &akerning );
                 x += ( akerning.x >> 6 );        /* add (or subtract) the kerning */
             }
 
@@ -250,8 +250,8 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
              */
 
             FT_Load_Char( FT->face,
-                          text[i],
-                          FT_LOAD_MONOCHROME + FT_LOAD_RENDER );
+                text[i],
+                FT_LOAD_MONOCHROME + FT_LOAD_RENDER );
 
             /*
              * Add in the "advancement" needed to position the cursor for the next
@@ -398,9 +398,9 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
             if (( last_char != -1 ) && ( i > 0 ) && FT_HAS_KERNING( FT->face ))
             {
                 FT_Get_Kerning( FT->face,
-                                text[last_char],
-                                text[i],
-                                ft_kerning_default, &akerning );
+                    text[last_char],
+                    text[i],
+                    ft_kerning_default, &akerning );
                 x += akerning.x;        /* add (or subtract) the kerning */
                 y -= akerning.y;        /* Do I need this in case of rotation ? */
             }
@@ -413,7 +413,7 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
                   0 ) ? FT_LOAD_MONOCHROME + FT_LOAD_RENDER : FT_LOAD_RENDER |
                 FT_LOAD_FORCE_AUTOHINT );
             FT_PlotChar( pls, FT, FT->face->glyph,
-                         ROUND( x / 64.0 ), ROUND( y / 64.0 ), 2 ); /* render the text */
+                ROUND( x / 64.0 ), ROUND( y / 64.0 ), 2 );          /* render the text */
 
             x += FT->face->glyph->advance.x;
             y -= FT->face->glyph->advance.y;
@@ -432,7 +432,7 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
 
 void
 FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
-             int x, int y, short colour )
+    int x, int y, short colour )
 {
     unsigned char bittest;
     short         i, k, j;
@@ -567,8 +567,8 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
                         else
                         {
                             current_pixel_colour = FT->read_pixel( pls,
-                                                                   x + k,
-                                                                   y + i );
+                                x + k,
+                                y + i );
 
                             G       = GetGValue( current_pixel_colour );
                             R       = GetRValue( current_pixel_colour );
@@ -601,9 +601,9 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
                                     B ) * alpha_a ) + B );
 
                             FT->set_pixel( pls, x + k, y + i,
-                                           RGB( R > 255 ? 255 : R, G >
-                                                255 ? 255 : G, B >
-                                                255 ? 255 : B ));
+                                RGB( R > 255 ? 255 : R, G >
+                                    255 ? 255 : G, B >
+                                    255 ? 255 : B ));
                         }
                     }
                     else     /* The old anti-aliasing technique */
@@ -612,7 +612,7 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
                                       (( FT->ncol0_width * FT->shade ) / 255 );
                         FT->last_icol0 = pls->icol0;
                         plcol0( pls->icol0 +
-                                ( FT->col_idx * ( FT->ncol0_org - 1 )));
+                            ( FT->col_idx * ( FT->ncol0_org - 1 )));
                         FT->pixel( pls, x + k, y + i );
                         plcol0( FT->last_icol0 );
                     }
@@ -731,8 +731,8 @@ void plD_FreeType_init( PLStream *pls )
     else
     {
         strncat( WINDIR_PATH,
-                 "\\fonts\\arial.ttf",
-                 PLPLOT_MAX_PATH - 1 - strlen( WINDIR_PATH ));
+            "\\fonts\\arial.ttf",
+            PLPLOT_MAX_PATH - 1 - strlen( WINDIR_PATH ));
         if ( access( WINDIR_PATH, F_OK ) == 0 )
         {
             b = strrchr( WINDIR_PATH, '\\' );
@@ -795,15 +795,15 @@ void plD_FreeType_init( PLStream *pls )
             {
                 strncpy( FT->font_name[i], font_dir, PLPLOT_MAX_PATH - 1 );
                 strncat( FT->font_name[i], a, PLPLOT_MAX_PATH - 1 -
-                         strlen( FT->font_name[i] ));
+                    strlen( FT->font_name[i] ));
             }
         }
         else
         {
             strncpy( FT->font_name[i], font_dir, PLPLOT_MAX_PATH - 1 );
             strncat( FT->font_name[i],
-                     (char *) TrueTypeLookup[i].pfont,
-                     PLPLOT_MAX_PATH - 1 - strlen( FT->font_name[i] ));
+                (char *) TrueTypeLookup[i].pfont,
+                PLPLOT_MAX_PATH - 1 - strlen( FT->font_name[i] ));
         }
         FT->font_name[i][PLPLOT_MAX_PATH - 1] = '\0';
 
@@ -879,8 +879,8 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci )
         }
     }
     FT_Set_Char_Size( FT->face, 0,
-                      font_size * 64 / TEXT_SCALING_FACTOR, pls->xdpi,
-                      pls->ydpi );
+        font_size * 64 / TEXT_SCALING_FACTOR, pls->xdpi,
+        pls->ydpi );
 }
 
 /*----------------------------------------------------------------------*\
@@ -1248,7 +1248,7 @@ void pl_set_extended_cmap0( PLStream *pls, int ncol0_width, int ncol0_org )
                 plscol0( k, 0, 0, 0 );
             else
                 plscol0( k, ( r > 0xff ? 0xff : r ), ( g > 0xff ? 0xff : g ),
-                         ( b > 0xff ? 0xff : b ));
+                    ( b > 0xff ? 0xff : b ));
         }
     }
 }

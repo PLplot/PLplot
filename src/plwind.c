@@ -137,8 +137,8 @@ c_plwind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
 
 void
 c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
-         PLFLT xmax0, PLFLT ymin0, PLFLT ymax0, PLFLT zmin0,
-         PLFLT zmax0, PLFLT alt, PLFLT az )
+    PLFLT xmax0, PLFLT ymin0, PLFLT ymax0, PLFLT zmin0,
+    PLFLT zmax0, PLFLT alt, PLFLT az )
 {
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, d;
     PLFLT cx, cy, saz, caz, salt, calt, zscale;

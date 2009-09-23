@@ -26,12 +26,12 @@
 /* Calculate broken-down time from continuous time for current stream. */
 void
 c_plbtime( PLINT *year,
-           PLINT *month,
-           PLINT *day,
-           PLINT *hour,
-           PLINT *min,
-           PLFLT *sec,
-           PLFLT ctime )
+    PLINT *month,
+    PLINT *day,
+    PLINT *hour,
+    PLINT *min,
+    PLFLT *sec,
+    PLFLT ctime )
 {
     btimeqsas( year, month, day, hour, min, sec, ctime, plsc->qsasconfig );
 }
@@ -40,16 +40,16 @@ c_plbtime( PLINT *year,
  * vice versa) for current stream. */
 void
 c_plconfigtime( PLFLT scale,
-                PLFLT offset1,
-                PLFLT offset2,
-                PLINT ccontrol,
-                PLBOOL ifbtime_offset,
-                PLINT year,
-                PLINT month,
-                PLINT day,
-                PLINT hour,
-                PLINT min,
-                PLFLT sec )
+    PLFLT offset1,
+    PLFLT offset2,
+    PLINT ccontrol,
+    PLBOOL ifbtime_offset,
+    PLINT year,
+    PLINT month,
+    PLINT day,
+    PLINT hour,
+    PLINT min,
+    PLFLT sec )
 {
     if ( scale == 0. )
     {
@@ -58,34 +58,34 @@ c_plconfigtime( PLFLT scale,
         /* Note the PLplot default is not necessarily the same as the
          * libqsastime default. */
         configqsas( 1. / 86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0.,
-                    &( plsc->qsasconfig ));
+            &( plsc->qsasconfig ));
     }
     else
     {
         configqsas( scale,
-                    offset1,
-                    offset2,
-                    ccontrol,
-                    ifbtime_offset,
-                    year,
-                    month,
-                    day,
-                    hour,
-                    min,
-                    sec,
-                    &( plsc->qsasconfig ));
+            offset1,
+            offset2,
+            ccontrol,
+            ifbtime_offset,
+            year,
+            month,
+            day,
+            hour,
+            min,
+            sec,
+            &( plsc->qsasconfig ));
     }
 }
 
 /* Calculate continuous time from broken-down time for current stream. */
 void
 c_plctime( PLINT year,
-           PLINT month,
-           PLINT day,
-           PLINT hour,
-           PLINT min,
-           PLFLT sec,
-           PLFLT *ctime )
+    PLINT month,
+    PLINT day,
+    PLINT hour,
+    PLINT min,
+    PLFLT sec,
+    PLFLT *ctime )
 {
     int ret;
     ret = ctimeqsas( year, month, day, hour, min, sec, ctime, plsc->qsasconfig );

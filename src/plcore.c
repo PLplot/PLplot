@@ -265,12 +265,12 @@ plP_esc( PLINT op, void *ptr )
         {
             args = (EscText*) ptr;
             difilt( &( args->x ),
-                    &( args->y ),
-                    1,
-                    &clpxmi,
-                    &clpxma,
-                    &clpymi,
-                    &clpyma );
+                &( args->y ),
+                1,
+                &clpxmi,
+                &clpxma,
+                &clpymi,
+                &clpyma );
         }
     }
 
@@ -328,7 +328,7 @@ plP_swin( PLWindow *plwin )
     {
         char *save_locale = plsave_set_locale();
         ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
-                                          PLESC_SWIN, NULL );
+            PLESC_SWIN, NULL );
         plrestore_locale( save_locale );
     }
 }
@@ -388,7 +388,7 @@ plP_polyline( short *x, short *y, PLINT npts )
         }
         difilt( xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma );
         plP_pllclp( xscl, yscl, npts, clpxmi, clpxma, clpymi, clpyma,
-                    grpolyline );
+            grpolyline );
     }
     else
     {
@@ -455,7 +455,7 @@ plP_fill( short *x, short *y, PLINT npts )
             }
             difilt( xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma );
             plP_plfclp( xscl, yscl, npts, clpxmi, clpxma, clpymi, clpyma,
-                        grfill );
+                grfill );
         }
         else
         {
@@ -492,9 +492,9 @@ int text2num( const char *text, char end, PLUNICODE *num )
     if ( end != endptr[0] )
     {
         snprintf( msgbuf,
-                  BUFFER_SIZE,
-                  "text2num: invalid control string detected - %c expected",
-                  end );
+            BUFFER_SIZE,
+            "text2num: invalid control string detected - %c expected",
+            end );
         plwarn( msgbuf );
     }
 
@@ -520,8 +520,8 @@ int text2num( const char *text, char end, PLUNICODE *num )
  \*--------------------------------------------------------------------------*/
 
 int text2fci( const char *text,
-              unsigned char *hexdigit,
-              unsigned char *hexpower )
+    unsigned char *hexdigit,
+    unsigned char *hexpower )
 {
     typedef struct
     {
@@ -566,7 +566,7 @@ static PLUNICODE unicode_buffer[1024];
 
 void
 plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
-          PLINT refx, PLINT refy, const char *string )
+    PLINT refx, PLINT refy, const char *string )
 {
     if ( plsc->dev_text ) /* Does the device render it's own text ? */
     {
@@ -746,8 +746,8 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             else
                             {
                                 i += text2fci( &string[i + 1],
-                                               &hexdigit,
-                                               &hexpower );
+                                    &hexdigit,
+                                    &hexpower );
                                 if ( hexpower < 7 )
                                 {
                                     plP_hex2fci( hexdigit, hexpower, &fci );
@@ -910,7 +910,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                         PLUNICODE unichar = 0;
 #ifdef HAVE_LIBUNICODE
                         char      * ptr = unicode_get_utf8( string + i,
-                                                            &unichar );
+                            &unichar );
 #else
                         char* ptr = utf8_to_ucs4( string + i, &unichar );
 #endif
@@ -920,10 +920,10 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             strncpy( buf, string, 30 );
                             buf[30] = '\0';
                             snprintf( buf,
-                                      BUFFER_SIZE,
-                                      "UTF-8 string is malformed: %s%s",
-                                      buf,
-                                      strlen( string ) > 30 ? "[...]" : "" );
+                                BUFFER_SIZE,
+                                "UTF-8 string is malformed: %s%s",
+                                buf,
+                                strlen( string ) > 30 ? "[...]" : "" );
                             plabort( buf );
                             return;
                         }
@@ -1120,7 +1120,7 @@ grline( short *x, short *y, PLINT npts )
 {
     char *save_locale = plsave_set_locale();
     ( *plsc->dispatch_table->pl_line )((struct PLStream_struct *) plsc,
-                                       x[0], y[0], x[1], y[1] );
+        x[0], y[0], x[1], y[1] );
     plrestore_locale( save_locale );
 }
 
@@ -1129,7 +1129,7 @@ grpolyline( short *x, short *y, PLINT npts )
 {
     char *save_locale = plsave_set_locale();
     ( *plsc->dispatch_table->pl_polyline )((struct PLStream_struct *) plsc,
-                                           x, y, npts );
+        x, y, npts );
     plrestore_locale( save_locale );
 }
 
@@ -1143,7 +1143,7 @@ grfill( short *x, short *y, PLINT npts )
 
     save_locale = plsave_set_locale();
     ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
-                                      PLESC_FILL, NULL );
+        PLESC_FILL, NULL );
     plrestore_locale( save_locale );
 }
 
@@ -1169,7 +1169,7 @@ grfill( short *x, short *y, PLINT npts )
 
 void
 difilt( PLINT *xscl, PLINT *yscl, PLINT npts,
-        PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma )
+    PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma )
 {
     PLINT i, x, y;
 
@@ -1238,7 +1238,7 @@ difilt( PLINT *xscl, PLINT *yscl, PLINT npts,
 
 void
 sdifilt( short *xscl, short *yscl, PLINT npts,
-         PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma )
+    PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma )
 {
     int   i;
     short x, y;
@@ -1409,8 +1409,8 @@ pldid2pc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
     if ( plsc->difilt & PLDI_DEV )
     {
         pldebug( "pldid2pc",
-                 "Relative device coordinates (in): %f, %f, %f, %f\n",
-                 *xmin, *ymin, *xmax, *ymax );
+            "Relative device coordinates (in): %f, %f, %f, %f\n",
+            *xmin, *ymin, *xmax, *ymax );
 
         pxmin = plP_dcpcx( *xmin );
         pymin = plP_dcpcy( *ymin );
@@ -1433,8 +1433,8 @@ pldid2pc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
         *ymax = ( rymax > 1 ) ? 1 : rymax;
 
         pldebug( "pldid2pc",
-                 "Relative plot coordinates (out): %f, %f, %f, %f\n",
-                 rxmin, rymin, rxmax, rymax );
+            "Relative plot coordinates (out): %f, %f, %f, %f\n",
+            rxmin, rymin, rxmax, rymax );
     }
 }
 
@@ -1455,8 +1455,8 @@ pldip2dc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
     if ( plsc->difilt & PLDI_DEV )
     {
         pldebug( "pldip2pc",
-                 "Relative plot coordinates (in): %f, %f, %f, %f\n",
-                 *xmin, *ymin, *xmax, *ymax );
+            "Relative plot coordinates (in): %f, %f, %f, %f\n",
+            *xmin, *ymin, *xmax, *ymax );
 
         pxmin = plP_dcpcx( *xmin );
         pymin = plP_dcpcy( *ymin );
@@ -1479,8 +1479,8 @@ pldip2dc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
         *ymax = ( rymax > 1 ) ? 1 : rymax;
 
         pldebug( "pldip2pc",
-                 "Relative device coordinates (out): %f, %f, %f, %f\n",
-                 rxmin, rymin, rxmax, rymax );
+            "Relative device coordinates (out): %f, %f, %f, %f\n",
+            rxmin, rymin, rxmax, rymax );
     }
 }
 
@@ -1548,7 +1548,7 @@ calc_diplt( void )
     {
         char *save_locale = plsave_set_locale();
         ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
-                                          PLESC_DI, NULL );
+            PLESC_DI, NULL );
         plrestore_locale( save_locale );
     }
 
@@ -1634,7 +1634,7 @@ calc_didev( void )
     {
         char *save_locale = plsave_set_locale();
         ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
-                                          PLESC_DI, NULL );
+            PLESC_DI, NULL );
         plrestore_locale( save_locale );
     }
 
@@ -1756,7 +1756,7 @@ calc_diori( void )
     {
         char *save_locale = plsave_set_locale();
         ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
-                                          PLESC_DI, NULL );
+            PLESC_DI, NULL );
         plrestore_locale( save_locale );
     }
 
@@ -1835,7 +1835,7 @@ c_plgdiori( PLFLT *p_rot )
 
 void
 c_plsdimap( PLINT dimxmin, PLINT dimxmax, PLINT dimymin, PLINT dimymax,
-            PLFLT dimxpmm, PLFLT dimypmm )
+    PLFLT dimxpmm, PLFLT dimypmm )
 {
     plsetvar( plsc->dimxmin, dimxmin );
     plsetvar( plsc->dimxmax, dimxmax );
@@ -1912,7 +1912,7 @@ c_plflush( void )
     {
         char *save_locale = plsave_set_locale();
         ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
-                                          PLESC_FLUSH, NULL );
+            PLESC_FLUSH, NULL );
         plrestore_locale( save_locale );
     }
     else
@@ -2265,8 +2265,8 @@ c_plsstrm( PLINT strm )
     if ( strm < 0 || strm >= PL_NSTREAMS )
     {
         fprintf( stderr,
-                 "plsstrm: Illegal stream number %d, must be in [0, %d]\n",
-                 (int) strm, PL_NSTREAMS );
+            "plsstrm: Illegal stream number %d, must be in [0, %d]\n",
+            (int) strm, PL_NSTREAMS );
     }
     else
     {
@@ -2444,10 +2444,10 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
     if ( !( flags & 0x01 ))
     {
         pldebug( "plcpstrm", "mapping parameters: %d %d %d %d %f %f\n",
-                 plsr->phyxmi, plsr->phyxma, plsr->phyymi, plsr->phyyma,
-                 plsr->xpmm, plsr->ypmm );
+            plsr->phyxmi, plsr->phyxma, plsr->phyymi, plsr->phyyma,
+            plsr->xpmm, plsr->ypmm );
         plsdimap( plsr->phyxmi, plsr->phyxma, plsr->phyymi, plsr->phyyma,
-                  plsr->xpmm, plsr->ypmm );
+            plsr->xpmm, plsr->ypmm );
     }
 
 /* current color */
@@ -2561,7 +2561,7 @@ PLDLLIMPEXP int plInBuildTree()
                 }
                 if ( chdir( currdir ) != 0 )
                     pldebug( "plInBuildTree():",
-                             "Unable to chdir to current directory" );
+                        "Unable to chdir to current directory" );
             }
         }
         inited = 1;
@@ -2593,7 +2593,7 @@ plGetDrvDir()
         if ( drvdir == NULL )
         {
             pldebug( "plGetDrvDir",
-                     "Will use drivers dir: " DRV_DIR "\n" );
+                "Will use drivers dir: " DRV_DIR "\n" );
             drvdir = DRV_DIR;
         }
     }
@@ -2663,7 +2663,7 @@ plInitDispatchTable()
         int len    = strlen( name ) - 3;
 
         pldebug( "plInitDispatchTable",
-                 "Consider file %s\n", name );
+            "Consider file %s\n", name );
 
 /* Only consider entries that have the ".rc" suffix */
         if (( len > 0 ) && ( strcmp( name + len, ".rc" ) == 0 ))
@@ -2690,7 +2690,7 @@ plInitDispatchTable()
  * character */
 
             pldebug( "plInitDispatchTable",
-                     "Opened driver info file %s\n", name );
+                "Opened driver info file %s\n", name );
             while ( fgets( buf, BUFFER2_SIZE, fd ) != NULL )
             {
                 fprintf( fp_drvdb, "%s", buf );
@@ -2713,7 +2713,7 @@ plInitDispatchTable()
     if (( dispatch_table = (PLDispatchTable **)
                            malloc(( nplstaticdevices +
                                     npldynamicdevices ) *
-                                  sizeof ( PLDispatchTable * ))) == NULL )
+              sizeof ( PLDispatchTable * ))) == NULL )
     {
         plexit( "plInitDispatchTable: Insufficient memory" );
     }
@@ -2833,7 +2833,7 @@ plInitDispatchTable()
  * sequence number in the dispatch ttable entries. */
 
     qsort( dispatch_table, npldrivers, sizeof ( PLDispatchTable* ),
-           plDispatchSequencer );
+        plDispatchSequencer );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2862,7 +2862,7 @@ plSelectDev()
         {
             if (( *plsc->DevName == *dispatch_table[i]->pl_DevName ) &&
                 ( strncmp( plsc->DevName,
-                           dispatch_table[i]->pl_DevName, length ) == 0 ))
+                      dispatch_table[i]->pl_DevName, length ) == 0 ))
                 break;
         }
         if ( i < npldrivers )
@@ -2873,7 +2873,7 @@ plSelectDev()
         else
         {
             fprintf( stderr, "Requested device %s not available\n",
-                     plsc->DevName );
+                plsc->DevName );
         }
     }
 
@@ -2891,14 +2891,14 @@ plSelectDev()
         for ( i = 0; i < npldrivers; i++ )
         {
             fprintf( stdout, " <%2d> %-10s %s\n", i + 1,
-                     dispatch_table[i]->pl_DevName,
-                     dispatch_table[i]->pl_MenuStr );
+                dispatch_table[i]->pl_DevName,
+                dispatch_table[i]->pl_MenuStr );
         }
         if ( ipls == 0 )
             fprintf( stdout, "\nEnter device number or keyword: " );
         else
             fprintf( stdout, "\nEnter device number or keyword (stream %d): ",
-                     (int) ipls );
+                (int) ipls );
 
         plio_fgets( response, sizeof ( response ), stdin );
 
@@ -2912,7 +2912,7 @@ plSelectDev()
         for ( i = 0; i < npldrivers; i++ )
         {
             if ( !strncmp( response, dispatch_table[i]->pl_DevName,
-                           (unsigned int) length ))
+                     (unsigned int) length ))
                 break;
         }
         if ( i < npldrivers )
@@ -2998,7 +2998,7 @@ plLoadDriver( void )
 #endif  /* LTDL_WIN32 */
 
         pldebug( "plLoadDriver", "Trying to load %s on %s\n",
-                 driver->drvnam, drvspec );
+            driver->drvnam, drvspec );
 
         driver->dlhand = lt_dlopenext( drvspec );
     }
@@ -3007,7 +3007,7 @@ plLoadDriver( void )
     if ( !driver->dlhand )
     {
         pldebug( "plLoadDriver", "lt_dlopenext failed because of "
-                 "the following reason:\n%s\n", lt_dlerror());
+            "the following reason:\n%s\n", lt_dlerror());
         fprintf( stderr, "Unable to load driver: %s.\n", driver->drvnam );
         plexit( "Unable to load driver" );
     }
@@ -3107,9 +3107,9 @@ plgDevs( const char ***p_menustr, const char ***p_devname, int *p_ndev )
 
 static void
 plgdevlst( const char **p_menustr,
-           const char **p_devname,
-           int *p_ndev,
-           int type )
+    const char **p_devname,
+    int *p_ndev,
+    int type )
 {
     int i, j;
 
@@ -3141,7 +3141,7 @@ plgdevlst( const char **p_menustr,
 
 void
 c_plgpage( PLFLT *p_xp, PLFLT *p_yp,
-           PLINT *p_xleng, PLINT *p_yleng, PLINT *p_xoff, PLINT *p_yoff )
+    PLINT *p_xleng, PLINT *p_yleng, PLINT *p_xoff, PLINT *p_yoff )
 {
     *p_xp    = plsc->xdpi;
     *p_yp    = plsc->ydpi;
@@ -3266,7 +3266,7 @@ c_plglevel( PLINT *p_level )
 
 void
 plsKeyEH( void ( *KeyEH )( PLGraphicsIn *, void *, int * ),
-          void *KeyEH_data )
+    void *KeyEH_data )
 {
     plsc->KeyEH      = KeyEH;
     plsc->KeyEH_data = KeyEH_data;
@@ -3276,7 +3276,7 @@ plsKeyEH( void ( *KeyEH )( PLGraphicsIn *, void *, int * ),
 
 void
 plsButtonEH( void ( *ButtonEH )( PLGraphicsIn *, void *, int * ),
-             void *ButtonEH_data )
+    void *ButtonEH_data )
 {
     plsc->ButtonEH      = ButtonEH;
     plsc->ButtonEH_data = ButtonEH_data;
@@ -3913,14 +3913,14 @@ PLINT plP_checkdriverinit( char *names )
 
 void
 plP_image( PLFLT *z,
-           PLINT nx,
-           PLINT ny,
-           PLFLT xmin,
-           PLFLT ymin,
-           PLFLT dx,
-           PLFLT dy,
-           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-           PLPointer pltr_data )
+    PLINT nx,
+    PLINT ny,
+    PLFLT xmin,
+    PLFLT ymin,
+    PLFLT dx,
+    PLFLT dy,
+    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+    PLPointer pltr_data )
 {
     plsc->page_status = DRAWING;
 
@@ -3945,7 +3945,7 @@ plP_image( PLFLT *z,
     if ( plsc->dev_fastimg == 0 )
     {
         plimageslow( x, y, z, nx - 1, ny - 1,
-                     xmin, ymin, dx, dy, zmin, zmax );
+            xmin, ymin, dx, dy, zmin, zmax );
         return;
     }
 

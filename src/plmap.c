@@ -87,7 +87,7 @@
 
 void
 plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
-       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
+    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
     PLINT            wrap, sign;
     int              i, j;
@@ -267,8 +267,8 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 
 void
 plmeridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-             PLFLT dlong, PLFLT dlat,
-             PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
+    PLFLT dlong, PLFLT dlat,
+    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
     PLFLT yy, xx, temp, x[2], y[2], dx, dy;
 

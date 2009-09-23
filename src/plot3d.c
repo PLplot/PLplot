@@ -57,8 +57,8 @@ static void plgrid3( PLFLT );
 static void plnxtv( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
 static void plside3( PLFLT *, PLFLT *, PLFLT **, PLINT, PLINT, PLINT );
 static void plt3zz( PLINT, PLINT, PLINT, PLINT,
-                    PLINT, PLINT *, PLFLT *, PLFLT *, PLFLT **,
-                    PLINT, PLINT, PLINT *, PLINT *, PLFLT* );
+    PLINT, PLINT *, PLFLT *, PLFLT *, PLFLT **,
+    PLINT, PLINT, PLINT *, PLINT *, PLFLT* );
 static void plnxtvhi( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
 static void plnxtvlo( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
 static void plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n );
@@ -72,21 +72,21 @@ static void myabort( char * );
 static void freework( void );
 static int  plabv( PLINT, PLINT, PLINT, PLINT, PLINT, PLINT );
 static void pl3cut( PLINT, PLINT, PLINT, PLINT, PLINT,
-                    PLINT, PLINT, PLINT, PLINT *, PLINT * );
+    PLINT, PLINT, PLINT, PLINT *, PLINT * );
 static PLFLT plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z );
 static void plP_draw3d( PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move );
 static void plxyindexlimits( PLINT instart, PLINT inn,
-                             PLINT *inarray_min, PLINT *inarray_max,
-                             PLINT *outstart, PLINT *outn, PLINT outnmax,
-                             PLINT *outarray_min, PLINT *outarray_max );
+    PLINT *inarray_min, PLINT *inarray_max,
+    PLINT *outstart, PLINT *outn, PLINT outnmax,
+    PLINT *outarray_min, PLINT *outarray_max );
 
 
 /* #define MJL_HACK 1 */
 #if MJL_HACK
 static void plP_fill3( PLINT x0, PLINT y0, PLINT x1, PLINT y1,
-                       PLINT x2, PLINT y2, PLINT j );
+    PLINT x2, PLINT y2, PLINT j );
 static void plP_fill4( PLINT x0, PLINT y0, PLINT x1, PLINT y1,
-                       PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT j );
+    PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT j );
 #endif
 
 /*--------------------------------------------------------------------------*\
@@ -139,7 +139,7 @@ c_plmesh( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
 
 void
 c_plmeshc( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
-           PLFLT *clevel, PLINT nlevel )
+    PLFLT *clevel, PLINT nlevel )
 {
     c_plot3dc( x, y, z, nx, ny, opt | MESH, clevel, nlevel );
 }
@@ -214,8 +214,8 @@ plP_clip_poly( int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset )
 /* helper for plsurf3d, similar to c_plfill3() */
 static void
 shade_triangle( PLFLT x0, PLFLT y0, PLFLT z0,
-                PLFLT x1, PLFLT y1, PLFLT z1,
-                PLFLT x2, PLFLT y2, PLFLT z2 )
+    PLFLT x1, PLFLT y1, PLFLT z1,
+    PLFLT x2, PLFLT y2, PLFLT z2 )
 {
     int   i;
     /* arrays for interface to core functions */
@@ -279,7 +279,7 @@ shade_triangle( PLFLT x0, PLFLT y0, PLFLT z0,
 
 void
 c_plsurf3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-            PLINT opt, PLFLT *clevel, PLINT nlevel )
+    PLINT opt, PLFLT *clevel, PLINT nlevel )
 {
     PLINT i;
     PLINT *indexymin = (PLINT *) malloc((size_t) ( nx * sizeof ( PLINT )));
@@ -293,7 +293,7 @@ c_plsurf3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
         indexymax[i] = ny;
     }
     c_plsurf3dl( x, y, z, nx, ny, opt, clevel, nlevel,
-                 0, nx, indexymin, indexymax );
+        0, nx, indexymin, indexymax );
     free_mem( indexymin );
     free_mem( indexymax );
 }
@@ -334,8 +334,8 @@ c_plsurf3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
 void
 c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-             PLINT opt, PLFLT *clevel, PLINT nlevel,
-             PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
+    PLINT opt, PLFLT *clevel, PLINT nlevel,
+    PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
 {
     PLFLT      cxx, cxy, cyx, cyy, cyz;
     PLINT      i, j, k;
@@ -559,7 +559,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
         }
         /* Fill cont structure with contours. */
         cont_store( zstore, nx, ny, ixstart + 1, ixn, 1, ny,
-                    clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
+            clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
 
         /* Free the 2D input arrays to cont_store since not needed any more. */
         plFree2dGrid( zstore, nx, ny );
@@ -578,7 +578,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
                     np = cline->npts;
                     if (( zz =
                               (PLFLT *) realloc( zz,
-                                                 np * sizeof ( PLFLT ))) ==
+                                  np * sizeof ( PLFLT ))) ==
                         NULL )
                     {
                         plexit( "c_plsurf3dl: Insufficient memory" );
@@ -659,7 +659,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
                 for ( j = 0; j < 4; j += 3 )
                 {
                     shade_triangle( px[j], py[j], pz[j], xm, ym, zm, px[i],
-                                    py[i], pz[i] );
+                        py[i], pz[i] );
 
                     /* after shading, see if the triangle crosses	one contour plane */
 
@@ -672,13 +672,13 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
                         {
                             if ( clevel[k] >=
                                  min3( pz[i], zm,
-                                       pz[j] ) && clevel[k] <
+                                     pz[j] ) && clevel[k] <
                                  max3( pz[i], zm, pz[j] ))
                             {
                                 ct = 0;
                                 if ( clevel[k] >=
                                      MIN( pz[i],
-                                          zm ) && clevel[k] < MAX( pz[i], zm )) /* p0-pm */
+                                         zm ) && clevel[k] < MAX( pz[i], zm ))  /* p0-pm */
                                 {
                                     xx[ct] =
                                         (( clevel[k] -
@@ -695,7 +695,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
                                 if ( clevel[k] >=
                                      MIN( pz[i],
-                                          pz[j] ) && clevel[k] <
+                                         pz[j] ) && clevel[k] <
                                      MAX( pz[i], pz[j] ))                            /* p0-p1 */
                                 {
                                     xx[ct] =
@@ -713,7 +713,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
                                 if ( clevel[k] >=
                                      MIN( pz[j],
-                                          zm ) && clevel[k] < MAX( pz[j], zm )) /* p1-pm */
+                                         zm ) && clevel[k] < MAX( pz[j], zm ))  /* p1-pm */
                                 {
                                     xx[ct] =
                                         (( clevel[k] -
@@ -758,7 +758,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     {
         plcol0( 0 );
         c_plot3dcl( x, y, z, nx, ny, MESH | DRAW_LINEXY, NULL, 0,
-                    ixstart, ixn, indexymin, indexymax );
+            ixstart, ixn, indexymin, indexymax );
     }
 
     if ( opt & DRAW_SIDES ) /* the sides look ugly !!! */
@@ -793,16 +793,16 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
             /* now draw the quad as two triangles (4 might be better) */
 
             shade_triangle( px[0],
-                            py[0],
-                            pz[0],
-                            px[2],
-                            py[2],
-                            pz[2],
-                            px[0],
-                            py[0],
-                            zmin );
+                py[0],
+                pz[0],
+                px[2],
+                py[2],
+                pz[2],
+                px[0],
+                py[0],
+                zmin );
             shade_triangle( px[2], py[2], pz[2], px[2], py[2], zmin, px[0],
-                            py[0], zmin );
+                py[0], zmin );
         }
 
         iFast      = nFast - 1;
@@ -831,16 +831,16 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
             /* now draw the quad as two triangles (4 might be better) */
             shade_triangle( px[0],
-                            py[0],
-                            pz[0],
-                            px[2],
-                            py[2],
-                            pz[2],
-                            px[0],
-                            py[0],
-                            zmin );
+                py[0],
+                pz[0],
+                px[2],
+                py[2],
+                pz[2],
+                px[0],
+                py[0],
+                zmin );
             shade_triangle( px[2], py[2], pz[2], px[2], py[2], zmin, px[0],
-                            py[0], zmin );
+                py[0], zmin );
         }
     }
 }
@@ -856,7 +856,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
 void
 c_plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
-          PLINT nx, PLINT ny, PLINT opt, PLBOOL side )
+    PLINT nx, PLINT ny, PLINT opt, PLBOOL side )
 {
     c_plot3dc( x, y, z, nx, ny, opt | ( side != 0 ? DRAW_SIDES : 0 ), NULL, 0 );
 }
@@ -872,8 +872,8 @@ c_plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
 
 void
 c_plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
-           PLINT nx, PLINT ny, PLINT opt,
-           PLFLT *clevel, PLINT nlevel )
+    PLINT nx, PLINT ny, PLINT opt,
+    PLFLT *clevel, PLINT nlevel )
 {
     c_plot3dcl( x, y, z, nx, ny, opt, clevel, nlevel, 0, 0, NULL, NULL );
 }
@@ -903,9 +903,9 @@ c_plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
 
 void
 c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
-            PLINT nx, PLINT ny, PLINT opt,
-            PLFLT *clevel, PLINT nlevel,
-            PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
+    PLINT nx, PLINT ny, PLINT opt,
+    PLFLT *clevel, PLINT nlevel,
+    PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT init, i, ix, iy, color, width;
@@ -1155,7 +1155,7 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
         if (( ctmp =
                   (PLFLT *) malloc((size_t) ( 2 *
                                               MAX( nx,
-                                                   ny ) *
+                                                  ny ) *
                                               sizeof ( PLFLT )))) == NULL )
         {
             plexit( "c_plot3dcl: Insufficient memory" );
@@ -1184,7 +1184,24 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
     {
         if ( opt == DRAW_LINEY )
             plt3zz( 1,
-                    ny,
+                ny,
+                1,
+                -1,
+                -opt,
+                &init,
+                x,
+                y,
+                z,
+                nx,
+                ny,
+                utmp,
+                vtmp,
+                ctmp );
+        else
+        {
+            for ( iy = 2; iy <= ny; iy++ )
+                plt3zz( 1,
+                    iy,
                     1,
                     -1,
                     -opt,
@@ -1197,23 +1214,6 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                     utmp,
                     vtmp,
                     ctmp );
-        else
-        {
-            for ( iy = 2; iy <= ny; iy++ )
-                plt3zz( 1,
-                        iy,
-                        1,
-                        -1,
-                        -opt,
-                        &init,
-                        x,
-                        y,
-                        z,
-                        nx,
-                        ny,
-                        utmp,
-                        vtmp,
-                        ctmp );
         }
         if ( opt == DRAW_LINEX )
             plt3zz( 1, ny, 1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
@@ -1221,19 +1221,19 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
         {
             for ( ix = 1; ix <= nx - 1; ix++ )
                 plt3zz( ix,
-                        ny,
-                        1,
-                        -1,
-                        opt,
-                        &init,
-                        x,
-                        y,
-                        z,
-                        nx,
-                        ny,
-                        utmp,
-                        vtmp,
-                        ctmp );
+                    ny,
+                    1,
+                    -1,
+                    opt,
+                    &init,
+                    x,
+                    y,
+                    z,
+                    nx,
+                    ny,
+                    utmp,
+                    vtmp,
+                    ctmp );
         }
     }
 
@@ -1241,6 +1241,23 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
     {
         if ( opt == DRAW_LINEX )
             plt3zz( nx,
+                ny,
+                -1,
+                -1,
+                opt,
+                &init,
+                x,
+                y,
+                z,
+                nx,
+                ny,
+                utmp,
+                vtmp,
+                ctmp );
+        else
+        {
+            for ( ix = 2; ix <= nx; ix++ )
+                plt3zz( ix,
                     ny,
                     -1,
                     -1,
@@ -1254,27 +1271,27 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                     utmp,
                     vtmp,
                     ctmp );
-        else
-        {
-            for ( ix = 2; ix <= nx; ix++ )
-                plt3zz( ix,
-                        ny,
-                        -1,
-                        -1,
-                        opt,
-                        &init,
-                        x,
-                        y,
-                        z,
-                        nx,
-                        ny,
-                        utmp,
-                        vtmp,
-                        ctmp );
         }
         if ( opt == DRAW_LINEY )
             plt3zz( nx,
-                    ny,
+                ny,
+                -1,
+                -1,
+                -opt,
+                &init,
+                x,
+                y,
+                z,
+                nx,
+                ny,
+                utmp,
+                vtmp,
+                ctmp );
+        else
+        {
+            for ( iy = ny; iy >= 2; iy-- )
+                plt3zz( nx,
+                    iy,
                     -1,
                     -1,
                     -opt,
@@ -1287,23 +1304,6 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                     utmp,
                     vtmp,
                     ctmp );
-        else
-        {
-            for ( iy = ny; iy >= 2; iy-- )
-                plt3zz( nx,
-                        iy,
-                        -1,
-                        -1,
-                        -opt,
-                        &init,
-                        x,
-                        y,
-                        z,
-                        nx,
-                        ny,
-                        utmp,
-                        vtmp,
-                        ctmp );
         }
     }
 
@@ -1311,7 +1311,24 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
     {
         if ( opt == DRAW_LINEY )
             plt3zz( nx,
-                    1,
+                1,
+                -1,
+                1,
+                -opt,
+                &init,
+                x,
+                y,
+                z,
+                nx,
+                ny,
+                utmp,
+                vtmp,
+                ctmp );
+        else
+        {
+            for ( iy = ny - 1; iy >= 1; iy-- )
+                plt3zz( nx,
+                    iy,
                     -1,
                     1,
                     -opt,
@@ -1324,23 +1341,6 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                     utmp,
                     vtmp,
                     ctmp );
-        else
-        {
-            for ( iy = ny - 1; iy >= 1; iy-- )
-                plt3zz( nx,
-                        iy,
-                        -1,
-                        1,
-                        -opt,
-                        &init,
-                        x,
-                        y,
-                        z,
-                        nx,
-                        ny,
-                        utmp,
-                        vtmp,
-                        ctmp );
         }
         if ( opt == DRAW_LINEX )
             plt3zz( nx, 1, -1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
@@ -1348,19 +1348,19 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
         {
             for ( ix = nx; ix >= 2; ix-- )
                 plt3zz( ix,
-                        1,
-                        -1,
-                        1,
-                        opt,
-                        &init,
-                        x,
-                        y,
-                        z,
-                        nx,
-                        ny,
-                        utmp,
-                        vtmp,
-                        ctmp );
+                    1,
+                    -1,
+                    1,
+                    opt,
+                    &init,
+                    x,
+                    y,
+                    z,
+                    nx,
+                    ny,
+                    utmp,
+                    vtmp,
+                    ctmp );
         }
     }
 
@@ -1372,19 +1372,19 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
         {
             for ( ix = nx - 1; ix >= 1; ix-- )
                 plt3zz( ix,
-                        1,
-                        1,
-                        1,
-                        opt,
-                        &init,
-                        x,
-                        y,
-                        z,
-                        nx,
-                        ny,
-                        utmp,
-                        vtmp,
-                        ctmp );
+                    1,
+                    1,
+                    1,
+                    opt,
+                    &init,
+                    x,
+                    y,
+                    z,
+                    nx,
+                    ny,
+                    utmp,
+                    vtmp,
+                    ctmp );
         }
         if ( opt == DRAW_LINEY )
             plt3zz( 1, 1, 1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
@@ -1392,19 +1392,19 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
         {
             for ( iy = 1; iy <= ny - 1; iy++ )
                 plt3zz( 1,
-                        iy,
-                        1,
-                        1,
-                        -opt,
-                        &init,
-                        x,
-                        y,
-                        z,
-                        nx,
-                        ny,
-                        utmp,
-                        vtmp,
-                        ctmp );
+                    iy,
+                    1,
+                    1,
+                    -opt,
+                    &init,
+                    x,
+                    y,
+                    z,
+                    nx,
+                    ny,
+                    utmp,
+                    vtmp,
+                    ctmp );
         }
     }
 
@@ -1447,7 +1447,7 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
 
         /* Fill cont structure with contours. */
         cont_store( zstore, nx, ny, 1, nx, 1, ny,
-                    clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
+            clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
 
         /* Free the 2D input arrays to cont_store since not needed any more. */
         plFree2dGrid( zstore, nx, ny );
@@ -1468,11 +1468,11 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                     np = cline->npts;
                     if ((( uu =
                                (PLINT *) realloc( uu, np *
-                                                  sizeof ( PLINT ))) ==
+                                   sizeof ( PLINT ))) ==
                          NULL ) ||
                         (( vv =
                                (PLINT *) realloc( vv, np *
-                                                  sizeof ( PLINT ))) == NULL ))
+                                   sizeof ( PLINT ))) == NULL ))
                     {
                         plexit( "c_plot3dcl: Insufficient memory" );
                     }
@@ -1489,15 +1489,15 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                         plcol1(( clev->level - fc_minz ) / ( fc_maxz - fc_minz ));
                         cx =
                             plP_wcpcx( plP_w3wcx( cline->x[i], cline->y[i],
-                                                  plsc->ranmi ));
+                                    plsc->ranmi ));
                         for ( j = i; j < cline->npts; j++ ) /* convert to 2D coordinates */
                         {
                             uu[j] =
                                 plP_wcpcx( plP_w3wcx( cline->x[j], cline->y[j],
-                                                      plsc->ranmi ));
+                                        plsc->ranmi ));
                             vv[j] =
                                 plP_wcpcy( plP_w3wcy( cline->x[j], cline->y[j],
-                                                      plsc->ranmi ));
+                                        plsc->ranmi ));
                             if ( uu[j] < cx ) /* find turn back point */
                                 break;
                             else
@@ -1512,8 +1512,8 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                             {
                                 uu[i] =
                                     plP_wcpcx( plP_w3wcx( cline->x[i],
-                                                          cline->y[i],
-                                                          plsc->ranmi ));
+                                            cline->y[i],
+                                            plsc->ranmi ));
                                 if ( uu[i] > cx )
                                     break;
                                 else
@@ -1538,18 +1538,18 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                             {
                                 uu[j] =
                                     plP_wcpcx( plP_w3wcx( cline->x[j],
-                                                          cline->y[j],
-                                                          plsc->ranmi ));
+                                            cline->y[j],
+                                            plsc->ranmi ));
                                 vv[j] =
                                     plP_wcpcy( plP_w3wcy( cline->x[j],
-                                                          cline->y[j],
-                                                          plsc->ranmi ));
+                                            cline->y[j],
+                                            plsc->ranmi ));
                             }
                             plnxtv( &uu[start],
-                                    &vv[start],
-                                    NULL,
-                                    end - start + 1,
-                                    0 );                              /* and plot it */
+                                &vv[start],
+                                NULL,
+                                end - start + 1,
+                                0 );                                  /* and plot it */
 
                             cline->x[end] = cline->x[start];
                             cline->y[end] = cline->y[start];
@@ -1619,9 +1619,9 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
 
 static void
 plxyindexlimits( PLINT instart, PLINT inn,
-                 PLINT *inarray_min, PLINT *inarray_max,
-                 PLINT *outstart, PLINT *outn, PLINT outnmax,
-                 PLINT *outarray_min, PLINT *outarray_max )
+    PLINT *inarray_min, PLINT *inarray_max,
+    PLINT *outstart, PLINT *outn, PLINT outnmax,
+    PLINT *outarray_min, PLINT *outarray_max )
 {
     PLINT i, j;
     if ( inn < 0 )
@@ -1766,8 +1766,8 @@ plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z )
 
 static void
 plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
-        PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-        PLINT *u, PLINT *v, PLFLT* c )
+    PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+    PLINT *u, PLINT *v, PLFLT* c )
 {
     PLINT n = 0;
     PLFLT x2d, y2d;
@@ -2149,7 +2149,7 @@ plnxtvhi( PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init )
         {
             newhiview =
                 (PLINT *) realloc((void *) newhiview,
-                                  (size_t) ( newhisize * sizeof ( PLINT )));
+                    (size_t) ( newhisize * sizeof ( PLINT )));
         }
         else
         {
@@ -2470,7 +2470,7 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
         {
             newloview =
                 (PLINT *) realloc((void *) newloview,
-                                  (size_t) ( newlosize * sizeof ( PLINT )));
+                    (size_t) ( newlosize * sizeof ( PLINT )));
         }
         else
         {
@@ -2696,7 +2696,7 @@ savehipoint( PLINT px, PLINT py )
     {
         newhisize += 2 * BINC;
         newhiview  = (PLINT *) realloc((void *) newhiview,
-                                       (size_t) ( newhisize * sizeof ( PLINT )));
+            (size_t) ( newhisize * sizeof ( PLINT )));
         if ( !newhiview )
             myexit( "savehipoint: Out of memory." );
     }
@@ -2717,7 +2717,7 @@ savelopoint( PLINT px, PLINT py )
     {
         newlosize += 2 * BINC;
         newloview  = (PLINT *) realloc((void *) newloview,
-                                       (size_t) ( newlosize * sizeof ( PLINT )));
+            (size_t) ( newlosize * sizeof ( PLINT )));
         if ( !newloview )
             myexit( "savelopoint: Out of memory." );
     }
@@ -2843,7 +2843,7 @@ plabv( PLINT px, PLINT py, PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2 )
 
 static void
 pl3cut( PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
-        PLINT su1, PLINT sv1, PLINT su2, PLINT sv2, PLINT *cx, PLINT *cy )
+    PLINT su1, PLINT sv1, PLINT su2, PLINT sv2, PLINT *cx, PLINT *cy )
 {
     PLINT x21, y21, u21, v21, yv1, xu1, a, b;
     double fa, fb;
@@ -2896,9 +2896,9 @@ pl3cut( PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
 
 void
 plRotationShear( PLFLT *xFormMatrix,
-                 PLFLT *rotation,
-                 PLFLT *shear,
-                 PLFLT *stride )
+    PLFLT *rotation,
+    PLFLT *shear,
+    PLFLT *stride )
 {
     *stride = sqrt(
         xFormMatrix[0] * xFormMatrix[0] + xFormMatrix[2] * xFormMatrix[2] );
@@ -2910,7 +2910,7 @@ plRotationShear( PLFLT *xFormMatrix,
     }
 
     *shear = -asin( xFormMatrix[0] * xFormMatrix[1] +
-                    xFormMatrix[2] * xFormMatrix[3] );
+        xFormMatrix[2] * xFormMatrix[3] );
 
     /* Compute the cross product of the vectors [1,0] and [0,1] to
      * determine if we need to make a "quadrant 3,4" adjustment

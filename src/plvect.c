@@ -106,7 +106,7 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
     if ( plsc->arrow_fill )
     {
         plP_plfclp( a_x, a_y, plsc->arrow_npts, plsc->clpxmi, plsc->clpxma,
-                    plsc->clpymi, plsc->clpyma, plP_fill );
+            plsc->clpymi, plsc->clpyma, plP_fill );
     }
 
     free((void *) a_x );
@@ -120,10 +120,10 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
  * and vector transformations
  */
 void plfvect( PLFLT ( *plf2eval )( PLINT, PLINT, PLPointer ),
-              PLPointer f2eval_data1, PLPointer f2eval_data2,
-              PLINT nx, PLINT ny, PLFLT scale,
-              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-              PLPointer pltr_data )
+    PLPointer f2eval_data1, PLPointer f2eval_data2,
+    PLINT nx, PLINT ny, PLFLT scale,
+    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+    PLPointer pltr_data )
 {
     PLINT i, j, i1, j1;
     PLFLT **u, **v, **x, **y;
@@ -216,8 +216,8 @@ void plfvect( PLFLT ( *plf2eval )( PLINT, PLINT, PLPointer ),
 
 void
 c_plvect( PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
-          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-          PLPointer pltr_data )
+    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+    PLPointer pltr_data )
 {
     PLfGrid2 grid1, grid2;
 
@@ -225,5 +225,5 @@ c_plvect( PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
     grid2.f = v;
 
     plfvect( plf2eval2, ( PLPointer ) & grid1, ( PLPointer ) & grid2,
-             nx, ny, scale, pltr, pltr_data );
+        nx, ny, scale, pltr, pltr_data );
 }

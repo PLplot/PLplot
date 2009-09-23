@@ -274,7 +274,7 @@ c_pllsty( PLINT lin )
     }
 
     plstyl( line[lin - 1].nels,
-            &line[lin - 1].mark[0], &line[lin - 1].space[0] );
+        &line[lin - 1].mark[0], &line[lin - 1].space[0] );
 }
 
 /*----------------------------------------------------------------------*\
@@ -341,7 +341,7 @@ c_plpsty( PLINT patt )
     if ( patt > 0 )
     {
         spat( &pattern[patt - 1].inc[0], &pattern[patt - 1].del[0],
-              pattern[patt - 1].nlines );
+            pattern[patt - 1].nlines );
     }
 }
 

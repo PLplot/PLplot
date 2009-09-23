@@ -34,21 +34,21 @@
 
 static void
 plcntr( PLFLT ( *plf2eval )( PLINT, PLINT, PLPointer ),
-        PLPointer plf2eval_data,
-        PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-        PLINT ky, PLINT ly, PLFLT flev, PLINT **ipts,
-        void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-        PLPointer pltr_data );
+    PLPointer plf2eval_data,
+    PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+    PLINT ky, PLINT ly, PLFLT flev, PLINT **ipts,
+    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+    PLPointer pltr_data );
 
 static void
 pldrawcn( PLFLT ( *plf2eval )( PLINT, PLINT, PLPointer ),
-          PLPointer plf2eval_data,
-          PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-          PLINT ky, PLINT ly, PLFLT flev, char *flabel, PLINT kcol, PLINT krow,
-          PLFLT lastx, PLFLT lasty, PLINT startedge,
-          PLINT **ipts, PLFLT *distance, PLINT *lastindex,
-          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-          PLPointer pltr_data );
+    PLPointer plf2eval_data,
+    PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+    PLINT ky, PLINT ly, PLFLT flev, char *flabel, PLINT kcol, PLINT krow,
+    PLFLT lastx, PLFLT lasty, PLINT startedge,
+    PLINT **ipts, PLFLT *distance, PLINT *lastindex,
+    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+    PLPointer pltr_data );
 
 static void
 plfloatlabel( PLFLT value, char *string, PLINT len );
@@ -61,10 +61,10 @@ plP_pcwcy( PLINT y );
 
 static void
 pl_drawcontlabel( PLFLT tpx,
-                  PLFLT tpy,
-                  char *flabel,
-                  PLFLT *distance,
-                  PLINT *lastindex );
+    PLFLT tpy,
+    char *flabel,
+    PLFLT *distance,
+    PLINT *lastindex );
 
 /* Error flag for aborts */
 
@@ -152,12 +152,12 @@ static void
 realloc_line( CONT_LINE *line )
 {
     if ((( line->x = (PLFLT *) realloc( line->x,
-                                        ( line->npts +
-                                          LINE_ITEMS ) * sizeof ( PLFLT ))) ==
+               ( line->npts +
+                 LINE_ITEMS ) * sizeof ( PLFLT ))) ==
          NULL ) ||
         (( line->y = (PLFLT *) realloc( line->y,
-                                        ( line->npts +
-                                          LINE_ITEMS ) * sizeof ( PLFLT ))) ==
+               ( line->npts +
+                 LINE_ITEMS ) * sizeof ( PLFLT ))) ==
          NULL ))
         plexit( "realloc_line: Insufficient memory" );
 }
@@ -259,9 +259,9 @@ cont_mv_store( PLFLT xx, PLFLT yy )
 
 /* small routine to set offset and spacing of contour labels, see desciption above */
 void c_pl_setcontlabelparam( PLFLT offset,
-                             PLFLT size,
-                             PLFLT spacing,
-                             PLINT active )
+    PLFLT size,
+    PLFLT spacing,
+    PLINT active )
 {
     contlabel_offset = offset;
     contlabel_size   = size;
@@ -277,10 +277,10 @@ void c_pl_setcontlabelformat( PLINT lexp, PLINT sigdig )
 }
 
 static void pl_drawcontlabel( PLFLT tpx,
-                              PLFLT tpy,
-                              char *flabel,
-                              PLFLT *distance,
-                              PLINT *lastindex )
+    PLFLT tpy,
+    char *flabel,
+    PLFLT *distance,
+    PLINT *lastindex )
 {
     PLFLT delta_x, delta_y;
     PLINT currx_old, curry_old;
@@ -316,7 +316,7 @@ static void pl_drawcontlabel( PLFLT tpx,
         dev_y = mx * vec_x / my;
 
         scale = sqrt(( mx * mx * dev_x * dev_x + my * my * dev_y * dev_y ) /
-                     ( contlabel_offset * contlabel_offset ));
+            ( contlabel_offset * contlabel_offset ));
 
         off_x = dev_x / scale;
         off_y = dev_y / scale;
@@ -493,15 +493,15 @@ plf2evalr( PLINT ix, PLINT iy, PLPointer plf2eval_data )
 
 void
 cont_store( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-            PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-            PLPointer pltr_data,
-            CONT_LEVEL **contour )
+    PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+    PLPointer pltr_data,
+    CONT_LEVEL **contour )
 {
     cont3d = 1;
 
     plcont( f, nx, ny, kx, lx, ky, ly, clevel, nlevel,
-            pltr, pltr_data );
+        pltr, pltr_data );
 
     *contour = startlev;
     cont3d   = 0;
@@ -516,9 +516,9 @@ cont_store( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 
 void
 c_plcont( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-          PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-          PLPointer pltr_data )
+    PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+    PLPointer pltr_data )
 {
     PLfGrid2 grid;
 
@@ -531,8 +531,8 @@ c_plcont( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 
     grid.f = f;
     plfcont( plf2eval2, ( PLPointer ) & grid,
-             nx, ny, kx, lx, ky, ly, clevel, nlevel,
-             pltr, pltr_data );
+        nx, ny, kx, lx, ky, ly, clevel, nlevel,
+        pltr, pltr_data );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -554,11 +554,11 @@ c_plcont( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 
 void
 plfcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
-         PLPointer f2eval_data,
-         PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-         PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-         void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-         PLPointer pltr_data )
+    PLPointer f2eval_data,
+    PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+    PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+    PLPointer pltr_data )
 {
     PLINT i, **ipts;
 
@@ -589,8 +589,8 @@ plfcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
     for ( i = 0; i < nlevel; i++ )
     {
         plcntr( f2eval, f2eval_data,
-                nx, ny, kx - 1, lx - 1, ky - 1, ly - 1, clevel[i], ipts,
-                pltr, pltr_data );
+            nx, ny, kx - 1, lx - 1, ky - 1, ly - 1, clevel[i], ipts,
+            pltr, pltr_data );
 
         if ( error )
         {
@@ -616,11 +616,11 @@ done:
 
 static void
 plcntr( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
-        PLPointer f2eval_data,
-        PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-        PLINT ky, PLINT ly, PLFLT flev, PLINT **ipts,
-        void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-        PLPointer pltr_data )
+    PLPointer f2eval_data,
+    PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+    PLINT ky, PLINT ly, PLFLT flev, PLINT **ipts,
+    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+    PLPointer pltr_data )
 {
     PLINT kcol, krow, lastindex;
     PLFLT distance;
@@ -654,9 +654,9 @@ plcntr( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
             {
                 /* Follow and draw a contour */
                 pldrawcn( f2eval, f2eval_data,
-                          nx, ny, kx, lx, ky, ly, flev, flabel, kcol, krow,
-                          0.0, 0.0, -2, ipts, &distance, &lastindex,
-                          pltr, pltr_data );
+                    nx, ny, kx, lx, ky, ly, flev, flabel, kcol, krow,
+                    0.0, 0.0, -2, ipts, &distance, &lastindex,
+                    pltr, pltr_data );
 
                 if ( error )
                     return;
@@ -674,13 +674,13 @@ plcntr( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
 static void
 pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
-          PLPointer f2eval_data,
-          PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-          PLINT ky, PLINT ly, PLFLT flev, char *flabel, PLINT kcol, PLINT krow,
-          PLFLT lastx, PLFLT lasty, PLINT startedge, PLINT **ipts,
-          PLFLT *distance, PLINT *lastindex,
-          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-          PLPointer pltr_data )
+    PLPointer f2eval_data,
+    PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+    PLINT ky, PLINT ly, PLFLT flev, char *flabel, PLINT kcol, PLINT krow,
+    PLFLT lastx, PLFLT lasty, PLINT startedge, PLINT **ipts,
+    PLFLT *distance, PLINT *lastindex,
+    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+    PLPointer pltr_data )
 {
     PLFLT f[4];
     PLFLT px[4], py[4], locx[4], locy[4];
@@ -777,10 +777,10 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                 /* Link to the next point on the contour */
                 if ( contlabel_active )
                     pl_drawcontlabel( locx[num],
-                                      locy[num],
-                                      flabel,
-                                      distance,
-                                      lastindex );
+                        locy[num],
+                        flabel,
+                        distance,
+                        lastindex );
                 else
                     cont_xy_store( locx[num], locy[num] );
                 /* Need to follow contour into next grid box */
@@ -799,11 +799,11 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                         ( ipts[kcolnext][krownext] == 0 ))
                     {
                         pldrawcn( f2eval, f2eval_data,
-                                  nx, ny, kx, lx, ky, ly, flev, flabel,
-                                  kcolnext, krownext,
-                                  locx[num], locy[num], inext, ipts,
-                                  distance, lastindex,
-                                  pltr, pltr_data );
+                            nx, ny, kx, lx, ky, ly, flev, flabel,
+                            kcolnext, krownext,
+                            locx[num], locy[num], inext, ipts,
+                            distance, lastindex,
+                            pltr, pltr_data );
                     }
                 }
                 /* Hard case where contour passes through corner */
@@ -836,11 +836,11 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                         ( ipts[kcolnext][krownext] == 0 ))
                     {
                         pldrawcn( f2eval, f2eval_data,
-                                  nx, ny, kx, lx, ky, ly, flev, flabel,
-                                  kcolnext, krownext,
-                                  locx[num], locy[num], inext, ipts,
-                                  distance, lastindex,
-                                  pltr, pltr_data );
+                            nx, ny, kx, lx, ky, ly, flev, flabel,
+                            kcolnext, krownext,
+                            locx[num], locy[num], inext, ipts,
+                            distance, lastindex,
+                            pltr, pltr_data );
                     }
                 }
                 if ( first == 1 )

@@ -88,7 +88,7 @@ value( double n1, double n2, double hue );
 
 static void
 cmap0_palette_read( const char *filename,
-                    int *number_colors, int **r, int **g, int **b, double **a );
+    int *number_colors, int **r, int **g, int **b, double **a );
 /* An additional hardwired location for lib files. */
 /* I have no plans to change these again, ever. */
 
@@ -134,7 +134,7 @@ c_plcol0( PLINT icol0 )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer, BUFFER_SIZE, "plcol0: Invalid color map entry: %d",
-                  (int) icol0 );
+            (int) icol0 );
         plabort( buffer );
         return;
     }
@@ -169,7 +169,7 @@ c_plcol1( PLFLT col1 )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer, BUFFER_SIZE, "plcol1: Invalid color map position: %f",
-                  (PLFLT) col1 );
+            (PLFLT) col1 );
         plabort( buffer );
         return;
     }
@@ -251,7 +251,7 @@ c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer, BUFFER_SIZE, "plscol0: Illegal color table value: %d",
-                  (int) icol0 );
+            (int) icol0 );
         plabort( buffer );
         return;
     }
@@ -259,7 +259,7 @@ c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer, BUFFER_SIZE, "plscol0: Invalid RGB color: %d, %d, %d",
-                  (int) r, (int) g, (int) b );
+            (int) r, (int) g, (int) b );
         plabort( buffer );
         return;
     }
@@ -283,9 +283,9 @@ c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer,
-                  BUFFER_SIZE,
-                  "plscol0a: Illegal color table value: %d",
-                  (int) icol0 );
+            BUFFER_SIZE,
+            "plscol0a: Illegal color table value: %d",
+            (int) icol0 );
         plabort( buffer );
         return;
     }
@@ -295,12 +295,12 @@ c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer,
-                  BUFFER_SIZE,
-                  "plscol0a: Invalid RGB color: %d, %d, %d, %f",
-                  (int) r,
-                  (int) g,
-                  (int) b,
-                  (double) a );
+            BUFFER_SIZE,
+            "plscol0a: Invalid RGB color: %d, %d, %d, %f",
+            (int) r,
+            (int) g,
+            (int) b,
+            (double) a );
         plabort( buffer );
         return;
     }
@@ -335,9 +335,9 @@ c_plgcol0( PLINT icol0, PLINT *r, PLINT *g, PLINT *b )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer,
-                  BUFFER_SIZE,
-                  "plgcol0: Invalid color index: %d",
-                  (int) icol0 );
+            BUFFER_SIZE,
+            "plgcol0: Invalid color index: %d",
+            (int) icol0 );
         plabort( buffer );
         return;
     }
@@ -371,9 +371,9 @@ c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer,
-                  BUFFER_SIZE,
-                  "plgcol0: Invalid color index: %d",
-                  (int) icol0 );
+            BUFFER_SIZE,
+            "plgcol0: Invalid color index: %d",
+            (int) icol0 );
         plabort( buffer );
         return;
     }
@@ -408,11 +408,11 @@ c_plscmap0( PLINT *r, PLINT *g, PLINT *b, PLINT ncol0 )
         {
             char buffer[BUFFER_SIZE];
             snprintf( buffer,
-                      BUFFER_SIZE,
-                      "plscmap0: Invalid RGB color: %d, %d, %d",
-                      (int) r[i],
-                      (int) g[i],
-                      (int) b[i] );
+                BUFFER_SIZE,
+                "plscmap0: Invalid RGB color: %d, %d, %d",
+                (int) r[i],
+                (int) g[i],
+                (int) b[i] );
             plabort( buffer );
             return;
         }
@@ -450,12 +450,12 @@ c_plscmap0a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0 )
         {
             char buffer[BUFFER_SIZE];
             snprintf( buffer,
-                      BUFFER_SIZE,
-                      "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
-                      (int) r[i],
-                      (int) g[i],
-                      (int) b[i],
-                      (double) a[i] );
+                BUFFER_SIZE,
+                "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
+                (int) r[i],
+                (int) g[i],
+                (int) b[i],
+                (double) a[i] );
             plabort( buffer );
             return;
         }
@@ -492,11 +492,11 @@ c_plscmap1( PLINT *r, PLINT *g, PLINT *b, PLINT ncol1 )
         {
             char buffer[BUFFER_SIZE];
             snprintf( buffer,
-                      BUFFER_SIZE,
-                      "plscmap1: Invalid RGB color: %d, %d, %d",
-                      (int) r[i],
-                      (int) g[i],
-                      (int) b[i] );
+                BUFFER_SIZE,
+                "plscmap1: Invalid RGB color: %d, %d, %d",
+                (int) r[i],
+                (int) g[i],
+                (int) b[i] );
             plabort( buffer );
             return;
         }
@@ -533,12 +533,12 @@ c_plscmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 )
         {
             char buffer[BUFFER_SIZE];
             snprintf( buffer,
-                      BUFFER_SIZE,
-                      "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
-                      (int) r[i],
-                      (int) g[i],
-                      (int) b[i],
-                      (double) a[i] );
+                BUFFER_SIZE,
+                "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
+                (int) r[i],
+                (int) g[i],
+                (int) b[i],
+                (double) a[i] );
             plabort( buffer );
             return;
         }
@@ -605,7 +605,7 @@ c_plscmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 )
 
 void
 c_plscmap1l( PLINT itype, PLINT npts, PLFLT *pos,
-             PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev )
+    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev )
 {
     int   n;
     PLFLT h, l, s, r, g, b;
@@ -679,7 +679,7 @@ c_plscmap1l( PLINT itype, PLINT npts, PLFLT *pos,
 
 void
 c_plscmap1la( PLINT itype, PLINT npts, PLFLT *pos,
-              PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLINT *rev )
+    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLINT *rev )
 {
     int   n;
     PLFLT h, l, s, r, g, b;
@@ -915,7 +915,7 @@ plcmap0_def( int imin, int imax )
         cmap0_palette_read( "", &number_colors, &r, &g, &b, &a );
         for ( i = imin; i <= MIN(( number_colors - 1 ), imax ); i++ )
             color_def( i, r[i], g[i], b[i], a[i],
-                       "colors defined by default cmap0 palette file" );
+                "colors defined by default cmap0 palette file" );
         free( r );
         free( g );
         free( b );
@@ -930,7 +930,7 @@ plcmap0_def( int imin, int imax )
      * to opaque red as a warning. */
     for ( i = MAX( number_colors, imin ); i <= imax; i++ )
         color_def( i, 255, 0, 0, 1.0,
-                   "opaque red colour to mark not defined by palette file" );
+            "opaque red colour to mark not defined by palette file" );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1279,7 +1279,7 @@ c_plrgbhls( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s )
 
 void
 cmap0_palette_read( const char *filename,
-                    int *number_colors, int **r, int **g, int **b, double **a )
+    int *number_colors, int **r, int **g, int **b, double **a )
 {
     int  i, err = 0;
     char color_info[30];
@@ -1293,9 +1293,9 @@ cmap0_palette_read( const char *filename,
         if ( fp == NULL )
         {
             snprintf( msgbuf,
-                      1024,
-                      "Unable to open cmap0 file %s\n",
-                      PL_DEFAULT_CMAP0_FILE );
+                1024,
+                "Unable to open cmap0 file %s\n",
+                PL_DEFAULT_CMAP0_FILE );
             plwarn( msgbuf );
             err = 1;
         }
@@ -1343,8 +1343,8 @@ cmap0_palette_read( const char *filename,
             if ( strlen( color_info ) == 7 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x",
-                             (int *) ( *r + i ), (int *) ( *g + i ),
-                             (int *) ( *b + i )) != 3 )
+                         (int *) ( *r + i ), (int *) ( *g + i ),
+                         (int *) ( *b + i )) != 3 )
                 {
                     err = 1;
                     break;
@@ -1354,9 +1354,9 @@ cmap0_palette_read( const char *filename,
             else if ( strlen( color_info ) > 9 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x %lf",
-                             (int *) ( *r + i ), (int *) ( *g + i ),
-                             (int *) ( *b + i ),
-                             (double *) ( *a + i )) != 4 )
+                         (int *) ( *r + i ), (int *) ( *g + i ),
+                         (int *) ( *b + i ),
+                         (double *) ( *a + i )) != 4 )
                 {
                     err = 1;
                     break;
@@ -1387,9 +1387,9 @@ cmap0_palette_read( const char *filename,
         if ( err )
         {
             snprintf( msgbuf,
-                      1024,
-                      "Unrecognized cmap0 format data line.  Line is %s\n",
-                      color_info );
+                1024,
+                "Unrecognized cmap0 format data line.  Line is %s\n",
+                color_info );
             plwarn( msgbuf );
             free( *r );
             free( *g );
@@ -1518,9 +1518,9 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         if ( fp == NULL )
         {
             snprintf( msgbuf,
-                      1024,
-                      "Unable to open cmap1 .pal file %s\n",
-                      PL_DEFAULT_CMAP1_FILE );
+                1024,
+                "Unable to open cmap1 .pal file %s\n",
+                PL_DEFAULT_CMAP1_FILE );
             plwarn( msgbuf );
             goto finish;
         }
@@ -1531,9 +1531,9 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         if ( fp == NULL )
         {
             snprintf( msgbuf,
-                      1024,
-                      "Unable to open cmap1 .pal file %s\n",
-                      filename );
+                1024,
+                "Unable to open cmap1 .pal file %s\n",
+                filename );
             plwarn( msgbuf );
             goto finish;
         }
@@ -1550,9 +1550,9 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         else
         {
             snprintf( msgbuf,
-                      1024,
-                      "Invalid color space %s - assuming RGB\n",
-                      &color_info[3] );
+                1024,
+                "Invalid color space %s - assuming RGB\n",
+                &color_info[3] );
             plwarn( msgbuf );
             rgb = TRUE;
         }
@@ -1562,9 +1562,9 @@ c_plspal1( const char *filename, PLBOOL interpolate )
     if ( sscanf( color_info, "%d\n", &number_colors ) != 1 || number_colors < 2 )
     {
         snprintf( msgbuf,
-                  1024,
-                  "Unrecognized cmap1 format (wrong number of colors) %s\n",
-                  color_info );
+            1024,
+            "Unrecognized cmap1 format (wrong number of colors) %s\n",
+            color_info );
         plwarn( msgbuf );
         fclose( fp );
         goto finish;
@@ -1590,12 +1590,12 @@ c_plspal1( const char *filename, PLBOOL interpolate )
             /* Ensure string is null terminated if > 160 characters */
             color_info[159] = '\0';
             return_sscanf   = sscanf( color_info,
-                                      "#%2x%2x%2x %d %d",
-                                      &r_i,
-                                      &g_i,
-                                      &b_i,
-                                      &pos_i,
-                                      &rev_i );
+                "#%2x%2x%2x %d %d",
+                &r_i,
+                &g_i,
+                &b_i,
+                &pos_i,
+                &rev_i );
             if ( return_sscanf < 4 ||
                  ( return_sscanf_old != 0 && return_sscanf != return_sscanf_old ))
             {
@@ -1640,7 +1640,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         {
             fgets( color_info, 160, fp );
             if ( sscanf( color_info, "%lf %lf %lf %lf %lf %d", &pos_d, &r_d,
-                         &g_d, &b_d, &a_d, &rev_i ) != 6 )
+                     &g_d, &b_d, &a_d, &rev_i ) != 6 )
             {
                 snprintf(
                     msgbuf,
@@ -2187,7 +2187,7 @@ plFindName( char *p )
             strncpy( cp, buf, n );
             cp[n] = '\0';
             pldebug( "plFindName",
-                     "Link is relative: %s\n\tTotal path:%s\n", cp, p );
+                "Link is relative: %s\n\tTotal path:%s\n", cp, p );
         }
     }
 
@@ -2231,9 +2231,9 @@ plFindName( char *p )
 
 void
 plGetName( const char *dir,
-           const char *subdir,
-           const char *filename,
-           char **filespec )
+    const char *subdir,
+    const char *filename,
+    char **filespec )
 {
     int lfilespec;
 
@@ -2259,11 +2259,11 @@ plGetName( const char *dir,
         strcat( *filespec, filename );
     }
     pldebug( "plGetName",
-             "Length of full pathname of file to be found is %d\n",
-             lfilespec );
+        "Length of full pathname of file to be found is %d\n",
+        lfilespec );
     pldebug( "plGetName",
-             "Full pathname of file to be found is %s\n",
-             *filespec );
+        "Full pathname of file to be found is %s\n",
+        *filespec );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2549,7 +2549,7 @@ plGetFam( PLStream *pls )
              * is changed. */
             plP_gpixmm( &xpmm_loc, &ypmm_loc );
             plP_setpxl( xpmm_loc * plsc->caspfactor,
-                        ypmm_loc / plsc->caspfactor );
+                ypmm_loc / plsc->caspfactor );
             return;
         }
     }
@@ -2566,7 +2566,7 @@ plGetFam( PLStream *pls )
 
 void
 plRotPhy( PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
-          PLINT *px, PLINT *py )
+    PLINT *px, PLINT *py )
 {
     int x, y;
 

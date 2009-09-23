@@ -268,9 +268,9 @@ plbuf_image( PLStream *pls, IMG_DT *img_dt )
     wr_data( pls, pls->dev_ix, sizeof ( short ) * npts );
     wr_data( pls, pls->dev_iy, sizeof ( short ) * npts );
     wr_data( pls,
-             pls->dev_z,
-             sizeof ( unsigned short ) *
-             ( pls->dev_nptsX - 1 ) * ( pls->dev_nptsY - 1 ));
+        pls->dev_z,
+        sizeof ( unsigned short ) *
+        ( pls->dev_nptsX - 1 ) * ( pls->dev_nptsY - 1 ));
 }
 
 /*--------------------------------------------------------------------------*\
@@ -311,8 +311,8 @@ plbuf_text( PLStream *pls, EscText *text )
     wr_data( pls, &text->unicode_array_len, sizeof ( PLINT ));
     if ( text->unicode_array_len )
         wr_data( pls,
-                 text->unicode_array,
-                 sizeof ( PLUNICODE ) * text->unicode_array_len );
+            text->unicode_array,
+            sizeof ( PLUNICODE ) * text->unicode_array_len );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -579,9 +579,9 @@ rdbuf_state( PLStream *pls )
             {
                 char buffer[256];
                 snprintf( buffer,
-                          256,
-                          "rdbuf_state: Invalid color map entry: %d",
-                          (int) icol0 );
+                    256,
+                    "rdbuf_state: Invalid color map entry: %d",
+                    (int) icol0 );
                 plabort( buffer );
                 return;
             }
@@ -758,15 +758,15 @@ rdbuf_image( PLStream *pls )
         (( dev_z =
                (unsigned short *) malloc(( nptsX -
                                            1 ) *
-                                         ( nptsY -
-                                           1 ) * sizeof ( unsigned short ))) ==
+                   ( nptsY -
+                     1 ) * sizeof ( unsigned short ))) ==
          NULL ))
         plexit( "rdbuf_image: Insufficient memory" );
 
     rd_data( pls, dev_ix, sizeof ( short ) * npts );
     rd_data( pls, dev_iy, sizeof ( short ) * npts );
     rd_data( pls, dev_z, sizeof ( unsigned short ) *
-             ( nptsX - 1 ) * ( nptsY - 1 ));
+        ( nptsX - 1 ) * ( nptsY - 1 ));
 
     /*
      * COMMENTED OUT by Hezekiah Carty
@@ -847,7 +847,7 @@ rdbuf_text( PLStream *pls )
     {
         if (( unicode =
                   (PLUNICODE *) malloc( text.unicode_array_len *
-                                        sizeof ( PLUNICODE )))
+                      sizeof ( PLUNICODE )))
             == NULL )
             plexit( "rdbuf_text: Insufficient memory" );
 
@@ -1011,9 +1011,9 @@ plbuf_control( PLStream *pls, U_CHAR c )
 
     default:
         pldebug( "plbuf_control",
-                 "Unrecognized command %d, previous %d\n",
-                 c,
-                 c_old );
+            "Unrecognized command %d, previous %d\n",
+            c,
+            c_old );
     }
     c_old = c;
 }
@@ -1087,7 +1087,7 @@ wr_command( PLStream *pls, U_CHAR c )
 
         if ( pls->verbose )
             printf( "Growing buffer to %d KB\n",
-                    (int) ( pls->plbuf_buffer_size / 1024 ));
+                (int) ( pls->plbuf_buffer_size / 1024 ));
         if (( pls->plbuf_buffer =
                   realloc( pls->plbuf_buffer, pls->plbuf_buffer_size )) == NULL )
             plexit( "plbuf wr_data:  Plot buffer grow failed" );
@@ -1208,7 +1208,7 @@ void * plbuf_save( PLStream *pls, void *state )
                 /* Yes, reallocate a larger one */
                 if (( plot_state =
                           (struct _state *) realloc( state,
-                                                     save_size )) == NULL )
+                              save_size )) == NULL )
                 {
                     /* NOTE: If realloc fails, then plot_state ill be NULL.
                      * This will leave the original buffer untouched, thus we
@@ -1276,7 +1276,7 @@ void * plbuf_save( PLStream *pls, void *state )
             while ( count = fread( &tmp, sizeof ( U_CHAR ), 1, pls->plbufFile ))
             {
                 if ( fwrite( &tmp, sizeof ( U_CHAR ), 1,
-                             plot_state->plbufFile ) != count )
+                         plot_state->plbufFile ) != count )
                 {
                     /* Throw a warning since this might be a permissions problem
                      * and we may not want to force an exit
@@ -1302,7 +1302,7 @@ void * plbuf_save( PLStream *pls, void *state )
          * are copying the portion of the plot buffer that is being used
          */
         if ( memcpy( plot_state->plbuf_buffer, pls->plbuf_buffer,
-                     pls->plbuf_top ) == NULL )
+                 pls->plbuf_top ) == NULL )
         {
             /* This should never be NULL */
             plwarn( "plbuf: Got a NULL in memcpy!" );

@@ -108,7 +108,7 @@ pdf_fopen( const char *filename, const char *mode )
                 if ( binary )
                 {
                     Tcl_SetChannelOption( NULL, pdfs->tclChan, "-translation",
-                                          "binary" );
+                        "binary" );
                 }
             }
         }
@@ -263,11 +263,11 @@ pdf_putc( int c, PDFstrm *pdfs )
         if ( pdfs->bp >= pdfs->bufmax )
         {
             pldebug( "pdf_putc",
-                     "Increasing buffer to %d bytes\n", pdfs->bufmax );
+                "Increasing buffer to %d bytes\n", pdfs->bufmax );
             pdfs->bufmax += 512;
             if (( pdfs->buffer =
                       (U_CHAR *) realloc((void *) pdfs->buffer,
-                                         pdfs->bufmax )) == NULL )
+                          pdfs->bufmax )) == NULL )
             {
                 plexit( "pdf_putc: Insufficient memory" );
             }
@@ -384,11 +384,11 @@ pdf_wrx( const U_CHAR *x, long nitems, PDFstrm *pdfs )
             if ( pdfs->bp >= pdfs->bufmax )
             {
                 pldebug( "pdf_wrx",
-                         "Increasing buffer to %d bytes\n", pdfs->bufmax );
+                    "Increasing buffer to %d bytes\n", pdfs->bufmax );
                 pdfs->bufmax += 512;
                 if (( pdfs->buffer = (U_CHAR *)
                                      realloc((void *) ( pdfs->buffer ),
-                                             pdfs->bufmax )) == NULL )
+                          pdfs->bufmax )) == NULL )
                 {
                     plexit( "pdf_wrx: Insufficient memory" );
                 }

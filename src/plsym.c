@@ -65,8 +65,8 @@ pldeco( short int **sym, PLINT *length, const char *text );
 
 static void
 plchar( signed char *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
-        PLINT refx, PLINT refy, PLFLT scale, PLFLT xpmm, PLFLT ypmm,
-        PLFLT *p_xorg, PLFLT *p_yorg, PLFLT *p_width );
+    PLINT refx, PLINT refy, PLFLT scale, PLFLT xpmm, PLFLT ypmm,
+    PLFLT *p_xorg, PLFLT *p_yorg, PLFLT *p_width );
 
 static PLINT
 plcvec( PLINT ch, signed char **xygr );
@@ -450,7 +450,7 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel )
 
 void
 c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
-          const char *text )
+    const char *text )
 {
     PLINT clpxmi, clpxma, clpymi, clpyma;
     PLINT vert, refx, refy, x, y;
@@ -478,7 +478,7 @@ c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
         dispy = -disp;
     }
     else if ( plP_stindex( side,
-                           "TV" ) != -1 || plP_stindex( side, "tv" ) != -1 )
+                  "TV" ) != -1 || plP_stindex( side, "tv" ) != -1 )
     {
         vert  = 1;
         xdv   = plsc->vpdxmi + ( plsc->vpdxma - plsc->vpdxmi ) * pos;
@@ -503,7 +503,7 @@ c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
         dispy = disp;
     }
     else if ( plP_stindex( side,
-                           "LV" ) != -1 || plP_stindex( side, "lv" ) != -1 )
+                  "LV" ) != -1 || plP_stindex( side, "lv" ) != -1 )
     {
         vert  = 0;
         xdv   = plsc->vpdxmi;
@@ -512,7 +512,7 @@ c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
         dispy = 0;
     }
     else if ( plP_stindex( side,
-                           "RV" ) != -1 || plP_stindex( side, "rv" ) != -1 )
+                  "RV" ) != -1 || plP_stindex( side, "rv" ) != -1 )
     {
         vert  = 0;
         xdv   = plsc->vpdxma;
@@ -705,7 +705,7 @@ plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string )
         {
             if ( plcvec( ch, &vxygrid ))
                 plchar( vxygrid, xform, base, oline, uline, refx, refy, scale,
-                        plsc->xpmm, plsc->ypmm, &xorg, &yorg, &width );
+                    plsc->xpmm, plsc->ypmm, &xorg, &yorg, &width );
         }
     }
     plsc->nms = style;
@@ -719,18 +719,18 @@ plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string )
 
 static void
 plchar( signed char *vxygrid,
-        PLFLT *xform,
-        PLINT base,
-        PLINT oline,
-        PLINT uline,
-        PLINT refx,
-        PLINT refy,
-        PLFLT scale,
-        PLFLT xpmm,
-        PLFLT ypmm,
-        PLFLT *p_xorg,
-        PLFLT *p_yorg,
-        PLFLT *p_width )
+    PLFLT *xform,
+    PLINT base,
+    PLINT oline,
+    PLINT uline,
+    PLINT refx,
+    PLINT refy,
+    PLFLT scale,
+    PLFLT xpmm,
+    PLFLT ypmm,
+    PLFLT *p_xorg,
+    PLFLT *p_yorg,
+    PLFLT *p_width )
 {
     PLINT xbase, ybase, ydisp, lx, ly, cx, cy;
     PLINT k, penup;
@@ -1005,8 +1005,8 @@ pldeco( short int **symbol, PLINT *length, const char *text )
             {
                 test  = text[j++];
                 ifont = 1 + plP_strpos( font_types,
-                                        isupper( test ) ? tolower(
-                                            test ) : test );
+                    isupper( test ) ? tolower(
+                        test ) : test );
                 if ( ifont == 0 || ifont > numberfonts )
                     ifont = 1;
             }
@@ -1209,7 +1209,7 @@ plfntld( PLINT fnt )
     pdf_rdx( fntbffr, sizeof ( signed char ) * ( 2 * bffrleng ), pdfs );
 #else
     plio_fread((void *) fntbffr, (size_t) sizeof ( signed char ),
-               (size_t) ( 2 * bffrleng ), pdfs->file );
+        (size_t) ( 2 * bffrleng ), pdfs->file );
 #endif
 
 /* Done */
@@ -1311,7 +1311,7 @@ int plhershey2unicode( int in )
 
 char *
 plP_FCI2FontName( PLUNICODE fci,
-                  const FCI_to_FontName_Table lookup[], const int nlookup )
+    const FCI_to_FontName_Table lookup[], const int nlookup )
 {
     int jlo = -1, jmid, jhi = nlookup;
     while ( jhi - jlo > 1 )
@@ -1373,10 +1373,10 @@ plP_FCI2FontName( PLUNICODE fci,
 
 void
 c_plmtex3( const char *side,
-           PLFLT disp,
-           PLFLT pos,
-           PLFLT just,
-           const char *text )
+    PLFLT disp,
+    PLFLT pos,
+    PLFLT just,
+    const char *text )
 {
     /* local storage */
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
@@ -1526,7 +1526,7 @@ c_plmtex3( const char *side,
             xform[2] = 1.0;
             xform[3] = -sin( theta );
             plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc,
-                      (PLINT) yrefpc, text );
+                (PLINT) yrefpc, text );
         }
 
         /* parallel, rotate & shear by angle */
@@ -1538,7 +1538,7 @@ c_plmtex3( const char *side,
             xform[3] = 1.0;
 
             plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc,
-                      (PLINT) yrefpc, text );
+                (PLINT) yrefpc, text );
         }
     }
 
@@ -1714,7 +1714,7 @@ c_plmtex3( const char *side,
             xform[3] = 1.0;
 
             plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc,
-                      (PLINT) yrefpc, text );
+                (PLINT) yrefpc, text );
         }
 
         else
@@ -1725,7 +1725,7 @@ c_plmtex3( const char *side,
             xform[3] = -sin( theta );
 
             plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc,
-                      (PLINT) yrefpc, text );
+                (PLINT) yrefpc, text );
         }
     }
 }
@@ -1753,7 +1753,7 @@ c_plmtex3( const char *side,
 
 void
 c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
-           PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text )
+    PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text )
 {
     PLFLT xpc, ypc, xrefpc, yrefpc, xdpc, ydpc, xspc, yspc, ld, ls, cp, shift;
     PLFLT x_o, y_o, z_o, x_dx, y_dy, z_dz;
@@ -1846,13 +1846,13 @@ c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
     xform[3] = sin( theta ) * sin( phi ) + cos( theta ) * cos( phi );
 
     plP_text( 0,
-              just,
-              xform,
-              (PLINT) xpc,
-              (PLINT) ypc,
-              (PLINT) xrefpc,
-              (PLINT) yrefpc,
-              text );
+        just,
+        xform,
+        (PLINT) xpc,
+        (PLINT) ypc,
+        (PLINT) xrefpc,
+        (PLINT) yrefpc,
+        text );
 }
 
 /*------------------------------------------------------------------------*\

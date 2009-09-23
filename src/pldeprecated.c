@@ -90,7 +90,7 @@ static PLFLT arrow_y[4] = { 0.0, 0.0, 0.0, 0.20 };
 
 void
 plarrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
-          PLFLT scale, PLFLT dx, PLFLT dy )
+    PLFLT scale, PLFLT dx, PLFLT dy )
 {
     PLFLT  uu, vv;
     PLINT  i, j, npts = 4;
