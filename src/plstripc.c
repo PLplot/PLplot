@@ -112,7 +112,7 @@ c_plstripc( PLINT *id, const char *xspec, const char *yspec,
         stripc->legline[i] = plstrdup( legline[i] );
         stripc->x[i]       = (PLFLT *) malloc(
             (size_t) sizeof ( PLFLT ) * stripc->nptsmax[i] );;
-        stripc->y[i]       = (PLFLT *) malloc(
+        stripc->y[i] = (PLFLT *) malloc(
             (size_t) sizeof ( PLFLT ) * stripc->nptsmax[i] );;
         if ( stripc->x[i] == NULL || stripc->y[i] == NULL )
         {

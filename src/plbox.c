@@ -1613,7 +1613,7 @@ plform( PLINT axis,
         {
             plwarn(
                 "Custom axis labels requested without a labeling function \
-                    - using default."                                                                             );
+                    - using default." );
         }
         if ( ll )
         {

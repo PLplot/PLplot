@@ -762,7 +762,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     }
 
     if ( opt & DRAW_SIDES ) /* the sides look ugly !!! */
-    { /* draw one more row with all the Z's set to zmin */
+    {                       /* draw one more row with all the Z's set to zmin */
         PLFLT zscale, zmin, zmax;
 
         plP_grange( &zscale, &zmin, &zmax );
@@ -1046,7 +1046,8 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                 _z[i][0] = z[ixmin][iymin] *
                            ( 1 -
                              ty0 ) *
-                           ( 1 - tx0 ) + z[ixmin][iymin + 1] * ( 1 - tx0 ) * ty0
+                           ( 1 -
+                             tx0 ) + z[ixmin][iymin + 1] * ( 1 - tx0 ) * ty0
                            + z[ixmin +
                                1][iymin] * tx0 *
                            ( 1 - ty0 ) + z[ixmin + 1][iymin + 1] * tx0 * ty0;

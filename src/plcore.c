@@ -535,16 +535,16 @@ int text2fci( const char *text,
      */
 #define N_TextLookupTable    10
     const TextLookupTable lookup[N_TextLookupTable] = {
-        { "<sans-serif/>", PL_FCI_SANS,       PL_FCI_FAMILY          },
-        { "<serif/>",      PL_FCI_SERIF,      PL_FCI_FAMILY          },
-        { "<monospace/>",  PL_FCI_MONO,       PL_FCI_FAMILY          },
-        { "<script/>",     PL_FCI_SCRIPT,     PL_FCI_FAMILY          },
-        { "<symbol/>",     PL_FCI_SYMBOL,     PL_FCI_FAMILY          },
-        { "<upright/>",    PL_FCI_UPRIGHT,    PL_FCI_STYLE           },
-        { "<italic/>",     PL_FCI_ITALIC,     PL_FCI_STYLE           },
-        { "<oblique/>",    PL_FCI_OBLIQUE,    PL_FCI_STYLE           },
-        { "<medium/>",     PL_FCI_MEDIUM,     PL_FCI_WEIGHT          },
-        { "<bold/>",       PL_FCI_BOLD,       PL_FCI_WEIGHT          }
+        { "<sans-serif/>", PL_FCI_SANS,    PL_FCI_FAMILY },
+        { "<serif/>",      PL_FCI_SERIF,   PL_FCI_FAMILY },
+        { "<monospace/>",  PL_FCI_MONO,    PL_FCI_FAMILY },
+        { "<script/>",     PL_FCI_SCRIPT,  PL_FCI_FAMILY },
+        { "<symbol/>",     PL_FCI_SYMBOL,  PL_FCI_FAMILY },
+        { "<upright/>",    PL_FCI_UPRIGHT, PL_FCI_STYLE  },
+        { "<italic/>",     PL_FCI_ITALIC,  PL_FCI_STYLE  },
+        { "<oblique/>",    PL_FCI_OBLIQUE, PL_FCI_STYLE  },
+        { "<medium/>",     PL_FCI_MEDIUM,  PL_FCI_WEIGHT },
+        { "<bold/>",       PL_FCI_BOLD,    PL_FCI_WEIGHT }
     };
     int                   i, length;
     for ( i = 0; i < N_TextLookupTable; i++ )

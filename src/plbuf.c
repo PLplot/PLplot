@@ -759,7 +759,8 @@ rdbuf_image( PLStream *pls )
                (unsigned short *) malloc(( nptsX -
                                            1 ) *
                                          ( nptsY -
-                                           1 ) * sizeof ( unsigned short ))) == NULL ))
+                                           1 ) * sizeof ( unsigned short ))) ==
+         NULL ))
         plexit( "rdbuf_image: Insufficient memory" );
 
     rd_data( pls, dev_ix, sizeof ( short ) * npts );
