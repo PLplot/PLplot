@@ -125,14 +125,14 @@ procedure x19a is
         -- Function to convert an unbounded string to a fixed-length C string with the 
         -- null terminator somewhere in the middle and spaces after. The result, of type
         -- Label_String_Type, is fixed to a length by C, currently at 41, and is 
-        -- indexed in Ada as 0 .. PLplot_Traditional.Label_String_Length.
+        -- indexed in Ada as 0 .. PLplot_Traditional.Max_Label_String_Length.
         function Unbounded_To_Weird_C
            (Item     : Unbounded_String;
             C_Length : size_t) return Label_String_Type 
         is
             Temp : Unbounded_String;
         begin
-            -- Check length and adjust if necessary. Put_Line doesn't work here.
+            -- Check length and adjust if necessary.
             if Length(Item) >= Integer(C_Length) then
                 Put_Line("*** Warning: Custom label was truncated to" 
                     & Integer'Image(Integer(C_Length)) & " characters. ***");
@@ -140,7 +140,7 @@ procedure x19a is
                 return To_C(To_String(Temp), True);
             else
                return To_C(To_String(Item & ASCII.nul & 
-                    (Label_String_Length - Length(Item)) * " "), False);
+                    (Max_Label_String_Length - Length(Item)) * " "), False);
             end if;
         end Unbounded_To_Weird_C;
 

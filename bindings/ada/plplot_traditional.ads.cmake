@@ -88,7 +88,7 @@ package PLplot_Traditional is
     -- in Custom_Label_Procedure_Pointer_Type, and plslabelfunc (Set_Custom_Label).
     -- This length, 0 .. 40, is hardwired in the PLplot C code; this type will
     -- fail if that length is ever changed.
-    Label_String_Length : Integer renames PLplot_Thin.Label_String_Length;
+    Max_Label_String_Length : Integer renames PLplot_Thin.Max_Label_String_Length;
     subtype Label_String_Type is PLplot_Thin.Label_String_Type;
 
     -- "Rename" callback for custom label functions.
@@ -141,10 +141,12 @@ package PLplot_Traditional is
     type Line_Style_Array_Type is array (1..Max_Lines_For_Multiplot) of Line_Style_Type;
     Default_Line_Style_Array : Line_Style_Array_Type := (1, 1, 1, 1, 1);
     
-    -- Arrays of label strings
+    -- Things for label strings
     Default_Label_String : constant Unbounded_String := To_Unbounded_String("");
     type Label_String_Array_Type is array (1..Max_Lines_For_Multiplot) of Unbounded_String;
     Default_Label_String_Array : Label_String_Array_Type := (others => Default_Label_String);
+ 
+    -- Things for stripcharts
     Maximum_Number_Of_Stripcharts : Integer := 4; -- Limited by PLplot designers.
     type Stripchart_Label_String_Array_Type is array (1 .. Maximum_Number_Of_Stripcharts) of Unbounded_String;
 
@@ -1596,7 +1598,7 @@ package PLplot_Traditional is
         Box_Color, Legend_Color              : Plot_Color_Type;
         Pen_Colors                           : Integer_Array_1D;
         Line_Styles                          : Integer_Array_1D;
-        Pen_Labels                           : Stripchart_Label_String_Array_Type;
+        Pen_Labels                           : in out Stripchart_Label_String_Array_Type;
         X_Label, Y_Label, Title_Label        : String := To_String(Default_Label_String));
 
 

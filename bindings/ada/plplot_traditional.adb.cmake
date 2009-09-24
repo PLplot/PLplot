@@ -2719,7 +2719,7 @@ package body PLplot_Traditional is
         Box_Color, Legend_Color              : Plot_Color_Type;
         Pen_Colors                           : Integer_Array_1D;
         Line_Styles                          : Integer_Array_1D;
-        Pen_Labels                           : Stripchart_Label_String_Array_Type;
+        Pen_Labels                           : in out Stripchart_Label_String_Array_Type;
         X_Label, Y_Label, Title_Label        : String := To_String(Default_Label_String)) is
         
         PL_Autoscale_Y, PL_Accumulate : PLBOOL;
@@ -2727,7 +2727,7 @@ package body PLplot_Traditional is
         
         x_LP : Long_Float renames x_Legend_Position;
         y_LP : Long_Float renames y_Legend_Position;
-        
+
     begin
         if Autoscale_Y then
             PL_Autoscale_Y := PLtrue;
@@ -2741,17 +2741,30 @@ package body PLplot_Traditional is
             PL_Accumulate := PLfalse;
         end if;
         
-        -- Adapt strings for Pen_Labels to C. Head truncates or pads as 
-        -- necessary to the length of Stripchart_String - 1; we then append 
-        -- a null terminator which I suppose C needs. This could have also been 
-        -- accomplished using char_array from the C interfaces.
-        -- fix this NOTE that the current implementation displays all four 
-        -- legend labels the same, and equal to the fourth legend label. The 
-        -- goal is to match const char *legline[4] in plstripc.c and e.g. 
-        -- in x17c.c.
-        for Index in Pen_Labels'range loop
-            Temp_C_Stripchart_String := To_String(Head(Pen_Labels(Index), PL_Stripchart_String'length - 1) & Character'val(0));
-            PL_Pen_Labels(Index) := Temp_C_Stripchart_String'Access;
+        -- Adapt strings for Pen_Labels to C. We have to pass an array of 
+        -- pointers (here, System.Address) to C-style strings, except that the 
+        -- C-style strings usually have the null terminator somewhere in the
+        -- middle of the allocated string memory, after the "significant text."
+        -- I'm not sure if C allocates the memory or not--probably not, since 
+        -- this is not a callback as in plslabelfunc where string memory was 
+        -- allocated by the intervening C code. Here, the C string length is set
+        -- by Max_Stripchart_Label_Length, ranging 0 .. Max_Stripchart_Label_Length.
+        for I in Pen_Labels'range loop
+
+            -- Check length and adjust if necessary.
+            if Length(Pen_Labels(I)) >= Max_Stripchart_Label_Length then
+                Put_Line("*** Warning: Stripchart label was truncated to" 
+                    & Integer'Image(Max_Stripchart_Label_Length) & " characters. ***");
+                Pen_Labels(I) := Head(Pen_Labels(I), Max_Stripchart_Label_Length);
+            end if;
+
+            -- Make the C-style string with null character immediately after the text.
+            C_Stripchart_String_Array(I) := To_C(To_String(Pen_Labels(I) 
+                & Character'val(0) 
+                & (Max_Stripchart_Label_Length - Length(Pen_Labels(I))) * " "), False);
+
+            -- Set the I-th pointer in the array of pointers.
+            PL_Pen_Labels(I) := C_Stripchart_String_Array(I)'Address;
         end loop;
         
         PLplot_Thin.plstripc(ID, To_C(X_Options), To_C(Y_Options), 

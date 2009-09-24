@@ -89,23 +89,30 @@ package PLplot_Thin is
     -- C code of plstripc which creates a strip chart. The C code will accept 
     -- any length of string and each of the four strings can be different lengths.
     -- These types are a bit of a hack whereby each of the legend strings is the 
-    -- same length, so that they can be accessed as an array. They are 41 
+    -- same length, so that they can be accessed as an array. They are Max_Stripchart_Label_Length 
     -- characters long here including a null terminator; I suppose any length 
     -- will work since the stripchart program doesn't seem to mind. The user 
     -- will probably never see this type since he is allowed to set up the 
     -- legend strings as an array of unbounded strings. Only in preparing to 
     -- call the underlying C are the fixed-length strings used. If the user 
     -- specifies unbounded legend strings that are longer than allowed here, 
-    -- they are truncated or padded with spaces, as appropriate, to meet the 
-    -- required length. Although that length is now 41, it is OK to make it 
+    -- they are truncated to meet the required length. Although that length 
+    -- is now Max_Stripchart_Label_Length, it should be OK to make it 
     -- longer or shorter simply by changing the following line, since everything
-    -- else (padding, truncation, conversion to C-style) works automatically. 
-    -- See the fix this note in plplot.adb and plplot_traditional.adb about how 
-    -- all this somehow doesn't work correctly, causing all four stripchart 
-    -- legends to be the same and equal to the fourth one.
-    subtype PL_Stripchart_String is String(1 .. 41);
-    type PL_Stripchart_String_Array is array (1 .. 4) of access PL_Stripchart_String;
-    Temp_C_Stripchart_String : aliased PL_Stripchart_String;
+    -- else (truncation, conversion to C-style) works automatically.
+    -- The current implementation uses char_array for the strings and uses
+    -- System.Address as the pointer which are assigned to an array of type 
+    -- PL_Stripchart_String_Array (see plstripc). I think it is also possible 
+    -- to subtype String and use access variables assigned to an array of 
+    -- suitable access types.
+    -- One very important note is that in forming the C string, the null 
+    -- terminator will normally come in the middle of the array, right after
+    -- the "significant" part of the string. This is handled in plstripc.
+    Max_Stripchart_Label_Length : constant Integer := 100;
+    subtype PL_Stripchart_String is 
+        Interfaces.C.char_array(0 .. size_t(Max_Stripchart_Label_Length));
+    type PL_Stripchart_String_Array is array (1 .. 4) of PLpointer;
+    C_Stripchart_String_Array : array(1 .. 4) of PL_Stripchart_String;
 
 
     -- Access-to-procedure type for Draw_Vector_Plot and its kin.
@@ -162,8 +169,8 @@ package PLplot_Thin is
     -- in Custom_Label_Procedure_Pointer_Type, and plslabelfunc (Set_Custom_Label).
     -- This length, 0 .. 40, is hardwired in the PLplot C code; this type will
     -- fail if that length is ever changed.
-    Label_String_Length : constant Integer := 40;
-    subtype Label_String_Type is Interfaces.C.char_array (0 .. size_t(Label_String_Length));
+    Max_Label_String_Length : constant Integer := 40;
+    subtype Label_String_Type is Interfaces.C.char_array (0 .. size_t(Max_Label_String_Length));
 
     -- Access-to-function type for making custom labels such as with plslabelfunc.
     type Custom_Label_Procedure_Pointer_Type is access
