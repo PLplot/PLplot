@@ -289,7 +289,7 @@ tran( PLINT *a, PLINT *b, PLFLT c, PLFLT d )
 
 static void
 buildlist( PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
-    PLINT dinc )
+           PLINT dinc )
 {
     PLINT min_y, max_y;
     PLINT dx, dy, cstep, nstep, ploty, plotx;

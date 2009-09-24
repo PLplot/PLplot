@@ -34,21 +34,21 @@
 
 static void
 plcntr( PLFLT ( *plf2eval )( PLINT, PLINT, PLPointer ),
-    PLPointer plf2eval_data,
-    PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-    PLINT ky, PLINT ly, PLFLT flev, PLINT **ipts,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-    PLPointer pltr_data );
+        PLPointer plf2eval_data,
+        PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+        PLINT ky, PLINT ly, PLFLT flev, PLINT **ipts,
+        void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+        PLPointer pltr_data );
 
 static void
 pldrawcn( PLFLT ( *plf2eval )( PLINT, PLINT, PLPointer ),
-    PLPointer plf2eval_data,
-    PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-    PLINT ky, PLINT ly, PLFLT flev, char *flabel, PLINT kcol, PLINT krow,
-    PLFLT lastx, PLFLT lasty, PLINT startedge,
-    PLINT **ipts, PLFLT *distance, PLINT *lastindex,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-    PLPointer pltr_data );
+          PLPointer plf2eval_data,
+          PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+          PLINT ky, PLINT ly, PLFLT flev, char *flabel, PLINT kcol, PLINT krow,
+          PLFLT lastx, PLFLT lasty, PLINT startedge,
+          PLINT **ipts, PLFLT *distance, PLINT *lastindex,
+          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+          PLPointer pltr_data );
 
 static void
 plfloatlabel( PLFLT value, char *string, PLINT len );
@@ -474,10 +474,10 @@ plf2evalr( PLINT ix, PLINT iy, PLPointer plf2eval_data )
 
 void
 cont_store( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-    PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-    PLPointer pltr_data,
-    CONT_LEVEL **contour )
+            PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+            PLPointer pltr_data,
+            CONT_LEVEL **contour )
 {
     cont3d = 1;
 
@@ -497,9 +497,9 @@ cont_store( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 
 void
 c_plcont( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-    PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-    PLPointer pltr_data )
+          PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+          PLPointer pltr_data )
 {
     PLfGrid2 grid;
 
@@ -535,11 +535,11 @@ c_plcont( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 
 void
 plfcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
-    PLPointer f2eval_data,
-    PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-    PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-    PLPointer pltr_data )
+         PLPointer f2eval_data,
+         PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+         PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+         void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+         PLPointer pltr_data )
 {
     PLINT i, **ipts;
 
@@ -597,11 +597,11 @@ done:
 
 static void
 plcntr( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
-    PLPointer f2eval_data,
-    PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-    PLINT ky, PLINT ly, PLFLT flev, PLINT **ipts,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-    PLPointer pltr_data )
+        PLPointer f2eval_data,
+        PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+        PLINT ky, PLINT ly, PLFLT flev, PLINT **ipts,
+        void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+        PLPointer pltr_data )
 {
     PLINT kcol, krow, lastindex;
     PLFLT distance;
@@ -655,13 +655,13 @@ plcntr( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
 static void
 pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
-    PLPointer f2eval_data,
-    PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-    PLINT ky, PLINT ly, PLFLT flev, char *flabel, PLINT kcol, PLINT krow,
-    PLFLT lastx, PLFLT lasty, PLINT startedge, PLINT **ipts,
-    PLFLT *distance, PLINT *lastindex,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-    PLPointer pltr_data )
+          PLPointer f2eval_data,
+          PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+          PLINT ky, PLINT ly, PLFLT flev, char *flabel, PLINT kcol, PLINT krow,
+          PLFLT lastx, PLFLT lasty, PLINT startedge, PLINT **ipts,
+          PLFLT *distance, PLINT *lastindex,
+          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+          PLPointer pltr_data )
 {
     PLFLT f[4];
     PLFLT px[4], py[4], locx[4], locy[4];

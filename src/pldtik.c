@@ -252,7 +252,7 @@ pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
 
 void
 pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
-    PLINT *mode, PLINT *prec, PLINT digmax, PLINT *scale )
+         PLINT *mode, PLINT *prec, PLINT digmax, PLINT *scale )
 {
     PLFLT chosen, notchosen, vmod, t0;
     PLINT msd, notmsd, np, digmin, digfix;

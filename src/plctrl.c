@@ -88,7 +88,7 @@ value( double n1, double n2, double hue );
 
 static void
 cmap0_palette_read( const char *filename,
-    int *number_colors, int **r, int **g, int **b, double **a );
+                    int *number_colors, int **r, int **g, int **b, double **a );
 /* An additional hardwired location for lib files. */
 /* I have no plans to change these again, ever. */
 
@@ -568,7 +568,7 @@ c_plscmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 )
 
 void
 c_plscmap1l( PLINT itype, PLINT npts, PLFLT *pos,
-    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev )
+             PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev )
 {
     int   n;
     PLFLT h, l, s, r, g, b;
@@ -642,7 +642,7 @@ c_plscmap1l( PLINT itype, PLINT npts, PLFLT *pos,
 
 void
 c_plscmap1la( PLINT itype, PLINT npts, PLFLT *pos,
-    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLINT *rev )
+              PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLFLT *a, PLINT *rev )
 {
     int   n;
     PLFLT h, l, s, r, g, b;
@@ -1241,7 +1241,7 @@ c_plrgbhls( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s )
 
 void
 cmap0_palette_read( const char *filename,
-    int *number_colors, int **r, int **g, int **b, double **a )
+                    int *number_colors, int **r, int **g, int **b, double **a )
 {
     int  i, err = 0;
     char color_info[30];
@@ -2453,7 +2453,7 @@ plGetFam( PLStream *pls )
 
 void
 plRotPhy( PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
-    PLINT *px, PLINT *py )
+          PLINT *px, PLINT *py )
 {
     int x, y;
 

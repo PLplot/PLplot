@@ -25,7 +25,7 @@
 
 static void
 c_plenvi( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-    PLINT just, PLINT axis, PLINT old );
+          PLINT just, PLINT axis, PLINT old );
 
 /*--------------------------------------------------------------------------*\
  * void plenv()
@@ -89,7 +89,7 @@ c_plenvi( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 
 void
 c_plenv( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-    PLINT just, PLINT axis )
+         PLINT just, PLINT axis )
 {
     c_plenvi( xmin, xmax, ymin, ymax, just, axis, 1 );
 }
@@ -103,7 +103,7 @@ c_plenv( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 
 void
 c_plenv0( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-    PLINT just, PLINT axis )
+          PLINT just, PLINT axis )
 {
     c_plenvi( xmin, xmax, ymin, ymax, just, axis, 0 );
 }
@@ -111,7 +111,7 @@ c_plenv0( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 
 static void
 c_plenvi( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-    PLINT just, PLINT axis, PLINT old )
+          PLINT just, PLINT axis, PLINT old )
 {
     PLFLT lb, rb, tb, bb, dx, dy;
     PLFLT xsize, ysize, size, xscale, yscale, scale;

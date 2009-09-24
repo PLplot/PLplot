@@ -38,33 +38,33 @@
 /* forward declarations */
 static void
 grid_nnaidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg );
+             PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg );
 
 static void
 grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
-    PLFLT threshold );
+           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
+           PLFLT threshold );
 
 static void
 grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
-    int knn_order );
+            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
+            int knn_order );
 
 #ifdef WITH_CSA
 static void
 grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg );
+          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg );
 #endif
 
 #ifdef HAVE_QHULL
 static void
 grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
-    PLFLT wmin );
+          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
+          PLFLT wmin );
 
 static void
 grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg );
+           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg );
 #endif
 
 static void
@@ -109,8 +109,8 @@ static PT items[KNN_MAX_ORDER];
 
 void
 c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
-    PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
-    PLFLT **zg, PLINT type, PLFLT data )
+              PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
+              PLFLT **zg, PLINT type, PLFLT data )
 {
     int i, j;
 
@@ -199,7 +199,7 @@ c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
 
 static void
 grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
+          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
 {
     PLFLT *xt, *yt, *zt;
     point *pin, *pgrid, *pt;
@@ -269,8 +269,8 @@ grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 static void
 grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
-    int knn_order )
+            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
+            int knn_order )
 {
     int   i, j, k;
     PLFLT wi, nt;
@@ -332,8 +332,8 @@ grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 static void
 grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
-    PLFLT threshold )
+           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
+           PLFLT threshold )
 {
     PLFLT xx[4], yy[4], zz[4], t, A, B, C, D, d1, d2, d3, max_thick;
     int   i, j, ii, excl, cnt, excl_item;
@@ -510,7 +510,7 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 static void
 grid_nnaidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
+             PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
 {
     PLFLT d, nt;
     int   i, j, k;
@@ -553,7 +553,7 @@ grid_nnaidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 static void
 grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
+           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
 {
     point *pin, *pgrid, *pt;
     PLFLT *xt, *yt, *zt;
@@ -622,8 +622,8 @@ grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 static void
 grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
-    PLFLT wmin )
+          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
+          PLFLT wmin )
 {
     PLFLT *xt, *yt, *zt;
     point *pin, *pgrid, *pt;
@@ -787,7 +787,7 @@ dist2( PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts )
 #ifdef NONN /* another DTLI, based only on QHULL, not nn */
 static void
 grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-    PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
+            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
 {
     coordT  *points;          /* array of coordinates for each point */
     boolT   ismalloc = False; /* True if qhull should free points */

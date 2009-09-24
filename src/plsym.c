@@ -65,8 +65,8 @@ pldeco( short int **sym, PLINT *length, const char *text );
 
 static void
 plchar( signed char *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
-    PLINT refx, PLINT refy, PLFLT scale, PLFLT xpmm, PLFLT ypmm,
-    PLFLT *p_xorg, PLFLT *p_yorg, PLFLT *p_width );
+        PLINT refx, PLINT refy, PLFLT scale, PLFLT xpmm, PLFLT ypmm,
+        PLFLT *p_xorg, PLFLT *p_yorg, PLFLT *p_width );
 
 static PLINT
 plcvec( PLINT ch, signed char **xygr );
@@ -450,7 +450,7 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel )
 
 void
 c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
-    const char *text )
+          const char *text )
 {
     PLINT clpxmi, clpxma, clpymi, clpyma;
     PLINT vert, refx, refy, x, y;
@@ -716,8 +716,8 @@ plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string )
 
 static void
 plchar( signed char *vxygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
-    PLINT refx, PLINT refy, PLFLT scale, PLFLT xpmm, PLFLT ypmm,
-    PLFLT *p_xorg, PLFLT *p_yorg, PLFLT *p_width )
+        PLINT refx, PLINT refy, PLFLT scale, PLFLT xpmm, PLFLT ypmm,
+        PLFLT *p_xorg, PLFLT *p_yorg, PLFLT *p_width )
 {
     PLINT xbase, ybase, ydisp, lx, ly, cx, cy;
     PLINT k, penup;
@@ -1293,7 +1293,7 @@ int plhershey2unicode( int in )
 
 char *
 plP_FCI2FontName( PLUNICODE fci,
-    const FCI_to_FontName_Table lookup[], const int nlookup )
+                  const FCI_to_FontName_Table lookup[], const int nlookup )
 {
     int jlo = -1, jmid, jhi = nlookup;
     while ( jhi - jlo > 1 )
@@ -1727,7 +1727,7 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text
 
 void
 c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
-    PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text )
+           PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text )
 {
     PLFLT xpc, ypc, xrefpc, yrefpc, xdpc, ydpc, xspc, yspc, ld, ls, cp, shift;
     PLFLT x_o, y_o, z_o, x_dx, y_dy, z_dz;

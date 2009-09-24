@@ -115,10 +115,10 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
  * and vector transformations
  */
 void plfvect( PLFLT ( *plf2eval )( PLINT, PLINT, PLPointer ),
-    PLPointer f2eval_data1, PLPointer f2eval_data2,
-    PLINT nx, PLINT ny, PLFLT scale,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-    PLPointer pltr_data )
+              PLPointer f2eval_data1, PLPointer f2eval_data2,
+              PLINT nx, PLINT ny, PLFLT scale,
+              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+              PLPointer pltr_data )
 {
     PLINT i, j, i1, j1;
     PLFLT **u, **v, **x, **y;
@@ -211,8 +211,8 @@ void plfvect( PLFLT ( *plf2eval )( PLINT, PLINT, PLPointer ),
 
 void
 c_plvect( PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-    PLPointer pltr_data )
+          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+          PLPointer pltr_data )
 {
     PLfGrid2 grid1, grid2;
 

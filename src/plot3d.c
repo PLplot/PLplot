@@ -57,8 +57,8 @@ static void plgrid3( PLFLT );
 static void plnxtv( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
 static void plside3( PLFLT *, PLFLT *, PLFLT **, PLINT, PLINT, PLINT );
 static void plt3zz( PLINT, PLINT, PLINT, PLINT,
-    PLINT, PLINT *, PLFLT *, PLFLT *, PLFLT **,
-    PLINT, PLINT, PLINT *, PLINT *, PLFLT* );
+                    PLINT, PLINT *, PLFLT *, PLFLT *, PLFLT **,
+                    PLINT, PLINT, PLINT *, PLINT *, PLFLT* );
 static void plnxtvhi( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
 static void plnxtvlo( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
 static void plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n );
@@ -72,21 +72,21 @@ static void myabort( char * );
 static void freework( void );
 static int  plabv( PLINT, PLINT, PLINT, PLINT, PLINT, PLINT );
 static void pl3cut( PLINT, PLINT, PLINT, PLINT, PLINT,
-    PLINT, PLINT, PLINT, PLINT *, PLINT * );
+                    PLINT, PLINT, PLINT, PLINT *, PLINT * );
 static PLFLT plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z );
 static void plP_draw3d( PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move );
 static void plxyindexlimits( PLINT instart, PLINT inn,
-    PLINT *inarray_min, PLINT *inarray_max,
-    PLINT *outstart, PLINT *outn, PLINT outnmax,
-    PLINT *outarray_min, PLINT *outarray_max );
+                             PLINT *inarray_min, PLINT *inarray_max,
+                             PLINT *outstart, PLINT *outn, PLINT outnmax,
+                             PLINT *outarray_min, PLINT *outarray_max );
 
 
 /* #define MJL_HACK 1 */
 #if MJL_HACK
 static void plP_fill3( PLINT x0, PLINT y0, PLINT x1, PLINT y1,
-    PLINT x2, PLINT y2, PLINT j );
+                       PLINT x2, PLINT y2, PLINT j );
 static void plP_fill4( PLINT x0, PLINT y0, PLINT x1, PLINT y1,
-    PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT j );
+                       PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT j );
 #endif
 
 /*--------------------------------------------------------------------------*\
@@ -139,7 +139,7 @@ c_plmesh( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
 
 void
 c_plmeshc( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
-    PLFLT *clevel, PLINT nlevel )
+           PLFLT *clevel, PLINT nlevel )
 {
     c_plot3dc( x, y, z, nx, ny, opt | MESH, clevel, nlevel );
 }
@@ -214,8 +214,8 @@ plP_clip_poly( int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset )
 /* helper for plsurf3d, similar to c_plfill3() */
 static void
 shade_triangle( PLFLT x0, PLFLT y0, PLFLT z0,
-    PLFLT x1, PLFLT y1, PLFLT z1,
-    PLFLT x2, PLFLT y2, PLFLT z2 )
+                PLFLT x1, PLFLT y1, PLFLT z1,
+                PLFLT x2, PLFLT y2, PLFLT z2 )
 {
     int   i;
     /* arrays for interface to core functions */
@@ -278,7 +278,7 @@ shade_triangle( PLFLT x0, PLFLT y0, PLFLT z0,
 
 void
 c_plsurf3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-    PLINT opt, PLFLT *clevel, PLINT nlevel )
+            PLINT opt, PLFLT *clevel, PLINT nlevel )
 {
     PLINT i;
     PLINT *indexymin = (PLINT *) malloc((size_t) ( nx * sizeof ( PLINT )));
@@ -333,8 +333,8 @@ c_plsurf3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
 void
 c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-    PLINT opt, PLFLT *clevel, PLINT nlevel,
-    PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
+             PLINT opt, PLFLT *clevel, PLINT nlevel,
+             PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
 {
     PLFLT      cxx, cxy, cyx, cyy, cyz;
     PLINT      i, j, k;
@@ -716,7 +716,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     }
 
     if ( opt & DRAW_SIDES ) /* the sides look ugly !!! */
-    { /* draw one more row with all the Z's set to zmin */
+    {                       /* draw one more row with all the Z's set to zmin */
         PLFLT zscale, zmin, zmax;
 
         plP_grange( &zscale, &zmin, &zmax );
@@ -792,7 +792,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
 void
 c_plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
-    PLINT nx, PLINT ny, PLINT opt, PLBOOL side )
+          PLINT nx, PLINT ny, PLINT opt, PLBOOL side )
 {
     c_plot3dc( x, y, z, nx, ny, opt | ( side != 0 ? DRAW_SIDES : 0 ), NULL, 0 );
 }
@@ -808,8 +808,8 @@ c_plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
 
 void
 c_plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
-    PLINT nx, PLINT ny, PLINT opt,
-    PLFLT *clevel, PLINT nlevel )
+           PLINT nx, PLINT ny, PLINT opt,
+           PLFLT *clevel, PLINT nlevel )
 {
     c_plot3dcl( x, y, z, nx, ny, opt, clevel, nlevel, 0, 0, NULL, NULL );
 }
@@ -839,9 +839,9 @@ c_plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
 
 void
 c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
-    PLINT nx, PLINT ny, PLINT opt,
-    PLFLT *clevel, PLINT nlevel,
-    PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
+            PLINT nx, PLINT ny, PLINT opt,
+            PLFLT *clevel, PLINT nlevel,
+            PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT init, i, ix, iy, color, width;
@@ -1333,9 +1333,9 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
 
 static void
 plxyindexlimits( PLINT instart, PLINT inn,
-    PLINT *inarray_min, PLINT *inarray_max,
-    PLINT *outstart, PLINT *outn, PLINT outnmax,
-    PLINT *outarray_min, PLINT *outarray_max )
+                 PLINT *inarray_min, PLINT *inarray_max,
+                 PLINT *outstart, PLINT *outn, PLINT outnmax,
+                 PLINT *outarray_min, PLINT *outarray_max )
 {
     PLINT i, j;
     if ( inn < 0 )
@@ -1478,8 +1478,8 @@ plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z )
 
 static void
 plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
-    PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-    PLINT *u, PLINT *v, PLFLT* c )
+        PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+        PLINT *u, PLINT *v, PLFLT* c )
 {
     PLINT n = 0;
     PLFLT x2d, y2d;
@@ -2555,7 +2555,7 @@ plabv( PLINT px, PLINT py, PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2 )
 
 static void
 pl3cut( PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
-    PLINT su1, PLINT sv1, PLINT su2, PLINT sv2, PLINT *cx, PLINT *cy )
+        PLINT su1, PLINT sv1, PLINT su2, PLINT sv2, PLINT *cx, PLINT *cy )
 {
     PLINT x21, y21, u21, v21, yv1, xu1, a, b;
     double fa, fb;

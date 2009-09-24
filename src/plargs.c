@@ -940,7 +940,7 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
 
 static int
 ParseOpt( int *p_myargc, const char ***p_argv, int *p_argc, const char ***p_argsave,
-    PLOptionTable *option_table )
+          PLOptionTable *option_table )
 {
     PLOptionTable *tab;
     const char    *opt;
@@ -992,7 +992,7 @@ ParseOpt( int *p_myargc, const char ***p_argv, int *p_argc, const char ***p_args
 
 static int
 ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_argv,
-    int *p_argc )
+            int *p_argc )
 {
     int        need_arg, res;
     const char *optarg = NULL;

@@ -553,7 +553,7 @@ static PLUNICODE unicode_buffer[1024];
 
 void
 plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
-    PLINT refx, PLINT refy, const char *string )
+          PLINT refx, PLINT refy, const char *string )
 {
     if ( plsc->dev_text ) /* Does the device render it's own text ? */
     {
@@ -588,8 +588,8 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 
             {
                 len = strlen( string ); /* this length is only used in the loop
-                                     * counter, we will work out the length of
-                                     * the unicode string as we go */
+                                         * counter, we will work out the length of
+                                         * the unicode string as we go */
                 plgesc( &esc );
 
                 /* At this stage we will do some translations into unicode, like
@@ -610,7 +610,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                     plP_esc( PLESC_BEGIN_TEXT, &args );
                 }
                 for ( j = i = 0; i < len; i++ ) /* Walk through the string, and convert
-                                        * some stuff to unicode on the fly */
+                                                 * some stuff to unicode on the fly */
                 {
                     skip = 0;
 
@@ -818,7 +818,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                     (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
                                 i   += 2;
                                 skip = 1; /* skip is set if we have copied something
-                                  * into the unicode table */
+                                           * into the unicode table */
 
                                 if ( plsc->alt_unicode )
                                 {
@@ -834,7 +834,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 unicode_buffer[j++] = (PLUNICODE) 0x00;
                                 i                  += 2;
                                 skip                = 1; /* skip is set if we have copied something
-                                  * into  the unicode table */
+                                                          * into  the unicode table */
 
                                 if ( plsc->alt_unicode )
                                 {
@@ -920,11 +920,11 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                 if ( j > 0 )
                 {
                     args.unicode_array_len = j; /* Much easier to set the length than
-                                          * work it out later :-) */
+                                                 * work it out later :-) */
                     args.unicode_array     = &unicode_buffer[0]; /* Get address of the
-                                                       * unicode buffer (even
-                                                       * though it is
-                                                       * currently  static) */
+                                                                  * unicode buffer (even
+                                                                  * though it is
+                                                                  * currently  static) */
                 }
                 else
                     /* Don't print anything, if there is no unicode to print! */
@@ -1136,7 +1136,7 @@ grfill( short *x, short *y, PLINT npts )
 
 void
 difilt( PLINT *xscl, PLINT *yscl, PLINT npts,
-    PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma )
+        PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma )
 {
     PLINT i, x, y;
 
@@ -1201,7 +1201,7 @@ difilt( PLINT *xscl, PLINT *yscl, PLINT npts,
 
 void
 sdifilt( short *xscl, short *yscl, PLINT npts,
-    PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma )
+         PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma )
 {
     int   i;
     short x, y;
@@ -1794,7 +1794,7 @@ c_plgdiori( PLFLT *p_rot )
 
 void
 c_plsdimap( PLINT dimxmin, PLINT dimxmax, PLINT dimymin, PLINT dimymax,
-    PLFLT dimxpmm, PLFLT dimypmm )
+            PLFLT dimxpmm, PLFLT dimypmm )
 {
     plsetvar( plsc->dimxmin, dimxmin );
     plsetvar( plsc->dimxmax, dimxmax );
@@ -3079,7 +3079,7 @@ plgdevlst( const char **p_menustr, const char **p_devname, int *p_ndev, int type
 
 void
 c_plgpage( PLFLT *p_xp, PLFLT *p_yp,
-    PLINT *p_xleng, PLINT *p_yleng, PLINT *p_xoff, PLINT *p_yoff )
+           PLINT *p_xleng, PLINT *p_yleng, PLINT *p_xoff, PLINT *p_yoff )
 {
     *p_xp    = plsc->xdpi;
     *p_yp    = plsc->ydpi;
@@ -3203,7 +3203,7 @@ c_plglevel( PLINT *p_level )
 
 void
 plsKeyEH( void ( *KeyEH )( PLGraphicsIn *, void *, int * ),
-    void *KeyEH_data )
+          void *KeyEH_data )
 {
     plsc->KeyEH      = KeyEH;
     plsc->KeyEH_data = KeyEH_data;
@@ -3213,7 +3213,7 @@ plsKeyEH( void ( *KeyEH )( PLGraphicsIn *, void *, int * ),
 
 void
 plsButtonEH( void ( *ButtonEH )( PLGraphicsIn *, void *, int * ),
-    void *ButtonEH_data )
+             void *ButtonEH_data )
 {
     plsc->ButtonEH      = ButtonEH;
     plsc->ButtonEH_data = ButtonEH_data;
@@ -3810,7 +3810,7 @@ PLINT plP_checkdriverinit( char *names )
     PLINT ret  = 0; /* set up return code to 0, the value if no devices match*/
 
     buff = (char *) malloc((size_t) PL_NSTREAMS * 8 ); /* Allocate enough memory for 8
-                                              * characters for each possible stream */
+                                                        * characters for each possible stream */
 
     if ( buff != NULL )
     {
@@ -3847,7 +3847,7 @@ PLINT plP_checkdriverinit( char *names )
 
 void
 plP_image( PLFLT *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ), PLPointer pltr_data )
+           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ), PLPointer pltr_data )
 {
     plsc->page_status = DRAWING;
 

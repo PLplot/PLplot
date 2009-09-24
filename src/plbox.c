@@ -38,28 +38,28 @@ static PLFLT xlog[8] =
 
 static void
 plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
-    PLFLT wx2, PLFLT wy2, PLFLT vmin, PLFLT vmax,
-    PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits );
+        PLFLT wx2, PLFLT wy2, PLFLT vmin, PLFLT vmax,
+        PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits );
 
 static void
 plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
-    PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin, PLFLT vmax,
-    PLFLT tick, PLINT nsub, PLINT *digits );
+       PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin, PLFLT vmax,
+       PLFLT tick, PLINT nsub, PLINT *digits );
 
 static void
 plxytx( PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
-    PLFLT disp, PLFLT pos, PLFLT just, const char *text );
+        PLFLT disp, PLFLT pos, PLFLT just, const char *text );
 
 static void
 plztx( const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
-    PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text );
+       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text );
 
 static void
 plform( PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *result, PLINT len, PLBOOL ll, PLBOOL lf, PLBOOL lo );
 
 static void
 grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
-    const char *yopt, PLFLT ytick1, PLINT nysub1 );
+          const char *yopt, PLFLT ytick1, PLINT nysub1 );
 
 static void
 label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 );
@@ -76,7 +76,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 );
 
 void
 c_plbox( const char *xopt, PLFLT xtick, PLINT nxsub,
-    const char *yopt, PLFLT ytick, PLINT nysub )
+         const char *yopt, PLFLT ytick, PLINT nysub )
 {
     c_plaxes( 0.0, 0.0, xopt, xtick, nxsub, yopt, ytick, nysub );
 }
@@ -116,8 +116,8 @@ c_plbox( const char *xopt, PLFLT xtick, PLINT nxsub,
 
 void
 c_plaxes( PLFLT x0, PLFLT y0,
-    const char *xopt, PLFLT xtick, PLINT nxsub,
-    const char *yopt, PLFLT ytick, PLINT nysub )
+          const char *xopt, PLFLT xtick, PLINT nxsub,
+          const char *yopt, PLFLT ytick, PLINT nysub )
 {
     PLBOOL lax, lbx, lcx, ldx, lgx, lix, llx, lsx, ltx;
     PLBOOL lay, lby, lcy, ldy, lgy, liy, lly, lsy, lty;
@@ -531,8 +531,8 @@ c_plaxes( PLFLT x0, PLFLT y0,
 
 void
 c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
-    const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
-    const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz )
+          const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
+          const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz )
 {
     PLFLT dx, dy, tx, ty, ux, uy;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
@@ -721,8 +721,8 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 static void
 plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
-    PLFLT wx2, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
-    PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits )
+        PLFLT wx2, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
+        PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits )
 {
     static char string[STRING_LEN];
     PLINT       lb, ld, lf, li, ll, ln, ls, lt, lu, lo;
@@ -881,7 +881,7 @@ plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
 
 static void
 plxytx( PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
-    PLFLT disp, PLFLT pos, PLFLT just, const char *text )
+        PLFLT disp, PLFLT pos, PLFLT just, const char *text )
 {
     PLINT x, y, refx, refy;
     PLFLT shift, cc, ss, wx, wy;
@@ -949,8 +949,8 @@ plxytx( PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
 
 static void
 plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
-    PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
-    PLFLT tick, PLINT nsub, PLINT *digits )
+       PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
+       PLFLT tick, PLINT nsub, PLINT *digits )
 {
     static char string[STRING_LEN];
     PLINT       lb, lc, ld, lf, li, ll, lm, ln, ls, lt, lu, lv, lo;
@@ -1127,7 +1127,7 @@ plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 
 static void
 plztx( const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
-    PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text )
+       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text )
 {
     PLINT refx = 0, refy = 0, x = 0, y = 0, vert = 0;
     PLFLT shift, cc, ss, wy;
@@ -1196,7 +1196,7 @@ plztx( const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
 
 static void
 grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
-    const char *yopt, PLFLT ytick1, PLINT nysub1 )
+          const char *yopt, PLFLT ytick1, PLINT nysub1 )
 {
     PLINT lgx, lhx, llx;
     PLINT lgy, lhy, lly;

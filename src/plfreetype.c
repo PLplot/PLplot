@@ -382,7 +382,7 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
 
             FT_Load_Char( FT->face, text[i], ( FT->smooth_text == 0 ) ? FT_LOAD_MONOCHROME + FT_LOAD_RENDER : FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT );
             FT_PlotChar( pls, FT, FT->face->glyph,
-                ROUND( x / 64.0 ), ROUND( y / 64.0 ), 2 );  /* render the text */
+                ROUND( x / 64.0 ), ROUND( y / 64.0 ), 2 );          /* render the text */
 
             x += FT->face->glyph->advance.x;
             y -= FT->face->glyph->advance.y;
@@ -401,7 +401,7 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
 
 void
 FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
-    int x, int y, short colour )
+             int x, int y, short colour )
 {
     unsigned char bittest;
     short         i, k, j;

@@ -86,9 +86,9 @@ enabledisplay()
  */
 void
 plimageslow( PLFLT *idata, PLINT nx, PLINT ny,
-    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-    PLPointer pltr_data )
+             PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
+             void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+             PLPointer pltr_data )
 {
     /* Indices */
     PLINT ix, iy, i;
@@ -189,10 +189,10 @@ grimage( short *x, short *y, unsigned short *z, PLINT nx, PLINT ny )
  \*-------------------------------------------------------------------------*/
 void
 c_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
-    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-    PLFLT valuemin, PLFLT valuemax,
-    void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-    PLPointer pltr_data )
+             PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+             PLFLT valuemin, PLFLT valuemax,
+             void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+             PLPointer pltr_data )
 {
     PLINT ix, iy;
     PLFLT dx, dy;
@@ -309,8 +309,8 @@ c_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
  \*-------------------------------------------------------------------------*/
 void
 c_plimage( PLFLT **idata, PLINT nx, PLINT ny,
-    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-    PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax )
+           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+           PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax )
 {
     PLINT  ix, iy, ixx, iyy, xm, ym, nnx, nny;
     PLFLT  data_min, data_max, dx, dy;

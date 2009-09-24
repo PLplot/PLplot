@@ -41,7 +41,7 @@ pllclp( PLINT *x, PLINT *y, PLINT npts );
 
 static int
 clipline( PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
-    PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax );
+          PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax );
 
 /* General line-drawing routine.  Takes line styles into account. */
 
@@ -560,8 +560,8 @@ pllclp( PLINT *x, PLINT *y, PLINT npts )
 
 void
 plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
-    PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
-    void ( *draw )( short *, short *, PLINT ))
+            PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
+            void ( *draw )( short *, short *, PLINT ))
 {
     PLINT x1, x2, y1, y2;
     PLINT i, iclp = 0;
@@ -705,8 +705,8 @@ circulation( PLINT *x, PLINT *y, PLINT npts )
 
 void
 plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
-    PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
-    void ( *draw )( short *, short *, PLINT ))
+            PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
+            void ( *draw )( short *, short *, PLINT ))
 {
     PLINT i, x1, x2, y1, y2;
     int   iclp = 0, iout = 2;
@@ -1160,7 +1160,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
 
 static int
 clipline( PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
-    PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax )
+          PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax )
 {
     PLINT  t, dx, dy, flipx, flipy;
     double dydx = 0, dxdy = 0;
