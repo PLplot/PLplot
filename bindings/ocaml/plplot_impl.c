@@ -38,6 +38,8 @@ along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 #define CAML_PLPLOT_MAPFORM_FUNC_NAME "caml_plplot_mapform"
 #define CAML_PLPLOT_DEFINED_FUNC_NAME "caml_plplot_defined"
 #define CAML_PLPLOT_LABEL_FUNC_NAME "caml_plplot_customlabel"
+#define CAML_PLPLOT_ABORT_FUNC_NAME "caml_plplot_abort"
+#define CAML_PLPLOT_EXIT_FUNC_NAME "caml_plplot_exit"
 
 typedef void(*ML_PLOTTER_FUNC)(PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer);
 typedef PLINT(*ML_DEFINED_FUNC)(PLFLT, PLFLT);
@@ -155,6 +157,42 @@ void ml_labelfunc(PLINT axis, PLFLT n, char *label, PLINT length, PLPointer d) {
     CAMLreturn0;
 }
 
+// OCaml callback for plsabort
+void ml_abort(const char* message) {
+    CAMLparam0();
+    CAMLlocal1(result);
+
+    // Get the OCaml callback function (if there is one)
+    static value * handler = NULL;
+    if (handler == NULL)
+        handler = caml_named_value(CAML_PLPLOT_ABORT_FUNC_NAME);
+
+    // No check to see if a callback function has been designated yet,
+    // because that is checked before we get to this point.
+    result =
+        caml_callback(*handler, caml_copy_string(message));
+
+    CAMLreturn0;
+}
+
+// OCaml callback for plsexit
+int ml_exit(const char* message) {
+    CAMLparam0();
+    CAMLlocal1(result);
+
+    // Get the OCaml callback function (if there is one)
+    static value * handler = NULL;
+    if (handler == NULL)
+        handler = caml_named_value(CAML_PLPLOT_EXIT_FUNC_NAME);
+
+    // No check to see if a callback function has been designated yet,
+    // because that is checked before we get to this point.
+    result =
+        caml_callback(*handler, caml_copy_string(message));
+
+    CAMLreturn(Int_val(result));
+}
+
 // Check if the matching OCaml callback is defined.  Return NULL if it is not,
 // and the proper function pointer if it is.
 ML_PLOTTER_FUNC get_ml_plotter_func() {
@@ -216,6 +254,40 @@ value ml_plslabelfunc(value unit) {
         plslabelfunc(ml_labelfunc, NULL);
     }
 
+    CAMLreturn(Val_unit);
+}
+
+// Custom wrappers for plsabort and plsexit
+value ml_plsabort(value unit) {
+    CAMLparam1(unit);
+    static value * handler = NULL;
+    if (handler == NULL)
+        handler = caml_named_value(CAML_PLPLOT_ABORT_FUNC_NAME);
+
+    if (handler == NULL || Val_int(0) == *handler) {
+        // No handler defined
+        plsabort(NULL);
+    }
+    else {
+        // Handler is defined
+        plsabort(ml_abort);
+    }
+    CAMLreturn(Val_unit);
+}
+value ml_plsexit(value unit) {
+    CAMLparam1(unit);
+    static value * handler = NULL;
+    if (handler == NULL)
+        handler = caml_named_value(CAML_PLPLOT_EXIT_FUNC_NAME);
+
+    if (handler == NULL || Val_int(0) == *handler) {
+        // No handler defined
+        plsexit(NULL);
+    }
+    else {
+        // Handler is defined
+        plsexit(ml_exit);
+    }
     CAMLreturn(Val_unit);
 }
 

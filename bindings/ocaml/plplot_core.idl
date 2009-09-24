@@ -62,6 +62,9 @@ typedef enum plplot_run_level_enum plplot_run_level;
 // an Invalid_argument error if the return value is <> 0.
 typedef [errorcheck(plplot_check_nonzero_result), errorcode] int nonzero_error_int;
 
+// Include the prototype for this to avoid implicit declaration warnings
+quote(h, "void plplot_check_nonzero_result(int result);");
+
 // This is a simplified and modified version of the plplot.h file.
 #include "plplot_h.inc"
 
@@ -208,6 +211,32 @@ quote(ml,
   Callback.register \"caml_plplot_customlabel\" 0;\
   ml_plslabelfunc ()");
 quote(mli, "val plunset_labelfunc : unit -> unit");
+
+// Custom plabort handling
+quote(ml, "external ml_plsabort : unit -> unit = \"ml_plsabort\"");
+quote(ml,
+"let plsabort (f : string -> unit) =\
+  Callback.register \"caml_plplot_abort\" f;\
+  ml_plsabort ()");
+quote(mli, "val plsabort : (string -> unit) -> unit");
+quote(ml,
+"let plunset_abort () =\
+  Callback.register \"caml_plplot_abort\" 0;\
+  ml_plsabort ()");
+quote(mli, "val plunset_abort : unit -> unit");
+
+// Custom plexit handling
+quote(ml, "external ml_plsexit : unit -> unit = \"ml_plsexit\"");
+quote(ml,
+"let plsexit (f : string -> int) =\
+  Callback.register \"caml_plplot_exit\" f;\
+  ml_plsexit ()");
+quote(mli, "val plsexit : (string -> int) -> unit");
+quote(ml,
+"let plunset_exit () =\
+  Callback.register \"caml_plplot_exit\" 0;\
+  ml_plsexit ()");
+quote(mli, "val plunset_exit : unit -> unit");
 
 RAW_ML(external plgriddata : float array -> float array -> float array -> float array -> float array -> plplot_grid_method_type -> float -> float array array = "ml_plgriddata_bytecode" "ml_plgriddata")
 RAW_ML(external plparseopts : string array -> plplot_parse_method_type list -> unit = "ml_plparseopts")

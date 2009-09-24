@@ -850,6 +850,10 @@ type plplot_axis_type =
   | PL_Z_AXIS
 val plslabelfunc : (plplot_axis_type -> float -> string) -> unit
 val plunset_labelfunc : unit -> unit
+val plsabort : (string -> unit) -> unit
+val plunset_abort : unit -> unit
+val plsexit : (string -> int) -> unit
+val plunset_exit : unit -> unit
 external plgriddata :
   float array ->
   float array ->
