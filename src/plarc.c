@@ -34,13 +34,7 @@
  *
  *-------------------------------------------------------------------------*/
 void
-plarc_approx( PLFLT x,
-    PLFLT y,
-    PLFLT a,
-    PLFLT b,
-    PLFLT angle1,
-    PLFLT angle2,
-    PLBOOL fill )
+plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLBOOL fill )
 {
     PLINT i;
     PLFLT theta0, theta_step, theta, d_angle;
@@ -111,13 +105,7 @@ plarc_approx( PLFLT x,
  *
  *-------------------------------------------------------------------------*/
 void
-c_plarc( PLFLT x,
-    PLFLT y,
-    PLFLT a,
-    PLFLT b,
-    PLFLT angle1,
-    PLFLT angle2,
-    PLBOOL fill )
+c_plarc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLBOOL fill )
 {
     PLINT      xscl[2], yscl[2];
     PLINT      clpxmi, clpxma, clpymi, clpyma;

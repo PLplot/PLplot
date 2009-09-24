@@ -95,8 +95,7 @@ pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
         *tick = ABS( *tick );
         if ( *tick < 1.e-4 * tick_reasonable )
         {
-            plexit(
-                "pldtik: magnitude of specified tick spacing is much too small" );
+            plexit( "pldtik: magnitude of specified tick spacing is much too small" );
             return;
         }
     }

@@ -190,8 +190,7 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
              * is done bellow!!!
              */
 
-            test[i] = abs((int) ( bufx[i] - bufx[i + 1] )) > abs(
-                (int) bufy[i] / 3 );                                       /* Changed this from 30 degrees so it is now "polar sensitive" */
+            test[i] = abs((int) ( bufx[i] - bufx[i + 1] )) > abs((int) bufy[i] / 3 ); /* Changed this from 30 degrees so it is now "polar sensitive" */
             if ( test[i] ) wrap = 1;
         }
 

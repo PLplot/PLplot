@@ -133,8 +133,7 @@ c_plcol0( PLINT icol0 )
     if ( icol0 < 0 || icol0 >= plsc->ncol0 )
     {
         char buffer[BUFFER_SIZE];
-        snprintf( buffer, BUFFER_SIZE, "plcol0: Invalid color map entry: %d",
-            (int) icol0 );
+        snprintf( buffer, BUFFER_SIZE, "plcol0: Invalid color map entry: %d", (int) icol0 );
         plabort( buffer );
         return;
     }
@@ -168,8 +167,7 @@ c_plcol1( PLFLT col1 )
     if ( col1 < 0 || col1 > 1 || isnan( col1 ))
     {
         char buffer[BUFFER_SIZE];
-        snprintf( buffer, BUFFER_SIZE, "plcol1: Invalid color map position: %f",
-            (PLFLT) col1 );
+        snprintf( buffer, BUFFER_SIZE, "plcol1: Invalid color map position: %f", (PLFLT) col1 );
         plabort( buffer );
         return;
     }
@@ -250,8 +248,7 @@ c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
     if ( icol0 < 0 || icol0 >= plsc->ncol0 )
     {
         char buffer[BUFFER_SIZE];
-        snprintf( buffer, BUFFER_SIZE, "plscol0: Illegal color table value: %d",
-            (int) icol0 );
+        snprintf( buffer, BUFFER_SIZE, "plscol0: Illegal color table value: %d", (int) icol0 );
         plabort( buffer );
         return;
     }
@@ -282,25 +279,15 @@ c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
     if ( icol0 < 0 || icol0 >= plsc->ncol0 )
     {
         char buffer[BUFFER_SIZE];
-        snprintf( buffer,
-            BUFFER_SIZE,
-            "plscol0a: Illegal color table value: %d",
-            (int) icol0 );
+        snprintf( buffer, BUFFER_SIZE, "plscol0a: Illegal color table value: %d", (int) icol0 );
         plabort( buffer );
         return;
     }
-    if (( r < 0 ||
-          r > 255 ) ||
-        ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ) || ( a < 0 || a > 1.0 ))
+    if (( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ) || ( a < 0 || a > 1.0 ))
     {
         char buffer[BUFFER_SIZE];
-        snprintf( buffer,
-            BUFFER_SIZE,
-            "plscol0a: Invalid RGB color: %d, %d, %d, %f",
-            (int) r,
-            (int) g,
-            (int) b,
-            (double) a );
+        snprintf( buffer, BUFFER_SIZE, "plscol0a: Invalid RGB color: %d, %d, %d, %f",
+            (int) r, (int) g, (int) b, (double) a );
         plabort( buffer );
         return;
     }
@@ -334,10 +321,7 @@ c_plgcol0( PLINT icol0, PLINT *r, PLINT *g, PLINT *b )
     if ( icol0 < 0 || icol0 > plsc->ncol0 )
     {
         char buffer[BUFFER_SIZE];
-        snprintf( buffer,
-            BUFFER_SIZE,
-            "plgcol0: Invalid color index: %d",
-            (int) icol0 );
+        snprintf( buffer, BUFFER_SIZE, "plgcol0: Invalid color index: %d", (int) icol0 );
         plabort( buffer );
         return;
     }
@@ -370,10 +354,7 @@ c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *a )
     if ( icol0 < 0 || icol0 > plsc->ncol0 )
     {
         char buffer[BUFFER_SIZE];
-        snprintf( buffer,
-            BUFFER_SIZE,
-            "plgcol0: Invalid color index: %d",
-            (int) icol0 );
+        snprintf( buffer, BUFFER_SIZE, "plgcol0: Invalid color index: %d", (int) icol0 );
         plabort( buffer );
         return;
     }
@@ -407,12 +388,8 @@ c_plscmap0( PLINT *r, PLINT *g, PLINT *b, PLINT ncol0 )
             ( b[i] < 0 || b[i] > 255 ))
         {
             char buffer[BUFFER_SIZE];
-            snprintf( buffer,
-                BUFFER_SIZE,
-                "plscmap0: Invalid RGB color: %d, %d, %d",
-                (int) r[i],
-                (int) g[i],
-                (int) b[i] );
+            snprintf( buffer, BUFFER_SIZE, "plscmap0: Invalid RGB color: %d, %d, %d",
+                (int) r[i], (int) g[i], (int) b[i] );
             plabort( buffer );
             return;
         }
@@ -449,13 +426,8 @@ c_plscmap0a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0 )
             ( a[i] < 0.0 || a[i] > 1.0 ))
         {
             char buffer[BUFFER_SIZE];
-            snprintf( buffer,
-                BUFFER_SIZE,
-                "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
-                (int) r[i],
-                (int) g[i],
-                (int) b[i],
-                (double) a[i] );
+            snprintf( buffer, BUFFER_SIZE, "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
+                (int) r[i], (int) g[i], (int) b[i], (double) a[i] );
             plabort( buffer );
             return;
         }
@@ -491,12 +463,8 @@ c_plscmap1( PLINT *r, PLINT *g, PLINT *b, PLINT ncol1 )
             ( b[i] < 0 || b[i] > 255 ))
         {
             char buffer[BUFFER_SIZE];
-            snprintf( buffer,
-                BUFFER_SIZE,
-                "plscmap1: Invalid RGB color: %d, %d, %d",
-                (int) r[i],
-                (int) g[i],
-                (int) b[i] );
+            snprintf( buffer, BUFFER_SIZE, "plscmap1: Invalid RGB color: %d, %d, %d",
+                (int) r[i], (int) g[i], (int) b[i] );
             plabort( buffer );
             return;
         }
@@ -532,13 +500,8 @@ c_plscmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 )
             ( a[i] < 0.0 || a[i] > 1.0 ))
         {
             char buffer[BUFFER_SIZE];
-            snprintf( buffer,
-                BUFFER_SIZE,
-                "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
-                (int) r[i],
-                (int) g[i],
-                (int) b[i],
-                (double) a[i] );
+            snprintf( buffer, BUFFER_SIZE, "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
+                (int) r[i], (int) g[i], (int) b[i], (double) a[i] );
             plabort( buffer );
             return;
         }
@@ -975,8 +938,7 @@ c_plscmap1n( PLINT ncol1 )
     }
     else
     {
-        if (( plsc->cmap1 =
-                  (PLColor *) calloc( ncol, sizeof ( PLColor ))) == NULL )
+        if (( plsc->cmap1 = (PLColor *) calloc( ncol, sizeof ( PLColor ))) == NULL )
         {
             plexit( "c_plscmap1n: Insufficient memory" );
         }
@@ -1292,10 +1254,7 @@ cmap0_palette_read( const char *filename,
         fp = plLibOpen( PL_DEFAULT_CMAP0_FILE );
         if ( fp == NULL )
         {
-            snprintf( msgbuf,
-                1024,
-                "Unable to open cmap0 file %s\n",
-                PL_DEFAULT_CMAP0_FILE );
+            snprintf( msgbuf, 1024, "Unable to open cmap0 file %s\n", PL_DEFAULT_CMAP0_FILE );
             plwarn( msgbuf );
             err = 1;
         }
@@ -1310,8 +1269,7 @@ cmap0_palette_read( const char *filename,
             err = 1;
         }
     }
-    if ( !err &&
-         ( fscanf( fp, "%d\n", number_colors ) != 1 || *number_colors < 1 ))
+    if ( !err && ( fscanf( fp, "%d\n", number_colors ) != 1 || *number_colors < 1 ))
     {
         fclose( fp );
         snprintf( msgbuf, 1024, "Unrecognized cmap0 header\n" );
@@ -1323,14 +1281,10 @@ cmap0_palette_read( const char *filename,
     {
         /* Allocate arrays to hold r, g, b, and a data for calling routine.
          * The caller must free these after it is finished with them. */
-        if ((( *r = (int *) malloc( *number_colors * sizeof ( int ))) ==
-             NULL ) ||
-            (( *g = (int *) malloc( *number_colors * sizeof ( int ))) ==
-             NULL ) ||
-            (( *b = (int *) malloc( *number_colors * sizeof ( int ))) ==
-             NULL ) ||
-            (( *a = (double *) malloc( *number_colors * sizeof ( double ))) ==
-             NULL ))
+        if ((( *r = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
+            (( *g = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
+            (( *b = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
+            (( *a = (double *) malloc( *number_colors * sizeof ( double ))) == NULL ))
         {
             fclose( fp );
             plexit( "cmap0_palette_read: insufficient memory" );
@@ -1343,8 +1297,7 @@ cmap0_palette_read( const char *filename,
             if ( strlen( color_info ) == 7 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x",
-                         (int *) ( *r + i ), (int *) ( *g + i ),
-                         (int *) ( *b + i )) != 3 )
+                         (int *) ( *r + i ), (int *) ( *g + i ), (int *) ( *b + i )) != 3 )
                 {
                     err = 1;
                     break;
@@ -1354,16 +1307,14 @@ cmap0_palette_read( const char *filename,
             else if ( strlen( color_info ) > 9 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x %lf",
-                         (int *) ( *r + i ), (int *) ( *g + i ),
-                         (int *) ( *b + i ),
+                         (int *) ( *r + i ), (int *) ( *g + i ), (int *) ( *b + i ),
                          (double *) ( *a + i )) != 4 )
                 {
                     err = 1;
                     break;
                 }
                 /* fuzzy range check. */
-                if ( *( *a + i ) < -FUZZ_EPSILON || *( *a + i ) >
-                     ( 1. + FUZZ_EPSILON ))
+                if ( *( *a + i ) < -FUZZ_EPSILON || *( *a + i ) > ( 1. + FUZZ_EPSILON ))
                 {
                     err = 1;
                     break;
@@ -1386,9 +1337,7 @@ cmap0_palette_read( const char *filename,
         fclose( fp );
         if ( err )
         {
-            snprintf( msgbuf,
-                1024,
-                "Unrecognized cmap0 format data line.  Line is %s\n",
+            snprintf( msgbuf, 1024, "Unrecognized cmap0 format data line.  Line is %s\n",
                 color_info );
             plwarn( msgbuf );
             free( *r );
@@ -1402,14 +1351,10 @@ cmap0_palette_read( const char *filename,
     if ( err )
     {
         *number_colors = 16;
-        if ((( *r = (int *) malloc( *number_colors * sizeof ( int ))) ==
-             NULL ) ||
-            (( *g = (int *) malloc( *number_colors * sizeof ( int ))) ==
-             NULL ) ||
-            (( *b = (int *) malloc( *number_colors * sizeof ( int ))) ==
-             NULL ) ||
-            (( *a = (double *) malloc( *number_colors * sizeof ( double ))) ==
-             NULL ))
+        if ((( *r = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
+            (( *g = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
+            (( *b = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
+            (( *a = (double *) malloc( *number_colors * sizeof ( double ))) == NULL ))
         {
             plexit( "cmap0_palette_read: insufficient memory" );
         }
@@ -1465,25 +1410,16 @@ c_plspal0( const char *filename )
  * floating-point range checking of a value and the adjustment of that
  * value when close to the range when there is floating-point errors.
  */
-#define fuzzy_range_check( value, min, max, fuzz, err_number )                        \
-    if ( value < ( min - fuzz ) || value > ( max + fuzz ))                            \
-    {                                                                                 \
-        snprintf(                                                                     \
-            msgbuf,                                                                   \
-            1024,                                                                     \
-            "Unrecognized cmap1 format data line.  Error number is %d. Line is %s\n", \
-            err_number,                                                               \
-            color_info );                                                             \
-        plwarn( msgbuf );                                                             \
-        err = 1;                                                                      \
-        break;                                                                        \
-    }                                                                                 \
-    else if ( value < min )                                                           \
-    {                                                                                 \
-        value = min;                                                                  \
-    }                                                                                 \
-    else if ( value > max ) {                                                         \
-        value = max;                                                                  \
+#define fuzzy_range_check( value, min, max, fuzz, err_number )                                                                      \
+    if ( value < ( min - fuzz ) || value > ( max + fuzz )) {                                                                        \
+        snprintf( msgbuf, 1024, "Unrecognized cmap1 format data line.  Error number is %d. Line is %s\n", err_number, color_info ); \
+        plwarn( msgbuf );                                                                                                           \
+        err = 1;                                                                                                                    \
+        break;                                                                                                                      \
+    } else if ( value < min ) {                                                                                                     \
+        value = min;                                                                                                                \
+    } else if ( value > max ) {                                                                                                     \
+        value = max;                                                                                                                \
     }
 /*--------------------------------------------------------------------------*\
  * void c_plspal1(filename)
@@ -1517,10 +1453,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         fp = plLibOpen( PL_DEFAULT_CMAP1_FILE );
         if ( fp == NULL )
         {
-            snprintf( msgbuf,
-                1024,
-                "Unable to open cmap1 .pal file %s\n",
-                PL_DEFAULT_CMAP1_FILE );
+            snprintf( msgbuf, 1024, "Unable to open cmap1 .pal file %s\n", PL_DEFAULT_CMAP1_FILE );
             plwarn( msgbuf );
             goto finish;
         }
@@ -1530,10 +1463,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         fp = plLibOpen( filename );
         if ( fp == NULL )
         {
-            snprintf( msgbuf,
-                1024,
-                "Unable to open cmap1 .pal file %s\n",
-                filename );
+            snprintf( msgbuf, 1024, "Unable to open cmap1 .pal file %s\n", filename );
             plwarn( msgbuf );
             goto finish;
         }
@@ -1549,10 +1479,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
             rgb = TRUE;
         else
         {
-            snprintf( msgbuf,
-                1024,
-                "Invalid color space %s - assuming RGB\n",
-                &color_info[3] );
+            snprintf( msgbuf, 1024, "Invalid color space %s - assuming RGB\n", &color_info[3] );
             plwarn( msgbuf );
             rgb = TRUE;
         }
@@ -1561,10 +1488,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
 
     if ( sscanf( color_info, "%d\n", &number_colors ) != 1 || number_colors < 2 )
     {
-        snprintf( msgbuf,
-            1024,
-            "Unrecognized cmap1 format (wrong number of colors) %s\n",
-            color_info );
+        snprintf( msgbuf, 1024, "Unrecognized cmap1 format (wrong number of colors) %s\n", color_info );
         plwarn( msgbuf );
         fclose( fp );
         goto finish;
@@ -1589,21 +1513,10 @@ c_plspal1( const char *filename, PLBOOL interpolate )
             fgets( color_info, 160, fp );
             /* Ensure string is null terminated if > 160 characters */
             color_info[159] = '\0';
-            return_sscanf   = sscanf( color_info,
-                "#%2x%2x%2x %d %d",
-                &r_i,
-                &g_i,
-                &b_i,
-                &pos_i,
-                &rev_i );
-            if ( return_sscanf < 4 ||
-                 ( return_sscanf_old != 0 && return_sscanf != return_sscanf_old ))
+            return_sscanf   = sscanf( color_info, "#%2x%2x%2x %d %d", &r_i, &g_i, &b_i, &pos_i, &rev_i );
+            if ( return_sscanf < 4 || ( return_sscanf_old != 0 && return_sscanf != return_sscanf_old ))
             {
-                snprintf(
-                    msgbuf,
-                    1024,
-                    "Unrecognized cmap1 format (wrong number of items for version 1 of format) %s\n",
-                    color_info );
+                snprintf( msgbuf, 1024, "Unrecognized cmap1 format (wrong number of items for version 1 of format) %s\n", color_info );
                 plwarn( msgbuf );
                 err = 1;
                 break;
@@ -1639,14 +1552,9 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         for ( i = 0; i < number_colors; i++ )
         {
             fgets( color_info, 160, fp );
-            if ( sscanf( color_info, "%lf %lf %lf %lf %lf %d", &pos_d, &r_d,
-                     &g_d, &b_d, &a_d, &rev_i ) != 6 )
+            if ( sscanf( color_info, "%lf %lf %lf %lf %lf %d", &pos_d, &r_d, &g_d, &b_d, &a_d, &rev_i ) != 6 )
             {
-                snprintf(
-                    msgbuf,
-                    1024,
-                    "Unrecognized cmap1 format (wrong number of items for version 2 of format) %s\n",
-                    color_info );
+                snprintf( msgbuf, 1024, "Unrecognized cmap1 format (wrong number of items for version 2 of format) %s\n", color_info );
                 plwarn( msgbuf );
                 err = 1;
                 break;
@@ -2230,10 +2138,7 @@ plFindName( char *p )
  \*--------------------------------------------------------------------------*/
 
 void
-plGetName( const char *dir,
-    const char *subdir,
-    const char *filename,
-    char **filespec )
+plGetName( const char *dir, const char *subdir, const char *filename, char **filespec )
 {
     int lfilespec;
 
@@ -2258,12 +2163,8 @@ plGetName( const char *dir,
         strcat_delim( *filespec );
         strcat( *filespec, filename );
     }
-    pldebug( "plGetName",
-        "Length of full pathname of file to be found is %d\n",
-        lfilespec );
-    pldebug( "plGetName",
-        "Full pathname of file to be found is %s\n",
-        *filespec );
+    pldebug( "plGetName", "Length of full pathname of file to be found is %d\n", lfilespec );
+    pldebug( "plGetName", "Full pathname of file to be found is %s\n", *filespec );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2320,20 +2221,10 @@ plcol_interp( PLStream *pls, PLColor *newcolor, int i, int ncol )
     }
     else
     {
-        newcolor->r =
-            (unsigned char) (( 1. -
-                               delta ) * pls->cmap1[il].r + delta *
-                             pls->cmap1[ir].r );
-        newcolor->g =
-            (unsigned char) (( 1. -
-                               delta ) * pls->cmap1[il].g + delta *
-                             pls->cmap1[ir].g );
-        newcolor->b =
-            (unsigned char) (( 1. -
-                               delta ) * pls->cmap1[il].b + delta *
-                             pls->cmap1[ir].b );
-        newcolor->a =
-            ( 1. - delta ) * pls->cmap1[il].a + delta * pls->cmap1[ir].a;
+        newcolor->r = (unsigned char) (( 1. - delta ) * pls->cmap1[il].r + delta * pls->cmap1[ir].r );
+        newcolor->g = (unsigned char) (( 1. - delta ) * pls->cmap1[il].g + delta * pls->cmap1[ir].g );
+        newcolor->b = (unsigned char) (( 1. - delta ) * pls->cmap1[il].b + delta * pls->cmap1[ir].b );
+        newcolor->a = ( 1. - delta ) * pls->cmap1[il].a + delta * pls->cmap1[ir].a;
     }
 }
 
@@ -2436,9 +2327,7 @@ plP_getmember( PLStream *pls )
     else
     {
         strncpy( prefix, pls->BaseName, BUFFER_SIZE - 1 );
-        prefix [( suffix - pls->BaseName < BUFFER_SIZE ) ? ( suffix -
-                                                             pls->BaseName ) :
-                BUFFER_SIZE - 1] = '\0';
+        prefix [( suffix - pls->BaseName < BUFFER_SIZE ) ? ( suffix - pls->BaseName ) : BUFFER_SIZE - 1] = '\0';
         snprintf( pls->FileName, maxlen, "%s%s%s", prefix, num, suffix + 2 );
     }
 }
@@ -2477,8 +2366,7 @@ plP_sfnam( PLStream *pls, const char *fnam )
     else
     {
         strncpy( prefix, fnam, BUFFER_SIZE - 1 );
-        prefix [( suffix - fnam ) <
-                BUFFER_SIZE ? ( suffix - fnam ) : BUFFER_SIZE - 1] = '\0';
+        prefix [( suffix - fnam ) < BUFFER_SIZE ? ( suffix - fnam ) : BUFFER_SIZE - 1] = '\0';
         snprintf( pls->FileName, maxlen, "%s%s", prefix, suffix + 2 );
     }
 
@@ -2548,8 +2436,7 @@ plGetFam( PLStream *pls )
              * character aspect ratio is preserved when overall aspect ratio
              * is changed. */
             plP_gpixmm( &xpmm_loc, &ypmm_loc );
-            plP_setpxl( xpmm_loc * plsc->caspfactor,
-                ypmm_loc / plsc->caspfactor );
+            plP_setpxl( xpmm_loc * plsc->caspfactor, ypmm_loc / plsc->caspfactor );
             return;
         }
     }
@@ -2818,8 +2705,7 @@ plsave_set_locale( void )
     /*save original LC_NUMERIC locale for restore below. */
     if ( !( setlocale_ptr = setlocale( LC_NUMERIC, NULL )))
     {
-        plexit(
-            "plsave_set_locale: LC_NUMERIC locale could not be determined for NULL locale.\n" );
+        plexit( "plsave_set_locale: LC_NUMERIC locale could not be determined for NULL locale.\n" );
     }
     strncpy( saved_lc_numeric_locale, setlocale_ptr, 100 );
     saved_lc_numeric_locale[99] = '\0';
@@ -2834,8 +2720,7 @@ plsave_set_locale( void )
 
     if ( !( setlocale( LC_NUMERIC, "C" )))
     {
-        plexit(
-            "plsave_set_locale: LC_NUMERIC locale could not be set to \"C\"" );
+        plexit( "plsave_set_locale: LC_NUMERIC locale could not be set to \"C\"" );
     }
     return saved_lc_numeric_locale;
 }
@@ -2862,11 +2747,7 @@ plrestore_locale( char *saved_lc_numeric_locale )
     if ( !( setlocale( LC_NUMERIC, saved_lc_numeric_locale )))
     {
         char msgbuf[1024];
-        snprintf(
-            msgbuf,
-            1024,
-            "plrestore_locale: LC_NUMERIC could not be restored to the default \"%s\" locale.\n",
-            saved_lc_numeric_locale );
+        snprintf( msgbuf, 1024, "plrestore_locale: LC_NUMERIC could not be restored to the default \"%s\" locale.\n", saved_lc_numeric_locale );
         plexit( msgbuf );
     }
     free( saved_lc_numeric_locale );

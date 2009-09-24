@@ -150,8 +150,7 @@ c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
 #ifdef WITH_CSA
         grid_csa( x, y, z, npts, xg, nptsx, yg, nptsy, zg );
 #else
-        plwarn(
-            "plgriddata(): PLplot was configured to not use GRID_CSA.\n  Reverting to GRID_NNAIDW." );
+        plwarn( "plgriddata(): PLplot was configured to not use GRID_CSA.\n  Reverting to GRID_NNAIDW." );
         grid_nnaidw( x, y, z, npts, xg, nptsx, yg, nptsy, zg );
 #endif
         break;
@@ -172,8 +171,7 @@ c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
 #ifdef HAVE_QHULL
         grid_dtli( x, y, z, npts, xg, nptsx, yg, nptsy, zg );
 #else
-        plwarn(
-            "plgriddata(): you must have the Qhull library installed to use GRID_DTLI.\n  Reverting to GRID_NNAIDW." );
+        plwarn( "plgriddata(): you must have the Qhull library installed to use GRID_DTLI.\n  Reverting to GRID_NNAIDW." );
         grid_nnaidw( x, y, z, npts, xg, nptsx, yg, nptsy, zg );
 #endif
         break;
@@ -182,8 +180,7 @@ c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
 #ifdef HAVE_QHULL
         grid_nni( x, y, z, npts, xg, nptsx, yg, nptsy, zg, data );
 #else
-        plwarn(
-            "plgriddata(): you must have the Qhull library installed to use GRID_NNI.\n  Reverting to GRID_NNAIDW." );
+        plwarn( "plgriddata(): you must have the Qhull library installed to use GRID_NNI.\n  Reverting to GRID_NNAIDW." );
         grid_nnaidw( x, y, z, npts, xg, nptsx, yg, nptsy, zg );
 #endif
         break;
@@ -286,8 +283,7 @@ grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
     if ( knn_order == 0 )
     {
-        plwarn(
-            "plgriddata(): GRID_NNIDW: knn_order must be specified with 'data' arg. Using 15" );
+        plwarn( "plgriddata(): GRID_NNIDW: knn_order must be specified with 'data' arg. Using 15" );
         knn_order = 15;;
     }
 
@@ -344,8 +340,7 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
     if ( threshold == 0. )
     {
-        plwarn(
-            "plgriddata(): GRID_NNLI: threshold must be specified with 'data' arg. Using 1.001" );
+        plwarn( "plgriddata(): GRID_NNLI: threshold must be specified with 'data' arg. Using 1.001" );
         threshold = 1.001;
     }
     else if ( threshold > 2. || threshold < 1. )
@@ -368,18 +363,9 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                 zz[ii] = z[items[ii].item];
             }
 
-            d1 = sqrt(
-                ( xx[1] -
-                  xx[0] ) *
-                ( xx[1] - xx[0] ) + ( yy[1] - yy[0] ) * ( yy[1] - yy[0] ));
-            d2 = sqrt(
-                ( xx[2] -
-                  xx[1] ) *
-                ( xx[2] - xx[1] ) + ( yy[2] - yy[1] ) * ( yy[2] - yy[1] ));
-            d3 = sqrt(
-                ( xx[0] -
-                  xx[2] ) *
-                ( xx[0] - xx[2] ) + ( yy[0] - yy[2] ) * ( yy[0] - yy[2] ));
+            d1 = sqrt(( xx[1] - xx[0] ) * ( xx[1] - xx[0] ) + ( yy[1] - yy[0] ) * ( yy[1] - yy[0] ));
+            d2 = sqrt(( xx[2] - xx[1] ) * ( xx[2] - xx[1] ) + ( yy[2] - yy[1] ) * ( yy[2] - yy[1] ));
+            d3 = sqrt(( xx[0] - xx[2] ) * ( xx[0] - xx[2] ) + ( yy[0] - yy[2] ) * ( yy[0] - yy[2] ));
 
             if ( d1 == 0. || d2 == 0. || d3 == 0. ) /* coincident points */
             {
@@ -406,18 +392,9 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
             else                               /* calculate the plane passing through the three points */
 
             {
-                A = yy[0] *
-                    ( zz[1] -
-                      zz[2] ) + yy[1] *
-                    ( zz[2] - zz[0] ) + yy[2] * ( zz[0] - zz[1] );
-                B = zz[0] *
-                    ( xx[1] -
-                      xx[2] ) + zz[1] *
-                    ( xx[2] - xx[0] ) + zz[2] * ( xx[0] - xx[1] );
-                C = xx[0] *
-                    ( yy[1] -
-                      yy[2] ) + xx[1] *
-                    ( yy[2] - yy[0] ) + xx[2] * ( yy[0] - yy[1] );
+                A = yy[0] * ( zz[1] - zz[2] ) + yy[1] * ( zz[2] - zz[0] ) + yy[2] * ( zz[0] - zz[1] );
+                B = zz[0] * ( xx[1] - xx[2] ) + zz[1] * ( xx[2] - xx[0] ) + zz[2] * ( xx[0] - xx[1] );
+                C = xx[0] * ( yy[1] - yy[2] ) + xx[1] * ( yy[2] - yy[0] ) + xx[2] * ( yy[0] - yy[1] );
                 D = -A * xx[0] - B * yy[0] - C * zz[0];
 
                 /* and interpolate (or extrapolate...) */
@@ -471,26 +448,10 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                             }
                         }
 
-                        d1 =
-                            sqrt(( xx[1] -
-                                   xx[0] ) *
-                                ( xx[1] -
-                                  xx[0] ) +
-                                ( yy[1] - yy[0] ) * ( yy[1] - yy[0] ));
-                        d2 =
-                            sqrt(( xx[2] -
-                                   xx[1] ) *
-                                ( xx[2] -
-                                  xx[1] ) +
-                                ( yy[2] - yy[1] ) * ( yy[2] - yy[1] ));
-                        d3 =
-                            sqrt(( xx[0] -
-                                   xx[2] ) *
-                                ( xx[0] -
-                                  xx[2] ) +
-                                ( yy[0] - yy[2] ) * ( yy[0] - yy[2] ));
-                        if ( d1 == 0. || d2 == 0. || d3 ==
-                             0. ) /* coincident points */ continue;
+                        d1 = sqrt(( xx[1] - xx[0] ) * ( xx[1] - xx[0] ) + ( yy[1] - yy[0] ) * ( yy[1] - yy[0] ));
+                        d2 = sqrt(( xx[2] - xx[1] ) * ( xx[2] - xx[1] ) + ( yy[2] - yy[1] ) * ( yy[2] - yy[1] ));
+                        d3 = sqrt(( xx[0] - xx[2] ) * ( xx[0] - xx[2] ) + ( yy[0] - yy[2] ) * ( yy[0] - yy[2] ));
+                        if ( d1 == 0. || d2 == 0. || d3 == 0. ) /* coincident points */ continue;
 
                         /* make d1 < d2 */
                         if ( d1 > d2 )
@@ -527,18 +488,9 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                         }
                     }
 
-                    A = yy[0] *
-                        ( zz[1] -
-                          zz[2] ) + yy[1] *
-                        ( zz[2] - zz[0] ) + yy[2] * ( zz[0] - zz[1] );
-                    B = zz[0] *
-                        ( xx[1] -
-                          xx[2] ) + zz[1] *
-                        ( xx[2] - xx[0] ) + zz[2] * ( xx[0] - xx[1] );
-                    C = xx[0] *
-                        ( yy[1] -
-                          yy[2] ) + xx[1] *
-                        ( yy[2] - yy[0] ) + xx[2] * ( yy[0] - yy[1] );
+                    A = yy[0] * ( zz[1] - zz[2] ) + yy[1] * ( zz[2] - zz[0] ) + yy[2] * ( zz[0] - zz[1] );
+                    B = zz[0] * ( xx[1] - xx[2] ) + zz[1] * ( xx[2] - xx[0] ) + zz[2] * ( xx[0] - xx[1] );
+                    C = xx[0] * ( yy[1] - yy[2] ) + xx[1] * ( yy[2] - yy[0] ) + xx[2] * ( yy[0] - yy[1] );
                     D = -A * xx[0] - B * yy[0] - C * zz[0];
 
                     /* and interpolate (or extrapolate...) */
@@ -686,8 +638,7 @@ grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
     if ( wmin == 0. ) /* only accept weights greater than wmin */
     {
-        plwarn(
-            "plgriddata(): GRID_NNI: wmin must be specified with 'data' arg. Using -PLFLT_MAX" );
+        plwarn( "plgriddata(): GRID_NNI: wmin must be specified with 'data' arg. Using -PLFLT_MAX" );
         wmin = -PLFLT_MAX;
     }
 
@@ -866,9 +817,7 @@ grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
      * plgriddata() */
     strcpy( flags, "qhull d Qbb Qt", 250 );
 
-    if (( points =
-              (coordT *) malloc( npts * ( dim + 1 ) * sizeof ( coordT ))) ==
-        NULL )
+    if (( points = (coordT *) malloc( npts * ( dim + 1 ) * sizeof ( coordT ))) == NULL )
     {
         plexit( "grid_adtli: Insufficient memory" );
     }
@@ -912,24 +861,14 @@ grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
         printf( "Neigbors\n" );
 
         qh_findgood_all( qh facet_list );
-        qh_countfacets( qh facet_list,
-            NULL,
-            !qh_ALL,
-            &numfacets,
-            &numsimplicial,
-            &totneighbors,
-            &numridges,
-            &numcoplanars,
-            &numtricoplanars );
+        qh_countfacets( qh facet_list, NULL, !qh_ALL, &numfacets, &numsimplicial,
+            &totneighbors, &numridges, &numcoplanars, &numtricoplanars );
 
         FORALLfacets {
             if ( !facet->upperdelaunay )
             {
                 FOREACHneighbor_( facet )
-                printf(
-                    " %d",
-                    neighbor->visitid ? neighbor->visitid -
-                    1 : -neighbor->id );
+                printf( " %d", neighbor->visitid ? neighbor->visitid - 1 : -neighbor->id );
                 printf( "\n" );
             }
         }
@@ -952,10 +891,7 @@ grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                     /* several ways to find the triangle given a point follow.
                      * None but brute force works */
 #if 0
-                    facet = qh_findbestfacet( point,
-                        qh_ALL,
-                        &bestdist,
-                        &isoutside );
+                    facet = qh_findbestfacet( point, qh_ALL, &bestdist, &isoutside );
 #endif
 
 #if 0
@@ -981,10 +917,7 @@ grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                      * Another possibility is to implement the 'walking
                      * triangle algorithm */
 
-                    facet = qh_findfacet_all( point,
-                        &bestdist,
-                        &isoutside,
-                        &totpart );
+                    facet = qh_findfacet_all( point, &bestdist, &isoutside, &totpart );
 
                     if ( facet->upperdelaunay )
                         zg[i][j] = NaN;
@@ -1001,18 +934,9 @@ grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
                         /* calculate the plane passing through the three points */
 
-                        A = yt[0] *
-                            ( zt[1] -
-                              zt[2] ) + yt[1] *
-                            ( zt[2] - zt[0] ) + yt[2] * ( zt[0] - zt[1] );
-                        B = zt[0] *
-                            ( xt[1] -
-                              xt[2] ) + zt[1] *
-                            ( xt[2] - xt[0] ) + zt[2] * ( xt[0] - xt[1] );
-                        C = xt[0] *
-                            ( yt[1] -
-                              yt[2] ) + xt[1] *
-                            ( yt[2] - yt[0] ) + xt[2] * ( yt[0] - yt[1] );
+                        A = yt[0] * ( zt[1] - zt[2] ) + yt[1] * ( zt[2] - zt[0] ) + yt[2] * ( zt[0] - zt[1] );
+                        B = zt[0] * ( xt[1] - xt[2] ) + zt[1] * ( xt[2] - xt[0] ) + zt[2] * ( xt[0] - xt[1] );
+                        C = xt[0] * ( yt[1] - yt[2] ) + xt[1] * ( yt[2] - yt[0] ) + xt[2] * ( yt[0] - yt[1] );
                         D = -A * xt[0] - B * yt[0] - C * zt[0];
 
                         /* and interpolate */

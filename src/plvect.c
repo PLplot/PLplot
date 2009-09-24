@@ -44,8 +44,7 @@ c_plsvect( PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill )
     if ( plsc->arrow_x ) free_mem( plsc->arrow_x );
     if ( plsc->arrow_y ) free_mem( plsc->arrow_y );
 
-    if ((( plsc->arrow_x = (PLFLT *) malloc( npts * sizeof ( PLFLT ))) ==
-         NULL ) ||
+    if ((( plsc->arrow_x = (PLFLT *) malloc( npts * sizeof ( PLFLT ))) == NULL ) ||
         (( plsc->arrow_y = (PLFLT *) malloc( npts * sizeof ( PLFLT ))) == NULL ))
     {
         plexit( "c_plsvect: Insufficient memory" );
@@ -75,10 +74,8 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
 
     if ( uu == 0.0 && vv == 0.0 ) return;
 
-    if ((( a_x = (PLINT *) malloc( sizeof ( PLINT ) * ( plsc->arrow_npts ))) ==
-         NULL ) ||
-        (( a_y = (PLINT *) malloc( sizeof ( PLINT ) * ( plsc->arrow_npts ))) ==
-         NULL ))
+    if ((( a_x = (PLINT *) malloc( sizeof ( PLINT ) * ( plsc->arrow_npts ))) == NULL ) ||
+        (( a_y = (PLINT *) malloc( sizeof ( PLINT ) * ( plsc->arrow_npts ))) == NULL ))
     {
         plexit( "plP_plotvect: Insufficient memory" );
     }
@@ -95,10 +92,8 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
 
     for ( j = 0; j < plsc->arrow_npts; j++ )
     {
-        a_x[j] =
-            (PLINT) ( plsc->arrow_x[j] * dpx - plsc->arrow_y[j] * dpy + px0 );
-        a_y[j] =
-            (PLINT) ( plsc->arrow_x[j] * dpy + plsc->arrow_y[j] * dpx + py0 );
+        a_x[j] = (PLINT) ( plsc->arrow_x[j] * dpx - plsc->arrow_y[j] * dpy + px0 );
+        a_y[j] = (PLINT) ( plsc->arrow_x[j] * dpy + plsc->arrow_y[j] * dpx + py0 );
     }
 
     /* draw the arrow */

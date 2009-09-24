@@ -55,15 +55,7 @@ plztx( const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
     PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text );
 
 static void
-plform( PLINT axis,
-    PLFLT value,
-    PLINT scale,
-    PLINT prec,
-    char *result,
-    PLINT len,
-    PLBOOL ll,
-    PLBOOL lf,
-    PLBOOL lo );
+plform( PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *result, PLINT len, PLBOOL ll, PLBOOL lf, PLBOOL lo );
 
 static void
 grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
@@ -353,8 +345,7 @@ c_plaxes( PLFLT x0, PLFLT y0,
             if ( ldx )
             {
                 pldtfac( vpwxmi, vpwxma, &factor, &tstart );
-                tp = xtick1 *
-                     ( floor(( vpwxma - tstart ) / xtick1 ) + 1 ) + tstart;
+                tp = xtick1 * ( floor(( vpwxma - tstart ) / xtick1 ) + 1 ) + tstart;
             }
             else
                 tp = xtick1 * ( floor( vpwxma / xtick1 ) + 1 );
@@ -401,8 +392,7 @@ c_plaxes( PLFLT x0, PLFLT y0,
             if ( ldy )
             {
                 pldtfac( vpwymi, vpwyma, &factor, &tstart );
-                tp = ytick1 *
-                     ( floor(( vpwymi - tstart ) / ytick1 ) + 1 ) + tstart;
+                tp = ytick1 * ( floor(( vpwymi - tstart ) / ytick1 ) + 1 ) + tstart;
             }
             else
                 tp = ytick1 * ( floor( vpwyma / ytick1 ) + 1 );
@@ -458,8 +448,7 @@ c_plaxes( PLFLT x0, PLFLT y0,
                         {
                             temp = tp + xlog[i];
                             if ( BETW( temp, vpwxmi, vpwxma ))
-                                plxtik( plP_wcpcx(
-                                        temp ), (PLINT) yp0, xminor, xminor );
+                                plxtik( plP_wcpcx( temp ), (PLINT) yp0, xminor, xminor );
                         }
                     }
                     else
@@ -468,8 +457,7 @@ c_plaxes( PLFLT x0, PLFLT y0,
                         {
                             temp = tp + i * xtick1 / nxsub1;
                             if ( BETW( temp, vpwxmi, vpwxma ))
-                                plxtik( plP_wcpcx(
-                                        temp ), (PLINT) yp0, xminor, xminor );
+                                plxtik( plP_wcpcx( temp ), (PLINT) yp0, xminor, xminor );
                         }
                     }
                 }
@@ -501,8 +489,7 @@ c_plaxes( PLFLT x0, PLFLT y0,
                         {
                             temp = tp + xlog[i];
                             if ( BETW( temp, vpwymi, vpwyma ))
-                                plytik((PLINT) xp0, plP_wcpcy(
-                                        temp ), yminor, yminor );
+                                plytik((PLINT) xp0, plP_wcpcy( temp ), yminor, yminor );
                         }
                     }
                     else
@@ -511,8 +498,7 @@ c_plaxes( PLFLT x0, PLFLT y0,
                         {
                             temp = tp + i * ytick1 / nysub1;
                             if ( BETW( temp, vpwymi, vpwyma ))
-                                plytik((PLINT) xp0, plP_wcpcy(
-                                        temp ), yminor, yminor );
+                                plytik((PLINT) xp0, plP_wcpcy( temp ), yminor, yminor );
                         }
                     }
                 }
@@ -601,9 +587,7 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
         dx = ux - tx;
         dy = uy - ty;
         plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
-            plP_w3wcy( xmax,
-                ymin,
-                zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmax, ymin, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
 
         tx = plP_w3wcx( xmin, ymax, zmin );
         ty = plP_w3wcy( xmin, ymax, zmin );
@@ -617,9 +601,7 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 /* restore zdigits to initial value for second call */
         zdigits = zdigmax;
         plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
-            plP_w3wcy( xmin,
-                ymax,
-                zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmin, ymax, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
     }
     else if ( cxx <= 0.0 && cxy <= 0.0 )
     {
@@ -634,9 +616,7 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
         dx = ux - tx;
         dy = uy - ty;
         plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
-            plP_w3wcy( xmin,
-                ymin,
-                zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmin, ymin, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
 
         tx = plP_w3wcx( xmax, ymax, zmin );
         ty = plP_w3wcy( xmax, ymax, zmin );
@@ -650,9 +630,7 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 /* restore zdigits to initial value for second call */
         zdigits = zdigmax;
         plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
-            plP_w3wcy( xmax,
-                ymax,
-                zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmax, ymax, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
     }
     else if ( cxx <= 0.0 && cxy >= 0.0 )
     {
@@ -667,9 +645,7 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
         dx = ux - tx;
         dy = uy - ty;
         plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
-            plP_w3wcy( xmin,
-                ymax,
-                zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmin, ymax, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
 
         tx = plP_w3wcx( xmax, ymin, zmin );
         ty = plP_w3wcy( xmax, ymin, zmin );
@@ -683,9 +659,7 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 /* restore zdigits to initial value for second call */
         zdigits = zdigmax;
         plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
-            plP_w3wcy( xmax,
-                ymin,
-                zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmax, ymin, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
     }
     else if ( cxx >= 0.0 && cxy >= 0.0 )
     {
@@ -700,9 +674,7 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
         dx = ux - tx;
         dy = uy - ty;
         plzbx( zopt, zlabel, 1, dx, dy, ux, uy,
-            plP_w3wcy( xmax,
-                ymax,
-                zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmax, ymax, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
 
         tx = plP_w3wcx( xmin, ymin, zmin );
         ty = plP_w3wcy( xmin, ymin, zmin );
@@ -716,9 +688,7 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 /* restore zdigits to initial value for second call */
         zdigits = zdigmax;
         plzbx( zopt, zlabel, 0, dx, dy, tx, ty,
-            plP_w3wcy( xmin,
-                ymin,
-                zmax ), zmin, zmax, ztick, nsubz, &zdigits );
+            plP_w3wcy( xmin, ymin, zmax ), zmin, zmax, ztick, nsubz, &zdigits );
     }
     plsxax( xdigmax, xdigits );
     plsyax( ydigmax, ydigits );
@@ -1399,23 +1369,11 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
         {
             if ( ldx )
             {
-                strfqsas( string,
-                    STRING_LEN,
-                    timefmt,
-                    (double) tn,
-                    plsc->qsasconfig );
+                strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
             }
             else
             {
-                plform( PL_X_AXIS,
-                    tn,
-                    xscale,
-                    xprec,
-                    string,
-                    STRING_LEN,
-                    llx,
-                    lfx,
-                    lox );
+                plform( PL_X_AXIS, tn, xscale, xprec, string, STRING_LEN, llx, lfx, lox );
             }
             height = lix ? 1.75 : 1.5;
             pos    = ( vpwxmax > vpwxmin ) ?
@@ -1437,11 +1395,9 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
              * label function is provided. */
             if ( plsc->label_data )
             {
-                height =
-                    ((PLLabelDefaults *) plsc->label_data )->exp_label_disp;
-                pos  = ((PLLabelDefaults *) plsc->label_data )->exp_label_pos;
-                just =
-                    ((PLLabelDefaults *) plsc->label_data )->exp_label_just;
+                height = ((PLLabelDefaults *) plsc->label_data )->exp_label_disp;
+                pos    = ((PLLabelDefaults *) plsc->label_data )->exp_label_pos;
+                just   = ((PLLabelDefaults *) plsc->label_data )->exp_label_just;
             }
             else
             {
@@ -1478,23 +1434,11 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
         {
             if ( ldy )
             {
-                strfqsas( string,
-                    STRING_LEN,
-                    timefmt,
-                    (double) tn,
-                    plsc->qsasconfig );
+                strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
             }
             else
             {
-                plform( PL_Y_AXIS,
-                    tn,
-                    yscale,
-                    yprec,
-                    string,
-                    STRING_LEN,
-                    lly,
-                    lfy,
-                    loy );
+                plform( PL_Y_AXIS, tn, yscale, yprec, string, STRING_LEN, lly, lfy, loy );
             }
             pos = ( vpwymax > vpwymin ) ?
                   ( tn - vpwymi ) / ( vpwyma - vpwymi ) :
@@ -1539,11 +1483,9 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
             snprintf( string, STRING_LEN, "(x10#u%d#d)", (int) yscale );
             if ( plsc->label_data )
             {
-                height =
-                    ((PLLabelDefaults *) plsc->label_data )->exp_label_disp;
-                pos  = ((PLLabelDefaults *) plsc->label_data )->exp_label_pos;
-                just =
-                    ((PLLabelDefaults *) plsc->label_data )->exp_label_just;
+                height = ((PLLabelDefaults *) plsc->label_data )->exp_label_disp;
+                pos    = ((PLLabelDefaults *) plsc->label_data )->exp_label_pos;
+                just   = ((PLLabelDefaults *) plsc->label_data )->exp_label_just;
             }
             else
             {
@@ -1592,15 +1534,7 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
  \*--------------------------------------------------------------------------*/
 
 static void
-plform( PLINT axis,
-    PLFLT value,
-    PLINT scale,
-    PLINT prec,
-    char *string,
-    PLINT len,
-    PLBOOL ll,
-    PLBOOL lf,
-    PLBOOL lo )
+plform( PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *string, PLINT len, PLBOOL ll, PLBOOL lf, PLBOOL lo )
 {
     /* Check to see if a custom labeling function is defined.  If not, */
     if ( lo && plsc->label_func )
@@ -1611,8 +1545,7 @@ plform( PLINT axis,
     {
         if ( lo )
         {
-            plwarn(
-                "Custom axis labels requested without a labeling function \
+            plwarn( "Custom axis labels requested without a labeling function \
                     - using default." );
         }
         if ( ll )
@@ -1696,11 +1629,7 @@ plform( PLINT axis,
  *
  \*--------------------------------------------------------------------------*/
 void
-c_plslabelfunc( void ( *label_func )( PLINT,
-        PLFLT,
-        char *,
-        PLINT,
-        PLPointer ), PLPointer label_data )
+c_plslabelfunc( void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer ), PLPointer label_data )
 {
     plsc->label_func = label_func;
     plsc->label_data = label_data;

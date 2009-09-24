@@ -477,8 +477,7 @@ c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
         dispx = 0;
         dispy = -disp;
     }
-    else if ( plP_stindex( side,
-                  "TV" ) != -1 || plP_stindex( side, "tv" ) != -1 )
+    else if ( plP_stindex( side, "TV" ) != -1 || plP_stindex( side, "tv" ) != -1 )
     {
         vert  = 1;
         xdv   = plsc->vpdxmi + ( plsc->vpdxma - plsc->vpdxmi ) * pos;
@@ -502,8 +501,7 @@ c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
         dispx = 0;
         dispy = disp;
     }
-    else if ( plP_stindex( side,
-                  "LV" ) != -1 || plP_stindex( side, "lv" ) != -1 )
+    else if ( plP_stindex( side, "LV" ) != -1 || plP_stindex( side, "lv" ) != -1 )
     {
         vert  = 0;
         xdv   = plsc->vpdxmi;
@@ -511,8 +509,7 @@ c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
         dispx = -disp;
         dispy = 0;
     }
-    else if ( plP_stindex( side,
-                  "RV" ) != -1 || plP_stindex( side, "rv" ) != -1 )
+    else if ( plP_stindex( side, "RV" ) != -1 || plP_stindex( side, "rv" ) != -1 )
     {
         vert  = 0;
         xdv   = plsc->vpdxma;
@@ -718,19 +715,9 @@ plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string )
  \*--------------------------------------------------------------------------*/
 
 static void
-plchar( signed char *vxygrid,
-    PLFLT *xform,
-    PLINT base,
-    PLINT oline,
-    PLINT uline,
-    PLINT refx,
-    PLINT refy,
-    PLFLT scale,
-    PLFLT xpmm,
-    PLFLT ypmm,
-    PLFLT *p_xorg,
-    PLFLT *p_yorg,
-    PLFLT *p_width )
+plchar( signed char *vxygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
+    PLINT refx, PLINT refy, PLFLT scale, PLFLT xpmm, PLFLT ypmm,
+    PLFLT *p_xorg, PLFLT *p_yorg, PLFLT *p_width )
 {
     PLINT xbase, ybase, ydisp, lx, ly, cx, cy;
     PLINT k, penup;
@@ -971,8 +958,7 @@ pldeco( short int **symbol, PLINT *length, const char *text )
         {
             test = text[j++];
             if ( test == esc )
-                sym[( *length )++] =
-                    *( fntlkup + ( ifont - 1 ) * numberchars + ch );
+                sym[( *length )++] = *( fntlkup + ( ifont - 1 ) * numberchars + ch );
 
             else if ( test == 'u' || test == 'U' )
                 sym[( *length )++] = -1;
@@ -1005,8 +991,7 @@ pldeco( short int **symbol, PLINT *length, const char *text )
             {
                 test  = text[j++];
                 ifont = 1 + plP_strpos( font_types,
-                    isupper( test ) ? tolower(
-                        test ) : test );
+                    isupper( test ) ? tolower( test ) : test );
                 if ( ifont == 0 || ifont > numberfonts )
                     ifont = 1;
             }
@@ -1173,8 +1158,7 @@ plfntld( PLINT fnt )
         pdfs = plLibOpenPdfstrm( PL_SFONT );
 
     if ( pdfs == NULL )
-        plexit(
-            "Unable to either (1) open/find or (2) allocate memory for the font file" );
+        plexit( "Unable to either (1) open/find or (2) allocate memory for the font file" );
 
 /* Read fntlkup[] */
 
@@ -1257,9 +1241,7 @@ int plhershey2unicode( int in )
     int ret = -1;
     int i;
 
-    for ( i = 0;
-          ( i < number_of_entries_in_hershey_to_unicode_table ) && ( ret == -1 );
-          i++ )
+    for ( i = 0; ( i < number_of_entries_in_hershey_to_unicode_table ) && ( ret == -1 ); i++ )
     {
         if ( hershey_to_unicode_lookup_table[i].Hershey == in ) ret = i;
     }
@@ -1372,11 +1354,7 @@ plP_FCI2FontName( PLUNICODE fci,
  \*--------------------------------------------------------------------------*/
 
 void
-c_plmtex3( const char *side,
-    PLFLT disp,
-    PLFLT pos,
-    PLFLT just,
-    const char *text )
+c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text )
 {
     /* local storage */
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
@@ -1525,8 +1503,7 @@ c_plmtex3( const char *side,
             xform[1] = -cos( theta );
             xform[2] = 1.0;
             xform[3] = -sin( theta );
-            plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc,
-                (PLINT) yrefpc, text );
+            plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc, (PLINT) yrefpc, text );
         }
 
         /* parallel, rotate & shear by angle */
@@ -1537,8 +1514,7 @@ c_plmtex3( const char *side,
             xform[2] = sin( theta );
             xform[3] = 1.0;
 
-            plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc,
-                (PLINT) yrefpc, text );
+            plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc, (PLINT) yrefpc, text );
         }
     }
 
@@ -1713,8 +1689,7 @@ c_plmtex3( const char *side,
             xform[2] = sin( theta );
             xform[3] = 1.0;
 
-            plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc,
-                (PLINT) yrefpc, text );
+            plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc, (PLINT) yrefpc, text );
         }
 
         else
@@ -1724,8 +1699,7 @@ c_plmtex3( const char *side,
             xform[2] = 1.0;
             xform[3] = -sin( theta );
 
-            plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc,
-                (PLINT) yrefpc, text );
+            plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc, (PLINT) yrefpc, text );
         }
     }
 }
@@ -1793,18 +1767,10 @@ c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
     {
         xspc = plP_wcpcx( plP_w3wcx( wx + sx, wy + sy, wz + sz ));
         yspc = plP_wcpcy( plP_w3wcy( wx + sx, wy + sy, wz + sz ));
-        ld   =
-            sqrt(( xpc -
-                   xdpc ) * ( xpc - xdpc ) + ( ypc - ydpc ) * ( ypc - ydpc ));
-        ls =
-            sqrt(( xpc -
-                   xspc ) * ( xpc - xspc ) + ( ypc - yspc ) * ( ypc - yspc ));
-        phi =
-            acos(
-                (( xdpc -
-                   xpc ) *
-                 ( xspc - xpc ) + ( ydpc - ypc ) * ( yspc - ypc )) / ( ld * ls ));
-        cp = ( xdpc - xpc ) * ( yspc - ypc ) - ( ydpc - ypc ) * ( xspc - xpc );
+        ld   = sqrt(( xpc - xdpc ) * ( xpc - xdpc ) + ( ypc - ydpc ) * ( ypc - ydpc ));
+        ls   = sqrt(( xpc - xspc ) * ( xpc - xspc ) + ( ypc - yspc ) * ( ypc - yspc ));
+        phi  = acos((( xdpc - xpc ) * ( xspc - xpc ) + ( ydpc - ypc ) * ( yspc - ypc )) / ( ld * ls ));
+        cp   = ( xdpc - xpc ) * ( yspc - ypc ) - ( ydpc - ypc ) * ( xspc - xpc );
         if ( cp < 0.0 )
         {
             phi = -phi;
@@ -1845,14 +1811,7 @@ c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
     xform[2] = sin( theta ) * stride;
     xform[3] = sin( theta ) * sin( phi ) + cos( theta ) * cos( phi );
 
-    plP_text( 0,
-        just,
-        xform,
-        (PLINT) xpc,
-        (PLINT) ypc,
-        (PLINT) xrefpc,
-        (PLINT) yrefpc,
-        text );
+    plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc, (PLINT) yrefpc, text );
 }
 
 /*------------------------------------------------------------------------*\

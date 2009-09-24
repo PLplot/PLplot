@@ -60,11 +60,7 @@ static PLFLT
 plP_pcwcy( PLINT y );
 
 static void
-pl_drawcontlabel( PLFLT tpx,
-    PLFLT tpy,
-    char *flabel,
-    PLFLT *distance,
-    PLINT *lastindex );
+pl_drawcontlabel( PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance, PLINT *lastindex );
 
 /* Error flag for aborts */
 
@@ -152,13 +148,9 @@ static void
 realloc_line( CONT_LINE *line )
 {
     if ((( line->x = (PLFLT *) realloc( line->x,
-               ( line->npts +
-                 LINE_ITEMS ) * sizeof ( PLFLT ))) ==
-         NULL ) ||
+               ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ))) == NULL ) ||
         (( line->y = (PLFLT *) realloc( line->y,
-               ( line->npts +
-                 LINE_ITEMS ) * sizeof ( PLFLT ))) ==
-         NULL ))
+               ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ))) == NULL ))
         plexit( "realloc_line: Insufficient memory" );
 }
 
@@ -258,10 +250,7 @@ cont_mv_store( PLFLT xx, PLFLT yy )
 }
 
 /* small routine to set offset and spacing of contour labels, see desciption above */
-void c_pl_setcontlabelparam( PLFLT offset,
-    PLFLT size,
-    PLFLT spacing,
-    PLINT active )
+void c_pl_setcontlabelparam( PLFLT offset, PLFLT size, PLFLT spacing, PLINT active )
 {
     contlabel_offset = offset;
     contlabel_size   = size;
@@ -276,11 +265,7 @@ void c_pl_setcontlabelformat( PLINT lexp, PLINT sigdig )
     sigprec = sigdig;
 }
 
-static void pl_drawcontlabel( PLFLT tpx,
-    PLFLT tpy,
-    char *flabel,
-    PLFLT *distance,
-    PLINT *lastindex )
+static void pl_drawcontlabel( PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance, PLINT *lastindex )
 {
     PLFLT delta_x, delta_y;
     PLINT currx_old, curry_old;
@@ -380,11 +365,7 @@ static void plfloatlabel( PLFLT value, char *string, PLINT len )
     mant = value / pow( 10.0, exponent );
 
     if ( mant != 0.0 )
-        mant =
-            (int ) ( mant *
-                     pow( 10.0, prec - 1 ) + 0.5 * mant / fabs( mant )) / pow(
-                10.0,
-                prec - 1 );
+        mant = (int ) ( mant * pow( 10.0, prec - 1 ) + 0.5 * mant / fabs( mant )) / pow( 10.0, prec - 1 );
 
     snprintf( form, FORM_LEN, "%%.%df", prec - 1 );
     snprintf( string, len, form, mant );
@@ -728,9 +709,7 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
         num++;
         first = 0;
     }
-    for ( k = 0, i = ( startedge < 0 ? 0 : startedge );
-          k < 4;
-          k++, i = ( i + 1 ) % 4 )
+    for ( k = 0, i = ( startedge < 0 ? 0 : startedge ); k < 4; k++, i = ( i + 1 ) % 4 )
     {
         if ( i == startedge ) continue;
 
@@ -752,12 +731,8 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
             j = ( i + 1 ) % 4;
             if ( f[i] != 0.0 )
             {
-                locx[num] =
-                    ( px[i] * fabs( f[j] ) + px[j] *
-                      fabs( f[i] )) / fabs( f[j] - f[i] );
-                locy[num] =
-                    ( py[i] * fabs( f[j] ) + py[j] *
-                      fabs( f[i] )) / fabs( f[j] - f[i] );
+                locx[num] = ( px[i] * fabs( f[j] ) + px[j] * fabs( f[i] )) / fabs( f[j] - f[i] );
+                locy[num] = ( py[i] * fabs( f[j] ) + py[j] * fabs( f[i] )) / fabs( f[j] - f[i] );
             }
             else
             {
@@ -776,11 +751,7 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
             {
                 /* Link to the next point on the contour */
                 if ( contlabel_active )
-                    pl_drawcontlabel( locx[num],
-                        locy[num],
-                        flabel,
-                        distance,
-                        lastindex );
+                    pl_drawcontlabel( locx[num], locy[num], flabel, distance, lastindex );
                 else
                     cont_xy_store( locx[num], locy[num] );
                 /* Need to follow contour into next grid box */

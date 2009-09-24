@@ -206,8 +206,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
  * (if cont_color <= 0 or cont_width <=0, no such contours are drawn).
  \*----------------------------------------------------------------------*/
 
-void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT,
-        PLFLT ),
+void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
     PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     PLFLT *clevel, PLINT nlevel, PLINT fill_width,
     PLINT cont_color, PLINT cont_width,
@@ -261,15 +260,13 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT,
                 plexit( "plshades: Out of memory for x" );
             cgrid1.xg = x;
             for ( i = 0; i < nx; i++ )
-                cgrid1.xg[i] = xmin +
-                               ( xmax - xmin ) * (float) i / (float) ( nx - 1 );
+                cgrid1.xg[i] = xmin + ( xmax - xmin ) * (float) i / (float) ( nx - 1 );
             y = (PLFLT *) malloc( ny * sizeof ( PLFLT ));
             if ( y == NULL )
                 plexit( "plshades: Out of memory for y" );
             cgrid1.yg = y;
             for ( i = 0; i < ny; i++ )
-                cgrid1.yg[i] = ymin +
-                               ( ymax - ymin ) * (float) i / (float) ( ny - 1 );
+                cgrid1.yg[i] = ymin + ( ymax - ymin ) * (float) i / (float) ( ny - 1 );
             plcont( a, nx, ny, 1, nx, 1, ny, clevel, nlevel,
                 pltr1, (void *) &cgrid1 );
             free( x );

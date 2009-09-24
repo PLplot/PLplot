@@ -188,17 +188,9 @@ grimage( short *x, short *y, unsigned short *z, PLINT nx, PLINT ny )
  *
  \*-------------------------------------------------------------------------*/
 void
-c_plimagefr( PLFLT **idata,
-    PLINT nx,
-    PLINT ny,
-    PLFLT xmin,
-    PLFLT xmax,
-    PLFLT ymin,
-    PLFLT ymax,
-    PLFLT zmin,
-    PLFLT zmax,
-    PLFLT valuemin,
-    PLFLT valuemax,
+c_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
+    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+    PLFLT valuemin, PLFLT valuemax,
     void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
     PLPointer pltr_data )
 {
@@ -275,8 +267,7 @@ c_plimagefr( PLFLT **idata,
                     }
                     /* Set to a value scaled between COLOR_MIN and COLOR_MAX. */
                     z[ix * ny + iy] =
-                        ( datum - valuemin +
-                          COLOR_MIN ) / ( valuemax - valuemin ) * COLOR_MAX;
+                        ( datum - valuemin + COLOR_MIN ) / ( valuemax - valuemin ) * COLOR_MAX;
                 }
             }
         }
@@ -317,19 +308,9 @@ c_plimagefr( PLFLT **idata,
  *
  \*-------------------------------------------------------------------------*/
 void
-c_plimage( PLFLT **idata,
-    PLINT nx,
-    PLINT ny,
-    PLFLT xmin,
-    PLFLT xmax,
-    PLFLT ymin,
-    PLFLT ymax,
-    PLFLT zmin,
-    PLFLT zmax,
-    PLFLT Dxmin,
-    PLFLT Dxmax,
-    PLFLT Dymin,
-    PLFLT Dymax )
+c_plimage( PLFLT **idata, PLINT nx, PLINT ny,
+    PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+    PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax )
 {
     PLINT  ix, iy, ixx, iyy, xm, ym, nnx, nny;
     PLFLT  data_min, data_max, dx, dy;
@@ -347,15 +328,13 @@ c_plimage( PLFLT **idata,
 
     if ( Dxmin < xmin || Dxmax > xmax || Dymin < ymin || Dymax > ymax )
     {
-        plabort(
-            "plimage: Dxmin or Dxmax or Dymin or Dymax not compatible with xmin or xmax or ymin or ymax." );
+        plabort( "plimage: Dxmin or Dxmax or Dymin or Dymax not compatible with xmin or xmax or ymin or ymax." );
         return;
     }
 
     if ( Dxmax < Dxmin || xmax < xmin || Dymax < Dymin || ymax < ymin )
     {
-        plabort(
-            "plimage: All (Dxmin < Dxmax) and (Dymin < Dymax) and (xmin < xmax) and (ymin < ymax) must hold." );
+        plabort( "plimage: All (Dxmin < Dxmax) and (Dymin < Dymax) and (xmin < xmax) and (ymin < ymax) must hold." );
         return;
     }
 

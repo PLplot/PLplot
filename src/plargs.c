@@ -100,16 +100,8 @@
 
 /* Support functions */
 
-static int  ParseOpt( int *,
-    const char ***,
-    int *,
-    const char ***,
-    PLOptionTable * );
-static int  ProcessOpt( const char *,
-    PLOptionTable *,
-    int *,
-    const char ***,
-    int * );
+static int  ParseOpt( int *, const char ***, int *, const char ***, PLOptionTable * );
+static int  ProcessOpt( const char *, PLOptionTable *, int *, const char ***, int * );
 static int  GetOptarg( const char **, int *, const char ***, int * );
 static void Help( void );
 static void Syntax( void );
@@ -947,10 +939,7 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
  \*--------------------------------------------------------------------------*/
 
 static int
-ParseOpt( int *p_myargc,
-    const char ***p_argv,
-    int *p_argc,
-    const char ***p_argsave,
+ParseOpt( int *p_myargc, const char ***p_argv, int *p_argc, const char ***p_argsave,
     PLOptionTable *option_table )
 {
     PLOptionTable *tab;
@@ -1002,10 +991,7 @@ ParseOpt( int *p_myargc,
  \*--------------------------------------------------------------------------*/
 
 static int
-ProcessOpt( const char *opt,
-    PLOptionTable *tab,
-    int *p_myargc,
-    const char ***p_argv,
+ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_argv,
     int *p_argc )
 {
     int        need_arg, res;
@@ -1041,8 +1027,7 @@ ProcessOpt( const char *opt,
         {
             /* Make a copy, since handler may mung optarg with strtok() */
             char *copy =
-                (char *) malloc((size_t) ( 1 +
-                                           strlen( optarg )) * sizeof ( char ));
+                (char *) malloc((size_t) ( 1 + strlen( optarg )) * sizeof ( char ));
             if ( copy == NULL )
             {
                 plabort( "ProcessOpt: out of memory" );
@@ -1127,10 +1112,7 @@ ProcessOpt( const char *opt,
  \*--------------------------------------------------------------------------*/
 
 static int
-GetOptarg( const char **poptarg,
-    int *p_myargc,
-    const char ***p_argv,
-    int *p_argc )
+GetOptarg( const char **poptarg, int *p_myargc, const char ***p_argv, int *p_argc )
 {
     int result = 0;
 
@@ -1158,9 +1140,7 @@ GetOptarg( const char **poptarg,
     {
         if ( !mode_quiet )
         {
-            fprintf( stderr,
-                "Argument missing for %s option.\n",
-                ( *p_argv )[0] );
+            fprintf( stderr, "Argument missing for %s option.\n", ( *p_argv )[0] );
             plOptUsage();
         }
     }
@@ -1365,40 +1345,29 @@ plParseDrvOpts( DrvOpt *acc_opt )
                 case DRV_STR:
                     *(char **) ( t->var_ptr ) = ( drvp->value );
 #ifdef DEBUG
-                    fprintf( stderr, "plParseDrvOpts: %s %s\n", t->opt,
-                        *(char**) t->var_ptr );
+                    fprintf( stderr, "plParseDrvOpts: %s %s\n", t->opt, *(char**) t->var_ptr );
 #endif
                     break;
 
                 case DRV_INT:
                     if ( sscanf( drvp->value, "%d", (int *) t->var_ptr ) != 1 )
                     {
-                        snprintf( msg,
-                            sizeof ( msg ) - 1,
-                            "Incorrect argument to '%s' option",
-                            drvp->option );
+                        snprintf( msg, sizeof ( msg ) - 1, "Incorrect argument to '%s' option", drvp->option );
                         plexit( msg );
                     }
 #ifdef DEBUG
-                    fprintf( stderr,
-                        "plParseDrvOpts: %s %d\n",
-                        t->opt,
-                        *(int *) t->var_ptr );
+                    fprintf( stderr, "plParseDrvOpts: %s %d\n", t->opt, *(int *) t->var_ptr );
 #endif
                     break;
 
                 case DRV_FLT:
                     if ( sscanf( drvp->value, "%f", (float *) t->var_ptr ) != 1 )
                     {
-                        snprintf( msg,
-                            sizeof ( msg ) - 1,
-                            "Incorrect argument to '%s' option",
-                            drvp->option );
+                        snprintf( msg, sizeof ( msg ) - 1, "Incorrect argument to '%s' option", drvp->option );
                         plexit( msg );
                     }
 #ifdef DEBUG
-                    fprintf( stderr, "plParseDrvOpts: %s %f\n", t->opt,
-                        *(float *) t->var_ptr );
+                    fprintf( stderr, "plParseDrvOpts: %s %f\n", t->opt, *(float *) t->var_ptr );
 #endif
                     break;
                 }
@@ -1408,11 +1377,7 @@ plParseDrvOpts( DrvOpt *acc_opt )
 
         if ( !fl )
         {
-            snprintf(
-                msg,
-                sizeof ( msg ) - 1,
-                "Option '%s' not recognized.\n\nRecognized options for this driver are:\n",
-                drvp->option );
+            snprintf( msg, sizeof ( msg ) - 1, "Option '%s' not recognized.\n\nRecognized options for this driver are:\n", drvp->option );
             plwarn( msg );
             plHelpDrvOpts( acc_opt );
             plexit( "" );
@@ -1785,9 +1750,7 @@ opt_bg( const char *opt, const char *optarg, void *client_data )
         break;
 
     default:
-        fprintf( stderr,
-            "Unrecognized background color value %s\n",
-            color_field );
+        fprintf( stderr, "Unrecognized background color value %s\n", color_field );
         return 1;
     }
 
@@ -2017,9 +1980,7 @@ opt_fsiz( const char *opt, const char *optarg, void *client_data )
     bytemax = (PLINT) ( multiplier * atof( spec ));
     if ( bytemax <= 0 )
     {
-        fprintf( stderr,
-            "?invalid file size %d. 2.14G is the maximum.\n",
-            bytemax );
+        fprintf( stderr, "?invalid file size %d. 2.14G is the maximum.\n", bytemax );
         return 1;
     }
     plsfam( 1, -1, bytemax );
@@ -2167,10 +2128,7 @@ opt_plserver( const char *opt, const char *optarg, void *client_data )
 static int
 opt_plwindow( const char *opt, const char *optarg, void *client_data )
 {
-    if (( plsc->plwindow =
-              (char *) malloc((size_t) ( 1 +
-                                         strlen( optarg )) *
-                  sizeof ( char ))) == NULL )
+    if (( plsc->plwindow = (char *) malloc((size_t) ( 1 + strlen( optarg )) * sizeof ( char ))) == NULL )
     {
         plexit( "opt_plwindow: Insufficient memory" );
     }
@@ -2191,10 +2149,7 @@ opt_tcl_cmd( const char *opt, const char *optarg, void *client_data )
 {
     char *newcmd;
 
-    if (( newcmd =
-              (char *) malloc((size_t) ( strlen( optarg ) +
-                                         9 ) * sizeof ( char ))) ==
-        NULL )
+    if (( newcmd = (char *) malloc((size_t) ( strlen( optarg ) + 9 ) * sizeof ( char ))) == NULL )
     {
         plexit( "opt_tcl_cmd: Insufficient memory" );
     }
@@ -2202,9 +2157,7 @@ opt_tcl_cmd( const char *opt, const char *optarg, void *client_data )
     strcpy( newcmd, "tcl_cmd=" );
     strcat( newcmd, optarg );
 
-    fprintf(
-        stderr,
-        "-tcl_cmd <cmd> is obsolete. Please use -drvopt tcl_cmd=<cmd> instead\n" );
+    fprintf( stderr, "-tcl_cmd <cmd> is obsolete. Please use -drvopt tcl_cmd=<cmd> instead\n" );
 
     opt_drvopt( "drvopt", newcmd, NULL );
     free( newcmd );
@@ -2273,10 +2226,7 @@ opt_geo( const char *opt, const char *optarg, void *client_data )
 
 /* The TK driver uses the geometry string directly */
 
-    if (( plsc->geometry =
-              (char *) malloc((size_t) ( 1 +
-                                         strlen( optarg )) *
-                  sizeof ( char ))) == NULL )
+    if (( plsc->geometry = (char *) malloc((size_t) ( 1 + strlen( optarg )) * sizeof ( char ))) == NULL )
     {
         plexit( "opt_geo: Insufficient memory" );
     }
@@ -2332,10 +2282,7 @@ opt_geo( const char *opt, const char *optarg, void *client_data )
 static int
 opt_tk_file( const char *opt, const char *optarg, void *client_data )
 {
-    if (( plsc->tk_file =
-              (char *) malloc((size_t) ( 1 +
-                                         strlen( optarg )) *
-                  sizeof ( char ))) == NULL )
+    if (( plsc->tk_file = (char *) malloc((size_t) ( 1 + strlen( optarg )) * sizeof ( char ))) == NULL )
     {
         plexit( "opt_tk_file: Insufficient memory" );
     }
@@ -2453,12 +2400,10 @@ opt_locale( const char *opt, const char *optarg, void *client_data )
     }
     else
     {
-        plwarn(
-            "Could not use invalid environment (e.g., LC_ALL, LC_NUMERIC, or LANG) to set LC_NUMERIC locale.  Falling back to LC_NUMERIC \"C\" locale instead.\n" );
+        plwarn( "Could not use invalid environment (e.g., LC_ALL, LC_NUMERIC, or LANG) to set LC_NUMERIC locale.  Falling back to LC_NUMERIC \"C\" locale instead.\n" );
         if ( !( locale = setlocale( LC_NUMERIC, "C" )))
         {
-            plexit(
-                "Your platform is seriously broken.  Not even a \"C\" locale could be set." );
+            plexit( "Your platform is seriously broken.  Not even a \"C\" locale could be set." );
         }
     }
     return 0;

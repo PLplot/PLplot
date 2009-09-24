@@ -689,8 +689,7 @@ circulation( PLINT *x, PLINT *y, PLINT npts )
         y2       = y[i + 1];
         x3       = x[i + 2];
         y3       = y[i + 2];
-        xproduct = xproduct +
-                   ( x2 - x1 ) * ( y3 - y2 ) - ( y2 - y1 ) * ( x3 - x2 );
+        xproduct = xproduct + ( x2 - x1 ) * ( y3 - y2 ) - ( y2 - y1 ) * ( x3 - x2 );
     }
 
     if ( xproduct > 0.0 ) direction = 1;
@@ -735,10 +734,8 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     }
     else
     {
-        if ((( xclp = (short *) malloc(( 2 * npts + 2 ) * sizeof ( short ))) ==
-             NULL ) ||
-            (( yclp = (short *) malloc(( 2 * npts + 2 ) * sizeof ( short ))) ==
-             NULL ))
+        if ((( xclp = (short *) malloc(( 2 * npts + 2 ) * sizeof ( short ))) == NULL ) ||
+            (( yclp = (short *) malloc(( 2 * npts + 2 ) * sizeof ( short ))) == NULL ))
         {
             plexit( "plP_plfclp: Insufficient memory" );
         }
