@@ -105,9 +105,9 @@ public:
     plstream( plstream * pls );
     plstream( PLS::stream_id sid, PLINT strm = 0 );
     plstream( PLINT _stream ) : stream( _stream ) {}
-    plstream( PLINT nx //=1, PLINT ny //=1,
+    plstream( PLINT nx /*=1*/, PLINT ny /*=1*/,
         const char *driver = NULL, const char *file = NULL );
-    plstream( PLINT nx //=1, PLINT ny //=1, PLINT r, PLINT g, PLINT b,
+    plstream( PLINT nx /*=1*/, PLINT ny /*=1*/, PLINT r, PLINT g, PLINT b,
         const char *driver = NULL, const char *file = NULL );
 
     virtual ~plstream();
@@ -816,7 +816,7 @@ public:
     void stripd( PLINT id );
 
 // plots a 2d image (or a matrix too large for plshade() ) - colors
-    *automatically scaled
+// automatically scaled
 
     void image( PLFLT **data, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax,
                 PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
