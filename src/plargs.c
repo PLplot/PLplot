@@ -2243,6 +2243,16 @@ opt_geo( const char *opt, const char *optarg, void *client_data )
             fprintf( stderr, "?invalid xwid in -geometry %s\n", optarg );
         if ( ywid == 0 )
             fprintf( stderr, "?invalid ywid in -geometry %s\n", optarg );
+        if ( xwid < 0 )
+        {
+            fprintf( stderr, "?invalid xwid in -geometry %s\n", optarg );
+            return 1;
+        }
+        if ( ywid < 0 )
+        {
+            fprintf( stderr, "?invalid ywid in -geometry %s\n", optarg );
+            return 1;
+        }
     }
     else if ( numargs == 4 )
     {
@@ -2250,6 +2260,16 @@ opt_geo( const char *opt, const char *optarg, void *client_data )
             fprintf( stderr, "?invalid xwid in -geometry %s\n", optarg );
         if ( ywid == 0 )
             fprintf( stderr, "?invalid ywid in -geometry %s\n", optarg );
+        if ( xwid < 0 )
+        {
+            fprintf( stderr, "?invalid xwid in -geometry %s\n", optarg );
+            return 1;
+        }
+        if ( ywid < 0 )
+        {
+            fprintf( stderr, "?invalid ywid in -geometry %s\n", optarg );
+            return 1;
+        }
         if ( abs( xoff ) == 0 )
             fprintf( stderr, "?invalid xoff in -geometry %s\n", optarg );
         if ( abs( yoff ) == 0 )
