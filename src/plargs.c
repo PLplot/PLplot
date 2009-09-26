@@ -330,7 +330,7 @@ static PLOptionTable ploption_table[] = {
         NULL,
         PL_OPT_FUNC | PL_OPT_ARG,
         "-geometry geom",
-        "Window size (and optional position), in pixels (e.g. -geometry 400x300 or -geometry 400x300+100+200)"
+        "Window size/position specified as in X, e.g., 400x300, 400x300-100+200, +100-200, etc."
     },
     {
         "geo",                  /* Geometry (alias) */
@@ -339,7 +339,7 @@ static PLOptionTable ploption_table[] = {
         NULL,
         PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
         "-geo geom",
-        "Window size, in pixels (e.g. -geo 400x300)"
+        "Window size/position specified as in X, e.g., 400x300, 400x300-100+200, +100-200, etc."
     },
     {
         "wplt",                 /* Plot window */
@@ -2210,19 +2210,20 @@ opt_py( const char *opt, const char *optarg, void *client_data )
 /*--------------------------------------------------------------------------*\
  * opt_geo()
  *
- * Performs appropriate action for option "geo":
- * Set geometry for output window
- *   e.g.,  "-geometry 400x400+100+0"
- * or with offsets alone "-geometry +Xoff+Yoff"
- *   e.g., "-geometry +100+0"
+ * Performs appropriate action for option "geo": Set geometry for
+ * output window, i.e., "-geometry WIDTHxHEIGHT+XOFF+YOFF" where
+ * WIDTHxHEIGHT, +XOFF+YOFF, or both must be present, and +XOFF+YOFF
+ * stands for one of the four combinations +XOFF+YOFF, +XOFF-YOFF,
+ * -XOFF+YOFF, and -XOFF-YOFF.  Some examples are the following:
+ * -geometry 400x300, -geometry -100+200, and -geometry 400x300-100+200.
  \*--------------------------------------------------------------------------*/
 
 static int
 opt_geo( const char *opt, const char *optarg, void *client_data )
 {
-    char  *field;
+    int   numargs;
     PLFLT xdpi = 0., ydpi = 0.;
-    PLINT xwid = 0, ywid = 0, xoff = 0, yoff = 0;
+    PLINT xwid, ywid, xoff, yoff;
 
 /* The TK driver uses the geometry string directly */
 
@@ -2233,42 +2234,46 @@ opt_geo( const char *opt, const char *optarg, void *client_data )
 
     strcpy( plsc->geometry, optarg );
 
-/* Set up plplot dimensions */
-
-    strncpy( opttmp, optarg, OPTMAX - 1 );
-    opttmp[OPTMAX - 1] = '\0';
-    if ( strchr( opttmp, 'x' ))
+    numargs = sscanf( optarg, "%dx%d%d%d", &xwid, &ywid, &xoff, &yoff );
+    if ( numargs == 2 )
     {
-        /* -geometry WxH or -geometry WxH+Xoff+Yoff */
-
-        field = strtok( opttmp, "x" );
-        xwid  = atoi( field );
+        xoff = 0;
+        yoff = 0;
         if ( xwid == 0 )
-            fprintf( stderr, "?invalid xwid\n" );
-
-        if (( field = strtok( NULL, "+" )) == NULL )
-            return 1;
-
-        ywid = atoi( field );
+            fprintf( stderr, "?invalid xwid in -geometry %s\n", optarg );
         if ( ywid == 0 )
-            fprintf( stderr, "?invalid ywid\n" );
-
-        field = strtok( NULL, "+" );
+            fprintf( stderr, "?invalid ywid in -geometry %s\n", optarg );
+    }
+    else if ( numargs == 4 )
+    {
+        if ( xwid == 0 )
+            fprintf( stderr, "?invalid xwid in -geometry %s\n", optarg );
+        if ( ywid == 0 )
+            fprintf( stderr, "?invalid ywid in -geometry %s\n", optarg );
+        if ( abs( xoff ) == 0 )
+            fprintf( stderr, "?invalid xoff in -geometry %s\n", optarg );
+        if ( abs( yoff ) == 0 )
+            fprintf( stderr, "?invalid yoff in -geometry %s\n", optarg );
     }
     else
     {
-        /* -geometry +Xoff or -geometry +Xoff+Yoff only */
-
-        field = strtok( opttmp, "+" );
+        numargs = sscanf( optarg, "%d%d", &xoff, &yoff );
+        if ( numargs == 2 )
+        {
+            xwid = 0;
+            ywid = 0;
+            if ( abs( xoff ) == 0 )
+                fprintf( stderr, "?invalid xoff in -geometry %s\n", optarg );
+            if ( abs( yoff ) == 0 )
+                fprintf( stderr, "?invalid yoff in -geometry %s\n", optarg );
+        }
+        else
+        {
+            fprintf( stderr, "?invalid -geometry %s\n", optarg );
+            return 1;
+        }
     }
-
-    if ( field != NULL )
-    {
-        xoff = atoi( field );
-        if (( field = strtok( NULL, "+" )) != NULL )
-            yoff = atoi( field );
-    }
-
+    /*fprintf( stderr, "xwid, ywid, xoff, yoff = %d, %d, %d, %d\n", xwid, ywid, xoff, yoff );*/
     plspage( xdpi, ydpi, xwid, ywid, xoff, yoff );
     return 0;
 }
