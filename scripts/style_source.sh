@@ -102,7 +102,7 @@ previous runs of style_source.sh with their uncrustified versions.
 
 fi
 
-export csource_LIST="src/*.c src/*.h include/plplot.h examples/c/*.c"
+export csource_LIST="src/*.c src/*.h"
 
 export cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
 
