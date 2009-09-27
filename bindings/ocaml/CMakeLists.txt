@@ -5,6 +5,7 @@
 #
 # Copyright (C) 2008 Andrew Ross
 # Copyright (C) 2009 Hezekiah M. Carty
+# Copyright (C) 2009 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -61,9 +62,12 @@ if(ENABLE_ocaml)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
 
+  # ocamlc -c compiles *.c into *.o.
+  # ocamlmklib links *.o into *.so and *.a
   add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
+    OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.o
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
     ${CMAKE_CURRENT_BINARY_DIR}/dllplplot_stubs.so
     ${CMAKE_CURRENT_BINARY_DIR}/libplplot_stubs.a
     COMMAND ${OCAMLC} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
@@ -81,6 +85,7 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/libplplot_stubs.a
     )
 
+  # ocamlc -c compiles *.mli into *.cmi
   add_custom_command(
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmi
@@ -99,7 +104,8 @@ if(ENABLE_ocaml)
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmi
     )
 
-  # ocamlc
+  # ocamlc -c compiles  *.ml into *.cmo and simultaneously checks against
+  # *.cmi produced from *.mli above.
   add_custom_command(
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo
@@ -121,31 +127,7 @@ if(ENABLE_ocaml)
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo
     )
 
-  # ocamlopt
-  add_custom_command(
-    OUTPUT
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.o
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot.o
-    COMMAND ${OCAMLOPT} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.ml
-    # ocamlc and ocamlopt *.ml source file must be in
-    # ${CMAKE_CURRENT_BINARY_DIR}.
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ml ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
-    COMMAND ${OCAMLOPT} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.ml
-    ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ml
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmi
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmi
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    )
-  add_custom_target(target_plplot_core_cmx
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx
-    )
-
-  # ocamlc
+  # ocamlc -a -custom builds a *.cma library from *.cmo
   add_custom_command(
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma
@@ -160,32 +142,71 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma
     )
 
-  # ocamlopt
-  add_custom_command(
-    OUTPUT
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot.a
-    COMMAND ${OCAMLOPT} -a -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG}
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    )
-  add_custom_target(target_plplot_cmxa
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa
-    )
-
   # These targets depend on common files in their respective
   # file-dependency chains.  Therefore, to avoid screwing up parallel
   # builds must serialize with target depends.
   add_dependencies(target_plplot_core_cmi target_lib_plplot_stubs)
-  # ocamlc
   add_dependencies(target_plplot_core_cmo target_plplot_core_cmi)
   add_dependencies(target_plplot_cma target_plplot_core_cmo)
-  # ocamlopt
-  add_dependencies(target_plplot_core_cmx target_plplot_core_cmi)
-  add_dependencies(target_plplot_cmxa target_plplot_core_cmx)
+
+  add_custom_target(plplot_ocaml ALL)
+
+  if(OCAMLOPT)
+    # ocamlopt compiles *.ml into *.o and *.cmx and simultaneously
+    # checks against *.cmi produced from *.mli above.
+    add_custom_command(
+      OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.o
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.o
+      COMMAND ${OCAMLOPT} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.ml
+      # ocamlc and ocamlopt *.ml source file must be in
+      # ${CMAKE_CURRENT_BINARY_DIR}.
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ml ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
+      COMMAND ${OCAMLOPT} -c ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.ml
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ml
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmi
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmi
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      )
+    add_custom_target(target_plplot_core_cmx
+      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx
+      )
+
+    # ocamlopt -a builds the libraries *.cmxa and *.a respectively from
+    # the *.cmx and *.o files.  The plplot_stubs library also plays
+    # a role.
+    add_custom_command(
+      OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.a
+      COMMAND ${OCAMLOPT} -a -o ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplplot_stubs -ccopt -L${CAMLIDL_LIB_DIR} -cclib -lcamlidl -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG}
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      )
+    add_custom_target(target_plplot_cmxa
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa
+      )
+
+    # Must serialize these targets against highest dependency ocamlc
+    # target, target_plplot_cma, because of common custom commands in
+    # their file-dependency chains which would be screwed up in a
+    # parallel build without this serialization.
+
+    add_dependencies(target_plplot_core_cmx target_plplot_cma)
+    add_dependencies(target_plplot_cmxa target_plplot_core_cmx)
+
+    add_dependencies(plplot_ocaml target_plplot_cmxa)
+  else (OCAMLOPT)
+    add_dependencies(plplot_ocaml target_plplot_cma)
+  endif(OCAMLOPT)
 
   # Basic build done, now trying to finish up by adapting bits
   # and pieces of old build procedure below.
@@ -234,13 +255,6 @@ if(ENABLE_ocaml)
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
     configure_file(META.cmake ${CMAKE_CURRENT_BINARY_DIR}/META)
   endif(PKG_CONFIG_EXECUTABLE)
-
-  add_custom_target(plplot_ocaml ALL)
-  if (OCAMLOPT)
-    add_dependencies(plplot_ocaml target_plplot_cma target_plplot_cmxa)
-  else (OCAMLOPT)
-    add_dependencies(plplot_ocaml target_plplot_cma)
-  endif (OCAMLOPT)
 
   # Need to keep track of file dependencies since this is a custom target.
   set_property(GLOBAL PROPERTY FILES_plplot_ocaml
