@@ -102,9 +102,9 @@ previous runs of style_source.sh with their uncrustified versions.
 
 fi
 
-export csource_LIST="src/*.c src/*.h include/plplot.h"
+export csource_LIST="src/*.c src/*.h include/plplot.h examples/c/*.c"
 
-export cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h include/qt.h"
+export cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
 
 for csource in $csource_LIST ; do
     uncrustify -c uncrustify.cfg -q -l c < $csource | cmp --quiet $csource -
