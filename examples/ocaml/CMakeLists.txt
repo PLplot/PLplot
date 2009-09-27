@@ -71,14 +71,16 @@ if(CORE_BUILD)
 
   # Use ocamlopt if it is available, otherwise ocamlc.
   # Make sure the libraries match the compiler.
-  set(OCAML_EXAMPLE_COMPILER ${OCAMLC})
-  set(OCAML_EXAMPLE_LIBEXT cma)
-  set(OCAML_EXAMPLE_CLEAN "*.cm?")
   if (OCAMLOPT)
     set(OCAML_EXAMPLE_COMPILER ${OCAMLOPT})
     set(OCAML_EXAMPLE_LIBEXT cmxa)
     set(OCAML_EXAMPLE_CLEAN "*.cm? *.o")
+  else (OCAMLOPT)
+    set(OCAML_EXAMPLE_COMPILER ${OCAMLC})
+    set(OCAML_EXAMPLE_LIBEXT cma)
+    set(OCAML_EXAMPLE_CLEAN "*.cm?")
   endif (OCAMLOPT)
+
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
@@ -102,13 +104,14 @@ endif(CORE_BUILD)
 if(BUILD_TEST)
   # Default to using ocaml if ocamlopt is not available.  Make sure the proper
   # files are cleaned up after a build, depending on the compiler used.
-  set(ocaml_lib_extension cma)
-  set(ocaml_cleanup_extensions cmo cmi)
-  set(ocaml_compiler ${OCAMLC})
   if (OCAMLOPT)
+    set(ocaml_compiler ${OCAMLOPT})
     set(ocaml_lib_extension cmxa)
     set(ocaml_cleanup_extensions cmx cmi o)
-    set(ocaml_compiler ${OCAMLOPT})
+  else (OCAMLOPT)
+    set(ocaml_compiler ${OCAMLC})
+    set(ocaml_lib_extension cma)
+    set(ocaml_cleanup_extensions cmo cmi)
   endif (OCAMLOPT)
 
   set(ocaml_EXTRA_CLEAN_FILES)
