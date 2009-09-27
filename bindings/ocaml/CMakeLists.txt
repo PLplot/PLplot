@@ -100,8 +100,8 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot.mli
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
-  add_custom_target(target_plplot_core_cmi
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmi
+  add_custom_target(target_plplot_cmi
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmi
     )
 
   # ocamlc -c compiles  *.ml into *.cmo and simultaneously checks against
@@ -123,8 +123,8 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmi
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
-  add_custom_target(target_plplot_core_cmo
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmo
+  add_custom_target(target_plplot_cmo
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmo
     )
 
   # ocamlc -a -custom builds a *.cma library from *.cmo
@@ -145,9 +145,9 @@ if(ENABLE_ocaml)
   # These targets depend on common files in their respective
   # file-dependency chains.  Therefore, to avoid screwing up parallel
   # builds must serialize with target depends.
-  add_dependencies(target_plplot_core_cmi target_lib_plplot_stubs)
-  add_dependencies(target_plplot_core_cmo target_plplot_core_cmi)
-  add_dependencies(target_plplot_cma target_plplot_core_cmo)
+  add_dependencies(target_plplot_cmi target_lib_plplot_stubs)
+  add_dependencies(target_plplot_cmo target_plplot_cmi)
+  add_dependencies(target_plplot_cma target_plplot_cmo)
 
   add_custom_target(plplot_ocaml ALL)
 
@@ -173,7 +173,7 @@ if(ENABLE_ocaml)
       ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmi
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
-    add_custom_target(target_plplot_core_cmx
+    add_custom_target(target_plplot_cmx
       DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.cmx
       )
 
@@ -200,12 +200,22 @@ if(ENABLE_ocaml)
     # their file-dependency chains which would be screwed up in a
     # parallel build without this serialization.
 
-    add_dependencies(target_plplot_core_cmx target_plplot_cma)
-    add_dependencies(target_plplot_cmxa target_plplot_core_cmx)
+    add_dependencies(target_plplot_cmx target_plplot_cma)
+    add_dependencies(target_plplot_cmxa target_plplot_cmx)
 
     add_dependencies(plplot_ocaml target_plplot_cmxa)
+
+    # Need to keep track of file dependencies since this is a custom target.
+    set_property(GLOBAL PROPERTY FILES_plplot_ocaml
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.a
+      )
   else (OCAMLOPT)
     add_dependencies(plplot_ocaml target_plplot_cma)
+    # Need to keep track of file dependencies since this is a custom target.
+    set_property(GLOBAL PROPERTY FILES_plplot_ocaml
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma
+      )
   endif(OCAMLOPT)
 
   # Basic build done, now trying to finish up by adapting bits
@@ -255,17 +265,6 @@ if(ENABLE_ocaml)
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
     configure_file(META.cmake ${CMAKE_CURRENT_BINARY_DIR}/META)
   endif(PKG_CONFIG_EXECUTABLE)
-
-  # Need to keep track of file dependencies since this is a custom target.
-  set_property(GLOBAL PROPERTY FILES_plplot_ocaml
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma
-    )
-  if (OCAMLOPT)
-    set_property(GLOBAL APPEND PROPERTY FILES_plplot_ocaml
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmxa
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot.a
-      )
-  endif (OCAMLOPT)
 
   set(OCAML_FULL_INSTALL_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cma
