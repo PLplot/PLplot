@@ -1084,6 +1084,7 @@ void plD_init_qtwidget(PLStream * pls)
             
     widget->setVisible(true);
     widget->resize(plsc->xlength, plsc->ylength);
+    widget->move(plsc->xoffset, plsc->yoffset);
 
     qApp->connect(&handler, SIGNAL(MasterChangedPage()), widget, SLOT(nextPage()));
     qApp->connect(&handler, SIGNAL(MasterClosed()), widget, SLOT(close()));
