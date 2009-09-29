@@ -50,6 +50,7 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core_stubs.c
     )
 
+  # camlidl produces most of the C and OCaml code required to bind PLplot
   add_custom_command(
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.idl
@@ -222,6 +223,7 @@ if(ENABLE_ocaml)
   # and pieces of old build procedure below.
 
   # Configure the META file
+  configure_file(META.cmake ${CMAKE_CURRENT_BINARY_DIR}/META)
   # Configure pkg-config *.pc file corresponding to plplot.cma
   if(PKG_CONFIG_EXECUTABLE)
     if(LIB_TAG)
@@ -263,7 +265,6 @@ if(ENABLE_ocaml)
       @ONLY
       )
     install(FILES ${PC_CONFIGURED_FILE} DESTINATION ${PKG_CONFIG_DIR})
-    configure_file(META.cmake ${CMAKE_CURRENT_BINARY_DIR}/META)
   endif(PKG_CONFIG_EXECUTABLE)
 
   set(OCAML_FULL_INSTALL_FILES
