@@ -427,7 +427,9 @@ include(octave)
 include(tcl-related)
 include(pdl)
 include(ada)
-include(ocaml)
+# OCaml support is included after the check for output drivers in order to
+# check for extcairo support.
+#include(ocaml)
 include(lua)
 include(d)
 
@@ -456,6 +458,11 @@ include(pango)
 # Device drivers
 # =======================================================================
 include(drivers)
+
+# =======================================================================
+# OCaml support (after drivers to check for extcairo)
+# =======================================================================
+include(ocaml)
 
 # =======================================================================
 # Miscellaneous other features - including docbook documentation

@@ -77,6 +77,16 @@ if(ENABLE_ocaml)
 endif(ENABLE_ocaml)
 
 if(ENABLE_ocaml)
+  find_program(OCAMLFIND ocamlfind)
+  if (OCAMLFIND)
+    message(STATUS "OCAMLFIND = ${OCAMLFIND}")
+  else (OCAMLFIND)
+    message(STATUS "WARNING:"
+      "ocamlfind not found.")
+  endif (OCAMLFIND)
+endif(ENABLE_ocaml)
+
+if(ENABLE_ocaml)
   execute_process(COMMAND ${OCAMLC} -version
     OUTPUT_VARIABLE OCAML_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -144,4 +154,46 @@ if(ENABLE_ocaml)
     endif(output OR error)
 
   endif(GENERATE_PLPLOT_H_INC)
+
+  # Test for the availability of Cairo and Gtk+ bindings
+  if(OCAMLFIND)
+    if(PLD_extcairo)
+      set(text_cairo "module C = Cairo")
+      file(WRITE ${CMAKE_BINARY_DIR}/test_cairo.ml ${text_cairo})
+      execute_process(
+        COMMAND ${OCAMLFIND} c -package cairo -linkpkg test_cairo.ml -o test_cairo
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        RESULT_VARIABLE OCAML_HAS_CAIRO
+        )
+      # Invert the test result.  What CMake takes as true is meant to be false.
+      set(OCAML_HAS_CAIRO NOT OCAML_HAS_CAIRO)
+      if(OCAML_HAS_CAIRO)
+        message(STATUS "Cairo OCaml library found")
+      else(OCAML_HAS_CAIRO)
+        message(STATUS "WARNING:"
+          "Cairo OCaml library not found.  Disabling Plcairo module")
+      endif(OCAML_HAS_CAIRO)
+
+      set(text_gtk
+  "module G = Gtk
+  module C = Cairo_lablgtk"
+        )
+      file (WRITE ${CMAKE_BINARY_DIR}/test_gtk.ml ${text_gtk})
+      execute_process(
+        COMMAND ${OCAMLFIND} c -package cairo.lablgtk2 -linkpkg test_gtk.ml -o test_gtk
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        RESULT_VARIABLE OCAML_HAS_GTK
+        )
+      # Invert the test result.  What CMake takes as true is meant to be false.
+      set(OCAML_HAS_GTK NOT OCAML_HAS_GTK)
+      if(OCAML_HAS_GTK)
+        message(STATUS "lablgtk2 OCaml library found")
+      else(OCAML_HAS_GTK)
+        message(STATUS "WARNING: lablgtk2 OCaml library not found.")
+      endif(OCAML_HAS_GTK)
+    endif (PLD_extcairo)
+  else(OCAMLFIND)
+    message(STATUS "WARNING:"
+      "ocamlfind not available.  Disabling Plcairo module and lablgtk support")
+  endif(OCAMLFIND)
 endif(ENABLE_ocaml)
