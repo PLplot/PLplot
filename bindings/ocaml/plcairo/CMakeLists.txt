@@ -26,15 +26,19 @@ if(PKG_CONFIG_EXECUTABLE)
 endif(PKG_CONFIG_EXECUTABLE)
 if(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
   # Cairo compile and link flags
-  # Requires blank-delimited list.
-  #string(REGEX REPLACE ";" " " CAIRO_COMPILE_FLAGS "${cflags}")
-  #cmake_link_flags(CAIRO_LINK_FLAGS "${linkflags}")
-  set(CAIRO_COMPILE_FLAGS "-D_REENTRANT -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/directfb -I/usr/include/libpng12")
-  set(CAIRO_LINK_FLAGS "-lcairo")
+  # A hack to get the compile and link flags from pkg-config
+  execute_process(COMMAND ${PKG_CONFIG_EXECUTABLE} --cflags cairo
+    OUTPUT_VARIABLE CAIRO_COMPILE_FLAGS
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  execute_process(COMMAND ${PKG_CONFIG_EXECUTABLE} --libs cairo
+    OUTPUT_VARIABLE CAIRO_LINK_FLAGS
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
 
   # locations of plplot.cma and plplot.cmxa
-  set(PATH_TO_PLPLOT_CMA ${CMAKE_CURRENT_BINARY_DIR}/..)
-  set(PATH_TO_PLPLOT_CMXA ${CMAKE_CURRENT_BINARY_DIR}/..)
+  set(PATH_TO_PLPLOT_CMA ${CMAKE_BINARY_DIR}/bindings/ocaml)
+  set(PATH_TO_PLPLOT_CMXA ${CMAKE_BINARY_DIR}/bindings/ocaml)
 
   # ocamlc -c compiles *.c into *.o.
   # ocamlmklib links *.o into *.so and *.a
@@ -108,7 +112,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
   # These targets depend on common files in their respective
   # file-dependency chains.  Therefore, to avoid screwing up parallel
   # builds must serialize with target depends.
-  add_dependencies(target_plcairo_cmi target_lib_plcairo_stubs)
+  add_dependencies(target_plcairo_cmi target_lib_plcairo_stubs target_plplot_cma)
   add_dependencies(target_plcairo_cmo target_plcairo_cmi)
   add_dependencies(target_plcairo_cma target_plcairo_cmo)
 
@@ -157,7 +161,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
     # their file-dependency chains which would be screwed up in a
     # parallel build without this serialization.
 
-    add_dependencies(target_plcairo_cmx target_plcairo_cma)
+    add_dependencies(target_plcairo_cmx target_plcairo_cma target_plplot_cmxa)
     add_dependencies(target_plcairo_cmxa target_plcairo_cmx)
 
     add_dependencies(plcairo_ocaml target_plcairo_cmxa)

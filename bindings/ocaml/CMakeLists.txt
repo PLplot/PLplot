@@ -24,8 +24,8 @@
 
 if(ENABLE_ocaml)
 
-  # Try to build the Plcairo module
-  #add_subdirectory(plcairo)
+  # Optionally build the Plcairo module
+  add_subdirectory(plcairo)
 
   # optional command to generate generated_plplot_h.inc.  This generated
   # version of the file should be identical to plplot_h.inc.
