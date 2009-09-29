@@ -40,6 +40,13 @@ type ('a, 'b) plcairo_sfc_t =
 (** Provide PLplot with a Cairo context to plot on. *)
 external plset_cairo_context : Cairo.t -> unit = "ml_set_plplot_cairo_context"
 
+(** Get the various components of a {!t} instance *)
+let plget_dims t = t.width, t.height
+let plget_surface t = t.surface
+let plget_context t = t.context
+let plget_stream t = t.plstream
+let plget_output t = t.file
+
 (** [plblit_to_cairo ?xoff ?yoff ?scale_by plcairo dest] *)
 let plblit_to_cairo ?(xoff = 0.0) ?(yoff = 0.0) ?scale_by t dest =
   let sx, sy =

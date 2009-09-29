@@ -1,13 +1,5 @@
 (** A record to keep track of the Cairo surface and context information *)
-type ('a, 'b) t = {
-  width : float; (** Width in device units *)
-  height : float; (** Height in device units *)
-  surface : 'a Cairo.surface; (** Cairo surface to plot to *)
-  context : Cairo.t; (** Cairo context to plot to *)
-  file : 'b option; (** An optional file name or stream for the plot output *)
-  clear : bool; (** Should each new page be cleared? *)
-  plstream : int; (** PLplot stream number associated with this plot *)
-}
+type ('a, 'b) t
 
 (** Types of Cairo surfaces available for {!init}. *)
 type ('a, 'b) plcairo_sfc_t
@@ -15,6 +7,21 @@ type ('a, 'b) plcairo_sfc_t
 (** Provide PLplot with a Cairo context to plot on. *)
 external plset_cairo_context : Cairo.t -> unit
   = "ml_set_plplot_cairo_context"
+
+(** Get the [(width, height)] of the surface in device units. *)
+val plget_dims : ('a, 'b) t -> float * float
+
+(** Get the Cairo surface associated with [t]. *)
+val plget_surface : ('a, 'b) t -> 'a Cairo.surface
+
+(** Get the Cairo context associated with [t]. *)
+val plget_context : ('a, 'b) t -> Cairo.t
+
+(** Get the PLplot stream number associated with [t]. *)
+val plget_stream : ('a, 'b) t -> int
+
+(** Get the output (filename, output stream or nothing) associated with [t]. *)
+val plget_output : ('a, 'b) t -> 'b option
 
 (** [plblit_to_cairo ?xoff ?yoff ?scale_by plcairo dest]
     blits the contents of [plcairo] to [dest].
