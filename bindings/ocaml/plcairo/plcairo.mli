@@ -1,50 +1,84 @@
+(** A record to keep track of the Cairo surface and context information *)
 type ('a, 'b) t = {
-  width : float;
-  height : float;
-  surface : 'a Cairo.surface;
-  context : Cairo.t;
-  file : 'b option;
-  clear : bool;
-  plstream : int;
+  width : float; (** Width in device units *)
+  height : float; (** Height in device units *)
+  surface : 'a Cairo.surface; (** Cairo surface to plot to *)
+  context : Cairo.t; (** Cairo context to plot to *)
+  file : 'b option; (** An optional file name or stream for the plot output *)
+  clear : bool; (** Should each new page be cleared? *)
+  plstream : int; (** PLplot stream number associated with this plot *)
 }
-type ('a, 'b) plplot_cairo_t = ('a, 'b) t
-external set_cairo_context : Cairo.t -> unit = "ml_set_plplot_cairo_context"
-val blit_to_cairo :
-  dest:Cairo.t ->
-  dim:[< `Both of float * float | `Height of float | `Width of float ] ->
-  xoff:float -> yoff:float -> ([> `Any ], 'a) t -> unit
-val rasterize : ?alpha:float -> ('a, 'b) t -> (unit -> 'c) -> unit
-val rimage :
+
+(** Types of Cairo surfaces available for {!init}. *)
+type ('a, 'b) plcairo_sfc_t
+
+(** Provide PLplot with a Cairo context to plot on. *)
+external plset_cairo_context : Cairo.t -> unit
+  = "ml_set_plplot_cairo_context"
+
+(** [plblit_to_cairo ?xoff ?yoff ?scale_by plcairo dest]
+    blits the contents of [plcairo] to [dest].
+    Optionally, offset the blit by [xoff] and [yoff] and
+    scale by [`width w], [`height h] or [`both (w, h)]. *)
+val plblit_to_cairo :
+  ?xoff:float ->
+  ?yoff:float ->
+  ?scale_by:[< `both of float * float | `height of float | `width of float ] ->
+  ([> `Any ], 'a) t -> Cairo.t -> unit
+
+(** [plrasterize ?alpha t f] applies the plotting function [f ()] to [t],
+    with the difference that the output will be rasterized for all plot
+    output drivers, including vector-based output drivers such as PS, PDF and
+    SVG.
+    The [alpha] parameter may be provided to make the rasterized overlay
+    transparent, even if the current color palette is not.
+    Note that the plotting done by [f ()] will not be antialiased by default. *)
+val plrasterize :
   ?alpha:float ->
-  ('a, 'b) t ->
-  float array array ->
-  float ->
-  float -> float -> float -> float -> float -> float -> float -> unit
-val with_stream : ?stream:('a, 'b) t -> (unit -> 'c) -> 'c
-val new_page : ('a, 'b) t -> unit
-val pscairo :
-  width:int ->
-  height:int -> string option -> out_channel option * Cairo_ps.surface
-val pdfcairo :
-  width:int ->
-  height:int -> string option -> out_channel option * Cairo_pdf.surface
-val imagecairo :
-  width:int ->
-  height:int -> string option -> string option * Cairo.image_surface
-val imagecairo_rgba :
-  width:int ->
-  height:int -> string option -> string option * Cairo.image_surface
-val init_cairo :
-  ?filename:'a ->
-  clear:bool ->
-  width:int ->
-  height:int ->
-  (width:int ->
-   height:int -> 'a option -> 'b option * ([> `Any ] as 'c) Cairo.surface) ->
-  ('c, 'b) t
-val make_active : ('a, 'b) t -> unit
-val finish : ([> `Any ], 'a) t -> unit
-val save_image : ([> `Any ], string) t -> unit
-val save_image_as : ([> `Any ], 'a) t -> string -> unit
-val save_to_file : ([> `Any ], out_channel) t -> unit
-val copy_plot : ('a, 'b) t -> string -> string -> unit
+  ?antialias:Cairo.antialias -> ('a, 'b) t -> (unit -> 'c) -> unit
+
+(** [plcairo_new_page t] will advance the Cairo context associated with [t] to
+    a new page, for devices which support this. *)
+val plcairo_new_page : ('a, 'b) t -> unit
+
+(** The following 4 functions provide a relatively simple way to setup an
+    appropriate Cairo surface for use with this library and the extcairo
+    driver.  They should be passed as the [init] argument to the
+    [plinit_cairo] function.*)
+val plpscairo : (out_channel, [ `Any | `PS ]) plcairo_sfc_t
+val plpdfcairo : (out_channel, [ `Any | `PDF ]) plcairo_sfc_t
+val plimagecairo : (string, [ `Any | `Image ]) plcairo_sfc_t
+val plimagecairo_rgba : (string, [ `Any | `Image ]) plcairo_sfc_t
+
+(** [plinit_cairo ?filename ?clear (width, height) init] creates a Cairo
+    context and associates it with a new PLplot stream. *)
+val plinit_cairo :
+  ?filename:string ->
+  ?clear:bool ->
+  int * int -> ('a, [> `Any ] as 'b) plcairo_sfc_t -> ('b, 'a) t
+
+(** [plcairo_make_active t] sets PLplot to using the plot stream associated
+    with [t] the active plot stream. *)
+val plcairo_make_active : ('a, 'b) t -> unit
+
+(** [plcairo_finish t] calls [Cairo.surface_finish] on the Cairo surface
+    associated with [t]. *)
+val plcairo_finish : ([> `Any ], 'a) t -> unit
+
+(** [plsave_cairo_image ?filename t] saves the plot surface in [t]
+    as a png to its associated file.  If [filename] is given then the file is
+    saved with that name instead.  {!Plplot.plend} should be called first or
+    the plotting may not be complete!
+    Raises [Invalid_argument "No filename associated with this plot" if no
+    filename is provided and [t] does not have a filename associated with it. *)
+val plsave_cairo_image : ?filename:string -> ([> `Any ], string) t -> unit
+
+(** [plsave_cairo ?filename t] is like {!plsave_cairo_image} but for
+    non-image surfaces. *)
+val plsave_cairo : ([> `Any ], out_channel) t -> unit
+
+(** NOTE: This function will almost definitely change in a future revision.
+    [plcairo_copy_plot t driver filename] copies the plot stream from
+    [t] to a new output stream, using the plot driver [driver], saving the
+    output to [filename]. *)
+val plcairo_copy_plot : ('a, 'b) t -> string -> string -> unit

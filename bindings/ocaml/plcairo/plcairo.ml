@@ -24,49 +24,49 @@ open Printf
 
 (** A record to keep track of the Cairo surface and context information *)
 type ('a, 'b) t = {
-  width : float;
-  height : float;
-  surface : 'a Cairo.surface;
-  context : Cairo.t;
-  file : 'b option;
-  (* Should each new page be cleared? *)
-  clear : bool;
-  (* What PLplot stream number is associated with this plot? *)
-  plstream : int;
+  width : float; (** Width in device units *)
+  height : float; (** Height in device units *)
+  surface : 'a Cairo.surface; (** Cairo surface to plot to *)
+  context : Cairo.t; (** Cairo context to plot to *)
+  file : 'b option; (** An optional file name or stream for the plot output *)
+  clear : bool; (** Should each new page be cleared? *)
+  plstream : int; (** PLplot stream number associated with this plot *)
 }
 
-(** An alias for {t}. *)
-type ('a, 'b) plplot_cairo_t = ('a, 'b) t
+(** Types of Cairo surfaces available for {!init}. *)
+type ('a, 'b) plcairo_sfc_t =
+  width:int -> height:int -> string option -> 'a option * 'b Cairo.surface
 
 (** Provide PLplot with a Cairo context to plot on. *)
-external set_cairo_context : Cairo.t -> unit = "ml_set_plplot_cairo_context"
+external plset_cairo_context : Cairo.t -> unit = "ml_set_plplot_cairo_context"
 
-(** Blit the contents of the given {plplot_cairo_t} to the given {Cairo.t}.
-    Scale according to [`Width w]. [`Height h] or [`Both (w, h)]. *)
-let blit_to_cairo ~dest ~dim ~xoff ~yoff plcairo =
+(** [plblit_to_cairo ?xoff ?yoff ?scale_by plcairo dest] *)
+let plblit_to_cairo ?(xoff = 0.0) ?(yoff = 0.0) ?scale_by t dest =
   let sx, sy =
-    match dim with
-    | `Width w -> let scale = w /. plcairo.width in scale, scale
-    | `Height h -> let scale = h /. plcairo.height in scale, scale
-    | `Both (w, h) -> w /. plcairo.width, h /. plcairo.height
+    match scale_by with
+    | None -> 1.0, 1.0
+    | Some scale -> (
+      match scale with
+      | `width width -> let scale = width /. t.width in scale, scale
+      | `height height -> let scale = height /. t.height in scale, scale
+      | `both (width, height) -> width /. t.width, height /. t.height
+    )
   in
   Cairo.save dest;
   begin
     Cairo.scale ~sx ~sy dest;
-    Cairo.set_source_surface dest plcairo.surface xoff yoff;
+    Cairo.set_source_surface dest t.surface xoff yoff;
     Cairo.paint dest;
   end;
   Cairo.restore dest;
   ()
 
-(** [rasterize ?alpha plot f] applies the plotting function [f ()] to [plot],
-    with the caveat that the output will be rasterized for all plot
-    output drivers, including vector-based output drivers such as PS, PDF and
-    SVG.
-    The [alpha] parameter may be provided to make the rasterized overlay
-    transparent, even if the current color palette is not.
-    Note that the plotting done by [f ()] will not be antialiased. *)
-let rasterize ?alpha plot f =
+(** [plrasterize ?alpha t f] applies the plotting function [f ()] to [t] *)
+let plrasterize ?alpha ?(antialias = Cairo.ANTIALIAS_NONE) t f =
+  (* TODO FIXME: This function should only pain the actual (semi-)opaque pixels
+     in the source image.  As it is, each call to this function will generate
+     an image the size of the source canvas which will often not be the
+     desired effect. *)
   (* Create a Cairo image surface and context to plot the rasterized image
      on.  This will be a duplicate in size and shape of the current plot's
      surface.  Leave the background transparent, so only the plotted image
@@ -74,47 +74,33 @@ let rasterize ?alpha plot f =
   let img_sfc =
     Cairo.image_surface_create
       Cairo.FORMAT_ARGB32
-      ~width:(int_of_float plot.width)
-      ~height:(int_of_float plot.height)
+      ~width:(int_of_float t.width)
+      ~height:(int_of_float t.height)
   in
   let img_context = Cairo.create img_sfc in
   (* Assign the transformation matrix from the main plot context to maintain
      consistency.  It will also have to be applied to the main plot context
      again once back to it. *)
-  let plot_matrix = Cairo.get_matrix plot.context in
-  Cairo.set_matrix img_context plot_matrix;
-  set_cairo_context img_context;
+  let t_matrix = Cairo.get_matrix t.context in
+  Cairo.set_matrix img_context t_matrix;
+  plset_cairo_context img_context;
   (* Make sure antialiasing is turned OFF for the.  The output looks bad
      otherwise. *)
-  Cairo.set_antialias img_context Cairo.ANTIALIAS_NONE;
+  Cairo.set_antialias img_context antialias;
   (* This will now be plotted on to the Cairo image surface. *)
   f ();
   (* Blit the raster image on to the main plot surface *)
-  Cairo.set_source_surface plot.context img_sfc 0.0 0.0;
+  Cairo.set_source_surface t.context img_sfc 0.0 0.0;
   let () =
     match alpha with
-    | None -> Cairo.paint plot.context
-    | Some a -> Cairo.paint_with_alpha plot.context a
+    | None -> Cairo.paint t.context
+    | Some a -> Cairo.paint_with_alpha t.context a
   in
   (* Now set PLplot back to using the proper plot context. *)
-  set_cairo_context plot.context;
-  Cairo.set_matrix plot.context plot_matrix;
+  plset_cairo_context t.context;
+  Cairo.set_matrix t.context t_matrix;
   (* Don't forget to do a [Cairo.surface_finish] when everything is done!
      That isn't done here because the plot may not be finished yet. *)
-  ()
-
-(** [rimage ?alpha plot] takes the same arguments as {Plplot.plimagefr} and
-    works in the same way, except that the output will be rasterized for all
-    plot output drivers, including vector-based output drivers such as PS, PDF
-    and SVG.  {Plplot.plimagefr} is used internally, so image distortions and
-    transformations are possible in the same way as for that function.  The
-    [alpha] parameter may be provided to make the raster image overlay
-    transparent even if the current color palette is not.
-    This is somewhat deprecated, as [plimage] and [plimagefr] now act this way
-    by default. *)
-let rimage ?alpha plot m xmin xmax ymin ymax zmin zmax valuemin valuemax =
-  rasterize ?alpha plot
-    (fun () -> plimagefr m xmin xmax ymin ymax zmin zmax valuemin valuemax);
   ()
 
 (*
@@ -149,67 +135,67 @@ let with_stream ?stream f =
       plsstrm old_stream;
       result
 
-(** [new_page p] will advance the Cairo context associted with [p] to a
-    new page, for devices which support this. *)
-let new_page p =
-  Cairo.show_page p.context;
-  if p.clear then with_stream ~stream:p (fun () -> pladv 0; plclear ()) else ()
+(** [plcairo_new_page t] will advance the Cairo context associated with [t] to
+    a new page, for devices which support this. *)
+let plcairo_new_page t =
+  Cairo.show_page t.context;
+  (* TODO: Is the call to plclear () the right thing to do here? *)
+  if t.clear then with_stream ~stream:t (fun () -> pladv 0; plclear ()) else ()
 
 (** The following 4 functions provide a relatively simple way to setup an
     appropriate Cairo surface for use with this library and the extcairo
     driver.  They should be passed as the [init] argument to the
     [plinit_cairo] function.*)
-let pscairo ~width ~height filename =
+let plpscairo ~width ~height filename =
   let outfile =
     match filename with
     | Some f -> open_out f
-    | None -> raise (Invalid_argument "pscairo needs a filename")
+    | None -> raise (Invalid_argument "plpscairo needs a filename")
   in
   Some outfile,
   Cairo_ps.surface_create_for_channel outfile
     ~width_in_points:(float_of_int width)
     ~height_in_points:(float_of_int height)
 
-let pdfcairo ~width ~height filename =
+let plpdfcairo ~width ~height filename =
   let outfile =
     match filename with
     | Some f -> open_out f
-    | None -> raise (Invalid_argument "pdfcairo needs a filename")
+    | None -> raise (Invalid_argument "plpdfcairo needs a filename")
   in
   Some outfile,
   Cairo_pdf.surface_create_for_channel outfile
     ~width_in_points:(float_of_int width)
     ~height_in_points:(float_of_int height)
 
-let imagecairo ~width ~height (filename : string option) =
+let plimagecairo ~width ~height (filename : string option) =
   filename,
   Cairo.image_surface_create Cairo.FORMAT_RGB24 ~width ~height
 
-let imagecairo_rgba ~width ~height (filename : string option) =
+let plimagecairo_rgba ~width ~height (filename : string option) =
   filename,
   Cairo.image_surface_create Cairo.FORMAT_ARGB32 ~width ~height
 
-(** [init_cairo ?filename ~clear ~width ~height init] creates a Cairo context
-    and associates it with a PLplot stream.  A new plot stream is created in the
-    process.  The current plot stream is left active by this function. *)
-let init_cairo ?filename ~clear ~width ~height init =
+(** [plinit_cairo ?filename ?clear (width, height) init] creates a Cairo
+    context and associates it with a new PLplot stream. *)
+let plinit_cairo ?filename ?(clear = false)
+                 (width, height) (init : ('a, 'b) plcairo_sfc_t) =
   let file, sfc = init ~width ~height filename in
   let context = Cairo.create sfc in
   (* Associate the Cairo context with PLplot, then initialize PLplot *)
   let old_stream = plgstrm () in
   let new_stream = plmkstrm () in
   plsdev "extcairo";
-  ignore (plsetopt "geometry" (sprintf "%dx%d" width height));
-  (* Make the plot have a white background. *)
-  plscol0 0 255 255 255;
-  plscol0 15 0 0 0;
+  plsetopt "geometry" (sprintf "%dx%d" width height);
   plinit ();
   (* Associate our new Cairo context with the PLplot stream. *)
-  set_cairo_context context;
+  plset_cairo_context context;
+  (* Clear the plot if requested and restore the previously active plot
+     stream. *)
   if clear then (pladv 0; plclear ()) else ();
+  plsstrm old_stream;
   (* Return the Cairo information so that the plot surface can be manipulated
      and/or saved late. *)
-  plsstrm old_stream;
   {
     width = float_of_int width;
     height = float_of_int height;
@@ -220,62 +206,61 @@ let init_cairo ?filename ~clear ~width ~height init =
     plstream = new_stream;
   }
 
-(** [make_active plcairo] sets PLplot to using the [plcairo] context
-    and associated stream as its default plotting stream. *)
-let make_active plcairo = plsstrm plcairo.plstream
+(** [plcairo_make_active t] sets PLplot to using the plot stream associated
+    with [t] the active plot stream. *)
+let plcairo_make_active t = plsstrm t.plstream
 
-(** [finish plcairo] calls [Cairo.surface_finish] on the Cairo surface
-    associated with [plcairo]. *)
-let finish plcairo =
-  Cairo.surface_finish plcairo.surface;
+(** [plcairo_finish t] calls [Cairo.surface_finish] on the Cairo surface
+    associated with [t]. *)
+let plcairo_finish t =
+  Cairo.surface_finish t.surface;
   ()
 
-(** [save_image plcairo] saves the plot surface in [plcairo]
-    as a png to its associated file.  {Plplot.plend} should be called first or
-    the plotting may not be complete! *)
-let save_image plcairo =
-  match plcairo.file with
-  | Some filename ->
-      Cairo_png.surface_write_to_file plcairo.surface filename;
-      ()
-  | None -> raise (Invalid_argument "No filename is associated with this plot")
-
-(** [save_image_as plcairo filename] - Like [save_image], but save the plot to
-    the specified file rather than to a filename defined at plot creation. *)
-let save_image_as plcairo filename =
-  Cairo_png.surface_write_to_file plcairo.surface filename;
+(** [plsave_cairo_image ?filename t] saves the plot surface in [t]
+    as a png to its associated file.  If [filename] is given then the file is
+    saved with that name instead.  {!Plplot.plend} should be called first or
+    the plotting may not be complete!
+    Raises [Invalid_argument "No filename associated with this plot" if no
+    filename is provided and [t] does not have a filename associated with it. *)
+let plsave_cairo_image ?filename t =
+  let output_filename =
+    match filename with
+    | Some f -> f
+    | None -> (
+      match t.file with
+      | Some f -> f
+      | None -> invalid_arg "No filename associated with this plot"
+    )
+  in
+  Cairo_png.surface_write_to_file t.surface output_filename;
   ()
 
-(** [save_to_file plcairo] saves the plot surface in [plcairo] to its
-    associated filename.
-    Raises [Invalid_argument] if [plcairo] does not have a filename associated
-    with it. *)
-let save_to_file plcairo =
-  match plcairo.file with
+(** [plsave_cairo ?filename t] is like {!plsave_cairo_image} but for
+    non-image surfaces. *)
+let plsave_cairo t =
+  match t.file with
   | Some fout ->
-      finish plcairo;
+      plcairo_finish t;
       close_out fout;
       ()
-  | None -> raise (Invalid_argument "No file is associated with this plot")
+  | None -> invalid_arg "No filename associated with this plot"
 
-(** NOTE XXX FIXME : This function will almost definitely change in a future
+(** NOTE TODO FIXME : This function will almost definitely change in a future
     revision.
-    [copy_plot plcairo driver filename] copies the plot stream from
-    [plcairo] to a new output stream, using the plot driver [driver], saving the
+    [plcairo_copy_plot t driver filename] copies the plot stream from
+    [t] to a new output stream, using the plot driver [driver], saving the
     output to [filename]. *)
-let copy_plot plcairo driver filename =
+let plcairo_copy_plot t driver filename =
   (* Get the current stream so we can restore it when done. *)
   let old_stream = plgstrm () in
   (* Make a new plot stream *)
   ignore (plmkstrm ());
   plsdev driver;
   plsfnam filename;
-  let geometry = sprintf "%.0fx%.0f" plcairo.width plcairo.height in
-  ignore (plsetopt "geometry" geometry);
-  plscol0 0 255 255 255;
-  plscol0 15 0 0 0;
+  let geometry = sprintf "%.0fx%.0f" t.width t.height in
+  plsetopt "geometry" geometry;
   plinit ();
-  plcpstrm plcairo.plstream true;
+  plcpstrm t.plstream true;
   plreplot ();
   plend1 ();
   plsstrm old_stream;
