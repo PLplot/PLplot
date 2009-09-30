@@ -129,7 +129,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
       # ocamlc and ocamlopt *.ml source file must be in
       # ${CMAKE_CURRENT_BINARY_DIR}.
       COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
-      COMMAND ${OCAMLFIND} opt -package cairo -I ${PATH_TO_PLPLOT_CMXA} -cclib plplot.cmxa -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
+      COMMAND ${OCAMLFIND} opt -package cairo -I ${PATH_TO_PLPLOT_CMXA} -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
       DEPENDS
       ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmi
@@ -146,7 +146,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
       OUTPUT
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmxa
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.a
-      COMMAND ${OCAMLOPT} -a -o ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmxa -I ${PATH_TO_PLPLOT_CMXA} -cclib plplot.cmxa ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplcairo_stubs -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG}
+      COMMAND ${OCAMLOPT} -a -o ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmxa -I ${PATH_TO_PLPLOT_CMXA} ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplcairo_stubs -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -lplplot${LIB_TAG}
       DEPENDS
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmx
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -167,16 +167,16 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
     add_dependencies(plcairo_ocaml target_plcairo_cmxa)
 
     # Need to keep track of file dependencies since this is a custom target.
-    #set_property(GLOBAL PROPERTY FILES_plplot_ocaml
-    #  ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmxa
-    #  ${CMAKE_CURRENT_BINARY_DIR}/plcairo.a
-    #  )
+    set_property(GLOBAL PROPERTY FILES_plcairo_ocaml
+      ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmxa
+      ${CMAKE_CURRENT_BINARY_DIR}/plcairo.a
+      )
   else (OCAMLOPT)
     add_dependencies(plcairo_ocaml target_plcairo_cma)
     # Need to keep track of file dependencies since this is a custom target.
-    #set_property(GLOBAL PROPERTY FILES_plplot_ocaml
-    #  ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cma
-    #  )
+    set_property(GLOBAL PROPERTY FILES_plcairo_ocaml
+      ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cma
+      )
   endif(OCAMLOPT)
 
   # These targets depend on common files in their respective
@@ -201,17 +201,6 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
     add_dependencies(plplot_ocaml_plcairo target_plcairo_cma target_plcairo_cmxa)
   else (OCAMLOPT)
     add_dependencies(plplot_ocaml_plcairo target_plcairo_cma)
-  endif (OCAMLOPT)
-
-  # Need to keep track of file dependencies since this is a custom target.
-  set_property(GLOBAL PROPERTY FILES_plplot_ocaml_plcairo
-    ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cma
-    )
-  if (OCAMLOPT)
-    set_property(GLOBAL APPEND PROPERTY FILES_plplot_ocaml_plcairo
-      ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmxa
-      ${CMAKE_CURRENT_BINARY_DIR}/plcairo.a
-      )
   endif (OCAMLOPT)
 
   set(OCAML_FULL_INSTALL_FILES
