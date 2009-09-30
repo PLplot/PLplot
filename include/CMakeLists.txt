@@ -120,18 +120,27 @@ if(ANY_QT_DEVICE)
     list(APPEND MOC_OPTIONS -DPLD_extqt)
   endif(PLD_extqt)
   if(MOC_OPTIONS)
+    # This creates a custom command with OUTPUT ${QT_MOC_OUTFILES}.
     qt4_wrap_cpp(
       QT_MOC_OUTFILES
       ${CMAKE_SOURCE_DIR}/include/qt.h
       OPTIONS ${MOC_OPTIONS}
       )
-    # Use custom target to force correct dependencies in various directories.
-    # This target is used in three possible places (qt_gui, drivers, or src)
-    # depending on build options.
+    # Use custom target to force correct target dependencies in
+    # various directories.  This target is used in three possible
+    # places (qt_gui, drivers, or src) depending on build options.
+    # The CMake dependency parser creates the necessary file
+    # dependency on qt.h for all qt-related source code so there is no
+    # need to add the ${QT_MOC_OUTFILES} file dependencies for any
+    # target dependency on moc_outfiles_generated.
     add_custom_target(moc_outfile_generated DEPENDS ${QT_MOC_OUTFILES})
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "/* Generated header file listing the moc generated files to include in plqt.cpp. */ \n#ifndef __MOC_FILES_H__\n#define __MOC_FILES_H__\n\n")
-    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "#include \"${QT_MOC_OUTFILES}\"\n")
-    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h "#endif  /* __MOC_FILES_H__i */ \n")
+
+    # #include ${QT_MOC_OUTFILES}) indirectly via the configured moc_files.h
+    # header.
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/moc_files.h.in
+      ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h
+      )
   else(MOC_OPTIONS)
     message(FATAL_ERROR "Internal build system inconsistency between ANY_QT_DEVICE true and MOC_OPTIONS false.")
   endif(MOC_OPTIONS)
