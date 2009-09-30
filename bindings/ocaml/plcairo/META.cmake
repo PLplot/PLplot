@@ -2,7 +2,7 @@
 requires = "plplot"
 requires += "cairo"
 description = "PLplot Cairo extras"
-version = "0.1"
+version = "@VERSION@"
 browse_interfaces = " Plcairo "
 archive(byte) = "plcairo.cma"
 archive(native) = "plcairo.cmxa"
