@@ -494,8 +494,8 @@ module Plot = struct
   let imagefr ?range ~scale (x0, y0) (x1, y1) data =
     Image_fr ((range, x0, y0, x1, y1, data), scale)
 
-  (** [join color x0 y0 x1 y1] *)
-  let join ?style ?width color x0 y0 x1 y1 =
+  (** [join color (x0, y0) (x1, y1)] *)
+  let join ?style ?width color (x0, y0) (x1, y1) =
     Join (color, x0, y0, x1, y1, width |? 1, style |? Solid_line)
 
   (** [lines ?label color xs ys] *)

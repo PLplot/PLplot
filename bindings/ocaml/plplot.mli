@@ -264,11 +264,11 @@ module Plot :
       scale:float * float ->
       float * float -> float * float -> float array array -> plot_t
 
-    (** [join ?style color x0 y0 x1 y1] *)
+    (** [join ?style color (x0, y0) (x1, y1)] *)
     val join :
       ?style:line_style_t ->
       ?width:int ->
-      color_t -> float -> float -> float -> float -> plot_t
+      color_t -> float * float -> float * float -> plot_t
 
     (** [lines ?label ?style color xs ys] *)
     val lines :
