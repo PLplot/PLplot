@@ -56,7 +56,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="ocaml_bindings">
     <title>The Bindings</title>
     <para>
-      The OCaml bindings for PLplot provide an interface the the PLplot C API.
+      The OCaml bindings for PLplot provide an interface to the PLplot C API.
       In addition to providing access to the core functions of the C API, the
       OCaml PLplot interface also includes a set of higher-level plotting
       functions which, while built on top of the core PLplot API, retain more
@@ -64,11 +64,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
     <para>
       The OCaml PLplot API is defined within the Plplot module.  In general,
-      it is suggested to include the line <command>open Plplot</command> in
+      it is suggested to include the line <literal>open Plplot</literal> in
       OCaml code using PLplot.  The function and constant definitions are
       named such that they should avoid namespace collisions with other
-      libraries.  Core PLplot functions have a "pl" prefix, while constant
-      constructors/variant types have a "PL_" prefix.
+      libraries.  Core PLplot functions have a <literal>pl</literal> prefix,
+      while constant constructors/variant types have a <literal>PL_</literal>
+      prefix.
     </para>
     <para>
       The core binding provides a close to direct mapping to the underlying C
@@ -82,23 +83,25 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       There are also a selection of functions which provide support for
       operations outside of the base C API.  These higher level functions are
-      defined within the <command>Plplot.Plot</command> and
-      <command>Plplot.Quick_plot</command> modules.
+      defined within the <literal>Plplot.Plot</literal> and
+      <literal>Plplot.Quick_plot</literal> modules.
     </para>
     <sect2 id="ocaml_core">
       <title>Core Binding</title>
       <para>
         The core binding is mostly a direct and obvious mapping of the C
         application programming interface (API) to OCaml. Thus, for example,
-        where a C function such as plcol0 requires a single integer argument,
-        there is a corresponding OCaml function also called plcol0 which also
-        requires a single integer argument. (plcol0 happens to set the drawing
-        color using a number which is associated with a set of colors).
-        Various constants from the C API are also included here as OCaml
-        variant types with a "PL_" prefix to avoid namespace clashes when the
-        Plplot module is opened.  For example, where the C PLplot API uses
-        GRID_* to select between the data gridding methods, the OCaml API uses
-        PL_GRID_*.
+        where a C function such as <literal>plcol0</literal> requires a single
+        integer argument, there is a corresponding OCaml function also called
+        <literal>plcol0</literal> which also requires a single integer
+        argument. (<literal>plcol0</literal> happens to set the drawing color
+        using a number which is associated with a set of colors).  Various
+        constants from the C API are also included here as OCaml variant types
+        with a <literal>PL_</literal> prefix to avoid namespace clashes when
+        the <literal>Plplot</literal> module is opened.  For example, where
+        the C PLplot API uses <literal>GRID_*</literal> to select between the
+        data gridding methods, the OCaml API uses
+        <literal>PL_GRID_*</literal>.
       </para>
     </sect2>
     <sect2 id="ocaml_specific">
@@ -110,14 +113,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         to keep the interface between C and OCaml as simple as possible.
         Rather than passing transformation functions directly to each PLplot
         function which supports a coordinate transformation, the coordinate
-        tranform functions are set globally using the plset_pltr and
-        plset_mapform functions.  Similarly, the functions plunset_pltr and
-        plunset_mapform can be used to clear the globally defined coordinate
-        transformation function.  Note that the transform functions are only
-        used in the functions which support them in the C API (ex. plmap)-
-        they are not automatically applied to plotted data in other function
-        calls (ex. plline).  For demonstrations of their use, see OCaml PLplot
-        examples 16 and 20 for plset_pltr and example 19 for plset_mapform.
+        transform functions are set globally using the
+        <literal>plset_pltr</literal> and <literal>plset_mapform</literal>
+        functions.  Similarly, the functions <literal>plunset_pltr</literal>
+        and <literal>plunset_mapform</literal> can be used to clear the
+        globally defined coordinate transformation function.  Note that the
+        transform functions are only used in the functions which support them
+        in the C API (ex. <literal>plmap</literal>)- they are not
+        automatically applied to plotted data in other function calls (ex.
+        <literal>plline</literal>).  For demonstrations of their use, see
+        OCaml PLplot examples 16 and 20 for <literal>plset_pltr</literal> and
+        example 19 for <literal>plset_mapform</literal>.
       </para>
     </sect2>
     <sect2 id="ocaml_high_level">
@@ -125,11 +131,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para>
         In addition to the core PLplot API, the OCaml bindings provide two
         modules which provide a more OCaml-like interface:
-        <command>Plplot.Plot</command> and
-        <command>Plplot.Quick_plot</command>.  <command>Plplot.Plot</command>
-        provides a simlified naming scheme for plotting functions, as well as
+        <literal>Plplot.Plot</literal> and
+        <literal>Plplot.Quick_plot</literal>.  <literal>Plplot.Plot</literal>
+        provides a simplified naming scheme for plotting functions, as well as
         the means to more easily track multiple plot streams at once.
-        <command>Plplot.Quick_plot</command> provides functions to quickly
+        <literal>Plplot.Quick_plot</literal> provides functions to quickly
         plot points, lines, data arrays (images) and functions without the
         need for any plot setup or boilerplate.
       </para>
@@ -194,12 +200,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           findlib
         </ulink>
         and its associated tools (ie., ocamlfind) are installed in in your
-        <command>$PATH</command>.
+        <literal>$PATH</literal>.
       </para>
       <para>
         If PLplot was installed under a non-standard prefix, or any prefix
         where findlib does not check automatically for OCaml libraries, then
-        the following enviroment variables can be set to tell findlib where to
+        the following environment variables can be set to tell findlib where to
         look for PLplot:
       </para>
       <programlisting>
@@ -240,7 +246,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         let () = simple_example ()
       </programlisting>
       <para>
-        Save this code as <command>simple_example_core.ml</command>. The
+        Save this code as <literal>simple_example_core.ml</literal>. The
         following command can then be used to build the example:
       </para>
       <programlisting>
@@ -248,7 +254,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </programlisting>
       <para>
         The resulting binary program can be run by typing
-        <command>./simple_example_core</command>
+        <literal>./simple_example_core</literal>
       </para>
     </sect2>
     <sect2 id="ocaml_command_line_sample_project_ocaml">
@@ -283,7 +289,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         let () = simple_example ()
       </programlisting>
       <para>
-        Save this code as <command>simple_example_ocaml.ml</command>.  The
+        Save this code as <literal>simple_example_ocaml.ml</literal>.  The
         following command can then be used to build the example:
       </para>
       <programlisting>
@@ -291,22 +297,22 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </programlisting>
       <para>
         The resulting binary program can be run by typing
-        <command>./simple_example_ocaml</command>
+        <literal>./simple_example_ocaml</literal>
       </para>
     </sect2>
     <sect2 id="ocaml_toplevel_sample_project">
       <title>Sample toplevel project</title>
       <para>
-        The OCaml interactive toplevel (<command>ocaml</command>) provides a
+        The OCaml interactive toplevel (<literal>ocaml</literal>) provides a
         very useful tool for code testing, development and interactive data
         analysis.
       </para>
       <para>
-        The Quick_plot module provides a set of functions for producing quick,
-        simple two-dimensional plots from both the toplevel and stand-alone
-        OCaml programs.  Here is a set of commands which can be used in a
-        toplevel session to produce a plot of a portion of a parabola, similar
-        to the compiled examples above.
+        The <literal>Quick_plot</literal> module provides a set of functions
+        for producing quick, simple two-dimensional plots from both the
+        toplevel and stand-alone OCaml programs.  Here is a set of commands
+        which can be used in a toplevel session to produce a plot of a portion
+        of a parabola, similar to the compiled examples above.
       </para>
       <programlisting>
         # #use "topfind";;
@@ -315,14 +321,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         # Quick_plot.func ~names:["Parabola"] [(fun x -> x ** 2.0)] (-10.0, 10.0);;
       </programlisting>
       <para>
-        Conversely, the above <command>ocaml</command> session could be
+        Conversely, the above <literal>ocaml</literal> session could be
         expressed in a compiled OCaml program:
       </para>
       <programlisting>
         Plplot.Quick_plot.func ~names:["Parabola"] [(fun x -> x ** 2.0)] (-10.0, 10.0)
       </programlisting>
       <para>
-        Save this code as <command>simple_example_quick.ml</command>.  The
+        Save this code as <literal>simple_example_quick.ml</literal>.  The
         following command can then be used to build the example:
       </para>
       <programlisting>
@@ -330,7 +336,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </programlisting>
       <para>
         The resulting binary program can be run by typing
-        <command>./simple_example_quick</command>
+        <literal>./simple_example_quick</literal>
       </para>
     </sect2>
   </sect1>
