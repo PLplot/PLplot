@@ -491,6 +491,7 @@ if(BUILD_TEST)
   # noninteractive_devices_info_LIST set in plplot_configure.cmake.  Each list
   # member consists of a colon-separated device name and a Boolean variable
   # that indicates if device has familied output in plplot-test.sh.
+  
   foreach(noninteractive_devices_info ${noninteractive_devices_info_LIST})
     string(REGEX REPLACE "^(.*):.*$" "\\1" device ${noninteractive_devices_info})
     string(REGEX REPLACE "^.*:(.*)$" "\\1" familied ${noninteractive_devices_info})
@@ -534,29 +535,35 @@ if(BUILD_TEST)
     list(APPEND interactive_targets_LIST ${targets_examples_tk})
   endif(targets_examples_tk)
 
-  if(TARGET plplotcanvas_demo)
-    list(APPEND interactive_targets_LIST plplotcanvas_demo)
-  endif(TARGET plplotcanvas_demo)
+  get_property(target_plplotcanvas_demo GLOBAL PROPERTY TARGET_plplotcanvas_demo)
+  if(target_plplotcanvas_demo)
+    list(APPEND interactive_targets_LIST ${target_plplotcanvas_demo})
+  endif(target_plplotcanvas_demo)
 
-  if(TARGET plplotcanvas_animation)
-    list(APPEND interactive_targets_LIST plplotcanvas_animation)
-  endif(TARGET plplotcanvas_animation)
+  get_property(target_plplotcanvas_animation GLOBAL PROPERTY TARGET_plplotcanvas_animation)
+  if(target_plplotcanvas_animation)
+    list(APPEND interactive_targets_LIST ${target_plplotcanvas_animation})
+  endif(target_plplotcanvas_animation)
 
-  if(TARGET extXdrawable_demo)
-    list(APPEND interactive_targets_LIST extXdrawable_demo)
-  endif(TARGET extXdrawable_demo)
+  get_property(target_extXdrawable_demo GLOBAL PROPERTY TARGET_extXdrawable_demo)
+  if(target_extXdrawable_demo)
+    list(APPEND interactive_targets_LIST ${target_extXdrawable_demo})
+  endif(target_extXdrawable_demo)
 
-  if(TARGET ext-cairo-test)
-    list(APPEND interactive_targets_LIST ext-cairo-test)
-  endif(TARGET ext-cairo-test)
+  get_property(target_ext-cairo-test GLOBAL PROPERTY TARGET_ext-cairo-test)
+  if(target_ext-cairo-test)
+    list(APPEND interactive_targets_LIST ${target_ext-cairo-test})
+  endif(target_ext-cairo-test)
 
-  if(TARGET wxPLplotDemo)
-    list(APPEND interactive_targets_LIST wxPLplotDemo)
-  endif(TARGET wxPLplotDemo)
+  get_property(target_wxPLplotDemo GLOBAL PROPERTY TARGET_wxPLplotDemo)
+  if(target_wxPLplotDemo)
+    list(APPEND interactive_targets_LIST ${target_wxPLplotDemo})
+  endif(target_wxPLplotDemo)
 
-  if(TARGET qt_example)
-    list(APPEND interactive_targets_LIST qt_example)
-  endif(TARGET qt_example)
+  get_property(target_qt_example GLOBAL PROPERTY TARGET_qt_example)
+  if(target_qt_example)
+    list(APPEND interactive_targets_LIST ${target_qt_example})
+  endif(target_qt_example)
 
   add_custom_target(test_interactive
     COMMAND SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} EXAMPLES_DIR=${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test-interactive.sh
