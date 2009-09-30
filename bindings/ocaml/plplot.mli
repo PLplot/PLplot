@@ -292,7 +292,7 @@ module Plot :
     val polygon :
       ?fill:bool -> color_t -> float array -> float array -> plot_t
 
-    (** [rectangle ?fill color (x0, y0) (x1, y1) *)
+    (** [rectangle ?fill color (x0, y0) (x1, y1)] *)
     val rectangle :
       ?fill:bool -> color_t -> float * float -> float * float -> plot_t
 
