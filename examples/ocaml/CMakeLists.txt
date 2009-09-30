@@ -218,9 +218,9 @@ if(CORE_BUILD AND OCAML_HAS_CAIRO AND OCAML_HAS_GTK)
   #  DESTINATION ${DATA_DIR}/examples/ocaml
   #  )
 
-endif(CORE_BUILD)
+endif(CORE_BUILD AND OCAML_HAS_CAIRO AND OCAML_HAS_GTK)
 
-if(BUILD_TEST)
+if(BUILD_TEST AND OCAML_HAS_CAIRO AND OCAML_HAS_GTK)
   # Default to using ocaml if ocamlopt is not available.  Make sure the proper
   # files are cleaned up after a build, depending on the compiler used.
   if (OCAMLOPT)
@@ -295,4 +295,4 @@ if(BUILD_TEST)
     set_property(GLOBAL APPEND PROPERTY FILES_examples_ocaml ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME})
   endforeach(STRING_INDEX ${ocaml_STRING_INDICES})
   set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ocaml_EXTRA_CLEAN_FILES}")
-endif(BUILD_TEST)
+endif(BUILD_TEST AND OCAML_HAS_CAIRO AND OCAML_HAS_GTK)

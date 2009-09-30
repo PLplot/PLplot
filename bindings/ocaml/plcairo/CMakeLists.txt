@@ -227,4 +227,4 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
     DESTINATION ${OCAML_INSTALL_DIR}/stublibs
     )
 
-endif(ENABLE_ocaml AND OCAML_HAS_CAIRO)
+endif(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
