@@ -472,18 +472,12 @@ if(BUILD_TEST)
       endif(ENABLE_${language})
     endforeach(language_info ${language_info_LIST})
 
-    # Note no target or file dependencies for test_some_diff_psc since
-    # we want to execute this target like it is done in ctest, i.e.,
-    # whenever we like for whatever test_${language}_psc targets we
-    # have run first.
-    add_custom_target(test_some_diff_psc COMMAND ${compare_command})
-
-    # Note this target does have complete file and target dependencies to
-    # force a complete comparison of stdout and PostScript results.
-    add_custom_target(test_all_diff_psc COMMAND ${compare_command}
+    # Note this target has complete file and target dependencies for
+    # a comparison of stdout and PostScript results.
+    add_custom_target(test_diff_psc COMMAND ${compare_command}
       DEPENDS ${diff_files_LIST}
       )
-    add_dependencies(test_all_diff_psc ${diff_targets_LIST})
+    add_dependencies(test_diff_psc ${diff_targets_LIST})
 
   endif(PLD_psc)
 
