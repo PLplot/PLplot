@@ -4,6 +4,7 @@
 #
 #
 # Copyright (C) 2008 Andrew Ross
+# Copyright (C) 2009 Alan W. Irwin
 # Copyright (C) 2009 Hezekiah M. Carty
 #
 # This file is part of PLplot.
@@ -21,21 +22,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-if(PKG_CONFIG_EXECUTABLE)
-  pkg_check_pkgconfig(cairo includedir libdir linkflags cflags version _CAIRO)
-endif(PKG_CONFIG_EXECUTABLE)
-if(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
-  # Cairo compile and link flags
-  # A hack to get the compile and link flags from pkg-config
-  execute_process(COMMAND ${PKG_CONFIG_EXECUTABLE} --cflags cairo
-    OUTPUT_VARIABLE CAIRO_COMPILE_FLAGS
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-  execute_process(COMMAND ${PKG_CONFIG_EXECUTABLE} --libs cairo
-    OUTPUT_VARIABLE CAIRO_LINK_FLAGS
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-
+if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
   # locations of plplot.cma and plplot.cmxa
   set(PATH_TO_PLPLOT_CMA ${CMAKE_BINARY_DIR}/bindings/ocaml)
   set(PATH_TO_PLPLOT_CMXA ${CMAKE_BINARY_DIR}/bindings/ocaml)
@@ -227,4 +214,4 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
     DESTINATION ${OCAML_INSTALL_DIR}/stublibs
     )
 
-endif(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
+endif(ENABLE_ocaml AND OCAML_HAS_CAIRO)

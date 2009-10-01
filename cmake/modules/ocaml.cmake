@@ -177,6 +177,25 @@ if(ENABLE_ocaml)
 
       if(OCAML_HAS_CAIRO)
         message(STATUS "Cairo OCaml library found")
+	if(PKG_CONFIG_EXECUTABLE)
+	  pkg_check_pkgconfig(cairo includedir libdir linkflags cflags version _CAIRO1)
+	  # Transform from CMake form to pkg-config form required by ocaml build
+	  # commands.
+	  if(linkflags)
+	    string(REGEX REPLACE ";" " " CAIRO_COMPILE_FLAGS "${cflags}")
+	    pkg_config_link_flags(CAIRO_LINK_FLAGS "${linkflags}")
+	    #message(STATUS "DEBUG: cairo linkflags = ${linkflags}")
+	    #message(STATUS "DEBUG: CAIRO_LINK_FLAGS = ${CAIRO_LINK_FLAGS}")
+	  else(linkflags)
+            message(STATUS "WARNING:"
+            "pkg-config could not find cairo module.  Disabling Plcairo module")
+	  set(OCAML_HAS_CAIRO OFF)
+	  endif(linkflags)
+	else(PKG_CONFIG_EXECUTABLE)
+          message(STATUS "WARNING:"
+            "pkg-config not found.  Disabling Plcairo module")
+	  set(OCAML_HAS_CAIRO OFF)
+	endif(PKG_CONFIG_EXECUTABLE)
       else(OCAML_HAS_CAIRO)
         message(STATUS "WARNING:"
           "Cairo OCaml library not found.  Disabling Plcairo module")
@@ -214,4 +233,7 @@ if(ENABLE_ocaml)
     set(OCAML_HAS_CAIRO OFF)
     set(OCAML_HAS_GTK OFF)
   endif(OCAMLFIND)
+else(ENABLE_ocaml)
+  set(OCAML_HAS_CAIRO OFF) 
+  set(OCAML_HAS_GTK OFF) 
 endif(ENABLE_ocaml)
