@@ -34,12 +34,13 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo_impl.o
     ${CMAKE_CURRENT_BINARY_DIR}/dllplcairo_stubs.so
     ${CMAKE_CURRENT_BINARY_DIR}/libplcairo_stubs.a
-    COMMAND ${OCAMLC} -ccopt "${CAIRO_COMPILE_FLAGS}" -cclib '${CAIRO_LINK_FLAGS}' -ccopt -I${CMAKE_SOURCE_DIR}/include -ccopt -I${CMAKE_BINARY_DIR}/include -ccopt -I${CMAKE_SOURCE_DIR}/lib/qsastime  -c ${CMAKE_CURRENT_SOURCE_DIR}/plcairo_impl.c
+    COMMAND ${OCAMLC} -ccopt "${CAIRO_COMPILE_FLAGS}" -cclib "${CAIRO_LINK_FLAGS}" -ccopt -I${CMAKE_SOURCE_DIR}/include -ccopt -I${CMAKE_BINARY_DIR}/include -ccopt -I${CMAKE_SOURCE_DIR}/lib/qsastime  -c ${CMAKE_CURRENT_SOURCE_DIR}/plcairo_impl.c
     COMMAND ${OCAMLMKLIB} -o plcairo_stubs "${CAIRO_LINK_FLAGS}" -L${CMAKE_BINARY_DIR}/src -lplplot${LIB_TAG} ${CMAKE_CURRENT_BINARY_DIR}/plcairo_impl.o
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plcairo_impl.c
     plplot${LIB_TAG}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
     )
   add_custom_target(target_lib_plcairo_stubs
     DEPENDS
@@ -47,14 +48,14 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     ${CMAKE_CURRENT_BINARY_DIR}/libplcairo_stubs.a
     )
 
-  # ocamlc -c compiles *.mli into *.cmi
+  # ocamlfind ocamlc -c compiles *.mli into *.cmi
   add_custom_command(
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmi
     # ocamlc *.mli source file must be in ${CMAKE_CURRENT_BINARY_DIR}.
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.mli ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
-    COMMAND ${OCAMLFIND} c -package cairo -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
+    COMMAND ${OCAMLFIND} ocamlc -package cairo -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.mli
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -63,8 +64,8 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmi
     )
 
-  # ocamlc -c compiles  *.ml into *.cmo and simultaneously checks against
-  # *.cmi produced from *.mli above.
+  # ocamlfind ocamlc -c compiles *.ml into *.cmo and simultaneously
+  # checks against *.cmi produced from *.mli above.
   add_custom_command(
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmo
@@ -72,7 +73,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     # ocamlc and ocamlopt *.ml source file must be in
     # ${CMAKE_CURRENT_BINARY_DIR}.
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
-    COMMAND ${OCAMLFIND} c -package cairo -I ${PATH_TO_PLPLOT_CMA} plplot.cma -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
+    COMMAND ${OCAMLFIND} ocamlc -package cairo -I ${PATH_TO_PLPLOT_CMA} plplot.cma -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmi
@@ -106,7 +107,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
   add_custom_target(plcairo_ocaml ALL)
 
   if(OCAMLOPT)
-    # ocamlopt compiles *.ml into *.o and *.cmx and simultaneously
+    # ocamlfind ocamlopt compiles *.ml into *.o and *.cmx and simultaneously
     # checks against *.cmi produced from *.mli above.
     add_custom_command(
       OUTPUT
@@ -116,7 +117,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
       # ocamlc and ocamlopt *.ml source file must be in
       # ${CMAKE_CURRENT_BINARY_DIR}.
       COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
-      COMMAND ${OCAMLFIND} opt -package cairo -I ${PATH_TO_PLPLOT_CMXA} -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
+      COMMAND ${OCAMLFIND} ocamlopt -package cairo -I ${PATH_TO_PLPLOT_CMXA} -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
       DEPENDS
       ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmi
