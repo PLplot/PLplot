@@ -1,7 +1,7 @@
 (** A record to keep track of the Cairo surface and context information *)
 type ('a, 'b) t
 
-(** Types of Cairo surfaces available for {!init}. *)
+(** Types of Cairo surfaces available for {!plinit_cairo}. *)
 type ('a, 'b) plcairo_sfc_t
 
 (** Provide PLplot with a Cairo context to plot on. *)
@@ -74,9 +74,9 @@ val plcairo_finish : ([> `Any ], 'a) t -> unit
 
 (** [plsave_cairo_image ?filename t] saves the plot surface in [t]
     as a png to its associated file.  If [filename] is given then the file is
-    saved with that name instead.  {!Plplot.plend} should be called first or
-    the plotting may not be complete!
-    Raises [Invalid_argument "No filename associated with this plot" if no
+    saved with that name instead.  One of [Plplot.plflush], [Plplot.plend] or
+    [Plplot.plend1] should be called first or the plotting may not be complete!
+    Raises [Invalid_argument "No filename associated with this plot"] if no
     filename is provided and [t] does not have a filename associated with it. *)
 val plsave_cairo_image : ?filename:string -> ([> `Any ], string) t -> unit
 
