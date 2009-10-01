@@ -164,9 +164,17 @@ if(ENABLE_ocaml)
         COMMAND ${OCAMLFIND} c -package cairo -linkpkg test_cairo.ml -o test_cairo
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         RESULT_VARIABLE OCAML_HAS_CAIRO
+	OUTPUT_QUIET
+	ERROR_QUIET
         )
-      # Invert the test result.  What CMake takes as true is meant to be false.
-      set(OCAML_HAS_CAIRO NOT OCAML_HAS_CAIRO)
+      # zero return code indicates no errors.  Thus, OCAML_HAS_CAIRO must have
+      # truth inverted.
+      if(OCAML_HAS_CAIRO)
+	set(OCAML_HAS_CAIRO OFF)
+      else(OCAML_HAS_CAIRO)
+	set(OCAML_HAS_CAIRO ON)
+      endif(OCAML_HAS_CAIRO)
+
       if(OCAML_HAS_CAIRO)
         message(STATUS "Cairo OCaml library found")
       else(OCAML_HAS_CAIRO)
@@ -183,9 +191,17 @@ if(ENABLE_ocaml)
         COMMAND ${OCAMLFIND} c -package cairo.lablgtk2 -linkpkg test_gtk.ml -o test_gtk
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         RESULT_VARIABLE OCAML_HAS_GTK
+	OUTPUT_QUIET
+	ERROR_QUIET
         )
-      # Invert the test result.  What CMake takes as true is meant to be false.
-      set(OCAML_HAS_GTK NOT OCAML_HAS_GTK)
+      # zero return code indicates no errors.  Thus, OCAML_HAS_CAIRO must have
+      # truth inverted.
+      if(OCAML_HAS_GTK)
+	set(OCAML_HAS_GTK OFF)
+      else(OCAML_HAS_GTK)
+	set(OCAML_HAS_GTK ON)
+      endif(OCAML_HAS_GTK)
+
       if(OCAML_HAS_GTK)
         message(STATUS "lablgtk2 OCaml library found")
       else(OCAML_HAS_GTK)
@@ -195,5 +211,7 @@ if(ENABLE_ocaml)
   else(OCAMLFIND)
     message(STATUS "WARNING:"
       "ocamlfind not available.  Disabling Plcairo module and lablgtk support")
+    set(OCAML_HAS_CAIRO OFF)
+    set(OCAML_HAS_GTK OFF)
   endif(OCAMLFIND)
 endif(ENABLE_ocaml)
