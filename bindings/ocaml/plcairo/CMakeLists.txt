@@ -194,7 +194,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO AND linkflags)
   # and pieces of old build procedure below.
 
   # Configure the META file
-  configure_file(META.cmake ${CMAKE_CURRENT_BINARY_DIR}/META)
+  configure_file(META.in ${CMAKE_CURRENT_BINARY_DIR}/META)
 
   add_custom_target(plplot_ocaml_plcairo ALL)
   if (OCAMLOPT)

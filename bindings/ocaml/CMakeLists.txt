@@ -226,7 +226,7 @@ if(ENABLE_ocaml)
   # and pieces of old build procedure below.
 
   # Configure the META file
-  configure_file(META.cmake ${CMAKE_CURRENT_BINARY_DIR}/META)
+  configure_file(META.in ${CMAKE_CURRENT_BINARY_DIR}/META)
   # Configure pkg-config *.pc file corresponding to plplot.cma
   if(PKG_CONFIG_EXECUTABLE)
     if(LIB_TAG)
