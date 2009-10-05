@@ -276,14 +276,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         let simple_example () =
           (* Initialize a new plot, using the windowed Cairo device
              ("xcairo") *)
-          let p = P.init (-10.0) 10.0 0.0 100.0 P.Greedy (P.Window P.Cairo) in
+          let p =
+            P.init (-10.0, 0.0) (10.0, 100.0) P.Greedy (P.Window P.Cairo)
+          in
 
           (* Draw the parabola *)
           P.plot ~stream:p [P.func P.Blue (fun x -> x ** 2.0) (-10.0, 10.0)];
 
           (* Draw the plot axes and close up the plot stream using the default
              spacing between tick marks. *)
-          P.finish ~stream:p 0.0 0.0;
+          P.finish ~stream:p ();
           ()
 
         let () = simple_example ()
