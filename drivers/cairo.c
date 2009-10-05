@@ -1551,9 +1551,12 @@ void plD_eop_xcairo(PLStream *pls)
         aStream->exit_event_loop = 1;
       break;
     case Expose:
-      /* Blit the image again after an expose event. */
-      blit_to_x(aStream);
-      XFlush(aStream->XDisplay);
+      /* Blit the image again after an expose event, but only for the last
+         available event.  Otherwise multiple redraws occur needlessly. */
+      if (((XExposeEvent *)&event)->count == 0) {
+        blit_to_x(aStream);
+        XFlush(aStream->XDisplay);
+      }
       break;
     }
   }
