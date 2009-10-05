@@ -369,11 +369,11 @@ module Plot :
     (** Draw the plot axes on the current plot page *)
     val plot_axes :
       ?stream:stream_t ->
-      xtick:float ->
-      xsub:int ->
-      ytick:float ->
-      ysub:int ->
-      xoptions:axis_options_t list -> yoptions:axis_options_t list -> unit
+      ?xtick:float ->
+      ?xsub:int ->
+      ?ytick:float ->
+      ?ysub:int ->
+      axis_options_t list -> axis_options_t list -> unit
 
     (** {4 Finishing up a plot page} *)
 
@@ -384,7 +384,8 @@ module Plot :
       ?f:(unit -> unit) ->
       ?post:(unit -> unit) ->
       ?axis:axis_options_t list * axis_options_t list ->
-      float -> float -> unit
+      ?xtick:float -> ?ytick:float ->
+      unit -> unit
 
     (** Finish the current page, start a new one. *)
     val next_page :
@@ -392,8 +393,8 @@ module Plot :
       ?f:(unit -> unit) ->
       ?post:(unit -> unit) ->
       ?axis:axis_options_t list * axis_options_t list ->
-      ?xstep:float ->
-      ?ystep:float ->
+      ?xtick:float ->
+      ?ytick:float ->
       float * float -> float * float -> plot_scaling_t -> unit
 
     (** [finish ?stream xstep ystep] finishes up the plot [stream], using
@@ -403,7 +404,8 @@ module Plot :
       ?f:(unit -> unit) ->
       ?post:(unit -> unit) ->
       ?axis:axis_options_t list * axis_options_t list ->
-      float -> float -> unit
+      ?xtick:float -> ?ytick:float ->
+      unit -> unit
   end
 
 (** {3 A module for quick, "throw-away" plots} *)

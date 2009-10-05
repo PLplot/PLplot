@@ -101,7 +101,7 @@ let plot1 ?stream ?fontset (do_test, test_xor) params =
   ];
 
   (* Show the axes *)
-  P.finish_page ~stream 0.0 0.0;
+  P.finish_page ~stream ();
 
   (* All done. *)
   stream
@@ -136,7 +136,7 @@ let plot2 stream =
     P.Axis :: P.default_axis_options,
     P.Axis :: P.default_axis_options
   in
-  P.finish_page ~stream ~axis 0.0 0.0;
+  P.finish_page ~stream ~axis ();
 
   (* All done. *)
   ()
@@ -154,7 +154,7 @@ let plot3 stream =
     fun () ->
       plstyl [|mark1|] [|space1|];
       P.set_color P.Yellow;
-      P.plot_axes 30.0 0 0.2 0 [P.Major_grid] [P.Major_grid];
+      P.plot_axes ~xtick:30.0 ~ytick:0.2 [P.Major_grid] [P.Major_grid];
       plstyl [||] [||];
   );
 
@@ -180,7 +180,7 @@ let plot3 stream =
     ]
   in
 
-  P.finish_page ~stream ~axis 60.0 0.2;
+  P.finish_page ~stream ~axis ~xtick:60.0 ~ytick:0.2 ();
 
   (* All done. *)
   ()
@@ -234,7 +234,7 @@ let main fontset =
 
   (* Don't forget to finish off!  Each function does the needed end-of-page
      steps, so all we need to do here is wrap up the plotting session. *)
-  P.finish ~stream ~f:(fun () -> ()) 0.0 0.0;
+  P.finish ~stream ~f:(fun () -> ()) ();
   ()
 
 let () = main true

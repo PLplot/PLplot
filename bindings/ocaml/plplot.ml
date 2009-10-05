@@ -919,7 +919,8 @@ module Plot = struct
     with_stream ?stream (fun () -> colorbar ?label ?log ?pos ?width values)
 
   (** An easier to deduce alternative to {Plplot.plbox} *)
-  let plot_axes ?stream ~xtick ~xsub ~ytick ~ysub ~xoptions ~yoptions =
+  let plot_axes ?stream ?(xtick = 0.0) ?(xsub =0)
+                ?(ytick = 0.0) ?(ysub = 0) xoptions yoptions =
     let map_axis_options ol =
       List.map (
         function
@@ -945,7 +946,7 @@ module Plot = struct
     with_stream ?stream (fun () -> plbox xopt xtick xsub yopt ytick ysub)
 
   (** Default page ending steps.  Just draw the plot axes. *)
-  let default_finish ?stream ?axis xstep ystep =
+  let default_finish ?stream ?axis ?xtick ?ytick () =
     let xopt, yopt =
       match axis with
       | None -> default_axis_options, default_axis_options
@@ -953,29 +954,27 @@ module Plot = struct
     in
     set_color_in ?stream Black (
       fun () ->
-        plot_axes ?stream
-          ~xtick:xstep ~xsub:0 ~xoptions:xopt
-          ~ytick:ystep ~ysub:0 ~yoptions:yopt;
+        plot_axes ?stream ?xtick xopt ?ytick yopt;
     )
 
   (** Plot axes, but don't advance the page or end the session.  This is used
       internally by [finish]. *)
-  let finish_page ?stream ?f ?post ?axis xstep ystep =
+  let finish_page ?stream ?f ?post ?axis ?xtick ?ytick () =
     with_stream ?stream (
       fun () ->
         let actual_finish =
           match f with
           | Some custom_finish -> custom_finish
-          | None -> (fun () -> default_finish ?stream ?axis xstep ystep)
+          | None -> default_finish ?stream ?axis ?xtick ?ytick
         in
         actual_finish ();
         Option.may (fun f -> f ()) post;
     )
 
   (** Finish the current page, start a new one. *)
-  let next_page ?stream ?f ?post ?axis ?(xstep = 0.0) ?(ystep = 0.0)
+  let next_page ?stream ?f ?post ?axis ?xtick ?ytick
                 (x0, y0) (x1, y1) axis_scaling =
-    finish_page ?stream ?f ?post ?axis xstep ystep;
+    finish_page ?stream ?f ?post ?axis ?xtick ?ytick ();
     start_page ?stream (x0, y0) (x1, y1) axis_scaling;
     ()
 
@@ -985,8 +984,8 @@ module Plot = struct
 
   (** Finish up the plot by plotting axes and ending the session.  This must
       be called after plotting is complete. *)
-  let finish ?stream ?f ?post ?axis xstep ystep =
-    finish_page ?stream ?f ?post ?axis xstep ystep;
+  let finish ?stream ?f ?post ?axis ?xtick ?ytick () =
+    finish_page ?stream ?f ?post ?axis ?xtick ?ytick ();
     with_stream ?stream plend1
 end
 
@@ -1051,7 +1050,7 @@ module Quick_plot = struct
     in
     plot ~stream:p plottable_points;
     Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
-    finish ~stream:p ~axis:(maybe_log log) 0.0 0.0;
+    finish ~stream:p ~axis:(maybe_log log) ();
     ()
 
   (** [lines [xs, ys; ...] plots the line segments described by the coordinates
@@ -1072,7 +1071,7 @@ module Quick_plot = struct
     plot ~stream:p plottable_lines;
     Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
     Option.may (fun n -> draw_legend ~stream:p n (Array.to_list colors)) names;
-    finish ~stream:p ~axis:(maybe_log log) 0.0 0.0;
+    finish ~stream:p ~axis:(maybe_log log) ();
     ()
 
   (** [image ?log m] plots the image [m] with a matching colorbar.  If [log] is
@@ -1088,7 +1087,7 @@ module Quick_plot = struct
     Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
     colorbar ~stream:p ?log ~pos:(Right 0.12)
       (Array_ext.range ~n:100 m_min m_max);
-    finish ~stream:p 0.0 0.0;
+    finish ~stream:p ();
     ()
 
   (** [func ?point ?step fs (min, max)] plots the functions [fs] from [x = min]
@@ -1122,7 +1121,7 @@ module Quick_plot = struct
     plot ~stream plot_content;
     Option.may (fun n -> draw_legend ~stream n (Array.to_list colors)) names;
     Option.may (fun (x, y, t) -> label ~stream x y t) labels;
-    finish ~stream 0.0 0.0;
+    finish ~stream ();
     ()
 end
 
