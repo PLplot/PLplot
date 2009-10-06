@@ -131,7 +131,7 @@ let () =
 
   plpsty 0;
 
-  plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width 1;
+  plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width true;
 
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
@@ -151,7 +151,7 @@ let () =
   plpsty 0;
 
   plset_pltr (fun x y -> pltr1 x y xg1 yg1);
-  plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width 1;
+  plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width true;
 
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
@@ -171,7 +171,8 @@ let () =
   plpsty 0;
 
   plset_pltr (fun x y -> pltr2 x y xg2 yg2);
-  plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width 0;
+  plshades
+    z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width false;
 
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
@@ -192,7 +193,7 @@ let () =
 
   plpsty 0;
 
-  plshades z (-1.0) 1.0 (-1.) 1.0 shedge fill_width 2 3 0;
+  plshades z (-1.0) 1.0 (-1.) 1.0 shedge fill_width 2 3 false;
 
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
@@ -211,7 +212,8 @@ let () =
     plpsty 0;
 
     plset_defined zdefined;
-    plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width 0;
+    plshades
+      z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width false;
     plunset_defined ();
 
     plcol0 1;
@@ -252,7 +254,8 @@ let () =
   in
 
   (*  Now we can shade the interior region. *)
-  plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width 0;
+  plshades
+    z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width false;
 
   (* Now we can draw the perimeter.  (If do before, shade stuff may overlap.) *)
   let px = Array.make perimeterpts 0.0 in

@@ -72,7 +72,7 @@ quote(h, "void plplot_check_nonzero_result(int result);");
 // properly
 #define PLINT int
 #define PLFLT double
-#define PLBOOL int
+#define PLBOOL boolean
 
 [mlname(plcont)] void ml_plcont(
     [size_is(nx,ny)] PLFLT **f, PLINT nx, PLINT ny,

@@ -768,13 +768,13 @@ external plshade :
   float ->
   float ->
   float ->
-  float -> int -> float -> int -> int -> int -> int -> int -> int -> unit
+  float -> int -> float -> int -> int -> int -> int -> int -> bool -> unit
   = "camlidl_plplot_core_ml_plshade_bytecode"
   "camlidl_plplot_core_ml_plshade"
 external plshades :
   float array array ->
   float ->
-  float -> float -> float -> float array -> int -> int -> int -> int -> unit
+  float -> float -> float -> float array -> int -> int -> int -> bool -> unit
   = "camlidl_plplot_core_ml_plshades_bytecode"
   "camlidl_plplot_core_ml_plshades"
 external plimagefr :
@@ -792,7 +792,7 @@ external plmeridians :
   = "camlidl_plplot_core_ml_plmeridians_bytecode"
   "camlidl_plplot_core_ml_plmeridians"
 external plpoly3 :
-  float array -> float array -> float array -> int array -> int -> unit
+  float array -> float array -> float array -> bool array -> bool -> unit
   = "camlidl_plplot_core_ml_plpoly3"
 external pltr0 : float -> float -> float * float
   = "camlidl_plplot_core_ml_pltr0"

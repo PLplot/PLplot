@@ -135,9 +135,9 @@ let () =
   (* Set the color levels array. These levels are also between 0.0 and 1.0 *)
   let clevel = Array.init 101 (fun i -> 0.01 *. float_of_int i) in
 
-  (* Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate ranges
-     such that it fills the entire plotting area. *)
-  plshades z 0.0 1.0 0.0 1.0 clevel 0 (-1) 2 1;
+  (* Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate
+     ranges such that it fills the entire plotting area. *)
+  plshades z 0.0 1.0 0.0 1.0 clevel 0 (-1) 2 true;
 
   plend ();
   ()

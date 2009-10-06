@@ -15,10 +15,10 @@ let npts = 1000
 let pi = atan 1.0 *. 4.0
 
 let test_poly k =
-  let draw = [| [|1; 1; 1; 1|];
-                [|1; 0; 1; 0|];
-                [|0; 1; 0; 1|];
-                [|1; 1; 0; 0|] |] in
+  let draw = [| [| true;  true;  true;  true|];
+                [| true; false;  true; false|];
+                [|false;  true; false;  true|];
+                [| true;  true; false; false|] |] in
 
   let two_pi = 2.0 *. pi in
 
@@ -62,7 +62,7 @@ let test_poly k =
       y.(4) <- sin (phi j) *. sin (theta i);
       z.(4) <- cos (phi j);
 
-      plpoly3 x y z draw.(k) 1;
+      plpoly3 x y z draw.(k) true;
     done
   done;
 

@@ -68,7 +68,7 @@ let plot1 z zmin zmax =
     z (-1.0) 1.0 (-1.0) 1.0
     shade_min shade_max
     sh_cmap sh_color sh_width
-    min_color min_width max_color max_width 1;
+    min_color min_width max_color max_width true;
 
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
@@ -122,7 +122,7 @@ let plot2 z zmin zmax =
       z (-1.0) 1.0 (-1.0) 1.0
       shade_min shade_max
       sh_cmap sh_color sh_width
-      min_color min_width max_color max_width 1;
+      min_color min_width max_color max_width true;
   done;
 
   plcol0 1;
