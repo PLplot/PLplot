@@ -32,6 +32,7 @@ set(plplot${LIB_TAG}_LIB_SRCS
   pldtik.c
   plfill.c
   plfreetype.c
+  plgset.c
   plhist.c
   plimage.c
   plline.c
