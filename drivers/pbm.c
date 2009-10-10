@@ -253,7 +253,7 @@ plD_eop_pbm(PLStream *pls)
         im_size = pls->xlength*pls->ylength*3;
 	nwrite = fwrite( cmap, 1, im_size, fp );
         if (nwrite != im_size) 
-            plabort("gd driver: Error writing png file");
+            plabort("pbm driver: Error writing pbm file");
 
 	fclose(fp);
     } 
