@@ -24,7 +24,7 @@ type stretch_data = {
 }
 
 (* Transformation function *)
-let mypltr x y pltr_data =
+let mypltr pltr_data x y =
   let x0 = (pltr_data.xmin +. pltr_data.xmax) *. 0.5 in
   let y0 = (pltr_data.ymin +. pltr_data.ymax) *. 0.5 in
   let dy = (pltr_data.ymax -. pltr_data.ymin) *. 0.5 in
@@ -224,7 +224,7 @@ let () =
 
   (* OCaml supports arbitrary coordinate transform callbacks, so take advantage
      of that to use mypltr directly and skip the use of pltr2. *)
-  plset_pltr (fun x y -> mypltr x y stretch);
+  plset_pltr (mypltr stretch);
   (* Comment the above line, and uncomment the following section to use pltr2 *)
   (*
   let xg = Array.make_matrix (int_of_float width + 1) (int_of_float height + 1) 0.0 in
@@ -236,7 +236,7 @@ let () =
       yg.(i).(j) <- yy;
     done
   done;
-  plset_pltr (fun x y -> pltr2 x y xg yg);
+  plset_pltr (pltr2 xg yg);
   *)
   plimagefr img_f 0.0 width 0.0 height 0.0 0.0 img_min img_max;
 

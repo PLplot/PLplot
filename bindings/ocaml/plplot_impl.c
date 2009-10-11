@@ -623,8 +623,8 @@ void ml_pltr0(double x, double y, double* tx, double* ty) {
     pltr0(x, y, tx, ty, NULL);
 }
 
-value ml_pltr1(value x, value y, value xg, value yg) {
-    CAMLparam4(x, y, xg, yg);
+value ml_pltr1(value xg, value yg, value x, value y) {
+    CAMLparam4(xg, yg, x, y);
     CAMLlocal1(tx_ty);
     tx_ty = caml_alloc(2, 0);
     double tx;
@@ -642,8 +642,8 @@ value ml_pltr1(value x, value y, value xg, value yg) {
     CAMLreturn(tx_ty);
 }
 
-value ml_pltr2(value x, value y, value xg, value yg) {
-    CAMLparam4(x, y, xg, yg);
+value ml_pltr2(value xg, value yg, value x, value y) {
+    CAMLparam4(xg, yg, x, y);
     CAMLlocal1(tx_ty);
     tx_ty = caml_alloc(2, 0);
     double** c_xg;

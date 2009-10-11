@@ -140,10 +140,10 @@ quote(mlmli,
 
 // pltr callback functions, hand-wrapped
 quote(mlmli,
-    "external pltr1 : float -> float -> float array -> float array -> float * float \
+    "external pltr1 : float array -> float array -> float -> float -> float * float \
     = \"ml_pltr1\"");
 quote(mlmli,
-    "external pltr2 : float -> float -> float array array -> float array array -> float * float \
+    "external pltr2 : float array array -> float array array -> float -> float -> float * float \
     = \"ml_pltr2\"");
 
 // Setting the translation function for the contouring and plotting functions

@@ -150,7 +150,7 @@ let () =
 
   plpsty 0;
 
-  plset_pltr (fun x y -> pltr1 x y xg1 yg1);
+  plset_pltr (pltr1 xg1 yg1);
   plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width true;
 
   plcol0 1;
@@ -170,7 +170,7 @@ let () =
 
   plpsty 0;
 
-  plset_pltr (fun x y -> pltr2 x y xg2 yg2);
+  plset_pltr (pltr2 xg2 yg2);
   plshades
     z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width false;
 

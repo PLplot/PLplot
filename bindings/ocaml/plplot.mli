@@ -831,9 +831,9 @@ external plstripc :
   int array -> int array -> string array -> string -> string -> string -> int
   = "ml_plstripc_byte" "ml_plstripc"
 external pltr1 :
-  float -> float -> float array -> float array -> float * float = "ml_pltr1"
+  float array -> float array -> float -> float -> float * float = "ml_pltr1"
 external pltr2 :
-  float -> float -> float array array -> float array array -> float * float
+  float array array -> float array array -> float -> float -> float * float
   = "ml_pltr2"
 val plset_pltr : (float -> float -> float * float) -> unit
 val plunset_pltr : unit -> unit

@@ -87,7 +87,7 @@ let polar () =
   let lev = Array.init 10 (fun i -> 0.05 +. 0.10 *. float_of_int i) in
 
   plcol0 2;
-  plset_pltr (fun x y -> pltr2 x y xg yg);
+  plset_pltr (pltr2 xg yg);
   plcont z 1 rpts 1 thetapts lev;
   plunset_pltr ();
   plcol0 1;
@@ -211,7 +211,7 @@ let potential () =
   plbox "" 0.0 0 "" 0.0 0;
 
   plcol0 ncollin;
-  plset_pltr (fun x y -> pltr2 x y xg yg);
+  plset_pltr (pltr2 xg yg);
   if !nlevelneg > 0 then (
     (* Negative contours *)
     pllsty 2;
@@ -310,7 +310,7 @@ let () =
   (* Plot using 1d coordinate transform *)
   plenv (-1.0) 1.0 (-1.0) 1.0 0 0;
   plcol0 2;
-  plset_pltr (fun x y -> pltr1 x y cgrid1_xg cgrid1_yg);
+  plset_pltr (pltr1 cgrid1_xg cgrid1_yg);
   plcont z 1 xpts 1 ypts clevel;
 
   plstyl mark space;
@@ -323,7 +323,7 @@ let () =
   (* Plot using 2d coordinate transform *)
   plenv (-1.0) 1.0 (-1.0) 1.0 0 0;
   plcol0 2;
-  plset_pltr (fun x y -> pltr2 x y cgrid2_xg cgrid2_yg);
+  plset_pltr (pltr2 cgrid2_xg cgrid2_yg);
   plcont z 1 xpts 1 ypts clevel;
 
   plstyl mark space;
