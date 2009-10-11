@@ -189,6 +189,10 @@ module Plot = struct
     | Points of
       (string option * color_t * float array * float array * symbol_t * float)
     | Polygon of (color_t * float array * float array * bool)
+    | Shades of (
+      int * color_t * int * bool * float * float * float * float * float array
+      array * float array
+    )
     | Text of (color_t * string * float * float * float * float * float)
     | Text_outside of
       (color_t * string * float plot_side_t * float * float * bool)
@@ -361,25 +365,26 @@ module Plot = struct
     | Open_dot_symbol -> 20
     | Index_symbol i -> i
 
+  (** NOTE that these are for the ALTERNATE color palette, not the DEFAULT
+      color palette. *)
+  let int_of_color = function
+    | White -> 0
+    | Red -> 3
+    | Yellow -> 13
+    | Green -> 12
+    | Gray -> 10
+    | Blue -> 2
+    | Light_blue -> 11
+    | Purple -> 15
+    | Pink -> 14
+    | Black -> 1
+    | Brown -> 4
+    | Index_color i -> i
+
   (** Set the plotting color (color scale 0). NOTE that these are for the
       ALTERNATE color palette, not the DEFAULT color palette. *)
   let set_color ?stream c =
-    let n =
-      match c with
-      | White -> 0
-      | Red -> 3
-      | Yellow -> 13
-      | Green -> 12
-      | Gray -> 10
-      | Blue -> 2
-      | Light_blue -> 11
-      | Purple -> 15
-      | Pink -> 14
-      | Black -> 1
-      | Brown -> 4
-      | Index_color i -> i
-    in
-    with_stream ?stream (fun () -> plcol0 n)
+    with_stream ?stream (fun () -> plcol0 (int_of_color c))
 
   (** [set_color_scale ?stream rev colors] sets the color scale 1 (images and
       shade plots) using a linear interpolation between the given list of
@@ -518,6 +523,17 @@ module Plot = struct
   (** [rectangle ?fill color (x0, y0) (x1, y1)] *)
   let rectangle ?(fill = false) color (x0, y0) (x1, y1) =
     polygon ~fill color [|x0; x1; x1; x0; x0|] [|y0; y0; y1; y1; y0|]
+
+  (** [shades ?fill_width ?contour ?rect (x0, y0) (x1, y1) data] *)
+  let shades ?fill_width ?contour ?(rect = true)
+             (x0, y0) (x1, y1) contours data =
+    let cont_color, cont_width =
+      contour |? (Index_color 0, 0)
+    in
+    Shades (
+      fill_width |? 1, cont_color, cont_width, rect, x0, y0, x1, y1,
+      data, contours
+    )
 
   (** [text ?dx ?dy ?just ?color s x y] *)
   let text ?(dx = 0.0) ?(dy = 0.0) ?(just = 0.5) color x y s =
@@ -747,6 +763,25 @@ module Plot = struct
           )
       )
     in
+    (*
+    let plot_shade
+      (x0, y0, x1, y1,
+       shade_min, shade_max, shade_color, shade_width,
+       min_color, min_width,
+       max_color, max_width,
+       rect,
+       data)
+    =
+      plshade data x0 x1 y0 y1 shade_min shade_max cmap color width
+        min_color min_width max_color max_width rect
+    in
+    *)
+    let plot_shades
+      (fill_width, cont_color, cont_width, rect, x0, y0, x1, y1, data, contours)
+    =
+      let cont_color = int_of_color cont_color in
+      plshades data x0 x1 y0 y1 contours fill_width cont_color cont_width rect
+    in
     let plot_text (color, s, x, y, dx, dy, just) =
       set_color_in color (fun () -> plptex x y dx dy just s)
     in
@@ -774,6 +809,7 @@ module Plot = struct
       | Map m -> plot_map m
       | Points p -> plot_points p
       | Polygon poly -> plot_polygon poly
+      | Shades s -> plot_shades s
       | Text t -> plot_text t
       | Text_outside t_o -> plot_text_outside t_o
       | Set_transform pltr -> plset_pltr pltr
@@ -816,7 +852,7 @@ module Plot = struct
     let yopt = String.concat "" (map_axis_options yoptions) ^ "v" in
     with_stream ?stream (fun () -> plbox xopt xtick xsub yopt ytick ysub)
 
-  (** [colorbar ?label ?log ?pos values] draws a colorbar, using the given
+  (** [colorbar_base ?label ?log ?pos values] draws a colorbar, using the given
       values for the color range. [label] gives the position and text of the
       colorbar label; if [log] is true then the scale is taken to be log rather
       than linear ; [pos] sets the position of the colorbar itself, both the
@@ -826,8 +862,8 @@ module Plot = struct
       NOTE: This potentially wrecks the current viewport and
       window settings, among others, so it should be called AFTER the current
       plot page is otherwise complete. *)
-  let colorbar ?custom_axis ?label ?log ?(pos = Right 0.07) ?(width = 0.03)
-               values =
+  let colorbar_base ?custom_axis ?label ?log ?(pos = Right 0.07) ?(width = 0.03)
+               data =
     (* Save the state of the current plot window. *)
     let dxmin, dxmax, dymin, dymax = plgvpd () in
     let wxmin, wxmax, wymin, wymax = plgvpw () in
@@ -841,44 +877,78 @@ module Plot = struct
     plsmaj 0.0 0.5;
     plsmin 0.0 0.5;
 
-    (* "Rotate" the image if we have a horizontal (Top or Bottom) colorbar.  If
-       the colorbar is to the Right or Bottom of the image then count the
-       distance as distance from that edge. *)
-    let image, offset =
+    (* Offset from the edge of the plot surface in normalized device units *)
+    let offset =
       match pos with
-      | Right off -> [|values|], 1.0 -. off
-      | Left off -> [|values|], off -. width
-      | Top off ->
-          Array.map (fun x -> [|x|]) values, 1.0 -. off
-      | Bottom off ->
-          Array.map (fun x -> [|x|]) values, off -. width
+      | Right off
+      | Top off -> 1.0 -. off
+      | Left off
+      | Bottom off -> off -. width
     in
-
-    (* Find the min and max in the range of values, ignoring nan, infinity and
-       neg_infinity values. *)
-    let max_value, min_value = plMinMax2dGrid image in
-
     (* Put the bar on the proper side, with the proper offsets. *)
     (* Unit major-axis, minor-axis scaled to contour values. *)
-    (* Draw the color bar as an image. *)
     let width_start = offset in
     let width_end = offset +. width in
-    let () =
+
+    (* Set the viewport and window *)
+    let init_window min_value max_value =
       match pos with
       | Right _
       | Left _ ->
           plvpor width_start width_end 0.15 0.85;
           plwind 0.0 1.0 min_value max_value;
-          plimage
-            image 0.0 1.0 min_value max_value 0.0 0.0
-            0.0 1.0 min_value max_value;
       | Top _
       | Bottom _ ->
           plvpor 0.15 0.85 width_start width_end;
           plwind min_value max_value 0.0 1.0;
-          plimage
-            image min_value max_value 0.0 1.0 0.0 0.0
-            min_value max_value 0.0 1.0;
+    in
+
+    (* "Rotate" the image if we have a horizontal (Top or Bottom) colorbar. *)
+    (* Also, double the amount of data because plshades won't work properly
+       otherwise. *)
+    let colorbar_data values =
+      match pos with
+      | Right off
+      | Left off -> [|values; values|]
+      | Top off
+      | Bottom off -> Array.map (fun x -> [|x; x|]) values
+    in
+
+    (* Draw the image or shaded data, depending on what was requested *)
+    let () =
+      match data with
+      | `image (min_value, max_value) ->
+          (* Draw the color bar as an image. *)
+          (* TODO FIXME XXX: Change "100" to be the number of color palette 1
+             colors once the attribute getting + setting functions are in
+             place. *)
+          let colorbar_steps = Array_ext.range ~n:100 min_value max_value in
+          let data = colorbar_data colorbar_steps in
+          init_window min_value max_value;
+          (match pos with
+          | Right _
+          | Left _ -> plot [image (0.0, min_value) (1.0, max_value) data]
+          | Top _
+          | Bottom _ -> plot [image (min_value, 0.0) (max_value, 1.0) data])
+      | `shade contours ->
+          let shade_data = colorbar_data contours in
+          let max_value, min_value = plMinMax2dGrid [|contours|] in
+          init_window min_value max_value;
+          (match pos with
+          | Right _
+          | Left _ ->
+              plot [
+                transform (pltr1 [|0.0; 1.0|] contours);
+                shades (0.0, min_value) (1.0, max_value) contours shade_data;
+                clear_transform;
+              ]
+          | Top _
+          | Bottom _ ->
+              plot [
+                transform (pltr1 contours [|0.0; 1.0|]);
+                shades (min_value, 0.0) (max_value, 1.0) contours shade_data;
+                clear_transform;
+              ])
     in
 
     (* Draw a box and tick marks around the color bar. *)
@@ -943,7 +1013,7 @@ module Plot = struct
     plschr 0.0 1.0;
     plsmaj 0.0 1.0;
     plsmin 0.0 1.0;
-    plcol0 old_color;
+    set_color (Index_color old_color);
     ()
 
   (** [colorbar_labeler ?log ?min ?max axis n] can be used as a custom
@@ -982,9 +1052,18 @@ module Plot = struct
     | Some true -> log10_text n
 
   (** Draw a colorbar, optionally log scaled and labeled. *)
-  let colorbar ?stream ?custom_axis ?label ?log ?pos ?width values =
-    with_stream ?stream
-      (fun () -> colorbar ?custom_axis ?label ?log ?pos ?width values)
+  let colorbar ?stream ?custom_axis ?label ?log ?pos ?width (min, max) =
+    with_stream ?stream (
+      fun () ->
+        colorbar_base ?custom_axis ?label ?log ?pos ?width (`image (min, max))
+    )
+
+  (** Draw a shaded colorbar, optionally log scaled and labeled. *)
+  let shadebar ?stream ?custom_axis ?label ?log ?pos ?width values =
+    with_stream ?stream (
+      fun () ->
+        colorbar_base ?custom_axis ?label ?log ?pos ?width (`shade values)
+    )
 
   (** Default page ending steps.  Just draw the plot axes. *)
   let default_finish ?stream ?axis ?xtick ?ytick () =
@@ -1126,8 +1205,7 @@ module Quick_plot = struct
     Option.may (load_palette ~stream:p) palette;
     plot ~stream:p [image (xmin, ymin) (xmax, ymax) m];
     Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
-    colorbar ~stream:p ?log ~pos:(Right 0.12)
-      (Array_ext.range ~n:100 m_min m_max);
+    colorbar ~stream:p ?log ~pos:(Right 0.12) (m_min, m_max);
     finish ~stream:p ();
     ()
 
@@ -1163,6 +1241,25 @@ module Quick_plot = struct
     Option.may (fun n -> draw_legend ~stream n (Array.to_list colors)) names;
     Option.may (fun (x, y, t) -> label ~stream x y t) labels;
     finish ~stream ();
+    ()
+
+  let shades ?filename ?(device = Window Cairo) ?labels ?log ?palette ?contours
+             m =
+    let xmin, ymin = 0.0, 0.0 in
+    let xmax, ymax = Array_ext.matrix_dims m in
+    let xmax, ymax = float_of_int xmax, float_of_int ymax in
+    let p = init ?filename (xmin, ymin) (xmax, ymax) Equal_square device in
+    Option.may (load_palette ~stream:p) palette;
+    let contours =
+      contours |? (
+        let m_max, m_min = plMinMax2dGrid m in
+        Array_ext.range ~n:11 m_min m_max
+      )
+    in
+    plot ~stream:p [shades (xmin, ymin) (xmax, ymax) contours m];
+    Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
+    shadebar ~stream:p ?log ~pos:(Right 0.12) contours;
+    finish ~stream:p ();
     ()
 end
 

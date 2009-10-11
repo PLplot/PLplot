@@ -296,6 +296,14 @@ module Plot :
     val rectangle :
       ?fill:bool -> color_t -> float * float -> float * float -> plot_t
 
+    (** [shades ?fill_width ?contour ?rect (x0, y0) (x1, y1) contours data] *)
+    val shades :
+      ?fill_width:int ->
+      ?contour:color_t * int ->
+      ?rect:bool ->
+      float * float -> float * float ->
+      float array -> float array array -> plot_t
+
     (** [text ?dx ?dy ?just color x y string ] writes the text [string] inside
         the plot window, at an optional angle defined by the offsets [dx] and
         [dy]. *)
@@ -357,15 +365,30 @@ module Plot :
         plot [stream]. *)
     val label : ?stream:stream_t -> string -> string -> string -> unit
 
-    (** [colorbar ?stream ?label ?log ?pos ?width values] addd a color bar to a
-        plot using the current color scale.  This function should be called
-        after the rest of the plot is complete. *)
+    (** [colorbar ?stream ?label ?log ?pos ?width (min, max)] add a color bar
+        to a plot using the current color scale.  This function should be
+        called after the rest of the plot is complete. *)
     val colorbar :
       ?stream:stream_t ->
       ?custom_axis:axis_options_t list ->
       ?label:string plot_side_t ->
       ?log:bool ->
-      ?pos:float plot_side_t -> ?width:float -> float array -> unit
+      ?pos:float plot_side_t ->
+      ?width:float ->
+      float * float -> unit
+
+    (** [shadebar ?stream ?label ?log ?pos ?width contours] add a shaded color
+        bar to a plot using the current color scale.  This is similar to
+        {!colorbar} but takes contours as [values].  This function should be
+        called after the rest of the plot is complete. *)
+    val shadebar :
+      ?stream:stream_t ->
+      ?custom_axis:axis_options_t list ->
+      ?label:string plot_side_t ->
+      ?log:bool ->
+      ?pos:float plot_side_t ->
+      ?width:float ->
+      float array -> unit
 
     (** [colorbar_labeler ?log ?min ?max axis n] can be used as a custom
         axis labeling function when a colorbar is meant to represent values
@@ -461,6 +484,17 @@ module Quick_plot :
       ?names:string list ->
       ?symbol:Plot.symbol_t ->
       ?step:float -> (float -> float) list -> float * float -> unit
+
+    (** [shades ?log ?contours m] plots a filled contour/shaded [m] with a
+        matching colorbar.  If [log] is true then the data in [m] are assumed
+        to be [log10(x)] values. *)
+    val shades :
+      ?filename:string ->
+      ?device:Plot.plot_device_t ->
+      ?labels:string * string * string ->
+      ?log:bool ->
+      ?palette:Plot.color_palette_t ->
+      ?contours:float array -> float array array -> unit
   end
 
 (** {3:core The standard PLplot API} *)
