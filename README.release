@@ -1,18 +1,19 @@
-PLplot Release 5.10.0
+PLplot Release 5.9.6
 ~~~~~~~~~~~~~~~~~~~~
-This is a stable release of PLplot. It represents the ongoing efforts
+This is a development release of PLplot. It represents the ongoing efforts
 of the community to improve the PLplot plotting package. Development 
-releases in the 5.11.x series will be available every few months. The next 
-stable release will be 5.12.0.
+releases in the 5.9.x series will be available every few months. The next 
+stable release will be 5.10.0.
 
      If you encounter a problem that is not already documented in the
-PROBLEMS file, then please send bug reports to PLplot developers via the
-mailing lists at http://sourceforge.net/mail/?group_id=2915 .
+PROBLEMS file or on our bugtracker, then please send bug reports to PLplot
+developers via the mailing lists at
+http://sourceforge.net/mail/?group_id=2915 (preferred) or on our bugtracker
+at http://sourceforge.net/tracker/?group_id=2915&atid=102915.
 
      Please see the license under which this software is distributed
 (LGPL), and the disclaimer of all warranties, given in the COPYING.LIB
 file.
-
 
 Official Notices for Users.
 
@@ -109,6 +110,18 @@ install.  Recent tests have shown a number of run-time issues (hpgl,
 impress, and ljii) or build-time issues (tek) with these devices, and as far
 as we know there is no more user interest in them. Therefore, we have
 decided to retire these devices rather than fix them.
+
+XIII. As of release 5.9.6 we have retired the pbm driver containing the pbm
+(actually portable pixmap) file device. This device is quite primitive and
+poorly maintained. It ignores unicode fonts (i.e., uses the Hershey font
+fallback), falls back to ugly software fills, doesn't support alpha
+transparency, etc.  It also has a serious run-time issue with example 2
+(double free detected by glibc) which probably indicates some fundamental
+issue with the 100 colours in cmap0 for that example. For those who really
+need portable pixmap results, we suggest using the ImageMagick convert
+programme, e.g., "convert examples/x24c01.pngqt test.ppm" or "convert
+examples/x24c01.pngcairo test.ppm" to produce good-looking portable pixmap
+results from our best png device results.
 
 INDEX
 
