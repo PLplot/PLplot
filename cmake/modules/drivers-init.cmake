@@ -188,8 +188,10 @@ set(DRIVERS_DEVICE_LIST
   "mem:mem:ON:M:OFF"
   "ntk:ntk:OFF:I:OFF"
   "null:null:ON:N:OFF"
-  # glibc detects double free
-  "pbm:pbm:OFF:F:OFF"
+  # The pbm device is primitive (e.g., Hershey fonts, software fills,
+  # no alpha transparency) and poorly maintained (the double free for
+  # example 2 has not been fixed).  Therefore retire this device.
+  # "pbm:pbm:OFF:F:OFF"
   "pdf:pdf:OFF:F:OFF"
   # (2007-09-01) As discussed on list, don't enable plmeta until we sort
   # out the known issues (e.g., strings, aspect ratio, and TrueType fonts).
