@@ -362,9 +362,21 @@ module Plot :
         after the rest of the plot is complete. *)
     val colorbar :
       ?stream:stream_t ->
+      ?custom_axis:axis_options_t list ->
       ?label:string plot_side_t ->
       ?log:bool ->
       ?pos:float plot_side_t -> ?width:float -> float array -> unit
+
+    (** [colorbar_labeler ?log ?min ?max axis n] can be used as a custom
+        axis labeling function when a colorbar is meant to represent values
+        beyond those which are represented.  So if the colorbar labeling shows
+        values from 0.0 to 1.0, but the color for 1.0 is meant to represent
+        values > 1.0 then set [max_value] 1.0. *)
+    val colorbar_labeler :
+      ?log:bool ->
+      ?min:float ->
+      ?max:float ->
+      'a -> float -> string
 
     (** Draw the plot axes on the current plot page *)
     val plot_axes :

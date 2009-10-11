@@ -789,6 +789,33 @@ module Plot = struct
   let label ?stream x y title =
     with_stream ?stream (fun () -> pllab x y title)
 
+  (** An easier to deduce alternative to {Plplot.plbox} *)
+  let plot_axes ?stream ?(xtick = 0.0) ?(xsub =0)
+                ?(ytick = 0.0) ?(ysub = 0) xoptions yoptions =
+    let map_axis_options ol =
+      List.map (
+        function
+        | Axis -> "a"
+        | Frame0 -> "b"
+        | Frame1 -> "c"
+        | Time -> "d"
+        | Fixed_point -> "f"
+        | Major_grid -> "g"
+        | Minor_grid -> "h"
+        | Invert_ticks -> "i"
+        | Log -> "l"
+        | Unconventional_label -> "m"
+        | Label -> "n"
+        | Custom_label -> "o"
+        | Minor_ticks -> "s"
+        | Major_ticks -> "t"
+        | Vertical_label -> "v"
+      ) ol
+    in
+    let xopt = String.concat "" (map_axis_options xoptions) in
+    let yopt = String.concat "" (map_axis_options yoptions) ^ "v" in
+    with_stream ?stream (fun () -> plbox xopt xtick xsub yopt ytick ysub)
+
   (** [colorbar ?label ?log ?pos values] draws a colorbar, using the given
       values for the color range. [label] gives the position and text of the
       colorbar label; if [log] is true then the scale is taken to be log rather
@@ -799,7 +826,8 @@ module Plot = struct
       NOTE: This potentially wrecks the current viewport and
       window settings, among others, so it should be called AFTER the current
       plot page is otherwise complete. *)
-  let colorbar ?label ?log ?(pos = Right 0.07) ?(width = 0.03) values =
+  let colorbar ?custom_axis ?label ?log ?(pos = Right 0.07) ?(width = 0.03)
+               values =
     (* Save the state of the current plot window. *)
     let dxmin, dxmax, dymin, dymax = plgvpd () in
     let wxmin, wxmax, wymin, wymax = plgvpw () in
@@ -858,28 +886,32 @@ module Plot = struct
     (* Draw ticks and labels on the major axis.  Add other options as
        appropriate. *)
     let major_axis_opt =
-      String.concat "" [
-        "bct";
+      List.concat [
+        [Frame0; Frame1; Major_ticks];
         (* Log? *)
         (match log with
-        | None -> ""
-        | Some b -> if b then "sl" else "");
+        | None -> []
+        | Some b -> if b then [Minor_ticks; Log] else []);
         (* Which side gets the label *)
         (match pos with
         | Right _
-        | Top _ -> "m"
+        | Top _ -> [Unconventional_label]
         | Left _
-        | Bottom _ -> "n");
+        | Bottom _ -> [Label]);
         (* Perpendicular labeling? *)
         (match pos with
         | Right _
-        | Left _ -> "v"
+        | Left _ -> [Vertical_label]
         | Top _
-        | Bottom _ -> "");
+        | Bottom _ -> []);
+        (* User-specified axis options? *)
+        (match custom_axis with
+        | None -> []
+        | Some l -> l);
       ]
     in
     (* Just draw the minor axis sides, no labels or ticks. *)
-    let minor_axis_opt = "bc" in
+    let minor_axis_opt = [Frame0; Frame1] in
     let x_opt, y_opt =
       match pos with
       | Top _
@@ -887,13 +919,13 @@ module Plot = struct
       | Left _
       | Right _ -> minor_axis_opt, major_axis_opt
     in
-    plbox x_opt 0.0 0 y_opt 0.0 0;
+    plot_axes x_opt y_opt;
 
     (* Draw the label *)
     Option.may (
       fun l ->
-        (* Which side to draw the label on and the offset from that side in units
-           of character height. *)
+        (* Which side to draw the label on and the offset from that side in
+           units of character height. *)
         let label_string, label_pos_string, label_offset =
           match l with
           | Right s -> s, "r", 4.0
@@ -914,36 +946,45 @@ module Plot = struct
     plcol0 old_color;
     ()
 
-  (** Draw a colorbar, optionally log scaled and labeled. *)
-  let colorbar ?stream ?label ?log ?pos ?width values =
-    with_stream ?stream (fun () -> colorbar ?label ?log ?pos ?width values)
-
-  (** An easier to deduce alternative to {Plplot.plbox} *)
-  let plot_axes ?stream ?(xtick = 0.0) ?(xsub =0)
-                ?(ytick = 0.0) ?(ysub = 0) xoptions yoptions =
-    let map_axis_options ol =
-      List.map (
-        function
-        | Axis -> "a"
-        | Frame0 -> "b"
-        | Frame1 -> "c"
-        | Time -> "d"
-        | Fixed_point -> "f"
-        | Major_grid -> "g"
-        | Minor_grid -> "h"
-        | Invert_ticks -> "i"
-        | Log -> "l"
-        | Unconventional_label -> "m"
-        | Label -> "n"
-        | Custom_label -> "o"
-        | Minor_ticks -> "s"
-        | Major_ticks -> "t"
-        | Vertical_label -> "v"
-      ) ol
+  (** [colorbar_labeler ?log ?min ?max axis n] can be used as a custom
+      axis labeling function when a colorbar is meant to represent values
+      beyond those which are represented.  So if the colorbar labeling shows
+      values from 0.0 to 1.0, but the color for 1.0 is meant to represent
+      values > 1.0 then set [max_value] 1.0. *)
+  let colorbar_labeler ?log ?(min = neg_infinity) ?(max = infinity) _ n =
+    (* Custom text labeling if ">" or "<" prefixes are needed *)
+    let gt_or_lt = function
+      | x when x <= min -> "< "
+      | x when x >= max -> "> "
+      | _ -> ""
     in
-    let xopt = String.concat "" (map_axis_options xoptions) in
-    let yopt = String.concat "" (map_axis_options yoptions) ^ "v" in
-    with_stream ?stream (fun () -> plbox xopt xtick xsub yopt ytick ysub)
+    let log10_text n =
+      let power = log10 n in
+      sprintf "%s10#u%d#d" (gt_or_lt n) (int_of_float power)
+    in
+    let decimal_places n =
+      match log10 n with
+      | d when d >= 2.0 -> 0
+      | d when d >= 0.0 -> 1
+      | d ->
+          let d' =
+            match d with
+            | x when x > 0.0 -> ceil x
+            | x when x < 0.0 -> floor x
+            | x -> x
+          in
+          abs (int_of_float d')
+    in
+    let normal_text n = sprintf "%s%.*f" (gt_or_lt n) (decimal_places n) n in
+    match log with
+    | None
+    | Some false -> normal_text n
+    | Some true -> log10_text n
+
+  (** Draw a colorbar, optionally log scaled and labeled. *)
+  let colorbar ?stream ?custom_axis ?label ?log ?pos ?width values =
+    with_stream ?stream
+      (fun () -> colorbar ?custom_axis ?label ?log ?pos ?width values)
 
   (** Default page ending steps.  Just draw the plot axes. *)
   let default_finish ?stream ?axis ?xtick ?ytick () =
