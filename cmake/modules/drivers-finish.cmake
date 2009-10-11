@@ -24,11 +24,17 @@
 # Results are contained in the following variables:
 # DRIVERS_LIST: list of device drivers (e.g., gd for the png and jpeg devices)
 # where at least one of the associated devices is enabled.
+
 # DEVICES_LIST: list of devices (e.g. png, jpeg), where device is enabled.
-# FILE_DEVICES_LIST: list of colon-separated information
-# (<devicename>:<familied>, where familied is ON or OFF (depending on whether
-# familying is required for multi-page results) for enabled file # devices.
-# INTERACTIVE_DEVICES_LIST: list of enabled interactive devices.
+
+# FILE_DEVICES_LIST: list of colon-separated information for enabled
+# file devices.  The information included is
+# <devicename>:<drivername>:<familied>, where familied is ON or OFF
+# (depending on whether familying is required for multi-page results).
+
+# INTERACTIVE_DEVICES_LIST: list of colon-separated information for
+# enabled interactive devices.  The information included is
+# <devicename>:<drivername>.
 
 # N.B. DRIVERS_LIST is used below to create data to help test plug-in
 # devices.  Also, it is output in the summary.  DEVICES_LIST is used
@@ -49,9 +55,9 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
     string(REGEX REPLACE "^.*:.*:.*:(.*):.*$" "\\1" KIND ${DRIVERS_DEVICE})
     string(REGEX REPLACE "^.*:.*:.*:.*:(.*)$" "\\1" REQUIRE_FAMILYING ${DRIVERS_DEVICE})
     if(KIND STREQUAL "F")
-      list(APPEND FILE_DEVICES_LIST "${DEVICE}:${REQUIRE_FAMILYING}")
+      list(APPEND FILE_DEVICES_LIST "${DEVICE}:${DRIVER}:${REQUIRE_FAMILYING}")
     elseif(KIND STREQUAL "I")
-      list(APPEND INTERACTIVE_DEVICES_LIST ${DEVICE})
+      list(APPEND INTERACTIVE_DEVICES_LIST ${DEVICE}:${DRIVER})
     endif(KIND STREQUAL "F")
 
     set(APPEND_DRIVER ON)
