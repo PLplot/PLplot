@@ -222,6 +222,35 @@ if(ENABLE_ocaml)
       )
   endif(OCAMLOPT)
 
+  if(OCAMLDOC AND BUILD_DOC)
+    # Build OCaml API reference documentation
+    set(OCAMLDOC_FILE_LIST
+      index_attributes.html index_modules.html Plplot.Plot.html
+      index_classes.html index_module_types.html Plplot.Quick_plot.html
+      index_class_types.html index_types.html style.css
+      index_exceptions.html index_values.html type_Plplot.html
+      index.html Plplot.html type_Plplot.Plot.html
+      index_methods.html plplot.mli type_Plplot.Quick_plot.html
+      )
+    set(OCAMLDOC_FILES)
+    foreach(html_file ${OCAMLDOC_FILE_LIST})
+      list(APPEND ${OCAMLDOC_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${html_file})
+    endforeach(html_file ${OCAMLDOC_FILE_LIST})
+    # ocamldoc builds the module's documentation using specially formatted
+    # comments in the source file.
+    add_custom_command(
+      OUTPUT "${OCAMLDOC_FILES}"
+      COMMAND ${OCAMLDOC} -html ${CMAKE_CURRENT_SOURCE_DIR}/plplot.mli
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.mli
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      )
+    add_custom_target(target_plplot_doc
+      DEPENDS
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplot.mli
+      )
+  endif(OCAMLDOC AND BUILD_DOC)
+
   # Basic build done, now trying to finish up by adapting bits
   # and pieces of old build procedure below.
 

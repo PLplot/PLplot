@@ -86,6 +86,16 @@ if(ENABLE_ocaml)
   endif (OCAMLFIND)
 endif(ENABLE_ocaml)
 
+if(ENABLE_ocaml AND BUILD_DOC)
+  find_program(OCAMLDOC NAMES ocamldoc.opt ocamldoc)
+  if (OCAMLDOC)
+    message(STATUS "OCAMLDOC = ${OCAMLDOC}")
+  else (OCAMLDOC)
+    message(STATUS "WARNING:"
+      "ocamldoc not found. Disabling OCaml API documentation generation")
+  endif (OCAMLDOC)
+endif(ENABLE_ocaml AND BUILD_DOC)
+
 if(ENABLE_ocaml)
   execute_process(COMMAND ${OCAMLC} -version
     OUTPUT_VARIABLE OCAML_VERSION
