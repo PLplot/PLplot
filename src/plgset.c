@@ -26,40 +26,41 @@
  * plget : Get the value of the specified variable in the current plot stream
  *-------------------------------------------------------------------------*/
 void
-c_plget(enum PLAttributeName attrName, PLAttribute *attrValue)
+c_plget( enum PLAttributeName attrName, PLAttribute *attrValue )
 {
-  attrValue->attributeType = -1;
-  switch(attrName){
-  case PL_CURCOLOR:
-    attrValue->attributeType = PL_COLOR;
-    attrValue->colorValue.r = plsc->curcolor.r;
-    attrValue->colorValue.g = plsc->curcolor.g;
-    attrValue->colorValue.b = plsc->curcolor.b;
-    attrValue->colorValue.a = plsc->curcolor.a;
-    break;
-  case PL_ICOL0:
-    attrValue->attributeType = PL_INT;
-    attrValue->intValue = plsc->icol0;
-    break;
-  case PL_ICOL1:
-    attrValue->attributeType = PL_INT;
-    attrValue->intValue = plsc->icol1;
-    break;
-  case PL_NCOL0:
-    attrValue->attributeType = PL_INT;
-    attrValue->intValue = plsc->ncol0;
-    break;
-  case PL_NCOL1:
-    attrValue->attributeType = PL_INT;
-    attrValue->intValue = plsc->ncol1;
-    break;
-  case PL_PENWIDTH:
-    attrValue->attributeType = PL_INT;
-    attrValue->intValue = plsc->width;
-    break;
-  default:
-    break;
-  }
+    attrValue->attributeType = -1;
+    switch ( attrName )
+    {
+    case PL_CURCOLOR:
+        attrValue->attributeType = PL_COLOR;
+        attrValue->colorValue.r  = plsc->curcolor.r;
+        attrValue->colorValue.g  = plsc->curcolor.g;
+        attrValue->colorValue.b  = plsc->curcolor.b;
+        attrValue->colorValue.a  = plsc->curcolor.a;
+        break;
+    case PL_ICOL0:
+        attrValue->attributeType = PL_INT;
+        attrValue->intValue      = plsc->icol0;
+        break;
+    case PL_ICOL1:
+        attrValue->attributeType = PL_INT;
+        attrValue->intValue      = plsc->icol1;
+        break;
+    case PL_NCOL0:
+        attrValue->attributeType = PL_INT;
+        attrValue->intValue      = plsc->ncol0;
+        break;
+    case PL_NCOL1:
+        attrValue->attributeType = PL_INT;
+        attrValue->intValue      = plsc->ncol1;
+        break;
+    case PL_PENWIDTH:
+        attrValue->attributeType = PL_INT;
+        attrValue->intValue      = plsc->width;
+        break;
+    default:
+        break;
+    }
 }
 
 /*-------------------------------------------------------------------------
@@ -71,25 +72,28 @@ c_plget(enum PLAttributeName attrName, PLAttribute *attrValue)
  *
  *-------------------------------------------------------------------------*/
 void
-c_plset(enum PLAttributeName attrName, PLAttribute attrValue)
+c_plset( enum PLAttributeName attrName, PLAttribute attrValue )
 {
-  switch(attrName){
-  case PL_CURCOLOR:
-    if (attrValue.attributeType == PL_COLOR){
-      plscol0(plsc->icol0,
-	      attrValue.colorValue.r,
-	      attrValue.colorValue.g,
-	      attrValue.colorValue.b);
-      plcol0(plsc->icol0);
+    switch ( attrName )
+    {
+    case PL_CURCOLOR:
+        if ( attrValue.attributeType == PL_COLOR )
+        {
+            plscol0( plsc->icol0,
+                attrValue.colorValue.r,
+                attrValue.colorValue.g,
+                attrValue.colorValue.b );
+            plcol0( plsc->icol0 );
+        }
+        break;
+    case PL_PENWIDTH:
+        if ( attrValue.attributeType == PL_INT )
+        {
+            plwid( attrValue.intValue );
+        }
+        break;
+    default:
+        break;
     }
-    break;
-  case PL_PENWIDTH:
-    if (attrValue.attributeType == PL_INT){
-      plwid(attrValue.intValue);
-    }
-    break;
-  default:
-    break;
-  }
 }
 
