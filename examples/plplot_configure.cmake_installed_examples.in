@@ -148,62 +148,9 @@ endif(ENABLE_qt)
 
 set(ENABLE_DYNDRIVERS @ENABLE_DYNDRIVERS@)
 
-# List of all devices that will be used for noninteractive device tests.
-# Exclude some devices (linuxvga, conex?) in plplot-test.sh
-# where it is likely they are interactive.
-# The first field is the device, the second field is whether it produces
-# familied output (to help keep track of file dependencies).  That field must
-# be consistent with the shell logic which deploys the -fam option for
-# certain devices in plplot-test.sh.cmake.
-# N.B. That field has nothing to do with whether the device is turned ON
-# or not.
-set(noninteractive_devices_info_LIST
-  pdfcairo:OFF
-  pngcairo:ON
-  pscairo:OFF
-  svgcairo:ON
-  cgm:OFF
-  dg300:OFF
-  epsqt:ON
-  pdfqt:ON
-  bmpqt:ON
-  jpgqt:ON
-  pngqt:ON
-  ppmqt:ON
-  tiffqt:ON
-  svgqt:ON
-  gif:ON
-  jpeg:ON
-  png:ON
-  # All hp7xxx devices are semi-broken (Invalid pen selection warnings)
-  #  hp7470:OFF
-  #  hp7580:OFF
-  # lj_hpgl is severely broken (segfaults).
-  #  lj_hpgl:OFF
-  imp:OFF
-  ljii:OFF
-  ljiip:OFF
-  # pbm is severely broken (glibc double free detected)
-  #  pbm:OFF
-  pdf:OFF
-  # Include ps in list because we want to test monochromatic results, but
-  # exclude psc because that already done with noninteractive language tests.
-  ps:OFF
-  #  psc:OFF
-  pstex:OFF
-  psttf:OFF
-  psttfc:OFF
-  svg:ON
-  tek4010f:OFF
-  tek4107f:OFF
-  wxpng:OFF
-  xfig:ON
-  )
-
+set(FILE_DEVICES_LIST @FILE_DEVICES_LIST@)
 # This list of set commands must be consistent with the above list which
-# potentially is a maintenance issue.  However, cannot make this list
-# automatically with a foreach loop because explicit configuration of
-# each name is required.
+# implies a maintenance issue.
 set(PLD_pdfcairo @PLD_pdfcairo@)
 set(PLD_pngcairo @PLD_pngcairo@)
 set(PLD_pscairo @PLD_pscairo@)
@@ -230,17 +177,32 @@ set(PLD_ljiip @PLD_ljiip@)
 set(PLD_pbm @PLD_pbm@)
 set(PLD_pdf @PLD_pdf@)
 set(PLD_ps @PLD_ps@)
-set(PLD_psc @PLD_psc@)
 set(PLD_pstex @PLD_pstex@)
 set(PLD_psttf @PLD_psttf@)
-set(PLD_psttfc @PLD_psttfc@)
 set(PLD_svg @PLD_svg@)
 set(PLD_tek4010f @PLD_tek4010f@)
 set(PLD_tek4107f @PLD_tek4107f@)
 set(PLD_wxpng @PLD_wxpng@)
 set(PLD_xfig @PLD_xfig@)
 
-# Set interactive/external devices that are needed to build certain examples.
-set(PLD_xcairo @PLD_xcairo@)
-set(PLD_extcairo @PLD_extcairo@)
+# These only used for testing, but not core build
+set(PLD_psc @PLD_psc@)
+set(PLD_psttfc @PLD_psttfc@)
 
+set(INTERACTIVE_DEVICES_LIST @INTERACTIVE_DEVICES_LIST@)
+# Set interactive devices that are needed to build certain examples.  This
+# list should be consistent with INTERACTIVE_DEVICES_LIST which implies a
+# maintenance issue.
+
+set(PLD_aqt @PLD_aqt@)
+set(PLD_gcw @PLD_gcw@)
+set(PLD_ntk @PLD_ntk@)
+set(PLD_qtwidget @PLD_qtwidget@)
+set(PLD_tk @PLD_tk@)
+set(PLD_wingcc @PLD_wingcc@)
+set(PLD_wxwidgets @PLD_wxwidgets@)
+set(PLD_xcairo @PLD_xcairo@)
+set(PLD_xwin @PLD_xwin@)
+
+# Set external devices that are needed to build certain examples.
+set(PLD_extcairo @PLD_extcairo@)
