@@ -225,6 +225,11 @@ if(CORE_BUILD)
   set(ENABLE_c ON)
   set(PLD_psc ${PLD_ps})
   set(PLD_psttfc ${PLD_psttf})
+  # The psc device handled separately below so don't add it to
+  # FILE_DEVICES_LIST.
+  if(PLD_psttfc)
+    list(APPEND FILE_DEVICES_LIST psttfc:psttf:OFF)
+  endif(PLD_psttfc)
 
   # Start configuration/installation of CMake-based build system for
   # installed examples.
@@ -389,21 +394,22 @@ if(BUILD_TEST)
     ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
     )
 
-  if(PLD_psc)
-    if(CORE_BUILD)
-      set(custom_test_command ${CMAKE_BINARY_DIR}/plplot_test/plplot-test.sh)
-      set(custom_env EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples)
-      set(java_custom_env ${custom_env} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar)
-      set(compare_command ${CMAKE_BINARY_DIR}/plplot_test/test_diff.sh)
-    else(CORE_BUILD)
-      set(custom_test_command ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh)
-      set(custom_env SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR})
-      set(java_custom_env ${custom_env})
-      set(compare_command ${CMAKE_CURRENT_SOURCE_DIR}/test_diff.sh)
-    endif(CORE_BUILD)
+  if(CORE_BUILD)
+    set(custom_test_command ${CMAKE_BINARY_DIR}/plplot_test/plplot-test.sh)
+    set(custom_env EXAMPLES_DIR=${CMAKE_BINARY_DIR}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR}/examples)
+    set(java_custom_env ${custom_env} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar)
+    set(compare_command ${CMAKE_BINARY_DIR}/plplot_test/test_diff.sh)
+  else(CORE_BUILD)
+    set(custom_test_command ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh)
+    set(custom_env SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR})
+    set(java_custom_env ${custom_env})
+    set(compare_command ${CMAKE_CURRENT_SOURCE_DIR}/test_diff.sh)
+  endif(CORE_BUILD)
 
+  if(PLD_psc)
     set(compare_file_depends ${custom_test_command})
     if(ENABLE_DYNDRIVERS)
+      # The ps shared object implements both the psc (and ps) devices.
       list(APPEND compare_file_depends ps)
     endif(ENABLE_DYNDRIVERS)
 
@@ -478,50 +484,69 @@ if(BUILD_TEST)
       DEPENDS ${diff_files_LIST}
       )
     add_dependencies(test_diff_psc ${diff_targets_LIST})
-
+    set(noninteractive_targets_LIST test_diff_psc)
+  else(PLD_psc)
+    set(noninteractive_targets_LIST)
   endif(PLD_psc)
 
-  set(output_LIST)
-  # noninteractive_devices_info_LIST set in plplot_configure.cmake.  Each list
-  # member consists of a colon-separated device name and a Boolean variable
-  # that indicates if device has familied output in plplot-test.sh.
-  
-  foreach(noninteractive_devices_info ${noninteractive_devices_info_LIST})
-    string(REGEX REPLACE "^(.*):.*$" "\\1" device ${noninteractive_devices_info})
-    string(REGEX REPLACE "^.*:(.*)$" "\\1" familied ${noninteractive_devices_info})
+  # ENABLE_c is always ON by construction, but test it anyway for
+  # consistency sake.
+  if(ENABLE_c)
+    set(file_device_depends ${custom_test_command})
+    if(files_examples_c)
+      list(APPEND file_device_depends ${files_examples_c})
+    else(files_examples_c)
+      if(targets_examples_c)
+      list(APPEND file_device_depends ${targets_examples_c})
+      endif(targets_examples_c)
+    endif(files_examples_c)
 
-    # If familying turned on for this device in plplot-test.sh, then the OUTPUT
-    # files appear in the form x??c??.${device} rather than x??c.${device}.
-    # Put in a representative placeholder for the familying index in the
-    # OUTPUT name.
-    if(familied)
-      set(index 01)
-    else(familied)
-      set(index)
-    endif(familied)
-
-    # ENABLE_c is always ON by construction in plplot_configure.cmake, but
-    # make a logical test of it in any case just to be consistent with above
-    # ENABLE_${language} logic where c is one of the languages.
-    if(PLD_${device} AND ENABLE_c)
+    # FILE_DEVICES_LIST is set in cmake/modules/drivers-finish.cmake
+    # for all enabled devices and adjusted above for the special case
+    # of the psttfc device.  It is also configured in
+    # plplot_configure.cmake.  Each list member consists of a
+    # colon-separated device name, driver name, and a Boolean variable that
+    # indicates if device has familied output in plplot-test.sh.
+    # N.B. device psc is deliberately excluded from list because it is
+    # handled in a different way above.
+    foreach(file_devices_info ${FILE_DEVICES_LIST})
+      string(REGEX REPLACE "^(.*):.*:.*$" "\\1" device ${file_devices_info})
+      string(REGEX REPLACE "^.*:(.*):.*$" "\\1" driver ${file_devices_info})
+      string(REGEX REPLACE "^.*:.*:(.*)$" "\\1" familied ${file_devices_info})
+      
+      # If familying turned on for this device in plplot-test.sh, then the OUTPUT
+      # files appear in the form x??c??.${device} rather than x??c.${device}.
+      # Put in a representative placeholder for the familying index in the
+      # OUTPUT name.
+      if(familied)
+	set(index 01)
+      else(familied)
+	set(index)
+      endif(familied)
+      
+      set(file_device_depends_${device} ${file_device_depends})
+      if(ENABLE_DYNDRIVERS)
+	list(APPEND file_device_depends_${device} ${driver})
+      endif(ENABLE_DYNDRIVERS)
       #message("DEBUG: OUTPUT filename = x01c${index}.${device}")
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x01c${index}.${device}
-	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} device"
-	COMMAND SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh --verbose --front-end=c --device=${device}
+	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} file device"
+	COMMAND ${custom_env} ${custom_test_command} --verbose --front-end=c --device=${device}
 	DEPENDS
-	${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh
+	${file_device_depends_${device}}
 	)
-      list(APPEND output_LIST ${CMAKE_CURRENT_BINARY_DIR}/x01c${index}.${device})
-    endif(PLD_${device} AND ENABLE_c)
-  endforeach(noninteractive_devices_info ${noninteractive_devices_info_LIST})
+      add_custom_target(test_c_${device}
+	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x01c${index}.${device}
+	)
+      list(APPEND noninteractive_targets_LIST test_c_${device})
+    endforeach(file_devices_info ${FILE_DEVICES_LIST})
 
-  add_custom_target(test_noninteractive 
-    DEPENDS ${output_LIST}
-    )
-  if(noninteractive_targets_LIST)
-    add_dependencies(test_noninteractive ${noninteractive_targets_LIST})
-  endif(noninteractive_targets_LIST)
+    add_custom_target(test_noninteractive)
+    if(noninteractive_targets_LIST)
+      add_dependencies(test_noninteractive ${noninteractive_targets_LIST})
+    endif(noninteractive_targets_LIST)
+  endif(ENABLE_c)
 
   set(interactive_targets_LIST ${targets_examples_c})
 
