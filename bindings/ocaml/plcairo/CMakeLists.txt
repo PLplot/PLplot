@@ -168,33 +168,42 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
       )
   endif(OCAMLOPT)
 
-  if(OCAMLFIND AND OCAMLDOC AND BUILD_DOC)
+  if(OCAMLFIND AND OCAMLDOC)
     # Build OCaml API reference documentation
     set(OCAMLDOC_FILE_LIST
-      index_attributes.html index_methods.html Plcairo.html
-      index_classes.html index_modules.html style.css
-      index_class_types.html index_module_types.html type_Plcairo.html
-      index_exceptions.html index_types.html
-      index.html index_values.html
+      Plcairo.html
+      index.html
+      index_attributes.html
+      index_class_types.html
+      index_classes.html
+      index_exceptions.html
+      index_methods.html
+      index_module_types.html
+      index_modules.html
+      index_types.html
+      index_values.html
+      style.css
+      type_Plcairo.html
       )
     set(OCAMLDOC_FILES)
     foreach(html_file ${OCAMLDOC_FILE_LIST})
-      list(APPEND ${OCAMLDOC_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${html_file})
+      list(APPEND OCAMLDOC_FILES ${CMAKE_CURRENT_BINARY_DIR}/${html_file})
     endforeach(html_file ${OCAMLDOC_FILE_LIST})
     # ocamldoc builds the module's documentation using specially formatted
     # comments in the source file.  Source can be a .ml or a .mli.
     add_custom_command(
-      OUTPUT "${OCAMLDOC_FILES}"
+      OUTPUT ${OCAMLDOC_FILES}
       COMMAND ${OCAMLFIND} doc -package cairo -html ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.mli
       DEPENDS
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
-    add_custom_target(target_plcairo_doc
-      DEPENDS
-      ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.mli
-      )
-  endif(OCAMLFIND AND OCAMLDOC AND BUILD_DOC)
+    add_custom_target(target_build_ocaml_plcairo_doc DEPENDS ${OCAMLDOC_FILES})
+    # associated custom command has common file depends with custom command
+    # that is associated with target_plplot_cmi.  Therefore must serialize
+    # the two custom targets.
+    add_dependencies(target_plcairo_cmi target_build_ocaml_plcairo_doc)
+  endif(OCAMLFIND AND OCAMLDOC)
 
   # These targets depend on common files in their respective
   # file-dependency chains.  Therefore, to avoid screwing up parallel
