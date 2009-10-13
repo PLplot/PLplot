@@ -178,9 +178,12 @@ set(DRIVERS_DEVICE_LIST
   # This unmaintained driver generates double frees for example 14.
   # Retire this elderly device driver rather than fixing it.
   # "imp:impress:OFF:I:OFF"
-  # Default off because poorly maintained (e.g., colours are incorrect)
-  # must use software fill, and must run as root.
-  "linuxvga:linuxvga:OFF:I:OFF"
+  # linuxvga is retired because it is poorly maintained (e.g., colours
+  # are incorrect), it is primitive (e.g., Hershey fonts, software
+  # fill), and it must be run as root.  Also, svgalib is not supported
+  # for mainstream (e.g., intel) graphics chips anymore so it is
+  # difficult to even test this device.
+  #"linuxvga:linuxvga:OFF:I:OFF"
   # ljii is unmaintained and both the ljii and ljiip segfault on example 14.
   # Retire this elderly device driver rather than fixing it.
   #"ljii:ljii:OFF:F:OFF"
