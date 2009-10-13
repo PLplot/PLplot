@@ -59,6 +59,7 @@ Options:
    [--output-dir=/path/to/output/dir]
                      Specify location where the resulting files are stored.
                      Defaults to "."
+   [--interactive]   Run subset of C examples for interactive devices only.
    [--verbose]	     Echo each PLplot example that is executed.
    [--debug="debug command"]         
                      Run examples with given debug command.
@@ -95,6 +96,9 @@ while test $# -gt 0; do
    case $1 in
       --device=*)
          device=$optarg
+         ;;
+      --interactive)
+         interactive=on
          ;;
       --verbose)
          export verbose_test=on
@@ -160,6 +164,60 @@ subdirectory called "c".  This condition has been violated.
 exit 1
 fi
 
+# Find where the front-end scripts are by looking at the directory name of the
+# current script.  
+
+if [ "@WIN32@" = "1" ] ; then
+   scripts_dir=${0%/*}
+else
+   scripts_dir=`echo $0 | sed 's:/[^/][^/]*$::'`
+fi
+
+if [ "$interactive" = "on" ] ; then
+    # List of interactive devices for PLplot that _might_ be enabled.
+    PLD_aqt=@PLD_aqt@
+    PLD_qtwidget=@PLD_qtwidget@
+    PLD_gcw=@PLD_gcw@
+    PLD_gnome=@PLD_gnome@
+    PLD_ntk=@PLD_ntk@
+    PLD_tk=@PLD_tk@
+    PLD_wingcc=@PLD_wingcc@
+    PLD_wxwidgets=@PLD_wxwidgets@
+    PLD_xcairo=@PLD_xcairo@
+    PLD_xwin=@PLD_xwin@
+
+    eval pld_device='$'PLD_$device
+    if [ -z "$pld_device" ] ; then
+	echo '
+Never heard of an interactive device called '"$device"'.  Either this
+is not a legitimate interactive device for PLplot or else
+plplot-test.sh.cmake needs some maintenance to include this
+interactive device in the list of possible PLplot interactive devices.
+'
+	exit 1
+    fi
+
+    if [ ! "$pld_device" = "ON" ] ; then
+	echo '
+PLD_'"$device"' is defined as '"$pld_device"'.  It must be ON (i.e., enabled
+by your cmake configuration and built properly) before you can use this
+script with DEVICE='"$device"'.
+'
+	exit 1
+    fi
+
+    status=0
+    export cdir=$EXAMPLES_DIR/c
+    echo "Testing subset of C examples for device $device"
+    script=$scripts_dir/test_c_interactive.sh
+    if [ "@WIN32@" != "1" ] ; then
+	chmod +x $script
+    fi
+    @SH_EXECUTABLE@ $script || status=1
+
+    exit $status
+fi
+
 # These variables set by default assuming you are going to run this
 # script from the installed demos directory $prefix/lib/plplot$version/examples.
 cdir=$EXAMPLES_DIR/c
@@ -193,8 +251,8 @@ fe=""
 
 # List of non-interactive (i.e., file) devices for PLplot that 
 # _might_ be enabled.  For completeness you may want to specify all devices
-# here, but be sure to comment out the interactive ones since the configured
-# plplot-test.sh script does not work with interactive devices.
+# here, but be sure to comment out the interactive ones since they are
+# handled by the above --interactive logic.
 
 #interactive PLD_aqt=@PLD_aqt@
 PLD_cgm=@PLD_cgm@
@@ -216,7 +274,6 @@ PLD_hp7470=@PLD_hp7470@
 PLD_hp7580=@PLD_hp7580@
 PLD_imp=@PLD_imp@
 PLD_jpeg=@PLD_jpeg@
-PLD_linuxvga=@PLD_linuxvga@
 PLD_lj_hpgl=@PLD_lj_hpgl@
 PLD_ljii=@PLD_ljii@
 PLD_ljiip=@PLD_ljiip@
@@ -310,15 +367,6 @@ if [ -z "$FRONT_END" ] ; then
    test "@ENABLE_ocaml@" = "ON"  && FRONT_END="$FRONT_END ocaml"
    test "@ENABLE_lua@" = "ON"  && FRONT_END="$FRONT_END lua"
    test "@ENABLE_d@" = "ON"  && FRONT_END="$FRONT_END d"
-fi
-
-# Find where the front-end scripts are by looking at the directory name of the
-# current script.  
-
-if [ "@WIN32@" = "1" ] ; then
-   scripts_dir=${0%/*}
-else
-   scripts_dir=`echo $0 | sed 's:/[^/][^/]*$::'`
 fi
 
 # Call the front-end scripts

@@ -492,21 +492,23 @@ if(BUILD_TEST)
   # ENABLE_c is always ON by construction, but test it anyway for
   # consistency sake.
   if(ENABLE_c)
-    set(file_device_depends ${custom_test_command})
+    set(device_depends ${custom_test_command})
     if(files_examples_c)
-      list(APPEND file_device_depends ${files_examples_c})
+      list(APPEND device_depends ${files_examples_c})
     else(files_examples_c)
       if(targets_examples_c)
-      list(APPEND file_device_depends ${targets_examples_c})
+      list(APPEND device_depends ${targets_examples_c})
       endif(targets_examples_c)
     endif(files_examples_c)
 
     # FILE_DEVICES_LIST is set in cmake/modules/drivers-finish.cmake
-    # for all enabled devices and adjusted above for the special case
-    # of the psttfc device.  It is also configured in
-    # plplot_configure.cmake.  Each list member consists of a
-    # colon-separated device name, driver name, and a Boolean variable that
-    # indicates if device has familied output in plplot-test.sh.
+    # for all enabled _file_ devices and adjusted above for the
+    # special case of the psttfc device.  It is thus available for the
+    # core build.  It is also configured in plplot_configure.cmake and
+    # is thus available for the installed examples tests.  Each list
+    # member consists of a colon-separated device name, driver name,
+    # and a Boolean variable that indicates if device has familied
+    # output in plplot-test.sh.
     # N.B. device psc is deliberately excluded from list because it is
     # handled in a different way above.
     foreach(file_devices_info ${FILE_DEVICES_LIST})
@@ -524,7 +526,7 @@ if(BUILD_TEST)
 	set(index)
       endif(familied)
       
-      set(file_device_depends_${device} ${file_device_depends})
+      set(file_device_depends_${device} ${device_depends})
       if(ENABLE_DYNDRIVERS)
 	list(APPEND file_device_depends_${device} ${driver})
       endif(ENABLE_DYNDRIVERS)
@@ -546,6 +548,36 @@ if(BUILD_TEST)
     if(noninteractive_targets_LIST)
       add_dependencies(test_noninteractive ${noninteractive_targets_LIST})
     endif(noninteractive_targets_LIST)
+
+    set(interactive_targets_LIST)
+    # INTERACTIVE_DEVICES_LIST is set in
+    # cmake/modules/drivers-finish.cmake for all enabled _interactive_
+    # devices and is thus available for the core build.  It is also
+    # configured in plplot_configure.cmake so and is thus available
+    # for the installed examples tests.  Each list member consists of
+    # a colon-separated device name and driver name.
+    foreach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
+      string(REGEX REPLACE "^(.*):.*$" "\\1" device ${interactive_devices_info})
+      string(REGEX REPLACE "^.*:(.*)$" "\\1" driver ${interactive_devices_info})
+      
+      set(interactive_device_depends_${device} ${device_depends})
+      if(ENABLE_DYNDRIVERS)
+	list(APPEND interactive_device_depends_${device} ${driver})
+      endif(ENABLE_DYNDRIVERS)
+      add_custom_target(test_c_${device}
+	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} file device"
+	COMMAND ${custom_env} ${custom_test_command} --verbose --interactive --device=${device}
+	DEPENDS
+	${interactive_device_depends_${device}}
+	)
+      list(APPEND interactive_targets_LIST test_c_${device})
+    endforeach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
+
+    add_custom_target(test_interactive)
+    if(interactive_targets_LIST)
+      add_dependencies(test_interactive ${interactive_targets_LIST})
+    endif(interactive_targets_LIST)
+
   endif(ENABLE_c)
 
   set(interactive_targets_LIST ${targets_examples_c})
@@ -584,13 +616,13 @@ if(BUILD_TEST)
     list(APPEND interactive_targets_LIST ${target_qt_example})
   endif(target_qt_example)
 
-  add_custom_target(test_interactive
-    COMMAND SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} EXAMPLES_DIR=${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test-interactive.sh
-    )
+#  add_custom_target(test_interactive
+#    COMMAND SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} EXAMPLES_DIR=${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test-interactive.sh
+#    )
 
-  if(interactive_targets_LIST)
-    add_dependencies(test_interactive ${interactive_targets_LIST})
-  endif(interactive_targets_LIST)
+#  if(interactive_targets_LIST)
+#    add_dependencies(test_interactive ${interactive_targets_LIST})
+#  endif(interactive_targets_LIST)
 
 endif(BUILD_TEST)
 

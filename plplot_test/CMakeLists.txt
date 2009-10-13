@@ -41,6 +41,14 @@ if(SH_EXECUTABLE)
     @ONLY
     )
   list(APPEND SCRIPTS test_c.sh)
+
+  configure_file(
+    test_c_interactive.sh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/test_c_interactive.sh
+    @ONLY
+    )
+  list(APPEND SCRIPTS test_c_interactive.sh)
+
   add_test(examples_c
     ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
     )
