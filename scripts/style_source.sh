@@ -32,11 +32,14 @@ echo '
 Usage: ./style_source.sh [OPTIONS]
 
 Options:
-   [--view]         Show detailed style differences in source code.
-   [--noview]       Summarize style differences in source code (default).
-   [--apply]        Apply style differences to source code (POWERFUL).
-   [--noapply]      Do not apply style differences to source code (default).
-   [--help]         Show this message.
+   [--diff [diff options]]  Show detailed style differences in source code
+                            with optional concatanated diff options headed
+                            by a single hyphen.  If no diff options are
+                            specified, then -auw is used by default.
+   [--nodiff]               Summarize style differences in source code (default).
+   [--apply]                Apply style differences to source code (POWERFUL).
+   [--noapply]              Do not apply style differences to source code (default).
+   [--help]                 Show this message.
 
 '
    exit $1
@@ -44,17 +47,24 @@ Options:
 
 # Figure out what script options were specified by the user.
 # Defaults
-export view=OFF
+export diff=OFF
 export apply=OFF
+export diff_options="-auw"
 
 while test $# -gt 0; do
 
     case $1 in
-	--view)
-	    view=ON
+	--diff)
+	    diff=ON
+	    case $2 in
+		-[^-]*)
+		    diff_options=$2
+		    shift
+		    ;;
+	    esac
 	    ;;
-	--noview)
-	    view=OFF
+	--nodiff)
+	    diff=OFF
 	    ;;
 	--apply)
 	    apply=ON
@@ -102,7 +112,15 @@ previous runs of style_source.sh with their uncrustified versions.
 
 fi
 
-export csource_LIST="src/*.c src/*.h"
+export csource_LIST
+# Top level directory.
+csource_LIST=config.h.cmake
+
+# src directory
+csource_LIST="$csource_LIST src/*.c src/*.h"
+
+# All C source (i.e., exclude qt.h) in include directory.
+csource_LIST="$csource_LIST `ls include/*.h include/*.h.in include/*.h.cmake |grep -v qt.h`" 
 
 export cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
 
@@ -110,8 +128,8 @@ for csource in $csource_LIST ; do
     uncrustify -c uncrustify.cfg -q -l c < $csource | cmp --quiet $csource -
     if [ "$?" -ne 0 ] ; then
 	ls $csource
-	if [ "$view" = "ON" ] ; then
-	    uncrustify -c uncrustify.cfg -q -l c < $csource | diff -au $csource -
+	if [ "$diff" = "ON" ] ; then
+	    uncrustify -c uncrustify.cfg -q -l c < $csource | diff $diff_options $csource -
 	fi
 
 	if [ "$apply" = "ON" ] ; then
@@ -124,8 +142,8 @@ for cppsource in $cppsource_LIST ; do
     uncrustify -c uncrustify.cfg -q -l cpp < $cppsource | cmp --quiet $cppsource -
     if [ "$?" -ne 0 ] ; then
 	ls $cppsource
-	if [ "$view" = "ON" ] ; then
-	    uncrustify -c uncrustify.cfg -q -l cpp < $cppsource | diff -au $cppsource -
+	if [ "$diff" = "ON" ] ; then
+	    uncrustify -c uncrustify.cfg -q -l cpp < $cppsource | diff $diff_options $cppsource -
 	fi
 
 	if [ "$apply" = "ON" ] ; then
