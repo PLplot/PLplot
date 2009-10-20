@@ -114,7 +114,7 @@ fi
 
 export csource_LIST
 # Top level directory.
-csource_LIST=config.h.cmake
+csource_LIST="config.h.cmake"
 
 # src directory
 csource_LIST="$csource_LIST src/*.c src/*.h"
@@ -123,6 +123,14 @@ csource_LIST="$csource_LIST src/*.c src/*.h"
 csource_LIST="$csource_LIST `ls include/*.h include/*.h.in include/*.h.cmake |grep -v qt.h`" 
 
 export cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
+
+# Check that source file lists actually refer to files.
+for source in $csource_LIST $cppsource_LIST ; do
+    if [ ! -f $source ] ; then
+	echo $source is not a regular file so this script will not work without further editing.
+	exit 1
+    fi
+done
 
 for csource in $csource_LIST ; do
     uncrustify -c uncrustify.cfg -q -l c < $csource | cmp --quiet $csource -
