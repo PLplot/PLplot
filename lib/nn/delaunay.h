@@ -57,9 +57,9 @@ struct delaunay
     triangle_neighbours* neighbours;    /* for delaunay_xytoi() */
 
     int                * n_point_triangles; /* n_point_triangles[i] is number of
-                                 * triangles i-th point belongs to */
+                                             * triangles i-th point belongs to */
     int                ** point_triangles; /* point_triangles[i][j] is index of j-th
-                                 * triangle i-th point belongs to */
+                                            * triangle i-th point belongs to */
 
     int                nedges;
     int                * edges; /* n-th edge is formed by points[edges[n*2]]

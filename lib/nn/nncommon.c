@@ -51,7 +51,7 @@ void nn_quit( char* format, ... )
     va_list args;
 
     fflush( stdout );             /* just in case, to have the exit message
-                                 * last */
+                                   * last */
 
     fprintf( stderr, "error: nn: " );
     va_start( args, format );

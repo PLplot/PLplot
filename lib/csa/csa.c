@@ -137,7 +137,7 @@ static void csa_quit( char* format, ... )
     va_list args;
 
     fflush( stdout );             /* just in case -- to have the exit message
-                                 * last */
+                                   * last */
 
     fprintf( stderr, "error: csa: " );
     va_start( args, format );
@@ -470,7 +470,7 @@ static void csa_setprimaryflag( csa* a )
 static void csa_squarize( csa* a )
 {
     int    nps[7]  = { 0, 0, 0, 0, 0, 0 }; /* stats on number of points per
-                                         * square */
+                                            * square */
     double dx      = a->xmax - a->xmin;
     double dy      = a->ymax - a->ymin;
     int    npoints = a->npoints;
