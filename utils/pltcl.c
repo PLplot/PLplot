@@ -38,7 +38,7 @@
 #endif
 
 static int
-AppInit(Tcl_Interp *interp);
+AppInit( Tcl_Interp *interp );
 
 /*--------------------------------------------------------------------------*\
  * main --
@@ -49,12 +49,12 @@ AppInit(Tcl_Interp *interp);
  * systems/compilers/linkers/etc).  Hopefully in the future Tcl will
  * supply a sufficiently capable tclMain() type function that can be used
  * instead.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, const char **argv)
+main( int argc, const char **argv )
 {
-    exit(pltclMain(argc, argv, NULL, AppInit));
+    exit( pltclMain( argc, argv, NULL, AppInit ));
 }
 
 /*--------------------------------------------------------------------------*\
@@ -63,22 +63,21 @@ main(int argc, const char **argv)
  * PLplot/Tcl extension command -- handle exit.
  * The reason for overriding the normal exit command is so we can tell
  * the PLplot library to clean up.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 static int
-plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
+plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 {
-
 /* Print error message if one given */
 
-    if (interp->result != NULL && interp->result[0] != '\0')
-	fprintf(stderr, "%s\n", interp->result);
+    if ( interp->result != NULL && interp->result[0] != '\0' )
+        fprintf( stderr, "%s\n", interp->result );
 
-    plspause(0);
+    plspause( 0 );
     plend();
 
-    Tcl_UnsetVar(interp, "tcl_prompt1", 0);
-    Tcl_Eval(interp, "tclexit");
+    Tcl_UnsetVar( interp, "tcl_prompt1", 0 );
+    Tcl_Eval( interp, "tclexit" );
 
     return TCL_OK;
 }
@@ -88,22 +87,22 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
  *
  * PLplot/Tcl extension command -- print the prompt.
  * Allows much more flexible setting of the prompt.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 static int
-prPromptCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
+prPromptCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 {
     PLStream *pls;
-    char prompt[80];
+    char     prompt[80];
 
-    plgpls(&pls);
+    plgpls( &pls );
 
-    if (pls->ipls == 0)
-	sprintf(prompt, "pltext; puts -nonewline \"pltcl> \"; flush stdout");
+    if ( pls->ipls == 0 )
+        sprintf( prompt, "pltext; puts -nonewline \"pltcl> \"; flush stdout" );
     else
-	sprintf(prompt, "pltext; puts -nonewline \"pltcl_%d> \"; flush stdout", pls->ipls);
+        sprintf( prompt, "pltext; puts -nonewline \"pltcl_%d> \"; flush stdout", pls->ipls );
 
-    Tcl_VarEval(interp, prompt, 0);
+    Tcl_VarEval( interp, prompt, 0 );
 
     return TCL_OK;
 }
@@ -128,7 +127,7 @@ prPromptCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
  */
 
 static int
-AppInit(Tcl_Interp *interp)
+AppInit( Tcl_Interp *interp )
 {
 /*
  * Call the init procedures for included packages.  Each call should
@@ -140,34 +139,37 @@ AppInit(Tcl_Interp *interp)
  *
  * where "Mod" is the name of the module.
  */
-    if (Tcl_Init(interp) == TCL_ERROR) {
-    printf( "Error Tcl_Init\n") ;
-	return TCL_ERROR;
+    if ( Tcl_Init( interp ) == TCL_ERROR )
+    {
+        printf( "Error Tcl_Init\n" );
+        return TCL_ERROR;
     }
 #ifdef HAVE_ITCL
-    if (Itcl_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
+    if ( Itcl_Init( interp ) == TCL_ERROR )
+    {
+        return TCL_ERROR;
     }
 #endif
-    if (Pltcl_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
+    if ( Pltcl_Init( interp ) == TCL_ERROR )
+    {
+        return TCL_ERROR;
     }
 
 /* Application-specific startup.  That means: for use in pltcl ONLY. */
 
 /* Rename "exit" to "tclexit", and insert custom exit handler */
 
-    Tcl_VarEval(interp, "rename exit tclexit", (char *) NULL);
+    Tcl_VarEval( interp, "rename exit tclexit", (char *) NULL );
 
-    Tcl_CreateCommand(interp, "exit", (Tcl_CmdProc *) plExitCmd,
-                      (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateCommand( interp, "exit", (Tcl_CmdProc *) plExitCmd,
+        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL );
 
-    Tcl_CreateCommand(interp, "pr_prompt", (Tcl_CmdProc *) prPromptCmd,
-                      (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateCommand( interp, "pr_prompt", (Tcl_CmdProc *) prPromptCmd,
+        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL );
 
 /* Custom prompt, to make sure we are in text mode when entering commands */
 
-    Tcl_SetVar(interp, "tcl_prompt1", "pr_prompt", 0);
+    Tcl_SetVar( interp, "tcl_prompt1", "pr_prompt", 0 );
 
     return TCL_OK;
 }

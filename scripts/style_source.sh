@@ -131,6 +131,12 @@ csource_LIST="$csource_LIST drivers/*.c"
 # C part of examples.
 csource_LIST="$csource_LIST examples/c/*.[ch] examples/tk/*.c"
 
+# C source in fonts.
+csource_LIST="$csource_LIST fonts/*.c"
+
+# C source in utils.
+csource_LIST="$csource_LIST utils/*.c"
+
 export cppsource_LIST
 
 # C++ part of bindings/c++
