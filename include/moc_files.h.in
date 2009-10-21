@@ -1,6 +1,6 @@
-/* Configured header file listing the moc-generated files to include in plqt.cpp. */ 
+/* Configured header file listing the moc-generated files to include in plqt.cpp. */
 #ifndef __MOC_FILES_H__
 #define __MOC_FILES_H__
 
 #include "@QT_MOC_OUTFILES@"
-#endif  /* __MOC_FILES_H__i */ 
+#endif  /* __MOC_FILES_H__i */

@@ -3,26 +3,26 @@
  *    Header file for Support routines for freetype font engine
  *
  *    See plfreetype.c for more details
-
-    Copyright (C) 2004  Andrew Roach
-
-    This file is part of PLplot.
-
-    PLplot is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Library General Public License as published
-    by the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    PLplot is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Library General Public License for more details.
-
-    You should have received a copy of the GNU Library General Public License
-    along with PLplot; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-
-
+ *
+ *  Copyright (C) 2004  Andrew Roach
+ *
+ *  This file is part of PLplot.
+ *
+ *  PLplot is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Library General Public License as published
+ *  by the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  PLplot is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Library General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Library General Public License
+ *  along with PLplot; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ *
+ *
  */
 
 #ifndef __PLFREETY_H__
@@ -35,39 +35,40 @@
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 
-#define FT_Data _FT_Data_
+#define FT_Data    _FT_Data_
 
 #ifndef GetGValue
-#define GetGValue(rgb)   ((unsigned char) (((unsigned short) (rgb)) >> 8))
+#define GetGValue( rgb )    ((unsigned char) (((unsigned short) ( rgb )) >> 8 ))
 #endif
 #ifndef GetRValue
-#define GetRValue(rgb)   ((unsigned char) (rgb))
+#define GetRValue( rgb )    ((unsigned char) ( rgb ))
 #endif
 #ifndef GetBValue
-#define GetBValue(rgb)   ((unsigned char) ((rgb) >> 16))
+#define GetBValue( rgb )    ((unsigned char) (( rgb ) >> 16 ))
 #endif
 #ifndef RGB
-#define RGB(r, g ,b) (((r) | \
-                      ((g) << 8) | \
-                       (b) << 16))
+#define RGB( r, g, b )      ((( r ) |         \
+                              (( g ) << 8 ) | \
+                              ( b ) << 16 ))
 #endif
 
-typedef void (*plD_pixel_fp)           (PLStream *, PLINT, PLINT);
-typedef PLINT (*plD_read_pixel_fp)     (PLStream *, PLINT, PLINT);
-typedef PLINT (*plD_set_pixel_fp)      (PLStream *, PLINT, PLINT, PLINT);
+typedef void ( *plD_pixel_fp )( PLStream *, PLINT, PLINT );
+typedef PLINT ( *plD_read_pixel_fp )( PLStream *, PLINT, PLINT );
+typedef PLINT ( *plD_set_pixel_fp )( PLStream *, PLINT, PLINT, PLINT );
 
 /*--------------------------------------------------------------------------*\
  * Define the FT_Data data structure.
  *
  * These are the "globalish" variables used by Freetype
  * They are kept here so they are moderately thread safe, and stream specific
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
-typedef struct FT_Data {
-    short               x;
-    short               y;
+typedef struct FT_Data
+{
+    short x;
+    short y;
 
-    char *textbuf;		/* temporary string buffer */
+    char  *textbuf;             /* temporary string buffer */
 
 /*
  *  If set to 1, scale won't do anything, but this is an "arbitrary" scale
@@ -79,22 +80,22 @@ typedef struct FT_Data {
  *  "pls", not "dev", but at this late stage, we can just live with it
  *  now...
  */
-    PLFLT		scale;
+    PLFLT scale;
 
-  /*
-   * If different scales are used for x and y, set the next variables instead
-   * of scale.
-   */
-    PLFLT		scalex;
-    PLFLT		scaley;
+    /*
+     * If different scales are used for x and y, set the next variables instead
+     * of scale.
+     */
+    PLFLT         scalex;
+    PLFLT         scaley;
 
-    unsigned char       greek;
+    unsigned char greek;
 
 /*
  *  Set "invert_y" to 1 if the y coordinates need to be inverted for
  *  plotting. Most bitmaps will need this.
  */
-    unsigned char       invert_y;
+    unsigned char invert_y;
 
 /*
  *  ymax should be equal to, what it says - the maximum y coordinate of the
@@ -102,17 +103,17 @@ typedef struct FT_Data {
  *  bitmap when invert_y is set to 1. If invert_y isn't set, this setting is
  *  ignored.
  */
-    short               ymax;
+    short             ymax;
 
 
-    plD_pixel_fp        pixel;          /* pointer to a function which draws a single pixel */
-    plD_set_pixel_fp    set_pixel;      /* pointer to a function which draws a single pixel directly */
-    plD_read_pixel_fp   read_pixel;     /* pointer to a function which reads the RGB value of a pixel and returns it*/
+    plD_pixel_fp      pixel;            /* pointer to a function which draws a single pixel */
+    plD_set_pixel_fp  set_pixel;        /* pointer to a function which draws a single pixel directly */
+    plD_read_pixel_fp read_pixel;       /* pointer to a function which reads the RGB value of a pixel and returns it*/
 
 
-    int want_smooth_text; /* flag to request text smoothing (won't */
-                          /* necessarily get it though */
-    int smooth_text;      /* Flag to indicate type of anti-aliasing used, if freetype text is active */
+    int               want_smooth_text; /* flag to request text smoothing (won't */
+                                        /* necessarily get it though */
+    int               smooth_text;      /* Flag to indicate type of anti-aliasing used, if freetype text is active */
 
 
 /*
@@ -122,19 +123,19 @@ typedef struct FT_Data {
  */
 
     /* 30 = five families * 3 styles * 2 weights = N_TrueTypeLookup */
-    char                font_name[30][1024];
+    char font_name[30][1024];
 
 /*
  *  This is a mirror of pls->fci and is basically used for detecting when
  *  fonts have been changed .
  */
 
-    PLUNICODE               fci;
-    PLFLT chrht; /* Mirror of pls's copy so we can detect when the font SIZE has been changed */
-    PLFLT xdpi, ydpi;  /* Mirror of pls's copy, so that we can detect, if resolution was changed */
+    PLUNICODE fci;
+    PLFLT     chrht;                    /* Mirror of pls's copy so we can detect when the font SIZE has been changed */
+    PLFLT     xdpi, ydpi;               /* Mirror of pls's copy, so that we can detect, if resolution was changed */
 
-    FT_Matrix           matrix;         /* used for rotating etc... the font. */
-    FT_Vector           pos;            /* used for calculating offsets of text boxes/sizes */
+    FT_Matrix matrix;                   /* used for rotating etc... the font. */
+    FT_Vector pos;                      /* used for calculating offsets of text boxes/sizes */
 
 
 /*
@@ -158,14 +159,14 @@ typedef struct FT_Data {
  *  not all, of these variables will move elsewhere.
  */
 
-    FT_Library          library;        /* pointer to freetype library      */
-    FT_Face             face;           /* pointer to a font face           */
-    FT_GlyphSlot        slot;           /* pointer to a glyph slot          */
-    FT_Glyph            image;          /* bitmap or outline image of font  */
+    FT_Library   library;               /* pointer to freetype library      */
+    FT_Face      face;                  /* pointer to a font face           */
+    FT_GlyphSlot slot;                  /* pointer to a glyph slot          */
+    FT_Glyph     image;                 /* bitmap or outline image of font  */
 
-    short               colour;         /* depreciated ?? must check code */
+    short        colour;                /* depreciated ?? must check code */
 
-    PLINT shade, col_idx;		/* Used for antialiasing */
+    PLINT        shade, col_idx;        /* Used for antialiasing */
 
 /*
  *  If a driver is 24Bit, and supports reading pixel values as well as writing,
@@ -173,7 +174,6 @@ typedef struct FT_Data {
  *  with the background. Set to 1 if you have this.
  */
     unsigned char BLENDED_ANTIALIASING;
-
 } FT_Data;
 
 

@@ -2,26 +2,26 @@
  *
  *	Contains declarations for PLStream and PLDev structs.
  *	Also prototypes for stream & device utility functions.
-
-    Copyright (C) 2004  Andrew Ross
-    Copyright (C) 2004  Andrew Roach
-
-    This file is part of PLplot.
-
-    PLplot is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Library General Public License as published
-    by the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    PLplot is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Library General Public License for more details.
-
-    You should have received a copy of the GNU Library General Public License
-    along with PLplot; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-*/
+ *
+ *  Copyright (C) 2004  Andrew Ross
+ *  Copyright (C) 2004  Andrew Roach
+ *
+ *  This file is part of PLplot.
+ *
+ *  PLplot is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Library General Public License as published
+ *  by the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  PLplot is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Library General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Library General Public License
+ *  along with PLplot; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
 
 #include "pdf.h"
 
@@ -37,9 +37,10 @@
  *
  * These are all quantities that must be saved on a per-device basis.
  * Some drivers (xwin, tk) allocate structures defined internally.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
-typedef struct {
+typedef struct
+{
     PLFLT pxlx, pxly;
     PLINT xold, yold;
 
@@ -120,8 +121,8 @@ typedef struct {
  * curcmap	PLINT	Current color map
  * curcolor	RGB[]	Current color
  * tmpcolor	RGB[]	Temporary color storage
- * cmap0 	RGB[]	Color map 0: maximum of ncol0 RGB 8-bit values
- * cmap1 	RGB[]	Color map 1: maximum of ncol1 RGB 8-bit values
+ * cmap0        RGB[]	Color map 0: maximum of ncol0 RGB 8-bit values
+ * cmap1        RGB[]	Color map 1: maximum of ncol1 RGB 8-bit values
  *
  ***************************************************************************
  *
@@ -300,26 +301,26 @@ typedef struct {
  * dipymin	PLFLT	Min, max relative plot coordinates
  * dipxmax	PLFLT
  * dipymax	PLFLT
- * dipxax 	PLFLT	Plot window transformation:
- * dipxb 	PLFLT	  x' = dipxax * x + dipxb
- * dipyay 	PLFLT
- * dipyb 	PLFLT	  y' = dipyay * y + dipyb
+ * dipxax       PLFLT	Plot window transformation:
+ * dipxb        PLFLT	  x' = dipxax * x + dipxb
+ * dipyay       PLFLT
+ * dipyb        PLFLT	  y' = dipyay * y + dipyb
  *
  * aspdev	PLFLT	Original device aspect ratio
  * aspect	PLFLT	Page aspect ratio
  * aspori	PLFLT	Rotation-induced aspect ratio
  * caspfactor	PLFLT	Factor applied to preserve character aspect ratio
  * freeaspect	PLINT	Allow aspect ratio to adjust to orientation swaps
- * 			when overall aspect ratio is changed.
+ *                      when overall aspect ratio is changed.
  * portrait	PLINT	Portrait mode (orientation and aspect ratio)
  * mar		PLFLT	Page margin (minimum)
  * jx		PLFLT	Page justification in x
  * jy		PLFLT	Page justification in y
  *
- * didxax 	PLFLT	Device window transformation:
- * didxb 	PLFLT	  x' = didxax * x + didxb
- * didyay 	PLFLT
- * didyb 	PLFLT	  y' = didyay * y + didyb
+ * didxax       PLFLT	Device window transformation:
+ * didxb        PLFLT	  x' = didxax * x + didxb
+ * didyay       PLFLT
+ * didyb        PLFLT	  y' = didyay * y + didyb
  *
  * diclpxmi	PLINT
  * diclpxma	PLINT	Device clip limits
@@ -329,10 +330,10 @@ typedef struct {
  * diorot	PLFLT	Rotation angle (in units of pi/2)
  * dioxax	PLFLT	Orientation transformation:
  * dioxay	PLFLT	  x' = dioxax * x + dioxay * y + dioxb
- * dioxb 	PLFLT
+ * dioxb        PLFLT
  * dioyax	PLFLT	  y' = dioyax * x + dioyay * y + dioyb
  * dioyay	PLFLT
- * dioyb 	PLFLT
+ * dioyb        PLFLT
  *
  * dimxmin	PLFLT
  * dimymin	PLFLT	Target coordinate system parameters.
@@ -340,10 +341,10 @@ typedef struct {
  * dimymax	PLFLT
  * dimxpmm	PLFLT
  * dimypmm	PLFLT
- * dimxax 	PLFLT	Map meta to physical coordinates:
- * dimxb 	PLFLT	  x' = dimxax * x + dimxb
- * dimyay 	PLFLT
- * dimyb 	PLFLT	  y' = dimyay * y + dimyb
+ * dimxax       PLFLT	Map meta to physical coordinates:
+ * dimxb        PLFLT	  x' = dimxax * x + dimxb
+ * dimyay       PLFLT
+ * dimyb        PLFLT	  y' = dimyay * y + dimyb
  *
  * page_status	PLINT	Flag to indicate current action
  *
@@ -397,7 +398,7 @@ typedef struct {
  * precis	User-specified precision
  * xdigmax..	Allowed #digits in axes labels
  * xdigits..	Actual field widths (returned)
- * timefmt      Format string (for strftime) 
+ * timefmt      Format string (for strftime)
  *
  ***************************************************************************
  *
@@ -488,24 +489,24 @@ typedef struct {
  * of the transformation between broken-down and continuous time used
  * in the qsastime library.
  *
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
-#define PL_MAX_CMAP1CP 256
+#define PL_MAX_CMAP1CP    256
 
-typedef struct {
-
+typedef struct
+{
 /* Misc control information */
 
-    PLINT ipls, level, verbose, debug, initialized, dev_initialized;
+    PLINT      ipls, level, verbose, debug, initialized, dev_initialized;
     const char *program;
 
 /* Colormaps */
 
-    PLINT icol0, ncol0, icol1, ncol1, ncp1, curcmap;
+    PLINT       icol0, ncol0, icol1, ncol1, ncp1, curcmap;
 
-    PLColor curcolor, tmpcolor;
-    PLColor *cmap0;
-    PLColor *cmap1;
+    PLColor     curcolor, tmpcolor;
+    PLColor     *cmap0;
+    PLColor     *cmap1;
 
     PLControlPt cmap1cp[PL_MAX_CMAP1CP];
 
@@ -526,52 +527,52 @@ typedef struct {
 
 /* Variables used for interacting with or by device driver */
 
-    PLINT plbuf_read, plbuf_write;
-    PLINT device, dev_minor, termin, graphx, nopause;
-    PLINT color, colorset;
-    PLINT family, member, finc, fflen, bytemax, famadv;
-    PLINT dev_fill0, dev_fill1, dev_dash, dev_di, dev_flush, dev_swin;
-    PLINT dev_text, dev_xor, dev_clear, dev_fastimg, dev_arc;
+    PLINT   plbuf_read, plbuf_write;
+    PLINT   device, dev_minor, termin, graphx, nopause;
+    PLINT   color, colorset;
+    PLINT   family, member, finc, fflen, bytemax, famadv;
+    PLINT   dev_fill0, dev_fill1, dev_dash, dev_di, dev_flush, dev_swin;
+    PLINT   dev_text, dev_xor, dev_clear, dev_fastimg, dev_arc;
 
-    char DevName[80];
-    FILE *OutFile;
-    char *BaseName, *FileName;
-    int  output_type;
-    PLINT bytecnt, page, linepos;
+    char    DevName[80];
+    FILE    *OutFile;
+    char    *BaseName, *FileName;
+    int     output_type;
+    PLINT   bytecnt, page, linepos;
     PDFstrm *pdfs;
 
-    PLINT dev_npts;
-    short *dev_x, *dev_y;
+    PLINT   dev_npts;
+    short   *dev_x, *dev_y;
 
-  /* variables for plimage() */
+    /* variables for plimage() */
 
-    PLINT dev_nptsX, dev_nptsY;
-    short *dev_ix, *dev_iy;
+    PLINT          dev_nptsX, dev_nptsY;
+    short          *dev_ix, *dev_iy;
     unsigned short *dev_z;
     unsigned short dev_zmin, dev_zmax;
-    PLINT imclxmin, imclxmax, imclymin, imclymax;
+    PLINT          imclxmin, imclxmax, imclymin, imclymax;
 
-  /* end of variables for plimage() */
+    /* end of variables for plimage() */
 
     void *dev;
 
-    void (*KeyEH)	(PLGraphicsIn *gin, void *KeyEH_data,
-			 int *exit_eventloop);
+    void ( *KeyEH )( PLGraphicsIn *gin, void *KeyEH_data,
+                     int *exit_eventloop );
     void *KeyEH_data;
 
-    void (*ButtonEH)	(PLGraphicsIn *gin, void *ButtonEH_data,
-			 int *exit_eventloop);
+    void ( *ButtonEH )( PLGraphicsIn *gin, void *ButtonEH_data,
+                        int *exit_eventloop );
     void *ButtonEH_data;
 
-    void (*LocateEH)	(PLGraphicsIn *gin, void *LocateEH_data,
-			 int *locate_mode);
-    void *LocateEH_data;
+    void ( *LocateEH )( PLGraphicsIn *gin, void *LocateEH_data,
+                        int *locate_mode );
+    void  *LocateEH_data;
 
-    void (*bop_handler)	(void *bop_data, int *skip_driver_bop);
-    void *bop_data;
+    void ( *bop_handler )( void *bop_data, int *skip_driver_bop );
+    void  *bop_data;
 
-    void (*eop_handler)	(void *eop_data, int *skip_driver_eop);
-    void *eop_data;
+    void ( *eop_handler )( void *eop_data, int *skip_driver_eop );
+    void  *eop_data;
 
     PLFLT xdpi, ydpi;
     PLINT xlength, ylength;
@@ -580,13 +581,13 @@ typedef struct {
 
 /* Per stream tidy function. */
 
-    void (*tidy)    (void *);
+    void ( *tidy )( void * );
     void *tidy_data;
 
 /* Error info */
 
     PLINT *errcode;
-    char *errmsg;
+    char  *errmsg;
 
 /* Stuff used by Xlib driver */
 
@@ -605,15 +606,15 @@ typedef struct {
 /* Plot buffer settings */
 
 #ifdef BUFFERED_FILE
-    FILE *plbufFile;
+    FILE   *plbufFile;
 #else
     size_t plbuf_buffer_grow;
-    size_t plbuf_buffer_size;	
-    void *plbuf_buffer;
+    size_t plbuf_buffer_size;
+    void   *plbuf_buffer;
     size_t plbuf_top;
     size_t plbuf_readpos;
 #endif
-    int  plbufOwner;
+    int    plbufOwner;
 
 /* Driver interface (DI) */
 
@@ -640,7 +641,7 @@ typedef struct {
 
 /* Variables governing character strings */
 
-    char  esc;
+    char esc;
 
 /* Scale factors for characters, symbols, and tick marks. */
 
@@ -652,11 +653,11 @@ typedef struct {
 
 /* Variables governing numeric axis label appearance */
 
-    PLINT setpre, precis;
-    PLINT xdigmax, ydigmax, zdigmax;
-    PLINT xdigits, ydigits, zdigits;
-    char *timefmt;
-    void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
+    PLINT     setpre, precis;
+    PLINT     xdigmax, ydigmax, zdigmax;
+    PLINT     xdigits, ydigits, zdigits;
+    char      *timefmt;
+    void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     PLPointer label_data;
 
 /* Variables governing physical coordinate system */
@@ -673,11 +674,11 @@ typedef struct {
     PLFLT base3x, base3y, basecx, basecy;
     PLFLT domxmi, domxma, domymi, domyma;
     PLFLT zzscl, ranmi, ranma;
-  PLFLT cxx, cxy, cyx, cyy, cyz, czx, czy, czz;
+    PLFLT cxx, cxy, cyx, cyy, cyz, czx, czy, czz;
 
 /* Variables for keeping track of windows on a page. */
 
-    int nplwin;
+    int      nplwin;
     PLWindow plwin[PL_MAXWINDOWS];
 
 /* Variables governing subpages and viewports. */
@@ -695,47 +696,46 @@ typedef struct {
 
 /* Other variables */
 
-  PLINT dev_compression;
-  PLINT cfont;
+    PLINT            dev_compression;
+    PLINT            cfont;
 
-  void *FT;
+    void             *FT;
 
 /* Stuff used by the Tkwin driver for Plframe */
-  struct PlPlotter *plPlotterPtr;
+    struct PlPlotter *plPlotterPtr;
 
 
 /* Unicode section */
 
-  PLINT dev_unicode;
+    PLINT     dev_unicode;
 
-  PLINT alt_unicode; /* The alternative interface for unicode text rendering. */
+    PLINT     alt_unicode; /* The alternative interface for unicode text rendering. */
 
-  PLUNICODE fci;
+    PLUNICODE fci;
 
-  PLINT dev_hrshsym;
+    PLINT     dev_hrshsym;
 
 /* Used to keep a hold of a temporary copy of the original character height
  * which I overload as a quick hack to fix up a bug in freetype an plsym()
  */
 
-  PLFLT original_chrdef,original_chrht;
+    PLFLT original_chrdef, original_chrht;
 
-  /*
-   * Pointer to postscript document class used by psttf
-   */
-  void *psdoc;
+    /*
+     * Pointer to postscript document class used by psttf
+     */
+    void *psdoc;
 
-  /* pointer to a struct that keeps track of the details of the
-     transformation between broken-down and continuous time used in
-     the qsastime library. */
+    /* pointer to a struct that keeps track of the details of the
+     * transformation between broken-down and continuous time used in
+     * the qsastime library. */
 
-     QSASConfig *qsasconfig;
-
+    QSASConfig *qsasconfig;
 } PLStream;
 
 /*--------------------------------------------------------------------------*\
  * Prototypes for stream & device utility functions.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -744,56 +744,56 @@ extern "C" {
 /* Get the current stream pointer */
 
 void PLDLLIMPEXP
-plgpls(PLStream **p_pls);
+plgpls( PLStream **p_pls );
 
 /* Initializes device cmap 1 entry by interpolation from pls->cmap1 entries */
 
 PLDLLIMPEXP void
-plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol);
+plcol_interp( PLStream *pls, PLColor *newcolor, int i, int ncol );
 
 /* Opens file for output, prompting if not set. */
 
 PLDLLIMPEXP void
-plOpenFile(PLStream *pls);
+plOpenFile( PLStream *pls );
 
 /* Sets up next file member name (in pls->FileName), but does not open it. */
 
 void
-plP_getmember(PLStream *pls);
+plP_getmember( PLStream *pls );
 
 /* Sets up file name & family stem name. */
 
 void
-plP_sfnam(PLStream *pls, const char *fnam);
+plP_sfnam( PLStream *pls, const char *fnam );
 
 /* Initializes family file parameters. */
 
 PLDLLIMPEXP void
-plFamInit(PLStream *pls);
+plFamInit( PLStream *pls );
 
 /* Starts new member file of family file set if necessary. */
 
 PLDLLIMPEXP void
-plGetFam(PLStream *pls);
+plGetFam( PLStream *pls );
 
 /* Rotates physical coordinates if necessary for given orientation. */
 
 PLDLLIMPEXP void
-plRotPhy(PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
-	 PLINT *px, PLINT *py);
+plRotPhy( PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
+          PLINT *px, PLINT *py );
 
 /* Allocates a standard PLDev structure for device-specific data */
 
 PLDLLIMPEXP PLDev *
-plAllocDev(PLStream *pls);
+plAllocDev( PLStream *pls );
 
 /* Just fills in the PLGraphicsIn with appropriate initial values. */
 
 PLDLLIMPEXP void
-plGinInit(PLGraphicsIn *gin);
+plGinInit( PLGraphicsIn *gin );
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif	/* __PLSTRM_H__ */
+#endif  /* __PLSTRM_H__ */

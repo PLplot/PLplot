@@ -47,39 +47,41 @@ G_BEGIN_DECLS
  * fill_color_gdk	GdkColor*		RW		Allocated GdkColor for fill.
  */
 
-#define PLPLOT_TYPE_CANVAS_HACKTEXT        (plplot_canvas_hacktext_get_type ())
-#define PLPLOT_CANVAS_HACKTEXT(o)          (G_TYPE_CHECK_INSTANCE_CAST ((o), PLPLOT_TYPE_CANVAS_HACKTEXT, PlplotCanvasHacktext))
-#define PLPLOT_CANVAS_HACKTEXT_CLASS(k)    (G_TYPE_CHECK_CLASS_CAST    ((k), PLPLOT_TYPE_CANVAS_HACKTEXT, PlplotCanvasHacktextClass))
-#define PLPLOT_IS_CANVAS_HACKTEXT(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), PLPLOT_TYPE_CANVAS_HACKTEXT))
-#define PLPLOT_IS_CANVAS_HACKTEXT_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE    ((k), PLPLOT_TYPE_CANVAS_HACKTEXT))
+#define PLPLOT_TYPE_CANVAS_HACKTEXT    ( plplot_canvas_hacktext_get_type())
+#define PLPLOT_CANVAS_HACKTEXT( o )             ( G_TYPE_CHECK_INSTANCE_CAST(( o ), PLPLOT_TYPE_CANVAS_HACKTEXT, PlplotCanvasHacktext ))
+#define PLPLOT_CANVAS_HACKTEXT_CLASS( k )       ( G_TYPE_CHECK_CLASS_CAST(( k ), PLPLOT_TYPE_CANVAS_HACKTEXT, PlplotCanvasHacktextClass ))
+#define PLPLOT_IS_CANVAS_HACKTEXT( o )          ( G_TYPE_CHECK_INSTANCE_TYPE(( o ), PLPLOT_TYPE_CANVAS_HACKTEXT ))
+#define PLPLOT_IS_CANVAS_HACKTEXT_CLASS( k )    ( G_TYPE_CHECK_CLASS_TYPE(( k ), PLPLOT_TYPE_CANVAS_HACKTEXT ))
 
-typedef struct _PlplotCanvasHacktext      PlplotCanvasHacktext;
-typedef struct _PlplotCanvasHacktextPriv  PlplotCanvasHacktextPriv;
-typedef struct _PlplotCanvasHacktextClass PlplotCanvasHacktextClass;
+typedef struct _PlplotCanvasHacktext        PlplotCanvasHacktext;
+typedef struct _PlplotCanvasHacktextPriv    PlplotCanvasHacktextPriv;
+typedef struct _PlplotCanvasHacktextClass   PlplotCanvasHacktextClass;
 
 #include <libgnomecanvas/libgnomecanvas.h>
 
-struct _PlplotCanvasHacktext {
-	GnomeCanvasItem item;
+struct _PlplotCanvasHacktext
+{
+    GnomeCanvasItem          item;
 
-	char *text;			/* String of the text item */
-	guint fill_color;		/* Fill color, RGBA */
-	gulong fill_pixel;		/* Color for fill */
-	guint fill_set : 1;		/* Is fill color set? */
+    char                     *text;        /* String of the text item */
+    guint                    fill_color;   /* Fill color, RGBA */
+    gulong                   fill_pixel;   /* Color for fill */
+    guint                    fill_set : 1; /* Is fill color set? */
 
-	double size;			/* size in user units */
-	double x, y;			/* x, y coords of text origin */
+    double                   size;         /* size in user units */
+    double                   x, y;         /* x, y coords of text origin */
 
-	/* Antialiased specific stuff follows */
-	guint32 fill_rgba;		/* RGBA color for filling */
-	PlplotCanvasHacktextPriv *priv;	/* Private data */
+    /* Antialiased specific stuff follows */
+    guint32                  fill_rgba; /* RGBA color for filling */
+    PlplotCanvasHacktextPriv *priv;     /* Private data */
 };
 
-struct _PlplotCanvasHacktextClass {
-	GnomeCanvasItemClass parent_class;
+struct _PlplotCanvasHacktextClass
+{
+    GnomeCanvasItemClass parent_class;
 };
 
-GType plplot_canvas_hacktext_get_type (void);
+GType plplot_canvas_hacktext_get_type( void );
 
 G_END_DECLS
 
