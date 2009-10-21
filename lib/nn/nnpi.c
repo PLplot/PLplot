@@ -1,4 +1,4 @@
- /*****************************************************************************
+/*****************************************************************************
  *
  * File:           nnpi.c
  *
@@ -33,7 +33,7 @@
  *                   Sibson interpolation, if circle_build fails(), now a
  *                   local copy of a point is moved slightly rather than the
  *                   data point itself. The later approach have found leading
- *                   to inconsistencies of the new point position with the 
+ *                   to inconsistencies of the new point position with the
  *                   earlier built triangulation.
  *
  *****************************************************************************/
@@ -50,52 +50,53 @@
 #include "nan.h"
 #include "hash.h"
 
-struct nnpi {
+struct nnpi
+{
     delaunay* d;
-    point* p;
-    double wmin;
+    point   * p;
+    double  wmin;
     /*
-     * work variables 
+     * work variables
      */
-    int nvertices;
-    int nallocated;
-    int* vertices;              /* vertex indices */
+    int   nvertices;
+    int   nallocated;
+    int   * vertices;           /* vertex indices */
     double* weights;
-    int n;                      /* number of points processed */
+    int   n;                    /* number of points processed */
 };
 
-int circle_build(circle* c, point* p0, point* p1, point* p2);
-int circle_contains(circle* c, point* p);
-void delaunay_circles_find(delaunay* d, point* p, int* n, int** out);
-int delaunay_xytoi(delaunay* d, point* p, int seed);
-void nn_quit(char* format, ...);
+int circle_build( circle* c, point* p0, point* p1, point* p2 );
+int circle_contains( circle* c, point* p );
+void delaunay_circles_find( delaunay* d, point* p, int* n, int** out );
+int delaunay_xytoi( delaunay* d, point* p, int seed );
+void nn_quit( char* format, ... );
 
-#define NSTART 10
-#define NINC 10
-#define EPS_SHIFT 1.0e-9
-#define N_SEARCH_TURNON 20
-#define BIGNUMBER 1.0e+100
+#define NSTART             10
+#define NINC               10
+#define EPS_SHIFT          1.0e-9
+#define N_SEARCH_TURNON    20
+#define BIGNUMBER          1.0e+100
 
-#define min(x,y) ((x) < (y) ? (x) : (y))
-#define max(x,y) ((x) > (y) ? (x) : (y))
+#define min( x, y )    (( x ) < ( y ) ? ( x ) : ( y ))
+#define max( x, y )    (( x ) > ( y ) ? ( x ) : ( y ))
 
 /* Creates Natural Neighbours point interpolator.
  *
  * @param d Delaunay triangulation
  * @return Natural Neighbours interpolation
  */
-nnpi* nnpi_create(delaunay* d)
+nnpi* nnpi_create( delaunay* d )
 {
-    nnpi* nn = malloc(sizeof(nnpi));
+    nnpi* nn = malloc( sizeof ( nnpi ));
 
-    nn->d = d;
-    nn->wmin = -DBL_MAX;
-    nn->vertices = calloc(NSTART, sizeof(int));
-    nn->weights = calloc(NSTART, sizeof(double));
-    nn->nvertices = 0;
+    nn->d          = d;
+    nn->wmin       = -DBL_MAX;
+    nn->vertices   = calloc( NSTART, sizeof ( int ));
+    nn->weights    = calloc( NSTART, sizeof ( double ));
+    nn->nvertices  = 0;
     nn->nallocated = NSTART;
-    nn->p = NULL;
-    nn->n = 0;
+    nn->p          = NULL;
+    nn->n          = 0;
 
     return nn;
 }
@@ -104,68 +105,71 @@ nnpi* nnpi_create(delaunay* d)
  *
  * @param nn Structure to be destroyed
  */
-void nnpi_destroy(nnpi* nn)
+void nnpi_destroy( nnpi* nn )
 {
-    free(nn->weights);
-    free(nn->vertices);
-    free(nn);
+    free( nn->weights );
+    free( nn->vertices );
+    free( nn );
 }
 
-void nnpi_reset(nnpi* nn)
+void nnpi_reset( nnpi* nn )
 {
     nn->nvertices = 0;
-    nn->p = NULL;
-    memset(nn->d->flags, 0, nn->d->ntriangles * sizeof(int));
+    nn->p         = NULL;
+    memset( nn->d->flags, 0, nn->d->ntriangles * sizeof ( int ));
 }
 
-static void nnpi_add_weight(nnpi* nn, int vertex, double w)
+static void nnpi_add_weight( nnpi* nn, int vertex, double w )
 {
     int i;
 
     /*
-     * find whether the vertex is already in the list 
+     * find whether the vertex is already in the list
      */
-    for (i = 0; i < nn->nvertices; ++i)
-        if (nn->vertices[i] == vertex)
+    for ( i = 0; i < nn->nvertices; ++i )
+        if ( nn->vertices[i] == vertex )
             break;
 
-    if (i == nn->nvertices) {   /* not in the list */
-        /*
-         * get more memory if necessary 
+    if ( i == nn->nvertices )     /* not in the list */
+    {   /*
+         * get more memory if necessary
          */
-        if (nn->nvertices == nn->nallocated) {
-            nn->vertices = realloc(nn->vertices, (nn->nallocated + NINC) * sizeof(int));
-            nn->weights = realloc(nn->weights, (nn->nallocated + NINC) * sizeof(double));
+        if ( nn->nvertices == nn->nallocated )
+        {
+            nn->vertices    = realloc( nn->vertices, ( nn->nallocated + NINC ) * sizeof ( int ));
+            nn->weights     = realloc( nn->weights, ( nn->nallocated + NINC ) * sizeof ( double ));
             nn->nallocated += NINC;
         }
 
         /*
-         * add the vertex to the list 
+         * add the vertex to the list
          */
         nn->vertices[i] = vertex;
-        nn->weights[i] = w;
+        nn->weights[i]  = w;
         nn->nvertices++;
-    } else {                    /* in the list */
+    }
+    else                        /* in the list */
 
-        if (nn_rule == SIBSON)
+    {
+        if ( nn_rule == SIBSON )
             nn->weights[i] += w;
-        else if (w > nn->weights[i])
+        else if ( w > nn->weights[i] )
             nn->weights[i] = w;
     }
 }
 
-static double triangle_scale_get(delaunay* d, triangle* t)
+static double triangle_scale_get( delaunay* d, triangle* t )
 {
-    double x0 = d->points[t->vids[0]].x;
-    double x1 = d->points[t->vids[1]].x;
-    double x2 = d->points[t->vids[2]].x;
-    double y0 = d->points[t->vids[0]].y;
-    double y1 = d->points[t->vids[1]].y;
-    double y2 = d->points[t->vids[2]].y;
-    double xmin = min(min(x0, x1), x2);
-    double xmax = max(max(x0, x1), x2);
-    double ymin = min(min(y0, y1), y2);
-    double ymax = max(max(y0, y1), y2);
+    double x0   = d->points[t->vids[0]].x;
+    double x1   = d->points[t->vids[1]].x;
+    double x2   = d->points[t->vids[2]].x;
+    double y0   = d->points[t->vids[0]].y;
+    double y1   = d->points[t->vids[1]].y;
+    double y2   = d->points[t->vids[2]].y;
+    double xmin = min( min( x0, x1 ), x2 );
+    double xmax = max( max( x0, x1 ), x2 );
+    double ymin = min( min( y0, y1 ), y2 );
+    double ymax = max( max( y0, y1 ), y2 );
 
     return xmax - xmin + ymax - ymin;
 }
@@ -175,95 +179,106 @@ static double triangle_scale_get(delaunay* d, triangle* t)
  * that the vertices of the delaunay triangulation are listed in uniform
  * (clockwise or counterclockwise) order.
  */
-static void nnpi_triangle_process(nnpi* nn, point* p, int i)
+static void nnpi_triangle_process( nnpi* nn, point* p, int i )
 {
     delaunay* d = nn->d;
     triangle* t = &d->triangles[i];
-    circle* c = &d->circles[i];
-    circle cs[3];
-    int j;
+    circle  * c = &d->circles[i];
+    circle  cs[3];
+    int     j;
 
-    assert(circle_contains(c, p));
+    assert( circle_contains( c, p ));
 
-    if (nn_rule == SIBSON) {
+    if ( nn_rule == SIBSON )
+    {
         point pp;
 
         pp.x = p->x;
         pp.y = p->y;
         /*
-         * Sibson interpolation by using Watson's algorithm 
+         * Sibson interpolation by using Watson's algorithm
          */
-        do {
-            for (j = 0; j < 3; ++j) {
-                int j1 = (j + 1) % 3;
-                int j2 = (j + 2) % 3;
+        do
+        {
+            for ( j = 0; j < 3; ++j )
+            {
+                int j1 = ( j + 1 ) % 3;
+                int j2 = ( j + 2 ) % 3;
                 int v1 = t->vids[j1];
                 int v2 = t->vids[j2];
 
-                if (!circle_build(&cs[j], &d->points[v1], &d->points[v2], &pp)) {
-                    double scale = triangle_scale_get(d, t);
+                if ( !circle_build( &cs[j], &d->points[v1], &d->points[v2], &pp ))
+                {
+                    double scale = triangle_scale_get( d, t );
 
-                    if (d->points[v1].y == d->points[v2].y)
+                    if ( d->points[v1].y == d->points[v2].y )
                         pp.y += EPS_SHIFT * scale;
                     else
                         pp.x += EPS_SHIFT * scale;
                     break;
                 }
             }
-        } while (j != 3);
+        } while ( j != 3 );
 
-        for (j = 0; j < 3; ++j) {
-            int j1 = (j + 1) % 3;
-            int j2 = (j + 2) % 3;
-            double det = ((cs[j1].x - c->x) * (cs[j2].y - c->y) - (cs[j2].x - c->x) * (cs[j1].y - c->y));
+        for ( j = 0; j < 3; ++j )
+        {
+            int    j1  = ( j + 1 ) % 3;
+            int    j2  = ( j + 2 ) % 3;
+            double det = (( cs[j1].x - c->x ) * ( cs[j2].y - c->y ) - ( cs[j2].x - c->x ) * ( cs[j1].y - c->y ));
 
-            nnpi_add_weight(nn, t->vids[j], det);
+            nnpi_add_weight( nn, t->vids[j], det );
         }
-    } else if (nn_rule == NON_SIBSONIAN) {
-        double d1 = c->r - hypot(p->x - c->x, p->y - c->y);
+    }
+    else if ( nn_rule == NON_SIBSONIAN )
+    {
+        double d1 = c->r - hypot( p->x - c->x, p->y - c->y );
 
-        for (i = 0; i < 3; ++i) {
-            int vid = t->vids[i];
-            point* pp = &d->points[vid];
-            double d2 = hypot(p->x - pp->x, p->y - pp->y);
+        for ( i = 0; i < 3; ++i )
+        {
+            int    vid  = t->vids[i];
+            point  * pp = &d->points[vid];
+            double d2   = hypot( p->x - pp->x, p->y - pp->y );
 
-            if (d2 == 0.0)
-                nnpi_add_weight(nn, vid, BIGNUMBER);
+            if ( d2 == 0.0 )
+                nnpi_add_weight( nn, vid, BIGNUMBER );
             else
-                nnpi_add_weight(nn, vid, d1 / d2);
+                nnpi_add_weight( nn, vid, d1 / d2 );
         }
-    } else
-        nn_quit("unknown rule\n");
+    }
+    else
+        nn_quit( "unknown rule\n" );
 }
 
-void nnpi_calculate_weights(nnpi* nn)
+void nnpi_calculate_weights( nnpi* nn )
 {
     point* p = nn->p;
-    int n = nn->d->ntriangles;
-    int i;
+    int  n   = nn->d->ntriangles;
+    int  i;
 
-    if (n > N_SEARCH_TURNON) {
+    if ( n > N_SEARCH_TURNON )
+    {
         int* tids;
 
-        delaunay_circles_find(nn->d, p, &n, &tids);
-        for (i = 0; i < n; ++i)
-            nnpi_triangle_process(nn, p, tids[i]);
-    } else
-        for (i = 0; i < n; ++i)
-            if (circle_contains(&nn->d->circles[i], p))
-                nnpi_triangle_process(nn, p, i);
+        delaunay_circles_find( nn->d, p, &n, &tids );
+        for ( i = 0; i < n; ++i )
+            nnpi_triangle_process( nn, p, tids[i] );
+    }
+    else
+        for ( i = 0; i < n; ++i )
+            if ( circle_contains( &nn->d->circles[i], p ))
+                nnpi_triangle_process( nn, p, i );
 }
 
-void nnpi_normalize_weights(nnpi* nn)
+void nnpi_normalize_weights( nnpi* nn )
 {
-    int n = nn->nvertices;
+    int    n   = nn->nvertices;
     double sum = 0.0;
-    int i;
+    int    i;
 
-    for (i = 0; i < n; ++i)
+    for ( i = 0; i < n; ++i )
         sum += nn->weights[i];
 
-    for (i = 0; i < n; ++i)
+    for ( i = 0; i < n; ++i )
         nn->weights[i] /= sum;
 }
 
@@ -272,54 +287,64 @@ void nnpi_normalize_weights(nnpi* nn)
  * @param nn NN interpolation
  * @param p Point to be interpolated (p->x, p->y -- input; p->z -- output)
  */
-void nnpi_interpolate_point(nnpi* nn, point* p)
+void nnpi_interpolate_point( nnpi* nn, point* p )
 {
     delaunay* d = nn->d;
-    int i;
+    int     i;
 
-    nnpi_reset(nn);
+    nnpi_reset( nn );
     nn->p = p;
-    nnpi_calculate_weights(nn);
-    nnpi_normalize_weights(nn);
+    nnpi_calculate_weights( nn );
+    nnpi_normalize_weights( nn );
 
-    if (nn_verbose) {
-        if (nn_test_vertice == -1) {
-            if (nn->n == 0)
-                fprintf(stderr, "weights:\n");
-            fprintf(stderr, "  %d: {", nn->n);
-            for (i = 0; i < nn->nvertices; ++i) {
-                fprintf(stderr, "(%d,%.5g)", nn->vertices[i], nn->weights[i]);
-                if (i < nn->nvertices - 1)
-                    fprintf(stderr, ", ");
+    if ( nn_verbose )
+    {
+        if ( nn_test_vertice == -1 )
+        {
+            if ( nn->n == 0 )
+                fprintf( stderr, "weights:\n" );
+            fprintf( stderr, "  %d: {", nn->n );
+            for ( i = 0; i < nn->nvertices; ++i )
+            {
+                fprintf( stderr, "(%d,%.5g)", nn->vertices[i], nn->weights[i] );
+                if ( i < nn->nvertices - 1 )
+                    fprintf( stderr, ", " );
             }
-            fprintf(stderr, "}\n");
-        } else {
+            fprintf( stderr, "}\n" );
+        }
+        else
+        {
             double w = 0.0;
 
-            if (nn->n == 0)
-                fprintf(stderr, "weights for vertex %d:\n", nn_test_vertice);
-            for (i = 0; i < nn->nvertices; ++i) {
-                if (nn->vertices[i] == nn_test_vertice) {
+            if ( nn->n == 0 )
+                fprintf( stderr, "weights for vertex %d:\n", nn_test_vertice );
+            for ( i = 0; i < nn->nvertices; ++i )
+            {
+                if ( nn->vertices[i] == nn_test_vertice )
+                {
                     w = nn->weights[i];
                     break;
                 }
             }
-            fprintf(stderr, "%15.7g %15.7g %15.7g\n", p->x, p->y, w);
+            fprintf( stderr, "%15.7g %15.7g %15.7g\n", p->x, p->y, w );
         }
     }
 
     nn->n++;
 
-    if (nn->nvertices == 0) {
+    if ( nn->nvertices == 0 )
+    {
         p->z = NaN;
         return;
     }
 
     p->z = 0.0;
-    for (i = 0; i < nn->nvertices; ++i) {
+    for ( i = 0; i < nn->nvertices; ++i )
+    {
         double weight = nn->weights[i];
 
-        if (weight < nn->wmin) {
+        if ( weight < nn->wmin )
+        {
             p->z = NaN;
             return;
         }
@@ -335,45 +360,49 @@ void nnpi_interpolate_point(nnpi* nn, point* p)
  * @param nout Number of output points
  * @param pout Array of output points [nout]
  */
-void nnpi_interpolate_points(int nin, point pin[], double wmin, int nout, point pout[])
+void nnpi_interpolate_points( int nin, point pin[], double wmin, int nout, point pout[] )
 {
-    delaunay* d = delaunay_build(nin, pin, 0, NULL, 0, NULL);
-    nnpi* nn = nnpi_create(d);
-    int seed = 0;
-    int i;
+    delaunay* d  = delaunay_build( nin, pin, 0, NULL, 0, NULL );
+    nnpi    * nn = nnpi_create( d );
+    int     seed = 0;
+    int     i;
 
     nn->wmin = wmin;
 
-    if (nn_verbose) {
-        fprintf(stderr, "xytoi:\n");
-        for (i = 0; i < nout; ++i) {
+    if ( nn_verbose )
+    {
+        fprintf( stderr, "xytoi:\n" );
+        for ( i = 0; i < nout; ++i )
+        {
             point* p = &pout[i];
 
-            fprintf(stderr, "(%.7g,%.7g) -> %d\n", p->x, p->y, delaunay_xytoi(d, p, seed));
+            fprintf( stderr, "(%.7g,%.7g) -> %d\n", p->x, p->y, delaunay_xytoi( d, p, seed ));
         }
     }
 
-    for (i = 0; i < nout; ++i)
-        nnpi_interpolate_point(nn, &pout[i]);
+    for ( i = 0; i < nout; ++i )
+        nnpi_interpolate_point( nn, &pout[i] );
 
-    if (nn_verbose) {
-        fprintf(stderr, "output:\n");
-        for (i = 0; i < nout; ++i) {
+    if ( nn_verbose )
+    {
+        fprintf( stderr, "output:\n" );
+        for ( i = 0; i < nout; ++i )
+        {
             point* p = &pout[i];
 
-            fprintf(stderr, "  %d:%15.7g %15.7g %15.7g\n", i, p->x, p->y, p->z);
+            fprintf( stderr, "  %d:%15.7g %15.7g %15.7g\n", i, p->x, p->y, p->z );
         }
     }
 
-    nnpi_destroy(nn);
-    delaunay_destroy(d);
+    nnpi_destroy( nn );
+    delaunay_destroy( d );
 }
 
 /* Sets minimal allowed weight for Natural Neighbours interpolation.
  * @param nn Natural Neighbours point interpolator
  * @param wmin Minimal allowed weight
  */
-void nnpi_setwmin(nnpi* nn, double wmin)
+void nnpi_setwmin( nnpi* nn, double wmin )
 {
     nn->wmin = wmin;
 }
@@ -382,7 +411,7 @@ void nnpi_setwmin(nnpi* nn, double wmin)
  * @param nn Natural Neighbours point interpolator
  * @param p Point to interpolate in
  */
-void nnpi_set_point(nnpi* nn, point* p)
+void nnpi_set_point( nnpi* nn, point* p )
 {
     nn->p = p;
 }
@@ -390,7 +419,7 @@ void nnpi_set_point(nnpi* nn, point* p)
 /* Gets number of data points involved in current interpolation.
  * @return Number of data points involved in current interpolation
  */
-int nnpi_get_nvertices(nnpi* nn)
+int nnpi_get_nvertices( nnpi* nn )
 {
     return nn->nvertices;
 }
@@ -398,7 +427,7 @@ int nnpi_get_nvertices(nnpi* nn)
 /* Gets indices of data points involved in current interpolation.
  * @return indices of data points involved in current interpolation
  */
-int* nnpi_get_vertices(nnpi* nn)
+int* nnpi_get_vertices( nnpi* nn )
 {
     return nn->vertices;
 }
@@ -406,7 +435,7 @@ int* nnpi_get_vertices(nnpi* nn)
 /* Gets weights of data points involved in current interpolation.
  * @return weights of data points involved in current interpolation
  */
-double* nnpi_get_weights(nnpi* nn)
+double* nnpi_get_weights( nnpi* nn )
 {
     return nn->weights;
 }
@@ -415,16 +444,18 @@ double* nnpi_get_weights(nnpi* nn)
  * nnhpi
  */
 
-struct nnhpi {
-    nnpi* nnpi;
+struct nnhpi
+{
+    nnpi     * nnpi;
     hashtable* ht_data;
     hashtable* ht_weights;
-    int n;                      /* number of points processed */
+    int      n;                 /* number of points processed */
 };
 
-typedef struct {
-    int nvertices;
-    int* vertices;              /* vertex indices [nvertices] */
+typedef struct
+{
+    int   nvertices;
+    int   * vertices;           /* vertex indices [nvertices] */
     double* weights;            /* vertex weights [nvertices] */
 } nn_weights;
 
@@ -434,42 +465,42 @@ typedef struct {
  * @param size Hash table size (should be of order of number of output points)
  * @return Natural Neighbours interpolation
  */
-nnhpi* nnhpi_create(delaunay* d, int size)
+nnhpi* nnhpi_create( delaunay* d, int size )
 {
-    nnhpi* nn = malloc(sizeof(nnhpi));
-    int i;
+    nnhpi* nn = malloc( sizeof ( nnhpi ));
+    int  i;
 
-    nn->nnpi = nnpi_create(d);
+    nn->nnpi = nnpi_create( d );
 
-    nn->ht_data = ht_create_d2(d->npoints);
-    nn->ht_weights = ht_create_d2(size);
-    nn->n = 0;
+    nn->ht_data    = ht_create_d2( d->npoints );
+    nn->ht_weights = ht_create_d2( size );
+    nn->n          = 0;
 
-    for (i = 0; i < d->npoints; ++i)
-        ht_insert(nn->ht_data, &d->points[i], &d->points[i]);
+    for ( i = 0; i < d->npoints; ++i )
+        ht_insert( nn->ht_data, &d->points[i], &d->points[i] );
 
     return nn;
 }
 
-static void free_nn_weights(void* data)
+static void free_nn_weights( void* data )
 {
     nn_weights* weights = (nn_weights*) data;
 
-    free(weights->vertices);
-    free(weights->weights);
-    free(weights);
+    free( weights->vertices );
+    free( weights->weights );
+    free( weights );
 }
 
 /* Destroys Natural Neighbours hashing point interpolation.
  *
  * @param nn Structure to be destroyed
  */
-void nnhpi_destroy(nnhpi* nn)
+void nnhpi_destroy( nnhpi* nn )
 {
-    ht_destroy(nn->ht_data);
-    ht_process(nn->ht_weights, free_nn_weights);
-    ht_destroy(nn->ht_weights);
-    nnpi_destroy(nn->nnpi);
+    ht_destroy( nn->ht_data );
+    ht_process( nn->ht_weights, free_nn_weights );
+    ht_destroy( nn->ht_weights );
+    nnpi_destroy( nn->nnpi );
 }
 
 /* Finds Natural Neighbours-interpolated value in a point.
@@ -477,63 +508,74 @@ void nnhpi_destroy(nnhpi* nn)
  * @param nnhpi NN point hashing interpolator
  * @param p Point to be interpolated (p->x, p->y -- input; p->z -- output)
  */
-void nnhpi_interpolate(nnhpi* nnhpi, point* p)
+void nnhpi_interpolate( nnhpi* nnhpi, point* p )
 {
-    nnpi* nnpi = nnhpi->nnpi;
-    delaunay* d = nnpi->d;
-    hashtable* ht_weights = nnhpi->ht_weights;
+    nnpi      * nnpi       = nnhpi->nnpi;
+    delaunay  * d          = nnpi->d;
+    hashtable * ht_weights = nnhpi->ht_weights;
     nn_weights* weights;
-    int i;
+    int       i;
 
-    if (ht_find(ht_weights, p) != NULL) {
-        weights = ht_find(ht_weights, p);
-        if (nn_verbose)
-            fprintf(stderr, "  <hashtable>\n");
-    } else {
-        nnpi_reset(nnpi);
+    if ( ht_find( ht_weights, p ) != NULL )
+    {
+        weights = ht_find( ht_weights, p );
+        if ( nn_verbose )
+            fprintf( stderr, "  <hashtable>\n" );
+    }
+    else
+    {
+        nnpi_reset( nnpi );
         nnpi->p = p;
-        nnpi_calculate_weights(nnpi);
-        nnpi_normalize_weights(nnpi);
+        nnpi_calculate_weights( nnpi );
+        nnpi_normalize_weights( nnpi );
 
-        weights = malloc(sizeof(nn_weights));
-        weights->vertices = malloc(sizeof(int) * nnpi->nvertices);
-        weights->weights = malloc(sizeof(double) * nnpi->nvertices);
+        weights           = malloc( sizeof ( nn_weights ));
+        weights->vertices = malloc( sizeof ( int ) * nnpi->nvertices );
+        weights->weights  = malloc( sizeof ( double ) * nnpi->nvertices );
 
         weights->nvertices = nnpi->nvertices;
 
-        for (i = 0; i < nnpi->nvertices; ++i) {
+        for ( i = 0; i < nnpi->nvertices; ++i )
+        {
             weights->vertices[i] = nnpi->vertices[i];
-            weights->weights[i] = nnpi->weights[i];
+            weights->weights[i]  = nnpi->weights[i];
         }
 
-        ht_insert(ht_weights, p, weights);
+        ht_insert( ht_weights, p, weights );
 
-        if (nn_verbose) {
-            if (nn_test_vertice == -1) {
-                if (nnpi->n == 0)
-                    fprintf(stderr, "weights:\n");
-                fprintf(stderr, "  %d: {", nnpi->n);
+        if ( nn_verbose )
+        {
+            if ( nn_test_vertice == -1 )
+            {
+                if ( nnpi->n == 0 )
+                    fprintf( stderr, "weights:\n" );
+                fprintf( stderr, "  %d: {", nnpi->n );
 
-                for (i = 0; i < nnpi->nvertices; ++i) {
-                    fprintf(stderr, "(%d,%.5g)", nnpi->vertices[i], nnpi->weights[i]);
+                for ( i = 0; i < nnpi->nvertices; ++i )
+                {
+                    fprintf( stderr, "(%d,%.5g)", nnpi->vertices[i], nnpi->weights[i] );
 
-                    if (i < nnpi->nvertices - 1)
-                        fprintf(stderr, ", ");
+                    if ( i < nnpi->nvertices - 1 )
+                        fprintf( stderr, ", " );
                 }
-                fprintf(stderr, "}\n");
-            } else {
+                fprintf( stderr, "}\n" );
+            }
+            else
+            {
                 double w = 0.0;
 
-                if (nnpi->n == 0)
-                    fprintf(stderr, "weights for vertex %d:\n", nn_test_vertice);
-                for (i = 0; i < nnpi->nvertices; ++i) {
-                    if (nnpi->vertices[i] == nn_test_vertice) {
+                if ( nnpi->n == 0 )
+                    fprintf( stderr, "weights for vertex %d:\n", nn_test_vertice );
+                for ( i = 0; i < nnpi->nvertices; ++i )
+                {
+                    if ( nnpi->vertices[i] == nn_test_vertice )
+                    {
                         w = nnpi->weights[i];
 
                         break;
                     }
                 }
-                fprintf(stderr, "%15.7g %15.7g %15.7g\n", p->x, p->y, w);
+                fprintf( stderr, "%15.7g %15.7g %15.7g\n", p->x, p->y, w );
             }
         }
 
@@ -542,14 +584,17 @@ void nnhpi_interpolate(nnhpi* nnhpi, point* p)
 
     nnhpi->n++;
 
-    if (weights->nvertices == 0) {
+    if ( weights->nvertices == 0 )
+    {
         p->z = NaN;
         return;
     }
 
     p->z = 0.0;
-    for (i = 0; i < weights->nvertices; ++i) {
-        if (weights->weights[i] < nnpi->wmin) {
+    for ( i = 0; i < weights->nvertices; ++i )
+    {
+        if ( weights->weights[i] < nnpi->wmin )
+        {
             p->z = NaN;
             return;
         }
@@ -565,11 +610,11 @@ void nnhpi_interpolate(nnhpi* nnhpi, point* p)
  * @param nnhpi Natural Neighbours hashing point interpolator
  * @param p New data
  */
-void nnhpi_modify_data(nnhpi* nnhpi, point* p)
+void nnhpi_modify_data( nnhpi* nnhpi, point* p )
 {
-    point* orig = ht_find(nnhpi->ht_data, p);
+    point* orig = ht_find( nnhpi->ht_data, p );
 
-    assert(orig != NULL);
+    assert( orig != NULL );
     orig->z = p->z;
 }
 
@@ -577,76 +622,78 @@ void nnhpi_modify_data(nnhpi* nnhpi, point* p)
  * @param nn Natural Neighbours point hashing interpolator
  * @param wmin Minimal allowed weight
  */
-void nnhpi_setwmin(nnhpi* nn, double wmin)
+void nnhpi_setwmin( nnhpi* nn, double wmin )
 {
     nn->nnpi->wmin = wmin;
 }
 
-#if defined(NNPHI_TEST)
+#if defined ( NNPHI_TEST )
 
 #include <sys/time.h>
 
-#define NPOINTSIN 10000
-#define NMIN 10
-#define NX 101
-#define NXMIN 1
+#define NPOINTSIN    10000
+#define NMIN         10
+#define NX           101
+#define NXMIN        1
 
-#define SQ(x) ((x) * (x))
+#define SQ( x )    (( x ) * ( x ))
 
-static double franke(double x, double y)
+static double franke( double x, double y )
 {
     x *= 9.0;
     y *= 9.0;
-    return 0.75 * exp((-SQ(x - 2.0) - SQ(y - 2.0)) / 4.0)
-        + 0.75 * exp(-SQ(x - 2.0) / 49.0 - (y - 2.0) / 10.0)
-        + 0.5 * exp((-SQ(x - 7.0) - SQ(y - 3.0)) / 4.0)
-        - 0.2 * exp(-SQ(x - 4.0) - SQ(y - 7.0));
+    return 0.75 * exp(( -SQ( x - 2.0 ) - SQ( y - 2.0 )) / 4.0 )
+           + 0.75 * exp( -SQ( x - 2.0 ) / 49.0 - ( y - 2.0 ) / 10.0 )
+           + 0.5 * exp(( -SQ( x - 7.0 ) - SQ( y - 3.0 )) / 4.0 )
+           - 0.2 * exp( -SQ( x - 4.0 ) - SQ( y - 7.0 ));
 }
 
 static void usage()
 {
-    printf("Usage: nnhpi_test [-a] [-n <nin> <nxout>] [-v|-V]\n");
-    printf("Options:\n");
-    printf("  -a              -- use non-Sibsonian interpolation rule\n");
-    printf("  -n <nin> <nout>:\n");
-    printf("            <nin> -- number of input points (default = 10000)\n");
-    printf("           <nout> -- number of output points per side (default = 64)\n");
-    printf("  -v              -- verbose\n");
-    printf("  -V              -- very verbose\n");
+    printf( "Usage: nnhpi_test [-a] [-n <nin> <nxout>] [-v|-V]\n" );
+    printf( "Options:\n" );
+    printf( "  -a              -- use non-Sibsonian interpolation rule\n" );
+    printf( "  -n <nin> <nout>:\n" );
+    printf( "            <nin> -- number of input points (default = 10000)\n" );
+    printf( "           <nout> -- number of output points per side (default = 64)\n" );
+    printf( "  -v              -- verbose\n" );
+    printf( "  -V              -- very verbose\n" );
 
-    exit(0);
+    exit( 0 );
 }
 
-int main(int argc, char* argv[])
+int main( int argc, char* argv[] )
 {
-    int nin = NPOINTSIN;
-    int nx = NX;
-    int nout = 0;
-    point* pin = NULL;
-    delaunay* d = NULL;
-    point* pout = NULL;
-    nnhpi* nn = NULL;
-    int cpi = -1;               /* control point index */
-    struct timeval tv0, tv1;
+    int             nin    = NPOINTSIN;
+    int             nx     = NX;
+    int             nout   = 0;
+    point           * pin  = NULL;
+    delaunay        * d    = NULL;
+    point           * pout = NULL;
+    nnhpi           * nn   = NULL;
+    int             cpi    = -1; /* control point index */
+    struct timeval  tv0, tv1;
     struct timezone tz;
-    int i;
+    int             i;
 
     i = 1;
-    while (i < argc) {
-        switch (argv[i][1]) {
+    while ( i < argc )
+    {
+        switch ( argv[i][1] )
+        {
         case 'a':
             i++;
             nn_rule = NON_SIBSONIAN;
             break;
         case 'n':
             i++;
-            if (i >= argc)
-                nn_quit("no number of data points found after -n\n");
-            nin = atoi(argv[i]);
+            if ( i >= argc )
+                nn_quit( "no number of data points found after -n\n" );
+            nin = atoi( argv[i] );
             i++;
-            if (i >= argc)
-                nn_quit("no number of ouput points per side found after -i\n");
-            nx = atoi(argv[i]);
+            if ( i >= argc )
+                nn_quit( "no number of ouput points per side found after -i\n" );
+            nx = atoi( argv[i] );
             i++;
             break;
         case 'v':
@@ -663,189 +710,196 @@ int main(int argc, char* argv[])
         }
     }
 
-    if (nin < NMIN)
+    if ( nin < NMIN )
         nin = NMIN;
-    if (nx < NXMIN)
+    if ( nx < NXMIN )
         nx = NXMIN;
 
-    printf("\nTest of Natural Neighbours hashing point interpolator:\n\n");
-    printf("  %d data points\n", nin);
-    printf("  %d output points\n", nx * nx);
+    printf( "\nTest of Natural Neighbours hashing point interpolator:\n\n" );
+    printf( "  %d data points\n", nin );
+    printf( "  %d output points\n", nx * nx );
 
     /*
-     * generate data 
+     * generate data
      */
-    printf("  generating data:\n");
-    fflush(stdout);
-    pin = malloc(nin * sizeof(point));
-    for (i = 0; i < nin; ++i) {
+    printf( "  generating data:\n" );
+    fflush( stdout );
+    pin = malloc( nin * sizeof ( point ));
+    for ( i = 0; i < nin; ++i )
+    {
         point* p = &pin[i];
 
         p->x = (double) random() / RAND_MAX;
         p->y = (double) random() / RAND_MAX;
-        p->z = franke(p->x, p->y);
-        if (nn_verbose)
-            printf("    (%f, %f, %f)\n", p->x, p->y, p->z);
+        p->z = franke( p->x, p->y );
+        if ( nn_verbose )
+            printf( "    (%f, %f, %f)\n", p->x, p->y, p->z );
     }
 
     /*
      * triangulate
      */
-    printf("  triangulating:\n");
-    fflush(stdout);
-    d = delaunay_build(nin, pin, 0, NULL, 0, NULL);
+    printf( "  triangulating:\n" );
+    fflush( stdout );
+    d = delaunay_build( nin, pin, 0, NULL, 0, NULL );
 
     /*
-     * generate output points 
+     * generate output points
      */
-    points_generate2(-0.1, 1.1, -0.1, 1.1, nx, nx, &nout, &pout);
-    cpi = (nx / 2) * (nx + 1);
+    points_generate2( -0.1, 1.1, -0.1, 1.1, nx, nx, &nout, &pout );
+    cpi = ( nx / 2 ) * ( nx + 1 );
 
-    gettimeofday(&tv0, &tz);
+    gettimeofday( &tv0, &tz );
 
     /*
-     * create interpolator 
+     * create interpolator
      */
-    printf("  creating interpolator:\n");
-    fflush(stdout);
-    nn = nnhpi_create(d, nout);
+    printf( "  creating interpolator:\n" );
+    fflush( stdout );
+    nn = nnhpi_create( d, nout );
 
-    fflush(stdout);
-    gettimeofday(&tv1, &tz);
+    fflush( stdout );
+    gettimeofday( &tv1, &tz );
     {
-        long dt = 1000000 * (tv1.tv_sec - tv0.tv_sec) + tv1.tv_usec - tv0.tv_usec;
+        long dt = 1000000 * ( tv1.tv_sec - tv0.tv_sec ) + tv1.tv_usec - tv0.tv_usec;
 
-        printf("    interpolator creation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout);
+        printf( "    interpolator creation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout );
     }
 
     /*
-     * interpolate 
+     * interpolate
      */
-    printf("  interpolating:\n");
-    fflush(stdout);
-    gettimeofday(&tv1, &tz);
-    for (i = 0; i < nout; ++i) {
+    printf( "  interpolating:\n" );
+    fflush( stdout );
+    gettimeofday( &tv1, &tz );
+    for ( i = 0; i < nout; ++i )
+    {
         point* p = &pout[i];
 
-        nnhpi_interpolate(nn, p);
-        if (nn_verbose)
-            printf("    (%f, %f, %f)\n", p->x, p->y, p->z);
+        nnhpi_interpolate( nn, p );
+        if ( nn_verbose )
+            printf( "    (%f, %f, %f)\n", p->x, p->y, p->z );
     }
 
-    fflush(stdout);
-    gettimeofday(&tv0, &tz);
+    fflush( stdout );
+    gettimeofday( &tv0, &tz );
     {
-        long dt = 1000000.0 * (tv0.tv_sec - tv1.tv_sec) + tv0.tv_usec - tv1.tv_usec;
+        long dt = 1000000.0 * ( tv0.tv_sec - tv1.tv_sec ) + tv0.tv_usec - tv1.tv_usec;
 
-        printf("    interpolation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout);
+        printf( "    interpolation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout );
     }
 
-    if (!nn_verbose)
-        printf("    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke(pout[cpi].x, pout[cpi].y));
+    if ( !nn_verbose )
+        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke( pout[cpi].x, pout[cpi].y ));
 
-    printf("  interpolating one more time:\n");
-    fflush(stdout);
-    gettimeofday(&tv0, &tz);
-    for (i = 0; i < nout; ++i) {
+    printf( "  interpolating one more time:\n" );
+    fflush( stdout );
+    gettimeofday( &tv0, &tz );
+    for ( i = 0; i < nout; ++i )
+    {
         point* p = &pout[i];
 
-        nnhpi_interpolate(nn, p);
-        if (nn_verbose)
-            printf("    (%f, %f, %f)\n", p->x, p->y, p->z);
+        nnhpi_interpolate( nn, p );
+        if ( nn_verbose )
+            printf( "    (%f, %f, %f)\n", p->x, p->y, p->z );
     }
 
-    fflush(stdout);
-    gettimeofday(&tv1, &tz);
+    fflush( stdout );
+    gettimeofday( &tv1, &tz );
     {
-        long dt = 1000000.0 * (tv1.tv_sec - tv0.tv_sec) + tv1.tv_usec - tv0.tv_usec;
+        long dt = 1000000.0 * ( tv1.tv_sec - tv0.tv_sec ) + tv1.tv_usec - tv0.tv_usec;
 
-        printf("    interpolation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout);
+        printf( "    interpolation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout );
     }
 
-    if (!nn_verbose)
-        printf("    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke(pout[cpi].x, pout[cpi].y));
+    if ( !nn_verbose )
+        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke( pout[cpi].x, pout[cpi].y ));
 
-    printf("  entering new data:\n");
-    fflush(stdout);
-    for (i = 0; i < nin; ++i) {
+    printf( "  entering new data:\n" );
+    fflush( stdout );
+    for ( i = 0; i < nin; ++i )
+    {
         point* p = &pin[i];
 
         p->z = p->x * p->x - p->y * p->y;
-        nnhpi_modify_data(nn, p);
-        if (nn_verbose)
-            printf("    (%f, %f, %f)\n", p->x, p->y, p->z);
+        nnhpi_modify_data( nn, p );
+        if ( nn_verbose )
+            printf( "    (%f, %f, %f)\n", p->x, p->y, p->z );
     }
 
-    printf("  interpolating:\n");
-    fflush(stdout);
-    gettimeofday(&tv1, &tz);
-    for (i = 0; i < nout; ++i) {
+    printf( "  interpolating:\n" );
+    fflush( stdout );
+    gettimeofday( &tv1, &tz );
+    for ( i = 0; i < nout; ++i )
+    {
         point* p = &pout[i];
 
-        nnhpi_interpolate(nn, p);
-        if (nn_verbose)
-            printf("    (%f, %f, %f)\n", p->x, p->y, p->z);
+        nnhpi_interpolate( nn, p );
+        if ( nn_verbose )
+            printf( "    (%f, %f, %f)\n", p->x, p->y, p->z );
     }
 
-    fflush(stdout);
-    gettimeofday(&tv0, &tz);
+    fflush( stdout );
+    gettimeofday( &tv0, &tz );
     {
-        long dt = 1000000.0 * (tv0.tv_sec - tv1.tv_sec) + tv0.tv_usec - tv1.tv_usec;
+        long dt = 1000000.0 * ( tv0.tv_sec - tv1.tv_sec ) + tv0.tv_usec - tv1.tv_usec;
 
-        printf("    interpolation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout);
+        printf( "    interpolation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout );
     }
 
-    if (!nn_verbose)
-        printf("    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, pout[cpi].x * pout[cpi].x - pout[cpi].y * pout[cpi].y);
+    if ( !nn_verbose )
+        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, pout[cpi].x * pout[cpi].x - pout[cpi].y * pout[cpi].y );
 
-    printf("  restoring data:\n");
-    fflush(stdout);
-    for (i = 0; i < nin; ++i) {
+    printf( "  restoring data:\n" );
+    fflush( stdout );
+    for ( i = 0; i < nin; ++i )
+    {
         point* p = &pin[i];
 
-        p->z = franke(p->x, p->y);
-        nnhpi_modify_data(nn, p);
-        if (nn_verbose)
-            printf("    (%f, %f, %f)\n", p->x, p->y, p->z);
+        p->z = franke( p->x, p->y );
+        nnhpi_modify_data( nn, p );
+        if ( nn_verbose )
+            printf( "    (%f, %f, %f)\n", p->x, p->y, p->z );
     }
 
-    printf("  interpolating:\n");
-    fflush(stdout);
-    gettimeofday(&tv0, &tz);
-    for (i = 0; i < nout; ++i) {
+    printf( "  interpolating:\n" );
+    fflush( stdout );
+    gettimeofday( &tv0, &tz );
+    for ( i = 0; i < nout; ++i )
+    {
         point* p = &pout[i];
 
-        nnhpi_interpolate(nn, p);
-        if (nn_verbose)
-            printf("    (%f, %f, %f)\n", p->x, p->y, p->z);
+        nnhpi_interpolate( nn, p );
+        if ( nn_verbose )
+            printf( "    (%f, %f, %f)\n", p->x, p->y, p->z );
     }
 
-    fflush(stdout);
-    gettimeofday(&tv1, &tz);
+    fflush( stdout );
+    gettimeofday( &tv1, &tz );
     {
-        long dt = 1000000.0 * (tv1.tv_sec - tv0.tv_sec) + tv1.tv_usec - tv0.tv_usec;
+        long dt = 1000000.0 * ( tv1.tv_sec - tv0.tv_sec ) + tv1.tv_usec - tv0.tv_usec;
 
-        printf("    interpolation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout);
+        printf( "    interpolation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout );
     }
 
-    if (!nn_verbose)
-        printf("    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke(pout[cpi].x, pout[cpi].y));
+    if ( !nn_verbose )
+        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke( pout[cpi].x, pout[cpi].y ));
 
-    printf("  hashtable stats:\n");
-    fflush(stdout);
+    printf( "  hashtable stats:\n" );
+    fflush( stdout );
     {
         hashtable* ht = nn->ht_data;
 
-        printf("    input points: %d entries, %d table elements, %d filled elements\n", ht->n, ht->size, ht->nhash);
+        printf( "    input points: %d entries, %d table elements, %d filled elements\n", ht->n, ht->size, ht->nhash );
         ht = nn->ht_weights;
-        printf("    weights: %d entries, %d table elements, %d filled elements\n", ht->n, ht->size, ht->nhash);
+        printf( "    weights: %d entries, %d table elements, %d filled elements\n", ht->n, ht->size, ht->nhash );
     }
-    printf("\n");
+    printf( "\n" );
 
-    nnhpi_destroy(nn);
-    free(pout);
-    delaunay_destroy(d);
-    free(pin);
+    nnhpi_destroy( nn );
+    free( pout );
+    delaunay_destroy( d );
+    free( pin );
 
     return 0;
 }

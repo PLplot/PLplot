@@ -14,19 +14,20 @@
  *
  *****************************************************************************/
 
-#if !defined(_CSA_H)
+#if !defined ( _CSA_H )
 #define _CSA_H
 
 /* include header file for dll definitions */
 #include "csadll.h"
 
-#if _MSC_VER>1309
-  #define hypot _hypot
+#if _MSC_VER > 1309
+  #define hypot    _hypot
 #endif
 
-#if !defined(_POINT_STRUCT)
+#if !defined ( _POINT_STRUCT )
 #define _POINT_STRUCT
-typedef struct {
+typedef struct
+{
     double x;
     double y;
     double z;
@@ -37,28 +38,28 @@ extern int csa_verbose;
 extern char* csa_version;
 
 struct csa;
-typedef struct csa csa;
+typedef struct csa   csa;
 
 CSADLLIMPEXP
 csa* csa_create();
 CSADLLIMPEXP
-void csa_destroy(csa* a);
+void csa_destroy( csa* a );
 CSADLLIMPEXP
-void csa_addpoints(csa* a, int n, point points[]);
+void csa_addpoints( csa* a, int n, point points[] );
 CSADLLIMPEXP
-void csa_calculatespline(csa* a);
+void csa_calculatespline( csa* a );
 CSADLLIMPEXP
-void csa_approximate_point(csa* a, point* p);
+void csa_approximate_point( csa* a, point* p );
 CSADLLIMPEXP
-void csa_approximate_points(csa* a, int n, point* points);
+void csa_approximate_points( csa* a, int n, point* points );
 
 CSADLLIMPEXP
-void csa_setnpmin(csa* a, int npmin);
+void csa_setnpmin( csa* a, int npmin );
 CSADLLIMPEXP
-void csa_setnpmax(csa* a, int npmax);
+void csa_setnpmax( csa* a, int npmax );
 CSADLLIMPEXP
-void csa_setk(csa* a, int k);
+void csa_setk( csa* a, int k );
 CSADLLIMPEXP
-void csa_setnpps(csa* a, double npps);
+void csa_setnpps( csa* a, double npps );
 
 #endif

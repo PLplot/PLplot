@@ -15,47 +15,48 @@
  *
  *****************************************************************************/
 
-#define STACK_NSTART 50
-#define STACK_NINC 50
+#define STACK_NSTART    50
+#define STACK_NINC      50
 
 #include <stdlib.h>
 #include <string.h>
 #include "istack.h"
 
-static void istack_init(istack* s)
+static void istack_init( istack* s )
 {
-    s->n = 0;
+    s->n          = 0;
     s->nallocated = STACK_NSTART;
-    s->v = malloc(STACK_NSTART * sizeof(int));
+    s->v          = malloc( STACK_NSTART * sizeof ( int ));
 }
 
 istack* istack_create()
 {
-    istack* s = malloc(sizeof(istack));
+    istack* s = malloc( sizeof ( istack ));
 
-    istack_init(s);
+    istack_init( s );
     return s;
 }
 
-void istack_reset(istack* s)
+void istack_reset( istack* s )
 {
     s->n = 0;
 }
 
-int istack_contains(istack* s, int v)
+int istack_contains( istack* s, int v )
 {
     int i;
 
-    for (i = 0; i < s->n; ++i)
-        if (s->v[i] == v)
+    for ( i = 0; i < s->n; ++i )
+        if ( s->v[i] == v )
             return 1;
     return 0;
 }
 
-void istack_push(istack* s, int v)
+void istack_push( istack* s, int v )
 {
-    if (s->n == s->nallocated) {
-        s->v = realloc(s->v, (s->nallocated + STACK_NINC) * sizeof(int));
+    if ( s->n == s->nallocated )
+    {
+        s->v           = realloc( s->v, ( s->nallocated + STACK_NINC ) * sizeof ( int ));
         s->nallocated += STACK_NINC;
     }
 
@@ -63,16 +64,17 @@ void istack_push(istack* s, int v)
     s->n++;
 }
 
-int istack_pop(istack* s)
+int istack_pop( istack* s )
 {
     s->n--;
     return s->v[s->n];
 }
 
-void istack_destroy(istack* s)
+void istack_destroy( istack* s )
 {
-    if (s != NULL) {
-        free(s->v);
-        free(s);
+    if ( s != NULL )
+    {
+        free( s->v );
+        free( s );
     }
 }
