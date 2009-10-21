@@ -122,7 +122,9 @@ csource_LIST="$csource_LIST src/*.c src/*.h"
 # All C source (i.e., exclude qt.h) in include directory.
 csource_LIST="$csource_LIST `ls include/*.h include/*.h.in include/*.h.cmake |grep -v qt.h`" 
 
-export cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
+export cppsource_LIST
+cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
+# cppsource_LIST="$cppsource_LIST include/qt.h" 
 
 # Check that source file lists actually refer to files.
 for source in $csource_LIST $cppsource_LIST ; do
