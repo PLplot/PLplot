@@ -125,9 +125,19 @@ csource_LIST="$csource_LIST `ls include/*.h include/*.h.in include/*.h.cmake |gr
 # Every subdirectory of lib.
 csource_LIST="$csource_LIST lib/*/*.c lib/*/*.h lib/qsastime/qsastimeP.h.in"
 
+# C part of drivers.
+csource_LIST="$csource_LIST drivers/*.c"
+
 export cppsource_LIST
+
+# C++ part of bindings/c++
 cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
-# cppsource_LIST="$cppsource_LIST include/qt.h" 
+
+# C++ part of include. 
+# cppsource_LIST="$cppsource_LIST include/qt.h"
+
+# C++ part of drivers.
+# cppsource_LIST="$cppsource_LIST drivers/wxwidgets.h drivers/*.cpp" 
 
 # Check that source file lists actually refer to files.
 for source in $csource_LIST $cppsource_LIST ; do

@@ -14,7 +14,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library
  * General Public License for more details.
-
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with the GNU C Library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
@@ -31,50 +31,53 @@
 #include <signal.h>
 #include <stdlib.h>
 
-#define SYM_LEN 300
-#define DRVSPEC_LEN 400
+#define SYM_LEN        300
+#define DRVSPEC_LEN    400
 
 /* SEGV signal handler */
 RETSIGTYPE
-catch_segv (int sig)
+catch_segv( int sig )
 {
-  fprintf (stderr, "libltdl error: %s\n", lt_dlerror ());
-  exit (1);
+    fprintf( stderr, "libltdl error: %s\n", lt_dlerror());
+    exit( 1 );
 }
 
 int
-main (int argc, char* argv[])
+main( int argc, char* argv[] )
 {
-  lt_dlhandle dlhand;
-  char sym[SYM_LEN];
-  char* drvnam = argv[1];
-  char drvspec[ DRVSPEC_LEN ];
-  char** info;
+    lt_dlhandle dlhand;
+    char        sym[SYM_LEN];
+    char        * drvnam = argv[1];
+    char        drvspec[ DRVSPEC_LEN ];
+    char        ** info;
 
-  /* Establish a handler for SIGSEGV signals. */
-  signal (SIGSEGV, catch_segv);
+    /* Establish a handler for SIGSEGV signals. */
+    signal( SIGSEGV, catch_segv );
 
-  lt_dlinit ();
-#if defined(LTDL_WIN32) || defined(__CYGWIN__)
-  snprintf( drvspec, DRVSPEC_LEN, "%s", drvnam );
+    lt_dlinit();
+#if defined ( LTDL_WIN32 ) || defined ( __CYGWIN__ )
+    snprintf( drvspec, DRVSPEC_LEN, "%s", drvnam );
 #else
-  snprintf( drvspec, DRVSPEC_LEN, "%s/%s", plGetDrvDir (), drvnam );
+    snprintf( drvspec, DRVSPEC_LEN, "%s/%s", plGetDrvDir(), drvnam );
 #endif /* LTDL_WIN32 */
-  dlhand = lt_dlopenext (drvspec);
-  if (dlhand == NULL) {
-    fprintf (stderr, "Could not open driver module %s\n"
-                     "libltdl error: %s\n", drvspec, lt_dlerror ());
-    return 1;
-  }
-  snprintf (sym, SYM_LEN, "plD_DEVICE_INFO_%s", drvnam);
-  info = (char **) lt_dlsym (dlhand, sym);
-  if (info != NULL) {
-    printf ("%s", *info);
-    return 0;
-  }
-  else {
-    fprintf (stderr, "Could not read symbol %s in driver module %s\n"
-                     "libltdl error: %s\n", sym, drvspec, lt_dlerror ());
-    return 1;
-  }
+    dlhand = lt_dlopenext( drvspec );
+    if ( dlhand == NULL )
+    {
+        fprintf( stderr, "Could not open driver module %s\n"
+            "libltdl error: %s\n", drvspec, lt_dlerror());
+        return 1;
+    }
+    snprintf( sym, SYM_LEN, "plD_DEVICE_INFO_%s", drvnam );
+    info = (char **) lt_dlsym( dlhand, sym );
+    if ( info != NULL )
+    {
+        printf( "%s", *info );
+        return 0;
+    }
+    else
+    {
+        fprintf( stderr, "Could not read symbol %s in driver module %s\n"
+            "libltdl error: %s\n", sym, drvspec, lt_dlerror());
+        return 1;
+    }
 }
