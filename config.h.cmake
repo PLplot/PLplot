@@ -18,22 +18,22 @@
 */
 
 /* Location of executables */
-#define BIN_DIR "${BIN_DIR}"
+#define BIN_DIR "@BIN_DIR@"
 
 /* Location of Build tree */
-#define BUILD_DIR "${BUILD_DIR}"
+#define BUILD_DIR "@BUILD_DIR@"
 
 /* Location of package data files */
-#define DATA_DIR "${DATA_DIR}"
+#define DATA_DIR "@DATA_DIR@"
 
 /* Location of dynamically loaded drivers */
-#define DRV_DIR "${DRV_DIR}"
+#define DRV_DIR "@DRV_DIR@"
 
 /* Name of the default cmap0 palette to use */
-#define PL_DEFAULT_CMAP0_FILE "${DEFAULT_CMAP0_FILE}"
+#define PL_DEFAULT_CMAP0_FILE "@DEFAULT_CMAP0_FILE@"
 
 /* Name of the default cmap1 palette to use */
-#define PL_DEFAULT_CMAP1_FILE "${DEFAULT_CMAP1_FILE}"
+#define PL_DEFAULT_CMAP1_FILE "@DEFAULT_CMAP1_FILE@"
 
 /* Define if there is support for dynamically loaded drivers */
 #cmakedefine ENABLE_DYNDRIVERS
@@ -160,121 +160,121 @@
 #cmakedefine NEED_SYS_TYPE_H
 
 /* Name of package */
-#define PACKAGE "${PACKAGE}"
+#define PACKAGE "@PACKAGE@"
 
 /* Define if the win32 ltdl implementation should be used */
 #cmakedefine LTDL_WIN32
 
 /* Portable definition for PTHREAD_MUTEX_RECURSIVE */
-#define PLPLOT_MUTEX_RECURSIVE ${PLPLOT_MUTEX_RECURSIVE}
+#define PLPLOT_MUTEX_RECURSIVE @PLPLOT_MUTEX_RECURSIVE@
 
 /* Directory containing fonts that are accessible from freetype */
-#define PL_FREETYPE_FONT_DIR "${PL_FREETYPE_FONT_DIR}"
+#define PL_FREETYPE_FONT_DIR "@PL_FREETYPE_FONT_DIR@"
 
 /* MONO font accessible from freetype */
-#define PL_FREETYPE_MONO "${PL_FREETYPE_MONO}"
+#define PL_FREETYPE_MONO "@PL_FREETYPE_MONO@"
 
 /* MONO_BOLD font accessible from freetype */
-#define PL_FREETYPE_MONO_BOLD "${PL_FREETYPE_MONO_BOLD}"
+#define PL_FREETYPE_MONO_BOLD "@PL_FREETYPE_MONO_BOLD@"
 
 /* MONO_BOLD_ITALIC font accessible from freetype */
-#define PL_FREETYPE_MONO_BOLD_ITALIC "${PL_FREETYPE_MONO_BOLD_ITALIC}"
+#define PL_FREETYPE_MONO_BOLD_ITALIC "@PL_FREETYPE_MONO_BOLD_ITALIC@"
 
 /* MONO_BOLD_OBLIQUE font accessible from freetype */
-#define PL_FREETYPE_MONO_BOLD_OBLIQUE "${PL_FREETYPE_MONO_BOLD_OBLIQUE}"
+#define PL_FREETYPE_MONO_BOLD_OBLIQUE "@PL_FREETYPE_MONO_BOLD_OBLIQUE@"
 
 /* MONO_ITALIC font accessible from freetype */
-#define PL_FREETYPE_MONO_ITALIC "${PL_FREETYPE_MONO_ITALIC}"
+#define PL_FREETYPE_MONO_ITALIC "@PL_FREETYPE_MONO_ITALIC@"
 
 /* MONO_OBLIQUE font accessible from freetype */
-#define PL_FREETYPE_MONO_OBLIQUE "${PL_FREETYPE_MONO_OBLIQUE}"
+#define PL_FREETYPE_MONO_OBLIQUE "@PL_FREETYPE_MONO_OBLIQUE@"
 
 /* SANS font accessible from freetype */
-#define PL_FREETYPE_SANS "${PL_FREETYPE_SANS}"
+#define PL_FREETYPE_SANS "@PL_FREETYPE_SANS@"
 
 /* SANS_BOLD font accessible from freetype */
-#define PL_FREETYPE_SANS_BOLD "${PL_FREETYPE_SANS_BOLD}"
+#define PL_FREETYPE_SANS_BOLD "@PL_FREETYPE_SANS_BOLD@"
 
 /* SANS_BOLD_ITALIC font accessible from freetype */
-#define PL_FREETYPE_SANS_BOLD_ITALIC "${PL_FREETYPE_SANS_BOLD_ITALIC}"
+#define PL_FREETYPE_SANS_BOLD_ITALIC "@PL_FREETYPE_SANS_BOLD_ITALIC@"
 
 /* SANS_BOLD_OBLIQUE font accessible from freetype */
-#define PL_FREETYPE_SANS_BOLD_OBLIQUE "${PL_FREETYPE_SANS_BOLD_OBLIQUE}"
+#define PL_FREETYPE_SANS_BOLD_OBLIQUE "@PL_FREETYPE_SANS_BOLD_OBLIQUE@"
 
 /* SANS_ITALIC font accessible from freetype */
-#define PL_FREETYPE_SANS_ITALIC "${PL_FREETYPE_SANS_ITALIC}"
+#define PL_FREETYPE_SANS_ITALIC "@PL_FREETYPE_SANS_ITALIC@"
 
 /* SANS_OBLIQUE font accessible from freetype */
-#define PL_FREETYPE_SANS_OBLIQUE "${PL_FREETYPE_SANS_OBLIQUE}"
+#define PL_FREETYPE_SANS_OBLIQUE "@PL_FREETYPE_SANS_OBLIQUE@"
 
 /* SCRIPT font accessible from freetype */
-#define PL_FREETYPE_SCRIPT "${PL_FREETYPE_SCRIPT}"
+#define PL_FREETYPE_SCRIPT "@PL_FREETYPE_SCRIPT@"
 
 /* SCRIPT_BOLD font accessible from freetype */
-#define PL_FREETYPE_SCRIPT_BOLD "${PL_FREETYPE_SCRIPT_BOLD}"
+#define PL_FREETYPE_SCRIPT_BOLD "@PL_FREETYPE_SCRIPT_BOLD@"
 
 /* SCRIPT_BOLD_ITALIC font accessible from freetype */
-#define PL_FREETYPE_SCRIPT_BOLD_ITALIC "${PL_FREETYPE_SCRIPT_BOLD_ITALIC}"
+#define PL_FREETYPE_SCRIPT_BOLD_ITALIC "@PL_FREETYPE_SCRIPT_BOLD_ITALIC@"
 
 /* SCRIPT_BOLD_OBLIQUE font accessible from freetype */
-#define PL_FREETYPE_SCRIPT_BOLD_OBLIQUE "${PL_FREETYPE_SCRIPT_BOLD_OBLIQUE}"
+#define PL_FREETYPE_SCRIPT_BOLD_OBLIQUE "@PL_FREETYPE_SCRIPT_BOLD_OBLIQUE@"
 
 /* SCRIPT_ITALIC font accessible from freetype */
-#define PL_FREETYPE_SCRIPT_ITALIC "${PL_FREETYPE_SCRIPT_ITALIC}"
+#define PL_FREETYPE_SCRIPT_ITALIC "@PL_FREETYPE_SCRIPT_ITALIC@"
 
 /* SCRIPT_OBLIQUE font accessible from freetype */
-#define PL_FREETYPE_SCRIPT_OBLIQUE "${PL_FREETYPE_SCRIPT_OBLIQUE}"
+#define PL_FREETYPE_SCRIPT_OBLIQUE "@PL_FREETYPE_SCRIPT_OBLIQUE@"
 
 /* SERIF font accessible from freetype */
-#define PL_FREETYPE_SERIF "${PL_FREETYPE_SERIF}"
+#define PL_FREETYPE_SERIF "@PL_FREETYPE_SERIF@"
 
 /* SERIF_BOLD font accessible from freetype */
-#define PL_FREETYPE_SERIF_BOLD "${PL_FREETYPE_SERIF_BOLD}"
+#define PL_FREETYPE_SERIF_BOLD "@PL_FREETYPE_SERIF_BOLD@"
 
 /* SERIF_BOLD_ITALIC font accessible from freetype */
-#define PL_FREETYPE_SERIF_BOLD_ITALIC "${PL_FREETYPE_SERIF_BOLD_ITALIC}"
+#define PL_FREETYPE_SERIF_BOLD_ITALIC "@PL_FREETYPE_SERIF_BOLD_ITALIC@"
 
 /* SERIF_BOLD_OBLIQUE font accessible from freetype */
-#define PL_FREETYPE_SERIF_BOLD_OBLIQUE "${PL_FREETYPE_SERIF_BOLD_OBLIQUE}"
+#define PL_FREETYPE_SERIF_BOLD_OBLIQUE "@PL_FREETYPE_SERIF_BOLD_OBLIQUE@"
 
 /* SERIF_ITALIC font accessible from freetype */
-#define PL_FREETYPE_SERIF_ITALIC "${PL_FREETYPE_SERIF_ITALIC}"
+#define PL_FREETYPE_SERIF_ITALIC "@PL_FREETYPE_SERIF_ITALIC@"
 
 /* SERIF_OBLIQUE font accessible from freetype */
-#define PL_FREETYPE_SERIF_OBLIQUE "${PL_FREETYPE_SERIF_OBLIQUE}"
+#define PL_FREETYPE_SERIF_OBLIQUE "@PL_FREETYPE_SERIF_OBLIQUE@"
 
 /* Symbol font accessible from freetype */
-#define PL_FREETYPE_SYMBOL "${PL_FREETYPE_SYMBOL}"
+#define PL_FREETYPE_SYMBOL "@PL_FREETYPE_SYMBOL@"
 
 /* SYMBOL_BOLD font accessible from freetype */
-#define PL_FREETYPE_SYMBOL_BOLD "${PL_FREETYPE_SYMBOL_BOLD}"
+#define PL_FREETYPE_SYMBOL_BOLD "@PL_FREETYPE_SYMBOL_BOLD@"
 
 /* SYMBOL_BOLD_ITALIC font accessible from freetype */
-#define PL_FREETYPE_SYMBOL_BOLD_ITALIC "${PL_FREETYPE_SYMBOL_BOLD_ITALIC}"
+#define PL_FREETYPE_SYMBOL_BOLD_ITALIC "@PL_FREETYPE_SYMBOL_BOLD_ITALIC@"
 
 /* SYMBOL_BOLD_OBLIQUE font accessible from freetype */
-#define PL_FREETYPE_SYMBOL_BOLD_OBLIQUE "${PL_FREETYPE_SYMBOL_BOLD_OBLIQUE}"
+#define PL_FREETYPE_SYMBOL_BOLD_OBLIQUE "@PL_FREETYPE_SYMBOL_BOLD_OBLIQUE@"
 
 /* SYMBOL_ITALIC font accessible from freetype */
-#define PL_FREETYPE_SYMBOL_ITALIC "${PL_FREETYPE_SYMBOL_ITALIC}"
+#define PL_FREETYPE_SYMBOL_ITALIC "@PL_FREETYPE_SYMBOL_ITALIC@"
 
 /* SYMBOL_OBLIQUE font accessible from freetype */
-#define PL_FREETYPE_SYMBOL_OBLIQUE "${PL_FREETYPE_SYMBOL_OBLIQUE}"
+#define PL_FREETYPE_SYMBOL_OBLIQUE "@PL_FREETYPE_SYMBOL_OBLIQUE@"
 
 /* Define as the return type of signal handlers (`int' or `void'). */
-#define RETSIGTYPE ${RETSIGTYPE}
+#define RETSIGTYPE @RETSIGTYPE@
 
 /* Location of Source tree */
-#define SOURCE_DIR "${SOURCE_DIR}"
+#define SOURCE_DIR "@SOURCE_DIR@"
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
 
 /* Location of Tcl stuff */
-#define TCL_DIR "${TCL_DIR}"
+#define TCL_DIR "@TCL_DIR@"
 
 /* Version number of package */
-#define VERSION "${VERSION}"
+#define VERSION "@VERSION@"
 
 /* Define if csa is desired */
 #cmakedefine WITH_CSA
