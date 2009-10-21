@@ -1,22 +1,22 @@
 /* $Id$
-
-   Copyright (C) 2004  Joao Cardoso
-
-   This file is part of PLplot.
-
-   PLplot is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Library Public License as published
-   by the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
-
-   PLplot is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU Library General Public License for more details.
-
-   You should have received a copy of the GNU Library General Public License
-   along with PLplot; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ *
+ * Copyright (C) 2004  Joao Cardoso
+ *
+ * This file is part of PLplot.
+ *
+ * PLplot is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Library Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * PLplot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with PLplot; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include "pltk.h"
@@ -24,29 +24,29 @@
 #include <math.h>
 
 static int
-AppInit(Tcl_Interp *interp);
+AppInit( Tcl_Interp *interp );
 
 int mat_max( tclMatrix *pm, Tcl_Interp *interp,
-	     int argc, const char *argv[] )
+             int argc, const char *argv[] )
 {
     PLFLT max = pm->fdata[0];
-    int i;
-    for( i=1; i < pm->len; i++ )
-	if (pm->fdata[i] > max)
-	    max = pm->fdata[i];
+    int   i;
+    for ( i = 1; i < pm->len; i++ )
+        if ( pm->fdata[i] > max )
+            max = pm->fdata[i];
 
     sprintf( interp->result, "%f", max );
     return TCL_OK;
 }
 
 int mat_min( tclMatrix *pm, Tcl_Interp *interp,
-	     int argc, const char *argv[] )
+             int argc, const char *argv[] )
 {
     PLFLT min = pm->fdata[0];
-    int i;
-    for( i=1; i < pm->len; i++ )
-	if (pm->fdata[i] < min)
-	    min = pm->fdata[i];
+    int   i;
+    for ( i = 1; i < pm->len; i++ )
+        if ( pm->fdata[i] < min )
+            min = pm->fdata[i];
 
     sprintf( interp->result, "%f", min );
     return TCL_OK;
@@ -61,12 +61,12 @@ int mat_min( tclMatrix *pm, Tcl_Interp *interp,
  * systems/compilers/linkers/etc).  Hopefully in the future Tk will
  * supply a sufficiently capable tkMain() type function that can be used
  * instead.
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, const char **argv)
+main( int argc, const char **argv )
 {
-    exit(pltkMain(argc, argv, NULL, AppInit));
+    exit( pltkMain( argc, argv, NULL, AppInit ));
 }
 
 /*
@@ -109,12 +109,12 @@ main(int argc, const char **argv)
  *--------------------------------------------------------------------------
  */
 
-int   get_dataCmd        (ClientData, Tcl_Interp *, int, char **);
+int   get_dataCmd( ClientData, Tcl_Interp *, int, char ** );
 
 static int
-AppInit(Tcl_Interp *interp)
+AppInit( Tcl_Interp *interp )
 {
-    Tk_Window mainWindow = Tk_MainWindow(interp);
+    Tk_Window mainWindow = Tk_MainWindow( interp );
 
 /*
  * Call the init procedures for included packages.  Each call should
@@ -127,8 +127,9 @@ AppInit(Tcl_Interp *interp)
  * where "Mod" is the name of the module.
  */
 
-    if (Pltk_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
+    if ( Pltk_Init( interp ) == TCL_ERROR )
+    {
+        return TCL_ERROR;
     }
 
 /*
@@ -136,8 +137,8 @@ AppInit(Tcl_Interp *interp)
  * they weren't already created by the init procedures called above.
  */
 
-    Tcl_CreateCommand(interp, "get_data",(Tcl_CmdProc*) get_dataCmd,
-                      (ClientData) mainWindow, (Tcl_CmdDeleteProc*) NULL);
+    Tcl_CreateCommand( interp, "get_data", (Tcl_CmdProc*) get_dataCmd,
+        (ClientData) mainWindow, (Tcl_CmdDeleteProc*) NULL );
 
     Tcl_MatrixInstallXtnsn( "max", mat_max );
     Tcl_MatrixInstallXtnsn( "min", mat_min );
@@ -148,24 +149,27 @@ AppInit(Tcl_Interp *interp)
 int   get_dataCmd( ClientData cd, Tcl_Interp *interp, int argc, char **argv )
 {
     tclMatrix *pm, *matPtr;
-    int nx, ny, i, j;
-    PLFLT pi = 3.1415927;
-    int kx = 3, ky = 2;
+    int       nx, ny, i, j;
+    PLFLT     pi = 3.1415927;
+    int       kx = 3, ky = 2;
 
-    pm = Tcl_GetMatrixPtr( interp, argv[1] );
+    pm     = Tcl_GetMatrixPtr( interp, argv[1] );
     matPtr = pm;
 
-    if ( pm->dim != 2 ) {
-	interp->result = "must use 2-d matrix.";
-	return TCL_ERROR;
+    if ( pm->dim != 2 )
+    {
+        interp->result = "must use 2-d matrix.";
+        return TCL_ERROR;
     }
 
     nx = pm->n[0], ny = pm->n[1];
 
-    for( i=0; i < nx; i++ ) {
-	for( j=0; j < ny; j++ ) {
-	    pm->fdata[I2D(i,j)] = sin(pi*kx*i/64) * sin(pi*ky*j/64);
-	}
+    for ( i = 0; i < nx; i++ )
+    {
+        for ( j = 0; j < ny; j++ )
+        {
+            pm->fdata[I2D( i, j )] = sin( pi * kx * i / 64 ) * sin( pi * ky * j / 64 );
+        }
     }
 
     return TCL_OK;

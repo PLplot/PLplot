@@ -1,46 +1,46 @@
 /* $Id$
-
-	Bar chart demo.
-*/
+ *
+ *      Bar chart demo.
+ */
 
 #include "plcdemos.h"
 
 void
-plfbox(PLFLT x0, PLFLT y0);
+plfbox( PLFLT x0, PLFLT y0 );
 
 /*--------------------------------------------------------------------------*\
  * main
  *
  * Does a simple bar chart, using color fill.  If color fill is
  * unavailable, pattern fill is used instead (automatic).
-\*--------------------------------------------------------------------------*/
+ \*--------------------------------------------------------------------------*/
 
 int
-main(int argc, const char *argv[])
+main( int argc, const char *argv[] )
 {
-    int i;
-    char string[20];
-    PLFLT y0[10];
+    int          i;
+    char         string[20];
+    PLFLT        y0[10];
 
-    static PLFLT pos[] = {0.0, 0.25, 0.5, 0.75, 1.0};
-    static PLFLT red[] = {0.0, 0.25, 0.5, 1.0, 1.0};
-    static PLFLT green[] = {1.0, 0.5, 0.5, 0.5, 1.0};
-    static PLFLT blue[] = {1.0, 1.0, 0.5, 0.25, 0.0};
+    static PLFLT pos[]   = { 0.0, 0.25, 0.5, 0.75, 1.0 };
+    static PLFLT red[]   = { 0.0, 0.25, 0.5, 1.0, 1.0 };
+    static PLFLT green[] = { 1.0, 0.5, 0.5, 0.5, 1.0 };
+    static PLFLT blue[]  = { 1.0, 1.0, 0.5, 0.25, 0.0 };
 
 /* Parse and process command line arguments */
 
-    (void) plparseopts(&argc, argv, PL_PARSE_FULL);
+    (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
 /* Initialize plplot */
 
     plinit();
 
-    pladv(0);
+    pladv( 0 );
     plvsta();
-    plwind(1980.0, 1990.0, 0.0, 35.0);
-    plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
-    plcol0(2);
-    pllab("Year", "Widget Sales (millions)", "#frPLplot Example 12");
+    plwind( 1980.0, 1990.0, 0.0, 35.0 );
+    plbox( "bc", 1.0, 0, "bcnv", 10.0, 0 );
+    plcol0( 2 );
+    pllab( "Year", "Widget Sales (millions)", "#frPLplot Example 12" );
 
     y0[0] = 5;
     y0[1] = 15;
@@ -53,27 +53,28 @@ main(int argc, const char *argv[])
     y0[8] = 12;
     y0[9] = 3;
 
-    plscmap1l(1,5,pos,red,green,blue,NULL);
+    plscmap1l( 1, 5, pos, red, green, blue, NULL );
 
-    for (i = 0; i < 10; i++) {
-	/*plcol0(i + 1);*/
-	plcol1(i/9.0);
-	plpsty(0);
-	plfbox((1980. + i), y0[i]);
-	sprintf(string, "%.0f", y0[i]);
-	plptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, string);
-	sprintf(string, "%d", 1980 + i);
-	plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string);
+    for ( i = 0; i < 10; i++ )
+    {
+        /*plcol0(i + 1);*/
+        plcol1( i / 9.0 );
+        plpsty( 0 );
+        plfbox(( 1980. + i ), y0[i] );
+        sprintf( string, "%.0f", y0[i] );
+        plptex(( 1980. + i + .5 ), ( y0[i] + 1. ), 1.0, 0.0, .5, string );
+        sprintf( string, "%d", 1980 + i );
+        plmtex( "b", 1.0, (( i + 1 ) * .1 - .05 ), 0.5, string );
     }
 
 /* Don't forget to call plend() to finish off! */
 
     plend();
-    exit(0);
+    exit( 0 );
 }
 
 void
-plfbox(PLFLT x0, PLFLT y0)
+plfbox( PLFLT x0, PLFLT y0 )
 {
     PLFLT x[4], y[4];
 
@@ -85,8 +86,8 @@ plfbox(PLFLT x0, PLFLT y0)
     y[2] = y0;
     x[3] = x0 + 1.;
     y[3] = 0.;
-    plfill(4, x, y);
-    plcol0(1);
-    pllsty(1);
-    plline(4, x, y);
+    plfill( 4, x, y );
+    plcol0( 1 );
+    pllsty( 1 );
+    plline( 4, x, y );
 }
