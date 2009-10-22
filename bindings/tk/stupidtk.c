@@ -1,1 +1,4 @@
-int Tcl_AppInit() { return 0; }
+int Tcl_AppInit()
+{
+    return 0;
+}

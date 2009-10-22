@@ -39,7 +39,7 @@
 
 #include "plserver.h"
 
-extern int Matrix_Init(Tcl_Interp* interp);
+extern int Matrix_Init( Tcl_Interp* interp );
 
 /*----------------------------------------------------------------------*\
  * Pltk_Init
@@ -47,14 +47,15 @@ extern int Matrix_Init(Tcl_Interp* interp);
  * Initialization routine for extended wish'es.
  * Creates the plframe, matrix, and host_id (w/Tcl-DP only)
  * commands.  Also sets the auto_path variable.
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
 int
 Pltk_Init( Tcl_Interp *interp )
 {
     /* This must be before any other Tcl related calls */
-    if (PlbasicInit(interp) != TCL_OK) {
-	return TCL_ERROR;
+    if ( PlbasicInit( interp ) != TCL_OK )
+    {
+        return TCL_ERROR;
     }
 
 #ifdef USE_TK_STUBS
@@ -64,43 +65,43 @@ Pltk_Init( Tcl_Interp *interp )
      * is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
      * be loaded into 8.1
      */
-    Tk_InitStubs(interp,"8.1",0);
+    Tk_InitStubs( interp, "8.1", 0 );
 #endif
 
 /* plframe -- PLplot graphing widget */
 
     Tcl_CreateCommand( interp, "plframe", (Tcl_CmdProc*) plFrameCmd,
-		       (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
+        (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL );
 
 /* host_id -- returns host IP number.  Only for use with Tcl-DP */
 
 #ifdef PLD_dp
-    Tcl_CreateCommand(interp, "host_id", (Tcl_CmdProc*) plHost_ID,
-	      (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
+    Tcl_CreateCommand( interp, "host_id", (Tcl_CmdProc*) plHost_ID,
+        (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL );
 #endif
 
 /* Set up auto_path */
 
-    if (pls_auto_path(interp) == TCL_ERROR)
-	return TCL_ERROR;
+    if ( pls_auto_path( interp ) == TCL_ERROR )
+        return TCL_ERROR;
 
 /* Save initial RGB colormap components */
 /* Disabled for now */
 
 #if 0
     {
-    Display *display;
-    Colormap map;
+        Display  *display;
+        Colormap map;
 
-    display = Tk_Display(mainWindow);
-    map = DefaultColormap(display, DefaultScreen(display));
+        display = Tk_Display( mainWindow );
+        map     = DefaultColormap( display, DefaultScreen( display ));
 
 /* Convert this to use esc function if it's going to be used */
 /* SaveColormap(display, map); */
     }
 #endif
 
-    Tcl_PkgProvide(interp,"Pltk",VERSION);
+    Tcl_PkgProvide( interp, "Pltk", VERSION );
 
     return TCL_OK;
 }

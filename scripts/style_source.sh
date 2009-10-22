@@ -137,6 +137,9 @@ csource_LIST="$csource_LIST fonts/*.c"
 # C source in utils.
 csource_LIST="$csource_LIST utils/*.c"
 
+# C source in bindings.
+csource_LIST="$csource_LIST bindings/tcl/*.[ch] bindings/f95/*.c bindings/f95/plstubs.h bindings/gnome2/*/*.c bindings/ocaml/plplot_impl.c bindings/ocaml/plcairo/plcairo_impl.c bindings/python/plplot_widgetmodule.c bindings/f77/*.c bindings/f77/plstubs.h bindings/tk/*.[ch] bindings/tk-x-plat/*.[ch] bindings/octave/plplot_octave.h.in bindings/octave/plplot_octave_rej.h bindings/octave/massage.c"
+
 export cppsource_LIST
 
 # C++ part of bindings/c++
@@ -150,6 +153,9 @@ cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
 
 # C++ part of examples.
 # cppsource_LIST="$cppsource_LIST examples/c++/*.cc examples/c++/*.cpp examples/c++/*.h"
+
+# C++ source in bindings.
+# cppsource_LIST="$cppsource_LIST bindings/qt_gui/plqt.cpp bindings/wxwidgets/wxPLplotstream.cpp bindings/wxwidgets/wxPLplotwindow.cpp bindings/wxwidgets/wxPLplotwindow.h bindings/wxwidgets/wxPLplotstream.h.in"
 
 # Check that source file lists actually refer to files.
 for source in $csource_LIST $cppsource_LIST ; do

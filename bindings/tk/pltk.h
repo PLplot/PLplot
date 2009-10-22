@@ -20,7 +20,7 @@ extern "C" {
 
 #ifdef BUILD_Plplot
 #undef TCL_STORAGE_CLASS
-#define TCL_STORAGE_CLASS DLLEXPORT
+#define TCL_STORAGE_CLASS    DLLEXPORT
 #endif /* BUILD_Vfs */
 
 EXTERN PLDLLIMPEXP_TCLTK int
@@ -29,11 +29,11 @@ Pltk_Init( Tcl_Interp *interp );
 /* Main program for wish, with PLplot extensions. */
 
 EXTERN PLDLLIMPEXP_TCLTK int
-pltkMain(int argc, const char **argv, char *RcFileName,
-	 int (*AppInit)(Tcl_Interp *interp));
+pltkMain( int argc, const char **argv, char *RcFileName,
+          int ( *AppInit )( Tcl_Interp *interp ));
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif	/* __PLTK_H__ */
+#endif  /* __PLTK_H__ */

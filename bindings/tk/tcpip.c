@@ -57,13 +57,13 @@
  */
 
 /*
-#define DEBUG
-*/
+ #define DEBUG
+ */
 
 #include "plDevs.h"
 #include "plConfig.h"
 
-#if defined (PLD_tk) || defined (ENABLE_tk)
+#if defined ( PLD_tk ) || defined ( ENABLE_tk )
 
 /* This file is meant to be compiled with non-ANSI compilers ("cc").
  * The reason for doing it this way is to ensure that the full C
@@ -84,13 +84,13 @@
 #ifdef caddr_t
 #undef caddr_t
 #endif
-#define PLARGS(a)	()
+#define PLARGS( a )    ( )
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#if defined(__sgi) && !defined(SVR3)
+#if defined ( __sgi ) && !defined ( SVR3 )
 #include <sys/select.h>
 #endif
 #ifdef PL_HAVE_UNISTD_H
@@ -111,37 +111,38 @@
 extern int errno;
 
 #ifndef MIN
-#define MIN(a,b)    (((a) < (b)) ? (a) : (b))
+#define MIN( a, b )    ((( a ) < ( b )) ? ( a ) : ( b ))
 #endif
 
 /*
  * This is a "magic number" prepended to the beginning of the packet
  * Used to help resync the packet machanism in the event of errors.
  */
-#define PACKET_MAGIC	0x6feeddcc
+#define PACKET_MAGIC    0x6feeddcc
 
 /*
  * For TCP, it's possible to get a line in pieces.  In case everything we
  * want isn't there, we need a place to store partial results when we're
  * in non-blocking mode.  The partial buffers below are created
  * dynamically to store incomplete data in these cases.
-*/
+ */
 
-typedef struct PartialRead {
-    char *buffer;		/* Buffer of characters */
-    int bufSize;		/* Size of buffer */
-    int offset;			/* Offset of current character within buffer */
-    struct PartialRead *next;	/* Next buffer in chain */
+typedef struct PartialRead
+{
+    char               *buffer; /* Buffer of characters */
+    int                bufSize; /* Size of buffer */
+    int                offset;  /* Offset of current character within buffer */
+    struct PartialRead *next;   /* Next buffer in chain */
 } PartialRead;
 
-#define MAX_OPEN_FILES	128
+#define MAX_OPEN_FILES    128
 
 static PartialRead *partial[MAX_OPEN_FILES];
 
-static void pl_FreeReadBuffer	PLARGS((int fd));
-static void pl_Unread		PLARGS((int fd, char *buffer,
-					int numBytes, int copy));
-static int  pl_Read		PLARGS((int fd, char *buffer, int numReq));
+static void pl_FreeReadBuffer   PLARGS((int fd));
+static void pl_Unread           PLARGS(( int fd, char *buffer,
+                                         int numBytes, int copy ));
+static int pl_Read             PLARGS(( int fd, char *buffer, int numReq ));
 
 /*
  *--------------------------------------------------------------
@@ -161,16 +162,17 @@ static int  pl_Read		PLARGS((int fd, char *buffer, int numReq));
  */
 
 static void
-pl_FreeReadBuffer(fd)
-    int fd;
+pl_FreeReadBuffer( fd )
+int fd;
 {
     PartialRead *readList;
 
-    while (partial[fd] != NULL) {
-	readList = partial[fd];
-	partial[fd] = readList->next;
-	free (readList->buffer);
-	free (readList);
+    while ( partial[fd] != NULL )
+    {
+        readList    = partial[fd];
+        partial[fd] = readList->next;
+        free( readList->buffer );
+        free( readList );
     }
 }
 
@@ -192,26 +194,29 @@ pl_FreeReadBuffer(fd)
  */
 
 static void
-pl_Unread (fd, buffer, numBytes, copy)
-    int fd;                     /* File descriptor */
-    char *buffer;               /* Data to unget */
-    int numBytes;               /* Number of bytes to unget */
-    int copy;			/* Should we copy the data, or use this */
-				/* buffer? */
+pl_Unread( fd, buffer, numBytes, copy )
+int fd;                         /* File descriptor */
+char *buffer;                   /* Data to unget */
+int  numBytes;                  /* Number of bytes to unget */
+int  copy;                      /* Should we copy the data, or use this */
+                                /* buffer? */
 {
     PartialRead *new;
 
-    new = (PartialRead *) malloc (sizeof(PartialRead));
-    if (copy) {
-	new->buffer = (char *) malloc (numBytes);
-	memcpy (new->buffer, buffer, numBytes);
-    } else {
-	new->buffer = buffer;
+    new = (PartialRead *) malloc( sizeof ( PartialRead ));
+    if ( copy )
+    {
+        new->buffer = (char *) malloc( numBytes );
+        memcpy( new->buffer, buffer, numBytes );
+    }
+    else
+    {
+        new->buffer = buffer;
     }
     new->bufSize = numBytes;
-    new->offset = 0;
-    new->next = partial[fd];
-    partial[fd] = new;
+    new->offset  = 0;
+    new->next    = partial[fd];
+    partial[fd]  = new;
 }
 
 /*
@@ -233,15 +238,15 @@ pl_Unread (fd, buffer, numBytes, copy)
  */
 
 static int
-pl_Read (fd, buffer, numReq)
-    int fd;			/* File descriptor to read from */
-    char *buffer;		/* Place to put the data */
-    int numReq;			/* Number of bytes to get */
+pl_Read( fd, buffer, numReq )
+int fd;                         /* File descriptor to read from */
+char *buffer;                   /* Place to put the data */
+int  numReq;                    /* Number of bytes to get */
 {
     PartialRead *readList;
     PartialRead *tmp;
-    int numRead;
-    int numToCopy;
+    int         numRead;
+    int         numToCopy;
 
     readList = partial[fd];
 
@@ -249,18 +254,19 @@ pl_Read (fd, buffer, numReq)
      * If there's no data left over from a previous read, then just do a read
      * This is the common case.
      */
-    if (readList == NULL) {
-	numRead = read(fd, buffer, numReq);
+    if ( readList == NULL )
+    {
+        numRead = read( fd, buffer, numReq );
 #ifdef DEBUG
-	{
-	    int j;
-	    fprintf(stderr, "received %d bytes starting with:", numRead);
-	    for (j = 0; j < MIN(8,numRead); j++)
-		fprintf(stderr, " %x", 0x000000FF & (unsigned long) buffer[j]);
-	    fprintf(stderr, "\n");
-	}
+        {
+            int j;
+            fprintf( stderr, "received %d bytes starting with:", numRead );
+            for ( j = 0; j < MIN( 8, numRead ); j++ )
+                fprintf( stderr, " %x", 0x000000FF & (unsigned long) buffer[j] );
+            fprintf( stderr, "\n" );
+        }
 #endif
-	return numRead;
+        return numRead;
     }
 
     /*
@@ -269,33 +275,37 @@ pl_Read (fd, buffer, numReq)
      * readable if they only request as much data as is in the buffers).
      */
     numRead = 0;
-    while ((readList != NULL) && (numRead < numReq)) {
-	numToCopy = readList->bufSize - readList->offset;
-	if (numToCopy + numRead > numReq) {
-	    numToCopy = numReq - numRead;
-	}
-	memcpy (buffer+numRead, readList->buffer+readList->offset, numToCopy);
+    while (( readList != NULL ) && ( numRead < numReq ))
+    {
+        numToCopy = readList->bufSize - readList->offset;
+        if ( numToCopy + numRead > numReq )
+        {
+            numToCopy = numReq - numRead;
+        }
+        memcpy( buffer + numRead, readList->buffer + readList->offset, numToCopy );
 
-	/*
-	 * Consume the data
-	 */
-	tmp = readList;
-	readList = readList->next;
-	tmp->offset += numToCopy;
-	if (tmp->offset == tmp->bufSize) {
-	    free (tmp->buffer);
-	    free (tmp);
-	    partial[fd] = readList;
-	}
-	numRead += numToCopy;
+        /*
+         * Consume the data
+         */
+        tmp          = readList;
+        readList     = readList->next;
+        tmp->offset += numToCopy;
+        if ( tmp->offset == tmp->bufSize )
+        {
+            free( tmp->buffer );
+            free( tmp );
+            partial[fd] = readList;
+        }
+        numRead += numToCopy;
     }
 
     /*
      * Only call read if at the end of a previously incomplete packet.
      */
-    if ((numRead < numReq)) {
-	numToCopy = numReq - numRead;
-	numRead += read(fd, buffer+numRead, numToCopy);
+    if (( numRead < numReq ))
+    {
+        numToCopy = numReq - numRead;
+        numRead  += read( fd, buffer + numRead, numToCopy );
     }
 
     return numRead;
@@ -303,7 +313,7 @@ pl_Read (fd, buffer, numReq)
 
 /*----------------------------------------------------------------------*\
  *  This part for Tcl-DP only
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
 #ifdef PLD_dp
 
@@ -321,51 +331,53 @@ pl_Read (fd, buffer, numReq)
  *
  * Derived from source code in "UNIX Network Programming" by W. Richard
  * Stevens, Prentice Hall, 1990.
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
 static char *
-get_inet(listptr, length)
-    char **listptr;
-    int length;
+get_inet( listptr, length )
+char **listptr;
+int length;
 {
-    struct in_addr	*ptr;
+    struct in_addr *ptr;
 
-    while ( (ptr = (struct in_addr *) *listptr++) == NULL)
-	continue;
+    while (( ptr = (struct in_addr *) *listptr++ ) == NULL )
+        continue;
 
-    return inet_ntoa(*ptr);
+    return inet_ntoa( *ptr );
 }
 
 int
-plHost_ID(clientData, interp, argc, argv)
-    ClientData clientData;
-    Tcl_Interp *interp;
-    int argc;
-    char **argv;
+plHost_ID( clientData, interp, argc, argv )
+ClientData clientData;
+Tcl_Interp *interp;
+int        argc;
+char       **argv;
 {
-    register struct hostent	*hostptr;
-    char			hostname[100];
+    register struct hostent *hostptr;
+    char                    hostname[100];
 
-    if (gethostname(hostname, 100)) {
-	Tcl_AppendResult(interp, "Error -- cannot get host name",
-			 (char *) NULL);
-	return TCL_ERROR;
+    if ( gethostname( hostname, 100 ))
+    {
+        Tcl_AppendResult( interp, "Error -- cannot get host name",
+            (char *) NULL );
+        return TCL_ERROR;
     }
 
-    if ( (hostptr = gethostbyname(hostname)) == NULL) {
-	Tcl_AppendResult(interp, "Error -- cannot get host info for node ",
-			 hostname, (char *) NULL);
-	return TCL_ERROR;
+    if (( hostptr = gethostbyname( hostname )) == NULL )
+    {
+        Tcl_AppendResult( interp, "Error -- cannot get host info for node ",
+            hostname, (char *) NULL );
+        return TCL_ERROR;
     }
 
-    Tcl_SetResult(interp,
-		  get_inet(hostptr->h_addr_list, hostptr->h_length),
-		  TCL_VOLATILE);
+    Tcl_SetResult( interp,
+        get_inet( hostptr->h_addr_list, hostptr->h_length ),
+        TCL_VOLATILE );
 
     return TCL_OK;
 }
 
-#endif	/* PLD_dp */
+#endif  /* PLD_dp */
 
 /*
  *--------------------------------------------------------------
@@ -391,16 +403,16 @@ plHost_ID(clientData, interp, argc, argv)
  *--------------------------------------------------------------
  */
 int
-pl_PacketReceive(interp, iodev, pdfs)
-    Tcl_Interp *interp;
-    PLiodev *iodev;
-    PDFstrm *pdfs;
+pl_PacketReceive( interp, iodev, pdfs )
+Tcl_Interp * interp;
+PLiodev *iodev;
+PDFstrm *pdfs;
 {
-    int j, numRead;
-    unsigned int packetLen, header[2];
-    int headerSize;
+    int           j, numRead;
+    unsigned int  packetLen, header[2];
+    int           headerSize;
     unsigned char hbuf[8];
-    char *errMsg;
+    char          *errMsg;
 
     pdfs->bp = 0;
 
@@ -408,25 +420,27 @@ pl_PacketReceive(interp, iodev, pdfs)
      * Read in the header (8 bytes)
      */
     headerSize = 8;
-    numRead = pl_Read (iodev->fd, (char *) hbuf, headerSize);
+    numRead    = pl_Read( iodev->fd, (char *) hbuf, headerSize );
 
-    if (numRead <= 0) {
+    if ( numRead <= 0 )
+    {
 #ifdef DEBUG
-	fprintf(stderr, "Incorrect header read, numRead = %d\n", numRead);
+        fprintf( stderr, "Incorrect header read, numRead = %d\n", numRead );
 #endif
-	goto readError;
+        goto readError;
     }
 
     /*
      * Check for incomplete read.  If so, put it back and return.
      */
-    if (numRead < headerSize) {
+    if ( numRead < headerSize )
+    {
 #ifdef DEBUG
-	fprintf(stderr, "Incomplete header read, numRead = %d\n", numRead);
+        fprintf( stderr, "Incomplete header read, numRead = %d\n", numRead );
 #endif
-	pl_Unread (iodev->fd, (char *) hbuf, numRead, 1);
-	Tcl_ResetResult(interp);
-	return TCL_OK;
+        pl_Unread( iodev->fd, (char *) hbuf, numRead, 1 );
+        Tcl_ResetResult( interp );
+        return TCL_OK;
     }
 
     /*
@@ -438,13 +452,13 @@ pl_PacketReceive(interp, iodev, pdfs)
 
     j = 0;
 
-    header[0] = 0;
+    header[0]  = 0;
     header[0] |= hbuf[j++] << 24;
     header[0] |= hbuf[j++] << 16;
     header[0] |= hbuf[j++] << 8;
     header[0] |= hbuf[j++];
 
-    header[1] = 0;
+    header[1]  = 0;
     header[1] |= hbuf[j++] << 24;
     header[1] |= hbuf[j++] << 16;
     header[1] |= hbuf[j++] << 8;
@@ -457,11 +471,12 @@ pl_PacketReceive(interp, iodev, pdfs)
      *		Next 4 bytes are packetLen.
      *		Next packetLen-headerSize is zero terminated string
      */
-    if (header[0] != PACKET_MAGIC) {
-	fprintf(stderr, "Badly formatted packet, numRead = %d\n", numRead);
-        Tcl_AppendResult(interp, "Error reading from ", iodev->typeName,
-			 ": badly formatted packet", (char *) NULL);
-	return TCL_ERROR;
+    if ( header[0] != PACKET_MAGIC )
+    {
+        fprintf( stderr, "Badly formatted packet, numRead = %d\n", numRead );
+        Tcl_AppendResult( interp, "Error reading from ", iodev->typeName,
+            ": badly formatted packet", (char *) NULL );
+        return TCL_ERROR;
     }
     packetLen = header[1] - headerSize;
 
@@ -469,10 +484,11 @@ pl_PacketReceive(interp, iodev, pdfs)
      * Expand the size of the buffer, as needed.
      */
 
-    if (header[1] > (unsigned) pdfs->bufmax) {
-	free((void *) pdfs->buffer);
-	pdfs->bufmax = header[1] + 32;
-	pdfs->buffer = (unsigned char *) malloc(pdfs->bufmax);
+    if ( header[1] > (unsigned) pdfs->bufmax )
+    {
+        free((void *) pdfs->buffer );
+        pdfs->bufmax = header[1] + 32;
+        pdfs->buffer = (unsigned char *) malloc( pdfs->bufmax );
     }
 
     /*
@@ -483,43 +499,52 @@ pl_PacketReceive(interp, iodev, pdfs)
      * function) but the rest of the packet is still out on the network.
      */
 
-    if (iodev->type == 0) {
-	numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
-    } else {
+    if ( iodev->type == 0 )
+    {
+        numRead = pl_Read( iodev->fd, (char *) pdfs->buffer, packetLen );
+    }
+    else
+    {
 #ifdef PLD_dp
-	if (Tdp_FDIsReady(iodev->fd) & TCL_FILE_READABLE) {
-	    numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
-	} else {
+        if ( Tdp_FDIsReady( iodev->fd ) & TCL_FILE_READABLE )
+        {
+            numRead = pl_Read( iodev->fd, (char *) pdfs->buffer, packetLen );
+        }
+        else
+        {
 #ifdef DEBUG
-	    fprintf(stderr, "Packet not ready, putting back header\n");
+            fprintf( stderr, "Packet not ready, putting back header\n" );
 #endif
-	    pl_Unread (iodev->fd, (char *) hbuf, headerSize, 1);
-	    Tcl_ResetResult(interp);
-	    return TCL_OK;
-	}
+            pl_Unread( iodev->fd, (char *) hbuf, headerSize, 1 );
+            Tcl_ResetResult( interp );
+            return TCL_OK;
+        }
 #endif
     }
 
-    if (numRead <= 0) {
-	goto readError;
+    if ( numRead <= 0 )
+    {
+        goto readError;
     }
 
-    if ((unsigned) numRead != packetLen) {
+    if ((unsigned) numRead != packetLen )
+    {
 #ifdef DEBUG
-	fprintf(stderr, "Incomplete packet read, numRead = %d\n", numRead);
+        fprintf( stderr, "Incomplete packet read, numRead = %d\n", numRead );
 #endif
-	pl_Unread (iodev->fd, (char *) pdfs->buffer, numRead, 1);
-	pl_Unread (iodev->fd, (char *) hbuf, headerSize, 1);
-	return TCL_OK;
+        pl_Unread( iodev->fd, (char *) pdfs->buffer, numRead, 1 );
+        pl_Unread( iodev->fd, (char *) hbuf, headerSize, 1 );
+        return TCL_OK;
     }
 
     pdfs->bp = numRead;
 #ifdef DEBUG
-    fprintf(stderr, "received %d byte packet starting with:", numRead);
-    for (j = 0; j < 4; j++) {
-	fprintf(stderr, " %x", 0x000000FF & (unsigned long) pdfs->buffer[j]);
+    fprintf( stderr, "received %d byte packet starting with:", numRead );
+    for ( j = 0; j < 4; j++ )
+    {
+        fprintf( stderr, " %x", 0x000000FF & (unsigned long) pdfs->buffer[j] );
     }
-    fprintf(stderr, "\n");
+    fprintf( stderr, "\n" );
 #endif
 
     return TCL_OK;
@@ -535,37 +560,45 @@ readError:
      * return a null string.
      */
 
-    if (errno == EWOULDBLOCK || errno == EAGAIN) {
-	Tcl_ResetResult(interp);
-	return TCL_OK;
+    if ( errno == EWOULDBLOCK || errno == EAGAIN )
+    {
+        Tcl_ResetResult( interp );
+        return TCL_OK;
     }
 
     /* Record the error before closing the file */
-    if (numRead != 0) {
-	errMsg = (char *) Tcl_PosixError (interp);
-    } else {
-	errMsg = NULL;	/* Suppresses spurious compiler warning */
+    if ( numRead != 0 )
+    {
+        errMsg = (char *) Tcl_PosixError( interp );
+    }
+    else
+    {
+        errMsg = NULL;  /* Suppresses spurious compiler warning */
     }
 
     /*
      * Remove the file handler and close the file.
      */
-    if (iodev->type == 0) {
+    if ( iodev->type == 0 )
+    {
 /* Exclude UNIX-only feature */
-#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
-	Tk_DeleteFileHandler(iodev->fd);
+#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+        Tk_DeleteFileHandler( iodev->fd );
 #endif
-	close(iodev->fd);
+        close( iodev->fd );
     }
-    pl_FreeReadBuffer(iodev->fd);
+    pl_FreeReadBuffer( iodev->fd );
 
-    Tcl_ResetResult(interp);
-    if (numRead == 0) {
-	return TCL_OK;
-    } else {
-	Tcl_AppendResult (interp, "pl_PacketReceive -- error reading from ",
-			  iodev->typeName, ": ", errMsg, (char *) NULL);
-	return TCL_ERROR;
+    Tcl_ResetResult( interp );
+    if ( numRead == 0 )
+    {
+        return TCL_OK;
+    }
+    else
+    {
+        Tcl_AppendResult( interp, "pl_PacketReceive -- error reading from ",
+            iodev->typeName, ": ", errMsg, (char *) NULL );
+        return TCL_ERROR;
     }
 }
 
@@ -589,16 +622,16 @@ readError:
  */
 
 int
-pl_PacketSend(interp, iodev, pdfs)
-    Tcl_Interp *interp;
-    PLiodev *iodev;
-    PDFstrm *pdfs;
+pl_PacketSend( interp, iodev, pdfs )
+Tcl_Interp * interp;
+PLiodev *iodev;
+PDFstrm *pdfs;
 {
-    int j, numSent;
+    int           j, numSent;
     unsigned char hbuf[8];
-    unsigned int packetLen, header[2];
-    int len;
-    char *buffer, tmp[256];
+    unsigned int  packetLen, header[2];
+    int           len;
+    char          *buffer, tmp[256];
 
     /*
      * Format up the packet:
@@ -619,15 +652,15 @@ pl_PacketSend(interp, iodev, pdfs)
 
     j = 0;
 
-    hbuf[j++] = (header[0] & (unsigned long) 0xFF000000) >> 24;
-    hbuf[j++] = (header[0] & (unsigned long) 0x00FF0000) >> 16;
-    hbuf[j++] = (header[0] & (unsigned long) 0x0000FF00) >> 8;
-    hbuf[j++] = (header[0] & (unsigned long) 0x000000FF);
+    hbuf[j++] = ( header[0] & (unsigned long) 0xFF000000 ) >> 24;
+    hbuf[j++] = ( header[0] & (unsigned long) 0x00FF0000 ) >> 16;
+    hbuf[j++] = ( header[0] & (unsigned long) 0x0000FF00 ) >> 8;
+    hbuf[j++] = ( header[0] & (unsigned long) 0x000000FF );
 
-    hbuf[j++] = (header[1] & (unsigned long) 0xFF000000) >> 24;
-    hbuf[j++] = (header[1] & (unsigned long) 0x00FF0000) >> 16;
-    hbuf[j++] = (header[1] & (unsigned long) 0x0000FF00) >> 8;
-    hbuf[j++] = (header[1] & (unsigned long) 0x000000FF);
+    hbuf[j++] = ( header[1] & (unsigned long) 0xFF000000 ) >> 24;
+    hbuf[j++] = ( header[1] & (unsigned long) 0x00FF0000 ) >> 16;
+    hbuf[j++] = ( header[1] & (unsigned long) 0x0000FF00 ) >> 8;
+    hbuf[j++] = ( header[1] & (unsigned long) 0x000000FF );
 
     /*
      * Send it off, with error checking.
@@ -635,58 +668,65 @@ pl_PacketSend(interp, iodev, pdfs)
      * the msg so it can go out in a single write() call.
      */
 
-    len = pdfs->bp + 8;
-    buffer = (char *) malloc(len);
+    len    = pdfs->bp + 8;
+    buffer = (char *) malloc( len );
 
-    memcpy(buffer, (char *) hbuf, 8);
-    memcpy(buffer + 8, (char *) pdfs->buffer, pdfs->bp);
+    memcpy( buffer, (char *) hbuf, 8 );
+    memcpy( buffer + 8, (char *) pdfs->buffer, pdfs->bp );
 
 #ifdef DEBUG
-    fprintf(stderr, "sending  %d byte packet starting with:", len);
-    for (j = 0; j < 12; j++) {
-	fprintf(stderr, " %x", 0x000000FF & (unsigned long) buffer[j]);
+    fprintf( stderr, "sending  %d byte packet starting with:", len );
+    for ( j = 0; j < 12; j++ )
+    {
+        fprintf( stderr, " %x", 0x000000FF & (unsigned long) buffer[j] );
     }
-    fprintf(stderr, "\n");
+    fprintf( stderr, "\n" );
 #endif
-    numSent = write(iodev->fd, buffer, len);
+    numSent = write( iodev->fd, buffer, len );
 
-    free(buffer);
+    free( buffer );
 
-    if ((unsigned) numSent != packetLen) {
+    if ((unsigned) numSent != packetLen )
+    {
+        if (( errno == 0 ) || ( errno == EWOULDBLOCK || errno == EAGAIN ))
+        {
+            /*
+             * Non-blocking I/O: return number of bytes actually sent.
+             */
+            Tcl_ResetResult( interp );
+            sprintf( tmp, "%d", numSent - 8 );
+            Tcl_SetResult( interp, tmp, TCL_VOLATILE );
+            return TCL_OK;
+        }
+        else if ( errno == EPIPE )
+        {
+            /*
+             * Got a broken pipe signal, which means the far end closed
+             * the connection.  Close the file and return 0 bytes sent.
+             */
+            if ( iodev->type == 0 )
+            {
+                close( iodev->fd );
+            }
+            sprintf( tmp, "0" );
+            Tcl_SetResult( interp, tmp, TCL_VOLATILE );
+            return TCL_OK;
+        }
+        else
+        {
+            Tcl_AppendResult( interp, "pl_PacketSend -- error writing to ",
+                iodev->typeName, ": ",
+                Tcl_PosixError( interp ), (char *) NULL );
+        }
 
-	if ((errno == 0) || (errno == EWOULDBLOCK || errno == EAGAIN)) {
-	    /*
-	     * Non-blocking I/O: return number of bytes actually sent.
-	     */
-	    Tcl_ResetResult(interp);
-	    sprintf (tmp, "%d", numSent - 8);
-	    Tcl_SetResult(interp, tmp, TCL_VOLATILE);
-	    return TCL_OK;
-	} else if (errno == EPIPE) {
-	    /*
-	     * Got a broken pipe signal, which means the far end closed
-	     * the connection.  Close the file and return 0 bytes sent.
-	     */
-	    if (iodev->type == 0) {
-		close(iodev->fd);
-	    }
-	    sprintf (tmp, "0");
-	    Tcl_SetResult(interp, tmp, TCL_VOLATILE);
-	    return TCL_OK;
-	} else {
-	    Tcl_AppendResult (interp, "pl_PacketSend -- error writing to ",
-			      iodev->typeName, ": ",
-			      Tcl_PosixError (interp), (char *) NULL);
-	}
-
-	return TCL_ERROR;
+        return TCL_ERROR;
     }
 
     /*
      * Return the number of bytes sent (minus the header).
      */
-    sprintf (tmp, "%d", numSent - 8);
-    Tcl_SetResult(interp, tmp, TCL_VOLATILE);
+    sprintf( tmp, "%d", numSent - 8 );
+    Tcl_SetResult( interp, tmp, TCL_VOLATILE );
     return TCL_OK;
 }
 
@@ -697,4 +737,4 @@ pldummy_tcpip()
     return 0;
 }
 
-#endif	/* defined(PLD_tk) || defined (ENABLE_tk)*/
+#endif  /* defined(PLD_tk) || defined (ENABLE_tk)*/

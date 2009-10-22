@@ -16,13 +16,13 @@
 /* Modified version of the "Tdp_PacketSend" command. */
 
 PLDLLIMPEXP_TCLTK int
-pl_PacketSend		PLARGS((Tcl_Interp *interp, PLiodev *iodev,
-				PDFstrm *pdfs));
+pl_PacketSend           PLARGS(( Tcl_Interp * interp, PLiodev * iodev,
+                                 PDFstrm * pdfs ));
 
 /* Modified version of the "Tdp_PacketReceive" command. */
 
 PLDLLIMPEXP_TCLTK int
-pl_PacketReceive	PLARGS((Tcl_Interp *interp, PLiodev *iodev,
-				PDFstrm *pdfs));
+pl_PacketReceive        PLARGS(( Tcl_Interp * interp, PLiodev * iodev,
+                                 PDFstrm * pdfs ));
 
-#endif	/* __TCPIP_H__ */
+#endif  /* __TCPIP_H__ */

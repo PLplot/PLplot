@@ -81,19 +81,19 @@
 
 /* From itkDecls.h */
 
-EXTERN int		Itk_Init _ANSI_ARGS_((Tcl_Interp * interp));
+EXTERN int Itk_Init _ANSI_ARGS_(( Tcl_Interp * interp ));
 
 /* From tclIntDecls.h */
 
 #ifndef Tcl_Import_TCL_DECLARED
-EXTERN int		Tcl_Import _ANSI_ARGS_((Tcl_Interp * interp,
-				Tcl_Namespace * nsPtr, char * pattern,
-				int allowOverwrite));
+EXTERN int Tcl_Import _ANSI_ARGS_(( Tcl_Interp * interp,
+                                    Tcl_Namespace * nsPtr, char * pattern,
+                                    int allowOverwrite ));
 #endif
 
 #ifndef Tcl_GetGlobalNamespace_TCL_DECLARE
-EXTERN Tcl_Namespace *	Tcl_GetGlobalNamespace _ANSI_ARGS_((
-				Tcl_Interp * interp));
+EXTERN Tcl_Namespace * Tcl_GetGlobalNamespace _ANSI_ARGS_((
+                                                              Tcl_Interp * interp ));
 #endif
 
 /*
@@ -103,60 +103,60 @@ EXTERN Tcl_Namespace *	Tcl_GetGlobalNamespace _ANSI_ARGS_((
  */
 
 /* these are defined in unistd.h, included by plplotP.h
-extern void		exit _ANSI_ARGS_((int status));
-extern int		isatty _ANSI_ARGS_((int fd));
-extern int		read _ANSI_ARGS_((int fd, char *buf, size_t size));
-*/
-extern char *		strrchr _ANSI_ARGS_((CONST char *string, int c));
+ * extern void		exit _ANSI_ARGS_((int status));
+ * extern int		isatty _ANSI_ARGS_((int fd));
+ * extern int		read _ANSI_ARGS_((int fd, char *buf, size_t size));
+ */
+extern char *           strrchr _ANSI_ARGS_(( CONST char *string, int c ));
 
 /*
  * Global variables used by the main program:
  */
 
-static Tcl_Interp *interp;	/* Interpreter for this application. */
-static Tcl_DString command;	/* Used to assemble lines of terminal input
-				 * into Tcl commands. */
-static int tty;			/* Non-zero means standard input is a
-				 * terminal-like device.  Zero means it's
-				 * a file. */
+static Tcl_Interp  *interp;     /* Interpreter for this application. */
+static Tcl_DString command;     /* Used to assemble lines of terminal input
+                                 * into Tcl commands. */
+static int         tty;         /* Non-zero means standard input is a
+                                 * terminal-like device.  Zero means it's
+                                 * a file. */
 static char errorExitCmd[] = "exit 1";
 
 /*
  * Command-line options:
  */
 
-static int synchronize = 0;
-static const char *script = NULL;
-static const char *fileName = NULL;
-static const char *name = NULL;
-static const char *display = NULL;
-static const char *geometry = NULL;
+static int         synchronize = 0;
+static const char  *script     = NULL;
+static const char  *fileName   = NULL;
+static const char  *name       = NULL;
+static const char  *display    = NULL;
+static const char  *geometry   = NULL;
 
 static Tk_ArgvInfo argTable[] = {
-    {"-file", TK_ARGV_STRING, (char *) NULL, (char *) &fileName,
-	"File from which to read commands"},
-    {"-e", TK_ARGV_STRING, (char *) NULL, (char *) &script,
-	"Script to execute on startup"},
-    {"-geometry", TK_ARGV_STRING, (char *) NULL, (char *) &geometry,
-	"Initial geometry for window"},
-    {"-display", TK_ARGV_STRING, (char *) NULL, (char *) &display,
-	"Display to use"},
-    {"-name", TK_ARGV_STRING, (char *) NULL, (char *) &name,
-	"Name to use for application"},
-    {"-sync", TK_ARGV_CONSTANT, (char *) 1, (char *) &synchronize,
-	"Use synchronous mode for display server"},
-    {(char *) NULL, TK_ARGV_END, (char *) NULL, (char *) NULL,
-	(char *) NULL}
+    { "-file",       TK_ARGV_STRING,   (char *) NULL, (char *) &fileName,
+      "File from which to read commands" },
+    { "-e",          TK_ARGV_STRING,   (char *) NULL, (char *) &script,
+      "Script to execute on startup" },
+    { "-geometry",   TK_ARGV_STRING,   (char *) NULL, (char *) &geometry,
+      "Initial geometry for window" },
+    { "-display",    TK_ARGV_STRING,   (char *) NULL, (char *) &display,
+      "Display to use" },
+    { "-name",       TK_ARGV_STRING,   (char *) NULL, (char *) &name,
+      "Name to use for application" },
+    { "-sync",       TK_ARGV_CONSTANT, (char *) 1,    (char *) &synchronize,
+      "Use synchronous mode for display server" },
+    { (char *) NULL, TK_ARGV_END,      (char *) NULL, (char *) NULL,
+      (char *) NULL }
 };
 
 /*
  * Forward declarations for procedures defined later in this file:
  */
 
-static void		Prompt _ANSI_ARGS_((Tcl_Interp *interp, int partial));
-static void		StdinProc _ANSI_ARGS_((ClientData clientData,
-			    int mask));
-
+static void Prompt _ANSI_ARGS_(( Tcl_Interp * interp, int partial ));
+static void StdinProc _ANSI_ARGS_(( ClientData clientData,
+                                    int mask ));
+
 /*
  *----------------------------------------------------------------------
  *
@@ -177,45 +177,53 @@ static void		StdinProc _ANSI_ARGS_((ClientData clientData,
  */
 
 int
-pltkMain(int argc, const char **argv, char *RcFileName,
-	 int (*AppInit)(Tcl_Interp *interp))
+pltkMain( int argc, const char **argv, char *RcFileName,
+          int ( *AppInit )( Tcl_Interp *interp ))
 {
-    char *args, *msg;
+    char       *args, *msg;
     const char *p;
-    char buf[20];
-    int code;
+    char       buf[20];
+    int        code;
 
 #ifdef HAVE_PTHREAD
     XInitThreads();
 #endif
 
-    Tcl_FindExecutable(argv[0]);
+    Tcl_FindExecutable( argv[0] );
     interp = Tcl_CreateInterp();
 #ifdef TCL_MEM_DEBUG
-    Tcl_InitMemory(interp);
+    Tcl_InitMemory( interp );
 #endif
 
     /*
      * Parse command-line arguments.
      */
 
-    if (Tk_ParseArgv(interp, (Tk_Window) NULL, &argc, argv, argTable, 0)
-	    != TCL_OK) {
-	fprintf(stderr, "%s\n", interp->result);
-	exit(1);
+    if ( Tk_ParseArgv( interp, (Tk_Window) NULL, &argc, argv, argTable, 0 )
+         != TCL_OK )
+    {
+        fprintf( stderr, "%s\n", interp->result );
+        exit( 1 );
     }
-    if (name == NULL) {
-	if (fileName != NULL) {
-	    p = fileName;
-	} else {
-	    p = argv[0];
-	}
-	name = strrchr(p, '/');
-	if (name != NULL) {
-	    name++;
-	} else {
-	    name = p;
-	}
+    if ( name == NULL )
+    {
+        if ( fileName != NULL )
+        {
+            p = fileName;
+        }
+        else
+        {
+            p = argv[0];
+        }
+        name = strrchr( p, '/' );
+        if ( name != NULL )
+        {
+            name++;
+        }
+        else
+        {
+            name = p;
+        }
     }
 
     /*
@@ -224,8 +232,9 @@ pltkMain(int argc, const char **argv, char *RcFileName,
      * any sub-processes created by us.
      */
 
-    if (display != NULL) {
-	Tcl_SetVar2(interp, "env", "DISPLAY", display, TCL_GLOBAL_ONLY);
+    if ( display != NULL )
+    {
+        Tcl_SetVar2( interp, "env", "DISPLAY", display, TCL_GLOBAL_ONLY );
     }
 
     /*
@@ -237,44 +246,51 @@ pltkMain(int argc, const char **argv, char *RcFileName,
      * and `name' has already been setup above
      */
 
-    Tcl_SetVar(interp, "argv0", name, TCL_GLOBAL_ONLY);
+    Tcl_SetVar( interp, "argv0", name, TCL_GLOBAL_ONLY );
 
-    if ( Tcl_Init( interp ) == TCL_ERROR ) {
-	return TCL_ERROR;
+    if ( Tcl_Init( interp ) == TCL_ERROR )
+    {
+        return TCL_ERROR;
     }
-    if ( Tk_Init( interp ) == TCL_ERROR ) {
-	return TCL_ERROR;
+    if ( Tk_Init( interp ) == TCL_ERROR )
+    {
+        return TCL_ERROR;
     }
 #ifdef HAVE_ITCL
-    if ( Itcl_Init( interp ) == TCL_ERROR ) {
-	return TCL_ERROR;
+    if ( Itcl_Init( interp ) == TCL_ERROR )
+    {
+        return TCL_ERROR;
     }
 #endif
 #ifdef HAVE_ITK
-    if ( Itk_Init( interp ) == TCL_ERROR ) {
-	return TCL_ERROR;
+    if ( Itk_Init( interp ) == TCL_ERROR )
+    {
+        return TCL_ERROR;
     }
 
 /*
-  Pulled in this next section from itkwish in itcl3.0.1.
-*/
+ * Pulled in this next section from itkwish in itcl3.0.1.
+ */
 
     /*
      *  This is itkwish, so import all [incr Tcl] commands by
      *  default into the global namespace.  Fix up the autoloader
      *  to do the same.
      */
-    if (Tcl_Import(interp, Tcl_GetGlobalNamespace(interp),
-            "::itk::*", /* allowOverwrite */ 1) != TCL_OK) {
+    if ( Tcl_Import( interp, Tcl_GetGlobalNamespace( interp ),
+             "::itk::*", /* allowOverwrite */ 1 ) != TCL_OK )
+    {
         return TCL_ERROR;
     }
 
-    if (Tcl_Import(interp, Tcl_GetGlobalNamespace(interp),
-            "::itcl::*", /* allowOverwrite */ 1) != TCL_OK) {
+    if ( Tcl_Import( interp, Tcl_GetGlobalNamespace( interp ),
+             "::itcl::*", /* allowOverwrite */ 1 ) != TCL_OK )
+    {
         return TCL_ERROR;
     }
 
-    if (Tcl_Eval(interp, "auto_mkindex_parser::slavehook { _%@namespace import -force ::itcl::* ::itk::* }") != TCL_OK) {
+    if ( Tcl_Eval( interp, "auto_mkindex_parser::slavehook { _%@namespace import -force ::itcl::* ::itk::* }" ) != TCL_OK )
+    {
         return TCL_ERROR;
     }
 #endif
@@ -285,23 +301,24 @@ pltkMain(int argc, const char **argv, char *RcFileName,
      * specified on the command line.
      */
 
-    args = Tcl_Merge(argc-1, (CONST char * CONST *) argv+1);
-    Tcl_SetVar(interp, "argv", args, TCL_GLOBAL_ONLY);
-    ckfree(args);
-    sprintf(buf, "%d", argc-1);
-    Tcl_SetVar(interp, "argc", buf, TCL_GLOBAL_ONLY);
+    args = Tcl_Merge( argc - 1, ( CONST char * CONST * )argv + 1 );
+    Tcl_SetVar( interp, "argv", args, TCL_GLOBAL_ONLY );
+    ckfree( args );
+    sprintf( buf, "%d", argc - 1 );
+    Tcl_SetVar( interp, "argc", buf, TCL_GLOBAL_ONLY );
 
-    if (geometry != NULL) {
-	Tcl_SetVar(interp, "geometry", geometry, TCL_GLOBAL_ONLY);
+    if ( geometry != NULL )
+    {
+        Tcl_SetVar( interp, "geometry", geometry, TCL_GLOBAL_ONLY );
     }
 
     /*
      * Set the "tcl_interactive" variable.
      */
 
-    tty = isatty(0);
-    Tcl_SetVar(interp, "tcl_interactive",
-	    ((fileName == NULL) && tty) ? "1" : "0", TCL_GLOBAL_ONLY);
+    tty = isatty( 0 );
+    Tcl_SetVar( interp, "tcl_interactive",
+        (( fileName == NULL ) && tty ) ? "1" : "0", TCL_GLOBAL_ONLY );
 
     /*
      * Add a few application-specific commands to the application's
@@ -312,82 +329,98 @@ pltkMain(int argc, const char **argv, char *RcFileName,
      * Invoke application-specific initialization.
      */
 
-    if ((*AppInit)(interp) != TCL_OK) {
-	fprintf(stderr, "(*AppInit) failed: %s\n", interp->result);
+    if (( *AppInit )( interp ) != TCL_OK )
+    {
+        fprintf( stderr, "(*AppInit) failed: %s\n", interp->result );
     }
 
     /*
      * Set the geometry of the main window, if requested.
      */
 
-    if (geometry != NULL) {
-	code = Tcl_VarEval(interp, "wm geometry . ", geometry, (char *) NULL);
-	if (code != TCL_OK) {
-	    fprintf(stderr, "%s\n", interp->result);
-	}
+    if ( geometry != NULL )
+    {
+        code = Tcl_VarEval( interp, "wm geometry . ", geometry, (char *) NULL );
+        if ( code != TCL_OK )
+        {
+            fprintf( stderr, "%s\n", interp->result );
+        }
     }
 
     /*
      * Process the startup script, if any.
      */
 
-    if (script != NULL) {
-	code = Tcl_VarEval(interp, script, (char *) NULL);
-	if (code != TCL_OK) {
-	    goto error;
-	}
-	tty = 0;
+    if ( script != NULL )
+    {
+        code = Tcl_VarEval( interp, script, (char *) NULL );
+        if ( code != TCL_OK )
+        {
+            goto error;
+        }
+        tty = 0;
     }
 
     /*
      * Invoke the script specified on the command line, if any.
      */
 
-    if (fileName != NULL) {
-	code = Tcl_VarEval(interp, "source ", fileName, (char *) NULL);
-	if (code != TCL_OK) {
-	    goto error;
-	}
-	tty = 0;
-    } else {
-	/*
-	 * Commands will come from standard input, so set up an event
-	 * handler for standard input.  If the input device is aEvaluate the
-	 * .rc file, if one has been specified, set up an event handler
-	 * for standard input, and print a prompt if the input
-	 * device is a terminal.
-	 */
-
-	if (RcFileName != NULL) {
-	    Tcl_DString buffer;
-	    char *fullName;
-	    FILE *f;
-
-	    fullName = Tcl_TildeSubst(interp, RcFileName, &buffer);
-	    if (fullName == NULL) {
-		fprintf(stderr, "%s\n", interp->result);
-	    } else {
-		f = fopen(fullName, "r");
-		if (f != NULL) {
-		    code = Tcl_EvalFile(interp, fullName);
-		    if (code != TCL_OK) {
-			fprintf(stderr, "%s\n", interp->result);
-		    }
-		    fclose(f);
-		}
-	    }
-	    Tcl_DStringFree(&buffer);
-	}
-/* Exclude UNIX-only feature */
-#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
-	Tk_CreateFileHandler(0, TK_READABLE, StdinProc, (ClientData) 0);
-#endif
-	if (tty) {
-	    Prompt(interp, 0);
-	}
+    if ( fileName != NULL )
+    {
+        code = Tcl_VarEval( interp, "source ", fileName, (char *) NULL );
+        if ( code != TCL_OK )
+        {
+            goto error;
+        }
+        tty = 0;
     }
-    fflush(stdout);
-    Tcl_DStringInit(&command);
+    else
+    {
+        /*
+         * Commands will come from standard input, so set up an event
+         * handler for standard input.  If the input device is aEvaluate the
+         * .rc file, if one has been specified, set up an event handler
+         * for standard input, and print a prompt if the input
+         * device is a terminal.
+         */
+
+        if ( RcFileName != NULL )
+        {
+            Tcl_DString buffer;
+            char        *fullName;
+            FILE        *f;
+
+            fullName = Tcl_TildeSubst( interp, RcFileName, &buffer );
+            if ( fullName == NULL )
+            {
+                fprintf( stderr, "%s\n", interp->result );
+            }
+            else
+            {
+                f = fopen( fullName, "r" );
+                if ( f != NULL )
+                {
+                    code = Tcl_EvalFile( interp, fullName );
+                    if ( code != TCL_OK )
+                    {
+                        fprintf( stderr, "%s\n", interp->result );
+                    }
+                    fclose( f );
+                }
+            }
+            Tcl_DStringFree( &buffer );
+        }
+/* Exclude UNIX-only feature */
+#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+        Tk_CreateFileHandler( 0, TK_READABLE, StdinProc, (ClientData) 0 );
+#endif
+        if ( tty )
+        {
+            Prompt( interp, 0 );
+        }
+    }
+    fflush( stdout );
+    Tcl_DStringInit( &command );
 
     /*
      * Loop infinitely, waiting for commands to execute.  When there
@@ -402,19 +435,20 @@ pltkMain(int argc, const char **argv, char *RcFileName,
      * to do additional cleanup.
      */
 
-    Tcl_Eval(interp, "exit");
-    exit(1);
+    Tcl_Eval( interp, "exit" );
+    exit( 1 );
 
 error:
-    msg = (char *) Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY);
-    if (msg == NULL) {
-	msg = interp->result;
+    msg = (char *) Tcl_GetVar( interp, "errorInfo", TCL_GLOBAL_ONLY );
+    if ( msg == NULL )
+    {
+        msg = interp->result;
     }
-    fprintf(stderr, "%s\n", msg);
-    Tcl_Eval(interp, errorExitCmd);
-    return 1;			/* Needed only to prevent compiler warnings. */
+    fprintf( stderr, "%s\n", msg );
+    Tcl_Eval( interp, errorExitCmd );
+    return 1;                   /* Needed only to prevent compiler warnings. */
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -435,44 +469,54 @@ error:
  *----------------------------------------------------------------------
  */
 
-    /* ARGSUSED */
+/* ARGSUSED */
 static void
-StdinProc(clientData, mask)
-    ClientData clientData;		/* Not used. */
-    int mask;				/* Not used. */
+StdinProc( clientData, mask )
+ClientData clientData;                  /* Not used. */
+int mask;                               /* Not used. */
 {
-#define BUFFER_SIZE 4000
-    char input[BUFFER_SIZE+1];
+#define BUFFER_SIZE    4000
+    char       input[BUFFER_SIZE + 1];
     static int gotPartial = 0;
-    char *cmd;
-    int code, count;
+    char       *cmd;
+    int        code, count;
 
-    count = read(fileno(stdin), input, BUFFER_SIZE);
-    if (count <= 0) {
-	if (!gotPartial) {
-	    if (tty) {
-		Tcl_Eval(interp, "exit");
-		exit(1);
-	    } else {
-#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
-		Tk_DeleteFileHandler(0);
+    count = read( fileno( stdin ), input, BUFFER_SIZE );
+    if ( count <= 0 )
+    {
+        if ( !gotPartial )
+        {
+            if ( tty )
+            {
+                Tcl_Eval( interp, "exit" );
+                exit( 1 );
+            }
+            else
+            {
+#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+                Tk_DeleteFileHandler( 0 );
 #endif
-	    }
-	    return;
-	} else {
-	    count = 0;
-	}
+            }
+            return;
+        }
+        else
+        {
+            count = 0;
+        }
     }
-    cmd = Tcl_DStringAppend(&command, input, count);
-    if (count != 0) {
-	if ((input[count-1] != '\n') && (input[count-1] != ';')) {
-	    gotPartial = 1;
-	    goto prompt;
-	}
-	if (!Tcl_CommandComplete(cmd)) {
-	    gotPartial = 1;
-	    goto prompt;
-	}
+    cmd = Tcl_DStringAppend( &command, input, count );
+    if ( count != 0 )
+    {
+        if (( input[count - 1] != '\n' ) && ( input[count - 1] != ';' ))
+        {
+            gotPartial = 1;
+            goto prompt;
+        }
+        if ( !Tcl_CommandComplete( cmd ))
+        {
+            gotPartial = 1;
+            goto prompt;
+        }
     }
     gotPartial = 0;
 
@@ -483,30 +527,33 @@ StdinProc(clientData, mask)
      * finished.  Among other things, this will trash the text of the
      * command being evaluated.
      */
-#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
-    Tk_CreateFileHandler(0, 0, StdinProc, (ClientData) 0);
+#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+    Tk_CreateFileHandler( 0, 0, StdinProc, (ClientData) 0 );
 #endif
-    code = Tcl_RecordAndEval(interp, cmd, 0);
-#if !defined(MAC_TCL) && !defined(__WIN32__) && !defined(__CYGWIN__)
-    Tk_CreateFileHandler(0, TK_READABLE, StdinProc, (ClientData) 0);
+    code = Tcl_RecordAndEval( interp, cmd, 0 );
+#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+    Tk_CreateFileHandler( 0, TK_READABLE, StdinProc, (ClientData) 0 );
 #endif
-    Tcl_DStringFree(&command);
-    if (*interp->result != 0) {
-	if ((code != TCL_OK) || (tty)) {
-	    printf("%s\n", interp->result);
-	}
+    Tcl_DStringFree( &command );
+    if ( *interp->result != 0 )
+    {
+        if (( code != TCL_OK ) || ( tty ))
+        {
+            printf( "%s\n", interp->result );
+        }
     }
 
     /*
      * Output a prompt.
      */
 
-    prompt:
-    if (tty) {
-	Prompt(interp, gotPartial);
+prompt:
+    if ( tty )
+    {
+        Prompt( interp, gotPartial );
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -526,30 +573,35 @@ StdinProc(clientData, mask)
  */
 
 static void
-Prompt(interp, partial)
-    Tcl_Interp *interp;			/* Interpreter to use for prompting. */
-    int partial;			/* Non-zero means there already
-					 * exists a partial command, so use
-					 * the secondary prompt. */
+Prompt( interp, partial )
+Tcl_Interp * interp;                    /* Interpreter to use for prompting. */
+int partial;                            /* Non-zero means there already
+                                         * exists a partial command, so use
+                                         * the secondary prompt. */
 {
     char *promptCmd;
-    int code;
+    int  code;
 
-    promptCmd = (char *) Tcl_GetVar(interp,
-	partial ? "tcl_prompt2" : "tcl_prompt1", TCL_GLOBAL_ONLY);
-    if (promptCmd == NULL) {
-	defaultPrompt:
-	if (!partial) {
-	    fputs("% ", stdout);
-	}
-    } else {
-	code = Tcl_Eval(interp, promptCmd);
-	if (code != TCL_OK) {
-	    Tcl_AddErrorInfo(interp,
-		    "\n    (script that generates prompt)");
-	    fprintf(stderr, "%s\n", interp->result);
-	    goto defaultPrompt;
-	}
+    promptCmd = (char *) Tcl_GetVar( interp,
+        partial ? "tcl_prompt2" : "tcl_prompt1", TCL_GLOBAL_ONLY );
+    if ( promptCmd == NULL )
+    {
+defaultPrompt:
+        if ( !partial )
+        {
+            fputs( "% ", stdout );
+        }
     }
-    fflush(stdout);
+    else
+    {
+        code = Tcl_Eval( interp, promptCmd );
+        if ( code != TCL_OK )
+        {
+            Tcl_AddErrorInfo( interp,
+                "\n    (script that generates prompt)" );
+            fprintf( stderr, "%s\n", interp->result );
+            goto defaultPrompt;
+        }
+    }
+    fflush( stdout );
 }

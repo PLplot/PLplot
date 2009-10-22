@@ -23,15 +23,15 @@ extern "C" {
 /* Main program for a Tcl-based shell that reads Tcl commands from stdin. */
 
 PLDLLIMPEXP_TCLTK int
-pltclMain(int argc, const char **argv, char *RcFileName,
-	  int (*AppInit)(Tcl_Interp *interp));
+pltclMain( int argc, const char **argv, char *RcFileName,
+           int ( *AppInit )( Tcl_Interp *interp ));
 
 /* tclAPI.c */
 /* Front-end to PLplot/Tcl API for use from Tcl commands (e.g. plframe). */
 
 PLDLLIMPEXP_TCLTK int
-plTclCmd(char *cmdlist, Tcl_Interp *interp,
-	 int argc, const char **argv);
+plTclCmd( char *cmdlist, Tcl_Interp *interp,
+          int argc, const char **argv );
 
 /* Initialization routine for PLplot-extended tclsh's (like pltcl). */
 
@@ -45,20 +45,20 @@ PlbasicInit( Tcl_Interp *interp );
 /* Sets up auto_path variable */
 
 PLDLLIMPEXP_TCLTK int
-pls_auto_path(Tcl_Interp *interp);
+pls_auto_path( Tcl_Interp *interp );
 
 /* Tcl command -- wait until the specified condition is satisfied. */
 
 PLDLLIMPEXP_TCLTK int
-plWait_Until(ClientData, Tcl_Interp *, int, const char **);
+plWait_Until( ClientData, Tcl_Interp *, int, const char ** );
 
 /* Tcl command -- return the IP address for the current host.  */
 
 int
-plHost_ID(ClientData clientData, Tcl_Interp *interp, int argc, const char **argv);
+plHost_ID( ClientData clientData, Tcl_Interp *interp, int argc, const char **argv );
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif	/* __PLTCL_H__ */
+#endif  /* __PLTCL_H__ */

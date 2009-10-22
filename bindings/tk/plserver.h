@@ -3,7 +3,7 @@
  * Maurice LeBrun
  * 6-May-93
  *
- * Declarations for plserver and associated files.  
+ * Declarations for plserver and associated files.
  */
 
 #ifndef __PLSERVER_H__
@@ -15,15 +15,16 @@
 
 /* State info for the rendering code */
 
-typedef struct {
-    char  *client;			/* Name of client main window */
-    PDFstrm *pdfs;			/* PDF stream descriptor */
-    PLiodev *iodev;			/* I/O info */
-    int   nbytes;			/* data bytes waiting to be read */
-    int   at_bop, at_eop;		/* bop/eop condition flags */
+typedef struct
+{
+    char    *client;                    /* Name of client main window */
+    PDFstrm *pdfs;                      /* PDF stream descriptor */
+    PLiodev *iodev;                     /* I/O info */
+    int     nbytes;                     /* data bytes waiting to be read */
+    int     at_bop, at_eop;             /* bop/eop condition flags */
 
-    short xmin, xmax, ymin, ymax;	/* Data minima and maxima */
-    PLFLT xold, yold;			/* Endpoints of last line plotted */
+    short   xmin, xmax, ymin, ymax;     /* Data minima and maxima */
+    PLFLT   xold, yold;                 /* Endpoints of last line plotted */
 } PLRDev;
 
 /* External function prototypes. */
@@ -34,21 +35,21 @@ typedef struct {
 /* Invoked to process the "plframe" Tcl command. */
 
 int
-plFrameCmd(ClientData clientData, Tcl_Interp *interp,
-	   int argc, const char **argv);
+plFrameCmd( ClientData clientData, Tcl_Interp *interp,
+            int argc, const char **argv );
 int
-plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
-	   int argc, const char **argv);
+plPlotterCmd( ClientData clientData, Tcl_Interp *interp,
+              int argc, const char **argv );
 
 /* plr.c */
 /* Set default state parameters before anyone else has a chance to. */
 
 PLDLLIMPEXP_TCLTK void
-plr_start(PLRDev *plr);
+plr_start( PLRDev *plr );
 
 /* Read & process commands until "nbyte_max" bytes have been read. */
 
 PLDLLIMPEXP_TCLTK int
-plr_process(PLRDev *plr);
+plr_process( PLRDev *plr );
 
-#endif	/* __PLSERVER_H__ */
+#endif  /* __PLSERVER_H__ */

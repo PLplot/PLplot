@@ -40,7 +40,7 @@
 
 #ifdef BUILD_Plplot
 #undef TCL_STORAGE_CLASS
-#define TCL_STORAGE_CLASS DLLEXPORT
+#define TCL_STORAGE_CLASS    DLLEXPORT
 #endif /* BUILD_Vfs */
 
 /*----------------------------------------------------------------------*\
@@ -50,7 +50,7 @@
  * Creates the plframe, wait_until, and host_id (w/Tcl-DP only)
  * commands.  The more basic Plplot-Tcl initialization is handled by
  * the Plbasicinit function called from here.
-\*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
 EXTERN int
 Plplotter_Init( Tcl_Interp *interp )
@@ -62,14 +62,15 @@ Plplotter_Init( Tcl_Interp *interp )
      * is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
      * be loaded into 8.1
      */
-    Tcl_InitStubs(interp,"8.1",0);
+    Tcl_InitStubs( interp, "8.1", 0 );
 #endif
 #ifdef USE_TK_STUBS
-    Tk_InitStubs(interp,"8.1",0);
+    Tk_InitStubs( interp, "8.1", 0 );
 #endif
     /* This must be before any other Tcl related calls */
-    if (PlbasicInit(interp) != TCL_OK) {
-	return TCL_ERROR;
+    if ( PlbasicInit( interp ) != TCL_OK )
+    {
+        return TCL_ERROR;
     }
 
     /*
@@ -87,9 +88,9 @@ Plplotter_Init( Tcl_Interp *interp )
 /* plframe -- PLplot graphing widget */
 
     Tcl_CreateCommand( interp, "plframe", (Tcl_CmdProc*) plPlotterCmd,
-		       (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
+        (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL );
 
-    Tcl_PkgProvide(interp,"Plplotter",VERSION);
+    Tcl_PkgProvide( interp, "Plplotter", VERSION );
     return TCL_OK;
 }
 

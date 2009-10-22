@@ -53,18 +53,18 @@
 
 #ifdef HAVE_TCL_GT_84
 /* From (private) tclInt.h in tcl8.5 */
-#define TclFormatInt(buf, n)            sprintf((buf), "%ld", (long)(n))
+#define TclFormatInt( buf, n )    sprintf(( buf ), "%ld", (long) ( n ))
 #else
 /* From (private) tclIntDecls.h in tcl8.4 and before*/
-EXTERN int		TclFormatInt _ANSI_ARGS_((char * buffer, long n));
+EXTERN int TclFormatInt _ANSI_ARGS_(( char * buffer, long n ));
 #endif
 
 #ifndef TclObjCommandComplete_TCL_DECLARED
-EXTERN int		TclObjCommandComplete _ANSI_ARGS_((Tcl_Obj * cmdPtr));
+EXTERN int TclObjCommandComplete _ANSI_ARGS_(( Tcl_Obj * cmdPtr ));
 #endif
 
 # undef TCL_STORAGE_CLASS
-# define TCL_STORAGE_CLASS DLLEXPORT
+# define TCL_STORAGE_CLASS    DLLEXPORT
 
 /*
  * The following code ensures that tclLink.c is linked whenever
@@ -74,7 +74,7 @@ EXTERN int		TclObjCommandComplete _ANSI_ARGS_((Tcl_Obj * cmdPtr));
  */
 
 EXTERN int Tcl_LinkVar();
-int (*tclDummyLinkVarPtr)() = Tcl_LinkVar;
+int ( *tclDummyLinkVarPtr )() = Tcl_LinkVar;
 
 /*
  * Declarations for various library procedures and variables (don't want
@@ -85,68 +85,73 @@ int (*tclDummyLinkVarPtr)() = Tcl_LinkVar;
  * on some systems, so it's better just to leave it out.
  */
 
-extern int		isatty _ANSI_ARGS_((int fd));
-extern char *		strcpy _ANSI_ARGS_((char *dst, CONST char *src));
+extern int isatty _ANSI_ARGS_((int fd));
+extern char *           strcpy _ANSI_ARGS_(( char *dst, CONST char *src ));
 
 static const char *tclStartupScriptFileName = NULL;
 
 /* pltcl enhancements */
 
 static void
-plPrepOutputHandler(Tcl_Interp *interp, int code, int tty);
+plPrepOutputHandler( Tcl_Interp *interp, int code, int tty );
 
 /* These are globally visible and can be replaced */
 
-void (*tclErrorHandler)(Tcl_Interp *interp, int code, int tty) = NULL;
+void ( *tclErrorHandler )( Tcl_Interp *interp, int code, int tty ) = NULL;
 
-void (*tclPrepOutputHandler)(Tcl_Interp *interp, int code, int tty)
-     = plPrepOutputHandler;
+void ( *tclPrepOutputHandler )( Tcl_Interp *interp, int code, int tty )
+    = plPrepOutputHandler;
 
 /* Options data structure definition. */
 
-static char *tclStartupScript = NULL;
-static const char *pltcl_notes[] = {
+static char          *tclStartupScript = NULL;
+static const char    *pltcl_notes[]    = {
     "Specifying the filename on the command line is compatible with modern",
     "tclsh syntax.  Old tclsh's used the -f syntax, which is still supported.",
     "You may use either syntax but not both.",
-    NULL};
-
-static PLOptionTable options[] = {
-{
-    "f",			/* File to read & process */
-    NULL,
-    NULL,
-    &tclStartupScriptFileName,
-    PL_OPT_STRING,
-    "-f",
-    "File from which to read commands" },
-{
-    "file",			/* File to read & process (alias) */
-    NULL,
-    NULL,
-    &tclStartupScriptFileName,
-    PL_OPT_STRING | PL_OPT_INVISIBLE,
-    "-file",
-    "File from which to read commands" },
-{
-    "e",			/* Script to run on startup */
-    NULL,
-    NULL,
-    &tclStartupScript,
-    PL_OPT_STRING,
-    "-e",
-    "Script to execute on startup" },
-{
-    NULL,			/* option */
-    NULL,			/* handler */
-    NULL,			/* client data */
-    NULL,			/* address of variable to set */
-    0,				/* mode flag */
-    NULL,			/* short syntax */
-    NULL }			/* long syntax */
+    NULL
 };
 
-
+static PLOptionTable options[] = {
+    {
+        "f",                    /* File to read & process */
+        NULL,
+        NULL,
+        &tclStartupScriptFileName,
+        PL_OPT_STRING,
+        "-f",
+        "File from which to read commands"
+    },
+    {
+        "file",                 /* File to read & process (alias) */
+        NULL,
+        NULL,
+        &tclStartupScriptFileName,
+        PL_OPT_STRING | PL_OPT_INVISIBLE,
+        "-file",
+        "File from which to read commands"
+    },
+    {
+        "e",                    /* Script to run on startup */
+        NULL,
+        NULL,
+        &tclStartupScript,
+        PL_OPT_STRING,
+        "-e",
+        "Script to execute on startup"
+    },
+    {
+        NULL,                   /* option */
+        NULL,                   /* handler */
+        NULL,                   /* client data */
+        NULL,                   /* address of variable to set */
+        0,                      /* mode flag */
+        NULL,                   /* short syntax */
+        NULL
+    }                           /* long syntax */
+};
+
+
 /*
  *----------------------------------------------------------------------
  *
@@ -164,12 +169,12 @@ static PLOptionTable options[] = {
  *
  *----------------------------------------------------------------------
  */
-void TclSetStartupScriptFileName(char *fileName)
+void TclSetStartupScriptFileName( char *fileName )
 {
     tclStartupScriptFileName = fileName;
 }
 
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -186,13 +191,13 @@ void TclSetStartupScriptFileName(char *fileName)
  *
  *----------------------------------------------------------------------
  */
-const char *TclGetStartupScriptFileName(void)
+const char *TclGetStartupScriptFileName( void )
 {
     return tclStartupScriptFileName;
 }
 
 
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -213,32 +218,32 @@ const char *TclGetStartupScriptFileName(void)
  */
 
 int PLDLLEXPORT
-pltclMain(int argc, const char **argv, char *RcFileName /* OBSOLETE */,
-	  int (*appInitProc)(Tcl_Interp *interp))
+pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
+           int ( *appInitProc )( Tcl_Interp *interp ))
 {
-    Tcl_Obj *resultPtr;
-    Tcl_Obj *commandPtr = NULL;
-    char buffer[1000], *args;
-    int code, gotPartial, tty, length;
-    int exitCode = 0;
+    Tcl_Obj     *resultPtr;
+    Tcl_Obj     *commandPtr = NULL;
+    char        buffer[1000], *args;
+    int         code, gotPartial, tty, length;
+    int         exitCode = 0;
     Tcl_Channel inChannel, outChannel, errChannel;
-    Tcl_Interp *interp;
+    Tcl_Interp  *interp;
     Tcl_DString argString;
 
-    char usage[500];
+    char        usage[500];
 
-    Tcl_FindExecutable(argv[0]);
+    Tcl_FindExecutable( argv[0] );
     interp = Tcl_CreateInterp();
 #ifdef TCL_MEM_DEBUG
-    Tcl_InitMemory(interp);
+    Tcl_InitMemory( interp );
 #endif
 
     /* First process plplot-specific args using the PLplot parser. */
 
-    sprintf(usage, "\nUsage:\n        %s [filename] [options]\n", argv[0]);
-    plSetUsage(NULL, usage);
-    plMergeOpts(options, "pltcl options", pltcl_notes);
-    (void) plparseopts(&argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
+    sprintf( usage, "\nUsage:\n        %s [filename] [options]\n", argv[0] );
+    plSetUsage( NULL, usage );
+    plMergeOpts( options, "pltcl options", pltcl_notes );
+    (void) plparseopts( &argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
 
     /*
      * Make (remaining) command-line arguments available in the Tcl variables
@@ -246,63 +251,72 @@ pltclMain(int argc, const char **argv, char *RcFileName /* OBSOLETE */,
      * strip it off and use it as the name of a script file to process.
      */
 
-    if (tclStartupScriptFileName == NULL) {
-	if ((argc > 1) && (argv[1][0] != '-')) {
-	    tclStartupScriptFileName = argv[1];
-	    argc--;
-	    argv++;
-	}
+    if ( tclStartupScriptFileName == NULL )
+    {
+        if (( argc > 1 ) && ( argv[1][0] != '-' ))
+        {
+            tclStartupScriptFileName = argv[1];
+            argc--;
+            argv++;
+        }
     }
-    args = Tcl_Merge(argc-1, (CONST char * CONST *) argv+1);
-    Tcl_ExternalToUtfDString(NULL, args, -1, &argString);
-    Tcl_SetVar(interp, "argv", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
-    Tcl_DStringFree(&argString);
-    ckfree(args);
+    args = Tcl_Merge( argc - 1, ( CONST char * CONST * )argv + 1 );
+    Tcl_ExternalToUtfDString( NULL, args, -1, &argString );
+    Tcl_SetVar( interp, "argv", Tcl_DStringValue( &argString ), TCL_GLOBAL_ONLY );
+    Tcl_DStringFree( &argString );
+    ckfree( args );
 
-    if (tclStartupScriptFileName == NULL) {
-	Tcl_ExternalToUtfDString(NULL, argv[0], -1, &argString);
-    } else {
-	tclStartupScriptFileName = Tcl_ExternalToUtfDString(NULL,
-		tclStartupScriptFileName, -1, &argString);
+    if ( tclStartupScriptFileName == NULL )
+    {
+        Tcl_ExternalToUtfDString( NULL, argv[0], -1, &argString );
+    }
+    else
+    {
+        tclStartupScriptFileName = Tcl_ExternalToUtfDString( NULL,
+            tclStartupScriptFileName, -1, &argString );
     }
 
-    TclFormatInt(buffer, argc-1);
-    Tcl_SetVar(interp, "argc", buffer, TCL_GLOBAL_ONLY);
-    Tcl_SetVar(interp, "argv0", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
+    TclFormatInt( buffer, argc - 1 );
+    Tcl_SetVar( interp, "argc", buffer, TCL_GLOBAL_ONLY );
+    Tcl_SetVar( interp, "argv0", Tcl_DStringValue( &argString ), TCL_GLOBAL_ONLY );
 
     /*
      * Set the "tcl_interactive" variable.
      */
 
-    tty = isatty(0);
-    Tcl_SetVar(interp, "tcl_interactive",
-	    ((tclStartupScriptFileName == NULL) && tty) ? "1" : "0",
-	    TCL_GLOBAL_ONLY);
+    tty = isatty( 0 );
+    Tcl_SetVar( interp, "tcl_interactive",
+        (( tclStartupScriptFileName == NULL ) && tty ) ? "1" : "0",
+        TCL_GLOBAL_ONLY );
 
     /*
      * Invoke application-specific initialization.
      */
 
-    if ((*appInitProc)(interp) != TCL_OK) {
-	errChannel = Tcl_GetStdChannel(TCL_STDERR);
-	if (errChannel) {
-	    Tcl_WriteChars(errChannel,
-		    "application-specific initialization failed: ", -1);
-	    Tcl_WriteObj(errChannel, Tcl_GetObjResult(interp));
-	    Tcl_WriteChars(errChannel, "\n", 1);
-	}
+    if (( *appInitProc )( interp ) != TCL_OK )
+    {
+        errChannel = Tcl_GetStdChannel( TCL_STDERR );
+        if ( errChannel )
+        {
+            Tcl_WriteChars( errChannel,
+                "application-specific initialization failed: ", -1 );
+            Tcl_WriteObj( errChannel, Tcl_GetObjResult( interp ));
+            Tcl_WriteChars( errChannel, "\n", 1 );
+        }
     }
 
     /*
      * Process the startup script, if any.
      */
 
-    if (tclStartupScript != NULL) {
-	code = Tcl_VarEval(interp, tclStartupScript, (char *) NULL);
-	if (code != TCL_OK) {
-	    fprintf(stderr, "%s\n", interp->result);
-	    exitCode = 1;
-	}
+    if ( tclStartupScript != NULL )
+    {
+        code = Tcl_VarEval( interp, tclStartupScript, (char *) NULL );
+        if ( code != TCL_OK )
+        {
+            fprintf( stderr, "%s\n", interp->result );
+            exitCode = 1;
+        }
     }
 
     /*
@@ -310,33 +324,36 @@ pltclMain(int argc, const char **argv, char *RcFileName /* OBSOLETE */,
      * and quit.
      */
 
-    if (tclStartupScriptFileName != NULL) {
-	code = Tcl_EvalFile(interp, tclStartupScriptFileName);
-	if (code != TCL_OK) {
-	    errChannel = Tcl_GetStdChannel(TCL_STDERR);
-	    if (errChannel) {
-		/*
-		 * The following statement guarantees that the errorInfo
-		 * variable is set properly.
-		 */
+    if ( tclStartupScriptFileName != NULL )
+    {
+        code = Tcl_EvalFile( interp, tclStartupScriptFileName );
+        if ( code != TCL_OK )
+        {
+            errChannel = Tcl_GetStdChannel( TCL_STDERR );
+            if ( errChannel )
+            {
+                /*
+                 * The following statement guarantees that the errorInfo
+                 * variable is set properly.
+                 */
 
-		Tcl_AddErrorInfo(interp, "");
-		Tcl_WriteObj(errChannel, Tcl_GetVar2Ex(interp, "errorInfo",
-			NULL, TCL_GLOBAL_ONLY));
-		Tcl_WriteChars(errChannel, "\n", 1);
-	    }
-	    exitCode = 1;
-	}
-	goto done;
+                Tcl_AddErrorInfo( interp, "" );
+                Tcl_WriteObj( errChannel, Tcl_GetVar2Ex( interp, "errorInfo",
+                        NULL, TCL_GLOBAL_ONLY ));
+                Tcl_WriteChars( errChannel, "\n", 1 );
+            }
+            exitCode = 1;
+        }
+        goto done;
     }
-    Tcl_DStringFree(&argString);
+    Tcl_DStringFree( &argString );
 
     /*
      * We're running interactively.  Source a user-specific startup
      * file if the application specified one and if the file exists.
      */
 
-    Tcl_SourceRCFile(interp);
+    Tcl_SourceRCFile( interp );
 
     /*
      * Process commands from stdin until there's an end-of-file.  Note
@@ -345,102 +362,122 @@ pltclMain(int argc, const char **argv, char *RcFileName /* OBSOLETE */,
      */
 
     commandPtr = Tcl_NewObj();
-    Tcl_IncrRefCount(commandPtr);
+    Tcl_IncrRefCount( commandPtr );
 
-    inChannel = Tcl_GetStdChannel(TCL_STDIN);
-    outChannel = Tcl_GetStdChannel(TCL_STDOUT);
+    inChannel  = Tcl_GetStdChannel( TCL_STDIN );
+    outChannel = Tcl_GetStdChannel( TCL_STDOUT );
     gotPartial = 0;
-    while (1) {
-	if (tty) {
-	    Tcl_Obj *promptCmdPtr;
+    while ( 1 )
+    {
+        if ( tty )
+        {
+            Tcl_Obj *promptCmdPtr;
 
-	    promptCmdPtr = Tcl_GetVar2Ex(interp,
-		    (gotPartial ? "tcl_prompt2" : "tcl_prompt1"),
-		    NULL, TCL_GLOBAL_ONLY);
-	    if (promptCmdPtr == NULL) {
-                defaultPrompt:
-		if (!gotPartial && outChannel) {
-		    Tcl_WriteChars(outChannel, "% ", 2);
-		}
-	    } else {
-		code = Tcl_EvalObjEx(interp, promptCmdPtr, 0);
-		inChannel = Tcl_GetStdChannel(TCL_STDIN);
-		outChannel = Tcl_GetStdChannel(TCL_STDOUT);
-		errChannel = Tcl_GetStdChannel(TCL_STDERR);
-		if (code != TCL_OK) {
-		    if (errChannel) {
-			Tcl_WriteObj(errChannel, Tcl_GetObjResult(interp));
-			Tcl_WriteChars(errChannel, "\n", 1);
-		    }
-		    Tcl_AddErrorInfo(interp,
-			    "\n    (script that generates prompt)");
-		    goto defaultPrompt;
-		}
-	    }
-	    if (outChannel) {
-		Tcl_Flush(outChannel);
-	    }
-	}
-	if (!inChannel) {
-	    goto done;
-	}
-        length = Tcl_GetsObj(inChannel, commandPtr);
-	if (length < 0) {
-	    goto done;
-	}
-	if ((length == 0) && Tcl_Eof(inChannel) && (!gotPartial)) {
-	    goto done;
-	}
+            promptCmdPtr = Tcl_GetVar2Ex( interp,
+                ( gotPartial ? "tcl_prompt2" : "tcl_prompt1" ),
+                NULL, TCL_GLOBAL_ONLY );
+            if ( promptCmdPtr == NULL )
+            {
+defaultPrompt:
+                if ( !gotPartial && outChannel )
+                {
+                    Tcl_WriteChars( outChannel, "% ", 2 );
+                }
+            }
+            else
+            {
+                code       = Tcl_EvalObjEx( interp, promptCmdPtr, 0 );
+                inChannel  = Tcl_GetStdChannel( TCL_STDIN );
+                outChannel = Tcl_GetStdChannel( TCL_STDOUT );
+                errChannel = Tcl_GetStdChannel( TCL_STDERR );
+                if ( code != TCL_OK )
+                {
+                    if ( errChannel )
+                    {
+                        Tcl_WriteObj( errChannel, Tcl_GetObjResult( interp ));
+                        Tcl_WriteChars( errChannel, "\n", 1 );
+                    }
+                    Tcl_AddErrorInfo( interp,
+                        "\n    (script that generates prompt)" );
+                    goto defaultPrompt;
+                }
+            }
+            if ( outChannel )
+            {
+                Tcl_Flush( outChannel );
+            }
+        }
+        if ( !inChannel )
+        {
+            goto done;
+        }
+        length = Tcl_GetsObj( inChannel, commandPtr );
+        if ( length < 0 )
+        {
+            goto done;
+        }
+        if (( length == 0 ) && Tcl_Eof( inChannel ) && ( !gotPartial ))
+        {
+            goto done;
+        }
 
         /*
          * Add the newline removed by Tcl_GetsObj back to the string.
          */
 
-	Tcl_AppendToObj(commandPtr, "\n", 1);
-	if (!TclObjCommandComplete(commandPtr)) {
-	    gotPartial = 1;
-	    continue;
-	}
+        Tcl_AppendToObj( commandPtr, "\n", 1 );
+        if ( !TclObjCommandComplete( commandPtr ))
+        {
+            gotPartial = 1;
+            continue;
+        }
 
-	gotPartial = 0;
-	code = Tcl_RecordAndEvalObj(interp, commandPtr, 0);
-	inChannel = Tcl_GetStdChannel(TCL_STDIN);
-	outChannel = Tcl_GetStdChannel(TCL_STDOUT);
-	errChannel = Tcl_GetStdChannel(TCL_STDERR);
-	Tcl_DecrRefCount(commandPtr);
-	commandPtr = Tcl_NewObj();
-	Tcl_IncrRefCount(commandPtr);
+        gotPartial = 0;
+        code       = Tcl_RecordAndEvalObj( interp, commandPtr, 0 );
+        inChannel  = Tcl_GetStdChannel( TCL_STDIN );
+        outChannel = Tcl_GetStdChannel( TCL_STDOUT );
+        errChannel = Tcl_GetStdChannel( TCL_STDERR );
+        Tcl_DecrRefCount( commandPtr );
+        commandPtr = Tcl_NewObj();
+        Tcl_IncrRefCount( commandPtr );
 
-	/* User defined function to deal with tcl command output */
-	/* Deprecated; for backward compatibility only */
-	if ( ((code != TCL_OK) || tty) && tclErrorHandler )
-	    (*tclErrorHandler)(interp, code, tty);
-	else {
-	    /* User defined function to prepare for tcl output */
-	    /* This is the new way */
-	    if ( ((code != TCL_OK) || tty) && tclPrepOutputHandler )
-		(*tclPrepOutputHandler)(interp, code, tty);
-	    /* Back to the stock tcl code */
-	    if (code != TCL_OK) {
-		if (errChannel) {
-		    Tcl_WriteObj(errChannel, Tcl_GetObjResult(interp));
-		    Tcl_WriteChars(errChannel, "\n", 1);
-		}
-	    } else if (tty) {
-		resultPtr = Tcl_GetObjResult(interp);
-		Tcl_GetStringFromObj(resultPtr, &length);
-		if ((length > 0) && outChannel) {
-		    Tcl_WriteObj(outChannel, resultPtr);
-		    Tcl_WriteChars(outChannel, "\n", 1);
-		}
-	    }
-	}
+        /* User defined function to deal with tcl command output */
+        /* Deprecated; for backward compatibility only */
+        if ((( code != TCL_OK ) || tty ) && tclErrorHandler )
+            ( *tclErrorHandler )( interp, code, tty );
+        else
+        {
+            /* User defined function to prepare for tcl output */
+            /* This is the new way */
+            if ((( code != TCL_OK ) || tty ) && tclPrepOutputHandler )
+                ( *tclPrepOutputHandler )( interp, code, tty );
+            /* Back to the stock tcl code */
+            if ( code != TCL_OK )
+            {
+                if ( errChannel )
+                {
+                    Tcl_WriteObj( errChannel, Tcl_GetObjResult( interp ));
+                    Tcl_WriteChars( errChannel, "\n", 1 );
+                }
+            }
+            else if ( tty )
+            {
+                resultPtr = Tcl_GetObjResult( interp );
+                Tcl_GetStringFromObj( resultPtr, &length );
+                if (( length > 0 ) && outChannel )
+                {
+                    Tcl_WriteObj( outChannel, resultPtr );
+                    Tcl_WriteChars( outChannel, "\n", 1 );
+                }
+            }
+        }
 #ifdef TCL_MEM_DEBUG
-	if (tclMemDumpFileName != NULL) {
-	    Tcl_DecrRefCount(commandPtr);
-	    Tcl_DeleteInterp(interp);
-	    Tcl_Exit(0);
-	}
+        if ( tclMemDumpFileName != NULL )
+        {
+            Tcl_DecrRefCount( commandPtr );
+            Tcl_DeleteInterp( interp );
+            Tcl_Exit( 0 );
+        }
 #endif
     }
 
@@ -450,13 +487,14 @@ pltclMain(int argc, const char **argv, char *RcFileName /* OBSOLETE */,
      * cleanup on exit.  The Tcl_Eval call should never return.
      */
 
-    done:
-    if (commandPtr != NULL) {
-	Tcl_DecrRefCount(commandPtr);
+done:
+    if ( commandPtr != NULL )
+    {
+        Tcl_DecrRefCount( commandPtr );
     }
-    sprintf(buffer, "exit %d", exitCode);
-    Tcl_Eval(interp, buffer);
-    return 0;		/* to silence warnings */
+    sprintf( buffer, "exit %d", exitCode );
+    Tcl_Eval( interp, buffer );
+    return 0;           /* to silence warnings */
 }
 
 /*
@@ -479,7 +517,7 @@ pltclMain(int argc, const char **argv, char *RcFileName /* OBSOLETE */,
  */
 
 static void
-plPrepOutputHandler(Tcl_Interp *interp, int code, int tty)
+plPrepOutputHandler( Tcl_Interp *interp, int code, int tty )
 {
     pltext();
 }
