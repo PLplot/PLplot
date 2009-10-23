@@ -10,7 +10,7 @@ int main( int argc, char *argv[] )
     cairo_surface_t *cairoSurface;
     cairo_t         *cairoContext;
 
-    cairoSurface = cairo_ps_surface_create( "test.ps", 720, 540 );
+    cairoSurface = cairo_ps_surface_create( "ext-cairo-test.ps", 720, 540 );
     cairoContext = cairo_create( cairoSurface );
 
     plsdev( "extcairo" );
