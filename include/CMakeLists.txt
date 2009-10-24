@@ -45,13 +45,14 @@ else(NOT CMAKE_CROSSCOMPILING)
   INCLUDE(${IMPORT_EXECUTABLES})
 endif(NOT CMAKE_CROSSCOMPILING)
 
+get_target_property(plhershey-unicode-gen_LOCATION plhershey-unicode-gen LOCATION)
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
-  COMMAND plhershey-unicode-gen
+  COMMAND ${plhershey-unicode-gen_LOCATION}
   ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
   ${CMAKE_CURRENT_BINARY_DIR}/plhershey-unicode.h
   DEPENDS
-  ${plhershey-unicode-gen_LOCATION}
+  plhershey-unicode-gen
   ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
   )
 
