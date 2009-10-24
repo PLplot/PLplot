@@ -544,6 +544,19 @@ if(BUILD_TEST)
       list(APPEND noninteractive_targets_LIST test_c_${device})
     endforeach(file_devices_info ${FILE_DEVICES_LIST})
 
+    if(PLD_extcairo)
+      get_target_property(ext-cairo-test_LOCATION ext-cairo-test LOCATION)
+      add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
+	COMMAND ${ext-cairo-test_LOCATION}
+	DEPENDS ext-cairo-test
+	)
+      add_custom_target(test_c_extcairo
+	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
+	)
+      list(APPEND noninteractive_targets_LIST test_c_extcairo)
+    endif(PLD_extcairo)
+
     add_custom_target(test_noninteractive)
     if(noninteractive_targets_LIST)
       add_dependencies(test_noninteractive ${noninteractive_targets_LIST})
