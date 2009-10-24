@@ -586,14 +586,21 @@ if(BUILD_TEST)
       list(APPEND interactive_targets_LIST test_c_${device})
     endforeach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
 
-    add_custom_target(test_interactive)
-    if(interactive_targets_LIST)
-      add_dependencies(test_interactive ${interactive_targets_LIST})
-    endif(interactive_targets_LIST)
+    if(PLD_extcairo)
+      get_target_property(extXdrawable_demo_LOCATION extXdrawable_demo LOCATION)
+      add_custom_target(test_extXdrawable
+	COMMAND ${extXdrawable_demo_LOCATION}
+	DEPENDS extXdrawable_demo
+	)
+      list(APPEND interactive_targets_LIST test_extXdrawable)
+    endif(PLD_extcairo)
 
   endif(ENABLE_c)
 
-  set(interactive_targets_LIST ${targets_examples_c})
+  add_custom_target(test_interactive)
+  if(interactive_targets_LIST)
+    add_dependencies(test_interactive ${interactive_targets_LIST})
+  endif(interactive_targets_LIST)
 
   if(targets_examples_tk)
     list(APPEND interactive_targets_LIST ${targets_examples_tk})
@@ -628,14 +635,6 @@ if(BUILD_TEST)
   if(target_qt_example)
     list(APPEND interactive_targets_LIST ${target_qt_example})
   endif(target_qt_example)
-
-#  add_custom_target(test_interactive
-#    COMMAND SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} EXAMPLES_DIR=${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test-interactive.sh
-#    )
-
-#  if(interactive_targets_LIST)
-#    add_dependencies(test_interactive ${interactive_targets_LIST})
-#  endif(interactive_targets_LIST)
 
 endif(BUILD_TEST)
 
