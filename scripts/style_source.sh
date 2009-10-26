@@ -146,16 +146,16 @@ export cppsource_LIST
 cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
 
 # C++ part of include. 
-# cppsource_LIST="$cppsource_LIST include/qt.h"
+cppsource_LIST="$cppsource_LIST include/qt.h"
 
 # C++ part of drivers.
-# cppsource_LIST="$cppsource_LIST drivers/wxwidgets.h drivers/*.cpp" 
+cppsource_LIST="$cppsource_LIST drivers/wxwidgets.h drivers/*.cpp" 
 
 # C++ part of examples.
-# cppsource_LIST="$cppsource_LIST examples/c++/*.cc examples/c++/*.cpp examples/c++/*.h"
+cppsource_LIST="$cppsource_LIST examples/c++/*.cc examples/c++/*.cpp examples/c++/*.h"
 
 # C++ source in bindings.
-# cppsource_LIST="$cppsource_LIST bindings/qt_gui/plqt.cpp bindings/wxwidgets/wxPLplotstream.cpp bindings/wxwidgets/wxPLplotwindow.cpp bindings/wxwidgets/wxPLplotwindow.h bindings/wxwidgets/wxPLplotstream.h.in"
+cppsource_LIST="$cppsource_LIST bindings/qt_gui/plqt.cpp bindings/wxwidgets/wxPLplotstream.cpp bindings/wxwidgets/wxPLplotwindow.cpp bindings/wxwidgets/wxPLplotwindow.h bindings/wxwidgets/wxPLplotstream.h.in"
 
 # Check that source file lists actually refer to files.
 for source in $csource_LIST $cppsource_LIST ; do

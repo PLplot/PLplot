@@ -33,84 +33,84 @@ using namespace std;
 #endif
 
 class x06 {
-
 public:
-  x06(int, const char **);
+    x06( int, const char ** );
 
 private:
-  // Class data
-  plstream *pls;
-
-
+    // Class data
+    plstream *pls;
 };
 
 
-x06::x06( int argc, const char ** argv ) {
+x06::x06( int argc, const char ** argv )
+{
+    int   i, j, k;
+    PLFLT x, y;
+    char  text[10];
 
-  int i, j, k;
-  PLFLT x, y;
-  char text[10];
+    // plplot initialization
 
-  // plplot initialization
+    pls = new plstream();
 
-  pls = new plstream();
+    // Parse and process command line arguments.
+    pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
-  // Parse and process command line arguments.
-  pls->parseopts( &argc, argv, PL_PARSE_FULL );
+    // Initialize PLplot.
+    pls->init();
 
-  // Initialize PLplot.
-  pls->init();
+    pls->adv( 0 );
 
-  pls->adv(0);
+    // Set up viewport and window.
 
-  // Set up viewport and window.
+    pls->col0( 2 );
+    pls->vpor( 0.1, 1.0, 0.1, 0.9 );
+    pls->wind( 0.0, 1.0, 0.0, 1.3 );
 
-  pls->col0(2);
-  pls->vpor(0.1, 1.0, 0.1, 0.9);
-  pls->wind(0.0, 1.0, 0.0, 1.3);
+    // Draw the grid using plbox.
 
-  // Draw the grid using plbox.
+    pls->box( "bcg", 0.1, 0, "bcg", 0.1, 0 );
 
-  pls->box("bcg", 0.1, 0, "bcg", 0.1, 0);
+    // Write the digits below the frame.
 
-  // Write the digits below the frame.
-
-  pls->col0(15);
-  for( i = 0; i <= 9; i++ ) {
-    sprintf(text,"%d",i);
-    pls->mtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
-  }
-
-  k = 0;
-  for( i = 0; i <= 12; i++ ) {
-
-    // Write the digits to the left of the frame.
-
-    sprintf(text,"%d",10*i);
-    pls->mtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, text);
-    for( j = 0; j <= 9; j++ ) {
-      x = 0.1 * j + 0.05;
-      y = 1.25 - 0.1 * i;
-
-      // Display the symbols (plpoin expects that x and y are arrays so
-      // that is what we feed it).
-
-      if (k < 128)
-	pls->poin( 1, &x, &y, k );
-      k = k + 1;
+    pls->col0( 15 );
+    for ( i = 0; i <= 9; i++ )
+    {
+        sprintf( text, "%d", i );
+        pls->mtex( "b", 1.5, ( 0.1 * i + 0.05 ), 0.5, text );
     }
-  }
 
-  pls->mtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
-  // pls->end();
+    k = 0;
+    for ( i = 0; i <= 12; i++ )
+    {
+        // Write the digits to the left of the frame.
 
-  delete pls;
+        sprintf( text, "%d", 10 * i );
+        pls->mtex( "lv", 1.0, ( 1.0 - ( 2 * i + 1 ) / 26.0 ), 1.0, text );
+        for ( j = 0; j <= 9; j++ )
+        {
+            x = 0.1 * j + 0.05;
+            y = 1.25 - 0.1 * i;
+
+            // Display the symbols (plpoin expects that x and y are arrays so
+            // that is what we feed it).
+
+            if ( k < 128 )
+                pls->poin( 1, &x, &y, k );
+            k = k + 1;
+        }
+    }
+
+    pls->mtex( "t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols" );
+    // pls->end();
+
+    delete pls;
 }
 
-int main( int argc, const char ** argv ) {
-  x06 *x = new x06( argc, argv );
+int main( int argc, const char ** argv )
+{
+    x06 *x = new x06( argc, argv );
 
-  delete x;
+    delete x;
 }
 
 

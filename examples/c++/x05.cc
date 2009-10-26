@@ -33,59 +33,58 @@ using namespace std;
 #endif
 
 class x05 {
-
 public:
-  x05(int, const char **);
+    x05( int, const char ** );
 
 private:
-  // Class data
-  plstream *pls;
+    // Class data
+    plstream         *pls;
 
-  static const int NPTS;
-
+    static const int NPTS;
 };
 
 const int x05::NPTS = 2047;
 
-x05::x05( int argc, const char ** argv ) {
+x05::x05( int argc, const char ** argv )
+{
+    int   i;
+    PLFLT *data = new PLFLT[NPTS];
+    PLFLT delta;
 
-  int i;
-  PLFLT *data = new PLFLT[NPTS];
-  PLFLT delta;
+    // plplot initialization
 
-  // plplot initialization
+    pls = new plstream();
 
-  pls = new plstream();
+    // Parse and process command line arguments.
+    pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
-  // Parse and process command line arguments.
-  pls->parseopts( &argc, argv, PL_PARSE_FULL );
+    // Initialize PLplot.
+    pls->init();
 
-  // Initialize PLplot.
-  pls->init();
+    // Fill up data points.
 
-  // Fill up data points.
+    delta = 2.0 * M_PI / (PLFLT) NPTS;
+    for ( i = 0; i < NPTS; i++ )
+        data[i] = sin( i * delta );
 
-  delta = 2.0 * M_PI / (PLFLT) NPTS;
-  for (i = 0; i < NPTS; i++)
-    data[i] = sin(i * delta);
+    pls->col0( 1 );
+    pls->hist( NPTS, data, -1.1, 1.1, 44, 0 );
+    pls->col0( 2 );
+    pls->lab( "#frValue", "#frFrequency",
+        "#frPLplot Example 5 - Probability function of Oscillator" );
 
-  pls->col0(1);
-  pls->hist(NPTS, data, -1.1, 1.1, 44, 0);
-  pls->col0(2);
-  pls->lab( "#frValue", "#frFrequency",
-	     "#frPLplot Example 5 - Probability function of Oscillator" );
+    //pls.plend();
 
-  //pls.plend();
+    delete[] data;
 
-  delete[] data;
-
-  delete pls;
+    delete pls;
 }
 
-int main( int argc, const char ** argv ) {
-  x05 *x = new x05( argc, argv );
+int main( int argc, const char ** argv )
+{
+    x05 *x = new x05( argc, argv );
 
-  delete x;
+    delete x;
 }
 
 

@@ -33,15 +33,12 @@ using namespace std;
 #endif
 
 class x19 {
-
 public:
-  x19(int, const char **);
+    x19( int, const char ** );
 
 private:
-  // Class data
-  plstream *pls;
-
-
+    // Class data
+    plstream *pls;
 };
 
 //--------------------------------------------------------------------------
@@ -53,141 +50,156 @@ private:
 //--------------------------------------------------------------------------
 
 void
-mapform19(PLINT n, PLFLT *x, PLFLT *y)
+mapform19( PLINT n, PLFLT *x, PLFLT *y )
 {
-    int i;
+    int    i;
     double xp, yp, radius;
-    for (i = 0; i < n; i++) {
+    for ( i = 0; i < n; i++ )
+    {
         radius = 90.0 - y[i];
-        xp = radius * cos(x[i] * M_PI / 180.0);
-        yp = radius * sin(x[i] * M_PI / 180.0);
-        x[i] = xp;
-        y[i] = yp;
+        xp     = radius * cos( x[i] * M_PI / 180.0 );
+        yp     = radius * sin( x[i] * M_PI / 180.0 );
+        x[i]   = xp;
+        y[i]   = yp;
     }
 }
 
 // "Normalize" longitude values so that they always fall between -180.0 and
-// 180.0 
-PLFLT 
-normalize_longitude(PLFLT lon) 
+// 180.0
+PLFLT
+normalize_longitude( PLFLT lon )
 {
     PLFLT times;
-    if (lon >= -180.0 && lon <= 180.0) {
-        return(lon);
+    if ( lon >= -180.0 && lon <= 180.0 )
+    {
+        return ( lon );
     }
-    else {
-        times = floor ((fabs(lon) + 180.0) / 360.0);
-        if (lon < 0.0) {
-            return(lon + 360.0 * times);
+    else
+    {
+        times = floor(( fabs( lon ) + 180.0 ) / 360.0 );
+        if ( lon < 0.0 )
+        {
+            return ( lon + 360.0 * times );
         }
-        else {
-            return(lon - 360.0 * times);
+        else
+        {
+            return ( lon - 360.0 * times );
         }
     }
 }
 
-// A custom axis labeling function for longitudes and latitudes. 
+// A custom axis labeling function for longitudes and latitudes.
 void
-geolocation_labeler(PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data) 
+geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data )
 {
     const char *direction_label;
-    PLFLT label_val;
+    PLFLT      label_val;
 
-    if (axis == PL_Y_AXIS) {
+    if ( axis == PL_Y_AXIS )
+    {
         label_val = value;
-        if (label_val > 0.0) {
+        if ( label_val > 0.0 )
+        {
             direction_label = " N";
         }
-        else if (label_val < 0.0) {
+        else if ( label_val < 0.0 )
+        {
             direction_label = " S";
         }
-        else {
+        else
+        {
             direction_label = "Eq";
         }
     }
-    else if (axis == PL_X_AXIS) {
-        label_val = normalize_longitude(value);
-        if (label_val > 0.0) {
+    else if ( axis == PL_X_AXIS )
+    {
+        label_val = normalize_longitude( value );
+        if ( label_val > 0.0 )
+        {
             direction_label = " E";
         }
-        else if (label_val < 0.0) {
+        else if ( label_val < 0.0 )
+        {
             direction_label = " W";
         }
-        else {
+        else
+        {
             direction_label = "";
         }
     }
-    if (axis == PL_Y_AXIS && value == 0.0) {
+    if ( axis == PL_Y_AXIS && value == 0.0 )
+    {
         /* A special case for the equator */
-        snprintf(label, length, "%s", direction_label);
+        snprintf( label, length, "%s", direction_label );
     }
-    else {
-        snprintf(label, length, "%.0f%s", fabs(label_val), direction_label);
+    else
+    {
+        snprintf( label, length, "%.0f%s", fabs( label_val ), direction_label );
     }
 }
 
 
-x19::x19( int argc, const char ** argv ) {
+x19::x19( int argc, const char ** argv )
+{
+    PLFLT minx, maxx, miny, maxy;
 
-  PLFLT minx, maxx, miny, maxy;
+    // plplot initialization
 
-  // plplot initialization
+    pls = new plstream();
 
-  pls = new plstream();
+    // Parse and process command line arguments.
+    pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
-  // Parse and process command line arguments.
-  pls->parseopts( &argc, argv, PL_PARSE_FULL );
+    // Longitude (x) and latitude (y)
 
-  // Longitude (x) and latitude (y)
+    miny = -70;
+    maxy = 80;
 
-  miny = -70;
-  maxy = 80;
+    // Initialize PLplot.
+    pls->init();
+    // Cartesian plots
+    // Most of world
 
-  // Initialize PLplot.
-  pls->init();
-  // Cartesian plots
-  // Most of world
+    minx = 190;
+    maxx = 190 + 360;
 
-  minx = 190;
-  maxx = 190+360;
+    // Setup a custom latitude and longitude-based scaling function.
+    pls->slabelfunc( geolocation_labeler, NULL );
 
-  // Setup a custom latitude and longitude-based scaling function.
-  pls->slabelfunc(geolocation_labeler, NULL);
+    pls->col0( 1 );
+    pls->env( minx, maxx, miny, maxy, 1, 70 );
+    pls->map( NULL, "usaglobe", minx, maxx, miny, maxy );
 
-  pls->col0(1);
-  pls->env(minx, maxx, miny, maxy, 1, 70);
-  pls->map(NULL, "usaglobe", minx, maxx, miny, maxy);
+    // The Americas
 
-  // The Americas
+    minx = 190;
+    maxx = 340;
 
-  minx = 190;
-  maxx = 340;
+    pls->col0( 1 );
+    pls->env( minx, maxx, miny, maxy, 1, 70 );
+    pls->map( NULL, "usaglobe", minx, maxx, miny, maxy );
 
-  pls->col0(1);
-  pls->env(minx, maxx, miny, maxy, 1, 70);
-  pls->map(NULL, "usaglobe", minx, maxx, miny, maxy);
+    // Clear the labeling function
+    pls->slabelfunc( NULL, NULL );
 
-  // Clear the labeling function
-  pls->slabelfunc(NULL, NULL);
+    // Polar, Northern hemisphere
+    minx = 0;
+    maxx = 360;
 
-  // Polar, Northern hemisphere
-  minx = 0;
-  maxx = 360;
+    pls->env( -75., 75., -75., 75., 1, -1 );
+    pls->map( mapform19, "globe", minx, maxx, miny, maxy );
 
-  pls->env(-75., 75., -75., 75., 1, -1);
-  pls->map(mapform19,"globe", minx, maxx, miny, maxy);
+    pls->lsty( 2 );
+    pls->meridians( mapform19, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
 
-  pls->lsty(2);
-  pls->meridians(mapform19,10.0, 10.0, 0.0, 360.0, -10.0, 80.0);
-
-  delete pls;
-
+    delete pls;
 }
 
-int main( int argc, const char ** argv ) {
-  x19 *x = new x19( argc, argv );
+int main( int argc, const char ** argv )
+{
+    x19 *x = new x19( argc, argv );
 
-  delete x;
+    delete x;
 }
 
 

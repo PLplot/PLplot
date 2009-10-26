@@ -41,29 +41,29 @@ using namespace std;
 // the header for it.  Here we conjure up a dopey stand in.
 
 class Matrix {
-    int nx, ny;
+    int   nx, ny;
     PLFLT *v;
-  public:
-    Matrix( int _nx, int _ny ) : nx(_nx), ny(_ny) { v = new PLFLT[nx*ny]; }
+public:
+    Matrix( int _nx, int _ny ) : nx( _nx ), ny( _ny ) { v = new PLFLT[nx * ny]; }
     ~Matrix() { delete[] v; }
 
     PLFLT& operator()( int i, int j )
     {
-	// Should do bounds checking, pass for now.
-	return v[ j*ny + i ];
+        // Should do bounds checking, pass for now.
+        return v[ j * ny + i ];
     }
 
     PLFLT operator()( int i, int j ) const
     {
-	// Should do bounds checking, pass for now.
-	return v[ j*ny + i ];
+        // Should do bounds checking, pass for now.
+        return v[ j * ny + i ];
     }
 
     void redim( int i, int j )
     {
-	delete[] v;
-	nx = i, ny = j;
-	v = new PLFLT[nx*ny];
+        delete[] v;
+        nx = i, ny = j;
+        v  = new PLFLT[nx * ny];
     }
 };
 
@@ -73,91 +73,90 @@ class Matrix {
 // the indexing operator.
 
 class ContourableMatrix : public Contourable_Data {
-    int nx, ny;
+    int    nx, ny;
     Matrix m;
-    int wrapy;			// periodic in 2nd coord ?
-  public:
-    ContourableMatrix( int _nx, int _ny, int wy =0 )
-	: Contourable_Data(_nx,_ny),
-	  nx(_nx), ny(_ny), m(nx,ny), wrapy(wy)
+    int    wrapy;               // periodic in 2nd coord ?
+public:
+    ContourableMatrix( int _nx, int _ny, int wy = 0 )
+        : Contourable_Data( _nx, _ny ),
+        nx( _nx ), ny( _ny ), m( nx, ny ), wrapy( wy )
     {}
     void elements( int& _nx, int& _ny ) const
     {
-	_nx = nx;
-	if (wrapy)
-	    _ny = ny +1;
-	else
-	    _ny = ny;
+        _nx = nx;
+        if ( wrapy )
+            _ny = ny + 1;
+        else
+            _ny = ny;
     }
     PLFLT& operator()( int i, int j )
     {
-	if (wrapy) j %= ny;
-	return m(i,j);
+        if ( wrapy ) j %= ny;
+        return m( i, j );
     }
     PLFLT operator()( int i, int j ) const
     {
-	if (wrapy) j %= ny;
-	return m(i,j);
+        if ( wrapy ) j %= ny;
+        return m( i, j );
     }
 };
-	
+
 //---------------------------------------------------------------------------//
 // For general mesh plotting, we also need to concretize the abstract
 // coordinate interface.  Do this by deriving from Coord_2d and filling in
 // the blanks.
 
 class CoordinateMatrix : public Coord_2d {
-    int nx, ny;
+    int    nx, ny;
     Matrix m;
-    int wrapy;
-  public:
-    CoordinateMatrix( int _nx, int _ny, int wy =0 )
-	: nx(_nx), ny(_ny), m(nx,ny), wrapy(wy)
+    int    wrapy;
+public:
+    CoordinateMatrix( int _nx, int _ny, int wy = 0 )
+        : nx( _nx ), ny( _ny ), m( nx, ny ), wrapy( wy )
     {}
 
-    PLFLT operator() ( int ix, int iy ) const
+    PLFLT operator()( int ix, int iy ) const
     {
-	if (wrapy) iy %= ny;
-	return m(ix,iy);
+        if ( wrapy ) iy %= ny;
+        return m( ix, iy );
     }
 
-    PLFLT& operator() ( int ix, int iy )
+    PLFLT& operator()( int ix, int iy )
     {
-	if (wrapy) iy %= ny;
-	return m(ix,iy);
+        if ( wrapy ) iy %= ny;
+        return m( ix, iy );
     }
 
     void elements( int& _nx, int& _ny )
     {
-	_nx = nx;
-	if (wrapy)
-	    _ny = ny + 1;
-	else
-	    _ny = ny;
+        _nx = nx;
+        if ( wrapy )
+            _ny = ny + 1;
+        else
+            _ny = ny;
     }
 
     void min_max( PLFLT& _min, PLFLT& _max )
     {
-	_min = _max = m(0,0);
-	for( int i=0; i < nx; i++ )
-	    for( int j=0; j < ny; j++ ) {
-		if (m(i,j) < _min) _min = m(i,j);
-		if (m(i,j) > _max) _max = m(i,j);
-	    }
+        _min = _max = m( 0, 0 );
+        for ( int i = 0; i < nx; i++ )
+            for ( int j = 0; j < ny; j++ )
+            {
+                if ( m( i, j ) < _min ) _min = m( i, j );
+                if ( m( i, j ) > _max ) _max = m( i, j );
+            }
     }
 };
 
 class x01cc {
-
 public:
-   x01cc(int, const char**);
-   void plot1();
-   void plot2();
+    x01cc( int, const char** );
+    void plot1();
+    void plot2();
 
 
 private:
-   plstream *pls;
-   
+    plstream *pls;
 };
 
 //---------------------------------------------------------------------------//
@@ -170,12 +169,13 @@ void x01cc::plot1()
     pls->env( 0., 1., 0., 1., 0, 0 );
 
     pls->col( Yellow );
-    pls->lab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
+    pls->lab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
 
     PLFLT x[6], y[6];
-    for( int i=0; i < 6; i++ ) {
-	x[i] = .2 * i;
-	y[i] = x[i] * x[i];
+    for ( int i = 0; i < 6; i++ )
+    {
+        x[i] = .2 * i;
+        y[i] = x[i] * x[i];
     }
 
     pls->col( Cyan );
@@ -193,7 +193,7 @@ void x01cc::plot1()
 
 void x01cc::plot2()
 {
-    pls->adv(0);
+    pls->adv( 0 );
 
 // First declare some objects to hold the data and the coordinates.  Note,
 // if you don't want to go to the trouble of making these derived classes so
@@ -212,84 +212,89 @@ void x01cc::plot2()
 // done from C++.  For C-- and Dogtran, one would have to copy the data to a
 // new buffer, and pad one side with an image copy of the other side.
 
-    ContourableMatrix d(64,64,1);
-    CoordinateMatrix  xg(64,64,1), yg(64,64,1);
+    ContourableMatrix d( 64, 64, 1 );
+    CoordinateMatrix  xg( 64, 64, 1 ), yg( 64, 64, 1 );
 
-    int i, j;
-    PLFLT twopi = 2.*3.1415927;
+    int               i, j;
+    PLFLT             twopi = 2. * 3.1415927;
 
 // Set up the data and coordinate matrices.
 
-    for( i=0; i < 64; i++ ) {
-	PLFLT r = i/64.;
-	for( j=0; j < 64; j++ ) {
-	    PLFLT theta = twopi * j/64.;
+    for ( i = 0; i < 64; i++ )
+    {
+        PLFLT r = i / 64.;
+        for ( j = 0; j < 64; j++ )
+        {
+            PLFLT theta = twopi * j / 64.;
 
-	    xg(i,j) = r * cos(theta);
-	    yg(i,j) = r * sin(theta);;
-	    d(i,j) = exp(-r*r)*cos(twopi*2*r)*sin(3*theta);
-	}
+            xg( i, j ) = r * cos( theta );
+            yg( i, j ) = r * sin( theta );;
+            d( i, j )  = exp( -r * r ) * cos( twopi * 2 * r ) * sin( 3 * theta );
+        }
     }
 
 // Now draw a normal shaded plot.
 
-    PLFLT zmin = -1., zmax = 1.;
-    int NCONTR = 20;
+    PLFLT zmin   = -1., zmax = 1.;
+    int   NCONTR = 20;
     PLFLT shade_min, shade_max, sh_color;
-    int sh_cmap =1, sh_width;
-    int min_color = 1, min_width = 0, max_color = 0, max_width = 0;
+    int   sh_cmap   = 1, sh_width;
+    int   min_color = 1, min_width = 0, max_color = 0, max_width = 0;
 
     pls->vpor( .1, .9, .1, .9 );
     pls->wind( 0., 1., 0., twopi );
 
-    for (i = 0; i < NCONTR; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (PLFLT) NCONTR;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (PLFLT) NCONTR;
-	sh_color = i / (PLFLT) (NCONTR-1);
-	sh_width = 2;
-	pls->psty(0);
+    for ( i = 0; i < NCONTR; i++ )
+    {
+        shade_min = zmin + ( zmax - zmin ) * i / (PLFLT) NCONTR;
+        shade_max = zmin + ( zmax - zmin ) * ( i + 1 ) / (PLFLT) NCONTR;
+        sh_color  = i / (PLFLT) ( NCONTR - 1 );
+        sh_width  = 2;
+        pls->psty( 0 );
 
-	pls->shade( d, 0., 1., 0., twopi,
-		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
-		   min_color, min_width, max_color, max_width,
-		   true, NULL );
+        pls->shade( d, 0., 1., 0., twopi,
+            shade_min, shade_max, sh_cmap, sh_color, sh_width,
+            min_color, min_width, max_color, max_width,
+            true, NULL );
     }
 
-    pls->col(Red);
-    pls->box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+    pls->col( Red );
+    pls->box( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
 
 // Now do it again, but with the coordinate transformation taken into
-// account. 
+// account.
 
-    pls->adv(0);
+    pls->adv( 0 );
 
     cxx_pltr2 tr( xg, yg );
 
     pls->vpas( .1, .9, .1, .9, 1. );
     pls->wind( -1., 1., -1., 1. );
 
-    for (i = 0; i < NCONTR; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (PLFLT) NCONTR;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (PLFLT) NCONTR;
-	sh_color = i / (PLFLT) (NCONTR-1);
-	sh_width = 2;
-	pls->psty(0);
+    for ( i = 0; i < NCONTR; i++ )
+    {
+        shade_min = zmin + ( zmax - zmin ) * i / (PLFLT) NCONTR;
+        shade_max = zmin + ( zmax - zmin ) * ( i + 1 ) / (PLFLT) NCONTR;
+        sh_color  = i / (PLFLT) ( NCONTR - 1 );
+        sh_width  = 2;
+        pls->psty( 0 );
 
-	pls->shade( d, 0., 1., 0., twopi,
-		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
-		   min_color, min_width, max_color, max_width,
-		   false, &tr );
+        pls->shade( d, 0., 1., 0., twopi,
+            shade_min, shade_max, sh_cmap, sh_color, sh_width,
+            min_color, min_width, max_color, max_width,
+            false, &tr );
     }
 
-    pls->col(Red);
+    pls->col( Red );
 
 // Now draw the border around the drawing region.
 
     PLFLT x[65], y[65];
 
-    for( i=0; i < 65; i++ ) {
-	x[i] = xg(63,i);
-	y[i] = yg(63,i);
+    for ( i = 0; i < 65; i++ )
+    {
+        x[i] = xg( 63, i );
+        y[i] = yg( 63, i );
     }
 
     pls->line( 65, x, y );
@@ -298,77 +303,81 @@ void x01cc::plot2()
 
     PLFLT X1 = 1., X2 = .1, Y1 = 1.2, Y2 = -.2;
 
-    for( i=0; i < 64; i++ ) {
-	PLFLT r = i/64.;
-	for( j=0; j < 64; j++ ) {
-	    PLFLT theta = twopi * j / 64.;
+    for ( i = 0; i < 64; i++ )
+    {
+        PLFLT r = i / 64.;
+        for ( j = 0; j < 64; j++ )
+        {
+            PLFLT theta = twopi * j / 64.;
 
-	    xg(i,j) = X1 * r * cos(theta) +
-		X2 * r*r * cos(2*theta);
+            xg( i, j ) = X1 * r * cos( theta ) +
+                         X2 * r*r * cos( 2 * theta );
 
-	    yg(i,j) = Y1 * r * sin(theta) +
-		Y2 * r*r * sin(2*theta);
-	}
+            yg( i, j ) = Y1 * r * sin( theta ) +
+                         Y2 * r*r * sin( 2 * theta );
+        }
     }
 
     PLFLT xmin, xmax, ymin, ymax;
-    xg.min_max(xmin, xmax), yg.min_max(ymin, ymax);
+    xg.min_max( xmin, xmax ), yg.min_max( ymin, ymax );
 
-    pls->adv(0);
+    pls->adv( 0 );
 
     pls->vpas( .1, .9, .1, .9, 1. );
     pls->wind( xmin, xmax, ymin, ymax );
 
-    for (i = 0; i < NCONTR; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (PLFLT) NCONTR;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (PLFLT) NCONTR;
-	sh_color = i / (PLFLT) (NCONTR-1);
-	sh_width = 2;
-	pls->psty(0);
+    for ( i = 0; i < NCONTR; i++ )
+    {
+        shade_min = zmin + ( zmax - zmin ) * i / (PLFLT) NCONTR;
+        shade_max = zmin + ( zmax - zmin ) * ( i + 1 ) / (PLFLT) NCONTR;
+        sh_color  = i / (PLFLT) ( NCONTR - 1 );
+        sh_width  = 2;
+        pls->psty( 0 );
 
-	pls->shade( d, 0., 1., 0., twopi,
-		   shade_min, shade_max, sh_cmap, sh_color, sh_width,
-		   min_color, min_width, max_color, max_width,
-		   false, &tr );
+        pls->shade( d, 0., 1., 0., twopi,
+            shade_min, shade_max, sh_cmap, sh_color, sh_width,
+            min_color, min_width, max_color, max_width,
+            false, &tr );
     }
 
-    pls->col(Red);
+    pls->col( Red );
 
 // Now draw the border around the drawing region.
 
-    for( i=0; i < 65; i++ ) {
-	x[i] = xg(63,i);
-	y[i] = yg(63,i);
+    for ( i = 0; i < 65; i++ )
+    {
+        x[i] = xg( 63, i );
+        y[i] = yg( 63, i );
     }
 
     pls->line( 65, x, y );
 }
 
-x01cc::x01cc( int argc, const char **argv ) {
+x01cc::x01cc( int argc, const char **argv )
+{
+    pls = new plstream();
 
-   pls = new plstream();
+    // Parse and process command line arguments.
 
-   // Parse and process command line arguments.
-  
-   pls->parseopts( &argc, argv, PL_PARSE_FULL );
+    pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
-   // Initialize plplot.
-  
-   pls->init();
-   plot1();
-   plot2();
-   delete pls;
+    // Initialize plplot.
+
+    pls->init();
+    plot1();
+    plot2();
+    delete pls;
 }
 
 //---------------------------------------------------------------------------//
 // Finally!
 //---------------------------------------------------------------------------//
 
-int main( int argc, const char **argv ) 
+int main( int argc, const char **argv )
 {
-   x01cc *x = new x01cc( argc, argv );
+    x01cc *x = new x01cc( argc, argv );
 
-   delete x;
+    delete x;
 }
 
 //---------------------------------------------------------------------------//
