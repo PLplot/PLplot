@@ -316,7 +316,7 @@ protected:
 
     void resetPensAndBrushes( QPainter* );
 
-    double m_dAspectRatio;                       // Is kept constant during resizes
+    double  m_dAspectRatio;                      // Is kept constant during resizes
     QPixmap * m_pixPixmap;                       // stores the drawn image as long as it does not have to be regenerated
 
     QLinkedList<BufferElement> m_listBuffer;     // Buffer holding the draw instructions

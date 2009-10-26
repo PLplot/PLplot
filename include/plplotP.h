@@ -646,8 +646,8 @@ typedef struct cont_line
 
 typedef struct cont_level
 {
-    PLFLT level;
-    struct cont_line *line;  /* contour line */
+    PLFLT             level;
+    struct cont_line  *line; /* contour line */
     struct cont_level *next; /* contour level */
 } CONT_LEVEL;
 
