@@ -63,7 +63,9 @@ if(ENABLE_f77 OR ENABLE_f95)
   endif(ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
 
   # Set installation location for f95 modules.
-  set(F95_MOD_DIR ${LIB_DIR}/fortran/modules/${PACKAGE})
+  set(F95_MOD_DIR ${LIB_DIR}/fortran/modules/${PACKAGE} 
+    CACHE PATH "installation location for f95 modules"
+    )
 
   # Check if f77/f95 style command line parsing is possible
   include(TestF77CmdLine)
