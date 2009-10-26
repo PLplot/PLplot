@@ -699,7 +699,7 @@ void plD_eop_svgqt( PLStream *pls )
     bool isMaster = ( handler.isMasterDevice((QtSVGDevice *) pls->dev ));
     delete ((QtSVGDevice *) pls->dev );
 
-    pls->dev                               = new QtSVGDevice( s.width(), s.height());
+    pls->dev = new QtSVGDevice( s.width(), s.height());
     ((QtSVGDevice *) pls->dev )->downscale = downscale;
 
     if ( isMaster ) handler.setMasterDevice((QtSVGDevice *) pls->dev );
@@ -943,7 +943,7 @@ void plD_eop_epspdfqt( PLStream *pls )
     bool isMaster = handler.isMasterDevice((QtEPSDevice *) pls->dev );
     delete ((QtEPSDevice *) pls->dev );
 
-    pls->dev                               = new QtEPSDevice;
+    pls->dev = new QtEPSDevice;
     ((QtEPSDevice *) pls->dev )->downscale = downscale;
 
     if ( isMaster ) handler.setMasterDevice((QtEPSDevice *) pls->dev );

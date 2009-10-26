@@ -524,7 +524,7 @@ OpenMetaFile( char **argv )
             {
                 strncpy( FileName, argv[1], sizeof ( FileName ) - 1 );
                 FileName[sizeof ( FileName ) - 1] = '\0';
-                argv[1][0]                        = '\0';
+                argv[1][0] = '\0';
             }
             else
             {
@@ -2007,7 +2007,7 @@ Opt_i( const char *opt, const char *optarg, void *client_data )
 
     strncpy( FileName, optarg, sizeof ( FileName ) - 1 );
     FileName[sizeof ( FileName ) - 1] = '\0';
-    do_file_loop                      = 0;
+    do_file_loop = 0;
 
     return 0;
 }

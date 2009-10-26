@@ -30,7 +30,7 @@ typedef struct
     unsigned char Type1;
 } Unicode_to_Type1_table;
 
-static const int                    number_of_entries_in_unicode_to_dingbats_table = 188;
+static const int number_of_entries_in_unicode_to_dingbats_table = 188;
 
 static const Unicode_to_Type1_table unicode_to_dingbats_lookup_table[188] = {
     { 0x0020,  32 },
@@ -223,7 +223,7 @@ static const Unicode_to_Type1_table unicode_to_dingbats_lookup_table[188] = {
     { 0x27be, 254 }
 };
 
-static const int                    number_of_entries_in_unicode_to_standard_table = 149;
+static const int number_of_entries_in_unicode_to_standard_table = 149;
 
 static const Unicode_to_Type1_table unicode_to_standard_lookup_table[149] = {
     { 0x0020,  32 },
@@ -377,7 +377,7 @@ static const Unicode_to_Type1_table unicode_to_standard_lookup_table[149] = {
     { 0xfb02, 175 }
 };
 
-static const int                    number_of_entries_in_unicode_to_symbol_table = 166;
+static const int number_of_entries_in_unicode_to_symbol_table = 166;
 
 static const Unicode_to_Type1_table unicode_to_symbol_lookup_table[166] = {
     { 0x0020,  32 },

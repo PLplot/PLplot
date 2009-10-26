@@ -695,8 +695,8 @@ PLOptionInfo ploption_info[PL_MAX_OPT_TABLES] = {
 
 typedef struct DrvOptCmd
 {
-    char             *option;
-    char             *value;
+    char *option;
+    char *value;
     struct DrvOptCmd *next;
 } DrvOptCmd;
 

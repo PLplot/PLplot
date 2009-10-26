@@ -47,7 +47,7 @@ static int             already = 0;
 /* Device info */
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_xwin = "xwin:X-Window (Xlib):1:xwin:5:xw\n";
 
-static int                   synchronize = 0; /* change to 1 for X synchronized operation */
+static int synchronize = 0;                   /* change to 1 for X synchronized operation */
                                               /* Use "-drvopt sync" cmd line option to set. */
 
 static int nobuffered = 0;                    /* make it a buffered device by default */
@@ -1063,7 +1063,7 @@ Init( PLStream *pls )
         gcValues.background = xwd->cmap0[0].pixel;
         gcValues.foreground = 0xFF;
         gcValues.function   = GXxor;
-        mask                = GCForeground | GCBackground | GCFunction;
+        mask = GCForeground | GCBackground | GCFunction;
 
         xwd->gcXor = XCreateGC( xwd->display, dev->window, mask, &gcValues );
     }
@@ -1082,7 +1082,7 @@ Init( PLStream *pls )
     if ( pls->nopixmap )
     {
         dev->write_to_pixmap = 0;
-        pls->db              = 0;
+        pls->db = 0;
     }
     else
     {
@@ -1553,7 +1553,7 @@ LookupXKeyEvent( PLStream *pls, XEvent *event )
 
     gin->state = keyEvent->state;
 
-    nchars              = XLookupString( keyEvent, gin->string, ncmax, &keysym, &cs );
+    nchars = XLookupString( keyEvent, gin->string, ncmax, &keysym, &cs );
     gin->string[nchars] = '\0';
 
     pldebug( "LookupXKeyEvent",
@@ -2338,12 +2338,12 @@ static void ConfigBufferingCmd( PLStream *pls, PLBufferingCB *ptr )
     {
     case PLESC_DOUBLEBUFFERING_ENABLE:
         dev->write_to_window = 0;
-        pls->db              = 1;
+        pls->db = 1;
         break;
 
     case PLESC_DOUBLEBUFFERING_DISABLE:
         dev->write_to_window = 1;
-        pls->db              = 0;
+        pls->db = 0;
         break;
 
     case PLESC_DOUBLEBUFFERING_QUERY:
@@ -2453,7 +2453,7 @@ CreatePixmap( PLStream *pls )
     {
         dev->write_to_pixmap = 0;
         dev->write_to_window = 1;
-        pls->db              = 0;
+        pls->db = 0;
         fprintf( stderr, "\n\
 Warning: pixmap could not be allocated (insufficient memory on server).\n\
 Driver will redraw the entire plot to handle expose events.\n" );

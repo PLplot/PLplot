@@ -997,8 +997,8 @@ pldeco( short int **symbol, PLINT *length, const char *text )
             }
             else if ( test == 'g' || test == 'G' )
             {
-                test               = text[j++];
-                ig                 = plP_strpos( plP_greek_mnemonic, test ) + 1;
+                test = text[j++];
+                ig   = plP_strpos( plP_greek_mnemonic, test ) + 1;
                 sym[( *length )++] =
                     *( fntlkup + ( ifont - 1 ) * numberchars + 127 + ig );
             }

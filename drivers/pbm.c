@@ -127,8 +127,8 @@ plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
         cmap[(int) y_off][(int) x_off][0] = pls->curcolor.r;
         cmap[(int) y_off][(int) x_off][1] = pls->curcolor.g;
         cmap[(int) y_off][(int) x_off][2] = pls->curcolor.b;
-        x_off                            += dx_step;
-        y_off                            += dy_step;
+        x_off += dx_step;
+        y_off += dy_step;
     }
 
     cmap[(int) y_off][(int) x_off][0] = pls->curcolor.r;

@@ -84,7 +84,7 @@ int main( int argc, char *argv[] )
     double *slope    = NULL;
     double sec, *leap_sec = NULL;
     int    jd;
-    int    i               = 0;
+    int    i = 0;
     int    number_of_lines = 0;
 
     if (( fr = fopen( argv[1], "r" )) == NULL )

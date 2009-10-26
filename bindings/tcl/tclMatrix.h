@@ -348,8 +348,8 @@ typedef int ( *tclMatrixXtnsnProc )( tclMatrix *pm, Tcl_Interp *interp,
 
 typedef struct tclMatrixXtnsnDescr
 {
-    char                       *cmd;
-    tclMatrixXtnsnProc         cmdproc;
+    char *cmd;
+    tclMatrixXtnsnProc cmdproc;
     struct tclMatrixXtnsnDescr *next;
 } tclMatrixXtnsnDescr;
 

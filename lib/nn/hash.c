@@ -25,9 +25,9 @@
  */
 typedef struct ht_bucket
 {
-    void            * key;
+    void * key;
     void            * data;
-    int             id;         /* unique id -- just in case */
+    int  id;                    /* unique id -- just in case */
     struct ht_bucket* next;
 } ht_bucket;
 

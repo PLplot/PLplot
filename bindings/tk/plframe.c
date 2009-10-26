@@ -362,7 +362,7 @@ plFrameCmd( ClientData clientData, Tcl_Interp *interp,
     Tk_Window        new;
     register PlFrame *plFramePtr;
     register PLRDev  *plr;
-    int              i, ndev;
+    int i, ndev;
 
     dbug_enter( "plFrameCmd" );
 
@@ -512,9 +512,9 @@ PlFrameWidgetCmd( ClientData clientData, Tcl_Interp *interp,
                   int argc, const char **argv )
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
-    int              result      = TCL_OK;
-    int              length;
-    char             c;
+    int  result = TCL_OK;
+    int  length;
+    char c;
 
     dbug_enter( "PlFrameWidgetCmd" );
 
@@ -1177,9 +1177,9 @@ PlFrameKeyEH( ClientData clientData, register XEvent *eventPtr )
     register Tk_Window tkwin       = plFramePtr->tkwin;
 
     KeySym             keysym;
-    int                nchars;
-    char               string[11];
-    XComposeStatus     cs;
+    int            nchars;
+    char           string[11];
+    XComposeStatus cs;
 
     dbug_enter( "PlFrameKeyEH" );
 
@@ -1277,7 +1277,7 @@ CreateXhairs( PlFrame *plFramePtr )
 {
     register Tk_Window tkwin = plFramePtr->tkwin;
     Window             root, child;
-    int                root_x, root_y, win_x, win_y;
+    int root_x, root_y, win_x, win_y;
     unsigned int       mask;
 
 /* Switch to crosshair cursor. */
@@ -1367,8 +1367,8 @@ static void
 DrawXhairs( PlFrame *plFramePtr, int x0, int y0 )
 {
     register Tk_Window tkwin = plFramePtr->tkwin;
-    int                xmin  = 0, xmax = Tk_Width( tkwin ) - 1;
-    int                ymin  = 0, ymax = Tk_Height( tkwin ) - 1;
+    int xmin = 0, xmax = Tk_Width( tkwin ) - 1;
+    int ymin = 0, ymax = Tk_Height( tkwin ) - 1;
 
     if ( plFramePtr->drawing_xhairs )
         UpdateXhairs( plFramePtr );
@@ -1413,7 +1413,7 @@ CreateRband( PlFrame *plFramePtr )
 {
     register Tk_Window tkwin = plFramePtr->tkwin;
     Window             root, child;
-    int                root_x, root_y, win_x, win_y;
+    int root_x, root_y, win_x, win_y;
     unsigned int       mask;
 
 /* Find current pointer location, and initiate rubber banding. */
@@ -2231,7 +2231,7 @@ ConfigurePlFrame( Tcl_Interp *interp, register PlFrame *plFramePtr,
     XwDisplay          *xwd  = (XwDisplay *) dev->xwd;
     XGCValues          gcValues;
     unsigned long      mask;
-    int                need_redisplay = 0;
+    int need_redisplay = 0;
 
 #ifdef DEBUG
     if ( pls->debug )
@@ -2273,7 +2273,7 @@ ConfigurePlFrame( Tcl_Interp *interp, register PlFrame *plFramePtr,
     gcValues.background = xwd->cmap0[0].pixel;
     gcValues.foreground = 0xFF;
     gcValues.function   = GXxor;
-    mask                = GCForeground | GCBackground | GCFunction;
+    mask = GCForeground | GCBackground | GCFunction;
 
     if ( plFramePtr->xorGC != NULL )
         Tk_FreeGC( plFramePtr->display, plFramePtr->xorGC );
@@ -2347,10 +2347,10 @@ static int
 Draw( Tcl_Interp *interp, register PlFrame *plFramePtr,
       int argc, const char **argv )
 {
-    register Tk_Window tkwin  = plFramePtr->tkwin;
-    int                result = TCL_OK;
-    char               c      = argv[0][0];
-    int                length = strlen( argv[0] );
+    register Tk_Window tkwin = plFramePtr->tkwin;
+    int  result = TCL_OK;
+    char c      = argv[0][0];
+    int  length = strlen( argv[0] );
 
 /* Make sure widget has been initialized before going any further */
 
@@ -2511,8 +2511,8 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
     register PLRDev  *plr   = plFramePtr->plr;
     register PLiodev *iodev = plr->iodev;
 
-    char             c      = argv[0][0];
-    int              length = strlen( argv[0] );
+    char             c = argv[0][0];
+    int length         = strlen( argv[0] );
 
     dbug_enter( "Openlink" );
 
@@ -2653,7 +2653,7 @@ process_data( Tcl_Interp *interp, register PlFrame *plFramePtr )
 {
     register PLRDev  *plr   = plFramePtr->plr;
     register PLiodev *iodev = plr->iodev;
-    int              result = TCL_OK;
+    int result = TCL_OK;
 
 /* Process data */
 
@@ -2703,7 +2703,7 @@ ReadData( ClientData clientData, int mask )
     register PLRDev     *plr   = plFramePtr->plr;
     register PLiodev    *iodev = plr->iodev;
     register PDFstrm    *pdfs  = plr->pdfs;
-    int                 result = TCL_OK;
+    int result = TCL_OK;
 
     if ( mask & TK_READABLE )
     {

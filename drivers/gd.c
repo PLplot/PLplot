@@ -444,7 +444,7 @@ plD_init_png_Dev( PLStream *pls )
 
 
         init_freetype_lv1( pls );
-        FT                   = (FT_Data *) pls->FT;
+        FT = (FT_Data *) pls->FT;
         FT->want_smooth_text = smooth_text > 0 ? 1 : 0;
         if (( dev->optimise == 0 ) && ( dev->palette == 0 ) && ( smooth_text != 0 ))
         {

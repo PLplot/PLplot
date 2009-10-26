@@ -418,7 +418,7 @@ typedef struct
     char         Font;
 } Hershey_to_Unicode_table;
 
-extern int                      number_of_entries_in_hershey_to_unicode_table;
+extern int number_of_entries_in_hershey_to_unicode_table;
 extern Hershey_to_Unicode_table hershey_to_unicode_lookup_table[];
 
 
@@ -646,8 +646,8 @@ typedef struct cont_line
 
 typedef struct cont_level
 {
-    PLFLT             level;
-    struct cont_line  *line; /* contour line */
+    PLFLT level;
+    struct cont_line *line;  /* contour line */
     struct cont_level *next; /* contour level */
 } CONT_LEVEL;
 

@@ -358,7 +358,7 @@ main( int argc, const char *argv[] )
         r = ((PLFLT) i ) / ( nx - 1 );
         for ( j = 0; j < ny; j++ )
         {
-            t               = ( 2. * M_PI / ( ny - 1. )) * j;
+            t = ( 2. * M_PI / ( ny - 1. )) * j;
             cgrid2.xg[i][j] = r * cos( t );
             cgrid2.yg[i][j] = r * sin( t );
             z[i][j]         = exp( -r * r ) * cos( 5. * M_PI * r ) * cos( 5. * t );

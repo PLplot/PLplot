@@ -208,7 +208,7 @@ void zoom( gpointer data, gint flag )
     gdouble     curmag, dum;
 
     /* Get the current canvas */
-    n               = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ));
+    n = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ));
     scrolled_window = gtk_notebook_get_nth_page( GTK_NOTEBOOK( dev->notebook ), n );
     canvas          = GNOME_CANVAS( gtk_container_get_children(
             GTK_CONTAINER( gtk_container_get_children(
@@ -411,7 +411,7 @@ void file_ok_sel( GtkWidget *w, gpointer data )
     }
 
     /* Get the current canvas */
-    n               = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ));
+    n = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ));
     scrolled_window = gtk_notebook_get_nth_page( GTK_NOTEBOOK( dev->notebook ), n );
     canvas          = GNOME_CANVAS( gtk_container_get_children(
             GTK_CONTAINER( gtk_container_get_children(
@@ -475,7 +475,7 @@ void filesel( GtkWidget *widget, gpointer data )
     guint       n;
 
     /* Get the current canvas */
-    n               = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ));
+    n = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ));
     scrolled_window = gtk_notebook_get_nth_page( GTK_NOTEBOOK( dev->notebook ), n );
     canvas          = GNOME_CANVAS( gtk_container_get_children(
             GTK_CONTAINER( gtk_container_get_children(

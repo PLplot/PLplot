@@ -124,10 +124,10 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
                int argc, const char **argv )
 {
     register tclMatrix *matPtr;
-    int                i, j, length, new, index, persist = 0, initializer = 0;
+    int i, j, length, new, index, persist = 0, initializer = 0;
     Tcl_HashEntry      *hPtr;
     Tcl_CmdInfo        infoPtr;
-    char               c;
+    char c;
 
     dbug_enter( "Tcl_MatrixCmd" );
 
@@ -525,11 +525,11 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
            int argc, const char **argv )
 {
     register tclMatrix *matPtr = (tclMatrix *) clientData;
-    int                length, put = 0;
-    char               c, tmp[80];
+    int  length, put = 0;
+    char c, tmp[80];
     const char         *name = argv[0];
-    int                nmin[MAX_ARRAY_DIM], nmax[MAX_ARRAY_DIM];
-    int                i, j, k;
+    int  nmin[MAX_ARRAY_DIM], nmax[MAX_ARRAY_DIM];
+    int  i, j, k;
 
 /* Initialize */
 
@@ -628,7 +628,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
             for ( i = 0; i < matPtr->len; i++ )
             {
-                j                = i + 1;
+                j = i + 1;
                 matPtr->fdata[i] = 0.25 * ( tmp[j - 1] + 2 * tmp[j] + tmp[j + 1] );
             }
         }

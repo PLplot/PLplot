@@ -320,7 +320,7 @@ static void
 setpoint( PLINT x, PLINT y )
 {
     PLINT index;
-    index               = x / 8 + y * BPROW;
+    index = x / 8 + y * BPROW;
     *( bitmap + index ) = *( bitmap + index ) | mask[x % 8];
 }
 

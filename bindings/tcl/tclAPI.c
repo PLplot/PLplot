@@ -258,7 +258,7 @@ int
 plTclCmd( char *cmdlist, Tcl_Interp *interp, int argc, const char **argv )
 {
     register Tcl_HashEntry *hPtr;
-    int                    result = TCL_OK;
+    int result = TCL_OK;
 
     pl_errcode = 0; errmsg[0] = '\0';
 
@@ -326,7 +326,7 @@ loopbackCmd( ClientData clientData, Tcl_Interp *interp,
              int argc, const char **argv )
 {
     register Tcl_HashEntry *hPtr;
-    int                    result = TCL_OK;
+    int result = TCL_OK;
 
     argc--; argv++;
     if ( argc == 0 || ( strcmp( argv[0], "cmd" ) != 0 ))
@@ -855,8 +855,8 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else
     {
-        nx              = matf->n[0];
-        ny              = matf->n[1];
+        nx = matf->n[0];
+        ny = matf->n[1];
         tclmateval_modx = nx;
         tclmateval_mody = ny;
 
@@ -1189,8 +1189,8 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else
     {
-        nx              = matu->n[0];
-        ny              = matu->n[1];
+        nx = matu->n[0];
+        ny = matu->n[1];
         tclmateval_modx = nx;
         tclmateval_mody = ny;
 
@@ -1216,8 +1216,8 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else
     {
-        nx              = matv->n[0];
-        ny              = matv->n[1];
+        nx = matv->n[0];
+        ny = matv->n[1];
         tclmateval_modx = nx;
         tclmateval_mody = ny;
 

@@ -251,12 +251,12 @@ plD_line_xfig( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     if ( dev->firstline )
     {
-        count                       = 0;
+        count = 0;
         *( dev->buffptr + count++ ) = x1;
         *( dev->buffptr + count++ ) = y1;
         *( dev->buffptr + count++ ) = x2;
         *( dev->buffptr + count++ ) = y2;
-        dev->firstline              = 0;
+        dev->firstline = 0;
     }
     else if ( x1 == dev->xold && y1 == dev->yold )
     {
@@ -279,7 +279,7 @@ plD_line_xfig( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     else
     {
         flushbuffer( pls );
-        count                       = dev->count;
+        count = dev->count;
         *( dev->buffptr + count++ ) = x1;
         *( dev->buffptr + count++ ) = y1;
         *( dev->buffptr + count++ ) = x2;

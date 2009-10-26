@@ -806,7 +806,7 @@ void QtPLWidget::drawText( PLStream* pls, EscText* txt )
     el.Data.TextStruct->fci = fci;
     PLFLT rotation, shear, stride;
     plRotationShear( txt->xform, &rotation, &shear, &stride );
-    rotation                    -= pls->diorot * M_PI / 2.0;
+    rotation -= pls->diorot * M_PI / 2.0;
     el.Data.TextStruct->rotation = rotation;
     el.Data.TextStruct->shear    = shear;
     el.Data.TextStruct->stride   = stride;
@@ -1095,7 +1095,7 @@ QtExtWidget::QtExtWidget( int i_iWidth, int i_iHeight, QWidget* parent ) :
     cursorParameters.isTracking = false;
     cursorParameters.cursor_x   = -1.0;
     cursorParameters.cursor_y   = -1.0;
-    killed                      = false;
+    killed = false;
 }
 
 QtExtWidget::~QtExtWidget()

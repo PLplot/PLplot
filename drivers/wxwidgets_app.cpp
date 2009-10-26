@@ -480,7 +480,7 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED( event ))
     wxPaintDC dc( this );
 
     /* only update damaged regions */
-    int              vX, vY, vW, vH;
+    int vX, vY, vW, vH;
     wxRegionIterator upd( GetUpdateRegion());
 
     // remove the xhair before updating

@@ -607,8 +607,8 @@ void text_esc_cairo( PLStream *pls, EscText *args )
 
 void text_end_cairo( PLStream *pls, EscText *args )
 {
-    int                  textXExtent, textYExtent;
-    PLFLT                rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
+    int   textXExtent, textYExtent;
+    PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
     cairo_matrix_t       *cairoTransformMatrix;
     cairo_font_options_t *cairoFontOptions;
     PangoContext         *context;
@@ -695,10 +695,10 @@ void text_end_cairo( PLStream *pls, EscText *args )
 
 void proc_str( PLStream *pls, EscText *args )
 {
-    float                fontSize;
-    int                  textXExtent, textYExtent;
+    float fontSize;
+    int   textXExtent, textYExtent;
     char                 *textWithPangoMarkup;
-    PLFLT                rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
+    PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
     cairo_matrix_t       *cairoTransformMatrix;
     cairo_font_options_t *cairoFontOptions;
     PangoContext         *context;
@@ -1195,7 +1195,7 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts )
 
 void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
-    int               i;
+    int i;
     PLCairo           *aStream;
     cairo_line_join_t old_line_join;
     cairo_line_cap_t  old_line_cap;
@@ -1600,7 +1600,7 @@ void plD_eop_xcairo( PLStream *pls )
         switch ( event.type )
         {
         case KeyPress:
-            number_chars               = XLookupString((XKeyEvent *) &event, event_string, 10, &keysym, &cs );
+            number_chars = XLookupString((XKeyEvent *) &event, event_string, 10, &keysym, &cs );
             event_string[number_chars] = '\0';
             if ( keysym == XK_Return )
             {
@@ -1749,7 +1749,7 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
     /* Get key pressed (if any) */
     if ( event.type == KeyPress )
     {
-        number_chars              = XLookupString((XKeyEvent *) &event, gin->string, 10, &keysym, &cs );
+        number_chars = XLookupString((XKeyEvent *) &event, gin->string, 10, &keysym, &cs );
         gin->string[number_chars] = '\0';
         switch ( keysym )
         {

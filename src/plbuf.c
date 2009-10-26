@@ -1015,9 +1015,9 @@ rd_command( PLStream *pls, U_CHAR *p_c )
 #else
     if ( pls->plbuf_readpos < pls->plbuf_top )
     {
-        *p_c                = *(U_CHAR *) ((U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos );
+        *p_c = *(U_CHAR *) ((U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos );
         pls->plbuf_readpos += sizeof ( U_CHAR );
-        count               = sizeof ( U_CHAR );
+        count = sizeof ( U_CHAR );
     }
     else
     {
@@ -1072,7 +1072,7 @@ wr_command( PLStream *pls, U_CHAR c )
     }
 
     *(U_CHAR *) ((U_CHAR *) pls->plbuf_buffer + pls->plbuf_top ) = c;
-    pls->plbuf_top                                              += sizeof ( U_CHAR );
+    pls->plbuf_top += sizeof ( U_CHAR );
 #endif
 }
 
@@ -1266,7 +1266,7 @@ void * plbuf_save( PLStream *pls, void *state )
 
         /* Create a pointer that points in the space we allocated after struct _state */
         plot_state->plbuf_buffer = (void *) buf;
-        buf                     += pls->plbuf_top;
+        buf += pls->plbuf_top;
 
         /* Copy the plot buffer to our new buffer.  Again, I must stress, that we only
          * are copying the portion of the plot buffer that is being used
@@ -1285,13 +1285,13 @@ void * plbuf_save( PLStream *pls, void *state )
         /* Save the colormaps.  First create a pointer that points in the space we allocated
          * after the plot buffer */
         plot_state->color_map = (struct _color_map *) buf;
-        buf                  += sizeof ( struct _color_map ) * 2;
+        buf += sizeof ( struct _color_map ) * 2;
 
         /* Then we need to make space for the colormaps themselves */
         plot_state->color_map[0].cmap = (PLColor *) buf;
-        buf                          += sizeof ( PLColor ) * pls->ncol0;
+        buf += sizeof ( PLColor ) * pls->ncol0;
         plot_state->color_map[1].cmap = (PLColor *) buf;
-        buf                          += sizeof ( PLColor ) * pls->ncol1;
+        buf += sizeof ( PLColor ) * pls->ncol1;
 
         /* Save cmap 0 */
         plot_state->color_map[0].icol = pls->icol0;

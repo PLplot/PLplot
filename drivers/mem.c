@@ -116,8 +116,8 @@ plD_line_mem( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     dx = ( x2 - x1 ) / length;
     dy = ( y2 - y1 ) / length;
 
-    fx                            = x1;
-    fy                            = y1;
+    fx = x1;
+    fy = y1;
     mem[3 * xm * y1 + 3 * x1 + 0] = pls->curcolor.r;
     mem[3 * xm * y1 + 3 * x1 + 1] = pls->curcolor.g;
     mem[3 * xm * y1 + 3 * x1 + 2] = pls->curcolor.b;

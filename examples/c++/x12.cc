@@ -35,7 +35,7 @@ using namespace std;
 class x12 {
 public:
     x12( int, const char** );
-    void               plfbox( PLFLT, PLFLT );
+    void plfbox( PLFLT, PLFLT );
 private:
     plstream           *pls;
 

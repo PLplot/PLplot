@@ -145,8 +145,8 @@ plD_line_imp( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
         /* Add both points to path */
 
-        count                   = 0;
-        FirstLine               = 0;
+        count     = 0;
+        FirstLine = 0;
         *( LineBuff + count++ ) = x1;
         *( LineBuff + count++ ) = y1;
         *( LineBuff + count++ ) = x2;
@@ -175,7 +175,7 @@ plD_line_imp( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
             fprintf( pls->OutFile, "%c%c", SET_PEN, (char) penwidth );
             penchange = 0;
         }
-        count                   = 0;
+        count = 0;
         *( LineBuff + count++ ) = x1;
         *( LineBuff + count++ ) = y1;
         *( LineBuff + count++ ) = x2;

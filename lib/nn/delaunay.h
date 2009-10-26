@@ -44,14 +44,14 @@ typedef struct istack   istack;
 
 struct delaunay
 {
-    int                npoints;
+    int    npoints;
     point              * points;
-    double             xmin;
-    double             xmax;
-    double             ymin;
-    double             ymax;
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
 
-    int                ntriangles;
+    int    ntriangles;
     triangle           * triangles;
     circle             * circles;
     triangle_neighbours* neighbours;    /* for delaunay_xytoi() */

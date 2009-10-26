@@ -73,7 +73,7 @@ circulation()
         x = ( i - nx / 2 + 0.5 ) * dx;
         for ( j = 0; j < ny; j++ )
         {
-            y               = ( j - ny / 2 + 0.5 ) * dy;
+            y = ( j - ny / 2 + 0.5 ) * dy;
             cgrid2.xg[i][j] = x;
             cgrid2.yg[i][j] = y;
             u[i][j]         = y;
@@ -131,10 +131,10 @@ constriction()
         x = ( i - nx / 2 + 0.5 ) * dx;
         for ( j = 0; j < ny; j++ )
         {
-            y               = ( j - ny / 2 + 0.5 ) * dy;
+            y = ( j - ny / 2 + 0.5 ) * dy;
             cgrid2.xg[i][j] = x;
             cgrid2.yg[i][j] = y;
-            b               = ymax / 4.0 * ( 3 - cos( M_PI * x / xmax ));
+            b = ymax / 4.0 * ( 3 - cos( M_PI * x / xmax ));
             if ( fabs( y ) < b )
             {
                 dbdx = ymax / 4.0 * sin( M_PI * x / xmax ) *

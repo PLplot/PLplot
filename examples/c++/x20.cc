@@ -123,7 +123,7 @@ static void
 mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 {
     struct stretch_data *s = (struct stretch_data *) pltr_data;
-    PLFLT               x0, y0, dy;
+    PLFLT x0, y0, dy;
     x0  = ( s->xmin + s->xmax ) * 0.5;
     y0  = ( s->ymin + s->ymax ) * 0.5;
     dy  = ( s->ymax - s->ymin ) * 0.5;
@@ -133,7 +133,7 @@ mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 
 x20::x20( int argc, const char ** argv )
 {
-    PLFLT               *x = new PLFLT[XDIM];
+    PLFLT *x = new PLFLT[XDIM];
     PLFLT               *y = new PLFLT[YDIM];
     PLFLT               **z, **r;
     PLFLT               xi, yi, xe, ye;

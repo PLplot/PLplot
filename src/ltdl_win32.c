@@ -73,7 +73,7 @@ lt_dlhandle lt_dlopenext( char* dllname )
     }
 
     dlhandle->previousHandle = lastHandle;
-    lastHandle               = dlhandle;
+    lastHandle = dlhandle;
 
     return dlhandle;
 }
@@ -101,7 +101,7 @@ void* lt_dlsym( lt_dlhandle dlhandle, const char* symbol )
         buffer[0] = '_';
         strncpy( &buffer[1], symbol, bufferLength - 2 );
         buffer[bufferLength - 1] = '\0';
-        retPointer               = GetProcAddress( dlhandle->hinstLib, buffer );
+        retPointer = GetProcAddress( dlhandle->hinstLib, buffer );
         free( buffer );
         return retPointer;
 #else

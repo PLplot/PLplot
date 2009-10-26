@@ -93,11 +93,11 @@ public: /* methods */
     virtual ~wxPLDevBase( void );
 
     // virtual functions which need to implemented
-    virtual void DrawLine( short x1a, short y1a, short x2a, short y2a )                                                         = 0;
-    virtual void DrawPolyline( short *xa, short *ya, PLINT npts )                                                               = 0;
+    virtual void DrawLine( short x1a, short y1a, short x2a, short y2a ) = 0;
+    virtual void DrawPolyline( short *xa, short *ya, PLINT npts )       = 0;
     virtual void ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1 = -1, PLINT y1 = -1, PLINT x2 = -1, PLINT y2 = -1 ) = 0;
-    virtual void FillPolygon( PLStream *pls )                                                                                   = 0;
-    virtual void BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH )                                                      = 0;
+    virtual void FillPolygon( PLStream *pls ) = 0;
+    virtual void BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH ) = 0;
     void AddtoClipRegion( int x1, int y1, int x2, int y2 );
     virtual void CreateCanvas()                    = 0;
     virtual void SetWidth( PLStream *pls )         = 0;
@@ -106,13 +106,13 @@ public: /* methods */
     virtual void SetExternalBuffer( void* buffer ) = 0;
 #ifdef HAVE_FREETYPE
     virtual void PutPixel( short x, short y, PLINT color ) = 0;
-    virtual void PutPixel( short x, short y )              = 0;
-    virtual PLINT GetPixel( short x, short y )             = 0;
+    virtual void PutPixel( short x, short y )  = 0;
+    virtual PLINT GetPixel( short x, short y ) = 0;
 #endif // HAVE_FREETYPE
     virtual void ProcessString( PLStream* pls, EscText* args ) = 0;
     virtual void PSDrawText( PLUNICODE* ucs4, int ucs4Len, bool drawText );
     virtual void PSDrawTextToDC( char* utf8_string, bool drawText ) = 0;
-    virtual void PSSetFont( PLUNICODE fci )                         = 0;
+    virtual void PSSetFont( PLUNICODE fci ) = 0;
 
 public: /* variables */
     const int    backend;
@@ -268,39 +268,39 @@ public: /* methods */
     void AGGAddtoClipRegion( short x1, short y1, short x2, short y2 );
 
 private: /* variables */
-    wxDC                                                                    * mDC;
-    wxImage                                                                 * mBuffer;
-    agg::rendering_buffer                                                   mRenderingBuffer;
-    fontEngineType                                                          mFontEngine;
-    fontManagerType                                                         mFontManager;
-    agg::conv_curve<fontManagerType::path_adaptor_type>                     mCurves;
+    wxDC * mDC;
+    wxImage               * mBuffer;
+    agg::rendering_buffer mRenderingBuffer;
+    fontEngineType        mFontEngine;
+    fontManagerType       mFontManager;
+    agg::conv_curve<fontManagerType::path_adaptor_type> mCurves;
     agg::conv_contour<agg::conv_curve<fontManagerType::path_adaptor_type> > mContour;
 
-    pixFormat                                                               mPixFormat;
-    rendererBase                                                            mRendererBase;
-    rendererSolid                                                           mRendererSolid;
+    pixFormat         mPixFormat;
+    rendererBase      mRendererBase;
+    rendererSolid     mRendererSolid;
 
-    agg::scanline_u8                                                        mScanLine;
+    agg::scanline_u8  mScanLine;
     agg::rasterizer_scanline_aa<>                                           mRasterizer;
-    agg::path_storage                                                       mPath;
-    agg::trans_affine                                                       mTransform;
+    agg::path_storage mPath;
+    agg::trans_affine mTransform;
 
-    convCurve                                                               mConvCurve;
-    convStroke                                                              mConvStroke;
-    pathTransform                                                           mPathTransform;
-    strokeTransform                                                         mStrokeTransform;
+    convCurve         mConvCurve;
+    convStroke        mConvStroke;
+    pathTransform     mPathTransform;
+    strokeTransform   mStrokeTransform;
 
-    double                                                                  mStrokeWidth;
-    wxUint8                                                                 mStrokeOpacity;
-    unsigned char                                                           mColorRedStroke;
-    unsigned char                                                           mColorGreenStroke;
-    unsigned char                                                           mColorBlueStroke;
-    unsigned char                                                           mColorRedFill;
-    unsigned char                                                           mColorGreenFill;
-    unsigned char                                                           mColorBlueFill;
+    double            mStrokeWidth;
+    wxUint8           mStrokeOpacity;
+    unsigned char     mColorRedStroke;
+    unsigned char     mColorGreenStroke;
+    unsigned char     mColorBlueStroke;
+    unsigned char     mColorRedFill;
+    unsigned char     mColorGreenFill;
+    unsigned char     mColorBlueFill;
 
-    double                                                                  textWidth, textHeight;
-    wxString                                                                fontdir;
+    double            textWidth, textHeight;
+    wxString          fontdir;
 };
 #endif
 
@@ -384,8 +384,8 @@ public:
     void OnIdle( wxIdleEvent& event );
 
 private:
-    bool                   exit;
-    bool                   advance;
+    bool exit;
+    bool advance;
     wxArrayOfwxPLplotFrame FrameArray;
 
     DECLARE_EVENT_TABLE()

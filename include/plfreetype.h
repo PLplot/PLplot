@@ -111,9 +111,9 @@ typedef struct FT_Data
     plD_read_pixel_fp read_pixel;       /* pointer to a function which reads the RGB value of a pixel and returns it*/
 
 
-    int               want_smooth_text; /* flag to request text smoothing (won't */
+    int want_smooth_text;               /* flag to request text smoothing (won't */
                                         /* necessarily get it though */
-    int               smooth_text;      /* Flag to indicate type of anti-aliasing used, if freetype text is active */
+    int smooth_text;                    /* Flag to indicate type of anti-aliasing used, if freetype text is active */
 
 
 /*

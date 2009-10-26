@@ -267,13 +267,13 @@ public:
 
     union DataType
     {
-        QLineF              * Line;
+        QLineF * Line;
         QPolygonF           * Polyline;
         QRectF              * Rect;
         struct ColourStruct_* ColourStruct;
         struct TextStruct_  * TextStruct;
-        PLINT               intParam;
-        PLFLT               fltParam;
+        PLINT intParam;
+        PLFLT fltParam;
     } Data;
 };
 
@@ -316,8 +316,8 @@ protected:
 
     void resetPensAndBrushes( QPainter* );
 
-    double                     m_dAspectRatio;   // Is kept constant during resizes
-    QPixmap                    * m_pixPixmap;    // stores the drawn image as long as it does not have to be regenerated
+    double m_dAspectRatio;                       // Is kept constant during resizes
+    QPixmap * m_pixPixmap;                       // stores the drawn image as long as it does not have to be regenerated
 
     QLinkedList<BufferElement> m_listBuffer;     // Buffer holding the draw instructions
 //         bool m_bAwaitingRedraw;

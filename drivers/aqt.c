@@ -48,19 +48,19 @@
 
 /* local variables */
 
-static NSAutoreleasePool     *arpool; /* Objective-C autorelease pool */
-static id                    adapter; /* Adapter object */
+static NSAutoreleasePool *arpool;     /* Objective-C autorelease pool */
+static id adapter;                    /* Adapter object */
 
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_aqt = "aqt:AquaTerm (Mac OS X):1:aqt:50:aqt\n";
 
-static int                   currentPlot = 0;
-static int                   maxWindows  = 30;
-static int                   windowXSize = 0;
-static int                   windowYSize = 0;
+static int  currentPlot = 0;
+static int  maxWindows  = 30;
+static int  windowXSize = 0;
+static int  windowYSize = 0;
 
-static bool                  didTests = false;
-static bool                  hasShear = false;
-static bool                  hasAlpha = false;
+static bool didTests = false;
+static bool hasShear = false;
+static bool hasAlpha = false;
 
 /* font stuff */
 
@@ -528,9 +528,9 @@ void get_cursor( PLStream *pls, PLGraphicsIn *gin )
 
 void proc_str( PLStream *pls, EscText *args )
 {
-    PLFLT                     a1, ft_ht, angle, shear, stride;
-    PLINT                     clxmin, clxmax, clymin, clymax;
-    int                       i, jst, ref;
+    PLFLT a1, ft_ht, angle, shear, stride;
+    PLINT clxmin, clxmax, clymin, clymax;
+    int   i, jst, ref;
     NSMutableAttributedString *str;
 
     /* check that we got unicode, warning message and return if not */
@@ -632,15 +632,15 @@ void proc_str( PLStream *pls, EscText *args )
 
 NSMutableAttributedString  * create_string( const PLUNICODE *ucs4, int ucs4_len, PLFLT font_height )
 {
-    PLUNICODE                 fci;
-    char                      plplot_esc;
-    int                       i;
-    int                       cur_loc;
-    int                       utf8_len;
-    int                       updown;
-    char                      dummy[MAX_STRING_LEN + 1];
+    PLUNICODE fci;
+    char      plplot_esc;
+    int       i;
+    int       cur_loc;
+    int       utf8_len;
+    int       updown;
+    char      dummy[MAX_STRING_LEN + 1];
     char                      *font;
-    char                      utf8[5];
+    char      utf8[5];
     NSMutableAttributedString *str;
 
     updown = 0;
@@ -649,7 +649,7 @@ NSMutableAttributedString  * create_string( const PLUNICODE *ucs4, int ucs4_len,
 
     for ( i = 0; i < MAX_STRING_LEN; i++ ) dummy[i] = 'i';
     dummy[MAX_STRING_LEN] = '\0';
-    str                   = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithCString:dummy]];
+    str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithCString:dummy]];
 
     /* get plplot escape character & current font */
 

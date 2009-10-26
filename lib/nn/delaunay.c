@@ -67,14 +67,14 @@ static void tio_init( struct triangulateio* tio )
     tio->segmentlist                = 0;
     tio->segmentmarkerlist          = NULL;
     tio->numberofsegments           = 0;
-    tio->holelist                   = NULL;
-    tio->numberofholes              = 0;
-    tio->regionlist                 = NULL;
-    tio->numberofregions            = 0;
-    tio->edgelist                   = NULL;
-    tio->edgemarkerlist             = NULL;
-    tio->normlist                   = NULL;
-    tio->numberofedges              = 0;
+    tio->holelist        = NULL;
+    tio->numberofholes   = 0;
+    tio->regionlist      = NULL;
+    tio->numberofregions = 0;
+    tio->edgelist        = NULL;
+    tio->edgemarkerlist  = NULL;
+    tio->normlist        = NULL;
+    tio->numberofedges   = 0;
 }
 
 static void tio_destroy( struct triangulateio* tio )
@@ -187,10 +187,10 @@ static void tio2delaunay( struct triangulateio* tio_out, delaunay* d )
         fprintf( stderr, "triangles:\n" );
     for ( i = 0; i < d->ntriangles; ++i )
     {
-        int                offset = i * 3;
-        triangle           * t    = &d->triangles[i];
-        triangle_neighbours* n    = &d->neighbours[i];
-        circle             * c    = &d->circles[i];
+        int offset             = i * 3;
+        triangle           * t = &d->triangles[i];
+        triangle_neighbours* n = &d->neighbours[i];
+        circle             * c = &d->circles[i];
 
         t->vids[0] = tio_out->trianglelist[offset];
         t->vids[1] = tio_out->trianglelist[offset + 1];
@@ -262,8 +262,8 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
     delaunay             * d = delaunay_create();
     struct triangulateio tio_in;
     struct triangulateio tio_out;
-    char                 cmd[64] = "eznC";
-    int                  i, j;
+    char cmd[64] = "eznC";
+    int  i, j;
 
     assert( sizeof ( REAL ) == sizeof ( double ));
 

@@ -351,7 +351,7 @@ plPlotterCmd( ClientData clientData, Tcl_Interp *interp,
     Tk_Window          tkwin;
     register PlPlotter *plPlotterPtr;
     register PLRDev    *plr;
-    int                i, ndev;
+    int i, ndev;
 
     dbug_enter( "plPlotterCmd" );
 
@@ -410,9 +410,9 @@ plPlotterCmd( ClientData clientData, Tcl_Interp *interp,
     plPlotterPtr->SaveFnam       = NULL;
 
     plPlotterPtr->plr = (PLRDev *) malloc( sizeof ( PLRDev ));
-    plr               = plPlotterPtr->plr;
-    plr->pdfs         = NULL;
-    plr->iodev        = (PLiodev *) malloc( sizeof ( PLiodev ));
+    plr        = plPlotterPtr->plr;
+    plr->pdfs  = NULL;
+    plr->iodev = (PLiodev *) malloc( sizeof ( PLiodev ));
     plr_start( plr );
 
 /* Associate new PLplot stream with this widget */
@@ -491,9 +491,9 @@ PlPlotterWidgetCmd( ClientData clientData, Tcl_Interp *interp,
                     int argc, CONST char **argv )
 {
     register PlPlotter *plPlotterPtr = (PlPlotter *) clientData;
-    int                result        = TCL_OK;
-    int                length;
-    char               c;
+    int  result = TCL_OK;
+    int  length;
+    char c;
 
     dbug_enter( "PlPlotterWidgetCmd" );
 
@@ -1141,7 +1141,7 @@ CreateXhairs( PlPlotter *plPlotterPtr )
 {
     register Tk_Window tkwin = plPlotterPtr->tkwin;
     Window             root, child;
-    int                root_x, root_y, win_x, win_y;
+    int root_x, root_y, win_x, win_y;
     unsigned int       mask;
 
 
@@ -1193,8 +1193,8 @@ static void
 DrawXhairs( PlPlotter *plPlotterPtr, int x0, int y0 )
 {
     register Tk_Window tkwin = plPlotterPtr->tkwin;
-    int                xmin  = 0, xmax = Tk_Width( tkwin ) - 1;
-    int                ymin  = 0, ymax = Tk_Height( tkwin ) - 1;
+    int xmin = 0, xmax = Tk_Width( tkwin ) - 1;
+    int ymin = 0, ymax = Tk_Height( tkwin ) - 1;
 
     if ( plPlotterPtr->drawing_xhairs )
         UpdateXhairs( plPlotterPtr );
@@ -1239,7 +1239,7 @@ CreateRband( PlPlotter *plPlotterPtr )
 {
     register Tk_Window tkwin = plPlotterPtr->tkwin;
     Window             root, child;
-    int                root_x, root_y, win_x, win_y;
+    int root_x, root_y, win_x, win_y;
     unsigned int       mask;
 
 /* Find current pointer location, and initiate rubber banding. */
@@ -2038,7 +2038,7 @@ ConfigurePlPlotter( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     TkwDisplay         *tkwd = (TkwDisplay *) dev->tkwd;
     XGCValues          gcValues;
     unsigned long      mask;
-    int                need_redisplay = 0;
+    int need_redisplay = 0;
 
 #ifdef DEBUG
     if ( pls->debug )
@@ -2085,7 +2085,7 @@ ConfigurePlPlotter( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     gcValues.background = tkwd->cmap0[0].pixel;
     gcValues.foreground = 0xFF;
     gcValues.function   = GXxor;
-    mask                = GCForeground | GCBackground | GCFunction;
+    mask = GCForeground | GCBackground | GCFunction;
 
     if ( plPlotterPtr->xorGC != NULL )
         Tk_FreeGC( plPlotterPtr->display, plPlotterPtr->xorGC );
@@ -2175,10 +2175,10 @@ static int
 Draw( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
       int argc, CONST char **argv )
 {
-    register Tk_Window tkwin  = plPlotterPtr->tkwin;
-    int                result = TCL_OK;
-    char               c      = argv[0][0];
-    int                length = strlen( argv[0] );
+    register Tk_Window tkwin = plPlotterPtr->tkwin;
+    int  result = TCL_OK;
+    char c      = argv[0][0];
+    int  length = strlen( argv[0] );
 
 /* Make sure widget has been initialized before going any further */
 
@@ -2340,8 +2340,8 @@ Openlink( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     register PLRDev  *plr   = plPlotterPtr->plr;
     register PLiodev *iodev = plr->iodev;
 
-    char             c      = argv[0][0];
-    int              length = strlen( argv[0] );
+    char             c = argv[0][0];
+    int length         = strlen( argv[0] );
 
     dbug_enter( "Openlink" );
 
@@ -2451,7 +2451,7 @@ process_data( Tcl_Interp *interp, register PlPlotter *plPlotterPtr )
 {
     register PLRDev  *plr   = plPlotterPtr->plr;
     register PLiodev *iodev = plr->iodev;
-    int              result = TCL_OK;
+    int result = TCL_OK;
 
 /* Process data */
 
@@ -2521,7 +2521,7 @@ ReadData( ClientData clientData, int mask )
     register PLRDev     *plr   = plPlotterPtr->plr;
     register PLiodev    *iodev = plr->iodev;
     register PDFstrm    *pdfs  = plr->pdfs;
-    int                 result = TCL_OK;
+    int result = TCL_OK;
 
     if ( mask & TK_READABLE )
     {

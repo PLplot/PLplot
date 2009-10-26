@@ -129,9 +129,9 @@ extern int errno;
 
 typedef struct PartialRead
 {
-    char               *buffer; /* Buffer of characters */
-    int                bufSize; /* Size of buffer */
-    int                offset;  /* Offset of current character within buffer */
+    char *buffer;               /* Buffer of characters */
+    int  bufSize;               /* Size of buffer */
+    int  offset;                /* Offset of current character within buffer */
     struct PartialRead *next;   /* Next buffer in chain */
 } PartialRead;
 
@@ -354,7 +354,7 @@ int        argc;
 char       **argv;
 {
     register struct hostent *hostptr;
-    char                    hostname[100];
+    char hostname[100];
 
     if ( gethostname( hostname, 100 ))
     {

@@ -214,9 +214,9 @@ static void usage()
 
 int main( int argc, char* argv[] )
 {
-    int             nin    = NPOINTSIN;
-    int             nx     = NX;
-    int             nout   = 0;
+    int nin  = NPOINTSIN;
+    int nx   = NX;
+    int nout = 0;
     point           * pin  = NULL;
     delaunay        * d    = NULL;
     point           * pout = NULL;

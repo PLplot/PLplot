@@ -925,7 +925,7 @@ Init( PLStream *pls )
         gcValues.background = tkwd->cmap0[0].pixel;
         gcValues.foreground = 0xFF;
         gcValues.function   = GXxor;
-        mask                = GCForeground | GCBackground | GCFunction;
+        mask = GCForeground | GCBackground | GCFunction;
 
         tkwd->gcXor = XCreateGC( tkwd->display, dev->window, mask, &gcValues );
     }
@@ -945,7 +945,7 @@ Init( PLStream *pls )
     if ( pls->nopixmap )
     {
         dev->write_to_pixmap = 0;
-        pls->db              = 0;
+        pls->db = 0;
     }
     else
     {
@@ -1245,7 +1245,7 @@ CreatePixmap( PLStream *pls )
     {
         dev->write_to_pixmap = 0;
         dev->write_to_window = 1;
-        pls->db              = 0;
+        pls->db = 0;
         fprintf( stderr, "\n\
       Warning: pixmap could not be allocated (insufficient memory on server).\n\
       Driver will redraw the entire plot to handle expose events.\n" );

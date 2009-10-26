@@ -80,7 +80,7 @@ static void
 mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 {
     struct stretch_data *s = (struct stretch_data *) pltr_data;
-    PLFLT               x0, y0, dy;
+    PLFLT x0, y0, dy;
     x0  = ( s->xmin + s->xmax ) * 0.5;
     y0  = ( s->ymin + s->ymax ) * 0.5;
     dy  = ( s->ymax - s->ymin ) * 0.5;

@@ -576,7 +576,7 @@ plD_init_wingcc( PLStream *pls )
         pls->dev_text    = 1; /* want to draw text */
         pls->dev_unicode = 1; /* want unicode */
         init_freetype_lv1( pls );
-        FT                   = (FT_Data *) pls->FT;
+        FT = (FT_Data *) pls->FT;
         FT->want_smooth_text = smooth_text;
     }
 

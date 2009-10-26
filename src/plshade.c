@@ -804,12 +804,12 @@ find_interval( PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x )
     {
         if ( c0 == NEG )
         {
-            x[n++]                = linear( a0, a1, sh_min );
+            x[n++] = linear( a0, a1, sh_min );
             min_pts[min_points++] = n_point++;
         }
         if ( c1 == POS )
         {
-            x[n++]                = linear( a0, a1, sh_max );
+            x[n++] = linear( a0, a1, sh_max );
             max_pts[max_points++] = n_point++;
         }
     }
@@ -817,12 +817,12 @@ find_interval( PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x )
     {
         if ( c0 == POS )
         {
-            x[n++]                = linear( a0, a1, sh_max );
+            x[n++] = linear( a0, a1, sh_max );
             max_pts[max_points++] = n_point++;
         }
         if ( c1 == NEG )
         {
-            x[n++]                = linear( a0, a1, sh_min );
+            x[n++] = linear( a0, a1, sh_min );
             min_pts[min_points++] = n_point++;
         }
     }

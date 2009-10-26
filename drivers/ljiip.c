@@ -353,7 +353,7 @@ plD_polyline_ljiip( PLStream *pls, short *xa, short *ya, PLINT npts )
 void
 plD_eop_ljiip( PLStream *pls )
 {
-    PLINT               j;
+    PLINT j;
     unsigned char _HUGE *p;
 #if GCMODE > 0
     int                 i, iy, last, n, jmax;
@@ -506,7 +506,7 @@ static void
 setpoint( PLINT x, PLINT y )
 {
     PLINT index;
-    index               = x / 8 + y * BPROW1;
+    index = x / 8 + y * BPROW1;
     *( bitmap + index ) = *( bitmap + index ) | mask[x % 8];
 }
 

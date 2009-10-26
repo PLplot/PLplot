@@ -77,26 +77,26 @@
 /* container for device specific data */
 typedef struct
 {
-    HPDF_Doc                     pdf;
-    HPDF_Page                    page;
-    HPDF_PageSizes               pageSize;
+    HPDF_Doc       pdf;
+    HPDF_Page      page;
+    HPDF_PageSizes pageSize;
     FILE                         *pdfFile;
-    PLFLT                        scalex, scaley;
+    PLFLT          scalex, scaley;
 
     /* font variables */
-    HPDF_Font                    m_font;
-    int                          nlookup;
+    HPDF_Font      m_font;
+    int            nlookup;
     const Unicode_to_Type1_table *lookup;
-    HPDF_REAL                    fontSize;
-    HPDF_REAL                    fontScale;
-    HPDF_REAL                    textWidth, textHeight;
-    HPDF_REAL                    yOffset;
-    HPDF_REAL                    textRed, textGreen, textBlue;
+    HPDF_REAL      fontSize;
+    HPDF_REAL      fontScale;
+    HPDF_REAL      textWidth, textHeight;
+    HPDF_REAL      yOffset;
+    HPDF_REAL      textRed, textGreen, textBlue;
 } pdfdev;
 
 /* local variables */
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_pdf = "pdf:Portable Document Format PDF:1:pdf:58:pdf\n";
-static jmp_buf               env;
+static jmp_buf env;
 
 /***********************************************************************
  * function declarations

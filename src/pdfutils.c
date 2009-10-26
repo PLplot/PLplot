@@ -271,7 +271,7 @@ pdf_putc( int c, PDFstrm *pdfs )
             }
         }
         pdfs->buffer[pdfs->bp++] = c;
-        result                   = c;
+        result = c;
     }
     else
         plexit( "pdf_putc: Illegal operation" );
@@ -343,7 +343,7 @@ pdf_ungetc( int c, PDFstrm *pdfs )
         if ( pdfs->bp > 0 )
         {
             pdfs->buffer[--pdfs->bp] = c;
-            result                   = c;
+            result = c;
         }
     }
     else

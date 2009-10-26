@@ -215,8 +215,8 @@ void x01cc::plot2()
     ContourableMatrix d( 64, 64, 1 );
     CoordinateMatrix  xg( 64, 64, 1 ), yg( 64, 64, 1 );
 
-    int               i, j;
-    PLFLT             twopi = 2. * 3.1415927;
+    int   i, j;
+    PLFLT twopi = 2. * 3.1415927;
 
 // Set up the data and coordinate matrices.
 

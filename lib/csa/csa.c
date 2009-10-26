@@ -2162,13 +2162,13 @@ int main( int argc, char* argv[] )
     int    nout            = 0;
     int    generate_points = 0;
     point  * pout          = NULL;
-    int    nx              = -1;
-    int    ny              = -1;
-    csa    * a             = NULL;
-    int    nppc            = -1;
-    int    k               = -1;
-    double ks              = NaN;
-    double zoom            = NaN;
+    int    nx   = -1;
+    int    ny   = -1;
+    csa    * a  = NULL;
+    int    nppc = -1;
+    int    k    = -1;
+    double ks   = NaN;
+    double zoom = NaN;
 
     parse_commandline( argc, argv, &fdata, &fpoints, &invariant, &square, &generate_points, &nx, &ny, &nppc, &k, &zoom );
 

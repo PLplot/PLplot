@@ -54,10 +54,10 @@
 
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_svg = "svg:Scalable Vector Graphics (SVG 1.1):1:svg:57:svg\n";
 
-static int                   already_warned = 0;
+static int    already_warned = 0;
 
-static int                   text_clipping = 1;
-static DrvOpt                svg_options[] = { { "text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)" } };
+static int    text_clipping = 1;
+static DrvOpt svg_options[] = { { "text_clipping", DRV_INT, &text_clipping, "Use text clipping (text_clipping=0|1)" } };
 
 typedef struct
 {

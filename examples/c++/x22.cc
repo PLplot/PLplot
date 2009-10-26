@@ -74,8 +74,8 @@ x22::circulation()
     {
         for ( j = 0; j < ny; j++ )
         {
-            x               = ( i - nx / 2 + 0.5 ) * dx;
-            y               = ( j - ny / 2 + 0.5 ) * dy;
+            x = ( i - nx / 2 + 0.5 ) * dx;
+            y = ( j - ny / 2 + 0.5 ) * dy;
             cgrid2.xg[i][j] = x;
             cgrid2.yg[i][j] = y;
             u[i][j]         = y;
@@ -113,11 +113,11 @@ x22::constriction()
     {
         for ( j = 0; j < ny; j++ )
         {
-            x               = ( i - nx / 2 + 0.5 ) * dx;
-            y               = ( j - ny / 2 + 0.5 ) * dy;
+            x = ( i - nx / 2 + 0.5 ) * dx;
+            y = ( j - ny / 2 + 0.5 ) * dy;
             cgrid2.xg[i][j] = x;
             cgrid2.yg[i][j] = y;
-            b               = ymax / 4.0 * ( 3 - cos( M_PI * x / xmax ));
+            b = ymax / 4.0 * ( 3 - cos( M_PI * x / xmax ));
             if ( fabs( y ) < b )
             {
                 dbdx = ymax / 4.0 * sin( M_PI * x / xmax ) *

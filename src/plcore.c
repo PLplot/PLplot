@@ -533,7 +533,7 @@ int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower
         { "<medium/>",     PL_FCI_MEDIUM,  PL_FCI_WEIGHT },
         { "<bold/>",       PL_FCI_BOLD,    PL_FCI_WEIGHT }
     };
-    int                   i, length;
+    int i, length;
     for ( i = 0; i < N_TextLookupTable; i++ )
     {
         length = strlen( lookup[i].ptext );
@@ -646,9 +646,9 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                              * driver.
                              */
                             if ( unicode_buffer[j - 1] == esc ) unicode_buffer[j++] = esc;
-                            fci               = fcisave;
+                            fci = fcisave;
                             unicode_buffer[j] = fci;
-                            skip              = 1;
+                            skip = 1;
                             break;
 
                         case '[': /* unicode */
@@ -676,9 +676,9 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                              * driver.
                              */
                             if ( unicode_buffer[j - 1] == esc ) unicode_buffer[j++] = esc;
-                            fci               = fcisave;
+                            fci = fcisave;
                             unicode_buffer[j] = fci;
-                            skip              = 1;
+                            skip = 1;
                             break;
 
                         case '<': /* change font*/
@@ -690,9 +690,9 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                     /* code is a complete FCI (font characterization
                                      * integer): change FCI to this value.
                                      */
-                                    fci               = code;
+                                    fci = code;
                                     unicode_buffer[j] = fci;
-                                    skip              = 1;
+                                    skip = 1;
 
                                     if ( plsc->alt_unicode )
                                     {
@@ -712,7 +712,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                     hexpower = code & PL_FCI_HEXPOWER_MASK;
                                     plP_hex2fci( hexdigit, hexpower, &fci );
                                     unicode_buffer[j] = fci;
-                                    skip              = 1;
+                                    skip = 1;
 
                                     if ( plsc->alt_unicode )
                                     {
@@ -730,7 +730,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 {
                                     plP_hex2fci( hexdigit, hexpower, &fci );
                                     unicode_buffer[j] = fci;
-                                    skip              = 1;
+                                    skip = 1;
 
                                     if ( plsc->alt_unicode )
                                     {
@@ -777,9 +777,9 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 
                             if ( fci != PL_FCI_IMPOSSIBLE )
                             {
-                                i                += 2;
+                                i += 2;
                                 unicode_buffer[j] = fci;
-                                skip              = 1;
+                                skip = 1;
 
                                 if ( plsc->alt_unicode )
                                 {
@@ -813,7 +813,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             {
                                 if ( ig >= 24 )
                                     ig = ig + 100 - 24;
-                                idx                 = plhershey2unicode( ig + 527 );
+                                idx = plhershey2unicode( ig + 527 );
                                 unicode_buffer[j++] = \
                                     (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
                                 i   += 2;
@@ -832,8 +832,8 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 /* Use "unknown" unicode character if string[i+2]
                                  * is not in the Greek array.*/
                                 unicode_buffer[j++] = (PLUNICODE) 0x00;
-                                i                  += 2;
-                                skip                = 1; /* skip is set if we have copied something
+                                i   += 2;
+                                skip = 1;                /* skip is set if we have copied something
                                                           * into  the unicode table */
 
                                 if ( plsc->alt_unicode )
@@ -843,7 +843,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                     plP_esc( PLESC_TEXT_CHAR, &args );
                                 }
                             }
-                            fci               = fcisave;
+                            fci = fcisave;
                             unicode_buffer[j] = fci;
 
                             if ( plsc->alt_unicode )
@@ -895,7 +895,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             return;
                         }
                         unicode_buffer [j] = unichar;
-                        i                 += ptr - ( string + i ) - 1;
+                        i += ptr - ( string + i ) - 1;
 
                         /* Search for escesc (an unescaped escape) in the input
                          * string and adjust unicode_buffer accordingly).
@@ -2890,11 +2890,11 @@ static void
 plLoadDriver( void )
 {
 #ifdef ENABLE_DYNDRIVERS
-    int              i, drvidx;
-    char             sym[BUFFER_SIZE];
-    char             *tag;
+    int  i, drvidx;
+    char sym[BUFFER_SIZE];
+    char *tag;
 
-    int              n       = plsc->device - 1;
+    int  n = plsc->device - 1;
     PLDispatchTable  *dev    = dispatch_table[n];
     PLLoadableDriver *driver = 0;
 

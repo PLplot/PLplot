@@ -217,10 +217,10 @@ int cdCgmHeader( cdImagePtr im )
     unsigned char       *headerp;
     unsigned char       *head;
     const unsigned char *buf, *buf2;
-    int                 octet_count = 0;
-    int                 blen; /* length of buf */
-    int                 curly;
-    int                 fontlistlen; /* each font in the font list is stored as a string,
+    int octet_count = 0;
+    int blen;                 /* length of buf */
+    int curly;
+    int fontlistlen;                 /* each font in the font list is stored as a string,
                                       * with a single octet in front of the string
                                       * giving its length, fontlistlen is the sum of
                                       * the lengths of all the font strings + the

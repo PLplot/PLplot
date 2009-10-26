@@ -719,9 +719,9 @@ ps_getdate( void )
     time_t t;
     char   *p;
 
-    t                = time((time_t *) 0 );
-    p                = ctime( &t );
-    len              = strlen( p );
+    t   = time((time_t *) 0 );
+    p   = ctime( &t );
+    len = strlen( p );
     *( p + len - 1 ) = '\0';      /* zap the newline character */
     return p;
 }
@@ -760,12 +760,12 @@ proc_str( PLStream *pls, EscText *args )
     /* unicode only! so test for it. */
     if ( args->unicode_array_len > 0 )
     {
-        int                          j, s, f;
+        int j, s, f;
         char                         *fonts[PROC_STR_STRING_LENGTH];
-        int                          nlookup;
+        int nlookup;
         const Unicode_to_Type1_table *lookup;
         const PLUNICODE              *cur_text;
-        PLUNICODE                    fci;
+        PLUNICODE fci;
         /* translate from unicode into type 1 font index. */
         /*
          * Choose the font family, style, variant, and weight using
