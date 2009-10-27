@@ -545,16 +545,17 @@ if(BUILD_TEST)
     endforeach(file_devices_info ${FILE_DEVICES_LIST})
 
     if(PLD_extcairo)
-      get_target_property(ext-cairo-test_LOCATION ext-cairo-test LOCATION)
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
-	COMMAND ${ext-cairo-test_LOCATION}
-	DEPENDS ext-cairo-test
+	COMMAND ext-cairo-test
+	DEPENDS 
+	ext-cairo-test
+	cairo
 	)
-      add_custom_target(test_c_extcairo
+      add_custom_target(test_extcairo
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
 	)
-      list(APPEND noninteractive_targets_LIST test_c_extcairo)
+      list(APPEND noninteractive_targets_LIST test_extcairo)
     endif(PLD_extcairo)
 
     add_custom_target(test_noninteractive)
@@ -586,14 +587,33 @@ if(BUILD_TEST)
       list(APPEND interactive_targets_LIST test_c_${device})
     endforeach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
 
-    if(PLD_extcairo)
-      get_target_property(extXdrawable_demo_LOCATION extXdrawable_demo LOCATION)
+    if(PLD_xcairo)
       add_custom_target(test_extXdrawable
-	COMMAND ${extXdrawable_demo_LOCATION}
-	DEPENDS extXdrawable_demo
+	COMMAND extXdrawable_demo
+	DEPENDS 
+	extXdrawable_demo
+	cairo
 	)
       list(APPEND interactive_targets_LIST test_extXdrawable)
-    endif(PLD_extcairo)
+    endif(PLD_xcairo)
+
+    if(ENABLE_gnome2)
+      add_custom_target(test_plplotcanvas_demo
+	COMMAND plplotcanvas_demo
+	DEPENDS 
+	plplotcanvas_demo
+	gcw
+	)
+      list(APPEND interactive_targets_LIST test_plplotcanvas_demo)
+
+      add_custom_target(test_plplotcanvas_animation
+	COMMAND plplotcanvas_animation
+	DEPENDS 
+	plplotcanvas_animation
+	gcw
+	)
+      list(APPEND interactive_targets_LIST test_plplotcanvas_animation)
+    endif(ENABLE_gnome2)
 
   endif(ENABLE_c)
 
