@@ -617,6 +617,29 @@ if(BUILD_TEST)
 
   endif(ENABLE_c)
 
+  if(ENABLE_cxx)
+    if(ENABLE_wxwidgets)
+      add_custom_target(test_wxPLplotDemo
+	COMMAND wxPLplotDemo
+	DEPENDS 
+	wxPLplotDemo
+	wxwidgets
+	)
+      list(APPEND interactive_targets_LIST test_wxPLplotDemo)
+    endif(ENABLE_wxwidgets)
+
+    if(PLD_extqt)
+      add_custom_target(test_qt_example
+	COMMAND qt_example
+	DEPENDS 
+	qt_example
+	qt
+	)
+      list(APPEND interactive_targets_LIST test_qt_example)
+    endif(PLD_extqt)
+
+  endif(ENABLE_cxx)
+
   add_custom_target(test_interactive)
   if(interactive_targets_LIST)
     add_dependencies(test_interactive ${interactive_targets_LIST})
@@ -625,36 +648,6 @@ if(BUILD_TEST)
   if(targets_examples_tk)
     list(APPEND interactive_targets_LIST ${targets_examples_tk})
   endif(targets_examples_tk)
-
-  get_property(target_plplotcanvas_demo GLOBAL PROPERTY TARGET_plplotcanvas_demo)
-  if(target_plplotcanvas_demo)
-    list(APPEND interactive_targets_LIST ${target_plplotcanvas_demo})
-  endif(target_plplotcanvas_demo)
-
-  get_property(target_plplotcanvas_animation GLOBAL PROPERTY TARGET_plplotcanvas_animation)
-  if(target_plplotcanvas_animation)
-    list(APPEND interactive_targets_LIST ${target_plplotcanvas_animation})
-  endif(target_plplotcanvas_animation)
-
-  get_property(target_extXdrawable_demo GLOBAL PROPERTY TARGET_extXdrawable_demo)
-  if(target_extXdrawable_demo)
-    list(APPEND interactive_targets_LIST ${target_extXdrawable_demo})
-  endif(target_extXdrawable_demo)
-
-  get_property(target_ext-cairo-test GLOBAL PROPERTY TARGET_ext-cairo-test)
-  if(target_ext-cairo-test)
-    list(APPEND interactive_targets_LIST ${target_ext-cairo-test})
-  endif(target_ext-cairo-test)
-
-  get_property(target_wxPLplotDemo GLOBAL PROPERTY TARGET_wxPLplotDemo)
-  if(target_wxPLplotDemo)
-    list(APPEND interactive_targets_LIST ${target_wxPLplotDemo})
-  endif(target_wxPLplotDemo)
-
-  get_property(target_qt_example GLOBAL PROPERTY TARGET_qt_example)
-  if(target_qt_example)
-    list(APPEND interactive_targets_LIST ${target_qt_example})
-  endif(target_qt_example)
 
 endif(BUILD_TEST)
 
