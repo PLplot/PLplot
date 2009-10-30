@@ -81,10 +81,13 @@ endif(ENABLE_java)
 if(ENABLE_java)
   # Set up installation locations for java specific files.
   # Java .jar files.
-  set(JAR_DIR ${CMAKE_INSTALL_DATADIR}/java)
+  set(JAR_DIR ${CMAKE_INSTALL_DATADIR}/java
+    CACHE PATH "PLplot jar file install location")
   get_filename_component(JAVADATA_HARDDIR ${JAR_DIR} ABSOLUTE)
   # JNI .so files.
-  set(JAVAWRAPPER_DIR ${LIB_DIR}/jni)
+  set(JAVAWRAPPER_DIR ${LIB_DIR}/jni
+    CACHE PATH "PLplot java plugin install location"
+    )
   get_filename_component(JAVAWRAPPER_HARDDIR ${JAVAWRAPPER_DIR} ABSOLUTE)
   # Library name suffix is system dependent.  Tests have shown
   # that ${CMAKE_SHARED_LIBRARY_SUFFIX} gives the correct suffix on both
