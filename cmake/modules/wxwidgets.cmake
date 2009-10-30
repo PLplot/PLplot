@@ -60,12 +60,21 @@ if(PLD_wxwidgets OR PLD_wxpng)
     wxwidgets_COMPILE_FLAGS
     "-I${wxWidgets_INCLUDE_DIRS}"
     )
-  # For case (cvs version of CMake as of 2008-03-23, but not cmake-2.4.8)
-  # when wxWidgets_DEFINITIONS is a list.
+  string(REGEX REPLACE ";" " -D" 
+    wxWidgets_DEFINITIONS_wD
+    "-D${wxWidgets_DEFINITIONS}"
+    )
+ 	set(wxWidgets_DEFINITIONS_DEBUG_wD "") 
+  if(wxWidgets_DEFINITIONS_DEBUG)
+	  string(REGEX REPLACE ";" " -D" 
+	    wxWidgets_DEFINITIONS_DEBUG_wD
+	    "-D${wxWidgets_DEFINITIONS_DEBUG}"
+	    )
+  endif(wxWidgets_DEFINITIONS_DEBUG)
   string(REGEX REPLACE ";" " " 
     wxwidgets_COMPILE_FLAGS
     ${wxwidgets_COMPILE_FLAGS}
-    " ${wxWidgets_DEFINITIONS}"
+    " ${wxWidgets_DEFINITIONS_wD} ${wxWidgets_DEFINITIONS_DEBUG_wD}"
     )
   # Convert wxWidgets_LIBRARIES to full pathname form.
   cmake_link_flags(wxwidgets_LINK_FLAGS "${wxWidgets_LIBRARIES}")
