@@ -383,9 +383,6 @@ wxPLDevBase* common_init( PLStream *pls )
 #ifdef _DEBUG
     pls->verbose = 1;
     pls->debug   = 1;
-#else
-    pls->verbose = 0;
-    pls->debug   = 0;
 #endif
 
     pls->color     = 1;             /* Is a color device */
