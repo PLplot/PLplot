@@ -71,9 +71,9 @@ if(ENABLE_java)
   if(NOT JAVA_INCLUDE_PATH)
     message(STATUS
       "WARNING: jni.h header not found. Disabling Java bindings.\n" 
-    "   Please install that header and/or set the environment variable\n"
-    "   CMAKE_INCLUDE_PATH appropriately."
-    )
+      "   Please install that header and/or set the environment variable\n"
+      "   CMAKE_INCLUDE_PATH appropriately."
+      )
     set(ENABLE_java OFF CACHE BOOL "Enable Java bindings" FORCE)
   endif(NOT JAVA_INCLUDE_PATH)
 endif(ENABLE_java)
@@ -82,7 +82,8 @@ if(ENABLE_java)
   # Set up installation locations for java specific files.
   # Java .jar files.
   set(JAR_DIR ${CMAKE_INSTALL_DATADIR}/java
-    CACHE PATH "PLplot jar file install location")
+    CACHE PATH "PLplot jar file install location"
+    )
   get_filename_component(JAVADATA_HARDDIR ${JAR_DIR} ABSOLUTE)
   # JNI .so files.
   set(JAVAWRAPPER_DIR ${LIB_DIR}/jni
