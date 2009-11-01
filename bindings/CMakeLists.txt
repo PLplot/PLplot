@@ -48,25 +48,19 @@ if(PLD_tkwin)
 endif(PLD_tkwin)
 
 if(index)
-  find_program(CAT NAMES cat)
-  if(CAT)
-      add_custom_target(gen_pkgIndex.tcl ALL
-      COMMAND ${CAT} ${index} > pkgIndex.tcl
-      DEPENDS ${index}
-      )
-  else(CAT)
-    find_program(COMMAND_ENVIRONMENT NAMES cmd command)
-    if(COMMAND_ENVIRONMENT)
-      set(COPY "copy"  CACHE INTERNAL "program to concatenate files" FORCE)
-      message(STATUS "Copy: ${COPY} - ${COMMAND_ENVIRONMENT}")
-      add_custom_target(gen_pkgIndex.tcl ALL
-      COMMAND ${COPY} ${index} pkgIndex.tcl
-      DEPENDS ${index}
-      )
-    else(COMMAND_ENVIRONMENT)
-      message(FATAL_ERROR "program to concatenate files not found")
-    endif(COMMAND_ENVIRONMENT)
-  endif(CAT)
+  # The best cross-platform method of concatanating these files would
+  # be to use "cmake -E concatanate ...", but that functionality has
+  # not been implemented yet so we use a different method.
+  # This method of concatanating files at cmake time works because each
+  # of the files in index is configured at cmake time.
+  # N.B. the quotes on filecontents below are necessary to avoid
+  # having semicolons in filecontents messing up the results.
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl "")
+  foreach(filename ${index})
+    file(READ ${filename} filecontents)
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl "${filecontents}")
+  endforeach(filename ${index})
+
   install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
   DESTINATION ${DATA_DIR}
