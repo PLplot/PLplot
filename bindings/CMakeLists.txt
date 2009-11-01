@@ -50,7 +50,7 @@ endif(PLD_tkwin)
 if(index)
   find_program(CAT NAMES cat)
   if(CAT)
-      add_custom_target(pkgIndex.tcl ALL
+      add_custom_target(gen_pkgIndex.tcl ALL
       COMMAND ${CAT} ${index} > pkgIndex.tcl
       DEPENDS ${index}
       )
@@ -59,7 +59,7 @@ if(index)
     if(COMMAND_ENVIRONMENT)
       set(COPY "copy"  CACHE INTERNAL "program to concatenate files" FORCE)
       message(STATUS "Copy: ${COPY} - ${COMMAND_ENVIRONMENT}")
-      add_custom_target(pkgIndex.tcl ALL
+      add_custom_target(gen_pkgIndex.tcl ALL
       COMMAND ${COPY} ${index} pkgIndex.tcl
       DEPENDS ${index}
       )
