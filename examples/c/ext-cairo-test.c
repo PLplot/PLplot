@@ -5,13 +5,15 @@
 
 #include <plplot.h>
 
-int main( int argc, char *argv[] )
+int main( int argc, const char *argv[] )
 {
     cairo_surface_t *cairoSurface;
     cairo_t         *cairoContext;
 
     cairoSurface = cairo_ps_surface_create( "ext-cairo-test.ps", 720, 540 );
     cairoContext = cairo_create( cairoSurface );
+
+    plparseopts( &argc, argv, PL_PARSE_FULL );
 
     plsdev( "extcairo" );
     plinit();

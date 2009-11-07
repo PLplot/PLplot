@@ -75,11 +75,14 @@ static int    text_anti_aliasing;
 static int    graphics_anti_aliasing;
 static int    external_drawable;
 static int    rasterize_image;
+static int    set_background;
+
 static DrvOpt cairo_options[] = { { "text_clipping",          DRV_INT, &text_clipping,          "Use text clipping (text_clipping=0|1)"                                                                                                                                                                                          },
                                   { "text_anti_aliasing",     DRV_INT, &text_anti_aliasing,     "Set desired text anti-aliasing (text_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t)"        },
                                   { "graphics_anti_aliasing", DRV_INT, &graphics_anti_aliasing, "Set desired graphics anti-aliasing (graphics_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t" },
                                   { "external_drawable",      DRV_INT, &external_drawable,      "Plot to external X drawable"                                                                                                                                                                                                    },
                                   { "rasterize_image",        DRV_INT, &rasterize_image,        "Raster or vector image rendering (rasterize_image=0|1)"                                                                                                                                                                         },
+				  { "set_background",         DRV_INT, &set_background,         "Set the background for the extcairo device (set_background=0|1). If 1 then the plot background will set by PLplot"                                                                                                              },
                                   { NULL,                     DRV_INT, NULL,                    NULL                                                                                                                                                                                                                             } };
 
 typedef struct
@@ -92,6 +95,7 @@ typedef struct
     short           text_anti_aliasing;
     short           graphics_anti_aliasing;
     short           rasterize_image;
+    short           set_background;
     double          downscale;
     char            *pangoMarkupString;
     short           upDown;
@@ -1117,6 +1121,7 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     text_anti_aliasing     = 0; /* use 'default' text aliasing by default */
     graphics_anti_aliasing = 0; /* use 'default' graphics aliasing by default */
     rasterize_image        = 1; /* Enable rasterization by default */
+    set_background         = 0; /* Default for extcairo is that PLplot not change the background */
 
     /* Check for cairo specific options */
     plParseDrvOpts( cairo_options );
@@ -1131,6 +1136,7 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     aStream->text_anti_aliasing     = text_anti_aliasing;
     aStream->graphics_anti_aliasing = graphics_anti_aliasing;
     aStream->rasterize_image        = rasterize_image;
+    aStream->set_background         = set_background;
 
     return aStream;
 }
@@ -2346,12 +2352,37 @@ void plD_eop_memcairo( PLStream *pls )
 
 #if defined ( PLD_extcairo )
 
+void extcairo_setbackground( PLStream * );
 void plD_dispatch_init_extcairo( PLDispatchTable *pdt );
 void plD_init_extcairo( PLStream * );
 void plD_bop_extcairo( PLStream * );
 void plD_eop_extcairo( PLStream * );
 void plD_esc_extcairo( PLStream *, PLINT, void * );
 void plD_tidy_extcairo( PLStream * );
+
+/*---------------------------------------------------------------------
+ * extcairo_setbackground()
+ *
+ * Set the background color for the extcairo device
+ * ----------------------------------------------------------------------*/
+
+void extcairo_setbackground( PLStream *pls )
+{
+    PLCairo *aStream;
+
+    aStream = (PLCairo *) pls->dev;
+
+    /* Fill the context with the background color if the user so desires. */
+    if ( aStream->cairoContext != NULL) {
+        cairo_rectangle( aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength );
+        cairo_set_source_rgba( aStream->cairoContext,
+            (double) pls->cmap0[0].r / 255.0,
+	    (double) pls->cmap0[0].g / 255.0,
+	    (double) pls->cmap0[0].b / 255.0,
+	    (double) pls->cmap0[0].a );
+        cairo_fill( aStream->cairoContext );
+    }
+}
 
 /*---------------------------------------------------------------------
  * dispatch_init_init()
@@ -2403,7 +2434,14 @@ void plD_init_extcairo( PLStream *pls )
 
 void plD_bop_extcairo( PLStream *pls )
 {
-/* nothing to do here, we want to preserve the Cairo context as it is. */
+    PLCairo *aStream;
+
+    aStream = (PLCairo *) pls->dev;
+
+    /* Set background if desired */
+    if ( aStream->set_background ){
+        extcairo_setbackground(pls);
+    } 
 }
 
 /*----------------------------------------------------------------------
@@ -2444,6 +2482,10 @@ void plD_esc_extcairo( PLStream *pls, PLINT op, void *ptr )
         /* Should adjust plot size to fit in the given cairo context?
          * Cairo does not provide a way to query the dimensions of a context? */
 
+        /* Set background if desired */
+        if ( aStream->set_background ){
+            extcairo_setbackground(pls);
+        }
         break;
     default: /* Fall back on default Cairo actions */
         plD_esc_cairo( pls, op, ptr );
