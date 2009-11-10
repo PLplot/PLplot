@@ -584,6 +584,13 @@ if(BUILD_TEST)
 	DEPENDS
 	${interactive_device_depends_${device}}
 	)
+      if(device STREQUAL "tk")
+	if(CORE_BUILD)
+	  add_dependencies(test_c_tk tclIndex_tk tclIndex_tcl plserver xwin)
+	else(CORE_BUILD)
+	  add_dependencies(test_c_tk plserver xwin)
+	endif(CORE_BUILD)
+      endif(device STREQUAL "tk")
       list(APPEND interactive_targets_LIST test_c_${device})
     endforeach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
 
