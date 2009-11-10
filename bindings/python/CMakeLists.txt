@@ -123,7 +123,8 @@ if(ENABLE_python)
   endif(USE_RPATH)
 
   install(
-    TARGETS plplot_widgetmodule _plplotcmodule 
+    TARGETS plplot_widgetmodule _plplotcmodule
+    EXPORT export_plplot
     LIBRARY 
     DESTINATION ${PYTHON_INSTDIR}
     )
