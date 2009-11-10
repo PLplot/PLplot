@@ -164,6 +164,13 @@ if(CORE_BUILD)
     set_property(GLOBAL PROPERTY TARGETS_examples_python python_examples
       _plplotcmodule plplot_widgetmodule)
     set_property(GLOBAL PROPERTY FILES_examples_python ${command_DEPENDS})
+    if(ENABLE_pygcw)
+      add_custom_target(copy_plplotcanvas
+	DEPENDS
+	${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_demo.py
+	${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_animation.py
+	)
+    endif(ENABLE_pygcw)
   endif(BUILD_TEST)
 
   set(PERM_SCRIPTS
@@ -194,6 +201,7 @@ if(CORE_BUILD)
   set(python_location1 ${CMAKE_SOURCE_DIR}/bindings/python)
   set(python_location2 ${CMAKE_BINARY_DIR}/bindings/python)
   set(python_location3 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
+  set(python_location4 ${CMAKE_BINARY_DIR}/bindings/gnome2/python)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py
@@ -203,6 +211,7 @@ if(CORE_BUILD)
   set(python_location1 ${PYTHON_INSTDIR})
   set(python_location2)
   set(python_location3)
+  set(python_location4)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py_install
