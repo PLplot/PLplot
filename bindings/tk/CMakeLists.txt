@@ -98,8 +98,8 @@ if(ENABLE_tk)
 
 
   if(BUILD_SHARED_LIBS)
-    SET_SOURCE_FILES_PROPERTIES(plserver.c
-        PROPERTIES COMPILE_FLAGS "-DUSINGPLDLL" )
+    set_source_files_properties(plserver.c
+      PROPERTIES COMPILE_FLAGS "-DUSINGPLDLL" )
   endif(BUILD_SHARED_LIBS)
 
   add_executable(plserver plserver.c)
@@ -113,7 +113,10 @@ if(ENABLE_tk)
       )
   endif(USE_RPATH)
 
-  install(TARGETS plserver DESTINATION ${BIN_DIR})
+  install(TARGETS plserver
+    EXPORT export_plplot
+    DESTINATION ${BIN_DIR}
+    )
 
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
