@@ -200,4 +200,13 @@ if(ENABLE_pygcw)
     DESTINATION ${PYTHON_INSTDIR}
     )
 
+  # So pygcw will work in build tree.
+  if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/plplotcanvas.py
+      ${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas.py
+      COPYONLY
+      )
+  endif(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+
 endif(ENABLE_pygcw)
