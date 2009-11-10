@@ -284,9 +284,9 @@ if(CORE_BUILD)
 
   # Install soft-landing support for compiler detection/testing.
   install(FILES
-   ${CMAKE_SOURCE_DIR}/cmake/modules/language_support.cmake 
-   DESTINATION ${DATA_DIR}/examples/cmake/modules
-   )
+    ${CMAKE_SOURCE_DIR}/cmake/modules/language_support.cmake 
+    DESTINATION ${DATA_DIR}/examples/cmake/modules
+    )
 
   # Install PLplot-specific language support files needed for CMake-based
   # build of installed examples.
@@ -497,7 +497,7 @@ if(BUILD_TEST)
       list(APPEND device_depends ${files_examples_c})
     else(files_examples_c)
       if(targets_examples_c)
-      list(APPEND device_depends ${targets_examples_c})
+	list(APPEND device_depends ${targets_examples_c})
       endif(targets_examples_c)
     endif(files_examples_c)
 
@@ -547,7 +547,7 @@ if(BUILD_TEST)
     if(PLD_extcairo)
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
-	COMMAND ext-cairo-test
+	COMMAND ext-cairo-test -drvopt set_background=1
 	DEPENDS 
 	ext-cairo-test
 	cairo
@@ -579,7 +579,7 @@ if(BUILD_TEST)
 	list(APPEND interactive_device_depends_${device} ${driver})
       endif(ENABLE_DYNDRIVERS)
       add_custom_target(test_c_${device}
-	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} file device"
+	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} interactive device"
 	COMMAND ${custom_env} ${custom_test_command} --verbose --interactive --device=${device}
 	DEPENDS
 	${interactive_device_depends_${device}}
@@ -598,21 +598,15 @@ if(BUILD_TEST)
     endif(PLD_xcairo)
 
     if(ENABLE_gnome2)
-      add_custom_target(test_plplotcanvas_demo
+      add_custom_target(test_plplotcanvas
 	COMMAND plplotcanvas_demo
-	DEPENDS 
-	plplotcanvas_demo
-	gcw
-	)
-      list(APPEND interactive_targets_LIST test_plplotcanvas_demo)
-
-      add_custom_target(test_plplotcanvas_animation
 	COMMAND plplotcanvas_animation
 	DEPENDS 
+	plplotcanvas_demo
 	plplotcanvas_animation
 	gcw
 	)
-      list(APPEND interactive_targets_LIST test_plplotcanvas_animation)
+      list(APPEND interactive_targets_LIST test_plplotcanvas)
     endif(ENABLE_gnome2)
 
   endif(ENABLE_c)
@@ -639,6 +633,38 @@ if(BUILD_TEST)
     endif(PLD_extqt)
 
   endif(ENABLE_cxx)
+
+  if(ENABLE_pygcw)
+    if(CORE_BUILD)
+      add_custom_target(test_pygcw
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_demo.py
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_animation.py
+	DEPENDS
+	gcwmodule
+	cplplotcanvasmodule
+	gcw
+	_plplotcmodule
+	${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_demo.py
+	${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_animation.py
+	WORKING_DIRECTORY
+	${CMAKE_CURRENT_BINARY_DIR}/python
+	)
+      add_dependencies(test_pygcw copy_plplotcanvas)
+    else(CORE_BUILD)
+      add_custom_target(test_pygcw
+	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/plplotcanvas_demo.py
+	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/plplotcanvas_animation.py
+	DEPENDS
+	gcwmodule
+	cplplotcanvasmodule
+	gcw
+	_plplotcmodule
+	WORKING_DIRECTORY
+	${CMAKE_CURRENT_SOURCE_DIR}/python
+	)
+    endif(CORE_BUILD)
+    list(APPEND interactive_targets_LIST test_pygcw)
+  endif(ENABLE_pygcw)
 
   add_custom_target(test_interactive)
   if(interactive_targets_LIST)
