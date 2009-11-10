@@ -48,10 +48,10 @@ if(PLD_tkwin)
 endif(PLD_tkwin)
 
 if(index)
-  # The best cross-platform method of concatanating these files would
-  # be to use "cmake -E concatanate ...", but that functionality has
+  # The best cross-platform method of concatenating these files would
+  # be to use "cmake -E concatenate ...", but that functionality has
   # not been implemented yet so we use a different method.
-  # This method of concatanating files at cmake time works because each
+  # This method of concatenating files at cmake time works because each
   # of the files in index is configured at cmake time.
   # N.B. the quotes on filecontents below are necessary to avoid
   # having semicolons in filecontents messing up the results.
