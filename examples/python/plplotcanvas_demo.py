@@ -44,7 +44,7 @@ HEIGHT = 600 # 300
 
 # Delete event callback
 def delete_event(widget, event, data=None):
-    return gtk.FALSE
+    return False
 
 # Destroy event calback
 def destroy(widget, data=None):

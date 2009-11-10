@@ -118,7 +118,7 @@ def plot(canvas,offset,title):
 
 # Delete event callback
 def delete_event(widget, event, data=None):
-    return gtk.FALSE
+    return False
 
 # Destroy event calback
 def destroy(widget, data=None):
@@ -135,7 +135,7 @@ def plot_thread(canvas,title):
 
     # Draw plots in succession
     for i in range(STEPS):
-        gtk.threads_enter()
+        gtk.gdk.threads_enter()
 
         # Lock the current gtk state
         gtk_state_lock.acquire()
@@ -143,7 +143,7 @@ def plot_thread(canvas,title):
         # Check to make sure gtk hasn't quit
         if gtk_state == GTKSTATE_QUIT:
             gtk_state_lock.release()
-            gtk.threads_leave()
+            gtk.gdk.threads_leave()
             return
 
         # Draw the plot
@@ -151,7 +151,7 @@ def plot_thread(canvas,title):
 
         # Release the lock
         gtk_state_lock.release()
-        gtk.threads_leave()
+        gtk.gdk.threads_leave()
 
 # Start threads callback from execute button
 def start_threads(widget,data):
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     plplot_py_demos.plparseopts(sys.argv,plplot_py_demos.PL_PARSE_FULL);
 
     # Initialize
-    gtk.threads_init()
+    gtk.gdk.threads_init()
 
     # Create the first canvas, set its size, draw some axes on it, and
     # place it in a frame
@@ -232,6 +232,6 @@ if __name__ == "__main__":
     window.show_all()
 
     # Start the gtk main loop
-    gtk.threads_enter()
+    gtk.gdk.threads_enter()
     gtk.main()
-    gtk.threads_leave()
+    gtk.gdk.threads_leave()
