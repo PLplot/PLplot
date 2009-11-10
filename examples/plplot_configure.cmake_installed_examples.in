@@ -44,6 +44,9 @@ set(ENABLE_tk @ENABLE_tk@)
 set(ENABLE_gnome2 @ENABLE_gnome2@)
 set(ENABLE_wxwidgets @ENABLE_wxwidgets@)
 set(ENABLE_qt @ENABLE_qt@)
+if(ENABLE_python)
+  set(ENABLE_pygcw @ENABLE_pygcw@)
+endif(ENABLE_python)
 
 # Check for all officially supported CMake compilers that we use with
 # soft-landing support.
@@ -117,10 +120,6 @@ if(ENABLE_ocaml)
   set(CMAKE_INSTALL_LIBDIR @CMAKE_INSTALL_LIBDIR@)
   set(OCAML_INSTALL_DIR @OCAML_INSTALL_DIR@)
 endif(ENABLE_ocaml)
-
-if(ENABLE_python)
-  set(ENABLE_pygcw @ENABLE_pygcw@)
-endif(ENABLE_python)
 
 if(ENABLE_tcl OR ENABLE_tk)
   set(TCL_TCLSH @TCL_TCLSH@)
@@ -206,3 +205,4 @@ set(PLD_xwin @PLD_xwin@)
 
 # Set external devices that are needed to build certain examples.
 set(PLD_extcairo @PLD_extcairo@)
+set(PLD_extqt @PLD_extqt@)
