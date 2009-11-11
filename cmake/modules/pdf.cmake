@@ -24,6 +24,7 @@
 # pdf_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile pdf
 # 			    device.
 # pdf_LINK_FLAGS	  - individual LINK_FLAGS for dynamic pdf device.
+# pdf_RPATH               - RPATH directory list for pdf device driver.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
 
 if(PLD_pdf)
@@ -37,6 +38,7 @@ if(PLD_pdf)
       set(pdf_COMPILE_FLAGS "-I${hpdf_INCLUDE_DIRS}")
     endif(WIN32)
     set(pdf_LINK_FLAGS "${hpdf_LIBRARIES}")
+    set(pdf_RPATH ${hpdf_LIBRARY_DIRS})
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${pdf_LINK_FLAGS})
   else(hpdf_FOUND)
     message(STATUS "Looking for haru pdf header and library - not found")
@@ -44,4 +46,3 @@ if(PLD_pdf)
     set(PLD_pdf OFF CACHE BOOL "Enable pdf device" FORCE)    
   endif(hpdf_FOUND)
 endif(PLD_pdf)
-
