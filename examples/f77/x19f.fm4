@@ -38,6 +38,20 @@ c--------------------------------------------------------------------------
       end
 
 c--------------------------------------------------------------------------
+c floor
+c
+c Compatibility function - keep all examples as equal as possible
+c--------------------------------------------------------------------------
+      real*8 function floor(x)
+      real*8 x
+      if ( x .gt. 0.0d0 ) then
+          floor = real(int(x))
+      else
+          floor = real(int(x)-1)
+      endif
+      end
+
+c--------------------------------------------------------------------------
 c mapform19
 c
 c Defines specific coordinate transformation for example 19.
@@ -67,7 +81,7 @@ c--------------------------------------------------------------------------
       return
       end
 
-c     "Normalize" longitude values so that they always fall between 
+c     "Normalize" longitude values so that they always fall between
 c      -180.0 and 180.0
       function normalize_longitude(lon)
       implicit none
@@ -76,7 +90,7 @@ c      -180.0 and 180.0
 
       if ((lon .ge. -180.0d0) .and. (lon .le. 180.0d0)) then
          normalize_longitude = lon
-      else 
+      else
          times = floor ((abs(lon) + 180.0d0) / 360.0d0)
         if (lon .lt. 0.0d0) then
            normalize_longitude = lon + 360.0d0 * times
@@ -92,7 +106,7 @@ c A custom axis labeling function for longitudes and latitudes.
       implicit none
       integer axis, length
       real*8 value
-      character*(length) label
+      character*(*) label
       character*5 direction_label
       real*8 label_val
       real*8 normalize_longitude
@@ -115,13 +129,13 @@ c A custom axis labeling function for longitudes and latitudes.
          else
             direction_label = ''
          endif
-      endif    
+      endif
       if (axis .eq. 2 .and. value .eq. 0.0d0) then
 c     A special case for the equator
-         label = direction_label    
+         label = direction_label
       else if (abs(label_val) .lt. 100.0d0) then
          write(label,'(I2.1,A2)') iabs(int(label_val)),direction_label
-      else 
+      else
          write(label,'(I3.1,A2)') iabs(int(label_val)),direction_label
       endif
       end

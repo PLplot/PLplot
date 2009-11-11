@@ -37,8 +37,9 @@
 static void ( STDCALL *plmapform )( PLINT *, PLFLT *, PLFLT * ); /* Note: slightly different prototype than
                                                                   * (*mapform)! */
 /* Slightly different to (*label_func) as we don't support PLPointer for
- * additional data in f77. */
-static void ( STDCALL *pllabelfunc )( PLINT *, PLFLT *, char *, PLINT * );
+ * additional data in f77.
+ * Note the hidden argument! */
+static void ( STDCALL *pllabelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT );
 
 void
 PL_SETCONTLABELFORMAT( PLINT *lexp, PLINT *sigdig )
@@ -481,7 +482,10 @@ pllabelfuncf2c( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer da
 {
     int i;
 
-        ( *pllabelfunc )( &axis, &value, label, &length );
+    /* (AM) Note the hidden argument "length" - it ensures that the string "label"
+       is recognised to have that length
+    */
+    ( *pllabelfunc )( &axis, &value, label, &length, length );
 
     /* Ensure string is null terminated */
     i = length - 1;
