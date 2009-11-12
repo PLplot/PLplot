@@ -93,7 +93,8 @@ function save_fig(file, device, rev)
     to_prt = 0;
     if (strcmp(file,"|lp"))	# special output file, printer!
       to_prt = 1;
-      file = tmpnam;
+      [fp,file] = mkstemp("oct_fig_XXXXXX");
+      fclose(fp);
     elseif (file(1) == '~')
       file = tilde_expand(file);
     elseif (exist("FIGDIR") & file(1) != '/' & file(1) != '.')
