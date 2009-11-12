@@ -192,7 +192,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	  tk_init;
 	 endif
 
-          [fp,init_file] = mkstemp("oct_fig_XXXXXX");
+          [fp,init_file] = mkstemp([P_tmpdir "oct_fig_XXXXXX"]);
 
 	  fprintf(fp, "set octave_interp {%s}\n", __tk_name);
 	  fprintf(fp, "set octave_interp_pid %d\n", getpid);
