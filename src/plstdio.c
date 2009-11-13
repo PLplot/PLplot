@@ -26,6 +26,13 @@
 #define NEED_PLDEBUG
 #include "plplotP.h"
 
+#if defined ( MSDOS ) || defined ( WIN32 )
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#endif
+
+
 /*
  * plio_write()
  *
@@ -133,3 +140,88 @@ plio_fgets( char *buf, int size, FILE *stream )
         plabort( "Error reading from file" );
     }
 }
+
+/*
+ * pl_create_tempfile()
+ *
+ * Securely create a temporary file and return a file handle to it.
+ * This provides cross-platform compatibility and also adds some 
+ * additional functionality over mkstemp in that it honours the TMP / 
+ * TMPDIR / TEMP environment variables.
+ * 
+ * The function returns the file handle.
+ *
+ * If the fname variable is not NULL, then on return it will contain
+ * a pointer to the full temporary file name. This will be allocated
+ * with malloc. It is the caller's responsibility to ensure this 
+ * memory is free'd and to ensure the file is deleted after use.
+ * If fname is NULL then the file will be automatically deleted 
+ * when it is closed.
+ */
+int
+pl_create_tempfile(char **fname)
+{
+    int fd;
+    char *tmpdir;
+    char *template;
+    const char *tmpfile = "plplot_XXXXXX";
+
+#if defined ( MSDOS ) || defined ( WIN32 )
+    tmpdir = getenv("TEMP");
+#else
+    tmpdir = getenv("TMPDIR");
+#endif
+
+/* The P_TMPDIR macro is defined in stdio.h on many UNIX systems - try that */
+#ifdef P_TMPDIR
+    if (tmpdir == NULL) 
+        tmpdir = P_TMPDIR;
+#endif
+
+    if (tmpdir == NULL) {
+#if defined ( MSDOS ) || defined ( WIN32 )
+        tmpdir = "c:\\windows\\Temp";
+#else
+        tmpdir = "/tmp";
+#endif
+    }
+
+    /* N.B. Malloc ensures template is long enough so strcpy and strcat are safe here */
+    template = (char *) malloc( strlen(tmpdir) + strlen(tmpfile) + 2);
+    strcpy(template,tmpdir);
+#if defined ( MSDOS ) || defined ( WIN32 )
+    strcat(template,"\\");
+#else
+    strcat(template,"/");
+#endif
+    strcat(template,tmpfile);
+
+#ifdef PL_HAVE_MKSTEMP
+    fd = mkstemp(template);
+    /* If we are not returning the file name then unlink the file so it is
+     * automatically deleted. */
+    if ( fd != -1 && fname != NULL )
+        unlink(template);
+#else
+#define _S_IREAD 256
+#define _S_IWRITE 128
+    fd = -1;
+    flags = O_RDWR|O_BINARY|O_CREAT|O_EXCL|_O_SHORT_LIVED;
+    /* If we are not returning the file name then add flag to automatically
+     * delete file once all file handles are closed. */
+    if (fname == NULL) 
+        flags = flags | _O_TEMPORARY;
+    mktemp(template); 
+    fd = open(template,flags, _S_IREAD|_S_IWRITE);
+#endif
+
+    if (fname != NULL) {
+        *fname = template;
+    }
+    else {
+        free(template);
+    }
+
+    return fd;
+}
+

@@ -109,6 +109,9 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H 1
 
+/* Define to 1 if the function mkstemp is available. */
+#cmakedefine PL_HAVE_MKSTEMP 1
+
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #cmakedefine HAVE_NDIR_H 1
 
