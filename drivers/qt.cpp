@@ -34,10 +34,6 @@
 #include "qt.h"
 #include <QMutexLocker>
 
-extern int           vectorize;
-extern int           lines_aa;
-extern MasterHandler handler;
-
 // global variables initialised in init(), used in tidy()
 // QApplication* app=NULL;
 static int  argc;           // argc and argv have to exist when tidy() is used, thus they are made global
@@ -45,7 +41,8 @@ static char **argv;
 static int  appCounter = 0; // to be rigorous, all uses should be placed between mutexes
 
 // Drivers declaration
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
+extern "C" {
+PLDLLIMPEXP_DRIVER_DATA(const char*) plD_DEVICE_INFO_qt =
 #if defined ( PLD_bmpqt )
     "bmpqt:Qt Windows bitmap driver:0:qt:66:bmpqt\n"
 #endif
@@ -77,6 +74,7 @@ PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_qt =
     "extqt:External Qt driver:0:qt:75:extqt\n"
 #endif
 ;
+}  // extern "C"
 
 static DrvOpt qt_options[] = { { "text_vectorize",     DRV_INT, &vectorize, "Vectorize fonts on output (0|1)"     },
                                { "lines_antialiasing", DRV_INT, &lines_aa,  "Toggles antialiasing on lines (0|1)" },
@@ -336,7 +334,7 @@ void plD_polyline_rasterqt( PLStream *pls, short *xa, short *ya, PLINT npts )
 void plD_esc_rasterqt( PLStream * pls, PLINT op, void* ptr )
 {
     short          *xa, *ya;
-    PLINT          i, j;
+    PLINT          i;
     QtRasterDevice * widget = (QtRasterDevice *) pls->dev;
     if ( widget != NULL && qt_family_check( pls ))
     {
@@ -735,7 +733,7 @@ void plD_polyline_svgqt( PLStream *pls, short *xa, short *ya, PLINT npts )
 void plD_esc_svgqt( PLStream * pls, PLINT op, void* ptr )
 {
     short       *xa, *ya;
-    PLINT       i, j;
+    PLINT       i;
     QtSVGDevice * widget = (QtSVGDevice *) pls->dev;
     if ( widget != NULL && qt_family_check( pls ))
     {
@@ -979,7 +977,7 @@ void plD_polyline_epspdfqt( PLStream *pls, short *xa, short *ya, PLINT npts )
 void plD_esc_epspdfqt( PLStream * pls, PLINT op, void* ptr )
 {
     short       *xa, *ya;
-    PLINT       i, j;
+    PLINT       i;
     QtEPSDevice * widget = (QtEPSDevice *) pls->dev;
     if ( widget != NULL && qt_family_check( pls ))
     {
@@ -1098,7 +1096,6 @@ void plD_init_qtwidget( PLStream * pls )
     lines_aa  = 1;
     plParseDrvOpts( qt_options );
 
-    PLINT     w, h;
     bool      isMaster = initQtApp( true );
     QtPLWidget* widget;
 
@@ -1192,8 +1189,7 @@ void plD_polyline_qtwidget( PLStream *pls, short *xa, short *ya, PLINT npts )
 void plD_esc_qtwidget( PLStream * pls, PLINT op, void* ptr )
 {
     short      *xa, *ya;
-    short      xmin, xmax, ymin, ymax;
-    PLINT      i, j;
+    PLINT      i;
     QtPLWidget * widget = (QtPLWidget *) pls->dev;
     if ( widget == NULL ) return;
 
@@ -1358,7 +1354,7 @@ void plD_polyline_extqt( PLStream *pls, short *xa, short *ya, PLINT npts )
 void plD_esc_extqt( PLStream * pls, PLINT op, void* ptr )
 {
     short       *xa, *ya;
-    PLINT       i, j;
+    PLINT       i;
     QtExtWidget * widget = NULL;
 
     widget = (QtExtWidget*) pls->dev;

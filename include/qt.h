@@ -89,6 +89,8 @@
 #define QT_DEFAULT_X    842
 #define QT_DEFAULT_Y    595
 
+extern "C" extern PLDLLIMPEXP_DRIVER_DATA( const char* ) plD_DEVICE_INFO_qt;
+
 class PLDLLIMPEXP_QT QtPLDriver;
 
 // Master Device Handler for multiple streams
@@ -396,6 +398,12 @@ PLDLLIMPEXP_QT void plsetqtdev( QtExtWidget* widget, int argc, char** argv ); //
 PLDLLIMPEXP_QT void plfreeqtdev();                                            // Deletes and unregisters the device.
 
 #endif
+
+// These variables are declared in plqt.cpp but also needed
+// by the qt driver.
+extern PLDLLIMPEXP_QT_DATA( int ) vectorize;
+extern PLDLLIMPEXP_QT_DATA( int ) lines_aa;
+extern PLDLLIMPEXP_QT_DATA( MasterHandler ) handler;
 
 #if defined ( plplot_pyqt4_EXPORTS )
 #define initplplot_pyqt4    PLDLLIMPEXP_PYQT4 initplplot_pyqt4

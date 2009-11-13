@@ -944,8 +944,6 @@ void QtPLWidget::paintEvent( QPaintEvent * )
 void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_offset, double y_offset )
 {
     QLineF         line;
-    QPointF        * polyline;
-    PLINT          npts;
     QVector<qreal> vect;
     QRectF         rect;
 
