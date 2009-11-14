@@ -1127,7 +1127,7 @@ void plD_init_qtwidget( PLStream * pls )
     plP_setpxl( temp.logicalDpiX() / 25.4 / widget->downscale, temp.logicalDpiY() / 25.4 / widget->downscale );
 
     pls->color       = 1;       /* Is a color device */
-    pls->plbuf_write = 0;
+    pls->plbuf_write = 1;       /* Store commands to device in core buffer */
     pls->dev_fill0   = 1;       /* Handle solid fills */
     pls->dev_fill1   = 0;
     /* Let the PLplot core handle dashed lines since
