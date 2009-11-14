@@ -1071,7 +1071,7 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     pls->page        = 0;
     pls->dev_fill0   = 1;           /* Supports hardware solid fills */
     pls->dev_arc     = 1;           /* Supports driver-level arcs */
-    pls->plbuf_write = 1;           /* Activate plot buffer */
+    pls->plbuf_write = interactive; /* Activate plot buffer */
 
 
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
