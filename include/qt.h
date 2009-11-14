@@ -89,7 +89,7 @@
 #define QT_DEFAULT_X    842
 #define QT_DEFAULT_Y    595
 
-extern "C" extern PLDLLIMPEXP_DRIVER_DATA( const char* ) plD_DEVICE_INFO_qt;
+extern "C" PLDLLIMPEXP_DRIVER_DATA( const char* ) plD_DEVICE_INFO_qt;
 
 class PLDLLIMPEXP_QT QtPLDriver;
 
