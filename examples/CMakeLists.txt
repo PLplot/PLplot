@@ -682,6 +682,35 @@ if(BUILD_TEST)
     list(APPEND interactive_targets_LIST ${targets_examples_tk})
   endif(targets_examples_tk)
 
+  # Custom target to test all of qt devices/special examples.
+  # Must be maintained.
+  add_custom_target(test_all_qt)
+  add_dependencies(test_all_qt
+    test_c_epsqt
+    test_c_pdfqt
+    test_c_bmpqt
+    test_c_jpgqt
+    test_c_pngqt
+    test_c_ppmqt
+    test_c_tiffqt
+    test_c_svgqt
+    test_c_qtwidget
+    test_qt_example
+    )
+
+  # Custom target to test all of cairo devices/special examples.
+  # Must be maintained.
+  add_custom_target(test_all_cairo)
+  add_dependencies(test_all_cairo
+    test_c_pdfcairo
+    test_c_pngcairo
+    test_c_pscairo
+    test_c_svgcairo
+    test_extcairo
+    test_c_xcairo
+    test_extXdrawable
+    )
+
 endif(BUILD_TEST)
 
 if(NOT CORE_BUILD)
