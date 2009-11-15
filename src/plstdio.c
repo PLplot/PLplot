@@ -161,7 +161,7 @@ plio_fgets( char *buf, int size, FILE *stream )
 int
 pl_create_tempfile(char **fname)
 {
-    int fd;
+    int fd, flags;
     char *tmpdir;
     char *template;
     const char *tmpfile = "plplot_XXXXXX";
