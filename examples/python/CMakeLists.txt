@@ -77,6 +77,7 @@ set(
   xw31.py
   plplot_logo.py
   test_circle.py
+  test_axis_precision.py
   testh.py
   test_superscript_subscript.py
   )
