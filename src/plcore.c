@@ -946,10 +946,10 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
             args.string = string;
         }
 
-        if ( !plsc->alt_unicode )
-        {
+	//        if ( !plsc->alt_unicode )
+	//        {
             plP_esc( PLESC_HAS_TEXT, &args );
-        }
+	    //        }
 #ifndef DEBUG_TEXT
     }
     else

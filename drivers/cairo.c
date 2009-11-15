@@ -479,7 +479,9 @@ void plD_esc_cairo( PLStream *pls, PLINT op, void *ptr )
         filled_polygon( pls, pls->dev_x, pls->dev_y, pls->dev_npts );
         break;
     case PLESC_HAS_TEXT:
-        proc_str( pls, (EscText *) ptr );
+        if(!pls->alt_unicode){
+            proc_str( pls, (EscText *) ptr );
+        }
         break;
     case PLESC_BEGIN_TEXT: /* get ready to get a handle a string of text */
         text_begin_cairo( pls, (EscText *) ptr );
