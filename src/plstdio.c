@@ -32,7 +32,17 @@
 #include <fcntl.h>
 #endif
 
-
+/* For Visual C++ 2005 and later mktemp() and open() are deprecated (see
+ * http://msdn.microsoft.com/en-us/library/ms235413.aspx and
+ * http://msdn.microsoft.com/en-us/library/ms235491.aspx). mktemp()
+ * is redefined to _mktemp() as well as open() to _open(). In addition
+ * we need to include io.h.
+ */
+#if defined ( _MSC_VER ) && _MSC_VER >= 1400
+#include <io.h>
+#define mktemp _mktemp
+#define open _open
+#endif
 /*
  * plio_write()
  *
@@ -203,8 +213,12 @@ pl_create_tempfile(char **fname)
     if ( fd != -1 && fname != NULL )
         unlink(template);
 #else
+#if !defined(_S_IREAD)
 #define _S_IREAD 256
+#endif
+#if !defined(_S_IWRITE)
 #define _S_IWRITE 128
+#endif
     fd = -1;
     flags = O_RDWR|O_BINARY|O_CREAT|O_EXCL|_O_SHORT_LIVED;
     /* If we are not returning the file name then add flag to automatically
