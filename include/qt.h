@@ -89,9 +89,7 @@
 #define QT_DEFAULT_X    842
 #define QT_DEFAULT_Y    595
 
-extern "C" PLDLLIMPEXP_DRIVER_DATA( const char* ) plD_DEVICE_INFO_qt;
-
-class PLDLLIMPEXP_QT QtPLDriver;
+class QtPLDriver;
 
 // Master Device Handler for multiple streams
 // Only handles multiple Qt devices
