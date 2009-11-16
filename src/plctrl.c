@@ -1846,7 +1846,7 @@ pl_cmd( PLINT op, void *ptr )
  * Looks for the specified executable file.  Search path:
  *      if command invoked in the build tree:
  *         build_tree/tk (plserver lies there - needed for the tk driver)
- *         build_tree/scripts (plpr lies there - needed for the tk driver)
+ *         source_tree/scripts (plpr lies there - needed for the tk driver)
  *      else
  *	PLPLOT_BIN_ENV = $(PLPLOT_BIN)
  *	current directory
@@ -1870,7 +1870,7 @@ plFindCommand( const char *fn )
             return fs;
         else
         {
-            plGetName( BUILD_DIR, "scripts", fn, &fs );
+            plGetName( SOURCE_DIR, "scripts", fn, &fs );
             if ( !plFindName( fs ))
                 return fs;
         }
