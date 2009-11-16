@@ -1505,7 +1505,7 @@ link_init( PLStream *pls )
     if ( !pls->dp )
     {
         /* This of tmpnam should (?) be safe since mkfifo
-           will fail if the filename already exists */
+         * will fail if the filename already exists */
         iodev->fileName = (char *) tmpnam( NULL );
         if ( mkfifo( iodev->fileName,
                  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH ) < 0 )

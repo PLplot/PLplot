@@ -483,8 +483,8 @@ pllabelfuncf2c( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer da
     int i;
 
     /* (AM) Note the hidden argument "length" - it ensures that the string "label"
-       is recognised to have that length
-    */
+     * is recognised to have that length
+     */
     ( *pllabelfunc )( &axis, &value, label, &length, length );
 
     /* Ensure string is null terminated */

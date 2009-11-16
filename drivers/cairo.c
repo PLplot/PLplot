@@ -82,7 +82,7 @@ static DrvOpt cairo_options[] = { { "text_clipping",          DRV_INT, &text_cli
                                   { "graphics_anti_aliasing", DRV_INT, &graphics_anti_aliasing, "Set desired graphics anti-aliasing (graphics_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t" },
                                   { "external_drawable",      DRV_INT, &external_drawable,      "Plot to external X drawable"                                                                                                                                                                                                    },
                                   { "rasterize_image",        DRV_INT, &rasterize_image,        "Raster or vector image rendering (rasterize_image=0|1)"                                                                                                                                                                         },
-				  { "set_background",         DRV_INT, &set_background,         "Set the background for the extcairo device (set_background=0|1). If 1 then the plot background will set by PLplot"                                                                                                              },
+                                  { "set_background",         DRV_INT, &set_background,         "Set the background for the extcairo device (set_background=0|1). If 1 then the plot background will set by PLplot"                                                                                                              },
                                   { NULL,                     DRV_INT, NULL,                    NULL                                                                                                                                                                                                                             } };
 
 typedef struct
@@ -479,7 +479,8 @@ void plD_esc_cairo( PLStream *pls, PLINT op, void *ptr )
         filled_polygon( pls, pls->dev_x, pls->dev_y, pls->dev_npts );
         break;
     case PLESC_HAS_TEXT:
-        if(!pls->alt_unicode){
+        if ( !pls->alt_unicode )
+        {
             proc_str( pls, (EscText *) ptr );
         }
         break;
@@ -2375,13 +2376,14 @@ void extcairo_setbackground( PLStream *pls )
     aStream = (PLCairo *) pls->dev;
 
     /* Fill the context with the background color if the user so desires. */
-    if ( aStream->cairoContext != NULL) {
+    if ( aStream->cairoContext != NULL )
+    {
         cairo_rectangle( aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength );
         cairo_set_source_rgba( aStream->cairoContext,
             (double) pls->cmap0[0].r / 255.0,
-	    (double) pls->cmap0[0].g / 255.0,
-	    (double) pls->cmap0[0].b / 255.0,
-	    (double) pls->cmap0[0].a );
+            (double) pls->cmap0[0].g / 255.0,
+            (double) pls->cmap0[0].b / 255.0,
+            (double) pls->cmap0[0].a );
         cairo_fill( aStream->cairoContext );
     }
 }
@@ -2441,9 +2443,10 @@ void plD_bop_extcairo( PLStream *pls )
     aStream = (PLCairo *) pls->dev;
 
     /* Set background if desired */
-    if ( aStream->set_background ){
-        extcairo_setbackground(pls);
-    } 
+    if ( aStream->set_background )
+    {
+        extcairo_setbackground( pls );
+    }
 }
 
 /*----------------------------------------------------------------------
@@ -2485,8 +2488,9 @@ void plD_esc_extcairo( PLStream *pls, PLINT op, void *ptr )
          * Cairo does not provide a way to query the dimensions of a context? */
 
         /* Set background if desired */
-        if ( aStream->set_background ){
-            extcairo_setbackground(pls);
+        if ( aStream->set_background )
+        {
+            extcairo_setbackground( pls );
         }
         break;
     default: /* Fall back on default Cairo actions */

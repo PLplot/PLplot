@@ -42,7 +42,7 @@ static int  appCounter = 0; // to be rigorous, all uses should be placed between
 
 // Drivers declaration
 extern "C" {
-PLDLLIMPEXP_DRIVER_DATA(const char*) plD_DEVICE_INFO_qt =
+PLDLLIMPEXP_DRIVER_DATA( const char* ) plD_DEVICE_INFO_qt =
 #if defined ( PLD_bmpqt )
     "bmpqt:Qt Windows bitmap driver:0:qt:66:bmpqt\n"
 #endif

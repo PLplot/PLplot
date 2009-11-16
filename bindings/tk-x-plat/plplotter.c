@@ -2638,16 +2638,16 @@ Print( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 /* Open file for writes */
 
-   /* Create and open temporary file */
-   /* NB use fdopen to get a file stream from the existing file handle */
-    if (( sfile = fdopen( pl_create_tempfile(&sfnam), "wb+" )) == NULL )
+    /* Create and open temporary file */
+    /* NB use fdopen to get a file stream from the existing file handle */
+    if (( sfile = fdopen( pl_create_tempfile( &sfnam ), "wb+" )) == NULL )
     {
         Tcl_AppendResult( interp,
             "Error -- cannot open plot file for writing",
             (char *) NULL );
         plend1();
-        if (sfnam != NULL) 
-            free(sfnam);
+        if ( sfnam != NULL )
+            free( sfnam );
         return TCL_ERROR;
     }
 
@@ -2683,12 +2683,12 @@ Print( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
                  (char *) 0 ))
         {
             fprintf( stderr, "Unable to exec print command.\n" );
-            free(sfnam);
+            free( sfnam );
             _exit( 1 );
         }
     }
 #endif
-    free(sfnam);
+    free( sfnam );
     return result;
 }
 
