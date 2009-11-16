@@ -210,7 +210,7 @@ pl_create_tempfile( char **fname )
     strcat( template, tmpname );
 
 #ifdef PL_HAVE_MKSTEMP
-    fd = fdopen( mkstemp( template ), "wb" );
+    fd = fdopen( mkstemp( template ), "wb+" );
     if ( fd == NULL )
     {
         plwarn( "pl_create_tempfile: Unable to open temporary file - returning" );
@@ -220,8 +220,8 @@ pl_create_tempfile( char **fname )
     }
     /* If we are not returning the file name then unlink the file so it is
      * automatically deleted. */
-    if ( fd != NULL && fname == NULL )
-        unlink( template );
+    //if ( fname == NULL )
+    //    unlink( template );
 #else
 #if !defined ( _S_IREAD )
 #define _S_IREAD     256
@@ -236,7 +236,7 @@ pl_create_tempfile( char **fname )
     if ( fname == NULL )
         flags = flags | _O_TEMPORARY;
     mktemp( template );
-    fd = fdopen( open( template, flags, _S_IREAD | _S_IWRITE ), "wb" );
+    fd = fdopen( open( template, flags, _S_IREAD | _S_IWRITE ), "wb+" );
 #endif
 
     if ( fname != NULL )

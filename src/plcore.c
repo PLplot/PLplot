@@ -88,6 +88,8 @@
 #define BUFFER2_SIZE    300
 #define DRVSPEC_SIZE    400
 
+#include <errno.h>
+
 /*--------------------------------------------------------------------------*\
  * Driver Interface
  *
@@ -2597,7 +2599,12 @@ plInitDispatchTable()
 
 /* Open a temporary file in which all the plD_DEVICE_INFO_<driver> strings
  * will be stored */
-    fp_drvdb = tmpfile();
+    fp_drvdb = pl_create_tempfile( NULL );
+    if ( fp_drvdb == NULL )
+    {
+        plabort( "plInitDispatchTable: Could not open temporary file" );
+        return;
+    }
 
 /* Open the drivers directory */
     drvdir    = plGetDrvDir();

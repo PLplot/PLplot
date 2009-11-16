@@ -150,7 +150,7 @@ plbuf_bop( PLStream *pls )
     plbuf_tidy( pls );
 
 #ifdef BUFFERED_FILE
-    pls->plbufFile = tmpfile();
+    pls->plbufFile = pl_create_tempfile( NULL );
     if ( pls->plbufFile == NULL )
         plexit( "plbuf_bop: Error opening plot data storage file." );
 #else
@@ -1231,7 +1231,7 @@ void * plbuf_save( PLStream *pls, void *state )
         }
 
         /* Copy the plot buffer to a tempfile */
-        if (( plot_state->plbufFile = tmpfile()) == NULL )
+        if (( plot_state->plbufFile = pl_create_tempfile( NULL )) == NULL )
         {
             /* Throw a warning since this might be a permissions problem
              * and we may not want to force an exit
