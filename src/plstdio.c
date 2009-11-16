@@ -176,7 +176,7 @@ pl_create_tempfile( char **fname )
     FILE       *fd;
     char       *tmpdir;
     char       *template;
-    const char *tmpfile = "plplot_XXXXXX";
+    const char *tmpname = "plplot_XXXXXX";
 
 #if defined ( MSDOS ) || defined ( WIN32 )
     tmpdir = getenv( "TEMP" );
@@ -200,14 +200,14 @@ pl_create_tempfile( char **fname )
     }
 
     /* N.B. Malloc ensures template is long enough so strcpy and strcat are safe here */
-    template = (char *) malloc( sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpfile ) + 2 ));
+    template = (char *) malloc( sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + 2 ));
     strcpy( template, tmpdir );
 #if defined ( MSDOS ) || defined ( WIN32 )
     strcat( template, "\\" );
 #else
     strcat( template, "/" );
 #endif
-    strcat( template, tmpfile );
+    strcat( template, tmpname );
 
 #ifdef PL_HAVE_MKSTEMP
     fd = fdopen( mkstemp( template ), "wb" );
