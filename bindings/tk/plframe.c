@@ -2812,15 +2812,18 @@ Print( Tcl_Interp *interp, register PlFrame *plFramePtr,
     }
 
 /* Open file for writes */
+    sfnam = NULL;
 
-    sfnam = (char *) tmpnam( NULL );
-
-    if (( sfile = fopen( sfnam, "wb+" )) == NULL )
+    /* Create and open temporary file */
+    /* NB use fdopen to get a file stream from the existing file handle */
+    if (( sfile = fdopen( pl_create_tempfile( &sfnam ) , "wb+" )) == NULL )
     {
         Tcl_AppendResult( interp,
             "Error -- cannot open plot file for writing",
             (char *) NULL );
         plend1();
+        if (sfnam != NULL) 
+            free(sfnam);
         return TCL_ERROR;
     }
 
@@ -2857,9 +2860,12 @@ Print( Tcl_Interp *interp, register PlFrame *plFramePtr,
                  (char *) 0 ))
         {
             fprintf( stderr, "Unable to exec print command.\n" );
+            free(sfnam);
             _exit( 1 );
         }
     }
+
+    free(sfnam);
 
     return result;
 }

@@ -197,7 +197,7 @@ pl_create_tempfile(char **fname)
     }
 
     /* N.B. Malloc ensures template is long enough so strcpy and strcat are safe here */
-    template = (char *) malloc( strlen(tmpdir) + strlen(tmpfile) + 2);
+    template = (char *) malloc( sizeof(char)*(strlen(tmpdir) + strlen(tmpfile) + 2));
     strcpy(template,tmpdir);
 #if defined ( MSDOS ) || defined ( WIN32 )
     strcat(template,"\\");
@@ -210,7 +210,7 @@ pl_create_tempfile(char **fname)
     fd = mkstemp(template);
     /* If we are not returning the file name then unlink the file so it is
      * automatically deleted. */
-    if ( fd != -1 && fname != NULL )
+    if ( fd != -1 && fname == NULL )
         unlink(template);
 #else
 #if !defined(_S_IREAD)
