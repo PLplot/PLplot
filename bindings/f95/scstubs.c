@@ -902,11 +902,26 @@ PLSFONT( PLINT *family, PLINT *style, PLINT *weight )
 }
 
 void
-PLSLABELFUNC( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ))
+PLSLABELFUNC_ON( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ))
 {
     pllabelfunc = labelfunc;
     /* N.B. neglect pointer to additional data for f77 */
     c_plslabelfunc( pllabelfuncf2c, NULL );
+}
+
+void
+PLSLABELFUNC_OFF( PLINT * )
+{
+    pllabelfunc = NULL;
+    c_plslabelfunc( NULL, NULL );
+}
+
+/* Provided for symmetry with FORTRAN 77 */
+void
+PLSLABELFUNC_NONE( PLINT * )
+{
+    pllabelfunc = NULL;
+    c_plslabelfunc( NULL, NULL );
 }
 
 void

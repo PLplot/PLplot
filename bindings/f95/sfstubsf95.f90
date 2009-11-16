@@ -749,6 +749,29 @@
          end subroutine plsfont
       end interface
 
+      interface plslabelfunc
+          subroutine plslabelfunc_on( labelfunc )
+              interface
+                  subroutine labelfunc(axis, value, label, length)
+                      use plplot_flt
+                      implicit none
+                      integer :: axis, length
+                      real(kind=plflt) :: value
+                      character*(length) label
+                  end subroutine labelfunc
+              end interface
+          end subroutine plslabelfunc_on
+
+          subroutine plslabelfunc_off( dummy )
+              implicit none
+              integer :: dummy
+          end subroutine plslabelfunc_off
+
+          subroutine plslabelfunc_none
+          end subroutine plslabelfunc_none
+
+      end interface
+
       interface
          subroutine plsmaj( def, scale )
             use plplot_flt

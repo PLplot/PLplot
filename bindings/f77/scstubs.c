@@ -853,6 +853,13 @@ PLSLABELFUNC( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ))
 }
 
 void
+PLSLABELFUNC_NONE( void )
+{
+    pllabelfunc = NULL;
+    c_plslabelfunc( NULL, NULL );
+}
+
+void
 PLSMAJ( PLFLT *def, PLFLT *scale )
 {
     c_plsmaj( *def, *scale );
