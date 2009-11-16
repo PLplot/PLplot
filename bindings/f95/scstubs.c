@@ -910,7 +910,7 @@ PLSLABELFUNC_ON( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * 
 }
 
 void
-PLSLABELFUNC_OFF( PLINT * )
+PLSLABELFUNC_OFF( PLINT *dummy )
 {
     pllabelfunc = NULL;
     c_plslabelfunc( NULL, NULL );
@@ -918,7 +918,7 @@ PLSLABELFUNC_OFF( PLINT * )
 
 /* Provided for symmetry with FORTRAN 77 */
 void
-PLSLABELFUNC_NONE( PLINT * )
+PLSLABELFUNC_NONE( void )
 {
     pllabelfunc = NULL;
     c_plslabelfunc( NULL, NULL );
