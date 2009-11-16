@@ -88,6 +88,9 @@ c      -180.0 and 180.0
       real*8 normalize_longitude
       real*8 lon, times
 
+      external floor
+      real*8 floor
+
       if ((lon .ge. -180.0d0) .and. (lon .le. 180.0d0)) then
          normalize_longitude = lon
       else
@@ -188,7 +191,9 @@ c The Americas
       call plmap(ident, 'usaglobe', minx, maxx, miny, maxy)
 
 c Clear the labeling function
-      call plslabelfunc(0)
+c (Note: FORTRAN 77 does not handle NULL pointers, so an
+c alternative function is used)
+      call plslabelfunc_none
 
 c Polar, Northern hemisphere
 
