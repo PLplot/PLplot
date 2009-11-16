@@ -78,6 +78,7 @@ set(
   plplot_logo.py
   test_circle.py
   test_axis_precision.py
+  test_symbol_clip.py
   testh.py
   test_superscript_subscript.py
   )
