@@ -646,8 +646,8 @@ typedef struct cont_line
 
 typedef struct cont_level
 {
-    PLFLT level;
-    struct cont_line *line;  /* contour line */
+    PLFLT             level;
+    struct cont_line  *line; /* contour line */
     struct cont_level *next; /* contour level */
 } CONT_LEVEL;
 
@@ -1134,7 +1134,7 @@ pl_set_extended_cmap0( PLStream *, int, int );
 #endif
 
 /* Create a temporary file securely */
-PLDLLIMPEXP int
+PLDLLIMPEXP FILE *
 pl_create_tempfile( char **fname );
 
 #ifdef __cplusplus

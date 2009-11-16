@@ -42,6 +42,7 @@
 #include <io.h>
 #define mktemp    _mktemp
 #define open      _open
+#define fdopen    _fdopen
 #endif
 /*
  * plio_write()
@@ -168,10 +169,11 @@ plio_fgets( char *buf, int size, FILE *stream )
  * If fname is NULL then the file will be automatically deleted
  * when it is closed.
  */
-int
+FILE *
 pl_create_tempfile( char **fname )
 {
-    int        fd, flags;
+    int        flags;
+    FILE       *fd;
     char       *tmpdir;
     char       *template;
     const char *tmpfile = "plplot_XXXXXX";
@@ -208,10 +210,17 @@ pl_create_tempfile( char **fname )
     strcat( template, tmpfile );
 
 #ifdef PL_HAVE_MKSTEMP
-    fd = mkstemp( template );
+    fd = fdopen( mkstemp( template ), "wb" );
+    if ( fd == NULL )
+    {
+        plwarn( "pl_create_tempfile: Unable to open temporary file - returning" );
+        if ( fname != NULL )
+            *fname = NULL;
+        return NULL;
+    }
     /* If we are not returning the file name then unlink the file so it is
      * automatically deleted. */
-    if ( fd != -1 && fname == NULL )
+    if ( fd != NULL && fname == NULL )
         unlink( template );
 #else
 #if !defined ( _S_IREAD )
@@ -220,14 +229,14 @@ pl_create_tempfile( char **fname )
 #if !defined ( _S_IWRITE )
 #define _S_IWRITE    128
 #endif
-    fd    = -1;
+    fd    = NULL;
     flags = O_RDWR | O_BINARY | O_CREAT | O_EXCL | _O_SHORT_LIVED;
     /* If we are not returning the file name then add flag to automatically
      * delete file once all file handles are closed. */
     if ( fname == NULL )
         flags = flags | _O_TEMPORARY;
     mktemp( template );
-    fd = open( template, flags, _S_IREAD | _S_IWRITE );
+    fd = fdopen( open( template, flags, _S_IREAD | _S_IWRITE ), "wb" );
 #endif
 
     if ( fname != NULL )

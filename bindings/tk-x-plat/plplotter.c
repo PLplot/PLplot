@@ -2640,7 +2640,7 @@ Print( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
     /* Create and open temporary file */
     /* NB use fdopen to get a file stream from the existing file handle */
-    if (( sfile = fdopen( pl_create_tempfile( &sfnam ), "wb+" )) == NULL )
+    if (( sfile = pl_create_tempfile( &sfnam )) == NULL )
     {
         Tcl_AppendResult( interp,
             "Error -- cannot open plot file for writing",
