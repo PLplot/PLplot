@@ -1147,15 +1147,15 @@ void plD_init_qtwidget( PLStream * pls )
     widget->move( plsc->xoffset, plsc->yoffset );
 
     if ( pls->plwindow )     /* allow -plwindow to specify wm decoration name */
-    {    
-        widget->setWindowTitle(pls->plwindow);
+    {
+        widget->setWindowTitle( pls->plwindow );
     }
     else if ( pls->program )
     {
-        widget->setWindowTitle(pls->program);
+        widget->setWindowTitle( pls->program );
     }
     else
-        widget->setWindowTitle("Plplot");
+        widget->setWindowTitle( "Plplot" );
 
 
     qApp->connect( &handler, SIGNAL( MasterChangedPage()), widget, SLOT( nextPage()));
