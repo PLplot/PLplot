@@ -1976,6 +1976,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
+      By default, PLplot's interactive devices (Xwin, TK, etc.) 
+      go into a wait state after a call to plend
+      or other functions which trigger the end of a plot page.
+      To avoid this, use the &plspause; function.
+    </para>
+
+    <para>
       Redacted form: <function>plend()</function>
     </para>
 
