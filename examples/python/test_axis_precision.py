@@ -12,7 +12,9 @@ plparseopts(sys.argv, PL_PARSE_FULL)
 
 # Initialize plplot
 plinit()
-plsyax(10000, 0)
+# Choose 5 here so there is room for non-exponential notation for an axis
+# label of +0.08.
+plsyax(5, 0)
 pladv(0)
 plvpor(0.1, 0.9, 0.1, 0.9)
 plwind(0.00, 1.00, 0.00, 0.08)
