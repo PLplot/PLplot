@@ -245,10 +245,8 @@ pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
  * places after the decimal place.
  \*----------------------------------------------------------------------*/
 
-#define MIN_FLTDIG        3     /* disregarded if fractional part is 0 */
-#define MAX_FIXDIG_POS    6
-#define MAX_FIXDIG_NEG    4
-#define DIGMAX_DEF        5
+#define MIN_FLTDIG    3         /* disregarded if fractional part is 0 */
+#define DIGMAX_DEF    5
 
 void
 pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
@@ -260,9 +258,13 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
     *mode  = 0;
     *scale = 0;
 
+    /* Default xdigmax, ydigmax and zdigmax set in c_plinit so this is
+     * only an emergency measure in case of some internal PLplot
+     * logic error. */
     if ( digmax == 0 )
         digmax = DIGMAX_DEF;
-
+    /* No modification of digfix from digmax value. */
+    digfix = digmax;
 /* Choose vmin or vmax depending on magnitudes of vmin and vmax. */
     chosen    = ( ABS( vmax ) >= ABS( vmin )) ? vmax : vmin;
     notchosen = ( ABS( vmax ) >= ABS( vmin )) ? vmin : vmax;
@@ -276,7 +278,7 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
     }
     else
     {
-/* this branch occurs only when 0. --- 0. range put in */
+        /* this branch occurs only when 0. --- 0. range put in */
         vmod = 1.;
         t0   = (PLFLT) log10( vmod );
         msd  = (PLINT) floor( t0 );
@@ -286,24 +288,18 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
         notmsd = (PLINT) floor((PLFLT) log10( ABS( notchosen )));
     else
         notmsd = msd;
-/* Autoselect the mode flag */
-/* 'digmin' is the minimum number of places taken up by the label */
+    /* Autoselect the mode flag */
+    /* 'digmin' is the minimum number of places taken up by the label */
 
     if ( msd >= 0 )
     {
-/* n.b. no decimal point in the minimal case  */
+        /* n.b. no decimal point in the minimal case  */
         digmin = msd + 1;
-        digfix = MAX_FIXDIG_POS;
-        if ( digmax > 0 )
-            digfix = MIN( digmax, MAX_FIXDIG_POS );
     }
     else
     {
-/* adjust digmin to account for leading 0 and decimal point */
+        /* adjust digmin to account for leading 0 and decimal point */
         digmin = -msd + 2;
-        digfix = MAX_FIXDIG_NEG;
-        if ( digmax > 0 )
-            digfix = MIN( digmax, MAX_FIXDIG_NEG );
     }
 /* adjust digmin to account for sign on the chosen end of axis or sign on the
  * nonchosen end of axis if notmsd = msd or (msd <= 0 and notmsd < 0)
