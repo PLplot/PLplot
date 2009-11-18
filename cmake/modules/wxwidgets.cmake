@@ -81,19 +81,19 @@ if(PLD_wxwidgets OR PLD_wxpng)
   message(STATUS "wxWidgets found")
   message(STATUS "wxwidgets_COMPILE_FLAGS = ${wxwidgets_COMPILE_FLAGS}")
   message(STATUS "wxwidgets_LINK_FLAGS = ${wxwidgets_LINK_FLAGS}")
-  include(agg)
-  if(HAVE_AGG)
-    set(
-      wxwidgets_COMPILE_FLAGS
-      "${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIRS}"
-      )
-    set(
-      wxwidgets_LINK_FLAGS
-      ${wxwidgets_LINK_FLAGS}
-      ${AGG_LIBRARIES}
-      )
-  endif(HAVE_AGG)
   if(WITH_FREETYPE)
+    include(agg)
+    if(HAVE_AGG)
+      set(
+	wxwidgets_COMPILE_FLAGS
+	"${wxwidgets_COMPILE_FLAGS} -I${AGG_INCLUDE_DIRS}"
+	)
+      set(
+	wxwidgets_LINK_FLAGS
+	${wxwidgets_LINK_FLAGS}
+	${AGG_LIBRARIES}
+	)
+    endif(HAVE_AGG)
     set(
       wxwidgets_COMPILE_FLAGS
       "${wxwidgets_COMPILE_FLAGS} -I${FREETYPE_INCLUDE_DIR}"
