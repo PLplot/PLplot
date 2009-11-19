@@ -1270,17 +1270,17 @@ static void install_buffer( PLStream *pls )
     }
 
 
-    wxString title = wxT( "wxWidgets PLplot App" );
+    wxString title( pls->plwindow, *wxConvCurrent );
     switch ( dev->backend )
     {
     case wxBACKEND_DC:
-        title += wxT( " (basic)" );
+        title += wxT( " - wxWidgets (basic)" );
         break;
     case wxBACKEND_GC:
-        title += wxT( " (wxGC)" );
+        title += wxT( " - wxWidgets (wxGC)" );
         break;
     case wxBACKEND_AGG:
-        title += wxT( " (AGG)" );
+        title += wxT( " - wxWidgets (AGG)" );
         break;
     default:
         break;

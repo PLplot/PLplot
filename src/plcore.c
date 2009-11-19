@@ -1980,6 +1980,27 @@ c_plinit( void )
 
     plstrm_init();
 
+/* Set title for window to a sensible default if not defined */
+    if ( plsc->plwindow == NULL ) 
+    {
+        if ( plsc->program ) 
+        {
+            if (( plsc->plwindow = (char *) malloc((size_t) ( 1 + strlen( plsc->program )) * sizeof ( char ))) == NULL )
+            {
+                plexit( "plinit: Insufficient memory" );
+            }
+            strcpy( plsc->plwindow, plsc->program );
+        }
+        else
+        {
+            if (( plsc->plwindow = (char *) malloc((size_t) 7 * sizeof ( char ))) == NULL )
+            {
+                plexit( "plinit: Insufficient memory" );
+            }
+            strcpy( plsc->plwindow, "PLplot" );
+        }
+    }
+            
 /* Initialize device & first page */
 
     plP_init();

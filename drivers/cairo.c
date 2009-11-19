@@ -1490,7 +1490,6 @@ static signed int xcairo_init_cairo( PLStream *pls )
 
 void plD_init_xcairo( PLStream *pls )
 {
-    char    plotTitle[40];
     PLCairo *aStream;
 
     /* Setup the PLStream and the font lookup table. */
@@ -1506,9 +1505,6 @@ void plD_init_xcairo( PLStream *pls )
     }
     else
     {
-        /* Initialize plot title */
-        sprintf( plotTitle, "PLplot" );
-
         /* X Windows setup */
         aStream->XDisplay = NULL;
         aStream->XDisplay = XOpenDisplay( NULL );
@@ -1522,7 +1518,7 @@ void plD_init_xcairo( PLStream *pls )
 
         aStream->XWindow = XCreateSimpleWindow( aStream->XDisplay, rootWindow, 0, 0, pls->xlength, pls->ylength,
             1, BlackPixel( aStream->XDisplay, XScreen ), BlackPixel( aStream->XDisplay, XScreen ));
-        XStoreName( aStream->XDisplay, aStream->XWindow, plotTitle );
+        XStoreName( aStream->XDisplay, aStream->XWindow, pls->plwindow);
         XSelectInput( aStream->XDisplay, aStream->XWindow, NoEventMask );
         XMapWindow( aStream->XDisplay, aStream->XWindow );
         aStream->xdrawable_mode = 0;
@@ -1562,9 +1558,6 @@ void plD_bop_xcairo( PLStream *pls )
     if ( aStream->xdrawable_mode )
         return;
 
-    /* Be sure the window title is set appropriately. */
-    XStoreName( aStream->XDisplay, aStream->XWindow, "PLplot" );
-
     XFlush( aStream->XDisplay );
 }
 
@@ -1583,6 +1576,8 @@ void plD_eop_xcairo( PLStream *pls )
     XComposeStatus cs;
     XEvent         event;
     PLCairo        *aStream;
+    char           helpmsg[] = " - Press Enter or right-click to continue";
+    char           *plotTitle;
 
     aStream = (PLCairo *) pls->dev;
 
@@ -1597,8 +1592,6 @@ void plD_eop_xcairo( PLStream *pls )
     /* Only pause if nopause is unset. */
     if ( pls->nopause )
         aStream->exit_event_loop = 1;
-    else
-        XStoreName( aStream->XDisplay, aStream->XWindow, "PLplot - Press Enter or right-click to continue" );
 
     /* Loop, handling selected events, till the user elects to close the plot. */
     event_mask = ButtonPressMask | KeyPressMask | ExposureMask;
