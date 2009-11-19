@@ -939,7 +939,7 @@ PLSLABELFUNC_NONE( void )
     c_plslabelfunc( NULL, NULL );
 }
 void
-PLSLABELFUNC_NONEa( PLINT * )
+PLSLABELFUNC_NONEa( void )
 {
     pllabelfunc = NULL;
     c_plslabelfunc( NULL, NULL );
