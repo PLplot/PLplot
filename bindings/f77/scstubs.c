@@ -860,6 +860,13 @@ PLSLABELFUNC_NONE( void )
 }
 
 void
+PLSLABELFUNC_NONEa( void )
+{
+    pllabelfunc = NULL;
+    c_plslabelfunc( NULL, NULL );
+}
+
+void
 PLSMAJ( PLFLT *def, PLFLT *scale )
 {
     c_plsmaj( *def, *scale );

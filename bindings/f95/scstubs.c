@@ -910,7 +910,22 @@ PLSLABELFUNC_ON( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * 
 }
 
 void
+PLSLABELFUNC_ONa( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ))
+{
+    pllabelfunc = labelfunc;
+    /* N.B. neglect pointer to additional data for f77 */
+    c_plslabelfunc( pllabelfuncf2c, NULL );
+}
+
+void
 PLSLABELFUNC_OFF( PLINT *dummy )
+{
+    pllabelfunc = NULL;
+    c_plslabelfunc( NULL, NULL );
+}
+
+void
+PLSLABELFUNC_OFFa( PLINT *dummy )
 {
     pllabelfunc = NULL;
     c_plslabelfunc( NULL, NULL );
@@ -919,6 +934,12 @@ PLSLABELFUNC_OFF( PLINT *dummy )
 /* Provided for symmetry with FORTRAN 77 */
 void
 PLSLABELFUNC_NONE( void )
+{
+    pllabelfunc = NULL;
+    c_plslabelfunc( NULL, NULL );
+}
+void
+PLSLABELFUNC_NONEa( PLINT * )
 {
     pllabelfunc = NULL;
     c_plslabelfunc( NULL, NULL );
