@@ -31,7 +31,7 @@ main( int argc, const char *argv[] )
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
 
-/* Set orientation to landscape - note not all device drivers
+/* Set orientation to portrait - note not all device drivers
  * support this, in particular most interactive drivers do not */
     plsori( 1 );
 
