@@ -192,7 +192,7 @@ void QtPLDriver::drawTextInPicture( QPainter* p, const QString& text )
 
     tempPainter.end();
 
-    p->drawPicture((int) ( xOffset + bounding.width() / 2. ), -yOffset, tempPic );
+    p->drawPicture((int) ( xOffset + bounding.width() / 2. ), (int) -yOffset, tempPic );
 
     xOffset += bounding.width();
 }
@@ -746,7 +746,7 @@ void QtPLWidget::setColor( int r, int g, int b, double alpha )
         el.Data.ColourStruct->R = r;
         el.Data.ColourStruct->G = g;
         el.Data.ColourStruct->B = b;
-        el.Data.ColourStruct->A = alpha * 255.;
+        el.Data.ColourStruct->A = (PLINT) (alpha * 255.);
 
         m_listBuffer.append( el );
 
@@ -767,7 +767,7 @@ void QtPLWidget::setBackgroundColor( int r, int g, int b, double alpha )
     el.Data.ColourStruct->R = r;
     el.Data.ColourStruct->G = g;
     el.Data.ColourStruct->B = b;
-    el.Data.ColourStruct->A = alpha * 255.;
+    el.Data.ColourStruct->A = (PLINT) (alpha * 255.);
 
     bgColour.r     = r;
     bgColour.g     = g;
@@ -835,7 +835,7 @@ void QtPLWidget::renderText( QPainter* p, struct TextStruct_* s, double x_fact, 
 
     p->translate( -s->just * xOffset * p->device()->logicalDpiY() / picDpi, 0. );
 
-    p->drawPicture( 0., 0., picText );
+    p->drawPicture( 0, 0, picText );
 
     p->resetTransform();
 
@@ -1050,7 +1050,7 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
 
         case SET_BG_COLOUR:
             SolidBrush.setColor( QColor( i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A ));
-            p->fillRect( 0., 0., m_dWidth, m_dHeight, SolidBrush );
+            p->fillRect( 0, 0, (int) m_dWidth, (int) m_dHeight, SolidBrush );
             break;
 
         default:
