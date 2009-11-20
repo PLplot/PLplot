@@ -259,6 +259,7 @@ c     this does not introduce any issues.
       real*8 tai_sec, tai
       integer utc_year, utc_month, utc_day, utc_hour, utc_min
       real*8 utc_sec, utc
+      integer lnblnk
       
 c     Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
 c     B = 1900. + (JD -2415020.31352)/365.242198781 
