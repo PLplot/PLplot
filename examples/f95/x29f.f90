@@ -139,7 +139,7 @@
 !     "A Model Comparison for Daylength as a Function of Latitude and 
 !     Day of the Year", 1995, Ecological Modelling, 80, pp 87-95.
       do j=1,npts
-         x(j) = (j-1)*60.0_plflt*60.0_plflt*24.0_plflt;
+         x(j) = (j-1)*60.0_plflt*60.0_plflt*24.0_plflt
          p = asin(0.39795_plflt*cos(0.2163108_plflt + 2.0_plflt* &
               atan(0.9671396_plflt*tan(0.00860_plflt*(j-187)))))
          d = 24.0_plflt - (24.0_plflt/PI)* &
@@ -177,7 +177,7 @@
       integer :: i, npts
       real(kind=plflt) :: xmin, xmax, ymin, ymax
       integer :: tstart, t1, t2
-!      real(kind=plflt) :: toff;
+!      real(kind=plflt) :: toff
       real(kind=plflt), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
       common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
 
@@ -217,7 +217,7 @@
       call plcol0(3)
       call pllab("Date", "Hours of television watched", &
            "@frPLplot Example 29 - Hours of television watched in " // &
-           "Dec 2005 / Jan 2006");
+           "Dec 2005 / Jan 2006")
   
       call plcol0(4)
 
@@ -247,10 +247,10 @@
       character(len=100) :: xtitle
       character(len=100) :: title
       real(kind=plflt) :: x(1001), y(1001)
-      integer :: tai_year, tai_month, tai_day, tai_hour, tai_min;
-      real(kind=plflt) :: tai_sec, tai;
-      integer :: utc_year, utc_month, utc_day, utc_hour, utc_min;
-      real(kind=plflt) :: utc_sec, utc;
+      integer :: tai_year, tai_month, tai_day, tai_hour, tai_min
+      real(kind=plflt) :: tai_sec, tai
+      integer :: utc_year, utc_month, utc_day, utc_hour, utc_min
+      real(kind=plflt) :: utc_sec, utc
       
 !     Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
 !     B = 1900. + (JD -2415020.31352)/365.242198781 
@@ -330,7 +330,7 @@
             x(i+1) = xmin + i*(xmax-xmin)/(dble(npts-1))
             call plconfigtime(scale, offset1, offset2, z'0', 0, 0, 0, 0, &
                  0, 0, 0._plflt)
-            tai = x(i+1);
+            tai = x(i+1)
             call plbtime(tai_year, tai_month, tai_day, tai_hour, &
                  tai_min, tai_sec, tai)
             call plconfigtime(scale, offset1, offset2, z'2', 0, 0, 0, &

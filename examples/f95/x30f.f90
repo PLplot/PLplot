@@ -119,7 +119,7 @@
       ! the transparencies back to completely opaque.
       icol = mod(i-1,3) + 1
       call plgcol0a (icol, r, g, b, a)
-      call plscol0a (icol, r, g, b, 1.0_plflt);
+      call plscol0a (icol, r, g, b, 1.0_plflt)
       call plcol0 (icol)
       do j = 1, 5
          ! Set box y position and draw the box.

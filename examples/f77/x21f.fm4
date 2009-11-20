@@ -69,7 +69,7 @@ c     The function myisnan is defined in plf77demos.h
       real*8 xg(xp), yg(yp), zg(xp,yp)
       real*8 zmin, zmax, lzmin, lzmax
       integer i, j, k
-      integer alg;
+      integer alg
       character*80 title(6)
       data title /'Cubic Spline Approximation',
      &            'Delaunay Linear Interpolation',
@@ -95,11 +95,11 @@ c     The function myisnan is defined in plf77demos.h
       ymax = 0.6d0
 
 c      call plMergeOpts(options, "x21c options", NULL);
-      call plparseopts(PL_PARSE_FULL);
+      call plparseopts(PL_PARSE_FULL)
 
-      opt(3) = wmin;
-      opt(4) = dble(knn_order);
-      opt(5) = threshold;
+      opt(3) = wmin
+      opt(4) = dble(knn_order)
+      opt(5) = threshold
 
 c Initialize plplot
 
@@ -150,7 +150,7 @@ c Initialize plplot
       call plssub(3,2)
 
       do k=1,2
-         call pladv(0);
+         call pladv(0)
          do alg=1,6
 
             call plgriddata(x, y, z, pts, xg, xp, yg, yp, zg, alg, 
@@ -219,7 +219,7 @@ c     average (IDW) over the 8 neighbors
             if (k.eq.1) then
                
                do i=1,nl
-                  clev(i) = lzmin + (lzmax-lzmin)/(nl-1.d0)*(i-1.d0);
+                  clev(i) = lzmin + (lzmax-lzmin)/(nl-1.d0)*(i-1.d0)
                enddo
                call plenv0(xmin, xmax, ymin, ymax, 2, 0)
                call plcol0(15)
@@ -230,7 +230,7 @@ c     average (IDW) over the 8 neighbors
             else
                
                do i = 1,nl
-                  clev(i) = lzmin + (lzmax-lzmin)/(nl-1.d0)*(i-1.d0);
+                  clev(i) = lzmin + (lzmax-lzmin)/(nl-1.d0)*(i-1.d0)
                enddo
                call cmap1_init()
                call plvpor(0.d0, 1.d0, 0.d0, 0.9d0)

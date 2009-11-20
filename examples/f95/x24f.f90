@@ -154,7 +154,7 @@ program x24f
 
   do i = 1,4
 
-     call plcol0 (i);
+     call plcol0 (i)
      call plfill (px, py)
 
      do j = 1,4

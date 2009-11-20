@@ -179,17 +179,17 @@ c     vector plot of the flow through a constricted pipe
 
       eps = 2.0d0
 
-      q1 = 1.0d0;
-      d1 = rmax/4.0d0;
+      q1 = 1.0d0
+      d1 = rmax/4.0d0
       
-      q1i = - q1*rmax/d1;
-      d1i = rmax**2.0d0/d1;
+      q1i = - q1*rmax/d1
+      d1i = rmax**2.0d0/d1
       
-      q2 = -1.0d0;
-      d2 = rmax/4.0d0;
+      q2 = -1.0d0
+      d2 = rmax/4.0d0
       
-      q2i = - q2*rmax/d2;
-      d2i = rmax**2.0d0/d2;
+      q2i = - q2*rmax/d2
+      d2i = rmax**2.0d0/d2
            
       do i = 1, nr
          r = 0.5 + dble(i-1)

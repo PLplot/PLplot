@@ -146,7 +146,7 @@ c     Formula for hours of daylight from
 c     "A Model Comparison for Daylength as a Function of Latitude and 
 c     Day of the Year", 1995, Ecological Modelling, 80, pp 87-95.
       do j=1,npts
-         x(j) = (j-1)*60.0d0*60.0d0*24.0d0;
+         x(j) = (j-1)*60.0d0*60.0d0*24.0d0
          p = asin(0.39795d0*cos(0.2163108d0 + 2.0d0*atan(0.9671396d0*
      &        tan(0.00860d0*(j-187)))))
          d = 24.0d0 - (24.0d0/PI)*
@@ -182,7 +182,7 @@ c
       integer i, npts
       real*8 xmin, xmax, ymin, ymax
       integer tstart, t1, t2
-      real*8 toff;
+      real*8 toff
       real*8 x(365), y(365), xerr1(365), xerr2(365), yerr1(365), 
      &     yerr2(365)
       common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
@@ -255,10 +255,10 @@ c     this does not introduce any issues.
       character*100 xtitle
       character*100 title
       real*8 x(1001), y(1001)
-      integer tai_year, tai_month, tai_day, tai_hour, tai_min;
-      real*8 tai_sec, tai;
-      integer utc_year, utc_month, utc_day, utc_hour, utc_min;
-      real*8 utc_sec, utc;
+      integer tai_year, tai_month, tai_day, tai_hour, tai_min
+      real*8 tai_sec, tai
+      integer utc_year, utc_month, utc_day, utc_hour, utc_min
+      real*8 utc_sec, utc
       
 c     Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
 c     B = 1900. + (JD -2415020.31352)/365.242198781 
@@ -338,7 +338,7 @@ c     MJD = B*365.24219878 - 678940.364163900
             x(i+1) = xmin + i*(xmax-xmin)/(dble(npts-1))
             call plconfigtime(scale, offset1, offset2, z'0', 0, 0, 0, 0, 
      1           0, 0, 0.d0)
-            tai = x(i+1);
+            tai = x(i+1)
             call plbtime(tai_year, tai_month, tai_day, tai_hour, 
      1           tai_min, tai_sec, tai)
             call plconfigtime(scale, offset1, offset2, z'2', 0, 0, 0, 

@@ -154,7 +154,7 @@ c  Kurdish
 
       do 120 i = 1,4
 
-          call plcol0 (i);
+          call plcol0 (i)
           call plfill (4, px, py)
 
           do 110 j = 1,4

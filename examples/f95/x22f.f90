@@ -176,17 +176,17 @@
 
       eps = 2.0_plflt
 
-      q1 = 1.0_plflt;
-      d1 = rmax/4.0_plflt;
+      q1 = 1.0_plflt
+      d1 = rmax/4.0_plflt
 
-      q1i = - q1*rmax/d1;
-      d1i = rmax**2.0_plflt/d1;
+      q1i = - q1*rmax/d1
+      d1i = rmax**2.0_plflt/d1
 
-      q2 = -1.0_plflt;
-      d2 = rmax/4.0_plflt;
+      q2 = -1.0_plflt
+      d2 = rmax/4.0_plflt
 
-      q2i = - q2*rmax/d2;
-      d2i = rmax**2.0_plflt/d2;
+      q2i = - q2*rmax/d2
+      d2i = rmax**2.0_plflt/d2
 
       do i = 1, nr
          r = 0.5 + dble(i-1)

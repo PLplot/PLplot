@@ -62,7 +62,7 @@
       real(kind=plflt) xg(xp), yg(yp), zg(xp,yp)
       real(kind=plflt) zmin, zmax, lzmin, lzmax
       integer i, j, k
-      integer alg;
+      integer alg
       character*80 title(6)
       data title /'Cubic Spline Approximation', &
                  'Delaunay Linear Interpolation', &
@@ -88,11 +88,11 @@
       ymax = 0.6_plflt
 
 !      call plMergeOpts(options, "x21c options", NULL);
-      call plparseopts(PL_PARSE_FULL);
+      call plparseopts(PL_PARSE_FULL)
 
-      opt(3) = wmin;
-      opt(4) = dble(knn_order);
-      opt(5) = threshold;
+      opt(3) = wmin
+      opt(4) = dble(knn_order)
+      opt(5) = threshold
 
 ! Initialize plplot
 
@@ -143,7 +143,7 @@
       call plssub(3,2)
 
       do k=1,2
-         call pladv(0);
+         call pladv(0)
          do alg=1,6
 
             call plgriddata(x, y, z, xg, yg, zg, alg, opt(alg))
@@ -211,7 +211,7 @@
             if (k.eq.1) then
                
                do i=1,nl
-                  clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt);
+                  clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt)
                enddo
                call plenv0(xmin, xmax, ymin, ymax, 2, 0)
                call plcol0(15)
@@ -222,7 +222,7 @@
             else
                
                do i = 1,nl
-                  clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt);
+                  clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt)
                enddo
                call cmap1_init()
                call plvpor(0._plflt, 1._plflt, 0._plflt, 0.9_plflt)
