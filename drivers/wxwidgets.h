@@ -537,7 +537,7 @@ const wxFontFamily fontFamilyLookup[5] = {
     wxFONTFAMILY_ROMAN,      // serif
     wxFONTFAMILY_TELETYPE,   // monospace
     wxFONTFAMILY_SCRIPT,     // script
-    wxFONTFAMILY_ROMAN       // symbol
+    wxFONTFAMILY_SWISS       // symbol
 };
 
 const int          fontStyleLookup[3] = {
