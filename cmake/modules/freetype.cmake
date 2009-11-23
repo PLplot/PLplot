@@ -82,12 +82,12 @@ if (WITH_FREETYPE)
     "PL_FREETYPE_SERIF_BOLD_OBLIQUE:FreeSerifBoldItalic.ttf:timesbi.ttf"
     "PL_FREETYPE_SERIF_ITALIC:FreeSerifItalic.ttf:timesi.ttf"
     "PL_FREETYPE_SERIF_OBLIQUE:FreeSerifItalic.ttf:timesi.ttf"
-    "PL_FREETYPE_SYMBOL:FreeSerif.ttf:times.ttf"
-    "PL_FREETYPE_SYMBOL_BOLD:FreeSerifBold.ttf:timesbd.ttf"
-    "PL_FREETYPE_SYMBOL_BOLD_ITALIC:FreeSerifBoldItalic.ttf:timesbi.ttf"
-    "PL_FREETYPE_SYMBOL_BOLD_OBLIQUE:FreeSerifBoldItalic.ttf:timesbi.ttf"
-    "PL_FREETYPE_SYMBOL_ITALIC:FreeSerifItalic.ttf:timesi.ttf"
-    "PL_FREETYPE_SYMBOL_OBLIQUE:FreeSerifItalic.ttf:timesi.ttf"
+    "PL_FREETYPE_SYMBOL:FreeSans.ttf:arial.ttf"
+    "PL_FREETYPE_SYMBOL_BOLD:FreeSansBold.ttf:arialbd.ttf"
+    "PL_FREETYPE_SYMBOL_BOLD_ITALIC:FreeSansBoldOblique.ttf:arialbi.ttf"
+    "PL_FREETYPE_SYMBOL_BOLD_OBLIQUE:FreeSansBoldOblique.ttf:arialbi.ttf"
+    "PL_FREETYPE_SYMBOL_ITALIC:FreeSansOblique.ttf:ariali.ttf"
+    "PL_FREETYPE_SYMBOL_OBLIQUE:FreeSansOblique.ttf:ariali.ttf"
     )
 
   foreach(FONT_ENTRY ${PL_FREETYPE_FONT_LIST}) 
