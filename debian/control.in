@@ -109,7 +109,7 @@ Description: Scientific plotting library (Java bindings)
  handful of function calls is typically required.  For more advanced use,
  virtually all aspects of plotting are configurable.
  .
- This packages contains the Java bindings for PLplot.
+ This package contains the Java bindings for PLplot.
 :]
 Package: libcsiro0
 Architecture: any
