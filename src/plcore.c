@@ -33,6 +33,9 @@
  */
 
 #define DEBUG
+/* Allow momentary change to symbol font for certain PLplot-specific
+ * escape-sequence encodings for unicode. */
+#define PL_MOMENTARY_SYMBOL_FONT
 
 #define NEED_PLDEBUG
 #include "plcore.h"
@@ -611,8 +614,9 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                     args.n_fci = fci;
                     plP_esc( PLESC_BEGIN_TEXT, &args );
                 }
-                for ( j = i = 0; i < len; i++ ) /* Walk through the string, and convert
-                                                 * some stuff to unicode on the fly */
+                /* Walk through the string, and convert
+                 * some stuff to unicode on the fly */
+                for ( j = i = 0; i < len; i++ )
                 {
                     skip = 0;
 
@@ -623,18 +627,21 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                         case '(': /* hershey code */
                             i  += 2 + text2num( &string[i + 2], ')', &code );
                             idx = plhershey2unicode( code );
-                            /* momentarily switch to symbol font. */
+#ifdef PL_MOMENTARY_SYMBOL_FONT
                             fcisave = fci;
                             plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
                             unicode_buffer[j++] = fci;
+#endif
                             unicode_buffer[j++] = \
                                 (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
 
                             if ( plsc->alt_unicode )
                             {
+#ifdef PL_MOMENTARY_SYMBOL_FONT
                                 args.n_fci       = fci;
                                 args.n_ctrl_char = PLTEXT_FONTCHANGE;
                                 plP_esc( PLESC_CONTROL_CHAR, &args );
+#endif
                                 args.n_char = \
                                     (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
                                 plP_esc( PLESC_TEXT_CHAR, &args );
@@ -648,24 +655,37 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                              * driver.
                              */
                             if ( unicode_buffer[j - 1] == esc ) unicode_buffer[j++] = esc;
+#ifdef PL_MOMENTARY_SYMBOL_FONT
                             fci = fcisave;
-                            unicode_buffer[j] = fci;
-                            skip = 1;
-                            break;
-
-                        case '[': /* unicode */
-                            i += 2 + text2num( &string[i + 2], ']', &code );
-                            /* momentarily switch to symbol font. */
-                            fcisave = fci;
-                            plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
                             unicode_buffer[j++] = fci;
-                            unicode_buffer[j++] = code;
 
                             if ( plsc->alt_unicode )
                             {
                                 args.n_fci       = fci;
                                 args.n_ctrl_char = PLTEXT_FONTCHANGE;
                                 plP_esc( PLESC_CONTROL_CHAR, &args );
+                            }
+#endif
+                            j--;
+                            skip = 1;
+                            break;
+
+                        case '[': /* unicode */
+                            i += 2 + text2num( &string[i + 2], ']', &code );
+#ifdef PL_MOMENTARY_SYMBOL_FONT
+                            fcisave = fci;
+                            plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
+                            unicode_buffer[j++] = fci;
+#endif
+                            unicode_buffer[j++] = code;
+
+                            if ( plsc->alt_unicode )
+                            {
+#ifdef PL_MOMENTARY_SYMBOL_FONT
+                                args.n_fci       = fci;
+                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+#endif
                                 args.n_char = code;
                                 plP_esc( PLESC_TEXT_CHAR, &args );
                             }
@@ -678,8 +698,18 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                              * driver.
                              */
                             if ( unicode_buffer[j - 1] == esc ) unicode_buffer[j++] = esc;
+#ifdef PL_MOMENTARY_SYMBOL_FONT
                             fci = fcisave;
-                            unicode_buffer[j] = fci;
+                            unicode_buffer[j++] = fci;
+
+                            if ( plsc->alt_unicode )
+                            {
+                                args.n_fci       = fci;
+                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+                            }
+#endif
+                            j--;
                             skip = 1;
                             break;
 
@@ -724,7 +754,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                     }
                                 }
                             }
-
                             else
                             {
                                 i += text2fci( &string[i + 1], &hexdigit, &hexpower );
@@ -798,7 +827,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                              * 527 = upper case alpha displacement in Hershey Table
                              * 627 = lower case alpha displacement in Hershey Table
                              */
-                            /* momentarily switch to symbol font. */
+#ifdef PL_MOMENTARY_SYMBOL_FONT
                             fcisave = fci;
                             plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
                             unicode_buffer[j++] = fci;
@@ -809,6 +838,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 args.n_ctrl_char = PLTEXT_FONTCHANGE;
                                 plP_esc( PLESC_CONTROL_CHAR, &args );
                             }
+#endif
 
                             ig = plP_strpos( plP_greek_mnemonic, string[i + 2] );
                             if ( ig >= 0 )
@@ -845,8 +875,9 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                     plP_esc( PLESC_TEXT_CHAR, &args );
                                 }
                             }
+#ifdef PL_MOMENTARY_SYMBOL_FONT
                             fci = fcisave;
-                            unicode_buffer[j] = fci;
+                            unicode_buffer[j++] = fci;
 
                             if ( plsc->alt_unicode )
                             {
@@ -854,6 +885,8 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 args.n_ctrl_char = PLTEXT_FONTCHANGE;
                                 plP_esc( PLESC_CONTROL_CHAR, &args );
                             }
+#endif
+                            j--;
                             break;
 
                         case 'u':
