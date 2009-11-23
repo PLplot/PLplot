@@ -33,9 +33,10 @@
  */
 
 #define DEBUG
-/* Allow momentary change to symbol font for certain PLplot-specific
- * escape-sequence encodings for unicode. */
-#define PL_MOMENTARY_SYMBOL_FONT
+/* Disallow momentary change to symbol font for PLplot escape
+ * sequences (Hershey, hexadecimal, and Greek) for specifying
+ * unicode. */
+#undef PL_MOMENTARY_SYMBOL_FONT
 
 #define NEED_PLDEBUG
 #include "plcore.h"
@@ -2014,9 +2015,9 @@ c_plinit( void )
     plstrm_init();
 
 /* Set title for window to a sensible default if not defined */
-    if ( plsc->plwindow == NULL ) 
+    if ( plsc->plwindow == NULL )
     {
-        if ( plsc->program ) 
+        if ( plsc->program )
         {
             if (( plsc->plwindow = (char *) malloc((size_t) ( 1 + strlen( plsc->program )) * sizeof ( char ))) == NULL )
             {
@@ -2033,7 +2034,7 @@ c_plinit( void )
             strcpy( plsc->plwindow, "PLplot" );
         }
     }
-            
+
 /* Initialize device & first page */
 
     plP_init();
