@@ -1518,7 +1518,7 @@ void plD_init_xcairo( PLStream *pls )
 
         aStream->XWindow = XCreateSimpleWindow( aStream->XDisplay, rootWindow, 0, 0, pls->xlength, pls->ylength,
             1, BlackPixel( aStream->XDisplay, XScreen ), BlackPixel( aStream->XDisplay, XScreen ));
-        XStoreName( aStream->XDisplay, aStream->XWindow, pls->plwindow);
+        XStoreName( aStream->XDisplay, aStream->XWindow, pls->plwindow );
         XSelectInput( aStream->XDisplay, aStream->XWindow, NoEventMask );
         XMapWindow( aStream->XDisplay, aStream->XWindow );
         aStream->xdrawable_mode = 0;

@@ -746,7 +746,7 @@ void QtPLWidget::setColor( int r, int g, int b, double alpha )
         el.Data.ColourStruct->R = r;
         el.Data.ColourStruct->G = g;
         el.Data.ColourStruct->B = b;
-        el.Data.ColourStruct->A = (PLINT) (alpha * 255.);
+        el.Data.ColourStruct->A = (PLINT) ( alpha * 255. );
 
         m_listBuffer.append( el );
 
@@ -767,7 +767,7 @@ void QtPLWidget::setBackgroundColor( int r, int g, int b, double alpha )
     el.Data.ColourStruct->R = r;
     el.Data.ColourStruct->G = g;
     el.Data.ColourStruct->B = b;
-    el.Data.ColourStruct->A = (PLINT) (alpha * 255.);
+    el.Data.ColourStruct->A = (PLINT) ( alpha * 255. );
 
     bgColour.r     = r;
     bgColour.g     = g;
