@@ -88,7 +88,6 @@ public:
 class PLDLLIMPEXP_CXX plstream {
     PLINT        stream;
 
-    static PLINT next_stream;
     static PLINT active_streams;
 
 private:

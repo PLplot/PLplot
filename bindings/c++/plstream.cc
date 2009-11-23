@@ -234,14 +234,12 @@ void cxx_pltr2::xform( PLFLT x, PLFLT y, PLFLT& tx, PLFLT& ty ) const
     }
 }
 
-PLINT plstream::next_stream    = 0;
 PLINT plstream::active_streams = 0;
 
 plstream::plstream()
 {
-    ::c_plsstrm( next_stream++ );
+    ::c_plmkstrm( &stream );
     //::c_plinit();
-    ::c_plgstrm( &stream );
     active_streams++;
 }
 
@@ -269,7 +267,7 @@ plstream::plstream ( PLS::stream_id sid, PLINT strm /*=0*/ )
 
 plstream::plstream( PLINT nx, PLINT ny, const char *driver, const char *file )
 {
-    ::c_plsstrm( next_stream++ );
+    ::c_plmkstrm( &stream );
 
     if ( driver )
         ::c_plsdev( driver );
@@ -278,15 +276,13 @@ plstream::plstream( PLINT nx, PLINT ny, const char *driver, const char *file )
     ::c_plssub( nx, ny );
     //::c_plinit();
 
-    ::c_plgstrm( &stream );
-
     active_streams++;
 }
 
 plstream::plstream( PLINT nx, PLINT ny, PLINT r, PLINT g, PLINT b,
                     const char *driver, const char *file )
 {
-    ::c_plsstrm( next_stream++ );
+    ::c_plmkstrm( &stream );
 
     if ( driver )
         ::c_plsdev( driver );
@@ -295,8 +291,6 @@ plstream::plstream( PLINT nx, PLINT ny, PLINT r, PLINT g, PLINT b,
     ::c_plssub( nx, ny );
     ::c_plscolbg( r, g, b );
     //::c_plinit();
-
-    ::c_plgstrm( &stream );
 
     active_streams++;
 }
