@@ -34,27 +34,27 @@ public class PLStream implements plplotjavacConstants {
 // Class data.
     int stream_id = -1;
 
-    static int next_stream = 0;
     static int active_streams = 0;
 
 // Constructor
 public PLStream() {
+    int[] strm = new int[1];
+
     // If this is the first instance of the class we
     // need to load the C part of the bindings
     if (active_streams == 0) {
         openlib();
     }
     
-    stream_id = next_stream;
-    active_streams++;
-    next_stream++;
-
     // Create stream and check it worked ok.
-    if(set_stream() == -1) {
+    plplotjavac.plmkstrm(strm);
+    if (strm[0] != -1) {
+        stream_id = strm[0];
+        active_streams++;
+    }
+    else {
         System.err.println("Error creating plplot stream");
 	stream_id = -1;
-	active_streams--;
-	next_stream--;
     }
 }
 
