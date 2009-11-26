@@ -11130,7 +11130,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    Defines the "grid" coordinates.  The data a[0][0] has a
 	    position of (xmin,ymin), a[nx-1][0] has a position at (xmax,ymin)
 	    and so on.
-	    (xmax,ymin)
 	  </para>
 	</listitem>
       </varlistentry>
