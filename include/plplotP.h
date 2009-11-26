@@ -916,6 +916,9 @@ plP_w3wcz( PLFLT x, PLFLT y, PLFLT z );
 PLDLLIMPEXP void
 plRotationShear( PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear, PLFLT *stride );
 
+/* Test whether a point is in a polygon. */
+int
+plP_pointinpolygon( PLINT n, PLFLT *x, PLFLT *y, PLFLT xp, PLFLT yp );
 
 /* Driver calls */
 

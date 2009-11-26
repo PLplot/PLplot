@@ -56,7 +56,7 @@ grdashline( short *x, short *y );
 /* Determines if a point is inside a polygon or not */
 
 static int
-pointinpolygon( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp );
+pointinpolygon( PLINT n, PLINT *x, PLINT *y, PLINT xp, PLINT yp );
 
 /*----------------------------------------------------------------------*\
  * void pljoin()
@@ -1429,22 +1429,52 @@ grdashline( short *x, short *y )
 /*----------------------------------------------------------------------*\
  * int pointinpolygon()
  *
- * Returns 1 if the point is inside the polygon, 0 otherwise
- * Note:
- * Points on the polygon are considered to be outside
+ * PLINT wrapper for plP_pointinpolygon.
  \*----------------------------------------------------------------------*/
 
 static int
-pointinpolygon( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
+pointinpolygon( PLINT n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
+{
+    int i, return_value;
+    PLFLT *xflt, *yflt;
+    if(( xflt = (PLFLT *) malloc( n * sizeof ( PLFLT ))) == NULL )
+    {
+        plexit( "pointinpolygon: Insufficient memory" );
+    }
+    if(( yflt = (PLFLT *) malloc( n * sizeof ( PLFLT ))) == NULL )
+    {
+        plexit( "pointinpolygon: Insufficient memory" );
+    }
+    for ( i = 0; i < n; i++ )
+    {
+      xflt[i] = (PLFLT) x[i];
+      yflt[i] = (PLFLT) y[i];
+    }
+    return_value = PLP_pointinpolygon( n, xflt, yflt, (PLFLT) xp, (PLFLT) yp );
+    free( xflt );
+    free( yflt );
+    return return_value;
+}
+/*----------------------------------------------------------------------*\
+ * int PLP_pointinpolygon()
+ *
+ * Returns 1 if the point is inside the polygon, 0 otherwise
+ * Notes:
+ * Points on the polygon are considered to be outside.
+ * This "Ray casting algorithm" has been described in
+ * http://en.wikipedia.org/wiki/Point_in_polygon.
+ * Logic still needs to be inserted to take care of the "ray passes
+ * through vertex" problem in a numerically robust way.
+ \*----------------------------------------------------------------------*/
+
+int
+PLP_pointinpolygon( PLINT n, PLFLT *x, PLFLT *y, PLFLT xp, PLFLT yp )
 {
     int   i;
     int   count_crossings;
-    PLFLT x1, y1, x2, y2, xpp, ypp, xout, yout, xmax;
+    PLFLT x1, y1, x2, y2, xout, yout, xmax;
     PLFLT xvp, yvp, xvv, yvv, xv1, yv1, xv2, yv2;
     PLFLT inprod1, inprod2;
-
-    xpp = (PLFLT) xp;
-    ypp = (PLFLT) yp;
 
     count_crossings = 0;
 
@@ -1470,25 +1500,22 @@ pointinpolygon( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
     /* Determine for each side whether the line segment between
      * our two points crosses the vertex */
 
-    xpp = (PLFLT) xp;
-    ypp = (PLFLT) yp;
-
-    xvp = xpp - xout;
-    yvp = ypp - yout;
+    xvp = xp - xout;
+    yvp = yp - yout;
 
     for ( i = 0; i < n; i++ )
     {
-        x1 = (PLFLT) x[i];
-        y1 = (PLFLT) y[i];
+        x1 = x[i];
+        y1 = y[i];
         if ( i < n - 1 )
         {
-            x2 = (PLFLT) x[i + 1];
-            y2 = (PLFLT) y[i + 1];
+            x2 = x[i + 1];
+            y2 = y[i + 1];
         }
         else
         {
-            x2 = (PLFLT) x[0];
-            y2 = (PLFLT) y[0];
+            x2 = x[0];
+            y2 = y[0];
         }
 
         /* Skip zero-length segments */
@@ -1512,11 +1539,11 @@ pointinpolygon( int n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
         }
 
         /* Line through the two vertices:
-         * Are xout and xpp on either side? */
+         * Are xout and xp on either side? */
         xvv     = x2 - x1;
         yvv     = y2 - y1;
-        xv1     = xpp - x1;
-        yv1     = ypp - y1;
+        xv1     = xp - x1;
+        yv1     = yp - y1;
         xv2     = xout - x1;
         yv2     = yout - y1;
         inprod1 = xv1 * yvv - yv1 * xvv;
