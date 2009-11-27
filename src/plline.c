@@ -1450,13 +1450,13 @@ pointinpolygon( PLINT n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
         xflt[i] = (PLFLT) x[i];
         yflt[i] = (PLFLT) y[i];
     }
-    return_value = PLP_pointinpolygon( n, xflt, yflt, (PLFLT) xp, (PLFLT) yp );
+    return_value = plP_pointinpolygon( n, xflt, yflt, (PLFLT) xp, (PLFLT) yp );
     free( xflt );
     free( yflt );
     return return_value;
 }
 /*----------------------------------------------------------------------*\
- * int PLP_pointinpolygon()
+ * int plP_pointinpolygon()
  *
  * Returns 1 if the point is inside the polygon, 0 otherwise
  * Notes:
@@ -1468,7 +1468,7 @@ pointinpolygon( PLINT n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
  \*----------------------------------------------------------------------*/
 
 int
-PLP_pointinpolygon( PLINT n, PLFLT *x, PLFLT *y, PLFLT xp, PLFLT yp )
+plP_pointinpolygon( PLINT n, PLFLT *x, PLFLT *y, PLFLT xp, PLFLT yp )
 {
     int   i;
     int   count_crossings;
