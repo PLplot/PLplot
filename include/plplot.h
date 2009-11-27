@@ -1048,8 +1048,7 @@ c_plgra( void );
 /* Draw gradient in polygon. */
 
 PLDLLIMPEXP void
-c_plgradient( PLINT n, PLFLT *x, PLFLT *y,
-              PLFLT fmin, PLFLT fmax, PLFLT angle );
+c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
 
 /* grid irregularly sampled data */
 
