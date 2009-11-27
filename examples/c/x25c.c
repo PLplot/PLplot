@@ -106,7 +106,7 @@ main( int argc, const char *argv[] )
                 if ( k == 0 )
                     plfill( npts, x0, y0 );
                 else
-                    plgradient( npts, x0, y0, 0., 1., 45. );
+                    plgradient( npts, x0, y0, 45. );
                 plcol0( 2 );
                 pllsty( 1 );
                 plline( npts, x0, y0 );
