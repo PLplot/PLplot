@@ -1435,20 +1435,20 @@ grdashline( short *x, short *y )
 static int
 pointinpolygon( PLINT n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
 {
-    int i, return_value;
+    int   i, return_value;
     PLFLT *xflt, *yflt;
-    if(( xflt = (PLFLT *) malloc( n * sizeof ( PLFLT ))) == NULL )
+    if (( xflt = (PLFLT *) malloc( n * sizeof ( PLFLT ))) == NULL )
     {
         plexit( "pointinpolygon: Insufficient memory" );
     }
-    if(( yflt = (PLFLT *) malloc( n * sizeof ( PLFLT ))) == NULL )
+    if (( yflt = (PLFLT *) malloc( n * sizeof ( PLFLT ))) == NULL )
     {
         plexit( "pointinpolygon: Insufficient memory" );
     }
     for ( i = 0; i < n; i++ )
     {
-      xflt[i] = (PLFLT) x[i];
-      yflt[i] = (PLFLT) y[i];
+        xflt[i] = (PLFLT) x[i];
+        yflt[i] = (PLFLT) y[i];
     }
     return_value = PLP_pointinpolygon( n, xflt, yflt, (PLFLT) xp, (PLFLT) yp );
     free( xflt );

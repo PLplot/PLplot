@@ -489,6 +489,16 @@ typedef struct
  * of the transformation between broken-down and continuous time used
  * in the qsastime library.
  *
+ ****************************************************************************
+ *
+ * Gradient variables.
+ *
+ * n_polygon       Number of vertex points in the polygon defining the
+ *                 boundary of the gradient.
+ * x_polygon       Pointer to array of x vertex points in the polygon
+ *                 defining the boundary of the gradient.
+ * y_polygon       Pointer to array of y vertex points in the polygon
+ *                 defining the boundary of the gradient.
  \*--------------------------------------------------------------------------*/
 
 #define PL_MAX_CMAP1CP    256
@@ -731,6 +741,12 @@ typedef struct
      * the qsastime library. */
 
     QSASConfig *qsasconfig;
+
+    /* The next three variables define the polygon boundary used
+     * in the software fallback for the gradient. */
+    PLINT n_polygon;
+    PLFLT *x_polygon;
+    PLFLT *y_polygon;
 } PLStream;
 
 /*--------------------------------------------------------------------------*\
