@@ -80,8 +80,8 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
 {
     PLFLT xrot, xrot_min, xrot_max, cosangle, sinangle;
     PLFLT xmin, xmax, ymin, ymax;
-    PLFLT **z, *edge;
-    PLINT i;
+    PLFLT **z, *edge, xcoord, ycoord;
+    PLINT i, j;
 
     if ( n < 3 )
     {
@@ -127,16 +127,21 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     }
 
     /* 2 x 2 array more than sufficient to define plane. */
-    plAlloc2dGrid( &z, 2, 2 );
-    xrot    = xmin * cosangle + ymin * sinangle;
-    z[0][0] = ( xrot - xrot_min ) / ( xrot_max - xrot_min );
-    xrot    = xmax * cosangle + ymin * sinangle;
-    z[1][0] = ( xrot - xrot_min ) / ( xrot_max - xrot_min );
-    xrot    = xmin * cosangle + ymax * sinangle;
-    z[0][1] = ( xrot - xrot_min ) / ( xrot_max - xrot_min );
-    xrot    = xmax * cosangle + ymax * sinangle;
-    z[1][1] = ( xrot - xrot_min ) / ( xrot_max - xrot_min );
-
+    /* Temporarily use more to overcome irregular edge issue on defined
+     * region. */
+    #define NX    20
+    #define NY    20
+    plAlloc2dGrid( &z, NX, NY );
+    for ( i = 0; i < NX; i++ )
+    {
+        xcoord = xmin + ((PLFLT) i ) * ( xmax - xmin ) / (PLFLT) ( NX - 1 );
+        for ( j = 0; j < NY; j++ )
+        {
+            ycoord  = ymin + ((PLFLT) j ) * ( ymax - ymin ) / (PLFLT) ( NY - 1 );
+            xrot    = xcoord * cosangle + ycoord * sinangle;
+            z[i][j] = ( xrot - xrot_min ) / ( xrot_max - xrot_min );
+        }
+    }
     /* 101 edges gives reasonably smooth results for example 30. */
     #define NEDGE    101
     /* Define NEDGE shade edges (or NEDGE-1 shade levels)
@@ -146,19 +151,15 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     for ( i = 0; i < NEDGE; i++ )
         edge[i] = (PLFLT) i / (PLFLT) ( NEDGE - 1 );
 
-    /* For some reason, gradient_defined doesn't work correctly yet so use NULL
-     * until this issue is sorted out.
-     * plshades( z, 2, 2, gradient_defined, xmin, xmax, ymin, ymax,
-     * edge, NEDGE, 0, -1, 2, plfill, 0, NULL, NULL ); */
-    plshades( z, 2, 2, NULL, xmin, xmax, ymin, ymax,
-        edge, NEDGE, 0, -1, 2, plfill, 0, NULL, NULL );
+    plshades( z, NX, NY, gradient_defined, xmin, xmax, ymin, ymax,
+        edge, NEDGE, 0, 0, 0, plfill, 1, NULL, NULL );
     free((void *) edge );
-    plFree2dGrid( z, 2, 2 );
+    plFree2dGrid( z, NX, NY );
 }
 
 PLINT
 gradient_defined( PLFLT x, PLFLT y )
 {
-    return PLP_pointinpolygon( plsc->n_polygon, plsc->x_polygon, plsc->y_polygon,
+    return plP_pointinpolygon( plsc->n_polygon, plsc->x_polygon, plsc->y_polygon,
         x, y );
 }
