@@ -26,8 +26,7 @@
 
 /* software fallback for gradient. */
 static void
-plgradient_soft( PLINT n, PLFLT *x, PLFLT *y,
-                 PLFLT fmin, PLFLT fmax, PLFLT angle );
+plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
 
 /* define where plshades plots gradient for software fallback for
  * gradient.  */
@@ -42,15 +41,14 @@ gradient_defined( PLFLT x, PLFLT y );
  * direction for the polygon bounded by the x and y vertices.  x, and
  * y are expressed in world coordinates, and angle (in the world
  * coordinate system) is expressed in degrees.  The gradient is
- * expressed using colour and transparency information from cmap1.
- * fmin >= 0. and fmax <= 1. give the range of independent variable of
- * cmap1 that is used for the gradient corresponding to the range of
- * the polygon in the direction specified by angle.
+ * expressed using colour and transparency information from cmap1.  The
+ * geometrical gradient direction is specified by the angle argument.
+ * The 0. to 1. range of the independent variable of cmap1 corresponds
+ * to the range of the polygon in the direction specified by angle.
  \*----------------------------------------------------------------------*/
 
 void
-c_plgradient( PLINT n, PLFLT *x, PLFLT *y,
-              PLFLT fmin, PLFLT fmax, PLFLT angle )
+c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
 {
     if ( plsc->level < 3 )
     {
@@ -67,7 +65,7 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y,
      * implements a native linear gradient for a device, this will become
      * the software fallback method for devices that don't have
      * native linear gradient capability. */
-    plgradient_soft( n, x, y, fmin, fmax, angle );
+    plgradient_soft( n, x, y, angle );
 }
 
 /*----------------------------------------------------------------------*\
@@ -78,8 +76,7 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y,
  \*----------------------------------------------------------------------*/
 
 void
-plgradient_soft( PLINT n, PLFLT *x, PLFLT *y,
-                 PLFLT fmin, PLFLT fmax, PLFLT angle )
+plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
 {
     PLFLT xrot, xrot_min, xrot_max, cosangle, sinangle;
     PLFLT xmin, xmax, ymin, ymax;
@@ -92,21 +89,6 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y,
         return;
     }
 
-    if ( fmin < 0. )
-    {
-        plwarn( "plgradient_soft: fmin < 0. set to 0." );
-        fmin = 0.;
-    }
-    if ( fmax > 1. )
-    {
-        plwarn( "plgradient_soft: fmax > 1. set to 1." );
-        fmax = 1.;
-    }
-    if ( fmin > fmax )
-    {
-        plabort( "plgradient_soft: fmin > fmax" );
-        return;
-    }
 
     /* Define polygon boundary so it is accessible from gradient_defined. */
     plsc->n_polygon = n;
@@ -147,26 +129,22 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y,
     /* 2 x 2 array more than sufficient to define plane. */
     plAlloc2dGrid( &z, 2, 2 );
     xrot    = xmin * cosangle + ymin * sinangle;
-    z[0][0] = (( xrot - xrot_min ) * fmin + ( xrot_max - xrot ) * fmax ) /
-              ( xrot_max - xrot_min );
+    z[0][0] = ( xrot - xrot_min ) / ( xrot_max - xrot_min );
     xrot    = xmax * cosangle + ymin * sinangle;
-    z[1][0] = (( xrot - xrot_min ) * fmin + ( xrot_max - xrot ) * fmax ) /
-              ( xrot_max - xrot_min );
+    z[1][0] = ( xrot - xrot_min ) / ( xrot_max - xrot_min );
     xrot    = xmin * cosangle + ymax * sinangle;
-    z[0][1] = (( xrot - xrot_min ) * fmin + ( xrot_max - xrot ) * fmax ) /
-              ( xrot_max - xrot_min );
+    z[0][1] = ( xrot - xrot_min ) / ( xrot_max - xrot_min );
     xrot    = xmax * cosangle + ymax * sinangle;
-    z[1][1] = (( xrot - xrot_min ) * fmin + ( xrot_max - xrot ) * fmax ) /
-              ( xrot_max - xrot_min );
+    z[1][1] = ( xrot - xrot_min ) / ( xrot_max - xrot_min );
 
     /* 101 edges gives reasonably smooth results for example 30. */
     #define NEDGE    101
     /* Define NEDGE shade edges (or NEDGE-1 shade levels)
-     * from fmin to fmax. */
+     * from 0. to 1. */
     if (( edge = (PLFLT *) malloc( NEDGE * sizeof ( PLFLT ))) == NULL )
         plexit( "plgradient_soft: Insufficient memory" );
     for ( i = 0; i < NEDGE; i++ )
-        edge[i] = fmin + ( fmax - fmin ) * (PLFLT) i / (PLFLT) ( NEDGE - 1 );
+        edge[i] = (PLFLT) i / (PLFLT) ( NEDGE - 1 );
 
     /* For some reason, gradient_defined doesn't work correctly yet so use NULL
      * until this issue is sorted out.
