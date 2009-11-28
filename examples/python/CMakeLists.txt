@@ -1,7 +1,7 @@
 # examples/python/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006, 2007, 2008, 2009 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -81,6 +81,7 @@ set(
   test_symbol_clip.py
   testh.py
   test_superscript_subscript.py
+  test_plplot_encodings.py
   )
 
 if(ENABLE_tk)
