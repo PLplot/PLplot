@@ -9473,11 +9473,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </funcsynopsis>
     </para>
 
-    <para> This the alpha value supporting version of plscmap1l. It sets color 
-    map1 colors using a piece-wise linear relationship between position in the 
-    color map (from 0 to 1) and position in HLS or RGB color space 
-    (see <xref linkend="color-map-1"/>) with alpha value (0.0 - 1.0). It may be 
-    called at any time. </para>
+    <para>
+      This is a version of &plscmap1l; that supports alpha
+      transparency. It sets color map1 colors using a piece-wise linear
+      relationship between position in the color map (from 0 to 1) and
+      position in HLS or RGB color space (see <xref linkend="color-map-1"/>)
+      with alpha value (0.0 - 1.0). It may be called at any time.
+    </para>
 
     <variablelist>
       <varlistentry>
