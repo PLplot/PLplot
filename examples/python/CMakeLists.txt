@@ -82,6 +82,7 @@ set(
   testh.py
   test_superscript_subscript.py
   test_plplot_encodings.py
+  test_fill.py
   )
 
 if(ENABLE_tk)
