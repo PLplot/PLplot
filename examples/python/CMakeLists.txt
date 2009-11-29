@@ -83,6 +83,7 @@ set(
   test_superscript_subscript.py
   test_plplot_encodings.py
   test_fill.py
+  test_gradient.py
   )
 
 if(ENABLE_tk)
