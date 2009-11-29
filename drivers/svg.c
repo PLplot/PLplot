@@ -67,6 +67,7 @@ typedef struct
     PLFLT scale;
     int   svgIndent;
     FILE  *svgFile;
+    int   gradient_index;
     /*  char curColor[7]; */
 } SVG;
 
@@ -97,6 +98,7 @@ static int svg_family_check( PLStream * );
 /* General */
 
 static void poly_line( PLStream *, short *, short *, PLINT, short );
+static void gradient( PLStream *, short *, short *, PLINT, PLFLT );
 static void write_hex( FILE *, unsigned char );
 static void write_unicode( FILE *, PLUNICODE );
 static void specify_font( FILE *, PLUNICODE );
@@ -162,6 +164,7 @@ void plD_init_svg( PLStream *pls )
     pls->page        = 0;
     pls->dev_fill0   = 1;       /* driver generates solid fills */
     pls->dev_fill1   = 0;       /* Use PLplot core fallback for pattern fills */
+    pls->dev_gradient = 1;      /* driver renders gradient */
 
     pls->graphx = GRAPHICS_MODE;
 
@@ -219,6 +222,7 @@ void plD_init_svg( PLStream *pls )
     aStream->textClipping = text_clipping;
 
     aStream->svgIndent = 0;
+    aStream->gradient_index = 0;
     svg_general( aStream, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" );
     svg_general( aStream, "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n" );
     svg_general( aStream, "        \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n" );
@@ -390,6 +394,10 @@ void plD_esc_svg( PLStream *pls, PLINT op, void *ptr )
     case PLESC_FILL:      /* fill polygon */
         poly_line( pls, pls->dev_x, pls->dev_y, pls->dev_npts, 1 );
         break;
+    case PLESC_GRADIENT:      /* render gradient inside polygon */
+        gradient( pls, pls->dev_x, pls->dev_y, pls->dev_npts,
+            pls->gradient_angle );
+        break;
     case PLESC_HAS_TEXT:  /* render text */
         proc_str( pls, (EscText *) ptr );
         break;
@@ -453,6 +461,107 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
     }
     fprintf( aStream->svgFile, "\"/>\n" );
     aStream->svgIndent -= 2;
+}
+
+/*---------------------------------------------------------------------
+ * gradient()
+ *
+ * Draws gradient
+ * ---------------------------------------------------------------------*/
+
+void gradient( PLStream *pls, short *xa, short *ya, PLINT npts, PLFLT angle )
+{
+    int i, irot_min, irot_max;
+    PLFLT xrot, xrot_min, xrot_max, x1, y1, x2, y2;
+    char gradient_id[25];
+    char gradient_url[31];
+    char floating_value[20];
+    SVG *aStream;
+
+    /* Find (x1, y1) and (x2, y2) corresponding to beginning and end
+     * of gradient vector. */
+    double cosangle = cos( angle );
+    double sinangle = sin( angle );
+    xrot     = xa[0] * cosangle + ya[0] * sinangle;
+    xrot_min = xrot;
+    xrot_max = xrot;
+    irot_min = 0;
+    irot_max = 0;
+    for ( i = 1; i < npts; i++ )
+    {
+        xrot = xa[i] * cosangle + ya[i] * sinangle;
+        if ( xrot < xrot_min )
+        {
+            xrot_min = xrot;
+            irot_min = i;
+        }
+        else if ( xrot > xrot_max )
+        {
+            xrot_max = xrot;
+            irot_max = i;
+        }
+    }
+    /* xrot_min and xrot_max are the minimum and maximum rotated x coordinate
+     * of polygon vertices. Use the vertex corresponding to the minimum
+     * as the (x1, y1) base of the gradient vector, and calculate the
+     * (x2, y2) tip of the gradient vector from the range in rotated
+     * x coordinate and the angle of the gradient. */
+    x1 = xa[irot_min];
+    y1 = ya[irot_min];
+    x2 = x1 + (xrot_max - xrot_min)*cosangle;
+    y2 = y1 + (xrot_max - xrot_min)*sinangle;
+
+    aStream = pls->dev;
+    /* Generates ~2^31 possible unique gradient id's */
+    sprintf(gradient_id, "MyGradient%010d\0", aStream->gradient_index);
+    sprintf(gradient_url, "url(#MyGradient%010d)\0", aStream->gradient_index++);
+
+    svg_open( aStream, "g>" );
+    svg_open( aStream, "defs>" );
+    svg_open( aStream, "linearGradient" );
+    svg_attr_value( aStream, "id", gradient_id );
+    svg_attr_value( aStream, "gradientUnits", "userSpaceOnUse" );
+    sprintf(floating_value, "%.2f\0", x1 / aStream->scale);
+    svg_attr_value( aStream, "x1", floating_value );
+    sprintf(floating_value, "%.2f\0", y1 / aStream->scale);
+    svg_attr_value( aStream, "y1", floating_value );
+    sprintf(floating_value, "%.2f\0", x2 / aStream->scale);
+    svg_attr_value( aStream, "x2", floating_value );
+    sprintf(floating_value, "%.2f\0", y2 / aStream->scale);
+    svg_attr_value( aStream, "y2", floating_value );
+    svg_general( aStream, ">\n" );
+
+    for (i = 0; i < pls->ncol1; i++)
+    {
+      svg_indent( aStream );
+      fprintf( aStream->svgFile, "<stop offset=\"%.3f\" ",
+               (double)i/(double)(pls->ncol1 - 1) );
+      fprintf( aStream->svgFile, "stop-color=\"#" );
+      write_hex( aStream->svgFile, pls->cmap1[i].r );
+      write_hex( aStream->svgFile, pls->cmap1[i].g );
+      write_hex( aStream->svgFile, pls->cmap1[i].b );
+      fprintf( aStream->svgFile, "\" " );
+      fprintf( aStream->svgFile, "stop-opacity=\"%.3f\"/>\n", pls->cmap1[i].a );
+    }
+
+    svg_close( aStream, "linearGradient");
+    svg_close( aStream, "defs");
+    svg_open( aStream, "polyline" );
+    svg_attr_value( aStream, "fill", gradient_url );
+    svg_indent( aStream );
+    fprintf( aStream->svgFile, "points=\"" );
+    for ( i = 0; i < npts; i++ )
+    {
+        fprintf( aStream->svgFile, "%.2f,%.2f ", (double) xa[i] / aStream->scale, (double) ya[i] / aStream->scale );
+        if ((( i + 1 ) % 10 ) == 0 )
+        {
+            fprintf( aStream->svgFile, "\n" );
+            svg_indent( aStream );
+        }
+    }
+    fprintf( aStream->svgFile, "\"/>\n" );
+    aStream->svgIndent -= 2;
+    svg_close( aStream, "g");
 }
 
 /*---------------------------------------------------------------------
