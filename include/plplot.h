@@ -479,16 +479,35 @@ typedef struct
  */
 
 enum PLAttributeName   // alphabetical?
-{ PL_CURCOLOR,
-  PL_ICOL0,
-  PL_ICOL1,
-  PL_NCOL0,
-  PL_NCOL1,
-  PL_PENWIDTH };
+{ 
+    PL_CMAP0,
+    PL_CMAP1,
+    PL_CURCHARSIZE,
+    PL_CURCOLOR0,
+    PL_CURMAJORTICK,
+    PL_CURMINORTICK,
+    PL_DEFCHARSIZE,
+    PL_DEFMAJORTICK,
+    PL_DEFMINORTICK,
+    PL_ICOL0,
+    PL_ICOL1,
+    PL_NCOL0,
+    PL_NCOL1,
+    PL_PENWIDTH,
+    PL_PRECISION,
+    PL_SETPRECISION,
+    PL_XDIGITS,
+    PL_XDIGMAX,
+    PL_YDIGITS,
+    PL_YDIGMAX,
+    PL_ZDIGITS,
+    PL_ZDIGMAX
+};
 
 enum PLAttributeType
 {
     PL_COLOR,
+    PL_COLORPTR,
     PL_FLT,
     PL_FLTPTR,
     PL_INT,
@@ -500,9 +519,11 @@ typedef struct
     PLINT   attributeType;
     PLINT   intValue;
     PLINT   *intValues;
-    PLFLT   floatValue;
-    PLFLT   *floatValues;
+    PLFLT   fltValue;
+    PLFLT   *fltValues;
     PLColor colorValue;
+    PLColor *colorValues;
+    PLINT   nValues;
 } PLAttribute;
 
 /*--------------------------------------------------------------------------*\
