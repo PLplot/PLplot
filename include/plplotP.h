@@ -942,6 +942,11 @@ plP_polyline( short *x, short *y, PLINT npts );
 void
 plP_fill( short *x, short *y, PLINT npts );
 
+/* Render gradient */
+
+void
+plP_gradient( short *x, short *y, PLINT npts );
+
 /* draw image */
 
 void

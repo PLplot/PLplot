@@ -462,6 +462,44 @@ plP_fill( short *x, short *y, PLINT npts )
     }
 }
 
+/* Render a gradient */
+/* The plot buffer must be called first */
+/* N.B. plP_gradient is never called (see plgradient) unless the
+ * device driver has set plsc->dev_gradient to true. */
+
+void
+plP_gradient( short *x, short *y, PLINT npts )
+{
+    PLINT i, clpxmi, clpxma, clpymi, clpyma;
+
+    plsc->page_status = DRAWING;
+
+    if ( plsc->plbuf_write )
+    {
+        plsc->dev_npts = npts;
+        plsc->dev_x    = x;
+        plsc->dev_y    = y;
+        plbuf_esc( plsc, PLESC_GRADIENT, NULL );
+    }
+
+    /* Render gradient with driver. */
+    if ( plsc->difilt )
+    {
+      for ( i = 0; i < npts; i++ )
+      {
+        xscl[i] = x[i];
+        yscl[i] = y[i];
+      }
+      difilt( xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma );
+      plP_plfclp( xscl, yscl, npts, clpxmi, clpxma, clpymi, clpyma,
+                  grgradient );
+    }
+    else
+    {
+      grgradient( x, y, npts );
+    }
+}
+
 /* Account for driver ability to draw text itself */
 /*
  #define DEBUG_TEXT
@@ -1147,6 +1185,20 @@ grfill( short *x, short *y, PLINT npts )
     save_locale = plsave_set_locale();
     ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
         PLESC_FILL, NULL );
+    plrestore_locale( save_locale );
+}
+
+static void
+grgradient( short *x, short *y, PLINT npts )
+{
+    char * save_locale;
+    plsc->dev_npts = npts;
+    plsc->dev_x    = x;
+    plsc->dev_y    = y;
+
+    save_locale = plsave_set_locale();
+    ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
+        PLESC_GRADIENT, NULL );
     plrestore_locale( save_locale );
 }
 

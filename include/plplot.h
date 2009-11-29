@@ -236,6 +236,7 @@ typedef void*    PLPointer;
 #define PLESC_START_RASTERIZE    32     /* start rasterized rendering */
 #define PLESC_END_RASTERIZE      33     /* end rasterized rendering */
 #define PLESC_ARC                34     /* render an arc */
+#define PLESC_GRADIENT           35     /* render a gradient */
 
 /* Alternative unicode text handling control characters */
 #define PLTEXT_FONTCHANGE        0      /* font change in the text stream */

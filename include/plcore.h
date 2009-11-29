@@ -54,6 +54,7 @@ static char     *utf8_to_ucs4( const char *ptr, PLUNICODE *unichar );
 static void     grline( short *, short *, PLINT );
 static void     grpolyline( short *, short *, PLINT );
 static void     grfill( short *, short *, PLINT );
+static void     grgradient( short *, short *, PLINT );
 static void     plSelectDev( void );
 static void     pldi_ini( void );
 static void     calc_diplt( void );

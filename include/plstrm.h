@@ -155,6 +155,7 @@ typedef struct
  * plbuf_read	PLINT	Set during a plot buffer redraw
  * plbuf_write	PLINT	Set if driver needs to use the plot buffer
  * dev_fill0	PLINT	Set if driver can do solid area fills
+ * dev_gradient	PLINT	Set if driver can do (linear) gradients
  * dev_text	PLINT	Set if driver want to do it's only text drawing
  * dev_unicode	PLINT	Set if driver wants unicode
  * dev_hrshsym	PLINT	Set for Hershey symbols to be used
@@ -491,7 +492,8 @@ typedef struct
  *
  ****************************************************************************
  *
- * Gradient variables.
+ * Variables used in plgradient software fallback to communicate the polygon
+ * to the gradient_define callback used by plshades.
  *
  * n_polygon       Number of vertex points in the polygon defining the
  *                 boundary of the gradient.
@@ -499,6 +501,11 @@ typedef struct
  *                 defining the boundary of the gradient.
  * y_polygon       Pointer to array of y vertex points in the polygon
  *                 defining the boundary of the gradient.
+ ****************************************************************************
+ *
+ * Variables used to store gradient information for device drivers.
+ *
+ * gradient_angle  Angle (radians) of gradient from horizontal axis.
  \*--------------------------------------------------------------------------*/
 
 #define PL_MAX_CMAP1CP    256
@@ -742,6 +749,9 @@ typedef struct
 
     QSASConfig *qsasconfig;
 
+    /* Gradient section. */
+    PLINT dev_gradient;
+    PLFLT gradient_angle;
     /* The next three variables define the polygon boundary used
      * in the software fallback for the gradient. */
     PLINT n_polygon;
