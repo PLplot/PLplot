@@ -61,34 +61,34 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
         return;
     }
 
-    if(!plsc->dev_gradient)
+    if ( !plsc->dev_gradient )
     {
         plgradient_soft( n, x, y, angle );
     }
     else
     {
-      plsc->gradient_angle = PI * angle/180.;
-      PLINT i, xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
-      if ( n > PL_MAXPOLY - 1 )
-      {
-        plwarn( "plgradient: too many points in polygon" );
-        n = PL_MAXPOLY;
-      }
-      for ( i = 0; i < n; i++ )
-      {
-        xpoly[i] = plP_wcpcx( x[i] );
-        ypoly[i] = plP_wcpcy( y[i] );
-      }
-      if ( x[0] != x[n - 1] || y[0] != y[n - 1] )
-      {
-        if ( n < PL_MAXPOLY ) n++;
-        xpoly[n - 1] = plP_wcpcx( x[0] );
-        ypoly[n - 1] = plP_wcpcy( y[0] );
-      }
-      plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
-                  plsc->clpymi, plsc->clpyma, plP_gradient );
+        plsc->gradient_angle = PI * angle / 180.;
+        PLINT i, xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
+        if ( n > PL_MAXPOLY - 1 )
+        {
+            plwarn( "plgradient: too many points in polygon" );
+            n = PL_MAXPOLY;
+        }
+        for ( i = 0; i < n; i++ )
+        {
+            xpoly[i] = plP_wcpcx( x[i] );
+            ypoly[i] = plP_wcpcy( y[i] );
+        }
+        if ( x[0] != x[n - 1] || y[0] != y[n - 1] )
+        {
+            if ( n < PL_MAXPOLY ) n++;
+            xpoly[n - 1] = plP_wcpcx( x[0] );
+            ypoly[n - 1] = plP_wcpcy( y[0] );
+        }
+        plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
+            plsc->clpymi, plsc->clpyma, plP_gradient );
     }
-  }
+}
 
 /*----------------------------------------------------------------------*\
  * void plgradient_soft()

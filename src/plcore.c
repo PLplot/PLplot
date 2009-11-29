@@ -485,18 +485,18 @@ plP_gradient( short *x, short *y, PLINT npts )
     /* Render gradient with driver. */
     if ( plsc->difilt )
     {
-      for ( i = 0; i < npts; i++ )
-      {
-        xscl[i] = x[i];
-        yscl[i] = y[i];
-      }
-      difilt( xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma );
-      plP_plfclp( xscl, yscl, npts, clpxmi, clpxma, clpymi, clpyma,
-                  grgradient );
+        for ( i = 0; i < npts; i++ )
+        {
+            xscl[i] = x[i];
+            yscl[i] = y[i];
+        }
+        difilt( xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma );
+        plP_plfclp( xscl, yscl, npts, clpxmi, clpxma, clpymi, clpyma,
+            grgradient );
     }
     else
     {
-      grgradient( x, y, npts );
+        grgradient( x, y, npts );
     }
 }
 

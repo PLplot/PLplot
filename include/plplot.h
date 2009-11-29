@@ -480,7 +480,7 @@ typedef struct
  */
 
 enum PLAttributeName   // alphabetical?
-{ 
+{
     PL_CMAP0,
     PL_CMAP1,
     PL_CURCHARSIZE,

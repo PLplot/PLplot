@@ -124,15 +124,15 @@
 #include "plplotP.h"
 #include <float.h>
 
-#define MISSING_MIN_DEF    (PLFLT) 1.0
-#define MISSING_MAX_DEF    (PLFLT) -1.0
+#define MISSING_MIN_DEF      (PLFLT) 1.0
+#define MISSING_MAX_DEF      (PLFLT) -1.0
 
 
-#define NEG                1
-#define POS                8
-#define OK                 0
-#define UNDEF              64
-#define NUMBER_BISECTIONS  10
+#define NEG                  1
+#define POS                  8
+#define OK                   0
+#define UNDEF                64
+#define NUMBER_BISECTIONS    10
 
 #define linear( val1, val2, level )    (( level - val1 ) / ( val2 - val1 ))
 

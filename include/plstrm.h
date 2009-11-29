@@ -750,13 +750,13 @@ typedef struct
     QSASConfig *qsasconfig;
 
     /* Gradient section. */
-    PLINT dev_gradient;
-    PLFLT gradient_angle;
+    PLINT      dev_gradient;
+    PLFLT      gradient_angle;
     /* The next three variables define the polygon boundary used
      * in the software fallback for the gradient. */
-    PLINT n_polygon;
-    PLFLT *x_polygon;
-    PLFLT *y_polygon;
+    PLINT      n_polygon;
+    PLFLT      *x_polygon;
+    PLFLT      *y_polygon;
 } PLStream;
 
 /*--------------------------------------------------------------------------*\
