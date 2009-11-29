@@ -132,6 +132,7 @@
 #define POS                8
 #define OK                 0
 #define UNDEF              64
+#define NUMBER_BISECTIONS  10
 
 #define linear( val1, val2, level )    (( level - val1 ) / ( val2 - val1 ))
 
@@ -932,10 +933,10 @@ exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
                 if ( !is_inside )
                 {
                     if ( i > 0 )
-                        bisect( defined, 10,
+                        bisect( defined, NUMBER_BISECTIONS,
                             x[i], y[i], x[i - 1], y[i - 1], &xb, &yb );
                     else
-                        bisect( defined, 10,
+                        bisect( defined, NUMBER_BISECTIONS,
                             x[i], y[i], x[n - 1], y[n - 1], &xb, &yb );
                     xx[count]   = xb;
                     yy[count++] = yb;
@@ -949,10 +950,10 @@ exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
                 if ( is_inside )
                 {
                     if ( i > 0 )
-                        bisect( defined, 10,
+                        bisect( defined, NUMBER_BISECTIONS,
                             x[i - 1], y[i - 1], x[i], y[i], &xb, &yb );
                     else
-                        bisect( defined, 10,
+                        bisect( defined, NUMBER_BISECTIONS,
                             x[n - 1], y[n - 1], x[i], y[i], &xb, &yb );
                     xx[count]   = xb;
                     yy[count++] = yb;
