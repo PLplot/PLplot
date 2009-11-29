@@ -355,6 +355,10 @@ plfill(PLINT n, PLFLT *Array, PLFLT *ArrayCk);
 void
 plfill3(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT *ArrayCk);
 
+%feature("autodoc", "Renders linear gradient for the polygon bounded by the input points.") plgradient;
+void
+plgradient(PLINT n, PLFLT *Array, PLFLT *ArrayCk, PLFLT angle);
+
 %feature("autodoc", "Flush the output stream.  Use sparingly, if at all.") plflush;
 void
 plflush(void);
