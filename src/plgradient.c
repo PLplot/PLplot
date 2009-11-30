@@ -67,8 +67,57 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     }
     else
     {
-        plsc->gradient_angle = PI * angle / 180.;
-        PLINT i, xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
+      #define NGRAD    2
+        int   i, irot_min, irot_max;
+        PLINT xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
+        PLINT xgrad[NGRAD], ygrad[NGRAD], clpxmi, clpxma, clpymi, clpyma;
+        PLFLT dxgrad[NGRAD], dygrad[NGRAD], xrot, xrot_min, xrot_max;
+
+        /* Find (x1, y1) and (x2, y2) corresponding to beginning and end
+         * of gradient vector. */
+        double cosangle = cos( PI * angle / 180. );
+        double sinangle = sin( PI * angle / 180. );
+        xrot     = x[0] * cosangle + y[0] * sinangle;
+        xrot_min = xrot;
+        xrot_max = xrot;
+        irot_min = 0;
+        irot_max = 0;
+        for ( i = 1; i < n; i++ )
+        {
+            xrot = x[i] * cosangle + y[i] * sinangle;
+            if ( xrot < xrot_min )
+            {
+                xrot_min = xrot;
+                irot_min = i;
+            }
+            else if ( xrot > xrot_max )
+            {
+                xrot_max = xrot;
+                irot_max = i;
+            }
+        }
+        /* xrot_min and xrot_max are the minimum and maximum rotated x
+         * coordinate of polygon vertices. Use the vertex corresponding
+         * to the minimum  as the (xgrad[0], ygrad[0]) base of the
+         * gradient vector, and calculate the (xgrad[1], ygrad[1]) tip of
+         * the gradient vector from the range in rotated x coordinate and
+         * the angle of the gradient. */
+        dxgrad[0] = x[irot_min];
+        dxgrad[1] = dxgrad[0] + ( xrot_max - xrot_min ) * cosangle;
+        dygrad[0] = y[irot_min];
+        dygrad[1] = dygrad[0] + ( xrot_max - xrot_min ) * sinangle;
+        for ( i = 0; i < NGRAD; i++ )
+        {
+            xgrad[i] = plP_wcpcx( dxgrad[i] );
+            ygrad[i] = plP_wcpcy( dygrad[i] );
+        }
+        if ( plsc->difilt )
+            difilt( xgrad, ygrad, NGRAD, &clpxmi, &clpxma, &clpymi, &clpyma );
+        plsc->xgradient = xgrad;
+        plsc->ygradient = ygrad;
+        plsc->ngradient = NGRAD;
+
+
         if ( n > PL_MAXPOLY - 1 )
         {
             plwarn( "plgradient: too many points in polygon" );
@@ -87,6 +136,9 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
         }
         plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
             plsc->clpymi, plsc->clpyma, plP_gradient );
+        /* Plot line corresponding to gradient to give visual
+         * debugging cue. */
+        plline( NGRAD, dxgrad, dygrad );
     }
 }
 

@@ -505,7 +505,9 @@ typedef struct
  *
  * Variables used to store gradient information for device drivers.
  *
- * gradient_angle  Angle (radians) of gradient from horizontal axis.
+ * xgradient       Pointer to array of x coordinates of gradient vector.
+ * ygradient       Pointer to array of y coordinates of gradient vector.
+ * ngradient       Number of points (two) in gradient vector.
  \*--------------------------------------------------------------------------*/
 
 #define PL_MAX_CMAP1CP    256
@@ -751,12 +753,12 @@ typedef struct
 
     /* Gradient section. */
     PLINT      dev_gradient;
-    PLFLT      gradient_angle;
+    PLINT      ngradient;
+    PLINT      *xgradient, *ygradient;
     /* The next three variables define the polygon boundary used
      * in the software fallback for the gradient. */
     PLINT      n_polygon;
-    PLFLT      *x_polygon;
-    PLFLT      *y_polygon;
+    PLFLT      *x_polygon, *y_polygon;
 } PLStream;
 
 /*--------------------------------------------------------------------------*\

@@ -98,7 +98,7 @@ static int svg_family_check( PLStream * );
 /* General */
 
 static void poly_line( PLStream *, short *, short *, PLINT, short );
-static void gradient( PLStream *, short *, short *, PLINT, PLFLT );
+static void gradient( PLStream *, short *, short *, PLINT );
 static void write_hex( FILE *, unsigned char );
 static void write_unicode( FILE *, PLUNICODE );
 static void specify_font( FILE *, PLUNICODE );
@@ -395,8 +395,7 @@ void plD_esc_svg( PLStream *pls, PLINT op, void *ptr )
         poly_line( pls, pls->dev_x, pls->dev_y, pls->dev_npts, 1 );
         break;
     case PLESC_GRADIENT:      /* render gradient inside polygon */
-        gradient( pls, pls->dev_x, pls->dev_y, pls->dev_npts,
-            pls->gradient_angle );
+        gradient( pls, pls->dev_x, pls->dev_y, pls->dev_npts );
         break;
     case PLESC_HAS_TEXT:  /* render text */
         proc_str( pls, (EscText *) ptr );
@@ -469,50 +468,12 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
  * Draws gradient
  * ---------------------------------------------------------------------*/
 
-void gradient( PLStream *pls, short *xa, short *ya, PLINT npts, PLFLT angle )
+void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
-    int   i, irot_min, irot_max;
-    PLFLT xrot, xrot_min, xrot_max, x1, y1, x2, y2;
+    int  i;
     /* 27 should be the maximum needed below, but be generous.*/
-    char  buffer[50];
-    SVG   *aStream;
-
-    /* Find (x1, y1) and (x2, y2) corresponding to beginning and end
-     * of gradient vector. */
-    double cosangle = cos( angle );
-    double sinangle = sin( angle );
-    /* gradient polygon must have at least two points, and this test also
-     * avoids accessing undefined variables. */
-    if ( npts < 2 )
-        return;
-    xrot     = xa[0] * cosangle + ya[0] * sinangle;
-    xrot_min = xrot;
-    xrot_max = xrot;
-    irot_min = 0;
-    irot_max = 0;
-    for ( i = 1; i < npts; i++ )
-    {
-        xrot = xa[i] * cosangle + ya[i] * sinangle;
-        if ( xrot < xrot_min )
-        {
-            xrot_min = xrot;
-            irot_min = i;
-        }
-        else if ( xrot > xrot_max )
-        {
-            xrot_max = xrot;
-            irot_max = i;
-        }
-    }
-    /* xrot_min and xrot_max are the minimum and maximum rotated x coordinate
-     * of polygon vertices. Use the vertex corresponding to the minimum
-     * as the (x1, y1) base of the gradient vector, and calculate the
-     * (x2, y2) tip of the gradient vector from the range in rotated
-     * x coordinate and the angle of the gradient. */
-    x1 = xa[irot_min];
-    y1 = ya[irot_min];
-    x2 = x1 + ( xrot_max - xrot_min ) * cosangle;
-    y2 = y1 + ( xrot_max - xrot_min ) * sinangle;
+    char buffer[50];
+    SVG  *aStream;
 
     aStream = pls->dev;
 
@@ -523,13 +484,13 @@ void gradient( PLStream *pls, short *xa, short *ya, PLINT npts, PLFLT angle )
     sprintf( buffer, "MyGradient%010d", aStream->gradient_index );
     svg_attr_value( aStream, "id", buffer );
     svg_attr_value( aStream, "gradientUnits", "userSpaceOnUse" );
-    sprintf( buffer, "%.2f", x1 / aStream->scale );
+    sprintf( buffer, "%.2f", pls->xgradient[0] / aStream->scale );
     svg_attr_value( aStream, "x1", buffer );
-    sprintf( buffer, "%.2f", y1 / aStream->scale );
+    sprintf( buffer, "%.2f", pls->ygradient[0] / aStream->scale );
     svg_attr_value( aStream, "y1", buffer );
-    sprintf( buffer, "%.2f", x2 / aStream->scale );
+    sprintf( buffer, "%.2f", pls->xgradient[1] / aStream->scale );
     svg_attr_value( aStream, "x2", buffer );
-    sprintf( buffer, "%.2f", y2 / aStream->scale );
+    sprintf( buffer, "%.2f", pls->ygradient[1] / aStream->scale );
     svg_attr_value( aStream, "y2", buffer );
     svg_general( aStream, ">\n" );
 
