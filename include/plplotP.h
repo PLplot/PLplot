@@ -468,6 +468,12 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
 int
 plP_clip_poly( int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset );
 
+/* Get clipped endpoints */
+
+int
+plP_clipline( PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
+          PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax );
+
 /* Stores hex digit value into FCI (font characterization integer). */
 void
 plP_hex2fci( unsigned char hexdigit, unsigned char hexpower, PLUNICODE *pfci );
