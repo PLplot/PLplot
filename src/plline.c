@@ -906,7 +906,12 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     {
         if ( inside_lb )
         {
-            ( *draw )( xclp, yclp, iclp );
+            xclp[0] = xmin; yclp[0] = ymin;
+            xclp[1] = xmax; yclp[1] = ymin;
+            xclp[2] = xmax; yclp[2] = ymax;
+            xclp[3] = xmin; yclp[3] = ymax;
+            xclp[4] = xmin; yclp[4] = ymin;
+            ( *draw )( xclp, yclp, 5 );
 
             if ( xclp != _xclp )
             {
