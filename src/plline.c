@@ -649,7 +649,7 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
 
 int
 plP_clipline( PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
-          PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax )
+              PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax )
 {
     PLINT  t, dx, dy, flipx, flipy;
     double dydx = 0, dxdy = 0;
