@@ -10,6 +10,11 @@ plplot (5.9.2-4) unstable; urgency=low
       handle info install triggers. Fixes lintian warning.
     + Bump debian standards version to 3.8.3.
     + Fix typo in java bindings package description. (closes: #557677)
+  * debian/control.in, debian/rules:
+    + Update java to build-dep on default-jdk and runtime depend on default-jre
+      which should work for all architectures.
+    + Update ada packages so built on all architectures except armel where gnat
+      seems to be unavailable. (closes: #544187)
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 23 Aug 2009 12:05:07 +0100
 

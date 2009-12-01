@@ -32,19 +32,12 @@ PYVERS = $(shell pyversions -vr)
 
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
-# Disable java and ada build on arm - problems with java-gcj-compat-dev
-# at the moment. Also gnat not available on arm, mips, and mipsel.
+# Disable Ada build on armel - gnat not available on armel at the moment.
 
-ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:alpha:arm:armeb:armel:mips:mipsel:kfreebsd-amd64:))
+ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:armel:))
 BUILD_ADA = no
 else
 BUILD_ADA = yes
-endif
-
-ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:alpha:arm:hppa:hurd-i386:))
-BUILD_JAVA = no
-else
-BUILD_JAVA = yes
 endif
 
 # Configure options
@@ -55,14 +48,10 @@ else
 ADA_OPTIONS = -DENABLE_ada=OFF
 endif
 
-ifeq ($(BUILD_JAVA),yes)
 JAVA_OPTIONS = \
 	-DCMAKE_Java_RUNTIME=$(JAVA_HOME)/bin/java \
 	-DCMAKE_Java_COMPILER=$(JAVA_HOME)/bin/javac \
 	-DCMAKE_Java_ARCHIVE=$(JAVA_HOME)/bin/jar
-else
-JAVA_OPTIONS = -DENABLE_java=OFF
-endif
 
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
@@ -76,17 +65,9 @@ SRC_DIR = $(shell pwd)
 
 control:
 ifeq ($(BUILD_ADA),no)
-ifeq ($(BUILD_JAVA),no)
-	slice -o UNDEF:debian/control debian/control.in
-else
-	slice -o UNDEF+JAVA:debian/control debian/control.in
-endif
-else
-ifeq ($(BUILD_JAVA),no)
 	slice -o UNDEF+ADA:debian/control debian/control.in
 else
-	slice -o UNDEF+JAVA+ADA:debian/control debian/control.in
-endif
+	slice -o UNDEF+ADA:debian/control debian/control.in
 endif
 
 config: config-stamp
@@ -133,9 +114,7 @@ install-arch: install-arch-stamp install-python
 		     --no-package=libplplot9-java --no-package=libplplot-ada
 	dh_movefiles --package=python-plplot
 	dh_movefiles --package=plplot-bin
-ifeq ($(BUILD_JAVA),yes)
 	dh_movefiles --package=libplplot9-java
-endif
 ifeq ($(BUILD_ADA),yes)
 	dh_movefiles --package=libplplot-ada
 	dh_movefiles --package=libplplot-dev usr/share/ada
@@ -170,11 +149,9 @@ install-arch-stamp: build-arch-stamp
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
 
-ifeq ($(BUILD_JAVA),yes)
 	ln -s $(libpkg) $(debdoc)/libplplot9-java
 	mv $(debshr)/java/plplot.jar $(debshr)/java/plplot-$(version).jar
 	( cd $(debshr)/java ; ln -s plplot-$(version).jar plplot.jar )
-endif
 
 ifeq ($(BUILD_ADA),yes)
 	ln -s $(libpkg) $(debdoc)/libplplot-ada
