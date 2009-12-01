@@ -372,6 +372,30 @@ void QtPLDriver::setColor( int r, int g, int b, double alpha )
     m_painterP->setBrush( B );
 }
 
+void QtPLDriver::setGradient( int x1, int x2, int y1, int y2,
+                              int *r, int *g, int *b, qreal *alpha, PLINT ncol1 )
+{
+    if ( !m_painterP->isActive() || ncol1 < 2 ) return;
+
+    int            i;
+    qreal          stop_arg;
+    QGradient      linear_gradient;
+    QGradientStops stops;
+
+    linear_gradient = QLinearGradient(
+        QPointF((qreal) ( x1 * downscale ), (qreal) ( m_dHeight - y1 * downscale )),
+        QPointF((qreal) ( x2 * downscale ), (qreal) ( m_dHeight - y2 * downscale )));
+
+    for ( i = 0; i < ncol1; i++ )
+    {
+        stop_arg = (qreal) i / (qreal) ( ncol1 - 1 );
+        stops << QGradientStop( stop_arg, QColor( r[i], g[i],
+                b[i], (int) ( alpha[i] * 255 )));
+    }
+    linear_gradient.setStops( stops );
+    m_painterP->setBrush( linear_gradient );
+}
+
 void QtPLDriver::setWidth( PLINT w )
 {
     if ( !m_painterP->isActive()) return;

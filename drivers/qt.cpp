@@ -240,10 +240,11 @@ void plD_init_rasterqt( PLStream * pls )
     plParseDrvOpts( qt_options );
 
     /* Stream setup */
-    pls->color       = 1;
-    pls->plbuf_write = 0;
-    pls->dev_fill0   = 1;
-    pls->dev_fill1   = 0;
+    pls->color        = 1;
+    pls->plbuf_write  = 0;
+    pls->dev_fill0    = 1;
+    pls->dev_fill1    = 0;
+    pls->dev_gradient = 1;      /* driver renders gradient */
     /* Let the PLplot core handle dashed lines since
      * the driver results for this capability have a number of issues.
      * pls->dev_dash=1; */
@@ -334,6 +335,8 @@ void plD_polyline_rasterqt( PLStream *pls, short *xa, short *ya, PLINT npts )
 void plD_esc_rasterqt( PLStream * pls, PLINT op, void* ptr )
 {
     short          *xa, *ya;
+    int            *r, *g, *b;
+    qreal          *alpha;
     PLINT          i;
     QtRasterDevice * widget = (QtRasterDevice *) pls->dev;
     if ( widget != NULL && qt_family_check( pls ))
@@ -365,6 +368,38 @@ void plD_esc_rasterqt( PLStream * pls, PLINT op, void* ptr )
 
         delete[] xa;
         delete[] ya;
+        break;
+
+    case PLESC_GRADIENT:
+        xa    = new short[pls->dev_npts];
+        ya    = new short[pls->dev_npts];
+        r     = new int [pls->ncol1];
+        g     = new int [pls->ncol1];
+        b     = new int [pls->ncol1];
+        alpha = new qreal [pls->ncol1];
+
+        for ( i = 0; i < pls->ncol1; i++ )
+        {
+            r[i]     = pls->cmap1[i].r;
+            g[i]     = pls->cmap1[i].g;
+            b[i]     = pls->cmap1[i].b;
+            alpha[i] = pls->cmap1[i].a;
+        }
+        widget->QtPLDriver::setGradient( pls->xgradient[0], pls->xgradient[1], pls->ygradient[0], pls->ygradient[1], r, g, b, alpha, pls->ncol1 );
+
+        for ( i = 0; i < pls->dev_npts; i++ )
+        {
+            xa[i] = pls->dev_x[i];
+            ya[i] = pls->dev_y[i];
+        }
+        widget->drawPolygon( xa, ya, pls->dev_npts );
+
+        delete[] xa;
+        delete[] ya;
+        delete[] r;
+        delete[] g;
+        delete[] b;
+        delete[] alpha;
         break;
 
     case PLESC_HAS_TEXT:
@@ -622,10 +657,11 @@ void plD_init_svgqt( PLStream * pls )
     plParseDrvOpts( qt_options );
 
     /* Stream setup */
-    pls->color       = 1;
-    pls->plbuf_write = 0;
-    pls->dev_fill0   = 1;
-    pls->dev_fill1   = 0;
+    pls->color        = 1;
+    pls->plbuf_write  = 0;
+    pls->dev_fill0    = 1;
+    pls->dev_fill1    = 0;
+    pls->dev_gradient = 1;      /* driver renders gradient */
     /* Let the PLplot core handle dashed lines since
      * the driver results for this capability have a number of issues.
      * pls->dev_dash=1; */
@@ -733,6 +769,8 @@ void plD_polyline_svgqt( PLStream *pls, short *xa, short *ya, PLINT npts )
 void plD_esc_svgqt( PLStream * pls, PLINT op, void* ptr )
 {
     short       *xa, *ya;
+    int         *r, *g, *b;
+    qreal       *alpha;
     PLINT       i;
     QtSVGDevice * widget = (QtSVGDevice *) pls->dev;
     if ( widget != NULL && qt_family_check( pls ))
@@ -757,6 +795,39 @@ void plD_esc_svgqt( PLStream * pls, PLINT op, void* ptr )
 
         delete[] xa;
         delete[] ya;
+        break;
+
+    case PLESC_GRADIENT:
+        xa    = new short[pls->dev_npts];
+        ya    = new short[pls->dev_npts];
+        r     = new int [pls->ncol1];
+        g     = new int [pls->ncol1];
+        b     = new int [pls->ncol1];
+        alpha = new qreal [pls->ncol1];
+
+        for ( i = 0; i < pls->ncol1; i++ )
+        {
+            r[i]     = pls->cmap1[i].r;
+            g[i]     = pls->cmap1[i].g;
+            b[i]     = pls->cmap1[i].b;
+            alpha[i] = pls->cmap1[i].a;
+        }
+        widget->QtPLDriver::setGradient( pls->xgradient[0], pls->xgradient[1], pls->ygradient[0], pls->ygradient[1], r, g, b, alpha, pls->ncol1 );
+
+
+        for ( i = 0; i < pls->dev_npts; i++ )
+        {
+            xa[i] = pls->dev_x[i];
+            ya[i] = pls->dev_y[i];
+        }
+        widget->drawPolygon( xa, ya, pls->dev_npts );
+
+        delete[] xa;
+        delete[] ya;
+        delete[] r;
+        delete[] g;
+        delete[] b;
+        delete[] alpha;
         break;
 
     case PLESC_HAS_TEXT:

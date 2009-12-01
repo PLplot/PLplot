@@ -128,6 +128,8 @@ public:
     virtual void drawPolygon( short * x, short * y, PLINT npts );
     virtual void drawText( PLStream* pls, EscText* txt );
     virtual void setColor( int r, int g, int b, double alpha );
+    virtual void setGradient( int x1, int x2, int y1, int y2,
+                              int *r, int *g, int *b, qreal *alpha, PLINT ncol1 );
     virtual void setBackgroundColor( int r, int g, int b, double alpha ){}
     virtual void setWidth( PLINT w );
     // Set pen to draw solid strokes (called after drawing dashed strokes)
