@@ -401,6 +401,10 @@
          end subroutine plgra
       end interface
 
+      interface plgradient
+         module procedure plgradient
+      end interface
+
       interface plgriddata
          module procedure plgriddata
       end interface
@@ -1008,6 +1012,13 @@
 
          call plfill3f77( size(x), x, y, z )
       end subroutine plfill3
+
+      subroutine plgradient( x, y, angle )
+         real(kind=plflt), dimension(:) :: x, y
+         real(kind=plflt)               :: angle
+
+         call plgradientf77( size(x), x, y, angle )
+      end subroutine plgradient
 
       subroutine plgriddata( x, y, z, xg, yg, zg, type, data )
          real(kind=plflt), dimension(:)   :: x, y, z, xg, yg

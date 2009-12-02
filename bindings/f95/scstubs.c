@@ -372,6 +372,12 @@ PLGRA( void )
     c_plgra();
 }
 
+void
+PLGRADIENT( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *angle )
+{
+  c_plgradient( *n, x, y, *angle );
+}
+
 /* AM - removed: also defined, and better in sccont.c
  * void
  * PLGRIDDATA(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *npts,
