@@ -43,11 +43,12 @@ int main( char[][] args )
                                   [-120.0, 120.0] ];
 
   PLFLT[] x0, y0;
-  x0.length = 4;
-  y0.length = 4;
+  for(int k=0; k<2; k++) {
   for(int j=0; j<4; j++) {
     switch(j) {
     case 0:
+      x0.length = 4;
+      y0.length = 4;
       /* Polygon 1: a diamond */
       x0[] = [   0.0, -100.0,   0.0, 100.0 ];
       y0[] = [-100.0,    0.0, 100.0,   0.0 ]; 
@@ -80,11 +81,15 @@ int main( char[][] args )
       plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
       plcol0(1);
       plpsty(0);
-      plfill(x0, y0);
+      if(k ==0)
+        plfill(x0, y0);
+      else
+        plgradient(x0, y0, 45.);
       plcol0(2);
       pllsty(1);
       plline(x0, y0);
     }
+  }
   }
 
   /* Don't forget to call plend() to finish off! */

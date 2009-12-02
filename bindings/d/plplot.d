@@ -262,6 +262,14 @@ void plgfnam(out string fnam)
   fnam=toString(fnam.ptr);
 }
 
+/* Draw gradient in polygon. */
+void plgradient(PLFLT[] x, PLFLT[] y, PLFLT angle)
+{
+  PLINT n=x.length;
+  assert(n==y.length, "plgradient(): Arrays must be of same length!");
+  c_plgradient(n, x.ptr, y.ptr, angle);
+}
+
 /* grid irregularly sampled data */
 void  plgriddata(PLFLT[] x, PLFLT[] y, PLFLT[] z, PLFLT[] xg, PLFLT[] yg, PLFLT[][] zg, PLINT type, PLFLT data)
 {
@@ -1264,6 +1272,7 @@ alias c_plgfci plgfci;
 alias c_plgfont plgfont;
 alias c_plglevel plglevel;
 alias c_plgpage plgpage;
+alias c_plgradient plgrdient;
 alias c_plgra plgra;
 //alias c_plgriddata plgriddata;
 alias c_plgspa plgspa;
@@ -1590,7 +1599,10 @@ void c_plgpage(PLFLT *p_xp, PLFLT *p_yp, PLINT *p_xleng, PLINT *p_yleng,
 /* Switches to graphics screen. */
 void c_plgra();
 
-  /* grid irregularly sampled data */
+/* Draw gradient in polygon. */
+void c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
+
+/* grid irregularly sampled data */
 void c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts, PLFLT *xg, PLINT nptsx,
                   PLFLT *yg, PLINT nptsy, PLFLT **zg, PLINT type, PLFLT data);
 
