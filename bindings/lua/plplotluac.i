@@ -1038,6 +1038,7 @@ void mylabel(PLINT axis, PLFLT value, char* label, PLINT length, PLPointer data)
 %rename(glevel) plglevel;
 %rename(gpage) plgpage;
 %rename(gra) plgra;
+%rename(gradient) plgradient;
 %rename(griddata) plgriddata;
 %rename(gspa) plgspa;
 %rename(gstrm) plgstrm;

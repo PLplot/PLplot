@@ -39,8 +39,6 @@ bcoord = { 0, 0 }
 acoord = { 0, 1 }
 rev = { 0, 0 }
 
-clevel = {}
-
 pl.parseopts (arg, pl.PL_PARSE_FULL);
 
 pl.init()
@@ -117,26 +115,23 @@ for i = 0, 4 do
   end
 end
 
--- The overlaid box is drawn using plshades with a color map that is 
--- the same color but has a linearly varying transparency.
-
 -- Create the color map with 128 colors and use plscmap1la to initialize
--- the color values with a linear varying transparency (or alpha)
+-- the color values with a linearly varying red transparency (or alpha)
 pl.scmap1n(128)
 pl.scmap1la(1, pos, rcoord, gcoord, bcoord, acoord, rev)
 
--- Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will
--- used for the shade plot. plshades will use linear interpolation to
--- calculate the z values of all the intermediate points in this array.
-z = { {0, 1}, {0, 1} }
+-- Use that cmap1 to create a transparent red gradient for the whole
+-- window.
+px[1] = 0.
+px[2] = 1.
+px[3] = 1.
+px[4] = 0.
 
--- Set the color levels array. These levels are also between 0.0 and 1.0
-for i=1, 101 do
-  clevel[i] = 0.01 * (i-1)
-end
+py[1] = 0.
+py[2] = 0.
+py[3] = 1.
+py[4] = 1.
 
--- Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate ranges
--- such that it fills the entire plotting area.
-pl.shades(z, 0, 1, 0, 1, clevel, 0, -1, 2, 1);
+pl.gradient(px, py, 90.)
 
 pl.plend()

@@ -48,6 +48,7 @@ xextreme = { { -120, 120 }, { -120, 120 }, { -120, 120 }, { -80,  80 }, { -220, 
 yextreme = { { -120, 120 }, {   20, 120 }, {  -20, 120 }, {  -20, 120 }, { -120, 120 },
              { -120, 120 }, {  -20,  20 }, {  -80,  80 }, { -120, 120 } }             
              
+for k = 1, 2 do
 for j = 1, 4 do
   if j==1 then
     -- Polygon 1: a diamond 
@@ -79,11 +80,16 @@ for j = 1, 4 do
     pl.box("bc", 1, 0, "bcnv", 10, 0)
     pl.col0(1) 
     pl.psty(0) 
-    pl.fill(x0, y0) 
+    if k==1 then
+      pl.fill(x0, y0)
+    else
+      pl.gradient(x0, y0, 45.) 
+    end
     pl.col0(2) 
     pl.lsty(1) 
     pl.line(x0, y0) 
   end
+end
 end
 
 -- Don't forget to call plend() to finish off! 
