@@ -132,6 +132,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plglevel '<link linkend="plglevel"><function>plglevel</function></link>'>
 <!ENTITY plgpage '<link linkend="plgpage"><function>plgpage</function></link>'>
 <!ENTITY plgra '<link linkend="plgra"><function>plgra</function></link>'>
+<!ENTITY plgradient '<link linkend="plgradient"><function>plgradient</function></link>'>
 <!ENTITY plgriddata '<link linkend="plgriddata"><function>plgriddata</function></link>'>
 <!ENTITY plgspa '<link linkend="plgspa"><function>plgspa</function></link>'>
 <!ENTITY plgstrm '<link linkend="plgstrm"><function>plgstrm</function></link>'>

@@ -4511,6 +4511,105 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
+  <sect1 id="plgradient" renderas="sect3">
+    <title>
+      <function>plgradient</function>: Draw linear gradient inside polygon
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plgradient</function>
+	  </funcdef>
+	  <paramdef><parameter>n</parameter></paramdef>
+	  <paramdef><parameter>x</parameter></paramdef>
+	  <paramdef><parameter>y</parameter></paramdef>
+	  <paramdef><parameter>angle</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Draw a linear gradient using colour map 1 inside the polygon
+      defined by the <literal><parameter>n</parameter></literal> points
+      <literal>(<parameter>x</parameter>[i],
+      <parameter>y</parameter>[i])</literal>.  Interpretation of the polygon
+      is the same as for &plfill;.  The polygon coordinates and the gradient
+      angle are all expressed in world coordinates.  The angle from the
+      <literal><parameter>x</parameter></literal> axis for both the rotated
+      coordinate system and the gradient vector is specified by
+      <literal><parameter>angle</parameter></literal>.  The magnitude of the
+      gradient vector is the difference between the maximum and minimum
+      values of <literal><parameter>x</parameter></literal> for the vertices
+      in the rotated coordinate system.  The origin of the gradient vector
+      can be interpreted as being anywhere on the line corresponding to the
+      minimum <literal><parameter>x</parameter></literal> value for the
+      vertices in the rotated coordinate system.  The distance along the gradient
+      vector is linearly transformed to the independent variable of colour
+      map 1 which ranges from 0. at the tail of the gradient vector to 1. at
+      the head of the gradient vector.  What is drawn is the RGBA colour
+      corresponding to the independent variable of colour map 1.  For more
+      information about colour map 1 (see <xref linkend="color-map-1"/>).
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>n</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of vertices in polygon.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to array with x coordinates of vertices.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to array with y coordinates of vertices.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>angle</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Angle (degrees) of gradient vector from x axis.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plgradient(x,y,angle)</function>
+    </para>
+
+    <para>
+      This function is used in examples 25,30.
+    </para>
+
+  </sect1>
+
   <sect1 id="plgriddata" renderas="sect3">
     <title>
       <function>plgriddata</function>: Grid data from irregularly sampled
