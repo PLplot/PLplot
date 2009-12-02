@@ -133,23 +133,25 @@ main( int argc, const char *argv[] )
         }
     }
 
+    /* Create the color map with 128 colors and use plscmap1la to initialize */
+    /* the color values with a linear varying red transparency (or alpha) */
+    plscmap1n( 128 );
+    plscmap1la( 1, 2, pos, rcoord, gcoord, bcoord, acoord, rev );
+
+    /* Use that cmap1 to create a transparent red gradient for the whole
+     * window. */
     px[0] = 0.;
     px[1] = 1.;
     px[2] = 1.;
     px[3] = 0.;
-    
+
     py[0] = 0.;
     py[1] = 0.;
     py[2] = 1.;
     py[3] = 1.;
 
-    /* Create the color map with 128 colors and use plscmap1la to initialize */
-    /* the color values with a linear varying transparency (or alpha) */
-    plscmap1n( 128 );
-    plscmap1la( 1, 2, pos, rcoord, gcoord, bcoord, acoord, rev );
+    plgradient( 4, px, py, 90. );
 
-    plgradient( 4, px, py, 90.);
-    
     plend();
     exit( 0 );
 }
