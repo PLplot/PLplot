@@ -491,9 +491,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-                  <literal>o</literal>: Use custom labeling function to
-                  generate axis label text.  The custom labeling function
-                  can be defined with the plslabelfuncplslabelfunc; command.
+		  <literal>o</literal>: Use custom labeling function to
+		  generate axis label text.  The custom labeling function
+		  can be defined with the plslabelfuncplslabelfunc; command.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -914,9 +914,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-                  <literal>o</literal>: Use custom labeling function to
-                  generate axis label text.  The custom labeling function
-                  can be defined with the plslabelfuncplslabelfunc; command.
+		  <literal>o</literal>: Use custom labeling function to
+		  generate axis label text.  The custom labeling function
+		  can be defined with the plslabelfuncplslabelfunc; command.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -1115,9 +1115,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-                  <literal>o</literal>: Use custom labeling function to
-                  generate axis label text.  The custom labeling function
-                  can be defined with the plslabelfuncplslabelfunc; command.
+		  <literal>o</literal>: Use custom labeling function to
+		  generate axis label text.  The custom labeling function
+		  can be defined with the plslabelfuncplslabelfunc; command.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -1297,9 +1297,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-                  <literal>o</literal>: Use custom labeling function to
-                  generate axis label text.  The custom labeling function
-                  can be defined with the plslabelfuncplslabelfunc; command.
+		  <literal>o</literal>: Use custom labeling function to
+		  generate axis label text.  The custom labeling function
+		  can be defined with the plslabelfuncplslabelfunc; command.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -5697,42 +5697,42 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </para>
 	</listitem>
       </varlistentry>
-        <varlistentry>
-  	<term>
- 	  <parameter>pltr</parameter>
- 	  (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer)
-            </literal>, input)
-  	</term>
-  	<listitem>
-  	  <para>
- 	    Pointer to function that defines transformation between indices
- 	    in array <literal><parameter>idata</parameter></literal> and the
- 	    world coordinates (C only).  Transformation functions are
- 	    provided in the PLplot library:
- 	    &pltr0; for identity mapping, and &pltr1; and &pltr2; for
- 	    arbitrary mappings respectively defined by one- and
- 	    two-dimensional arrays.  In addition, user-supplied routines
- 	    for the transformation can be used as well.  Examples of
- 	    all of these approaches are given in
- 	    <xref linkend="contour-plots-c"/>.
- 	    The transformation function should
- 	    have the form given by any of &pltr0;, &pltr1;, or &pltr2;.
- 	  </para>
+      <varlistentry>
+	<term>
+	  <parameter>pltr</parameter>
+	  (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer)
+	  </literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to function that defines transformation between indices
+	    in array <literal><parameter>idata</parameter></literal> and the
+	    world coordinates (C only).  Transformation functions are
+	    provided in the PLplot library:
+	    &pltr0; for identity mapping, and &pltr1; and &pltr2; for
+	    arbitrary mappings respectively defined by one- and
+	    two-dimensional arrays.  In addition, user-supplied routines
+	    for the transformation can be used as well.  Examples of
+	    all of these approaches are given in
+	    <xref linkend="contour-plots-c"/>.
+	    The transformation function should
+	    have the form given by any of &pltr0;, &pltr1;, or &pltr2;.
+	  </para>
 	</listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>
-	    <parameter>pltr_data</parameter>
- 	  (<literal>PLPointer</literal>, input)
- 	</term>
- 	<listitem>
- 	  <para>
- 	    Extra parameter to help
- 	    pass information to &pltr0;, &pltr1;, &pltr2;, or whatever routine
- 	    that is externally supplied.
-  	  </para>
-  	</listitem>
-        </varlistentry>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>pltr_data</parameter>
+	  (<literal>PLPointer</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Extra parameter to help
+	    pass information to &pltr0;, &pltr1;, &pltr2;, or whatever routine
+	    that is externally supplied.
+	  </para>
+	</listitem>
+      </varlistentry>
     </variablelist>
 
     <para>
@@ -7584,7 +7584,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <funcsynopsis>
 	<funcprototype>
 	  <funcdef>int
-	    <function>plparseopts</function>
+	  <function>plparseopts</function>
 	  </funcdef>
 	  <paramdef><parameter>p_argc</parameter></paramdef>
 	  <paramdef><parameter>argv</parameter></paramdef>
@@ -7676,47 +7676,47 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </varlistentry>
     </variablelist>
 
-   <para>
-    &plparseopts; removes all recognized flags
-    (decreasing argc accordingly), so that invalid input may be readily
-    detected.  It can also be used to process user command line flags.  The
-    user can merge an option table of type PLOptionTable into the internal
-    option table info structure using &plMergeOpts;.  Or, the user can
-    specify that ONLY the external table(s) be parsed by calling
-    &plClearOpts; before &plMergeOpts;.
+    <para>
+      &plparseopts; removes all recognized flags
+      (decreasing argc accordingly), so that invalid input may be readily
+      detected.  It can also be used to process user command line flags.  The
+      user can merge an option table of type PLOptionTable into the internal
+      option table info structure using &plMergeOpts;.  Or, the user can
+      specify that ONLY the external table(s) be parsed by calling
+      &plClearOpts; before &plMergeOpts;.
     </para>
 
     <para>
-    The default action taken by &plparseopts; is as follows:
-    <simplelist columns="1">
-        <member>
-         Returns with an error if an unrecognized option or badly formed
-         option-value pair are encountered.
-        </member>
-        <member>
-         Returns immediately (return code 0) when the first non-option
-         command line argument is found.
-        </member>
-        <member>
-         Returns with the return code of the option handler, if one
-         was called.
-        </member>
-        <member>
-         Deletes command line arguments from argv list as they are found,
-         and decrements argc accordingly.
-        </member>
-        <member>
-         Does not show "invisible" options in usage or help messages.
-        </member>
-        <member>
-         Assumes the program name is contained in argv[0].
-        </member>
-    </simplelist>
+      The default action taken by &plparseopts; is as follows:
+      <simplelist columns="1">
+	<member>
+	  Returns with an error if an unrecognized option or badly formed
+	  option-value pair are encountered.
+	</member>
+	<member>
+	  Returns immediately (return code 0) when the first non-option
+	  command line argument is found.
+	</member>
+	<member>
+	  Returns with the return code of the option handler, if one
+	  was called.
+	</member>
+	<member>
+	  Deletes command line arguments from argv list as they are found,
+	  and decrements argc accordingly.
+	</member>
+	<member>
+	  Does not show "invisible" options in usage or help messages.
+	</member>
+	<member>
+	  Assumes the program name is contained in argv[0].
+	</member>
+      </simplelist>
     </para>
 
     <para>
-    These behaviors may be controlled through the 
-    <parameter>mode</parameter> argument.
+      These behaviors may be controlled through the 
+      <parameter>mode</parameter> argument.
     </para>
 
     <para>
@@ -10042,15 +10042,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <para>
 	    The desired compression level. This is a device-dependent
 	    value.
-            Currently only the jpeg and png devices use these values. For jpeg 
-            value is the jpeg quality which should normally be in the range 0-95.
-            Higher values denote higher quality and hence larger image sizes. For
-            png values are in the range -1 to 99. Values of 0-9 are taken as the 
-            compression level for zlib. A value of -1 denotes the default zlib 
-            compression level. Values in the range 10-99 are divided by 10 and 
-            then used as the zlib compression level. Higher compression levels
-            correspond to greater compression and small file sizes at the
-            expense of more computation.
+	    Currently only the jpeg and png devices use these values. For jpeg 
+	    value is the jpeg quality which should normally be in the range 0-95.
+	    Higher values denote higher quality and hence larger image sizes. For
+	    png values are in the range -1 to 99. Values of 0-9 are taken as the 
+	    compression level for zlib. A value of -1 denotes the default zlib 
+	    compression level. Values in the range 10-99 are divided by 10 and 
+	    then used as the zlib compression level. Higher compression levels
+	    correspond to greater compression and small file sizes at the
+	    expense of more computation.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -10175,7 +10175,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    Relative justification in x. Value must lie in the
-            range -0.5 to 0.5.
+	    range -0.5 to 0.5.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -10187,7 +10187,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    Relative justification in y. Value must lie in the
-            range -0.5 to 0.5.
+	    range -0.5 to 0.5.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -10567,8 +10567,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-    Set the seed for the internal random number generator. See &plrandd; 
-    for further details.
+      Set the seed for the internal random number generator. See &plrandd; 
+      for further details.
     </para>
 
     <variablelist>
@@ -10713,7 +10713,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <funcsynopsis>
 	<funcprototype>
 	  <funcdef>int
-	    <function>plsetopt</function>
+	  <function>plsetopt</function>
 	  </funcdef>
 	  <paramdef><parameter>opt</parameter></paramdef>
 	  <paramdef><parameter>optarg</parameter></paramdef>
@@ -12005,48 +12005,48 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-            This is the custom label function.  In order to reset to the
-            default labeling, set this to <literal>NULL</literal>.
-            The labeling function parameters are, in order:
-            <variablelist>
-              <varlistentry>
-                <term><parameter>axis</parameter></term>
-                <listitem>
-                  <para>
-                    This indicates which axis a label is being requested for.
-                    The value will be one of <literal>PL_X_AXIS</literal>,
-                    <literal>PL_Y_AXIS</literal> or
-                    <literal>PL_Z_AXIS</literal>.
-                  </para>
-                </listitem>
-              </varlistentry>
-              <varlistentry>
-                <term><parameter>value</parameter></term>
-                <listitem>
-                  <para>
-                    This is the value along the axis which is being labeled.
-                  </para>
-                </listitem>
-              </varlistentry>
-              <varlistentry>
-                <term><parameter>label_text</parameter></term>
-                <listitem>
-                  <para>
-                    The string representation of the label
-                    <literal>value</literal>.
-                  </para>
-                </listitem>
-              </varlistentry>
-              <varlistentry>
-                <term><parameter>length</parameter></term>
-                <listitem>
-                  <para>
-                    The maximum length in characters allowed for
-                    <literal>label_text</literal>.
-                  </para>
-                </listitem>
-              </varlistentry>
-            </variablelist>
+	    This is the custom label function.  In order to reset to the
+	    default labeling, set this to <literal>NULL</literal>.
+	    The labeling function parameters are, in order:
+	    <variablelist>
+	      <varlistentry>
+		<term><parameter>axis</parameter></term>
+		<listitem>
+		  <para>
+		    This indicates which axis a label is being requested for.
+		    The value will be one of <literal>PL_X_AXIS</literal>,
+		    <literal>PL_Y_AXIS</literal> or
+		    <literal>PL_Z_AXIS</literal>.
+		  </para>
+		</listitem>
+	      </varlistentry>
+	      <varlistentry>
+		<term><parameter>value</parameter></term>
+		<listitem>
+		  <para>
+		    This is the value along the axis which is being labeled.
+		  </para>
+		</listitem>
+	      </varlistentry>
+	      <varlistentry>
+		<term><parameter>label_text</parameter></term>
+		<listitem>
+		  <para>
+		    The string representation of the label
+		    <literal>value</literal>.
+		  </para>
+		</listitem>
+	      </varlistentry>
+	      <varlistentry>
+		<term><parameter>length</parameter></term>
+		<listitem>
+		  <para>
+		    The maximum length in characters allowed for
+		    <literal>label_text</literal>.
+		  </para>
+		</listitem>
+	      </varlistentry>
+	    </variablelist>
 	  </para>
 	</listitem>
       </varlistentry>
@@ -12057,8 +12057,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-            This parameter may be used to pass data to the
-            <literal>label_func</literal> function.
+	    This parameter may be used to pass data to the
+	    <literal>label_func</literal> function.
 	  </para>
 	</listitem>
       </varlistentry>
