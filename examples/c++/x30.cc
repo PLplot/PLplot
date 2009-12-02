@@ -75,7 +75,6 @@ x30::x30( int argc, const char *argv[] )
     PLINT icol, r, g, b;
     PLFLT a;
     PLFLT clevel[101];
-    PLFLT **z;
 
     pls = new plstream;
 
@@ -162,34 +161,24 @@ x30::x30( int argc, const char *argv[] )
         }
     }
 
-    /* The overlaid box is drawn using plshades with a color map that is */
-    /* the same color but has a linearly varying transparency. */
-
     /* Create the color map with 128 colors and use plscmap1la to initialize */
-    /* the color values with a linear varying transparency (or alpha) */
+    /* the color values with a linearly varying red transparency (or alpha) */
     pls->scmap1n( 128 );
     pls->scmap1la( true, 2, pos, rcoord, gcoord, bcoord, acoord );
 
-    /* Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will */
-    /* used for the shade plot. plshades will use linear interpolation to */
-    /* calculate the z values of all the intermediate points in this array. */
-    pls->Alloc2dGrid( &z, 2, 2 );
-    z[0][0] = 0.0;
-    z[1][0] = 0.0;
-    z[0][1] = 1.0;
-    z[1][1] = 1.0;
+    /* Use that cmap1 to create a transparent red gradient for the whole
+     * window. */
+    px[0] = 0.;
+    px[1] = 1.;
+    px[2] = 1.;
+    px[3] = 0.;
 
-    /* Set the color levels array. These levels are also between 0.0 and 1.0 */
-    for ( i = 0; i < 101; i++ )
-    {
-        clevel[i] = 0.01 * (PLFLT) i;
-    }
+    py[0] = 0.;
+    py[1] = 0.;
+    py[2] = 1.;
+    py[3] = 1.;
 
-    /* Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate ranges */
-    /* such that it fills the entire plotting area. */
-    pls->shades( z, 2, 2, NULL, 0.0, 1.0, 0.0, 1.0, clevel, 101, 0, -1, 2, plfill, true, NULL, NULL );
-
-    pls->Free2dGrid( z, 2, 2 );
+    plgradient( 4, px, py, 90. );
 
     delete pls;
 }

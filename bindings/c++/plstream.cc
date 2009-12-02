@@ -847,6 +847,16 @@ void plstream::gra()
     plgra();
 }
 
+
+// Draw gradient in polygon.
+
+void plstream::gradient( PLINT n, PLFLT * x, PLFLT * y, PLFLT angle )
+{
+    //set_stream();
+
+  plgradient( n, x, y, angle );
+}
+
 // grid irregularly sampled data
 void plstream::griddata( PLFLT * x, PLFLT * y, PLFLT * z, PLINT npts,
                          PLFLT * xg, PLINT nptsx, PLFLT * yg, PLINT nptsy,

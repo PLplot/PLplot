@@ -357,6 +357,10 @@ public:
 
     void gra();
 
+// Draw gradient in polygon.
+
+    static void gradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
+
 // grid irregularly sampled data
 
     void griddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,

@@ -34,8 +34,7 @@ private:
 
 x25::x25( int argc, const char *argv[] )
 {
-    int   i;
-    int   j;
+    int   i, j, k;
     int   npts = 0;
     PLFLT xextreme[10][2];
     PLFLT yextreme[10][2];
@@ -63,6 +62,8 @@ x25::x25( int argc, const char *argv[] )
     xextreme[7][0] = -80.0; xextreme[7][1] = 80.0; yextreme[7][0] = -80.0; yextreme[7][1] = 80.0;
     xextreme[8][0] = 20.0; xextreme[8][1] = 120.0; yextreme[8][0] = -120.0; yextreme[8][1] = 120.0;
 
+    for ( k = 0; k < 2; k++ )
+    {
     for ( j = 0; j < 4; j++ )
     {
         if ( j == 0 )
@@ -124,11 +125,15 @@ x25::x25( int argc, const char *argv[] )
             pls->box( "bc", 1.0, 0, "bcnv", 10.0, 0 );
             pls->col0( 1 );
             pls->psty( 0 );
-            pls->fill( npts, x0, y0 );
+            if ( k == 0 )
+                pls->fill( npts, x0, y0 );
+            else
+              pls->gradient( npts, x0, y0, 45. );
             pls->col0( 2 );
             pls->lsty( 1 );
             pls->line( npts, x0, y0 );
         }
+    }
     }
 
 /* Don't forget to delete stream to finish off! */
