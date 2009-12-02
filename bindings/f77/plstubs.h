@@ -218,6 +218,7 @@
 #define    PLGLEVEL                  FNAME( PLGLEVEL, plglevel )
 #define    PLGPAGE                   FNAME( PLGPAGE, plgpage )
 #define    PLGRA                     FNAME( PLGRA, plgra )
+#define    PLGRADIENT                FNAME( PLGRADIENT, plgradient )
 #define    PLGRIDDATA                FNAME( PLGRIDDATA, plgriddata )
 #define    PLGSPA                    FNAME( PLGSPA, plgspa )
 #define    PLGSTRM                   FNAME( PLGSTRM, plgstrm )

@@ -46,7 +46,7 @@ c
 
       integer i, j
       integer icol, r, g, b
-      real*8 a, clevel(101), z(2,2)
+      real*8 a, clevel(101)
 
       character*1 defined
 
@@ -133,31 +133,24 @@ c     Set box y position and draw the box.
          enddo
       enddo
 
-c     The overlaid box is drawn using plshades with a color map that is
-c     the same color but has a linearly varying transparency.
-
 c     Create the color map with 128 colors and call plscmap1la to initialize
-c     the color values with a linear varying transparency (or alpha)
+c     the color values with a linearly varying red transparency (or alpha)
       call plscmap1n(128)
       call plscmap1la(1, 2, pos, rcoord, gcoord, bcoord, acoord, rev)
 
-c     Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will
-c     used for the shade plot. plshades uses linear interpolation to
-c     calculate the z values of all the intermediate points in this array.
-      z(1,1) = 0.0d0
-      z(2,1) = 0.0d0
-      z(1,2) = 1.0d0
-      z(2,2) = 1.0d0
+c     Use that cmap1 to create a transparent red gradient for the whole
+c     window.
+      px(1) = 0.d0
+      px(2) = 1.d0
+      px(3) = 1.d0
+      px(4) = 0.d0
 
-c     Set the color levels array. These levels are also between 0.0 and 1.0
-      do i = 1,101 
-         clevel(i) = 0.01d0 * dble(i-1)
-      enddo
+      py(1) = 0.d0
+      py(2) = 0.d0
+      py(3) = 1.d0
+      py(4) = 1.d0
 
-c     Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate ranges
-c     such that it fills the entire plotting area.
-      call plshades0(z, 2, 2, defined, 0.0d0, 1.0d0, 0.0d0, 1.0d0,
-     &     clevel, 101, 0, -1, 2, 2)
+      call plgradient( 4, px, py, 90.d0 )
 
       call plend()
       end

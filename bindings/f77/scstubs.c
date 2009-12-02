@@ -368,6 +368,12 @@ PLGRA( void )
 }
 
 void
+PLGRADIENT( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *angle )
+{
+  c_plgradient( *n, x, y, *angle );
+}
+
+void
 PLGSPA( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax )
 {
     c_plgspa( xmin, xmax, ymin, ymax );
