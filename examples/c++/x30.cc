@@ -74,7 +74,6 @@ x30::x30( int argc, const char *argv[] )
     int   i, j;
     PLINT icol, r, g, b;
     PLFLT a;
-    PLFLT clevel[101];
 
     pls = new plstream;
 

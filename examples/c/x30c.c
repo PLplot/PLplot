@@ -47,7 +47,6 @@ main( int argc, const char *argv[] )
     int   i, j;
     PLINT icol, r, g, b;
     PLFLT a;
-    PLFLT clevel[101];
 
     plparseopts( &argc, argv, PL_PARSE_FULL );
 

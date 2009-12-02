@@ -46,7 +46,7 @@ c
 
       integer i, j
       integer icol, r, g, b
-      real*8 a, clevel(101)
+      real*8 a
 
       character*1 defined
 
