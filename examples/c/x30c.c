@@ -134,7 +134,7 @@ main( int argc, const char *argv[] )
     }
 
     /* Create the color map with 128 colors and use plscmap1la to initialize */
-    /* the color values with a linear varying red transparency (or alpha) */
+    /* the color values with a linearly varying red transparency (or alpha) */
     plscmap1n( 128 );
     plscmap1la( 1, 2, pos, rcoord, gcoord, bcoord, acoord, rev );
 
