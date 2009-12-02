@@ -365,6 +365,11 @@ public void gra() {
     plplotjavac.plgra();
 }
 
+  public void gradient(double[] x, double[] y, double angle) {
+    if (set_stream() == -1) return;
+    plplotjavac.plgradient(x, y, angle);
+}
+
 public void griddata(double[] x, double[] y, double[] z, double[] xg, 
 		     double[] yg, double[][] zg, int type, double data) {
     if (set_stream() == -1) return;
