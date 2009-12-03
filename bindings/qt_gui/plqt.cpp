@@ -373,14 +373,15 @@ void QtPLDriver::setColor( int r, int g, int b, double alpha )
 }
 
 void QtPLDriver::setGradient( int x1, int x2, int y1, int y2,
-                              int *r, int *g, int *b, qreal *alpha, PLINT ncol1 )
+                              unsigned char *r, unsigned char *g,
+                              unsigned char *b, PLFLT *alpha, PLINT ncol1 )
 {
     if ( !m_painterP->isActive() || ncol1 < 2 ) return;
 
-    int            i;
-    qreal          stop_arg;
-    QGradient      linear_gradient;
-    QGradientStops stops;
+    int             i;
+    qreal           stop_arg;
+    QLinearGradient linear_gradient;
+    QGradientStops  stops;
 
     linear_gradient = QLinearGradient(
         QPointF((qreal) ( x1 * downscale ), (qreal) ( m_dHeight - y1 * downscale )),
@@ -650,6 +651,10 @@ void QtPLWidget::clearBuffer()
             delete i->Data.ColourStruct;
             break;
 
+        case SET_GRADIENT:
+            delete i->Data.LinearGradient;
+            break;
+
         default:
             break;
         }
@@ -781,6 +786,35 @@ void QtPLWidget::setColor( int r, int g, int b, double alpha )
     }
     // No need to ask for a redraw at this point. The color only affects subsequent items
 //     redrawFromLastFlush=true;
+}
+
+void QtPLWidget::setGradient( int x1, int x2, int y1, int y2,
+                              unsigned char *r, unsigned char *g,
+                              unsigned char *b, PLFLT *alpha, PLINT ncol1 )
+{
+    int            i;
+    BufferElement  el;
+    qreal          stop_arg;
+    QGradientStops stops;
+
+    el.Element = SET_GRADIENT;
+
+    el.Data.LinearGradient  = new QLinearGradient;
+    *el.Data.LinearGradient = QLinearGradient(
+        QPointF((qreal) ( x1 * downscale ), (qreal) ( m_dHeight - y1 * downscale )),
+        QPointF((qreal) ( x2 * downscale ), (qreal) ( m_dHeight - y2 * downscale )));
+    for ( i = 0; i < ncol1; i++ )
+    {
+        stop_arg = (qreal) i / (qreal) ( ncol1 - 1 );
+        stops << QGradientStop( stop_arg, QColor( r[i], g[i],
+                b[i], (int) ( alpha[i] * 255 )));
+    }
+    ( *el.Data.LinearGradient ).setStops( stops );
+    m_listBuffer.append( el );
+
+    // No need to ask for a redraw at this point. The gradient only
+    // affects subsequent items.
+    //redrawFromLastFlush=true;
 }
 
 void QtPLWidget::setBackgroundColor( int r, int g, int b, double alpha )
@@ -971,6 +1005,7 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
     QVector<qreal> vect;
     QRectF         rect;
 
+
 //     QPen SolidPen;
 //
 //     QPen NoPen(Qt::NoPen);
@@ -1008,6 +1043,10 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
             }
             SolidBrush.setColor( QColor( i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A ));
             p->setBrush( SolidBrush );
+            break;
+
+        case SET_GRADIENT:
+            p->setBrush( *( i->Data.LinearGradient ));
             break;
 
         case LINE:

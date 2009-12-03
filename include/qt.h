@@ -128,9 +128,10 @@ public:
     virtual void drawPolygon( short * x, short * y, PLINT npts );
     virtual void drawText( PLStream* pls, EscText* txt );
     virtual void setColor( int r, int g, int b, double alpha );
-    virtual void setGradient( int x1, int x2, int y1, int y2,
-                              int *r, int *g, int *b, qreal *alpha, PLINT ncol1 );
     virtual void setBackgroundColor( int r, int g, int b, double alpha ){}
+    virtual void setGradient( int x1, int x2, int y1, int y2,
+                              unsigned char *r, unsigned char *g,
+                              unsigned char *b, PLFLT *alpha, PLINT ncol1 );
     virtual void setWidth( PLINT w );
     // Set pen to draw solid strokes (called after drawing dashed strokes)
     virtual void setSolid();
@@ -233,6 +234,7 @@ typedef enum ElementType_
     RECTANGLE,
     SET_WIDTH,
     SET_COLOUR,
+    SET_GRADIENT,
     SET_SMOOTH,
     TEXT,
     SET_BG_COLOUR
@@ -272,6 +274,7 @@ public:
         QLineF * Line;
         QPolygonF           * Polyline;
         QRectF              * Rect;
+        QLinearGradient     * LinearGradient;
         struct ColourStruct_* ColourStruct;
         struct TextStruct_  * TextStruct;
         PLINT intParam;
@@ -303,6 +306,9 @@ public:
     void drawPolygon( short * x, short * y, PLINT npts );
     void setColor( int r, int g, int b, double alpha );
     void setBackgroundColor( int r, int g, int b, double alpha );
+    void setGradient( int x1, int x2, int y1, int y2,
+                      unsigned char *r, unsigned char *g,
+                      unsigned char *b, PLFLT *alpha, PLINT ncol1 );
     void setWidth( PLINT r );
     void drawText( PLStream* pls, EscText* txt );
     void flush();
