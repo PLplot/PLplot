@@ -1,5 +1,5 @@
 The following files work together to define the fortran API for PLplot.
-The general rule is 
+The general rule is
 
 * use sfstubs.fm4 for routines that have character strings;
 
@@ -55,3 +55,36 @@ meaning there is a wrapper in sfstubs.f(m4). Also contains plvect routines.
 
 * scstubs.c contains all the simple (non-3D, non-cont, non-shade) API plus
 some 7-suffix routines that have a special wrapper in sfstubs.f(m4).
+
+
+Linking DLLs on Windows
+-----------------------
+On Windows it is necessary to specify which routines and functions in
+a DLL should be exported, i.e. made visible to external programs. While
+there compiler-specific ways to do that within the source code we prefer
+to do it via so-called linker definition files (.def).
+
+Basically, these files contain a list of all the subroutines and functions
+that need to be exported, one name per line. The difficulty is, however,
+that these names are the names as constructed by the compiler. Each compiler
+is free to use its own scheme for turning the name found in the Fortran code
+into a "linker" name".
+
+For the Compaq Visual Fortran the scheme is this:
+
+subroutine/function Name( a, b ) ==> _NAME@8
+
+where the @8 represents the number of bytes in the argument list (the
+hidden argument representing the length of string arguments must be
+included in that count)
+
+For the MinGW gfortran compiler the scheme is somewhat simpler:
+
+subroutine/function Name( a, b ) ==> name_
+subroutine/function My_Name( a, b ) ==> my_name__
+
+For the Cygwin gfortran compiler all symbols are automatically exported. There
+is no need for a linker definition file.
+
+One way to find out what the internally produced names are is to examine the
+object file (.obj) that is produced by the compiler.
