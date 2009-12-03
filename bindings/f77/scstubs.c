@@ -370,7 +370,7 @@ PLGRA( void )
 void
 PLGRADIENT( PLINT *n, PLFLT *x, PLFLT *y, PLFLT *angle )
 {
-  c_plgradient( *n, x, y, *angle );
+    c_plgradient( *n, x, y, *angle );
 }
 
 void
