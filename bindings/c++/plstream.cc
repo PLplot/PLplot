@@ -854,7 +854,7 @@ void plstream::gradient( PLINT n, PLFLT * x, PLFLT * y, PLFLT angle )
 {
     //set_stream();
 
-  plgradient( n, x, y, angle );
+    plgradient( n, x, y, angle );
 }
 
 // grid irregularly sampled data

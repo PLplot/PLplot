@@ -64,76 +64,76 @@ x25::x25( int argc, const char *argv[] )
 
     for ( k = 0; k < 2; k++ )
     {
-    for ( j = 0; j < 4; j++ )
-    {
-        if ( j == 0 )
+        for ( j = 0; j < 4; j++ )
         {
+            if ( j == 0 )
+            {
 /* Polygon 1: a diamond */
-            x0[0] = 0; y0[0] = -100;
-            x0[1] = -100; y0[1] = 0;
-            x0[2] = 0; y0[2] = 100;
-            x0[3] = 100; y0[3] = 0;
-            npts  = 4;
-        }
-        if ( j == 1 )
-        {
+                x0[0] = 0; y0[0] = -100;
+                x0[1] = -100; y0[1] = 0;
+                x0[2] = 0; y0[2] = 100;
+                x0[3] = 100; y0[3] = 0;
+                npts  = 4;
+            }
+            if ( j == 1 )
+            {
 /* Polygon 1: a diamond - reverse direction */
-            x0[3] = 0; y0[3] = -100;
-            x0[2] = -100; y0[2] = 0;
-            x0[1] = 0; y0[1] = 100;
-            x0[0] = 100; y0[0] = 0;
-            npts  = 4;
-        }
-        if ( j == 2 )
-        {
+                x0[3] = 0; y0[3] = -100;
+                x0[2] = -100; y0[2] = 0;
+                x0[1] = 0; y0[1] = 100;
+                x0[0] = 100; y0[0] = 0;
+                npts  = 4;
+            }
+            if ( j == 2 )
+            {
 /* Polygon 2: a square with punctures */
-            x0[0] = -100; y0[0] = -100;
-            x0[1] = -100; y0[1] = -80;
-            x0[2] = 80; y0[2] = 0;
-            x0[3] = -100; y0[3] = 80;
-            x0[4] = -100; y0[4] = 100;
-            x0[5] = -80; y0[5] = 100;
-            x0[6] = 0; y0[6] = 80;
-            x0[7] = 80; y0[7] = 100;
-            x0[8] = 100; y0[8] = 100;
-            x0[9] = 100; y0[9] = -100;
-            npts  = 10;
-        }
-        if ( j == 3 )
-        {
+                x0[0] = -100; y0[0] = -100;
+                x0[1] = -100; y0[1] = -80;
+                x0[2] = 80; y0[2] = 0;
+                x0[3] = -100; y0[3] = 80;
+                x0[4] = -100; y0[4] = 100;
+                x0[5] = -80; y0[5] = 100;
+                x0[6] = 0; y0[6] = 80;
+                x0[7] = 80; y0[7] = 100;
+                x0[8] = 100; y0[8] = 100;
+                x0[9] = 100; y0[9] = -100;
+                npts  = 10;
+            }
+            if ( j == 3 )
+            {
 /* Polygon 2: a square with punctures - reversed direction */
-            x0[9] = -100; y0[9] = -100;
-            x0[8] = -100; y0[8] = -80;
-            x0[7] = 80; y0[7] = 0;
-            x0[6] = -100; y0[6] = 80;
-            x0[5] = -100; y0[5] = 100;
-            x0[4] = -80; y0[4] = 100;
-            x0[3] = 0; y0[3] = 80;
-            x0[2] = 80; y0[2] = 100;
-            x0[1] = 100; y0[1] = 100;
-            x0[0] = 100; y0[0] = -100;
-            npts  = 10;
-        }
+                x0[9] = -100; y0[9] = -100;
+                x0[8] = -100; y0[8] = -80;
+                x0[7] = 80; y0[7] = 0;
+                x0[6] = -100; y0[6] = 80;
+                x0[5] = -100; y0[5] = 100;
+                x0[4] = -80; y0[4] = 100;
+                x0[3] = 0; y0[3] = 80;
+                x0[2] = 80; y0[2] = 100;
+                x0[1] = 100; y0[1] = 100;
+                x0[0] = 100; y0[0] = -100;
+                npts  = 10;
+            }
 
-        for ( i = 0; i < 9; i++ )
-        {
-            pls->adv( 0 );
-            pls->vsta();
-            pls->wind( xextreme[i][0], xextreme[i][1], yextreme[i][0], yextreme[i][1] );
+            for ( i = 0; i < 9; i++ )
+            {
+                pls->adv( 0 );
+                pls->vsta();
+                pls->wind( xextreme[i][0], xextreme[i][1], yextreme[i][0], yextreme[i][1] );
 
-            pls->col0( 2 );
-            pls->box( "bc", 1.0, 0, "bcnv", 10.0, 0 );
-            pls->col0( 1 );
-            pls->psty( 0 );
-            if ( k == 0 )
-                pls->fill( npts, x0, y0 );
-            else
-              pls->gradient( npts, x0, y0, 45. );
-            pls->col0( 2 );
-            pls->lsty( 1 );
-            pls->line( npts, x0, y0 );
+                pls->col0( 2 );
+                pls->box( "bc", 1.0, 0, "bcnv", 10.0, 0 );
+                pls->col0( 1 );
+                pls->psty( 0 );
+                if ( k == 0 )
+                    pls->fill( npts, x0, y0 );
+                else
+                    pls->gradient( npts, x0, y0, 45. );
+                pls->col0( 2 );
+                pls->lsty( 1 );
+                pls->line( npts, x0, y0 );
+            }
         }
-    }
     }
 
 /* Don't forget to delete stream to finish off! */
