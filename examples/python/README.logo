@@ -6,12 +6,17 @@ make plplot_logo
 in either the top-level of the build tree (configured with cmake
 option -DBUILD_TEST=ON) or (after "make install" is run) in the build
 tree of the installed examples configured by the new CMake-based build
-system for those examples.
+system for those examples.  The above command actually runs the
+equivalent of
 
-The above command generates both plplot_logo.svg and plplot_logo.jpg
-(see below) in examples/python (if working in the top-level of the
-core build tree) or python (if working in the top-level of the
-installed examples build tree).
+./plplot_logo.py -dev svg -geometry 760x120 -o plplot_logo.svg
+
+with proper dependencies and with plplot_logo.py run from the correct
+directory with correct directory prefix on the output.  It also
+generates plplot_logo.jpg (see below).  Both output files end up in
+examples/python (if working in the top-level of the core build tree)
+or python (if working in the top-level of the installed examples build
+tree).
 
 The plplot_logo.svg results look great on konqueror, but they are slow
 to render.  The results also look good for display (for the default
