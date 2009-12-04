@@ -226,6 +226,7 @@ static char *rise_span_tag( int, int );
 static void set_current_context( PLStream * );
 static void poly_line( PLStream *, short *, short *, PLINT );
 static void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts );
+static void gradient( PLStream *pls, short *xa, short *ya, PLINT npts );
 static void arc( PLStream *, arc_struct * );
 static void rotate_cairo_surface( PLStream *, float, float, float, float, float, float );
 /* Rasterization of plotted material */
@@ -477,6 +478,9 @@ void plD_esc_cairo( PLStream *pls, PLINT op, void *ptr )
     {
     case PLESC_FILL:     /* filled polygon */
         filled_polygon( pls, pls->dev_x, pls->dev_y, pls->dev_npts );
+        break;
+    case PLESC_GRADIENT:     /* render a gradient within a polygon. */
+        gradient( pls, pls->dev_x, pls->dev_y, pls->dev_npts );
         break;
     case PLESC_HAS_TEXT:
         if ( !pls->alt_unicode )
@@ -1065,16 +1069,17 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     downscale = 0.0;
 
     /* Stream setup */
-    pls->termin      = interactive; /* Interactive device */
-    pls->dev_flush   = 1;           /* Handles flushes */
-    pls->color       = 1;           /* Supports color */
-    pls->dev_text    = 1;           /* Handles text */
-    pls->dev_unicode = 1;           /* Wants unicode text */
-    pls->alt_unicode = 1;           /* Wants to handle unicode character by character */
-    pls->page        = 0;
-    pls->dev_fill0   = 1;           /* Supports hardware solid fills */
-    pls->dev_arc     = 1;           /* Supports driver-level arcs */
-    pls->plbuf_write = interactive; /* Activate plot buffer */
+    pls->termin       = interactive; /* Interactive device */
+    pls->dev_flush    = 1;           /* Handles flushes */
+    pls->color        = 1;           /* Supports color */
+    pls->dev_text     = 1;           /* Handles text */
+    pls->dev_unicode  = 1;           /* Wants unicode text */
+    pls->alt_unicode  = 1;           /* Wants to handle unicode character by character */
+    pls->page         = 0;
+    pls->dev_fill0    = 1;           /* Supports hardware solid fills */
+    pls->dev_gradient = 1;           /* driver renders gradient */
+    pls->dev_arc      = 1;           /* Supports driver-level arcs */
+    pls->plbuf_write  = interactive; /* Activate plot buffer */
 
 
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
@@ -1241,6 +1246,50 @@ void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     /* Restore the previous line drawing style */
     set_line_properties( aStream, old_line_join, old_line_cap );
+}
+
+/*---------------------------------------------------------------------
+ * gradient()
+ *
+ * Render a gradient within a polygon.
+ * ---------------------------------------------------------------------*/
+
+void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
+{
+    int i;
+    PLCairo         *aStream;
+    cairo_pattern_t *linear_gradient;
+
+    aStream = (PLCairo *) pls->dev;
+
+    /* These line properties make for a nicer looking polygon mesh */
+    set_line_properties( aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_BUTT );
+
+    linear_gradient = cairo_pattern_create_linear(
+        aStream->downscale * pls->xgradient[0],
+        aStream->downscale * pls->ygradient[0],
+        aStream->downscale * pls->xgradient[1],
+        aStream->downscale * pls->ygradient[1] );
+
+    cairo_pattern_reference( linear_gradient );
+    for ( i = 0; i < pls->ncol1; i++ )
+    {
+        cairo_pattern_add_color_stop_rgba( linear_gradient,
+            (double) i / (double) ( pls->ncol1 - 1 ),
+            (double) pls->cmap1[i].r / 255.,
+            (double) pls->cmap1[i].g / 255.,
+            (double) pls->cmap1[i].b / 255.,
+            (double) pls->cmap1[i].a );
+    }
+
+    /* Draw the polygon using the gradient. */
+
+    cairo_move_to( aStream->cairoContext, aStream->downscale * (double) xa[0], aStream->downscale * (double) ya[0] );
+    for ( i = 1; i < npts; i++ )
+        cairo_line_to( aStream->cairoContext, aStream->downscale * (double) xa[i], aStream->downscale * (double) ya[i] );
+    cairo_set_source( aStream->cairoContext, linear_gradient );
+    cairo_fill( aStream->cairoContext );
+    cairo_pattern_destroy( linear_gradient );
 }
 
 /*---------------------------------------------------------------------
