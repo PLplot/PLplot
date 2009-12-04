@@ -137,7 +137,6 @@ set(
   README.pythondemos
   README.rendering_tests
   README.logo
-  svg_760x120_gradient.patch
   )
 
 if(ENABLE_pygcw)
@@ -252,3 +251,36 @@ else(CORE_BUILD)
       )
   endforeach(file ${python_SCRIPTS} ${python_DATA} plplot_python_start.py plplot_py_demos.py)
 endif(CORE_BUILD)
+
+# Custom target to build logo (Unix only with ImageMagick installed).
+if(BUILD_TEST)
+  if(CORE_BUILD)
+    set(working_directory ${CMAKE_CURRENT_BINARY_DIR})
+  else(CORE_BUILD)
+    set(working_directory ${CMAKE_CURRENT_SOURCE_DIR})
+  endif(CORE_BUILD)
+  set(command_file ${working_directory}/plplot_logo.py)
+  add_custom_command(
+    OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.svg
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.jpg
+    COMMAND ${command_file} -dev svg -geometry 760x120
+    -o ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.svg
+    COMMAND convert
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.svg 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.jpg
+    DEPENDS ${command_file}
+    WORKING_DIRECTORY ${working_directory}
+    )
+  add_custom_target(plplot_logo
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.svg
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.jpg
+    )
+  if(CORE_BUILD)
+    add_dependencies(plplot_logo python_examples _plplotcmodule)
+  else(CORE_BUILD)
+    add_dependencies(plplot_logo _plplotcmodule)
+  endif(CORE_BUILD)
+    
+endif(BUILD_TEST)

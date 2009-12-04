@@ -1,14 +1,21 @@
 To produce an SVG form of the logo with -dev svg (which is the device which
 plplot_logo.py has been explicitly tuned for) execute
 
-python/plplot_logo.py -dev svg -o plplot_logo.svg -geometry 760x120
+make plplot_logo
 
-in either the build tree examples directory (after "make python_examples")
-or the install-tree examples directory (after  "make install").
+in either the top-level of the build tree (configured with cmake
+option -DBUILD_TEST=ON) or (after "make install" is run) in the build
+tree of the installed examples configured by the new CMake-based build
+system for those examples.
 
-The results look great on konqueror, but they are slow to render.
-The results also look good for display (for the default compensation
-for text shifts) and take very little time to render.
+The above command generates both plplot_logo.svg and plplot_logo.jpg
+(see below) in examples/python (if working in the top-level of the
+core build tree) or python (if working in the top-level of the
+installed examples build tree).
+
+The plplot_logo.svg results look great on konqueror, but they are slow
+to render.  The results also look good for display (for the default
+compensation for text shifts) and take very little time to render.
 
 Partially because of the file-bloating issue discussed on list (lots of
 graphical objects outside device boundaries that are still included in the
@@ -20,7 +27,7 @@ If I compress that file using
 
 gzip -c <plplot_logo.svg >| plplot_logo.svgz
 
-then the result is only 97 K (which is mostly reasonable) and a factor of
+then the result is only 97 K (which is almost reasonable) and a factor of
 almost 20 (!) in size over uncompressed.  Other results follow:
 
 (1) The compressed result can still be quickly rendered with "display".
@@ -41,10 +48,12 @@ uncompressed results.
 However, the uncompressed result (after a long upload) validates properly
 at w3c.
 
-Until the *.svgz compressed form becomes well-recognized (not least by w3c),
-it is probably best to convert to jpeg to improve rendering speed/reduce
-bandwidth compared to the uncompressed svg file.  This convert step also
-appears to get rid of everything outside the device boundaries.
+Until the *.svgz compressed form becomes well-recognized (not least of
+all by w3c), it is probably best to convert to jpeg to improve
+rendering speed/reduce bandwidth compared to the uncompressed svg
+file.  This convert step (also done with the above "make plplot_logo"
+command) appears to get rid of everything outside the device
+boundaries.
 
 convert plplot_logo.svg plplot_logo.jpg
 
