@@ -77,7 +77,7 @@ while the required dependencies of the cairo and/or qt devices are not
 accessible, you can still use these deprecated devices by setting PLD_png,
 PLD_jpeg, or PLD_gif to ON.
 
-VIII. As of release 5.9.3 we have reenabled the tk, itk, and itcl components
+VIII. As of release 5.9.3 we have re-enabled the tk, itk, and itcl components
 of PLplot by default that were disabled by default as of release 5.9.1 due
 to segfaults.  The cause of the segfaults was a bug (now fixed) in how
 pthread support was implemented for the Tk-related components of PLplot.
@@ -98,7 +98,7 @@ export FC='gfortran -g -fvisibility=hidden'
 
 All other CMake methods of specifying a non-default compiler and associated
 compiler options will not be supported until CMake bug 9220 is fixed, see
-discussion below of the soft-landing reimplementation for details.
+discussion below of the soft-landing re-implementation for details.
 
 XII. As of release 5.9.5 we have retired the hpgl driver (containing the
 hp7470, hp7580, and lj_hpgl devices), the impress driver (containing the imp
@@ -140,6 +140,7 @@ INDEX
 1. Changes relative to PLplot 5.9.5 (the previous development release)
 
 1.1 Make PLplot aware of LC_NUMERIC locale
+1.2 Linear gradients have been implemented
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -178,9 +179,10 @@ examples
 2.32 Cairo driver improvements
 2.33 PyQt changes
 2.34 Color Palettes
-2.35 Reimplementation of a "soft landing" when a bad/missing compiler is
+2.35 Re-implementation of a "soft landing" when a bad/missing compiler is
 detected
 2.36 Make PLplot aware of LC_NUMERIC locale
+2.37 Linear gradients have been implemented
 
 1. Changes relative to PLplot 5.9.5 (the previous development release)
 
@@ -246,6 +248,21 @@ Previous versions of PLplot did not have this protection of the critical
 areas so were vulnerable to default LC_NUMERIC settings of external
 applications that resulted in a comma decimal separator that did not work
 correctly for the critical areas.
+
+1.2 Linear gradients have been implemented
+
+The new plgradient routine draws a linear gradient (based on the
+current colour map 1) at a specified angle with the x axis for a
+specified polygon.  Standard examples 25 and 30 now demonstrate use of
+plgradient.  Some devices use a software fallback to render the
+gradient.  This fallback is implemented with plshades which uses a
+series of rectangles to approximate the gradient. Tiny alignment
+issues for those rectangles relative to the pixel grid may look
+problematic for transparency gradients.  To avoid that issue, we try
+to use native gradient capability whenever that is possible for any of
+our devices.  Currently, this has been implemented for our svg, qt,
+and cairo devices.  The result is nice-looking smooth transparency
+gradients for those devices, for, e.g., example 30, page 2.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -391,7 +408,7 @@ support, while now the option enables the driver's own text routines.
 Some other features were added:
  * the wxWidgets driver now correctly clears the background (or parts of it)
  * transparency support was added
- * the "locate mode" (already availale in the xwin and tk driver) was
+ * the "locate mode" (already available in the xwin and tk driver) was
    implemented, where graphics input events are processed and translated
    to world coordinates
 
@@ -456,7 +473,7 @@ Thanks to Doug Hunt's efforts the external Perl/PDL module,
 PDL::Graphics::PLplot version 0.46 available at
 http://search.cpan.org/dist/PDL-Graphics-PLplot has been brought up to date
 to give access to recently added PLplot API.  The instructions for how to
-install this module on top of an offical PDL release are given in
+install this module on top of an official PDL release are given in
 examples/perl/README.perldemos. Doug has also finished implementing a
 complete set of standard examples in Perl/PDL which are part of PLplot and
 which produce identical results to their C counterparts if the above updated
@@ -539,7 +556,7 @@ ON by default for Windows if a shared plplot library is built.
 
 2.24 Documentation updates
 
-The docbook documentation has been updated to include many of the 
+The DocBook documentation has been updated to include many of the 
 C-specific functions (for example plAlloc2dGrid) which are not part 
 of the common API, but are used in the examples and may be helpful 
 for plplot users.
@@ -698,11 +715,11 @@ Support has been added to PLplot for user defined color palette files.
 These files can be loaded at the command line using the -cmap0 or
 -cmap1 commands, or via the API using the plspal0 and plspal1 commands.
 The commands cmap0 / plspal0 are used to load cmap0 type files which
-specify the colors in PLplots color table 0. The commands cmap1 /
-plspal1 are used to load cmap1 type files which specify PLplots color
+specify the colors in PLplot's color table 0. The commands cmap1 /
+plspal1 are used to load cmap1 type files which specify PLplot's color
 table 1. Examples of both types of files can be found in either the
 plplot-source/data directory or the PLplot installed directory 
-(typically /usr/local/share/plplotx.y.z/ on linux).
+(typically /usr/local/share/plplotx.y.z/ on Linux).
 
 2.35 Reimplementation of a "soft landing" when a bad/missing compiler is
 detected
@@ -792,3 +809,19 @@ Previous versions of PLplot did not have this protection of the critical
 areas so were vulnerable to default LC_NUMERIC settings of external
 applications that resulted in a comma decimal separator that did not work
 correctly for the critical areas.
+
+2.37 Linear gradients have been implemented
+
+The new plgradient routine draws a linear gradient (based on the
+current colour map 1) at a specified angle with the x axis for a
+specified polygon.  Standard examples 25 and 30 now demonstrate use of
+plgradient.  Some devices use a software fallback to render the
+gradient.  This fallback is implemented with plshades which uses a
+series of rectangles to approximate the gradient. Tiny alignment
+issues for those rectangles relative to the pixel grid may look
+problematic for transparency gradients.  To avoid that issue, we try
+to use native gradient capability whenever that is possible for any of
+our devices.  Currently, this has been implemented for our svg, qt,
+and cairo devices.  The result is nice-looking smooth transparency
+gradients for those devices, for, e.g., example 30, page 2.
+
