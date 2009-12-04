@@ -892,8 +892,8 @@ bisect( PLINT ( *defined )( PLFLT, PLFLT ), PLINT niter,
         return;
     }
 
-    xm = ( x1 + x2 ) / 2;
-    ym = ( y1 + y2 ) / 2;
+    xm = ( x1 + x2 ) / 2.;
+    ym = ( y1 + y2 ) / 2.;
 
     if ( defined( xm, ym ))
         bisect( defined, niter - 1, xm, ym, x2, y2, xb, yb );
@@ -904,66 +904,92 @@ bisect( PLINT ( *defined )( PLFLT, PLFLT ), PLINT niter,
 /*----------------------------------------------------------------------*\
  * exfill()
  *
- * Draws a polygon from points in x[] and y[] by taking into account
- * eventual exclusions
- \*----------------------------------------------------------------------*/
+ * Fills a polygon from points in x[] and y[] with all points in
+ * undefined regions dropped and replaced by points at the bisected
+ * edge of the defined region.
+ * Note, undefined regions that are confined to the areas between polygon
+ * points are completely ignored.  Also, a range of undefined polygon points
+ * are simply replaced with a straight line with accurately bisected end
+ * points.  So this routine can produce problematic plotted results
+ * if the polygon is not a lot smaller than the typical resolution of
+ * the defined region.
+  \*----------------------------------------------------------------------*/
 
 static void
 exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
         PLINT ( *defined )( PLFLT, PLFLT ),
         int n, PLFLT *x, PLFLT *y )
 {
+    if ( n < 3 )
+    {
+        plabort( "exfill: Not enough points in object" );
+        return;
+    }
+
     if ( defined == NULL )
 
         ( *fill )( n, x, y );
 
     else
     {
-        PLFLT xx[16];
-        PLFLT yy[16];
+        PLFLT *xx;
+        PLFLT *yy;
         PLFLT xb, yb;
         PLINT count     = 0;
-        PLINT is_inside = defined( x[n - 1], y[n - 1] );
+        PLINT im1 = n-1;
+        PLINT is_defined = defined( x[im1], y[im1] );
         PLINT i;
+
+        /* Slightly less than 2 n points are required for xx, yy, but
+         * allocate room for 2 n to be safe. */
+        if((xx = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ))) == NULL )
+            plexit("exfill: out of memory for xx");
+        if((yy = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ))) == NULL )
+            plexit("exfill: out of memory for yy.");
 
         for ( i = 0; i < n; i++ )
         {
+            /* is_defined tells whether im1 point was in defined region. */
             if ( defined( x[i], y[i] ))
             {
-                if ( !is_inside )
+                if ( !is_defined )
                 {
-                    if ( i > 0 )
-                        bisect( defined, NUMBER_BISECTIONS,
-                            x[i], y[i], x[i - 1], y[i - 1], &xb, &yb );
-                    else
-                        bisect( defined, NUMBER_BISECTIONS,
-                            x[i], y[i], x[n - 1], y[n - 1], &xb, &yb );
+                  /* Cross from undefined (at im1) to defined region.
+                   * Bisect for the first point inside the defined region
+                   * and add it to xx, yy. */
+                    bisect( defined, NUMBER_BISECTIONS,
+                        x[i], y[i], x[im1], y[im1], &xb, &yb );
                     xx[count]   = xb;
                     yy[count++] = yb;
                 }
+                /* x[i], y[i] known to be in defined region so add this
+                 * point to xx, yy. */
                 xx[count]   = x[i];
                 yy[count++] = y[i];
-                is_inside   = 1;
+                is_defined   = 1;
             }
             else
             {
-                if ( is_inside )
+                if ( is_defined )
                 {
-                    if ( i > 0 )
-                        bisect( defined, NUMBER_BISECTIONS,
-                            x[i - 1], y[i - 1], x[i], y[i], &xb, &yb );
-                    else
-                        bisect( defined, NUMBER_BISECTIONS,
-                            x[n - 1], y[n - 1], x[i], y[i], &xb, &yb );
+                  /* Cross from defined (at im1) to undefined region.
+                   * Bisect for the last point in the defined region and
+                   * add it to xx, yy. */
+                    bisect( defined, NUMBER_BISECTIONS,
+                        x[im1], y[im1], x[i], y[i], &xb, &yb );
                     xx[count]   = xb;
                     yy[count++] = yb;
-                    is_inside   = 0;
+                    is_defined   = 0;
                 }
             }
+            im1 = i;
         }
 
-        if ( count )
+        if ( count >= 3 )
             ( *fill )( count, xx, yy );
+
+        free ( xx );
+        free ( yy );
     }
 }
 
