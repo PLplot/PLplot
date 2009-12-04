@@ -121,19 +121,25 @@ def main():
     x=array([0., 0., x1, x1])
     y=array([0., 1., 1., 0.])
     plfill(x,y)
-    # Partially opaque (later to be replaced by gradient) from x1 to x2
-    plscol0a(15, 0, 0, 0, 0.3)
-    plcol0(15)
+    # Black transparent gradient.
+    pos = array([0.0, 1.0])
+    rcoord = array([0.0, 0.0])
+    gcoord = array([0.0, 0.0])
+    bcoord = array([0.0, 0.0])
+    acoord = array([1.0, 0.0])
+    rev = array([0, 0])
+    plscmap1n(2)
+    plscmap1la(1, pos, rcoord, gcoord, bcoord, acoord, rev)
     x=array([x1, x1, x2, x2])
-    plfill(x,y)
+    plgradient(x,y,0.)
     # Logo Legend
     plscol0a(15, 255, 255, 255, 1.0)
     plcol0(15)
     x1 = 0.03
-    plschr(0., 2.5)
+    plschr(0., 2.9)
     plsfont(PL_FCI_SANS, PL_FCI_UPRIGHT, PL_FCI_BOLD)
     plptex(x1, 0.57, 1.0, 0.0, 0.0, "PLplot")
-    plschr(0., 1.3)
+    plschr(0., 1.5)
     plptex(x1, 0.30, 1.0, 0.0, 0.0,
            "The ultimate in cross-platform plotting")
     

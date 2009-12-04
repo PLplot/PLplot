@@ -1,36 +1,18 @@
-N.B. This logo production example is not considered to be one of the 
-standard examples because it has been excessively fine-tuned, and may
-be subject to further fine-tuning (which we do not want to keep propagating
-to all the rest of the languages).
-
 To produce an SVG form of the logo with -dev svg (which is the device which
-plplot_logo.py has been explicitly tuned for) execute (only in the installed
-examples/python directory!)
+plplot_logo.py has been explicitly tuned for) execute
 
-./plplot_logo.py -dev svg -o plplot_logo.svg -geometry 760x120
+python/plplot_logo.py -dev svg -o plplot_logo.svg -geometry 760x120
 
-# Patch to apply native SVG gradient.  Since this patch is problematic (see
-below) use --dry-run first to make sure it will work.
+in either the build tree examples directory (after "make python_examples")
+or the install-tree examples directory (after  "make install").
 
-patch --dry-run <svg_760x120_gradient.patch
-patch  <svg_760x120_gradient.patch
-
-N.B. This patch is problematic because it depends on the exact command
-above and absolutely no changes to the svg.c device-driver code or
-libplplotd code or even platform dependent rounding.  So in general it
-shouldn't be considered a working patch (unless --dry-run says it will
-apply, see above).  Instead, it should be considered a method of reminding
-human editors of the plplot_logo.svg file of the simple changes that are
-necessary to apply a native SVG opacity gradient as a background to the
-legend of the logo.
-
-The patched results look great on konqueror, but they are slow to render.
-The patched results also look good for display (for the default compensation
+The results look great on konqueror, but they are slow to render.
+The results also look good for display (for the default compensation
 for text shifts) and take very little time to render.
 
 Partially because of the file-bloating issue discussed on list (lots of
 graphical objects outside device boundaries that are still included in the
-file, the size of the file is 1.8M.  (Of course, another reason for this
+file), the size of the file is 1.8M.  (Of course, another reason for this
 large file size is there is incredible detail (many triangles) used to
 represent the surface.
 
@@ -44,7 +26,7 @@ almost 20 (!) in size over uncompressed.  Other results follow:
 (1) The compressed result can still be quickly rendered with "display".
 
 (2) The compressed result makes no difference to the slow konqueror rendering,
-but that is konqueror's problem and not ours because of how quicky "display"
+but that is konqueror's problem and not ours because of how quickly "display"
 renders the result.
 
 (3) Firefox 2 does not know what to do with the compressed result.  For
@@ -64,7 +46,7 @@ it is probably best to convert to jpeg to improve rendering speed/reduce
 bandwidth compared to the uncompressed svg file.  This convert step also
 appears to get rid of everything outside the device boundaries.
 
-convert plplot_logo.svg.gz plplot_logo.jpg
+convert plplot_logo.svg plplot_logo.jpg
 
 The result has a file size of 34K compared to the original jpeg logo
 (www/img/header.jpg) put together by Werner (with external editor?) which
@@ -87,4 +69,4 @@ support them become supported by PLplot since that means the triangles used
 to represent colour surfaces in PLplot can be made much larger without
 compromising how good the result looks.
 
-Alan W. Irwin 2008-10-19
+Alan W. Irwin 2008-10-19 (revised 2009-12-04)
