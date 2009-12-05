@@ -913,7 +913,7 @@ bisect( PLINT ( *defined )( PLFLT, PLFLT ), PLINT niter,
  * points.  So this routine can produce problematic plotted results
  * if the polygon is not a lot smaller than the typical resolution of
  * the defined region.
-  \*----------------------------------------------------------------------*/
+ \*----------------------------------------------------------------------*/
 
 static void
 exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
@@ -935,17 +935,17 @@ exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
         PLFLT *xx;
         PLFLT *yy;
         PLFLT xb, yb;
-        PLINT count     = 0;
-        PLINT im1 = n-1;
+        PLINT count      = 0;
+        PLINT im1        = n - 1;
         PLINT is_defined = defined( x[im1], y[im1] );
         PLINT i;
 
         /* Slightly less than 2 n points are required for xx, yy, but
          * allocate room for 2 n to be safe. */
-        if((xx = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ))) == NULL )
-            plexit("exfill: out of memory for xx");
-        if((yy = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ))) == NULL )
-            plexit("exfill: out of memory for yy.");
+        if (( xx = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ))) == NULL )
+            plexit( "exfill: out of memory for xx" );
+        if (( yy = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ))) == NULL )
+            plexit( "exfill: out of memory for yy." );
 
         for ( i = 0; i < n; i++ )
         {
@@ -954,9 +954,9 @@ exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
             {
                 if ( !is_defined )
                 {
-                  /* Cross from undefined (at im1) to defined region.
-                   * Bisect for the first point inside the defined region
-                   * and add it to xx, yy. */
+                    /* Cross from undefined (at im1) to defined region.
+                     * Bisect for the first point inside the defined region
+                     * and add it to xx, yy. */
                     bisect( defined, NUMBER_BISECTIONS,
                         x[i], y[i], x[im1], y[im1], &xb, &yb );
                     xx[count]   = xb;
@@ -966,20 +966,20 @@ exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
                  * point to xx, yy. */
                 xx[count]   = x[i];
                 yy[count++] = y[i];
-                is_defined   = 1;
+                is_defined  = 1;
             }
             else
             {
                 if ( is_defined )
                 {
-                  /* Cross from defined (at im1) to undefined region.
-                   * Bisect for the last point in the defined region and
-                   * add it to xx, yy. */
+                    /* Cross from defined (at im1) to undefined region.
+                     * Bisect for the last point in the defined region and
+                     * add it to xx, yy. */
                     bisect( defined, NUMBER_BISECTIONS,
                         x[im1], y[im1], x[i], y[i], &xb, &yb );
                     xx[count]   = xb;
                     yy[count++] = yb;
-                    is_defined   = 0;
+                    is_defined  = 0;
                 }
             }
             im1 = i;
@@ -988,8 +988,8 @@ exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
         if ( count >= 3 )
             ( *fill )( count, xx, yy );
 
-        free ( xx );
-        free ( yy );
+        free( xx );
+        free( yy );
     }
 }
 
