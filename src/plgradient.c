@@ -24,6 +24,9 @@
 
 #include "plplotP.h"
 
+/* To keep track of whether a sofware fallback warning has been issued. */
+
+static int foo;
 /* software fallback for gradient. */
 static void
 plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
@@ -63,6 +66,12 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
 
     if ( !plsc->dev_gradient )
     {
+        if ( !foo )
+        {
+            plwarn( "Driver does not support native gradients, switching to software fallback gradient.\n" );
+            foo = 1;
+        }
+
         plgradient_soft( n, x, y, angle );
     }
     else
