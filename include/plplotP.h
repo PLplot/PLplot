@@ -433,6 +433,55 @@ extern const char plP_greek_mnemonic[];
 extern "C" {
 #endif
 
+/* Number of elements in the affine vector representation of the affine
+ * transformation matrix. */
+#define NAFFINE 6
+
+/* Returns affine identity matrix */
+
+PLDLLIMPEXP void
+plP_affine_identity(PLFLT *affine_vector);
+
+/* Translate new coordinate system axes relative to the old. */
+
+PLDLLIMPEXP void
+plP_affine_translate(PLFLT *affine_vector, PLFLT xtranslate, PLFLT ytranslate);
+
+/* Scale new coordinate system axes relative to the old. */
+
+PLDLLIMPEXP void
+plP_affine_scale(PLFLT *affine_vector, PLFLT xscale, PLFLT yscale);
+
+/* Rotate new coordinate system axes relative to the old.
+ * angle is in degrees.*/
+
+PLDLLIMPEXP void
+plP_affine_rotate(PLFLT *affine_vector, PLFLT angle );
+
+/* Skew new X coordinate axis relative to the old.
+ * angle is in degrees.*/
+
+PLDLLIMPEXP void
+plP_affine_xskew(PLFLT *affine_vector, PLFLT angle );
+
+/* Skew new Y coordinate axis relative to the old.
+ * angle is in degrees.*/
+
+PLDLLIMPEXP void
+plP_affine_yskew(PLFLT *affine_vector, PLFLT angle );
+
+/* Multiply two affine transformation matrices to form a third.
+ *
+ * A = B * C
+ *
+ */
+
+PLDLLIMPEXP void
+plP_affine_multiply(
+    PLFLT *affine_vectorA,
+    const PLFLT *affine_vectorB,
+    const PLFLT *affine_vectorC );
+
 /* Determines interval between numeric labels */
 
 void

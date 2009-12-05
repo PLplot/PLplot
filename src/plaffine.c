@@ -1,6 +1,6 @@
 /* $Id$
  *
- *      Affine manipulation routines for PLplot.
+ * Affine manipulation routines for PLplot.
  *
  * Copyright (C) 2009  Alan W. Irwin
  *
@@ -22,7 +22,7 @@
  *
  */
 
-#include "plcore.h"
+#include "plplotP.h"
 
 /* For background on these affine functions see SVG specification, e.g.,
  * http://www.w3.org/TR/SVGTiny12/coords.html#EstablishingANewUserSpace.
@@ -85,12 +85,12 @@ plP_affine_scale(PLFLT *affine_vector, PLFLT xscale, PLFLT yscale)
   if(xscale == 0.)
   {
     plwarn("plP_affine_scale: attempt to scale X coordinates by zero.");
-    xscale = 1.
+    xscale = 1.;
   }
   if(yscale == 0.)
   {
     plwarn("plP_affine_scale: attempt to scale Y coordinates by zero.");
-    yscale = 1.
+    yscale = 1.;
   }
   affine_vector[0] = 1./xscale;
   affine_vector[1] = 0.;
@@ -180,4 +180,3 @@ plP_affine_multiply(
   for(i=0;i<NAFFINE;i++)
     affine_vectorA[i] = result[i];
 }
-

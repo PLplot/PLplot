@@ -21,6 +21,7 @@
 
 set(plplot${LIB_TAG}_LIB_SRCS
   pdfutils.c
+  plaffine.c
   plarc.c
   plargs.c
   plbox.c
@@ -31,8 +32,8 @@ set(plplot${LIB_TAG}_LIB_SRCS
   pldeprecated.c
   pldtik.c
   plfill.c
-  plgradient.c
   plfreetype.c
+  plgradient.c
   plgset.c
   plhist.c
   plimage.c
