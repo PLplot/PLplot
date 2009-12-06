@@ -1798,7 +1798,7 @@ calc_diori( void )
 {
     PLFLT r11, r21, r12, r22, cost, sint;
     PLFLT x0, y0, lx, ly, aspect;
-    PLFLT affineA[NAFFINE], affineB[NAFFINE], affineC[NAFFINE];
+    PLFLT affine_result[NAFFINE], affine_left[NAFFINE];
 
     if ( plsc->dev_di )
     {
@@ -1864,21 +1864,21 @@ calc_diori( void )
     /* Calculate affine transformation as product of translate to middle
      * of device, scale to relative device coordinates, rotate, unscale
      * to physical coordinates, untranslate to original zero point. */
-    plP_affine_translate( affineC, x0, y0 );
-    plP_affine_scale( affineB, lx, ly );
-    plP_affine_multiply( affineA, affineB, affineC );
-    plP_affine_rotate( affineC, plsc->diorot * 90. );
-    plP_affine_multiply( affineB, affineC, affineA );
-    plP_affine_scale( affineC, 1. / lx, 1. / ly );
-    plP_affine_multiply( affineA, affineC, affineB );
-    plP_affine_translate( affineC, -x0, -y0 );
-    plP_affine_multiply( affineB, affineC, affineA );
-    plsc->dioxax = affineB[0];
-    plsc->dioxay = affineB[2];
-    plsc->dioxb  = affineB[4];
-    plsc->dioyax = affineB[1];
-    plsc->dioyay = affineB[3];
-    plsc->dioyb  = affineB[5];
+    plP_affine_translate( affine_result, x0, y0 );
+    plP_affine_scale( affine_left, lx, ly );
+    plP_affine_multiply( affine_result, affine_left, affine_result );
+    plP_affine_rotate( affine_left, plsc->diorot * 90. );
+    plP_affine_multiply( affine_result, affine_left, affine_result );
+    plP_affine_scale( affine_left, 1. / lx, 1. / ly );
+    plP_affine_multiply( affine_result, affine_left, affine_result );
+    plP_affine_translate( affine_left, -x0, -y0 );
+    plP_affine_multiply( affine_result, affine_left, affine_result );
+    plsc->dioxax = affine_result[0];
+    plsc->dioxay = affine_result[2];
+    plsc->dioxb  = affine_result[4];
+    plsc->dioyax = affine_result[1];
+    plsc->dioyay = affine_result[3];
+    plsc->dioyb  = affine_result[5];
 }
 
 /*--------------------------------------------------------------------------*\
