@@ -1731,7 +1731,7 @@ c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
 {
     PLFLT xpc, ypc, xrefpc, yrefpc, xdpc, ydpc, xspc, yspc, ld, ls, cp, shift;
     PLFLT x_o, y_o, z_o, x_dx, y_dy, z_dz;
-    PLFLT theta, phi, stride, xform[4];
+    PLFLT theta, phi, stride, xform[6], affineL[6], cosphi;
 
     /* check that the plotting environment is set up */
     if ( plsc->level < 3 )
@@ -1775,7 +1775,7 @@ c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
         {
             phi = -phi;
         }
-        phi = 1.570796 - phi;
+        phi = 0.5 * PI - phi;
     }
 
     /* Determine how to adjust the "stride" of the text to make it
@@ -1806,11 +1806,26 @@ c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
     yrefpc = plP_mmpcy( yrefpc );
 
     /* compute the transform */
-    xform[0] = cos( theta ) * stride;
-    xform[1] = cos( theta ) * sin( phi ) - sin( theta ) * cos( phi );
-    xform[2] = sin( theta ) * stride;
-    xform[3] = sin( theta ) * sin( phi ) + cos( theta ) * cos( phi );
-
+    /* This affine transformation corresponds to transforming from old
+     * coordinates to new coordinates by rotating axes, y shearing
+     * or (y skewing), and scaling.
+     * Comment out the explicit xform calculations because we use
+     * the affine utilities for that calculation instead. */
+    /*
+     * xform[0] = cos( theta ) * stride;
+     * xform[1] = cos( theta ) * sin( phi ) - sin( theta ) * cos( phi );
+     * xform[2] = sin( theta ) * stride;
+     * xform[3] = sin( theta ) * sin( phi ) + cos( theta ) * cos( phi );
+     */
+    plP_affine_rotate( xform, 180. * theta / PI );
+    plP_affine_yskew( affineL, -180. * phi / PI );
+    plP_affine_multiply( xform, affineL, xform );
+    cosphi = cos( phi );
+    if ( fabs( cosphi ) > 1.e-300 )
+        plP_affine_scale( affineL, 1. / stride, 1. / cosphi );
+    else
+        plP_affine_scale( affineL, 1. / stride, 1.e300 );
+    plP_affine_multiply( xform, affineL, xform );
     plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc, (PLINT) yrefpc, text );
 }
 
