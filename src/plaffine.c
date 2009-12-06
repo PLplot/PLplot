@@ -39,111 +39,111 @@
  * new_coord_vector = affine_matrix * old_coordinate vector.
  * The result is all affine matrices below are the inverses of the SVG
  * equivalents.
-
+ *
  * N.B. All PLplot affine functions below return the affine matrix result (in
  * vector form) as the first argument).  It is the calling routine's
  * responsibility to provide the space for all affine matrix arguments,
  * i.e., a PLFLT array with a dimension of 6.
-
-/* Returns affine identity matrix */
+ *
+ * /* Returns affine identity matrix */
 
 void
-plP_affine_identity(PLFLT *affine_vector)
+plP_affine_identity( PLFLT *affine_vector )
 {
-  affine_vector[0] = 1.;
-  affine_vector[1] = 0.;
-  affine_vector[2] = 0.;
-  affine_vector[3] = 1.;
-  affine_vector[4] = 0.;
-  affine_vector[5] = 0.;
+    affine_vector[0] = 1.;
+    affine_vector[1] = 0.;
+    affine_vector[2] = 0.;
+    affine_vector[3] = 1.;
+    affine_vector[4] = 0.;
+    affine_vector[5] = 0.;
 }
 
 /* Translate new coordinate system axes relative to the old. */
 
 void
-plP_affine_translate(PLFLT *affine_vector, PLFLT xtranslate, PLFLT ytranslate)
+plP_affine_translate( PLFLT *affine_vector, PLFLT xtranslate, PLFLT ytranslate )
 {
-  affine_vector[0] = 1.;
-  affine_vector[1] = 0.;
-  affine_vector[2] = 0.;
-  affine_vector[3] = 1.;
-  /* If the new coordinate system axis is shifted by xtranslate and ytranslate
-   * relative to the old, then the actual new coordinates are shifted in
-   * the opposite direction. */
-  affine_vector[4] = -xtranslate;
-  affine_vector[5] = -ytranslate;
+    affine_vector[0] = 1.;
+    affine_vector[1] = 0.;
+    affine_vector[2] = 0.;
+    affine_vector[3] = 1.;
+    /* If the new coordinate system axis is shifted by xtranslate and ytranslate
+     * relative to the old, then the actual new coordinates are shifted in
+     * the opposite direction. */
+    affine_vector[4] = -xtranslate;
+    affine_vector[5] = -ytranslate;
 }
 
 /* Scale new coordinate system axes relative to the old. */
 
 void
-plP_affine_scale(PLFLT *affine_vector, PLFLT xscale, PLFLT yscale)
+plP_affine_scale( PLFLT *affine_vector, PLFLT xscale, PLFLT yscale )
 {
-  /* If the new coordinate system axes are scaled by xscale and yscale
-   * relative to the old, then the actual new coordinates are scaled
-   * by the inverses. */
-  if(xscale == 0.)
-  {
-    plwarn("plP_affine_scale: attempt to scale X coordinates by zero.");
-    xscale = 1.;
-  }
-  if(yscale == 0.)
-  {
-    plwarn("plP_affine_scale: attempt to scale Y coordinates by zero.");
-    yscale = 1.;
-  }
-  affine_vector[0] = 1./xscale;
-  affine_vector[1] = 0.;
-  affine_vector[2] = 0.;
-  affine_vector[3] = 1./yscale;
-  affine_vector[4] = 0.;
-  affine_vector[5] = 0.;
+    /* If the new coordinate system axes are scaled by xscale and yscale
+     * relative to the old, then the actual new coordinates are scaled
+     * by the inverses. */
+    if ( xscale == 0. )
+    {
+        plwarn( "plP_affine_scale: attempt to scale X coordinates by zero." );
+        xscale = 1.;
+    }
+    if ( yscale == 0. )
+    {
+        plwarn( "plP_affine_scale: attempt to scale Y coordinates by zero." );
+        yscale = 1.;
+    }
+    affine_vector[0] = 1. / xscale;
+    affine_vector[1] = 0.;
+    affine_vector[2] = 0.;
+    affine_vector[3] = 1. / yscale;
+    affine_vector[4] = 0.;
+    affine_vector[5] = 0.;
 }
 
 /* Rotate new coordinate system axes relative to the old.
  * angle is in degrees.*/
 
 void
-plP_affine_rotate(PLFLT *affine_vector, PLFLT angle )
+plP_affine_rotate( PLFLT *affine_vector, PLFLT angle )
 {
-  PLFLT cosangle = cos(PI * angle/180.);
-  PLFLT sinangle = sin(PI * angle/180.);
-  affine_vector[0] = cosangle;
-  affine_vector[1] = -sinangle;
-  affine_vector[2] = sinangle;
-  affine_vector[3] = cosangle;
-  affine_vector[4] = 0.;
-  affine_vector[5] = 0.;
+    PLFLT cosangle = cos( PI * angle / 180. );
+    PLFLT sinangle = sin( PI * angle / 180. );
+    affine_vector[0] = cosangle;
+    affine_vector[1] = -sinangle;
+    affine_vector[2] = sinangle;
+    affine_vector[3] = cosangle;
+    affine_vector[4] = 0.;
+    affine_vector[5] = 0.;
 }
 
 /* Skew new X coordinate axis relative to the old.
  * angle is in degrees.*/
 
 void
-plP_affine_xskew(PLFLT *affine_vector, PLFLT angle )
+plP_affine_xskew( PLFLT *affine_vector, PLFLT angle )
 {
-  PLFLT tanangle = tan(PI * angle/180.);
-  affine_vector[0] = 1.;
-  affine_vector[1] = 0.;
-  affine_vector[2] = -tanangle;
-  affine_vector[3] = 0.;
-  affine_vector[4] = 0.;
-  affine_vector[5] = 0.;
+    PLFLT tanangle = tan( PI * angle / 180. );
+    affine_vector[0] = 1.;
+    affine_vector[1] = 0.;
+    affine_vector[2] = -tanangle;
+    affine_vector[3] = 0.;
+    affine_vector[4] = 0.;
+    affine_vector[5] = 0.;
 }
 
 /* Skew new Y coordinate axis relative to the old.
  * angle is in degrees.*/
 
 void
-plP_affine_yskew(PLFLT *affine_vector, PLFLT angle )
+plP_affine_yskew( PLFLT *affine_vector, PLFLT angle )
 {
-  PLFLT tanangle = tan(PI * angle/180.);
-  affine_vector[0] = 1.;
-  affine_vector[1] = -tanangle;
-  affine_vector[2] = 0.;
-  affine_vector[3] = 0.;
-  affine_vector[4] = 0.;
-  affine_vector[5] = 0.;
+    PLFLT tanangle = tan( PI * angle / 180. );
+    affine_vector[0] = 1.;
+    affine_vector[1] = -tanangle;
+    affine_vector[2] = 0.;
+    affine_vector[3] = 0.;
+    affine_vector[4] = 0.;
+    affine_vector[5] = 0.;
 }
 
 /* Multiply two affine transformation matrices to form a third.
@@ -158,25 +158,25 @@ plP_affine_multiply(
     const PLFLT *affine_vectorB,
     const PLFLT *affine_vectorC )
 {
-  int i;
-  PLFLT result[NAFFINE];
-  /* Multiply two affine matrices stored in affine vector form. */
-  result[0] = affine_vectorB[0]*affine_vectorC[0] +
-      affine_vectorB[2]*affine_vectorC[1];
-  result[2] = affine_vectorB[0]*affine_vectorC[2] +
-      affine_vectorB[2]*affine_vectorC[3];
-  result[4] = affine_vectorB[0]*affine_vectorC[4] +
-      affine_vectorB[2]*affine_vectorC[5] +
-      affine_vectorB[4];
+    int   i;
+    PLFLT result[NAFFINE];
+    /* Multiply two affine matrices stored in affine vector form. */
+    result[0] = affine_vectorB[0] * affine_vectorC[0] +
+                affine_vectorB[2] * affine_vectorC[1];
+    result[2] = affine_vectorB[0] * affine_vectorC[2] +
+                affine_vectorB[2] * affine_vectorC[3];
+    result[4] = affine_vectorB[0] * affine_vectorC[4] +
+                affine_vectorB[2] * affine_vectorC[5] +
+                affine_vectorB[4];
 
-  result[1] = affine_vectorB[1]*affine_vectorC[0] +
-      affine_vectorB[3]*affine_vectorC[1];
-  result[3] = affine_vectorB[1]*affine_vectorC[2] +
-      affine_vectorB[3]*affine_vectorC[3];
-  result[5] = affine_vectorB[1]*affine_vectorC[4] +
-      affine_vectorB[3]*affine_vectorC[5] +
-      affine_vectorB[5];
+    result[1] = affine_vectorB[1] * affine_vectorC[0] +
+                affine_vectorB[3] * affine_vectorC[1];
+    result[3] = affine_vectorB[1] * affine_vectorC[2] +
+                affine_vectorB[3] * affine_vectorC[3];
+    result[5] = affine_vectorB[1] * affine_vectorC[4] +
+                affine_vectorB[3] * affine_vectorC[5] +
+                affine_vectorB[5];
 
-  for(i=0;i<NAFFINE;i++)
-    affine_vectorA[i] = result[i];
+    for ( i = 0; i < NAFFINE; i++ )
+        affine_vectorA[i] = result[i];
 }
