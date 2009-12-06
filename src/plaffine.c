@@ -126,7 +126,7 @@ plP_affine_xskew( PLFLT *affine_vector, PLFLT angle )
     affine_vector[0] = 1.;
     affine_vector[1] = 0.;
     affine_vector[2] = -tanangle;
-    affine_vector[3] = 0.;
+    affine_vector[3] = 1.;
     affine_vector[4] = 0.;
     affine_vector[5] = 0.;
 }
@@ -141,7 +141,7 @@ plP_affine_yskew( PLFLT *affine_vector, PLFLT angle )
     affine_vector[0] = 1.;
     affine_vector[1] = -tanangle;
     affine_vector[2] = 0.;
-    affine_vector[3] = 0.;
+    affine_vector[3] = 1.;
     affine_vector[4] = 0.;
     affine_vector[5] = 0.;
 }
