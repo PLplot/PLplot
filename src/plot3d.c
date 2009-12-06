@@ -2597,36 +2597,87 @@ pl3cut( PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
  *
  * Calculates the rotation and shear angles from a plplot transformation matrix
  *
- * N.B. The plot transformation matrix is the product of the following
- * rotation and shear matrices:
+ * N.B. the plot transformation matrix
  *
- * [c(t) -s(t)] [stride s(p)]
- * [s(t)  c(t)] [0      c(p)]
+ * [xFormMatrix[0] xFormMatrix[2]]
+ * [xFormMatrix[1] xFormMatrix[3]]
  *
- * Where t is the rotation angle and phi is the shear angle.
- \*--------------------------------------------------------------------------*/
+ * is calculated as
+ *
+ * [stride cos(t)    stride sin(t)]
+ * [sin(p-t)              cos(p-t)]
+ *
+ * where t is the rotation angle and p is the shear angle.
+ * The purpose of this routine is to determine stride, rotation angle,
+ * and shear angle from xFormMatrix.
+
+ * For information only, xFormMatrix is the product of the following
+ * rotation, skew(shear), and scale matrices:
+ *
+ *  [stride    0] [1      0] [cos(t)  sin(t)]
+ *  [0    cos(p)] [tan(p) 1] [-sin(t) cos(t)]
+ *
+  \*--------------------------------------------------------------------------*/
 
 void
 plRotationShear( PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear, PLFLT *stride )
 {
+    PLFLT smr;
     *stride = sqrt( xFormMatrix[0] * xFormMatrix[0] + xFormMatrix[2] * xFormMatrix[2] );
 
+    /* Calculate rotation in range from -pi to pi. */
     *rotation = acos( xFormMatrix[0] / *stride );
     if ( xFormMatrix[2] < 0.0 )
     {
         *rotation = -*rotation;
     }
 
-    *shear = -asin( xFormMatrix[0] * xFormMatrix[1] +
-        xFormMatrix[2] * xFormMatrix[3] );
+    /* Calculate shear - rotation in range from -pi to pi. */
+    /* N.B. Sometimes xFormMatrix[3] can wander outside the range from
+     * -1. to 1. due to numerical errors so must protect against that
+     * to avoid NaN's. */
+    if(fabs(xFormMatrix[3]) <= 1.)
+      smr = acos(xFormMatrix[3]);
+    else if(xFormMatrix[3] < -1.)
+      smr = PI;
+    else
+      smr = 0.;
+
+    if ( xFormMatrix[1] < 0.0 )
+    {
+      smr = -smr;
+    }
+
+    /* Calculate shear in range from -2 pi to 2 pi. */
+    *shear = smr + *rotation;
+
+    /* Calculate shear in range from -pi to pi. */
+    if(*shear < -PI)
+      *shear += 2.*PI;
+    else if(*shear > PI)
+      *shear -= 2.*PI;
+
+    /* Actually must honour some convention to calculate the negative
+     * of the shear angle instead of the shear angle. Why??*/
+    *shear = - *shear;
+    /* Comment out the modified old logic which determines the negative
+     * of the shear angle in a more complicated way.  Note, the modification
+     * to divide the asin argument by *stride which solved a long-standing
+     * bug (as does the above logic in a simpler way). */
+    /*
+    *shear = -asin( (xFormMatrix[0] * xFormMatrix[1] +
+                     xFormMatrix[2] * xFormMatrix[3] )/ *stride);
+    */
 
     /* Compute the cross product of the vectors [1,0] and [0,1] to
      * determine if we need to make a "quadrant 3,4" adjustment
      * to the shear angle. */
 
+    /*
     if ( xFormMatrix[0] * xFormMatrix[3] - xFormMatrix[1] * xFormMatrix[2] < 0.0 )
     {
         *shear = -( M_PI + *shear );
     }
+    */
 }
 
