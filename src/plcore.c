@@ -11,7 +11,7 @@
  * Copyright (C) 2004, 2005  Rafael Laboissiere
  * Copyright (C) 2004, 2006  Andrew Ross
  * Copyright (C) 2004  Andrew Roach
- * Copyright (C) 2005  Alan W. Irwin
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009  Alan W. Irwin
  * Copyright (C) 2005  Thomas J. Duck
  *
  * This file is part of PLplot.
@@ -1798,6 +1798,7 @@ calc_diori( void )
 {
     PLFLT r11, r21, r12, r22, cost, sint;
     PLFLT x0, y0, lx, ly, aspect;
+    PLFLT affineA[NAFFINE], affineB[NAFFINE], affineC[NAFFINE];
 
     if ( plsc->dev_di )
     {
@@ -1850,13 +1851,34 @@ calc_diori( void )
 
 /* Transformation coefficients */
 
-    plsc->dioxax = r11;
-    plsc->dioxay = r21 * ( lx / ly );
-    plsc->dioxb  = ( 1. - r11 ) * x0 - r21 * y0 * ( lx / ly );
+    /*
+     * plsc->dioxax = r11;
+     * plsc->dioxay = r21 * ( lx / ly );
+     * plsc->dioxb  = ( 1. - r11 ) * x0 - r21 * y0 * ( lx / ly );
+     *
+     * plsc->dioyax = r12 * ( ly / lx );
+     * plsc->dioyay = r22;
+     * plsc->dioyb  = ( 1. - r22 ) * y0 - r12 * x0 * ( ly / lx );
+     */
 
-    plsc->dioyax = r12 * ( ly / lx );
-    plsc->dioyay = r22;
-    plsc->dioyb  = ( 1. - r22 ) * y0 - r12 * x0 * ( ly / lx );
+    /* Calculate affine transformation as product of translate to middle
+     * of device, scale to relative device coordinates, rotate, unscale
+     * to physical coordinates, untranslate to original zero point. */
+    plP_affine_translate( affineC, x0, y0 );
+    plP_affine_scale( affineB, lx, ly );
+    plP_affine_multiply( affineA, affineB, affineC );
+    plP_affine_rotate( affineC, plsc->diorot * 90. );
+    plP_affine_multiply( affineB, affineC, affineA );
+    plP_affine_scale( affineC, 1. / lx, 1. / ly );
+    plP_affine_multiply( affineA, affineC, affineB );
+    plP_affine_translate( affineC, -x0, -y0 );
+    plP_affine_multiply( affineB, affineC, affineA );
+    plsc->dioxax = affineB[0];
+    plsc->dioxay = affineB[2];
+    plsc->dioxb  = affineB[4];
+    plsc->dioyax = affineB[1];
+    plsc->dioyay = affineB[3];
+    plsc->dioyb  = affineB[5];
 }
 
 /*--------------------------------------------------------------------------*\
