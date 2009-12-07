@@ -658,8 +658,8 @@ void proc_str( PLStream *pls, EscText *args )
     sin_rot   = -sin( rotation );
     sin_shear = sin( shear );
     cos_shear = -cos( shear );
-    t[0]      = cos_rot;
-    t[1]      = -sin_rot;
+    t[0]      = cos_rot * stride;
+    t[1]      = -sin_rot * stride;
     t[2]      = cos_rot * sin_shear + sin_rot * cos_shear;
     t[3]      = -sin_rot * sin_shear + cos_rot * cos_shear;
 
