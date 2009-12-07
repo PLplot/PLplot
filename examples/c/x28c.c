@@ -2,7 +2,7 @@
  *
  *      plmtex3, plptex3 demo.
  *
- * Copyright (C) 2007 Alan W. Irwin
+ * Copyright (C) 2007, 2008, 2009 Alan W. Irwin
  *
  * This file is part of PLplot.
  *
@@ -43,11 +43,6 @@ int main( int argc, const char *argv[] )
            xmin     = 0., xmax = 1.0, xmid = 0.5 * ( xmax + xmin ), xrange = xmax - xmin,
            ymin     = 0., ymax = 1.0, ymid = 0.5 * ( ymax + ymin ), yrange = ymax - ymin,
            zmin     = 0., zmax = 1.0, zmid = 0.5 * ( zmax + zmin ), zrange = zmax - zmin,
-           xsmin    = xmin + 0.1 * xrange,
-           xsmax    = xmax - 0.1 * xrange,
-           xsrange  = xsmax - xsmin,
-           dxsrot   = xsrange / (PLFLT) ( NROTATION - 1 ),
-           dxsshear = xsrange / (PLFLT) ( NSHEAR - 1 ),
            ysmin    = ymin + 0.1 * yrange,
            ysmax    = ymax - 0.1 * yrange,
            ysrange  = ysmax - ysmin,
@@ -58,7 +53,7 @@ int main( int argc, const char *argv[] )
            zsrange  = zsmax - zsmin,
            dzsrot   = zsrange / (PLFLT) ( NROTATION - 1 ),
            dzsshear = zsrange / (PLFLT) ( NSHEAR - 1 ),
-           xs, ys, zs,
+           ys, zs,
            x_inclination, y_inclination, z_inclination,
            x_shear, y_shear, z_shear,
            omega, sin_omega, cos_omega, domega;
