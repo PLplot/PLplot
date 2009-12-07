@@ -382,6 +382,14 @@ yoff	PLINT&
 
 pltclcmd plgra void
 
+# Draw gradient in polygon. 
+
+pltclcmd plgradient void
+n	PLINT
+x	PLFLT *
+y	PLFLT *
+angle	PLFLT
+
 # Get subpage boundaries in absolute coordinates.
 
 pltclcmd plgspa void

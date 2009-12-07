@@ -126,25 +126,19 @@ proc x30 {{w loopback}} {
     $w cmd plscmap1n 128
     $w cmd plscmap1la 1 2 pos rcoord gcoord bcoord acoord rev
 
-    # Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will 
-    # used for the shade plot. plshades will use linear interpolation to 
-    # calculate the z values of all the intermediate points in this array. 
-    matrix z f 2 2 
-    z 0 0 = 0.0
-    z 1 0 = 0.0
-    z 0 1 = 1.0
-    z 1 1 = 1.0
+    # Use that cmap1 to create a transparent red gradient for the whole
+    # window.
+    px 0 = 0.
+    px 1 = 1.
+    px 2 = 1.
+    px 3 = 0.
 
-    matrix clevel f 101
+    py 0 = 0.
+    py 1 = 0.
+    py 2 = 1.
+    py 3 = 1.
 
-    # Set the color levels array. These levels are also between 0.0 and 1.0 
-    for {set i 0} {$i<101} {incr i} {
-	clevel $i = [expr {0.01 * double($i)}]
-    }
-
-    # Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate ranges 
-    # such that it fills the entire plotting area. 
-    $w cmd plshades z 0.0 1.0 0.0 1.0 clevel 0 -1 2 1
+    $w cmd plgradient 4 px py 90.
 
 }
 
