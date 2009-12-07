@@ -157,38 +157,44 @@ cppsource_LIST="$cppsource_LIST examples/c++/*.cc examples/c++/*.cpp examples/c+
 # C++ source in bindings.
 cppsource_LIST="$cppsource_LIST bindings/qt_gui/plqt.cpp bindings/wxwidgets/wxPLplotstream.cpp bindings/wxwidgets/wxPLplotwindow.cpp bindings/wxwidgets/wxPLplotwindow.h bindings/wxwidgets/wxPLplotstream.h.in"
 
+export javasource_LIST
+
+# Java part of bindings/java
+javasource_LIST="bindings/java/*.java bindings/java/*.java.in"
+
+# Java part of examples/java
+javasource_LIST="$javasource_LIST examples/java/*.java"
+
 # Check that source file lists actually refer to files.
-for source in $csource_LIST $cppsource_LIST ; do
+for source in $csource_LIST $cppsource_LIST $javasource_LIST ; do
     if [ ! -f $source ] ; then
 	echo $source is not a regular file so this script will not work without further editing.
 	exit 1
     fi
 done
 
-for csource in $csource_LIST ; do
-    uncrustify -c uncrustify.cfg -q -l c < $csource | cmp --quiet $csource -
-    if [ "$?" -ne 0 ] ; then
-	ls $csource
-	if [ "$diff" = "ON" ] ; then
-	    uncrustify -c uncrustify.cfg -q -l c < $csource | diff $diff_options $csource -
-	fi
+uncrustify_source()
+{
+# $1 is a list of source files of a particular language.
+# $2 is the language identification string for those source files in
+# the form needed by uncrustify.  From the uncrustify man page those
+# language id forms are C, CPP, D, CS, JAVA, PAWN, VALA, OC, OC+
 
-	if [ "$apply" = "ON" ] ; then
-	    uncrustify -c uncrustify.cfg -q -l c --no-backup $csource
-	fi
-    fi
-done
+    for language_source in $1 ; do
+	uncrustify -c uncrustify.cfg -q -l $2 < $language_source | cmp --quiet $language_source -
+	if [ "$?" -ne 0 ] ; then
+	    ls $language_source
+	    if [ "$diff" = "ON" ] ; then
+		uncrustify -c uncrustify.cfg -q -l $2 < $language_source | diff $diff_options $language_source -
+	    fi
 
-for cppsource in $cppsource_LIST ; do
-    uncrustify -c uncrustify.cfg -q -l cpp < $cppsource | cmp --quiet $cppsource -
-    if [ "$?" -ne 0 ] ; then
-	ls $cppsource
-	if [ "$diff" = "ON" ] ; then
-	    uncrustify -c uncrustify.cfg -q -l cpp < $cppsource | diff $diff_options $cppsource -
+	    if [ "$apply" = "ON" ] ; then
+		uncrustify -c uncrustify.cfg -q -l $2 --no-backup $language_source
+	    fi
 	fi
+    done
+}
 
-	if [ "$apply" = "ON" ] ; then
-	    uncrustify -c uncrustify.cfg -q -l cpp --no-backup $cppsource
-	fi
-    fi
-done
+uncrustify_source "$csource_LIST" C
+uncrustify_source "$cppsource_LIST" CPP
+uncrustify_source "$javasource_LIST" JAVA
