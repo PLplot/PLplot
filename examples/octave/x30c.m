@@ -130,21 +130,19 @@ function ix30c
   plscmap1n(128);
   plscmap1la(1, pos', rcoord', gcoord', bcoord', acoord', rev');
 
-  ## Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will
-  ## used for the shade plot. plshades will use linear interpolation to
-  ## calculate the z values of all the intermediate points in this
-  ## array.
-  z = zeros(2,2);
-  z(1,2) = 1.0;
-  z(2,2) = 1.0;
+  ## Use that cmap1 to create a transparent red gradient for the whole
+  ## window.
+  px(1) = 0.;
+  px(2) = 1.;
+  px(3) = 1.;
+  px(4) = 0.;
 
-  ## Set the color levels array. These levels are also between 0.0 and
-  ## 1.0
-  clevel = 0.01 * (0:100);
+  py(1) = 0.;
+  py(2) = 0.;
+  py(3) = 1.;
+  py(4) = 1.;
 
-  ## Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y
-  ## coordinate ranges such that it fills the entire plotting area.
-  plshades(z, 0.0, 1.0, 0.0, 1.0, clevel', 0, -1, 2, 1);
+  plgradient( px', py', 90. );
 
   plend1();
 endfunction

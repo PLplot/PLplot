@@ -483,6 +483,7 @@ typedef struct
 #define    plglevel                 c_plglevel
 #define    plgpage                  c_plgpage
 #define    plgra                    c_plgra
+#define    plgradient               c_plgradient
 #define    plgriddata               c_plgriddata
 #define    plgspa                   c_plgspa
 #define    plgstrm                  c_plgstrm
@@ -931,6 +932,10 @@ void c_plgpage( PLFLT *p_xp, PLFLT *p_yp, PLINT *p_xleng, PLINT *p_yleng,
 /* Switches to graphics screen. */
 
 void c_plgra( void ); //%name plgra
+
+/* Draw gradient in polygon. */
+
+void c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle ); //%name plgradient //%input x(n), y(n)
 
 void plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                  PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
