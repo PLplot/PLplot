@@ -435,7 +435,8 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
     /* actually draw text */
     m_context->PushState();
     m_context->Translate( args->x / scalex, height - args->y / scaley );
-    wxGraphicsMatrix matrix = m_context->CreateMatrix( cos_rot, -sin_rot,
+    wxGraphicsMatrix matrix = m_context->CreateMatrix(
+        cos_rot * stride, -sin_rot * stride,
         cos_rot * sin_shear + sin_rot * cos_shear,
         -sin_rot * sin_shear + cos_rot * cos_shear,
         0.0, 0.0 );
