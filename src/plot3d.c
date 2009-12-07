@@ -2626,27 +2626,10 @@ plRotationShear( PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear, PLFLT *strid
     *stride = sqrt( xFormMatrix[0] * xFormMatrix[0] + xFormMatrix[2] * xFormMatrix[2] );
 
     /* Calculate rotation in range from -pi to pi. */
-    *rotation = acos( xFormMatrix[0] / *stride );
-    if ( xFormMatrix[2] < 0.0 )
-    {
-        *rotation = -*rotation;
-    }
+    *rotation = atan2( xFormMatrix[2], xFormMatrix[0] );
 
     /* Calculate shear - rotation in range from -pi to pi. */
-    /* N.B. Sometimes xFormMatrix[3] can wander outside the range from
-     * -1. to 1. due to numerical errors so must protect against that
-     * to avoid NaN's. */
-    if ( fabs( xFormMatrix[3] ) <= 1. )
-        smr = acos( xFormMatrix[3] );
-    else if ( xFormMatrix[3] < -1. )
-        smr = PI;
-    else
-        smr = 0.;
-
-    if ( xFormMatrix[1] < 0.0 )
-    {
-        smr = -smr;
-    }
+    smr = atan2( xFormMatrix[1], xFormMatrix[3] );
 
     /* Calculate shear in range from -2 pi to 2 pi. */
     *shear = smr + *rotation;
