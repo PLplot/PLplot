@@ -34,71 +34,72 @@ import plplot.core.*;
 import java.text.*;
 
 class x06 {
-
-    public static void main( String[] args ) 
+    public static void main( String[] args )
     {
         new x06( args );
     }
 
     public x06( String[] args )
     {
-       PLStream pls = new PLStream();
+        PLStream     pls = new PLStream();
 
         NumberFormat nf = NumberFormat.getNumberInstance();
 
-        int i, j, k;
-        double x[] = new double[1];
-        double y[] = new double[1];
+        int          i, j, k;
+        double       x[] = new double[1];
+        double       y[] = new double[1];
 
-    // Parse and process command line arguments.
+        // Parse and process command line arguments.
 
         pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
-    // Initialize plplot
+        // Initialize plplot
 
         pls.init();
 
-        pls.adv(0);
+        pls.adv( 0 );
 
-    // Set up viewport and window.
+        // Set up viewport and window.
 
-        pls.col0(2);
-        pls.vpor(0.1, 1.0, 0.1, 0.9);
-        pls.wind(0.0, 1.0, 0.0, 1.3);
+        pls.col0( 2 );
+        pls.vpor( 0.1, 1.0, 0.1, 0.9 );
+        pls.wind( 0.0, 1.0, 0.0, 1.3 );
 
-    // Draw the grid using plbox.
+        // Draw the grid using plbox.
 
-        pls.box("bcg", 0.1, 0, "bcg", 0.1, 0);
+        pls.box( "bcg", 0.1, 0, "bcg", 0.1, 0 );
 
-    // Write the digits below the frame.
+        // Write the digits below the frame.
 
-        pls.col0(15);
-        for( i = 0; i <= 9; i++ ) {
-            String text = nf.format(i);
-            pls.mtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
+        pls.col0( 15 );
+        for ( i = 0; i <= 9; i++ )
+        {
+            String text = nf.format( i );
+            pls.mtex( "b", 1.5, ( 0.1 * i + 0.05 ), 0.5, text );
         }
 
         k = 0;
-        for( i = 0; i <= 12; i++ ) {
+        for ( i = 0; i <= 12; i++ )
+        {
+            // Write the digits to the left of the frame.
 
-        // Write the digits to the left of the frame.
-
-            String text = nf.format( 10*i);
-            pls.mtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, text);
-            for( j = 0; j <= 9; j++ ) {
+            String text = nf.format( 10 * i );
+            pls.mtex( "lv", 1.0, ( 1.0 - ( 2 * i + 1 ) / 26.0 ), 1.0, text );
+            for ( j = 0; j <= 9; j++ )
+            {
                 x[0] = 0.1 * j + 0.05;
                 y[0] = 1.25 - 0.1 * i;
 
-            // Display the symbols (plpoin expects that x and y are arrays so
-            // that is what we feed it).
+                // Display the symbols (plpoin expects that x and y are arrays so
+                // that is what we feed it).
 
-                if (k < 128)
+                if ( k < 128 )
                     pls.poin( x, y, k );
                 k = k + 1;
             }
         }
 
-        pls.mtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
+        pls.mtex( "t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols" );
         pls.end();
     }
 }

@@ -34,41 +34,40 @@ import plplot.core.*;
 import java.lang.Math;
 
 class x05 {
-
     static final int NPTS = 2047;
 
-    public static void main( String[] args ) 
+    public static void main( String[] args )
     {
         new x05( args );
     }
 
     public x05( String[] args )
     {
-       PLStream pls = new PLStream();
+        PLStream pls = new PLStream();
 
-        int i;
+        int      i;
         double[] data = new double[NPTS];
-        double delta;
+        double   delta;
 
-    // Parse and process command line arguments.
+        // Parse and process command line arguments.
 
         pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
-    // Initialize plplot.
+        // Initialize plplot.
 
         pls.init();
 
-    // Fill up data points.
+        // Fill up data points.
 
         delta = 2.0 * Math.PI / (double) NPTS;
-        for (i = 0; i < NPTS; i++)
-            data[i] = Math.sin(i * delta);
+        for ( i = 0; i < NPTS; i++ )
+            data[i] = Math.sin( i * delta );
 
-        pls.col0(1);
-        pls.hist(data, -1.1, 1.1, 44, PLStream.PL_HIST_DEFAULT);
-        pls.col0(2);
+        pls.col0( 1 );
+        pls.hist( data, -1.1, 1.1, 44, PLStream.PL_HIST_DEFAULT );
+        pls.col0( 2 );
         pls.lab( "#frValue", "#frFrequency",
-                 "#frPLplot Example 5 - Probability function of Oscillator" );
+            "#frPLplot Example 5 - Probability function of Oscillator" );
 
         pls.end();
     }

@@ -68,66 +68,67 @@ import plplot.core.*;
 import java.lang.Math;
 
 class x26 {
-
     PLStream pls = new PLStream();
 
-    static String[] x_label = {
+    static   String[] x_label = {
         "Frequency",
         "Частота"
     };
 
-    static String[] y_label = {
+    static   String[] y_label = {
         "Amplitude (dB)",
         "Амплитуда (dB)"
     };
 
-    static String[] alty_label = {
+    static   String[] alty_label = {
         "Phase shift (degrees)",
         "Фазовый сдвиг (градусы)"
     };
 
-    static String[] title_label = {
+    static   String[] title_label = {
         "Single Pole Low-Pass Filter",
         "Однополюсный Низко-Частотный Фильтр"
     };
 
-    static String[] line_label = {
+    static   String[] line_label = {
         "-20 dB/decade",
         "-20 dB/десяток"
     };
 
 
-    public static void main( String[] args ) 
+    public static void main( String[] args )
     {
         new x26( args );
     }
 
     public x26( String[] args )
     {
-	int nlang, i;
-	nlang = x_label.length;
-	if ( (nlang != y_label.length) || (nlang != alty_label.length) ||
-	     (nlang != title_label.length) || (nlang != line_label.length) ) {
-            System.out.println("Internal inconsistency in label dimensions");
-	    pls.end();
-	    System.exit(1);
-	}
+        int nlang, i;
+        nlang = x_label.length;
+        if (( nlang != y_label.length ) || ( nlang != alty_label.length ) ||
+            ( nlang != title_label.length ) || ( nlang != line_label.length ))
+        {
+            System.out.println( "Internal inconsistency in label dimensions" );
+            pls.end();
+            System.exit( 1 );
+        }
 
-    // Parse and process command line arguments.
+        // Parse and process command line arguments.
 
         pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
-    // Initialize plplot.
+        // Initialize plplot.
 
         pls.init();
-        pls.font(2);
+        pls.font( 2 );
 
-    // Make log plots using different languages.
+        // Make log plots using different languages.
 
-	for (i=0;i<nlang;i++) {
-            plot1(0, x_label[i], y_label[i], alty_label[i], title_label[i],
-	          line_label[i]);
-	}
+        for ( i = 0; i < nlang; i++ )
+        {
+            plot1( 0, x_label[i], y_label[i], alty_label[i], title_label[i],
+                line_label[i] );
+        }
 
         pls.end();
     }
@@ -135,7 +136,7 @@ class x26 {
 // Log-linear plot.
 
     void plot1( int type, String x_label, String y_label, String alty_label,
-		String title_label, String line_label )
+                String title_label, String line_label )
     {
         int i;
         double[] freql = new double[101];
@@ -143,59 +144,62 @@ class x26 {
         double[] phase = new double[101];
         double f0, freq;
 
-        pls.adv(0);
+        pls.adv( 0 );
 
-    // Set up data for log plot.
+        // Set up data for log plot.
 
         f0 = 1.0;
-        for (i = 0; i <= 100; i++) {
+        for ( i = 0; i <= 100; i++ )
+        {
             freql[i] = -2.0 + i / 20.0;
-            freq = Math.pow(10.0, freql[i]);
-        // Unbelievably, Java has no log10() that I can find...
-            ampl[i] = 20.0 * Math.log(1.0 / Math.sqrt(1.0 + Math.pow((freq / f0), 2.))) / Math.log(10.);
-            phase[i] = -(180.0 / Math.PI) * Math.atan(freq / f0);
+            freq     = Math.pow( 10.0, freql[i] );
+            // Unbelievably, Java has no log10() that I can find...
+            ampl[i]  = 20.0 * Math.log( 1.0 / Math.sqrt( 1.0 + Math.pow(( freq / f0 ), 2. ))) / Math.log( 10. );
+            phase[i] = -( 180.0 / Math.PI ) * Math.atan( freq / f0 );
         }
 
-        pls.vpor(0.15, 0.85, 0.1, 0.9);
-        pls.wind(-2.0, 3.0, -80.0, 0.0);
+        pls.vpor( 0.15, 0.85, 0.1, 0.9 );
+        pls.wind( -2.0, 3.0, -80.0, 0.0 );
 
-    // Try different axis and labelling styles.
+        // Try different axis and labelling styles.
 
-        pls.col0(1);
-        switch (type) {
+        pls.col0( 1 );
+        switch ( type )
+        {
         case 0:
-            pls.box("bclnst", 0.0, 0, "bnstv", 0.0, 0);
+            pls.box( "bclnst", 0.0, 0, "bnstv", 0.0, 0 );
             break;
         case 1:
-            pls.box("bcfghlnst", 0.0, 0, "bcghnstv", 0.0, 0);
+            pls.box( "bcfghlnst", 0.0, 0, "bcghnstv", 0.0, 0 );
             break;
         }
 
-    // Plot ampl vs freq.
+        // Plot ampl vs freq.
 
-        pls.col0(2);
-        pls.line(freql, ampl);
-        pls.col0(1);
-        pls.ptex(1.6, -30.0, 1.0, -20.0, 0.5, line_label);
+        pls.col0( 2 );
+        pls.line( freql, ampl );
+        pls.col0( 1 );
+        pls.ptex( 1.6, -30.0, 1.0, -20.0, 0.5, line_label );
 
-    // Put labels on.
+        // Put labels on.
 
-        pls.col0(1);
-        pls.mtex("b", 3.2, 0.5, 0.5, x_label);
-        pls.mtex("t", 2.0, 0.5, 0.5, title_label);
-        pls.col0(2);
-        pls.mtex("l", 5.0, 0.5, 0.5, y_label);
+        pls.col0( 1 );
+        pls.mtex( "b", 3.2, 0.5, 0.5, x_label );
+        pls.mtex( "t", 2.0, 0.5, 0.5, title_label );
+        pls.col0( 2 );
+        pls.mtex( "l", 5.0, 0.5, 0.5, y_label );
 
-    // For the gridless case, put phase vs freq on same plot.
+        // For the gridless case, put phase vs freq on same plot.
 
-        if (type == 0) {
-            pls.col0(1);
-            pls.wind(-2.0, 3.0, -100.0, 0.0);
-            pls.box("", 0.0, 0, "cmstv", 30.0, 3);
-            pls.col0(3);
-            pls.line(freql, phase);
-            pls.col0(3);
-            pls.mtex("r", 5.0, 0.5, 0.5, alty_label);
+        if ( type == 0 )
+        {
+            pls.col0( 1 );
+            pls.wind( -2.0, 3.0, -100.0, 0.0 );
+            pls.box( "", 0.0, 0, "cmstv", 30.0, 3 );
+            pls.col0( 3 );
+            pls.line( freql, phase );
+            pls.col0( 3 );
+            pls.mtex( "r", 5.0, 0.5, 0.5, alty_label );
         }
     }
 }

@@ -32,153 +32,163 @@ import plplot.core.*;
 import java.lang.Math;
 
 class Mapform19 implements PLCallbackMapform {
-
-    public void mapform(double[] x, double[] y) {
-	int i;
-	double xp, yp, radius;
-	for (i=0;i< x.length;i++) {
-	    radius = 90.0-y[i];
-	    xp = radius * Math.cos(x[i] * Math.PI / 180.0);
-	    yp = radius * Math.sin(x[i] * Math.PI / 180.0);
-	    x[i] = xp;
-	    y[i] = yp;
-	}
-        
-	
+    public void mapform( double[] x, double[] y )
+    {
+        int    i;
+        double xp, yp, radius;
+        for ( i = 0; i < x.length; i++ )
+        {
+            radius = 90.0 - y[i];
+            xp     = radius * Math.cos( x[i] * Math.PI / 180.0 );
+            yp     = radius * Math.sin( x[i] * Math.PI / 180.0 );
+            x[i]   = xp;
+            y[i]   = yp;
+        }
     }
-
 }
 
 class LabelFunc19 implements PLCallbackLabel {
+    // A custom axis labeling function for longitudes and latitudes.
+    public String label( int axis, double value )
+    {
+        String label           = "";
+        String direction_label = "";
+        double label_val       = 0.0;
 
-    // A custom axis labeling function for longitudes and latitudes. 
-    public String label(int axis, double value) {
-	String label = "";
-	String direction_label = "";
-	double label_val = 0.0;
-
-	if (axis == PLStream.PL_Y_AXIS) {
-	    label_val = value;
-	    if (label_val > 0.0) {
-		direction_label = " N";
-	    }
-	    else if (label_val < 0.0) {
-		direction_label = " S";
-	    }
-	    else {
-		direction_label = "Eq";
-	    }
-	}
-	else if (axis == PLStream.PL_X_AXIS) {
-	    label_val = normalize_longitude(value);
-	    if (label_val > 0.0) {
-		direction_label = " E";
-	    }
-	    else if (label_val < 0.0) {
-		direction_label = " W";
-	    }
-	    else {
-		direction_label = "";
-	    }
-	}
-	if (axis == PLStream.PL_Y_AXIS && value == 0.0) {
-	    /* A special case for the equator */
-	    label = direction_label;
-	}
-	else {
-	    label = ""+((int)Math.abs(label_val))+direction_label;
-	}
-	return label;
+        if ( axis == PLStream.PL_Y_AXIS )
+        {
+            label_val = value;
+            if ( label_val > 0.0 )
+            {
+                direction_label = " N";
+            }
+            else if ( label_val < 0.0 )
+            {
+                direction_label = " S";
+            }
+            else
+            {
+                direction_label = "Eq";
+            }
+        }
+        else if ( axis == PLStream.PL_X_AXIS )
+        {
+            label_val = normalize_longitude( value );
+            if ( label_val > 0.0 )
+            {
+                direction_label = " E";
+            }
+            else if ( label_val < 0.0 )
+            {
+                direction_label = " W";
+            }
+            else
+            {
+                direction_label = "";
+            }
+        }
+        if ( axis == PLStream.PL_Y_AXIS && value == 0.0 )
+        {
+            /* A special case for the equator */
+            label = direction_label;
+        }
+        else
+        {
+            label = "" + ((int) Math.abs( label_val )) + direction_label;
+        }
+        return label;
     }
 
     // "Normalize" longitude values so that they always fall between -180.0
-    // and 180.0 
-    double normalize_longitude(double lon) {
-	double times;
+    // and 180.0
+    double normalize_longitude( double lon )
+    {
+        double times;
 
-	if (lon >= -180.0 && lon <= 180.0) {
-	    return(lon);
-	}
-	else {
-	    times = Math.floor ((Math.abs(lon) + 180.0) / 360.0);
-	    if (lon < 0.0) {
-		return(lon + 360.0 * times);
-	    }
-	    else {
-		return(lon - 360.0 * times);
-	    }
-	}
+        if ( lon >= -180.0 && lon <= 180.0 )
+        {
+            return ( lon );
+        }
+        else
+        {
+            times = Math.floor(( Math.abs( lon ) + 180.0 ) / 360.0 );
+            if ( lon < 0.0 )
+            {
+                return ( lon + 360.0 * times );
+            }
+            else
+            {
+                return ( lon - 360.0 * times );
+            }
+        }
     }
-    
 }
 
 class x19 {
-
     PLStream pls = new PLStream();
 
-    public static void main( String[] args ) 
+    public static void main( String[] args )
     {
-        new x19(args);
+        new x19( args );
     }
 
-    public x19 (String[] args) 
+    public x19 ( String[] args )
     {
-	double minx, maxx, miny,maxy;
-        PLCallbackMapform nullCallback = null;
-	PLCallbackLabel nullLabelCallback = null;
-	LabelFunc19 geolocation_labeler = new LabelFunc19();
+        double            minx, maxx, miny, maxy;
+        PLCallbackMapform nullCallback        = null;
+        PLCallbackLabel   nullLabelCallback   = null;
+        LabelFunc19       geolocation_labeler = new LabelFunc19();
 
-	// Parse and process command line arguments.
-	pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
+        // Parse and process command line arguments.
+        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
-	// Longitude (x) and latitude (y)
-	
-	miny = -70;
-	maxy = 80;
-	
-	// Initialize PLplot.
-	pls.init();
-	// Cartesian plots
-	// Most of world
-	
-	minx = 190;
-	maxx = 190+360;
-	
-	// Setup a custom latitude and longitude-based scaling function.
-	pls.slabelfunc(geolocation_labeler);
+        // Longitude (x) and latitude (y)
 
-	pls.col0(1);
-	pls.env(minx, maxx, miny, maxy, 1, 70);
-	pls.map(nullCallback, "usaglobe", minx, maxx, miny, maxy);
+        miny = -70;
+        maxy = 80;
 
-	// The Americas
+        // Initialize PLplot.
+        pls.init();
+        // Cartesian plots
+        // Most of world
 
-	minx = 190;
-	maxx = 340;
+        minx = 190;
+        maxx = 190 + 360;
 
-	pls.col0(1);
-	pls.env(minx, maxx, miny, maxy, 1, 70);
-	pls.map(nullCallback, "usaglobe", minx, maxx, miny, maxy);
+        // Setup a custom latitude and longitude-based scaling function.
+        pls.slabelfunc( geolocation_labeler );
 
-	// Clear the labelling function.
-	pls.slabelfunc(nullLabelCallback);
+        pls.col0( 1 );
+        pls.env( minx, maxx, miny, maxy, 1, 70 );
+        pls.map( nullCallback, "usaglobe", minx, maxx, miny, maxy );
 
-	// Polar, Northern hemisphere
-        
+        // The Americas
+
+        minx = 190;
+        maxx = 340;
+
+        pls.col0( 1 );
+        pls.env( minx, maxx, miny, maxy, 1, 70 );
+        pls.map( nullCallback, "usaglobe", minx, maxx, miny, maxy );
+
+        // Clear the labelling function.
+        pls.slabelfunc( nullLabelCallback );
+
+        // Polar, Northern hemisphere
+
         // Create callback object containing mapform function
-	Mapform19 mapform19 = new Mapform19();
+        Mapform19 mapform19 = new Mapform19();
 
-	minx = 0;
-	maxx = 360;
+        minx = 0;
+        maxx = 360;
 
-	pls.env(-75., 75., -75., 75., 1, -1);
-	pls.map(mapform19,"globe", minx, maxx, miny, maxy);
-	
-	pls.lsty(2);
-	pls.meridians(mapform19,10.0, 10.0, 0.0, 360.0, -10.0, 80.0);
+        pls.env( -75., 75., -75., 75., 1, -1 );
+        pls.map( mapform19, "globe", minx, maxx, miny, maxy );
+
+        pls.lsty( 2 );
+        pls.meridians( mapform19, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
 
         pls.end();
-
     }
 }
 

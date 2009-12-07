@@ -3,5 +3,5 @@ package plplot.core;
 
 public interface PLCallbackMapform
 {
-    public void mapform(double[] x, double[] y);
+    public void mapform( double[] x, double[] y );
 };

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-// $Id$ 
+// $Id$
 //  Unicode Pace Flag
 //---------------------------------------------------------------------------//
 //
@@ -23,17 +23,7 @@
 //  along with PLplot; if not, write to the Free Software
 //  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 //
-//
-// In Debian, run like this:
-//
-// PLPLOT_FREETYPE_SANS_FONT=/usr/share/fonts/truetype/arphic/bkai00mp.ttf \
-// PLPLOT_FREETYPE_SERIF_FONT=/usr/share/fonts/truetype/freefont/FreeSerif.ttf \
-// PLPLOT_FREETYPE_MONO_FONT=/usr/share/fonts/truetype/ttf-devanagari-fonts/lohit_hi.ttf \
-// PLPLOT_FREETYPE_SCRIPT_FONT=/usr/share/fonts/truetype/unfonts/UnBatang.ttf \
-// PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bangla-fonts/JamrulNormal.ttf \
-// java -cp /path/to/plplot.jar plplot.examples.x24 -dev png -o x24j.png
-//
-// Packages needed:
+// Packages needed (by Debian name):
 //
 // ttf-arphic-bkai00mp
 // ttf-freefont
@@ -51,120 +41,117 @@ package plplot.examples;
 import plplot.core.*;
 
 class x24 {
-
     PLStream pls = new PLStream();
 
-    int red[]   = {240, 204, 204, 204,   0,  39, 125};
-    int green[] = {240,   0, 125, 204, 204,  80,   0};
-    int blue[]  = {240,   0,   0,   0,   0, 204, 125};
-    
-    double px[] = {0.0, 0.0, 1.0, 1.0};
-    double py[] = {0.0, 0.25, 0.25, 0.0};
-    
-    double sx[] = {
-	0.16374,
-	0.15844,
-	0.15255,
-	0.17332,
-	0.50436,
-	0.51721,
-	0.49520,
-	0.48713,
-	0.83976,
-	0.81688,
-	0.82231,
-	0.82647
+    int      red[]   = { 240, 204, 204, 204, 0, 39, 125 };
+    int      green[] = { 240, 0, 125, 204, 204, 80, 0 };
+    int      blue[]  = { 240, 0, 0, 0, 0, 204, 125 };
+
+    double   px[] = { 0.0, 0.0, 1.0, 1.0 };
+    double   py[] = { 0.0, 0.25, 0.25, 0.0 };
+
+    double   sx[] = {
+        0.16374,
+        0.15844,
+        0.15255,
+        0.17332,
+        0.50436,
+        0.51721,
+        0.49520,
+        0.48713,
+        0.83976,
+        0.81688,
+        0.82231,
+        0.82647
     };
 
-    double sy[] = {
-	0.125,
-	0.375,
-	0.625,
-	0.875,
-	0.125,
-	0.375,
-	0.625,
-	0.875,
-	0.125,
-	0.375,
-	0.625,
-	0.875
+    double   sy[] = {
+        0.125,
+        0.375,
+        0.625,
+        0.875,
+        0.125,
+        0.375,
+        0.625,
+        0.875,
+        0.125,
+        0.375,
+        0.625,
+        0.875
     };
-    
+
 
     /* Taken from http://www.columbia.edu/~fdc/pace/ */
-    
+
     String peace[] = {
-	/* Mandarin */
-	"#<0x00>和平",
-	/* Hindi */
-	"#<0x20>शांति",
-	/* English */
-	"#<0x10>Peace",
-	/* Hebrew */
-	"#<0x10>שלום",
-	/* Russian */
-	"#<0x10>Мир",
-	/* German */
-	"#<0x10>Friede",
-	/* Korean */
-	"#<0x30>평화",
-	/* French */
-	"#<0x10>Paix",
-	/* Spanish */
-	"#<0x10>Paz",
-	/* Arabic */
-	"#<0x10>ﺳﻼم",
-	/* Turkish*/
-	"#<0x10>Barış",
-	/* Kurdish */
-	"#<0x10>Hasîtî",
+        /* Mandarin */
+        "#<0x00>和平",
+        /* Hindi */
+        "#<0x20>शांति",
+        /* English */
+        "#<0x10>Peace",
+        /* Hebrew */
+        "#<0x10>שלום",
+        /* Russian */
+        "#<0x10>Мир",
+        /* German */
+        "#<0x10>Friede",
+        /* Korean */
+        "#<0x30>평화",
+        /* French */
+        "#<0x10>Paix",
+        /* Spanish */
+        "#<0x10>Paz",
+        /* Arabic */
+        "#<0x10>ﺳﻼم",
+        /* Turkish*/
+        "#<0x10>Barış",
+        /* Kurdish */
+        "#<0x10>Hasîtî",
     };
-    
-    public x24(String[] args) {
-	int i, j;
-	
-	pls.parseopts (args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM);
-	
-	pls.init ();
-	
-	pls.adv (0);
-	pls.vpor (0.0, 1.0, 0.0, 1.0);
-	pls.wind (0.0, 1.0, 0.0, 1.0);
-	pls.col0 (0);
-	pls.box("", 1.0, 0, "", 1.0, 0);
-	
-	pls.scmap0n (7);
-	pls.scmap0 (red, green, blue);
-	
-	pls.schr (0, 4.0);
-	pls.font (1);
 
-	for (i = 0; i < 4; i++) {
+    public x24( String[] args )
+    {
+        int i, j;
 
-	    pls.col0 (i + 1);
-	    pls.fill (px, py);
+        pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
-	    for (j = 0; j < 4; j++)
-		py [j] += 1.0 / 4.0;
-	    
-	}
-	
-	pls.col0 (0);
-	for (i = 0; i < 12; i++)
-	    pls.ptex (sx [i], sy [i], 1.0, 0.0, 0.5, peace [i]);
+        pls.init();
 
-	pls.end();
-	
+        pls.adv( 0 );
+        pls.vpor( 0.0, 1.0, 0.0, 1.0 );
+        pls.wind( 0.0, 1.0, 0.0, 1.0 );
+        pls.col0( 0 );
+        pls.box( "", 1.0, 0, "", 1.0, 0 );
+
+        pls.scmap0n( 7 );
+        pls.scmap0( red, green, blue );
+
+        pls.schr( 0, 4.0 );
+        pls.font( 1 );
+
+        for ( i = 0; i < 4; i++ )
+        {
+            pls.col0( i + 1 );
+            pls.fill( px, py );
+
+            for ( j = 0; j < 4; j++ )
+                py [j] += 1.0 / 4.0;
+        }
+
+        pls.col0( 0 );
+        for ( i = 0; i < 12; i++ )
+            pls.ptex( sx [i], sy [i], 1.0, 0.0, 0.5, peace [i] );
+
+        pls.end();
     }
 
     public static void main( String[] args )
     {
-	new x24( args );
+        new x24( args );
     }
-
 }
-    
+
 
 //---------------------------------------------------------------------------//
 //                              End of x24.java
