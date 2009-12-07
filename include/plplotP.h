@@ -697,9 +697,11 @@ typedef struct cont_line
 
 typedef struct cont_level
 {
-    PLFLT             level;
-    struct cont_line  *line; /* contour line */
-    struct cont_level *next; /* contour level */
+    /* INDENT-OFF (stop infinite recursion) */
+    PLFLT level;             /* contour level */
+    struct cont_line  *line; /* contour line struct*/
+    struct cont_level *next; /* contour level struct */
+    /* INDENT-ON */
 } CONT_LEVEL;
 
 void
