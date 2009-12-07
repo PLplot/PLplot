@@ -64,15 +64,7 @@ option(HAVE_NUMPY "Use numpy rather than deprecated Numeric" ON)
 
 if(ENABLE_python)
   # NUMERIC_INCLUDE_PATH = path to arrayobject.h for either Numeric or numpy.
-  if(NUMERIC_INCLUDE_PATH)
-    # PYTHON_INCLUDE_PATH reset by above "find_package(PythonLibs)" so
-    # must append ${NUMERIC_INCLUDE_PATH} for each rebuild.
-    set(
-      PYTHON_INCLUDE_PATH
-      ${PYTHON_INCLUDE_PATH} ${NUMERIC_INCLUDE_PATH}
-      CACHE INTERNAL ""
-      )
-  else(NUMERIC_INCLUDE_PATH)
+  if(NOT NUMERIC_INCLUDE_PATH)
     if(HAVE_NUMPY)
       # First check for new version of numpy (replaces Numeric)
       execute_process(
@@ -86,7 +78,10 @@ if(ENABLE_python)
 	set(HAVE_NUMPY OFF CACHE BOOL "Use numpy rather than deprecated Numeric" FORCE)
       endif(NUMPY_ERR)
     endif(HAVE_NUMPY)
+
     if(HAVE_NUMPY)
+      # We use the full path name (including numpy on the end), but
+      # Double-check that all is well with that choice.
       find_path(
 	NUMERIC_INCLUDE_PATH
 	arrayobject.h
@@ -107,23 +102,19 @@ if(ENABLE_python)
 	set(PYTHON_NUMERIC_NAME Numeric CACHE INTERNAL "")
       endif (NUMERIC_INCLUDE_PATH)
     endif(HAVE_NUMPY)
-    if(NUMERIC_INCLUDE_PATH)
-      set(
-	PYTHON_INCLUDE_PATH
-	${PYTHON_INCLUDE_PATH} ${NUMERIC_INCLUDE_PATH}
-	CACHE INTERNAL ""
-	)
-    else(NUMERIC_INCLUDE_PATH)
-      if(HAVE_NUMPY)
-	message(STATUS "WARNING: "
-	  "NumPy header not found. Disabling python bindings")
-      else(HAVE_NUMPY)
-	message(STATUS "WARNING: "
-	  "Numeric header not found. Disabling python bindings")
-      endif(HAVE_NUMPY)
-      set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
-    endif(NUMERIC_INCLUDE_PATH)
-  endif(NUMERIC_INCLUDE_PATH)
+
+  endif(NOT NUMERIC_INCLUDE_PATH)
+
+  if(NOT NUMERIC_INCLUDE_PATH)
+    if(HAVE_NUMPY)
+      message(STATUS "WARNING: "
+	"NumPy header not found. Disabling python bindings")
+    else(HAVE_NUMPY)
+      message(STATUS "WARNING: "
+	"Numeric header not found. Disabling python bindings")
+    endif(HAVE_NUMPY)
+    set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
+  endif(NOT NUMERIC_INCLUDE_PATH)
 endif(ENABLE_python)
 
 if(ENABLE_python AND HAVE_NUMPY)

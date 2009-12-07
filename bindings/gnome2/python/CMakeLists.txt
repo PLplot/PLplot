@@ -115,6 +115,7 @@ if(ENABLE_pygcw)
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
     ${PYTHON_INCLUDE_PATH}
+    ${NUMERIC_INCLUDE_PATH}
     )
 
   ### Build and install the gcw module
