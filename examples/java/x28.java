@@ -2,7 +2,7 @@
 //
 //	plmtex3, plptex3 demo.
 //
-// Copyright (C) 2007  Alan W. Irwin
+// Copyright (C) 2007, 2008, 2009  Alan W. Irwin
 // Copyright (C) 2007  Andrew Ross 
 //
 // This file is part of PLplot.
@@ -44,9 +44,20 @@ class x28 {
 
     x28(String[] args)
     {
-	double xmin=0., xmax=1.0, xmid = 0.5*(xmax + xmin), xrange = xmax - xmin,
+      double xmin=0., xmax=1.0, xmid = 0.5*(xmax + xmin), xrange = xmax - xmin,
 	    ymin=0., ymax=1.0, ymid = 0.5*(ymax + ymin), yrange = ymax - ymin,
 	    zmin=0., zmax=1.0, zmid = 0.5*(zmax + zmin), zrange = zmax - zmin,
+           ysmin    = ymin + 0.1 * yrange,
+           ysmax    = ymax - 0.1 * yrange,
+           ysrange  = ysmax - ysmin,
+            dysrot   = ysrange / (double) ( NROTATION - 1 ),
+          dysshear = ysrange / (double) ( NSHEAR - 1 ),
+           zsmin    = zmin + 0.1 * zrange,
+           zsmax    = zmax - 0.1 * zrange,
+           zsrange  = zsmax - zsmin,
+           dzsrot   = zsrange / (double) ( NROTATION - 1 ),
+          dzsshear = zsrange / (double) ( NSHEAR - 1 ),
+           ys, zs,
 	    x_inclination, y_inclination, z_inclination,
 	    x_shear, y_shear, z_shear,
 	    omega, sin_omega, cos_omega, domega;
@@ -176,8 +187,9 @@ class x28 {
 	    cos_omega = Math.cos(omega);
 	    y_shear = 0.5*yrange*sin_omega;
 	    z_shear = 0.5*zrange*cos_omega;
+            zs        = zsmax - dzsrot * (double) i;
 	    pls.ptex3(
-		       xmid, ymax, zmax -(zmax-0.2)*((double)i/(double)(NROTATION-1)),
+                xmid, ymax, zs,
 		       x_inclination, y_inclination, z_inclination,
 		       x_shear, y_shear, z_shear,
 		       0.5, "rotation for y = y#dmax#u");
@@ -195,8 +207,9 @@ class x28 {
 	    cos_omega = Math.cos(omega);
 	    x_shear = 0.5*xrange*sin_omega;
 	    z_shear = 0.5*zrange*cos_omega;
+            zs        = zsmax - dzsrot * (double) i;
 	    pls.ptex3(
-		       xmax, ymid, zmax -(zmax-0.2)*((double)i/(double)(NROTATION-1)),
+                xmax, ymid, zs,
 		       x_inclination, y_inclination, z_inclination,
 		       x_shear, y_shear, z_shear,
 		       0.5, "rotation for x = x#dmax#u");
@@ -214,8 +227,9 @@ class x28 {
 	    cos_omega = Math.cos(omega);
 	    y_shear = 0.5*yrange*cos_omega;
 	    z_shear = 0.5*zrange*sin_omega;
+            ys        = ysmax - dysrot * (double) i;
 	    pls.ptex3(
-		       xmid, ymax -(ymax-0.2)*((double)i/(double)(NROTATION-1)), zmin,
+                       xmid, ys, zmin,
 		       x_inclination, y_inclination, z_inclination,
 		       x_shear, y_shear, z_shear,
 		       0.5, "rotation for z = z#dmin#u");
@@ -251,8 +265,9 @@ class x28 {
 	    cos_omega = Math.cos(omega);
 	    x_shear = 0.5*xrange*sin_omega;
 	    z_shear = 0.5*zrange*cos_omega;
+            zs        = zsmax - dzsshear * (double) i;
 	    pls.ptex3(
-		       xmid, ymax, zmax -(zmax-0.2)*((double)i/(double)(NSHEAR-1)),
+                       xmid, ymax, zs,
 		       x_inclination, y_inclination, z_inclination,
 		       x_shear, y_shear, z_shear,
 		       0.5, "shear for y = y#dmax#u");
@@ -270,8 +285,9 @@ class x28 {
 	    cos_omega = Math.cos(omega);
 	    y_shear = -0.5*yrange*sin_omega;
 	    z_shear = 0.5*zrange*cos_omega;
+            zs        = zsmax - dzsshear * (double) i;
 	    pls.ptex3(
-		       xmax, ymid, zmax -(zmax-0.2)*((double)i/(double)(NSHEAR-1)),
+                       xmax, ymid, zs,
 		       x_inclination, y_inclination, z_inclination,
 		       x_shear, y_shear, z_shear,
 		       0.5, "shear for x = x#dmax#u");
@@ -289,8 +305,9 @@ class x28 {
 	    cos_omega = Math.cos(omega);
 	    y_shear = 0.5*yrange*cos_omega;
 	    x_shear = 0.5*xrange*sin_omega;
+            ys        = ysmax - dysshear * (double) i;
 	    pls.ptex3(
-		       xmid, ymax -(ymax-0.2)*((double)i/(double)(NSHEAR-1)), zmin,
+                       xmid, ys, zmin,
 		       x_inclination, y_inclination, z_inclination,
 		       x_shear, y_shear, z_shear,
 		       0.5, "shear for z = z#dmin#u");

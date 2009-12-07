@@ -3,6 +3,7 @@
 	plmtex3, plptex3 demo.
 
   Copyright (C) 2009 Werner Smekal
+  Copyright (C) 2009 Alan W. Irwin
 
   This file is part of PLplot.
 
@@ -41,9 +42,21 @@ int main(char[][] args)
   const int NROTATION=8;
   const int NSHEAR=8;
 
-  PLFLT xmin=0.0, xmax=1.0, xmid = 0.5*(xmax+xmin), xrange = xmax-xmin;
-  PLFLT ymin=0.0, ymax=1.0, ymid = 0.5*(ymax+ymin), yrange = ymax-ymin;
-  PLFLT zmin=0.0, zmax=1.0, zmid = 0.5*(zmax+zmin), zrange = zmax-zmin;
+  PLFLT 
+xmin=0.0, xmax=1.0, xmid = 0.5*(xmax+xmin), xrange = xmax-xmin,
+ymin=0.0, ymax=1.0, ymid = 0.5*(ymax+ymin), yrange = ymax-ymin,
+zmin=0.0, zmax=1.0, zmid = 0.5*(zmax+zmin), zrange = zmax-zmin,
+           ysmin    = ymin + 0.1 * yrange,
+           ysmax    = ymax - 0.1 * yrange,
+           ysrange  = ysmax - ysmin,
+           dysrot   = ysrange / cast(PLFLT) ( NROTATION - 1 ),
+           dysshear = ysrange / cast(PLFLT) ( NSHEAR - 1 ),
+           zsmin    = zmin + 0.1 * zrange,
+           zsmax    = zmax - 0.1 * zrange,
+           zsrange  = zsmax - zsmin,
+           dzsrot   = zsrange / cast(PLFLT) ( NROTATION - 1 ),
+           dzsshear = zsrange / cast(PLFLT) ( NSHEAR - 1 ),
+           ys, zs;
 
   /* p1string must be exactly one character + the null termination 
    * character. */
@@ -167,7 +180,8 @@ int main(char[][] args)
     cos_omega = cos(omega);
     y_shear = 0.5*yrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
-    plptex3(xmid, ymax, zmax -(zmax-0.2)*i/(NROTATION-1.0),
+    zs        = zsmax - dzsrot * cast(PLFLT) i;
+    plptex3(xmid, ymax, zs,
             x_inclination, y_inclination, z_inclination,
             x_shear, y_shear, z_shear,
             0.5, "rotation for y = y#dmax#u");
@@ -185,7 +199,8 @@ int main(char[][] args)
     cos_omega = cos(omega);
     x_shear = 0.5*xrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
-    plptex3(xmax, ymid, zmax -(zmax-0.2)*i/(NROTATION-1.0),
+    zs        = zsmax - dzsrot * cast(PLFLT) i;
+    plptex3(xmax, ymid, zs,
             x_inclination, y_inclination, z_inclination,
             x_shear, y_shear, z_shear,
             0.5, "rotation for x = x#dmax#u");
@@ -203,7 +218,8 @@ int main(char[][] args)
     cos_omega = cos(omega);
     y_shear = 0.5*yrange*cos_omega;
     z_shear = 0.5*zrange*sin_omega;
-    plptex3(xmid, ymax -(ymax-0.2)*i/(NROTATION-1.0), zmin,
+    ys        = ysmax - dysrot * cast(PLFLT) i;
+    plptex3(xmid, ys, zmin,
             x_inclination, y_inclination, z_inclination,
             x_shear, y_shear, z_shear,
             0.5, "rotation for z = z#dmin#u");
@@ -238,7 +254,8 @@ int main(char[][] args)
     cos_omega = cos(omega);
     x_shear = 0.5*xrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
-    plptex3(xmid, ymax, zmax -(zmax-0.2)*i/(NSHEAR-1.0),
+    zs        = zsmax - dzsshear * cast(PLFLT) i;
+    plptex3(xmid, ymax, zs,
             x_inclination, y_inclination, z_inclination,
             x_shear, y_shear, z_shear,
             0.5, "shear for y = y#dmax#u");
@@ -256,7 +273,8 @@ int main(char[][] args)
     cos_omega = cos(omega);
     y_shear = -0.5*yrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
-    plptex3(xmax, ymid, zmax -(zmax-0.2)*i/(NSHEAR-1.0),
+    zs        = zsmax - dzsshear * cast(PLFLT) i;
+    plptex3(xmax, ymid, zs,
             x_inclination, y_inclination, z_inclination,
             x_shear, y_shear, z_shear,
             0.5, "shear for x = x#dmax#u");
@@ -274,7 +292,8 @@ int main(char[][] args)
     cos_omega = cos(omega);
     y_shear = 0.5*yrange*cos_omega;
     x_shear = 0.5*xrange*sin_omega;
-    plptex3(xmid, ymax -(ymax-0.2)*i/(NSHEAR-1.0), zmin,
+    ys        = ysmax - dysshear * cast(PLFLT) i;
+    plptex3(xmid, ys, zmin,
             x_inclination, y_inclination, z_inclination,
             x_shear, y_shear, z_shear,
             0.5, "shear for z = z#dmin#u");
