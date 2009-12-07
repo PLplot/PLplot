@@ -739,7 +739,7 @@ void
 proc_str( PLStream *pls, EscText *args )
 {
     PLFLT *t = args->xform, tt[4]; /* Transform matrices */
-    PLFLT theta;                   /* Rotation angle and shear from the matrix */
+    PLFLT theta, shear, stride;                   /* Rotation angle and shear from the matrix */
     PLFLT ft_ht, offset;           /* Font height and offset */
     PLFLT cs, sn, l1, l2;
     PSDev *dev = (PSDev *) pls->dev;
@@ -846,10 +846,9 @@ proc_str( PLStream *pls, EscText *args )
 
 
         /* The transform matrix has only rotations and shears; extract them */
-        theta = acos( t[0] ) * 180. / PI;  /* Determine the rotation (in degrees)... */
-        if ( t[2] < 0. ) theta *= -1.;     /* ... and sign ... */
-        cs    = cos( theta * PI / 180. );
-        sn    = sin( theta * PI / 180. );
+        plRotationShear( t, &theta, &shear, &stride );
+        cs    = cos( theta  );
+        sn    = sin( theta  );
         tt[0] = t[0] * cs + t[2] * sn;
         tt[1] = t[1] * cs + t[3] * sn;
         tt[2] = -t[0] * sn + t[2] * cs;
@@ -875,16 +874,16 @@ proc_str( PLStream *pls, EscText *args )
             offset = -ENLARGE * ft_ht / 2.;
 
         /* Determine the adjustment for page orientation */
-        theta   -= 90. * pls->diorot;
-        args->y += (PLINT) ( offset * cos( theta * PI / 180. ));
-        args->x -= (PLINT) ( offset * sin( theta * PI / 180. ));
+        theta   -= PI/2. * pls->diorot;
+        args->y += (PLINT) ( offset * cos( theta  ));
+        args->x -= (PLINT) ( offset * sin( theta  ));
 
         /* ps driver is rotated by default */
         plRotPhy( ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
             &( args->x ), &( args->y ));
 
         /* Correct for the fact ps driver uses landscape by default */
-        theta += 90.;
+        theta += PI/2.;
 
         /* Output */
         /* Set clipping */
@@ -911,7 +910,7 @@ proc_str( PLStream *pls, EscText *args )
         fprintf( OF, " %d %d M\n", args->x, args->y );
 
         /* Save the current position and set the string rotation */
-        fprintf( OF, "gsave %.3f R\n", TRMFLT( theta ));
+        fprintf( OF, "gsave %.3f R\n", TRMFLT( theta*180./PI ));
 
         /* Purge escape sequences from string, so that postscript can find it's
          * length.  The string length is computed with the current font, and can
@@ -1039,8 +1038,8 @@ proc_str( PLStream *pls, EscText *args )
          * 0.6 * character height. Add on an extra 1.5 * character height
          * for safety.
          */
-        cs = cos( theta / 180. * PI );
-        sn = sin( theta / 180. * PI );
+        cs = cos( theta  );
+        sn = sin( theta  );
         l1 = -i * args->just;
         l2 = i * ( 1. - args->just );
         /* Factor of 0.6 is an empirical fudge to convert character
