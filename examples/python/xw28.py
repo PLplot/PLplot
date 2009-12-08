@@ -44,6 +44,16 @@ zmin = 0.
 zmax = 1.0
 zmid = 0.5*(zmax + zmin)
 zrange = zmax - zmin
+ysmin    = ymin + 0.1 * yrange
+ysmax    = ymax - 0.1 * yrange
+ysrange  = ysmax - ysmin
+dysrot   = ysrange / float( NROTATION - 1 )
+dysshear = ysrange / float( NSHEAR - 1 )
+zsmin    = zmin + 0.1 * zrange
+zsmax    = zmax - 0.1 * zrange
+zsrange  = zsmax - zsmin
+dzsrot   = zsrange / float( NROTATION - 1 )
+dzsshear = zsrange / float( NSHEAR - 1 )
 
 pstring = "The future of our civilization depends on software freedom."
 def main():
@@ -148,8 +158,9 @@ def main():
 	cos_omega = cos(omega)
 	y_shear = 0.5*yrange*sin_omega
 	z_shear = 0.5*zrange*cos_omega
+        zs = zsmax - dzsrot * float(i)
 	plptex3(
-	xmid, ymax, zmax -(zmax-0.2)*(float(i)/float(NROTATION-1)),
+	xmid, ymax, zs,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "rotation for y = y#dmax#u")
@@ -166,8 +177,9 @@ def main():
 	cos_omega = cos(omega)
 	x_shear = 0.5*xrange*sin_omega
 	z_shear = 0.5*zrange*cos_omega
+        zs = zsmax - dzsrot * float(i)
 	plptex3(
-	xmax, ymid, zmax -(zmax-0.2)*(float(i)/float(NROTATION-1)),
+	xmax, ymid, zs,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "rotation for x = x#dmax#u")
@@ -184,8 +196,9 @@ def main():
 	cos_omega = cos(omega)
 	y_shear = 0.5*yrange*cos_omega
 	z_shear = 0.5*zrange*sin_omega
+        ys = ysmax - dysrot * float(i)
 	plptex3(
-	xmid, ymax -(ymax-0.2)*(float(i)/float(NROTATION-1)), zmin,
+	xmid, ys, zmin,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "rotation for z = z#dmin#u")
@@ -222,8 +235,9 @@ def main():
 	cos_omega = cos(omega)
 	x_shear = 0.5*xrange*sin_omega
 	z_shear = 0.5*zrange*cos_omega
+        zs = zsmax - dzsshear * float(i)
 	plptex3(
-	xmid, ymax, zmax -(zmax-0.2)*(float(i)/float(NSHEAR-1)),
+	xmid, ymax, zs,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "shear for y = y#dmax#u")
@@ -240,8 +254,9 @@ def main():
 	cos_omega = cos(omega)
 	y_shear = -0.5*yrange*sin_omega
 	z_shear = 0.5*zrange*cos_omega
+        zs = zsmax - dzsshear * float(i)
 	plptex3(
-	xmax, ymid, zmax -(zmax-0.2)*(float(i)/float(NSHEAR-1)),
+	xmax, ymid, zs,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "shear for x = x#dmax#u")
@@ -258,8 +273,9 @@ def main():
 	cos_omega = cos(omega)
 	y_shear = 0.5*yrange*cos_omega
 	x_shear = 0.5*xrange*sin_omega
+        ys = ysmax - dysshear * float(i)
 	plptex3(
-	xmid, ymax -(ymax-0.2)*(float(i)/float(NSHEAR-1)), zmin,
+	xmid, ys, zmin,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "shear for z = z#dmin#u")
