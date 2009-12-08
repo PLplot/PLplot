@@ -49,8 +49,19 @@ c
       parameter(zmax = 1.d0)
       parameter(zmid = 0.5d0*(zmax+zmin))
       parameter(zrange = zmax-zmin)
-
-
+      real*8 ysmin, ysmax, ysrange, dysrot, dysshear
+      parameter(ysmin    = ymin + 0.1 * yrange)
+      parameter(ysmax    = ymax - 0.1 * yrange)
+      parameter(ysrange  = ysmax - ysmin)
+      parameter(dysrot   = ysrange / ( NROTATION - 1 ))
+      parameter(dysshear = ysrange / ( NSHEAR - 1 ))
+      real*8 zsmin, zsmax, zsrange, dzsrot, dzsshear
+      parameter(zsmin    = zmin + 0.1 * zrange)
+      parameter(zsmax    = zmax - 0.1 * zrange)
+      parameter(zsrange  = zsmax - zsmin)
+      parameter(dzsrot   = zsrange / ( NROTATION - 1 ))
+      parameter(dzsshear = zsrange / ( NSHEAR - 1 ))
+      real*8 ys, zs
       real*8 x_inclination, y_inclination, z_inclination,
      &  x_shear, y_shear, z_shear,
      &  omega, sin_omega, cos_omega, domega
@@ -184,10 +195,9 @@ c      y = ymax.
       	 cos_omega = cos(omega)
          y_shear = 0.5d0*yrange*sin_omega
          z_shear = 0.5d0*zrange*cos_omega
+         zs        = zsmax - dzsrot * dble(i-1)
          call plptex3(
-     &     xmid,
-     &     ymax,
-     &     zmax -(zmax-0.2d0)*(dble(i-1)/dble(NROTATION-1)),
+     &     xmid, ymax, zs,
      &     x_inclination, y_inclination, z_inclination,
      &     x_shear, y_shear, z_shear,
      &     0.5d0, "rotation for y = y#dmax#u")
@@ -205,10 +215,9 @@ c      x = xmax.
       	 cos_omega = cos(omega)
          x_shear = 0.5d0*xrange*sin_omega
          z_shear = 0.5d0*zrange*cos_omega
+         zs        = zsmax - dzsrot * dble(i-1)
          call plptex3(
-     &     xmax,
-     &     ymid,
-     &     zmax -(zmax-0.2d0)*(dble(i-1)/dble(NROTATION-1)),
+     &     xmax, ymid, zs,
      &     x_inclination, y_inclination, z_inclination,
      &     x_shear, y_shear, z_shear,
      &     0.5d0, "rotation for x = x#dmax#u")
@@ -226,10 +235,9 @@ c      z = zmin.
       	 cos_omega = cos(omega)
          y_shear = 0.5d0*yrange*cos_omega
          z_shear = 0.5d0*zrange*sin_omega
+         ys        = ysmax - dysrot * dble(i-1)
          call plptex3(
-     &     xmid,
-     &     ymax -(zmax-0.2d0)*(dble(i-1)/dble(NROTATION-1)),
-     &     zmin,
+     &     xmid, ys, zmin,
      &     x_inclination, y_inclination, z_inclination,
      &     x_shear, y_shear, z_shear,
      &     0.5d0, "rotation for z = z#dmin#u")
@@ -266,10 +274,9 @@ c      y = ymax.
       	 cos_omega = cos(omega)
          x_shear = 0.5d0*xrange*sin_omega
          z_shear = 0.5d0*zrange*cos_omega
+         zs        = zsmax - dzsshear * dble(i-1)
          call plptex3(
-     &     xmid,
-     &     ymax,
-     &     zmax -(zmax-0.2d0)*(dble(i-1)/dble(NSHEAR-1)),
+     &     xmid, ymax, zs,
      &     x_inclination, y_inclination, z_inclination,
      &     x_shear, y_shear, z_shear,
      &     0.5d0, "shear for y = y#dmax#u")
@@ -287,10 +294,9 @@ c      x = xmax.
       	 cos_omega = cos(omega)
          y_shear = -0.5d0*yrange*sin_omega
          z_shear = 0.5d0*zrange*cos_omega
+         zs        = zsmax - dzsshear * dble(i-1)
          call plptex3(
-     &     xmax,
-     &     ymid,
-     &     zmax -(zmax-0.2d0)*(dble(i-1)/dble(NSHEAR-1)),
+     &     xmax, ymid, zs,
      &     x_inclination, y_inclination, z_inclination,
      &     x_shear, y_shear, z_shear,
      &     0.5d0, "shear for x = x#dmax#u")
@@ -308,10 +314,9 @@ c      z = zmin.
       	 cos_omega = cos(omega)
          y_shear = 0.5d0*yrange*cos_omega
          x_shear = 0.5d0*xrange*sin_omega
+         ys        = ysmax - dysshear * dble(i-1)
          call plptex3(
-     &     xmid,
-     &     ymax -(ymax-0.2d0)*(dble(i-1)/dble(NSHEAR-1)),
-     &     zmin,
+     &     xmid, ys, zmin,
      &     x_inclination, y_inclination, z_inclination,
      &     x_shear, y_shear, z_shear,
      &     0.5d0, "shear for z = z#dmin#u")
