@@ -603,7 +603,6 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
 /* Limit case - all vertices are outside of bounding box.  So just fill entire
  * box, *if* the bounding box is completely encircled.
  */
-
     if ( iclp == 0 )
     {
         if ( inside_lb )
@@ -620,7 +619,6 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                 free( xclp );
                 free( yclp );
             }
-
 
             return;
         }
@@ -813,8 +811,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
  * enough, apparently the crossed_*1 and crossed_*2 variables
  * are not quite what I expected.
  */
-    if ( crossed_left + crossed_right + crossed_down + crossed_up == 1 &&
-         inside_lb + inside_rb + inside_lu + inside_ru == 4 )
+    if ( inside_lb + inside_rb + inside_lu + inside_ru == 4 )
     {
         int   dir = circulation( x, y, npts );
         PLINT xlim[4], ylim[4];
@@ -825,18 +822,83 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         xlim[1] = xmax; ylim[1] = ymin;
         xlim[2] = xmax; ylim[2] = ymax;
         xlim[3] = xmin; ylim[3] = ymax;
-        if ( dir > 0 )
+
+        if ( crossed_left + crossed_right + crossed_down + crossed_up == 1 )
         {
-            incr   = 1;
-            insert = 0 * crossed_left + 1 * crossed_down + 2 * crossed_right +
-                     3 * crossed_up;
+            if ( dir > 0 )
+            {
+                incr   = 1;
+                insert = 0 * crossed_left + 1 * crossed_down + 2 * crossed_right +
+                         3 * crossed_up;
+            }
+            else
+            {
+                incr   = -1;
+                insert = 3 * crossed_left + 2 * crossed_up + 1 * crossed_right +
+                         0 * crossed_down;
+            }
         }
-        else
+
+        if ( crossed_left + crossed_right == 2 && crossed_down + crossed_up == 0 )
         {
-            incr   = -1;
-            insert = 3 * crossed_left + 2 * crossed_up + 1 * crossed_right +
-                     0 * crossed_down;
+            if ( xclp[iclp-1] == xmin )
+            {
+                if ( dir == 1 )
+                {
+                    incr   = 1;
+                    insert = 0;
+                }
+                else
+                {
+                    incr   = -1;
+                    insert =  3;
+                }
+            }
+            else
+            {
+                if ( dir == 1 )
+                {
+                    incr   = 1;
+                    insert = 1;
+                }
+                else
+                {
+                    incr   = -1;
+                    insert =  2;
+                }
+            }
         }
+
+        if ( crossed_left + crossed_right == 0 && crossed_down + crossed_up == 2 )
+        {
+            if ( yclp[iclp-1] == ymin )
+            {
+                if ( dir == 1 )
+                {
+                    incr   = 1;
+                    insert = 1;
+                }
+                else
+                {
+                    incr   = -1;
+                    insert =  0;
+                }
+            }
+            else
+            {
+                if ( dir == 1 )
+                {
+                    incr   = 1;
+                    insert = 3;
+                }
+                else
+                {
+                    incr   = -1;
+                    insert =  2;
+                }
+            }
+        }
+
         for ( i = 0; i < 4; i++ )
         {
             xclp[iclp] = xlim[insert];
