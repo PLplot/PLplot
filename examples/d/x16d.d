@@ -1,11 +1,11 @@
 /* $Id: $
-
-	plshade demo, using color fill.
-
-	Maurice LeBrun
-	IFS, University of Texas at Austin
-	20 Mar 1994
-*/
+ *
+ *      plshade demo, using color fill.
+ *
+ *      Maurice LeBrun
+ *      IFS, University of Texas at Austin
+ *      20 Mar 1994
+ */
 
 import std.string;
 import std.math;
@@ -14,67 +14,67 @@ import plplot;
 
 /* Fundamental settings.  See notes[] for more info. */
 
-int ns = 20;		  /* Default number of shade levels */
-int nx = 35;		  /* Default number of data points in x */
-int ny = 46;		  /* Default number of data points in y */
+int ns      = 20;         /* Default number of shade levels */
+int nx      = 35;         /* Default number of data points in x */
+int ny      = 46;         /* Default number of data points in y */
 int exclude = 0;  /* By default do not plot a page illustrating
                    * exclusion.  API is probably going to change
                    * anyway, and cannot be reproduced by any
                    * front end other than the C one. */
 
-extern (C) {
-	/* Transformation function */
-	PLFLT[] tr;
+extern ( C ) {
+/* Transformation function */
+PLFLT[] tr;
 
-  void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void* pltr_data)
-  {
-    *tx = tr[0] * x+tr[1] * y+tr[2];
-    *ty = tr[3] * x+tr[4] * y+tr[5];
-  }
+void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void* pltr_data )
+{
+    *tx = tr[0] * x + tr[1] * y + tr[2];
+    *ty = tr[3] * x + tr[4] * y + tr[5];
+}
 }
 
 /* Options data structure definition. */
 //~ static PLOptionTable options[] = {
 //~ {
-    //~ "exclude",			/* Turns on page showing exclusion */
-    //~ NULL,
-    //~ NULL,
-    //~ &exclude,
-    //~ PL_OPT_BOOL,
-    //~ "-exclude",
-    //~ "Plot the \"exclusion\" page." },
+//~ "exclude",			/* Turns on page showing exclusion */
+//~ NULL,
+//~ NULL,
+//~ &exclude,
+//~ PL_OPT_BOOL,
+//~ "-exclude",
+//~ "Plot the \"exclusion\" page." },
 //~ {
-    //~ "ns",			/* Number of shade levels */
-    //~ NULL,
-    //~ NULL,
-    //~ &ns,
-    //~ PL_OPT_INT,
-    //~ "-ns levels",
-    //~ "Sets number of shade levels" },
+//~ "ns",			/* Number of shade levels */
+//~ NULL,
+//~ NULL,
+//~ &ns,
+//~ PL_OPT_INT,
+//~ "-ns levels",
+//~ "Sets number of shade levels" },
 //~ {
-    //~ "nx",			/* Number of data points in x */
-    //~ NULL,
-    //~ NULL,
-    //~ &nx,
-    //~ PL_OPT_INT,
-    //~ "-nx xpts",
-    //~ "Sets number of data points in x" },
+//~ "nx",			/* Number of data points in x */
+//~ NULL,
+//~ NULL,
+//~ &nx,
+//~ PL_OPT_INT,
+//~ "-nx xpts",
+//~ "Sets number of data points in x" },
 //~ {
-    //~ "ny",			/* Number of data points in y */
-    //~ NULL,
-    //~ NULL,
-    //~ &ny,
-    //~ PL_OPT_INT,
-    //~ "-ny ypts",
-    //~ "Sets number of data points in y" },
+//~ "ny",			/* Number of data points in y */
+//~ NULL,
+//~ NULL,
+//~ &ny,
+//~ PL_OPT_INT,
+//~ "-ny ypts",
+//~ "Sets number of data points in y" },
 //~ {
-    //~ NULL,			/* option */
-    //~ NULL,			/* handler */
-    //~ NULL,			/* client data */
-    //~ NULL,			/* address of variable to set */
-    //~ 0,				/* mode flag */
-    //~ NULL,			/* short syntax */
-    //~ NULL }			/* long syntax */
+//~ NULL,			/* option */
+//~ NULL,			/* handler */
+//~ NULL,			/* client data */
+//~ NULL,			/* address of variable to set */
+//~ 0,				/* mode flag */
+//~ NULL,			/* short syntax */
+//~ NULL }			/* long syntax */
 //~ };
 
 //~ static const char *notes[] = {
@@ -83,13 +83,13 @@ extern (C) {
 //~ "test results from ns around 5 and nx, ny around 25.",
 //~ NULL};
 
-extern (C) {
-  PLINT zdefined(PLFLT x, PLFLT y)
-  {
-    PLFLT z = sqrt(x*x + y*y);
+extern ( C ) {
+PLINT zdefined( PLFLT x, PLFLT y )
+{
+    PLFLT z = sqrt( x * x + y * y );
 
     return z<0.4 || z>0.6;
-  }
+}
 }
 
 
@@ -97,275 +97,285 @@ extern (C) {
  * main
  *
  * Does several shade plots using different coordinate mappings.
-\*--------------------------------------------------------------------------*/
-int main(char[][] args)
+ \*--------------------------------------------------------------------------*/
+int main( char[][] args )
 {
-  const int PERIMETERPTS=100;
+    const int PERIMETERPTS = 100;
 
-  /* Parse and process command line arguments */
-  //plMergeOpts(options, "x16c options", notes);
-  plparseopts(args, PL_PARSE_FULL);
+    /* Parse and process command line arguments */
+    //plMergeOpts(options, "x16c options", notes);
+    plparseopts( args, PL_PARSE_FULL );
 
-	/* Load colour palettes*/
-	plspal0("cmap0_black_on_white.pal");
-	plspal1("cmap1_gray.pal", 1);
+    /* Load colour palettes*/
+    plspal0( "cmap0_black_on_white.pal" );
+    plspal1( "cmap1_gray.pal", 1 );
 
-	/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
-	plscmap0n(3);
+    /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    plscmap0n( 3 );
 
-  /* Initialize plplot */
-  plinit();
+    /* Initialize plplot */
+    plinit();
 
-  /* Set up transformation function */
-  tr = [ 2./(nx-1), 0.0, -1.0, 0.0, 2./(ny-1), -1.0 ];
+    /* Set up transformation function */
+    tr = [ 2. / ( nx - 1 ), 0.0, -1.0, 0.0, 2. / ( ny - 1 ), -1.0 ];
 
-  /* Allocate data structures */
-  PLFLT[][] z = new PLFLT[][nx];
-  for(int i=0; i<nx; i++)
-    z[i] = new PLFLT[ny];
+    /* Allocate data structures */
+    PLFLT[][] z = new PLFLT[][nx];
+    for ( int i = 0; i < nx; i++ )
+        z[i] = new PLFLT[ny];
 
-  PLFLT[][] w = new PLFLT[][nx];
-  for(int i=0; i<nx; i++)
-    w[i] = new PLFLT[ny];
+    PLFLT[][] w = new PLFLT[][nx];
+    for ( int i = 0; i < nx; i++ )
+        w[i] = new PLFLT[ny];
 
-  /* Set up data array */
-  PLFLT x, y;
-  for(int i=0; i<nx; i++) {
-    x = cast(double)(i-(nx/2))/(nx/2);
-    for(int j=0; j<ny; j++) {
-	    y = cast(double)(j-(ny/2))/(ny/2) - 1.0;
+    /* Set up data array */
+    PLFLT x, y;
+    for ( int i = 0; i < nx; i++ )
+    {
+        x = cast(double) ( i - ( nx / 2 )) / ( nx / 2 );
+        for ( int j = 0; j < ny; j++ )
+        {
+            y = cast(double) ( j - ( ny / 2 )) / ( ny / 2 ) - 1.0;
 
-	    z[i][j] = -sin(7*x)*cos(7*y) + x*x - y*y;
-	    w[i][j] = -cos(7*x)*sin(7*y) + 2*x*y;
+            z[i][j] = -sin( 7 * x ) * cos( 7 * y ) + x * x - y * y;
+            w[i][j] = -cos( 7 * x ) * sin( 7 * y ) + 2 * x * y;
+        }
     }
-  }
-  PLFLT zmin, zmax;
-  f2mnmx(z, zmin, zmax);
+    PLFLT zmin, zmax;
+    f2mnmx( z, zmin, zmax );
 
-  PLFLT[] clevel = new PLFLT[ns];
-  for(int i=0; i<ns; i++)
-    clevel[i] = zmin + (zmax-zmin)*(i+0.5)/ns;
+    PLFLT[] clevel = new PLFLT[ns];
+    for ( int i = 0; i < ns; i++ )
+        clevel[i] = zmin + ( zmax - zmin ) * ( i + 0.5 ) / ns;
 
-  PLFLT[] shedge = new PLFLT[ns+1];
-  for(int i=0; i<ns+1; i++)
-    shedge[i] = zmin + (zmax-zmin)*i/ns;
+    PLFLT[] shedge = new PLFLT[ns + 1];
+    for ( int i = 0; i < ns + 1; i++ )
+        shedge[i] = zmin + ( zmax - zmin ) * i / ns;
 
-  /* Set up coordinate grids */
-  PLcGrid cgrid1;
-  cgrid1.xg = new PLFLT[nx];
-  cgrid1.yg = new PLFLT[ny];
+    /* Set up coordinate grids */
+    PLcGrid cgrid1;
+    cgrid1.xg = new PLFLT[nx];
+    cgrid1.yg = new PLFLT[ny];
 
-  PLcGrid2 cgrid2;
-  cgrid2.xg = new PLFLT[][nx];
-  for(int i=0; i<nx; i++)
-    cgrid2.xg[i] = new PLFLT[ny];
+    PLcGrid2 cgrid2;
+    cgrid2.xg = new PLFLT[][nx];
+    for ( int i = 0; i < nx; i++ )
+        cgrid2.xg[i] = new PLFLT[ny];
 
-  cgrid2.yg = new PLFLT[][nx];
-  for(int i=0; i<nx; i++)
-    cgrid2.yg[i] = new PLFLT[ny];
-  
-  PLFLT argx, argy, distort;
-  for(int i=0; i<nx; i++) {
-    for(int j=0; j<ny; j++) {
-	    mypltr(i, j, &x, &y, null);
+    cgrid2.yg = new PLFLT[][nx];
+    for ( int i = 0; i < nx; i++ )
+        cgrid2.yg[i] = new PLFLT[ny];
 
-	    argx = x*PI/2;
-	    argy = y*PI/2;
-	    distort = 0.4;
+    PLFLT argx, argy, distort;
+    for ( int i = 0; i < nx; i++ )
+    {
+        for ( int j = 0; j < ny; j++ )
+        {
+            mypltr( i, j, &x, &y, null );
 
-	    cgrid1.xg[i] = x + distort * cos(argx);
-	    cgrid1.yg[j] = y - distort * cos(argy);
+            argx    = x * PI / 2;
+            argy    = y * PI / 2;
+            distort = 0.4;
 
-	    cgrid2.xg[i][j] = x + distort * cos(argx) * cos(argy);
-	    cgrid2.yg[i][j] = y - distort * cos(argx) * cos(argy);
+            cgrid1.xg[i] = x + distort * cos( argx );
+            cgrid1.yg[j] = y - distort * cos( argy );
+
+            cgrid2.xg[i][j] = x + distort * cos( argx ) * cos( argy );
+            cgrid2.yg[i][j] = y - distort * cos( argx ) * cos( argy );
+        }
     }
-  }
 
-  /* Plot using identity transform */
-  PLINT fill_width = 2, cont_color = 0, cont_width = 0;
+    /* Plot using identity transform */
+    PLINT fill_width = 2, cont_color = 0, cont_width = 0;
 
-  pladv(0);
-  plvpor(0.1, 0.9, 0.1, 0.9);
-  plwind(-1.0, 1.0, -1.0, 1.0);
+    pladv( 0 );
+    plvpor( 0.1, 0.9, 0.1, 0.9 );
+    plwind( -1.0, 1.0, -1.0, 1.0 );
 
-  plpsty(0);
+    plpsty( 0 );
 
-  plshades(z, null, -1., 1., -1., 1., shedge, fill_width,
-           cont_color, cont_width, 1);
+    plshades( z, null, -1., 1., -1., 1., shedge, fill_width,
+        cont_color, cont_width, 1 );
 
-  plcol0(1);
-  plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-  plcol0(2);
-  pllab("distance", "altitude", "Bogon density");
+    plcol0( 1 );
+    plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
+    plcol0( 2 );
+    pllab( "distance", "altitude", "Bogon density" );
 
-  /* Plot using 1d coordinate transform */
+    /* Plot using 1d coordinate transform */
 
-	/* Load colour palettes*/
-	plspal0("cmap0_black_on_white.pal");
-	plspal1("cmap1_blue_yellow.pal", 1);
+    /* Load colour palettes*/
+    plspal0( "cmap0_black_on_white.pal" );
+    plspal1( "cmap1_blue_yellow.pal", 1 );
 
-	/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
-	plscmap0n(3);
+    /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    plscmap0n( 3 );
 
-  pladv(0);
-  plvpor(0.1, 0.9, 0.1, 0.9);
-  plwind(-1.0, 1.0, -1.0, 1.0);
+    pladv( 0 );
+    plvpor( 0.1, 0.9, 0.1, 0.9 );
+    plwind( -1.0, 1.0, -1.0, 1.0 );
 
-  plpsty(0);
+    plpsty( 0 );
 
-  plshades(z, null, -1., 1., -1., 1., shedge, fill_width,
-           cont_color, cont_width, 1, cgrid1);
+    plshades( z, null, -1., 1., -1., 1., shedge, fill_width,
+        cont_color, cont_width, 1, cgrid1 );
 
-  plcol0(1);
-  plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-  plcol0(2);
-  pllab("distance", "altitude", "Bogon density");
+    plcol0( 1 );
+    plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
+    plcol0( 2 );
+    pllab( "distance", "altitude", "Bogon density" );
 
-  /* Plot using 2d coordinate transform */
+    /* Plot using 2d coordinate transform */
 
-	/* Load colour palettes*/
-	plspal0("cmap0_black_on_white.pal");
-	plspal1("cmap1_blue_red.pal", 1);
+    /* Load colour palettes*/
+    plspal0( "cmap0_black_on_white.pal" );
+    plspal1( "cmap1_blue_red.pal", 1 );
 
-	/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
-	plscmap0n(3);
-  
-  pladv(0);
-  plvpor(0.1, 0.9, 0.1, 0.9);
-  plwind(-1.0, 1.0, -1.0, 1.0);
+    /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    plscmap0n( 3 );
 
-  plpsty(0);
+    pladv( 0 );
+    plvpor( 0.1, 0.9, 0.1, 0.9 );
+    plwind( -1.0, 1.0, -1.0, 1.0 );
 
-  plshades(z, null, -1., 1., -1., 1., shedge, fill_width,
-           cont_color, cont_width, 0, cgrid2);
+    plpsty( 0 );
 
-  plcol0(1);
-  plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-  plcol0(2);
-  plcont(w, 1, nx, 1, ny, clevel, cgrid2);
+    plshades( z, null, -1., 1., -1., 1., shedge, fill_width,
+        cont_color, cont_width, 0, cgrid2 );
 
-  pllab("distance", "altitude", "Bogon density, with streamlines");
+    plcol0( 1 );
+    plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
+    plcol0( 2 );
+    plcont( w, 1, nx, 1, ny, clevel, cgrid2 );
 
-  /* Plot using 2d coordinate transform */
-  
-	/* Load colour palettes*/
-	plspal0("");
-	plspal1("", 1);
+    pllab( "distance", "altitude", "Bogon density, with streamlines" );
 
-	/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
-	plscmap0n(3);
+    /* Plot using 2d coordinate transform */
 
-  pladv(0);
-  plvpor(0.1, 0.9, 0.1, 0.9);
-  plwind(-1.0, 1.0, -1.0, 1.0);
+    /* Load colour palettes*/
+    plspal0( "" );
+    plspal1( "", 1 );
 
-  plpsty(0);
+    /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    plscmap0n( 3 );
 
-  plshades(z, null, -1., 1., -1., 1., shedge, fill_width,
-           2, 3, 0, cgrid2);
+    pladv( 0 );
+    plvpor( 0.1, 0.9, 0.1, 0.9 );
+    plwind( -1.0, 1.0, -1.0, 1.0 );
 
-  plcol0(1);
-  plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-  plcol0(2);
+    plpsty( 0 );
 
-  pllab("distance", "altitude", "Bogon density");
+    plshades( z, null, -1., 1., -1., 1., shedge, fill_width,
+        2, 3, 0, cgrid2 );
 
-  /* Note this exclusion API will probably change. */
+    plcol0( 1 );
+    plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
+    plcol0( 2 );
 
-  /* Plot using 2d coordinate transform and exclusion*/
-  if(exclude) {
-		/* Load colour palettes*/
-    plspal0("cmap0_black_on_white.pal");
-    plspal1("cmap1_gray.pal", 1);
+    pllab( "distance", "altitude", "Bogon density" );
 
-		/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
-    plscmap0n(3);
+    /* Note this exclusion API will probably change. */
 
-    pladv(0);
-    plvpor(0.1, 0.9, 0.1, 0.9);
-    plwind(-1.0, 1.0, -1.0, 1.0);
+    /* Plot using 2d coordinate transform and exclusion*/
+    if ( exclude )
+    {
+        /* Load colour palettes*/
+        plspal0( "cmap0_black_on_white.pal" );
+        plspal1( "cmap1_gray.pal", 1 );
 
-    plpsty(0);
+        /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+        plscmap0n( 3 );
 
-    plshades(z, &zdefined, -1., 1., -1., 1., shedge, fill_width,
-             cont_color, cont_width, 0, cgrid2);
+        pladv( 0 );
+        plvpor( 0.1, 0.9, 0.1, 0.9 );
+        plwind( -1.0, 1.0, -1.0, 1.0 );
 
-    plcol0(1);
-    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+        plpsty( 0 );
 
-    pllab("distance", "altitude", "Bogon density with exclusion");
-  }
-  
-  /* Example with polar coordinates. */
-  
-	/* Load colour palettes*/
-	plspal0("cmap0_black_on_white.pal");
-	plspal1("cmap1_gray.pal", 1);
+        plshades( z, &zdefined, -1., 1., -1., 1., shedge, fill_width,
+            cont_color, cont_width, 0, cgrid2 );
 
-	/* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
-	plscmap0n(3);
-  
-  pladv(0);
-  plvpor( .1, .9, .1, .9 );
-  plwind( -1., 1., -1., 1. );
+        plcol0( 1 );
+        plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 );
 
-  plpsty(0);
-
-  /* Build new coordinate matrices. */
-  PLFLT r, t;
-  for(int i=0; i<nx; i++) {
-    r = cast(PLFLT)i/(nx-1);
-    for(int j=0; j<ny; j++) {
-	   t = 2.*PI/(ny-1.)*j;
-	   cgrid2.xg[i][j] = r*cos(t);
-	   cgrid2.yg[i][j] = r*sin(t);
-	   z[i][j] = exp(-r*r)*cos(5.*PI*r)*cos(5.*t);
+        pllab( "distance", "altitude", "Bogon density with exclusion" );
     }
-  }
 
-  /* Need a new shedge to go along with the new data set. */
-  f2mnmx(z, zmin, zmax);
+    /* Example with polar coordinates. */
 
-  for(int i=0; i<ns+1; i++)
-    shedge[i] = zmin + (zmax-zmin)*i/ns;
+    /* Load colour palettes*/
+    plspal0( "cmap0_black_on_white.pal" );
+    plspal1( "cmap1_gray.pal", 1 );
 
-  /*  Now we can shade the interior region. */
-  plshades(z, null, -1., 1., -1., 1., shedge, fill_width,
-           cont_color, cont_width, 0, cgrid2);
+    /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+    plscmap0n( 3 );
 
-  /* Now we can draw the perimeter.  (If do before, shade stuff may overlap.) */
-  PLFLT[PERIMETERPTS] px, py;
-  for(int i=0; i<PERIMETERPTS; i++) {
-    t = 2.*PI/(PERIMETERPTS-1)*i;
-    px[i] = cos(t);
-    py[i] = sin(t);
-  }
-  plcol0(1);
-  plline(px, py);
-                  
-  /* And label the plot.*/
-  plcol0(2);
-  pllab("", "",  "Tokamak Bogon Instability");
+    pladv( 0 );
+    plvpor( .1, .9, .1, .9 );
+    plwind( -1., 1., -1., 1. );
 
-  plend();
+    plpsty( 0 );
 
-  return 0;
+    /* Build new coordinate matrices. */
+    PLFLT r, t;
+    for ( int i = 0; i < nx; i++ )
+    {
+        r = cast(PLFLT) i / ( nx - 1 );
+        for ( int j = 0; j < ny; j++ )
+        {
+            t = 2. * PI / ( ny - 1. ) * j;
+            cgrid2.xg[i][j] = r * cos( t );
+            cgrid2.yg[i][j] = r * sin( t );
+            z[i][j]         = exp( -r * r ) * cos( 5. * PI * r ) * cos( 5. * t );
+        }
+    }
+
+    /* Need a new shedge to go along with the new data set. */
+    f2mnmx( z, zmin, zmax );
+
+    for ( int i = 0; i < ns + 1; i++ )
+        shedge[i] = zmin + ( zmax - zmin ) * i / ns;
+
+    /*  Now we can shade the interior region. */
+    plshades( z, null, -1., 1., -1., 1., shedge, fill_width,
+        cont_color, cont_width, 0, cgrid2 );
+
+    /* Now we can draw the perimeter.  (If do before, shade stuff may overlap.) */
+    PLFLT[PERIMETERPTS] px, py;
+    for ( int i = 0; i < PERIMETERPTS; i++ )
+    {
+        t     = 2. * PI / ( PERIMETERPTS - 1 ) * i;
+        px[i] = cos( t );
+        py[i] = sin( t );
+    }
+    plcol0( 1 );
+    plline( px, py );
+
+    /* And label the plot.*/
+    plcol0( 2 );
+    pllab( "", "", "Tokamak Bogon Instability" );
+
+    plend();
+
+    return 0;
 }
 
 /*--------------------------------------------------------------------------*\
  * f2mnmx
  *
  * Returns min & max of input 2d array.
-\*--------------------------------------------------------------------------*/
-void f2mnmx(PLFLT[][] f, out PLFLT fmn, out PLFLT fmx)
+ \*--------------------------------------------------------------------------*/
+void f2mnmx( PLFLT[][] f, out PLFLT fmn, out PLFLT fmx )
 {
-  fmx = f[0][0];
-  fmn = fmx;
+    fmx = f[0][0];
+    fmn = fmx;
 
-  for(int i=0; i<f.length; i++) {
-    for(int j=0; j<f[i].length; j++) {
-      fmx = fmax(fmx, f[i][j]);
-      fmn = fmin(fmn, f[i][j]);
+    for ( int i = 0; i < f.length; i++ )
+    {
+        for ( int j = 0; j < f[i].length; j++ )
+        {
+            fmx = fmax( fmx, f[i][j] );
+            fmn = fmin( fmn, f[i][j] );
+        }
     }
-  }
 }

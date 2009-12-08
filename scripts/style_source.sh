@@ -165,8 +165,16 @@ javasource_LIST="bindings/java/*.java bindings/java/*.java.in"
 # Java part of examples/java
 javasource_LIST="$javasource_LIST examples/java/*.java"
 
+export dsource_LIST
+
+# D part of bindings/d
+dsource_LIST="bindings/d/*.d"
+
+# D part of examples/d
+dsource_LIST="$dsource_LIST examples/d/*.d"
+
 # Check that source file lists actually refer to files.
-for source in $csource_LIST $cppsource_LIST $javasource_LIST ; do
+for source in $csource_LIST $cppsource_LIST $javasource_LIST $dsource_LIST ; do
     if [ ! -f $source ] ; then
 	echo $source is not a regular file so this script will not work without further editing.
 	exit 1
@@ -198,3 +206,4 @@ uncrustify_source()
 uncrustify_source "$csource_LIST" C
 uncrustify_source "$cppsource_LIST" CPP
 uncrustify_source "$javasource_LIST" JAVA
+uncrustify_source "$dsource_LIST" D
