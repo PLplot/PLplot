@@ -841,7 +841,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
 
         if ( crossed_left + crossed_right == 2 && crossed_down + crossed_up == 0 )
         {
-            if ( xclp[iclp-1] == xmin )
+            if ( xclp[iclp - 1] == xmin )
             {
                 if ( dir == 1 )
                 {
@@ -851,7 +851,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                 else
                 {
                     incr   = -1;
-                    insert =  3;
+                    insert = 3;
                 }
             }
             else
@@ -864,14 +864,14 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                 else
                 {
                     incr   = -1;
-                    insert =  2;
+                    insert = 2;
                 }
             }
         }
 
         if ( crossed_left + crossed_right == 0 && crossed_down + crossed_up == 2 )
         {
-            if ( yclp[iclp-1] == ymin )
+            if ( yclp[iclp - 1] == ymin )
             {
                 if ( dir == 1 )
                 {
@@ -881,7 +881,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                 else
                 {
                     incr   = -1;
-                    insert =  0;
+                    insert = 0;
                 }
             }
             else
@@ -894,7 +894,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                 else
                 {
                     incr   = -1;
-                    insert =  2;
+                    insert = 2;
                 }
             }
         }
