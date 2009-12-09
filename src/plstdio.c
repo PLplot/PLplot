@@ -216,7 +216,7 @@ pl_create_tempfile( char **fname )
         plwarn( "pl_create_tempfile: Unable to open temporary file - returning" );
         if ( fname != NULL )
             *fname = NULL;
-        free(template);
+        free( template );
         return NULL;
     }
     /* If we are not returning the file name then unlink the file so it is

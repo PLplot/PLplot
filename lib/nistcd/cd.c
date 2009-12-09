@@ -376,9 +376,14 @@ int cdCgmPic( cdImagePtr im, int sticky )
     if (( sticky > 2 ) || ( sticky < 0 )) return 0; /* invalid sticky bit */
     /* increment the picture number */
     im->picnum++;
-    tb      = (char *) calloc( 4 * 4, SIZEOF( char ));
+    tb = (char *) calloc( 4 * 4, SIZEOF( char ));
+    if ( !tb ) return 0;  /* memory allocation failed */
     headerp = (unsigned char *) calloc( 1024, SIZEOF( unsigned char ));
-    if ( !headerp ) return 0;   /* memory allocation failed */
+    if ( !headerp )
+    {   /* memory allocation failed */
+        free( tb );
+        return 0;
+    }
     head = headerp;
 
     /*** Attribute: BegPic; Elem Class 0; Elem ID 3 */

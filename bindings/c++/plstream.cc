@@ -1224,7 +1224,7 @@ void plstream::poly3( PLINT n, PLFLT * x, PLFLT * y, PLFLT * z,
 
     plpoly3( n, x, y, z, loc_draw, (PLBOOL) ifcc );
 
-    delete loc_draw;
+    delete [] loc_draw;
 }
 
 // Deprecated version using PLINT not bool
@@ -1241,7 +1241,7 @@ void plstream::poly3( PLINT n, PLFLT * x, PLFLT * y, PLFLT * z,
 
     plpoly3( n, x, y, z, loc_draw, (PLBOOL) ifcc );
 
-    delete loc_draw;
+    delete [] loc_draw;
 }
 
 // Set the floating point precision (in number of places) in numeric labels.
@@ -1396,7 +1396,7 @@ void plstream::scmap1l( bool itype, PLINT npts, PLFLT * intensity,
     plscmap1l((PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_rev );
 
     if ( loc_rev != NULL )
-        delete loc_rev;
+        delete [] loc_rev;
 }
 
 // Set color map 1 colors using a piece-wise linear relationship between
@@ -1423,7 +1423,7 @@ void plstream::scmap1la( bool itype, PLINT npts, PLFLT * intensity,
         a, loc_rev );
 
     if ( loc_rev != NULL )
-        delete loc_rev;
+        delete [] loc_rev;
 }
 
 //
@@ -1456,7 +1456,7 @@ void plstream::scmap1l( PLINT itype, PLINT npts, PLFLT * intensity,
     plscmap1l((PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_rev );
 
     if ( loc_rev != NULL )
-        delete loc_rev;
+        delete [] loc_rev;
 }
 
 // Set a given color from color map 0 by 8 bit RGB value

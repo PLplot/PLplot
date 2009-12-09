@@ -178,6 +178,7 @@ int main( int argc, char *argv[] )
     free( offset1 );
     free( offset2 );
     free( slope );
+    free( leap_sec );
 
     return ( 0 );
 }

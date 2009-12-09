@@ -23,6 +23,14 @@
 #include "defines.h"
 #include "cd.h"
 
+#define CD_CHECK_RETURN( x )  \
+    if ( !( x ))              \
+    {                         \
+        cdImageDestroy( im ); \
+        fclose( outf );       \
+        return 1;             \
+    }
+
 
 int main()
 {
@@ -42,26 +50,24 @@ int main()
     im = cdImageStartCgm();
     /* now open the file lets call it cdexpert1.cgm */
     outf = fopen( "cdexp1.cgm", "wb" );
-    if ( !outf ) return 1;
+    if ( !outf )
+    {
+        cdImageDestroy( im );
+        return 1;
+    }
     /* set its size to 500x500 */
-    if ( !cdImageSetSize( im, 500, 500 )) return 1;
+    CD_CHECK_RETURN( cdImageSetSize( im, 500, 500 ));
     /* set Line, Marker, and Edge specification modes to absolute (0)
      * the default is scaled (1) */
-    if ( !cdImageSetLineSpec( im, 0 )) return 1;
-    if ( !cdImageSetMarkerSpec( im, 0 )) return 1;
-    if ( !cdImageSetEdgeSpec( im, 0 )) return 1;
+    CD_CHECK_RETURN( cdImageSetLineSpec( im, 0 ));
+    CD_CHECK_RETURN( cdImageSetMarkerSpec( im, 0 ));
+    CD_CHECK_RETURN( cdImageSetEdgeSpec( im, 0 ));
     /* Clear the font list, then set it to just contain 1 font */
-    if ( !cdImageClearFonts( im )) return 1;
-    if ( !cdImageAddFont( im, "TIMES_ROMAN" )) return 1;
+    CD_CHECK_RETURN( cdImageClearFonts( im ));
+    CD_CHECK_RETURN( cdImageAddFont( im, "TIMES_ROMAN" ));
     /* start the picture */
-    if ( !cdCgmHeader( im ))
-    {
-        free( im ); return 1;
-    }
-    if ( !cdCgmPic( im, 2 ))
-    {
-        free( im ); return 1;
-    }
+    CD_CHECK_RETURN( cdCgmHeader( im ));
+    CD_CHECK_RETURN( cdCgmPic( im, 2 ));
 
 
     /* allocate some colors (isn't this fun?) */
@@ -71,56 +77,55 @@ int main()
     blue  = cdImageColorAllocate( im, 0, 0, 255 );
 
     /* fill attributes: Empty */
-    if ( !( cdSetShapeFillAttrib( im, 4, -1, -1 ))) return 1;
+    CD_CHECK_RETURN( cdSetShapeFillAttrib( im, 4, -1, -1 ));
 
     /* Edge attributes: dots, width 3, blue, visible edges. */
-    if ( !( cdSetShapeEdgeAttrib( im, 2, 3, blue, 1 ))) return 1;
+    CD_CHECK_RETURN( cdSetShapeEdgeAttrib( im, 2, 3, blue, 1 ));
 
     /* Text attributes: Times, black, size 25 */
-    if ( !( cdSetTextAttrib( im, 1, black, 25 ))) return 1;
+    CD_CHECK_RETURN( cdSetTextAttrib( im, 1, black, 25 ));
 
     /* Line attributes: Solid Black Line of Width 5 */
-    if ( !( cdSetLineAttrib( im, 1, 5, black ))) return 1;
+    CD_CHECK_RETURN( cdSetLineAttrib( im, 1, 5, black ));
 
     /* Marker attributes: style pluses, size 3, black  */
-    if ( !( cdSetMarkerAttrib( im, 2, 3, black ))) return 1;
+    CD_CHECK_RETURN( cdSetMarkerAttrib( im, 2, 3, black ));
 
     /* Now that we have set some attributes, lets do some drawing */
 
     /* Draw a rectangle (10,450) is upper left, (350,350) is lower right */
-    if ( !( cdRectangle( im, 10, 450, 350, 350 ))) return 1;
-
+    CD_CHECK_RETURN( cdRectangle( im, 10, 450, 350, 350 ));
     /* Draw a line (300,100) to (400,100) */
-    if ( !( cdLine( im, 300, 100, 400, 100 ))) return 1;
+    CD_CHECK_RETURN( cdLine( im, 300, 100, 400, 100 ));
 
     /* Add Two markers */
-    if ( !( cdMarker( im, 325, 150 ))) return 1;
-    if ( !( cdMarker( im, 375, 150 ))) return 1;
+    CD_CHECK_RETURN( cdMarker( im, 325, 150 ));
+    CD_CHECK_RETURN( cdMarker( im, 375, 150 ));
 
     /* lets put some text in the picture too. */
     /* (100,100) is the point at the lower left corner of the text */
-    if ( !( cdText( im, 100, 100, "Hello World" ))) return 1;
+    CD_CHECK_RETURN( cdText( im, 100, 100, "Hello World" ));
 
     /* we could just finish off the CGM here with a
      * cdImageCgm(im, outf), but lets put another picture in. */
 
     /* close the picture */
-    if ( !cdImageEndPic( im )) return 1;
+    CD_CHECK_RETURN( cdImageEndPic( im ));
     /* set the specifications modes back to the default */
-    if ( !cdImageSetLineSpec( im, 1 )) return 1;
-    if ( !cdImageSetMarkerSpec( im, 1 )) return 1;
-    if ( !cdImageSetEdgeSpec( im, 1 )) return 1;
+    CD_CHECK_RETURN( cdImageSetLineSpec( im, 1 ));
+    CD_CHECK_RETURN( cdImageSetMarkerSpec( im, 1 ));
+    CD_CHECK_RETURN( cdImageSetEdgeSpec( im, 1 ));
     /* start a new picture, keeping all the changes we made, including
      * the color table */
-    if ( !cdCgmPic( im, 1 )) return 1;
+    CD_CHECK_RETURN( cdCgmPic( im, 1 ));
 
     /* draw the same image again, notice the Specification modes are
      * different */
     /* Draw a rectangle (10,450) is upper left, (350,350) is lower right */
-    if ( !( cdRectangle( im, 10, 450, 350, 350 ))) return 1;
+    CD_CHECK_RETURN( cdRectangle( im, 10, 450, 350, 350 ));
 
     /* Draw a line (300,100) to (400,100) */
-    if ( !( cdLine( im, 300, 100, 400, 100 ))) return 1;
+    CD_CHECK_RETURN( cdLine( im, 300, 100, 400, 100 ));
 
     /* Add Two markers */
     /* we are doing the markers a little bit differently this time */
@@ -128,11 +133,11 @@ int main()
     points[0].y = 150;
     points[1].x = 375;
     points[1].y = 150;
-    if ( !( cdPolyMarker( im, points, 2 ))) return 1;
+    CD_CHECK_RETURN( cdPolyMarker( im, points, 2 ));
 
     /* lets put some text in the picture too. */
     /* (100,100) is the point at the lower left corner of the text */
-    if ( !( cdText( im, 100, 100, "Hello World" ))) return 1;
+    CD_CHECK_RETURN( cdText( im, 100, 100, "Hello World" ));
 
     cdImageCgm( im, outf );
     fclose( outf );

@@ -961,10 +961,9 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                         if ( ptr == NULL )
                         {
                             char buf[BUFFER_SIZE];
-                            strncpy( buf, string, 30 );
-                            buf[30] = '\0';
-                            snprintf( buf, BUFFER_SIZE, "UTF-8 string is malformed: %s%s",
-                                buf, strlen( string ) > 30 ? "[...]" : "" );
+                            strncpy( buf, "UTF-8 string is malformed: ", BUFFER_SIZE );
+                            strncat( buf, string, 30 );
+                            if ( strlen( string ) > 30 ) strncat( buf, "[...]", 5 );
                             plabort( buf );
                             return;
                         }
@@ -2740,6 +2739,7 @@ plInitDispatchTable()
     dp_drvdir = opendir( drvdir );
     if ( dp_drvdir == NULL )
     {
+        fclose( fp_drvdb );
         plabort( "plInitDispatchTable: Could not open drivers directory" );
         return;
     }
@@ -2766,6 +2766,8 @@ plInitDispatchTable()
             fd = fopen( path, "r" );
             if ( fd == NULL )
             {
+                closedir( dp_drvdir );
+                fclose( fp_drvdb );
                 snprintf( buf, BUFFER2_SIZE,
                     "plInitDispatchTable: Could not open driver info file %s\n",
                     name );
@@ -2801,6 +2803,7 @@ plInitDispatchTable()
     if (( dispatch_table = (PLDispatchTable **)
                            malloc(( nplstaticdevices + npldynamicdevices ) * sizeof ( PLDispatchTable * ))) == NULL )
     {
+        fclose( fp_drvdb );
         plexit( "plInitDispatchTable: Insufficient memory" );
     }
 
@@ -2813,6 +2816,7 @@ plInitDispatchTable()
     {
         if (( dispatch_table[n] = (PLDispatchTable *) malloc( sizeof ( PLDispatchTable ))) == NULL )
         {
+            fclose( fp_drvdb );
             plexit( "plInitDispatchTable: Insufficient memory" );
         }
 
@@ -2828,6 +2832,7 @@ plInitDispatchTable()
     if ((( loadable_device_list = malloc( npldynamicdevices * sizeof ( PLLoadableDevice ))) == NULL ) ||
         (( loadable_driver_list = malloc( npldynamicdevices * sizeof ( PLLoadableDriver ))) == NULL ))
     {
+        fclose( fp_drvdb );
         plexit( "plInitDispatchTable: Insufficient memory" );
     }
 
@@ -2858,6 +2863,7 @@ plInitDispatchTable()
 
         if (( dispatch_table[n] = malloc( sizeof ( PLDispatchTable ))) == NULL )
         {
+            fclose( fp_drvdb );
             plexit( "plInitDispatchTable: Insufficient memory" );
         }
 

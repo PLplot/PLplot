@@ -167,6 +167,7 @@ bool wxPLplotwindow::SavePlot( const wxString& devname, const wxString& filename
     plmkstrm( &pls_save );
     if ( pls_save < 0 )
     {
+        fclose( sfile );
         return false;
     }
     plsdev( devname.mb_str());
