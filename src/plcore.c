@@ -961,9 +961,11 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                         if ( ptr == NULL )
                         {
                             char buf[BUFFER_SIZE];
-                            strncpy( buf, "UTF-8 string is malformed: ", BUFFER_SIZE );
-                            strncat( buf, string, 30 );
-                            if ( strlen( string ) > 30 ) strncat( buf, "[...]", 5 );
+                            char tmpstring[31];
+                            strncpy( tmpstring, string, 30 );
+                            tmpstring[30] = '\0';
+                            snprintf( buf, BUFFER_SIZE, "UTF-8 string is malformed: %s%s", 
+                                tmpstring, strlen( string ) > 30 ? "[...]" : "" );
                             plabort( buf );
                             return;
                         }
