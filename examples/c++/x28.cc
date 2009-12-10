@@ -424,8 +424,8 @@ x28::x28( int argc, const char *argv[] )
     pls->mesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
     /* Clean up. */
-    delete x;
-    delete y;
+    delete[] x;
+    delete[] y;
     pls->Free2dGrid( z, XPTS, YPTS );
     delete pls;
 }

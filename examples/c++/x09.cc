@@ -268,8 +268,8 @@ x09::x09( int argc, const char **argv )
 
     delete pls;
 
-    delete yg1;
-    delete xg1;
+    delete[] yg1;
+    delete[] xg1;
 }
 
 void x09::polar()

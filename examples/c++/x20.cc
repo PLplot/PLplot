@@ -343,8 +343,8 @@ x20::x20( int argc, const char ** argv )
 
     delete pls;
 
-    delete y;
-    delete x;
+    delete[] y;
+    delete[] x;
 }
 
 // read image from file in binary ppm format
