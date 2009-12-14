@@ -640,7 +640,7 @@ int
 pls_auto_path( Tcl_Interp *interp )
 {
     char *buf, *ptr = NULL, *dn;
-    int return_code = TCL_OK;
+    int  return_code = TCL_OK;
 #ifdef DEBUG
     char *path;
 #endif
@@ -653,7 +653,7 @@ pls_auto_path( Tcl_Interp *interp )
     Tcl_SetVar( interp, "dir", TCL_DIR, TCL_GLOBAL_ONLY );
     if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
     {
-        return_code =  TCL_ERROR;
+        return_code = TCL_ERROR;
         goto finish;
     }
 #ifdef DEBUG
@@ -671,7 +671,7 @@ pls_auto_path( Tcl_Interp *interp )
         Tcl_SetVar( interp, "dir", ptr, 0 );
         if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
         {
-            return_code =  TCL_ERROR;
+            return_code = TCL_ERROR;
             goto finish;
         }
 #ifdef DEBUG
@@ -690,7 +690,7 @@ pls_auto_path( Tcl_Interp *interp )
         Tcl_SetVar( interp, "dir", ptr, 0 );
         if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
         {
-            return_code =  TCL_ERROR;
+            return_code = TCL_ERROR;
             goto finish;
         }
 #ifdef DEBUG
@@ -710,7 +710,7 @@ pls_auto_path( Tcl_Interp *interp )
         Tcl_SetVar( interp, "dir", ptr, 0 );
         if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
         {
-            return_code =  TCL_ERROR;
+            return_code = TCL_ERROR;
             goto finish;
         }
 #ifdef DEBUG
@@ -727,14 +727,14 @@ pls_auto_path( Tcl_Interp *interp )
     {
         Tcl_SetResult( interp, "Problems with getcwd in pls_auto_path", TCL_STATIC );
         {
-            return_code =  TCL_ERROR;
+            return_code = TCL_ERROR;
             goto finish;
         }
     }
     Tcl_SetVar( interp, "dir", buf, 0 );
     if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
     {
-        return_code =  TCL_ERROR;
+        return_code = TCL_ERROR;
         goto finish;
     }
     /*** see if plserver was invoked in the build tree ***/
@@ -743,7 +743,7 @@ pls_auto_path( Tcl_Interp *interp )
         Tcl_SetVar( interp, "dir", BUILD_DIR "/bindings/tk", TCL_GLOBAL_ONLY );
         if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
         {
-            return_code =  TCL_ERROR;
+            return_code = TCL_ERROR;
             goto finish;
         }
     }
