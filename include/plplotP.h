@@ -975,7 +975,8 @@ plRotationShear( PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear, PLFLT *strid
 
 /* Test whether a point is in a polygon. */
 int
-plP_pointinpolygon( PLINT n, PLFLT *x, PLFLT *y, PLFLT xp, PLFLT yp );
+plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y,
+                    PLFLT xp, PLFLT yp );
 
 /* Driver calls */
 

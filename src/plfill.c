@@ -26,7 +26,7 @@
 
 #define INSIDE( ix, iy )    ( BETW( ix, xmin, xmax ) && BETW( iy, ymin, ymax ))
 
-#define DTOR    0.0174533
+#define DTOR    ( PI / 180. )
 #define BINC    50
 
 struct point
@@ -36,7 +36,6 @@ struct point
 static PLINT bufferleng, buffersize, *buffer;
 
 /* Static function prototypes */
-/* INDENT OFF */
 
 static int
 compar( const void *, const void * );
@@ -51,13 +50,23 @@ static void
 buildlist( PLINT, PLINT, PLINT, PLINT, PLINT, PLINT, PLINT );
 
 static int
-pointinpolygon( PLINT n, PLINT *x, PLINT *y, PLINT xp, PLINT yp );
+pointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp );
 
 static int
 circulation( PLINT *x, PLINT *y, PLINT npts );
 
+static void
+fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
+                           void ( *fill )( short *, short *, PLINT ),
+                           const PLINT *x1, const PLINT *y1,
+                           PLINT i1start, PLINT n1,
+                           const PLINT *x2, const PLINT *y2,
+                           const PLINT *if2, PLINT n2 );
 
-/* INDENT ON */
+static int
+ifnotintersect( PLINT *xintersect, PLINT *yintersect,
+                PLINT xA1, PLINT yA1, PLINT xA2, PLINT yA2,
+                PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 );
 
 /*----------------------------------------------------------------------*\
  * void plfill()
@@ -410,6 +419,46 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
             void ( *draw )( short *, short *, PLINT ))
 {
+    /* Must have at least 3 points and draw() specified */
+    if ( npts < 3 || !draw ) return;
+
+#ifdef USE_FILL_INTERSECTION_POLYGON
+    PLINT *x1, *y1, i1start = 0, i, im1, n1;
+    PLINT x2[4]  = { xmin, xmax, xmax, xmin };
+    PLINT y2[4]  = { ymin, ymin, ymax, ymax };
+    PLINT if2[4] = { 0, 0, 0, 0 };
+    PLINT n2     = 4;
+    if (( x1 = (PLINT *) malloc( npts * sizeof ( PLINT ))) == NULL )
+    {
+        plexit( "plP_plfclp: Insufficient memory" );
+    }
+    if (( y1 = (PLINT *) malloc( npts * sizeof ( PLINT ))) == NULL )
+    {
+        plexit( "plP_plfclp: Insufficient memory" );
+    }
+    /* Polygon 2 obviously has no dups, but get rid of them in polygon
+     * 1 if they exist.  ToDo: Deal with self-intersecting polygon 1
+     * case as well. */
+
+    im1 = npts - 1;
+    n1  = 0;
+    for ( i = 0; i < npts; i++ )
+    {
+        if ( !( x[i] == x[im1] && y[i] == y[im1] ))
+        {
+            x1[n1]   = x[i];
+            y1[n1++] = y[i];
+        }
+        im1 = i;
+    }
+
+    fill_intersection_polygon( 0, 0, draw, x1, y1, i1start, n1, x2, y2, if2, n2 );
+    free( x1 );
+    free( y1 );
+    return;
+}
+#else /* USE_FILL_INTERSECTION_POLYGON */
+
     PLINT i, x1, x2, y1, y2;
     int   iclp = 0, iout = 2;
     short _xclp[2 * PL_MAXPOLY + 2], _yclp[2 * PL_MAXPOLY + 2];
@@ -426,8 +475,6 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     int   inside_rb;
     int   inside_ru;
 
-/* Must have at least 3 points and draw() specified */
-    if ( npts < 3 || !draw ) return;
 
     if ( npts < PL_MAXPOLY )
     {
@@ -442,7 +489,6 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             plexit( "plP_plfclp: Insufficient memory" );
         }
     }
-
     inside_lb = pointinpolygon( npts, x, y, xmin, ymin );
     inside_lu = pointinpolygon( npts, x, y, xmin, ymax );
     inside_rb = pointinpolygon( npts, x, y, xmax, ymin );
@@ -600,9 +646,9 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         }
     }
 
-/* Limit case - all vertices are outside of bounding box.  So just fill entire
- * box, *if* the bounding box is completely encircled.
- */
+    /* Limit case - all vertices are outside of bounding box.  So just fill entire
+     * box, *if* the bounding box is completely encircled.
+     */
     if ( iclp == 0 )
     {
         if ( inside_lb )
@@ -624,7 +670,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         }
     }
 
-/* Now handle cases where fill polygon intersects two sides of the box */
+    /* Now handle cases where fill polygon intersects two sides of the box */
 
     if ( iclp >= 2 )
     {
@@ -806,11 +852,11 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         }
     }
 
-/* Check for the case that only one side has been crossed
- * (AM) Just checking a single point turns out not to be
- * enough, apparently the crossed_*1 and crossed_*2 variables
- * are not quite what I expected.
- */
+    /* Check for the case that only one side has been crossed
+     * (AM) Just checking a single point turns out not to be
+     * enough, apparently the crossed_*1 and crossed_*2 variables
+     * are not quite what I expected.
+     */
     if ( inside_lb + inside_rb + inside_lu + inside_ru == 4 )
     {
         int   dir = circulation( x, y, npts );
@@ -910,7 +956,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         }
     }
 
-/* Draw the sucker */
+    /* Draw the sucker */
     if ( iclp >= 3 )
         ( *draw )( xclp, yclp, iclp );
 
@@ -920,6 +966,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         free( yclp );
     }
 }
+#endif /* USE_FILL_INTERSECTION_POLYGON */
 
 /*----------------------------------------------------------------------*\
  * int circulation()
@@ -948,9 +995,9 @@ static int
 circulation( PLINT *x, PLINT *y, PLINT npts )
 {
     PLFLT xproduct;
-    int   direction = 0;
+    int direction = 0;
     PLFLT x1, y1, x2, y2, x3, y3;
-    int   i;
+    int i;
 
     xproduct = 0.0;
     x1       = x[0];
@@ -976,9 +1023,9 @@ circulation( PLINT *x, PLINT *y, PLINT npts )
  \*----------------------------------------------------------------------*/
 
 static int
-pointinpolygon( PLINT n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
+pointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
 {
-    int   i, return_value;
+    int i, return_value;
     PLFLT *xflt, *yflt;
     if (( xflt = (PLFLT *) malloc( n * sizeof ( PLFLT ))) == NULL )
     {
@@ -1011,10 +1058,10 @@ pointinpolygon( PLINT n, PLINT *x, PLINT *y, PLINT xp, PLINT yp )
  \*----------------------------------------------------------------------*/
 
 int
-plP_pointinpolygon( PLINT n, PLFLT *x, PLFLT *y, PLFLT xp, PLFLT yp )
+plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp )
 {
-    int   i;
-    int   count_crossings;
+    int i;
+    int count_crossings;
     PLFLT x1, y1, x2, y2, xout, yout, xmax;
     PLFLT xvp, yvp, xvv, yvv, xv1, yv1, xv2, yv2;
     PLFLT inprod1, inprod2;
@@ -1105,4 +1152,505 @@ plP_pointinpolygon( PLINT n, PLFLT *x, PLFLT *y, PLFLT xp, PLFLT yp )
      * point is outside the polygon */
 
     return ( count_crossings % 2 );
+}
+
+/* Fill intersection of two simple (not self-intersecting) polygons.
+ * There must be an even number of edge intersections between the two
+ * polygons (ignoring vertex intersections which touch, but do not cross).
+ * Eliminate those intersection pairs by recursion (calling the same
+ * routine again with either the first or second polygon split between
+ * the two intersecting edges into two independent second polygons.)
+ * Once the recursion has eliminated all intersecting edges, fill or
+ * not using the appropriate polygon depending on whether the first
+ * and second polygons are identical or whether one of them is
+ * entirely inside the other of them.  If ifclip is true, the fill
+ * step will consist of another recursive call to the routine with
+ * ifclip false and the second polygon set to the clip rectangle.
+ * N.B. it is the calling routine's responsibility to insure the two
+ * polygons are not self-intersecting and do not have duplicate points.  */
+
+/*  Consider the intersections between the first and second
+ * polygons (including the possibility of multiple intersections per edge of
+ * the first polygon).  The total number of such intersections must be even.
+ * Solve for the first pair of intersections (if any) and simplify the problem
+ * by recursively calling the same routine twice with the same first polygon
+ * and two modified second polygons consisting of the left-hand segment of the
+ * second polygon + two intersection points and the right-hand segment of the
+ * second polygon + two intersection points.  Note that for the recursive call
+ * the vertices that were intersection points should not generate new
+ * intersections with the first unchanging polygon because points on the
+ * perimeter of polygons are always considered to be outside it.  However, due
+ * to integer truncation and other numerical errors I doubt we can guaranteed
+ * that numerically in all cases. So we set up a logical array that drops
+ * segments from the intersection test that are already bounded by
+ * intersections generated higher in the recursion stack.  The result
+ * of this recursion is deep in the recursion stack you finally end up
+ * considering the case of the original first polygon and a modified second
+ * polygon that does not intersect with it at all.
+ *
+ *
+ * . Solve that simple case.  Check for identical polygons (taking into account
+ * the possibilities of different starting points and different directions
+ * traversing the perimeter), and if so, do a fill of the first polygon (to be
+ * specific) in that case. If not identical, then do one testinpolygon call to
+ * decide if the second polygon is totally inside the first.  If so, fill the
+ * second polygon.  If not, use one additional testinpolygon call to decide if
+ * the first polygon is totally inside the second, and if so, fill the first
+ * polygon.
+ *
+ * . Carry a clip flag as part of the recursion, and for the simple case above
+ * with the flag true, start the recursion all over again (with the clip flag
+ * false) with the "filling" polygon as the first polygon, and the clip
+ * rectangle as the the second.
+ *
+ *
+ * Find innermost polygon of (x1,y1) and (x2, y2) for the purposes of
+ * filling.  The number of vertices is returned, and the resulting
+ * inner (xinner, yinner) polygon calculated for that number of
+ * vertices.  A zero is returned as an error code if the number of
+ * inner polygon vertices exceeds max_ninner (which should be set
+ * externally to the size allocated externally for xinner, yinner).  A
+ * zero is also returned if n1 < 3 or (n2 < 3 && n2 != -2).  (Note
+ * that n2 = -2 signals the special case when the second polygon is a
+ * rectangle.)  */
+
+#define MAX_RECURSION_DEPTH    10
+void
+fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
+                           void ( *fill )( short *, short *, PLINT ),
+                           const PLINT *x1, const PLINT *y1,
+                           PLINT i1start, PLINT n1,
+                           const PLINT *x2, const PLINT *y2,
+                           const PLINT *if2, PLINT n2 )
+{
+    PLINT i1, i1m1, i1wrap, i1wraplast,
+          i2, i2m1, i2wrap, i2wraplast,
+          kk, kkstart1, kkstart21, kkstart22,
+          k, kstart, range1, range21, range22, nintersect,
+          nsplit1, nsplit2;
+    PLINT xintersect[2], yintersect[2], ifintersect;
+    PLINT *xsplit1, *ysplit1, *ifsplit1,
+    *xsplit2, *ysplit2, *ifsplit2;
+    PLINT ifill, nfill = 0;
+    const PLINT *xfiller, *yfiller;
+    short *xfill, *yfill;
+
+    if ( recursion_depth > MAX_RECURSION_DEPTH )
+    {
+        plwarn( "fill_intersection_polygon: Recursion_depth too large.  "
+            "Probably an internal error figuring out intersections. " );
+        return;
+    }
+
+    if ( n1 < 3 )
+    {
+        plwarn( "fill_intersection_polygon: Internal error; n1 < 3." );
+        return;
+    }
+
+    if ( n2 < 3 )
+    {
+        plwarn( "fill_intersection_polygon: Internal error; n2 < 3." );
+        return;
+    }
+
+    if ( i1start < 0 || i1start >= n1 )
+    {
+        plwarn( "fill_intersection_polygon: invalid i1start." );
+        return;
+    }
+
+    i1m1 = i1start - 1;
+    if ( i1m1 <= 0 )
+        i1m1 = n1 - 1;
+
+    for ( i1 = i1start; i1 < n1; i1++ )
+    {
+        if ( x1[i1] == x1[i1m1] && y1[i1] == y1[i1m1] )
+            break;
+        i1m1 = i1;
+    }
+
+    if ( i1 < n1 )
+    {
+        plwarn( "fill_intersection_polygon: Internal error; i1 < n1." );
+        return;
+    }
+
+    i2m1 = n2 - 1;
+    for ( i2 = 0; i2 < n2; i2++ )
+    {
+        if ( x2[i2] == x2[i2m1] && y2[i2] == y2[i2m1] )
+            break;
+        i2m1 = i2;
+    }
+
+    if ( i2 < n2 )
+    {
+        plwarn( "fill_intersection_polygon: Internal error; i < n2." );
+        return;
+    }
+
+    /*
+     *
+     * Follow polygon 1 (checking intersections with polygon 2 for each
+     * segment of polygon 1) until you have accumulated two
+     * intersections with polygon 2.  Here is an ascii-art illustration
+     * of the situation.
+     *
+     *
+     *                  2???2
+     *
+     *                2       2
+     *
+     * --- 1    1
+     *            1            2         1      1 ...
+     *             x
+     *                               1
+     *                             x
+     *           2
+     *                1         1
+     *                   1
+     *                                 2
+     *            2
+     *                     2???2
+     *
+     *
+     * "1" marks polygon 1 vertices, "2" marks polygon 2 vertices, "x"
+     * marks the intersections, "---" stands for part of polygon 1
+     * that has been previously searched for all possible intersections
+     * from index 0, and "..." means polygon 1 continues
+     * with more potential intersections both above or below this diagram
+     * before it finally hooks back to connect with the index 0 vertex.
+     * "2???2" stands for parts of polygon 2 that must connect with each other
+     * (since the polygon 1 path between the two intersections is
+     * known to be free of intersections.)
+     *
+     * Polygon 2 is split at the boundary defined by the two
+     * intersections and all (in this case three) polygon 1 vertices
+     * between the two intersections for the next recursion level.  We
+     * absolutely know for that boundary that no more intersections can
+     * occur (both polygon 1 and polygon 2 are guaranteed not to
+     * self-intersect) so we mark the status of those vertices with that
+     * information so those polygon 2 split vertices will not be used to
+     * search for further intersections at deeper recursion levels.
+     * Note, we know nothing about whether the remaining "2???2" parts of the
+     * split polygon 2 intersect with polygon 1 or not so those will
+     * continued to be searched at deeper recursion levels. At the same
+     * time, we absolutely know that the part of polygon 1 to the left of
+     * rightmost x down to and including index 0 cannot yield more
+     * intersections with any split of polygon 2 so we adjust the lower
+     * limit of polygon 1 to be used for intersection searches at deeper
+     * recursion levels.  The result should be that at sufficiently deep
+     * recursion depth we always end up with the case that there are no
+     * intersections to be found between polygon 1 and some polygon 2
+     * split, and in that case we move on to the end phase below.
+     */
+    nintersect = 0;
+    i1m1       = n1 - 1;
+    i1wrap     = -1;
+    for ( i1 = i1start; i1 < n1; i1++ )
+    {
+        i2m1   = n2 - 1;
+        i2wrap = -1;
+        for ( i2 = 0; i2 < n2; i2++ )
+        {
+            if ( !if2[i2] )
+            {
+                /* intersect is acted upon only if a series of conditions are met. */
+                ifintersect = !ifnotintersect(
+                    &xintersect[nintersect], &yintersect[nintersect],
+                    x1[i1m1], y1[i1m1], x1[i1], y1[i1],
+                    x2[i2m1], y2[i2m1], x2[i2], y2[i2] );
+                ifintersect = ifintersect && !(
+                    xintersect[nintersect] == x1[i1m1] &&
+                    yintersect[nintersect] == y1[i1m1] );
+                ifintersect = ifintersect && !(
+                    xintersect[nintersect] == x1[i1] &&
+                    yintersect[nintersect] == y1[i1] );
+                ifintersect = ifintersect && !(
+                    xintersect[nintersect] == x2[i2m1] &&
+                    yintersect[nintersect] == y2[i2m1] );
+                ifintersect = ifintersect && !(
+                    xintersect[nintersect] == x2[i2] &&
+                    yintersect[nintersect] == y2[i2] );
+                if ( ifintersect )
+                {
+                    /* The above test must be more elaborate if the intersection
+                     * point is a vertex of the first polygon, the second polygon
+                     * or both. ToDo! */
+                    if ( nintersect == 0 )
+                    {
+                        i1wraplast = i1wrap;
+                        i2wraplast = i2wrap;
+
+                        nintersect++;
+                    }
+                    else
+                    {
+                        /* Have discovered the first two intersections for
+                         * polygon 1 at i1 = i1start or above. */
+                        /* New i1start is the largest non-negative polygon 1
+                         * index below the last detected intersect. */
+                        i1start = MAX( i1wrap, 0 );
+
+                        /* Split polygon 2 at the boundary consisting of
+                         * first intersection, intervening (if any) range1
+                         * polygon 1 points and second intersection. */
+                        /* range1 must always be non-negative because i1
+                         * range only traversed once. */
+                        range1 = i1wrap - i1wraplast;
+                        /* Polygon 2 intersects could be anywhere (since
+                         * i2 range repeated until get an intersect).
+                         * Divide polygon 2 into two polygons with a
+                         * common boundary consisting of the first intersect,
+                         * range1 points from polygon1 starting at index
+                         * kkstart1 of polygon 1, and the second intersect. */
+                        kkstart1 = i1wraplast + 1;
+
+                        /* Split 1 of polygon2 consists of the
+                         * boundary + range21 points between kkstart21
+                         * (= i2) and i2wraplast in ascending order of
+                         * polygon 2 indices.  N.B.  if range21 is zero
+                         * below we change that to n2, i.e., use the
+                         * whole range of polygon 2 in ascending
+                         * order.  For this case, range22 (below) will
+                         * be zero and range1 (above) must be nonzero
+                         * (in order to have two intersections). */
+                        range21 = i2wraplast - i2wrap;
+                        if ( range21 <= 0 )
+                            range21 += n2;
+                        kkstart21 = i2;
+
+                        /* Split 2 of polygon 2 consists of the
+                         * boundary + range22 (= n2 - range21) points
+                         * between kkstart22 (= i2wrap) and i2wraplast + 1 in
+                         * descending order of polygon 2 indices. */
+                        range22   = n2 - range21;
+                        kkstart22 = i2wrap;
+                        if ( kkstart22 == -1 )
+                            kkstart22 = i2m1;
+                        nsplit1 = 2 + range1 + range21;
+                        nsplit2 = 2 + range1 + range22;
+
+                        if (( xsplit1 = (PLINT *) malloc( nsplit1 * sizeof ( PLINT ))) == NULL )
+                        {
+                            plexit( "fill_intersection_polygon: Insufficient memory" );
+                        }
+                        if (( ysplit1 = (PLINT *) malloc( nsplit1 * sizeof ( PLINT ))) == NULL )
+                        {
+                            plexit( "fill_intersection_polygon: Insufficient memory" );
+                        }
+                        if (( ifsplit1 = (PLINT *) malloc( nsplit1 * sizeof ( PLINT ))) == NULL )
+                        {
+                            plexit( "fill_intersection_polygon: Insufficient memory" );
+                        }
+
+                        if (( xsplit2 = (PLINT *) malloc( nsplit2 * sizeof ( PLINT ))) == NULL )
+                        {
+                            plexit( "fill_intersection_polygon: Insufficient memory" );
+                        }
+                        if (( ysplit2 = (PLINT *) malloc( nsplit2 * sizeof ( PLINT ))) == NULL )
+                        {
+                            plexit( "fill_intersection_polygon: Insufficient memory" );
+                        }
+                        if (( ifsplit2 = (PLINT *) malloc( nsplit2 * sizeof ( PLINT ))) == NULL )
+                        {
+                            plexit( "fill_intersection_polygon: Insufficient memory" );
+                        }
+                        /* Common boundary between split1 and split2. */
+                        k           = 0;
+                        xsplit1[k]  = xintersect[0];
+                        ysplit1[k]  = yintersect[0];
+                        ifsplit1[k] = 1;
+                        xsplit2[k]  = xintersect[0];
+                        ysplit2[k]  = yintersect[0];
+                        ifsplit2[k] = 1;
+                        kstart      = k + 1;
+                        kk          = kkstart1;
+                        /* No wrap checks on kk index below because
+                         * it must always be in valid range (since
+                         * polygon 1 traversed only once). */
+                        for ( k = kstart; k < range1 + 1; k++ )
+                        {
+                            xsplit1[k]  = x1[kk];
+                            ysplit1[k]  = y1[kk];
+                            ifsplit1[k] = 2;
+                            xsplit2[k]  = x1[kk];
+                            ysplit2[k]  = y1[kk++];
+                            ifsplit2[k] = 2;
+                        }
+                        xsplit1[k]  = xintersect[1];
+                        ysplit1[k]  = yintersect[1];
+                        ifsplit1[k] = 1;
+                        xsplit2[k]  = xintersect[1];
+                        ysplit2[k]  = yintersect[1];
+                        ifsplit2[k] = 1;
+
+                        /* Finish off collecting split1 using ascending kk
+                         * values. */
+                        kstart = k + 1;
+                        kk     = kkstart21;
+                        for ( k = kstart; k < nsplit1; k++ )
+                        {
+                            xsplit1[k]  = x2[kk];
+                            ysplit1[k]  = y2[kk];
+                            ifsplit1[k] = if2[kk++];
+                            if ( kk >= n2 )
+                                kk -= n2;
+                        }
+                        fill_intersection_polygon( recursion_depth + 1, ifclip, fill,
+                            x1, y1, i1start, n1,
+                            xsplit1, ysplit1, ifsplit1, nsplit1 );
+                        free( xsplit1 );
+                        free( ysplit1 );
+                        free( ifsplit1 );
+
+                        /* Finish off collecting split2 using descending kk
+                         * values. */
+                        kk = kkstart22;
+                        for ( k = kstart; k < nsplit2; k++ )
+                        {
+                            xsplit2[k]  = x2[kk];
+                            ysplit2[k]  = y2[kk];
+                            ifsplit2[k] = if2[kk--];
+                            if ( kk < 0 )
+                                kk += n2;
+                        }
+                        fill_intersection_polygon( recursion_depth + 1, ifclip, fill,
+                            x1, y1, i1start, n1,
+                            xsplit2, ysplit2, ifsplit2, nsplit2 );
+                        free( xsplit2 );
+                        free( ysplit2 );
+                        free( ifsplit2 );
+                        return;
+                    }
+                }
+            }
+            i2m1   = i2;
+            i2wrap = i2m1;
+        }
+        i1m1   = i1;
+        i1wrap = i1m1;
+    }
+    if ( nintersect != 0 )
+    {
+        plwarn( "fill_intersection_polygon: Internal error; nintersect != 0." );
+        return;
+    }
+
+    /* Look for first vertex in Polygon 2 that does not intersect with 1. */
+    for ( i2 = 0; i2 < n2; i2++ )
+    {
+        if ( !if2[i2] )
+            break;
+    }
+
+    if ( i2 < n2 && pointinpolygon( n1, x1, y1, x2[i2], y2[i2] ))
+    {
+        /* All of polygon 2 inside polygon 1. */
+        nfill   = n2;
+        xfiller = x2;
+        yfiller = y2;
+    }
+    else
+    {
+        /* Look for first vertex in polygon 1 that is inside polygon 2. */
+        for ( i1 = 0; i1 < n1; i1++ )
+        {
+            if ( pointinpolygon( n2, x2, y2, x1[i1], y1[i1] ))
+                break;
+        }
+
+        if ( i1 < n1 )
+        {
+            /* All of polygon 1 inside polygon 2 */
+            nfill   = n1;
+            xfiller = x1;
+            yfiller = y1;
+        }
+        else
+            plwarn( "fill_intersection_polygon: inscribed polygon not yet implemented" );
+    }
+    if ( nfill > 0 )
+    {
+        if (( xfill = (short *) malloc( nfill * sizeof ( short ))) == NULL )
+        {
+            plexit( "fill_intersection_polygon: Insufficient memory" );
+        }
+        if (( yfill = (short *) malloc( nfill * sizeof ( short ))) == NULL )
+        {
+            plexit( "fill_intersection_polygon: Insufficient memory" );
+        }
+        for ( ifill = 0; ifill < nfill; ifill++ )
+        {
+            xfill[ifill] = xfiller[ifill];
+            yfill[ifill] = yfiller[ifill];
+        }
+        ( *fill )( xfill, yfill, nfill );
+        free( xfill );
+        free( yfill );
+    }
+
+    return;
+}
+
+/* Find if an intersection (N.B. including end points) exists between
+ * straight line segments A and B defined by their endpoints xA1, yA1,
+ * xA2, yA2, xB1, yB1, xB2, yB2.  If not return true (-1 if parallel,
+ * 1 if intersecting away from segments).  If true, return false.
+ * Except for the parallel line case always return the intersection,
+ * (xintersect, yintersect) via the argument list. */
+
+int
+ifnotintersect( PLINT * xintersect, PLINT * yintersect,
+                PLINT xA1, PLINT yA1, PLINT xA2, PLINT yA2,
+                PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 )
+{
+    PLINT xA2A1, yA2A1, xB2B1, yB2B1;
+    PLINT xB1A1, yB1A1, xB2A1, yB2A1;
+    PLFLT factor;
+    /*
+     * Two linear equations to be solved for x and y.
+     * y = ((x - xA1)*yA2 + (xA2 - x)*yA1)/(xA2 - xA1)
+     * y = ((x - xB1)*yB2 + (xB2 - x)*yB1)/(xB2 - xB1)
+     *
+     * Transform those two equations to coordinate system with origin
+     * at (xA1, yA1).
+     * y' = x'*yA2A1/xA2A1
+     * y' = ((x' - xB1A1)*yB2A1 + (xB2A1 - x')*yB1A1)/xB2B1
+     * ==>
+     * x' = -(
+     * (-xB1A1*yB2A1 + xB2A1*yB1A1)/xB2B1)/
+     * (yB2B1/xB2B1 - yA2A1/xA2A1)
+     * = (xB1A1*yB2A1 - xB2A1*yB1A1)*xA2A1/
+     * (xA2A1*yB2B1 - yA2A1*xB2B1)
+     *
+     */
+
+    xA2A1 = xA2 - xA1;
+    yA2A1 = yA2 - yA1;
+    xB2B1 = xB2 - xB1;
+    yB2B1 = yB2 - yB1;
+
+    factor = xA2A1 * yB2B1 - yA2A1 * xB2B1;
+    /* If two line segments are parallel (including identical) .... */
+    if ( fabs( factor ) == 0. )
+        return -1;
+    xB1A1 = xB1 - xA1;
+    yB1A1 = yB1 - yA1;
+    xB2A1 = xB2 - xA1;
+    yB2A1 = yB2 - yA1;
+
+    factor      = ( xB1A1 * yB2A1 - yB1A1 * xB2A1 ) / factor;
+    *xintersect = factor * xA2A1 + xA1;
+    *yintersect = factor * yA2A1 + yA1;
+    /* The x and y range checks (which include end points) are redundant
+     * with each other for infinite-precision floating-point arithmetic.
+     * But we don't have that so do these "redundant" checks. */
+    if ( BETW( *xintersect, xA1, xA2 ) && BETW( *yintersect, yA1, yA2 ) &&
+         BETW( *xintersect, xB1, xB2 ) && BETW( *yintersect, yB1, yB2 ))
+        return 0;
+    else
+        return 1;
 }

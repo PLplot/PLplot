@@ -282,6 +282,11 @@
 /* Define if csa is desired */
 #cmakedefine WITH_CSA
 
+/* Define if want to use general fill_intersection_polygon approach
+ * rather than the traditional code to fill the intersection of a polygon with
+ * the clipping limits. */
+#cmakedefine USE_FILL_INTERSECTION_POLYGON
+
 /* Define to `char *' if <sys/types.h> does not define. */
 #cmakedefine caddr_t
 
