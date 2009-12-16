@@ -300,7 +300,7 @@ plfill_soft( short *x, short *y, PLINT n )
  * Utility functions
  \*----------------------------------------------------------------------*/
 
-static void
+void
 tran( PLINT *a, PLINT *b, PLFLT c, PLFLT d )
 {
     PLINT ta, tb;
@@ -312,7 +312,7 @@ tran( PLINT *a, PLINT *b, PLFLT c, PLFLT d )
     *b = (PLINT) floor((double) ( tb * c - ta * d + 0.5 ));
 }
 
-static void
+void
 buildlist( PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
            PLINT dinc )
 {
@@ -363,7 +363,7 @@ buildlist( PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
     }
 }
 
-static void
+void
 addcoord( PLINT xp1, PLINT yp1 )
 {
     PLINT *temp;
@@ -385,7 +385,7 @@ addcoord( PLINT xp1, PLINT yp1 )
     buffer[bufferleng++] = yp1;
 }
 
-static int
+int
 compar( const void *pnum1, const void *pnum2 )
 {
     const struct point *pnt1, *pnt2;
@@ -991,7 +991,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
  * are used to avoid overflow.
  \*----------------------------------------------------------------------*/
 
-static int
+int
 circulation( PLINT *x, PLINT *y, PLINT npts )
 {
     PLFLT xproduct;
@@ -1016,37 +1016,33 @@ circulation( PLINT *x, PLINT *y, PLINT npts )
     return direction;
 }
 
-/*----------------------------------------------------------------------*\
- * int pointinpolygon()
- *
- * PLINT wrapper for plP_pointinpolygon.
- \*----------------------------------------------------------------------*/
 
-static int
-pointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
+/* PLFLT wrapper for pointinpolygon. */
+int
+plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp )
 {
     int i, return_value;
-    PLFLT *xflt, *yflt;
-    if (( xflt = (PLFLT *) malloc( n * sizeof ( PLFLT ))) == NULL )
+    PLINT *xint, *yint;
+    if (( xint = (PLINT *) malloc( n * sizeof ( PLINT ))) == NULL )
     {
-        plexit( "pointinpolygon: Insufficient memory" );
+        plexit( "PlP_pointinpolygon: Insufficient memory" );
     }
-    if (( yflt = (PLFLT *) malloc( n * sizeof ( PLFLT ))) == NULL )
+    if (( yint = (PLINT *) malloc( n * sizeof ( PLINT ))) == NULL )
     {
-        plexit( "pointinpolygon: Insufficient memory" );
+        plexit( "PlP_pointinpolygon: Insufficient memory" );
     }
     for ( i = 0; i < n; i++ )
     {
-        xflt[i] = (PLFLT) x[i];
-        yflt[i] = (PLFLT) y[i];
+        xint[i] = (PLINT) x[i];
+        yint[i] = (PLINT) y[i];
     }
-    return_value = plP_pointinpolygon( n, xflt, yflt, (PLFLT) xp, (PLFLT) yp );
-    free( xflt );
-    free( yflt );
+    return_value = pointinpolygon( n, xint, yint, (PLINT) xp, (PLINT) yp );
+    free( xint );
+    free( yint );
     return return_value;
 }
 /*----------------------------------------------------------------------*\
- * int plP_pointinpolygon()
+ * int pointinpolygon()
  *
  * Returns 1 if the point is inside the polygon, 0 otherwise
  * Notes:
@@ -1058,13 +1054,16 @@ pointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
  \*----------------------------------------------------------------------*/
 
 int
-plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp )
+pointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
 {
     int i;
     int count_crossings;
-    PLFLT x1, y1, x2, y2, xout, yout, xmax;
+    PLFLT x1, y1, x2, y2, xpp, ypp, xout, yout, xmax;
     PLFLT xvp, yvp, xvv, yvv, xv1, yv1, xv2, yv2;
     PLFLT inprod1, inprod2;
+
+    xpp = (PLFLT) xp;
+    ypp = (PLFLT) yp;
 
     count_crossings = 0;
 
@@ -1090,22 +1089,25 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
     /* Determine for each side whether the line segment between
      * our two points crosses the vertex */
 
-    xvp = xp - xout;
-    yvp = yp - yout;
+    xpp = (PLFLT) xp;
+    ypp = (PLFLT) yp;
+
+    xvp = xpp - xout;
+    yvp = ypp - yout;
 
     for ( i = 0; i < n; i++ )
     {
-        x1 = x[i];
-        y1 = y[i];
+        x1 = (PLFLT) x[i];
+        y1 = (PLFLT) y[i];
         if ( i < n - 1 )
         {
-            x2 = x[i + 1];
-            y2 = y[i + 1];
+            x2 = (PLFLT) x[i + 1];
+            y2 = (PLFLT) y[i + 1];
         }
         else
         {
-            x2 = x[0];
-            y2 = y[0];
+            x2 = (PLFLT) x[0];
+            y2 = (PLFLT) y[0];
         }
 
         /* Skip zero-length segments */
@@ -1129,11 +1131,11 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
         }
 
         /* Line through the two vertices:
-         * Are xout and xp on either side? */
+         * Are xout and xpp on either side? */
         xvv     = x2 - x1;
         yvv     = y2 - y1;
-        xv1     = xp - x1;
-        yv1     = yp - y1;
+        xv1     = xpp - x1;
+        yv1     = ypp - y1;
         xv2     = xout - x1;
         yv2     = yout - y1;
         inprod1 = xv1 * yvv - yv1 * xvv;
@@ -1153,7 +1155,6 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
 
     return ( count_crossings % 2 );
 }
-
 /* Fill intersection of two simple (not self-intersecting) polygons.
  * There must be an even number of edge intersections between the two
  * polygons (ignoring vertex intersections which touch, but do not cross).
