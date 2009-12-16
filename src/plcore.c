@@ -2805,7 +2805,9 @@ plInitDispatchTable()
     if (( dispatch_table = (PLDispatchTable **)
                            malloc(( nplstaticdevices + npldynamicdevices ) * sizeof ( PLDispatchTable * ))) == NULL )
     {
+#ifdef ENABLE_DYNDRIVERS
         fclose( fp_drvdb );
+#endif
         plexit( "plInitDispatchTable: Insufficient memory" );
     }
 
@@ -2818,7 +2820,9 @@ plInitDispatchTable()
     {
         if (( dispatch_table[n] = (PLDispatchTable *) malloc( sizeof ( PLDispatchTable ))) == NULL )
         {
+#ifdef ENABLE_DYNDRIVERS
             fclose( fp_drvdb );
+#endif
             plexit( "plInitDispatchTable: Insufficient memory" );
         }
 
