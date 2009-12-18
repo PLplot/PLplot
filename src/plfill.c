@@ -2,7 +2,8 @@
  *
  *      Polygon pattern fill.
  *
- * Copyright (C) 2004  Alan W. Irwin
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009  Alan W. Irwin
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009  Arjen Markus
  *
  * This file is part of PLplot.
  *
@@ -50,13 +51,13 @@ static void
 buildlist( PLINT, PLINT, PLINT, PLINT, PLINT, PLINT, PLINT );
 
 static int
-pointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp );
+notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp );
 
 static int
 circulation( PLINT *x, PLINT *y, PLINT npts );
 
 static void
-fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
+fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                            void ( *fill )( short *, short *, PLINT ),
                            const PLINT *x1, const PLINT *y1,
                            PLINT i1start, PLINT n1,
@@ -64,9 +65,9 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
                            const PLINT *if2, PLINT n2 );
 
 static int
-ifnotintersect( PLINT *xintersect, PLINT *yintersect,
-                PLINT xA1, PLINT yA1, PLINT xA2, PLINT yA2,
-                PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 );
+notintersect( PLINT *xintersect, PLINT *yintersect,
+              PLINT xA1, PLINT yA1, PLINT xA2, PLINT yA2,
+              PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 );
 
 /*----------------------------------------------------------------------*\
  * void plfill()
@@ -489,10 +490,10 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             plexit( "plP_plfclp: Insufficient memory" );
         }
     }
-    inside_lb = pointinpolygon( npts, x, y, xmin, ymin );
-    inside_lu = pointinpolygon( npts, x, y, xmin, ymax );
-    inside_rb = pointinpolygon( npts, x, y, xmax, ymin );
-    inside_ru = pointinpolygon( npts, x, y, xmax, ymax );
+    inside_lb = !notpointinpolygon( npts, x, y, xmin, ymin );
+    inside_lu = !notpointinpolygon( npts, x, y, xmin, ymax );
+    inside_rb = !notpointinpolygon( npts, x, y, xmax, ymin );
+    inside_ru = !notpointinpolygon( npts, x, y, xmax, ymax );
 
     for ( i = 0; i < npts - 1; i++ )
     {
@@ -1017,12 +1018,13 @@ circulation( PLINT *x, PLINT *y, PLINT npts )
 }
 
 
-/* PLFLT wrapper for pointinpolygon. */
+/* PLFLT wrapper for !notpointinpolygon. */
 int
 plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp )
 {
     int i, return_value;
     PLINT *xint, *yint;
+    PLFLT xmaximum = fabs( xp ), ymaximum = fabs( yp ), xscale, yscale;
     if (( xint = (PLINT *) malloc( n * sizeof ( PLINT ))) == NULL )
     {
         plexit( "PlP_pointinpolygon: Insufficient memory" );
@@ -1033,29 +1035,39 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
     }
     for ( i = 0; i < n; i++ )
     {
-        xint[i] = (PLINT) x[i];
-        yint[i] = (PLINT) y[i];
+        xmaximum = MAX( xmaximum, fabs( x[i] ));
+        ymaximum = MAX( ymaximum, fabs( y[i] ));
     }
-    return_value = pointinpolygon( n, xint, yint, (PLINT) xp, (PLINT) yp );
+    xscale = 2.e9 / xmaximum;
+    yscale = 2.e9 / ymaximum;
+    for ( i = 0; i < n; i++ )
+    {
+        xint[i] = (PLINT) ( xscale * x[i] );
+        yint[i] = (PLINT) ( yscale * y[i] );
+    }
+    return_value = !notpointinpolygon( n, xint, yint,
+        (PLINT) ( xscale * xp ), (PLINT) ( yscale * yp ));
     free( xint );
     free( yint );
     return return_value;
 }
 /*----------------------------------------------------------------------*\
- * int pointinpolygon()
+ * int notpointinpolygon()
  *
- * Returns 1 if the point is inside the polygon, 0 otherwise
+ * Returns 0, 1, or 2 depending on whether the test point is definitely
+ * inside, near the border, or definitely outside the polygon.
  * Notes:
- * Points on the polygon are considered to be outside.
  * This "Ray casting algorithm" has been described in
  * http://en.wikipedia.org/wiki/Point_in_polygon.
  * Logic still needs to be inserted to take care of the "ray passes
  * through vertex" problem in a numerically robust way.
  \*----------------------------------------------------------------------*/
 
+#define TEMPORARY_NOTPOINTINPOLYGON_CODE
 int
-pointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
+notpointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
 {
+#ifdef TEMPORARY_NOTPOINTINPOLYGON_CODE
     int i;
     int count_crossings;
     PLFLT x1, y1, x2, y2, xpp, ypp, xout, yout, xmax;
@@ -1153,71 +1165,68 @@ pointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
     /* Return the result: an even number of crossings means the
      * point is outside the polygon */
 
-    return ( count_crossings % 2 );
+    return !( count_crossings % 2 );
 }
+#else
+    int i, im1;
+    int count_crossings = 0;
+    PLINT xmin, xout, yout, xintersect, yintersect;
+
+
+    /* Determine a point outside the polygon  */
+
+    xmin = x[0];
+    xout = x[0];
+    yout = y[0];
+    for ( i = 1; i < n; i++ )
+    {
+        xout = MAX( xout, x[i] );
+        xmin = MIN( xmin, x[i] );
+    }
+    /* + 10 to make sure completely outside. */
+    xout = xout + ( xout - xmin ) + 10;
+
+    /* Determine whether the line between (xout, yout) and (xp, yp) intersects
+     * one of the polygon segments. */
+
+    im1 = n - 1;
+    for ( i = 0; i < n; i++ )
+    {
+        if ( !( x[im1] == x[i] && y[im1] == y[i] ) &&
+             !notintersect( &xintersect, &yintersect,
+                 x[im1], y[im1], x[i], y[i],
+                 xp, yp, xout, yout ))
+            count_crossings++;
+        im1 = i;
+    }
+
+    /* Return the result: an even number of crossings means the
+     * point is outside the polygon */
+
+    return !( count_crossings % 2 );
+}
+#endif /* TEMPORARY_NOTPOINTINPOLYGON_CODE */
 /* Fill intersection of two simple (not self-intersecting) polygons.
  * There must be an even number of edge intersections between the two
  * polygons (ignoring vertex intersections which touch, but do not cross).
  * Eliminate those intersection pairs by recursion (calling the same
- * routine again with either the first or second polygon split between
- * the two intersecting edges into two independent second polygons.)
+ * routine twice again with the second polygon split at a boundary defined
+ * by the first intersection point, all polygon 1 vertices between
+ * the intersections, and the second intersection point).
  * Once the recursion has eliminated all intersecting edges, fill or
  * not using the appropriate polygon depending on whether the first
  * and second polygons are identical or whether one of them is
- * entirely inside the other of them.  If ifclip is true, the fill
+ * entirely inside the other of them.  If ifextrapolygon is true, the fill
  * step will consist of another recursive call to the routine with
- * ifclip false and the second polygon set to the clip rectangle.
+ * ifextrapolygon false, and the second polygon set to an additional
+ * polygon defined by the stream (not yet implemented).
  * N.B. it is the calling routine's responsibility to insure the two
  * polygons are not self-intersecting and do not have duplicate points.  */
 
-/*  Consider the intersections between the first and second
- * polygons (including the possibility of multiple intersections per edge of
- * the first polygon).  The total number of such intersections must be even.
- * Solve for the first pair of intersections (if any) and simplify the problem
- * by recursively calling the same routine twice with the same first polygon
- * and two modified second polygons consisting of the left-hand segment of the
- * second polygon + two intersection points and the right-hand segment of the
- * second polygon + two intersection points.  Note that for the recursive call
- * the vertices that were intersection points should not generate new
- * intersections with the first unchanging polygon because points on the
- * perimeter of polygons are always considered to be outside it.  However, due
- * to integer truncation and other numerical errors I doubt we can guaranteed
- * that numerically in all cases. So we set up a logical array that drops
- * segments from the intersection test that are already bounded by
- * intersections generated higher in the recursion stack.  The result
- * of this recursion is deep in the recursion stack you finally end up
- * considering the case of the original first polygon and a modified second
- * polygon that does not intersect with it at all.
- *
- *
- * . Solve that simple case.  Check for identical polygons (taking into account
- * the possibilities of different starting points and different directions
- * traversing the perimeter), and if so, do a fill of the first polygon (to be
- * specific) in that case. If not identical, then do one testinpolygon call to
- * decide if the second polygon is totally inside the first.  If so, fill the
- * second polygon.  If not, use one additional testinpolygon call to decide if
- * the first polygon is totally inside the second, and if so, fill the first
- * polygon.
- *
- * . Carry a clip flag as part of the recursion, and for the simple case above
- * with the flag true, start the recursion all over again (with the clip flag
- * false) with the "filling" polygon as the first polygon, and the clip
- * rectangle as the the second.
- *
- *
- * Find innermost polygon of (x1,y1) and (x2, y2) for the purposes of
- * filling.  The number of vertices is returned, and the resulting
- * inner (xinner, yinner) polygon calculated for that number of
- * vertices.  A zero is returned as an error code if the number of
- * inner polygon vertices exceeds max_ninner (which should be set
- * externally to the size allocated externally for xinner, yinner).  A
- * zero is also returned if n1 < 3 or (n2 < 3 && n2 != -2).  (Note
- * that n2 = -2 signals the special case when the second polygon is a
- * rectangle.)  */
 
 #define MAX_RECURSION_DEPTH    10
 void
-fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
+fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                            void ( *fill )( short *, short *, PLINT ),
                            const PLINT *x1, const PLINT *y1,
                            PLINT i1start, PLINT n1,
@@ -1306,9 +1315,9 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
      *
      * --- 1    1
      *            1            2         1      1 ...
-     *             x
+     *             X
      *                               1
-     *                             x
+     *                             X
      *           2
      *                1         1
      *                   1
@@ -1317,11 +1326,11 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
      *                     2???2
      *
      *
-     * "1" marks polygon 1 vertices, "2" marks polygon 2 vertices, "x"
+     * "1" marks polygon 1 vertices, "2" marks polygon 2 vertices, "X"
      * marks the intersections, "---" stands for part of polygon 1
      * that has been previously searched for all possible intersections
      * from index 0, and "..." means polygon 1 continues
-     * with more potential intersections both above or below this diagram
+     * with more potential intersections above and/or below this diagram
      * before it finally hooks back to connect with the index 0 vertex.
      * "2???2" stands for parts of polygon 2 that must connect with each other
      * (since the polygon 1 path between the two intersections is
@@ -1359,7 +1368,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
             if ( !if2[i2] )
             {
                 /* intersect is acted upon only if a series of conditions are met. */
-                ifintersect = !ifnotintersect(
+                ifintersect = !notintersect(
                     &xintersect[nintersect], &yintersect[nintersect],
                     x1[i1m1], y1[i1m1], x1[i1], y1[i1],
                     x2[i2m1], y2[i2m1], x2[i2], y2[i2] );
@@ -1500,7 +1509,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
                             if ( kk >= n2 )
                                 kk -= n2;
                         }
-                        fill_intersection_polygon( recursion_depth + 1, ifclip, fill,
+                        fill_intersection_polygon( recursion_depth + 1, ifextrapolygon, fill,
                             x1, y1, i1start, n1,
                             xsplit1, ysplit1, ifsplit1, nsplit1 );
                         free( xsplit1 );
@@ -1518,7 +1527,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
                             if ( kk < 0 )
                                 kk += n2;
                         }
-                        fill_intersection_polygon( recursion_depth + 1, ifclip, fill,
+                        fill_intersection_polygon( recursion_depth + 1, ifextrapolygon, fill,
                             x1, y1, i1start, n1,
                             xsplit2, ysplit2, ifsplit2, nsplit2 );
                         free( xsplit2 );
@@ -1534,20 +1543,28 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
         i1m1   = i1;
         i1wrap = i1m1;
     }
+
     if ( nintersect != 0 )
     {
         plwarn( "fill_intersection_polygon: Internal error; nintersect != 0." );
         return;
     }
 
-    /* Look for first vertex in Polygon 2 that does not intersect with 1. */
+    /* This end phase is reached only if no intersections are found.
+     * For this case, the intersection of polygon 2 and 1, must be
+     * either of them (in which case fill with the inner one), or neither
+     * of them (in which case don't fill at all). */
+
+    /* Look for first vertex in polygon 2 that is inside polygon 1. */
     for ( i2 = 0; i2 < n2; i2++ )
     {
-        if ( !if2[i2] )
+        /* Do not bother checking vertices already known to be on the
+         * boundary with polygon 1. */
+        if ( !if2[i2] && !notpointinpolygon( n1, x1, y1, x2[i2], y2[i2] ))
             break;
     }
 
-    if ( i2 < n2 && pointinpolygon( n1, x1, y1, x2[i2], y2[i2] ))
+    if ( i2 < n2 )
     {
         /* All of polygon 2 inside polygon 1. */
         nfill   = n2;
@@ -1559,7 +1576,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
         /* Look for first vertex in polygon 1 that is inside polygon 2. */
         for ( i1 = 0; i1 < n1; i1++ )
         {
-            if ( pointinpolygon( n2, x2, y2, x1[i1], y1[i1] ))
+            if ( !notpointinpolygon( n2, x2, y2, x1[i1], y1[i1] ))
                 break;
         }
 
@@ -1571,7 +1588,8 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
             yfiller = y1;
         }
         else
-            plwarn( "fill_intersection_polygon: inscribed polygon not yet implemented" );
+        {
+        }
     }
     if ( nfill > 0 )
     {
@@ -1604,13 +1622,15 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifclip,
  * (xintersect, yintersect) via the argument list. */
 
 int
-ifnotintersect( PLINT * xintersect, PLINT * yintersect,
-                PLINT xA1, PLINT yA1, PLINT xA2, PLINT yA2,
-                PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 )
+notintersect( PLINT * xintersect, PLINT * yintersect,
+              PLINT xA1, PLINT yA1, PLINT xA2, PLINT yA2,
+              PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 )
 {
-    PLINT xA2A1, yA2A1, xB2B1, yB2B1;
-    PLINT xB1A1, yB1A1, xB2A1, yB2A1;
-    PLFLT factor;
+    PLFLT factor, fxintersect, fyintersect;
+    /* These variables are PLFLT not for precision, but to
+     * avoid integer overflows if they were typed as PLINT.  */
+    PLFLT xA2A1, yA2A1, xB2B1, yB2B1;
+    PLFLT xB1A1, yB1A1, xB2A1, yB2A1;
     /*
      * Two linear equations to be solved for x and y.
      * y = ((x - xA1)*yA2 + (xA2 - x)*yA1)/(xA2 - xA1)
@@ -1635,22 +1655,51 @@ ifnotintersect( PLINT * xintersect, PLINT * yintersect,
     yB2B1 = yB2 - yB1;
 
     factor = xA2A1 * yB2B1 - yA2A1 * xB2B1;
-    /* If two line segments are parallel (including identical) .... */
     if ( fabs( factor ) == 0. )
-        return -1;
+    {
+        /* Two line segments are parallel */
+        /* For this case check for an intersect for each of the end
+         * points of A segment against the B segment. */
+        fxintersect = xA1;
+        fyintersect = yA1;
+        if ( BETW( fxintersect, xB1, xB2 ) && BETW( fyintersect, yB1, yB2 ))
+        {
+            *xintersect = fxintersect;
+            *yintersect = fyintersect;
+            return 0;
+        }
+        else
+        {
+            fxintersect = xA2;
+            fyintersect = yA2;
+            if ( BETW( fxintersect, xB1, xB2 ) || BETW( fyintersect, yB1, yB2 ))
+            {
+                *xintersect = fxintersect;
+                *yintersect = fyintersect;
+                return 0;
+            }
+            else
+            {
+                /* parallel and no intersect. */
+                return -1;
+            }
+        }
+    }
     xB1A1 = xB1 - xA1;
     yB1A1 = yB1 - yA1;
     xB2A1 = xB2 - xA1;
     yB2A1 = yB2 - yA1;
 
     factor      = ( xB1A1 * yB2A1 - yB1A1 * xB2A1 ) / factor;
-    *xintersect = factor * xA2A1 + xA1;
-    *yintersect = factor * yA2A1 + yA1;
-    /* The x and y range checks (which include end points) are redundant
-     * with each other for infinite-precision floating-point arithmetic.
-     * But we don't have that so do these "redundant" checks. */
-    if ( BETW( *xintersect, xA1, xA2 ) && BETW( *yintersect, yA1, yA2 ) &&
-         BETW( *xintersect, xB1, xB2 ) && BETW( *yintersect, yB1, yB2 ))
+    fxintersect = factor * xA2A1 + xA1;
+    *xintersect = fxintersect;
+    fyintersect = factor * yA2A1 + yA1;
+    *yintersect = fyintersect;
+
+    /* The "redundant" x and y segment range checks (which include end points)
+     * are needed for the vertical and the horizontal cases. */
+    if (( BETW( fxintersect, xA1, xA2 ) || BETW( fyintersect, yA1, yA2 )) &&
+        ( BETW( fxintersect, xB1, xB2 ) || BETW( fyintersect, yB1, yB2 )))
         return 0;
     else
         return 1;
