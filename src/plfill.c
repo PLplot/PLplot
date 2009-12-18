@@ -1038,8 +1038,8 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
         xmaximum = MAX( xmaximum, fabs( x[i] ));
         ymaximum = MAX( ymaximum, fabs( y[i] ));
     }
-    xscale = 2.e9 / xmaximum;
-    yscale = 2.e9 / ymaximum;
+    xscale = 1.e8 / xmaximum;
+    yscale = 1.e8 / ymaximum;
     for ( i = 0; i < n; i++ )
     {
         xint[i] = (PLINT) ( xscale * x[i] );
@@ -1063,11 +1063,49 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
  * through vertex" problem in a numerically robust way.
  \*----------------------------------------------------------------------*/
 
-#define TEMPORARY_NOTPOINTINPOLYGON_CODE
+#define NEW_NOTPOINTINPOLYGON_CODE
 int
 notpointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
 {
-#ifdef TEMPORARY_NOTPOINTINPOLYGON_CODE
+#ifdef NEW_NOTPOINTINPOLYGON_CODE
+    int i, im1;
+    int count_crossings = 0;
+    PLINT xmin, xout, yout, xintersect, yintersect;
+
+
+    /* Determine a point outside the polygon  */
+
+    xmin = x[0];
+    xout = x[0];
+    yout = y[0];
+    for ( i = 1; i < n; i++ )
+    {
+        xout = MAX( xout, x[i] );
+        xmin = MIN( xmin, x[i] );
+    }
+    /* + 10 to make sure completely outside. */
+    xout = xout + ( xout - xmin ) + 10;
+
+    /* Determine whether the line between (xout, yout) and (xp, yp) intersects
+     * one of the polygon segments. */
+
+    im1 = n - 1;
+    for ( i = 0; i < n; i++ )
+    {
+        if ( !( x[im1] == x[i] && y[im1] == y[i] ) &&
+             !notintersect( &xintersect, &yintersect,
+                 x[im1], y[im1], x[i], y[i],
+                 xp, yp, xout, yout ))
+            count_crossings++;
+        im1 = i;
+    }
+
+    /* Return the result: an even number of crossings means the
+     * point is outside the polygon */
+
+    return !( count_crossings % 2 );
+}
+#else /* NEW_NOTPOINTINPOLYGON_CODE */
     int i;
     int count_crossings;
     PLFLT x1, y1, x2, y2, xpp, ypp, xout, yout, xmax;
@@ -1167,45 +1205,7 @@ notpointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
 
     return !( count_crossings % 2 );
 }
-#else
-    int i, im1;
-    int count_crossings = 0;
-    PLINT xmin, xout, yout, xintersect, yintersect;
-
-
-    /* Determine a point outside the polygon  */
-
-    xmin = x[0];
-    xout = x[0];
-    yout = y[0];
-    for ( i = 1; i < n; i++ )
-    {
-        xout = MAX( xout, x[i] );
-        xmin = MIN( xmin, x[i] );
-    }
-    /* + 10 to make sure completely outside. */
-    xout = xout + ( xout - xmin ) + 10;
-
-    /* Determine whether the line between (xout, yout) and (xp, yp) intersects
-     * one of the polygon segments. */
-
-    im1 = n - 1;
-    for ( i = 0; i < n; i++ )
-    {
-        if ( !( x[im1] == x[i] && y[im1] == y[i] ) &&
-             !notintersect( &xintersect, &yintersect,
-                 x[im1], y[im1], x[i], y[i],
-                 xp, yp, xout, yout ))
-            count_crossings++;
-        im1 = i;
-    }
-
-    /* Return the result: an even number of crossings means the
-     * point is outside the polygon */
-
-    return !( count_crossings % 2 );
-}
-#endif /* TEMPORARY_NOTPOINTINPOLYGON_CODE */
+#endif /* NEW_NOTPOINTINPOLYGON_CODE */
 /* Fill intersection of two simple (not self-intersecting) polygons.
  * There must be an even number of edge intersections between the two
  * polygons (ignoring vertex intersections which touch, but do not cross).
@@ -1672,7 +1672,7 @@ notintersect( PLINT * xintersect, PLINT * yintersect,
         {
             fxintersect = xA2;
             fyintersect = yA2;
-            if ( BETW( fxintersect, xB1, xB2 ) || BETW( fyintersect, yB1, yB2 ))
+            if ( BETW( fxintersect, xB1, xB2 ) && BETW( fyintersect, yB1, yB2 ))
             {
                 *xintersect = fxintersect;
                 *yintersect = fyintersect;
@@ -1698,8 +1698,8 @@ notintersect( PLINT * xintersect, PLINT * yintersect,
 
     /* The "redundant" x and y segment range checks (which include end points)
      * are needed for the vertical and the horizontal cases. */
-    if (( BETW( fxintersect, xA1, xA2 ) || BETW( fyintersect, yA1, yA2 )) &&
-        ( BETW( fxintersect, xB1, xB2 ) || BETW( fyintersect, yB1, yB2 )))
+    if (( BETW( fxintersect, xA1, xA2 ) && BETW( fyintersect, yA1, yA2 )) &&
+        ( BETW( fxintersect, xB1, xB2 ) && BETW( fyintersect, yB1, yB2 )))
         return 0;
     else
         return 1;
