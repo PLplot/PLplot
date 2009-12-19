@@ -27,8 +27,41 @@
 
 #define INSIDE( ix, iy )    ( BETW( ix, xmin, xmax ) && BETW( iy, ymin, ymax ))
 
-#define DTOR    ( PI / 180. )
-#define BINC    50
+#define DTOR       ( PI / 180. )
+#define BINC       50
+/* Near-border comparison criterion (NBCC). */
+#define PL_NBCC    2
+/* Variant of BETW that returns true if between or within PL_NBCC of it. */
+#define BETW_NBCC( ix, ia, ib )    ((( ix ) <= ( ia + PL_NBCC ) && ( ix ) >= ( ib - PL_NBCC )) || (( ix ) >= ( ia - PL_NBCC ) && ( ix ) <= ( ib + PL_NBCC )))
+
+/* Status codes ORed together in the return from notcrossed.
+ * PL_NOT_CROSSED is set whenever the two line segments definitely
+ * (i.e., not near the ends or completely apart) do not cross each
+ * other.
+ *
+ * PL_NEAR_A1 is set if the intersect is near (+/- PL_NBCC) the first
+ * end of line segment A.
+ *
+ * PL_NEAR_A2 is set if the intersect is near (+/- PL_NBCC) the second
+ * end of line segment A.
+ *
+ * PL_NEAR_B1 is set if the intersect is near (+/- PL_NBCC) the first
+ * end of line segment B.
+ *
+ * PL_NEAR_B2 is set if the intersect is near (+/- PL_NBCC) the second
+ * end of line segment B.
+ *
+ * PL_PARALLEL is set if the two line segments are parallel with each other.
+ */
+enum PL_CrossedStatus
+{
+    PL_NOT_CROSSED = 0x1,
+    PL_NEAR_A1     = 0x2,
+    PL_NEAR_A2     = 0x4,
+    PL_NEAR_B1     = 0x8,
+    PL_NEAR_B2     = 0x10,
+    PL_PARALLEL    = 0x20
+};
 
 struct point
 {
@@ -65,9 +98,9 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                            const PLINT *if2, PLINT n2 );
 
 static int
-notintersect( PLINT *xintersect, PLINT *yintersect,
-              PLINT xA1, PLINT yA1, PLINT xA2, PLINT yA2,
-              PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 );
+notcrossed( PLINT *xintersect, PLINT *yintersect,
+            PLINT xA1, PLINT yA1, PLINT xA2, PLINT yA2,
+            PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 );
 
 /*----------------------------------------------------------------------*\
  * void plfill()
@@ -1063,12 +1096,13 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
  * through vertex" problem in a numerically robust way.
  \*----------------------------------------------------------------------*/
 
+/* Temporary until get rid of old code altogether. */
 #define NEW_NOTPOINTINPOLYGON_CODE
 int
 notpointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
 {
 #ifdef NEW_NOTPOINTINPOLYGON_CODE
-    int i, im1;
+    int i, im1, ifnotcrossed;
     int count_crossings = 0;
     PLINT xmin, xout, yout, xintersect, yintersect;
 
@@ -1092,18 +1126,28 @@ notpointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
     im1 = n - 1;
     for ( i = 0; i < n; i++ )
     {
-        if ( !( x[im1] == x[i] && y[im1] == y[i] ) &&
-             !notintersect( &xintersect, &yintersect,
-                 x[im1], y[im1], x[i], y[i],
-                 xp, yp, xout, yout ))
-            count_crossings++;
+        if ( !( x[im1] == x[i] && y[im1] == y[i] ))
+        {
+            ifnotcrossed = notcrossed( &xintersect, &yintersect,
+                x[im1], y[im1], x[i], y[i],
+                xp, yp, xout, yout );
+
+            if ( !ifnotcrossed )
+                count_crossings++;
+            else if ( ifnotcrossed & ( PL_NEAR_A1 | PL_NEAR_A2 | PL_NEAR_B1 | PL_NEAR_B2 ))
+                return 1;
+        }
         im1 = i;
     }
 
-    /* Return the result: an even number of crossings means the
-     * point is outside the polygon */
-
-    return !( count_crossings % 2 );
+    /* return 0 if the test point is definitely inside
+     * (count_crossings odd), return 1 if the test point is near (see
+     * above logic), and return 2 if the test point is definitely
+     * outside the border (count_crossings even). */
+    if (( count_crossings % 2 ) == 1 )
+        return 0;
+    else
+        return 2;
 }
 #else /* NEW_NOTPOINTINPOLYGON_CODE */
     int i;
@@ -1236,12 +1280,13 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
     PLINT i1, i1m1, i1wrap, i1wraplast,
           i2, i2m1, i2wrap, i2wraplast,
           kk, kkstart1, kkstart21, kkstart22,
-          k, kstart, range1, range21, range22, nintersect,
+          k, kstart, range1, range21, range22, ncrossed,
           nsplit1, nsplit2;
-    PLINT xintersect[2], yintersect[2], ifintersect;
+    PLINT xintersect[2], yintersect[2], ifcrossed;
     PLINT *xsplit1, *ysplit1, *ifsplit1,
     *xsplit2, *ysplit2, *ifsplit2;
-    PLINT ifill, nfill = 0;
+    PLINT ifill, nfill = 0,
+          ifnotpolygon1inpolygon2, ifnotpolygon2inpolygon1;
     const PLINT *xfiller, *yfiller;
     short *xfill, *yfill;
 
@@ -1271,7 +1316,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
     }
 
     i1m1 = i1start - 1;
-    if ( i1m1 <= 0 )
+    if ( i1m1 < 0 )
         i1m1 = n1 - 1;
 
     for ( i1 = i1start; i1 < n1; i1++ )
@@ -1297,7 +1342,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
 
     if ( i2 < n2 )
     {
-        plwarn( "fill_intersection_polygon: Internal error; i < n2." );
+        plwarn( "fill_intersection_polygon: Internal error; i2 < n2." );
         return;
     }
 
@@ -1356,9 +1401,12 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
      * intersections to be found between polygon 1 and some polygon 2
      * split, and in that case we move on to the end phase below.
      */
-    nintersect = 0;
-    i1m1       = n1 - 1;
-    i1wrap     = -1;
+    ncrossed = 0;
+    i1wrap   = i1start - 1;
+    if ( i1wrap < 0 )
+        i1m1 = n1 - 1;
+    else
+        i1m1 = i1wrap;
     for ( i1 = i1start; i1 < n1; i1++ )
     {
         i2m1   = n2 - 1;
@@ -1367,34 +1415,23 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         {
             if ( !if2[i2] )
             {
-                /* intersect is acted upon only if a series of conditions are met. */
-                ifintersect = !notintersect(
-                    &xintersect[nintersect], &yintersect[nintersect],
+                /* ifcrossed true only if there is a definite crossing of
+                 * the two line segments with the intersect not being
+                 * near (+/- PL_NBCC) the ends. ToDo.  This test
+                 * must be made more elaborate if the polygons definitely
+                 * cross near one or both of their vertices. */
+                ifcrossed = !notcrossed(
+                    &xintersect[ncrossed], &yintersect[ncrossed],
                     x1[i1m1], y1[i1m1], x1[i1], y1[i1],
                     x2[i2m1], y2[i2m1], x2[i2], y2[i2] );
-                ifintersect = ifintersect && !(
-                    xintersect[nintersect] == x1[i1m1] &&
-                    yintersect[nintersect] == y1[i1m1] );
-                ifintersect = ifintersect && !(
-                    xintersect[nintersect] == x1[i1] &&
-                    yintersect[nintersect] == y1[i1] );
-                ifintersect = ifintersect && !(
-                    xintersect[nintersect] == x2[i2m1] &&
-                    yintersect[nintersect] == y2[i2m1] );
-                ifintersect = ifintersect && !(
-                    xintersect[nintersect] == x2[i2] &&
-                    yintersect[nintersect] == y2[i2] );
-                if ( ifintersect )
+                if ( ifcrossed )
                 {
-                    /* The above test must be more elaborate if the intersection
-                     * point is a vertex of the first polygon, the second polygon
-                     * or both. ToDo! */
-                    if ( nintersect == 0 )
+                    if ( ncrossed == 0 )
                     {
                         i1wraplast = i1wrap;
                         i2wraplast = i2wrap;
 
-                        nintersect++;
+                        ncrossed++;
                     }
                     else
                     {
@@ -1544,53 +1581,81 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         i1wrap = i1m1;
     }
 
-    if ( nintersect != 0 )
+    if ( ncrossed != 0 )
     {
-        plwarn( "fill_intersection_polygon: Internal error; nintersect != 0." );
+        plwarn( "fill_intersection_polygon: Internal error; ncrossed != 0." );
         return;
     }
 
     /* This end phase is reached only if no intersections are found.
-     * For this case, the intersection of polygon 2 and 1, must be
+     * For this case, there are 5 valid and 1 invalid combination of
+     * the following conditions:the intersection of polygon 2 and 1, must be
      * either of them (in which case fill with the inner one), or neither
      * of them (in which case don't fill at all). */
 
-    /* Look for first vertex in polygon 2 that is inside polygon 1. */
+    /* Classify polygon 1 by looking for first vertex in polygon 1
+     * that is definitely inside or outside polygon 2. */
+    for ( i1 = 0; i1 < n1; i1++ )
+    {
+        if (( ifnotpolygon1inpolygon2 =
+                  notpointinpolygon( n2, x2, y2, x1[i1], y1[i1] )) != 1 )
+            break;
+    }
+
+    /* Classify polygon 2 by looking for first vertex in polygon 2
+     * that is definitely inside or outside polygon 1. */
+    ifnotpolygon2inpolygon1 = 1;
     for ( i2 = 0; i2 < n2; i2++ )
     {
         /* Do not bother checking vertices already known to be on the
          * boundary with polygon 1. */
-        if ( !if2[i2] && !notpointinpolygon( n1, x1, y1, x2[i2], y2[i2] ))
+        if ( !if2[i2] && ( ifnotpolygon2inpolygon1 =
+                               notpointinpolygon( n1, x1, y1, x2[i2], y2[i2] )) != 1 )
             break;
     }
 
-    if ( i2 < n2 )
+    if ( ifnotpolygon2inpolygon1 == 0 )
     {
-        /* All of polygon 2 inside polygon 1. */
-        nfill   = n2;
-        xfiller = x2;
-        yfiller = y2;
-    }
-    else
-    {
-        /* Look for first vertex in polygon 1 that is inside polygon 2. */
-        for ( i1 = 0; i1 < n1; i1++ )
+        /* Polygon 2 definitely inside polygon 1. */
+        if ( ifnotpolygon1inpolygon2 != 0 )
         {
-            if ( !notpointinpolygon( n2, x2, y2, x1[i1], y1[i1] ))
-                break;
+            nfill   = n2;
+            xfiller = x2;
+            yfiller = y2;
         }
-
-        if ( i1 < n1 )
+        else
+            plwarn( "fill_intersection_polygon: Internal error; no intersections found but each polygon definitely inside the other!" );
+    }
+    else if ( ifnotpolygon2inpolygon1 == 1 )
+    {
+        /* Polygon 2 vertices near polygon 1 border. */
+        if ( ifnotpolygon1inpolygon2 != 0 )
         {
-            /* All of polygon 1 inside polygon 2 */
+            /* Polygon 1 vertices near polygon 2 border or definitely outside it. */
+            nfill   = n2;
+            xfiller = x2;
+            yfiller = y2;
+        }
+        else
+        {
+            /* Polygon 1 vertices definitely inside polygon 2 border. */
             nfill   = n1;
             xfiller = x1;
             yfiller = y1;
         }
-        else
+    }
+    else
+    {
+        /* Polygon 2 vertices definitely outside polygon 1 border. */
+        if ( ifnotpolygon1inpolygon2 != 2 )
         {
+            /* Polygon 1 vertices definitely inside polygon 2 border. */
+            nfill   = n1;
+            xfiller = x1;
+            yfiller = y1;
         }
     }
+
     if ( nfill > 0 )
     {
         if (( xfill = (short *) malloc( nfill * sizeof ( short ))) == NULL )
@@ -1614,23 +1679,27 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
     return;
 }
 
-/* Find if an intersection (N.B. including end points) exists between
- * straight line segments A and B defined by their endpoints xA1, yA1,
- * xA2, yA2, xB1, yB1, xB2, yB2.  If not return true (-1 if parallel,
- * 1 if intersecting away from segments).  If true, return false.
- * Except for the parallel line case always return the intersection,
- * (xintersect, yintersect) via the argument list. */
+/* Returns a 0 status code if the two line segments A, and B defined
+ * by their end points (xA1, yA1, xA2, yA2, xB1, yB1, xB2, and yB2)
+ * definitely (i.e., intersection point is not near the ends of either
+ * of the line segments) cross each other.  Otherwise, return a status
+ * code specifying the type of non-crossing (i.e., completely
+ * separate, near one of the ends, parallel).  Return the actual
+ * intersection (or average of the x end points and y end points for
+ * the parallel, not crossed case) via the argument list pointers to
+ * xintersect and yintersect. */
 
 int
-notintersect( PLINT * xintersect, PLINT * yintersect,
-              PLINT xA1, PLINT yA1, PLINT xA2, PLINT yA2,
-              PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 )
+notcrossed( PLINT * xintersect, PLINT * yintersect,
+            PLINT xA1, PLINT yA1, PLINT xA2, PLINT yA2,
+            PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 )
 {
     PLFLT factor, fxintersect, fyintersect;
     /* These variables are PLFLT not for precision, but to
      * avoid integer overflows if they were typed as PLINT.  */
     PLFLT xA2A1, yA2A1, xB2B1, yB2B1;
     PLFLT xB1A1, yB1A1, xB2A1, yB2A1;
+    PLINT status = 0;
     /*
      * Two linear equations to be solved for x and y.
      * y = ((x - xA1)*yA2 + (xA2 - x)*yA1)/(xA2 - xA1)
@@ -1658,49 +1727,60 @@ notintersect( PLINT * xintersect, PLINT * yintersect,
     if ( fabs( factor ) == 0. )
     {
         /* Two line segments are parallel */
-        /* For this case check for an intersect for each of the end
-         * points of A segment against the B segment. */
-        fxintersect = xA1;
-        fyintersect = yA1;
-        if ( BETW( fxintersect, xB1, xB2 ) && BETW( fyintersect, yB1, yB2 ))
+        status = status | PL_PARALLEL;
+        /* Choice of intersect is arbitrary in this case.  Choose A1 if
+         * that lies near or in B.  Otherwise, choose A2 if that lies near
+         * or in B.  Otherwise, choose the average point. */
+        if (( BETW_NBCC( xA1, xB1, xB2 ) && BETW_NBCC( yA1, yB1, yB2 )))
         {
-            *xintersect = fxintersect;
-            *yintersect = fyintersect;
-            return 0;
+            fxintersect = xA1;
+            fyintersect = yA1;
         }
-        else
+        else if (( BETW_NBCC( xA2, xB1, xB2 ) && BETW_NBCC( yA2, yB1, yB2 )))
         {
             fxintersect = xA2;
             fyintersect = yA2;
-            if ( BETW( fxintersect, xB1, xB2 ) && BETW( fyintersect, yB1, yB2 ))
-            {
-                *xintersect = fxintersect;
-                *yintersect = fyintersect;
-                return 0;
-            }
-            else
-            {
-                /* parallel and no intersect. */
-                return -1;
-            }
+        }
+        else
+        {
+            fxintersect = 0.25 * ( xA1 + xA2 + xB1 + xB2 );
+            fyintersect = 0.25 * ( yA1 + yA2 + yB1 + yB2 );
         }
     }
-    xB1A1 = xB1 - xA1;
-    yB1A1 = yB1 - yA1;
-    xB2A1 = xB2 - xA1;
-    yB2A1 = yB2 - yA1;
+    else
+    {
+        xB1A1 = xB1 - xA1;
+        yB1A1 = yB1 - yA1;
+        xB2A1 = xB2 - xA1;
+        yB2A1 = yB2 - yA1;
 
-    factor      = ( xB1A1 * yB2A1 - yB1A1 * xB2A1 ) / factor;
-    fxintersect = factor * xA2A1 + xA1;
+        factor      = ( xB1A1 * yB2A1 - yB1A1 * xB2A1 ) / factor;
+        fxintersect = factor * xA2A1 + xA1;
+        fyintersect = factor * yA2A1 + yA1;
+    }
+    /* The "redundant" x and y segment range checks (which include near the
+     * end points) are needed for the vertical and the horizontal cases. */
+    if (( BETW_NBCC( fxintersect, xA1, xA2 ) && BETW_NBCC( fyintersect, yA1, yA2 )) &&
+        ( BETW_NBCC( fxintersect, xB1, xB2 ) && BETW_NBCC( fyintersect, yB1, yB2 )))
+    {
+        /* The intersect is close (within +/- PL_NBCC) to an end point or
+         * corresponds to a definite crossing of the two line segments.
+         * Find out which. */
+        if ( fabs( fxintersect - xA1 ) <= PL_NBCC && fabs( fyintersect - yA1 ) <= PL_NBCC )
+            status = status | PL_NEAR_A1;
+        else if ( fabs( fxintersect - xA2 ) <= PL_NBCC && fabs( fyintersect - yA2 ) <= PL_NBCC )
+            status = status | PL_NEAR_A2;
+        else if ( fabs( fxintersect - xB1 ) <= PL_NBCC && fabs( fyintersect - yB1 ) <= PL_NBCC )
+            status = status | PL_NEAR_B1;
+        else if ( fabs( fxintersect - xB2 ) <= PL_NBCC && fabs( fyintersect - yB2 ) <= PL_NBCC )
+            status = status | PL_NEAR_B2;
+        /* N.B. if none of the above conditions hold then status remains at
+         * zero to signal we have a definite crossing. */
+    }
+    else
+        status = status | PL_NOT_CROSSED;
     *xintersect = fxintersect;
-    fyintersect = factor * yA2A1 + yA1;
     *yintersect = fyintersect;
 
-    /* The "redundant" x and y segment range checks (which include end points)
-     * are needed for the vertical and the horizontal cases. */
-    if (( BETW( fxintersect, xA1, xA2 ) && BETW( fyintersect, yA1, yA2 )) &&
-        ( BETW( fxintersect, xB1, xB2 ) && BETW( fyintersect, yB1, yB2 )))
-        return 0;
-    else
-        return 1;
+    return status;
 }
