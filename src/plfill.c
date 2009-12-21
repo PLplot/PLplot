@@ -1437,6 +1437,79 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                     {
                         /* Have discovered the first two intersections for
                          * polygon 1 at i1 = i1start or above. */
+
+                        /* Calculate polygon 2 index range in split 1
+                         * (the split that normally proceeds beyond
+                         * the second intersect with ascending i2
+                         * values). */
+                        range21 = i2wraplast - i2wrap;
+                        if ( range21 < 0 )
+                            range21 += n2;
+                        /* Wrap values range between -1 and n2 - 2 so
+                         * the the smallest untransformed range21
+                         * value is -n2 + 1, the smallest transformed
+                         * range21 value is 0 (only obtained if
+                         * i2wraplast == i2wrap), and the largest
+                         * transformed range21 value is n2 - 1. */
+                        if ( range21 == 0 )
+                        {
+                            /* For this special case the above ascii art
+                             * does not apply, and we must use the
+                             * following diagram instead:
+                             *
+                             *       --- 1               1 ...
+                             *
+                             *
+                             *
+                             *       2???2  X       X  2???2
+                             *
+                             *                1  1
+                             *
+                             *
+                             * N.B. no valid split of polygon 2 is
+                             * possible with this diagram.  However,
+                             * this diagrem can be classified the same
+                             * as the first diagram, but with the roles
+                             * of polygon 1 and polygon 2 swapped so
+                             * that polygon 1 is the one that gets split
+                             * instead of polygon 2.  In fact, swapping
+                             * those two polygons (and starting the new
+                             * polygon 1 just at i2 of the old polygon 2
+                             * to insure the present two intersections
+                             * are immediately (at least for the first
+                             * new polygon segment 1) found and dealt
+                             * with to eliminate the chance of an
+                             * infinite "swap" loop) is the only clean
+                             * way to deal with this situation. */
+                            if (( xsplit2 = (PLINT *) malloc( n2 * sizeof ( PLINT ))) == NULL )
+                            {
+                                plexit( "fill_intersection_polygon: Insufficient memory" );
+                            }
+                            if (( ysplit2 = (PLINT *) malloc( n2 * sizeof ( PLINT ))) == NULL )
+                            {
+                                plexit( "fill_intersection_polygon: Insufficient memory" );
+                            }
+                            if (( ifsplit1 = (PLINT *) calloc( n1, sizeof ( PLINT ))) == NULL )
+                            {
+                                plexit( "fill_intersection_polygon: Insufficient memory" );
+                            }
+                            kk = i2;
+                            for ( i2 = 0; i2 < n2; i2++ )
+                            {
+                                xsplit2[kk]   = x2[i2];
+                                ysplit2[kk++] = y2[i2];
+                                if ( kk == n2 )
+                                    kk = 0;
+                            }
+                            fill_intersection_polygon(
+                                recursion_depth + 1, ifextrapolygon, fill,
+                                xsplit2, ysplit2, 0, n2,
+                                x1, y1, ifsplit1, n1 );
+                            free( xsplit2 );
+                            free( ysplit2 );
+                            free( ifsplit1 );
+                            return;
+                        }
                         /* New i1start is the largest non-negative polygon 1
                          * index below the last detected intersect. */
                         i1start = MAX( i1wrap, 0 );
@@ -1455,18 +1528,6 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                          * kkstart1 of polygon 1, and the second intersect. */
                         kkstart1 = i1wraplast + 1;
 
-                        /* Split 1 of polygon2 consists of the
-                         * boundary + range21 points between kkstart21
-                         * (= i2) and i2wraplast in ascending order of
-                         * polygon 2 indices.  N.B.  if range21 is zero
-                         * below we change that to n2, i.e., use the
-                         * whole range of polygon 2 in ascending
-                         * order.  For this case, range22 (below) will
-                         * be zero and range1 (above) must be nonzero
-                         * (in order to have two intersections). */
-                        range21 = i2wraplast - i2wrap;
-                        if ( range21 <= 0 )
-                            range21 += n2;
                         kkstart21 = i2;
 
                         /* Split 2 of polygon 2 consists of the
@@ -1546,7 +1607,9 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                             if ( kk >= n2 )
                                 kk -= n2;
                         }
-                        fill_intersection_polygon( recursion_depth + 1, ifextrapolygon, fill,
+
+                        fill_intersection_polygon(
+                            recursion_depth + 1, ifextrapolygon, fill,
                             x1, y1, i1start, n1,
                             xsplit1, ysplit1, ifsplit1, nsplit1 );
                         free( xsplit1 );
@@ -1564,7 +1627,9 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                             if ( kk < 0 )
                                 kk += n2;
                         }
-                        fill_intersection_polygon( recursion_depth + 1, ifextrapolygon, fill,
+
+                        fill_intersection_polygon(
+                            recursion_depth + 1, ifextrapolygon, fill,
                             x1, y1, i1start, n1,
                             xsplit2, ysplit2, ifsplit2, nsplit2 );
                         free( xsplit2 );
