@@ -1930,30 +1930,40 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
 }
 
 /* Decide if polygon has a positive orientation or not.
- * See http://en.wikipedia.org/wiki/Curve_orientation for details
- * of this simple determinate method.  */
+ * Note the simple algorithm given in
+ * http://en.wikipedia.org/wiki/Curve_orientation is incorrect for
+ * non-convex polygons.  Instead, for the general nonintersecting case
+ * use the polygon area method given by
+ * http://local.wasp.uwa.edu.au/~pbourke/geometry/polyarea/ where
+ * you project each edge of the polygon down to the X axis and take the
+ * area of the enclosed trapezoid.  The trapezoid areas outside the
+ * polygon are completely cancelled if you sum over all edges.  Furthermore,
+ * the sum of the trapezoid areas have terms which are zero when calculated
+ * with the telescoping rule so the final formula is quite simple. */
 int
 positive_orientation( PLINT n, const PLINT *x, const PLINT *y )
 {
-    PLFLT xa, ya, xb, yb, xc, yc, det;
+    PLINT i, im1;
+    /* Use PLFLT for all calculations to avoid integer overflows.  Also,
+     * the normal PLFLT has 64-bits which means you get exact integer
+     * arithmetic well beyond the normal integer overflow limits. */
+    PLFLT twice_area = 0.;
     if ( n < 3 )
     {
         plwarn( "positive_orientation: internal logic error, n < 3" );
         return 0;
     }
-    /* Use floating point to avoid integer overflows. */
-    xa  = x[0];
-    xb  = x[1];
-    xc  = x[2];
-    ya  = y[0];
-    yb  = y[1];
-    yc  = y[2];
-    det = ( xa * yb + xb * yc + xc * ya ) - ( xa * yc + xb * ya + xc * yb );
-    if ( det == 0. )
+    im1 = n - 1;
+    for ( i = 0; i < n; i++ )
     {
-        plwarn( "positive_orientation: internal logic error, det == 0." );
+        twice_area += (PLFLT) x[im1] * (PLFLT) y[i] - (PLFLT) x[i] * (PLFLT) y[im1];
+        im1         = i;
+    }
+    if ( twice_area == 0. )
+    {
+        plwarn( "positive_orientation: internal logic error, twice_area == 0." );
         return 0;
     }
     else
-        return det > 0.;
+        return twice_area > 0.;
 }
