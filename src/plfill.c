@@ -456,8 +456,6 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
             void ( *draw )( short *, short *, PLINT ))
 {
-    /* Must have at least 3 points and draw() specified */
-    if ( npts < 3 || !draw ) return;
 
 #ifdef USE_FILL_INTERSECTION_POLYGON
     PLINT *x10, *y10, *x1, *y1, i1start = 0, i, im1, n1, n1m1;
@@ -465,6 +463,10 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     PLINT y2[4]  = { ymin, ymin, ymax, ymax };
     PLINT if2[4] = { 0, 0, 0, 0 };
     PLINT n2     = 4;
+
+    /* Must have at least 3 points and draw() specified */
+    if ( npts < 3 || !draw ) return;
+
     if (( x10 = (PLINT *) malloc( npts * sizeof ( PLINT ))) == NULL )
     {
         plexit( "plP_plfclp: Insufficient memory" );
@@ -549,6 +551,8 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     int   inside_rb;
     int   inside_ru;
 
+    /* Must have at least 3 points and draw() specified */
+    if ( npts < 3 || !draw ) return;
 
     if ( npts < PL_MAXPOLY )
     {
