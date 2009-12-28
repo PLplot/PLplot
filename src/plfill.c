@@ -1391,7 +1391,8 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
     PLINT i1, i1m1, i1start_new,
           i2, i2m1,
           kk, kkstart1, kkstart21, kkstart22,
-          k, kstart, range1, range21, range22, ncrossed, ncrossed_change,
+          k, kstart, range1,
+          range21, range22, ncrossed, ncrossed_change,
           nsplit1, nsplit2, nsplit2m1;
     PLINT xintersect[2], yintersect[2], i1intersect[2],
           i2intersect[2], ifnotcrossed;
@@ -1520,7 +1521,6 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         i1m1 += n1;
     for ( i1 = i1start; i1 < n1; i1++ )
     {
-        i2m1            = n2 - 1;
         ncrossed_change = number_crossings(
             &xintersect[ncrossed], &yintersect[ncrossed],
             &i2intersect[ncrossed], 2 - ncrossed,
@@ -1537,95 +1537,6 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                 /* Have discovered the first two crossings for
                  * polygon 1 at i1 = i1start or above. */
 
-                /* Calculate polygon 2 index range in split 1 (the
-                 * split that proceeds beyond the second intersect with
-                 * ascending i2 values). */
-                range21 = i2intersect[0] - i2intersect[1];
-                if ( range21 < 0 )
-                    range21 += n2;
-                /* i2 intersect values range between 0 and n2 - 1 so
-                 * the the smallest untransformed range21 value is -n2
-                 + 1, and the largest untransformed range21 value is
-                 * n2 - 1.  This means the smallest transformed range21
-                 * value is +1.  Also, for the untransformed range21
-                 * value of 0, go the "long way" around with
-                 * transformed range21 = n2 so that split 1 is
-                 * guaranteed to have the correct fill_status == +1. */
-
-                /* N.B. always avoid special code for range21 == 0
-                 * case because it is no longer necessary since there
-                 * is a guarantee that the first vertex of polygon 1
-                 * (starting with n1 - 1) that is not near the border
-                 * of polygon 2 will be outside polygon 2. */
-                if ( 0 && range21 == 0 )
-                {
-                    /* For this special case the above ascii art
-                     * does not apply, and we must use the
-                     * following diagram instead:
-                     *
-                     *       --- 1               1 ...
-                     *
-                     *
-                     *
-                     *       2???2  X       X  2???2
-                     *
-                     *                1  1
-                     *
-                     *
-                     * N.B. no valid split of polygon 2 is
-                     * possible with this diagram.  However,
-                     * this diagrem can be classified the same
-                     * as the first diagram, but with the roles
-                     * of polygon 1 and polygon 2 swapped so
-                     * that polygon 1 is the one that gets split
-                     * instead of polygon 2.  In fact, swapping
-                     * those two polygons (and starting the new
-                     * polygon 1 just at i2intersect[1] of the old
-                     * polygon 2 to insure the present two
-                     * intersections are immediately (at least for the
-                     * first new polygon segment 1) found and dealt
-                     * with to eliminate the chance of an infinite
-                     * "swap" loop) is the only clean way to deal with
-                     * this situation. */
-                    if (( xsplit2 = (PLINT *) malloc( n2 * sizeof ( PLINT ))) == NULL )
-                    {
-                        plexit( "fill_intersection_polygon: Insufficient memory" );
-                    }
-                    if (( ysplit2 = (PLINT *) malloc( n2 * sizeof ( PLINT ))) == NULL )
-                    {
-                        plexit( "fill_intersection_polygon: Insufficient memory" );
-                    }
-                    if (( ifsplit1 = (PLINT *) calloc( n1, sizeof ( PLINT ))) == NULL )
-                    {
-                        plexit( "fill_intersection_polygon: Insufficient memory" );
-                    }
-                    kk = i2intersect[1];
-                    for ( i2 = 0; i2 < n2; i2++ )
-                    {
-                        xsplit2[kk]   = x2[i2];
-                        ysplit2[kk++] = y2[i2];
-                        if ( kk == n2 )
-                            kk = 0;
-                    }
-                    /* N.B. the positive orientation of split2
-                     * is preserved since the index order is
-                     * the same as that of polygon 2, and by
-                     * assumption that polygon and polygon 1
-                     * have identical positive
-                     * orientations.  fill_status does not matter
-                     * here because a split is guaranteed at the
-                     * next recursion level.  For definiteness set
-                     * it to zero.  */
-                    fill_intersection_polygon(
-                        recursion_depth + 1, ifextrapolygon,
-                        0, fill,
-                        xsplit2, ysplit2, 0, n2,
-                        x1, y1, ifsplit1, n1 );
-                    free( xsplit2 );
-                    free( ysplit2 );
-                    free( ifsplit1 );
-                    return;
-                }
                 /* New i1start is the same as the current i1 (just
                  * in case there are more crossings to find between
                  * i1m1 and i1.) */
@@ -1645,17 +1556,57 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                  * kkstart1 of polygon 1, and the second intersect. */
                 kkstart1 = i1intersect[0];
 
+                /* Calculate polygon 2 index range in split 1 (the
+                 * split that proceeds beyond the second intersect with
+                 * ascending i2 values). */
+                range21 = i2intersect[0] - i2intersect[1];
+                if ( range21 < 0 )
+                    range21 += n2;
+                /* i2 intersect values range between 0 and n2 - 1 so
+                 * the smallest untransformed range21 value is -n2 + 1,
+                 * and the largest untransformed range21 value is n2 - 1.
+                 * This means the smallest transformed range21 value is 0
+                 * (which occurs only ifi2intersect[0] = i2intersect[1],
+                 * see more commentary for that special case below) while
+                 * the largest transformed range21 value is n2 - 1. */
+
+                if ( range21 == 0 )
+                {
+                    int ifxsort, ifascend;
+                    /* For this case, the two crossings occur within the same
+                     * polygon 2 boundary segment and if those two crossings
+                     * are in ascending/descending order in i2, then split 1
+                     * (the split with the positive fill_status) must include
+                     * all/none of the points in polygon 2. */
+                    i2   = i2intersect[1];
+                    i2m1 = i2 - 1;
+                    if ( i2m1 < 0 )
+                        i2m1 += n2;
+
+                    ifxsort  = abs( x2[i2] - x2[i2m1] ) > abs( y2[i2] - y2[i2m1] );
+                    ifascend = ( ifxsort && x2[i2] > x2[i2m1] ) ||
+                               ( !ifxsort && y2[i2] > y2[i2m1] );
+                    if (( ifxsort && ifascend && xintersect[0] < xintersect[1] ) ||
+                        ( !ifxsort && ifascend && yintersect[0] < yintersect[1] ) ||
+                        ( ifxsort && !ifascend && xintersect[0] >= xintersect[1] ) ||
+                        ( !ifxsort && !ifascend && yintersect[0] >= yintersect[1] ))
+                    {
+                        range21 = n2;
+                    }
+                }
+
                 kkstart21 = i2intersect[1];
+                nsplit1   = 2 + range1 + range21;
 
                 /* Split 2 of polygon 2 consists of the
                  * boundary + range22 (= n2 - range21) points
                  * between kkstart22 (= i2intersect[1]-1) and i2intersect[0] in
                  * descending order of polygon 2 indices. */
-                range22   = n2 - range21;
+                range22 = n2 - range21;
+                /* Starting i2 index of split 2. */
                 kkstart22 = i2intersect[1] - 1;
                 if ( kkstart22 < 0 )
                     kkstart22 += n2;
-                nsplit1 = 2 + range1 + range21;
                 nsplit2 = 2 + range1 + range22;
 
                 if (( xsplit1 = (PLINT *) malloc( nsplit1 * sizeof ( PLINT ))) == NULL )
