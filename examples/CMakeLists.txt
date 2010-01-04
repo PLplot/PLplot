@@ -458,7 +458,7 @@ if(BUILD_TEST)
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x01${suffix}.psc
 	  COMMAND ${CMAKE_COMMAND} -E echo "Generate ${language} results for psc device"
-	  COMMAND ${environment} ${custom_test_command} --verbose --front-end=${language} --device=psc
+	  COMMAND DUMMY= ${environment} ${custom_test_command} --verbose --front-end=${language} --device=psc
 	  DEPENDS ${compare_file_depends_${language}}
 	  )
 	add_custom_target(test_${language}_psc
@@ -534,7 +534,7 @@ if(BUILD_TEST)
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x01c${index}.${device}
 	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} file device"
-	COMMAND ${custom_env} ${custom_test_command} --verbose --front-end=c --device=${device}
+	COMMAND DUMMY= ${custom_env} ${custom_test_command} --verbose --front-end=c --device=${device}
 	DEPENDS
 	${file_device_depends_${device}}
 	)
