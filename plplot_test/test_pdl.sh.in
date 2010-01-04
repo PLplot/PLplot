@@ -31,9 +31,9 @@
 # tree and install tree.
 lang="pdl"
 if [ "$LD_LIBRARY_PATH" = "" ] ; then
-    export LD_LIBRARY_PATH=../src:@LIB_DIR@
+    export LD_LIBRARY_PATH=../src:"@LIB_DIR@"
 else
-    export LD_LIBRARY_PATH=../src:@LIB_DIR@:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=../src:"@LIB_DIR@":$LD_LIBRARY_PATH
 fi
 
 if [ "@HAVE_PDL_GRAPHICS_PLPLOT_40@" = "ON" ] ; then
@@ -49,12 +49,12 @@ for index in $INDEX_LIST ; do
 	echo "x${index}.pl"
     fi
     if [ "$index" = "14" ] ; then
-	echo ${OUTPUT_DIR}/x${index}a${lang}%n.$dsuffix | \
-	$perldir/x${index}.pl -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix \
-	    $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
+	echo "${OUTPUT_DIR}"/x${index}a${lang}%n.$dsuffix | \
+	"$perldir"/x${index}.pl -dev $device -o "${OUTPUT_DIR}"/x${index}${lang}%n.$dsuffix \
+	    $options 2> test.error >| "${OUTPUT_DIR}"/x${index}${lang}_${dsuffix}.txt
 	status_code=$?
     else
-	$perldir/x${index}.pl -dev $device -o ${OUTPUT_DIR}/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${dsuffix}.txt
+	"$perldir"/x${index}.pl -dev $device -o "${OUTPUT_DIR}"/x${index}${lang}%n.$dsuffix $options 2> test.error >| "${OUTPUT_DIR}"/x${index}${lang}_${dsuffix}.txt
 	status_code=$?
     fi
     cat test.error

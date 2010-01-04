@@ -24,14 +24,14 @@
 # This is called from plplot-test.sh with $tcldir, $device, $dsuffix,
 # $options, and possibly $verbose_test defined.
 lang="t"
-cd $OUTPUT_DIR
-results=`pwd`
+cd "${OUTPUT_DIR}"
+results="`pwd`"
 export results
-cd $tcldir
+cd "$tcldir"
 if [ "$verbose_test" ] ; then
     echo "pltcl demo of plot"
 fi
-pltcl -dev $device -o $results/plot%n.$dsuffix $options <<EOF 2> test.error
+pltcl -dev $device -o "$results"/plot%n.$dsuffix $options <<EOF 2> test.error
 plinit
 source plot.tcl
 plot stats.log {1 4}
@@ -54,7 +54,7 @@ fi
 if [ "$verbose_test" ] ; then
     echo "pltcl demo of plgrid"
 fi
-pltcl -dev $device -o $results/plgrid%n.$dsuffix $options <<EOF 2> test.error
+pltcl -dev $device -o "$results"/plgrid%n.$dsuffix $options <<EOF 2> test.error
 plinit
 source plgrid.tcl
 plgrid
@@ -76,12 +76,12 @@ for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 2
 	echo "x${index}"
     fi
     if [ "$index" = "14" ] ; then
-	echo ${results}/x${index}a${lang}%n.$dsuffix | \
-	./x${index} -dev $device -o $results/x${index}${lang}%n.$dsuffix \
-	    $options 2> test.error >| ${results}/x${index}${lang}_${dsuffix}.txt
+	echo "${results}"/x${index}a${lang}%n.$dsuffix | \
+	./x${index} -dev $device -o "$results"/x${index}${lang}%n.$dsuffix \
+	    $options 2> test.error >| "${results}"/x${index}${lang}_${dsuffix}.txt
 	status_code=$?
     else
-	./x${index} -dev $device -o $results/x${index}${lang}%n.$dsuffix $options 2> test.error >| ${results}/x${index}${lang}_${dsuffix}.txt
+	./x${index} -dev $device -o "$results"/x${index}${lang}%n.$dsuffix $options 2> test.error >| "${results}"/x${index}${lang}_${dsuffix}.txt
 	status_code=$?
     fi
     cat test.error

@@ -25,24 +25,24 @@
 # Do the standard non-interactive examples.
 lang="lua"
 # Lua examples must be run from the directory where they exist.
-cd $OUTPUT_DIR
-results=`pwd`
+cd "${OUTPUT_DIR}"
+results="`pwd`"
 export results
-echo $results
-cd $luadir
+echo "$results"
+cd "$luadir"
 for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31; do
     if [ "$verbose_test" ] ; then
 	echo "x${index}"
     fi
     if [ "$index" = "14" ] ; then
-	echo ${results}/x${index}a${lang}%n.$dsuffix | \
-	@LUA_EXECUTABLE@ x${index}.${lang} -dev $device -o ${results}/x${index}${lang}%n.$dsuffix \
-	    $options 2> test.error >| ${results}/x${index}${lang}_${dsuffix}.txt
+	echo "${results}"/x${index}a${lang}%n.$dsuffix | \
+	@LUA_EXECUTABLE@ x${index}.${lang} -dev $device -o "${results}"/x${index}${lang}%n.$dsuffix \
+	    $options 2> test.error >| "${results}"/x${index}${lang}_${dsuffix}.txt
 	# Look for any status codes (segfaults, plexit) from the examples themselves.
 	status_code=$?
     else
-	@LUA_EXECUTABLE@ x${index}.${lang} -dev $device -o ${results}/x${index}${lang}%n.$dsuffix \
-	    $options 2> test.error >| ${results}/x${index}${lang}_${dsuffix}.txt
+	@LUA_EXECUTABLE@ x${index}.${lang} -dev $device -o "${results}"/x${index}${lang}%n.$dsuffix \
+	    $options 2> test.error >| "${results}"/x${index}${lang}_${dsuffix}.txt
     # Look for any status codes (segfaults, plexit) from the examples themselves.
 	status_code=$?
     fi

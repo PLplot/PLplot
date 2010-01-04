@@ -31,7 +31,7 @@ for index in 01 04 08 14 16 17 24 30; do
 	echo "x${index}${lang}"
     fi
     $DEBUG_CMD $cdir/x${index}${lang} -dev $device \
-	2> test.error >| ${OUTPUT_DIR}/x${index}${lang}_${device}.txt
+	2> test.error >| "${OUTPUT_DIR}"/x${index}${lang}_${device}.txt
     # Look for any status codes (segfaults, plexit) from the examples
     # themselves.
     status_code=$?

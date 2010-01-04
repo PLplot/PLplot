@@ -155,7 +155,7 @@ done
 # This script is only designed to work when EXAMPLES_DIR is a directory
 # with a subdirectory called "c".  Check whether this conditions is true.
 
-if [ ! -d $EXAMPLES_DIR/c ] ; then
+if [ ! -d "$EXAMPLES_DIR"/c ] ; then
 echo '
 This script is only designed to work when the EXAMPLES_DIR environment
 variable (overridden by option --examples-dir) is a directory with a
@@ -170,7 +170,7 @@ fi
 if [ "@WIN32@" = "1" ] ; then
    scripts_dir=${0%/*}
 else
-   scripts_dir=`echo $0 | sed 's:/[^/][^/]*$::'`
+   scripts_dir=`echo "$0" | sed 's:/[^/][^/]*$::'`
 fi
 
 if [ "$interactive" = "on" ] ; then
@@ -207,44 +207,44 @@ script with DEVICE='"$device"'.
     fi
 
     status=0
-    export cdir=$EXAMPLES_DIR/c
+    export cdir="$EXAMPLES_DIR"/c
     echo "Testing subset of C examples for device $device"
-    script=$scripts_dir/test_c_interactive.sh
+    script="$scripts_dir"/test_c_interactive.sh
     if [ "@WIN32@" != "1" ] ; then
-	chmod +x $script
+	chmod +x "$script"
     fi
-    @SH_EXECUTABLE@ $script || status=1
+    @SH_EXECUTABLE@ "$script" || status=1
 
     exit $status
 fi
 
 # These variables set by default assuming you are going to run this
 # script from the installed demos directory $prefix/lib/plplot$version/examples.
-cdir=$EXAMPLES_DIR/c
-cxxdir=$EXAMPLES_DIR/c++
-f77dir=$EXAMPLES_DIR/f77
-f95dir=$EXAMPLES_DIR/f95
-pythondir=$@CONFIGURED_EXAMPLES_DIR@/python
-tcldir=$@CONFIGURED_EXAMPLES_DIR@/tcl
-perldir=$SRC_EXAMPLES_DIR/perl
-javadir=$EXAMPLES_DIR/java
-adadir=$EXAMPLES_DIR/ada
-ocamldir=$EXAMPLES_DIR/ocaml
-luadir=$@CONFIGURED_EXAMPLES_DIR@/lua
-ddir=$EXAMPLES_DIR/d
+cdir="$EXAMPLES_DIR"/c
+cxxdir="$EXAMPLES_DIR"/c++
+f77dir="$EXAMPLES_DIR"/f77
+f95dir="$EXAMPLES_DIR"/f95
+pythondir="$@CONFIGURED_EXAMPLES_DIR@"/python
+tcldir="$@CONFIGURED_EXAMPLES_DIR@"/tcl
+perldir="$SRC_EXAMPLES_DIR"/perl
+javadir="$EXAMPLES_DIR"/java
+adadir="$EXAMPLES_DIR"/ada
+ocamldir="$EXAMPLES_DIR"/ocaml
+luadir="$@CONFIGURED_EXAMPLES_DIR@"/lua
+ddir="$EXAMPLES_DIR"/d
 octave=@OCTAVE@
 octavedir=\
-$EXAMPLES_DIR/../bindings/octave:\
-$SRC_EXAMPLES_DIR/../bindings/octave/PLplot:\
-$SRC_EXAMPLES_DIR/../bindings/octave/PLplot/support:\
-$SRC_EXAMPLES_DIR/../bindings/octave/demos:\
-$SRC_EXAMPLES_DIR/../bindings/octave/misc:\
-$SRC_EXAMPLES_DIR/octave:\
-@PLPLOT_OCTAVE_DIR@:\
-@PLPLOT_OCTAVE_DIR@/support:\
-@OCTAVE_M_DIR@/PLplot:\
-@OCTAVE_OCT_DIR@:
-PATH=$EXAMPLES_DIR/../utils:@BIN_DIR@:$PATH
+"$EXAMPLES_DIR"/../bindings/octave:\
+"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot:\
+"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot/support:\
+"$SRC_EXAMPLES_DIR"/../bindings/octave/demos:\
+"$SRC_EXAMPLES_DIR"/../bindings/octave/misc:\
+"$SRC_EXAMPLES_DIR"/octave:\
+"@PLPLOT_OCTAVE_DIR@":\
+"@PLPLOT_OCTAVE_DIR@"/support:\
+"@OCTAVE_M_DIR@"/PLplot:\
+"@OCTAVE_OCT_DIR@":
+PATH="$EXAMPLES_DIR"/../utils:"@BIN_DIR@":"$PATH"
 export cdir cxxdir f77dir f95dir pythondir javadir octave octavedir tcldir perldir adadir ocamldir luadir ddir PATH
 
 fe=""
@@ -382,11 +382,11 @@ fi
 export critical_examples exesuffix
 for i in $FRONT_END ; do
    echo "Testing front-end $i"
-   script=$scripts_dir/test_$i.sh
+   script="$scripts_dir"/test_$i.sh
    if [ "@WIN32@" != "1" ] ; then
-      chmod +x $script
+      chmod +x "$script"
    fi
-   @SH_EXECUTABLE@ $script || status=1
+   @SH_EXECUTABLE@ "$script" || status=1
 done
 
 exit $status

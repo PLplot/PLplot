@@ -29,11 +29,11 @@
 lang="o"
 export lang
 TOPDIR=`pwd`/..
-echo $TOPDIR
-export LD_LIBRARY_PATH=$TOPDIR/src:$TOPDIR/lib/csa:$TOPDIR/lib/nn
+echo "$TOPDIR"
+export LD_LIBRARY_PATH="$TOPDIR"/src:"$TOPDIR"/lib/csa:"$TOPDIR"/lib/nn
 
 # Launch an Octave script that exercises all the demos
-$octave -f -q -p $octavedir <<EOF 2> test.error
+$octave -f -q -p "$octavedir" <<EOF 2> test.error
 
 # Check verbose_test variable
 if (strcmp(getenv("verbose_test"),"on") == 1)
