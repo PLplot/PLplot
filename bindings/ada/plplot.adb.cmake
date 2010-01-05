@@ -1641,6 +1641,14 @@ package body PLplot is
     end Use_Graphics_Mode;
 
 
+    -- Draw gradient in polygon.
+    -- plgradient
+    procedure Fill_Polygon_Gradient(x, y : Real_Vector; Angle : Long_Float) is
+    begin
+        plgradient(x'Length, x, y, Angle);
+    end Fill_Polygon_Gradient;
+
+
     -- Grid irregularly sampled data.
     -- plgriddata
     procedure Grid_Data

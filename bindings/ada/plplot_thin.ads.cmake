@@ -846,8 +846,15 @@ package PLplot_Thin is
     pragma Import(C, plgra, "c_plgra");
 
 
+    -- Draw gradient in polygon.
+
+    procedure
+    plgradient(n : PLINT; x : PL_Float_Array; y : PL_Float_Array; angle : PLFLT);
+    pragma Import(C, plgradient, "c_plgradient");
+
+
       -- grid irregularly sampled data 
-    -- Note that since z_Gridded is passed as an array of pointers, this is 
+    -- Ada Note: Since z_Gridded is passed as an array of pointers, this is 
     -- effectively the same as pass-by-reference so "in out" is not required for 
     -- the formal argument zg in plgriddata.
 

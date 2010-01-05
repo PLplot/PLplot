@@ -965,6 +965,10 @@ package PLplot_Traditional is
     procedure plgra;
 
 
+    -- Draw gradient in polygon.
+    procedure plgradient(x, y : Real_Vector; Angle : Long_Float);
+
+
     -- Grid irregularly sampled data.
     procedure plgriddata
        (x, y, z                : Real_Vector; -- ungridded x- and y-points; z is height

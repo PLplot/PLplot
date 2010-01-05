@@ -1017,6 +1017,11 @@ package PLplot is
     procedure Use_Graphics_Mode;
 
 
+    -- Draw gradient in polygon.
+    -- plgradient
+    procedure Fill_Polygon_Gradient(x, y : Real_Vector; Angle : Long_Float);
+
+
     -- Grid irregularly sampled data.
     -- plgriddata
     procedure Grid_Data

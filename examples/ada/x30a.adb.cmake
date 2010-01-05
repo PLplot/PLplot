@@ -2,7 +2,7 @@
 
 -- Alpha color values demonstration
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2008, 2010 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -52,8 +52,7 @@ procedure x30a is
 
     icol, r, g, b : Integer;
     a : Long_Float;
-    clevel : Real_Vector(0 .. 100);
-    z : Real_Matrix(0 .. 1, 0 .. 1);
+
 begin
     plparseopts(PL_PARSE_FULL);
     plinit;
@@ -127,30 +126,23 @@ begin
         end loop;
     end loop;
 
-    -- The overlaid box is drawn using plshades with a color map that is
-    -- the same color but has a linearly varying transparency.
-
     -- Create the color map with 128 colors and use plscmap1la to initialize
-    -- the color values with a linear varying transparency (or alpha).
+    -- the color values with a linearly varying transparency (or alpha).
     plscmap1n(128);
     plscmap1la(RGB, pos, rcoord, gcoord, bcoord, acoord, Reverse_Hue_None);
 
-    -- Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will
-    -- used for the shade plot. plshades will use linear interpolation to
-    -- calculate the z values of all the intermediate points in this array.
-    z(0, 0) := 0.0;
-    z(1, 0) := 0.0;
-    z(0, 1) := 1.0;
-    z(1, 1) := 1.0;
+    -- Use that cmap1 to create a transparent red gradient for the whole window.
+    px(0) := 0.0;
+    px(1) := 1.0;
+    px(2) := 1.0;
+    px(3) := 0.0;
 
-    -- Set the color levels array. These levels are also between 0.0 and 1.0
-    for i in clevel'range loop
-        clevel(i) := 0.01 * Long_Float(i);
-    end loop;
+    py(0) := 0.0;
+    py(1) := 0.0;
+    py(2) := 1.0;
+    py(3) := 1.0;
 
-    -- Draw the shade plot with zmin := 0.0, zmax := 1.0 and x and y coordinate
-    -- ranges such that it fills the entire plotting area.
-    plshades(z, Null, 0.0, 1.0, 0.0, 1.0, clevel, 0, 0, 2, plfill'access, True, NULL, System.Null_Address);
-
+    plgradient(px, py, 90.0);
+    
     plend;
 end x30a;
