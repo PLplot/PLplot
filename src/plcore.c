@@ -95,33 +95,33 @@
 #include <errno.h>
 
 /*--------------------------------------------------------------------------*\
- * Driver Interface
- *
- * These routines are the low-level interface to the driver -- all calls to
- * driver functions must pass through here.  For implementing driver-
- * specific functions, the escape function is provided.  The command stream
- * gets duplicated to the plot buffer here.
- *
- * All functions that result in graphics actually being plotted (rather than
- * just a change of state) are filtered as necessary before being passed on.
- * The default settings do not require any filtering, i.e.  PLplot physical
- * coordinates are the same as the device physical coordinates (currently
- * this can't be changed anyway), and a global view equal to the entire page
- * is used.
- *
- * The reason one wants to put view-specific filtering here is that if
- * enabled, the plot buffer should receive the unfiltered data stream.  This
- * allows a specific view to be used from an interactive device (e.g. TCL/TK
- * driver) but be restored to the full view at any time merely by
- * reprocessing the contents of the plot buffer.
- *
- * The metafile, on the other hand, *should* be affected by changes in the
- * view, since this is a crucial editing capability.  It is recommended that
- * the initial metafile be created without a restricted global view, and
- * modification of the view done on a per-plot basis as desired during
- * subsequent processing.
- *
- \*--------------------------------------------------------------------------*/
+* Driver Interface
+*
+* These routines are the low-level interface to the driver -- all calls to
+* driver functions must pass through here.  For implementing driver-
+* specific functions, the escape function is provided.  The command stream
+* gets duplicated to the plot buffer here.
+*
+* All functions that result in graphics actually being plotted (rather than
+* just a change of state) are filtered as necessary before being passed on.
+* The default settings do not require any filtering, i.e.  PLplot physical
+* coordinates are the same as the device physical coordinates (currently
+* this can't be changed anyway), and a global view equal to the entire page
+* is used.
+*
+* The reason one wants to put view-specific filtering here is that if
+* enabled, the plot buffer should receive the unfiltered data stream.  This
+* allows a specific view to be used from an interactive device (e.g. TCL/TK
+* driver) but be restored to the full view at any time merely by
+* reprocessing the contents of the plot buffer.
+*
+* The metafile, on the other hand, *should* be affected by changes in the
+* view, since this is a crucial editing capability.  It is recommended that
+* the initial metafile be created without a restricted global view, and
+* modification of the view done on a per-plot basis as desired during
+* subsequent processing.
+*
+\*--------------------------------------------------------------------------*/
 
 enum { AT_BOP, DRAWING, AT_EOP };
 
@@ -333,8 +333,8 @@ plP_swin( PLWindow *plwin )
 }
 
 /*--------------------------------------------------------------------------*\
- *  Drawing commands.
- \*--------------------------------------------------------------------------*/
+*  Drawing commands.
+\*--------------------------------------------------------------------------*/
 
 /* Draw line between two points */
 /* The plot buffer must be called first so it gets the unfiltered data */
@@ -506,17 +506,17 @@ plP_gradient( short *x, short *y, PLINT npts )
  */
 
 /*--------------------------------------------------------------------------*\
- *  int text2num( char *text, char end, PLUNICODE *num)
- *       char *text - pointer to the text to be parsed
- *       char end   - end character (i.e. ')' or ']' to stop parsing
- *       PLUNICODE *num - pointer to an PLUNICODE to store the value
- *
- *    Function takes a string, which can be either hex or decimal,
- *    and converts it into an PLUNICODE, stopping at either a null,
- *    or the character pointed to by 'end'. This implementation using
- *    the C library strtoul replaces the original brain-dead version
- *    and should be more robust to invalid control strings.
- \*--------------------------------------------------------------------------*/
+*  int text2num( char *text, char end, PLUNICODE *num)
+*       char *text - pointer to the text to be parsed
+*       char end   - end character (i.e. ')' or ']' to stop parsing
+*       PLUNICODE *num - pointer to an PLUNICODE to store the value
+*
+*    Function takes a string, which can be either hex or decimal,
+*    and converts it into an PLUNICODE, stopping at either a null,
+*    or the character pointed to by 'end'. This implementation using
+*    the C library strtoul replaces the original brain-dead version
+*    and should be more robust to invalid control strings.
+\*--------------------------------------------------------------------------*/
 
 int text2num( const char *text, char end, PLUNICODE *num )
 {
@@ -535,22 +535,22 @@ int text2num( const char *text, char end, PLUNICODE *num )
 }
 
 /*--------------------------------------------------------------------------*\
- *  int text2fci( char *text, unsigned char *hexdigit, unsigned char *hexpower)
- *       char *text - pointer to the text to be parsed
- *       unsigned char *hexdigit - pointer to hex value that is stored.
- *       unsigned char *hexpower - pointer to hex power (left shift) that is stored.
- *
- *    Function takes a pointer to a string, which is looked up in a table
- *    to determine the corresponding FCI (font characterization integer)
- *    hex digit value and hex power (left shift).  All matched strings
- *    start with "<" and end with the two characters "/>".
- *    If the lookup succeeds, hexdigit and hexpower are set to the appropriate
- *    values in the table, and the function returns the number of characters
- *    in text that are consumed by the matching string in the table lookup.
- *
- *    If the lookup fails, hexdigit is set to 0, hexpower is set to and
- *    impossible value, and the function returns 0.
- \*--------------------------------------------------------------------------*/
+*  int text2fci( char *text, unsigned char *hexdigit, unsigned char *hexpower)
+*       char *text - pointer to the text to be parsed
+*       unsigned char *hexdigit - pointer to hex value that is stored.
+*       unsigned char *hexpower - pointer to hex power (left shift) that is stored.
+*
+*    Function takes a pointer to a string, which is looked up in a table
+*    to determine the corresponding FCI (font characterization integer)
+*    hex digit value and hex power (left shift).  All matched strings
+*    start with "<" and end with the two characters "/>".
+*    If the lookup succeeds, hexdigit and hexpower are set to the appropriate
+*    values in the table, and the function returns the number of characters
+*    in text that are consumed by the matching string in the table lookup.
+*
+*    If the lookup fails, hexdigit is set to 0, hexpower is set to and
+*    impossible value, and the function returns 0.
+\*--------------------------------------------------------------------------*/
 
 int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower )
 {
@@ -648,11 +648,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                  * string. */
                 plgfci( &fci );
 
-                if ( plsc->alt_unicode )
-                {
-                    args.n_fci = fci;
-                    plP_esc( PLESC_BEGIN_TEXT, &args );
-                }
                 /* Walk through the string, and convert
                  * some stuff to unicode on the fly */
                 for ( j = i = 0; i < len; i++ )
@@ -674,17 +669,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             unicode_buffer[j++] = \
                                 (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
 
-                            if ( plsc->alt_unicode )
-                            {
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-#endif
-                                args.n_char = \
-                                    (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
-                                plP_esc( PLESC_TEXT_CHAR, &args );
-                            }
 
                             /* if unicode_buffer[j-1] corresponds to the escape
                              * character must unescape it by appending one more.
@@ -697,13 +681,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 #ifdef PL_MOMENTARY_SYMBOL_FONT
                             fci = fcisave;
                             unicode_buffer[j++] = fci;
-
-                            if ( plsc->alt_unicode )
-                            {
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-                            }
 #endif
                             j--;
                             skip = 1;
@@ -718,16 +695,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 #endif
                             unicode_buffer[j++] = code;
 
-                            if ( plsc->alt_unicode )
-                            {
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-#endif
-                                args.n_char = code;
-                                plP_esc( PLESC_TEXT_CHAR, &args );
-                            }
 
                             /* if unicode_buffer[j-1] corresponds to the escape
                              * character must unescape it by appending one more.
@@ -740,13 +707,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 #ifdef PL_MOMENTARY_SYMBOL_FONT
                             fci = fcisave;
                             unicode_buffer[j++] = fci;
-
-                            if ( plsc->alt_unicode )
-                            {
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-                            }
 #endif
                             j--;
                             skip = 1;
@@ -764,13 +724,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                     fci = code;
                                     unicode_buffer[j] = fci;
                                     skip = 1;
-
-                                    if ( plsc->alt_unicode )
-                                    {
-                                        args.n_fci       = fci;
-                                        args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                        plP_esc( PLESC_CONTROL_CHAR, &args );
-                                    }
                                 }
                                 else
                                 {
@@ -784,13 +737,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                     plP_hex2fci( hexdigit, hexpower, &fci );
                                     unicode_buffer[j] = fci;
                                     skip = 1;
-
-                                    if ( plsc->alt_unicode )
-                                    {
-                                        args.n_fci       = fci;
-                                        args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                        plP_esc( PLESC_CONTROL_CHAR, &args );
-                                    }
                                 }
                             }
                             else
@@ -801,13 +747,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                     plP_hex2fci( hexdigit, hexpower, &fci );
                                     unicode_buffer[j] = fci;
                                     skip = 1;
-
-                                    if ( plsc->alt_unicode )
-                                    {
-                                        args.n_fci       = fci;
-                                        args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                        plP_esc( PLESC_CONTROL_CHAR, &args );
-                                    }
                                 }
                             }
                             break;
@@ -850,13 +789,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 i += 2;
                                 unicode_buffer[j] = fci;
                                 skip = 1;
-
-                                if ( plsc->alt_unicode )
-                                {
-                                    args.n_fci       = fci;
-                                    args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                    plP_esc( PLESC_CONTROL_CHAR, &args );
-                                }
                             }
                             break;
 
@@ -870,13 +802,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             fcisave = fci;
                             plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
                             unicode_buffer[j++] = fci;
-
-                            if ( plsc->alt_unicode )
-                            {
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-                            }
 #endif
 
                             ig = plP_strpos( plP_greek_mnemonic, string[i + 2] );
@@ -890,13 +815,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 i   += 2;
                                 skip = 1; /* skip is set if we have copied something
                                            * into the unicode table */
-
-                                if ( plsc->alt_unicode )
-                                {
-                                    args.n_char = \
-                                        (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
-                                    plP_esc( PLESC_TEXT_CHAR, &args );
-                                }
                             }
                             else
                             {
@@ -906,46 +824,13 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 i   += 2;
                                 skip = 1;                /* skip is set if we have copied something
                                                           * into  the unicode table */
-
-                                if ( plsc->alt_unicode )
-                                {
-                                    args.n_char = \
-                                        (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
-                                    plP_esc( PLESC_TEXT_CHAR, &args );
-                                }
                             }
 #ifdef PL_MOMENTARY_SYMBOL_FONT
                             fci = fcisave;
                             unicode_buffer[j++] = fci;
 
-                            if ( plsc->alt_unicode )
-                            {
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-                            }
 #endif
                             j--;
-                            break;
-
-                        case 'u':
-                            if ( plsc->alt_unicode )
-                            {
-                                args.n_ctrl_char = PLTEXT_SUPERSCRIPT;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-                                i   += 1;
-                                skip = 1;
-                            }
-                            break;
-
-                        case 'd':
-                            if ( plsc->alt_unicode )
-                            {
-                                args.n_ctrl_char = PLTEXT_SUBSCRIPT;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-                                i   += 1;
-                                skip = 1;
-                            }
                             break;
                         }
                     }
@@ -979,15 +864,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                         {
                             i++;
                             unicode_buffer[++j] = esc;
-                            args.n_char         = esc;
-                        }
-                        else
-                        {
-                            args.n_char = unichar;
-                        }
-                        if ( plsc->alt_unicode )
-                        {
-                            plP_esc( PLESC_TEXT_CHAR, &args );
                         }
                     }
                     j++;
@@ -1001,14 +877,273 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                                                   * though it is
                                                                   * currently  static) */
                 }
-                else
-                    /* Don't print anything, if there is no unicode to print! */
-                    return;
-            }
 
-            if ( plsc->alt_unicode )
-            {
-                plP_esc( PLESC_END_TEXT, &args );
+
+                /* The alternate unicode text handling loop. */
+
+                if ( plsc->alt_unicode )
+                {
+                    args.n_fci = fci;
+                    plP_esc( PLESC_BEGIN_TEXT, &args );
+
+                    for ( i = 0; i < len; i++ )
+                    {
+                        skip = 0;
+
+                        if ( string[i] == esc )
+                        {
+                            switch ( string[i + 1] )
+                            {
+                            case '(': /* hershey code */
+                                i  += 2 + text2num( &string[i + 2], ')', &code );
+                                idx = plhershey2unicode( code );
+#ifdef PL_MOMENTARY_SYMBOL_FONT
+                                fcisave = fci;
+                                plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
+                                args.n_fci       = fci;
+                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+#endif
+                                args.n_char = \
+                                    (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+                                plP_esc( PLESC_TEXT_CHAR, &args );
+
+#ifdef PL_MOMENTARY_SYMBOL_FONT
+                                fci = fcisave;
+
+                                args.n_fci       = fci;
+                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+#endif
+                                skip = 1;
+                                break;
+
+                            case '[': /* unicode */
+                                i += 2 + text2num( &string[i + 2], ']', &code );
+#ifdef PL_MOMENTARY_SYMBOL_FONT
+                                fcisave = fci;
+                                plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
+#endif
+
+#ifdef PL_MOMENTARY_SYMBOL_FONT
+                                args.n_fci       = fci;
+                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+#endif
+                                args.n_char = code;
+                                plP_esc( PLESC_TEXT_CHAR, &args );
+
+#ifdef PL_MOMENTARY_SYMBOL_FONT
+                                fci = fcisave;
+
+                                args.n_fci       = fci;
+                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+#endif
+                                skip = 1;
+                                break;
+
+                            case '<': /* change font*/
+                                if ( '0' <= string[i + 2] && string[i + 2] <= '9' )
+                                {
+                                    i += 2 + text2num( &string[i + 2], '>', &code );
+                                    if ( code & PL_FCI_MARK )
+                                    {
+                                        /* code is a complete FCI (font characterization
+                                         * integer): change FCI to this value.
+                                         */
+                                        fci  = code;
+                                        skip = 1;
+
+                                        args.n_fci       = fci;
+                                        args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                        plP_esc( PLESC_CONTROL_CHAR, &args );
+                                    }
+                                    else
+                                    {
+                                        /* code is not complete FCI. Change
+                                         * FCI with hex power in rightmost hex
+                                         * digit and hex digit value in second rightmost
+                                         * hex digit.
+                                         */
+                                        hexdigit = ( code >> 4 ) & PL_FCI_HEXDIGIT_MASK;
+                                        hexpower = code & PL_FCI_HEXPOWER_MASK;
+                                        plP_hex2fci( hexdigit, hexpower, &fci );
+                                        skip = 1;
+
+                                        args.n_fci       = fci;
+                                        args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                        plP_esc( PLESC_CONTROL_CHAR, &args );
+                                    }
+                                }
+                                else
+                                {
+                                    i += text2fci( &string[i + 1], &hexdigit, &hexpower );
+                                    if ( hexpower < 7 )
+                                    {
+                                        plP_hex2fci( hexdigit, hexpower, &fci );
+                                        skip = 1;
+
+                                        args.n_fci       = fci;
+                                        args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                        plP_esc( PLESC_CONTROL_CHAR, &args );
+                                    }
+                                }
+                                break;
+
+                            case 'f': /* Deprecated Hershey-style font change*/
+                            case 'F': /* Deprecated Hershey-style font change*/
+                                /* We implement an approximate response here so that
+                                 * reasonable results are obtained for unicode fonts,
+                                 * but this method is deprecated and the #<nnn> or
+                                 * #<command string> methods should be used instead
+                                 * to change unicode fonts in mid-string.
+                                 */
+                                fci = PL_FCI_MARK;
+                                if ( string[i + 2] == 'n' )
+                                {
+                                    /* medium, upright, sans-serif */
+                                    plP_hex2fci( PL_FCI_SANS, PL_FCI_FAMILY, &fci );
+                                }
+                                else if ( string[i + 2] == 'r' )
+                                {
+                                    /* medium, upright, serif */
+                                    plP_hex2fci( PL_FCI_SERIF, PL_FCI_FAMILY, &fci );
+                                }
+                                else if ( string[i + 2] == 'i' )
+                                {
+                                    /* medium, italic, serif */
+                                    plP_hex2fci( PL_FCI_ITALIC, PL_FCI_STYLE, &fci );
+                                    plP_hex2fci( PL_FCI_SERIF, PL_FCI_FAMILY, &fci );
+                                }
+                                else if ( string[i + 2] == 's' )
+                                {
+                                    /* medium, upright, script */
+                                    plP_hex2fci( PL_FCI_SCRIPT, PL_FCI_FAMILY, &fci );
+                                }
+                                else
+                                    fci = PL_FCI_IMPOSSIBLE;
+
+                                if ( fci != PL_FCI_IMPOSSIBLE )
+                                {
+                                    i   += 2;
+                                    skip = 1;
+
+                                    args.n_fci       = fci;
+                                    args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                    plP_esc( PLESC_CONTROL_CHAR, &args );
+                                }
+                                break;
+
+                            case 'g': /* Greek font */
+                            case 'G': /* Greek font */
+                                /* Get the index in the lookup table
+                                 * 527 = upper case alpha displacement in Hershey Table
+                                 * 627 = lower case alpha displacement in Hershey Table
+                                 */
+#ifdef PL_MOMENTARY_SYMBOL_FONT
+                                fcisave = fci;
+                                plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
+
+                                args.n_fci       = fci;
+                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+#endif
+
+                                ig = plP_strpos( plP_greek_mnemonic, string[i + 2] );
+                                if ( ig >= 0 )
+                                {
+                                    if ( ig >= 24 )
+                                        ig = ig + 100 - 24;
+                                    idx  = plhershey2unicode( ig + 527 );
+                                    i   += 2;
+                                    skip = 1; /* skip is set if we have copied something
+                                           * into the unicode table */
+
+                                    args.n_char = \
+                                        (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+                                    plP_esc( PLESC_TEXT_CHAR, &args );
+                                }
+                                else
+                                {
+                                    /* Use "unknown" unicode character if string[i+2]
+                                     * is not in the Greek array.*/
+                                    i   += 2;
+                                    skip = 1;            /* skip is set if we have copied something
+                                                          * into  the unicode table */
+
+                                    args.n_char = \
+                                        (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+                                    plP_esc( PLESC_TEXT_CHAR, &args );
+                                }
+#ifdef PL_MOMENTARY_SYMBOL_FONT
+                                fci = fcisave;
+
+                                args.n_fci       = fci;
+                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+#endif
+                                break;
+
+                            case 'u':
+                                args.n_ctrl_char = PLTEXT_SUPERSCRIPT;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+                                i   += 1;
+                                skip = 1;
+                                break;
+
+                            case 'd':
+                                args.n_ctrl_char = PLTEXT_SUBSCRIPT;
+                                plP_esc( PLESC_CONTROL_CHAR, &args );
+                                i   += 1;
+                                skip = 1;
+                                break;
+                            }
+                        }
+
+                        if ( skip == 0 )
+                        {
+                            PLUNICODE unichar = 0;
+#ifdef HAVE_LIBUNICODE
+                            char      * ptr = unicode_get_utf8( string + i, &unichar );
+#else
+                            char      * ptr = utf8_to_ucs4( string + i, &unichar );
+#endif
+                            if ( ptr == NULL )
+                            {
+                                char buf[BUFFER_SIZE];
+                                char tmpstring[31];
+                                strncpy( tmpstring, string, 30 );
+                                tmpstring[30] = '\0';
+                                snprintf( buf, BUFFER_SIZE, "UTF-8 string is malformed: %s%s",
+                                    tmpstring, strlen( string ) > 30 ? "[...]" : "" );
+                                plabort( buf );
+                                return;
+                            }
+                            i += ptr - ( string + i ) - 1;
+
+                            /* Search for escesc (an unescaped escape) in the input
+                             * string and adjust unicode_buffer accordingly).
+                             */
+                            if ( string[i] == esc && string[i + 1] == esc )
+                            {
+                                i++;
+                                args.n_char = esc;
+                            }
+                            else
+                            {
+                                args.n_char = unichar;
+                            }
+                            plP_esc( PLESC_TEXT_CHAR, &args );
+                        }
+                    }
+                    plP_esc( PLESC_END_TEXT, &args );
+                }
+
+                /* No text to display */
+
+                if ( j == 0 )
+                    return;
             }
         }
 
@@ -1021,10 +1156,8 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
             args.string = string;
         }
 
-        //        if ( !plsc->alt_unicode )
-        //        {
         plP_esc( PLESC_HAS_TEXT, &args );
-        //        }
+
 #ifndef DEBUG_TEXT
     }
     else
@@ -1204,24 +1337,24 @@ grgradient( short *x, short *y, PLINT npts )
 }
 
 /*--------------------------------------------------------------------------*\
- * void difilt
- *
- * Driver interface filter -- passes all coordinates through a variety
- * of filters.  These include filters to change :
- *
- *	- mapping of meta to physical coordinates
- *	- plot orientation
- *	- window into plot (zooms)
- *	- window into device (i.e set margins)
- *
- * The filters are applied in the order specified above.  Because the
- * orientation change comes first, subsequent window specifications affect
- * the new coordinates (i.e. after a 90 degree flip, what was x is now y).
- * This is the only way that makes sense from a graphical interface
- * (e.g. TCL/TK driver).
- *
- * Where appropriate, the page clip limits are modified.
- \*--------------------------------------------------------------------------*/
+* void difilt
+*
+* Driver interface filter -- passes all coordinates through a variety
+* of filters.  These include filters to change :
+*
+*	- mapping of meta to physical coordinates
+*	- plot orientation
+*	- window into plot (zooms)
+*	- window into device (i.e set margins)
+*
+* The filters are applied in the order specified above.  Because the
+* orientation change comes first, subsequent window specifications affect
+* the new coordinates (i.e. after a 90 degree flip, what was x is now y).
+* This is the only way that makes sense from a graphical interface
+* (e.g. TCL/TK driver).
+*
+* Where appropriate, the page clip limits are modified.
+\*--------------------------------------------------------------------------*/
 
 void
 difilt( PLINT *xscl, PLINT *yscl, PLINT npts,
@@ -1355,11 +1488,11 @@ sdifilt( short *xscl, short *yscl, PLINT npts,
 }
 
 /*--------------------------------------------------------------------------*\
- * void difilt_clip
- *
- * This provides the transformed text clipping region for the benefit of
- * those drivers that render their own text.
- \*--------------------------------------------------------------------------*/
+* void difilt_clip
+*
+* This provides the transformed text clipping region for the benefit of
+* those drivers that render their own text.
+\*--------------------------------------------------------------------------*/
 
 void
 difilt_clip( PLINT *x_coords, PLINT *y_coords )
@@ -1383,11 +1516,11 @@ difilt_clip( PLINT *x_coords, PLINT *y_coords )
 
 
 /*--------------------------------------------------------------------------*\
- * void pldi_ini
- *
- * Updates driver interface, making sure everything is in order.
- * Even if filter is not being used, the defaults need to be set up.
- \*--------------------------------------------------------------------------*/
+* void pldi_ini
+*
+* Updates driver interface, making sure everything is in order.
+* Even if filter is not being used, the defaults need to be set up.
+\*--------------------------------------------------------------------------*/
 
 static void
 setdef_diplt()
@@ -1439,13 +1572,13 @@ pldi_ini( void )
 }
 
 /*--------------------------------------------------------------------------*\
- * void pldid2pc
- *
- * Converts input values from relative device coordinates to relative plot
- * coordinates.  This function must be called when selecting a plot window
- * from a display driver, since the coordinates chosen by the user are
- * necessarily device-specific.
- \*--------------------------------------------------------------------------*/
+* void pldid2pc
+*
+* Converts input values from relative device coordinates to relative plot
+* coordinates.  This function must be called when selecting a plot window
+* from a display driver, since the coordinates chosen by the user are
+* necessarily device-specific.
+\*--------------------------------------------------------------------------*/
 
 void
 pldid2pc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
@@ -1487,11 +1620,11 @@ pldid2pc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
 }
 
 /*--------------------------------------------------------------------------*\
- * void pldip2dc
- *
- * Converts input values from relative plot coordinates to relative
- * device coordinates.
- \*--------------------------------------------------------------------------*/
+* void pldip2dc
+*
+* Converts input values from relative plot coordinates to relative
+* device coordinates.
+\*--------------------------------------------------------------------------*/
 
 void
 pldip2dc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
@@ -1533,10 +1666,10 @@ pldip2dc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plsdiplt
- *
- * Set window into plot space
- \*--------------------------------------------------------------------------*/
+* void plsdiplt
+*
+* Set window into plot space
+\*--------------------------------------------------------------------------*/
 
 void
 c_plsdiplt( PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax )
@@ -1557,10 +1690,10 @@ c_plsdiplt( PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plsdiplz
- *
- * Set window into plot space incrementally (zoom)
- \*--------------------------------------------------------------------------*/
+* void plsdiplz
+*
+* Set window into plot space incrementally (zoom)
+\*--------------------------------------------------------------------------*/
 
 void
 c_plsdiplz( PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax )
@@ -1577,15 +1710,15 @@ c_plsdiplz( PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax )
 }
 
 /*--------------------------------------------------------------------------*\
- * void calc_diplt
- *
- * Calculate transformation coefficients to set window into plot space.
- *
- * Note: if driver has requested to handle these commands itself, we must
- * send the appropriate escape command.  If the driver succeeds it will
- * cancel the filter operation.  The command is deferred until this point
- * to ensure that the driver has been initialized.
- \*--------------------------------------------------------------------------*/
+* void calc_diplt
+*
+* Calculate transformation coefficients to set window into plot space.
+*
+* Note: if driver has requested to handle these commands itself, we must
+* send the appropriate escape command.  If the driver succeeds it will
+* cancel the filter operation.  The command is deferred until this point
+* to ensure that the driver has been initialized.
+\*--------------------------------------------------------------------------*/
 
 static void
 calc_diplt( void )
@@ -1620,10 +1753,10 @@ calc_diplt( void )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plgdiplt
- *
- * Retrieve current window into plot space
- \*--------------------------------------------------------------------------*/
+* void plgdiplt
+*
+* Retrieve current window into plot space
+\*--------------------------------------------------------------------------*/
 
 void
 c_plgdiplt( PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax )
@@ -1635,15 +1768,15 @@ c_plgdiplt( PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plsdidev
- *
- * Set window into device space using margin, aspect ratio, and
- * justification.  If you want to just use the previous value for any of
- * these, just pass in the magic value PL_NOTSET.
- *
- * It is unlikely that one should ever need to change the aspect ratio
- * but it's in there for completeness.
- \*--------------------------------------------------------------------------*/
+* void plsdidev
+*
+* Set window into device space using margin, aspect ratio, and
+* justification.  If you want to just use the previous value for any of
+* these, just pass in the magic value PL_NOTSET.
+*
+* It is unlikely that one should ever need to change the aspect ratio
+* but it's in there for completeness.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plsdidev( PLFLT mar, PLFLT aspect, PLFLT jx, PLFLT jy )
@@ -1665,11 +1798,11 @@ c_plsdidev( PLFLT mar, PLFLT aspect, PLFLT jx, PLFLT jy )
 }
 
 /*--------------------------------------------------------------------------*\
- * void calc_didev
- *
- * Calculate transformation coefficients to set window into device space.
- * Calculates relative window bounds and calls plsdidxy to finish the job.
- \*--------------------------------------------------------------------------*/
+* void calc_didev
+*
+* Calculate transformation coefficients to set window into device space.
+* Calculates relative window bounds and calls plsdidxy to finish the job.
+\*--------------------------------------------------------------------------*/
 
 static void
 calc_didev( void )
@@ -1752,10 +1885,10 @@ calc_didev( void )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plgdidev
- *
- * Retrieve current window into device space
- \*--------------------------------------------------------------------------*/
+* void plgdidev
+*
+* Retrieve current window into device space
+\*--------------------------------------------------------------------------*/
 
 void
 c_plgdidev( PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy )
@@ -1767,10 +1900,10 @@ c_plgdidev( PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plsdiori
- *
- * Set plot orientation, specifying rotation in units of pi/2.
- \*--------------------------------------------------------------------------*/
+* void plsdiori
+*
+* Set plot orientation, specifying rotation in units of pi/2.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plsdiori( PLFLT rot )
@@ -1788,11 +1921,11 @@ c_plsdiori( PLFLT rot )
 }
 
 /*--------------------------------------------------------------------------*\
- * void calc_diori
- *
- * Calculate transformation coefficients to arbitrarily orient plot.
- * Preserve aspect ratios so the output doesn't suck.
- \*--------------------------------------------------------------------------*/
+* void calc_diori
+*
+* Calculate transformation coefficients to arbitrarily orient plot.
+* Preserve aspect ratios so the output doesn't suck.
+\*--------------------------------------------------------------------------*/
 
 static void
 calc_diori( void )
@@ -1883,10 +2016,10 @@ calc_diori( void )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plgdiori
- *
- * Get plot orientation
- \*--------------------------------------------------------------------------*/
+* void plgdiori
+*
+* Get plot orientation
+\*--------------------------------------------------------------------------*/
 
 void
 c_plgdiori( PLFLT *p_rot )
@@ -1895,13 +2028,13 @@ c_plgdiori( PLFLT *p_rot )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plsdimap
- *
- * Set up transformation from metafile coordinates.  The size of the plot is
- * scaled so as to preserve aspect ratio.  This isn't intended to be a
- * general-purpose facility just yet (not sure why the user would need it,
- * for one).
- \*--------------------------------------------------------------------------*/
+* void plsdimap
+*
+* Set up transformation from metafile coordinates.  The size of the plot is
+* scaled so as to preserve aspect ratio.  This isn't intended to be a
+* general-purpose facility just yet (not sure why the user would need it,
+* for one).
+\*--------------------------------------------------------------------------*/
 
 void
 c_plsdimap( PLINT dimxmin, PLINT dimxmax, PLINT dimymin, PLINT dimymax,
@@ -1919,13 +2052,13 @@ c_plsdimap( PLINT dimxmin, PLINT dimxmax, PLINT dimymin, PLINT dimymax,
 }
 
 /*--------------------------------------------------------------------------*\
- * void calc_dimap
- *
- * Set up transformation from metafile coordinates.  The size of the plot is
- * scaled so as to preserve aspect ratio.  This isn't intended to be a
- * general-purpose facility just yet (not sure why the user would need it,
- * for one).
- \*--------------------------------------------------------------------------*/
+* void calc_dimap
+*
+* Set up transformation from metafile coordinates.  The size of the plot is
+* scaled so as to preserve aspect ratio.  This isn't intended to be a
+* general-purpose facility just yet (not sure why the user would need it,
+* for one).
+\*--------------------------------------------------------------------------*/
 
 static void
 calc_dimap()
@@ -1968,10 +2101,10 @@ calc_dimap()
 }
 
 /*--------------------------------------------------------------------------*\
- * void plflush()
- *
- * Flushes the output stream.  Use sparingly, if at all.
- \*--------------------------------------------------------------------------*/
+* void plflush()
+*
+* Flushes the output stream.  Use sparingly, if at all.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plflush( void )
@@ -1991,16 +2124,16 @@ c_plflush( void )
 }
 
 /*--------------------------------------------------------------------------*\
- * Startup routines.
- \*--------------------------------------------------------------------------*/
+* Startup routines.
+\*--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------*\
- * void pllib_init()
- *
- * Initialize library.  Called internally by every startup routine.
- * Everything you want to always be initialized before plinit() is called
- * you should put here.  E.g. dispatch table setup, rcfile read, etc.
- \*--------------------------------------------------------------------------*/
+* void pllib_init()
+*
+* Initialize library.  Called internally by every startup routine.
+* Everything you want to always be initialized before plinit() is called
+* you should put here.  E.g. dispatch table setup, rcfile read, etc.
+\*--------------------------------------------------------------------------*/
 
 void
 pllib_init()
@@ -2020,10 +2153,10 @@ pllib_init()
 }
 
 /*--------------------------------------------------------------------------*\
- * void plstar(nx, ny)
- *
- * Initialize PLplot, passing in the windows/page settings.
- \*--------------------------------------------------------------------------*/
+* void plstar(nx, ny)
+*
+* Initialize PLplot, passing in the windows/page settings.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plstar( PLINT nx, PLINT ny )
@@ -2039,10 +2172,10 @@ c_plstar( PLINT nx, PLINT ny )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plstart(devname, nx, ny)
- *
- * Initialize PLplot, passing the device name and windows/page settings.
- \*--------------------------------------------------------------------------*/
+* void plstart(devname, nx, ny)
+*
+* Initialize PLplot, passing the device name and windows/page settings.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plstart( const char *devname, PLINT nx, PLINT ny )
@@ -2059,10 +2192,10 @@ c_plstart( const char *devname, PLINT nx, PLINT ny )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plinit()
- *
- * Initializes PLplot, using preset or default options.
- \*--------------------------------------------------------------------------*/
+* void plinit()
+*
+* Initializes PLplot, using preset or default options.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plinit( void )
@@ -2223,10 +2356,10 @@ c_plinit( void )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plend()
- *
- * End a plotting session for all open streams.
- \*--------------------------------------------------------------------------*/
+* void plend()
+*
+* End a plotting session for all open streams.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plend( void )
@@ -2278,12 +2411,12 @@ c_plend( void )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plend1()
- *
- * End a plotting session for the current stream only.  After the stream is
- * ended the memory associated with the stream's PLStream data structure is
- * freed (for stream > 0), and the stream counter is set to 0 (the default).
- \*--------------------------------------------------------------------------*/
+* void plend1()
+*
+* End a plotting session for the current stream only.  After the stream is
+* ended the memory associated with the stream's PLStream data structure is
+* freed (for stream > 0), and the stream counter is set to 0 (the default).
+\*--------------------------------------------------------------------------*/
 
 void
 c_plend1( void )
@@ -2342,11 +2475,11 @@ c_plend1( void )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plsstrm
- *
- * Set stream number.  If the data structure for a new stream is
- * unallocated, we allocate it here.
- \*--------------------------------------------------------------------------*/
+* void plsstrm
+*
+* Set stream number.  If the data structure for a new stream is
+* unallocated, we allocate it here.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plsstrm( PLINT strm )
@@ -2374,10 +2507,10 @@ c_plsstrm( PLINT strm )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plgstrm
- *
- * Get current stream number.
- \*--------------------------------------------------------------------------*/
+* void plgstrm
+*
+* Get current stream number.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plgstrm( PLINT *p_strm )
@@ -2386,17 +2519,17 @@ c_plgstrm( PLINT *p_strm )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plmkstrm
- *
- * Creates a new stream and makes it the default.  Differs from using
- * plsstrm(), in that a free stream number is found, and returned.
- *
- * Unfortunately, I /have/ to start at stream 1 and work upward, since
- * stream 0 is preallocated.  One of the BIG flaws in the PLplot API is
- * that no initial, library-opening call is required.  So stream 0 must be
- * preallocated, and there is no simple way of determining whether it is
- * already in use or not.
- \*--------------------------------------------------------------------------*/
+* void plmkstrm
+*
+* Creates a new stream and makes it the default.  Differs from using
+* plsstrm(), in that a free stream number is found, and returned.
+*
+* Unfortunately, I /have/ to start at stream 1 and work upward, since
+* stream 0 is preallocated.  One of the BIG flaws in the PLplot API is
+* that no initial, library-opening call is required.  So stream 0 must be
+* preallocated, and there is no simple way of determining whether it is
+* already in use or not.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plmkstrm( PLINT *p_strm )
@@ -2423,20 +2556,20 @@ c_plmkstrm( PLINT *p_strm )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plstrm_init
- *
- * Does required startup initialization of a stream.  Should be called right
- * after creating one (for allocating extra memory, etc).  Users shouldn't
- * need to call this directly.
- *
- * This function can be called multiple times for a given stream, in which
- * case only the first call produces any effect.  For streams >= 1, which
- * are created dynamically, this is called by the routine that allocates
- * the stream.  Stream 0, which is preallocated, is much harder to deal with
- * because any of a number of different calls may be the first call to the
- * library.  This is handled by just calling plstrm_init() from every
- * function that might be called first.  Sucks, but it should work.
- \*--------------------------------------------------------------------------*/
+* void plstrm_init
+*
+* Does required startup initialization of a stream.  Should be called right
+* after creating one (for allocating extra memory, etc).  Users shouldn't
+* need to call this directly.
+*
+* This function can be called multiple times for a given stream, in which
+* case only the first call produces any effect.  For streams >= 1, which
+* are created dynamically, this is called by the routine that allocates
+* the stream.  Stream 0, which is preallocated, is much harder to deal with
+* because any of a number of different calls may be the first call to the
+* library.  This is handled by just calling plstrm_init() from every
+* function that might be called first.  Sucks, but it should work.
+\*--------------------------------------------------------------------------*/
 
 void
 plstrm_init( void )
@@ -2456,10 +2589,10 @@ plstrm_init( void )
 }
 
 /*--------------------------------------------------------------------------*\
- * pl_cpcolor
- *
- * Utility to copy one PLColor to another.
- \*--------------------------------------------------------------------------*/
+* pl_cpcolor
+*
+* Utility to copy one PLColor to another.
+\*--------------------------------------------------------------------------*/
 
 void
 pl_cpcolor( PLColor *to, PLColor *from )
@@ -2471,18 +2604,18 @@ pl_cpcolor( PLColor *to, PLColor *from )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plcpstrm
- *
- * Copies state parameters from the reference stream to the current stream.
- * Tell driver interface to map device coordinates unless flags == 1.
- *
- * This function is used for making save files of selected plots (e.g.
- * from the TK driver).  After initializing, you can get a copy of the
- * current plot to the specified device by switching to this stream and
- * issuing a plcpstrm() and a plreplot(), with calls to plbop() and
- * pleop() as appropriate.  The plot buffer must have previously been
- * enabled (done automatically by some display drivers, such as X).
- \*--------------------------------------------------------------------------*/
+* void plcpstrm
+*
+* Copies state parameters from the reference stream to the current stream.
+* Tell driver interface to map device coordinates unless flags == 1.
+*
+* This function is used for making save files of selected plots (e.g.
+* from the TK driver).  After initializing, you can get a copy of the
+* current plot to the specified device by switching to this stream and
+* issuing a plcpstrm() and a plreplot(), with calls to plbop() and
+* pleop() as appropriate.  The plot buffer must have previously been
+* enabled (done automatically by some display drivers, such as X).
+\*--------------------------------------------------------------------------*/
 
 void
 c_plcpstrm( PLINT iplsr, PLINT flags )
@@ -2580,25 +2713,25 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
 }
 
 /*--------------------------------------------------------------------------*\
- * pllib_devinit()
- *
- * Does preliminary setup of device driver.
- *
- * This function (previously plGetDev) used to be what is now shown as
- * plSelectDev below.  However, the situation is a bit more complicated now in
- * the dynloadable drivers era.  We now have to:
- *
- * 1) Make sure the dispatch table is initialized to the union of static
- *    drivers and available dynamic drivers (done from pllib_init now).
- * 2) Allow the user to select the desired device.
- * 3) Initialize the dispatch table entries for the selected device, in the
- *    case that it is a dynloadable driver that has not yet been loaded.
- *
- * Also made non-static, in order to allow some device calls to be made prior
- * to calling plinit().  E.g. plframe needs to tell the X driver to create its
- * internal data structure during widget construction time (using the escape
- * function), but doesn't call plinit() until the plframe is actually mapped.
- \*--------------------------------------------------------------------------*/
+* pllib_devinit()
+*
+* Does preliminary setup of device driver.
+*
+* This function (previously plGetDev) used to be what is now shown as
+* plSelectDev below.  However, the situation is a bit more complicated now in
+* the dynloadable drivers era.  We now have to:
+*
+* 1) Make sure the dispatch table is initialized to the union of static
+*    drivers and available dynamic drivers (done from pllib_init now).
+* 2) Allow the user to select the desired device.
+* 3) Initialize the dispatch table entries for the selected device, in the
+*    case that it is a dynloadable driver that has not yet been loaded.
+*
+* Also made non-static, in order to allow some device calls to be made prior
+* to calling plinit().  E.g. plframe needs to tell the X driver to create its
+* internal data structure during widget construction time (using the escape
+* function), but doesn't call plinit() until the plframe is actually mapped.
+\*--------------------------------------------------------------------------*/
 
 void
 pllib_devinit()
@@ -2691,10 +2824,10 @@ plGetDrvDir()
 
 
 /*--------------------------------------------------------------------------*\
- * void plInitDispatchTable()
- *
- * ...
- \*--------------------------------------------------------------------------*/
+* void plInitDispatchTable()
+*
+* ...
+\*--------------------------------------------------------------------------*/
 
 static int plDispatchSequencer( const void *p1, const void *p2 )
 {
@@ -2929,15 +3062,15 @@ plInitDispatchTable()
 }
 
 /*--------------------------------------------------------------------------*\
- * void plSelectDev()
- *
- * If the user has not already specified the output device, or the
- * one specified is either: (a) not available, (b) "?", or (c) NULL, the
- * user is prompted for it.
- *
- * Prompting quits after 10 unsuccessful tries in case the user has
- * run the program in the background with insufficient input.
- \*--------------------------------------------------------------------------*/
+* void plSelectDev()
+*
+* If the user has not already specified the output device, or the
+* one specified is either: (a) not available, (b) "?", or (c) NULL, the
+* user is prompted for it.
+*
+* Prompting quits after 10 unsuccessful tries in case the user has
+* run the program in the background with insufficient input.
+\*--------------------------------------------------------------------------*/
 
 static void
 plSelectDev()
@@ -3027,12 +3160,12 @@ plSelectDev()
 }
 
 /*--------------------------------------------------------------------------*\
- * void plLoadDriver()
- *
- * Make sure the selected driver is loaded.  Static drivers are already
- * loaded, but if the user selected a dynamically loadable driver, we may
- * have to take care of that now.
- \*--------------------------------------------------------------------------*/
+* void plLoadDriver()
+*
+* Make sure the selected driver is loaded.  Static drivers are already
+* loaded, but if the user selected a dynamically loadable driver, we may
+* have to take care of that now.
+\*--------------------------------------------------------------------------*/
 
 static void
 plLoadDriver( void )
@@ -3124,10 +3257,10 @@ plLoadDriver( void )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plfontld()
- *
- * Load specified font set.
- \*--------------------------------------------------------------------------*/
+* void plfontld()
+*
+* Load specified font set.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plfontld( PLINT ifont )
@@ -3142,10 +3275,10 @@ c_plfontld( PLINT ifont )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plreplot()
- *
- * Replays contents of plot buffer to current device/file.
- \*--------------------------------------------------------------------------*/
+* void plreplot()
+*
+* Replays contents of plot buffer to current device/file.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plreplot( void )
@@ -3166,15 +3299,15 @@ c_plreplot( void )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plgFileDevs()
- *
- * Returns a list of file-oriented device names and their menu strings,
- * for use in a graphical interface.  The caller must allocate enough
- * space for (*p_menustr) and (*p_devname) to hold a pointer for each
- * device -- 20 or so is plenty.  E.g. char *menustr[20].  The size of
- * these arrays should be passed in *p_ndev, which, on exit, holds the
- * number of devices actually present.
- \*--------------------------------------------------------------------------*/
+* void plgFileDevs()
+*
+* Returns a list of file-oriented device names and their menu strings,
+* for use in a graphical interface.  The caller must allocate enough
+* space for (*p_menustr) and (*p_devname) to hold a pointer for each
+* device -- 20 or so is plenty.  E.g. char *menustr[20].  The size of
+* these arrays should be passed in *p_ndev, which, on exit, holds the
+* number of devices actually present.
+\*--------------------------------------------------------------------------*/
 
 void
 plgFileDevs( const char ***p_menustr, const char ***p_devname, int *p_ndev )
@@ -3183,10 +3316,10 @@ plgFileDevs( const char ***p_menustr, const char ***p_devname, int *p_ndev )
 }
 
 /*--------------------------------------------------------------------------*\
- * void plgDevs()
- *
- * Like plgFileDevs(), but returns names and menu strings for all devices.
- \*--------------------------------------------------------------------------*/
+* void plgDevs()
+*
+* Like plgFileDevs(), but returns names and menu strings for all devices.
+\*--------------------------------------------------------------------------*/
 
 void
 plgDevs( const char ***p_menustr, const char ***p_devname, int *p_ndev )
@@ -3220,8 +3353,8 @@ plgdevlst( const char **p_menustr, const char **p_devname, int *p_ndev, int type
 }
 
 /*--------------------------------------------------------------------------*\
- *  Various external access routines.
- \*--------------------------------------------------------------------------*/
+*  Various external access routines.
+\*--------------------------------------------------------------------------*/
 
 /* Get output device parameters. */
 
@@ -3605,13 +3738,13 @@ plsxwin( PLINT window_id )
 }
 
 /*--------------------------------------------------------------------------*\
- *  These set/get information for family files, and may be called prior
- *  to plinit to set up the necessary parameters.  Arguments:
- *
- *	fam	familying flag (boolean)
- *	num	member number
- *	bmax	maximum member size
- \*--------------------------------------------------------------------------*/
+*  These set/get information for family files, and may be called prior
+*  to plinit to set up the necessary parameters.  Arguments:
+*
+*	fam	familying flag (boolean)
+*	num	member number
+*	bmax	maximum member size
+\*--------------------------------------------------------------------------*/
 
 /* Get family file parameters */
 
@@ -3648,9 +3781,9 @@ c_plfamadv( void )
 }
 
 /*--------------------------------------------------------------------------*\
- *  Interface routines for axis labling parameters.
- *  See pldtik.c for more info.
- \*--------------------------------------------------------------------------*/
+*  Interface routines for axis labling parameters.
+*  See pldtik.c for more info.
+\*--------------------------------------------------------------------------*/
 
 /* Get x axis labeling parameters */
 
@@ -3756,8 +3889,8 @@ plP_xgvpw( PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax )
 }
 
 /*--------------------------------------------------------------------------*\
- *  These should not be called by the user.
- \*--------------------------------------------------------------------------*/
+*  These should not be called by the user.
+\*--------------------------------------------------------------------------*/
 
 /* Get x-y domain in world coordinates for 3d plots */
 
@@ -3882,11 +4015,11 @@ plP_setphy( PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax )
 }
 
 /*--------------------------------------------------------------------------*\
- * void c_plscompression()
- *
- * Set compression.
- * Has to be done before plinit.
- \*--------------------------------------------------------------------------*/
+* void c_plscompression()
+*
+* Set compression.
+* Has to be done before plinit.
+\*--------------------------------------------------------------------------*/
 
 void
 c_plscompression( PLINT compression )
@@ -3898,10 +4031,10 @@ c_plscompression( PLINT compression )
 }
 
 /*--------------------------------------------------------------------------*\
- * void c_plgcompression()
- *
- * Get compression
- \*--------------------------------------------------------------------------*/
+* void c_plgcompression()
+*
+* Get compression
+\*--------------------------------------------------------------------------*/
 
 void
 c_plgcompression( PLINT *compression )
@@ -3911,14 +4044,14 @@ c_plgcompression( PLINT *compression )
 
 
 /*--------------------------------------------------------------------------*\
- * void plP_getinitdriverlist()
- *
- * Check to see if a driver/stream has been initialised
- * Returns a space separated list of matches streams/drivers
- * If more than one stream uses the same device, then the device name
- * will be returned for each stream.
- * Caller must allocate enough memory for "names" to hold the answer.
- \*--------------------------------------------------------------------------*/
+* void plP_getinitdriverlist()
+*
+* Check to see if a driver/stream has been initialised
+* Returns a space separated list of matches streams/drivers
+* If more than one stream uses the same device, then the device name
+* will be returned for each stream.
+* Caller must allocate enough memory for "names" to hold the answer.
+\*--------------------------------------------------------------------------*/
 
 void
 plP_getinitdriverlist( char *names )
@@ -3944,12 +4077,12 @@ plP_getinitdriverlist( char *names )
 
 
 /*--------------------------------------------------------------------------*\
- * PLINT plP_checkdriverinit()
- *
- * Checks from a list of given drivers which ones have been initialised
- * and returns the number of devices matching the list, or -1 if in error.
- * Effectively returns the number of streams matching the given stream.
- \*--------------------------------------------------------------------------*/
+* PLINT plP_checkdriverinit()
+*
+* Checks from a list of given drivers which ones have been initialised
+* and returns the number of devices matching the list, or -1 if in error.
+* Effectively returns the number of streams matching the given stream.
+\*--------------------------------------------------------------------------*/
 
 PLINT plP_checkdriverinit( char *names )
 {
@@ -3976,22 +4109,22 @@ PLINT plP_checkdriverinit( char *names )
         free( buff );                /* Clear up that memory we allocated   */
     }
     else
-        ret = -1;                    /* Error flag */
+        ret = -1; /* Error flag */
 
     return ( ret );
 }
 
 
 /*--------------------------------------------------------------------------*\
- * plP_image
- *
- * Author: Alessandro Mirone, Nov 2001
- *
- * Updated by Hezekiah Carty, Mar 2008.
- *   - Added support for pltr callback
- *   - Commented out the "dev_fastimg" rendering path
- *
- \*--------------------------------------------------------------------------*/
+* plP_image
+*
+* Author: Alessandro Mirone, Nov 2001
+*
+* Updated by Hezekiah Carty, Mar 2008.
+*   - Added support for pltr callback
+*   - Commented out the "dev_fastimg" rendering path
+*
+\*--------------------------------------------------------------------------*/
 
 void
 plP_image( PLFLT *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
