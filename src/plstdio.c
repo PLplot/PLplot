@@ -221,8 +221,10 @@ pl_create_tempfile( char **fname )
     }
     /* If we are not returning the file name then unlink the file so it is
      * automatically deleted. */
-    //if ( fname == NULL )
-    //    unlink( template );
+#ifdef PL_HAVE_UNLINK
+    if ( fname == NULL )
+        unlink( template );
+#endif
 #else
 #if !defined ( _S_IREAD )
 #define _S_IREAD     256

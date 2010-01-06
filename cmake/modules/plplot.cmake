@@ -243,6 +243,7 @@ include(CheckFunctionExists)
 check_function_exists(popen HAVE_POPEN)
 check_function_exists(usleep PL_HAVE_USLEEP)
 check_function_exists(mkstemp PL_HAVE_MKSTEMP)
+check_function_exists(mkstemp PL_HAVE_UNLINK)
 
 # Check for FP functions, including underscored version which 
 # are sometimes all that is available on windows
