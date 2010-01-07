@@ -3077,6 +3077,19 @@ plSelectDev()
 {
     int  dev, i, count, length;
     char response[80];
+    char * devname_env;
+
+/* If device name is not already specified, try to get it from environment */
+
+    if ( plsc->DevName[0] == '\0' )
+    {
+        devname_env = getenv( "PLPLOT_DEV" );
+        if ( devname_env )
+        {
+            strncpy( plsc->DevName, devname_env, sizeof ( plsc->DevName ) - 1 );
+            plsc->DevName[sizeof ( plsc->DevName ) - 1] = '\0';
+        }
+    }
 
 /* Device name already specified.  See if it is valid. */
 
