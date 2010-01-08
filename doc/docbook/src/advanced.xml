@@ -598,9 +598,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	all internal data structures necessary for plotting and initializes
 	the output device driver.  The output device can be a terminal, disk
 	file, window system, pipe, or socket.  If the output device has not
-	already been specified when &plinit; is called, a list of valid
-	output devices is given and the user is prompted for a choice.  For
-	example:
+	already been specified when &plinit; is called, the output device
+	will be taken from the value of the PLPLOT_DEV environment variable.
+	If this variable is not set (or is empty), a list of valid output
+	devices is given and the user is prompted for a choice.  For example:
       </para>
       
       <para>
@@ -649,6 +650,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      command line argument, if the program's command line arguments
 	      are being passed to the PLplot function
 	      &plparseopts;.
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      The value of the <literal>PLPLOT_DEV</literal> environment
+	      variable.  Note that specifying the output device via &plsdev;
+	      or the <literal>-dev</literal> command line argument will
+	      override the value given by the <literal>PLPLOT_DEV</literal>
+	      environment variable.
 	    </para>
 	  </listitem>
 	</itemizedlist>
