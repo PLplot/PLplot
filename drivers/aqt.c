@@ -284,8 +284,8 @@ void plD_init_aqt( PLStream *pls )
 
     if ( !didTests )
     {
-        hasShear = [adapter respondsToSelector:@selector( addLabel:atPoint:angle:shearAngle:align:)];
-        hasAlpha = [adapter respondsToSelector:@selector( setColorRed:green:blue:alpha:)];
+        hasShear = [adapter respondsToSelector:@selector( addLabel:atPoint:angle:shearAngle:align: )];
+        hasAlpha = [adapter respondsToSelector:@selector( setColorRed:green:blue:alpha: )];
         didTests = true;
     }
 }

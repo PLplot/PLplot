@@ -1495,14 +1495,14 @@ plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 
         switch ( flag )
         {
-        case - 3:
+        case -3:
             y0  += dy;
             flag = -flag;
             break;
-        case - 2:
+        case -2:
             y0 += dy;
             break;
-        case - 1:
+        case -1:
             y0  += dy;
             flag = -flag;
             break;

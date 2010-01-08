@@ -78,7 +78,7 @@ int main()
             test = offset + (double) j / (double) multiplier;
             if ( !ifhunt )
                 index = -40;
-            bhunt_search( &test, table, ntable, sizeof ( double ), &index, ( int( * ) ( const void *, const void * ))gedouble );
+            bhunt_search( &test, table, ntable, sizeof ( double ), &index, ( int ( * )( const void *, const void * ))gedouble );
             if ( index < -1 || index > ntable - 1 )
             {
                 printf( "ERROR: test = %20.16f lead to an invalid index of %i\n", test, index );

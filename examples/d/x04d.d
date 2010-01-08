@@ -44,7 +44,7 @@ void plot1( int type )
 
     /* Set up data for log plot */
     f0 = 1.0;
-    for ( size_t i = 0;  i <= 100; i++ )
+    for ( size_t i = 0; i <= 100; i++ )
     {
         freql[i] = -2.0 + i / 20.0;
         freq     = pow( 10.0, freql[i] );

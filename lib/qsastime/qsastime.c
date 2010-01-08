@@ -1008,7 +1008,7 @@ double leap_second_TAI( const MJDtime *MJD_TAI, int *inleap, int *index )
     *MJD = *MJD_TAI;
     normalize_MJD( MJD );
     /* Search for index such that TAI_UTC_lookup_table[*index] <= MJD(TAI) < TAI_UTC_lookup_table[*index+1] */
-    bhunt_search( MJD, TAI_UTC_lookup_table, number_of_entries_in_tai_utc_table, sizeof ( TAI_UTC ), index, ( int( * ) ( const void *, const void * ))geMJDtime_TAI );
+    bhunt_search( MJD, TAI_UTC_lookup_table, number_of_entries_in_tai_utc_table, sizeof ( TAI_UTC ), index, ( int ( * )( const void *, const void * ))geMJDtime_TAI );
     if ( debug == 2 )
         fprintf( stderr, "*index = %d\n", *index );
     if ( *index == -1 )

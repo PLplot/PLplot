@@ -192,9 +192,9 @@ c_plenvi( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 
     switch ( axis )
     {
-    case - 2:
+    case -2:
         break;
-    case - 1:
+    case -1:
         plbox( "bc", (PLFLT) 0.0, 0, "bc", (PLFLT) 0.0, 0 );
         break;
     case 0:

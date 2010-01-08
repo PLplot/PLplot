@@ -169,10 +169,10 @@ static void UpdatePageMetrics( PLStream *pls, char flag );
   #define Debug2    if ( pls->debug ) printf
   #define Debug3    if ( pls->debug ) printf
 #else
-  #define Verbose(... )      do { if ( pls->verbose ) { fprintf( stderr, __VA_ARGS__ ); } } while ( 0 )
-  #define Debug(... )        do { if ( pls->debug ) { fprintf( stderr, __VA_ARGS__ ); } } while ( 0 )
-  #define Debug2(... )       do { if ( pls->debug ) { fprintf( stderr, __VA_ARGS__ ); } } while ( 0 )
-  #define Debug3(... )       do { if ( pls->debug ) { fprintf( stderr, __VA_ARGS__ ); } } while ( 0 )
+  #define Verbose( ... )     do { if ( pls->verbose ) { fprintf( stderr, __VA_ARGS__ ); } } while ( 0 )
+  #define Debug( ... )       do { if ( pls->debug ) { fprintf( stderr, __VA_ARGS__ ); } } while ( 0 )
+  #define Debug2( ... )      do { if ( pls->debug ) { fprintf( stderr, __VA_ARGS__ ); } } while ( 0 )
+  #define Debug3( ... )      do { if ( pls->debug ) { fprintf( stderr, __VA_ARGS__ ); } } while ( 0 )
 #endif
 
 #define ReportWinError()     do {                                                       \

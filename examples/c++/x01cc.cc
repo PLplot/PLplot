@@ -47,7 +47,7 @@ public:
     Matrix( int _nx, int _ny ) : nx( _nx ), ny( _ny ) { v = new PLFLT[nx * ny]; }
     ~Matrix() { delete[] v; }
 
-    PLFLT& operator()( int i, int j )
+    PLFLT & operator()( int i, int j )
     {
         // Should do bounds checking, pass for now.
         return v[ j * ny + i ];
@@ -89,7 +89,7 @@ public:
         else
             _ny = ny;
     }
-    PLFLT& operator()( int i, int j )
+    PLFLT & operator()( int i, int j )
     {
         if ( wrapy ) j %= ny;
         return m( i, j );
@@ -121,7 +121,7 @@ public:
         return m( ix, iy );
     }
 
-    PLFLT& operator()( int ix, int iy )
+    PLFLT & operator()( int ix, int iy )
     {
         if ( wrapy ) iy %= ny;
         return m( ix, iy );
