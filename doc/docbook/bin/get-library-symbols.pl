@@ -23,7 +23,7 @@ open (HEADER, "< $header")
 my @hlines = <HEADER>;
 close HEADER;
 
-my @extsym = `nm $library`
+my @extsym = `nm "$library"`
   or die "$0: cannot get external symbols of library $library";
 
 my @symbols = ();
