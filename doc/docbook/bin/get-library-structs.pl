@@ -20,7 +20,7 @@ my $buf = "";
   
 while (<HEADER>) {
   $in_struct = 1
-    if /^typedef struct {/;
+    if /^typedef struct/;
   if ($in_struct) {
     $buf .= $_;
     if (/^}/) {
