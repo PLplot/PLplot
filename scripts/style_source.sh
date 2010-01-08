@@ -83,7 +83,7 @@ while test $# -gt 0; do
 done
 
 version=`uncrustify --version`
-if [ "$version" != "uncrustify 0.53" ] ; then
+if [ "$version" != "uncrustify 0.55" ] ; then
     echo "
 Detected uncrustify version = '$version'.
 This script only works with uncrustify 0.53."
