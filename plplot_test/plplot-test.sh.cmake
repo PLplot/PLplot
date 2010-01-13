@@ -237,7 +237,6 @@ octavedir=\
 "$EXAMPLES_DIR"/../bindings/octave:\
 "$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot:\
 "$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot/support:\
-"$SRC_EXAMPLES_DIR"/../bindings/octave/demos:\
 "$SRC_EXAMPLES_DIR"/../bindings/octave/misc:\
 "$SRC_EXAMPLES_DIR"/octave:\
 "@PLPLOT_OCTAVE_DIR@":\
