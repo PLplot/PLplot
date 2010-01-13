@@ -139,7 +139,7 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 \
 	examples/f95/x${exe}f.f90 \
         examples/java/x${exe}.java \
         examples/ocaml/x${exe}.ml \
-        bindings/octave/demos/x${exe}c.m \
+        examples/octave/x${exe}c.m \
         examples/perl/x${exe}.pl \
         examples/python/xw${exe}.py \
         examples/tcl/x${exe}.tcl \
