@@ -6,10 +6,12 @@ plplot (5.9.2-4) unstable; urgency=low
     + Remove arm build dependency on g++-4.1. (closes: #533806)
     + Update build dependency on tcl / tk to 8.5 (compatible with 
       latest itcl). (closes: #545302)
-    + Add dpkg (>=1.15.4) dependency for plplot-doc to correctly 
+    + Add dpkg (>=1.15.4) | install-info dependency for plplot-doc to correctly 
       handle info install triggers. Fixes lintian warning.
     + Bump debian standards version to 3.8.3.
     + Fix typo in java bindings package description. (closes: #557677)
+    + Add ${misc:Depends} to all binary package dependencies. Fixes lintian 
+      warning.
   * debian/control.in, debian/rules:
     + Update java to build-dep on default-jdk and runtime depend on default-jre
       which should work for all architectures.
