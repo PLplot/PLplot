@@ -1374,10 +1374,24 @@ plwindow_init( PLStream *pls )
     TkDev        *dev = (TkDev *) pls->dev;
     char         command[CMD_LEN];
     unsigned int bg;
+    char         *tmp;
+    int          i,n;
 
     dbug_enter( "plwindow_init" );
 
-    Tcl_SetVar( dev->interp, "plwindow", pls->plwindow, 0 );
+    /* Set tcl plwindow variable to be pls->plwindow with a . prepended and
+     * and with ' ' replaced by '_' and all other '.' by '_' to avoid
+     * quoting and bad window name problems. Also avoid name starting with
+     * an upper case letter. */
+    n = strlen(pls->plwindow)+1;
+    tmp = (char *)malloc(sizeof(char)*(n+1));
+    sprintf(tmp,".%s",pls->plwindow);
+    for (i=1;i<n;i++) {
+      if ( (tmp[i] == ' ') || (tmp[i] == '.') ) tmp[i] = '_';
+    }
+    if (isupper(tmp[1])) tmp[1] = tolower(tmp[1]);
+    Tcl_SetVar( dev->interp, "plwindow", tmp, 0 );
+    free(tmp);
 
 /* Create the plframe widget & anything else you want with it. */
 
