@@ -213,11 +213,14 @@ if(HAVE_QHULL)
     )
   set(
     libplplot${LIB_TAG}_LINK_FLAGS
-    "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -lqhull"
+    "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -L${QHULL_LIBRARY_DIRS} -lqhull"
     )
+  # Needed by plgridd.c.
   include_directories(
     ${QHULL_INCLUDE_DIRS}
     )
+  # Needed by traditional pkg-config approach for installed examples.
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${QHULL_LIBRARY_DIRS})
 endif(HAVE_QHULL)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
