@@ -17,6 +17,9 @@ plplot (5.9.2-4) unstable; urgency=low
       which should work for all architectures.
     + Update ada packages so built on all architectures except armel where gnat
       seems to be unavailable. (closes: #544187)
+  * debian/patches/16_wxwidget-with-cmake-2.8.diff: New patch ported from 
+    upstream to fix wxwidget build with cmake 2.8.0.
+  * debian/control.in: Bump wxgtk version to 2.8. Require cmake 2.8.0 to build.  
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 23 Aug 2009 12:05:07 +0100
 
