@@ -116,11 +116,11 @@ typedef struct
     char            bigendian;
 #endif
 #if defined ( PLD_wincairo )
-  WNDCLASSEX      wndclass;
-  HWND            hwnd;
-  MSG             msg;
-  HDC             hdc;
-  HDC             SCRN_hdc;
+    WNDCLASSEX      wndclass;
+    HWND            hwnd;
+    MSG             msg;
+    HDC             hdc;
+    HDC             SCRN_hdc;
 #endif
 } PLCairo;
 
@@ -2636,8 +2636,8 @@ LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
     switch ( nMsg )
     {
     case WM_DESTROY:
-      //        if ( dev )
-      //            Debug( "WM_DESTROY\t" );
+        //        if ( dev )
+        //            Debug( "WM_DESTROY\t" );
         PostQuitMessage( 0 );
         return ( 0 );
         break;
@@ -2757,9 +2757,9 @@ void plD_init_wincairo( PLStream *pls )
         WS_OVERLAPPEDWINDOW,                                /* Style */
         pls->xoffset,                                       /* Initial x (use default) */
         pls->yoffset,                                       /* Initial y (use default) */
-        /* This is a little lame since the window border size might change. */
-        pls->xlength+5,                                     /* Initial x size (use default) */
-        pls->ylength+30,                                    /* Initial y size (use default) */
+                                                            /* This is a little lame since the window border size might change. */
+        pls->xlength + 5,                                   /* Initial x size (use default) */
+        pls->ylength + 30,                                  /* Initial y size (use default) */
         NULL,                                               /* No parent window */
         NULL,                                               /* No menu */
         aStream->wndclass.hInstance,                        /* This program instance */
@@ -2781,11 +2781,11 @@ void plD_init_wincairo( PLStream *pls )
  */
 
 /*
-    dev->PopupMenu = CreatePopupMenu();
-    AppendMenu( dev->PopupMenu, MF_STRING, PopupPrint, "Print" );
-    AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, "Next Page" );
-    AppendMenu( dev->PopupMenu, MF_STRING, PopupQuit, "Quit" );
-*/
+ *  dev->PopupMenu = CreatePopupMenu();
+ *  AppendMenu( dev->PopupMenu, MF_STRING, PopupPrint, "Print" );
+ *  AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, "Next Page" );
+ *  AppendMenu( dev->PopupMenu, MF_STRING, PopupQuit, "Quit" );
+ */
 
     //    plD_state_wingcc( pls, PLSTATE_COLOR0 );
     /*
@@ -2804,17 +2804,17 @@ void plD_init_wincairo( PLStream *pls )
  */
 
 /*
-    GetClientRect( dev->hwnd, &dev->rect );
-    dev->width  = dev->rect.right;
-    dev->height = dev->rect.bottom;
-*/
+ *  GetClientRect( dev->hwnd, &dev->rect );
+ *  dev->width  = dev->rect.right;
+ *  dev->height = dev->rect.bottom;
+ */
 
 /*
  * Initialize Cairo Surface using the windows hdc.
  */
 
-    aStream->cairoSurface = (cairo_surface_t *)cairo_win32_surface_create(aStream->hdc);
-    aStream->cairoContext = cairo_create(aStream->cairoSurface);
+    aStream->cairoSurface = (cairo_surface_t *) cairo_win32_surface_create( aStream->hdc );
+    aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     /* Invert the surface so that the graphs are drawn right side up. */
     rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength );
@@ -2842,9 +2842,9 @@ plD_eop_wincairo( PLStream *pls )
             switch ((int) aStream->msg.message )
             {
             case WM_CHAR:
-	      if (((TCHAR) ( aStream->msg.wParam ) == 13 ) ||
-		  ((TCHAR) ( aStream->msg.wParam ) == 'q' ) ||
-		  ((TCHAR) ( aStream->msg.wParam ) == 'Q' ))
+                if (((TCHAR) ( aStream->msg.wParam ) == 13 ) ||
+                    ((TCHAR) ( aStream->msg.wParam ) == 'q' ) ||
+                    ((TCHAR) ( aStream->msg.wParam ) == 'Q' ))
                 {
                     PostQuitMessage( 0 );
                 }

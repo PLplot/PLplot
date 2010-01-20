@@ -141,6 +141,7 @@ INDEX
 
 1.1 Make PLplot aware of LC_NUMERIC locale
 1.2 Linear gradients have been implemented
+1.3 Cairo Windows driver implemented
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -183,6 +184,7 @@ examples
 detected
 2.36 Make PLplot aware of LC_NUMERIC locale
 2.37 Linear gradients have been implemented
+2.38 Cairo Windows driver implemented
 
 1. Changes relative to PLplot 5.9.5 (the previous development release)
 
@@ -263,6 +265,12 @@ to use native gradient capability whenever that is possible for any of
 our devices.  Currently, this has been implemented for our svg, qt,
 and cairo devices.  The result is nice-looking smooth transparency
 gradients for those devices, for, e.g., example 30, page 2.
+
+1.3 Cairo Windows driver implemented
+
+A cairo Windows driver has been implemented. This provides an
+interactive cairo driver for Windows similar to xcairo on Linux.
+Work to improve its functionality is ongoing.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -824,4 +832,10 @@ to use native gradient capability whenever that is possible for any of
 our devices.  Currently, this has been implemented for our svg, qt,
 and cairo devices.  The result is nice-looking smooth transparency
 gradients for those devices, for, e.g., example 30, page 2.
+
+2.38 Cairo Windows driver implemented
+
+A cairo Windows driver has been implemented. This provides an
+interactive cairo driver for Windows similar to xcairo on Linux.
+Work to improve its functionality is ongoing.
 
