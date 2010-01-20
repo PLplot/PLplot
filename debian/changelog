@@ -1,9 +1,41 @@
+plplot (5.9.5-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/patches/series: Remove the following patches which are no longer
+    required as they are now included upstream 
+      13_fix-kfreeBSD-build.diff
+      14_octave-3.0-fixes.diff
+      15_octave-toggle-plplot-use.diff
+  * debian/patches/02_unset-python-path.diff, 
+    debian/patches/04_use-mkoctfile.diff,
+    debian/patches/07_octave_prune_examples.diff, 
+    debian/patches/16_wxwidget-with-cmake-2.8.diff: 
+      + Update patches to work with plplot 5.9.5
+
 plplot (5.9.2-4) unstable; urgency=low
 
   * debian/patches/02_unset-python-path.diff: Fix offset in patch
     to remove quilt warning.  (closes: #538533)
+  * debian/control.in: 
+    + Remove arm build dependency on g++-4.1. (closes: #533806)
+    + Update build dependency on tcl / tk to 8.5 (compatible with 
+      latest itcl). (closes: #545302)
+    + Add dpkg (>=1.15.4) | install-info dependency for plplot-doc to correctly 
+      handle info install triggers. Fixes lintian warning.
+    + Bump debian standards version to 3.8.3.
+    + Fix typo in java bindings package description. (closes: #557677)
+    + Add ${misc:Depends} to all binary package dependencies. Fixes lintian 
+      warning.
+  * debian/control.in, debian/rules:
+    + Update java to build-dep on default-jdk and runtime depend on default-jre
+      which should work for all architectures.
+    + Update ada packages so built on all architectures except armel where gnat
+      seems to be unavailable. (closes: #544187)
+  * debian/patches/16_wxwidget-with-cmake-2.8.diff: New patch ported from 
+    upstream to fix wxwidget build with cmake 2.8.0.
+  * debian/control.in: Bump wxgtk version to 2.8. Require cmake 2.8.0 to build.  
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 20 Aug 2009 13:40:07 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 23 Aug 2009 12:05:07 +0100
 
 plplot (5.9.2-3) unstable; urgency=low
 
