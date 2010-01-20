@@ -85,6 +85,7 @@
 #cmakedefine PLD_pngcairo
 #cmakedefine PLD_memcairo
 #cmakedefine PLD_extcairo
+#cmakedefine PLD_wincairo
 #cmakedefine PLD_bmpqt
 #cmakedefine PLD_jpgqt
 #cmakedefine PLD_pngqt

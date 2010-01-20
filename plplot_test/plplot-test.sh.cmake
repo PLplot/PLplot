@@ -305,6 +305,7 @@ PLD_tek4107f=@PLD_tek4107f@
 #interactive PLD_tkwin=@PLD_tkwin@
 PLD_versaterm=@PLD_versaterm@
 PLD_vlt=@PLD_vlt@
+#interactive PLD_wincairo=@PLD_wincairo@
 #interactive PLD_wingcc=@PLD_wingcc@
 PLD_wxpng=@PLD_wxpng@
 #interactive PLD_wxwidgets=@PLD_wxwidgets@

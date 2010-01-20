@@ -136,6 +136,7 @@ set(DRIVERS_DEVICE_LIST
   "pscairo:cairo:ON:F:OFF"
   "svgcairo:cairo:ON:F:ON"
   "xcairo:cairo:ON:I:OFF"
+  "wincairo:cairo:ON:I:OFF"
   # new example 16 shows severe valgrind issues with this device.
   "cgm:cgm:OFF:F:OFF"
   # This unmaintained device driver builds but does not actually work 

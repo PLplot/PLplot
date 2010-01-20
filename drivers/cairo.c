@@ -57,7 +57,9 @@
 #if defined ( PLD_svgcairo )
 #include <cairo-svg.h>
 #endif
-
+#if defined ( PLD_wincairo )
+#include <windows.h>
+#endif
 
 /*---------------------------------------------------------------------
  * Constants & global (to this file) variables
@@ -113,29 +115,39 @@ typedef struct
     unsigned char   *cairo_format_memory;
     char            bigendian;
 #endif
+#if defined ( PLD_wincairo )
+  WNDCLASSEX      wndclass;
+  HWND            hwnd;
+  MSG             msg;
+  HDC             hdc;
+  HDC             SCRN_hdc;
+#endif
 } PLCairo;
 
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_cairo =
 #if defined ( PLD_xcairo )
-    "xcairo:Cairo X Windows Driver:1:cairo:59:xcairo\n"
+    "xcairo:Cairo X Windows Driver:1:cairo:100:xcairo\n"
 #endif
 #if defined ( PLD_pdfcairo )
-    "pdfcairo:Cairo PDF Driver:0:cairo:60:pdfcairo\n"
+    "pdfcairo:Cairo PDF Driver:0:cairo:101:pdfcairo\n"
 #endif
 #if defined ( PLD_pscairo )
-    "pscairo:Cairo PS Driver:0:cairo:61:pscairo\n"
+    "pscairo:Cairo PS Driver:0:cairo:102:pscairo\n"
 #endif
 #if defined ( PLD_svgcairo )
-    "svgcairo:Cairo SVG Driver:0:cairo:62:svgcairo\n"
+    "svgcairo:Cairo SVG Driver:0:cairo:103:svgcairo\n"
 #endif
 #if defined ( PLD_pngcairo )
-    "pngcairo:Cairo PNG Driver:0:cairo:63:pngcairo\n"
+    "pngcairo:Cairo PNG Driver:0:cairo:104:pngcairo\n"
 #endif
 #if defined ( PLD_memcairo )
-    "memcairo:Cairo Memory Driver:0:cairo:64:memcairo\n"
+    "memcairo:Cairo Memory Driver:0:cairo:105:memcairo\n"
 #endif
 #if defined ( PLD_extcairo )
-    "extcairo:Cairo External Context Driver:0:cairo:65:extcairo\n"
+    "extcairo:Cairo External Context Driver:0:cairo:106:extcairo\n"
+#endif
+#if defined ( PLD_wincairo )
+    "wincairo:Cairo Microscoft Windows Driver:0:cairo:107:wincairo\n"
 #endif
 ;
 
@@ -2550,6 +2562,317 @@ void plD_esc_extcairo( PLStream *pls, PLINT op, void *ptr )
 
 void plD_tidy_extcairo( PLStream *pls )
 {
+}
+
+#endif
+
+
+/*---------------------------------------------------------------------
+ * ---------------------------------------------------------------------
+ *
+ * That which is specific to the cairo microsoft windows driver.
+ *
+ * Much of the Windows specific code here was lifted from the wingcc
+ * driver.
+ *
+ * ---------------------------------------------------------------------
+ * ---------------------------------------------------------------------*/
+
+#if defined ( PLD_wincairo )
+
+static char* szWndClass = "PLplot WinCairo";
+
+void plD_dispatch_init_wincairo( PLDispatchTable *pdt );
+void plD_init_wincairo( PLStream * );
+//void plD_bop_extcairo( PLStream * );
+void plD_eop_wincairo( PLStream * );
+//void plD_esc_extcairo( PLStream *, PLINT, void * );
+void plD_tidy_wincairo( PLStream * );
+
+/*--------------------------------------------------------------------------*\
+ * This is the window function for the plot window. Whenever a message is
+ * dispatched using DispatchMessage (or sent with SendMessage) this function
+ * gets called with the contents of the message.
+ \*--------------------------------------------------------------------------*/
+
+LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lParam )
+{
+    PLStream *pls = NULL;
+    PLCairo  *dev = NULL;
+
+/*
+ * The window carries a 32bit user defined pointer which points to the
+ * plplot stream (pls). This is used for tracking the window.
+ * Unfortunately, this is "attached" to the window AFTER it is created
+ * so we can not initialise PLStream or wingcc_Dev "blindly" because
+ * they may not yet have been initialised.
+ * WM_CREATE is called before we get to initialise those variables, so
+ * we wont try to set them.
+ */
+
+    if ( nMsg == WM_CREATE )
+    {
+        return ( 0 );
+    }
+    else
+    {
+        pls = (PLStream *) GetWindowLong( hwnd, GWL_USERDATA ); /* Try to get the address to pls for this window */
+        if ( pls )                                              /* If we got it, then we will initialise this windows plplot private data area */
+        {
+            dev = (PLCairo *) pls->dev;
+        }
+    }
+
+/*
+ * Process the windows messages
+ *
+ * Everything except WM_CREATE is done here and it is generally hoped that
+ * pls and dev are defined already by this stage.
+ * That will be true MOST of the time. Some times WM_PAINT will be called
+ * before we get to initialise the user data area of the window with the
+ * pointer to the windows plplot stream
+ */
+
+    switch ( nMsg )
+    {
+    case WM_DESTROY:
+      //        if ( dev )
+      //            Debug( "WM_DESTROY\t" );
+        PostQuitMessage( 0 );
+        return ( 0 );
+        break;
+
+    case WM_PAINT:
+        return ( 1 );
+        break;
+
+    case WM_SIZE:
+        return ( 0 );
+        break;
+
+    case WM_ENTERSIZEMOVE:
+        return ( 0 );
+        break;
+
+    case WM_EXITSIZEMOVE:
+        return ( 0 );
+        break;
+
+    case WM_ERASEBKGND:
+        return ( 0 );
+        break;
+
+    case WM_COMMAND:
+        return ( 0 );
+        break;
+    }
+
+    /* If we don't handle a message completely we hand it to the system
+     * provided default window function. */
+    return DefWindowProc( hwnd, nMsg, wParam, lParam );
+}
+
+/*---------------------------------------------------------------------
+ * dispatch_init_init()
+ *
+ * Initialize device dispatch table
+ * ----------------------------------------------------------------------*/
+
+/* extcairo */
+void plD_dispatch_init_wincairo( PLDispatchTable *pdt )
+{
+#ifndef ENABLE_DYNDRIVERS
+    pdt->pl_MenuStr = "Cairo Microsoft Windows driver";
+    pdt->pl_DevName = "wincairo";
+#endif
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 65;
+    pdt->pl_init     = (plD_init_fp) plD_init_wincairo;
+    pdt->pl_line     = (plD_line_fp) plD_line_cairo;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cairo;
+    pdt->pl_bop      = (plD_bop_fp) plD_bop_cairo;
+    pdt->pl_eop      = (plD_eop_fp) plD_eop_wincairo;
+    pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_wincairo;
+    pdt->pl_state    = (plD_state_fp) plD_state_cairo;
+    pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo;
+}
+
+/*---------------------------------------------------------------------
+ * plD_init_wincairo()
+ *
+ * Initialize Cairo Microsoft Windows driver.
+ * ----------------------------------------------------------------------*/
+
+void plD_init_wincairo( PLStream *pls )
+{
+    PLCairo *aStream;
+
+    /* Setup the PLStream and the font lookup table */
+    aStream = stream_and_font_setup( pls, 0 );
+
+    /* Save the pointer to the structure in the PLplot stream */
+    pls->dev = aStream;
+
+    /* Create window */
+    memset( &aStream->wndclass, 0, sizeof ( WNDCLASSEX ));
+
+    /* This class is called WinTestWin */
+    aStream->wndclass.lpszClassName = szWndClass;
+
+    /* cbSize gives the size of the structure for extensibility. */
+    aStream->wndclass.cbSize = sizeof ( WNDCLASSEX );
+
+    /* All windows of this class redraw when resized. */
+    aStream->wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_OWNDC | CS_PARENTDC;
+
+    /* All windows of this class use the PlplotCairoWndProc window function. */
+    aStream->wndclass.lpfnWndProc = PlplotCairoWndProc;
+
+    /* This class is used with the current program instance. */
+
+    aStream->wndclass.hInstance = GetModuleHandle( NULL );
+
+    /* Use standard application icon and arrow cursor provided by the OS */
+    aStream->wndclass.hIcon   = LoadIcon( NULL, IDI_APPLICATION );
+    aStream->wndclass.hIconSm = LoadIcon( NULL, IDI_APPLICATION );
+    aStream->wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
+    /* Color the background white */
+    aStream->wndclass.hbrBackground = NULL;
+
+    aStream->wndclass.cbWndExtra = sizeof ( pls );
+
+
+    /*
+     * Now register the window class for use.
+     */
+
+    RegisterClassEx( &aStream->wndclass );
+
+    /*
+     * Create our main window using that window class.
+     */
+    aStream->hwnd = CreateWindowEx( WS_EX_WINDOWEDGE + WS_EX_LEFT,
+        szWndClass,                                         /* Class name */
+        pls->program,                                       /* Caption */
+        WS_OVERLAPPEDWINDOW,                                /* Style */
+        pls->xoffset,                                       /* Initial x (use default) */
+        pls->yoffset,                                       /* Initial y (use default) */
+        /* This is a little lame since the window border size might change. */
+        pls->xlength+5,                                     /* Initial x size (use default) */
+        pls->ylength+30,                                    /* Initial y size (use default) */
+        NULL,                                               /* No parent window */
+        NULL,                                               /* No menu */
+        aStream->wndclass.hInstance,                        /* This program instance */
+        NULL                                                /* Creation parameters */
+        );
+
+
+/*
+ * Attach a pointer to the stream to the window's user area
+ * this pointer will be used by the windows call back for
+ * process this window
+ */
+
+    SetWindowLong( aStream->hwnd, GWL_USERDATA, (long) pls );
+    aStream->SCRN_hdc = aStream->hdc = GetDC( aStream->hwnd );
+
+/*
+ *  Setup the popup menu
+ */
+
+/*
+    dev->PopupMenu = CreatePopupMenu();
+    AppendMenu( dev->PopupMenu, MF_STRING, PopupPrint, "Print" );
+    AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, "Next Page" );
+    AppendMenu( dev->PopupMenu, MF_STRING, PopupQuit, "Quit" );
+*/
+
+    //    plD_state_wingcc( pls, PLSTATE_COLOR0 );
+    /*
+     * Display the window which we just created (using the nShow
+     * passed by the OS, which allows for start minimized and that
+     * sort of thing).
+     */
+    ShowWindow( aStream->hwnd, SW_SHOWDEFAULT );
+    SetForegroundWindow( aStream->hwnd );
+
+/*
+ *  Now we have to find out, from windows, just how big our drawing area is
+ *  when we specified the page size earlier on, that includes the borders,
+ *  title bar etc... so now that windows has done all its initialisations,
+ *  we will ask how big the drawing area is, and tell plplot
+ */
+
+/*
+    GetClientRect( dev->hwnd, &dev->rect );
+    dev->width  = dev->rect.right;
+    dev->height = dev->rect.bottom;
+*/
+
+/*
+ * Initialize Cairo Surface using the windows hdc.
+ */
+
+    aStream->cairoSurface = (cairo_surface_t *)cairo_win32_surface_create(aStream->hdc);
+    aStream->cairoContext = cairo_create(aStream->cairoSurface);
+
+    /* Invert the surface so that the graphs are drawn right side up. */
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength );
+
+    /* Set graphics aliasing */
+    cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
+}
+
+/*---------------------------------------------------------------------
+ * plD_eop_wincairo()
+ *
+ * Clean up Cairo Microsoft Windows driver.
+ * ---------------------------------------------------------------------*/
+
+void
+plD_eop_wincairo( PLStream *pls )
+{
+    PLCairo *aStream = (PLCairo *) pls->dev;
+
+    if ( !pls->nopause )
+    {
+        while ( GetMessage( &aStream->msg, NULL, 0, 0 ))
+        {
+            TranslateMessage( &aStream->msg );
+            switch ((int) aStream->msg.message )
+            {
+            case WM_CHAR:
+	      if (((TCHAR) ( aStream->msg.wParam ) == 13 ) ||
+		  ((TCHAR) ( aStream->msg.wParam ) == 'q' ) ||
+		  ((TCHAR) ( aStream->msg.wParam ) == 'Q' ))
+                {
+                    PostQuitMessage( 0 );
+                }
+                break;
+
+            default:
+                DispatchMessage( &aStream->msg );
+                break;
+            }
+        }
+    }
+}
+
+/*---------------------------------------------------------------------
+ * plD_tidy_wincairo()
+ *
+ * Clean up Cairo Microsoft Windows driver.
+ * ---------------------------------------------------------------------*/
+
+void plD_tidy_wincairo( PLStream *pls )
+{
+    PLCairo *aStream = (PLCairo *) pls->dev;
+
+    if ( aStream != NULL )
+    {
+        if ( aStream->hdc != NULL ) ReleaseDC( aStream->hwnd, aStream->hdc );
+        free_mem( pls->dev );
+    }
 }
 
 #endif

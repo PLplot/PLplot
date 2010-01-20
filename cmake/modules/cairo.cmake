@@ -29,6 +29,7 @@
 # PLD_pscairo		  - ON means the pscairo device is enabled.
 # PLD_svgcairo		  - ON means the svgcairo device is enabled.
 # PLD_xcairo		  - ON means the xcairo device is enabled.
+# PLD_wincairo            - ON means the wincairo device is enabled.
 # cairo_COMPILE_FLAGS	  - Blank-delimited COMPILE_FLAGS required to
 # 			    compile cairo device drivers.
 # cairo_LINK_FLAGS	  - list of full path names of libraries and
@@ -55,6 +56,7 @@ OR PLD_pscairo
 OR PLD_svgcairo 
 OR PLD_xcairo
 OR PLD_extcairo
+OR PLD_wincairo
 )
   if(NOT PKG_CONFIG_EXECUTABLE)
     message(STATUS 
@@ -67,6 +69,7 @@ OR PLD_extcairo
     set(PLD_svgcairo OFF CACHE BOOL "Enable svgcairo device" FORCE)
     set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
     set(PLD_extcairo OFF CACHE BOOL "Enable extcairo device" FORCE)
+    set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
   endif(NOT PKG_CONFIG_EXECUTABLE)
 endif(
    PLD_memcairo
@@ -76,6 +79,7 @@ OR PLD_pscairo
 OR PLD_svgcairo 
 OR PLD_xcairo
 OR PLD_extcairo
+OR PLD_wincairo
 )
 
 if(
@@ -86,6 +90,7 @@ OR PLD_pscairo
 OR PLD_svgcairo 
 OR PLD_xcairo
 OR PLD_extcairo
+OR PLD_wincairo
 )
   pkg_check_pkgconfig(
   pangocairo
@@ -145,6 +150,7 @@ OR PLD_extcairo
     set(PLD_svgcairo OFF CACHE BOOL "Enable svgcairo device" FORCE)
     set(PLD_xcairo OFF CACHE BOOL "Enable xcairo device" FORCE)
     set(PLD_extcairo OFF CACHE BOOL "Enable extcairo device" FORCE)
+    set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
   endif(linkflags)
 endif(
    PLD_memcairo
@@ -154,6 +160,7 @@ OR PLD_pscairo
 OR PLD_svgcairo 
 OR PLD_xcairo
 OR PLD_extcairo
+OR PLD_wincairo
 )
 
 if(NOT PLD_xcairo)
@@ -163,3 +170,10 @@ endif(NOT PLD_xcairo)
 if(NOT PLD_extcairo)
   set(extcairo_true "#")
 endif(NOT PLD_extcairo)
+
+if(NOT WIN32)
+  message(STATUS 
+    "WARNING: Not a Windows Computer. Setting wincairo driver to OFF."
+  )
+  set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
+endif(NOT WIN32)
