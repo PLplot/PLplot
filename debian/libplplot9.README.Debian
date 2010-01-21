@@ -30,8 +30,6 @@ plplot for Debian
       * plplot9-driver-gd: Provides the GD driver module, which allows
         direct generation of PNG and JPEG files.
 
-      * plplot9-driver-gnome2: Provides the Gnome canvas driver module.
-
       * plplot9-driver-cairo: Provides the cairo driver module. This uses
 	the cairo library to produce higher quality text using truetype
         fonts. It produces postscript, pdf, svg, png, mem and X output.

@@ -144,7 +144,7 @@ install-arch-stamp: build-arch-stamp
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
 		python-plplot plplot-bin libplplot-c++9c2 		\
-		plplot9-driver-gnome2 plplot9-driver-wxwidgets		\
+		plplot9-driver-wxwidgets		\
 		plplot9-driver-cairo libplplot-fortran9	; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
@@ -177,8 +177,8 @@ install-python: $(PYVERS:%=install-python%)
 
 install-python%: build-arch-stamp
 	( cd $(BUILD_DIR) ; \
-	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DENABLE_pygcw=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
-	  for d in gnome2/python python ; do		\
+	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
+	  for d in python ; do		\
 	    ( cd bindings/$$d;				\
 	      $(MAKE) clean ;				\
 	      $(MAKE) ;					\

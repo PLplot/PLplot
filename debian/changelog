@@ -11,8 +11,18 @@ plplot (5.9.5-1) unstable; urgency=low
     debian/patches/07_octave_prune_examples.diff, 
     debian/patches/16_wxwidget-with-cmake-2.8.diff: 
       + Update patches to work with plplot 5.9.5
+  * debian/control.in, debian/rules: 
+      + Properly enable support for ada on all architectures (except armel) 
+        - build dependencies were not updated. 
+      + Add sh4 to the list of architectures where gnat is not available and
+        so ada support is disabled. (closes: #562238)
+      + Drop the plplot9-driver-gnome2 package which is unmaintained 
+        upstream and depends on libgnomeprintui-2.2 which is to be dropped
+        from Debian. (closes: #542577)
+  * Rebuild package to use latest versions of gfortran (closes: #564065) 
+    and python (closes: #562411)
 
-plplot (5.9.2-4) unstable; urgency=low
+plplot (5.9.2-4) UNRELEASED; urgency=low
 
   * debian/patches/02_unset-python-path.diff: Fix offset in patch
     to remove quilt warning.  (closes: #538533)
