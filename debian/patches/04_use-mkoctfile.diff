@@ -57,11 +57,10 @@
    # Have to be specific about permissions for some reason (probably oct suffix).
    set(PERM_MODULES
      OWNER_READ
-@@ -188,9 +145,23 @@
+@@ -188,9 +145,22 @@
      WORLD_EXECUTE
      )
  
--  install(TARGETS plplot_octave
 +  add_custom_command(
 +    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.oct
 +    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc
@@ -76,9 +75,10 @@
 +    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.oct
 +    )
 +
-+  install(
++  install( 
 +    FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.oct
-     EXPORT export_plplot
+-  install(TARGETS plplot_octave
+-    EXPORT export_plplot
 -    LIBRARY
      DESTINATION ${OCTAVE_OCT_DIR}
      PERMISSIONS ${PERM_MODULES}

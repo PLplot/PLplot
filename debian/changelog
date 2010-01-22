@@ -6,6 +6,7 @@ plplot (5.9.5-1) unstable; urgency=low
       13_fix-kfreeBSD-build.diff
       14_octave-3.0-fixes.diff
       15_octave-toggle-plplot-use.diff
+    and clean up directory by deleting unused patches.
   * debian/patches/02_unset-python-path.diff, 
     debian/patches/04_use-mkoctfile.diff,
     debian/patches/07_octave_prune_examples.diff, 
@@ -19,8 +20,15 @@ plplot (5.9.5-1) unstable; urgency=low
       + Drop the plplot9-driver-gnome2 package which is unmaintained 
         upstream and depends on libgnomeprintui-2.2 which is to be dropped
         from Debian. (closes: #542577)
+      + Ensure ghostscript is installed in Build-Depends-Indep: since this
+        is needed to generate fonts for pdfjadetex, but is not automatically
+        pulled in.
+  * debian/rules: Remove setting of ITCL_LIBRARY which is not required
+    with latest version of itcl.
   * Rebuild package to use latest versions of gfortran (closes: #564065) 
     and python (closes: #562411)
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 21 Jan 2010 21:05:07 +0000
 
 plplot (5.9.2-4) UNRELEASED; urgency=low
 

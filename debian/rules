@@ -89,7 +89,7 @@ build-arch-stamp: patch config-stamp
 	#( cd bindings/octave ; \
 	#  $(MAKE) CC="gcc -D__builtin_va_list=void" plplot_octave.oct )
 	( cd $(BUILD_DIR) ; $(MAKE)  )
-	-( cd $(BUILD_DIR) ; ITCL_LIBRARY=/usr/lib/itcl3.2 ctest -VV)
+	-( cd $(BUILD_DIR) ; ctest -VV )
 	touch build-arch-stamp
 
 build-indep: build-indep-stamp
