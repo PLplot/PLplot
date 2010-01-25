@@ -43,9 +43,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     that we support. Currently, those are all operating systems supported by
     CMake (all forms of Unix including Linux and Mac OS X, and all forms of
     Windows including MinGW, MinGW/MSYS, Cygwin, and essentially all Windows
-    variants directly supported by Microsoft) as well as the DJGPP operating
-    system (supported by an independent build system since CMake is not
-    available for DJGPP).
+    variants directly supported by Microsoft).
   </para>
 
   <sect1 id="linux-unix-notes">
@@ -102,19 +100,4 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </sect2>
 
   </sect1>
-
-  <sect1 id="djgpp-notes">
-    <title>DJGPP Notes</title>
-    <sect2>
-      <title>DJGPP Configure and Build</title>
-      <para>
-	Since DJGPP is not supported by CMake it has an independent build system
-	which is documented at sys/dos/djgpp/readme.  The eventual plan is to
-	incorporate that material into this documentation, 
-	but we haven't done it yet so this section NEEDS DOCUMENTATION.
-      </para>
-    </sect2>
-
-  </sect1>
-
 </chapter>

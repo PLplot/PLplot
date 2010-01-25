@@ -135,6 +135,12 @@ device much less use it for anything serious.  Finally, it has had a
 well-known issue for years (incorrect colours) which has never been
 fixed indicating nobody is interested in maintaining this device.
 
+XV. As of release 5.9.6 we have retired our platform support of djgpp
+that used to reside in sys/dos/djgpp.  The developer (Andrew Roach)
+who used to maintain those support files for djgpp feels that the
+djgpp platform is no longer actively developed, and he no longer uses
+djgpp himself.
+
 INDEX
 
 1. Changes relative to PLplot 5.9.5 (the previous development release)
@@ -276,9 +282,8 @@ Work to improve its functionality is ongoing.
 
 2.1 All autotools-related files have now been removed
 
-CMake (with the exception of a special build script for the DJGPP platform)
-is now the only supported build system. It has been tested on Linux / Unix,
-Mac OS-X and Windows platforms.
+CMake is now the only supported build system. It has been tested on
+Linux / Unix, Mac OS-X and Windows platforms.
 
 2.2 Build system bug fixes
 

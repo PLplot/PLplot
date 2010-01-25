@@ -31,10 +31,9 @@
 				 <ul class="arrowlist">
 				   <li>Linux, Mac OS X, and other Unices</li>
 				   <li>Windows (2000, XP and Vista)</li>
-				   <li>MS-DOS (DJGPP)</li>
 				 </ul>
 
-				 <p>With the exception of DJGPP, where we have implemented a custom build system, PLplot is built on the above platforms using our CMake-based build system.</p>
+				 <p>PLplot is built on the above platforms using our CMake-based build system.</p>
 				<h4><a name="languages">Language Bindings</a></h4>
 				<p>There are many bindings to the PLplot library</p>
 				<ul class="arrowlist">

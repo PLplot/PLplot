@@ -5,10 +5,9 @@ The definitive set of instructions is given at
 http://www.miscdebris.net/plplot_wiki/index.php?title=Building_PLplot.  The
 material below is cut and pasted from there as of 2009-01-10.
 
-With the exception of DJGPP on (Free)DOS (where you should follow the
-directions at sys/dos/djgpp/readme) all PLplot builds are done with our
-CMake-based build system which gives good results on Unix, Linux, and Mac OS
-X and Cygwin, MinGW, MinGW/MSYS, and bare windows.
+All PLplot builds are done with our CMake-based build system which
+gives good results on Unix, Linux, and Mac OS X and Cygwin, MinGW,
+MinGW/MSYS, and bare windows.
 
 Building PLplot with our CMake-based build system 
 =================================================
