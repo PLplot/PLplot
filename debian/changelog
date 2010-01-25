@@ -25,10 +25,11 @@ plplot (5.9.5-1) unstable; urgency=low
         pulled in.
   * debian/rules: Remove setting of ITCL_LIBRARY which is not required
     with latest version of itcl.
+  * debian/libplplot9.files: Ensures .pal palette files are correctly installed
   * Rebuild package to use latest versions of gfortran (closes: #564065) 
     and python (closes: #562411)
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 21 Jan 2010 21:05:07 +0000
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 25 Jan 2010 21:19:07 +0000
 
 plplot (5.9.2-4) UNRELEASED; urgency=low
 
