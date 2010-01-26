@@ -134,49 +134,6 @@ if(ENABLE_octave)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
     )
 
-  # Build octave interface.
-  set(octave_interface_INCLUDE_PATHS
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${OCTAVE_INCLUDE_PATH}
-    )
-  include_directories(${octave_interface_INCLUDE_PATHS})
-
-  add_library(plplot_octave MODULE ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc)
-  target_link_libraries(
-    plplot_octave
-    plplot${LIB_TAG}
-    "${OCTAVE_LIBRARIES}"
-    "${OCTINTERP_LIBRARIES}"
-    )
-
-  if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot${LIB_TAG} INSTALL_RPATH)
-    # (Reasonable) assumption here is that OCTAVE_LIBRARIES and
-    # OCTINTERP_LIBRARIES have the same path.
-    get_filename_component(OCTAVE_INSTALL_RPATH "${OCTAVE_LIBRARIES}" PATH)
-    set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${OCTAVE_INSTALL_RPATH})
-    set_target_properties(
-      plplot_octave
-      PROPERTIES
-      PREFIX "" 
-      SUFFIX ".oct"
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${OCTAVE_OCT_DIR}"
-      )
-  else(USE_RPATH)
-    set_target_properties(
-      plplot_octave
-      PROPERTIES
-      PREFIX "" 
-      SUFFIX ".oct"
-      INSTALL_NAME_DIR "${OCTAVE_OCT_DIR}"
-      )
-  endif(USE_RPATH)
-
   # Have to be specific about permissions for some reason (probably oct suffix).
   set(PERM_MODULES
     OWNER_READ
@@ -188,9 +145,22 @@ if(ENABLE_octave)
     WORLD_EXECUTE
     )
 
-  install(TARGETS plplot_octave
-    EXPORT export_plplot
-    LIBRARY
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.oct
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc
+    COMMAND ${MKOCTFILE} ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc
+    -I${CMAKE_CURRENT_BINARY_DIR} -I${CMAKE_SOURCE_DIR}/bindings/octave
+    -I${CMAKE_SOURCE_DIR}/include --strip
+    -L${CMAKE_BINARY_DIR}/src -lplplot${LIB_TAG}
+    )
+
+  add_custom_target(
+    plplot_octave_oct_file ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.oct
+    )
+
+  install( 
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.oct
     DESTINATION ${OCTAVE_OCT_DIR}
     PERMISSIONS ${PERM_MODULES}
     )

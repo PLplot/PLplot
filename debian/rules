@@ -57,6 +57,7 @@ CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
 	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON  -DENABLE_ocaml=OFF\
+        -DDEFAULT_NO_QT_DEVICES=ON \
 	$(ADA_OPTIONS) $(JAVA_OPTIONS) 
 
 BUILD_DIR = $(debbase)/build_tmp
@@ -144,7 +145,7 @@ install-arch-stamp: build-arch-stamp
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
 		python-plplot plplot-bin libplplot-c++9c2 		\
-		plplot9-driver-wxwidgets		\
+		plplot9-driver-wxwidgets                                \
 		plplot9-driver-cairo libplplot-fortran9	; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done

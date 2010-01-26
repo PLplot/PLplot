@@ -195,7 +195,7 @@ configure_file(
   @ONLY
   )
 
-set(python_location1 ${PYTHON_INSTDIR})
+set(python_location1)
 set(python_location2)
 set(python_location3)
 configure_file(

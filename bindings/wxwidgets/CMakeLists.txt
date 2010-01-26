@@ -55,9 +55,18 @@ if(ENABLE_wxwidgets)
   endif(BUILD_SHARED_LIBS)
 
   INCLUDE_DIRECTORIES( ${wxWidgets_INCLUDE_DIRS} )
-  ADD_DEFINITIONS( ${wxWidgets_DEFINITIONS} )
 
-  target_link_libraries(
+  IF(wxWidgets_DEFINITIONS)
+    SET_PROPERTY(DIRECTORY APPEND
+      PROPERTY COMPILE_DEFINITIONS ${wxWidgets_DEFINITIONS})
+  ENDIF(wxWidgets_DEFINITIONS)
+
+  IF(wxWidgets_DEFINITIONS_DEBUG)
+    SET_PROPERTY(DIRECTORY APPEND
+      PROPERTY COMPILE_DEFINITIONS_DEBUG ${wxWidgets_DEFINITIONS_DEBUG})
+  ENDIF(wxWidgets_DEFINITIONS_DEBUG)
+
+target_link_libraries(
   plplotwxwidgets${LIB_TAG}
   plplotcxx${LIB_TAG} 
   ${wxwidgets_LINK_FLAGS}
@@ -103,9 +112,14 @@ if(ENABLE_wxwidgets)
     endif(LIB_TAG)
     
     # Determine libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS
-    STRING(REGEX REPLACE ";" " "
+    set(wxWidgets_DEFINITIONS_all "${wxWidgets_DEFINITIONS}")
+    if(wxWidgets_DEFINITIONS_DEBUG)
+          set(wxWidgets_DEFINITIONS_all "${wxWidgets_DEFINITIONS};${wxWidgets_DEFINITIONS_DEBUG}")
+    endif(wxWidgets_DEFINITIONS_DEBUG)
+
+    STRING(REGEX REPLACE ";" " -D"
     libplplotwxwidgets${LIB_TAG}_COMPILE_FLAGS
-    "${wxWidgets_DEFINITIONS}"
+    "-D${wxWidgets_DEFINITIONS_all}"
     )
     STRING(REGEX REPLACE ";" " -I"
     wxWidgets_IFLAGS
