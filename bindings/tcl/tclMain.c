@@ -51,7 +51,7 @@
 #include <tcl.h>
 #include "plplot.h"
 
-#ifdef HAVE_TCL_GT_84
+#ifdef TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 5
 /* From (private) tclInt.h in tcl8.5 */
 #define TclFormatInt( buf, n )    sprintf(( buf ), "%ld", (long) ( n ))
 #else
