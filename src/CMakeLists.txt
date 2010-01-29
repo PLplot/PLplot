@@ -280,12 +280,16 @@ target_link_libraries(
   ${libplplot${LIB_TAG}_LINK_LIBRARIES}
   )
 
-# Temporary workaround until this filtering functionality automatically
-# supplied by CMake.
+# Temporary crude workaround until this run-time default library location
+# filtering functionality (which is bound to vary from platform to platform)
+# is automatically supplied by CMake.  Note this only fixes the issue
+# for libplplotd and the libraries and plugins that depend on it, 
+# but does not fix the issue for, e.g., other mixtures of shared
+# libraries that driver plug-ins might depend upon.
 
 list(REMOVE_DUPLICATES LIB_INSTALL_RPATH)
 list(REMOVE_ITEM LIB_INSTALL_RPATH "/usr/lib")
-message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
+#message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
 
 if(USE_RPATH)
   set_target_properties(
