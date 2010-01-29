@@ -176,7 +176,7 @@ else(ENABLE_DYNDRIVERS)
   set(libplplot${LIB_TAG}_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${DRIVERS_RPATH})
 endif(ENABLE_DYNDRIVERS)
-#message("LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
+#message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
 
 if(MATH_LIB)
   set(
@@ -219,7 +219,8 @@ if(HAVE_QHULL)
   include_directories(
     ${QHULL_INCLUDE_DIRS}
     )
-  # Needed by traditional pkg-config approach for installed examples.
+  # Needed by the traditional pkg-config approach for installed examples
+  # as well as the new CMake-based build system for the installed examples.
   set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${QHULL_LIBRARY_DIRS})
 endif(HAVE_QHULL)
 
@@ -278,6 +279,13 @@ target_link_libraries(
   plplot${LIB_TAG}
   ${libplplot${LIB_TAG}_LINK_LIBRARIES}
   )
+
+# Temporary workaround until this filtering functionality automatically
+# supplied by CMake.
+
+list(REMOVE_DUPLICATES LIB_INSTALL_RPATH)
+list(REMOVE_ITEM LIB_INSTALL_RPATH "/usr/lib")
+message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
 
 if(USE_RPATH)
   set_target_properties(
