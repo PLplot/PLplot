@@ -71,7 +71,7 @@ proc process_pltclcmd {cmd rtype} {
 
             # Check to see if this arg is for fetching something from PLplot.
 
-           if { [string first & $vtype] >= 0 || $vtype eq "char *" } {
+           if { [string first & $vtype] >= 0 || $vtype == "char *" } {
                set refargs 1
                set argref($nargs) 1
            }
