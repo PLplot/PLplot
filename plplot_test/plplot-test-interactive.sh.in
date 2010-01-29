@@ -85,7 +85,7 @@ done
 
 # This script is only designed to work when EXAMPLES_DIR is a directory
 # with a subdirectory called "c".  Check whether this conditions is true.
-if [ ! -d $EXAMPLES_DIR/c ] ; then
+if [ ! -d "$EXAMPLES_DIR"/c ] ; then
     echo '
 This script is only designed to work when the EXAMPLES_DIR environment
 variable (overridden by option --examples-dir) is a directory with a
@@ -151,7 +151,7 @@ INDEX_LIST="01 04 08 14 16 17 23"
 for device in $INTERACTIVE_DEVICES_LIST ; do
     for index in $INDEX_LIST ; do
 	echo "${EXAMPLES_DIR}/c/x${index}c -dev $device"
-	${EXAMPLES_DIR}/c/x${index}c -dev $device 2> test.error
+	"${EXAMPLES_DIR}"/c/x${index}c -dev $device 2> test.error
 	# Look for any status codes (segfaults, plexit) from the examples themselves
 	status_code=$?
 	if [ "$status_code" -ne 0 ] ; then
@@ -272,7 +272,7 @@ for index in $INDEX_LIST ; do
 done
 
 if [ "@ENABLE_tk@" = "ON" ] ; then
-    cd ${SRC_EXAMPLES_DIR}/tcl
+    cd "${SRC_EXAMPLES_DIR}"/tcl
     plserver <<EOF
 plstdwin .
 plxframe .plw
@@ -282,7 +282,7 @@ proc 1 {} "plgrid .plw.plwin"
 1
 exit
 EOF
-    cd ${EXAMPLES_DIR}/tk
+    cd "${EXAMPLES_DIR}"/tk
     pwd
 # Drop 14 because multiple devices do not seem to work in this context.
 # Drop 31 since it produces empty plot (by design).

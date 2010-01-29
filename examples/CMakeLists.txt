@@ -582,9 +582,10 @@ if(BUILD_TEST)
       endif(ENABLE_DYNDRIVERS)
       add_custom_target(test_c_${device}
 	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} interactive device"
-	COMMAND ${custom_env} ${custom_test_command} --verbose --interactive --device=${device}
+	COMMAND env ${custom_env} ${custom_test_command} --verbose --interactive --device=${device}
 	DEPENDS
 	${interactive_device_depends_${device}}
+	VERBATIM
 	)
       if(device STREQUAL "tk")
 	if(CORE_BUILD)
