@@ -35,7 +35,7 @@ proc load_pkg_Plplotter {dir} {
     if {$tcl_platform(platform) == "unix"} {
 	set stem tkwin
 	set thisDir [pwd]
-	set buildDir @BUILD_DIR@
+	set buildDir "@BUILD_DIR@"
 	set bLen [string length $buildDir]
 	if {![string compare -length $bLen $buildDir $thisDir]}	then {
 		set searchdirs "../../drivers/.libs"} else {
