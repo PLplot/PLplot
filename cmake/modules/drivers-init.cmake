@@ -219,8 +219,9 @@ set(DRIVERS_DEVICE_LIST
   #"tek4107f:tek:OFF:F:OFF"
   #"versaterm:tek:OFF:I:OFF"
   #"vlt:tek:OFF:I:OFF"
-  #"xterm:tek:OFF:I:OFF" 
-  "tk:tk:ON:I:OFF"
+  #"xterm:tek:OFF:I:OFF"
+  # Temporarily turn off -dev tk by default until it works again.
+  "tk:tk:OFF:I:OFF"
   "tkwin:tkwin:ON:E:OFF"
   "wingcc:wingcc:ON:I:OFF"
   "wxwidgets:wxwidgets:ON:I:OFF"
