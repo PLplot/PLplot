@@ -67,18 +67,9 @@ if(ENABLE_tcl)
     if(TCL_TCLSH)
       message(STATUS "Looking for tclsh - found")
       message(STATUS "TCL_TCLSH = ${TCL_TCLSH}")
-      # test to determine HAVE_TCL_GT_84
-      execute_process(
-	COMMAND ${TCL_TCLSH} CheckTCL_GT_84.tcl
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/cmake/modules
-	OUTPUT_VARIABLE HAVE_TCL_GT_84
-	)
     else(TCL_TCLSH)
       message(STATUS "Looking for tclsh - not found")
-      # Fall back to user option for determining HAVE_TCL_GT_84.
-      option(HAVE_TCL_GT_84 "if Tcl version is greater than 8.4" OFF)
     endif(TCL_TCLSH)
-    message(STATUS "HAVE_TCL_GT_84 = ${HAVE_TCL_GT_84}")
   else(TCL_FOUND)
     message(STATUS
       "Looking for include paths and libraries for Tcl/Tk - not found"
