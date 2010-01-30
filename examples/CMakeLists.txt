@@ -569,7 +569,7 @@ if(BUILD_TEST)
     # INTERACTIVE_DEVICES_LIST is set in
     # cmake/modules/drivers-finish.cmake for all enabled _interactive_
     # devices and is thus available for the core build.  It is also
-    # configured in plplot_configure.cmake so and is thus available
+    # configured in plplot_configure.cmake and is thus available
     # for the installed examples tests.  Each list member consists of
     # a colon-separated device name and driver name.
     foreach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
