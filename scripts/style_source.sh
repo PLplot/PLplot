@@ -86,7 +86,7 @@ version=`uncrustify --version`
 if [ "$version" != "uncrustify 0.55" ] ; then
     echo "
 Detected uncrustify version = '$version'.
-This script only works with uncrustify 0.53."
+This script only works with uncrustify 0.55."
     exit 1
 fi
 
