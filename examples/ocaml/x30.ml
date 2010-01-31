@@ -2,7 +2,7 @@
   Alpha color values demonstration.
 
   Copyright (C) 2008 Hazen Babcock
-  Copyright (C) 2008 Hezekiah M. Carty
+  Copyright (C) 2008, 2010 Hezekiah M. Carty
 
 
   This file is part of PLplot.
@@ -114,30 +114,15 @@ let () =
     done
   done;
 
-  (* The overlaid box is drawn using plshades with a color map that is
-     the same color but has a linearly varying transparency. *)
+  let px = [|0.0; 1.0; 1.0; 0.0|] in
+  let py = [|0.0; 0.0; 1.0; 1.0|] in
 
   (* Create the color map with 128 colors and use plscmap1la to initialize
      the color values with a linear varying transparency (or alpha) *)
   plscmap1n 128;
   plscmap1la true pos rcoord gcoord bcoord acoord (Some rev);
 
-  (* Create a 2 x 2 array that contains the z values (0.0 to 1.0) that will
-     used for the shade plot. plshades will use linear interpolation to
-     calculate the z values of all the intermediate points in this array. *)
-  let z =
-    [|
-      [|0.0; 1.0|];
-      [|0.0; 1.0|];
-    |]
-  in
-
-  (* Set the color levels array. These levels are also between 0.0 and 1.0 *)
-  let clevel = Array.init 101 (fun i -> 0.01 *. float_of_int i) in
-
-  (* Draw the shade plot with zmin = 0.0, zmax = 1.0 and x and y coordinate
-     ranges such that it fills the entire plotting area. *)
-  plshades z 0.0 1.0 0.0 1.0 clevel 0 (-1) 2 true;
+  plgradient px py 90.0;
 
   plend ();
   ()
