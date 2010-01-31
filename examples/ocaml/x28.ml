@@ -3,7 +3,7 @@
         plmtex3, plptex3 demo.
 
    Copyright (C) 2007 Alan W. Irwin
-   Copyright (C) 2008 Hezekiah M. Carty
+   Copyright (C) 2008, 2010 Hezekiah M. Carty
 
   This file is part of PLplot.
 
@@ -50,6 +50,16 @@ let () =
   let zmax = 1.0 in
   let zmid = 0.5 *. (zmax +. zmin) in
   let zrange = zmax -. zmin in
+  let ysmin = ymin +. 0.1 *. yrange in
+  let ysmax = ymax -. 0.1 *. yrange in
+  let ysrange = ysmax -. ysmin in
+  let dysrot = ysrange /. float_of_int (nrotation - 1) in
+  let dysshear = ysrange /. float_of_int (nshear - 1) in
+  let zsmin = zmin +. 0.1 *. zrange in
+  let zsmax = zmax -. 0.1 *. zrange in
+  let zsrange = zsmax -. zsmin in
+  let dzsrot = zsrange /. float_of_int (nrotation - 1) in
+  let dzsshear = zsrange /. float_of_int (nshear - 1) in
   let pstring =
     "The future of our civilization depends on software freedom."
   in
@@ -162,8 +172,9 @@ let () =
     let cos_omega = cos omega in
     let y_shear = 0.5 *. yrange *. sin_omega in
     let z_shear = 0.5 *. zrange *. cos_omega in
+    let zs = zsmax -. dzsrot *. float_of_int i in
     plptex3
-      xmid ymax (zmax -. (zmax -. 0.2) *. float_of_int i /. float_of_int (nrotation - 1))
+      xmid ymax zs
       x_inclination y_inclination z_inclination
       x_shear y_shear z_shear
       0.5 "rotation for y = y#dmax#u";
@@ -180,8 +191,9 @@ let () =
     let cos_omega = cos omega in
     let x_shear = 0.5 *. xrange *. sin_omega in
     let z_shear = 0.5 *. zrange *. cos_omega in
+    let zs = zsmax -. dzsrot *. float_of_int i in
     plptex3
-      xmax ymid (zmax -. (zmax -. 0.2) *. float_of_int i /. float_of_int (nrotation - 1))
+      xmax ymid zs
       x_inclination y_inclination z_inclination
       x_shear y_shear z_shear
       0.5 "rotation for x = x#dmax#u";
@@ -198,8 +210,9 @@ let () =
     let cos_omega = cos omega in
     let y_shear = 0.5 *. yrange *. cos_omega in
     let z_shear = 0.5 *. zrange *. sin_omega in
+    let ys = ysmax -. dysrot *. float_of_int i in
     plptex3
-      xmid (ymax -. (ymax -. 0.2) *. float_of_int i /. float_of_int (nrotation - 1)) zmin
+      xmid ys zmin
       x_inclination y_inclination z_inclination
       x_shear y_shear z_shear
       0.5 "rotation for z = z#dmin#u";
@@ -233,8 +246,9 @@ let () =
     let cos_omega = cos omega in
     let x_shear = 0.5 *. xrange *. sin_omega in
     let z_shear = 0.5 *. zrange *. cos_omega in
+    let zs = zsmax -. dzsshear *. float_of_int i in
     plptex3
-      xmid ymax (zmax -. (zmax -. 0.2) *. float_of_int i /. float_of_int (nshear - 1))
+      xmid ymax zs
       x_inclination y_inclination z_inclination
       x_shear y_shear z_shear
       0.5 "shear for y = y#dmax#u";
@@ -251,8 +265,9 @@ let () =
     let cos_omega = cos omega in
     let y_shear = -0.5 *. yrange *. sin_omega in
     let z_shear = 0.5 *. zrange *. cos_omega in
+    let zs = zsmax -. dzsshear *. float_of_int i in
     plptex3
-      xmax ymid (zmax -. (zmax -. 0.2) *. float_of_int i /. float_of_int (nshear - 1))
+      xmax ymid zs
       x_inclination y_inclination z_inclination
       x_shear y_shear z_shear
       0.5 "shear for x = x#dmax#u";
@@ -269,8 +284,9 @@ let () =
     let cos_omega = cos omega in
     let y_shear = 0.5 *. yrange *. cos_omega in
     let x_shear = 0.5 *. xrange *. sin_omega in
+    let ys = ysmax -. dysshear *. float_of_int i in
     plptex3
-      xmid (ymax -. (ymax -. 0.2) *. float_of_int i /. float_of_int (nshear - 1)) zmin
+      xmid ys zmin
       x_inclination y_inclination z_inclination
       x_shear y_shear z_shear
       0.5 "shear for z = z#dmin#u";
