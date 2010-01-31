@@ -109,10 +109,10 @@ class x11 {
         pls.init();
 
         for ( i = 0; i < XPTS; i++ )
-            x[i] = 3. * (double) ( i - ( XPTS / 2 )) / (double) ( XPTS / 2 );
+            x[i] = 3. * (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
 
         for ( j = 0; j < YPTS; j++ )
-            y[j] = 3. * (double) ( j - ( YPTS / 2 )) / (double) ( YPTS / 2 );
+            y[j] = 3. * (double) ( j - ( YPTS / 2 ) ) / (double) ( YPTS / 2 );
 
         for ( i = 0; i < XPTS; i++ )
         {
@@ -120,9 +120,9 @@ class x11 {
             for ( j = 0; j < YPTS; j++ )
             {
                 yy      = y[j];
-                z[i][j] = 3. * ( 1. - xx ) * ( 1. - xx ) * Math.exp( -( xx * xx ) - ( yy + 1. ) * ( yy + 1. )) -
-                          10. * ( xx / 5. - Math.pow( xx, 3. ) - Math.pow( yy, 5. )) * Math.exp( -xx * xx - yy * yy ) -
-                          1. / 3. * Math.exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ));
+                z[i][j] = 3. * ( 1. - xx ) * ( 1. - xx ) * Math.exp( -( xx * xx ) - ( yy + 1. ) * ( yy + 1. ) ) -
+                          10. * ( xx / 5. - Math.pow( xx, 3. ) - Math.pow( yy, 5. ) ) * Math.exp( -xx * xx - yy * yy ) -
+                          1. / 3. * Math.exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ) );
                 if ( false ) /* Jungfraujoch/Interlaken */
                 {
                     if ( z[i][j] < -1. )

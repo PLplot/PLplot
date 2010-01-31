@@ -51,11 +51,11 @@ struct hashtable
  */
 hashtable* ht_create( int size, ht_keycp cp, ht_keyeq eq, ht_key2hash hash )
 {
-    hashtable* table = malloc( sizeof ( hashtable ));
+    hashtable* table = malloc( sizeof ( hashtable ) );
     ht_bucket** bucket;
     int      i;
 
-    assert( sizeof ( double ) == INT_PER_DOUBLE * sizeof ( int ));
+    assert( sizeof ( double ) == INT_PER_DOUBLE * sizeof ( int ) );
     /*
      * (used in d1hash() and d2hash())
      */
@@ -140,9 +140,9 @@ void* ht_insert( hashtable* table, void* key, void* data )
      * space for our new bucket and put our data there, with the table
      * pointing at it.
      */
-    if (( table->table )[val] == NULL )
+    if ( ( table->table )[val] == NULL )
     {
-        bucket = malloc( sizeof ( ht_bucket ));
+        bucket = malloc( sizeof ( ht_bucket ) );
         if ( bucket == NULL )
             return NULL;
 
@@ -183,7 +183,7 @@ void* ht_insert( hashtable* table, void* key, void* data )
      * place as soon as it was determined that the present key in the list
      * was larger than this one.
      */
-    bucket = (ht_bucket*) malloc( sizeof ( ht_bucket ));
+    bucket = (ht_bucket*) malloc( sizeof ( ht_bucket ) );
     if ( bucket == NULL )
         return 0;
     bucket->key  = table->cp( key );
@@ -210,7 +210,7 @@ void* ht_find( hashtable* table, void* key )
     unsigned int val = table->hash( key ) % table->size;
     ht_bucket    * bucket;
 
-    if (( table->table )[val] == NULL )
+    if ( ( table->table )[val] == NULL )
         return NULL;
 
     for ( bucket = ( table->table )[val]; bucket != NULL; bucket = bucket->next )
@@ -235,7 +235,7 @@ void* ht_delete( hashtable* table, void* key )
     ht_bucket    * bucket;
     void         * data;
 
-    if (( table->table )[val] == NULL )
+    if ( ( table->table )[val] == NULL )
         return NULL;
 
     /*
@@ -285,12 +285,12 @@ void* ht_delete( hashtable* table, void* key )
  * @param table The hash table
  * @param func The action function
  */
-void ht_process( hashtable* table, void ( *func )( void* ))
+void ht_process( hashtable* table, void ( *func )( void* ) )
 {
     int i;
 
     for ( i = 0; i < table->size; ++i )
-        if (( table->table )[i] != NULL )
+        if ( ( table->table )[i] != NULL )
         {
             ht_bucket* bucket;
 
@@ -343,7 +343,7 @@ static unsigned int d1hash( void* key )
 
 static void* d1cp( void* key )
 {
-    double* newkey = malloc( sizeof ( double ));
+    double* newkey = malloc( sizeof ( double ) );
 
     *newkey = *(double*) key;
 
@@ -380,15 +380,15 @@ static void* d2cp( void* key )
 {
     double* newkey = malloc( sizeof ( double ) * 2 );
 
-    newkey[0] = ((double*) key )[0];
-    newkey[1] = ((double*) key )[1];
+    newkey[0] = ( (double*) key )[0];
+    newkey[1] = ( (double*) key )[1];
 
     return newkey;
 }
 
 static int d2eq( void* key1, void* key2 )
 {
-    return (((double*) key1 )[0] == ((double*) key2 )[0] ) && (((double*) key1 )[1] == ((double*) key2 )[1] );
+    return ( ( (double*) key1 )[0] == ( (double*) key2 )[0] ) && ( ( (double*) key1 )[1] == ( (double*) key2 )[1] );
 }
 
 hashtable* ht_create_d1( int size )
@@ -663,7 +663,7 @@ int main()
         char key[BUFSIZE];
 
         sprintf( key, "%d-th key", i );
-        free( ht_delete( ht, key ));
+        free( ht_delete( ht, key ) );
     }
     printf( "done\n" );
 

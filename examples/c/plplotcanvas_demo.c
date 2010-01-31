@@ -77,7 +77,7 @@ int main( int argc, char *argv[] )
     /* Create a new window and stuff the canvas into it */
     window = gtk_window_new( GTK_WINDOW_TOPLEVEL );
     gtk_container_set_border_width( GTK_CONTAINER( window ), 10 );
-    gtk_container_add( GTK_CONTAINER( window ), GTK_WIDGET( canvas ));
+    gtk_container_add( GTK_CONTAINER( window ), GTK_WIDGET( canvas ) );
 
     /* Connect the signal handlers to the window decorations */
     g_signal_connect( G_OBJECT( window ), "delete_event",

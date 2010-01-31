@@ -196,7 +196,7 @@ main( int argc, const char *argv[] )
 
     create_grid( &xg, xp, &yg, yp ); /* grid the data at */
     plAlloc2dGrid( &zg, xp, yp );    /* the output grided data */
-    clev = (PLFLT *) malloc( nl * sizeof ( PLFLT ));
+    clev = (PLFLT *) malloc( nl * sizeof ( PLFLT ) );
 
     /* printf("Npts=%d gridx=%d gridy=%d", pts, xp, yp); */
     plcol0( 1 );
@@ -235,7 +235,7 @@ main( int argc, const char *argv[] )
                 {
                     for ( j = 0; j < yp; j++ )
                     {
-                        if ( isnan( zg[i][j] )) /* average (IDW) over the 8 neighbors */
+                        if ( isnan( zg[i][j] ) ) /* average (IDW) over the 8 neighbors */
 
                         {
                             zg[i][j] = 0.; dist = 0.;
@@ -244,9 +244,9 @@ main( int argc, const char *argv[] )
                             {
                                 for ( jj = j - 1; jj <= j + 1 && jj < yp; jj++ )
                                 {
-                                    if ( ii >= 0 && jj >= 0 && !isnan( zg[ii][jj] ))
+                                    if ( ii >= 0 && jj >= 0 && !isnan( zg[ii][jj] ) )
                                     {
-                                        d         = ( abs( ii - i ) + abs( jj - j )) == 1 ? 1. : 1.4142;
+                                        d         = ( abs( ii - i ) + abs( jj - j ) ) == 1 ? 1. : 1.4142;
                                         zg[i][j] += zg[ii][jj] / ( d * d );
                                         dist     += d;
                                     }
@@ -318,7 +318,7 @@ main( int argc, const char *argv[] )
 
     free_data( x, y, z );
     free_grid( xg, yg );
-    free((void *) clev );
+    free( (void *) clev );
     plFree2dGrid( zg, xp, yp );
     exit( 0 );
 }
@@ -330,8 +330,8 @@ create_grid( PLFLT **xi, int px, PLFLT **yi, int py )
     PLFLT *x, *y;
     int   i;
 
-    x = *xi = (PLFLT *) malloc( px * sizeof ( PLFLT ));
-    y = *yi = (PLFLT *) malloc( py * sizeof ( PLFLT ));
+    x = *xi = (PLFLT *) malloc( px * sizeof ( PLFLT ) );
+    y = *yi = (PLFLT *) malloc( py * sizeof ( PLFLT ) );
 
     for ( i = 0; i < px; i++ )
         *x++ = xm + ( xM - xm ) * i / ( px - 1. );
@@ -343,8 +343,8 @@ create_grid( PLFLT **xi, int px, PLFLT **yi, int py )
 void
 free_grid( PLFLT *xi, PLFLT *yi )
 {
-    free((void *) xi );
-    free((void *) yi );
+    free( (void *) xi );
+    free( (void *) yi );
 }
 
 void
@@ -354,9 +354,9 @@ create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts )
     PLFLT *x, *y, *z, r;
     PLFLT xt, yt;
 
-    *xi = x = (PLFLT *) malloc( pts * sizeof ( PLFLT ));
-    *yi = y = (PLFLT *) malloc( pts * sizeof ( PLFLT ));
-    *zi = z = (PLFLT *) malloc( pts * sizeof ( PLFLT ));
+    *xi = x = (PLFLT *) malloc( pts * sizeof ( PLFLT ) );
+    *yi = y = (PLFLT *) malloc( pts * sizeof ( PLFLT ) );
+    *zi = z = (PLFLT *) malloc( pts * sizeof ( PLFLT ) );
 
     for ( i = 0; i < pts; i++ )
     {
@@ -369,17 +369,17 @@ create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts )
         }
         else /* std=1, meaning that many points are outside the plot range */
         {
-            *x = sqrt( -2. * log( xt )) * cos( 2. * M_PI * yt ) + xm;
-            *y = sqrt( -2. * log( xt )) * sin( 2. * M_PI * yt ) + ym;
+            *x = sqrt( -2. * log( xt ) ) * cos( 2. * M_PI * yt ) + xm;
+            *y = sqrt( -2. * log( xt ) ) * sin( 2. * M_PI * yt ) + ym;
         }
         if ( !rosen )
         {
-            r  = sqrt(( *x ) * ( *x ) + ( *y ) * ( *y ));
+            r  = sqrt( ( *x ) * ( *x ) + ( *y ) * ( *y ) );
             *z = exp( -r * r ) * cos( 2.0 * M_PI * r );
         }
         else
         {
-            *z = log( pow( 1. - *x, 2. ) + 100. * pow( *y - pow( *x, 2. ), 2. ));
+            *z = log( pow( 1. - *x, 2. ) + 100. * pow( *y - pow( *x, 2. ), 2. ) );
         }
         x++; y++; z++;
     }
@@ -388,7 +388,7 @@ create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts )
 void
 free_data( PLFLT *x, PLFLT *y, PLFLT *z )
 {
-    free((void *) x );
-    free((void *) y );
-    free((void *) z );
+    free( (void *) x );
+    free( (void *) y );
+    free( (void *) z );
 }

@@ -125,14 +125,14 @@ int main( char[][] args )
 
     for ( int i = 0; i < XPTS; i++ )
     {
-        x[i] = ( cast(PLFLT) ( i - ( XPTS / 2 )) / cast(PLFLT) ( XPTS / 2 ));
+        x[i] = ( cast(PLFLT) ( i - ( XPTS / 2 ) ) / cast(PLFLT) ( XPTS / 2 ) );
         if ( rosen )
             x[i] *= 1.5;
     }
 
     for ( int i = 0; i < YPTS; i++ )
     {
-        y[i] = cast(PLFLT) ( i - ( YPTS / 2 )) / cast(PLFLT) ( YPTS / 2 );
+        y[i] = cast(PLFLT) ( i - ( YPTS / 2 ) ) / cast(PLFLT) ( YPTS / 2 );
         if ( rosen )
             y[i] += 0.5;
     }

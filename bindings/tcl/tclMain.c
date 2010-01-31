@@ -53,14 +53,14 @@
 
 #if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 5
 /* From (private) tclInt.h in tcl8.5 */
-#define TclFormatInt( buf, n )    sprintf(( buf ), "%ld", (long) ( n ))
+#define TclFormatInt( buf, n )    sprintf( ( buf ), "%ld", (long) ( n ) )
 #else
 /* From (private) tclIntDecls.h in tcl8.4 and before*/
-EXTERN int TclFormatInt _ANSI_ARGS_(( char * buffer, long n ));
+EXTERN int TclFormatInt _ANSI_ARGS_( ( char * buffer, long n ) );
 #endif
 
 #ifndef TclObjCommandComplete_TCL_DECLARED
-EXTERN int TclObjCommandComplete _ANSI_ARGS_(( Tcl_Obj * cmdPtr ));
+EXTERN int TclObjCommandComplete _ANSI_ARGS_( ( Tcl_Obj * cmdPtr ) );
 #endif
 
 # undef TCL_STORAGE_CLASS
@@ -85,8 +85,8 @@ int ( *tclDummyLinkVarPtr )() = Tcl_LinkVar;
  * on some systems, so it's better just to leave it out.
  */
 
-extern int isatty _ANSI_ARGS_((int fd));
-extern char *           strcpy _ANSI_ARGS_(( char *dst, CONST char *src ));
+extern int isatty _ANSI_ARGS_( (int fd) );
+extern char *           strcpy _ANSI_ARGS_( ( char *dst, CONST char *src ) );
 
 static const char *tclStartupScriptFileName = NULL;
 
@@ -219,7 +219,7 @@ const char *TclGetStartupScriptFileName( void )
 
 int PLDLLEXPORT
 pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
-           int ( *appInitProc )( Tcl_Interp *interp ))
+           int ( *appInitProc )( Tcl_Interp *interp ) )
 {
     Tcl_Obj     *resultPtr;
     Tcl_Obj     *commandPtr = NULL;
@@ -253,7 +253,7 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
 
     if ( tclStartupScriptFileName == NULL )
     {
-        if (( argc > 1 ) && ( argv[1][0] != '-' ))
+        if ( ( argc > 1 ) && ( argv[1][0] != '-' ) )
         {
             tclStartupScriptFileName = argv[1];
             argc--;
@@ -286,21 +286,21 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
 
     tty = isatty( 0 );
     Tcl_SetVar( interp, "tcl_interactive",
-        (( tclStartupScriptFileName == NULL ) && tty ) ? "1" : "0",
+        ( ( tclStartupScriptFileName == NULL ) && tty ) ? "1" : "0",
         TCL_GLOBAL_ONLY );
 
     /*
      * Invoke application-specific initialization.
      */
 
-    if (( *appInitProc )( interp ) != TCL_OK )
+    if ( ( *appInitProc )( interp ) != TCL_OK )
     {
         errChannel = Tcl_GetStdChannel( TCL_STDERR );
         if ( errChannel )
         {
             Tcl_WriteChars( errChannel,
                 "application-specific initialization failed: ", -1 );
-            Tcl_WriteObj( errChannel, Tcl_GetObjResult( interp ));
+            Tcl_WriteObj( errChannel, Tcl_GetObjResult( interp ) );
             Tcl_WriteChars( errChannel, "\n", 1 );
         }
     }
@@ -339,7 +339,7 @@ pltclMain( int argc, const char **argv, char *RcFileName /* OBSOLETE */,
 
                 Tcl_AddErrorInfo( interp, "" );
                 Tcl_WriteObj( errChannel, Tcl_GetVar2Ex( interp, "errorInfo",
-                        NULL, TCL_GLOBAL_ONLY ));
+                        NULL, TCL_GLOBAL_ONLY ) );
                 Tcl_WriteChars( errChannel, "\n", 1 );
             }
             exitCode = 1;
@@ -394,7 +394,7 @@ defaultPrompt:
                 {
                     if ( errChannel )
                     {
-                        Tcl_WriteObj( errChannel, Tcl_GetObjResult( interp ));
+                        Tcl_WriteObj( errChannel, Tcl_GetObjResult( interp ) );
                         Tcl_WriteChars( errChannel, "\n", 1 );
                     }
                     Tcl_AddErrorInfo( interp,
@@ -416,7 +416,7 @@ defaultPrompt:
         {
             goto done;
         }
-        if (( length == 0 ) && Tcl_Eof( inChannel ) && ( !gotPartial ))
+        if ( ( length == 0 ) && Tcl_Eof( inChannel ) && ( !gotPartial ) )
         {
             goto done;
         }
@@ -426,7 +426,7 @@ defaultPrompt:
          */
 
         Tcl_AppendToObj( commandPtr, "\n", 1 );
-        if ( !TclObjCommandComplete( commandPtr ))
+        if ( !TclObjCommandComplete( commandPtr ) )
         {
             gotPartial = 1;
             continue;
@@ -443,20 +443,20 @@ defaultPrompt:
 
         /* User defined function to deal with tcl command output */
         /* Deprecated; for backward compatibility only */
-        if ((( code != TCL_OK ) || tty ) && tclErrorHandler )
+        if ( ( ( code != TCL_OK ) || tty ) && tclErrorHandler )
             ( *tclErrorHandler )( interp, code, tty );
         else
         {
             /* User defined function to prepare for tcl output */
             /* This is the new way */
-            if ((( code != TCL_OK ) || tty ) && tclPrepOutputHandler )
+            if ( ( ( code != TCL_OK ) || tty ) && tclPrepOutputHandler )
                 ( *tclPrepOutputHandler )( interp, code, tty );
             /* Back to the stock tcl code */
             if ( code != TCL_OK )
             {
                 if ( errChannel )
                 {
-                    Tcl_WriteObj( errChannel, Tcl_GetObjResult( interp ));
+                    Tcl_WriteObj( errChannel, Tcl_GetObjResult( interp ) );
                     Tcl_WriteChars( errChannel, "\n", 1 );
                 }
             }
@@ -464,7 +464,7 @@ defaultPrompt:
             {
                 resultPtr = Tcl_GetObjResult( interp );
                 Tcl_GetStringFromObj( resultPtr, &length );
-                if (( length > 0 ) && outChannel )
+                if ( ( length > 0 ) && outChannel )
                 {
                     Tcl_WriteObj( outChannel, resultPtr );
                     Tcl_WriteChars( outChannel, "\n", 1 );

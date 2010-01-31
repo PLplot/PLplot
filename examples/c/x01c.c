@@ -197,11 +197,11 @@ main( int argc, const char *argv[] )
     {
         for (;; )
         {
-            if ( !plGetCursor( &gin )) break;
+            if ( !plGetCursor( &gin ) ) break;
             if ( gin.keysym == PLK_Escape ) break;
 
             pltext();
-            if ( gin.keysym < 0xFF && isprint( gin.keysym ))
+            if ( gin.keysym < 0xFF && isprint( gin.keysym ) )
                 printf( "subwin = %d, wx = %f,  wy = %f, dx = %f,  dy = %f,  c = '%c'\n",
                     gin.subwindow, gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym );
             else

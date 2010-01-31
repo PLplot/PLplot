@@ -133,7 +133,7 @@ class plot {
                 vmax = vmax - 0.1;
             }
             plwid( 1 );
-            plptex( 0.5, 0.5, 1.0, 0.0, 0.5, std.string.toString( i ));
+            plptex( 0.5, 0.5, 1.0, 0.0, 0.5, std.string.toString( i ) );
         }
     }
 }

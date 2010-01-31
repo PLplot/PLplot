@@ -79,7 +79,7 @@ Pltk_Init( Tcl_Interp *interp )
         Colormap map;
 
         display = Tk_Display( main );
-        map     = DefaultColormap( display, DefaultScreen( display ));
+        map     = DefaultColormap( display, DefaultScreen( display ) );
 
 /* Convert this to use esc function if it's going to be used */
 /* SaveColormap(display, map); */
@@ -112,7 +112,7 @@ plWait_Until( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 
     for (;; )
     {
-        if ( Tcl_ExprBoolean( interp, argv[1], &result ))
+        if ( Tcl_ExprBoolean( interp, argv[1], &result ) )
         {
             fprintf( stderr, "wait_until command \"%s\" failed:\n\t %s\n",
                 argv[1], interp->result );

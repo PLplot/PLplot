@@ -78,13 +78,13 @@ int main( int argc, char *argv[] )
     int    i               = 0;
     int    number_of_lines = 0;
 
-    if (( fr = fopen( argv[1], "r" )) == NULL )
+    if ( ( fr = fopen( argv[1], "r" ) ) == NULL )
     {
         fprintf( stderr, "Cannot open first file as readable\n" );
         exit( 1 );
     }
 
-    if (( fw = fopen( argv[2], "w" )) == NULL )
+    if ( ( fw = fopen( argv[2], "w" ) ) == NULL )
     {
         fprintf( stderr, "Cannot open second file as writable\n" );
         exit( 1 );
@@ -94,7 +94,7 @@ int main( int argc, char *argv[] )
      *   Work out how many lines we have all up
      */
 
-    while (( fgets( readbuffer, 255, fr ) != NULL ))
+    while ( ( fgets( readbuffer, 255, fr ) != NULL ) )
     {
         ++number_of_lines;
     }
@@ -103,13 +103,13 @@ int main( int argc, char *argv[] )
      *   Allocate memory to the arrays which will hold the data
      */
 
-    if (( xspline = (double *) calloc( number_of_lines, (size_t) sizeof ( double ))) == NULL )
+    if ( ( xspline = (double *) calloc( number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
         MemError1( "Allocating memory to the xspline table" );
 
-    if (( yspline = (double *) calloc( number_of_lines, (size_t) sizeof ( double ))) == NULL )
+    if ( ( yspline = (double *) calloc( number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
         MemError1( "Allocating memory to the yspline table" );
 
-    if (( y2spline = (double *) calloc( number_of_lines, (size_t) sizeof ( double ))) == NULL )
+    if ( ( y2spline = (double *) calloc( number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
         MemError1( "Allocating memory to the y2spline table" );
 
     rewind( fr ); /* Go back to the start of the file */
@@ -118,7 +118,7 @@ int main( int argc, char *argv[] )
      *    Read in line by line, and copy the numbers into our arrays
      */
 
-    while (( fgets( readbuffer, 255, fr ) != NULL ))
+    while ( ( fgets( readbuffer, 255, fr ) != NULL ) )
     {
         sscanf( readbuffer, "%lf %lf", (double *) &xspline[i], (double *) &yspline[i] );
         i++;

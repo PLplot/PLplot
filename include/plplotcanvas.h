@@ -40,15 +40,15 @@ G_BEGIN_DECLS
 
 #define PLPLOT_TYPE_CANVAS    plplot_canvas_get_type()
 
-#define PLPLOT_CANVAS( obj )               ( G_TYPE_CHECK_INSTANCE_CAST(( obj ), PLPLOT_TYPE_CANVAS, PlplotCanvas ))
+#define PLPLOT_CANVAS( obj )               ( G_TYPE_CHECK_INSTANCE_CAST( ( obj ), PLPLOT_TYPE_CANVAS, PlplotCanvas ) )
 
-#define PLPLOT_CANVAS_CLASS( klass )       ( G_TYPE_CHECK_CLASS_CAST(( klass ), PLPLOT_TYPE_CANVAS, PlplotCanvasClass ))
+#define PLPLOT_CANVAS_CLASS( klass )       ( G_TYPE_CHECK_CLASS_CAST( ( klass ), PLPLOT_TYPE_CANVAS, PlplotCanvasClass ) )
 
-#define PLPLOT_IS_CANVAS( obj )            ( G_TYPE_CHECK_INSTANCE_TYPE(( obj ), PLPLOT_TYPE_CANVAS ))
+#define PLPLOT_IS_CANVAS( obj )            ( G_TYPE_CHECK_INSTANCE_TYPE( ( obj ), PLPLOT_TYPE_CANVAS ) )
 
-#define PLPLOT_IS_CANVAS_CLASS( klass )    ( G_TYPE_CHECK_CLASS_TYPE(( klass ), PLPLOT_TYPE_CANVAS ))
+#define PLPLOT_IS_CANVAS_CLASS( klass )    ( G_TYPE_CHECK_CLASS_TYPE( ( klass ), PLPLOT_TYPE_CANVAS ) )
 
-#define PLPLOT_CANVAS_GET_CLASS( o )       ( G_TYPE_INSTANCE_GET_CLASS(( o ), PLPLOT_TYPE_CANVAS, PlplotCanvasClass ))
+#define PLPLOT_CANVAS_GET_CLASS( o )       ( G_TYPE_INSTANCE_GET_CLASS( ( o ), PLPLOT_TYPE_CANVAS, PlplotCanvasClass ) )
 
 typedef struct _PlplotCanvas        PlplotCanvas;
 typedef struct _PlplotCanvasClass   PlplotCanvasClass;

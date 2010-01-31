@@ -190,7 +190,7 @@ static void PrintLocation( char *tag )
     {
         FPOS_T current_offset;
 
-        if ( pl_fgetpos( MetaFile, &current_offset ))
+        if ( pl_fgetpos( MetaFile, &current_offset ) )
             plexit( "PrintLocation (plrender.c): fgetpos call failed" );
 
         pldebug( tag, "at offset %d in file %s\n",
@@ -282,7 +282,7 @@ main( int argc, char *argv[] )
 
 /* Process first file.  There must be at least one. */
 
-    if ( ProcessFile( argc, argv ))
+    if ( ProcessFile( argc, argv ) )
     {
         fprintf( stderr, "\nNo filename specified.\n" );
         plOptUsage();
@@ -294,7 +294,7 @@ main( int argc, char *argv[] )
     if ( do_file_loop )
     {
         pltext();
-        while ( !ProcessFile( argc, argv ))
+        while ( !ProcessFile( argc, argv ) )
             ;
     }
     plend();
@@ -324,7 +324,7 @@ Init( int argc, char **argv )
 
 /* Save argv list for future reuse */
 
-    myargv = (char **) malloc( argc * sizeof ( char * ));
+    myargv = (char **) malloc( argc * sizeof ( char * ) );
     myargc = argc;
     for ( i = 0; i < argc; i++ )
     {
@@ -379,7 +379,7 @@ ProcessFile( int argc, char **argv )
 /* Since we aren't using full parsing, plparseopts() will stop when it hits */
 /* a non-flag item */
 
-    if ( plparseopts( &argc, (const char **) argv, 0 ))
+    if ( plparseopts( &argc, (const char **) argv, 0 ) )
         exit( 1 );
 
 /* Any remaining flags are illegal. */
@@ -393,14 +393,14 @@ ProcessFile( int argc, char **argv )
 
 /* Try to open metafile. */
 
-    if ( OpenMetaFile( argv ))
+    if ( OpenMetaFile( argv ) )
         return 1;
 
 /* Initialize file and read header */
 
     pdfs = pdf_finit( MetaFile );
 
-    if ( ReadFileHeader())
+    if ( ReadFileHeader() )
         exit( EX_BADFILE );
 
 /* Read & process any state info before the INITIALIZE */
@@ -460,7 +460,7 @@ ProcessFile( int argc, char **argv )
                 break;
         }
 
-        if (( c == BOP || c == BOP0 || c == ADVANCE ) && curdisp == disp_end )
+        if ( ( c == BOP || c == BOP0 || c == ADVANCE ) && curdisp == disp_end )
             break;
 
         process_next( c );
@@ -506,7 +506,7 @@ OpenMetaFile( char **argv )
 
     dbug_enter( "OpenMetaFile" );
 
-    if ( !strcmp( FileName, "-" ))
+    if ( !strcmp( FileName, "-" ) )
         input_type = 1;
 
     isfile = ( input_type == 0 );
@@ -542,13 +542,13 @@ OpenMetaFile( char **argv )
         strncpy( name, FileName, sizeof ( name ) - 1 );
         name[sizeof ( name ) - 1] = '\0';
 
-        if (( MetaFile = fopen( FileName, "rb" )) != NULL )
+        if ( ( MetaFile = fopen( FileName, "rb" ) ) != NULL )
         {
             return 0;
         }
 
         (void) sprintf( FileName, "%s.%i", name, (int) member );
-        if (( MetaFile = fopen( FileName, "rb" )) != NULL )
+        if ( ( MetaFile = fopen( FileName, "rb" ) ) != NULL )
         {
             (void) sprintf( BaseName, "%s", name );
             is_family = 1;
@@ -556,13 +556,13 @@ OpenMetaFile( char **argv )
         }
 
         (void) sprintf( FileName, "%s.plm", name );
-        if (( MetaFile = fopen( FileName, "rb" )) != NULL )
+        if ( ( MetaFile = fopen( FileName, "rb" ) ) != NULL )
         {
             return 0;
         }
 
         (void) sprintf( FileName, "%s.plm.%i", name, (int) member );
-        if (( MetaFile = fopen( FileName, "rb" )) != NULL )
+        if ( ( MetaFile = fopen( FileName, "rb" ) ) != NULL )
         {
             (void) sprintf( BaseName, "%s.plm", name );
             is_family = 1;
@@ -597,7 +597,7 @@ process_next( U_CHAR c )
 {
 /* Specially handle line draws to contain output when debugging */
 
-    switch ((int) c )
+    switch ( (int) c )
     {
     case LINE:
     case LINETO:
@@ -612,7 +612,7 @@ process_next( U_CHAR c )
 
     pldebug( "process_next", "processing command %s\n", cmdstring[c] );
 
-    switch ((int) c )
+    switch ( (int) c )
     {
     case INITIALIZE:
         plr_init( c );
@@ -628,7 +628,7 @@ process_next( U_CHAR c )
         return;
 
     case CHANGE_STATE:
-        plr_state( getcommand());
+        plr_state( getcommand() );
         return;
 
     case ESCAPE:
@@ -787,7 +787,7 @@ plr_line( U_CHAR c )
 {
     npts = 1;
 
-    switch ((int) c )
+    switch ( (int) c )
     {
     case LINE:
         get_ncoords( x, y, 1 );
@@ -811,7 +811,7 @@ plr_line( U_CHAR c )
         break;
 
     case POLYLINE:
-        plm_rd( pdf_rd_2bytes( pdfs, &npts ));
+        plm_rd( pdf_rd_2bytes( pdfs, &npts ) );
         get_ncoords( x, y, npts );
         break;
     }
@@ -834,8 +834,8 @@ get_ncoords( PLFLT *x, PLFLT *y, PLINT n )
     short xs[PL_MAXPOLY], ys[PL_MAXPOLY];
     PLINT i;
 
-    plm_rd( pdf_rd_2nbytes( pdfs, (U_SHORT *) xs, n ));
-    plm_rd( pdf_rd_2nbytes( pdfs, (U_SHORT *) ys, n ));
+    plm_rd( pdf_rd_2nbytes( pdfs, (U_SHORT *) xs, n ) );
+    plm_rd( pdf_rd_2nbytes( pdfs, (U_SHORT *) ys, n ) );
 
     for ( i = 0; i < n; i++ )
     {
@@ -921,7 +921,7 @@ plr_bop( U_CHAR c )
     plP_setsub();
 
     plvpor( vpxmin, vpxmax, vpymin, vpymax );
-    plwind((PLFLT) xmin, (PLFLT) xmax, (PLFLT) ymin, (PLFLT) ymax );
+    plwind( (PLFLT) xmin, (PLFLT) xmax, (PLFLT) ymin, (PLFLT) ymax );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -942,7 +942,7 @@ plr_state( U_CHAR op )
     case PLSTATE_WIDTH: {
         U_SHORT width;
 
-        plm_rd( pdf_rd_2bytes( pdfs, &width ));
+        plm_rd( pdf_rd_2bytes( pdfs, &width ) );
 
         plwid( width );
         break;
@@ -952,14 +952,14 @@ plr_state( U_CHAR op )
         if ( strcmp( mf_version, "2005a" ) >= 0 )
         {
             short icol0;
-            plm_rd( pdf_rd_2bytes( pdfs, &icol0 ));
+            plm_rd( pdf_rd_2bytes( pdfs, &icol0 ) );
 
             if ( icol0 == PL_RGB_COLOR )
             {
                 U_CHAR r, g, b;
-                plm_rd( pdf_rd_1byte( pdfs, &r ));
-                plm_rd( pdf_rd_1byte( pdfs, &g ));
-                plm_rd( pdf_rd_1byte( pdfs, &b ));
+                plm_rd( pdf_rd_1byte( pdfs, &r ) );
+                plm_rd( pdf_rd_1byte( pdfs, &g ) );
+                plm_rd( pdf_rd_1byte( pdfs, &b ) );
                 plrgb1( r, g, b );
             }
             else
@@ -970,14 +970,14 @@ plr_state( U_CHAR op )
         else if ( strcmp( mf_version, "1993a" ) >= 0 )
         {
             U_CHAR icol0;
-            plm_rd( pdf_rd_1byte( pdfs, &icol0 ));
+            plm_rd( pdf_rd_1byte( pdfs, &icol0 ) );
 
             if ( icol0 == 1 << 7 )
             {
                 U_CHAR r, g, b;
-                plm_rd( pdf_rd_1byte( pdfs, &r ));
-                plm_rd( pdf_rd_1byte( pdfs, &g ));
-                plm_rd( pdf_rd_1byte( pdfs, &b ));
+                plm_rd( pdf_rd_1byte( pdfs, &r ) );
+                plm_rd( pdf_rd_1byte( pdfs, &g ) );
+                plm_rd( pdf_rd_1byte( pdfs, &b ) );
                 plrgb1( r, g, b );
             }
             else
@@ -988,7 +988,7 @@ plr_state( U_CHAR op )
         else
         {
             U_SHORT icol;
-            plm_rd( pdf_rd_2bytes( pdfs, &icol ));
+            plm_rd( pdf_rd_2bytes( pdfs, &icol ) );
             plcol( icol );
         }
         break;
@@ -998,7 +998,7 @@ plr_state( U_CHAR op )
         U_SHORT icol1;
         PLFLT   col1;
 
-        plm_rd( pdf_rd_2bytes( pdfs, &icol1 ));
+        plm_rd( pdf_rd_2bytes( pdfs, &icol1 ) );
         col1 = (PLFLT) icol1 / (PLFLT) plsc->ncol1;
         plcol1( col1 );
         break;
@@ -1007,7 +1007,7 @@ plr_state( U_CHAR op )
     case PLSTATE_FILL: {
         signed char patt;
 
-        plm_rd( pdf_rd_1byte( pdfs, (U_CHAR *) &patt ));
+        plm_rd( pdf_rd_1byte( pdfs, (U_CHAR *) &patt ) );
         plpsty( patt );
         break;
     }
@@ -1016,20 +1016,20 @@ plr_state( U_CHAR op )
         if ( strcmp( mf_version, "2005a" ) >= 0 )
         {
             U_SHORT ncol0;
-            plm_rd( pdf_rd_2bytes( pdfs, &ncol0 ));
+            plm_rd( pdf_rd_2bytes( pdfs, &ncol0 ) );
             plscmap0n( ncol0 );
         }
         else
         {
             U_CHAR ncol0;
-            plm_rd( pdf_rd_1byte( pdfs, &ncol0 ));
+            plm_rd( pdf_rd_1byte( pdfs, &ncol0 ) );
             plscmap0n( ncol0 );
         }
         for ( i = 0; i < plsc->ncol0; i++ )
         {
-            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap0[i].r ));
-            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap0[i].g ));
-            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap0[i].b ));
+            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap0[i].r ) );
+            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap0[i].g ) );
+            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap0[i].b ) );
         }
         if ( plsc->level > 0 )
             plP_state( PLSTATE_CMAP0 );
@@ -1040,13 +1040,13 @@ plr_state( U_CHAR op )
     case PLSTATE_CMAP1: {
         U_SHORT ncol1;
 
-        plm_rd( pdf_rd_2bytes( pdfs, &ncol1 ));
+        plm_rd( pdf_rd_2bytes( pdfs, &ncol1 ) );
         plscmap1n( ncol1 );
         for ( i = 0; i < plsc->ncol1; i++ )
         {
-            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap1[i].r ));
-            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap1[i].g ));
-            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap1[i].b ));
+            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap1[i].r ) );
+            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap1[i].g ) );
+            plm_rd( pdf_rd_1byte( pdfs, &plsc->cmap1[i].b ) );
         }
         if ( plsc->level > 0 )
             plP_state( PLSTATE_CMAP1 );
@@ -1071,7 +1071,7 @@ plr_esc( U_CHAR c )
 
     dbug_enter( "plr_esc" );
 
-    plm_rd( pdf_rd_1byte( pdfs, &op ));
+    plm_rd( pdf_rd_1byte( pdfs, &op ) );
 
     switch ( op )
     {
@@ -1091,10 +1091,10 @@ plr_esc( U_CHAR c )
         return;
 
     case PLESC_SET_LPB:
-        plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
-        plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
-        plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
-        plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
+        plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
+        plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
+        plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
+        plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
         return;
     }
 }
@@ -1110,7 +1110,7 @@ plresc_fill( void )
 {
     dbug_enter( "plresc_fill" );
 
-    plm_rd( pdf_rd_2bytes( pdfs, &npts ));
+    plm_rd( pdf_rd_2bytes( pdfs, &npts ) );
     get_ncoords( x, y, npts );
     plfill( npts, x, y );
 }
@@ -1131,9 +1131,9 @@ plresc_rgb( void )
 
     dbug_enter( "plresc_rgb" );
 
-    plm_rd( pdf_rd_2bytes( pdfs, &ired ));
-    plm_rd( pdf_rd_2bytes( pdfs, &igreen ));
-    plm_rd( pdf_rd_2bytes( pdfs, &iblue ));
+    plm_rd( pdf_rd_2bytes( pdfs, &ired ) );
+    plm_rd( pdf_rd_2bytes( pdfs, &igreen ) );
+    plm_rd( pdf_rd_2bytes( pdfs, &iblue ) );
 
     red   = (double) ired / 65535.;
     green = (double) igreen / 65535.;
@@ -1157,8 +1157,8 @@ plresc_ancol( void )
 
     dbug_enter( "plresc_ancol" );
 
-    plm_rd( pdf_rd_1byte( pdfs, &icolor ));
-    plm_rd( pdf_rd_header( pdfs, name ));
+    plm_rd( pdf_rd_1byte( pdfs, &icolor ) );
+    plm_rd( pdf_rd_header( pdfs, name ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1180,12 +1180,12 @@ NextFamilyFile( U_CHAR *c )
     member++;
     (void) sprintf( FileName, "%s.%i", BaseName, (int) member );
 
-    if (( MetaFile = fopen( FileName, "rb" )) == NULL )
+    if ( ( MetaFile = fopen( FileName, "rb" ) ) == NULL )
     {
         is_family = 0;
         return;
     }
-    if ( ReadFileHeader())
+    if ( ReadFileHeader() )
     {
         is_family = 0;
         return;
@@ -1201,7 +1201,7 @@ NextFamilyFile( U_CHAR *c )
     *c = getcommand();
     while ( *c == CHANGE_STATE )
     {
-        plr_state( getcommand());
+        plr_state( getcommand() );
         *c = getcommand();
     }
 
@@ -1212,11 +1212,11 @@ NextFamilyFile( U_CHAR *c )
     {
         /* Update position offset */
 
-        if ( pl_fgetpos( MetaFile, &curpage_loc ))
+        if ( pl_fgetpos( MetaFile, &curpage_loc ) )
             plr_exit( "plrender: fgetpos call failed" );
 
         *c = getcommand();
-        if ( !( *c == BOP0 || *c == BOP ))
+        if ( !( *c == BOP0 || *c == BOP ) )
             fprintf( stderr,
                 "First instruction after INITIALIZE not a BOP!\n" );
     }
@@ -1243,12 +1243,12 @@ PrevFamilyFile( void )
     member--;
     (void) sprintf( FileName, "%s.%i", BaseName, (int) member );
 
-    if (( MetaFile = fopen( FileName, "rb" )) == NULL )
+    if ( ( MetaFile = fopen( FileName, "rb" ) ) == NULL )
     {
         is_family = 0;
         return;
     }
-    if ( ReadFileHeader())
+    if ( ReadFileHeader() )
     {
         is_family = 0;
         return;
@@ -1393,10 +1393,10 @@ plr_KeyEH( PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop )
 
 /* If a number, store into num_buffer */
 
-    if ( isdigit( gin->string[0] ))
+    if ( isdigit( gin->string[0] ) )
     {
         isanum = TRUE;
-        (void) strncat( num_buffer, gin->string, ( 20 - strlen( num_buffer )));
+        (void) strncat( num_buffer, gin->string, ( 20 - strlen( num_buffer ) ) );
     }
 
 /*
@@ -1414,7 +1414,7 @@ plr_KeyEH( PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop )
             input_num = atoi( num_buffer );
             if ( input_num == 0 )
             {
-                if ( strcmp( num_buffer, "0" ))
+                if ( strcmp( num_buffer, "0" ) )
                     input_num = -1;
             }
             if ( input_num >= 0 )
@@ -1512,12 +1512,12 @@ SeekToDisp( long target_disp )
 
 /* <Return> at the end of a page */
 
-    if (( delta == 0 ) && at_eop )
+    if ( ( delta == 0 ) && at_eop )
         return;
 
 /* <Return> while drawing the last page */
 
-    if (( delta >= 0 ) && ( nextpage_loc == 0 ))
+    if ( ( delta >= 0 ) && ( nextpage_loc == 0 ) )
         return;
 
 /* Anything else requires at least one seek */
@@ -1609,7 +1609,7 @@ SeekToCurPage( void )
 {
     FPOS_T loc;
 
-    if ( pl_fgetpos( MetaFile, &loc ))
+    if ( pl_fgetpos( MetaFile, &loc ) )
         plr_exit( "plrender: fgetpos call failed" );
 
     if ( loc != curpage_loc )
@@ -1630,7 +1630,7 @@ SeekToNextPage( void )
 {
     FPOS_T loc;
 
-    if ( pl_fgetpos( MetaFile, &loc ))
+    if ( pl_fgetpos( MetaFile, &loc ) )
         plr_exit( "plrender: fgetpos call failed" );
 
     if ( loc == curpage_loc )
@@ -1654,7 +1654,7 @@ SeekToPrevPage( void )
 
     dbug_enter( "SeekToPrevPage" );
 
-    if ( pl_fgetpos( MetaFile, &loc ))
+    if ( pl_fgetpos( MetaFile, &loc ) )
         plr_exit( "plrender: fgetpos call failed" );
 
     if ( loc != curpage_loc )
@@ -1697,7 +1697,7 @@ SeekTo( FPOS_T loc )
 static void
 doseek( FPOS_T loc )
 {
-    if ( pl_fsetpos( MetaFile, &loc ))
+    if ( pl_fsetpos( MetaFile, &loc ) )
         plr_exit( "plrender: fsetpos call failed" );
 }
 
@@ -1750,7 +1750,7 @@ ReadPageHeader( void )
 
     if ( isfile )
     {
-        if ( pl_fgetpos( MetaFile, &curpage_loc ))
+        if ( pl_fgetpos( MetaFile, &curpage_loc ) )
             plr_exit( "plrender: fgetpos call failed" );
     }
 
@@ -1758,7 +1758,7 @@ ReadPageHeader( void )
     if ( c == CLOSE && is_family )
         NextFamilyFile( &c );
 
-    if ( !( c == BOP0 || c == BOP || c == ADVANCE ))
+    if ( !( c == BOP0 || c == BOP || c == ADVANCE ) )
     {
         sprintf( buffer, "plrender: page advance expected; found command code %d\n \
 file: %s, position: %d", c, FileName, (int) curpage_loc );
@@ -1775,9 +1775,9 @@ file: %s, position: %d", c, FileName, (int) curpage_loc );
     {
         if ( strcmp( mf_version, "1993a" ) >= 0 )
         {
-            plm_rd( pdf_rd_2bytes( pdfs, &page ));
-            plm_rd( pdf_rd_4bytes( pdfs, &prevpage ));
-            plm_rd( pdf_rd_4bytes( pdfs, &nextpage ));
+            plm_rd( pdf_rd_2bytes( pdfs, &page ) );
+            plm_rd( pdf_rd_4bytes( pdfs, &prevpage ) );
+            plm_rd( pdf_rd_4bytes( pdfs, &nextpage ) );
             prevpage_loc = prevpage;
             nextpage_loc = nextpage;
             pldebug( "ReadPageHeader",
@@ -1786,8 +1786,8 @@ file: %s, position: %d", c, FileName, (int) curpage_loc );
         }
         else
         {
-            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
-            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
+            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
+            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
         }
     }
     pldebug( "ReadPageHeader", "Now at page %d, disp %d\n", curpage, curdisp );
@@ -1809,8 +1809,8 @@ ReadFileHeader( void )
 
 /* Read label field of header to make sure file is a PLplot metafile */
 
-    plm_rd( pdf_rd_header( pdfs, mf_magic ));
-    if ( strcmp( mf_magic, PLMETA_HEADER ))
+    plm_rd( pdf_rd_header( pdfs, mf_magic ) );
+    if ( strcmp( mf_magic, PLMETA_HEADER ) )
     {
         fprintf( stderr, "Not a PLplot metafile!\n" );
         return 1;
@@ -1819,7 +1819,7 @@ ReadFileHeader( void )
 /* Read version field of header.  We need to check that we can read the
  * metafile, in case this is an old version of plrender. */
 
-    plm_rd( pdf_rd_header( pdfs, mf_version ));
+    plm_rd( pdf_rd_header( pdfs, mf_version ) );
     if ( strcmp( mf_version, PLMETA_VERSION ) > 0 )
     {
         fprintf( stderr,
@@ -1846,120 +1846,120 @@ ReadFileHeader( void )
 
     for (;; )
     {
-        plm_rd( pdf_rd_header( pdfs, tag ));
+        plm_rd( pdf_rd_header( pdfs, tag ) );
         if ( *tag == '\0' )
             break;
 
         pldebug( "ReadFileHeader",
             "Read tag: %s\n", tag );
 
-        if ( !strcmp( tag, "pages" ))
+        if ( !strcmp( tag, "pages" ) )
         {
-            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
+            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
             pages = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "xmin" ))
+        if ( !strcmp( tag, "xmin" ) )
         {
-            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
+            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
             xmin = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "xmax" ))
+        if ( !strcmp( tag, "xmax" ) )
         {
-            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
+            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
             xmax = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "ymin" ))
+        if ( !strcmp( tag, "ymin" ) )
         {
-            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
+            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
             ymin = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "ymax" ))
+        if ( !strcmp( tag, "ymax" ) )
         {
-            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
+            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
             ymax = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "pxlx" ))
+        if ( !strcmp( tag, "pxlx" ) )
         {
-            plm_rd( pdf_rd_ieeef( pdfs, &pxlx ));
+            plm_rd( pdf_rd_ieeef( pdfs, &pxlx ) );
             continue;
         }
 
-        if ( !strcmp( tag, "pxly" ))
+        if ( !strcmp( tag, "pxly" ) )
         {
-            plm_rd( pdf_rd_ieeef( pdfs, &pxly ));
+            plm_rd( pdf_rd_ieeef( pdfs, &pxly ) );
             continue;
         }
 
-        if ( !strcmp( tag, "width" ))
+        if ( !strcmp( tag, "width" ) )
         {
-            plm_rd( pdf_rd_1byte( pdfs, &dum_uchar ));
+            plm_rd( pdf_rd_1byte( pdfs, &dum_uchar ) );
             plwid( dum_uchar );
             continue;
         }
 
         /* Geometry info */
 
-        if ( !strcmp( tag, "xdpi" ))
+        if ( !strcmp( tag, "xdpi" ) )
         {
-            plm_rd( pdf_rd_ieeef( pdfs, &xdpi ));
+            plm_rd( pdf_rd_ieeef( pdfs, &xdpi ) );
             continue;
         }
 
-        if ( !strcmp( tag, "ydpi" ))
+        if ( !strcmp( tag, "ydpi" ) )
         {
-            plm_rd( pdf_rd_ieeef( pdfs, &ydpi ));
+            plm_rd( pdf_rd_ieeef( pdfs, &ydpi ) );
             continue;
         }
 
-        if ( !strcmp( tag, "xlength" ))
+        if ( !strcmp( tag, "xlength" ) )
         {
-            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
+            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
             xlength = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "ylength" ))
+        if ( !strcmp( tag, "ylength" ) )
         {
-            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
+            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
             ylength = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "xoffset" ))
+        if ( !strcmp( tag, "xoffset" ) )
         {
-            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
+            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
             xoffset = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "yoffset" ))
+        if ( !strcmp( tag, "yoffset" ) )
         {
-            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ));
+            plm_rd( pdf_rd_2bytes( pdfs, &dum_ushort ) );
             yoffset = dum_ushort;
             continue;
         }
 
         /* Obsolete tags */
 
-        if ( !strcmp( tag, "orient" ))
+        if ( !strcmp( tag, "orient" ) )
         {
-            plm_rd( pdf_rd_1byte( pdfs, &dum_uchar ));
+            plm_rd( pdf_rd_1byte( pdfs, &dum_uchar ) );
             continue;
         }
 
-        if ( !strcmp( tag, "aspect" ))
+        if ( !strcmp( tag, "aspect" ) )
         {
-            plm_rd( pdf_rd_ieeef( pdfs, &dum_float ));
+            plm_rd( pdf_rd_ieeef( pdfs, &dum_float ) );
             continue;
         }
 

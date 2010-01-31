@@ -58,7 +58,7 @@ main( int argc, const char *argv[] )
         /* Draw radial spokes for polar grid */
 
         pljoin( 0.0, 0.0, dx, dy );
-        sprintf( text, "%d", ROUND( theta ));
+        sprintf( text, "%d", ROUND( theta ) );
 
         /* Write labels for angle */
 
@@ -86,7 +86,7 @@ main( int argc, const char *argv[] )
 
     for ( i = 0; i <= 360; i++ )
     {
-        r    = sin( dtr * ( 5 * i ));
+        r    = sin( dtr * ( 5 * i ) );
         x[i] = x0[i] * r;
         y[i] = y0[i] * r;
     }

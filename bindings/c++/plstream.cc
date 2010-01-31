@@ -462,7 +462,7 @@ void plstream::col( PLcolor c )
 {
     set_stream();
 
-    plcol0((int) c );
+    plcol0( (int) c );
 }
 
 // Set color, map 1.  Argument is a float between 0. and 1.
@@ -1393,7 +1393,7 @@ void plstream::scmap1l( bool itype, PLINT npts, PLFLT * intensity,
 
     set_stream();
 
-    plscmap1l((PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_rev );
+    plscmap1l( (PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_rev );
 
     if ( loc_rev != NULL )
         delete [] loc_rev;
@@ -1419,7 +1419,7 @@ void plstream::scmap1la( bool itype, PLINT npts, PLFLT * intensity,
 
     set_stream();
 
-    plscmap1la((PLBOOL) itype, npts, intensity, coord1, coord2, coord3,
+    plscmap1la( (PLBOOL) itype, npts, intensity, coord1, coord2, coord3,
         a, loc_rev );
 
     if ( loc_rev != NULL )
@@ -1453,7 +1453,7 @@ void plstream::scmap1l( PLINT itype, PLINT npts, PLFLT * intensity,
 
     set_stream();
 
-    plscmap1l((PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_rev );
+    plscmap1l( (PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_rev );
 
     if ( loc_rev != NULL )
         delete [] loc_rev;
@@ -1941,7 +1941,7 @@ void plstream::spause( bool pause )
 {
     set_stream();
 
-    plspause((PLBOOL) pause );
+    plspause( (PLBOOL) pause );
 }
 
 // Deprecated version using PLINT not bool
@@ -1949,7 +1949,7 @@ void plstream::spause( PLINT pause )
 {
     set_stream();
 
-    plspause((PLBOOL) pause );
+    plspause( (PLBOOL) pause );
 }
 
 // Set stream number.
@@ -2237,7 +2237,7 @@ void plstream::xormod( bool mode, bool *status )
 
     set_stream();
 
-    plxormod((PLBOOL) mode, &loc_status );
+    plxormod( (PLBOOL) mode, &loc_status );
 
     *status = ( loc_status != 0 );
 }
@@ -2249,7 +2249,7 @@ void plstream::xormod( PLINT mode, PLINT * status )
 
     set_stream();
 
-    plxormod((PLBOOL) mode, &loc_status );
+    plxormod( (PLBOOL) mode, &loc_status );
 
     *status = (PLINT) loc_status;
 }
@@ -2305,7 +2305,7 @@ void plstream::sError( PLINT * errcode, char *errmsg )
 
 // Sets an optional user exit handler.
 
-void plstream::sexit( int ( *handler )( const char * ))
+void plstream::sexit( int ( *handler )( const char * ) )
 {
     set_stream();
 

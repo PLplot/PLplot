@@ -101,14 +101,14 @@
 #endif
 /* Make sure Unix systems define "__unix" */
 
-#if defined ( SX ) ||                                /* NEC Super-UX */      \
-    ( defined ( _IBMR2 ) && defined ( _AIX )) ||     /* AIX */               \
-    defined ( __hpux ) ||                            /* HP/UX */             \
-    defined ( sun ) ||                               /* SUN */               \
-    defined ( CRAY ) ||                              /* Cray */              \
-    defined ( __convexc__ ) ||                       /* CONVEX */            \
-    ( defined ( __alpha ) && defined ( __osf__ )) || /* DEC Alpha AXP/OSF */ \
-    defined ( __APPLE__ )                            /* Max OS-X */
+#if defined ( SX ) ||                                 /* NEC Super-UX */      \
+    ( defined ( _IBMR2 ) && defined ( _AIX ) ) ||     /* AIX */               \
+    defined ( __hpux ) ||                             /* HP/UX */             \
+    defined ( sun ) ||                                /* SUN */               \
+    defined ( CRAY ) ||                               /* Cray */              \
+    defined ( __convexc__ ) ||                        /* CONVEX */            \
+    ( defined ( __alpha ) && defined ( __osf__ ) ) || /* DEC Alpha AXP/OSF */ \
+    defined ( __APPLE__ )                             /* Max OS-X */
 #ifndef __unix
 #define __unix
 #endif
@@ -154,8 +154,8 @@ typedef float    PLFLT;
 #define PLFLT_MIN    FLT_MIN
 #endif
 
-#if ( defined ( PL_HAVE_STDINT_H ) && !defined ( __cplusplus )) || \
-    ( defined ( __cplusplus ) && defined ( PL_HAVE_CXX_STDINT_H ))
+#if ( defined ( PL_HAVE_STDINT_H ) && !defined ( __cplusplus ) ) || \
+    ( defined ( __cplusplus ) && defined ( PL_HAVE_CXX_STDINT_H ) )
 #include <stdint.h>
 /* This is apparently portable if stdint.h exists. */
 typedef uint32_t       PLUINT;
@@ -1795,12 +1795,12 @@ plsError( PLINT *errcode, char *errmsg );
 /* Sets an optional user exit handler. */
 
 PLDLLIMPEXP void
-plsexit( int ( *handler )( const char * ));
+plsexit( int ( *handler )( const char * ) );
 
 /* Sets an optional user abort handler. */
 
 PLDLLIMPEXP void
-plsabort( void ( *handler )( const char * ));
+plsabort( void ( *handler )( const char * ) );
 
 /* Transformation routines */
 

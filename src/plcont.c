@@ -109,15 +109,15 @@ alloc_line( CONT_LEVEL *node )
 {
     CONT_LINE *line;
 
-    if (( line = (CONT_LINE *) malloc( sizeof ( CONT_LINE ))) == NULL )
+    if ( ( line = (CONT_LINE *) malloc( sizeof ( CONT_LINE ) ) ) == NULL )
     {
         plexit( "alloc_line: Insufficient memory" );
     }
 
-    line->x = (PLFLT *) malloc( LINE_ITEMS * sizeof ( PLFLT ));
-    line->y = (PLFLT *) malloc( LINE_ITEMS * sizeof ( PLFLT ));
+    line->x = (PLFLT *) malloc( LINE_ITEMS * sizeof ( PLFLT ) );
+    line->y = (PLFLT *) malloc( LINE_ITEMS * sizeof ( PLFLT ) );
 
-    if (( line->x == NULL ) || ( line->y == NULL ))
+    if ( ( line->x == NULL ) || ( line->y == NULL ) )
     {
         plexit( "alloc_line: Insufficient memory" );
     }
@@ -133,7 +133,7 @@ alloc_level( PLFLT level )
 {
     CONT_LEVEL *node;
 
-    if (( node = (CONT_LEVEL *) malloc( sizeof ( CONT_LEVEL ))) == NULL )
+    if ( ( node = (CONT_LEVEL *) malloc( sizeof ( CONT_LEVEL ) ) ) == NULL )
     {
         plexit( "alloc_level: Insufficient memory" );
     }
@@ -147,10 +147,10 @@ alloc_level( PLFLT level )
 static void
 realloc_line( CONT_LINE *line )
 {
-    if ((( line->x = (PLFLT *) realloc( line->x,
-               ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ))) == NULL ) ||
-        (( line->y = (PLFLT *) realloc( line->y,
-               ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ))) == NULL ))
+    if ( ( ( line->x = (PLFLT *) realloc( line->x,
+                 ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ) ) ) == NULL ) ||
+         ( ( line->y = (PLFLT *) realloc( line->y,
+                 ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ) ) ) == NULL ) )
         plexit( "realloc_line: Insufficient memory" );
 }
 
@@ -270,8 +270,8 @@ static void pl_drawcontlabel( PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distanc
     PLFLT delta_x, delta_y;
     PLINT currx_old, curry_old;
 
-    delta_x = plP_pcdcx( plsc->currx ) - plP_pcdcx( plP_wcpcx( tpx ));
-    delta_y = plP_pcdcy( plsc->curry ) - plP_pcdcy( plP_wcpcy( tpy ));
+    delta_x = plP_pcdcx( plsc->currx ) - plP_pcdcx( plP_wcpcx( tpx ) );
+    delta_y = plP_pcdcy( plsc->curry ) - plP_pcdcy( plP_wcpcy( tpy ) );
 
     currx_old = plsc->currx;
     curry_old = plsc->curry;
@@ -280,7 +280,7 @@ static void pl_drawcontlabel( PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distanc
 
     plP_drawor( tpx, tpy );
 
-    if ((int ) ( fabs( *distance / contlabel_space )) > *lastindex )
+    if ( (int ) ( fabs( *distance / contlabel_space ) ) > *lastindex )
     {
         PLFLT scale, vec_x, vec_y, mx, my, dev_x, dev_y, off_x, off_y;
 
@@ -300,8 +300,8 @@ static void pl_drawcontlabel( PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distanc
         dev_x = -my * vec_y / mx;
         dev_y = mx * vec_x / my;
 
-        scale = sqrt(( mx * mx * dev_x * dev_x + my * my * dev_y * dev_y ) /
-            ( contlabel_offset * contlabel_offset ));
+        scale = sqrt( ( mx * mx * dev_x * dev_x + my * my * dev_y * dev_y ) /
+            ( contlabel_offset * contlabel_offset ) );
 
         off_x = dev_x / scale;
         off_y = dev_y / scale;
@@ -359,13 +359,13 @@ static void plfloatlabel( PLFLT value, char *string, PLINT len )
         if ( floor( tmp ) < tmp )
             exponent = -(int ) ( floor( tmp ) + 1.0 );
         else
-            exponent = -(int ) ( floor( tmp ));
+            exponent = -(int ) ( floor( tmp ) );
     }
 
     mant = value / pow( 10.0, exponent );
 
     if ( mant != 0.0 )
-        mant = (int ) ( mant * pow( 10.0, prec - 1 ) + 0.5 * mant / fabs( mant )) / pow( 10.0, prec - 1 );
+        mant = (int ) ( mant * pow( 10.0, prec - 1 ) + 0.5 * mant / fabs( mant ) ) / pow( 10.0, prec - 1 );
 
     snprintf( form, FORM_LEN, "%%.%df", prec - 1 );
     snprintf( string, len, form, mant );
@@ -394,7 +394,7 @@ static void plfloatlabel( PLFLT value, char *string, PLINT len )
 static PLFLT
 plP_pcwcx( PLINT x )
 {
-    return (( x - plsc->wpxoff ) / plsc->wpxscl );
+    return ( ( x - plsc->wpxoff ) / plsc->wpxscl );
 }
 
 /* physical coords (y) to world coords */
@@ -402,7 +402,7 @@ plP_pcwcx( PLINT x )
 static PLFLT
 plP_pcwcy( PLINT y )
 {
-    return (( y - plsc->wpyoff ) / plsc->wpyscl );
+    return ( ( y - plsc->wpyoff ) / plsc->wpyscl );
 }
 
 
@@ -554,14 +554,14 @@ plfcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
         return;
     }
 
-    if (( ipts = (PLINT **) malloc( nx * sizeof ( PLINT * ))) == NULL )
+    if ( ( ipts = (PLINT **) malloc( nx * sizeof ( PLINT * ) ) ) == NULL )
     {
         plexit( "plfcont: Insufficient memory" );
     }
 
     for ( i = 0; i < nx; i++ )
     {
-        if (( ipts[i] = (PLINT *) malloc( ny * sizeof ( PLINT * ))) == NULL )
+        if ( ( ipts[i] = (PLINT *) malloc( ny * sizeof ( PLINT * ) ) ) == NULL )
         {
             plexit( "plfcont: Insufficient memory" );
         }
@@ -583,9 +583,9 @@ plfcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 done:
     for ( i = 0; i < nx; i++ )
     {
-        free((void *) ipts[i] );
+        free( (void *) ipts[i] );
     }
-    free((void *) ipts );
+    free( (void *) ipts );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -681,20 +681,20 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
     for ( i = 0, j = 1; i < 4; i++, j = ( j + 1 ) % 4 )
     {
-        iedge[i] = ( f[i] * f[j] > 0.0 ) ? -1 : (( f[i] * f[j] < 0.0 ) ? 1 : 0 );
+        iedge[i] = ( f[i] * f[j] > 0.0 ) ? -1 : ( ( f[i] * f[j] < 0.0 ) ? 1 : 0 );
     }
 
     /* Mark this square as done */
     ipts[kcol][krow] = 1;
 
     /* Check if no contour has been crossed i.e. iedge[i] = -1 */
-    if (( iedge[0] == -1 ) && ( iedge[1] == -1 ) && ( iedge[2] == -1 )
-        && ( iedge[3] == -1 )) return;
+    if ( ( iedge[0] == -1 ) && ( iedge[1] == -1 ) && ( iedge[2] == -1 )
+         && ( iedge[3] == -1 ) ) return;
 
     /* Check if this is a completely flat square - in which case
      * ignore it */
-    if (( f[0] == 0.0 ) && ( f[1] == 0.0 ) && ( f[2] == 0.0 ) &&
-        ( f[3] == 0.0 )) return;
+    if ( ( f[0] == 0.0 ) && ( f[1] == 0.0 ) && ( f[2] == 0.0 ) &&
+         ( f[3] == 0.0 ) ) return;
 
     /* Calculate intersection points */
     num = 0;
@@ -722,17 +722,17 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
             if ( i == 1 ) krownext--;
             if ( i == 2 ) kcolnext++;
             if ( i == 3 ) krownext++;
-            if (( kcolnext < kx ) || ( kcolnext >= lx ) ||
-                ( krownext < ky ) || ( krownext >= ly ) ||
-                ( ipts[kcolnext][krownext] == 1 )) continue;
+            if ( ( kcolnext < kx ) || ( kcolnext >= lx ) ||
+                 ( krownext < ky ) || ( krownext >= ly ) ||
+                 ( ipts[kcolnext][krownext] == 1 ) ) continue;
         }
-        if (( iedge[i] == 1 ) || ( f[i] == 0.0 ))
+        if ( ( iedge[i] == 1 ) || ( f[i] == 0.0 ) )
         {
             j = ( i + 1 ) % 4;
             if ( f[i] != 0.0 )
             {
-                locx[num] = ( px[i] * fabs( f[j] ) + px[j] * fabs( f[i] )) / fabs( f[j] - f[i] );
-                locy[num] = ( py[i] * fabs( f[j] ) + py[j] * fabs( f[i] )) / fabs( f[j] - f[i] );
+                locx[num] = ( px[i] * fabs( f[j] ) + px[j] * fabs( f[i] ) ) / fabs( f[j] - f[i] );
+                locy[num] = ( py[i] * fabs( f[j] ) + py[j] * fabs( f[i] ) ) / fabs( f[j] - f[i] );
             }
             else
             {
@@ -765,9 +765,9 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                     if ( i == 1 ) krownext--;
                     if ( i == 2 ) kcolnext++;
                     if ( i == 3 ) krownext++;
-                    if (( kcolnext >= kx ) && ( kcolnext < lx ) &&
-                        ( krownext >= ky ) && ( krownext < ly ) &&
-                        ( ipts[kcolnext][krownext] == 0 ))
+                    if ( ( kcolnext >= kx ) && ( kcolnext < lx ) &&
+                         ( krownext >= ky ) && ( krownext < ly ) &&
+                         ( ipts[kcolnext][krownext] == 0 ) )
                     {
                         pldrawcn( f2eval, f2eval_data,
                             nx, ny, kx, lx, ky, ly, flev, flabel,
@@ -802,9 +802,9 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                     {
                         krownext++; kcolnext++;
                     }
-                    if (( kcolnext >= kx ) && ( kcolnext < lx ) &&
-                        ( krownext >= ky ) && ( krownext < ly ) &&
-                        ( ipts[kcolnext][krownext] == 0 ))
+                    if ( ( kcolnext >= kx ) && ( kcolnext < lx ) &&
+                         ( krownext >= ky ) && ( krownext < ly ) &&
+                         ( ipts[kcolnext][krownext] == 0 ) )
                     {
                         pldrawcn( f2eval, f2eval_data,
                             nx, ny, kx, lx, ky, ly, flev, flabel,
@@ -1134,8 +1134,8 @@ pltr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
             }
             else if ( y > ymax )
             {
-                *tx = *( xg + ( ny - 1 ));
-                *ty = *( yg + ( ny - 1 ));
+                *tx = *( xg + ( ny - 1 ) );
+                *ty = *( yg + ( ny - 1 ) );
             }
             else
             {

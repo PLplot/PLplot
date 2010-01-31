@@ -28,15 +28,15 @@
 /* various utility macros */
 
 #ifndef MAX
-#define MAX( a, b )    ((( a ) > ( b )) ? ( a ) : ( b ))
+#define MAX( a, b )    ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 #endif
 
 #ifndef MIN
-#define MIN( a, b )    ((( a ) < ( b )) ? ( a ) : ( b ))
+#define MIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 
 #ifndef ROUND
-#define ROUND( a )    (PLINT) (( a ) < 0. ? (( a ) - .5 ) : (( a ) + .5 ))
+#define ROUND( a )    (PLINT) ( ( a ) < 0. ? ( ( a ) - .5 ) : ( ( a ) + .5 ) )
 #endif
 
 /* Declarations for save string functions */
@@ -66,7 +66,7 @@ int plsnscanf( const char *buffer, int n, const char *format, ... );
 #endif
 
 #if !defined ( PL_HAVE_ISNAN )
-#  define isnan( x )    (( x ) != ( x ))
+#  define isnan( x )    ( ( x ) != ( x ) )
 #endif
 
 #endif  /* __PLCDEMOS_H__ */

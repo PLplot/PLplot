@@ -46,7 +46,7 @@ int main()
     blue  = cdImageColorAllocate( myimage, 0, 0, 255 );
     black = cdImageColorAllocate( myimage, 0, 0, 0 );
 
-    if ( cdSetLineColor( myimage, blue ))
+    if ( cdSetLineColor( myimage, blue ) )
     {
         fprintf( stderr, "cdSetLineColor Successful\n" );
     }
@@ -55,7 +55,7 @@ int main()
         fprintf( stderr, "cdSetLineColor Unsuccessful\n" );
     }
 
-    if ( cdSetLineColor( myimage, blue ))
+    if ( cdSetLineColor( myimage, blue ) )
     {
         fprintf( stderr, "cdSetLineColor Successful\n" );
     }
@@ -65,7 +65,7 @@ int main()
     }
 
 
-    if ( cdImageLine( myimage, 400, 8, 520, 8, green ))
+    if ( cdImageLine( myimage, 400, 8, 520, 8, green ) )
     {
         fprintf( stderr, "cdImageLine Successful\n" );
     }
@@ -74,7 +74,7 @@ int main()
         fprintf( stderr, "cdImageLine Unsuccessful\n" );
     }
 
-    if ( cdImageLine( myimage, 50, 50, 500, 500, red ))
+    if ( cdImageLine( myimage, 50, 50, 500, 500, red ) )
     {
         fprintf( stderr, "cdImageLine Successful\n" );
     }
@@ -83,7 +83,7 @@ int main()
         fprintf( stderr, "cdImageLine Unsuccessful\n" );
     }
 
-    if ( cdSetLineAttrib( myimage, 2, 3, red ))
+    if ( cdSetLineAttrib( myimage, 2, 3, red ) )
     {
         fprintf( stderr, "cdSetLineAttrib Successful\n" );
     }
@@ -92,7 +92,7 @@ int main()
         fprintf( stderr, "cdSetLineAttrib Unsuccessful\n" );
     }
 
-    if ( cdLine( myimage, 500, 50, 50, 500 ))
+    if ( cdLine( myimage, 500, 50, 50, 500 ) )
     {
         fprintf( stderr, "cdLine Successful\n" );
     }
@@ -102,7 +102,7 @@ int main()
     }
 
 /* Now, build a rectangle */
-    if ( cdSetShapeFillAttrib( myimage, 3, blue, 6 ))
+    if ( cdSetShapeFillAttrib( myimage, 3, blue, 6 ) )
     {
         fprintf( stderr, "cdSetShapeFillAttrib Successful\n" );
     }
@@ -111,7 +111,7 @@ int main()
         fprintf( stderr, "cdSetShapeFillAttrib Unsuccessful\n" );
     }
 
-    if ( cdSetShapeEdgeAttrib( myimage, 1, 2, green, 1 ))
+    if ( cdSetShapeEdgeAttrib( myimage, 1, 2, green, 1 ) )
     {
         fprintf( stderr, "cdSetShapeEdgeAttrib Successful\n" );
     }
@@ -120,7 +120,7 @@ int main()
         fprintf( stderr, "cdSetShapeEdgeAttrib Unsuccessful\n" );
     }
 
-    if ( cdRectangle( myimage, 100, 100, 250, 250 ))
+    if ( cdRectangle( myimage, 100, 100, 250, 250 ) )
     {
         fprintf( stderr, "cdRectangle Successful\n" );
     }
@@ -133,7 +133,7 @@ int main()
 
 /* now check out each of the line styles in order */
 
-    if ( cdSetLineAttrib( myimage, 5, 4, green ))
+    if ( cdSetLineAttrib( myimage, 5, 4, green ) )
     {
         fprintf( stderr, "cdSetLineAttrib Successful\n" );
     }
@@ -142,7 +142,7 @@ int main()
         fprintf( stderr, "cdSetLineAttrib Unsuccessful\n" );
     }
 
-    if ( cdLine( myimage, 100, 600, 500, 600 ))
+    if ( cdLine( myimage, 100, 600, 500, 600 ) )
     {
         fprintf( stderr, "cdLine Successful\n" );
     }
@@ -151,7 +151,7 @@ int main()
         fprintf( stderr, "cdLine Unsuccessful\n" );
     }
 
-    if ( cdSetLineAttrib( myimage, 4, -1, -1 ))
+    if ( cdSetLineAttrib( myimage, 4, -1, -1 ) )
     {
         fprintf( stderr, "cdSetLineAttrib Successful\n" );
     }
@@ -159,7 +159,7 @@ int main()
     {
         fprintf( stderr, "cdSetLineAttrib Unsuccessful\n" );
     }
-    if ( cdLine( myimage, 100, 625, 500, 625 ))
+    if ( cdLine( myimage, 100, 625, 500, 625 ) )
     {
         fprintf( stderr, "cdLine Successful\n" );
     }
@@ -168,7 +168,7 @@ int main()
         fprintf( stderr, "cdLine Unsuccessful\n" );
     }
 
-    if ( cdSetLineAttrib( myimage, 3, -1, -1 ))
+    if ( cdSetLineAttrib( myimage, 3, -1, -1 ) )
     {
         fprintf( stderr, "cdSetLineAttrib Successful\n" );
     }
@@ -176,7 +176,7 @@ int main()
     {
         fprintf( stderr, "cdSetLineAttrib Unsuccessful\n" );
     }
-    if ( cdLine( myimage, 100, 650, 500, 650 ))
+    if ( cdLine( myimage, 100, 650, 500, 650 ) )
     {
         fprintf( stderr, "cdLine Successful\n" );
     }
@@ -186,7 +186,7 @@ int main()
     }
 
 
-    if ( cdSetLineAttrib( myimage, 2, -1, -1 ))
+    if ( cdSetLineAttrib( myimage, 2, -1, -1 ) )
     {
         fprintf( stderr, "cdSetLineAttrib Successful\n" );
     }
@@ -194,7 +194,7 @@ int main()
     {
         fprintf( stderr, "cdSetLineAttrib Unsuccessful\n" );
     }
-    if ( cdLine( myimage, 100, 675, 500, 675 ))
+    if ( cdLine( myimage, 100, 675, 500, 675 ) )
     {
         fprintf( stderr, "cdLine Successful\n" );
     }
@@ -203,7 +203,7 @@ int main()
         fprintf( stderr, "cdLine Unsuccessful\n" );
     }
 
-    if ( cdSetLineAttrib( myimage, 1, -1, -1 ))
+    if ( cdSetLineAttrib( myimage, 1, -1, -1 ) )
     {
         fprintf( stderr, "cdSetLineAttrib Successful\n" );
     }
@@ -211,7 +211,7 @@ int main()
     {
         fprintf( stderr, "cdSetLineAttrib Unsuccessful\n" );
     }
-    if ( cdLine( myimage, 100, 700, 500, 700 ))
+    if ( cdLine( myimage, 100, 700, 500, 700 ) )
     {
         fprintf( stderr, "cdLine Successful\n" );
     }
@@ -221,7 +221,7 @@ int main()
     }
 
 /* now make a circle */
-    if ( cdSetShapeFillAttrib( myimage, 1, -1, 6 ))
+    if ( cdSetShapeFillAttrib( myimage, 1, -1, 6 ) )
     {
         fprintf( stderr, "cdSetShapeFillAttrib Successful\n" );
     }
@@ -230,7 +230,7 @@ int main()
         fprintf( stderr, "cdSetShapeFillAttrib Unsuccessful\n" );
     }
 
-    if ( cdSetShapeEdgeAttrib( myimage, 1, 2, green, 0 ))
+    if ( cdSetShapeEdgeAttrib( myimage, 1, 2, green, 0 ) )
     {
         fprintf( stderr, "cdSetShapeEdgeAttrib Successful\n" );
     }
@@ -239,7 +239,7 @@ int main()
         fprintf( stderr, "cdSetShapeEdgeAttrib Unsuccessful\n" );
     }
 
-    if ( cdCircle( myimage, 500, 500, 25 ))
+    if ( cdCircle( myimage, 500, 500, 25 ) )
     {
         fprintf( stderr, "cdCircle Successful\n" );
     }
@@ -249,7 +249,7 @@ int main()
     }
 
 /* how about a Circular Arc now */
-    if ( cdArc3Pt( myimage, 550, 500, 600, 600, 650, 550 ))
+    if ( cdArc3Pt( myimage, 550, 500, 600, 600, 650, 550 ) )
     {
         fprintf( stderr, "cdArc3Pt Successful\n" );
     }
@@ -259,7 +259,7 @@ int main()
     }
 
 /* now draw a closed Circular Arc */
-    if ( cdArc3PtClose( myimage, 550, 200, 600, 300, 650, 250, 0 ))
+    if ( cdArc3PtClose( myimage, 550, 200, 600, 300, 650, 250, 0 ) )
     {
         fprintf( stderr, "cdArc3PtClose Successful\n" );
     }
@@ -269,7 +269,7 @@ int main()
     }
 
 /* and now for an ellipse */
-    if ( cdSetShapeEdgeAttrib( myimage, 1, 2, green, 1 ))
+    if ( cdSetShapeEdgeAttrib( myimage, 1, 2, green, 1 ) )
     {
         fprintf( stderr, "cdSetShapeEdgeAttrib Successful\n" );
     }
@@ -278,7 +278,7 @@ int main()
         fprintf( stderr, "cdSetShapeEdgeAttrib Unsuccessful\n" );
     }
 
-    if ( cdEllipse( myimage, 750, 200, 800, 250, 750, 300 ))
+    if ( cdEllipse( myimage, 750, 200, 800, 250, 750, 300 ) )
     {
         fprintf( stderr, "cdEllipse Successful\n" );
     }
@@ -298,7 +298,7 @@ int main()
     points[2].x = 775;
     points[2].y = 650;
 
-    if ( cdPolygon( myimage, points, 3 ))
+    if ( cdPolygon( myimage, points, 3 ) )
     {
         fprintf( stderr, "cdPolygon Successful\n" );
     }
@@ -332,7 +332,7 @@ int main()
     points[10].x = 825;
     points[10].y = 900;
 
-    if ( cdPolygon( myimage, points, 11 ))
+    if ( cdPolygon( myimage, points, 11 ) )
     {
         fprintf( stderr, "cdPolygon Successful\n" );
     }
@@ -364,7 +364,7 @@ int main()
     points[5].e = 2;    /* close polygone with an invisible edge */
 
 /* make the edges wider so it is easier to see if they are there */
-    if ( cdSetEdgeWidth( myimage, 3 ))
+    if ( cdSetEdgeWidth( myimage, 3 ) )
     {
         fprintf( stderr, "cdSetEdgeWidth Successful\n" );
     }
@@ -372,7 +372,7 @@ int main()
     {
         fprintf( stderr, "cdSetEdgeWidth Unsuccessful\n" );
     }
-    if ( cdPolygonSet( myimage, points, 6 )) /* draw the polygonset */
+    if ( cdPolygonSet( myimage, points, 6 ) ) /* draw the polygonset */
     {
         fprintf( stderr, "cdPolygonSet Successful\n" );
     }
@@ -383,7 +383,7 @@ int main()
 
 /* now for poly lines, just like polygons (except they're lines) */
 
-    if ( cdSetLineAttrib( myimage, 1, 1, red ))
+    if ( cdSetLineAttrib( myimage, 1, 1, red ) )
     {
         fprintf( stderr, "cdSetLineAttrib Successful\n" );
     }
@@ -397,7 +397,7 @@ int main()
     points[0].y = 16;
     points[1].x = 520;
     points[1].y = 16;
-    if ( cdPolyLine( myimage, points, 2 ))
+    if ( cdPolyLine( myimage, points, 2 ) )
     {
         fprintf( stderr, "cdPolyLine Successful\n" );
     }
@@ -414,7 +414,7 @@ int main()
     points[2].y = 650;
     points[3].x = 875;
     points[3].y = 700;
-    if ( cdPolyLine( myimage, points, 4 ))
+    if ( cdPolyLine( myimage, points, 4 ) )
     {
         fprintf( stderr, "cdPolyLine Successful\n" );
     }
@@ -426,7 +426,7 @@ int main()
 
 /* Markers */
 /* set the attributes */
-    if ( cdSetMarkerAttrib( myimage, 1, 1, green ))
+    if ( cdSetMarkerAttrib( myimage, 1, 1, green ) )
     {
         fprintf( stderr, "cdSetMarkerAttrib Successful\n" );
     }
@@ -437,7 +437,7 @@ int main()
 
 /* now plot the marker */
 
-    if ( cdMarker( myimage, 900, 500 ))
+    if ( cdMarker( myimage, 900, 500 ) )
     {
         fprintf( stderr, "cdMarker Successful\n" );
     }
@@ -447,7 +447,7 @@ int main()
     }
 
 
-    if ( cdSetMarkerAttrib( myimage, 5, 3, black ))
+    if ( cdSetMarkerAttrib( myimage, 5, 3, black ) )
     {
 /* set the marker type to cross */
         fprintf( stderr, "cdSetMarkerAttrib Successful\n" );
@@ -463,7 +463,7 @@ int main()
     points[1].x = 735;
     points[1].y = 815;
 
-    if ( cdPolyMarker( myimage, points, 2 ))
+    if ( cdPolyMarker( myimage, points, 2 ) )
     {
         fprintf( stderr, "cdPolyMarker Successful\n" );
     }
@@ -476,7 +476,7 @@ int main()
 /* Hey, things are going so well, lets do some text */
     lavender = cdImageColorAllocate( myimage, 204, 102, 255 );
 
-    if ( cdSetTextAttrib( myimage, 1, lavender, 50 ))
+    if ( cdSetTextAttrib( myimage, 1, lavender, 50 ) )
     {
         fprintf( stderr, "cdSetTextAttrib Successful\n" );
     }
@@ -485,7 +485,7 @@ int main()
         fprintf( stderr, "cdSetTextAttrib Unsuccessful\n" );
     }
 
-    if ( cdText( myimage, 50, 800, "CGM Draw Version 1.3" ))
+    if ( cdText( myimage, 50, 800, "CGM Draw Version 1.3" ) )
     {
         fprintf( stderr, "cdText Successful\n" );
     }
@@ -495,7 +495,7 @@ int main()
     }
 
 /* More text.  This time test TextPath and TextOrient */
-    if ( cdSetTextPath( myimage, 3 ))
+    if ( cdSetTextPath( myimage, 3 ) )
     {
         fprintf( stderr, "cdSetTextPath Successful\n" );
     }
@@ -504,7 +504,7 @@ int main()
         fprintf( stderr, "cdSetTextPath Unsuccessful\n" );
     }
 
-    if ( cdText( myimage, 50, 800, "CGM Draw" ))
+    if ( cdText( myimage, 50, 800, "CGM Draw" ) )
     {
         fprintf( stderr, "cdText Successful\n" );
     }
@@ -513,7 +513,7 @@ int main()
         fprintf( stderr, "cdText Unsuccessful\n" );
     }
 
-    if ( cdSetTextOrient( myimage, 1, 0, 0, -1 ))
+    if ( cdSetTextOrient( myimage, 1, 0, 0, -1 ) )
     {
         fprintf( stderr, "cdSetTextOrient Successful\n" );
     }
@@ -522,7 +522,7 @@ int main()
         fprintf( stderr, "cdSetTextOrient Unsuccessful\n" );
     }
 
-    if ( cdSetTextPath( myimage, 0 ))
+    if ( cdSetTextPath( myimage, 0 ) )
     {
         fprintf( stderr, "cdSetTextPath Successful\n" );
     }
@@ -531,7 +531,7 @@ int main()
         fprintf( stderr, "cdSetTextPath Unsuccessful\n" );
     }
 
-    if ( cdText( myimage, 950, 400, "CGM Draw" ))
+    if ( cdText( myimage, 950, 400, "CGM Draw" ) )
     {
         fprintf( stderr, "cdText Successful\n" );
     }
@@ -541,7 +541,7 @@ int main()
     }
 
 
-    if ( cdSetTextOrient( myimage, 0, 1, 1, 0 ))
+    if ( cdSetTextOrient( myimage, 0, 1, 1, 0 ) )
     {
         fprintf( stderr, "cdSetTextOrient Successful\n" );
     }
@@ -551,7 +551,7 @@ int main()
     }
 
 
-    if ( cdSetTextAttrib( myimage, 5, -1, 25 ))
+    if ( cdSetTextAttrib( myimage, 5, -1, 25 ) )
     {
         fprintf( stderr, "cdSetTextAttrib Successful\n" );
     }
@@ -560,7 +560,7 @@ int main()
         fprintf( stderr, "cdSetTextAttrib Unsuccessful\n" );
     }
 
-    if ( cdText( myimage, 5, 5, "G. Edward Johnson" ))
+    if ( cdText( myimage, 5, 5, "G. Edward Johnson" ) )
     {
         fprintf( stderr, "cdText Successful\n" );
     }

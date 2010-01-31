@@ -94,7 +94,7 @@ Pltk_Init( Tcl_Interp *interp )
         Colormap map;
 
         display = Tk_Display( mainWindow );
-        map     = DefaultColormap( display, DefaultScreen( display ));
+        map     = DefaultColormap( display, DefaultScreen( display ) );
 
 /* Convert this to use esc function if it's going to be used */
 /* SaveColormap(display, map); */

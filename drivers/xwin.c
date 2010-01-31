@@ -312,7 +312,7 @@ plD_init_xw( PLStream *pls )
         if ( !already )
         {
             pthread_mutexattr_init( &mutexatt );
-            if ( pthread_mutexattr_settype( &mutexatt, PLPLOT_MUTEX_RECURSIVE ))
+            if ( pthread_mutexattr_settype( &mutexatt, PLPLOT_MUTEX_RECURSIVE ) )
                 plexit( "xwin: pthread_mutexattr_settype() failed!\n" );
 
             pthread_mutex_init( &events_mutex, &mutexatt );
@@ -328,7 +328,7 @@ plD_init_xw( PLStream *pls )
         pthread_attr_init( &pthattr );
         pthread_attr_setdetachstate( &pthattr, PTHREAD_CREATE_JOINABLE );
 
-        if ( pthread_create( &( dev->updater ), &pthattr, (void *) &events_thread, (void *) pls ))
+        if ( pthread_create( &( dev->updater ), &pthattr, (void *) &events_thread, (void *) pls ) )
         {
             pthread_mutex_lock( &events_mutex );
             already--;
@@ -611,7 +611,7 @@ plD_state_xw( PLStream *pls, PLINT op )
             if ( icol0 == PL_RGB_COLOR )
             {
                 PLColor_to_XColor( &pls->curcolor, &dev->curcolor );
-                if ( !XAllocColor( xwd->display, xwd->map, &dev->curcolor ))
+                if ( !XAllocColor( xwd->display, xwd->map, &dev->curcolor ) )
                 {
                     fprintf( stderr, "Warning: could not allocate color\n" );
                     dev->curcolor.pixel = xwd->fgcolor.pixel;
@@ -640,7 +640,7 @@ plD_state_xw( PLStream *pls, PLINT op )
         if ( xwd->ncol1 < 2 )
             break;
 
-        icol1 = ( pls->icol1 * ( xwd->ncol1 - 1 )) / ( pls->ncol1 - 1 );
+        icol1 = ( pls->icol1 * ( xwd->ncol1 - 1 ) ) / ( pls->ncol1 - 1 );
         if ( xwd->color )
             dev->curcolor = xwd->cmap1[icol1];
         else
@@ -894,7 +894,7 @@ OpenXwin( PLStream *pls )
     if ( pls->dev != NULL )
         plwarn( "OpenXwin: device pointer is already set" );
 
-    pls->dev = calloc( 1, (size_t) sizeof ( XwDev ));
+    pls->dev = calloc( 1, (size_t) sizeof ( XwDev ) );
     if ( pls->dev == NULL )
         plexit( "plD_init_xw: Out of memory." );
 
@@ -934,7 +934,7 @@ OpenXwin( PLStream *pls )
 
     if ( dev->xwd == NULL )
     {
-        dev->xwd = (XwDisplay *) calloc( 1, (size_t) sizeof ( XwDisplay ));
+        dev->xwd = (XwDisplay *) calloc( 1, (size_t) sizeof ( XwDisplay ) );
         if ( dev->xwd == NULL )
             plexit( "Init: Out of memory." );
 
@@ -952,7 +952,7 @@ OpenXwin( PLStream *pls )
 /* Open display */
 #ifdef HAVE_PTHREAD
         if ( usepthreads )
-            if ( !XInitThreads())
+            if ( !XInitThreads() )
                 plexit( "xwin: XInitThreads() not successful." );
 #endif
         xwd->display = XOpenDisplay( pls->FileName );
@@ -985,7 +985,7 @@ OpenXwin( PLStream *pls )
         /* Allocate space for colors */
         /* Note cmap1 allocation is deferred */
         xwd->ncol0_alloc = pls->ncol0;
-        xwd->cmap0       = (XColor *) calloc( pls->ncol0, (size_t) sizeof ( XColor ));
+        xwd->cmap0       = (XColor *) calloc( pls->ncol0, (size_t) sizeof ( XColor ) );
         if ( xwd->cmap0 == 0 )
             plexit( "couldn't allocate space for cmap0 colors" );
 
@@ -1217,7 +1217,7 @@ MapMain( PLStream *pls )
         if ( event.type == Expose )
         {
             while ( XCheckWindowEvent( xwd->display, dev->window,
-                        ExposureMask, &event )) ;
+                        ExposureMask, &event ) ) ;
             break;
         }
     }
@@ -1322,7 +1322,7 @@ events_thread( void *pls )
                  ++dev->instr % dev->max_instr == 0 )
             {
                 dev->instr = 0;
-                while ( XCheckWindowEvent( xwd->display, dev->window, event_mask, &event ))
+                while ( XCheckWindowEvent( xwd->display, dev->window, event_mask, &event ) )
                 {
                     /* As ResizeEH() ends up calling plRemakePlot(), that
                      * indirectly uses the current stream, one needs to
@@ -1396,7 +1396,7 @@ HandleEvents( PLStream *pls )
     XEvent    event;
 
     while ( XCheckWindowEvent( xwd->display, dev->window,
-                dev->event_mask, &event ))
+                dev->event_mask, &event ) )
         MasterEH( pls, &event );
 }
 
@@ -1694,14 +1694,14 @@ LocateKey( PLStream *pls )
 
 /* Ignore modifier keys */
 
-    else if ( IsModifierKey( gin->keysym ))
+    else if ( IsModifierKey( gin->keysym ) )
     {
         plGinInit( gin );
     }
 
 /* Now handle cursor keys */
 
-    else if ( IsCursorKey( gin->keysym ))
+    else if ( IsCursorKey( gin->keysym ) )
     {
         int x1, y1, dx = 0, dy = 0;
         int xmin = 0, xmax = dev->width - 1, ymin = 0, ymax = dev->height - 1;
@@ -1847,7 +1847,7 @@ Locate( PLStream *pls )
     {
         /* Try to locate cursor */
 
-        if ( plTranslateCursor( gin ))
+        if ( plTranslateCursor( gin ) )
         {
             /* If invoked by the API, we're done */
             /* Otherwise send report to stdout */
@@ -1855,7 +1855,7 @@ Locate( PLStream *pls )
             if ( dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER )
             {
                 pltext();
-                if ( gin->keysym < 0xFF && isprint( gin->keysym ))
+                if ( gin->keysym < 0xFF && isprint( gin->keysym ) )
                     printf( "%f %f %c\n", gin->wX, gin->wY, gin->keysym );
                 else
                     printf( "%f %f 0x%02x\n", gin->wX, gin->wY, gin->keysym );
@@ -1953,7 +1953,7 @@ CreateXhairs( PLStream *pls )
 /* inside our window */
 
     if ( XQueryPointer( xwd->display, dev->window, &root, &child,
-             &root_x, &root_y, &win_x, &win_y, &mask ))
+             &root_x, &root_y, &win_x, &win_y, &mask ) )
     {
         if ( win_x >= 0 && win_x < (int) dev->width &&
              win_y >= 0 && win_y < (int) dev->height )
@@ -1967,7 +1967,7 @@ CreateXhairs( PLStream *pls )
 
     XSync( xwd->display, 0 );
     while ( XCheckWindowEvent( xwd->display, dev->window,
-                PointerMotionMask, &event )) ;
+                PointerMotionMask, &event ) ) ;
 
 /* Catch PointerMotion and crossing events so we can update them properly */
 
@@ -2070,7 +2070,7 @@ ExposeEH( PLStream *pls, XEvent *event )
         "x = %d, y = %d, width = %d, height = %d, count = %d, pending = %d\n",
         exposeEvent->x, exposeEvent->y,
         exposeEvent->width, exposeEvent->height,
-        exposeEvent->count, XPending( xwd->display ));
+        exposeEvent->count, XPending( xwd->display ) );
 
 /* Handle expose */
 /* If we have anything overlaid (like crosshairs), we need to refresh the */
@@ -2100,7 +2100,7 @@ ExposeEH( PLStream *pls, XEvent *event )
 
     if ( redrawn )
         while ( XCheckWindowEvent( xwd->display, dev->window,
-                    ExposureMask | StructureNotifyMask, event )) ;
+                    ExposureMask | StructureNotifyMask, event ) ) ;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2130,7 +2130,7 @@ ResizeEH( PLStream *pls, XEvent *event )
 
     pldebug( "ResizeEH",
         "x = %d, y = %d, pending = %d\n",
-        configEvent->width, configEvent->height, XPending( xwd->display ));
+        configEvent->width, configEvent->height, XPending( xwd->display ) );
 
 /* Handle resize */
 
@@ -2145,7 +2145,7 @@ ResizeEH( PLStream *pls, XEvent *event )
 
     XFlush( xwd->display );
     while ( XCheckWindowEvent( xwd->display, dev->window,
-                ExposureMask | StructureNotifyMask, event )) ;
+                ExposureMask | StructureNotifyMask, event ) ) ;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2613,7 +2613,7 @@ AllocBGFG( PLStream *pls )
     if ( xwd->rw_cmap &&
          /* r/w color maps */
          XAllocColorCells( xwd->display, xwd->map, False,
-             plane_masks, 0, pixels, 1 ))
+             plane_masks, 0, pixels, 1 ) )
     {
         /* background */
         xwd->cmap0[0].pixel = pixels[0];
@@ -2635,7 +2635,7 @@ AllocBGFG( PLStream *pls )
     for (;; )
     {
         if ( XAllocColorCells( xwd->display, xwd->map, False,
-                 plane_masks, 0, pixels, npixels ))
+                 plane_masks, 0, pixels, npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )
@@ -2647,7 +2647,7 @@ AllocBGFG( PLStream *pls )
 
     for ( i = 0; i < npixels - 1; i++ )
     {
-        if ( pixels[i] == ( ~xwd->cmap0[0].pixel & 0xFF ))
+        if ( pixels[i] == ( ~xwd->cmap0[0].pixel & 0xFF ) )
             break;
     }
 
@@ -2690,9 +2690,9 @@ SetBGFG( PLStream *pls )
     {
         pls->cmap0[0].r = pls->cmap0[0].g = pls->cmap0[0].b = 0xFF;
     }
-    gslevbg = ((long) pls->cmap0[0].r +
-               (long) pls->cmap0[0].g +
-               (long) pls->cmap0[0].b ) / 3;
+    gslevbg = ( (long) pls->cmap0[0].r +
+                (long) pls->cmap0[0].g +
+                (long) pls->cmap0[0].b ) / 3;
 
     PLColor_to_XColor( &pls->cmap0[0], &xwd->cmap0[0] );
 
@@ -2823,7 +2823,7 @@ AllocCustomMap( PLStream *pls )
     for (;; )
     {
         if ( XAllocColorCells( xwd->display, xwd->map, False,
-                 plane_masks, 0, pixels, npixels ))
+                 plane_masks, 0, pixels, npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )
@@ -2856,9 +2856,9 @@ AllocCustomMap( PLStream *pls )
     {
         for ( i = 0; i < RWMAP_MAX_COLORS; i++ )
         {
-            if (( xwm_colors[i].red != sxwm_colors[i].red ) ||
-                ( xwm_colors[i].green != sxwm_colors[i].green ) ||
-                ( xwm_colors[i].blue != sxwm_colors[i].blue ))
+            if ( ( xwm_colors[i].red != sxwm_colors[i].red ) ||
+                 ( xwm_colors[i].green != sxwm_colors[i].green ) ||
+                 ( xwm_colors[i].blue != sxwm_colors[i].blue ) )
             {
                 if ( pixels[i] != 0 )
                 {
@@ -2909,7 +2909,7 @@ AllocCmap0( PLStream *pls )
     {
         xwd->ncol0_alloc = pls->ncol0;
         xwd->cmap0       = (XColor *)
-                           realloc( xwd->cmap0, (size_t) pls->ncol0 * sizeof ( XColor ));
+                           realloc( xwd->cmap0, (size_t) pls->ncol0 * sizeof ( XColor ) );
         if ( xwd->cmap0 == 0 )
             plexit( "couldn't allocate space for cmap0 colors" );
     }
@@ -2925,7 +2925,7 @@ AllocCmap0( PLStream *pls )
         for (;; )
         {
             if ( XAllocColorCells( xwd->display, xwd->map, False,
-                     plane_masks, 0, &pixels[1], npixels ))
+                     plane_masks, 0, &pixels[1], npixels ) )
                 break;
             npixels--;
             if ( npixels == 0 )
@@ -3029,11 +3029,11 @@ AllocCmap1( PLStream *pls )
         /* If using the default color map, must severely limit number of colors
          * otherwise TK won't have enough. */
 
-        npixels = MAX( 2, MIN( RWMAP_CMAP1_COLORS, pls->ncol1 ));
+        npixels = MAX( 2, MIN( RWMAP_CMAP1_COLORS, pls->ncol1 ) );
         for (;; )
         {
             if ( XAllocColorCells( xwd->display, xwd->map, False,
-                     plane_masks, 0, pixels, npixels ))
+                     plane_masks, 0, pixels, npixels ) )
                 break;
             npixels--;
             if ( npixels == 0 )
@@ -3055,7 +3055,7 @@ AllocCmap1( PLStream *pls )
         if ( !xwd->cmap1 )
         {
             xwd->ncol1_alloc = xwd->ncol1;
-            xwd->cmap1       = (XColor *) calloc( xwd->ncol1, (size_t) sizeof ( XColor ));
+            xwd->cmap1       = (XColor *) calloc( xwd->ncol1, (size_t) sizeof ( XColor ) );
             if ( !xwd->cmap1 )
                 plexit( "couldn't allocate space for cmap1 colors" );
         }
@@ -3098,7 +3098,7 @@ AllocCmap1( PLStream *pls )
         if ( !xwd->cmap1 )
         {
             xwd->ncol1_alloc = ncolors;
-            xwd->cmap1       = (XColor *) calloc( ncolors, (size_t) sizeof ( XColor ));
+            xwd->cmap1       = (XColor *) calloc( ncolors, (size_t) sizeof ( XColor ) );
             if ( !xwd->cmap1 )
                 plexit( "couldn't allocate space for cmap1 colors" );
         }
@@ -3195,8 +3195,8 @@ StoreCmap1( PLStream *pls )
  * The argument types follow the same order as in the function name.
  \*--------------------------------------------------------------------------*/
 
-#define ToXColor( a )     ((( 0xFF & ( a )) << 8 ) | ( a ))
-#define ToPLColor( a )    (((U_LONG) a ) >> 8 )
+#define ToXColor( a )     ( ( ( 0xFF & ( a ) ) << 8 ) | ( a ) )
+#define ToPLColor( a )    ( ( (U_LONG) a ) >> 8 )
 
 static void
 PLColor_to_XColor( PLColor *plcolor, XColor *xcolor )
@@ -3248,8 +3248,8 @@ AreWeGrayscale( Display *display )
     igray = 1;
     /* check the list looking for non-monochrome visual classes */
     for ( i = 0; i < nitems; i++ )
-        if (( visuals[i].THING != GrayScale ) &&
-            ( visuals[i].THING != StaticGray ))
+        if ( ( visuals[i].THING != GrayScale ) &&
+             ( visuals[i].THING != StaticGray ) )
         {
             igray = 0;
             break;
@@ -3385,7 +3385,7 @@ DrawImage( PLStream *pls )
         return;
 
 /* translate array for rotation */
-    switch ((int) ( pls->diorot - 4. * floor( pls->diorot / 4. )))
+    switch ( (int) ( pls->diorot - 4. * floor( pls->diorot / 4. ) ) )
     {
     case 0:
         r[0] = 0; r[1] = 1; r[2] = 2; r[3] = 3; break;
@@ -3413,11 +3413,11 @@ DrawImage( PLStream *pls )
      */
 
 /* slope of left/right and top/bottom edges */
-    mlr = ( dev->yscale * ( pls->dev_iy[1] - pls->dev_iy[0] )) /
-          ( dev->xscale * ( pls->dev_ix[1] - pls->dev_ix[0] ));
+    mlr = ( dev->yscale * ( pls->dev_iy[1] - pls->dev_iy[0] ) ) /
+          ( dev->xscale * ( pls->dev_ix[1] - pls->dev_ix[0] ) );
 
-    mtb = ( dev->yscale * ( pls->dev_iy[ny] - pls->dev_iy[0] )) /
-          ( dev->xscale * ( pls->dev_ix[ny] - pls->dev_ix[0] ));
+    mtb = ( dev->yscale * ( pls->dev_iy[ny] - pls->dev_iy[0] ) ) /
+          ( dev->xscale * ( pls->dev_ix[ny] - pls->dev_ix[0] ) );
 
     for ( ix = 0; ix < nx - 1; ix++ )
     {
@@ -3459,14 +3459,14 @@ DrawImage( PLStream *pls )
                 /* Fill square between current and next points. */
 
                 /* If the fill area is a single dot, accelerate the fill. */
-                if (( fabs( Ppts[2].x - Ppts[0].x ) == 1 ) &&
-                    ( fabs( Ppts[3].y - Ppts[1].y ) == 1 ))
+                if ( ( fabs( Ppts[2].x - Ppts[0].x ) == 1 ) &&
+                     ( fabs( Ppts[3].y - Ppts[1].y ) == 1 ) )
                 {
                     XPutPixel( ximg, Ppts[0].x, dev->height - 1 - Ppts[0].y, curcolor.pixel );
 
                     /* integer rotate, accelerate */
                 }
-                else if ( pls->diorot == floor( pls->diorot ))
+                else if ( pls->diorot == floor( pls->diorot ) )
                 {
                     for ( ky = Ppts[1].y; ky < Ppts[3].y; ky++ )
                         for ( kx = Ppts[0].x; kx < Ppts[2].x; kx++ )
@@ -3485,11 +3485,11 @@ DrawImage( PLStream *pls )
 
                     for ( ky = Ppts[1].y; ky < Ppts[3].y; ky++ )
                     {
-                        left  = MAX((( ky - blt ) / mlr ), (( ky - blb ) / mtb ));
-                        right = MIN((( ky - brt ) / mtb ), (( ky - brb ) / mlr ));
+                        left  = MAX( ( ( ky - blt ) / mlr ), ( ( ky - blb ) / mtb ) );
+                        right = MIN( ( ( ky - brt ) / mtb ), ( ( ky - brb ) / mlr ) );
                         for ( kx = Ppts[0].x; kx < Ppts[2].x; kx++ )
                         {
-                            if ( kx >= rint( left ) && kx <= rint( right ))
+                            if ( kx >= rint( left ) && kx <= rint( right ) )
                             {
                                 XPutPixel( ximg, kx, dev->height - 1 - ky, curcolor.pixel );
                             }

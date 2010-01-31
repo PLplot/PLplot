@@ -61,8 +61,8 @@ int main()
     printf( "date/time components: %d-%d-%d %d:%d:%13.11g\n\n", y, m + 1, d, hour, min, sec );
 
     printf( "MJD = %d, seconds = %17.15g\n", MJD2.base_day, MJD2.time_sec );
-    printf( " MJD = %18.10f \n", getMJD( &MJD2 ));
-    printf( " JD = %18.10f \n\n", getJD( &MJD2 ));
+    printf( " MJD = %18.10f \n", getMJD( &MJD2 ) );
+    printf( " JD = %18.10f \n\n", getJD( &MJD2 ) );
 
     ISOstring = getISOString( &MJD2, 0, 0 );
     printf( "ISO string = '%s'\n\n", ISOstring );
@@ -87,9 +87,9 @@ int main()
     epoch = getCDFepoch( &MJD2 );
     printf( "CDF epoch sec %18.3f\n", epoch );
     setFromCDFepoch( epoch, &MJD2 );
-    printf( "from CDF ISO string (CDF epoch is accurate to msec only) = '%s'\n", getISOString( &MJD2, 1, 0 ));
+    printf( "from CDF ISO string (CDF epoch is accurate to msec only) = '%s'\n", getISOString( &MJD2, 1, 0 ) );
 
-    printf( "Day of week is/was %s\n\n", getDayOfWeek( &MJD2 ));
+    printf( "Day of week is/was %s\n\n", getDayOfWeek( &MJD2 ) );
 
     ISOstring = getISOString( &MJD1, 0, 0 );
     printf( "ISO string = '%s'\n\n", ISOstring );
@@ -107,10 +107,10 @@ int main()
     hour = 0;
 
     setFromUT( y, m, d, hour, min, sec, &MJD1, 0 );
-    strcpy( &( copy[0] ), getISOString( &MJD1, 0, 0 )); /* copy because getISOString() returns a pointer to a static string */
-    printf( "Gregorian = '%s'\n", &( copy[0] ));
+    strcpy( &( copy[0] ), getISOString( &MJD1, 0, 0 ) ); /* copy because getISOString() returns a pointer to a static string */
+    printf( "Gregorian = '%s'\n", &( copy[0] ) );
     //setFromUT(y, m, d, hour, min, sec, &MJD1, 1); /* set from Julian date */
-    printf( "%s Julian = '%s' Gregorian, (give us back our 11 days)\n", getISOString( &MJD1, 1, 1 ), &( copy[0] ));
+    printf( "%s Julian = '%s' Gregorian, (give us back our 11 days)\n", getISOString( &MJD1, 1, 1 ), &( copy[0] ) );
 
 
     /* Compare formatting from strftime() */

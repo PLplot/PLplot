@@ -715,7 +715,7 @@ static int       tables = 1;
 int
 c_plsetopt( const char *opt, const char *optarg )
 {
-    return ( plSetOpt( opt, optarg ));
+    return ( plSetOpt( opt, optarg ) );
 }
 
 int
@@ -761,12 +761,12 @@ plMergeOpts( PLOptionTable *options, const char *name, const char **notes )
 
 /* We've reached the last table entry.  All the subentries must be NULL or 0 */
 
-    if (( tab->handler != NULL ) ||
-        ( tab->client_data != NULL ) ||
-        ( tab->var != NULL ) ||
-        ( tab->mode != 0 ) ||
-        ( tab->syntax != NULL ) ||
-        ( tab->desc != NULL ))
+    if ( ( tab->handler != NULL ) ||
+         ( tab->client_data != NULL ) ||
+         ( tab->var != NULL ) ||
+         ( tab->mode != 0 ) ||
+         ( tab->syntax != NULL ) ||
+         ( tab->desc != NULL ) )
     {
         plabort( "plMergeOpts: input table improperly terminated" );
         return 1;
@@ -962,7 +962,7 @@ ParseOpt( int *p_myargc, const char ***p_argv, int *p_argc, const char ***p_args
 
             /* Try to match it */
 
-            if ( *opt == *tab->opt && !strcmp( opt, tab->opt ))
+            if ( *opt == *tab->opt && !strcmp( opt, tab->opt ) )
             {
                 /* Option matched, so remove from argv list if applicable. */
 
@@ -976,7 +976,7 @@ ParseOpt( int *p_myargc, const char ***p_argv, int *p_argc, const char ***p_args
 
                 /* Process option (and argument if applicable) */
 
-                return ( ProcessOpt( opt, tab, p_myargc, p_argv, p_argc ));
+                return ( ProcessOpt( opt, tab, p_myargc, p_argv, p_argc ) );
             }
         }
     }
@@ -1003,7 +1003,7 @@ ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_
 
     if ( tab->mode & need_arg )
     {
-        if ( GetOptarg( &optarg, p_myargc, p_argv, p_argc ))
+        if ( GetOptarg( &optarg, p_myargc, p_argv, p_argc ) )
             return 1;
     }
 
@@ -1027,20 +1027,20 @@ ProcessOpt( const char *opt, PLOptionTable *tab, int *p_myargc, const char ***p_
         {
             /* Make a copy, since handler may mung optarg with strtok() */
             char *copy =
-                (char *) malloc((size_t) ( 1 + strlen( optarg )) * sizeof ( char ));
+                (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) );
             if ( copy == NULL )
             {
                 plabort( "ProcessOpt: out of memory" );
                 return 1;
             }
             strcpy( copy, optarg );
-            res = (( *tab->handler )( opt, copy, tab->client_data ));
-            free((void *) copy );
+            res = ( ( *tab->handler )( opt, copy, tab->client_data ) );
+            free( (void *) copy );
             return res;
         }
         else
         {
-            return (( *tab->handler )( opt, optarg, tab->client_data ));
+            return ( ( *tab->handler )( opt, optarg, tab->client_data ) );
         }
 
     case PL_OPT_BOOL:
@@ -1118,13 +1118,13 @@ GetOptarg( const char **poptarg, int *p_myargc, const char ***p_argv, int *p_arg
 
     --( *p_myargc );
 
-    if (( *p_myargc ) <= 0 )            /* oops, no more arguments */
+    if ( ( *p_myargc ) <= 0 )           /* oops, no more arguments */
         result = 1;
 
     if ( !result )
     {
         ( *p_argv )++;
-        if (( *p_argv )[0][0] == '-' && isalpha(( *p_argv )[0][1] ))
+        if ( ( *p_argv )[0][0] == '-' && isalpha( ( *p_argv )[0][1] ) )
         {
             ( *p_argv )--;                /* oops, next arg is a flag */
             result = 1;
@@ -1214,7 +1214,7 @@ Syntax( void )
             if ( tab->mode & PL_OPT_DISABLED )
                 continue;
 
-            if ( !mode_showall && ( tab->mode & PL_OPT_INVISIBLE ))
+            if ( !mode_showall && ( tab->mode & PL_OPT_INVISIBLE ) )
                 continue;
 
             if ( tab->syntax == NULL )
@@ -1282,7 +1282,7 @@ Help( void )
             if ( tab->mode & PL_OPT_DISABLED )
                 continue;
 
-            if ( !mode_showall && ( tab->mode & PL_OPT_INVISIBLE ))
+            if ( !mode_showall && ( tab->mode & PL_OPT_INVISIBLE ) )
                 continue;
 
             if ( tab->desc == NULL )
@@ -1326,7 +1326,7 @@ plParseDrvOpts( DrvOpt *acc_opt )
     DrvOpt    *t;
     int       fl;
     char      msg[80];
-    memset( msg, '\0', sizeof ( msg ));
+    memset( msg, '\0', sizeof ( msg ) );
 
     if ( !drv_opt.option )
         return 1;
@@ -1383,7 +1383,7 @@ plParseDrvOpts( DrvOpt *acc_opt )
             plexit( "" );
         }
     }
-    while (( drvp = drvp->next ))
+    while ( ( drvp = drvp->next ) )
     ;
 
     return 0;
@@ -1599,7 +1599,7 @@ opt_jx( const char *opt, const char *optarg, void *client_data )
 static int
 opt_jy( const char *opt, const char *optarg, void *client_data )
 {
-    plsdidev( PL_NOTSET, PL_NOTSET, PL_NOTSET, atof( optarg ));
+    plsdidev( PL_NOTSET, PL_NOTSET, PL_NOTSET, atof( optarg ) );
     return 0;
 }
 
@@ -1613,7 +1613,7 @@ opt_jy( const char *opt, const char *optarg, void *client_data )
 static int
 opt_ori( const char *opt, const char *optarg, void *client_data )
 {
-    plsdiori( atof( optarg ));
+    plsdiori( atof( optarg ) );
     return 0;
 }
 
@@ -1714,7 +1714,7 @@ opt_bg( const char *opt, const char *optarg, void *client_data )
     strncpy( opttmp, optarg, OPTMAX - 1 );
     opttmp[OPTMAX - 1] = '\0';
 
-    if ( strchr( opttmp, '_' ))
+    if ( strchr( opttmp, '_' ) )
     {
         /* e.g., -bg ff0000_0.1 */
         color_field = strtok( opttmp, "_" );
@@ -1731,7 +1731,7 @@ opt_bg( const char *opt, const char *optarg, void *client_data )
 /* Must be either a 3 or 6 digit hex number */
 /* If 3 digits, each is "doubled" (i.e. ABC becomes AABBCC). */
 
-    switch ( strlen( color_field ))
+    switch ( strlen( color_field ) )
     {
     case 3:
         r = ( bgcolor & 0xF00 ) >> 8;
@@ -1808,22 +1808,22 @@ opt_wplt( const char *opt, const char *optarg, void *client_data )
     strncpy( opttmp, optarg, OPTMAX - 1 );
     opttmp[OPTMAX - 1] = '\0';
 
-    if (( field = strtok( opttmp, "," )) == NULL )
+    if ( ( field = strtok( opttmp, "," ) ) == NULL )
         return 1;
 
     xl = atof( field );
 
-    if (( field = strtok( NULL, "," )) == NULL )
+    if ( ( field = strtok( NULL, "," ) ) == NULL )
         return 1;
 
     yl = atof( field );
 
-    if (( field = strtok( NULL, "," )) == NULL )
+    if ( ( field = strtok( NULL, "," ) ) == NULL )
         return 1;
 
     xr = atof( field );
 
-    if (( field = strtok( NULL, "," )) == NULL )
+    if ( ( field = strtok( NULL, "," ) ) == NULL )
         return 1;
 
     yr = atof( field );
@@ -1846,18 +1846,18 @@ opt_drvopt( const char *opt, const char *optarg, void *client_data )
     int       fl = 0;
     DrvOptCmd *drvp;
 
-    option = (char *) malloc((size_t) ( 1 + strlen( optarg )) * sizeof ( char ));
+    option = (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) );
     if ( option == NULL )
         plexit( "opt_drvopt: Out of memory!?" );
 
-    value = (char *) malloc((size_t) ( 1 + strlen( optarg )) * sizeof ( char ));
+    value = (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) );
     if ( value == NULL )
         plexit( "opt_drvopt: Out of memory!?" );
 
     drvp    = &drv_opt;
     *option = *value = '\0';
     tt      = option;
-    while (( t = *optarg++ ))
+    while ( ( t = *optarg++ ) )
     {
         switch ( t )
         {
@@ -1871,9 +1871,9 @@ opt_drvopt( const char *opt, const char *optarg, void *client_data )
             }
 
             *tt          = '\0'; tt = option;
-            drvp->option = plstrdup( option );                          /* it should not be release, because of familying */
-            drvp->value  = plstrdup( value );                           /* don't release */
-            drvp->next   = (DrvOptCmd *) malloc( sizeof ( DrvOptCmd )); /* don't release */
+            drvp->option = plstrdup( option );                           /* it should not be release, because of familying */
+            drvp->value  = plstrdup( value );                            /* don't release */
+            drvp->next   = (DrvOptCmd *) malloc( sizeof ( DrvOptCmd ) ); /* don't release */
             if ( drvp->next == NULL )
                 plexit( "opt_drvopt: Out of memory!?\n" );
 
@@ -1977,7 +1977,7 @@ opt_fsiz( const char *opt, const char *optarg, void *client_data )
     strncpy( spec, optarg, len );
     spec[len] = '\0';
 
-    bytemax = (PLINT) ( multiplier * atof( spec ));
+    bytemax = (PLINT) ( multiplier * atof( spec ) );
     if ( bytemax <= 0 )
     {
         fprintf( stderr, "?invalid file size %d. 2.14G is the maximum.\n", bytemax );
@@ -2128,7 +2128,7 @@ opt_plserver( const char *opt, const char *optarg, void *client_data )
 static int
 opt_plwindow( const char *opt, const char *optarg, void *client_data )
 {
-    if (( plsc->plwindow = (char *) malloc((size_t) ( 1 + strlen( optarg )) * sizeof ( char ))) == NULL )
+    if ( ( plsc->plwindow = (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) ) ) == NULL )
     {
         plexit( "opt_plwindow: Insufficient memory" );
     }
@@ -2149,7 +2149,7 @@ opt_tcl_cmd( const char *opt, const char *optarg, void *client_data )
 {
     char *newcmd;
 
-    if (( newcmd = (char *) malloc((size_t) ( strlen( optarg ) + 9 ) * sizeof ( char ))) == NULL )
+    if ( ( newcmd = (char *) malloc( (size_t) ( strlen( optarg ) + 9 ) * sizeof ( char ) ) ) == NULL )
     {
         plexit( "opt_tcl_cmd: Insufficient memory" );
     }
@@ -2203,7 +2203,7 @@ opt_px( const char *opt, const char *optarg, void *client_data )
 static int
 opt_py( const char *opt, const char *optarg, void *client_data )
 {
-    plssub( -1, atoi( optarg ));
+    plssub( -1, atoi( optarg ) );
     return 0;
 }
 
@@ -2227,7 +2227,7 @@ opt_geo( const char *opt, const char *optarg, void *client_data )
 
 /* The TK driver uses the geometry string directly */
 
-    if (( plsc->geometry = (char *) malloc((size_t) ( 1 + strlen( optarg )) * sizeof ( char ))) == NULL )
+    if ( ( plsc->geometry = (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) ) ) == NULL )
     {
         plexit( "opt_geo: Insufficient memory" );
     }
@@ -2307,7 +2307,7 @@ opt_geo( const char *opt, const char *optarg, void *client_data )
 static int
 opt_tk_file( const char *opt, const char *optarg, void *client_data )
 {
-    if (( plsc->tk_file = (char *) malloc((size_t) ( 1 + strlen( optarg )) * sizeof ( char ))) == NULL )
+    if ( ( plsc->tk_file = (char *) malloc( (size_t) ( 1 + strlen( optarg ) ) * sizeof ( char ) ) ) == NULL )
     {
         plexit( "opt_tk_file: Insufficient memory" );
     }
@@ -2336,14 +2336,14 @@ opt_dpi( const char *opt, const char *optarg, void *client_data )
 
     strncpy( opttmp, optarg, OPTMAX - 1 );
     opttmp[OPTMAX - 1] = '\0';
-    if ( strchr( opttmp, 'x' ))
+    if ( strchr( opttmp, 'x' ) )
     {
         field = strtok( opttmp, "x" );
         xdpi  = atof( field );
         if ( xdpi == 0 )
             fprintf( stderr, "?invalid xdpi\n" );
 
-        if (( field = strtok( NULL, " " )) == NULL )
+        if ( ( field = strtok( NULL, " " ) ) == NULL )
             return 1;
 
         ydpi = atof( field );
@@ -2419,14 +2419,14 @@ static int
 opt_locale( const char *opt, const char *optarg, void *client_data )
 {
     char *locale;
-    if ( locale = setlocale( LC_NUMERIC, "" ))
+    if ( locale = setlocale( LC_NUMERIC, "" ) )
     {
         printf( "LC_NUMERIC locale set to \"%s\"\n", locale );
     }
     else
     {
         plwarn( "Could not use invalid environment (e.g., LC_ALL, LC_NUMERIC, or LANG) to set LC_NUMERIC locale.  Falling back to LC_NUMERIC \"C\" locale instead.\n" );
-        if ( !( locale = setlocale( LC_NUMERIC, "C" )))
+        if ( !( locale = setlocale( LC_NUMERIC, "C" ) ) )
         {
             plexit( "Your platform is seriously broken.  Not even a \"C\" locale could be set." );
         }

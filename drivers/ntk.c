@@ -249,7 +249,7 @@ plD_init_ntk( PLStream *pls )
     if ( Tcl_Init( interp ) != TCL_OK )
         plexit( "Unable to initialize Tcl." );
 
-    if ( Tk_Init( interp ))
+    if ( Tk_Init( interp ) )
         plexit( "Unable to initialize Tk." );
 
     mainw = Tk_MainWindow( interp );
@@ -365,7 +365,7 @@ waitforpage( PLStream *pls )
 /*tk_cmd("bind . <KeyPress> {set keypress %N; puts \"\n%k-%A-%K-%N\"}"); */
     tk_cmd( "bind . <KeyPress> {set keypress %N}" );
 
-    while (( key & 0xff ) != PLK_Return && ( key & 0xff ) != PLK_Linefeed && key != PLK_Next && key != 'Q' )
+    while ( ( key & 0xff ) != PLK_Return && ( key & 0xff ) != PLK_Linefeed && key != PLK_Next && key != 'Q' )
     {
         while ( st != 1 )
         {
@@ -503,7 +503,7 @@ plD_esc_ntk( PLStream *pls, PLINT op, void *ptr )
         for ( i = 0; i < pls->nms; i++ )
             j += sprintf( &dash[j], " %d %d",
                 (int) ceil( pls->mark[i] / 1e3 * ppm ),
-                (int) ceil( pls->space[i] / 1e3 * ppm ));
+                (int) ceil( pls->space[i] / 1e3 * ppm ) );
         sprintf( &dash[j], "}" );
         plD_polyline_ntk( pls, xa, ya, pls->dev_npts );
         free( xa ); free( ya );
@@ -543,7 +543,7 @@ plD_esc_ntk( PLStream *pls, PLINT op, void *ptr )
             if ( pls->patt != 0 )
             {
                 Tk_DefineBitmap( interp, Tk_GetUid( "foo" ), bit_pat, 16, 16 );
-                bitmap = Tk_GetBitmap( interp, mainw, Tk_GetUid( "patt" ));
+                bitmap = Tk_GetBitmap( interp, mainw, Tk_GetUid( "patt" ) );
             }
             j = sprintf( cmd, "$plf.f2.c%d create polygon ", ccanv );
             for ( i = 0; i < pls->dev_npts; i++ )

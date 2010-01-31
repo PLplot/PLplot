@@ -90,6 +90,6 @@ void* ht_delete( hashtable* table, void* key );
  * @param table The hash table
  * @param func The action function
  */
-void ht_process( hashtable* table, void ( *func )( void* ));
+void ht_process( hashtable* table, void ( *func )( void* ) );
 
 #endif                          /* _HASH_H */

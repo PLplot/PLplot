@@ -92,13 +92,13 @@ int main( int argc, char *argv[] )
     int  i               = 0;
     int  number_of_lines = 0;
 
-    if (( fr = fopen( argv[1], "r" )) != NULL )
+    if ( ( fr = fopen( argv[1], "r" ) ) != NULL )
     {
         /*
          *   Work out how many lines we have all up
          */
 
-        while (( fgets( readbuffer, 255, fr ) != NULL ))
+        while ( ( fgets( readbuffer, 255, fr ) != NULL ) )
         {
             ++number_of_lines;
         }
@@ -107,13 +107,13 @@ int main( int argc, char *argv[] )
          *   Allocate memory to the arrays which will hold the data
          */
 
-        if (( Hershey = (int *) calloc( number_of_lines, (size_t) sizeof ( int ))) == NULL )
+        if ( ( Hershey = (int *) calloc( number_of_lines, (size_t) sizeof ( int ) ) ) == NULL )
             MemError1( "Allocating memory to the hershey table" );
 
-        if (( Unicode = (int *) calloc( number_of_lines, (size_t) sizeof ( int ))) == NULL )
+        if ( ( Unicode = (int *) calloc( number_of_lines, (size_t) sizeof ( int ) ) ) == NULL )
             MemError1( "Allocating memory to the unicode table" );
 
-        if (( Font = (char *) calloc( number_of_lines, (size_t) sizeof ( char ))) == NULL )
+        if ( ( Font = (char *) calloc( number_of_lines, (size_t) sizeof ( char ) ) ) == NULL )
             MemError1( "Allocating memory to the font table" );
 
         rewind( fr ); /* Go back to the start of the file */
@@ -122,7 +122,7 @@ int main( int argc, char *argv[] )
          *    Read in line by line, and copy the numbers into our arrays
          */
 
-        while (( fgets( readbuffer, 255, fr ) != NULL ))
+        while ( ( fgets( readbuffer, 255, fr ) != NULL ) )
         {
             sscanf( readbuffer, "%x,%d,%c", (int *) &Unicode[i], (int *) &Hershey[i], (char *) &Font[i] );
             i++;
@@ -136,7 +136,7 @@ int main( int argc, char *argv[] )
  */
 
 
-    if (( fw = fopen( argv[2], "w" )) != NULL )
+    if ( ( fw = fopen( argv[2], "w" ) ) != NULL )
     {
         fprintf( fw, "%s\n", header );
 
@@ -147,9 +147,9 @@ int main( int argc, char *argv[] )
 
         for ( i = 0; i < number_of_lines; i++ )
         {
-            if ((( i % 4 ) == 0 ) && ( i > 0 )) fprintf( fw, "\n" );
+            if ( ( ( i % 4 ) == 0 ) && ( i > 0 ) ) fprintf( fw, "\n" );
             fprintf( fw, "{%d,0x%04x,%c}", (int) Hershey[i], (int) Unicode[i], (char) Font[i] );
-            if ( i < ( number_of_lines - 1 )) fprintf( fw, ", " );
+            if ( i < ( number_of_lines - 1 ) ) fprintf( fw, ", " );
         }
 
         fprintf( fw, "\n};\n" );

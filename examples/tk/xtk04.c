@@ -66,7 +66,7 @@ int mat_min( tclMatrix *pm, Tcl_Interp *interp,
 int
 main( int argc, const char **argv )
 {
-    exit( pltkMain( argc, argv, NULL, AppInit ));
+    exit( pltkMain( argc, argv, NULL, AppInit ) );
 }
 
 /*

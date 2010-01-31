@@ -161,9 +161,9 @@ static void UpdatePageMetrics( PLStream *pls, char flag );
  \*--------------------------------------------------------------------------*/
 
 #if defined ( _MSC_VER )
-  #define Debug( a )           do { if ( pls->debug ) { fprintf( stderr, ( a )); } } while ( 0 )
-  #define Debug2( a, b )       do { if ( pls->debug ) { fprintf( stderr, ( a ), ( b )); } } while ( 0 )
-  #define Debug3( a, b, c )    do { if ( pls->debug ) { fprintf( stderr, ( a ), ( b ), ( c )); } } while ( 0 )
+  #define Debug( a )           do { if ( pls->debug ) { fprintf( stderr, ( a ) ); } } while ( 0 )
+  #define Debug2( a, b )       do { if ( pls->debug ) { fprintf( stderr, ( a ), ( b ) ); } } while ( 0 )
+  #define Debug3( a, b, c )    do { if ( pls->debug ) { fprintf( stderr, ( a ), ( b ), ( c ) ); } } while ( 0 )
 #elif defined ( __BORLANDC__ )
   #define Debug     if ( pls->debug ) printf
   #define Debug2    if ( pls->debug ) printf
@@ -282,18 +282,18 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
         if ( dev )
         {
             Debug( "WM_PAINT\t" );
-            if ( GetUpdateRect( dev->hwnd, &dev->paintrect, TRUE ))
+            if ( GetUpdateRect( dev->hwnd, &dev->paintrect, TRUE ) )
             {
                 BusyCursor();
                 BeginPaint( dev->hwnd, &dev->ps );
 
-                if (( dev->waiting == 1 ) && ( dev->already_erased == 1 ))
+                if ( ( dev->waiting == 1 ) && ( dev->already_erased == 1 ) )
                 {
                     Debug( "Remaking\t" );
 
                     if ( dev->ps.fErase )
                     {
-                        dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ));
+                        dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
                         ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0 );
                         SetBkColor( dev->hdc, dev->oldcolour );
                     }
@@ -302,7 +302,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
                     CopySCRtoBMP( pls );
                     dev->already_erased++;
                 }
-                else if (( dev->waiting == 1 ) && ( dev->already_erased == 2 ))
+                else if ( ( dev->waiting == 1 ) && ( dev->already_erased == 2 ) )
                 {
                     dev->oldobject = SelectObject( dev->hdc2, dev->bitmap );
                     BitBlt( dev->hdc, dev->paintrect.left, dev->paintrect.top,
@@ -364,7 +364,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
                  *    filling a rectangle - go figure ?
                  */
 
-                dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ));
+                dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
                 ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0 );
                 SetBkColor( dev->hdc, dev->oldcolour );
 
@@ -427,9 +427,9 @@ plD_init_wingcc( PLStream *pls )
 /* Allocate and initialize device-specific data */
 
     if ( pls->dev != NULL )
-        free((void *) pls->dev );
+        free( (void *) pls->dev );
 
-    pls->dev = calloc( 1, (size_t) sizeof ( wingcc_Dev ));
+    pls->dev = calloc( 1, (size_t) sizeof ( wingcc_Dev ) );
     if ( pls->dev == NULL )
         plexit( "plD_init_wingcc_Dev: Out of memory." );
 
@@ -498,7 +498,7 @@ plD_init_wingcc( PLStream *pls )
  */
 
     /* Initialize the entire structure to zero. */
-    memset( &dev->wndclass, 0, sizeof ( WNDCLASSEX ));
+    memset( &dev->wndclass, 0, sizeof ( WNDCLASSEX ) );
 
     /* This class is called WinTestWin */
     dev->wndclass.lpszClassName = szWndClass;
@@ -632,7 +632,7 @@ plD_init_wingcc( PLStream *pls )
     Debug2( "Scale = %f (FLT)\n", dev->scale );
 
     plP_setpxl( dev->scale * pls->xdpi / 25.4, dev->scale * pls->ydpi / 25.4 );
-    plP_setphy( 0, (PLINT) ( dev->scale * dev->width ), 0, (PLINT) ( dev->scale * dev->height ));
+    plP_setphy( 0, (PLINT) ( dev->scale * dev->width ), 0, (PLINT) ( dev->scale * dev->height ) );
 
 #ifdef HAVE_FREETYPE
     if ( pls->dev_text )
@@ -657,8 +657,8 @@ plD_line_wingcc( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     points[0].x = (LONG) ( x1a / dev->scale );
     points[1].x = (LONG) ( x2a / dev->scale );
-    points[0].y = (LONG) ( dev->height - ( y1a / dev->scale ));
-    points[1].y = (LONG) ( dev->height - ( y2a / dev->scale ));
+    points[0].y = (LONG) ( dev->height - ( y1a / dev->scale ) );
+    points[1].y = (LONG) ( dev->height - ( y2a / dev->scale ) );
 
     dev->oldobject = SelectObject( dev->hdc, dev->pen );
 
@@ -689,13 +689,13 @@ plD_polyline_wingcc( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     if ( npts > 0 )
     {
-        points = GlobalAlloc( GMEM_ZEROINIT | GMEM_FIXED, (size_t) npts * sizeof ( POINT ));
+        points = GlobalAlloc( GMEM_ZEROINIT | GMEM_FIXED, (size_t) npts * sizeof ( POINT ) );
         if ( points != NULL )
         {
             for ( i = 0; i < npts; i++ )
             {
                 points[i].x = (LONG) ( xa[i] / dev->scale );
-                points[i].y = (LONG) ( dev->height - ( ya[i] / dev->scale ));
+                points[i].y = (LONG) ( dev->height - ( ya[i] / dev->scale ) );
             }
             dev->oldobject = SelectObject( dev->hdc, dev->pen );
             Polyline( dev->hdc, points, npts );
@@ -725,7 +725,7 @@ plD_fill_polygon_wingcc( PLStream *pls )
 
     if ( pls->dev_npts > 0 )
     {
-        points = GlobalAlloc( GMEM_ZEROINIT, (size_t) pls->dev_npts * sizeof ( POINT ));
+        points = GlobalAlloc( GMEM_ZEROINIT, (size_t) pls->dev_npts * sizeof ( POINT ) );
 
         if ( points == NULL )
             plexit( "Could not allocate memory to \"plD_fill_polygon_wingcc\"\n" );
@@ -733,7 +733,7 @@ plD_fill_polygon_wingcc( PLStream *pls )
         for ( i = 0; i < pls->dev_npts; i++ )
         {
             points[i].x = (PLINT) ( pls->dev_x[i] / dev->scale );
-            points[i].y = (PLINT) ( dev->height - ( pls->dev_y[i] / dev->scale ));
+            points[i].y = (PLINT) ( dev->height - ( pls->dev_y[i] / dev->scale ) );
         }
 
         dev->fillbrush = CreateSolidBrush( dev->colour );
@@ -791,10 +791,10 @@ plD_eop_wingcc( PLStream *pls )
     if ( !pls->nopause )
     {
         dev->waiting = 1;
-        while ( GetMessage( &dev->msg, NULL, 0, 0 ))
+        while ( GetMessage( &dev->msg, NULL, 0, 0 ) )
         {
             TranslateMessage( &dev->msg );
-            switch ((int) dev->msg.message )
+            switch ( (int) dev->msg.message )
             {
             case WM_CONTEXTMENU:
             case WM_RBUTTONDOWN:
@@ -803,14 +803,14 @@ plD_eop_wingcc( PLStream *pls )
                 break;
 
             case WM_CHAR:
-                if (((TCHAR) ( dev->msg.wParam ) == 32 ) ||
-                    ((TCHAR) ( dev->msg.wParam ) == 13 ))
+                if ( ( (TCHAR) ( dev->msg.wParam ) == 32 ) ||
+                     ( (TCHAR) ( dev->msg.wParam ) == 13 ) )
                 {
                     dev->waiting = 0;
                 }
-                else if (((TCHAR) ( dev->msg.wParam ) == 27 ) ||
-                         ((TCHAR) ( dev->msg.wParam ) == 'q' ) ||
-                         ((TCHAR) ( dev->msg.wParam ) == 'Q' ))
+                else if ( ( (TCHAR) ( dev->msg.wParam ) == 27 ) ||
+                          ( (TCHAR) ( dev->msg.wParam ) == 'q' ) ||
+                          ( (TCHAR) ( dev->msg.wParam ) == 'Q' ) )
                 {
                     dev->waiting = 0;
                     PostQuitMessage( 0 );
@@ -823,7 +823,7 @@ plD_eop_wingcc( PLStream *pls )
                 break;
 
             case WM_COMMAND:
-                switch ( LOWORD( dev->msg.wParam ))
+                switch ( LOWORD( dev->msg.wParam ) )
                 {
                 case PopupPrint:
                     Debug( "PopupPrint" );
@@ -999,13 +999,13 @@ static void Resize( PLStream *pls )
 
     if ( dev->waiting == 1 )     /* Only resize the window IF plplot has finished with it */
     {
-        memcpy( &dev->oldrect, &dev->rect, sizeof ( RECT ));
+        memcpy( &dev->oldrect, &dev->rect, sizeof ( RECT ) );
         GetClientRect( dev->hwnd, &dev->rect );
         Debug3( "[%d %d]", dev->rect.right, dev->rect.bottom );
 
-        if (( dev->rect.right > 0 ) && ( dev->rect.bottom > 0 ))            /* Check to make sure it isn't just minimised (i.e. zero size) */
+        if ( ( dev->rect.right > 0 ) && ( dev->rect.bottom > 0 ) )            /* Check to make sure it isn't just minimised (i.e. zero size) */
         {
-            if ( memcmp( &dev->rect, &dev->oldrect, sizeof ( RECT )) != 0 ) /* See if the window's changed size or not */
+            if ( memcmp( &dev->rect, &dev->oldrect, sizeof ( RECT ) ) != 0 )  /* See if the window's changed size or not */
             {
                 dev->already_erased = 0;
                 dev->width          = dev->rect.right;
@@ -1031,7 +1031,7 @@ static void Resize( PLStream *pls )
         }
         else
         {
-            memcpy( &dev->rect, &dev->oldrect, sizeof ( RECT )); /* restore the old size to current size since the window is minimised */
+            memcpy( &dev->rect, &dev->oldrect, sizeof ( RECT ) ); /* restore the old size to current size since the window is minimised */
         }
     }
 }
@@ -1155,7 +1155,7 @@ static PLINT plD_read_pixel_wingcc( PLStream *pls, short x, short y )
 {
     wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
 
-    return ( GetPixel( dev->hdc, x, y ));
+    return ( GetPixel( dev->hdc, x, y ) );
 }
 
 
@@ -1243,13 +1243,13 @@ static void init_freetype_lv2( PLStream *pls )
     FT->ymax     = dev->height;
     FT->invert_y = 1;
 
-    if (( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 ))           /* do we want to at least *try* for smoothing ? */
+    if ( ( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 ) )           /* do we want to at least *try* for smoothing ? */
     {
-        FT->ncol0_org   = pls->ncol0;                                                 /* save a copy of the original size of ncol0 */
-        FT->ncol0_xtra  = 16777216 - ( pls->ncol1 + pls->ncol0 );                     /* work out how many free slots we have */
-        FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;           /* find out how many different shades of anti-aliasing we can do */
-        FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;           /* set a maximum number of shades */
-        plscmap0n( FT->ncol0_org + ( FT->ncol0_width * pls->ncol0 ));                 /* redefine the size of cmap0 */
+        FT->ncol0_org   = pls->ncol0;                                                   /* save a copy of the original size of ncol0 */
+        FT->ncol0_xtra  = 16777216 - ( pls->ncol1 + pls->ncol0 );                       /* work out how many free slots we have */
+        FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;             /* find out how many different shades of anti-aliasing we can do */
+        FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;             /* set a maximum number of shades */
+        plscmap0n( FT->ncol0_org + ( FT->ncol0_width * pls->ncol0 ) );                  /* redefine the size of cmap0 */
 /* the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)
  * call in plscmap0 which (a) leads to segfaults since the GD image is
  * not defined at this point and (b) would be inefficient in any case since
@@ -1262,9 +1262,9 @@ static void init_freetype_lv2( PLStream *pls )
             pl_set_extended_cmap0( pls, FT->ncol0_width, FT->ncol0_org ); /* call the function to add the extra cmap0 entries and calculate stuff */
             pls->level = level_save;
         }
-        FT->smooth_text = 1;                                                     /* Yippee ! We had success setting up the extended cmap0 */
+        FT->smooth_text = 1;                                                       /* Yippee ! We had success setting up the extended cmap0 */
     }
-    else if (( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 1 )) /* If we have a truecolour device, we wont even bother trying to change the palette */
+    else if ( ( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 1 ) ) /* If we have a truecolour device, we wont even bother trying to change the palette */
     {
         FT->smooth_text = 1;
     }
@@ -1323,7 +1323,7 @@ static void UpdatePageMetrics( PLStream *pls, char flag )
     pls->xdpi = GetDeviceCaps( dev->hdc, HORZRES ) / GetDeviceCaps( dev->hdc, HORZSIZE ) * 25.4;
     pls->ydpi = GetDeviceCaps( dev->hdc, VERTRES ) / GetDeviceCaps( dev->hdc, VERTSIZE ) * 25.4;
     plP_setpxl( dev->scale * pls->xdpi / 25.4, dev->scale * pls->ydpi / 25.4 );
-    plP_setphy( 0, (PLINT) ( dev->scale * dev->width ), 0, (PLINT) ( dev->scale * dev->height ));
+    plP_setphy( 0, (PLINT) ( dev->scale * dev->width ), 0, (PLINT) ( dev->scale * dev->height ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1348,7 +1348,7 @@ static void PrintPage( PLStream *pls )
      *    This structure is used to supply a name to the print queue
      */
 
-    ZeroMemory( &docinfo, sizeof ( docinfo ));
+    ZeroMemory( &docinfo, sizeof ( docinfo ) );
     docinfo.cbSize      = sizeof ( docinfo );
     docinfo.lpszDocName = "Plplot Page";
 
@@ -1356,7 +1356,7 @@ static void PrintPage( PLStream *pls )
      *   Reset out printer structure to zero and initialise it
      */
 
-    ZeroMemory( &Printer, sizeof ( PRINTDLG ));
+    ZeroMemory( &Printer, sizeof ( PRINTDLG ) );
     Printer.lStructSize = sizeof ( PRINTDLG );
     Printer.hwndOwner   = dev->hwnd;
     Printer.Flags       = PD_NOPAGENUMS | PD_NOSELECTION | PD_RETURNDC;
@@ -1379,10 +1379,10 @@ static void PrintPage( PLStream *pls )
          *  and when all is done, restore them.
          */
 
-        if (( dev->push = GlobalAlloc( GMEM_ZEROINIT, sizeof ( wingcc_Dev ))) != NULL )
+        if ( ( dev->push = GlobalAlloc( GMEM_ZEROINIT, sizeof ( wingcc_Dev ) ) ) != NULL )
         {
             BusyCursor();
-            memcpy( dev->push, dev, sizeof ( wingcc_Dev ));
+            memcpy( dev->push, dev, sizeof ( wingcc_Dev ) );
 
             dev->hdc = dev->PRNT_hdc = Printer.hDC; /* Copy the printer HDC */
 
@@ -1417,7 +1417,7 @@ static void PrintPage( PLStream *pls )
                 FT->smooth_text = dev->FT_smooth_text;
             }
           #endif
-            memcpy( dev, dev->push, sizeof ( wingcc_Dev )); /* POP our "stack" now to restore the values */
+            memcpy( dev, dev->push, sizeof ( wingcc_Dev ) ); /* POP our "stack" now to restore the values */
 
             GlobalFree( dev->push );
             NormalCursor();

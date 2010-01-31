@@ -18,7 +18,7 @@
 /* Follow ideas in http://gcc.gnu.org/wiki/Visibility for GCC version 4.x
  * The following forces exported symbols specifically designated with
  * QSASTIMEDLLEXPORT to be visible.  */
-#define QSASTIMEDLLEXPORT    __attribute__ (( visibility( "default" )))
+#define QSASTIMEDLLEXPORT    __attribute__ ( ( visibility( "default" ) ) )
 #define QSASTIMEDLLIMPORT
 #endif
 #endif

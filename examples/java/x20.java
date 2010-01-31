@@ -187,9 +187,9 @@ class x20 {
 
 
         /* read Lena image */
-        if (( img_f = read_img( "lena.pgm", n )) == null )
+        if ( ( img_f = read_img( "lena.pgm", n ) ) == null )
         {
-            if (( img_f = read_img( "../lena.pgm", n )) == null )
+            if ( ( img_f = read_img( "../lena.pgm", n ) ) == null )
             {
                 System.out.println( "File error - aborting" );
                 pls.end();
@@ -220,7 +220,7 @@ class x20 {
             xi[0] = 200.; xe[0] = 330.;
             yi[0] = 280.; ye[0] = 220.;
 
-            if ( get_clip( xi, xe, yi, ye ))   // get selection rectangle
+            if ( get_clip( xi, xe, yi, ye ) )   // get selection rectangle
             {
                 pls.end();
                 System.exit( 0 );
@@ -307,7 +307,7 @@ class x20 {
             for ( j = 0; j <= height; j++ )
             {
                 xg[i][j] = x0 + ( x0 - i ) * ( 1.0 - stretch *
-                                               Math.cos(( j - y0 ) / dy * Math.PI * 0.5 ));
+                                               Math.cos( ( j - y0 ) / dy * Math.PI * 0.5 ) );
                 yg[i][j] = j;
             }
         }
@@ -328,8 +328,8 @@ class x20 {
 
         /* naive grayscale binary ppm reading. If you know how to, improve it */
         try {
-            in  = new BufferedReader( new FileReader( fname ));
-            in2 = new DataInputStream( new DataInputStream( new BufferedInputStream( new FileInputStream( fname ))));
+            in  = new BufferedReader( new FileReader( fname ) );
+            in2 = new DataInputStream( new DataInputStream( new BufferedInputStream( new FileInputStream( fname ) ) ) );
         }
         catch ( FileNotFoundException e ) {
             System.out.println( "File " + fname + " not found" );
@@ -354,13 +354,13 @@ class x20 {
             } while ( line.charAt( 0 ) == '#' );
 
             st = new StringTokenizer( line );
-            w  = Integer.parseInt( st.nextToken());
-            h  = Integer.parseInt( st.nextToken());
+            w  = Integer.parseInt( st.nextToken() );
+            h  = Integer.parseInt( st.nextToken() );
 
             line = in.readLine();
             in2.skip( line.getBytes().length + 1 );
             st         = new StringTokenizer( line );
-            num_col[0] = Integer.parseInt( st.nextToken());
+            num_col[0] = Integer.parseInt( st.nextToken() );
 
             img = new double[w][h];
 
@@ -424,7 +424,7 @@ class x20 {
                     sx[4] = xxi; sy[4] = yyi;
                 }
 
-                if (( gin.getState() & (long) 0x100 ) != 0 )
+                if ( ( gin.getState() & (long) 0x100 ) != 0 )
                 {
                     xxe = gin.getWX(); yye = gin.getWY();
                     if ( start )

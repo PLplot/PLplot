@@ -18,7 +18,7 @@
 /* Follow ideas in http://gcc.gnu.org/wiki/Visibility for GCC version 4.x
  * The following forces exported symbols specifically designated with
  * PLDLLEXPORT to be visible.  */
-    #define PLDLLEXPORT    __attribute__ (( visibility( "default" )))
+    #define PLDLLEXPORT    __attribute__ ( ( visibility( "default" ) ) )
     #define PLDLLIMPORT
   #endif
 #endif

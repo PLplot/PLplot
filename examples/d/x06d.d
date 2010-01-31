@@ -32,13 +32,13 @@ int main( char[][] args )
     plcol0( 15 );
     PLFLT[1] x, y;
     for ( size_t i = 0; i <= 9; i++ )
-        plmtex( "b", 1.5, ( 0.1 * i + 0.05 ), 0.5, format( "%d", i ));
+        plmtex( "b", 1.5, ( 0.1 * i + 0.05 ), 0.5, format( "%d", i ) );
 
     size_t k = 0;
     for ( size_t i = 0; i <= 12; i++ )
     {
         /* Write the digits to the left of the frame */
-        plmtex( "lv", 1.0, ( 1.0 - ( 2 * i + 1 ) / 26.0 ), 1.0, format( "%d", 10 * i ));
+        plmtex( "lv", 1.0, ( 1.0 - ( 2 * i + 1 ) / 26.0 ), 1.0, format( "%d", 10 * i ) );
         for ( size_t j = 0; j <= 9; j++ )
         {
             x[0] = 0.1 * j + 0.05;

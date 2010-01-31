@@ -163,9 +163,9 @@ c_plenvi( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
         xscale = dx / ( xsize - lb - rb );
         yscale = dy / ( ysize - tb - bb );
         scale  = MAX( xscale, yscale );
-        vpxmin = MAX( lb, 0.5 * ( xsize - dx / scale ));
+        vpxmin = MAX( lb, 0.5 * ( xsize - dx / scale ) );
         vpxmax = vpxmin + ( dx / scale );
-        vpymin = MAX( bb, 0.5 * ( ysize - dy / scale ));
+        vpymin = MAX( bb, 0.5 * ( ysize - dy / scale ) );
         vpymax = vpymin + ( dy / scale );
         plsvpa( vpxmin, vpxmax, vpymin, vpymax );
     }
@@ -326,10 +326,10 @@ c_plvsta( void )
     tb = 5.0 * plsc->chrht;
     bb = 5.0 * plsc->chrht;
 
-    xmin = plP_dcscx( plP_mmdcx((PLFLT) ( plP_dcmmx( plsc->spdxmi ) + lb )));
-    xmax = plP_dcscx( plP_mmdcx((PLFLT) ( plP_dcmmx( plsc->spdxma ) - rb )));
-    ymin = plP_dcscy( plP_mmdcy((PLFLT) ( plP_dcmmy( plsc->spdymi ) + tb )));
-    ymax = plP_dcscy( plP_mmdcy((PLFLT) ( plP_dcmmy( plsc->spdyma ) - bb )));
+    xmin = plP_dcscx( plP_mmdcx( (PLFLT) ( plP_dcmmx( plsc->spdxmi ) + lb ) ) );
+    xmax = plP_dcscx( plP_mmdcx( (PLFLT) ( plP_dcmmx( plsc->spdxma ) - rb ) ) );
+    ymin = plP_dcscy( plP_mmdcy( (PLFLT) ( plP_dcmmy( plsc->spdymi ) + tb ) ) );
+    ymax = plP_dcscy( plP_mmdcy( (PLFLT) ( plP_dcmmy( plsc->spdyma ) - bb ) ) );
 
     plvpor( xmin, xmax, ymin, ymax );
 }
@@ -348,12 +348,12 @@ c_plvpor( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
         plabort( "plvpor: Please call plinit first" );
         return;
     }
-    if (( xmin >= xmax ) || ( ymin >= ymax ))
+    if ( ( xmin >= xmax ) || ( ymin >= ymax ) )
     {
         plabort( "plvpor: Invalid limits" );
         return;
     }
-    if (( plsc->cursub <= 0 ) || ( plsc->cursub > ( plsc->nsubx * plsc->nsuby )))
+    if ( ( plsc->cursub <= 0 ) || ( plsc->cursub > ( plsc->nsubx * plsc->nsuby ) ) )
     {
         plabort( "plvpor: Please call pladv or plenv to go to a subpage" );
         return;
@@ -395,7 +395,7 @@ c_plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect )
         plabort( "plvpas: Please call plinit first" );
         return;
     }
-    if (( xmin >= xmax ) || ( ymin >= ymax ))
+    if ( ( xmin >= xmax ) || ( ymin >= ymax ) )
     {
         plabort( "plvpas: Invalid limits" );
         return;
@@ -514,12 +514,12 @@ c_plsvpa( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
         plabort( "plsvpa: Please call plinit first" );
         return;
     }
-    if (( xmin >= xmax ) || ( ymin >= ymax ))
+    if ( ( xmin >= xmax ) || ( ymin >= ymax ) )
     {
         plabort( "plsvpa: Invalid limits" );
         return;
     }
-    if (( plsc->cursub <= 0 ) || ( plsc->cursub > ( plsc->nsubx * plsc->nsuby )))
+    if ( ( plsc->cursub <= 0 ) || ( plsc->cursub > ( plsc->nsubx * plsc->nsuby ) ) )
     {
         plabort( "plsvpa: Please call pladv or plenv to go to a subpage" );
         return;
@@ -528,10 +528,10 @@ c_plsvpa( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
     sxmin = plP_dcmmx( plsc->spdxmi );
     symin = plP_dcmmy( plsc->spdymi );
 
-    plsc->vpdxmi = plP_mmdcx((PLFLT) ( sxmin + xmin ));
-    plsc->vpdxma = plP_mmdcx((PLFLT) ( sxmin + xmax ));
-    plsc->vpdymi = plP_mmdcy((PLFLT) ( symin + ymin ));
-    plsc->vpdyma = plP_mmdcy((PLFLT) ( symin + ymax ));
+    plsc->vpdxmi = plP_mmdcx( (PLFLT) ( sxmin + xmin ) );
+    plsc->vpdxma = plP_mmdcx( (PLFLT) ( sxmin + xmax ) );
+    plsc->vpdymi = plP_mmdcy( (PLFLT) ( symin + ymin ) );
+    plsc->vpdyma = plP_mmdcy( (PLFLT) ( symin + ymax ) );
 
     plsc->vppxmi = plP_dcpcx( plsc->vpdxmi );
     plsc->vppxma = plP_dcpcx( plsc->vpdxma );

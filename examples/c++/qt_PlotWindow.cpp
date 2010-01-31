@@ -31,9 +31,9 @@ PlotWindow::PlotWindow( int argc, char** argv, QWidget* parent ) :
     setAttribute( Qt::WA_DeleteOnClose );
 
     QMenu * plotMenu = menuBar()->addMenu( "Plot" );
-    plotMenu->addAction( "Curves", this, SLOT( plotCurves()));
-    plotMenu->addAction( "Histogram", this, SLOT( plotHistogram()));
-    plotMenu->addAction( "Interactive Selection", this, SLOT( interactive()));
+    plotMenu->addAction( "Curves", this, SLOT( plotCurves() ) );
+    plotMenu->addAction( "Histogram", this, SLOT( plotHistogram() ) );
+    plotMenu->addAction( "Interactive Selection", this, SLOT( interactive() ) );
 
     plot = new QtExtWidget( QT_DEFAULT_X, QT_DEFAULT_Y, this );
     setCentralWidget( plot );
@@ -83,8 +83,8 @@ void PlotWindow::plotCurves()
 
     for ( int i = 0; i < 360; ++i )
     {
-        sine[i]    = sin((PLFLT) i / 180. * M_PI );
-        cosine[i]  = cos((PLFLT) i / 180. * M_PI );
+        sine[i]    = sin( (PLFLT) i / 180. * M_PI );
+        cosine[i]  = cos( (PLFLT) i / 180. * M_PI );
         indexes[i] = (PLFLT) i;
     }
 
@@ -113,9 +113,9 @@ void PlotWindow::plotCurves()
 
     for ( int i = -180; i < 180; ++i )
     {
-        square[i + 180]  = (((PLFLT) i ) / 180. * ((PLFLT) i ) / 180. );
-        cubic[i + 180]   = square[i + 180] * ((PLFLT) i ) / 180.;
-        indexes[i + 180] = ((PLFLT) i ) / 180.;
+        square[i + 180]  = ( ( (PLFLT) i ) / 180. * ( (PLFLT) i ) / 180. );
+        cubic[i + 180]   = square[i + 180] * ( (PLFLT) i ) / 180.;
+        indexes[i + 180] = ( (PLFLT) i ) / 180.;
     }
 
     plvpor( 0.05, 0.95, 0.55, 0.95 );
@@ -196,11 +196,11 @@ void PlotWindow::plotHistogram()
         /*plcol0(i + 1);*/
         plcol1( i / 9.0 );
         plpsty( 0 );
-        plfbox(( 1980. + i ), y0[i] );
+        plfbox( ( 1980. + i ), y0[i] );
         sprintf( string, "%.0f", y0[i] );
-        plptex(( 1980. + i + .5 ), ( y0[i] + 1. ), 1.0, 0.0, .5, string );
+        plptex( ( 1980. + i + .5 ), ( y0[i] + 1. ), 1.0, 0.0, .5, string );
         sprintf( string, "%d", 1980 + i );
-        plmtex( "b", 1.0, (( i + 1 ) * .1 - .05 ), 0.5, string );
+        plmtex( "b", 1.0, ( ( i + 1 ) * .1 - .05 ), 0.5, string );
     }
 }
 

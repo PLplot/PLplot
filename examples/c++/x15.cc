@@ -88,10 +88,10 @@ x15::x15( int argc, const char ** argv )
 
     for ( i = 0; i < XPTS; i++ )
     {
-        xx = (PLFLT) ( i - ( XPTS / 2 )) / (PLFLT) ( XPTS / 2 );
+        xx = (PLFLT) ( i - ( XPTS / 2 ) ) / (PLFLT) ( XPTS / 2 );
         for ( j = 0; j < YPTS; j++ )
         {
-            yy      = ((PLFLT) ( j - ( YPTS / 2 )) / (PLFLT) ( YPTS / 2 )) - 1.;
+            yy      = ( (PLFLT) ( j - ( YPTS / 2 ) ) / (PLFLT) ( YPTS / 2 ) ) - 1.;
             z[i][j] = xx * xx - yy * yy + ( xx - yy ) / ( xx * xx + yy * yy + 0.1 );
             x       = tr[0] * i + tr[1] * j + tr[2];
             y       = tr[3] * i + tr[4] * j + tr[5];

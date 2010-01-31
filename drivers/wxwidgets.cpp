@@ -152,10 +152,10 @@ wxPLDevBase::wxPLDevBase( int bcknd ) : backend( bcknd )
     freetype    = 0;
     smooth_text = 0;
 
-    devName = (const char **) malloc( NDEV * sizeof ( char** ));
-    memset( devName, '\0', NDEV * sizeof ( char** ));
-    devDesc = (const char **) malloc( NDEV * sizeof ( char** ));
-    memset( devDesc, '\0', NDEV * sizeof ( char** ));
+    devName = (const char **) malloc( NDEV * sizeof ( char** ) );
+    memset( devName, '\0', NDEV * sizeof ( char** ) );
+    devDesc = (const char **) malloc( NDEV * sizeof ( char** ) );
+    memset( devDesc, '\0', NDEV * sizeof ( char** ) );
     ndev = NDEV;
 }
 
@@ -442,16 +442,16 @@ wxPLDevBase* common_init( PLStream *pls )
     /* If portrait mode, apply a rotation and set freeaspect */
     if ( pls->portrait )
     {
-        plsdiori((PLFLT) ( 4 - ORIENTATION ));
+        plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
         pls->freeaspect = 1;
     }
 
     /* Set the number of pixels per mm */
-    plP_setpxl((PLFLT) VIRTUAL_PIXELS_PER_MM, (PLFLT) VIRTUAL_PIXELS_PER_MM );
+    plP_setpxl( (PLFLT) VIRTUAL_PIXELS_PER_MM, (PLFLT) VIRTUAL_PIXELS_PER_MM );
 
     /* Set up physical limits of plotting device (in drawing units) */
-    plP_setphy((PLINT) 0, (PLINT) ( CANVAS_WIDTH * VIRTUAL_PIXELS_PER_IN ),
-        (PLINT) 0, (PLINT) ( CANVAS_HEIGHT * VIRTUAL_PIXELS_PER_IN ));
+    plP_setphy( (PLINT) 0, (PLINT) ( CANVAS_WIDTH * VIRTUAL_PIXELS_PER_IN ),
+        (PLINT) 0, (PLINT) ( CANVAS_HEIGHT * VIRTUAL_PIXELS_PER_IN ) );
 
     /* get physical device limits coordinates */
     plP_gphy( &dev->xmin, &dev->xmax, &dev->ymin, &dev->ymax );
@@ -591,7 +591,7 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
 
     wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
 
-    if ( !( dev->ready ))
+    if ( !( dev->ready ) )
         install_buffer( pls );
 
     dev->DrawLine( x1a, y1a, x2a, y2a );
@@ -621,7 +621,7 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
     /* should be changed to use the wxDC::DrawLines function? */
     wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
 
-    if ( !( dev->ready ))
+    if ( !( dev->ready ) )
         install_buffer( pls );
 
     dev->DrawPolyline( xa, ya, npts );
@@ -661,7 +661,7 @@ void plD_eop_wxwidgets( PLStream *pls )
         dev->BlitRectangle( &memDC, 0, 0, dev->width, dev->height );
         wxImage             buffer = bitmap.ConvertToImage();
         wxFFileOutputStream fstream( pls->OutFile );
-        if ( !( buffer.SaveFile( fstream, dev->bitmapType )))
+        if ( !( buffer.SaveFile( fstream, dev->bitmapType ) ) )
             puts( "Troubles saving file!" );
         memDC.SelectObject( wxNullBitmap );
     }
@@ -756,7 +756,7 @@ void plD_tidy_wxwidgets( PLStream *pls )
     if ( dev->ownGUI )
     {
         wxPLGetApp().RemoveFrame( dev->m_frame );
-        if ( !wxPLGetApp().FrameCount())
+        if ( !wxPLGetApp().FrameCount() )
             wxUninitialize();
     }
 
@@ -801,7 +801,7 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
         break;
 
     default:
-        if ( !( dev->ready ))
+        if ( !( dev->ready ) )
             install_buffer( pls );
     }
 }
@@ -844,7 +844,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
         break;
 
     case PLESC_HAS_TEXT:
-        if ( !( dev->ready ))
+        if ( !( dev->ready ) )
             install_buffer( pls );
 
         if ( dev->freetype )
@@ -860,12 +860,12 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
     case PLESC_RESIZE:
     {
         wxSize* size = (wxSize*) ptr;
-        wx_set_size( pls, size->GetWidth(), size->GetHeight());
+        wx_set_size( pls, size->GetWidth(), size->GetHeight() );
     }
     break;
 
     case PLESC_CLEAR:
-        if ( !( dev->ready ))
+        if ( !( dev->ready ) )
             install_buffer( pls );
         /* Since the plot is updated only every MAX_COMCOUNT commands (usually 5000)
          *       before we clear the screen we need to show the plot at least once :) */
@@ -892,7 +892,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
         break;
 
     case PLESC_GETBACKEND:
-        *((int*) ptr ) = dev->backend;
+        *( (int*) ptr ) = dev->backend;
         break;
 
     default:
@@ -912,7 +912,7 @@ static void fill_polygon( PLStream *pls )
 
     wxPLDevBase* dev = (wxPLDevBase*) pls->dev;
 
-    if ( !( dev->ready ))
+    if ( !( dev->ready ) )
         install_buffer( pls );
 
     dev->FillPolygon( pls );
@@ -1004,7 +1004,7 @@ void plD_erroraborthandler_wxwidgets( const char *errormessage )
 {
     if ( errormessage[0] )
     {
-        wxMessageDialog dialog( 0, ( wxString( errormessage, *wxConvCurrent ) + wxString( " aborting operation...", *wxConvCurrent )), wxString( "wxWidgets PLplot App abort", *wxConvCurrent ), wxOK | wxICON_ERROR );
+        wxMessageDialog dialog( 0, ( wxString( errormessage, *wxConvCurrent ) + wxString( " aborting operation...", *wxConvCurrent ) ), wxString( "wxWidgets PLplot App abort", *wxConvCurrent ), wxOK | wxICON_ERROR );
         dialog.ShowModal();
     }
 }
@@ -1026,7 +1026,7 @@ static void plD_pixel_wxwidgets( PLStream *pls, short x, short y )
 
     wxPLDevBase *dev = (wxPLDevBase*) pls->dev;
 
-    if ( !( dev->ready ))
+    if ( !( dev->ready ) )
         install_buffer( pls );
 
     dev->PutPixel( x, y );
@@ -1055,7 +1055,7 @@ static void plD_set_pixel_wxwidgets( PLStream *pls, short x, short y, PLINT colo
 
     wxPLDevBase *dev = (wxPLDevBase*) pls->dev;
 
-    if ( !( dev->ready ))
+    if ( !( dev->ready ) )
         install_buffer( pls );
 
     dev->PutPixel( x, y, colour );
@@ -1084,7 +1084,7 @@ static PLINT plD_read_pixel_wxwidgets( PLStream *pls, short x, short y )
 
     wxPLDevBase *dev = (wxPLDevBase*) pls->dev;
 
-    if ( !( dev->ready ))
+    if ( !( dev->ready ) )
         install_buffer( pls );
 
     return dev->GetPixel( x, y );
@@ -1160,16 +1160,16 @@ static void init_freetype_lv2( PLStream *pls )
     FT->invert_y    = 1;
     FT->smooth_text = 0;
 
-    if (( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 )) /* do we want to at least *try* for smoothing ? */
+    if ( ( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 ) ) /* do we want to at least *try* for smoothing ? */
     {
-        FT->ncol0_org   = pls->ncol0;                                       /* save a copy of the original size of ncol0 */
-        FT->ncol0_xtra  = 16777216 - ( pls->ncol1 + pls->ncol0 );           /* work out how many free slots we have */
-        FT->ncol0_width = FT->ncol0_xtra / ( pls->ncol0 - 1 );              /* find out how many different shades of anti-aliasing we can do */
-        if ( FT->ncol0_width > 4 )                                          /* are there enough colour slots free for text smoothing ? */
+        FT->ncol0_org   = pls->ncol0;                                         /* save a copy of the original size of ncol0 */
+        FT->ncol0_xtra  = 16777216 - ( pls->ncol1 + pls->ncol0 );             /* work out how many free slots we have */
+        FT->ncol0_width = FT->ncol0_xtra / ( pls->ncol0 - 1 );                /* find out how many different shades of anti-aliasing we can do */
+        if ( FT->ncol0_width > 4 )                                            /* are there enough colour slots free for text smoothing ? */
         {
             if ( FT->ncol0_width > max_number_of_grey_levels_used_in_text_smoothing )
-                FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;          /* set a maximum number of shades */
-            plscmap0n( FT->ncol0_org + ( FT->ncol0_width * pls->ncol0 ));                    /* redefine the size of cmap0 */
+                FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;           /* set a maximum number of shades */
+            plscmap0n( FT->ncol0_org + ( FT->ncol0_width * pls->ncol0 ) );                    /* redefine the size of cmap0 */
             /* the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)
              * call in plscmap0 which (a) leads to segfaults since the GD image is
              * not defined at this point and (b) would be inefficient in any case since
@@ -1187,7 +1187,7 @@ static void init_freetype_lv2( PLStream *pls )
         else
             plwarn( "Insufficient colour slots available in CMAP0 to do text smoothing." );
     }
-    else if (( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 1 ))    /* If we have a truecolour device, we wont even bother trying to change the palette */
+    else if ( ( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 1 ) )    /* If we have a truecolour device, we wont even bother trying to change the palette */
     {
         FT->smooth_text = 1;
     }

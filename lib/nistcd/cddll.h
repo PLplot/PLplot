@@ -18,7 +18,7 @@
 /* Follow ideas in http://gcc.gnu.org/wiki/Visibility for GCC version 4.x
  * The following forces exported symbols specifically designated with
  * CDDLLEXPORT to be visible.  */
-    #define CDDLLEXPORT    __attribute__ (( visibility( "default" )))
+    #define CDDLLEXPORT    __attribute__ ( ( visibility( "default" ) ) )
     #define CDDLLIMPORT
   #endif
 #endif

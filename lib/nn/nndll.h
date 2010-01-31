@@ -18,7 +18,7 @@
 /* Follow ideas in http://gcc.gnu.org/wiki/Visibility for GCC version 4.x
  * The following forces exported symbols specifically designated with
  * NNDLLEXPORT to be visible.  */
-    #define NNDLLEXPORT    __attribute__ (( visibility( "default" )))
+    #define NNDLLEXPORT    __attribute__ ( ( visibility( "default" ) ) )
     #define NNDLLIMPORT
   #endif
 #endif

@@ -233,7 +233,7 @@ static int NCOLOURS = gdMaxColors;
 #if GD2_VERS >= 2
 int plToGdAlpha( PLFLT a )
 {
-    int tmp = (int) (( 1.0 - a ) * gdAlphaMax );
+    int tmp = (int) ( ( 1.0 - a ) * gdAlphaMax );
     return tmp;
 }
 #endif
@@ -392,9 +392,9 @@ plD_init_png_Dev( PLStream *pls )
 /* Allocate and initialize device-specific data */
 
     if ( pls->dev != NULL )
-        free((void *) pls->dev );
+        free( (void *) pls->dev );
 
-    pls->dev = calloc( 1, (size_t) sizeof ( png_Dev ));
+    pls->dev = calloc( 1, (size_t) sizeof ( png_Dev ) );
     if ( pls->dev == NULL )
         plexit( "plD_init_png_Dev: Out of memory." );
 
@@ -418,16 +418,16 @@ plD_init_png_Dev( PLStream *pls )
 
 
 
-    if (( dev->truecolour > 0 ) && ( dev->palette > 0 ))
+    if ( ( dev->truecolour > 0 ) && ( dev->palette > 0 ) )
         plwarn( "Selecting both \"truecolor\" AND \"palette\" driver options is contradictory, so\nI will just use my best judgment.\n" );
     else if ( dev->truecolour > 0 )
         NCOLOURS = 16777216;
-    else if (( dev->truecolour == 0 ) && ( dev->palette == 0 ) && (( pls->ncol1 + pls->ncol0 ) > NCOLOURS ))
+    else if ( ( dev->truecolour == 0 ) && ( dev->palette == 0 ) && ( ( pls->ncol1 + pls->ncol0 ) > NCOLOURS ) )
     {
         NCOLOURS = 16777216;
     }
 
-    if (( dev->palette == 0 ) && ( dev->optimise == 0 ) && ( smooth_line == 1 )) dev->smooth = 1; /* Allow smoothing of lines if we have a truecolour device */
+    if ( ( dev->palette == 0 ) && ( dev->optimise == 0 ) && ( smooth_line == 1 ) ) dev->smooth = 1; /* Allow smoothing of lines if we have a truecolour device */
 
 #endif
 
@@ -446,7 +446,7 @@ plD_init_png_Dev( PLStream *pls )
         init_freetype_lv1( pls );
         FT = (FT_Data *) pls->FT;
         FT->want_smooth_text = smooth_text > 0 ? 1 : 0;
-        if (( dev->optimise == 0 ) && ( dev->palette == 0 ) && ( smooth_text != 0 ))
+        if ( ( dev->optimise == 0 ) && ( dev->palette == 0 ) && ( smooth_text != 0 ) )
         {
             FT->BLENDED_ANTIALIASING = 1;
             dev->truecolour          = 1;
@@ -575,9 +575,9 @@ plD_init_gif_Dev( PLStream *pls )
 /* Allocate and initialize device-specific data */
 
     if ( pls->dev != NULL )
-        free((void *) pls->dev );
+        free( (void *) pls->dev );
 
-    pls->dev = calloc( 1, (size_t) sizeof ( png_Dev ));
+    pls->dev = calloc( 1, (size_t) sizeof ( png_Dev ) );
     if ( pls->dev == NULL )
         plexit( "plD_init_gif_Dev: Out of memory." );
 
@@ -756,7 +756,7 @@ fill_polygon( PLStream *pls )
     if ( pls->dev_npts < 1 )
         return;
 
-    points = malloc((size_t) pls->dev_npts * sizeof ( gdPoint ));
+    points = malloc( (size_t) pls->dev_npts * sizeof ( gdPoint ) );
 
     for ( i = 0; i < pls->dev_npts; i++ )
     {
@@ -838,14 +838,14 @@ setcmap( PLStream *pls )
 
 /* Initialize cmap 0 colors */
 
-    if (( ncol0 > 0 ) && ( dev->im_out != NULL )) /* make sure the program actually asked for cmap0 first */
+    if ( ( ncol0 > 0 ) && ( dev->im_out != NULL ) ) /* make sure the program actually asked for cmap0 first */
     {
         for ( i = 0; i < ncol0; i++ )
         {
 #if GD2_VERS >= 2
             gdImageColorAllocateAlpha( dev->im_out,
                 pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b,
-                plToGdAlpha( pls->cmap0[i].a ));
+                plToGdAlpha( pls->cmap0[i].a ) );
 #else
             gdImageColorAllocate( dev->im_out,
                 pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b );
@@ -857,7 +857,7 @@ setcmap( PLStream *pls )
 /* Initialize any remaining slots for cmap1 */
 
 
-    if (( ncol1 > 0 ) && ( dev->im_out != NULL )) /* make sure that we want to define cmap1 first */
+    if ( ( ncol1 > 0 ) && ( dev->im_out != NULL ) ) /* make sure that we want to define cmap1 first */
     {
         for ( i = 0; i < ncol1; i++ )
         {
@@ -871,7 +871,7 @@ setcmap( PLStream *pls )
                  * in cases when pls->ncol1 exceeds the number of free colours.
                  */
 
-                tmp_colour_pos = i > 0 ? pls->ncol1 * ((PLFLT) i / ncol1 ) : 0;
+                tmp_colour_pos = i > 0 ? pls->ncol1 * ( (PLFLT) i / ncol1 ) : 0;
                 plcol_interp( pls, &cmap1col, (int) tmp_colour_pos, pls->ncol1 );
             }
             else
@@ -883,7 +883,7 @@ setcmap( PLStream *pls )
 #if GD2_VERS >= 2
             gdImageColorAllocateAlpha( dev->im_out,
                 cmap1col.r, cmap1col.g, cmap1col.b,
-                plToGdAlpha( cmap1col.a ));
+                plToGdAlpha( cmap1col.a ) );
 #else
             gdImageColorAllocate( dev->im_out,
                 cmap1col.r, cmap1col.g, cmap1col.b );
@@ -922,23 +922,23 @@ plD_state_png( PLStream *pls, PLINT op )
     case PLSTATE_COLOR0:
 #if GD2_VERS >= 2
 
-        if (( pls->icol0 == PL_RGB_COLOR ) ||       /*  Should never happen since PL_RGB_COLOR is depreciated, but here for backwards compatibility */
-            ( gdImageTrueColor( dev->im_out )))     /*  We will do this if we are in "TrueColour" mode */
+        if ( ( pls->icol0 == PL_RGB_COLOR ) ||         /*  Should never happen since PL_RGB_COLOR is depreciated, but here for backwards compatibility */
+             ( gdImageTrueColor( dev->im_out ) ) )     /*  We will do this if we are in "TrueColour" mode */
         {
-            if (( dev->totcol < NCOLOURS ) ||       /* See if there are slots left, if so we will allocate a new colour */
-                ( gdImageTrueColor( dev->im_out ))) /* In TrueColour mode we allocate each colour as we come to it */
+            if ( ( dev->totcol < NCOLOURS ) ||         /* See if there are slots left, if so we will allocate a new colour */
+                 ( gdImageTrueColor( dev->im_out ) ) ) /* In TrueColour mode we allocate each colour as we come to it */
             {
                 /* Next allocate a new colour to a temporary slot since what we do with it will vary depending on if its a palette index or truecolour */
 #if GD2_VERS >= 2
                 temp_col = gdImageColorAllocateAlpha( dev->im_out, pls->curcolor.r,
                     pls->curcolor.g, pls->curcolor.b,
-                    plToGdAlpha( pls->curcolor.a ));
+                    plToGdAlpha( pls->curcolor.a ) );
 #else
                 temp_col = gdImageColorAllocate( dev->im_out, pls->curcolor.r,
                     pls->curcolor.g, pls->curcolor.b );
 #endif
 
-                if ( gdImageTrueColor( dev->im_out ))
+                if ( gdImageTrueColor( dev->im_out ) )
                     dev->colour = temp_col;     /* If it's truecolour, then we will directly set dev->colour to our "new" colour */
                 else
                 {
@@ -961,7 +961,7 @@ plD_state_png( PLStream *pls, PLINT op )
 #if GD2_VERS >= 2
                 gdImageColorAllocateAlpha( dev->im_out, pls->curcolor.r,
                     pls->curcolor.g, pls->curcolor.b,
-                    plToGdAlpha( pls->curcolor.a ));
+                    plToGdAlpha( pls->curcolor.a ) );
 #else
                 gdImageColorAllocate( dev->im_out, pls->curcolor.r,
                     pls->curcolor.g, pls->curcolor.b );
@@ -975,7 +975,7 @@ plD_state_png( PLStream *pls, PLINT op )
     case PLSTATE_COLOR1:
 
 #if GD2_VERS >= 2
-        if ( !gdImageTrueColor( dev->im_out ))
+        if ( !gdImageTrueColor( dev->im_out ) )
         {
 #endif
         /*
@@ -984,7 +984,7 @@ plD_state_png( PLStream *pls, PLINT op )
          */
         if ( dev->ncol1 < pls->ncol1 )
         {
-            tmp_colour_pos = dev->ncol1 * ((PLFLT) pls->icol1 / ( pls->ncol1 > 0 ? pls->ncol1 : 1 ));
+            tmp_colour_pos = dev->ncol1 * ( (PLFLT) pls->icol1 / ( pls->ncol1 > 0 ? pls->ncol1 : 1 ) );
             dev->colour    = pls->ncol0 + (int) tmp_colour_pos;
         }
         else
@@ -996,7 +996,7 @@ plD_state_png( PLStream *pls, PLINT op )
 #if GD2_VERS >= 2
         dev->colour = gdTrueColorAlpha( pls->curcolor.r, pls->curcolor.g,
             pls->curcolor.b,
-            plToGdAlpha( pls->curcolor.a ));
+            plToGdAlpha( pls->curcolor.a ) );
 #else
         dev->colour = gdTrueColor( pls->curcolor.r, pls->curcolor.g,
             pls->curcolor.b );
@@ -1010,7 +1010,7 @@ plD_state_png( PLStream *pls, PLINT op )
     case PLSTATE_CMAP1:
 
 #if GD2_VERS >= 2
-        if (( dev->im_out != NULL ) && !gdImageTrueColor( dev->im_out ))
+        if ( ( dev->im_out != NULL ) && !gdImageTrueColor( dev->im_out ) )
         {
 #endif
 
@@ -1084,10 +1084,10 @@ void plD_bop_png( PLStream *pls )
     if ( dev->red15 ) plD_red15_gd( pls );
 
 #if GD2_VERS >= 2
-    if ((((( dev->truecolour > 0 ) && ( dev->palette > 0 )) ||    /* In an EXTREMELY convaluted */
-          (( dev->truecolour == 0 ) && ( dev->palette == 0 ))) && /* manner, all this is just   */
-         (( pls->ncol1 + pls->ncol0 ) <= 256 )) ||                /* asking the question, do we */
-        ((( dev->palette > 0 ) && ( dev->truecolour == 0 ))))     /* want truecolour or not ?   */
+    if ( ( ( ( ( dev->truecolour > 0 ) && ( dev->palette > 0 ) ) ||     /* In an EXTREMELY convaluted */
+             ( ( dev->truecolour == 0 ) && ( dev->palette == 0 ) ) ) && /* manner, all this is just   */
+           ( ( pls->ncol1 + pls->ncol0 ) <= 256 ) ) ||                  /* asking the question, do we */
+         ( ( ( dev->palette > 0 ) && ( dev->truecolour == 0 ) ) ) )     /* want truecolour or not ?   */
     {
 #endif
 
@@ -1115,13 +1115,13 @@ else
  *  ???
  */
 
-    if (( pls->cmap0[0].r != 0 ) || ( pls->cmap0[0].g != 0 ) ||
-        ( pls->cmap0[0].b != 0 ) || ( pls->cmap0[0].a != 0.0 ))
+    if ( ( pls->cmap0[0].r != 0 ) || ( pls->cmap0[0].g != 0 ) ||
+         ( pls->cmap0[0].b != 0 ) || ( pls->cmap0[0].a != 0.0 ) )
     {
         gdImageFilledRectangle( dev->im_out, 0, 0, pls->xlength - 1, pls->ylength - 1,
             gdTrueColorAlpha( pls->cmap0[0].r, pls->cmap0[0].g,
                 pls->cmap0[0].b,
-                plToGdAlpha( pls->cmap0[0].a )));
+                plToGdAlpha( pls->cmap0[0].a ) ) );
     }
 }
 
@@ -1166,7 +1166,7 @@ void plD_black15_gd( PLStream *pls )
 {
     if ( pls->ncol0 > 15 )
     {
-        if (( pls->cmap0[0].r > 227 ) && ( pls->cmap0[0].g > 227 ) && ( pls->cmap0[0].b > 227 ))
+        if ( ( pls->cmap0[0].r > 227 ) && ( pls->cmap0[0].g > 227 ) && ( pls->cmap0[0].b > 227 ) )
         {
             pls->cmap0[15].r = 0;
             pls->cmap0[15].g = 0;
@@ -1296,10 +1296,10 @@ void plD_eop_png( PLStream *pls )
         if ( dev->optimise )
         {
 #if GD2_VERS >= 2
-            if ((((( dev->truecolour > 0 ) && ( dev->palette > 0 )) ||    /* In an EXTREMELY convaluted */
-                  (( dev->truecolour == 0 ) && ( dev->palette == 0 ))) && /* manner, all this is just   */
-                 (( pls->ncol1 + pls->ncol0 ) <= 256 )) ||                /* asking the question, do we */
-                ((( dev->palette > 0 ) && ( dev->truecolour == 0 ))))     /* want truecolour or not ?   */
+            if ( ( ( ( ( dev->truecolour > 0 ) && ( dev->palette > 0 ) ) ||     /* In an EXTREMELY convaluted */
+                     ( ( dev->truecolour == 0 ) && ( dev->palette == 0 ) ) ) && /* manner, all this is just   */
+                   ( ( pls->ncol1 + pls->ncol0 ) <= 256 ) ) ||                  /* asking the question, do we */
+                 ( ( ( dev->palette > 0 ) && ( dev->truecolour == 0 ) ) ) )     /* want truecolour or not ?   */
             {
 #endif
             plD_gd_optimise( pls );
@@ -1326,7 +1326,7 @@ void plD_eop_png( PLStream *pls )
          * to lower qualities of compression (larger file size), but lower
          * computer times as well. */
 
-        png_compression = (( pls->dev_compression <= 0 ) || ( pls->dev_compression > 99 )) ? 90 : pls->dev_compression;
+        png_compression = ( ( pls->dev_compression <= 0 ) || ( pls->dev_compression > 99 ) ) ? 90 : pls->dev_compression;
         png_compression = ( png_compression > 9 ) ? ( png_compression / 10 ) : png_compression;
         im_ptr          = gdImagePngPtrEx( dev->im_out, &im_size, png_compression );
        #else
@@ -1465,16 +1465,16 @@ static void init_freetype_lv2( PLStream *pls )
     FT->invert_y    = 1;
     FT->smooth_text = 0;
 
-    if (( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 )) /* do we want to at least *try* for smoothing ? */
+    if ( ( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 ) ) /* do we want to at least *try* for smoothing ? */
     {
-        FT->ncol0_org   = pls->ncol0;                                       /* save a copy of the original size of ncol0 */
-        FT->ncol0_xtra  = NCOLOURS - ( pls->ncol1 + pls->ncol0 );           /* work out how many free slots we have */
-        FT->ncol0_width = FT->ncol0_xtra / ( pls->ncol0 - 1 );              /* find out how many different shades of anti-aliasing we can do */
-        if ( FT->ncol0_width > 4 )                                          /* are there enough colour slots free for text smoothing ? */
+        FT->ncol0_org   = pls->ncol0;                                         /* save a copy of the original size of ncol0 */
+        FT->ncol0_xtra  = NCOLOURS - ( pls->ncol1 + pls->ncol0 );             /* work out how many free slots we have */
+        FT->ncol0_width = FT->ncol0_xtra / ( pls->ncol0 - 1 );                /* find out how many different shades of anti-aliasing we can do */
+        if ( FT->ncol0_width > 4 )                                            /* are there enough colour slots free for text smoothing ? */
         {
             if ( FT->ncol0_width > max_number_of_grey_levels_used_in_text_smoothing )
-                FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;          /* set a maximum number of shades */
-            plscmap0n( FT->ncol0_org + ( FT->ncol0_width * pls->ncol0 ));                    /* redefine the size of cmap0 */
+                FT->ncol0_width = max_number_of_grey_levels_used_in_text_smoothing;           /* set a maximum number of shades */
+            plscmap0n( FT->ncol0_org + ( FT->ncol0_width * pls->ncol0 ) );                    /* redefine the size of cmap0 */
 /* the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)
  * call in plscmap0 which (a) leads to segfaults since the GD image is
  * not defined at this point and (b) would be inefficient in any case since
@@ -1492,7 +1492,7 @@ static void init_freetype_lv2( PLStream *pls )
         else
             plwarn( "Insufficient colour slots available in CMAP0 to do text smoothing." );
     }
-    else if (( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 1 )) /* If we have a truecolour device, we wont even bother trying to change the palette */
+    else if ( ( FT->want_smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 1 ) ) /* If we have a truecolour device, we wont even bother trying to change the palette */
     {
         FT->smooth_text = 1;
     }
@@ -1522,7 +1522,7 @@ void plD_eop_jpeg( PLStream *pls )
         /*  Set the compression/quality level for JPEG files
          *  The higher the value, the bigger/better the image is
          */
-        if (( pls->dev_compression <= 0 ) || ( pls->dev_compression > 99 ))
+        if ( ( pls->dev_compression <= 0 ) || ( pls->dev_compression > 99 ) )
             jpeg_compression = 90;
         else
             jpeg_compression = pls->dev_compression;

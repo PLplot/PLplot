@@ -188,14 +188,14 @@ x08::x08( int argc, const char **argv )
 
     for ( i = 0; i < XPTS; i++ )
     {
-        x[i] = (PLFLT) ( i - ( XPTS / 2 )) / (PLFLT) ( XPTS / 2 );
+        x[i] = (PLFLT) ( i - ( XPTS / 2 ) ) / (PLFLT) ( XPTS / 2 );
         if ( rosen )
             x[i] *= 1.5;
     }
 
     for ( j = 0; j < YPTS; j++ )
     {
-        y[j] = (PLFLT) ( j - ( YPTS / 2 )) / (PLFLT) ( YPTS / 2 );
+        y[j] = (PLFLT) ( j - ( YPTS / 2 ) ) / (PLFLT) ( YPTS / 2 );
         if ( rosen )
             y[j] += 0.5;
     }
@@ -208,7 +208,7 @@ x08::x08( int argc, const char **argv )
             yy = y[j];
             if ( rosen )
             {
-                z[i][j] = pow((double) ( 1. - xx ), 2. ) + 100 * pow((double) ( yy - pow((double) xx, 2. )), 2. );
+                z[i][j] = pow( (double) ( 1. - xx ), 2. ) + 100 * pow( (double) ( yy - pow( (double) xx, 2. ) ), 2. );
                 /* The log argument may be zero for just the right grid.  */
                 if ( z[i][j] > 0. )
                     z[i][j] = log( z[i][j] );

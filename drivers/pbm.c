@@ -37,8 +37,8 @@ static char *cmap;
 
 #undef MAX
 #undef ABS
-#define MAX( a, b )    (( a > b ) ? a : b )
-#define ABS( a )       (( a < 0 ) ? -a : a )
+#define MAX( a, b )    ( ( a > b ) ? a : b )
+#define ABS( a )       ( ( a < 0 ) ? -a : a )
 
 #define MAX_INTENSITY    255
 
@@ -75,7 +75,7 @@ plD_init_pbm( PLStream *pls )
 
     plFamInit( pls );
 
-    plP_setpxl((PLFLT) 5.905, (PLFLT) 5.905 );
+    plP_setpxl( (PLFLT) 5.905, (PLFLT) 5.905 );
 
 #endif
 
@@ -115,7 +115,7 @@ plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     dx      = x2a - x1a;
     dy      = y2a - y1a;
-    steps   = MAX( ABS( dx ), ABS( dy )) + 1;
+    steps   = MAX( ABS( dx ), ABS( dy ) ) + 1;
     steps  *= 2;
     dx_step = dx / steps;
     dy_step = dy / steps;
@@ -139,7 +139,7 @@ plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 }
 #endif
 
-#define sign( a )          (( a < 0 ) ? -1 : (( a == 0 ) ? 0 : 1 ))
+#define sign( a )          ( ( a < 0 ) ? -1 : ( ( a == 0 ) ? 0 : 1 ) )
 
 #if 0
 #define plot( x, y, c )    { cmap[y - 1][x - 1][0] = ( c )->curcolor.r; \
@@ -189,9 +189,9 @@ plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     }
 }
 #else
-#define plot( x, y, c )    { int i = 3 * (( y ) * ( c )->xlength + ( x )); \
-                             cmap[i + 0] = ( c )->curcolor.r;              \
-                             cmap[i + 1] = ( c )->curcolor.g;              \
+#define plot( x, y, c )    { int i = 3 * ( ( y ) * ( c )->xlength + ( x ) ); \
+                             cmap[i + 0] = ( c )->curcolor.r;                \
+                             cmap[i + 1] = ( c )->curcolor.g;                \
                              cmap[i + 2] = ( c )->curcolor.b; }
 
 /* Modified version of the ljii routine (see ljii.c) */
@@ -209,8 +209,8 @@ plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     y2 = pls->ylength - ( y2 - 0 );
 
     x1b    = x1, x2b = x2, y1b = y1, y2b = y2;
-    length = (PLFLT) sqrt((double)
-        (( x2b - x1b ) * ( x2b - x1b ) + ( y2b - y1b ) * ( y2b - y1b )));
+    length = (PLFLT) sqrt( (double)
+        ( ( x2b - x1b ) * ( x2b - x1b ) + ( y2b - y1b ) * ( y2b - y1b ) ) );
 
     if ( length == 0. )
         length = 1.;
@@ -219,13 +219,13 @@ plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     fx = x1;
     fy = y1;
-    plot((PLINT) x1, (PLINT) y1, pls );
-    plot((PLINT) x2, (PLINT) y2, pls );
+    plot( (PLINT) x1, (PLINT) y1, pls );
+    plot( (PLINT) x2, (PLINT) y2, pls );
 
     for ( i = 1; i <= (int) length; i++ )
     {
         fx += dx; fy += dy;
-        plot((PLINT) fx, (PLINT) fy, pls );
+        plot( (PLINT) fx, (PLINT) fy, pls );
     }
 }
 #endif

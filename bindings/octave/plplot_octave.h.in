@@ -102,13 +102,13 @@
 
 /* Make sure Unix systems define "__unix" */
 
-#if defined ( SX ) ||                                  /* NEC Super-UX */ \
-    ( defined ( _IBMR2 ) && defined ( _AIX )) ||       /* AIX */          \
-    defined ( __hpux ) ||                              /* HP/UX */        \
-    defined ( sun ) ||                                 /* SUN */          \
-    defined ( CRAY ) ||                                /* Cray */         \
-    defined ( __convexc__ ) ||                         /* CONVEX */       \
-    ( defined ( __alpha ) && defined ( __osf__ ))      /* DEC Alpha AXP/OSF */
+#if defined ( SX ) ||                                   /* NEC Super-UX */ \
+    ( defined ( _IBMR2 ) && defined ( _AIX ) ) ||       /* AIX */          \
+    defined ( __hpux ) ||                               /* HP/UX */        \
+    defined ( sun ) ||                                  /* SUN */          \
+    defined ( CRAY ) ||                                 /* Cray */         \
+    defined ( __convexc__ ) ||                          /* CONVEX */       \
+    ( defined ( __alpha ) && defined ( __osf__ ) )      /* DEC Alpha AXP/OSF */
 
 #ifndef __unix
 #define __unix
@@ -724,18 +724,18 @@ void pltr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data ); //%n
 
 void xform( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 {
-    *tx = *((PLFLT *) pltr_data + 0 ) * x + *((PLFLT *) pltr_data + 1 ) * y + *((PLFLT *) pltr_data + 2 );
-    *ty = *((PLFLT *) pltr_data + 3 ) * x + *((PLFLT *) pltr_data + 4 ) * y + *((PLFLT *) pltr_data + 5 );
+    *tx = *( (PLFLT *) pltr_data + 0 ) * x + *( (PLFLT *) pltr_data + 1 ) * y + *( (PLFLT *) pltr_data + 2 );
+    *ty = *( (PLFLT *) pltr_data + 3 ) * x + *( (PLFLT *) pltr_data + 4 ) * y + *( (PLFLT *) pltr_data + 5 );
 }                                                                                                   //%nowrap
 
 /* convert from Fortran like arrays (one vector), to C like 2D arrays */
 
-#define  f2c( f, ff, nx, ny )                             \
-    PLFLT * *ff;                                          \
-    ff = (PLFLT **) alloca( nx * sizeof ( PLFLT * ));     \
-    for ( int i = 0; i < nx; i++ ) {                      \
-        ff[i] = (PLFLT *) alloca( ny * sizeof ( PLFLT )); \
-        for ( int j = 0; j < ny; j++ )                    \
+#define  f2c( f, ff, nx, ny )                              \
+    PLFLT * *ff;                                           \
+    ff = (PLFLT **) alloca( nx * sizeof ( PLFLT * ) );     \
+    for ( int i = 0; i < nx; i++ ) {                       \
+        ff[i] = (PLFLT *) alloca( ny * sizeof ( PLFLT ) ); \
+        for ( int j = 0; j < ny; j++ )                     \
             *( ff[i] + j ) = *( f + nx * j + i );}
 
 /* simpler plcont() for use with xform() */
@@ -1802,7 +1802,7 @@ void my_plimagefr2( PLFLT *a, PLINT nx, PLINT ny,
                     PLFLT valuemin, PLFLT valuemax, PLFLT *xg, PLFLT *yg )
 {
     PLcGrid2 grid2;
-    f2c( xg, xgg, ( nx + 1 ), ( ny + 1 ));  f2c( yg, ygg, ( nx + 1 ), ( ny + 1 ));
+    f2c( xg, xgg, ( nx + 1 ), ( ny + 1 ) );  f2c( yg, ygg, ( nx + 1 ), ( ny + 1 ) );
     grid2.nx = nx + 1;  grid2.ny = ny + 1;
     grid2.xg = xgg;  grid2.yg = ygg;
     f2c( a, aa, nx, ny );

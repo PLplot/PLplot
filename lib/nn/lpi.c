@@ -47,10 +47,10 @@ int delaunay_xytoi( delaunay* d, point* p, int seed );
 lpi* lpi_build( delaunay* d )
 {
     int i;
-    lpi * l = malloc( sizeof ( lpi ));
+    lpi * l = malloc( sizeof ( lpi ) );
 
     l->d       = d;
-    l->weights = malloc( d->ntriangles * sizeof ( lweights ));
+    l->weights = malloc( d->ntriangles * sizeof ( lweights ) );
 
     for ( i = 0; i < d->ntriangles; ++i )
     {
@@ -146,7 +146,7 @@ void lpi_interpolate_points( int nin, point pin[], int nout, point pout[] )
         {
             point* p = &pout[i];
 
-            fprintf( stderr, "(%.7g,%.7g) -> %d\n", p->x, p->y, delaunay_xytoi( d, p, seed ));
+            fprintf( stderr, "(%.7g,%.7g) -> %d\n", p->x, p->y, delaunay_xytoi( d, p, seed ) );
         }
     }
 

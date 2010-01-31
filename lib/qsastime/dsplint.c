@@ -22,8 +22,8 @@
  * Fortran to C with the aid of f2c and relicensed for PLplot under the LGPL
  * with the permission of the FreeEOS copyright holder (Alan W. Irwin).
  */
-# define MAX( a, b )    ((( a ) > ( b )) ? ( a ) : ( b ))
-# define MIN( a, b )    ((( a ) < ( b )) ? ( a ) : ( b ))
+# define MAX( a, b )    ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
+# define MIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 
 /*int dsplint(double *xa, double *ya, double *y2a,
  *          int n, double x, double *y, double *dy, double *d2y) */

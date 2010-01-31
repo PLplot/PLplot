@@ -54,7 +54,7 @@ pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
 
 /* Magnitude of min/max difference to get tick spacing */
 
-    t1 = (PLFLT) log10( ABS( vmax - vmin ));
+    t1 = (PLFLT) log10( ABS( vmax - vmin ) );
     np = (PLINT) floor( t1 );
     t1 = t1 - np;
 
@@ -266,8 +266,8 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
     /* No modification of digfix from digmax value. */
     digfix = digmax;
 /* Choose vmin or vmax depending on magnitudes of vmin and vmax. */
-    chosen    = ( ABS( vmax ) >= ABS( vmin )) ? vmax : vmin;
-    notchosen = ( ABS( vmax ) >= ABS( vmin )) ? vmin : vmax;
+    chosen    = ( ABS( vmax ) >= ABS( vmin ) ) ? vmax : vmin;
+    notchosen = ( ABS( vmax ) >= ABS( vmin ) ) ? vmin : vmax;
 /* Magnitute of chosen to get number of significant digits */
 
     if ( ABS( chosen ) > 0. )
@@ -285,7 +285,7 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
     }
 
     if ( ABS( notchosen ) > 0. )
-        notmsd = (PLINT) floor((PLFLT) log10( ABS( notchosen )));
+        notmsd = (PLINT) floor( (PLFLT) log10( ABS( notchosen ) ) );
     else
         notmsd = msd;
     /* Autoselect the mode flag */
@@ -308,7 +308,7 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
  * since notmsd <= msd always and the equal part is selected by the first
  * condition.
  */
-    if ( chosen < 0. || ( notchosen < 0. && ( notmsd == msd || msd <= 0 )))
+    if ( chosen < 0. || ( notchosen < 0. && ( notmsd == msd || msd <= 0 ) ) )
         digmin = digmin + 1;
 
     if ( digmin > digfix && !lf )
@@ -320,7 +320,7 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
 /* Establish precision.  */
 /* It must be fine enough to resolve the tick spacing */
 
-    np = (PLINT) floor( log10( ABS( tick )));
+    np = (PLINT) floor( log10( ABS( tick ) ) );
 
     if ( *mode != 0 )
         *prec = msd - np;
@@ -347,6 +347,6 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
     if ( *mode != 0 )
     {
         *prec = msd - np;
-        *prec = MAX( MIN( *prec, MAX( digmax - 1, MIN_FLTDIG )), 0 );
+        *prec = MAX( MIN( *prec, MAX( digmax - 1, MIN_FLTDIG ) ), 0 );
     }
 }

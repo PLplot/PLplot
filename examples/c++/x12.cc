@@ -83,11 +83,11 @@ x12::x12( int argc, const char **argv )
         //pls->col0(i + 1);
         pls->col1( i / 9.0 );
         pls->psty( 0 );
-        plfbox(( 1980. + i ), y0[i] );
+        plfbox( ( 1980. + i ), y0[i] );
         sprintf( string, "%.0f", y0[i] );
-        pls->ptex(( 1980. + i + .5 ), ( y0[i] + 1. ), 1.0, 0.0, .5, string );
+        pls->ptex( ( 1980. + i + .5 ), ( y0[i] + 1. ), 1.0, 0.0, .5, string );
         sprintf( string, "%d", 1980 + i );
-        pls->mtex( "b", 1.0, (( i + 1 ) * .1 - .05 ), 0.5, string );
+        pls->mtex( "b", 1.0, ( ( i + 1 ) * .1 - .05 ), 0.5, string );
     }
     //pls->end();
     delete pls;

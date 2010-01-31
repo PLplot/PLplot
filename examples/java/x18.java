@@ -82,25 +82,25 @@ class x18 {
         {
             for ( j = 0; j < 20; j++ )
             {
-                x[0] = Math.sin( PHI( j )) * Math.cos( THETA( i ));
-                y[0] = Math.sin( PHI( j )) * Math.sin( THETA( i ));
-                z[0] = Math.cos( PHI( j ));
+                x[0] = Math.sin( PHI( j ) ) * Math.cos( THETA( i ) );
+                y[0] = Math.sin( PHI( j ) ) * Math.sin( THETA( i ) );
+                z[0] = Math.cos( PHI( j ) );
 
-                x[1] = Math.sin( PHI( j + 1 )) * Math.cos( THETA( i ));
-                y[1] = Math.sin( PHI( j + 1 )) * Math.sin( THETA( i ));
-                z[1] = Math.cos( PHI( j + 1 ));
+                x[1] = Math.sin( PHI( j + 1 ) ) * Math.cos( THETA( i ) );
+                y[1] = Math.sin( PHI( j + 1 ) ) * Math.sin( THETA( i ) );
+                z[1] = Math.cos( PHI( j + 1 ) );
 
-                x[2] = Math.sin( PHI( j + 1 )) * Math.cos( THETA( i + 1 ));
-                y[2] = Math.sin( PHI( j + 1 )) * Math.sin( THETA( i + 1 ));
-                z[2] = Math.cos( PHI( j + 1 ));
+                x[2] = Math.sin( PHI( j + 1 ) ) * Math.cos( THETA( i + 1 ) );
+                y[2] = Math.sin( PHI( j + 1 ) ) * Math.sin( THETA( i + 1 ) );
+                z[2] = Math.cos( PHI( j + 1 ) );
 
-                x[3] = Math.sin( PHI( j )) * Math.cos( THETA( i + 1 ));
-                y[3] = Math.sin( PHI( j )) * Math.sin( THETA( i + 1 ));
-                z[3] = Math.cos( PHI( j ));
+                x[3] = Math.sin( PHI( j ) ) * Math.cos( THETA( i + 1 ) );
+                y[3] = Math.sin( PHI( j ) ) * Math.sin( THETA( i + 1 ) );
+                z[3] = Math.cos( PHI( j ) );
 
-                x[4] = Math.sin( PHI( j )) * Math.cos( THETA( i ));
-                y[4] = Math.sin( PHI( j )) * Math.sin( THETA( i ));
-                z[4] = Math.cos( PHI( j ));
+                x[4] = Math.sin( PHI( j ) ) * Math.cos( THETA( i ) );
+                y[4] = Math.sin( PHI( j ) ) * Math.sin( THETA( i ) );
+                z[4] = Math.cos( PHI( j ) );
 
                 pls.poly3( x, y, z, draw[k], true );
             }
@@ -171,9 +171,9 @@ class x18 {
 
             pls.col0( 3 );
             String title = "#frPLplot Example 18 - Alt=" +
-                           nf.format((int) alt[k] ) +
+                           nf.format( (int) alt[k] ) +
                            ", Az=" +
-                           nf.format((int) az[k] );
+                           nf.format( (int) az[k] );
             pls.mtex( "t", 1.0, 0.5, 0.5, title );
         }
 

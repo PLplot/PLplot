@@ -12,7 +12,7 @@
 #include <tcl.h>
 #endif
 
-#define TRY( E )    if ( !( E )) return NULL
+#define TRY( E )    if ( !( E ) ) return NULL
 
 #ifdef ENABLE_tk
 static char doc_Pltk_init[] = "Initialize the Pltk Tcl extension.";
@@ -28,7 +28,7 @@ static PyObject *pl_Pltk_init( PyObject *self, PyObject *args )
     printf( "in pl_Pltk_init()\n" );
     long x = 0;
 
-    TRY( PyArg_ParseTuple( args, "l", &x ));
+    TRY( PyArg_ParseTuple( args, "l", &x ) );
 
     if ( !x )
     {
@@ -77,6 +77,6 @@ PLDLLIMPEXP_PLPLOT_WIDGETMODULE void initplplot_widget( void )
     d = PyModule_GetDict( m );
 
     /* Check for errors */
-    if ( PyErr_Occurred())
+    if ( PyErr_Occurred() )
         Py_FatalError( "plplot_widget module initialization failed" );
 }

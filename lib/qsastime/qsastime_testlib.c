@@ -101,16 +101,16 @@ int testlib_broken_down_time( int year, int month, int day, int hour, int min, d
     setFromUT( year, month, day, hour, min, sec, pMJD1, forceJulian );
 
     /* Inner TEST01: compare setFromUT with my_timegm. */
-    if ( !forceJulian && ( inner_test_choice & TEST01 ))
+    if ( !forceJulian && ( inner_test_choice & TEST01 ) )
     {
-        secs_past_epoch1 = (time_t) ( 86400. * ((double) pMJD1->base_day - (double) MJD_1970 ) + (int) pMJD1->time_sec );
+        secs_past_epoch1 = (time_t) ( 86400. * ( (double) pMJD1->base_day - (double) MJD_1970 ) + (int) pMJD1->time_sec );
         secs_past_epoch  = my_timegm( ptm );
         delta_secs       = abs( secs_past_epoch1 - secs_past_epoch );
         if ( delta_secs != 0 )
         {
             printf( "setFromUT secs_past_epoch = %lld seconds\n", (long long) secs_past_epoch1 );
             printf( "my_timegm secs_past_epoch = %lld seconds\n", (long long) secs_past_epoch );
-            printf( "delta secs_past_epoch = %lld seconds\n", (long long) ( secs_past_epoch1 - secs_past_epoch ));
+            printf( "delta secs_past_epoch = %lld seconds\n", (long long) ( secs_past_epoch1 - secs_past_epoch ) );
             printf( "test failed with inconsistency between setFromUT and my_timegm\n" );
             return 1;
         }
@@ -140,7 +140,7 @@ int testlib_broken_down_time( int year, int month, int day, int hour, int min, d
     if ( forceJulian )
         ifleapyear = ( year % 4 == 0 );
     else
-        ifleapyear = (( year % 4 == 0 && year % 100 != 0 ) || year % 400 == 0 );
+        ifleapyear = ( ( year % 4 == 0 && year % 100 != 0 ) || year % 400 == 0 );
     iffeb29   = month == 1 && day == 29;
     ifleapday = ( ifleapyear && iffeb29 );
 
@@ -148,10 +148,10 @@ int testlib_broken_down_time( int year, int month, int day, int hour, int min, d
     if ( inner_test_choice & TEST03 )
     {
         breakDownMJD( &year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, forceJulian );
-        ifsamedate = ( year1 - year == 0 && ((( !iffeb29 || ifleapday ) && ( month1 - month == 0 && day1 - day == 0 )) || (( iffeb29 && !ifleapday ) && ( month1 == 2 && day1 == 1 ))));
+        ifsamedate = ( year1 - year == 0 && ( ( ( !iffeb29 || ifleapday ) && ( month1 - month == 0 && day1 - day == 0 ) ) || ( ( iffeb29 && !ifleapday ) && ( month1 == 2 && day1 == 1 ) ) ) );
         ifsametime = ( hour1 - hour == 0 && min1 - min == 0 && fabs( sec1 - sec ) < 1.e-10 );
 
-        if ( !( ifsamedate && ifsametime ))
+        if ( !( ifsamedate && ifsametime ) )
         {
             printf( "output date calculated with breakDownMJD = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year1, month1 + 1, day1, hour1, min1, sec1 );
             printf( "test failed with inconsistency between setFromUT and breakDownMJD\n" );
@@ -160,13 +160,13 @@ int testlib_broken_down_time( int year, int month, int day, int hour, int min, d
     }
 
     /* Inner TEST04: compare setFromUT with its inverse, the C library gmtime.*/
-    if ( !forceJulian && ( inner_test_choice & TEST04 ))
+    if ( !forceJulian && ( inner_test_choice & TEST04 ) )
     {
         ptm1       = gmtime( &secs_past_epoch );
-        ifsamedate = ( ptm1->tm_year == ptm->tm_year && ((( !iffeb29 || ifleapday ) && ( ptm1->tm_mon == ptm->tm_mon && ptm1->tm_mday == ptm->tm_mday )) || (( iffeb29 && !ifleapday ) && ( ptm1->tm_mon == 2 && ptm1->tm_mday == 1 ))));
+        ifsamedate = ( ptm1->tm_year == ptm->tm_year && ( ( ( !iffeb29 || ifleapday ) && ( ptm1->tm_mon == ptm->tm_mon && ptm1->tm_mday == ptm->tm_mday ) ) || ( ( iffeb29 && !ifleapday ) && ( ptm1->tm_mon == 2 && ptm1->tm_mday == 1 ) ) ) );
         ifsametime = ( ptm1->tm_hour == ptm->tm_hour && ptm1->tm_min == ptm->tm_min && ptm1->tm_sec == ptm->tm_sec );
 
-        if ( !( ifsamedate && ifsametime ))
+        if ( !( ifsamedate && ifsametime ) )
         {
             printf( "test failed with inconsistency between my_timegm and its C library inverse gmtime" );
             return 1;
@@ -195,7 +195,7 @@ int testlib_MJD( const MJDtime *MJD, int forceJulian, int inner_test_choice, int
 
     *MJD1 = *MJD;
     normalize_MJD( MJD1 );
-    secs_past_epoch = (time_t) ( 86400. * ((double) MJD1->base_day - (double) MJD_1970 ) + MJD1->time_sec );
+    secs_past_epoch = (time_t) ( 86400. * ( (double) MJD1->base_day - (double) MJD_1970 ) + MJD1->time_sec );
     breakDownMJD( &year, &month, &day, &hour, &min, &sec, MJD1, forceJulian );
 
     ptm->tm_year = year - 1900;
@@ -220,10 +220,10 @@ int testlib_MJD( const MJDtime *MJD, int forceJulian, int inner_test_choice, int
     }
 
     /* Inner TEST01: compare breakDownMJD with gmtime. */
-    if ( !forceJulian && ( inner_test_choice & TEST01 ))
+    if ( !forceJulian && ( inner_test_choice & TEST01 ) )
     {
         ptm1 = gmtime( &secs_past_epoch );
-        if ( !(( ptm1->tm_year + 1900 ) == year && ptm1->tm_mon == month && ptm1->tm_mday == day && ptm1->tm_hour == hour && ptm1->tm_min == min && ptm1->tm_sec == (int) sec ))
+        if ( !( ( ptm1->tm_year + 1900 ) == year && ptm1->tm_mon == month && ptm1->tm_mday == day && ptm1->tm_hour == hour && ptm1->tm_min == min && ptm1->tm_sec == (int) sec ) )
         {
             printf( "date calculated with breakDownMJD = %d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month + 1, day, hour, min, sec );
             printf( "date calculated with gmtime = %d-%02d-%02dT%02d:%02d:%02dZ\n", ptm1->tm_year + 1900, ptm1->tm_mon + 1, ptm1->tm_mday, ptm1->tm_hour, ptm1->tm_min, ptm1->tm_sec );
@@ -256,7 +256,7 @@ int testlib_MJD( const MJDtime *MJD, int forceJulian, int inner_test_choice, int
     if ( forceJulian )
         ifleapyear = ( year % 4 == 0 );
     else
-        ifleapyear = (( year % 4 == 0 && year % 100 != 0 ) || year % 400 == 0 );
+        ifleapyear = ( ( year % 4 == 0 && year % 100 != 0 ) || year % 400 == 0 );
     iffeb29   = month == 1 && day == 29;
     ifleapday = ( ifleapyear && iffeb29 );
 
@@ -264,7 +264,7 @@ int testlib_MJD( const MJDtime *MJD, int forceJulian, int inner_test_choice, int
     if ( inner_test_choice & TEST03 )
     {
         setFromUT( year, month, day, hour, min, sec, MJD2, forceJulian );
-        if ( !( MJD2->time_sec == MJD1->time_sec && MJD2->base_day == MJD1->base_day ))
+        if ( !( MJD2->time_sec == MJD1->time_sec && MJD2->base_day == MJD1->base_day ) )
         {
             printf( "(normalized) input MJD components are = %d, %f\n", MJD1->base_day, MJD1->time_sec );
             printf( "(output MJD2 components generated by setFromUT are = %d, %f\n", MJD2->base_day, MJD2->time_sec );
@@ -274,14 +274,14 @@ int testlib_MJD( const MJDtime *MJD, int forceJulian, int inner_test_choice, int
     }
 
     /* Inner TEST04: compare breakDownMJD with its inverse, my_timegm */
-    if ( !forceJulian && ( inner_test_choice & TEST04 ))
+    if ( !forceJulian && ( inner_test_choice & TEST04 ) )
     {
         secs_past_epoch1 = my_timegm( ptm );
-        if ( !( secs_past_epoch == secs_past_epoch1 ))
+        if ( !( secs_past_epoch == secs_past_epoch1 ) )
         {
             printf( "secs_past_epoch calculated from input = %lld\n", (long long) secs_past_epoch );
             printf( "secs_past_epoch calculated from my_timegm = %lld\n", (long long) secs_past_epoch1 );
-            printf( "delta secs_past_epoch = %lld seconds\n", (long long) ( secs_past_epoch1 - secs_past_epoch ));
+            printf( "delta secs_past_epoch = %lld seconds\n", (long long) ( secs_past_epoch1 - secs_past_epoch ) );
             printf( "test failed with inconsistency between breakDownMJD and its C library based inverse, my_timegm\n" );
             return 1;
         }
@@ -315,14 +315,14 @@ int main()
      * input from stdin. */
     scanf( "%i", &test_choice );
 
-    printf( "sizeof(time_t) = %d\n", (int) sizeof ( time_t ));
+    printf( "sizeof(time_t) = %d\n", (int) sizeof ( time_t ) );
     if ( sizeof ( time_t ) < 8 )
     {
         printf( "tests abandoned because time_t is too small on this platform to represent the extremely large date range used for many of these tests.  Note, the limitation is in the C library routines (gmtime and mktime) used for these test comparisons and not libqsastime itself.\n" );
         return 1;
     }
 
-    printf( "sizeof(int) = %d\n", (int) sizeof ( int ));
+    printf( "sizeof(int) = %d\n", (int) sizeof ( int ) );
     if ( sizeof ( int ) != 4 )
     {
         printf( "tests abandoned because int must be 32-bits to test this library properly for how well it will potentially perform on 32-bit platforms\n" );

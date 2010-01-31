@@ -160,8 +160,8 @@ void x26::plot1( int type, const char *x_label, const char *y_label,
     {
         freql[i] = -2.0 + i / 20.0;
         freq     = pow( 10.0, (double) freql[i] );
-        ampl[i]  = 20.0 * log10( 1.0 / sqrt( 1.0 + pow((double) ( freq / f0 ), 2. )));
-        phase[i] = -( 180.0 / M_PI ) * atan((double) ( freq / f0 ));
+        ampl[i]  = 20.0 * log10( 1.0 / sqrt( 1.0 + pow( (double) ( freq / f0 ), 2. ) ) );
+        phase[i] = -( 180.0 / M_PI ) * atan( (double) ( freq / f0 ) );
     }
 
     pls->vpor( 0.15, 0.85, 0.1, 0.9 );

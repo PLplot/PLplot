@@ -96,10 +96,10 @@ class x09 {
 
         for ( i = 0; i < XPTS; i++ )
         {
-            xx = (double) ( i - ( XPTS / 2 )) / (double) ( XPTS / 2 );
+            xx = (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
             for ( j = 0; j < YPTS; j++ )
             {
-                yy      = (double) ( j - ( YPTS / 2 )) / (double) ( YPTS / 2 ) - 1.0;
+                yy      = (double) ( j - ( YPTS / 2 ) ) / (double) ( YPTS / 2 ) - 1.0;
                 z[i][j] = xx * xx - yy * yy;
                 w[i][j] = 2 * xx * yy;
             }
@@ -238,7 +238,7 @@ class x09 {
         // Perimeter
         for ( i = 0; i < PERIMETERPTS; i++ )
         {
-            t     = ( 2. * Math.PI / ( PERIMETERPTS - 1 )) * (double) i;
+            t     = ( 2. * Math.PI / ( PERIMETERPTS - 1 ) ) * (double) i;
             px[i] = Math.cos( t );
             py[i] = Math.sin( t );
         }
@@ -251,7 +251,7 @@ class x09 {
             r = i / (double) ( RPTS - 1 );
             for ( j = 0; j < THETAPTS; j++ )
             {
-                theta    = ( 2. * Math.PI / (double) ( THETAPTS - 1 )) * (double) j;
+                theta    = ( 2. * Math.PI / (double) ( THETAPTS - 1 ) ) * (double) j;
                 xg[i][j] = r * Math.cos( theta );
                 yg[i][j] = r * Math.sin( theta );
                 z[i][j]  = r;
@@ -314,7 +314,7 @@ class x09 {
             r = 0.5 + (double) i;
             for ( j = 0; j < PTHETAPTS; j++ )
             {
-                theta    = ( 2. * Math.PI / (double) ( PTHETAPTS - 1 )) * ( 0.5 + (double) j );
+                theta    = ( 2. * Math.PI / (double) ( PTHETAPTS - 1 ) ) * ( 0.5 + (double) j );
                 xg[i][j] = r * Math.cos( theta );
                 yg[i][j] = r * Math.sin( theta );
             }
@@ -363,10 +363,10 @@ class x09 {
         {
             for ( j = 0; j < PTHETAPTS; j++ )
             {
-                div1    = Math.sqrt( Math.pow( xg[i][j] - d1, 2 ) + Math.pow( yg[i][j] - d1, 2 ) + Math.pow( eps, 2 ));
-                div1i   = Math.sqrt( Math.pow( xg[i][j] - d1i, 2 ) + Math.pow( yg[i][j] - d1i, 2 ) + Math.pow( eps, 2 ));
-                div2    = Math.sqrt( Math.pow( xg[i][j] - d2, 2 ) + Math.pow( yg[i][j] + d2, 2 ) + Math.pow( eps, 2 ));
-                div2i   = Math.sqrt( Math.pow( xg[i][j] - d2i, 2 ) + Math.pow( yg[i][j] + d2i, 2 ) + Math.pow( eps, 2 ));
+                div1    = Math.sqrt( Math.pow( xg[i][j] - d1, 2 ) + Math.pow( yg[i][j] - d1, 2 ) + Math.pow( eps, 2 ) );
+                div1i   = Math.sqrt( Math.pow( xg[i][j] - d1i, 2 ) + Math.pow( yg[i][j] - d1i, 2 ) + Math.pow( eps, 2 ) );
+                div2    = Math.sqrt( Math.pow( xg[i][j] - d2, 2 ) + Math.pow( yg[i][j] + d2, 2 ) + Math.pow( eps, 2 ) );
+                div2i   = Math.sqrt( Math.pow( xg[i][j] - d2i, 2 ) + Math.pow( yg[i][j] + d2i, 2 ) + Math.pow( eps, 2 ) );
                 z[i][j] = q1 / div1 + q1i / div1i + q2 / div2 + q2i / div2i;
             }
         }
@@ -390,7 +390,7 @@ class x09 {
         nlevelpos = 0;
         for ( i = 0; i < PNLEVEL; i++ )
         {
-            clev = zmin + ((double) i + 0.5 ) * dz;
+            clev = zmin + ( (double) i + 0.5 ) * dz;
             if ( clev <= 0. )
                 clevelneg_store[nlevelneg++] = clev;
             else
@@ -435,7 +435,7 @@ class x09 {
         // Draw outer boundary
         for ( i = 0; i < PPERIMETERPTS; i++ )
         {
-            t     = ( 2. * Math.PI / ( PPERIMETERPTS - 1 )) * (double) i;
+            t     = ( 2. * Math.PI / ( PPERIMETERPTS - 1 ) ) * (double) i;
             px[i] = x0 + rmax*Math.cos( t );
             py[i] = y0 + rmax*Math.sin( t );
         }

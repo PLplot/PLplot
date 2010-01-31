@@ -90,7 +90,7 @@ c_plstripc( PLINT *id, const char *xspec, const char *yspec,
     else
     {
         sid        = *id = i;
-        strip[sid] = (PLStrip *) calloc( 1, (size_t) sizeof ( PLStrip ));
+        strip[sid] = (PLStrip *) calloc( 1, (size_t) sizeof ( PLStrip ) );
         if ( strip[sid] == NULL )
         {
             plabort( "plstripc: Out of memory." );
@@ -110,8 +110,8 @@ c_plstripc( PLINT *id, const char *xspec, const char *yspec,
         stripc->colline[i] = colline[i];
         stripc->styline[i] = styline[i];
         stripc->legline[i] = plstrdup( legline[i] );
-        stripc->x[i]       = (PLFLT *) malloc((size_t) sizeof ( PLFLT ) * stripc->nptsmax[i] );;
-        stripc->y[i]       = (PLFLT *) malloc((size_t) sizeof ( PLFLT ) * stripc->nptsmax[i] );;
+        stripc->x[i]       = (PLFLT *) malloc( (size_t) sizeof ( PLFLT ) * stripc->nptsmax[i] );;
+        stripc->y[i]       = (PLFLT *) malloc( (size_t) sizeof ( PLFLT ) * stripc->nptsmax[i] );;
         if ( stripc->x[i] == NULL || stripc->y[i] == NULL )
         {
             plabort( "plstripc: Out of memory." );
@@ -230,8 +230,8 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
         return;
     }
 
-    if (( id < 0 ) || ( id >= MAX_STRIPC ) ||
-        (( stripc = strip[id] ) == NULL ))
+    if ( ( id < 0 ) || ( id >= MAX_STRIPC ) ||
+         ( ( stripc = strip[id] ) == NULL ) )
     {
         plabort( "Non existent stripchart" );
         return;
@@ -242,8 +242,8 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
     if ( ++stripc->npts[p] > stripc->nptsmax[p] )
     {
         stripc->nptsmax[p] += 32;
-        stripc->x[p]        = (PLFLT *) realloc((void *) stripc->x[p], sizeof ( PLFLT ) * stripc->nptsmax[p] );
-        stripc->y[p]        = (PLFLT *) realloc((void *) stripc->y[p], sizeof ( PLFLT ) * stripc->nptsmax[p] );
+        stripc->x[p]        = (PLFLT *) realloc( (void *) stripc->x[p], sizeof ( PLFLT ) * stripc->nptsmax[p] );
+        stripc->y[p]        = (PLFLT *) realloc( (void *) stripc->y[p], sizeof ( PLFLT ) * stripc->nptsmax[p] );
         if ( stripc->x[p] == NULL || stripc->y[p] == NULL )
         {
             plabort( "plstripc: Out of memory." );
@@ -257,7 +257,7 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
 
     stripc->xmax = x;
 
-    if ( stripc->y_ascl == 1 && ( y > stripc->ymax || y < stripc->ymin ))
+    if ( stripc->y_ascl == 1 && ( y > stripc->ymax || y < stripc->ymin ) )
         yasc = 1;
 
     if ( y > stripc->ymax )
@@ -275,7 +275,7 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
             plvsta();
             plwind( stripc->wxmin, stripc->wxmax, stripc->wymin, stripc->wymax );   /* FIXME - can exist some redundancy here */
             plcol( stripc->colline[p] ); pllsty( stripc->styline[p] );
-            if (( stripc->npts[p] - 2 ) < 0 )
+            if ( ( stripc->npts[p] - 2 ) < 0 )
                 plP_movwor( stripc->x[p][stripc->npts[p] - 1], stripc->y[p][stripc->npts[p] - 1] );
             else
                 plP_movwor( stripc->x[p][stripc->npts[p] - 2], stripc->y[p][stripc->npts[p] - 2] );
@@ -302,8 +302,8 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
                         istart++;
 
                     stripc->npts[j] = stripc->npts[j] - istart;
-                    memcpy( &stripc->x[j][0], &stripc->x[j][istart], ( stripc->npts[j] ) * sizeof ( PLFLT ));
-                    memcpy( &stripc->y[j][0], &stripc->y[j][istart], ( stripc->npts[j] ) * sizeof ( PLFLT ));
+                    memcpy( &stripc->x[j][0], &stripc->x[j][istart], ( stripc->npts[j] ) * sizeof ( PLFLT ) );
+                    memcpy( &stripc->y[j][0], &stripc->y[j][istart], ( stripc->npts[j] ) * sizeof ( PLFLT ) );
                 }
             }
         }
@@ -327,8 +327,8 @@ void c_plstripd( PLINT id )
 {
     int i;
 
-    if (( id < 0 ) || ( id >= MAX_STRIPC ) ||
-        (( stripc = strip[id] ) == NULL ))
+    if ( ( id < 0 ) || ( id >= MAX_STRIPC ) ||
+         ( ( stripc = strip[id] ) == NULL ) )
     {
         plabort( "Non existent stripchart" );
         return;
@@ -338,8 +338,8 @@ void c_plstripd( PLINT id )
     {
         if ( stripc->npts[i] )
         {
-            free((void *) stripc->x[i] );
-            free((void *) stripc->y[i] );
+            free( (void *) stripc->x[i] );
+            free( (void *) stripc->y[i] );
             free( stripc->legline[i] );
         }
     }
@@ -349,6 +349,6 @@ void c_plstripd( PLINT id )
     free( stripc->labx );
     free( stripc->laby );
     free( stripc->labtop );
-    free((void *) stripc );
+    free( (void *) stripc );
     strip[id] = NULL;
 }

@@ -190,10 +190,10 @@ void potential()
     {
         for ( int j = 0; j < THETAPTS; j++ )
         {
-            div1    = sqrt( pow( cgrid2.xg[i][j] - d1, 2. ) + pow( cgrid2.yg[i][j] - d1, 2. ) + pow( eps, 2. ));
-            div1i   = sqrt( pow( cgrid2.xg[i][j] - d1i, 2. ) + pow( cgrid2.yg[i][j] - d1i, 2. ) + pow( eps, 2. ));
-            div2    = sqrt( pow( cgrid2.xg[i][j] - d2, 2. ) + pow( cgrid2.yg[i][j] + d2, 2. ) + pow( eps, 2. ));
-            div2i   = sqrt( pow( cgrid2.xg[i][j] - d2i, 2. ) + pow( cgrid2.yg[i][j] + d2i, 2. ) + pow( eps, 2. ));
+            div1    = sqrt( pow( cgrid2.xg[i][j] - d1, 2. ) + pow( cgrid2.yg[i][j] - d1, 2. ) + pow( eps, 2. ) );
+            div1i   = sqrt( pow( cgrid2.xg[i][j] - d1i, 2. ) + pow( cgrid2.yg[i][j] - d1i, 2. ) + pow( eps, 2. ) );
+            div2    = sqrt( pow( cgrid2.xg[i][j] - d2, 2. ) + pow( cgrid2.yg[i][j] + d2, 2. ) + pow( eps, 2. ) );
+            div2i   = sqrt( pow( cgrid2.xg[i][j] - d2i, 2. ) + pow( cgrid2.yg[i][j] + d2i, 2. ) + pow( eps, 2. ) );
             z[i][j] = q1 / div1 + q1i / div1i + q2 / div2 + q2i / div2i;
         }
     }
@@ -251,7 +251,7 @@ void potential()
     PLFLT t;
     for ( int i = 0; i < PERIMETERPTS; i++ )
     {
-        t     = ( 2. * PI / ( PERIMETERPTS - 1 )) * i;
+        t     = ( 2. * PI / ( PERIMETERPTS - 1 ) ) * i;
         px[i] = x0 + rmax*cos( t );
         py[i] = y0 + rmax*sin( t );
     }
@@ -292,10 +292,10 @@ int main( char[][] args )
     PLFLT xx, yy;
     for ( int i = 0; i < XPTS; i++ )
     {
-        xx = cast(double) ( i - ( XPTS / 2 )) / ( XPTS / 2 );
+        xx = cast(double) ( i - ( XPTS / 2 ) ) / ( XPTS / 2 );
         for ( int j = 0; j < YPTS; j++ )
         {
-            yy      = cast(double) ( j - ( YPTS / 2 )) / ( YPTS / 2 ) - 1.0;
+            yy      = cast(double) ( j - ( YPTS / 2 ) ) / ( YPTS / 2 ) - 1.0;
             z[i][j] = xx * xx - yy * yy;
             w[i][j] = 2 * xx * yy;
         }

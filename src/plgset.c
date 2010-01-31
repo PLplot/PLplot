@@ -105,7 +105,7 @@ c_plget( enum PLAttributeName attrName, PLAttribute *attrValue )
     /* get the index of the current color map 1 color */
     case PL_ICOL1:
         attrValue->attributeType = PL_FLT;
-        attrValue->intValue      = ((PLFLT) plsc->icol1 ) / ((PLFLT) plsc->ncol1 );
+        attrValue->intValue      = ( (PLFLT) plsc->icol1 ) / ( (PLFLT) plsc->ncol1 );
         break;
     /* get the number of colors in color map 0 */
     case PL_NCOL0:

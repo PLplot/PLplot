@@ -39,9 +39,9 @@ main( int argc, const char *argv[] )
     for ( k = 0; k < 4; k++ )
         test_poly( k );
 
-    x = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ));
-    y = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ));
-    z = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ));
+    x = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ) );
+    y = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ) );
+    z = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ) );
 
 /* From the mind of a sick and twisted physicist... */
 
@@ -83,9 +83,9 @@ main( int argc, const char *argv[] )
     }
 
     /* Clean up */
-    free((void *) x );
-    free((void *) y );
-    free((void *) z );
+    free( (void *) x );
+    free( (void *) y );
+    free( (void *) z );
 
     plend();
 
@@ -104,9 +104,9 @@ void test_poly( int k )
 
     pi = M_PI, two_pi = 2. * pi;
 
-    x = (PLFLT *) malloc( 5 * sizeof ( PLFLT ));
-    y = (PLFLT *) malloc( 5 * sizeof ( PLFLT ));
-    z = (PLFLT *) malloc( 5 * sizeof ( PLFLT ));
+    x = (PLFLT *) malloc( 5 * sizeof ( PLFLT ) );
+    y = (PLFLT *) malloc( 5 * sizeof ( PLFLT ) );
+    z = (PLFLT *) malloc( 5 * sizeof ( PLFLT ) );
 
     pladv( 0 );
     plvpor( 0.0, 1.0, 0.0, 0.9 );
@@ -133,25 +133,25 @@ void test_poly( int k )
     {
         for ( j = 0; j < 20; j++ )
         {
-            x[0] = sin( PHI( j )) * cos( THETA( i ));
-            y[0] = sin( PHI( j )) * sin( THETA( i ));
-            z[0] = cos( PHI( j ));
+            x[0] = sin( PHI( j ) ) * cos( THETA( i ) );
+            y[0] = sin( PHI( j ) ) * sin( THETA( i ) );
+            z[0] = cos( PHI( j ) );
 
-            x[1] = sin( PHI( j + 1 )) * cos( THETA( i ));
-            y[1] = sin( PHI( j + 1 )) * sin( THETA( i ));
-            z[1] = cos( PHI( j + 1 ));
+            x[1] = sin( PHI( j + 1 ) ) * cos( THETA( i ) );
+            y[1] = sin( PHI( j + 1 ) ) * sin( THETA( i ) );
+            z[1] = cos( PHI( j + 1 ) );
 
-            x[2] = sin( PHI( j + 1 )) * cos( THETA( i + 1 ));
-            y[2] = sin( PHI( j + 1 )) * sin( THETA( i + 1 ));
-            z[2] = cos( PHI( j + 1 ));
+            x[2] = sin( PHI( j + 1 ) ) * cos( THETA( i + 1 ) );
+            y[2] = sin( PHI( j + 1 ) ) * sin( THETA( i + 1 ) );
+            z[2] = cos( PHI( j + 1 ) );
 
-            x[3] = sin( PHI( j )) * cos( THETA( i + 1 ));
-            y[3] = sin( PHI( j )) * sin( THETA( i + 1 ));
-            z[3] = cos( PHI( j ));
+            x[3] = sin( PHI( j ) ) * cos( THETA( i + 1 ) );
+            y[3] = sin( PHI( j ) ) * sin( THETA( i + 1 ) );
+            z[3] = cos( PHI( j ) );
 
-            x[4] = sin( PHI( j )) * cos( THETA( i ));
-            y[4] = sin( PHI( j )) * sin( THETA( i ));
-            z[4] = cos( PHI( j ));
+            x[4] = sin( PHI( j ) ) * cos( THETA( i ) );
+            y[4] = sin( PHI( j ) ) * sin( THETA( i ) );
+            z[4] = cos( PHI( j ) );
 
             plpoly3( 5, x, y, z, draw[k], 1 );
         }
@@ -161,7 +161,7 @@ void test_poly( int k )
     plmtex( "t", 1.0, 0.5, 0.5, "unit radius sphere" );
 
     /* Clean up */
-    free((void *) x );
-    free((void *) y );
-    free((void *) z );
+    free( (void *) x );
+    free( (void *) y );
+    free( (void *) z );
 }

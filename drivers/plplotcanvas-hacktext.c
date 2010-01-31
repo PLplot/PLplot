@@ -152,26 +152,26 @@ plplot_canvas_hacktext_class_init( PlplotCanvasHacktextClass *class )
             _( "Text" ),
             _( "Text to render" ),
             NULL,
-            G_PARAM_READABLE | G_PARAM_WRITABLE ));
+            G_PARAM_READABLE | G_PARAM_WRITABLE ) );
     g_object_class_install_property
         ( gobject_class,
         PROP_X,
         g_param_spec_double( "x", NULL, NULL,
             -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-            ( G_PARAM_READABLE | G_PARAM_WRITABLE )));
+            ( G_PARAM_READABLE | G_PARAM_WRITABLE ) ) );
     g_object_class_install_property
         ( gobject_class,
         PROP_Y,
         g_param_spec_double( "y", NULL, NULL,
             -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-            ( G_PARAM_READABLE | G_PARAM_WRITABLE )));
+            ( G_PARAM_READABLE | G_PARAM_WRITABLE ) ) );
     g_object_class_install_property
         ( gobject_class,
         PROP_GLYPHLIST,
         g_param_spec_pointer( "glyphlist",
             _( "Glyphlist" ),
             _( "Glyphlist" ),
-            ( G_PARAM_READABLE | G_PARAM_WRITABLE )));
+            ( G_PARAM_READABLE | G_PARAM_WRITABLE ) ) );
     g_object_class_install_property
         ( gobject_class,
         PROP_FILL_COLOR,
@@ -179,7 +179,7 @@ plplot_canvas_hacktext_class_init( PlplotCanvasHacktextClass *class )
             _( "Color" ),
             _( "Text color, as string" ),
             NULL,
-            G_PARAM_WRITABLE ));
+            G_PARAM_WRITABLE ) );
     g_object_class_install_property
         ( gobject_class,
         PROP_FILL_COLOR_RGBA,
@@ -187,7 +187,7 @@ plplot_canvas_hacktext_class_init( PlplotCanvasHacktextClass *class )
             _( "Color" ),
             _( "Text color, as an R/G/B/A combined integer" ),
             0, G_MAXUINT, 0,
-            ( G_PARAM_READABLE | G_PARAM_WRITABLE )));
+            ( G_PARAM_READABLE | G_PARAM_WRITABLE ) ) );
     g_object_class_install_property
         ( gobject_class,
         PROP_FONT,
@@ -195,7 +195,7 @@ plplot_canvas_hacktext_class_init( PlplotCanvasHacktextClass *class )
             _( "Font" ),
             _( "Font as a GnomeFont struct" ),
             GNOME_TYPE_FONT,
-            ( G_PARAM_READABLE | G_PARAM_WRITABLE )));
+            ( G_PARAM_READABLE | G_PARAM_WRITABLE ) ) );
 
     object_class->destroy = plplot_canvas_hacktext_destroy;
 
@@ -225,7 +225,7 @@ plplot_canvas_hacktext_destroy( GtkObject *object )
     PlplotCanvasHacktext *hacktext;
 
     g_return_if_fail( object != NULL );
-    g_return_if_fail( PLPLOT_IS_CANVAS_HACKTEXT( object ));
+    g_return_if_fail( PLPLOT_IS_CANVAS_HACKTEXT( object ) );
 
     hacktext = PLPLOT_CANVAS_HACKTEXT( object );
 
@@ -350,13 +350,13 @@ plplot_canvas_hacktext_set_property( GObject               *object,
         break;
 
     case PROP_FILL_COLOR:
-        if ( gnome_canvas_get_color( item->canvas, g_value_get_string( value ), &color ))
+        if ( gnome_canvas_get_color( item->canvas, g_value_get_string( value ), &color ) )
         {
             bp->fill_set   = TRUE;
             bp->fill_pixel = color.pixel;
             bp->fill_rgba  =
-                (( color.red & 0xff00 ) << 16 ) |
-                (( color.green & 0xff00 ) << 8 ) |
+                ( ( color.red & 0xff00 ) << 16 ) |
+                ( ( color.green & 0xff00 ) << 8 ) |
                 ( color.blue & 0xff00 ) |
                 0xff;
         }
@@ -536,7 +536,7 @@ plplot_canvas_hacktext_point( GnomeCanvasItem *item, double mx, double my,
 
     *actual_item = item;
 
-    if ( gnome_pgl_test_point( hacktext->priv->pgl, cx, cy ))
+    if ( gnome_pgl_test_point( hacktext->priv->pgl, cx, cy ) )
         return 0.0;
 
     return 1e18;
@@ -548,7 +548,7 @@ plplot_canvas_hacktext_bounds( GnomeCanvasItem *item, double *x1, double *y1, do
     PlplotCanvasHacktext *hacktext;
 
     g_return_if_fail( item != NULL );
-    g_return_if_fail( PLPLOT_IS_CANVAS_HACKTEXT( item ));
+    g_return_if_fail( PLPLOT_IS_CANVAS_HACKTEXT( item ) );
 
     hacktext = PLPLOT_CANVAS_HACKTEXT( item );
 
@@ -572,7 +572,7 @@ plplot_canvas_hacktext_req_repaint( PlplotCanvasHacktext *hacktext,
     if ( !hacktext->priv->pgl )
         return;
 
-    if ( gnome_pgl_bbox( hacktext->priv->pgl, &gbbox ))
+    if ( gnome_pgl_bbox( hacktext->priv->pgl, &gbbox ) )
     {
         ArtIRect ibox;
         art_drect_to_irect( &ibox, &gbbox );

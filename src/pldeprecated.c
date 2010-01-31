@@ -112,16 +112,16 @@ plarrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
         max_v = v[0];
         for ( i = 1; i < n; i++ )
         {
-            t     = fabs((double) u[i] );
+            t     = fabs( (double) u[i] );
             max_u = t > max_u ? t : max_u;
-            t     = fabs((double) v[i] );
+            t     = fabs( (double) v[i] );
             max_v = t > max_v ? t : max_v;
         }
 
         /* measure distance in grid boxs */
 
-        max_u = max_u / fabs((double) dx );
-        max_v = max_v / fabs((double) dy );
+        max_u = max_u / fabs( (double) dx );
+        max_v = max_v / fabs( (double) dy );
 
         t = ( max_u > max_v ? max_u : max_v );
         t = SCALE0 / t;

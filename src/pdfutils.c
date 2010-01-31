@@ -49,7 +49,7 @@ static int debug = 0;
 void
 pdf_set( char *option, int value )
 {
-    if ( !strcmp( option, "debug" ))
+    if ( !strcmp( option, "debug" ) )
         debug = value;
 }
 
@@ -67,7 +67,7 @@ pdf_fopen( const char *filename, const char *mode )
 
     dbug_enter( "pdf_fopen" );
 
-    pdfs = (PDFstrm *) malloc( sizeof ( PDFstrm ));
+    pdfs = (PDFstrm *) malloc( sizeof ( PDFstrm ) );
 
     if ( pdfs != NULL )
     {
@@ -139,7 +139,7 @@ pdf_bopen( U_CHAR *buffer, long bufmax )
 
     dbug_enter( "pdf_bopen" );
 
-    pdfs = (PDFstrm *) malloc( sizeof ( PDFstrm ));
+    pdfs = (PDFstrm *) malloc( sizeof ( PDFstrm ) );
 
     if ( pdfs != NULL )
     {
@@ -187,7 +187,7 @@ pdf_finit( FILE *file )
 
     dbug_enter( "pdf_finit" );
 
-    pdfs = (PDFstrm *) malloc( sizeof ( PDFstrm ));
+    pdfs = (PDFstrm *) malloc( sizeof ( PDFstrm ) );
 
     if ( pdfs != NULL )
     {
@@ -228,9 +228,9 @@ pdf_close( PDFstrm *pdfs )
         }
         else if ( pdfs->buffer != NULL )
         {
-            free((void *) pdfs->buffer );
+            free( (void *) pdfs->buffer );
         }
-        free((void *) pdfs );
+        free( (void *) pdfs );
     }
     return 0;
 }
@@ -265,7 +265,7 @@ pdf_putc( int c, PDFstrm *pdfs )
             pldebug( "pdf_putc",
                 "Increasing buffer to %d bytes\n", pdfs->bufmax );
             pdfs->bufmax += 512;
-            if (( pdfs->buffer = (U_CHAR *) realloc((void *) pdfs->buffer, pdfs->bufmax )) == NULL )
+            if ( ( pdfs->buffer = (U_CHAR *) realloc( (void *) pdfs->buffer, pdfs->bufmax ) ) == NULL )
             {
                 plexit( "pdf_putc: Insufficient memory" );
             }
@@ -384,8 +384,8 @@ pdf_wrx( const U_CHAR *x, long nitems, PDFstrm *pdfs )
                 pldebug( "pdf_wrx",
                     "Increasing buffer to %d bytes\n", pdfs->bufmax );
                 pdfs->bufmax += 512;
-                if (( pdfs->buffer = (U_CHAR *)
-                                     realloc((void *) ( pdfs->buffer ), pdfs->bufmax )) == NULL )
+                if ( ( pdfs->buffer = (U_CHAR *)
+                                      realloc( (void *) ( pdfs->buffer ), pdfs->bufmax ) ) == NULL )
                 {
                     plexit( "pdf_wrx: Insufficient memory" );
                 }
@@ -479,7 +479,7 @@ pdf_rd_header( PDFstrm *pdfs, char *header )
 
     for ( i = 0; i < 79; i++ )
     {
-        if (( c = pdf_getc( pdfs )) == EOF )
+        if ( ( c = pdf_getc( pdfs ) ) == EOF )
             return PDF_RDERR;
 
         header[i] = c;
@@ -528,7 +528,7 @@ pdf_rd_string( PDFstrm *pdfs, char *string, int nmax )
 
     for ( i = 0; i < nmax; i++ )
     {
-        if (( c = pdf_getc( pdfs )) == EOF )
+        if ( ( c = pdf_getc( pdfs ) ) == EOF )
             return PDF_RDERR;
 
         string[i] = c;
@@ -568,10 +568,10 @@ pdf_rd_1byte( PDFstrm *pdfs, U_CHAR *ps )
 {
     U_CHAR x[1];
 
-    if ( !pdf_rdx( x, 1, pdfs ))
+    if ( !pdf_rdx( x, 1, pdfs ) )
         return PDF_RDERR;
 
-    *ps = ((U_CHAR) x[0] );
+    *ps = ( (U_CHAR) x[0] );
     return 0;
 }
 
@@ -586,8 +586,8 @@ pdf_wr_2bytes( PDFstrm *pdfs, U_SHORT s )
 {
     U_CHAR x[2];
 
-    x[0] = (U_CHAR) ((U_LONG) ( s & (U_LONG) 0x00FF ));
-    x[1] = (U_CHAR) ((U_LONG) ( s & (U_LONG) 0xFF00 ) >> 8 );
+    x[0] = (U_CHAR) ( (U_LONG) ( s & (U_LONG) 0x00FF ) );
+    x[1] = (U_CHAR) ( (U_LONG) ( s & (U_LONG) 0xFF00 ) >> 8 );
 
     if ( pdf_wrx( x, 2, pdfs ) != 2 )
         return PDF_WRERR;
@@ -606,7 +606,7 @@ pdf_rd_2bytes( PDFstrm *pdfs, U_SHORT *ps )
 {
     U_CHAR x[2];
 
-    if ( !pdf_rdx( x, 2, pdfs ))
+    if ( !pdf_rdx( x, 2, pdfs ) )
         return PDF_RDERR;
 
     *ps  = 0;
@@ -630,8 +630,8 @@ pdf_wr_2nbytes( PDFstrm *pdfs, U_SHORT *s, PLINT n )
 
     for ( i = 0; i < n; i++ )
     {
-        x[0] = (U_CHAR) ((U_LONG) ( s[i] & (U_LONG) 0x00FF ));
-        x[1] = (U_CHAR) ((U_LONG) ( s[i] & (U_LONG) 0xFF00 ) >> 8 );
+        x[0] = (U_CHAR) ( (U_LONG) ( s[i] & (U_LONG) 0x00FF ) );
+        x[1] = (U_CHAR) ( (U_LONG) ( s[i] & (U_LONG) 0xFF00 ) >> 8 );
 
         if ( pdf_wrx( x, 2, pdfs ) != 2 )
             return PDF_WRERR;
@@ -653,7 +653,7 @@ pdf_rd_2nbytes( PDFstrm *pdfs, U_SHORT *s, PLINT n )
 
     for ( i = 0; i < n; i++ )
     {
-        if ( !pdf_rdx( x, 2, pdfs ))
+        if ( !pdf_rdx( x, 2, pdfs ) )
             return PDF_RDERR;
 
         s[i]  = 0;
@@ -674,10 +674,10 @@ pdf_wr_4bytes( PDFstrm *pdfs, U_LONG s )
 {
     U_CHAR x[4];
 
-    x[0] = (U_CHAR) (( s & (U_LONG) 0x000000FF ));
-    x[1] = (U_CHAR) (( s & (U_LONG) 0x0000FF00 ) >> 8 );
-    x[2] = (U_CHAR) (( s & (U_LONG) 0x00FF0000 ) >> 16 );
-    x[3] = (U_CHAR) (( s & (U_LONG) 0xFF000000 ) >> 24 );
+    x[0] = (U_CHAR) ( ( s & (U_LONG) 0x000000FF ) );
+    x[1] = (U_CHAR) ( ( s & (U_LONG) 0x0000FF00 ) >> 8 );
+    x[2] = (U_CHAR) ( ( s & (U_LONG) 0x00FF0000 ) >> 16 );
+    x[3] = (U_CHAR) ( ( s & (U_LONG) 0xFF000000 ) >> 24 );
 
     if ( pdf_wrx( x, 4, pdfs ) != 4 )
         return PDF_WRERR;
@@ -696,7 +696,7 @@ pdf_rd_4bytes( PDFstrm *pdfs, U_LONG *ps )
 {
     U_CHAR x[4];
 
-    if ( !pdf_rdx( x, 4, pdfs ))
+    if ( !pdf_rdx( x, 4, pdfs ) )
         return PDF_RDERR;
 
     *ps  = 0;
@@ -780,7 +780,7 @@ pdf_wr_ieeef( PDFstrm *pdfs, float f )
     if ( f == 0.0 )
     {
         value = 0;
-        return ( pdf_wr_4bytes( pdfs, value ));
+        return ( pdf_wr_4bytes( pdfs, value ) );
     }
     fdbl  = f;
     fsgl  = (float) fdbl;
@@ -799,7 +799,7 @@ pdf_wr_ieeef( PDFstrm *pdfs, float f )
     {
         e_off  = e_new - ( 1 - bias );
         e_ieee = 0;
-        f_tmp  = (float) ( f_new * pow((double) 2.0, (double) e_off ));
+        f_tmp  = (float) ( f_new * pow( (double) 2.0, (double) e_off ) );
     }
     else
     {
@@ -820,7 +820,7 @@ pdf_wr_ieeef( PDFstrm *pdfs, float f )
 
     value = s_ieee | e_ieee | f_ieee;
 
-    if (( istat = pdf_wr_4bytes( pdfs, value )))
+    if ( ( istat = pdf_wr_4bytes( pdfs, value ) ) )
         return ( istat );
 
     if ( debug )
@@ -846,7 +846,7 @@ pdf_rd_ieeef( PDFstrm *pdfs, float *pf )
     int    istat, exp, bias = 127;
     U_LONG value, s_ieee, e_ieee, f_ieee;
 
-    if (( istat = pdf_rd_4bytes( pdfs, &value )))
+    if ( ( istat = pdf_rd_4bytes( pdfs, &value ) ) )
         return ( istat );
 
     s_ieee = ( value & (U_LONG) 0x80000000 ) >> 31;
@@ -866,7 +866,7 @@ pdf_rd_ieeef( PDFstrm *pdfs, float *pf )
         f_new = 1.0 + f_tmp;
     }
 
-    fsgl = (float) ( f_new * pow( 2.0, (double) exp ));
+    fsgl = (float) ( f_new * pow( 2.0, (double) exp ) );
     if ( s_ieee == 1 )
         fsgl = -fsgl;
 
@@ -946,12 +946,12 @@ plAlloc2dGrid( PLFLT ***f, PLINT nx, PLINT ny )
 {
     PLINT i;
 
-    if (( *f = (PLFLT **) calloc( nx, sizeof ( PLFLT * ))) == NULL )
+    if ( ( *f = (PLFLT **) calloc( nx, sizeof ( PLFLT * ) ) ) == NULL )
         plexit( "Memory allocation error in \"plAlloc2dGrid\"" );
 
     for ( i = 0; i < nx; i++ )
     {
-        if ((( *f )[i] = (PLFLT *) calloc( ny, sizeof ( PLFLT ))) == NULL )
+        if ( ( ( *f )[i] = (PLFLT *) calloc( ny, sizeof ( PLFLT ) ) ) == NULL )
             plexit( "Memory allocation error in \"plAlloc2dGrid\"" );
     }
 }
@@ -968,9 +968,9 @@ plFree2dGrid( PLFLT **f, PLINT nx, PLINT ny )
     PLINT i;
 
     for ( i = 0; i < nx; i++ )
-        free((void *) f[i] );
+        free( (void *) f[i] );
 
-    free((void *) f );
+    free( (void *) f );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -986,7 +986,7 @@ plMinMax2dGrid( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin )
     int   i, j;
     PLFLT m, M;
 
-    if ( !finite( f[0][0] ))
+    if ( !finite( f[0][0] ) )
     {
         M = -HUGE_VAL;
         m = HUGE_VAL;
@@ -998,7 +998,7 @@ plMinMax2dGrid( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin )
     {
         for ( j = 0; j < ny; j++ )
         {
-            if ( !finite( f[i][j] )) continue;
+            if ( !finite( f[i][j] ) ) continue;
             if ( f[i][j] > M ) M = f[i][j];
             if ( f[i][j] < m ) m = f[i][j];
         }

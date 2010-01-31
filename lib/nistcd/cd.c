@@ -36,17 +36,17 @@ cdImagePtr cdImageCreate( int sx, int sy )
 
     im = cdImageStartCgm();
     if ( !im ) return 0;   /* memory allocation failed */
-    if ( !cdImageSetSize( im, sx, sy ))
+    if ( !cdImageSetSize( im, sx, sy ) )
     {
         free( im ); return 0;
     }
 
-    if ( !cdCgmHeader( im ))
+    if ( !cdCgmHeader( im ) )
     {
         free( im ); return 0;
     }
 
-    if ( cdCgmPic( im, 0 ))
+    if ( cdCgmPic( im, 0 ) )
     {
         return im;
     }
@@ -156,7 +156,7 @@ static int cdcomheadlong( unsigned char *es, int elemclass, int id, int len )
  */
 
     /* I'm lazy, call cdcomhead to set the first two bytes */
-    if ( !cdcomhead( es, elemclass, id, 31 )) return 0;
+    if ( !cdcomhead( es, elemclass, id, 31 ) ) return 0;
     es += 2;
 
     /* now set the second two bytes */
@@ -177,7 +177,7 @@ static int cdAddElem( cdImagePtr im, unsigned char *es, int octet_count )
     unsigned char *newlist;     /* in case memory allocation fails */
     int           x;            /* counter */
 
-    while (( octet_count + 1 ) >= im->bytestoend )
+    while ( ( octet_count + 1 ) >= im->bytestoend )
     {
         /* not enough space, must grow elemlist */
         im->listlen = im->listlen + CDGROWLISTSIZE;
@@ -227,13 +227,13 @@ int cdCgmHeader( cdImagePtr im )
                                       * length octets. */
 
     if ( im->state != 0 ) return 0;
-    headerp = (unsigned char *) calloc( 1024, SIZEOF( unsigned char ));
+    headerp = (unsigned char *) calloc( 1024, SIZEOF( unsigned char ) );
     if ( !headerp ) return 0;   /* memory allocation failed */
     head = headerp;
 
     /*** Attribute: BegMF; Elem Class 0; Elem ID 1 */
     buf  = (const unsigned char *) "cd: CgmDraw Library";
-    blen = strlen((const char *) buf );
+    blen = strlen( (const char *) buf );
     cdcomhead( head, 0, 1, blen + 1 );
     head += 2;
     head += cdAppByte( head, (short int) blen );
@@ -257,7 +257,7 @@ int cdCgmHeader( cdImagePtr im )
     octet_count += 4;
 
     /*** Attribute: MFDesc; Elem Class 1; Elem ID 2 */
-    blen = strlen((char *) im->desc );
+    blen = strlen( (char *) im->desc );
     cdcomheadlong( head, 1, 2, blen + 1 );
     head += 4;
     head += cdAppByte( head, (short int) blen );
@@ -311,7 +311,7 @@ int cdCgmHeader( cdImagePtr im )
     buf = im->fontlist;
     if ( buf )     /* don't do this if there aren't any fonts */
     {
-        fontlistlen = strlen((const char *) buf ) + 1;
+        fontlistlen = strlen( (const char *) buf ) + 1;
         cdcomheadlong( head, 1, 13, fontlistlen );
         head += 4;
 
@@ -319,7 +319,7 @@ int cdCgmHeader( cdImagePtr im )
         {
             blen = 0;
             buf2 = buf;
-            while (( *buf ) && ( *buf != ',' ))
+            while ( ( *buf ) && ( *buf != ',' ) )
             {
                 buf++;
                 blen++;
@@ -343,7 +343,7 @@ int cdCgmHeader( cdImagePtr im )
         }
     }     /* end of check to see if any fonts */
 
-    if ( cdAddElem( im, headerp, octet_count ))
+    if ( cdAddElem( im, headerp, octet_count ) )
     {
         free( headerp );
         headerp = 0;
@@ -372,13 +372,13 @@ int cdCgmPic( cdImagePtr im, int sticky )
     int           blen;           /* length of buf */
     int           x1, x2, x3, x4; /* needed for setting defaults */
 
-    if (( im->state != 0 ) && ( im->state != 2 )) return 0;
-    if (( sticky > 2 ) || ( sticky < 0 )) return 0; /* invalid sticky bit */
+    if ( ( im->state != 0 ) && ( im->state != 2 ) ) return 0;
+    if ( ( sticky > 2 ) || ( sticky < 0 ) ) return 0; /* invalid sticky bit */
     /* increment the picture number */
     im->picnum++;
-    tb = (char *) calloc( 4 * 4, SIZEOF( char ));
+    tb = (char *) calloc( 4 * 4, SIZEOF( char ) );
     if ( !tb ) return 0;  /* memory allocation failed */
-    headerp = (unsigned char *) calloc( 1024, SIZEOF( unsigned char ));
+    headerp = (unsigned char *) calloc( 1024, SIZEOF( unsigned char ) );
     if ( !headerp )
     {   /* memory allocation failed */
         free( tb );
@@ -390,7 +390,7 @@ int cdCgmPic( cdImagePtr im, int sticky )
     sprintf( tb, "picture %d", im->picnum );
     buf = (unsigned char*) tb;
     /* buf = (unsigned char *) "picture 1"; */
-    blen = strlen((char *) buf );
+    blen = strlen( (char *) buf );
     cdcomhead( head, 0, 3, blen + 1 );
     head += 2;
     head += cdAppByte( head, (short int) blen );
@@ -401,7 +401,7 @@ int cdCgmPic( cdImagePtr im, int sticky )
     }
     free( tb );
     octet_count += ( blen + 3 );
-    if ( !( blen % 2 ))
+    if ( !( blen % 2 ) )
     {
         octet_count++;
         head += cdAppNull( head, 1 );
@@ -419,7 +419,7 @@ int cdCgmPic( cdImagePtr im, int sticky )
     octet_count += 4;
     /* Picture Descriptor: Line Width Specification Mode;
      * Elem Class 2; Elem ID 3*/
-    if ( sticky && ( im->linespec != CDLINESPEC ))
+    if ( sticky && ( im->linespec != CDLINESPEC ) )
     {
         cdcomhead( head, 2, 3, 2 );
         head        += 2;
@@ -428,7 +428,7 @@ int cdCgmPic( cdImagePtr im, int sticky )
     }
     /* Picture Descriptor: Marker Size Specification Mode;
      * Elem Class 2; Elem ID 4*/
-    if ( sticky && ( im->markerspec != CDMARKERSPEC ))
+    if ( sticky && ( im->markerspec != CDMARKERSPEC ) )
     {
         cdcomhead( head, 2, 4, 2 );
         head        += 2;
@@ -437,7 +437,7 @@ int cdCgmPic( cdImagePtr im, int sticky )
     }
     /* Picture Descriptor: Edge Width Specification Mode;
      * Elem Class 2; Elem ID 5*/
-    if ( sticky && ( im->edgespec != CDEDGESPEC ))
+    if ( sticky && ( im->edgespec != CDEDGESPEC ) )
     {
         cdcomhead( head, 2, 5, 2 );
         head        += 2;
@@ -459,7 +459,7 @@ int cdCgmPic( cdImagePtr im, int sticky )
     head        += 2;
     octet_count += 2;
 
-    if ( cdAddElem( im, headerp, octet_count ))
+    if ( cdAddElem( im, headerp, octet_count ) )
     {
         free( headerp );
     }
@@ -489,30 +489,30 @@ int cdCgmPic( cdImagePtr im, int sticky )
         im->state = 1;
         x1        = im->ltype; x2 = im->lwidth; x3 = im->lcolor;
         im->ltype = CDLTYPE; im->lwidth = CDLWIDTH; im->lcolor = CDLCOLOR;
-        if ( !cdSetLineAttrib( im, x1, x2, x3 )) return 0;
+        if ( !cdSetLineAttrib( im, x1, x2, x3 ) ) return 0;
 
         x1             = im->shapestyle; x2 = im->shapecolor; x3 = im->shapehatch;
         im->shapestyle = CDSHAPESTYLE; im->shapecolor = CDSHAPECOLOR;
         im->shapehatch = CDSHAPEHATCH;
-        if ( !cdSetShapeFillAttrib( im, x1, x2, x3 )) return 0;
+        if ( !cdSetShapeFillAttrib( im, x1, x2, x3 ) ) return 0;
 
         x1            = im->edgetype; x2 = im->edgewidth;
         x3            = im->edgecolor; x4 = im->edgevis;
         im->edgetype  = CDEDGETYPE; im->edgewidth = CDEDGEWIDTH;
         im->edgecolor = CDEDGECOLOR; im->edgevis = CDEDGEVIS;
-        if ( !cdSetShapeEdgeAttrib( im, x1, x2, x3, x4 )) return 0;
+        if ( !cdSetShapeEdgeAttrib( im, x1, x2, x3, x4 ) ) return 0;
 
         x1             = im->textfont; x2 = im->textcolor; x3 = im->textheight;
         im->textfont   = CDTEXTFONT; im->textcolor = CDTEXTCOLOR;
         im->textheight = CDTEXTHEIGHT;
-        if ( !cdSetTextAttrib( im, x1, x2, x3 )) return 0;
+        if ( !cdSetTextAttrib( im, x1, x2, x3 ) ) return 0;
 
         x1 = im->textpath; im->textpath = CDTEXTPATH;
-        if ( !cdSetTextPath( im, x1 )) return 0;
+        if ( !cdSetTextPath( im, x1 ) ) return 0;
 
         x1        = im->mtype; x2 = im->msize; x3 = im->mcolor;
         im->ltype = CDMTYPE; im->lwidth = CDMSIZE; im->lcolor = CDMCOLOR;
-        if ( !cdSetMarkerAttrib( im, x1, x2, x3 )) return 0;
+        if ( !cdSetMarkerAttrib( im, x1, x2, x3 ) ) return 0;
     }
     else
     {
@@ -536,10 +536,10 @@ int cdCgmNewPic( cdImagePtr im, int sticky )
  */
 {
     /* close the current picture */
-    if ( !cdImageEndPic( im )) return 0;
+    if ( !cdImageEndPic( im ) ) return 0;
 
     /* now start the new picture */
-    return ( cdCgmPic( im, sticky ));
+    return ( cdCgmPic( im, sticky ) );
 }
 
 int cdImageCgm( cdImagePtr im, FILE *out )
@@ -578,15 +578,15 @@ int cdSetLineType( cdImagePtr im, int lntype )
         return 1;
 
     /* Make sure that lntype is between 1 and 5 */
-    if (( lntype < 1 ) || ( lntype > 5 ))
+    if ( ( lntype < 1 ) || ( lntype > 5 ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
-    if ( !cdcomhead( es, 5, 2, 2 ))
+    if ( !cdcomhead( es, 5, 2, 2 ) )
     {
         free( esp ); return 0;
     }
@@ -599,7 +599,7 @@ int cdSetLineType( cdImagePtr im, int lntype )
     octet_count = 4;     /* we just know this */
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->ltype = (short int) lntype;
         free( esp );
@@ -634,7 +634,7 @@ int cdSetLineWidth( cdImagePtr im, int lnwidth )
         return 1;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
@@ -644,7 +644,7 @@ int cdSetLineWidth( cdImagePtr im, int lnwidth )
      * if Line Spec is 0 (0, absolute) then it is 16 bit SI */
     if ( im->linespec )
     {
-        if ( !cdcomhead( es, 5, 3, 4 ))
+        if ( !cdcomhead( es, 5, 3, 4 ) )
         {
             free( esp ); return 0;
         }
@@ -658,7 +658,7 @@ int cdSetLineWidth( cdImagePtr im, int lnwidth )
     }
     else
     {
-        if ( !cdcomhead( es, 5, 3, 2 ))
+        if ( !cdcomhead( es, 5, 3, 2 ) )
         {
             free( esp ); return 0;
         }
@@ -670,7 +670,7 @@ int cdSetLineWidth( cdImagePtr im, int lnwidth )
 
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->lwidth = lnwidth;
         free( esp );
@@ -703,16 +703,16 @@ int cdSetLineColor( cdImagePtr im, int lncolor )
 
     /* Make sure the color they want to use has been allocated.
      * also, that color must be non-negative */
-    if (( lncolor >= im->colorsTotal ) || ( lncolor < 0 ))
+    if ( ( lncolor >= im->colorsTotal ) || ( lncolor < 0 ) )
         return 0;          /* you must allocate a color before you use it */
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
 
-    if ( !cdcomhead( es, 5, 4, 1 ))
+    if ( !cdcomhead( es, 5, 4, 1 ) )
     {
         free( esp ); return 0;
     }
@@ -727,7 +727,7 @@ int cdSetLineColor( cdImagePtr im, int lncolor )
                           * 1 octet of data, 1 octet of null data */
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->lcolor = (short int) lncolor;
         free( esp );
@@ -766,16 +766,16 @@ int cdSetFillStyle( cdImagePtr im, int instyle )
 
     /* Make sure that lnhatch is between 0 and 6, but not
      * 2, 5, or 6 */
-    if (( instyle < 0 ) || ( instyle > 4 ) || ( instyle == 2 ))
+    if ( ( instyle < 0 ) || ( instyle > 4 ) || ( instyle == 2 ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
     /* set the header to Class 5, ID 22, Length 2 */
-    if ( !cdcomhead( es, 5, 22, 2 ))
+    if ( !cdcomhead( es, 5, 22, 2 ) )
     {
         free( esp ); return 0;
     }
@@ -787,7 +787,7 @@ int cdSetFillStyle( cdImagePtr im, int instyle )
     octet_count = 4;     /* we just know this */
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->shapestyle = (short int) instyle;
         free( esp );
@@ -822,15 +822,15 @@ int cdSetFillColor( cdImagePtr im, int incolor )
 
     /* Make sure the color they want to use has been allocated.
      * also, that color must be non-negative */
-    if (( incolor >= im->colorsTotal ) || ( incolor < 0 ))
+    if ( ( incolor >= im->colorsTotal ) || ( incolor < 0 ) )
         return 0;          /* you must allocate a color before you use it */
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
-    if ( !cdcomhead( es, 5, 23, 1 ))
+    if ( !cdcomhead( es, 5, 23, 1 ) )
     {
         free( esp ); return 0;
     }
@@ -844,7 +844,7 @@ int cdSetFillColor( cdImagePtr im, int incolor )
                           * 1 octet of data, 1 octet of null data */
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->shapecolor = (short int) incolor;
         free( esp );
@@ -885,16 +885,16 @@ int cdSetFillHatch( cdImagePtr im, int inhatch )
         return 1;
 
     /* Make sure that lnhatch is between 1 and 6 */
-    if (( inhatch < 1 ) || ( inhatch > 6 ))
+    if ( ( inhatch < 1 ) || ( inhatch > 6 ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
     /* set the command header to class 5, id 24, length 2 */
-    if ( !cdcomhead( es, 5, 24, 2 ))
+    if ( !cdcomhead( es, 5, 24, 2 ) )
     {
         free( esp ); return 0;
     }
@@ -910,7 +910,7 @@ int cdSetFillHatch( cdImagePtr im, int inhatch )
     octet_count = 4;     /* we just know this */
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->shapehatch = (short int) inhatch;
         free( esp );
@@ -952,15 +952,15 @@ int cdSetEdgeType( cdImagePtr im, int edtype )
         return 1;
 
     /* Make sure that lntype is between 1 and 5 */
-    if (( edtype < 1 ) || ( edtype > 5 ))
+    if ( ( edtype < 1 ) || ( edtype > 5 ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
-    if ( !cdcomhead( es, 5, 27, 2 ))
+    if ( !cdcomhead( es, 5, 27, 2 ) )
     {
         free( esp ); return 0;
     }
@@ -972,7 +972,7 @@ int cdSetEdgeType( cdImagePtr im, int edtype )
     octet_count = 4;     /* we just know this */
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->edgetype = (short int) edtype;
         free( esp );
@@ -1007,7 +1007,7 @@ int cdSetEdgeWidth( cdImagePtr im, int edwidth )
         return 1;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
@@ -1016,7 +1016,7 @@ int cdSetEdgeWidth( cdImagePtr im, int edwidth )
      * edge spec is absolute (0) then just 16 bit SI */
     if ( im->edgespec )
     {
-        if ( !cdcomhead( es, 5, 28, 4 ))
+        if ( !cdcomhead( es, 5, 28, 4 ) )
         {
             free( esp ); return 0;
         }
@@ -1030,7 +1030,7 @@ int cdSetEdgeWidth( cdImagePtr im, int edwidth )
     }
     else
     {
-        if ( !cdcomhead( es, 5, 28, 2 ))
+        if ( !cdcomhead( es, 5, 28, 2 ) )
         {
             free( esp ); return 0;
         }
@@ -1041,7 +1041,7 @@ int cdSetEdgeWidth( cdImagePtr im, int edwidth )
     }
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->edgewidth = edwidth;
         free( esp );
@@ -1076,14 +1076,14 @@ int cdSetEdgeColor( cdImagePtr im, int edcolor )
 
     /* Make sure the color they want to use has been allocated.
      * also, that color must be non-negative */
-    if (( edcolor >= im->colorsTotal ) || ( edcolor < 0 ))
+    if ( ( edcolor >= im->colorsTotal ) || ( edcolor < 0 ) )
         return 0;          /* you must allocate a color before you use it */
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
-    if ( !cdcomhead( es, 5, 29, 1 ))
+    if ( !cdcomhead( es, 5, 29, 1 ) )
     {
         free( esp ); return 0;
     }
@@ -1097,7 +1097,7 @@ int cdSetEdgeColor( cdImagePtr im, int edcolor )
                           * 1 octet of data, 1 octet of null data */
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->edgecolor = (short int) edcolor;
         free( esp );
@@ -1133,11 +1133,11 @@ int cdSetEdgeVis( cdImagePtr im, int edvis )
         return 1;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
-    if ( !cdcomhead( es, 5, 30, 2 ))
+    if ( !cdcomhead( es, 5, 30, 2 ) )
     {
         free( esp ); return 0;
     }
@@ -1151,7 +1151,7 @@ int cdSetEdgeVis( cdImagePtr im, int edvis )
 
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->edgevis = (short int) edvis;
         free( esp );
@@ -1196,15 +1196,15 @@ int cdSetTextFont( cdImagePtr im, int font )
         return 1;
 
     /* Make sure that font is between 1 and the number of fonts */
-    if (( font < 1 ) || ( font > im->numfonts ))
+    if ( ( font < 1 ) || ( font > im->numfonts ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
-    if ( !cdcomhead( es, 5, 10, 2 ))
+    if ( !cdcomhead( es, 5, 10, 2 ) )
     {
         free( esp ); return 0;
     }
@@ -1215,7 +1215,7 @@ int cdSetTextFont( cdImagePtr im, int font )
     octet_count = 4;     /* we just know this */
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->textfont = (short int) font;
         free( esp );
@@ -1247,15 +1247,15 @@ int cdSetTextColor( cdImagePtr im, int color )
 
     /* Make sure the color they want to use has been allocated.
      * also, that color must be non-negative */
-    if (( color >= im->colorsTotal ) || ( color < 0 ))
+    if ( ( color >= im->colorsTotal ) || ( color < 0 ) )
         return 0;          /* you must allocate a color before you use it */
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
-    if ( !cdcomhead( es, 5, 14, 1 ))
+    if ( !cdcomhead( es, 5, 14, 1 ) )
     {
         free( esp ); return 0;
     }
@@ -1268,7 +1268,7 @@ int cdSetTextColor( cdImagePtr im, int color )
                           * 1 octet of data, 1 octet of null data */
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->textcolor = (short int) color;
         free( esp );
@@ -1299,11 +1299,11 @@ int cdSetTextHeight( cdImagePtr im, int height )
         return 1;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
-    if ( !cdcomhead( es, 5, 15, 2 ))
+    if ( !cdcomhead( es, 5, 15, 2 ) )
     {
         free( esp ); return 0;
     }
@@ -1313,7 +1313,7 @@ int cdSetTextHeight( cdImagePtr im, int height )
     octet_count += 2;
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->textheight = height;
         free( esp );
@@ -1349,12 +1349,12 @@ int cdSetTextPath( cdImagePtr im, int tpath )
         return 1;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp         = es;
     octet_count = 0;
 
-    if ( !cdcomhead( es, 5, 17, 2 ))
+    if ( !cdcomhead( es, 5, 17, 2 ) )
     {
         free( esp ); return 0;
     }
@@ -1364,7 +1364,7 @@ int cdSetTextPath( cdImagePtr im, int tpath )
     octet_count += 2;
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->textpath = (short int) tpath;
         free( esp );
@@ -1396,12 +1396,12 @@ int cdSetTextOrient( cdImagePtr im, int xup, int yup, int xbase, int ybase )
 
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp         = es;
     octet_count = 0;
 
-    if ( !cdcomhead( es, 5, 16, 8 ))
+    if ( !cdcomhead( es, 5, 16, 8 ) )
     {
         free( esp ); return 0;
     }
@@ -1420,7 +1420,7 @@ int cdSetTextOrient( cdImagePtr im, int xup, int yup, int xbase, int ybase )
     octet_count += 2;
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -1454,15 +1454,15 @@ int cdSetMarkerType( cdImagePtr im, int mtype )
         return 1;
 
     /* Make sure that mtype is between 1 and 5 */
-    if (( mtype < 1 ) || ( mtype > 5 ))
+    if ( ( mtype < 1 ) || ( mtype > 5 ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
-    if ( !cdcomhead( es, 5, 6, 2 ))
+    if ( !cdcomhead( es, 5, 6, 2 ) )
     {
         free( esp ); return 0;
     }
@@ -1475,7 +1475,7 @@ int cdSetMarkerType( cdImagePtr im, int mtype )
     octet_count = 4;     /* we just know this */
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->mtype = (short int) mtype;
         free( esp );
@@ -1510,7 +1510,7 @@ int cdSetMarkerSize( cdImagePtr im, int msize )
         return 1;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
@@ -1520,7 +1520,7 @@ int cdSetMarkerSize( cdImagePtr im, int msize )
      * for absolute mode (0, absolute) it is 16 bit SI */
     if ( im->markerspec )
     {
-        if ( !cdcomhead( es, 5, 7, 4 ))
+        if ( !cdcomhead( es, 5, 7, 4 ) )
         {
             free( esp ); return 0;
         }
@@ -1534,7 +1534,7 @@ int cdSetMarkerSize( cdImagePtr im, int msize )
     }
     else
     {
-        if ( !cdcomhead( es, 5, 7, 4 ))
+        if ( !cdcomhead( es, 5, 7, 4 ) )
         {
             free( esp ); return 0;
         }
@@ -1546,7 +1546,7 @@ int cdSetMarkerSize( cdImagePtr im, int msize )
 
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->msize = msize;
         free( esp );
@@ -1579,16 +1579,16 @@ int cdSetMarkerColor( cdImagePtr im, int mcolor )
 
     /* Make sure the color they want to use has been allocated.
      * also, that color must be non-negative */
-    if (( mcolor >= im->colorsTotal ) || ( mcolor < 0 ))
+    if ( ( mcolor >= im->colorsTotal ) || ( mcolor < 0 ) )
         return 0;          /* you must allocate a color before you use it */
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
 
-    if ( !cdcomhead( es, 5, 8, 1 ))
+    if ( !cdcomhead( es, 5, 8, 1 ) )
     {
         free( esp ); return 0;
     }
@@ -1603,7 +1603,7 @@ int cdSetMarkerColor( cdImagePtr im, int mcolor )
                           * 1 octet of data, 1 octet of null data */
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         im->mcolor = (short int) mcolor;
         free( esp );
@@ -1622,9 +1622,9 @@ int cdSetLineAttrib( cdImagePtr im, int lntype, int lnwidth, int lncolor )
  * until changed, so you don't have to output them every time.
  */
 
-    if ( !cdSetLineType( im, lntype )) return 0;
-    if ( !cdSetLineWidth( im, lnwidth )) return 0;
-    if ( !cdSetLineColor( im, lncolor )) return 0;
+    if ( !cdSetLineType( im, lntype ) ) return 0;
+    if ( !cdSetLineWidth( im, lnwidth ) ) return 0;
+    if ( !cdSetLineColor( im, lncolor ) ) return 0;
 
     return 1;
 }
@@ -1644,9 +1644,9 @@ int cdSetShapeFillAttrib( cdImagePtr im, int instyle, int incolor, int inhatch )
  *                   neg. slope parallel lines, horizontal/vertical
  *                   crosshatch, positive/negative slope crosshatch)
  */
-    if ( !cdSetFillStyle( im, instyle )) return 0;
-    if ( !cdSetFillColor( im, incolor )) return 0;
-    if ( !cdSetFillHatch( im, inhatch )) return 0;
+    if ( !cdSetFillStyle( im, instyle ) ) return 0;
+    if ( !cdSetFillColor( im, incolor ) ) return 0;
+    if ( !cdSetFillHatch( im, inhatch ) ) return 0;
 
     return 1;
 }
@@ -1666,10 +1666,10 @@ int cdSetShapeEdgeAttrib( cdImagePtr im, int edtype, int edwidth, int edcolor, i
  *     Edge Colour (index into the color table)
  *     Edge Visibility (integer 0 or 1, corresponding to: Off, On)
  */
-    if ( !cdSetEdgeType( im, edtype )) return 0;
-    if ( !cdSetEdgeWidth( im, edwidth )) return 0;
-    if ( !cdSetEdgeColor( im, edcolor )) return 0;
-    if ( !cdSetEdgeVis( im, edvis )) return 0;
+    if ( !cdSetEdgeType( im, edtype ) ) return 0;
+    if ( !cdSetEdgeWidth( im, edwidth ) ) return 0;
+    if ( !cdSetEdgeColor( im, edcolor ) ) return 0;
+    if ( !cdSetEdgeVis( im, edvis ) ) return 0;
 
     return 1;
 }
@@ -1694,9 +1694,9 @@ int cdSetTextAttrib( cdImagePtr im, int font, int color, int height )
  * size is the approximate size you want the text written in.
  */
 
-    if ( !cdSetTextFont( im, font )) return 0;
-    if ( !cdSetTextColor( im, color )) return 0;
-    if ( !cdSetTextHeight( im, height )) return 0;
+    if ( !cdSetTextFont( im, font ) ) return 0;
+    if ( !cdSetTextColor( im, color ) ) return 0;
+    if ( !cdSetTextHeight( im, height ) ) return 0;
 
     return 1;
 }
@@ -1707,9 +1707,9 @@ int cdSetMarkerAttrib( cdImagePtr im, int mtype, int msize, int mcolor )
  * until changed, so you don't have to output them every time.
  */
 
-    if ( !cdSetMarkerType( im, mtype )) return 0;
-    if ( !cdSetMarkerSize( im, msize )) return 0;
-    if ( !cdSetMarkerColor( im, mcolor )) return 0;
+    if ( !cdSetMarkerType( im, mtype ) ) return 0;
+    if ( !cdSetMarkerSize( im, msize ) ) return 0;
+    if ( !cdSetMarkerColor( im, mcolor ) ) return 0;
 
     return 1;
 }
@@ -1743,7 +1743,7 @@ int cdImageColorClosest( cdImagePtr im, int r, int g, int b )
     long      rd, gd, bd;
     int       ct      = ( -1 );
     long      mindist = 0;
-    for ( i = 0; ( i < ( im->colorsTotal )); i++ )
+    for ( i = 0; ( i < ( im->colorsTotal ) ); i++ )
     {
         long dist;
         if ( im->open[i] )
@@ -1754,7 +1754,7 @@ int cdImageColorClosest( cdImagePtr im, int r, int g, int b )
         gd   = ( im->green[i] - g );
         bd   = ( im->blue[i] - b );
         dist = rd * rd + gd * gd + bd * bd;
-        if (( i == 0 ) || ( dist < mindist ))
+        if ( ( i == 0 ) || ( dist < mindist ) )
         {
             mindist = dist;
             ct      = i;
@@ -1767,7 +1767,7 @@ int cdImageColorClear( cdImagePtr im )
 {
 /* mark all entries in the color table as open */
     short int i;
-    for ( i = 0; ( i < ( cdMaxColors )); i++ )
+    for ( i = 0; ( i < ( cdMaxColors ) ); i++ )
     {
         im->open[i] = 1;
     }
@@ -1780,15 +1780,15 @@ int cdImageColorExact( cdImagePtr im, int r, int g, int b )
 /* gej: 5/96, changed colors to work with short ints */
 {
     short int i;
-    for ( i = 0; ( i < ( im->colorsTotal )); i++ )
+    for ( i = 0; ( i < ( im->colorsTotal ) ); i++ )
     {
         if ( im->open[i] )
         {
             continue;
         }
-        if (( im->red[i] == r ) &&
-            ( im->green[i] == g ) &&
-            ( im->blue[i] == b ))
+        if ( ( im->red[i] == r ) &&
+             ( im->green[i] == g ) &&
+             ( im->blue[i] == b ) )
         {
             return i;
         }
@@ -1804,7 +1804,7 @@ static int cdImageAddColorIndex( cdImagePtr im, int r, int g, int b )
 {
     short int i;
     short int ct = ( -1 );
-    for ( i = 0; ( i < ( im->colorsTotal )); i++ )
+    for ( i = 0; ( i < ( im->colorsTotal ) ); i++ )
     {
         if ( im->open[i] )
         {
@@ -1812,7 +1812,7 @@ static int cdImageAddColorIndex( cdImagePtr im, int r, int g, int b )
             break;
         }
     }
-    if ( ct == ( -1 ))
+    if ( ct == ( -1 ) )
     {
         ct = im->colorsTotal;
         if ( ct == cdMaxColors )
@@ -1848,27 +1848,27 @@ static int cdImageAddColor( cdImagePtr im, int si, int ei )
     if ( ei < 0 ) return -1;   /* no colors being added */
     numco = ei - si + 1;
 
-    if (( numco > 0 ) && ( numco < 10 ))
+    if ( ( numco > 0 ) && ( numco < 10 ) )
     {
         /* we can use the short form of the command */
         /* allocate sufficent space. Should be 32 bits * 10 to be safe*/
-        cts = (unsigned char *) calloc( 4 * 10, SIZEOF( unsigned char ));
+        cts = (unsigned char *) calloc( 4 * 10, SIZEOF( unsigned char ) );
         if ( !cts ) return -1;       /* memory allocation failed */
         ctsp = cts;
-        if ( !cdcomhead( ctsp, 5, 34, ( numco * 3 ) + 1 ))
+        if ( !cdcomhead( ctsp, 5, 34, ( numco * 3 ) + 1 ) )
         {
             free( cts ); return -1;
         }
         ctsp += 2; octet_count += 2;
     }
-    else if (( numco > 9 ) && ( numco < 256 ))
+    else if ( ( numco > 9 ) && ( numco < 256 ) )
     {
         /* we must use the long form of the command */
         /* allocate sufficent space. Should be 32 bits*256 to be safe*/
-        cts = (unsigned char *) calloc( 256 * 4, SIZEOF( unsigned char ));
+        cts = (unsigned char *) calloc( 256 * 4, SIZEOF( unsigned char ) );
         if ( !cts ) return -1;       /* memory allocation failed */
         ctsp = cts;
-        if ( !cdcomheadlong( ctsp, 5, 34, ( numco * 3 ) + 1 ))
+        if ( !cdcomheadlong( ctsp, 5, 34, ( numco * 3 ) + 1 ) )
         {
             free( cts ); return -1;
         }
@@ -1899,7 +1899,7 @@ static int cdImageAddColor( cdImagePtr im, int si, int ei )
         ctsp        += cdAppNull( ctsp, curly );
     }
     /* add it to the buffer */
-    if ( cdAddElem( im, cts, octet_count ))
+    if ( cdAddElem( im, cts, octet_count ) )
     {
         free( cts );
         return 1;
@@ -2076,15 +2076,15 @@ int cdLine( cdImagePtr im, int x1, int y1, int x2, int y2 )
     /* check to make sure the line is withing the scope of the picture
      * ie. the values you give for drawing the line are within
      * the values you created the picture with */
-    if ( !( cdImageBoundsSafe( im, x1, y1 )) || !( cdImageBoundsSafe( im, x2, y2 )))
+    if ( !( cdImageBoundsSafe( im, x1, y1 ) ) || !( cdImageBoundsSafe( im, x2, y2 ) ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
-    if ( !cdcomhead( es, 4, 1, 8 ))
+    if ( !cdcomhead( es, 4, 1, 8 ) )
     {
         free( esp ); return 0;
     }
@@ -2118,7 +2118,7 @@ int cdLine( cdImagePtr im, int x1, int y1, int x2, int y2 )
     octet_count++;
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2142,15 +2142,15 @@ int cdMarker( cdImagePtr im, int x, int y )
     /* check to make sure the line is withing the scope of the picture
      * ie. the values you give for drawing the line are within
      * the values you created the picture with */
-    if ( !cdImageBoundsSafe( im, x, y ))
+    if ( !cdImageBoundsSafe( im, x, y ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
-    if ( !cdcomhead( es, 4, 3, 4 ))
+    if ( !cdcomhead( es, 4, 3, 4 ) )
     {
         free( esp ); return 0;
     }
@@ -2163,7 +2163,7 @@ int cdMarker( cdImagePtr im, int x, int y )
     es          += 2;
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2195,16 +2195,16 @@ int cdRectangle( cdImagePtr im, int x1, int y1, int x2, int y2 )
     /* check to make sure the line is withing the scope of the picture
      * ie. the values you give for drawing the line are within
      * the values you created the picture with */
-    if ( !( cdImageBoundsSafe( im, x1, y1 )) || !( cdImageBoundsSafe( im, x2, y2 )))
+    if ( !( cdImageBoundsSafe( im, x1, y1 ) ) || !( cdImageBoundsSafe( im, x2, y2 ) ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
     /* their are four 16 bit signed integers as attributes */
-    if ( !cdcomhead( es, 4, 11, 8 ))
+    if ( !cdcomhead( es, 4, 11, 8 ) )
     {
         free( esp ); return 0;
     }
@@ -2237,7 +2237,7 @@ int cdRectangle( cdImagePtr im, int x1, int y1, int x2, int y2 )
     octet_count++;
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2266,16 +2266,16 @@ int cdCircle( cdImagePtr im, int cx, int cy, int r )
     /* check to make sure the circle is withing the scope of the picture
      * ie. the values you give for drawing the circle are within
      * the values you created the picture with */
-    if ( !( cdImageBoundsSafe( im, cx, cy )))
+    if ( !( cdImageBoundsSafe( im, cx, cy ) ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
     /* their are three 16 bit signed integers as attributes */
-    if ( !cdcomhead( es, 4, 12, 6 ))
+    if ( !cdcomhead( es, 4, 12, 6 ) )
     {
         free( esp ); return 0;
     }
@@ -2303,7 +2303,7 @@ int cdCircle( cdImagePtr im, int cx, int cy, int r )
 
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2330,16 +2330,16 @@ int cdArc3Pt( cdImagePtr im, int sx, int sy, int ix, int iy, int ex, int ey )
     /* check to make sure the line is withing the scope of the picture
      * ie. the values you give for drawing the line are within
      * the values you created the picture with */
-    if ( !( cdImageBoundsSafe( im, sx, sy )) || !( cdImageBoundsSafe( im, ix, iy )) || !( cdImageBoundsSafe( im, ex, ey )))
+    if ( !( cdImageBoundsSafe( im, sx, sy ) ) || !( cdImageBoundsSafe( im, ix, iy ) ) || !( cdImageBoundsSafe( im, ex, ey ) ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
     /* their are six 16 bit signed integers as attributes */
-    if ( !cdcomhead( es, 4, 13, 12 ))
+    if ( !cdcomhead( es, 4, 13, 12 ) )
     {
         free( esp ); return 0;
     }
@@ -2384,7 +2384,7 @@ int cdArc3Pt( cdImagePtr im, int sx, int sy, int ix, int iy, int ex, int ey )
     octet_count++;
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2413,20 +2413,20 @@ int cdArc3PtClose( cdImagePtr im, int sx, int sy, int ix, int iy, int ex, int ey
     /* check to make sure the line is withing the scope of the picture
      * ie. the values you give for drawing the line are within
      * the values you created the picture with */
-    if ( !( cdImageBoundsSafe( im, sx, sy )) || !( cdImageBoundsSafe( im, ix, iy )) || !( cdImageBoundsSafe( im, ex, ey )))
+    if ( !( cdImageBoundsSafe( im, sx, sy ) ) || !( cdImageBoundsSafe( im, ix, iy ) ) || !( cdImageBoundsSafe( im, ex, ey ) ) )
         return 0;
 
     /* make sure that they close the arc either with pie (0) or chord (1) */
-    if (( cl != 0 ) && ( cl != 1 ))
+    if ( ( cl != 0 ) && ( cl != 1 ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 6 to be safe */
-    es = (unsigned char *) calloc( 4 * 6, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 6, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
     /* their are seven 16 bit signed integers as attributes */
-    if ( !cdcomhead( es, 4, 14, 14 ))
+    if ( !cdcomhead( es, 4, 14, 14 ) )
     {
         free( esp ); return 0;
     }
@@ -2449,7 +2449,7 @@ int cdArc3PtClose( cdImagePtr im, int sx, int sy, int ix, int iy, int ex, int ey
     es          += 2;
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2475,16 +2475,16 @@ int cdEllipse( cdImagePtr im, int cx, int cy, int d1x, int d1y, int d2x, int d2y
     /* check to make sure the line is withing the scope of the picture
      * ie. the values you give for drawing the line are within
      * the values you created the picture with */
-    if ( !( cdImageBoundsSafe( im, cx, cy )) || !( cdImageBoundsSafe( im, d1x, d1y )) || !( cdImageBoundsSafe( im, d2x, d2y )))
+    if ( !( cdImageBoundsSafe( im, cx, cy ) ) || !( cdImageBoundsSafe( im, d1x, d1y ) ) || !( cdImageBoundsSafe( im, d2x, d2y ) ) )
         return 0;
 
     /* allocate sufficent space.  should be 32 bits * 4 to be safe */
-    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
     /* their are six 16 bit signed integers as attributes */
-    if ( !cdcomhead( es, 4, 17, 12 ))
+    if ( !cdcomhead( es, 4, 17, 12 ) )
     {
         free( esp ); return 0;
     }
@@ -2505,7 +2505,7 @@ int cdEllipse( cdImagePtr im, int cx, int cy, int d1x, int d1y, int d2x, int d2y
     es          += 2;
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2542,13 +2542,13 @@ int cdPolygon( cdImagePtr im, cdPointPtr p, int n )
         /* It fits in the short form of the command, lets us
          * add it right now, shall we? */
         /* allocate sufficent space. Should be 32 bits*10 to be safe */
-        es = (unsigned char *) calloc( 4 * 10, SIZEOF( unsigned char ));
+        es = (unsigned char *) calloc( 4 * 10, SIZEOF( unsigned char ) );
         if ( !es ) return 0;       /* memory allocation failed */
         esp = es;
 
 
         /* their are n*2 16 bit signed integers as attributes */
-        if ( !cdcomhead( es, 4, 7, ( n * 4 )))
+        if ( !cdcomhead( es, 4, 7, ( n * 4 ) ) )
         {
             free( esp ); return 0;
         }
@@ -2568,11 +2568,11 @@ int cdPolygon( cdImagePtr im, cdPointPtr p, int n )
          * (at most 32769) then things could fail in a most unsavory fashion.
          */
         /* allocate sufficent space.  32 bits*(n+1) to be safe */
-        es = (unsigned char *) calloc( 4 * ( n + 1 ), SIZEOF( unsigned char ));
+        es = (unsigned char *) calloc( 4 * ( n + 1 ), SIZEOF( unsigned char ) );
         if ( !es ) return 0;       /* memory allocation failed */
         esp = es;
 
-        if ( !cdcomheadlong( es, 4, 7, ( n * 4 )))
+        if ( !cdcomheadlong( es, 4, 7, ( n * 4 ) ) )
         {
             free( esp ); return 0;
         }
@@ -2596,7 +2596,7 @@ int cdPolygon( cdImagePtr im, cdPointPtr p, int n )
     }
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2635,13 +2635,13 @@ int cdPolygonSet( cdImagePtr im, cdPointPtr p, int n )
         /* It fits in the short form of the command, lets us
          * add it right now, shall we? */
         /* allocate sufficent space. Should be 48 bits*10 to be safe */
-        es = (unsigned char *) calloc( 6 * 10, SIZEOF( unsigned char ));
+        es = (unsigned char *) calloc( 6 * 10, SIZEOF( unsigned char ) );
         if ( !es ) return 0;       /* memory allocation failed */
         esp = es;
 
 
         /* their are n*2 16 bit signed integers as attributes */
-        if ( !cdcomhead( es, 4, 8, ( n * 6 )))
+        if ( !cdcomhead( es, 4, 8, ( n * 6 ) ) )
         {
             free( esp ); return 0;
         }
@@ -2661,11 +2661,11 @@ int cdPolygonSet( cdImagePtr im, cdPointPtr p, int n )
          * (at most 32769) then things could fail in a most unsavory fashion.
          */
         /* allocate sufficent space.  48 bits*(n+1) to be safe */
-        es = (unsigned char *) calloc( 6 * ( n + 1 ), SIZEOF( unsigned char ));
+        es = (unsigned char *) calloc( 6 * ( n + 1 ), SIZEOF( unsigned char ) );
         if ( !es ) return 0;       /* memory allocation failed */
         esp = es;
 
-        if ( !cdcomheadlong( es, 4, 8, ( n * 6 )))
+        if ( !cdcomheadlong( es, 4, 8, ( n * 6 ) ) )
         {
             free( esp ); return 0;
         }
@@ -2690,7 +2690,7 @@ int cdPolygonSet( cdImagePtr im, cdPointPtr p, int n )
     }
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2725,13 +2725,13 @@ int cdPolyLine( cdImagePtr im, cdPointPtr p, int n )
         /* It fits in the short form of the command, lets us
          * add it right now, shall we? */
         /* allocate sufficent space. Should be 32 bits*10 to be safe */
-        es = (unsigned char *) calloc( 4 * 10, SIZEOF( unsigned char ));
+        es = (unsigned char *) calloc( 4 * 10, SIZEOF( unsigned char ) );
         if ( !es ) return 0;       /* memory allocation failed */
         esp = es;
 
 
         /* their are n*2 16 bit signed integers as attributes */
-        if ( !cdcomhead( es, 4, 1, ( n * 4 )))
+        if ( !cdcomhead( es, 4, 1, ( n * 4 ) ) )
         {
             free( esp ); return 0;
         }
@@ -2747,11 +2747,11 @@ int cdPolyLine( cdImagePtr im, cdPointPtr p, int n )
          * (at most 32769) then the list may have to grow several times
          */
         /* allocate sufficent space.  32 bits*(n+1) to be safe */
-        es = (unsigned char *) calloc( 4 * ( n + 1 ), SIZEOF( unsigned char ));
+        es = (unsigned char *) calloc( 4 * ( n + 1 ), SIZEOF( unsigned char ) );
         if ( !es ) return 0;       /* memory allocation failed */
         esp = es;
 
-        if ( !cdcomheadlong( es, 4, 1, ( n * 4 )))
+        if ( !cdcomheadlong( es, 4, 1, ( n * 4 ) ) )
         {
             free( esp ); return 0;
         }
@@ -2774,7 +2774,7 @@ int cdPolyLine( cdImagePtr im, cdPointPtr p, int n )
     }
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2808,13 +2808,13 @@ int cdPolyMarker( cdImagePtr im, cdPointPtr p, int n )
         /* It fits in the short form of the command, lets us
          * add it right now, shall we? */
         /* allocate sufficent space. Should be 32 bits*10 to be safe */
-        es = (unsigned char *) calloc( 4 * 10, SIZEOF( unsigned char ));
+        es = (unsigned char *) calloc( 4 * 10, SIZEOF( unsigned char ) );
         if ( !es ) return 0;       /* memory allocation failed */
         esp = es;
 
 
         /* their are n*2 16 bit signed integers as attributes */
-        if ( !cdcomhead( es, 4, 3, ( n * 4 )))
+        if ( !cdcomhead( es, 4, 3, ( n * 4 ) ) )
         {
             free( esp ); return 0;
         }
@@ -2830,11 +2830,11 @@ int cdPolyMarker( cdImagePtr im, cdPointPtr p, int n )
          * (at most 32769) then the list may have to grow several times
          */
         /* allocate sufficent space.  32 bits*(n+1) to be safe */
-        es = (unsigned char *) calloc( 4 * ( n + 1 ), SIZEOF( unsigned char ));
+        es = (unsigned char *) calloc( 4 * ( n + 1 ), SIZEOF( unsigned char ) );
         if ( !es ) return 0;       /* memory allocation failed */
         esp = es;
 
-        if ( !cdcomheadlong( es, 4, 3, ( n * 4 )))
+        if ( !cdcomheadlong( es, 4, 3, ( n * 4 ) ) )
         {
             free( esp ); return 0;
         }
@@ -2857,7 +2857,7 @@ int cdPolyMarker( cdImagePtr im, cdPointPtr p, int n )
     }
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2892,7 +2892,7 @@ int cdText( cdImagePtr im, int x, int y, const char *ts )
     /* check to make sure the Text is within the scope of the picture
      * actually, I am only checking the start of it
      */
-    if ( !( cdImageBoundsSafe( im, x, y )))
+    if ( !( cdImageBoundsSafe( im, x, y ) ) )
         return 0;
 
     /* allocate sufficent space.  should be tslen+ 32 bits * 4 to be safe */
@@ -2901,13 +2901,13 @@ int cdText( cdImagePtr im, int x, int y, const char *ts )
     /* if there are more than 32700 characters fail
      * gej: this could go as high as 32767 I think, but lets
      * cut it off at 32700 */
-    if (( tslen > 32700 ) || ( tslen < 0 )) return 0;
+    if ( ( tslen > 32700 ) || ( tslen < 0 ) ) return 0;
 
-    es = (unsigned char *) calloc((( 4 * 4 ) + tslen ), SIZEOF( unsigned char ));
+    es = (unsigned char *) calloc( ( ( 4 * 4 ) + tslen ), SIZEOF( unsigned char ) );
     if ( !es ) return 0;   /* memory allocation failed */
     esp = es;
 
-    if ( !cdcomheadlong( es, 4, 4, 9 + tslen ))
+    if ( !cdcomheadlong( es, 4, 4, 9 + tslen ) )
     {
         free( esp ); return 0;
     }
@@ -2944,7 +2944,7 @@ int cdText( cdImagePtr im, int x, int y, const char *ts )
     }
 
     /* add it to the buffer */
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         return 1;
@@ -2967,8 +2967,8 @@ int cdImageLine( cdImagePtr im, int x1, int y1, int x2, int y2, int color )
     /* save the linetype state */
     ltstate = im->ltype;
     /* set the attributes of the line */
-    if ( !cdSetLineAttrib( im, 1, -1, color )) return 0;
-    if ( !cdLine( im, x1, y1, x2, y2 )) return 0; /* draw the line */
+    if ( !cdSetLineAttrib( im, 1, -1, color ) ) return 0;
+    if ( !cdLine( im, x1, y1, x2, y2 ) ) return 0; /* draw the line */
     /* restore the state If it fails, don't return an error, because
      * the line was still drawn */
     cdSetLineType( im, ltstate );
@@ -2983,9 +2983,9 @@ int cdImageDashedLine( cdImagePtr im, int x1, int y1, int x2, int y2, int color 
  * cdLine instead */
 {
     /* set the attributes of the line */
-    if ( !cdSetLineAttrib( im, -1, -1, color )) return 0;
+    if ( !cdSetLineAttrib( im, -1, -1, color ) ) return 0;
     /* generate the line */
-    if ( !cdLine( im, x1, y1, x2, y2 )) return 0;
+    if ( !cdLine( im, x1, y1, x2, y2 ) ) return 0;
 
     /* everthing is A-OK */
     return 1;
@@ -2995,8 +2995,8 @@ int cdImageBoundsSafe( cdImagePtr im, int x, int y )
 /* From gd library, see README file for copyright information */
 /* gej: this should work unchanged */
 {
-    return ( !((( y < 0 ) || ( y >= im->sy )) ||
-               (( x < 0 ) || ( x >= im->sx ))));
+    return ( !( ( ( y < 0 ) || ( y >= im->sy ) ) ||
+                ( ( x < 0 ) || ( x >= im->sx ) ) ) );
 }
 
 
@@ -3006,10 +3006,10 @@ int cdImageRectangle( cdImagePtr im, int x1, int y1, int x2, int y2, int color )
 
 /* gej: but I think I will use the cgm rectangle */
 {
-    if ( !cdImageLine( im, x1, y1, x2, y1, color )) return 0;
-    if ( !cdImageLine( im, x1, y2, x2, y2, color )) return 0;
-    if ( !cdImageLine( im, x1, y1, x1, y2, color )) return 0;
-    if ( !cdImageLine( im, x2, y1, x2, y2, color )) return 0;
+    if ( !cdImageLine( im, x1, y1, x2, y1, color ) ) return 0;
+    if ( !cdImageLine( im, x1, y2, x2, y2, color ) ) return 0;
+    if ( !cdImageLine( im, x1, y1, x1, y2, color ) ) return 0;
+    if ( !cdImageLine( im, x2, y1, x2, y2, color ) ) return 0;
 
     return 1;
 }
@@ -3031,7 +3031,7 @@ int cdImageSetLineSpec( cdImagePtr im, int specmode )
 /* sets the Line Width Specification mode of subsequent pictures.
  * 1 is scaled (default), 2 is absolute */
 {
-    if (( specmode < 0 ) || ( specmode > 2 )) return 0;
+    if ( ( specmode < 0 ) || ( specmode > 2 ) ) return 0;
     im->linespec = specmode;
     return 1;
 }
@@ -3041,7 +3041,7 @@ int cdImageSetMarkerSpec( cdImagePtr im, int specmode )
 /* sets the Marker Width Specification mode of subsequent pictures.
  * 1 is scaled (default), 2 is absolute */
 {
-    if (( specmode < 0 ) || ( specmode > 2 )) return 0;
+    if ( ( specmode < 0 ) || ( specmode > 2 ) ) return 0;
     im->linespec = specmode;
     return 1;
 }
@@ -3051,7 +3051,7 @@ int cdImageSetEdgeSpec( cdImagePtr im, int specmode )
 /* sets the Edge Width Specification mode of subsequent pictures.
  * 1 is scaled (default), 2 is absolute */
 {
-    if (( specmode < 0 ) || ( specmode > 2 )) return 0;
+    if ( ( specmode < 0 ) || ( specmode > 2 ) ) return 0;
     im->edgespec = specmode;
     return 1;
 }
@@ -3085,21 +3085,21 @@ int cdImageAddFont( cdImagePtr im, const char *fontname )
     oldfonts = im->fontlist;
     if ( oldfonts )
     {
-        listsize = strlen((char *) oldfonts ) + 1 + strlen( fontname ) + 1;
+        listsize = strlen( (char *) oldfonts ) + 1 + strlen( fontname ) + 1;
     }
     else
     {
         listsize = strlen( fontname ) + 1;
     }
-    im->fontlist = (unsigned char *) calloc( listsize, SIZEOF( unsigned char ));
+    im->fontlist = (unsigned char *) calloc( listsize, SIZEOF( unsigned char ) );
     if ( !im->fontlist ) return 0;   /* memory allocation failed */
     if ( oldfonts )
     {
-        sprintf((char *) im->fontlist, "%s%s%s", (char *) oldfonts, ",", fontname );
+        sprintf( (char *) im->fontlist, "%s%s%s", (char *) oldfonts, ",", fontname );
     }
     else
     {
-        sprintf((char *) im->fontlist, "%s", fontname );
+        sprintf( (char *) im->fontlist, "%s", fontname );
     }
     im->numfonts++;
     if ( oldfonts ) free( oldfonts );
@@ -3123,7 +3123,7 @@ int cdImageSetDefaults( cdImagePtr im )
 {
     /* you must be either before any picture has been created,
      * or after a picture has closed to call this */
-    if (( im->state != 0 ) && ( im->state != 2 )) return 0;
+    if ( ( im->state != 0 ) && ( im->state != 2 ) ) return 0;
     /* set line_width, line_height, line_color to the defaults */
     im->ltype  = CDLTYPE;
     im->lwidth = CDLWIDTH;
@@ -3164,7 +3164,7 @@ cdImagePtr cdImageStartCgm()
     im = (cdImage *) calloc( SIZEOF( cdImage ), 1 );
     if ( !im ) return 0;   /* memory allocation failed */
     /* elemlist is set to some number, when it is full, make it bigger */
-    im->elemlist = (unsigned char *) calloc( CDSTARTLISTSIZE, SIZEOF( unsigned char ));
+    im->elemlist = (unsigned char *) calloc( CDSTARTLISTSIZE, SIZEOF( unsigned char ) );
     if ( !im->elemlist )
     {
         free( im ); return 0;
@@ -3184,18 +3184,18 @@ cdImagePtr cdImageStartCgm()
     tmps  = "'ProfileId: Model-Profile''ProfileEd:1''ColourClass:colour''Source:NIST CGMDraw 1.3''Date: 1996-12-16'";
     tmpsl = strlen( tmps );
     if ( tmpsl > 250 ) tmpsl = 250;
-    im->desc = (unsigned char *) calloc( tmpsl + 1, SIZEOF( unsigned char ));
-    strncpy((char*) im->desc, tmps, tmpsl );
+    im->desc = (unsigned char *) calloc( tmpsl + 1, SIZEOF( unsigned char ) );
+    strncpy( (char*) im->desc, tmps, tmpsl );
     /* The font list can be quite long, but individual font names can
      * can only be 250 chars */
     tmps         = "TIMES_ROMAN,TIMES_BOLD,TIMES_ITALIC,TIMES_BOLD_ITALIC,HELVETICA,HELVETICA_BOLD,HELVETICA_ITALIC,HELVETICA_BOLD_ITALIC,COURIER,COURIER_BOLD,COURIER_ITALIC,COURIER_BOLD_ITALIC";
     im->numfonts = 12;
     tmpsl        = strlen( tmps );
-    im->fontlist = (unsigned char *) calloc( tmpsl + 1, SIZEOF( unsigned char ));
-    strcpy((char*) im->fontlist, tmps );
+    im->fontlist = (unsigned char *) calloc( tmpsl + 1, SIZEOF( unsigned char ) );
+    strcpy( (char*) im->fontlist, tmps );
     im->outfile = NULL;
 
-    if ( !cdImageSetDefaults( im ))
+    if ( !cdImageSetDefaults( im ) )
     {
         cdImageDestroy( im );
     }
@@ -3218,18 +3218,18 @@ int cdImageEndPic( cdImagePtr im )
         return 0;
     }
 
-    esp = (unsigned char *) calloc( 1024, SIZEOF( unsigned char ));
+    esp = (unsigned char *) calloc( 1024, SIZEOF( unsigned char ) );
     if ( !esp ) return 0;   /* memory allocation failed */
     es = esp;
 
     /* Attribute: End Picture; Elem Class 0; Elem ID 5; Length 0  */
-    if ( !cdcomhead( es, 0, 5, 0 ))
+    if ( !cdcomhead( es, 0, 5, 0 ) )
     {
         free( esp ); return 0;
     }
     octet_count += 2;
 
-    if ( cdAddElem( im, esp, octet_count ))
+    if ( cdAddElem( im, esp, octet_count ) )
     {
         free( esp );
         im->state = 2;
@@ -3253,14 +3253,14 @@ int cdImageEndCgm( cdImagePtr im )
     cdImageEndPic( im );
     if ( im->state == 2 )     /* We have closed the pic, but not the CGM */
     {
-        efile = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ));
+        efile = (unsigned char *) calloc( 4 * 4, SIZEOF( unsigned char ) );
         if ( !efile ) return 0;       /* memory allocation failed */
         efilep = efile;
         /* Attribute: End Metafile; Elem Class 0; Elem ID 2 */
         cdcomhead( efilep, 0, 2, 0 );
 
 
-        if ( cdAddElem( im, efile, 2 ))
+        if ( cdAddElem( im, efile, 2 ) )
         {
             free( efile );
             efile  = 0;
@@ -3279,7 +3279,7 @@ int cdImageEndCgm( cdImagePtr im )
         used = im->listlen - im->bytestoend;
         for ( x = 0; x < used; x++ )
         {
-            putc((unsigned char) im->elemlist[x], im->outfile );
+            putc( (unsigned char) im->elemlist[x], im->outfile );
         }
     }     /* else do nothing */
 

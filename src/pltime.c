@@ -41,11 +41,11 @@ c_plconfigtime( PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOO
          * (and vice versa) defined here for PLplot. */
         /* Note the PLplot default is not necessarily the same as the
          * libqsastime default. */
-        configqsas( 1. / 86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0., &( plsc->qsasconfig ));
+        configqsas( 1. / 86400., 0., 0., 0x0, 1, 1970, 0, 1, 0, 0, 0., &( plsc->qsasconfig ) );
     }
     else
     {
-        configqsas( scale, offset1, offset2, ccontrol, ifbtime_offset, year, month, day, hour, min, sec, &( plsc->qsasconfig ));
+        configqsas( scale, offset1, offset2, ccontrol, ifbtime_offset, year, month, day, hour, min, sec, &( plsc->qsasconfig ) );
     }
 }
 
@@ -66,7 +66,7 @@ c_pltimefmt( const char *fmt )
     if ( plsc->timefmt )
         free_mem( plsc->timefmt );
 
-    plsc->timefmt = (char *) malloc((size_t) ( strlen( fmt ) + 1 ));
+    plsc->timefmt = (char *) malloc( (size_t) ( strlen( fmt ) + 1 ) );
     strcpy( plsc->timefmt, fmt );
 }
 

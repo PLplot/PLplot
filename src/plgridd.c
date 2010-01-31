@@ -206,7 +206,7 @@ grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
     csa   * a = NULL;
     int   i, j, nptsg;
 
-    if (( pin = (point *) malloc( npts * sizeof ( point ))) == NULL )
+    if ( ( pin = (point *) malloc( npts * sizeof ( point ) ) ) == NULL )
     {
         plexit( "grid_csa: Insufficient memory" );
     }
@@ -221,7 +221,7 @@ grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
     }
 
     nptsg = nptsx * nptsy;
-    if (( pgrid = (point *) malloc( nptsg * sizeof ( point ))) == NULL )
+    if ( ( pgrid = (point *) malloc( nptsg * sizeof ( point ) ) ) == NULL )
     {
         plexit( "grid_csa: Insufficient memory" );
     }
@@ -363,9 +363,9 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                 zz[ii] = z[items[ii].item];
             }
 
-            d1 = sqrt(( xx[1] - xx[0] ) * ( xx[1] - xx[0] ) + ( yy[1] - yy[0] ) * ( yy[1] - yy[0] ));
-            d2 = sqrt(( xx[2] - xx[1] ) * ( xx[2] - xx[1] ) + ( yy[2] - yy[1] ) * ( yy[2] - yy[1] ));
-            d3 = sqrt(( xx[0] - xx[2] ) * ( xx[0] - xx[2] ) + ( yy[0] - yy[2] ) * ( yy[0] - yy[2] ));
+            d1 = sqrt( ( xx[1] - xx[0] ) * ( xx[1] - xx[0] ) + ( yy[1] - yy[0] ) * ( yy[1] - yy[0] ) );
+            d2 = sqrt( ( xx[2] - xx[1] ) * ( xx[2] - xx[1] ) + ( yy[2] - yy[1] ) * ( yy[2] - yy[1] ) );
+            d3 = sqrt( ( xx[0] - xx[2] ) * ( xx[0] - xx[2] ) + ( yy[0] - yy[2] ) * ( yy[0] - yy[2] ) );
 
             if ( d1 == 0. || d2 == 0. || d3 == 0. ) /* coincident points */
             {
@@ -385,11 +385,11 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                 t = d2; d2 = d3; d3 = t;
             }
 
-            if (( d1 + d2 ) / d3 < threshold ) /* thin triangle! */
+            if ( ( d1 + d2 ) / d3 < threshold ) /* thin triangle! */
             {
-                zg[i][j] = NaN;                /* deal with it latter */
+                zg[i][j] = NaN;                 /* deal with it latter */
             }
-            else                               /* calculate the plane passing through the three points */
+            else                                /* calculate the plane passing through the three points */
 
             {
                 A = yy[0] * ( zz[1] - zz[2] ) + yy[1] * ( zz[2] - zz[0] ) + yy[2] * ( zz[0] - zz[1] );
@@ -417,7 +417,7 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
         {
             for ( j = 0; j < nptsy; j++ )
             {
-                if ( isnan( zg[i][j] ))
+                if ( isnan( zg[i][j] ) )
                 {
                     dist1( xg[i], yg[j], x, y, npts, 4 );
 
@@ -448,9 +448,9 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                             }
                         }
 
-                        d1 = sqrt(( xx[1] - xx[0] ) * ( xx[1] - xx[0] ) + ( yy[1] - yy[0] ) * ( yy[1] - yy[0] ));
-                        d2 = sqrt(( xx[2] - xx[1] ) * ( xx[2] - xx[1] ) + ( yy[2] - yy[1] ) * ( yy[2] - yy[1] ));
-                        d3 = sqrt(( xx[0] - xx[2] ) * ( xx[0] - xx[2] ) + ( yy[0] - yy[2] ) * ( yy[0] - yy[2] ));
+                        d1 = sqrt( ( xx[1] - xx[0] ) * ( xx[1] - xx[0] ) + ( yy[1] - yy[0] ) * ( yy[1] - yy[0] ) );
+                        d2 = sqrt( ( xx[2] - xx[1] ) * ( xx[2] - xx[1] ) + ( yy[2] - yy[1] ) * ( yy[2] - yy[1] ) );
+                        d3 = sqrt( ( xx[0] - xx[2] ) * ( xx[0] - xx[2] ) + ( yy[0] - yy[2] ) * ( yy[0] - yy[2] ) );
                         if ( d1 == 0. || d2 == 0. || d3 == 0. ) /* coincident points */ continue;
 
                         /* make d1 < d2 */
@@ -559,13 +559,13 @@ grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
     PLFLT *xt, *yt, *zt;
     int   i, j, nptsg;
 
-    if ( sizeof ( realT ) != sizeof ( double ))
+    if ( sizeof ( realT ) != sizeof ( double ) )
     {
         plabort( "plgridata: QHull was compiled for floats instead of doubles" );
         return;
     }
 
-    if (( pin = (point *) malloc( npts * sizeof ( point ))) == NULL )
+    if ( ( pin = (point *) malloc( npts * sizeof ( point ) ) ) == NULL )
     {
         plexit( "grid_dtli: Insufficient memory" );
     }
@@ -581,7 +581,7 @@ grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
     nptsg = nptsx * nptsy;
 
-    if (( pgrid = (point *) malloc( nptsg * sizeof ( point ))) == NULL )
+    if ( ( pgrid = (point *) malloc( nptsg * sizeof ( point ) ) ) == NULL )
     {
         plexit( "grid_dtli: Insufficient memory" );
     }
@@ -630,7 +630,7 @@ grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
     int   i, j, nptsg;
     nn_rule = NON_SIBSONIAN;
 
-    if ( sizeof ( realT ) != sizeof ( double ))
+    if ( sizeof ( realT ) != sizeof ( double ) )
     {
         plabort( "plgridata: QHull was compiled for floats instead of doubles" );
         return;
@@ -642,7 +642,7 @@ grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
         wmin = -PLFLT_MAX;
     }
 
-    if (( pin = (point *) malloc( npts * sizeof ( point ))) == NULL )
+    if ( ( pin = (point *) malloc( npts * sizeof ( point ) ) ) == NULL )
     {
         plexit( "plgridata: Insufficient memory" );
     }
@@ -658,7 +658,7 @@ grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
     nptsg = nptsx * nptsy;
 
-    if (( pgrid = (point *) malloc( nptsg * sizeof ( point ))) == NULL )
+    if ( ( pgrid = (point *) malloc( nptsg * sizeof ( point ) ) ) == NULL )
     {
         plexit( "plgridata: Insufficient memory" );
     }
@@ -713,7 +713,7 @@ dist1( PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts, int knn_order )
 
     for ( i = 0; i < npts; i++ )
     {
-        d = (( gx - x[i] ) * ( gx - x[i] ) + ( gy - y[i] ) * ( gy - y[i] )); /* save sqrt() time */
+        d = ( ( gx - x[i] ) * ( gx - x[i] ) + ( gy - y[i] ) * ( gy - y[i] ) ); /* save sqrt() time */
 
         if ( d < max_dist )
         {
@@ -760,7 +760,7 @@ dist2( PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts )
 
     for ( i = 0; i < npts; i++ )
     {
-        d = (( gx - x[i] ) * ( gx - x[i] ) + ( gy - y[i] ) * ( gy - y[i] )); /* save sqrt() time */
+        d = ( ( gx - x[i] ) * ( gx - x[i] ) + ( gy - y[i] ) * ( gy - y[i] ) ); /* save sqrt() time */
 
         /* trick to quickly compute a quadrant. The determined quadrants will be
          * miss-assigned, i.e., 1->2, 2->0, 3->1, 4->3, but that is not important,
@@ -817,7 +817,7 @@ grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
      * plgriddata() */
     strcpy( flags, "qhull d Qbb Qt", 250 );
 
-    if (( points = (coordT *) malloc( npts * ( dim + 1 ) * sizeof ( coordT ))) == NULL )
+    if ( ( points = (coordT *) malloc( npts * ( dim + 1 ) * sizeof ( coordT ) ) ) == NULL )
     {
         plexit( "grid_adtli: Insufficient memory" );
     }
@@ -851,7 +851,7 @@ grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
             if ( !facet->upperdelaunay )
             {
                 FOREACHvertex_( facet->vertices )
-                printf( " %d", qh_pointid( vertex->point )); /* vertices index */
+                printf( " %d", qh_pointid( vertex->point ) ); /* vertices index */
                 printf( "\n" );
             }
         }

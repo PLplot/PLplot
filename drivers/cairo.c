@@ -559,22 +559,22 @@ void text_char_cairo( PLStream *pls, EscText *args )
 
     aStream = (PLCairo *) pls->dev;
     /* make sure we are not too close to the end of the string */
-    if ( strlen( aStream->pangoMarkupString ) < ( MAX_MARKUP_LEN - 50 ))
+    if ( strlen( aStream->pangoMarkupString ) < ( MAX_MARKUP_LEN - 50 ) )
     {
         switch ( args->n_char )
         {
         case 38:
-            strncat( aStream->pangoMarkupString, "&#38;", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ));
+            strncat( aStream->pangoMarkupString, "&#38;", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
             break;
         case 60:
-            strncat( aStream->pangoMarkupString, "&#60;", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ));
+            strncat( aStream->pangoMarkupString, "&#60;", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
             break;
         case 62:
-            strncat( aStream->pangoMarkupString, "&#62;", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ));
+            strncat( aStream->pangoMarkupString, "&#62;", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
             break;
         default:
             ucs4_to_utf8( args->n_char, utf8 );
-            strncat( aStream->pangoMarkupString, utf8, MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ));
+            strncat( aStream->pangoMarkupString, utf8, MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
             break;
         }
     }
@@ -600,22 +600,22 @@ void text_esc_cairo( PLStream *pls, EscText *args )
     case PLTEXT_SUPERSCRIPT:
         if ( aStream->upDown < 0 )
         {
-            strncat( aStream->pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ));
+            strncat( aStream->pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
         }
         else
         {
-            strncat( aStream->pangoMarkupString, rise_span_tag( aStream->upDown, 1 ), MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ));
+            strncat( aStream->pangoMarkupString, rise_span_tag( aStream->upDown, 1 ), MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
         }
         aStream->upDown++;
         break;
     case PLTEXT_SUBSCRIPT:
         if ( aStream->upDown > 0 )
         {
-            strncat( aStream->pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ));
+            strncat( aStream->pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
         }
         else
         {
-            strncat( aStream->pangoMarkupString, rise_span_tag( aStream->upDown, -1 ), MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ));
+            strncat( aStream->pangoMarkupString, rise_span_tag( aStream->upDown, -1 ), MAX_MARKUP_LEN - 1 - strlen( aStream->pangoMarkupString ) );
         }
         aStream->upDown--;
         break;
@@ -671,7 +671,7 @@ void text_end_cairo( PLStream *pls, EscText *args )
     cairo_move_to( aStream->cairoContext, aStream->downscale * (double) args->x, aStream->downscale * (double) args->y );
 
     /* Invert the coordinate system so that the text is drawn right side up */
-    cairoTransformMatrix = (cairo_matrix_t *) malloc( sizeof ( cairo_matrix_t ));
+    cairoTransformMatrix = (cairo_matrix_t *) malloc( sizeof ( cairo_matrix_t ) );
     cairo_matrix_init( cairoTransformMatrix, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
     cairo_transform( aStream->cairoContext, cairoTransformMatrix );
 
@@ -697,7 +697,7 @@ void text_end_cairo( PLStream *pls, EscText *args )
     /* Move to the text starting point */
     cairo_rel_move_to( aStream->cairoContext,
         (double) ( -1.0 * args->just * (double) textXExtent ),
-        (double) ( -0.5 * textYExtent ));
+        (double) ( -0.5 * textYExtent ) );
 
     /* Render the text */
     pango_cairo_show_layout( aStream->cairoContext, layout );
@@ -778,7 +778,7 @@ void proc_str( PLStream *pls, EscText *args )
     cairo_move_to( aStream->cairoContext, aStream->downscale * (double) args->x, aStream->downscale * (double) args->y );
 
     /* Invert the coordinate system so that the text is drawn right side up */
-    cairoTransformMatrix = (cairo_matrix_t *) malloc( sizeof ( cairo_matrix_t ));
+    cairoTransformMatrix = (cairo_matrix_t *) malloc( sizeof ( cairo_matrix_t ) );
     cairo_matrix_init( cairoTransformMatrix, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
     cairo_transform( aStream->cairoContext, cairoTransformMatrix );
 
@@ -804,7 +804,7 @@ void proc_str( PLStream *pls, EscText *args )
     /* Move to the text starting point */
     cairo_rel_move_to( aStream->cairoContext,
         (double) ( -1.0 * args->just * (double) textXExtent ),
-        (double) ( -0.5 * textYExtent ));
+        (double) ( -0.5 * textYExtent ) );
 
     /* Render the text */
     pango_cairo_show_layout( aStream->cairoContext, layout );
@@ -854,7 +854,7 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
     while ( i < ucs4Len )
     {
         /* Try to avoid going off the end of the string */
-        if ( strlen( pangoMarkupString ) > ( MAX_MARKUP_LEN - 50 ))
+        if ( strlen( pangoMarkupString ) > ( MAX_MARKUP_LEN - 50 ) )
         {
             continue;
         }
@@ -865,17 +865,17 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                 switch ( ucs4[i] )
                 {
                 case 38:
-                    strncat( pangoMarkupString, "&#38;", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+                    strncat( pangoMarkupString, "&#38;", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     break;
                 case 60:
-                    strncat( pangoMarkupString, "&#60;", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+                    strncat( pangoMarkupString, "&#60;", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     break;
                 case 62:
-                    strncat( pangoMarkupString, "&#62;", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+                    strncat( pangoMarkupString, "&#62;", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     break;
                 default:
                     ucs4_to_utf8( ucs4[i], utf8 );
-                    strncat( pangoMarkupString, utf8, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+                    strncat( pangoMarkupString, utf8, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     break;
                 }
                 i++;
@@ -885,7 +885,7 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
             if ( ucs4[i] == (PLUNICODE) plplotEsc ) /* a escape character to display */
             {
                 ucs4_to_utf8( ucs4[i], utf8 );
-                strncat( pangoMarkupString, utf8, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+                strncat( pangoMarkupString, utf8, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                 i++;
                 continue;
             }
@@ -895,11 +895,11 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                 {
                     if ( upDown < 0 )
                     {
-                        strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+                        strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     }
                     else
                     {
-                        strncat( pangoMarkupString, rise_span_tag( upDown, 1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+                        strncat( pangoMarkupString, rise_span_tag( upDown, 1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     }
                     upDown++;
                 }
@@ -907,11 +907,11 @@ char *ucs4_to_pango_markup_format( PLUNICODE *ucs4, int ucs4Len, float fontSize 
                 {
                     if ( upDown > 0 )
                     {
-                        strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+                        strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     }
                     else
                     {
-                        strncat( pangoMarkupString, rise_span_tag( upDown, -1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+                        strncat( pangoMarkupString, rise_span_tag( upDown, -1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
                     }
                     upDown--;
                 }
@@ -954,13 +954,13 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
     plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
     plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );
     snprintf( openTag, TAG_LEN, "<span font_desc=\"%s %.2f\" ", familyLookup[fontFamily], fontSize );
-    strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+    strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 
     snprintf( openTag, TAG_LEN, "style=\"%s\" ", styleLookup[fontStyle] );
-    strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+    strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 
     snprintf( openTag, TAG_LEN, "weight=\"%s\">", weightLookup[fontWeight] );
-    strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+    strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 
     /* Move to the right sub/super-script level */
     if ( upDown > 0 )
@@ -968,7 +968,7 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
         while ( upDown > 0 )
         {
             upDown--;
-            strncat( pangoMarkupString, rise_span_tag( upDown, 1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+            strncat( pangoMarkupString, rise_span_tag( upDown, 1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
         }
     }
     if ( upDown < 0 )
@@ -976,7 +976,7 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
         while ( upDown < 0 )
         {
             upDown++;
-            strncat( pangoMarkupString, rise_span_tag( upDown, -1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+            strncat( pangoMarkupString, rise_span_tag( upDown, -1 ), MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
         }
     }
 }
@@ -993,7 +993,7 @@ void close_span_tag( char *pangoMarkupString, int upDown )
     {
         while ( upDown > 0 )
         {
-            strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+            strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
             upDown--;
         }
     }
@@ -1001,12 +1001,12 @@ void close_span_tag( char *pangoMarkupString, int upDown )
     {
         while ( upDown < 0 )
         {
-            strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+            strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
             upDown++;
         }
     }
 
-    strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ));
+    strncat( pangoMarkupString, "</span>", MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 }
 
 /*---------------------------------------------------------------------
@@ -1105,14 +1105,14 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
         downscale = (double) pls->xlength / (double) ( PIXELS_X - 1 );
     else
         downscale = (double) pls->ylength / (double) PIXELS_Y;
-    plP_setphy((PLINT) 0, (PLINT) ( pls->xlength / downscale ), (PLINT) 0, (PLINT) ( pls->ylength / downscale ));
+    plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / downscale ), (PLINT) 0, (PLINT) ( pls->ylength / downscale ) );
     plP_setpxl( DPI / 25.4 / downscale, DPI / 25.4 / downscale );
 
     /* Initialize font table with either enviroment variables or defaults.
      * This was copied from the psttf driver. */
     for ( i = 0; i < NPANGOLOOKUP; i++ )
     {
-        if (( a = getenv( envFamilyLookup[i] )) != NULL )
+        if ( ( a = getenv( envFamilyLookup[i] ) ) != NULL )
         {
             strncpy( familyLookup[i], a, FAMILY_LOOKUP_LEN - 1 );
             familyLookup[i][FAMILY_LOOKUP_LEN - 1] = '\0';
@@ -1125,7 +1125,7 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     }
 
     /* Allocate a cairo stream structure */
-    aStream = malloc( sizeof ( PLCairo ));
+    aStream = malloc( sizeof ( PLCairo ) );
 #if defined ( PLD_xcairo )
     aStream->XDisplay = NULL;
     aStream->XWindow  = -1;
@@ -1247,7 +1247,7 @@ void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
     aa_state = cairo_get_antialias( aStream->cairoContext );
     /* Add an extra outline stroke to the polygon unless the plotting color is
      * not opaque or antialiasing is disabled. */
-    if (( pls->curcolor.a > 0.99 ) && ( aa_state != CAIRO_ANTIALIAS_NONE ))
+    if ( ( pls->curcolor.a > 0.99 ) && ( aa_state != CAIRO_ANTIALIAS_NONE ) )
     {
         cairo_fill_preserve( aStream->cairoContext );
         cairo_set_line_width( aStream->cairoContext, 1.0 );
@@ -1416,7 +1416,7 @@ void rotate_cairo_surface( PLStream *pls, float x11, float x12, float x21, float
 
     aStream = (PLCairo *) pls->dev;
 
-    matrix = (cairo_matrix_t *) malloc( sizeof ( cairo_matrix_t ));
+    matrix = (cairo_matrix_t *) malloc( sizeof ( cairo_matrix_t ) );
     cairo_matrix_init( matrix, x11, x12, x21, x22, x0, y0 );
     cairo_transform( aStream->cairoContext, matrix );
     free( matrix );
@@ -1578,7 +1578,7 @@ void plD_init_xcairo( PLStream *pls )
         rootWindow = RootWindow( aStream->XDisplay, XScreen );
 
         aStream->XWindow = XCreateSimpleWindow( aStream->XDisplay, rootWindow, 0, 0, pls->xlength, pls->ylength,
-            1, BlackPixel( aStream->XDisplay, XScreen ), BlackPixel( aStream->XDisplay, XScreen ));
+            1, BlackPixel( aStream->XDisplay, XScreen ), BlackPixel( aStream->XDisplay, XScreen ) );
         XStoreName( aStream->XDisplay, aStream->XWindow, pls->plwindow );
         XSelectInput( aStream->XDisplay, aStream->XWindow, NoEventMask );
         XMapWindow( aStream->XDisplay, aStream->XWindow );
@@ -1663,7 +1663,7 @@ void plD_eop_xcairo( PLStream *pls )
         switch ( event.type )
         {
         case KeyPress:
-            number_chars = XLookupString((XKeyEvent *) &event, event_string, 10, &keysym, &cs );
+            number_chars = XLookupString( (XKeyEvent *) &event, event_string, 10, &keysym, &cs );
             event_string[number_chars] = '\0';
             if ( keysym == XK_Return )
             {
@@ -1671,13 +1671,13 @@ void plD_eop_xcairo( PLStream *pls )
             }
             break;
         case ButtonPress:
-            if (((XButtonEvent *) &event )->button == Button3 )
+            if ( ( (XButtonEvent *) &event )->button == Button3 )
                 aStream->exit_event_loop = 1;
             break;
         case Expose:
             /* Blit the image again after an expose event, but only for the last
              * available event.  Otherwise multiple redraws occur needlessly. */
-            if (((XExposeEvent *) &event )->count == 0 )
+            if ( ( (XExposeEvent *) &event )->count == 0 )
             {
                 blit_to_x( aStream );
                 XFlush( aStream->XDisplay );
@@ -1762,8 +1762,8 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
             &x, &y, &w, &h, &b, &d );
         pls->xlength = w;
         pls->ylength = h;
-        plP_setphy((PLINT) 0, (PLINT) ( pls->xlength / aStream->downscale ), (PLINT) 0,
-            (PLINT) ( pls->ylength / aStream->downscale ));
+        plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / aStream->downscale ), (PLINT) 0,
+            (PLINT) ( pls->ylength / aStream->downscale ) );
 
         /* Associate cairo with the supplied drawable */
         xcairo_init_cairo( pls );
@@ -1812,7 +1812,7 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
     /* Get key pressed (if any) */
     if ( event.type == KeyPress )
     {
-        number_chars = XLookupString((XKeyEvent *) &event, gin->string, 10, &keysym, &cs );
+        number_chars = XLookupString( (XKeyEvent *) &event, gin->string, 10, &keysym, &cs );
         gin->string[number_chars] = '\0';
         switch ( keysym )
         {
@@ -1840,8 +1840,8 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
     gin->button  = xButtonEvent->button;
     gin->pX      = event.xbutton.x;
     gin->pY      = pls->ylength - event.xbutton.y;
-    gin->dX      = (PLFLT) event.xbutton.x / ((PLFLT) ( pls->xlength ));
-    gin->dY      = (PLFLT) ( pls->ylength - event.xbutton.y ) / ((PLFLT) ( pls->ylength ));
+    gin->dX      = (PLFLT) event.xbutton.x / ( (PLFLT) ( pls->xlength ) );
+    gin->dY      = (PLFLT) ( pls->ylength - event.xbutton.y ) / ( (PLFLT) ( pls->ylength ) );
 
     /* Switch back to normal cursor */
     XUndefineCursor( aStream->XDisplay, aStream->XWindow );
@@ -1907,7 +1907,7 @@ void plD_init_pdfcairo( PLStream *pls )
 
     /* Create an cairo surface & context for PDF file. */
     /* Dimension units are pts = 1/72 inches from cairo documentation. */
-    aStream->cairoSurface = cairo_pdf_surface_create_for_stream((cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->xlength, (double) pls->ylength );
+    aStream->cairoSurface = cairo_pdf_surface_create_for_stream( (cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->xlength, (double) pls->ylength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     /* Save the pointer to the structure in the PLplot stream */
@@ -1979,7 +1979,7 @@ void plD_init_pscairo( PLStream *pls )
 
     /* Create an cairo surface & context for PS file. */
     /* Dimension units are pts = 1/72 inches from cairo documentation. */
-    aStream->cairoSurface = cairo_ps_surface_create_for_stream((cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->ylength, (double) pls->xlength );
+    aStream->cairoSurface = cairo_ps_surface_create_for_stream( (cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->ylength, (double) pls->xlength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     /* Save the pointer to the structure in the PLplot stream */
@@ -2078,7 +2078,7 @@ void plD_init_svgcairo( PLStream *pls )
 
     /* Create an cairo surface & context for SVG file. */
     /* Dimension units are pts = 1/72 inches from cairo documentation. */
-    aStream->cairoSurface = cairo_svg_surface_create_for_stream((cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->xlength, (double) pls->ylength );
+    aStream->cairoSurface = cairo_svg_surface_create_for_stream( (cairo_write_func_t) write_to_stream, pls->OutFile, (double) pls->xlength, (double) pls->ylength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     /* Invert the surface so that the graphs are drawn right side up. */
@@ -2714,7 +2714,7 @@ void plD_init_wincairo( PLStream *pls )
     pls->dev = aStream;
 
     /* Create window */
-    memset( &aStream->wndclass, 0, sizeof ( WNDCLASSEX ));
+    memset( &aStream->wndclass, 0, sizeof ( WNDCLASSEX ) );
 
     /* This class is called WinTestWin */
     aStream->wndclass.lpszClassName = szWndClass;
@@ -2836,15 +2836,15 @@ plD_eop_wincairo( PLStream *pls )
 
     if ( !pls->nopause )
     {
-        while ( GetMessage( &aStream->msg, NULL, 0, 0 ))
+        while ( GetMessage( &aStream->msg, NULL, 0, 0 ) )
         {
             TranslateMessage( &aStream->msg );
-            switch ((int) aStream->msg.message )
+            switch ( (int) aStream->msg.message )
             {
             case WM_CHAR:
-                if (((TCHAR) ( aStream->msg.wParam ) == 13 ) ||
-                    ((TCHAR) ( aStream->msg.wParam ) == 'q' ) ||
-                    ((TCHAR) ( aStream->msg.wParam ) == 'Q' ))
+                if ( ( (TCHAR) ( aStream->msg.wParam ) == 13 ) ||
+                     ( (TCHAR) ( aStream->msg.wParam ) == 'q' ) ||
+                     ( (TCHAR) ( aStream->msg.wParam ) == 'Q' ) )
                 {
                     PostQuitMessage( 0 );
                 }

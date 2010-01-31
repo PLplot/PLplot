@@ -59,7 +59,7 @@ wxPLDevGC::~wxPLDevGC()
     {
         if ( m_dc )
         {
-            ((wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap );
+            ( (wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap );
             delete m_dc;
         }
         if ( m_bitmap )
@@ -85,7 +85,7 @@ void wxPLDevGC::DrawLine( short x1a, short y1a, short x2a, short y2a )
     path.AddLineToPoint( x2, y2 );
     m_context->StrokePath( path );
 
-    AddtoClipRegion((int) x1, (int) y1, (int) x2, (int) y2 );
+    AddtoClipRegion( (int) x1, (int) y1, (int) x2, (int) y2 );
 }
 
 
@@ -101,7 +101,7 @@ void wxPLDevGC::DrawPolyline( short *xa, short *ya, PLINT npts )
 
     wxDouble x, y, w, h;
     path.GetBox( &x, &y, &w, &h );
-    AddtoClipRegion((int) x, (int) y, (int) ( x + w ), (int) ( y + h ));
+    AddtoClipRegion( (int) x, (int) y, (int) ( x + w ), (int) ( y + h ) );
 }
 
 
@@ -116,16 +116,16 @@ void wxPLDevGC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLIN
     if ( x2 < 0 ) x2a = width;else x2a = x2 / scalex;
     if ( y2 < 0 ) y2a = height;else y2a = height - y2 / scaley;
 
-    m_context->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( bgr, bgg, bgb ), 1, wxSOLID )));
-    m_context->SetBrush( wxBrush( wxColour( bgr, bgg, bgb )));
+    m_context->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( bgr, bgg, bgb ), 1, wxSOLID ) ) );
+    m_context->SetBrush( wxBrush( wxColour( bgr, bgg, bgb ) ) );
     m_context->DrawRectangle( x1a, y1a, x2a - x1a, y2a - y1a );
 
     m_context->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( mColorRedStroke, mColorGreenStroke,
                                   mColorBlueStroke, mStrokeOpacity ),
-                              1, wxSOLID )));
-    m_context->SetBrush( wxBrush( wxColour( mColorRedFill, mColorGreenFill, mColorBlueFill, mStrokeOpacity )));
+                              1, wxSOLID ) ) );
+    m_context->SetBrush( wxBrush( wxColour( mColorRedFill, mColorGreenFill, mColorBlueFill, mStrokeOpacity ) ) );
 
-    AddtoClipRegion((int) x1a, (int) y1a, (int) x2a, (int) y2a );
+    AddtoClipRegion( (int) x1a, (int) y1a, (int) x2a, (int) y2a );
 }
 
 
@@ -185,7 +185,7 @@ void wxPLDevGC::FillPolygon( PLStream *pls )
             h  = y1 - y2;
         }
         m_context->DrawRectangle( x0, y0, w, h );
-        AddtoClipRegion((int) x0, (int) y0, (int) w, (int) h );
+        AddtoClipRegion( (int) x0, (int) y0, (int) w, (int) h );
     }
     else
     {
@@ -200,7 +200,7 @@ void wxPLDevGC::FillPolygon( PLStream *pls )
         wxDouble x, y, w, h;
         path.GetBox( &x, &y, &w, &h );
 
-        AddtoClipRegion((int) x, (int) y, (int) ( x + w ), (int) ( y + h ));
+        AddtoClipRegion( (int) x, (int) y, (int) ( x + w ), (int) ( y + h ) );
     }
 }
 
@@ -223,15 +223,15 @@ void wxPLDevGC::CreateCanvas()
         if ( !m_dc )
             m_dc = new wxMemoryDC();
 
-        ((wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap ); /* deselect bitmap */
+        ( (wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap ); /* deselect bitmap */
         if ( m_bitmap )
             delete m_bitmap;
         m_bitmap = new wxBitmap( bm_width, bm_height, 32 );
-        ((wxMemoryDC*) m_dc )->SelectObject( *m_bitmap ); /* select new bitmap */
+        ( (wxMemoryDC*) m_dc )->SelectObject( *m_bitmap ); /* select new bitmap */
     }
 
     if ( m_dc )
-        m_context = wxGraphicsContext::Create( *((wxMemoryDC*) m_dc ));
+        m_context = wxGraphicsContext::Create( *( (wxMemoryDC*) m_dc ) );
 }
 
 
@@ -241,7 +241,7 @@ void wxPLDevGC::SetWidth( PLStream *pls )
 
     m_context->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( mColorRedStroke, mColorGreenStroke,
                                   mColorBlueStroke, mStrokeOpacity ),
-                              pls->width > 0 ? pls->width : 1, wxSOLID )));
+                              pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
 }
 
 
@@ -259,8 +259,8 @@ void wxPLDevGC::SetColor0( PLStream *pls )
 
     m_context->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( mColorRedStroke, mColorGreenStroke,
                                   mColorBlueStroke, mStrokeOpacity ),
-                              pls->width > 0 ? pls->width : 1, wxSOLID )));
-    m_context->SetBrush( wxBrush( wxColour( mColorRedFill, mColorGreenFill, mColorBlueFill, mStrokeOpacity )));
+                              pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
+    m_context->SetBrush( wxBrush( wxColour( mColorRedFill, mColorGreenFill, mColorBlueFill, mStrokeOpacity ) ) );
 }
 
 
@@ -278,8 +278,8 @@ void wxPLDevGC::SetColor1( PLStream *pls )
 
     m_context->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( mColorRedStroke, mColorGreenStroke,
                                   mColorBlueStroke, mStrokeOpacity ),
-                              pls->width > 0 ? pls->width : 1, wxSOLID )));
-    m_context->SetBrush( wxBrush( wxColour( mColorRedFill, mColorGreenFill, mColorBlueFill, mStrokeOpacity )));
+                              pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
+    m_context->SetBrush( wxBrush( wxColour( mColorRedFill, mColorGreenFill, mColorBlueFill, mStrokeOpacity ) ) );
 }
 
 
@@ -294,7 +294,7 @@ void wxPLDevGC::SetExternalBuffer( void* dc )
     // Log_Verbose( "%s", __FUNCTION__ );
 
     m_dc      = (wxDC*) dc; /* Add the dc to the device */
-    m_context = wxGraphicsContext::Create( *((wxMemoryDC*) m_dc ));
+    m_context = wxGraphicsContext::Create( *( (wxMemoryDC*) m_dc ) );
     ready     = true;
     ownGUI    = false;
 }
@@ -307,8 +307,8 @@ void wxPLDevGC::PutPixel( short x, short y, PLINT color )
     // Log_Verbose( "%s", __FUNCTION__ );
 
     const wxPen oldpen = m_dc->GetPen();
-    m_context->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( GetRValue( color ), GetGValue( color ), GetBValue( color )),
-                              1, wxSOLID )));
+    m_context->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( GetRValue( color ), GetGValue( color ), GetBValue( color ) ),
+                              1, wxSOLID ) ) );
     //m_context->DrawPoint( x, y );
     AddtoClipRegion( x, y, x, y );
     m_context->SetPen( oldpen );
@@ -335,7 +335,7 @@ PLINT wxPLDevGC::GetPixel( short x, short y )
 #else
     wxColour col;
     m_dc->GetPixel( x, y, &col );
-    return RGB( col.Red(), col.Green(), col.Blue());
+    return RGB( col.Red(), col.Green(), col.Blue() );
 #endif
 }
 
@@ -359,7 +359,7 @@ void wxPLDevGC::PSDrawTextToDC( char* utf8_string, bool drawText )
     textWidth += static_cast<int>( w );
     textHeight = textHeight > ( h + yOffset / scaley )
                  ? textHeight
-                 : static_cast<int>(( h + yOffset / scaley ));
+                 : static_cast<int>( ( h + yOffset / scaley ) );
     memset( utf8_string, '\0', max_string_length );
 }
 
@@ -379,7 +379,7 @@ void wxPLDevGC::PSSetFont( PLUNICODE fci )
         fontFamilyLookup[fontFamily],
         fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
     m_font->SetUnderlined( underlined );
-    m_context->SetFont( *m_font, wxColour( textRed, textGreen, textBlue ));
+    m_context->SetFont( *m_font, wxColour( textRed, textGreen, textBlue ) );
 }
 
 
@@ -414,7 +414,7 @@ void wxPLDevGC::ProcessString( PLStream* pls, EscText* args )
         cpoints[i].x = rcx[i] / scalex;
         cpoints[i].y = height - rcy[i] / scaley;
     }
-    m_context->Clip( wxRegion( 4, cpoints ));
+    m_context->Clip( wxRegion( 4, cpoints ) );
 
     /* text color */
     textRed   = pls->cmap0[pls->icol0].r;

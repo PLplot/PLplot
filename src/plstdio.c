@@ -66,7 +66,7 @@ plio_fwrite( void *buf, size_t size, size_t nmemb, FILE *stream )
 
     bytes = fwrite( buf, size, nmemb, stream );
 
-    if ( ferror( stream ))
+    if ( ferror( stream ) )
     {
         /* Perhaps we can add a flag (global or per output stream)
          * in order to decide if we should abort or warn.  I think
@@ -101,7 +101,7 @@ plio_fread( void *buf, size_t size, size_t nmemb, FILE *stream )
 
     bytes = fread( buf, size, nmemb, stream );
 
-    if ( ferror( stream ))
+    if ( ferror( stream ) )
     {
         /* The read resulted in an error */
         plabort( "Error reading from file" );
@@ -145,7 +145,7 @@ plio_fgets( char *buf, int size, FILE *stream )
 
     s = fgets( buf, size, stream );
 
-    if ( s == NULL && ferror( stream ))
+    if ( s == NULL && ferror( stream ) )
     {
         /* The read resulted in an error */
         plabort( "Error reading from file" );
@@ -200,7 +200,7 @@ pl_create_tempfile( char **fname )
     }
 
     /* N.B. Malloc ensures template is long enough so strcpy and strcat are safe here */
-    template = (char *) malloc( sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + 2 ));
+    template = (char *) malloc( sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + 2 ) );
     strcpy( template, tmpdir );
 #if defined ( MSDOS ) || defined ( WIN32 )
     strcat( template, "\\" );

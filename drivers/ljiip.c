@@ -62,10 +62,10 @@ static void setpoint( PLINT, PLINT );
 #endif
 
 #define OF         pls->OutFile
-#define CURX       ((long) ( DPI / 5 ))
-#define CURY       ((long) ( DPI / 7 ))
-#define XDOTS      ( 376 * ( DPI / 50 )) /* # dots across */
-#define YDOTS      ( 500 * ( DPI / 50 )) /* # dots down */
+#define CURX       ( (long) ( DPI / 5 ) )
+#define CURY       ( (long) ( DPI / 7 ) )
+#define XDOTS      ( 376 * ( DPI / 50 ) ) /* # dots across */
+#define YDOTS      ( 500 * ( DPI / 50 ) ) /* # dots down */
 #define JETX       ( XDOTS - 1 )
 #define JETY       ( YDOTS - 1 )
 
@@ -142,7 +142,7 @@ plD_init_ljiip( PLStream *pls )
 
 /* number of pixels / mm */
 
-    plP_setpxl((PLFLT) ( DPI / 25.4 ), (PLFLT) ( DPI / 25.4 ));
+    plP_setpxl( (PLFLT) ( DPI / 25.4 ), (PLFLT) ( DPI / 25.4 ) );
 
 /* Rotate by 90 degrees since portrait mode addressing is used */
 
@@ -164,18 +164,18 @@ plD_init_ljiip( PLStream *pls )
 
     if ( pls->portrait )
     {
-        plsdiori((PLFLT) ( 4 - ORIENTATION ));
+        plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
         pls->freeaspect = 1;
     }
 
 /* Allocate storage for bit map matrix */
 
 #ifdef MSDOS
-    if (( bitmap = (unsigned char _HUGE *)
-                   halloc((long) NBYTES, sizeof ( char ))) == NULL )
+    if ( ( bitmap = (unsigned char _HUGE *)
+                    halloc( (long) NBYTES, sizeof ( char ) ) ) == NULL )
         plexit( "Out of memory in call to calloc" );
 #else
-    if (( bitmap = (unsigned char *) calloc( NBYTES, sizeof ( char ))) == NULL )
+    if ( ( bitmap = (unsigned char *) calloc( NBYTES, sizeof ( char ) ) ) == NULL )
         plexit( "Out of memory in call to calloc" );
 #endif
 
@@ -249,7 +249,7 @@ plD_line_ljiip( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
         tmp = 1.0 - (PLFLT) abs_dx / abs_dy;
     }
 
-    width = floor( 0.5 + width * ( tmp * tmp * tmp * ( 1.0 - 0.707107 ) + 0.707107 ));
+    width = floor( 0.5 + width * ( tmp * tmp * tmp * ( 1.0 - 0.707107 ) + 0.707107 ) );
 
     if ( width < 1 ) width = 1;
     if ( width > 1 )
@@ -258,8 +258,8 @@ plD_line_ljiip( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
         {
             for ( j = 0; j < width; j++ )
             {
-                setpoint((PLINT) ( x1 + i ), (PLINT) ( y1 + j ));
-                setpoint((PLINT) ( x2 + i ), (PLINT) ( y2 + j ));
+                setpoint( (PLINT) ( x1 + i ), (PLINT) ( y1 + j ) );
+                setpoint( (PLINT) ( x2 + i ), (PLINT) ( y2 + j ) );
             }
         }
     }
@@ -270,8 +270,8 @@ plD_line_ljiip( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
         {
             for ( i = 0; i <= abs_dx; i++, x1 += incx )
             {
-                setpoint((PLINT) ( x1 ), (PLINT) ( y1 ));
-                if (( residual += abs_dy ) >= 0 )
+                setpoint( (PLINT) ( x1 ), (PLINT) ( y1 ) );
+                if ( ( residual += abs_dy ) >= 0 )
                 {
                     residual -= abs_dx;
                     y1       += incy;
@@ -284,10 +284,10 @@ plD_line_ljiip( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
             {
                 for ( j = 0; j < width; j++ )
                 {
-                    setpoint((PLINT) ( x1 ), (PLINT) ( y1 + j ));
-                    setpoint((PLINT) ( x1 + width - 1 ), (PLINT) ( y1 + j ));
+                    setpoint( (PLINT) ( x1 ), (PLINT) ( y1 + j ) );
+                    setpoint( (PLINT) ( x1 + width - 1 ), (PLINT) ( y1 + j ) );
                 }
-                if (( residual += abs_dy ) >= 0 )
+                if ( ( residual += abs_dy ) >= 0 )
                 {
                     residual -= abs_dx;
                     y1       += incy;
@@ -302,8 +302,8 @@ plD_line_ljiip( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
         {
             for ( i = 0; i <= abs_dy; i++, y1 += incy )
             {
-                setpoint((PLINT) ( x1 ), (PLINT) ( y1 ));
-                if (( residual += abs_dx ) >= 0 )
+                setpoint( (PLINT) ( x1 ), (PLINT) ( y1 ) );
+                if ( ( residual += abs_dx ) >= 0 )
                 {
                     residual -= abs_dy;
                     x1       += incx;
@@ -316,10 +316,10 @@ plD_line_ljiip( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
             {
                 for ( j = 0; j < width; j++ )
                 {
-                    setpoint((PLINT) ( x1 + j ), (PLINT) ( y1 ));
-                    setpoint((PLINT) ( x1 + j ), (PLINT) ( y1 + width - 1 ));
+                    setpoint( (PLINT) ( x1 + j ), (PLINT) ( y1 ) );
+                    setpoint( (PLINT) ( x1 + j ), (PLINT) ( y1 + width - 1 ) );
                 }
-                if (( residual += abs_dx ) >= 0 )
+                if ( ( residual += abs_dx ) >= 0 )
                 {
                     residual -= abs_dy;
                     x1       += incx;
@@ -403,7 +403,7 @@ plD_eop_ljiip( PLStream *pls )
             c    = p[i];
             jmax = i + 127;
             jmax = last < jmax ? last : jmax;
-            if ( i < last - 2 && ( c == p[i + 1] ) && ( c == p[i + 2] ))
+            if ( i < last - 2 && ( c == p[i + 1] ) && ( c == p[i + 2] ) )
             {
                 j = i + 3;
                 while ( j < jmax && c == p[j] ) j++;
@@ -416,7 +416,7 @@ plD_eop_ljiip( PLStream *pls )
                 for ( j = i + 1; j < jmax; j++ )
                 {
                     if ( j < last - 2 && ( p[j] == p[j + 1] ) &&
-                         ( p[j + 1] == p[j + 2] )) break;
+                         ( p[j + 1] == p[j + 2] ) ) break;
                 }
                 t_buf[n++] = j - i - 1;
                 while ( i < j )
@@ -439,7 +439,7 @@ plD_eop_ljiip( PLStream *pls )
 
 /* Finally, clear out bitmap storage area */
 
-    memset((void *) bitmap, '\0', NBYTES );
+    memset( (void *) bitmap, '\0', NBYTES );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -471,7 +471,7 @@ plD_tidy_ljiip( PLStream *pls )
 
     fprintf( OF, "%cE", ESC );
     fclose( OF );
-    free((char *) bitmap );
+    free( (char *) bitmap );
 }
 
 /*--------------------------------------------------------------------------*\

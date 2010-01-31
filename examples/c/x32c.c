@@ -89,10 +89,10 @@ main( int argc, const char *argv[] )
     for ( i = 0; i < 10; i++ )
     {
         plcol1( i / 9.0 );
-        plfbox(( x0 + i ), y25[i], y50[i], y75[i], lw[i], uw[i] );
+        plfbox( ( x0 + i ), y25[i], y50[i], y75[i], lw[i], uw[i] );
 
         sprintf( string, "%d", (int) x0 + i );
-        plmtex( "b", 1.0, (( i + 1 ) * .1 - .05 ), 0.5, string );
+        plmtex( "b", 1.0, ( ( i + 1 ) * .1 - .05 ), 0.5, string );
     }
 
     /* some outliers plotted with intermediate-sized circles, see PLplot

@@ -68,10 +68,10 @@ void ml_plotter( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
     // No check to see if a callback function has been designated yet,
     // because that is checked before we get to this point.
     result =
-        caml_callback2( *pltr, caml_copy_double( x ), caml_copy_double( y ));
+        caml_callback2( *pltr, caml_copy_double( x ), caml_copy_double( y ) );
     double new_x, new_y;
-    new_x = Double_val( Field( result, 0 ));
-    new_y = Double_val( Field( result, 1 ));
+    new_x = Double_val( Field( result, 0 ) );
+    new_y = Double_val( Field( result, 1 ) );
 
     *tx = new_x;
     *ty = new_y;
@@ -100,7 +100,7 @@ PLINT ml_defined( PLFLT x, PLFLT y )
     // No check to see if a callback function has been designated yet,
     // because that is checked before we get to this point.
     result =
-        caml_callback2( *defined, caml_copy_double( x ), caml_copy_double( y ));
+        caml_callback2( *defined, caml_copy_double( x ), caml_copy_double( y ) );
     is_it_defined = Int_val( result );
 
     CAMLreturn( is_it_defined );
@@ -126,11 +126,11 @@ void ml_mapform( PLINT n, PLFLT *x, PLFLT *y )
     {
         result =
             caml_callback2( *mapform,
-                caml_copy_double( x[i] ), caml_copy_double( y[i] ));
+                caml_copy_double( x[i] ), caml_copy_double( y[i] ) );
 
         double new_x, new_y;
-        new_x = Double_val( Field( result, 0 ));
-        new_y = Double_val( Field( result, 1 ));
+        new_x = Double_val( Field( result, 0 ) );
+        new_y = Double_val( Field( result, 1 ) );
 
         x[i] = new_x;
         y[i] = new_y;
@@ -154,10 +154,10 @@ void ml_labelfunc( PLINT axis, PLFLT n, char *label, PLINT length, PLPointer d )
     // No check to see if a callback function has been designated yet,
     // because that is checked before we get to this point.
     result =
-        caml_callback2( *callback, Val_int( axis - 1 ), caml_copy_double( n ));
+        caml_callback2( *callback, Val_int( axis - 1 ), caml_copy_double( n ) );
 
     // Copy the OCaml callback output to the proper location.
-    snprintf( label, length, "%s", String_val( result ));
+    snprintf( label, length, "%s", String_val( result ) );
 
     CAMLreturn0;
 }
@@ -176,7 +176,7 @@ void ml_abort( const char* message )
     // No check to see if a callback function has been designated yet,
     // because that is checked before we get to this point.
     result =
-        caml_callback( *handler, caml_copy_string( message ));
+        caml_callback( *handler, caml_copy_string( message ) );
 
     CAMLreturn0;
 }
@@ -195,9 +195,9 @@ int ml_exit( const char* message )
     // No check to see if a callback function has been designated yet,
     // because that is checked before we get to this point.
     result =
-        caml_callback( *handler, caml_copy_string( message ));
+        caml_callback( *handler, caml_copy_string( message ) );
 
-    CAMLreturn( Int_val( result ));
+    CAMLreturn( Int_val( result ) );
 }
 
 // Check if the matching OCaml callback is defined.  Return NULL if it is not,
@@ -503,10 +503,10 @@ value ml_plgriddata( value x, value y, value z,
 
     // Check to make sure x, y and z are all the same length.
     npts = Wosize_val( x ) / Double_wosize;
-    if (( Wosize_val( y ) / Double_wosize != Wosize_val( z ) / Double_wosize ) ||
-        ( Wosize_val( y ) / Double_wosize != npts ) ||
-        ( Wosize_val( z ) / Double_wosize != npts )
-        )
+    if ( ( Wosize_val( y ) / Double_wosize != Wosize_val( z ) / Double_wosize ) ||
+         ( Wosize_val( y ) / Double_wosize != npts ) ||
+         ( Wosize_val( z ) / Double_wosize != npts )
+         )
     {
         caml_failwith( "ml_plgriddata: x, y, z must all have the same dimensions" );
     }
@@ -519,9 +519,9 @@ value ml_plgriddata( value x, value y, value z,
 
     // Using "type + 1" because "type" is passed in as a variant type, so
     // the indexing starts from 0 rather than 1.
-    c_plgriddata((double*) x, (double*) y, (double*) z, npts, (double*) xg, nptsx,
+    c_plgriddata( (double*) x, (double*) y, (double*) z, npts, (double*) xg, nptsx,
         (double*) yg, nptsy, zg_local, Int_val( type ) + 1,
-        Double_val( data ));
+        Double_val( data ) );
 
     // Allocate the X-dimension of the to-be-returned OCaml array
     zg = caml_alloc( nptsx, 0 );
@@ -605,7 +605,7 @@ value ml_plparseopts( value argv, value parse_method )
     const char* argv_copy[argv_length];
     for ( i = 0; i < argv_length; i++ )
     {
-        argv_copy[i] = String_val( Field( argv, i ));
+        argv_copy[i] = String_val( Field( argv, i ) );
     }
     // OR the elements of the parse_method list together
     combined_parse_method = 0;
@@ -613,7 +613,7 @@ value ml_plparseopts( value argv, value parse_method )
     {
         combined_parse_method =
             combined_parse_method |
-            translate_parse_option( Int_val( Field( parse_method, 0 )));
+            translate_parse_option( Int_val( Field( parse_method, 0 ) ) );
         // Point to the tail of the list for the next loop
         parse_method = Field( parse_method, 1 );
     }
@@ -644,9 +644,9 @@ value ml_plstripc( value xspec, value yspec, value xmin, value xmax, value xjump
     int       i;
     for ( i = 0; i < 4; i++ )
     {
-        colline_copy[i] = Int_val( Field( colline, i ));
-        styline_copy[i] = Int_val( Field( styline, i ));
-        legend_copy[i]  = String_val( Field( legline, i ));
+        colline_copy[i] = Int_val( Field( colline, i ) );
+        styline_copy[i] = Int_val( Field( styline, i ) );
+        legend_copy[i]  = String_val( Field( legline, i ) );
     }
     // The returned value
     int id;
@@ -656,9 +656,9 @@ value ml_plstripc( value xspec, value yspec, value xmin, value xmax, value xjump
         Double_val( xlpos ), Double_val( ylpos ), Bool_val( y_ascl ),
         Bool_val( acc ), Int_val( colbox ), Int_val( collab ),
         colline_copy, styline_copy, legend_copy,
-        String_val( labx ), String_val( laby ), String_val( labtop ));
+        String_val( labx ), String_val( laby ), String_val( labtop ) );
     // Make me do something!
-    CAMLreturn( Val_int( id ));
+    CAMLreturn( Val_int( id ) );
 }
 
 value ml_plstripc_byte( value* argv, int argn )
@@ -690,8 +690,8 @@ value ml_pltr1( value xg, value yg, value x, value y )
     pltr1( Double_val( x ), Double_val( y ), &tx, &ty, ( PLPointer ) & grid );
 
     // Allocate a tuple and return it with the results
-    Store_field( tx_ty, 0, caml_copy_double( tx ));
-    Store_field( tx_ty, 1, caml_copy_double( ty ));
+    Store_field( tx_ty, 0, caml_copy_double( tx ) );
+    Store_field( tx_ty, 1, caml_copy_double( ty ) );
     CAMLreturn( tx_ty );
 }
 
@@ -715,13 +715,13 @@ value ml_pltr2( value xg, value yg, value x, value y )
     // Length of "outer" array
     length1 = Wosize_val( xg );
     // Length of the "inner" arrays
-    length2 = Wosize_val( Field( xg, 0 )) / Double_wosize;
-    c_xg    = malloc( length1 * sizeof ( double* ));
+    length2 = Wosize_val( Field( xg, 0 ) ) / Double_wosize;
+    c_xg    = malloc( length1 * sizeof ( double* ) );
     for ( i = 0; i < length1; i++ )
     {
         c_xg[i] = (double*) Field( xg, i );
     }
-    c_yg = malloc( length1 * sizeof ( double* ));
+    c_yg = malloc( length1 * sizeof ( double* ) );
     for ( i = 0; i < length1; i++ )
     {
         c_yg[i] = (double*) Field( yg, i );
@@ -738,8 +738,8 @@ value ml_pltr2( value xg, value yg, value x, value y )
     free( c_yg );
 
     // Allocate a tuple and return it with the results
-    Store_field( tx_ty, 0, caml_copy_double( tx ));
-    Store_field( tx_ty, 1, caml_copy_double( ty ));
+    Store_field( tx_ty, 0, caml_copy_double( tx ) );
+    Store_field( tx_ty, 1, caml_copy_double( ty ) );
     CAMLreturn( tx_ty );
 }
 

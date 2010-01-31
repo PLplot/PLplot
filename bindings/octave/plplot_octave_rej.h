@@ -124,4 +124,4 @@ void plsButtonEH( void ( *ButtonEH )( PLGraphicsIn *, void *, int * ),
 
 /* Sets an optional user exit handler. */
 
-void plsexit( int ( *handler )( char * ));  //%nowrap
+void plsexit( int ( *handler )( char * ) );  //%nowrap

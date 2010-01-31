@@ -54,7 +54,7 @@
                   return -1; }
 
 #define plr_cmd( code ) \
-    if (( code ) == -1 ) return -1;
+    if ( ( code ) == -1 ) return -1;
 
 /* Error termination */
 
@@ -118,9 +118,9 @@ plr_process( PLRDev *plr )
 
     while ( plr->pdfs->bp < plr->nbytes )
     {
-        plr_cmd( c = plr_get( plr ));
+        plr_cmd( c = plr_get( plr ) );
         csave = c;
-        plr_cmd( plr_process1( plr, c ));
+        plr_cmd( plr_process1( plr, c ) );
     }
     return 0;
 }
@@ -141,31 +141,31 @@ plr_process1( PLRDev *plr, int c )
     switch ( c )
     {
     case INITIALIZE:
-        plr_cmd( plr_init( plr ));
+        plr_cmd( plr_init( plr ) );
         break;
 
     case LINE:
     case LINETO:
     case POLYLINE:
-        plr_cmd( plr_line( plr, c ));
+        plr_cmd( plr_line( plr, c ) );
         break;
 
     case EOP:
         plr->at_eop = 1;
-        plr_cmd( plr_eop( plr ));
+        plr_cmd( plr_eop( plr ) );
         break;
 
     case BOP:
         plr->at_bop = 1;
-        plr_cmd( plr_bop( plr ));
+        plr_cmd( plr_bop( plr ) );
         break;
 
     case CHANGE_STATE:
-        plr_cmd( plr_state( plr ));
+        plr_cmd( plr_state( plr ) );
         break;
 
     case ESCAPE:
-        plr_cmd( plr_esc( plr ));
+        plr_cmd( plr_esc( plr ) );
         break;
 
     default:
@@ -190,14 +190,14 @@ plr_init( PLRDev *plr )
 
 /* Read header info */
 
-    plr_cmd( pdf_rd_header( plr->pdfs, tk_magic ));
-    if ( strcmp( tk_magic, PLSERV_HEADER ))
+    plr_cmd( pdf_rd_header( plr->pdfs, tk_magic ) );
+    if ( strcmp( tk_magic, PLSERV_HEADER ) )
         barf( "plr_init: Invalid header" );
 
 /* Read version field of header.  We need to check that we can read the */
 /* byte stream, in case this is an old version of plserver. */
 
-    plr_cmd( pdf_rd_header( plr->pdfs, tk_version ));
+    plr_cmd( pdf_rd_header( plr->pdfs, tk_version ) );
     if ( strcmp( tk_version, PLSERV_VERSION ) > 0 )
     {
         fprintf( stderr,
@@ -210,41 +210,41 @@ plr_init( PLRDev *plr )
 
     for (;; )
     {
-        plr_cmd( pdf_rd_header( plr->pdfs, tag ));
+        plr_cmd( pdf_rd_header( plr->pdfs, tag ) );
         if ( *tag == '\0' )
             break;
 
-        if ( !strcmp( tag, "xmin" ))
+        if ( !strcmp( tag, "xmin" ) )
         {
-            plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ));
+            plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ) );
             plr->xmin = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "xmax" ))
+        if ( !strcmp( tag, "xmax" ) )
         {
-            plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ));
+            plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ) );
             plr->xmax = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "ymin" ))
+        if ( !strcmp( tag, "ymin" ) )
         {
-            plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ));
+            plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ) );
             plr->ymin = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "ymax" ))
+        if ( !strcmp( tag, "ymax" ) )
         {
-            plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ));
+            plr_rd( pdf_rd_2bytes( plr->pdfs, &dum_ushort ) );
             plr->ymax = dum_ushort;
             continue;
         }
 
-        if ( !strcmp( tag, "width" ))
+        if ( !strcmp( tag, "width" ) )
         {
-            plr_rd( pdf_rd_1byte( plr->pdfs, &dum_uchar ));
+            plr_rd( pdf_rd_1byte( plr->pdfs, &dum_uchar ) );
             plwid( dum_uchar );
             continue;
         }
@@ -271,32 +271,32 @@ plr_line( PLRDev *plr, int c )
     x[0] = plr->xold;
     y[0] = plr->yold;
 
-    switch ((int) c )
+    switch ( (int) c )
     {
     case LINE:
-        plr_cmd( get_ncoords( plr, x, y, 1 ));
+        plr_cmd( get_ncoords( plr, x, y, 1 ) );
 
     case LINETO:
         for (;; )
         {
-            plr_cmd( get_ncoords( plr, x + npts, y + npts, 1 ));
+            plr_cmd( get_ncoords( plr, x + npts, y + npts, 1 ) );
 
             npts++;
-            if ( npts == PL_MAXPOLY || ( plr->pdfs->bp == plr->nbytes ))
+            if ( npts == PL_MAXPOLY || ( plr->pdfs->bp == plr->nbytes ) )
                 break;
 
-            plr_cmd( c1 = plr_get( plr ));
+            plr_cmd( c1 = plr_get( plr ) );
             if ( c1 != LINETO )
             {
-                plr_cmd( plr_unget( plr, (U_CHAR) c1 ));
+                plr_cmd( plr_unget( plr, (U_CHAR) c1 ) );
                 break;
             }
         }
         break;
 
     case POLYLINE:
-        plr_rd( pdf_rd_2bytes( plr->pdfs, &npts ));
-        plr_cmd( get_ncoords( plr, x, y, npts ));
+        plr_rd( pdf_rd_2bytes( plr->pdfs, &npts ) );
+        plr_cmd( get_ncoords( plr, x, y, npts ) );
         break;
     }
 
@@ -326,8 +326,8 @@ get_ncoords( PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n )
     int   i;
     short xs[PL_MAXPOLY], ys[PL_MAXPOLY];
 
-    plr_rdn( pdf_rd_2nbytes( plr->pdfs, (U_SHORT *) xs, n ));
-    plr_rdn( pdf_rd_2nbytes( plr->pdfs, (U_SHORT *) ys, n ));
+    plr_rdn( pdf_rd_2nbytes( plr->pdfs, (U_SHORT *) xs, n ) );
+    plr_rdn( pdf_rd_2nbytes( plr->pdfs, (U_SHORT *) ys, n ) );
 
     for ( i = 0; i < n; i++ )
     {
@@ -385,14 +385,14 @@ plr_state( PLRDev *plr )
     U_CHAR op;
     int    i;
 
-    plr_rd( pdf_rd_1byte( plr->pdfs, &op ));
+    plr_rd( pdf_rd_1byte( plr->pdfs, &op ) );
 
     switch ( op )
     {
     case PLSTATE_WIDTH: {
         U_SHORT width;
 
-        plr_rd( pdf_rd_2bytes( plr->pdfs, &width ));
+        plr_rd( pdf_rd_2bytes( plr->pdfs, &width ) );
 
         plwid( width );
         break;
@@ -401,14 +401,14 @@ plr_state( PLRDev *plr )
     case PLSTATE_COLOR0: {
         short icol0;
 
-        plr_rd( pdf_rd_2bytes( plr->pdfs, &icol0 ));
+        plr_rd( pdf_rd_2bytes( plr->pdfs, &icol0 ) );
 
         if ( icol0 == PL_RGB_COLOR )
         {
             U_CHAR r, g, b;
-            plr_rd( pdf_rd_1byte( plr->pdfs, &r ));
-            plr_rd( pdf_rd_1byte( plr->pdfs, &g ));
-            plr_rd( pdf_rd_1byte( plr->pdfs, &b ));
+            plr_rd( pdf_rd_1byte( plr->pdfs, &r ) );
+            plr_rd( pdf_rd_1byte( plr->pdfs, &g ) );
+            plr_rd( pdf_rd_1byte( plr->pdfs, &b ) );
             plrgb1( r, g, b );
         }
         else
@@ -422,7 +422,7 @@ plr_state( PLRDev *plr )
         U_SHORT icol1;
         PLFLT   col1;
 
-        plr_rd( pdf_rd_2bytes( plr->pdfs, &icol1 ));
+        plr_rd( pdf_rd_2bytes( plr->pdfs, &icol1 ) );
         col1 = (double) icol1 / (double) plsc->ncol1;
         plcol1( col1 );
         break;
@@ -431,7 +431,7 @@ plr_state( PLRDev *plr )
     case PLSTATE_FILL: {
         signed char patt;
 
-        plr_rd( pdf_rd_1byte( plr->pdfs, (U_CHAR *) &patt ));
+        plr_rd( pdf_rd_1byte( plr->pdfs, (U_CHAR *) &patt ) );
         plpsty( patt );
         break;
     }
@@ -439,13 +439,13 @@ plr_state( PLRDev *plr )
     case PLSTATE_CMAP0: {
         U_SHORT ncol0;
 
-        plr_rd( pdf_rd_2bytes( plr->pdfs, &ncol0 ));
-        plscmap0n((PLINT) ncol0 );
+        plr_rd( pdf_rd_2bytes( plr->pdfs, &ncol0 ) );
+        plscmap0n( (PLINT) ncol0 );
         for ( i = 0; i < plsc->ncol0; i++ )
         {
-            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap0[i].r ));
-            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap0[i].g ));
-            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap0[i].b ));
+            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap0[i].r ) );
+            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap0[i].g ) );
+            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap0[i].b ) );
         }
         plP_state( PLSTATE_CMAP0 );
         break;
@@ -456,23 +456,23 @@ plr_state( PLRDev *plr )
         float   h, l, s;
         U_CHAR  rev;
 
-        plr_rd( pdf_rd_2bytes( plr->pdfs, &ncol1 ));
-        plscmap1n((PLINT) ncol1 );
+        plr_rd( pdf_rd_2bytes( plr->pdfs, &ncol1 ) );
+        plscmap1n( (PLINT) ncol1 );
         for ( i = 0; i < plsc->ncol1; i++ )
         {
-            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap1[i].r ));
-            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap1[i].g ));
-            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap1[i].b ));
+            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap1[i].r ) );
+            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap1[i].g ) );
+            plr_rd( pdf_rd_1byte( plr->pdfs, &plsc->cmap1[i].b ) );
         }
         /* Get the control points */
-        plr_rd( pdf_rd_2bytes( plr->pdfs, &ncp1 ));
+        plr_rd( pdf_rd_2bytes( plr->pdfs, &ncp1 ) );
         plsc->ncp1 = ncp1;
         for ( i = 0; i < plsc->ncp1; i++ )
         {
-            plr_rd( pdf_rd_ieeef( plr->pdfs, &h ));
-            plr_rd( pdf_rd_ieeef( plr->pdfs, &l ));
-            plr_rd( pdf_rd_ieeef( plr->pdfs, &s ));
-            plr_rd( pdf_rd_1byte( plr->pdfs, &rev ));
+            plr_rd( pdf_rd_ieeef( plr->pdfs, &h ) );
+            plr_rd( pdf_rd_ieeef( plr->pdfs, &l ) );
+            plr_rd( pdf_rd_ieeef( plr->pdfs, &s ) );
+            plr_rd( pdf_rd_1byte( plr->pdfs, &rev ) );
 
             plsc->cmap1cp[i].h   = h;
             plsc->cmap1cp[i].l   = l;
@@ -501,16 +501,16 @@ plr_esc( PLRDev *plr )
 {
     U_CHAR op;
 
-    plr_rd( pdf_rd_1byte( plr->pdfs, &op ));
+    plr_rd( pdf_rd_1byte( plr->pdfs, &op ) );
 
     switch ( op )
     {
     case PLESC_FILL:
-        plr_cmd( plresc_fill( plr ));
+        plr_cmd( plresc_fill( plr ) );
         break;
 
     default:
-        pl_cmd((PLINT) op, NULL );
+        pl_cmd( (PLINT) op, NULL );
         break;
     }
 
@@ -530,7 +530,7 @@ plresc_fill( PLRDev *plr )
 
     dbug_enter( "plresc_fill" );
 
-    plr_rd( pdf_rd_2bytes( plr->pdfs, &npts ));
+    plr_rd( pdf_rd_2bytes( plr->pdfs, &npts ) );
     get_ncoords( plr, x, y, npts );
     plfill( npts, x, y );
 

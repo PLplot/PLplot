@@ -63,7 +63,7 @@ void init_genrand( unsigned long s )
     for ( mti = 1; mti < N; mti++ )
     {
         mt[mti] =
-            ( 1812433253UL * ( mt[mti - 1] ^ ( mt[mti - 1] >> 30 )) + mti );
+            ( 1812433253UL * ( mt[mti - 1] ^ ( mt[mti - 1] >> 30 ) ) + mti );
         /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
         /* In the previous versions, MSBs of the seed affect   */
         /* only MSBs of the array mt[].                        */
@@ -85,7 +85,7 @@ void init_by_array( unsigned long init_key[], int key_length )
     k = ( N > key_length ? N : key_length );
     for (; k; k-- )
     {
-        mt[i] = ( mt[i] ^ (( mt[i - 1] ^ ( mt[i - 1] >> 30 )) * 1664525UL ))
+        mt[i] = ( mt[i] ^ ( ( mt[i - 1] ^ ( mt[i - 1] >> 30 ) ) * 1664525UL ) )
                 + init_key[j] + j; /* non linear */
         mt[i] &= 0xffffffffUL;     /* for WORDSIZE > 32 machines */
         i++; j++;
@@ -97,7 +97,7 @@ void init_by_array( unsigned long init_key[], int key_length )
     }
     for ( k = N - 1; k; k-- )
     {
-        mt[i] = ( mt[i] ^ (( mt[i - 1] ^ ( mt[i - 1] >> 30 )) * 1566083941UL ))
+        mt[i] = ( mt[i] ^ ( ( mt[i - 1] ^ ( mt[i - 1] >> 30 ) ) * 1566083941UL ) )
                 - i;           /* non linear */
         mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
         i++;
@@ -174,7 +174,7 @@ double genrand_real2( void )
 /* generates a random number on (0,1)-real-interval */
 double genrand_real3( void )
 {
-    return (((double) genrand_int32()) + 0.5 ) * ( 1.0 / 4294967296.0 );
+    return ( ( (double) genrand_int32() ) + 0.5 ) * ( 1.0 / 4294967296.0 );
     /* divided by 2^32 */
 }
 

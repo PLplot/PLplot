@@ -116,7 +116,7 @@ plD_init_ljii( PLStream *pls )
     dev->xmin = 0;
     dev->ymin = 0;
 
-    plP_setpxl((PLFLT) 5.905, (PLFLT) 5.905 );
+    plP_setpxl( (PLFLT) 5.905, (PLFLT) 5.905 );
 
 /* Rotate by 90 degrees since portrait mode addressing is used */
 
@@ -138,17 +138,17 @@ plD_init_ljii( PLStream *pls )
 
     if ( pls->portrait )
     {
-        plsdiori((PLFLT) ( 4 - ORIENTATION ));
+        plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
         pls->freeaspect = 1;
     }
 
 /* Allocate storage for bit map matrix */
 
 #ifdef MSDOS
-    if (( bitmap = (char _HUGE *) halloc((long) NBYTES, sizeof ( char ))) == NULL )
+    if ( ( bitmap = (char _HUGE *) halloc( (long) NBYTES, sizeof ( char ) ) ) == NULL )
         plexit( "Out of memory in call to calloc" );
 #else
-    if (( bitmap = (void *) calloc( NBYTES, sizeof ( char ))) == NULL )
+    if ( ( bitmap = (void *) calloc( NBYTES, sizeof ( char ) ) ) == NULL )
         plexit( "Out of memory in call to calloc" );
 #endif
 
@@ -183,8 +183,8 @@ plD_line_ljii( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     plRotPhy( ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x2, &y2 );
 
     x1b    = x1, x2b = x2, y1b = y1, y2b = y2;
-    length = (PLFLT) sqrt((double)
-        (( x2b - x1b ) * ( x2b - x1b ) + ( y2b - y1b ) * ( y2b - y1b )));
+    length = (PLFLT) sqrt( (double)
+        ( ( x2b - x1b ) * ( x2b - x1b ) + ( y2b - y1b ) * ( y2b - y1b ) ) );
 
     if ( length == 0. )
         length = 1.;
@@ -193,11 +193,11 @@ plD_line_ljii( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     fx = x1;
     fy = y1;
-    setpoint((PLINT) x1, (PLINT) y1 );
-    setpoint((PLINT) x2, (PLINT) y2 );
+    setpoint( (PLINT) x1, (PLINT) y1 );
+    setpoint( (PLINT) x2, (PLINT) y2 );
 
     for ( i = 1; i <= (int) length; i++ )
-        setpoint((PLINT) ( fx += dx ), (PLINT) ( fy += dy ));
+        setpoint( (PLINT) ( fx += dx ), (PLINT) ( fy += dy ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -285,7 +285,7 @@ plD_tidy_ljii( PLStream *pls )
 
     fprintf( OF, "%cE", ESC );
     fclose( OF );
-    free((void *) bitmap );
+    free( (void *) bitmap );
 }
 
 /*--------------------------------------------------------------------------*\

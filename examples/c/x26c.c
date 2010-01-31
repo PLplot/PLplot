@@ -153,7 +153,7 @@ plot1( int type, char *x_label, char *y_label, char *alty_label,
     {
         freql[i] = -2.0 + i / 20.0;
         freq     = pow( 10.0, freql[i] );
-        ampl[i]  = 20.0 * log10( 1.0 / sqrt( 1.0 + pow(( freq / f0 ), 2. )));
+        ampl[i]  = 20.0 * log10( 1.0 / sqrt( 1.0 + pow( ( freq / f0 ), 2. ) ) );
         phase[i] = -( 180.0 / M_PI ) * atan( freq / f0 );
     }
 

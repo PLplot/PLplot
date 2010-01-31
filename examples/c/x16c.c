@@ -150,10 +150,10 @@ main( int argc, const char *argv[] )
 
 /* Allocate data structures */
 
-    clevel = (PLFLT *) calloc( ns, sizeof ( PLFLT ));
-    shedge = (PLFLT *) calloc( ns + 1, sizeof ( PLFLT ));
-    xg1    = (PLFLT *) calloc( nx, sizeof ( PLFLT ));
-    yg1    = (PLFLT *) calloc( ny, sizeof ( PLFLT ));
+    clevel = (PLFLT *) calloc( ns, sizeof ( PLFLT ) );
+    shedge = (PLFLT *) calloc( ns + 1, sizeof ( PLFLT ) );
+    xg1    = (PLFLT *) calloc( nx, sizeof ( PLFLT ) );
+    yg1    = (PLFLT *) calloc( ny, sizeof ( PLFLT ) );
 
     plAlloc2dGrid( &z, nx, ny );
     plAlloc2dGrid( &w, nx, ny );
@@ -162,10 +162,10 @@ main( int argc, const char *argv[] )
 
     for ( i = 0; i < nx; i++ )
     {
-        x = (double) ( i - ( nx / 2 )) / (double) ( nx / 2 );
+        x = (double) ( i - ( nx / 2 ) ) / (double) ( nx / 2 );
         for ( j = 0; j < ny; j++ )
         {
-            y = (double) ( j - ( ny / 2 )) / (double) ( ny / 2 ) - 1.0;
+            y = (double) ( j - ( ny / 2 ) ) / (double) ( ny / 2 ) - 1.0;
 
             z[i][j] = -sin( 7. * x ) * cos( 7. * y ) + x * x - y * y;
             w[i][j] = -cos( 7. * x ) * sin( 7. * y ) + 2 * x * y;
@@ -194,7 +194,7 @@ main( int argc, const char *argv[] )
     {
         for ( j = 0; j < ny; j++ )
         {
-            mypltr((PLFLT) i, (PLFLT) j, &x, &y, NULL );
+            mypltr( (PLFLT) i, (PLFLT) j, &x, &y, NULL );
 
             argx    = x * M_PI / 2;
             argy    = y * M_PI / 2;
@@ -355,10 +355,10 @@ main( int argc, const char *argv[] )
 
     for ( i = 0; i < nx; i++ )
     {
-        r = ((PLFLT) i ) / ( nx - 1 );
+        r = ( (PLFLT) i ) / ( nx - 1 );
         for ( j = 0; j < ny; j++ )
         {
-            t = ( 2. * M_PI / ( ny - 1. )) * j;
+            t = ( 2. * M_PI / ( ny - 1. ) ) * j;
             cgrid2.xg[i][j] = r * cos( t );
             cgrid2.yg[i][j] = r * sin( t );
             z[i][j]         = exp( -r * r ) * cos( 5. * M_PI * r ) * cos( 5. * t );
@@ -381,7 +381,7 @@ main( int argc, const char *argv[] )
 /* Now we can draw the perimeter.  (If do before, shade stuff may overlap.) */
     for ( i = 0; i < PERIMETERPTS; i++ )
     {
-        t     = ( 2. * M_PI / ( PERIMETERPTS - 1 )) * (double) i;
+        t     = ( 2. * M_PI / ( PERIMETERPTS - 1 ) ) * (double) i;
         px[i] = cos( t );
         py[i] = sin( t );
     }
@@ -396,10 +396,10 @@ main( int argc, const char *argv[] )
 
 /* Clean up */
 
-    free((void *) clevel );
-    free((void *) shedge );
-    free((void *) xg1 );
-    free((void *) yg1 );
+    free( (void *) clevel );
+    free( (void *) shedge );
+    free( (void *) xg1 );
+    free( (void *) yg1 );
     plFree2dGrid( z, nx, ny );
     plFree2dGrid( w, nx, ny );
     plFree2dGrid( cgrid2.xg, nx, ny );

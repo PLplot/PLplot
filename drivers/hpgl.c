@@ -124,7 +124,7 @@ initialize_hpgl_pls( PLStream *pls )
     dev->xlen = dev->xmax - dev->xmin;
     dev->ylen = dev->ymax - dev->ymin;
 
-    plP_setpxl((PLFLT) 40., (PLFLT) 40. );
+    plP_setpxl( (PLFLT) 40., (PLFLT) 40. );
     plP_setphy( dev->xmin, dev->xmax, dev->ymin, dev->ymax );
 }
 

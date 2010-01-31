@@ -81,19 +81,19 @@
 
 /* From itkDecls.h */
 
-EXTERN int Itk_Init _ANSI_ARGS_(( Tcl_Interp * interp ));
+EXTERN int Itk_Init _ANSI_ARGS_( ( Tcl_Interp * interp ) );
 
 /* From tclIntDecls.h */
 
 #ifndef Tcl_Import_TCL_DECLARED
-EXTERN int Tcl_Import _ANSI_ARGS_(( Tcl_Interp * interp,
-                                    Tcl_Namespace * nsPtr, char * pattern,
-                                    int allowOverwrite ));
+EXTERN int Tcl_Import _ANSI_ARGS_( ( Tcl_Interp * interp,
+                                     Tcl_Namespace * nsPtr, char * pattern,
+                                     int allowOverwrite ) );
 #endif
 
 #ifndef Tcl_GetGlobalNamespace_TCL_DECLARE
-EXTERN Tcl_Namespace * Tcl_GetGlobalNamespace _ANSI_ARGS_((
-                                                              Tcl_Interp * interp ));
+EXTERN Tcl_Namespace * Tcl_GetGlobalNamespace _ANSI_ARGS_( (
+                                                               Tcl_Interp * interp ) );
 #endif
 
 /*
@@ -107,7 +107,7 @@ EXTERN Tcl_Namespace * Tcl_GetGlobalNamespace _ANSI_ARGS_((
  * extern int		isatty _ANSI_ARGS_((int fd));
  * extern int		read _ANSI_ARGS_((int fd, char *buf, size_t size));
  */
-extern char *           strrchr _ANSI_ARGS_(( CONST char *string, int c ));
+extern char *           strrchr _ANSI_ARGS_( ( CONST char *string, int c ) );
 
 /*
  * Global variables used by the main program:
@@ -153,9 +153,9 @@ static Tk_ArgvInfo argTable[] = {
  * Forward declarations for procedures defined later in this file:
  */
 
-static void Prompt _ANSI_ARGS_(( Tcl_Interp * interp, int partial ));
-static void StdinProc _ANSI_ARGS_(( ClientData clientData,
-                                    int mask ));
+static void Prompt _ANSI_ARGS_( ( Tcl_Interp * interp, int partial ) );
+static void StdinProc _ANSI_ARGS_( ( ClientData clientData,
+                                     int mask ) );
 
 /*
  *----------------------------------------------------------------------
@@ -178,7 +178,7 @@ static void StdinProc _ANSI_ARGS_(( ClientData clientData,
 
 int
 pltkMain( int argc, const char **argv, char *RcFileName,
-          int ( *AppInit )( Tcl_Interp *interp ))
+          int ( *AppInit )( Tcl_Interp *interp ) )
 {
     char       *args, *msg;
     const char *p;
@@ -318,7 +318,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
 
     tty = isatty( 0 );
     Tcl_SetVar( interp, "tcl_interactive",
-        (( fileName == NULL ) && tty ) ? "1" : "0", TCL_GLOBAL_ONLY );
+        ( ( fileName == NULL ) && tty ) ? "1" : "0", TCL_GLOBAL_ONLY );
 
     /*
      * Add a few application-specific commands to the application's
@@ -329,7 +329,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
      * Invoke application-specific initialization.
      */
 
-    if (( *AppInit )( interp ) != TCL_OK )
+    if ( ( *AppInit )( interp ) != TCL_OK )
     {
         fprintf( stderr, "(*AppInit) failed: %s\n", interp->result );
     }
@@ -507,12 +507,12 @@ int mask;                               /* Not used. */
     cmd = Tcl_DStringAppend( &command, input, count );
     if ( count != 0 )
     {
-        if (( input[count - 1] != '\n' ) && ( input[count - 1] != ';' ))
+        if ( ( input[count - 1] != '\n' ) && ( input[count - 1] != ';' ) )
         {
             gotPartial = 1;
             goto prompt;
         }
-        if ( !Tcl_CommandComplete( cmd ))
+        if ( !Tcl_CommandComplete( cmd ) )
         {
             gotPartial = 1;
             goto prompt;
@@ -537,7 +537,7 @@ int mask;                               /* Not used. */
     Tcl_DStringFree( &command );
     if ( *interp->result != 0 )
     {
-        if (( code != TCL_OK ) || ( tty ))
+        if ( ( code != TCL_OK ) || ( tty ) )
         {
             printf( "%s\n", interp->result );
         }

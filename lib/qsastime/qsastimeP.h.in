@@ -68,7 +68,7 @@ struct QSASConfigStruct
 #define QSASTIME_static    static
 #endif
 
-QSASTIME_static void bhunt_search( const void *key, const void *base, int n, size_t size, int *low, int ( *ge )( const void *keyval, const void *datum ));
+QSASTIME_static void bhunt_search( const void *key, const void *base, int n, size_t size, int *low, int ( *ge )( const void *keyval, const void *datum ) );
 
 QSASTIME_static int setFromUT( int year, int month, int day, int hour, int min, double sec, MJDtime *MJD, int forceJulian );
 QSASTIME_static void breakDownMJD( int *year, int *month, int *day, int *hour, int *min, double *sec, const MJDtime *MJD, int forceJulian );

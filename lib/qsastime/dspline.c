@@ -75,7 +75,7 @@ int dspline( double *x, double *y, int n,
 /*        d(i) = -c(i)/b(i) */
 /*        N.B. d(i) is temporarily stored in y2. */
         y2[1] = -.5;
-        u[0]  = 3. / ( x[2] - x[1] ) * (( y[2] - y[1] ) / ( x[2] - x[1] ) - cond1 );
+        u[0]  = 3. / ( x[2] - x[1] ) * ( ( y[2] - y[1] ) / ( x[2] - x[1] ) - cond1 );
     }
     else
     {
@@ -108,9 +108,9 @@ int dspline( double *x, double *y, int n,
 /*        propagate d(i) equation above.  Note sig-1 = -c(i) */
         y2[i__] = ( sig - 1. ) / p;
 /*        propagate scaled u(i) equation above */
-        u[i__ - 1] = ((( y[i__ + 1] - y[i__] ) / ( x[i__ + 1] - x[i__] ) - ( y[i__]
-                                                                             - y[i__ - 1] ) / ( x[i__] - x[i__ - 1] )) * 6. / ( x[i__ + 1] -
-                                                                                                                                x[i__ - 1] ) - sig * u[i__ - 2] ) / p;
+        u[i__ - 1] = ( ( ( y[i__ + 1] - y[i__] ) / ( x[i__ + 1] - x[i__] ) - ( y[i__]
+                                                                               - y[i__ - 1] ) / ( x[i__] - x[i__ - 1] ) ) * 6. / ( x[i__ + 1] -
+                                                                                                                                   x[i__ - 1] ) - sig * u[i__ - 2] ) / p;
     }
     if ( ifn == 2 )
     {
@@ -134,7 +134,7 @@ int dspline( double *x, double *y, int n,
         qn = .5;
 /*        un is scaled r_n (N.B. un is not u(n))!  Sorry for the mixed notation. */
         un = 3. / ( x[n] - x[n - 1] ) * ( condn - ( y[n] - y[n - 1] ) / ( x[n]
-                                                                          - x[n - 1] ));
+                                                                          - x[n - 1] ) );
     }
     else
     {

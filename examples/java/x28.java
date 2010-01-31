@@ -110,7 +110,7 @@ class x28 {
         pls.schr( 0., 1.0 );
         for ( i = 0; i < NREVOLUTION; i++ )
         {
-            omega         = 2. * Math.PI * ((double) i / (double) NREVOLUTION );
+            omega         = 2. * Math.PI * ( (double) i / (double) NREVOLUTION );
             sin_omega     = Math.sin( omega );
             cos_omega     = Math.cos( omega );
             x_inclination = 0.5 * xrange * cos_omega;
@@ -130,7 +130,7 @@ class x28 {
         pls.schr( 0., 1.0 );
         for ( i = 0; i < NREVOLUTION; i++ )
         {
-            omega         = 2. * Math.PI * ((double) i / (double) NREVOLUTION );
+            omega         = 2. * Math.PI * ( (double) i / (double) NREVOLUTION );
             sin_omega     = Math.sin( omega );
             cos_omega     = Math.cos( omega );
             x_inclination = 0.;
@@ -150,7 +150,7 @@ class x28 {
         pls.schr( 0., 1.0 );
         for ( i = 0; i < NREVOLUTION; i++ )
         {
-            omega         = 2. * Math.PI * ((double) i / (double) NREVOLUTION );
+            omega         = 2. * Math.PI * ( (double) i / (double) NREVOLUTION );
             sin_omega     = Math.sin( omega );
             cos_omega     = Math.cos( omega );
             x_inclination = 0.5 * xrange * cos_omega;
@@ -188,7 +188,7 @@ class x28 {
         x_shear       = 0.;
         for ( i = 0; i < NROTATION; i++ )
         {
-            omega     = 2. * Math.PI * ((double) i / (double) NROTATION );
+            omega     = 2. * Math.PI * ( (double) i / (double) NROTATION );
             sin_omega = Math.sin( omega );
             cos_omega = Math.cos( omega );
             y_shear   = 0.5 * yrange * sin_omega;
@@ -209,7 +209,7 @@ class x28 {
         y_shear       = 0.;
         for ( i = 0; i < NROTATION; i++ )
         {
-            omega     = 2. * Math.PI * ((double) i / (double) NROTATION );
+            omega     = 2. * Math.PI * ( (double) i / (double) NROTATION );
             sin_omega = Math.sin( omega );
             cos_omega = Math.cos( omega );
             x_shear   = 0.5 * xrange * sin_omega;
@@ -230,7 +230,7 @@ class x28 {
         x_shear       = 0.;
         for ( i = 0; i < NROTATION; i++ )
         {
-            omega     = 2. * Math.PI * ((double) i / (double) NROTATION );
+            omega     = 2. * Math.PI * ( (double) i / (double) NROTATION );
             sin_omega = Math.sin( omega );
             cos_omega = Math.cos( omega );
             y_shear   = 0.5 * yrange * cos_omega;
@@ -269,7 +269,7 @@ class x28 {
         y_shear       = 0.;
         for ( i = 0; i < NSHEAR; i++ )
         {
-            omega     = domega + 2. * Math.PI * ((double) i / (double) NSHEAR );
+            omega     = domega + 2. * Math.PI * ( (double) i / (double) NSHEAR );
             sin_omega = Math.sin( omega );
             cos_omega = Math.cos( omega );
             x_shear   = 0.5 * xrange * sin_omega;
@@ -290,7 +290,7 @@ class x28 {
         x_shear       = 0.;
         for ( i = 0; i < NSHEAR; i++ )
         {
-            omega     = domega + 2. * Math.PI * ((double) i / (double) NSHEAR );
+            omega     = domega + 2. * Math.PI * ( (double) i / (double) NSHEAR );
             sin_omega = Math.sin( omega );
             cos_omega = Math.cos( omega );
             y_shear   = -0.5 * yrange * sin_omega;
@@ -311,7 +311,7 @@ class x28 {
         z_shear       = 0.;
         for ( i = 0; i < NSHEAR; i++ )
         {
-            omega     = domega + 2. * Math.PI * ((double) i / (double) NSHEAR );
+            omega     = domega + 2. * Math.PI * ( (double) i / (double) NSHEAR );
             sin_omega = Math.sin( omega );
             cos_omega = Math.cos( omega );
             y_shear   = 0.5 * yrange * cos_omega;
@@ -369,7 +369,7 @@ class x28 {
                 xpos, ypos, zpos,
                 x_inclination, y_inclination, z_inclination,
                 x_shear, y_shear, z_shear,
-                0.5, pstring.substring( i, i + 1 ));
+                0.5, pstring.substring( i, i + 1 ) );
             omega += domega;
         }
         /* Draw minimal 3D grid to finish defining the 3D box. */

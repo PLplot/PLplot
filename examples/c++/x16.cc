@@ -179,10 +179,10 @@ x16::x16( int argc, const char ** argv )
 
     for ( i = 0; i < nx; i++ )
     {
-        x = (PLFLT) ( i - ( nx / 2 )) / (PLFLT) ( nx / 2 );
+        x = (PLFLT) ( i - ( nx / 2 ) ) / (PLFLT) ( nx / 2 );
         for ( j = 0; j < ny; j++ )
         {
-            y = (PLFLT) ( j - ( ny / 2 )) / (PLFLT) ( ny / 2 ) - 1.0;
+            y = (PLFLT) ( j - ( ny / 2 ) ) / (PLFLT) ( ny / 2 ) - 1.0;
 
             z[i][j] = -sin( 7. * x ) * cos( 7. * y ) + x * x - y * y;
             w[i][j] = -cos( 7. * x ) * sin( 7. * y ) + 2 * x * y;
@@ -213,7 +213,7 @@ x16::x16( int argc, const char ** argv )
     {
         for ( j = 0; j < ny; j++ )
         {
-            mypltr((PLFLT) i, (PLFLT) j, &x, &y, NULL );
+            mypltr( (PLFLT) i, (PLFLT) j, &x, &y, NULL );
 
             argx    = x * M_PI / 2;
             argy    = y * M_PI / 2;
@@ -357,10 +357,10 @@ x16::x16( int argc, const char ** argv )
 
     for ( i = 0; i < nx; i++ )
     {
-        r = ((PLFLT) i ) / ( nx - 1 );
+        r = ( (PLFLT) i ) / ( nx - 1 );
         for ( j = 0; j < ny; j++ )
         {
-            t = ( 2. * M_PI / ( ny - 1. )) * j;
+            t = ( 2. * M_PI / ( ny - 1. ) ) * j;
             cgrid2.xg[i][j] = r * cos( t );
             cgrid2.yg[i][j] = r * sin( t );
             z[i][j]         = exp( -r * r ) * cos( 5. * M_PI * r ) * cos( 5. * t );
@@ -382,7 +382,7 @@ x16::x16( int argc, const char ** argv )
     // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
     for ( i = 0; i < PERIMETERPTS; i++ )
     {
-        t     = ( 2. * M_PI / ( PERIMETERPTS - 1 )) * (PLFLT) i;
+        t     = ( 2. * M_PI / ( PERIMETERPTS - 1 ) ) * (PLFLT) i;
         px[i] = cos( t );
         py[i] = sin( t );
     }

@@ -150,7 +150,7 @@ int main( char[][] args )
     PLINT win;
     plcalc_world( xmid, ymid, &wx, &wy, &win );
     writefln( "world parameters: wx, wy, win = %f %f %d", wx, wy, win );
-    if ( fabs( wx - 0.5 * ( xmin + xmax )) > 1.0E-5 || fabs( wy - 0.5 * ( ymin + ymax )) > 1.0E-5 )
+    if ( fabs( wx - 0.5 * ( xmin + xmax ) ) > 1.0E-5 || fabs( wy - 0.5 * ( ymin + ymax ) ) > 1.0E-5 )
     {
         derr.writefln( "plcalc_world test failed" );
         status = 1;
@@ -232,10 +232,10 @@ int main( char[][] args )
     PLFLT zxmin, zymin, zxmax, zymax;
     plgdiplt( &zxmin, &zymin, &zxmax, &zymax );
     writefln( "zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f", zxmin, zymin, zxmax, zymax );
-    if ( fabs( zxmin - ( xmin + ( xmax - xmin ) * 0.1 )) > 1.0E-5 ||
-         fabs( zxmax - ( xmin + ( xmax - xmin ) * 0.9 )) > 1.0E-5 ||
-         fabs( zymin - ( ymin + ( ymax - ymin ) * 0.1 )) > 1.0E-5 ||
-         fabs( zymax - ( ymin + ( ymax - ymin ) * 0.9 )) > 1.0E-5 )
+    if ( fabs( zxmin - ( xmin + ( xmax - xmin ) * 0.1 ) ) > 1.0E-5 ||
+         fabs( zxmax - ( xmin + ( xmax - xmin ) * 0.9 ) ) > 1.0E-5 ||
+         fabs( zymin - ( ymin + ( ymax - ymin ) * 0.1 ) ) > 1.0E-5 ||
+         fabs( zymax - ( ymin + ( ymax - ymin ) * 0.9 ) ) > 1.0E-5 )
     {
         derr.writefln( "plsdiplz test failed" );
         status = 1;

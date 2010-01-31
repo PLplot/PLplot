@@ -128,7 +128,7 @@ x28::x28( int argc, const char *argv[] )
     pls->schr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
-        omega         = 2. * M_PI * ((PLFLT) i / (PLFLT) NREVOLUTION );
+        omega         = 2. * M_PI * ( (PLFLT) i / (PLFLT) NREVOLUTION );
         sin_omega     = sin( omega );
         cos_omega     = cos( omega );
         x_inclination = 0.5 * xrange * cos_omega;
@@ -148,7 +148,7 @@ x28::x28( int argc, const char *argv[] )
     pls->schr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
-        omega         = 2. * M_PI * ((PLFLT) i / (PLFLT) NREVOLUTION );
+        omega         = 2. * M_PI * ( (PLFLT) i / (PLFLT) NREVOLUTION );
         sin_omega     = sin( omega );
         cos_omega     = cos( omega );
         x_inclination = 0.;
@@ -168,7 +168,7 @@ x28::x28( int argc, const char *argv[] )
     pls->schr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
-        omega         = 2. * M_PI * ((PLFLT) i / (PLFLT) NREVOLUTION );
+        omega         = 2. * M_PI * ( (PLFLT) i / (PLFLT) NREVOLUTION );
         sin_omega     = sin( omega );
         cos_omega     = cos( omega );
         x_inclination = 0.5 * xrange * cos_omega;
@@ -206,7 +206,7 @@ x28::x28( int argc, const char *argv[] )
     x_shear       = 0.;
     for ( i = 0; i < NROTATION; i++ )
     {
-        omega     = 2. * M_PI * ((PLFLT) i / (PLFLT) NROTATION );
+        omega     = 2. * M_PI * ( (PLFLT) i / (PLFLT) NROTATION );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         y_shear   = 0.5 * yrange * sin_omega;
@@ -227,7 +227,7 @@ x28::x28( int argc, const char *argv[] )
     y_shear       = 0.;
     for ( i = 0; i < NROTATION; i++ )
     {
-        omega     = 2. * M_PI * ((PLFLT) i / (PLFLT) NROTATION );
+        omega     = 2. * M_PI * ( (PLFLT) i / (PLFLT) NROTATION );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         x_shear   = 0.5 * xrange * sin_omega;
@@ -248,7 +248,7 @@ x28::x28( int argc, const char *argv[] )
     x_shear       = 0.;
     for ( i = 0; i < NROTATION; i++ )
     {
-        omega     = 2. * M_PI * ((PLFLT) i / (PLFLT) NROTATION );
+        omega     = 2. * M_PI * ( (PLFLT) i / (PLFLT) NROTATION );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         y_shear   = 0.5 * yrange * cos_omega;
@@ -287,7 +287,7 @@ x28::x28( int argc, const char *argv[] )
     y_shear       = 0.;
     for ( i = 0; i < NSHEAR; i++ )
     {
-        omega     = domega + 2. * M_PI * ((PLFLT) i / (PLFLT) NSHEAR );
+        omega     = domega + 2. * M_PI * ( (PLFLT) i / (PLFLT) NSHEAR );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         x_shear   = 0.5 * xrange * sin_omega;
@@ -308,7 +308,7 @@ x28::x28( int argc, const char *argv[] )
     x_shear       = 0.;
     for ( i = 0; i < NSHEAR; i++ )
     {
-        omega     = domega + 2. * M_PI * ((PLFLT) i / (PLFLT) NSHEAR );
+        omega     = domega + 2. * M_PI * ( (PLFLT) i / (PLFLT) NSHEAR );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         y_shear   = -0.5 * yrange * sin_omega;
@@ -329,7 +329,7 @@ x28::x28( int argc, const char *argv[] )
     z_shear       = 0.;
     for ( i = 0; i < NSHEAR; i++ )
     {
-        omega     = domega + 2. * M_PI * ((PLFLT) i / (PLFLT) NSHEAR );
+        omega     = domega + 2. * M_PI * ( (PLFLT) i / (PLFLT) NSHEAR );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         y_shear   = 0.5 * yrange * cos_omega;

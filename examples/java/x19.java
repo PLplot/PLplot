@@ -94,7 +94,7 @@ class LabelFunc19 implements PLCallbackLabel {
         }
         else
         {
-            label = "" + ((int) Math.abs( label_val )) + direction_label;
+            label = "" + ( (int) Math.abs( label_val ) ) + direction_label;
         }
         return label;
     }
@@ -111,7 +111,7 @@ class LabelFunc19 implements PLCallbackLabel {
         }
         else
         {
-            times = Math.floor(( Math.abs( lon ) + 180.0 ) / 360.0 );
+            times = Math.floor( ( Math.abs( lon ) + 180.0 ) / 360.0 );
             if ( lon < 0.0 )
             {
                 return ( lon + 360.0 * times );

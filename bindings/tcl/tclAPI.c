@@ -134,7 +134,7 @@ static char  errmsg[160];
 
 extern PLDLLIMPORT char * plplotLibDir;
 
-#if ( !defined ( MAC_TCL ) && !defined ( __WIN32__ ))
+#if ( !defined ( MAC_TCL ) && !defined ( __WIN32__ ) )
 /*
  * Use an extended search for installations on Unix where we
  * have very likely installed plplot so that plplot.tcl is
@@ -165,7 +165,7 @@ Append_Cmdlist( Tcl_Interp *interp )
 
     if ( !inited )
     {
-        namelist = (char **) malloc( ncmds * sizeof ( char * ));
+        namelist = (char **) malloc( ncmds * sizeof ( char * ) );
 
         for ( i = 0; i < ncmds; i++ )
             namelist[i] = Cmds[i].name;
@@ -223,7 +223,7 @@ plTclCmd_Init( Tcl_Interp *interp )
         hPtr = Tcl_CreateHashEntry( &cmdTable, cmdInfoPtr->name, &new );
         if ( new )
         {
-            cmdPtr             = (Command *) ckalloc( sizeof ( Command ));
+            cmdPtr             = (Command *) ckalloc( sizeof ( Command ) );
             cmdPtr->proc       = cmdInfoPtr->proc;
             cmdPtr->clientData = (ClientData) NULL;
             cmdPtr->deleteProc = NULL;
@@ -329,7 +329,7 @@ loopbackCmd( ClientData clientData, Tcl_Interp *interp,
     int result = TCL_OK;
 
     argc--; argv++;
-    if ( argc == 0 || ( strcmp( argv[0], "cmd" ) != 0 ))
+    if ( argc == 0 || ( strcmp( argv[0], "cmd" ) != 0 ) )
     {
         Tcl_AppendResult( interp, "bad option \"", argv[0],
             "\" to \"loopback\": must be ",
@@ -437,7 +437,7 @@ PlbasicInit( Tcl_Interp *interp )
 /* If search is successful, both libDir (C) and pllibrary (tcl) are set */
 
 /* if we are in the build tree, search there */
-    if ( plInBuildTree())
+    if ( plInBuildTree() )
     {
         if ( debug ) fprintf( stderr, "trying BUILD_DIR\n" );
         libDir = BUILD_DIR "/bindings/tcl";
@@ -610,7 +610,7 @@ plWait_Until( ClientData clientData, Tcl_Interp *interp, int argc, const char **
 
     for (;; )
     {
-        if ( Tcl_ExprBoolean( interp, argv[1], &result ))
+        if ( Tcl_ExprBoolean( interp, argv[1], &result ) )
         {
             fprintf( stderr, "wait_until command \"%s\" failed:\n\t %s\n",
                 argv[1], interp->result );
@@ -645,7 +645,7 @@ pls_auto_path( Tcl_Interp *interp )
     char *path;
 #endif
 
-    buf = (char *) malloc( 256 * sizeof ( char ));
+    buf = (char *) malloc( 256 * sizeof ( char ) );
 
 /* Add TCL_DIR */
 
@@ -665,7 +665,7 @@ pls_auto_path( Tcl_Interp *interp )
 
 /* Add $HOME/tcl */
 
-    if (( dn = getenv( "HOME" )) != NULL )
+    if ( ( dn = getenv( "HOME" ) ) != NULL )
     {
         plGetName( dn, "tcl", "", &ptr );
         Tcl_SetVar( interp, "dir", ptr, 0 );
@@ -684,7 +684,7 @@ pls_auto_path( Tcl_Interp *interp )
 /* Add PL_TCL_ENV = $(PL_TCL) */
 
 #if defined ( PL_TCL_ENV )
-    if (( dn = getenv( PL_TCL_ENV )) != NULL )
+    if ( ( dn = getenv( PL_TCL_ENV ) ) != NULL )
     {
         plGetName( dn, "", "", &ptr );
         Tcl_SetVar( interp, "dir", ptr, 0 );
@@ -704,7 +704,7 @@ pls_auto_path( Tcl_Interp *interp )
 /* Add PL_HOME_ENV/tcl = $(PL_HOME_ENV)/tcl */
 
 #if defined ( PL_HOME_ENV )
-    if (( dn = getenv( PL_HOME_ENV )) != NULL )
+    if ( ( dn = getenv( PL_HOME_ENV ) ) != NULL )
     {
         plGetName( dn, "tcl", "", &ptr );
         Tcl_SetVar( interp, "dir", ptr, 0 );
@@ -738,7 +738,7 @@ pls_auto_path( Tcl_Interp *interp )
         goto finish;
     }
     /*** see if plserver was invoked in the build tree ***/
-    if ( plInBuildTree())
+    if ( plInBuildTree() )
     {
         Tcl_SetVar( interp, "dir", BUILD_DIR "/bindings/tk", TCL_GLOBAL_ONLY );
         if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
@@ -896,7 +896,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
  * otherwise it is the name of clev. */
 
     for ( i = 0; i < (int) strlen( argv[2] ) && arg3_is_kx; i++ )
-        if ( !isdigit( argv[2][i] ))
+        if ( !isdigit( argv[2][i] ) )
             arg3_is_kx = 0;
 
     if ( arg3_is_kx )
@@ -977,7 +977,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
 /* Now we need to set up the data for contouring. */
 
-    if ( !strcmp( pltrname, "pltr0" ))
+    if ( !strcmp( pltrname, "pltr0" ) )
     {
         pltr  = pltr0;
         zused = z;
@@ -989,7 +989,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
             return TCL_ERROR;
         }
     }
-    else if ( !strcmp( pltrname, "pltr1" ))
+    else if ( !strcmp( pltrname, "pltr1" ) )
     {
         pltr      = pltr1;
         cgrid1.xg = mattrx->fdata;
@@ -1013,7 +1013,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
         pltr_data = &cgrid1;
     }
-    else if ( !strcmp( pltrname, "pltr2" ))
+    else if ( !strcmp( pltrname, "pltr2" ) )
     {
         /* printf( "plcont, setting up for pltr2\n" ); */
         if ( !wrap )
@@ -1301,7 +1301,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
 
 /* Now we need to set up the data for contouring. */
 
-    if ( !strcmp( pltrname, "pltr0" ))
+    if ( !strcmp( pltrname, "pltr0" ) )
     {
         pltr  = pltr0;
         uused = u;
@@ -1314,7 +1314,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
             return TCL_ERROR;
         }
     }
-    else if ( !strcmp( pltrname, "pltr1" ))
+    else if ( !strcmp( pltrname, "pltr1" ) )
     {
         pltr      = pltr1;
         cgrid1.xg = mattrx->fdata;
@@ -1339,7 +1339,7 @@ plvectCmd( ClientData clientData, Tcl_Interp *interp,
 
         pltr_data = &cgrid1;
     }
-    else if ( !strcmp( pltrname, "pltr2" ))
+    else if ( !strcmp( pltrname, "pltr2" ) )
     {
         /* printf( "plvect, setting up for pltr2\n" ); */
         if ( !wrap )
@@ -1556,7 +1556,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
         x = matx->fdata;
         y = maty->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -1593,7 +1593,7 @@ plmeshCmd( ClientData clientData, Tcl_Interp *interp,
         x = matx->fdata;
         y = maty->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -1697,7 +1697,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
         y    = maty->fdata;
         clev = matlev->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -1741,7 +1741,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
         clev = matlev->fdata;
         nlev = matlev->n[0];
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -1780,7 +1780,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
         x = matx->fdata;
         y = maty->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -1818,7 +1818,7 @@ plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
         x = matx->fdata;
         y = maty->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -1911,7 +1911,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
         x = matx->fdata;
         y = maty->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -1949,7 +1949,7 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
         x = matx->fdata;
         y = maty->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -2053,7 +2053,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
         y    = maty->fdata;
         clev = matlev->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -2097,7 +2097,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
         clev = matlev->fdata;
         nlev = matlev->n[0];
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -2136,7 +2136,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
         x = matx->fdata;
         y = maty->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -2174,7 +2174,7 @@ plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
         x = matx->fdata;
         y = maty->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -2278,7 +2278,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
         y    = maty->fdata;
         clev = matlev->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -2322,7 +2322,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
         clev = matlev->fdata;
         nlev = matlev->n[0];
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -2361,7 +2361,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
         x = matx->fdata;
         y = maty->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -2399,7 +2399,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
         x = matx->fdata;
         y = maty->fdata;
 
-        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ));
+        z = (PLFLT **) malloc( nx * sizeof ( PLFLT * ) );
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
@@ -2452,7 +2452,7 @@ plranddCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else
     {
-        Tcl_SetObjResult( interp, Tcl_NewDoubleObj( plrandd()));
+        Tcl_SetObjResult( interp, Tcl_NewDoubleObj( plrandd() ) );
         return TCL_OK;
     }
 }
@@ -2597,7 +2597,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
 /* Figure out which coordinate transformation model is being used, and setup
  * accordingly. */
 
-    if ( !strcmp( pltrname, "pltr0" ))
+    if ( !strcmp( pltrname, "pltr0" ) )
     {
         pltr  = pltr0;
         zused = z;
@@ -2609,7 +2609,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
             return TCL_ERROR;
         }
     }
-    else if ( !strcmp( pltrname, "pltr1" ))
+    else if ( !strcmp( pltrname, "pltr1" ) )
     {
         pltr      = pltr1;
         cgrid1.xg = mattrx->fdata;
@@ -2633,7 +2633,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
 
         pltr_data = &cgrid1;
     }
-    else if ( !strcmp( pltrname, "pltr2" ))
+    else if ( !strcmp( pltrname, "pltr2" ) )
     {
         /* printf( "plshade, setting up for pltr2\n" ); */
         if ( !wrap )
@@ -2900,7 +2900,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
 /* Figure out which coordinate transformation model is being used, and setup
  * accordingly. */
 
-    if ( !strcmp( pltrname, "pltr0" ))
+    if ( !strcmp( pltrname, "pltr0" ) )
     {
         pltr  = pltr0;
         zused = z;
@@ -2912,7 +2912,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
             return TCL_ERROR;
         }
     }
-    else if ( !strcmp( pltrname, "pltr1" ))
+    else if ( !strcmp( pltrname, "pltr1" ) )
     {
         pltr      = pltr1;
         cgrid1.xg = mattrx->fdata;
@@ -2936,7 +2936,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
 
         pltr_data = &cgrid1;
     }
-    else if ( !strcmp( pltrname, "pltr2" ))
+    else if ( !strcmp( pltrname, "pltr2" ) )
     {
         /* printf( "plshades, setting up for pltr2\n" ); */
         if ( !wrap )
@@ -3684,7 +3684,7 @@ list of at least four items - ", argv[17], (char *) NULL );
     sprintf( idvalue, "%d", id );
     Tcl_SetVar( interp, idName, idvalue, 0 );
 
-    Tcl_Free((char *) legline );
+    Tcl_Free( (char *) legline );
 
     return TCL_OK;
 }
@@ -3704,7 +3704,7 @@ labelform( PLINT axis, PLFLT value, char *string, PLINT string_length, PLPointer
     int objc;
 
     label_objs[1] = Tcl_NewIntObj( axis );
-    label_objs[2] = Tcl_NewDoubleObj((double) value );
+    label_objs[2] = Tcl_NewDoubleObj( (double) value );
 
     Tcl_IncrRefCount( label_objs[1] );
     Tcl_IncrRefCount( label_objs[2] );
@@ -3771,13 +3771,13 @@ plslabelfuncCmd( ClientData clientData, Tcl_Interp *interp,
     else
     {
         plslabelfunc( labelform, NULL );
-        label_objs[0] = Tcl_NewStringObj( argv[1], strlen( argv[1] ));
+        label_objs[0] = Tcl_NewStringObj( argv[1], strlen( argv[1] ) );
         Tcl_IncrRefCount( label_objs[0] );
     }
 
     if ( argc == 3 )
     {
-        label_objs[3] = Tcl_NewStringObj( argv[2], strlen( argv[2] )); /* Should change with Tcl_Obj interface */
+        label_objs[3] = Tcl_NewStringObj( argv[2], strlen( argv[2] ) ); /* Should change with Tcl_Obj interface */
         Tcl_IncrRefCount( label_objs[3] );
     }
     else

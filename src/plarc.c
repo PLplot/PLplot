@@ -22,10 +22,10 @@
 #include "plplotP.h"
 
 #define CIRCLE_SEGMENTS    PL_MAXPOLY
-#define DEG_TO_RAD( x )                    (( x ) * M_PI / 180.0 )
+#define DEG_TO_RAD( x )                    ( ( x ) * M_PI / 180.0 )
 
-#define PLARC_POINT_X( x, a, b, theta )    (( x ) + (( a ) * cos( theta )))
-#define PLARC_POINT_Y( y, a, b, theta )    (( y ) + (( b ) * sin( theta )))
+#define PLARC_POINT_X( x, a, b, theta )    ( ( x ) + ( ( a ) * cos( theta ) ) )
+#define PLARC_POINT_Y( y, a, b, theta )    ( ( y ) + ( ( b ) * sin( theta ) ) )
 
 /*-------------------------------------------------------------------------
  * plarc_approx : Plot an approximated arc with a series of lines
@@ -114,7 +114,7 @@ c_plarc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLBOOL 
     /* TODO: For now, only unrotated plots use the driver-accelerated path. */
     if ( plsc->dev_arc && plsc->diorot == 0 )
     {
-        arc_info = (arc_struct *) malloc((size_t) sizeof ( arc_struct ));
+        arc_info = (arc_struct *) malloc( (size_t) sizeof ( arc_struct ) );
 
         xscl[0] = plP_wcpcx( x - a );
         xscl[1] = plP_wcpcx( x + a );

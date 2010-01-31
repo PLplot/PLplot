@@ -19,7 +19,7 @@
 #if !defined ( _NAN_H )
 #define _NAN_H
 
-#if ( defined ( __GNUC__ ) && !defined ( __ICC )) || defined ( __BORLANDC__ )
+#if ( defined ( __GNUC__ ) && !defined ( __ICC ) ) || defined ( __BORLANDC__ )
 
 static const double NaN = 0.0 / 0.0;
 
@@ -32,7 +32,7 @@ static const double NaN = 0.0 / 0.0;
 
 #if !defined ( _MSC_VER )
 
-static unsigned _int64 lNaN = ((unsigned _int64) 1 << 63 ) - 1;
+static unsigned _int64 lNaN = ( (unsigned _int64) 1 << 63 ) - 1;
 
 #define NaN    ( *(double*) &lNaN )
 
@@ -57,7 +57,7 @@ static unsigned _int64 lNaN = ((unsigned _int64) 1 << 63 ) - 1;
 
 #else
 
-static const long long lNaN = ((unsigned long long) 1 << 63 ) - 1;
+static const long long lNaN = ( (unsigned long long) 1 << 63 ) - 1;
 
 #define NaN    ( *(double*) &lNaN )
 

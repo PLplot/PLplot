@@ -30,7 +30,7 @@ Pltk_Init( Tcl_Interp *interp );
 
 EXTERN PLDLLIMPEXP_TCLTK int
 pltkMain( int argc, const char **argv, char *RcFileName,
-          int ( *AppInit )( Tcl_Interp *interp ));
+          int ( *AppInit )( Tcl_Interp *interp ) );
 
 #ifdef __cplusplus
 }

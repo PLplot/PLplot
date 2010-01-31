@@ -134,7 +134,7 @@
 #define UNDEF                64
 #define NUMBER_BISECTIONS    10
 
-#define linear( val1, val2, level )    (( level - val1 ) / ( val2 - val1 ))
+#define linear( val1, val2, level )    ( ( level - val1 ) / ( val2 - val1 ) )
 
 /* Global variables */
 
@@ -256,13 +256,13 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT
             PLFLT   *x, *y;
             cgrid1.nx = nx;
             cgrid1.ny = ny;
-            x         = (PLFLT *) malloc( nx * sizeof ( PLFLT ));
+            x         = (PLFLT *) malloc( nx * sizeof ( PLFLT ) );
             if ( x == NULL )
                 plexit( "plshades: Out of memory for x" );
             cgrid1.xg = x;
             for ( i = 0; i < nx; i++ )
                 cgrid1.xg[i] = xmin + ( xmax - xmin ) * (float) i / (float) ( nx - 1 );
-            y = (PLFLT *) malloc( ny * sizeof ( PLFLT ));
+            y = (PLFLT *) malloc( ny * sizeof ( PLFLT ) );
             if ( y == NULL )
                 plexit( "plshades: Out of memory for y" );
             cgrid1.yg = y;
@@ -469,14 +469,14 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
     pen_wd_min = min_width;
     pen_wd_max = max_width;
 
-    plstyl((PLINT) 0, NULL, NULL );
+    plstyl( (PLINT) 0, NULL, NULL );
     plwid( sh_width );
     if ( fill != NULL )
     {
         switch ( sh_cmap )
         {
         case 0:
-            plcol0((PLINT) sh_color );
+            plcol0( (PLINT) sh_color );
             break;
         case 1:
             plcol1( sh_color );
@@ -489,7 +489,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
     /* alloc space for value array, and initialize */
     /* This is only a temporary kludge */
     nxny = nx * ny;
-    if (( a = (PLFLT *) malloc( nxny * sizeof ( PLFLT ))) == NULL )
+    if ( ( a = (PLFLT *) malloc( nxny * sizeof ( PLFLT ) ) ) == NULL )
     {
         plabort( "plfshade: unable to allocate memory for value array" );
         return;
@@ -501,7 +501,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
     /* alloc space for condition codes */
 
-    if (( c = (int *) malloc( nxny * sizeof ( int ))) == NULL )
+    if ( ( c = (int *) malloc( nxny * sizeof ( int ) ) ) == NULL )
     {
         plabort( "plfshade: unable to allocate memory for condition codes" );
         free( a );
@@ -640,7 +640,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
             /* special cases: check number of times a contour is in a box */
 
-            switch (( min_points << 3 ) + max_points )
+            switch ( ( min_points << 3 ) + max_points )
             {
             case 000:
             case 020:
@@ -694,12 +694,12 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                 if ( n != 7 )
                     fprintf( stderr, "plfshade err n=%d !7", (int) n );
 
-                if (( c0[iy] == OK || c1[iy + 1] == OK ) && slope == 1 )
+                if ( ( c0[iy] == OK || c1[iy + 1] == OK ) && slope == 1 )
                 {
                     if ( fill != NULL )
                         exfill( fill, defined, n, x, y );
                 }
-                else if (( c0[iy + 1] == OK || c1[iy] == OK ) && slope == 0 )
+                else if ( ( c0[iy + 1] == OK || c1[iy] == OK ) && slope == 0 )
                 {
                     if ( fill != NULL )
                         exfill( fill, defined, n, x, y );
@@ -739,7 +739,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
             if ( fill != NULL )
             {
                 plwid( sh_width );
-                if ( sh_cmap == 0 ) plcol0((PLINT) sh_color );
+                if ( sh_cmap == 0 ) plcol0( (PLINT) sh_color );
                 else if ( sh_cmap == 1 ) plcol1( sh_color );
             }
         }
@@ -895,7 +895,7 @@ bisect( PLINT ( *defined )( PLFLT, PLFLT ), PLINT niter,
     xm = ( x1 + x2 ) / 2.;
     ym = ( y1 + y2 ) / 2.;
 
-    if ( defined( xm, ym ))
+    if ( defined( xm, ym ) )
         bisect( defined, niter - 1, xm, ym, x2, y2, xb, yb );
     else
         bisect( defined, niter - 1, x1, y1, xm, ym, xb, yb );
@@ -942,15 +942,15 @@ exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
 
         /* Slightly less than 2 n points are required for xx, yy, but
          * allocate room for 2 n to be safe. */
-        if (( xx = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ))) == NULL )
+        if ( ( xx = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ) ) ) == NULL )
             plexit( "exfill: out of memory for xx" );
-        if (( yy = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ))) == NULL )
+        if ( ( yy = (PLFLT *) malloc( 2 * n * sizeof ( PLFLT ) ) ) == NULL )
             plexit( "exfill: out of memory for yy." );
 
         for ( i = 0; i < n; i++ )
         {
             /* is_defined tells whether im1 point was in defined region. */
-            if ( defined( x[i], y[i] ))
+            if ( defined( x[i], y[i] ) )
             {
                 if ( !is_defined )
                 {

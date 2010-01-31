@@ -105,8 +105,8 @@ class x26 {
     {
         int nlang, i;
         nlang = x_label.length;
-        if (( nlang != y_label.length ) || ( nlang != alty_label.length ) ||
-            ( nlang != title_label.length ) || ( nlang != line_label.length ))
+        if ( ( nlang != y_label.length ) || ( nlang != alty_label.length ) ||
+             ( nlang != title_label.length ) || ( nlang != line_label.length ) )
         {
             System.out.println( "Internal inconsistency in label dimensions" );
             pls.end();
@@ -154,7 +154,7 @@ class x26 {
             freql[i] = -2.0 + i / 20.0;
             freq     = Math.pow( 10.0, freql[i] );
             // Unbelievably, Java has no log10() that I can find...
-            ampl[i]  = 20.0 * Math.log( 1.0 / Math.sqrt( 1.0 + Math.pow(( freq / f0 ), 2. ))) / Math.log( 10. );
+            ampl[i]  = 20.0 * Math.log( 1.0 / Math.sqrt( 1.0 + Math.pow( ( freq / f0 ), 2. ) ) ) / Math.log( 10. );
             phase[i] = -( 180.0 / Math.PI ) * Math.atan( freq / f0 );
         }
 

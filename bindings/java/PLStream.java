@@ -64,7 +64,7 @@ public class PLStream implements plplotjavacConstants {
 // Ensure this is the current stream
     public int set_stream()
     {
-        if (( stream_id == -1 ) || ( active_streams == 0 ))
+        if ( ( stream_id == -1 ) || ( active_streams == 0 ) )
         {
             System.err.println( "Error: This stream is not active" );
             return -1;
@@ -81,7 +81,7 @@ public class PLStream implements plplotjavacConstants {
         try {
             String libdir = System.getProperty( "plplot.libdir" );
             libname = new File( libdir + File.separatorChar + plplot.core.config.libname );
-            if ( !libname.exists())
+            if ( !libname.exists() )
             {
                 libname = null;
             }
@@ -90,7 +90,7 @@ public class PLStream implements plplotjavacConstants {
         if ( libname == null )
         {
             libname = new File( plplot.core.config.libdir + File.separatorChar + plplot.core.config.libname );
-            if ( !libname.exists())
+            if ( !libname.exists() )
             {
                 libname = null;
             }
@@ -98,7 +98,7 @@ public class PLStream implements plplotjavacConstants {
         if ( libname != null )
         {
             try {
-                System.load( libname.getAbsolutePath());
+                System.load( libname.getAbsolutePath() );
             } catch ( UnsatisfiedLinkError e ) {
                 System.err.println( "Native code library failed to load. See the chapter on Dynamic Linking Problems in the SWIG Java documentation for help.\n" + e );
                 System.exit( 1 );

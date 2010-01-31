@@ -39,8 +39,8 @@ extern "C" { void CPSEnableForegroundOperation( ProcessSerialNumber* psn ); }
 #include "wxPLplotwindow.h"
 #include <cmath>
 
-#define MAX( a, b )    (( a ) < ( b ) ? ( b ) : ( a ))
-#define MIN( a, b )    (( a ) < ( b ) ? ( a ) : ( b ))
+#define MAX( a, b )    ( ( a ) < ( b ) ? ( b ) : ( a ) )
+#define MIN( a, b )    ( ( a ) < ( b ) ? ( a ) : ( b ) )
 
 /* Application icon as XPM */
 /* This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/ */
@@ -150,7 +150,7 @@ bool MyApp::OnInit()
     SetFrontProcess( &psn );
 #endif
 
-    MyFrame *frame = new MyFrame( _T( "wxPLplot demo" ));
+    MyFrame *frame = new MyFrame( _T( "wxPLplot demo" ) );
     frame->Show( true );
 
     return true;
@@ -190,14 +190,14 @@ MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 
     // add menu
     wxMenu *fileMenu = new wxMenu;
-    fileMenu->Append( wxPLplotDemo_BGColor, _T( "&Change background color...\tAlt-C" ), _T( "Change background color" ));
-    fileMenu->Append( wxPLplotDemo_About, _T( "&About...\tF1" ), _T( "Show about dialog" ));
-    fileMenu->Append( wxPLplotDemo_Quit, _T( "E&xit\tAlt-X" ), _T( "Quit this program" ));
+    fileMenu->Append( wxPLplotDemo_BGColor, _T( "&Change background color...\tAlt-C" ), _T( "Change background color" ) );
+    fileMenu->Append( wxPLplotDemo_About, _T( "&About...\tF1" ), _T( "Show about dialog" ) );
+    fileMenu->Append( wxPLplotDemo_Quit, _T( "E&xit\tAlt-X" ), _T( "Quit this program" ) );
 
     wxMenuBar *menuBar = new wxMenuBar();
-    menuBar->Append( fileMenu, _T( "&File" ));
+    menuBar->Append( fileMenu, _T( "&File" ) );
     SetMenuBar( menuBar );
-    SetIcon( wxIcon( graph ));
+    SetIcon( wxIcon( graph ) );
 
     // add the wxPLplot
     wxPanel   * panel = new wxPanel( this );
@@ -208,14 +208,14 @@ MyFrame::MyFrame( const wxString& title ) : wxFrame( NULL, wxID_ANY, title )
 #else
         wxPLPLOT_BACKEND_AGG | wxPLPLOT_DRAW_TEXT );
 #endif
-    plotwindow->Connect( wxEVT_CHAR, wxKeyEventHandler( MyPlotwindow::OnChar ));
+    plotwindow->Connect( wxEVT_CHAR, wxKeyEventHandler( MyPlotwindow::OnChar ) );
     box->Add( plotwindow, 1, wxALL | wxEXPAND, 0 );
     panel->SetSizer( box );
     SetSize( 640, 500 );      // set frame size
     SetSizeHints( 220, 150 ); // set minimum frame size
 
     wxString m_title = title;
-    switch ( plotwindow->getBackend())
+    switch ( plotwindow->getBackend() )
     {
     case wxPLPLOT_BACKEND_DC:
         m_title += wxT( " (basic)" );
@@ -279,13 +279,13 @@ void MyFrame::Plot()
 }
 
 
-void MyFrame::OnQuit( wxCommandEvent& WXUNUSED( event ))
+void MyFrame::OnQuit( wxCommandEvent& WXUNUSED( event ) )
 {
     Close( true );
 }
 
 
-void MyFrame::OnBackgroundColor( wxCommandEvent& WXUNUSED( event ))
+void MyFrame::OnBackgroundColor( wxCommandEvent& WXUNUSED( event ) )
 {
     bgcolor = !bgcolor;
     Plot();
@@ -294,7 +294,7 @@ void MyFrame::OnBackgroundColor( wxCommandEvent& WXUNUSED( event ))
 
 /*! Show information if Menu entry About was choosen.
  */
-void MyFrame::OnAbout( wxCommandEvent& WXUNUSED( event ))
+void MyFrame::OnAbout( wxCommandEvent& WXUNUSED( event ) )
 {
     wxMessageBox( _T( "This is the About dialog of the wxPLplot demo.\n" ), _T( "About wxPLplot" ),
         wxOK | wxICON_INFORMATION, this );

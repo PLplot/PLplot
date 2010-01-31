@@ -84,31 +84,31 @@ typedef struct
 /* Prototypes */
 /* Use a wrapper for the prototypes for use from K&R C */
 
-void pdf_set            PLARGS(( char *option, int value ));
-PLDLLIMPEXP PDFstrm *pdf_fopen  PLARGS(( const char *fileName, const char *mode ));
-PLDLLIMPEXP PDFstrm *pdf_bopen  PLARGS(( U_CHAR * buffer, long bufmax ));
-PLDLLIMPEXP PDFstrm *pdf_finit  PLARGS(( FILE * file ));
-PDFstrm *plLibOpenPdfstrm PLARGS((const char *fn));
-PLDLLIMPEXP int pdf_close              PLARGS(( PDFstrm * pdfs ));
+void pdf_set            PLARGS( ( char *option, int value ) );
+PLDLLIMPEXP PDFstrm *pdf_fopen  PLARGS( ( const char *fileName, const char *mode ) );
+PLDLLIMPEXP PDFstrm *pdf_bopen  PLARGS( ( U_CHAR * buffer, long bufmax ) );
+PLDLLIMPEXP PDFstrm *pdf_finit  PLARGS( ( FILE * file ) );
+PDFstrm *plLibOpenPdfstrm PLARGS( (const char *fn) );
+PLDLLIMPEXP int pdf_close              PLARGS( ( PDFstrm * pdfs ) );
 
-int pdf_putc           PLARGS(( int c, PDFstrm * pdfs ));
-PLDLLIMPEXP int pdf_getc               PLARGS(( PDFstrm * pdfs ));
-PLDLLIMPEXP int pdf_ungetc             PLARGS(( int c, PDFstrm * pdfs ));
-int pdf_rdx            PLARGS(( U_CHAR * x, long nitems, PDFstrm * pdfs ));
+int pdf_putc           PLARGS( ( int c, PDFstrm * pdfs ) );
+PLDLLIMPEXP int pdf_getc               PLARGS( ( PDFstrm * pdfs ) );
+PLDLLIMPEXP int pdf_ungetc             PLARGS( ( int c, PDFstrm * pdfs ) );
+int pdf_rdx            PLARGS( ( U_CHAR * x, long nitems, PDFstrm * pdfs ) );
 
-PLDLLIMPEXP int pdf_rd_header  PLARGS(( PDFstrm * pdfs, char *header ));
-PLDLLIMPEXP int pdf_wr_header  PLARGS(( PDFstrm * pdfs, char *header ));
-int pdf_wr_string      PLARGS(( PDFstrm * pdfs, const char *string ));
-int pdf_rd_string      PLARGS(( PDFstrm * pdfs, char *string, int nmax ));
-PLDLLIMPEXP int pdf_wr_1byte   PLARGS(( PDFstrm * pdfs, U_CHAR s ));
-PLDLLIMPEXP int pdf_rd_1byte   PLARGS(( PDFstrm * pdfs, U_CHAR * ps ));
-PLDLLIMPEXP int pdf_wr_2bytes  PLARGS(( PDFstrm * pdfs, U_SHORT s ));
-PLDLLIMPEXP int pdf_rd_2bytes  PLARGS(( PDFstrm * pdfs, U_SHORT * ps ));
-PLDLLIMPEXP int pdf_wr_2nbytes PLARGS(( PDFstrm * pdfs, U_SHORT * s, PLINT n ));
-PLDLLIMPEXP int pdf_rd_2nbytes         PLARGS(( PDFstrm * pdfs, U_SHORT * s, PLINT n ));
-PLDLLIMPEXP int pdf_wr_4bytes  PLARGS(( PDFstrm * pdfs, U_LONG s ));
-PLDLLIMPEXP int pdf_rd_4bytes  PLARGS(( PDFstrm * pdfs, U_LONG * ps ));
-PLDLLIMPEXP int pdf_wr_ieeef   PLARGS(( PDFstrm * pdfs, float f ));
-PLDLLIMPEXP int pdf_rd_ieeef   PLARGS(( PDFstrm * pdfs, float *pf ));
+PLDLLIMPEXP int pdf_rd_header  PLARGS( ( PDFstrm * pdfs, char *header ) );
+PLDLLIMPEXP int pdf_wr_header  PLARGS( ( PDFstrm * pdfs, char *header ) );
+int pdf_wr_string      PLARGS( ( PDFstrm * pdfs, const char *string ) );
+int pdf_rd_string      PLARGS( ( PDFstrm * pdfs, char *string, int nmax ) );
+PLDLLIMPEXP int pdf_wr_1byte   PLARGS( ( PDFstrm * pdfs, U_CHAR s ) );
+PLDLLIMPEXP int pdf_rd_1byte   PLARGS( ( PDFstrm * pdfs, U_CHAR * ps ) );
+PLDLLIMPEXP int pdf_wr_2bytes  PLARGS( ( PDFstrm * pdfs, U_SHORT s ) );
+PLDLLIMPEXP int pdf_rd_2bytes  PLARGS( ( PDFstrm * pdfs, U_SHORT * ps ) );
+PLDLLIMPEXP int pdf_wr_2nbytes PLARGS( ( PDFstrm * pdfs, U_SHORT * s, PLINT n ) );
+PLDLLIMPEXP int pdf_rd_2nbytes         PLARGS( ( PDFstrm * pdfs, U_SHORT * s, PLINT n ) );
+PLDLLIMPEXP int pdf_wr_4bytes  PLARGS( ( PDFstrm * pdfs, U_LONG s ) );
+PLDLLIMPEXP int pdf_rd_4bytes  PLARGS( ( PDFstrm * pdfs, U_LONG * ps ) );
+PLDLLIMPEXP int pdf_wr_ieeef   PLARGS( ( PDFstrm * pdfs, float f ) );
+PLDLLIMPEXP int pdf_rd_ieeef   PLARGS( ( PDFstrm * pdfs, float *pf ) );
 
 #endif  /* __PDF_H__ */

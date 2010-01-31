@@ -111,7 +111,7 @@ static void tio_destroy( struct triangulateio* tio )
 
 static delaunay* delaunay_create()
 {
-    delaunay* d = malloc( sizeof ( delaunay ));
+    delaunay* d = malloc( sizeof ( delaunay ) );
 
     d->npoints           = 0;
     d->points            = NULL;
@@ -175,12 +175,12 @@ static void tio2delaunay( struct triangulateio* tio_out, delaunay* d )
     d->ntriangles = tio_out->numberoftriangles;
     if ( d->ntriangles > 0 )
     {
-        d->triangles         = malloc( d->ntriangles * sizeof ( triangle ));
-        d->neighbours        = malloc( d->ntriangles * sizeof ( triangle_neighbours ));
-        d->circles           = malloc( d->ntriangles * sizeof ( circle ));
-        d->n_point_triangles = calloc( d->npoints, sizeof ( int ));
-        d->point_triangles   = malloc( d->npoints * sizeof ( int* ));
-        d->flags             = calloc( d->ntriangles, sizeof ( int ));
+        d->triangles         = malloc( d->ntriangles * sizeof ( triangle ) );
+        d->neighbours        = malloc( d->ntriangles * sizeof ( triangle_neighbours ) );
+        d->circles           = malloc( d->ntriangles * sizeof ( circle ) );
+        d->n_point_triangles = calloc( d->npoints, sizeof ( int ) );
+        d->point_triangles   = malloc( d->npoints * sizeof ( int* ) );
+        d->flags             = calloc( d->ntriangles, sizeof ( int ) );
     }
 
     if ( nn_verbose )
@@ -218,7 +218,7 @@ static void tio2delaunay( struct triangulateio* tio_out, delaunay* d )
         for ( i = 0; i < d->npoints; ++i )
         {
             if ( d->n_point_triangles[i] > 0 )
-                d->point_triangles[i] = malloc( d->n_point_triangles[i] * sizeof ( int ));
+                d->point_triangles[i] = malloc( d->n_point_triangles[i] * sizeof ( int ) );
             else
                 d->point_triangles[i] = NULL;
             d->n_point_triangles[i] = 0;
@@ -240,8 +240,8 @@ static void tio2delaunay( struct triangulateio* tio_out, delaunay* d )
     if ( tio_out->edgelist != NULL )
     {
         d->nedges = tio_out->numberofedges;
-        d->edges  = malloc( d->nedges * 2 * sizeof ( int ));
-        memcpy( d->edges, tio_out->edgelist, d->nedges * 2 * sizeof ( int ));
+        d->edges  = malloc( d->nedges * 2 * sizeof ( int ) );
+        memcpy( d->edges, tio_out->edgelist, d->nedges * 2 * sizeof ( int ) );
     }
 }
 #endif
@@ -265,7 +265,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
     char cmd[64] = "eznC";
     int  i, j;
 
-    assert( sizeof ( REAL ) == sizeof ( double ));
+    assert( sizeof ( REAL ) == sizeof ( double ) );
 
     tio_init( &tio_in );
 
@@ -275,7 +275,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
         return NULL;
     }
 
-    tio_in.pointlist      = malloc( np * 2 * sizeof ( double ));
+    tio_in.pointlist      = malloc( np * 2 * sizeof ( double ) );
     tio_in.numberofpoints = np;
     for ( i = 0, j = 0; i < np; ++i )
     {
@@ -285,16 +285,16 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
 
     if ( ns > 0 )
     {
-        tio_in.segmentlist      = malloc( ns * 2 * sizeof ( int ));
+        tio_in.segmentlist      = malloc( ns * 2 * sizeof ( int ) );
         tio_in.numberofsegments = ns;
-        memcpy( tio_in.segmentlist, segments, ns * 2 * sizeof ( int ));
+        memcpy( tio_in.segmentlist, segments, ns * 2 * sizeof ( int ) );
     }
 
     if ( nh > 0 )
     {
-        tio_in.holelist      = malloc( nh * 2 * sizeof ( double ));
+        tio_in.holelist      = malloc( nh * 2 * sizeof ( double ) );
         tio_in.numberofholes = nh;
-        memcpy( tio_in.holelist, holes, nh * 2 * sizeof ( double ));
+        memcpy( tio_in.holelist, holes, nh * 2 * sizeof ( double ) );
     }
 
     tio_init( &tio_out );
@@ -329,7 +329,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
 }
 #else /* USE_QHULL */
 {
-    delaunay* d = malloc( sizeof ( delaunay ));
+    delaunay* d = malloc( sizeof ( delaunay ) );
 
     coordT  *qpoints;                       /* array of coordinates for each point */
     boolT   ismalloc  = False;              /* True if qhull should free points */
@@ -348,7 +348,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
 
     dim = 2;
 
-    assert( sizeof ( realT ) == sizeof ( double )); /* Qhull was compiled with doubles? */
+    assert( sizeof ( realT ) == sizeof ( double ) ); /* Qhull was compiled with doubles? */
 
     if ( np == 0 || ns > 0 || nh > 0 )
     {
@@ -357,7 +357,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
         return NULL;
     }
 
-    qpoints = (coordT *) malloc( np * ( dim + 1 ) * sizeof ( coordT ));
+    qpoints = (coordT *) malloc( np * ( dim + 1 ) * sizeof ( coordT ) );
 
     for ( i = 0; i < np; i++ )
     {
@@ -393,7 +393,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
         d->ymax = -DBL_MAX;
 
         d->npoints = np;
-        d->points  = malloc( np * sizeof ( point ));
+        d->points  = malloc( np * sizeof ( point ) );
         for ( i = 0; i < np; ++i )
         {
             point* p = &d->points[i];
@@ -436,9 +436,9 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
         }
 
         d->ntriangles = ntriangles;
-        d->triangles  = malloc( d->ntriangles * sizeof ( triangle ));
-        d->neighbours = malloc( d->ntriangles * sizeof ( triangle_neighbours ));
-        d->circles    = malloc( d->ntriangles * sizeof ( circle ));
+        d->triangles  = malloc( d->ntriangles * sizeof ( triangle ) );
+        d->neighbours = malloc( d->ntriangles * sizeof ( triangle_neighbours ) );
+        d->circles    = malloc( d->ntriangles * sizeof ( circle ) );
 
         if ( nn_verbose )
             fprintf( stderr, "triangles:\tneighbors:\n" );
@@ -470,7 +470,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
                  * to do, reorder the neighbors.
                  */
 
-                if ( cw( d, t ))
+                if ( cw( d, t ) )
                 {
                     int tmp = t->vids[1];
                     t->vids[1] = t->vids[2];
@@ -493,9 +493,9 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
             }
         }
 
-        d->flags = calloc( d->ntriangles, sizeof ( int ));
+        d->flags = calloc( d->ntriangles, sizeof ( int ) );
 
-        d->n_point_triangles = calloc( d->npoints, sizeof ( int ));
+        d->n_point_triangles = calloc( d->npoints, sizeof ( int ) );
         for ( i = 0; i < d->ntriangles; ++i )
         {
             triangle* t = &d->triangles[i];
@@ -503,11 +503,11 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
             for ( j = 0; j < 3; ++j )
                 d->n_point_triangles[t->vids[j]]++;
         }
-        d->point_triangles = malloc( d->npoints * sizeof ( int* ));
+        d->point_triangles = malloc( d->npoints * sizeof ( int* ) );
         for ( i = 0; i < d->npoints; ++i )
         {
             if ( d->n_point_triangles[i] > 0 )
-                d->point_triangles[i] = malloc( d->n_point_triangles[i] * sizeof ( int ));
+                d->point_triangles[i] = malloc( d->n_point_triangles[i] * sizeof ( int ) );
             else
                 d->point_triangles[i] = NULL;
             d->n_point_triangles[i] = 0;
@@ -556,8 +556,8 @@ static int cw( delaunay *d, triangle *t )
     point* pb = &d->points[t->vids[1]];
     point* pc = &d->points[t->vids[2]];
 
-    return (( pb->x - pa->x ) * ( pc->y - pa->y ) <
-            ( pc->x - pa->x ) * ( pb->y - pa->y ));
+    return ( ( pb->x - pa->x ) * ( pc->y - pa->y ) <
+             ( pc->x - pa->x ) * ( pb->y - pa->y ) );
 }
 
 #endif
@@ -636,7 +636,7 @@ int delaunay_xytoi( delaunay* d, point* p, int id )
         {
             int i1 = ( i + 1 ) % 3;
 
-            if ( on_right_side( p, &d->points[t->vids[i]], &d->points[t->vids[i1]] ))
+            if ( on_right_side( p, &d->points[t->vids[i]], &d->points[t->vids[i1]] ) )
             {
                 id = d->neighbours[id].tids[( i + 2 ) % 3];
                 if ( id < 0 )
@@ -686,7 +686,7 @@ void delaunay_circles_find( delaunay* d, point* p, int* n, int** out )
      * tricircles from the last search; if fails then (iii) make linear
      * search through all tricircles
      */
-    if ( d->first_id < 0 || !circle_contains( &d->circles[d->first_id], p ))
+    if ( d->first_id < 0 || !circle_contains( &d->circles[d->first_id], p ) )
     {
         /*
          * if any triangle contains (x,y) -- start with this triangle
@@ -708,7 +708,7 @@ void delaunay_circles_find( delaunay* d, point* p, int* n, int** out )
             for ( i = 0; i < nn; ++i )
             {
                 tid = d->t_out->v[i];
-                if ( circle_contains( &d->circles[tid], p ))
+                if ( circle_contains( &d->circles[tid], p ) )
                     break;
             }
             /*
@@ -720,7 +720,7 @@ void delaunay_circles_find( delaunay* d, point* p, int* n, int** out )
 
                 for ( tid = 0; tid < nt; ++tid )
                 {
-                    if ( circle_contains( &d->circles[tid], p ))
+                    if ( circle_contains( &d->circles[tid], p ) )
                         break;
                 }
                 if ( tid == nt )
@@ -749,7 +749,7 @@ void delaunay_circles_find( delaunay* d, point* p, int* n, int** out )
         int     tid = istack_pop( d->t_in );
         triangle* t = &d->triangles[tid];
 
-        if ( circle_contains( &d->circles[tid], p ))
+        if ( circle_contains( &d->circles[tid], p ) )
         {
             istack_push( d->t_out, tid );
             for ( i = 0; i < 3; ++i )

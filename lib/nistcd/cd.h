@@ -222,12 +222,12 @@ CDDLLIMPEXP int cdImageEndCgm( cdImagePtr im );
 
 /* Macros to access information about images. READ ONLY. Changing
  *      these values will NOT have the desired result. */
-#define cdImageSX( im )             (( im )->sx )
-#define cdImageSY( im )             (( im )->sy )
-#define cdImageColorsTotal( im )    (( im )->colorsTotal )
-#define cdImageRed( im, c )         (( im )->red[( c )] )
-#define cdImageGreen( im, c )       (( im )->green[( c )] )
-#define cdImageBlue( im, c )        (( im )->blue[( c )] )
+#define cdImageSX( im )             ( ( im )->sx )
+#define cdImageSY( im )             ( ( im )->sy )
+#define cdImageColorsTotal( im )    ( ( im )->colorsTotal )
+#define cdImageRed( im, c )         ( ( im )->red[( c )] )
+#define cdImageGreen( im, c )       ( ( im )->green[( c )] )
+#define cdImageBlue( im, c )        ( ( im )->blue[( c )] )
 
 /* Source: Independent JPEG Group
  * In ANSI C, and indeed any rational implementation, size_t is also the
@@ -237,7 +237,7 @@ CDDLLIMPEXP int cdImageEndCgm( cdImagePtr im );
  * we always use this SIZEOF() macro in place of using sizeof() directly.
  */
 
-#define SIZEOF( object )    ((size_t) sizeof ( object ))
+#define SIZEOF( object )    ( (size_t) sizeof ( object ) )
 
 /* GeJ: these are helper functions I use in cd.  That means DON'T call
  * them from your program.  Yes, that means you.  */

@@ -65,7 +65,7 @@ wxPLDevDC::~wxPLDevDC()
     {
         if ( m_dc )
         {
-            ((wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap );
+            ( (wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap );
             delete m_dc;
         }
         if ( m_bitmap )
@@ -87,9 +87,9 @@ void wxPLDevDC::DrawLine( short x1a, short y1a, short x2a, short y2a )
     x1a = (short) ( x1a / scalex ); y1a = (short) ( height - y1a / scaley );
     x2a = (short) ( x2a / scalex );        y2a = (short) ( height - y2a / scaley );
 
-    m_dc->DrawLine((wxCoord) x1a, (wxCoord) y1a, (wxCoord) x2a, (wxCoord) y2a );
+    m_dc->DrawLine( (wxCoord) x1a, (wxCoord) y1a, (wxCoord) x2a, (wxCoord) y2a );
 
-    AddtoClipRegion((int) x1a, (int) y1a, (int) x2a, (int) y2a );
+    AddtoClipRegion( (int) x1a, (int) y1a, (int) x2a, (int) y2a );
 }
 
 
@@ -112,7 +112,7 @@ void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
 
         m_dc->DrawLine( x1a, y1a, x2a, y2a );
 
-        AddtoClipRegion((int) x1a, (int) y1a, (int) x2a, (int) y2a );
+        AddtoClipRegion( (int) x1a, (int) y1a, (int) x2a, (int) y2a );
     }
 }
 
@@ -134,8 +134,8 @@ void wxPLDevDC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb,
     const wxPen   oldPen   = m_dc->GetPen();
     const wxBrush oldBrush = m_dc->GetBrush();
 
-    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( bgr, bgg, bgb ), 1, wxSOLID )));
-    m_dc->SetBrush( wxBrush( wxColour( bgr, bgg, bgb )));
+    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( bgr, bgg, bgb ), 1, wxSOLID ) ) );
+    m_dc->SetBrush( wxBrush( wxColour( bgr, bgg, bgb ) ) );
     m_dc->DrawRectangle( x1, y1, x2 - x1, y2 - y1 );
 
     m_dc->SetPen( oldPen );
@@ -192,11 +192,11 @@ void wxPLDevDC::CreateCanvas()
         if ( !m_dc )
             m_dc = new wxMemoryDC();
 
-        ((wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap ); /* deselect bitmap */
+        ( (wxMemoryDC*) m_dc )->SelectObject( wxNullBitmap ); /* deselect bitmap */
         if ( m_bitmap )
             delete m_bitmap;
         m_bitmap = new wxBitmap( bm_width, bm_height, 32 );
-        ((wxMemoryDC*) m_dc )->SelectObject( *m_bitmap ); /* select new bitmap */
+        ( (wxMemoryDC*) m_dc )->SelectObject( *m_bitmap ); /* select new bitmap */
     }
 }
 
@@ -210,7 +210,7 @@ void wxPLDevDC::SetWidth( PLStream *pls )
 {
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
                              pls->cmap0[pls->icol0].b ),
-                         pls->width > 0 ? pls->width : 1, wxSOLID )));
+                         pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
 }
 
 
@@ -223,8 +223,8 @@ void wxPLDevDC::SetColor0( PLStream *pls )
 {
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
                              pls->cmap0[pls->icol0].b ),
-                         pls->width > 0 ? pls->width : 1, wxSOLID )));
-    m_dc->SetBrush( wxBrush( wxColour( pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g, pls->cmap0[pls->icol0].b )));
+                         pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
+    m_dc->SetBrush( wxBrush( wxColour( pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g, pls->cmap0[pls->icol0].b ) ) );
 }
 
 
@@ -237,8 +237,8 @@ void wxPLDevDC::SetColor1( PLStream *pls )
 {
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g,
                              pls->curcolor.b ),
-                         pls->width > 0 ? pls->width : 1, wxSOLID )));
-    m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b )));
+                         pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
+    m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) ) );
 }
 
 
@@ -266,8 +266,8 @@ void wxPLDevDC::SetExternalBuffer( void* dc )
 void wxPLDevDC::PutPixel( short x, short y, PLINT color )
 {
     const wxPen oldpen = m_dc->GetPen();
-    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( GetRValue( color ), GetGValue( color ), GetBValue( color )),
-                         1, wxSOLID )));
+    m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( GetRValue( color ), GetGValue( color ), GetBValue( color ) ),
+                         1, wxSOLID ) ) );
     m_dc->DrawPoint( x, y );
     AddtoClipRegion( x, y, x, y );
     m_dc->SetPen( oldpen );
@@ -302,7 +302,7 @@ PLINT wxPLDevDC::GetPixel( short x, short y )
 #else
     wxColour col;
     m_dc->GetPixel( x, y, &col );
-    return RGB( col.Red(), col.Green(), col.Blue());
+    return RGB( col.Red(), col.Green(), col.Blue() );
 #endif
 }
 
@@ -328,7 +328,7 @@ void wxPLDevDC::PSDrawTextToDC( char* utf8_string, bool drawText )
     posX      += (PLINT) ( w * scalex * cos_rot );
     posY      += (PLINT) ( w * scaley * sin_rot );
     textWidth += w;
-    textHeight = (wxCoord) ( textHeight > ( h + yOffset / scaley ) ? textHeight : ( h + yOffset / scaley ));
+    textHeight = (wxCoord) ( textHeight > ( h + yOffset / scaley ) ? textHeight : ( h + yOffset / scaley ) );
     memset( utf8_string, '\0', max_string_length );
 }
 
@@ -349,7 +349,7 @@ void wxPLDevDC::PSSetFont( PLUNICODE fci )
     if ( m_font )
         delete m_font;
 
-    m_font = wxFont::New((int) ( fontSize * fontScale < 4 ? 4 : fontSize * fontScale ),
+    m_font = wxFont::New( (int) ( fontSize * fontScale < 4 ? 4 : fontSize * fontScale ),
         fontFamilyLookup[fontFamily],
         fontStyleLookup[fontStyle] & fontWeightLookup[fontWeight] );
     m_font->SetUnderlined( underlined );
@@ -393,7 +393,7 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
         cpoints[i].x = rcx[i] / scalex;
         cpoints[i].y = height - rcy[i] / scaley;
     }
-    wxDCClipper clip( *m_dc, wxRegion( 4, cpoints ));
+    wxDCClipper clip( *m_dc, wxRegion( 4, cpoints ) );
 
     /* calculate rotation of text */
     plRotationShear( args->xform, &rotation, &shear, &stride );
@@ -403,15 +403,15 @@ void wxPLDevDC::ProcessString( PLStream* pls, EscText* args )
 
     /* Set font color */
     m_dc->SetTextForeground( wxColour( pls->cmap0[pls->icol0].r, pls->cmap0[pls->icol0].g,
-            pls->cmap0[pls->icol0].b ));
-    m_dc->SetTextBackground( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ));
+            pls->cmap0[pls->icol0].b ) );
+    m_dc->SetTextBackground( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ) );
 
     posX = args->x;
     posY = args->y;
     PSDrawText( args->unicode_array, args->unicode_array_len, false );
 
-    posX = (PLINT) ( args->x - (( args->just * textWidth ) * cos_rot + ( 0.5 * textHeight ) * sin_rot ) * scalex );
-    posY = (PLINT) ( args->y - (( args->just * textWidth ) * sin_rot - ( 0.5 * textHeight ) * cos_rot ) * scaley );
+    posX = (PLINT) ( args->x - ( ( args->just * textWidth ) * cos_rot + ( 0.5 * textHeight ) * sin_rot ) * scalex );
+    posY = (PLINT) ( args->y - ( ( args->just * textWidth ) * sin_rot - ( 0.5 * textHeight ) * cos_rot ) * scaley );
     PSDrawText( args->unicode_array, args->unicode_array_len, true );
 
     AddtoClipRegion( 0, 0, width, height );

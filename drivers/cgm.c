@@ -188,9 +188,9 @@ plD_init_cgm_Dev( PLStream *pls )
 /* Allocate and initialize device-specific data */
 
     if ( pls->dev != NULL )
-        free((void *) pls->dev );
+        free( (void *) pls->dev );
 
-    pls->dev = calloc( 1, (size_t) sizeof ( cgm_Dev ));
+    pls->dev = calloc( 1, (size_t) sizeof ( cgm_Dev ) );
     if ( pls->dev == NULL )
         plexit( "plD_init_cgm_Dev: Out of memory." );
 
@@ -324,7 +324,7 @@ plD_polyline_cgm( PLStream *pls, short *xa, short *ya, PLINT npts )
     PLINT   i;
     cdPoint *points = NULL;
 
-    if (( points = calloc( npts, (size_t) sizeof ( cdPoint ))) == NULL )
+    if ( ( points = calloc( npts, (size_t) sizeof ( cdPoint ) ) ) == NULL )
     {
         plexit( "Memory allocation error in \"plD_polyline_cgm\"" );
     }
@@ -369,7 +369,7 @@ fill_polygon( PLStream *pls )
     if ( pls->dev_npts < 1 )
         return;
 
-    if (( points = calloc( pls->dev_npts, (size_t) sizeof ( cdPoint ))) == NULL )
+    if ( ( points = calloc( pls->dev_npts, (size_t) sizeof ( cdPoint ) ) ) == NULL )
     {
         plexit( "Memory allocation error in \"plD_fill_polygon_cgm\"" );
     }
@@ -388,7 +388,7 @@ fill_polygon( PLStream *pls )
  * "last_fill_colour" will be -1.
  */
 
-    if (( dev->fill_colour != dev->last_fill_colour ) || ( dev->force_edges == 1 ))
+    if ( ( dev->fill_colour != dev->last_fill_colour ) || ( dev->force_edges == 1 ) )
     {
         cdSetFillColor( dev->im_out, dev->fill_colour );
 
@@ -479,7 +479,7 @@ setcmap( PLStream *pls )
  *
  */
 
-        if (( pls->ncol0 > 15 ) && ( pls->cmap0[0].r > 227 ) && ( pls->cmap0[0].g > 227 ) && ( pls->cmap0[0].b > 227 ))
+        if ( ( pls->ncol0 > 15 ) && ( pls->cmap0[0].r > 227 ) && ( pls->cmap0[0].g > 227 ) && ( pls->cmap0[0].b > 227 ) )
         {
             if ( pls->hack != 1 ) /* just set colour 15 to black */
             {
@@ -503,10 +503,10 @@ setcmap( PLStream *pls )
 
         for ( i = 0; i < ncol0; i++ )
         {
-            if ((
-                    dev->colour_index[i] = cdImageColorAllocate( dev->im_out,
-                        pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b )
-                    ) == -1 )
+            if ( (
+                     dev->colour_index[i] = cdImageColorAllocate( dev->im_out,
+                         pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b )
+                     ) == -1 )
             {
                 plwarn( "Problem setting cmap0 in CGM driver." );
             }
@@ -532,7 +532,7 @@ setcmap( PLStream *pls )
                  * in cases when pls->ncol1 exceeds the number of free colours.
                  */
 
-                tmp_colour_pos = i > 0 ? pls->ncol1 * ((PLFLT) i / ncol1 ) : 0;
+                tmp_colour_pos = i > 0 ? pls->ncol1 * ( (PLFLT) i / ncol1 ) : 0;
                 plcol_interp( pls, &cmap1col, (int) tmp_colour_pos, pls->ncol1 );
             }
             else
@@ -541,10 +541,10 @@ setcmap( PLStream *pls )
             }
 
 
-            if ((
-                    dev->colour_index[i + pls->ncol0] = cdImageColorAllocate( dev->im_out,
-                        cmap1col.r, cmap1col.g, cmap1col.b )
-                    ) == -1 )
+            if ( (
+                     dev->colour_index[i + pls->ncol0] = cdImageColorAllocate( dev->im_out,
+                         cmap1col.r, cmap1col.g, cmap1col.b )
+                     ) == -1 )
             {
                 plwarn( "Problem setting cmap1 in CGM driver." );
             }
@@ -582,9 +582,9 @@ plD_state_cgm( PLStream *pls, PLINT op )
             int b = pls->curcolor.b;
             if ( dev->totcol < cdMaxColors )
             {
-                if ((
-                        dev->colour_index[++dev->totcol] = cdImageColorAllocate( dev->im_out, r, g, b )
-                        ) == -1 )
+                if ( (
+                         dev->colour_index[++dev->totcol] = cdImageColorAllocate( dev->im_out, r, g, b )
+                         ) == -1 )
                     plwarn( "Problem changing colour in \"PLSTATE_COLOR0\"" );
                 else
                     dev->colour = dev->totcol;
@@ -600,7 +600,7 @@ plD_state_cgm( PLStream *pls, PLINT op )
          */
         if ( dev->ncol1 < pls->ncol1 )
         {
-            tmp_colour_pos = dev->ncol1 * ((PLFLT) pls->icol1 / ( pls->ncol1 > 0 ? pls->ncol1 : 1 ));
+            tmp_colour_pos = dev->ncol1 * ( (PLFLT) pls->icol1 / ( pls->ncol1 > 0 ? pls->ncol1 : 1 ) );
             dev->colour    = pls->ncol0 + (int) tmp_colour_pos;
         }
         else

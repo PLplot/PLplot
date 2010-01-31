@@ -87,23 +87,23 @@ QtPLDriver::~QtPLDriver()
 
 void QtPLDriver::drawLine( short x1, short y1, short x2, short y2 )
 {
-    if ( !m_painterP->isActive()) return;
-    QLineF line((PLFLT) x1 * downscale,
-                m_dHeight - (PLFLT) y1 * downscale,
-                (PLFLT) x2 * downscale,
-                m_dHeight - (PLFLT) y2 * downscale
-                );
+    if ( !m_painterP->isActive() ) return;
+    QLineF line( (PLFLT) x1 * downscale,
+                 m_dHeight - (PLFLT) y1 * downscale,
+                 (PLFLT) x2 * downscale,
+                 m_dHeight - (PLFLT) y2 * downscale
+                 );
 
     m_painterP->drawLine( line );
 }
 
 void QtPLDriver::drawPolyline( short * x, short * y, PLINT npts )
 {
-    if ( !m_painterP->isActive()) return;
+    if ( !m_painterP->isActive() ) return;
     QPointF * polyline = new QPointF[npts];
     for ( int i = 0; i < npts; ++i )
     {
-        polyline[i].setX((PLFLT) x[i] * downscale );
+        polyline[i].setX( (PLFLT) x[i] * downscale );
         polyline[i].setY( m_dHeight - (PLFLT) y[i] * downscale );
     }
     m_painterP->drawPolyline( polyline, npts );
@@ -112,11 +112,11 @@ void QtPLDriver::drawPolyline( short * x, short * y, PLINT npts )
 
 void QtPLDriver::drawPolygon( short * x, short * y, PLINT npts )
 {
-    if ( !m_painterP->isActive()) return;
+    if ( !m_painterP->isActive() ) return;
     QPointF * polygon = new QPointF[npts];
     for ( int i = 0; i < npts; ++i )
     {
-        polygon[i].setX((PLFLT) x[i] * downscale );
+        polygon[i].setX( (PLFLT) x[i] * downscale );
         polygon[i].setY( m_dHeight - (PLFLT) y[i] * downscale );
     }
     m_painterP->drawPolygon( polygon, npts );
@@ -167,7 +167,7 @@ void QtPLDriver::drawTextInPicture( QPainter* p, const QString& text )
     QRectF   bounding;
     QPicture tempPic;
     QPainter tempPainter( &tempPic );
-    tempPainter.setFont( p->font());
+    tempPainter.setFont( p->font() );
 
     if ( vectorize )
     {
@@ -192,7 +192,7 @@ void QtPLDriver::drawTextInPicture( QPainter* p, const QString& text )
 
     tempPainter.end();
 
-    p->drawPicture((int) ( xOffset + bounding.width() / 2. ), (int) -yOffset, tempPic );
+    p->drawPicture( (int) ( xOffset + bounding.width() / 2. ), (int) -yOffset, tempPic );
 
     xOffset += bounding.width();
 }
@@ -221,7 +221,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
     underlined       = false;
     overlined        = false;
 
-    p.setFont( getFont( fci ));
+    p.setFont( getFont( fci ) );
 
     int i = 0;
     while ( i < len )
@@ -230,7 +230,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
         {
             if ( text[i] != (PLUNICODE) plplotEsc )
             {
-                currentString.append( QString( QChar( text[i] )));
+                currentString.append( QString( QChar( text[i] ) ) );
                 ++i;
                 continue;
             }
@@ -252,7 +252,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
 
                 yOffset -= currentFontSize * old_fontScale / 2.;
 
-                p.setFont( getFont( fci ));
+                p.setFont( getFont( fci ) );
                 break;
 
             case 'u':
@@ -269,7 +269,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
                 }
 
                 yOffset += currentFontSize * currentFontScale / 2.;
-                p.setFont( getFont( fci ));
+                p.setFont( getFont( fci ) );
                 break;
 
             case '-':
@@ -277,7 +277,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
 
                 currentString.clear();
                 underlined = !underlined;
-                p.setFont( getFont( fci ));
+                p.setFont( getFont( fci ) );
                 break;
 
             case '+':
@@ -285,16 +285,16 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
 
                 currentString.clear();
                 overlined = !overlined;
-                p.setFont( getFont( fci ));
+                p.setFont( getFont( fci ) );
                 break;
 
 
             case '#':
-                currentString.append( QString((QChar*) &( text[i] ), 1 ));
+                currentString.append( QString( (QChar*) &( text[i] ), 1 ) );
                 break;
 
             default:
-                std::cout << "unknown escape char " << ((QChar) text[i] ).toLatin1() << std::endl;
+                std::cout << "unknown escape char " << ( (QChar) text[i] ).toLatin1() << std::endl;
                 break;
             }
         }
@@ -304,7 +304,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
 
             currentString.clear();
             fci = text[i];
-            p.setFont( getFont( fci ));
+            p.setFont( getFont( fci ) );
         }
         ++i;
     }
@@ -316,7 +316,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
 
 void QtPLDriver::drawText( PLStream* pls, EscText* txt )
 {
-    if ( !m_painterP->isActive()) return;
+    if ( !m_painterP->isActive() ) return;
 
     /* Check that we got unicode, warning message and return if not */
     if ( txt->unicode_array_len == 0 )
@@ -342,7 +342,7 @@ void QtPLDriver::drawText( PLStream* pls, EscText* txt )
     picDpi = picText.logicalDpiY();
 
     m_painterP->setClipping( true );
-    m_painterP->setClipRect( QRect((int) ( pls->clpxmi * downscale ), (int) ( m_dHeight - pls->clpyma * downscale ), (int) (( pls->clpxma - pls->clpxmi ) * downscale ), (int) (( pls->clpyma - pls->clpymi ) * downscale )), Qt::ReplaceClip );
+    m_painterP->setClipRect( QRect( (int) ( pls->clpxmi * downscale ), (int) ( m_dHeight - pls->clpyma * downscale ), (int) ( ( pls->clpxma - pls->clpxmi ) * downscale ), (int) ( ( pls->clpyma - pls->clpymi ) * downscale ) ), Qt::ReplaceClip );
 
     rotation -= pls->diorot * M_PI / 2.0;
     m_painterP->translate( txt->x * downscale, m_dHeight - txt->y * downscale );
@@ -360,14 +360,14 @@ void QtPLDriver::drawText( PLStream* pls, EscText* txt )
 
 void QtPLDriver::setColor( int r, int g, int b, double alpha )
 {
-    if ( !m_painterP->isActive()) return;
+    if ( !m_painterP->isActive() ) return;
 
     QPen p = m_painterP->pen();
-    p.setColor( QColor( r, g, b, (int) ( alpha * 255 )));
+    p.setColor( QColor( r, g, b, (int) ( alpha * 255 ) ) );
     m_painterP->setPen( p );
 
     QBrush B = m_painterP->brush();
-    B.setColor( QColor( r, g, b, (int) ( alpha * 255 )));
+    B.setColor( QColor( r, g, b, (int) ( alpha * 255 ) ) );
     B.setStyle( Qt::SolidPattern );
     m_painterP->setBrush( B );
 }
@@ -384,14 +384,14 @@ void QtPLDriver::setGradient( int x1, int x2, int y1, int y2,
     QGradientStops  stops;
 
     linear_gradient = QLinearGradient(
-        QPointF((qreal) ( x1 * downscale ), (qreal) ( m_dHeight - y1 * downscale )),
-        QPointF((qreal) ( x2 * downscale ), (qreal) ( m_dHeight - y2 * downscale )));
+        QPointF( (qreal) ( x1 * downscale ), (qreal) ( m_dHeight - y1 * downscale ) ),
+        QPointF( (qreal) ( x2 * downscale ), (qreal) ( m_dHeight - y2 * downscale ) ) );
 
     for ( i = 0; i < ncol1; i++ )
     {
         stop_arg = (qreal) i / (qreal) ( ncol1 - 1 );
         stops << QGradientStop( stop_arg, QColor( r[i], g[i],
-                b[i], (int) ( alpha[i] * 255 )));
+                b[i], (int) ( alpha[i] * 255 ) ) );
     }
     linear_gradient.setStops( stops );
     m_painterP->setBrush( linear_gradient );
@@ -399,7 +399,7 @@ void QtPLDriver::setGradient( int x1, int x2, int y1, int y2,
 
 void QtPLDriver::setWidth( PLINT w )
 {
-    if ( !m_painterP->isActive()) return;
+    if ( !m_painterP->isActive() ) return;
 
     QPen p = m_painterP->pen();
     p.setWidth( w );
@@ -423,7 +423,7 @@ void QtPLDriver::setWidth( PLINT w )
 
 void QtPLDriver::setSolid()
 {
-    if ( !m_painterP->isActive()) return;
+    if ( !m_painterP->isActive() ) return;
 
     QPen p = m_painterP->pen();
     p.setStyle( Qt::SolidLine );
@@ -473,9 +473,9 @@ void QtRasterDevice::savePlot()
 
 void QtRasterDevice::setBackgroundColor( int r, int g, int b, double alpha )
 {
-    if ( !m_painterP->isActive()) return;
+    if ( !m_painterP->isActive() ) return;
 
-    QBrush brush( QColor( r, g, b, (int) ( alpha * 255 )));
+    QBrush brush( QColor( r, g, b, (int) ( alpha * 255 ) ) );
     m_painterP->fillRect( 0, 0, width(), height(), brush );
 }
 #endif
@@ -494,11 +494,11 @@ QtSVGDevice::~QtSVGDevice()
 
 void QtSVGDevice::definePlotName( const char* fileName )
 {
-    setFileName( QString( fileName ));
+    setFileName( QString( fileName ) );
     setResolution( POINTS_PER_INCH );
-    setSize( QSize((int) m_dWidth, (int) m_dHeight ));
+    setSize( QSize( (int) m_dWidth, (int) m_dHeight ) );
 #if QT_VERSION >= 0x040500
-    setViewBox( QRect( 0, 0, (int) m_dWidth, (int) m_dHeight ));
+    setViewBox( QRect( 0, 0, (int) m_dWidth, (int) m_dHeight ) );
 #endif
 
     m_painterP = new QPainter( this );
@@ -511,9 +511,9 @@ void QtSVGDevice::savePlot()
 
 void QtSVGDevice::setBackgroundColor( int r, int g, int b, double alpha )
 {
-    if ( !m_painterP->isActive()) return;
+    if ( !m_painterP->isActive() ) return;
 
-    QBrush brush( QColor( r, g, b, (int) ( alpha * 255 )));
+    QBrush brush( QColor( r, g, b, (int) ( alpha * 255 ) ) );
     m_painterP->fillRect( 0, 0, width(), height(), brush );
 }
 #endif
@@ -530,7 +530,7 @@ QtEPSDevice::QtEPSDevice( int i_iWidth, int i_iHeight )
     setResolution( POINTS_PER_INCH );
     setColorMode( QPrinter::Color );
     setOrientation( QPrinter::Landscape );
-    setPrintProgram( QString( "lpr" ));
+    setPrintProgram( QString( "lpr" ) );
 
     if ( i_iWidth <= 0 || i_iHeight <= 0 )
     {
@@ -552,7 +552,7 @@ QtEPSDevice::~QtEPSDevice()
 
 void QtEPSDevice::definePlotName( const char* fileName, int ifeps )
 {
-    setOutputFileName( QString( fileName ));
+    setOutputFileName( QString( fileName ) );
     if ( ifeps )
     {
         setOutputFormat( QPrinter::PostScriptFormat );
@@ -572,9 +572,9 @@ void QtEPSDevice::savePlot()
 
 void QtEPSDevice::setBackgroundColor( int r, int g, int b, double alpha )
 {
-    if ( !m_painterP->isActive()) return;
+    if ( !m_painterP->isActive() ) return;
 
-    QBrush brush( QColor( r, g, b, (int) ( alpha * 255 )));
+    QBrush brush( QColor( r, g, b, (int) ( alpha * 255 ) ) );
     m_painterP->fillRect( 0, 0, width(), height(), brush );
 }
 #endif
@@ -669,7 +669,7 @@ void QtPLWidget::drawLine( short x1, short y1, short x2, short y2 )
 {
     BufferElement el;
     el.Element   = LINE;
-    el.Data.Line = new QLineF( QPointF((PLFLT) x1 * downscale, (PLFLT) ( m_dHeight - y1 * downscale )), QPointF((PLFLT) x2 * downscale, (PLFLT) ( m_dHeight - y2 * downscale )));
+    el.Data.Line = new QLineF( QPointF( (PLFLT) x1 * downscale, (PLFLT) ( m_dHeight - y1 * downscale ) ), QPointF( (PLFLT) x2 * downscale, (PLFLT) ( m_dHeight - y2 * downscale ) ) );
 
     m_listBuffer.append( el );
     redrawFromLastFlush = true;
@@ -682,7 +682,7 @@ void QtPLWidget::drawPolyline( short * x, short * y, PLINT npts )
     el.Data.Polyline = new QPolygonF;
     for ( int i = 0; i < npts; ++i )
     {
-        ( *el.Data.Polyline ) << QPointF((PLFLT) ( x[i] ) * downscale, (PLFLT) ( m_dHeight - ( y[i] ) * downscale ));
+        ( *el.Data.Polyline ) << QPointF( (PLFLT) ( x[i] ) * downscale, (PLFLT) ( m_dHeight - ( y[i] ) * downscale ) );
     }
 
     m_listBuffer.append( el );
@@ -757,7 +757,7 @@ void QtPLWidget::drawPolygon( short * x, short * y, PLINT npts )
         el.Data.Polyline = new QPolygonF;
         for ( int i = 0; i < npts; ++i )
         {
-            ( *el.Data.Polyline ) << QPointF((PLFLT) ( x[i] ) * downscale, (PLFLT) ( m_dHeight - ( y[i] ) * downscale ));
+            ( *el.Data.Polyline ) << QPointF( (PLFLT) ( x[i] ) * downscale, (PLFLT) ( m_dHeight - ( y[i] ) * downscale ) );
         }
     }
 
@@ -801,13 +801,13 @@ void QtPLWidget::setGradient( int x1, int x2, int y1, int y2,
 
     el.Data.LinearGradient  = new QLinearGradient;
     *el.Data.LinearGradient = QLinearGradient(
-        QPointF((qreal) ( x1 * downscale ), (qreal) ( m_dHeight - y1 * downscale )),
-        QPointF((qreal) ( x2 * downscale ), (qreal) ( m_dHeight - y2 * downscale )));
+        QPointF( (qreal) ( x1 * downscale ), (qreal) ( m_dHeight - y1 * downscale ) ),
+        QPointF( (qreal) ( x2 * downscale ), (qreal) ( m_dHeight - y2 * downscale ) ) );
     for ( i = 0; i < ncol1; i++ )
     {
         stop_arg = (qreal) i / (qreal) ( ncol1 - 1 );
         stops << QGradientStop( stop_arg, QColor( r[i], g[i],
-                b[i], (int) ( alpha[i] * 255 )));
+                b[i], (int) ( alpha[i] * 255 ) ) );
     }
     ( *el.Data.LinearGradient ).setStops( stops );
     m_listBuffer.append( el );
@@ -870,7 +870,7 @@ void QtPLWidget::drawText( PLStream* pls, EscText* txt )
     el.Data.TextStruct->stride   = stride;
     el.Data.TextStruct->just     = txt->just;
     el.Data.TextStruct->text     = new PLUNICODE[txt->unicode_array_len];
-    memcpy( el.Data.TextStruct->text, txt->unicode_array, txt->unicode_array_len * sizeof ( PLUNICODE ));
+    memcpy( el.Data.TextStruct->text, txt->unicode_array, txt->unicode_array_len * sizeof ( PLUNICODE ) );
     el.Data.TextStruct->len   = txt->unicode_array_len;
     el.Data.TextStruct->chrht = pls->chrht;
 
@@ -956,13 +956,13 @@ void QtPLWidget::paintEvent( QPaintEvent * )
         {
             delete m_pixPixmap;
         }
-        m_pixPixmap = new QPixmap( width(), height());
+        m_pixPixmap = new QPixmap( width(), height() );
         QPainter* painter = new QPainter;
         painter->begin( m_pixPixmap );
 
         // Draw the margins and the background
-        painter->fillRect( 0, 0, width(), height(), QBrush( Qt::white ));
-        painter->fillRect( 0, 0, width(), height(), QBrush( Qt::gray, Qt::Dense4Pattern ));
+        painter->fillRect( 0, 0, width(), height(), QBrush( Qt::white ) );
+        painter->fillRect( 0, 0, width(), height(), QBrush( Qt::gray, Qt::Dense4Pattern ) );
 
         // Re-initialise pens etc.
         resetPensAndBrushes( painter );
@@ -1024,9 +1024,9 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
 
     p->setTransform( trans );
 
-    if ( m_listBuffer.empty())
+    if ( m_listBuffer.empty() )
     {
-        p->fillRect( 0, 0, 1, 1, QBrush());
+        p->fillRect( 0, 0, 1, 1, QBrush() );
         return;
     }
 
@@ -1036,17 +1036,17 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
         switch ( i->Element )
         {
         case SET_COLOUR:
-            SolidPen.setColor( QColor( i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A ));
+            SolidPen.setColor( QColor( i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A ) );
             if ( hasPen )
             {
                 p->setPen( SolidPen );
             }
-            SolidBrush.setColor( QColor( i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A ));
+            SolidBrush.setColor( QColor( i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A ) );
             p->setBrush( SolidBrush );
             break;
 
         case SET_GRADIENT:
-            p->setBrush( *( i->Data.LinearGradient ));
+            p->setBrush( *( i->Data.LinearGradient ) );
             break;
 
         case LINE:
@@ -1055,7 +1055,7 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
                 p->setPen( SolidPen );
                 hasPen = true;
             }
-            p->drawLine( *( i->Data.Line ));
+            p->drawLine( *( i->Data.Line ) );
 
             break;
 
@@ -1065,7 +1065,7 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
                 p->setPen( SolidPen );
                 hasPen = true;
             }
-            p->drawPolyline( *( i->Data.Polyline ));
+            p->drawPolyline( *( i->Data.Polyline ) );
             break;
 
         case RECTANGLE:
@@ -1075,7 +1075,7 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
                 p->setPen( NoPen );
                 hasPen = false;
             }
-            p->drawRect( *( i->Data.Rect ));
+            p->drawRect( *( i->Data.Rect ) );
             p->setRenderHints( QPainter::Antialiasing, (bool) lines_aa );
             break;
 
@@ -1086,7 +1086,7 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
                 p->setPen( NoPen );
                 hasPen = false;
             }
-            p->drawConvexPolygon( *( i->Data.Polyline ));
+            p->drawConvexPolygon( *( i->Data.Polyline ) );
             p->setRenderHints( QPainter::Antialiasing, (bool) lines_aa );
             break;
 
@@ -1112,7 +1112,7 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
             break;
 
         case SET_BG_COLOUR:
-            SolidBrush.setColor( QColor( i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A ));
+            SolidBrush.setColor( QColor( i->Data.ColourStruct->R, i->Data.ColourStruct->G, i->Data.ColourStruct->B, i->Data.ColourStruct->A ) );
             p->fillRect( 0, 0, (int) m_dWidth, (int) m_dHeight, SolidBrush );
             break;
 
@@ -1261,9 +1261,9 @@ void QtExtWidget::paintEvent( QPaintEvent* event )
 
     QPainter p( this );
 
-    p.setPen( QPen( Qt::white ));
+    p.setPen( QPen( Qt::white ) );
 
-    p.drawLine((int) cursorParameters.cursor_x, 0, (int) cursorParameters.cursor_x, height());
+    p.drawLine( (int) cursorParameters.cursor_x, 0, (int) cursorParameters.cursor_x, height() );
     p.drawLine( 0, (int) cursorParameters.cursor_y, width(), (int) cursorParameters.cursor_y );
 
     p.end();
@@ -1282,7 +1282,7 @@ void plsetqtdev( QtExtWidget* widget, int argc, char** argv )
 
 void plfreeqtdev()
 {
-    delete ((QtExtWidget*) plsc->dev );
+    delete ( (QtExtWidget*) plsc->dev );
     plsc->dev = NULL;
 }
 #endif

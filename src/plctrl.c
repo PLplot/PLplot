@@ -164,7 +164,7 @@ c_plcol1( PLFLT col1 )
         plabort( "plcol1: Please call plinit first" );
         return;
     }
-    if ( col1 < 0 || col1 > 1 || isnan( col1 ))
+    if ( col1 < 0 || col1 > 1 || isnan( col1 ) )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer, BUFFER_SIZE, "plcol1: Invalid color map position: %f", (PLFLT) col1 );
@@ -252,7 +252,7 @@ c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
         plabort( buffer );
         return;
     }
-    if (( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ))
+    if ( ( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ) )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer, BUFFER_SIZE, "plscol0: Invalid RGB color: %d, %d, %d",
@@ -283,7 +283,7 @@ c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT a )
         plabort( buffer );
         return;
     }
-    if (( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ) || ( a < 0 || a > 1.0 ))
+    if ( ( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ) || ( a < 0 || a > 1.0 ) )
     {
         char buffer[BUFFER_SIZE];
         snprintf( buffer, BUFFER_SIZE, "plscol0a: Invalid RGB color: %d, %d, %d, %f",
@@ -383,9 +383,9 @@ c_plscmap0( PLINT *r, PLINT *g, PLINT *b, PLINT ncol0 )
 
     for ( i = 0; i < plsc->ncol0; i++ )
     {
-        if (( r[i] < 0 || r[i] > 255 ) ||
-            ( g[i] < 0 || g[i] > 255 ) ||
-            ( b[i] < 0 || b[i] > 255 ))
+        if ( ( r[i] < 0 || r[i] > 255 ) ||
+             ( g[i] < 0 || g[i] > 255 ) ||
+             ( b[i] < 0 || b[i] > 255 ) )
         {
             char buffer[BUFFER_SIZE];
             snprintf( buffer, BUFFER_SIZE, "plscmap0: Invalid RGB color: %d, %d, %d",
@@ -420,10 +420,10 @@ c_plscmap0a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol0 )
 
     for ( i = 0; i < plsc->ncol0; i++ )
     {
-        if (( r[i] < 0 || r[i] > 255 ) ||
-            ( g[i] < 0 || g[i] > 255 ) ||
-            ( b[i] < 0 || b[i] > 255 ) ||
-            ( a[i] < 0.0 || a[i] > 1.0 ))
+        if ( ( r[i] < 0 || r[i] > 255 ) ||
+             ( g[i] < 0 || g[i] > 255 ) ||
+             ( b[i] < 0 || b[i] > 255 ) ||
+             ( a[i] < 0.0 || a[i] > 1.0 ) )
         {
             char buffer[BUFFER_SIZE];
             snprintf( buffer, BUFFER_SIZE, "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
@@ -458,9 +458,9 @@ c_plscmap1( PLINT *r, PLINT *g, PLINT *b, PLINT ncol1 )
 
     for ( i = 0; i < plsc->ncol1; i++ )
     {
-        if (( r[i] < 0 || r[i] > 255 ) ||
-            ( g[i] < 0 || g[i] > 255 ) ||
-            ( b[i] < 0 || b[i] > 255 ))
+        if ( ( r[i] < 0 || r[i] > 255 ) ||
+             ( g[i] < 0 || g[i] > 255 ) ||
+             ( b[i] < 0 || b[i] > 255 ) )
         {
             char buffer[BUFFER_SIZE];
             snprintf( buffer, BUFFER_SIZE, "plscmap1: Invalid RGB color: %d, %d, %d",
@@ -494,10 +494,10 @@ c_plscmap1a( PLINT *r, PLINT *g, PLINT *b, PLFLT *a, PLINT ncol1 )
 
     for ( i = 0; i < plsc->ncol1; i++ )
     {
-        if (( r[i] < 0 || r[i] > 255 ) ||
-            ( g[i] < 0 || g[i] > 255 ) ||
-            ( b[i] < 0 || b[i] > 255 ) ||
-            ( a[i] < 0.0 || a[i] > 1.0 ))
+        if ( ( r[i] < 0 || r[i] > 255 ) ||
+             ( g[i] < 0 || g[i] > 255 ) ||
+             ( b[i] < 0 || b[i] > 255 ) ||
+             ( a[i] < 0.0 || a[i] > 1.0 ) )
         {
             char buffer[BUFFER_SIZE];
             snprintf( buffer, BUFFER_SIZE, "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
@@ -579,7 +579,7 @@ c_plscmap1l( PLINT itype, PLINT npts, PLFLT *pos,
         return;
     }
 
-    if (( pos[0] != 0 ) || ( pos[npts - 1] != 1 ))
+    if ( ( pos[0] != 0 ) || ( pos[npts - 1] != 1 ) )
     {
         plabort( "plscmap1l: First, last control points must lie on boundary" );
         return;
@@ -653,7 +653,7 @@ c_plscmap1la( PLINT itype, PLINT npts, PLFLT *pos,
         return;
     }
 
-    if (( pos[0] != 0 ) || ( pos[npts - 1] != 1 ))
+    if ( ( pos[0] != 0 ) || ( pos[npts - 1] != 1 ) )
     {
         plabort( "plscmap1la: First, last control points must lie on boundary" );
         return;
@@ -747,8 +747,8 @@ plcmap1_calc( void )
         for ( i = 0; i < plsc->ncol1; i++ )
         {
             p = (double) i / ( plsc->ncol1 - 1.0 );
-            if (( p < plsc->cmap1cp[n].p ) ||
-                ( p > plsc->cmap1cp[n + 1].p ))
+            if ( ( p < plsc->cmap1cp[n].p ) ||
+                 ( p > plsc->cmap1cp[n + 1].p ) )
                 continue;
 
             /* Interpolate based on position of color cell in cmap1 space */
@@ -770,9 +770,9 @@ plcmap1_calc( void )
 
             c_plhlsrgb( h, l, s, &r, &g, &b );
 
-            plsc->cmap1[i].r = MAX( 0, MIN( 255, (int) ( 256. * r )));
-            plsc->cmap1[i].g = MAX( 0, MIN( 255, (int) ( 256. * g )));
-            plsc->cmap1[i].b = MAX( 0, MIN( 255, (int) ( 256. * b )));
+            plsc->cmap1[i].r = MAX( 0, MIN( 255, (int) ( 256. * r ) ) );
+            plsc->cmap1[i].g = MAX( 0, MIN( 255, (int) ( 256. * g ) ) );
+            plsc->cmap1[i].b = MAX( 0, MIN( 255, (int) ( 256. * b ) ) );
             plsc->cmap1[i].a = a;
         }
     }
@@ -817,7 +817,7 @@ c_plscmap0n( PLINT ncol0 )
 
     if ( plsc->cmap0 == NULL )
     {
-        if (( plsc->cmap0 = (PLColor *) calloc( 1, size )) == NULL )
+        if ( ( plsc->cmap0 = (PLColor *) calloc( 1, size ) ) == NULL )
         {
             plexit( "c_plscmap0n: Insufficient memory" );
         }
@@ -825,7 +825,7 @@ c_plscmap0n( PLINT ncol0 )
     }
     else
     {
-        if (( plsc->cmap0 = (PLColor *) realloc( plsc->cmap0, size )) == NULL )
+        if ( ( plsc->cmap0 = (PLColor *) realloc( plsc->cmap0, size ) ) == NULL )
         {
             plexit( "c_plscmap0n: Insufficient memory" );
         }
@@ -876,7 +876,7 @@ plcmap0_def( int imin, int imax )
     if ( imin <= imax )
     {
         cmap0_palette_read( "", &number_colors, &r, &g, &b, &a );
-        for ( i = imin; i <= MIN(( number_colors - 1 ), imax ); i++ )
+        for ( i = imin; i <= MIN( ( number_colors - 1 ), imax ); i++ )
             color_def( i, r[i], g[i], b[i], a[i],
                 "colors defined by default cmap0 palette file" );
         free( r );
@@ -931,14 +931,14 @@ c_plscmap1n( PLINT ncol1 )
 
     if ( plsc->ncol1 > 0 )
     {
-        if (( plsc->cmap1 = (PLColor *) realloc( plsc->cmap1, size )) == NULL )
+        if ( ( plsc->cmap1 = (PLColor *) realloc( plsc->cmap1, size ) ) == NULL )
         {
             plexit( "c_plscmap1n: Insufficient memory" );
         }
     }
     else
     {
-        if (( plsc->cmap1 = (PLColor *) calloc( ncol, sizeof ( PLColor ))) == NULL )
+        if ( ( plsc->cmap1 = (PLColor *) calloc( ncol, sizeof ( PLColor ) ) ) == NULL )
         {
             plexit( "c_plscmap1n: Insufficient memory" );
         }
@@ -984,9 +984,9 @@ plcmap1_def( void )
 /* Be careful to pick just short of top or bottom else hue info is lost */
 
     if ( plsc->cmap0 != NULL )
-        vertex = ((PLFLT) plsc->cmap0[0].r +
-                  (PLFLT) plsc->cmap0[0].g +
-                  (PLFLT) plsc->cmap0[0].b ) / 3. / 255.;
+        vertex = ( (PLFLT) plsc->cmap0[0].r +
+                   (PLFLT) plsc->cmap0[0].g +
+                   (PLFLT) plsc->cmap0[0].b ) / 3. / 255.;
 
     if ( vertex < 0.5 )
     {
@@ -1062,9 +1062,9 @@ c_plrgb( PLFLT r, PLFLT g, PLFLT b )
     }
 
     plsc->icol0      = PL_RGB_COLOR;
-    plsc->curcolor.r = MAX( 0, MIN( 255, (int) ( 256. * r )));
-    plsc->curcolor.g = MAX( 0, MIN( 255, (int) ( 256. * g )));
-    plsc->curcolor.b = MAX( 0, MIN( 255, (int) ( 256. * b )));
+    plsc->curcolor.r = MAX( 0, MIN( 255, (int) ( 256. * r ) ) );
+    plsc->curcolor.g = MAX( 0, MIN( 255, (int) ( 256. * g ) ) );
+    plsc->curcolor.b = MAX( 0, MIN( 255, (int) ( 256. * b ) ) );
 
     plsc->curcmap = 0;
     plP_state( PLSTATE_COLOR0 );
@@ -1085,7 +1085,7 @@ c_plrgb1( PLINT r, PLINT g, PLINT b )
         plabort( "plrgb1: Please call plinit first" );
         return;
     }
-    if (( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ))
+    if ( ( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ) )
     {
         plabort( "plrgb1: Invalid color" );
         return;
@@ -1192,8 +1192,8 @@ c_plrgbhls( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s )
 {
     PLFLT h, l, s, d, rc, gc, bc, rgb_min, rgb_max;
 
-    rgb_min = MIN( r, MIN( g, b ));
-    rgb_max = MAX( r, MAX( g, b ));
+    rgb_min = MIN( r, MIN( g, b ) );
+    rgb_max = MAX( r, MAX( g, b ) );
 
     l = ( rgb_min + rgb_max ) / 2.0;
 
@@ -1269,7 +1269,7 @@ cmap0_palette_read( const char *filename,
             err = 1;
         }
     }
-    if ( !err && ( fscanf( fp, "%d\n", number_colors ) != 1 || *number_colors < 1 ))
+    if ( !err && ( fscanf( fp, "%d\n", number_colors ) != 1 || *number_colors < 1 ) )
     {
         fclose( fp );
         snprintf( msgbuf, 1024, "Unrecognized cmap0 header\n" );
@@ -1281,10 +1281,10 @@ cmap0_palette_read( const char *filename,
     {
         /* Allocate arrays to hold r, g, b, and a data for calling routine.
          * The caller must free these after it is finished with them. */
-        if ((( *r = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
-            (( *g = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
-            (( *b = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
-            (( *a = (double *) malloc( *number_colors * sizeof ( double ))) == NULL ))
+        if ( ( ( *r = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
+             ( ( *g = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
+             ( ( *b = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
+             ( ( *a = (double *) malloc( *number_colors * sizeof ( double ) ) ) == NULL ) )
         {
             fclose( fp );
             plexit( "cmap0_palette_read: insufficient memory" );
@@ -1297,7 +1297,7 @@ cmap0_palette_read( const char *filename,
             if ( strlen( color_info ) == 7 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x",
-                         (int *) ( *r + i ), (int *) ( *g + i ), (int *) ( *b + i )) != 3 )
+                         (int *) ( *r + i ), (int *) ( *g + i ), (int *) ( *b + i ) ) != 3 )
                 {
                     err = 1;
                     break;
@@ -1308,13 +1308,13 @@ cmap0_palette_read( const char *filename,
             {
                 if ( sscanf( color_info, "#%2x%2x%2x %lf",
                          (int *) ( *r + i ), (int *) ( *g + i ), (int *) ( *b + i ),
-                         (double *) ( *a + i )) != 4 )
+                         (double *) ( *a + i ) ) != 4 )
                 {
                     err = 1;
                     break;
                 }
                 /* fuzzy range check. */
-                if ( *( *a + i ) < -FUZZ_EPSILON || *( *a + i ) > ( 1. + FUZZ_EPSILON ))
+                if ( *( *a + i ) < -FUZZ_EPSILON || *( *a + i ) > ( 1. + FUZZ_EPSILON ) )
                 {
                     err = 1;
                     break;
@@ -1351,10 +1351,10 @@ cmap0_palette_read( const char *filename,
     if ( err )
     {
         *number_colors = 16;
-        if ((( *r = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
-            (( *g = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
-            (( *b = (int *) malloc( *number_colors * sizeof ( int ))) == NULL ) ||
-            (( *a = (double *) malloc( *number_colors * sizeof ( double ))) == NULL ))
+        if ( ( ( *r = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
+             ( ( *g = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
+             ( ( *b = (int *) malloc( *number_colors * sizeof ( int ) ) ) == NULL ) ||
+             ( ( *a = (double *) malloc( *number_colors * sizeof ( double ) ) ) == NULL ) )
         {
             plexit( "cmap0_palette_read: insufficient memory" );
         }
@@ -1411,7 +1411,7 @@ c_plspal0( const char *filename )
  * value when close to the range when there is floating-point errors.
  */
 #define fuzzy_range_check( value, min, max, fuzz, err_number )                                                                      \
-    if ( value < ( min - fuzz ) || value > ( max + fuzz )) {                                                                        \
+    if ( value < ( min - fuzz ) || value > ( max + fuzz ) ) {                                                                       \
         snprintf( msgbuf, 1024, "Unrecognized cmap1 format data line.  Error number is %d. Line is %s\n", err_number, color_info ); \
         plwarn( msgbuf );                                                                                                           \
         err = 1;                                                                                                                    \
@@ -1494,15 +1494,15 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         goto finish;
     }
 
-    r   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ));
-    g   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ));
-    b   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ));
-    ri  = (PLINT *) malloc( number_colors * sizeof ( PLINT ));
-    gi  = (PLINT *) malloc( number_colors * sizeof ( PLINT ));
-    bi  = (PLINT *) malloc( number_colors * sizeof ( PLINT ));
-    a   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ));
-    pos = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ));
-    rev = (PLBOOL *) malloc( number_colors * sizeof ( PLBOOL ));
+    r   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
+    g   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
+    b   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
+    ri  = (PLINT *) malloc( number_colors * sizeof ( PLINT ) );
+    gi  = (PLINT *) malloc( number_colors * sizeof ( PLINT ) );
+    bi  = (PLINT *) malloc( number_colors * sizeof ( PLINT ) );
+    a   = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
+    pos = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
+    rev = (PLBOOL *) malloc( number_colors * sizeof ( PLBOOL ) );
 
     if ( format_version == 0 )
     {
@@ -1514,7 +1514,7 @@ c_plspal1( const char *filename, PLBOOL interpolate )
             /* Ensure string is null terminated if > 160 characters */
             color_info[159] = '\0';
             return_sscanf   = sscanf( color_info, "#%2x%2x%2x %d %d", &r_i, &g_i, &b_i, &pos_i, &rev_i );
-            if ( return_sscanf < 4 || ( return_sscanf_old != 0 && return_sscanf != return_sscanf_old ))
+            if ( return_sscanf < 4 || ( return_sscanf_old != 0 && return_sscanf != return_sscanf_old ) )
             {
                 snprintf( msgbuf, 1024, "Unrecognized cmap1 format (wrong number of items for version 1 of format) %s\n", color_info );
                 plwarn( msgbuf );
@@ -1612,10 +1612,10 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         free( b );
         free( pos );
         number_colors = 2;
-        r             = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ));
-        g             = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ));
-        b             = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ));
-        pos           = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ));
+        r             = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
+        g             = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
+        b             = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
+        pos           = (PLFLT *) malloc( number_colors * sizeof ( PLFLT ) );
         r[0]          = 0.;
         r[1]          = 1.;
         g[0]          = 0.;
@@ -1722,7 +1722,7 @@ plabort( const char *errormsg )
  \*--------------------------------------------------------------------------*/
 
 void
-plsabort( void ( *handler )( const char * ))
+plsabort( void ( *handler )( const char * ) )
 {
     abort_handler = handler;
 }
@@ -1766,7 +1766,7 @@ plexit( const char *errormsg )
  \*--------------------------------------------------------------------------*/
 
 void
-plsexit( int ( *handler )( const char * ))
+plsexit( int ( *handler )( const char * ) )
 {
     exit_handler = handler;
 }
@@ -1866,12 +1866,12 @@ plFindCommand( const char *fn )
     if ( plInBuildTree() == 1 )
     {
         plGetName( BUILD_DIR, "bindings/tk", fn, &fs );
-        if ( !plFindName( fs ))
+        if ( !plFindName( fs ) )
             return fs;
         else
         {
             plGetName( SOURCE_DIR, "scripts", fn, &fs );
-            if ( !plFindName( fs ))
+            if ( !plFindName( fs ) )
                 return fs;
         }
     }
@@ -1879,10 +1879,10 @@ plFindCommand( const char *fn )
 /* PLPLOT_BIN_ENV = $(PLPLOT_BIN) */
 
 #if defined ( PLPLOT_BIN_ENV )
-    if (( dn = getenv( PLPLOT_BIN_ENV )) != NULL )
+    if ( ( dn = getenv( PLPLOT_BIN_ENV ) ) != NULL )
     {
         plGetName( dn, "", fn, &fs );
-        if ( !plFindName( fs ))
+        if ( !plFindName( fs ) )
             return fs;
         fprintf( stderr, PLPLOT_BIN_ENV "=\"%s\"\n", dn ); /* what IS set? */
     }
@@ -1891,16 +1891,16 @@ plFindCommand( const char *fn )
 /* Current directory */
 
     plGetName( ".", "", fn, &fs );
-    if ( !plFindName( fs ))
+    if ( !plFindName( fs ) )
         return fs;
 
 /* PLPLOT_HOME_ENV/bin = $(PLPLOT_HOME)/bin */
 
 #if defined ( PLPLOT_HOME_ENV )
-    if (( dn = getenv( PLPLOT_HOME_ENV )) != NULL )
+    if ( ( dn = getenv( PLPLOT_HOME_ENV ) ) != NULL )
     {
         plGetName( dn, "bin", fn, &fs );
-        if ( !plFindName( fs ))
+        if ( !plFindName( fs ) )
             return fs;
         fprintf( stderr, PLPLOT_HOME_ENV "=\"%s\"\n", dn ); /* what IS set? */
     }
@@ -1910,7 +1910,7 @@ plFindCommand( const char *fn )
 
 #if defined ( BIN_DIR )
     plGetName( BIN_DIR, "", fn, &fs );
-    if ( !plFindName( fs ))
+    if ( !plFindName( fs ) )
         return fs;
 #endif
 
@@ -1967,18 +1967,18 @@ plLibOpenPdfstrm( const char *fn )
     {
         plGetName( SOURCE_DIR, "data", fn, &fs );
 
-        if (( file = pdf_fopen( fs, "rb" )) != NULL )
+        if ( ( file = pdf_fopen( fs, "rb" ) ) != NULL )
             goto done;
     }
 
 /****	search PLPLOT_LIB_ENV = $(PLPLOT_LIB)	****/
 
 #if defined ( PLPLOT_LIB_ENV )
-    if (( dn = getenv( PLPLOT_LIB_ENV )) != NULL )
+    if ( ( dn = getenv( PLPLOT_LIB_ENV ) ) != NULL )
     {
         plGetName( dn, "", fn, &fs );
 
-        if (( file = pdf_fopen( fs, "rb" )) != NULL )
+        if ( ( file = pdf_fopen( fs, "rb" ) ) != NULL )
             goto done;
         fprintf( stderr, PLPLOT_LIB_ENV "=\"%s\"\n", dn ); /* what IS set? */
     }
@@ -1986,7 +1986,7 @@ plLibOpenPdfstrm( const char *fn )
 
 /****	search current directory	****/
 
-    if (( file = pdf_fopen( fn, "rb" )) != NULL )
+    if ( ( file = pdf_fopen( fn, "rb" ) ) != NULL )
     {
         pldebug( "plLibOpenPdfstr", "Found file %s in current directory.\n", fn );
         free_mem( fs );
@@ -1996,11 +1996,11 @@ plLibOpenPdfstrm( const char *fn )
 /****	search PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib	****/
 
 #if defined ( PLPLOT_HOME_ENV )
-    if (( dn = getenv( PLPLOT_HOME_ENV )) != NULL )
+    if ( ( dn = getenv( PLPLOT_HOME_ENV ) ) != NULL )
     {
         plGetName( dn, "lib", fn, &fs );
 
-        if (( file = pdf_fopen( fs, "rb" )) != NULL )
+        if ( ( file = pdf_fopen( fs, "rb" ) ) != NULL )
             goto done;
         fprintf( stderr, PLPLOT_HOME_ENV "=\"%s\"\n", dn ); /* what IS set? */
     }
@@ -2011,7 +2011,7 @@ plLibOpenPdfstrm( const char *fn )
 #if defined ( DATA_DIR )
     plGetName( DATA_DIR, "", fn, &fs );
 
-    if (( file = pdf_fopen( fs, "rb" )) != NULL )
+    if ( ( file = pdf_fopen( fs, "rb" ) ) != NULL )
         goto done;
 #endif  /* DATA_DIR */
 
@@ -2020,7 +2020,7 @@ plLibOpenPdfstrm( const char *fn )
 #ifdef PLLIBDEV
     plGetName( PLLIBDEV, "", fn, &fs );
 
-    if (( file = pdf_fopen( fs, "rb" )) != NULL )
+    if ( ( file = pdf_fopen( fs, "rb" ) ) != NULL )
         goto done;
 #endif  /* PLLIBDEV */
 
@@ -2033,7 +2033,7 @@ plLibOpenPdfstrm( const char *fn )
     if ( plplotLibDir != NULL )
     {
         plGetName( plplotLibDir, "", fn, &fs );
-        if (( file = pdf_fopen( fs, "rb" )) != NULL )
+        if ( ( file = pdf_fopen( fs, "rb" ) ) != NULL )
             goto done;
     }
 
@@ -2076,7 +2076,7 @@ plFindName( char *p )
     struct stat sbuf;
 
     pldebug( "plFindName", "Trying to find %s\n", p );
-    while (( n = readlink( p, buf, PLPLOT_MAX_PATH )) > 0 )
+    while ( ( n = readlink( p, buf, PLPLOT_MAX_PATH ) ) > 0 )
     {
         pldebug( "plFindName", "Readlink read %d chars at: %s\n", n, p );
         if ( buf[0] == '/' )
@@ -2110,10 +2110,10 @@ plFindName( char *p )
     if ( errno == EINVAL || errno == ENXIO )
     {
         pldebug( "plFindName", "%s may be the one...\n", p );
-        if (( stat( p, &sbuf ) == 0 ) && S_ISREG( sbuf.st_mode ))
+        if ( ( stat( p, &sbuf ) == 0 ) && S_ISREG( sbuf.st_mode ) )
         {
             pldebug( "plFindName", "%s is a regular file\n", p );
-            return ( access( p, X_OK ));
+            return ( access( p, X_OK ) );
         }
     }
     pldebug( "plFindName", "%s found but is not executable\n", p );
@@ -2146,7 +2146,7 @@ plGetName( const char *dir, const char *subdir, const char *filename, char **fil
 
     free_mem( *filespec );
     lfilespec = strlen( dir ) + strlen( subdir ) + strlen( filename ) + 10;
-    if (( *filespec = (char *) malloc( lfilespec )) == NULL )
+    if ( ( *filespec = (char *) malloc( lfilespec ) ) == NULL )
     {
         plexit( "plGetName: Insufficient memory" );
     }
@@ -2204,7 +2204,7 @@ plcol_interp( PLStream *pls, PLColor *newcolor, int i, int ncol )
     PLFLT x, delta;
     int   il, ir;
 
-    x     = (double) ( i * ( pls->ncol1 - 1 )) / (double) ( ncol - 1 );
+    x     = (double) ( i * ( pls->ncol1 - 1 ) ) / (double) ( ncol - 1 );
     il    = (int) x;
     ir    = il + 1;
     delta = x - il;
@@ -2212,7 +2212,7 @@ plcol_interp( PLStream *pls, PLColor *newcolor, int i, int ncol )
     if ( ir > pls->ncol1 || il < 0 )
         fprintf( stderr, "Invalid color\n" );
 
-    else if ( ir == pls->ncol1 || ( delta == 0. ))
+    else if ( ir == pls->ncol1 || ( delta == 0. ) )
     {
         newcolor->r = pls->cmap1[il].r;
         newcolor->g = pls->cmap1[il].g;
@@ -2221,9 +2221,9 @@ plcol_interp( PLStream *pls, PLColor *newcolor, int i, int ncol )
     }
     else
     {
-        newcolor->r = (unsigned char) (( 1. - delta ) * pls->cmap1[il].r + delta * pls->cmap1[ir].r );
-        newcolor->g = (unsigned char) (( 1. - delta ) * pls->cmap1[il].g + delta * pls->cmap1[ir].g );
-        newcolor->b = (unsigned char) (( 1. - delta ) * pls->cmap1[il].b + delta * pls->cmap1[ir].b );
+        newcolor->r = (unsigned char) ( ( 1. - delta ) * pls->cmap1[il].r + delta * pls->cmap1[ir].r );
+        newcolor->g = (unsigned char) ( ( 1. - delta ) * pls->cmap1[il].g + delta * pls->cmap1[ir].g );
+        newcolor->b = (unsigned char) ( ( 1. - delta ) * pls->cmap1[il].b + delta * pls->cmap1[ir].b );
         newcolor->a = ( 1. - delta ) * pls->cmap1[il].a + delta * pls->cmap1[ir].a;
     }
 }
@@ -2271,7 +2271,7 @@ plOpenFile( PLStream *pls )
 
 /* If name is "-", send to stdout */
 
-        if ( !strcmp( pls->FileName, "-" ))
+        if ( !strcmp( pls->FileName, "-" ) )
         {
             pls->OutFile     = stdout;
             pls->output_type = 1;
@@ -2286,7 +2286,7 @@ plOpenFile( PLStream *pls )
         if ( i++ > 10 )
             plexit( "Too many tries." );
 
-        if (( pls->OutFile = fopen( pls->FileName, "wb+" )) == NULL )
+        if ( ( pls->OutFile = fopen( pls->FileName, "wb+" ) ) == NULL )
             fprintf( stderr, "Can't open %s.\n", pls->FileName );
         else
             pldebug( "plOpenFile", "Opened %s\n", pls->FileName );
@@ -2311,7 +2311,7 @@ plP_getmember( PLStream *pls )
     maxlen = strlen( pls->BaseName ) + 10;
     if ( pls->FileName == NULL )
     {
-        if (( pls->FileName = (char *) malloc( maxlen )) == NULL )
+        if ( ( pls->FileName = (char *) malloc( maxlen ) ) == NULL )
         {
             plexit( "plP_getmember: Insufficient memory" );
         }
@@ -2348,10 +2348,10 @@ plP_sfnam( PLStream *pls, const char *fnam )
     pls->OutFile = NULL;
 
     if ( pls->FileName != NULL )
-        free((void *) pls->FileName );
+        free( (void *) pls->FileName );
 
     maxlen = 10 + strlen( fnam );
-    if (( pls->FileName = (char *) malloc( maxlen )) == NULL )
+    if ( ( pls->FileName = (char *) malloc( maxlen ) ) == NULL )
     {
         plexit( "plP_sfnam: Insufficient memory" );
     }
@@ -2371,9 +2371,9 @@ plP_sfnam( PLStream *pls, const char *fnam )
     }
 
     if ( pls->BaseName != NULL )
-        free((void *) pls->BaseName );
+        free( (void *) pls->BaseName );
 
-    if (( pls->BaseName = (char *) malloc( maxlen )) == NULL )
+    if ( ( pls->BaseName = (char *) malloc( maxlen ) ) == NULL )
     {
         plexit( "plP_sfnam: Insufficient memory" );
     }
@@ -2493,9 +2493,9 @@ PLDev *
 plAllocDev( PLStream *pls )
 {
     if ( pls->dev != NULL )
-        free((void *) pls->dev );
+        free( (void *) pls->dev );
 
-    pls->dev = calloc( 1, (size_t) sizeof ( PLDev ));
+    pls->dev = calloc( 1, (size_t) sizeof ( PLDev ) );
     if ( pls->dev == NULL )
         plexit( "plAllocDev: cannot allocate memory\n" );
 
@@ -2597,7 +2597,7 @@ plGetFlt( const char *s )
 char PLDLLIMPEXP *
 plstrdup( const char *src )
 {
-    char *dest = (char *) malloc(( strlen( src ) + 1 ) * sizeof ( char ));
+    char *dest = (char *) malloc( ( strlen( src ) + 1 ) * sizeof ( char ) );
     if ( dest != NULL )
         strcpy( dest, src );
     else
@@ -2676,7 +2676,7 @@ c_plseed( unsigned int s )
 PLFLT
 c_plrandd( void )
 {
-    return (PLFLT) ( genrand_real1());
+    return (PLFLT) ( genrand_real1() );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2697,13 +2697,13 @@ plsave_set_locale( void )
     char * setlocale_ptr;
     char * saved_lc_numeric_locale;
 
-    if ( !( saved_lc_numeric_locale = (char *) malloc( 100 * sizeof ( char ))))
+    if ( !( saved_lc_numeric_locale = (char *) malloc( 100 * sizeof ( char ) ) ) )
     {
         plexit( "plsave_set_locale: out of memory" );
     }
 
     /*save original LC_NUMERIC locale for restore below. */
-    if ( !( setlocale_ptr = setlocale( LC_NUMERIC, NULL )))
+    if ( !( setlocale_ptr = setlocale( LC_NUMERIC, NULL ) ) )
     {
         plexit( "plsave_set_locale: LC_NUMERIC locale could not be determined for NULL locale.\n" );
     }
@@ -2718,7 +2718,7 @@ plsave_set_locale( void )
      * fprintf(stderr, "plsave_set_locale: saved LC_NUMERIC locale is \"%s\"\n", saved_lc_numeric_locale);
      */
 
-    if ( !( setlocale( LC_NUMERIC, "C" )))
+    if ( !( setlocale( LC_NUMERIC, "C" ) ) )
     {
         plexit( "plsave_set_locale: LC_NUMERIC locale could not be set to \"C\"" );
     }
@@ -2744,7 +2744,7 @@ plrestore_locale( char *saved_lc_numeric_locale )
      * fprintf(stderr, "plrestore_locale: restored LC_NUMERIC locale is \"%s\"\n", saved_lc_numeric_locale);
      */
 
-    if ( !( setlocale( LC_NUMERIC, saved_lc_numeric_locale )))
+    if ( !( setlocale( LC_NUMERIC, saved_lc_numeric_locale ) ) )
     {
         char msgbuf[1024];
         snprintf( msgbuf, 1024, "plrestore_locale: LC_NUMERIC could not be restored to the default \"%s\" locale.\n", saved_lc_numeric_locale );

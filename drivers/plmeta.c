@@ -93,7 +93,7 @@ static void PrintLocation( PLStream *pls, char *tag )
         FILE   *file = pls->OutFile;
         FPOS_T current_offset;
 
-        if ( pl_fgetpos( file, &current_offset ))
+        if ( pl_fgetpos( file, &current_offset ) )
             plexit( "PrintLocation (plmeta.c): fgetpos call failed" );
 
         pldebug( tag, "at offset %d in file %s\n",
@@ -151,7 +151,7 @@ plD_init_plm( PLStream *pls )
 
 /* Allocate and initialize device-specific data */
 
-    pls->dev = calloc( 1, (size_t) sizeof ( PLmDev ));
+    pls->dev = calloc( 1, (size_t) sizeof ( PLmDev ) );
     if ( pls->dev == NULL )
         plexit( "plD_init_plm: Out of memory." );
 
@@ -183,7 +183,7 @@ plD_init_plm( PLStream *pls )
 /* Write initialization command. */
 
     DEBUG_PRINT_LOCATION( "before init" );
-    plm_wr( pdf_wr_1byte( pls->pdfs, c ));
+    plm_wr( pdf_wr_1byte( pls->pdfs, c ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -228,22 +228,22 @@ plD_line_plm( PLStream *pls, short x1, short y1, short x2, short y2 )
     if ( x1 == dev->xold && y1 == dev->yold )
     {
         c = (U_CHAR) LINETO;
-        plm_wr( pdf_wr_1byte( pls->pdfs, c ));
+        plm_wr( pdf_wr_1byte( pls->pdfs, c ) );
 
         xy[0] = x2;
         xy[1] = y2;
-        plm_wr( pdf_wr_2nbytes( pls->pdfs, xy, 2 ));
+        plm_wr( pdf_wr_2nbytes( pls->pdfs, xy, 2 ) );
     }
     else
     {
         c = (U_CHAR) LINE;
-        plm_wr( pdf_wr_1byte( pls->pdfs, c ));
+        plm_wr( pdf_wr_1byte( pls->pdfs, c ) );
 
         xy[0] = x1;
         xy[1] = y1;
         xy[2] = x2;
         xy[3] = y2;
-        plm_wr( pdf_wr_2nbytes( pls->pdfs, xy, 4 ));
+        plm_wr( pdf_wr_2nbytes( pls->pdfs, xy, 4 ) );
     }
     dev->xold = x2;
     dev->yold = y2;
@@ -263,12 +263,12 @@ plD_polyline_plm( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     dbug_enter( "plD_polyline_plm" );
 
-    plm_wr( pdf_wr_1byte( pls->pdfs, c ));
+    plm_wr( pdf_wr_1byte( pls->pdfs, c ) );
 
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) npts ));
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) npts ) );
 
-    plm_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) xa, npts ));
-    plm_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) ya, npts ));
+    plm_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) xa, npts ) );
+    plm_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) ya, npts ) );
 
     dev->xold = xa[npts - 1];
     dev->yold = ya[npts - 1];
@@ -285,7 +285,7 @@ plD_eop_plm( PLStream *pls )
 {
     U_CHAR c = (U_CHAR) EOP;
 
-    plm_wr( pdf_wr_1byte( pls->pdfs, c ));
+    plm_wr( pdf_wr_1byte( pls->pdfs, c ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -354,7 +354,7 @@ WritePageInfo( PLStream *pls, FPOS_T pp_offset )
 
     if ( isfile )
     {
-        if ( pl_fgetpos( file, &cp_offset ))
+        if ( pl_fgetpos( file, &cp_offset ) )
             plexit( "WritePageInfo (plmeta.c): fgetpos call failed" );
 
         UpdateIndex( pls, cp_offset );
@@ -369,10 +369,10 @@ WritePageInfo( PLStream *pls, FPOS_T pp_offset )
         c             = BOP0;
         dev->notfirst = 1;
     }
-    plm_wr( pdf_wr_1byte( pls->pdfs, c ));
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->page ));
-    plm_wr( pdf_wr_4bytes( pls->pdfs, (U_LONG) pp_offset ));
-    plm_wr( pdf_wr_4bytes( pls->pdfs, (U_LONG) 0 ));
+    plm_wr( pdf_wr_1byte( pls->pdfs, c ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->page ) );
+    plm_wr( pdf_wr_4bytes( pls->pdfs, (U_LONG) pp_offset ) );
+    plm_wr( pdf_wr_4bytes( pls->pdfs, (U_LONG) 0 ) );
 
 /* Update last page offset with current page value */
 
@@ -401,7 +401,7 @@ UpdatePrevPagehdr( PLStream *pls )
 
 /* Determine where we are */
 
-    if ( pl_fgetpos( file, &cp_offset ))
+    if ( pl_fgetpos( file, &cp_offset ) )
         plexit( "plD_bop_plm: fgetpos call failed" );
 
 /* Seek back to previous page header. */
@@ -416,7 +416,7 @@ UpdatePrevPagehdr( PLStream *pls )
 
         /* The forward byte offset is located exactly 7 bytes after the BOP */
         fwbyte_offset = dev->lp_offset + 7;
-        if ( pl_fsetpos( file, &fwbyte_offset ))
+        if ( pl_fsetpos( file, &fwbyte_offset ) )
         {
             snprintf( buffer, BUFFER_LEN, "UpdatePrevPagehdr (plmeta.c): fsetpos to fwbyte_offset (%d) failed",
                 (int) fwbyte_offset );
@@ -426,7 +426,7 @@ UpdatePrevPagehdr( PLStream *pls )
         /* DEBUG: verify current location */
 
 #ifdef DEBUG
-        if ( pl_fgetpos( file, &fwbyte_offset ))
+        if ( pl_fgetpos( file, &fwbyte_offset ) )
             plexit( "UpdatePrevPagehdr (plmeta.c): fgetpos call failed" );
 
         pldebug( "UpdatePrevPagehdr 2 (plmeta.c)",
@@ -436,13 +436,13 @@ UpdatePrevPagehdr( PLStream *pls )
 
         /* Write forward byte offset into previous page header. */
 
-        plm_wr( pdf_wr_4bytes( pls->pdfs, (U_LONG) cp_offset ));
+        plm_wr( pdf_wr_4bytes( pls->pdfs, (U_LONG) cp_offset ) );
         fflush( file );
 
         /* DEBUG: move back to before the write & read it to verify */
 
 #ifdef DEBUG
-        if ( pl_fsetpos( file, &fwbyte_offset ))
+        if ( pl_fsetpos( file, &fwbyte_offset ) )
         {
             snprintf( buffer, BUFFER_LEN, "UpdatePrevPagehdr (plmeta.c): fsetpos to fwbyte_offset (%d) failed",
                 (int) fwbyte_offset );
@@ -450,7 +450,7 @@ UpdatePrevPagehdr( PLStream *pls )
         }
         {
             U_LONG read_offset;
-            plm_rd( pdf_rd_4bytes( pls->pdfs, &read_offset ));
+            plm_rd( pdf_rd_4bytes( pls->pdfs, &read_offset ) );
             pldebug( "UpdatePrevPagehdr 3 (plmeta.c)",
                 "Value read as: %d\n", read_offset );
         }
@@ -458,7 +458,7 @@ UpdatePrevPagehdr( PLStream *pls )
 
         /* Return to current page offset */
 
-        if ( pl_fsetpos( file, &cp_offset ))
+        if ( pl_fsetpos( file, &cp_offset ) )
         {
             snprintf( buffer, BUFFER_LEN, "UpdatePrevPagehdr (plmeta.c): fsetpos to cp_offset (%d) failed",
                 (int) cp_offset );
@@ -488,20 +488,20 @@ UpdateIndex( PLStream *pls, FPOS_T cp_offset )
             "Location: %d, seeking to: %d\n",
             (int) cp_offset, (int) dev->lp_offset );
 
-        if ( pl_fsetpos( file, &dev->index_offset ))
+        if ( pl_fsetpos( file, &dev->index_offset ) )
         {
             snprintf( buffer, BUFFER_LEN, "UpdateIndex (plmeta.c): fsetpos to index_offset (%d) failed",
                 (int) dev->index_offset );
             plexit( buffer );
         }
-        plm_wr( pdf_wr_header( pls->pdfs, "pages" ));
-        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->page ));
+        plm_wr( pdf_wr_header( pls->pdfs, "pages" ) );
+        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->page ) );
 
         pldebug( "UpdateIndex (plmeta.c)",
             "Location: %d, seeking to: %d\n",
             (int) dev->lp_offset, (int) cp_offset );
 
-        if ( pl_fsetpos( file, &cp_offset ))
+        if ( pl_fsetpos( file, &cp_offset ) )
         {
             snprintf( buffer, BUFFER_LEN, "UpdateIndex (plmeta.c): fsetpos to cp_offset (%d) failed",
                 (int) cp_offset );
@@ -523,7 +523,7 @@ plD_tidy_plm( PLStream *pls )
 
     dbug_enter( "plD_tidy_plm" );
 
-    plm_wr( pdf_wr_1byte( pls->pdfs, c ));
+    plm_wr( pdf_wr_1byte( pls->pdfs, c ) );
     pdf_close( pls->pdfs );
     free_mem( pls->dev );
 }
@@ -542,51 +542,51 @@ plD_state_plm( PLStream *pls, PLINT op )
 
     dbug_enter( "plD_state_plm" );
 
-    plm_wr( pdf_wr_1byte( pls->pdfs, c ));
-    plm_wr( pdf_wr_1byte( pls->pdfs, op ));
+    plm_wr( pdf_wr_1byte( pls->pdfs, c ) );
+    plm_wr( pdf_wr_1byte( pls->pdfs, op ) );
 
     switch ( op )
     {
     case PLSTATE_WIDTH:
-        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) ( pls->width )));
+        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) ( pls->width ) ) );
         break;
 
     case PLSTATE_COLOR0:
-        plm_wr( pdf_wr_2bytes( pls->pdfs, (short) pls->icol0 ));
+        plm_wr( pdf_wr_2bytes( pls->pdfs, (short) pls->icol0 ) );
 
         if ( pls->icol0 == PL_RGB_COLOR )
         {
-            plm_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.r ));
-            plm_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.g ));
-            plm_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.b ));
+            plm_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.r ) );
+            plm_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.g ) );
+            plm_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.b ) );
         }
         break;
 
     case PLSTATE_COLOR1:
-        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->icol1 ));
+        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->icol1 ) );
         break;
 
     case PLSTATE_FILL:
-        plm_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) pls->patt ));
+        plm_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) pls->patt ) );
         break;
 
     case PLSTATE_CMAP0:
-        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncol0 ));
+        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncol0 ) );
         for ( i = 0; i < pls->ncol0; i++ )
         {
-            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].r ));
-            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].g ));
-            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].b ));
+            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].r ) );
+            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].g ) );
+            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].b ) );
         }
         break;
 
     case PLSTATE_CMAP1:
-        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncol1 ));
+        plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncol1 ) );
         for ( i = 0; i < pls->ncol1; i++ )
         {
-            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].r ));
-            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].g ));
-            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].b ));
+            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].r ) );
+            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].g ) );
+            plm_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].b ) );
         }
         break;
     }
@@ -612,8 +612,8 @@ plD_esc_plm( PLStream *pls, PLINT op, void *ptr )
 
     dbug_enter( "plD_esc_plm" );
 
-    plm_wr( pdf_wr_1byte( pls->pdfs, c ));
-    plm_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) op ));
+    plm_wr( pdf_wr_1byte( pls->pdfs, c ) );
+    plm_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) op ) );
 
     switch ( op )
     {
@@ -640,10 +640,10 @@ plm_fill( PLStream *pls )
 
     dbug_enter( "plm_fill" );
 
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->dev_npts ));
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->dev_npts ) );
 
-    plm_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) pls->dev_x, pls->dev_npts ));
-    plm_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) pls->dev_y, pls->dev_npts ));
+    plm_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) pls->dev_x, pls->dev_npts ) );
+    plm_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) pls->dev_y, pls->dev_npts ) );
 
     dev->xold = PL_UNDEFINED;
     dev->yold = PL_UNDEFINED;
@@ -678,65 +678,65 @@ WriteFileHeader( PLStream *pls )
 
     dbug_enter( "WriteFileHeader(PLStream *pls" );
 
-    plm_wr( pdf_wr_header( pls->pdfs, PLMETA_HEADER ));
-    plm_wr( pdf_wr_header( pls->pdfs, PLMETA_VERSION ));
+    plm_wr( pdf_wr_header( pls->pdfs, PLMETA_HEADER ) );
+    plm_wr( pdf_wr_header( pls->pdfs, PLMETA_VERSION ) );
 
 /* Write file index info.  Right now only number of pages. */
 /* The order here is critical */
 
     if ( isfile )
     {
-        if ( pl_fgetpos( file, &dev->index_offset ))
+        if ( pl_fgetpos( file, &dev->index_offset ) )
             plexit( "WriteFileHeader: fgetpos call failed" );
     }
 
-    plm_wr( pdf_wr_header( pls->pdfs, "pages" ));
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) 0 ));
+    plm_wr( pdf_wr_header( pls->pdfs, "pages" ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) 0 ) );
 
 /* Write initialization info.  Tag via strings to make backward
  * compatibility with old metafiles as easy as possible. */
 
-    plm_wr( pdf_wr_header( pls->pdfs, "xmin" ));
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) dev->xmin ));
+    plm_wr( pdf_wr_header( pls->pdfs, "xmin" ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) dev->xmin ) );
 
-    plm_wr( pdf_wr_header( pls->pdfs, "xmax" ));
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) dev->xmax ));
+    plm_wr( pdf_wr_header( pls->pdfs, "xmax" ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) dev->xmax ) );
 
-    plm_wr( pdf_wr_header( pls->pdfs, "ymin" ));
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) dev->ymin ));
+    plm_wr( pdf_wr_header( pls->pdfs, "ymin" ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) dev->ymin ) );
 
-    plm_wr( pdf_wr_header( pls->pdfs, "ymax" ));
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) dev->ymax ));
+    plm_wr( pdf_wr_header( pls->pdfs, "ymax" ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) dev->ymax ) );
 
-    plm_wr( pdf_wr_header( pls->pdfs, "pxlx" ));
-    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) dev->pxlx ));
+    plm_wr( pdf_wr_header( pls->pdfs, "pxlx" ) );
+    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) dev->pxlx ) );
 
-    plm_wr( pdf_wr_header( pls->pdfs, "pxly" ));
-    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) dev->pxly ));
+    plm_wr( pdf_wr_header( pls->pdfs, "pxly" ) );
+    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) dev->pxly ) );
 
 /* Geometry info, needed to properly transmit e.g. aspect ratio, via the
  * length params.  Not sure if the others are useful, but they're included for
  * completeness. */
 
-    plm_wr( pdf_wr_header( pls->pdfs, "xdpi" ));
-    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->xdpi ));
+    plm_wr( pdf_wr_header( pls->pdfs, "xdpi" ) );
+    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->xdpi ) );
 
-    plm_wr( pdf_wr_header( pls->pdfs, "ydpi" ));
-    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->ydpi ));
+    plm_wr( pdf_wr_header( pls->pdfs, "ydpi" ) );
+    plm_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->ydpi ) );
 
-    plm_wr( pdf_wr_header( pls->pdfs, "xlength" ));
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->xlength ));
+    plm_wr( pdf_wr_header( pls->pdfs, "xlength" ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->xlength ) );
 
-    plm_wr( pdf_wr_header( pls->pdfs, "ylength" ));
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ylength ));
+    plm_wr( pdf_wr_header( pls->pdfs, "ylength" ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ylength ) );
 
-    plm_wr( pdf_wr_header( pls->pdfs, "xoffset" ));
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->xoffset ));
+    plm_wr( pdf_wr_header( pls->pdfs, "xoffset" ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->xoffset ) );
 
-    plm_wr( pdf_wr_header( pls->pdfs, "yoffset" ));
-    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->yoffset ));
+    plm_wr( pdf_wr_header( pls->pdfs, "yoffset" ) );
+    plm_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->yoffset ) );
 
-    plm_wr( pdf_wr_header( pls->pdfs, "" ));
+    plm_wr( pdf_wr_header( pls->pdfs, "" ) );
 }
 
 #else

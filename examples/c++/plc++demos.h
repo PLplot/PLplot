@@ -25,7 +25,7 @@
 
 /* various utility macros */
 #ifndef ROUND
-#define ROUND( a )    (PLINT) (( a ) < 0. ? (( a ) - 0.5 ) : (( a ) + 0.5 ))
+#define ROUND( a )    (PLINT) ( ( a ) < 0. ? ( ( a ) - 0.5 ) : ( ( a ) + 0.5 ) )
 #endif
 
 /* Declarations for save string functions */
@@ -55,7 +55,7 @@ int plsnscanf( const char *buffer, int n, const char *format, ... );
 #endif
 
 #if !defined ( PL_HAVE_ISNAN )
-#  define isnan( x )    (( x ) != ( x ))
+#  define isnan( x )    ( ( x ) != ( x ) )
 #endif
 
 #endif  /* __PLCXXDEMOS_H__ */

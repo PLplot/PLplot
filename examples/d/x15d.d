@@ -47,10 +47,10 @@ int main( char[][] args )
 
     for ( int i = 0; i < XPTS; i++ )
     {
-        xx = cast(double) ( i - ( XPTS / 2 )) / ( XPTS / 2 );
+        xx = cast(double) ( i - ( XPTS / 2 ) ) / ( XPTS / 2 );
         for ( int j = 0; j < YPTS; j++ )
         {
-            yy      = cast(double) ( j - ( YPTS / 2 )) / ( YPTS / 2 ) - 1.0;
+            yy      = cast(double) ( j - ( YPTS / 2 ) ) / ( YPTS / 2 ) - 1.0;
             z[i][j] = xx * xx - yy * yy + ( xx - yy ) / ( xx * xx + yy * yy + 0.1 );
         }
     }

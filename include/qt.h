@@ -173,8 +173,8 @@ public:
     void savePlot();
     virtual void setResolution( double dotsPerInch )
     {
-        setDotsPerMeterX((int) (( dotsPerInch / 25.4 ) * 1000. ));
-        setDotsPerMeterY((int) (( dotsPerInch / 25.4 ) * 1000. ));
+        setDotsPerMeterX( (int) ( ( dotsPerInch / 25.4 ) * 1000. ) );
+        setDotsPerMeterY( (int) ( ( dotsPerInch / 25.4 ) * 1000. ) );
     }
 
 protected:

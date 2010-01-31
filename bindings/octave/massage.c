@@ -39,7 +39,7 @@ main()
     FILE        *fp, *fp1;
     struct stat buf;
 
-    if (( fp = fopen( "plplot_octave_txt/plplot.doc", "r" )) == NULL )
+    if ( ( fp = fopen( "plplot_octave_txt/plplot.doc", "r" ) ) == NULL )
     {
         perror( "plplot.doc not found:" );
         exit( 1 );
@@ -47,12 +47,12 @@ main()
 
     while ( !feof( fp ) && fgets( b, sizeof ( b ), fp ) != NULL )
     {
-        if ( strchr( b, '-' ))
+        if ( strchr( b, '-' ) )
             strcpy( doc[item++], b );
     }
     fclose( fp );
 
-    if (( fp = fopen( "tmp_stub", "r" )) == NULL )
+    if ( ( fp = fopen( "tmp_stub", "r" ) ) == NULL )
     {
         perror( "tmp_stub not found:" );
         exit( 1 );
@@ -60,7 +60,7 @@ main()
 
     while ( !feof( fp ) && fgets( b, sizeof ( b ), fp ) != NULL )
     {
-        if (( p2 = strchr( b, '(' )))   /* function ... = ...( */
+        if ( ( p2 = strchr( b, '(' ) ) )   /* function ... = ...( */
         {
             p1 = p2;
             while ( *p1-- != ' ' ) ;
@@ -68,7 +68,7 @@ main()
             if ( *( p1 + 1 ) == '_' )           /* c_... */
                 p1 += 2;
             strncpy( tok, p1, p2 - p1 );
-            *( tok + (int) ( p2 - p1 )) = '\0';
+            *( tok + (int) ( p2 - p1 ) ) = '\0';
             printf( "%s", b );
             if ( fgets( b, sizeof ( b ), fp ) == NULL )
             {
@@ -84,7 +84,7 @@ main()
                 strcat( tok, "\t" );
                 for ( j = 0; j < item; j++ )
                 {
-                    if ( strncmp( doc[j], tok, strlen( tok )) == 0 )
+                    if ( strncmp( doc[j], tok, strlen( tok ) ) == 0 )
                     {
                         printf( "%% %s", &doc[j][strlen( tok ) + 4] ); /* strip func --*/
                         break;

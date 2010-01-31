@@ -381,7 +381,7 @@ tek_init( PLStream *pls )
 
 /* Allocate and initialize device-specific data */
 
-    pls->dev = calloc( 1, (size_t) sizeof ( TekDev ));
+    pls->dev = calloc( 1, (size_t) sizeof ( TekDev ) );
     if ( pls->dev == NULL )
         plexit( "tek_init: Out of memory." );
 
@@ -648,10 +648,10 @@ plD_state_tek( PLStream *pls, PLINT op )
         {
             int icol1, ncol1;
             tek_graph( pls );
-            if (( ncol1 = MIN( 16 - pls->ncol0, pls->ncol1 )) < 1 )
+            if ( ( ncol1 = MIN( 16 - pls->ncol0, pls->ncol1 ) ) < 1 )
                 break;
 
-            icol1         = pls->ncol0 + ( pls->icol1 * ( ncol1 - 1 )) / ( pls->ncol1 - 1 );
+            icol1         = pls->ncol0 + ( pls->icol1 * ( ncol1 - 1 ) ) / ( pls->ncol1 - 1 );
             dev->curcolor = icol1;
             tek_color( pls, icol1 );
         }
@@ -722,7 +722,7 @@ GetCursor( PLStream *pls, PLGraphicsIn *ptr )
 
         /* Read & decode report */
 
-        while ( ++i < MAX_GIN && ( input_string[i - 1] = getchar()) != '\n' )
+        while ( ++i < MAX_GIN && ( input_string[i - 1] = getchar() ) != '\n' )
             ;
 
         input_string[i - 1] = '\0';
@@ -800,7 +800,7 @@ fill_polygon( PLStream *pls )
 static void
 tek_text( PLStream *pls )
 {
-    if ( pls->termin && ( pls->graphx == GRAPHICS_MODE ))
+    if ( pls->termin && ( pls->graphx == GRAPHICS_MODE ) )
     {
         tty_reset();
         pls->graphx = TEXT_MODE;
@@ -841,7 +841,7 @@ tek_text( PLStream *pls )
 static void
 tek_graph( PLStream *pls )
 {
-    if ( pls->termin && ( pls->graphx == TEXT_MODE ))
+    if ( pls->termin && ( pls->graphx == TEXT_MODE ) )
     {
         tty_cbreak();
         pls->graphx = GRAPHICS_MODE;
@@ -882,9 +882,9 @@ encode_int( char *c, int i )
     if ( i > 0 )
     {
         if ( i & 0x7C00 )                       /* are any of bits 10-14 set?*/
-            *c++ = (( i >> 10 ) & 0x1F ) | 0x40;
+            *c++ = ( ( i >> 10 ) & 0x1F ) | 0x40;
         if ( i & 0x03F0 )                       /* are any of bits 4-9 set? */
-            *c++ = (( i >> 4 ) & 0x3F ) | 0x40;
+            *c++ = ( ( i >> 4 ) & 0x3F ) | 0x40;
     }
     else
     {
@@ -924,11 +924,11 @@ decode_gin( char *c, PLGraphicsIn *gin )
 
     if ( lc == 4 )
     {
-        x = (( c[0] & 0x1f ) << 5 ) +
-            (( c[1] & 0x1f ));
+        x = ( ( c[0] & 0x1f ) << 5 ) +
+            ( ( c[1] & 0x1f ) );
 
-        y = (( c[2] & 0x1f ) << 5 ) +
-            (( c[3] & 0x1f ));
+        y = ( ( c[2] & 0x1f ) << 5 ) +
+            ( ( c[3] & 0x1f ) );
 
         gin->pX = x;
         gin->pY = y;
@@ -937,13 +937,13 @@ decode_gin( char *c, PLGraphicsIn *gin )
     }
     else if ( lc == 5 )
     {
-        y = (( c[0] & 0x1f ) << 7 ) +
-            (( c[2] & 0x1f ) << 2 ) +
-            (( c[1] & 0x06 ) >> 2 );
+        y = ( ( c[0] & 0x1f ) << 7 ) +
+            ( ( c[2] & 0x1f ) << 2 ) +
+            ( ( c[1] & 0x06 ) >> 2 );
 
-        x = (( c[3] & 0x1f ) << 7 ) +
-            (( c[4] & 0x1f ) << 2 ) +
-            (( c[1] & 0x03 ));
+        x = ( ( c[3] & 0x1f ) << 7 ) +
+            ( ( c[4] & 0x1f ) << 2 ) +
+            ( ( c[1] & 0x03 ) );
 
         gin->pX = x;
         gin->pY = y;
@@ -1092,7 +1092,7 @@ LookupEvent( PLStream *pls )
         gin->keysym = getchar();
     }
 
-    if ( isprint( gin->keysym ))
+    if ( isprint( gin->keysym ) )
     {
         gin->string[0] = gin->keysym;
         gin->string[1] = '\0';
@@ -1160,12 +1160,12 @@ LocateEH( PLStream *pls )
     {
         /* Try to locate cursor */
 
-        if ( plTranslateCursor( gin ))
+        if ( plTranslateCursor( gin ) )
         {
             /* Successful, so send report to stdout */
 
             pltext();
-            if ( isprint( gin->keysym ))
+            if ( isprint( gin->keysym ) )
                 printf( "%f %f %c\n", gin->wX, gin->wY, gin->keysym );
             else
                 printf( "%f %f\n", gin->wX, gin->wY );
@@ -1253,7 +1253,7 @@ tty_setup( void )                         /* setup for terminal operations */
     termios_cbreak.c_cc[VTIME] = 0;             /* no timer */
 
 #ifdef STDC_HEADERS
-    if ( atexit( tty_atexit ))
+    if ( atexit( tty_atexit ) )
         fprintf( stderr, "Unable to set up atexit handler.\n" );
 #endif
     return;

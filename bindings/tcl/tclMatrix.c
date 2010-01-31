@@ -44,10 +44,10 @@
 /* Cool math macros */
 
 #ifndef MAX
-#define MAX( a, b )    ((( a ) > ( b )) ? ( a ) : ( b ))
+#define MAX( a, b )    ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 #endif
 #ifndef MIN
-#define MIN( a, b )    ((( a ) < ( b )) ? ( a ) : ( b ))
+#define MIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 
 /* For the truly desperate debugging task */
@@ -155,7 +155,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
         /* If found, set persist variable and compress argv-list */
 
-        if (( c == '-' ) && ( strncmp( argv[i], "-persist", length ) == 0 ))
+        if ( ( c == '-' ) && ( strncmp( argv[i], "-persist", length ) == 0 ) )
         {
             persist = 1;
             argc--;
@@ -167,7 +167,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
 /* Create matrix data structure */
 
-    matPtr          = (tclMatrix *) malloc( sizeof ( tclMatrix ));
+    matPtr          = (tclMatrix *) malloc( sizeof ( tclMatrix ) );
     matPtr->fdata   = NULL;
     matPtr->idata   = NULL;
     matPtr->name    = NULL;
@@ -182,11 +182,11 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
     argc--; argv++;
 
-    if ( Tcl_GetCommandInfo( interp, argv[0], &infoPtr ))
+    if ( Tcl_GetCommandInfo( interp, argv[0], &infoPtr ) )
     {
         Tcl_AppendResult( interp, "Matrix operator \"", argv[0],
             "\" already in use", (char *) NULL );
-        free((void *) matPtr );
+        free( (void *) matPtr );
         return TCL_ERROR;
     }
 
@@ -195,7 +195,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         Tcl_AppendResult( interp, "Illegal name for Matrix operator \"",
             argv[0], "\": local variable of same name is active",
             (char *) NULL );
-        free((void *) matPtr );
+        free( (void *) matPtr );
         return TCL_ERROR;
     }
 
@@ -208,13 +208,13 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     c      = argv[0][0];
     length = strlen( argv[0] );
 
-    if (( c == 'f' ) && ( strncmp( argv[0], "float", length ) == 0 ))
+    if ( ( c == 'f' ) && ( strncmp( argv[0], "float", length ) == 0 ) )
     {
         matPtr->type = TYPE_FLOAT;
         matPtr->put  = MatrixPut_f;
         matPtr->get  = MatrixGet_f;
     }
-    else if (( c == 'i' ) && ( strncmp( argv[0], "int", length ) == 0 ))
+    else if ( ( c == 'i' ) && ( strncmp( argv[0], "int", length ) == 0 ) )
     {
         matPtr->type = TYPE_INT;
         matPtr->put  = MatrixPut_i;
@@ -226,7 +226,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             "\" not supported, should be \"float\" or \"int\"",
             (char *) NULL );
 
-        DeleteMatrixCmd((ClientData) matPtr );
+        DeleteMatrixCmd( (ClientData) matPtr );
         return TCL_ERROR;
     }
 
@@ -253,7 +253,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
                 "too many dimensions specified for Matrix operator \"",
                 matPtr->name, "\"", (char *) NULL );
 
-            DeleteMatrixCmd((ClientData) matPtr );
+            DeleteMatrixCmd( (ClientData) matPtr );
             return TCL_ERROR;
         }
 
@@ -267,7 +267,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
                 "\" for Matrix operator \"", matPtr->name, "\"",
                 (char *) NULL );
 
-            DeleteMatrixCmd((ClientData) matPtr );
+            DeleteMatrixCmd( (ClientData) matPtr );
             return TCL_ERROR;
         }
         matPtr->len *= matPtr->n[index];
@@ -278,7 +278,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         Tcl_AppendResult( interp,
             "insufficient dimensions given for Matrix operator \"",
             matPtr->name, "\"", (char *) NULL );
-        DeleteMatrixCmd((ClientData) matPtr );
+        DeleteMatrixCmd( (ClientData) matPtr );
         return TCL_ERROR;
     }
 
@@ -287,13 +287,13 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     switch ( matPtr->type )
     {
     case TYPE_FLOAT:
-        matPtr->fdata = (Mat_float *) malloc( matPtr->len * sizeof ( Mat_float ));
+        matPtr->fdata = (Mat_float *) malloc( matPtr->len * sizeof ( Mat_float ) );
         for ( i = 0; i < matPtr->len; i++ )
             matPtr->fdata[i] = 0.0;
         break;
 
     case TYPE_INT:
-        matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof ( Mat_int ));
+        matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof ( Mat_int ) );
         for ( i = 0; i < matPtr->len; i++ )
             matPtr->idata[i] = 0;
         break;
@@ -314,7 +314,7 @@ Tcl_MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         {
             Tcl_AppendResult( interp, "unable to schedule Matrix operator \"",
                 matPtr->name, "\" for automatic deletion", (char *) NULL );
-            DeleteMatrixCmd((ClientData) matPtr );
+            DeleteMatrixCmd( (ClientData) matPtr );
             return TCL_ERROR;
         }
         matPtr->tracing = 1;
@@ -418,7 +418,7 @@ Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc )
  */
 
     tclMatrixXtnsnDescr *new =
-        (tclMatrixXtnsnDescr *) malloc( sizeof ( tclMatrixXtnsnDescr ));
+        (tclMatrixXtnsnDescr *) malloc( sizeof ( tclMatrixXtnsnDescr ) );
 
     dbug_enter( "Tcl_MatrixInstallXtnsn" );
 
@@ -489,7 +489,7 @@ static int matrixInitialize( Tcl_Interp* interp, tclMatrix* m,
 
             matrixInitialize( interp, m, dim + 1, newoffs, numnewargs, (const char **) newargs );
             /* Must use Tcl_Free since allocated by Tcl */
-            Tcl_Free((char *) newargs );
+            Tcl_Free( (char *) newargs );
         }
         return TCL_OK;
     }
@@ -497,7 +497,7 @@ static int matrixInitialize( Tcl_Interp* interp, tclMatrix* m,
     for ( i = 0; i < nargs; i++ )
     {
         newoffs = offs * m->n[dim - 1] + i;
-        ( m->put )((ClientData) m, interp, newoffs, args[i] );
+        ( m->put )( (ClientData) m, interp, newoffs, args[i] );
         if ( verbose )
             fprintf( stderr, "\ta[%d] = %s\n", newoffs, args[i] );
     }
@@ -555,7 +555,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 /* dump -- send a nicely formatted listing of the array contents to stdout */
 /* (very helpful for debugging) */
 
-    if (( c == 'd' ) && ( strncmp( argv[0], "dump", length ) == 0 ))
+    if ( ( c == 'd' ) && ( strncmp( argv[0], "dump", length ) == 0 ) )
     {
         for ( i = nmin[0]; i <= nmax[0]; i++ )
         {
@@ -563,7 +563,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             {
                 for ( k = nmin[2]; k <= nmax[2]; k++ )
                 {
-                    ( *matPtr->get )((ClientData) matPtr, interp, I3D( i, j, k ), tmp );
+                    ( *matPtr->get )( (ClientData) matPtr, interp, I3D( i, j, k ), tmp );
                     printf( "%s ", tmp );
                 }
                 if ( matPtr->dim > 2 )
@@ -578,7 +578,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
 /* delete -- delete the array */
 
-    else if (( c == 'd' ) && ( strncmp( argv[0], "delete", length ) == 0 ))
+    else if ( ( c == 'd' ) && ( strncmp( argv[0], "delete", length ) == 0 ) )
     {
 #ifdef DEBUG
         fprintf( stderr, "Deleting array %s\n", name );
@@ -590,7 +590,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 /* filter */
 /* Only works on 1d matrices */
 
-    else if (( c == 'f' ) && ( strncmp( argv[0], "filter", length ) == 0 ))
+    else if ( ( c == 'f' ) && ( strncmp( argv[0], "filter", length ) == 0 ) )
     {
         Mat_float *tmp;
         int       ifilt, nfilt;
@@ -611,7 +611,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         }
 
         nfilt = atoi( argv[1] );
-        tmp   = (Mat_float *) malloc(( matPtr->len + 2 ) * sizeof ( Mat_float ));
+        tmp   = (Mat_float *) malloc( ( matPtr->len + 2 ) * sizeof ( Mat_float ) );
 
         for ( ifilt = 0; ifilt < nfilt; ifilt++ )
         {
@@ -633,13 +633,13 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             }
         }
 
-        free((void *) tmp );
+        free( (void *) tmp );
         return TCL_OK;
     }
 
 /* help */
 
-    else if (( c == 'h' ) && ( strncmp( argv[0], "help", length ) == 0 ))
+    else if ( ( c == 'h' ) && ( strncmp( argv[0], "help", length ) == 0 ) )
     {
         Tcl_AppendResult( interp,
             "So you really thought there'd be help, eh?  Sucker.",
@@ -649,7 +649,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
 /* info */
 
-    else if (( c == 'i' ) && ( strncmp( argv[0], "info", length ) == 0 ))
+    else if ( ( c == 'i' ) && ( strncmp( argv[0], "info", length ) == 0 ) )
     {
         for ( i = 0; i < matPtr->dim; i++ )
         {
@@ -665,7 +665,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
 /* max */
 
-    else if (( c == 'm' ) && ( strncmp( argv[0], "max", length ) == 0 ))
+    else if ( ( c == 'm' ) && ( strncmp( argv[0], "max", length ) == 0 ) )
     {
         int len;
         if ( argc < 1 || argc > 2 )
@@ -706,7 +706,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
 /* min */
 
-    else if (( c == 'm' ) && ( strncmp( argv[0], "min", length ) == 0 ))
+    else if ( ( c == 'm' ) && ( strncmp( argv[0], "min", length ) == 0 ) )
     {
         int len;
         if ( argc < 1 || argc > 2 )
@@ -748,7 +748,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 /* redim */
 /* Only works on 1d matrices */
 
-    else if (( c == 'r' ) && ( strncmp( argv[0], "redim", length ) == 0 ))
+    else if ( ( c == 'r' ) && ( strncmp( argv[0], "redim", length ) == 0 ) )
     {
         int  newlen;
         void *data;
@@ -772,7 +772,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         switch ( matPtr->type )
         {
         case TYPE_FLOAT:
-            data = realloc( matPtr->fdata, newlen * sizeof ( Mat_float ));
+            data = realloc( matPtr->fdata, newlen * sizeof ( Mat_float ) );
             if ( data == NULL )
             {
                 Tcl_AppendResult( interp, "redim failed!",
@@ -785,7 +785,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             break;
 
         case TYPE_INT:
-            data = realloc( matPtr->idata, newlen * sizeof ( Mat_int ));
+            data = realloc( matPtr->idata, newlen * sizeof ( Mat_int ) );
             if ( data == NULL )
             {
                 Tcl_AppendResult( interp, "redim failed!",
@@ -804,7 +804,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 /* scale */
 /* Only works on 1d matrices */
 
-    else if (( c == 's' ) && ( strncmp( argv[0], "scale", length ) == 0 ))
+    else if ( ( c == 's' ) && ( strncmp( argv[0], "scale", length ) == 0 ) )
     {
         Mat_float scale;
 
@@ -845,12 +845,12 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         tclMatrixXtnsnDescr *p = head;
         for (; p; p = p->next )
         {
-            if (( c == p->cmd[0] ) && ( strncmp( argv[0], p->cmd, length ) == 0 ))
+            if ( ( c == p->cmd[0] ) && ( strncmp( argv[0], p->cmd, length ) == 0 ) )
             {
 #ifdef DEBUG
                 printf( "found a match, invoking %s\n", p->cmd );
 #endif
-                return ( *( p->cmdproc ))( matPtr, interp, --argc, ++argv );
+                return ( *( p->cmdproc ) )( matPtr, interp, --argc, ++argv );
             }
         }
     }
@@ -924,10 +924,10 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
             for ( k = nmin[2]; k <= nmax[2]; k++ )
             {
                 if ( put )
-                    ( *matPtr->put )((ClientData) matPtr, interp, I3D( i, j, k ), argv[0] );
+                    ( *matPtr->put )( (ClientData) matPtr, interp, I3D( i, j, k ), argv[0] );
                 else
                 {
-                    ( *matPtr->get )((ClientData) matPtr, interp, I3D( i, j, k ), tmp );
+                    ( *matPtr->get )( (ClientData) matPtr, interp, I3D( i, j, k ), tmp );
                     if ( i == nmax[0] && j == nmax[1] && k == nmax[2] )
                         Tcl_AppendResult( interp, tmp, (char *) NULL );
                     else
@@ -978,7 +978,7 @@ MatrixPut_i( ClientData clientData, Tcl_Interp* interp, int index, const char *s
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 
-    if (( strlen( string ) > 2 ) && ( strncmp( string, "0x", 2 ) == 0 ))
+    if ( ( strlen( string ) > 2 ) && ( strncmp( string, "0x", 2 ) == 0 ) )
     {
         matPtr->idata[index] = strtoul( &string[2], NULL, 16 );
     }
@@ -1026,7 +1026,7 @@ DeleteMatrixVar( ClientData clientData,
         strcpy( name, matPtr->name );
 
 #ifdef DEBUG
-        if ( Tcl_GetCommandInfo( matPtr->interp, matPtr->name, &infoPtr ))
+        if ( Tcl_GetCommandInfo( matPtr->interp, matPtr->name, &infoPtr ) )
         {
             if ( Tcl_DeleteCommand( matPtr->interp, matPtr->name ) == TCL_OK )
                 fprintf( stderr, "Deleted command %s\n", name );
@@ -1034,10 +1034,10 @@ DeleteMatrixVar( ClientData clientData,
                 fprintf( stderr, "Unable to delete command %s\n", name );
         }
 #else
-        if ( Tcl_GetCommandInfo( matPtr->interp, matPtr->name, &infoPtr ))
+        if ( Tcl_GetCommandInfo( matPtr->interp, matPtr->name, &infoPtr ) )
             Tcl_DeleteCommand( matPtr->interp, matPtr->name );
 #endif
-        free((void *) name );
+        free( (void *) name );
     }
     return (char *) NULL;
 }
@@ -1086,12 +1086,12 @@ DeleteMatrixCmd( ClientData clientData )
 
     if ( matPtr->fdata != NULL )
     {
-        free((void *) matPtr->fdata );
+        free( (void *) matPtr->fdata );
         matPtr->fdata = NULL;
     }
     if ( matPtr->idata != NULL )
     {
-        free((void *) matPtr->idata );
+        free( (void *) matPtr->idata );
         matPtr->idata = NULL;
     }
 
@@ -1113,16 +1113,16 @@ DeleteMatrixCmd( ClientData clientData )
 
     if ( matPtr->name != NULL )
     {
-        free((void *) matPtr->name );
+        free( (void *) matPtr->name );
         matPtr->name = NULL;
     }
 
 /* Free tclMatrix */
 
     if ( !matPtr->tracing )
-        free((void *) matPtr );
+        free( (void *) matPtr );
 #ifdef DEBUG
     else
-        fprintf( stderr, "OOPS!  You just lost %d bytes\n", sizeof ( tclMatrix ));
+        fprintf( stderr, "OOPS!  You just lost %d bytes\n", sizeof ( tclMatrix ) );
 #endif
 }

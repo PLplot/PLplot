@@ -344,7 +344,7 @@ plot4( void )
 /* Draw radial spokes for polar grid */
 
         pljoin( 0.0, 0.0, dx, dy );
-        sprintf( text, "%d", ROUND( theta ));
+        sprintf( text, "%d", ROUND( theta ) );
 
 /* Write labels for angle */
 
@@ -359,7 +359,7 @@ plot4( void )
 
     for ( i = 0; i <= 360; i++ )
     {
-        r    = sin( dtr * ( 5 * i ));
+        r    = sin( dtr * ( 5 * i ) );
         x[i] = x0[i] * r;
         y[i] = y0[i] * r;
     }
@@ -409,10 +409,10 @@ plot5( void )
 
     for ( i = 0; i < XPTS; i++ )
     {
-        xx = (double) ( i - ( XPTS / 2 )) / (double) ( XPTS / 2 );
+        xx = (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
         for ( j = 0; j < YPTS; j++ )
         {
-            yy      = (double) ( j - ( YPTS / 2 )) / (double) ( YPTS / 2 ) - 1.0;
+            yy      = (double) ( j - ( YPTS / 2 ) ) / (double) ( YPTS / 2 ) - 1.0;
             z[i][j] = xx * xx - yy * yy;
             w[i][j] = 2 * xx * yy;
         }

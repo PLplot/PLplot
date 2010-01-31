@@ -32,7 +32,7 @@
 PLINT
 plP_dcpcx( PLFLT x )
 {
-    return ( ROUND( plsc->phyxmi + plsc->phyxlen * x ));
+    return ( ROUND( plsc->phyxmi + plsc->phyxlen * x ) );
 }
 
 /* device coords to physical coords (y) */
@@ -40,7 +40,7 @@ plP_dcpcx( PLFLT x )
 PLINT
 plP_dcpcy( PLFLT y )
 {
-    return ( ROUND( plsc->phyymi + plsc->phyylen * y ));
+    return ( ROUND( plsc->phyymi + plsc->phyylen * y ) );
 }
 
 /* millimeters from bottom left-hand corner to physical coords (x) */
@@ -48,7 +48,7 @@ plP_dcpcy( PLFLT y )
 PLINT
 plP_mmpcx( PLFLT x )
 {
-    return ( ROUND( plsc->phyxmi + plsc->xpmm * x ));
+    return ( ROUND( plsc->phyxmi + plsc->xpmm * x ) );
 }
 
 /* millimeters from bottom left-hand corner to physical coords (y) */
@@ -56,7 +56,7 @@ plP_mmpcx( PLFLT x )
 PLINT
 plP_mmpcy( PLFLT y )
 {
-    return ( ROUND( plsc->phyymi + plsc->ypmm * y ));
+    return ( ROUND( plsc->phyymi + plsc->ypmm * y ) );
 }
 
 /* world coords to physical coords (x) */
@@ -64,8 +64,8 @@ plP_mmpcy( PLFLT y )
 PLINT
 plP_wcpcx( PLFLT x )
 {
-    if ( !finite( x )) return PLINT_MIN;
-    return ( ROUND( plsc->wpxoff + plsc->wpxscl * x ));
+    if ( !finite( x ) ) return PLINT_MIN;
+    return ( ROUND( plsc->wpxoff + plsc->wpxscl * x ) );
 }
 
 /* world coords to physical coords (y) */
@@ -73,8 +73,8 @@ plP_wcpcx( PLFLT x )
 PLINT
 plP_wcpcy( PLFLT y )
 {
-    if ( !finite( y )) return PLINT_MIN;
-    return ( ROUND( plsc->wpyoff + plsc->wpyscl * y ));
+    if ( !finite( y ) ) return PLINT_MIN;
+    return ( ROUND( plsc->wpyoff + plsc->wpyscl * y ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -86,7 +86,7 @@ plP_wcpcy( PLFLT y )
 PLFLT
 plP_pcdcx( PLINT x )
 {
-    return (PLFLT) (( x - plsc->phyxmi ) / (double) plsc->phyxlen );
+    return (PLFLT) ( ( x - plsc->phyxmi ) / (double) plsc->phyxlen );
 }
 
 /* physical coords to device coords (y) */
@@ -94,7 +94,7 @@ plP_pcdcx( PLINT x )
 PLFLT
 plP_pcdcy( PLINT y )
 {
-    return (PLFLT) (( y - plsc->phyymi ) / (double) plsc->phyylen );
+    return (PLFLT) ( ( y - plsc->phyymi ) / (double) plsc->phyylen );
 }
 
 /* millimeters from bottom left corner to device coords (x) */
@@ -102,7 +102,7 @@ plP_pcdcy( PLINT y )
 PLFLT
 plP_mmdcx( PLFLT x )
 {
-    return ((PLFLT) ( x * plsc->xpmm / ABS( plsc->phyxma - plsc->phyxmi )));
+    return ( (PLFLT) ( x * plsc->xpmm / ABS( plsc->phyxma - plsc->phyxmi ) ) );
 }
 
 /* millimeters from bottom left corner to device coords (y) */
@@ -110,7 +110,7 @@ plP_mmdcx( PLFLT x )
 PLFLT
 plP_mmdcy( PLFLT y )
 {
-    return ((PLFLT) ( y * plsc->ypmm / ABS( plsc->phyyma - plsc->phyymi )));
+    return ( (PLFLT) ( y * plsc->ypmm / ABS( plsc->phyyma - plsc->phyymi ) ) );
 }
 
 /* world coords into device coords (x) */
@@ -118,7 +118,7 @@ plP_mmdcy( PLFLT y )
 PLFLT
 plP_wcdcx( PLFLT x )
 {
-    return ((PLFLT) ( plsc->wdxoff + plsc->wdxscl * x ));
+    return ( (PLFLT) ( plsc->wdxoff + plsc->wdxscl * x ) );
 }
 
 /* world coords into device coords (y) */
@@ -126,7 +126,7 @@ plP_wcdcx( PLFLT x )
 PLFLT
 plP_wcdcy( PLFLT y )
 {
-    return ((PLFLT) ( plsc->wdyoff + plsc->wdyscl * y ));
+    return ( (PLFLT) ( plsc->wdyoff + plsc->wdyscl * y ) );
 }
 
 /* subpage coords to device coords (x) */
@@ -134,7 +134,7 @@ plP_wcdcy( PLFLT y )
 PLFLT
 plP_scdcx( PLFLT x )
 {
-    return ((PLFLT) ( plsc->spdxmi + ( plsc->spdxma - plsc->spdxmi ) * x ));
+    return ( (PLFLT) ( plsc->spdxmi + ( plsc->spdxma - plsc->spdxmi ) * x ) );
 }
 
 /* subpage coords to device coords (y) */
@@ -142,7 +142,7 @@ plP_scdcx( PLFLT x )
 PLFLT
 plP_scdcy( PLFLT y )
 {
-    return ((PLFLT) ( plsc->spdymi + ( plsc->spdyma - plsc->spdymi ) * y ));
+    return ( (PLFLT) ( plsc->spdymi + ( plsc->spdyma - plsc->spdymi ) * y ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -154,7 +154,7 @@ plP_scdcy( PLFLT y )
 PLFLT
 plP_dcmmx( PLFLT x )
 {
-    return ((PLFLT) ( x * ABS( plsc->phyxma - plsc->phyxmi ) / plsc->xpmm ));
+    return ( (PLFLT) ( x * ABS( plsc->phyxma - plsc->phyxmi ) / plsc->xpmm ) );
 }
 
 /* device coords to millimeters from bottom left-hand corner (y) */
@@ -162,7 +162,7 @@ plP_dcmmx( PLFLT x )
 PLFLT
 plP_dcmmy( PLFLT y )
 {
-    return ((PLFLT) ( y * ABS( plsc->phyyma - plsc->phyymi ) / plsc->ypmm ));
+    return ( (PLFLT) ( y * ABS( plsc->phyyma - plsc->phyymi ) / plsc->ypmm ) );
 }
 
 /* world coords into millimeters (x) */
@@ -170,7 +170,7 @@ plP_dcmmy( PLFLT y )
 PLFLT
 plP_wcmmx( PLFLT x )
 {
-    return ((PLFLT) ( plsc->wmxoff + plsc->wmxscl * x ));
+    return ( (PLFLT) ( plsc->wmxoff + plsc->wmxscl * x ) );
 }
 
 /* world coords into millimeters (y) */
@@ -178,7 +178,7 @@ plP_wcmmx( PLFLT x )
 PLFLT
 plP_wcmmy( PLFLT y )
 {
-    return ((PLFLT) ( plsc->wmyoff + plsc->wmyscl * y ));
+    return ( (PLFLT) ( plsc->wmyoff + plsc->wmyscl * y ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -190,7 +190,7 @@ plP_wcmmy( PLFLT y )
 PLFLT
 plP_dcscx( PLFLT x )
 {
-    return ((PLFLT) (( x - plsc->spdxmi ) / ( plsc->spdxma - plsc->spdxmi )));
+    return ( (PLFLT) ( ( x - plsc->spdxmi ) / ( plsc->spdxma - plsc->spdxmi ) ) );
 }
 
 /* device coords to subpage coords (y) */
@@ -198,7 +198,7 @@ plP_dcscx( PLFLT x )
 PLFLT
 plP_dcscy( PLFLT y )
 {
-    return ((PLFLT) (( y - plsc->spdymi ) / ( plsc->spdyma - plsc->spdymi )));
+    return ( (PLFLT) ( ( y - plsc->spdymi ) / ( plsc->spdyma - plsc->spdymi ) ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -211,8 +211,8 @@ plP_dcscy( PLFLT y )
 PLFLT
 plP_w3wcx( PLFLT x, PLFLT y, PLFLT z )
 {
-    return ((PLFLT) (( x - plsc->basecx ) * plsc->cxx +
-                     ( y - plsc->basecy ) * plsc->cxy ));
+    return ( (PLFLT) ( ( x - plsc->basecx ) * plsc->cxx +
+                       ( y - plsc->basecy ) * plsc->cxy ) );
 }
 
 /* 3-d coords to 2-d projection (y) */
@@ -221,9 +221,9 @@ plP_w3wcx( PLFLT x, PLFLT y, PLFLT z )
 PLFLT
 plP_w3wcy( PLFLT x, PLFLT y, PLFLT z )
 {
-    return ((PLFLT) (( x - plsc->basecx ) * plsc->cyx +
-                     ( y - plsc->basecy ) * plsc->cyy +
-                     ( z - plsc->ranmi ) * plsc->cyz ));
+    return ( (PLFLT) ( ( x - plsc->basecx ) * plsc->cyx +
+                       ( y - plsc->basecy ) * plsc->cyy +
+                       ( z - plsc->ranmi ) * plsc->cyz ) );
 }
 
 /* 3-d coords to 2-d projection (z), if that makes any sense... */
@@ -232,7 +232,7 @@ plP_w3wcy( PLFLT x, PLFLT y, PLFLT z )
 PLFLT
 plP_w3wcz( PLFLT x, PLFLT y, PLFLT z )
 {
-    return ((PLFLT) (( x - plsc->basecx ) * plsc->czx +
-                     ( y - plsc->basecy ) * plsc->czy +
-                     ( z - plsc->ranmi ) * plsc->czz ));
+    return ( (PLFLT) ( ( x - plsc->basecx ) * plsc->czx +
+                       ( y - plsc->basecy ) * plsc->czy +
+                       ( z - plsc->ranmi ) * plsc->czz ) );
 }

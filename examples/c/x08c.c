@@ -141,21 +141,21 @@ main( int argc, const char *argv[] )
 
 /* Allocate data structures */
 
-    x = (PLFLT *) calloc( XPTS, sizeof ( PLFLT ));
-    y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ));
+    x = (PLFLT *) calloc( XPTS, sizeof ( PLFLT ) );
+    y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ) );
 
     plAlloc2dGrid( &z, XPTS, YPTS );
 
     for ( i = 0; i < XPTS; i++ )
     {
-        x[i] = ((double) ( i - ( XPTS / 2 )) / (double) ( XPTS / 2 ));
+        x[i] = ( (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 ) );
         if ( rosen )
             x[i] *= 1.5;
     }
 
     for ( i = 0; i < YPTS; i++ )
     {
-        y[i] = (double) ( i - ( YPTS / 2 )) / (double) ( YPTS / 2 );
+        y[i] = (double) ( i - ( YPTS / 2 ) ) / (double) ( YPTS / 2 );
         if ( rosen )
             y[i] += 0.5;
     }
@@ -235,8 +235,8 @@ main( int argc, const char *argv[] )
 
 /* Clean up */
 
-    free((void *) x );
-    free((void *) y );
+    free( (void *) x );
+    free( (void *) y );
     plFree2dGrid( z, XPTS, YPTS );
 
     plend();

@@ -72,7 +72,7 @@ int circle_build( circle* c, point* p1, point* p2, point* p3 )
     double t1   = x3sq - x2sq + y3sq - y2sq;
     double t2   = x1sq - x3sq + y1sq - y3sq;
     double t3   = x2sq - x1sq + y2sq - y1sq;
-    double D    = ( p1->x * ( p2->y - p3->y ) + p2->x * ( p3->y - p1->y ) + p3->x * ( p1->y - p2->y )) * 2.0;
+    double D    = ( p1->x * ( p2->y - p3->y ) + p2->x * ( p3->y - p1->y ) + p3->x * ( p1->y - p2->y ) ) * 2.0;
 
     if ( D == 0.0 )
         return 0;
@@ -116,10 +116,10 @@ void points_thin( int* pn, point** ppoints, int nx, int ny )
     double ymin        = DBL_MAX;
     double ymax        = -DBL_MAX;
     int    nxy         = nx * ny;
-    double * sumx      = calloc( nxy, sizeof ( double ));
-    double * sumy      = calloc( nxy, sizeof ( double ));
-    double * sumz      = calloc( nxy, sizeof ( double ));
-    int    * count     = calloc( nxy, sizeof ( int ));
+    double * sumx      = calloc( nxy, sizeof ( double ) );
+    double * sumy      = calloc( nxy, sizeof ( double ) );
+    double * sumz      = calloc( nxy, sizeof ( double ) );
+    int    * count     = calloc( nxy, sizeof ( int ) );
     double stepx       = 0.0;
     double stepy       = 0.0;
     int    nnew        = 0;
@@ -195,7 +195,7 @@ void points_thin( int* pn, point** ppoints, int nx, int ny )
         }
     }
 
-    pointsnew = malloc( nnew * sizeof ( point ));
+    pointsnew = malloc( nnew * sizeof ( point ) );
 
     ii = 0;
     for ( j = 0; j < ny; ++j )
@@ -290,7 +290,7 @@ void points_generate1( int nin, point pin[], int nx, int ny, double zoom, int* n
     }
 
     *nout = nx * ny;
-    *pout = malloc( *nout * sizeof ( point ));
+    *pout = malloc( *nout * sizeof ( point ) );
 
     stepx = ( nx > 1 ) ? ( xmax - xmin ) / ( nx - 1 ) : 0.0;
     stepy = ( ny > 1 ) ? ( ymax - ymin ) / ( ny - 1 ) : 0.0;
@@ -341,7 +341,7 @@ void points_generate2( double xmin, double xmax, double ymin, double ymax, int n
     }
 
     *nout = nx * ny;
-    *pout = malloc( *nout * sizeof ( point ));
+    *pout = malloc( *nout * sizeof ( point ) );
 
     stepx = ( nx > 1 ) ? ( xmax - xmin ) / ( nx - 1 ) : 0.0;
     stepy = ( ny > 1 ) ? ( ymax - ymin ) / ( ny - 1 ) : 0.0;
@@ -420,11 +420,11 @@ void points_read( char* fname, int dim, int* n, point** points )
         {
             f = fopen( fname, "r" );
             if ( f == NULL )
-                nn_quit( "%s: %s\n", fname, strerror( errno ));
+                nn_quit( "%s: %s\n", fname, strerror( errno ) );
         }
     }
 
-    *points = malloc( nallocated * sizeof ( point ));
+    *points = malloc( nallocated * sizeof ( point ) );
     *n      = 0;
     while ( fgets( buf, BUFSIZE, f ) != NULL )
     {
@@ -433,28 +433,28 @@ void points_read( char* fname, int dim, int* n, point** points )
         if ( *n == nallocated )
         {
             nallocated *= 2;
-            *points     = realloc( *points, nallocated * sizeof ( point ));
+            *points     = realloc( *points, nallocated * sizeof ( point ) );
         }
 
         p = &( *points )[*n];
 
         if ( buf[0] == '#' )
             continue;
-        if (( token = strtok( buf, seps )) == NULL )
+        if ( ( token = strtok( buf, seps ) ) == NULL )
             continue;
-        if ( !str2double( token, &p->x ))
+        if ( !str2double( token, &p->x ) )
             continue;
-        if (( token = strtok( NULL, seps )) == NULL )
+        if ( ( token = strtok( NULL, seps ) ) == NULL )
             continue;
-        if ( !str2double( token, &p->y ))
+        if ( !str2double( token, &p->y ) )
             continue;
         if ( dim == 2 )
             p->z = NaN;
         else
         {
-            if (( token = strtok( NULL, seps )) == NULL )
+            if ( ( token = strtok( NULL, seps ) ) == NULL )
                 continue;
-            if ( !str2double( token, &p->z ))
+            if ( !str2double( token, &p->z ) )
                 continue;
         }
         ( *n )++;
@@ -466,11 +466,11 @@ void points_read( char* fname, int dim, int* n, point** points )
         *points = NULL;
     }
     else
-        *points = realloc( *points, *n * sizeof ( point ));
+        *points = realloc( *points, *n * sizeof ( point ) );
 
     if ( f != stdin )
         if ( fclose( f ) != 0 )
-            nn_quit( "%s: %s\n", fname, strerror( errno ));
+            nn_quit( "%s: %s\n", fname, strerror( errno ) );
 }
 
 /** Scales Y coordinate so that the resulting set fits into square:

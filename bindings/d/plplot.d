@@ -307,7 +307,7 @@ void plhist( PLFLT[] data, PLFLT datmin, PLFLT datmax, PLINT nbin, PLINT opt )
 /* Simple routine for labelling graphs. */
 void pllab( string xlabel, string ylabel, string tlabel )
 {
-    c_pllab( toStringz( xlabel ), toStringz( ylabel ), toStringz( tlabel ));
+    c_pllab( toStringz( xlabel ), toStringz( ylabel ), toStringz( tlabel ) );
 }
 
 /* Draws line segments connecting a series of points. */
@@ -361,13 +361,13 @@ void plmeshc( PLFLT[] x, PLFLT[] y, PLFLT[][] z, PLINT opt, PLFLT[] clevel )
 /* Prints out "text" at specified position relative to viewport */
 void plmtex( string side, PLFLT disp, PLFLT pos, PLFLT just, string text )
 {
-    c_plmtex( toStringz( side ), disp, pos, just, toStringz( text ));
+    c_plmtex( toStringz( side ), disp, pos, just, toStringz( text ) );
 }
 
 /* Prints out "text" at specified position relative to viewport (3D)*/
 void plmtex3( string side, PLFLT disp, PLFLT pos, PLFLT just, string text )
 {
-    c_plmtex3( toStringz( side ), disp, pos, just, toStringz( text ));
+    c_plmtex3( toStringz( side ), disp, pos, just, toStringz( text ) );
 }
 
 /* Plots a 3-d representation of the function z[x][y]. */
@@ -447,20 +447,20 @@ void plpoly3( PLFLT[] x, PLFLT[] y, PLFLT[] z, PLBOOL[] draw, PLBOOL ifcc )
 /* Prints out "text" at world cooordinate (x,y). */
 void plptex( PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, string text )
 {
-    c_plptex( x, y, dx, dy, just, toStringz( text ));
+    c_plptex( x, y, dx, dy, just, toStringz( text ) );
 }
 
 /* Prints out "text" at world cooordinate (x,y,z). */
 void plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
               PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, string text )
 {
-    c_plptex3( wx, wy, wz, dx, dy, dz, sx, sy, sz, just, toStringz( text ));
+    c_plptex3( wx, wy, wz, dx, dy, dz, sx, sy, sz, just, toStringz( text ) );
 }
 
 /* Set the colors for color table 0 from a cmap0 file */
 void plspal0( string filename )
 {
-    c_plspal0( toStringz( filename ));
+    c_plspal0( toStringz( filename ) );
 }
 
 /* Set the colors for color table 1 from a cmap1 file */
@@ -549,13 +549,13 @@ void plscmap1la( PLBOOL itype, PLFLT[] intensity, PLFLT[] coord1,
 /* Set the device (keyword) name */
 void plsdev( string devname )
 {
-    c_plsdev( toStringz( devname ));
+    c_plsdev( toStringz( devname ) );
 }
 
 /* Set the output file name. */
 void plsfnam( string fnam )
 {
-    c_plsfnam( toStringz( fnam ));
+    c_plsfnam( toStringz( fnam ) );
 }
 
 /* Shade region. */
@@ -655,7 +655,7 @@ void plstripc( PLINT* id, string xspec, string yspec, PLFLT xmin, PLFLT xmax, PL
 
     c_plstripc( id, toStringz( xspec ), toStringz( yspec ), xmin, xmax, xjump, ymin, ymax,
         xlpos, ylpos, y_ascl, acc, colbox, collab, colline.ptr, styline.ptr, leglinez.ptr,
-        toStringz( labx ), toStringz( laby ), toStringz( labtop ));
+        toStringz( labx ), toStringz( laby ), toStringz( labtop ) );
 }
 
 /* plots a 2d image (or a matrix too large for plshade() ) */
@@ -776,7 +776,7 @@ void plsym( PLFLT[] x, PLFLT[] y, PLINT code )
 /* Set the format for date / time labels */
 void pltimefmt( string fmt )
 {
-    c_pltimefmt( toStringz( fmt ));
+    c_pltimefmt( toStringz( fmt ) );
 }
 
 /*--------------------------------------------------------------------------*
@@ -839,7 +839,7 @@ void pltimefmt( string fmt )
  * here for backward compatibilty. */
 int plsetopt( string opt, string optarg )
 {
-    return c_plsetopt( toStringz( opt ), toStringz( optarg ));
+    return c_plsetopt( toStringz( opt ), toStringz( optarg ) );
 }
 
 /* Miscellaneous */

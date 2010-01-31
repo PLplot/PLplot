@@ -179,7 +179,7 @@ x31::x31( int argc, const char *argv[] )
     // Get world coordinates for middle of viewport
     pls->calc_world( xmid, ymid, wx, wy, win );
     cout << "world parameters: wx, wy, win = " << wx << " " << wy << " " << win << endl;
-    if ( fabs( wx - 0.5 * ( xmin + xmax )) > 1.0E-5 || fabs( wy - 0.5 * ( ymin + ymax )) > 1.0E-5 )
+    if ( fabs( wx - 0.5 * ( xmin + xmax ) ) > 1.0E-5 || fabs( wy - 0.5 * ( ymin + ymax ) ) > 1.0E-5 )
     {
         cerr << "plcalc_world test failed" << endl;
         status = 1;
@@ -260,10 +260,10 @@ x31::x31( int argc, const char *argv[] )
     pls->sdiplz( 0.1, 0.1, 0.9, 0.9 );
     pls->gdiplt( zxmin, zymin, zxmax, zymax );
     cout << "zoomed plot-space window parameters: xmin, ymin, xmax, ymax = " << zxmin << " " << zymin << " " << zxmax << " " << zymax << endl;
-    if ( fabs( zxmin - ( xmin + ( xmax - xmin ) * 0.1 )) > 1.0E-5 ||
-         fabs( zxmax - ( xmin + ( xmax - xmin ) * 0.9 )) > 1.0E-5 ||
-         fabs( zymin - ( ymin + ( ymax - ymin ) * 0.1 )) > 1.0E-5 ||
-         fabs( zymax - ( ymin + ( ymax - ymin ) * 0.9 )) > 1.0E-5 )
+    if ( fabs( zxmin - ( xmin + ( xmax - xmin ) * 0.1 ) ) > 1.0E-5 ||
+         fabs( zxmax - ( xmin + ( xmax - xmin ) * 0.9 ) ) > 1.0E-5 ||
+         fabs( zymin - ( ymin + ( ymax - ymin ) * 0.1 ) ) > 1.0E-5 ||
+         fabs( zymax - ( ymin + ( ymax - ymin ) * 0.9 ) ) > 1.0E-5 )
     {
         cerr << "plsdiplz test failed" << endl;
         status = 1;

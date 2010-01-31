@@ -101,7 +101,7 @@ c_plsym( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 
     for ( i = 0; i < n; i++ )
     {
-        plhrsh( code, plP_wcpcx( x[i] ), plP_wcpcy( y[i] ));
+        plhrsh( code, plP_wcpcx( x[i] ), plP_wcpcy( y[i] ) );
     }
 }
 
@@ -146,7 +146,7 @@ c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
         sym = *( fntlkup + ( ifont - 1 ) * numberchars + code );
 
         for ( i = 0; i < n; i++ )
-            plhrsh( sym, plP_wcpcx( x[i] ), plP_wcpcy( y[i] ));
+            plhrsh( sym, plP_wcpcx( x[i] ), plP_wcpcy( y[i] ) );
     }
 }
 
@@ -185,10 +185,10 @@ c_plpoin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code )
                  y[i] >= ymin && y[i] <= ymax &&
                  z[i] >= zmin && z[i] <= zmax )
             {
-                u = plP_wcpcx( plP_w3wcx( x[i], y[i], z[i] ));
-                v = plP_wcpcy( plP_w3wcy( x[i], y[i], z[i] ));
-                plP_movphy((PLINT) u, (PLINT) v );
-                plP_draphy((PLINT) u, (PLINT) v );
+                u = plP_wcpcx( plP_w3wcx( x[i], y[i], z[i] ) );
+                v = plP_wcpcy( plP_w3wcy( x[i], y[i], z[i] ) );
+                plP_movphy( (PLINT) u, (PLINT) v );
+                plP_draphy( (PLINT) u, (PLINT) v );
             }
         }
     }
@@ -204,8 +204,8 @@ c_plpoin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code )
                  y[i] >= ymin && y[i] <= ymax &&
                  z[i] >= zmin && z[i] <= zmax )
             {
-                u = plP_wcpcx( plP_w3wcx( x[i], y[i], z[i] ));
-                v = plP_wcpcy( plP_w3wcy( x[i], y[i], z[i] ));
+                u = plP_wcpcx( plP_w3wcx( x[i], y[i], z[i] ) );
+                v = plP_wcpcy( plP_w3wcy( x[i], y[i], z[i] ) );
                 plhrsh( sym, (PLINT) u, (PLINT) v );
             }
         }
@@ -242,7 +242,7 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
     /* Check to see if the device understands unicode and wants to draw
      * symbols.
      */
-    if (( plsc->dev_text ) && ( plsc->dev_unicode ) && ( !plsc->dev_hrshsym ))
+    if ( ( plsc->dev_text ) && ( plsc->dev_unicode ) && ( !plsc->dev_hrshsym ) )
     {
         idx          = plhershey2unicode( ch ); /* Get the index in the lookup table */
         unicode_char = hershey_to_unicode_lookup_table[idx].Unicode;
@@ -254,7 +254,7 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
          *  Otherwise, we let the driver render it as unicode
          */
 
-        if (( unicode_char == 0 ) || ( idx == -1 ))
+        if ( ( unicode_char == 0 ) || ( idx == -1 ) )
         {
 #ifndef TEST_FOR_MISSING_GLYPHS
             plhrsh2( ch, x, y );
@@ -340,7 +340,7 @@ plhrsh2( PLINT ch, PLINT x, PLINT y )
     penup = 1;
     scale = 0.05 * plsc->symht;
 
-    if ( !plcvec( ch, &vxygrid ))
+    if ( !plcvec( ch, &vxygrid ) )
     {
         plP_movphy( x, y );
         return;
@@ -485,7 +485,7 @@ c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
         dispx = 0;
         dispy = disp;
     }
-    else if ( plP_stsearch( side, 'b' ))
+    else if ( plP_stsearch( side, 'b' ) )
     {
         vert  = 0;
         xdv   = plsc->vpdxmi + ( plsc->vpdxma - plsc->vpdxmi ) * pos;
@@ -493,7 +493,7 @@ c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
         dispx = 0;
         dispy = -disp;
     }
-    else if ( plP_stsearch( side, 't' ))
+    else if ( plP_stsearch( side, 't' ) )
     {
         vert  = 0;
         xdv   = plsc->vpdxmi + ( plsc->vpdxma - plsc->vpdxmi ) * pos;
@@ -517,7 +517,7 @@ c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
         dispx = disp;
         dispy = 0;
     }
-    else if ( plP_stsearch( side, 'l' ))
+    else if ( plP_stsearch( side, 'l' ) )
     {
         vert  = 1;
         xdv   = plsc->vpdxmi;
@@ -525,7 +525,7 @@ c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
         dispx = -disp;
         dispy = 0;
     }
-    else if ( plP_stsearch( side, 'r' ))
+    else if ( plP_stsearch( side, 'r' ) )
     {
         vert  = 1;
         xdv   = plsc->vpdxma;
@@ -684,12 +684,12 @@ plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string )
         {
             level++;
             yorg += 16.0 * scale;
-            scale = dscale * pow( 0.75, (double) ABS( level ));
+            scale = dscale * pow( 0.75, (double) ABS( level ) );
         }
         else if ( ch == -2 )   /* sub-script */
         {
             level--;
-            scale = dscale * pow( 0.75, (double) ABS( level ));
+            scale = dscale * pow( 0.75, (double) ABS( level ) );
             yorg -= 16.0 * scale;
         }
         else if ( ch == -3 ) /* back-char */
@@ -700,7 +700,7 @@ plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string )
             uline = !uline;
         else
         {
-            if ( plcvec( ch, &vxygrid ))
+            if ( plcvec( ch, &vxygrid ) )
                 plchar( vxygrid, xform, base, oline, uline, refx, refy, scale,
                     plsc->xpmm, plsc->ypmm, &xorg, &yorg, &width );
         }
@@ -765,8 +765,8 @@ plchar( signed char *vxygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline
         {
             x  = *p_xorg + ( cx - xbase ) * scale;
             y  = *p_yorg + ( cy - ybase ) * scale;
-            lx = refx + ROUND( xpmm * ( xform[0] * x + xform[1] * y ));
-            ly = refy + ROUND( ypmm * ( xform[2] * x + xform[3] * y ));
+            lx = refx + ROUND( xpmm * ( xform[0] * x + xform[1] * y ) );
+            ly = refy + ROUND( ypmm * ( xform[2] * x + xform[3] * y ) );
             if ( penup == 1 )
             {
                 if ( l )
@@ -791,24 +791,24 @@ plchar( signed char *vxygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline
     {
         x  = *p_xorg;
         y  = *p_yorg + ( 30 + ydisp ) * scale;
-        lx = refx + ROUND( xpmm * ( xform[0] * x + xform[1] * y ));
-        ly = refy + ROUND( ypmm * ( xform[2] * x + xform[3] * y ));
+        lx = refx + ROUND( xpmm * ( xform[0] * x + xform[1] * y ) );
+        ly = refy + ROUND( ypmm * ( xform[2] * x + xform[3] * y ) );
         plP_movphy( lx, ly );
         x  = *p_xorg + *p_width * scale;
-        lx = refx + ROUND( xpmm * ( xform[0] * x + xform[1] * y ));
-        ly = refy + ROUND( ypmm * ( xform[2] * x + xform[3] * y ));
+        lx = refx + ROUND( xpmm * ( xform[0] * x + xform[1] * y ) );
+        ly = refy + ROUND( ypmm * ( xform[2] * x + xform[3] * y ) );
         plP_draphy( lx, ly );
     }
     if ( uline )
     {
         x  = *p_xorg;
         y  = *p_yorg + ( -5 + ydisp ) * scale;
-        lx = refx + ROUND( xpmm * ( xform[0] * x + xform[1] * y ));
-        ly = refy + ROUND( ypmm * ( xform[2] * x + xform[3] * y ));
+        lx = refx + ROUND( xpmm * ( xform[0] * x + xform[1] * y ) );
+        ly = refy + ROUND( ypmm * ( xform[2] * x + xform[3] * y ) );
         plP_movphy( lx, ly );
         x  = *p_xorg + *p_width * scale;
-        lx = refx + ROUND( xpmm * ( xform[0] * x + xform[1] * y ));
-        ly = refy + ROUND( ypmm * ( xform[2] * x + xform[3] * y ));
+        lx = refx + ROUND( xpmm * ( xform[0] * x + xform[1] * y ) );
+        ly = refy + ROUND( ypmm * ( xform[2] * x + xform[3] * y ) );
         plP_draphy( lx, ly );
     }
     *p_xorg = *p_xorg + *p_width * scale;
@@ -839,19 +839,19 @@ plstrl( const char *string )
         if ( ch == -1 )
         {
             level++;
-            scale = dscale * pow( 0.75, (double) ABS( level ));
+            scale = dscale * pow( 0.75, (double) ABS( level ) );
         }
         else if ( ch == -2 )
         {
             level--;
-            scale = dscale * pow( 0.75, (double) ABS( level ));
+            scale = dscale * pow( 0.75, (double) ABS( level ) );
         }
         else if ( ch == -3 )
             xorg -= width * scale;
         else if ( ch == -4 || ch == -5 ) ;
         else
         {
-            if ( plcvec( ch, &vxygrid ))
+            if ( plcvec( ch, &vxygrid ) )
             {
                 width = vxygrid[3] - vxygrid[2];
                 xorg += width * scale;
@@ -888,9 +888,9 @@ plcvec( PLINT ch, signed char **xygr )
         y           = fntbffr[2 * ib + 1];
         xygrid[k++] = x;
         xygrid[k++] = y;
-    } while (( x != 64 || y != 64 ) && k <= ( STLEN - 2 ));
+    } while ( ( x != 64 || y != 64 ) && k <= ( STLEN - 2 ) );
 
-    if ( k == ( STLEN - 1 ))
+    if ( k == ( STLEN - 1 ) )
     {
         /* This is bad if we get here */
         xygrid[k] = 64;
@@ -1033,7 +1033,7 @@ plP_strpos( const char *str, int chr )
 {
     char *temp;
 
-    if (( temp = strchr( str, chr )))
+    if ( ( temp = strchr( str, chr ) ) )
         return (PLINT) ( temp - str );
     else
         return (PLINT) -1;
@@ -1071,9 +1071,9 @@ plP_stindex( const char *str1, const char *str2 )
 PLBOOL
 plP_stsearch( const char *str, int chr )
 {
-    if ( strchr( str, chr ))
+    if ( strchr( str, chr ) )
         return TRUE;
-    else if ( strchr( str, toupper( chr )))
+    else if ( strchr( str, toupper( chr ) ) )
         return TRUE;
     else
         return FALSE;
@@ -1145,7 +1145,7 @@ plfntld( PLINT fnt )
     short        bffrleng;
     PDFstrm      *pdfs;
 
-    if ( fontloaded && ( charset == fnt ))
+    if ( fontloaded && ( charset == fnt ) )
         return;
 
     plfontrel();
@@ -1166,7 +1166,7 @@ plfntld( PLINT fnt )
     numberfonts = bffrleng / 256;
     numberchars = bffrleng & 0xff;
     bffrleng    = numberfonts * numberchars;
-    fntlkup     = (short int *) malloc( bffrleng * sizeof ( short int ));
+    fntlkup     = (short int *) malloc( bffrleng * sizeof ( short int ) );
     if ( !fntlkup )
         plexit( "plfntld: Out of memory while allocating font buffer." );
 
@@ -1175,7 +1175,7 @@ plfntld( PLINT fnt )
 /* Read fntindx[] */
 
     pdf_rd_2bytes( pdfs, (U_SHORT *) &indxleng );
-    fntindx = (short int *) malloc( indxleng * sizeof ( short int ));
+    fntindx = (short int *) malloc( indxleng * sizeof ( short int ) );
     if ( !fntindx )
         plexit( "plfntld: Out of memory while allocating font buffer." );
 
@@ -1185,14 +1185,14 @@ plfntld( PLINT fnt )
 /* Since this is an array of char, there are no endian problems */
 
     pdf_rd_2bytes( pdfs, (U_SHORT *) &bffrleng );
-    fntbffr = (signed char *) malloc( 2 * bffrleng * sizeof ( signed char ));
+    fntbffr = (signed char *) malloc( 2 * bffrleng * sizeof ( signed char ) );
     if ( !fntbffr )
         plexit( "plfntld: Out of memory while allocating font buffer." );
 
 #if PLPLOT_USE_TCL_CHANNELS
     pdf_rdx( fntbffr, sizeof ( signed char ) * ( 2 * bffrleng ), pdfs );
 #else
-    plio_fread((void *) fntbffr, (size_t) sizeof ( signed char ),
+    plio_fread( (void *) fntbffr, (size_t) sizeof ( signed char ),
         (size_t) ( 2 * bffrleng ), pdfs->file );
 #endif
 
@@ -1261,9 +1261,9 @@ int plhershey2unicode( int in )
         /* convert hershey_to_unicode_lookup_table[jmid].Hershey to signed
          * integer since we don't loose information - the number range
          * is from 1 and 2932 at the moment */
-        if ( in > (int) ( hershey_to_unicode_lookup_table[jmid].Hershey ))
+        if ( in > (int) ( hershey_to_unicode_lookup_table[jmid].Hershey ) )
             jlo = jmid;
-        else if ( in < (int) ( hershey_to_unicode_lookup_table[jmid].Hershey ))
+        else if ( in < (int) ( hershey_to_unicode_lookup_table[jmid].Hershey ) )
             jhi = jmid;
         else
             /* We have found it!
@@ -1379,7 +1379,7 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text
     plgchr( &chrdef, &chrht );
 
     /* handle x/y axises */
-    if (( plP_stindex( side, "x" ) != -1 ) || ( plP_stindex( side, "y" ) != -1 ))
+    if ( ( plP_stindex( side, "x" ) != -1 ) || ( plP_stindex( side, "y" ) != -1 ) )
     {
         /* get the locations of the end points of the relevant axis */
 
@@ -1389,34 +1389,34 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text
             /* primary */
             if ( plP_stindex( side, "p" ) != -1 )
             {
-                epx1 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ));
-                epy1 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ));
-                epx2 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ));
-                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ));
+                epx1 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ) );
+                epy1 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ) );
+                epx2 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ) );
+                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ) );
             }
             else
             {
-                epx1 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ));
-                epy1 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ));
-                epx2 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ));
-                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ));
+                epx1 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ) );
+                epy1 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ) );
+                epx2 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ) );
+                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ) );
             }
         }
         else
         {
             if ( plP_stindex( side, "p" ) != -1 )
             {
-                epx1 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ));
-                epy1 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ));
-                epx2 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ));
-                epy2 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ));
+                epx1 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ) );
+                epy1 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ) );
+                epx2 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ) );
+                epy2 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ) );
             }
             else
             {
-                epx1 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ));
-                epy1 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ));
-                epx2 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ));
-                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ));
+                epx1 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ) );
+                epy1 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ) );
+                epx2 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ) );
+                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ) );
             }
         }
 
@@ -1439,9 +1439,9 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text
         /* 1. calculate the angle of the axis we are to
          * draw the text on relative to the horizontal */
 
-        if (( epx2 - epx1 ) != 0.0 )
+        if ( ( epx2 - epx1 ) != 0.0 )
         {
-            theta = atan(( epy2 - epy1 ) / ( epx2 - epx1 ));
+            theta = atan( ( epy2 - epy1 ) / ( epx2 - epx1 ) );
         }
         else
         {
@@ -1472,8 +1472,8 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text
          *  The calculation is also dependent of the orientation
          *   (perpendicular or parallel) of the text. */
 
-        xpc = plP_dcmmx( plP_pcdcx((PLINT) xpc ));
-        ypc = plP_dcmmy( plP_pcdcy((PLINT) ypc )) - dispy;
+        xpc = plP_dcmmx( plP_pcdcx( (PLINT) xpc ) );
+        ypc = plP_dcmmy( plP_pcdcy( (PLINT) ypc ) ) - dispy;
 
         shift = plstrl( text ) * just;
 
@@ -1528,74 +1528,74 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text
 
         if ( plP_stindex( side, "p" ) != -1 )
         {
-            epx1 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ));
-            epy1 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ));
-            epy2 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmax ));
-            epx3 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ));
-            epy3 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ));
+            epx1 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ) );
+            epy1 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ) );
+            epy2 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmax ) );
+            epx3 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ) );
+            epy3 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ) );
 
-            if ( plP_wcpcx( plP_w3wcx( xmin, ymax, zmin )) < epx1 )
+            if ( plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ) ) < epx1 )
             {
-                epx1 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ));
-                epy1 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ));
-                epy2 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmax ));
-                epx3 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ));
-                epy3 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ));
+                epx1 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ) );
+                epy1 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ) );
+                epy2 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmax ) );
+                epx3 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ) );
+                epy3 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ) );
             }
 
-            if ( plP_wcpcx( plP_w3wcx( xmax, ymin, zmin )) < epx1 )
+            if ( plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ) ) < epx1 )
             {
-                epx1 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ));
-                epy1 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ));
-                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmax ));
-                epx3 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ));
-                epy3 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ));
+                epx1 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ) );
+                epy1 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ) );
+                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmax ) );
+                epx3 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ) );
+                epy3 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ) );
             }
 
-            if ( plP_wcpcx( plP_w3wcx( xmax, ymax, zmin )) < epx1 )
+            if ( plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ) ) < epx1 )
             {
-                epx1 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ));
-                epy1 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ));
-                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmax ));
-                epx3 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ));
-                epy3 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ));
+                epx1 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ) );
+                epy1 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ) );
+                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmax ) );
+                epx3 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ) );
+                epy3 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ) );
             }
         }
 
         /* find the right most of the 4 z axis options for "primary" */
         if ( plP_stindex( side, "s" ) != -1 )
         {
-            epx1 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ));
-            epy1 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ));
-            epy2 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmax ));
-            epx3 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ));
-            epy3 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ));
+            epx1 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ) );
+            epy1 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ) );
+            epy2 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmax ) );
+            epx3 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ) );
+            epy3 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ) );
 
-            if ( plP_wcpcx( plP_w3wcx( xmin, ymax, zmin )) > epx1 )
+            if ( plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ) ) > epx1 )
             {
-                epx1 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ));
-                epy1 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ));
-                epy2 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmax ));
-                epx3 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ));
-                epy3 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ));
+                epx1 = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ) );
+                epy1 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ) );
+                epy2 = plP_wcpcy( plP_w3wcy( xmin, ymax, zmax ) );
+                epx3 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ) );
+                epy3 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ) );
             }
 
-            if ( plP_wcpcx( plP_w3wcx( xmax, ymin, zmin )) > epx1 )
+            if ( plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ) ) > epx1 )
             {
-                epx1 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ));
-                epy1 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ));
-                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmax ));
-                epx3 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ));
-                epy3 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ));
+                epx1 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ) );
+                epy1 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ) );
+                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmax ) );
+                epx3 = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ) );
+                epy3 = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ) );
             }
 
-            if ( plP_wcpcx( plP_w3wcx( xmax, ymax, zmin )) > epx1 )
+            if ( plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ) ) > epx1 )
             {
-                epx1 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ));
-                epy1 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ));
-                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmax ));
-                epx3 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ));
-                epy3 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ));
+                epx1 = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ) );
+                epy1 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ) );
+                epy2 = plP_wcpcy( plP_w3wcy( xmax, ymax, zmax ) );
+                epx3 = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ) );
+                epy3 = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ) );
             }
         }
 
@@ -1609,9 +1609,9 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text
             /* 1. Calculate the angle of the axis we are to
              * draw the text on relative to the horizontal. */
 
-            if (( epx3 - epx1 ) != 0.0 )
+            if ( ( epx3 - epx1 ) != 0.0 )
             {
-                theta = atan(( epy3 - epy1 ) / ( epx3 - epx1 ));
+                theta = atan( ( epy3 - epy1 ) / ( epx3 - epx1 ) );
             }
             else
             {
@@ -1632,9 +1632,9 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text
         }
         else
         {
-            if (( epx1 - epx3 ) != 0.0 )
+            if ( ( epx1 - epx3 ) != 0.0 )
             {
-                theta = -atan(( epy3 - epy1 ) / ( epx1 - epx3 ));
+                theta = -atan( ( epy3 - epy1 ) / ( epx1 - epx3 ) );
             }
             else
             {
@@ -1659,8 +1659,8 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text
 
         /* 4. Compute the reference point. */
 
-        xpc = plP_dcmmx( plP_pcdcx((PLINT) xpc )) + dispx;
-        ypc = plP_dcmmy( plP_pcdcy((PLINT) ypc )) + dispy;
+        xpc = plP_dcmmx( plP_pcdcx( (PLINT) xpc ) ) + dispx;
+        ypc = plP_dcmmy( plP_pcdcy( (PLINT) ypc ) ) + dispy;
 
         shift = plstrl( text ) * just;
 
@@ -1741,12 +1741,12 @@ c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
     }
 
     /* compute text x,y location in physical coordinates */
-    xpc = plP_wcpcx( plP_w3wcx( wx, wy, wz ));
-    ypc = plP_wcpcy( plP_w3wcy( wx, wy, wz ));
+    xpc = plP_wcpcx( plP_w3wcx( wx, wy, wz ) );
+    ypc = plP_wcpcy( plP_w3wcy( wx, wy, wz ) );
 
     /* determine angle to rotate text in the x-y plane */
-    xdpc  = plP_wcpcx( plP_w3wcx( wx + dx, wy + dy, wz + dz ));
-    ydpc  = plP_wcpcy( plP_w3wcy( wx + dx, wy + dy, wz + dz ));
+    xdpc  = plP_wcpcx( plP_w3wcx( wx + dx, wy + dy, wz + dz ) );
+    ydpc  = plP_wcpcy( plP_w3wcy( wx + dx, wy + dy, wz + dz ) );
     theta = atan2( ydpc - ypc, xdpc - xpc );
 
     /* Determine angle to shear text in the x-y plane. This is a little
@@ -1759,17 +1759,17 @@ c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
      * two vectors. If this is negative then the angle is adjusted
      * 0.0 to -PI. */
 
-    if (( sx == 0.0 ) && ( sy == 0.0 ) && ( sz == 0.0 ))
+    if ( ( sx == 0.0 ) && ( sy == 0.0 ) && ( sz == 0.0 ) )
     {
         phi = 0.0;
     }
     else
     {
-        xspc = plP_wcpcx( plP_w3wcx( wx + sx, wy + sy, wz + sz ));
-        yspc = plP_wcpcy( plP_w3wcy( wx + sx, wy + sy, wz + sz ));
-        ld   = sqrt(( xpc - xdpc ) * ( xpc - xdpc ) + ( ypc - ydpc ) * ( ypc - ydpc ));
-        ls   = sqrt(( xpc - xspc ) * ( xpc - xspc ) + ( ypc - yspc ) * ( ypc - yspc ));
-        phi  = acos((( xdpc - xpc ) * ( xspc - xpc ) + ( ydpc - ypc ) * ( yspc - ypc )) / ( ld * ls ));
+        xspc = plP_wcpcx( plP_w3wcx( wx + sx, wy + sy, wz + sz ) );
+        yspc = plP_wcpcy( plP_w3wcy( wx + sx, wy + sy, wz + sz ) );
+        ld   = sqrt( ( xpc - xdpc ) * ( xpc - xdpc ) + ( ypc - ydpc ) * ( ypc - ydpc ) );
+        ls   = sqrt( ( xpc - xspc ) * ( xpc - xspc ) + ( ypc - yspc ) * ( ypc - yspc ) );
+        phi  = acos( ( ( xdpc - xpc ) * ( xspc - xpc ) + ( ydpc - ypc ) * ( yspc - ypc ) ) / ( ld * ls ) );
         cp   = ( xdpc - xpc ) * ( yspc - ypc ) - ( ydpc - ypc ) * ( xspc - xpc );
         if ( cp < 0.0 )
         {
@@ -1793,8 +1793,8 @@ c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
     stride = stride / sqrt( x_dx * x_dx + y_dy * y_dy + z_dz * z_dz );
 
     /* compute the reference point */
-    xpc = plP_dcmmx( plP_pcdcx((PLINT) xpc ));
-    ypc = plP_dcmmy( plP_pcdcy((PLINT) ypc ));
+    xpc = plP_dcmmx( plP_pcdcx( (PLINT) xpc ) );
+    ypc = plP_dcmmy( plP_pcdcy( (PLINT) ypc ) );
 
     shift  = plstrl( text ) * just;
     xrefpc = xpc - cos( theta ) * shift * stride;
@@ -1849,7 +1849,7 @@ c_plsfont( PLINT family, PLINT style, PLINT weight )
         if ( family > PL_FCI_SYMBOL )
             plwarn( "plsfont: Value for family is out of range" );
         else
-            plP_hex2fci((unsigned char) family, PL_FCI_FAMILY, &fci );
+            plP_hex2fci( (unsigned char) family, PL_FCI_FAMILY, &fci );
     }
 
     if ( style >= 0 )
@@ -1858,7 +1858,7 @@ c_plsfont( PLINT family, PLINT style, PLINT weight )
         if ( style > PL_FCI_OBLIQUE )
             plwarn( "plsfont: Value for style is out of range" );
         else
-            plP_hex2fci((unsigned char) style, PL_FCI_STYLE, &fci );
+            plP_hex2fci( (unsigned char) style, PL_FCI_STYLE, &fci );
     }
 
     if ( weight >= 0 )
@@ -1867,7 +1867,7 @@ c_plsfont( PLINT family, PLINT style, PLINT weight )
         if ( weight > PL_FCI_BOLD )
             plwarn( "plsfont: Value for weight is out of range" );
         else
-            plP_hex2fci((unsigned char) weight, PL_FCI_WEIGHT, &fci );
+            plP_hex2fci( (unsigned char) weight, PL_FCI_WEIGHT, &fci );
     }
 
     plsfci( fci );

@@ -135,13 +135,13 @@ int setFromUT( int year, int month, int day, int hour, int min, double sec, MJDt
          * stores the expected exact integer results of the
          * calculation with exact representation unless the
          * result is much larger than the integer overflow limit. */
-        if (( year % 4 == 0 && year % 100 != 0 ) || ( year % 4 == 0 && year % 400 == 0 ))
+        if ( ( year % 4 == 0 && year % 100 != 0 ) || ( year % 4 == 0 && year % 400 == 0 ) )
             dbase_day = year * non_leaps + leaps + MonthStartDOY_L[month] + day + MJD_0000G;
         else
             dbase_day = year * non_leaps + leaps + MonthStartDOY[month] + day + MJD_0000G;
     }
 
-    time_sec = sec + ((double) min + (double) hour * 60. ) * 60.;
+    time_sec = sec + ( (double) min + (double) hour * 60. ) * 60.;
 
     if ( time_sec >= SecInDay )
     {
@@ -191,12 +191,12 @@ void getYAD( int *year, int *ifleapyear, int *doy, const MJDtime *MJD, int force
          * j =  -1826 -1461, -1095, -730, -365, 0, 366, 731, 1096, 1461, 1827 */
         if ( j >= 366 )
         {
-            *year = (int) ((double) ( j ) / 365.25 );
+            *year = (int) ( (double) ( j ) / 365.25 );
             year4 = *year - 1;
         }
         else
         {
-            *year = (int) ((double) ( j - 365 ) / 365.25 );
+            *year = (int) ( (double) ( j - 365 ) / 365.25 );
             year4 = *year - 4;
         }
 
@@ -215,14 +215,14 @@ void getYAD( int *year, int *ifleapyear, int *doy, const MJDtime *MJD, int force
 
         if ( j >= 366 )
         {
-            *year   = (int) ((double) ( j ) / 365.2425 );
+            *year   = (int) ( (double) ( j ) / 365.2425 );
             year4   = *year - 1;
             year100 = *year - 1;
             year400 = *year - 1;
         }
         else
         {
-            *year   = (int) ((double) ( j - 365 ) / 365.2425 );
+            *year   = (int) ( (double) ( j - 365 ) / 365.2425 );
             year4   = *year - 4;
             year100 = *year - 100;
             year400 = *year - 400;
@@ -237,7 +237,7 @@ void getYAD( int *year, int *ifleapyear, int *doy, const MJDtime *MJD, int force
             ( *year )--;
             ifcorrect = 1;
         }
-        else if ( *doy > 365 && ( !*ifleapyear || *doy > 366 ))
+        else if ( *doy > 365 && ( !*ifleapyear || *doy > 366 ) )
         {
             ( *year )++;
             ifcorrect = 1;
@@ -674,7 +674,7 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
             else if ( next == 'S' )
             {
                 /* second (00 - 59 with optional decimal point and numbers after the decimal point.) */
-                if ( i + 2 < fmtlen && format[i + 1] == '%' && ( format[i + 2] == '.' || isdigit( format[i + 2] ) != 0 ))
+                if ( i + 2 < fmtlen && format[i + 1] == '%' && ( format[i + 2] == '.' || isdigit( format[i + 2] ) != 0 ) )
                 {
                     /* nplaces is number of decimal places ( 0 < nplaces <= 9 ) */
                     if ( format[i + 2] == '.' )
@@ -691,7 +691,7 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 if ( nplaces == 0 )
                 {
-                    sprintf( DateTime, "%02d", (int) ( sec + 0.5 ));
+                    sprintf( DateTime, "%02d", (int) ( sec + 0.5 ) );
                 }
                 else
                 {
@@ -925,7 +925,7 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                 sprintf( dynamic_format, "%%-%d.%df", nplaces + 2, nplaces );
                 /*sprintf(DateTime, "%-11.9f",  sec_fraction);*/
                 sprintf( DateTime, dynamic_format, sec_fraction );
-                while (( ptr = strrchr( &( DateTime[0] ), ' ' )) != NULL ) ptr[0] = '\0'; /* remove trailing white space */
+                while ( ( ptr = strrchr( &( DateTime[0] ), ' ' ) ) != NULL ) ptr[0] = '\0'; /* remove trailing white space */
 
                 if ( next == '.' )
                 {
@@ -1008,14 +1008,14 @@ double leap_second_TAI( const MJDtime *MJD_TAI, int *inleap, int *index )
     *MJD = *MJD_TAI;
     normalize_MJD( MJD );
     /* Search for index such that TAI_UTC_lookup_table[*index] <= MJD(TAI) < TAI_UTC_lookup_table[*index+1] */
-    bhunt_search( MJD, TAI_UTC_lookup_table, number_of_entries_in_tai_utc_table, sizeof ( TAI_UTC ), index, ( int ( * )( const void *, const void * ))geMJDtime_TAI );
+    bhunt_search( MJD, TAI_UTC_lookup_table, number_of_entries_in_tai_utc_table, sizeof ( TAI_UTC ), index, ( int ( * )( const void *, const void * ) )geMJDtime_TAI );
     if ( debug == 2 )
         fprintf( stderr, "*index = %d\n", *index );
     if ( *index == -1 )
     {
         /* MJD is less than first table entry. */
         /* Debug: check that condition is met */
-        if ( debug && geMJDtime_TAI( MJD, &TAI_UTC_lookup_table[*index + 1] ))
+        if ( debug && geMJDtime_TAI( MJD, &TAI_UTC_lookup_table[*index + 1] ) )
         {
             fprintf( stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for *index = %d\n", *index );
             exit( EXIT_FAILURE );
@@ -1033,7 +1033,7 @@ double leap_second_TAI( const MJDtime *MJD_TAI, int *inleap, int *index )
     {
         /* MJD is greater than or equal to last table entry. */
         /* Debug: check that condition is met */
-        if ( debug && !geMJDtime_TAI( MJD, &TAI_UTC_lookup_table[*index] ))
+        if ( debug && !geMJDtime_TAI( MJD, &TAI_UTC_lookup_table[*index] ) )
         {
             fprintf( stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for *index = %d\n", *index );
             exit( EXIT_FAILURE );
@@ -1049,13 +1049,13 @@ double leap_second_TAI( const MJDtime *MJD_TAI, int *inleap, int *index )
     {
         /* table[*index] <= MJD < table[*index+1]. */
         /* Debug: check that condition is met */
-        if ( debug && !( geMJDtime_TAI( MJD, &TAI_UTC_lookup_table[*index] ) && !geMJDtime_TAI( MJD, &TAI_UTC_lookup_table[*index + 1] )))
+        if ( debug && !( geMJDtime_TAI( MJD, &TAI_UTC_lookup_table[*index] ) && !geMJDtime_TAI( MJD, &TAI_UTC_lookup_table[*index + 1] ) ) )
         {
             fprintf( stderr, "MJD = {%d, %f}\n", MJD->base_day, MJD->time_sec );
             fprintf( stderr, "libqsastime (leap_second_TAI) logic ERROR: bad condition for *index = %d\n", *index );
             exit( EXIT_FAILURE );
         }
-        leap = -( TAI_UTC_lookup_table[*index].offset1 + (( MJD->base_day - TAI_UTC_lookup_table[*index].offset2 ) + MJD->time_sec / SecInDay ) * TAI_UTC_lookup_table[*index].slope ) / ( 1. + TAI_UTC_lookup_table[*index].slope / SecInDay );
+        leap = -( TAI_UTC_lookup_table[*index].offset1 + ( ( MJD->base_day - TAI_UTC_lookup_table[*index].offset2 ) + MJD->time_sec / SecInDay ) * TAI_UTC_lookup_table[*index].slope ) / ( 1. + TAI_UTC_lookup_table[*index].slope / SecInDay );
         /* Convert MJD(TAI) to normalized MJD(UTC). */
         MJD->time_sec += leap;
         normalize_MJD( MJD );
@@ -1086,7 +1086,7 @@ void configqsas( double scale, double offset1, double offset2, int ccontrol, int
      * previous call. */
     if ( *qsasconfig == NULL )
     {
-        *qsasconfig = (QSASConfig *) malloc((size_t) sizeof ( QSASConfig ));
+        *qsasconfig = (QSASConfig *) malloc( (size_t) sizeof ( QSASConfig ) );
         if ( *qsasconfig == NULL )
         {
             fprintf( stderr, "configqsas: out of memory\n" );
@@ -1134,7 +1134,7 @@ void closeqsas( QSASConfig **qsasconfig )
     /* Close library if it has been opened. */
     if ( *qsasconfig != NULL )
     {
-        free((void *) *qsasconfig );
+        free( (void *) *qsasconfig );
         *qsasconfig = NULL;
     }
 }
@@ -1158,7 +1158,7 @@ int ctimeqsas( int year, int month, int day, int hour, int min, double sec, doub
     ret = setFromUT( year, month, day, hour, min, sec, MJD, forceJulian );
     if ( ret )
         return ret;
-    *ctime = (((double) ( MJD->base_day ) - qsasconfig->offset1 ) - qsasconfig->offset2 + MJD->time_sec / (double) SecInDay ) / qsasconfig->scale;
+    *ctime = ( ( (double) ( MJD->base_day ) - qsasconfig->offset1 ) - qsasconfig->offset2 + MJD->time_sec / (double) SecInDay ) / qsasconfig->scale;
     return 0;
 }
 
@@ -1175,7 +1175,7 @@ void btimeqsas( int *year, int *month, int *day, int *hour, int *min, double *se
         exit( EXIT_FAILURE );
     }
 
-    MJD->time_sec = SecInDay * ( modf( qsasconfig->offset1, &integral_offset1 ) + modf( qsasconfig->offset2, &integral_offset2 ) + modf( ctime * qsasconfig->scale, &integral_scaled_ctime ));
+    MJD->time_sec = SecInDay * ( modf( qsasconfig->offset1, &integral_offset1 ) + modf( qsasconfig->offset2, &integral_offset2 ) + modf( ctime * qsasconfig->scale, &integral_scaled_ctime ) );
     MJD->base_day = (int) ( integral_offset1 + integral_offset2 + integral_scaled_ctime );
 
     if ( qsasconfig->ccontrol & 0x1 )
@@ -1184,7 +1184,7 @@ void btimeqsas( int *year, int *month, int *day, int *hour, int *min, double *se
         forceJulian = 0;
 
     if ( qsasconfig->ccontrol & 0x2 )
-        MJD->time_sec += leap_second_TAI( MJD, &inleap, &( qsasconfig->index ));
+        MJD->time_sec += leap_second_TAI( MJD, &inleap, &( qsasconfig->index ) );
     else
         inleap = 0;
 
@@ -1212,7 +1212,7 @@ size_t strfqsas( char * buf, size_t len, const char *format, double ctime, QSASC
         fprintf( stderr, "libqsastime (strfqsas) ERROR: configqsas must be called first.\n" );
         exit( EXIT_FAILURE );
     }
-    MJD->time_sec = SecInDay * ( modf( qsasconfig->offset1, &integral_offset1 ) + modf( qsasconfig->offset2, &integral_offset2 ) + modf( ctime * qsasconfig->scale, &integral_scaled_ctime ));
+    MJD->time_sec = SecInDay * ( modf( qsasconfig->offset1, &integral_offset1 ) + modf( qsasconfig->offset2, &integral_offset2 ) + modf( ctime * qsasconfig->scale, &integral_scaled_ctime ) );
     MJD->base_day = (int) ( integral_offset1 + integral_offset2 + integral_scaled_ctime );
 
     if ( qsasconfig->ccontrol & 0x1 )
@@ -1221,7 +1221,7 @@ size_t strfqsas( char * buf, size_t len, const char *format, double ctime, QSASC
         forceJulian = 0;
 
     if ( qsasconfig->ccontrol & 0x2 )
-        MJD->time_sec += leap_second_TAI( MJD, &inleap, &( qsasconfig->index ));
+        MJD->time_sec += leap_second_TAI( MJD, &inleap, &( qsasconfig->index ) );
     else
         inleap = 0;
 
@@ -1241,7 +1241,7 @@ size_t strfqsas( char * buf, size_t len, const char *format, double ctime, QSASC
  * its second argument (a table entry).  Otherwise it returns false
  * (0).  Items in the array base must be in ascending order. */
 
-void bhunt_search( const void *key, const void *base, int n, size_t size, int *low, int ( *ge )( const void *keyval, const void *datum ))
+void bhunt_search( const void *key, const void *base, int n, size_t size, int *low, int ( *ge )( const void *keyval, const void *datum ) )
 {
     const void *indexbase;
     int        mid, high, hunt_inc = 1;
@@ -1259,18 +1259,18 @@ void bhunt_search( const void *key, const void *base, int n, size_t size, int *l
     else
     {
         /* binary hunt phase where we are assured 0 <= *low < n */
-        indexbase = (void *) (((const char *) base ) + ( size * ( *low )));
-        if (( *ge )( key, indexbase ))
+        indexbase = (void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
+        if ( ( *ge )( key, indexbase ) )
         {
             high      = ( *low ) + hunt_inc;
-            indexbase = (void *) (((const char *) base ) + ( size * high ));
+            indexbase = (void *) ( ( (const char *) base ) + ( size * high ) );
             /* indexbase is valid if high < n. */
-            while (( high < n ) && (( *ge )( key, indexbase )))
+            while ( ( high < n ) && ( ( *ge )( key, indexbase ) ) )
             {
                 *low      = high;
                 hunt_inc += hunt_inc;
                 high      = high + hunt_inc;
-                indexbase = (void *) (((const char *) base ) + ( size * high ));
+                indexbase = (void *) ( ( (const char *) base ) + ( size * high ) );
             }
             if ( high >= n )
                 high = n;
@@ -1281,16 +1281,16 @@ void bhunt_search( const void *key, const void *base, int n, size_t size, int *l
         {
             high      = *low;
             *low      = high - hunt_inc;
-            indexbase = (void *) (((const char *) base ) + ( size * ( *low )));
+            indexbase = (void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
             /* indexbase is valid if(*low) >= 0 */
-            while ((( *low ) >= 0 ) && !(( *ge )( key, indexbase )))
+            while ( ( ( *low ) >= 0 ) && !( ( *ge )( key, indexbase ) ) )
             {
                 high      = *low;
                 hunt_inc += hunt_inc;
                 *low      = ( *low ) - hunt_inc;
-                indexbase = (void *) (((const char *) base ) + ( size * ( *low )));
+                indexbase = (void *) ( ( (const char *) base ) + ( size * ( *low ) ) );
             }
-            if (( *low ) < 0 )
+            if ( ( *low ) < 0 )
                 *low = -1;
             /* At this point high is valid and key < base[high]
              * and either base[low] <= key for valid low or low = -1. */
@@ -1302,8 +1302,8 @@ void bhunt_search( const void *key, const void *base, int n, size_t size, int *l
     while ( high - *low > 1 )
     {
         mid       = *low + ( high - *low ) / 2;
-        indexbase = (void *) (((const char *) base ) + ( size * mid ));
-        if (( *ge )( key, indexbase ))
+        indexbase = (void *) ( ( (const char *) base ) + ( size * mid ) );
+        if ( ( *ge )( key, indexbase ) )
             *low = mid;
         else
             high = mid;

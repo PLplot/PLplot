@@ -42,7 +42,7 @@ int main()
     ntest = abs( multiplier ) * ( ntable - 1 ) + 1;
     printf( "ntable, offset, multiplier, ntest = %i, %i, %i, %i\n", ntable, offset, multiplier, ntest );
 
-    table = (double *) malloc( ntable * sizeof ( double ));
+    table = (double *) malloc( ntable * sizeof ( double ) );
     if ( table == NULL )
     {
         printf( "Could not malloc desired memory\n" );
@@ -68,7 +68,7 @@ int main()
         {
             if ( ifrandom )
             {
-                j = (int) ((double) ntest * (double) rand() / (((double) RAND_MAX ) + 1. ));
+                j = (int) ( (double) ntest * (double) rand() / ( ( (double) RAND_MAX ) + 1. ) );
             }
             else
             {
@@ -78,14 +78,14 @@ int main()
             test = offset + (double) j / (double) multiplier;
             if ( !ifhunt )
                 index = -40;
-            bhunt_search( &test, table, ntable, sizeof ( double ), &index, ( int ( * )( const void *, const void * ))gedouble );
+            bhunt_search( &test, table, ntable, sizeof ( double ), &index, ( int ( * )( const void *, const void * ) )gedouble );
             if ( index < -1 || index > ntable - 1 )
             {
                 printf( "ERROR: test = %20.16f lead to an invalid index of %i\n", test, index );
                 return 1;
             }
 
-            if ( !(( index == -1 && test < table[index + 1] ) || ( index > -1 && index < ntable - 1 && table[index] <= test && test < table[index + 1] ) || ( index == ntable - 1 && table[index] <= test )))
+            if ( !( ( index == -1 && test < table[index + 1] ) || ( index > -1 && index < ntable - 1 && table[index] <= test && test < table[index + 1] ) || ( index == ntable - 1 && table[index] <= test ) ) )
             {
                 if ( index == -1 )
                 {
@@ -113,6 +113,6 @@ int main()
     }
     printf( "Successful completion of bhunt_search test\n" );
 
-    free((void *) table );
+    free( (void *) table );
     return 0;
 }

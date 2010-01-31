@@ -111,7 +111,7 @@
 extern int errno;
 
 #ifndef MIN
-#define MIN( a, b )    ((( a ) < ( b )) ? ( a ) : ( b ))
+#define MIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 
 /*
@@ -139,10 +139,10 @@ typedef struct PartialRead
 
 static PartialRead *partial[MAX_OPEN_FILES];
 
-static void pl_FreeReadBuffer   PLARGS((int fd));
-static void pl_Unread           PLARGS(( int fd, char *buffer,
-                                         int numBytes, int copy ));
-static int pl_Read             PLARGS(( int fd, char *buffer, int numReq ));
+static void pl_FreeReadBuffer   PLARGS( (int fd) );
+static void pl_Unread           PLARGS( ( int fd, char *buffer,
+                                          int numBytes, int copy ) );
+static int pl_Read             PLARGS( ( int fd, char *buffer, int numReq ) );
 
 /*
  *--------------------------------------------------------------
@@ -203,7 +203,7 @@ int  copy;                      /* Should we copy the data, or use this */
 {
     PartialRead *new;
 
-    new = (PartialRead *) malloc( sizeof ( PartialRead ));
+    new = (PartialRead *) malloc( sizeof ( PartialRead ) );
     if ( copy )
     {
         new->buffer = (char *) malloc( numBytes );
@@ -275,7 +275,7 @@ int  numReq;                    /* Number of bytes to get */
      * readable if they only request as much data as is in the buffers).
      */
     numRead = 0;
-    while (( readList != NULL ) && ( numRead < numReq ))
+    while ( ( readList != NULL ) && ( numRead < numReq ) )
     {
         numToCopy = readList->bufSize - readList->offset;
         if ( numToCopy + numRead > numReq )
@@ -302,7 +302,7 @@ int  numReq;                    /* Number of bytes to get */
     /*
      * Only call read if at the end of a previously incomplete packet.
      */
-    if (( numRead < numReq ))
+    if ( ( numRead < numReq ) )
     {
         numToCopy = numReq - numRead;
         numRead  += read( fd, buffer + numRead, numToCopy );
@@ -340,7 +340,7 @@ int length;
 {
     struct in_addr *ptr;
 
-    while (( ptr = (struct in_addr *) *listptr++ ) == NULL )
+    while ( ( ptr = (struct in_addr *) *listptr++ ) == NULL )
         continue;
 
     return inet_ntoa( *ptr );
@@ -356,14 +356,14 @@ char       **argv;
     register struct hostent *hostptr;
     char hostname[100];
 
-    if ( gethostname( hostname, 100 ))
+    if ( gethostname( hostname, 100 ) )
     {
         Tcl_AppendResult( interp, "Error -- cannot get host name",
             (char *) NULL );
         return TCL_ERROR;
     }
 
-    if (( hostptr = gethostbyname( hostname )) == NULL )
+    if ( ( hostptr = gethostbyname( hostname ) ) == NULL )
     {
         Tcl_AppendResult( interp, "Error -- cannot get host info for node ",
             hostname, (char *) NULL );
@@ -486,7 +486,7 @@ PDFstrm *pdfs;
 
     if ( header[1] > (unsigned) pdfs->bufmax )
     {
-        free((void *) pdfs->buffer );
+        free( (void *) pdfs->buffer );
         pdfs->bufmax = header[1] + 32;
         pdfs->buffer = (unsigned char *) malloc( pdfs->bufmax );
     }
@@ -527,7 +527,7 @@ PDFstrm *pdfs;
         goto readError;
     }
 
-    if ((unsigned) numRead != packetLen )
+    if ( (unsigned) numRead != packetLen )
     {
 #ifdef DEBUG
         fprintf( stderr, "Incomplete packet read, numRead = %d\n", numRead );
@@ -686,9 +686,9 @@ PDFstrm *pdfs;
 
     free( buffer );
 
-    if ((unsigned) numSent != packetLen )
+    if ( (unsigned) numSent != packetLen )
     {
-        if (( errno == 0 ) || ( errno == EWOULDBLOCK || errno == EAGAIN ))
+        if ( ( errno == 0 ) || ( errno == EWOULDBLOCK || errno == EAGAIN ) )
         {
             /*
              * Non-blocking I/O: return number of bytes actually sent.

@@ -18,7 +18,7 @@
 /* Follow ideas in http://gcc.gnu.org/wiki/Visibility for GCC version 4.x
  * The following forces exported symbols specifically designated with
  * CSADLLEXPORT to be visible.  */
-    #define CSADLLEXPORT    __attribute__ (( visibility( "default" )))
+    #define CSADLLEXPORT    __attribute__ ( ( visibility( "default" ) ) )
     #define CSADLLIMPORT
   #endif
 #endif

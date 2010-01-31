@@ -114,9 +114,9 @@ plD_init_xfig( PLStream *pls )
 /* Allocate and initialize device-specific data */
 
     if ( pls->dev != NULL )
-        free((void *) pls->dev );
+        free( (void *) pls->dev );
 
-    pls->dev = calloc( 1, (size_t) sizeof ( xfig_Dev ));
+    pls->dev = calloc( 1, (size_t) sizeof ( xfig_Dev ) );
 
     if ( pls->dev == NULL )
         plexit( "plD_init_xfig: cannot allocate memory\n" );
@@ -136,12 +136,12 @@ plD_init_xfig( PLStream *pls )
     dev->yscale_dev = DPI / 25.4;
     dev->offset_inc = dev->ymax * (PLINT) dev->yscale_dev;
     dev->offset     = -dev->offset_inc;
-    pls->dev_fill0  = 1;                                                                       /* Handle solid fills */
+    pls->dev_fill0  = 1;                                                                        /* Handle solid fills */
     if ( !pls->colorset )
-        pls->color = 1;                                                                        /* Is a color device */
+        pls->color = 1;                                                                         /* Is a color device */
 
-    plP_setpxl( dev->xscale_dev, dev->xscale_dev );                                            /* dpmm -- dots per mm */
-    plP_setphy( 0, (PLINT) ( FIGX * dev->xscale_dev ), 0, (PLINT) ( FIGY * dev->yscale_dev )); /* physical dimension in mm */
+    plP_setpxl( dev->xscale_dev, dev->xscale_dev );                                             /* dpmm -- dots per mm */
+    plP_setphy( 0, (PLINT) ( FIGX * dev->xscale_dev ), 0, (PLINT) ( FIGY * dev->yscale_dev ) ); /* physical dimension in mm */
 
 /* Write out header */
 
@@ -185,7 +185,7 @@ stcmap0( PLStream *pls )
 
     cur_pos = ftell( pls->OutFile );
 
-    if ( fseek( pls->OutFile, dev->cmap0_pos, SEEK_SET ))
+    if ( fseek( pls->OutFile, dev->cmap0_pos, SEEK_SET ) )
         plexit( "Sorry, only file based output, no pipes.\n" );
 
     /* fill the colormap */
@@ -215,7 +215,7 @@ stcmap1( PLStream *pls )
 
     cur_pos = ftell( pls->OutFile );
 
-    if ( fseek( pls->OutFile, dev->cmap1_pos, SEEK_SET ))
+    if ( fseek( pls->OutFile, dev->cmap1_pos, SEEK_SET ) )
         plexit( "Sorry, only file based output, no pipes.\n" );
 
     /* fill the colormap */
@@ -265,10 +265,10 @@ plD_line_xfig( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
         {
             dev->bufflen += 2 * BSIZE;
             tempptr       = (int *)
-                            realloc((void *) dev->buffptr, dev->bufflen * sizeof ( int ));
+                            realloc( (void *) dev->buffptr, dev->bufflen * sizeof ( int ) );
             if ( tempptr == NULL )
             {
-                free((void *) dev->buffptr );
+                free( (void *) dev->buffptr );
                 plexit( "plD_line_xfig: Out of memory!" );
             }
             dev->buffptr = tempptr;
@@ -370,7 +370,7 @@ plD_tidy_xfig( PLStream *pls )
     xfig_Dev *dev = (xfig_Dev *) pls->dev;
 
     flushbuffer( pls );
-    free((void *) dev->buffptr );
+    free( (void *) dev->buffptr );
     fclose( pls->OutFile );
 }
 
@@ -469,7 +469,7 @@ flushbuffer( PLStream *pls )
     while ( i < dev->count )
     {
         fprintf( pls->OutFile, "%d %d ", *( dev->buffptr + i ),
-            dev->offset + dev->ymax * (int) dev->yscale_dev - *( dev->buffptr + i + 1 ));
+            dev->offset + dev->ymax * (int) dev->yscale_dev - *( dev->buffptr + i + 1 ) );
         i += 2;
     }
     fprintf( pls->OutFile, "\n" );
@@ -546,8 +546,8 @@ proc_str( PLStream *pls, EscText *args )
         ref = DPI / 72. * ft_ht / 2.;
 
     /* rotate point in xfig is lower left corner, compensate */
-    args->y = (PLINT) ( dev->offset + dev->ymax * (int) dev->xscale_dev - ( args->y - ref * cos( alpha )));
-    args->x = (PLINT) ( args->x + ref * sin( alpha ));
+    args->y = (PLINT) ( dev->offset + dev->ymax * (int) dev->xscale_dev - ( args->y - ref * cos( alpha ) ) );
+    args->x = (PLINT) ( args->x + ref * sin( alpha ) );
 
     /*
      *  font family, serie and shape. Currently not supported by plplot

@@ -113,7 +113,7 @@ plbuf_polyline( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     wr_command( pls, (U_CHAR) POLYLINE );
 
-    wr_data( pls, &npts, sizeof ( PLINT ));
+    wr_data( pls, &npts, sizeof ( PLINT ) );
 
     wr_data( pls, xa, sizeof ( short ) * npts );
     wr_data( pls, ya, sizeof ( short ) * npts );
@@ -160,7 +160,7 @@ plbuf_bop( PLStream *pls )
     if ( pls->plbuf_buffer == NULL )
     {
         /* We have not allocated a buffer, so do it now */
-        if (( pls->plbuf_buffer = malloc( pls->plbuf_buffer_grow )) == NULL )
+        if ( ( pls->plbuf_buffer = malloc( pls->plbuf_buffer_grow ) ) == NULL )
             plexit( "plbuf_bop: Error allocating plot buffer." );
 
         pls->plbuf_buffer_size = pls->plbuf_buffer_grow;
@@ -216,25 +216,25 @@ plbuf_state( PLStream *pls, PLINT op )
     switch ( op )
     {
     case PLSTATE_WIDTH:
-        wr_data( pls, &( pls->width ), sizeof ( pls->width ));
+        wr_data( pls, &( pls->width ), sizeof ( pls->width ) );
         break;
 
     case PLSTATE_COLOR0:
-        wr_data( pls, &( pls->icol0 ), sizeof ( pls->icol0 ));
+        wr_data( pls, &( pls->icol0 ), sizeof ( pls->icol0 ) );
         if ( pls->icol0 == PL_RGB_COLOR )
         {
-            wr_data( pls, &( pls->curcolor.r ), sizeof ( pls->curcolor.r ));
-            wr_data( pls, &( pls->curcolor.g ), sizeof ( pls->curcolor.g ));
-            wr_data( pls, &( pls->curcolor.b ), sizeof ( pls->curcolor.b ));
+            wr_data( pls, &( pls->curcolor.r ), sizeof ( pls->curcolor.r ) );
+            wr_data( pls, &( pls->curcolor.g ), sizeof ( pls->curcolor.g ) );
+            wr_data( pls, &( pls->curcolor.b ), sizeof ( pls->curcolor.b ) );
         }
         break;
 
     case PLSTATE_COLOR1:
-        wr_data( pls, &( pls->icol1 ), sizeof ( pls->icol1 ));
+        wr_data( pls, &( pls->icol1 ), sizeof ( pls->icol1 ) );
         break;
 
     case PLSTATE_FILL:
-        wr_data( pls, &( pls->patt ), sizeof ( pls->patt ));
+        wr_data( pls, &( pls->patt ), sizeof ( pls->patt ) );
         break;
     }
 }
@@ -254,20 +254,20 @@ plbuf_image( PLStream *pls, IMG_DT *img_dt )
 
     dbug_enter( "plbuf_image" );
 
-    wr_data( pls, &pls->dev_nptsX, sizeof ( PLINT ));
-    wr_data( pls, &pls->dev_nptsY, sizeof ( PLINT ));
+    wr_data( pls, &pls->dev_nptsX, sizeof ( PLINT ) );
+    wr_data( pls, &pls->dev_nptsY, sizeof ( PLINT ) );
 
-    wr_data( pls, &img_dt->xmin, sizeof ( PLFLT ));
-    wr_data( pls, &img_dt->ymin, sizeof ( PLFLT ));
-    wr_data( pls, &img_dt->dx, sizeof ( PLFLT ));
-    wr_data( pls, &img_dt->dy, sizeof ( PLFLT ));
+    wr_data( pls, &img_dt->xmin, sizeof ( PLFLT ) );
+    wr_data( pls, &img_dt->ymin, sizeof ( PLFLT ) );
+    wr_data( pls, &img_dt->dx, sizeof ( PLFLT ) );
+    wr_data( pls, &img_dt->dy, sizeof ( PLFLT ) );
 
-    wr_data( pls, &pls->dev_zmin, sizeof ( short ));
-    wr_data( pls, &pls->dev_zmax, sizeof ( short ));
+    wr_data( pls, &pls->dev_zmin, sizeof ( short ) );
+    wr_data( pls, &pls->dev_zmax, sizeof ( short ) );
 
     wr_data( pls, pls->dev_ix, sizeof ( short ) * npts );
     wr_data( pls, pls->dev_iy, sizeof ( short ) * npts );
-    wr_data( pls, pls->dev_z, sizeof ( unsigned short ) * ( pls->dev_nptsX - 1 ) * ( pls->dev_nptsY - 1 ));
+    wr_data( pls, pls->dev_z, sizeof ( unsigned short ) * ( pls->dev_nptsX - 1 ) * ( pls->dev_nptsY - 1 ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -288,24 +288,24 @@ plbuf_text( PLStream *pls, EscText *text )
 
     /* Write the text information */
 
-    wr_data( pls, &fci, sizeof ( PLUNICODE ));
+    wr_data( pls, &fci, sizeof ( PLUNICODE ) );
 
-    wr_data( pls, &pls->chrht, sizeof ( PLFLT ));
-    wr_data( pls, &pls->diorot, sizeof ( PLFLT ));
-    wr_data( pls, &pls->clpxmi, sizeof ( PLFLT ));
-    wr_data( pls, &pls->clpxma, sizeof ( PLFLT ));
-    wr_data( pls, &pls->clpymi, sizeof ( PLFLT ));
-    wr_data( pls, &pls->clpyma, sizeof ( PLFLT ));
+    wr_data( pls, &pls->chrht, sizeof ( PLFLT ) );
+    wr_data( pls, &pls->diorot, sizeof ( PLFLT ) );
+    wr_data( pls, &pls->clpxmi, sizeof ( PLFLT ) );
+    wr_data( pls, &pls->clpxma, sizeof ( PLFLT ) );
+    wr_data( pls, &pls->clpymi, sizeof ( PLFLT ) );
+    wr_data( pls, &pls->clpyma, sizeof ( PLFLT ) );
 
-    wr_data( pls, &text->base, sizeof ( PLINT ));
-    wr_data( pls, &text->just, sizeof ( PLFLT ));
+    wr_data( pls, &text->base, sizeof ( PLINT ) );
+    wr_data( pls, &text->just, sizeof ( PLFLT ) );
     wr_data( pls, text->xform, sizeof ( PLFLT ) * 4 );
-    wr_data( pls, &text->x, sizeof ( PLINT ));
-    wr_data( pls, &text->y, sizeof ( PLINT ));
-    wr_data( pls, &text->refx, sizeof ( PLINT ));
-    wr_data( pls, &text->refy, sizeof ( PLINT ));
+    wr_data( pls, &text->x, sizeof ( PLINT ) );
+    wr_data( pls, &text->y, sizeof ( PLINT ) );
+    wr_data( pls, &text->refx, sizeof ( PLINT ) );
+    wr_data( pls, &text->refy, sizeof ( PLINT ) );
 
-    wr_data( pls, &text->unicode_array_len, sizeof ( PLINT ));
+    wr_data( pls, &text->unicode_array_len, sizeof ( PLINT ) );
     if ( text->unicode_array_len )
         wr_data( pls, text->unicode_array, sizeof ( PLUNICODE ) * text->unicode_array_len );
 }
@@ -328,28 +328,28 @@ plbuf_text_unicode( PLStream *pls, EscText *text )
 
     /* Write the text information */
 
-    wr_data( pls, &fci, sizeof ( PLUNICODE ));
+    wr_data( pls, &fci, sizeof ( PLUNICODE ) );
 
-    wr_data( pls, &pls->chrht, sizeof ( PLFLT ));
-    wr_data( pls, &pls->diorot, sizeof ( PLFLT ));
-    wr_data( pls, &pls->clpxmi, sizeof ( PLFLT ));
-    wr_data( pls, &pls->clpxma, sizeof ( PLFLT ));
-    wr_data( pls, &pls->clpymi, sizeof ( PLFLT ));
-    wr_data( pls, &pls->clpyma, sizeof ( PLFLT ));
+    wr_data( pls, &pls->chrht, sizeof ( PLFLT ) );
+    wr_data( pls, &pls->diorot, sizeof ( PLFLT ) );
+    wr_data( pls, &pls->clpxmi, sizeof ( PLFLT ) );
+    wr_data( pls, &pls->clpxma, sizeof ( PLFLT ) );
+    wr_data( pls, &pls->clpymi, sizeof ( PLFLT ) );
+    wr_data( pls, &pls->clpyma, sizeof ( PLFLT ) );
 
-    wr_data( pls, &text->base, sizeof ( PLINT ));
-    wr_data( pls, &text->just, sizeof ( PLFLT ));
+    wr_data( pls, &text->base, sizeof ( PLINT ) );
+    wr_data( pls, &text->just, sizeof ( PLFLT ) );
     wr_data( pls, text->xform, sizeof ( PLFLT ) * 4 );
-    wr_data( pls, &text->x, sizeof ( PLINT ));
-    wr_data( pls, &text->y, sizeof ( PLINT ));
-    wr_data( pls, &text->refx, sizeof ( PLINT ));
-    wr_data( pls, &text->refy, sizeof ( PLINT ));
+    wr_data( pls, &text->x, sizeof ( PLINT ) );
+    wr_data( pls, &text->y, sizeof ( PLINT ) );
+    wr_data( pls, &text->refx, sizeof ( PLINT ) );
+    wr_data( pls, &text->refy, sizeof ( PLINT ) );
 
-    wr_data( pls, &text->n_fci, sizeof ( PLUNICODE ));
-    wr_data( pls, &text->n_char, sizeof ( PLUNICODE ));
-    wr_data( pls, &text->n_ctrl_char, sizeof ( PLINT ));
+    wr_data( pls, &text->n_fci, sizeof ( PLUNICODE ) );
+    wr_data( pls, &text->n_char, sizeof ( PLUNICODE ) );
+    wr_data( pls, &text->n_ctrl_char, sizeof ( PLINT ) );
 
-    wr_data( pls, &text->unicode_array_len, sizeof ( PLINT ));
+    wr_data( pls, &text->unicode_array_len, sizeof ( PLINT ) );
 }
 
 
@@ -420,7 +420,7 @@ plbuf_fill( PLStream *pls )
 {
     dbug_enter( "plbuf_fill" );
 
-    wr_data( pls, &pls->dev_npts, sizeof ( PLINT ));
+    wr_data( pls, &pls->dev_npts, sizeof ( PLINT ) );
     wr_data( pls, pls->dev_x, sizeof ( short ) * pls->dev_npts );
     wr_data( pls, pls->dev_y, sizeof ( short ) * pls->dev_npts );
 }
@@ -434,15 +434,15 @@ plbuf_fill( PLStream *pls )
 static void
 plbuf_swin( PLStream *pls, PLWindow *plwin )
 {
-    wr_data( pls, &plwin->dxmi, sizeof ( PLFLT ));
-    wr_data( pls, &plwin->dxma, sizeof ( PLFLT ));
-    wr_data( pls, &plwin->dymi, sizeof ( PLFLT ));
-    wr_data( pls, &plwin->dyma, sizeof ( PLFLT ));
+    wr_data( pls, &plwin->dxmi, sizeof ( PLFLT ) );
+    wr_data( pls, &plwin->dxma, sizeof ( PLFLT ) );
+    wr_data( pls, &plwin->dymi, sizeof ( PLFLT ) );
+    wr_data( pls, &plwin->dyma, sizeof ( PLFLT ) );
 
-    wr_data( pls, &plwin->wxmi, sizeof ( PLFLT ));
-    wr_data( pls, &plwin->wxma, sizeof ( PLFLT ));
-    wr_data( pls, &plwin->wymi, sizeof ( PLFLT ));
-    wr_data( pls, &plwin->wyma, sizeof ( PLFLT ));
+    wr_data( pls, &plwin->wxmi, sizeof ( PLFLT ) );
+    wr_data( pls, &plwin->wxma, sizeof ( PLFLT ) );
+    wr_data( pls, &plwin->wymi, sizeof ( PLFLT ) );
+    wr_data( pls, &plwin->wyma, sizeof ( PLFLT ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -495,7 +495,7 @@ rdbuf_polyline( PLStream *pls )
 
     dbug_enter( "rdbuf_polyline" );
 
-    rd_data( pls, &npts, sizeof ( PLINT ));
+    rd_data( pls, &npts, sizeof ( PLINT ) );
     rd_data( pls, xpl, sizeof ( short ) * npts );
     rd_data( pls, ypl, sizeof ( short ) * npts );
 
@@ -541,14 +541,14 @@ rdbuf_state( PLStream *pls )
 
     dbug_enter( "rdbuf_state" );
 
-    rd_data( pls, &op, sizeof ( U_CHAR ));
+    rd_data( pls, &op, sizeof ( U_CHAR ) );
 
     switch ( op )
     {
     case PLSTATE_WIDTH: {
         U_CHAR width;
 
-        rd_data( pls, &width, sizeof ( U_CHAR ));
+        rd_data( pls, &width, sizeof ( U_CHAR ) );
         pls->width = width;
         plP_state( PLSTATE_WIDTH );
 
@@ -560,17 +560,17 @@ rdbuf_state( PLStream *pls )
         U_CHAR r, g, b;
         PLFLT  a;
 
-        rd_data( pls, &icol0, sizeof ( short ));
+        rd_data( pls, &icol0, sizeof ( short ) );
         if ( icol0 == PL_RGB_COLOR )
         {
-            rd_data( pls, &r, sizeof ( U_CHAR ));
-            rd_data( pls, &g, sizeof ( U_CHAR ));
-            rd_data( pls, &b, sizeof ( U_CHAR ));
+            rd_data( pls, &r, sizeof ( U_CHAR ) );
+            rd_data( pls, &g, sizeof ( U_CHAR ) );
+            rd_data( pls, &b, sizeof ( U_CHAR ) );
             a = 1.0;
         }
         else
         {
-            if ((int) icol0 >= pls->ncol0 )
+            if ( (int) icol0 >= pls->ncol0 )
             {
                 char buffer[256];
                 snprintf( buffer, 256, "rdbuf_state: Invalid color map entry: %d", (int) icol0 );
@@ -595,7 +595,7 @@ rdbuf_state( PLStream *pls )
     case PLSTATE_COLOR1: {
         short icol1;
 
-        rd_data( pls, &icol1, sizeof ( short ));
+        rd_data( pls, &icol1, sizeof ( short ) );
 
         pls->icol1      = icol1;
         pls->curcolor.r = pls->cmap1[icol1].r;
@@ -610,7 +610,7 @@ rdbuf_state( PLStream *pls )
     case PLSTATE_FILL: {
         signed char patt;
 
-        rd_data( pls, &patt, sizeof ( signed char ));
+        rd_data( pls, &patt, sizeof ( signed char ) );
 
         pls->patt = patt;
         plP_state( PLSTATE_FILL );
@@ -658,7 +658,7 @@ rdbuf_esc( PLStream *pls )
 
     dbug_enter( "rdbuf_esc" );
 
-    rd_data( pls, &op, sizeof ( U_CHAR ));
+    rd_data( pls, &op, sizeof ( U_CHAR ) );
 
     switch ( op )
     {
@@ -706,7 +706,7 @@ rdbuf_fill( PLStream *pls )
 
     dbug_enter( "rdbuf_fill" );
 
-    rd_data( pls, &npts, sizeof ( PLINT ));
+    rd_data( pls, &npts, sizeof ( PLINT ) );
     rd_data( pls, xpl, sizeof ( short ) * npts );
     rd_data( pls, ypl, sizeof ( short ) * npts );
 
@@ -729,30 +729,30 @@ rdbuf_image( PLStream *pls )
 
     dbug_enter( "rdbuf_image" );
 
-    rd_data( pls, &nptsX, sizeof ( PLINT ));
-    rd_data( pls, &nptsY, sizeof ( PLINT ));
+    rd_data( pls, &nptsX, sizeof ( PLINT ) );
+    rd_data( pls, &nptsY, sizeof ( PLINT ) );
     npts = nptsX * nptsY;
 
-    rd_data( pls, &xmin, sizeof ( PLFLT ));
-    rd_data( pls, &ymin, sizeof ( PLFLT ));
-    rd_data( pls, &dx, sizeof ( PLFLT ));
-    rd_data( pls, &dy, sizeof ( PLFLT ));
+    rd_data( pls, &xmin, sizeof ( PLFLT ) );
+    rd_data( pls, &ymin, sizeof ( PLFLT ) );
+    rd_data( pls, &dx, sizeof ( PLFLT ) );
+    rd_data( pls, &dy, sizeof ( PLFLT ) );
 
-    rd_data( pls, &dev_zmin, sizeof ( short ));
-    rd_data( pls, &dev_zmax, sizeof ( short ));
+    rd_data( pls, &dev_zmin, sizeof ( short ) );
+    rd_data( pls, &dev_zmax, sizeof ( short ) );
 
     /* NOTE:  Even though for memory buffered version all the data is in memory,
      * we still allocate and copy the data because I think that method works
      * better in a multithreaded environment.  I could be wrong.
      */
-    if ((( dev_ix = (short *) malloc( npts * sizeof ( short ))) == NULL ) ||
-        (( dev_iy = (short *) malloc( npts * sizeof ( short ))) == NULL ) ||
-        (( dev_z = (unsigned short *) malloc(( nptsX - 1 ) * ( nptsY - 1 ) * sizeof ( unsigned short ))) == NULL ))
+    if ( ( ( dev_ix = (short *) malloc( npts * sizeof ( short ) ) ) == NULL ) ||
+         ( ( dev_iy = (short *) malloc( npts * sizeof ( short ) ) ) == NULL ) ||
+         ( ( dev_z = (unsigned short *) malloc( ( nptsX - 1 ) * ( nptsY - 1 ) * sizeof ( unsigned short ) ) ) == NULL ) )
         plexit( "rdbuf_image: Insufficient memory" );
 
     rd_data( pls, dev_ix, sizeof ( short ) * npts );
     rd_data( pls, dev_iy, sizeof ( short ) * npts );
-    rd_data( pls, dev_z, sizeof ( unsigned short ) * ( nptsX - 1 ) * ( nptsY - 1 ));
+    rd_data( pls, dev_z, sizeof ( unsigned short ) * ( nptsX - 1 ) * ( nptsY - 1 ) );
 
     /*
      * COMMENTED OUT by Hezekiah Carty
@@ -779,15 +779,15 @@ rdbuf_swin( PLStream *pls )
 {
     PLWindow plwin;
 
-    rd_data( pls, &plwin.dxmi, sizeof ( PLFLT ));
-    rd_data( pls, &plwin.dxma, sizeof ( PLFLT ));
-    rd_data( pls, &plwin.dymi, sizeof ( PLFLT ));
-    rd_data( pls, &plwin.dyma, sizeof ( PLFLT ));
+    rd_data( pls, &plwin.dxmi, sizeof ( PLFLT ) );
+    rd_data( pls, &plwin.dxma, sizeof ( PLFLT ) );
+    rd_data( pls, &plwin.dymi, sizeof ( PLFLT ) );
+    rd_data( pls, &plwin.dyma, sizeof ( PLFLT ) );
 
-    rd_data( pls, &plwin.wxmi, sizeof ( PLFLT ));
-    rd_data( pls, &plwin.wxma, sizeof ( PLFLT ));
-    rd_data( pls, &plwin.wymi, sizeof ( PLFLT ));
-    rd_data( pls, &plwin.wyma, sizeof ( PLFLT ));
+    rd_data( pls, &plwin.wxmi, sizeof ( PLFLT ) );
+    rd_data( pls, &plwin.wxma, sizeof ( PLFLT ) );
+    rd_data( pls, &plwin.wymi, sizeof ( PLFLT ) );
+    rd_data( pls, &plwin.wyma, sizeof ( PLFLT ) );
 
     plP_swin( &plwin );
 }
@@ -811,28 +811,28 @@ rdbuf_text( PLStream *pls )
 
     /* Read in the data */
 
-    rd_data( pls, &fci, sizeof ( PLUNICODE ));
+    rd_data( pls, &fci, sizeof ( PLUNICODE ) );
 
-    rd_data( pls, &pls->chrht, sizeof ( PLFLT ));
-    rd_data( pls, &pls->diorot, sizeof ( PLFLT ));
-    rd_data( pls, &pls->clpxmi, sizeof ( PLFLT ));
-    rd_data( pls, &pls->clpxma, sizeof ( PLFLT ));
-    rd_data( pls, &pls->clpymi, sizeof ( PLFLT ));
-    rd_data( pls, &pls->clpyma, sizeof ( PLFLT ));
+    rd_data( pls, &pls->chrht, sizeof ( PLFLT ) );
+    rd_data( pls, &pls->diorot, sizeof ( PLFLT ) );
+    rd_data( pls, &pls->clpxmi, sizeof ( PLFLT ) );
+    rd_data( pls, &pls->clpxma, sizeof ( PLFLT ) );
+    rd_data( pls, &pls->clpymi, sizeof ( PLFLT ) );
+    rd_data( pls, &pls->clpyma, sizeof ( PLFLT ) );
 
-    rd_data( pls, &text.base, sizeof ( PLINT ));
-    rd_data( pls, &text.just, sizeof ( PLFLT ));
+    rd_data( pls, &text.base, sizeof ( PLINT ) );
+    rd_data( pls, &text.just, sizeof ( PLFLT ) );
     rd_data( pls, text.xform, sizeof ( PLFLT ) * 4 );
-    rd_data( pls, &text.x, sizeof ( PLINT ));
-    rd_data( pls, &text.y, sizeof ( PLINT ));
-    rd_data( pls, &text.refx, sizeof ( PLINT ));
-    rd_data( pls, &text.refy, sizeof ( PLINT ));
+    rd_data( pls, &text.x, sizeof ( PLINT ) );
+    rd_data( pls, &text.y, sizeof ( PLINT ) );
+    rd_data( pls, &text.refx, sizeof ( PLINT ) );
+    rd_data( pls, &text.refy, sizeof ( PLINT ) );
 
-    rd_data( pls, &text.unicode_array_len, sizeof ( PLINT ));
+    rd_data( pls, &text.unicode_array_len, sizeof ( PLINT ) );
     if ( text.unicode_array_len )
     {
-        if (( unicode = (PLUNICODE *) malloc( text.unicode_array_len * sizeof ( PLUNICODE )))
-            == NULL )
+        if ( ( unicode = (PLUNICODE *) malloc( text.unicode_array_len * sizeof ( PLUNICODE ) ) )
+             == NULL )
             plexit( "rdbuf_text: Insufficient memory" );
 
         rd_data( pls, unicode, sizeof ( PLUNICODE ) * text.unicode_array_len );
@@ -866,28 +866,28 @@ rdbuf_text_unicode( PLINT op, PLStream *pls )
 
     /* Read in the data */
 
-    rd_data( pls, &fci, sizeof ( PLUNICODE ));
+    rd_data( pls, &fci, sizeof ( PLUNICODE ) );
 
-    rd_data( pls, &pls->chrht, sizeof ( PLFLT ));
-    rd_data( pls, &pls->diorot, sizeof ( PLFLT ));
-    rd_data( pls, &pls->clpxmi, sizeof ( PLFLT ));
-    rd_data( pls, &pls->clpxma, sizeof ( PLFLT ));
-    rd_data( pls, &pls->clpymi, sizeof ( PLFLT ));
-    rd_data( pls, &pls->clpyma, sizeof ( PLFLT ));
+    rd_data( pls, &pls->chrht, sizeof ( PLFLT ) );
+    rd_data( pls, &pls->diorot, sizeof ( PLFLT ) );
+    rd_data( pls, &pls->clpxmi, sizeof ( PLFLT ) );
+    rd_data( pls, &pls->clpxma, sizeof ( PLFLT ) );
+    rd_data( pls, &pls->clpymi, sizeof ( PLFLT ) );
+    rd_data( pls, &pls->clpyma, sizeof ( PLFLT ) );
 
-    rd_data( pls, &text.base, sizeof ( PLINT ));
-    rd_data( pls, &text.just, sizeof ( PLFLT ));
+    rd_data( pls, &text.base, sizeof ( PLINT ) );
+    rd_data( pls, &text.just, sizeof ( PLFLT ) );
     rd_data( pls, text.xform, sizeof ( PLFLT ) * 4 );
-    rd_data( pls, &text.x, sizeof ( PLINT ));
-    rd_data( pls, &text.y, sizeof ( PLINT ));
-    rd_data( pls, &text.refx, sizeof ( PLINT ));
-    rd_data( pls, &text.refy, sizeof ( PLINT ));
+    rd_data( pls, &text.x, sizeof ( PLINT ) );
+    rd_data( pls, &text.y, sizeof ( PLINT ) );
+    rd_data( pls, &text.refx, sizeof ( PLINT ) );
+    rd_data( pls, &text.refy, sizeof ( PLINT ) );
 
-    rd_data( pls, &text.n_fci, sizeof ( PLUNICODE ));
-    rd_data( pls, &text.n_char, sizeof ( PLUNICODE ));
-    rd_data( pls, &text.n_ctrl_char, sizeof ( PLINT ));
+    rd_data( pls, &text.n_fci, sizeof ( PLUNICODE ) );
+    rd_data( pls, &text.n_char, sizeof ( PLUNICODE ) );
+    rd_data( pls, &text.n_ctrl_char, sizeof ( PLINT ) );
 
-    rd_data( pls, &text.unicode_array_len, sizeof ( PLINT ));
+    rd_data( pls, &text.unicode_array_len, sizeof ( PLINT ) );
 
     if ( pls->dev_unicode )
     {
@@ -938,7 +938,7 @@ plRemakePlot( PLStream *pls )
         save_pls = plsc;
         plsc     = pls;
 
-        while ( rd_command( pls, &c ))
+        while ( rd_command( pls, &c ) )
         {
             plbuf_control( pls, c );
         }
@@ -963,7 +963,7 @@ plbuf_control( PLStream *pls, U_CHAR c )
 
     dbug_enter( "plbuf_control" );
 
-    switch ((int) c )
+    switch ( (int) c )
     {
     case INITIALIZE:
         rdbuf_init( pls );
@@ -1015,7 +1015,7 @@ rd_command( PLStream *pls, U_CHAR *p_c )
 #else
     if ( pls->plbuf_readpos < pls->plbuf_top )
     {
-        *p_c = *(U_CHAR *) ((U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos );
+        *p_c = *(U_CHAR *) ( (U_CHAR *) pls->plbuf_buffer + pls->plbuf_readpos );
         pls->plbuf_readpos += sizeof ( U_CHAR );
         count = sizeof ( U_CHAR );
     }
@@ -1060,18 +1060,18 @@ wr_command( PLStream *pls, U_CHAR c )
 #ifdef BUFFERED_FILE
     plio_fwrite( &c1, sizeof ( U_CHAR ), 1, pls->plbufFile );
 #else
-    if (( pls->plbuf_top + sizeof ( U_CHAR )) >= pls->plbuf_buffer_size )
+    if ( ( pls->plbuf_top + sizeof ( U_CHAR ) ) >= pls->plbuf_buffer_size )
     {
         /* Not enough space, need to grow the buffer */
         pls->plbuf_buffer_size += pls->plbuf_buffer_grow;
 
         if ( pls->verbose )
-            printf( "Growing buffer to %d KB\n", (int) ( pls->plbuf_buffer_size / 1024 ));
-        if (( pls->plbuf_buffer = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size )) == NULL )
+            printf( "Growing buffer to %d KB\n", (int) ( pls->plbuf_buffer_size / 1024 ) );
+        if ( ( pls->plbuf_buffer = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size ) ) == NULL )
             plexit( "plbuf wr_data:  Plot buffer grow failed" );
     }
 
-    *(U_CHAR *) ((U_CHAR *) pls->plbuf_buffer + pls->plbuf_top ) = c;
+    *(U_CHAR *) ( (U_CHAR *) pls->plbuf_buffer + pls->plbuf_top ) = c;
     pls->plbuf_top += sizeof ( U_CHAR );
 #endif
 }
@@ -1088,16 +1088,16 @@ wr_data( PLStream *pls, void *buf, size_t buf_size )
 #ifdef BUFFERED_FILE
     plio_fwrite( buf, buf_size, 1, pls->plbufFile );
 #else
-    if (( pls->plbuf_top + buf_size ) >= pls->plbuf_buffer_size )
+    if ( ( pls->plbuf_top + buf_size ) >= pls->plbuf_buffer_size )
     {
         /* Not enough space, need to grow the buffer */
         /* Must make sure the increase is enough for this data */
         pls->plbuf_buffer_size += pls->plbuf_buffer_grow *
-                                  (( pls->plbuf_top + buf_size - pls->plbuf_buffer_size ) /
-                                   pls->plbuf_buffer_grow + 1 );
+                                  ( ( pls->plbuf_top + buf_size - pls->plbuf_buffer_size ) /
+                                    pls->plbuf_buffer_grow + 1 );
         while ( pls->plbuf_top + buf_size >= pls->plbuf_buffer_size ) ;
 
-        if (( pls->plbuf_buffer = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size )) == NULL )
+        if ( ( pls->plbuf_buffer = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size ) ) == NULL )
             plexit( "plbuf wr_data:  Plot buffer grow failed" );
     }
 
@@ -1105,7 +1105,7 @@ wr_data( PLStream *pls, void *buf, size_t buf_size )
  * then this code will have problems.  A better approach might be to use
  * uint8_t from <stdint.h> but I do not know how portable that approach is
  */
-    memcpy((U_CHAR *) pls->plbuf_buffer + pls->plbuf_top, buf, buf_size );
+    memcpy( (U_CHAR *) pls->plbuf_buffer + pls->plbuf_top, buf, buf_size );
     pls->plbuf_top += buf_size;
 #endif
 }
@@ -1181,7 +1181,7 @@ void * plbuf_save( PLStream *pls, void *state )
             if ( plot_state->size < save_size )
             {
                 /* Yes, reallocate a larger one */
-                if (( plot_state = (struct _state *) realloc( state, save_size )) == NULL )
+                if ( ( plot_state = (struct _state *) realloc( state, save_size ) ) == NULL )
                 {
                     /* NOTE: If realloc fails, then plot_state ill be NULL.
                      * This will leave the original buffer untouched, thus we
@@ -1198,7 +1198,7 @@ void * plbuf_save( PLStream *pls, void *state )
         else
         {
             /* A buffer does not exist, so we need to allocate one */
-            if (( plot_state = (struct _state *) malloc( save_size )) == NULL )
+            if ( ( plot_state = (struct _state *) malloc( save_size ) ) == NULL )
             {
                 plwarn( "plbuf: Unable to allocate sufficient memory to save state" );
 
@@ -1231,7 +1231,7 @@ void * plbuf_save( PLStream *pls, void *state )
         }
 
         /* Copy the plot buffer to a tempfile */
-        if (( plot_state->plbufFile = pl_create_tempfile( NULL )) == NULL )
+        if ( ( plot_state->plbufFile = pl_create_tempfile( NULL ) ) == NULL )
         {
             /* Throw a warning since this might be a permissions problem
              * and we may not want to force an exit
@@ -1244,7 +1244,7 @@ void * plbuf_save( PLStream *pls, void *state )
             U_CHAR tmp;
 
             rewind( pls->plbufFile );
-            while ( count = fread( &tmp, sizeof ( U_CHAR ), 1, pls->plbufFile ))
+            while ( count = fread( &tmp, sizeof ( U_CHAR ), 1, pls->plbufFile ) )
             {
                 if ( fwrite( &tmp, sizeof ( U_CHAR ), 1, plot_state->plbufFile ) != count )
                 {
@@ -1374,7 +1374,7 @@ void * plbuf_switch( PLStream *pls, void *state )
     save_size = sizeof ( struct _state )
                 + 2 * sizeof ( struct _color_map );
 
-    if (( prev_state = (struct _state *) malloc( save_size )) == NULL )
+    if ( ( prev_state = (struct _state *) malloc( save_size ) ) == NULL )
     {
         plwarn( "plbuf: Unable to allocate memory to save state" );
         return NULL;

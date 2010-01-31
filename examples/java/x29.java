@@ -92,8 +92,8 @@ class x29 {
 
         for ( i = 0; i < npts; i++ )
         {
-            x[i] = xmax * ((double) i / (double) npts );
-            y[i] = 15.0 - 5.0 * Math.cos( 2 * Math.PI * ((double) i / (double) npts ));
+            x[i] = xmax * ( (double) i / (double) npts );
+            y[i] = 15.0 - 5.0 * Math.cos( 2 * Math.PI * ( (double) i / (double) npts ) );
             // Set x error bars to +/- 5 minute
             xerr1[i] = x[i] - 60 * 5;
             xerr2[i] = x[i] + 60 * 5;
@@ -161,10 +161,10 @@ class x29 {
         for ( j = 0; j < npts; j++ )
         {
             x[j] = j * 60.0 * 60.0 * 24.0;
-            p    = Math.asin( 0.39795 * Math.cos( 0.2163108 + 2 * Math.atan( 0.9671396 * Math.tan( 0.00860 * ( j - 186 )))));
+            p    = Math.asin( 0.39795 * Math.cos( 0.2163108 + 2 * Math.atan( 0.9671396 * Math.tan( 0.00860 * ( j - 186 ) ) ) ) );
             d    = 24.0 - ( 24.0 / Math.PI ) *
-                   Math.acos(( Math.sin( 0.8333 * Math.PI / 180.0 ) + Math.sin( lat * Math.PI / 180.0 ) * Math.sin( p )) /
-                ( Math.cos( lat * Math.PI / 180.0 ) * Math.cos( p )));
+                   Math.acos( ( Math.sin( 0.8333 * Math.PI / 180.0 ) + Math.sin( lat * Math.PI / 180.0 ) * Math.sin( p ) ) /
+                ( Math.cos( lat * Math.PI / 180.0 ) * Math.cos( p ) ) );
             y[j] = d;
         }
 
@@ -212,8 +212,8 @@ class x29 {
         for ( i = 0; i < npts; i++ )
         {
             x[i] = xmin + i * 60.0 * 60.0 * 24.0;
-            y[i] = 1.0 + Math.sin( 2 * Math.PI * ((double) i ) / 7.0 ) +
-                   Math.exp(((double) Math.min( i, npts - i )) / 31.0 );
+            y[i] = 1.0 + Math.sin( 2 * Math.PI * ( (double) i ) / 7.0 ) +
+                   Math.exp( ( (double) Math.min( i, npts - i ) ) / 31.0 );
         }
         pls.adv( 0 );
 
@@ -357,7 +357,7 @@ class x29 {
             y = new double[npts];
             for ( i = 0; i < npts; i++ )
             {
-                x[i] = xmin[0] + i * ( xmax[0] - xmin[0] ) / ((double) ( npts - 1 ));
+                x[i] = xmin[0] + i * ( xmax[0] - xmin[0] ) / ( (double) ( npts - 1 ) );
                 pls.configtime( scale, offset1, offset2, 0x0, false, 0, 0, 0, 0, 0, 0. );
                 tai = x[i];
                 pls.btime( tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec, tai );

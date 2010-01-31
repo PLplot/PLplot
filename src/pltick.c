@@ -59,8 +59,8 @@ plytik( PLINT x, PLINT y, PLINT left, PLINT right )
 void
 plstik( PLFLT mx, PLFLT my, PLFLT dx, PLFLT dy )
 {
-    plP_movphy( plP_mmpcx( mx ), plP_mmpcy( my ));
-    plP_draphy( plP_mmpcx((PLFLT) ( mx + dx )), plP_mmpcy((PLFLT) ( my + dy )));
+    plP_movphy( plP_mmpcx( mx ), plP_mmpcy( my ) );
+    plP_draphy( plP_mmpcx( (PLFLT) ( mx + dx ) ), plP_mmpcy( (PLFLT) ( my + dy ) ) );
 }
 
 /*----------------------------------------------------------------------*\
@@ -74,7 +74,7 @@ plerx1( PLFLT xmin, PLFLT xmax, PLFLT y )
 {
     PLINT yminor;
 
-    yminor = (PLINT) ( MAX( 1.0, plsc->minht * plsc->ypmm ));
+    yminor = (PLINT) ( MAX( 1.0, plsc->minht * plsc->ypmm ) );
     plxtik( plP_wcpcx( xmin ), plP_wcpcy( y ), yminor, yminor );
     plP_movwor( xmin, y );
     plP_drawor( xmax, y );
@@ -92,7 +92,7 @@ plery1( PLFLT x, PLFLT ymin, PLFLT ymax )
 {
     PLINT xminor;
 
-    xminor = (PLINT) ( MAX( 1.0, plsc->minht * plsc->xpmm ));
+    xminor = (PLINT) ( MAX( 1.0, plsc->minht * plsc->xpmm ) );
     plytik( plP_wcpcx( x ), plP_wcpcy( ymin ), xminor, xminor );
     plP_movwor( x, ymin );
     plP_drawor( x, ymax );

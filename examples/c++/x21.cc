@@ -254,7 +254,7 @@ x21::x21( int argc, const char ** argv )
                 {
                     for ( j = 0; j < yp; j++ )
                     {
-                        if ( isnan( zg[i][j] )) /* average (IDW) over the 8 neighbors */
+                        if ( isnan( zg[i][j] ) ) /* average (IDW) over the 8 neighbors */
 
                         {
                             zg[i][j] = 0.; dist = 0.;
@@ -263,9 +263,9 @@ x21::x21( int argc, const char ** argv )
                             {
                                 for ( jj = j - 1; jj <= j + 1 && jj < yp; jj++ )
                                 {
-                                    if ( ii >= 0 && jj >= 0 && !isnan( zg[ii][jj] ))
+                                    if ( ii >= 0 && jj >= 0 && !isnan( zg[ii][jj] ) )
                                     {
-                                        d         = ( abs( ii - i ) + abs( jj - j )) == 1 ? 1. : 1.4142;
+                                        d         = ( abs( ii - i ) + abs( jj - j ) ) == 1 ? 1. : 1.4142;
                                         zg[i][j] += zg[ii][jj] / ( d * d );
                                         dist     += d;
                                     }
@@ -400,17 +400,17 @@ void x21::create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, PLINT pts )
         }
         else /* std=1, meaning that many points are outside the plot range */
         {
-            *x = sqrt( -2. * log( xt )) * cos( 2. * M_PI * yt ) + xm;
-            *y = sqrt( -2. * log( xt )) * sin( 2. * M_PI * yt ) + ym;
+            *x = sqrt( -2. * log( xt ) ) * cos( 2. * M_PI * yt ) + xm;
+            *y = sqrt( -2. * log( xt ) ) * sin( 2. * M_PI * yt ) + ym;
         }
         if ( !rosen )
         {
-            r  = sqrt(( *x ) * ( *x ) + ( *y ) * ( *y ));
+            r  = sqrt( ( *x ) * ( *x ) + ( *y ) * ( *y ) );
             *z = exp( -r * r ) * cos( 2.0 * M_PI * r );
         }
         else
         {
-            *z = log( pow((double) ( 1. - *x ), 2. ) + 100. * pow((double) ( *y - pow((double) *x, 2. )), 2. ));
+            *z = log( pow( (double) ( 1. - *x ), 2. ) + 100. * pow( (double) ( *y - pow( (double) *x, 2. ) ), 2. ) );
         }
         x++; y++; z++;
     }

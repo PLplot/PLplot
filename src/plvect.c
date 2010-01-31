@@ -44,8 +44,8 @@ c_plsvect( PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill )
     if ( plsc->arrow_x ) free_mem( plsc->arrow_x );
     if ( plsc->arrow_y ) free_mem( plsc->arrow_y );
 
-    if ((( plsc->arrow_x = (PLFLT *) malloc( npts * sizeof ( PLFLT ))) == NULL ) ||
-        (( plsc->arrow_y = (PLFLT *) malloc( npts * sizeof ( PLFLT ))) == NULL ))
+    if ( ( ( plsc->arrow_x = (PLFLT *) malloc( npts * sizeof ( PLFLT ) ) ) == NULL ) ||
+         ( ( plsc->arrow_y = (PLFLT *) malloc( npts * sizeof ( PLFLT ) ) ) == NULL ) )
     {
         plexit( "c_plsvect: Insufficient memory" );
     }
@@ -74,8 +74,8 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
 
     if ( uu == 0.0 && vv == 0.0 ) return;
 
-    if ((( a_x = (PLINT *) malloc( sizeof ( PLINT ) * ( plsc->arrow_npts ))) == NULL ) ||
-        (( a_y = (PLINT *) malloc( sizeof ( PLINT ) * ( plsc->arrow_npts ))) == NULL ))
+    if ( ( ( a_x = (PLINT *) malloc( sizeof ( PLINT ) * ( plsc->arrow_npts ) ) ) == NULL ) ||
+         ( ( a_y = (PLINT *) malloc( sizeof ( PLINT ) * ( plsc->arrow_npts ) ) ) == NULL ) )
     {
         plexit( "plP_plotvect: Insufficient memory" );
     }
@@ -104,8 +104,8 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
             plsc->clpymi, plsc->clpyma, plP_fill );
     }
 
-    free((void *) a_x );
-    free((void *) a_y );
+    free( (void *) a_x );
+    free( (void *) a_y );
 }
 
 /*
@@ -135,7 +135,7 @@ void plfvect( PLFLT ( *plf2eval )( PLINT, PLINT, PLPointer ),
         {
             u[i][j] = plf2eval( i, j, f2eval_data1 );
             v[i][j] = plf2eval( i, j, f2eval_data2 );
-            pltr((PLFLT) i, (PLFLT) j, &x[i][j], &y[i][j], pltr_data );
+            pltr( (PLFLT) i, (PLFLT) j, &x[i][j], &y[i][j], pltr_data );
         }
     }
 

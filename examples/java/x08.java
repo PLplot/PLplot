@@ -133,14 +133,14 @@ class x08 {
 
         for ( i = 0; i < XPTS; i++ )
         {
-            x[i] = (double) ( i - ( XPTS / 2 )) / (double) ( XPTS / 2 );
+            x[i] = (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
             if ( rosen )
                 x[i] *= 1.5;
         }
 
         for ( j = 0; j < YPTS; j++ )
         {
-            y[j] = (double) ( j - ( YPTS / 2 )) / (double) ( YPTS / 2 );
+            y[j] = (double) ( j - ( YPTS / 2 ) ) / (double) ( YPTS / 2 );
             if ( rosen )
                 y[j] += 0.5;
         }

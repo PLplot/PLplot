@@ -68,7 +68,7 @@ int main( char[][] args )
             plpoin3( x, y, z, 1 );
 
         plcol0( 3 );
-        plmtex( "t", 1.0, 0.5, 0.5, format( "#frPLplot Example 18 - Alt=%.0f, Az=%.0f", alt[k], az[k] ));
+        plmtex( "t", 1.0, 0.5, 0.5, format( "#frPLplot Example 18 - Alt=%.0f, Az=%.0f", alt[k], az[k] ) );
     }
 
     plend();
@@ -111,25 +111,25 @@ void test_poly( int k )
     {
         for ( int j = 0; j < 20; j++ )
         {
-            x[0] = sin( phi( j )) * cos( theta( i ));
-            y[0] = sin( phi( j )) * sin( theta( i ));
-            z[0] = cos( phi( j ));
+            x[0] = sin( phi( j ) ) * cos( theta( i ) );
+            y[0] = sin( phi( j ) ) * sin( theta( i ) );
+            z[0] = cos( phi( j ) );
 
-            x[1] = sin( phi( j + 1 )) * cos( theta( i ));
-            y[1] = sin( phi( j + 1 )) * sin( theta( i ));
-            z[1] = cos( phi( j + 1 ));
+            x[1] = sin( phi( j + 1 ) ) * cos( theta( i ) );
+            y[1] = sin( phi( j + 1 ) ) * sin( theta( i ) );
+            z[1] = cos( phi( j + 1 ) );
 
-            x[2] = sin( phi( j + 1 )) * cos( theta( i + 1 ));
-            y[2] = sin( phi( j + 1 )) * sin( theta( i + 1 ));
-            z[2] = cos( phi( j + 1 ));
+            x[2] = sin( phi( j + 1 ) ) * cos( theta( i + 1 ) );
+            y[2] = sin( phi( j + 1 ) ) * sin( theta( i + 1 ) );
+            z[2] = cos( phi( j + 1 ) );
 
-            x[3] = sin( phi( j )) * cos( theta( i + 1 ));
-            y[3] = sin( phi( j )) * sin( theta( i + 1 ));
-            z[3] = cos( phi( j ));
+            x[3] = sin( phi( j ) ) * cos( theta( i + 1 ) );
+            y[3] = sin( phi( j ) ) * sin( theta( i + 1 ) );
+            z[3] = cos( phi( j ) );
 
-            x[4] = sin( phi( j )) * cos( theta( i ));
-            y[4] = sin( phi( j )) * sin( theta( i ));
-            z[4] = cos( phi( j ));
+            x[4] = sin( phi( j ) ) * cos( theta( i ) );
+            y[4] = sin( phi( j ) ) * sin( theta( i ) );
+            z[4] = cos( phi( j ) );
 
             plpoly3( x, y, z, draw[k], 1 );
         }

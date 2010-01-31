@@ -266,7 +266,7 @@ int main( char[][] args )
                 {
                     if ( page == 0 )
                         cmdString = format( "#%s", Greek[slice] );
-                    else if (( page >= 1 ) && ( page <= 3 ))
+                    else if ( ( page >= 1 ) && ( page <= 3 ) )
                         cmdString = format( "##[0x%.4x]", Type1[offset[page] + slice] );
                     else if ( page >= 4 )
                         cmdString = format( "##[0x%.4x]", lo[page] + slice );
@@ -317,7 +317,7 @@ int main( char[][] args )
         {
             int family_index = i % 5;
             int style_index  = ( i / 5 ) % 3;
-            int weight_index = (( i / 5 ) / 3 ) % 2;
+            int weight_index = ( ( i / 5 ) / 3 ) % 2;
 
             if ( page == 11 )
             {

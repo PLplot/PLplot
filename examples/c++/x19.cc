@@ -76,7 +76,7 @@ normalize_longitude( PLFLT lon )
     }
     else
     {
-        times = floor(( fabs( lon ) + 180.0 ) / 360.0 );
+        times = floor( ( fabs( lon ) + 180.0 ) / 360.0 );
         if ( lon < 0.0 )
         {
             return ( lon + 360.0 * times );

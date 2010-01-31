@@ -84,7 +84,7 @@ mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
     x0  = ( s->xmin + s->xmax ) * 0.5;
     y0  = ( s->ymin + s->ymax ) * 0.5;
     dy  = ( s->ymax - s->ymin ) * 0.5;
-    *tx = x0 + ( x0 - x ) * ( 1.0 - s->stretch * cos(( y - y0 ) / dy * M_PI * 0.5 ));
+    *tx = x0 + ( x0 - x ) * ( 1.0 - s->stretch * cos( ( y - y0 ) / dy * M_PI * 0.5 ) );
     *ty = y;
 }
 
@@ -180,9 +180,9 @@ main( int argc, const char *argv[] )
     /* read Lena image */
     /* Note we try two different locations to cover the case where this
      * examples is being run from the test_c.sh script */
-    if ( read_img( "lena.pgm", &img_f, &width, &height, &num_col ))
+    if ( read_img( "lena.pgm", &img_f, &width, &height, &num_col ) )
     {
-        if ( read_img( "../lena.pgm", &img_f, &width, &height, &num_col ))
+        if ( read_img( "../lena.pgm", &img_f, &width, &height, &num_col ) )
         {
             fprintf( stderr, "No such file" );
             plend();
@@ -212,7 +212,7 @@ main( int argc, const char *argv[] )
         xi = 200.; xe = 330.;
         yi = 280.; ye = 220.;
 
-        if ( get_clip( &xi, &xe, &yi, &ye )) /* get selection rectangle */
+        if ( get_clip( &xi, &xe, &yi, &ye ) ) /* get selection rectangle */
         {
             plend();
             exit( 0 );
@@ -312,7 +312,7 @@ int read_img( char *fname, PLFLT ***img_f, int *width, int *height, int *num_col
     PLFLT         **imf;
 
     /* naive grayscale binary ppm reading. If you know how to, improve it */
-    if (( fp = fopen( fname, "rb" )) == NULL )
+    if ( ( fp = fopen( fname, "rb" ) ) == NULL )
         return 1;
 
     if ( fscanf( fp, "%s\n", ver ) != 1 ) /* version */
@@ -322,13 +322,13 @@ int read_img( char *fname, PLFLT ***img_f, int *width, int *height, int *num_col
     }
     /* printf("version: %s\n", ver);*/
 
-    if ( strcmp( ver, "P5" )) /* I only understand this! */
+    if ( strcmp( ver, "P5" ) ) /* I only understand this! */
     {
         fclose( fp );
         return 1;
     }
 
-    while (( i = fgetc( fp )) == '#' )
+    while ( ( i = fgetc( fp ) ) == '#' )
     {
         if ( fgets( ver, 80, fp ) == NULL ) /* comments */
         {
@@ -346,7 +346,7 @@ int read_img( char *fname, PLFLT ***img_f, int *width, int *height, int *num_col
     }
     /* printf("width=%d height=%d num_col=%d\n", w, h, *num_col); */
 
-    img = (unsigned char *) malloc( w * h * sizeof ( char ));
+    img = (unsigned char *) malloc( w * h * sizeof ( char ) );
     plAlloc2dGrid( &imf, w, h );
 
     if ( fread( img, sizeof ( char ), w * h, fp ) != w * h )

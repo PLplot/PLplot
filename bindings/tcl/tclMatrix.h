@@ -54,8 +54,8 @@ enum { TYPE_FLOAT, TYPE_INT };
 
 /* Useful macros for index calculations */
 
-#define I3D( i, j, k )    k + matPtr->n[2] * ( I2D( i, j ))
-#define I2D( i, j )       j + matPtr->n[1] * ( I1D( i ))
+#define I3D( i, j, k )    k + matPtr->n[2] * ( I2D( i, j ) )
+#define I2D( i, j )       j + matPtr->n[1] * ( I1D( i ) )
 #define I1D( i )          i
 
 /* Matrix operator data */
@@ -121,7 +121,7 @@ typedef struct
 #endif
 #endif
 
-#define tMat_Assert( a, b )    if ( !( a ))                    \
+#define tMat_Assert( a, b )    if ( !( a ) )                   \
     { using namespace std;                                     \
       cerr << "Assertion " << # a << " failed in " << __FILE__ \
            << " at line " << __LINE__ << endl << flush;        \
@@ -162,7 +162,7 @@ public:
         matPtr->n[0]  = nx;
         matPtr->len   = nx;
         matPtr->fdata = (Mat_float *) malloc( matPtr->len *
-            sizeof ( Mat_float ));
+            sizeof ( Mat_float ) );
     }
 
     void redim( int nx, int ny )
@@ -173,7 +173,7 @@ public:
         matPtr->n[1]  = ny;
         matPtr->len   = nx * ny;
         matPtr->fdata = (Mat_float *) malloc( matPtr->len *
-            sizeof ( Mat_float ));
+            sizeof ( Mat_float ) );
     }
 
     void redim( int nx, int ny, int nz )
@@ -185,7 +185,7 @@ public:
         matPtr->n[2]  = nz;
         matPtr->len   = nx * ny * nz;
         matPtr->fdata = (Mat_float *) malloc( matPtr->len *
-            sizeof ( Mat_float ));
+            sizeof ( Mat_float ) );
     }
 
     Mat_float& operator() ( int i )
@@ -253,7 +253,7 @@ public:
         matPtr->dim   = 1;
         matPtr->n[0]  = nx;
         matPtr->len   = nx;
-        matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof ( Mat_int ));
+        matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof ( Mat_int ) );
     }
 
     void redim( int nx, int ny )
@@ -263,7 +263,7 @@ public:
         matPtr->n[0]  = nx;
         matPtr->n[1]  = ny;
         matPtr->len   = nx * ny;
-        matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof ( Mat_int ));
+        matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof ( Mat_int ) );
     }
 
     void redim( int nx, int ny, int nz )
@@ -274,7 +274,7 @@ public:
         matPtr->n[1]  = ny;
         matPtr->n[2]  = nz;
         matPtr->len   = nx * ny * nz;
-        matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof ( Mat_int ));
+        matPtr->idata = (Mat_int *) malloc( matPtr->len * sizeof ( Mat_int ) );
     }
 
     Mat_int& operator() ( int i )

@@ -27,7 +27,7 @@ compare( const void *si1, const void *si2 )
     short *a = (short *) si1;
     short *b = (short *) si2;
 
-    return ( *a == *b ? 0 : ( *a > *b ? 1 : -1 ));
+    return ( *a == *b ? 0 : ( *a > *b ? 1 : -1 ) );
 }
 
 int
@@ -39,8 +39,8 @@ main( int argc, char **argv )
     long        fpos;
     PDFstrm     *pdfs;
 
-    hrshlst = (short *) malloc( 176 * sizeof ( short ));
-    hrshidx = (short *) malloc( 176 * sizeof ( short ));
+    hrshlst = (short *) malloc( 176 * sizeof ( short ) );
+    hrshidx = (short *) malloc( 176 * sizeof ( short ) );
 
     ib = 0;
     for ( k = 0; k < 176; k++ )
@@ -48,7 +48,7 @@ main( int argc, char **argv )
 
 /* Sort list */
 
-    qsort((char *) hrshlst, ib, sizeof ( short ), compare );
+    qsort( (char *) hrshlst, ib, sizeof ( short ), compare );
 
 /* Remove duplicates */
 

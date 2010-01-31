@@ -51,7 +51,7 @@ c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
         plabort( "plhist: Please call plinit first" );
         return;
     }
-    if ( plsc->level < 3 && ( flags & 1 ))
+    if ( plsc->level < 3 && ( flags & 1 ) )
     {
         plabort( "plhist: Please set up window first" );
         return;
@@ -61,14 +61,14 @@ c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
         plabort( "plhist: Data range invalid" );
         return;
     }
-    if ( !( x = (PLFLT *) malloc((size_t) nbin * sizeof ( PLFLT ))))
+    if ( !( x = (PLFLT *) malloc( (size_t) nbin * sizeof ( PLFLT ) ) ) )
     {
         plabort( "plhist: Out of memory" );
         return;
     }
-    if ( !( y = (PLFLT *) malloc((size_t) nbin * sizeof ( PLFLT ))))
+    if ( !( y = (PLFLT *) malloc( (size_t) nbin * sizeof ( PLFLT ) ) ) )
     {
-        free((void *) x );
+        free( (void *) x );
         plabort( "plhist: Out of memory" );
         return;
     }
@@ -82,8 +82,8 @@ c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 
     for ( i = 0; i < n; i++ )
     {
-        bin = (PLINT) (( data[i] - datmin ) / dx );
-        if (( flags & 2 ) == 0 )
+        bin = (PLINT) ( ( data[i] - datmin ) / dx );
+        if ( ( flags & 2 ) == 0 )
         {
             bin = bin > 0 ? bin : 0;
             bin = bin < nbin ? bin : nbin - 1;
@@ -98,7 +98,7 @@ c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
         }
     }
 
-    if ( !( flags & 1 ))
+    if ( !( flags & 1 ) )
     {
         ymax = 0.0;
         for ( i = 0; i < nbin; i++ )
@@ -107,9 +107,9 @@ c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
         plenv( datmin, datmax, (PLFLT) 0.0, (PLFLT) ( 1.1 * ymax ), 0, 0 );
     }
     /* We pass on the highest couple of bits to the 'plbin' routine */
-    plbin( nbin, x, y, ( flags & ( 4 + 8 + 16 + 32 )) >> 2 );
-    free((void *) x );
-    free((void *) y );
+    plbin( nbin, x, y, ( flags & ( 4 + 8 + 16 + 32 ) ) >> 2 );
+    free( (void *) x );
+    free( (void *) y );
 }
 
 /*----------------------------------------------------------------------*\
@@ -147,11 +147,11 @@ c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags )
     }
 
     plP_xgvpw( &vpwxmi, &vpwxma, &vpwymi, &vpwyma );
-    if ( !( flags & 1 ))
+    if ( !( flags & 1 ) )
     {
         for ( i = 0; i < nbin - 1; i++ )
         {
-            if ( !( flags & 4 ) || ( y[i] != vpwymi ))
+            if ( !( flags & 4 ) || ( y[i] != vpwymi ) )
             {
                 pljoin( x[i], vpwymi, x[i], y[i] );
                 pljoin( x[i], y[i], x[i + 1], y[i] );
@@ -160,9 +160,9 @@ c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags )
         }
         if ( flags & 2 )
         {
-            if ( !( flags & 4 ) || ( y[i] != vpwymi ))
+            if ( !( flags & 4 ) || ( y[i] != vpwymi ) )
             {
-                int xm = (int) ( x[i] + ( x[i] - x[i - 1] ));
+                int xm = (int) ( x[i] + ( x[i] - x[i - 1] ) );
                 pljoin( x[i], vpwymi, x[i], y[i] );
                 pljoin( x[i], y[i], xm, y[i] );
                 pljoin( xm, y[i], xm, vpwymi );
@@ -172,7 +172,7 @@ c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags )
         {
             if ( x[i] < vpwxma )
             {
-                if ( !( flags & 4 ) || ( y[i] != vpwymi ))
+                if ( !( flags & 4 ) || ( y[i] != vpwymi ) )
                 {
                     pljoin( x[i], vpwymi, x[i], y[i] );
                     pljoin( x[i], y[i], vpwxma, y[i] );
@@ -187,7 +187,7 @@ c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags )
             return;
         if ( flags & 2 )
         {
-            xmin = MAX( vpwxmi, 0.5 * ( 3 * x[0] - x[1] ));
+            xmin = MAX( vpwxmi, 0.5 * ( 3 * x[0] - x[1] ) );
         }
         else
         {
@@ -205,7 +205,7 @@ c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags )
         {
             xmin = xmax;
             xmax = MIN( 0.5 * ( x[i] + x[i + 1] ), vpwxma );
-            if ( !( flags & 4 ) || ( y[i] != vpwymi ))
+            if ( !( flags & 4 ) || ( y[i] != vpwymi ) )
             {
                 pljoin( xmin, vpwymi, xmin, y[i] );
                 pljoin( xmin, y[i], xmax, y[i] );
@@ -216,7 +216,7 @@ c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags )
         xmax = vpwxma;
         if ( flags & 2 )
         {
-            xmax = MIN( vpwxma, 0.5 * ( 3 * x[i] - x[i - 1] ));
+            xmax = MIN( vpwxma, 0.5 * ( 3 * x[i] - x[i - 1] ) );
         }
         else
         {
@@ -224,7 +224,7 @@ c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags )
         }
         if ( xmin < xmax )
         {
-            if ( !( flags & 4 ) || ( y[i] != vpwymi ))
+            if ( !( flags & 4 ) || ( y[i] != vpwymi ) )
             {
                 pljoin( xmin, vpwymi, xmin, y[i] );
                 pljoin( xmin, y[i], xmax, y[i] );

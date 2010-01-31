@@ -69,7 +69,7 @@ PLSURF3D( PLFLT *x, PLFLT *y, PLFLT *z,
      * Fortran matrix, so that the first dimension of z corresponds to the x
      * direction. */
 
-    if ( !( temp = (PLFLT **) malloc((size_t) *nx * sizeof ( PLFLT * ))))
+    if ( !( temp = (PLFLT **) malloc( (size_t) *nx * sizeof ( PLFLT * ) ) ) )
     {
         plabort( "PLSURF3D: Out of memory" );
         return;
@@ -77,13 +77,13 @@ PLSURF3D( PLFLT *x, PLFLT *y, PLFLT *z,
 
     for ( i = 0; i < *nx; i++ )
     {
-        if ( !( temp[i] = (PLFLT *) malloc((size_t) *ny * sizeof ( PLFLT ))))
+        if ( !( temp[i] = (PLFLT *) malloc( (size_t) *ny * sizeof ( PLFLT ) ) ) )
         {
             int ii;
 
             for ( ii = 0; ii < i - 1; ii++ )
-                free((void *) temp[i] );
-            free((void *) temp );
+                free( (void *) temp[i] );
+            free( (void *) temp );
             plabort( "PLSURF3D: Out of memory" );
             return;
         }
@@ -96,9 +96,9 @@ PLSURF3D( PLFLT *x, PLFLT *y, PLFLT *z,
     c_plsurf3d( x, y, temp, *nx, *ny, *opt, clevel, *nlevel );
 
     for ( i = 0; i < *nx; i++ )
-        free((void *) temp[i] );
+        free( (void *) temp[i] );
 
-    free((void *) temp );
+    free( (void *) temp );
 }
 
 void

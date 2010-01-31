@@ -116,9 +116,9 @@ static DrvOpt gcw_options[] =
 guint32 plcolor_to_rgba( PLColor color, guchar alpha )
 {
     return
-        ((int) ( color.r ) << 24 )
-        + ((int) ( color.g ) << 16 )
-        + ((int) ( color.b ) << 8 )
+        ( (int) ( color.r ) << 24 )
+        + ( (int) ( color.g ) << 16 )
+        + ( (int) ( color.b ) << 8 )
         + alpha;
 }
 
@@ -199,7 +199,7 @@ void plD_init_gcw( PLStream *pls )
     pls->dev_fill0   = 1;      /* Handle solid fills */
 
     /* Create the device */
-    if (( dev = g_malloc( sizeof ( GcwPLdev ))) == NULL )
+    if ( ( dev = g_malloc( sizeof ( GcwPLdev ) ) ) == NULL )
         plexit( "GCW driver <plD_init_gcw>: Cannot create device" );
     pls->dev = dev;
 
@@ -294,7 +294,7 @@ void plD_init_gcw( PLStream *pls )
     /* If portrait mode, apply a rotation and set freeaspect */
     if ( pls->portrait )
     {
-        plsdiori((PLFLT) ( 4 - ORIENTATION ));
+        plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
         pls->freeaspect = 1;
     }
 
@@ -346,7 +346,7 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
     gcw_debug( "<plD_polyline_gcw />\n" );
 #endif
 
-    if ( !GNOME_IS_CANVAS( dev->canvas ))
+    if ( !GNOME_IS_CANVAS( dev->canvas ) )
         plexit( "GCW driver <plD_polyline_gcw>: Canvas not found" );
     canvas = dev->canvas;
 
@@ -356,7 +356,7 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
     if ( dev->use_pixmap && !dev->use_persistence ) /* Write to bg pixmap */
 
     {
-        if (( gdkpoints = (GdkPoint*) malloc( npts * sizeof ( GdkPoint ))) == NULL )
+        if ( ( gdkpoints = (GdkPoint*) malloc( npts * sizeof ( GdkPoint ) ) ) == NULL )
         {
             plabort( "GCW driver <plD_polyline_gcw>: Could not create gdkpoints" );
             return;
@@ -389,7 +389,7 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
 
     {
         /* Put the data in a points structure */
-        if (( points = gnome_canvas_points_new( npts )) == NULL )
+        if ( ( points = gnome_canvas_points_new( npts ) ) == NULL )
         {
             plabort( "GCW driver <plD_polyline_gcw>: Cannot create points" );
             return;
@@ -448,7 +448,7 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
                          "fill-color-rgba", color,
                          "width-units", width,
                          NULL )
-                     ))
+                     ) )
             {
                 plwarn( "GCW driver <plD_polyline_gcw>: Canvas item not created." );
             }
@@ -507,14 +507,14 @@ void plD_eop_gcw( PLStream *pls )
 
     PLINT           width, height;
 
-    if ( !GNOME_IS_CANVAS( dev->canvas ))
+    if ( !GNOME_IS_CANVAS( dev->canvas ) )
         plexit( "GCW driver <plD_eop_gcw>: Canvas not found" );
     canvas = dev->canvas;
 
     /* Ignore if there is no hidden group.  This means BOP has not been
      * called yet.
      */
-    if ( !GNOME_IS_CANVAS_GROUP( dev->group_hidden )) return;
+    if ( !GNOME_IS_CANVAS_GROUP( dev->group_hidden ) ) return;
 
 #ifdef DEBUG_GCW_1
     gcw_debug( "<plD_eop_gcw>\n" );
@@ -535,7 +535,7 @@ void plD_eop_gcw( PLStream *pls )
                      dev->colormap,
                      0, 0,
                      0, 0,
-                     width, height )))
+                     width, height ) ) )
         {
             plwarn( "GCW driver <plD_eop_gcw>: Can't draw pixmap into pixbuf." );
         }
@@ -551,7 +551,7 @@ void plD_eop_gcw( PLStream *pls )
                          "width", (gdouble) ( width ),
                          "height", (gdouble) ( height ),
                          NULL )
-                     ))
+                     ) )
             {
                 plwarn( "GCW driver <plD_eop_gcw>: Canvas item not created." );
             }
@@ -574,7 +574,7 @@ void plD_eop_gcw( PLStream *pls )
                      "fill-color-rgba", plcolor_to_rgba( pls->cmap0[0], 0xFF ),
                      "width-units", 0.,
                      NULL )
-                 ))
+                 ) )
         {
             plabort( "GCW driver <pld_eop_gcw>: Canvas item not created" );
             return;
@@ -582,18 +582,18 @@ void plD_eop_gcw( PLStream *pls )
     }
 
     /* Move the persistent group to the front */
-    gnome_canvas_item_raise_to_top( GNOME_CANVAS_ITEM( dev->group_persistent ));
+    gnome_canvas_item_raise_to_top( GNOME_CANVAS_ITEM( dev->group_persistent ) );
 
     /* Move the background to the back */
-    if ( GNOME_IS_CANVAS_ITEM( item )) gnome_canvas_item_lower_to_bottom( item );
+    if ( GNOME_IS_CANVAS_ITEM( item ) ) gnome_canvas_item_lower_to_bottom( item );
 
     /* Make the hidden group visible */
-    gnome_canvas_item_show( GNOME_CANVAS_ITEM( dev->group_hidden ));
+    gnome_canvas_item_show( GNOME_CANVAS_ITEM( dev->group_hidden ) );
 
     /* Destroy the old visible group */
-    if ( GNOME_IS_CANVAS_GROUP( dev->group_visible ))
+    if ( GNOME_IS_CANVAS_GROUP( dev->group_visible ) )
     {
-        gtk_object_destroy((GtkObject*) ( dev->group_visible ));
+        gtk_object_destroy( (GtkObject*) ( dev->group_visible ) );
         dev->group_visible = NULL;
     }
 
@@ -650,7 +650,7 @@ void plD_bop_gcw( PLStream *pls )
     GcwPLdev   * dev = pls->dev;
     GnomeCanvas* canvas;
 
-    if ( !GNOME_IS_CANVAS( dev->canvas ))
+    if ( !GNOME_IS_CANVAS( dev->canvas ) )
     {
         if ( pls->hack ) return; /* Wait for a canvas via DEVINIT */
         else gcw_install_canvas( NULL );
@@ -678,8 +678,8 @@ void plD_bop_gcw( PLStream *pls )
                      gnome_canvas_clipgroup_get_type(),
                      "x", 0.,
                      "y", 0.,
-                     NULL ))
-             ))
+                     NULL ) )
+             ) )
     {
         plexit( "GCW driver <plD_bop_gcw>: Canvas group cannot be created" );
     }
@@ -688,7 +688,7 @@ void plD_bop_gcw( PLStream *pls )
     g_object_set( G_OBJECT( dev->group_hidden ), "path", NULL, NULL );
 
     /* Hide this group until drawing is done */
-    gnome_canvas_item_hide( GNOME_CANVAS_ITEM( dev->group_hidden ));
+    gnome_canvas_item_hide( GNOME_CANVAS_ITEM( dev->group_hidden ) );
 
 #ifdef DEBUG_GCW_1
     gcw_debug( "</plD_bop_gcw>\n" );
@@ -762,7 +762,7 @@ void plD_state_gcw( PLStream *pls, PLINT op )
     switch ( op )
     {
     case PLSTATE_WIDTH:
-        if ( GNOME_IS_CANVAS( dev->canvas ))
+        if ( GNOME_IS_CANVAS( dev->canvas ) )
         {
             if ( dev->use_pixmap )
             {
@@ -776,7 +776,7 @@ void plD_state_gcw( PLStream *pls, PLINT op )
         break;
 
     case PLSTATE_COLOR0:
-        if ( GNOME_IS_CANVAS( dev->canvas ))
+        if ( GNOME_IS_CANVAS( dev->canvas ) )
         {
             dev->color = plcolor_to_rgba( pls->cmap0[pls->icol0], 0xFF );
             if ( dev->use_pixmap ) gcw_set_gdk_color();
@@ -785,7 +785,7 @@ void plD_state_gcw( PLStream *pls, PLINT op )
         break;
 
     case PLSTATE_COLOR1:
-        if ( GNOME_IS_CANVAS( dev->canvas ))
+        if ( GNOME_IS_CANVAS( dev->canvas ) )
         {
             dev->color = plcolor_to_rgba( pls->cmap1[pls->icol1], 0xFF );
             if ( dev->use_pixmap ) gcw_set_gdk_color();
@@ -833,7 +833,7 @@ static void fill_polygon( PLStream* pls )
     gcw_debug( "<fill_polygon />\n" );
 #endif
 
-    if ( !GNOME_IS_CANVAS( dev->canvas ))
+    if ( !GNOME_IS_CANVAS( dev->canvas ) )
         plexit( "GCW driver <fill_polygon>: Canvas not found" );
     canvas = dev->canvas;
 
@@ -843,7 +843,7 @@ static void fill_polygon( PLStream* pls )
     if ( dev->use_pixmap && !dev->use_persistence ) /* Write to a pixmap */
 
     {
-        if (( gdkpoints = (GdkPoint*) malloc( pls->dev_npts * sizeof ( GdkPoint ))) == NULL )
+        if ( ( gdkpoints = (GdkPoint*) malloc( pls->dev_npts * sizeof ( GdkPoint ) ) ) == NULL )
         {
             plabort( "GCW driver <fill_polygon>: Could not create gdkpoints" );
             return;
@@ -875,7 +875,7 @@ static void fill_polygon( PLStream* pls )
     else /* Use Gnome Canvas polygons */
 
     {
-        if (( points = gnome_canvas_points_new( pls->dev_npts )) == NULL )
+        if ( ( points = gnome_canvas_points_new( pls->dev_npts ) ) == NULL )
         {
             plabort( "GCW driver <fill_polygon>: Could not create points" );
             return;
@@ -905,7 +905,7 @@ static void fill_polygon( PLStream* pls )
                      "fill-color-rgba", dev->color,
                      /* "outline-color-rgba",dev->color, */
                      NULL )
-                 ))
+                 ) )
         {
             plwarn( "GCW driver <fill_polygon>: Canvas item not created." );
         }
@@ -977,7 +977,7 @@ static void proc_str( PLStream *pls, EscText *args )
     gcw_debug( "<proc_str>\n" );
 #endif
 
-    if ( !GNOME_IS_CANVAS( dev->canvas ))
+    if ( !GNOME_IS_CANVAS( dev->canvas ) )
         plexit( "GCW driver <proc_str>: Canvas not found" );
     canvas = dev->canvas;
 
@@ -1121,16 +1121,16 @@ static void proc_str( PLStream *pls, EscText *args )
          * everything else into the glyphlist.
          */
         Nglyphs = 0;
-        while ( i < Ntext && !( text[i] & PL_FCI_MARK ))
+        while ( i < Ntext && !( text[i] & PL_FCI_MARK ) )
         {
             /* Differentiate between ## and escape sequences */
             if ( text[i] == esc )
             {
-                if ( !( i > 0 && text[i - 1] == esc )) break;
+                if ( !( i > 0 && text[i - 1] == esc ) ) break;
             }
 
             gnome_glyphlist_glyph( glyphlist,
-                gnome_font_lookup_default( font, text[i] ));
+                gnome_font_lookup_default( font, text[i] ) );
             i++; Nglyphs++;
         }
 
@@ -1154,7 +1154,7 @@ static void proc_str( PLStream *pls, EscText *args )
                          "x", 0.,
                          "y", 0.,
                          NULL )
-                     ))
+                     ) )
             {
                 plabort( "GCW driver <proc_str>: Canvas item not created" );
                 return;
@@ -1182,7 +1182,7 @@ static void proc_str( PLStream *pls, EscText *args )
     for ( i = 0; i < N; i++ )
     {
         /* Calculate and apply the affine transforms */
-        art_affine_rotate( affine_rotate, 90. * ( pls->diorot - pls->portrait ));
+        art_affine_rotate( affine_rotate, 90. * ( pls->diorot - pls->portrait ) );
         if ( !pls->portrait )
         {
             art_affine_translate( affine_baseline,
@@ -1242,7 +1242,7 @@ void plD_esc_gcw( PLStream *pls, PLINT op, void *ptr )
     switch ( op )
     {
     case PLESC_DEVINIT:
-        gcw_init_canvas( GNOME_CANVAS( ptr ));
+        gcw_init_canvas( GNOME_CANVAS( ptr ) );
         pls->hack = 0;
         break;
 

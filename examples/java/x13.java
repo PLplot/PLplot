@@ -78,11 +78,11 @@ class x13 {
                 theta1 = 500;
             for ( theta = theta0; theta <= theta1; theta += dthet )
             {
-                x[j]   = 5 + 3 * Math.cos(( 2. * Math.PI / 500. ) * theta );
-                y[j++] = 5 + 3 * Math.sin(( 2. * Math.PI / 500. ) * theta );
+                x[j]   = 5 + 3 * Math.cos( ( 2. * Math.PI / 500. ) * theta );
+                y[j++] = 5 + 3 * Math.sin( ( 2. * Math.PI / 500. ) * theta );
             }
             pls.col0( i + 1 );
-            pls.psty(( i + 3 ) % 8 + 1 );
+            pls.psty( ( i + 3 ) % 8 + 1 );
             // Make array of correct size to copy to.
             double [] xsized = new double[j];
             double [] ysized = new double[j];
@@ -94,12 +94,12 @@ class x13 {
             just = ( 2. * Math.PI / 500. ) * ( theta0 + theta1 ) / 2.;
             dx   = .25 * Math.cos( just );
             dy   = .25 * Math.sin( just );
-            if (( theta0 + theta1 ) < 250 || ( theta0 + theta1 ) > 750 )
+            if ( ( theta0 + theta1 ) < 250 || ( theta0 + theta1 ) > 750 )
                 just = 0.;
             else
                 just = 1.;
 
-            pls.ptex(( x[j / 2] + dx ), ( y[j / 2] + dy ), 1.0, 0.0, just, text[i] );
+            pls.ptex( ( x[j / 2] + dx ), ( y[j / 2] + dy ), 1.0, 0.0, just, text[i] );
             theta0 = theta - dthet;
         }
         pls.font( 2 );

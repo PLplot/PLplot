@@ -61,19 +61,19 @@ int main( char[][] args )
 
         for ( theta = theta0; theta <= theta1; theta += dthet )
         {
-            x[j]   = 5.0 + 3.0 * cos(( 2.0 * PI / 500. ) * theta );
-            y[j++] = 5.0 + 3.0 * sin(( 2.0 * PI / 500. ) * theta );
+            x[j]   = 5.0 + 3.0 * cos( ( 2.0 * PI / 500. ) * theta );
+            y[j++] = 5.0 + 3.0 * sin( ( 2.0 * PI / 500. ) * theta );
         }
 
         plcol0( i + 1 );
-        plpsty(( i + 3 ) % 8 + 1 );
+        plpsty( ( i + 3 ) % 8 + 1 );
         plfill( x, y );
         plcol0( 1 );
         plline( x, y );
         just = ( 2.0 * PI / 500.0 ) * ( theta0 + theta1 ) / 2.0;
         dx   = 0.25 * cos( just );
         dy   = 0.25 * sin( just );
-        if (( theta0 + theta1 ) < 250 || ( theta0 + theta1 ) > 750 )
+        if ( ( theta0 + theta1 ) < 250 || ( theta0 + theta1 ) > 750 )
             just = 0.0;
         else
             just = 1.0;

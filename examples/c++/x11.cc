@@ -130,10 +130,10 @@ x11::x11( int argc, const char **argv )
     pls->Alloc2dGrid( &z, XPTS, YPTS );
 
     for ( i = 0; i < XPTS; i++ )
-        x[i] = 3. * (PLFLT) ( i - ( XPTS / 2 )) / (PLFLT) ( XPTS / 2 );
+        x[i] = 3. * (PLFLT) ( i - ( XPTS / 2 ) ) / (PLFLT) ( XPTS / 2 );
 
     for ( j = 0; j < YPTS; j++ )
-        y[j] = 3. * (PLFLT) ( j - ( YPTS / 2 )) / (PLFLT) ( YPTS / 2 );
+        y[j] = 3. * (PLFLT) ( j - ( YPTS / 2 ) ) / (PLFLT) ( YPTS / 2 );
 
     for ( i = 0; i < XPTS; i++ )
     {
@@ -141,9 +141,9 @@ x11::x11( int argc, const char **argv )
         for ( j = 0; j < YPTS; j++ )
         {
             yy      = y[j];
-            z[i][j] = 3. * ( 1. - xx ) * ( 1. - xx ) * exp( -( xx * xx ) - ( yy + 1. ) * ( yy + 1. )) -
-                      10. * ( xx / 5. - pow((double) xx, 3. ) - pow((double) yy, 5. )) * exp( -xx * xx - yy * yy ) -
-                      1. / 3. * exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ));
+            z[i][j] = 3. * ( 1. - xx ) * ( 1. - xx ) * exp( -( xx * xx ) - ( yy + 1. ) * ( yy + 1. ) ) -
+                      10. * ( xx / 5. - pow( (double) xx, 3. ) - pow( (double) yy, 5. ) ) * exp( -xx * xx - yy * yy ) -
+                      1. / 3. * exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ) );
             if ( false ) /* Jungfraujoch/Interlaken */
             {
                 if ( z[i][j] < -1. )

@@ -107,7 +107,7 @@ class x22 {
                 y        = ( j - ny / 2 + 0.5 ) * dy;
                 xg[i][j] = x;
                 yg[i][j] = y;
-                b        = ymax / 4.0 * ( 3 - Math.cos( Math.PI * x / xmax ));
+                b        = ymax / 4.0 * ( 3 - Math.cos( Math.PI * x / xmax ) );
                 if ( Math.abs( y ) < b )
                 {
                     dbdx = ymax / 4.0 * Math.sin( Math.PI * x / xmax ) *
@@ -185,10 +185,10 @@ class x22 {
                 y        = r * Math.sin( theta );
                 xg[i][j] = x;
                 yg[i][j] = y;
-                div1     = Math.sqrt( Math.pow( x - d1, 2. ) + Math.pow( y - d1, 2. ) + Math.pow( eps, 2. ));
-                div1i    = Math.sqrt( Math.pow( x - d1i, 2. ) + Math.pow( y - d1i, 2. ) + Math.pow( eps, 2. ));
-                div2     = Math.sqrt( Math.pow( x - d2, 2. ) + Math.pow( y + d2, 2. ) + Math.pow( eps, 2. ));
-                div2i    = Math.sqrt( Math.pow( x - d2i, 2. ) + Math.pow( y + d2i, 2. ) + Math.pow( eps, 2. ));
+                div1     = Math.sqrt( Math.pow( x - d1, 2. ) + Math.pow( y - d1, 2. ) + Math.pow( eps, 2. ) );
+                div1i    = Math.sqrt( Math.pow( x - d1i, 2. ) + Math.pow( y - d1i, 2. ) + Math.pow( eps, 2. ) );
+                div2     = Math.sqrt( Math.pow( x - d2, 2. ) + Math.pow( y + d2, 2. ) + Math.pow( eps, 2. ) );
+                div2i    = Math.sqrt( Math.pow( x - d2i, 2. ) + Math.pow( y + d2i, 2. ) + Math.pow( eps, 2. ) );
                 z[i][j]  = q1 / div1 + q1i / div1i + q2 / div2 + q2i / div2i;
                 u[i][j]  = -q1 * ( x - d1 ) / Math.pow( div1, 3. ) - q1i * ( x - d1i ) / Math.pow( div1i, 3.0 )
                            - q2 * ( x - d2 ) / Math.pow( div2, 3. ) - q2i * ( x - d2i ) / Math.pow( div2i, 3. );
@@ -207,7 +207,7 @@ class x22 {
         dz = ( zmaxmin[0] - zmaxmin[1] ) / (double) nlevel;
         for ( i = 0; i < nlevel; i++ )
         {
-            clevel[i] = zmaxmin[1] + ((double) i + 0.5 ) * dz;
+            clevel[i] = zmaxmin[1] + ( (double) i + 0.5 ) * dz;
         }
         pls.col0( 3 );
         pls.lsty( 2 );
@@ -223,7 +223,7 @@ class x22 {
         // Plot the perimeter of the cylinder
         for ( i = 0; i < nper; i++ )
         {
-            theta = ( 2. * Math.PI / ( nper - 1 )) * (double) i;
+            theta = ( 2. * Math.PI / ( nper - 1 ) ) * (double) i;
             px[i] = rmax * Math.cos( theta );
             py[i] = rmax * Math.sin( theta );
         }

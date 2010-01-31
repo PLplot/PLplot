@@ -63,7 +63,7 @@ void nnpi_set_point( nnpi* nn, point* p );
  */
 nnai* nnai_build( delaunay* d, int n, double* x, double* y )
 {
-    nnai  * nn   = malloc( sizeof ( nnai ));
+    nnai  * nn   = malloc( sizeof ( nnai ) );
     nnpi  * nnpi = nnpi_create( d );
     int   * vertices;
     double* weights;
@@ -74,11 +74,11 @@ nnai* nnai_build( delaunay* d, int n, double* x, double* y )
 
     nn->d = d;
     nn->n = n;
-    nn->x = malloc( n * sizeof ( double ));
-    memcpy( nn->x, x, n * sizeof ( double ));
-    nn->y = malloc( n * sizeof ( double ));
-    memcpy( nn->y, y, n * sizeof ( double ));
-    nn->weights = malloc( n * sizeof ( nn_weights ));
+    nn->x = malloc( n * sizeof ( double ) );
+    memcpy( nn->x, x, n * sizeof ( double ) );
+    nn->y = malloc( n * sizeof ( double ) );
+    memcpy( nn->y, y, n * sizeof ( double ) );
+    nn->weights = malloc( n * sizeof ( nn_weights ) );
 
     for ( i = 0; i < n; ++i )
     {
@@ -97,10 +97,10 @@ nnai* nnai_build( delaunay* d, int n, double* x, double* y )
         weights  = nnpi_get_weights( nnpi );
 
         w->nvertices = nnpi_get_nvertices( nnpi );
-        w->vertices  = malloc( w->nvertices * sizeof ( int ));
-        memcpy( w->vertices, vertices, w->nvertices * sizeof ( int ));
-        w->weights = malloc( w->nvertices * sizeof ( double ));
-        memcpy( w->weights, weights, w->nvertices * sizeof ( double ));
+        w->vertices  = malloc( w->nvertices * sizeof ( int ) );
+        memcpy( w->vertices, vertices, w->nvertices * sizeof ( int ) );
+        w->weights = malloc( w->nvertices * sizeof ( double ) );
+        memcpy( w->weights, weights, w->nvertices * sizeof ( double ) );
     }
 
     nnpi_destroy( nnpi );
@@ -184,16 +184,16 @@ void nnai_setwmin( nnai* nn, double wmin )
 #define NX           101
 #define NXMIN        1
 
-#define SQ( x )    (( x ) * ( x ))
+#define SQ( x )    ( ( x ) * ( x ) )
 
 static double franke( double x, double y )
 {
     x *= 9.0;
     y *= 9.0;
-    return 0.75 * exp(( -SQ( x - 2.0 ) - SQ( y - 2.0 )) / 4.0 )
+    return 0.75 * exp( ( -SQ( x - 2.0 ) - SQ( y - 2.0 ) ) / 4.0 )
            + 0.75 * exp( -SQ( x - 2.0 ) / 49.0 - ( y - 2.0 ) / 10.0 )
-           + 0.5 * exp(( -SQ( x - 7.0 ) - SQ( y - 3.0 )) / 4.0 )
-           - 0.2 * exp( -SQ( x - 4.0 ) - SQ( y - 7.0 ));
+           + 0.5 * exp( ( -SQ( x - 7.0 ) - SQ( y - 3.0 ) ) / 4.0 )
+           - 0.2 * exp( -SQ( x - 4.0 ) - SQ( y - 7.0 ) );
 }
 
 /* *INDENT-OFF* */
@@ -278,8 +278,8 @@ int main( int argc, char* argv[] )
      */
     printf( "  generating data:\n" );
     fflush( stdout );
-    pin = malloc( nin * sizeof ( point ));
-    zin = malloc( nin * sizeof ( double ));
+    pin = malloc( nin * sizeof ( point ) );
+    zin = malloc( nin * sizeof ( double ) );
     for ( i = 0; i < nin; ++i )
     {
         point* p = &pin[i];
@@ -303,9 +303,9 @@ int main( int argc, char* argv[] )
      * generate output points
      */
     points_generate2( -0.1, 1.1, -0.1, 1.1, nx, nx, &nout, &pout );
-    xout = malloc( nout * sizeof ( double ));
-    yout = malloc( nout * sizeof ( double ));
-    zout = malloc( nout * sizeof ( double ));
+    xout = malloc( nout * sizeof ( double ) );
+    yout = malloc( nout * sizeof ( double ) );
+    zout = malloc( nout * sizeof ( double ) );
     for ( i = 0; i < nout; ++i )
     {
         point* p = &pout[i];
@@ -352,7 +352,7 @@ int main( int argc, char* argv[] )
     }
 
     if ( !nn_verbose )
-        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", xout[cpi], yout[cpi], zout[cpi], franke( xout[cpi], yout[cpi] ));
+        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", xout[cpi], yout[cpi], zout[cpi], franke( xout[cpi], yout[cpi] ) );
 
     printf( "  interpolating one more time:\n" );
     fflush( stdout );
@@ -370,7 +370,7 @@ int main( int argc, char* argv[] )
     }
 
     if ( !nn_verbose )
-        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", xout[cpi], yout[cpi], zout[cpi], franke( xout[cpi], yout[cpi] ));
+        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", xout[cpi], yout[cpi], zout[cpi], franke( xout[cpi], yout[cpi] ) );
 
     printf( "  entering new data:\n" );
     fflush( stdout );
@@ -414,7 +414,7 @@ int main( int argc, char* argv[] )
             printf( "    (%f, %f, %f)\n", xout[i], yout[i], zout[i] );
 
     if ( !nn_verbose )
-        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", xout[cpi], yout[cpi], zout[cpi], franke( xout[cpi], yout[cpi] ));
+        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", xout[cpi], yout[cpi], zout[cpi], franke( xout[cpi], yout[cpi] ) );
 
     printf( "\n" );
 

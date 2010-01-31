@@ -334,7 +334,7 @@ static PLDispatchInit  static_device_initializers[] = {
 };
 
 static int             nplstaticdevices = ( sizeof ( static_device_initializers ) /
-                                            sizeof ( PLDispatchInit )) - 1;
+                                            sizeof ( PLDispatchInit ) ) - 1;
 static int             npldynamicdevices = 0;
 
 /*--------------------------------------------------------------------------*\

@@ -188,9 +188,9 @@ encode_int( char *c, int i )
     if ( i > 0 )
     {
         if ( i & 0x7C00 )                       /* are any of bits 10-14 set?*/
-            *c++ = (( i >> 10 ) & 0x1F ) | 0x40;
+            *c++ = ( ( i >> 10 ) & 0x1F ) | 0x40;
         if ( i & 0x03F0 )                       /* are any of bits 4-9 set? */
-            *c++ = (( i >> 4 ) & 0x3F ) | 0x40;
+            *c++ = ( ( i >> 4 ) & 0x3F ) | 0x40;
     }
     else
     {
@@ -263,6 +263,6 @@ WaitForPage( void )
     printf( VECTOR_MODE );        /* Switch out of alpha mode */
     fflush( stdout );
 
-    while ( !getchar())
+    while ( !getchar() )
         ;
 }

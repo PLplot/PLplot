@@ -257,8 +257,8 @@ class x23 {
             // Draw the grid using PLStream.box
 
             pls.col0( 2 );
-            deltax = 1.0 / ((double) nxcells[page] );
-            deltay = 1.0 / ((double) nycells[page] );
+            deltax = 1.0 / ( (double) nxcells[page] );
+            deltay = 1.0 / ( (double) nycells[page] );
             pls.box( "bcg", deltax, 0, "bcg", deltay, 0 );
             pls.col0( 15 );
             length = hi[page] - lo[page];
@@ -275,7 +275,7 @@ class x23 {
                         {
                             cmdString = Greek[slice];
                         }
-                        else if (( page >= 1 ) && ( page <= 3 ))
+                        else if ( ( page >= 1 ) && ( page <= 3 ) )
                         {
                             cmdString = "#[" + Type1[offset[page] + slice] + "]";
                         }
@@ -302,7 +302,7 @@ class x23 {
         int[] iweight  = new int[1];
         pls.gfci( fci_old );
         pls.gfont( ifamily, istyle, iweight );
-        System.out.println( "For example 23 prior to page 12 the FCI is 0x" + Long.toHexString( fci_old[0] ));
+        System.out.println( "For example 23 prior to page 12 the FCI is 0x" + Long.toHexString( fci_old[0] ) );
         System.out.println( "For example 23 prior to page 12 the font family, style and weight are " + family[ifamily[0]] + " " + style[istyle[0]] + " " + weight[iweight[0]] );;
 
         for ( page = 11; page < 16; page++ )
@@ -352,7 +352,7 @@ class x23 {
             {
                 family_index = i % 5;
                 style_index  = ( i / 5 ) % 3;
-                weight_index = (( i / 5 ) / 3 ) % 2;
+                weight_index = ( ( i / 5 ) / 3 ) % 2;
                 if ( page == 11 )
                 {
                     pls.sfci( fci[i] );

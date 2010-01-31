@@ -56,7 +56,7 @@
 #include <tk.h>
 #endif
     #define malloc     ckalloc
-    #define free( m )    ckfree((char*) m )
+    #define free( m )    ckfree( (char*) m )
     #define realloc    ckrealloc
     #define calloc     ckcalloc
 #else
@@ -278,11 +278,11 @@ plD_init_tkwin( PLStream *pls )
     dev->yscale = dev->yscale_init;
 
 #if PHYSICAL
-    pxlx = (PLFLT) ((double) PIXELS_X / dev->width * DPMM );
-    pxly = (PLFLT) ((double) PIXELS_Y / dev->height * DPMM );
+    pxlx = (PLFLT) ( (double) PIXELS_X / dev->width * DPMM );
+    pxly = (PLFLT) ( (double) PIXELS_Y / dev->height * DPMM );
 #else
-    pxlx = (PLFLT) ((double) PIXELS_X / LPAGE_X );
-    pxly = (PLFLT) ((double) PIXELS_Y / LPAGE_Y );
+    pxlx = (PLFLT) ( (double) PIXELS_X / LPAGE_X );
+    pxly = (PLFLT) ( (double) PIXELS_Y / LPAGE_Y );
 #endif
 
     plP_setpxl( pxlx, pxly );
@@ -312,7 +312,7 @@ plD_open_tkwin( PLStream *pls )
     if ( pls->dev != NULL )
         plwarn( "plD_open_tkw: device pointer is already set" );
 
-    pls->dev = (TkwDev*) calloc( 1, (size_t) sizeof ( TkwDev ));
+    pls->dev = (TkwDev*) calloc( 1, (size_t) sizeof ( TkwDev ) );
     if ( pls->dev == NULL )
         plexit( "plD_init_tkw: Out of memory." );
 
@@ -352,7 +352,7 @@ plD_open_tkwin( PLStream *pls )
 
     if ( dev->tkwd == NULL )
     {
-        dev->tkwd = (TkwDisplay *) calloc( 1, (size_t) sizeof ( TkwDisplay ));
+        dev->tkwd = (TkwDisplay *) calloc( 1, (size_t) sizeof ( TkwDisplay ) );
         if ( dev->tkwd == NULL )
             plexit( "Init: Out of memory." );
 
@@ -391,7 +391,7 @@ plD_open_tkwin( PLStream *pls )
              * but we will actually 'free' it later ourselves, and therefore
              * need to own the memory.
              */
-            pls->FileName = strdup( TkGetDefaultScreenName( NULL, NULL ));
+            pls->FileName = strdup( TkGetDefaultScreenName( NULL, NULL ) );
         }
         tkwd->display = pls->plPlotterPtr->display;
 #else
@@ -496,7 +496,7 @@ plD_polyline_tkwin( PLStream *pls, short *xa, short *ya, PLINT npts )
     for ( i = 0; i < npts; i++ )
     {
         pts[i].x = (short) ( dev->xscale * xa[i] );
-        pts[i].y = (short) ( dev->yscale * ( dev->ylen - ya[i] ));
+        pts[i].y = (short) ( dev->yscale * ( dev->ylen - ya[i] ) );
     }
 
     if ( dev->write_to_window )
@@ -554,12 +554,12 @@ WaitForPage( PLStream *pls )
     }
     PlplotterAtEop( plf->interp, plf );
 
-    while ( !( dev->flags ) && !Tcl_InterpDeleted( plf->interp ) && ( Tk_GetNumMainWindows() > 0 ))
+    while ( !( dev->flags ) && !Tcl_InterpDeleted( plf->interp ) && ( Tk_GetNumMainWindows() > 0 ) )
     {
         Tcl_DoOneEvent( 0 );
     }
 
-    if ( Tcl_InterpDeleted( plf->interp ) || ( Tk_GetNumMainWindows() <= 0 ))
+    if ( Tcl_InterpDeleted( plf->interp ) || ( Tk_GetNumMainWindows() <= 0 ) )
     {
         dev->flags |= 1;
     }
@@ -695,7 +695,7 @@ plD_state_tkwin( PLStream *pls, PLINT op )
         if ( tkwd->ncol1 < 2 )
             break;
 
-        icol1 = ( pls->icol1 * ( tkwd->ncol1 - 1 )) / ( pls->ncol1 - 1 );
+        icol1 = ( pls->icol1 * ( tkwd->ncol1 - 1 ) ) / ( pls->ncol1 - 1 );
         if ( tkwd->color )
             dev->curcolor = tkwd->cmap1[icol1];
         else
@@ -805,10 +805,10 @@ CopyCommand( PLStream *pls )
 
     x0 = (int) ( dev->xscale * pls->dev_x[0] );
     x1 = (int) ( dev->xscale * pls->dev_x[2] );
-    y0 = (int) ( dev->yscale * ( dev->ylen - pls->dev_y[0] ));
-    y1 = (int) ( dev->yscale * ( dev->ylen - pls->dev_y[2] ));
-    w  = (int) ( dev->xscale * ( pls->dev_x[1] - pls->dev_x[0] ));
-    h  = (int) ( -dev->yscale * ( pls->dev_y[1] - pls->dev_y[0] ));
+    y0 = (int) ( dev->yscale * ( dev->ylen - pls->dev_y[0] ) );
+    y1 = (int) ( dev->yscale * ( dev->ylen - pls->dev_y[2] ) );
+    w  = (int) ( dev->xscale * ( pls->dev_x[1] - pls->dev_x[0] ) );
+    h  = (int) ( -dev->yscale * ( pls->dev_y[1] - pls->dev_y[0] ) );
 
     if ( dev->write_to_window )
         XCopyArea( tkwd->display, dev->window, dev->window, dev->gc,
@@ -842,7 +842,7 @@ FillPolygonCmd( PLStream *pls )
     for ( i = 0; i < pls->dev_npts; i++ )
     {
         pts[i].x = (short) ( dev->xscale * pls->dev_x[i] );
-        pts[i].y = (short) ( dev->yscale * ( dev->ylen - pls->dev_y[i] ));
+        pts[i].y = (short) ( dev->yscale * ( dev->ylen - pls->dev_y[i] ) );
     }
 
 /* Fill polygons */
@@ -1238,7 +1238,7 @@ CreatePixmap( PLStream *pls )
  */
     dev->pixmap = Tk_GetPixmap( tkwd->display, Tk_WindowId( tkwin ),
         Tk_Width( tkwin ), Tk_Height( tkwin ),
-        DefaultDepthOfScreen( Tk_Screen( tkwin )));
+        DefaultDepthOfScreen( Tk_Screen( tkwin ) ) );
     XSync( tkwd->display, 0 );
 #if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
     if ( CreatePixmapStatus != Success )
@@ -1311,7 +1311,7 @@ AllocBGFG( PLStream *pls )
     /* Allocate r/w color cell for background */
 
     if ( XAllocColorCells( tkwd->display, tkwd->map, False,
-             plane_masks, 0, pixels, 1 ))
+             plane_masks, 0, pixels, 1 ) )
     {
         tkwd->cmap0[0].pixel = pixels[0];
     }
@@ -1326,7 +1326,7 @@ AllocBGFG( PLStream *pls )
     for (;; )
     {
         if ( XAllocColorCells( tkwd->display, tkwd->map, False,
-                 plane_masks, 0, pixels, npixels ))
+                 plane_masks, 0, pixels, npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )
@@ -1338,7 +1338,7 @@ AllocBGFG( PLStream *pls )
 
     for ( i = 0; i < npixels - 1; i++ )
     {
-        if ( pixels[i] == ( ~tkwd->cmap0[0].pixel & 0xFF ))
+        if ( pixels[i] == ( ~tkwd->cmap0[0].pixel & 0xFF ) )
             break;
     }
 
@@ -1381,9 +1381,9 @@ pltkwin_setBGFG( PLStream *pls )
     {
         pls->cmap0[0].r = pls->cmap0[0].g = pls->cmap0[0].b = 0xFF;
     }
-    gslevbg = ((long) pls->cmap0[0].r +
-               (long) pls->cmap0[0].g +
-               (long) pls->cmap0[0].b ) / 3;
+    gslevbg = ( (long) pls->cmap0[0].r +
+                (long) pls->cmap0[0].g +
+                (long) pls->cmap0[0].b ) / 3;
 
     PLColor_to_TkColor( &pls->cmap0[0], &tkwd->cmap0[0] );
 
@@ -1525,7 +1525,7 @@ AllocCustomMap( PLStream *pls )
     for (;; )
     {
         if ( XAllocColorCells( tkwd->display, tkwd->map, False,
-                 plane_masks, 0, pixels, npixels ))
+                 plane_masks, 0, pixels, npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )
@@ -1558,9 +1558,9 @@ AllocCustomMap( PLStream *pls )
     {
         for ( i = 0; i < MAX_COLORS; i++ )
         {
-            if (( xwm_colors[i].red != sxwm_colors[i].red ) ||
-                ( xwm_colors[i].green != sxwm_colors[i].green ) ||
-                ( xwm_colors[i].blue != sxwm_colors[i].blue ))
+            if ( ( xwm_colors[i].red != sxwm_colors[i].red ) ||
+                 ( xwm_colors[i].green != sxwm_colors[i].green ) ||
+                 ( xwm_colors[i].blue != sxwm_colors[i].blue ) )
             {
                 if ( pixels[i] != 0 )
                 {
@@ -1611,7 +1611,7 @@ AllocCmap0( PLStream *pls )
     for (;; )
     {
         if ( XAllocColorCells( tkwd->display, tkwd->map, False,
-                 plane_masks, 0, &pixels[1], npixels ))
+                 plane_masks, 0, &pixels[1], npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )
@@ -1653,12 +1653,12 @@ AllocCmap1( PLStream *pls )
 
     /* Allocate colors in cmap 1 */
 
-    npixels = MAX( 2, MIN( CMAP1_COLORS, pls->ncol1 ));
+    npixels = MAX( 2, MIN( CMAP1_COLORS, pls->ncol1 ) );
 #ifndef USE_TK
     for (;; )
     {
         if ( XAllocColorCells( tkwd->display, tkwd->map, False,
-                 plane_masks, 0, pixels, npixels ))
+                 plane_masks, 0, pixels, npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )
@@ -1786,8 +1786,8 @@ void Tkw_StoreColor( PLStream* pls, TkwDisplay* tkwd, XColor* col )
  * The argument types follow the same order as in the function name.
  \*--------------------------------------------------------------------------*/
 
-#define ToXColor( a )     ((( 0xFF & ( a )) << 8 ) | ( a ))
-#define ToPLColor( a )    (((U_LONG) a ) >> 8 )
+#define ToXColor( a )     ( ( ( 0xFF & ( a ) ) << 8 ) | ( a ) )
+#define ToPLColor( a )    ( ( (U_LONG) a ) >> 8 )
 
 void
 PLColor_to_TkColor( PLColor *plcolor, XColor *xcolor )
@@ -1869,7 +1869,7 @@ pltk_AreWeGrayscale( PlPlotter *plf )
     Visual* visual;
     /* get the window's Visual */
     visual = Tk_Visual( plf->tkwin );
-    if (( visual->THING != GrayScale ) && ( visual->THING != StaticGray ))
+    if ( ( visual->THING != GrayScale ) && ( visual->THING != StaticGray ) )
         return ( 0 );
     /* if we got this far, only StaticGray and GrayScale classes available */
     return ( 1 );
@@ -1921,12 +1921,12 @@ void *  ckcalloc( size_t nmemb, size_t size )
 
 #if !__POWERPC__
 
-    for ( size = ( size / sizeof ( long )) + 1, p = ptr; --size; )
+    for ( size = ( size / sizeof ( long ) ) + 1, p = ptr; --size; )
         *p++ = 0;
 
 #else
 
-    for ( size = ( size / sizeof ( long )) + 1, p = ptr - 1; --size; )
+    for ( size = ( size / sizeof ( long ) ) + 1, p = ptr - 1; --size; )
         *++p = 0;
 
 #endif

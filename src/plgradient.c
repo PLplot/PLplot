@@ -217,10 +217,10 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     plAlloc2dGrid( &z, NX, NY );
     for ( i = 0; i < NX; i++ )
     {
-        xcoord = xmin + ((PLFLT) i ) * ( xmax - xmin ) / (PLFLT) ( NX - 1 );
+        xcoord = xmin + ( (PLFLT) i ) * ( xmax - xmin ) / (PLFLT) ( NX - 1 );
         for ( j = 0; j < NY; j++ )
         {
-            ycoord  = ymin + ((PLFLT) j ) * ( ymax - ymin ) / (PLFLT) ( NY - 1 );
+            ycoord  = ymin + ( (PLFLT) j ) * ( ymax - ymin ) / (PLFLT) ( NY - 1 );
             xrot    = xcoord * cosangle + ycoord * sinangle;
             z[i][j] = ( xrot - xrot_min ) / ( xrot_max - xrot_min );
         }
@@ -229,14 +229,14 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     #define NEDGE    101
     /* Define NEDGE shade edges (or NEDGE-1 shade levels)
      * from 0. to 1. */
-    if (( edge = (PLFLT *) malloc( NEDGE * sizeof ( PLFLT ))) == NULL )
+    if ( ( edge = (PLFLT *) malloc( NEDGE * sizeof ( PLFLT ) ) ) == NULL )
         plexit( "plgradient_soft: Insufficient memory" );
     for ( i = 0; i < NEDGE; i++ )
         edge[i] = (PLFLT) i / (PLFLT) ( NEDGE - 1 );
 
     plshades( z, NX, NY, gradient_defined, xmin, xmax, ymin, ymax,
         edge, NEDGE, 0, 0, 0, plfill, 1, NULL, NULL );
-    free((void *) edge );
+    free( (void *) edge );
     plFree2dGrid( z, NX, NY );
 }
 

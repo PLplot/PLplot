@@ -78,7 +78,7 @@ void wxPLplotstream::Create( wxDC *dc, int width, int height, int style )
         m_style & wxPLPLOT_USE_HERSHEY_SYMBOLS ? 1 : 0,
         m_style & wxPLPLOT_DRAW_TEXT ? 1 : 0,
         backend );
-    strncat( drvopt, buffer, bufferSize - strlen( drvopt ));
+    strncat( drvopt, buffer, bufferSize - strlen( drvopt ) );
 
     SetOpt( "-drvopt", drvopt );
 

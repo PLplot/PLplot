@@ -47,11 +47,11 @@ G_BEGIN_DECLS
  * fill_color_gdk	GdkColor*		RW		Allocated GdkColor for fill.
  */
 
-#define PLPLOT_TYPE_CANVAS_HACKTEXT    ( plplot_canvas_hacktext_get_type())
-#define PLPLOT_CANVAS_HACKTEXT( o )             ( G_TYPE_CHECK_INSTANCE_CAST(( o ), PLPLOT_TYPE_CANVAS_HACKTEXT, PlplotCanvasHacktext ))
-#define PLPLOT_CANVAS_HACKTEXT_CLASS( k )       ( G_TYPE_CHECK_CLASS_CAST(( k ), PLPLOT_TYPE_CANVAS_HACKTEXT, PlplotCanvasHacktextClass ))
-#define PLPLOT_IS_CANVAS_HACKTEXT( o )          ( G_TYPE_CHECK_INSTANCE_TYPE(( o ), PLPLOT_TYPE_CANVAS_HACKTEXT ))
-#define PLPLOT_IS_CANVAS_HACKTEXT_CLASS( k )    ( G_TYPE_CHECK_CLASS_TYPE(( k ), PLPLOT_TYPE_CANVAS_HACKTEXT ))
+#define PLPLOT_TYPE_CANVAS_HACKTEXT    ( plplot_canvas_hacktext_get_type() )
+#define PLPLOT_CANVAS_HACKTEXT( o )             ( G_TYPE_CHECK_INSTANCE_CAST( ( o ), PLPLOT_TYPE_CANVAS_HACKTEXT, PlplotCanvasHacktext ) )
+#define PLPLOT_CANVAS_HACKTEXT_CLASS( k )       ( G_TYPE_CHECK_CLASS_CAST( ( k ), PLPLOT_TYPE_CANVAS_HACKTEXT, PlplotCanvasHacktextClass ) )
+#define PLPLOT_IS_CANVAS_HACKTEXT( o )          ( G_TYPE_CHECK_INSTANCE_TYPE( ( o ), PLPLOT_TYPE_CANVAS_HACKTEXT ) )
+#define PLPLOT_IS_CANVAS_HACKTEXT_CLASS( k )    ( G_TYPE_CHECK_CLASS_TYPE( ( k ), PLPLOT_TYPE_CANVAS_HACKTEXT ) )
 
 typedef struct _PlplotCanvasHacktext        PlplotCanvasHacktext;
 typedef struct _PlplotCanvasHacktextPriv    PlplotCanvasHacktextPriv;

@@ -272,8 +272,8 @@ x23::x23( int argc, const char *argv[] )
         /* Draw the grid using plstream::box */
 
         pls->col0( 2 );
-        deltax = 1.0 / ((PLFLT) nxcells[page] );
-        deltay = 1.0 / ((PLFLT) nycells[page] );
+        deltax = 1.0 / ( (PLFLT) nxcells[page] );
+        deltay = 1.0 / ( (PLFLT) nycells[page] );
         pls->box( "bcg", deltax, 0, "bcg", deltay, 0 );
         pls->col0( 15 );
         length = hi[page] - lo[page];
@@ -290,7 +290,7 @@ x23::x23( int argc, const char *argv[] )
                     {
                         sprintf( cmdString, "#%s", Greek[slice] );
                     }
-                    else if (( page >= 1 ) && ( page <= 3 ))
+                    else if ( ( page >= 1 ) && ( page <= 3 ) )
                     {
                         sprintf( cmdString, "##[0x%.4x]", Type1[offset[page] + slice] );
                     }
@@ -366,7 +366,7 @@ x23::x23( int argc, const char *argv[] )
         {
             family_index = i % 5;
             style_index  = ( i / 5 ) % 3;
-            weight_index = (( i / 5 ) / 3 ) % 2;
+            weight_index = ( ( i / 5 ) / 3 ) % 2;
             if ( page == 11 )
             {
                 pls->sfci( fci[i] );

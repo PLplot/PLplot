@@ -41,11 +41,11 @@ int main( char[][] args )
     {
         plcol1( i / 9.0 );
         plpsty( 0 );
-        plfbox(( 1980. + i ), y0[i] );
+        plfbox( ( 1980. + i ), y0[i] );
         text = format( "%.0f", y0[i] );
-        plptex(( 1980. + i + .5 ), ( y0[i] + 1. ), 1.0, 0.0, .5, text );
+        plptex( ( 1980. + i + .5 ), ( y0[i] + 1. ), 1.0, 0.0, .5, text );
         text = format( "%d", 1980 + i );
-        plmtex( "b", 1.0, (( i + 1 ) * .1 - .05 ), 0.5, text );
+        plmtex( "b", 1.0, ( ( i + 1 ) * .1 - .05 ), 0.5, text );
     }
 
     /* Don't forget to call plend() to finish off! */

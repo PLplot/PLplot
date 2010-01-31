@@ -57,7 +57,7 @@
 #  include <sys/types.h>
 # endif
 # include <dirent.h>
-# define NAMLEN( dirent )    strlen(( dirent )->d_name )
+# define NAMLEN( dirent )    strlen( ( dirent )->d_name )
 #else
 # if defined ( _MSC_VER )
 #  include "dirent_msvc.h"
@@ -141,7 +141,7 @@ plP_init( void )
     plsc->page_status = AT_EOP;
 
     save_locale = plsave_set_locale();
-    ( *plsc->dispatch_table->pl_init )((struct PLStream_struct *) plsc );
+    ( *plsc->dispatch_table->pl_init )( (struct PLStream_struct *) plsc );
     plrestore_locale( save_locale );
 
     if ( plsc->plbuf_write )
@@ -173,7 +173,7 @@ plP_eop( void )
     if ( !skip_driver_eop )
     {
         char *save_locale = plsave_set_locale();
-        ( *plsc->dispatch_table->pl_eop )((struct PLStream_struct *) plsc );
+        ( *plsc->dispatch_table->pl_eop )( (struct PLStream_struct *) plsc );
         plrestore_locale( save_locale );
     }
 }
@@ -203,7 +203,7 @@ plP_bop( void )
     if ( !skip_driver_bop )
     {
         char *save_locale = plsave_set_locale();
-        ( *plsc->dispatch_table->pl_bop )((struct PLStream_struct *) plsc );
+        ( *plsc->dispatch_table->pl_bop )( (struct PLStream_struct *) plsc );
         plrestore_locale( save_locale );
     }
 
@@ -225,7 +225,7 @@ plP_tidy( void )
     }
 
     save_locale = plsave_set_locale();
-    ( *plsc->dispatch_table->pl_tidy )((struct PLStream_struct *) plsc );
+    ( *plsc->dispatch_table->pl_tidy )( (struct PLStream_struct *) plsc );
     plrestore_locale( save_locale );
 
     if ( plsc->plbuf_write )
@@ -245,7 +245,7 @@ plP_state( PLINT op )
     if ( plsc->plbuf_write ) plbuf_state( plsc, op );
 
     save_locale = plsave_set_locale();
-    ( *plsc->dispatch_table->pl_state )((struct PLStream_struct *) plsc, op );
+    ( *plsc->dispatch_table->pl_state )( (struct PLStream_struct *) plsc, op );
     plrestore_locale( save_locale );
 }
 
@@ -262,8 +262,8 @@ plP_esc( PLINT op, void *ptr )
     if ( plsc->plbuf_write ) plbuf_esc( plsc, op, ptr );
 
     /* Text coordinates must pass through the driver interface filter */
-    if (( op == PLESC_HAS_TEXT && plsc->dev_unicode ) ||
-        ( op == PLESC_END_TEXT && plsc->alt_unicode ))
+    if ( ( op == PLESC_HAS_TEXT && plsc->dev_unicode ) ||
+         ( op == PLESC_END_TEXT && plsc->alt_unicode ) )
     {
         /* Apply the driver interface filter */
         if ( plsc->difilt )
@@ -274,7 +274,7 @@ plP_esc( PLINT op, void *ptr )
     }
 
     save_locale = plsave_set_locale();
-    ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc, op, ptr );
+    ( *plsc->dispatch_table->pl_esc )( (struct PLStream_struct *) plsc, op, ptr );
     plrestore_locale( save_locale );
 }
 
@@ -326,7 +326,7 @@ plP_swin( PLWindow *plwin )
     if ( plsc->dev_swin )
     {
         char *save_locale = plsave_set_locale();
-        ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
+        ( *plsc->dispatch_table->pl_esc )( (struct PLStream_struct *) plsc,
             PLESC_SWIN, NULL );
         plrestore_locale( save_locale );
     }
@@ -581,7 +581,7 @@ int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower
     for ( i = 0; i < N_TextLookupTable; i++ )
     {
         length = strlen( lookup[i].ptext );
-        if ( !strncmp( text, lookup[i].ptext, length ))
+        if ( !strncmp( text, lookup[i].ptext, length ) )
         {
             *hexdigit = lookup[i].hexdigit;
             *hexpower = lookup[i].hexpower;
@@ -1183,32 +1183,32 @@ utf8_to_ucs4( const char *ptr, PLUNICODE *unichar )
         {
             isFirst = 0;
             /* Determine length of sequence */
-            if ((unsigned char) ( tmp & 0x80 ) == 0x00 ) /* single char */
+            if ( (unsigned char) ( tmp & 0x80 ) == 0x00 ) /* single char */
             {
                 *unichar = (unsigned int) tmp & 0x7F;
                 cnt      = 0;
             }
-            else if ((unsigned char) ( tmp & 0xE0 ) == 0xC0 ) /* 2 chars */
+            else if ( (unsigned char) ( tmp & 0xE0 ) == 0xC0 ) /* 2 chars */
             {
                 *unichar = (unsigned int) tmp & 0x1F;
                 cnt      = 1;
             }
-            else if ((unsigned char) ( tmp & 0xF0 ) == 0xE0 ) /* 3 chars */
+            else if ( (unsigned char) ( tmp & 0xF0 ) == 0xE0 ) /* 3 chars */
             {
                 *unichar = (unsigned char) tmp & 0x0F;
                 cnt      = 2;
             }
-            else if ((unsigned char) ( tmp & 0xF8 ) == 0xF0 ) /* 4 chars */
+            else if ( (unsigned char) ( tmp & 0xF8 ) == 0xF0 ) /* 4 chars */
             {
                 *unichar = (unsigned char) tmp & 0x07;
                 cnt      = 3;
             }
-            else if ((unsigned char) ( tmp & 0xFC ) == 0xF8 ) /* 5 chars */
+            else if ( (unsigned char) ( tmp & 0xFC ) == 0xF8 ) /* 5 chars */
             {
                 *unichar = (unsigned char) tmp & 0x03;
                 cnt      = 4;
             }
-            else if ((unsigned char) ( tmp & 0xFE ) == 0xFC ) /* 6 chars */
+            else if ( (unsigned char) ( tmp & 0xFE ) == 0xFC ) /* 6 chars */
             {
                 *unichar = (unsigned char) tmp & 0x01;
                 cnt      = 5;
@@ -1221,9 +1221,9 @@ utf8_to_ucs4( const char *ptr, PLUNICODE *unichar )
         }
         else   /* Subsequent char in UTF8 sequence */
         {
-            if ((unsigned char) ( tmp & 0xC0 ) == 0x80 )
+            if ( (unsigned char) ( tmp & 0xC0 ) == 0x80 )
             {
-                *unichar = ( *unichar << 6 ) | ((unsigned int) tmp & 0x3F );
+                *unichar = ( *unichar << 6 ) | ( (unsigned int) tmp & 0x3F );
                 cnt--;
             }
             else  /* Malformed */
@@ -1245,13 +1245,13 @@ ucs4_to_utf8( PLUNICODE unichar, char *ptr )
 
     tmp = (unsigned char *) ptr;
 
-    if (( unichar & 0xffff80 ) == 0 ) /* single byte */
+    if ( ( unichar & 0xffff80 ) == 0 ) /* single byte */
     {
         *tmp = (unsigned char) unichar;
         tmp++;
         len = 1;
     }
-    else if (( unichar & 0xfff800 ) == 0 ) /* two bytes */
+    else if ( ( unichar & 0xfff800 ) == 0 ) /* two bytes */
     {
         *tmp = (unsigned char) 0xc0 | ( unichar >> 6 );
         tmp++;
@@ -1259,23 +1259,23 @@ ucs4_to_utf8( PLUNICODE unichar, char *ptr )
         tmp++;
         len = 2;
     }
-    else if (( unichar & 0xff0000 ) == 0 ) /* three bytes */
+    else if ( ( unichar & 0xff0000 ) == 0 ) /* three bytes */
     {
         *tmp = (unsigned char) 0xe0 | ( unichar >> 12 );
         tmp++;
-        *tmp = (unsigned char) 0x80 | (( unichar >> 6 ) & 0x3f );
+        *tmp = (unsigned char) 0x80 | ( ( unichar >> 6 ) & 0x3f );
         tmp++;
         *tmp = (unsigned char) 0x80 | ( unichar & 0x3f );
         tmp++;
         len = 3;
     }
-    else if (( unichar & 0xe0000 ) == 0 ) /* four bytes */
+    else if ( ( unichar & 0xe0000 ) == 0 ) /* four bytes */
     {
         *tmp = (unsigned char) 0xf0 | ( unichar >> 18 );
         tmp++;
-        *tmp = (unsigned char) 0x80 | (( unichar >> 12 ) & 0x3f );
+        *tmp = (unsigned char) 0x80 | ( ( unichar >> 12 ) & 0x3f );
         tmp++;
-        *tmp = (unsigned char) 0x80 | (( unichar >> 6 ) & 0x3f );
+        *tmp = (unsigned char) 0x80 | ( ( unichar >> 6 ) & 0x3f );
         tmp++;
         *tmp = (unsigned char) 0x80 | ( unichar & 0x3f );
         tmp++;
@@ -1294,7 +1294,7 @@ static void
 grline( short *x, short *y, PLINT npts )
 {
     char *save_locale = plsave_set_locale();
-    ( *plsc->dispatch_table->pl_line )((struct PLStream_struct *) plsc,
+    ( *plsc->dispatch_table->pl_line )( (struct PLStream_struct *) plsc,
         x[0], y[0], x[1], y[1] );
     plrestore_locale( save_locale );
 }
@@ -1303,7 +1303,7 @@ static void
 grpolyline( short *x, short *y, PLINT npts )
 {
     char *save_locale = plsave_set_locale();
-    ( *plsc->dispatch_table->pl_polyline )((struct PLStream_struct *) plsc,
+    ( *plsc->dispatch_table->pl_polyline )( (struct PLStream_struct *) plsc,
         x, y, npts );
     plrestore_locale( save_locale );
 }
@@ -1317,7 +1317,7 @@ grfill( short *x, short *y, PLINT npts )
     plsc->dev_y    = y;
 
     save_locale = plsave_set_locale();
-    ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
+    ( *plsc->dispatch_table->pl_esc )( (struct PLStream_struct *) plsc,
         PLESC_FILL, NULL );
     plrestore_locale( save_locale );
 }
@@ -1331,7 +1331,7 @@ grgradient( short *x, short *y, PLINT npts )
     plsc->dev_y    = y;
 
     save_locale = plsave_set_locale();
-    ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
+    ( *plsc->dispatch_table->pl_esc )( (struct PLStream_struct *) plsc,
         PLESC_GRADIENT, NULL );
     plrestore_locale( save_locale );
 }
@@ -1603,10 +1603,10 @@ pldid2pc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
         sxmax = ( pxmax - plsc->didxb ) / plsc->didxax;
         symax = ( pymax - plsc->didyb ) / plsc->didyay;
 
-        rxmin = plP_pcdcx((PLINT) sxmin );
-        rymin = plP_pcdcy((PLINT) symin );
-        rxmax = plP_pcdcx((PLINT) sxmax );
-        rymax = plP_pcdcy((PLINT) symax );
+        rxmin = plP_pcdcx( (PLINT) sxmin );
+        rymin = plP_pcdcy( (PLINT) symin );
+        rxmax = plP_pcdcx( (PLINT) sxmax );
+        rymax = plP_pcdcy( (PLINT) symax );
 
         *xmin = ( rxmin < 0 ) ? 0 : rxmin;
         *xmax = ( rxmax > 1 ) ? 1 : rxmax;
@@ -1649,10 +1649,10 @@ pldip2dc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax )
         sxmax = pxmax * plsc->didxax + plsc->didxb;
         symax = pymax * plsc->didyay + plsc->didyb;
 
-        rxmin = plP_pcdcx((PLINT) sxmin );
-        rymin = plP_pcdcy((PLINT) symin );
-        rxmax = plP_pcdcx((PLINT) sxmax );
-        rymax = plP_pcdcy((PLINT) symax );
+        rxmin = plP_pcdcx( (PLINT) sxmin );
+        rymin = plP_pcdcy( (PLINT) symin );
+        rxmax = plP_pcdcx( (PLINT) sxmax );
+        rymax = plP_pcdcy( (PLINT) symax );
 
         *xmin = ( rxmin < 0 ) ? 0 : rxmin;
         *xmax = ( rxmax > 1 ) ? 1 : rxmax;
@@ -1728,12 +1728,12 @@ calc_diplt( void )
     if ( plsc->dev_di )
     {
         char *save_locale = plsave_set_locale();
-        ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
+        ( *plsc->dispatch_table->pl_esc )( (struct PLStream_struct *) plsc,
             PLESC_DI, NULL );
         plrestore_locale( save_locale );
     }
 
-    if ( !( plsc->difilt & PLDI_PLT ))
+    if ( !( plsc->difilt & PLDI_PLT ) )
         return;
 
     pxmin = plP_dcpcx( plsc->dipxmin );
@@ -1787,7 +1787,7 @@ c_plsdidev( PLFLT mar, PLFLT aspect, PLFLT jx, PLFLT jy )
     plsetvar( plsc->jy, jy );
 
     if ( mar == 0. && aspect == 0. && jx == 0. && jy == 0. &&
-         !( plsc->difilt & PLDI_ORI ))
+         !( plsc->difilt & PLDI_ORI ) )
     {
         plsc->difilt &= ~PLDI_DEV;
         return;
@@ -1814,12 +1814,12 @@ calc_didev( void )
     if ( plsc->dev_di )
     {
         char *save_locale = plsave_set_locale();
-        ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
+        ( *plsc->dispatch_table->pl_esc )( (struct PLStream_struct *) plsc,
             PLESC_DI, NULL );
         plrestore_locale( save_locale );
     }
 
-    if ( !( plsc->difilt & PLDI_DEV ))
+    if ( !( plsc->difilt & PLDI_DEV ) )
         return;
 
 /* Calculate aspect ratio of physical device */
@@ -1937,12 +1937,12 @@ calc_diori( void )
     if ( plsc->dev_di )
     {
         char *save_locale = plsave_set_locale();
-        ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
+        ( *plsc->dispatch_table->pl_esc )( (struct PLStream_struct *) plsc,
             PLESC_DI, NULL );
         plrestore_locale( save_locale );
     }
 
-    if ( !( plsc->difilt & PLDI_ORI ))
+    if ( !( plsc->difilt & PLDI_ORI ) )
         return;
 
 /* Center point of rotation */
@@ -1971,7 +1971,7 @@ calc_diori( void )
     else
         plsc->aspori = ( aspect * cost + sint ) / ( aspect * sint + cost );
 
-    if ( !( plsc->difilt & PLDI_DEV ))
+    if ( !( plsc->difilt & PLDI_DEV ) )
     {
         plsc->difilt |= PLDI_DEV;
         setdef_didev();
@@ -2067,9 +2067,9 @@ calc_dimap()
     PLINT pxmin, pxmax, pymin, pymax;
     PLFLT dimxlen, dimylen, pxlen, pylen;
 
-    if (( plsc->dimxmin == plsc->phyxmi ) && ( plsc->dimxmax == plsc->phyxma ) &&
-        ( plsc->dimymin == plsc->phyymi ) && ( plsc->dimymax == plsc->phyyma ) &&
-        ( plsc->dimxpmm == plsc->xpmm ) && ( plsc->dimypmm == plsc->ypmm ))
+    if ( ( plsc->dimxmin == plsc->phyxmi ) && ( plsc->dimxmax == plsc->phyxma ) &&
+         ( plsc->dimymin == plsc->phyymi ) && ( plsc->dimymax == plsc->phyyma ) &&
+         ( plsc->dimxpmm == plsc->xpmm ) && ( plsc->dimypmm == plsc->ypmm ) )
     {
         plsc->difilt &= ~PLDI_MAP;
         return;
@@ -2112,7 +2112,7 @@ c_plflush( void )
     if ( plsc->dev_flush )
     {
         char *save_locale = plsave_set_locale();
-        ( *plsc->dispatch_table->pl_esc )((struct PLStream_struct *) plsc,
+        ( *plsc->dispatch_table->pl_esc )( (struct PLStream_struct *) plsc,
             PLESC_FLUSH, NULL );
         plrestore_locale( save_locale );
     }
@@ -2227,7 +2227,7 @@ c_plinit( void )
     {
         if ( plsc->program )
         {
-            if (( plsc->plwindow = (char *) malloc((size_t) ( 1 + strlen( plsc->program )) * sizeof ( char ))) == NULL )
+            if ( ( plsc->plwindow = (char *) malloc( (size_t) ( 1 + strlen( plsc->program ) ) * sizeof ( char ) ) ) == NULL )
             {
                 plexit( "plinit: Insufficient memory" );
             }
@@ -2235,7 +2235,7 @@ c_plinit( void )
         }
         else
         {
-            if (( plsc->plwindow = (char *) malloc((size_t) 7 * sizeof ( char ))) == NULL )
+            if ( ( plsc->plwindow = (char *) malloc( (size_t) 7 * sizeof ( char ) ) ) == NULL )
             {
                 plexit( "plinit: Insufficient memory" );
             }
@@ -2276,7 +2276,7 @@ c_plinit( void )
     }
 /* Case of 90 deg rotations with -freeaspect (this is also how portraite
  * mode is implemented for the drivers that honor -portrait). */
-    else if ( plsc->freeaspect && ABS( cos( plsc->diorot * PI / 2. )) <= 1.e-5 )
+    else if ( plsc->freeaspect && ABS( cos( plsc->diorot * PI / 2. ) ) <= 1.e-5 )
     {
         lx               = plsc->phyxlen / plsc->xpmm;
         ly               = plsc->phyylen / plsc->ypmm;
@@ -2458,7 +2458,7 @@ c_plend1( void )
     /* Close qsastime library for this stream that was opened by
      * plconfigtime call in plinit. */
 
-    closeqsas( &( plsc->qsasconfig ));
+    closeqsas( &( plsc->qsasconfig ) );
 
 /* Free malloc'ed stream if not in initial stream, else clear it out */
 
@@ -2470,7 +2470,7 @@ c_plend1( void )
     }
     else
     {
-        memset((char *) pls[ipls], 0, sizeof ( PLStream ));
+        memset( (char *) pls[ipls], 0, sizeof ( PLStream ) );
     }
 }
 
@@ -2495,11 +2495,11 @@ c_plsstrm( PLINT strm )
         ipls = strm;
         if ( pls[ipls] == NULL )
         {
-            pls[ipls] = (PLStream *) malloc((size_t) sizeof ( PLStream ));
+            pls[ipls] = (PLStream *) malloc( (size_t) sizeof ( PLStream ) );
             if ( pls[ipls] == NULL )
                 plexit( "plsstrm: Out of memory." );
 
-            memset((char *) pls[ipls], 0, sizeof ( PLStream ));
+            memset( (char *) pls[ipls], 0, sizeof ( PLStream ) );
         }
         plsc       = pls[ipls];
         plsc->ipls = ipls;
@@ -2644,7 +2644,7 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
     plsc->plbuf_buffer_size = plsr->plbuf_buffer_size;
     plsc->plbuf_top         = plsr->plbuf_top;
     plsc->plbuf_readpos     = plsr->plbuf_readpos;
-    if (( plsc->plbuf_buffer = malloc( plsc->plbuf_buffer_size )) == NULL )
+    if ( ( plsc->plbuf_buffer = malloc( plsc->plbuf_buffer_size ) ) == NULL )
         plexit( "plcpstrm: Error allocating plot buffer." );
     memcpy( plsc->plbuf_buffer, plsr->plbuf_buffer, plsr->plbuf_top );
 #endif
@@ -2663,7 +2663,7 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
 
 /* Map device coordinates */
 
-    if ( !( flags & 0x01 ))
+    if ( !( flags & 0x01 ) )
     {
         pldebug( "plcpstrm", "mapping parameters: %d %d %d %d %f %f\n",
             plsr->phyxmi, plsr->phyxma, plsr->phyymi, plsr->phyyma,
@@ -2681,9 +2681,9 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
     plsc->icol0 = plsr->icol0;
     plsc->ncol0 = plsr->ncol0;
     if ( plsc->cmap0 != NULL )
-        free((void *) plsc->cmap0 );
+        free( (void *) plsc->cmap0 );
 
-    if (( plsc->cmap0 = (PLColor *) calloc( 1, plsc->ncol0 * sizeof ( PLColor ))) == NULL )
+    if ( ( plsc->cmap0 = (PLColor *) calloc( 1, plsc->ncol0 * sizeof ( PLColor ) ) ) == NULL )
     {
         plexit( "c_plcpstrm: Insufficient memory" );
     }
@@ -2696,9 +2696,9 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
     plsc->icol1 = plsr->icol1;
     plsc->ncol1 = plsr->ncol1;
     if ( plsc->cmap1 != NULL )
-        free((void *) plsc->cmap1 );
+        free( (void *) plsc->cmap1 );
 
-    if (( plsc->cmap1 = (PLColor *) calloc( 1, plsc->ncol1 * sizeof ( PLColor ))) == NULL )
+    if ( ( plsc->cmap1 = (PLColor *) calloc( 1, plsc->ncol1 * sizeof ( PLColor ) ) ) == NULL )
     {
         plexit( "c_plcpstrm: Insufficient memory" );
     }
@@ -2774,7 +2774,7 @@ PLDLLIMPEXP int plInBuildTree()
                 }
                 else
                 {
-                    if ( strncmp( builddir, currdir, strlen( builddir )) == 0 )
+                    if ( strncmp( builddir, currdir, strlen( builddir ) ) == 0 )
                     {
                         inBuildTree = 1;
                     }
@@ -2882,7 +2882,7 @@ plInitDispatchTable()
 /* Loop over each entry in the drivers directory */
 
     pldebug( "plInitDispatchTable", "Scanning dyndrivers dir\n" );
-    while (( entry = readdir( dp_drvdir )) != NULL )
+    while ( ( entry = readdir( dp_drvdir ) ) != NULL )
     {
         char* name = entry->d_name;
         int len    = strlen( name ) - 3;
@@ -2891,7 +2891,7 @@ plInitDispatchTable()
             "Consider file %s\n", name );
 
 /* Only consider entries that have the ".rc" suffix */
-        if (( len > 0 ) && ( strcmp( name + len, ".rc" ) == 0 ))
+        if ( ( len > 0 ) && ( strcmp( name + len, ".rc" ) == 0 ) )
         {
             char path[PLPLOT_MAX_PATH];
             FILE * fd;
@@ -2935,8 +2935,8 @@ plInitDispatchTable()
 #endif
 
 /* Allocate space for the dispatch table. */
-    if (( dispatch_table = (PLDispatchTable **)
-                           malloc(( nplstaticdevices + npldynamicdevices ) * sizeof ( PLDispatchTable * ))) == NULL )
+    if ( ( dispatch_table = (PLDispatchTable **)
+                            malloc( ( nplstaticdevices + npldynamicdevices ) * sizeof ( PLDispatchTable * ) ) ) == NULL )
     {
 #ifdef ENABLE_DYNDRIVERS
         fclose( fp_drvdb );
@@ -2951,7 +2951,7 @@ plInitDispatchTable()
 
     for ( n = 0; n < nplstaticdevices; n++ )
     {
-        if (( dispatch_table[n] = (PLDispatchTable *) malloc( sizeof ( PLDispatchTable ))) == NULL )
+        if ( ( dispatch_table[n] = (PLDispatchTable *) malloc( sizeof ( PLDispatchTable ) ) ) == NULL )
         {
 #ifdef ENABLE_DYNDRIVERS
             fclose( fp_drvdb );
@@ -2968,8 +2968,8 @@ plInitDispatchTable()
 /* Allocate space for the device and driver specs.  We may not use all of
  * these driver descriptors, but we obviously won't need more drivers than
  * devices... */
-    if ((( loadable_device_list = malloc( npldynamicdevices * sizeof ( PLLoadableDevice ))) == NULL ) ||
-        (( loadable_driver_list = malloc( npldynamicdevices * sizeof ( PLLoadableDriver ))) == NULL ))
+    if ( ( ( loadable_device_list = malloc( npldynamicdevices * sizeof ( PLLoadableDevice ) ) ) == NULL ) ||
+         ( ( loadable_driver_list = malloc( npldynamicdevices * sizeof ( PLLoadableDriver ) ) ) == NULL ) )
     {
         fclose( fp_drvdb );
         plexit( "plInitDispatchTable: Insufficient memory" );
@@ -3000,7 +3000,7 @@ plInitDispatchTable()
 
         n = npldrivers++;
 
-        if (( dispatch_table[n] = malloc( sizeof ( PLDispatchTable ))) == NULL )
+        if ( ( dispatch_table[n] = malloc( sizeof ( PLDispatchTable ) ) ) == NULL )
         {
             fclose( fp_drvdb );
             plexit( "plInitDispatchTable: Insufficient memory" );
@@ -3098,9 +3098,9 @@ plSelectDev()
         length = strlen( plsc->DevName );
         for ( i = 0; i < npldrivers; i++ )
         {
-            if (( *plsc->DevName == *dispatch_table[i]->pl_DevName ) &&
-                ( strncmp( plsc->DevName,
-                      dispatch_table[i]->pl_DevName, length ) == 0 ))
+            if ( ( *plsc->DevName == *dispatch_table[i]->pl_DevName ) &&
+                 ( strncmp( plsc->DevName,
+                       dispatch_table[i]->pl_DevName, length ) == 0 ) )
                 break;
         }
         if ( i < npldrivers )
@@ -3150,7 +3150,7 @@ plSelectDev()
         for ( i = 0; i < npldrivers; i++ )
         {
             if ( !strncmp( response, dispatch_table[i]->pl_DevName,
-                     (unsigned int) length ))
+                     (unsigned int) length ) )
                 break;
         }
         if ( i < npldrivers )
@@ -3159,7 +3159,7 @@ plSelectDev()
         }
         else
         {
-            if (( dev = atoi( response )) < 1 )
+            if ( ( dev = atoi( response ) ) < 1 )
             {
                 fprintf( stdout, "\nInvalid device: %s", response );
                 dev = 0;
@@ -3245,7 +3245,7 @@ plLoadDriver( void )
     if ( !driver->dlhand )
     {
         pldebug( "plLoadDriver", "lt_dlopenext failed because of "
-            "the following reason:\n%s\n", lt_dlerror());
+            "the following reason:\n%s\n", lt_dlerror() );
         fprintf( stderr, "Unable to load driver: %s.\n", driver->drvnam );
         plexit( "Unable to load driver" );
     }
@@ -3548,7 +3548,7 @@ plsError( PLINT *errcode, char *errmsg )
 void
 c_plsori( PLINT ori )
 {
-    plsdiori((PLFLT) ori );
+    plsdiori( (PLFLT) ori );
 }
 
 /*
@@ -3716,9 +3716,9 @@ plP_hex2fci( unsigned char hexdigit, unsigned char hexpower, PLUNICODE *pfci )
 {
     PLUNICODE mask;
     hexpower = hexpower & PL_FCI_HEXPOWER_MASK;
-    mask     = ~(((PLUNICODE) PL_FCI_HEXDIGIT_MASK ) << ((PLUNICODE) 4 * hexpower ));
+    mask     = ~( ( (PLUNICODE) PL_FCI_HEXDIGIT_MASK ) << ( (PLUNICODE) 4 * hexpower ) );
     *pfci    = *pfci & mask;
-    mask     = (((PLUNICODE) ( hexdigit & PL_FCI_HEXDIGIT_MASK )) << ( 4 * hexpower ));
+    mask     = ( ( (PLUNICODE) ( hexdigit & PL_FCI_HEXDIGIT_MASK ) ) << ( 4 * hexpower ) );
     *pfci    = *pfci | mask;
 }
 
@@ -3729,9 +3729,9 @@ plP_fci2hex( PLUNICODE fci, unsigned char *phexdigit, unsigned char hexpower )
 {
     PLUNICODE mask;
     hexpower   = hexpower & PL_FCI_HEXPOWER_MASK;
-    mask       = (((PLUNICODE) PL_FCI_HEXPOWER_MASK ) << ((PLUNICODE) ( 4 * hexpower )));
-    *phexdigit = (unsigned char) (( fci & mask ) >>
-                                  ((PLUNICODE) ( 4 * hexpower )));
+    mask       = ( ( (PLUNICODE) PL_FCI_HEXPOWER_MASK ) << ( (PLUNICODE) ( 4 * hexpower ) ) );
+    *phexdigit = (unsigned char) ( ( fci & mask ) >>
+                                   ( (PLUNICODE) ( 4 * hexpower ) ) );
 }
 
 /* Get the current library version number */
@@ -4103,8 +4103,8 @@ PLINT plP_checkdriverinit( char *names )
     char  *tok = NULL;
     PLINT ret  = 0; /* set up return code to 0, the value if no devices match*/
 
-    buff = (char *) malloc((size_t) PL_NSTREAMS * 8 ); /* Allocate enough memory for 8
-                                                        * characters for each possible stream */
+    buff = (char *) malloc( (size_t) PL_NSTREAMS * 8 ); /* Allocate enough memory for 8
+                                                         * characters for each possible stream */
 
     if ( buff != NULL )
     {
@@ -4112,7 +4112,7 @@ PLINT plP_checkdriverinit( char *names )
         plP_getinitdriverlist( buff );          /* Get the list of initialised devices */
 
         for ( tok = strtok( buff, " ," );       /* Check each device against the "name" */
-              tok; tok = strtok( 0, " ," ))     /* supplied to the subroutine   */
+              tok; tok = strtok( 0, " ," ) )    /* supplied to the subroutine   */
         {
             if ( strstr( names, tok ) != NULL ) /* Check to see if the device has been initialised */
             {
@@ -4199,8 +4199,8 @@ plP_image( PLFLT *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT
     {
         PLINT clpxmi, clpxma, clpymi, clpyma;
 
-        if ((( xscl = (short *) malloc( nx * ny * sizeof ( short ))) == NULL ) ||
-            (( yscl = (short *) malloc( nx * ny * sizeof ( short ))) == NULL ))
+        if ( ( ( xscl = (short *) malloc( nx * ny * sizeof ( short ) ) ) == NULL ) ||
+             ( ( yscl = (short *) malloc( nx * ny * sizeof ( short ) ) ) == NULL ) )
         {
             plexit( "plP_image: Insufficient memory" );
         }

@@ -190,7 +190,7 @@ void plD_init_pdf( PLStream *pls )
     pdfdev* dev;
 
     /* allocate memory for the device storage */
-    dev = (pdfdev*) calloc( 1, sizeof ( pdfdev ));
+    dev = (pdfdev*) calloc( 1, sizeof ( pdfdev ) );
     if ( dev == NULL )
         plexit( "Insufficient memory\n" );
     pls->dev = (void*) dev;
@@ -238,10 +238,10 @@ void plD_init_pdf( PLStream *pls )
 
     /* Set up physical limits of plotting device (in drawing units) */
     plP_setphy( 0, (PLINT) ( CANVAS_WIDTH * DEVICE_PIXELS_PER_INCH ),
-        0, (PLINT) ( CANVAS_HEIGHT * DEVICE_PIXELS_PER_INCH ));
+        0, (PLINT) ( CANVAS_HEIGHT * DEVICE_PIXELS_PER_INCH ) );
 
     /* Set the number of pixels per mm */
-    plP_setpxl((PLFLT) DEVICE_PIXELS_PER_MM, (PLFLT) DEVICE_PIXELS_PER_MM );
+    plP_setpxl( (PLFLT) DEVICE_PIXELS_PER_MM, (PLFLT) DEVICE_PIXELS_PER_MM );
 
     /* If portrait mode is specified, then set up an additional rotation
      * transformation with aspect ratio allowed to adjust via freeaspect.
@@ -251,7 +251,7 @@ void plD_init_pdf( PLStream *pls )
      * from portrait.) */
     if ( pls->portrait )
     {
-        plsdiori((PLFLT) ( 4 - ORIENTATION ));
+        plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
         pls->freeaspect = 1;
     }
 
@@ -273,19 +273,19 @@ void plD_init_pdf( PLStream *pls )
     dev->pageSize = HPDF_PAGE_SIZE_EOF;
     if ( pageSize == NULL )
         dev->pageSize = HPDF_PAGE_SIZE_A4;
-    else if ( !stricmp( pageSize, "letter" ))
+    else if ( !stricmp( pageSize, "letter" ) )
         dev->pageSize = HPDF_PAGE_SIZE_LETTER;
-    else if ( !stricmp( pageSize, "A3" ))
+    else if ( !stricmp( pageSize, "A3" ) )
         dev->pageSize = HPDF_PAGE_SIZE_A3;
-    else if ( !stricmp( pageSize, "A4" ))
+    else if ( !stricmp( pageSize, "A4" ) )
         dev->pageSize = HPDF_PAGE_SIZE_A4;
-    else if ( !stricmp( pageSize, "A5" ))
+    else if ( !stricmp( pageSize, "A5" ) )
         dev->pageSize = HPDF_PAGE_SIZE_A5;
 
     if ( dev->pageSize == HPDF_PAGE_SIZE_EOF )
         plexit( "ERROR: Unknown page size. Allowed strings are: letter, A3, A4, A5.\n" );
 
-    if ( setjmp( env ))
+    if ( setjmp( env ) )
     {
         HPDF_Free( dev->pdf );
         plexit( "ERROR: ???\n" );
@@ -314,14 +314,14 @@ void plD_bop_pdf( PLStream *pls )
     /* Determine scaling parameters. */
     width       = HPDF_Page_GetWidth( dev->page );  /* in pixels/dots */
     height      = HPDF_Page_GetHeight( dev->page ); /* in pixels/dots */
-    dev->scalex = (PLFLT) ( width / ( CANVAS_WIDTH * DEVICE_PIXELS_PER_INCH ));
-    dev->scaley = (PLFLT) ( height / ( CANVAS_HEIGHT * DEVICE_PIXELS_PER_INCH ));
+    dev->scalex = (PLFLT) ( width / ( CANVAS_WIDTH * DEVICE_PIXELS_PER_INCH ) );
+    dev->scaley = (PLFLT) ( height / ( CANVAS_HEIGHT * DEVICE_PIXELS_PER_INCH ) );
     HPDF_Page_Concat( dev->page, (HPDF_REAL) ( dev->scalex ), 0, 0, (HPDF_REAL) ( dev->scaley ), 0, 0 );
 
     /* Set the background by drawing a rectangle that is the size of
      * of the canvas and filling it with the background color. */
     HPDF_Page_SetRGBFill( dev->page, (HPDF_REAL) ( pls->cmap0[0].r / 255.0 ),
-        (HPDF_REAL) ( pls->cmap0[0].g / 255.0 ), (HPDF_REAL) ( pls->cmap0[0].b / 255.0 ));
+        (HPDF_REAL) ( pls->cmap0[0].g / 255.0 ), (HPDF_REAL) ( pls->cmap0[0].b / 255.0 ) );
     width  /= (HPDF_REAL) ( dev->scalex );
     height /= (HPDF_REAL) ( dev->scaley );
     HPDF_Page_MoveTo( dev->page, (HPDF_REAL) 0.0, (HPDF_REAL) 0.0 );
@@ -449,13 +449,13 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
     pdfdev* dev = (pdfdev*) pls->dev;
     PLINT i;
 
-    HPDF_Page_SetLineWidth( dev->page, (HPDF_REAL) ( pls->width ));
+    HPDF_Page_SetLineWidth( dev->page, (HPDF_REAL) ( pls->width ) );
     HPDF_Page_SetLineCap( dev->page, HPDF_ROUND_END );
     HPDF_Page_SetLineJoin( dev->page, HPDF_ROUND_JOIN );
     HPDF_Page_SetRGBStroke( dev->page, (HPDF_REAL) ( pls->curcolor.r / 255.0 ),
-        (HPDF_REAL) ( pls->curcolor.g / 255.0 ), (HPDF_REAL) ( pls->curcolor.b / 255.0 ));
+        (HPDF_REAL) ( pls->curcolor.g / 255.0 ), (HPDF_REAL) ( pls->curcolor.b / 255.0 ) );
     HPDF_Page_SetRGBFill( dev->page, (HPDF_REAL) ( pls->curcolor.r / 255.0 ),
-        (HPDF_REAL) ( pls->curcolor.g / 255.0 ), (HPDF_REAL) ( pls->curcolor.b / 255.0 ));
+        (HPDF_REAL) ( pls->curcolor.g / 255.0 ), (HPDF_REAL) ( pls->curcolor.b / 255.0 ) );
 
     HPDF_Page_MoveTo( dev->page, (HPDF_REAL) xa[0], (HPDF_REAL) ya[0] );
     for ( i = 1; i < npts; i++ )
@@ -553,11 +553,11 @@ void PSSetFont( pdfdev* dev, PLUNICODE fci )
     /* convert the fci to Base14/Type1 font information */
     font = plP_FCI2FontName( fci, Type1Lookup, N_Type1Lookup );
 
-    if ( !( dev->m_font = HPDF_GetFont( dev->pdf, font, NULL )))
+    if ( !( dev->m_font = HPDF_GetFont( dev->pdf, font, NULL ) ) )
         plexit( "ERROR: Couldn't open font\n" );
     HPDF_Page_SetFontAndSize( dev->page, dev->m_font, dev->fontSize * dev->fontScale );
 
-    if ( !strcmp( font, "Symbol" ))
+    if ( !strcmp( font, "Symbol" ) )
     {
         dev->nlookup = number_of_entries_in_unicode_to_symbol_table;
         dev->lookup  = unicode_to_symbol_lookup_table;
@@ -727,9 +727,9 @@ void process_string( PLStream* pls, EscText* args )
     HPDF_Page_Concat( dev->page, cos_rot, sin_rot,
         -cos_rot * sin_shear - sin_rot * cos_shear,
         -sin_rot * sin_shear + cos_rot * cos_shear,
-        (HPDF_REAL) ( args->x ), (HPDF_REAL) ( args->y ));
+        (HPDF_REAL) ( args->x ), (HPDF_REAL) ( args->y ) );
     HPDF_Page_Concat( dev->page, (HPDF_REAL) 1.0, (HPDF_REAL) 0.0, (HPDF_REAL) 0.0, (HPDF_REAL) 1.0,
-        (HPDF_REAL) ( -args->just * dev->textWidth ), (HPDF_REAL) ( -0.5 * dev->textHeight ));
+        (HPDF_REAL) ( -args->just * dev->textWidth ), (HPDF_REAL) ( -0.5 * dev->textHeight ) );
     PSDrawText( dev, args->unicode_array, args->unicode_array_len, 1 );
     HPDF_Page_GRestore( dev->page );
 }

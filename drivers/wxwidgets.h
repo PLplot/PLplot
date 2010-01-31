@@ -405,9 +405,9 @@ private:
     void OnPaint( wxPaintEvent& event );
     void OnChar( wxKeyEvent& event );
     void OnIdle( wxIdleEvent& event );
-    void OnErase( wxEraseEvent & WXUNUSED( event ));
-    void OnSize( wxSizeEvent & WXUNUSED( event ));
-    void OnMaximize( wxMaximizeEvent & WXUNUSED( event ));
+    void OnErase( wxEraseEvent & WXUNUSED( event ) );
+    void OnSize( wxSizeEvent & WXUNUSED( event ) );
+    void OnMaximize( wxMaximizeEvent & WXUNUSED( event ) );
     void OnMouse( wxMouseEvent& event );
     void Locate( void );
     void DrawCrosshair();
@@ -479,9 +479,9 @@ private:
         return new appname;                                          \
     }                                                                \
     wxAppInitializer                                                 \
-    wxAppInitializer((wxAppInitializerFunction) wxPLCreateApp );     \
+    wxAppInitializer( (wxAppInitializerFunction) wxPLCreateApp );    \
     DECLARE_PLAPP( appname )                                         \
-    appname & wxPLGetApp() { return *wx_static_cast( appname *, wxApp::GetInstance()); }
+    appname & wxPLGetApp() { return *wx_static_cast( appname *, wxApp::GetInstance() ); }
 
 #define DECLARE_PLAPP( appname )    extern appname &wxPLGetApp();
 

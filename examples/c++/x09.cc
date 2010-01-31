@@ -128,10 +128,10 @@ x09::x09( int argc, const char **argv )
 
     for ( i = 0; i < XPTS; i++ )
     {
-        xx = (PLFLT) ( i - ( XPTS / 2 )) / (PLFLT) ( XPTS / 2 );
+        xx = (PLFLT) ( i - ( XPTS / 2 ) ) / (PLFLT) ( XPTS / 2 );
         for ( j = 0; j < YPTS; j++ )
         {
-            yy      = (PLFLT) ( j - ( YPTS / 2 )) / (PLFLT) ( YPTS / 2 ) - 1.0;
+            yy      = (PLFLT) ( j - ( YPTS / 2 ) ) / (PLFLT) ( YPTS / 2 ) - 1.0;
             z[i][j] = xx * xx - yy * yy;
             w[i][j] = 2 * xx * yy;
         }
@@ -153,7 +153,7 @@ x09::x09( int argc, const char **argv )
     {
         for ( j = 0; j < YPTS; j++ )
         {
-            mypltr((PLFLT) i, (PLFLT) j, &xx, &yy, NULL );
+            mypltr( (PLFLT) i, (PLFLT) j, &xx, &yy, NULL );
 
             argx    = xx * M_PI / 2;
             argy    = yy * M_PI / 2;
@@ -295,7 +295,7 @@ void x09::polar()
     // Perimeter
     for ( i = 0; i < PERIMETERPTS; i++ )
     {
-        t     = ( 2. * M_PI / ( PERIMETERPTS - 1 )) * (PLFLT) i;
+        t     = ( 2. * M_PI / ( PERIMETERPTS - 1 ) ) * (PLFLT) i;
         px[i] = cos( t );
         py[i] = sin( t );
     }
@@ -308,7 +308,7 @@ void x09::polar()
         r = i / (PLFLT) ( RPTS - 1 );
         for ( j = 0; j < THETAPTS; j++ )
         {
-            theta           = ( 2. * M_PI / (PLFLT) ( THETAPTS - 1 )) * (PLFLT) j;
+            theta           = ( 2. * M_PI / (PLFLT) ( THETAPTS - 1 ) ) * (PLFLT) j;
             cgrid2.xg[i][j] = r * cos( theta );
             cgrid2.yg[i][j] = r * sin( theta );
             z[i][j]         = r;
@@ -368,7 +368,7 @@ const void x09::potential()
         r = 0.5 + (PLFLT) i;
         for ( j = 0; j < PTHETAPTS; j++ )
         {
-            theta           = ( 2. * M_PI / (PLFLT) ( PTHETAPTS - 1 )) * ( 0.5 + (PLFLT) j );
+            theta           = ( 2. * M_PI / (PLFLT) ( PTHETAPTS - 1 ) ) * ( 0.5 + (PLFLT) j );
             cgrid2.xg[i][j] = r * cos( theta );
             cgrid2.yg[i][j] = r * sin( theta );
         }
@@ -412,10 +412,10 @@ const void x09::potential()
     {
         for ( j = 0; j < PTHETAPTS; j++ )
         {
-            div1    = sqrt( pow( cgrid2.xg[i][j] - d1, 2 ) + pow( cgrid2.yg[i][j] - d1, 2 ) + pow( eps, 2 ));
-            div1i   = sqrt( pow( cgrid2.xg[i][j] - d1i, 2 ) + pow( cgrid2.yg[i][j] - d1i, 2 ) + pow( eps, 2 ));
-            div2    = sqrt( pow( cgrid2.xg[i][j] - d2, 2 ) + pow( cgrid2.yg[i][j] + d2, 2 ) + pow( eps, 2 ));
-            div2i   = sqrt( pow( cgrid2.xg[i][j] - d2i, 2 ) + pow( cgrid2.yg[i][j] + d2i, 2 ) + pow( eps, 2 ));
+            div1    = sqrt( pow( cgrid2.xg[i][j] - d1, 2 ) + pow( cgrid2.yg[i][j] - d1, 2 ) + pow( eps, 2 ) );
+            div1i   = sqrt( pow( cgrid2.xg[i][j] - d1i, 2 ) + pow( cgrid2.yg[i][j] - d1i, 2 ) + pow( eps, 2 ) );
+            div2    = sqrt( pow( cgrid2.xg[i][j] - d2, 2 ) + pow( cgrid2.yg[i][j] + d2, 2 ) + pow( eps, 2 ) );
+            div2i   = sqrt( pow( cgrid2.xg[i][j] - d2i, 2 ) + pow( cgrid2.yg[i][j] + d2i, 2 ) + pow( eps, 2 ) );
             z[i][j] = q1 / div1 + q1i / div1i + q2 / div2 + q2i / div2i;
         }
     }
@@ -434,7 +434,7 @@ const void x09::potential()
     nlevelpos = 0;
     for ( i = 0; i < PNLEVEL; i++ )
     {
-        clevel = zmin + ((PLFLT) i + 0.5 ) * dz;
+        clevel = zmin + ( (PLFLT) i + 0.5 ) * dz;
         if ( clevel <= 0. )
             clevelneg[nlevelneg++] = clevel;
         else
@@ -473,7 +473,7 @@ const void x09::potential()
     // Draw outer boundary
     for ( i = 0; i < PPERIMETERPTS; i++ )
     {
-        t     = ( 2. * M_PI / ( PPERIMETERPTS - 1 )) * (PLFLT) i;
+        t     = ( 2. * M_PI / ( PPERIMETERPTS - 1 ) ) * (PLFLT) i;
         px[i] = x0 + rmax*cos( t );
         py[i] = y0 + rmax*sin( t );
     }

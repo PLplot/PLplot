@@ -62,9 +62,9 @@ void geolocation_labeler( PLINT axis, PLFLT value, char* label, PLINT length, PL
 
     if ( axis == PL_Y_AXIS && value == 0.0 )
         /* A special case for the equator */
-        strcpy( label, toStringz( direction_label ));
+        strcpy( label, toStringz( direction_label ) );
     else
-        strcpy( label, toStringz( format( "%.0f%s", fabs( label_val ), direction_label )));
+        strcpy( label, toStringz( format( "%.0f%s", fabs( label_val ), direction_label ) ) );
 }
 }
 
@@ -77,7 +77,7 @@ PLFLT normalize_longitude( PLFLT lon )
         return ( lon );
     else
     {
-        PLFLT times = floor(( fabs( lon ) + 180.0 ) / 360.0 );
+        PLFLT times = floor( ( fabs( lon ) + 180.0 ) / 360.0 );
         if ( lon < 0.0 )
             return ( lon + 360.0 * times );
         else

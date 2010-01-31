@@ -52,7 +52,7 @@ int main( char[][] args )
         pljoin( 0.0, 0.0, dx, dy );
 
         /* Write labels for angle */
-        string text = format( "%d", lrint( theta ));
+        string text = format( "%d", lrint( theta ) );
 
         PLFLT  offset;
         if ( theta < 9.99 )
@@ -75,7 +75,7 @@ int main( char[][] args )
     x.length = y.length = 361;
     for ( size_t i = 0; i < x.length; i++ )
     {
-        r    = sin( dtr * ( 5 * i ));
+        r    = sin( dtr * ( 5 * i ) );
         x[i] = x0[i] * r;
         y[i] = y0[i] * r;
     }

@@ -266,13 +266,13 @@ void plD_init_aqt( PLStream *pls )
     {
         windowXSize = AQT_Default_X;
         windowYSize = AQT_Default_Y;
-        plP_setphy((PLINT) 0, (PLINT) ( AQT_Default_X / SCALE ), (PLINT) 0, (PLINT) ( AQT_Default_Y / SCALE ));
+        plP_setphy( (PLINT) 0, (PLINT) ( AQT_Default_X / SCALE ), (PLINT) 0, (PLINT) ( AQT_Default_Y / SCALE ) );
     }
     else
     {
         windowXSize = pls->xlength;
         windowYSize = pls->ylength;
-        plP_setphy((PLINT) 0, (PLINT) ( pls->xlength / SCALE ), (PLINT) 0, (PLINT) ( pls->ylength / SCALE ));
+        plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / SCALE ), (PLINT) 0, (PLINT) ( pls->ylength / SCALE ) );
     }
 
     /* check font environment variables & update font table as necessary */
@@ -327,8 +327,8 @@ void plD_bop_aqt( PLStream *pls )
 
 void plD_line_aqt( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
-    [adapter moveToPoint : NSMakePoint((float) x1a * SCALE, (float) y1a * SCALE )];
-    [adapter addLineToPoint : NSMakePoint((float) x2a * SCALE, (float) y2a * SCALE )];
+    [adapter moveToPoint : NSMakePoint( (float) x1a * SCALE, (float) y1a * SCALE )];
+    [adapter addLineToPoint : NSMakePoint( (float) x2a * SCALE, (float) y2a * SCALE )];
 }
 
 /*---------------------------------------------------------------------
@@ -505,8 +505,8 @@ void get_cursor( PLStream *pls, PLGraphicsIn *gin )
         gin->button = button;
         gin->pX     = x;
         gin->pY     = y;
-        gin->dX     = (PLFLT) x / ((PLFLT) ( pls->xlength ));
-        gin->dY     = (PLFLT) y / ((PLFLT) ( pls->ylength ));
+        gin->dX     = (PLFLT) x / ( (PLFLT) ( pls->xlength ) );
+        gin->dY     = (PLFLT) y / ( (PLFLT) ( pls->ylength ) );
     }
     else                /* just return zeroes if we did not */
     {
@@ -601,7 +601,7 @@ void proc_str( PLStream *pls, EscText *args )
     if ( hasShear )
     {
         [adapter addLabel : str
-         atPoint : NSMakePoint((float) args->x * SCALE, (float) args->y * SCALE )
+         atPoint : NSMakePoint( (float) args->x * SCALE, (float) args->y * SCALE )
          angle : angle
          shearAngle : shear
          align : ( jst | ref )];
@@ -609,7 +609,7 @@ void proc_str( PLStream *pls, EscText *args )
     else
     {
         [adapter addLabel : str
-         atPoint : NSMakePoint((float) args->x * SCALE, (float) args->y * SCALE )
+         atPoint : NSMakePoint( (float) args->x * SCALE, (float) args->y * SCALE )
          angle : angle
          align : ( jst | ref )];
     }
@@ -699,14 +699,14 @@ NSMutableAttributedString  * create_string( const PLUNICODE *ucs4, int ucs4_len,
                     updown--;
                     [str addAttribute : @ "NSSuperScript"
                      value :[NSNumber numberWithInt : updown]
-                     range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ))];
+                     range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ) )];
                 }
                 if ( ucs4[i] == (PLUNICODE) 'u' )       /* Superscript */
                 {
                     updown++;
                     [str addAttribute : @ "NSSuperScript"
                      value :[NSNumber numberWithInt : updown]
-                     range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ))];
+                     range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ) )];
                 }
                 i++;
             }
@@ -720,7 +720,7 @@ NSMutableAttributedString  * create_string( const PLUNICODE *ucs4, int ucs4_len,
 
     /* trim string to appropriate final length */
 
-    [str deleteCharactersInRange : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ))];
+    [str deleteCharactersInRange : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ) )];
 
     return str;
 }
@@ -749,10 +749,10 @@ void set_font_and_size( NSMutableAttributedString * str, PLUNICODE fci, PLFLT fo
 
     [str addAttribute : @ "AQTFontname"
      value :[NSString stringWithCString : font]
-     range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ))];
+     range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ) )];
     [str addAttribute : @ "AQTFontsize"
      value :[NSNumber numberWithFloat : font_height]
-     range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ))];
+     range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ) )];
 }
 
 /*---------------------------------------------------------------------
@@ -774,7 +774,7 @@ void check_font_environment_variables( void )
 
     for ( i = 0; i < AQT_N_FontLookup; i++ )
     {
-        if (( new_font = getenv( aqt_font_env_names[i] )) != NULL )
+        if ( ( new_font = getenv( aqt_font_env_names[i] ) ) != NULL )
         {
             /* If the user is just blindly following the suggestions in
              * the plplot examples then we might get a font name with

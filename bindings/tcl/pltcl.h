@@ -24,7 +24,7 @@ extern "C" {
 
 PLDLLIMPEXP_TCLTK int
 pltclMain( int argc, const char **argv, char *RcFileName,
-           int ( *AppInit )( Tcl_Interp *interp ));
+           int ( *AppInit )( Tcl_Interp *interp ) );
 
 /* tclAPI.c */
 /* Front-end to PLplot/Tcl API for use from Tcl commands (e.g. plframe). */

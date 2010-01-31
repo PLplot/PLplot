@@ -30,7 +30,7 @@ void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
     PLFLT       x0  = ( s.xmin + s.xmax ) * 0.5;
     PLFLT       y0  = ( s.ymin + s.ymax ) * 0.5;
     PLFLT       dy  = ( s.ymax - s.ymin ) * 0.5;
-    *tx = x0 + ( x0 - x ) * ( 1.0 - s.stretch * cos(( y - y0 ) / dy * PI * 0.5 ));
+    *tx = x0 + ( x0 - x ) * ( 1.0 - s.stretch * cos( ( y - y0 ) / dy * PI * 0.5 ) );
     *ty = y;
 }
 }
@@ -122,9 +122,9 @@ int main( char[][] args )
      * examples is being run from the test_c.sh script */
     int       width, height, num_col;
     PLFLT[][] img_f;
-    if ( read_img( "lena.pgm", img_f, width, height, num_col ))
+    if ( read_img( "lena.pgm", img_f, width, height, num_col ) )
     {
-        if ( read_img( "../lena.pgm", img_f, width, height, num_col ))
+        if ( read_img( "../lena.pgm", img_f, width, height, num_col ) )
         {
             fwritefln( stderr, "No such file" );
             plend();
@@ -154,7 +154,7 @@ int main( char[][] args )
         PLFLT yi = 280.0;
         PLFLT ye = 220.0;
 
-        if ( get_clip( xi, xe, yi, ye )) /* get selection rectangle */
+        if ( get_clip( xi, xe, yi, ye ) ) /* get selection rectangle */
         {
             plend();
             return 0;

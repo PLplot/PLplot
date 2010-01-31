@@ -36,8 +36,8 @@ void plD_esc_mem( PLStream *, PLINT, void * );
 
 #undef MAX
 #undef ABS
-#define MAX( a, b )    (( a > b ) ? a : b )
-#define ABS( a )       (( a < 0 ) ? -a : a )
+#define MAX( a, b )    ( ( a > b ) ? a : b )
+#define ABS( a )       ( ( a < 0 ) ? -a : a )
 
 #define MAX_INTENSITY    255
 
@@ -73,12 +73,12 @@ plD_init_mem( PLStream *pls )
      * have also been set by plsmem.  Verify this.
      */
 
-    if (( pls->phyxma == 0 ) || ( pls->dev == NULL ))
+    if ( ( pls->phyxma == 0 ) || ( pls->dev == NULL ) )
     {
         plexit( "Must call plsmem first to set user plotting area!" );
     }
 
-    plP_setpxl((PLFLT) 4, (PLFLT) 4 ); /* rough pixels/mm on *my* screen */
+    plP_setpxl( (PLFLT) 4, (PLFLT) 4 ); /* rough pixels/mm on *my* screen */
 
 
     pls->color     = 1;         /* Is a color device */
@@ -87,7 +87,7 @@ plD_init_mem( PLStream *pls )
     pls->nopause   = 1;         /* Don't pause between frames */
 }
 
-#define sign( a )    (( a < 0 ) ? -1 : (( a == 0 ) ? 0 : 1 ))
+#define sign( a )    ( ( a < 0 ) ? -1 : ( ( a == 0 ) ? 0 : 1 ) )
 
 /* Modified version of the ljii routine (see ljii.c) */
 void
@@ -108,8 +108,8 @@ plD_line_mem( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     y2 = ym - ( y2 - 0 );
 
     x1b    = x1, x2b = x2, y1b = y1, y2b = y2;
-    length = (PLFLT) sqrt((double)
-        (( x2b - x1b ) * ( x2b - x1b ) + ( y2b - y1b ) * ( y2b - y1b )));
+    length = (PLFLT) sqrt( (double)
+        ( ( x2b - x1b ) * ( x2b - x1b ) + ( y2b - y1b ) * ( y2b - y1b ) ) );
 
     if ( length == 0. )
         length = 1.;

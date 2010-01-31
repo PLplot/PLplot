@@ -939,7 +939,7 @@ public:
 
 // Sets an optional user exit handler.
 
-    void sexit( int ( *handler )( const char * ));
+    void sexit( int ( *handler )( const char * ) );
 
     // Transformation routines
 

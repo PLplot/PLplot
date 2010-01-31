@@ -38,18 +38,18 @@
 #define FT_Data    _FT_Data_
 
 #ifndef GetGValue
-#define GetGValue( rgb )    ((unsigned char) (((unsigned short) ( rgb )) >> 8 ))
+#define GetGValue( rgb )    ( (unsigned char) ( ( (unsigned short) ( rgb ) ) >> 8 ) )
 #endif
 #ifndef GetRValue
-#define GetRValue( rgb )    ((unsigned char) ( rgb ))
+#define GetRValue( rgb )    ( (unsigned char) ( rgb ) )
 #endif
 #ifndef GetBValue
-#define GetBValue( rgb )    ((unsigned char) (( rgb ) >> 16 ))
+#define GetBValue( rgb )    ( (unsigned char) ( ( rgb ) >> 16 ) )
 #endif
 #ifndef RGB
-#define RGB( r, g, b )      ((( r ) |         \
-                              (( g ) << 8 ) | \
-                              ( b ) << 16 ))
+#define RGB( r, g, b )      ( ( ( r ) |          \
+                                ( ( g ) << 8 ) | \
+                                ( b ) << 16 ) )
 #endif
 
 typedef void ( *plD_pixel_fp )( PLStream *, PLINT, PLINT );

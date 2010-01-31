@@ -104,15 +104,15 @@ main( int argc, char *argv[] )
 
 /* Allocate memory for all the arrays. */
 
-    x = (PLFLT *) malloc( N * sizeof ( PLFLT ));
+    x = (PLFLT *) malloc( N * sizeof ( PLFLT ) );
     if ( x == NULL )
         error( "Out of memory!" );
-    y = (PLFLT **) malloc( M * sizeof ( PLFLT * ));
+    y = (PLFLT **) malloc( M * sizeof ( PLFLT * ) );
     if ( y == NULL )
         error( "Out of memory!" );
     for ( i = 0; i < M; i++ )
     {
-        y[i] = (PLFLT *) malloc( N * sizeof ( PLFLT ));
+        y[i] = (PLFLT *) malloc( N * sizeof ( PLFLT ) );
         if ( y[i] == NULL )
             error( "Out of memory!" );
     }

@@ -130,7 +130,7 @@ main( int argc, const char **argv )
         fprintf( stderr, "\
 The client_<xxx> and -child options should not be used except via the\n\
 PLplot/Tk driver.\n\n(wish) " );
-        if ( strncmp( interp->result, helpmsg, strlen( helpmsg )))
+        if ( strncmp( interp->result, helpmsg, strlen( helpmsg ) ) )
             exit( 1 );
     }
 
@@ -143,7 +143,7 @@ PLplot/Tk driver.\n\n(wish) " );
 /* Call pltkMain() with original argc/argv list, to make sure -h is seen */
 /* Does not return until program exit */
 
-    exit( pltkMain( myargc, myargv, NULL, AppInit ));
+    exit( pltkMain( myargc, myargv, NULL, AppInit ) );
 }
 
 
@@ -258,13 +258,13 @@ plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 
 /* Best to check the syntax before proceeding */
 
-    if (( argc != 1 ) && ( argc != 2 ))
+    if ( ( argc != 1 ) && ( argc != 2 ) )
     {
         Tcl_AppendResult( interp, "wrong # args: should be \"", argv[0],
             " ?returnCode?\"", (char *) NULL );
         return TCL_ERROR;
     }
-    if (( argc != 1 ) && ( Tcl_GetInt( interp, argv[1], &value ) != TCL_OK ))
+    if ( ( argc != 1 ) && ( Tcl_GetInt( interp, argv[1], &value ) != TCL_OK ) )
     {
         Tcl_AppendResult( interp, "non-integer return code: \"", argv[1],
             "\"", (char *) NULL );

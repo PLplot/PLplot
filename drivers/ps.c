@@ -45,7 +45,7 @@
 
 /* Define macro to truncate small values to zero - prevents
  * printf printing -0.000 */
-#define TRMFLT( a )    (( fabs( a ) < 5.0e-4 ) ? 0.0 : ( a ))
+#define TRMFLT( a )    ( ( fabs( a ) < 5.0e-4 ) ? 0.0 : ( a ) )
 
 /* Device info */
 
@@ -191,9 +191,9 @@ ps_init( PLStream *pls )
 /* Allocate and initialize device-specific data */
 
     if ( pls->dev != NULL )
-        free((void *) pls->dev );
+        free( (void *) pls->dev );
 
-    pls->dev = calloc( 1, (size_t) sizeof ( PSDev ));
+    pls->dev = calloc( 1, (size_t) sizeof ( PSDev ) );
     if ( pls->dev == NULL )
         plexit( "ps_init: Out of memory." );
 
@@ -230,7 +230,7 @@ ps_init( PLStream *pls )
 
     if ( pls->portrait )
     {
-        plsdiori((PLFLT) ( 4 - ORIENTATION ));
+        plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
         pls->freeaspect = 1;
     }
 
@@ -242,7 +242,7 @@ ps_init( PLStream *pls )
 
     fprintf( OF, "%%%%Title: PLplot Graph\n" );
     fprintf( OF, "%%%%Creator: PLplot Version %s\n", VERSION );
-    fprintf( OF, "%%%%CreationDate: %s\n", ps_getdate());
+    fprintf( OF, "%%%%CreationDate: %s\n", ps_getdate() );
     fprintf( OF, "%%%%Pages: (atend)\n" );
     fprintf( OF, "%%%%EndComments\n\n" );
 
@@ -328,7 +328,7 @@ ps_init( PLStream *pls )
 
     fprintf( OF, "/lw %d def\n", (int) (
             ( pls->width < MIN_WIDTH ) ? DEF_WIDTH :
-            ( pls->width > MAX_WIDTH ) ? MAX_WIDTH : pls->width ));
+            ( pls->width > MAX_WIDTH ) ? MAX_WIDTH : pls->width ) );
 
 /* Setup user specified offsets, scales, sizes for clipping */
 
@@ -504,9 +504,9 @@ plD_bop_ps( PLStream *pls )
              pls->cmap0[0].g != 0xFF ||
              pls->cmap0[0].b != 0xFF )
         {
-            r = ((PLFLT) pls->cmap0[0].r ) / 255.;
-            g = ((PLFLT) pls->cmap0[0].g ) / 255.;
-            b = ((PLFLT) pls->cmap0[0].b ) / 255.;
+            r = ( (PLFLT) pls->cmap0[0].r ) / 255.;
+            g = ( (PLFLT) pls->cmap0[0].g ) / 255.;
+            b = ( (PLFLT) pls->cmap0[0].b ) / 255.;
 
             fprintf( OF, "B %.4f %.4f %.4f C F\n", r, g, b );
         }
@@ -593,22 +593,22 @@ plD_state_ps( PLStream *pls, PLINT op )
     case PLSTATE_COLOR0:
         if ( !pls->color )
         {
-            fprintf( OF, " S\n%.4f G", ( pls->icol0 ? 0.0 : 1.0 ));
+            fprintf( OF, " S\n%.4f G", ( pls->icol0 ? 0.0 : 1.0 ) );
             break;
         }
     /* else fallthrough */
     case PLSTATE_COLOR1:
         if ( pls->color )
         {
-            PLFLT r = ((PLFLT) pls->curcolor.r ) / 255.0;
-            PLFLT g = ((PLFLT) pls->curcolor.g ) / 255.0;
-            PLFLT b = ((PLFLT) pls->curcolor.b ) / 255.0;
+            PLFLT r = ( (PLFLT) pls->curcolor.r ) / 255.0;
+            PLFLT g = ( (PLFLT) pls->curcolor.g ) / 255.0;
+            PLFLT b = ( (PLFLT) pls->curcolor.b ) / 255.0;
 
             fprintf( OF, " S\n%.4f %.4f %.4f C", r, g, b );
         }
         else
         {
-            PLFLT r = ((PLFLT) pls->curcolor.r ) / 255.0;
+            PLFLT r = ( (PLFLT) pls->curcolor.r ) / 255.0;
             fprintf( OF, " S\n%.4f G", 1.0 - r );
         }
         break;
@@ -719,7 +719,7 @@ ps_getdate( void )
     time_t t;
     char   *p;
 
-    t   = time((time_t *) 0 );
+    t   = time( (time_t *) 0 );
     p   = ctime( &t );
     len = strlen( p );
     *( p + len - 1 ) = '\0';      /* zap the newline character */
@@ -783,7 +783,7 @@ proc_str( PLStream *pls, EscText *args )
             return;
         }
         /*pldebug("proc_str", "fci = 0x%x, font name = %s\n", fci, font);*/
-        if ( !strcmp( font, "Symbol" ))
+        if ( !strcmp( font, "Symbol" ) )
         {
             nlookup = number_of_entries_in_unicode_to_symbol_table;
             lookup  = unicode_to_symbol_lookup_table;
@@ -802,7 +802,7 @@ proc_str( PLStream *pls, EscText *args )
                  * with an escff to make it a 2-character escape
                  * that is not used in legacy Hershey code
                  */
-                if (( f < PROC_STR_STRING_LENGTH ) && ( s + 3 < PROC_STR_STRING_LENGTH ))
+                if ( ( f < PROC_STR_STRING_LENGTH ) && ( s + 3 < PROC_STR_STRING_LENGTH ) )
                 {
                     fonts[f] = plP_FCI2FontName( cur_text[j], Type1Lookup, N_Type1Lookup );
                     if ( fonts[f] == NULL )
@@ -812,7 +812,7 @@ proc_str( PLStream *pls, EscText *args )
                         return;
                     }
                     /*pldebug("proc_str", "string-supplied FCI = 0x%x, font name = %s\n", cur_text[j], fonts[f]);*/
-                    if ( !strcmp( fonts[f++], "Symbol" ))
+                    if ( !strcmp( fonts[f++], "Symbol" ) )
                     {
                         lookup  = unicode_to_symbol_lookup_table;
                         nlookup = number_of_entries_in_unicode_to_symbol_table;
@@ -875,12 +875,12 @@ proc_str( PLStream *pls, EscText *args )
 
         /* Determine the adjustment for page orientation */
         theta   -= PI / 2. * pls->diorot;
-        args->y += (PLINT) ( offset * cos( theta ));
-        args->x -= (PLINT) ( offset * sin( theta ));
+        args->y += (PLINT) ( offset * cos( theta ) );
+        args->x -= (PLINT) ( offset * sin( theta ) );
 
         /* ps driver is rotated by default */
         plRotPhy( ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
-            &( args->x ), &( args->y ));
+            &( args->x ), &( args->y ) );
 
         /* Correct for the fact ps driver uses landscape by default */
         theta += PI / 2.;
@@ -910,7 +910,7 @@ proc_str( PLStream *pls, EscText *args )
         fprintf( OF, " %d %d M\n", args->x, args->y );
 
         /* Save the current position and set the string rotation */
-        fprintf( OF, "gsave %.3f R\n", TRMFLT( theta * 180. / PI ));
+        fprintf( OF, "gsave %.3f R\n", TRMFLT( theta * 180. / PI ) );
 
         /* Purge escape sequences from string, so that postscript can find it's
          * length.  The string length is computed with the current font, and can
@@ -919,12 +919,12 @@ proc_str( PLStream *pls, EscText *args )
 
         esc_purge( str, cur_str );
 
-        fprintf( OF, "/%s %.3f SF\n", font, TRMFLT( font_factor * ENLARGE * ft_ht ));
+        fprintf( OF, "/%s %.3f SF\n", font, TRMFLT( font_factor * ENLARGE * ft_ht ) );
 
         /* Output string, while escaping the '(', ')' and '\' characters.
          * this string is output for measurement purposes only.
          */
-        fprintf( OF, "%.3f (", TRMFLT( -args->just ));
+        fprintf( OF, "%.3f (", TRMFLT( -args->just ) );
         while ( str[i] != '\0' )
         {
             if ( str[i] == '(' || str[i] == ')' || str[i] == '\\' )
@@ -1013,11 +1013,11 @@ proc_str( PLStream *pls, EscText *args )
                 TRMFLT( tt[0] * font_factor * ENLARGE * ft_ht * scale ),
                 TRMFLT( tt[2] * font_factor * ENLARGE * ft_ht * scale ),
                 TRMFLT( tt[1] * font_factor * ENLARGE * ft_ht * scale ),
-                TRMFLT( tt[3] * font_factor * ENLARGE * ft_ht * scale ));
+                TRMFLT( tt[3] * font_factor * ENLARGE * ft_ht * scale ) );
 
             /* if up/down escape sequences, save current point and adjust baseline;
              * take the shear into account */
-            if ( up != 0. ) fprintf( OF, "gsave %.3f %.3f rmoveto\n", TRMFLT( up * tt[1] ), TRMFLT( up * tt[3] ));
+            if ( up != 0. ) fprintf( OF, "gsave %.3f %.3f rmoveto\n", TRMFLT( up * tt[1] ), TRMFLT( up * tt[3] ) );
 
             /* print the string */
             fprintf( OF, "(%s) show\n", str );
@@ -1047,10 +1047,10 @@ proc_str( PLStream *pls, EscText *args )
         l1 *= 0.6;
         l2 *= 0.6;
 
-        dev->llx = (int) ( MIN( dev->llx, args->x + ( MIN( l1 * cs, l2 * cs ) - 1.5 ) * font_factor * ft_ht * ENLARGE ));
-        dev->lly = (int) ( MIN( dev->lly, args->y + ( MIN( l1 * sn, l2 * sn ) - 1.5 ) * font_factor * ft_ht * ENLARGE ));
-        dev->urx = (int) ( MAX( dev->urx, args->x + ( MAX( l1 * cs, l2 * cs ) + 1.5 ) * font_factor * ft_ht * ENLARGE ));
-        dev->ury = (int) ( MAX( dev->ury, args->y + ( MAX( l1 * sn, l2 * sn ) + 1.5 ) * font_factor * ft_ht * ENLARGE ));
+        dev->llx = (int) ( MIN( dev->llx, args->x + ( MIN( l1 * cs, l2 * cs ) - 1.5 ) * font_factor * ft_ht * ENLARGE ) );
+        dev->lly = (int) ( MIN( dev->lly, args->y + ( MIN( l1 * sn, l2 * sn ) - 1.5 ) * font_factor * ft_ht * ENLARGE ) );
+        dev->urx = (int) ( MAX( dev->urx, args->x + ( MAX( l1 * cs, l2 * cs ) + 1.5 ) * font_factor * ft_ht * ENLARGE ) );
+        dev->ury = (int) ( MAX( dev->ury, args->y + ( MAX( l1 * sn, l2 * sn ) + 1.5 ) * font_factor * ft_ht * ENLARGE ) );
     }
 }
 

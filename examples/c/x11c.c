@@ -84,17 +84,17 @@ main( int argc, const char *argv[] )
 
     plinit();
 
-    x = (PLFLT *) calloc( XPTS, sizeof ( PLFLT ));
-    y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ));
+    x = (PLFLT *) calloc( XPTS, sizeof ( PLFLT ) );
+    y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ) );
 
     plAlloc2dGrid( &z, XPTS, YPTS );
     for ( i = 0; i < XPTS; i++ )
     {
-        x[i] = 3. * (double) ( i - ( XPTS / 2 )) / (double) ( XPTS / 2 );
+        x[i] = 3. * (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
     }
 
     for ( i = 0; i < YPTS; i++ )
-        y[i] = 3. * (double) ( i - ( YPTS / 2 )) / (double) ( YPTS / 2 );
+        y[i] = 3. * (double) ( i - ( YPTS / 2 ) ) / (double) ( YPTS / 2 );
 
     for ( i = 0; i < XPTS; i++ )
     {
@@ -102,9 +102,9 @@ main( int argc, const char *argv[] )
         for ( j = 0; j < YPTS; j++ )
         {
             yy      = y[j];
-            z[i][j] = 3. * ( 1. - xx ) * ( 1. - xx ) * exp( -( xx * xx ) - ( yy + 1. ) * ( yy + 1. )) -
-                      10. * ( xx / 5. - pow( xx, 3. ) - pow( yy, 5. )) * exp( -xx * xx - yy * yy ) -
-                      1. / 3. * exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ));
+            z[i][j] = 3. * ( 1. - xx ) * ( 1. - xx ) * exp( -( xx * xx ) - ( yy + 1. ) * ( yy + 1. ) ) -
+                      10. * ( xx / 5. - pow( xx, 3. ) - pow( yy, 5. ) ) * exp( -xx * xx - yy * yy ) -
+                      1. / 3. * exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ) );
 
             if ( 0 ) /* Jungfraujoch/Interlaken */
             {
@@ -159,8 +159,8 @@ main( int argc, const char *argv[] )
 
 /* Clean up */
 
-    free((void *) x );
-    free((void *) y );
+    free( (void *) x );
+    free( (void *) y );
     plFree2dGrid( z, XPTS, YPTS );
 
     plend();

@@ -306,7 +306,7 @@ class plot {
 
             /* Draw radial spokes for polar grid */
             pljoin( 0.0, 0.0, dx, dy );
-            text = format( "%d", lrint( theta ));
+            text = format( "%d", lrint( theta ) );
 
             /* Write labels for angle */
 
@@ -321,7 +321,7 @@ class plot {
 
         for ( int i = 0; i < 361; i++ )
         {
-            PLFLT r = sin( dtr * ( 5 * i ));
+            PLFLT r = sin( dtr * ( 5 * i ) );
             x[i] = x0[i] * r;
             y[i] = y0[i] * r;
         }
@@ -345,12 +345,12 @@ class plot {
         w.length = XPTS;
         for ( int i = 0; i < XPTS; i++ )
         {
-            PLFLT xx = cast(double) ( i - ( XPTS / 2 )) / ( XPTS / 2 );
+            PLFLT xx = cast(double) ( i - ( XPTS / 2 ) ) / ( XPTS / 2 );
             z[i].length = YPTS;
             w[i].length = YPTS;
             for ( int j = 0; j < YPTS; j++ )
             {
-                PLFLT yy = cast(double) ( j - ( YPTS / 2 )) / ( YPTS / 2 ) - 1.0;
+                PLFLT yy = cast(double) ( j - ( YPTS / 2 ) ) / ( YPTS / 2 ) - 1.0;
                 z[i][j] = xx * xx - yy * yy;
                 w[i][j] = 2 * xx * yy;
             }

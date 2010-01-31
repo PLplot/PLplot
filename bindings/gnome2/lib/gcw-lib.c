@@ -60,7 +60,7 @@ void gcw_set_gdk_color()
     color.green = (guint16) ( plsc->curcolor.g / 255. * 65535 );
     color.blue  = (guint16) ( plsc->curcolor.b / 255. * 65535 );
 
-    if ( !gdk_colormap_alloc_color( dev->colormap, &color, FALSE, TRUE ))
+    if ( !gdk_colormap_alloc_color( dev->colormap, &color, FALSE, TRUE ) )
         plwarn( "GCW driver <set_gdk_color>: Could not allocate color." );
 
     gdk_gc_set_foreground( dev->gc, &color );
@@ -99,7 +99,7 @@ void gcw_clear_background()
     /* Clear the background pixmap with the background color.  Note that
      * we are going to reset the current gdk drawing color below, so we
      * can reuse the gc. */
-    gdk_gc_set_foreground( dev->gc, &( dev->bgcolor ));
+    gdk_gc_set_foreground( dev->gc, &( dev->bgcolor ) );
     gdk_draw_rectangle( dev->background, dev->gc, TRUE, 0, 0, width, height );
 
     /* Note that our pixmap is currently clear */
@@ -130,13 +130,13 @@ void gcw_init_canvas( GnomeCanvas* canvas )
     gcw_debug( "<gcw_init_canvas>\n" );
 #endif
 
-    if ( !GNOME_IS_CANVAS( canvas )) plexit( "GCW driver: Canvas not found" );
+    if ( !GNOME_IS_CANVAS( canvas ) ) plexit( "GCW driver: Canvas not found" );
 
     /* Add the canvas to the device */
     dev->canvas = canvas;
 
     /* Get the colormap */
-    dev->colormap = gtk_widget_get_colormap( GTK_WIDGET( dev->canvas ));
+    dev->colormap = gtk_widget_get_colormap( GTK_WIDGET( dev->canvas ) );
 
     /* Size the canvas */
     gcw_set_canvas_size( canvas, dev->width, dev->height );
@@ -148,8 +148,8 @@ void gcw_init_canvas( GnomeCanvas* canvas )
                      gnome_canvas_clipgroup_get_type(),
                      "x", 0.,
                      "y", 0.,
-                     NULL ))
-             ))
+                     NULL ) )
+             ) )
     {
         plexit( "GCW driver <gcw_init_canvas>: Canvas group cannot be created" );
     }
@@ -208,11 +208,11 @@ void zoom( gpointer data, gint flag )
     gdouble     curmag, dum;
 
     /* Get the current canvas */
-    n = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ));
+    n = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ) );
     scrolled_window = gtk_notebook_get_nth_page( GTK_NOTEBOOK( dev->notebook ), n );
     canvas          = GNOME_CANVAS( gtk_container_get_children(
             GTK_CONTAINER( gtk_container_get_children(
-                    GTK_CONTAINER( scrolled_window ))->data ))->data );
+                    GTK_CONTAINER( scrolled_window ) )->data ) )->data );
 
     /* Determine the new magnification */
     if ( flag == 2 )      /* Zoom in */
@@ -230,7 +230,7 @@ void zoom( gpointer data, gint flag )
         }
         else
         {
-            gcw_set_canvas_zoom( canvas, (PLFLT) ( ZOOM100 / curmag ));
+            gcw_set_canvas_zoom( canvas, (PLFLT) ( ZOOM100 / curmag ) );
         }
     }
     else /* Zoom 100 */
@@ -238,7 +238,7 @@ void zoom( gpointer data, gint flag )
         /* Get current magnification */
         gnome_canvas_c2w( canvas, 1, 0, &curmag, &dum );
         curmag = 1. / curmag;
-        gcw_set_canvas_zoom( canvas, (PLFLT) ( ZOOM100 / curmag ));
+        gcw_set_canvas_zoom( canvas, (PLFLT) ( ZOOM100 / curmag ) );
     }
 
     /* Set the focus on the notebook */
@@ -305,9 +305,9 @@ void file_ok_sel( GtkWidget *w, gpointer data )
     FILE        *f;
 
     /* Get the file name */
-    if (( fname =
-              strdup( gtk_file_selection_get_filename( GTK_FILE_SELECTION( dev->filew ))))
-        == NULL )
+    if ( ( fname =
+               strdup( gtk_file_selection_get_filename( GTK_FILE_SELECTION( dev->filew ) ) ) )
+         == NULL )
         plabort( "GCW driver <file_ok_sel>: Cannot obtain filename" );
 
     /* Check to see if the file already exists, and respond appropriately */
@@ -319,7 +319,7 @@ void file_ok_sel( GtkWidget *w, gpointer data )
                 GTK_WINDOW( dev->filew ),
                 GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                 GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-                GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL ));
+                GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, NULL ) );
 
         message = gtk_label_new( "" );
         gtk_label_set_markup( GTK_LABEL( message ),
@@ -334,10 +334,10 @@ void file_ok_sel( GtkWidget *w, gpointer data )
         gtk_box_pack_start( GTK_BOX( hbox ), message, TRUE, TRUE, 10 );
         gtk_container_add( GTK_CONTAINER( dialog->vbox ), hbox );
 
-        gtk_widget_show_all( GTK_WIDGET( dialog ));
+        gtk_widget_show_all( GTK_WIDGET( dialog ) );
 
         result = gtk_dialog_run( dialog );
-        gtk_widget_destroy( GTK_WIDGET( dialog ));
+        gtk_widget_destroy( GTK_WIDGET( dialog ) );
         if ( result == GTK_RESPONSE_REJECT ) return;
     }
 
@@ -348,7 +348,7 @@ void file_ok_sel( GtkWidget *w, gpointer data )
     gtk_window_set_focus( GTK_WINDOW( dev->window ), dev->notebook );
 
     /* Test that we can open and write to the file */
-    if (( f = fopen( fname, "w" )) == NULL )
+    if ( ( f = fopen( fname, "w" ) ) == NULL )
         plabort( "GCW driver <file_ok_sel>: Cannot open output file" );
     fclose( f );
     remove( fname ); /* Otherwise, we may leave behind a zero-length file */
@@ -411,11 +411,11 @@ void file_ok_sel( GtkWidget *w, gpointer data )
     }
 
     /* Get the current canvas */
-    n = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ));
+    n = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ) );
     scrolled_window = gtk_notebook_get_nth_page( GTK_NOTEBOOK( dev->notebook ), n );
     canvas          = GNOME_CANVAS( gtk_container_get_children(
             GTK_CONTAINER( gtk_container_get_children(
-                    GTK_CONTAINER( scrolled_window ))->data ))->data );
+                    GTK_CONTAINER( scrolled_window ) )->data ) )->data );
 
     /* Switch in the previously saved plot state */
     new_state = g_object_get_data( G_OBJECT( canvas ), "plotbuf" );
@@ -475,11 +475,11 @@ void filesel( GtkWidget *widget, gpointer data )
     guint       n;
 
     /* Get the current canvas */
-    n = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ));
+    n = gtk_notebook_get_current_page( GTK_NOTEBOOK( dev->notebook ) );
     scrolled_window = gtk_notebook_get_nth_page( GTK_NOTEBOOK( dev->notebook ), n );
     canvas          = GNOME_CANVAS( gtk_container_get_children(
             GTK_CONTAINER( gtk_container_get_children(
-                    GTK_CONTAINER( scrolled_window ))->data ))->data );
+                    GTK_CONTAINER( scrolled_window ) )->data ) )->data );
 
     /* Create a new file dialog if it doesn't already exist */
     if ( dev->filew == NULL )
@@ -534,9 +534,9 @@ void gcw_install_canvas( GnomeCanvas *canvas )
 #endif
 
     /* Create a new canvas if needed */
-    if ( !GNOME_IS_CANVAS( canvas ))
+    if ( !GNOME_IS_CANVAS( canvas ) )
     {
-        if ( !GNOME_IS_CANVAS( canvas = GNOME_CANVAS( gnome_canvas_new_aa())))
+        if ( !GNOME_IS_CANVAS( canvas = GNOME_CANVAS( gnome_canvas_new_aa() ) ) )
             plexit( "GCW driver <gcw_install_canvas>: Could not create Canvas" );
     }
 
@@ -580,7 +580,7 @@ void gcw_install_canvas( GnomeCanvas *canvas )
         gtk_notebook_set_scrollable( GTK_NOTEBOOK( dev->notebook ), TRUE );
         gtk_box_pack_start( GTK_BOX( hbox ), dev->notebook, TRUE, TRUE, 0 );
         g_signal_connect( G_OBJECT( dev->notebook ), "key_release_event",
-            G_CALLBACK( key_release ), G_OBJECT( dev->notebook ));
+            G_CALLBACK( key_release ), G_OBJECT( dev->notebook ) );
 
         /* Use a few labels as spacers */
         gtk_box_pack_start( GTK_BOX( vbox ), gtk_label_new( " " ), FALSE, FALSE, 0 );
@@ -637,7 +637,7 @@ void gcw_install_canvas( GnomeCanvas *canvas )
     gtk_scrolled_window_set_policy( GTK_SCROLLED_WINDOW( scrolled_window ),
         GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC );
     gtk_scrolled_window_add_with_viewport( GTK_SCROLLED_WINDOW( scrolled_window ),
-        GTK_WIDGET( canvas ));
+        GTK_WIDGET( canvas ) );
 
     /* Install the scrolled window in the notebook */
     gtk_notebook_append_page( GTK_NOTEBOOK( dev->notebook ), scrolled_window, NULL );
@@ -687,12 +687,12 @@ void gcw_set_device_size( PLINT width, PLINT height )
     PLINT   w, h;
 
     /* Set the number of virtual coordinate units per mm */
-    plP_setpxl((PLFLT) VIRTUAL_PIXELS_PER_MM, (PLFLT) VIRTUAL_PIXELS_PER_MM );
+    plP_setpxl( (PLFLT) VIRTUAL_PIXELS_PER_MM, (PLFLT) VIRTUAL_PIXELS_PER_MM );
 
     /* Set up physical limits of plotting device, in virtual coord units */
     w = (PLINT) ( width * VSCALE );
     h = (PLINT) ( height * VSCALE );
-    plP_setphy((PLINT) 0, w, (PLINT) 0, h );
+    plP_setphy( (PLINT) 0, w, (PLINT) 0, h );
 
     /* Save the width and height for the device, in device units */
     dev->width  = width;
@@ -744,9 +744,9 @@ void gcw_set_canvas_size( GnomeCanvas* canvas, PLINT width, PLINT height )
     height += 1;
 
     /* Attach the width and height to the canvas */
-    if (( w = (PLINT*) malloc( sizeof ( gint ))) == NULL )
+    if ( ( w = (PLINT*) malloc( sizeof ( gint ) ) ) == NULL )
         plwarn( "GCW driver <gcw_set_canvas_size>: Insufficient memory." );
-    if (( h = (PLINT*) malloc( sizeof ( gint ))) == NULL )
+    if ( ( h = (PLINT*) malloc( sizeof ( gint ) ) ) == NULL )
         plwarn( "GCW driver <gcw_set_canvas_size>: Insufficient memory." );
     *w = width;
     *h = height;
@@ -755,7 +755,7 @@ void gcw_set_canvas_size( GnomeCanvas* canvas, PLINT width, PLINT height )
 
     /* Size the canvas appropriately */
     gtk_widget_set_size_request( GTK_WIDGET( canvas ), (gint) ( width ),
-        (gint) ( height ));
+        (gint) ( height ) );
 
     /* Position the canvas appropriately */
     gnome_canvas_set_scroll_region( canvas, 0., (gdouble) ( -height ),
@@ -764,7 +764,7 @@ void gcw_set_canvas_size( GnomeCanvas* canvas, PLINT width, PLINT height )
     /* Set up the background pixmap */
     if ( dev->background == NULL || dev->allow_resize )
     {
-        if ( GDK_IS_PIXMAP( dev->background )) g_object_unref( dev->background );
+        if ( GDK_IS_PIXMAP( dev->background ) ) g_object_unref( dev->background );
 
         /* Why does this next *useless* command speed up the animation demo?
          * If we unref the allocated pixmaps, the benefit goes away!! */
@@ -776,14 +776,14 @@ void gcw_set_canvas_size( GnomeCanvas* canvas, PLINT width, PLINT height )
 /*     else { printf("Count %d\n",count); count ++; } */
 
         dev->background = gdk_pixmap_new( NULL, width, height,
-            gtk_widget_get_visual( GTK_WIDGET( canvas ))->depth );
+            gtk_widget_get_visual( GTK_WIDGET( canvas ) )->depth );
     }
 
     /* Set up the drawing context for the background pixmap */
     if ( dev->gc == NULL || dev->allow_resize )
     {
         /* Maintain the old values for pen width, color, etc */
-        if ( GDK_IS_GC( dev->gc ))
+        if ( GDK_IS_GC( dev->gc ) )
         {
             gdk_gc_get_values( dev->gc, &values );
             gdk_gc_unref( dev->gc );
@@ -839,8 +839,8 @@ void gcw_set_canvas_zoom( GnomeCanvas* canvas, PLFLT magnification )
 
     /* Size the canvas appropriately */
     gtk_widget_set_size_request( GTK_WIDGET( canvas ),
-        (gint) (( width ) * magnification * curmag ),
-        (gint) (( height ) * magnification * curmag ));
+        (gint) ( ( width ) * magnification * curmag ),
+        (gint) ( ( height ) * magnification * curmag ) );
 
     /* Position the canvas appropriately */
     gnome_canvas_set_scroll_region( canvas, 0., (gdouble) ( -height ),

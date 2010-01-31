@@ -538,7 +538,7 @@ pllabelfuncf2c( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer da
 
     /* Ensure string is null terminated */
     i = length - 1;
-    while (( i >= 0 ) && ( label[i] == ' ' ))
+    while ( ( i >= 0 ) && ( label[i] == ' ' ) )
         i--;
     label[i + 1] = '\0';
 }
@@ -862,14 +862,14 @@ PLSEED( unsigned int *s )
 void
 PLSESC( PLINT *esc )
 {
-    c_plsesc((char) *esc );
+    c_plsesc( (char) *esc );
 }
 
 /* Auxiliary routine - not to be used publicly
  */
 #define    PLSETMAPFORMC    FNAME( PLSETMAPFORMC, plsetmapformc )
 void
-PLSETMAPFORMC( void ( STDCALL *mapform )( PLINT *, PLFLT *, PLFLT * ))
+PLSETMAPFORMC( void ( STDCALL *mapform )( PLINT *, PLFLT *, PLFLT * ) )
 {
     plmapform = mapform;
 }
@@ -908,7 +908,7 @@ PLSFONT( PLINT *family, PLINT *style, PLINT *weight )
 }
 
 void
-PLSLABELFUNC_ON( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ))
+PLSLABELFUNC_ON( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ) )
 {
     pllabelfunc = labelfunc;
     /* N.B. neglect pointer to additional data for f77 */
@@ -916,7 +916,7 @@ PLSLABELFUNC_ON( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * 
 }
 
 void
-PLSLABELFUNC_ONa( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ))
+PLSLABELFUNC_ONa( void ( STDCALL *labelfunc )( PLINT *, PLFLT *, char *, PLINT * ) )
 {
     pllabelfunc = labelfunc;
     /* N.B. neglect pointer to additional data for f77 */

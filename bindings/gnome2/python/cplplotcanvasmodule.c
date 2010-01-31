@@ -50,7 +50,7 @@ initcplplotcanvas( void )
 
     import_array();
 
-    if ( PyErr_Occurred())
+    if ( PyErr_Occurred() )
     {
         Py_FatalError( "can't initialise module cplplotcanvas" );
     }

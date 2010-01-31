@@ -134,7 +134,7 @@ constriction()
             y = ( j - ny / 2 + 0.5 ) * dy;
             cgrid2.xg[i][j] = x;
             cgrid2.yg[i][j] = y;
-            b = ymax / 4.0 * ( 3 - cos( M_PI * x / xmax ));
+            b = ymax / 4.0 * ( 3 - cos( M_PI * x / xmax ) );
             if ( fabs( y ) < b )
             {
                 dbdx = ymax / 4.0 * sin( M_PI * x / xmax ) *
@@ -249,10 +249,10 @@ void potential()
             y               = r * sin( theta );
             cgrid2.xg[i][j] = x;
             cgrid2.yg[i][j] = y;
-            div1            = sqrt( pow( x - d1, 2. ) + pow( y - d1, 2. ) + pow( eps, 2. ));
-            div1i           = sqrt( pow( x - d1i, 2. ) + pow( y - d1i, 2. ) + pow( eps, 2. ));
-            div2            = sqrt( pow( x - d2, 2. ) + pow( y + d2, 2. ) + pow( eps, 2. ));
-            div2i           = sqrt( pow( x - d2i, 2. ) + pow( y + d2i, 2. ) + pow( eps, 2. ));
+            div1            = sqrt( pow( x - d1, 2. ) + pow( y - d1, 2. ) + pow( eps, 2. ) );
+            div1i           = sqrt( pow( x - d1i, 2. ) + pow( y - d1i, 2. ) + pow( eps, 2. ) );
+            div2            = sqrt( pow( x - d2, 2. ) + pow( y + d2, 2. ) + pow( eps, 2. ) );
+            div2i           = sqrt( pow( x - d2i, 2. ) + pow( y + d2i, 2. ) + pow( eps, 2. ) );
             z[i][j]         = q1 / div1 + q1i / div1i + q2 / div2 + q2i / div2i;
             u[i][j]         = -q1 * ( x - d1 ) / pow( div1, 3. ) - q1i * ( x - d1i ) / pow( div1i, 3.0 )
                               - q2 * ( x - d2 ) / pow( div2, 3. ) - q2i * ( x - d2i ) / pow( div2i, 3. );
@@ -271,7 +271,7 @@ void potential()
     dz = ( zmax - zmin ) / (double) nlevel;
     for ( i = 0; i < nlevel; i++ )
     {
-        clevel[i] = zmin + ((double) i + 0.5 ) * dz;
+        clevel[i] = zmin + ( (double) i + 0.5 ) * dz;
     }
     plcol0( 3 );
     pllsty( 2 );
@@ -287,7 +287,7 @@ void potential()
     /* Plot the perimeter of the cylinder */
     for ( i = 0; i < nper; i++ )
     {
-        theta = ( 2. * M_PI / ( nper - 1 )) * (double) i;
+        theta = ( 2. * M_PI / ( nper - 1 ) ) * (double) i;
         px[i] = rmax * cos( theta );
         py[i] = rmax * sin( theta );
     }

@@ -48,7 +48,7 @@ void plot1( int type )
     {
         freql[i] = -2.0 + i / 20.0;
         freq     = pow( 10.0, freql[i] );
-        ampl[i]  = 20.0 * log10( 1.0 / sqrt( 1.0 + pow(( freq / f0 ), 2.0 )));
+        ampl[i]  = 20.0 * log10( 1.0 / sqrt( 1.0 + pow( ( freq / f0 ), 2.0 ) ) );
         phase[i] = -( 180.0 / PI ) * atan( freq / f0 );
     }
 

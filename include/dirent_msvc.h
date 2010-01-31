@@ -94,9 +94,9 @@ static int closedir( DIR *dirp );
 
 /* use the new safe string functions introduced in Visual Studio 2005 */
 #if defined ( _MSC_VER ) && _MSC_VER >= 1400
-# define STRNCPY( dest, src, size )    strncpy_s(( dest ), ( size ), ( src ), _TRUNCATE )
+# define STRNCPY( dest, src, size )    strncpy_s( ( dest ), ( size ), ( src ), _TRUNCATE )
 #else
-# define STRNCPY( dest, src, size )    strncpy(( dest ), ( src ), ( size ))
+# define STRNCPY( dest, src, size )    strncpy( ( dest ), ( src ), ( size ) )
 #endif
 
 
@@ -114,13 +114,13 @@ opendir(
     assert( strlen( dirname ) < MAX_PATH );
 
     /* construct new DIR structure */
-    dirp = (DIR*) malloc( sizeof ( struct DIR ));
+    dirp = (DIR*) malloc( sizeof ( struct DIR ) );
     if ( dirp != NULL )
     {
         char *p;
 
         /* take directory name... */
-        STRNCPY( dirp->patt, dirname, sizeof ( dirp->patt ));
+        STRNCPY( dirp->patt, dirname, sizeof ( dirp->patt ) );
         dirp->patt[MAX_PATH] = '\0';
 
         /* ... and append search pattern to it */
@@ -186,7 +186,7 @@ readdir(
     }
 
     /* copy as a multibyte character string */
-    STRNCPY( dirp->current.d_name, dirp->current.data.cFileName, sizeof ( dirp->current.d_name ));
+    STRNCPY( dirp->current.d_name, dirp->current.data.cFileName, sizeof ( dirp->current.d_name ) );
     dirp->current.d_name[MAX_PATH] = '\0';
 
     return &dirp->current;

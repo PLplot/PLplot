@@ -127,7 +127,7 @@ mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
     x0  = ( s->xmin + s->xmax ) * 0.5;
     y0  = ( s->ymin + s->ymax ) * 0.5;
     dy  = ( s->ymax - s->ymin ) * 0.5;
-    *tx = x0 + ( x0 - x ) * ( 1.0 - s->stretch * cos(( y - y0 ) / dy * M_PI * 0.5 ));
+    *tx = x0 + ( x0 - x ) * ( 1.0 - s->stretch * cos( ( y - y0 ) / dy * M_PI * 0.5 ) );
     *ty = y;
 }
 
@@ -224,9 +224,9 @@ x20::x20( int argc, const char ** argv )
     pls->Free2dGrid( z, XDIM, YDIM );
 
     /* read Lena image */
-    if ( read_img( "lena.pgm", &img_f, &width, &height, &num_col ))
+    if ( read_img( "lena.pgm", &img_f, &width, &height, &num_col ) )
     {
-        if ( read_img( "../lena.pgm", &img_f, &width, &height, &num_col ))
+        if ( read_img( "../lena.pgm", &img_f, &width, &height, &num_col ) )
         {
             cout << "No such file - aborting" << endl;
             delete pls;
@@ -254,7 +254,7 @@ x20::x20( int argc, const char ** argv )
         xi = 200.; xe = 330.;
         yi = 280.; ye = 220.;
 
-        if ( get_clip( &xi, &xe, &yi, &ye )) // get selection rectangle
+        if ( get_clip( &xi, &xe, &yi, &ye ) ) // get selection rectangle
         {
             delete pls;
             exit( 0 );
@@ -358,13 +358,13 @@ int x20::read_img( const char *fname, PLFLT ***img_f, int *width, int *height, i
     PLFLT         **imf;
 
     /* naive grayscale binary ppm reading. If you know how to, improve it */
-    if ( !ifs.is_open())
+    if ( !ifs.is_open() )
         return 1;
 
     ifs.getline( ver, 80 );
     //cout << "version: " << ver << endl;
 
-    if ( strcmp( ver, "P5" )) /* I only understand this! */
+    if ( strcmp( ver, "P5" ) ) /* I only understand this! */
         return 1;
 
     ifs.read( &c, 1 );
@@ -383,7 +383,7 @@ int x20::read_img( const char *fname, PLFLT ***img_f, int *width, int *height, i
     img = new unsigned char[w * h];
     pls->Alloc2dGrid( &imf, w, h );
 
-    ifs.read((char *) img, w * h );
+    ifs.read( (char *) img, w * h );
     ifs.close();
 
     for ( i = 0; i < w; i++ )

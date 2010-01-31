@@ -42,13 +42,13 @@ main( int argc, char *argv[] )
         describe();
         exit( 1 );
     }
-    if (( fd = fopen( argv[1], "r" )) == NULL )
+    if ( ( fd = fopen( argv[1], "r" ) ) == NULL )
     {
         printf( "Cannot open %s\n", argv[1] );
         exit( 1 );
     }
 
-    if (( t = getenv( "TERM" )) != NULL )
+    if ( ( t = getenv( "TERM" ) ) != NULL )
     {
         if ( strcmp( "xterm", t ) == 0 )
         {
@@ -56,7 +56,7 @@ main( int argc, char *argv[] )
         }
         else if ( !strncmp( "tek", t, 3 ) ||
                   !strncmp( "401", t, 3 ) ||
-                  !strncmp( "410", t, 3 ))
+                  !strncmp( "410", t, 3 ) )
         {
             termtype = tekterm;
         }
@@ -74,7 +74,7 @@ main( int argc, char *argv[] )
         ifirst = 0;
         for ( j = 0; j < nb; j++ )
         {
-            if (( lastchar = buf[j] ) == '\f' )
+            if ( ( lastchar = buf[j] ) == '\f' )
             {
                 ifirst = j - 1;
                 ipage++;
@@ -98,7 +98,7 @@ main( int argc, char *argv[] )
         oldpage = ipage;
         printf( "Page %d/%d> ", ipage, npage );
 
-        if ( !fgets( ibuf, 128, stdin ))
+        if ( !fgets( ibuf, 128, stdin ) )
             break;
 
         c = ibuf[0];
@@ -118,7 +118,7 @@ main( int argc, char *argv[] )
         {
             ipage -= atoi( ibuf + 1 );
         }
-        else if ( isdigit( c ))         /* <n> = goto page <n> */
+        else if ( isdigit( c ) )         /* <n> = goto page <n> */
         {
             ipage = atoi( ibuf );
         }

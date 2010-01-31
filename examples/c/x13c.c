@@ -64,23 +64,23 @@ main( int argc, const char *argv[] )
             theta1 = 500;
         for ( theta = theta0; theta <= theta1; theta += dthet )
         {
-            x[j]   = 5 + 3 * cos(( 2. * M_PI / 500. ) * theta );
-            y[j++] = 5 + 3 * sin(( 2. * M_PI / 500. ) * theta );
+            x[j]   = 5 + 3 * cos( ( 2. * M_PI / 500. ) * theta );
+            y[j++] = 5 + 3 * sin( ( 2. * M_PI / 500. ) * theta );
         }
         plcol0( i + 1 );
-        plpsty(( i + 3 ) % 8 + 1 );
+        plpsty( ( i + 3 ) % 8 + 1 );
         plfill( j, x, y );
         plcol0( 1 );
         plline( j, x, y );
         just = ( 2. * M_PI / 500. ) * ( theta0 + theta1 ) / 2.;
         dx   = .25 * cos( just );
         dy   = .25 * sin( just );
-        if (( theta0 + theta1 ) < 250 || ( theta0 + theta1 ) > 750 )
+        if ( ( theta0 + theta1 ) < 250 || ( theta0 + theta1 ) > 750 )
             just = 0.;
         else
             just = 1.;
 
-        plptex(( x[j / 2] + dx ), ( y[j / 2] + dy ), 1.0, 0.0, just, text[i] );
+        plptex( ( x[j / 2] + dx ), ( y[j / 2] + dy ), 1.0, 0.0, just, text[i] );
         theta0 = theta - dthet;
     }
     plfont( 2 );

@@ -183,7 +183,7 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
 /* walk through the text character by character */
     for ( i = 0; i < len; i++ )
     {
-        if (( text[i] == esc ) && ( text[i - 1] != esc ))
+        if ( ( text[i] == esc ) && ( text[i - 1] != esc ) )
         {
             if ( text[i + 1] == esc ) continue;
 
@@ -205,7 +205,7 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
         else
         {
             /* see if we have kerning for the particular character pair */
-            if (( i > 0 ) && FT_HAS_KERNING( FT->face ))
+            if ( ( i > 0 ) && FT_HAS_KERNING( FT->face ) )
             {
                 FT_Get_Kerning( FT->face,
                     text[i - 1],
@@ -323,7 +323,7 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
 
     for ( i = 0; i < len; i++ )
     {
-        if (( text[i] == esc ) && ( text[i - 1] != esc ))
+        if ( ( text[i] == esc ) && ( text[i - 1] != esc ) )
         {
             if ( text[i + 1] == esc ) continue;
 
@@ -369,7 +369,7 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
         else
         {
             /* see if we have kerning for the particular character pair */
-            if (( last_char != -1 ) && ( i > 0 ) && FT_HAS_KERNING( FT->face ))
+            if ( ( last_char != -1 ) && ( i > 0 ) && FT_HAS_KERNING( FT->face ) )
             {
                 FT_Get_Kerning( FT->face,
                     text[last_char],
@@ -491,10 +491,10 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
                 bittest = 128;
                 for ( j = 0; j < 8; j++ )
                 {
-                    if (( bittest & (unsigned char) slot->bitmap.buffer[( i * n ) + k] ) == bittest )
+                    if ( ( bittest & (unsigned char) slot->bitmap.buffer[( i * n ) + k] ) == bittest )
                     {
                         xx = x + ( k * 8 ) + j;
-                        if (( xx >= clipxmin ) && ( xx <= clipxmax ))
+                        if ( ( xx >= clipxmin ) && ( xx <= clipxmax ) )
                             FT->pixel( pls, xx, y + i );
                     }
                     bittest >>= 1;
@@ -521,7 +521,7 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
                 FT->shade = ( slot->bitmap.buffer[( i * slot->bitmap.width ) + k] );
                 if ( FT->shade > 0 )
                 {
-                    if (( FT->BLENDED_ANTIALIASING == 1 ) && ( FT->read_pixel != NULL ))
+                    if ( ( FT->BLENDED_ANTIALIASING == 1 ) && ( FT->read_pixel != NULL ) )
                     /* The New anti-aliasing technique */
                     {
                         if ( FT->shade == 255 )
@@ -552,18 +552,18 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
                              *  Is one faster than the other so that you'd ever notice ?
                              */
 
-                            R = ((( plsc->cmap0[pls->icol0].r - R ) * alpha_a ) + R );
-                            G = ((( plsc->cmap0[pls->icol0].g - G ) * alpha_a ) + G );
-                            B = ((( plsc->cmap0[pls->icol0].b - B ) * alpha_a ) + B );
+                            R = ( ( ( plsc->cmap0[pls->icol0].r - R ) * alpha_a ) + R );
+                            G = ( ( ( plsc->cmap0[pls->icol0].g - G ) * alpha_a ) + G );
+                            B = ( ( ( plsc->cmap0[pls->icol0].b - B ) * alpha_a ) + B );
 
-                            FT->set_pixel( pls, x + k, y + i, RGB( R > 255 ? 255 : R, G > 255 ? 255 : G, B > 255 ? 255 : B ));
+                            FT->set_pixel( pls, x + k, y + i, RGB( R > 255 ? 255 : R, G > 255 ? 255 : G, B > 255 ? 255 : B ) );
                         }
                     }
                     else     /* The old anti-aliasing technique */
                     {
-                        FT->col_idx    = FT->ncol0_width - (( FT->ncol0_width * FT->shade ) / 255 );
+                        FT->col_idx    = FT->ncol0_width - ( ( FT->ncol0_width * FT->shade ) / 255 );
                         FT->last_icol0 = pls->icol0;
-                        plcol0( pls->icol0 + ( FT->col_idx * ( FT->ncol0_org - 1 )));
+                        plcol0( pls->icol0 + ( FT->col_idx * ( FT->ncol0_org - 1 ) ) );
                         FT->pixel( pls, x + k, y + i );
                         plcol0( FT->last_icol0 );
                     }
@@ -641,15 +641,15 @@ void plD_FreeType_init( PLStream *pls )
         return;
     }
 
-    if (( pls->FT = calloc( 1, (size_t) sizeof ( FT_Data ))) == NULL )
+    if ( ( pls->FT = calloc( 1, (size_t) sizeof ( FT_Data ) ) ) == NULL )
         plexit( "Could not allocate memory for Freetype" );
 
     FT = (FT_Data *) pls->FT;
 
-    if (( FT->textbuf = calloc( NTEXT_ALLOC, 1 )) == NULL )
+    if ( ( FT->textbuf = calloc( NTEXT_ALLOC, 1 ) ) == NULL )
         plexit( "Could not allocate memory for Freetype text buffer" );
 
-    if ( FT_Init_FreeType( &FT->library ))
+    if ( FT_Init_FreeType( &FT->library ) )
         plexit( "Could not initialise Freetype library" );
 
     /* set to an impossible value for an FCI */
@@ -679,7 +679,7 @@ void plD_FreeType_init( PLStream *pls )
     }
     else
     {
-        strncat( WINDIR_PATH, "\\fonts\\arial.ttf", PLPLOT_MAX_PATH - 1 - strlen( WINDIR_PATH ));
+        strncat( WINDIR_PATH, "\\fonts\\arial.ttf", PLPLOT_MAX_PATH - 1 - strlen( WINDIR_PATH ) );
         if ( access( WINDIR_PATH, F_OK ) == 0 )
         {
             b = strrchr( WINDIR_PATH, '\\' );
@@ -703,7 +703,7 @@ void plD_FreeType_init( PLStream *pls )
  *  NOTE WELL - the trailing slash must be added for now !
  */
 
-    if (( a = getenv( "PLPLOT_FREETYPE_FONT_DIR" )) != NULL )
+    if ( ( a = getenv( "PLPLOT_FREETYPE_FONT_DIR" ) ) != NULL )
         strncpy( font_dir, a, PLPLOT_MAX_PATH - 1 );
     else
         strncpy( font_dir, default_unix_font_dir, PLPLOT_MAX_PATH - 1 );
@@ -719,7 +719,7 @@ void plD_FreeType_init( PLStream *pls )
 
     for ( i = 0; i < N_TrueTypeLookup; i++ )
     {
-        if (( a = getenv( env_font_names[i] )) != NULL )
+        if ( ( a = getenv( env_font_names[i] ) ) != NULL )
         {
 /*
  *  Work out if we have been given an absolute path to a font name, or just
@@ -731,28 +731,28 @@ void plD_FreeType_init( PLStream *pls )
  */
 
 #ifdef MSDOS
-            if ( a[1] == ':' )                      /* check for MS-DOS absolute path */
+            if ( a[1] == ':' )                        /* check for MS-DOS absolute path */
 #else
-            if (( a[0] == '/' ) || ( a[0] == '~' )) /* check for unix abs path */
+            if ( ( a[0] == '/' ) || ( a[0] == '~' ) ) /* check for unix abs path */
 #endif
                 strncpy( FT->font_name[i], a, PLPLOT_MAX_PATH - 1 );
 
             else
             {
                 strncpy( FT->font_name[i], font_dir, PLPLOT_MAX_PATH - 1 );
-                strncat( FT->font_name[i], a, PLPLOT_MAX_PATH - 1 - strlen( FT->font_name[i] ));
+                strncat( FT->font_name[i], a, PLPLOT_MAX_PATH - 1 - strlen( FT->font_name[i] ) );
             }
         }
         else
         {
             strncpy( FT->font_name[i], font_dir, PLPLOT_MAX_PATH - 1 );
-            strncat( FT->font_name[i], (char *) TrueTypeLookup[i].pfont, PLPLOT_MAX_PATH - 1 - strlen( FT->font_name[i] ));
+            strncat( FT->font_name[i], (char *) TrueTypeLookup[i].pfont, PLPLOT_MAX_PATH - 1 - strlen( FT->font_name[i] ) );
         }
         FT->font_name[i][PLPLOT_MAX_PATH - 1] = '\0';
 
         {
             FILE *infile;
-            if (( infile = fopen( FT->font_name[i], "r" )) == NULL )
+            if ( ( infile = fopen( FT->font_name[i], "r" ) ) == NULL )
             {
                 char msgbuf[1024];
                 snprintf( msgbuf, 1024,
@@ -813,7 +813,7 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci )
 
             if ( FT->face == NULL )
             {
-                if ( FT_New_Face( FT->library, font_name, 0, &FT->face ))
+                if ( FT_New_Face( FT->library, font_name, 0, &FT->face ) )
                     plexit( "FT_SetFace: Error loading a font in freetype" );
             }
         }
@@ -850,7 +850,7 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
     FT_Fixed  height;
     PLFLT     height_factor;
 
-    if (( args->string != NULL ) || ( args->unicode_array_len > 0 ))
+    if ( ( args->string != NULL ) || ( args->unicode_array_len > 0 ) )
     {
 /*
  *   Work out if either the font size, the font face or the
@@ -858,7 +858,7 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
  *   If either has, then we will reload the font face.
  */
         plgfci( &fci );
-        if (( FT->fci != fci ) || ( FT->chrht != pls->chrht ) || ( FT->xdpi != pls->xdpi ) || ( FT->ydpi != pls->ydpi ))
+        if ( ( FT->fci != fci ) || ( FT->chrht != pls->chrht ) || ( FT->xdpi != pls->xdpi ) || ( FT->ydpi != pls->ydpi ) )
             FT_SetFace( pls, fci );
 
 
@@ -868,7 +868,7 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
             FT->face->underline_position >> 6,
             FT->face->descender >> 6,
             FT->face->ascender >> 6,
-            (( FT->face->underline_position * -1 ) + FT->face->ascender ) >> 6 );
+            ( ( FT->face->underline_position * -1 ) + FT->face->ascender ) >> 6 );
 
 
 
@@ -1057,8 +1057,8 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
  * only one glyph in the string in this case, we are okay here).
  */
 
-        if (( args->unicode_array_len == 2 )
-            && ( args->unicode_array[0] == ( PL_FCI_MARK | 0x004 )))
+        if ( ( args->unicode_array_len == 2 )
+             && ( args->unicode_array[0] == ( PL_FCI_MARK | 0x004 ) ) )
         {
             adjust.x = args->just * ROUND( FT->face->glyph->metrics.width / 64.0 );
             adjust.y = (FT_Pos) ROUND( FT->face->glyph->metrics.height / 128.0 );
@@ -1076,7 +1076,7 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 
             adjust.y = (FT_Pos)
                        ROUND( FT->face->size->metrics.height / height_factor / 128.0 );
-            adjust.x = (FT_Pos) ( args->just * ROUND( w / 64.0 ));
+            adjust.x = (FT_Pos) ( args->just * ROUND( w / 64.0 ) );
         }
 
         FT_Vector_Transform( &adjust, &FT->matrix ); /* was /&matrix); -  was I using the wrong matrix all this time ?*/
@@ -1107,7 +1107,7 @@ void plD_FreeType_Destroy( PLStream *pls )
 
     if ( FT )
     {
-        if (( FT->smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 )) plscmap0n( FT->ncol0_org );
+        if ( ( FT->smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 ) ) plscmap0n( FT->ncol0_org );
         if ( FT->textbuf )
             free( FT->textbuf );
         FT_Done_Library( FT->library );
@@ -1132,9 +1132,9 @@ static PLFLT CalculateIncrement( int bg, int fg, int levels )
     if ( levels > 1 )
     {
         if ( fg > bg )
-            ret = (( fg + 1 ) - bg ) / levels;
+            ret = ( ( fg + 1 ) - bg ) / levels;
         else if ( fg < bg )
-            ret = ((( fg - 1 ) - bg ) / levels );
+            ret = ( ( ( fg - 1 ) - bg ) / levels );
     }
     return ( ret );
 }
@@ -1170,15 +1170,15 @@ void pl_set_extended_cmap0( PLStream *pls, int ncol0_width, int ncol0_org )
         g_inc = CalculateIncrement( pls->cmap0[0].g, g, ncol0_width );
         b_inc = CalculateIncrement( pls->cmap0[0].b, b, ncol0_width );
 
-        for ( j = 0, k = ncol0_org + i - 1; j < ncol0_width; j++, k += ( ncol0_org - 1 ))
+        for ( j = 0, k = ncol0_org + i - 1; j < ncol0_width; j++, k += ( ncol0_org - 1 ) )
         {
             r -= r_inc;
             g -= g_inc;
             b -= b_inc;
-            if (( r < 0 ) || ( g < 0 ) || ( b < 0 ))
+            if ( ( r < 0 ) || ( g < 0 ) || ( b < 0 ) )
                 plscol0( k, 0, 0, 0 );
             else
-                plscol0( k, ( r > 0xff ? 0xff : r ), ( g > 0xff ? 0xff : g ), ( b > 0xff ? 0xff : b ));
+                plscol0( k, ( r > 0xff ? 0xff : r ), ( g > 0xff ? 0xff : g ), ( b > 0xff ? 0xff : b ) );
         }
     }
 }

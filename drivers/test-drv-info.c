@@ -38,7 +38,7 @@
 RETSIGTYPE
 catch_segv( int sig )
 {
-    fprintf( stderr, "libltdl error: %s\n", lt_dlerror());
+    fprintf( stderr, "libltdl error: %s\n", lt_dlerror() );
     exit( 1 );
 }
 
@@ -64,7 +64,7 @@ main( int argc, char* argv[] )
     if ( dlhand == NULL )
     {
         fprintf( stderr, "Could not open driver module %s\n"
-            "libltdl error: %s\n", drvspec, lt_dlerror());
+            "libltdl error: %s\n", drvspec, lt_dlerror() );
         return 1;
     }
     snprintf( sym, SYM_LEN, "plD_DEVICE_INFO_%s", drvnam );
@@ -77,7 +77,7 @@ main( int argc, char* argv[] )
     else
     {
         fprintf( stderr, "Could not read symbol %s in driver module %s\n"
-            "libltdl error: %s\n", sym, drvspec, lt_dlerror());
+            "libltdl error: %s\n", sym, drvspec, lt_dlerror() );
         return 1;
     }
 }

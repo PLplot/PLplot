@@ -237,7 +237,7 @@ class x21 {
                     {
                         for ( j = 0; j < yp; j++ )
                         {
-                            if ( Double.isNaN( zg[i][j] ))   /* average (IDW) over the 8 neighbors */
+                            if ( Double.isNaN( zg[i][j] ) )   /* average (IDW) over the 8 neighbors */
 
                             {
                                 zg[i][j] = 0.; dist = 0.;
@@ -246,9 +246,9 @@ class x21 {
                                 {
                                     for ( jj = j - 1; jj <= j + 1 && jj < yp; jj++ )
                                     {
-                                        if ( ii >= 0 && jj >= 0 && !Double.isNaN( zg[ii][jj] ))
+                                        if ( ii >= 0 && jj >= 0 && !Double.isNaN( zg[ii][jj] ) )
                                         {
-                                            d         = ( Math.abs( ii - i ) + Math.abs( jj - j )) == 1 ? 1. : 1.4142;
+                                            d         = ( Math.abs( ii - i ) + Math.abs( jj - j ) ) == 1 ? 1. : 1.4142;
                                             zg[i][j] += zg[ii][jj] / ( d * d );
                                             dist     += d;
                                         }
@@ -373,17 +373,17 @@ class x21 {
             }
             else     /* std=1, meaning that many points are outside the plot range */
             {
-                x[i] = Math.sqrt( -2. * Math.log( xt )) * Math.cos( 2. * Math.PI * yt ) + xm;
-                y[i] = Math.sqrt( -2. * Math.log( xt )) * Math.sin( 2. * Math.PI * yt ) + ym;
+                x[i] = Math.sqrt( -2. * Math.log( xt ) ) * Math.cos( 2. * Math.PI * yt ) + xm;
+                y[i] = Math.sqrt( -2. * Math.log( xt ) ) * Math.sin( 2. * Math.PI * yt ) + ym;
             }
             if ( rosen == 0 )
             {
-                r    = Math.sqrt(( x[i] ) * ( x[i] ) + ( y[i] ) * ( y[i] ));
+                r    = Math.sqrt( ( x[i] ) * ( x[i] ) + ( y[i] ) * ( y[i] ) );
                 z[i] = Math.exp( -r * r ) * Math.cos( 2.0 * Math.PI * r );
             }
             else
             {
-                z[i] = Math.log( Math.pow(( 1. - x[i] ), 2. ) + 100. * Math.pow(( y[i] - Math.pow( x[i], 2. )), 2. ));
+                z[i] = Math.log( Math.pow( ( 1. - x[i] ), 2. ) + 100. * Math.pow( ( y[i] - Math.pow( x[i], 2. ) ), 2. ) );
             }
         }
     }

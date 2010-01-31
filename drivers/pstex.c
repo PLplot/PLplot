@@ -124,10 +124,10 @@ plD_tidy_pstex( PLStream *pls )
 
     fseek( fp, dev->cur_pos, SEEK_SET );
     fprintf( fp, "\\begin{picture}(%d,%d)(%d,%d)%%\n%%",
-        ROUND(( dev->urx - dev->llx ) * scale ),
-        ROUND(( dev->ury - dev->lly ) * scale ),
-        ROUND(( dev->llx - XOFFSET ) * scale ),
-        ROUND(( dev->lly - YOFFSET ) * scale ));
+        ROUND( ( dev->urx - dev->llx ) * scale ),
+        ROUND( ( dev->ury - dev->lly ) * scale ),
+        ROUND( ( dev->llx - XOFFSET ) * scale ),
+        ROUND( ( dev->lly - YOFFSET ) * scale ) );
 
     fclose( fp );
 }
@@ -148,7 +148,7 @@ proc_str( PLStream *pls, EscText *args )
     ft_ht = 1.6 /*!*/ * pls->chrht * 72.0 / 25.4; /* ft_ht in points. ht is in mm */
 
     /* calculate baseline text angle */
-    angle = ((PLFLT) ( ORIENTATION - 1 ) + pls->diorot ) * 90.;
+    angle = ( (PLFLT) ( ORIENTATION - 1 ) + pls->diorot ) * 90.;
     a1    = acos( t[0] ) * 180. / PI;
     if ( t[2] > 0. )
         alpha = a1 - angle - 90.;
@@ -202,7 +202,7 @@ proc_str( PLStream *pls, EscText *args )
         return;
 
     plRotPhy( ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
-        &( args->x ), &( args->y ));
+        &( args->x ), &( args->y ) );
 
 #ifdef DEBUG
     fprintf( fp, "\\put(%d,%d){\\circle{10}}\n",
@@ -372,7 +372,7 @@ parse_str( const char *str, char *dest )
 
                 *tp++ = '\\';
                 strcpy( tp, mathgreek[n] );
-                if ( isupper( c ))
+                if ( isupper( c ) )
                     *tp = toupper( *tp );
                 tp += strlen( mathgreek[n] );
                 if ( !math )

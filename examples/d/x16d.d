@@ -132,10 +132,10 @@ int main( char[][] args )
     PLFLT x, y;
     for ( int i = 0; i < nx; i++ )
     {
-        x = cast(double) ( i - ( nx / 2 )) / ( nx / 2 );
+        x = cast(double) ( i - ( nx / 2 ) ) / ( nx / 2 );
         for ( int j = 0; j < ny; j++ )
         {
-            y = cast(double) ( j - ( ny / 2 )) / ( ny / 2 ) - 1.0;
+            y = cast(double) ( j - ( ny / 2 ) ) / ( ny / 2 ) - 1.0;
 
             z[i][j] = -sin( 7 * x ) * cos( 7 * y ) + x * x - y * y;
             w[i][j] = -cos( 7 * x ) * sin( 7 * y ) + 2 * x * y;

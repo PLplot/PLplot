@@ -69,7 +69,7 @@ plD_init_dg( PLStream *pls )
     printf( "\n\036\107\051\n" );
     scanf( "%s", (char *) &termattr );
     while ( getchar() != '\n' ) ;
-    if ( !strncmp((char *) &termattr.ram[0], "0000", 4 ))
+    if ( !strncmp( (char *) &termattr.ram[0], "0000", 4 ) )
     {
         printf( "Please wait while graphics interpreter is downloaded.\n" );
 
@@ -85,7 +85,7 @@ plD_init_dg( PLStream *pls )
 
     pls->termin = 1;            /* Is an interactive device */
 
-    plP_setpxl((PLFLT) ( 3.316 * 16 ), (PLFLT) ( 1.655 * 16 ));
+    plP_setpxl( (PLFLT) ( 3.316 * 16 ), (PLFLT) ( 1.655 * 16 ) );
     plP_setphy( 0, DGX * 16, 0, DGY * 16 );
 }
 

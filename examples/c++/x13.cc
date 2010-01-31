@@ -86,23 +86,23 @@ x13::x13( int argc, const char ** argv )
             theta1 = 500;
         for ( theta = theta0; theta <= theta1; theta += dthet )
         {
-            x[j]   = 5 + 3 * cos(( 2. * M_PI / 500. ) * theta );
-            y[j++] = 5 + 3 * sin(( 2. * M_PI / 500. ) * theta );
+            x[j]   = 5 + 3 * cos( ( 2. * M_PI / 500. ) * theta );
+            y[j++] = 5 + 3 * sin( ( 2. * M_PI / 500. ) * theta );
         }
         pls->col0( i + 1 );
-        pls->psty(( i + 3 ) % 8 + 1 );
+        pls->psty( ( i + 3 ) % 8 + 1 );
         pls->fill( j, x, y );
         pls->col0( 1 );
         pls->line( j, x, y );
         just = ( 2. * M_PI / 500. ) * ( theta0 + theta1 ) / 2.;
         dx   = .25 * cos( just );
         dy   = .25 * sin( just );
-        if (( theta0 + theta1 ) < 250 || ( theta0 + theta1 ) > 750 )
+        if ( ( theta0 + theta1 ) < 250 || ( theta0 + theta1 ) > 750 )
             just = 0.;
         else
             just = 1.;
 
-        pls->ptex(( x[j / 2] + dx ), ( y[j / 2] + dy ), 1.0, 0.0, just, text[i] );
+        pls->ptex( ( x[j / 2] + dx ), ( y[j / 2] + dy ), 1.0, 0.0, just, text[i] );
         theta0 = theta - dthet;
     }
     pls->font( 2 );

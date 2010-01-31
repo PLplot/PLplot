@@ -30,7 +30,7 @@ main( void )
     long        fpos;
     PDFstrm     *pdfs;
 
-    hrshlst = (short *) malloc( 4 * 176 * sizeof ( short ));
+    hrshlst = (short *) malloc( 4 * 176 * sizeof ( short ) );
 
     ib = 0;
     for ( j = 0; j < 4; j++ )

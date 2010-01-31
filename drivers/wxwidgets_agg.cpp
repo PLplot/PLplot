@@ -82,7 +82,7 @@ wxPLDevAGG::wxPLDevAGG() :
 
     mFontEngine(),
     mFontManager( mFontEngine ),
-    mCurves( mFontManager.path_adaptor()),
+    mCurves( mFontManager.path_adaptor() ),
     mContour( mCurves ),
 
     mBuffer( NULL ),
@@ -193,7 +193,7 @@ void wxPLDevAGG::drawPath( drawPathFlag flag )
         {
             mConvStroke.width( mStrokeWidth );
             mRasterizer.add_path( mStrokeTransform );
-            mRendererSolid.color( agg::rgba8( mColorRedStroke, mColorGreenStroke, mColorBlueStroke, mStrokeOpacity ));
+            mRendererSolid.color( agg::rgba8( mColorRedStroke, mColorGreenStroke, mColorBlueStroke, mStrokeOpacity ) );
             agg::render_scanlines( mRasterizer, mScanLine, mRendererSolid );
         }
         break;
@@ -201,7 +201,7 @@ void wxPLDevAGG::drawPath( drawPathFlag flag )
         if ( mStrokeOpacity )
         {
             mRasterizer.add_path( mPathTransform );
-            mRendererSolid.color( agg::rgba8( mColorRedStroke, mColorGreenStroke, mColorBlueStroke, mStrokeOpacity ));
+            mRendererSolid.color( agg::rgba8( mColorRedStroke, mColorGreenStroke, mColorBlueStroke, mStrokeOpacity ) );
             agg::render_scanlines( mRasterizer, mScanLine, mRendererSolid );
         }
 
@@ -209,7 +209,7 @@ void wxPLDevAGG::drawPath( drawPathFlag flag )
         {
             mConvStroke.width( mStrokeWidth );
             mRasterizer.add_path( mStrokeTransform );
-            mRendererSolid.color( agg::rgba8( mColorRedStroke, mColorGreenStroke, mColorBlueStroke, mStrokeOpacity ));
+            mRendererSolid.color( agg::rgba8( mColorRedStroke, mColorGreenStroke, mColorBlueStroke, mStrokeOpacity ) );
             agg::render_scanlines( mRasterizer, mScanLine, mRendererSolid );
         }
         break;
@@ -265,7 +265,7 @@ void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLI
 {
     if ( x1 < 0 && y1 < 0 && x2 < 0 && y2 < 0 )
     {
-        mRendererBase.clear( agg::rgba8( bgr, bgg, bgb ));
+        mRendererBase.clear( agg::rgba8( bgr, bgg, bgb ) );
         if ( !resizing && ownGUI )
             AddtoClipRegion( 0, 0, width, height );
     }
@@ -280,12 +280,12 @@ void wxPLDevAGG::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLI
 
         mRasterizer.reset();
         mRasterizer.add_path( mPathTransform );
-        mRendererSolid.color( agg::rgba8( bgr, bgg, bgb, 255 ));
+        mRendererSolid.color( agg::rgba8( bgr, bgg, bgb, 255 ) );
         agg::render_scanlines( mRasterizer, mScanLine, mRendererSolid );
 
         mConvStroke.width( 1.0 );
         mRasterizer.add_path( mStrokeTransform );
-        mRendererSolid.color( agg::rgba8( bgr, bgg, bgb, 255 ));
+        mRendererSolid.color( agg::rgba8( bgr, bgg, bgb, 255 ) );
         agg::render_scanlines( mRasterizer, mScanLine, mRendererSolid );
 
         if ( !resizing && ownGUI )
@@ -307,7 +307,7 @@ void wxPLDevAGG::AGGAddtoClipRegion( short x1, short y1, short x2, short y2 )
 
     mTransform.transform( &x1d, &y1d );
     mTransform.transform( &x2d, &y2d );
-    AddtoClipRegion((int) floor( x1d ), (int) floor( y1d ), (int) ceil( x2d ), (int) ceil( y2d ));
+    AddtoClipRegion( (int) floor( x1d ), (int) floor( y1d ), (int) ceil( x2d ), (int) ceil( y2d ) );
 }
 
 
@@ -347,7 +347,7 @@ void wxPLDevAGG::BlitRectangle( wxDC* dc, int vX, int vY, int vW, int vH )
     if ( mBuffer )
     {
         wxMemoryDC MemoryDC;
-        wxBitmap   bitmap( mBuffer->GetSubImage( wxRect( vX, vY, vW, vH )), -1 );
+        wxBitmap   bitmap( mBuffer->GetSubImage( wxRect( vX, vY, vW, vH ) ), -1 );
         MemoryDC.SelectObject( bitmap );
         dc->Blit( vX, vY, vW, vH, &MemoryDC, 0, 0 );
         MemoryDC.SelectObject( wxNullBitmap );
@@ -375,8 +375,8 @@ void wxPLDevAGG::CreateCanvas()
 
     mRendererBase.reset_clipping( true );
     mTransform.reset();
-    mTransform.premultiply( agg::trans_affine_translation( 0.0, height ));
-    mTransform.premultiply( agg::trans_affine_scaling( 1.0 / scalex, -1.0 / scaley ));
+    mTransform.premultiply( agg::trans_affine_translation( 0.0, height ) );
+    mTransform.premultiply( agg::trans_affine_scaling( 1.0 / scalex, -1.0 / scaley ) );
     mStrokeWidth = ( scalex + scaley ) / 2.0;
 }
 
@@ -433,8 +433,8 @@ void wxPLDevAGG::SetExternalBuffer( void* image )
 
     mRendererBase.reset_clipping( true );
     mTransform.reset();
-    mTransform.premultiply( agg::trans_affine_translation( 0.0, height ));
-    mTransform.premultiply( agg::trans_affine_scaling( 1.0 / scalex, -1.0 / scaley ));
+    mTransform.premultiply( agg::trans_affine_translation( 0.0, height ) );
+    mTransform.premultiply( agg::trans_affine_scaling( 1.0 / scalex, -1.0 / scaley ) );
     mStrokeWidth = ( scalex + scaley ) / 2.0;
 
     ready  = true;
@@ -451,7 +451,7 @@ void wxPLDevAGG::SetExternalBuffer( void* image )
  *--------------------------------------------------------------------------*/
 void wxPLDevAGG::PutPixel( short x, short y, PLINT color )
 {
-    mBuffer->SetRGB( x, y, GetRValue( color ), GetGValue( color ), GetBValue( color ));
+    mBuffer->SetRGB( x, y, GetRValue( color ), GetGValue( color ), GetBValue( color ) );
     AddtoClipRegion( x, y, x, y );
 }
 
@@ -475,7 +475,7 @@ void wxPLDevAGG::PutPixel( short x, short y )
  *--------------------------------------------------------------------------*/
 PLINT wxPLDevAGG::GetPixel( short x, short y )
 {
-    return RGB( mBuffer->GetRed( x, y ), mBuffer->GetGreen( x, y ), mBuffer->GetBlue( x, y ));
+    return RGB( mBuffer->GetRed( x, y ), mBuffer->GetGreen( x, y ), mBuffer->GetBlue( x, y ) );
 }
 
 #endif // HAVE_FREETYPE
@@ -533,7 +533,7 @@ void wxPLDevAGG::PSDrawTextToDC( char* utf8_string, bool drawText )
                 printf( "after: start_x=%f, start_y=%f\n", start_x, start_y );
                 mFontManager.init_embedded_adaptors( glyph, start_x, start_y );
 
-                mRendererSolid.color( agg::rgba8( mColorRedStroke, mColorGreenStroke, mColorBlueStroke, mStrokeOpacity ));
+                mRendererSolid.color( agg::rgba8( mColorRedStroke, mColorGreenStroke, mColorBlueStroke, mStrokeOpacity ) );
                 agg::render_scanlines( mFontManager.gray8_adaptor(), mFontManager.gray8_scanline(), mRendererSolid );
 
                 start_x += glyph->advance_x / scalex;
@@ -551,7 +551,7 @@ void wxPLDevAGG::PSSetFont( PLUNICODE fci )
     /* convert the fci to Base14/Type1 font information */
     wxString fontname = fontdir + wxString( plP_FCI2FontName( fci, TrueTypeLookup, N_TrueTypeLookup ), *wxConvCurrent );
 
-    if ( !mFontEngine.load_font( "/usr/share/fonts/truetype/freefont/FreeSans.ttf", 0, agg::glyph_ren_agg_gray8 ))
+    if ( !mFontEngine.load_font( "/usr/share/fonts/truetype/freefont/FreeSans.ttf", 0, agg::glyph_ren_agg_gray8 ) )
         plabort( "Font could not be loaded" );
     //mFontEngine.load_font( "c:\\windows\\fonts\\arial.ttf", 0, agg::glyph_ren_agg_gray8 );
     mFontEngine.height( fontSize * fontScale );

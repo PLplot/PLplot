@@ -104,8 +104,8 @@ x29::plot1()
 
     for ( i = 0; i < npts; i++ )
     {
-        x[i] = xmax * ((PLFLT) i / (PLFLT) npts );
-        y[i] = 15.0 - 5.0 * cos( 2 * M_PI * ((PLFLT) i / (PLFLT) npts ));
+        x[i] = xmax * ( (PLFLT) i / (PLFLT) npts );
+        y[i] = 15.0 - 5.0 * cos( 2 * M_PI * ( (PLFLT) i / (PLFLT) npts ) );
         // Set x error bars to +/- 5 minute
         xerr1[i] = x[i] - 60 * 5;
         xerr2[i] = x[i] + 60 * 5;
@@ -170,10 +170,10 @@ x29::plot2()
     for ( j = 0; j < npts; j++ )
     {
         x[j] = j * 60.0 * 60.0 * 24.0;
-        p    = asin( 0.39795 * cos( 0.2163108 + 2 * atan( 0.9671396 * tan( 0.00860 * ( j - 186 )))));
+        p    = asin( 0.39795 * cos( 0.2163108 + 2 * atan( 0.9671396 * tan( 0.00860 * ( j - 186 ) ) ) ) );
         d    = 24.0 - ( 24.0 / M_PI ) *
-               acos(( sin( 0.8333 * M_PI / 180.0 ) + sin( lat * M_PI / 180.0 ) * sin( p )) /
-            ( cos( lat * M_PI / 180.0 ) * cos( p )));
+               acos( ( sin( 0.8333 * M_PI / 180.0 ) + sin( lat * M_PI / 180.0 ) * sin( p ) ) /
+            ( cos( lat * M_PI / 180.0 ) * cos( p ) ) );
         y[j] = d;
     }
 
@@ -214,8 +214,8 @@ x29::plot3()
     for ( i = 0; i < npts; i++ )
     {
         x[i] = xmin + i * 60.0 * 60.0 * 24.0;
-        y[i] = 1.0 + sin( 2 * M_PI * ((PLFLT) i ) / 7.0 ) +
-               exp(((PLFLT) MIN( i, npts - i )) / 31.0 );
+        y[i] = 1.0 + sin( 2 * M_PI * ( (PLFLT) i ) / 7.0 ) +
+               exp( ( (PLFLT) MIN( i, npts - i ) ) / 31.0 );
     }
     pls->adv( 0 );
 
@@ -352,7 +352,7 @@ x29::plot4()
 
         for ( i = 0; i < npts; i++ )
         {
-            x[i] = xmin + i * ( xmax - xmin ) / ((double) ( npts - 1 ));
+            x[i] = xmin + i * ( xmax - xmin ) / ( (double) ( npts - 1 ) );
             pls->configtime( scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0. );
             tai = x[i];
             pls->btime( tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec, tai );

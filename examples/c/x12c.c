@@ -60,11 +60,11 @@ main( int argc, const char *argv[] )
         /*plcol0(i + 1);*/
         plcol1( i / 9.0 );
         plpsty( 0 );
-        plfbox(( 1980. + i ), y0[i] );
+        plfbox( ( 1980. + i ), y0[i] );
         sprintf( string, "%.0f", y0[i] );
-        plptex(( 1980. + i + .5 ), ( y0[i] + 1. ), 1.0, 0.0, .5, string );
+        plptex( ( 1980. + i + .5 ), ( y0[i] + 1. ), 1.0, 0.0, .5, string );
         sprintf( string, "%d", 1980 + i );
-        plmtex( "b", 1.0, (( i + 1 ) * .1 - .05 ), 0.5, string );
+        plmtex( "b", 1.0, ( ( i + 1 ) * .1 - .05 ), 0.5, string );
     }
 
 /* Don't forget to call plend() to finish off! */

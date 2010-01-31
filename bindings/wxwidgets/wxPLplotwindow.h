@@ -46,9 +46,9 @@ public:
     int getBackend()  { return m_backend; }
 
 protected:
-    virtual void OnPaint( wxPaintEvent& event );               //!< Paint event
-    virtual void OnErase( wxEraseEvent & WXUNUSED( event ));   //!< Erase event
-    virtual void OnSize( wxSizeEvent & WXUNUSED( event ));     //!< Size event
+    virtual void OnPaint( wxPaintEvent& event );                //!< Paint event
+    virtual void OnErase( wxEraseEvent & WXUNUSED( event ) );   //!< Erase event
+    virtual void OnSize( wxSizeEvent & WXUNUSED( event ) );     //!< Size event
 
 private:
     // variables regarding double buffering

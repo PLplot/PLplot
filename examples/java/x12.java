@@ -73,15 +73,15 @@ class x12 {
         for ( i = 0; i < 10; i++ )
         {
 //            pls.col0(i + 1);
-            pls.col1((double) i / 9.0 );
+            pls.col1( (double) i / 9.0 );
             pls.psty( 0 );
-            plfbox(( 1980. + i ), y0[i] );
+            plfbox( ( 1980. + i ), y0[i] );
 //	   sprintf(string, "%.0f", y0[i]);
-            String text = nf.format((int) ( y0[i] + 0.5 ));
-            pls.ptex(( 1980. + i + .5 ), ( y0[i] + 1. ), 1.0, 0.0, .5, text );
+            String text = nf.format( (int) ( y0[i] + 0.5 ) );
+            pls.ptex( ( 1980. + i + .5 ), ( y0[i] + 1. ), 1.0, 0.0, .5, text );
 //	   sprintf(string, "%d", 1980 + i);
             String text1 = nf4.format( 1980 + i );
-            pls.mtex( "b", 1.0, (( i + 1 ) * .1 - .05 ), 0.5, text1 );
+            pls.mtex( "b", 1.0, ( ( i + 1 ) * .1 - .05 ), 0.5, text1 );
         }
         pls.end();
     }

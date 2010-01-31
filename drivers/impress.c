@@ -108,10 +108,10 @@ plD_init_imp( PLStream *pls )
     dev->xlen = dev->xmax - dev->xmin;
     dev->ylen = dev->ymax - dev->ymin;
 
-    plP_setpxl((PLFLT) 11.81, (PLFLT) 11.81 );
+    plP_setpxl( (PLFLT) 11.81, (PLFLT) 11.81 );
     plP_setphy( dev->xmin, dev->xmax, dev->ymin, dev->ymax );
 
-    LineBuff = (int *) malloc( BUFFLENG * sizeof ( int ));
+    LineBuff = (int *) malloc( BUFFLENG * sizeof ( int ) );
     if ( LineBuff == NULL )
     {
         plexit( "Error in memory alloc in plD_init_imp()." );
@@ -152,7 +152,7 @@ plD_line_imp( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
         *( LineBuff + count++ ) = x2;
         *( LineBuff + count++ ) = y2;
     }
-    else if (( count + 2 ) < BUFFLENG && x1 == dev->xold && y1 == dev->yold )
+    else if ( ( count + 2 ) < BUFFLENG && x1 == dev->xold && y1 == dev->yold )
     {
         /* Add new point to path */
 
@@ -165,7 +165,7 @@ plD_line_imp( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
         count /= 2;
         fprintf( pls->OutFile, "%c%c%c", CREATE_PATH, (char) count / 256, (char) count % 256 );
-        fwrite((char *) LineBuff, sizeof ( int ), 2 * count, pls->OutFile );
+        fwrite( (char *) LineBuff, sizeof ( int ), 2 * count, pls->OutFile );
         fprintf( pls->OutFile, "%c%c", DRAW_PATH, OPTYPE );
 
         /* And start a new path */
@@ -243,7 +243,7 @@ plD_bop_imp( PLStream *pls )
 void
 plD_tidy_imp( PLStream *pls )
 {
-    free((void *) LineBuff );
+    free( (void *) LineBuff );
     fclose( pls->OutFile );
 }
 
@@ -296,7 +296,7 @@ flushline( PLStream *pls )
 {
     count /= 2;
     fprintf( pls->OutFile, "%c%c%c", CREATE_PATH, (char) count / 256, (char) count % 256 );
-    fwrite((char *) LineBuff, sizeof ( int ), 2 * count, pls->OutFile );
+    fwrite( (char *) LineBuff, sizeof ( int ), 2 * count, pls->OutFile );
     fprintf( pls->OutFile, "%c%c", DRAW_PATH, OPTYPE );
     FirstLine = 1;
 }

@@ -77,8 +77,8 @@ void nn_quit( char* format, ... );
 #define N_SEARCH_TURNON    20
 #define BIGNUMBER          1.0e+100
 
-#define min( x, y )    (( x ) < ( y ) ? ( x ) : ( y ))
-#define max( x, y )    (( x ) > ( y ) ? ( x ) : ( y ))
+#define min( x, y )    ( ( x ) < ( y ) ? ( x ) : ( y ) )
+#define max( x, y )    ( ( x ) > ( y ) ? ( x ) : ( y ) )
 
 /* Creates Natural Neighbours point interpolator.
  *
@@ -87,12 +87,12 @@ void nn_quit( char* format, ... );
  */
 nnpi* nnpi_create( delaunay* d )
 {
-    nnpi* nn = malloc( sizeof ( nnpi ));
+    nnpi* nn = malloc( sizeof ( nnpi ) );
 
     nn->d          = d;
     nn->wmin       = -DBL_MAX;
-    nn->vertices   = calloc( NSTART, sizeof ( int ));
-    nn->weights    = calloc( NSTART, sizeof ( double ));
+    nn->vertices   = calloc( NSTART, sizeof ( int ) );
+    nn->weights    = calloc( NSTART, sizeof ( double ) );
     nn->nvertices  = 0;
     nn->nallocated = NSTART;
     nn->p          = NULL;
@@ -116,7 +116,7 @@ void nnpi_reset( nnpi* nn )
 {
     nn->nvertices = 0;
     nn->p         = NULL;
-    memset( nn->d->flags, 0, nn->d->ntriangles * sizeof ( int ));
+    memset( nn->d->flags, 0, nn->d->ntriangles * sizeof ( int ) );
 }
 
 static void nnpi_add_weight( nnpi* nn, int vertex, double w )
@@ -136,8 +136,8 @@ static void nnpi_add_weight( nnpi* nn, int vertex, double w )
          */
         if ( nn->nvertices == nn->nallocated )
         {
-            nn->vertices    = realloc( nn->vertices, ( nn->nallocated + NINC ) * sizeof ( int ));
-            nn->weights     = realloc( nn->weights, ( nn->nallocated + NINC ) * sizeof ( double ));
+            nn->vertices    = realloc( nn->vertices, ( nn->nallocated + NINC ) * sizeof ( int ) );
+            nn->weights     = realloc( nn->weights, ( nn->nallocated + NINC ) * sizeof ( double ) );
             nn->nallocated += NINC;
         }
 
@@ -187,7 +187,7 @@ static void nnpi_triangle_process( nnpi* nn, point* p, int i )
     circle  cs[3];
     int     j;
 
-    assert( circle_contains( c, p ));
+    assert( circle_contains( c, p ) );
 
     if ( nn_rule == SIBSON )
     {
@@ -207,7 +207,7 @@ static void nnpi_triangle_process( nnpi* nn, point* p, int i )
                 int v1 = t->vids[j1];
                 int v2 = t->vids[j2];
 
-                if ( !circle_build( &cs[j], &d->points[v1], &d->points[v2], &pp ))
+                if ( !circle_build( &cs[j], &d->points[v1], &d->points[v2], &pp ) )
                 {
                     double scale = triangle_scale_get( d, t );
 
@@ -224,7 +224,7 @@ static void nnpi_triangle_process( nnpi* nn, point* p, int i )
         {
             int    j1  = ( j + 1 ) % 3;
             int    j2  = ( j + 2 ) % 3;
-            double det = (( cs[j1].x - c->x ) * ( cs[j2].y - c->y ) - ( cs[j2].x - c->x ) * ( cs[j1].y - c->y ));
+            double det = ( ( cs[j1].x - c->x ) * ( cs[j2].y - c->y ) - ( cs[j2].x - c->x ) * ( cs[j1].y - c->y ) );
 
             nnpi_add_weight( nn, t->vids[j], det );
         }
@@ -265,7 +265,7 @@ void nnpi_calculate_weights( nnpi* nn )
     }
     else
         for ( i = 0; i < n; ++i )
-            if ( circle_contains( &nn->d->circles[i], p ))
+            if ( circle_contains( &nn->d->circles[i], p ) )
                 nnpi_triangle_process( nn, p, i );
 }
 
@@ -376,7 +376,7 @@ void nnpi_interpolate_points( int nin, point pin[], double wmin, int nout, point
         {
             point* p = &pout[i];
 
-            fprintf( stderr, "(%.7g,%.7g) -> %d\n", p->x, p->y, delaunay_xytoi( d, p, seed ));
+            fprintf( stderr, "(%.7g,%.7g) -> %d\n", p->x, p->y, delaunay_xytoi( d, p, seed ) );
         }
     }
 
@@ -467,7 +467,7 @@ typedef struct
  */
 nnhpi* nnhpi_create( delaunay* d, int size )
 {
-    nnhpi* nn = malloc( sizeof ( nnhpi ));
+    nnhpi* nn = malloc( sizeof ( nnhpi ) );
     int  i;
 
     nn->nnpi = nnpi_create( d );
@@ -529,7 +529,7 @@ void nnhpi_interpolate( nnhpi* nnhpi, point* p )
         nnpi_calculate_weights( nnpi );
         nnpi_normalize_weights( nnpi );
 
-        weights           = malloc( sizeof ( nn_weights ));
+        weights           = malloc( sizeof ( nn_weights ) );
         weights->vertices = malloc( sizeof ( int ) * nnpi->nvertices );
         weights->weights  = malloc( sizeof ( double ) * nnpi->nvertices );
 
@@ -636,16 +636,16 @@ void nnhpi_setwmin( nnhpi* nn, double wmin )
 #define NX           101
 #define NXMIN        1
 
-#define SQ( x )    (( x ) * ( x ))
+#define SQ( x )    ( ( x ) * ( x ) )
 
 static double franke( double x, double y )
 {
     x *= 9.0;
     y *= 9.0;
-    return 0.75 * exp(( -SQ( x - 2.0 ) - SQ( y - 2.0 )) / 4.0 )
+    return 0.75 * exp( ( -SQ( x - 2.0 ) - SQ( y - 2.0 ) ) / 4.0 )
            + 0.75 * exp( -SQ( x - 2.0 ) / 49.0 - ( y - 2.0 ) / 10.0 )
-           + 0.5 * exp(( -SQ( x - 7.0 ) - SQ( y - 3.0 )) / 4.0 )
-           - 0.2 * exp( -SQ( x - 4.0 ) - SQ( y - 7.0 ));
+           + 0.5 * exp( ( -SQ( x - 7.0 ) - SQ( y - 3.0 ) ) / 4.0 )
+           - 0.2 * exp( -SQ( x - 4.0 ) - SQ( y - 7.0 ) );
 }
 
 static void usage()
@@ -724,7 +724,7 @@ int main( int argc, char* argv[] )
      */
     printf( "  generating data:\n" );
     fflush( stdout );
-    pin = malloc( nin * sizeof ( point ));
+    pin = malloc( nin * sizeof ( point ) );
     for ( i = 0; i < nin; ++i )
     {
         point* p = &pin[i];
@@ -790,7 +790,7 @@ int main( int argc, char* argv[] )
     }
 
     if ( !nn_verbose )
-        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke( pout[cpi].x, pout[cpi].y ));
+        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke( pout[cpi].x, pout[cpi].y ) );
 
     printf( "  interpolating one more time:\n" );
     fflush( stdout );
@@ -813,7 +813,7 @@ int main( int argc, char* argv[] )
     }
 
     if ( !nn_verbose )
-        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke( pout[cpi].x, pout[cpi].y ));
+        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke( pout[cpi].x, pout[cpi].y ) );
 
     printf( "  entering new data:\n" );
     fflush( stdout );
@@ -883,7 +883,7 @@ int main( int argc, char* argv[] )
     }
 
     if ( !nn_verbose )
-        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke( pout[cpi].x, pout[cpi].y ));
+        printf( "    control point: (%f, %f, %f) (expected z = %f)\n", pout[cpi].x, pout[cpi].y, pout[cpi].z, franke( pout[cpi].x, pout[cpi].y ) );
 
     printf( "  hashtable stats:\n" );
     fflush( stdout );

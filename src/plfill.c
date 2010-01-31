@@ -25,14 +25,14 @@
 
 #include "plplotP.h"
 
-#define INSIDE( ix, iy )    ( BETW( ix, xmin, xmax ) && BETW( iy, ymin, ymax ))
+#define INSIDE( ix, iy )    ( BETW( ix, xmin, xmax ) && BETW( iy, ymin, ymax ) )
 
 #define DTOR       ( PI / 180. )
 #define BINC       50
 /* Near-border comparison criterion (NBCC). */
 #define PL_NBCC    2
 /* Variant of BETW that returns true if between or within PL_NBCC of it. */
-#define BETW_NBCC( ix, ia, ib )    ((( ix ) <= ( ia + PL_NBCC ) && ( ix ) >= ( ib - PL_NBCC )) || (( ix ) >= ( ia - PL_NBCC ) && ( ix ) <= ( ib + PL_NBCC )))
+#define BETW_NBCC( ix, ia, ib )    ( ( ( ix ) <= ( ia + PL_NBCC ) && ( ix ) >= ( ib - PL_NBCC ) ) || ( ( ix ) >= ( ia - PL_NBCC ) && ( ix ) <= ( ib + PL_NBCC ) ) )
 
 /* Status codes ORed together in the return from notcrossed.
  * PL_NOT_CROSSED is set whenever the two line segments definitely
@@ -221,8 +221,8 @@ c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
     n    = plP_clip_poly( n, V, 2, -1, zmax );
     for ( i = 0; i < n; i++ )
     {
-        xpoly[i] = plP_wcpcx( plP_w3wcx( tx[i], ty[i], tz[i] ));
-        ypoly[i] = plP_wcpcy( plP_w3wcy( tx[i], ty[i], tz[i] ));
+        xpoly[i] = plP_wcpcx( plP_w3wcx( tx[i], ty[i], tz[i] ) );
+        ypoly[i] = plP_wcpcy( plP_w3wcy( tx[i], ty[i], tz[i] ) );
     }
 
 /* AWI: in the past we have used
@@ -257,7 +257,7 @@ plfill_soft( short *x, short *y, PLINT n )
     double temp;
 
     buffersize = 2 * BINC;
-    buffer     = (PLINT *) malloc((size_t) buffersize * sizeof ( PLINT ));
+    buffer     = (PLINT *) malloc( (size_t) buffersize * sizeof ( PLINT ) );
     if ( !buffer )
     {
         plabort( "plfill: Out of memory" );
@@ -276,12 +276,12 @@ plfill_soft( short *x, short *y, PLINT n )
 
         /* normalize: 1 = si*si + ci*ci */
 
-        temp = sqrt((double) ( si * si + ci * ci ));
+        temp = sqrt( (double) ( si * si + ci * ci ) );
         si  /= temp;
         ci  /= temp;
 
         dinc = (PLINT) ( plsc->delta[k] * SSQR( plsc->ypmm * ABS( ci ),
-                             plsc->xpmm * ABS( si )) / 1000. );
+                             plsc->xpmm * ABS( si ) ) / 1000. );
 
         if ( dinc < 0 ) dinc = -dinc;
         if ( dinc == 0 ) dinc = 1;
@@ -310,7 +310,7 @@ plfill_soft( short *x, short *y, PLINT n )
 
 /* Sort list by y then x */
 
-        qsort((void *) buffer, (size_t) bufferleng / 2,
+        qsort( (void *) buffer, (size_t) bufferleng / 2,
             (size_t) sizeof ( struct point ), compar );
 
 /* OK, now do the hatching */
@@ -324,7 +324,7 @@ plfill_soft( short *x, short *y, PLINT n )
             i  += 2;
             xp2 = xp1;
             yp2 = yp1;
-            tran( &xp1, &yp1, (PLFLT) ci, (PLFLT) ( -si ));
+            tran( &xp1, &yp1, (PLFLT) ci, (PLFLT) ( -si ) );
             plP_movphy( xp1, yp1 );
             xp1 = buffer[i];
             yp1 = buffer[i + 1];
@@ -339,11 +339,11 @@ plfill_soft( short *x, short *y, PLINT n )
                 }
                 continue;       /* Uh oh we're lost */
             }
-            tran( &xp1, &yp1, (PLFLT) ci, (PLFLT) ( -si ));
+            tran( &xp1, &yp1, (PLFLT) ci, (PLFLT) ( -si ) );
             plP_draphy( xp1, yp1 );
         }
     }
-    free((void *) buffer );
+    free( (void *) buffer );
 }
 
 /*----------------------------------------------------------------------*\
@@ -358,8 +358,8 @@ tran( PLINT *a, PLINT *b, PLFLT c, PLFLT d )
     ta = *a;
     tb = *b;
 
-    *a = (PLINT) floor((double) ( ta * c + tb * d + 0.5 ));
-    *b = (PLINT) floor((double) ( tb * c - ta * d + 0.5 ));
+    *a = (PLINT) floor( (double) ( ta * c + tb * d + 0.5 ) );
+    *b = (PLINT) floor( (double) ( tb * c - ta * d + 0.5 ) );
 }
 
 void
@@ -374,7 +374,7 @@ buildlist( PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
 
     if ( dy == 0 )
     {
-        if ( yp2 > yp3 && (( yp2 % dinc ) == 0 ))
+        if ( yp2 > yp3 && ( ( yp2 % dinc ) == 0 ) )
             addcoord( xp2, yp2 );
         return;
     }
@@ -408,7 +408,7 @@ buildlist( PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
             if ( cstep == -nstep ) continue;
             if ( yp2 == yp3 && yp1 > yp2 ) continue;
         }
-        plotx = xp1 + (PLINT) floor(((double) ( ploty - yp1 ) * dx ) / dy + 0.5 );
+        plotx = xp1 + (PLINT) floor( ( (double) ( ploty - yp1 ) * dx ) / dy + 0.5 );
         addcoord( plotx, ploty );
     }
 }
@@ -421,11 +421,11 @@ addcoord( PLINT xp1, PLINT yp1 )
     if ( bufferleng + 2 > buffersize )
     {
         buffersize += 2 * BINC;
-        temp        = (PLINT *) realloc((void *) buffer,
-            (size_t) buffersize * sizeof ( PLINT ));
+        temp        = (PLINT *) realloc( (void *) buffer,
+            (size_t) buffersize * sizeof ( PLINT ) );
         if ( !temp )
         {
-            free((void *) buffer );
+            free( (void *) buffer );
             plexit( "plfill: Out of memory!" );
         }
         buffer = temp;
@@ -467,7 +467,7 @@ compar( const void *pnum1, const void *pnum2 )
 void
 plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
-            void ( *draw )( short *, short *, PLINT ))
+            void ( *draw )( short *, short *, PLINT ) )
 {
 #ifdef USE_FILL_INTERSECTION_POLYGON
     PLINT *x10, *y10, *x1, *y1, *if1, i1start = 0, i, im1, n1, n1m1,
@@ -480,11 +480,11 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     /* Must have at least 3 points and draw() specified */
     if ( npts < 3 || !draw ) return;
 
-    if (( x10 = (PLINT *) malloc( npts * sizeof ( PLINT ))) == NULL )
+    if ( ( x10 = (PLINT *) malloc( npts * sizeof ( PLINT ) ) ) == NULL )
     {
         plexit( "plP_plfclp: Insufficient memory" );
     }
-    if (( y10 = (PLINT *) malloc( npts * sizeof ( PLINT ))) == NULL )
+    if ( ( y10 = (PLINT *) malloc( npts * sizeof ( PLINT ) ) ) == NULL )
     {
         plexit( "plP_plfclp: Insufficient memory" );
     }
@@ -496,7 +496,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     n1  = 0;
     for ( i = 0; i < npts; i++ )
     {
-        if ( !( x[i] == x[im1] && y[i] == y[im1] ))
+        if ( !( x[i] == x[im1] && y[i] == y[im1] ) )
         {
             x10[n1]   = x[i];
             y10[n1++] = y[i];
@@ -517,18 +517,18 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
      * the boundary and on the left are interior points for the
      * polygon), but enforce this condition demanded by
      * fill_intersection_polygon for polygon 1 as well. */
-    if ( positive_orientation( n1, x10, y10 ))
+    if ( positive_orientation( n1, x10, y10 ) )
     {
         x1 = x10;
         y1 = y10;
     }
     else
     {
-        if (( x1 = (PLINT *) malloc( n1 * sizeof ( PLINT ))) == NULL )
+        if ( ( x1 = (PLINT *) malloc( n1 * sizeof ( PLINT ) ) ) == NULL )
         {
             plexit( "plP_plfclp: Insufficient memory" );
         }
-        if (( y1 = (PLINT *) malloc( n1 * sizeof ( PLINT ))) == NULL )
+        if ( ( y1 = (PLINT *) malloc( n1 * sizeof ( PLINT ) ) ) == NULL )
         {
             plexit( "plP_plfclp: Insufficient memory" );
         }
@@ -548,8 +548,8 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     im1 = n1 - 1;
     for ( i = 0; i < n1; i++ )
     {
-        if (( ifnotpointinpolygon =
-                  notpointinpolygon( n2, x2, y2, x1[im1], y1[im1] )) != 1 )
+        if ( ( ifnotpointinpolygon =
+                   notpointinpolygon( n2, x2, y2, x1[im1], y1[im1] ) ) != 1 )
             break;
         im1 = i;
     }
@@ -558,7 +558,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         fill_intersection_polygon( 0, 0, 0, draw, x1, y1, i1start, n1, x2, y2, if2, n2 );
     else
     {
-        if (( if1 = (PLINT *) calloc( n1, sizeof ( PLINT ))) == NULL )
+        if ( ( if1 = (PLINT *) calloc( n1, sizeof ( PLINT ) ) ) == NULL )
         {
             plexit( "plP_plfclp: Insufficient memory" );
         }
@@ -597,8 +597,8 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     }
     else
     {
-        if ((( xclp = (short *) malloc(( 2 * npts + 2 ) * sizeof ( short ))) == NULL ) ||
-            (( yclp = (short *) malloc(( 2 * npts + 2 ) * sizeof ( short ))) == NULL ))
+        if ( ( ( xclp = (short *) malloc( ( 2 * npts + 2 ) * sizeof ( short ) ) ) == NULL ) ||
+             ( ( yclp = (short *) malloc( ( 2 * npts + 2 ) * sizeof ( short ) ) ) == NULL ) )
         {
             plexit( "plP_plfclp: Insufficient memory" );
         }
@@ -613,7 +613,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         x1 = x[i]; x2 = x[i + 1];
         y1 = y[i]; y2 = y[i + 1];
 
-        drawable = ( INSIDE( x1, y1 ) && INSIDE( x2, y2 ));
+        drawable = ( INSIDE( x1, y1 ) && INSIDE( x2, y2 ) );
         if ( !drawable )
             drawable = !plP_clipline( &x1, &y1, &x2, &y2,
                 xmin, xmax, ymin, ymax );
@@ -660,9 +660,9 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                 xclp[iclp + 2] = x1; yclp[iclp + 2] = y1;
                 iout           = iout - iclp + 1;
                 /* Upper two */
-                if ((( crossed_xmin1 && crossed_xmax2 ) ||
-                     ( crossed_xmin2 && crossed_xmax1 )) &&
-                    inside_lu )
+                if ( ( ( crossed_xmin1 && crossed_xmax2 ) ||
+                       ( crossed_xmin2 && crossed_xmax1 ) ) &&
+                     inside_lu )
                 {
                     if ( crossed_xmin1 )
                     {
@@ -676,9 +676,9 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                     }
                 }
                 /* Lower two */
-                else if ((( crossed_xmin1 && crossed_xmax2 ) ||
-                          ( crossed_xmin2 && crossed_xmax1 )) &&
-                         inside_lb )
+                else if ( ( ( crossed_xmin1 && crossed_xmax2 ) ||
+                            ( crossed_xmin2 && crossed_xmax1 ) ) &&
+                          inside_lb )
                 {
                     if ( crossed_xmin1 )
                     {
@@ -692,9 +692,9 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                     }
                 }
                 /* Left two */
-                else if ((( crossed_ymin1 && crossed_ymax2 ) ||
-                          ( crossed_ymin2 && crossed_ymax1 )) &&
-                         inside_lb )
+                else if ( ( ( crossed_ymin1 && crossed_ymax2 ) ||
+                            ( crossed_ymin2 && crossed_ymax1 ) ) &&
+                          inside_lb )
                 {
                     if ( crossed_ymin1 )
                     {
@@ -708,9 +708,9 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                     }
                 }
                 /* Right two */
-                else if ((( crossed_ymin1 && crossed_ymax2 ) ||
-                          ( crossed_ymin2 && crossed_ymax1 )) &&
-                         inside_rb )
+                else if ( ( ( crossed_ymin1 && crossed_ymax2 ) ||
+                            ( crossed_ymin2 && crossed_ymax1 ) ) &&
+                          inside_rb )
                 {
                     if ( crossed_ymin1 )
                     {
@@ -725,26 +725,26 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                 }
                 /* Now the case where we encircled one corner */
                 /* Lower left */
-                else if (( crossed_xmin1 && crossed_ymin2 ) ||
-                         ( crossed_ymin1 && crossed_xmin2 ))
+                else if ( ( crossed_xmin1 && crossed_ymin2 ) ||
+                          ( crossed_ymin1 && crossed_xmin2 ) )
                 {
                     xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
                 }
                 /* Lower right */
-                else if (( crossed_xmax1 && crossed_ymin2 ) ||
-                         ( crossed_ymin1 && crossed_xmax2 ))
+                else if ( ( crossed_xmax1 && crossed_ymin2 ) ||
+                          ( crossed_ymin1 && crossed_xmax2 ) )
                 {
                     xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
                 }
                 /* Upper left */
-                else if (( crossed_xmin1 && crossed_ymax2 ) ||
-                         ( crossed_ymax1 && crossed_xmin2 ))
+                else if ( ( crossed_xmin1 && crossed_ymax2 ) ||
+                          ( crossed_ymax1 && crossed_xmin2 ) )
                 {
                     xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
                 }
                 /* Upper right */
-                else if (( crossed_xmax1 && crossed_ymax2 ) ||
-                         ( crossed_ymax1 && crossed_xmax2 ))
+                else if ( ( crossed_xmax1 && crossed_ymax2 ) ||
+                          ( crossed_ymax1 && crossed_xmax2 ) )
                 {
                     xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
                 }
@@ -792,18 +792,18 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         int dir   = circulation( x, y, npts );
         if ( debug )
         {
-            if (( xclp[0] == xmin && xclp[iclp - 1] == xmax ) ||
-                ( xclp[0] == xmax && xclp[iclp - 1] == xmin ) ||
-                ( yclp[0] == ymin && yclp[iclp - 1] == ymax ) ||
-                ( yclp[0] == ymax && yclp[iclp - 1] == ymin ) ||
-                ( xclp[0] == xmin && yclp[iclp - 1] == ymin ) ||
-                ( yclp[0] == ymin && xclp[iclp - 1] == xmin ) ||
-                ( xclp[0] == xmax && yclp[iclp - 1] == ymin ) ||
-                ( yclp[0] == ymin && xclp[iclp - 1] == xmax ) ||
-                ( xclp[0] == xmax && yclp[iclp - 1] == ymax ) ||
-                ( yclp[0] == ymax && xclp[iclp - 1] == xmax ) ||
-                ( xclp[0] == xmin && yclp[iclp - 1] == ymax ) ||
-                ( yclp[0] == ymax && xclp[iclp - 1] == xmin ))
+            if ( ( xclp[0] == xmin && xclp[iclp - 1] == xmax ) ||
+                 ( xclp[0] == xmax && xclp[iclp - 1] == xmin ) ||
+                 ( yclp[0] == ymin && yclp[iclp - 1] == ymax ) ||
+                 ( yclp[0] == ymax && yclp[iclp - 1] == ymin ) ||
+                 ( xclp[0] == xmin && yclp[iclp - 1] == ymin ) ||
+                 ( yclp[0] == ymin && xclp[iclp - 1] == xmin ) ||
+                 ( xclp[0] == xmax && yclp[iclp - 1] == ymin ) ||
+                 ( yclp[0] == ymin && xclp[iclp - 1] == xmax ) ||
+                 ( xclp[0] == xmax && yclp[iclp - 1] == ymax ) ||
+                 ( yclp[0] == ymax && xclp[iclp - 1] == xmax ) ||
+                 ( xclp[0] == xmin && yclp[iclp - 1] == ymax ) ||
+                 ( yclp[0] == ymax && xclp[iclp - 1] == xmin ) )
             {
                 printf( "dir=%d, clipped points:\n", dir );
                 for ( i = 0; i < iclp; i++ )
@@ -885,28 +885,28 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
          * three vertices must be visited in the opposite order.
          */
         /* LL, short way around */
-        else if (( xclp[0] == xmin && yclp[iclp - 1] == ymin && dir < 0 ) ||
-                 ( yclp[0] == ymin && xclp[iclp - 1] == xmin && dir > 0 ))
+        else if ( ( xclp[0] == xmin && yclp[iclp - 1] == ymin && dir < 0 ) ||
+                  ( yclp[0] == ymin && xclp[iclp - 1] == xmin && dir > 0 ) )
         {
             xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
         }
         /* LL, long way around, counterclockwise */
-        else if (( xclp[0] == xmin && yclp[iclp - 1] == ymin && dir > 0 ))
+        else if ( ( xclp[0] == xmin && yclp[iclp - 1] == ymin && dir > 0 ) )
         {
             xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
             xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
             xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
         }
         /* LL, long way around, clockwise */
-        else if (( yclp[0] == ymin && xclp[iclp - 1] == xmin && dir < 0 ))
+        else if ( ( yclp[0] == ymin && xclp[iclp - 1] == xmin && dir < 0 ) )
         {
             xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
             xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
             xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
         }
         /* LR, short way around */
-        else if (( xclp[0] == xmax && yclp[iclp - 1] == ymin && dir > 0 ) ||
-                 ( yclp[0] == ymin && xclp[iclp - 1] == xmax && dir < 0 ))
+        else if ( ( xclp[0] == xmax && yclp[iclp - 1] == ymin && dir > 0 ) ||
+                  ( yclp[0] == ymin && xclp[iclp - 1] == xmax && dir < 0 ) )
         {
             xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
         }
@@ -925,8 +925,8 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
         }
         /* UR, short way around */
-        else if (( xclp[0] == xmax && yclp[iclp - 1] == ymax && dir < 0 ) ||
-                 ( yclp[0] == ymax && xclp[iclp - 1] == xmax && dir > 0 ))
+        else if ( ( xclp[0] == xmax && yclp[iclp - 1] == ymax && dir < 0 ) ||
+                  ( yclp[0] == ymax && xclp[iclp - 1] == xmax && dir > 0 ) )
         {
             xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
         }
@@ -945,8 +945,8 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
         }
         /* UL, short way around */
-        else if (( xclp[0] == xmin && yclp[iclp - 1] == ymax && dir > 0 ) ||
-                 ( yclp[0] == ymax && xclp[iclp - 1] == xmin && dir < 0 ))
+        else if ( ( xclp[0] == xmin && yclp[iclp - 1] == ymax && dir > 0 ) ||
+                  ( yclp[0] == ymax && xclp[iclp - 1] == xmin && dir < 0 ) )
         {
             xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
         }
@@ -1138,18 +1138,18 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
     int i, return_value;
     PLINT *xint, *yint;
     PLFLT xmaximum = fabs( xp ), ymaximum = fabs( yp ), xscale, yscale;
-    if (( xint = (PLINT *) malloc( n * sizeof ( PLINT ))) == NULL )
+    if ( ( xint = (PLINT *) malloc( n * sizeof ( PLINT ) ) ) == NULL )
     {
         plexit( "PlP_pointinpolygon: Insufficient memory" );
     }
-    if (( yint = (PLINT *) malloc( n * sizeof ( PLINT ))) == NULL )
+    if ( ( yint = (PLINT *) malloc( n * sizeof ( PLINT ) ) ) == NULL )
     {
         plexit( "PlP_pointinpolygon: Insufficient memory" );
     }
     for ( i = 0; i < n; i++ )
     {
-        xmaximum = MAX( xmaximum, fabs( x[i] ));
-        ymaximum = MAX( ymaximum, fabs( y[i] ));
+        xmaximum = MAX( xmaximum, fabs( x[i] ) );
+        ymaximum = MAX( ymaximum, fabs( y[i] ) );
     }
     xscale = 1.e8 / xmaximum;
     yscale = 1.e8 / ymaximum;
@@ -1159,7 +1159,7 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
         yint[i] = (PLINT) ( yscale * y[i] );
     }
     return_value = !notpointinpolygon( n, xint, yint,
-        (PLINT) ( xscale * xp ), (PLINT) ( yscale * yp ));
+        (PLINT) ( xscale * xp ), (PLINT) ( yscale * yp ) );
     free( xint );
     free( yint );
     return return_value;
@@ -1206,7 +1206,7 @@ notpointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
     im1 = n - 1;
     for ( i = 0; i < n; i++ )
     {
-        if ( !( x[im1] == x[i] && y[im1] == y[i] ))
+        if ( !( x[im1] == x[i] && y[im1] == y[i] ) )
         {
             ifnotcrossed = notcrossed( &xintersect, &yintersect,
                 x[im1], y[im1], x[i], y[i],
@@ -1214,7 +1214,7 @@ notpointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
 
             if ( !ifnotcrossed )
                 count_crossings++;
-            else if ( ifnotcrossed & ( PL_NEAR_A1 | PL_NEAR_A2 | PL_NEAR_B1 | PL_NEAR_B2 ))
+            else if ( ifnotcrossed & ( PL_NEAR_A1 | PL_NEAR_A2 | PL_NEAR_B1 | PL_NEAR_B2 ) )
                 return 1;
         }
         im1 = i;
@@ -1224,7 +1224,7 @@ notpointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
      * (count_crossings odd), return 1 if the test point is near (see
      * above logic), and return 2 if the test point is definitely
      * outside the border (count_crossings even). */
-    if (( count_crossings % 2 ) == 1 )
+    if ( ( count_crossings % 2 ) == 1 )
         return 0;
     else
         return 2;
@@ -1586,10 +1586,10 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                     ifxsort  = abs( x2[i2] - x2[i2m1] ) > abs( y2[i2] - y2[i2m1] );
                     ifascend = ( ifxsort && x2[i2] > x2[i2m1] ) ||
                                ( !ifxsort && y2[i2] > y2[i2m1] );
-                    if (( ifxsort && ifascend && xintersect[0] < xintersect[1] ) ||
-                        ( !ifxsort && ifascend && yintersect[0] < yintersect[1] ) ||
-                        ( ifxsort && !ifascend && xintersect[0] >= xintersect[1] ) ||
-                        ( !ifxsort && !ifascend && yintersect[0] >= yintersect[1] ))
+                    if ( ( ifxsort && ifascend && xintersect[0] < xintersect[1] ) ||
+                         ( !ifxsort && ifascend && yintersect[0] < yintersect[1] ) ||
+                         ( ifxsort && !ifascend && xintersect[0] >= xintersect[1] ) ||
+                         ( !ifxsort && !ifascend && yintersect[0] >= yintersect[1] ) )
                     {
                         range21 = n2;
                     }
@@ -1609,28 +1609,28 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                     kkstart22 += n2;
                 nsplit2 = 2 + range1 + range22;
 
-                if (( xsplit1 = (PLINT *) malloc( nsplit1 * sizeof ( PLINT ))) == NULL )
+                if ( ( xsplit1 = (PLINT *) malloc( nsplit1 * sizeof ( PLINT ) ) ) == NULL )
                 {
                     plexit( "fill_intersection_polygon: Insufficient memory" );
                 }
-                if (( ysplit1 = (PLINT *) malloc( nsplit1 * sizeof ( PLINT ))) == NULL )
+                if ( ( ysplit1 = (PLINT *) malloc( nsplit1 * sizeof ( PLINT ) ) ) == NULL )
                 {
                     plexit( "fill_intersection_polygon: Insufficient memory" );
                 }
-                if (( ifsplit1 = (PLINT *) malloc( nsplit1 * sizeof ( PLINT ))) == NULL )
+                if ( ( ifsplit1 = (PLINT *) malloc( nsplit1 * sizeof ( PLINT ) ) ) == NULL )
                 {
                     plexit( "fill_intersection_polygon: Insufficient memory" );
                 }
 
-                if (( xsplit2 = (PLINT *) malloc( nsplit2 * sizeof ( PLINT ))) == NULL )
+                if ( ( xsplit2 = (PLINT *) malloc( nsplit2 * sizeof ( PLINT ) ) ) == NULL )
                 {
                     plexit( "fill_intersection_polygon: Insufficient memory" );
                 }
-                if (( ysplit2 = (PLINT *) malloc( nsplit2 * sizeof ( PLINT ))) == NULL )
+                if ( ( ysplit2 = (PLINT *) malloc( nsplit2 * sizeof ( PLINT ) ) ) == NULL )
                 {
                     plexit( "fill_intersection_polygon: Insufficient memory" );
                 }
-                if (( ifsplit2 = (PLINT *) malloc( nsplit2 * sizeof ( PLINT ))) == NULL )
+                if ( ( ifsplit2 = (PLINT *) malloc( nsplit2 * sizeof ( PLINT ) ) ) == NULL )
                 {
                     plexit( "fill_intersection_polygon: Insufficient memory" );
                 }
@@ -1766,8 +1766,8 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
          * that is definitely inside or outside polygon 2. */
         for ( i1 = 0; i1 < n1; i1++ )
         {
-            if (( ifnotpolygon1inpolygon2 =
-                      notpointinpolygon( n2, x2, y2, x1[i1], y1[i1] )) != 1 )
+            if ( ( ifnotpolygon1inpolygon2 =
+                       notpointinpolygon( n2, x2, y2, x1[i1], y1[i1] ) ) != 1 )
                 break;
         }
 
@@ -1779,7 +1779,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
             /* Do not bother checking vertices already known to be on the
              * boundary with polygon 1. */
             if ( !if2[i2] && ( ifnotpolygon2inpolygon1 =
-                                   notpointinpolygon( n1, x1, y1, x2[i2], y2[i2] )) != 1 )
+                                   notpointinpolygon( n1, x1, y1, x2[i2], y2[i2] ) ) != 1 )
                 break;
         }
 
@@ -1822,11 +1822,11 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
 
     if ( nfill > 0 )
     {
-        if (( xfill = (short *) malloc( nfill * sizeof ( short ))) == NULL )
+        if ( ( xfill = (short *) malloc( nfill * sizeof ( short ) ) ) == NULL )
         {
             plexit( "fill_intersection_polygon: Insufficient memory" );
         }
-        if (( yfill = (short *) malloc( nfill * sizeof ( short ))) == NULL )
+        if ( ( yfill = (short *) malloc( nfill * sizeof ( short ) ) ) == NULL )
         {
             plexit( "fill_intersection_polygon: Insufficient memory" );
         }
@@ -1888,7 +1888,7 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
     yB2B1 = yB2 - yB1;
 
     factor      = xA2A1 * yB2B1 - yA2A1 * xB2B1;
-    factor_NBCC = PL_NBCC * ( fabs( xA2A1 ) + fabs( yB2B1 ) + fabs( yA2A1 ) + fabs( xB2B1 ));
+    factor_NBCC = PL_NBCC * ( fabs( xA2A1 ) + fabs( yB2B1 ) + fabs( yA2A1 ) + fabs( xB2B1 ) );
     if ( fabs( factor ) <= factor_NBCC )
     {
         if ( fabs( factor ) > 0. )
@@ -1898,22 +1898,22 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
         /* Choice of intersect is arbitrary in this case.  Choose A1, A2,
          * B1, or B2 (in that order) if any of them lie inside or near
          * the other line segment.  Otherwise, choose the average point. */
-        if (( BETW_NBCC( xA1, xB1, xB2 ) && BETW_NBCC( yA1, yB1, yB2 )))
+        if ( ( BETW_NBCC( xA1, xB1, xB2 ) && BETW_NBCC( yA1, yB1, yB2 ) ) )
         {
             fxintersect = xA1;
             fyintersect = yA1;
         }
-        else if (( BETW_NBCC( xA2, xB1, xB2 ) && BETW_NBCC( yA2, yB1, yB2 )))
+        else if ( ( BETW_NBCC( xA2, xB1, xB2 ) && BETW_NBCC( yA2, yB1, yB2 ) ) )
         {
             fxintersect = xA2;
             fyintersect = yA2;
         }
-        else if (( BETW_NBCC( xB1, xA1, xA2 ) && BETW_NBCC( yB1, yA1, yA2 )))
+        else if ( ( BETW_NBCC( xB1, xA1, xA2 ) && BETW_NBCC( yB1, yA1, yA2 ) ) )
         {
             fxintersect = xB1;
             fyintersect = yB1;
         }
-        else if (( BETW_NBCC( xB2, xA1, xA2 ) && BETW_NBCC( yB2, yA1, yA2 )))
+        else if ( ( BETW_NBCC( xB2, xA1, xA2 ) && BETW_NBCC( yB2, yA1, yA2 ) ) )
         {
             fxintersect = xB2;
             fyintersect = yB2;
@@ -1937,8 +1937,8 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
     }
     /* The "redundant" x and y segment range checks (which include near the
      * end points) are needed for the vertical and the horizontal cases. */
-    if (( BETW_NBCC( fxintersect, xA1, xA2 ) && BETW_NBCC( fyintersect, yA1, yA2 )) &&
-        ( BETW_NBCC( fxintersect, xB1, xB2 ) && BETW_NBCC( fyintersect, yB1, yB2 )))
+    if ( ( BETW_NBCC( fxintersect, xA1, xA2 ) && BETW_NBCC( fyintersect, yA1, yA2 ) ) &&
+         ( BETW_NBCC( fxintersect, xB1, xB2 ) && BETW_NBCC( fyintersect, yB1, yB2 ) ) )
     {
         /* The intersect is close (within +/- PL_NBCC) to an end point or
          * corresponds to a definite crossing of the two line segments.
@@ -2048,7 +2048,7 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
     i2m1 = n2 - 1;
     for ( i2 = 0; i2 < n2; i2++ )
     {
-        if ( !( x2[i2m1] == x2[i2] && y2[i2m1] == y2[i2] ))
+        if ( !( x2[i2m1] == x2[i2] && y2[i2m1] == y2[i2] ) )
         {
             ifnotcrossed = notcrossed( &xintersect, &yintersect,
                 x1[i1m1], y1[i1m1], x1[i1], y1[i1],
@@ -2066,10 +2066,10 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
                 }
                 else
                 {
-                    if (( ifxsort && ifascend && xintersect < xcross[0] ) ||
-                        ( !ifxsort && ifascend && yintersect < ycross[0] ) ||
-                        ( ifxsort && !ifascend && xintersect >= xcross[0] ) ||
-                        ( !ifxsort && !ifascend && yintersect >= ycross[0] ))
+                    if ( ( ifxsort && ifascend && xintersect < xcross[0] ) ||
+                         ( !ifxsort && ifascend && yintersect < ycross[0] ) ||
+                         ( ifxsort && !ifascend && xintersect >= xcross[0] ) ||
+                         ( !ifxsort && !ifascend && yintersect >= ycross[0] ) )
                     {
                         if ( ncross == 2 )
                         {
@@ -2086,7 +2086,7 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
                                                    ( ifxsort && ifascend && xintersect < xcross[1] ) ||
                                                    ( !ifxsort && ifascend && yintersect < ycross[1] ) ||
                                                    ( ifxsort && !ifascend && xintersect >= xcross[1] ) ||
-                                                   ( !ifxsort && !ifascend && yintersect >= ycross[1] ))))
+                                                   ( !ifxsort && !ifascend && yintersect >= ycross[1] ) ) ) )
                     {
                         xcross[1]  = xintersect;
                         ycross[1]  = yintersect;

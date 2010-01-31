@@ -68,7 +68,7 @@ int stuff( tclMatrix *pm, Tcl_Interp *interp,
 int
 main( int argc, const char **argv )
 {
-    exit( pltkMain( argc, argv, NULL, AppInit ));
+    exit( pltkMain( argc, argv, NULL, AppInit ) );
 }
 
 /*
@@ -334,16 +334,16 @@ plot3( void )
 
 int   myplotCmd( ClientData cd, Tcl_Interp *interp, int argc, char **argv )
 {
-    if ( !strcmp( argv[1], "1" ))
+    if ( !strcmp( argv[1], "1" ) )
         myplot1();
 
-    if ( !strcmp( argv[1], "2" ))
+    if ( !strcmp( argv[1], "2" ) )
         myplot2();
 
-    if ( !strcmp( argv[1], "3" ))
+    if ( !strcmp( argv[1], "3" ) )
         myplot3();
 
-    if ( !strcmp( argv[1], "4" ))
+    if ( !strcmp( argv[1], "4" ) )
         myplot4();
 
     plflush();

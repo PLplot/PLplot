@@ -98,7 +98,7 @@ class plot {
         for ( int i = 0; i < npts; i++ )
         {
             x[i] = xmax * ( i / cast(PLFLT) npts );
-            y[i] = 15.0 - 5.0 * cos( 2 * PI * ( i / cast(PLFLT) npts ));
+            y[i] = 15.0 - 5.0 * cos( 2 * PI * ( i / cast(PLFLT) npts ) );
 
             /* Set x error bars to +/- 5 minute */
             xerr1[i] = x[i] - 60 * 5;
@@ -165,10 +165,10 @@ class plot {
         for ( int j = 0; j < npts; j++ )
         {
             x[j] = j * 60.0 * 60.0 * 24.0;
-            p    = asin( 0.39795 * cos( 0.2163108 + 2 * atan( 0.9671396 * tan( 0.00860 * ( j - 186 )))));
+            p    = asin( 0.39795 * cos( 0.2163108 + 2 * atan( 0.9671396 * tan( 0.00860 * ( j - 186 ) ) ) ) );
             d    = 24.0 - ( 24.0 / PI ) *
-                   acos(( sin( 0.8333 * PI / 180.0 ) + sin( lat * PI / 180.0 ) * sin( p )) /
-                ( cos( lat * PI / 180.0 ) * cos( p )));
+                   acos( ( sin( 0.8333 * PI / 180.0 ) + sin( lat * PI / 180.0 ) * sin( p ) ) /
+                ( cos( lat * PI / 180.0 ) * cos( p ) ) );
             y[j] = d;
         }
 

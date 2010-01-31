@@ -198,11 +198,11 @@ x01::x01( int argc, const char ** argv )
     {
         while ( 1 )
         {
-            if ( !pls->GetCursor( &gin )) break;
+            if ( !pls->GetCursor( &gin ) ) break;
             if ( gin.keysym == PLK_Escape ) break;
 
             pls->text();
-            if ( gin.keysym < 0xFF && isprint( gin.keysym ))
+            if ( gin.keysym < 0xFF && isprint( gin.keysym ) )
                 cout << "wx = " << gin.wX << ", wy = " << gin.wY <<
                 ", dx = " << gin.dX << ",  dy = " << gin.dY <<
                 ",  c = '" << gin.keysym << "'" << endl;
@@ -234,7 +234,7 @@ void x01::plot1( int do_test )
     for ( i = 0; i < 60; i++ )
     {
         x[i] = xoff + xscale * ( i + 1 ) / 60.0;
-        y[i] = yoff + yscale * pow((double) x[i], 2. );
+        y[i] = yoff + yscale * pow( (double) x[i], 2. );
     }
 
     xmin = x[0];

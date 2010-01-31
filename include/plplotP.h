@@ -145,7 +145,7 @@ typedef char * caddr_t;
 #else
 #define FPOS_T    long
 #define pl_fsetpos( a, b )    fseek( a, *b, 0 )
-#define pl_fgetpos( a, b )    ( -1L == ( *b = ftell( a )))
+#define pl_fgetpos( a, b )    ( -1L == ( *b = ftell( a ) ) )
 #endif
 
 #include "pldll.h"
@@ -185,7 +185,7 @@ extern PLDLLIMPEXP_DATA( PLStream * ) plsc;
 /* Used to help ensure everything malloc'ed gets freed */
 
 #define free_mem( a ) \
-    if ( a != NULL ) { free((void *) a ); a = NULL; }
+    if ( a != NULL ) { free( (void *) a ); a = NULL; }
 
 /* Allows multi-argument setup calls to not affect selected arguments */
 
@@ -195,25 +195,25 @@ extern PLDLLIMPEXP_DATA( PLStream * ) plsc;
 /* Lots of cool math macros */
 
 #ifndef MAX
-#define MAX( a, b )           ((( a ) > ( b )) ? ( a ) : ( b ))
+#define MAX( a, b )           ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 #endif
 #ifndef MIN
-#define MIN( a, b )           ((( a ) < ( b )) ? ( a ) : ( b ))
+#define MIN( a, b )           ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 #ifndef ABS
-#define ABS( a )              (( a ) < 0 ? -( a ) : ( a ))
+#define ABS( a )              ( ( a ) < 0 ? -( a ) : ( a ) )
 #endif
 #ifndef ROUND
-#define ROUND( a )            (PLINT) (( a ) < 0. ? (( a ) - .5 ) : (( a ) + .5 ))
+#define ROUND( a )            (PLINT) ( ( a ) < 0. ? ( ( a ) - .5 ) : ( ( a ) + .5 ) )
 #endif
 #ifndef BETW
-#define BETW( ix, ia, ib )    ((( ix ) <= ( ia ) && ( ix ) >= ( ib )) || (( ix ) >= ( ia ) && ( ix ) <= ( ib )))
+#define BETW( ix, ia, ib )    ( ( ( ix ) <= ( ia ) && ( ix ) >= ( ib ) ) || ( ( ix ) >= ( ia ) && ( ix ) <= ( ib ) ) )
 #endif
 #ifndef SSQR
-#define SSQR( a, b )          sqrt(( a ) * ( a ) + ( b ) * ( b ))
+#define SSQR( a, b )          sqrt( ( a ) * ( a ) + ( b ) * ( b ) )
 #endif
 #ifndef SIGN
-#define SIGN( a )             (( a ) < 0 ? -1 : 1 )
+#define SIGN( a )             ( ( a ) < 0 ? -1 : 1 )
 #endif
 
 /* A coordinate value that should never occur */
@@ -258,13 +258,13 @@ int plsnscanf( const char *buffer, int n, const char *format, ... );
 /* Note these replacements follow the old BSD convention and not
  * C99. In particular isinf does not distinguish +/- inf. */
 #if !defined ( PL_HAVE_ISNAN )
-#  define isnan( x )     (( x ) != ( x ))
+#  define isnan( x )     ( ( x ) != ( x ) )
 #endif
 #if !defined ( PL_HAVE_ISINF )
-#  define isinf( x )     ( !isnan( x ) && isnan( x - x ))
+#  define isinf( x )     ( !isnan( x ) && isnan( x - x ) )
 #endif
 #if !defined ( PL_HAVE_FINITE )
-#  define finite( x )    ( !isnan( x - x ))
+#  define finite( x )    ( !isnan( x - x ) )
 #endif
 
 /* Check if C99 HUGE_VAL macro is available - if not then
@@ -504,14 +504,14 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
 void
 plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
             PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
-            void ( *draw )( short *, short *, PLINT ));
+            void ( *draw )( short *, short *, PLINT ) );
 
 /* Fills a polygon within the clip limits. */
 
 void
 plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
-            void ( *draw )( short *, short *, PLINT ));
+            void ( *draw )( short *, short *, PLINT ) );
 
 /* Clip a polygon to the 3d bounding plane */
 int

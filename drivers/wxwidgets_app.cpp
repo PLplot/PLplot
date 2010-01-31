@@ -164,7 +164,7 @@ void wxPLplotApp::SetRefreshFlag( bool flag )
  *
  *  XXX - missing
  \*----------------------------------------------------------------------*/
-void wxPLplotApp::OnIdle( wxIdleEvent& WXUNUSED( event ))
+void wxPLplotApp::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotApp::OnIdle" );
 
@@ -223,42 +223,42 @@ wxPLplotFrame::wxPLplotFrame( const wxString& title, PLStream *pls )
     for ( size_t j = 6; j < sizeof ( dev_entries ) / sizeof ( dev_entry ); j++ )
         for ( int i = 0; i < m_dev->ndev; i++ )
         {
-            if ( !strcmp( m_dev->devName[i], dev_entries[j].dev_name.mb_str()))
+            if ( !strcmp( m_dev->devName[i], dev_entries[j].dev_name.mb_str() ) )
                 saveMenu->Append( wxPL_Save + j, dev_entries[j].dev_menu_short, dev_entries[j].dev_menu_long );
         }
 
     wxMenu* fileMenu = new wxMenu;
 #if ( wxMAJOR_VERSION <= 2 ) & ( wxMINOR_VERSION <= 6 )
-    fileMenu->Append( -1, wxT( "Save plot as..." ), saveMenu, wxT( "Save this plot as ...!" ));
+    fileMenu->Append( -1, wxT( "Save plot as..." ), saveMenu, wxT( "Save this plot as ...!" ) );
 #else
-    fileMenu->AppendSubMenu( saveMenu, wxT( "Save plot as..." ), wxT( "Save this plot as ...!" ));
+    fileMenu->AppendSubMenu( saveMenu, wxT( "Save plot as..." ), wxT( "Save this plot as ...!" ) );
 #endif
-    fileMenu->Append( wxID_EXIT, wxT( "E&xit\tAlt-X" ), wxT( "Exit wxWidgets PLplot App" ));
+    fileMenu->Append( wxID_EXIT, wxT( "E&xit\tAlt-X" ), wxT( "Exit wxWidgets PLplot App" ) );
 
     wxMenu* orientationMenu = new wxMenu;
-    orientationMenu->Append( wxPL_Orientation_0, wxT( "0 deg." ), wxT( "Orientation 0 deg." ));
-    orientationMenu->Append( wxPL_Orientation_90, wxT( "90 deg." ), wxT( "Orientation 90 deg." ));
-    orientationMenu->Append( wxPL_Orientation_180, wxT( "180 deg." ), wxT( "Orientation 180 deg." ));
-    orientationMenu->Append( wxPL_Orientation_270, wxT( "270 deg." ), wxT( "Orientation 270 deg." ));
+    orientationMenu->Append( wxPL_Orientation_0, wxT( "0 deg." ), wxT( "Orientation 0 deg." ) );
+    orientationMenu->Append( wxPL_Orientation_90, wxT( "90 deg." ), wxT( "Orientation 90 deg." ) );
+    orientationMenu->Append( wxPL_Orientation_180, wxT( "180 deg." ), wxT( "Orientation 180 deg." ) );
+    orientationMenu->Append( wxPL_Orientation_270, wxT( "270 deg." ), wxT( "Orientation 270 deg." ) );
 
     wxMenu* plotMenu = new wxMenu;
-    plotMenu->Append( wxPL_Locate, wxT( "Locate\tL" ), wxT( "Enter locate mode" ));
+    plotMenu->Append( wxPL_Locate, wxT( "Locate\tL" ), wxT( "Enter locate mode" ) );
     // only add the orientation menu for hershey text processing
     if ( !pls->dev_text )
     {
 #if ( wxMAJOR_VERSION <= 2 ) & ( wxMINOR_VERSION <= 6 )
-        plotMenu->Append( -1, wxT( "Set Orientation to..." ), orientationMenu, wxT( "Set the Orientation of the plot!" ));
+        plotMenu->Append( -1, wxT( "Set Orientation to..." ), orientationMenu, wxT( "Set the Orientation of the plot!" ) );
 #else
-        plotMenu->AppendSubMenu( orientationMenu, wxT( "Set Orientation to..." ), wxT( "Set the Orientation of the plot!" ));
+        plotMenu->AppendSubMenu( orientationMenu, wxT( "Set Orientation to..." ), wxT( "Set the Orientation of the plot!" ) );
 #endif
     }
 
     wxMenuBar* menuBar = new wxMenuBar();
-    menuBar->Append( fileMenu, wxT( "&File" ));
-    menuBar->Append( plotMenu, wxT( "&Plot" ));
+    menuBar->Append( fileMenu, wxT( "&File" ) );
+    menuBar->Append( plotMenu, wxT( "&Plot" ) );
     SetMenuBar( menuBar );
 
-    SetIcon( wxIcon( graph ));
+    SetIcon( wxIcon( graph ) );
 }
 
 
@@ -271,7 +271,7 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
 {
     // Log_Verbose( "wxPLplotFrame::OnMenu" );
 
-    switch ( event.GetId())
+    switch ( event.GetId() )
     {
     case wxID_EXIT:
         m_dev->exit = true;
@@ -300,7 +300,7 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
     }
 
     size_t index = event.GetId() - wxPL_Save;
-    if (( index >= 0 ) && ( index < sizeof ( dev_entries ) / sizeof ( dev_entry )))
+    if ( ( index >= 0 ) && ( index < sizeof ( dev_entries ) / sizeof ( dev_entry ) ) )
     {
         int  width   = 800;
         int  height  = 600;
@@ -334,7 +334,7 @@ void wxPLplotFrame::OnMenu( wxCommandEvent& event )
             {
                 const wxCharBuffer buf1 = dialog.GetPath().mb_str();
                 const wxCharBuffer buf2 = dev_entries[index].dev_name.mb_str();
-                SavePlot((const char*) buf1, (const char*) buf2, width, height );
+                SavePlot( (const char*) buf1, (const char*) buf2, width, height );
             }
         }
     }
@@ -367,7 +367,7 @@ bool wxPLplotFrame::SavePlot( const char* filename, const char* devname, int wid
     int pls, pls_save;
 
     if ( !strcmp( devname, "wxbmp" ) || !strcmp( devname, "wxpng" ) || !strcmp( devname, "wxpcx" ) ||
-         !strcmp( devname, "wxjpeg" ) || !strcmp( devname, "wxtiff" ) || !strcmp( devname, "wxpnm" ))
+         !strcmp( devname, "wxjpeg" ) || !strcmp( devname, "wxtiff" ) || !strcmp( devname, "wxpnm" ) )
     {
         wxMemoryDC memDC;
 
@@ -390,26 +390,26 @@ bool wxPLplotFrame::SavePlot( const char* filename, const char* devname, int wid
         plsstrm( pls );
 
         wxBitmapType type;
-        if ( !strcmp( devname, "wxbmp" ))
+        if ( !strcmp( devname, "wxbmp" ) )
             type = wxBITMAP_TYPE_BMP;
 #if wxUSE_LIBPNG
-        else if ( !strcmp( devname, "wxpng" ))
+        else if ( !strcmp( devname, "wxpng" ) )
             type = wxBITMAP_TYPE_PNG;
 #endif
 #if wxUSE_PCX
-        else if ( !strcmp( devname, "wxpcx" ))
+        else if ( !strcmp( devname, "wxpcx" ) )
             type = wxBITMAP_TYPE_PCX;
 #endif
 #if wxUSE_LIBJPEG
-        else if ( !strcmp( devname, "wxjpeg" ))
+        else if ( !strcmp( devname, "wxjpeg" ) )
             type = wxBITMAP_TYPE_JPEG;
 #endif
 #if wxUSE_LIBTIFF
-        else if ( !strcmp( devname, "wxtiff" ))
+        else if ( !strcmp( devname, "wxtiff" ) )
             type = wxBITMAP_TYPE_TIF;
 #endif
 #if wxUSE_PNM
-        else if ( !strcmp( devname, "wxpnm" ))
+        else if ( !strcmp( devname, "wxpnm" ) )
             type = wxBITMAP_TYPE_PNM;
 #endif
         bool status = bitmap.SaveFile( wxString( filename, *wxConvCurrent ), type );
@@ -472,7 +472,7 @@ wxPLplotWindow::wxPLplotWindow( wxWindow* parent, PLStream *pls )
  *  area. This method is also called, if (part) of the client area was
  *  invalidated and a refresh is necessary.
  \*----------------------------------------------------------------------*/
-void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED( event ))
+void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotWindow::OnPaint" );
 
@@ -481,7 +481,7 @@ void wxPLplotWindow::OnPaint( wxPaintEvent& WXUNUSED( event ))
 
     /* only update damaged regions */
     int vX, vY, vW, vH;
-    wxRegionIterator upd( GetUpdateRegion());
+    wxRegionIterator upd( GetUpdateRegion() );
 
     // remove the xhair before updating
     if ( m_dev->draw_xhair && upd && xhair_drawn )
@@ -605,7 +605,7 @@ void wxPLplotWindow::OnChar( wxKeyEvent& event )
  *
  *  If there is no pending event, maybe the canvas needs to be refreshed.
  *----------------------------------------------------------------------*/
-void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED( event ))
+void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotWindow::OnIdle" );
 
@@ -641,7 +641,7 @@ void wxPLplotWindow::OnIdle( wxIdleEvent& WXUNUSED( event ))
  *
  *  Do nothing here to prevent flickering.
  *----------------------------------------------------------------------*/
-void wxPLplotWindow::OnErase( wxEraseEvent &WXUNUSED( event ))
+void wxPLplotWindow::OnErase( wxEraseEvent &WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotWindow::OnErase" );
 }
@@ -653,7 +653,7 @@ void wxPLplotWindow::OnErase( wxEraseEvent &WXUNUSED( event ))
  *  Allocate a bigger bitmap if necessary and redo the plot if the
  *  window size was changed.
  *----------------------------------------------------------------------*/
-void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED( event ))
+void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotWindow::OnSize" );
 
@@ -662,10 +662,10 @@ void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED( event ))
 
     if ( m_dev->waiting )
     {
-        if (( width != m_dev->width ) || ( height != m_dev->height ))
+        if ( ( width != m_dev->width ) || ( height != m_dev->height ) )
         {
             /* get a new bitmap if new size is bigger as bitmap size */
-            if (( width > m_dev->bm_width ) || ( height > m_dev->bm_height ))
+            if ( ( width > m_dev->bm_width ) || ( height > m_dev->bm_height ) )
             {
                 m_dev->bm_width  = m_dev->bm_width > width ? m_dev->bm_width : width;
                 m_dev->bm_height = m_dev->bm_height > height ? m_dev->bm_height : height;
@@ -686,11 +686,11 @@ void wxPLplotWindow::OnSize( wxSizeEvent & WXUNUSED( event ))
  *
  *  Add a size event if the Window is maximized.
  *----------------------------------------------------------------------*/
-void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED( event ))
+void wxPLplotWindow::OnMaximize( wxMaximizeEvent & WXUNUSED( event ) )
 {
     // Log_Verbose( "wxPLplotWindow::OnMax" );
 
-    wxSizeEvent event( GetClientSize());
+    wxSizeEvent event( GetClientSize() );
     AddPendingEvent( event );
 }
 
@@ -704,11 +704,11 @@ void wxPLplotWindow::OnMouse( wxMouseEvent &event )
 {
     // Log_Verbose( "wxPLplotWindow::OnMouse" );
 
-    wxPoint pos( event.GetPosition());
+    wxPoint pos( event.GetPosition() );
     mouse_x = pos.x;
     mouse_y = pos.y;
 
-    if ( event.ButtonDown())
+    if ( event.ButtonDown() )
     {
         PLGraphicsIn *gin = &( m_dev->gin );
 
@@ -720,17 +720,17 @@ void wxPLplotWindow::OnMouse( wxMouseEvent &event )
         gin->dX = (PLFLT) mouse_x / ( width - 1 );
         gin->dY = 1.0 - (PLFLT) mouse_y / ( height - 1 );
 
-        if ( event.LeftDown())
+        if ( event.LeftDown() )
         {
             gin->button = 1;      // X11/X.h: #define Button1	1
             gin->state  = 1 << 8; // X11/X.h: #define Button1Mask	(1<<8)
         }
-        else if ( event.MiddleDown())
+        else if ( event.MiddleDown() )
         {
             gin->button = 2;      // X11/X.h: #define Button2	2
             gin->state  = 1 << 9; // X11/X.h: #define Button2Mask	(1<<9)
         }
-        else if ( event.RightDown())
+        else if ( event.RightDown() )
         {
             gin->button = 3;       // X11/X.h: #define Button3	3
             gin->state  = 1 << 10; // X11/X.h: #define Button3Mask	(1<<10)
@@ -797,12 +797,12 @@ void wxPLplotWindow::Locate( void )
     }
     else
     {
-        if ( plTranslateCursor( gin ))
+        if ( plTranslateCursor( gin ) )
         {
             /* If invoked by the API, we're done */
             /* Otherwise send report to stdout */
             if ( m_dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER )
-                if ( gin->keysym < 0xFF && isprint( gin->keysym ))
+                if ( gin->keysym < 0xFF && isprint( gin->keysym ) )
                     printf( "%f %f %c\n", gin->wX, gin->wY, gin->keysym );
                 else
                     printf( "%f %f 0x%02x\n", gin->wX, gin->wY, gin->keysym );
@@ -829,7 +829,7 @@ void wxPLplotWindow::DrawCrosshair()
     wxClientDC dc( this );
     if ( m_dev->draw_xhair )
     {
-        if (( mouse_x != old_mouse_x ) || ( mouse_y != old_mouse_y ))
+        if ( ( mouse_x != old_mouse_x ) || ( mouse_y != old_mouse_y ) )
         {
             dc.SetLogicalFunction( wxINVERT );
             if ( xhair_drawn )
@@ -885,7 +885,7 @@ wxGetSizeDialog::wxGetSizeDialog( wxWindow *parent, wxWindowID id, const wxStrin
 {
     wxBoxSizer       *sizer = new wxBoxSizer( wxVERTICAL );
 
-    wxStaticBoxSizer *staticSizer = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT( "Size of plot" )), wxVERTICAL );
+    wxStaticBoxSizer *staticSizer = new wxStaticBoxSizer( new wxStaticBox( this, -1, wxT( "Size of plot" ) ), wxVERTICAL );
 
     wxFlexGridSizer  *flexSizer = new wxFlexGridSizer( 2, 0, 0 );
     flexSizer->AddGrowableCol( 1 );

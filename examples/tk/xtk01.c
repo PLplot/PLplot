@@ -39,7 +39,7 @@ AppInit( Tcl_Interp *interp );
 int
 main( int argc, const char **argv )
 {
-    exit( pltkMain( argc, argv, NULL, AppInit ));
+    exit( pltkMain( argc, argv, NULL, AppInit ) );
 }
 
 /*
@@ -232,7 +232,7 @@ plot2( void )
  * (just = 0), and we draw a box with axes (axis = 1). */
 
     plcol( 1 );
-    plenv((PLFLT) -2.0, (PLFLT) 10.0, (PLFLT) -0.4, (PLFLT) 1.2, 0, 1 );
+    plenv( (PLFLT) -2.0, (PLFLT) 10.0, (PLFLT) -0.4, (PLFLT) 1.2, 0, 1 );
     plcol( 2 );
     pllab( "(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function" );
 
@@ -268,7 +268,7 @@ plot3( void )
  *     from -1.2 to 1.2. */
 
     plvsta();
-    plwind((PLFLT) 0.0, (PLFLT) 360.0, (PLFLT) -1.2, (PLFLT) 1.2 );
+    plwind( (PLFLT) 0.0, (PLFLT) 360.0, (PLFLT) -1.2, (PLFLT) 1.2 );
 
 /* Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
 
@@ -323,10 +323,10 @@ static PLFLT clevel[NCONTR];
 #define PI    3.1415926535897932384
 #endif
 #ifndef MAX
-#define MAX( a, b )    ((( a ) > ( b )) ? ( a ) : ( b ))
+#define MAX( a, b )    ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 #endif
 #ifndef MIN
-#define MIN( a, b )    ((( a ) < ( b )) ? ( a ) : ( b ))
+#define MIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 
 /* Transformation function */
@@ -376,10 +376,10 @@ shade( void )
 
     for ( i = 0; i < XPTS; i++ )
     {
-        x = (double) ( i - ( XPTS / 2 )) / (double) ( XPTS / 2 );
+        x = (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
         for ( j = 0; j < YPTS; j++ )
         {
-            y = (double) ( j - ( YPTS / 2 )) / (double) ( YPTS / 2 ) - 1.0;
+            y = (double) ( j - ( YPTS / 2 ) ) / (double) ( YPTS / 2 ) - 1.0;
 
             z[i][j] = -sin( 7. * x ) * cos( 7. * y ) + x * x - y * y;
             w[i][j] = -cos( 7. * x ) * sin( 7. * y ) + 2 * x * y;
@@ -405,7 +405,7 @@ shade( void )
     {
         for ( j = 0; j < YPTS; j++ )
         {
-            mypltr((PLFLT) i, (PLFLT) j, &x, &y, NULL );
+            mypltr( (PLFLT) i, (PLFLT) j, &x, &y, NULL );
 
             argx    = x * PI / 2;
             argy    = y * PI / 2;
@@ -483,16 +483,16 @@ f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
 
 int   myplotCmd( ClientData cd, Tcl_Interp *interp, int argc, char **argv )
 {
-    if ( !strcmp( argv[1], "1" ))
+    if ( !strcmp( argv[1], "1" ) )
         myplot1();
 
-    if ( !strcmp( argv[1], "2" ))
+    if ( !strcmp( argv[1], "2" ) )
         myplot2();
 
-    if ( !strcmp( argv[1], "3" ))
+    if ( !strcmp( argv[1], "3" ) )
         myplot3();
 
-    if ( !strcmp( argv[1], "4" ))
+    if ( !strcmp( argv[1], "4" ) )
         shade();
 
     plflush();

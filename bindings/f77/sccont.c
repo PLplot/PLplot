@@ -112,8 +112,8 @@ pltr2f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
         {
             if ( y < ymin )
             {
-                *tx = *( xg + ( nx - 1 ));
-                *ty = *( yg + ( nx - 1 ));
+                *tx = *( xg + ( nx - 1 ) );
+                *ty = *( yg + ( nx - 1 ) );
             }
             else if ( y > ymax )
             {
@@ -851,8 +851,8 @@ PLIMAGEFR27( PLFLT *idata, PLINT *nx, PLINT *ny,
     {
         for ( j = 0; j <= *ny; j++ )
         {
-            cgrid2.xg[i][j] = xg[i + j * (( *lx ) + 1 )];
-            cgrid2.yg[i][j] = yg[i + j * (( *lx ) + 1 )];
+            cgrid2.xg[i][j] = xg[i + j * ( ( *lx ) + 1 )];
+            cgrid2.yg[i][j] = yg[i + j * ( ( *lx ) + 1 )];
         }
     }
 

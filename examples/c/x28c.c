@@ -64,8 +64,8 @@ int main( int argc, const char *argv[] )
     char p1string[] = "O",
     *pstring        = "The future of our civilization depends on software freedom.";
     /* Allocate and define the minimal x, y, and z to insure 3D box */
-    x = (PLFLT *) calloc( XPTS, sizeof ( PLFLT ));
-    y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ));
+    x = (PLFLT *) calloc( XPTS, sizeof ( PLFLT ) );
+    y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ) );
 
     plAlloc2dGrid( &z, XPTS, YPTS );
     for ( i = 0; i < XPTS; i++ )
@@ -107,7 +107,7 @@ int main( int argc, const char *argv[] )
     plschr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
-        omega         = 2. * M_PI * ((PLFLT) i / (PLFLT) NREVOLUTION );
+        omega         = 2. * M_PI * ( (PLFLT) i / (PLFLT) NREVOLUTION );
         sin_omega     = sin( omega );
         cos_omega     = cos( omega );
         x_inclination = 0.5 * xrange * cos_omega;
@@ -127,7 +127,7 @@ int main( int argc, const char *argv[] )
     plschr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
-        omega         = 2. * M_PI * ((PLFLT) i / (PLFLT) NREVOLUTION );
+        omega         = 2. * M_PI * ( (PLFLT) i / (PLFLT) NREVOLUTION );
         sin_omega     = sin( omega );
         cos_omega     = cos( omega );
         x_inclination = 0.;
@@ -147,7 +147,7 @@ int main( int argc, const char *argv[] )
     plschr( 0., 1.0 );
     for ( i = 0; i < NREVOLUTION; i++ )
     {
-        omega         = 2. * M_PI * ((PLFLT) i / (PLFLT) NREVOLUTION );
+        omega         = 2. * M_PI * ( (PLFLT) i / (PLFLT) NREVOLUTION );
         sin_omega     = sin( omega );
         cos_omega     = cos( omega );
         x_inclination = 0.5 * xrange * cos_omega;
@@ -185,7 +185,7 @@ int main( int argc, const char *argv[] )
     x_shear       = 0.;
     for ( i = 0; i < NROTATION; i++ )
     {
-        omega     = 2. * M_PI * ((PLFLT) i / (PLFLT) NROTATION );
+        omega     = 2. * M_PI * ( (PLFLT) i / (PLFLT) NROTATION );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         y_shear   = 0.5 * yrange * sin_omega;
@@ -206,7 +206,7 @@ int main( int argc, const char *argv[] )
     y_shear       = 0.;
     for ( i = 0; i < NROTATION; i++ )
     {
-        omega     = 2. * M_PI * ((PLFLT) i / (PLFLT) NROTATION );
+        omega     = 2. * M_PI * ( (PLFLT) i / (PLFLT) NROTATION );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         x_shear   = 0.5 * xrange * sin_omega;
@@ -227,7 +227,7 @@ int main( int argc, const char *argv[] )
     x_shear       = 0.;
     for ( i = 0; i < NROTATION; i++ )
     {
-        omega     = 2. * M_PI * ((PLFLT) i / (PLFLT) NROTATION );
+        omega     = 2. * M_PI * ( (PLFLT) i / (PLFLT) NROTATION );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         y_shear   = 0.5 * yrange * cos_omega;
@@ -266,7 +266,7 @@ int main( int argc, const char *argv[] )
     y_shear       = 0.;
     for ( i = 0; i < NSHEAR; i++ )
     {
-        omega     = domega + 2. * M_PI * ((PLFLT) i / (PLFLT) NSHEAR );
+        omega     = domega + 2. * M_PI * ( (PLFLT) i / (PLFLT) NSHEAR );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         x_shear   = 0.5 * xrange * sin_omega;
@@ -287,7 +287,7 @@ int main( int argc, const char *argv[] )
     x_shear       = 0.;
     for ( i = 0; i < NSHEAR; i++ )
     {
-        omega     = domega + 2. * M_PI * ((PLFLT) i / (PLFLT) NSHEAR );
+        omega     = domega + 2. * M_PI * ( (PLFLT) i / (PLFLT) NSHEAR );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         y_shear   = -0.5 * yrange * sin_omega;
@@ -308,7 +308,7 @@ int main( int argc, const char *argv[] )
     z_shear       = 0.;
     for ( i = 0; i < NSHEAR; i++ )
     {
-        omega     = domega + 2. * M_PI * ((PLFLT) i / (PLFLT) NSHEAR );
+        omega     = domega + 2. * M_PI * ( (PLFLT) i / (PLFLT) NSHEAR );
         sin_omega = sin( omega );
         cos_omega = cos( omega );
         y_shear   = 0.5 * yrange * cos_omega;
@@ -403,8 +403,8 @@ int main( int argc, const char *argv[] )
     plmesh( x, y, z, XPTS, YPTS, DRAW_LINEXY );
 
     /* Clean up. */
-    free((void *) x );
-    free((void *) y );
+    free( (void *) x );
+    free( (void *) y );
     plFree2dGrid( z, XPTS, YPTS );
     plend();
     exit( 0 );

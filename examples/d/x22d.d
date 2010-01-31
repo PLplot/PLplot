@@ -130,7 +130,7 @@ class plot {
                 y = ( j - ny / 2 + 0.5 ) * dy;
                 cgrid2.xg[i][j] = x;
                 cgrid2.yg[i][j] = y;
-                b = ymax / 4.0 * ( 3 - cos( PI * x / xmax ));
+                b = ymax / 4.0 * ( 3 - cos( PI * x / xmax ) );
                 if ( fabs( y ) < b )
                 {
                     dbdx    = ymax / 4.0 * sin( PI * x / xmax ) * y / b;
@@ -235,10 +235,10 @@ class plot {
                 y               = r * sin( theta );
                 cgrid2.xg[i][j] = x;
                 cgrid2.yg[i][j] = y;
-                div1            = sqrt( pow( x - d1, 2.0 ) + pow( y - d1, 2.0 ) + pow( eps, 2.0 ));
-                div1i           = sqrt( pow( x - d1i, 2.0 ) + pow( y - d1i, 2.0 ) + pow( eps, 2.0 ));
-                div2            = sqrt( pow( x - d2, 2.0 ) + pow( y + d2, 2.0 ) + pow( eps, 2.0 ));
-                div2i           = sqrt( pow( x - d2i, 2.0 ) + pow( y + d2i, 2.0 ) + pow( eps, 2.0 ));
+                div1            = sqrt( pow( x - d1, 2.0 ) + pow( y - d1, 2.0 ) + pow( eps, 2.0 ) );
+                div1i           = sqrt( pow( x - d1i, 2.0 ) + pow( y - d1i, 2.0 ) + pow( eps, 2.0 ) );
+                div2            = sqrt( pow( x - d2, 2.0 ) + pow( y + d2, 2.0 ) + pow( eps, 2.0 ) );
+                div2i           = sqrt( pow( x - d2i, 2.0 ) + pow( y + d2i, 2.0 ) + pow( eps, 2.0 ) );
                 z[i][j]         = q1 / div1 + q1i / div1i + q2 / div2 + q2i / div2i;
                 u[i][j]         = -q1 * ( x - d1 ) / pow( div1, 3.0 ) - q1i * ( x - d1i ) / pow( div1i, 3.0 )
                                   - q2 * ( x - d2 ) / pow( div2, 3.0 ) - q2i * ( x - d2i ) / pow( div2i, 3.0 );
@@ -277,7 +277,7 @@ class plot {
         PLFLT[] py = new PLFLT[nper];
         for ( int i = 0; i < nper; i++ )
         {
-            theta = ( 2.0 * PI / ( nper - 1 )) * i;
+            theta = ( 2.0 * PI / ( nper - 1 ) ) * i;
             px[i] = rmax * cos( theta );
             py[i] = rmax * sin( theta );
         }

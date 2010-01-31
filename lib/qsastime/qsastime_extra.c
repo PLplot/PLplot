@@ -128,7 +128,7 @@ void setFromDOY( int year, int doy, int hour, int min, double sec, MJDtime *MJD,
         MJD->base_day = year * 365 + leaps + doy - 678941;
     }
 
-    MJD->time_sec = sec + ((double) min + (double) hour * 60. ) * 60.;
+    MJD->time_sec = sec + ( (double) min + (double) hour * 60. ) * 60.;
 
     if ( MJD->time_sec >= SecInDay )
     {
@@ -250,7 +250,7 @@ const char * getISOString( MJDtime* MJD, int delim, int forceJulian )
             sprintf( DateTime, "-%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m + 1, d, hour, min, sec1, sec );
 
         /* remove trailing white space */
-        while (( ptr = strrchr( &( DateTime[0] ), ' ' )) != NULL ) ptr[0] = '\0';
+        while ( ( ptr = strrchr( &( DateTime[0] ), ' ' ) ) != NULL ) ptr[0] = '\0';
         strcat( &( DateTime[0] ), "Z" );
     }
     else

@@ -245,14 +245,14 @@ shade_triangle( PLFLT x0, PLFLT y0, PLFLT z0,
     if ( n > 0 )
     {
         if ( falsecolor )
-            plcol1((( z[0] + z[1] + z[2] ) / 3. - fc_minz ) / ( fc_maxz - fc_minz ));
+            plcol1( ( ( z[0] + z[1] + z[2] ) / 3. - fc_minz ) / ( fc_maxz - fc_minz ) );
         else
-            plcol1( plGetAngleToLight( x, y, z ));
+            plcol1( plGetAngleToLight( x, y, z ) );
 
         for ( i = 0; i < n; i++ )
         {
-            u[i] = plP_wcpcx( plP_w3wcx( x[i], y[i], z[i] ));
-            v[i] = plP_wcpcy( plP_w3wcy( x[i], y[i], z[i] ));
+            u[i] = plP_wcpcx( plP_w3wcx( x[i], y[i], z[i] ) );
+            v[i] = plP_wcpcy( plP_w3wcy( x[i], y[i], z[i] ) );
         }
         u[n] = u[0];
         v[n] = v[0];
@@ -281,8 +281,8 @@ c_plsurf3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
             PLINT opt, PLFLT *clevel, PLINT nlevel )
 {
     PLINT i;
-    PLINT *indexymin = (PLINT *) malloc((size_t) ( nx * sizeof ( PLINT )));
-    PLINT *indexymax = (PLINT *) malloc((size_t) ( nx * sizeof ( PLINT )));
+    PLINT *indexymin = (PLINT *) malloc( (size_t) ( nx * sizeof ( PLINT ) ) );
+    PLINT *indexymax = (PLINT *) malloc( (size_t) ( nx * sizeof ( PLINT ) ) );
 
     if ( !indexymin || !indexymax )
         plexit( "plsurf3d: Out of memory." );
@@ -453,7 +453,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
         iyOrigin = iymin;
     }
     /* figure out which dimension is dominant */
-    if ( fabs( cxx ) > fabs( cxy ))
+    if ( fabs( cxx ) > fabs( cxy ) )
     {
         /* X is dominant */
         nFast = ixmax - ixmin;  /* samples in the Fast direction */
@@ -518,7 +518,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
         int      np = NPTS;
         PLFLT    **zstore;
         PLcGrid2 cgrid2;
-        PLFLT    *zz = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ));
+        PLFLT    *zz = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ) );
         if ( zz == NULL ) plexit( "plsurf3dl: Insufficient memory" );
 
         /* get the contour lines */
@@ -570,7 +570,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
                 if ( cline->npts > np )
                 {
                     np = cline->npts;
-                    if (( zz = (PLFLT *) realloc( zz, np * sizeof ( PLFLT ))) == NULL )
+                    if ( ( zz = (PLFLT *) realloc( zz, np * sizeof ( PLFLT ) ) ) == NULL )
                     {
                         plexit( "c_plsurf3dl: Insufficient memory" );
                     }
@@ -579,7 +579,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
                     zz[j] = plsc->ranmi;
                 if ( cline->npts > 0 )
                 {
-                    plcol1(( clev->level - fc_minz ) / ( fc_maxz - fc_minz ));
+                    plcol1( ( clev->level - fc_minz ) / ( fc_maxz - fc_minz ) );
                     plline3( cline->npts, cline->x, cline->y, zz );
                 }
                 cline = cline->next;
@@ -651,34 +651,34 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
                     /* after shading, see if the triangle crosses	one contour plane */
 
-#define min3( a, b, c )    ( MIN(( MIN( a, b )), c ))
-#define max3( a, b, c )    ( MAX(( MAX( a, b )), c ))
+#define min3( a, b, c )    ( MIN( ( MIN( a, b ) ), c ) )
+#define max3( a, b, c )    ( MAX( ( MAX( a, b ) ), c ) )
 
-                    if ( clevel != NULL && ( opt & SURF_CONT ))
+                    if ( clevel != NULL && ( opt & SURF_CONT ) )
                     {
                         for ( k = 0; k < nlevel; k++ )
                         {
-                            if ( clevel[k] >= min3( pz[i], zm, pz[j] ) && clevel[k] < max3( pz[i], zm, pz[j] ))
+                            if ( clevel[k] >= min3( pz[i], zm, pz[j] ) && clevel[k] < max3( pz[i], zm, pz[j] ) )
                             {
                                 ct = 0;
-                                if ( clevel[k] >= MIN( pz[i], zm ) && clevel[k] < MAX( pz[i], zm )) /* p0-pm */
+                                if ( clevel[k] >= MIN( pz[i], zm ) && clevel[k] < MAX( pz[i], zm ) ) /* p0-pm */
                                 {
-                                    xx[ct] = (( clevel[k] - pz[i] ) * ( xm - px[i] )) / ( zm - pz[i] ) + px[i];
-                                    yy[ct] = (( clevel[k] - pz[i] ) * ( ym - py[i] )) / ( zm - pz[i] ) + py[i];
+                                    xx[ct] = ( ( clevel[k] - pz[i] ) * ( xm - px[i] ) ) / ( zm - pz[i] ) + px[i];
+                                    yy[ct] = ( ( clevel[k] - pz[i] ) * ( ym - py[i] ) ) / ( zm - pz[i] ) + py[i];
                                     ct++;
                                 }
 
-                                if ( clevel[k] >= MIN( pz[i], pz[j] ) && clevel[k] < MAX( pz[i], pz[j] )) /* p0-p1 */
+                                if ( clevel[k] >= MIN( pz[i], pz[j] ) && clevel[k] < MAX( pz[i], pz[j] ) ) /* p0-p1 */
                                 {
-                                    xx[ct] = (( clevel[k] - pz[i] ) * ( px[j] - px[i] )) / ( pz[j] - pz[i] ) + px[i];
-                                    yy[ct] = (( clevel[k] - pz[i] ) * ( py[j] - py[i] )) / ( pz[j] - pz[i] ) + py[i];
+                                    xx[ct] = ( ( clevel[k] - pz[i] ) * ( px[j] - px[i] ) ) / ( pz[j] - pz[i] ) + px[i];
+                                    yy[ct] = ( ( clevel[k] - pz[i] ) * ( py[j] - py[i] ) ) / ( pz[j] - pz[i] ) + py[i];
                                     ct++;
                                 }
 
-                                if ( clevel[k] >= MIN( pz[j], zm ) && clevel[k] < MAX( pz[j], zm )) /* p1-pm */
+                                if ( clevel[k] >= MIN( pz[j], zm ) && clevel[k] < MAX( pz[j], zm ) ) /* p1-pm */
                                 {
-                                    xx[ct] = (( clevel[k] - pz[j] ) * ( xm - px[j] )) / ( zm - pz[j] ) + px[j];
-                                    yy[ct] = (( clevel[k] - pz[j] ) * ( ym - py[j] )) / ( zm - pz[j] ) + py[j];
+                                    xx[ct] = ( ( clevel[k] - pz[j] ) * ( xm - px[j] ) ) / ( zm - pz[j] ) + px[j];
+                                    yy[ct] = ( ( clevel[k] - pz[j] ) * ( ym - py[j] ) ) / ( zm - pz[j] ) + py[j];
                                     ct++;
                                 }
 
@@ -857,7 +857,7 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
         return;
     }
 
-    if (( opt & 3 ) == 0 )
+    if ( ( opt & 3 ) == 0 )
     {
         myabort( "plot3dcl: Bad option" );
         return;
@@ -942,9 +942,9 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
         }
 
         /* allocate storage for new versions of the input vectors */
-        if ((( _x = (PLFLT*) malloc( _nx * sizeof ( PLFLT ))) == NULL ) ||
-            (( _y = (PLFLT*) malloc( _ny * sizeof ( PLFLT ))) == NULL ) ||
-            (( _z = (PLFLT**) malloc( _nx * sizeof ( PLFLT* ))) == NULL ))
+        if ( ( ( _x = (PLFLT*) malloc( _nx * sizeof ( PLFLT ) ) ) == NULL ) ||
+             ( ( _y = (PLFLT*) malloc( _ny * sizeof ( PLFLT ) ) ) == NULL ) ||
+             ( ( _z = (PLFLT**) malloc( _nx * sizeof ( PLFLT* ) ) ) == NULL ) )
         {
             plexit( "c_plot3dcl: Insufficient memory" );
         }
@@ -964,7 +964,7 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
         /* copy the data array so we can interpolate around the edges */
         for ( i = 0; i < _nx; i++ )
         {
-            if (( _z[i] = (PLFLT*) malloc( _ny * sizeof ( PLFLT ))) == NULL )
+            if ( ( _z[i] = (PLFLT*) malloc( _ny * sizeof ( PLFLT ) ) ) == NULL )
             {
                 plexit( "c_plot3dcl: Insufficient memory" );
             }
@@ -1018,7 +1018,7 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
         ny = _ny;
     }
 
-    if (( opt & BASE_CONT ) || ( opt & TOP_CONT ) || ( opt && MAG_COLOR ))
+    if ( ( opt & BASE_CONT ) || ( opt & TOP_CONT ) || ( opt && MAG_COLOR ) )
     {
         /*
          * Don't use the data z value to scale the color, use the z axis
@@ -1050,7 +1050,7 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
 
     if ( opt & MAG_COLOR )    /* If enabled, use magnitude colored wireframe  */
     {
-        if (( ctmp = (PLFLT *) malloc((size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLFLT )))) == NULL )
+        if ( ( ctmp = (PLFLT *) malloc( (size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLFLT ) ) ) ) == NULL )
         {
             plexit( "c_plot3dcl: Insufficient memory" );
         }
@@ -1063,8 +1063,8 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
 
     /* Allocate work arrays */
 
-    utmp = (PLINT *) malloc((size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLINT )));
-    vtmp = (PLINT *) malloc((size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLINT )));
+    utmp = (PLINT *) malloc( (size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLINT ) ) );
+    vtmp = (PLINT *) malloc( (size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLINT ) ) );
 
     if ( !utmp || !vtmp )
         myexit( "plot3dcl: Out of memory." );
@@ -1154,13 +1154,13 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
         CONT_LEVEL *cont, *clev;
         CONT_LINE *cline;
 
-        PLINT *uu = (PLINT *) malloc( NPTS * sizeof ( PLINT ));
-        PLINT *vv = (PLINT *) malloc( NPTS * sizeof ( PLINT ));
+        PLINT *uu = (PLINT *) malloc( NPTS * sizeof ( PLINT ) );
+        PLINT *vv = (PLINT *) malloc( NPTS * sizeof ( PLINT ) );
         /* prepare cont_store input */
         PLFLT **zstore;
         PLcGrid2 cgrid2;
 
-        if (( uu == NULL ) || ( vv == NULL ))
+        if ( ( uu == NULL ) || ( vv == NULL ) )
         {
             plexit( "c_plot3dcl: Insufficient memory" );
         }
@@ -1204,8 +1204,8 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                 if ( cline->npts > np )
                 {
                     np = cline->npts;
-                    if ((( uu = (PLINT *) realloc( uu, np * sizeof ( PLINT ))) == NULL ) ||
-                        (( vv = (PLINT *) realloc( vv, np * sizeof ( PLINT ))) == NULL ))
+                    if ( ( ( uu = (PLINT *) realloc( uu, np * sizeof ( PLINT ) ) ) == NULL ) ||
+                         ( ( vv = (PLINT *) realloc( vv, np * sizeof ( PLINT ) ) ) == NULL ) )
                     {
                         plexit( "c_plot3dcl: Insufficient memory" );
                     }
@@ -1219,12 +1219,12 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                 {
                     do
                     {
-                        plcol1(( clev->level - fc_minz ) / ( fc_maxz - fc_minz ));
-                        cx = plP_wcpcx( plP_w3wcx( cline->x[i], cline->y[i], plsc->ranmi ));
+                        plcol1( ( clev->level - fc_minz ) / ( fc_maxz - fc_minz ) );
+                        cx = plP_wcpcx( plP_w3wcx( cline->x[i], cline->y[i], plsc->ranmi ) );
                         for ( j = i; j < cline->npts; j++ ) /* convert to 2D coordinates */
                         {
-                            uu[j] = plP_wcpcx( plP_w3wcx( cline->x[j], cline->y[j], plsc->ranmi ));
-                            vv[j] = plP_wcpcy( plP_w3wcy( cline->x[j], cline->y[j], plsc->ranmi ));
+                            uu[j] = plP_wcpcx( plP_w3wcx( cline->x[j], cline->y[j], plsc->ranmi ) );
+                            vv[j] = plP_wcpcy( plP_w3wcy( cline->x[j], cline->y[j], plsc->ranmi ) );
                             if ( uu[j] < cx ) /* find turn back point */
                                 break;
                             else
@@ -1237,7 +1237,7 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                             start = j - 1;
                             for ( i = start; i < cline->npts; i++ ) /* search turn forward point */
                             {
-                                uu[i] = plP_wcpcx( plP_w3wcx( cline->x[i], cline->y[i], plsc->ranmi ));
+                                uu[i] = plP_wcpcx( plP_w3wcx( cline->x[i], cline->y[i], plsc->ranmi ) );
                                 if ( uu[i] > cx )
                                     break;
                                 else
@@ -1260,8 +1260,8 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
                             /* convert to 2D coordinates */
                             for ( j = start; j <= end; j++ )
                             {
-                                uu[j] = plP_wcpcx( plP_w3wcx( cline->x[j], cline->y[j], plsc->ranmi ));
-                                vv[j] = plP_wcpcy( plP_w3wcy( cline->x[j], cline->y[j], plsc->ranmi ));
+                                uu[j] = plP_wcpcx( plP_w3wcx( cline->x[j], cline->y[j], plsc->ranmi ) );
+                                vv[j] = plP_wcpcy( plP_w3wcy( cline->x[j], cline->y[j], plsc->ranmi ) );
                             }
                             plnxtv( &uu[start], &vv[start], NULL, end - start + 1, 0 ); /* and plot it */
 
@@ -1384,7 +1384,7 @@ plxyindexlimits( PLINT instart, PLINT inn,
     {
         i = instart;
         /* Find first valid i for this j. */
-        while ( i < inn && !( inarray_min[i] <= j && j < inarray_max[i] ))
+        while ( i < inn && !( inarray_min[i] <= j && j < inarray_max[i] ) )
             i++;
         if ( i < inn )
             outarray_min[j] = i;
@@ -1394,7 +1394,7 @@ plxyindexlimits( PLINT instart, PLINT inn,
             return;
         }
         /* Find next invalid i for this j. */
-        while ( i < inn && ( inarray_min[i] <= j && j < inarray_max[i] ))
+        while ( i < inn && ( inarray_min[i] <= j && j < inarray_max[i] ) )
             i++;
         outarray_max[j] = i;
     }
@@ -1457,7 +1457,7 @@ plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z )
         return 1;
 
 /* Now have 3 vectors going through the first point on the given surface */
-    cosangle = fabs(( vlx * px + vly * py + vlz * pz ) / sqrt( mag1 * mag2 ));
+    cosangle = fabs( ( vlx * px + vly * py + vlz * pz ) / sqrt( mag1 * mag2 ) );
 
 /* In case of numerical rounding */
     if ( cosangle > 1 ) cosangle = 1;
@@ -1704,80 +1704,80 @@ plgrid3( PLFLT tick )
     {
         while ( tp <= zmax )
         {
-            u[0] = plP_wcpcx( plP_w3wcx( xmin, ymax, tp ));
-            v[0] = plP_wcpcy( plP_w3wcy( xmin, ymax, tp ));
-            u[1] = plP_wcpcx( plP_w3wcx( xmax, ymax, tp ));
-            v[1] = plP_wcpcy( plP_w3wcy( xmax, ymax, tp ));
-            u[2] = plP_wcpcx( plP_w3wcx( xmax, ymin, tp ));
-            v[2] = plP_wcpcy( plP_w3wcy( xmax, ymin, tp ));
+            u[0] = plP_wcpcx( plP_w3wcx( xmin, ymax, tp ) );
+            v[0] = plP_wcpcy( plP_w3wcy( xmin, ymax, tp ) );
+            u[1] = plP_wcpcx( plP_w3wcx( xmax, ymax, tp ) );
+            v[1] = plP_wcpcy( plP_w3wcy( xmax, ymax, tp ) );
+            u[2] = plP_wcpcx( plP_w3wcx( xmax, ymin, tp ) );
+            v[2] = plP_wcpcy( plP_w3wcy( xmax, ymin, tp ) );
             plnxtv( u, v, 0, 3, 0 );
 
             tp += tick;
         }
-        u[0] = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ));
-        v[0] = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ));
-        u[1] = plP_wcpcx( plP_w3wcx( xmax, ymax, zmax ));
-        v[1] = plP_wcpcy( plP_w3wcy( xmax, ymax, zmax ));
+        u[0] = plP_wcpcx( plP_w3wcx( xmax, ymax, zmin ) );
+        v[0] = plP_wcpcy( plP_w3wcy( xmax, ymax, zmin ) );
+        u[1] = plP_wcpcx( plP_w3wcx( xmax, ymax, zmax ) );
+        v[1] = plP_wcpcy( plP_w3wcy( xmax, ymax, zmax ) );
         plnxtv( u, v, 0, 2, 0 );
     }
     else if ( cxx <= 0.0 && cxy <= 0.0 )
     {
         while ( tp <= zmax )
         {
-            u[0] = plP_wcpcx( plP_w3wcx( xmax, ymax, tp ));
-            v[0] = plP_wcpcy( plP_w3wcy( xmax, ymax, tp ));
-            u[1] = plP_wcpcx( plP_w3wcx( xmax, ymin, tp ));
-            v[1] = plP_wcpcy( plP_w3wcy( xmax, ymin, tp ));
-            u[2] = plP_wcpcx( plP_w3wcx( xmin, ymin, tp ));
-            v[2] = plP_wcpcy( plP_w3wcy( xmin, ymin, tp ));
+            u[0] = plP_wcpcx( plP_w3wcx( xmax, ymax, tp ) );
+            v[0] = plP_wcpcy( plP_w3wcy( xmax, ymax, tp ) );
+            u[1] = plP_wcpcx( plP_w3wcx( xmax, ymin, tp ) );
+            v[1] = plP_wcpcy( plP_w3wcy( xmax, ymin, tp ) );
+            u[2] = plP_wcpcx( plP_w3wcx( xmin, ymin, tp ) );
+            v[2] = plP_wcpcy( plP_w3wcy( xmin, ymin, tp ) );
             plnxtv( u, v, 0, 3, 0 );
 
             tp += tick;
         }
-        u[0] = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ));
-        v[0] = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ));
-        u[1] = plP_wcpcx( plP_w3wcx( xmax, ymin, zmax ));
-        v[1] = plP_wcpcy( plP_w3wcy( xmax, ymin, zmax ));
+        u[0] = plP_wcpcx( plP_w3wcx( xmax, ymin, zmin ) );
+        v[0] = plP_wcpcy( plP_w3wcy( xmax, ymin, zmin ) );
+        u[1] = plP_wcpcx( plP_w3wcx( xmax, ymin, zmax ) );
+        v[1] = plP_wcpcy( plP_w3wcy( xmax, ymin, zmax ) );
         plnxtv( u, v, 0, 2, 0 );
     }
     else if ( cxx <= 0.0 && cxy >= 0.0 )
     {
         while ( tp <= zmax )
         {
-            u[0] = plP_wcpcx( plP_w3wcx( xmax, ymin, tp ));
-            v[0] = plP_wcpcy( plP_w3wcy( xmax, ymin, tp ));
-            u[1] = plP_wcpcx( plP_w3wcx( xmin, ymin, tp ));
-            v[1] = plP_wcpcy( plP_w3wcy( xmin, ymin, tp ));
-            u[2] = plP_wcpcx( plP_w3wcx( xmin, ymax, tp ));
-            v[2] = plP_wcpcy( plP_w3wcy( xmin, ymax, tp ));
+            u[0] = plP_wcpcx( plP_w3wcx( xmax, ymin, tp ) );
+            v[0] = plP_wcpcy( plP_w3wcy( xmax, ymin, tp ) );
+            u[1] = plP_wcpcx( plP_w3wcx( xmin, ymin, tp ) );
+            v[1] = plP_wcpcy( plP_w3wcy( xmin, ymin, tp ) );
+            u[2] = plP_wcpcx( plP_w3wcx( xmin, ymax, tp ) );
+            v[2] = plP_wcpcy( plP_w3wcy( xmin, ymax, tp ) );
             plnxtv( u, v, 0, 3, 0 );
 
             tp += tick;
         }
-        u[0] = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ));
-        v[0] = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ));
-        u[1] = plP_wcpcx( plP_w3wcx( xmin, ymin, zmax ));
-        v[1] = plP_wcpcy( plP_w3wcy( xmin, ymin, zmax ));
+        u[0] = plP_wcpcx( plP_w3wcx( xmin, ymin, zmin ) );
+        v[0] = plP_wcpcy( plP_w3wcy( xmin, ymin, zmin ) );
+        u[1] = plP_wcpcx( plP_w3wcx( xmin, ymin, zmax ) );
+        v[1] = plP_wcpcy( plP_w3wcy( xmin, ymin, zmax ) );
         plnxtv( u, v, 0, 2, 0 );
     }
     else if ( cxx >= 0.0 && cxy >= 0.0 )
     {
         while ( tp <= zmax )
         {
-            u[0] = plP_wcpcx( plP_w3wcx( xmin, ymin, tp ));
-            v[0] = plP_wcpcy( plP_w3wcy( xmin, ymin, tp ));
-            u[1] = plP_wcpcx( plP_w3wcx( xmin, ymax, tp ));
-            v[1] = plP_wcpcy( plP_w3wcy( xmin, ymax, tp ));
-            u[2] = plP_wcpcx( plP_w3wcx( xmax, ymax, tp ));
-            v[2] = plP_wcpcy( plP_w3wcy( xmax, ymax, tp ));
+            u[0] = plP_wcpcx( plP_w3wcx( xmin, ymin, tp ) );
+            v[0] = plP_wcpcy( plP_w3wcy( xmin, ymin, tp ) );
+            u[1] = plP_wcpcx( plP_w3wcx( xmin, ymax, tp ) );
+            v[1] = plP_wcpcy( plP_w3wcy( xmin, ymax, tp ) );
+            u[2] = plP_wcpcx( plP_w3wcx( xmax, ymax, tp ) );
+            v[2] = plP_wcpcy( plP_w3wcy( xmax, ymax, tp ) );
             plnxtv( u, v, 0, 3, 0 );
 
             tp += tick;
         }
-        u[0] = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ));
-        v[0] = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ));
-        u[1] = plP_wcpcx( plP_w3wcx( xmin, ymax, zmax ));
-        v[1] = plP_wcpcy( plP_w3wcy( xmin, ymax, zmax ));
+        u[0] = plP_wcpcx( plP_w3wcx( xmin, ymax, zmin ) );
+        v[0] = plP_wcpcy( plP_w3wcy( xmin, ymax, zmin ) );
+        u[1] = plP_wcpcx( plP_w3wcx( xmin, ymax, zmax ) );
+        v[1] = plP_wcpcy( plP_w3wcy( xmin, ymax, zmax ) );
         plnxtv( u, v, 0, 2, 0 );
     }
     pl3upv = 1;
@@ -1823,7 +1823,7 @@ plnxtvhi( PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init )
     if ( init == 1 )
     {
         int i;
-        oldhiview = (PLINT *) malloc((size_t) ( 2 * n * sizeof ( PLINT )));
+        oldhiview = (PLINT *) malloc( (size_t) ( 2 * n * sizeof ( PLINT ) ) );
         if ( !oldhiview )
             myexit( "plnxtvhi: Out of memory." );
 
@@ -1860,13 +1860,13 @@ plnxtvhi( PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init )
         if ( newhiview != NULL )
         {
             newhiview =
-                (PLINT *) realloc((void *) newhiview,
-                    (size_t) ( newhisize * sizeof ( PLINT )));
+                (PLINT *) realloc( (void *) newhiview,
+                    (size_t) ( newhisize * sizeof ( PLINT ) ) );
         }
         else
         {
             newhiview =
-                (PLINT *) malloc((size_t) ( newhisize * sizeof ( PLINT )));
+                (PLINT *) malloc( (size_t) ( newhisize * sizeof ( PLINT ) ) );
         }
         if ( !newhiview )
             myexit( "plnxtvhi: Out of memory." );
@@ -1918,7 +1918,7 @@ plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
          * and segment coordinates appropriately.
          */
 
-        ptold = ( j >= n || ( i < mhi && oldhiview[2 * i] < u[j] ));
+        ptold = ( j >= n || ( i < mhi && oldhiview[2 * i] < u[j] ) );
         if ( ptold )
         {
             px  = oldhiview[2 * i];
@@ -1983,7 +1983,7 @@ plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
              * Take care of special cases at end of arrays.  If pl3upv is 0 the
              * endpoints are not connected to the old view.
              */
-            if ( pl3upv == 0 && (( !ptold && j == 0 ) || ( ptold && i == 0 )))
+            if ( pl3upv == 0 && ( ( !ptold && j == 0 ) || ( ptold && i == 0 ) ) )
             {
                 plP_draw3d( px, py, c, j, 1 );
                 lstold  = ptold;
@@ -1991,7 +1991,7 @@ plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
                 ochange = 0;
             }
             else if ( pl3upv == 0 &&
-                      (( !ptold && i >= mhi ) || ( ptold && j >= n )))
+                      ( ( !ptold && i >= mhi ) || ( ptold && j >= n ) ) )
             {
                 plP_draw3d( px, py, c, j, 1 );
                 lstold  = ptold;
@@ -2142,7 +2142,7 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
      */
     if ( init == 1 )
     {
-        oldloview = (PLINT *) malloc((size_t) ( 2 * n * sizeof ( PLINT )));
+        oldloview = (PLINT *) malloc( (size_t) ( 2 * n * sizeof ( PLINT ) ) );
         if ( !oldloview )
             myexit( "\nplnxtvlo: Out of memory." );
 
@@ -2181,13 +2181,13 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
         if ( newloview != NULL )
         {
             newloview =
-                (PLINT *) realloc((void *) newloview,
-                    (size_t) ( newlosize * sizeof ( PLINT )));
+                (PLINT *) realloc( (void *) newloview,
+                    (size_t) ( newlosize * sizeof ( PLINT ) ) );
         }
         else
         {
             newloview =
-                (PLINT *) malloc((size_t) ( newlosize * sizeof ( PLINT )));
+                (PLINT *) malloc( (size_t) ( newlosize * sizeof ( PLINT ) ) );
         }
         if ( !newloview )
             myexit( "plnxtvlo: Out of memory." );
@@ -2207,7 +2207,7 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
          * have fallen past the edges. Having found the point, load up the point
          * and segment coordinates appropriately.
          */
-        ptold = ( j >= n || ( i < mlo && oldloview[2 * i] < u[j] ));
+        ptold = ( j >= n || ( i < mlo && oldloview[2 * i] < u[j] ) );
         if ( ptold )
         {
             px  = oldloview[2 * i];
@@ -2268,7 +2268,7 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
              * Take care of special cases at end of arrays.  If pl3upv is 0 the
              * endpoints are not connected to the old view.
              */
-            if ( pl3upv == 0 && (( !ptold && j == 0 ) || ( ptold && i == 0 )))
+            if ( pl3upv == 0 && ( ( !ptold && j == 0 ) || ( ptold && i == 0 ) ) )
             {
                 plP_draw3d( px, py, c, j, 1 );
                 lstold  = ptold;
@@ -2276,7 +2276,7 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
                 ochange = 0;
             }
             else if ( pl3upv == 0 &&
-                      (( !ptold && i >= mlo ) || ( ptold && j >= n )))
+                      ( ( !ptold && i >= mlo ) || ( ptold && j >= n ) ) )
             {
                 plP_draw3d( px, py, c, j, 1 );
                 lstold  = ptold;
@@ -2407,8 +2407,8 @@ savehipoint( PLINT px, PLINT py )
     if ( xxhi >= newhisize )      /* allocate additional space */
     {
         newhisize += 2 * BINC;
-        newhiview  = (PLINT *) realloc((void *) newhiview,
-            (size_t) ( newhisize * sizeof ( PLINT )));
+        newhiview  = (PLINT *) realloc( (void *) newhiview,
+            (size_t) ( newhisize * sizeof ( PLINT ) ) );
         if ( !newhiview )
             myexit( "savehipoint: Out of memory." );
     }
@@ -2428,8 +2428,8 @@ savelopoint( PLINT px, PLINT py )
     if ( xxlo >= newlosize )      /* allocate additional space */
     {
         newlosize += 2 * BINC;
-        newloview  = (PLINT *) realloc((void *) newloview,
-            (size_t) ( newlosize * sizeof ( PLINT )));
+        newloview  = (PLINT *) realloc( (void *) newloview,
+            (size_t) ( newlosize * sizeof ( PLINT ) ) );
         if ( !newloview )
             myexit( "savelopoint: Out of memory." );
     }
@@ -2537,8 +2537,8 @@ plabv( PLINT px, PLINT py, PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2 )
         above = 1;
     else if ( py < sy1 && py < sy2 )
         above = 0;
-    else if ((double) ( sx2 - sx1 ) * ( py - sy1 ) >=
-             (double) ( px - sx1 ) * ( sy2 - sy1 ))
+    else if ( (double) ( sx2 - sx1 ) * ( py - sy1 ) >=
+              (double) ( px - sx1 ) * ( sy2 - sy1 ) )
         above = 1;
     else
         above = 0;

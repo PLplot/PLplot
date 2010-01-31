@@ -96,7 +96,7 @@ plD_init_vga( PLStream *pls )
  * It can be easyly made interactive! */
 
     mode = G640x480x16;         /* See <vga.h> for a list */
-    if ( vga_hasmode( mode ))
+    if ( vga_hasmode( mode ) )
         vga_setmode( mode );
     else
     {

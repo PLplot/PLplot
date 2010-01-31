@@ -118,7 +118,7 @@ class x03 {
 
         for ( i = 0; i <= 360; i++ )
         {
-            r    = Math.sin( dtr * ( 5 * i ));
+            r    = Math.sin( dtr * ( 5 * i ) );
             x[i] = x0[i] * r;
             y[i] = y0[i] * r;
         }

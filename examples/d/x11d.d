@@ -78,10 +78,10 @@ int main( char[][] args )
         z[i] = new PLFLT[YPTS];
 
     for ( int i = 0; i < XPTS; i++ )
-        x[i] = 3. * cast(PLFLT) ( i - ( XPTS / 2 )) / cast(PLFLT) ( XPTS / 2 );
+        x[i] = 3. * cast(PLFLT) ( i - ( XPTS / 2 ) ) / cast(PLFLT) ( XPTS / 2 );
 
     for ( int i = 0; i < YPTS; i++ )
-        y[i] = 3. * cast(PLFLT) ( i - ( YPTS / 2 )) / cast(PLFLT) ( YPTS / 2 );
+        y[i] = 3. * cast(PLFLT) ( i - ( YPTS / 2 ) ) / cast(PLFLT) ( YPTS / 2 );
 
     for ( size_t i = 0; i < XPTS; i++ )
     {
@@ -89,9 +89,9 @@ int main( char[][] args )
         for ( size_t j = 0; j < YPTS; j++ )
         {
             yy      = y[j];
-            z[i][j] = 3. * ( 1. - xx ) * ( 1. - xx ) * exp( -( xx * xx ) - ( yy + 1. ) * ( yy + 1. )) -
-                      10. * ( xx / 5. - pow( xx, 3. ) - pow( yy, 5. )) * exp( -xx * xx - yy * yy ) -
-                      1. / 3. * exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ));
+            z[i][j] = 3. * ( 1. - xx ) * ( 1. - xx ) * exp( -( xx * xx ) - ( yy + 1. ) * ( yy + 1. ) ) -
+                      10. * ( xx / 5. - pow( xx, 3. ) - pow( yy, 5. ) ) * exp( -xx * xx - yy * yy ) -
+                      1. / 3. * exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ) );
 
             if ( 0 ) /* Jungfraujoch/Interlaken */
             {

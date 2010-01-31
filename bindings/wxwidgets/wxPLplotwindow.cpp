@@ -59,7 +59,7 @@ wxPLplotwindow::wxPLplotwindow( wxWindow* parent, wxWindowID id, const wxPoint& 
     MemPlotDCBitmap = new wxBitmap( bitmapWidth, bitmapHeight, -1 );
     MemPlotDC->SelectObject( *MemPlotDCBitmap );
 
-    m_stream = new wxPLplotstream((wxDC*) MemPlotDC, m_width, m_height, pl_style );
+    m_stream = new wxPLplotstream( (wxDC*) MemPlotDC, m_width, m_height, pl_style );
 
     m_stream->cmd( PLESC_GETBACKEND, &m_backend );
     m_backend = 1 << ( m_backend + 2 );
@@ -90,22 +90,22 @@ wxPLplotwindow::~wxPLplotwindow( void )
  *  later), we also implement our own double buffering here (since the PLplot wxWidgets driver draws
  *  into a wxMemoryDC)
  */
-void wxPLplotwindow::OnPaint( wxPaintEvent &WXUNUSED( event ))
+void wxPLplotwindow::OnPaint( wxPaintEvent &WXUNUSED( event ) )
 {
     wxPaintDC dc( this );
     dc.Blit( 0, 0, m_width, m_height, MemPlotDC, 0, 0 );
 }
 
 
-void wxPLplotwindow::OnSize( wxSizeEvent& WXUNUSED( event ))
+void wxPLplotwindow::OnSize( wxSizeEvent& WXUNUSED( event ) )
 {
     int width, height;
     GetClientSize( &width, &height );
 
     // Check if we window was resized
-    if (( m_width != width ) || ( m_height != height ))
+    if ( ( m_width != width ) || ( m_height != height ) )
     {
-        if (( width > bitmapWidth ) || ( height > bitmapHeight ))
+        if ( ( width > bitmapWidth ) || ( height > bitmapHeight ) )
         {
             bitmapWidth  = bitmapWidth > width ? bitmapWidth : width;
             bitmapHeight = bitmapHeight > height ? bitmapHeight : height;
@@ -134,7 +134,7 @@ void wxPLplotwindow::OnSize( wxSizeEvent& WXUNUSED( event ))
 /*! Together with "SetBackgroundStyle( wxBG_STYLE_CUSTOM );" in the constructor this method
  *  is responsible that the background is not erased in order to prevent flickering.
  */
-void wxPLplotwindow::OnErase( wxEraseEvent &WXUNUSED( event ))
+void wxPLplotwindow::OnErase( wxEraseEvent &WXUNUSED( event ) )
 {
 }
 
@@ -158,7 +158,7 @@ bool wxPLplotwindow::SavePlot( const wxString& devname, const wxString& filename
     int  pls, pls_save;
     FILE *sfile;
 
-    if (( sfile = fopen( filename.mb_str(), "wb+" )) == NULL )
+    if ( ( sfile = fopen( filename.mb_str(), "wb+" ) ) == NULL )
     {
         return false;
     }
@@ -170,7 +170,7 @@ bool wxPLplotwindow::SavePlot( const wxString& devname, const wxString& filename
         fclose( sfile );
         return false;
     }
-    plsdev( devname.mb_str());
+    plsdev( devname.mb_str() );
     plsfile( sfile );
 
     plspage( 0., 0., 800, 600, 0, 0 );

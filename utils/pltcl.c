@@ -54,7 +54,7 @@ AppInit( Tcl_Interp *interp );
 int
 main( int argc, const char **argv )
 {
-    exit( pltclMain( argc, argv, NULL, AppInit ));
+    exit( pltclMain( argc, argv, NULL, AppInit ) );
 }
 
 /*--------------------------------------------------------------------------*\

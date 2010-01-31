@@ -106,10 +106,10 @@ class x16 {
 
         for ( i = 0; i < XPTS; i++ )
         {
-            x = (double) ( i - ( XPTS / 2 )) / (double) ( XPTS / 2 );
+            x = (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
             for ( j = 0; j < YPTS; j++ )
             {
-                y = (double) ( j - ( YPTS / 2 )) / (double) ( YPTS / 2 ) - 1.0;
+                y = (double) ( j - ( YPTS / 2 ) ) / (double) ( YPTS / 2 ) - 1.0;
 
                 z[i][j] = -Math.sin( 7. * x ) * Math.cos( 7. * y ) + x * x - y * y;
                 w[i][j] = -Math.cos( 7. * x ) * Math.sin( 7. * y ) + 2 * x * y;
@@ -273,10 +273,10 @@ class x16 {
 
         for ( i = 0; i < XPTS; i++ )
         {
-            r = ((double) i ) / ( XPTS - 1 );
+            r = ( (double) i ) / ( XPTS - 1 );
             for ( j = 0; j < YPTS; j++ )
             {
-                t         = ( 2. * Math.PI / ( YPTS - 1. )) * j;
+                t         = ( 2. * Math.PI / ( YPTS - 1. ) ) * j;
                 xg2[i][j] = r * Math.cos( t );
                 yg2[i][j] = r * Math.sin( t );
                 z[i][j]   = Math.exp( -r * r ) * Math.cos( 5. * Math.PI * r ) * Math.cos( 5. * t );
@@ -300,7 +300,7 @@ class x16 {
 // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
         for ( i = 0; i < PERIMETERPTS; i++ )
         {
-            t     = ( 2. * Math.PI / ( PERIMETERPTS - 1 )) * (double) i;
+            t     = ( 2. * Math.PI / ( PERIMETERPTS - 1 ) ) * (double) i;
             px[i] = Math.cos( t );
             py[i] = Math.sin( t );
         }

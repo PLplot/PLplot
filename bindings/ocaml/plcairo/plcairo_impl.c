@@ -35,13 +35,13 @@
 /** OCaml Cairo integration. */
 /* Get a Cairo context from OCaml.  These #defines are from the
  * OCaml Cairo bindings. */
-#define wPointer_val( t, val )    ( *((t **) Data_custom_val( val )))
+#define wPointer_val( t, val )    ( *( (t **) Data_custom_val( val ) ) )
 #define cairo_t_val( v )          wPointer_val( cairo_t, v )
 
 value ml_set_plplot_cairo_context( value context )
 {
     CAMLparam1( context );
-    pl_cmd( PLESC_DEVINIT, cairo_t_val( context ));
+    pl_cmd( PLESC_DEVINIT, cairo_t_val( context ) );
     CAMLreturn( Val_unit );
 }
 

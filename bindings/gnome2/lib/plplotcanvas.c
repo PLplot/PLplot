@@ -44,7 +44,7 @@ static GObjectClass *parent_class = NULL;
 
 void plplot_canvas_dispose( PlplotCanvas *self )
 {
-    parent_class->dispose( G_OBJECT( self ));
+    parent_class->dispose( G_OBJECT( self ) );
 }
 
 static void plplot_canvas_finalize( PlplotCanvas *self )
@@ -54,7 +54,7 @@ static void plplot_canvas_finalize( PlplotCanvas *self )
     plend1();
 
     /* Call parent's finalize impletmentation */
-    parent_class->finalize( G_OBJECT( self ));
+    parent_class->finalize( G_OBJECT( self ) );
 }
 
 static void plplot_canvas_init( PlplotCanvas *self )
@@ -122,7 +122,7 @@ PlplotCanvas* plplot_canvas_new()
 {
     PlplotCanvas *canvas;
 
-    canvas = PLPLOT_CANVAS( g_object_new( PLPLOT_TYPE_CANVAS, "aa", TRUE, NULL ));
+    canvas = PLPLOT_CANVAS( g_object_new( PLPLOT_TYPE_CANVAS, "aa", TRUE, NULL ) );
 
     plplot_canvas_devinit( canvas );
 
@@ -149,19 +149,19 @@ void plplot_canvas_set_zoom( PlplotCanvas* self, gdouble zoom )
 void plplot_canvas_use_text( PlplotCanvas* self, gboolean use_text )
 {
     plsstrm( self->Nstream ); /* Select stream before plplot call */
-    gcw_use_text((PLINT) use_text );
+    gcw_use_text( (PLINT) use_text );
 }
 
 void plplot_canvas_use_pixmap( PlplotCanvas* self, gboolean use_pixmap )
 {
     plsstrm( self->Nstream ); /* Select stream before plplot call */
-    gcw_use_pixmap((PLINT) use_pixmap );
+    gcw_use_pixmap( (PLINT) use_pixmap );
 }
 
 void plplot_canvas_use_persistence( PlplotCanvas* self, gboolean use_persistence )
 {
     plsstrm( self->Nstream ); /* Select stream before plplot call */
-    gcw_use_persistence((PLINT) use_persistence );
+    gcw_use_persistence( (PLINT) use_persistence );
 }
 
 

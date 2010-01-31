@@ -208,7 +208,7 @@ plD_init_dp( PLStream *pls )
 static void
 tk_wr_header( PLStream *pls, char *header )
 {
-    tk_wr( pdf_wr_header( pls->pdfs, header ));
+    tk_wr( pdf_wr_header( pls->pdfs, header ) );
 }
 
 static void
@@ -255,15 +255,15 @@ init( PLStream *pls )
 /* Allocate and initialize device-specific data */
 
     if ( pls->dev != NULL )
-        free((void *) pls->dev );
+        free( (void *) pls->dev );
 
-    pls->dev = calloc( 1, (size_t) sizeof ( TkDev ));
+    pls->dev = calloc( 1, (size_t) sizeof ( TkDev ) );
     if ( pls->dev == NULL )
         plexit( "plD_init_tk: Out of memory." );
 
     dev = (TkDev *) pls->dev;
 
-    dev->iodev = (PLiodev *) calloc( 1, (size_t) sizeof ( PLiodev ));
+    dev->iodev = (PLiodev *) calloc( 1, (size_t) sizeof ( PLiodev ) );
     if ( dev->iodev == NULL )
         plexit( "plD_init_tk: Out of memory." );
 
@@ -296,7 +296,7 @@ init( PLStream *pls )
 
 /* Send init info */
 
-    tk_wr( pdf_wr_1byte( pls->pdfs, c ));
+    tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
 
 /* The header and version fields are useful when the client & server */
 /* reside on different machines */
@@ -305,16 +305,16 @@ init( PLStream *pls )
     tk_wr_header( pls, PLSERV_VERSION );
 
     tk_wr_header( pls, "xmin" );
-    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) xmin ));
+    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) xmin ) );
 
     tk_wr_header( pls, "xmax" );
-    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) xmax ));
+    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) xmax ) );
 
     tk_wr_header( pls, "ymin" );
-    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) ymin ));
+    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) ymin ) );
 
     tk_wr_header( pls, "ymax" );
-    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) ymax ));
+    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) ymax ) );
 
     tk_wr_header( pls, "" );
 
@@ -345,22 +345,22 @@ plD_line_tk( PLStream *pls, short x1, short y1, short x2, short y2 )
     if ( x1 == dev->xold && y1 == dev->yold )
     {
         c = (U_CHAR) LINETO;
-        tk_wr( pdf_wr_1byte( pls->pdfs, c ));
+        tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
 
         xy[0] = x2;
         xy[1] = y2;
-        tk_wr( pdf_wr_2nbytes( pls->pdfs, xy, 2 ));
+        tk_wr( pdf_wr_2nbytes( pls->pdfs, xy, 2 ) );
     }
     else
     {
         c = (U_CHAR) LINE;
-        tk_wr( pdf_wr_1byte( pls->pdfs, c ));
+        tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
 
         xy[0] = x1;
         xy[1] = y1;
         xy[2] = x2;
         xy[3] = y2;
-        tk_wr( pdf_wr_2nbytes( pls->pdfs, xy, 4 ));
+        tk_wr( pdf_wr_2nbytes( pls->pdfs, xy, 4 ) );
     }
     dev->xold = x2;
     dev->yold = y2;
@@ -383,11 +383,11 @@ plD_polyline_tk( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     CheckForEvents( pls );
 
-    tk_wr( pdf_wr_1byte( pls->pdfs, c ));
-    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) npts ));
+    tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
+    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) npts ) );
 
-    tk_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) xa, npts ));
-    tk_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) ya, npts ));
+    tk_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) xa, npts ) );
+    tk_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) ya, npts ) );
 
     dev->xold = xa[npts - 1];
     dev->yold = ya[npts - 1];
@@ -410,7 +410,7 @@ plD_eop_tk( PLStream *pls )
 
     dbug_enter( "plD_eop_tk" );
 
-    tk_wr( pdf_wr_1byte( pls->pdfs, c ));
+    tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
     flush_output( pls );
     if ( !pls->nopause )
         WaitForPage( pls );
@@ -433,7 +433,7 @@ plD_bop_tk( PLStream *pls )
     dev->xold = PL_UNDEFINED;
     dev->yold = PL_UNDEFINED;
     pls->page++;
-    tk_wr( pdf_wr_1byte( pls->pdfs, c ));
+    tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -467,60 +467,60 @@ plD_state_tk( PLStream *pls, PLINT op )
 
     dbug_enter( "plD_state_tk" );
 
-    tk_wr( pdf_wr_1byte( pls->pdfs, c ));
-    tk_wr( pdf_wr_1byte( pls->pdfs, op ));
+    tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
+    tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
 
     switch ( op )
     {
     case PLSTATE_WIDTH:
-        tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) ( pls->width )));
+        tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) ( pls->width ) ) );
         break;
 
     case PLSTATE_COLOR0:
-        tk_wr( pdf_wr_2bytes( pls->pdfs, (short) pls->icol0 ));
+        tk_wr( pdf_wr_2bytes( pls->pdfs, (short) pls->icol0 ) );
 
         if ( pls->icol0 == PL_RGB_COLOR )
         {
-            tk_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.r ));
-            tk_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.g ));
-            tk_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.b ));
+            tk_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.r ) );
+            tk_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.g ) );
+            tk_wr( pdf_wr_1byte( pls->pdfs, pls->curcolor.b ) );
         }
         break;
 
     case PLSTATE_COLOR1:
-        tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->icol1 ));
+        tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->icol1 ) );
         break;
 
     case PLSTATE_FILL:
-        tk_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) pls->patt ));
+        tk_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) pls->patt ) );
         break;
 
     case PLSTATE_CMAP0:
-        tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncol0 ));
+        tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncol0 ) );
         for ( i = 0; i < pls->ncol0; i++ )
         {
-            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].r ));
-            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].g ));
-            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].b ));
+            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].r ) );
+            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].g ) );
+            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap0[i].b ) );
         }
         break;
 
     case PLSTATE_CMAP1:
-        tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncol1 ));
+        tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncol1 ) );
         for ( i = 0; i < pls->ncol1; i++ )
         {
-            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].r ));
-            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].g ));
-            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].b ));
+            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].r ) );
+            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].g ) );
+            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1[i].b ) );
         }
         /* Need to send over the control points too! */
-        tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncp1 ));
+        tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncp1 ) );
         for ( i = 0; i < pls->ncp1; i++ )
         {
-            tk_wr( pdf_wr_ieeef( pls->pdfs, pls->cmap1cp[i].h ));
-            tk_wr( pdf_wr_ieeef( pls->pdfs, pls->cmap1cp[i].l ));
-            tk_wr( pdf_wr_ieeef( pls->pdfs, pls->cmap1cp[i].s ));
-            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1cp[i].rev ));
+            tk_wr( pdf_wr_ieeef( pls->pdfs, pls->cmap1cp[i].h ) );
+            tk_wr( pdf_wr_ieeef( pls->pdfs, pls->cmap1cp[i].l ) );
+            tk_wr( pdf_wr_ieeef( pls->pdfs, pls->cmap1cp[i].s ) );
+            tk_wr( pdf_wr_1byte( pls->pdfs, pls->cmap1cp[i].rev ) );
         }
         break;
     }
@@ -555,26 +555,26 @@ plD_esc_tk( PLStream *pls, PLINT op, void *ptr )
     switch ( op )
     {
     case PLESC_DI:
-        tk_wr( pdf_wr_1byte( pls->pdfs, c ));
-        tk_wr( pdf_wr_1byte( pls->pdfs, op ));
+        tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
+        tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
         tk_di( pls );
         break;
 
     case PLESC_EH:
-        tk_wr( pdf_wr_1byte( pls->pdfs, c ));
-        tk_wr( pdf_wr_1byte( pls->pdfs, op ));
+        tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
+        tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
         HandleEvents( pls );
         break;
 
     case PLESC_FLUSH:
-        tk_wr( pdf_wr_1byte( pls->pdfs, c ));
-        tk_wr( pdf_wr_1byte( pls->pdfs, op ));
+        tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
+        tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
         flush_output( pls );
         break;
 
     case PLESC_FILL:
-        tk_wr( pdf_wr_1byte( pls->pdfs, c ));
-        tk_wr( pdf_wr_1byte( pls->pdfs, op ));
+        tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
+        tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
         tk_fill( pls );
         break;
 
@@ -587,8 +587,8 @@ plD_esc_tk( PLStream *pls, PLINT op, void *ptr )
         break;
 
     default:
-        tk_wr( pdf_wr_1byte( pls->pdfs, c ));
-        tk_wr( pdf_wr_1byte( pls->pdfs, op ));
+        tk_wr( pdf_wr_1byte( pls->pdfs, c ) );
+        tk_wr( pdf_wr_1byte( pls->pdfs, op ) );
     }
 }
 
@@ -735,10 +735,10 @@ tk_fill( PLStream *pls )
 
     dbug_enter( "tk_fill" );
 
-    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->dev_npts ));
+    tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->dev_npts ) );
 
-    tk_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) pls->dev_x, pls->dev_npts ));
-    tk_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) pls->dev_y, pls->dev_npts ));
+    tk_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) pls->dev_x, pls->dev_npts ) );
+    tk_wr( pdf_wr_2nbytes( pls->pdfs, (U_SHORT *) pls->dev_y, pls->dev_npts ) );
 
     dev->xold = PL_UNDEFINED;
     dev->yold = PL_UNDEFINED;
@@ -792,7 +792,7 @@ tk_start( PLStream *pls )
             Tcl_SetVar2( dev->interp, "env", "DISPLAY", "unix:0.0", TCL_GLOBAL_ONLY );          /* tk_init need this */
 
         dev->updatecmd = "update";
-        if ( pltk_toplevel( &dev->w, dev->interp ))
+        if ( pltk_toplevel( &dev->w, dev->interp ) )
             abort_session( pls, "Unable to create top-level window" );
     }
 
@@ -887,7 +887,7 @@ tk_stop( PLStream *pls )
         if ( dev->iodev->file != NULL )
             fclose( dev->iodev->file );
 
-        free((void *) dev->iodev );
+        free( (void *) dev->iodev );
     }
     free_mem( dev->cmdbuf );
 }
@@ -1094,12 +1094,12 @@ init_server( PLStream *pls )
     dbug_enter( "init_server" );
 
     pldebug( "init_server", "%s -- PID: %d, PGID: %d, PPID: %d\n",
-        __FILE__, (int) getpid(), (int) getpgrp(), (int) getppid());
+        __FILE__, (int) getpid(), (int) getpgrp(), (int) getppid() );
 
 /* If no means of communication provided, need to launch plserver */
 
-    if (( !pls->dp && pls->server_name != NULL ) ||
-        ( pls->dp && pls->server_port != NULL ))
+    if ( ( !pls->dp && pls->server_name != NULL ) ||
+         ( pls->dp && pls->server_port != NULL ) )
         server_exists = 1;
 
 /* So launch it */
@@ -1200,7 +1200,7 @@ launch_server( PLStream *pls )
         argv[i++] = "-name";                       /* plserver name */
         tmp       = plstrdup( pls->plwindow + 1 ); /* get rid of the initial dot */
         argv[i++] = tmp;
-        if (( t = strchr( tmp, '.' )) != NULL )
+        if ( ( t = strchr( tmp, '.' ) ) != NULL )
             *t = '\0';                  /* and keep only the base name */
     }
     else
@@ -1255,7 +1255,7 @@ launch_server( PLStream *pls )
     else if ( pls->dp && pls->server_host != NULL )
     {
         argv[i++] = "-display";
-        if (( ptr = getenv( "DISPLAY" )) != NULL )
+        if ( ( ptr = getenv( "DISPLAY" ) ) != NULL )
             argv[i++] = ptr;
         else
             argv[i++] = "unix:0.0";
@@ -1280,7 +1280,7 @@ launch_server( PLStream *pls )
 
     if ( pls->dp && pls->server_host != NULL )
     {
-        if (( dev->child_pid = vfork()) < 0 )
+        if ( ( dev->child_pid = vfork() ) < 0 )
         {
             abort_session( pls, "Unable to fork server process" );
         }
@@ -1289,7 +1289,7 @@ launch_server( PLStream *pls )
             fprintf( stderr, "Starting up %s on node %s\n", pls->plserver,
                 pls->server_host );
 
-            if ( execvp( "rsh", argv ))
+            if ( execvp( "rsh", argv ) )
             {
                 perror( "Unable to exec server process" );
                 _exit( 1 );
@@ -1302,7 +1302,7 @@ launch_server( PLStream *pls )
     else
     {
         plserver_exec = plFindCommand( pls->plserver );
-        if (( plserver_exec == NULL ) || ( dev->child_pid = vfork()) < 0 )
+        if ( ( plserver_exec == NULL ) || ( dev->child_pid = vfork() ) < 0 )
         {
             abort_session( pls, "Unable to fork server process" );
         }
@@ -1320,7 +1320,7 @@ launch_server( PLStream *pls )
             }
 
             pldebug( "launch_server", "Starting up %s\n", plserver_exec );
-            if ( execv( plserver_exec, argv ))
+            if ( execv( plserver_exec, argv ) )
             {
                 fprintf( stderr, "Unable to exec server process.\n" );
                 _exit( 1 );
@@ -1384,13 +1384,13 @@ plwindow_init( PLStream *pls )
      * quoting and bad window name problems. Also avoid name starting with
      * an upper case letter. */
     n   = strlen( pls->plwindow ) + 1;
-    tmp = (char *) malloc( sizeof ( char ) * ( n + 1 ));
+    tmp = (char *) malloc( sizeof ( char ) * ( n + 1 ) );
     sprintf( tmp, ".%s", pls->plwindow );
     for ( i = 1; i < n; i++ )
     {
-        if (( tmp[i] == ' ' ) || ( tmp[i] == '.' )) tmp[i] = '_';
+        if ( ( tmp[i] == ' ' ) || ( tmp[i] == '.' ) ) tmp[i] = '_';
     }
-    if ( isupper( tmp[1] )) tmp[1] = tolower( tmp[1] );
+    if ( isupper( tmp[1] ) ) tmp[1] = tolower( tmp[1] );
     Tcl_SetVar( dev->interp, "plwindow", tmp, 0 );
     free( tmp );
 
@@ -1477,7 +1477,7 @@ set_windowname( PLStream *pls )
     if ( pls->plwindow == NULL ) /* dont override -plwindow cmd line option */
     {
         maxlen        = strlen( pname ) + 10;
-        pls->plwindow = (char *) malloc( maxlen * sizeof ( char ));
+        pls->plwindow = (char *) malloc( maxlen * sizeof ( char ) );
 
         /* Allow for multiple widgets created by multiple streams */
 
@@ -1534,7 +1534,7 @@ link_init( PLStream *pls )
         /* Open the FIFO for writing */
         /* This will block until the server opens it for reading */
 
-        if (( iodev->fd = open( iodev->fileName, O_WRONLY )) == -1 )
+        if ( ( iodev->fd = open( iodev->fileName, O_WRONLY ) ) == -1 )
             abort_session( pls, "Error opening fifo for write" );
 
         /* Create stream interface (C file handle) to FIFO */
@@ -1665,7 +1665,7 @@ flush_output( PLStream *pls )
         pldebug( "flush_output", "%s: Flushing buffer, bytes = %ld\n",
             __FILE__, pdfs->bp );
 #endif
-        if ( pl_PacketSend( dev->interp, dev->iodev, pls->pdfs ))
+        if ( pl_PacketSend( dev->interp, dev->iodev, pls->pdfs ) )
         {
             fprintf( stderr, "Packet send failed:\n\t %s\n",
                 dev->interp->result );
@@ -1745,7 +1745,7 @@ KeyEH( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 
     dbug_enter( "KeyEH" );
 
-    if (( result = LookupTkKeyEvent( pls, interp, argc, argv )) != TCL_OK )
+    if ( ( result = LookupTkKeyEvent( pls, interp, argc, argv ) ) != TCL_OK )
         return result;
 
     if ( dev->locate_mode )
@@ -1771,7 +1771,7 @@ ButtonEH( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
 
     dbug_enter( "ButtonEH" );
 
-    if (( result = LookupTkButtonEvent( pls, interp, argc, argv )) != TCL_OK )
+    if ( ( result = LookupTkButtonEvent( pls, interp, argc, argv ) ) != TCL_OK )
         return result;
 
     if ( dev->locate_mode )
@@ -2077,7 +2077,7 @@ Locate( PLStream *pls )
     {
         /* Try to locate cursor */
 
-        if ( plTranslateCursor( gin ))
+        if ( plTranslateCursor( gin ) )
         {
             /* If invoked by the API, we're done */
             /* Otherwise send report to stdout */
@@ -2085,7 +2085,7 @@ Locate( PLStream *pls )
             if ( dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER )
             {
                 pltext();
-                if ( gin->keysym < 0xFF && isprint( gin->keysym ))
+                if ( gin->keysym < 0xFF && isprint( gin->keysym ) )
                     printf( "%f %f %c\n", gin->wX, gin->wY, gin->keysym );
                 else
                     printf( "%f %f 0x%02x\n", gin->wX, gin->wY, gin->keysym );
@@ -2124,7 +2124,7 @@ pltk_toplevel( Tk_Window *w, Tcl_Interp *interp )
 
 /* Create the main window without mapping it */
 
-    if ( Tk_Init( interp ))
+    if ( Tk_Init( interp ) )
     {
         fprintf( stderr, "tk_init:%s\n", interp->result );
         return 1;
@@ -2157,7 +2157,7 @@ tk_wait( PLStream *pls, char *cmd )
     copybuf( pls, cmd );
     for (;; )
     {
-        if ( Tcl_ExprBoolean( dev->interp, dev->cmdbuf, &result ))
+        if ( Tcl_ExprBoolean( dev->interp, dev->cmdbuf, &result ) )
         {
             fprintf( stderr, "tk_wait command \"%s\" failed:\n\t %s\n",
                 cmd, dev->interp->result );
@@ -2265,9 +2265,9 @@ copybuf( PLStream *pls, char *cmd )
         dev->cmdbuf     = (char *) malloc( dev->cmdbuf_len );
     }
 
-    if ((int) strlen( cmd ) >= dev->cmdbuf_len )
+    if ( (int) strlen( cmd ) >= dev->cmdbuf_len )
     {
-        free((void *) dev->cmdbuf );
+        free( (void *) dev->cmdbuf );
         dev->cmdbuf_len = strlen( cmd ) + 20;
         dev->cmdbuf     = (char *) malloc( dev->cmdbuf_len );
     }
