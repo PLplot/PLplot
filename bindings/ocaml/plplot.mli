@@ -617,6 +617,8 @@ external plglevel : unit -> plplot_run_level = "camlidl_plplot_core_c_plglevel"
 external plgpage : unit -> float * float * int * int * int * int
   = "camlidl_plplot_core_c_plgpage"
 external plgra : unit -> unit = "camlidl_plplot_core_c_plgra"
+external plgradient : float array -> float array -> float -> unit
+  = "camlidl_plplot_core_c_plgradient"
 external plgspa : unit -> float * float * float * float
   = "camlidl_plplot_core_c_plgspa"
 external plgstrm : unit -> int = "camlidl_plplot_core_c_plgstrm"

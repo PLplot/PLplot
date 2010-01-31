@@ -45,6 +45,7 @@
 [mlname(plglevel)] void c_plglevel ( [out] plplot_run_level * p_level );
 [mlname(plgpage)] void c_plgpage ( [out] double * p_xp, [out] double * p_yp, [out] int * p_xleng, [out] int * p_yleng, [out] int * p_xoff, [out] int * p_yoff );
 [mlname(plgra)] void c_plgra ( void );
+[mlname(plgradient)] void c_plgradient ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, double angle );
 [mlname(plgspa)] void c_plgspa ( [out] double * xmin, [out] double * xmax, [out] double * ymin, [out] double * ymax );
 [mlname(plgstrm)] void c_plgstrm ( [out] int * p_strm );
 [mlname(plgver)] void c_plgver ( [string, out, length_is(1024)] char * p_ver );

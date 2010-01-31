@@ -243,7 +243,7 @@ let function_attributes return_type name =
 (** Generate attributes for function parameters *)
 let parameter_attributes function_name types names =
   let pmatch re str = Pcre.pmatch ~pat:re str in
-  let non_get_functions = ["c_plgriddata"; "c_plgra"] in
+  let non_get_functions = ["c_plgriddata"; "c_plgra"; "c_plgradient"] in
 
   (* If all of the pieces are true, then the attribute(s) is(are) appropriate
      for this parameter.  This is basically a long list of special cases
@@ -443,11 +443,15 @@ let process_file () =
   |> List.map minimize_whitespace
   |> List.map (
        fun l ->
-         try
-           process_prototype l
-         with
-         | Not_found ->
-             failwith ("Unhandled or malformed prototype: \n" ^ l)
+         if Pcre.pmatch ~pat:"^enum" l then
+           l
+         else (
+           try
+             process_prototype l
+           with
+           | Not_found ->
+               failwith ("Unhandled or malformed prototype: " ^ l)
+         )
      )
   |> List.map minimize_whitespace
   |> List.map (fun l -> l ^ "\n")
