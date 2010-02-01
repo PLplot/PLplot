@@ -957,7 +957,9 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
     plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
     plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
     plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );
-    snprintf( openTag, TAG_LEN, "<span font_desc=\"%s %.2f\" ", familyLookup[fontFamily], fontSize );
+    /* From http://library.gnome.org/devel/pango/unstable/PangoMarkupFormat.html
+     * size = font size in 1024ths of a point. */
+    snprintf( openTag, TAG_LEN, "<span font_desc=\"%s\" size=\"%d\" ", familyLookup[fontFamily], (int)( fontSize * 1024. ) );
     strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 
     snprintf( openTag, TAG_LEN, "style=\"%s\" ", styleLookup[fontStyle] );
