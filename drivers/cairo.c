@@ -116,11 +116,15 @@ typedef struct
     char            bigendian;
 #endif
 #if defined ( PLD_wincairo )
+    cairo_surface_t *cairoSurface_win;
+    cairo_t         *cairoContext_win;
     WNDCLASSEX      wndclass;
     HWND            hwnd;
     MSG             msg;
     HDC             hdc;
     HDC             SCRN_hdc;
+    COLORREF        oldcolour;
+    RECT            rect;
 #endif
 } PLCairo;
 
@@ -2586,8 +2590,20 @@ void plD_dispatch_init_wincairo( PLDispatchTable *pdt );
 void plD_init_wincairo( PLStream * );
 //void plD_bop_extcairo( PLStream * );
 void plD_eop_wincairo( PLStream * );
-//void plD_esc_extcairo( PLStream *, PLINT, void * );
+void plD_esc_extcairo( PLStream *, PLINT, void * );
 void plD_tidy_wincairo( PLStream * );
+
+/*---------------------------------------------------------------------
+ * blit_to_win()
+ *
+ * Blit the offscreen image to the Windows window.
+ * ---------------------------------------------------------------------*/
+
+void blit_to_win( PLCairo *aStream )
+{
+    cairo_set_source_surface( aStream->cairoContext_win, aStream->cairoSurface, 0.0, 0.0 );
+    cairo_paint( aStream->cairoContext_win );
+}
 
 /*--------------------------------------------------------------------------*\
  * This is the window function for the plot window. Whenever a message is
@@ -2604,7 +2620,7 @@ LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
  * The window carries a 32bit user defined pointer which points to the
  * plplot stream (pls). This is used for tracking the window.
  * Unfortunately, this is "attached" to the window AFTER it is created
- * so we can not initialise PLStream or wingcc_Dev "blindly" because
+ * so we can not initialise PLStream or wincairo "blindly" because
  * they may not yet have been initialised.
  * WM_CREATE is called before we get to initialise those variables, so
  * we wont try to set them.
@@ -2643,10 +2659,12 @@ LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
         break;
 
     case WM_PAINT:
+        blit_to_win( dev );
         return ( 1 );
         break;
 
     case WM_SIZE:
+        GetClientRect( dev->hwnd, &dev->rect );
         return ( 0 );
         break;
 
@@ -2659,7 +2677,13 @@ LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
         break;
 
     case WM_ERASEBKGND:
-        return ( 0 );
+        if ( dev )
+        {
+	    dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
+	    ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0 );
+	    SetBkColor( dev->hdc, dev->oldcolour );
+        }
+        return ( 1 );
         break;
 
     case WM_COMMAND:
@@ -2813,7 +2837,12 @@ void plD_init_wincairo( PLStream *pls )
  * Initialize Cairo Surface using the windows hdc.
  */
 
-    aStream->cairoSurface = (cairo_surface_t *) cairo_win32_surface_create( aStream->hdc );
+    /* This is the Win32 Cairo surface. */
+    aStream->cairoSurface_win = (cairo_surface_t *) cairo_win32_surface_create( aStream->hdc );
+    aStream->cairoContext_win = cairo_create( aStream->cairoSurface_win );
+
+    /* This is the Cairo surface PLplot will actually plot to. */
+    aStream->cairoSurface = cairo_image_surface_create( CAIRO_FORMAT_RGB24, pls->xlength, pls->ylength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     /* Invert the surface so that the graphs are drawn right side up. */
@@ -2868,10 +2897,41 @@ void plD_tidy_wincairo( PLStream *pls )
 {
     PLCairo *aStream = (PLCairo *) pls->dev;
 
+    plD_tidy_cairo( pls );
+
+    /* Also free up the Cairo win32 surface and context */
+    cairo_destroy( aStream->cairoContext_win );
+    cairo_surface_destroy( aStream->cairoSurface_win );
+
     if ( aStream != NULL )
     {
         if ( aStream->hdc != NULL ) ReleaseDC( aStream->hwnd, aStream->hdc );
         free_mem( pls->dev );
+    }
+}
+
+/*---------------------------------------------------------------------
+ * plD_esc_wincairo()
+ *
+ * Escape function, specialized for the wincairo driver
+ * ---------------------------------------------------------------------*/
+
+void plD_esc_wincairo( PLStream *pls, PLINT op, void *ptr )
+{
+    PLCairo *aStream;
+
+    aStream = (PLCairo *) pls->dev;
+
+    switch ( op )
+    {
+    case PLESC_FLUSH:
+        InvalidateRect( aStream->hwnd, NULL, TRUE);
+        break;
+    case PLESC_GETC:
+        break;
+    default:
+        plD_esc_cairo( pls, op, ptr );
+        break;
     }
 }
 
