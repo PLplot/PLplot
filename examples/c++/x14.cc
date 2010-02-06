@@ -92,7 +92,7 @@ x14::x14( int argc, const char ** argv )
     // Using DP results in a crash at the end due to some odd cleanup problems
     // The geometry strings MUST be in writable memory
 
-    char       driver[80];
+    char       driver[80] = "";
 
     PLINT      fam, num, bmax;
 
@@ -110,13 +110,6 @@ x14::x14( int argc, const char ** argv )
     // Parse and process command line arguments.
     pls1->parseopts( &argc, argv, PL_PARSE_FULL );
 
-    pls1->gdev( driver );
-    pls1->gfam( fam, num, bmax );
-
-    cout << "Demo of multiple output streams via the " <<
-    driver << " driver." << endl;
-    cout << "Running with the second stream as slave to the first.\n" << endl;
-
     //If valid geometry specified on command line, use it for both streams.
     pls1->gpage( xp0, yp0, xleng0, yleng0, xoff0, yoff0 );
     valid_geometry = ( xleng0 > 0 && yleng0 > 0 );
@@ -128,11 +121,17 @@ x14::x14( int argc, const char ** argv )
     else
         pls1->setopt( "geometry", geometry_master );
 
-    pls1->sdev( driver );
     pls1->ssub( 2, 2 );
 
     // Initialize PLplot.
     pls1->init();
+
+    pls1->gdev( driver );
+    pls1->gfam( fam, num, bmax );
+
+    cout << "Demo of multiple output streams via the " <<
+    driver << " driver." << endl;
+    cout << "Running with the second stream as slave to the first.\n" << endl;
 
     pls2 = new plstream();
 

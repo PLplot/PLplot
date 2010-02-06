@@ -58,7 +58,7 @@ main( int argc, const char *argv[] )
     char  geometry_master[] = "500x410+100+200";
     char  geometry_slave[]  = "500x410+650+200";
 
-    char  driver[80];
+    char  driver[80] = "";
 
     PLINT fam, num, bmax;
     PLFLT xp0, yp0;
@@ -69,13 +69,6 @@ main( int argc, const char *argv[] )
 /* Parse and process command line arguments */
 
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );
-
-    plgdev( driver );
-    plgfam( &fam, &num, &bmax );
-
-    printf( "Demo of multiple output streams via the %s driver.\n", driver );
-    printf( "Running with the second stream as slave to the first.\n" );
-    printf( "\n" );
 
     /* If valid geometry specified on command line, use it for both streams. */
     plgpage( &xp0, &yp0, &xleng0, &yleng0, &xoff0, &yoff0 );
@@ -88,9 +81,15 @@ main( int argc, const char *argv[] )
     else
         plsetopt( "geometry", geometry_master );
 
-    plsdev( driver );
     plssub( 2, 2 );
     plinit();
+
+    plgdev( driver );
+    plgfam( &fam, &num, &bmax );
+
+    printf( "Demo of multiple output streams via the %s driver.\n", driver );
+    printf( "Running with the second stream as slave to the first.\n" );
+    printf( "\n" );
 
 /* Start next stream */
 

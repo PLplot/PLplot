@@ -63,15 +63,6 @@ class x14 {
 
         pls1.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
 
-        StringBuffer driver = new StringBuffer( 80 );
-
-        pls1.gdev( driver );
-        pls1.gfam( fam, num, bmax );
-        String sdriver = new String( driver );
-        System.out.println( "Demo of multiple output streams via the " + sdriver + " driver." );
-        System.out.println( "Running with the second stream as slave to the first." );
-        System.out.println( "" );
-
         //      If valid geometry specified on command line, use it for both streams.
 
         pls1.gpage( xp0, yp0, xleng0, yleng0, xoff0, yoff0 );
@@ -84,9 +75,17 @@ class x14 {
         else
             pls1.setopt( "geometry", geometry_master );
 
-        pls1.sdev( sdriver );
         pls1.ssub( 2, 2 );
         pls1.init();
+
+        StringBuffer driver = new StringBuffer( 80 );
+
+        pls1.gdev( driver );
+        pls1.gfam( fam, num, bmax );
+        String sdriver = new String( driver );
+        System.out.println( "Demo of multiple output streams via the " + sdriver + " driver." );
+        System.out.println( "Running with the second stream as slave to the first." );
+        System.out.println( "" );
 
         // Start next stream
 

@@ -98,6 +98,13 @@
 #include "plplotP.h"
 #include <ctype.h>
 
+#ifdef HAVE_CRT_EXTERNS_H
+/*
+ * This include file has the declaration for _NSGetArgc().  See below.
+ */
+#include <crt_externs.h>
+#endif
+
 /* Support functions */
 
 static int  ParseOpt( int *, const char ***, int *, const char ***, PLOptionTable * );
@@ -926,7 +933,19 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
             *argsave++ = *argv++;
 
         if ( argsave < argend )
+        {
             *argsave = NULL;
+#ifdef HAVE_NSGETARGC
+            /*
+             * Modify the global argc variable to match the shortened argv.
+             * The global argc and argv must be kept consistent so that future
+             * users of them (e.g. libraries loaded later with a device driver)
+             * will not try to dereference the null pointer at the end of the
+             * shortened argv array.
+             */
+            *_NSGetArgc() = *p_argc;
+#endif
+        }
     }
 
     return status;

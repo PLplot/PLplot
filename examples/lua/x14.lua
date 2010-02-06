@@ -268,12 +268,6 @@ geometry_slave  = "500x410+650+200"
 -- Parse and process command line arguments 
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
-driver = pl.gdev()
-fam, num, bmax = pl.gfam()
-
-print("Demo of multiple output streams via the " .. driver .." driver.")
-print("Running with the second stream as slave to the first.\n")
-
 -- If valid geometry specified on command line, use it for both streams. 
 xp0, yp0, xleng0, yleng0, xoff0, yoff0 = pl.gpage()
 valid_geometry = xleng0>0 and yleng0>0
@@ -285,9 +279,14 @@ else
   pl.setopt("geometry", geometry_master)
 end
 
-pl.sdev(driver)
 pl.ssub(2, 2)
 pl.init()
+
+driver = pl.gdev()
+fam, num, bmax = pl.gfam()
+
+print("Demo of multiple output streams via the " .. driver .." driver.")
+print("Running with the second stream as slave to the first.\n")
 
 -- Start next stream 
 pl.sstrm(1)

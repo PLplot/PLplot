@@ -51,15 +51,6 @@ int main( char[][] args )
     /* Parse and process command line arguments */
     plparseopts( args, PL_PARSE_FULL );
 
-    string driver;
-    plgdev( driver );
-
-    PLINT fam, num, bmax;
-    plgfam( &fam, &num, &bmax );
-
-    writefln( "Demo of multiple output streams via the %s driver.", driver );
-    writefln( "Running with the second stream as slave to the first.\n" );
-
     /* If valid geometry specified on command line, use it for both streams. */
     PLFLT xp0, yp0;
     PLINT xleng0, yleng0, xoff0, yoff0;
@@ -72,9 +63,17 @@ int main( char[][] args )
     else
         plsetopt( "geometry", geometry_master );
 
-    plsdev( driver );
     plssub( 2, 2 );
     plinit();
+
+    string driver;
+    plgdev( driver );
+
+    PLINT fam, num, bmax;
+    plgfam( &fam, &num, &bmax );
+
+    writefln( "Demo of multiple output streams via the %s driver.", driver );
+    writefln( "Running with the second stream as slave to the first.\n" );
 
     /* Start next stream */
     plsstrm( 1 );

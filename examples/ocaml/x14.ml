@@ -227,16 +227,9 @@ let () =
   (* Parse and process command line arguments *)
   plparseopts Sys.argv [PL_PARSE_FULL];
 
-  let driver = plgdev () in
-  let fam, num, bmax = plgfam () in
-  
   (* If valid geometry specified on command line, use it for both streams. *)
   let xp0, yp0, xleng0, yleng0, xoff0, yoff0 = plgpage () in
   let valid_geometry = ( xleng0 > 0 && yleng0 > 0 ) in
-
-  printf "Demo of multiple output streams via the %s driver.\n" driver;
-  printf "Running with the second stream as slave to the first.\n";
-  printf "\n";
 
   (* Set up first stream *)
   if valid_geometry then
@@ -244,9 +237,15 @@ let () =
   else
     plsetopt "geometry" geometry_master;
 
-  plsdev driver;
   plssub 2 2;
   plinit ();
+
+  let driver = plgdev () in
+  let fam, num, bmax = plgfam () in
+  
+  printf "Demo of multiple output streams via the %s driver.\n" driver;
+  printf "Running with the second stream as slave to the first.\n";
+  printf "\n";
 
   (* Start next stream *)
   plsstrm 1;

@@ -38,6 +38,7 @@ endif(NOT DEFAULT_CMAP1_FILE)
 option(USE_FILL_INTERSECTION_POLYGON "use fill_intersection_polygon" OFF)
 
 # Need these modules to do subsequent checks.
+include(CheckIncludeFile)
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
 include(CheckSymbolExists)
@@ -189,6 +190,7 @@ endif(NOT STDC_HEADERS)
 check_include_files(unistd.h PL_HAVE_UNISTD_H)
 check_include_files(termios.h HAVE_TERMIOS_H)
 check_include_files(stdint.h PL_HAVE_STDINT_H)
+check_include_file(crt_externs.h HAVE_CRT_EXTERNS_H)
 
 # AC_HEADER_SYS_WAIT
 include(TestForStandardHeaderwait)
@@ -244,6 +246,7 @@ check_function_exists(popen HAVE_POPEN)
 check_function_exists(usleep PL_HAVE_USLEEP)
 check_function_exists(mkstemp PL_HAVE_MKSTEMP)
 check_function_exists(mkstemp PL_HAVE_UNLINK)
+check_function_exists(_NSGetArgc HAVE_NSGETARGC)
 
 # Check for FP functions, including underscored version which 
 # are sometimes all that is available on windows

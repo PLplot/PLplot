@@ -7,19 +7,18 @@ proc x14 {{w loopback}} {
     set geometry_master "500x410+100+200"
     set geometry_slave  "500x410+650+200"
 
+# Set up first stream
+    $w cmd plsetopt "geometry" $geometry_master
+    
+    $w cmd plssub 2 2
+    $w cmd plinit
+	
     $w cmd plgdev driver
     $w cmd plgfam fam num bmax
     puts "Demo of multiple output streams via the $driver driver."
     puts "Running with the second stream as slave to the first."
     puts ""
     
-# Set up first stream
-    $w cmd plsetopt "geometry" $geometry_master
-    
-    if {$driver != ""} {$w cmd plsdev $driver}
-    $w cmd plssub 2 2
-    $w cmd plinit
-	
 # Start next stream
 	
     $w cmd plsstrm 1

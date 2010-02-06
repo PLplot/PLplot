@@ -56,13 +56,6 @@ sub main {
 
   plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
-  my $driver = plgdev ();
-  my ($fam, $num, $bmax) = plgfam ();
-
-  print ("Demo of multiple output streams via the $driver driver.\n"
-         . "Running with the second stream as slave to the first.\n"
-         . "\n");
-
   # If valid geometry specified on command line, use it for both streams.
   my ($xp0, $yp0, $xleng0, $yleng0, $xoff0, $yoff0) = plgpage ();
   printf("%s %i, %i\n", "xleng0, yleng0 = ", $xleng0, $yleng0);
@@ -82,9 +75,15 @@ sub main {
     plsetopt ("geometry", $geometry_master);
   }
 
-  plsdev ($driver);
   plssub (2, 2);
   plinit ();
+
+  my $driver = plgdev ();
+  my ($fam, $num, $bmax) = plgfam ();
+
+  print ("Demo of multiple output streams via the $driver driver.\n"
+         . "Running with the second stream as slave to the first.\n"
+         . "\n");
 
   # Start next stream
 

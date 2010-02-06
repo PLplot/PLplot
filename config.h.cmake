@@ -121,6 +121,9 @@
 /* Define if popen is available */
 #cmakedefine HAVE_POPEN
 
+/* Define if _NSGetArgc is available */
+#cmakedefine HAVE_NSGETARGC
+
 /* Define if pthreads is available */
 #cmakedefine HAVE_PTHREAD
 
@@ -149,6 +152,9 @@
 
 /* Define to 1 if you have the <termios.h> header file. */
 #cmakedefine HAVE_TERMIOS_H 1
+
+/* Define to 1 if you have the <crt_externs.h> header file. */
+#cmakedefine HAVE_CRT_EXTERNS_H 1
 
 /* Define to 1 if the function unlink is available */
 #cmakedefine PL_HAVE_UNLINK 1

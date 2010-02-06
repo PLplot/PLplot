@@ -34,13 +34,6 @@ function ix14c(fname2,strm)
     plplot_stub
   endif
 
-  device = sprintf("%s",plgdev');
-  if(isempty(device))
-    device = "xwin";
-  endif
-
-  [fam, num, bmax] = plgfam();
-
   xleng0 = 400; yleng0 = 300; xoff0 = 200; yoff0 = 200;
   xleng1 = 400; yleng1 = 300; xoff1 = 500; yoff1 = 500;
 
@@ -48,11 +41,6 @@ function ix14c(fname2,strm)
 
   geometry_master = "500x410+100+200";
   geometry_slave  = "500x410+650+200";
-
-  fprintf(strm,"Demo of multiple output streams via the %s driver.\n", device);
-  fprintf(strm,"Running with the second stream as slave to the first.\n");
-  ##fprintf(strm,"To advance to the next plot, press the third mouse button\n");
-  ##fprintf(strm,"or the enter key in the first (left) window\n");
 
   ## This is an entirely bogus message since the output file name is 
   ## set by the function arguments - but it does ensure that stdout 
@@ -66,9 +54,20 @@ function ix14c(fname2,strm)
   ## Set up first stream */
 
   plSetOpt("geometry", geometry_master);
-  plsdev(device);
   plssub(2,2);
   plinit();
+
+  device = sprintf("%s",plgdev');
+  if(isempty(device))
+    device = "xwin";
+  endif
+
+  [fam, num, bmax] = plgfam();
+
+  fprintf(strm,"Demo of multiple output streams via the %s driver.\n", device);
+  fprintf(strm,"Running with the second stream as slave to the first.\n");
+  ##fprintf(strm,"To advance to the next plot, press the third mouse button\n");
+  ##fprintf(strm,"or the enter key in the first (left) window\n");
 
   ## Start next stream */
 
