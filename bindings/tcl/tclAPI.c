@@ -651,7 +651,7 @@ pls_auto_path( Tcl_Interp *interp )
 
 #ifdef TCL_DIR
     Tcl_SetVar( interp, "dir", TCL_DIR, TCL_GLOBAL_ONLY );
-    if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
+    if ( tcl_cmd( interp, "set auto_path [list $dir $auto_path]" ) == TCL_ERROR )
     {
         return_code = TCL_ERROR;
         goto finish;
@@ -669,7 +669,7 @@ pls_auto_path( Tcl_Interp *interp )
     {
         plGetName( dn, "tcl", "", &ptr );
         Tcl_SetVar( interp, "dir", ptr, 0 );
-        if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
+        if ( tcl_cmd( interp, "set auto_path [list $dir $auto_path]" ) == TCL_ERROR )
         {
             return_code = TCL_ERROR;
             goto finish;
@@ -688,7 +688,7 @@ pls_auto_path( Tcl_Interp *interp )
     {
         plGetName( dn, "", "", &ptr );
         Tcl_SetVar( interp, "dir", ptr, 0 );
-        if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
+        if ( tcl_cmd( interp, "set auto_path [list $dir $auto_path]" ) == TCL_ERROR )
         {
             return_code = TCL_ERROR;
             goto finish;
@@ -708,7 +708,7 @@ pls_auto_path( Tcl_Interp *interp )
     {
         plGetName( dn, "tcl", "", &ptr );
         Tcl_SetVar( interp, "dir", ptr, 0 );
-        if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
+        if ( tcl_cmd( interp, "set auto_path [list $dir $auto_path]" ) == TCL_ERROR )
         {
             return_code = TCL_ERROR;
             goto finish;
@@ -732,7 +732,7 @@ pls_auto_path( Tcl_Interp *interp )
         }
     }
     Tcl_SetVar( interp, "dir", buf, 0 );
-    if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
+    if ( tcl_cmd( interp, "set auto_path [list $dir $auto_path]" ) == TCL_ERROR )
     {
         return_code = TCL_ERROR;
         goto finish;
@@ -741,7 +741,7 @@ pls_auto_path( Tcl_Interp *interp )
     if ( plInBuildTree() )
     {
         Tcl_SetVar( interp, "dir", BUILD_DIR "/bindings/tk", TCL_GLOBAL_ONLY );
-        if ( tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" ) == TCL_ERROR )
+        if ( tcl_cmd( interp, "set auto_path [list $dir $auto_path]" ) == TCL_ERROR )
         {
             return_code = TCL_ERROR;
             goto finish;

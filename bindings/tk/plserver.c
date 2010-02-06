@@ -225,7 +225,7 @@ AppInit( Tcl_Interp *interp )
     if ( auto_path != NULL )
     {
         Tcl_SetVar( interp, "dir", auto_path, 0 );
-        tcl_cmd( interp, "set auto_path \"$dir $auto_path\"" );
+        tcl_cmd( interp, "set auto_path [list $dir $auto_path]" );
     }
 
 /* Rename "exit" to "tkexit", and insert custom exit handler */
