@@ -211,17 +211,24 @@ if(HAVE_QHULL)
     ${libplplot${LIB_TAG}_LINK_LIBRARIES}
     csironn
     )
-  set(
-    libplplot${LIB_TAG}_LINK_FLAGS
-    "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -L${QHULL_LIBRARY_DIRS} -lqhull"
-    )
+  if(QHULL_RPATH)
+    set(
+      libplplot${LIB_TAG}_LINK_FLAGS
+      "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -L${QHULL_PATH} -lqhull"
+      )
+  else(QHULL_RPATH)
+    set(
+      libplplot${LIB_TAG}_LINK_FLAGS
+      "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -lqhull"
+      )
+  endif(QHULL_RPATH)
   # Needed by plgridd.c.
   include_directories(
     ${QHULL_INCLUDE_DIRS}
     )
   # Needed by the traditional pkg-config approach for installed examples
   # as well as the new CMake-based build system for the installed examples.
-  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${QHULL_LIBRARY_DIRS})
+  set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${QHULL_RPATH})
 endif(HAVE_QHULL)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
@@ -279,17 +286,6 @@ target_link_libraries(
   plplot${LIB_TAG}
   ${libplplot${LIB_TAG}_LINK_LIBRARIES}
   )
-
-# Temporary crude workaround until this run-time default library location
-# filtering functionality (which is bound to vary from platform to platform)
-# is automatically supplied by CMake.  Note this only fixes the issue
-# for libplplotd and the libraries and plugins that depend on it, 
-# but does not fix the issue for, e.g., other mixtures of shared
-# libraries that driver plug-ins might depend upon.
-
-list(REMOVE_DUPLICATES LIB_INSTALL_RPATH)
-list(REMOVE_ITEM LIB_INSTALL_RPATH "/usr/lib")
-#message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
 
 if(USE_RPATH)
   set_target_properties(
