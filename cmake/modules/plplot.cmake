@@ -82,6 +82,27 @@ function(TRANSFORM_VERSION numerical_result version)
   set(${numerical_result} ${internal_numerical_result} PARENT_SCOPE)
 endfunction(TRANSFORM_VERSION)
 
+# CMake-2.6.x duplicates this list so work around that bug by removing
+# those duplicates.
+if(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
+  list(REMOVE_DUPLICATES CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
+endif(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
+
+# Filter all CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES list elements from
+# rpath_in list.
+function(filter_rpath rpath)
+  message("DEBUG: ${rpath} = ${${rpath}}")
+  set(internal_rpath ${${rpath}})
+  if(internal_rpath)
+    list(REMOVE_DUPLICATES internal_rpath)
+    if(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
+      list(REMOVE_ITEM internal_rpath ${CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES})
+    endif(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
+  endif(internal_rpath)
+  message("DEBUG: (filtered) ${rpath} = ${internal_rpath}")
+  set(${rpath} ${internal_rpath} PARENT_SCOPE)
+endfunction(filter_rpath)
+
 # =======================================================================
 # Compilation and build options (PLFLT, install locations, and rpath)
 # Note, must come before java since that depends on, e.g., LIB_DIR.

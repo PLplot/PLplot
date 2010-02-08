@@ -80,6 +80,7 @@ if(ANY_QT_DEVICE)
     
     set(qt_LINK_FLAGS)
     set(qt_RPATH ${QT_LIBRARY_DIR})
+    filter_rpath(qt_RPATH)
     #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
   else(QT4_FOUND)
     message(STATUS "WARNING: Qt4 development environment not found so "

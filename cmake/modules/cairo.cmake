@@ -111,6 +111,7 @@ OR PLD_wincairo
       message("Pango Cairo version (${version}) < 1.20.5, if text rendering is slow recommend turning off text clipping")
     endif(NUMERICAL_PANGOCAIRO_VERSION LESS "${NUMERICAL_PANGOCAIRO_MINIMUM_VERSION}")
     set(cairo_RPATH ${linkdir})
+    filter_rpath(cairo_RPATH)
     if(PLD_xcairo AND X11_COMPILE_FLAGS)
       # Blank-delimited required.
       string(REGEX REPLACE ";" " " 
