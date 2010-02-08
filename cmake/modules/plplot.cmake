@@ -91,7 +91,7 @@ endif(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
 # Filter all CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES list elements from
 # rpath_in list.
 function(filter_rpath rpath)
-  message("DEBUG: ${rpath} = ${${rpath}}")
+  #message("DEBUG: ${rpath} = ${${rpath}}")
   set(internal_rpath ${${rpath}})
   if(internal_rpath)
     list(REMOVE_DUPLICATES internal_rpath)
@@ -99,7 +99,7 @@ function(filter_rpath rpath)
       list(REMOVE_ITEM internal_rpath ${CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES})
     endif(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
   endif(internal_rpath)
-  message("DEBUG: (filtered) ${rpath} = ${internal_rpath}")
+  #message("DEBUG: (filtered) ${rpath} = ${internal_rpath}")
   set(${rpath} ${internal_rpath} PARENT_SCOPE)
 endfunction(filter_rpath)
 
