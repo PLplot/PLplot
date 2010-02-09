@@ -214,7 +214,7 @@ if(HAVE_QHULL)
   if(QHULL_RPATH)
     set(
       libplplot${LIB_TAG}_LINK_FLAGS
-      "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -L${QHULL_PATH} -lqhull"
+      "${libplplot${LIB_TAG}_LINK_FLAGS} -lcsironn -L${QHULL_RPATH} -lqhull"
       )
   else(QHULL_RPATH)
     set(
