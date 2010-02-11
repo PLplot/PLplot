@@ -30,7 +30,7 @@
 /* OS X specific header files */
 
 #import <Foundation/Foundation.h>
-#import <Aquaterm/AQTAdapter.h>
+#import <AquaTerm/AQTAdapter.h>
 
 /* PLplot header files */
 
