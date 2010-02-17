@@ -14,7 +14,7 @@ EXPORTS
 	__plplotp_MOD_plcontour_tr_all
 	__plplotp_MOD_plgdev
 	__plplotp_MOD_plgfnam
-	__plplotp_MOD_plgradient
+	__plplot_MOD_plgradient
 	__plplotp_MOD_plgver
 	__plplotp_MOD_plimagefr_0
 	__plplotp_MOD_plimagefr_1
