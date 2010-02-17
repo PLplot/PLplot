@@ -959,7 +959,7 @@ void open_span_tag( char *pangoMarkupString, PLUNICODE fci, float fontSize, int 
     plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );
     /* From http://library.gnome.org/devel/pango/unstable/PangoMarkupFormat.html
      * size = font size in 1024ths of a point. */
-    snprintf( openTag, TAG_LEN, "<span font_desc=\"%s\" size=\"%d\" ", familyLookup[fontFamily], (int)( fontSize * 1024. ) );
+    snprintf( openTag, TAG_LEN, "<span font_desc=\"%s\" size=\"%d\" ", familyLookup[fontFamily], (int) ( fontSize * 1024. ) );
     strncat( pangoMarkupString, openTag, MAX_MARKUP_LEN - 1 - strlen( pangoMarkupString ) );
 
     snprintf( openTag, TAG_LEN, "style=\"%s\" ", styleLookup[fontStyle] );
@@ -2681,9 +2681,9 @@ LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
     case WM_ERASEBKGND:
         if ( dev )
         {
-	    dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
-	    ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0 );
-	    SetBkColor( dev->hdc, dev->oldcolour );
+            dev->oldcolour = SetBkColor( dev->hdc, RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
+            ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &dev->rect, "", 0, 0 );
+            SetBkColor( dev->hdc, dev->oldcolour );
         }
         return ( 1 );
         break;
@@ -2927,7 +2927,7 @@ void plD_esc_wincairo( PLStream *pls, PLINT op, void *ptr )
     switch ( op )
     {
     case PLESC_FLUSH:
-        InvalidateRect( aStream->hwnd, NULL, TRUE);
+        InvalidateRect( aStream->hwnd, NULL, TRUE );
         break;
     case PLESC_GETC:
         break;
