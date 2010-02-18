@@ -335,7 +335,7 @@ if(CORE_BUILD)
       string(REGEX REPLACE "^(.*):.*$" "\\1" LANG_SUPPORT_DIR ${LANG_SUPPORT_info})
       string(REGEX REPLACE "^.*:(.*)$" "\\1" LANG_SUPPORT_FILE ${LANG_SUPPORT_info})
       install(FILES
-	${CMAKE_SOURCE_DIR}/cmake/modules/${LANG_SUPPORT_FILE}
+	${CMAKE_SOURCE_DIR}/cmake/modules/${LANG_SUPPORT_DIR}/${LANG_SUPPORT_FILE}
 	DESTINATION ${DATA_DIR}/examples/cmake/modules/${LANG_SUPPORT_DIR}
 	)
     endforeach(LANG_SUPPORT_info ${LANG_SUPPORT_FILES})
