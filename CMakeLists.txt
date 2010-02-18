@@ -55,8 +55,20 @@ endif(MSYS)
 
 set(PACKAGE plplot)
 
-# Location where PLplot cmake build system first looks for cmake modules.
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
+# Locations where PLplot cmake build system first looks for cmake modules.
+if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+  set(CMAKE_MODULE_PATH
+    ${PROJECT_SOURCE_DIR}/cmake/modules
+    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
+    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.6
+  )
+else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+  set(CMAKE_MODULE_PATH
+    ${PROJECT_SOURCE_DIR}/cmake/modules
+    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
+    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
+  )
+endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
 
 # We need the path to the MinGW/Borland compiler in order to find
 # the import libraries for system libraries.

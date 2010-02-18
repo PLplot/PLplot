@@ -294,69 +294,71 @@ if(CORE_BUILD)
   # lists in cmake/modules/language_support.cmake.
 
   set(LANG_SUPPORT_FILES)
-  set(PLATFORM_SUPPORT_FILES)
 
   if(ENABLE_ada)
     set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
-      CMakeAdaCompiler.cmake.in
-      CMakeAdaInformation.cmake
-      CMakeDetermineAdaCompiler.cmake
-      CMakeTestAdaCompiler.cmake
+      language_support/cmake:CMakeAdaCompiler.cmake.in
+      language_support/cmake:CMakeAdaInformation.cmake
+      language_support/cmake:CMakeDetermineAdaCompiler.cmake
+      language_support/cmake:CMakeTestAdaCompiler.cmake
       )
   endif(ENABLE_ada)
 
   if(ENABLE_d)
     set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
-      CMakeD_Copyright.txt
-      CMakeDCompiler.cmake.in
-      CMakeDInformation.cmake
-      CMakeDetermineDCompiler.cmake
-      CMakeTestDCompiler.cmake
-      )
-    set(PLATFORM_SUPPORT_FILES ${PLATFORM_SUPPORT_FILES}
-      Platform/Linux-dmd.cmake
-      Platform/Linux-gdc.cmake
-      Platform/Windows-dmd.cmake
-      Platform/Windows-gdc.cmake
+      language_support/cmake:CMakeD_Copyright.txt
+      language_support/cmake:CMakeDCompiler.cmake.in
+      language_support/cmake:CMakeDInformation.cmake
+      language_support/cmake:CMakeDetermineDCompiler.cmake
+      language_support/cmake:CMakeTestDCompiler.cmake
+      language_support/cmake/Platform:/Linux-dmd.cmake
+      language_support/cmake/Platform:Linux-gdc.cmake
+      language_support/cmake/Platform:Windows-dmd.cmake
+      language_support/cmake/Platform:Windows-gdc.cmake
       )
   endif(ENABLE_d)
 
   if(ENABLE_f77 OR ENABLE_f95)
-    set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
-      CMakeFortranInformation.cmake
-      )
-    set(PLATFORM_SUPPORT_FILES ${PLATFORM_SUPPORT_FILES}
-      Platform/Cygwin-GNU-Fortran.cmake
-      Platform/Windows-GNU-Fortran.cmake
-      Platform/Windows-df.cmake
-      Platform/Windows-f90.cmake
-      )
+    if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+      set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
+	language_support/cmake-2.6:CMakeFortranInformation.cmake
+	language_support/cmake-2.6/Platform:Cygwin-GNU-Fortran.cmake
+	language_support/cmake-2.6/Platform:Windows-GNU-Fortran.cmake
+	language_support/cmake-2.6/Platform:Windows-df.cmake
+	language_support/cmake-2.6/Platform:Windows-f90.cmake
+	)
+    endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
   endif(ENABLE_f77 OR ENABLE_f95)
 
   if(LANG_SUPPORT_FILES)
-    foreach(LANG_SUPPORT_FILE ${LANG_SUPPORT_FILES})
+    foreach(LANG_SUPPORT_info ${LANG_SUPPORT_FILES})
+      string(REGEX REPLACE "^(.*):.*$" "\\1" LANG_SUPPORT_DIR ${LANG_SUPPORT_info})
+      string(REGEX REPLACE "^.*:(.*)$" "\\1" LANG_SUPPORT_FILE ${LANG_SUPPORT_info})
       install(FILES
 	${CMAKE_SOURCE_DIR}/cmake/modules/${LANG_SUPPORT_FILE}
-	DESTINATION ${DATA_DIR}/examples/cmake/modules
+	DESTINATION ${DATA_DIR}/examples/cmake/modules/${LANG_SUPPORT_DIR}
 	)
-    endforeach(LANG_SUPPORT_FILE ${LANG_SUPPORT_FILES})
+    endforeach(LANG_SUPPORT_info ${LANG_SUPPORT_FILES})
   endif(LANG_SUPPORT_FILES)
-
-  if(PLATFORM_SUPPORT_FILES)
-    foreach(PLATFORM_SUPPORT_FILE ${PLATFORM_SUPPORT_FILES})
-      install(FILES
-	${CMAKE_SOURCE_DIR}/cmake/modules/${PLATFORM_SUPPORT_FILE}
-	DESTINATION ${DATA_DIR}/examples/cmake/modules/Platform
-	)
-    endforeach(PLATFORM_SUPPORT_FILE ${PLATFORM_SUPPORT_FILES})
-  endif(PLATFORM_SUPPORT_FILES)
 
 else(CORE_BUILD)
   project(installed_plplot_examples NONE)
 
   CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4 FATAL_ERROR)
-  # Location where PLplot cmake build system first looks for cmake modules.
-  set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
+  # Locations where PLplot cmake build system first looks for cmake modules.
+  if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+    set(CMAKE_MODULE_PATH
+      ${PROJECT_SOURCE_DIR}/cmake/modules
+      ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
+      ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.6
+      )
+  else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+    set(CMAKE_MODULE_PATH
+      ${PROJECT_SOURCE_DIR}/cmake/modules
+      ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
+      ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
+      )
+  endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
 
   #Configure variables and enable languages as needed.
   include(plplot_configure)

@@ -10,8 +10,20 @@ function(workaround_9220 language language_works)
   #message("DEBUG: language = ${language}")
   set(text
     "project(test NONE)
-# Location where PLplot cmake build system first looks for cmake modules.
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
+# Locations where PLplot cmake build system first looks for cmake modules.
+if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+  set(CMAKE_MODULE_PATH
+    ${PROJECT_SOURCE_DIR}/cmake/modules
+    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
+    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.6
+  )
+else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+  set(CMAKE_MODULE_PATH
+    ${PROJECT_SOURCE_DIR}/cmake/modules
+    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
+    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
+  )
+endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
 cmake_minimum_required(VERSION 2.6.0)
 message(STATUS \"CMAKE_GENERATOR = ${CMAKE_GENERATOR}\")
 #enable_language(${language} OPTIONAL)
@@ -29,32 +41,36 @@ enable_language(${language})
   if(language STREQUAL "Ada")
     set(language_special ON)
     set(language_files
-      CMakeAdaCompiler.cmake.in
-      CMakeAdaInformation.cmake
-      CMakeDetermineAdaCompiler.cmake
-      CMakeTestAdaCompiler.cmake
+      language_support/cmake/CMakeAdaCompiler.cmake.in
+      language_support/cmake/CMakeAdaInformation.cmake
+      language_support/cmake/CMakeDetermineAdaCompiler.cmake
+      language_support/cmake/CMakeTestAdaCompiler.cmake
       )
   elseif(language STREQUAL "D")
     set(language_special ON)
     set(language_files
-      CMakeDCompiler.cmake.in
-      CMakeDInformation.cmake
-      CMakeDetermineDCompiler.cmake
-      CMakeTestDCompiler.cmake
-      Platform/Linux-dmd.cmake
-      Platform/Linux-gdc.cmake
-      Platform/Windows-dmd.cmake
-      Platform/Windows-gdc.cmake
+      language_support/cmake/CMakeDCompiler.cmake.in
+      language_support/cmake/CMakeDInformation.cmake
+      language_support/cmake/CMakeDetermineDCompiler.cmake
+      language_support/cmake/CMakeTestDCompiler.cmake
+      language_support/cmake/Platform/Linux-dmd.cmake
+      language_support/cmake/Platform/Linux-gdc.cmake
+      language_support/cmake/Platform/Windows-dmd.cmake
+      language_support/cmake/Platform/Windows-gdc.cmake
       )
   elseif(language STREQUAL "Fortran")
-    set(language_special ON)
-    set(language_files
-      CMakeFortranInformation.cmake
-      Platform/Cygwin-GNU-Fortran.cmake
-      Platform/Windows-GNU-Fortran.cmake
-      Platform/Windows-df.cmake
-      Platform/Windows-f90.cmake
-      )
+    if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+      set(language_special ON)
+      set(language_files
+	language_support/cmake-2.6/CMakeFortranInformation.cmake
+	language_support/cmake-2.6/Platform/Cygwin-GNU-Fortran.cmake
+	language_support/cmake-2.6/Platform/Windows-GNU-Fortran.cmake
+	language_support/cmake-2.6/Platform/Windows-df.cmake
+	language_support/cmake-2.6/Platform/Windows-f90.cmake
+	)
+    else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+      set(language_special OFF)
+    endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
   else(language STREQUAL "Ada")
     set(language_special OFF)
   endif(language STREQUAL "Ada")

@@ -19,7 +19,7 @@ end;
   "
 # FIXME: This specific location currently needs to be changed whenever the
 # location of the experimental Ada support files is changed.
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake)
 set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL \"\" FORCE)
 project(test Ada)
 add_executable(testadacompiler testadacompiler.adb)

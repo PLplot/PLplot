@@ -64,13 +64,15 @@ ELSE(NOT CMAKE_D_COMPILER_WORKS)
   # re-configure this file CMakeDCompiler.cmake so that it gets
   # the value for CMAKE_SIZEOF_VOID_P
   # configure variables set in this file for fast reload later on
-  IF(EXISTS ${CMAKE_MODULE_PATH}/CMakeDCompiler.cmake.in)
-  	CONFIGURE_FILE(${CMAKE_MODULE_PATH}/CMakeDCompiler.cmake.in 
+  # FIXME.  This is PLplot-specific location.  Other projects will use
+  # a different location.
+  IF(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in)
+  	CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in 
   	  ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeDCompiler.cmake IMMEDIATE)
-  ELSE(EXISTS ${CMAKE_MODULE_PATH}/CMakeDCompiler.cmake.in)
+  ELSE(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in)
   	CONFIGURE_FILE(${CMAKE_ROOT}/Modules/CMakeDCompiler.cmake.in 
 	  ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeDCompiler.cmake IMMEDIATE)
-  ENDIF(EXISTS ${CMAKE_MODULE_PATH}/CMakeDCompiler.cmake.in)
+  ENDIF(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in)
 ENDIF(NOT CMAKE_D_COMPILER_WORKS)
 
 IF(NOT CMAKE_D_PHOBOS_WORKS)
