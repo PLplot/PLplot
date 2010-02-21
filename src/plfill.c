@@ -1178,8 +1178,8 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
 
 /* Temporary until get rid of old code altogether. */
 #define NEW_NOTPOINTINPOLYGON_CODE
-int
-notpointinpolygon( int n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
+static int
+notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
 {
 #ifdef NEW_NOTPOINTINPOLYGON_CODE
     int i, im1, ifnotcrossed;

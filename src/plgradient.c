@@ -34,7 +34,7 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
 /* define where plshades plots gradient for software fallback for
  * gradient.  */
 
-static int
+static PLINT
 gradient_defined( PLFLT x, PLFLT y );
 
 /*----------------------------------------------------------------------*\
@@ -240,7 +240,7 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     plFree2dGrid( z, NX, NY );
 }
 
-PLINT
+static PLINT
 gradient_defined( PLFLT x, PLFLT y )
 {
     return plP_pointinpolygon( plsc->n_polygon, plsc->x_polygon, plsc->y_polygon,
