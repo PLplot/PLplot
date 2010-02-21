@@ -35,6 +35,8 @@ EXPORTS
 	plshades1_
 	plshades2_
 	plshades_
+	plspal0_
+	plspal1_
 	plstart_
 	plstrc2f_
 	plstripc_
