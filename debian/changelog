@@ -1,4 +1,11 @@
-plplot (5.9.5-1) unstable; urgency=low
+plplot (5.9.5-2) unstable; urgency=low
+
+  * debian/control.in: Update to use octave3.2 - octave 3.0 will shortly be 
+    dropped.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 22 Feb 2010 12:50:40 +0000
+
+plplot (5.9.5-1) UNRELEASED; urgency=low
 
   * New upstream release.
   * debian/patches/series: Remove the following patches which are no longer
