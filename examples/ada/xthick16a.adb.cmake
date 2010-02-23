@@ -88,6 +88,9 @@ procedure xthick16a is
 
 
     -- Masking function
+    function zdefined(x, y : Long_Float) return Integer;
+    pragma Convention(C, zdefined);
+
     function zdefined(x, y : Long_Float) return Integer is
         z : Long_Float := sqrt(x * x + y * y);
     begin
@@ -264,35 +267,35 @@ begin
 
     -- Plot using 2d coordinate transform and exclusion
 
-    -- Ada note: This "exclusion" part should work if exclude is set to True.
+    -- Ada note: This "exclusion" part works if exclude is set to True.
     -- In the C original example, the setting of exclude was handled by the 
     -- the input parser which handling is not implemented in this Ada example.
---    exclude := True;
---    if exclude then
---
---        -- Load colour palettes.
---        Set_Color_Map_0_From_File("cmap0_black_on_white.pal");
---        Set_Color_Map_1_From_File("cmap1_gray.pal", True);
---
---        -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
---        Set_Number_Of_Colors_Map_0(3);
---
---        Advance_To_Subpage(Next_Subpage);
---        Set_Viewport_Normalized(0.1, 0.9, 0.1, 0.9);
---        Set_Viewport_World(-1.0, 1.0, -1.0, 1.0);
---
---        Select_Fill_Pattern(0);
---
---        Shade_Regions(z, zdefined'Unrestricted_Access, -1.0, 1.0, -1.0, 1.0, 
---             shedge, fill_width,
---             cont_color, cont_width,
---             Fill_Polygon'access, False, Plot_Transformation_2'access, cgrid2'Address);
---
---        Set_Pen_Color(Red);
---        Box_Around_Viewport("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
---
---        Write_Labels("distance", "altitude", "Bogon density with exclusion");
---    end if;
+    exclude := False;
+    if exclude then
+
+        -- Load colour palettes.
+        Set_Color_Map_0_From_File("cmap0_black_on_white.pal");
+        Set_Color_Map_1_From_File("cmap1_gray.pal", True);
+
+        -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+        Set_Number_Of_Colors_Map_0(3);
+
+        Advance_To_Subpage(Next_Subpage);
+        Set_Viewport_Normalized(0.1, 0.9, 0.1, 0.9);
+        Set_Viewport_World(-1.0, 1.0, -1.0, 1.0);
+
+        Select_Fill_Pattern(0);
+
+        Shade_Regions(z, zdefined'Unrestricted_Access, -1.0, 1.0, -1.0, 1.0, 
+             shedge, fill_width,
+             cont_color, cont_width,
+             Fill_Polygon'access, False, Plot_Transformation_2'access, cgrid2'Address);
+
+        Set_Pen_Color(Red);
+        Box_Around_Viewport("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+
+        Write_Labels("distance", "altitude", "Bogon density with exclusion");
+    end if;
 
     -- Example with polar coordinates.
 

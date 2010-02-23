@@ -88,6 +88,9 @@ procedure x16a is
 
 
     -- Masking function
+    function zdefined(x, y : Long_Float) return Integer;
+    pragma Convention(C, zdefined);
+
     function zdefined(x, y : Long_Float) return Integer is
         z : Long_Float := sqrt(x * x + y * y);
     begin
@@ -264,35 +267,35 @@ begin
 
     -- Plot using 2d coordinate transform and exclusion
 
-    -- Ada note: This "exclusion" part should work if exclude is set to True.
+    -- Ada note: This "exclusion" part works if exclude is set to True.
     -- In the C original example, the setting of exclude was handled by the 
     -- the input parser which handling is not implemented in this Ada example.
---    exclude := True;
---    if exclude then
---
---        -- Load colour palettes.
---        plspal0("cmap0_black_on_white.pal");
---        plspal1("cmap1_gray.pal", 1);
---
---        -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
---        plscmap0n(3);
---
---        pladv(0);
---        plvpor(0.1, 0.9, 0.1, 0.9);
---        plwind(-1.0, 1.0, -1.0, 1.0);
---
---        plpsty(0);
---
---        plshades(z, zdefined'Unrestricted_Access, -1.0, 1.0, -1.0, 1.0, 
---             shedge, fill_width,
---             cont_color, cont_width,
---             plfill'access, False, pltr2'access, cgrid2'Address);
---
---        plcol0(1);
---        plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
---
---        pllab("distance", "altitude", "Bogon density with exclusion");
---    end if;
+    exclude := False;
+    if exclude then
+
+        -- Load colour palettes.
+        plspal0("cmap0_black_on_white.pal");
+        plspal1("cmap1_gray.pal", True);
+
+        -- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display.
+        plscmap0n(3);
+
+        pladv(0);
+        plvpor(0.1, 0.9, 0.1, 0.9);
+        plwind(-1.0, 1.0, -1.0, 1.0);
+
+        plpsty(0);
+
+        plshades(z, zdefined'Unrestricted_Access, -1.0, 1.0, -1.0, 1.0, 
+             shedge, fill_width,
+             cont_color, cont_width,
+             plfill'access, False, pltr2'access, cgrid2'Address);
+
+        plcol0(1);
+        plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+
+        pllab("distance", "altitude", "Bogon density with exclusion");
+    end if;
 
     -- Example with polar coordinates.
 
