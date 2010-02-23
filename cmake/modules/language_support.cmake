@@ -9,7 +9,7 @@
 function(workaround_9220 language language_works)
   #message("DEBUG: language = ${language}")
   set(text
-    "project(test NONE)
+    "project(test C)
 # Locations where PLplot cmake build system first looks for cmake modules.
 if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
   set(CMAKE_MODULE_PATH
