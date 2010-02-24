@@ -2,6 +2,10 @@ plplot (5.9.5-2) unstable; urgency=low
 
   * debian/control.in: Update to use octave3.2 - octave 3.0 will shortly be 
     dropped.
+  * debian/rules: explicitly enable jpeg, png and gif drivers as they are
+    now disabled by default. Eventually these will be replaced by cairo 
+    and qt drivers, but keep them in for now until these packages have
+    settled down.
 
  -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 22 Feb 2010 12:50:40 +0000
 
