@@ -143,35 +143,37 @@ djgpp himself.
 
 Tests made for this release
 
-Name:                airwin
-PLplot revision:     10813
-CMake versions:      2.8.1-rc3
-Platform:            Lenny
-pango/cairo version: system
-Qt version:          4.6.1
-BUILD_SHARED_LIBS:   ON
-ENABLE_DYNDRIVERS:   ON
+Name of tester:      airwin  airwin
+PLplot revision:     10814   10813
+CMake versions:      2.6.4   2.8.1-rc3
+Platform:            Lenny   Lenny
+pango/cairo version: system  system
+Qt version:          4.6.1   4.6.1
+BUILD_SHARED_LIBS:   ON	     ON
+ENABLE_DYNDRIVERS:   ON	     ON
 
-Build:		     YES
-ctest?		     NO
-test_noninteractive: YES
-test_interactive:    YES
+Build?		     YES     YES
+ctest?		     NO	     NO
+test_noninteractive? YES     YES
+test_interactive?    YES     YES
 
-Install:             YES
-test_noninteractive: YES
-test_interactive:    YES
-Notes:               1,2,3,4
+Install?             YES     YES
+test_noninteractive? YES     YES
+test_interactive?    YES     YES
+Notes:               1,2,3,4 1,2,3,4
 
 Testing notes:
 
 1. All suitable dependent libraries installed on system so there are
 no device drivers from default list that are missing from this test.
 
-2. Used parallel make option (-j4) for all builds, installs, and test targets.
+2. Used parallel make option (-j4) for all builds, installs, and test
+targets (other than test_interactive).
 
 3. No obvious configure, build, or install errors.
 
-4. test_c_tk failed for install_tree. (invalid command name "plclient_init")
+4. test_c_tk subset of test_interactive failed for install
+tree. (invalid command name "plclient_init")
 
 INDEX
 
