@@ -34,7 +34,7 @@ DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 # Disable Ada build on armel - gnat not available on armel at the moment.
 
-ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:armel:))
+ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:sh4:))
 BUILD_ADA = no
 else
 BUILD_ADA = yes
@@ -59,6 +59,7 @@ CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON  -DENABLE_ocaml=OFF \
 	-DPLD_jpeg=ON -DPLD_png=ON -DPLD_gif=ON \
         -DDEFAULT_NO_QT_DEVICES=ON \
+        -DTCL_TCLSH=/usr/bin/tclsh8.5 \
 	$(ADA_OPTIONS) $(JAVA_OPTIONS) 
 
 BUILD_DIR = $(debbase)/build_tmp

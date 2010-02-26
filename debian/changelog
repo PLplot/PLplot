@@ -1,3 +1,16 @@
+plplot (5.9.5-3) unstable; urgency=low
+
+  * debian/control.in: 
+      + Remove Rafael Laboissiere from the list of uploaders as he has 
+        now retired from Debian.
+      + Bump Debian standards version to 3.8.4.
+  * debian/control.in, debian/rules: Correctly disable ada support for sh4. 
+    Enable ada support on armel now that gnat is available (closes: #568451).
+  * debian/rules: Force tclsh to /usr/bin/tclsh8.5 - avoids problems if 
+    /usr/bin/tclsh points to a different version.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 24 Feb 2010 13:25:40 +0000
+
 plplot (5.9.5-2) unstable; urgency=low
 
   * debian/control.in: Update to use octave3.2 - octave 3.0 will shortly be 
