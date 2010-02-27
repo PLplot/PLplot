@@ -224,14 +224,19 @@ Testing notes:
   targets.
 
   c. No obvious configure, build, or install errors.  Some well-known
-  rendering bugs (misplaced text, etc.) for a few devices.  No test
-  errors other than those noted in additional notes.
+  rendering bugs (e.g., bug 2960373,
+  https://sourceforge.net/tracker/?func=detail&aid=2960373&group_id=2915&atid=102915
+  or bug 289939,
+  https://sourceforge.net/tracker/?func=detail&aid=2899393&group_id=2915&atid=102915
+  for a few devices or special examples.  No run-time errors in tests
+  other than those noted in additional notes.
 
   d. test_c_tk subset of test_interactive failed for install
-  tree. (bug 2960318, https://sourceforge.net/tracker/?func=detail&aid=2960318&group_id=2915&atid=102915)
+  tree. (bug 2960318, https://sourceforge.net/tracker/?func=detail&aid=2960318&group_id=2915&atid=102915).
 
   e. test_qt_example subset of test_interactive failed for build tree
-  and install tree.  (Bug 2960324, https://sourceforge.net/tracker/?func=detail&aid=2960324&group_id=2915&atid=102915).
+  and install tree.  (bug 2960324,
+  https://sourceforge.net/tracker/?func=detail&aid=2960324&group_id=2915&atid=102915).
 
 1. Changes relative to PLplot 5.9.5 (the previous development release)
 
