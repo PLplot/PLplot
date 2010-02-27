@@ -548,14 +548,20 @@ if(BUILD_TEST)
       list(APPEND noninteractive_targets_LIST test_c_${device})
     endforeach(file_devices_info ${FILE_DEVICES_LIST})
 
+    if(ENABLE_DYNDRIVERS)
+      set(cairo_target cairo)
+      set(gcw_target gcw)
+      set(wxwidgets_target wxwidgets)
+      set(qt_target qt)
+    endif(ENABLE_DYNDRIVERS)
     if(PLD_extcairo)
-      add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
-	COMMAND ext-cairo-test -drvopt set_background=1
-	DEPENDS 
-	ext-cairo-test
-	cairo
-	)
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
+	  COMMAND ext-cairo-test -drvopt set_background=1
+	  DEPENDS 
+	  ext-cairo-test
+	  ${cairo_target}
+	  )
       add_custom_target(test_extcairo
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
 	)
@@ -604,7 +610,7 @@ if(BUILD_TEST)
 	COMMAND extXdrawable_demo
 	DEPENDS 
 	extXdrawable_demo
-	cairo
+	${cairo_target}
 	)
       list(APPEND interactive_targets_LIST test_extXdrawable)
     endif(PLD_xcairo)
@@ -616,7 +622,7 @@ if(BUILD_TEST)
 	DEPENDS 
 	plplotcanvas_demo
 	plplotcanvas_animation
-	gcw
+	${gcw_target}
 	)
       list(APPEND interactive_targets_LIST test_plplotcanvas)
     endif(ENABLE_gnome2)
@@ -629,7 +635,7 @@ if(BUILD_TEST)
 	COMMAND wxPLplotDemo
 	DEPENDS 
 	wxPLplotDemo
-	wxwidgets
+	${wxwidgets_target}
 	)
       list(APPEND interactive_targets_LIST test_wxPLplotDemo)
     endif(ENABLE_wxwidgets)
@@ -639,7 +645,7 @@ if(BUILD_TEST)
 	COMMAND qt_example
 	DEPENDS 
 	qt_example
-	qt
+	${qt_target}
 	)
       list(APPEND interactive_targets_LIST test_qt_example)
     endif(PLD_extqt)
@@ -654,7 +660,7 @@ if(BUILD_TEST)
 	DEPENDS
 	gcwmodule
 	cplplotcanvasmodule
-	gcw
+	${gcw_target}
 	_plplotcmodule
 	${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_demo.py
 	${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_animation.py
@@ -669,7 +675,7 @@ if(BUILD_TEST)
 	DEPENDS
 	gcwmodule
 	cplplotcanvasmodule
-	gcw
+	${gcw_target}
 	_plplotcmodule
 	WORKING_DIRECTORY
 	${CMAKE_CURRENT_SOURCE_DIR}/python
