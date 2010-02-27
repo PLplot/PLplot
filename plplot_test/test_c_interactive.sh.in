@@ -26,14 +26,19 @@
 # Use a subset of C examples that tests interactive devices.
 lang="c"
 export index lang
-# Temporarily drop example 17 because of big xcairo problems in the
-# interactive driver case.
-#for index in 01 04 08 14 16 17 24 30; do
-for index in 01 04 08 14 16 24 30; do
+
+if [ "$device" = "xcairo" ] ; then
+    # Temporarily drop example 17 for xcairo because that driver is
+    # so horribly slow such interactive plots.
+    INDEX="01 04 08 14 16 24 30"
+else
+    INDEX="01 04 08 14 16 17 24 30"
+fi
+for index in $INDEX; do
     if [ "$verbose_test" ] ; then
 	echo "x${index}${lang}"
     fi
-    $DEBUG_CMD "$cdir"/x${index}${lang} -dev $device \
+    $DEBUG_CMD "$cdir"/x${index}${lang} -dev $device -np \
 	2> test.error >| "${OUTPUT_DIR}"/x${index}${lang}_${device}.txt
     # Look for any status codes (segfaults, plexit) from the examples
     # themselves.
@@ -42,8 +47,8 @@ for index in 01 04 08 14 16 24 30; do
     if [ "$status_code" -ne 0 ] ; then
 	exit $status_code
     fi
-  # Look for any PLPLOT ERROR messages from plwarn that do not result in an
-  # exit code.
+    # Look for any PLPLOT ERROR messages from plwarn that do not result in an
+    # exit code.
     is_error=`grep -l 'PLPLOT ERROR' test.error`
     if [ -n "$is_error" ] ; then
 	exit 1
