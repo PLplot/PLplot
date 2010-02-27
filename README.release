@@ -141,41 +141,9 @@ who used to maintain those support files for djgpp feels that the
 djgpp platform is no longer actively developed, and he no longer uses
 djgpp himself.
 
-Tests made for this release
-
-Name of tester:      airwin  airwin
-PLplot revision:     10814   10813
-CMake versions:      2.6.4   2.8.1-rc3
-Platform:            Lenny   Lenny
-pango/cairo version: system  system
-Qt version:          4.6.1   4.6.1
-BUILD_SHARED_LIBS:   ON	     ON
-ENABLE_DYNDRIVERS:   ON	     ON
-
-Build?		     YES     YES
-ctest?		     NO	     NO
-test_noninteractive? YES     YES
-test_interactive?    YES     YES
-
-Install?             YES     YES
-test_noninteractive? YES     YES
-test_interactive?    YES     YES
-Notes:               1,2,3,4 1,2,3,4
-
-Testing notes:
-
-1. All suitable dependent libraries installed on system so there are
-no device drivers from default list that are missing from this test.
-
-2. Used parallel make option (-j4) for all builds, installs, and test
-targets (other than test_interactive).
-
-3. No obvious configure, build, or install errors.
-
-4. test_c_tk subset of test_interactive failed for install
-tree. (invalid command name "plclient_init")
-
 INDEX
+
+0. Tests made for release 5.9.6.
 
 1. Changes relative to PLplot 5.9.5 (the previous development release)
 
@@ -225,6 +193,41 @@ detected
 2.36 Make PLplot aware of LC_NUMERIC locale
 2.37 Linear gradients have been implemented
 2.38 Cairo Windows driver implemented
+
+0. Tests made for release 5.9.6
+
+Name of tester:      airwin  airwin
+PLplot revision:     10814   10813
+CMake versions:      2.6.4   2.8.1-rc3
+Platform:            Lenny   Lenny
+pango/cairo version: system  system
+Qt version:          4.6.1   4.6.1
+BUILD_SHARED_LIBS:   ON	     ON
+ENABLE_DYNDRIVERS:   ON	     ON
+
+Build?		     YES     YES
+ctest?		     NO	     NO
+test_noninteractive? YES     YES
+test_interactive?    YES     YES
+
+Install?             YES     YES
+test_noninteractive? YES     YES
+test_interactive?    YES     YES
+Notes:               a,b,c,d a,b,c,d
+
+Testing notes:
+
+  a. All suitable dependent libraries installed on system so there are
+  no device drivers from default list that are missing from this test.
+
+  b. Used parallel make option (-j4) for all builds, installs, and test
+  targets (other than test_interactive).
+
+  c. No obvious configure, build, or install errors.
+
+  d. test_c_tk subset of test_interactive failed for install
+  tree. (invalid command name "plclient_init")
+
 
 1. Changes relative to PLplot 5.9.5 (the previous development release)
 
