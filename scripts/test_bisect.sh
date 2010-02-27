@@ -24,9 +24,9 @@ $SOURCE_DIR >& cmake.out
 #cd /tmp/bisect_test_install_build_dir
 #cmake /tmp/bisect_test_install/share/plplot5.9.5/examples >& cmake.out
 #make -j4 test_extXdrawable
-make -j4 extXdrawable_demo
+make -j4 x17c
 make -j4 cairo
-examples/c/extXdrawable_demo
+examples/c/x17c -dev xcairo -np
 
 result=
 while [ "$result" != "before" -a  "$result" != "after" ]; do
