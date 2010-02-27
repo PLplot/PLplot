@@ -143,7 +143,7 @@ djgpp himself.
 
 INDEX
 
-0. Tests made for release 5.9.6.
+0. Tests made for release 5.9.6
 
 1. Changes relative to PLplot 5.9.5 (the previous development release)
 
@@ -196,24 +196,24 @@ detected
 
 0. Tests made for release 5.9.6
 
-Name of tester:      airwin  airwin
-PLplot revision:     10814   10813
-CMake versions:      2.6.4   2.8.1-rc3
-Platform:            Lenny   Lenny
-pango/cairo version: system  system
-Qt version:          4.6.1   4.6.1
-BUILD_SHARED_LIBS:   ON	     ON
-ENABLE_DYNDRIVERS:   ON	     ON
+Name of tester:      airwin  airwin    airwin
+PLplot revision:     10814   10813     10821
+CMake versions:      2.6.4   2.8.1-rc3 2.6.4
+Platform:            Lenny   Lenny     Lenny
+pango/cairo version: system  system    system
+Qt version:          4.6.1   4.6.1     4.6.1
+BUILD_SHARED_LIBS:   ON	     ON	       ON
+ENABLE_DYNDRIVERS:   ON	     ON	       OFF
 
-Build?		     YES     YES
-ctest?		     NO	     NO
-test_noninteractive? YES     YES
-test_interactive?    YES     YES
+Build?		     YES     YES       YES
+ctest?		     NO	     NO	       NO
+test_noninteractive? YES     YES       YES
+test_interactive?    YES     YES       YES
 
-Install?             YES     YES
-test_noninteractive? YES     YES
-test_interactive?    YES     YES
-Notes:               a,b,c,d a,b,c,d
+Install?             YES     YES       YES
+test_noninteractive? YES     YES       YES
+test_interactive?    YES     YES       YES
+Notes:               a,b,c,d a,b,c,d   a,b,c,d,e
 
 Testing notes:
 
@@ -221,13 +221,19 @@ Testing notes:
   no device drivers from default list that are missing from this test.
 
   b. Used parallel make option (-j4) for all builds, installs, and test
-  targets (other than test_interactive).
+  targets.
 
-  c. No obvious configure, build, or install errors.
+  c. No obvious configure, build, or install errors.  Some well-known
+  rendering bugs (misplaced text, etc.) for a few devices.  devices.
+  No test errors other than those noted in additional notes.
 
   d. test_c_tk subset of test_interactive failed for install
   tree. (invalid command name "plclient_init")
 
+  e. test_qt_example subset of test_interactive failed for build tree
+  and install tree.  (c++/qt_example locks up when attempting to exit
+  normally [ctrl-C does get out of the lockup] and valgrind says the
+  first memory error involves QMutex::~QMutex).
 
 1. Changes relative to PLplot 5.9.5 (the previous development release)
 
