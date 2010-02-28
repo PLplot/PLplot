@@ -196,23 +196,23 @@ detected
 
 0. Tests made for release 5.9.6
 
-Name of tester:      airwin  airwin    airwin    airwin    airwin
-PLplot revision:     10814   10813     10821	 10828     10827
-CMake versions:      2.6.4   2.8.1-rc3 2.6.4	 2.8.1-rc3 2.6.4
-Platform:            Lenny   Lenny     Lenny	 Lenny	   Lenny
-pango/cairo version: system  system    system	 system	   system
-Qt version:          4.6.1   4.6.1     4.6.1	 4.6.1	   4.6.1
-BUILD_SHARED_LIBS:   ON	     ON	       ON	 ON	   OFF
-ENABLE_DYNDRIVERS:   ON	     ON	       OFF	 OFF	   OFF
-Build?		     YES     YES       YES	 YES	   YES	   
-ctest?		     NO	     NO	       NO	 NO	   NO
-test_noninteractive? YES     YES       YES	 YES	   YES
-test_interactive?    YES     YES       YES	 YES	   YES
+Name of tester:      airwin  airwin    airwin    airwin    airwin  airwin
+PLplot revision:     10814   10813     10821	 10828     10827   10829
+CMake versions:      2.6.4   2.8.1-rc3 2.6.4	 2.8.1-rc3 2.6.4   2.8.1-rc3
+Platform:            Lenny   Lenny     Lenny	 Lenny	   Lenny   Lenny
+pango/cairo version: system  system    system	 system	   system  system
+Qt version:          4.6.1   4.6.1     4.6.1	 4.6.1	   4.6.1   4.6.1
+BUILD_SHARED_LIBS:   ON	     ON	       ON	 ON	   OFF	   OFF
+ENABLE_DYNDRIVERS:   ON	     ON	       OFF	 OFF	   OFF	   OFF
+Build?		     YES     YES       YES	 YES	   YES	   YES
+ctest?		     NO	     NO	       NO	 NO	   NO	   NO
+test_noninteractive? YES     YES       YES	 YES	   YES	   YES
+test_interactive?    YES     YES       YES	 YES	   YES	   YES
 
-Install?             YES     YES       YES	 YES	   YES
-test_noninteractive? YES     YES       YES	 YES	   YES
-test_interactive?    YES     YES       YES	 YES	   YES
-Notes:               a,b,A,B a,b,A,B   a,b,A,B,C a,b,A,B,C a,c,A,B
+Install?             YES     YES       YES	 YES	   YES	   YES
+test_noninteractive? YES     YES       YES	 YES	   YES	   YES
+test_interactive?    YES     YES       YES	 YES	   YES	   YES
+Notes:               a,b,A,B a,b,A,B   a,b,A,B,C a,b,A,B,C a,c,A,B a,c,A,B,D
 
 Testing notes (lower case notes concern configuration and build
 options while upper case notes concern errors):
@@ -242,6 +242,10 @@ options while upper case notes concern errors):
   C. test_qt_example subset of test_interactive failed for build tree
   and install tree.  (bug 2960324,
   https://sourceforge.net/tracker/?func=detail&aid=2960324&group_id=2915&atid=102915).
+
+  D. With CMake-2.8.1-rc3 could not build D examples for the case
+  where static libraries were built.  Thus, had to disable D for this
+  combination of circumstances.
 
 1. Changes relative to PLplot 5.9.5 (the previous development release)
 
