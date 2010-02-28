@@ -196,23 +196,23 @@ detected
 
 0. Tests made for release 5.9.6
 
-Name of tester:      airwin  airwin    airwin    airwin
-PLplot revision:     10814   10813     10821	 10827
-CMake versions:      2.6.4   2.8.1-rc3 2.6.4	 2.6.4
-Platform:            Lenny   Lenny     Lenny	 Lenny
-pango/cairo version: system  system    system	 system
-Qt version:          4.6.1   4.6.1     4.6.1	 4.6.1
-BUILD_SHARED_LIBS:   ON	     ON	       ON	 OFF
-ENABLE_DYNDRIVERS:   ON	     ON	       OFF	 OFF
-Build?		     YES     YES       YES	 YES
-ctest?		     NO	     NO	       NO	 NO
-test_noninteractive? YES     YES       YES	 YES
-test_interactive?    YES     YES       YES	 YES
+Name of tester:      airwin  airwin    airwin    airwin    airwin
+PLplot revision:     10814   10813     10821	 10828     10827
+CMake versions:      2.6.4   2.8.1-rc3 2.6.4	 2.8.1-rc3 2.6.4
+Platform:            Lenny   Lenny     Lenny	 Lenny	   Lenny
+pango/cairo version: system  system    system	 system	   system
+Qt version:          4.6.1   4.6.1     4.6.1	 4.6.1	   4.6.1
+BUILD_SHARED_LIBS:   ON	     ON	       ON	 ON	   OFF
+ENABLE_DYNDRIVERS:   ON	     ON	       OFF	 OFF	   OFF
+Build?		     YES     YES       YES	 YES	   YES	   
+ctest?		     NO	     NO	       NO	 NO	   NO
+test_noninteractive? YES     YES       YES	 YES	   YES
+test_interactive?    YES     YES       YES	 YES	   YES
 
-Install?             YES     YES       YES	 YES
-test_noninteractive? YES     YES       YES	 YES
-test_interactive?    YES     YES       YES	 YES
-Notes:               a,b,A,B a,b,A,B   a,b,A,B,C a,c,A,B
+Install?             YES     YES       YES	 YES	   YES
+test_noninteractive? YES     YES       YES	 YES	   YES
+test_interactive?    YES     YES       YES	 YES	   YES
+Notes:               a,b,A,B a,b,A,B   a,b,A,B,C a,b,A,B,C a,c,A,B
 
 Testing notes (lower case notes concern configuration and build
 options while upper case notes concern errors):
