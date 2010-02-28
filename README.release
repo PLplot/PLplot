@@ -196,45 +196,50 @@ detected
 
 0. Tests made for release 5.9.6
 
-Name of tester:      airwin  airwin    airwin
-PLplot revision:     10814   10813     10821
-CMake versions:      2.6.4   2.8.1-rc3 2.6.4
-Platform:            Lenny   Lenny     Lenny
-pango/cairo version: system  system    system
-Qt version:          4.6.1   4.6.1     4.6.1
-BUILD_SHARED_LIBS:   ON	     ON	       ON
-ENABLE_DYNDRIVERS:   ON	     ON	       OFF
+Name of tester:      airwin  airwin    airwin    airwin
+PLplot revision:     10814   10813     10821	 10827
+CMake versions:      2.6.4   2.8.1-rc3 2.6.4	 2.6.4
+Platform:            Lenny   Lenny     Lenny	 Lenny
+pango/cairo version: system  system    system	 system
+Qt version:          4.6.1   4.6.1     4.6.1	 4.6.1
+BUILD_SHARED_LIBS:   ON	     ON	       ON	 OFF
+ENABLE_DYNDRIVERS:   ON	     ON	       OFF	 OFF
+Build?		     YES     YES       YES	 YES
+ctest?		     NO	     NO	       NO	 NO
+test_noninteractive? YES     YES       YES	 YES
+test_interactive?    YES     YES       YES	 YES
 
-Build?		     YES     YES       YES
-ctest?		     NO	     NO	       NO
-test_noninteractive? YES     YES       YES
-test_interactive?    YES     YES       YES
+Install?             YES     YES       YES	 YES
+test_noninteractive? YES     YES       YES	 YES
+test_interactive?    YES     YES       YES	 YES
+Notes:               a,b,A,B a,b,A,B   a,b,A,B,C a,c,A,B
 
-Install?             YES     YES       YES
-test_noninteractive? YES     YES       YES
-test_interactive?    YES     YES       YES
-Notes:               a,b,c,d a,b,c,d   a,b,c,d,e
-
-Testing notes:
+Testing notes (lower case notes concern configuration and build
+options while upper case notes concern errors):
 
   a. All suitable dependent libraries installed on system so there are
   no device drivers from default list that are missing from this test.
+  All compilers and bindings-related development packages installed on
+  system so there are no bindings that are missing from this test.
 
   b. Used parallel make option (-j4) for all builds, installs, and test
   targets.
 
-  c. No obvious configure, build, or install errors.  Some well-known
+  c. Java, Python, Octave, Perl/PDL, LUA, OCaml bindings/examples not 
+  available for static library build (BUILD_SHARED_LIBS=OFF) so not tested.
+
+  A. No obvious configure, build, or install errors.  Some well-known
   rendering bugs (e.g., bug 2960373,
   https://sourceforge.net/tracker/?func=detail&aid=2960373&group_id=2915&atid=102915
   or bug 289939,
   https://sourceforge.net/tracker/?func=detail&aid=2899393&group_id=2915&atid=102915
   for a few devices or special examples.  No run-time errors in tests
-  other than those noted in additional notes.
+  other than those noted in additional "upper-case" notes.
 
-  d. test_c_tk subset of test_interactive failed for install
+  B. test_c_tk subset of test_interactive failed for install
   tree. (bug 2960318, https://sourceforge.net/tracker/?func=detail&aid=2960318&group_id=2915&atid=102915).
 
-  e. test_qt_example subset of test_interactive failed for build tree
+  C. test_qt_example subset of test_interactive failed for build tree
   and install tree.  (bug 2960324,
   https://sourceforge.net/tracker/?func=detail&aid=2960324&group_id=2915&atid=102915).
 
