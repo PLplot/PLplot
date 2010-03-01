@@ -1,0 +1,34 @@
+# Patch from upstream to fix bug with cmap palette support - causes problems with ada examples.
+
+diff -ur plplot-5.9.5-orig/src/plctrl.c plplot-5.9.5/src/plctrl.c
+--- plplot-5.9.5.orig/src/plctrl.c     2009-01-18 20:24:12.000000000 +0000
++++ plplot-5.9.5/src/plctrl.c          2010-01-18 23:52:40.000000000 +0000
+@@ -836,7 +836,8 @@
+ /*--------------------------------------------------------------------------*\
+  * plcmap0_def()
+  *
+- * Initializes specified color map 0 color entry to its default.
++ * Initializes specified color map 0 color entry to its default for
++ * index range from imin to imax.
+ \*--------------------------------------------------------------------------*/
+ 
+ void
+@@ -847,6 +848,9 @@
+   int number_colors;
+   if(imin <= imax) {
+     cmap0_palette_read("", &number_colors, &r, &g, &b, &a);
++    for (i = imin; i <= MIN((number_colors-1),imax); i++)
++      color_def(i, r[i], g[i], b[i], a[i],
++              "colors defined by default cmap0 palette file");
+     free(r);
+     free(g);
+     free(b);
+@@ -860,7 +864,7 @@
+      to opaque red as a warning. */
+   for (i = MAX(number_colors, imin); i <= imax; i++)
+     color_def(i, 255, 0, 0, 1.0,
+-              "opaque red to mark not defined by palette file");
++              "opaque red colour to mark not defined by palette file");
+ }
+ 
+ /*--------------------------------------------------------------------------*\

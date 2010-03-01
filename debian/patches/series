@@ -3,3 +3,4 @@
 07_octave_prune_examples.diff
 11_minus-sign-manpage.diff
 16_wxwidget-with-cmake-2.8.diff
+17_fix_cmap_support.diff

@@ -5,13 +5,16 @@ plplot (5.9.5-3) unstable; urgency=low
         now retired from Debian (closes: #571874).
       + Bump Debian standards version to 3.8.4.
   * debian/control.in, debian/rules: Correctly disable ada support for 
-    sh4. Enable ada support on armel now that gnat is available 
-    (closes: #568451).
+    sh4 (closes: #572028). Enable ada support on armel now that gnat is 
+    available (closes: #568451).
   * debian/rules: Force tclsh to /usr/bin/tclsh8.5 - avoids problems if 
     tcl8.4 is also installed so /usr/bin/tclsh points to a different 
     version.
+  * debian/patches/17_fix_cmap_support.diff, debian/patches/series: Add
+    bug fix patch from upstream to fix cmap palette support. This fixes
+    the blank pages in the ada examples (and possibly user code).
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 24 Feb 2010 13:25:40 +0000
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 01 Mar 2010 14:03:40 +0000
 
 plplot (5.9.5-2) unstable; urgency=low
 
