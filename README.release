@@ -196,37 +196,44 @@ detected
 
 0. Tests made for release 5.9.6
 
-Name of tester:      airwin  airwin    airwin    airwin    airwin  airwin
-PLplot revision:     10814   10834     10821	 10828     10834   10834
-CMake versions:      2.6.4   2.8.1-rc3 2.6.4	 2.8.1-rc3 2.6.4   2.8.1-rc3
-Platform:            Lenny   Lenny     Lenny	 Lenny	   Lenny   Lenny
-pango/cairo version: system  system    system	 system	   system  system
-Qt version:          4.6.1   4.6.1     4.6.1	 4.6.1	   4.6.1   4.6.1
-BUILD_SHARED_LIBS:   ON	     ON	       ON	 ON	   OFF	   OFF
-ENABLE_DYNDRIVERS:   ON	     ON	       OFF	 OFF	   OFF	   OFF
-Build?		     YES     YES       YES	 YES	   YES	   YES
-ctest?		     NO	     NO	       NO	 NO	   NO	   NO
-test_noninteractive? YES     YES       YES	 YES	   YES	   YES
-test_interactive?    YES     YES       YES	 YES	   YES	   YES
+Name of tester:      airwin    airwin	   airwin      airwin	   airwin    airwin
+PLplot revision:     10814     10834	   10821       10828	   10834     10834
+CMake versions:      2.6.4     2.8.1-rc3   2.6.4       2.8.1-rc3   2.6.4     2.8.1-rc3
+Platform:            Lenny     Lenny	   Lenny       Lenny	   Lenny     Lenny
+pango/cairo version: system    system	   system      system	   system    system
+Qt version:          4.6.1     4.6.1	   4.6.1       4.6.1	   4.6.1     4.6.1
+BUILD_SHARED_LIBS:   ON	       ON	   ON	       ON	   OFF	     OFF
+ENABLE_DYNDRIVERS:   ON	       ON	   OFF	       OFF	   OFF	     OFF
 
-Install?             YES     YES       YES	 YES	   YES	   YES
-test_noninteractive? YES     YES       YES	 YES	   YES	   YES
-test_interactive?    YES     YES       YES	 YES	   YES	   YES
-Notes:               a,b,A,B a,b,A,B   a,b,A,B,C a,b,A,B,C a,c,A,B a,c,A,B
+Build?		     YES       YES	   YES	       YES	   YES	     YES
+ctest?		     NO	       NO	   NO	       NO	   NO	     NO
+test_noninteractive? YES       YES	   YES	       YES	   YES	     YES
+test_interactive?    YES       YES	   YES	       YES	   YES	     YES
+
+Install?             YES       YES	   YES	       YES	   YES	     YES
+test_noninteractive? YES       YES	   YES	       YES	   YES	     YES
+test_interactive?    YES       YES	   YES	       YES	   YES	     YES
+
+Notes:               a,b,c,A,B a,b,c,A,B   a,b,c,A,B,C a,b,c,A,B,C a,b,d,A,B a,b,d,A,B
 
 Testing notes (lower case notes concern configuration and build
 options while upper case notes concern errors):
 
-  a. All suitable dependent libraries installed on system so there are
-  no device drivers from default list that are missing from this test.
-  All compilers and bindings-related development packages installed on
-  system so there are no bindings that are missing from this test.
+  a. Testing done on 64-bit (AMD64) hardware.
 
   b. Used parallel make option (-j4) for all builds, installs, and test
   targets.
 
-  c. Java, Python, Octave, Perl/PDL, LUA, OCaml bindings/examples not 
-  available for static library build (BUILD_SHARED_LIBS=OFF) so not tested.
+  c. All suitable dependent libraries installed on system so there are
+  no device drivers from default list that are missing from this test.
+  All compilers and bindings-related development packages installed on
+  system so there are no bindings that are missing from this test.
+
+  d. All suitable dependent libraries installed on system so there are
+  no device drivers from default list that are missing from this test.
+  Java, Python, Octave, Perl/PDL, LUA, and OCaml bindings/examples not
+  available for static library build (BUILD_SHARED_LIBS=OFF) so not
+  tested.
 
   A. No obvious configure, build, or install errors.  Some well-known
   rendering bugs (e.g., bug 2960373,
