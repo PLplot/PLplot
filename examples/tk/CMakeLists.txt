@@ -62,10 +62,6 @@ set(tk_SRC_FILES
   runAllDemos.tcl
   runExtendedDemos.tcl
   tkdemos.tcl
-  tk01
-  tk02
-  tk03
-  tk04
   )
 
 # Copy files to the binary directory (if different) for generating tclIndex
@@ -123,39 +119,13 @@ add_custom_target(tclIndex_examples_tk ALL
   DEPENDS ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
   )
 
-# The second and fourth Tk examples depend on Itk to work.
-set(tk_SCRIPTS tk01 tk03)
+# The third example is run using a configured shell script which invokes
+# plserver so there is no source code to be compiled.
 set(tk_SRC xtk01.c)
-
+# The second and fourth Tk examples depend on Itk to work.
 if(ENABLE_itk)
-  list(APPEND tk_SCRIPTS tk02 tk04)
   list(APPEND tk_SRC xtk02.c xtk04.c)
 endif(ENABLE_itk)
-
-if(CORE_BUILD)
-  install(FILES ${tk_FILES} DESTINATION ${DATA_DIR}/examples/tk)
-
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex DESTINATION ${DATA_DIR}/examples/tk)
-
-  install(PROGRAMS ${tk_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tk)
-  install(FILES ${tk_SRC} DESTINATION ${DATA_DIR}/examples/tk)
-
-  set(CC ${CMAKE_C_COMPILER})
-
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-    )
-
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-    DESTINATION ${DATA_DIR}/examples/tk
-    RENAME Makefile
-    )
-
-  install(FILES CMakeLists.txt
-    DESTINATION ${DATA_DIR}/examples/tk
-    )
-endif(CORE_BUILD)
 
 if(BUILD_TEST)
   if(CORE_BUILD)
@@ -188,3 +158,64 @@ if(BUILD_TEST)
   endforeach(TK_SRC_FILE ${tk_SRC})
   set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk tclIndex_examples_tk)
 endif(BUILD_TEST)
+
+# The first, second, and fourth tk examples depend on configured bang
+# scripts to work which depends directly on the executables, xtk01,
+# xtk02, and xtk04.
+# The third example is run with the configured shell script, tk03, which
+# invokes plserver.
+set(tk_SCRIPTS tk01.in tk03.in)
+get_target_property(xtk01_LOCATION xtk01 LOCATION)
+get_target_property(plserver_LOCATION plserver LOCATION)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/tk01.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/tk01
+  @ONLY
+)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/tk03.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/tk03
+  @ONLY
+)
+# The second and fourth Tk examples depend on Itk to work.
+if(ENABLE_itk)
+  list(APPEND tk_SCRIPTS tk02.in tk04.in)
+  get_target_property(xtk02_LOCATION xtk02 LOCATION)
+  get_target_property(xtk04_LOCATION xtk04 LOCATION)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/tk02.in 
+    ${CMAKE_CURRENT_BINARY_DIR}/tk02
+    @ONLY
+    )
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/tk04.in 
+    ${CMAKE_CURRENT_BINARY_DIR}/tk04
+    @ONLY
+    )
+endif(ENABLE_itk)
+
+if(CORE_BUILD)
+  install(PROGRAMS ${tk_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tk)
+  install(FILES ${tk_FILES} DESTINATION ${DATA_DIR}/examples/tk)
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex DESTINATION ${DATA_DIR}/examples/tk)
+
+  install(FILES ${tk_SRC} DESTINATION ${DATA_DIR}/examples/tk)
+
+  set(CC ${CMAKE_C_COMPILER})
+
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    DESTINATION ${DATA_DIR}/examples/tk
+    RENAME Makefile
+    )
+
+  install(FILES CMakeLists.txt
+    DESTINATION ${DATA_DIR}/examples/tk
+    )
+endif(CORE_BUILD)

@@ -1,4 +1,4 @@
-#!xtk04 -f
+#!@xtk04_LOCATION@ -f
 #                     -*-tcl-*-
 # $Id$
 # Maurice LeBrun
