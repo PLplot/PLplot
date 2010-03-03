@@ -164,7 +164,9 @@ endif(BUILD_TEST)
 # xtk02, and xtk04.
 # The third example is run with the configured shell script, tk03, which
 # invokes plserver.
-set(tk_SCRIPTS tk01.in tk03.in)
+# plgrid is a configured shell script that runs the plgrid.tcl example
+# (N.B., in the tcl directory) using plserver.
+set(tk_SCRIPTS tk01.in tk03.in plgrid.in)
 get_target_property(xtk01_LOCATION xtk01 LOCATION)
 get_target_property(plserver_LOCATION plserver LOCATION)
 
@@ -176,6 +178,11 @@ configure_file(
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/tk03.in 
   ${CMAKE_CURRENT_BINARY_DIR}/tk03
+  @ONLY
+)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/plgrid.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/plgrid
   @ONLY
 )
 # The second and fourth Tk examples depend on Itk to work.
