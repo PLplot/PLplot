@@ -684,14 +684,62 @@ if(BUILD_TEST)
     list(APPEND interactive_targets_LIST test_pygcw)
   endif(ENABLE_pygcw)
 
-  add_custom_target(test_interactive)
-  if(interactive_targets_LIST)
-    add_dependencies(test_interactive ${interactive_targets_LIST})
-  endif(interactive_targets_LIST)
+  if(ENABLE_tk AND PLD_tk)
+    set(targets_examples_tk)
+
+    add_custom_target(test_tk_01
+      COMMAND xtk01 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk01
+      )
+    add_dependencies(test_tk_01
+      tclIndex_tcl
+      tclIndex_tk
+      xwin
+      )
+    list(APPEND targets_examples_tk test_tk_01)
+      
+    add_custom_target(test_tk_03
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/tk03
+      )
+    add_dependencies(test_tk_03
+      plserver
+      tclIndex_tcl
+      tclIndex_tk
+      xwin
+      )
+    list(APPEND targets_examples_tk test_tk_03)
+
+    if(ENABLE_itk)
+      add_custom_target(test_tk_02
+	COMMAND xtk02 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk02
+	)
+      add_dependencies(test_tk_02
+	tclIndex_tcl
+	tclIndex_tk
+	xwin
+	)
+      list(APPEND targets_examples_tk test_tk_02)
+      
+      add_custom_target(test_tk_04
+	COMMAND xtk04 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk04
+	)
+      add_dependencies(test_tk_04
+	tclIndex_tcl
+	tclIndex_tk
+	xwin
+	)
+      list(APPEND targets_examples_tk test_tk_04)
+    endif(ENABLE_itk)
+      
+  endif(ENABLE_tk)
 
   if(targets_examples_tk)
     list(APPEND interactive_targets_LIST ${targets_examples_tk})
   endif(targets_examples_tk)
+
+  add_custom_target(test_interactive)
+  if(interactive_targets_LIST)
+    add_dependencies(test_interactive ${interactive_targets_LIST})
+  endif(interactive_targets_LIST)
 
   # Custom target to test all of qt devices/special examples.
   # Must be maintained.
