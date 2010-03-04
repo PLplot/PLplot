@@ -23,12 +23,18 @@
 
 
 import sys
-from PyQt4 import QtCore, QtGui
 import numpy
 
 from plplot_python_start import *
 import plplot
+# An indirect side effect of this import statement is a consistent set
+# of Qt4 libraries are loaded (e.g., if those are from some downloaded
+# non-system version in a non-standard location).
 import plplot_pyqt4
+# This import statement must go after the one above to insure a
+# consistent set of Qt4 libraries are used for the case of the
+# downloaded, non-standard location of those libraries.
+from PyQt4 import QtCore, QtGui
 
 
 class QPlot(QtGui.QMainWindow):
