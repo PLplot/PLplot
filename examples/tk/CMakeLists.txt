@@ -55,6 +55,7 @@ set(tk_STRING_INDICES
   "28"
   "29"
   "30"
+  "31"
   )
 
 set(tk_SRC_FILES
@@ -166,7 +167,9 @@ endif(BUILD_TEST)
 # invokes plserver.
 # plgrid is a configured shell script that runs the plgrid.tcl example
 # (N.B., in the tcl directory) using plserver.
-set(tk_SCRIPTS tk01.in tk03.in plgrid.in)
+# standard_examples is a configured shell script that runs all the standard
+# examples under plserver.
+set(tk_SCRIPTS tk01.in tk03.in plgrid.in standard_examples.in)
 get_target_property(xtk01_LOCATION xtk01 LOCATION)
 get_target_property(plserver_LOCATION plserver LOCATION)
 
@@ -183,6 +186,11 @@ configure_file(
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/plgrid.in 
   ${CMAKE_CURRENT_BINARY_DIR}/plgrid
+  @ONLY
+)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/standard_examples.in 
+  ${CMAKE_CURRENT_BINARY_DIR}/standard_examples
   @ONLY
 )
 # The second and fourth Tk examples depend on Itk to work.

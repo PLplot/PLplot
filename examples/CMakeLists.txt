@@ -719,7 +719,6 @@ if(BUILD_TEST)
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tcl
 	)
     endif(CORE_BUILD)
-      
     add_dependencies(test_tk_plgrid
       plserver
       tcl_examples
@@ -728,6 +727,27 @@ if(BUILD_TEST)
       xwin
       )
     list(APPEND targets_examples_tk test_tk_plgrid)
+
+    if(CORE_BUILD)
+      add_custom_target(test_tk_standard_examples
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/standard_examples
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
+	)
+    else(CORE_BUILD)
+      add_custom_target(test_tk_standard_examples
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/standard_examples
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
+	)
+    endif(CORE_BUILD)
+    add_dependencies(test_tk_standard_examples
+      plserver
+      tcl_examples
+      tclIndex_tcl
+      tclIndex_tk
+      tclIndex_examples_tk
+      xwin
+      )
+    list(APPEND targets_examples_tk test_tk_standard_examples)
 
     if(ENABLE_itk)
       add_custom_target(test_tk_02
