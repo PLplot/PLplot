@@ -121,7 +121,7 @@ proc x19 {{w loopback}} {
     $w cmd plmap usaglobe $minx $maxx $miny $maxy
 
     # Clear the labeling function
-    plslabelfunc ""
+    $w cmd plslabelfunc ""
 
 #   Polar, Northern hemisphere
 #   Note: the first argument now is the name of the procedure

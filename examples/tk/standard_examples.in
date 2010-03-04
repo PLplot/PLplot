@@ -2,7 +2,6 @@
 # Run plserver example for standard examples.
 # Drop examples 14 and 31 because querying for devices does not
 # seem to work in this context.
-# Drop example 19 because of "invalid command name "plslabelfunc"
 @plserver_LOCATION@ <<EOF
 source tkdemos.tcl
 1
@@ -22,6 +21,7 @@ source tkdemos.tcl
 16
 17
 18
+19
 20
 21
 22
