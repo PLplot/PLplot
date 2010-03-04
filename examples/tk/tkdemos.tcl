@@ -21,10 +21,8 @@ plstdwin .
 plxframe .plw
 pack append . .plw {left expand fill}
 
-# Exclude 31 because it does not work well in this context and because
-# the required x31.tcl is normally not copied to the tk directory in any case.
-for {set i 1} {$i <= 30} {incr i} {
+for {set i 1} {$i <= 31} {incr i} {
     set demo x[format "%02d" $i]
     source $demo.tcl
-    proc $i {} "$demo .plw.plwin; .plw.plwin cmd plspal0 cmap0_default.pal; .plw.plwin cmd plspal1 cmap1_default.pal"
+    proc $i {} "$demo .plw.plwin; .plw.plwin cmd plspal0 cmap0_default.pal; .plw.plwin cmd plspal1 cmap1_default.pal 1"
 }
