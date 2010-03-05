@@ -304,7 +304,7 @@ function plot4
     pltimefmt(time_format);
     plbox("bcnstd", xlabel_step, 0, "bcnstv", 0., 0);
     plcol0(3);
-    title = strcat("@frPLplot Example 29 - TAI-UTC ", title_suffix);
+    title = ["@frPLplot Example 29 - TAI-UTC ", title_suffix];
     pllab(xtitle, "TAI-UTC (sec)", title);
     
     plcol0(4);
