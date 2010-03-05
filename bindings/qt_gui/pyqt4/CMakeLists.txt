@@ -106,8 +106,8 @@ if(ENABLE_pyqt4)
 
   install(
     TARGETS plplot_pyqt4
-    LIBRARY
-    DESTINATION ${PYTHON_INSTDIR}
+    EXPORT export_plplot
+    LIBRARY DESTINATION ${PYTHON_INSTDIR}
     )
 
 endif(ENABLE_pyqt4)
