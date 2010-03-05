@@ -652,6 +652,32 @@ if(BUILD_TEST)
 
   endif(ENABLE_cxx)
 
+  if(ENABLE_pyqt4)
+    if(CORE_BUILD)
+      add_custom_target(test_pyqt4_example
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/python/pyqt4_example.py
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
+	)
+      add_dependencies(test_pyqt4_example
+	plplot_pyqt4
+	python_examples
+	_plplotcmodule
+	qt
+	)
+    else(CORE_BUILD)
+      add_custom_target(test_pyqt4_example
+	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/pyqt4_example.py
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
+	)
+      add_dependencies(test_pyqt4_example
+	plplot_pyqt4
+	_plplotcmodule
+	qt
+	)
+    endif(CORE_BUILD)
+      list(APPEND interactive_targets_LIST test_pyqt4_example)
+  endif(ENABLE_pyqt4)
+
   if(ENABLE_pygcw)
     if(CORE_BUILD)
       add_custom_target(test_pygcw
