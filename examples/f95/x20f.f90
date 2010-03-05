@@ -329,7 +329,7 @@
       integer      num_col
 
       character, dimension(8) :: img
-      character*80 ver
+      character(len=80), dimension(2) :: ver
       integer      i, j, k, w, h, b
 
       integer      ierr
@@ -355,17 +355,17 @@
 !     Read the first lines (count them for later re-reading)
 !
       count = 1
-      read( 10, '(a)', iostat = ierr ) ver
+      read( 10, '(a)', iostat = ierr ) ver(1)
 
 !     I only understand "P5"!
-      if (ver .ne. 'P5' .or. ierr .ne. 0) then
+      if (ver(1) .ne. 'P5' .or. ierr .ne. 0) then
           read_img = .false.
           return
       endif
 
       do
           count = count + 1
-          read( 10, '(a)', iostat = ierr ) ver
+          read( 10, '(a)', iostat = ierr ) ver(1)
 
           if (ierr .ne. 0) then
               read_img = .false.
@@ -373,23 +373,22 @@
               return
           endif
 
-          if (ver(1:1) .ne. '#' ) then
+          if (ver(1)(1:1) .ne. '#' ) then
               exit
           endif
       enddo
 
 !     Found the line with the sizes, copy this one and the next
-
-      open( 11, file = '_x20f_.bin' )
-      write( 11, '(a)' ) ver
+!     Note (AM):
+!     For reasons I have not been able to determine the original
+!     method (copied from the F77 example) did not work on my
+!     MinGW+gfortran platform - it caused an end-of-file error.
+!     So, instead use an internal read.
 
       count = count + 1
-      read( 10, '(a)', iostat = ierr ) ver
-      write( 11, '(a)' ) ver
+      read( 10, '(a)', iostat = ierr ) ver(2)
 
-      close( 11 )
-      open( 11, file = '_x20f_.bin' )
-      read( 11, * ) w, h, num_col
+      read( ver, * ) w, h, num_col
 
       allocate( img_f(w,h) )
 
