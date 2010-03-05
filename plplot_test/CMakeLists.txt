@@ -49,6 +49,13 @@ if(SH_EXECUTABLE)
     )
   list(APPEND SCRIPTS test_c_interactive.sh)
 
+  configure_file(
+    test_octave_interactive.sh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/test_octave_interactive.sh
+    @ONLY
+    )
+  list(APPEND SCRIPTS test_octave_interactive.sh)
+
   add_test(examples_c
     ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=c"
     )

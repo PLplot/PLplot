@@ -60,6 +60,7 @@ Options:
                      Specify location where the resulting files are stored.
                      Defaults to "."
    [--interactive]   Run subset of C examples for interactive devices only.
+   [--interactive_octave]   Run interactive octave examples for interactive devices only.
    [--verbose]	     Echo each PLplot example that is executed.
    [--debug="debug command"]         
                      Run examples with given debug command.
@@ -99,6 +100,9 @@ while test $# -gt 0; do
          ;;
       --interactive)
          interactive=on
+         ;;
+      --interactive_octave)
+         interactive_octave=on
          ;;
       --verbose)
          export verbose_test=on
@@ -173,7 +177,7 @@ else
    scripts_dir=`echo "$0" | sed 's:/[^/][^/]*$::'`
 fi
 
-if [ "$interactive" = "on" ] ; then
+if [ "$interactive" = "on" -o "$interactive_octave" = "on" ] ; then
     # List of interactive devices for PLplot that _might_ be enabled.
     PLD_aqt=@PLD_aqt@
     PLD_qtwidget=@PLD_qtwidget@
@@ -207,9 +211,27 @@ script with DEVICE='"$device"'.
     fi
 
     status=0
-    export cdir="$EXAMPLES_DIR"/c
-    echo "Testing subset of C examples for device $device"
-    script="$scripts_dir"/test_c_interactive.sh
+    if [ "$interactive" = "on" ] ; then
+	export cdir="$EXAMPLES_DIR"/c
+	echo "Testing subset of C examples for device $device"
+	script="$scripts_dir"/test_c_interactive.sh
+    else
+	# This case must be "$interactive_octave" = "on"
+	export options=
+	export octave=@OCTAVE@
+	export octavedir=\
+"$EXAMPLES_DIR"/../bindings/octave:\
+"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot:\
+"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot/support:\
+"$SRC_EXAMPLES_DIR"/../bindings/octave/misc:\
+"$SRC_EXAMPLES_DIR"/octave:\
+"@PLPLOT_OCTAVE_DIR@":\
+"@PLPLOT_OCTAVE_DIR@"/support:\
+"@OCTAVE_M_DIR@"/PLplot:\
+"@OCTAVE_OCT_DIR@":
+	echo "Testing interactive octave examples for device $device"
+	script="$scripts_dir"/test_octave_interactive.sh
+    fi
     if [ "@WIN32@" != "1" ] ; then
 	chmod +x "$script"
     fi

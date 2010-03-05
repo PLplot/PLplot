@@ -603,6 +603,25 @@ if(BUILD_TEST)
 	endif(CORE_BUILD)
       endif(device STREQUAL "tk")
       list(APPEND interactive_targets_LIST test_c_${device})
+
+      if(ENABLE_octave)
+	add_custom_target(test_octave_${device}
+	  COMMAND ${CMAKE_COMMAND} -E echo "Generate interactive octave results for ${device} interactive device"
+	  COMMAND env ${custom_env} ${custom_test_command} --verbose --interactive_octave --device=${device}
+	  DEPENDS
+	  ${interactive_device_depends_${device}}
+	  VERBATIM
+	  )
+	if(device STREQUAL "tk")
+	  if(CORE_BUILD)
+	    add_dependencies(test_octave_tk tclIndex_tk tclIndex_tcl plserver xwin)
+	  else(CORE_BUILD)
+	    add_dependencies(test_octave_tk plserver xwin)
+	  endif(CORE_BUILD)
+	endif(device STREQUAL "tk")
+	# Comment this out until interactive octave tests work better.
+	#list(APPEND interactive_targets_LIST test_octave_${device})
+      endif(ENABLE_octave)
     endforeach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
 
     if(PLD_xcairo)
