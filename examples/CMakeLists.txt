@@ -816,7 +816,7 @@ if(BUILD_TEST)
       list(APPEND targets_examples_tk test_tk_04)
     endif(ENABLE_itk)
       
-  endif(ENABLE_tk)
+  endif(ENABLE_tk AND PLD_tk)
 
   if(targets_examples_tk)
     list(APPEND interactive_targets_LIST ${targets_examples_tk})
