@@ -37,6 +37,7 @@ set(ENABLE_ocaml @ENABLE_ocaml@)
 set(ENABLE_octave @ENABLE_octave@)
 set(ENABLE_pdl @ENABLE_pdl@)
 set(ENABLE_python @ENABLE_python@)
+set(ENABLE_pyqt4 @ENABLE_pyqt4@)
 set(ENABLE_tcl @ENABLE_tcl@)
 
 # Interactive bindings
