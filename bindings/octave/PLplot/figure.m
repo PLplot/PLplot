@@ -223,7 +223,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	plSetOpt("plwindow", sprintf("Figure %d",n));
       endif
 
-      plSetOpt("geometry", "400x400+750+0");
+      plSetOpt("geometry", "400x400+750+1");
       plSetOpt("np", "");
       pldef	# user can override above defaults or add other options
       plsetopt("apply"); # override/add momentary options.
