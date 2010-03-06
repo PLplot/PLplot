@@ -5804,18 +5804,21 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to function that defines transformation between indices
-	    in array <literal><parameter>idata</parameter></literal> and the
-	    world coordinates (C only).  Transformation functions are
-	    provided in the PLplot library:
-	    &pltr0; for identity mapping, and &pltr1; and &pltr2; for
-	    arbitrary mappings respectively defined by one- and
-	    two-dimensional arrays.  In addition, user-supplied routines
-	    for the transformation can be used as well.  Examples of
-	    all of these approaches are given in
-	    <xref linkend="contour-plots-c"/>.
-	    The transformation function should
-	    have the form given by any of &pltr0;, &pltr1;, or &pltr2;.
+            Pointer to function that defines a transformation between the data
+            in the array <literal><parameter>idata</parameter></literal> and
+            world coordinates.  An input coordinate of
+            <literal>(0, 0)</literal> corresponds to the "top-left" corner of
+            <literal><parameter>idata</parameter></literal> while
+            <literal>(nx, ny)</literal> corresponds to the "bottom-right"
+            corner of <literal><parameter>idata</parameter></literal>.  Some
+            transformation functions are provided in the PLplot library:
+            &pltr0; for identity mapping, and &pltr1; and &pltr2; for
+            arbitrary mappings respectively defined by one- and
+            two-dimensional arrays.  In addition, user-supplied routines for
+            the transformation can be used as well.  Examples of all of these
+            approaches are given in <xref linkend="contour-plots-c"/>.  The
+            transformation function should have the form given by any of
+            &pltr0;, &pltr1;, or &pltr2;.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5828,7 +5831,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <para>
 	    Extra parameter to help
 	    pass information to &pltr0;, &pltr1;, &pltr2;, or whatever routine
-	    that is externally supplied.
+	    is externally supplied.
 	  </para>
 	</listitem>
       </varlistentry>
