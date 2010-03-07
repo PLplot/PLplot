@@ -67,7 +67,11 @@ if(ENABLE_ocaml)
 endif(ENABLE_ocaml)
 
 if(ENABLE_ocaml)
-  find_program(OCAMLOPT NAMES ocamlopt.opt ocamlopt)
+  option(FORCE_OCAMLC "Force use of ocamlc rather than ocamlopt?" OFF)
+  if(NOT FORCE_OCAMLC)
+    find_program(OCAMLOPT NAMES ocamlopt.opt ocamlopt)
+  endif(NOT FORCE_OCAMLC)
+
   if (OCAMLOPT)
     message(STATUS "OCAMLOPT = ${OCAMLOPT}")
   else (OCAMLOPT)

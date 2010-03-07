@@ -209,12 +209,14 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
   # file-dependency chains.  Therefore, to avoid screwing up parallel
   # builds must serialize with target depends.
   add_dependencies(target_plcairo_cmi target_lib_plcairo_stubs)
-  # ocamlc
+  # ocamlc used regardless
   add_dependencies(target_plcairo_cmo target_plcairo_cmi)
   add_dependencies(target_plcairo_cma target_plcairo_cmo)
-  # ocamlopt
-  add_dependencies(target_plcairo_cmx target_plcairo_cmi)
-  add_dependencies(target_plcairo_cmxa target_plcairo_cmx)
+  # ocamlopt only used if OCAMLOPT is true.
+  if(OCAMLOPT)
+    add_dependencies(target_plcairo_cmx target_plcairo_cmi)
+    add_dependencies(target_plcairo_cmxa target_plcairo_cmx)
+  endif(OCAMLOPT)
 
   # Basic build done, now trying to finish up by adapting bits
   # and pieces of old build procedure below.
