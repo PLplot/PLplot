@@ -584,7 +584,7 @@ if(BUILD_TEST)
       string(REGEX REPLACE "^(.*):.*$" "\\1" device ${interactive_devices_info})
       string(REGEX REPLACE "^.*:(.*)$" "\\1" driver ${interactive_devices_info})
       
-      set(interactive_device_depends_${device} ${device_depends})
+      set(interactive_device_depends_${device})
       if(ENABLE_DYNDRIVERS)
 	list(APPEND interactive_device_depends_${device} ${driver})
       endif(ENABLE_DYNDRIVERS)
@@ -605,13 +605,17 @@ if(BUILD_TEST)
       list(APPEND interactive_targets_LIST test_c_${device})
 
       if(ENABLE_octave)
+	get_property(targets_examples_octave GLOBAL PROPERTY TARGETS_examples_octave)
+	get_property(files_examples_octave GLOBAL PROPERTY FILES_examples_octave)
 	add_custom_target(test_octave_${device}
 	  COMMAND ${CMAKE_COMMAND} -E echo "Generate interactive octave results for ${device} interactive device"
 	  COMMAND env ${custom_env} ${custom_test_command} --verbose --interactive_octave --device=${device}
 	  DEPENDS
 	  ${interactive_device_depends_${device}}
+	  ${files_examples_octave}
 	  VERBATIM
 	  )
+	add_dependencies(test_octave_${device} ${targets_examples_octave})
 	if(device STREQUAL "tk")
 	  if(CORE_BUILD)
 	    add_dependencies(test_octave_tk tclIndex_tk tclIndex_tcl plserver xwin)
