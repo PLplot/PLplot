@@ -26,6 +26,10 @@
 
 #include "plcdemos.h"
 
+/* plexit not declared in public header!  */
+PLDLLIMPEXP void
+plexit( const char *errormsg );
+
 #define XPTS    35              /* Data points in x */
 #define YPTS    46              /* Data points in y */
 
@@ -120,14 +124,15 @@ static PLOptionTable options[] = {
 int
 main( int argc, const char *argv[] )
 {
-    int   i, j, k;
-    PLFLT *x, *y, **z;
-    PLFLT xx, yy, r;
-    PLINT ifshade;
-    PLFLT zmin, zmax, step;
-    PLFLT clevel[LEVELS];
-    PLINT nlevel = LEVELS;
-    int   rosen  = 1;
+    int      i, j, k;
+    PLFLT    *x, *y, **z, *z_row_major, *z_col_major;
+    PLfGrid2 grid_c, grid_row_major, grid_col_major;
+    PLFLT    xx, yy, r;
+    PLINT    ifshade;
+    PLFLT    zmin, zmax, step;
+    PLFLT    clevel[LEVELS];
+    PLINT    nlevel = LEVELS;
+    int      rosen  = 1;
 
     /* Parse and process command line arguments */
     plMergeOpts( options, "x08c options", NULL );
@@ -145,6 +150,16 @@ main( int argc, const char *argv[] )
     y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ) );
 
     plAlloc2dGrid( &z, XPTS, YPTS );
+    z_row_major = (PLFLT *) malloc( XPTS * YPTS * sizeof ( PLFLT ) );
+    z_col_major = (PLFLT *) malloc( XPTS * YPTS * sizeof ( PLFLT ) );
+    if ( !z_row_major || !z_col_major )
+        plexit( "Memory allocation error" );
+
+    grid_c.f         = z;
+    grid_row_major.f = (PLFLT **) z_row_major;
+    grid_col_major.f = (PLFLT **) z_col_major;
+    grid_c.nx        = grid_row_major.nx = grid_col_major.nx = XPTS;
+    grid_c.ny        = grid_row_major.ny = grid_col_major.ny = YPTS;
 
     for ( i = 0; i < XPTS; i++ )
     {
@@ -169,6 +184,7 @@ main( int argc, const char *argv[] )
             if ( rosen )
             {
                 z[i][j] = pow( 1. - xx, 2. ) + 100. * pow( yy - pow( xx, 2. ), 2. );
+
                 /* The log argument may be zero for just the right grid.  */
                 if ( z[i][j] > 0. )
                     z[i][j] = log( z[i][j] );
@@ -180,6 +196,9 @@ main( int argc, const char *argv[] )
                 r       = sqrt( xx * xx + yy * yy );
                 z[i][j] = exp( -r * r ) * cos( 2.0 * M_PI * r );
             }
+
+            z_row_major[i * YPTS + j] = z[i][j];
+            z_col_major[i + XPTS * j] = z[i][j];
         }
     }
 
@@ -213,22 +232,22 @@ main( int argc, const char *argv[] )
             if ( ifshade == 0 ) /* diffuse light surface plot */
             {
                 cmap1_init( 1 );
-                plsurf3d( x, y, z, XPTS, YPTS, 0, NULL, 0 );
+                plfsurf3d( x, y, plf2ops_c(), (PLPointer) z, XPTS, YPTS, 0, NULL, 0 );
             }
             else if ( ifshade == 1 ) /* magnitude colored plot */
             {
                 cmap1_init( 0 );
-                plsurf3d( x, y, z, XPTS, YPTS, MAG_COLOR, NULL, 0 );
+                plfsurf3d( x, y, plf2ops_grid_c(), ( PLPointer ) & grid_c, XPTS, YPTS, MAG_COLOR, NULL, 0 );
             }
             else if ( ifshade == 2 ) /*  magnitude colored plot with faceted squares */
             {
                 cmap1_init( 0 );
-                plsurf3d( x, y, z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
+                plfsurf3d( x, y, plf2ops_grid_row_major(), ( PLPointer ) & grid_row_major, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
             }
             else                  /* magnitude colored plot with contours */
             {
                 cmap1_init( 0 );
-                plsurf3d( x, y, z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel );
+                plfsurf3d( x, y, plf2ops_grid_col_major(), ( PLPointer ) & grid_col_major, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel );
             }
         }
     }
@@ -238,6 +257,8 @@ main( int argc, const char *argv[] )
     free( (void *) x );
     free( (void *) y );
     plFree2dGrid( z, XPTS, YPTS );
+    free( (void *) z_row_major );
+    free( (void *) z_col_major );
 
     plend();
 

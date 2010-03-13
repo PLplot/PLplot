@@ -55,9 +55,9 @@ static PLFLT fc_minz, fc_maxz;
 
 static void plgrid3( PLFLT );
 static void plnxtv( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
-static void plside3( PLFLT *, PLFLT *, PLFLT **, PLINT, PLINT, PLINT );
+static void plside3( PLFLT *, PLFLT *, PLF2OPS, PLPointer, PLINT, PLINT, PLINT );
 static void plt3zz( PLINT, PLINT, PLINT, PLINT,
-                    PLINT, PLINT *, PLFLT *, PLFLT *, PLFLT **,
+                    PLINT, PLINT *, PLFLT *, PLFLT *, PLF2OPS, PLPointer,
                     PLINT, PLINT, PLINT *, PLINT *, PLFLT* );
 static void plnxtvhi( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
 static void plnxtvlo( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
@@ -115,7 +115,14 @@ c_pllightsource( PLFLT x, PLFLT y, PLFLT z )
 void
 c_plmesh( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
 {
-    c_plot3dc( x, y, z, nx, ny, opt | MESH, NULL, 0 );
+    plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | MESH, NULL, 0 );
+}
+
+void
+plfmesh( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+         PLINT nx, PLINT ny, PLINT opt )
+{
+    plfplot3dc( x, y, zops, zp, nx, ny, opt | MESH, NULL, 0 );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -141,7 +148,14 @@ void
 c_plmeshc( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
            PLFLT *clevel, PLINT nlevel )
 {
-    c_plot3dc( x, y, z, nx, ny, opt | MESH, clevel, nlevel );
+    plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | MESH, clevel, nlevel );
+}
+
+void
+plfmeshc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+          PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel )
+{
+    plfplot3dc( x, y, zops, zp, nx, ny, opt | MESH, clevel, nlevel );
 }
 
 /* clipping helper for 3d polygons */
@@ -280,6 +294,14 @@ void
 c_plsurf3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
             PLINT opt, PLFLT *clevel, PLINT nlevel )
 {
+    plfsurf3d( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
+        opt, clevel, nlevel );
+}
+
+void
+plfsurf3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+           PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel )
+{
     PLINT i;
     PLINT *indexymin = (PLINT *) malloc( (size_t) ( nx * sizeof ( PLINT ) ) );
     PLINT *indexymax = (PLINT *) malloc( (size_t) ( nx * sizeof ( PLINT ) ) );
@@ -291,7 +313,7 @@ c_plsurf3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
         indexymin[i] = 0;
         indexymax[i] = ny;
     }
-    c_plsurf3dl( x, y, z, nx, ny, opt, clevel, nlevel,
+    plfsurf3dl( x, y, zops, zp, nx, ny, opt, clevel, nlevel,
         0, nx, indexymin, indexymax );
     free_mem( indexymin );
     free_mem( indexymax );
@@ -336,6 +358,15 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
              PLINT opt, PLFLT *clevel, PLINT nlevel,
              PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
 {
+    plfsurf3dl( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
+        opt, clevel, nlevel, ixstart, ixn, indexymin, indexymax );
+}
+
+void
+plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+            PLINT opt, PLFLT *clevel, PLINT nlevel,
+            PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
+{
     PLFLT      cxx, cxy, cyx, cyy, cyz;
     PLINT      i, j, k;
     PLINT      ixDir, ixOrigin, iyDir, iyOrigin, nFast, nSlow;
@@ -350,6 +381,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     CONT_LINE  *cline;
     int        ct, ix, iy, iftriangle;
     PLINT      color = plsc->icol0, width = plsc->width;
+    PLFLT      ( *getz )( PLPointer, PLINT, PLINT ) = zops->get;
 
     if ( plsc->level < 3 )
     {
@@ -536,19 +568,19 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
             {
                 cgrid2.xg[i][j] = x[i];
                 cgrid2.yg[i][j] = y[indexymin[i]];
-                zstore[i][j]    = z[i][indexymin[i]];
+                zstore[i][j]    = getz( zp, i, indexymin[i] );
             }
             for ( j = indexymin[i]; j < indexymax[i]; j++ )
             {
                 cgrid2.xg[i][j] = x[i];
                 cgrid2.yg[i][j] = y[j];
-                zstore[i][j]    = z[i][j];
+                zstore[i][j]    = getz( zp, i, j );
             }
             for ( j = indexymax[i]; j < ny; j++ )
             {
                 cgrid2.xg[i][j] = x[i];
                 cgrid2.yg[i][j] = y[indexymax[i] - 1];
-                zstore[i][j]    = z[i][indexymax[i] - 1];
+                zstore[i][j]    = getz( zp, i, indexymax[i] - 1 );
             }
         }
         /* Fill cont structure with contours. */
@@ -572,7 +604,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
                     np = cline->npts;
                     if ( ( zz = (PLFLT *) realloc( zz, np * sizeof ( PLFLT ) ) ) == NULL )
                     {
-                        plexit( "c_plsurf3dl: Insufficient memory" );
+                        plexit( "plsurf3dl: Insufficient memory" );
                     }
                 }
                 for ( j = 0; j < cline->npts; j++ )
@@ -622,7 +654,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
                     {
                         xm += px[2 * i + j] = x[ix];
                         ym += py[2 * i + j] = y[iy];
-                        zm += pz[2 * i + j] = z[ix][iy];
+                        zm += pz[2 * i + j] = getz( zp, ix, iy );
                     }
                     else
                     {
@@ -711,7 +743,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     if ( opt & FACETED )
     {
         plcol0( 0 );
-        c_plot3dcl( x, y, z, nx, ny, MESH | DRAW_LINEXY, NULL, 0,
+        plfplot3dcl( x, y, zops, zp, nx, ny, MESH | DRAW_LINEXY, NULL, 0,
             ixstart, ixn, indexymin, indexymax );
     }
 
@@ -734,7 +766,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
                 {
                     px[2 * i] = x[ix];
                     py[2 * i] = y[iy];
-                    pz[2 * i] = z[ix][iy];
+                    pz[2 * i] = getz( zp, ix, iy );
                 }
                 else
                 {
@@ -763,7 +795,7 @@ c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
                 {
                     px[2 * i] = x[ix];
                     py[2 * i] = y[iy];
-                    pz[2 * i] = z[ix][iy];
+                    pz[2 * i] = getz( zp, ix, iy );
                 }
                 else
                 {
@@ -794,7 +826,14 @@ void
 c_plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
           PLINT nx, PLINT ny, PLINT opt, PLBOOL side )
 {
-    c_plot3dc( x, y, z, nx, ny, opt | ( side != 0 ? DRAW_SIDES : 0 ), NULL, 0 );
+    plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | ( side != 0 ? DRAW_SIDES : 0 ), NULL, 0 );
+}
+
+void
+plfplot3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+           PLINT nx, PLINT ny, PLINT opt, PLBOOL side )
+{
+    plfplot3dc( x, y, zops, zp, nx, ny, opt | ( side != 0 ? DRAW_SIDES : 0 ), NULL, 0 );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -811,7 +850,14 @@ c_plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
            PLINT nx, PLINT ny, PLINT opt,
            PLFLT *clevel, PLINT nlevel )
 {
-    c_plot3dcl( x, y, z, nx, ny, opt, clevel, nlevel, 0, 0, NULL, NULL );
+    plfplot3dcl( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt, clevel, nlevel, 0, 0, NULL, NULL );
+}
+
+void
+plfplot3dc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+            PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel )
+{
+    plfplot3dcl( x, y, zops, zp, nx, ny, opt, clevel, nlevel, 0, 0, NULL, NULL );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -843,11 +889,22 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
             PLFLT *clevel, PLINT nlevel,
             PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
 {
+    plfplot3dcl( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
+        opt, clevel, nlevel, ixstart, ixn, indexymin, indexymax );
+}
+
+void
+plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+             PLINT nx, PLINT ny, PLINT opt,
+             PLFLT *clevel, PLINT nlevel,
+             PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax )
+{
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT init, i, ix, iy, color, width;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
     PLINT ixmin   = 0, ixmax = nx - 1, iymin = 0, iymax = ny - 1;
     PLINT clipped = 0, base_cont = 0, side = 0;
+    PLFLT ( *getz )( PLPointer, PLINT, PLINT ) = zops->get;
 
     pl3mode = 0;
 
@@ -979,28 +1036,28 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
         {
             if ( i == 0 )
             {
-                _z[i][0] = z[ixmin][iymin] * ( 1 - ty0 ) * ( 1 - tx0 ) + z[ixmin][iymin + 1] * ( 1 - tx0 ) * ty0
-                           + z[ixmin + 1][iymin] * tx0 * ( 1 - ty0 ) + z[ixmin + 1][iymin + 1] * tx0 * ty0;
+                _z[i][0] = getz( zp, ixmin, iymin ) * ( 1 - ty0 ) * ( 1 - tx0 ) + getz( zp, ixmin, iymin + 1 ) * ( 1 - tx0 ) * ty0
+                           + getz( zp, ixmin + 1, iymin ) * tx0 * ( 1 - ty0 ) + getz( zp, ixmin + 1, iymin + 1 ) * tx0 * ty0;
                 for ( j = 1; j < _ny - 1; j++ )
-                    _z[i][j] = z[ixmin][iymin + j] * ( 1 - tx0 ) + z[ixmin + 1][iymin + j] * tx0;
-                _z[i][_ny - 1] = z[ixmin][iymax - 1] * ( 1 - tx0 ) * ( 1 - ty1 ) + z[ixmin][iymax] * ( 1 - tx0 ) * ty1
-                                 + z[ixmin + 1][iymax - 1] * tx0 * ( 1 - ty1 ) + z[ixmin + 1][iymax] * tx0 * ty1;
+                    _z[i][j] = getz( zp, ixmin, iymin + j ) * ( 1 - tx0 ) + getz( zp, ixmin + 1, iymin + j ) * tx0;
+                _z[i][_ny - 1] = getz( zp, ixmin, iymax - 1 ) * ( 1 - tx0 ) * ( 1 - ty1 ) + getz( zp, ixmin, iymax ) * ( 1 - tx0 ) * ty1
+                                 + getz( zp, ixmin + 1, iymax - 1 ) * tx0 * ( 1 - ty1 ) + getz( zp, ixmin + 1, iymax ) * tx0 * ty1;
             }
             else if ( i == _nx - 1 )
             {
-                _z[i][0] = z[ixmax - 1][iymin] * ( 1 - tx1 ) * ( 1 - ty0 ) + z[ixmax - 1][iymin + 1] * ( 1 - tx1 ) * ty0
-                           + z[ixmax][iymin] * tx1 * ( 1 - ty0 ) + z[ixmax][iymin + 1] * tx1 * ty0;
+                _z[i][0] = getz( zp, ixmax - 1, iymin ) * ( 1 - tx1 ) * ( 1 - ty0 ) + getz( zp, ixmax - 1, iymin + 1 ) * ( 1 - tx1 ) * ty0
+                           + getz( zp, ixmax, iymin ) * tx1 * ( 1 - ty0 ) + getz( zp, ixmax, iymin + 1 ) * tx1 * ty0;
                 for ( j = 1; j < _ny - 1; j++ )
-                    _z[i][j] = z[ixmax - 1][iymin + j] * ( 1 - tx1 ) + z[ixmax][iymin + j] * tx1;
-                _z[i][_ny - 1] = z[ixmax - 1][iymax - 1] * ( 1 - tx1 ) * ( 1 - ty1 ) + z[ixmax][iymax] * ( 1 - tx1 ) * ty1
-                                 + z[ixmax][iymax - 1] * tx1 * ( 1 - ty1 ) + z[ixmax][iymax] * tx1 * ty1;
+                    _z[i][j] = getz( zp, ixmax - 1, iymin + j ) * ( 1 - tx1 ) + getz( zp, ixmax, iymin + j ) * tx1;
+                _z[i][_ny - 1] = getz( zp, ixmax - 1, iymax - 1 ) * ( 1 - tx1 ) * ( 1 - ty1 ) + getz( zp, ixmax, iymax ) * ( 1 - tx1 ) * ty1
+                                 + getz( zp, ixmax, iymax - 1 ) * tx1 * ( 1 - ty1 ) + getz( zp, ixmax, iymax ) * tx1 * ty1;
             }
             else
             {
-                _z[i][0] = z[ixmin + i][iymin] * ( 1 - ty0 ) + z[ixmin + i][iymin + 1] * ty0;
+                _z[i][0] = getz( zp, ixmin + i, iymin ) * ( 1 - ty0 ) + getz( zp, ixmin + i, iymin + 1 ) * ty0;
                 for ( j = 1; j < _ny - 1; j++ )
-                    _z[i][j] = z[ixmin + i][iymin + j];
-                _z[i][_ny - 1] = z[ixmin + i][iymax - 1] * ( 1 - ty1 ) + z[ixmin + i][iymax] * ty1;
+                    _z[i][j] = getz( zp, ixmin + i, iymin + j );
+                _z[i][_ny - 1] = getz( zp, ixmin + i, iymax - 1 ) * ( 1 - ty1 ) + getz( zp, ixmin + i, iymax ) * ty1;
             }
             for ( j = 0; j < _ny; j++ )
             {
@@ -1011,11 +1068,12 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
             }
         }
         /* replace the input with our clipped versions */
-        x  = _x;
-        y  = _y;
-        z  = _z;
-        nx = _nx;
-        ny = _ny;
+        x    = _x;
+        y    = _y;
+        zp   = (PLPointer) _z;
+        getz = plf2ops_c()->get;
+        nx   = _nx;
+        ny   = _ny;
     }
 
     if ( ( opt & BASE_CONT ) || ( opt & TOP_CONT ) || ( opt && MAG_COLOR ) )
@@ -1073,76 +1131,75 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
     init = 1;
 /* Call 3d line plotter.  Each viewing quadrant
  * (perpendicular to x-y plane) must be handled separately. */
-
     if ( cxx >= 0.0 && cxy <= 0.0 )
     {
         if ( opt == DRAW_LINEY )
-            plt3zz( 1, ny, 1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( 1, ny, 1, -1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( iy = 2; iy <= ny; iy++ )
-                plt3zz( 1, iy, 1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( 1, iy, 1, -1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
         if ( opt == DRAW_LINEX )
-            plt3zz( 1, ny, 1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( 1, ny, 1, -1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( ix = 1; ix <= nx - 1; ix++ )
-                plt3zz( ix, ny, 1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( ix, ny, 1, -1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
     }
 
     else if ( cxx <= 0.0 && cxy <= 0.0 )
     {
         if ( opt == DRAW_LINEX )
-            plt3zz( nx, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( nx, ny, -1, -1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( ix = 2; ix <= nx; ix++ )
-                plt3zz( ix, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( ix, ny, -1, -1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
         if ( opt == DRAW_LINEY )
-            plt3zz( nx, ny, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( nx, ny, -1, -1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( iy = ny; iy >= 2; iy-- )
-                plt3zz( nx, iy, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( nx, iy, -1, -1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
     }
 
     else if ( cxx <= 0.0 && cxy >= 0.0 )
     {
         if ( opt == DRAW_LINEY )
-            plt3zz( nx, 1, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( nx, 1, -1, 1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( iy = ny - 1; iy >= 1; iy-- )
-                plt3zz( nx, iy, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( nx, iy, -1, 1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
         if ( opt == DRAW_LINEX )
-            plt3zz( nx, 1, -1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( nx, 1, -1, 1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( ix = nx; ix >= 2; ix-- )
-                plt3zz( ix, 1, -1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( ix, 1, -1, 1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
     }
 
     else if ( cxx >= 0.0 && cxy >= 0.0 )
     {
         if ( opt == DRAW_LINEX )
-            plt3zz( 1, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( 1, 1, 1, 1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( ix = nx - 1; ix >= 1; ix-- )
-                plt3zz( ix, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( ix, 1, 1, 1, opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
         if ( opt == DRAW_LINEY )
-            plt3zz( 1, 1, 1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+            plt3zz( 1, 1, 1, 1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         else
         {
             for ( iy = 1; iy <= ny - 1; iy++ )
-                plt3zz( 1, iy, 1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp );
+                plt3zz( 1, iy, 1, 1, -opt, &init, x, y, zops, zp, nx, ny, utmp, vtmp, ctmp );
         }
     }
 
@@ -1177,7 +1234,7 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
             {
                 cgrid2.xg[i][j] = x[i];
                 cgrid2.yg[i][j] = y[j];
-                zstore[i][j]    = z[i][j];
+                zstore[i][j]    = getz( zp, i, j );
             }
         }
 
@@ -1287,7 +1344,7 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
 /* Finish up by drawing sides, background grid (both are optional) */
 
     if ( side )
-        plside3( x, y, z, nx, ny, opt );
+        plside3( x, y, zops, zp, nx, ny, opt );
 
     if ( zbflg )
     {
@@ -1304,6 +1361,7 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
 
     if ( clipped )
     {
+        PLFLT **z = (PLFLT **) zp;
         free( x );
         free( y );
         for ( i = 0; i < nx; i++ )
@@ -1478,20 +1536,21 @@ plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z )
 
 static void
 plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
-        PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+        PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         PLINT *u, PLINT *v, PLFLT* c )
 {
     PLINT n = 0;
     PLFLT x2d, y2d;
+    PLFLT ( *getz )( PLPointer, PLINT, PLINT ) = zops->get;
 
     while ( 1 <= x0 && x0 <= nx && 1 <= y0 && y0 <= ny )
     {
-        x2d  = plP_w3wcx( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1] );
-        y2d  = plP_w3wcy( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1] );
+        x2d  = plP_w3wcx( x[x0 - 1], y[y0 - 1], getz( zp, x0 - 1, y0 - 1 ) );
+        y2d  = plP_w3wcy( x[x0 - 1], y[y0 - 1], getz( zp, x0 - 1, y0 - 1 ) );
         u[n] = plP_wcpcx( x2d );
         v[n] = plP_wcpcy( y2d );
         if ( c != NULL )
-            c[n] = ( z[x0 - 1][y0 - 1] - fc_minz ) / ( fc_maxz - fc_minz );
+            c[n] = ( getz( zp, x0 - 1, y0 - 1 ) - fc_minz ) / ( fc_maxz - fc_minz );
 
         switch ( flag )
         {
@@ -1535,12 +1594,12 @@ plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
         }
         if ( 1 <= x0 && x0 <= nx && 1 <= y0 && y0 <= ny )
         {
-            x2d  = plP_w3wcx( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1] );
-            y2d  = plP_w3wcy( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1] );
+            x2d  = plP_w3wcx( x[x0 - 1], y[y0 - 1], getz( zp, x0 - 1, y0 - 1 ) );
+            y2d  = plP_w3wcy( x[x0 - 1], y[y0 - 1], getz( zp, x0 - 1, y0 - 1 ) );
             u[n] = plP_wcpcx( x2d );
             v[n] = plP_wcpcy( y2d );
             if ( c != NULL )
-                c[n] = ( z[x0 - 1][y0 - 1] - fc_minz ) / ( fc_maxz - fc_minz );
+                c[n] = ( getz( zp, x0 - 1, y0 - 1 ) - fc_minz ) / ( fc_maxz - fc_minz );
             n++;
         }
     }
@@ -1559,12 +1618,13 @@ plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
  \*--------------------------------------------------------------------------*/
 
 static void
-plside3( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
+plside3( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny, PLINT opt )
 {
     PLINT i;
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLFLT xmin, ymin, zmin, xmax, ymax, zmax, zscale;
     PLFLT tx, ty, ux, uy;
+    PLFLT ( *getz )( PLPointer, PLINT, PLINT ) = zops->get;
 
     plP_gw3wc( &cxx, &cxy, &cyx, &cyy, &cyz );
     plP_gdom( &xmin, &xmax, &ymin, &ymax );
@@ -1580,8 +1640,8 @@ plside3( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
             {
                 tx = plP_w3wcx( x[i], y[0], zmin );
                 ty = plP_w3wcy( x[i], y[0], zmin );
-                ux = plP_w3wcx( x[i], y[0], z[i][0] );
-                uy = plP_w3wcy( x[i], y[0], z[i][0] );
+                ux = plP_w3wcx( x[i], y[0], getz( zp, i, 0 ) );
+                uy = plP_w3wcy( x[i], y[0], getz( zp, i, 0 ) );
                 pljoin( tx, ty, ux, uy );
             }
         }
@@ -1591,8 +1651,8 @@ plside3( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
             {
                 tx = plP_w3wcx( x[0], y[i], zmin );
                 ty = plP_w3wcy( x[0], y[i], zmin );
-                ux = plP_w3wcx( x[0], y[i], z[0][i] );
-                uy = plP_w3wcy( x[0], y[i], z[0][i] );
+                ux = plP_w3wcx( x[0], y[i], getz( zp, 0, i ) );
+                uy = plP_w3wcy( x[0], y[i], getz( zp, 0, i ) );
                 pljoin( tx, ty, ux, uy );
             }
         }
@@ -1605,8 +1665,8 @@ plside3( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
             {
                 tx = plP_w3wcx( x[i], y[ny - 1], zmin );
                 ty = plP_w3wcy( x[i], y[ny - 1], zmin );
-                ux = plP_w3wcx( x[i], y[ny - 1], z[i][ny - 1] );
-                uy = plP_w3wcy( x[i], y[ny - 1], z[i][ny - 1] );
+                ux = plP_w3wcx( x[i], y[ny - 1], getz( zp, i, ny - 1 ) );
+                uy = plP_w3wcy( x[i], y[ny - 1], getz( zp, i, ny - 1 ) );
                 pljoin( tx, ty, ux, uy );
             }
         }
@@ -1616,8 +1676,8 @@ plside3( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
             {
                 tx = plP_w3wcx( x[0], y[i], zmin );
                 ty = plP_w3wcy( x[0], y[i], zmin );
-                ux = plP_w3wcx( x[0], y[i], z[0][i] );
-                uy = plP_w3wcy( x[0], y[i], z[0][i] );
+                ux = plP_w3wcx( x[0], y[i], getz( zp, 0, i ) );
+                uy = plP_w3wcy( x[0], y[i], getz( zp, 0, i ) );
                 pljoin( tx, ty, ux, uy );
             }
         }
@@ -1630,8 +1690,8 @@ plside3( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
             {
                 tx = plP_w3wcx( x[i], y[ny - 1], zmin );
                 ty = plP_w3wcy( x[i], y[ny - 1], zmin );
-                ux = plP_w3wcx( x[i], y[ny - 1], z[i][ny - 1] );
-                uy = plP_w3wcy( x[i], y[ny - 1], z[i][ny - 1] );
+                ux = plP_w3wcx( x[i], y[ny - 1], getz( zp, i, ny - 1 ) );
+                uy = plP_w3wcy( x[i], y[ny - 1], getz( zp, i, ny - 1 ) );
                 pljoin( tx, ty, ux, uy );
             }
         }
@@ -1641,8 +1701,8 @@ plside3( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
             {
                 tx = plP_w3wcx( x[nx - 1], y[i], zmin );
                 ty = plP_w3wcy( x[nx - 1], y[i], zmin );
-                ux = plP_w3wcx( x[nx - 1], y[i], z[nx - 1][i] );
-                uy = plP_w3wcy( x[nx - 1], y[i], z[nx - 1][i] );
+                ux = plP_w3wcx( x[nx - 1], y[i], getz( zp, nx - 1, i ) );
+                uy = plP_w3wcy( x[nx - 1], y[i], getz( zp, nx - 1, i ) );
                 pljoin( tx, ty, ux, uy );
             }
         }
@@ -1655,8 +1715,8 @@ plside3( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
             {
                 tx = plP_w3wcx( x[i], y[0], zmin );
                 ty = plP_w3wcy( x[i], y[0], zmin );
-                ux = plP_w3wcx( x[i], y[0], z[i][0] );
-                uy = plP_w3wcy( x[i], y[0], z[i][0] );
+                ux = plP_w3wcx( x[i], y[0], getz( zp, i, 0 ) );
+                uy = plP_w3wcy( x[i], y[0], getz( zp, i, 0 ) );
                 pljoin( tx, ty, ux, uy );
             }
         }
@@ -1666,8 +1726,8 @@ plside3( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
             {
                 tx = plP_w3wcx( x[nx - 1], y[i], zmin );
                 ty = plP_w3wcy( x[nx - 1], y[i], zmin );
-                ux = plP_w3wcx( x[nx - 1], y[i], z[nx - 1][i] );
-                uy = plP_w3wcy( x[nx - 1], y[i], z[nx - 1][i] );
+                ux = plP_w3wcx( x[nx - 1], y[i], getz( zp, nx - 1, i ) );
+                uy = plP_w3wcy( x[nx - 1], y[i], getz( zp, nx - 1, i ) );
                 pljoin( tx, ty, ux, uy );
             }
         }

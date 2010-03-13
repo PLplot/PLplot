@@ -191,7 +191,6 @@ typedef PLUINT   PLUNICODE;
 typedef PLINT    PLBOOL;
 
 /* For passing user data, as with X's XtPointer */
-
 typedef void*    PLPointer;
 
 /*--------------------------------------------------------------------------*\
@@ -526,6 +525,42 @@ typedef struct
     PLColor *colorValues;
     PLINT   nValues;
 } PLAttribute;
+
+/*
+ * typedefs for access methods for arbitrary (i.e. user defined) data storage
+ */
+
+/*
+ * This type of struct holds pointers to functions that are used to get, set,
+ * modify, and test individual 2-D data points referenced by a PLPointer.  How
+ * the PLPointer is used depends entirely on the functions that implement the
+ * various operations.  Certain common data representations have predefined
+ * instances of this structure prepopulated with pointers to predefined
+ * functions.
+ */
+
+typedef struct
+{
+    PLFLT ( *get )( PLPointer p, PLINT ix, PLINT iy );
+    PLFLT ( *set )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *add )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *sub )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *mul )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *div )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
+    PLINT ( *is_nan )( PLPointer p, PLINT ix, PLINT iy );
+    void ( *minmax )( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmim, PLFLT *zmax );
+    /*
+     * f2eval is backwards compatible signature for "f2eval" functions that
+     * existed before plf2ops "operator function families" were used.
+     */
+    PLFLT ( *f2eval )( PLINT ix, PLINT iy, PLPointer p );
+} plf2ops_t;
+
+/*
+ * A typedef to facilitate declaration of a pointer to a plfops_t structure.
+ */
+
+typedef plf2ops_t * PLF2OPS;
 
 /*--------------------------------------------------------------------------*\
  *		BRAINDEAD-ness
@@ -1079,6 +1114,11 @@ c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
               PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
               PLFLT **zg, PLINT type, PLFLT data );
 
+PLDLLIMPEXP void
+plfgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
+             PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
+             PLF2OPS zops, PLPointer zgp, PLINT type, PLFLT data );
+
 /* type of gridding algorithm for plgriddata() */
 
 #define GRID_CSA       1 /* Bivariate Cubic Spline approximation */
@@ -1199,11 +1239,23 @@ c_plmeridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 PLDLLIMPEXP void
 c_plmesh( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt );
 
+/* Like plmesh, but uses an evaluator function to access z data from zp */
+
+PLDLLIMPEXP void
+plfmesh( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+         PLINT nx, PLINT ny, PLINT opt );
+
 /* Plots a mesh representation of the function z[x][y] with contour */
 
 PLDLLIMPEXP void
 c_plmeshc( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
            PLFLT *clevel, PLINT nlevel );
+
+/* Like plmeshc, but uses an evaluator function to access z data from zp */
+
+PLDLLIMPEXP void
+plfmeshc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+          PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel );
 
 /* Creates a new stream and makes it the default.  */
 
@@ -1228,12 +1280,24 @@ PLDLLIMPEXP void
 c_plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
           PLINT nx, PLINT ny, PLINT opt, PLBOOL side );
 
+/* Like plot3d, but uses an evaluator function to access z data from zp */
+
+PLDLLIMPEXP void
+plfplot3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+           PLINT nx, PLINT ny, PLINT opt, PLBOOL side );
+
 /* Plots a 3-d representation of the function z[x][y] with contour. */
 
 PLDLLIMPEXP void
 c_plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
            PLINT nx, PLINT ny, PLINT opt,
            PLFLT *clevel, PLINT nlevel );
+
+/* Like plot3dc, but uses an evaluator function to access z data from zp */
+
+PLDLLIMPEXP void
+plfplot3dc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+            PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel );
 
 /* Plots a 3-d representation of the function z[x][y] with contour and
  * y index limits. */
@@ -1243,6 +1307,14 @@ c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
             PLINT nx, PLINT ny, PLINT opt,
             PLFLT *clevel, PLINT nlevel,
             PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax );
+
+/* Like plot3dcl, but uses an evaluator function to access z data from zp */
+
+PLDLLIMPEXP void
+plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+             PLINT nx, PLINT ny, PLINT opt,
+             PLFLT *clevel, PLINT nlevel,
+             PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax );
 
 /*
  * definitions for the opt argument in plot3dc() and plsurf3d()
@@ -1505,6 +1577,16 @@ c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
             PLPointer pltr_data );
 
 PLDLLIMPEXP void
+plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+           PLINT ( *defined )( PLFLT, PLFLT ),
+           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+           PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+           PLINT cont_color, PLINT cont_width,
+           void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+           PLPointer pltr_data );
+
+PLDLLIMPEXP void
 plfshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
           PLPointer f2eval_data,
           PLFLT ( *c2eval )( PLINT, PLINT, PLPointer ),
@@ -1518,6 +1600,18 @@ plfshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
           void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLBOOL rectangular,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data );
+
+PLDLLIMPEXP void
+plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+           PLINT ( *defined )( PLFLT, PLFLT ),
+           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+           PLFLT shade_min, PLFLT shade_max,
+           PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+           PLINT min_color, PLINT min_width,
+           PLINT max_color, PLINT max_width,
+           void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+           PLPointer pltr_data );
 
 /* Setup a user-provided custom labeling function */
 
@@ -1621,6 +1715,18 @@ c_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
              PLPointer pltr_data );
 
+/*
+ * Like plimagefr, but uses an evaluator function to access image data from
+ * idatap.  getminmax is only used if zmin == zmax.
+ */
+
+PLDLLIMPEXP void
+plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
+            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+            PLFLT valuemin, PLFLT valuemax,
+            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+            PLPointer pltr_data );
+
 /* plots a 2d image (or a matrix too large for plshade() ) - colors
  * automatically scaled */
 
@@ -1628,6 +1734,16 @@ PLDLLIMPEXP void
 c_plimage( PLFLT **idata, PLINT nx, PLINT ny,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
            PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax );
+
+/*
+ * Like plimage, but uses an operator functions to access image data from
+ * idatap.
+ */
+
+PLDLLIMPEXP void
+plfimage( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
+          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+          PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax );
 
 /* Set up a new line style */
 
@@ -1640,6 +1756,12 @@ PLDLLIMPEXP void
 c_plsurf3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
             PLINT opt, PLFLT *clevel, PLINT nlevel );
 
+/* Like plsurf3d, but uses an evaluator function to access z data from zp */
+
+PLDLLIMPEXP void
+plfsurf3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
+           PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel );
+
 /* Plots the 3d surface representation of the function z[x][y] with y
  * index limits. */
 
@@ -1647,6 +1769,13 @@ PLDLLIMPEXP void
 c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
              PLINT opt, PLFLT *clevel, PLINT nlevel,
              PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax );
+
+/* Like plsurf3dl, but uses an evaluator function to access z data from zp */
+
+PLDLLIMPEXP void
+plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+            PLINT opt, PLFLT *clevel, PLINT nlevel,
+            PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax );
 
 PLDLLIMPEXP void
 c_plsvect( PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill );
@@ -1706,6 +1835,17 @@ PLDLLIMPEXP void
 c_plvect( PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data );
+
+/*
+ * Routine to plot a vector array with arbitrary coordinate
+ * and vector transformations
+ */
+PLDLLIMPEXP void
+plfvect( PLFLT ( *getuv )( PLINT, PLINT, PLPointer ),
+         PLPointer up, PLPointer vp,
+         PLINT nx, PLINT ny, PLFLT scale,
+         void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+         PLPointer pltr_data );
 
 PLDLLIMPEXP void
 c_plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect );
@@ -1826,33 +1966,105 @@ pltr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
 PLDLLIMPEXP void
 pltr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
 
-/* Identity transformation for plots from Fortran. */
-
-PLDLLIMPEXP void
-pltr0f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data );
-
 /* Does linear interpolation from doubly dimensioned coord arrays */
 /* (row dominant, i.e. Fortran ordering). */
 
 PLDLLIMPEXP void
 pltr2f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data );
 
-/* Function evaluators */
+/*
+ * Returns a pointer to a plf2ops_t stucture with pointers to functions for
+ * accessing 2-D data referenced as (PLFLT **), such as the C variable z
+ * declared as...
+ *
+ *   PLFLT z[nx][ny];
+ */
 
-/* Does a lookup from a 2d function array.  Array is of type (PLFLT **), */
-/* and is column dominant (normal C ordering). */
+PLDLLIMPEXP PLF2OPS
+plf2ops_c();
+
+/*
+ * Returns a pointer to a plf2ops_t stucture with pointers to functions for accessing 2-D data
+ * referenced as (PLfGrid2 *), where the PLfGrid2's "f" is treated as type
+ * (PLFLT **).
+ */
+
+PLDLLIMPEXP PLF2OPS
+plf2ops_grid_c();
+
+/*
+ * Returns a pointer to a plf2ops_t stucture with pointers to functions for
+ * accessing 2-D data stored in (PLfGrid2 *), with the PLfGrid2's "f" field
+ * treated as type (PLFLT *) pointing to 2-D data stored in row-major order.
+ * In the context of plotting, it might be easier to think of it as "X-major"
+ * order.  In this ordering, values for a single X index are stored in
+ * consecutive memory locations.
+ */
+
+PLDLLIMPEXP PLF2OPS
+plf2ops_grid_row_major();
+
+/*
+ * Returns a pointer to a plf2ops_t stucture with pointers to functions for
+ * accessing 2-D data stored in (PLfGrid2 *), with the PLfGrid2's "f" field
+ * treated as type (PLFLT *) pointing to 2-D data stored in column-major order.
+ * In the context of plotting, it might be easier to think of it as "Y-major"
+ * order.  In this ordering, values for a single Y index are stored in
+ * consecutive memory locations.
+ */
+
+PLDLLIMPEXP PLF2OPS
+plf2ops_grid_col_major();
+
+
+/* Function evaluators (Should these be deprecated in favor of plf2ops?) */
+
+/*
+ * Does a lookup from a 2d function array.  plf2eval_data is treated as type
+ * (PLFLT **) and data for (ix,iy) is returned from...
+ *
+ * plf2eval_data[ix][iy];
+ */
+
+PLDLLIMPEXP PLFLT
+plf2eval1( PLINT ix, PLINT iy, PLPointer plf2eval_data );
+
+/*
+ * Does a lookup from a 2d function array.  plf2eval_data is treated as type
+ * (PLfGrid2 *) and data for (ix,iy) is returned from...
+ *
+ * plf2eval_data->f[ix][iy];
+ */
 
 PLDLLIMPEXP PLFLT
 plf2eval2( PLINT ix, PLINT iy, PLPointer plf2eval_data );
 
-/* Does a lookup from a 2d function array.  Array is of type (PLFLT *), */
-/* and is column dominant (normal C ordering). */
+/*
+ * Does a lookup from a 2d function array.  plf2eval_data is treated as type
+ * (PLfGrid *) and data for (ix,iy) is returned from...
+ *
+ * plf2eval_data->f[ix * plf2eval_data->ny + iy];
+ *
+ * This is commonly called "row-major order", but in the context of plotting,
+ * it might be easier to think of it as "X-major order".  In this ordering,
+ * values for a single X index are stored in consecutive memory locations.
+ * This is also known as C ordering.
+ */
 
 PLDLLIMPEXP PLFLT
 plf2eval( PLINT ix, PLINT iy, PLPointer plf2eval_data );
 
-/* Does a lookup from a 2d function array.  Array is of type (PLFLT *), */
-/* and is row dominant (Fortran ordering). */
+/*
+ * Does a lookup from a 2d function array.  plf2eval_data is treated as type
+ * (PLfGrid *) and data for (ix,iy) is returned from...
+ *
+ * plf2eval_data->f[ix + iy * plf2eval_data->nx];
+ *
+ * This is commonly called "column-major order", but in the context of
+ * plotting, it might be easier to think of it as "Y-major order".  In this
+ * ordering, values for a single Y index are stored in consecutive memory
+ * locations.  This is also known as FORTRAN ordering.
+ */
 
 PLDLLIMPEXP PLFLT
 plf2evalr( PLINT ix, PLINT iy, PLPointer plf2eval_data );

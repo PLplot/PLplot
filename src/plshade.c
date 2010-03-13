@@ -215,6 +215,37 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT
                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                  PLPointer pltr_data )
 {
+    plfshades( plf2ops_c(), a, nx, ny, defined,
+        xmin, xmax, ymin, ymax,
+        clevel, nlevel, fill_width,
+        cont_color, cont_width,
+        fill, rectangular,
+        pltr, pltr_data );
+}
+
+/*----------------------------------------------------------------------*\
+ * plfshades()
+ *
+ * Shade regions via a series of calls to plfshade1.
+ * All arguments are the same as plfshade1 except the following:
+ * clevel is a pointer to an array of values representing
+ * the shade edge values, nlevel-1 is
+ * the number of different shades, (nlevel is the number of shade edges),
+ * fill_width is the pattern fill width, and cont_color and cont_width
+ * are the color and width of the contour drawn at each shade edge.
+ * (if cont_color <= 0 or cont_width <=0, no such contours are drawn).
+ \*----------------------------------------------------------------------*/
+
+void
+plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+           PLINT ( *defined )( PLFLT, PLFLT ),
+           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+           PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+           PLINT cont_color, PLINT cont_width,
+           void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+           PLPointer pltr_data )
+{
     PLFLT shade_min, shade_max, shade_color;
     PLINT i, init_color, init_width;
 
@@ -229,7 +260,7 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT
          * than the normal plshade drawing which gets partially blocked
          * when sequential shading is done as in the present case */
 
-        plshade( a, nx, ny, defined, xmin, xmax, ymin, ymax,
+        plfshade1( zops, zp, nx, ny, defined, xmin, xmax, ymin, ymax,
             shade_min, shade_max,
             1, shade_color, fill_width,
             0, 0, 0, 0,
@@ -243,7 +274,7 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT
         plwid( cont_width );
         if ( pltr && pltr_data )
         {
-            plcont( a, nx, ny, 1, nx, 1, ny, clevel, nlevel, pltr, pltr_data );
+            plfcont( zops->f2eval, zp, nx, ny, 1, nx, 1, ny, clevel, nlevel, pltr, pltr_data );
         }
         else
         {
@@ -258,17 +289,17 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT
             cgrid1.ny = ny;
             x         = (PLFLT *) malloc( nx * sizeof ( PLFLT ) );
             if ( x == NULL )
-                plexit( "plshades: Out of memory for x" );
+                plexit( "plfshades: Out of memory for x" );
             cgrid1.xg = x;
             for ( i = 0; i < nx; i++ )
                 cgrid1.xg[i] = xmin + ( xmax - xmin ) * (float) i / (float) ( nx - 1 );
             y = (PLFLT *) malloc( ny * sizeof ( PLFLT ) );
             if ( y == NULL )
-                plexit( "plshades: Out of memory for y" );
+                plexit( "plfshades: Out of memory for y" );
             cgrid1.yg = y;
             for ( i = 0; i < ny; i++ )
                 cgrid1.yg[i] = ymin + ( ymax - ymin ) * (float) i / (float) ( ny - 1 );
-            plcont( a, nx, ny, 1, nx, 1, ny, clevel, nlevel,
+            plfcont( zops->f2eval, zp, nx, ny, 1, nx, 1, ny, clevel, nlevel,
                 pltr1, (void *) &cgrid1 );
             free( x );
             free( y );
@@ -296,13 +327,7 @@ void c_plshade( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT 
                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
                 PLPointer pltr_data )
 {
-    PLfGrid2 grid;
-
-    grid.f  = a;
-    grid.nx = nx;
-    grid.ny = ny;
-
-    plshade_int( plf2eval2, ( PLPointer ) & grid,
+    plshade_int( plf2eval1, ( PLPointer ) a,
         NULL, NULL,
 /*	     plc2eval, (PLPointer) &cgrid,*/
         defined, MISSING_MIN_DEF, MISSING_MAX_DEF, nx, ny, xmin,
@@ -376,6 +401,38 @@ plfshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
         fill, rectangular, pltr, pltr_data );
 }
 
+/*----------------------------------------------------------------------*\
+ * plfshade1()
+ *
+ * Shade region.
+ *
+ * This function is a plf2ops variant of c_plfshade and c_plfshade1.  It
+ * differs from plfshade in that it supports a "defined" callback (like
+ * c_plshade and c_plfshade1) rather than a "defined mask" (like plfshade
+ * even though it is not yet implemented).
+ \*----------------------------------------------------------------------*/
+
+void
+plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+           PLINT ( *defined )( PLFLT, PLFLT ),
+           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+           PLFLT shade_min, PLFLT shade_max,
+           PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+           PLINT min_color, PLINT min_width,
+           PLINT max_color, PLINT max_width,
+           void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
+           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+           PLPointer pltr_data )
+{
+    plshade_int( zops->f2eval, zp,
+        NULL, NULL,
+/*	     plc2eval, (PLPointer) &cgrid,*/
+        defined, MISSING_MIN_DEF, MISSING_MAX_DEF, nx, ny, xmin,
+        xmax, ymin, ymax, shade_min, shade_max,
+        sh_cmap, sh_color, sh_width,
+        min_color, min_width, max_color, max_width,
+        fill, rectangular, pltr, pltr_data );
+}
 
 /*----------------------------------------------------------------------*\
  * plshade_int()

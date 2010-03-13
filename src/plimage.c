@@ -194,6 +194,18 @@ c_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
              PLPointer pltr_data )
 {
+    plfimagefr( plf2ops_c(), ( PLPointer ) idata, nx, ny,
+        xmin, xmax, ymin, ymax, zmin, zmax,
+        valuemin, valuemax, pltr, pltr_data );
+}
+
+void
+plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
+            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+            PLFLT valuemin, PLFLT valuemax,
+            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
+            PLPointer pltr_data )
+{
     PLINT ix, iy;
     PLFLT dx, dy;
     /* z holds scaled image pixel values */
@@ -229,7 +241,7 @@ c_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
     if ( zmin == zmax )
     {
         /* Find the minimum and maximum values in the image */
-        plMinMax2dGrid( idata, nx, ny, &zmax, &zmin );
+        idataops->minmax( idatap, nx, ny, &zmin, &zmax );
     }
 
     /* Go through the image values and scale them to fit in
@@ -249,7 +261,7 @@ c_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
             }
             else
             {
-                datum = idata[ix][iy];
+                datum = idataops->get( idatap, ix, iy );
                 if ( isnan( datum ) || datum < zmin || datum > zmax )
                 {
                     /* Set to a guaranteed-not-to-plot value */
@@ -312,12 +324,23 @@ c_plimage( PLFLT **idata, PLINT nx, PLINT ny,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
            PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax )
 {
-    PLINT  ix, iy, ixx, iyy, xm, ym, nnx, nny;
-    PLFLT  data_min, data_max, dx, dy;
+    plfimage( plf2ops_c(), (PLPointer) idata, nx, ny,
+        xmin, xmax, ymin, ymax, zmin, zmax,
+        Dxmin, Dxmax, Dymin, Dymax );
+}
+
+void
+plfimage( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
+          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+          PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax )
+{
+    PLINT   ix, iy, ixx, iyy, xm, ym, nnx, nny;
+    PLFLT   data_min, data_max, dx, dy;
     /* z holds the subimage (Dxmin, Dymin) - (Dxmax, Dymax) */
-    PLFLT  **z;
+    PLFLT   **z;
+    PLF2OPS zops;
     /* Was any space allocated for z? */
-    PLBOOL copied;
+    PLBOOL  copied;
     copied = FALSE;
 
     if ( nx <= 0 || ny <= 0 )
@@ -340,14 +363,15 @@ c_plimage( PLFLT **idata, PLINT nx, PLINT ny,
 
     /* Find the minimum and maximum values in the image.  Use these values to
      * for the color scale range. */
-    plMinMax2dGrid( idata, nx, ny, &data_max, &data_min );
+    idataops->minmax( idatap, nx, ny, &data_min, &data_max );
 
     if ( xmin == Dxmin && xmax == Dxmax && ymin == Dymin && ymax == Dymax )
     {
         /* If the whole image should be shown, then no copying is needed. */
-        z   = idata;
-        nnx = nx;
-        nny = ny;
+        z    = (PLFLT **) idatap;
+        zops = idataops;
+        nnx  = nx;
+        nny  = ny;
     }
     else
     {
@@ -368,6 +392,7 @@ c_plimage( PLFLT **idata, PLINT nx, PLINT ny,
 
         /* Allocate space for the sub-image */
         plAlloc2dGrid( &z, nnx, nny );
+        zops = plf2ops_c();
 
         /* Go through the image and select the pixels within the given
          * (Dxmin, Dymin) - (Dxmax, Dymax) window. */
@@ -377,7 +402,7 @@ c_plimage( PLFLT **idata, PLINT nx, PLINT ny,
             ixx++; iyy = 0;
             for ( iy = ym; iy < ym + nny; iy++ )
             {
-                z[ixx][iyy++] = idata[ix][iy];
+                z[ixx][iyy++] = idataops->get( idatap, ix, iy );
             }
         }
 
@@ -385,7 +410,7 @@ c_plimage( PLFLT **idata, PLINT nx, PLINT ny,
         copied = TRUE;
     }
 
-    plimagefr( z, nnx, nny, Dxmin, Dxmax, Dymin, Dymax, zmin, zmax,
+    plfimagefr( zops, (PLPointer) z, nnx, nny, Dxmin, Dxmax, Dymin, Dymax, zmin, zmax,
         data_min, data_max, NULL, NULL );
 
     /* Only free the memory if it was allocated by us... */

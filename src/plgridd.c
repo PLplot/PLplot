@@ -38,33 +38,36 @@
 /* forward declarations */
 static void
 grid_nnaidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-             PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg );
+             PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+             PLF2OPS zops, PLPointer zgp );
 
 static void
 grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
-           PLFLT threshold );
+           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+           PLF2OPS zops, PLPointer zgp, PLFLT threshold );
 
 static void
 grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
-            int knn_order );
+            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+            PLF2OPS zops, PLPointer zgp, int knn_order );
 
 #ifdef WITH_CSA
 static void
 grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg );
+          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+          PLF2OPS zops, PLPointer zgp );
 #endif
 
 #ifdef HAVE_QHULL
 static void
 grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
-          PLFLT wmin );
+          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+          PLF2OPS zops, PLPointer zgp, PLFLT wmin );
 
 static void
 grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg );
+           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+           PLF2OPS zops, PLPointer zgp );
 #endif
 
 static void
@@ -112,6 +115,14 @@ c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
               PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
               PLFLT **zg, PLINT type, PLFLT data )
 {
+    plfgriddata( x, y, z, npts, xg, nptsx, yg, nptsy, plf2ops_c(), (PLPointer) zg, type, data );
+}
+
+void
+plfgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
+             PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
+             PLF2OPS zops, PLPointer zgp, PLINT type, PLFLT data )
+{
     int i, j;
 
     if ( npts < 1 || nptsx < 1 || nptsy < 1 )
@@ -142,46 +153,46 @@ c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
     /* clear array to return */
     for ( i = 0; i < nptsx; i++ )
         for ( j = 0; j < nptsy; j++ )
-            zg[i][j] = 0.; /* NaN signals a not processed grid point */
+            zops->set( zgp, i, j, 0.0 ); /* NaN signals a not processed grid point */
 
     switch ( type )
     {
     case ( GRID_CSA ): /*  Bivariate Cubic Spline Approximation */
 #ifdef WITH_CSA
-        grid_csa( x, y, z, npts, xg, nptsx, yg, nptsy, zg );
+        grid_csa( x, y, z, npts, xg, nptsx, yg, nptsy, zops, zgp );
 #else
         plwarn( "plgriddata(): PLplot was configured to not use GRID_CSA.\n  Reverting to GRID_NNAIDW." );
-        grid_nnaidw( x, y, z, npts, xg, nptsx, yg, nptsy, zg );
+        grid_nnaidw( x, y, z, npts, xg, nptsx, yg, nptsy, zops, zgp );
 #endif
         break;
 
     case ( GRID_NNIDW ): /* Nearest Neighbors Inverse Distance Weighted */
-        grid_nnidw( x, y, z, npts, xg, nptsx, yg, nptsy, zg, (int) data );
+        grid_nnidw( x, y, z, npts, xg, nptsx, yg, nptsy, zops, zgp, (int) data );
         break;
 
     case ( GRID_NNLI ): /* Nearest Neighbors Linear Interpolation */
-        grid_nnli( x, y, z, npts, xg, nptsx, yg, nptsy, zg, data );
+        grid_nnli( x, y, z, npts, xg, nptsx, yg, nptsy, zops, zgp, data );
         break;
 
     case ( GRID_NNAIDW ): /* Nearest Neighbors "Around" Inverse Distance Weighted */
-        grid_nnaidw( x, y, z, npts, xg, nptsx, yg, nptsy, zg );
+        grid_nnaidw( x, y, z, npts, xg, nptsx, yg, nptsy, zops, zgp );
         break;
 
     case ( GRID_DTLI ): /* Delaunay Triangulation Linear Interpolation */
 #ifdef HAVE_QHULL
-        grid_dtli( x, y, z, npts, xg, nptsx, yg, nptsy, zg );
+        grid_dtli( x, y, z, npts, xg, nptsx, yg, nptsy, zops, zgp );
 #else
         plwarn( "plgriddata(): you must have the Qhull library installed to use GRID_DTLI.\n  Reverting to GRID_NNAIDW." );
-        grid_nnaidw( x, y, z, npts, xg, nptsx, yg, nptsy, zg );
+        grid_nnaidw( x, y, z, npts, xg, nptsx, yg, nptsy, zops, zgp );
 #endif
         break;
 
     case ( GRID_NNI ): /* Natural Neighbors */
 #ifdef HAVE_QHULL
-        grid_nni( x, y, z, npts, xg, nptsx, yg, nptsy, zg, data );
+        grid_nni( x, y, z, npts, xg, nptsx, yg, nptsy, zops, zgp, data );
 #else
         plwarn( "plgriddata(): you must have the Qhull library installed to use GRID_NNI.\n  Reverting to GRID_NNAIDW." );
-        grid_nnaidw( x, y, z, npts, xg, nptsx, yg, nptsy, zg );
+        grid_nnaidw( x, y, z, npts, xg, nptsx, yg, nptsy, zops, zgp );
 #endif
         break;
 
@@ -199,7 +210,8 @@ c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
 
 static void
 grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
+          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+          PLF2OPS zops, PLPointer zgp )
 {
     PLFLT *xt, *yt, *zt;
     point *pin, *pgrid, *pt;
@@ -248,8 +260,8 @@ grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
     {
         for ( j = 0; j < nptsy; j++ )
         {
-            pt       = &pgrid[j * nptsx + i];
-            zg[i][j] = (PLFLT) pt->z;
+            pt = &pgrid[j * nptsx + i];
+            zops->set( zgp, i, j, (PLFLT) pt->z );
         }
     }
 
@@ -269,8 +281,8 @@ grid_csa( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 static void
 grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
-            int knn_order )
+            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+            PLF2OPS zops, PLPointer zgp, int knn_order )
 {
     int   i, j, k;
     PLFLT wi, nt;
@@ -300,8 +312,8 @@ grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                 if ( items[k].dist > md )
                     md = items[k].dist;
 #endif
-            zg[i][j] = 0.;
-            nt       = 0.;
+            zops->set( zgp, i, j, 0.0 );
+            nt = 0.;
 
             for ( k = 0; k < knn_order; k++ )
             {
@@ -313,13 +325,13 @@ grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 #else
                 wi = 1. / ( items[k].dist * items[k].dist );
 #endif
-                zg[i][j] += wi * z[items[k].item];
-                nt       += wi;
+                zops->add( zgp, i, j, wi * z[items[k].item] );
+                nt += wi;
             }
             if ( nt != 0. )
-                zg[i][j] /= nt;
+                zops->div( zgp, i, j, nt );
             else
-                zg[i][j] = NaN;
+                zops->set( zgp, i, j, NaN );
         }
     }
 }
@@ -332,8 +344,8 @@ grid_nnidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 static void
 grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
-           PLFLT threshold )
+           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy,
+           PLF2OPS zops, PLPointer zgp, PLFLT threshold )
 {
     PLFLT xx[4], yy[4], zz[4], t, A, B, C, D, d1, d2, d3, max_thick;
     int   i, j, ii, excl, cnt, excl_item;
@@ -369,7 +381,7 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
             if ( d1 == 0. || d2 == 0. || d3 == 0. ) /* coincident points */
             {
-                zg[i][j] = NaN;
+                zops->set( zgp, i, j, NaN );
                 continue;
             }
 
@@ -387,7 +399,7 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
             if ( ( d1 + d2 ) / d3 < threshold ) /* thin triangle! */
             {
-                zg[i][j] = NaN;                 /* deal with it latter */
+                zops->set( zgp, i, j, NaN );    /* deal with it later */
             }
             else                                /* calculate the plane passing through the three points */
 
@@ -398,7 +410,7 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                 D = -A * xx[0] - B * yy[0] - C * zz[0];
 
                 /* and interpolate (or extrapolate...) */
-                zg[i][j] = -xg[i] * A / C - yg[j] * B / C - D / C;
+                zops->set( zgp, i, j, -xg[i] * A / C - yg[j] * B / C - D / C );
             }
         }
     }
@@ -417,7 +429,7 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
         {
             for ( j = 0; j < nptsy; j++ )
             {
-                if ( isnan( zg[i][j] ) )
+                if ( zops->is_nan( zgp, i, j ) )
                 {
                     dist1( xg[i], yg[j], x, y, npts, 4 );
 
@@ -494,7 +506,7 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                     D = -A * xx[0] - B * yy[0] - C * zz[0];
 
                     /* and interpolate (or extrapolate...) */
-                    zg[i][j] = -xg[i] * A / C - yg[j] * B / C - D / C;
+                    zops->set( zgp, i, j, -xg[i] * A / C - yg[j] * B / C - D / C );
                 }
             }
         }
@@ -510,7 +522,7 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 static void
 grid_nnaidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-             PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
+             PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp )
 {
     PLFLT d, nt;
     int   i, j, k;
@@ -520,21 +532,21 @@ grid_nnaidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
         for ( j = 0; j < nptsy; j++ )
         {
             dist2( xg[i], yg[j], x, y, npts );
-            zg[i][j] = 0.;
-            nt       = 0.;
+            zops->set( zgp, i, j, 0. );
+            nt = 0.;
             for ( k = 0; k < 4; k++ )
             {
                 if ( items[k].item != -1 )                              /* was found */
                 {
-                    d         = 1. / ( items[k].dist * items[k].dist ); /* 1/square distance */
-                    zg[i][j] += d * z[items[k].item];
-                    nt       += d;
+                    d = 1. / ( items[k].dist * items[k].dist );         /* 1/square distance */
+                    zops->add( zgp, i, j, d * z[items[k].item] );
+                    nt += d;
                 }
             }
             if ( nt == 0. ) /* no points found?! */
-                zg[i][j] = NaN;
+                zops->set( zgp, i, j, NaN );
             else
-                zg[i][j] /= nt;
+                zops->div( zgp, i, j, nt );
         }
     }
 }
@@ -553,7 +565,7 @@ grid_nnaidw( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 static void
 grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
+           PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp )
 {
     point *pin, *pgrid, *pt;
     PLFLT *xt, *yt, *zt;
@@ -604,8 +616,8 @@ grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
     {
         for ( j = 0; j < nptsy; j++ )
         {
-            pt       = &pgrid[j * nptsx + i];
-            zg[i][j] = (PLFLT) pt->z;
+            pt = &pgrid[j * nptsx + i];
+            zops->set( zgp, i, j, (PLFLT) pt->z );
         }
     }
 
@@ -622,7 +634,7 @@ grid_dtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 static void
 grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg,
+          PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp,
           PLFLT wmin )
 {
     PLFLT *xt, *yt, *zt;
@@ -681,8 +693,8 @@ grid_nni( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
     {
         for ( j = 0; j < nptsy; j++ )
         {
-            pt       = &pgrid[j * nptsx + i];
-            zg[i][j] = (PLFLT) pt->z;
+            pt = &pgrid[j * nptsx + i];
+            zops->set( zgp, i, j, (PLFLT) pt->z );
         }
     }
 
@@ -787,7 +799,7 @@ dist2( PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts )
 #ifdef NONN /* another DTLI, based only on QHULL, not nn */
 static void
 grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
-            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLFLT **zg )
+            PLFLT *xg, int nptsx, PLFLT *yg, int nptsy, PLF2OPS zops, PLPointer zgp )
 {
     coordT  *points;          /* array of coordinates for each point */
     boolT   ismalloc = False; /* True if qhull should free points */
@@ -920,7 +932,7 @@ grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                     facet = qh_findfacet_all( point, &bestdist, &isoutside, &totpart );
 
                     if ( facet->upperdelaunay )
-                        zg[i][j] = NaN;
+                        zops->set( zgp, i, j, NaN );
                     else
                     {
                         FOREACHvertex_( facet->vertices )
@@ -940,7 +952,7 @@ grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                         D = -A * xt[0] - B * yt[0] - C * zt[0];
 
                         /* and interpolate */
-                        zg[i][j] = -xg[i] * A / C - yg[j] * B / C - D / C;
+                        zops->set( zgp, i, j, -xg[i] * A / C - yg[j] * B / C - D / C );
                     }
                 }
         }

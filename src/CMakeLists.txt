@@ -31,6 +31,7 @@ set(plplot${LIB_TAG}_LIB_SRCS
   plcvt.c
   pldeprecated.c
   pldtik.c
+  plf2ops.c
   plfill.c
   plfreetype.c
   plgradient.c

@@ -405,13 +405,29 @@ plP_pcwcy( PLINT y )
     return ( ( y - plsc->wpyoff ) / plsc->wpyscl );
 }
 
+/*--------------------------------------------------------------------------*\
+ * plf2eval1()
+ *
+ * Does a lookup from a 2d function array.  Array is of type (PLFLT **),
+ * and is column dominant (normal C ordering).
+ \*--------------------------------------------------------------------------*/
 
+PLFLT
+plf2eval1( PLINT ix, PLINT iy, PLPointer plf2eval_data )
+{
+    PLFLT value;
+    PLFLT **z = (PLFLT **) plf2eval_data;
+
+    value = z[ix][iy];
+
+    return value;
+}
 
 /*--------------------------------------------------------------------------*\
  * plf2eval2()
  *
- * Does a lookup from a 2d function array.  Array is of type (PLFLT **),
- * and is column dominant (normal C ordering).
+ * Does a lookup from a 2d function array.  plf2eval_data is treated as type
+ * (PLfGrid2 *).
  \*--------------------------------------------------------------------------*/
 
 PLFLT
@@ -501,8 +517,6 @@ c_plcont( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data )
 {
-    PLfGrid2 grid;
-
     if ( pltr == NULL )
     {
         /* If pltr is undefined, abort with an error. */
@@ -510,8 +524,7 @@ c_plcont( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
         return;
     }
 
-    grid.f = f;
-    plfcont( plf2eval2, ( PLPointer ) & grid,
+    plfcont( plf2eval1, ( PLPointer ) f,
         nx, ny, kx, lx, ky, ly, clevel, nlevel,
         pltr, pltr_data );
 }
@@ -1258,6 +1271,188 @@ pltr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 
             *ty = yll * ( 1 - du ) * ( 1 - dv ) + ylr * ( 1 - du ) * ( dv ) +
                   yrl * ( du ) * ( 1 - dv ) + yrr * ( du ) * ( dv );
+        }
+    }
+}
+
+/*----------------------------------------------------------------------*\
+ * pltr2f()
+ *
+ * Does linear interpolation from doubly dimensioned coord arrays
+ * (row dominant, i.e. Fortran ordering).
+ *
+ * This routine includes lots of checks for out of bounds.  This would
+ * occur occasionally due to a bug in the contour plotter that is now fixed.
+ * If an out of bounds coordinate is obtained, the boundary value is provided
+ * along with a warning.  These checks should stay since no harm is done if
+ * if everything works correctly.
+ \*----------------------------------------------------------------------*/
+
+void
+pltr2f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )
+{
+    PLINT   ul, ur, vl, vr;
+    PLFLT   du, dv;
+    PLFLT   xll, xlr, xrl, xrr;
+    PLFLT   yll, ylr, yrl, yrr;
+    PLFLT   xmin, xmax, ymin, ymax;
+
+    PLcGrid *cgrid = (PLcGrid *) pltr_data;
+    PLFLT   *xg    = cgrid->xg;
+    PLFLT   *yg    = cgrid->yg;
+    PLINT   nx     = cgrid->nx;
+    PLINT   ny     = cgrid->ny;
+
+    ul = (PLINT) x;
+    ur = ul + 1;
+    du = x - ul;
+
+    vl = (PLINT) y;
+    vr = vl + 1;
+    dv = y - vl;
+
+    xmin = 0;
+    xmax = nx - 1;
+    ymin = 0;
+    ymax = ny - 1;
+
+    if ( x < xmin || x > xmax || y < ymin || y > ymax )
+    {
+        plwarn( "pltr2f: Invalid coordinates" );
+
+        if ( x < xmin )
+        {
+            if ( y < ymin )
+            {
+                *tx = *xg;
+                *ty = *yg;
+            }
+            else if ( y > ymax )
+            {
+                *tx = *( xg + ( ny - 1 ) * nx );
+                *ty = *( yg + ( ny - 1 ) * nx );
+            }
+            else
+            {
+                ul  = 0;
+                xll = *( xg + ul + vl * nx );
+                yll = *( yg + ul + vl * nx );
+                xlr = *( xg + ul + vr * nx );
+                ylr = *( yg + ul + vr * nx );
+
+                *tx = xll * ( 1 - dv ) + xlr * ( dv );
+                *ty = yll * ( 1 - dv ) + ylr * ( dv );
+            }
+        }
+        else if ( x > xmax )
+        {
+            if ( y < ymin )
+            {
+                *tx = *( xg + ( nx - 1 ) );
+                *ty = *( yg + ( nx - 1 ) );
+            }
+            else if ( y > ymax )
+            {
+                *tx = *( xg + ( nx - 1 ) + ( ny - 1 ) * nx );
+                *ty = *( yg + ( nx - 1 ) + ( ny - 1 ) * nx );
+            }
+            else
+            {
+                ul  = nx - 1;
+                xll = *( xg + ul + vl * nx );
+                yll = *( yg + ul + vl * nx );
+                xlr = *( xg + ul + vr * nx );
+                ylr = *( yg + ul + vr * nx );
+
+                *tx = xll * ( 1 - dv ) + xlr * ( dv );
+                *ty = yll * ( 1 - dv ) + ylr * ( dv );
+            }
+        }
+        else
+        {
+            if ( y < ymin )
+            {
+                vl  = 0;
+                xll = *( xg + ul + vl * nx );
+                xrl = *( xg + ur + vl * nx );
+                yll = *( yg + ul + vl * nx );
+                yrl = *( yg + ur + vl * nx );
+
+                *tx = xll * ( 1 - du ) + xrl * ( du );
+                *ty = yll * ( 1 - du ) + yrl * ( du );
+            }
+            else if ( y > ymax )
+            {
+                vr  = ny - 1;
+                xlr = *( xg + ul + vr * nx );
+                xrr = *( xg + ur + vr * nx );
+                ylr = *( yg + ul + vr * nx );
+                yrr = *( yg + ur + vr * nx );
+
+                *tx = xlr * ( 1 - du ) + xrr * ( du );
+                *ty = ylr * ( 1 - du ) + yrr * ( du );
+            }
+        }
+    }
+
+/* Normal case.
+ * Look up coordinates in row-dominant array.
+ * Have to handle right boundary specially -- if at the edge, we'd
+ * better not reference the out of bounds point. */
+
+    else
+    {
+        xll = *( xg + ul + vl * nx );
+        yll = *( yg + ul + vl * nx );
+
+/* ur is out of bounds */
+
+        if ( ur == nx && vr < ny )
+        {
+            xlr = *( xg + ul + vr * nx );
+            ylr = *( yg + ul + vr * nx );
+
+            *tx = xll * ( 1 - dv ) + xlr * ( dv );
+            *ty = yll * ( 1 - dv ) + ylr * ( dv );
+        }
+
+/* vr is out of bounds */
+
+        else if ( ur < nx && vr == ny )
+        {
+            xrl = *( xg + ur + vl * nx );
+            yrl = *( yg + ur + vl * nx );
+
+            *tx = xll * ( 1 - du ) + xrl * ( du );
+            *ty = yll * ( 1 - du ) + yrl * ( du );
+        }
+
+/* both ur and vr are out of bounds */
+
+        else if ( ur == nx && vr == ny )
+        {
+            *tx = xll;
+            *ty = yll;
+        }
+
+/* everything in bounds */
+
+        else
+        {
+            xrl = *( xg + ur + vl * nx );
+            xlr = *( xg + ul + vr * nx );
+            xrr = *( xg + ur + vr * nx );
+
+            yrl = *( yg + ur + vl * nx );
+            ylr = *( yg + ul + vr * nx );
+            yrr = *( yg + ur + vr * nx );
+/* INDENT OFF */
+            *tx = xll * ( 1 - du ) * ( 1 - dv ) + xlr * ( 1 - du ) * ( dv ) +
+                  xrl * ( du ) * ( 1 - dv ) + xrr * ( du ) * ( dv );
+
+            *ty = yll * ( 1 - du ) * ( 1 - dv ) + ylr * ( 1 - du ) * ( dv ) +
+                  yrl * ( du ) * ( 1 - dv ) + yrr * ( du ) * ( dv );
+/* INDENT ON */
         }
     }
 }
