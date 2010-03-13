@@ -1149,6 +1149,7 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     pls->color        = 1;           /* Supports color */
     pls->dev_text     = 1;           /* Handles text */
     pls->dev_unicode  = 1;           /* Wants unicode text */
+    pls->dev_clear    = 0;
     pls->alt_unicode  = 1;           /* Wants to handle unicode character by character */
     pls->page         = 0;
     pls->dev_fill0    = 1;           /* Supports hardware solid fills */
