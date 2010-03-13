@@ -85,8 +85,8 @@ let () =
   (* Initialize plplot *)
   plinit ();
 
-  pladv 0;    
-  plvsta ();    
+  pladv 0;
+  plvsta ();
 
   (* Register our error variables with PLplot *)
   (* From here on, we're handling all errors here *)
