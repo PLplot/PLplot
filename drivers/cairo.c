@@ -426,6 +426,7 @@ void plD_polyline_cairo( PLStream *pls, short *xa, short *ya, PLINT npts )
     set_line_properties( aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_BUTT );
 
     poly_line( pls, xa, ya, npts );
+
     cairo_stroke( aStream->cairoContext );
 
     set_line_properties( aStream, old_join, old_cap );
@@ -1242,9 +1243,8 @@ void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
     set_line_properties( aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_BUTT );
 
     /* Draw the polygons */
-    cairo_move_to( aStream->cairoContext, aStream->downscale * (double) xa[0], aStream->downscale * (double) ya[0] );
-    for ( i = 1; i < npts; i++ )
-        cairo_line_to( aStream->cairoContext, aStream->downscale * (double) xa[i], aStream->downscale * (double) ya[i] );
+    poly_line( pls, xa, ya, npts );
+
     cairo_set_source_rgba( aStream->cairoContext,
         (double) pls->curcolor.r / 255.0,
         (double) pls->curcolor.g / 255.0,
@@ -1301,10 +1301,8 @@ void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
     }
 
     /* Draw the polygon using the gradient. */
+    poly_line( pls, xa, ya, npts );
 
-    cairo_move_to( aStream->cairoContext, aStream->downscale * (double) xa[0], aStream->downscale * (double) ya[0] );
-    for ( i = 1; i < npts; i++ )
-        cairo_line_to( aStream->cairoContext, aStream->downscale * (double) xa[i], aStream->downscale * (double) ya[i] );
     cairo_set_source( aStream->cairoContext, linear_gradient );
     cairo_fill( aStream->cairoContext );
     cairo_pattern_destroy( linear_gradient );
