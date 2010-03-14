@@ -254,7 +254,7 @@ static void poly_line( PLStream *, short *, short *, PLINT );
 static void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts );
 static void gradient( PLStream *pls, short *xa, short *ya, PLINT npts );
 static void arc( PLStream *, arc_struct * );
-static void rotate_cairo_surface( PLStream *, float, float, float, float, float, float );
+static void rotate_cairo_surface( PLStream *, float, float, float, float, float, float, PLBOOL );
 /* Rasterization of plotted material */
 static void start_raster( PLStream* );
 static void end_raster( PLStream* );
@@ -1476,7 +1476,7 @@ void arc( PLStream *pls, arc_struct *arc_info )
  * Rotates the cairo surface to the appropriate orientation.
  * ---------------------------------------------------------------------*/
 
-void rotate_cairo_surface( PLStream *pls, float x11, float x12, float x21, float x22, float x0, float y0 )
+void rotate_cairo_surface( PLStream *pls, float x11, float x12, float x21, float x22, float x0, float y0, PLBOOL is_xcairo )
 {
     cairo_matrix_t *matrix;
     PLCairo        *aStream;
@@ -1486,7 +1486,14 @@ void rotate_cairo_surface( PLStream *pls, float x11, float x12, float x21, float
     matrix = (cairo_matrix_t *) malloc( sizeof ( cairo_matrix_t ) );
     cairo_matrix_init( matrix, x11, x12, x21, x22, x0, y0 );
 #if defined ( PLD_xcairo )
-    cairo_transform( aStream->cairoContext_X, matrix );
+    if ( is_xcairo )
+    {
+        cairo_transform( aStream->cairoContext_X, matrix );
+    }
+    else
+    {
+        cairo_transform( aStream->cairoContext, matrix );
+    }
 #else
     cairo_transform( aStream->cairoContext, matrix );
 #endif
@@ -1613,7 +1620,7 @@ static signed int xcairo_init_cairo( PLStream *pls )
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     /* Invert the surface so that the graphs are drawn right side up. */
-    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength );
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, TRUE );
 
     /* Set graphics aliasing */
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
@@ -2018,7 +2025,7 @@ void plD_init_pdfcairo( PLStream *pls )
     pls->dev = aStream;
 
     /* Invert the surface so that the graphs are drawn right side up. */
-    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength );
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
     /* Set graphics aliasing */
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
@@ -2095,7 +2102,7 @@ void plD_init_pscairo( PLStream *pls )
         plsdiori( 1 );
         pls->freeaspect = 1;
     }
-    rotate_cairo_surface( pls, 0.0, -1.0, -1.0, 0.0, pls->ylength, pls->xlength );
+    rotate_cairo_surface( pls, 0.0, -1.0, -1.0, 0.0, pls->ylength, pls->xlength, FALSE );
 }
 
 
@@ -2186,7 +2193,7 @@ void plD_init_svgcairo( PLStream *pls )
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     /* Invert the surface so that the graphs are drawn right side up. */
-    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength );
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
     /* Set graphics aliasing */
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
@@ -2280,7 +2287,7 @@ void plD_init_pngcairo( PLStream *pls )
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     /* Invert the surface so that the graphs are drawn right side up. */
-    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength );
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
     /* Set graphics aliasing */
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
@@ -2448,7 +2455,7 @@ void plD_init_memcairo( PLStream *pls )
     pls->dev = aStream;
 
     /* Invert the surface so that the graphs are drawn right side up. */
-    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength );
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
     /* Set graphics aliasing */
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
@@ -2640,7 +2647,7 @@ void plD_esc_extcairo( PLStream *pls, PLINT op, void *ptr )
         cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
 
         /* Invert the surface so that the graphs are drawn right side up. */
-        rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength );
+        rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
         /* Should adjust plot size to fit in the given cairo context?
          * Cairo does not provide a way to query the dimensions of a context? */
