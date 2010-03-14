@@ -1895,10 +1895,9 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
             status = status | PL_NEAR_PARALLEL;
         else
             status = status | PL_PARALLEL;
-        /* Choice of intersect is arbitrary in this case.  Choose A1
-         * A2, B1, or B2 (in that order) if any of them lie inside or
-         * near the other line segment.  Otherwise, choose the average
-         * point. */
+        /* Choice of intersect is arbitrary in this case.  Choose A1, A2,
+         * B1, or B2 (in that order) if any of them lie inside or near
+         * the other line segment.  Otherwise, choose the average point. */
         if ( ( BETW_NBCC( xA1, xB1, xB2 ) && BETW_NBCC( yA1, yB1, yB2 ) ) )
         {
             fxintersect = xA1;
@@ -1946,11 +1945,11 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
          * Find out which. */
         if ( fabs( fxintersect - xA1 ) <= PL_NBCC && fabs( fyintersect - yA1 ) <= PL_NBCC )
             status = status | PL_NEAR_A1;
-        if ( fabs( fxintersect - xA2 ) <= PL_NBCC && fabs( fyintersect - yA2 ) <= PL_NBCC )
+        else if ( fabs( fxintersect - xA2 ) <= PL_NBCC && fabs( fyintersect - yA2 ) <= PL_NBCC )
             status = status | PL_NEAR_A2;
-        if ( fabs( fxintersect - xB1 ) <= PL_NBCC && fabs( fyintersect - yB1 ) <= PL_NBCC )
+        else if ( fabs( fxintersect - xB1 ) <= PL_NBCC && fabs( fyintersect - yB1 ) <= PL_NBCC )
             status = status | PL_NEAR_B1;
-        if ( fabs( fxintersect - xB2 ) <= PL_NBCC && fabs( fyintersect - yB2 ) <= PL_NBCC )
+        else if ( fabs( fxintersect - xB2 ) <= PL_NBCC && fabs( fyintersect - yB2 ) <= PL_NBCC )
             status = status | PL_NEAR_B2;
         /* N.B. if none of the above conditions hold then status remains at
          * zero to signal we have a definite crossing. */
@@ -2022,13 +2021,6 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
     int i1m1, i2, i2m1, ifnotcrossed;
     int ifxsort, ifascend, count_crossings = 0, status = 0;
     PLINT xintersect, yintersect;
-    PLINT ifnear_a1, ifnear_a2, ifnear_a, ifnear_b1, ifnear_b2, ifnear_b;
-    PLINT crossing_index[4];
-    /* The following are floating point to avoid integer overflows while
-     * still having exact arithmetic (except for very large values beyond
-     * the 53 bits of the significand). */
-    PLFLT xline, yline, xpoint0, ypoint0, xpoint1, ypoint1,
-          inprod0, inprod1, product_NBCC;
 
     i1m1 = i1 - 1;
     if ( i1m1 < 0 )
@@ -2061,123 +2053,6 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
             ifnotcrossed = notcrossed( &xintersect, &yintersect,
                 x1[i1m1], y1[i1m1], x1[i1], y1[i1],
                 x2[i2m1], y2[i2m1], x2[i2], y2[i2] );
-            if ( ifnotcrossed && !( ifnotcrossed & ( PL_PARALLEL | PL_NEAR_PARALLEL | PL_NOT_CROSSED ) ) )
-            {
-                /* intersection near at least one of the vertices, but not
-                 * near parallel and not parallel */
-                ifnear_a1 = ifnotcrossed & PL_NEAR_A1;
-                ifnear_a2 = ifnotcrossed & PL_NEAR_A2;
-                ifnear_a  = ifnotcrossed & ( PL_NEAR_A1 | PL_NEAR_A2 );
-                ifnear_b1 = ifnotcrossed & PL_NEAR_B1;
-                ifnear_b2 = ifnotcrossed & PL_NEAR_B2;
-                ifnear_b  = ifnotcrossed & ( PL_NEAR_B1 | PL_NEAR_B2 );
-                if ( ( ifnear_a1 && ifnear_a2 ) || ( ifnear_b1 && ifnear_b2 ) ||
-                     !( ifnear_a || ifnear_b ) )
-                    plwarn( "number_crossings; internal logic error" );
-                if ( ifnear_a1 )
-                {
-                    crossing_index[0] = i1;
-                    crossing_index[2] = i1m1 - 1;
-                    if ( crossing_index[2] < 0 )
-                        crossing_index[2] += n1;
-                }
-                else if ( ifnear_a2 )
-                {
-                    crossing_index[0] = i1m1;
-                    crossing_index[2] = i1 + 1;
-                    if ( crossing_index[2] >= n1 )
-                        crossing_index[2] -= n1;
-                }
-                if ( ifnear_b1 )
-                {
-                    crossing_index[1] = i2;
-                    crossing_index[3] = i2m1 - 1;
-                    if ( crossing_index[3] < 0 )
-                        crossing_index[3] += n2;
-                }
-                else if ( ifnear_b2 )
-                {
-                    crossing_index[1] = i2m1;
-                    crossing_index[3] = i2 + 1;
-                    if ( crossing_index[3] >= n2 )
-                        crossing_index[3] -= n2;
-                }
-                /* Never count ifnear_a1 since that should be a duplicate
-                 * of ifnear_a2 for the next i1 index. */
-                if ( ifnear_a2 && !ifnear_b )
-                {
-                    /* Are the points defined by crossing_index[0] (point
-                     * 0) and crossing_index[2] (point 1) on opposite
-                     * sides of the line defined by the polygon 2 edge
-                     * from i2m1 to i2?  If so, indicate definite
-                     * crossing. */
-
-                    /* Use point i2m1 as origin of coordinate system and take
-                     * dot products of both point 0 and point 1 vectors with
-                     * perpendicular to point i2 vector. */
-                    xline   = -( y2[i2] - y2[i2m1] );
-                    yline   = x2[i2] - x2[i2m1];
-                    xpoint0 = x1[crossing_index[0]] - x2[i2m1];
-                    ypoint0 = y1[crossing_index[0]] - y2[i2m1];
-                    xpoint1 = x1[crossing_index[2]] - x2[i2m1];
-                    ypoint1 = y1[crossing_index[2]] - y2[i2m1];
-                    inprod0 = xpoint0 * xline + ypoint0 * yline;
-                    inprod1 = xpoint1 * xline + ypoint1 * yline;
-                    /* maximum error of product of inner products for
-                     * an error of PL_NBCC of the right sign for
-                     * each original position.  */
-                    product_NBCC = 2. * PL_NBCC * (
-                        ( fabs( xpoint0 ) + fabs( xline ) +
-                          fabs( ypoint0 ) + fabs( yline ) ) * fabs( inprod1 ) +
-                        ( fabs( xpoint1 ) + fabs( xline ) +
-                          fabs( ypoint1 ) + fabs( yline ) ) * fabs( inprod0 ) );
-
-                    /* Not crossed if sine 0 proportional to inprod0 has
-                     * same sign (subject to error) as  sine 1 proportional
-                     * to inprod1. */
-                    ifnotcrossed = inprod0 * inprod1 >= -product_NBCC;
-                }
-                /* Never count ifnear_b1 since that should be a duplicate
-                 * of ifnear_b2 for the next i2 index. */
-                else if ( ifnear_b2 && !ifnear_a )
-                {
-                    /* Are the points defined by crossing_index[1] (point
-                     * 0) and crossing_index[3] (point 1) on opposite
-                     * sides of the line defined by the polygon 1 edge
-                     * from i1m1 to i1?  If so, indicate definite
-                     * crossing. */
-
-                    /* Use point i1m1 as origin of coordinate system and take
-                     * dot products of both point 0 and point 1 vectors with
-                     * perpendicular to point i1 vector. */
-                    xline   = -( y1[i1] - y1[i1m1] );
-                    yline   = x1[i1] - x1[i1m1];
-                    xpoint0 = x2[crossing_index[1]] - x1[i1m1];
-                    ypoint0 = y2[crossing_index[1]] - y1[i1m1];
-                    xpoint1 = x2[crossing_index[3]] - x1[i1m1];
-                    ypoint1 = y2[crossing_index[3]] - y1[i1m1];
-                    inprod0 = xpoint0 * xline + ypoint0 * yline;
-                    inprod1 = xpoint1 * xline + ypoint1 * yline;
-                    /* maximum error of product of inner products for
-                     * an error of PL_NBCC of the right sign for
-                     * each original position.  */
-                    product_NBCC = 2. * PL_NBCC * (
-                        ( fabs( xpoint0 ) + fabs( xline ) +
-                          fabs( ypoint0 ) + fabs( yline ) ) * fabs( inprod1 ) +
-                        ( fabs( xpoint1 ) + fabs( xline ) +
-                          fabs( ypoint1 ) + fabs( yline ) ) * fabs( inprod0 ) );
-
-                    /* Not crossed if sine 0 proportional to inprod0 has
-                     * same sign (subject to error) as  sine 1 proportional
-                     * to inprod1. */
-                    ifnotcrossed = inprod0 * inprod1 >= -product_NBCC;
-                }
-                else if ( ifnear_a && ifnear_b )
-                {
-                    plwarn( "notcrossing: coincident vertices not implemented yet." );
-                    ifnotcrossed = 0;
-                }
-            }
 
             if ( !ifnotcrossed )
             {
