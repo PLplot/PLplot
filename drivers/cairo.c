@@ -376,6 +376,11 @@ void plD_bop_cairo( PLStream *pls )
 
     /* Fill in the window with the background color. */
     cairo_rectangle( aStream->cairoContext, 0.0, 0.0, pls->xlength, pls->ylength );
+    if ( (double) pls->cmap0[0].a < 1.0 )
+    {
+        cairo_set_source_rgba( aStream->cairoContext, 1.0, 1.0, 1.0, 1.0 );
+        cairo_fill_preserve( aStream->cairoContext );
+    }
     cairo_set_source_rgba( aStream->cairoContext,
         (double) pls->cmap0[0].r / 255.0,
         (double) pls->cmap0[0].g / 255.0,
