@@ -2288,7 +2288,7 @@ void plD_init_pngcairo( PLStream *pls )
 
     /* Create a new cairo surface & context for PNG file. */
     /* Dimension units are pixels from cairo documentation. */
-    aStream->cairoSurface = cairo_image_surface_create( CAIRO_FORMAT_RGB24, (double) pls->xlength, (double) pls->ylength );
+    aStream->cairoSurface = cairo_image_surface_create( CAIRO_FORMAT_ARGB32, (double) pls->xlength, (double) pls->ylength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     /* Invert the surface so that the graphs are drawn right side up. */
