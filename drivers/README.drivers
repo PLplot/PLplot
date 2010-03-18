@@ -48,13 +48,13 @@ PLDLLIMPEXP_DRIVER void plD_dispatch_init_<device> ( PLDispatchTable *pdt );
     plD_dispatch_init_<device>,
 #endif
 
-6. For each _file_ device of the driver add the following line to 
-plplot/plplot_test/plplot-test.sh.cmake:
+6. For each interactive and file device of the driver add the
+following line to plplot/plplot_test/plplot-test.sh.cmake:
+
 PLD_<device>=@PLD_<device>@
 
-For completeness you may want to specify the interactive devices there as
-well but be sure to comment them out since the configured plplot-test.sh
-script does not work with interactive devices.
+Note, that the interactive and file devices are dealt with in separate places
+in that script so be careful where you put the above change.
 
 7. Add the following line to
 plplot/examples/plplot_configure.cmake_installed_examples.in:
