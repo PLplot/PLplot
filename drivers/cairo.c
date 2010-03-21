@@ -2958,7 +2958,7 @@ void plD_init_wincairo( PLStream *pls )
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     /* Invert the surface so that the graphs are drawn right side up. */
-    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength );
+    rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, FALSE );
 
     /* Set graphics aliasing */
     cairo_set_antialias( aStream->cairoContext, aStream->graphics_anti_aliasing );
