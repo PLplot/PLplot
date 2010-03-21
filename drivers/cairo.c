@@ -2705,7 +2705,7 @@ void plD_dispatch_init_wincairo( PLDispatchTable *pdt );
 void plD_init_wincairo( PLStream * );
 //void plD_bop_extcairo( PLStream * );
 void plD_eop_wincairo( PLStream * );
-void plD_esc_extcairo( PLStream *, PLINT, void * );
+void plD_esc_wincairo( PLStream *, PLINT, void * );
 void plD_tidy_wincairo( PLStream * );
 
 /*---------------------------------------------------------------------
@@ -2812,6 +2812,45 @@ LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
 }
 
 /*---------------------------------------------------------------------
+ * handle_locate()
+ *
+ * Handle getting the cursor location.
+ * ---------------------------------------------------------------------*/
+
+void
+handle_locate( PLStream *pls , PLGraphicsIn *gin)
+{
+    int located = 0;
+    PLCairo *aStream = (PLCairo *) pls->dev;
+
+    while ( GetMessage( &aStream->msg, NULL, 0, 0 ) && !located)
+      {
+	TranslateMessage( &aStream->msg );
+
+	switch ( (int) aStream->msg.message )
+	  {
+	  case WM_MOUSEMOVE:
+	  case WM_LBUTTONDOWN:
+	    gin->state  = 1;
+	    gin->button = 1;
+	    gin->pX     = LOWORD(aStream->msg.lParam);
+            gin->pY     = pls->ylength - HIWORD(aStream->msg.lParam);
+            gin->dX     = (PLFLT) LOWORD(aStream->msg.lParam) / ((PLFLT) pls->xlength);
+            gin->dY     = (PLFLT) (pls->ylength - HIWORD(aStream->msg.lParam)) / ((PLFLT) pls->ylength);
+              break;
+	  case WM_CHAR:
+             gin->keysym = aStream->msg.wParam;
+	     located = 1;
+	     break;
+ 
+	  default:
+	    DispatchMessage( &aStream->msg );
+	    break;
+	  }
+      }
+}
+
+/*---------------------------------------------------------------------
  * dispatch_init_init()
  *
  * Initialize device dispatch table
@@ -2833,7 +2872,7 @@ void plD_dispatch_init_wincairo( PLDispatchTable *pdt )
     pdt->pl_eop      = (plD_eop_fp) plD_eop_wincairo;
     pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_wincairo;
     pdt->pl_state    = (plD_state_fp) plD_state_cairo;
-    pdt->pl_esc      = (plD_esc_fp) plD_esc_cairo;
+    pdt->pl_esc      = (plD_esc_fp) plD_esc_wincairo;
 }
 
 /*---------------------------------------------------------------------
@@ -2847,7 +2886,7 @@ void plD_init_wincairo( PLStream *pls )
     PLCairo *aStream;
 
     /* Setup the PLStream and the font lookup table */
-    aStream = stream_and_font_setup( pls, 0 );
+    aStream = stream_and_font_setup( pls, 1 );
 
     /* Save the pointer to the structure in the PLplot stream */
     pls->dev = aStream;
@@ -3043,6 +3082,7 @@ void plD_esc_wincairo( PLStream *pls, PLINT op, void *ptr )
         InvalidateRect( aStream->hwnd, NULL, TRUE );
         break;
     case PLESC_GETC:
+      handle_locate(pls, (PLGraphicsIn*) ptr);
         break;
     default:
         plD_esc_cairo( pls, op, ptr );
