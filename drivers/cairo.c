@@ -1852,6 +1852,9 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
         XFlush( aStream->XDisplay );
         break;
     case PLESC_GETC:     /* get cursor position */
+        blit_to_x( aStream, aStream->dirty_x1, aStream->dirty_y1,
+                   aStream->dirty_x2 - aStream->dirty_x1,
+                   aStream->dirty_y2 - aStream->dirty_y1 );
         XFlush( aStream->XDisplay );
         xcairo_get_cursor( pls, (PLGraphicsIn*) ptr );
         break;
