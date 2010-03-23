@@ -1907,6 +1907,8 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
 void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
 {
     int            number_chars;
+    char           *ksname;
+    char           str[257];
     KeySym         keysym;
     XComposeStatus cs;
     XEvent         event;
@@ -1931,8 +1933,13 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
     /* Get key pressed (if any) */
     if ( event.type == KeyPress )
     {
-        number_chars = XLookupString( (XKeyEvent *) &event, gin->string, 10, &keysym, &cs );
-        gin->string[number_chars] = '\0';
+        number_chars = XLookupString( (XKeyEvent *) &event, str, 100, &keysym, NULL );
+	if (keysym == NoSymbol)
+	  ksname = "NoSymbol";
+	else if (!(ksname = XKeysymToString(keysym)))
+	  ksname = "(no name)";
+	strcpy(gin->string, ksname);
+	//        gin->string[number_chars] = '\0';
         switch ( keysym )
         {
         case XK_BackSpace:
@@ -2822,6 +2829,9 @@ handle_locate( PLStream *pls , PLGraphicsIn *gin)
 {
     int located = 0;
     PLCairo *aStream = (PLCairo *) pls->dev;
+
+    /* Initialize PLplot mouse event structure */
+    plGinInit( gin );
 
     while ( GetMessage( &aStream->msg, NULL, 0, 0 ) && !located)
       {
