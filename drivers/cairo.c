@@ -1926,12 +1926,21 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
     XDefineCursor( aStream->XDisplay, aStream->XWindow, xHairCursor );
 
     /* Get the next mouse button release or key press event */
-    XSelectInput( aStream->XDisplay, aStream->XWindow, ButtonReleaseMask | KeyPressMask );
-    XMaskEvent( aStream->XDisplay, ButtonReleaseMask | KeyPressMask, &event );
+    XSelectInput( aStream->XDisplay, aStream->XWindow, ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask );
+    XMaskEvent( aStream->XDisplay, ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask, &event );
     XSelectInput( aStream->XDisplay, aStream->XWindow, NoEventMask );
 
+    /* Update PLplot's mouse event structure */
+    xButtonEvent = (XButtonEvent *) &event;
+    gin->state   = xButtonEvent->state;
+    gin->button  = xButtonEvent->button;
+    gin->pX      = event.xbutton.x;
+    gin->pY      = pls->ylength - event.xbutton.y;
+    gin->dX      = (PLFLT) event.xbutton.x / ( (PLFLT) ( pls->xlength ) );
+    gin->dY      = (PLFLT) ( pls->ylength - event.xbutton.y ) / ( (PLFLT) ( pls->ylength ) );
+
     /* Get key pressed (if any) */
-    if ( event.type == KeyPress )
+    if ( event.type == KeyPress || event.type == KeyRelease ) 
     {
         number_chars = XLookupString( (XKeyEvent *) &event, str, 100, &keysym, NULL );
 	if (keysym == NoSymbol)
@@ -1954,20 +1963,11 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
             gin->keysym = keysym;
         }
     }
-    else
+    else // button press
     {
-        gin->string[0] = '\0';
-        gin->keysym    = 0x20;
+      sprintf(gin->string, "button %u", gin->button);
+      gin->keysym    = 0x20;
     }
-
-    /* Update PLplot's mouse event structure */
-    xButtonEvent = (XButtonEvent *) &event;
-    gin->state   = xButtonEvent->state;
-    gin->button  = xButtonEvent->button;
-    gin->pX      = event.xbutton.x;
-    gin->pY      = pls->ylength - event.xbutton.y;
-    gin->dX      = (PLFLT) event.xbutton.x / ( (PLFLT) ( pls->xlength ) );
-    gin->dY      = (PLFLT) ( pls->ylength - event.xbutton.y ) / ( (PLFLT) ( pls->ylength ) );
 
     /* Switch back to normal cursor */
     XUndefineCursor( aStream->XDisplay, aStream->XWindow );
