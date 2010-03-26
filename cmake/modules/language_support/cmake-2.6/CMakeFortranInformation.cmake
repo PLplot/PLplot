@@ -10,19 +10,19 @@ IF(CMAKE_COMPILER_IS_GNUG77)
 ENDIF(CMAKE_COMPILER_IS_GNUG77)
 IF(CMAKE_Fortran_COMPILER_ID)
   # FIXME: PLplot specific path here that will be different for other projects.
-  IF(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_Fortran_COMPILER_ID}-Fortran.cmake OR EXISTS ${CMAKE_ROOT}/Modules/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_Fortran_COMPILER_ID}-Fortran.cmake)
+  IF(EXISTS ${CMAKE_HOME_DIRECTORY}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_Fortran_COMPILER_ID}-Fortran.cmake OR EXISTS ${CMAKE_ROOT}/Modules/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_Fortran_COMPILER_ID}-Fortran.cmake)
     SET(CMAKE_BASE_NAME ${CMAKE_Fortran_COMPILER_ID}-Fortran)
-  ENDIF(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_Fortran_COMPILER_ID}-Fortran.cmake OR EXISTS ${CMAKE_ROOT}/Modules/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_Fortran_COMPILER_ID}-Fortran.cmake)
+  ENDIF(EXISTS ${CMAKE_HOME_DIRECTORY}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_Fortran_COMPILER_ID}-Fortran.cmake OR EXISTS ${CMAKE_ROOT}/Modules/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_Fortran_COMPILER_ID}-Fortran.cmake)
 ENDIF(CMAKE_Fortran_COMPILER_ID)
-IF(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME}.cmake)
+IF(EXISTS ${CMAKE_HOME_DIRECTORY}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME}.cmake)
   # Use this file if it exists.
   SET(CMAKE_SYSTEM_AND_Fortran_COMPILER_INFO_FILE
-  ${CMAKE_SOURCE_DIR}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME}.cmake)
-ELSE(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME}.cmake)
+  ${CMAKE_HOME_DIRECTORY}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME}.cmake)
+ELSE(EXISTS ${CMAKE_HOME_DIRECTORY}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME}.cmake)
   # This one apparently doesn't have to actually exist, see OPTIONAL below.
   SET(CMAKE_SYSTEM_AND_Fortran_COMPILER_INFO_FILE
   ${CMAKE_ROOT}/Modules/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME}.cmake)
-ENDIF(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME}.cmake)
+ENDIF(EXISTS ${CMAKE_HOME_DIRECTORY}/cmake/modules/language-support/cmake-2.6/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME}.cmake)
 INCLUDE(Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME} OPTIONAL)
 
 # This should be included before the _INIT variables are
