@@ -43,7 +43,7 @@ if(ENABLE_ada)
 endif(ENABLE_ada)
 
 if(ENABLE_ada)
-  find_library(GNAT_LIB NAMES gnat gnat-4.1 gnat-4.2 gnat-4.3 gnat-4.4)
+  find_library(GNAT_LIB NAMES gnat gnat-4.5 gnat-4.4 gnat-4.3 gnat-4.2 gnat-4.1)
   if(NOT GNAT_LIB)
     message(STATUS "WARNING: "
       "gnat library not found. Disabling ada bindings")
@@ -52,8 +52,6 @@ if(ENABLE_ada)
     message(STATUS "FOUND gnat library ${GNAT_LIB}")
   endif(NOT GNAT_LIB)
 endif(ENABLE_ada)
-
-
 
 # New stuff by Jerry for source modifications for Ada 2007 or not Ada 2007.
 option(HAVE_ADA_2007 "Ada 2007?" OFF)
