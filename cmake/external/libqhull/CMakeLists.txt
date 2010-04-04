@@ -1,5 +1,3 @@
-project(qhull_lib)
-
 # Configurable items here.
 option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
 
