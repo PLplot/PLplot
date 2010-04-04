@@ -1,98 +1,151 @@
-# CMakeLists.txt for the qhull library and executables
-# Put this file in the main directory, create and cd into a build directory,
-# and run this cmake command:
-#    cmake -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=../local ..
-# or similar.
+project(qhull_lib)
+
+# Configurable items here.
+option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
+
+# libraries are all shared by default
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
+# Change before each release whenever there has been an API change of any
+# kind.
+set(qhull_SOVERSION 5)
+set(qhull_VERSION ${qhull_SOVERSION}.0.0)
 
 # no shared library support for win32 compilers except cygwin, mingw
-IF( WIN32 AND NOT CYGWIN AND NOT MINGW )
-  IF( BUILD_SHARED_LIBS )
-    SET( BUILD_SHARED_LIBS OFF )
-    MESSAGE( " >> There is no shared library support for your Windows compiler!\n >> Turning option off." )
-  ENDIF( BUILD_SHARED_LIBS )
-ENDIF( WIN32 AND NOT CYGWIN AND NOT MINGW  )
+if(WIN32 AND NOT CYGWIN AND NOT MINGW)
+  if(BUILD_SHARED_LIBS)
+    set(BUILD_SHARED_LIBS OFF)
+    message( " >> There is no shared library support for your Windows compiler!\n >> Turning option off." )
+  endif(BUILD_SHARED_LIBS)
+endif(WIN32 AND NOT CYGWIN AND NOT MINGW)
 
+# find math library
+if(NOT WIN32)
+  find_library(MATH_LIB NAMES m PATHS /usr/local/lib /usr/lib)
+  if(NOT MATH_LIB)
+    message(FATAL_ERROR "Cannot find required math library")
+  endif(NOT MATH_LIB)
+endif(NOT WIN32)
+
+# some extra flags for Borland C++ Compiler 5.5
+if(BORLAND)
+  add_definitions(-A -w-)
+endif(BORLAND)
+
+# Order object files by frequency of execution.  Small files at end.
 set(
-  qhull_LIB_SRCS
-    src/user.c
-    src/global.c
-    src/stat.c
-    src/io.c
-    src/geom2.c
-    src/poly2.c
-    src/merge.c
-    src/qhull.c
-    src/geom.c
-    src/poly.c
-    src/qset.c
-    src/mem.c
+    qhull_src
+        rboxlib.c
+        user.c
+        global.c
+        stat.c
+        io.c
+        geom2.c
+        poly2.c
+        merge.c
+        libqhull.c
+        geom.c
+        poly.c
+        qset.c
+        mem.c
+        usermem.c
+        userprintf.c
+        random.c
 )
 
+# header files
 set(
-  qhull_LIB_HDRS
-    src/geom.h
-    src/io.h
-    src/mem.h
-    src/merge.h
-    src/poly.h
-    src/qhull.h
-    src/qhull_a.h
-    src/qset.h
-    src/stat.h
-    src/user.h
+	qhull_hdr
+		geom.h
+		io.h
+		libqhull.h
+		mem.h
+		merge.h
+		poly.h
+		qhull.h
+		qhull_a.h
+		qset.h
+		random.h
+		stat.h
+		user.h
 )
 
-set(
-  qhull_HTML_FILES
-    qhull.man rbox.man qh-in.htm qh-optg.htm qh-optt.htm qh-optp.htm
-    index.htm qh-quick.htm qh-impre.htm qh-eg.htm
-    qh-optc.htm qh-opto.htm qh-optf.htm qh-optq.htm
-	  qh-c.htm qh-faq.htm qhull.htm qconvex.htm qdelaun.htm
-		qh-geom.htm qh-globa.htm qh-io.htm qh-mem.htm qh-merge.htm
-		qh-poly.htm qh-qhull.htm qh-set.htm qh-stat.htm qh-user.htm
-		qdelau_f.htm qhalf.htm qvoronoi.htm qvoron_f.htm rbox.htm 
+add_library(
+	qhull 
+  	${qhull_src}
 )
 
+target_link_libraries(
+	qhull 
+		${MATH_LIB}
+)
 
-IF(BORLAND)
-  ADD_DEFINITIONS(-A -w-)
-ENDIF(BORLAND)
-
-ADD_LIBRARY(
+set_target_properties(
   qhull
-  ${qhull_LIB_SRCS}
+	  PROPERTIES 
+	  SOVERSION ${qhull_SOVERSION}
+	  VERSION ${qhull_VERSION}
+ )
+
+if(UNIX)
+	if(APPLE)
+		set_target_properties(qhull PROPERTIES 
+			INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+	else(APPLE)
+		set_target_properties(qhull PROPERTIES 
+			INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib"
+			INSTALL_RPATH_USE_LINK_PATH TRUE
+			BUILD_WITH_INSTALL_RPATH FALSE)
+	endif(APPLE)
+endif(UNIX)
+
+install(
+	TARGETS qhull
+		ARCHIVE DESTINATION lib
+		RUNTIME DESTINATION bin
+		LIBRARY DESTINATION lib
 )
 
-# add samples
-set( qhull_EXE qconvex qhalf qvoronoi user_eg user_eg2)
-foreach(EXE ${qhull_EXE})
-  ADD_EXECUTABLE( ${EXE} src/${EXE}.c )
-  TARGET_LINK_LIBRARIES( ${EXE} qhull )
-endforeach(EXE ${qhull_EXE})
 
-ADD_EXECUTABLE( qhullx src/unix.c )
-TARGET_LINK_LIBRARIES( qhullx qhull )
+# samples
+set(qhullcmd_SOURCES  unix.c)
+set(rbox_SOURCES      rbox.c)
+set(qconvex_SOURCES   qconvex.c)
+set(qdelaunay_SOURCES qdelaun.c)
+set(qvoronoi_SOURCES  qvoronoi.c)
+set(qhalf_SOURCES     qhalf.c)
 
-ADD_EXECUTABLE( qdelaunay src/qdelaun.c )
-TARGET_LINK_LIBRARIES( qdelaunay qhull )
-
-ADD_EXECUTABLE( rbox src/rbox.c )
-
-
-INSTALL(
-  TARGETS
-    qhull ${qhull_EXE} qhullx qdelaunay rbox
-  ARCHIVE DESTINATION 
-    lib
-  LIBRARY DESTINATION 
-    lib
-  RUNTIME DESTINATION
-    bin
+set(
+	TARGET_LIST
+		qhullcmd rbox qconvex qdelaunay qvoronoi qhalf
 )
 
-INSTALL(
-  FILES
-    ${qhull_LIB_HDRS}
-  DESTINATION
-    include/qhull
+
+foreach(TARGET ${TARGET_LIST})
+  add_executable(${TARGET} ${${TARGET}_SOURCES})
+  target_link_libraries(${TARGET} qhull)
+  if(USE_RPATH)
+    set_target_properties(
+      ${TARGET}
+	      PROPERTIES 
+	      INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib
+	      INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/bin
+      )
+  else(USE_RPATH)
+    set_target_properties(
+      ${TARGET}
+	      PROPERTIES 
+	      INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/bin
+      )
+  endif(USE_RPATH)
+  install(TARGETS ${TARGET} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+endforeach(TARGET ${TARGET_LIST})
+
+set_property(TARGET qhullcmd PROPERTY OUTPUT_NAME "qhull")
+
+
+# install header
+install(
+	FILES libqhull.h
+		DESTINATION include/qhull
 )
