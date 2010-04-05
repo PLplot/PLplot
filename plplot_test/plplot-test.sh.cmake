@@ -186,6 +186,7 @@ if [ "$interactive" = "on" -o "$interactive_octave" = "on" ] ; then
     PLD_ntk=@PLD_ntk@
     PLD_tk=@PLD_tk@
     PLD_wingcc=@PLD_wingcc@
+    PLD_wincairo=@PLD_wincairo@
     PLD_wxwidgets=@PLD_wxwidgets@
     PLD_xcairo=@PLD_xcairo@
     PLD_xwin=@PLD_xwin@
