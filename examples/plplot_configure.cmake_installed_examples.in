@@ -211,3 +211,8 @@ set(PLD_xwin @PLD_xwin@)
 # Set external devices that are needed to build certain examples.
 set(PLD_extcairo @PLD_extcairo@)
 set(PLD_extqt @PLD_extqt@)
+
+# Needed to check if diff and tail on system for test_diff_psc target.
+
+set(DIFF_EXECUTABLE @DIFF_EXECUTABLE@)
+set(TAIL_EXECUTABLE @TAIL_EXECUTABLE@)

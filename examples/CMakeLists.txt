@@ -481,13 +481,17 @@ if(BUILD_TEST)
       endif(ENABLE_${language})
     endforeach(language_info ${language_info_LIST})
 
-    # Note this target has complete file and target dependencies for
-    # a comparison of stdout and PostScript results.
-    add_custom_target(test_diff_psc COMMAND ${compare_command}
-      DEPENDS ${diff_files_LIST}
-      )
-    add_dependencies(test_diff_psc ${diff_targets_LIST})
-    set(noninteractive_targets_LIST test_diff_psc)
+    if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+      # Note this target has complete file and target dependencies for
+      # a comparison of stdout and PostScript results.
+      add_custom_target(test_diff_psc COMMAND ${compare_command}
+	DEPENDS ${diff_files_LIST}
+	)
+      add_dependencies(test_diff_psc ${diff_targets_LIST})
+      set(noninteractive_targets_LIST test_diff_psc)
+    else(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+      set(noninteractive_targets_LIST)
+    endif(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
   else(PLD_psc)
     set(noninteractive_targets_LIST)
   endif(PLD_psc)
