@@ -144,6 +144,6 @@ set_property(TARGET qhullcmd PROPERTY OUTPUT_NAME "qhull")
 
 # install header
 install(
-	FILES libqhull.h
+	FILES ${qhull_hdr}
 		DESTINATION include/qhull
 )
