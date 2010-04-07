@@ -144,6 +144,8 @@ c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
         if ( ifont > numberfonts )
             ifont = 1;
         sym = *( fntlkup + ( ifont - 1 ) * numberchars + code );
+        // One-time diagnostic output.
+        // fprintf(stdout, "plploin code, sym = %d, %d\n", code, sym);
 
         for ( i = 0; i < n; i++ )
             plhrsh( sym, plP_wcpcx( x[i] ), plP_wcpcy( y[i] ) );
