@@ -9,8 +9,8 @@
 
 #include "plcdemos.h"
 
-static int base[17] =
-{ 0,     200,  500,  600,  700,  800,  900,
+static int base[18] =
+{ 0,  100,   200,  500,  600,  700,  800,  900,
   2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900 };
 
 /*--------------------------------------------------------------------------*\
@@ -34,9 +34,10 @@ main( int argc, const char *argv[] )
 
     plinit();
 
-    plfontld( 1 );
-    for ( l = 0; l < 17; l++ )
+    plfontld( 0 );
+    for ( l = 0; l < 18; l++ )
     {
+        if (l == 2) plfontld(1);
         pladv( 0 );
 
         /* Set up viewport and window */
