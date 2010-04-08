@@ -272,7 +272,7 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         init_width = plsc->width;
         plcol0( cont_color );
         plwid( cont_width );
-        if ( pltr && pltr_data )
+        if ( pltr )
         {
             plfcont( zops->f2eval, zp, nx, ny, 1, nx, 1, ny, clevel, nlevel, pltr, pltr_data );
         }
