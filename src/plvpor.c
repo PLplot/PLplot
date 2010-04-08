@@ -387,8 +387,10 @@ c_plvpor( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
 void
 c_plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect )
 {
-    PLFLT vpxmi, vpxma, vpymi, vpyma;
-    PLFLT vpxmid, vpymid, vpxlen, vpylen, w_aspect, ratio;
+    PLFLT spxmin, spxmax, spymin, spymax;
+    PLFLT vpxmin, vpxmax, vpymin, vpymax;
+    PLFLT spxmid, spymid, xsize, ysize, nxsize, nysize, w_aspect, ratio;
+    PLFLT xoffset, yoffset;
 
     if ( plsc->level < 1 )
     {
@@ -407,42 +409,42 @@ c_plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect )
         return;
     }
 
-    vpxmi = plP_dcmmx( xmin );
-    vpxma = plP_dcmmx( xmax );
-    vpymi = plP_dcmmy( ymin );
-    vpyma = plP_dcmmy( ymax );
+    plgspa( &spxmin, &spxmax, &spymin, &spymax );
 
-    vpxmid = ( vpxmi + vpxma ) / 2.;
-    vpymid = ( vpymi + vpyma ) / 2.;
+    xsize = spxmax - spxmin;
+    ysize = spymax - spymin;
 
-    vpxlen = vpxma - vpxmi;
-    vpylen = vpyma - vpymi;
+    xoffset = xsize * xmin;
+    yoffset = ysize * ymin;
 
-    w_aspect = vpylen / vpxlen;
-    ratio    = aspect / w_aspect;
+    spxmax = spxmin + xsize * xmax;
+    spxmin = spxmin + xsize * xmin;
+    spymax = spymin + ysize * ymax;
+    spymin = spymin + ysize * ymin;
 
-/*
- * If ratio < 1, you are requesting an aspect ratio (y/x) less than the natural
- * aspect ratio of the specified window, and you will need to reduce the length
- * in y correspondingly.  Similarly, for ratio > 1, x length must be reduced.
- */
+    /* Adjust size for the requested edging */
+    xsize = spxmax - spxmin;
+    ysize = spymax - spymin;
 
-    if ( ratio <= 0. )
+    if ( aspect * xsize > ysize )
     {
-        plabort( "plvpas: Error in aspect ratio setting" );
-        return;
+        nxsize = ysize / aspect;
+        nysize = ysize;
     }
-    else if ( ratio < 1. )
-        vpylen = vpylen * ratio;
     else
-        vpxlen = vpxlen / ratio;
+    {
+        nxsize = xsize;
+        nysize = xsize * aspect;
+    }
 
-    vpxmi = vpxmid - vpxlen / 2.;
-    vpxma = vpxmid + vpxlen / 2.;
-    vpymi = vpymid - vpylen / 2.;
-    vpyma = vpymid + vpylen / 2.;
+/* center plot within page */
 
-    plsvpa( vpxmi, vpxma, vpymi, vpyma );
+    vpxmin = 0.5 * ( xsize - nxsize ) + xoffset;
+    vpxmax = vpxmin + nxsize;
+    vpymin = 0.5 * ( ysize - nysize ) + yoffset;
+    vpymax = vpymin + nysize;
+
+    plsvpa( vpxmin, vpxmax, vpymin, vpymax );
 }
 
 /*--------------------------------------------------------------------------*\
