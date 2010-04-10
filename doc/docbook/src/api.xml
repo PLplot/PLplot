@@ -3312,7 +3312,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Sets the character set to use for subsequent character drawing.  May
-      be called before calling initializing PLplot.
+      be called before initializing PLplot.
     </para>
 
     <variablelist>
