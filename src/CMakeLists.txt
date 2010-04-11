@@ -65,6 +65,19 @@ if(BUILD_SHARED_LIBS)
     PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
 endif(BUILD_SHARED_LIBS)
 
+option(HERSHEY_FALLBACK "Hershey fallback for Unicode fonts" ON)
+
+if(NOT HERSHEY_FALLBACK)
+  get_source_file_property(PLSYM_COMPILE_PROPS plsym.c COMPILE_FLAGS)
+  if(NOT PLSYM_COMPILE_PROPS)
+    set(PLSYM_COMPILE_PROPS)
+  endif(NOT PLSYM_COMPILE_PROPS)
+  set_source_files_properties(
+    plsym.c
+    PROPERTIES COMPILE_FLAGS "${PLSYM_COMPILE_PROPS} -DTEST_FOR_MISSING_GLYPHS"
+    )
+endif(NOT HERSHEY_FALLBACK)
+
 if(ENABLE_DYNDRIVERS)
   get_source_file_property(PLCORE_COMPILE_PROPS plcore.c COMPILE_FLAGS)
   # Deal with NOTFOUND case.
