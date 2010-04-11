@@ -174,7 +174,7 @@ endif(NOT PLD_extcairo)
 
 if(NOT WIN32)
   message(STATUS 
-    "WARNING: Not a Windows Computer. Setting wincairo driver to OFF."
+    "WARNING: Not a Windows platform so setting wincairo driver to OFF."
   )
   set(PLD_wincairo OFF CACHE BOOL "Enable wincairo device" FORCE)
 endif(NOT WIN32)
