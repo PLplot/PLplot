@@ -5,6 +5,14 @@
  *
  */
 
+// buffer (defined by subbuffer??) contains coordinates describing the
+// Hershey glyphs; findex (defined by subindex??) indexes those glyphs
+// by Hershey index position; and hersh (defined by subhersh?)
+// indexes the Hershey index by the plpoint "ascii" index that in the
+// range from 0 to 31 points to Hershey indices that point to useful
+// plotting symbols and from 32 to 126 indexes Hershey indices that
+// point to ascii printable characters.
+
 /*      short int findex[3000]    */
 /*      short int buffer[27000]   */
 /*      short int hersh[0:175,4]  */
@@ -230,7 +238,7 @@ short int subindex05[100] = {
     3499, 3541, 3573, 3621, 3656, 3688, 3722, 3757, 3798, 3829,
     3857, 3893, 3928, 3956, 3995, 4036,    0,    0,    0,    0,
     0,       0, 4079,    0,    0,    0,    0,    0,    0,    0,
-    0,       0,    0,    0,    0,    0,    0,    0,    0, 0
+    0,       0,    0,    0,    0,    0,    0,    0,    0,    0
 };
 short int subindex06[100] = {
     4091, 4112, 4133, 4151, 4172, 4193, 4205, 4231, 4245, 4257,
@@ -254,7 +262,7 @@ short int subindex07[100] = {
     6894, 6903, 6913, 6923, 6947, 6971, 7005, 7030,    0,    0,
     0,       0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,       0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,       0,    0,    0,    0, 7063, 7069, 7075, 7081, 7087
+    0,       0,    0,    0,26692, 7063, 7069, 7075, 7081, 7087
 };
 short int subindex08[100] = {
     7093, 7099, 7105, 7111, 7117, 7123, 7129, 7135, 7141, 7147,
