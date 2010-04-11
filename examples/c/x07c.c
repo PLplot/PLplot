@@ -9,8 +9,8 @@
 
 #include "plcdemos.h"
 
-static int base[18] =
-{ 0,  100,   200,  500,  600,  700,  800,  900,
+static int base[20] =
+{ 0,  100,   0,  100, 200,  500,  600,  700,  800,  900,
   2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900 };
 
 /*--------------------------------------------------------------------------*\
@@ -35,7 +35,7 @@ main( int argc, const char *argv[] )
     plinit();
 
     plfontld( 0 );
-    for ( l = 0; l < 18; l++ )
+    for ( l = 0; l < 20; l++ )
     {
         if (l == 2) plfontld(1);
         pladv( 0 );
@@ -78,7 +78,11 @@ main( int argc, const char *argv[] )
             }
         }
 
-        plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols" );
+        if( l < 2)
+        plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (compact)" );
+        else
+        plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (extended)" );
+          
     }
     plend();
     exit( 0 );
