@@ -6,10 +6,13 @@
 # This additional function definition is needed to provide a workaround for
 # CMake bug 9220.
 
-function(workaround_9220 language language_works)
-  #message("DEBUG: language = ${language}")
-  set(text
-    "project(test C)
+option(ENABLE_workaround_9220 "Enable a workaround for cmake bug 9220" ON)
+
+if(ENABLE_workaround_9220)
+  function(workaround_9220 language language_works)
+    #message("DEBUG: language = ${language}")
+    set(text
+      "project(test C)
 # Locations where PLplot cmake build system first looks for cmake modules.
 if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
   set(CMAKE_MODULE_PATH
@@ -29,81 +32,87 @@ message(STATUS \"CMAKE_GENERATOR = ${CMAKE_GENERATOR}\")
 #enable_language(${language} OPTIONAL)
 enable_language(${language})
 "
-    )
-  file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/language_tests/${language})
-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/language_tests/${language})
-  file(WRITE ${CMAKE_BINARY_DIR}/language_tests/${language}/CMakeLists.txt
-    ${text})
-  # Special language support files for various languages:
-  # N.B. This list of files has to be maintained to be consistent
-  # with anything special we do in terms of language support.
-  
-  if(language STREQUAL "Ada")
-    set(language_special ON)
-    set(language_files
-      language_support/cmake/CMakeAdaCompiler.cmake.in
-      language_support/cmake/CMakeAdaInformation.cmake
-      language_support/cmake/CMakeDetermineAdaCompiler.cmake
-      language_support/cmake/CMakeTestAdaCompiler.cmake
       )
-  elseif(language STREQUAL "D")
-    set(language_special ON)
-    set(language_files
-      language_support/cmake/CMakeDCompiler.cmake.in
-      language_support/cmake/CMakeDInformation.cmake
-      language_support/cmake/CMakeDetermineDCompiler.cmake
-      language_support/cmake/CMakeTestDCompiler.cmake
-      language_support/cmake/Platform/Linux-dmd.cmake
-      language_support/cmake/Platform/Linux-gdc.cmake
-      language_support/cmake/Platform/Windows-dmd.cmake
-      language_support/cmake/Platform/Windows-gdc.cmake
-      )
-  elseif(language STREQUAL "Fortran")
-    if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+    file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/language_tests/${language})
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/language_tests/${language})
+    file(WRITE ${CMAKE_BINARY_DIR}/language_tests/${language}/CMakeLists.txt
+      ${text})
+    # Special language support files for various languages:
+    # N.B. This list of files has to be maintained to be consistent
+    # with anything special we do in terms of language support.
+    
+    if(language STREQUAL "Ada")
       set(language_special ON)
       set(language_files
-	language_support/cmake-2.6/CMakeFortranInformation.cmake
-	language_support/cmake-2.6/Platform/Cygwin-GNU-Fortran.cmake
-	language_support/cmake-2.6/Platform/Windows-GNU-Fortran.cmake
-	language_support/cmake-2.6/Platform/Windows-df.cmake
-	language_support/cmake-2.6/Platform/Windows-f90.cmake
+	language_support/cmake/CMakeAdaCompiler.cmake.in
+	language_support/cmake/CMakeAdaInformation.cmake
+	language_support/cmake/CMakeDetermineAdaCompiler.cmake
+	language_support/cmake/CMakeTestAdaCompiler.cmake
 	)
-    else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+    elseif(language STREQUAL "D")
+      set(language_special ON)
+      set(language_files
+	language_support/cmake/CMakeDCompiler.cmake.in
+	language_support/cmake/CMakeDInformation.cmake
+	language_support/cmake/CMakeDetermineDCompiler.cmake
+	language_support/cmake/CMakeTestDCompiler.cmake
+	language_support/cmake/Platform/Linux-dmd.cmake
+	language_support/cmake/Platform/Linux-gdc.cmake
+	language_support/cmake/Platform/Windows-dmd.cmake
+	language_support/cmake/Platform/Windows-gdc.cmake
+	)
+    elseif(language STREQUAL "Fortran")
+      if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+	set(language_special ON)
+	set(language_files
+	  language_support/cmake-2.6/CMakeFortranInformation.cmake
+	  language_support/cmake-2.6/Platform/Cygwin-GNU-Fortran.cmake
+	  language_support/cmake-2.6/Platform/Windows-GNU-Fortran.cmake
+	  language_support/cmake-2.6/Platform/Windows-df.cmake
+	  language_support/cmake-2.6/Platform/Windows-f90.cmake
+	  )
+      else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+	set(language_special OFF)
+      endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
+    else(language STREQUAL "Ada")
       set(language_special OFF)
-    endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
-  else(language STREQUAL "Ada")
-    set(language_special OFF)
-  endif(language STREQUAL "Ada")
+    endif(language STREQUAL "Ada")
 
-  if(language_special)
-    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/language_tests/${language}/cmake/modules/Platform)
-    foreach(file ${language_files})
-      configure_file(
-	${CMAKE_SOURCE_DIR}/cmake/modules/${file}
-	${CMAKE_BINARY_DIR}/language_tests/${language}/cmake/modules/${file}
-	COPYONLY
-	)
-    endforeach(file ${language_files})
-  endif(language_special)
+    if(language_special)
+      file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/language_tests/${language}/cmake/modules/Platform)
+      foreach(file ${language_files})
+	configure_file(
+	  ${CMAKE_SOURCE_DIR}/cmake/modules/${file}
+	  ${CMAKE_BINARY_DIR}/language_tests/${language}/cmake/modules/${file}
+	  COPYONLY
+	  )
+      endforeach(file ${language_files})
+    endif(language_special)
 
-  execute_process(
-    COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/language_tests/${language}
-    RESULT_VARIABLE return_code
-    #OUTPUT_VARIABLE output
-    #ERROR_VARIABLE error
-    #OUTPUT_STRIP_TRAILING_WHITESPACE
-    #ERROR_STRIP_TRAILING_WHITESPACE
-    )
-  if(return_code EQUAL 0)
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/language_tests/${language}
+      RESULT_VARIABLE return_code
+      #OUTPUT_VARIABLE output
+      #ERROR_VARIABLE error
+      #OUTPUT_STRIP_TRAILING_WHITESPACE
+      #ERROR_STRIP_TRAILING_WHITESPACE
+      )
+    if(return_code EQUAL 0)
+      set(${language_works} ON CACHE INTERNAL "")
+    else(return_code EQUAL 0)
+      set(${language_works} OFF CACHE INTERNAL "")
+      #message(STATUS "A test cmake run with language = ${language} enabled failed with the following stdout and stderr:")
+      #message(STATUS "stdout = ${output}")
+      #message(STATUS "stderr = ${error}")
+    endif(return_code EQUAL 0)
+  endfunction(workaround_9220)
+else(ENABLE_workaround_9220)
+  function(workaround_9220 language language_works)
+    # Dummy version that always returns success.
     set(${language_works} ON CACHE INTERNAL "")
-  else(return_code EQUAL 0)
-    set(${language_works} OFF CACHE INTERNAL "")
-    #message(STATUS "A test cmake run with language = ${language} enabled failed with the following stdout and stderr:")
-    #message(STATUS "stdout = ${output}")
-    #message(STATUS "stderr = ${error}")
-  endif(return_code EQUAL 0)
-endfunction(workaround_9220)
+  endfunction(workaround_9220)
+endif(ENABLE_workaround_9220)
 
 # Temporary tests of the above function.
 #workaround_9220(CXX CXX_language_works)
