@@ -15,7 +15,7 @@ int
 main( int argc, const char *argv[] )
 {
     char  text[10];
-    int   i, j, k;
+    int   i, j, k, kind_font, font, maxfont;
     PLFLT x, y;
 
 /* Parse and process command line arguments */
@@ -25,6 +25,16 @@ main( int argc, const char *argv[] )
 /* Initialize plplot */
 
     plinit();
+
+    for(kind_font=0;kind_font<2; kind_font++) {
+    plfontld (kind_font);
+    if(kind_font == 0)
+      maxfont = 1;
+      else
+        maxfont = 4;
+
+    for(font=0; font<maxfont; font++) {
+      plfont(font+1);
 
     pladv( 0 );
 
@@ -68,7 +78,12 @@ main( int argc, const char *argv[] )
         }
     }
 
-    plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols" );
+      if(kind_font == 0)
+    plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (compact)" );
+      else
+    plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (extended)" );
+}
+}
     plend();
     exit( 0 );
 }
