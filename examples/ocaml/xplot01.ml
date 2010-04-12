@@ -98,10 +98,9 @@ let plot1 ?stream ?fontset (do_test, test_xor) params =
     P.points ~symbol:P.Solar_symbol P.Green xs ys;
     (* Draw the line through the data *)
     P.lines P.Red x y;
+    (* Show the axes *)
+    P.default_axes;
   ];
-
-  (* Show the axes *)
-  P.finish_page ~stream ();
 
   (* All done. *)
   stream
@@ -128,15 +127,17 @@ let plot2 stream =
     )
   in
 
-  (* Draw the line *)
-  P.plot ~stream [P.lines ~width:2 P.Red x y];
-
   (* Show the axes *)
-  let axis =
+  let x_axis, y_axis =
     P.Axis :: P.default_axis_options,
     P.Axis :: P.default_axis_options
   in
-  P.finish_page ~stream ~axis ();
+
+  (* Draw the line *)
+  P.plot ~stream [
+    P.lines ~width:2 P.Red x y;
+    P.axes x_axis y_axis;
+  ];
 
   (* All done. *)
   ()
@@ -149,15 +150,6 @@ let plot3 stream =
      from -1.2 to 1.2.*)
   P.start_page ~stream  (0.0, -1.2) (360.0, 1.2) P.Greedy;
 
-  (* Superimpose a dashed line grid, with 1.5 mm marks and spaces. *)
-  P.with_stream ~stream (
-    fun () ->
-      plstyl [|mark1|] [|space1|];
-      P.set_color P.Yellow;
-      P.plot_axes ~xtick:30.0 ~ytick:0.2 [P.Major_grid] [P.Major_grid];
-      plstyl [||] [||];
-  );
-
   P.set_color ~stream P.Red;
   P.label ~stream "Angle (degrees)" "sine"
     "#frPLplot Example 1 - Sine function";
@@ -165,22 +157,28 @@ let plot3 stream =
   let x = Array.init 101 (fun i -> 3.6 *. float_of_int i) in
   let y = Array.init 101 (fun i -> sin (x.(i) *. pi /. 180.0)) in
 
-  P.plot ~stream [P.lines P.Brown x y];
-
   (* For the final graph we wish to override the default axis attributes,
      including tick intervals.
      Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. *)
-  let axis =
+  let x_axis, y_axis =
     (* x-axis *)
-    [P.Frame0; P.Frame1; P.Label; P.Minor_ticks; P.Major_ticks],
+    [P.Frame0; P.Frame1; P.Label; P.Minor_ticks; P.Major_tick_spacing 60.0],
     (* y-axis *)
     [
-      P.Frame0; P.Frame1; P.Label; P.Minor_ticks; P.Major_ticks;
+      P.Frame0; P.Frame1; P.Label; P.Minor_ticks; P.Major_tick_spacing 0.2;
       P.Vertical_label
     ]
   in
 
-  P.finish_page ~stream ~axis ~xtick:60.0 ~ytick:0.2 ();
+  P.plot ~stream [
+    (* Superimpose a dashed line grid, with 1.5 mm marks and spaces. *)
+    P.axes ~color:P.Yellow ~style:(P.Custom_line [mark1, space1])
+      [P.Major_grid; P.Major_tick_spacing 30.0]
+      [P.Major_grid; P.Major_tick_spacing 0.2];
+    P.lines P.Brown x y;
+    (* The normal plot axes *)
+    P.axes x_axis y_axis;
+  ];
 
   (* All done. *)
   ()
@@ -232,9 +230,9 @@ let main fontset =
 
   plot3 stream;
 
-  (* Don't forget to finish off!  Each function does the needed end-of-page
-     steps, so all we need to do here is wrap up the plotting session. *)
-  P.finish ~stream ~f:(fun () -> ()) ();
+  (* Don't forget to finish off!  All we need to do here is close up the
+     plot stream. *)
+  P.end_stream ~stream ();
   ()
 
 let () = main true

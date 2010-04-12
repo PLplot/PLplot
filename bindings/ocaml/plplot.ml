@@ -124,7 +124,10 @@ module Plot = struct
     | Unconventional_label
     | Label
     | Custom_label
-    | Minor_ticks | Major_ticks
+    | Minor_ticks
+    | Minor_tick_count of int
+    | Major_ticks
+    | Major_tick_spacing of float
     | Vertical_label
 
   type stream_t = {
@@ -179,6 +182,8 @@ module Plot = struct
   type plot_t =
     (* Standard plot elements *)
     | Arc of (color_t * float * float * float * float * float * float * bool)
+    | Axes of
+      (color_t * axis_options_t list * axis_options_t list * int * line_style_t)
     | Contours of (color_t * pltr_t * float array * float array array)
     | Image of image_t
     | Image_fr of (image_t * (float * float))
@@ -485,6 +490,13 @@ module Plot = struct
   let arc ?(fill = false) color x y a b angle1 angle2 =
     Arc (color, x, y, a, b, angle1, angle2, fill)
 
+  (** [axes ?color ?style ?width xopt yopt] *)
+  let axes ?(color = Black) ?(style = Solid_line) ?(width = 1) xopt yopt =
+    Axes (color, xopt, yopt, width, style)
+
+  (** Default axes *)
+  let default_axes = axes default_axis_options default_axis_options
+
   (** [circle ?fill color x y r] - A special case of [arc]. *)
   let circle ?fill color x y r = arc ?fill color x y r r 0.0 360.0
 
@@ -647,6 +659,38 @@ module Plot = struct
         ()
     )
 
+  (** An easier to deduce alternative to {Plplot.plbox} *)
+  let plot_axes ?stream xoptions yoptions =
+    let xtick = ref 0.0 in
+    let xsub = ref 0 in
+    let ytick = ref 0.0 in
+    let ysub = ref 0 in
+    let map_axis_options tick sub ol =
+      List.map (
+        function
+        | Axis -> "a"
+        | Frame0 -> "b"
+        | Frame1 -> "c"
+        | Time -> "d"
+        | Fixed_point -> "f"
+        | Major_grid -> "g"
+        | Minor_grid -> "h"
+        | Invert_ticks -> "i"
+        | Log -> "l"
+        | Unconventional_label -> "m"
+        | Label -> "n"
+        | Custom_label -> "o"
+        | Minor_ticks -> "s"
+        | Minor_tick_count t_sub -> sub := t_sub; "s"
+        | Major_ticks -> "t"
+        | Major_tick_spacing t_space -> tick := t_space; "t"
+        | Vertical_label -> "v"
+      ) ol
+    in
+    let xopt = String.concat "" (map_axis_options xtick xsub xoptions) in
+    let yopt = String.concat "" (map_axis_options ytick ysub yoptions) ^ "v" in
+    with_stream ?stream (fun () -> plbox xopt !xtick !xsub yopt !ytick !ysub)
+
   (** [plot stream l] plots the data in [l] to the plot [stream]. *)
   let rec plot ?stream plottable_list =
     (* TODO: Add legend support. *)
@@ -679,6 +723,17 @@ module Plot = struct
     let plot_arc (color, x, y, a, b, angle1, angle2, fill) =
       set_color_in color (
         fun () -> plarc x y a b angle1 angle2 fill;
+      )
+    in
+    let plot_axes (color, xopt, yopt, width, style) =
+      set_color_in color (
+        fun () ->
+          let old_width = plgwid () in
+          plwid width;
+          set_line_style style;
+          plot_axes xopt yopt;
+          set_line_style Solid_line;
+          plwid old_width;
       )
     in
     let plot_contours (color, pltr, contours, data) =
@@ -801,6 +856,7 @@ module Plot = struct
     let one_plot p =
       match p with
       | Arc a -> plot_arc a
+      | Axes ax -> plot_axes ax
       | Contours c -> plot_contours c
       | Image i -> plot_image i
       | Image_fr (i, scale) -> plot_imagefr i scale
@@ -824,33 +880,6 @@ module Plot = struct
   (** Label the axes and plot title *)
   let label ?stream x y title =
     with_stream ?stream (fun () -> pllab x y title)
-
-  (** An easier to deduce alternative to {Plplot.plbox} *)
-  let plot_axes ?stream ?(xtick = 0.0) ?(xsub =0)
-                ?(ytick = 0.0) ?(ysub = 0) xoptions yoptions =
-    let map_axis_options ol =
-      List.map (
-        function
-        | Axis -> "a"
-        | Frame0 -> "b"
-        | Frame1 -> "c"
-        | Time -> "d"
-        | Fixed_point -> "f"
-        | Major_grid -> "g"
-        | Minor_grid -> "h"
-        | Invert_ticks -> "i"
-        | Log -> "l"
-        | Unconventional_label -> "m"
-        | Label -> "n"
-        | Custom_label -> "o"
-        | Minor_ticks -> "s"
-        | Major_ticks -> "t"
-        | Vertical_label -> "v"
-      ) ol
-    in
-    let xopt = String.concat "" (map_axis_options xoptions) in
-    let yopt = String.concat "" (map_axis_options yoptions) ^ "v" in
-    with_stream ?stream (fun () -> plbox xopt xtick xsub yopt ytick ysub)
 
   (** [colorbar_base ?label ?log ?pos values] draws a colorbar, using the given
       values for the color range. [label] gives the position and text of the
@@ -1065,48 +1094,17 @@ module Plot = struct
         colorbar_base ?custom_axis ?label ?log ?pos ?width (`shade values)
     )
 
-  (** Default page ending steps.  Just draw the plot axes. *)
-  let default_finish ?stream ?axis ?xtick ?ytick () =
-    let xopt, yopt =
-      match axis with
-      | None -> default_axis_options, default_axis_options
-      | Some s -> s
-    in
-    set_color_in ?stream Black (
-      fun () ->
-        plot_axes ?stream ?xtick xopt ?ytick yopt;
-    )
-
-  (** Plot axes, but don't advance the page or end the session.  This is used
-      internally by [finish]. *)
-  let finish_page ?stream ?f ?post ?axis ?xtick ?ytick () =
-    with_stream ?stream (
-      fun () ->
-        let actual_finish =
-          match f with
-          | Some custom_finish -> custom_finish
-          | None -> default_finish ?stream ?axis ?xtick ?ytick
-        in
-        actual_finish ();
-        Option.may (fun f -> f ()) post;
-    )
-
-  (** Finish the current page, start a new one. *)
-  let next_page ?stream ?f ?post ?axis ?xtick ?ytick
-                (x0, y0) (x1, y1) axis_scaling =
-    finish_page ?stream ?f ?post ?axis ?xtick ?ytick ();
-    start_page ?stream (x0, y0) (x1, y1) axis_scaling;
-    ()
+  (** Finish the current page, start a new one (alias for {!start_page}). *)
+  let next_page = start_page
 
   (** End the current plot stream *)
-  let end_stream ~stream =
-    with_stream ~stream plend1
-
-  (** Finish up the plot by plotting axes and ending the session.  This must
-      be called after plotting is complete. *)
-  let finish ?stream ?f ?post ?axis ?xtick ?ytick () =
-    finish_page ?stream ?f ?post ?axis ?xtick ?ytick ();
+  let end_stream ?stream () =
     with_stream ?stream plend1
+
+  (** Finish up the plot by plotting axes and ending the stream. *)
+  let finish ?stream () =
+    plot ?stream [default_axes];
+    end_stream ?stream ()
 end
 
 (** The [Quick_plot] module is intended to be used for quick, "throw-away"
@@ -1158,7 +1156,7 @@ module Quick_plot = struct
     let xs_list, ys_list = List.split xs_ys_list in
     let xmin, xmax, ymin, ymax = extents xs_list ys_list in
     let ys_array = Array.of_list ys_list in
-    let p = init ?filename (xmin, ymin) (xmax, ymax) Greedy device in
+    let stream = init ?filename (xmin, ymin) (xmax, ymax) Greedy device in
     let plottable_points =
       Array.to_list (
         Array.mapi (
@@ -1168,9 +1166,13 @@ module Quick_plot = struct
         ) (Array.of_list xs_list)
       )
     in
-    plot ~stream:p plottable_points;
-    Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
-    finish ~stream:p ~axis:(maybe_log log) ();
+    let x_axis, y_axis = maybe_log log in
+    plot ~stream [
+      list plottable_points;
+      axes x_axis y_axis;
+    ];
+    Option.may (fun (x, y, t) -> label ~stream x y t) labels;
+    end_stream ~stream ();
     ()
 
   (** [lines [xs, ys; ...] plots the line segments described by the coordinates
@@ -1179,7 +1181,7 @@ module Quick_plot = struct
     let xs_list, ys_list = List.split xs_ys_list in
     let xmin, xmax, ymin, ymax = extents xs_list ys_list in
     let ys_array = Array.of_list ys_list in
-    let p = init ?filename (xmin, ymin) (xmax, ymax) Greedy device in
+    let stream = init ?filename (xmin, ymin) (xmax, ymax) Greedy device in
     let colors = Array.mapi (fun i _ -> Index_color (i + 1)) ys_array in
     let plottable_lines =
       Array.to_list (
@@ -1188,10 +1190,14 @@ module Quick_plot = struct
         ) (Array.of_list xs_list)
       )
     in
-    plot ~stream:p plottable_lines;
-    Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
-    Option.may (fun n -> draw_legend ~stream:p n (Array.to_list colors)) names;
-    finish ~stream:p ~axis:(maybe_log log) ();
+    let x_axis, y_axis = maybe_log log in
+    plot ~stream [
+      list plottable_lines;
+      axes x_axis y_axis;
+    ];
+    Option.may (fun (x, y, t) -> label ~stream x y t) labels;
+    Option.may (fun n -> draw_legend ~stream n (Array.to_list colors)) names;
+    end_stream ~stream ();
     ()
 
   (** [image ?log m] plots the image [m] with a matching colorbar.  If [log] is
@@ -1201,12 +1207,15 @@ module Quick_plot = struct
     let xmin, ymin = 0.0, 0.0 in
     let xmax, ymax = Array_ext.matrix_dims m in
     let xmax, ymax = float_of_int xmax, float_of_int ymax in
-    let p = init ?filename (xmin, ymin) (xmax, ymax) Equal_square device in
-    Option.may (load_palette ~stream:p) palette;
-    plot ~stream:p [image (xmin, ymin) (xmax, ymax) m];
-    Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
-    colorbar ~stream:p ?log ~pos:(Right 0.12) (m_min, m_max);
-    finish ~stream:p ();
+    let stream = init ?filename (xmin, ymin) (xmax, ymax) Equal_square device in
+    Option.may (load_palette ~stream) palette;
+    plot ~stream [
+      image (xmin, ymin) (xmax, ymax) m;
+      default_axes;
+    ];
+    Option.may (fun (x, y, t) -> label ~stream x y t) labels;
+    colorbar ~stream ?log ~pos:(Right 0.12) (m_min, m_max);
+    end_stream ~stream ();
     ()
 
   (** [func ?point ?step fs (min, max)] plots the functions [fs] from [x = min]
@@ -1237,10 +1246,13 @@ module Quick_plot = struct
     in
     let ymax, ymin = plMinMax2dGrid ys in
     let stream = init ?filename (xmin, ymin) (xmax, ymax) Greedy device in
-    plot ~stream plot_content;
+    plot ~stream [
+      list plot_content;
+      default_axes;
+    ];
     Option.may (fun n -> draw_legend ~stream n (Array.to_list colors)) names;
     Option.may (fun (x, y, t) -> label ~stream x y t) labels;
-    finish ~stream ();
+    end_stream ~stream ();
     ()
 
   let shades ?filename ?(device = Window Cairo) ?labels ?log ?palette ?contours
@@ -1248,18 +1260,21 @@ module Quick_plot = struct
     let xmin, ymin = 0.0, 0.0 in
     let xmax, ymax = Array_ext.matrix_dims m in
     let xmax, ymax = float_of_int xmax, float_of_int ymax in
-    let p = init ?filename (xmin, ymin) (xmax, ymax) Equal_square device in
-    Option.may (load_palette ~stream:p) palette;
+    let stream = init ?filename (xmin, ymin) (xmax, ymax) Equal_square device in
+    Option.may (load_palette ~stream) palette;
     let contours =
       contours |? (
         let m_max, m_min = plMinMax2dGrid m in
         Array_ext.range ~n:11 m_min m_max
       )
     in
-    plot ~stream:p [shades (xmin, ymin) (xmax, ymax) contours m];
-    Option.may (fun (x, y, t) -> label ~stream:p x y t) labels;
-    shadebar ~stream:p ?log ~pos:(Right 0.12) contours;
-    finish ~stream:p ();
+    plot ~stream [
+      shades (xmin, ymin) (xmax, ymax) contours m;
+      default_axes;
+    ];
+    Option.may (fun (x, y, t) -> label ~stream x y t) labels;
+    shadebar ~stream ?log ~pos:(Right 0.12) contours;
+    end_stream ~stream ();
     ()
 end
 

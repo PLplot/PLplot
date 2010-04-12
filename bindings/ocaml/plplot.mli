@@ -55,7 +55,9 @@ module Plot :
       | Label
       | Custom_label
       | Minor_ticks
+      | Minor_tick_count of int
       | Major_ticks
+      | Major_tick_spacing of float
       | Vertical_label
 
     (** A plot stream. *)
@@ -172,6 +174,11 @@ module Plot :
       ?stream:stream_t ->
       float * float -> float * float -> plot_scaling_t -> unit
 
+    (** An alias for {!start_page}. *)
+    val next_page :
+      ?stream:stream_t ->
+      float * float -> float * float -> plot_scaling_t -> unit
+
     (** Create a new plot instance.  See {!init} for a description of the
         parameters. *)
     val make :
@@ -245,6 +252,17 @@ module Plot :
     val arc :
       ?fill:bool ->
       color_t -> float -> float -> float -> float -> float -> float -> plot_t
+
+    (** [axes ?color ?style ?width xopt yopt] *)
+    val axes :
+      ?color:color_t ->
+      ?style:line_style_t ->
+      ?width:int ->
+      axis_options_t list -> axis_options_t list -> plot_t
+
+    (** [default_axes] is equivalent to
+        [axes default_axis_options default_axis_options] *)
+    val default_axes : plot_t
 
     (** [circle ?fill color x y r] *)
     val circle : ?fill:bool -> color_t -> float -> float -> float -> plot_t
@@ -404,43 +422,16 @@ module Plot :
     (** Draw the plot axes on the current plot page *)
     val plot_axes :
       ?stream:stream_t ->
-      ?xtick:float ->
-      ?xsub:int ->
-      ?ytick:float ->
-      ?ysub:int ->
       axis_options_t list -> axis_options_t list -> unit
 
     (** {4 Finishing up a plot page} *)
 
-    (** Plot axes, but don't advance the page or end the session.  This is used
-        internally by [finish]. *)
-    val finish_page :
-      ?stream:stream_t ->
-      ?f:(unit -> unit) ->
-      ?post:(unit -> unit) ->
-      ?axis:axis_options_t list * axis_options_t list ->
-      ?xtick:float -> ?ytick:float ->
-      unit -> unit
+    (** [end_stream ?stream ()] ends [stream].  This or {!finish} should be
+        called once all plotting is complete. *)
+    val end_stream : ?stream:stream_t -> unit -> unit
 
-    (** Finish the current page, start a new one. *)
-    val next_page :
-      ?stream:stream_t ->
-      ?f:(unit -> unit) ->
-      ?post:(unit -> unit) ->
-      ?axis:axis_options_t list * axis_options_t list ->
-      ?xtick:float ->
-      ?ytick:float ->
-      float * float -> float * float -> plot_scaling_t -> unit
-
-    (** [finish ?stream xstep ystep] finishes up the plot [stream], using
-        [xstep] and [ystep] for the axis tick. *)
-    val finish :
-      ?stream:stream_t ->
-      ?f:(unit -> unit) ->
-      ?post:(unit -> unit) ->
-      ?axis:axis_options_t list * axis_options_t list ->
-      ?xtick:float -> ?ytick:float ->
-      unit -> unit
+    (** [finish ?stream ()] draws default x and y axes, then closes [stream]. *)
+    val finish : ?stream:stream_t -> unit -> unit
   end
 
 (** {3 A module for quick, "throw-away" plots} *)
