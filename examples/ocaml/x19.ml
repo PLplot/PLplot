@@ -144,5 +144,33 @@ let () =
   (* This call to plmeridians is also after the set_mapform call, so it uses
      the same projection as the plmap call above. *)
   plmeridians 10.0 10.0 0.0 360.0 (-10.0) 80.0;
+
+  plunset_mapform ();
+
+  (* Polar, Northern hemisphere, this time with a PLplot-wide transform *)
+  let minx = 0.0 in
+  let maxx = 360.0 in
+
+  plstransform mapform19;
+
+  pllsty 1;
+  plenv (-75.) 75. (-75.) 75. 1 (-1);
+  (* No need to set the map transform here as the global transform will be
+     used. *)
+  plmap "globe" minx maxx miny maxy;
+
+  pllsty 2;
+  plmeridians 10.0 10.0 0.0 360.0 (-10.0) 80.0;
+
+  (* Show Baltimore, MD on the map *)
+  plcol0 2;
+  plssym 0.0 2.0;
+  plpoin [|-76.6125|] [|39.2902778|] 18;
+  plssym 0.0 1.0;
+  plptex ~-.76.6125 43.0 0.0 0.0 0.0 "Baltimore, MD";
+
+  (* For OCaml, this is how the global transform is cleared *)
+  plunset_transform ();
+
   plend ();
   ()

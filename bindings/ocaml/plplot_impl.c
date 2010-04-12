@@ -33,13 +33,14 @@
 
 #include <stdio.h>
 
-#define MAX_EXCEPTION_MESSAGE_LENGTH     1000
-#define CAML_PLPLOT_PLOTTER_FUNC_NAME    "caml_plplot_plotter"
-#define CAML_PLPLOT_MAPFORM_FUNC_NAME    "caml_plplot_mapform"
-#define CAML_PLPLOT_DEFINED_FUNC_NAME    "caml_plplot_defined"
-#define CAML_PLPLOT_LABEL_FUNC_NAME      "caml_plplot_customlabel"
-#define CAML_PLPLOT_ABORT_FUNC_NAME      "caml_plplot_abort"
-#define CAML_PLPLOT_EXIT_FUNC_NAME       "caml_plplot_exit"
+#define MAX_EXCEPTION_MESSAGE_LENGTH       1000
+#define CAML_PLPLOT_PLOTTER_FUNC_NAME      "caml_plplot_plotter"
+#define CAML_PLPLOT_MAPFORM_FUNC_NAME      "caml_plplot_mapform"
+#define CAML_PLPLOT_DEFINED_FUNC_NAME      "caml_plplot_defined"
+#define CAML_PLPLOT_LABEL_FUNC_NAME        "caml_plplot_customlabel"
+#define CAML_PLPLOT_ABORT_FUNC_NAME        "caml_plplot_abort"
+#define CAML_PLPLOT_EXIT_FUNC_NAME         "caml_plplot_exit"
+#define CAML_PLPLOT_TRANSFORM_FUNC_NAME    "caml_plplot_transform"
 
 typedef void ( *ML_PLOTTER_FUNC )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer );
 typedef PLINT ( *ML_DEFINED_FUNC )( PLFLT, PLFLT );
@@ -200,6 +201,30 @@ int ml_exit( const char* message )
     CAMLreturn( Int_val( result ) );
 }
 
+// A simple routine to wrap a properly registered OCaml callback in a form
+// usable by PLPlot routines.  If an appropriate callback is not registered
+// then nothing is done.
+void ml_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
+{
+    CAMLparam0();
+    CAMLlocal1( result );
+
+    // Get the OCaml callback function (if there is one)
+    static value * transform = NULL;
+    if ( transform == NULL )
+        transform = caml_named_value( CAML_PLPLOT_TRANSFORM_FUNC_NAME );
+
+    // No check to see if a callback function has been designated yet,
+    // because that is checked before we get to this point.
+    result =
+        caml_callback2( *transform, caml_copy_double( x ), caml_copy_double( y ) );
+
+    *xt = Double_val( Field( result, 0 ) );
+    *yt = Double_val( Field( result, 1 ) );
+
+    CAMLreturn0;
+}
+
 // Check if the matching OCaml callback is defined.  Return NULL if it is not,
 // and the proper function pointer if it is.
 ML_PLOTTER_FUNC get_ml_plotter_func()
@@ -312,6 +337,27 @@ value ml_plsexit( value unit )
     {
         // Handler is defined
         plsexit( ml_exit );
+    }
+    CAMLreturn( Val_unit );
+}
+
+// Set a global coordinate transform
+value ml_plstransform( value unit )
+{
+    CAMLparam1( unit );
+    static value * handler = NULL;
+    if ( handler == NULL )
+        handler = caml_named_value( CAML_PLPLOT_TRANSFORM_FUNC_NAME );
+
+    if ( handler == NULL || Val_int( 0 ) == *handler )
+    {
+        // No handler defined
+        plstransform( NULL, NULL );
+    }
+    else
+    {
+        // Handler is defined
+        plstransform( ml_transform, NULL );
     }
     CAMLreturn( Val_unit );
 }

@@ -292,10 +292,7 @@ plmeridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
     {
         if ( mapform == NULL )
         {
-            y[0] = y[1] = yy;
-            x[0] = minlong;
-            x[1] = maxlong;
-            plline( 2, x, y );
+            plpath( NSEG, minlong, yy, maxlong, yy );
         }
         else
         {
@@ -316,10 +313,7 @@ plmeridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
     {
         if ( mapform == NULL )
         {
-            x[0] = x[1] = xx;
-            y[0] = minlat;
-            y[1] = maxlat;
-            plline( 2, x, y );
+            plpath( NSEG, xx, minlat, xx, maxlat );
         }
         else
         {

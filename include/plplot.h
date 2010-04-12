@@ -656,6 +656,7 @@ typedef plf2ops_t * PLF2OPS;
 #define    plgcolbg                 c_plgcolbg
 #define    plgcolbga                c_plgcolbga
 #define    plgcompression           c_plgcompression
+#define    plstransform             c_plstransform
 #define    plgdev                   c_plgdev
 #define    plgdidev                 c_plgdidev
 #define    plgdiori                 c_plgdiori
@@ -688,6 +689,7 @@ typedef plf2ops_t * PLF2OPS;
 #define    pllab                    c_pllab
 #define    pllightsource            c_pllightsource
 #define    plline                   c_plline
+#define    plpath                   c_plpath
 #define    plline3                  c_plline3
 #define    pllsty                   c_pllsty
 #define    plmap                    c_plmap
@@ -1046,6 +1048,10 @@ c_plgcolbga( PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
 PLDLLIMPEXP void
 c_plgcompression( PLINT *compression );
 
+/* Set the coordinate transform */
+PLDLLIMPEXP void
+c_plstransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), PLPointer coordinate_transform_data );
+
 /* Get the current device (keyword) name */
 
 PLDLLIMPEXP void
@@ -1348,6 +1354,11 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 
 PLDLLIMPEXP void
 c_plpat( PLINT nlin, PLINT *inc, PLINT *del );
+
+/* Draw a line connecting two points, accounting for coordinate transforms */
+
+PLDLLIMPEXP void
+c_plpath( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
 
 /* Plots array y against x for n points using ASCII code "code".*/
 

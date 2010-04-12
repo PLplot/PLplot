@@ -71,6 +71,7 @@
 [mlname(plot3d)] void c_plot3d ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt, boolean side );
 [mlname(plot3dc)] void c_plot3dc ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt, [size_is(nlevel), in] double * clevel, int nlevel );
 [mlname(plpat)] void c_plpat ( int nlin, [in, size_is(nlin)] int * inc, [in, size_is(nlin)] int * del );
+[mlname(plpath)] void c_plpath ( int n, double x1, double y1, double x2, double y2);
 [mlname(plpoin)] void c_plpoin ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, int code );
 [mlname(plpoin3)] void c_plpoin3 ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, [in, size_is(n)] double * z, int code );
 [mlname(plprec)] void c_plprec ( int setp, int prec );

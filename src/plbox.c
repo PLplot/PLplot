@@ -24,9 +24,10 @@
 
 #include "plplotP.h"
 
-#define STRING_LEN    40
-#define FORMAT_LEN    10
-#define TEMP_LEN      30
+#define STRING_LEN         40
+#define FORMAT_LEN         10
+#define TEMP_LEN           30
+#define N_EDGE_SEGMENTS    50
 
 static PLFLT xlog[8] =
 {

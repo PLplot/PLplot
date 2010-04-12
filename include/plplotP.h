@@ -195,25 +195,28 @@ extern PLDLLIMPEXP_DATA( PLStream * ) plsc;
 /* Lots of cool math macros */
 
 #ifndef MAX
-#define MAX( a, b )           ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
+#define MAX( a, b )                      ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 #endif
 #ifndef MIN
-#define MIN( a, b )           ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
+#define MIN( a, b )                      ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 #endif
 #ifndef ABS
-#define ABS( a )              ( ( a ) < 0 ? -( a ) : ( a ) )
+#define ABS( a )                         ( ( a ) < 0 ? -( a ) : ( a ) )
 #endif
 #ifndef ROUND
-#define ROUND( a )            (PLINT) ( ( a ) < 0. ? ( ( a ) - .5 ) : ( ( a ) + .5 ) )
+#define ROUND( a )                       (PLINT) ( ( a ) < 0. ? ( ( a ) - .5 ) : ( ( a ) + .5 ) )
 #endif
 #ifndef BETW
-#define BETW( ix, ia, ib )    ( ( ( ix ) <= ( ia ) && ( ix ) >= ( ib ) ) || ( ( ix ) >= ( ia ) && ( ix ) <= ( ib ) ) )
+#define BETW( ix, ia, ib )               ( ( ( ix ) <= ( ia ) && ( ix ) >= ( ib ) ) || ( ( ix ) >= ( ia ) && ( ix ) <= ( ib ) ) )
 #endif
 #ifndef SSQR
-#define SSQR( a, b )          sqrt( ( a ) * ( a ) + ( b ) * ( b ) )
+#define SSQR( a, b )                     sqrt( ( a ) * ( a ) + ( b ) * ( b ) )
 #endif
 #ifndef SIGN
-#define SIGN( a )             ( ( a ) < 0 ? -1 : 1 )
+#define SIGN( a )                        ( ( a ) < 0 ? -1 : 1 )
+#endif
+#ifndef TRANSFORM
+#define TRANSFORM( x, y, xnew, ynew )    if ( plsc->coordinate_transform ) { plsc->coordinate_transform( ( x ), ( y ), ( xnew ), ( ynew ), plsc->coordinate_transform_data ); } else { *xnew = x; *ynew = y; }
 #endif
 
 /* A coordinate value that should never occur */

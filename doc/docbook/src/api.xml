@@ -7934,6 +7934,106 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
+  <sect1 id="plpath" renderas="sect3">
+    <title>
+      <function>plpath</function>: Draw a line between two points, accounting
+      for coordinate transforms.
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plpath</function>
+	  </funcdef>
+	  <paramdef><parameter>n</parameter></paramdef>
+	  <paramdef><parameter>x1</parameter></paramdef>
+	  <paramdef><parameter>y1</parameter></paramdef>
+	  <paramdef><parameter>x2</parameter></paramdef>
+	  <paramdef><parameter>y2</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Joins the point <literal>(<parameter>x1</parameter>,
+      <parameter>y1</parameter>)</literal> to
+      <literal>(<parameter>x2</parameter>,
+      <parameter>y2</parameter>)</literal>.  If a global coordinate transform
+      is defined then the line is broken in to
+      <literal><parameter>n</parameter></literal> segments to approximate the
+      path.  If no transform is defined then this simply acts like a call to
+      &pljoin;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>n</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    number of points to use to approximate the path.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>x1</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    x coordinate of first point.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y1</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    y coordinate of first point.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>x2</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    x coordinate of second point.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y2</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    y coordinate of second point.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plpath(n,x1,y1,x2,y2)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
+  </sect1>
+
   <sect1 id="plpoin" renderas="sect3">
     <title>
       <function>plpoin</function>: Plots a character at the specified points
@@ -12895,6 +12995,79 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       This function is not used in any examples.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plstransform" renderas="sect3">
+    <title>
+      <function>plstransform</function>: Set a global coordinate transform
+      function
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plstransform</function>
+	  </funcdef>
+	  <paramdef><parameter>transform_fun</parameter></paramdef>
+	  <paramdef><parameter>data</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      This function can be used to define a coordinate transformation which
+      affects all elements drawn within the current plot window.  The
+      transformation function is similar to that provided for the &plmap;
+      and &plmeridians; functions.  The
+      <literal><parameter>data</parameter></literal> parameter may be used to
+      pass extra data to
+      <literal><parameter>transform_fun</parameter></literal>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>transform_fun</parameter>
+          (<literal>void (*) (PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer)
+          </literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to a function that defines a transformation from the
+            input (x, y) coordinate to a new plot world coordiante.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>data</parameter>
+	  (<literal>PLPointer</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Optional extra data for
+            <parameter><literal>transform_fun</literal></parameter>.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    General: <function>plstransform(transform_fun, data)</function>
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 19.
     </para>
 
   </sect1>

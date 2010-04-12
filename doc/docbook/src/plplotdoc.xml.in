@@ -153,6 +153,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plline '<link linkend="plline"><function>plline</function></link>'>
 <!ENTITY plline3 '<link linkend="plline3"><function>plline3</function></link>'>
 <!ENTITY pllsty '<link linkend="pllsty"><function>pllsty</function></link>'>
+<!ENTITY plmap '<link linkend="plmap"><function>plmap</function></link>'>
+<!ENTITY plmeridians '<link linkend="plmeridians"><function>plmeridians</function></link>'>
 <!ENTITY plMergeOpts '<link linkend="plMergeOpts"><function>plMergeOpts</function></link>'>
 <!ENTITY plmesh '<link linkend="plmesh"><function>plmesh</function></link>'>
 <!ENTITY plmeshc '<link linkend="plmeshc"><function>plmeshc</function></link>'>
@@ -169,6 +171,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plparseoptsfortran95 '<link linkend="plparseoptsfortran95"><function>plparseoptsfortran95</function></link>'>
 <!ENTITY plparseoptsfortran77 '<link linkend="plparseoptsfortran77"><function>plparseoptsfortran77</function></link>'>
 <!ENTITY plpat '<link linkend="plpat"><function>plpat</function></link>'>
+<!ENTITY plpath '<link linkend="plpath"><function>plpath</function></link>'>
 <!ENTITY plpoin '<link linkend="plpoin"><function>plpoin</function></link>'>
 <!ENTITY plpoin3 '<link linkend="plpoin3"><function>plpoin3</function></link>'>
 <!ENTITY plpoly3 '<link linkend="plpoly3"><function>plpoly3</function></link>'>
@@ -224,6 +227,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plstripc '<link linkend="plstripc"><function>plstripc</function></link>'>
 <!ENTITY plstripd '<link linkend="plstripd"><function>plstripd</function></link>'>
 <!ENTITY plstart '<link linkend="plstart"><function>plstart</function></link>'>
+<!ENTITY plstransform '<link linkend="plstransform"><function>plstransform</function></link>'>
 <!ENTITY plstyl '<link linkend="plstyl"><function>plstyl</function></link>'>
 <!ENTITY plsurf3d '<link linkend="plsurf3d"><function>plsurf3d</function></link>'>
 <!ENTITY plsvect '<link linkend="plsvect"><function>plsvect</function></link>'>

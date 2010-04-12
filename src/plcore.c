@@ -4230,3 +4230,16 @@ plP_image( PLFLT *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT
     plsc->plbuf_write = plbuf_write;
 #endif  /* END dev_fastimg COMMENT */
 }
+
+/*--------------------------------------------------------------------------*\
+ * plstransform
+ *
+ * Set a universal coordinate transform function which will be applied to all
+ * plotted items.
+ \*--------------------------------------------------------------------------*/
+void
+c_plstransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), PLPointer coordinate_transform_data )
+{
+    plsc->coordinate_transform      = coordinate_transform;
+    plsc->coordinate_transform_data = coordinate_transform_data;
+}

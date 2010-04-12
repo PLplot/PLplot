@@ -132,6 +132,7 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
 {
     PLINT xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
     PLINT i;
+    PLFLT xt, yt;
 
     if ( plsc->level < 3 )
     {
@@ -150,15 +151,17 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
     }
     for ( i = 0; i < n; i++ )
     {
-        xpoly[i] = plP_wcpcx( x[i] );
-        ypoly[i] = plP_wcpcy( y[i] );
+        TRANSFORM( x[i], y[i], &xt, &yt );
+        xpoly[i] = plP_wcpcx( xt );
+        ypoly[i] = plP_wcpcy( yt );
     }
 
     if ( x[0] != x[n - 1] || y[0] != y[n - 1] )
     {
         if ( n < PL_MAXPOLY ) n++;
-        xpoly[n - 1] = plP_wcpcx( x[0] );
-        ypoly[n - 1] = plP_wcpcy( y[0] );
+        TRANSFORM( x[0], y[0], &xt, &yt );
+        xpoly[n - 1] = plP_wcpcx( xt );
+        ypoly[n - 1] = plP_wcpcy( yt );
     }
 
     plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,

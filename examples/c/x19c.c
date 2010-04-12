@@ -6,6 +6,16 @@
 
 #include "plcdemos.h"
 
+void
+map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
+{
+    double radius;
+
+    radius = 90.0 - y;
+    *xt    = radius * cos( x * M_PI / 180.0 );
+    *yt    = radius * sin( x * M_PI / 180.0 );
+}
+
 /*--------------------------------------------------------------------------*\
  * mapform19
  *
@@ -18,14 +28,12 @@ void
 mapform19( PLINT n, PLFLT *x, PLFLT *y )
 {
     int    i;
-    double xp, yp, radius;
+    double xp, yp;
     for ( i = 0; i < n; i++ )
     {
-        radius = 90.0 - y[i];
-        xp     = radius * cos( x[i] * M_PI / 180.0 );
-        yp     = radius * sin( x[i] * M_PI / 180.0 );
-        x[i]   = xp;
-        y[i]   = yp;
+        map_transform( x[i], y[i], &xp, &yp, NULL );
+        x[i] = xp;
+        y[i] = yp;
     }
 }
 
@@ -159,6 +167,35 @@ main( int argc, const char **argv )
 
     pllsty( 2 );
     plmeridians( mapform19, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
+
+/* Polar, Northern hemisphere, this time with a PLplot-wide transform */
+
+    minx = 0;
+    maxx = 360;
+
+    plstransform( map_transform, NULL );
+
+    pllsty( 1 );
+    plenv( -75., 75., -75., 75., 1, -1 );
+    /* No need to set the map transform here as the global transform will be
+     * used. */
+    plmap( NULL, "globe", minx, maxx, miny, maxy );
+
+    pllsty( 2 );
+    plmeridians( NULL, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
+
+    /* Show Baltimore, MD on the map */
+    plcol0( 2 );
+    plssym( 0.0, 2.0 );
+    PLFLT x = -76.6125;
+    PLFLT y = 39.2902778;
+    plpoin( 1, &x, &y, 18 );
+    plssym( 0.0, 1.0 );
+    plptex( -76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD" );
+
+    /* For C, this is how the global transform is cleared */
+    plstransform( NULL, NULL );
+
     plend();
     exit( 0 );
 }

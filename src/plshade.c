@@ -514,7 +514,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
         return;
     }
 
-    if ( pltr == NULL )
+    if ( pltr == NULL && plsc->coordinate_transform == NULL )
         rectangular = 1;
 
     int_val    = shade_max - shade_min;

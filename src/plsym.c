@@ -87,6 +87,7 @@ void
 c_plsym( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 {
     PLINT i;
+    PLFLT xt, yt;
 
     if ( plsc->level < 3 )
     {
@@ -101,7 +102,8 @@ c_plsym( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 
     for ( i = 0; i < n; i++ )
     {
-        plhrsh( code, plP_wcpcx( x[i] ), plP_wcpcy( y[i] ) );
+        TRANSFORM( x[i], y[i], &xt, &yt );
+        plhrsh( code, plP_wcpcx( xt ), plP_wcpcy( yt ) );
     }
 }
 
@@ -122,6 +124,7 @@ void
 c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 {
     PLINT i, sym, ifont = plsc->cfont;
+    PLFLT xt, yt;
 
     if ( plsc->level < 3 )
     {
@@ -137,7 +140,10 @@ c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
     if ( code == -1 )
     {
         for ( i = 0; i < n; i++ )
-            pljoin( x[i], y[i], x[i], y[i] );
+        {
+            TRANSFORM( x[i], y[i], &xt, &yt );
+            pljoin( xt, yt, xt, yt );
+        }
     }
     else
     {
@@ -148,7 +154,10 @@ c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
         // fprintf(stdout, "plploin code, sym = %d, %d\n", code, sym);
 
         for ( i = 0; i < n; i++ )
-            plhrsh( sym, plP_wcpcx( x[i] ), plP_wcpcy( y[i] ) );
+        {
+            TRANSFORM( x[i], y[i], &xt, &yt );
+            plhrsh( sym, plP_wcpcx( xt ), plP_wcpcy( yt ) );
+        }
     }
 }
 
@@ -598,6 +607,7 @@ c_plptex( PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, const char *text )
     PLFLT xform[4], diag;
     PLFLT chrdef, chrht;
     PLFLT dispx, dispy;
+    PLFLT wxt, wyt, dxt, dyt;
 
     if ( plsc->level < 3 )
     {
@@ -605,13 +615,19 @@ c_plptex( PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, const char *text )
         return;
     }
 
-    if ( dx == 0.0 && dy == 0.0 )
+    /* Transform both the origin and offset values */
+    TRANSFORM( wx, wy, &wxt, &wyt );
+    TRANSFORM( wx + dx, wy + dy, &dxt, &dyt );
+    dxt = dxt - wxt;
+    dyt = dyt - wyt;
+    if ( dxt == 0.0 && dyt == 0.0 )
     {
-        dx = 1.0;
-        dy = 0.0;
+        dxt = 1.0;
+        dyt = 0.0;
     }
-    cc   = plsc->wmxscl * dx;
-    ss   = plsc->wmyscl * dy;
+
+    cc   = plsc->wmxscl * dxt;
+    ss   = plsc->wmyscl * dyt;
     diag = sqrt( cc * cc + ss * ss );
     cc  /= diag;
     ss  /= diag;
@@ -621,8 +637,8 @@ c_plptex( PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, const char *text )
     xform[2] = ss;
     xform[3] = cc;
 
-    xdv = plP_wcdcx( wx );
-    ydv = plP_wcdcy( wy );
+    xdv = plP_wcdcx( wxt );
+    ydv = plP_wcdcy( wyt );
 
     dispx = 0.;
     dispy = 0.;
@@ -1828,6 +1844,7 @@ c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
     else
         plP_affine_scale( affineL, 1. / stride, 1.e300 );
     plP_affine_multiply( xform, affineL, xform );
+
     plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc, (PLINT) yrefpc, text );
 }
 

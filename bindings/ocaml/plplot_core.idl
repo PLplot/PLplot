@@ -172,6 +172,19 @@ quote(ml,
     "let plunset_defined () = Callback.register \"caml_plplot_defined\" 0");
 quote(mli, "val plunset_defined : unit -> unit");
 
+// Setting the translation function for the global coordinate transform
+quote(ml, "external ml_plstransform : unit -> unit = \"ml_plstransform\"");
+quote(ml,
+    "let plstransform (f : float -> float -> (float * float)) =\
+     Callback.register \"caml_plplot_transform\" f;\
+     ml_plstransform ()");
+quote(mli, "val plstransform : (float -> float -> (float * float)) -> unit");
+quote(ml,
+    "let plunset_transform () =\
+    Callback.register \"caml_plplot_transform\" 0;\
+    ml_plstransform ()");
+quote(mli, "val plunset_transform : unit -> unit");
+
 // Hand-translated PL_GRID_* flags for use with plgriddata
 quote(mlmli, "type plplot_grid_method_type = \
                 PL_GRID_CSA | \

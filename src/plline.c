@@ -49,6 +49,11 @@ grdashline( short *x, short *y );
 
 /* Determines if a point is inside a polygon or not */
 
+/* Interpolate between two points in n steps */
+
+static PLFLT *
+interpolate_between( int n, PLFLT a, PLFLT b );
+
 /*----------------------------------------------------------------------*\
  * void pljoin()
  *
@@ -77,6 +82,42 @@ c_plline( PLINT n, PLFLT *x, PLFLT *y )
         return;
     }
     plP_drawor_poly( x, y, n );
+}
+
+/*----------------------------------------------------------------------*\
+ * void plpath()
+ *
+ * Draws a line segment from (x1, y1) to (x2, y2).  If a coordinate
+ * transform is defined then break the line up in to n pieces to approximate
+ * the path.  Otherwise it simply calls pljoin().
+ \*----------------------------------------------------------------------*/
+
+void
+c_plpath( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
+{
+    PLFLT *xs, *ys;
+
+    if ( plsc->coordinate_transform == NULL )
+    {
+        /* No transform, so fall back on pljoin for a normal straight line */
+        pljoin( x1, y1, x2, y2 );
+    }
+    else
+    {
+        /* Approximate the path in transformed space with a sequence of line
+         * segments. */
+        xs = interpolate_between( n, x1, x2 );
+        ys = interpolate_between( n, y1, y2 );
+        if ( xs == NULL || ys == NULL )
+        {
+            plexit( "c_plpath: Insufficient memory" );
+            return;
+        }
+        plline( n, xs, ys );
+        /* plP_interpolate allocates memory, so we have to free it here. */
+        free( xs );
+        free( ys );
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -450,8 +491,11 @@ plP_draphy( PLINT x, PLINT y )
 void
 plP_movwor( PLFLT x, PLFLT y )
 {
-    plsc->currx = plP_wcpcx( x );
-    plsc->curry = plP_wcpcy( y );
+    PLFLT xt, yt;
+    TRANSFORM( x, y, &xt, &yt );
+
+    plsc->currx = plP_wcpcx( xt );
+    plsc->curry = plP_wcpcy( yt );
 }
 
 /*----------------------------------------------------------------------*\
@@ -463,10 +507,13 @@ plP_movwor( PLFLT x, PLFLT y )
 void
 plP_drawor( PLFLT x, PLFLT y )
 {
+    PLFLT xt, yt;
+    TRANSFORM( x, y, &xt, &yt );
+
     xline[0] = plsc->currx;
-    xline[1] = plP_wcpcx( x );
+    xline[1] = plP_wcpcx( xt );
     yline[0] = plsc->curry;
-    yline[1] = plP_wcpcy( y );
+    yline[1] = plP_wcpcy( yt );
 
     pllclp( xline, yline, 2 );
 }
@@ -510,6 +557,7 @@ void
 plP_drawor_poly( PLFLT *x, PLFLT *y, PLINT n )
 {
     PLINT i, j, ib, ilim;
+    PLFLT xt, yt;
 
     for ( ib = 0; ib < n; ib += PL_MAXPOLY - 1 )
     {
@@ -517,9 +565,10 @@ plP_drawor_poly( PLFLT *x, PLFLT *y, PLINT n )
 
         for ( i = 0; i < ilim; i++ )
         {
-            j        = ib + i;
-            xline[i] = plP_wcpcx( x[j] );
-            yline[i] = plP_wcpcy( y[j] );
+            j = ib + i;
+            TRANSFORM( x[j], y[j], &xt, &yt );
+            xline[i] = plP_wcpcx( xt );
+            yline[i] = plP_wcpcy( yt );
         }
         pllclp( xline, yline, ilim );
     }
@@ -913,4 +962,36 @@ grdashline( short *x, short *y )
         lastx = xtmp;
         lasty = ytmp;
     }
+}
+
+/*----------------------------------------------------------------------*\
+ * interpolate_between()
+ *
+ * Returns a pointer to an array of PLFLT values which interpolate in n steps
+ * from a to b.
+ * Note:
+ * The returned array is allocated by the function and needs to be freed by
+ * the function's caller.
+ * If the return value is NULL, the allocation failed and it is up to the
+ * caller to handle the error.
+ \*----------------------------------------------------------------------*/
+
+PLFLT *interpolate_between( PLINT n, PLFLT a, PLFLT b )
+{
+    PLFLT *values;
+    PLFLT step_size;
+    int   i;
+
+    if ( ( values = (PLFLT *) malloc( n * sizeof ( PLFLT ) ) ) == NULL )
+    {
+        return NULL;
+    }
+
+    step_size = ( b - a ) / (PLFLT) ( n - 1 );
+    for ( i = 0; i < n; i++ )
+    {
+        values[i] = a + step_size * (PLFLT) i;
+    }
+
+    return values;
 }

@@ -519,6 +519,11 @@ typedef struct
     PLINT      ipls, level, verbose, debug, initialized, dev_initialized;
     const char *program;
 
+/* Plot-wide coordinate transform */
+
+    void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer );
+    PLPointer coordinate_transform_data;
+
 /* Colormaps */
 
     PLINT       icol0, ncol0, icol1, ncol1, ncp1, curcmap;

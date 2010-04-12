@@ -660,6 +660,8 @@ external plot3dc :
   = "camlidl_plplot_core_c_plot3dc"
 external plpat : int array -> int array -> unit
   = "camlidl_plplot_core_c_plpat"
+external plpath : int -> float -> float -> float -> float -> unit
+  = "camlidl_plplot_core_c_plpath"
 external plpoin : float array -> float array -> int -> unit
   = "camlidl_plplot_core_c_plpoin"
 external plpoin3 : float array -> float array -> float array -> int -> unit
@@ -868,6 +870,8 @@ val plset_mapform : (float -> float -> float * float) -> unit
 val plunset_mapform : unit -> unit
 val plset_defined : (float -> float -> int) -> unit
 val plunset_defined : unit -> unit
+val plstransform : (float -> float -> (float * float)) -> unit
+val plunset_transform : unit -> unit
 type plplot_grid_method_type =
     PL_GRID_CSA
   | PL_GRID_DTLI
