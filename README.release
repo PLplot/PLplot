@@ -141,6 +141,19 @@ who used to maintain those support files for djgpp feels that the
 djgpp platform is no longer actively developed, and he no longer uses
 djgpp himself.
 
+XVI. As of release 5.9.6 plpoin results for ascii codes 92, 94, and 95
+are changed from centred dot, degree symbol, and centred dot glyphs to
+the correct backslash, caret, and underscore glyphs that are
+associated with those ascii indices.  This change is consistent with
+the documentation of plpoin and solves a long-standing issue with
+backslash, caret, and underscore ascii characters in character strings
+used for example by pl[mp]tex.  Those who need access to a centred dot
+with plpoin should use index 1.  The degree symbol is no longer
+accessible with plpoin, but it is available in ordinary text input to
+PLplot as Hershey escape "#(718)", where 718 is the Hershey index of
+the degree symbol, unicode escape "#[0x00B0]" where 0x00B0 is the
+unicode index for the degree symbol or direct UTF8 unicode string "°".
+
 INDEX
 
 0. Tests made for release 5.9.6
