@@ -20,10 +20,10 @@
 	  array( 5,  1, 1, "
 	<p>Histogram demo.</p>
 	\n"),
-	  array( 6,  1, 1, "
+	  array( 6,  5, 1, "
 	<p>Symbol demo.</p>
 	\n"),
-	  array( 7, 17, 1, "
+	  array( 7, 19, 1, "
 	<p>Font demo for Hershey encodings.</p>
 	\n"),
 	  array( 8,  8, 1, "
@@ -59,7 +59,7 @@
 	  array(18,  8, 1, "
 	<p>3-d line and point plot demo.</p>
 	\n"),
-	  array(19,  3, 1, "
+	  array(19,  4, 1, "
 	<p>Demo of backdrop plotting of world, US maps.</p>
 	\n"),
 	  array(20,  6, 3, "
