@@ -74,8 +74,8 @@
 #define MAX_MARKUP_LEN       MAX_STRING_LEN * 10
 
 /* Values to reset the dirty rectangle regions */
-#define DIRTY_MIN (1.0e50)
-#define DIRTY_MAX (-1.0e50)
+#define DIRTY_MIN            ( 1.0e50 )
+#define DIRTY_MAX            ( -1.0e50 )
 
 static int    text_clipping;
 static int    text_anti_aliasing;
@@ -290,13 +290,13 @@ void start_raster( PLStream *pls )
 
     /* Create an image surface and context for the offscreen rendering */
     aStream->cairoSurface_raster =
-    /*
-        cairo_surface_create_similar( aStream->cairoSurface,
-                                      CAIRO_CONTENT_COLOR,
-                                      pls->xlength, pls->ylength );
-    */
+        /*
+         *  cairo_surface_create_similar( aStream->cairoSurface,
+         *                                CAIRO_CONTENT_COLOR,
+         *                                pls->xlength, pls->ylength );
+         */
         cairo_image_surface_create( CAIRO_FORMAT_ARGB32,
-                                    pls->xlength, pls->ylength );
+            pls->xlength, pls->ylength );
     aStream->cairoContext_raster = cairo_create( aStream->cairoSurface_raster );
 
     /* Disable antialiasing for the raster surface.  The output seems to look
@@ -1615,13 +1615,13 @@ static signed int xcairo_init_cairo( PLStream *pls )
     aStream->cairoContext_X = cairo_create( aStream->cairoSurface_X );
     /* This is the Cairo surface PLplot will actually plot to. */
     aStream->cairoSurface =
-    /*
-        cairo_surface_create_similar( aStream->cairoSurface_X,
-                                      CAIRO_CONTENT_COLOR,
-                                      pls->xlength, pls->ylength );
-    */
+        /*
+         *  cairo_surface_create_similar( aStream->cairoSurface_X,
+         *                                CAIRO_CONTENT_COLOR,
+         *                                pls->xlength, pls->ylength );
+         */
         cairo_image_surface_create( CAIRO_FORMAT_RGB24,
-                                    pls->xlength, pls->ylength );
+            pls->xlength, pls->ylength );
     aStream->cairoContext = cairo_create( aStream->cairoSurface );
 
     /* Invert the surface so that the graphs are drawn right side up. */
@@ -1705,7 +1705,7 @@ void blit_to_x( PLCairo *aStream, double x, double y, double w, double h )
     cairo_rectangle( aStream->cairoContext_X, x, y, w, h );
     cairo_set_operator( aStream->cairoContext_X, CAIRO_OPERATOR_SOURCE );
     cairo_set_source_surface( aStream->cairoContext_X, aStream->cairoSurface,
-                              0.0, 0.0 );
+        0.0, 0.0 );
     cairo_fill( aStream->cairoContext_X );
     cairo_restore( aStream->cairoContext_X );
 
@@ -1794,7 +1794,7 @@ void plD_eop_xcairo( PLStream *pls )
             if ( expose->count == 0 )
             {
                 blit_to_x( aStream, expose->x, expose->y,
-                           expose->width, expose->height );
+                    expose->width, expose->height );
             }
             break;
         }
@@ -1847,14 +1847,14 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
     {
     case PLESC_FLUSH:    /* forced update of the window */
         blit_to_x( aStream, aStream->dirty_x1, aStream->dirty_y1,
-                   aStream->dirty_x2 - aStream->dirty_x1,
-                   aStream->dirty_y2 - aStream->dirty_y1 );
+            aStream->dirty_x2 - aStream->dirty_x1,
+            aStream->dirty_y2 - aStream->dirty_y1 );
         XFlush( aStream->XDisplay );
         break;
     case PLESC_GETC:     /* get cursor position */
         blit_to_x( aStream, aStream->dirty_x1, aStream->dirty_y1,
-                   aStream->dirty_x2 - aStream->dirty_x1,
-                   aStream->dirty_y2 - aStream->dirty_y1 );
+            aStream->dirty_x2 - aStream->dirty_x1,
+            aStream->dirty_y2 - aStream->dirty_y1 );
         XFlush( aStream->XDisplay );
         xcairo_get_cursor( pls, (PLGraphicsIn*) ptr );
         break;
@@ -1940,15 +1940,15 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
     gin->dY      = (PLFLT) ( pls->ylength - event.xbutton.y ) / ( (PLFLT) ( pls->ylength ) );
 
     /* Get key pressed (if any) */
-    if ( event.type == KeyPress || event.type == KeyRelease ) 
+    if ( event.type == KeyPress || event.type == KeyRelease )
     {
         number_chars = XLookupString( (XKeyEvent *) &event, str, 100, &keysym, NULL );
-	if (keysym == NoSymbol)
-	  ksname = "NoSymbol";
-	else if (!(ksname = XKeysymToString(keysym)))
-	  ksname = "(no name)";
-	strcpy(gin->string, ksname);
-	//        gin->string[number_chars] = '\0';
+        if ( keysym == NoSymbol )
+            ksname = "NoSymbol";
+        else if ( !( ksname = XKeysymToString( keysym ) ) )
+            ksname = "(no name)";
+        strcpy( gin->string, ksname );
+        //        gin->string[number_chars] = '\0';
         switch ( keysym )
         {
         case XK_BackSpace:
@@ -1965,8 +1965,8 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
     }
     else // button press
     {
-      sprintf(gin->string, "button %u", gin->button);
-      gin->keysym    = 0x20;
+        sprintf( gin->string, "button %u", gin->button );
+        gin->keysym = 0x20;
     }
 
     /* Switch back to normal cursor */
@@ -2825,39 +2825,39 @@ LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
  * ---------------------------------------------------------------------*/
 
 void
-handle_locate( PLStream *pls , PLGraphicsIn *gin)
+handle_locate( PLStream *pls, PLGraphicsIn *gin )
 {
-    int located = 0;
+    int     located  = 0;
     PLCairo *aStream = (PLCairo *) pls->dev;
 
     /* Initialize PLplot mouse event structure */
     plGinInit( gin );
 
-    while ( GetMessage( &aStream->msg, NULL, 0, 0 ) && !located)
-      {
-	TranslateMessage( &aStream->msg );
+    while ( GetMessage( &aStream->msg, NULL, 0, 0 ) && !located )
+    {
+        TranslateMessage( &aStream->msg );
 
-	switch ( (int) aStream->msg.message )
-	  {
-	  case WM_MOUSEMOVE:
-	  case WM_LBUTTONDOWN:
-	    gin->state  = 1;
-	    gin->button = 1;
-	    gin->pX     = LOWORD(aStream->msg.lParam);
-            gin->pY     = pls->ylength - HIWORD(aStream->msg.lParam);
-            gin->dX     = (PLFLT) LOWORD(aStream->msg.lParam) / ((PLFLT) pls->xlength);
-            gin->dY     = (PLFLT) (pls->ylength - HIWORD(aStream->msg.lParam)) / ((PLFLT) pls->ylength);
-              break;
-	  case WM_CHAR:
-             gin->keysym = aStream->msg.wParam;
-	     located = 1;
-	     break;
- 
-	  default:
-	    DispatchMessage( &aStream->msg );
-	    break;
-	  }
-      }
+        switch ( (int) aStream->msg.message )
+        {
+        case WM_MOUSEMOVE:
+        case WM_LBUTTONDOWN:
+            gin->state  = 1;
+            gin->button = 1;
+            gin->pX     = LOWORD( aStream->msg.lParam );
+            gin->pY     = pls->ylength - HIWORD( aStream->msg.lParam );
+            gin->dX     = (PLFLT) LOWORD( aStream->msg.lParam ) / ( (PLFLT) pls->xlength );
+            gin->dY     = (PLFLT) ( pls->ylength - HIWORD( aStream->msg.lParam ) ) / ( (PLFLT) pls->ylength );
+            break;
+        case WM_CHAR:
+            gin->keysym = aStream->msg.wParam;
+            located     = 1;
+            break;
+
+        default:
+            DispatchMessage( &aStream->msg );
+            break;
+        }
+    }
 }
 
 /*---------------------------------------------------------------------
@@ -3092,7 +3092,7 @@ void plD_esc_wincairo( PLStream *pls, PLINT op, void *ptr )
         InvalidateRect( aStream->hwnd, NULL, TRUE );
         break;
     case PLESC_GETC:
-      handle_locate(pls, (PLGraphicsIn*) ptr);
+        handle_locate( pls, (PLGraphicsIn*) ptr );
         break;
     default:
         plD_esc_cairo( pls, op, ptr );

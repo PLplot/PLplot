@@ -89,7 +89,7 @@ int main( int argc, char *argv[] )
     int  *Hershey        = NULL;
     int  *Unicode        = NULL;
     char *Font           = NULL;
-    int Hershey_old = 0;
+    int  Hershey_old     = 0;
     int  i               = 0;
     int  number_of_lines = 0;
 
@@ -126,10 +126,10 @@ int main( int argc, char *argv[] )
         while ( ( fgets( readbuffer, 255, fr ) != NULL ) )
         {
             sscanf( readbuffer, "%x,%d,%c", (int *) &Unicode[i], (int *) &Hershey[i], (char *) &Font[i] );
-            if (Hershey[i] <= Hershey_old)
+            if ( Hershey[i] <= Hershey_old )
             {
-              fprintf(stderr, "Error: Hershey index = %d is not ascending\n", Hershey[i]);
-              return(1);
+                fprintf( stderr, "Error: Hershey index = %d is not ascending\n", Hershey[i] );
+                return ( 1 );
             }
             Hershey_old = Hershey[i];
             i++;
