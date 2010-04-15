@@ -310,7 +310,10 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
         else
             stripc->xlen = stripc->xlen * ( 1 + stripc->xjump );
 
-        stripc->xmin = stripc->x[p][0];
+        if( stripc->acc == 0 )
+	    stripc->xmin = stripc->xmin + stripc->xlen * stripc->xjump;   
+	else
+	    stripc->xmin = stripc->x[p][0];
         stripc->xmax = stripc->xmax + stripc->xlen * stripc->xjump;
 
         plstrip_gen( stripc );
