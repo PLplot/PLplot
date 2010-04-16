@@ -24,6 +24,11 @@ along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 
     {!core} is {b not} expected to change. *)
 
+type plplot_axis_type =
+    PL_X_AXIS
+  | PL_Y_AXIS
+  | PL_Z_AXIS
+
 (** {3 A higher-level OCaml interface to PLplot} *)
 module Plot :
   sig
@@ -258,6 +263,7 @@ module Plot :
       ?color:color_t ->
       ?style:line_style_t ->
       ?width:int ->
+      ?labelfunc:(plplot_axis_type -> float -> string) ->
       axis_options_t list -> axis_options_t list -> plot_t
 
     (** [default_axes] is equivalent to
@@ -896,10 +902,6 @@ type plplot_parse_method_type =
   | PL_PARSE_NOPROGRAM
   | PL_PARSE_NODASH
   | PL_PARSE_SKIP
-type plplot_axis_type =
-    PL_X_AXIS
-  | PL_Y_AXIS
-  | PL_Z_AXIS
 val plslabelfunc : (plplot_axis_type -> float -> string) -> unit
 val plunset_labelfunc : unit -> unit
 val plsabort : (string -> unit) -> unit

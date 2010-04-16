@@ -183,7 +183,8 @@ module Plot = struct
     (* Standard plot elements *)
     | Arc of (color_t * float * float * float * float * float * float * bool)
     | Axes of
-      (color_t * axis_options_t list * axis_options_t list * int * line_style_t)
+      (color_t * axis_options_t list * axis_options_t list * int *
+       line_style_t * (plplot_axis_type -> float -> string) option)
     | Contours of (color_t * pltr_t * float array * float array array)
     | Image of image_t
     | Image_fr of (image_t * (float * float))
@@ -494,8 +495,8 @@ module Plot = struct
     Arc (color, x, y, a, b, angle1, angle2, fill)
 
   (** [axes ?color ?style ?width xopt yopt] *)
-  let axes ?(color = Black) ?(style = Solid_line) ?(width = 1) xopt yopt =
-    Axes (color, xopt, yopt, width, style)
+  let axes ?(color = Black) ?(style = Solid_line) ?(width = 1) ?labelfunc xopt yopt =
+    Axes (color, xopt, yopt, width, style, labelfunc)
 
   (** Default axes *)
   let default_axes = axes default_axis_options default_axis_options
@@ -734,13 +735,15 @@ module Plot = struct
         fun () -> plarc x y a b angle1 angle2 fill;
       )
     in
-    let plot_axes (color, xopt, yopt, width, style) =
+    let plot_axes (color, xopt, yopt, width, style, labelfunc) =
       set_color_in color (
         fun () ->
           let old_width = plgwid () in
           plwid width;
           set_line_style style;
+          Option.may plslabelfunc labelfunc;
           plot_axes xopt yopt;
+          Option.may (fun _ -> plunset_labelfunc ()) labelfunc;
           set_line_style Solid_line;
           plwid old_width;
       )
