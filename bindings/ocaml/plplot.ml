@@ -395,20 +395,17 @@ module Plot = struct
   let set_color ?stream c =
     with_stream ?stream (fun () -> plcol0 (int_of_color c))
 
-  (** [set_color_scale ?stream rev colors] sets the color scale 1 (images and
-      shade plots) using a linear interpolation between the given list of
+  (** [set_color_scale ?stream ?pos ?rev colors] sets the color scale 1 (images
+      and shade plots) using a linear interpolation between the given list of
       colors.  If [rev] is true then the scale goes in the reverse order. *)
-  let set_color_scale ?stream rev colors =
+  let set_color_scale ?stream ?pos ?rev colors =
     let cs = Array.map rgb_of_color colors in
     let r, g, b =
       Array.map (fun (r, _, _) -> float_of_int r /. 255.0) cs,
       Array.map (fun (_, g, _) -> float_of_int g /. 255.0) cs,
       Array.map (fun (_, _, b) -> float_of_int b /. 255.0) cs
     in
-    let positions = Array_ext.range ~n:(Array.length cs) 0.0 1.0 in
-    let rev =
-      if rev then Some (Array.map (fun _ -> true) cs) else None
-    in
+    let positions = pos |? Array_ext.range ~n:(Array.length cs) 0.0 1.0 in
     with_stream ?stream (fun () -> plscmap1l true positions r g b rev);
     ()
 

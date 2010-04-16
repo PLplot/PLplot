@@ -231,10 +231,19 @@ module Plot :
         [color]. *)
     val set_color : ?stream:stream_t -> color_t -> unit
 
-    (** [set_color_scale ?stream reverse colors] sets the continuous color map
+    (** [set_color_scale ?stream ?pos ?rev colors] sets the continuous color map
         (color map 1) to a scale determined by interpolating between [colors].
+        [pos] can be used to specify where in the color scale ([0.0 - 1.0]) the
+        a color interpolation point should fall.  [pos] defaults to even
+        spacing.
+        [rev] can be used to specify that a given segment should be
+        interpolated backwards.
         {!Plplot.plscmap1l} is used internally to set the color scale. *)
-    val set_color_scale : ?stream:stream_t -> bool -> color_t array -> unit
+    val set_color_scale :
+      ?stream:stream_t ->
+      ?pos:float array ->
+      ?rev:bool array ->
+      color_t array -> unit
 
     (** PLplot has two color palettes - indexed (color map 0) and
         continuous (color map 1).  These functions can be used with
