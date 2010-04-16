@@ -201,9 +201,12 @@ module Plot = struct
     | Text of (color_t * string * float * float * float * float * float)
     | Text_outside of
       (color_t * string * float plot_side_t * float * float * bool)
-    (* Set/clear coordinate transforms *)
+    (* Set/clear UNIVERSAL coordinate transforms *)
     | Set_transform of pltr_t
     | Clear_transform
+    (* Set/clear item-specific coordinate transforms (ex. plimagefr) *)
+    | Set_pltr of pltr_t
+    | Clear_pltr
     (* Custom functions *)
     | Custom of (unit -> unit)
     (* Embedded list of plottable elements *)
@@ -578,6 +581,12 @@ module Plot = struct
   (** [clear_transform] *)
   let clear_transform = Clear_transform
 
+  (** [pltr f] *)
+  let pltr f = Set_pltr f
+
+  (** [clear_pltr] *)
+  let clear_pltr = Clear_pltr
+
   (** [custom f] *)
   let custom f = Custom f
 
@@ -868,8 +877,10 @@ module Plot = struct
       | Shades s -> plot_shades s
       | Text t -> plot_text t
       | Text_outside t_o -> plot_text_outside t_o
-      | Set_transform pltr -> plset_pltr pltr
-      | Clear_transform -> plunset_pltr ()
+      | Set_transform transform -> plstransform transform
+      | Clear_transform -> plunset_transform ()
+      | Set_pltr pltr -> plset_pltr pltr
+      | Clear_pltr -> plunset_pltr ()
       | Custom f -> f ()
       | List l -> plot l
     in
@@ -967,16 +978,16 @@ module Plot = struct
           | Right _
           | Left _ ->
               plot [
-                transform (pltr1 [|0.0; 1.0|] contours);
+                pltr (pltr1 [|0.0; 1.0|] contours);
                 shades (0.0, min_value) (1.0, max_value) contours shade_data;
-                clear_transform;
+                clear_pltr;
               ]
           | Top _
           | Bottom _ ->
               plot [
-                transform (pltr1 contours [|0.0; 1.0|]);
+                pltr (pltr1 contours [|0.0; 1.0|]);
                 shades (min_value, 0.0) (max_value, 1.0) contours shade_data;
-                clear_transform;
+                clear_pltr;
               ])
     in
 

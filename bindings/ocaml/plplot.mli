@@ -347,13 +347,20 @@ module Plot :
       ?step:float ->
       color_t -> (float -> float) -> float * float -> plot_t
 
-    (** [transform f] Set the coordinate transformation function used by
-        {!imagefr} and other functions affected by {!Plplot.plset_pltr}. *)
+    (** [transform f] sets the universal coordinate transformation function. *)
     val transform : pltr_t -> plot_t
 
-    (** [clear_transform] clears any currently defined plot transform
-        function. *)
+    (** [clear_transform] clears any currently defined universal coordinate
+        transform function. *)
     val clear_transform : plot_t
+
+    (** [pltr f] sets the coordinate transformation function used by
+        {!imagefr} and other functions affected by {!Plplot.plset_pltr}. *)
+    val pltr : pltr_t -> plot_t
+
+    (** [clear_pltr] clears any currently defined function-specific pltr
+        transform function. *)
+    val clear_pltr : plot_t
 
     (** [custom f] will call [f ()] when the plot element is used.  This
         function can be used to create customized plot elements for use with
