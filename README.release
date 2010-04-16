@@ -163,6 +163,8 @@ INDEX
 1.1 Make PLplot aware of LC_NUMERIC locale
 1.2 Linear gradients have been implemented
 1.3 Cairo Windows driver implemented
+1.4 Custom axis labeling implemented
+1.5 Universal coordinate transform implemented
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -206,6 +208,8 @@ detected
 2.36 Make PLplot aware of LC_NUMERIC locale
 2.37 Linear gradients have been implemented
 2.38 Cairo Windows driver implemented
+2.39 Custom axis labeling implemented
+2.40 Universal coordinate transform implemented
 
 0. Tests made for release 5.9.6
 
@@ -348,6 +352,21 @@ gradients for those devices, for, e.g., example 30, page 2.
 A cairo Windows driver has been implemented. This provides an
 interactive cairo driver for Windows similar to xcairo on Linux.
 Work to improve its functionality is ongoing.
+
+1.4 Custom axis labeling implemented
+
+Axis text labels can now be customized using the new plslabelfunc function.
+This allows a user to specify what text should be draw at a given position
+along a plot axis.  Example 19 has been updated to illustrate this function's
+use through labeling geographic coordinates in degrees North, South, East and
+West.
+
+1.5 Universal coordinate transform implemented
+
+A custom coordinate transformation function can be set using plstransform.
+This transformation function affects all subsequent plot function calls which
+work with plot window coordinates.  Testing and refinement of this support is
+ongoing.
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -914,4 +933,19 @@ gradients for those devices, for, e.g., example 30, page 2.
 A cairo Windows driver has been implemented. This provides an
 interactive cairo driver for Windows similar to xcairo on Linux.
 Work to improve its functionality is ongoing.
+
+2.39 Custom axis labeling implemented
+
+Axis text labels can now be customized using the new plslabelfunc function.
+This allows a user to specify what text should be draw at a given position
+along a plot axis.  Example 19 has been updated to illustrate this function's
+use through labeling geographic coordinates in degrees North, South, East and
+West.
+
+2.40 Universal coordinate transform implemented
+
+A custom coordinate transformation function can be set using plstransform.
+This transformation function affects all subsequent plot function calls which
+work with plot window coordinates.  Testing and refinement of this support is
+ongoing.
 
