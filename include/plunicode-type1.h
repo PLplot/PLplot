@@ -377,9 +377,9 @@ static const Unicode_to_Type1_table unicode_to_standard_lookup_table[149] = {
     { 0xfb02, 175 }
 };
 
-static const int number_of_entries_in_unicode_to_symbol_table = 166;
+static const int number_of_entries_in_unicode_to_symbol_table = 168;
 
-static const Unicode_to_Type1_table unicode_to_symbol_lookup_table[166] = {
+static const Unicode_to_Type1_table unicode_to_symbol_lookup_table[168] = {
     { 0x0020,  32 },
     { 0x0021,  33 },
     { 0x0023,  35 },
@@ -466,14 +466,16 @@ static const Unicode_to_Type1_table unicode_to_symbol_lookup_table[166] = {
     { 0x03c3, 115 },
     { 0x03c4, 116 },
     { 0x03c5, 117 },
-    { 0x03c6, 102 },
+    { 0x03c6, 106 },
     { 0x03c7,  99 },
     { 0x03c8, 121 },
     { 0x03c9, 119 },
     { 0x03d1,  74 },
     { 0x03d2, 161 },
-    { 0x03d5, 106 },
+    { 0x03d5, 102 },
     { 0x03d6, 118 },
+    { 0x03f4,  74 },
+    { 0x03f5, 101 },
     { 0x2022, 183 },
     { 0x2026, 188 },
     { 0x2032, 162 },
