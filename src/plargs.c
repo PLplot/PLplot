@@ -888,6 +888,8 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
             /* No match.  Keep going if mode_skip is set, otherwise abort if
              * fully parsing, else return without error. */
 
+            status = 0;
+
             if ( mode_skip )
             {
                 if ( !mode_nodelete )
@@ -901,7 +903,6 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
             }
             if ( mode_full ) exit( 1 );
 
-            status = 0;
             break;
         }
         else if ( status == 1 )
