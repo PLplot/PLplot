@@ -239,7 +239,7 @@ c_plpoin3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code )
  *  If the function KNOWS there isn't a unicode equivalent, then it will
  *  try to render it as a hershey font. Understandably, this might make
  *  testing out the unicode functions a little tricky, so if you want
- *  to disable this behaviour, recompile with TEST_FOR_MISSING_GLYPHS
+ *  to disable this behaviour, recompile with PL_TEST_FOR_MISSING_GLYPHS
  *  defined.
  \*--------------------------------------------------------------------------*/
 
@@ -267,7 +267,7 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
 
         if ( ( unicode_char == 0 ) || ( idx == -1 ) )
         {
-#ifndef TEST_FOR_MISSING_GLYPHS
+#ifndef PL_TEST_FOR_MISSING_GLYPHS
             plhrsh2( ch, x, y );
 #endif
         }
