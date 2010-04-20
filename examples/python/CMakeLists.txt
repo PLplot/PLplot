@@ -84,6 +84,7 @@ set(
   test_plplot_encodings.py
   test_fill.py
   test_gradient.py
+  test_type1.py
   )
 
 if(ENABLE_tk)
