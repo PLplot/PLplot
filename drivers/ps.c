@@ -782,7 +782,7 @@ proc_str( PLStream *pls, EscText *args )
                 "internal PLplot error" );
             return;
         }
-        pldebug("proc_str", "fci = 0x%x, font name = %s\n", fci, font);
+        pldebug( "proc_str", "fci = 0x%x, font name = %s\n", fci, font );
         if ( !strcmp( font, "Symbol" ) )
         {
             nlookup = number_of_entries_in_unicode_to_symbol_table;
@@ -811,7 +811,7 @@ proc_str( PLStream *pls, EscText *args )
                         plabort( "proc_str: string-supplied FCI inconsistent with Type1Lookup;" );
                         return;
                     }
-                    pldebug("proc_str", "string-supplied FCI = 0x%x, font name = %s\n", cur_text[j], fonts[f]);
+                    pldebug( "proc_str", "string-supplied FCI = 0x%x, font name = %s\n", cur_text[j], fonts[f] );
                     if ( !strcmp( fonts[f++], "Symbol" ) )
                     {
                         lookup  = unicode_to_symbol_lookup_table;
@@ -829,9 +829,19 @@ proc_str( PLStream *pls, EscText *args )
             }
             else if ( s + 1 < PROC_STR_STRING_LENGTH )
             {
+#undef PL_TEST_TYPE1
+#ifdef PL_TEST_TYPE1
+                // Use this test case only to conveniently view type 1 font
+                // possibilities (as in test_type1.py example).
+                if ( 0 <= cur_text[j] && cur_text[j] < 256 )
+                    cur_str[s++] = cur_text[j];
+                else
+                    cur_str[s++] = 32;
+#else
                 cur_str[s++] = plunicode2type1( cur_text[j], lookup, nlookup );
-                pldebug("proc_str", "unicode = 0x%x, type 1 code = %d\n",
-                        cur_text[j], cur_str[s-1]);
+#endif
+                pldebug( "proc_str", "unicode = 0x%x, type 1 code = %d\n",
+                    cur_text[j], cur_str[s - 1] );
             }
         }
         cur_str[s] = '\0';
@@ -964,7 +974,7 @@ proc_str( PLStream *pls, EscText *args )
                         return;
                     }
                     font = fonts[f++];
-                    pldebug("proc_str", "string-specified fci = 0x%x, font name = %s\n", fci, font);
+                    pldebug( "proc_str", "string-specified fci = 0x%x, font name = %s\n", fci, font );
                     continue;
                 }
                 else switch ( *cur_strp++ )
