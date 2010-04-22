@@ -270,7 +270,7 @@ begin
     -- Ada note: This "exclusion" part works if exclude is set to True.
     -- In the C original example, the setting of exclude was handled by the 
     -- the input parser which handling is not implemented in this Ada example.
-    exclude := False;
+--    exclude := False;
     if exclude then
 
         -- Load colour palettes.
