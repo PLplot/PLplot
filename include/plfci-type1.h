@@ -3,7 +3,7 @@
  * FCIs (font characterization integers) and font names for the standard
  * 35 type 1 fonts.
  *
- * Copyright (C) 2005  Alan W. Irwin
+ * Copyright (C) 2005-2010  Alan W. Irwin
  *
  * This file is part of PLplot.
  *
@@ -36,31 +36,31 @@ static const FCI_to_FontName_Table Type1Lookup[N_Type1Lookup] = {
     { PL_FCI_MARK | 0x000, (unsigned char *) "Helvetica"             },
     { PL_FCI_MARK | 0x001, (unsigned char *) "Times-Roman"           },
     { PL_FCI_MARK | 0x002, (unsigned char *) "Courier"               },
-    { PL_FCI_MARK | 0x003, (unsigned char *) "Times-Roman"           },
-    { PL_FCI_MARK | 0x004, (unsigned char *) "Symbol"                },
+    { PL_FCI_MARK | 0x003, (unsigned char *) "Helvetica"             },
+    { PL_FCI_MARK | 0x004, (unsigned char *) "Helvetica"             },
     { PL_FCI_MARK | 0x010, (unsigned char *) "Helvetica-Oblique"     },
     { PL_FCI_MARK | 0x011, (unsigned char *) "Times-Italic"          },
     { PL_FCI_MARK | 0x012, (unsigned char *) "Courier-Oblique"       },
-    { PL_FCI_MARK | 0x013, (unsigned char *) "Times-Italic"          },
-    { PL_FCI_MARK | 0x014, (unsigned char *) "Symbol"                },
+    { PL_FCI_MARK | 0x013, (unsigned char *) "Helvetica-Oblique"     },
+    { PL_FCI_MARK | 0x014, (unsigned char *) "Helvetica-Oblique"     },
     { PL_FCI_MARK | 0x020, (unsigned char *) "Helvetica-Oblique"     },
     { PL_FCI_MARK | 0x021, (unsigned char *) "Times-Italic"          },
     { PL_FCI_MARK | 0x022, (unsigned char *) "Courier-Oblique"       },
-    { PL_FCI_MARK | 0x023, (unsigned char *) "Times-Italic"          },
-    { PL_FCI_MARK | 0x024, (unsigned char *) "Symbol"                },
+    { PL_FCI_MARK | 0x023, (unsigned char *) "Helvetica-Oblique"     },
+    { PL_FCI_MARK | 0x024, (unsigned char *) "Helvetica-Oblique"     },
     { PL_FCI_MARK | 0x100, (unsigned char *) "Helvetica-Bold"        },
     { PL_FCI_MARK | 0x101, (unsigned char *) "Times-Bold"            },
     { PL_FCI_MARK | 0x102, (unsigned char *) "Courier-Bold"          },
-    { PL_FCI_MARK | 0x103, (unsigned char *) "Times-Bold"            },
-    { PL_FCI_MARK | 0x104, (unsigned char *) "Symbol"                },
+    { PL_FCI_MARK | 0x103, (unsigned char *) "Helvetica-Bold"        },
+    { PL_FCI_MARK | 0x104, (unsigned char *) "Helvetica-Bold"        },
     { PL_FCI_MARK | 0x110, (unsigned char *) "Helvetica-BoldOblique" },
     { PL_FCI_MARK | 0x111, (unsigned char *) "Times-BoldItalic"      },
     { PL_FCI_MARK | 0x112, (unsigned char *) "Courier-BoldOblique"   },
-    { PL_FCI_MARK | 0x113, (unsigned char *) "Times-BoldItalic"      },
-    { PL_FCI_MARK | 0x114, (unsigned char *) "Symbol"                },
+    { PL_FCI_MARK | 0x113, (unsigned char *) "Helvetica-BoldOblique" },
+    { PL_FCI_MARK | 0x114, (unsigned char *) "Helvetica-BoldOblique" },
     { PL_FCI_MARK | 0x120, (unsigned char *) "Helvetica-BoldOblique" },
     { PL_FCI_MARK | 0x121, (unsigned char *) "Times-BoldItalic"      },
     { PL_FCI_MARK | 0x122, (unsigned char *) "Courier-BoldOblique"   },
-    { PL_FCI_MARK | 0x123, (unsigned char *) "Times-BoldItalic"      },
-    { PL_FCI_MARK | 0x124, (unsigned char *) "Symbol"                }
+    { PL_FCI_MARK | 0x123, (unsigned char *) "Helvetica-BoldOblique" },
+    { PL_FCI_MARK | 0x124, (unsigned char *) "Helvetica-BoldOblique" },
 };
