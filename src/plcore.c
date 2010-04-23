@@ -33,11 +33,6 @@
  */
 
 #define DEBUG
-/* Disallow momentary change to symbol font for PLplot escape
- * sequences (Hershey, hexadecimal, and Greek) for specifying
- * unicode. */
-#undef PL_MOMENTARY_SYMBOL_FONT
-
 #define NEED_PLDEBUG
 #include "plcore.h"
 
@@ -621,7 +616,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
         if ( plsc->dev_unicode ) /* Does the device also understand unicode? */
         {
             PLINT         ig;
-            PLUNICODE     fci, fcisave;
+            PLUNICODE     fci;
             unsigned char hexdigit, hexpower;
 
             /* Now process the text string */
@@ -661,11 +656,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                         case '(': /* hershey code */
                             i  += 2 + text2num( &string[i + 2], ')', &code );
                             idx = plhershey2unicode( code );
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                            fcisave = fci;
-                            plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
-                            unicode_buffer[j++] = fci;
-#endif
                             unicode_buffer[j++] = \
                                 (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
 
@@ -678,21 +668,12 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                              * driver.
                              */
                             if ( unicode_buffer[j - 1] == esc ) unicode_buffer[j++] = esc;
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                            fci = fcisave;
-                            unicode_buffer[j++] = fci;
-#endif
                             j--;
                             skip = 1;
                             break;
 
                         case '[': /* unicode */
                             i += 2 + text2num( &string[i + 2], ']', &code );
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                            fcisave = fci;
-                            plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
-                            unicode_buffer[j++] = fci;
-#endif
                             unicode_buffer[j++] = code;
 
 
@@ -704,10 +685,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                              * driver.
                              */
                             if ( unicode_buffer[j - 1] == esc ) unicode_buffer[j++] = esc;
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                            fci = fcisave;
-                            unicode_buffer[j++] = fci;
-#endif
                             j--;
                             skip = 1;
                             break;
@@ -798,11 +775,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                              * 527 = upper case alpha displacement in Hershey Table
                              * 627 = lower case alpha displacement in Hershey Table
                              */
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                            fcisave = fci;
-                            plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
-                            unicode_buffer[j++] = fci;
-#endif
 
                             ig = plP_strpos( plP_greek_mnemonic, string[i + 2] );
                             if ( ig >= 0 )
@@ -825,11 +797,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 skip = 1;                /* skip is set if we have copied something
                                                           * into  the unicode table */
                             }
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                            fci = fcisave;
-                            unicode_buffer[j++] = fci;
-
-#endif
                             j--;
                             break;
                         }
@@ -897,49 +864,17 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             case '(': /* hershey code */
                                 i  += 2 + text2num( &string[i + 2], ')', &code );
                                 idx = plhershey2unicode( code );
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                                fcisave = fci;
-                                plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-#endif
                                 args.n_char = \
                                     (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
                                 plP_esc( PLESC_TEXT_CHAR, &args );
 
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                                fci = fcisave;
-
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-#endif
                                 skip = 1;
                                 break;
 
                             case '[': /* unicode */
                                 i += 2 + text2num( &string[i + 2], ']', &code );
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                                fcisave = fci;
-                                plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
-#endif
-
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-#endif
                                 args.n_char = code;
                                 plP_esc( PLESC_TEXT_CHAR, &args );
-
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                                fci = fcisave;
-
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-#endif
                                 skip = 1;
                                 break;
 
@@ -1041,15 +976,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                  * 527 = upper case alpha displacement in Hershey Table
                                  * 627 = lower case alpha displacement in Hershey Table
                                  */
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                                fcisave = fci;
-                                plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
-
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-#endif
-
                                 ig = plP_strpos( plP_greek_mnemonic, string[i + 2] );
                                 if ( ig >= 0 )
                                 {
@@ -1076,13 +1002,6 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                         (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
                                     plP_esc( PLESC_TEXT_CHAR, &args );
                                 }
-#ifdef PL_MOMENTARY_SYMBOL_FONT
-                                fci = fcisave;
-
-                                args.n_fci       = fci;
-                                args.n_ctrl_char = PLTEXT_FONTCHANGE;
-                                plP_esc( PLESC_CONTROL_CHAR, &args );
-#endif
                                 break;
 
                             case 'u':
