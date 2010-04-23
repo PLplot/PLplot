@@ -289,18 +289,14 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
             /* "array method" */
             plgesc( &esc );
             args.xform             = xform;
-            args.unicode_array_len = 2;
-            /* Temporary Symbol font for every character. */
-            plgfci( &fci );
-            plP_hex2fci( PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci );
-            plhrsh_unicode_buffer[0] = fci;
-            plhrsh_unicode_buffer[1] = unicode_char;
+            args.unicode_array_len = 1;
+            plhrsh_unicode_buffer[0] = unicode_char;
             /* watch out for escape character and unescape it by appending
              * one extra. */
             if ( unicode_char == esc )
             {
-                args.unicode_array_len   = 3;
-                plhrsh_unicode_buffer[2] = unicode_char;
+                args.unicode_array_len   = 2;
+                plhrsh_unicode_buffer[1] = unicode_char;
             }
 
             /* No need to change font back since only one character. */
@@ -313,6 +309,7 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
 
             if ( plsc->alt_unicode )
             {
+                plgfci( &fci );
                 args.n_fci  = fci;
                 args.n_char = unicode_char;
                 plP_esc( PLESC_BEGIN_TEXT, &args );
