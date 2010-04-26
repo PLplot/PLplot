@@ -22,7 +22,7 @@
 
 function comet(x, y, p)
 
-  ax_s = axis "state";
+  ax_s = axis("state");
   ax_s = deblank(ax_s(1,:));
   if (strcmp("auto", ax_s) == 1)
     warning("comet: FIXME: axis is 'auto', turning it to 'tight'.");
