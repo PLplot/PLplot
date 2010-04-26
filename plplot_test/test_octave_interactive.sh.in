@@ -70,7 +70,8 @@ for i=[1:10 13 15 16 21];
   if (verbose_test)
       printf("p%d\n",i);
   endif
-  figure(i,"$device",sprintf("${OUTPUT_DIR}/p%d%%n.$dsuffix",i));
+  #figure(i,"$device",sprintf("${OUTPUT_DIR}/p%d%%n.$dsuffix",i));
+  figure(i,"$device");
   feval(sprintf("p%d",i))
   closefig
 endfor
