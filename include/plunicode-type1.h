@@ -24,6 +24,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#ifndef __PLUNICODE_TYPE1_H__
+#define __PLUNICODE_TYPE1_H__
+
 typedef struct
 {
     PLUNICODE     Unicode;
@@ -549,3 +552,5 @@ static const Unicode_to_Type1_table unicode_to_symbol_lookup_table[168] = {
     { 0x2665, 169 },
     { 0x2666, 168 }
 };
+
+#endif /* __PLUNICODE_TYPE1_H__ */
