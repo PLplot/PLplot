@@ -12,7 +12,7 @@
 ##
 ## This file is part of plplot_octave.
 
-function p12
+function p12(fg)
 
   global pl_automatic_replot
   t = pl_automatic_replot;
@@ -23,11 +23,13 @@ function p12
   x=0:0.1:4;
   plot(x,exp(x));
   text(1,20,"Click Here -> + ");
-  [x y]=ginput(1);
-  if (round(x) != 2 || round(y) != 20)
-    text(x,y,"You missed!")
-  else
-    text(x,y,"ouch! Gently!")
+  if (!nargin)
+    [x y]=ginput(1);
+    if (round(x) != 2 || round(y) != 20)
+      text(x,y,"You missed!")
+    else
+      text(x,y,"ouch! Gently!")
+    endif
   endif
   legend("on");
 

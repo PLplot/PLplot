@@ -47,7 +47,7 @@ function p20
   subwindow(4 ,3)
   p14(1)
   subwindow(1 ,2)
-  p12
+  p12(1)
   subwindow(4, 4)
   p17(1)
   oneplot;

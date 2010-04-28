@@ -48,6 +48,10 @@ function id = stripc (xmin, xmax, xjump, ymin, ymax, leg1, leg2, leg3, leg4, acc
   colline(3) = 3;
   colline(4) = 4;    
 
+  if ( plglevel == 1 )
+    pladv(0);
+  end
+
   id = plstripc("bcnst", "bcnstv",
 		xmin, xmax, xjump, ymin, ymax,
 		__pl.legend_xpos(strm), __pl.legend_ypos(strm), 

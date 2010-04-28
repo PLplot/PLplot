@@ -58,33 +58,27 @@ endfor
 # slowness issue
 # with that device).
 # The following comments are for -dev qtwidget.
-# 11 (many invalid limits);
 # 12 (hangs);
 # 14 (looks pretty to start but then segfaults);
 # 17 (error: plrb: device is not xor capable);
-# 18 (pthread_mutex_lock.c:285:)
-# 19 (failed to exit properly);
-# 20 (failed to exit properly);
-# 21 (plot was just dark background)
+# 18 (hangs);
+# The issues with 12, 17 and 18 are all because qtwidget does not handle plGetCursor
 
 # -dev wxwidgets had similar issues except possibly for examples 18
 # and 19 which seemed fine, but there is no way to tell for sure with
 # second wxwidgets example (no matter what) always segfaulting.
 
 # -dev xwin worked except for the following:
-# 11 (many invalid limits);
-# 14 (locked xterm);
-# 19 (failed to exit properly);
-# 20 (failed to exit properly);
-# 21 (plot was just dark background)
-# Drop everything that fails to work for -dev xwin except for 21.
+# 14 (animation does not work right);
 
-for i=[1:10 12:13 15:18 21];
+plsetopt("dev","$device");
+for i=[1:21];
   if (verbose_test)
       printf("p%d\n",i);
   endif
   #figure(i,"$device",sprintf("${OUTPUT_DIR}/p%d%%n.$dsuffix",i));
   figure(i,"$device");
+  plsetopt("dev","$device");
   feval(sprintf("p%d",i))
   closefig
 endfor
