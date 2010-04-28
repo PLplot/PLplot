@@ -862,8 +862,8 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             switch ( string[i + 1] )
                             {
                             case '(': /* hershey code */
-                                i  += 2 + text2num( &string[i + 2], ')', &code );
-                                idx = plhershey2unicode( code );
+                                i          += 2 + text2num( &string[i + 2], ')', &code );
+                                idx         = plhershey2unicode( code );
                                 args.n_char = \
                                     (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
                                 plP_esc( PLESC_TEXT_CHAR, &args );
@@ -872,7 +872,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 break;
 
                             case '[': /* unicode */
-                                i += 2 + text2num( &string[i + 2], ']', &code );
+                                i          += 2 + text2num( &string[i + 2], ']', &code );
                                 args.n_char = code;
                                 plP_esc( PLESC_TEXT_CHAR, &args );
                                 skip = 1;

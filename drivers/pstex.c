@@ -51,10 +51,10 @@ void plD_dispatch_init_pstex( PLDispatchTable *pdt )
 void
 plD_init_pstex( PLStream *pls )
 {
-    char  *ofile;
+    char   *ofile;
     size_t len;
-    PSDev *dev;
-    FILE  *fp;
+    PSDev  *dev;
+    FILE   *fp;
 
     plParseDrvOpts( pstex_options );
     if ( color )
@@ -68,10 +68,10 @@ plD_init_pstex( PLStream *pls )
     pls->dev_unicode = 0; /* don't want unicode */
 
     /* open latex output file */
-    len     = strlen( pls->FileName ) + 3;
-    ofile   = (char *) malloc( sizeof( char )*len );
+    len   = strlen( pls->FileName ) + 3;
+    ofile = (char *) malloc( sizeof ( char ) * len );
     snprintf( ofile, len, "%s_t", pls->FileName );
-    fp      = fopen( ofile, "w" );
+    fp = fopen( ofile, "w" );
     free( ofile );
     dev->fp = fp;
 

@@ -23,20 +23,20 @@
  */
 
 /* This file only relevant to device drivers (currently just pdf and
-   ps) that use Type1 fonts. */
+ * ps) that use Type1 fonts. */
 
 /* There are no good choices for script fonts for Type1 so default to
-  the Helvetica (sans) variants in that case. */
+ * the Helvetica (sans) variants in that case. */
 
 /* Default to Helvetica (sans) variants for symbol fonts to follow
-   what is done for all modern unicode-aware TrueType font devices. */
+ * what is done for all modern unicode-aware TrueType font devices. */
 
 /* N.B. if the glyph lookup comes up blank for any of the fonts below,
-   then an additional search of the Type1 Symbol font glyphs is
-   implemented in the Type1 device drivers as a fallback. */
+ * then an additional search of the Type1 Symbol font glyphs is
+ * implemented in the Type1 device drivers as a fallback. */
 
 /* N.B. When updating this table by hand be sure to keep it in
-   ascending order in fci!  */
+ * ascending order in fci!  */
 
 #define N_Type1Lookup    30
 static const FCI_to_FontName_Table Type1Lookup[N_Type1Lookup] = {

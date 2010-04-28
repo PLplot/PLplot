@@ -553,26 +553,25 @@ void PSSetFont( pdfdev* dev, PLUNICODE fci )
     // fci = 0 is a special value indicating the Type 1 Symbol font
     // is desired.  This value cannot be confused with a normal FCI value
     // because it doesn't have the PL_FCI_MARK.
-    if ( fci == 0)
+    if ( fci == 0 )
     {
-      font = "Symbol";
-      dev->nlookup = number_of_entries_in_unicode_to_symbol_table;
-      dev->lookup  = unicode_to_symbol_lookup_table;
-      dev->if_symbol_font = 1;
+        font                = "Symbol";
+        dev->nlookup        = number_of_entries_in_unicode_to_symbol_table;
+        dev->lookup         = unicode_to_symbol_lookup_table;
+        dev->if_symbol_font = 1;
     }
     else
     {
-      /* convert the fci to Base14/Type1 font information */
-      font = plP_FCI2FontName( fci, Type1Lookup, N_Type1Lookup );
-      dev->nlookup = number_of_entries_in_unicode_to_standard_table;
-      dev->lookup  = unicode_to_standard_lookup_table;
-      dev->if_symbol_font = 0;
+        /* convert the fci to Base14/Type1 font information */
+        font                = plP_FCI2FontName( fci, Type1Lookup, N_Type1Lookup );
+        dev->nlookup        = number_of_entries_in_unicode_to_standard_table;
+        dev->lookup         = unicode_to_standard_lookup_table;
+        dev->if_symbol_font = 0;
     }
 
     if ( !( dev->m_font = HPDF_GetFont( dev->pdf, font, NULL ) ) )
         plexit( "ERROR: Couldn't open font\n" );
     HPDF_Page_SetFontAndSize( dev->page, dev->m_font, dev->fontSize * dev->fontScale );
-
 }
 
 
@@ -612,106 +611,106 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
             if ( ucs4[i] != (PLUNICODE) plplotEsc ) /* a character to display */
             {
                 type1_string[s] = plunicode2type1( ucs4[i], dev->lookup, dev->nlookup );
-                if(ucs4[i] != ' ' && type1_string[s] == ' ')
+                if ( ucs4[i] != ' ' && type1_string[s] == ' ' )
                 {
-                  // failed lookup
-                  if(! dev->if_symbol_font)
-                  {
-                    // failed standard font lookup.  Try "last chance"
-                    // symbol font instead.
-                    type1_string[s] = '\0';
-                    PSDrawTextToCanvas( dev, type1_string, drawText );
-                    s = 0;
-                    last_chance = 1;
-                    PSSetFont( dev, 0 );
-                    continue;
-                  }
-                  else if(!last_chance)
-                  {
-                    // failed symbol font lookup that is not right
-                    // after a failed standard font lookup (i.e.,
-                    // last_change = 0).  Try standard fonts lookup instead.
-                    type1_string[s] = '\0';
-                    PSDrawTextToCanvas( dev, type1_string, drawText );
-                    s = 0;
-                    last_chance = 0;
-                    PSSetFont( dev, fci );
-                    continue;
-                  }
-                  else
-                  {
-                    // failed "last_chance" symbol font lookup that
-                    // has occurred right after a failed standard
-                    // fonts lookup.  Just accept blank result and
-                    // move on using standard fonts.
-                    PSDrawTextToCanvas( dev, type1_string, drawText );
-                    s = 0;
-                    last_chance = 0;
-                    PSSetFont( dev, fci );
-                    i++;
-                    continue;
-                  }
+                    // failed lookup
+                    if ( !dev->if_symbol_font )
+                    {
+                        // failed standard font lookup.  Try "last chance"
+                        // symbol font instead.
+                        type1_string[s] = '\0';
+                        PSDrawTextToCanvas( dev, type1_string, drawText );
+                        s           = 0;
+                        last_chance = 1;
+                        PSSetFont( dev, 0 );
+                        continue;
+                    }
+                    else if ( !last_chance )
+                    {
+                        // failed symbol font lookup that is not right
+                        // after a failed standard font lookup (i.e.,
+                        // last_change = 0).  Try standard fonts lookup instead.
+                        type1_string[s] = '\0';
+                        PSDrawTextToCanvas( dev, type1_string, drawText );
+                        s           = 0;
+                        last_chance = 0;
+                        PSSetFont( dev, fci );
+                        continue;
+                    }
+                    else
+                    {
+                        // failed "last_chance" symbol font lookup that
+                        // has occurred right after a failed standard
+                        // fonts lookup.  Just accept blank result and
+                        // move on using standard fonts.
+                        PSDrawTextToCanvas( dev, type1_string, drawText );
+                        s           = 0;
+                        last_chance = 0;
+                        PSSetFont( dev, fci );
+                        i++;
+                        continue;
+                    }
                 }
                 else
                 {
-                  // font lookup succeeded.
-                  s++;
-                  i++;
-                  last_chance = 0;
-                  continue;
+                    // font lookup succeeded.
+                    s++;
+                    i++;
+                    last_chance = 0;
+                    continue;
                 }
             }
             i++;
             if ( ucs4[i] == (PLUNICODE) plplotEsc ) /* a escape character to display */
             {
                 type1_string[s] = plunicode2type1( ucs4[i], dev->lookup, dev->nlookup );
-                if(ucs4[i] != ' ' && type1_string[s] == ' ')
+                if ( ucs4[i] != ' ' && type1_string[s] == ' ' )
                 {
-                  // failed lookup
-                  if(! dev->if_symbol_font)
-                  {
-                    // failed standard font lookup.  Try "last chance"
-                    // symbol font instead.
-                    type1_string[s] = '\0';
-                    PSDrawTextToCanvas( dev, type1_string, drawText );
-                    s = 0;
-                    last_chance = 1;
-                    PSSetFont( dev, 0 );
-                    continue;
-                  }
-                  else if(!last_chance)
-                  {
-                    // failed symbol font lookup that is not right
-                    // after a failed standard font lookup (i.e.,
-                    // last_change = 0).  Try standard fonts lookup instead.
-                    type1_string[s] = '\0';
-                    PSDrawTextToCanvas( dev, type1_string, drawText );
-                    s = 0;
-                    last_chance = 0;
-                    PSSetFont( dev, fci );
-                    continue;
-                  }
-                  else
-                  {
-                    // failed "last_chance" symbol font lookup that
-                    // has occurred right after a failed standard
-                    // fonts lookup.  Just accept blank result and
-                    // move on using standard fonts.
-                    PSDrawTextToCanvas( dev, type1_string, drawText );
-                    s = 0;
-                    last_chance = 0;
-                    PSSetFont( dev, fci );
-                    i++;
-                    continue;
-                  }
+                    // failed lookup
+                    if ( !dev->if_symbol_font )
+                    {
+                        // failed standard font lookup.  Try "last chance"
+                        // symbol font instead.
+                        type1_string[s] = '\0';
+                        PSDrawTextToCanvas( dev, type1_string, drawText );
+                        s           = 0;
+                        last_chance = 1;
+                        PSSetFont( dev, 0 );
+                        continue;
+                    }
+                    else if ( !last_chance )
+                    {
+                        // failed symbol font lookup that is not right
+                        // after a failed standard font lookup (i.e.,
+                        // last_change = 0).  Try standard fonts lookup instead.
+                        type1_string[s] = '\0';
+                        PSDrawTextToCanvas( dev, type1_string, drawText );
+                        s           = 0;
+                        last_chance = 0;
+                        PSSetFont( dev, fci );
+                        continue;
+                    }
+                    else
+                    {
+                        // failed "last_chance" symbol font lookup that
+                        // has occurred right after a failed standard
+                        // fonts lookup.  Just accept blank result and
+                        // move on using standard fonts.
+                        PSDrawTextToCanvas( dev, type1_string, drawText );
+                        s           = 0;
+                        last_chance = 0;
+                        PSSetFont( dev, fci );
+                        i++;
+                        continue;
+                    }
                 }
                 else
                 {
-                  // font lookup succeeded.
-                  s++;
-                  i++;
-                  last_chance = 0;
-                  continue;
+                    // font lookup succeeded.
+                    s++;
+                    i++;
+                    last_chance = 0;
+                    continue;
                 }
             }
             else

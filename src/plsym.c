@@ -288,8 +288,8 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
             args.string = NULL; /* Since we are using unicode, we want this to be NULL */
             /* "array method" */
             plgesc( &esc );
-            args.xform             = xform;
-            args.unicode_array_len = 1;
+            args.xform               = xform;
+            args.unicode_array_len   = 1;
             plhrsh_unicode_buffer[0] = unicode_char;
             /* watch out for escape character and unescape it by appending
              * one extra. */
