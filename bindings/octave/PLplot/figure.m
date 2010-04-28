@@ -183,7 +183,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       endif
 
       ## the tk stuff
-      if (strcmp("tk", sprintf("%s",plgdev')))
+      if (0 & strcmp("tk", sprintf("%s",plgdev')))
 	if (! exist("tk_start") && nargin == 6)
 	  error("Can't use this Tk feature of PLplot until tk_octave \
                  is installed!\n")
@@ -192,7 +192,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	  tk_init;
 	 endif
 
-          [fp,init_file] = mkstemp([P_tmpdir "oct_fig_XXXXXX"]);
+          [fp,init_file] = mkstemp([P_tmpdir "/oct_fig_XXXXXX"])
 
 	  fprintf(fp, "set octave_interp {%s}\n", __tk_name);
 	  fprintf(fp, "set octave_interp_pid %d\n", getpid);
@@ -234,7 +234,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       #pladv(0);
       #plflush;pleop;
       
-      if ( exist("__tk_name") & (strcmp("tk", sprintf("%s",plgdev'))))
+      if ( 0 & exist("__tk_name") & (strcmp("tk", sprintf("%s",plgdev'))))
 	eval(tk_receive(1));
 	__pl.intp = __pl_matstr(__pl.intp, intp, strm);	# tk interpreter name					
 	unlink(init_file);
