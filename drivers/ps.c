@@ -4,7 +4,7 @@
  *
  * Copyright (C) 1992, 2001  Geoffrey Furnish
  * Copyright (C) 1992, 1993, 1994, 1995, 2001  Maurice LeBrun
- * Copyright (C) 2000, 2001, 2002, 2004, 2005  Alan W. Irwin
+ * Copyright (C) 2000-2010  Alan W. Irwin
  * Copyright (C) 2001, 2002  Joao Cardoso
  * Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
  * Copyright (C) 2004, 2005  Thomas J. Duck
@@ -80,6 +80,9 @@ static unsigned char
 plunicode2type1( const PLUNICODE index,
                  const Unicode_to_Type1_table lookup[],
                  const int number_of_entries );
+
+static void
+set_font( PSDev* dev, PLUNICODE fci );
 
 /* text > 0 uses some postscript tricks, namely a transformation matrix
  * that scales, rotates (with slanting) and offsets text strings.
@@ -761,9 +764,7 @@ proc_str( PLStream *pls, EscText *args )
     if ( args->unicode_array_len > 0 )
     {
         int j, s, f;
-        char                         *fonts[PROC_STR_STRING_LENGTH];
-        int nlookup;
-        const Unicode_to_Type1_table *lookup;
+        char      *fonts[PROC_STR_STRING_LENGTH];
         const PLUNICODE              *cur_text;
         PLUNICODE fci;
         /* translate from unicode into type 1 font index. */
@@ -774,25 +775,8 @@ proc_str( PLStream *pls, EscText *args )
 
         plgesc( &esc );
         plgfci( &fci );
-        font = plP_FCI2FontName( fci, Type1Lookup, N_Type1Lookup );
-        if ( font == NULL )
-        {
-            fprintf( stderr, "fci = 0x%x, font name pointer = NULL \n", fci );
-            plabort( "proc_str: FCI inconsistent with Type1Lookup; "
-                "internal PLplot error" );
-            return;
-        }
-        pldebug( "proc_str", "fci = 0x%x, font name = %s\n", fci, font );
-        if ( !strcmp( font, "Symbol" ) )
-        {
-            nlookup = number_of_entries_in_unicode_to_symbol_table;
-            lookup  = unicode_to_symbol_lookup_table;
-        }
-        else
-        {
-            nlookup = number_of_entries_in_unicode_to_standard_table;
-            lookup  = unicode_to_standard_lookup_table;
-        }
+        set_font( dev, fci );
+        font     = dev->font;
         cur_text = args->unicode_array;
         for ( f = s = j = 0; j < args->unicode_array_len; j++ )
         {
@@ -804,24 +788,8 @@ proc_str( PLStream *pls, EscText *args )
                  */
                 if ( ( f < PROC_STR_STRING_LENGTH ) && ( s + 3 < PROC_STR_STRING_LENGTH ) )
                 {
-                    fonts[f] = plP_FCI2FontName( cur_text[j], Type1Lookup, N_Type1Lookup );
-                    if ( fonts[f] == NULL )
-                    {
-                        fprintf( stderr, "string-supplied FCI = 0x%x, font name pointer = NULL \n", cur_text[j] );
-                        plabort( "proc_str: string-supplied FCI inconsistent with Type1Lookup;" );
-                        return;
-                    }
-                    pldebug( "proc_str", "string-supplied FCI = 0x%x, font name = %s\n", cur_text[j], fonts[f] );
-                    if ( !strcmp( fonts[f++], "Symbol" ) )
-                    {
-                        lookup  = unicode_to_symbol_lookup_table;
-                        nlookup = number_of_entries_in_unicode_to_symbol_table;
-                    }
-                    else
-                    {
-                        lookup  = unicode_to_standard_lookup_table;
-                        nlookup = number_of_entries_in_unicode_to_standard_table;
-                    }
+                    set_font( dev, cur_text[j] );
+                    fonts[f++]   = dev->font;
                     cur_str[s++] = esc;
                     cur_str[s++] = 'f';
                     cur_str[s++] = 'f';
@@ -831,14 +799,14 @@ proc_str( PLStream *pls, EscText *args )
             {
 #undef PL_TEST_TYPE1
 #ifdef PL_TEST_TYPE1
-                // Use this test case only to conveniently view type 1 font
+                // Use this test case only to conveniently view Type1 font
                 // possibilities (as in test_type1.py example).
                 if ( 0 <= cur_text[j] && cur_text[j] < 256 )
                     cur_str[s++] = cur_text[j];
                 else
                     cur_str[s++] = 32;
 #else
-                cur_str[s++] = plunicode2type1( cur_text[j], lookup, nlookup );
+                cur_str[s++] = plunicode2type1( cur_text[j], dev->lookup, dev->nlookup );
 #endif
                 pldebug( "proc_str", "unicode = 0x%x, type 1 code = %d\n",
                     cur_text[j], cur_str[s - 1] );
@@ -1139,9 +1107,38 @@ plunicode2type1( const PLUNICODE index,
     /* jlo is invalid or it is valid and index > lookup[jlo].Unicode.
      * jhi is invalid or it is valid and index < lookup[jhi].Unicode.
      * All these conditions together imply index cannot be found in lookup.
-     * Mark with 32 (which is normally a blank in type 1 fonts).
+     * Mark with ' ' (which is normally the index for blank in type 1 fonts).
      */
-    return ( 32 );
+    return ( ' ' );
+}
+
+/***********************************************************************
+ * set_font( PSDev* dev, PLUNICODE fci )
+ *
+ * Sets the Type1 font.
+ ***********************************************************************/
+static void
+set_font( PSDev* dev, PLUNICODE fci )
+{
+    // fci = 0 is a special value indicating the Type 1 Symbol font
+    // is desired.  This value cannot be confused with a normal FCI value
+    // because it doesn't have the PL_FCI_MARK.
+    if ( fci == 0 )
+    {
+        dev->font           = "Symbol";
+        dev->nlookup        = number_of_entries_in_unicode_to_symbol_table;
+        dev->lookup         = unicode_to_symbol_lookup_table;
+        dev->if_symbol_font = 1;
+    }
+    else
+    {
+        /* convert the fci to Base14/Type1 font information */
+        dev->font           = plP_FCI2FontName( fci, Type1Lookup, N_Type1Lookup );
+        dev->nlookup        = number_of_entries_in_unicode_to_standard_table;
+        dev->lookup         = unicode_to_standard_lookup_table;
+        dev->if_symbol_font = 0;
+    }
+    pldebug( "set_font", "fci = 0x%x, font name = %s\n", fci, dev->font );
 }
 
 #else

@@ -6,6 +6,8 @@
 #ifndef __PS_H__
 #define __PS_H__
 
+#include "plunicode-type1.h"
+
 /* top level declarations */
 
 #define LINELENGTH    78
@@ -47,6 +49,10 @@ typedef struct
     PLFLT xscale_dev, yscale_dev;
 
     int   llx, lly, urx, ury, ptcnt;
+    // font variables.
+    char  *font;
+    int   nlookup, if_symbol_font;
+    const Unicode_to_Type1_table *lookup;
 
     /* These are only used by the pstex driver for the additional
      * file required in this case */
