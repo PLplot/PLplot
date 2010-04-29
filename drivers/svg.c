@@ -1122,11 +1122,15 @@ void write_hex( FILE *svgFile, unsigned char val )
  * write_unicode ()
  *
  * writes a unicode character, appropriately formatted (i.e. &#xNNN)
+ * with invalid xml characters replaced by ' '.
  * ---------------------------------------------------------------------*/
 
 void write_unicode( FILE *svgFile, PLUNICODE ucs4_char )
 {
-    fprintf( svgFile, "&#x%x;", ucs4_char );
+    if ( ucs4_char >= ' ' || ucs4_char == '\t' || ucs4_char == '\n' || ucs4_char == '\r' )
+        fprintf( svgFile, "&#x%x;", ucs4_char );
+    else
+        fprintf( svgFile, "&#x%x;", ' ' );
 }
 
 /*---------------------------------------------------------------------
