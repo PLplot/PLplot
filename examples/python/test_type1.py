@@ -16,9 +16,12 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Plots all the Type1 fonts that are available with -dev psc.
-# N.B. ps.c must be compiled with -DPL_TEST_TYPE1 (which interprets
-# unicode in the range from 0 to 255 directly as Type1 font indices.)
+# Plots the first 256 unicode glyphs.
+# N.B. If ps.c is edited to #define PL_TEST_TYPE1 (which interprets
+# unicode in the range from 0 to 255 directly as Type1 font indices) and
+# if the -dev ps -drvopt hrshsym=0 command-line options are used, then
+# the results are similar to the results obtained from the historical
+# gfontview application that is no longer available under Linux.
 
 # Append to effective python path so that can find plplot modules.
 from plplot_python_start import *
@@ -28,8 +31,6 @@ from plplot_py_demos import *
 
 # Parse and process command line arguments
 plparseopts(sys.argv, PL_PARSE_FULL)
-plsetopt("dev", "ps")
-plsetopt("drvopt", "hrshsym=0")
 
 # Initialize plplot
 plinit()
@@ -96,7 +97,11 @@ def main():
                 y = 1. - (i+0.5)/16
 
                 # Display the Type 1 glyph corresponding to k
-                plptex(x, y, 1., 0., 0.5, unichr(k).encode('utf-8'))
+                glyph_string = unichr(k).encode('utf-8')
+                # Escape the escape.
+                if glyph_string == "#":
+                    glyph_string = "##"
+                plptex(x, y, 1., 0., 0.5, glyph_string)
                 k = k + 1
             plsfont(0, 0, 0)
 
