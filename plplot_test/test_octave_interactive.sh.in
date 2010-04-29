@@ -51,25 +51,25 @@ for i=1:rows(t)
   plsetopt(tt(1:ix), tt(ix+1:len));
 endfor
 
-# -dev tk fails to work for any of these.
 # -dev wxwidgets will work on one at a time, but segfaults
 # for multiple examples.
+
 # -dev xcairo very slow on all of these (the well-known interactive
-# slowness issue
-# with that device).
+# slowness issue with that device).
+
 # The following comments are for -dev qtwidget.
 # 12 (hangs);
 # 14 (looks pretty to start but then segfaults);
 # 17 (error: plrb: device is not xor capable);
 # 18 (hangs);
-# The issues with 12, 17 and 18 are all because qtwidget does not handle plGetCursor
+# The issues with 12, 17 and 18 are all because qtwidget does not handle plGetCursor.
 
 # -dev wxwidgets had similar issues except possibly for examples 18
 # and 19 which seemed fine, but there is no way to tell for sure with
 # second wxwidgets example (no matter what) always segfaulting.
 
-# -dev xwin worked except for the following:
-# 14 (animation does not work right);
+# -dev xwin and -dev tk worked for all examples and Octave-3.0.  For
+# Octave-3.2 the animation for p14 does not work correctly with these devices.
 
 plsetopt("dev","$device");
 for i=[1:21];
