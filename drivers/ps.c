@@ -763,10 +763,10 @@ proc_str( PLStream *pls, EscText *args )
     /* unicode only! so test for it. */
     if ( args->unicode_array_len > 0 )
     {
-        int       j, s, f, last_chance = 0;
+        int       j, s, f;
         char      *fonts[PROC_STR_STRING_LENGTH];
         const PLUNICODE              *cur_text;
-        PLUNICODE fci;
+        PLUNICODE fci, fci_save;
         /* translate from unicode into type 1 font index. */
         /*
          * Choose the font family, style, variant, and weight using
@@ -775,10 +775,10 @@ proc_str( PLStream *pls, EscText *args )
 
         plgesc( &esc );
         plgfci( &fci );
+        fci_save = fci;
         font     = get_font( dev, fci );
         cur_text = args->unicode_array;
-        f        = s = j = 0;
-        while ( j < args->unicode_array_len )
+        for ( f = s = j = 0; j < args->unicode_array_len; j++ )
         {
             if ( cur_text[j] & PL_FCI_MARK )
             {
@@ -788,13 +788,14 @@ proc_str( PLStream *pls, EscText *args )
                  */
                 if ( ( f < PROC_STR_STRING_LENGTH ) && ( s + 3 < PROC_STR_STRING_LENGTH ) )
                 {
-                    fonts[f++]   = get_font( dev, cur_text[j] );
+                    fci_save     = cur_text[j];
+                    fonts[f++]   = get_font( dev, fci_save );
                     cur_str[s++] = esc;
                     cur_str[s++] = 'f';
                     cur_str[s++] = 'f';
                 }
             }
-            else if ( s + 1 < PROC_STR_STRING_LENGTH )
+            else if ( s + 4 < PROC_STR_STRING_LENGTH )
             {
 #undef PL_TEST_TYPE1
 #ifdef PL_TEST_TYPE1
@@ -813,12 +814,42 @@ proc_str( PLStream *pls, EscText *args )
                 else
                     font = get_font( dev, fci );
 #else
-                cur_str[s++] = plunicode2type1( cur_text[j], dev->lookup, dev->nlookup );
+                cur_str[s] = plunicode2type1( cur_text[j], dev->lookup, dev->nlookup );
+                if ( cur_text[j] != ' ' && cur_str[s] == ' ' )
+                {
+                    // failed lookup.
+                    if ( !dev->if_symbol_font )
+                    {
+                        // failed standard font lookup.  Use symbol
+                        // font instead which will return a blank if
+                        // that fails as well.
+                        fonts[f++]   = get_font( dev, 0 );
+                        cur_str[s++] = esc;
+                        cur_str[s++] = 'f';
+                        cur_str[s++] = 'f';
+                        cur_str[s++] = plunicode2type1( cur_text[j], dev->lookup, dev->nlookup );
+                    }
+                    else
+                    {
+                        // failed symbol font lookup.  Use last standard
+                        // font instead which will return a blank if
+                        // that fails as well.
+                        fonts[f++]   = get_font( dev, fci_save );
+                        cur_str[s++] = esc;
+                        cur_str[s++] = 'f';
+                        cur_str[s++] = 'f';
+                        cur_str[s++] = plunicode2type1( cur_text[j], dev->lookup, dev->nlookup );
+                    }
+                }
+                else
+                {
+                    // lookup succeeded.
+                    s++;
+                }
 #endif
                 pldebug( "proc_str", "unicode = 0x%x, type 1 code = %d\n",
                     cur_text[j], cur_str[s - 1] );
             }
-            j++;
         }
         cur_str[s] = '\0';
 
