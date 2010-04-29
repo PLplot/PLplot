@@ -50,7 +50,6 @@ typedef struct
 
     int   llx, lly, urx, ury, ptcnt;
     // font variables.
-    char  *font;
     int   nlookup, if_symbol_font;
     const Unicode_to_Type1_table *lookup;
 

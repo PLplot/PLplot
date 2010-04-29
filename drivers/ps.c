@@ -81,8 +81,8 @@ plunicode2type1( const PLUNICODE index,
                  const Unicode_to_Type1_table lookup[],
                  const int number_of_entries );
 
-static void
-set_font( PSDev* dev, PLUNICODE fci );
+static char *
+get_font( PSDev* dev, PLUNICODE fci );
 
 /* text > 0 uses some postscript tricks, namely a transformation matrix
  * that scales, rotates (with slanting) and offsets text strings.
@@ -763,7 +763,7 @@ proc_str( PLStream *pls, EscText *args )
     /* unicode only! so test for it. */
     if ( args->unicode_array_len > 0 )
     {
-        int j, s, f;
+        int       j, s, f, last_chance = 0;
         char      *fonts[PROC_STR_STRING_LENGTH];
         const PLUNICODE              *cur_text;
         PLUNICODE fci;
@@ -775,10 +775,10 @@ proc_str( PLStream *pls, EscText *args )
 
         plgesc( &esc );
         plgfci( &fci );
-        set_font( dev, fci );
-        font     = dev->font;
+        font     = get_font( dev, fci );
         cur_text = args->unicode_array;
-        for ( f = s = j = 0; j < args->unicode_array_len; j++ )
+        f        = s = j = 0;
+        while ( j < args->unicode_array_len )
         {
             if ( cur_text[j] & PL_FCI_MARK )
             {
@@ -788,8 +788,7 @@ proc_str( PLStream *pls, EscText *args )
                  */
                 if ( ( f < PROC_STR_STRING_LENGTH ) && ( s + 3 < PROC_STR_STRING_LENGTH ) )
                 {
-                    set_font( dev, cur_text[j] );
-                    fonts[f++]   = dev->font;
+                    fonts[f++]   = get_font( dev, cur_text[j] );
                     cur_str[s++] = esc;
                     cur_str[s++] = 'f';
                     cur_str[s++] = 'f';
@@ -801,16 +800,25 @@ proc_str( PLStream *pls, EscText *args )
 #ifdef PL_TEST_TYPE1
                 // Use this test case only to conveniently view Type1 font
                 // possibilities (as in test_type1.py example).
+                // This functionality is useless other than for this test case.
+                PLINT ifamily, istyle, iweight;
+                plgfont( &ifamily, &istyle, &iweight );
                 if ( 0 <= cur_text[j] && cur_text[j] < 256 )
                     cur_str[s++] = cur_text[j];
                 else
                     cur_str[s++] = 32;
+                // Overwrite font just for this special case.
+                if ( ifamily == PL_FCI_SYMBOL )
+                    font = get_font( dev, 0 );
+                else
+                    font = get_font( dev, fci );
 #else
                 cur_str[s++] = plunicode2type1( cur_text[j], dev->lookup, dev->nlookup );
 #endif
                 pldebug( "proc_str", "unicode = 0x%x, type 1 code = %d\n",
                     cur_text[j], cur_str[s - 1] );
             }
+            j++;
         }
         cur_str[s] = '\0';
 
@@ -1113,19 +1121,20 @@ plunicode2type1( const PLUNICODE index,
 }
 
 /***********************************************************************
- * set_font( PSDev* dev, PLUNICODE fci )
+ * get_font( PSDev* dev, PLUNICODE fci )
  *
  * Sets the Type1 font.
  ***********************************************************************/
-static void
-set_font( PSDev* dev, PLUNICODE fci )
+static char *
+get_font( PSDev* dev, PLUNICODE fci )
 {
+    char *font;
     // fci = 0 is a special value indicating the Type 1 Symbol font
     // is desired.  This value cannot be confused with a normal FCI value
     // because it doesn't have the PL_FCI_MARK.
     if ( fci == 0 )
     {
-        dev->font           = "Symbol";
+        font                = "Symbol";
         dev->nlookup        = number_of_entries_in_unicode_to_symbol_table;
         dev->lookup         = unicode_to_symbol_lookup_table;
         dev->if_symbol_font = 1;
@@ -1133,12 +1142,13 @@ set_font( PSDev* dev, PLUNICODE fci )
     else
     {
         /* convert the fci to Base14/Type1 font information */
-        dev->font           = plP_FCI2FontName( fci, Type1Lookup, N_Type1Lookup );
+        font                = plP_FCI2FontName( fci, Type1Lookup, N_Type1Lookup );
         dev->nlookup        = number_of_entries_in_unicode_to_standard_table;
         dev->lookup         = unicode_to_standard_lookup_table;
         dev->if_symbol_font = 0;
     }
-    pldebug( "set_font", "fci = 0x%x, font name = %s\n", fci, dev->font );
+    pldebug( "set_font", "fci = 0x%x, font name = %s\n", fci, font );
+    return ( font );
 }
 
 #else
