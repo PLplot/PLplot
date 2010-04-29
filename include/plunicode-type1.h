@@ -33,10 +33,14 @@ typedef struct
     unsigned char Type1;
 } Unicode_to_Type1_table;
 
-static const int number_of_entries_in_unicode_to_dingbats_table = 188;
+// The following table values have been updated to be consistent
+// with zdingbat.txt, stdenc.txt, and symbol.txt downloaded from
+// http://unicode.org/Public/MAPPINGS/VENDORS/ADOBE/ on 2010-04-28.
+static const int number_of_entries_in_unicode_to_dingbats_table = 203;
 
-static const Unicode_to_Type1_table unicode_to_dingbats_lookup_table[188] = {
+static const Unicode_to_Type1_table unicode_to_dingbats_lookup_table[203] = {
     { 0x0020,  32 },
+    { 0x00a0,  32 },
     { 0x2192, 213 },
     { 0x2194, 214 },
     { 0x2195, 215 },
@@ -223,12 +227,26 @@ static const Unicode_to_Type1_table unicode_to_dingbats_lookup_table[188] = {
     { 0x27bb, 251 },
     { 0x27bc, 252 },
     { 0x27bd, 253 },
-    { 0x27be, 254 }
+    { 0x27be, 254 },
+    { 0xf8d7, 128 },
+    { 0xf8d8, 129 },
+    { 0xf8d9, 130 },
+    { 0xf8da, 131 },
+    { 0xf8db, 132 },
+    { 0xf8dc, 133 },
+    { 0xf8dd, 134 },
+    { 0xf8de, 135 },
+    { 0xf8df, 136 },
+    { 0xf8e0, 137 },
+    { 0xf8e1, 138 },
+    { 0xf8e2, 139 },
+    { 0xf8e3, 140 },
+    { 0xf8e4, 141 },
 };
 
-static const int number_of_entries_in_unicode_to_standard_table = 149;
+static const int number_of_entries_in_unicode_to_standard_table = 154;
 
-static const Unicode_to_Type1_table unicode_to_standard_lookup_table[149] = {
+static const Unicode_to_Type1_table unicode_to_standard_lookup_table[154] = {
     { 0x0020,  32 },
     { 0x0021,  33 },
     { 0x0022,  34 },
@@ -236,7 +254,7 @@ static const Unicode_to_Type1_table unicode_to_standard_lookup_table[149] = {
     { 0x0024,  36 },
     { 0x0025,  37 },
     { 0x0026,  38 },
-    { 0x0027,  39 },
+    { 0x0027, 169 },
     { 0x0028,  40 },
     { 0x0029,  41 },
     { 0x002a,  42 },
@@ -324,6 +342,7 @@ static const Unicode_to_Type1_table unicode_to_standard_lookup_table[149] = {
     { 0x007c, 124 },
     { 0x007d, 125 },
     { 0x007e, 126 },
+    { 0x00a0,  32 },
     { 0x00a1, 161 },
     { 0x00a2, 162 },
     { 0x00a3, 163 },
@@ -333,6 +352,7 @@ static const Unicode_to_Type1_table unicode_to_standard_lookup_table[149] = {
     { 0x00a8, 200 },
     { 0x00aa, 227 },
     { 0x00ab, 171 },
+    { 0x00ad,  45 },
     { 0x00af, 197 },
     { 0x00b4, 194 },
     { 0x00b6, 182 },
@@ -354,6 +374,7 @@ static const Unicode_to_Type1_table unicode_to_standard_lookup_table[149] = {
     { 0x0192, 166 },
     { 0x02c6, 195 },
     { 0x02c7, 207 },
+    { 0x02c9, 197 },
     { 0x02d8, 198 },
     { 0x02d9, 199 },
     { 0x02da, 202 },
@@ -376,13 +397,15 @@ static const Unicode_to_Type1_table unicode_to_standard_lookup_table[149] = {
     { 0x2039, 172 },
     { 0x203a, 173 },
     { 0x2044, 164 },
+    { 0x2215, 164 },
+    { 0x2219, 180 },
     { 0xfb01, 174 },
-    { 0xfb02, 175 }
+    { 0xfb02, 175 },
 };
 
-static const int number_of_entries_in_unicode_to_symbol_table = 168;
+static const int number_of_entries_in_unicode_to_symbol_table = 194;
 
-static const Unicode_to_Type1_table unicode_to_symbol_lookup_table[168] = {
+static const Unicode_to_Type1_table unicode_to_symbol_lookup_table[194] = {
     { 0x0020,  32 },
     { 0x0021,  33 },
     { 0x0023,  35 },
@@ -416,11 +439,11 @@ static const Unicode_to_Type1_table unicode_to_symbol_lookup_table[168] = {
     { 0x007b, 123 },
     { 0x007c, 124 },
     { 0x007d, 125 },
-    { 0x00a9, 211 },
+    { 0x00a0,  32 },
     { 0x00ac, 216 },
-    { 0x00ae, 210 },
     { 0x00b0, 176 },
     { 0x00b1, 177 },
+    { 0x00b5, 109 },
     { 0x00d7, 180 },
     { 0x00f7, 184 },
     { 0x0192, 166 },
@@ -469,26 +492,23 @@ static const Unicode_to_Type1_table unicode_to_symbol_lookup_table[168] = {
     { 0x03c3, 115 },
     { 0x03c4, 116 },
     { 0x03c5, 117 },
-    { 0x03c6, 106 },
+    { 0x03c6, 102 },
     { 0x03c7,  99 },
     { 0x03c8, 121 },
     { 0x03c9, 119 },
     { 0x03d1,  74 },
     { 0x03d2, 161 },
-    { 0x03d5, 102 },
+    { 0x03d5, 106 },
     { 0x03d6, 118 },
-    { 0x03f4,  74 },
-    { 0x03f5, 101 },
     { 0x2022, 183 },
     { 0x2026, 188 },
     { 0x2032, 162 },
     { 0x2033, 178 },
-    { 0x203e,  96 },
     { 0x2044, 164 },
+    { 0x20ac, 160 },
     { 0x2111, 193 },
     { 0x2118, 195 },
     { 0x211c, 194 },
-    { 0x2122, 212 },
     { 0x2126,  87 },
     { 0x2135, 192 },
     { 0x2190, 172 },
@@ -550,7 +570,36 @@ static const Unicode_to_Type1_table unicode_to_symbol_lookup_table[168] = {
     { 0x2660, 170 },
     { 0x2663, 167 },
     { 0x2665, 169 },
-    { 0x2666, 168 }
+    { 0x2666, 168 },
+    { 0xf6d9, 211 },
+    { 0xf6da, 210 },
+    { 0xf6db, 212 },
+    { 0xf8e5,  96 },
+    { 0xf8e6, 189 },
+    { 0xf8e7, 190 },
+    { 0xf8e8, 226 },
+    { 0xf8e9, 227 },
+    { 0xf8ea, 228 },
+    { 0xf8eb, 230 },
+    { 0xf8ec, 231 },
+    { 0xf8ed, 232 },
+    { 0xf8ee, 233 },
+    { 0xf8ef, 234 },
+    { 0xf8f0, 235 },
+    { 0xf8f1, 236 },
+    { 0xf8f2, 237 },
+    { 0xf8f3, 238 },
+    { 0xf8f4, 239 },
+    { 0xf8f5, 244 },
+    { 0xf8f6, 246 },
+    { 0xf8f7, 247 },
+    { 0xf8f8, 248 },
+    { 0xf8f9, 249 },
+    { 0xf8fa, 250 },
+    { 0xf8fb, 251 },
+    { 0xf8fc, 252 },
+    { 0xf8fd, 253 },
+    { 0xf8fe, 254 },
 };
 
 #endif /* __PLUNICODE_TYPE1_H__ */
