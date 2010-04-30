@@ -166,6 +166,7 @@ INDEX
 1.4 Custom axis labeling implemented
 1.5 Universal coordinate transform implemented
 1.6 Support for arbitrary storage of 2D user data
+1.7 Font improvements
 
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -213,6 +214,7 @@ detected
 2.39 Custom axis labeling implemented
 2.40 Universal coordinate transform implemented
 2.41 Support for arbitrary storage of 2D user data
+2.42 Font improvements
 
 
 0. Tests made for release 5.9.6
@@ -427,6 +429,29 @@ four types of 2D data arrays:
 3) PLFLT z[nx*ny]; /* row major order */
 4) PLFLT z[nx*ny]; /* column major order */
 
+1.7 Font improvements
+
+We have added the underscore to the Hershey glyphs (thanks to David
+MacMahon) and slightly rearranged the ascii index to the Hershey
+indices so that plpoin now generates the complete set of printable
+ascii characters in the correct order for the Hershey fonts (and therefore
+the Type1 and TrueType fonts as well).
+
+We have improved how we access TrueType and Type1 fonts via the Hershey
+font index (used by plpoin, plsym, and the Hershey escape sequences in pl*tex
+commands).  We have added considerably to the Hershey index to Unicode index
+translation table both for the compact and extended Hershey indexing scheme,
+and we have adopted the standard Unicode to Type1 index translation tables
+from http://unicode.org/Public/MAPPINGS/VENDORS/ADOBE/.
+
+We have also dropped the momentary switch to symbol font that was
+implemented in the PLplot core library.  That switch was designed to partially
+compensate for the lack of symbol glyphs in the standard Type1 fonts.  That
+was a bad design because it affected TrueType font devices as well as
+the desired Type1 font devices.  To replace this bad idea we now
+change from Type1 standard fonts to the Type1 Symbol font (and vice
+versa) whenever there is a glyph lookup failure in the Type1 font
+device drivers (ps and pdf).
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -1062,4 +1087,28 @@ four types of 2D data arrays:
 2) PLfGrid2 z;
 3) PLFLT z[nx*ny]; /* row major order */
 4) PLFLT z[nx*ny]; /* column major order */
+
+2.42 Font improvements
+
+We have added the underscore to the Hershey glyphs (thanks to David
+MacMahon) and slightly rearranged the ascii index to the Hershey
+indices so that plpoin now generates the complete set of printable
+ascii characters in the correct order for the Hershey fonts (and therefore
+the Type1 and TrueType fonts as well).
+
+We have improved how we access TrueType and Type1 fonts via the Hershey
+font index (used by plpoin, plsym, and the Hershey escape sequences in pl*tex
+commands).  We have added considerably to the Hershey index to Unicode index
+translation table both for the compact and extended Hershey indexing scheme,
+and we have adopted the standard Unicode to Type1 index translation tables
+from http://unicode.org/Public/MAPPINGS/VENDORS/ADOBE/.
+
+We have also dropped the momentary switch to symbol font that was
+implemented in the PLplot core library.  That switch was designed to partially
+compensate for the lack of symbol glyphs in the standard Type1 fonts.  That
+was a bad design because it affected TrueType font devices as well as
+the desired Type1 font devices.  To replace this bad idea we now
+change from Type1 standard fonts to the Type1 Symbol font (and vice
+versa) whenever there is a glyph lookup failure in the Type1 font
+device drivers (ps and pdf).
 
