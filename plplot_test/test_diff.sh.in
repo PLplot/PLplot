@@ -137,4 +137,6 @@ for lang in c++ f77 f95 java octave python tcl perl ada adathick ocaml lua d; do
     fi 
 done
 
-exit ${ret}
+if [ "${ret}" != "0" ] ; then
+    echo "WARNING: Some PostScript or stdout results were different"
+fi
