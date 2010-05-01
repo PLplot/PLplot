@@ -91,7 +91,6 @@ let plot1 ?stream ?fontset (do_test, test_xor) params =
   let ys = Array.init 6 (fun i -> y.(i * 10 + 3)) in
 
   P.set_color ~stream P.Blue;
-  P.label ~stream "(x)" "(y)" "#frPLplot Example 1 - y=x#u2";
 
   P.plot ~stream [
     (* Plot the data points *)
@@ -100,6 +99,8 @@ let plot1 ?stream ?fontset (do_test, test_xor) params =
     P.lines P.Red x y;
     (* Show the axes *)
     P.default_axes;
+    (* Title and axis labels *)
+    P.label "(x)" "(y)" "#frPLplot Example 1 - y=x#u2";
   ];
 
   (* All done. *)
@@ -113,7 +114,6 @@ let plot2 stream =
   P.start_page ~stream (-2.0, -0.4) (10.0, 1.2) P.Greedy;
 
   P.set_color ~stream P.Blue;
-  P.label ~stream "(x)" "sin(x)/x" "#frPLplot Example 1 - Sinc Function";
 
   (* Fill up the arrays *)
   let x = Array.init 100 (fun i -> (float_of_int i -. 19.0) /. 6.0) in
@@ -137,6 +137,7 @@ let plot2 stream =
   P.plot ~stream [
     P.lines ~width:2 P.Red x y;
     P.axes x_axis y_axis;
+    P.label "(x)" "sin(x)/x" "#frPLplot Example 1 - Sinc Function";
   ];
 
   (* All done. *)
@@ -151,8 +152,6 @@ let plot3 stream =
   P.start_page ~stream  (0.0, -1.2) (360.0, 1.2) P.Greedy;
 
   P.set_color ~stream P.Red;
-  P.label ~stream "Angle (degrees)" "sine"
-    "#frPLplot Example 1 - Sine function";
 
   let x = Array.init 101 (fun i -> 3.6 *. float_of_int i) in
   let y = Array.init 101 (fun i -> sin (x.(i) *. pi /. 180.0)) in
@@ -178,6 +177,9 @@ let plot3 stream =
     P.lines P.Brown x y;
     (* The normal plot axes *)
     P.axes x_axis y_axis;
+    (* Plot title and axis labels *)
+    P.label "Angle (degrees)" "sine"
+      "#frPLplot Example 1 - Sine function";
   ];
 
   (* All done. *)

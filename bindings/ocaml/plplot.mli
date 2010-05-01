@@ -282,6 +282,29 @@ module Plot :
     (** [circle ?fill color x y r] *)
     val circle : ?fill:bool -> color_t -> float -> float -> float -> plot_t
 
+    (** [image_colorbar ?label ?log ?pos ?width (min, max)] add a
+        color bar to a plot using the current color scale.  This function
+        should be called after the rest of the plot is complete. *)
+    val image_colorbar :
+      ?custom_axis:axis_options_t list ->
+      ?label:string plot_side_t ->
+      ?log:bool ->
+      ?pos:float plot_side_t ->
+      ?width:float ->
+      float * float -> plot_t
+
+    (** [shade_colorbar ?label ?log ?pos ?width contours] add a shaded
+        color bar to a plot using the current color scale.  This is similar to
+        {!image_colorbar} but takes [contours] as rather than a range.  This
+        function should be called after the rest of the plot is complete. *)
+    val shade_colorbar :
+      ?custom_axis:axis_options_t list ->
+      ?label:string plot_side_t ->
+      ?log:bool ->
+      ?pos:float plot_side_t ->
+      ?width:float ->
+      float array -> plot_t
+
     (** [contours color tranform_func contours data] *)
     val contours :
       color_t -> pltr_t -> float array -> float array array -> plot_t
@@ -302,6 +325,9 @@ module Plot :
       ?style:line_style_t ->
       ?width:int ->
       color_t -> float * float -> float * float -> plot_t
+
+    (** [label ?color x_label y_label title] adds axis labels and a title. *)
+    val label : ?color:color_t -> string -> string -> string -> plot_t
 
     (** [lines ?label ?style color xs ys] *)
     val lines :
@@ -398,37 +424,8 @@ module Plot :
     (** Draw a legend, given a list of titles and colors *)
     val draw_legend :
       ?stream:stream_t ->
-      ?line_length:'a ->
+      ?line_length:float ->
       ?x:float -> ?y:float -> string list -> color_t list -> unit
-
-    (** [label x_label y_label title] adds axis labels and a title to the given
-        plot [stream]. *)
-    val label : ?stream:stream_t -> string -> string -> string -> unit
-
-    (** [colorbar ?stream ?label ?log ?pos ?width (min, max)] add a color bar
-        to a plot using the current color scale.  This function should be
-        called after the rest of the plot is complete. *)
-    val colorbar :
-      ?stream:stream_t ->
-      ?custom_axis:axis_options_t list ->
-      ?label:string plot_side_t ->
-      ?log:bool ->
-      ?pos:float plot_side_t ->
-      ?width:float ->
-      float * float -> unit
-
-    (** [shadebar ?stream ?label ?log ?pos ?width contours] add a shaded color
-        bar to a plot using the current color scale.  This is similar to
-        {!colorbar} but takes contours as [values].  This function should be
-        called after the rest of the plot is complete. *)
-    val shadebar :
-      ?stream:stream_t ->
-      ?custom_axis:axis_options_t list ->
-      ?label:string plot_side_t ->
-      ?log:bool ->
-      ?pos:float plot_side_t ->
-      ?width:float ->
-      float array -> unit
 
     (** [colorbar_labeler ?log ?min ?max axis n] can be used as a custom
         axis labeling function when a colorbar is meant to represent values
@@ -439,7 +436,7 @@ module Plot :
       ?log:bool ->
       ?min:float ->
       ?max:float ->
-      'a -> float -> string
+      plplot_axis_type -> float -> string
 
     (** Draw the plot axes on the current plot page *)
     val plot_axes :

@@ -1,5 +1,5 @@
 (*
-Copyright 2009  Hezekiah M. Carty
+Copyright 2009, 2010  Hezekiah M. Carty
 
 This file is part of PLplot.
 
@@ -185,10 +185,15 @@ module Plot = struct
     | Axes of
       (color_t * axis_options_t list * axis_options_t list * int *
        line_style_t * (plplot_axis_type -> float -> string) option)
+    | Colorbar of
+      (float plot_side_t option * string plot_side_t option * bool option *
+       float option * [`image of (float * float) | `shade of (float array)] *
+       axis_options_t list option)
     | Contours of (color_t * pltr_t * float array * float array array)
     | Image of image_t
     | Image_fr of (image_t * (float * float))
     | Join of (color_t * float * float * float * float * int * line_style_t)
+    | Labels of (color_t * string * string * string)
     | Lines of
       (string option * color_t * float array * float array * int * line_style_t)
     | Map of (color_t * map_t * float * float * float * float)
@@ -501,6 +506,14 @@ module Plot = struct
   (** [circle ?fill color x y r] - A special case of [arc]. *)
   let circle ?fill color x y r = arc ?fill color x y r r 0.0 360.0
 
+  (** Draw a colorbar, optionally log scaled and labeled. *)
+  let image_colorbar ?custom_axis ?label ?log ?pos ?width data =
+    Colorbar (pos, label, log, width, `image data, custom_axis)
+
+  (** Draw a shaded colorbar, optionally log scaled and labeled. *)
+  let shade_colorbar ?custom_axis ?label ?log ?pos ?width data =
+    Colorbar (pos, label, log, width, `shade data, custom_axis)
+
   (** [contours color pltr contours data] *)
   let contours color pltr contours data =
     Contours (color, pltr, contours, data)
@@ -515,6 +528,10 @@ module Plot = struct
   (** [join color (x0, y0) (x1, y1)] *)
   let join ?style ?width color (x0, y0) (x1, y1) =
     Join (color, x0, y0, x1, y1, width |? 1, style |? Solid_line)
+
+  (** [label x y title] labels the axes and adds plot title *)
+  let label ?(color = Black) x y title =
+    Labels (color, x, y, title)
 
   (** [lines ?label color xs ys] *)
   let lines ?label ?style ?width color xs ys =
@@ -727,6 +744,170 @@ module Plot = struct
         (xmin, ymin), (xmax, ymax)
     in
     *)
+    (** [colorbar_base ?label ?log ?pos values] draws a colorbar, using the given
+        values for the color range. [label] gives the position and text of the
+        colorbar label; if [log] is true then the scale is taken to be log rather
+        than linear ; [pos] sets the position of the colorbar itself, both the
+        side of the plot to put it on and the distance from the edge
+        (normalized device units); [width] is the width of the colorbar (again in
+        normalized device units).
+        NOTE: This potentially wrecks the current viewport and
+        window settings, among others, so it should be called AFTER the current
+        plot page is otherwise complete. *)
+    let colorbar_base ?custom_axis ?label ?log ?(pos = Right 0.07) ?(width = 0.03)
+                 data =
+      (* Save the state of the current plot window. *)
+      let dxmin, dxmax, dymin, dymax = plgvpd () in
+      let wxmin, wxmax, wymin, wymax = plgvpw () in
+      (*let old_default, old_scale = plgchr () in*)
+
+      let old_color = plg_current_col0 () in
+
+      (* Small font *)
+      plschr 0.0 0.75;
+      (* Small ticks on the vertical axis *)
+      plsmaj 0.0 0.5;
+      plsmin 0.0 0.5;
+
+      (* Offset from the edge of the plot surface in normalized device units *)
+      let offset =
+        match pos with
+        | Right off
+        | Top off -> 1.0 -. off
+        | Left off
+        | Bottom off -> off -. width
+      in
+      (* Put the bar on the proper side, with the proper offsets. *)
+      (* Unit major-axis, minor-axis scaled to contour values. *)
+      let width_start = offset in
+      let width_end = offset +. width in
+
+      (* Set the viewport and window *)
+      let init_window min_value max_value =
+        match pos with
+        | Right _
+        | Left _ ->
+            plvpor width_start width_end 0.15 0.85;
+            plwind 0.0 1.0 min_value max_value;
+        | Top _
+        | Bottom _ ->
+            plvpor 0.15 0.85 width_start width_end;
+            plwind min_value max_value 0.0 1.0;
+      in
+
+      (* "Rotate" the image if we have a horizontal (Top or Bottom) colorbar. *)
+      (* Also, double the amount of data because plshades won't work properly
+         otherwise. *)
+      let colorbar_data values =
+        match pos with
+        | Right off
+        | Left off -> [|values; values|]
+        | Top off
+        | Bottom off -> Array.map (fun x -> [|x; x|]) values
+      in
+
+      (* Draw the image or shaded data, depending on what was requested *)
+      let () =
+        match data with
+        | `image (min_value, max_value) ->
+            (* Draw the color bar as an image. *)
+            (* TODO FIXME XXX: Change "100" to be the number of color palette 1
+               colors once the attribute getting + setting functions are in
+               place. *)
+            let colorbar_steps = Array_ext.range ~n:100 min_value max_value in
+            let data = colorbar_data colorbar_steps in
+            init_window min_value max_value;
+            (match pos with
+            | Right _
+            | Left _ -> plot [image (0.0, min_value) (1.0, max_value) data]
+            | Top _
+            | Bottom _ -> plot [image (min_value, 0.0) (max_value, 1.0) data])
+        | `shade contours ->
+            let shade_data = colorbar_data contours in
+            let max_value, min_value = plMinMax2dGrid [|contours|] in
+            init_window min_value max_value;
+            (match pos with
+            | Right _
+            | Left _ ->
+                plot [
+                  pltr (pltr1 [|0.0; 1.0|] contours);
+                  shades (0.0, min_value) (1.0, max_value) contours shade_data;
+                  clear_pltr;
+                ]
+            | Top _
+            | Bottom _ ->
+                plot [
+                  pltr (pltr1 contours [|0.0; 1.0|]);
+                  shades (min_value, 0.0) (max_value, 1.0) contours shade_data;
+                  clear_pltr;
+                ])
+      in
+
+      (* Draw a box and tick marks around the color bar. *)
+      set_color Black;
+      (* Draw ticks and labels on the major axis.  Add other options as
+         appropriate. *)
+      let major_axis_opt =
+        List.concat [
+          [Frame0; Frame1; Major_ticks];
+          (* Log? *)
+          (match log with
+          | None -> []
+          | Some b -> if b then [Minor_ticks; Log] else []);
+          (* Which side gets the label *)
+          (match pos with
+          | Right _
+          | Top _ -> [Unconventional_label]
+          | Left _
+          | Bottom _ -> [Label]);
+          (* Perpendicular labeling? *)
+          (match pos with
+          | Right _
+          | Left _ -> [Vertical_label]
+          | Top _
+          | Bottom _ -> []);
+          (* User-specified axis options? *)
+          (match custom_axis with
+          | None -> []
+          | Some l -> l);
+        ]
+      in
+      (* Just draw the minor axis sides, no labels or ticks. *)
+      let minor_axis_opt = [Frame0; Frame1] in
+      let x_opt, y_opt =
+        match pos with
+        | Top _
+        | Bottom _ -> major_axis_opt, minor_axis_opt
+        | Left _
+        | Right _ -> minor_axis_opt, major_axis_opt
+      in
+      plot_axes x_opt y_opt;
+
+      (* Draw the label *)
+      Option.may (
+        fun l ->
+          (* Which side to draw the label on and the offset from that side in
+             units of character height. *)
+          let label_string, label_pos_string, label_offset =
+            match l with
+            | Right s -> s, "r", 4.0
+            | Left s -> s, "l", 4.0
+            | Top s -> s, "t", 1.5
+            | Bottom s -> s, "b", 1.5
+          in
+          plmtex label_pos_string label_offset 0.5 0.5 label_string
+      ) label;
+
+      (* TODO XXX FIXME - Make sure setting are all properly restored... *)
+      (* Restore the old plot window settings. *)
+      plvpor dxmin dxmax dymin dymax;
+      plwind wxmin wxmax wymin wymax;
+      plschr 0.0 1.0;
+      plsmaj 0.0 1.0;
+      plsmin 0.0 1.0;
+      set_color (Index_color old_color);
+      ()
+    in
     let plot_arc (color, x, y, a, b, angle1, angle2, fill) =
       set_color_in color (
         fun () -> plarc x y a b angle1 angle2 fill;
@@ -744,6 +925,9 @@ module Plot = struct
           set_line_style Solid_line;
           plwid old_width;
       )
+    in
+    let plot_colorbar (pos, label, log, width, data, custom_axis) =
+      colorbar_base ?custom_axis ?label ?log ?pos ?width data
     in
     let plot_contours (color, pltr, contours, data) =
       set_color_in color (
@@ -776,6 +960,11 @@ module Plot = struct
           pljoin x0 y0 x1 y1;
           set_line_style Solid_line;
           plwid old_width;
+      )
+    in
+    let plot_labels (color, x, y, title) =
+      set_color_in color (
+        fun () -> pllab x y title
       )
     in
     let plot_lines (label, color, xs, ys, width, style) =
@@ -866,10 +1055,12 @@ module Plot = struct
       match p with
       | Arc a -> plot_arc a
       | Axes ax -> plot_axes ax
+      | Colorbar cb -> plot_colorbar cb
       | Contours c -> plot_contours c
       | Image i -> plot_image i
       | Image_fr (i, scale) -> plot_imagefr i scale
       | Join j -> plot_join j
+      | Labels lab -> plot_labels lab
       | Lines l -> plot_lines l
       | Map m -> plot_map m
       | Points p -> plot_points p
@@ -887,174 +1078,6 @@ module Plot = struct
     List.iter (
       fun plottable -> with_stream ?stream (fun () -> one_plot plottable)
     ) plottable_list
-
-  (** Label the axes and plot title *)
-  let label ?stream x y title =
-    with_stream ?stream (fun () -> pllab x y title)
-
-  (** [colorbar_base ?label ?log ?pos values] draws a colorbar, using the given
-      values for the color range. [label] gives the position and text of the
-      colorbar label; if [log] is true then the scale is taken to be log rather
-      than linear ; [pos] sets the position of the colorbar itself, both the
-      side of the plot to put it on and the distance from the edge
-      (normalized device units); [width] is the width of the colorbar (again in
-      normalized device units).
-      NOTE: This potentially wrecks the current viewport and
-      window settings, among others, so it should be called AFTER the current
-      plot page is otherwise complete. *)
-  let colorbar_base ?custom_axis ?label ?log ?(pos = Right 0.07) ?(width = 0.03)
-               data =
-    (* Save the state of the current plot window. *)
-    let dxmin, dxmax, dymin, dymax = plgvpd () in
-    let wxmin, wxmax, wymin, wymax = plgvpw () in
-    (*let old_default, old_scale = plgchr () in*)
-
-    let old_color = plg_current_col0 () in
-
-    (* Small font *)
-    plschr 0.0 0.75;
-    (* Small ticks on the vertical axis *)
-    plsmaj 0.0 0.5;
-    plsmin 0.0 0.5;
-
-    (* Offset from the edge of the plot surface in normalized device units *)
-    let offset =
-      match pos with
-      | Right off
-      | Top off -> 1.0 -. off
-      | Left off
-      | Bottom off -> off -. width
-    in
-    (* Put the bar on the proper side, with the proper offsets. *)
-    (* Unit major-axis, minor-axis scaled to contour values. *)
-    let width_start = offset in
-    let width_end = offset +. width in
-
-    (* Set the viewport and window *)
-    let init_window min_value max_value =
-      match pos with
-      | Right _
-      | Left _ ->
-          plvpor width_start width_end 0.15 0.85;
-          plwind 0.0 1.0 min_value max_value;
-      | Top _
-      | Bottom _ ->
-          plvpor 0.15 0.85 width_start width_end;
-          plwind min_value max_value 0.0 1.0;
-    in
-
-    (* "Rotate" the image if we have a horizontal (Top or Bottom) colorbar. *)
-    (* Also, double the amount of data because plshades won't work properly
-       otherwise. *)
-    let colorbar_data values =
-      match pos with
-      | Right off
-      | Left off -> [|values; values|]
-      | Top off
-      | Bottom off -> Array.map (fun x -> [|x; x|]) values
-    in
-
-    (* Draw the image or shaded data, depending on what was requested *)
-    let () =
-      match data with
-      | `image (min_value, max_value) ->
-          (* Draw the color bar as an image. *)
-          (* TODO FIXME XXX: Change "100" to be the number of color palette 1
-             colors once the attribute getting + setting functions are in
-             place. *)
-          let colorbar_steps = Array_ext.range ~n:100 min_value max_value in
-          let data = colorbar_data colorbar_steps in
-          init_window min_value max_value;
-          (match pos with
-          | Right _
-          | Left _ -> plot [image (0.0, min_value) (1.0, max_value) data]
-          | Top _
-          | Bottom _ -> plot [image (min_value, 0.0) (max_value, 1.0) data])
-      | `shade contours ->
-          let shade_data = colorbar_data contours in
-          let max_value, min_value = plMinMax2dGrid [|contours|] in
-          init_window min_value max_value;
-          (match pos with
-          | Right _
-          | Left _ ->
-              plot [
-                pltr (pltr1 [|0.0; 1.0|] contours);
-                shades (0.0, min_value) (1.0, max_value) contours shade_data;
-                clear_pltr;
-              ]
-          | Top _
-          | Bottom _ ->
-              plot [
-                pltr (pltr1 contours [|0.0; 1.0|]);
-                shades (min_value, 0.0) (max_value, 1.0) contours shade_data;
-                clear_pltr;
-              ])
-    in
-
-    (* Draw a box and tick marks around the color bar. *)
-    set_color Black;
-    (* Draw ticks and labels on the major axis.  Add other options as
-       appropriate. *)
-    let major_axis_opt =
-      List.concat [
-        [Frame0; Frame1; Major_ticks];
-        (* Log? *)
-        (match log with
-        | None -> []
-        | Some b -> if b then [Minor_ticks; Log] else []);
-        (* Which side gets the label *)
-        (match pos with
-        | Right _
-        | Top _ -> [Unconventional_label]
-        | Left _
-        | Bottom _ -> [Label]);
-        (* Perpendicular labeling? *)
-        (match pos with
-        | Right _
-        | Left _ -> [Vertical_label]
-        | Top _
-        | Bottom _ -> []);
-        (* User-specified axis options? *)
-        (match custom_axis with
-        | None -> []
-        | Some l -> l);
-      ]
-    in
-    (* Just draw the minor axis sides, no labels or ticks. *)
-    let minor_axis_opt = [Frame0; Frame1] in
-    let x_opt, y_opt =
-      match pos with
-      | Top _
-      | Bottom _ -> major_axis_opt, minor_axis_opt
-      | Left _
-      | Right _ -> minor_axis_opt, major_axis_opt
-    in
-    plot_axes x_opt y_opt;
-
-    (* Draw the label *)
-    Option.may (
-      fun l ->
-        (* Which side to draw the label on and the offset from that side in
-           units of character height. *)
-        let label_string, label_pos_string, label_offset =
-          match l with
-          | Right s -> s, "r", 4.0
-          | Left s -> s, "l", 4.0
-          | Top s -> s, "t", 1.5
-          | Bottom s -> s, "b", 1.5
-        in
-        plmtex label_pos_string label_offset 0.5 0.5 label_string
-    ) label;
-
-    (* TODO XXX FIXME - Make sure setting are all properly restored... *)
-    (* Restore the old plot window settings. *)
-    plvpor dxmin dxmax dymin dymax;
-    plwind wxmin wxmax wymin wymax;
-    plschr 0.0 1.0;
-    plsmaj 0.0 1.0;
-    plsmin 0.0 1.0;
-    set_color (Index_color old_color);
-    ()
 
   (** [colorbar_labeler ?log ?min ?max axis n] can be used as a custom
       axis labeling function when a colorbar is meant to represent values
@@ -1090,20 +1113,6 @@ module Plot = struct
     | None
     | Some false -> normal_text n
     | Some true -> log10_text n
-
-  (** Draw a colorbar, optionally log scaled and labeled. *)
-  let colorbar ?stream ?custom_axis ?label ?log ?pos ?width (min, max) =
-    with_stream ?stream (
-      fun () ->
-        colorbar_base ?custom_axis ?label ?log ?pos ?width (`image (min, max))
-    )
-
-  (** Draw a shaded colorbar, optionally log scaled and labeled. *)
-  let shadebar ?stream ?custom_axis ?label ?log ?pos ?width values =
-    with_stream ?stream (
-      fun () ->
-        colorbar_base ?custom_axis ?label ?log ?pos ?width (`shade values)
-    )
 
   (** Finish the current page, start a new one (alias for {!start_page}). *)
   let next_page = start_page
@@ -1181,8 +1190,8 @@ module Quick_plot = struct
     plot ~stream [
       list plottable_points;
       axes x_axis y_axis;
+      Option.map_default (fun (x, y, t) -> label x y t) (list []) labels;
     ];
-    Option.may (fun (x, y, t) -> label ~stream x y t) labels;
     end_stream ~stream ();
     ()
 
@@ -1205,8 +1214,8 @@ module Quick_plot = struct
     plot ~stream [
       list plottable_lines;
       axes x_axis y_axis;
+      Option.map_default (fun (x, y, t) -> label x y t) (list []) labels;
     ];
-    Option.may (fun (x, y, t) -> label ~stream x y t) labels;
     Option.may (fun n -> draw_legend ~stream n (Array.to_list colors)) names;
     end_stream ~stream ();
     ()
@@ -1223,9 +1232,9 @@ module Quick_plot = struct
     plot ~stream [
       image (xmin, ymin) (xmax, ymax) m;
       default_axes;
+      Option.map_default (fun (x, y, t) -> label x y t) (list []) labels;
+      image_colorbar ?log ~pos:(Right 0.12) (m_min, m_max);
     ];
-    Option.may (fun (x, y, t) -> label ~stream x y t) labels;
-    colorbar ~stream ?log ~pos:(Right 0.12) (m_min, m_max);
     end_stream ~stream ();
     ()
 
@@ -1260,9 +1269,9 @@ module Quick_plot = struct
     plot ~stream [
       list plot_content;
       default_axes;
+      Option.map_default (fun (x, y, t) -> label x y t) (list []) labels;
     ];
     Option.may (fun n -> draw_legend ~stream n (Array.to_list colors)) names;
-    Option.may (fun (x, y, t) -> label ~stream x y t) labels;
     end_stream ~stream ();
     ()
 
@@ -1282,9 +1291,9 @@ module Quick_plot = struct
     plot ~stream [
       shades (xmin, ymin) (xmax, ymax) contours m;
       default_axes;
+      Option.map_default (fun (x, y, t) -> label x y t) (list []) labels;
+      shade_colorbar ?log ~pos:(Right 0.12) contours;
     ];
-    Option.may (fun (x, y, t) -> label ~stream x y t) labels;
-    shadebar ~stream ?log ~pos:(Right 0.12) contours;
     end_stream ~stream ();
     ()
 end
