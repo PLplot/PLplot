@@ -514,7 +514,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
         return;
     }
 
-    if ( pltr == NULL && plsc->coordinate_transform == NULL )
+    if ( (pltr == NULL && plsc->coordinate_transform == NULL) || pltr_data == NULL )
         rectangular = 1;
 
     int_val    = shade_max - shade_min;
@@ -609,7 +609,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                 y[0] = y[3] = iy;
                 y[1] = y[2] = iy + j;
 
-                if ( pltr )
+                if ( pltr && pltr_data )
                 {
                     for ( i = 0; i < 4; i++ )
                     {
@@ -668,7 +668,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
             }
             n += i;
 
-            if ( pltr )
+            if ( pltr && pltr_data )
             {
                 for ( i = 0; i < n; i++ )
                 {
