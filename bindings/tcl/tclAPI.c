@@ -2494,13 +2494,13 @@ plsetoptCmd( ClientData clientData, Tcl_Interp *interp,
  * We will be getting data through a 2-d Matrix, which carries along
  * nx and ny, so no need for those.  Toss defined since it's not supported
  * anyway.  Toss plfill since it is the only valid choice.  Take an optional
- * pltr spec just as for plcont, and add a wrapping specifier, also just as
- * in plcont.  So the new command looks like:
+ * pltr spec just as for plcont or an alternative of NULL pltr, and add a
+ * wrapping specifier, as in plcont.  So the new command looks like:
  *
  *      plshade z xmin xmax ymin ymax \
  *          sh_min sh_max sh_cmap sh_color sh_width \
  *          min_col min_wid max_col max_wid \
- *          rect [pltr x y] [wrap]
+ *          rect [[pltr x y] | NULL ] [wrap]
  \*--------------------------------------------------------------------------*/
 
 static int
@@ -2581,6 +2581,11 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
 
         argc -= 3, argv += 3;
     }
+    else if ( argc && !strcmp( argv[0], "NULL" ) )
+    {
+        pltrname = argv[0];
+        argc    -= 1, argv += 1;
+    }
 
     if ( argc )
     {
@@ -2597,7 +2602,19 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
 /* Figure out which coordinate transformation model is being used, and setup
  * accordingly. */
 
-    if ( !strcmp( pltrname, "pltr0" ) )
+    if ( !strcmp( pltrname, "NULL" ) )
+    {
+        pltr  = NULL;
+        zused = z;
+
+        /* wrapping is only supported for pltr2. */
+        if ( wrap )
+        {
+            interp->result = "Must use pltr2 if want wrapping.";
+            return TCL_ERROR;
+        }
+    }
+    else if ( !strcmp( pltrname, "pltr0" ) )
     {
         pltr  = pltr0;
         zused = z;
@@ -2743,7 +2760,7 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
     {
         Tcl_AppendResult( interp,
             "Unrecognized coordinate transformation spec:",
-            pltrname, ", must be pltr0 pltr1 or pltr2.",
+            pltrname, ", must be NULL, pltr0, pltr1, or pltr2.",
             (char *) NULL );
         return TCL_ERROR;
     }
@@ -2794,13 +2811,13 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
  * nx and ny, so no need for those.  Toss defined since it's not supported
  * anyway.  clevel will be via a 1-d matrix, which carries along nlevel, so
  * no need for that.  Toss plfill since it is the only valid choice.
- * Take an optional
- * pltr spec just as for plcont, and add a wrapping specifier, also just as
- * in plcont.  So the new command looks like:
+ * Take an optional pltr spec just as for plcont or an alternative of
+ * NULL pltr, and add a wrapping specifier, as in plcont.
+ * So the new command looks like:
  *
  *      plshades z xmin xmax ymin ymax \
  *          clevel, fill_width, cont_color, cont_width\
- *          rect [pltr x y] [wrap]
+ *          rect [[pltr x y] | NULL] [wrap]
  \*--------------------------------------------------------------------------*/
 
 static int
@@ -2884,6 +2901,11 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
 
         argc -= 3, argv += 3;
     }
+    else if ( argc && !strcmp( argv[0], "NULL" ) )
+    {
+        pltrname = argv[0];
+        argc    -= 1, argv += 1;
+    }
 
     if ( argc )
     {
@@ -2900,7 +2922,19 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
 /* Figure out which coordinate transformation model is being used, and setup
  * accordingly. */
 
-    if ( !strcmp( pltrname, "pltr0" ) )
+    if ( !strcmp( pltrname, "NULL" ) )
+    {
+        pltr  = NULL;
+        zused = z;
+
+        /* wrapping is only supported for pltr2. */
+        if ( wrap )
+        {
+            interp->result = "Must use pltr2 if want wrapping.";
+            return TCL_ERROR;
+        }
+    }
+    else if ( !strcmp( pltrname, "pltr0" ) )
     {
         pltr  = pltr0;
         zused = z;
@@ -3046,7 +3080,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
     {
         Tcl_AppendResult( interp,
             "Unrecognized coordinate transformation spec:",
-            pltrname, ", must be pltr0 pltr1 or pltr2.",
+            pltrname, ", must be NULL, pltr0, pltr1, or pltr2.",
             (char *) NULL );
         return TCL_ERROR;
     }
