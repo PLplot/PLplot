@@ -89,7 +89,7 @@ proc plot151 { w z zmin zmax } {
   $w cmd plpsty 8
   $w cmd plshade z -1. 1. -1. 1. $shade_min $shade_max \
     $sh_cmap $sh_color $sh_width \
-    $min_color $min_width $max_color $max_width 1
+    $min_color $min_width $max_color $max_width 1 "NULL"
   $w cmd plcol0 1
   $w cmd plbox bcnst 0.0 0 bcnstv 0.0 0
   $w cmd plcol0 2
@@ -138,7 +138,7 @@ proc plot152 { w z zmin zmax } {
     $w cmd plpat [nlin $i] inc$i del$i
     $w cmd plshade z -1. 1. -1. 1. $shade_min $shade_max \
       $sh_cmap $sh_color $sh_width \
-      $min_color $min_width $max_color $max_width 1
+      $min_color $min_width $max_color $max_width 1 "NULL"
   }
   $w cmd plcol0 1
   $w cmd plbox bcnst 0.0 0 bcnstv 0.0 0

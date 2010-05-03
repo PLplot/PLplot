@@ -93,7 +93,7 @@ proc x16 {{w loopback}} {
 
     $w cmd plshades zz -1. 1. -1. 1. \
       shedge $fill_width $cont_color $cont_width \
-      1
+      1 "NULL"
 
     $w cmd plcol0 1
     $w cmd plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
