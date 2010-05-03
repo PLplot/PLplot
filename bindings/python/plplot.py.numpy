@@ -411,6 +411,7 @@ def plshades(z, *args):
 	raise ValueError, "Missing rect argument"
 
     if len(args) > 0 and ( \
+    type(args[0]) == types.NoneType or \
     type(args[0]) == types.StringType or \
     type(args[0]) == types.FunctionType or \
     type(args[0]) == types.BuiltinFunctionType):
@@ -555,6 +556,7 @@ def plshade(z, *args):
 	raise ValueError, "Missing rect argument"
 
     if len(args) > 0 and ( \
+    type(args[0]) == types.NoneType or \
     type(args[0]) == types.StringType or \
     type(args[0]) == types.FunctionType or \
     type(args[0]) == types.BuiltinFunctionType):
