@@ -72,7 +72,7 @@ def plot1(z, zmin, zmax):
     # in X and Y coordinates
     plshade( z, -1., 1., -1., 1., 
     shade_min, shade_max, sh_cmap, sh_color, sh_width, 
-    min_color, min_width, max_color, max_width, 1)
+    min_color, min_width, max_color, max_width, 1, None, None)
 							
     plcol0(1)
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)
@@ -114,7 +114,7 @@ def plot2(z, zmin, zmax):
 	# in X and Y coordinates
 	plshade( z, -1., 1., -1., 1.,
 	shade_min, shade_max, sh_cmap, sh_color, sh_width,
-	min_color, min_width, max_color, max_width, 1)
+	min_color, min_width, max_color, max_width, 1, None, None)
 
     plcol0(1)
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)

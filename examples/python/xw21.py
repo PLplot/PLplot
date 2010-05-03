@@ -154,7 +154,7 @@ def main():
                 plenv0(xm,xM,ym,yM,2,0)
                 plcol0(15)
                 pllab('X','Y',title[alg-1])
-                plshades(zg, xm, xM, ym, yM, clev, 1, 1)
+                plshades(zg, xm, xM, ym, yM, clev, 1, 1, None, None)
                 plcol0(2)
             else:
                 clev = lzm + (lzM-lzm)*arange(nl)/(nl-1)
