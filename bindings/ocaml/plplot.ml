@@ -849,17 +849,28 @@ module Plot = struct
          appropriate. *)
       let major_axis_opt =
         List.concat [
-          [Frame0; Frame1; Major_ticks];
+          [Frame0; Frame1];
+          (* We draw tick marks ourselves for shade bars *)
+          (match data with
+          | `image _ -> [Major_ticks]
+          | `shade _ -> []);
           (* Log? *)
           (match log with
-          | None -> []
-          | Some b -> if b then [Minor_ticks; Log] else []);
-          (* Which side gets the label *)
+          | None
+          | Some false -> []
+          | Some true -> [Minor_ticks; Log]);
+          (* Which side gets the label?  We label ourselves for shade bars *)
           (match pos with
           | Right _
-          | Top _ -> [Unconventional_label]
+          | Top _ ->
+              (match data with
+              | `image _ -> [Unconventional_label]
+              | `shade _ -> [])
           | Left _
-          | Bottom _ -> [Label]);
+          | Bottom _ ->
+              (match data with
+              | `image _ -> [Label]
+              | `shade _ -> []));
           (* Perpendicular labeling? *)
           (match pos with
           | Right _
@@ -883,15 +894,46 @@ module Plot = struct
       in
       plot_axes x_opt y_opt;
 
+      (* Draw axis tick marks and labels if this is a shade bar *)
+      let () =
+        match data with
+        | `image _ -> () (* Nothing to do here *)
+        | `shade contours ->
+            let label_pos_string, label_justify =
+              match pos with
+              | Right _ -> "rv", 0.0
+              | Left _ -> "lv", 1.0
+              | Top _ -> "t", 0.5
+              | Bottom _ -> "b", 0.5
+            in
+            let max_value, min_value = plMinMax2dGrid [|contours|] in
+            Array.iter (
+              fun label_value ->
+                let label_position =
+                  (label_value -. min_value) /. (max_value -. min_value)
+                in
+                let label_string = sprintf "%g" label_value in
+                plmtex
+                  label_pos_string 1.0 label_position label_justify label_string
+            ) contours
+      in
+
       (* Draw the label *)
       Option.may (
         fun l ->
           (* Which side to draw the label on and the offset from that side in
              units of character height. *)
           let label_string, label_pos_string, label_offset =
+            let v =
+              match pos with
+              | Right _
+              | Left _ -> ""
+              | Top _
+              | Bottom _ -> "v"
+            in
             match l with
-            | Right s -> s, "r", 4.0
-            | Left s -> s, "l", 4.0
+            | Right s -> s, "r" ^ v, 4.0
+            | Left s -> s, "l" ^ v, 4.0
             | Top s -> s, "t", 1.5
             | Bottom s -> s, "b", 1.5
           in
