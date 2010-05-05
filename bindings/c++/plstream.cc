@@ -45,6 +45,7 @@ PLFLT Contourable_Data_evaluator( PLINT i, PLINT j, PLPointer p )
 void Coord_Xform_evaluator( PLFLT ox, PLFLT oy,
                             PLFLT *nx, PLFLT *ny, PLPointer p )
 {
+
     const Coord_Xformer& xf = *(Coord_Xformer *) p;
 
     xf.xform( ox, oy, *nx, *ny );
@@ -1737,14 +1738,24 @@ plstream::shade( Contourable_Data & d, PLFLT xmin, PLFLT xmax,
     int nx, ny;
     d.elements( nx, ny );
 
-    ::plfshade( Contourable_Data_evaluator, &d,
-        NULL, NULL,
-        nx, ny,
-        xmin, xmax, ymin, ymax, shade_min, shade_max,
-        sh_cmap, sh_color, sh_width,
-        min_color, min_width, max_color, max_width,
-        ::plfill, rectangular,
-        Coord_Xform_evaluator, pcxf );
+    if (pcxf != NULL )
+        ::plfshade( Contourable_Data_evaluator, &d,
+		    NULL, NULL,
+		    nx, ny,
+		    xmin, xmax, ymin, ymax, shade_min, shade_max,
+		    sh_cmap, sh_color, sh_width,
+		    min_color, min_width, max_color, max_width,
+		    ::plfill, rectangular,
+		    Coord_Xform_evaluator, pcxf );
+    else
+        ::plfshade( Contourable_Data_evaluator, &d,
+		    NULL, NULL,
+		    nx, ny,
+		    xmin, xmax, ymin, ymax, shade_min, shade_max,
+		    sh_cmap, sh_color, sh_width,
+		    min_color, min_width, max_color, max_width,
+		    ::plfill, rectangular,
+		    NULL, NULL );
 }
 
 // Deprecated version using PLINT not bool
@@ -1995,6 +2006,16 @@ void plstream::start( const char *devname, PLINT nx, PLINT ny )
     set_stream();
 
     plstart( devname, nx, ny );
+}
+
+// Set the coordinate transform
+
+void plstream::stransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), 
+			   PLPointer coordinate_transform_data )
+{
+    set_stream();
+
+    plstransform( coordinate_transform, coordinate_transform_data );
 }
 
 // Create 1d stripchart

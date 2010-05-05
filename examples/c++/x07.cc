@@ -32,8 +32,8 @@
 using namespace std;
 #endif
 
-static int base[17] = {
-    0,     200,  500,  600,  700,  800,  900,
+static int base[20] = {
+    0,     100,    0,  100,  200,  500,  600,  700,  800, 900,
     2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900
 };
 
@@ -63,9 +63,10 @@ x07::x07( int argc, const char ** argv )
     // Initialize PLplot.
     pls->init();
 
-    pls->fontld( 1 );
-    for ( l = 0; l < 17; l++ )
+    pls->fontld( 0 );
+    for ( l = 0; l < 20; l++ )
     {
+        if ( l == 2 ) pls->fontld( 1 );
         pls->adv( 0 );
 
         // Set up viewport and window.
@@ -107,7 +108,10 @@ x07::x07( int argc, const char ** argv )
             }
         }
 
-        pls->mtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols" );
+        if ( l < 2 )
+            pls->mtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (compact)" );
+        else
+            pls->mtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (extended)" );
     }
     // pls->end();
     delete pls;

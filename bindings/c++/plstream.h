@@ -800,6 +800,10 @@ public:
 
     void start( const char *devname, PLINT nx, PLINT ny );
 
+// Set the coordinate transform
+
+    void stransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), PLPointer coordinate_transform_data );
+
 // Create 1d stripchart
 
     void stripc( PLINT * id, const char *xspec, const char *yspec,

@@ -41,6 +41,16 @@ private:
     plstream *pls;
 };
 
+void
+map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
+{
+    double radius;
+
+    radius = 90.0 - y;
+    *xt    = radius * cos( x * M_PI / 180.0 );
+    *yt    = radius * sin( x * M_PI / 180.0 );
+}
+
 //--------------------------------------------------------------------------
 // mapform19
 //
@@ -192,6 +202,33 @@ x19::x19( int argc, const char ** argv )
     pls->lsty( 2 );
     pls->meridians( mapform19, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
 
+    // Polar, Northern hemisphere, this time with a PLplot-wide transform
+
+    minx = 0;
+    maxx = 360;
+
+    pls->stransform( map_transform, NULL );
+
+    pls->lsty( 1 );
+    pls->env( -75., 75., -75., 75., 1, -1 );
+    // No need to set the map transform here as the global transform will be
+    // used.
+    pls->map( NULL, "globe", minx, maxx, miny, maxy );
+
+    pls->lsty( 2 );
+    pls->meridians( NULL, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
+
+    // Show Baltimore, MD on the map
+    pls->col0( 2 );
+    pls->ssym( 0.0, 2.0 );
+    PLFLT x = -76.6125;
+    PLFLT y = 39.2902778;
+    pls->poin( 1, &x, &y, 18 );
+    pls->ssym( 0.0, 1.0 );
+    pls->ptex( -76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD" );
+
+    // For C, this is how the global transform is cleared
+    pls->stransform( NULL, NULL );
     delete pls;
 }
 
