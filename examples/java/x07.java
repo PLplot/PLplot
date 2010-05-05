@@ -35,7 +35,7 @@ import java.text.*;
 
 class x07 {
     static int base[] = {
-        0,     200,  500,  600,  700,  800,  900,
+        0,     100,    0,  100,  200,  500,  600,  700,  800, 900,
         2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900
     };
 
@@ -65,9 +65,10 @@ class x07 {
 
         pls.init();
 
-        pls.fontld( 1 );
+        pls.fontld( 0 );
         for ( l = 0; l < base.length; l++ )
         {
+            if ( l == 2 ) pls.fontld( 1 );
             pls.adv( 0 );
 
             // Set up viewport and window.
@@ -108,8 +109,10 @@ class x07 {
                     k = k + 1;
                 }
             }
-
-            pls.mtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols" );
+            if ( l < 2 )
+                pls.mtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (compact)" );
+            else
+                pls.mtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (extended)" );
         }
         pls.end();
     }
