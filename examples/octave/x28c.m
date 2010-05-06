@@ -54,6 +54,17 @@ function ix28c
   zmid = 0.5*(zmin+zmax);
   zrange = zmax-zmin;
 
+  ysmin = ymin + 0.1 * yrange;
+  ysmax = ymax - 0.1 * yrange;
+  ysrange = ysmax - ysmin;
+  dysrot = ysrange / ( NROTATION - 1 );
+  dysshear = ysrange / ( NSHEAR - 1 );
+  zsmin = zmin + 0.1 * zrange;
+  zsmax = zmax - 0.1 * zrange;
+  zsrange = zsmax - zsmin;
+  dzsrot = zsrange / ( NROTATION - 1 );
+  dzsshear = zsrange / ( NSHEAR - 1 );
+
   pstring = "The future of our civilization depends on software freedom.";
 
   x = xmin + (0:(XPTS-1))*xrange/(XPTS-1);
@@ -158,8 +169,9 @@ function ix28c
     cos_omega = cos(omega);
     y_shear = 0.5*yrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
+    zs = zsmax - dzsrot*i;
     plptex3( \
-	    xmid, ymax, zmax -(zmax-0.2)*(i/(NROTATION-1)), \
+	    xmid, ymax, zs, \
 	    x_inclination, y_inclination, z_inclination, \
 	    x_shear, y_shear, z_shear, \
 	    0.5, "rotation for y = y#dmax#u");
@@ -177,8 +189,9 @@ function ix28c
     cos_omega = cos(omega);
     x_shear = 0.5*xrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
+    zs = zsmax - dzsrot*i;
     plptex3( \
-	    xmax, ymid, zmax -(zmax-0.2)*(i/(NROTATION-1)), \
+	    xmax, ymid, zs, \
 	    x_inclination, y_inclination, z_inclination, \
 	    x_shear, y_shear, z_shear, \
 	    0.5, "rotation for x = x#dmax#u");
@@ -196,8 +209,9 @@ function ix28c
     cos_omega = cos(omega);
     y_shear = 0.5*yrange*cos_omega;
     z_shear = 0.5*zrange*sin_omega;
+    ys = ysmax - dysrot*i;
     plptex3( \
-	    xmid, ymax -(ymax-0.2)*(i/(NROTATION-1)), zmin, \
+	    xmid, ys, zmin, \
 	    x_inclination, y_inclination, z_inclination, \
 	    x_shear, y_shear, z_shear, \
 	    0.5, "rotation for z = z#dmin#u");
@@ -232,8 +246,9 @@ function ix28c
     cos_omega = cos(omega);
     x_shear = 0.5*xrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
+    zs = zsmax-dzsshear*i;
     plptex3( \
-	    xmid, ymax, zmax -(zmax-0.2)*(i/(NSHEAR-1)), \
+	    xmid, ymax, zs, \
 	    x_inclination, y_inclination, z_inclination, \
 	    x_shear, y_shear, z_shear, \
 	    0.5, "shear for y = y#dmax#u");
@@ -251,8 +266,9 @@ function ix28c
     cos_omega = cos(omega);
     y_shear = -0.5*yrange*sin_omega;
     z_shear = 0.5*zrange*cos_omega;
+    zs = zsmax-dzsshear*i;
     plptex3( \
-	    xmax, ymid, zmax -(zmax-0.2)*(i/(NSHEAR-1)), \
+	    xmax, ymid, zs, \
 	    x_inclination, y_inclination, z_inclination, \
 	    x_shear, y_shear, z_shear, \
 	    0.5, "shear for x = x#dmax#u");
@@ -270,8 +286,9 @@ function ix28c
     cos_omega = cos(omega);
     y_shear = 0.5*yrange*cos_omega;
     x_shear = 0.5*xrange*sin_omega;
+    ys = ysmax-dysshear*i;
     plptex3( \
-	    xmid, ymax -(ymax-0.2)*(i/(NSHEAR-1)), zmin, \
+	    xmid, ys, zmin, \
 	    x_inclination, y_inclination, z_inclination, \
 	    x_shear, y_shear, z_shear, \
 	    0.5, "shear for z = z#dmin#u");
