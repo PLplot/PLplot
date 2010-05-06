@@ -42,15 +42,6 @@ function ix14c(fname2,strm)
   geometry_master = "500x410+100+200";
   geometry_slave  = "500x410+650+200";
 
-  ## This is an entirely bogus message since the output file name is 
-  ## set by the function arguments - but it does ensure that stdout 
-  ## is identical to the C version of the example for ctest.
-  if (strm != stdout)
-    fprintf(strm,"\nEnter graphics output file name: ");
-  endif
-
-  fflush(stdout);
-
   ## Set up first stream */
 
   plSetOpt("geometry", geometry_master);
@@ -68,6 +59,16 @@ function ix14c(fname2,strm)
   fprintf(strm,"Running with the second stream as slave to the first.\n");
   ##fprintf(strm,"To advance to the next plot, press the third mouse button\n");
   ##fprintf(strm,"or the enter key in the first (left) window\n");
+  fprintf(strm,"\n");
+
+  ## This is an entirely bogus message since the output file name is 
+  ## set by the function arguments - but it does ensure that stdout 
+  ## is identical to the C version of the example for ctest.
+  if (strm != stdout)
+    fprintf(strm,"Enter graphics output file name: ");
+  endif
+
+  ## fflush(strm);
 
   ## Start next stream */
 
