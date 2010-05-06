@@ -24,10 +24,11 @@
 
       character*4 text
 
-      integer i, j, k, l, base(17)
-      data base /   0, 200, 500, 600, 700, 800, 900, &
-        2000,2100,2200,2300,2400,2500,2600, &
-        2700,2800,2900 /
+      integer i, j, k, l, base(20)
+      data base / &
+           0,  100,    0,  100,  200,  500,  600,  700,  800,  900, &
+        2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900 /
+
       real(kind=plflt), dimension(1:1) ::  x, y
 !      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
@@ -35,8 +36,10 @@
 !      Full sized page for display
 
       call plinit()
-      call plfontld(1)
-      do l=1,17
+      call plfontld(0)
+      do l=1,20
+        if (l==3) call plfontld(1)
+
         call pladv(0)
 
         call plcol0(2)
@@ -65,15 +68,8 @@
 !          N.B. The chain of if statements is just to ensure no leading
 !          blanks, consistent with the C version of the example.
 
-          if(base(l)+10*i.eq.0) then
-            write (text,'(i1)') base(l)+10*i
-          elseif(base(l)+10*i.lt.100) then
-            write (text,'(i2)') base(l)+10*i
-          elseif(base(l)+10*i.lt.1000) then
-            write (text,'(i3)') base(l)+10*i
-          else
-            write (text,'(i4)') base(l)+10*i
-          endif
+          write (text,'(i0)') base(l)+10*i
+
           call plmtex('lv', 1.0_plflt, (0.95_plflt-0.1_plflt*i), &
             1.0_plflt, text)
           do j=0,9
@@ -87,8 +83,14 @@
           enddo
         enddo
 
-        call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
-          'PLplot Example 7 - PLSYM symbols')
+        if (l<=2) then
+          call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+            'PLplot Example 7 - PLSYM symbols (compact)')
+        else
+          call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+            'PLplot Example 7 - PLSYM symbols (extended)')
+        endif
       enddo
+
       call plend
       end

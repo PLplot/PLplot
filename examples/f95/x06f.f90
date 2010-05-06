@@ -21,7 +21,7 @@
 
       use plplot
       implicit none
-      integer i, j, k
+      integer i, j, k, font, kind_font, maxfont
       real(kind=plflt), dimension(1:1) :: x, y
 
       character*3 text
@@ -32,53 +32,67 @@
 !      Full sized page for display
 
       call plinit()
-      call pladv(0)
 
-      call plcol0(2)
+      do kind_font = 1,2
+        call plfontld(kind_font-1)
+        if (kind_font==1) then
+          maxfont = 1
+        else
+          maxfont = 4
+        endif
+
+        do font=1,maxfont
+          call plfont(font)
+
+          call pladv(0)
+
+          call plcol0(2)
 
 !      Set up viewport and window
 
-      call plvpor(0.1_plflt, 1.0_plflt, 0.1_plflt, 0.9_plflt)
-      call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.3_plflt)
+          call plvpor(0.1_plflt, 1.0_plflt, 0.1_plflt, 0.9_plflt)
+          call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.3_plflt)
 
 !      Draw the grid using plbox
 
-      call plbox('bcg', 0.1_plflt, 0, 'bcg', 0.1_plflt, 0)
-      call plcol0(15)
+          call plbox('bcg', 0.1_plflt, 0, 'bcg', 0.1_plflt, 0)
+          call plcol0(15)
 
 !      Write the digits below the frame
 
-      do i=0,9
-        write (text,'(i1)') i
-        call plmtex('b', 1.5_plflt, (0.1_plflt*i+0.05_plflt), 0.5_plflt, text)
-      enddo
-      k=0
-      do i=0,12
+          do i=0,9
+            write (text,'(i1)') i
+            call plmtex('b', 1.5_plflt, (0.1_plflt*i+0.05_plflt), 0.5_plflt, text)
+          enddo
+
+          k=0
+          do i=0,12
 
 !        Write the digits to the left of the frame
-!        N.B. The chain of if statements is just to ensure no leading
-!        blanks, consistent with the C version of the example.
 
-        if(i.eq.0) then
-          write (text,'(i1)') 10*i
-        elseif(i.le.9) then
-          write (text,'(i2)') 10*i
-        else
-          write (text,'(i3)') 10*i
-        endif
-        call plmtex('lv', 1.0_plflt, (1.0_plflt-(2*i+1)/26.0_plflt), &
-          1.0_plflt, text)
-        do j=0,9
-          x=0.1_plflt*j+0.05_plflt
-          y=1.25_plflt-0.1_plflt*i
+            write (text,'(i0)') 10*i
+
+            call plmtex('lv', 1.0_plflt, (1.0_plflt-(2*i+1)/26.0_plflt), &
+              1.0_plflt, text)
+            do j=0,9
+              x=0.1_plflt*j+0.05_plflt
+              y=1.25_plflt-0.1_plflt*i
 
 !          Display the symbols
 
-          if (k.lt.128) call plpoin(x,y,k)
-          k=k+1
+              if (k.lt.128) call plpoin(x,y,k)
+              k=k+1
+            enddo
+          enddo
+          if (kind_font==1) then
+            call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+              'PLplot Example 6 - plpoin symbols (compact)')
+          else
+            call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+              'PLplot Example 6 - plpoin symbols (extended)')
+          endif
         enddo
       enddo
-      call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
-        'PLplot Example 6 - plpoin symbols')
+
       call plend
       end
