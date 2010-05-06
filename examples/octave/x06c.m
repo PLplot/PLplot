@@ -33,46 +33,63 @@ function x06c
   ## Initialize plplot */
   plinit();
 
-  pladv(0);
+  for kind_font = 0:1
+    plfontld( kind_font );
+    if (kind_font == 0)
+      maxfont = 1;
+    else
+      maxfont = 4;
+    endif
 
-  ## Set up viewport and window */
+    for font = 1:maxfont
+      plfont( font );
+      
+      pladv(0);
 
-  plcol0(2);
-  plvpor(0.1, 1.0, 0.1, 0.9);
-  plwind(0.0, 1.0, 0.0, 1.3);
+      ## Set up viewport and window */
+      
+      plcol0(2);
+      plvpor(0.1, 1.0, 0.1, 0.9);
+      plwind(0.0, 1.0, 0.0, 1.3);
+      
+      ## Draw the grid using plbox */
+      
+      plbox("bcg", 0.1, 0, "bcg", 0.1, 0);
+      
+      ## Write the digits below the frame */
+      
+      plcol0(15);
+      for i=0:9
+	text=sprintf("%d", i);
+	plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
+      endfor
+      
+      k = 0;
+      for i=0:12
+	
+	## Write the digits to the left of the frame */
+	
+	text=sprintf("%d", 10 * i);
+	plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, text);
+	for j=0:9
+	  x = 0.1 * j + 0.05;
+	  y = 1.25 - 0.1 * i;
+	  
+	  ## Display the symbols
+	  
+	  if (k < 128)
+	    plpoin(x, y, k);
+	  endif
+	  k = k + 1;
+	endfor
+      endfor
 
-  ## Draw the grid using plbox */
-
-  plbox("bcg", 0.1, 0, "bcg", 0.1, 0);
-
-  ## Write the digits below the frame */
-
-  plcol0(15);
-  for i=0:9
-    text=sprintf("%d", i);
-    plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
-  endfor
-
-  k = 0;
-  for i=0:12
-
-    ## Write the digits to the left of the frame */
-
-    text=sprintf("%d", 10 * i);
-    plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, text);
-    for j=0:9
-      x = 0.1 * j + 0.05;
-      y = 1.25 - 0.1 * i;
-
-      ## Display the symbols
-
-      if (k < 128)
-	plpoin(x, y, k);
+      if (kind_font == 0)
+	plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (compact)");
+      else
+	plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (extended)");
       endif
-      k = k + 1;
     endfor
   endfor
-
-  plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
   plend1();
 endfunction
