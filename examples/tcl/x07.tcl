@@ -4,15 +4,18 @@
 
 proc x07 {{w loopback}} {
 
-    matrix base i 17 = \
-	{0, 200, 500, 600, 700, 800, 900, \
+    matrix base i 20 = \
+	{0, 100, 0, 100, 200, 500, 600, 700, 800, 900, \
 	     2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900}
 
     matrix x f 1
     matrix y f 1
 
-    $w cmd plfontld 1
-    for {set l 0} {$l < 17} {incr l} {
+    $w cmd plfontld 0
+    for {set l 0} {$l < 20} {incr l} {
+        if {$l == 2} {
+           $w cmd plfontld 1
+        }
 	$w cmd pladv 0
 
     # Set up viewport and window
@@ -50,7 +53,11 @@ proc x07 {{w loopback}} {
 		incr k
 	    }
 	}
-	$w cmd plmtex "t" 1.5 0.5 0.5 "PLplot Example 7 - PLSYM symbols"
+        if {$l < 2} {
+	    $w cmd plmtex "t" 1.5 0.5 0.5 "PLplot Example 7 - PLSYM symbols (compact)"
+        } else {
+	    $w cmd plmtex "t" 1.5 0.5 0.5 "PLplot Example 7 - PLSYM symbols (extended)"
+        }
     }
 # Restore defaults
     # $w cmd plcol0 1
