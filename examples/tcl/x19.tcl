@@ -135,6 +135,53 @@ proc x19 {{w loopback}} {
 
     $w cmd pllsty 2
     $w cmd plmeridians mapform19 10.0 10.0 0.0 360.0 -10.0 80.0
+
+# Polar, Northern hemisphere
+# In x19c this next plot is done with a global, PLplot-wide transform, set
+# via plstransform.  Looks like we need to build a Tcl proc evaluator
+# callback function to handle this case.  For now, we just do this plot sort
+# of like how we did the last one.
+
+    set minx 0
+    set maxx 360
+
+    $w cmd pllsty 1
+    $w cmd plenv -75 75 -75 75 1 -1
+
+# If we had a Tcl-analogue for plstransform, then we could drop the mapform19
+# transform function.  But since we don't have Tcl support for global
+# transform functions yet, we must pass in mapform19 here again.
+    $w cmd plmap mapform19  globe minx maxx miny maxy
+
+    $w cmd pllsty 2
+    $w cmd plmeridians mapform19 10.0 10.0 0.0 360.0 -10.0 80.0
+
+# Show Baltimore, MD on the map.
+    $w cmd plcol0 2
+    $w cmd plssym 0. 2.
+
+# In the C example, the global transform function has been set, so x19c just
+# uses the desired long/lat coords.  In Tcl, till we implement a global
+# transform capability, we have to do the transforms manually before calling
+# the plotting functions.
+
+    matrix x f 1
+    matrix y f 1
+    x 0 = -76.6125
+    y 0 = 39.2902778
+
+    mapform19 1 x y
+
+    $w cmd plpoin 1 x y 18
+
+    x 0 = -76.6125
+    y 0 = 43.
+
+    mapform19 1 x y
+
+    $w cmd plssym 0. 1.
+    $w cmd plptex [x 0] [y 0] 0.0 0.0 0.0 "Baltimore, MD"
+
     $w cmd pllsty 1
 # No defaults to restore
 }
