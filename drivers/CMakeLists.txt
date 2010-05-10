@@ -73,7 +73,6 @@ if(ENABLE_DYNDRIVERS)
         )
     endif(WIN32 AND NOT CYGWIN)
     get_target_property(test-drv-info_LOCATION test-drv-info LOCATION)
-    set(test_dyndrivers_FDEPENDS)
     set(test_dyndrivers_TDEPENDS test-drv-info)
 
   endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
@@ -185,7 +184,8 @@ if(ENABLE_DYNDRIVERS)
 	LOCATION
 	)
       add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
+	OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
 	COMMAND test-drv-info
 	${SOURCE_ROOT_NAME}
 	> ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
@@ -196,10 +196,15 @@ if(ENABLE_DYNDRIVERS)
 	${${SOURCE_ROOT_NAME}_LOCATION}
 	${test-drv-info_LOCATION}
 	)
-      list(APPEND test_dyndrivers_FDEPENDS
+      add_custom_target(test_${SOURCE_ROOT_NAME}
+	DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
 	)
-      list(APPEND test_dyndrivers_TDEPENDS ${SOURCE_ROOT_NAME})
+      add_dependencies(test_${SOURCE_ROOT_NAME}
+	test-drv-info
+	${SOURCE_ROOT_NAME}
+	)
+      list(APPEND test_dyndrivers_TDEPENDS test_${SOURCE_ROOT_NAME})
     endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
     
     install(TARGETS ${SOURCE_ROOT_NAME} 
@@ -213,7 +218,6 @@ if(ENABLE_DYNDRIVERS)
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
   if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
     add_custom_target(test_dyndrivers ALL
-      DEPENDS ${test_dyndrivers_FDEPENDS}
       )
     add_dependencies(test_dyndrivers ${test_dyndrivers_TDEPENDS})
   endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
