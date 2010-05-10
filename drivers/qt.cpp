@@ -276,6 +276,7 @@ void plD_init_rasterqt( PLStream * pls )
     {
         pls->dev = new QtRasterDevice( pls->xlength, pls->ylength );
     }
+    ( (QtRasterDevice *) pls->dev )->setPLStream( pls );
 
     if ( isMaster ) handler.setMasterDevice( (QtRasterDevice*) ( pls->dev ) );
 
@@ -406,7 +407,7 @@ void plD_esc_rasterqt( PLStream * pls, PLINT op, void* ptr )
         /*$$ call the generic ProcessString function
          *  ProcessString( pls, (EscText *)ptr ); */
         widget->QtPLDriver::setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
-        widget->drawText( pls, (EscText *) ptr );
+        widget->drawText( (EscText *) ptr );
         break;
 
     default: break;
@@ -687,6 +688,7 @@ void plD_init_svgqt( PLStream * pls )
     {
         pls->dev = new QtSVGDevice( pls->xlength, pls->ylength );
     }
+    ( (QtSVGDevice *) pls->dev )->setPLStream( pls );
 
     if ( isMaster ) handler.setMasterDevice( (QtSVGDevice*) ( pls->dev ) );
 
@@ -735,6 +737,7 @@ void plD_eop_svgqt( PLStream *pls )
 
     pls->dev = new QtSVGDevice( s.width(), s.height() );
     ( (QtSVGDevice *) pls->dev )->downscale = downscale;
+    ( (QtSVGDevice *) pls->dev )->setPLStream( pls );
 
     if ( isMaster ) handler.setMasterDevice( (QtSVGDevice *) pls->dev );
     handler.DeviceChangedPage( (QtSVGDevice *) pls->dev );
@@ -833,7 +836,7 @@ void plD_esc_svgqt( PLStream * pls, PLINT op, void* ptr )
         /*$$ call the generic ProcessString function
          *  ProcessString( pls, (EscText *)ptr ); */
         widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
-        widget->drawText( pls, (EscText *) ptr );
+        widget->drawText( (EscText *) ptr );
         break;
 
     default:
@@ -962,6 +965,7 @@ void plD_init_epspdfqt( PLStream * pls )
     {
         pls->dev = new QtEPSDevice( pls->xlength, pls->ylength );
     }
+    ( (QtEPSDevice *) pls->dev )->setPLStream( pls );
 
     if ( isMaster ) handler.setMasterDevice( (QtEPSDevice*) ( pls->dev ) );
 
@@ -1112,7 +1116,7 @@ void plD_esc_epspdfqt( PLStream * pls, PLINT op, void* ptr )
         /*$$ call the generic ProcessString function
          *  ProcessString( pls, (EscText *)ptr ); */
         widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
-        widget->drawText( pls, (EscText *) ptr );
+        widget->drawText( (EscText *) ptr );
         break;
 
     default: break;
@@ -1216,6 +1220,7 @@ void plD_init_qtwidget( PLStream * pls )
         widget   = new QtPLWidget( pls->xlength, pls->ylength );
         pls->dev = (void*) widget;
     }
+    widget->setPLStream( pls );
 
     if ( isMaster ) handler.setMasterDevice( widget );
 
@@ -1356,15 +1361,15 @@ void plD_esc_qtwidget( PLStream * pls, PLINT op, void* ptr )
 
     case PLESC_HAS_TEXT:
         widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
-        widget->drawText( pls, (EscText *) ptr );
+        widget->drawText( (EscText *) ptr );
         break;
 
     case PLESC_FLUSH:
         widget->flush();
         break;
-
-
-
+    case PLESC_GETC:
+        widget->getCursorCmd( (PLGraphicsIn *) ptr );
+        break;
     default: break;
     }
 }
@@ -1557,7 +1562,7 @@ void plD_esc_extqt( PLStream * pls, PLINT op, void* ptr )
         /*$$ call the generic ProcessString function
          *  ProcessString( pls, (EscText *)ptr ); */
         widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
-        widget->drawText( pls, (EscText *) ptr );
+        widget->drawText( (EscText *) ptr );
         break;
 
     default: break;

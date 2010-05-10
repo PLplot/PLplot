@@ -120,13 +120,15 @@ public:
     // Constructor, taking the device size as arguments
     QtPLDriver( PLINT i_iWidth = QT_DEFAULT_X, PLINT i_iHeight = QT_DEFAULT_Y );
 
-    virtual ~QtPLDriver();     // does not delete emitter!
+    virtual ~QtPLDriver();              // does not delete emitter!
+
+    void setPLStream( PLStream *pls );  // store the related stream
 
     // Draws a line from (x1, y1) to (x2, y2) in internal plplot coordinates
     virtual void drawLine( short x1, short y1, short x2, short y2 );
     virtual void drawPolyline( short * x, short * y, PLINT npts );
     virtual void drawPolygon( short * x, short * y, PLINT npts );
-    virtual void drawText( PLStream* pls, EscText* txt );
+    virtual void drawText( EscText* txt );
     virtual void setColor( int r, int g, int b, double alpha );
     virtual void setBackgroundColor( int r, int g, int b, double alpha ){}
     virtual void setGradient( int x1, int x2, int y1, int y2,
@@ -149,14 +151,16 @@ protected:
     QPicture getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PLFLT chrht );
 
     // Text-related variables
-    bool    underlined;
-    bool    overlined;
-    double  currentFontScale;
-    double  currentFontSize;
-    double  yOffset;
-    double  xOffset;
+    bool     underlined;
+    bool     overlined;
+    double   currentFontScale;
+    double   currentFontSize;
+    double   yOffset;
+    double   xOffset;
 
-    QPainter* m_painterP;
+    PLStream *pls;
+
+    QPainter * m_painterP;
 };
 
 #if defined ( PLD_bmpqt ) || defined ( PLD_jpgqt ) || defined ( PLD_pngqt ) || defined ( PLD_ppmqt ) || defined ( PLD_tiffqt )
@@ -310,8 +314,9 @@ public:
                       unsigned char *r, unsigned char *g,
                       unsigned char *b, PLFLT *alpha, PLINT ncol1 );
     void setWidth( PLINT r );
-    void drawText( PLStream* pls, EscText* txt );
+    void drawText( EscText* txt );
     void flush();
+    void getCursorCmd( PLGraphicsIn *ptr );
 
 protected:
 
@@ -321,6 +326,8 @@ protected:
     void getPlotParameters( double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset );   // gives the parameters to scale and center the plot on the page
     void doPlot( QPainter* p, double x_fact, double y_fact, double x_offset, double y_offset );                     // Actually draws the plot. Deported in a function for readability
     void renderText( QPainter* p, struct TextStruct_* s, double x_fact, double x_offset, double y_fact, double y_offset );
+    void lookupButtonEvent( QMouseEvent * event );
+    void locate();
 
     void resetPensAndBrushes( QPainter* );
 
@@ -356,10 +363,13 @@ protected:
         int    g;
         int    b;
         double alpha;
-    } bgColour;
+    }            bgColour;
+
+    PLGraphicsIn gin;         // Graphics Input Structure
+    int          locate_mode; // Set while in locate mode
 
 protected slots:
-    void mouseReleaseEvent( QMouseEvent * event );
+    void mousePressEvent( QMouseEvent * event );
     void keyPressEvent( QKeyEvent* event );
     void closeEvent( QCloseEvent* event );
     void nextPage();

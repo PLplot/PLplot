@@ -85,6 +85,11 @@ QtPLDriver::~QtPLDriver()
 {
 }
 
+void QtPLDriver::setPLStream( PLStream *p )
+{
+    pls = p;
+}
+
 void QtPLDriver::drawLine( short x1, short y1, short x2, short y2 )
 {
     if ( !m_painterP->isActive() ) return;
@@ -314,7 +319,7 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
     return res;
 }
 
-void QtPLDriver::drawText( PLStream* pls, EscText* txt )
+void QtPLDriver::drawText( EscText* txt )
 {
     if ( !m_painterP->isActive() ) return;
 
@@ -599,6 +604,8 @@ QtPLWidget::QtPLWidget( int i_iWidth, int i_iHeight, QWidget* parent ) :
 
     NoPen = QPen( Qt::NoPen );
     NoPen.setWidthF( 0. );
+
+    locate_mode = 0;
 }
 
 QtPLWidget::~QtPLWidget()
@@ -848,7 +855,7 @@ void QtPLWidget::setWidth( PLINT w )
 //     redrawFromLastFlush=true;
 }
 
-void QtPLWidget::drawText( PLStream* pls, EscText* txt )
+void QtPLWidget::drawText( EscText* txt )
 {
     BufferElement el;
     el.Element                   = TEXT;
@@ -908,19 +915,187 @@ void QtPLWidget::resetPensAndBrushes( QPainter* painter )
     SolidBrush = QBrush( Qt::SolidPattern );
 }
 
-void QtPLWidget::mouseReleaseEvent( QMouseEvent * event )
+void QtPLWidget::lookupButtonEvent( QMouseEvent * event )
 {
-    if ( event->button() == Qt::RightButton )
+    Qt::MouseButtons      buttons   = event->buttons();
+    Qt::KeyboardModifiers modifiers = event->modifiers();
+    gin.pX = event->x();
+    gin.pY = height() - event->y();
+    gin.dX = (PLFLT) event->x() / width();
+    gin.dY = (PLFLT) ( height() - event->y() ) / height();
+
+    switch ( event->button() )
     {
-        handler.DeviceChangedPage( this );
+    case Qt::LeftButton:
+        gin.button = 1;
+        break;
+    case Qt::MidButton:
+        gin.button = 2;
+        break;
+    case Qt::RightButton:
+        gin.button = 3;
+        break;
+    }
+
+    // Map Qt button and key states to the (X windows) values used
+    // by plplot.
+    gin.state = 0;
+    if ( buttons & Qt::LeftButton )
+        gin.state |= 1 << 8;
+    if ( buttons & Qt::MidButton )
+        gin.state |= 1 << 9;
+    if ( buttons & Qt::RightButton )
+        gin.state |= 1 << 10;
+    if ( modifiers & Qt::ShiftModifier )
+        gin.state |= 1 << 0;
+    if ( modifiers & Qt::ControlModifier )
+        gin.state |= 1 << 2;
+    if ( modifiers & Qt::AltModifier )
+        gin.state |= 1 << 3;
+    if ( modifiers & Qt::MetaModifier )
+        gin.state |= 1 << 3;
+
+    gin.keysym = 0x20;
+}
+
+void QtPLWidget::locate()
+{
+    if ( plTranslateCursor( &gin ) )
+    {
+        if ( locate_mode == 2 )
+        {
+            pltext();
+            if ( gin.keysym < 0xFF && isprint( gin.keysym ) )
+                std::cout << gin.wX << " " << gin.wY << " " << (char) gin.keysym << std::endl;
+            else
+                std::cout << gin.wX << " " << gin.wY << " " << std::hex << gin.keysym << std::endl;
+
+            plgra();
+        }
+    }
+    else
+    {
+        locate_mode = 0;
+        QApplication::restoreOverrideCursor();
+    }
+}
+
+void QtPLWidget::mousePressEvent( QMouseEvent * event )
+{
+    lookupButtonEvent( event );
+
+    if ( locate_mode )
+    {
+        if ( event->button() == Qt::LeftButton )
+        {
+            locate();
+        }
+    }
+    else
+    {
+        if ( event->button() == Qt::RightButton )
+        {
+            handler.DeviceChangedPage( this );
+        }
     }
 }
 
 void QtPLWidget::keyPressEvent( QKeyEvent* event )
 {
-    if ( event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return )
+    if ( locate_mode )
     {
-        handler.DeviceChangedPage( this );
+        Qt::KeyboardModifiers modifiers = event->modifiers();
+        QPoint p = QCursor::pos();
+        gin.pX = p.x();
+        gin.pY = height() - p.y();
+        gin.dX = (PLFLT) p.x() / width();
+        gin.dY = (PLFLT) ( height() - p.y() ) / height();
+
+        switch ( event->key() )
+        {
+        case Qt::Key_Escape:
+            locate_mode = 0;
+            QApplication::restoreOverrideCursor();
+            plGinInit( &gin );
+            break;
+        case Qt::Key_Shift:
+        case Qt::Key_Control:
+        case Qt::Key_Alt:
+        case Qt::Key_Meta:
+        case Qt::Key_AltGr:
+            plGinInit( &gin );
+        case Qt::Key_Left:
+        case Qt::Key_Right:
+        case Qt::Key_Up:
+        case Qt::Key_Down:
+        {
+            int x1, y1, dx = 0, dy = 0;
+            int xmin = 0, xmax = width() - 1, ymin = 0, ymax = height() - 1;
+            switch ( event->key() )
+            {
+            case Qt::Key_Left:
+                dx = -1;
+                break;
+            case Qt::Key_Right:
+                dx = 1;
+                break;
+            case Qt::Key_Up:
+                dy = -1;
+                break;
+            case Qt::Key_Down:
+                dy = 1;
+                break;
+            }
+            if ( event->modifiers() & Qt::ShiftModifier )
+            {
+                dx *= 5;
+                dy *= 5;
+            }
+            if ( event->modifiers() & Qt::ControlModifier )
+            {
+                dx *= 5;
+                dy *= 5;
+            }
+            if ( event->modifiers() & Qt::AltModifier )
+            {
+                dx *= 5;
+                dy *= 5;
+            }
+            x1 = gin.pX + dx;
+            y1 = gin.pY + dy;
+
+            if ( x1 < xmin ) dx = xmin - gin.pX;
+            if ( y1 < ymin ) dy = ymin - gin.pY;
+            if ( x1 > xmax ) dx = xmax - gin.pX;
+            if ( y1 > ymax ) dy = ymax - gin.pY;
+
+            QCursor::setPos( p.x() + dx, p.y() + dy );
+            plGinInit( &gin );
+            break;
+        }
+        default:
+            locate();
+            break;
+        }
+    }
+    else
+    {
+        if ( event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return )
+        {
+            handler.DeviceChangedPage( this );
+        }
+        if ( event->text() == "Q" )
+        {
+            // Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake)
+            pls->nopause = TRUE;
+            plexit( "" );
+        }
+        else if ( event->text() == "L" )
+        // Begin locate mode
+        {
+            locate_mode = 2;
+            QApplication::setOverrideCursor( Qt::CrossCursor );
+        }
     }
 }
 
@@ -1147,6 +1322,20 @@ void QtPLWidget::getPlotParameters( double & io_dXFact, double & io_dYFact, doub
     }
 }
 
+void QtPLWidget::getCursorCmd( PLGraphicsIn *ptr )
+{
+    plGinInit( &gin );
+
+    locate_mode = 1;
+    QApplication::setOverrideCursor( Qt::CrossCursor );
+
+    while ( gin.pX < 0 && locate_mode )
+        QCoreApplication::processEvents( QEventLoop::AllEvents, 10 );
+
+    QApplication::restoreOverrideCursor();
+    *ptr = gin;
+}
+
 #endif
 
 #if defined ( PLD_extqt )
@@ -1272,12 +1461,14 @@ void QtExtWidget::paintEvent( QPaintEvent* event )
 void plsetqtdev( QtExtWidget* widget )
 {
     plsc->dev = (void*) widget;
+    widget->setPLStream( plsc );
 }
 
 void plsetqtdev( QtExtWidget* widget, int argc, char** argv )
 {
     plparseopts( &argc, (const char**) argv, PL_PARSE_FULL );
     plsc->dev = (void*) widget;
+    widget->setPLStream( plsc );
 }
 
 void plfreeqtdev()

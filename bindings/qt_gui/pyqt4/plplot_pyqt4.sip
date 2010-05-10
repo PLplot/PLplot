@@ -51,7 +51,7 @@ class QtPLWidget: QWidget, QtPLDriver {
     void clearWidget();
 
   protected:
-    void mouseReleaseEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void closeEvent(QCloseEvent *event);
     void nextPage();
