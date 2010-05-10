@@ -1210,8 +1210,8 @@ MapMain( PLStream *pls )
 
     XMapRaised( xwd->display, dev->window );
 
-    Atom wmDelete=XInternAtom( xwd->display, "WM_DELETE_WINDOW", False );
-    XSetWMProtocols( xwd->display, dev->window, &wmDelete, 1) ;
+    Atom wmDelete = XInternAtom( xwd->display, "WM_DELETE_WINDOW", False );
+    XSetWMProtocols( xwd->display, dev->window, &wmDelete, 1 );
 
 /* Wait for exposure */
 /* Remove extraneous expose events from the event queue */
@@ -1402,7 +1402,7 @@ HandleEvents( PLStream *pls )
     XEvent    event;
 
     while ( XCheckTypedWindowEvent( xwd->display, dev->window,
-                ClientMessage, &event )	 ||
+                ClientMessage, &event ) ||
             XCheckWindowEvent( xwd->display, dev->window,
                 dev->event_mask, &event ) )
         MasterEH( pls, &event );
@@ -1465,7 +1465,7 @@ MasterEH( PLStream *pls, XEvent *event )
         break;
 
     case ClientMessage:
-	ClientEH( pls, event );
+        ClientEH( pls, event );
         break;
     }
 }
@@ -1482,13 +1482,13 @@ ClientEH( PLStream *pls, XEvent *event )
     XwDev     *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
-    if ( event->xclient.data.l[0] == XInternAtom( xwd->display, "WM_DELETE_WINDOW", False ) ) 
+    if ( event->xclient.data.l[0] == XInternAtom( xwd->display, "WM_DELETE_WINDOW", False ) )
     {
         pls->nopause = TRUE;
         plexit( "" );
     }
 }
-    
+
 
 /*--------------------------------------------------------------------------*\
  * KeyEH()
