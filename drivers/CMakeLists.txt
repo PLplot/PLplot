@@ -47,21 +47,31 @@ if(ENABLE_DYNDRIVERS)
       plplot${LIB_TAG}
       ${LTDL_LIBRARIES}
       )
-    set(test-drv-info_RPATH
-      ${CMAKE_CURRENT_BINARY_DIR}
-      ${CMAKE_BINARY_DIR}/src
-      ${CMAKE_BINARY_DIR}/lib/csa
-      ${CMAKE_BINARY_DIR}/lib/nn
-      ${CMAKE_BINARY_DIR}/lib/qsastime
-      ${libplplot${LIB_TAG}_RPATH}
-      )
+
+    # in windows we move test-drv-info to the dll directory
+    # otherwise we use the RPATH functionality
+    if(WIN32 AND NOT CYGWIN)
+      set_target_properties(
+	test-drv-info
+	PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dll
+	)
+    else(WIN32 AND NOT CYGWIN)
+      set(test-drv-info_RPATH
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_BINARY_DIR}/src
+        ${CMAKE_BINARY_DIR}/lib/csa
+        ${CMAKE_BINARY_DIR}/lib/nn
+        ${CMAKE_BINARY_DIR}/lib/qsastime
+        ${libplplot${LIB_TAG}_RPATH}
+        )
     
-    set_target_properties(
-      test-drv-info
-      PROPERTIES
-      INSTALL_RPATH "${test-drv-info_RPATH}"
-      BUILD_WITH_INSTALL_RPATH ON
-      )
+      set_target_properties(
+        test-drv-info
+        PROPERTIES
+        INSTALL_RPATH "${test-drv-info_RPATH}"
+        BUILD_WITH_INSTALL_RPATH ON
+        )
+    endif(WIN32 AND NOT CYGWIN)
     get_target_property(test-drv-info_LOCATION test-drv-info LOCATION)
     set(test_dyndrivers_FDEPENDS)
     set(test_dyndrivers_TDEPENDS test-drv-info)
