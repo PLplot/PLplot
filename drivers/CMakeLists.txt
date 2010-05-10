@@ -196,15 +196,15 @@ if(ENABLE_DYNDRIVERS)
 	${${SOURCE_ROOT_NAME}_LOCATION}
 	${test-drv-info_LOCATION}
 	)
-      add_custom_target(test_${SOURCE_ROOT_NAME}
+      add_custom_target(test_${SOURCE_ROOT_NAME}_driver
 	DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.rc
 	)
-      add_dependencies(test_${SOURCE_ROOT_NAME}
+      add_dependencies(test_${SOURCE_ROOT_NAME}_driver
 	test-drv-info
 	${SOURCE_ROOT_NAME}
 	)
-      list(APPEND test_dyndrivers_TDEPENDS test_${SOURCE_ROOT_NAME})
+      list(APPEND test_dyndrivers_TDEPENDS test_${SOURCE_ROOT_NAME}_driver)
     endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
     
     install(TARGETS ${SOURCE_ROOT_NAME} 
