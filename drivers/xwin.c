@@ -161,6 +161,7 @@ static void  HandleEvents( PLStream *pls );
 /* Event handlers */
 
 static void  MasterEH( PLStream *pls, XEvent *event );
+static void  ClientEH( PLStream *pls, XEvent *event );
 static void  ExposeEH( PLStream *pls, XEvent *event );
 static void  ResizeEH( PLStream *pls, XEvent *event );
 static void  MotionEH( PLStream *pls, XEvent *event );
@@ -805,7 +806,8 @@ GetCursorCmd( PLStream *pls, PLGraphicsIn *ptr )
 
     while ( gin->pX < 0 && dev->locate_mode )
     {
-        XWindowEvent( xwd->display, dev->window, dev->event_mask, &event );
+        /* XWindowEvent( xwd->display, dev->window, dev->event_mask, &event ); */
+        XNextEvent( xwd->display, &event );
         MasterEH( pls, &event );
     }
     *ptr = *gin;
@@ -1208,6 +1210,9 @@ MapMain( PLStream *pls )
 
     XMapRaised( xwd->display, dev->window );
 
+    Atom wmDelete=XInternAtom( xwd->display, "WM_DELETE_WINDOW", False );
+    XSetWMProtocols( xwd->display, dev->window, &wmDelete, 1) ;
+
 /* Wait for exposure */
 /* Remove extraneous expose events from the event queue */
 
@@ -1241,7 +1246,8 @@ WaitForPage( PLStream *pls )
 
     while ( !dev->exit_eventloop )
     {
-        XWindowEvent( xwd->display, dev->window, dev->event_mask, &event );
+        /* XWindowEvent( xwd->display, dev->window, dev->event_mask, &event ); */
+        XNextEvent( xwd->display, &event );
         MasterEH( pls, &event );
     }
     dev->exit_eventloop = FALSE;
@@ -1395,7 +1401,9 @@ HandleEvents( PLStream *pls )
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
     XEvent    event;
 
-    while ( XCheckWindowEvent( xwd->display, dev->window,
+    while ( XCheckTypedWindowEvent( xwd->display, dev->window,
+                ClientMessage, &event )	 ||
+            XCheckWindowEvent( xwd->display, dev->window,
                 dev->event_mask, &event ) )
         MasterEH( pls, &event );
 }
@@ -1455,8 +1463,32 @@ MasterEH( PLStream *pls, XEvent *event )
     case LeaveNotify:
         LeaveEH( pls, event );
         break;
+
+    case ClientMessage:
+	ClientEH( pls, event );
+        break;
     }
 }
+
+/*--------------------------------------------------------------------------*\
+ * ClientEH()
+ *
+ * Event handler routine for client message events (WM_DELETE_WINDOW)
+ \*--------------------------------------------------------------------------*/
+
+static void
+ClientEH( PLStream *pls, XEvent *event )
+{
+    XwDev     *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+
+    if ( event->xclient.data.l[0] == XInternAtom( xwd->display, "WM_DELETE_WINDOW", False ) ) 
+    {
+        pls->nopause = TRUE;
+        plexit( "" );
+    }
+}
+    
 
 /*--------------------------------------------------------------------------*\
  * KeyEH()
