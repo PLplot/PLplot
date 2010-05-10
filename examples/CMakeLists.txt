@@ -437,7 +437,7 @@ if(BUILD_TEST)
 	  # must use _files_ (contained in files_examples_${language}
 	  # for file dependencies.
 	  # Another case covered here is when the subdirectory
-          # contains non-generated files  In this case also you must
+          # contains non-generated examples files.  In this case also you must
 	  # (of course) use _files_ for file dependencies.
 	  list(APPEND compare_file_depends_${language} ${files_examples_${language}})
 	else(files_examples_${language})
@@ -469,7 +469,6 @@ if(BUILD_TEST)
 	  )
 	list(APPEND diff_targets_LIST test_${language}_psc)
 	list(APPEND diff_files_LIST ${CMAKE_CURRENT_BINARY_DIR}/x01${suffix}.psc)
-
 	# If the subdirectory used an add_custom_target (as indicated
 	# by both files_examples_${language} and targets_examples_${language}
 	# being true), then for that special case must add a target-level
@@ -500,6 +499,8 @@ if(BUILD_TEST)
   # consistency sake.
   if(ENABLE_c)
     set(device_depends ${custom_test_command})
+    # See explanation above about what to do with files_examples_c and
+    # targets_examples_c.
     if(files_examples_c)
       list(APPEND device_depends ${files_examples_c})
     else(files_examples_c)
@@ -538,6 +539,7 @@ if(BUILD_TEST)
 	list(APPEND file_device_depends_${device} ${driver})
       endif(ENABLE_DYNDRIVERS)
       #message("DEBUG: OUTPUT filename = x01c${index}.${device}")
+      #message("DEBUG:file_device_depends_${device} = ${file_device_depends_${device}}")
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/x01c${index}.${device}
 	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} file device"
@@ -550,6 +552,10 @@ if(BUILD_TEST)
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x01c${index}.${device}
 	)
       list(APPEND noninteractive_targets_LIST test_c_${device})
+      # Follow what was done above.
+      if(files_examples_c AND targets_examples_c)
+	add_dependencies(test_c_${device} ${targets_examples_c})
+      endif(files_examples_c AND targets_examples_c)
     endforeach(file_devices_info ${FILE_DEVICES_LIST})
 
     if(ENABLE_DYNDRIVERS)
@@ -589,6 +595,16 @@ if(BUILD_TEST)
       string(REGEX REPLACE "^.*:(.*)$" "\\1" driver ${interactive_devices_info})
       
       set(interactive_device_depends_${device})
+      # See explanation above about what to do with files_examples_c and
+      # targets_examples_c.
+      if(files_examples_c)
+	list(APPEND interactive_device_depends_${device} ${files_examples_c})
+      else(files_examples_c)
+	if(targets_examples_c)
+	  list(APPEND interactive_device_depends_${device} ${targets_examples_c})
+	endif(targets_examples_c)
+      endif(files_examples_c)
+
       if(ENABLE_DYNDRIVERS)
 	list(APPEND interactive_device_depends_${device} ${driver})
       endif(ENABLE_DYNDRIVERS)
@@ -606,6 +622,10 @@ if(BUILD_TEST)
 	  add_dependencies(test_c_tk plserver xwin)
 	endif(CORE_BUILD)
       endif(device STREQUAL "tk")
+      # Follow what was done above.
+      if(files_examples_c AND targets_examples_c)
+	add_dependencies(test_c_${device} ${targets_examples_c})
+      endif(files_examples_c AND targets_examples_c)
       list(APPEND interactive_targets_LIST test_c_${device})
 
       if(ENABLE_octave)
