@@ -56,13 +56,12 @@ endfor
 
 # -dev xcairo very slow on all of these (the well-known interactive
 # slowness issue with that device).
+# 17 - the selection rectangle is not drawn because xcairo does not support xor mode.
 
 # The following comments are for -dev qtwidget.
-# 12 (hangs);
-# 14 (looks pretty to start but then segfaults);
-# 17 (error: plrb: device is not xor capable);
-# 18 (hangs);
-# The issues with 12, 17 and 18 are all because qtwidget does not handle plGetCursor.
+# 14 - looks pretty to start but then segfaults on some systems (octave 3.0?);
+#    - with octave 3.2 the animation does not work correctly (as with xwin / tk )
+# 17 - the selection rectangle is not drawn because qtwidget does not support xor mode.
 
 # -dev wxwidgets had similar issues except possibly for examples 18
 # and 19 which seemed fine, but there is no way to tell for sure with
