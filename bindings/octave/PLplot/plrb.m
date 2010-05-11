@@ -31,8 +31,10 @@ function [x1, y1, x2, y2] = plrb(fg)
   x1 = x2 = wX; y1 = y2 = wY;
   x = [x1; x2; x2; x1; x1]; y = [y1; y1; y2; y2; y1 ];
 
-  if (! plxormod(1))
-    error("plrb: device is not xor capable.");
+  hasxor = plxormod(1);
+
+  if (! hasxor )
+    warning("plrb: Device is not xor capable. Selection rectangle not drawn.");
   endif
 
   start = 1;
@@ -40,24 +42,35 @@ function [x1, y1, x2, y2] = plrb(fg)
   while(!done)
     [status, state, keysym, button, string, pX, pY, dX, dY, wX, wY, subwin] = plGetCursor;
     if (start)
-      plline(x,y); plflush; start = 0;
+      if (hasxor)
+        plline(x,y);
+        plflush;
+      endif
+      start = 0;
     elseif (state != 0)
-      plline(x,y);
-      x2 = wX; y2 = wY;
-      x = [x1; x2; x2; x1; x1]; y = [y1; y1; y2; y2; y1 ];
-      plline(x,y);
+      if (hasxor)
+        plline(x,y);
+        x2 = wX; y2 = wY;
+        x = [x1; x2; x2; x1; x1]; y = [y1; y1; y2; y2; y1 ];
+        plline(x,y);
+      else
+        x2 = wX; y2 = wY;
+        x = [x1; x2; x2; x1; x1]; y = [y1; y1; y2; y2; y1 ];
+      endif
     endif
 
     st = fix(state/255);
 
     if (st == 0 && button == 3) ## exit
-      if (nargin != 0 && fg)
+      if (nargin != 0 && fg && hasxor)
 	plline(x,y); plflush;
       endif
       plxormod(0);
       break;
     elseif (st == 0 && button == 2) ## restart
-      plline(x,y);
+      if (hasxor)
+        plline(x,y);
+      endif
       [status, state, keysym, button, string, pX, pY, dX, dY, wX, wY, subwin] = plGetCursor;
       x1 = x2 = wX; y1 = y2 = wY;
       x = [x1; x2; x2; x1; x1]; y = [y1; y1; y2; y2; y1 ];
