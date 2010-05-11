@@ -1926,8 +1926,8 @@ void xcairo_get_cursor( PLStream *pls, PLGraphicsIn *gin )
     XDefineCursor( aStream->XDisplay, aStream->XWindow, xHairCursor );
 
     /* Get the next mouse button release or key press event */
-    XSelectInput( aStream->XDisplay, aStream->XWindow, ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask );
-    XMaskEvent( aStream->XDisplay, ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask, &event );
+    XSelectInput( aStream->XDisplay, aStream->XWindow, ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask | ButtonMotionMask );
+    XMaskEvent( aStream->XDisplay, ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask | ButtonMotionMask, &event );
     XSelectInput( aStream->XDisplay, aStream->XWindow, NoEventMask );
 
     /* Update PLplot's mouse event structure */
