@@ -60,6 +60,7 @@ static int plshadeCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plshadesCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plmapCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plmeridiansCmd( ClientData, Tcl_Interp *, int, const char ** );
+static int plstransformCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plvectCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plranddCmd( ClientData, Tcl_Interp *, int, const char ** );
 static int plgriddataCmd( ClientData, Tcl_Interp *, int, const char ** );
@@ -98,6 +99,7 @@ static CmdInfo Cmds[] = {
     { "plcont",       plcontCmd       },
     { "plmap",        plmapCmd        },
     { "plmeridians",  plmeridiansCmd  },
+    { "plstransform", plstransformCmd },
     { "plmesh",       plmeshCmd       },
     { "plmeshc",      plmeshcCmd      },
     { "plot3d",       plot3dCmd       },
@@ -3324,6 +3326,98 @@ plmeridiansCmd( ClientData clientData, Tcl_Interp *interp,
     }
 
     plflush();
+    return TCL_OK;
+}
+
+static Tcl_Interp *tcl_xform_interp = 0;
+static char *tcl_xform_procname = 0;
+static const char *tcl_xform_template =
+    "set result  [%s ${_##_x} ${_##_y}] ; lassign $result _##_x _##_y";
+
+static char *tcl_xform_code = 0;
+
+static void
+Tcl_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
+{
+// Set Tcl x to x
+    Tcl_Obj *objx = Tcl_NewDoubleObj( x );
+    Tcl_IncrRefCount( objx );
+    Tcl_SetVar2Ex( tcl_xform_interp,
+                   "_##_x", NULL, objx, 0 );
+    Tcl_DecrRefCount( objx );
+
+// Set Tcl y to y
+    Tcl_Obj *objy = Tcl_NewDoubleObj( y );
+    Tcl_IncrRefCount( objy );
+    Tcl_SetVar2Ex( tcl_xform_interp,
+                   "_##_y", NULL, objy, 0 );
+    Tcl_DecrRefCount( objy );
+
+// Call identified Tcl proc.  Forget data, Tcl can use namespaces and custom
+// procs to manage transmission of the custom client data.
+// Proc should return a two element list which is xt yt.
+    int code = Tcl_Eval( tcl_xform_interp, tcl_xform_code );
+
+    if ( code != TCL_OK )
+    {
+        printf( "Unable to evaluate Tcl-side coordinate transform.\n" );
+        return;
+    }
+
+    objx = Tcl_GetVar2Ex( tcl_xform_interp, "_##_x", NULL, 0 );
+    objy = Tcl_GetVar2Ex( tcl_xform_interp, "_##_y", NULL, 0 );
+
+// In case PLFLT != double, we have to make sure we perform the extraction in
+// a safe manner.
+    double dx, dy;
+
+    if ( Tcl_GetDoubleFromObj( tcl_xform_interp, objx, &dx ) != TCL_OK ||
+         Tcl_GetDoubleFromObj( tcl_xform_interp, objy, &dy ) != TCL_OK )
+    {
+        printf( "Unable to extract Tcl results.\n" );
+        return;
+    }
+
+    *xt = dx;
+    *yt = dy;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plstransform
+ *
+ * Implement Tcl-side global coordinate transformation setting/restoring API.
+ \*--------------------------------------------------------------------------*/
+
+static int
+plstransformCmd( ClientData clientData, Tcl_Interp *interp,
+                 int argc, const char *argv[] )
+{
+    if ( argc == 1
+         || argv[1] == "NULL" )
+    {
+    // The user has requested to clear the transform setting.
+        plstransform( NULL, NULL );
+        tcl_xform_interp = 0;
+        if ( tcl_xform_procname )
+        {
+            free( tcl_xform_procname );
+            tcl_xform_procname = 0;
+        }
+    }
+    else
+    {
+        const char *data = argc > 2 ? argv[2] : 0;
+
+        tcl_xform_interp = interp;
+        tcl_xform_procname = strdup( argv[1] );
+
+        int len = strlen( tcl_xform_template ) + strlen( tcl_xform_procname );
+        tcl_xform_code = malloc( len );
+        sprintf( tcl_xform_code, tcl_xform_template, tcl_xform_procname );
+
+        plstransform( Tcl_transform, NULL );
+    }
+
     return TCL_OK;
 }
 
