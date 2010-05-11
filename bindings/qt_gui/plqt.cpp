@@ -980,7 +980,7 @@ void QtPLWidget::locate()
     }
 }
 
-void QtPLWidget::mousePressEvent( QMouseEvent * event )
+void QtPLWidget::mouseEvent( QMouseEvent * event )
 {
     lookupButtonEvent( event );
 
@@ -998,6 +998,21 @@ void QtPLWidget::mousePressEvent( QMouseEvent * event )
             handler.DeviceChangedPage( this );
         }
     }
+}
+
+void QtPLWidget::mousePressEvent( QMouseEvent * event )
+{
+    mouseEvent( event );
+}
+
+void QtPLWidget::mouseReleaseEvent( QMouseEvent * event )
+{
+    mouseEvent( event );
+}
+
+void QtPLWidget::mouseMoveEvent( QMouseEvent * event )
+{
+    mouseEvent( event );
 }
 
 void QtPLWidget::keyPressEvent( QKeyEvent* event )

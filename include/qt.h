@@ -322,6 +322,7 @@ protected:
 
     void resizeEvent( QResizeEvent* );
     void paintEvent( QPaintEvent* );
+    void mouseEvent( QMouseEvent * event );
 
     void getPlotParameters( double & io_dXFact, double & io_dYFact, double & io_dXOffset, double & io_dYOffset );   // gives the parameters to scale and center the plot on the page
     void doPlot( QPainter* p, double x_fact, double y_fact, double x_offset, double y_offset );                     // Actually draws the plot. Deported in a function for readability
@@ -370,6 +371,8 @@ protected:
 
 protected slots:
     void mousePressEvent( QMouseEvent * event );
+    void mouseReleaseEvent( QMouseEvent * event );
+    void mouseMoveEvent( QMouseEvent * event );
     void keyPressEvent( QKeyEvent* event );
     void closeEvent( QCloseEvent* event );
     void nextPage();
