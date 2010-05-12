@@ -107,11 +107,20 @@ for lang in c++ f77 f95 java octave python tcl perl ada adathick ocaml lua d; do
 		if [ ! -f x${xsuffix}${index}${suffix}.psc ] ; then
 		    missing="${missing} ${index}"
 		else
-		    @TAIL_EXECUTABLE@ -n +9 x${xsuffix_c}${index}c.psc > test1.psc
-		    @TAIL_EXECUTABLE@ -n +9 x${xsuffix}${index}${suffix}.psc > test2.psc
-		    @DIFF_EXECUTABLE@ -q test1.psc test2.psc 2>&1 > /dev/null
-		    if [ $? != 0 ] ; then
-			different="${different} ${index}"
+		    if [ "@HAVE_CMP_I@" = "ON" ] ; then
+		    # Skip first 190 bytes of comparison to ignore date stamp.
+			@CMP_EXECUTABLE@ -s -i 190 x${xsuffix_c}${index}c.psc x${xsuffix}${index}${suffix}.psc
+			if [ $? != 0 ] ; then
+			    different="${different} ${index}"
+			fi
+		    else
+		    # Drop first 8 lines from comparison to ignore date stamp.
+			@TAIL_EXECUTABLE@ -n +9 x${xsuffix_c}${index}c.psc > test1.psc
+			@TAIL_EXECUTABLE@ -n +9 x${xsuffix}${index}${suffix}.psc > test2.psc
+			@DIFF_EXECUTABLE@ -q test1.psc test2.psc 2>&1 > /dev/null
+			if [ $? != 0 ] ; then
+			    different="${different} ${index}"
+			fi
 		    fi
 		    if [ "$index" != "14a" ] ; then
 			if [ -f x${xsuffix}${index}${suffix}_psc.txt ] ; then

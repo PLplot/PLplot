@@ -332,7 +332,7 @@ if(SH_EXECUTABLE)
       )
   endif(PLD_pdf)
 
-  if(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+  if(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
     configure_file(
       test_diff.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh
@@ -342,7 +342,7 @@ if(SH_EXECUTABLE)
     add_test(examples_compare
       ${SH_EXECUTABLE} -c "./test_diff.sh"
       )
-  endif(DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+  endif(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
 
 
   # Make a copy of lena.pgm to the test subdirectory of the build

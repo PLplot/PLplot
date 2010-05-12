@@ -140,11 +140,20 @@ if(NOT SH_EXECUTABLE)
    )
 endif(NOT SH_EXECUTABLE)
 
-# Find diff, tail and tee which are used to compare results from different
+# Find diff and tail which are used to compare results from different
 # bindings.
 find_program(DIFF_EXECUTABLE diff)
 find_program(TAIL_EXECUTABLE tail)
-
+# On Linux find cmp which is faster than diff.  N.B. other Unix systems may
+# have a POSIX-compliant cmp but without the GNU extension available on
+# Linux of the -i option which we use to skip the datestamp on PostScript
+# files.
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  find_program(CMP_EXECUTABLE cmp)
+  if(CMP_EXECUTABLE)
+    set(HAVE_CMP_I ON)
+  endif(CMP_EXECUTABLE)
+endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 option(PREBUILD_DIST "Pre-build all components required for distribution" OFF)
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
