@@ -3332,7 +3332,12 @@ plmeridiansCmd( ClientData clientData, Tcl_Interp *interp,
 static Tcl_Interp *tcl_xform_interp = 0;
 static char *tcl_xform_procname = 0;
 static const char *tcl_xform_template =
-    "set result  [%s ${_##_x} ${_##_y}] ; lassign $result _##_x _##_y";
+#if TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION < 5
+    "set result [%s ${_##_x} ${_##_y}] ; set _##_x [lindex $result 0] ; set _##_y [lindex $result 1]"
+#else
+    "set result [%s ${_##_x} ${_##_y}] ; lassign $result _##_x _##_y"
+#endif    
+    ;
 
 static char *tcl_xform_code = 0;
 
@@ -3353,6 +3358,10 @@ Tcl_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
                    "_##_y", NULL, objy, 0 );
     Tcl_DecrRefCount( objy );
 
+/*     printf( "objx=%x objy=%x\n", objx, objy ); */
+
+/*     printf( "Evaluating code: %s\n", tcl_xform_code ); */
+
 // Call identified Tcl proc.  Forget data, Tcl can use namespaces and custom
 // procs to manage transmission of the custom client data.
 // Proc should return a two element list which is xt yt.
@@ -3361,6 +3370,8 @@ Tcl_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
     if ( code != TCL_OK )
     {
         printf( "Unable to evaluate Tcl-side coordinate transform.\n" );
+        printf( "code = %d\n", code );
+        printf( "Error result: %s\n", Tcl_GetStringResult( tcl_xform_interp ) );
         return;
     }
 
