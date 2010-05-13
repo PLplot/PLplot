@@ -1048,10 +1048,6 @@ c_plgcolbga( PLINT *r, PLINT *g, PLINT *b, PLFLT *a );
 PLDLLIMPEXP void
 c_plgcompression( PLINT *compression );
 
-/* Set the coordinate transform */
-PLDLLIMPEXP void
-c_plstransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), PLPointer coordinate_transform_data );
-
 /* Get the current device (keyword) name */
 
 PLDLLIMPEXP void
@@ -1695,6 +1691,11 @@ c_plstar( PLINT nx, PLINT ny );
 
 PLDLLIMPEXP void
 c_plstart( const char *devname, PLINT nx, PLINT ny );
+
+/* Set the coordinate transform */
+
+PLDLLIMPEXP void
+c_plstransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), PLPointer coordinate_transform_data );
 
 /* Add a point to a stripchart.  */
 
