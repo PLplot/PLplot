@@ -145,6 +145,7 @@ if(BUILD_TEST)
       # /usr/include/gtk-2.0 directory.  They also contain 
       # "#include <plplotcanvas.h>".  These issues are both taken care of
       # by the libgnomeprintui-2.2 pkg-config module.
+      message(STATUS "Determine compile and link flags for plotcanvas_demo")
       pkg_check_pkgconfig(libgnomeprintui-2.2 includedir libdir linkflags1 cflags1 version1 _GNOMEPRINTUI)
       if(linkflags1)
 	# Requires blank-delimited list.
@@ -160,6 +161,7 @@ if(BUILD_TEST)
 	# plplotcanvas_animation.c contains a reference to gthread_init and also
 	# contains '#include <glib.h>'.  Analysis shows both these issues are
 	# taken care of by the gthread-2.0 pkg-config module.
+        message(STATUS "Determine compile and link flags for plotcanvas_animation")
 	pkg_check_pkgconfig(gthread-2.0 includedir libdir linkflags2 cflags2 version2 _GTHREAD_2.0)
 	if(linkflags2)
 	  # Requires blank-delimited list.
@@ -180,6 +182,7 @@ if(BUILD_TEST)
     endif(ENABLE_gnome2)
     
     if(PLD_xcairo)
+      message(STATUS "Determine compile and link flags for extXdrawable_demo")
       pkg_check_pkgconfig(gtk+-x11-2.0 includedir libdir linkflags3 cflags3 version3 _GTK_X11)
       if(linkflags3)
 	# Requires blank-delimited list.
@@ -197,6 +200,7 @@ if(BUILD_TEST)
     endif(PLD_xcairo)
 
     if(PLD_extcairo)
+      message(STATUS "Determine compile and link flags for ext-cairo-test")
       pkg_check_pkgconfig(cairo includedir libdir linkflags4 cflags4 version4 _CAIRO)
       if(linkflags4)
 	# Requires blank-delimited list.
