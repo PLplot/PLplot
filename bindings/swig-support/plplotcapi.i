@@ -829,6 +829,14 @@ plstar(PLINT nx, PLINT ny);
 void
 plstart(const char *devname, PLINT nx, PLINT ny);
 
+#ifdef SWIG_JAVA
+
+%feature("autodoc", "Set the coordinate transform.") plstransform;
+void
+plstransform( ct_func ctf, PLPointer data );
+
+#endif
+
 %feature("autodoc", "Add a point to a stripchart.") plstripa;
 void
 plstripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);

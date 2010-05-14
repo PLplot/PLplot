@@ -55,6 +55,7 @@ if(ENABLE_java)
     ${CMAKE_CURRENT_SOURCE_DIR}/PLStream.java
     ${CMAKE_CURRENT_SOURCE_DIR}/PLCallbackMapform.java
     ${CMAKE_CURRENT_SOURCE_DIR}/PLCallbackLabel.java
+    ${CMAKE_CURRENT_SOURCE_DIR}/PLCallbackCT.java
 
     )
 
@@ -73,6 +74,7 @@ if(ENABLE_java)
     ${class_root}/plplotjavacJNI.class_DEPENDS
     ${class_root}/PLCallbackMapform.class
     ${class_root}/PLCallbackLabel.class
+    ${class_root}/PLCallbackCT.class
     )
 
   set(
@@ -92,6 +94,7 @@ if(ENABLE_java)
     ${class_root}/plplotjavacJNI.class
     ${class_root}/PLCallbackMapform.class
     ${class_root}/PLCallbackLabel.class
+    ${class_root}/PLCallbackCT.class
     )
 
   set(
@@ -101,6 +104,7 @@ if(ENABLE_java)
     ${class_root}/plplotjavac.class
     ${class_root}/PLCallbackMapform.class
     ${class_root}/PLCallbackLabel.class
+    ${class_root}/PLCallbackCT.class
     )
 
   # This is currently the include list for swig, the C wrapper and the

@@ -1,7 +1,7 @@
 /*
 Copyright (C) 2002  Gary Bishop
 Copyright (C) 2002, 2004  Alan W. Irwin
-Copyright (C) 2004  Andrew Ross
+Copyright (C) 2004-2010  Andrew Ross
 This file is part of PLplot.
 
 PLplot is free software; you can redistribute it and/or modify
@@ -1080,6 +1080,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    typedef PLINT (*defined_func)(PLFLT, PLFLT);
    typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
    typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
+   typedef void (*ct_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
    typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
    typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
    typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
@@ -1281,6 +1282,94 @@ bject. */
 %typemap(jtype) label_func lf "PLCallbackLabel"
 %typemap(jstype) label_func lf "PLCallbackLabel"
 %typemap(javain) label_func lf "$javainput"
+
+%{
+   
+   jobject ctClass = 0;
+   jobject ctClassRef = 0;
+
+   /* C coordinate transform callback function which calls the java
+    * coordinate transform function in a PLCallbackCoordTrans object. */
+   void ct_java(PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data) {
+        jdouble jx, jy;
+	jdoubleArray jxt, jyt;
+	jdouble *xtval;
+	jdouble *ytval;
+	jobject jdata;
+        JNIEnv *cbenv;
+        jmethodID ctID = 0;
+	
+	jx = (jdouble) x;
+	jy = (jdouble) y;
+	jdata = (jobject) data;
+
+        if (cached_jvm == NULL) {
+           fprintf(stderr,"Error! NULL jvm\n");
+           return;
+        }
+        (*cached_jvm)->GetEnv(cached_jvm,(void **)&cbenv,JNI_VERSION_1_2);
+        if (cbenv == NULL) {
+          fprintf(stderr,"Thread not attached\n");
+          if ((*cached_jvm)->AttachCurrentThread(cached_jvm, (void **)&cbenv, NULL) != 0) {
+            fprintf(stderr,"Error attaching to JVM\n");
+            return;
+          }
+        }
+	jxt = (*cbenv)->NewDoubleArray(cbenv,1);
+	jyt = (*cbenv)->NewDoubleArray(cbenv,1);
+        if (ctClass == 0) {
+          fprintf(stderr,"Error - callback undefined\n");
+          return;
+        }
+        jclass cls = (*cbenv)->GetObjectClass(cbenv,ctClass);
+        if (cls == 0) {
+          fprintf(stderr,"Error getting callback class\n");
+          return;
+        }
+        ctID = (*cbenv)->GetMethodID(cbenv,cls, "coordTransform","(DD[D[DLjava/lang/Object;)V" );
+        if (ctID != 0) {
+	  (*cbenv)->CallVoidMethod(cbenv,ctClass, ctID, jx, jy, jxt, jyt, jdata);
+	  xtval = (*cbenv)->GetDoubleArrayElements(cbenv,jxt, JNI_FALSE);
+	  ytval = (*cbenv)->GetDoubleArrayElements(cbenv,jyt, JNI_FALSE);
+	  *xt = (PLFLT) xtval[0];
+	  *yt = (PLFLT) ytval[0];
+        }
+        else {
+          fprintf(stderr,"Java callback not found\n");
+        }
+   }
+%}
+
+
+/* Handle function pointers to coordinate transform function using a 
+ * java class */
+%typemap(in) ct_func ctf {
+
+   jobject obj = $input;
+
+   /* Delete any old references */
+   if (ctClass != 0) {
+     (*jenv)->DeleteGlobalRef(jenv,ctClass);
+     ctClass = 0;
+   }
+   /* Need a reference to this object to ensure it is
+    * valid when we reach the callback */
+   if (obj != NULL) {
+      ctClass = (*jenv)->NewGlobalRef(jenv,obj);
+   }
+   if (ctClass != 0) {
+      $1 = ct_java;
+   }
+   else {
+      $1 = NULL;
+   }
+
+}
+
+%typemap(jni) ct_func ctf "jobject"
+%typemap(jtype) ct_func ctf "PLCallbackCT"
+%typemap(jstype) ct_func ctf "PLCallbackCT"
+%typemap(javain) ct_func ctf "$javainput"
 
 %typemap(in) PLPointer data {
     $1 = NULL;
