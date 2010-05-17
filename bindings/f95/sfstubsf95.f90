@@ -835,6 +835,28 @@
          end subroutine plstar
       end interface
 
+      interface plstransform
+          subroutine plstransformon( transformfunc )
+              interface
+                  subroutine transformfunc(x, y, xt, yt)
+                      use plplot_flt
+                      implicit none
+                      real(kind=plflt) :: x, y, xt, yt
+                  end subroutine transformfunc
+              end interface
+          end subroutine plstransformon
+
+          subroutine plstransformoff( dummy )
+              implicit none
+              integer :: dummy
+          end subroutine plstransformoff
+
+          subroutine plstransformnone
+          end subroutine plstransformnone
+
+      end interface
+
+
       interface
          subroutine plstripa( id, pen, x, y )
             use plplot_flt

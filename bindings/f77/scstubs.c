@@ -39,7 +39,16 @@ static void ( STDCALL *plmapform )( PLINT *, PLFLT *, PLFLT * ); /* Note: slight
 /* Slightly different to (*label_func) as we don't support PLPointer for
  * additional data in f77.
  * Note the hidden argument! */
-static void ( STDCALL *pllabelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT );
+static void ( STDCALL *pllabelfunc )( PLINT *, PLFLT *, char *, PLINT *, PLINT);
+/* Slightly different to C version as we don't support PLPointer  for additional data */
+static void ( STDCALL *pltransform )( PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+
+static void
+pltransformf2c( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer data )
+{
+  ( *pltransform )( &x, &y, tx, ty );
+}
+
 
 void
 PL_SETCONTLABELFORMAT( PLINT *lexp, PLINT *sigdig )
@@ -949,6 +958,21 @@ void
 PLSTART7( const char *devname, PLINT *nx, PLINT *ny )
 {
     c_plstart( devname, *nx, *ny );
+}
+
+void
+PLSTRANSFORM( void ( STDCALL *transformfunc )( PLFLT *, PLFLT *, PLFLT *, PLFLT * ) )
+{
+    pltransform = transformfunc;
+    /* N.B. neglect pointer to additional data for f77 */
+    c_plstransform( pltransformf2c, NULL );
+}
+
+void
+PLSTRANSFORMNONE( void )
+{
+    pltransform = NULL;
+    c_plstransform( NULL, NULL );
 }
 
 void

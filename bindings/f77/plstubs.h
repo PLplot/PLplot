@@ -321,6 +321,8 @@
 #define    PLSSYM                    FNAME( PLSSYM, plssym )
 #define    PLSTAR                    FNAME( PLSTAR, plstar )
 #define    PLSTART7                  FNAME( PLSTART7, plstart7 )
+#define    PLSTRANSFORM              FNAME( PLSTRANSFORM, plstransform )
+#define    PLSTRANSFORMNONE          FNAME( PLSTRANSFORMNONE, plstransformnone )
 #define    PLSTRIPA                  FNAME( PLSTRIPA, plstripa )
 #define    PLSTRIPC7                 FNAME( PLSTRIPC7, plstripc7 )
 #define    PLSTRIPD                  FNAME( PLSTRIPD, plstripd )

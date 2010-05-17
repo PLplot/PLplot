@@ -51,6 +51,19 @@ c--------------------------------------------------------------------------
       endif
       end
 
+      subroutine map_transform(x, y, xt, yt)
+      implicit none
+
+      real*8    x, y, xt, yt, radius
+      real*8    PI
+      parameter ( PI = 3.1415926535897932384d0 )
+
+      radius = 90.0d0 - y
+      xt = radius * cos(x * PI / 180.0d0)
+      yt = radius * sin(x * PI / 180.0d0)
+      return
+      end subroutine
+
 c--------------------------------------------------------------------------
 c mapform19
 c
@@ -152,7 +165,9 @@ c--------------------------------------------------------------------------
       program x19f
       implicit none
       real*8    minx, maxx, miny, maxy
+      real*8    x, y
       external ident
+      external map_transform
       external mapform19
       external geolocation_labeler
 
@@ -208,5 +223,36 @@ c Polar, Northern hemisphere
       call plmeridians(mapform19,10.0d0, 10.0d0,
      &        0.0d0, 360.0d0, -10.0d0,
      &        80.0d0)
+
+c Polar, Northern hemisphere, this time with a PLplot-wide transform
+
+      minx = 0
+      maxx = 360
+      
+      call plstransform( map_transform )
+
+      call pllsty( 1 )
+      call plenv( -75.d0, 75.d0, -75.d0, 75.d0, 1, -1 )
+      ! No need to set the map transform here as the global 
+      ! transform will be used.
+      call plmap( ident, 'globe', minx, maxx, miny, maxy )
+      
+      call pllsty( 2 )
+      call plmeridians( ident, 10.0d0, 10.0d0, 0.0d0,
+     &     360.0d0, -10.0d0, 80.0d0 )
+      
+      ! Show Baltimore, MD on the map
+      call plcol0( 2 )
+      call plssym( 0.0d0, 2.0d0 )
+      x=-76.6125d0
+      y=39.2902778d0
+      call plpoin( 1, x, y, 18 )
+      call plssym( 0.0d0, 1.0d0 )
+      call plptex( -76.6125d0, 43.0d0, 0.0d0, 0.0d0,
+     &     0.0d0, 'Baltimore, MD' )
+      
+      ! For f77, this is how the global transform is cleared
+      call plstransformnone
+
       call plend()
       end

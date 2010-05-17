@@ -38,6 +38,19 @@
       return
       end
 
+
+      subroutine map_transform(x, y, xt, yt)
+      use plplot, PI => PL_PI
+      implicit none
+
+      real(kind=plflt)    x, y, xt, yt, radius
+
+      radius = 90.0_plflt - y
+      xt = radius * cos(x * PI / 180.0_plflt)
+      yt = radius * sin(x * PI / 180.0_plflt)
+      return
+      end subroutine
+
 !--------------------------------------------------------------------------
 ! mapform19
 !
@@ -75,14 +88,14 @@
       real(kind=plflt) :: normalize_longitude
       real(kind=plflt) :: lon, times
 
-      if ((lon .ge. -180.0d0) .and. (lon .le. 180.0d0)) then
+      if ((lon .ge. -180.0_plflt) .and. (lon .le. 180.0_plflt)) then
          normalize_longitude = lon
       else 
-         times = floor ((abs(lon) + 180.0d0) / 360.0d0)
-        if (lon .lt. 0.0d0) then
-           normalize_longitude = lon + 360.0d0 * times
+         times = floor ((abs(lon) + 180.0_plflt) / 360.0_plflt)
+        if (lon .lt. 0.0_plflt) then
+           normalize_longitude = lon + 360.0_plflt * times
         else
-           normalize_longitude = lon - 360.0d0 * times
+           normalize_longitude = lon - 360.0_plflt * times
         endif
       endif
       return
@@ -103,27 +116,27 @@
 
       if (axis .eq. 2) then
          label_val = value
-         if (label_val .gt. 0.0d0) then
+         if (label_val .gt. 0.0_plflt) then
             direction_label = ' N'
-         else if (label_val .lt. 0.0d0) then
+         else if (label_val .lt. 0.0_plflt) then
             direction_label = ' S'
          else
             direction_label = 'Eq'
          endif
       else if (axis .eq. 1) then
          label_val = normalize_longitude(value)
-         if (label_val .gt. 0.0d0) then
+         if (label_val .gt. 0.0_plflt) then
             direction_label = ' E'
-         else if (label_val .lt. 0.0d0) then
+         else if (label_val .lt. 0.0_plflt) then
             direction_label = ' W'
          else
             direction_label = ''
          endif
       endif    
-      if (axis .eq. 2 .and. value .eq. 0.0d0) then
+      if (axis .eq. 2 .and. value .eq. 0.0_plflt) then
 !     A special case for the equator
          label = direction_label    
-      else if (abs(label_val) .lt. 100.0d0) then
+      else if (abs(label_val) .lt. 100.0_plflt) then
          write(label,'(I2.1,A2)') iabs(int(label_val)),direction_label
       else
         write(label,'(I3.1,A2)') iabs(int(label_val)),direction_label
@@ -140,8 +153,10 @@
       use plplot
       implicit none
       real(kind=plflt)    minx, maxx, miny, maxy
+      real(kind=plflt), dimension(1:1) :: x, y
       integer c
       external ident
+      external map_transform
       external mapform19
       external geolocation_labeler
 
@@ -193,5 +208,38 @@
       call plmeridians(mapform19,10.0_plflt, 10.0_plflt, &
               0.0_plflt, 360.0_plflt, -10.0_plflt, &
               80.0_plflt)
+
+! Polar, Northern hemisphere, this time with a PLplot-wide transform
+
+      minx = 0
+      maxx = 360
+      
+      call plstransform( map_transform )
+
+      call pllsty( 1 )
+      call plenv( -75._plflt, 75._plflt, -75._plflt, &
+           75._plflt, 1, -1 )
+      ! No need to set the map transform here as the global 
+      ! transform will be used.
+      call plmap( ident, 'globe', minx, maxx, miny, maxy )
+      
+      call pllsty( 2 )
+      call plmeridians(ident, 10.0_plflt, 10.0_plflt, &
+           0.0_plflt, 360.0_plflt, -10.0_plflt, &
+           80.0_plflt )
+      
+      ! Show Baltimore, MD on the map
+      call plcol0( 2 )
+      call plssym( 0.0_plflt, 2.0_plflt )
+      x=-76.6125_plflt
+      y=39.2902778_plflt
+      call plpoin( x, y, 18 )
+      call plssym( 0.0_plflt, 1.0_plflt )
+      call plptex( -76.6125_plflt, 43.0_plflt, 0.0_plflt, &
+           0.0_plflt, 0.0_plflt, 'Baltimore, MD' )
+      
+      ! For f95, this is how the global transform is cleared
+      call plstransform( 0 )
+
       call plend()
       end program x19f
