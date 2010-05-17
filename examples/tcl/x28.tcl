@@ -52,6 +52,17 @@ proc x28 {{w loopback}} {
     set zmid [expr {0.5*($zmax + $zmin)}]
     set zrange [expr {$zmax - $zmin}]
 
+    set ysmin [expr {$ymin + 0.1 * $yrange}]
+    set ysmax [expr {$ymax - 0.1 * $yrange}]
+    set ysrange [expr {$ysmax - $ysmin}]
+    set dysrot [expr {$ysrange / ( $NROTATION - 1 )}]
+    set dysshear [expr {$ysrange / ( $NSHEAR - 1 )}]
+    set zsmin [expr {$zmin + 0.1 * $zrange}]
+    set zsmax [expr {$zmax - 0.1 * $zrange}]
+    set zsrange [expr {$zsmax - $zsmin}]
+    set dzsrot [expr {$zsrange / ( $NROTATION - 1 )}]
+    set dzsshear [expr {$zsrange / ( $NSHEAR - 1 )}]
+
     # p1string must be exactly one character + the null termination 
     # character.
     set p1string "O"
@@ -169,8 +180,9 @@ proc x28 {{w loopback}} {
 	set cos_omega [expr {cos($omega)}]
 	set y_shear [expr {0.5*$yrange*$sin_omega}]
 	set z_shear [expr {0.5*$zrange*$cos_omega}]
+        set zs [expr {$zsmax - $dzsrot*$i}]
 	$w cmd plptex3 \
-	    $xmid $ymax [expr {$zmax -($zmax-0.2)*double($i)/double($NROTATION-1)}] \
+	    $xmid $ymax $zs \
 	    $x_inclination $y_inclination $z_inclination \
 	    $x_shear $y_shear $z_shear \
 	    0.5 "rotation for y = y#dmax#u"
@@ -188,8 +200,9 @@ proc x28 {{w loopback}} {
 	set cos_omega [expr {cos($omega)}]
 	set x_shear [expr {0.5*$xrange*$sin_omega}]
 	set z_shear [expr {0.5*$zrange*$cos_omega}]
-	$w cmd plptex3 \
-	    $xmax $ymid [expr {$zmax -($zmax-0.2)*double($i)/double($NROTATION-1)}] \
+	set zs [expr {$zsmax - $dzsrot*$i}]
+    	$w cmd plptex3 \
+	    $xmax $ymid $zs \
 	    $x_inclination $y_inclination $z_inclination \
 	    $x_shear $y_shear $z_shear \
 	    0.5 "rotation for x = x#dmax#u"
@@ -207,8 +220,9 @@ proc x28 {{w loopback}} {
 	set cos_omega [expr {cos($omega)}]
 	set y_shear [expr {0.5*$yrange*$cos_omega}]
 	set z_shear [expr {0.5*$zrange*$sin_omega}]
+        set ys [expr {$ysmax - $dysrot*$i}]
 	$w cmd plptex3  \
-	    $xmid [expr {$ymax -($ymax-0.2)*double($i)/double($NROTATION-1)}] $zmin \
+	    $xmid $ys $zmin \
 	    $x_inclination $y_inclination $z_inclination \
 	    $x_shear $y_shear $z_shear \
 	    0.5 "rotation for z = z#dmin#u"
@@ -243,8 +257,9 @@ proc x28 {{w loopback}} {
 	set cos_omega [expr {cos($omega)}]
 	set x_shear [expr {0.5*$xrange*$sin_omega}]
 	set z_shear [expr {0.5*$zrange*$cos_omega}]
+	set zs [expr {$zsmax - $dzsshear*$i}]
 	$w cmd plptex3 \
-	    $xmid $ymax [expr {$zmax -($zmax-0.2)*double($i)/double($NSHEAR-1)}] \
+	    $xmid $ymax $zs \
 	    $x_inclination $y_inclination $z_inclination \
 	    $x_shear $y_shear $z_shear \
 	    0.5 "shear for y = y#dmax#u"
@@ -262,8 +277,9 @@ proc x28 {{w loopback}} {
 	set cos_omega [expr {cos($omega)}]
 	set y_shear [expr {-0.5*$yrange*$sin_omega}]
 	set z_shear [expr {0.5*$zrange*$cos_omega}]
+	set zs [expr {$zsmax - $dzsshear*$i}]
 	$w cmd plptex3 \
-	    $xmax $ymid [expr {$zmax -($zmax-0.2)*double($i)/double($NSHEAR-1)}] \
+	    $xmax $ymid $zs \
 	    $x_inclination $y_inclination $z_inclination \
 	    $x_shear $y_shear $z_shear \
 	    0.5 "shear for x = x#dmax#u"
@@ -281,10 +297,11 @@ proc x28 {{w loopback}} {
 	set cos_omega [expr {cos($omega)}]
 	set y_shear [expr {0.5*$yrange*$cos_omega}]
 	set x_shear [expr {0.5*$xrange*$sin_omega}]
+	set ys [expr {$ysmax - $dysshear*$i}]
 	$w cmd plptex3 \
-	    $xmid [expr {$ymax -($ymax-0.2)*double($i)/double($NSHEAR-1)}] $zmin \
+	    $xmid $ys $zmin \
 	    $x_inclination $y_inclination $z_inclination \
-	   $x_shear $y_shear $z_shear \
+	    $x_shear $y_shear $z_shear \
 	    0.5 "shear for z = z#dmin#u"
     }
     # Draw minimal 3D grid to finish defining the 3D box. 
