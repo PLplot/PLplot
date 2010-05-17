@@ -26,12 +26,9 @@ from plplot_py_demos import *
 
 def map_transform( x, y, xt, yt, data ):
 
-    print "%f %f" % (x, y)
     radius = 90.0 - y
     xt[0]    = radius * cos( x * pi / 180.0 )
     yt[0]    = radius * sin( x * pi / 180.0 )
-    print "%f %f" % (xt[0], yt[0])
-    #return [xt, yt]
 
 # mapform19
 #
