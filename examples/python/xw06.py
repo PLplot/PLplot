@@ -29,43 +29,58 @@ from plplot_py_demos import *
 
 def main():
 
-    pladv(0)
+    for kind_font in range(2):
 
-    # Set up viewport and window
+        plfontld( kind_font )
 
-    plcol0(2)
-    plvpor(0.1, 1.0, 0.1, 0.9)
-    plwind(0.0, 1.0, 0.0, 1.3)
+        if kind_font == 0 :
+            maxfont = 1
+        else :
+            maxfont = 4
 
-    # Draw the grid using plbox
+        for font in range(maxfont):
+            plfont( font + 1 )
 
-    plbox("bcg", 0.1, 0, "bcg", 0.1, 0)
+            pladv(0)
 
-    # Write the digits below the frame
+            # Set up viewport and window
 
-    plcol0(15)
-    for i in range(10):
-	plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, `i`)
+            plcol0(2)
+            plvpor(0.1, 1.0, 0.1, 0.9)
+            plwind(0.0, 1.0, 0.0, 1.3)
 
-    k = 0
-    for i in range(13):
+            # Draw the grid using plbox
 
-	# Write the digits to the left of the frame
+            plbox("bcg", 0.1, 0, "bcg", 0.1, 0)
 
-	plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, `10 * i`)
+            # Write the digits below the frame
 
-	for j in range(10):
-	    x = 0.1 * j + 0.05
-	    y = 1.25 - 0.1 * i
+            plcol0(15)
+            for i in range(10):
+                plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, `i`)
 
-	    # Display the symbol (plpoin expects that x
-	    # and y are arrays so pass lists)
+            k = 0
+            for i in range(13):
 
-	    if k < 128:
-		plpoin([x], [y], k)
-	    k = k + 1
+                # Write the digits to the left of the frame
 
-    plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols")
+                plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, `10 * i`)
+                
+                for j in range(10):
+                    x = 0.1 * j + 0.05
+                    y = 1.25 - 0.1 * i
+                    
+                    # Display the symbol (plpoin expects that x
+                    # and y are arrays so pass lists)
+
+                    if k < 128:
+                        plpoin([x], [y], k)
+                    k = k + 1
+
+            if kind_font == 0 :
+                plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (compact)")
+            else :
+                plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (extended)")
 
     # Restore defaults
     #plcol0(1)

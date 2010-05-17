@@ -29,10 +29,15 @@ from plplot_py_demos import *
 
 def main():
 
-    base = [0, 200, 500, 600, 700, 800, 900, 2000, 2100,
-	    2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900]
+    base = [0, 100, 0, 100, 200, 500, 600, 700, 800, 900, 2000,
+	    2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900]
 
-    for l in range(17):
+    plfontld( 0 )
+
+    for l in range(20):
+        if l == 2:
+            plfontld( 1 )
+
 	pladv(0)
 
 	# Set up viewport and window
@@ -67,8 +72,10 @@ def main():
 
 		plsym(x, y, base[l] + k)
 		k = k + 1
-
-	plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols")
+        if l < 2 :
+            plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (compact)")
+        else :
+            plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (extended)")
 
     # Restore defaults
     #plcol0(1)
