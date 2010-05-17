@@ -60,7 +60,14 @@ woody).
 
 #ifdef HAVE_NUMPY
 #define  PyArray_PLINT PyArray_INT32
+
+#ifdef PL_DOUBLE
+#define  NPY_PLFLT NPY_DOUBLE
 #else
+#define  NPY_PLFLT NPY_FLOAT
+#endif
+
+#else  /* HAVE_NUMPY */
 #define  PyArray_PLINT PyArray_INT
 #endif
 /* python-1.5 compatibility mode? */
@@ -615,6 +622,7 @@ pltr2(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLcGrid2* cgrid);
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
+typedef void (*ct_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
@@ -623,6 +631,7 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
 typedef PLINT (*defined_func)(PLFLT, PLFLT);
 typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
 typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
+typedef void (*ct_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef void (*mapform_func)(PLINT, PLFLT *, PLFLT*);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
@@ -648,6 +657,7 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
  enum callback_type { CB_0, CB_1, CB_2, CB_Python } pltr_type;
  PyObject* python_pltr = NULL;
  PyObject* python_f2eval = NULL;
+ PyObject* python_ct = NULL;
  PyObject* python_mapform = NULL;
  PyObject* python_label = NULL;
 
@@ -807,12 +817,60 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
       }	
     }
 
+  void do_ct_callback(PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data)
+    {
+      PyObject *px, *py, *pdata, *arglist, *result;
+#ifdef HAVE_NUMPY
+      npy_intp n;
+#else
+      PLINT n;
+#endif
+      n = 1;
+
+      /* the data argument is acutally a pointer to a python object */
+      pdata = (PyObject*)data;
+      if(data == NULL) {
+	pdata = Py_None;
+      }
+      if(python_ct) { /* if not something is terribly wrong */
+	/* hold a reference to the data object */
+	Py_XINCREF(pdata);
+	/* grab the Global Interpreter Lock to be sure threads don't mess us up */
+	MY_BLOCK_THREADS	
+	/* build the argument list */
+#ifdef HAVE_NUMPY
+	px = PyArray_SimpleNewFromData(1, &n, NPY_PLFLT,(void *)xt);
+	py = PyArray_SimpleNewFromData(1, &n, NPY_PLFLT,(char *)yt);
+#else
+ 	px = PyArray_FromDimsAndData(1, &n, PyArray_PLFLT,(char *)xt);
+	py = PyArray_FromDimsAndData(1, &n, PyArray_PLFLT,(char *)yt);
+#endif
+	arglist = Py_BuildValue("(ddOOO)", x, y, px, py, pdata);
+	/* call the python function */
+	result = PyEval_CallObject(python_ct, arglist);
+	/* release the argument list */
+	Py_DECREF(arglist);
+	Py_DECREF(px);
+	Py_DECREF(py);
+	Py_DECREF(pdata);
+	/* check and unpack the result */
+	if(result == NULL) {
+	  fprintf(stderr, "call to python coordinate transform function with 5 arguments failed\n");
+	  PyErr_SetString(PyExc_RuntimeError, "coordinate transform callback must take 5 arguments.");
+	}
+	/* release the result */
+	Py_XDECREF(result);
+	/* release the global interpreter lock */
+	MY_UNBLOCK_THREADS
+      }	
+    }
+
   void do_mapform_callback(PLINT n, PLFLT *x, PLFLT *y)
     {
       PyObject *px, *py, *arglist, *result;
-      PyArrayObject *tmpx, *tmpy;
+      /* PyArrayObject *tmpx, *tmpy;
       PLFLT *xx, *yy;
-      PLINT i;
+      PLINT i; */
 
       if(python_mapform) { /* if not something is terribly wrong */
 	/* grab the Global Interpreter Lock to be sure threads don't mess us up */
@@ -898,6 +956,19 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
     python_pltr = 0;
   }
 
+/* marshal the ct function pointer argument */
+  ct_func marshal_ct(PyObject* input) {
+    ct_func result = do_ct_callback;
+    python_ct = input;
+    Py_XINCREF(input);
+    return result;
+  }
+
+  void cleanup_ct(void) {
+    Py_XDECREF(python_ct);
+    python_ct = 0;
+  }
+
 /* marshal the mapform function pointer argument */
   mapform_func marshal_mapform(PyObject* input) {
     mapform_func result = do_mapform_callback;
@@ -977,6 +1048,28 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
 /* you can omit the pltr func */
 %typemap(default) pltr_func pltr {
   python_pltr = 0;
+  $1 = NULL;
+}
+
+%typemap(in) ct_func ctf {
+  if (python_ct)
+    cleanup_ct();
+  /* it must be a callable or none */
+  if($input == Py_None) {
+    $1 = NULL;
+  }
+  else {
+    if(!PyCallable_Check((PyObject*)$input)) {
+      PyErr_SetString(PyExc_ValueError, "coordinate transform argument must be callable");
+      return NULL;
+    }
+    $1 = marshal_ct($input);
+  }
+}
+
+/* you can omit the ct func */
+%typemap(default) ct_func ctf {
+  python_ct = 0;
   $1 = NULL;
 }
 
