@@ -840,7 +840,7 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
 	/* build the argument list */
 #ifdef HAVE_NUMPY
 	px = PyArray_SimpleNewFromData(1, &n, NPY_PLFLT,(void *)xt);
-	py = PyArray_SimpleNewFromData(1, &n, NPY_PLFLT,(char *)yt);
+	py = PyArray_SimpleNewFromData(1, &n, NPY_PLFLT,(void *)yt);
 #else
  	px = PyArray_FromDimsAndData(1, &n, PyArray_PLFLT,(char *)xt);
 	py = PyArray_FromDimsAndData(1, &n, PyArray_PLFLT,(char *)yt);
@@ -871,14 +871,18 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
       /* PyArrayObject *tmpx, *tmpy;
       PLFLT *xx, *yy;
       PLINT i; */
+#ifdef HAVE_NUMPY
+      npy_intp nn;
+      nn = n;
+#endif
 
       if(python_mapform) { /* if not something is terribly wrong */
 	/* grab the Global Interpreter Lock to be sure threads don't mess us up */
 	MY_BLOCK_THREADS	
 	/* build the argument list */
-#ifdef PL_DOUBLE
- 	px = PyArray_FromDimsAndData(1, &n, PyArray_DOUBLE,(char *)x);
-	py = PyArray_FromDimsAndData(1, &n, PyArray_DOUBLE,(char *)y);
+#ifdef HAVE_PTHREAD
+	px = PyArray_SimpleNewFromData(1, &nn, NPY_PLFLT,(void *)x);
+	py = PyArray_SimpleNewFromData(1, &nn, NPY_PLFLT,(void *)y);
 #else
  	px = PyArray_FromDimsAndData(1, &n, PyArray_FLOAT,(char *)x);
 	py = PyArray_FromDimsAndData(1, &n, PyArray_FLOAT,(char *)y);
@@ -894,24 +898,7 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
 	if(result == NULL) {
 	  fprintf(stderr, "call to python mapform function with 3 arguments failed\n");
 	  PyErr_SetString(PyExc_RuntimeError, "mapform callback must take 3 arguments.");
-	} /* else {
-	  PyArg_ParseTuple(result,"OO",&px,&py);
-	  PyArrayObject *tmpx = (PyArrayObject *)myArray_ContiguousFromObject(px, PyArray_PLFLT, 1, 1);
-	  PyArrayObject *tmpy = (PyArrayObject *)myArray_ContiguousFromObject(py, PyArray_PLFLT, 1, 1);
-	  if(tmpx == 0 || tmpy == 0 || tmpx->dimensions[0] != 1 ||tmpy->dimensions[0] != 1) {
-	    fprintf(stderr, "pltr callback must return a 1-D vector or sequence\n");
-	    PyErr_SetString(PyExc_RuntimeError, "pltr callback must return a 1-sequence.");
-	  } else {
-	    xx = (PLFLT*)tmpx->data;
-	    yy = (PLFLT*)tmpy->data;
-            for (i=0;i<n;i++) {
-	      x[i] = xx[i];
-	      y[i] = yy[1];
-            }
-	    Py_XDECREF(tmpx);
-	    Py_XDECREF(tmpy);
-	  }
-	} */
+	}
 	/* release the result */
 	Py_XDECREF(result);
 	/* release the global interpreter lock */
