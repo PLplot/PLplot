@@ -544,7 +544,10 @@ PLMAP7( const char *type,
         PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat )
 
 {
-    c_plmap( plmapf2c, type, *minlong, *maxlong, *minlat, *maxlat );
+    if ( plmapform )
+        c_plmap( plmapf2c, type, *minlong, *maxlong, *minlat, *maxlat );
+    else
+        c_plmap( NULL, type, *minlong, *maxlong, *minlat, *maxlat );
 }
 
 
@@ -552,7 +555,10 @@ void
 PLMERIDIANS7( PLFLT *dlong, PLFLT *dlat,
               PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat )
 {
-    c_plmeridians( plmapf2c, *dlong, *dlat, *minlong, *maxlong, *minlat, *maxlat );
+    if ( plmapform )
+        c_plmeridians( plmapf2c, *dlong, *dlat, *minlong, *maxlong, *minlat, *maxlat );
+    else
+        c_plmeridians( NULL, *dlong, *dlat, *minlong, *maxlong, *minlat, *maxlat );
 }
 
 void
@@ -820,10 +826,17 @@ PLSESC( PLINT *esc )
 /* Auxiliary routine - not to be used publicly
  */
 #define    PLSETMAPFORMC    FNAME( PLSETMAPFORMC, plsetmapformc )
+#define    PLCLEARMAPFORMC  FNAME( PLCLEARMAPFORMC, plclearmapformc )
 void
 PLSETMAPFORMC( void ( STDCALL *mapform )( PLINT *, PLFLT *, PLFLT * ) )
 {
     plmapform = mapform;
+}
+
+void
+PLCLEARMAPFORMC( )
+{
+    plmapform = NULL;
 }
 
 void
@@ -969,7 +982,14 @@ PLSTRANSFORM( void ( STDCALL *transformfunc )( PLFLT *, PLFLT *, PLFLT *, PLFLT 
 }
 
 void
-PLSTRANSFORMNONE( void )
+PLSTRANSFORM_NONE( void )
+{
+    pltransform = NULL;
+    c_plstransform( NULL, NULL );
+}
+
+void
+PLSTRANSFORM_NONE_( void )
 {
     pltransform = NULL;
     c_plstransform( NULL, NULL );

@@ -505,6 +505,14 @@
          end subroutine pllsty
       end interface
 
+      interface plmap
+         module procedure plmap1, plmap2
+      end interface plmap
+
+      interface plmeridians
+         module procedure plmeridians1, plmeridians2
+      end interface plmeridians
+
       interface plmesh
          module procedure plmesh
       end interface
@@ -836,7 +844,7 @@
       end interface
 
       interface plstransform
-          subroutine plstransformon( transformfunc )
+          subroutine plstransform1( transformfunc )
               interface
                   subroutine transformfunc(x, y, xt, yt)
                       use plplot_flt
@@ -844,18 +852,17 @@
                       real(kind=plflt) :: x, y, xt, yt
                   end subroutine transformfunc
               end interface
-          end subroutine plstransformon
+          end subroutine plstransform1
 
-          subroutine plstransformoff( dummy )
+          subroutine plstransform2( dummy )
               implicit none
               integer :: dummy
-          end subroutine plstransformoff
+          end subroutine plstransform2
 
-          subroutine plstransformnone
-          end subroutine plstransformnone
+          subroutine plstransform3
+          end subroutine plstransform3
 
       end interface
-
 
       interface
          subroutine plstripa( id, pen, x, y )
@@ -1102,6 +1109,67 @@
 
          call plline3f77( size(x), x, y, z )
       end subroutine plline3
+
+      subroutine plmap1(mapform,mapname,minx,maxx,miny,maxy) 
+        use plplot_flt
+        implicit none
+        real(kind=plflt) minx, maxx, miny, maxy
+        character*(*) mapname
+        external mapform
+        
+        include 'sfstubs.h'
+        
+        call plstrf2c(mapname, string1, maxlen)
+        
+        call plsetmapformc(mapform)
+        s1 = transfer( string1, s1 )
+        call plmap7(s1,minx,maxx,miny,maxy)
+        
+      end subroutine plmap1
+      
+      subroutine plmap2(mapname,minx,maxx,miny,maxy)
+        use plplot_flt
+        implicit none
+        real(kind=plflt) minx, maxx, miny, maxy
+        character*(*) mapname
+        
+        include 'sfstubs.h'
+        
+        call plstrf2c(mapname, string1, maxlen)
+        
+        call plclearmapformc()
+        s1 = transfer( string1, s1 )
+        call plmap7(s1,minx,maxx,miny,maxy)
+        
+      end subroutine plmap2
+
+      subroutine plmeridians1(mapform,dlong,dlat,minlong,maxlong, &
+                             minlat,maxlat)
+
+      implicit none
+      real(kind=plflt) dlong, dlat, minlong, maxlong, minlat, maxlat
+      external mapform
+
+      include 'sfstubs.h'
+
+      call plsetmapformc(mapform)
+      call plmeridians7(dlong,dlat,minlong,maxlong,minlat,maxlat)
+
+      end subroutine plmeridians1
+
+      subroutine plmeridians2(dlong,dlat,minlong,maxlong, &
+                             minlat,maxlat)
+
+      implicit none
+      real(kind=plflt) dlong, dlat, minlong, maxlong, minlat, maxlat
+      external mapform
+
+      include 'sfstubs.h'
+
+      call plclearmapformc
+      call plmeridians7(dlong,dlat,minlong,maxlong,minlat,maxlat)
+
+      end subroutine plmeridians2
 
       subroutine plmesh( x, y, z, opt )
          integer                          :: opt

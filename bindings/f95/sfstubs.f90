@@ -793,41 +793,6 @@
 
 !***********************************************************************
 
-      subroutine plmap(mapform,mapname,minx,maxx,miny,maxy)
-
-      implicit none
-      real(kind=plflt) minx, maxx, miny, maxy
-      character*(*) mapname
-      external mapform
-
-      include 'sfstubs.h'
-
-      call plstrf2c(mapname, string1, maxlen)
-
-      call plsetmapformc(mapform)
-      s1 = transfer( string1, s1 )
-      call plmap7(s1,minx,maxx,miny,maxy)
-
-      end subroutine
-
-!***********************************************************************
-
-      subroutine plmeridians(mapform,dlong,dlat,minlong,maxlong, &
-                             minlat,maxlat)
-
-      implicit none
-      real(kind=plflt) dlong, dlat, minlong, maxlong, minlat, maxlat
-      external mapform
-
-      include 'sfstubs.h'
-
-      call plsetmapformc(mapform)
-      call plmeridians7(dlong,dlat,minlong,maxlong,minlat,maxlat)
-
-      end subroutine
-
-!***********************************************************************
-
       subroutine pltimefmt(fmt)
 
       implicit none

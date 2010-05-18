@@ -719,6 +719,23 @@ c***********************************************************************
 
 c***********************************************************************
 
+      subroutine plmap_none(mapname,minx,maxx,miny,maxy)
+
+      implicit none
+      real*8 minx, maxx, miny, maxy
+      character*(*) mapname
+
+      include 'sfstubs.h'
+
+      call plstrf2c(mapname, string1, maxlen)
+
+      call plclearmapformc()
+      call plmap7(s1,minx,maxx,miny,maxy)
+
+      end subroutine
+
+c***********************************************************************
+
       subroutine plmeridians(mapform,dlong,dlat,minlong,maxlong,
      &                       minlat,maxlat)
 
@@ -729,6 +746,22 @@ c***********************************************************************
       include 'sfstubs.h'
 
       call plsetmapformc(mapform)
+      call plmeridians7(dlong,dlat,minlong,maxlong,minlat,maxlat)
+
+      end subroutine
+
+
+c***********************************************************************
+
+      subroutine plmeridians_none(dlong,dlat,minlong,maxlong,
+     &                       minlat,maxlat)
+
+      implicit none
+      real*8 dlong, dlat, minlong, maxlong, minlat, maxlat
+
+      include 'sfstubs.h'
+
+      call plclearmapformc()
       call plmeridians7(dlong,dlat,minlong,maxlong,minlat,maxlat)
 
       end subroutine

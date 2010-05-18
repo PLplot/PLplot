@@ -19,26 +19,6 @@
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-!--------------------------------------------------------------------------
-! ident
-!
-! Defines identity transformation for example 19.
-! x(), y() are the coordinates to be plotted.
-! This is a 0-OP routine, to play the role of NULL in the C version!
-!--------------------------------------------------------------------------
-
-      subroutine ident(n, x, y)
-      use plplot
-      implicit none
-
-      integer n
-      real(kind=plflt)    x
-      real(kind=plflt)    y
-
-      return
-      end
-
-
       subroutine map_transform(x, y, xt, yt)
       use plplot, PI => PL_PI
       implicit none
@@ -155,7 +135,6 @@
       real(kind=plflt)    minx, maxx, miny, maxy
       real(kind=plflt), dimension(1:1) :: x, y
       integer c
-      external ident
       external map_transform
       external mapform19
       external geolocation_labeler
@@ -165,40 +144,40 @@
 
 ! Longitude (x) and latitude (y)
 
-      miny = -70
-      maxy = 80
+      miny = -70._plflt
+      maxy = 80._plflt
 
       call plinit()
 
 ! Cartesian plots
 ! Most of world
 
-      minx = 190
-      maxx = 190+360
+      minx = 190._plflt
+      maxx = 190._plflt+360._plflt
 
 ! Setup a custom latitude and longitude-based scaling function.
       call plslabelfunc(geolocation_labeler)
 
       call plcol0(1)
       call plenv(minx, maxx, miny, maxy, 1, 70)
-      call plmap(ident, 'usaglobe', minx, maxx, miny, maxy)
+      call plmap('usaglobe', minx, maxx, miny, maxy)
 
 ! The Americas
 
-      minx = 190
-      maxx = 340
+      minx = 190._plflt
+      maxx = 340._plflt
 
       call plcol0(1)
       call plenv(minx, maxx, miny, maxy, 1, 70)
-      call plmap(ident, 'usaglobe', minx, maxx, miny, maxy)
+      call plmap('usaglobe', minx, maxx, miny, maxy)
 
 ! Clear the labeling function
       call plslabelfunc(0)
 
 ! Polar, Northern hemisphere
 
-      minx = 0
-      maxx = 360
+      minx = 0._plflt
+      maxx = 360._plflt
 
       call plenv(-75._plflt, 75._plflt, -75._plflt, &
               75._plflt, 1, -1)
@@ -211,8 +190,8 @@
 
 ! Polar, Northern hemisphere, this time with a PLplot-wide transform
 
-      minx = 0
-      maxx = 360
+      minx = 0._plflt
+      maxx = 360._plflt
       
       call plstransform( map_transform )
 
@@ -221,10 +200,10 @@
            75._plflt, 1, -1 )
       ! No need to set the map transform here as the global 
       ! transform will be used.
-      call plmap( ident, 'globe', minx, maxx, miny, maxy )
+      call plmap('globe', minx, maxx, miny, maxy )
       
       call pllsty( 2 )
-      call plmeridians(ident, 10.0_plflt, 10.0_plflt, &
+      call plmeridians(10.0_plflt, 10.0_plflt, &
            0.0_plflt, 360.0_plflt, -10.0_plflt, &
            80.0_plflt )
       

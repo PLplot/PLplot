@@ -587,7 +587,10 @@ PLMAP7( const char *type,
         PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat )
 
 {
-    c_plmap( plmapf2c, type, *minlong, *maxlong, *minlat, *maxlat );
+    if ( plmapform )
+        c_plmap( plmapf2c, type, *minlong, *maxlong, *minlat, *maxlat );
+    else
+        c_plmap( NULL, type, *minlong, *maxlong, *minlat, *maxlat );
 }
 
 
@@ -595,7 +598,10 @@ void
 PLMERIDIANS7( PLFLT *dlong, PLFLT *dlat,
               PLFLT *minlong, PLFLT *maxlong, PLFLT *minlat, PLFLT *maxlat )
 {
-    c_plmeridians( plmapf2c, *dlong, *dlat, *minlong, *maxlong, *minlat, *maxlat );
+    if ( plmapform )
+        c_plmeridians( plmapf2c, *dlong, *dlat, *minlong, *maxlong, *minlat, *maxlat );
+    else
+        c_plmeridians( NULL, *dlong, *dlat, *minlong, *maxlong, *minlat, *maxlat );
 }
 
 void
@@ -877,10 +883,16 @@ PLSESC( PLINT *esc )
 /* Auxiliary routine - not to be used publicly
  */
 #define    PLSETMAPFORMC    FNAME( PLSETMAPFORMC, plsetmapformc )
+#define    PLCLEARMAPFORMC  FNAME( PLCLEARMAPFORMC, plclearmapformc )
 void
 PLSETMAPFORMC( void ( STDCALL *mapform )( PLINT *, PLFLT *, PLFLT * ) )
 {
     plmapform = mapform;
+}
+void
+PLCLEARMAPFORMC(  )
+{
+    plmapform = NULL;
 }
 
 void
@@ -1040,7 +1052,7 @@ PLSTART7( const char *devname, PLINT *nx, PLINT *ny )
 }
 
 void
-PLSTRANSFORMON( void ( STDCALL *transformfunc )( PLFLT *, PLFLT *, PLFLT *, PLFLT * ) )
+PLSTRANSFORM1( void ( STDCALL *transformfunc )( PLFLT *, PLFLT *, PLFLT *, PLFLT * ) )
 {
     pltransform = transformfunc;
 
@@ -1048,15 +1060,16 @@ PLSTRANSFORMON( void ( STDCALL *transformfunc )( PLFLT *, PLFLT *, PLFLT *, PLFL
 }
 
 void
-PLSTRANSFORMOFF( PLINT *dummy )
+PLSTRANSFORM2( PLINT *dummy )
 {
     pltransform = NULL;
 
     c_plstransform( NULL, NULL );
 }
 
+/* Provided for symmetry with FORTRAN 77 */
 void
-PLSTRANSFORMNONE( void )
+PLSTRANSFORM3( void )
 {
     pltransform = NULL;
 

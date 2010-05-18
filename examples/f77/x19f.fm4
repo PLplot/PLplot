@@ -20,24 +20,6 @@ c      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 
 
 
 c--------------------------------------------------------------------------
-c ident
-c
-c Defines identity transformation for example 19.
-c x(), y() are the coordinates to be plotted.
-c This is a 0-OP routine, to play the role of NULL in the C version!
-c--------------------------------------------------------------------------
-
-      subroutine ident(n, x, y)
-      implicit none
-
-      integer n
-      real*8    x
-      real*8    y
-
-      return
-      end
-
-c--------------------------------------------------------------------------
 c floor
 c
 c Compatibility function - keep all examples as equal as possible
@@ -51,6 +33,11 @@ c--------------------------------------------------------------------------
       endif
       end
 
+c--------------------------------------------------------------------------
+c map_transform
+c
+c General coordinate transform function
+c--------------------------------------------------------------------------
       subroutine map_transform(x, y, xt, yt)
       implicit none
 
@@ -85,9 +72,7 @@ c--------------------------------------------------------------------------
       real*8    xp, yp, radius
 
       do i = 1,n
-         radius = 90.0d0 - y(i)
-         xp = radius * cos(x(i) * PI / 180.0d0)
-         yp = radius * sin(x(i) * PI / 180.0d0)
+         call map_transform(x(i),y(i),xp,yp)
          x(i) = xp
          y(i) = yp
       enddo
@@ -166,7 +151,6 @@ c--------------------------------------------------------------------------
       implicit none
       real*8    minx, maxx, miny, maxy
       real*8    x, y
-      external ident
       external map_transform
       external mapform19
       external geolocation_labeler
@@ -194,7 +178,7 @@ c Setup a custom latitude and longitude-based scaling function.
 
       call plcol0(1)
       call plenv(minx, maxx, miny, maxy, 1, 70)
-      call plmap(ident, 'usaglobe', minx, maxx, miny, maxy)
+      call plmap_none('usaglobe', minx, maxx, miny, maxy)
 
 c The Americas
 
@@ -203,7 +187,7 @@ c The Americas
 
       call plcol0(1)
       call plenv(minx, maxx, miny, maxy, 1, 70)
-      call plmap(ident, 'usaglobe', minx, maxx, miny, maxy)
+      call plmap_none('usaglobe', minx, maxx, miny, maxy)
 
 c Clear the labeling function
 c (Note: FORTRAN 77 does not handle NULL pointers, so an
@@ -235,10 +219,10 @@ c Polar, Northern hemisphere, this time with a PLplot-wide transform
       call plenv( -75.d0, 75.d0, -75.d0, 75.d0, 1, -1 )
       ! No need to set the map transform here as the global 
       ! transform will be used.
-      call plmap( ident, 'globe', minx, maxx, miny, maxy )
+      call plmap_none( 'globe', minx, maxx, miny, maxy )
       
       call pllsty( 2 )
-      call plmeridians( ident, 10.0d0, 10.0d0, 0.0d0,
+      call plmeridians_none( 10.0d0, 10.0d0, 0.0d0,
      &     360.0d0, -10.0d0, 80.0d0 )
       
       ! Show Baltimore, MD on the map
@@ -252,7 +236,7 @@ c Polar, Northern hemisphere, this time with a PLplot-wide transform
      &     0.0d0, 'Baltimore, MD' )
       
       ! For f77, this is how the global transform is cleared
-      call plstransformnone
+      call plstransform_none
 
       call plend()
       end
