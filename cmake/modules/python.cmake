@@ -135,3 +135,7 @@ if(ENABLE_python)
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 endif(ENABLE_python)
+
+if(ENABLE_python AND NOT HAVE_NUMPY)
+  message(STATUS "WARNING: " "The Numeric extensions for python are deprecated. Support for Numeric will be dropped in a future plplot release. Please switch to numpy.")
+endif(ENABLE_python AND NOT HAVE_NUMPY)
