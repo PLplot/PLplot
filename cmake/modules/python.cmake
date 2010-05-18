@@ -61,6 +61,7 @@ if(ENABLE_python)
 endif(ENABLE_python)
 
 option(HAVE_NUMPY "Use numpy rather than deprecated Numeric" ON)
+option(USE_NUMERIC "Force use of deprecated Numeric" OFF)
 
 if(ENABLE_python)
   # NUMERIC_INCLUDE_PATH = path to arrayobject.h for either Numeric or numpy.
@@ -125,6 +126,15 @@ if(ENABLE_python AND HAVE_NUMPY)
   endif(EXCLUDE_PYTHON_LIBRARIES)
 endif(ENABLE_python AND HAVE_NUMPY)
 
+if(ENABLE_python AND NOT HAVE_NUMPY)
+  message(STATUS "WARNING: The Numeric extensions for python are deprecated. "
+                 "Support for Numeric will be dropped in a future plplot release. Please switch to numpy.")
+  if(NOT USE_NUMERIC)
+    message(STATUS "Disabling python. If you wish enable Numeric support set USE_NUMERIC.")
+    set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
+  endif(NOT USE_NUMERIC)
+endif(ENABLE_python AND NOT HAVE_NUMPY)
+
 if(ENABLE_python)
   # N.B. This is a nice way to obtain all sorts of python information
   # using distutils.
@@ -135,7 +145,3 @@ if(ENABLE_python)
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 endif(ENABLE_python)
-
-if(ENABLE_python AND NOT HAVE_NUMPY)
-  message(STATUS "WARNING: " "The Numeric extensions for python are deprecated. Support for Numeric will be dropped in a future plplot release. Please switch to numpy.")
-endif(ENABLE_python AND NOT HAVE_NUMPY)
