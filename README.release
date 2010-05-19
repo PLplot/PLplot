@@ -169,9 +169,9 @@ pyqt4 bindings for PLplot.
 XVIII. As of release 5.9.6 we have deprecated support for the python
 Numeric array extensions. Numeric is no longer maintained and users
 of Numeric are advised to migrate to numpy. Numpy has been the standard
-for plplot for some time. If numpy is not present plplot will now 
+for PLplot for some time. If numpy is not present PLplot will now 
 disable python by default. If you still require Numeric support in the
-short term then set USE_NUMERIC to ON in cmake. The plplot support 
+short term then set USE_NUMERIC to ON in cmake. The PLplot support 
 for Numeric will be dropped in a future release.
 
 INDEX
@@ -666,7 +666,7 @@ proper support for NaNs.
 Also new is an option for the plplot_test.sh script to run the examples 
 using a debugging command. This is enabled using the --debug option. The
 default it to use the valgrind memory checker. This has highlighted at 
-least one memory leaks in plplot which have been fixed. It is not part 
+least one memory leaks in PLplot which have been fixed. It is not part 
 of the standard ctest tests because it can be _very_ slow for a complete
 set of language bindings and device drivers.
 
@@ -696,7 +696,7 @@ our website and which are automatically included with the release.
 
 2.22 Internal changes to function visibility
 
-The internal definitions of functions in plplot have been significantly 
+The internal definitions of functions in PLplot have been significantly 
 tidied up to allow the use of the -fvisibility=hidden option with newer
 versions of gcc. This prevents internal functions from being exported
 to the user where possible. This extends the existing support for this
@@ -708,15 +708,15 @@ An interface based on the ltdl library function calls was established
 which allows to open and close dynamic link libraries (DLL) during
 run-time and call functions from these libraries. As a consequence
 drivers can now be compiled into single DLLs separate from the core
-plplot DLL also in Windows. The cmake option ENABLE_DYNDRIVERS is now
-ON by default for Windows if a shared plplot library is built.
+PLplot DLL also in Windows. The cmake option ENABLE_DYNDRIVERS is now
+ON by default for Windows if a shared PLplot library is built.
 
 2.24 Documentation updates
 
 The DocBook documentation has been updated to include many of the 
 C-specific functions (for example plAlloc2dGrid) which are not part 
 of the common API, but are used in the examples and may be helpful 
-for plplot users.
+for PLplot users.
 
 2.25 libnistcd (a.k.a. libcd) now built internally for -dev cgm
 
