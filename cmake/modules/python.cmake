@@ -62,6 +62,9 @@ endif(ENABLE_python)
 
 option(HAVE_NUMPY "Use numpy rather than deprecated Numeric" ON)
 option(USE_NUMERIC "Force use of deprecated Numeric" OFF)
+if(USE_NUMERIC)
+  set(HAVE_NUMPY OFF CACHE BOOL "Use numpy rather than deprecated Numeric" FORCE)
+endif(USE_NUMERIC)
 
 if(ENABLE_python)
   # NUMERIC_INCLUDE_PATH = path to arrayobject.h for either Numeric or numpy.
