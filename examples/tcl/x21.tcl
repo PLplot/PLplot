@@ -27,11 +27,6 @@
 
 proc x21 {{w loopback}} {
 
-    if { [catch {package require Tcl 8.5}] } {
-        puts "This example require Tcl 8.5 or later: use of NaNs"
-        return
-    }
-
     set PI          [expr {4.0*atan(1.0)}]
 
     set GRID_CSA    1
