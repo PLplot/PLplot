@@ -28,13 +28,13 @@ endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_python AND NOT BUILD_SHARED_LIBS)
   message(STATUS "WARNING: "
-    "Python requires shared libraries. Disabling python bindings")
+    "Python requires shared libraries. Disabling Python bindings")
   set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
 endif(ENABLE_python AND NOT BUILD_SHARED_LIBS)
 
 if(ENABLE_python AND NOT SWIG_FOUND)
   message(STATUS "WARNING: "
-    "swig not found. Disabling python bindings")
+    "swig not found. Disabling Python bindings")
   set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
 endif(ENABLE_python AND NOT SWIG_FOUND)
 
@@ -43,31 +43,32 @@ if(ENABLE_python)
   find_package(PythonInterp)
   if(NOT PYTHONINTERP_FOUND)
     message(STATUS "WARNING: "
-      "python interpreter not found. Disabling python bindings")
+      "Python interpreter not found. Disabling Python bindings")
     set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
   endif(NOT PYTHONINTERP_FOUND)
 endif(ENABLE_python)
 
 if(ENABLE_python)
   # Check for Python libraries which defines
-  #  PYTHON_LIBRARIES     = path to the python library
+  #  PYTHON_LIBRARIES     = path to the Python library
   #  PYTHON_INCLUDE_PATH  = path to where Python.h is found
   find_package(PythonLibs)
   if(NOT PYTHON_LIBRARIES OR NOT PYTHON_INCLUDE_PATH)
     message(STATUS "WARNING: "
-      "python library and/or header not found. Disabling python bindings")
+      "Python library and/or header not found. Disabling Python bindings")
     set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
   endif(NOT PYTHON_LIBRARIES OR NOT PYTHON_INCLUDE_PATH)
 endif(ENABLE_python)
 
 option(HAVE_NUMPY "Use numpy rather than deprecated Numeric" ON)
-option(USE_NUMERIC "Force use of deprecated Numeric" OFF)
-if(USE_NUMERIC)
+option(FORCE_NUMERIC "Force use of deprecated Numeric" OFF)
+if(FORCE_NUMERIC)
   set(HAVE_NUMPY OFF CACHE BOOL "Use numpy rather than deprecated Numeric" FORCE)
-endif(USE_NUMERIC)
+endif(FORCE_NUMERIC)
 
 if(ENABLE_python)
   # NUMERIC_INCLUDE_PATH = path to arrayobject.h for either Numeric or numpy.
+  #message(STATUS "DEBUG: NUMERIC_INCLUDE_PATH = ${NUMERIC_INCLUDE_PATH}") 
   if(NOT NUMERIC_INCLUDE_PATH)
     if(HAVE_NUMPY)
       # First check for new version of numpy (replaces Numeric)
@@ -112,10 +113,10 @@ if(ENABLE_python)
   if(NOT NUMERIC_INCLUDE_PATH)
     if(HAVE_NUMPY)
       message(STATUS "WARNING: "
-	"NumPy header not found. Disabling python bindings")
+	"NumPy header not found. Disabling Python bindings")
     else(HAVE_NUMPY)
       message(STATUS "WARNING: "
-	"Numeric header not found. Disabling python bindings")
+	"Numeric header not found. Disabling Python bindings")
     endif(HAVE_NUMPY)
     set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
   endif(NOT NUMERIC_INCLUDE_PATH)
@@ -130,16 +131,24 @@ if(ENABLE_python AND HAVE_NUMPY)
 endif(ENABLE_python AND HAVE_NUMPY)
 
 if(ENABLE_python AND NOT HAVE_NUMPY)
-  message(STATUS "WARNING: The Numeric extensions for python are deprecated. "
-                 "Support for Numeric will be dropped in a future plplot release. Please switch to numpy.")
-  if(NOT USE_NUMERIC)
-    message(STATUS "Disabling python. If you wish enable Numeric support set USE_NUMERIC.")
+  message(STATUS 
+"WARNING: The Numeric extension for Python is deprecated.  Support for
+Numeric will be dropped in a future PLplot release. Please switch to numpy
+by installing that Python extension and/or specifying HAVE_NUMPY ON and
+FORCE_NUMERIC OFF.")
+  if(NOT FORCE_NUMERIC)
+    message(STATUS 
+"WARNING: Disabling Python. If you really wish to enable the deprecated
+Numeric support set FORCE_NUMERIC ON.")
     set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
-  endif(NOT USE_NUMERIC)
+    # Allow further modifications.
+    set(NUMERIC_INCLUDE_PATH "NUMERIC_INCLUDE_PATH-NOTFOUND"
+      CACHE FILEPATH "Path to Numeric or numpy header" FORCE)
+  endif(NOT FORCE_NUMERIC)
 endif(ENABLE_python AND NOT HAVE_NUMPY)
 
 if(ENABLE_python)
-  # N.B. This is a nice way to obtain all sorts of python information
+  # N.B. This is a nice way to obtain all sorts of Python information
   # using distutils.
   execute_process(
     COMMAND
