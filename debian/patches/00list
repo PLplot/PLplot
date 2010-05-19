@@ -1,8 +1,0 @@
-01_check-for-octave2.9
-02_unset-python-path
-04_use-mkoctfile
-07_octave_prune_examples
-09_pdftex-EC-encoding
-10_print-usage-octave-3.0
-11_minus-sign-manpage
-12_cmake-2.6-fixes.dpatch

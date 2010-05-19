@@ -1,4 +1,77 @@
-plplot (5.9.2-4) unstable; urgency=low
+plplot (5.9.6-1) unstable; urgency=low
+
+  * New upstream release (closes: #564216).
+  * debian/patches/series: Remove the following patches which are included upstream
+      11_minus-sign-manpage.diff
+      16_wxwidget-with-cmake-2.8.diff
+      17_fix_cmap_support.diff
+    and delete the patches from the patches directory.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Wed, 19 May 2010 11:14:30 +0100
+
+plplot (5.9.5-3) unstable; urgency=low
+
+  * debian/control.in: 
+      + Remove Rafael Laboissiere from the list of uploaders as he has 
+        now retired from Debian (closes: #571874).
+      + Bump Debian standards version to 3.8.4.
+  * debian/control.in, debian/rules: Correctly disable ada support for 
+    sh4 (closes: #572028). Enable ada support on armel now that gnat is 
+    available (closes: #568451).
+  * debian/rules: Force tclsh to /usr/bin/tclsh8.5 - avoids problems if 
+    tcl8.4 is also installed so /usr/bin/tclsh points to a different 
+    version.
+  * debian/patches/17_fix_cmap_support.diff, debian/patches/series: Add
+    bug fix patch from upstream to fix cmap palette support. This fixes
+    the blank pages in the ada examples (and possibly user code).
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 01 Mar 2010 14:03:40 +0000
+
+plplot (5.9.5-2) unstable; urgency=low
+
+  * debian/control.in: Update to use octave3.2 - octave 3.0 will shortly be 
+    dropped.
+  * debian/rules: explicitly enable jpeg, png and gif drivers as they are
+    now disabled by default. Eventually these will be replaced by cairo 
+    and qt drivers, but keep them in for now until these packages have
+    settled down.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 22 Feb 2010 12:50:40 +0000
+
+plplot (5.9.5-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+  * debian/patches/series: Remove the following patches which are no longer
+    required as they are now included upstream 
+      13_fix-kfreeBSD-build.diff
+      14_octave-3.0-fixes.diff
+      15_octave-toggle-plplot-use.diff
+    and clean up directory by deleting unused patches.
+  * debian/patches/02_unset-python-path.diff, 
+    debian/patches/04_use-mkoctfile.diff,
+    debian/patches/07_octave_prune_examples.diff, 
+    debian/patches/16_wxwidget-with-cmake-2.8.diff: 
+      + Update patches to work with plplot 5.9.5
+  * debian/control.in, debian/rules: 
+      + Properly enable support for ada on all architectures (except armel) 
+        - build dependencies were not updated. 
+      + Add sh4 to the list of architectures where gnat is not available and
+        so ada support is disabled. (closes: #562238)
+      + Drop the plplot9-driver-gnome2 package which is unmaintained 
+        upstream and depends on libgnomeprintui-2.2 which is to be dropped
+        from Debian. (closes: #542577)
+      + Ensure ghostscript is installed in Build-Depends-Indep: since this
+        is needed to generate fonts for pdfjadetex, but is not automatically
+        pulled in.
+  * debian/rules: Remove setting of ITCL_LIBRARY which is not required
+    with latest version of itcl.
+  * debian/libplplot9.files: Ensures .pal palette files are correctly installed
+  * Rebuild package to use latest versions of gfortran (closes: #564065) 
+    and python (closes: #562411)
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Mon, 25 Jan 2010 21:19:07 +0000
+
+plplot (5.9.2-4) UNRELEASED; urgency=low
 
   * debian/patches/02_unset-python-path.diff: Fix offset in patch
     to remove quilt warning.  (closes: #538533)

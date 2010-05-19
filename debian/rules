@@ -34,7 +34,7 @@ DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 # Disable Ada build on armel - gnat not available on armel at the moment.
 
-ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:armel:))
+ifneq (,$(findstring :$(DEB_BUILD_ARCH):,:sh4:))
 BUILD_ADA = no
 else
 BUILD_ADA = yes
@@ -56,7 +56,10 @@ JAVA_OPTIONS = \
 CONFIGURE_OPTIONS = -DBUILD_TEST=ON -DHAVE_PTHREAD=ON \
 	-DBUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=/usr \
 	-DOCTAVE_OCT_DIR=$(OCTDIR) \
-	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON  -DENABLE_ocaml=OFF\
+	-DUSE_RPATH=OFF -DPLD_psttf=OFF -DENABLE_tk=ON  -DENABLE_ocaml=OFF \
+	-DPLD_jpeg=ON -DPLD_png=ON -DPLD_gif=ON \
+        -DDEFAULT_NO_QT_DEVICES=ON \
+        -DTCL_TCLSH=/usr/bin/tclsh8.5 \
 	$(ADA_OPTIONS) $(JAVA_OPTIONS) 
 
 BUILD_DIR = $(debbase)/build_tmp
@@ -89,7 +92,7 @@ build-arch-stamp: patch config-stamp
 	#( cd bindings/octave ; \
 	#  $(MAKE) CC="gcc -D__builtin_va_list=void" plplot_octave.oct )
 	( cd $(BUILD_DIR) ; $(MAKE)  )
-	-( cd $(BUILD_DIR) ; ITCL_LIBRARY=/usr/lib/itcl3.2 ctest -VV)
+	-( cd $(BUILD_DIR) ; ctest -VV )
 	touch build-arch-stamp
 
 build-indep: build-indep-stamp
@@ -144,7 +147,7 @@ install-arch-stamp: build-arch-stamp
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
 		python-plplot plplot-bin libplplot-c++9c2 		\
-		plplot9-driver-gnome2 plplot9-driver-wxwidgets		\
+		plplot9-driver-wxwidgets                                \
 		plplot9-driver-cairo libplplot-fortran9	; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
@@ -177,8 +180,8 @@ install-python: $(PYVERS:%=install-python%)
 
 install-python%: build-arch-stamp
 	( cd $(BUILD_DIR) ; \
-	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DENABLE_pygcw=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
-	  for d in gnome2/python python ; do		\
+	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
+	  for d in python ; do		\
 	    ( cd bindings/$$d;				\
 	      $(MAKE) clean ;				\
 	      $(MAKE) ;					\

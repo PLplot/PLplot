@@ -9,12 +9,12 @@
 
 --- plplot/examples/python/CMakeLists.txt.old
 +++ plplot/examples/python/CMakeLists.txt
-@@ -161,7 +161,7 @@
- @ONLY
- )
- 
+@@ -195,7 +195,7 @@
+   @ONLY
+   )
+
 -set(python_location1 ${PYTHON_INSTDIR})
 +set(python_location1)
  set(python_location2)
+ set(python_location3)
  configure_file(
- ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.cmake
