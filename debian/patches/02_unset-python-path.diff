@@ -9,12 +9,12 @@
 
 --- plplot/examples/python/CMakeLists.txt.old
 +++ plplot/examples/python/CMakeLists.txt
-@@ -195,7 +195,7 @@
-   @ONLY
-   )
+@@ -214,7 +214,7 @@
+     @ONLY
+     )
 
--set(python_location1 ${PYTHON_INSTDIR})
-+set(python_location1)
- set(python_location2)
- set(python_location3)
- configure_file(
+-  set(python_location1 ${PYTHON_INSTDIR})
++  set(python_location1)
+   set(python_location2)
+   set(python_location3)
+   set(python_location4)

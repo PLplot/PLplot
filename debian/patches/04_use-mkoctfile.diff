@@ -7,9 +7,9 @@
 
 --- plplot-5.9.5.orig/bindings/octave/CMakeLists.txt
 +++ plplot-5.9.5/bindings/octave/CMakeLists.txt
-@@ -134,49 +134,6 @@
-     ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.h
-     )
+@@ -136,49 +136,6 @@
+   set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/plplot_octave.cc
+     PROPERTIES GENERATED ON)
  
 -  # Build octave interface.
 -  set(octave_interface_INCLUDE_PATHS
@@ -57,7 +57,7 @@
    # Have to be specific about permissions for some reason (probably oct suffix).
    set(PERM_MODULES
      OWNER_READ
-@@ -188,9 +145,22 @@
+@@ -190,9 +147,22 @@
      WORLD_EXECUTE
      )
  
