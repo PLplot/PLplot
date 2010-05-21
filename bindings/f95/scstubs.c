@@ -41,12 +41,12 @@ static void ( STDCALL *plmapform )( PLINT *, PLFLT *, PLFLT * ); /* Note: slight
 static void ( STDCALL *pllabelfunc )( PLINT *, PLFLT *, char *, PLINT * );
 
 /* Slightly different to C version as we don't support PLPointer  for additional data */
-static void ( STDCALL *pltransform )( PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+static void ( STDCALL *pltransform )( PLFLT *, PLFLT *, PLFLT *, PLFLT * );
 
 static void
 pltransformf2c( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer data )
 {
-  ( *pltransform )( &x, &y, tx, ty );
+    ( *pltransform )( &x, &y, tx, ty );
 }
 
 void
@@ -882,8 +882,8 @@ PLSESC( PLINT *esc )
 
 /* Auxiliary routine - not to be used publicly
  */
-#define    PLSETMAPFORMC    FNAME( PLSETMAPFORMC, plsetmapformc )
-#define    PLCLEARMAPFORMC  FNAME( PLCLEARMAPFORMC, plclearmapformc )
+#define    PLSETMAPFORMC      FNAME( PLSETMAPFORMC, plsetmapformc )
+#define    PLCLEARMAPFORMC    FNAME( PLCLEARMAPFORMC, plclearmapformc )
 void
 PLSETMAPFORMC( void ( STDCALL *mapform )( PLINT *, PLFLT *, PLFLT * ) )
 {

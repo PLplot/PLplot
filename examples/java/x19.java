@@ -34,12 +34,11 @@ import java.lang.Math;
 class MapTransform implements PLCallbackCT {
     public void coordTransform( double x, double y, double[] xt, double[] yt, Object data )
     {
-	double radius;
+        double radius;
 
-	radius = 90.0 - y;
-	xt[0]  = radius * Math.cos( x * Math.PI / 180.0 );
-	yt[0]  = radius * Math.sin( x * Math.PI / 180.0 );
-
+        radius = 90.0 - y;
+        xt[0]  = radius * Math.cos( x * Math.PI / 180.0 );
+        yt[0]  = radius * Math.sin( x * Math.PI / 180.0 );
     }
 }
 
@@ -151,10 +150,10 @@ class x19 {
         PLCallbackLabel   nullLabelCallback   = null;
         PLCallbackCT      nullCTCallback      = null;
         LabelFunc19       geolocation_labeler = new LabelFunc19();
-	MapTransform      map_transform       = new MapTransform();
+        MapTransform      map_transform       = new MapTransform();
 
-	double[] x = new double[1];
-	double[] y = new double[1];
+        double[] x = new double[1];
+        double[] y = new double[1];
 
         // Parse and process command line arguments.
         pls.parseopts( args, PLStream.PL_PARSE_FULL | PLStream.PL_PARSE_NOPROGRAM );
@@ -206,33 +205,33 @@ class x19 {
         pls.meridians( mapform19, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
 
 
-	// Polar, Northern hemisphere, this time with a PLplot-wide transform
+        // Polar, Northern hemisphere, this time with a PLplot-wide transform
 
-	minx = 0;
-	maxx = 360;
+        minx = 0;
+        maxx = 360;
 
-	pls.stransform( map_transform, null);
+        pls.stransform( map_transform, null );
 
-	pls.lsty( 1 );
-	pls.env( -75., 75., -75., 75., 1, -1 );
-	// No need to set the map transform here as the global transform 
-	// will be used.
-	pls.map( nullCallback, "globe", minx, maxx, miny, maxy );
+        pls.lsty( 1 );
+        pls.env( -75., 75., -75., 75., 1, -1 );
+        // No need to set the map transform here as the global transform
+        // will be used.
+        pls.map( nullCallback, "globe", minx, maxx, miny, maxy );
 
-	pls.lsty( 2 );
-	pls.meridians( nullCallback, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
+        pls.lsty( 2 );
+        pls.meridians( nullCallback, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
 
-	// Show Baltimore, MD on the map
-	pls.col0( 2 );
-	pls.ssym( 0.0, 2.0 );
-	x[0] = -76.6125;
-	y[0] = 39.2902778;
-	pls.poin( x, y, 18 );
-	pls.ssym( 0.0, 1.0 );
-	pls.ptex( -76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD" );
-	
-	// For Java, this is how the global transform is cleared
-	pls.stransform( nullCTCallback, null );
+        // Show Baltimore, MD on the map
+        pls.col0( 2 );
+        pls.ssym( 0.0, 2.0 );
+        x[0] = -76.6125;
+        y[0] = 39.2902778;
+        pls.poin( x, y, 18 );
+        pls.ssym( 0.0, 1.0 );
+        pls.ptex( -76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD" );
+
+        // For Java, this is how the global transform is cleared
+        pls.stransform( nullCTCallback, null );
 
         pls.end();
     }

@@ -3329,15 +3329,15 @@ plmeridiansCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-static Tcl_Interp *tcl_xform_interp = 0;
-static char *tcl_xform_procname = 0;
+static Tcl_Interp *tcl_xform_interp   = 0;
+static char       *tcl_xform_procname = 0;
 static const char *tcl_xform_template =
 #if TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION < 5
     "set result [%s ${_##_x} ${_##_y}] ; set _##_x [lindex $result 0] ; set _##_y [lindex $result 1]"
 #else
     "set result [%s ${_##_x} ${_##_y}] ; lassign $result _##_x _##_y"
-#endif    
-    ;
+#endif
+;
 
 static char *tcl_xform_code = 0;
 
@@ -3348,14 +3348,14 @@ Tcl_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
     Tcl_Obj *objx = Tcl_NewDoubleObj( x );
     Tcl_IncrRefCount( objx );
     Tcl_SetVar2Ex( tcl_xform_interp,
-                   "_##_x", NULL, objx, 0 );
+        "_##_x", NULL, objx, 0 );
     Tcl_DecrRefCount( objx );
 
 // Set Tcl y to y
     Tcl_Obj *objy = Tcl_NewDoubleObj( y );
     Tcl_IncrRefCount( objy );
     Tcl_SetVar2Ex( tcl_xform_interp,
-                   "_##_y", NULL, objy, 0 );
+        "_##_y", NULL, objy, 0 );
     Tcl_DecrRefCount( objy );
 
 /*     printf( "objx=%x objy=%x\n", objx, objy ); */
@@ -3406,7 +3406,7 @@ plstransformCmd( ClientData clientData, Tcl_Interp *interp,
     if ( argc == 1
          || argv[1] == "NULL" )
     {
-    // The user has requested to clear the transform setting.
+        // The user has requested to clear the transform setting.
         plstransform( NULL, NULL );
         tcl_xform_interp = 0;
         if ( tcl_xform_procname )
@@ -3419,7 +3419,7 @@ plstransformCmd( ClientData clientData, Tcl_Interp *interp,
     {
         const char *data = argc > 2 ? argv[2] : 0;
 
-        tcl_xform_interp = interp;
+        tcl_xform_interp   = interp;
         tcl_xform_procname = strdup( argv[1] );
 
         int len = strlen( tcl_xform_template ) + strlen( tcl_xform_procname );
