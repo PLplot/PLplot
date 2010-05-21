@@ -1897,8 +1897,17 @@ calc_diori( void )
     }
     calc_didev();
 
-/* Compute scale factors */
+    // Compute scale factors for relative device coordinates.  Only
+    // the aspect ratio of lx to ly matters.  Note, plsc->phyxlen and
+    // plsc->phyylen are in PLplot core library coordinates and don't
+    // know anything about device coordinates which are likely to have
+    // a quite different aspect ratio.  So to correct between the two
+    // coordinate systems must divide plsc->phyxlen/plsc->phyylen by
+    // plsc->aspori.
 
+    // N.B. comment out this correction because causes other issues.
+
+    //lx = plsc->phyxlen/plsc->aspori;
     lx = plsc->phyxlen;
     ly = plsc->phyylen;
 
@@ -2193,7 +2202,7 @@ c_plinit( void )
         aspect_new       = plsc->aspect;
         plsc->caspfactor = sqrt( aspect_old / aspect_new );
     }
-/* Case of 90 deg rotations with -freeaspect (this is also how portraite
+/* Case of 90 deg rotations with -freeaspect (this is also how portrait
  * mode is implemented for the drivers that honor -portrait). */
     else if ( plsc->freeaspect && ABS( cos( plsc->diorot * PI / 2. ) ) <= 1.e-5 )
     {
