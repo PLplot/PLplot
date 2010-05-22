@@ -78,13 +78,6 @@ by our 16-bit integer approach.
 
 * Make plframe widget work for python/Tkinter front end.
 
-* Parallelogram problem for rotation which is not multiple of 90 deg. This
-is on the major list because Maurice doesn't think it will be simple to sort
-this out. Once this problem is sorted out, it should be possible to deal
-with the remaining rotation problems for the font handling, but those issues
-should not be tackled until the parallelogram core problem is straightened
-out.
-
 * Put in index limits for the plot3d API's so they can handle
 non-rectangular x,y regions.  This has already been done for plsurf and
 needs to be extended to plot3d.
