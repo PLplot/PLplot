@@ -1654,6 +1654,7 @@ static signed int xcairo_init_cairo( PLStream *pls )
 void plD_init_xcairo( PLStream *pls )
 {
     PLCairo *aStream;
+    Atom    wmDelete;
 
     /* Setup the PLStream and the font lookup table. */
     aStream = stream_and_font_setup( pls, 1 );
@@ -1685,6 +1686,9 @@ void plD_init_xcairo( PLStream *pls )
         XSelectInput( aStream->XDisplay, aStream->XWindow, NoEventMask );
         XMapWindow( aStream->XDisplay, aStream->XWindow );
         aStream->xdrawable_mode = 0;
+
+        wmDelete = XInternAtom( aStream->XDisplay, "WM_DELETE_WINDOW", True );
+        XSetWMProtocols( aStream->XDisplay, aStream->XWindow, &wmDelete, 1 );
 
         xcairo_init_cairo( pls );
     }
@@ -1772,7 +1776,8 @@ void plD_eop_xcairo( PLStream *pls )
     XSelectInput( aStream->XDisplay, aStream->XWindow, event_mask );
     while ( !aStream->exit_event_loop )
     {
-        XWindowEvent( aStream->XDisplay, aStream->XWindow, event_mask, &event );
+        //XWindowEvent( aStream->XDisplay, aStream->XWindow, event_mask, &event );
+        XNextEvent( aStream->XDisplay, &event );
         switch ( event.type )
         {
         case KeyPress:
@@ -1786,6 +1791,9 @@ void plD_eop_xcairo( PLStream *pls )
         case ButtonPress:
             if ( ( (XButtonEvent *) &event )->button == Button3 )
                 aStream->exit_event_loop = 1;
+            break;
+        case ClientMessage:
+            aStream->exit_event_loop = 1;
             break;
         case Expose:
             /* Blit the image again after an expose event, but only for the last
