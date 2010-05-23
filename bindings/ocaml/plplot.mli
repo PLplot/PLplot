@@ -463,6 +463,7 @@ module Quick_plot :
         and [ys]. *)
     val points :
       ?filename:string ->
+      ?size:int * int ->
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
       ?log:bool * bool -> (float array * float array) list -> unit
@@ -471,6 +472,7 @@ module Quick_plot :
         [xs] and [ys]. *)
     val lines :
       ?filename:string ->
+      ?size:int * int ->
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
       ?names:string list ->
@@ -480,6 +482,7 @@ module Quick_plot :
         is true then the data in [m] are assumed to be [log10(x)] values. *)
     val image :
       ?filename:string ->
+      ?size:int * int ->
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
       ?log:bool -> ?palette:Plot.color_palette_t -> float array array -> unit
@@ -489,6 +492,7 @@ module Quick_plot :
         sampling of plot points. *)
     val func :
       ?filename:string ->
+      ?size:int * int ->
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
       ?names:string list ->
@@ -500,6 +504,7 @@ module Quick_plot :
         to be [log10(x)] values. *)
     val shades :
       ?filename:string ->
+      ?size:int * int ->
       ?device:Plot.plot_device_t ->
       ?labels:string * string * string ->
       ?log:bool ->

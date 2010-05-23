@@ -1214,11 +1214,13 @@ module Quick_plot = struct
 
   (** [points [xs, ys; ...] plots the points described by the coordinates [xs]
       and [ys]. *)
-  let points ?filename ?(device = Window Cairo) ?labels ?log xs_ys_list =
+  let points ?filename ?size ?(device = Window Cairo) ?labels ?log xs_ys_list =
     let xs_list, ys_list = List.split xs_ys_list in
     let xmin, xmax, ymin, ymax = extents xs_list ys_list in
     let ys_array = Array.of_list ys_list in
-    let stream = init ?filename (xmin, ymin) (xmax, ymax) Greedy device in
+    let stream =
+      init ?filename ?size (xmin, ymin) (xmax, ymax) Greedy device
+    in
     let plottable_points =
       Array.to_list (
         Array.mapi (
@@ -1239,11 +1241,13 @@ module Quick_plot = struct
 
   (** [lines [xs, ys; ...] plots the line segments described by the coordinates
       [xs] and [ys]. *)
-  let lines ?filename ?(device = Window Cairo) ?labels ?names ?log xs_ys_list =
+  let lines
+        ?filename ?size ?(device = Window Cairo) ?labels ?names ?log
+        xs_ys_list =
     let xs_list, ys_list = List.split xs_ys_list in
     let xmin, xmax, ymin, ymax = extents xs_list ys_list in
     let ys_array = Array.of_list ys_list in
-    let stream = init ?filename (xmin, ymin) (xmax, ymax) Greedy device in
+    let stream = init ?filename ?size (xmin, ymin) (xmax, ymax) Greedy device in
     let colors = Array.mapi (fun i _ -> Index_color (i + 1)) ys_array in
     let plottable_lines =
       Array.to_list (
@@ -1264,12 +1268,14 @@ module Quick_plot = struct
 
   (** [image ?log m] plots the image [m] with a matching colorbar.  If [log] is
       true then the data in [m] are assumed to be log10(x) values. *)
-  let image ?filename ?(device = Window Cairo) ?labels ?log ?palette m =
+  let image ?filename ?size ?(device = Window Cairo) ?labels ?log ?palette m =
     let m_max, m_min = plMinMax2dGrid m in
     let xmin, ymin = 0.0, 0.0 in
     let xmax, ymax = Array_ext.matrix_dims m in
     let xmax, ymax = float_of_int xmax, float_of_int ymax in
-    let stream = init ?filename (xmin, ymin) (xmax, ymax) Equal_square device in
+    let stream =
+      init ?filename ?size (xmin, ymin) (xmax, ymax) Equal_square device
+    in
     Option.may (load_palette ~stream) palette;
     plot ~stream [
       image (xmin, ymin) (xmax, ymax) m;
@@ -1284,7 +1290,7 @@ module Quick_plot = struct
       to [x = max].  [step] can be used to tighten or coarsen the sampling of
       plot points. *)
   let func
-        ?filename ?(device = Window Cairo) ?labels ?names ?symbol ?step
+        ?filename ?size ?(device = Window Cairo) ?labels ?names ?symbol ?step
         fs (xmin, xmax) =
     let fs_array = Array.of_list fs in
     let colors = Array.mapi (fun i _ -> Index_color (i + 1)) fs_array in
@@ -1307,7 +1313,9 @@ module Quick_plot = struct
       )
     in
     let ymax, ymin = plMinMax2dGrid ys in
-    let stream = init ?filename (xmin, ymin) (xmax, ymax) Greedy device in
+    let stream =
+      init ?filename ?size (xmin, ymin) (xmax, ymax) Greedy device
+    in
     plot ~stream [
       list plot_content;
       default_axes;
@@ -1317,12 +1325,14 @@ module Quick_plot = struct
     end_stream ~stream ();
     ()
 
-  let shades ?filename ?(device = Window Cairo) ?labels ?log ?palette ?contours
-             m =
+  let shades ?filename ?size ?(device = Window Cairo) ?labels ?log ?palette
+        ?contours m =
     let xmin, ymin = 0.0, 0.0 in
     let xmax, ymax = Array_ext.matrix_dims m in
     let xmax, ymax = float_of_int xmax, float_of_int ymax in
-    let stream = init ?filename (xmin, ymin) (xmax, ymax) Equal_square device in
+    let stream =
+      init ?filename ?size (xmin, ymin) (xmax, ymax) Equal_square device
+    in
     Option.may (load_palette ~stream) palette;
     let contours =
       contours |? (
