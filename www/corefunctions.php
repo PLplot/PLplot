@@ -108,12 +108,9 @@ END;
 				<li><a href="documentation.php">Documentation</a></li>
 				<li><a href="http://www.miscdebris.net/plplot_wiki">Wiki</a></li>
 				<li><a href="http://sourceforge.net/projects/plplot">SourceForge Project Page</a></li>
+				<li><a href="http://sourceforge.net/projects/plplot/support">Project Support Page</a></li>
 				<li><a href="http://sourceforge.net/mail/?group_id=2915">Mailing Lists</a></li>
-			</ul>
-
-			<h3>Links</h3>
-			<ul class="arrowlist">
-				<li><a href="http://sourceforge.net/project/?group_id=2915">SF project page</a></li>
+				<li><a href="http://sourceforge.net/tracker/?group_id=2915&atid=102915">Bug Tracker</a></li>
 			</ul>
 		</div>
 END;
