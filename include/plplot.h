@@ -656,7 +656,6 @@ typedef plf2ops_t * PLF2OPS;
 #define    plgcolbg                 c_plgcolbg
 #define    plgcolbga                c_plgcolbga
 #define    plgcompression           c_plgcompression
-#define    plstransform             c_plstransform
 #define    plgdev                   c_plgdev
 #define    plgdidev                 c_plgdidev
 #define    plgdiori                 c_plgdiori
@@ -762,6 +761,7 @@ typedef plf2ops_t * PLF2OPS;
 #define    plssym                   c_plssym
 #define    plstar                   c_plstar
 #define    plstart                  c_plstart
+#define    plstransform             c_plstransform
 #define    plstripa                 c_plstripa
 #define    plstripc                 c_plstripc
 #define    plstripd                 c_plstripd
