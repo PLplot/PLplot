@@ -12,23 +12,12 @@ with the new unicode-aware fonts.
 Essential, major effort required.
 ********************************
 
-* The new Unix/Linux configuration scheme must be tested for as wide a
-variety of Unix/Linux platforms as possible.  This is the responsibility of
-everybody on the development team with access to different platforms.
-(Several Linux environments, a limited Solaris environment, and a limited
-OSF1 environment completed, but we need much more especially a Solaris
-environment with tcl/tk)
-
 Essential, minor effort required.
 ********************************
 
 * PLplot documentation of python, java, etc., interfaces.  Alan
 
 * Build our documentation on RedHat.  Alan
-
-* sort out option implications for --disable-shared.  For example, we
-cannot build dynamic drivers in this case, and this also kills python and
-octave so sysloc.in should be adjusted accordingly.
 
 * If x08.tcl (or any other multi-page example) is executed first, then the
 first page is skipped.
@@ -120,12 +109,6 @@ data are installed so we know the absolute path to our tcl install location.
 Then, the only way such an extended search would fail is if the packagers
 messed with our tcl install location.
 
-* Better support for "make check" so that uninstalled versions can check for
-drivers, fonts, and tcl support scripts in their uninstalled positions.
-There has been improvement in this area, but can we now run make check
-everywhere when nothing installed?  And when something installed, does
-make check completely ignore it?
-
 * standard octave examples should be made consistent with the C, C++, tcl,
 Java, python, fortran, and even yorick (yplot) examples as a test that the
 API is implemented correctly for octave and as a teaching device of how to
@@ -139,33 +122,6 @@ w3c verification tests for web sites) to be sure our results conform to the
 published pdf standards.  Currently there is no idea whether such a pdf
 verification tool exists, but acroread is buggy on Linux so that is not good
 enough as a verification tool.
-
-* Replace all configure-related environment variables, e.g.,
-
-JAVAMDINCDIR
-GDINCDIR
-CDINCDIR
-FREETYPEINCDIR
-TCLINCDIR
-ITCLINCDIR
-TKINCDIR
-TKPRIVATEINCDIR
-TCLPRIVATEINCDIR
-PYTHON_INC_DIR
-
-GDLIBDIR
-PNGLIBDIR
-JPEGLIBDIR
-ZLIBLIBDIR
-CDLIBDIR
-FREETYPELIBDIR
-TCLLIBDIR
-ITCLLIBDIR
-TKLIBDIR
-ITKLIBDIR
-VGALIBDIR
-
-by documented ./configure options.
 
 Collection of problems/issues with new unicode-aware fonts as of 2005-03-21.
 All these are in the would-be-nice category with some/all taking major effort
