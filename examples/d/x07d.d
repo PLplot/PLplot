@@ -6,7 +6,7 @@
 import plplot;
 import std.string;
 
-int[17] base = [    0, 200, 500, 600, 700, 800, 900,
+int[20] base = [    0, 100, 0, 100, 200, 500, 600, 700, 800, 900,
                     2000, 2100, 2200, 2300, 2400, 2500, 2600,
                     2700, 2800, 2900];
 
@@ -26,9 +26,10 @@ int main( char[][] args )
     /* Initialize plplot */
     plinit();
 
-    plfontld( 1 );
-    for ( size_t l = 0; l < 17; l++ )
+    plfontld( 0 );
+    for ( size_t l = 0; l < 20; l++ )
     {
+        if ( l == 2 ) plfontld( 1 );    
         pladv( 0 );
 
         /* Set up viewport and window */
@@ -64,7 +65,10 @@ int main( char[][] args )
             }
         }
 
-        plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols" );
+	if ( l < 2 )
+  	    plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (compact)" );
+	else
+  	    plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (extended)" );
     }
     plend();
     return 0;

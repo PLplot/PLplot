@@ -1376,6 +1376,7 @@ alias c_plssub   plssub;
 alias c_plssym   plssym;
 alias c_plstar   plstar;
 //alias c_plstart plstart;
+alias c_plstransform plstransform;
 alias c_plstripa plstripa;
 //alias c_plstripc plstripc;
 alias c_plstripd plstripd;
@@ -1951,6 +1952,9 @@ void c_plstar( PLINT nx, PLINT ny );
 
 /* Initialize PLplot, passing the device name and windows/page settings. */
 void c_plstart( char *devname, PLINT nx, PLINT ny );
+
+/* Set the coordinate transform */
+void c_plstransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), PLPointer coordinate_transform_data );
 
 /* Add a point to a stripchart.  */
 void c_plstripa( PLINT id, PLINT pen, PLFLT x, PLFLT y );
