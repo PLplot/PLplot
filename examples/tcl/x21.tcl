@@ -231,7 +231,8 @@ proc x21 {{w loopback}} {
     }
 
     $w cmd plflush
-    $w cmd plend
+    #$w cmd plend
+    $w cmd plssub 1 1
 }
 
 #----------------------------------------------------------------------------

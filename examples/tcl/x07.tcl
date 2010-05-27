@@ -61,4 +61,5 @@ proc x07 {{w loopback}} {
     }
 # Restore defaults
     # $w cmd plcol0 1
+    $w cmd plfontld 0
 }

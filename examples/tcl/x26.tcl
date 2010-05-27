@@ -112,6 +112,9 @@ proc x26 {{w loopback}} {
       plot261 $w 0 $xl $yl $altyl $title $linel
   }
 
+  # Restore defauls
+  $w cmd plfont 1
+
 }
 
 # --------------------------------------------------------------------------

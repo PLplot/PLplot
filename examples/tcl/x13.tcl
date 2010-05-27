@@ -73,4 +73,5 @@ proc x13 {{w loopback}} {
     $w cmd plptex 5.0 9.0 1.0 0.0 0.5 "Percentage of Sales"
 # Restore defaults
     # $w cmd plcol0 1
+    $w cmd plfont 1
 }

@@ -180,6 +180,8 @@ proc x19 {{w loopback}} {
 
     $w cmd plssym 0. 1.
     $w cmd plptex -76.6125 43. 0.0 0.0 0.0 "Baltimore, MD"
+  
+    $w cmd plstransform NULL
 
     $w cmd pllsty 1
 # No defaults to restore

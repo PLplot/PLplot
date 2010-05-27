@@ -128,4 +128,7 @@ proc x17 {{w loopback}} {
 #   Destroy strip chart and it's memory
 
     $w cmd plstripd $id1
+
+#   Restore defaults
+    $w cmd pllsty 1
 }
