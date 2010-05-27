@@ -24,7 +24,7 @@
 -- initialise Lua bindings for PLplot examples.
 dofile("plplot_examples.lua")
 
-base = { 0, 200, 500, 600, 700, 800, 900,
+base = { 0, 100, 0, 100, 200, 500, 600, 700, 800, 900,
          2000, 2100, 2200, 2300, 2400, 2500,
 				 2600, 2700, 2800, 2900 }
 
@@ -40,43 +40,51 @@ pl.parseopts(arg, pl.PL_PARSE_FULL)
 -- Initialize plplot 
 pl.init()
 
-pl.fontld(1)
-for l = 1, 17 do
-	pl.adv(0)
+pl.fontld(0)
+for l = 1, 20 do
 
-	-- Set up viewport and window 
-	pl.col0(2)
-	pl.vpor(0.15, 0.95, 0.1, 0.9)
-	pl.wind(0, 1, 0, 1)
+    if l == 3 then
+        pl.fontld(1)
+    end
+    pl.adv(0)
 
-	-- Draw the grid using plbox 
+    -- Set up viewport and window 
+    pl.col0(2)
+    pl.vpor(0.15, 0.95, 0.1, 0.9)
+    pl.wind(0, 1, 0, 1)
 
-	pl.box("bcg", 0.1, 0, "bcg", 0.1, 0)
+    -- Draw the grid using plbox 
 
-	-- Write the digits below the frame 
+    pl.box("bcg", 0.1, 0, "bcg", 0.1, 0)
 
-	pl.col0(15)
-	for i = 0, 9 do 
-		pl.mtex("b", 1.5, (0.1 * i + 0.05), 0.5, tostring(i))
-	end
+    -- Write the digits below the frame 
 
-	k = 0
-	x = {}
-	y = {}
-	for i = 0, 9 do 
-		-- Write the digits to the left of the frame 
-    pl.mtex("lv", 1.0, (0.95 - 0.1 * i), 1.0, tostring(base[l] + 10 * i))
-	  for j=0, 9 do
-			x[1] = 0.1 * j + 0.05
-			y[1] = 0.95 - 0.1 * i
+    pl.col0(15)
+    for i = 0, 9 do 
+        pl.mtex("b", 1.5, (0.1 * i + 0.05), 0.5, tostring(i))
+    end
 
-	    -- Display the symbols 
-			pl.sym(x, y, base[l] + k)
-			k = k + 1
-		end
-	end
+    k = 0
+    x = {}
+    y = {}
+    for i = 0, 9 do 
+        -- Write the digits to the left of the frame 
+        pl.mtex("lv", 1.0, (0.95 - 0.1 * i), 1.0, tostring(base[l] + 10 * i))
+        for j=0, 9 do
+            x[1] = 0.1 * j + 0.05
+            y[1] = 0.95 - 0.1 * i
 
-	pl.mtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols")
+            -- Display the symbols 
+            pl.sym(x, y, base[l] + k)
+            k = k + 1
+        end
+    end
+
+    if l <= 2 then
+        pl.mtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (compact)")
+    else
+        pl.mtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (extended)")
+    end
 end
 
 pl.plend()

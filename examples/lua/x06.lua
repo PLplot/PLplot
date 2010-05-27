@@ -36,39 +36,55 @@ pl.parseopts(arg, pl.PL_PARSE_FULL)
 -- Initialize plplot 
 pl.init()
 
-pl.adv(0)
+for kind_font = 0,1 do
+  pl.fontld( kind_font )
+  if kind_font == 0 then
+    maxfont = 1
+  else
+    maxfont = 4
+  end
 
--- Set up viewport and window 
-pl.col0(2)
-pl.vpor(0.1, 1, 0.1, 0.9)
-pl.wind(0, 1, 0, 1.3)
+  for font = 1,maxfont do
+    pl.font( font )
+    pl.adv(0)
 
--- Draw the grid using plbox 
-pl.box("bcg", 0.1, 0, "bcg", 0.1, 0)
+    -- Set up viewport and window 
+    pl.col0(2)
+    pl.vpor(0.1, 1, 0.1, 0.9)
+    pl.wind(0, 1, 0, 1.3)
 
--- Write the digits below the frame 
-pl.col0(15)
-for i=0, 9 do
-  pl.mtex("b", 1.5, (0.1 * i + 0.05), 0.5, tostring(i))
-end
+    -- Draw the grid using plbox 
+    pl.box("bcg", 0.1, 0, "bcg", 0.1, 0)
 
-k = 0
-x = {}
-y ={}
-for i = 0, 12 do
-  -- Write the digits to the left of the frame 
-	pl.mtex("lv", 1, (1 - (2 * i + 1) / 26), 1, tostring(10*i))
-	for j = 0, 9 do
-    x[1] = 0.1 * j + 0.05
-    y[1] = 1.25 - 0.1 * i
-
-    -- Display the symbols
-    if k < 128 then
-      pl.poin(x, y, k)
+    -- Write the digits below the frame 
+    pl.col0(15)
+    for i=0, 9 do
+      pl.mtex("b", 1.5, (0.1 * i + 0.05), 0.5, tostring(i))
     end
-    k = k + 1
+
+    k = 0
+    x = {}
+    y ={}
+    for i = 0, 12 do
+      -- Write the digits to the left of the frame 
+      pl.mtex("lv", 1, (1 - (2 * i + 1) / 26), 1, tostring(10*i))
+      for j = 0, 9 do
+        x[1] = 0.1 * j + 0.05
+        y[1] = 1.25 - 0.1 * i
+
+        -- Display the symbols
+        if k < 128 then
+          pl.poin(x, y, k)
+        end
+        k = k + 1
+      end
+    end
+  
+    if kind_font == 0 then
+      pl.mtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (compact)")
+    else
+      pl.mtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (extended)")
+    end
   end
 end
-  
-pl.mtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols")
 pl.plend()
