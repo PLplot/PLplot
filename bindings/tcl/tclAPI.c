@@ -3404,7 +3404,7 @@ plstransformCmd( ClientData clientData, Tcl_Interp *interp,
                  int argc, const char *argv[] )
 {
     if ( argc == 1
-         || argv[1] == "NULL" )
+         || strcmp( argv[1], "NULL" ) == 0 )
     {
         // The user has requested to clear the transform setting.
         plstransform( NULL, NULL );
