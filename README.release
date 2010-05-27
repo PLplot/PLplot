@@ -174,7 +174,7 @@ disable python by default. If you still require Numeric support in the
 short term then set USE_NUMERIC to ON in cmake. The PLplot support 
 for Numeric will be dropped in a future release.
 
-XVIV. It has come to out attention that the version of gdc supplied with 
+XVIV. It has come to our attention that the version of gdc supplied with 
 several recent versions of Ubuntu has a very serious bug on 64-bit 
 systems (see https://bugs.launchpad.net/ubuntu/+source/gdc-4.2/+bug/235955)
 which causes several of the plplot D examples to crash. If this
