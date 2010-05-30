@@ -414,7 +414,12 @@ if(BUILD_TEST)
     set(compare_file_depends ${custom_test_command})
     if(ENABLE_DYNDRIVERS)
       # The ps shared object implements both the psc (and ps) devices.
-      list(APPEND compare_file_depends ps)
+      get_property(FILE_DEPENDS_ps GLOBAL PROPERTY FILE_DEPENDS_ps_dyndriver)
+      # FILE_DEPENDS_ps contains the filename associated with testing ps.
+      # It is empty if not a core build.
+      # The file dependency on ps takes care of all
+      # target and file dependencies associated with ps.
+      list(APPEND compare_file_depends ${FILE_DEPENDS_ps} ps)
     endif(ENABLE_DYNDRIVERS)
 
     set(diff_targets_LIST)
@@ -479,6 +484,10 @@ if(BUILD_TEST)
 	  #message(STATUS "DEBUG: targets_examples_${language} = ${targets_examples_${language}}")
 	  add_dependencies(test_${language}_psc ${targets_examples_${language}})
 	endif(files_examples_${language} AND targets_examples_${language})
+	# FILE_DEPENDS_ps is empty if test_ps_dyndriver target is not defined.
+	if(FILE_DEPENDS_ps)
+	  add_dependencies(test_${language}_psc test_ps_dyndriver)
+	endif(FILE_DEPENDS_ps)
       endif(ENABLE_${language})
     endforeach(language_info ${language_info_LIST})
 
@@ -538,7 +547,12 @@ if(BUILD_TEST)
       
       set(file_device_depends_${device} ${device_depends})
       if(ENABLE_DYNDRIVERS)
-	list(APPEND file_device_depends_${device} ${driver})
+	get_property(FILE_DEPENDS_${driver} 
+	  GLOBAL PROPERTY FILE_DEPENDS_${driver}_dyndriver
+	  )
+	list(APPEND file_device_depends_${device}
+	  ${FILE_DEPENDS_${driver}} ${driver}
+	  )
       endif(ENABLE_DYNDRIVERS)
       #message("DEBUG: OUTPUT filename = x01c${index}.${device}")
       #message("DEBUG:file_device_depends_${device} = ${file_device_depends_${device}}")
@@ -558,13 +572,41 @@ if(BUILD_TEST)
       if(files_examples_c AND targets_examples_c)
 	add_dependencies(test_c_${device} ${targets_examples_c})
       endif(files_examples_c AND targets_examples_c)
+      if(FILE_DEPENDS_${driver})
+	add_dependencies(test_c_${device} test_${driver}_dyndriver)
+      endif(FILE_DEPENDS_${driver})
     endforeach(file_devices_info ${FILE_DEVICES_LIST})
 
     if(ENABLE_DYNDRIVERS)
-      set(cairo_target cairo)
-      set(gcw_target gcw)
-      set(wxwidgets_target wxwidgets)
-      set(qt_target qt)
+      # These required for some of the following special targets that are
+      # not handled by the foreach loop over interactive devices.  Therefore,
+      # this list of variables does not need to be complete over all
+      # interactive devices.
+      get_property(FILE_DEPENDS_cairo 
+	GLOBAL PROPERTY FILE_DEPENDS_cairo_dyndriver
+	)
+      set(cairo_target ${FILE_DEPENDS_cairo} cairo)
+
+      get_property(FILE_DEPENDS_gcw 
+	GLOBAL PROPERTY FILE_DEPENDS_gcw_dyndriver
+	)
+      set(gcw_target ${FILE_DEPENDS_gcw} gcw)
+
+      get_property(FILE_DEPENDS_qt
+	GLOBAL PROPERTY FILE_DEPENDS_qt_dyndriver
+	)
+      set(qt_target ${FILE_DEPENDS_qt} qt)
+
+      get_property(FILE_DEPENDS_wxwidgets 
+	GLOBAL PROPERTY FILE_DEPENDS_wxwidgets_dyndriver
+	)
+      set(wxwidgets_target ${FILE_DEPENDS_wxwidgets} wxwidgets)
+
+      get_property(FILE_DEPENDS_xwin
+	GLOBAL PROPERTY FILE_DEPENDS_xwin_dyndriver
+	)
+      set(xwin_target ${FILE_DEPENDS_xwin} xwin)
+
     endif(ENABLE_DYNDRIVERS)
     if(PLD_extcairo)
 	add_custom_command(
@@ -577,6 +619,9 @@ if(BUILD_TEST)
       add_custom_target(test_extcairo
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
 	)
+      if(FILE_DEPENDS_cairo)
+	add_dependencies(test_extcairo test_cairo_dyndriver)
+      endif(FILE_DEPENDS_cairo)
       list(APPEND noninteractive_targets_LIST test_extcairo)
     endif(PLD_extcairo)
 
@@ -608,7 +653,17 @@ if(BUILD_TEST)
       endif(files_examples_c)
 
       if(ENABLE_DYNDRIVERS)
-	list(APPEND interactive_device_depends_${device} ${driver})
+	get_property(FILE_DEPENDS_${driver}
+	  GLOBAL PROPERTY FILE_DEPENDS_${driver}_dyndriver
+	  )
+	list(APPEND interactive_device_depends_${device}
+	  ${FILE_DEPENDS_${driver}} ${driver}
+	  )
+	if(device STREQUAL "tk")
+	  list(APPEND interactive_device_depends_${device}
+	    ${FILE_DEPENDS_xwin} xwin
+	    )
+	endif(device STREQUAL "tk")
       endif(ENABLE_DYNDRIVERS)
       add_custom_target(test_c_${device}
 	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} interactive device"
@@ -617,11 +672,17 @@ if(BUILD_TEST)
 	${interactive_device_depends_${device}}
 	VERBATIM
 	)
+      if(FILE_DEPENDS_${driver})
+	add_dependencies(test_c_${device} test_${driver}_dyndriver)
+      endif(FILE_DEPENDS_${driver})
       if(device STREQUAL "tk")
 	if(CORE_BUILD)
-	  add_dependencies(test_c_tk tclIndex_tk tclIndex_tcl plserver xwin)
+	  add_dependencies(test_c_tk tclIndex_tk tclIndex_tcl plserver)
+	  if(FILE_DEPENDS_xwin)
+	    add_dependencies(test_c_${device} test_xwin_dyndriver)
+	  endif(FILE_DEPENDS_xwin)
 	else(CORE_BUILD)
-	  add_dependencies(test_c_tk plserver xwin)
+	  add_dependencies(test_c_tk plserver)
 	endif(CORE_BUILD)
       endif(device STREQUAL "tk")
       # Follow what was done above.
@@ -642,11 +703,17 @@ if(BUILD_TEST)
 	  VERBATIM
 	  )
 	add_dependencies(test_octave_${device} ${targets_examples_octave})
+	if(FILE_DEPENDS_${driver})
+	  add_dependencies(test_octave_${device} test_${driver}_dyndriver)
+	endif(FILE_DEPENDS_${driver})
 	if(device STREQUAL "tk")
 	  if(CORE_BUILD)
-	    add_dependencies(test_octave_tk tclIndex_tk tclIndex_tcl plserver xwin)
+	    add_dependencies(test_octave_tk tclIndex_tk tclIndex_tcl plserver)
+	    if(FILE_DEPENDS_xwin)
+	      add_dependencies(test_octave_tk test_xwin_dyndriver)
+	    endif(FILE_DEPENDS_xwin)
 	  else(CORE_BUILD)
-	    add_dependencies(test_octave_tk plserver xwin)
+	    add_dependencies(test_octave_tk plserver)
 	  endif(CORE_BUILD)
 	endif(device STREQUAL "tk")
 	# Comment this out until interactive octave tests work better.
@@ -661,6 +728,9 @@ if(BUILD_TEST)
 	extXdrawable_demo
 	${cairo_target}
 	)
+      if(FILE_DEPENDS_cairo)
+	add_dependencies(test_extXdrawable test_cairo_dyndriver)
+      endif(FILE_DEPENDS_cairo)
       list(APPEND interactive_targets_LIST test_extXdrawable)
     endif(PLD_xcairo)
 
@@ -673,6 +743,9 @@ if(BUILD_TEST)
 	plplotcanvas_animation
 	${gcw_target}
 	)
+      if(FILE_DEPENDS_gcw)
+	add_dependencies(test_plplotcanvas test_gcw_dyndriver)
+      endif(FILE_DEPENDS_gcw)
       list(APPEND interactive_targets_LIST test_plplotcanvas)
     endif(ENABLE_gnome2)
 
@@ -686,6 +759,9 @@ if(BUILD_TEST)
 	wxPLplotDemo
 	${wxwidgets_target}
 	)
+      if(FILE_DEPENDS_wxwidgets)
+	add_dependencies(test_wxPLplotDemo test_wxwidgets_dyndriver)
+      endif(FILE_DEPENDS_wxwidgets)
       list(APPEND interactive_targets_LIST test_wxPLplotDemo)
     endif(ENABLE_wxwidgets)
 
@@ -696,6 +772,9 @@ if(BUILD_TEST)
 	qt_example
 	${qt_target}
 	)
+      if(FILE_DEPENDS_qt)
+	add_dependencies(test_qt_example test_qt_dyndriver)
+      endif(FILE_DEPENDS_qt)
       list(APPEND interactive_targets_LIST test_qt_example)
     endif(PLD_extqt)
 
@@ -713,6 +792,9 @@ if(BUILD_TEST)
 	_plplotcmodule
 	qt
 	)
+      if(FILE_DEPENDS_qt)
+	add_dependencies(test_pyqt4_example test_qt_dyndriver)
+      endif(FILE_DEPENDS_qt)
     else(CORE_BUILD)
       add_custom_target(test_pyqt4_example
 	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/pyqt4_example.py
@@ -724,7 +806,8 @@ if(BUILD_TEST)
 	qt
 	)
     endif(CORE_BUILD)
-      list(APPEND interactive_targets_LIST test_pyqt4_example)
+    
+    list(APPEND interactive_targets_LIST test_pyqt4_example)
   endif(ENABLE_pyqt4)
 
   if(ENABLE_pygcw)
@@ -743,6 +826,9 @@ if(BUILD_TEST)
 	${CMAKE_CURRENT_BINARY_DIR}/python
 	)
       add_dependencies(test_pygcw copy_plplotcanvas)
+      if(FILE_DEPENDS_gcw)
+	add_dependencies(test_pygcw test_gcw_dyndriver)
+      endif(FILE_DEPENDS_gcw)
     else(CORE_BUILD)
       add_custom_target(test_pygcw
 	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/plplotcanvas_demo.py
@@ -764,16 +850,21 @@ if(BUILD_TEST)
 
     add_custom_target(test_tk_01
       COMMAND xtk01 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk01
+      DEPENDS ${xwin_target}
       )
     add_dependencies(test_tk_01
       tclIndex_tcl
       tclIndex_tk
       xwin
       )
+    if(FILE_DEPENDS_xwin)
+      add_dependencies(test_tk_01 test_xwin_dyndriver)
+    endif(FILE_DEPENDS_xwin)
     list(APPEND targets_examples_tk test_tk_01)
       
     add_custom_target(test_tk_03
       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/tk03
+      DEPENDS ${xwin_target}
       )
     add_dependencies(test_tk_03
       plserver
@@ -781,16 +872,21 @@ if(BUILD_TEST)
       tclIndex_tk
       xwin
       )
+    if(FILE_DEPENDS_xwin)
+      add_dependencies(test_tk_03 test_xwin_dyndriver)
+    endif(FILE_DEPENDS_xwin)
     list(APPEND targets_examples_tk test_tk_03)
 
     if(CORE_BUILD)
       add_custom_target(test_tk_plgrid
 	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plgrid
+	DEPENDS ${xwin_target}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
 	)
     else(CORE_BUILD)
       add_custom_target(test_tk_plgrid
 	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plgrid
+	DEPENDS ${xwin_target}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tcl
 	)
     endif(CORE_BUILD)
@@ -801,16 +897,21 @@ if(BUILD_TEST)
       tclIndex_tk
       xwin
       )
+    if(FILE_DEPENDS_xwin)
+      add_dependencies(test_tk_plgrid test_xwin_dyndriver)
+    endif(FILE_DEPENDS_xwin)
     list(APPEND targets_examples_tk test_tk_plgrid)
 
     if(CORE_BUILD)
       add_custom_target(test_tk_standard_examples
 	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/standard_examples
+	DEPENDS ${xwin_target}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	)
     else(CORE_BUILD)
       add_custom_target(test_tk_standard_examples
 	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/standard_examples
+	DEPENDS ${xwin_target}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	)
     endif(CORE_BUILD)
@@ -822,27 +923,38 @@ if(BUILD_TEST)
       tclIndex_examples_tk
       xwin
       )
+    if(FILE_DEPENDS_xwin)
+      add_dependencies(test_tk_standard_examples test_xwin_dyndriver)
+    endif(FILE_DEPENDS_xwin)
     list(APPEND targets_examples_tk test_tk_standard_examples)
 
     if(ENABLE_itk)
       add_custom_target(test_tk_02
 	COMMAND xtk02 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk02
+	DEPENDS ${xwin_target}
 	)
       add_dependencies(test_tk_02
 	tclIndex_tcl
 	tclIndex_tk
 	xwin
 	)
+      if(FILE_DEPENDS_xwin)
+	add_dependencies(test_tk_02 test_xwin_dyndriver)
+      endif(FILE_DEPENDS_xwin)
       list(APPEND targets_examples_tk test_tk_02)
       
       add_custom_target(test_tk_04
 	COMMAND xtk04 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk04
+	DEPENDS ${xwin_target}
 	)
       add_dependencies(test_tk_04
 	tclIndex_tcl
 	tclIndex_tk
 	xwin
 	)
+      if(FILE_DEPENDS_xwin)
+	add_dependencies(test_tk_04 test_xwin_dyndriver)
+      endif(FILE_DEPENDS_xwin)
       list(APPEND targets_examples_tk test_tk_04)
     endif(ENABLE_itk)
       
@@ -861,15 +973,17 @@ if(BUILD_TEST)
   # Must be maintained.
   add_custom_target(test_all_qt)
   add_dependencies(test_all_qt
-    test_c_epsqt
-    test_c_pdfqt
     test_c_bmpqt
+    test_c_epsqt
     test_c_jpgqt
+    test_c_pdfqt
     test_c_pngqt
     test_c_ppmqt
-    test_c_tiffqt
-    test_c_svgqt
     test_c_qtwidget
+    test_c_svgqt
+    test_c_tiffqt
+    #test_octave_qtwidget
+    test_pyqt4_example
     test_qt_example
     )
 
