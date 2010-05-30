@@ -119,6 +119,7 @@ typedef struct
     Display         *XDisplay;
     Window          XWindow;
     unsigned int    xdrawable_mode;
+    short           window_closed;
 #endif
 #if defined ( PLD_memcairo )
     unsigned char   *memory;
@@ -1642,6 +1643,9 @@ static signed int xcairo_init_cairo( PLStream *pls )
 
     XFlush( aStream->XDisplay );
 
+    /* set window as not closed. */
+    aStream->window_closed = 0;
+
     return 0;
 }
 
@@ -1734,6 +1738,9 @@ void plD_bop_xcairo( PLStream *pls )
 
     plD_bop_cairo( pls );
 
+    if ( aStream->window_closed )
+        return;
+
     if ( aStream->xdrawable_mode )
         return;
 
@@ -1760,6 +1767,9 @@ void plD_eop_xcairo( PLStream *pls )
     char           *plotTitle;
 
     aStream = (PLCairo *) pls->dev;
+
+    if ( aStream->window_closed )
+        return;
 
     /* Blit the offscreen image to the X window. */
     blit_to_x( aStream, 0.0, 0.0, pls->xlength, pls->ylength );
@@ -1793,7 +1803,9 @@ void plD_eop_xcairo( PLStream *pls )
                 aStream->exit_event_loop = 1;
             break;
         case ClientMessage:
-            aStream->exit_event_loop = 1;
+	  // plexit("X Window closed");
+	    aStream->window_closed = 1;
+	    aStream->exit_event_loop = 1;
             break;
         case Expose:
             /* Blit the image again after an expose event, but only for the last
