@@ -35,49 +35,66 @@ plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
 plinit ();
 
-pladv (0);
+for ( my $kindfont = 0; $kindfont < 2; $kindfont++) {
+    plfontld ( $kindfont );
+    my $maxfont;
+    if ( $kindfont == 0 ) {
+	$maxfont = 1;
+    } else {
+	$maxfont = 4;
+    }
+    for ( my $font = 0; $font < $maxfont; $font++ ) {
+	plfont( $font + 1 );
+
+	pladv (0);
 
 # Set up viewport and window
 
-plcol0 (2);
-plvpor (0.1, 1.0, 0.1, 0.9);
-plwind (0.0, 1.0, 0.0, 1.3);
+	plcol0 (2);
+	plvpor (0.1, 1.0, 0.1, 0.9);
+	plwind (0.0, 1.0, 0.0, 1.3);
 
 # Draw the grid using plbox
 
-plbox (0.1, 0, 0.1, 0, "bcg", "bcg");
+	plbox (0.1, 0, 0.1, 0, "bcg", "bcg");
 
 # Write the digits below the frame
 
-plcol0 (15);
+	plcol0 (15);
 
-my ($i, $j, $k);
+	my ($i, $j, $k);
 
-for ($i = 0; $i <= 9; $i++) {
-  plmtex (1.5, (0.1 * $i + 0.05), 0.5, "b", $i);
-}
+	for ($i = 0; $i <= 9; $i++) {
+	    plmtex (1.5, (0.1 * $i + 0.05), 0.5, "b", $i);
+	}
 
-$k = 0;
+	$k = 0;
 
-for ($i = 0; $i <= 12; $i++) {
+	for ($i = 0; $i <= 12; $i++) {
 
-  # Write the digits to the left of the frame
+	    # Write the digits to the left of the frame
 
-  plmtex (1.0, (1.0 - (2 * $i + 1) / 26.0), 1.0, "lv", 10 * $i);
+	    plmtex (1.0, (1.0 - (2 * $i + 1) / 26.0), 1.0, "lv", 10 * $i);
 
-  for ($j = 0; $j <= 9; $j++) {
-    my $x = 0.1 * $j + 0.05;
-    my $y = 1.25 - 0.1 * $i;
+	    for ($j = 0; $j <= 9; $j++) {
+		my $x = 0.1 * $j + 0.05;
+		my $y = 1.25 - 0.1 * $i;
 
-    # Display the symbols
+		# Display the symbols
 
-    if ($k < 128) {
-      plpoin ($x, $y, $k);
-      $k++;
+		if ($k < 128) {
+		    plpoin ($x, $y, $k);
+		    $k++;
+		}
+	    }
+	}
+
+	if ( $kindfont == 0 ) {
+	    plmtex (1.5, 0.5, 0.5, "t", "PLplot Example 6 - plpoin symbols (compact)");
+	} else {
+	    plmtex (1.5, 0.5, 0.5, "t", "PLplot Example 6 - plpoin symbols (extended)");
+	}
     }
-  }
 }
-
-plmtex (1.5, 0.5, 0.5, "t", "PLplot Example 6 - plpoin symbols");
 
 plend ();
