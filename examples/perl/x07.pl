@@ -29,8 +29,8 @@ use PDL;
 use PDL::Graphics::PLplot;
 
 # Starting points for symbol lookup
-my @base = (0, 200, 500, 600, 700, 800, 900, 2000, 2100, 2200, 2300,
-            2400, 2500, 2600, 2700, 2800, 2900);
+my @base = (0, 100, 0, 100, 200, 500, 600, 700, 800, 900,
+	    2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900);
 
 # Parse and process command line arguments
 
@@ -40,48 +40,58 @@ plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
 plinit ();
 
-plfontld (1);
+plfontld (0);
+
+my $l = 0;
 
 for my $base (@base) {
 
-  pladv (0);
-
-  # Set up viewport and window
-
-  plcol0 (2);
-  plvpor (0.15, 0.95, 0.1, 0.9);
-  plwind (0, 1, 0, 1);
-
-  # Draw the grid
-
-  plbox (0.1, 0, 0.1, 0, "bcg", "bcg");
-
-  # Write digits below the frame
-
-  plcol0 (15);
-  for my $i (0..9) {
-    plmtex (1.5, (0.1 * $i + 0.05), 0.5, "b", $i);
-  }
-
-  my $k = 0;
- OUTER: for my $i (0..9) {
-
-    # Write the digits to the left of the frame
-
-    plmtex (1, (0.95 - 0.1 * $i), 1, "lv", ($base + 10 * $i));
-
-    my $y = 0.95 - 0.1 * $i;
-    for my $j (0..9) {
-
-      my $x = 0.1 * $j + 0.05;
-
-      plsym ($x, $y, ($k + $base));
-      last OUTER if $k >= 127;
-      $k++;
+    if ( $l == 2 ) {
+	plfontld( 1 );
     }
+
+    pladv (0);
+
+    # Set up viewport and window
+
+    plcol0 (2);
+    plvpor (0.15, 0.95, 0.1, 0.9);
+    plwind (0, 1, 0, 1);
+
+    # Draw the grid
+
+    plbox (0.1, 0, 0.1, 0, "bcg", "bcg");
+
+    # Write digits below the frame
+
+    plcol0 (15);
+    for my $i (0..9) {
+	plmtex (1.5, (0.1 * $i + 0.05), 0.5, "b", $i);
+    }
+
+    my $k = 0;
+  OUTER: for my $i (0..9) {
+
+      # Write the digits to the left of the frame
+
+      plmtex (1, (0.95 - 0.1 * $i), 1, "lv", ($base + 10 * $i));
+
+      my $y = 0.95 - 0.1 * $i;
+      for my $j (0..9) {
+
+	  my $x = 0.1 * $j + 0.05;
+
+	  plsym ($x, $y, ($k + $base));
+	  last OUTER if $k >= 127;
+	  $k++;
+      }
   }
 
-  plmtex (1.5, 0.5, 0.5, "t", "PLplot Example 7 - PLSYM symbols");
+    if ($l++ <2) {
+	plmtex (1.5, 0.5, 0.5, "t", "PLplot Example 7 - PLSYM symbols (compact)");
+    } else {
+	plmtex (1.5, 0.5, 0.5, "t", "PLplot Example 7 - PLSYM symbols (extended)");
+    }
 
 }
 
