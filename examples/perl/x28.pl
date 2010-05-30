@@ -50,6 +50,19 @@ my $zmax = 1.0;
 my $zmid = 0.5*($zmax + $zmin);
 my $zrange = $zmax - $zmin;
 
+my $ysmin    = $ymin + 0.1 * $yrange;
+my $ysmax    = $ymax - 0.1 * $yrange;
+my $ysrange  = $ysmax - $ysmin;
+my $dysrot   = $ysrange / ( NROTATION - 1 );
+my $dysshear = $ysrange / ( NSHEAR - 1 );
+my $zsmin    = $zmin + 0.1 * $zrange;
+my $zsmax    = $zmax - 0.1 * $zrange;
+my $zsrange  = $zsmax - $zsmin;
+my $dzsrot   = $zsrange / ( NROTATION - 1 );
+my $dzsshear = $zsrange / ( NSHEAR - 1 );
+my $ys;
+my $zx;
+
 my $pstring = "The future of our civilization depends on software freedom.";
 
 my $x = $xmin + ($xmax-$xmin)*sequence(XPTS)/(XPTS-1);
@@ -57,7 +70,7 @@ my $y = $ymin + ($ymax-$ymin)*sequence(YPTS)/(YPTS-1);
 my $z = zeroes(XPTS,YPTS);
 
 # Parse and process command line arguments
-  
+
 plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
 plinit();
@@ -83,10 +96,10 @@ my $x_shear = -0.5*$xrange*sin($omega);
 my $y_shear =  0.5*$yrange*cos($omega);
 my $z_shear =  0;
 plptex3(
-	$xmid, $ymid, $zmin,
-	$x_inclination, $y_inclination, $z_inclination,
-	$x_shear, $y_shear, $z_shear,
-	0.0, "  revolution");
+    $xmid, $ymid, $zmin,
+    $x_inclination, $y_inclination, $z_inclination,
+    $x_shear, $y_shear, $z_shear,
+    0.0, "  revolution");
 
 # x = xmax.
 $x_inclination =  0;
@@ -96,10 +109,10 @@ $x_shear = 0;
 $y_shear = 0.5*$yrange*sin($omega);
 $z_shear = 0.5*$zrange*cos($omega);
 plptex3(
-	$xmax, $ymid, $zmid,
-	$x_inclination, $y_inclination, $z_inclination,
-	$x_shear, $y_shear, $z_shear, 
-	0.0, "  revolution");
+    $xmax, $ymid, $zmid,
+    $x_inclination, $y_inclination, $z_inclination,
+    $x_shear, $y_shear, $z_shear, 
+    0.0, "  revolution");
 
 $x_inclination = 0.5*$xrange*cos($omega);
 $y_inclination = 0;
@@ -108,10 +121,10 @@ $x_shear = -0.5*$xrange*sin($omega);
 $y_shear =  0;
 $z_shear =  0.5*$zrange*cos($omega);
 plptex3(
-	$xmid, $ymax, $zmid,
-	$x_inclination, $y_inclination, $z_inclination,
-	$x_shear, $y_shear, $z_shear, 
-	0.0, "  revolution");
+    $xmid, $ymax, $zmid,
+    $x_inclination, $y_inclination, $z_inclination,
+    $x_shear, $y_shear, $z_shear, 
+    0.0, "  revolution");
 
 # Draw minimal 3D grid to finish defining the 3D box.
 plmesh($x, $y, $z, DRAW_LINEXY);
@@ -122,7 +135,7 @@ pladv(0);
 plvpor(-0.15, 1.15, -0.05, 1.05);
 plwind(-1.2, 1.2, -0.8, 1.5);
 plw3d(1.0, 1.0, 1.0, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax, 20, 45);
-   
+
 plcol0(2);
 plbox3($xmax-$xmin, 0, $ymax-$ymin, 0, $zmax-$zmin, 0, "b", "", "b", "", "bcd", "");
 
@@ -134,11 +147,12 @@ $x_shear = 0;
 $omega = 2*PI*(sequence(NROTATION)/NROTATION);
 $y_shear = 0.5*$yrange*sin($omega);
 $z_shear = 0.5*$zrange*cos($omega);
+$zs = $zsmax - $dzsrot * sequence(NROTATION);
 plptex3(
-	$xmid, $ymax, $zmax -($zmax-0.2)*(sequence(NROTATION)/(NROTATION-1)),
-	$x_inclination, $y_inclination, $z_inclination,
-	$x_shear, $y_shear, $z_shear,
-	0.5, "rotation for y = y#dmax#u");
+    $xmid, $ymax, $zs,
+    $x_inclination, $y_inclination, $z_inclination,
+    $x_shear, $y_shear, $z_shear,
+    0.5, "rotation for y = y#dmax#u");
 
 # x = xmax.
 $x_inclination =  0;
@@ -147,11 +161,12 @@ $z_inclination =  0;
 $y_shear = 0;
 $x_shear = 0.5*$xrange*sin($omega);
 $z_shear = 0.5*$zrange*cos($omega);
+$zs = $zsmax - $dzsrot * sequence(NROTATION);
 plptex3(
-	$xmax, $ymid, $zmax -($zmax-0.2)*(sequence(NROTATION)/(NROTATION-1)),
-	$x_inclination, $y_inclination, $z_inclination,
-	$x_shear, $y_shear, $z_shear,
-	0.5, "rotation for x = x#dmax#u");
+    $xmax, $ymid, $zs,
+    $x_inclination, $y_inclination, $z_inclination,
+    $x_shear, $y_shear, $z_shear,
+    0.5, "rotation for x = x#dmax#u");
 
 # z = zmin.
 $x_inclination = 1;
@@ -160,11 +175,12 @@ $z_inclination = 0;
 $x_shear = 0.;
 $y_shear = 0.5*$yrange*cos($omega);
 $z_shear = 0.5*$zrange*sin($omega);
+$ys = $ysmax - $dysrot * sequence(NROTATION);
 plptex3(
-	$xmid, $ymax -($ymax-0.2)*(sequence(NROTATION)/(NROTATION-1)), $zmin,
-	$x_inclination, $y_inclination, $z_inclination,
-	$x_shear, $y_shear, $z_shear,
-	0.5, "rotation for z = z#dmin#u");
+    $xmid, $ys, $zmin,
+    $x_inclination, $y_inclination, $z_inclination,
+    $x_shear, $y_shear, $z_shear,
+    0.5, "rotation for z = z#dmin#u");
 
 # Draw minimal 3D grid to finish defining the 3D box.
 plmesh($x, $y, $z, DRAW_LINEXY);
@@ -178,7 +194,7 @@ pladv(0);
 plvpor(-0.15, 1.15, -0.05, 1.05);
 plwind(-1.2, 1.2, -0.8, 1.5);
 plw3d(1.0, 1.0, 1.0, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax, 20, 45);
-   
+
 plcol0(2);
 plbox3($xmax-$xmin, 0,
        $ymax-$ymin, 0,
@@ -195,11 +211,12 @@ $omega = $domega + 2*PI*(sequence(NSHEAR)/NSHEAR);
 
 $x_shear = 0.5*$xrange*sin($omega);
 $z_shear = 0.5*$zrange*cos($omega);
+$zs = $zsmax - $dzsshear * sequence(NSHEAR);
 plptex3(
-	$xmid, $ymax, $zmax -($zmax-0.2)*(sequence(NSHEAR)/(NSHEAR-1)),
-	$x_inclination, $y_inclination, $z_inclination,
-	$x_shear, $y_shear, $z_shear,
-	0.5, "shear for y = y#dmax#u");
+    $xmid, $ymax, $zs,
+    $x_inclination, $y_inclination, $z_inclination,
+    $x_shear, $y_shear, $z_shear,
+    0.5, "shear for y = y#dmax#u");
 
 # x = xmax.
 $x_inclination =  0;
@@ -208,11 +225,12 @@ $z_inclination =  0;
 $x_shear =  0;
 $y_shear = -0.5*$yrange*sin($omega);
 $z_shear =  0.5*$zrange*cos($omega);
+$zs = $zsmax - $dzsshear * sequence(NSHEAR);
 plptex3(
-	$xmax, $ymid, $zmax -($zmax-0.2)*(sequence(NSHEAR)/(NSHEAR-1)),
-	$x_inclination, $y_inclination, $z_inclination,
-	$x_shear, $y_shear, $z_shear,
-	0.5, "shear for x = x#dmax#u");
+    $xmax, $ymid, $zs,
+    $x_inclination, $y_inclination, $z_inclination,
+    $x_shear, $y_shear, $z_shear,
+    0.5, "shear for x = x#dmax#u");
 
 # z = zmin.
 $x_inclination = 1;
@@ -222,11 +240,12 @@ $z_shear = 0;
 
 $y_shear = 0.5*$yrange*cos($omega);
 $x_shear = 0.5*$xrange*sin($omega);
+$ys = $ysmax - $dysshear * sequence(NSHEAR);
 plptex3(
-	$xmid, $ymax -($ymax-0.2)*(sequence(NSHEAR)/(NSHEAR-1)), $zmin,
-	$x_inclination, $y_inclination, $z_inclination,
-	$x_shear, $y_shear, $z_shear,
-	0.5, "shear for z = z#dmin#u");
+    $xmid, $ys, $zmin,
+    $x_inclination, $y_inclination, $z_inclination,
+    $x_shear, $y_shear, $z_shear,
+    0.5, "shear for z = z#dmin#u");
 
 # Draw minimal 3D grid to finish defining the 3D box.
 plmesh($x, $y, $z, DRAW_LINEXY);
@@ -236,7 +255,7 @@ pladv(0);
 plvpor(-0.15, 1.15, -0.05, 1.05);
 plwind(-1.2, 1.2, -0.8, 1.5);
 plw3d(1.0, 1.0, 1.0, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax, 40, -30);
-   
+
 plcol0(2);
 plbox3($xmax-$xmin, 0,
        $ymax-$ymin, 0,
@@ -262,24 +281,24 @@ my $y_shear = 0;
 my $z_shear = 1;
 
 foreach my $c (split '', $pstring) {
-  my $sin_omega = sin($omega);
-  my $cos_omega = cos($omega);
-  my $xpos = $xmid + $radius*$sin_omega;
-  my $ypos = $ymid - $radius*$cos_omega;
-  my $zpos = $zmin + $pitch*$omega;
+    my $sin_omega = sin($omega);
+    my $cos_omega = cos($omega);
+    my $xpos = $xmid + $radius*$sin_omega;
+    my $ypos = $ymid - $radius*$cos_omega;
+    my $zpos = $zmin + $pitch*$omega;
 
-  # In general, the inclination is proportional to the derivative of 
-  # the position wrt theta.
-  my $x_inclination = $radius*$cos_omega;;
-  my $y_inclination = $radius*$sin_omega;
-  my $z_inclination = $pitch;
+    # In general, the inclination is proportional to the derivative of 
+    # the position wrt theta.
+    my $x_inclination = $radius*$cos_omega;;
+    my $y_inclination = $radius*$sin_omega;
+    my $z_inclination = $pitch;
 
-  plptex3(
-	  $xpos, $ypos, $zpos,
-	  $x_inclination, $y_inclination, $z_inclination,
-	  $x_shear, $y_shear, $z_shear,
-	  0.5, $c);
-  $omega += $domega;
+    plptex3(
+	$xpos, $ypos, $zpos,
+	$x_inclination, $y_inclination, $z_inclination,
+	$x_shear, $y_shear, $z_shear,
+	0.5, $c);
+    $omega += $domega;
 }
 
 # Draw minimal 3D grid to finish defining the 3D box.
@@ -290,7 +309,7 @@ pladv(0);
 plvpor(-0.15, 1.15, -0.05, 1.05);
 plwind(-1.2, 1.2, -0.8, 1.5);
 plw3d(1.0, 1.0, 1.0, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax, 20, 45);
-   
+
 plcol0(2);
 plbox3($xmax-$xmin, 0,
        $ymax-$ymin, 0,
