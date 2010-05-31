@@ -58,14 +58,14 @@ sub main {
 
   # If valid geometry specified on command line, use it for both streams.
   my ($xp0, $yp0, $xleng0, $yleng0, $xoff0, $yoff0) = plgpage ();
-  printf("%s %i, %i\n", "xleng0, yleng0 = ", $xleng0, $yleng0);
+  #printf("%s %i, %i\n", "xleng0, yleng0 = ", $xleng0, $yleng0);
   my $valid_geometry;
   if ($xleng0 > 0 && $yleng0 > 0) {
     $valid_geometry = 1;
   } else {
     $valid_geometry = 0;
   }
-  printf("%s %i\n", "valid_geometry = ", $valid_geometry);
+  #printf("%s %i\n", "valid_geometry = ", $valid_geometry);
 
   # Set up first stream
 
