@@ -17,5 +17,6 @@ source x01.tcl
 plgver ver
 puts [format "PLplot library version: %s" $ver ]
 
+plinit
 x01
 plend
