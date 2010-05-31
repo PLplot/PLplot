@@ -14,8 +14,7 @@ exec pltcl -f "$0" ${1+"$@"}
 
 source x16.tcl
 
-# For consistency with C version these need to be set before plinit is
-# called.
+# Reducing the size of the colour map needs to be done before plinit
 plspal0 "cmap0_black_on_white.pal"
 plspal1 "cmap1_gray.pal" 1
 plscmap0n 3

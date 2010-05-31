@@ -22,9 +22,6 @@ proc x16 {{w loopback}} {
     matrix zz f $nx $ny
     matrix ww f $nx $ny
 
-    $w cmd plspal0 "cmap0_black_on_white.pal"
-    $w cmd plspal1 "cmap1_gray.pal" 1
-
 # Set up data array
 
     for {set i 0} {$i < $nx} {incr i} {

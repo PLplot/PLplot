@@ -4,8 +4,9 @@
 
 proc x03 {{w loopback}} {
     set twopi  [expr 2. * 3.14159265358979323846]
-# Set up viewport and window, but do not draw box 
+# Set up viewport and window, but do not draw box
 
+    $w cmd plsori 1
     $w cmd plenv -1.3 1.3 -1.3 1.3 1 -2
 
 # Draw circles for polar grid
@@ -41,7 +42,7 @@ proc x03 {{w loopback}} {
 	} else {
 	    set offset 0.15
 	}
-		   
+		
 # Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
 	if {$xg >= -0.00001} {
 	    set dx [expr $xg]
@@ -54,13 +55,13 @@ proc x03 {{w loopback}} {
 	}
 	set label [expr round($theta*360./$twopi)]
 
-# N.B. cannot get this command to give same postscript output.  Also visual 
+# N.B. cannot get this command to give same postscript output.  Also visual
 # inspection shows 90 deg label jumping around slightly compared to python
 # and C front ends.  No idea why (AWI comment).
 	$w cmd plptex $xg $yg $dx $dy $just $label
     }
 
-# Draw the graph 
+# Draw the graph
 
     set npts 360
     set npts1 [expr $npts+1]

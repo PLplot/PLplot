@@ -5,11 +5,14 @@
 proc x01 {{w loopback}} {
     global xscale yscale xoff yoff
 
-    # For starting from scratch this call to pladv increments cursub, but 
-    # then the following plssub sets it to zero so the whole thing is 
-    # essentially a nop.  However, for the case when other examples are run 
-    # first, this call to pladv is absolutely essential to finish the 
+    # For starting from scratch this call to pladv increments cursub, but
+    # then the following plssub sets it to zero so the whole thing is
+    # essentially a nop.  However, for the case when other examples are run
+    # first, this call to pladv is absolutely essential to finish the
     # preceding page.
+
+    $w cmd plstar 2 2
+
     #$w cmd pladv 0
     #$w cmd plssub 2 2
 
@@ -129,7 +132,7 @@ proc plot3 {w} {
     $w cmd plcol0 1
     $w cmd plbox "bcnst" 60.0 2 "bcnstv" 0.2 2
 
-# Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
+# Superimpose a dashed line grid, with 1.5 mm marks and spaces.
 # plstyl expects two integer matrices for mark and space!
 
     matrix mark i 1

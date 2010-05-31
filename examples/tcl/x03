@@ -14,7 +14,6 @@ exec pltcl -f "$0" ${1+"$@"}
 
 source x03.tcl
 
-plsori 1
 plinit
 x03
 plend
