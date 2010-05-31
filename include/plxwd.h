@@ -103,6 +103,8 @@ typedef struct
     int          drawing_xhairs;                   /* Set during xhair draws */
     XPoint       xhair_x[2], xhair_y[2];           /* Crosshair lines */
 
+    int          closed;                            /* Set if the stream is closed */
+
     void ( *MasterEH )( PLStream *, XEvent * );    /* Master X event handler */
 #ifdef HAVE_PTHREAD
     pthread_t updater;                             /* The X events updater thread id */

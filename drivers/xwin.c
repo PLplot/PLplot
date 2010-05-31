@@ -284,6 +284,7 @@ plD_init_xw( PLStream *pls )
 
 /* Get ready for plotting */
 
+    dev->closed = FALSE;
     dev->xlen = xmax - xmin;
     dev->ylen = ymax - ymin;
 
@@ -363,6 +364,9 @@ plD_line_xw( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     dbug_enter( "plD_line_xw" );
 
+    if ( dev->closed )
+        return;
+
 #ifdef HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_lock( &events_mutex );
@@ -428,6 +432,9 @@ plD_polyline_xw( PLStream *pls, short *xa, short *ya, PLINT npts )
 
     dbug_enter( "plD_polyline_xw" );
 
+    if ( dev->closed )
+        return;
+
 #ifdef HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_lock( &events_mutex );
@@ -469,6 +476,9 @@ plD_eop_xw( PLStream *pls )
 
     dbug_enter( "plD_eop_xw" );
 
+    if ( dev->closed )
+        return;
+
 #ifdef HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_lock( &events_mutex );
@@ -500,6 +510,9 @@ plD_bop_xw( PLStream *pls )
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
     dbug_enter( "plD_bop_xw" );
+
+    if ( dev->closed )
+        return;
 
 #ifdef HAVE_PTHREAD
     if ( usepthreads )
@@ -590,6 +603,9 @@ plD_state_xw( PLStream *pls, PLINT op )
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
     dbug_enter( "plD_state_xw" );
+
+    if ( dev->closed )
+        return;
 
 #ifdef HAVE_PTHREAD
     if ( usepthreads )
@@ -703,7 +719,12 @@ plD_state_xw( PLStream *pls, PLINT op )
 void
 plD_esc_xw( PLStream *pls, PLINT op, void *ptr )
 {
+    XwDev     *dev = (XwDev *) pls->dev;
+
     dbug_enter( "plD_esc_xw" );
+
+    if ( dev->closed )
+        return;
 
 #ifdef HAVE_PTHREAD
     if ( usepthreads )
@@ -1484,8 +1505,9 @@ ClientEH( PLStream *pls, XEvent *event )
 
     if ( event->xclient.data.l[0] == XInternAtom( xwd->display, "WM_DELETE_WINDOW", False ) )
     {
-        pls->nopause = TRUE;
-        plexit( "" );
+        dev->exit_eventloop = TRUE;
+        dev->closed = TRUE;
+        return;
     }
 }
 
