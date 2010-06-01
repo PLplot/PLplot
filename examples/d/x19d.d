@@ -11,7 +11,6 @@ import std.c.string;
 import plplot;
 
 extern ( C ) {
-
 void
 map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
 {

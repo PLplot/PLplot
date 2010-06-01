@@ -1824,9 +1824,9 @@ void plD_eop_xcairo( PLStream *pls )
                 aStream->exit_event_loop = 1;
             break;
         case ClientMessage:
-	  // plexit("X Window closed");
-	    aStream->closed = 1;
-	    aStream->exit_event_loop = 1;
+            // plexit("X Window closed");
+            aStream->closed          = 1;
+            aStream->exit_event_loop = 1;
             break;
         case Expose:
             /* Blit the image again after an expose event, but only for the last

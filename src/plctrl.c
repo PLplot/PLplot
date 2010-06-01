@@ -2302,7 +2302,7 @@ plOpenFile( PLStream *pls )
 void
 plCloseFile( PLStream *pls )
 {
-    if ( pls->OutFile != NULL) 
+    if ( pls->OutFile != NULL )
     {
         /* Don't close if the output file was stdout */
         if ( pls->FileName && strcmp( pls->FileName, "-" ) == 0 ) return;

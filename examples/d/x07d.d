@@ -29,7 +29,7 @@ int main( char[][] args )
     plfontld( 0 );
     for ( size_t l = 0; l < 20; l++ )
     {
-        if ( l == 2 ) plfontld( 1 );    
+        if ( l == 2 ) plfontld( 1 );
         pladv( 0 );
 
         /* Set up viewport and window */
@@ -65,10 +65,10 @@ int main( char[][] args )
             }
         }
 
-	if ( l < 2 )
-  	    plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (compact)" );
-	else
-  	    plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (extended)" );
+        if ( l < 2 )
+            plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (compact)" );
+        else
+            plmtex( "t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (extended)" );
     }
     plend();
     return 0;
