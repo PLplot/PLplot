@@ -263,7 +263,7 @@ plD_eop_pbm( PLStream *pls )
         if ( nwrite != im_size )
             plabort( "pbm driver: Error writing pbm file" );
 
-        fclose( fp );
+        plCloseFile( pls );
     }
     free( cmap );
     cmap = 0;

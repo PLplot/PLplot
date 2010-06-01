@@ -284,7 +284,7 @@ plD_tidy_ljii( PLStream *pls )
 /* Reset Printer */
 
     fprintf( OF, "%cE", ESC );
-    fclose( OF );
+    plCloseFile( pls );
     free( (void *) bitmap );
 }
 

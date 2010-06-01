@@ -583,7 +583,7 @@ plD_tidy_tek( PLStream *pls )
 {
     if ( !pls->termin )
     {
-        fclose( pls->OutFile );
+        plCloseFile( pls );
     }
     else
     {

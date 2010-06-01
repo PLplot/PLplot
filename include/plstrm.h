@@ -789,6 +789,11 @@ plcol_interp( PLStream *pls, PLColor *newcolor, int i, int ncol );
 PLDLLIMPEXP void
 plOpenFile( PLStream *pls );
 
+/* Close output file */
+
+PLDLLIMPEXP void
+plCloseFile( PLStream *pls );
+
 /* Sets up next file member name (in pls->FileName), but does not open it. */
 
 void

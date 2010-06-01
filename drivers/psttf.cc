@@ -626,7 +626,7 @@ plD_tidy_psttf(PLStream *pls)
       doc->write(cout,dev->llx,dev->lly,dev->urx,dev->ury);
     }
     else {      
-      fclose(pls->OutFile);
+      plCloseFile( pls );
       ofstream out;
       out.open(pls->FileName);
       doc->write(out,dev->llx,dev->lly,dev->urx,dev->ury);

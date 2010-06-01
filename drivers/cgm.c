@@ -727,7 +727,7 @@ void plD_tidy_cgm( PLStream *pls )
     }
 
     cdImageDestroy( dev->im_out );
-    fclose( pls->OutFile );
+    plCloseFile( pls );
     free_mem( pls->dev );
 }
 

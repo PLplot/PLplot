@@ -536,8 +536,7 @@ void plD_tidy_cairo( PLStream *pls )
     cairo_destroy( aStream->cairoContext );
     cairo_surface_destroy( aStream->cairoSurface );
 
-    if ( pls->OutFile )
-        fclose( pls->OutFile );
+    plCloseFile( pls );
 }
 
 /*---------------------------------------------------------------------

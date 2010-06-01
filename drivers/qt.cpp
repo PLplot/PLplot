@@ -452,7 +452,7 @@ void plD_tidy_rasterqt( PLStream * pls )
         delete widget;
         pls->dev = NULL;
     }
-    fclose( pls->OutFile );
+    plCloseFile( pls );
 
     closeQtApp();
 }
@@ -882,7 +882,7 @@ void plD_tidy_svgqt( PLStream * pls )
         delete widget;
         pls->dev = NULL;
     }
-    fclose( pls->OutFile );
+    plCloseFile( pls );
 
     closeQtApp();
 }
@@ -1163,7 +1163,7 @@ void plD_tidy_epspdfqt( PLStream * pls )
         delete widget;
         pls->dev = NULL;
     }
-    fclose( pls->OutFile );
+    plCloseFile( pls );
 
     closeQtApp();
 }

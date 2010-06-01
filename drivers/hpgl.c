@@ -333,7 +333,7 @@ void
 plD_tidy_hpgl( PLStream *pls )
 {
     fputs( "SP0\n", OF );
-    fclose( OF );
+    plCloseFile( pls );
 }
 
 /*--------------------------------------------------------------------------*\

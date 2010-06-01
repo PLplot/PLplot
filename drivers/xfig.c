@@ -371,7 +371,7 @@ plD_tidy_xfig( PLStream *pls )
 
     flushbuffer( pls );
     free( (void *) dev->buffptr );
-    fclose( pls->OutFile );
+    plCloseFile( pls );
 }
 
 /*--------------------------------------------------------------------------*\

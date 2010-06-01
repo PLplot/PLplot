@@ -2294,6 +2294,25 @@ plOpenFile( PLStream *pls )
 }
 
 /*--------------------------------------------------------------------------*\
+ * plCloseFile()
+ *
+ * Closes output file unless it is associated with stdout.
+ \*--------------------------------------------------------------------------*/
+
+void
+plCloseFile( PLStream *pls )
+{
+    if ( pls->OutFile != NULL) 
+    {
+        /* Don't close if the output file was stdout */
+        if ( pls->FileName && strcmp( pls->FileName, "-" ) == 0 ) return;
+
+        fclose( pls->OutFile );
+        pls->OutFile = NULL;
+    }
+}
+
+/*--------------------------------------------------------------------------*\
  * plP_getmember()
  *
  * Sets up next file member name (in pls->FileName), but does not open it.

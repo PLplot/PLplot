@@ -361,7 +361,7 @@ void plD_tidy_svg( PLStream *pls )
     {
         return;
     }
-    fclose( aStream->svgFile );
+    plCloseFile( pls );
 }
 
 /*---------------------------------------------------------------------

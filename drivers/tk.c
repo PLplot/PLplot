@@ -885,7 +885,7 @@ tk_stop( PLStream *pls )
     if ( dev->iodev != NULL )
     {
         if ( dev->iodev->file != NULL )
-            fclose( dev->iodev->file );
+            plCloseFile( pls );
 
         free( (void *) dev->iodev );
     }

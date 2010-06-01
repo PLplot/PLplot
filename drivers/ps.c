@@ -566,7 +566,7 @@ plD_tidy_ps( PLStream *pls )
     fprintf( OF, "%%!PS-Adobe-2.0 EPSF-2.0\n" );
     fprintf( OF, "%%%%BoundingBox: %d %d %d %d\n",
         dev->llx, dev->lly, dev->urx, dev->ury );
-    fclose( OF );
+    plCloseFile( pls );
 }
 
 /*--------------------------------------------------------------------------*\

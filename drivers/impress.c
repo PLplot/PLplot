@@ -244,7 +244,7 @@ void
 plD_tidy_imp( PLStream *pls )
 {
     free( (void *) LineBuff );
-    fclose( pls->OutFile );
+    plCloseFile( pls );
 }
 
 /*--------------------------------------------------------------------------*\

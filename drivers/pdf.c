@@ -399,7 +399,7 @@ void plD_tidy_pdf( PLStream *pls )
             plexit( "ERROR: Cannot write to file!" );
     }
 
-    fclose( dev->pdfFile );
+    plCloseFile( pls );
 
     /* cleanup */
     HPDF_Free( dev->pdf );

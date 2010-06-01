@@ -1149,7 +1149,7 @@ void plD_tidy_png( PLStream *pls )
     }
 #endif
 
-    fclose( pls->OutFile );
+    plCloseFile( pls );
     free_mem( pls->dev );
 }
 

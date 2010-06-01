@@ -132,7 +132,7 @@ plD_tidy_pstex( PLStream *pls )
         ROUND( ( dev->llx - XOFFSET ) * scale ),
         ROUND( ( dev->lly - YOFFSET ) * scale ) );
 
-    fclose( fp );
+    plCloseFile( pls );
 }
 
 void
