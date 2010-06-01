@@ -2,7 +2,7 @@
 
 -- Font demo.
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2010 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -41,8 +41,8 @@ procedure xthick07a is
 
     k : Integer;
     x, y : Real_Vector(1 .. 1);
-    base : array(0 .. 16) of Integer := (0, 200, 500, 600, 700, 800, 900, 2000,
-        2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900);
+    base : array(0 .. 19) of Integer := (0, 100, 0, 100, 200, 500, 600, 700, 800, 
+        900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900);
 
 begin
     -- Parse and process command line arguments
@@ -51,8 +51,11 @@ begin
     -- Initialize plplot
     Initialize_PLplot;
 
-    Set_Characer_Set(1);
-    for l in 0 .. 16 loop
+    Set_Characer_Set(0);
+    for l in 0 .. 19 loop
+        if l = 2 then
+            Set_Characer_Set(1);
+        end if;
         Advance_To_Subpage(Next_Subpage);
 
         -- Set up viewport and window
@@ -84,7 +87,11 @@ begin
             end loop;
         end loop;
 
-        Write_Text_Viewport("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols");
+        if l < 2 then
+            Write_Text_Viewport("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (compact)");
+        else
+            Write_Text_Viewport("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (extended)");
+        end if;
     end loop;
     End_PLplot;
 

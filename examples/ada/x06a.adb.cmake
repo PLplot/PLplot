@@ -2,7 +2,7 @@
 
 -- Displays the entire "plpoin" symbol (font) set.
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2010 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -39,7 +39,7 @@ use
 
 procedure x06a is
 
-    k : Integer;
+    k, maxfont : Integer;
     x, y : Real_Vector(1 .. 1);
 
 begin
@@ -49,41 +49,57 @@ begin
     -- Initialize plplot
     plinit;
 
-    pladv(0);
+    for Kind_Font in 0 .. 1 loop
+        plfontld(Kind_Font);
+        if Kind_Font = 0 then
+            maxfont := 1;
+        else
+            maxfont := 4;
+        end if;
 
-    -- Set up viewport and window
-    plcol0(2);
-    plvpor(0.1, 1.0, 0.1, 0.9);
-    plwind(0.0, 1.0, 0.0, 1.3);
+        for font in 0 .. maxfont - 1 loop
+            plfont(font + 1);
+            pladv(0);
 
-    -- Draw the grid using plbox
-    plbox("bcg", 0.1, 0, "bcg", 0.1, 0);
+            -- Set up viewport and window
+            plcol0(2);
+            plvpor(0.1, 1.0, 0.1, 0.9);
+            plwind(0.0, 1.0, 0.0, 1.3);
 
-    -- Write the digits below the frame
-    plcol0(15);
-    for i in 0 .. 9 loop
-        plmtex("b", 1.5, (0.1 * Long_Float(i) + 0.05), 0.5, Trim(Integer'image(i), Left));
-    end loop;
+            -- Draw the grid using plbox
+            plbox("bcg", 0.1, 0, "bcg", 0.1, 0);
 
-    k := 0;
-    for i in 0 .. 12 loop
+            -- Write the digits below the frame
+            plcol0(15);
+            for i in 0 .. 9 loop
+                plmtex("b", 1.5, (0.1 * Long_Float(i) + 0.05), 0.5, Trim(Integer'image(i), Left));
+            end loop;
 
-        -- Write the digits to the left of the frame
-        plmtex("lv", 1.0, (1.0 - (2.0 * Long_Float(i) + 1.0) / 26.0), 1.0, Trim(Integer'image(10 * i), Left));
-        for j in 0 .. 9 loop
-            x(1) := 0.1 * Long_Float(j) + 0.05;
-            y(1) := 1.25 - 0.1 * Long_Float(i);
+            k := 0;
+            for i in 0 .. 12 loop
 
-            -- Display the symbols (plpoin expects that x and y are arrays so
-            -- pass pointers)
-            if k < 128 then
-                plpoin(x, y, k);
+                -- Write the digits to the left of the frame
+                plmtex("lv", 1.0, (1.0 - (2.0 * Long_Float(i) + 1.0) / 26.0), 1.0, Trim(Integer'image(10 * i), Left));
+                for j in 0 .. 9 loop
+                    x(1) := 0.1 * Long_Float(j) + 0.05;
+                    y(1) := 1.25 - 0.1 * Long_Float(i);
+
+                    -- Display the symbols (plpoin expects that x and y are arrays so
+                    -- pass pointers)
+                    if k < 128 then
+                        plpoin(x, y, k);
+                    end if;
+                    k := k + 1;
+                end loop;
+            end loop;
+
+            if Kind_Font = 0 then
+                plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (compact)");
+            else
+                plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (extended)");
             end if;
-            k := k + 1;
-        end loop;
-    end loop;
-
-    plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
+        end loop; -- font
+    end loop; -- Kind_Font
     plend;
 
 end x06a;

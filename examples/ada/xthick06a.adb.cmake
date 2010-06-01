@@ -2,7 +2,7 @@
 
 -- Displays the entire "Draw_Points" symbol (font) set.
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2010 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -39,7 +39,7 @@ use
 
 procedure xthick06a is
 
-    k : Integer;
+    k, maxfont : Integer;
     x, y : Real_Vector(1 .. 1);
 
 begin
@@ -49,41 +49,57 @@ begin
     -- Initialize plplot
     Initialize_PLplot;
 
-    Advance_To_Subpage(Next_Subpage);
+    for Kind_Font in 0 .. 1 loop
+        Set_Characer_Set(Kind_Font);
+        if Kind_Font = 0 then
+            maxfont := 1;
+        else
+            maxfont := 4;
+        end if;
 
-    -- Set up viewport and window
-    Set_Pen_Color(2);
-    Set_Viewport_Normalized(0.1, 1.0, 0.1, 0.9);
-    Set_Viewport_World(0.0, 1.0, 0.0, 1.3);
+        for font in 0 .. maxfont - 1 loop
+            Set_Font_Style(font + 1);
+            Advance_To_Subpage(Next_Subpage);
 
-    -- Draw the grid using Box_Around_Viewport
-    Box_Around_Viewport("bcg", 0.1, 0, "bcg", 0.1, 0);
+            -- Set up viewport and window
+            Set_Pen_Color(2);
+            Set_Viewport_Normalized(0.1, 1.0, 0.1, 0.9);
+            Set_Viewport_World(0.0, 1.0, 0.0, 1.3);
 
-    -- Write the digits below the frame
-    Set_Pen_Color(15);
-    for i in 0 .. 9 loop
-        Write_Text_Viewport("b", 1.5, (0.1 * Long_Float(i) + 0.05), 0.5, Trim(Integer'image(i), Left));
-    end loop;
+            -- Draw the grid using Box_Around_Viewport
+            Box_Around_Viewport("bcg", 0.1, 0, "bcg", 0.1, 0);
 
-    k := 0;
-    for i in 0 .. 12 loop
+            -- Write the digits below the frame
+            Set_Pen_Color(15);
+            for i in 0 .. 9 loop
+                Write_Text_Viewport("b", 1.5, (0.1 * Long_Float(i) + 0.05), 0.5, Trim(Integer'image(i), Left));
+            end loop;
 
-        -- Write the digits to the left of the frame
-        Write_Text_Viewport("lv", 1.0, (1.0 - (2.0 * Long_Float(i) + 1.0) / 26.0), 1.0, Trim(Integer'image(10 * i), Left));
-        for j in 0 .. 9 loop
-            x(1) := 0.1 * Long_Float(j) + 0.05;
-            y(1) := 1.25 - 0.1 * Long_Float(i);
+            k := 0;
+            for i in 0 .. 12 loop
 
-            -- Display the symbols (Draw_Points expects that x and y are arrays so
-            -- pass pointers)
-            if k < 128 then
-                Draw_Points(x, y, k);
+                -- Write the digits to the left of the frame
+                Write_Text_Viewport("lv", 1.0, (1.0 - (2.0 * Long_Float(i) + 1.0) / 26.0), 1.0, Trim(Integer'image(10 * i), Left));
+                for j in 0 .. 9 loop
+                    x(1) := 0.1 * Long_Float(j) + 0.05;
+                    y(1) := 1.25 - 0.1 * Long_Float(i);
+
+                    -- Display the symbols (Draw_Points expects that x and y are arrays so
+                    -- pass pointers)
+                    if k < 128 then
+                        Draw_Points(x, y, k);
+                    end if;
+                    k := k + 1;
+                end loop;
+            end loop;
+
+            if Kind_Font = 0 then
+                Write_Text_Viewport("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (compact)");
+            else
+                Write_Text_Viewport("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols (extended)");
             end if;
-            k := k + 1;
-        end loop;
-    end loop;
-
-    Write_Text_Viewport("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
+        end loop; -- font
+    end loop; -- Kind_Font
     End_PLplot;
 
 end xthick06a;
