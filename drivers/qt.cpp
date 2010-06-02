@@ -258,7 +258,8 @@ void plD_init_rasterqt( PLStream * pls )
     pls->dev_text    = 1;                        // want to draw text
     pls->dev_unicode = 1;                        // want unicode
 
-    bool isMaster = initQtApp( false );
+    // Needs to be true only because of multi-stream case
+    bool isMaster = initQtApp( true );
 
     if ( pls->xdpi <= 0. )
         dpi = DEFAULT_DPI;
@@ -677,7 +678,8 @@ void plD_init_svgqt( PLStream * pls )
     pls->dev_text    = 1;                        // want to draw text
     pls->dev_unicode = 1;                        // want unicode
 
-    bool isMaster = initQtApp( false );
+    // Needs to be true only because of multi-stream case
+    bool isMaster = initQtApp( true );
 
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
@@ -955,7 +957,8 @@ void plD_init_epspdfqt( PLStream * pls )
     pls->dev_unicode = 1; // want unicode
 
     // QPrinter devices won't create if there is no QApplication declared...
-    bool isMaster = initQtApp( false );
+    // Needs to be true only because of multi-stream case
+    bool isMaster = initQtApp( true );
 
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
