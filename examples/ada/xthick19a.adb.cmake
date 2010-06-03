@@ -47,6 +47,28 @@ use
 -- Shows two views of the world map.
 procedure xthick19a is
     minx, maxx, miny, maxy : Long_Float;
+    x, y : Real_Vector(1 .. 1);
+
+    -- This spec is necessary in order to enforce C calling conventions, used 
+    -- in the callback by intervening C code.
+    procedure map_transform
+       (x, y   : Long_Float;
+        xt, yt : out Long_Float; 
+        data   : PLPointer);
+    pragma Convention(C, map_transform);
+
+    procedure map_transform
+       (x, y   : Long_Float;
+        xt, yt : out Long_Float; 
+        data   : PLPointer)
+    is
+        radius : Long_Float;
+    begin
+        radius := 90.0 - y;
+        xt := radius * cos(x * pi / 180.0);
+        yt := radius * sin(x * pi / 180.0);
+    end map_transform;
+
 
     -- This spec is necessary in order to enforce C calling conventions, used 
     -- in the callback by intervening C code.
@@ -65,15 +87,13 @@ procedure xthick19a is
     -- argument list, and then pass a pointer to _that_ when calling Draw_Map and
     -- plmeridian.
     procedure mapform19(n : Integer; x, y : in out Map_Form_Constrained_Array) is 
-        xp, yp, radius : Long_Float;
+        xp, yp : Long_Float;
     begin
          -- DO NOT use x'range for this loop because the C function which calls 
          -- this function WILL NOT SEE IT AND YOU WILL GET A SEGFAULT. Simply 
          -- use 0 .. n - 1 explicitly.
         for i in 0 .. n - 1 loop
-            radius := 90.0 - y(i);
-            xp := radius * cos(x(i) * pi / 180.0);
-            yp := radius * sin(x(i) * pi / 180.0);
+            map_transform(x(i), y(i), xp, yp, System.Null_Address);
             x(i) := xp;
             y(i) := yp;
         end loop;
@@ -219,5 +239,35 @@ begin
 
     Select_Line_Style(Line_Style => 2);
     Draw_Latitude_Longitude(mapform19'Unrestricted_Access, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0);
+
+    -- Polar, Northern hemisphere, this time with a PLplot-wide transform
+    minx := 0.0;
+    maxx := 360.0;
+
+    Set_Custom_Coordinate_Transform(map_transform'Unrestricted_Access, System.Null_Address);
+
+    Select_Line_Style(1);
+    Set_Environment(-75.0, 75.0, -75.0, 75.0, Justified, Box);
+
+    -- No need to set the map transform here as the global transform will be used.
+    Draw_Map(null, Continents, minx, maxx, miny, maxy);
+
+    Select_Line_Style(2);
+    Draw_Latitude_Longitude(null, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0);
+
+    -- Show Baltimore, MD on the map.
+    Set_Pen_Color(Yellow);
+    Set_Symbol_Size(0.0, 2.0);
+    x(1) := -76.6125;
+    y(1) := 39.2902778;
+    Draw_Points(x, y, 18);
+    Set_Symbol_Size(0.0, 1.0);
+    Write_Text_World(-76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD");
+
+    -- Clear the global transform.
+    Clear_Custom_Coordinate_Transform;
+    -- or...
+    -- Set_Custom_Coordinate_Transform(null, System.Null_Address);
+
     End_PLplot;
 end xthick19a;

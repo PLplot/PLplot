@@ -2842,6 +2842,24 @@ package body PLplot is
     end Initialize_Set_Device;
 
 
+    -- Set the coordinate transform.
+    -- plstransform
+    procedure Set_Custom_Coordinate_Transform
+       (Coordinate_Transform_Procedure_Pointer : Coordinate_Transform_Procedure_Pointer_Type;
+        Coordinate_Transform_Data_Pointer : PLpointer) is
+    begin
+        plstransform(Coordinate_Transform_Procedure_Pointer,
+            Coordinate_Transform_Data_Pointer);
+    end Set_Custom_Coordinate_Transform;
+    
+    
+    -- Clear the coordinate transform. Ada only; not part of PLplot API.
+    procedure Clear_Custom_Coordinate_Transform is
+    begin
+        Set_Custom_Coordinate_Transform(null, System.Null_Address);
+    end Clear_Custom_Coordinate_Transform;
+
+
     -- Add a point to a stripchart.
     -- plstripa
     procedure Update_Stripchart

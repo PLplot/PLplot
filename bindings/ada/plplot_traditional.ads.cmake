@@ -94,6 +94,10 @@ package PLplot_Traditional is
     -- "Rename" callback for custom label functions.
     subtype Custom_Label_Procedure_Pointer_Type is 
         PLplot_Thin.Custom_Label_Procedure_Pointer_Type;
+        
+    -- "Rename" callback for custom coordinate transform procedure.
+    subtype Coordinate_Transform_Procedure_Pointer_Type is
+        PLplot_Thin.Coordinate_Transform_Procedure_Pointer_Type;
 
 --------------------------------------------------------------------------------
 --        Types and constants for thick binding                               --
@@ -753,7 +757,6 @@ package PLplot_Traditional is
     -- Draws a contour plot from data in f(nx,ny). Is just a front-end to plfcont,
     -- with a particular choice for f2eval and f2eval_data.
 
-    --  plcont
     procedure plcont
        (z                                : Real_Matrix;
         x_Min_Index, x_Max_Index         : Integer;
@@ -1518,7 +1521,7 @@ package PLplot_Traditional is
         label_data : PLPointer);
     
     
-    -- Reset to default labeling. Not part of the C API.
+    -- Reset to default labeling. Ada only; not part of the C API.
     procedure Use_Default_Labels;
 
 
@@ -1580,6 +1583,16 @@ package PLplot_Traditional is
     procedure plstart
        (Device_Name                                          : String;
         Number_Horizontal_Subpages, Number_Vertical_Subpages : Integer := 1);
+    
+    
+    -- Set the coordinate transform.
+    procedure plstransform
+       (Coordinate_Transform_Procedure_Pointer : Coordinate_Transform_Procedure_Pointer_Type;
+        Coordinate_Transform_Data_Pointer : PLpointer);
+    
+    
+    -- Clear the coordinate transform. Ada only; not part of the C API.
+    procedure Clear_Custom_Coordinate_Transform;
 
 
     -- Add a point to a stripchart.

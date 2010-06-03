@@ -1235,7 +1235,7 @@ package body PLplot_Traditional is
     -- Draws a contour plot from data in f(nx,ny). Is just a front-end to
     -- plfcont, with a particular choice for f2eval and f2eval_data.
 
-    -- plcont (universal version using System.Address to the transformation data)
+    -- (Universal version using System.Address to the transformation data)
     procedure plcont
        (z                                : Real_Matrix;
         x_Min_Index, x_Max_Index         : Integer;
@@ -2701,6 +2701,23 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plstart(To_C(Device_Name), Number_Horizontal_Subpages, Number_Vertical_Subpages);
     end plstart;
+
+
+    -- Set the coordinate transform.
+    procedure plstransform
+       (Coordinate_Transform_Procedure_Pointer : Coordinate_Transform_Procedure_Pointer_Type;
+        Coordinate_Transform_Data_Pointer : PLpointer) is
+    begin
+        PLplot_Thin.plstransform(Coordinate_Transform_Procedure_Pointer,
+            Coordinate_Transform_Data_Pointer);
+    end plstransform;
+    
+    
+    -- Clear the coordinate transform. Ada only; not part of the C API.
+    procedure Clear_Custom_Coordinate_Transform is
+    begin
+        PLplot_Thin.plstransform(null, System.Null_Address);
+    end Clear_Custom_Coordinate_Transform;
 
 
     -- Add a point to a stripchart.

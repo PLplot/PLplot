@@ -154,8 +154,7 @@ package PLplot_Thin is
     type Map_Form_Function_Pointer_Type is access
         procedure (Length_Of_x : Integer; x, y : in out Map_Form_Constrained_Array);
     pragma Convention(Convention => C, Entity => Map_Form_Function_Pointer_Type);
-    
-    
+
     -- Access-to-function type for making contour plots from irregularly 
     -- spaced data which is stored in a 2D array accessed by a single pointer.
     -- Examples of such functions are in plplot.h and are called plf2eval, 
@@ -181,6 +180,14 @@ package PLplot_Thin is
             length  : size_t;
             data    : PLPointer);
     pragma Convention(Convention => C, Entity => Custom_Label_Procedure_Pointer_Type);
+
+    -- Access-to-procedure type for setting a global custom coordinate tranformation.
+    type Coordinate_Transform_Procedure_Pointer_Type is access
+        procedure 
+           (x_In, y_In                   : Long_Float; 
+            x_Transformed, y_Transformed : out Long_Float;
+            data                         : PLpointer);
+    pragma Convention(Convention => C, Entity => Coordinate_Transform_Procedure_Pointer_Type);
 
 
 --------------------------------------------------------------------------------
@@ -1554,6 +1561,14 @@ package PLplot_Thin is
     procedure
     plstart(devname : char_array; nx : PLINT; ny : PLINT);
     pragma Import(C, plstart, "c_plstart");
+
+
+    --Set the coordinate transform
+
+    procedure
+    plstransform(coordinate_transform : Coordinate_Transform_Procedure_Pointer_Type;
+        coordinate_transform_data : PLpointer);
+    pragma Import (C, plstransform, "c_plstransform");
 
 
     -- Add a point to a stripchart.  

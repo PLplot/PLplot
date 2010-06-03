@@ -94,6 +94,10 @@ package PLplot is
     -- "Rename" callback for custom label functions.
     subtype Custom_Label_Procedure_Pointer_Type is 
         PLplot_Thin.Custom_Label_Procedure_Pointer_Type;
+        
+    -- "Rename" callback for custom coordinate transform procedure.
+    subtype Coordinate_Transform_Procedure_Pointer_Type is
+        PLplot_Thin.Coordinate_Transform_Procedure_Pointer_Type;
 
 --------------------------------------------------------------------------------
 --        Types and constants for thick binding                               --
@@ -1720,6 +1724,17 @@ package PLplot is
     procedure Initialize_Set_Device
        (Device_Name                                          : String;
         Number_Horizontal_Subpages, Number_Vertical_Subpages : Integer := 1);
+
+    
+    -- Set the coordinate transform.
+    -- plstransform
+    procedure Set_Custom_Coordinate_Transform
+       (Coordinate_Transform_Procedure_Pointer : Coordinate_Transform_Procedure_Pointer_Type;
+        Coordinate_Transform_Data_Pointer : PLpointer);
+    
+    
+    -- Clear the coordinate transform. Ada only; not part of the C API.
+    procedure Clear_Custom_Coordinate_Transform;
 
 
     -- Add a point to a stripchart.
