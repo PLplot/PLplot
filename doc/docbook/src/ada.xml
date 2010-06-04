@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+
 <!-- -*-  mode: nxml -*- --><!--
     ada.xml: "Ada Language" chapter
 
@@ -30,12 +30,14 @@ BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
---><!-- This document was created with Syntext Serna Free. --><chapter id="ada">
+--><!-- This document was created with Syntext Serna Free. -->
+
+<chapter id="ada">
   <title>Ada Language</title>
   <para>        This document describes the Ada bindings to the PLplot technical plotting software, how to obtain the necessary software components, and how to use them together.</para>
   <sect1 id="ada_overview">
     <title>Overview</title>
-    <para>        The Ada bindings for PLplot provide a way for Ada programmers to access the powerful PLplot technical plotting facilities directly from Ada programs while working completely in Ada—the Ada programmer never needs to know or worry that PLplot itself is written in another language.</para>
+    <para>        The Ada bindings for PLplot provide a way for Ada programmers to access the powerful PLplot technical plotting facilities directly from Ada programs while working completely in Ada; the Ada programmer never needs to know or worry that PLplot itself is written in another language.</para>
     <para>        There are a thin binding and two thick bindings provided. The thin binding presents the application programming interface (API) in a form very similar to the C API, although in 100% Ada. The thick bindings present the API in a form to which Ada programmers will be more accustomed and add some ease-of-use features. It is expected that the thick bindings will be preferred.</para>
   </sect1>
   <sect1 id="ada_bindings">
@@ -86,7 +88,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </sect2>
     <sect2 id="ada_obtaining_plplot">
       <title>Download and install PLplot</title>
-      <para>         PLplot can be downloaded from the PLplot home page at <ulink url="http://sourceforge.net/projects/plplot">sourceforge.net—plplot</ulink>. Follow the installation instructions after downloading. The installation process is more involved than other open source software and requires that your computer has cmake installed. OS X users can try installing PLplot in its entirety from MacPorts but that activity is not officially supported by the PLplot developers. The advantage of using MacPorts is that all installation dependencies are automatically installed for you.</para>
+      <para>         PLplot can be downloaded from the PLplot project page at <ulink url="http://sourceforge.net/projects/plplot">sourceforge.net</ulink>. Follow the installation instructions after downloading. The installation process requires that your computer has CMake installed. OS X users can try installing PLplot in its entirety from MacPorts but that activity is not officially supported by the PLplot developers. The advantage of using MacPorts is that all installation dependencies are automatically installed for you.</para>
     </sect2>
     <sect2 id="ada_obtaining_bindings">
       <title>Download the Ada bindings to PLplot</title>
@@ -184,11 +186,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </sect4>
         <sect4 id="ada_simple_plot_pairs">
           <title>Simple_Plot_Pairs</title>
-          <para> Plot up to five <emphasis>x</emphasis>–<emphasis>y</emphasis> pairs with easy labeling and automatic line colors and styles.</para>
+          <para> Plot up to five <emphasis>x</emphasis>-<emphasis>y</emphasis> pairs with easy labeling and automatic line colors and styles.</para>
         </sect4>
         <sect4 id="ada_single_plot">
           <title>Single_Plot</title>
-          <para> Plot a single <emphasis>x</emphasis>–<emphasis>y</emphasis> pair with flexible labels, axis styles, colors, line width and style, justification, and zooming.</para>
+          <para> Plot a single <emphasis>x</emphasis>-<emphasis>y</emphasis> pair with flexible labels, axis styles, colors, line width and style, justification, and zooming.</para>
         </sect4>
         <sect4 id="ada_simple_contour">
           <title>Simple_Contour</title>
@@ -214,7 +216,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <para><literal> Restore_Snapshot_Of_Color_Map_0</literal></para>
         <para><literal> Restore_Default_Snapshot_Of_Color_Map_0</literal></para>
         <para>  Color resetting functions for the 16 colors of color map 0</para>
-        <para><literal> Reset_Black, Reset_Red, … Reset_White</literal></para>
+        <para><literal> Reset_Black, Reset_Red, &#x2026;, Reset_White</literal></para>
         <para>  Easy manipulation of color map 1</para>
         <para>    Pre-built color themes for color map 1: <literal>Color_Themes_For_Map_1_Type</literal></para>
         <para>    Quick application of pre-built color themes: <literal>Quick_Set_Color_Map_1</literal></para>
@@ -225,7 +227,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </sect2>
     <sect2 id="ada_integer_options">
       <title>Integer-options Given Ada Names</title>
-      <para>The C version of PLplot uses a number of integers to mean specific things. Unfortunately, the meaning is lost when it it consigned to being a mere integer with no name. The Ada binding partially rectifies this situation by giving names to these integer constants—the integer can still be used if desired. (A more complete and safer rectification would use enumerated types.)</para>
+      <para>The C version of PLplot uses a number of integers to mean specific things. Unfortunately, the meaning is lost when it it consigned to being a mere integer with no name. The Ada binding partially rectifies this situation by giving names to these integer constants.  The integer can still be used if desired. (A more complete and safer rectification would use enumerated types.)</para>
       <para>        Below is a listing of at least the contexts in which these &quot;re-namings&quot; have been applied. In some cases the entire range of values is listed, but if there are more than about four such values for each context, only a sampling is given.</para>
       <para><emphasis role="bold"> Instances</emphasis></para>
       <para>  Colors: Plot_Color_Type</para>
@@ -274,8 +276,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para>         To provide convenient string handling in a fashion that is familiar to Ada programmers, function versions which return a <literal>String</literal> type are provided of <literal>Get_Device_Name</literal>, <literal>Get_Version_Number</literal>, and <literal>Get_Output_File_Name</literal> (<literal>plgdev</literal>, <literal>plgver</literal>, and <literal>plgfnam</literal> in the traditional binding). These functions replace the procedure-style subprograms that are described in the C API documentation.</para>
       <para>         Overloaded <literal>Set_Line_Style</literal> (<literal>plstyl</literal> in the traditional binding) with a version that takes a single argument, <literal>Default_Continuous_Line</literal>. This replaces the awkward situation of calling the normal versions of these procedures with unused arguments simply to set the line style to the default, continuous, line.</para>
       <para>         The contour plotter <literal>Contour_Plot_Irregular_Data</literal> (<literal>plfcont</literal> in the traditional binding) is provided for making contour plots from irregularly spaced data. This feature is not documented in the PLplot API documentation. </para>
-      <para>The custom label function <literal>Set_Custom_Label</literal> (<literal>plslabelfunc</literal> in the traditional binding) can be called with null arguments to revert to using the default labeling scheme. Alternately, an Ada–only procedure with no arguments, <literal>Use_Default_Labels</literal>, is provided. See Ada example 19 (<literal>x19a.adb</literal> or <literal>xthick19a.adb</literal>) for a usage example.</para>
-      <para>The custom coordinate transform setter, <literal>Set_Custom_Coordinate_Transform</literal>, (<literal>plstransform</literal> in the traditional binding) can be called with null arguments to clear any previous custom coordinate transforms that the user has set, thus reverting to the default coordinate transform. Alternately, an Ada–only procdure with no arguments, <literal>Clear_Custom_Coordinate_Transform</literal>, is provided. See Ada example 19 (<literal>x19a.adb</literal> or <literal>xthick19a.adb</literal>) for a usage example.</para>
+      <para>The custom label function <literal>Set_Custom_Label</literal> (<literal>plslabelfunc</literal> in the traditional binding) can be called with null arguments to revert to using the default labeling scheme. Alternately, an Ada-only procedure with no arguments, <literal>Use_Default_Labels</literal>, is provided. See Ada example 19 (<literal>x19a.adb</literal> or <literal>xthick19a.adb</literal>) for a usage example.</para>
+      <para>The custom coordinate transform setter, <literal>Set_Custom_Coordinate_Transform</literal>, (<literal>plstransform</literal> in the traditional binding) can be called with null arguments to clear any previous custom coordinate transforms that the user has set, thus reverting to the default coordinate transform. Alternately, an Ada-only procdure with no arguments, <literal>Clear_Custom_Coordinate_Transform</literal>, is provided. See Ada example 19 (<literal>x19a.adb</literal> or <literal>xthick19a.adb</literal>) for a usage example.</para>
     </sect2>
   </sect1>
   <sect1 id="ada_c_flavor">
@@ -309,10 +311,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>         The Macintosh Ada community has made a plug-in for Apple&apos;s free Xcode integrated development environment (IDE) that makes programming Ada in Xcode possible. The plug-in is included with the compiler that is available at <ulink url="http://www.macada.org/">www.macada.org</ulink>. Since Xcode is based on gcc, it is possible to work in the various gcc languages as well as to incorporate binaries such as the PLplot library.</para>
     <para>         In order to make an Xcode project, drag-and-drop source files and the PLplot library file to the Groups &amp; Files pane of an Ada project. There are a few idiosyncrasies that you may encounter so make sure to contact the very friendly Macintosh Ada mailing list at <ulink url="http://www.macada.org/">www.macada.org</ulink> or study the FAQ at that same site if you have any difficulties.</para>
     <para><emphasis role="bold"> 11.2 A Note on AquaTerm</emphasis></para>
-    <para>         AquaTerm is a display option available on Macintosh computers using OS X and is supported by PLplot. It is a native Cocoa graphics &quot;terminal&quot; that is highly recommended. All output is antialiased and is easily cut-and-pasted in OS X&apos;s native PDF format. Get it at <ulink url="http://sourceforge.net/project/showfiles.php?group_id=39915">sourceforge.net—showfiles.php</ulink>. It can also be installed from either the Fink <ulink url="http://www.finkproject.org/">www.finkproject.org</ulink> or MacPorts <ulink url="http://www.macports.org/projects.">www.macports.org—projects.</ulink> projects.</para>
+    <para>         AquaTerm is a display option available on Macintosh computers using OS X and is supported by PLplot. It is a native Cocoa graphics &quot;terminal&quot; that is highly recommended. All output is antialiased and is easily cut-and-pasted in OS X&apos;s native PDF format. Get it <ulink url="http://sourceforge.net/project/showfiles.php?group_id=39915">here</ulink>. It can also be installed from either the <ulink url="http://www.finkproject.org/">Fink</ulink> or <ulink url="http://www.macports.org/projects.">MacPorts</ulink> projects.</para>
     <para><emphasis role="bold"> 11.3 X11</emphasis></para>
     <para>         Apple supplies the X11 windowing system that is popular on some other Unix and Linux operations systems as part of the Developer Tools. All PLplot programs made with the Ada bindings will run on X11. In fact, some types of interactivity such as Examples 14 and 17 will not run on Apple&apos;s X11 (as of OS X 10.4 at least) and must be run on X11 (or some other output device such as TCL/TK).</para>
     <para><emphasis role="bold"> 11.4 GNAT for OS X</emphasis></para>
-    <para>         Apple Macintosh users will benefit from a pre-built version of GNAT that comes packaged using the usual Apple software installer and is strongly recommended. This compiler is available for both PowerPC and Intel Macintoshes at <ulink url="http://www.macada.org/macada/Welcome.html.">www.macada.org—Welcome.html.</ulink>. This site is traditionally rather confusing but the mailing list is extremely helpful. The installer also includes an Ada-specific plug-in for Apple&apos;s Xcode IDE which is strongly recommended if you plan to work on this platform. Xcode is part of the Developer Tools and is available on the Apple system disks that also contain the operating system or it can be downloaded for free from <ulink url="http://developer.apple.com/tools/xcode/">developer.apple.com—xcode</ulink>. </para>
+    <para>         Apple Macintosh users will benefit from a pre-built version of GNAT that comes packaged using the usual Apple software installer and is strongly recommended. This compiler is available for both PowerPC and Intel Macintoshes at <ulink url="http://www.macada.org/macada/Welcome.html.">www.macada.org</ulink>. This site is traditionally rather confusing but the mailing list is extremely helpful. The installer also includes an Ada-specific plug-in for Apple&apos;s Xcode IDE which is strongly recommended if you plan to work on this platform. Xcode is part of the Developer Tools and is available on the Apple system disks that also contain the operating system or it can be downloaded for free from <ulink url="http://developer.apple.com/tools/xcode/">here</ulink>. </para>
   </sect1>
 </chapter>
