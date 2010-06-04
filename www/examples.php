@@ -82,7 +82,7 @@
 	<li><a href=\"http://www.columbia.edu/~fdc/pace/flag.html\">Pace flag</a></li>
 	</ul>
 	\n"),
-	  array(25,  4, 1, "
+	  array(25,  8, 1, "
 	<p>Diagnostic demo of filling and clipping polygons.</p>
 	\n"),
 	  array(26,  2, 1, "
@@ -94,7 +94,7 @@
 	  array(28,  5, 1, "
 	<p>Demo of 3-d writing of text (plmtex3 and plptex3).</p>
 	\n"),
-	  array(29,  3, 1, "
+	  array(29, 10, 1, "
 	<p>Demo of date / time formatting for axes.</p>
 	\n"),
 	  array(30,  2, 1, "
