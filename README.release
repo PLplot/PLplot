@@ -1,4 +1,4 @@
-PLplot Release 5.9.6
+PLplot Release 5.9.7
 ~~~~~~~~~~~~~~~~~~~~
 This is a development release of PLplot. It represents the ongoing efforts
 of the community to improve the PLplot plotting package. Development 
@@ -184,18 +184,9 @@ be good).
 
 INDEX
 
-0. Tests made for release 5.9.6
+0. Tests made for release 5.9.7
 
-1. Changes relative to PLplot 5.9.5 (the previous development release)
-
-1.1 Make PLplot aware of LC_NUMERIC locale
-1.2 Linear gradients have been implemented
-1.3 Cairo Windows driver implemented
-1.4 Custom axis labeling implemented
-1.5 Universal coordinate transform implemented
-1.6 Support for arbitrary storage of 2D user data
-1.7 Font improvements
-
+1. Changes relative to PLplot 5.9.6 (the previous development release)
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -245,190 +236,14 @@ detected
 2.42 Font improvements
 
 
-0. Tests made for release 5.9.6
+0. Tests made for release 5.9.7
 
 See 
 http://www.miscdebris.net/plplot_wiki/index.php?title=Testing_PLplot#Testing_Reports
 for a summary table of all testing done for PLplot-5.9.6.
 
-1. Changes relative to PLplot 5.9.5 (the previous development release)
+1. Changes relative to PLplot 5.9.6 (the previous development release)
 
-1.1 Make PLplot aware of LC_NUMERIC locale
-
-For POSIX-compliant systems, locale is set globally so any external
-applications or libraries that use the PLplot library or any external
-libraries used by the PLplot library or PLplot device drivers could
-potentially change the LC_NUMERIC locale used by PLplot to anything those
-external applications and libraries choose. The principal consequence of
-such choice is the decimal separator could be a comma (for some locales)
-rather than the period assumed for the "C" locale.  For previous versions of
-PLplot a comma decimal separator would have lead to a large number of
-errors, but this issue is now addressed with a side benefit that our plots
-now have the capability of displaying the comma (e.g., in axis labels) for
-the decimal separator for those locales which require that.
-
-If you are not satisfied with the results for the default PLplot locale set
-by external applications and libraries, then you can now choose the
-LC_NUMERIC locale for PLplot by (a) specifying the new -locale command-line
-option for PLplot (if you do not specify that option, a default locale is
-chosen depending on applications and libraries external to PLplot (see
-comments above), and (b) setting an environment variable (LC_ALL,
-LC_NUMERIC, or LANG on Linux, for example) to some locale that has been
-installed on your system.  On Linux, to find what locales are installed, use
-the "locale -a" option. The "C" locale is always installed, but usually
-there is also a principal locale that works on a platform such as
-en_US.UTF8, nl_NL.UTF8, etc.  Furthermore, it is straightforward to build
-and install any additional locale you desire.  (For example, on Debian Linux
-you do that by running "dpkg-reconfigure locales".)
-
-Normally, users will not use the -locale option since the period
-decimal separator that you get for the normal LC_NUMERIC default "C"
-locale used by external applications and libraries is fine for their needs.
-However, if the resulting decimal separator is not what the user
-wants, then they would do something like the following to (a) use a period
-decimal separator for command-line input and plots:
-
-LC_ALL=C examples/c/x09c -locale -dev psc -o test.psc -ori 0.5
-
-or (b) use a comma decimal separator for command-line input and plots:
-
-LC_ALL=nl_NL.UTF8 examples/c/x09c -locale -dev psc -o test.psc -ori 0,5
-
-N.B. in either case if the wrong separator is used for input (e.g., -ori 0,5
-in the first case or -ori 0.5 in the second) the floating-point conversion
-(using atof) is silently terminated at the wrong separator for the locale,
-i.e., the fractional part of the number is silently dropped.  This is
-obviously not ideal, but on the other hand there are relatively few
-floating-point command-line options for PLplot, and we also expect those who
-use the -locale option to specifically ask for a given separator for plots
-(e.g., axis labels) will then use it for command-line input of
-floating-point values as well.
-
-Certain critical areas of the PLplot library (e.g., our colour palette file
-reading routines and much of the code in our device drivers) absolutely
-require a period for the decimal separator.  We now protect those critical
-areas by saving the normal PLplot LC_NUMERIC locale (established with the
-above -locale option or by default by whatever is set by external
-applications or libraries), setting the LC_NUMERIC "C" locale, executing the
-critical code, then restoring back to the normal PLplot LC_NUMERIC locale.
-Previous versions of PLplot did not have this protection of the critical
-areas so were vulnerable to default LC_NUMERIC settings of external
-applications that resulted in a comma decimal separator that did not work
-correctly for the critical areas.
-
-1.2 Linear gradients have been implemented
-
-The new plgradient routine draws a linear gradient (based on the
-current colour map 1) at a specified angle with the x axis for a
-specified polygon.  Standard examples 25 and 30 now demonstrate use of
-plgradient.  Some devices use a software fallback to render the
-gradient.  This fallback is implemented with plshades which uses a
-series of rectangles to approximate the gradient. Tiny alignment
-issues for those rectangles relative to the pixel grid may look
-problematic for transparency gradients.  To avoid that issue, we try
-to use native gradient capability whenever that is possible for any of
-our devices.  Currently, this has been implemented for our svg, qt,
-and cairo devices.  The result is nice-looking smooth transparency
-gradients for those devices, for, e.g., example 30, page 2.
-
-1.3 Cairo Windows driver implemented
-
-A cairo Windows driver has been implemented. This provides an
-interactive cairo driver for Windows similar to xcairo on Linux.
-Work to improve its functionality is ongoing.
-
-1.4 Custom axis labeling implemented
-
-Axis text labels can now be customized using the new plslabelfunc function.
-This allows a user to specify what text should be draw at a given position
-along a plot axis.  Example 19 has been updated to illustrate this function's
-use through labeling geographic coordinates in degrees North, South, East and
-West.
-
-1.5 Universal coordinate transform implemented
-
-A custom coordinate transformation function can be set using plstransform.
-This transformation function affects all subsequent plot function calls which
-work with plot window coordinates.  Testing and refinement of this support is
-ongoing.
-
-1.6 Support for arbitrary storage of 2D user data
-
-This improvement courtesy of David MacMahon adds support for arbitrary 
-storage of 2D user data.  This is very similar to the technique employed 
-by some existing functions (e.g. plfcont and plfshade) that use "evaluator" 
-functions to access 2D user data that is stored in an arbtrary format.  
-The new approach extends the concept of a user-supplied (or predefined) 
-"evaluator" function to a group of user-supplied (or predefined) "operator" 
-functions.  The operator functions provide for various operations on the 
-arbitrarily stored 2D data including: get, set, +=, -=, *=, /=, isnan, 
-minmax, and f2eval.
-
-To facilitate the passing of an entire family of operator functions (via
-function pointers), a plf2ops_t structure is defined to contain a
-pointer to each type of operator function.  Predefined operator
-functions are defined for several common 2D data storage techniques.
-Variables (of type plf2ops_t) containing function pointers for these
-operator functions are also defined.
-
-New variants of functions that accept 2D data are created.  The new
-variants accept the 2D data as two parameters: a pointer to a plf2ops_t
-structure containing (pointers to) suitable operator functions and a
-PLPointer to the actual 2D data store.  Existing functions that accept
-2D data are modified to simply pass their parameters to the
-corresponding new variant of the function, along with a pointer to the
-suitable predefined plf2ops_t stucture of operator function pointers.
-
-The list of functions for which new variants are created is:
-c_plimage, c_plimagefr, c_plmesh, c_plmeshc, c_plot3d, c_plot3dc,
-c_plot3dcl, c_plshade1, c_plshades, c_plsurf3d, and c_plsurf3dl, and
-c_plgriddata.  The new variants are named the same as their
-corresponding existing function except that the "c_" prefix is changed
-to "plf" (e.g. the new variant of c_plmesh is called plfmesh).
-
-Adds plfvect declaration to plplot.h and changes the names (and only the
-names) of some plfvect arguments to make them slightly clearer.  In
-order to maintain backwards API compatibility, this function and the
-other existing functions that use "evaluator" functions are NOT changed
-to use the new operator functions.
-
-Makes plplot.h and libplplot consistent vis-a-vis pltr0f and pltr2d.
-Moves the definitions of pltr2f (already declared in plplot.h) from the
-sccont.c files of the FORTRAN 77 and Fortran 95 bindings into plcont.c.
-Removes pltr0f declaration from plplot.h.
-
-Changes x08c.c to demonstrate use of new support for arbitrary storage
-of 2D data arrays.  Shows how to do surface plots with the following
-four types of 2D data arrays:
-
-1) PLFLT z[nx][ny];
-2) PLfGrid2 z;
-3) PLFLT z[nx*ny]; /* row major order */
-4) PLFLT z[nx*ny]; /* column major order */
-
-1.7 Font improvements
-
-We have added the underscore to the Hershey glyphs (thanks to David
-MacMahon) and slightly rearranged the ascii index to the Hershey
-indices so that plpoin now generates the complete set of printable
-ascii characters in the correct order for the Hershey fonts (and therefore
-the Type1 and TrueType fonts as well).
-
-We have improved how we access TrueType and Type1 fonts via the Hershey
-font index (used by plpoin, plsym, and the Hershey escape sequences in pl*tex
-commands).  We have added considerably to the Hershey index to Unicode index
-translation table both for the compact and extended Hershey indexing scheme,
-and we have adopted the standard Unicode to Type1 index translation tables
-from http://unicode.org/Public/MAPPINGS/VENDORS/ADOBE/.
-
-We have also dropped the momentary switch to symbol font that was
-implemented in the PLplot core library.  That switch was designed to partially
-compensate for the lack of symbol glyphs in the standard Type1 fonts.  That
-was a bad design because it affected TrueType font devices as well as
-the desired Type1 font devices.  To replace this bad idea we now
-change from Type1 standard fonts to the Type1 Symbol font (and vice
-versa) whenever there is a glyph lookup failure in the Type1 font
-device drivers (ps and pdf).
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
