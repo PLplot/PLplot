@@ -1153,6 +1153,16 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plbin(Bin_Values'length, Bin_Values, Bin_Counts, Options);
     end plbin;
+
+
+    -- Calculate broken-down time from continuous time for current stream.
+    procedure plbtime
+       (year, month, day, hour, min : out Integer;
+        sec                         : out Long_Float;
+        ctime                       : Long_Float) is
+    begin
+        PLplot_Thin.plbtime(year, month, day, hour, min, sec, ctime);
+    end plbtime;
         
 
     -- Start new page. Should only be used with pleop().
@@ -1232,6 +1242,27 @@ package body PLplot_Traditional is
     end plcol1;
 
 
+    -- Configure transformation between continuous and broken-down time (and
+    -- vice versa) for current stream.
+    procedure plconfigtime
+       (skale, offset1, offset2      : Long_Float;
+        ccontrol                     : Integer;
+        ifbtime_offset               : Boolean;
+        year, month, day, hour, min : Integer;
+        sec                          : Long_Float) is
+        
+        ifbtime_offset_As_Integer : Integer;
+    begin
+        if ifbtime_offset then
+            ifbtime_offset_As_Integer := 1;
+        else
+            ifbtime_offset_As_Integer := 0;
+        end if;
+        PLplot_Thin.plconfigtime(skale, offset1, offset2, ccontrol,
+            ifbtime_offset_As_Integer, year, month, day, hour, min, sec);
+    end plconfigtime;
+
+
     -- Draws a contour plot from data in f(nx,ny). Is just a front-end to
     -- plfcont, with a particular choice for f2eval and f2eval_data.
 
@@ -1305,6 +1336,16 @@ package body PLplot_Traditional is
         end if;
         PLplot_Thin.plcpstrm(Stream_ID, PL_Do_Not_Copy_Device_Coordinates);
     end plcpstrm;
+
+
+    -- Calculate continuous time from broken-down time for current stream.
+    procedure plctime
+       (year, month, day, hour, min : Integer;
+        sec                         : Long_Float;
+        ctime                       : out Long_Float) is
+    begin
+        PLplot_Thin.plctime(year, month, day, hour, min, sec, ctime);
+    end plctime;
 
 
     -- fix this

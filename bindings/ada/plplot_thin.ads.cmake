@@ -175,7 +175,7 @@ package PLplot_Thin is
     type Custom_Label_Procedure_Pointer_Type is access
         procedure 
            (axis    : Integer;
-            a_value : Long_Float;
+            a_value : PLFLT;
             label   : out Label_String_Type;
             length  : size_t;
             data    : PLPointer);
@@ -184,8 +184,8 @@ package PLplot_Thin is
     -- Access-to-procedure type for setting a global custom coordinate tranformation.
     type Coordinate_Transform_Procedure_Pointer_Type is access
         procedure 
-           (x_In, y_In                   : Long_Float; 
-            x_Transformed, y_Transformed : out Long_Float;
+           (x_In, y_In                   : PLFLT; 
+            x_Transformed, y_Transformed : out PLFLT;
             data                         : PLpointer);
     pragma Convention(Convention => C, Entity => Coordinate_Transform_Procedure_Pointer_Type);
 
@@ -542,6 +542,13 @@ package PLplot_Thin is
     pragma Import(C, plbin, "c_plbin");
 
 
+    -- Calculate broken-down time from continuous time for current stream.
+    procedure
+    plbtime(year, month, day, hour, min : out PLINT;
+        sec : out PLFLT; ctime : PLFLT);
+    pragma Import(C, plbtime, "c_plbtime");
+
+
     -- Start new page.  Should only be used with pleop(). 
 
     procedure
@@ -594,6 +601,14 @@ package PLplot_Thin is
     pragma Import(C, plcol1, "c_plcol1");
 
 
+    -- Configure transformation between continuous and broken-down time (and
+    -- vice versa) for current stream.
+    procedure
+    plconfigtime(skale, offset1, offset2 : PLFLT; ccontrol : PLINT;
+        ifbtime_offset : PLBOOL; year, month, day, hour, min : PLINT; sec : PLFLT);
+    pragma Import(C, plconfigtime, "c_plconfigtime");
+
+
     -- Draws a contour plot from data in f(nx,ny).  Is just a front-end to
     -- plfcont, with a particular choice for f2eval and f2eval_data.
  
@@ -622,6 +637,14 @@ package PLplot_Thin is
     procedure
     plcpstrm(iplsr : PLINT; flags : PLINT);
     pragma Import(C, plcpstrm, "c_plcpstrm");
+
+
+    -- Calculate continuous time from broken-down time for current stream.
+
+    procedure
+    plctime(year, month, day, hour, min : PLINT; sec : PLFLT;
+        ctime : out PLFLT);
+    pragma Import(C, plctime, "c_plctime");
 
 
     -- Converts input values from relative device coordinates to relative plot 
@@ -1181,7 +1204,7 @@ package PLplot_Thin is
     -- Obtain real random number in range [0,1].
 
     function
-    plrandd return Long_Float;
+    plrandd return PLFLT;
     pragma Import(C, plrandd, "c_plrandd");
 
 

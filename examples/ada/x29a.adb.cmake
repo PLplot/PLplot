@@ -2,7 +2,7 @@
 
 -- Sample plots using date / time formatting for axes
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2008-2010 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -21,15 +21,15 @@
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 with
+    Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Calendar,
     PLplot_Auxiliary,
     PLplot_Traditional;
 use
+    Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    Ada.Calendar,
     PLplot_Auxiliary,
     PLplot_Traditional;
 
@@ -38,14 +38,22 @@ use
 --------------------------------------------------------------------------------
 -- Draws several plots which demonstrate the use of date / time formats for
 -- the axis labels.
--- Time formatting is done using the system strftime routine. See the 
--- documentation of this for full details of the available formats.
+-- Time formatting is done using the strfqsas routine from the qsastime
+-- library.  This is similar to strftime, but works for a broad
+-- date range even on 32-bit systems.  See the
+-- documentation of strfqsas for full details of the available formats.
 --
 -- 1) Plotting temperature over a day (using hours / minutes)
--- 2) Plotting 
+-- 2) Plotting
 --
--- Note: Times are stored as seconds since the epoch (usually 1st Jan 1970). 
+-- Note: We currently use the default call for plconfigtime (done in
+-- plinit) which means continuous times are interpreted as seconds since
+-- 1970-01-01, but that may change in future, more extended versions of
+-- this example.
 --------------------------------------------------------------------------------
+
+-- NOTE: The Ada user is reminded that Ada.Calendar is very capable and complete.
+-- See especially Time_Of.
 
 procedure x29a is
     -- Plot a model diurnal cycle of temperature
@@ -151,32 +159,20 @@ procedure x29a is
 
 
     procedure plot3 is
-        xmin, xmax, ymin, ymax : Long_Float;
+        xmin, xmax, ymin, ymax, tstart : Long_Float;
         x, y : Real_Vector(0 .. 61);
     begin
-        -- Find the number of seconds since January 1, 1970 to December 1, 2005.
-        -- Should be 1_133_395_200.0.
+        -- Calculate continuous time corresponding to 2005-12-01 UTC.
+        plctime(2005, 11, 01, 0, 0, 0.0, tstart);
 
-        -- NOTE that some PLplot developers claim that the Time_Of function 
-        -- is incorrect, saying that this method does not work reliably for 
-        -- time zones which were on daylight saving time on Janary 1 1970, e.g. 
-        -- the UK. However, there is confusion over the C and/or Unix 
-        -- time functions which apparently refer to local time: Time_Of does 
-        -- not refer to local time. The following commented-out line which 
-        -- calculates xmin returns 1133395200.0 which is identical to the 
-        -- PLplot-developer-agreed-to value which is hard-coded here. Go figure.
-        -- xmin := Long_Float(Time_Of(2005, 12, 1, 0.0) - Time_Of(1970, 1,  1, 0.0));
-
-        -- For now we will just hard code it
-        xmin := 1133395200.0;
-        
+        xmin := tstart;
         xmax := xmin + Long_Float(x'length) * 60.0 * 60.0 * 24.0;
         ymin := 0.0;
         ymax := 5.0;
 
         for i in x'range loop
             x(i) := xmin + Long_Float(i) * 60.0 * 60.0 * 24.0;
-            y(i) := 1.0 + sin(2.0 * pi * Long_Float(i) / 7.0 ) + 
+            y(i) := 1.0 + sin(2.0 * pi * Long_Float(i) / 7.0) + 
                 exp((Long_Float(Integer'min(i, x'length - i))) / 31.0);
         end loop;
         
@@ -187,9 +183,8 @@ procedure x29a is
 
         plcol0(1);
 
-        -- Set time format to be ISO 8601 standard YYYY-MM-DD. Note that this is
-        -- equivalent to %f for C99 compliant implementations of strftime.
-        pltimefmt("%Y-%m-%d");
+        -- Set time format to be ISO 8601 standard YYYY-MM-DD.
+        pltimefmt("%F");
 
         -- Draw a box with ticks spaced every 14 days in X and 1 hour in Y.
         plbox("bcnstd", 14.0 * 24.0 * 60.0 * 60.0, 14, "bcnstv", 1.0, 4);
@@ -206,9 +201,144 @@ procedure x29a is
      
     end plot3;
 
-begin
+
+    procedure plot4 is 
+        -- TAI-UTC (seconds) as a function of time.
+        -- Use Besselian epochs as the continuous time interval just to prove
+        -- this does not introduce any issues.
+
+        scale, offset1, offset2 : Long_Float;  
+        xmin, xmax, ymin, ymax, xlabel_step : Long_Float;
+        npts : Integer;
+        if_TAI_time_format : Boolean;
+        time_format : Unbounded_String := To_Unbounded_String("");
+        title_suffix : Unbounded_String := To_Unbounded_String("");
+        xtitle : Unbounded_String := To_Unbounded_String("");
+        title : Unbounded_String := To_Unbounded_String("");
+        x, y : Real_Vector(0 .. 1000);
+        tai_year, tai_month, tai_day, tai_hour, tai_min : Integer;
+        tai_sec, tai : Long_Float;
+        utc_year, utc_month, utc_day, utc_hour, utc_min : Integer;
+        utc_sec, utc : Long_Float;
+    begin
+        -- Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
+        -- B = 1900. + (JD -2415020.31352)/365.242198781 
+        -- => (as calculated with aid of "bc -l" command)
+        -- B = (MJD + 678940.364163900)/365.242198781
+        -- =>
+        -- MJD = B*365.24219878 - 678940.364163900
+        scale := 365.242198781;
+        offset1 := -678940.0;
+        offset2 := -0.3641639;
+        plconfigtime(scale, offset1, offset2, 0, False, 0, 0, 0, 0, 0, 0.0);
+
+        for kind in 0 .. 6 loop
+            if kind = 0 then
+                plctime(1950, 0, 2, 0, 0, 0.0, xmin);
+                plctime(2020, 0, 2, 0, 0, 0.0, xmax);
+                npts := 70 * 12 + 1;
+                ymin := 0.0;
+                ymax := 36.0;
+                time_format := To_Unbounded_String("%Y%");
+                if_TAI_time_format := True;
+                title_suffix := To_Unbounded_String("from 1950 to 2020");
+                xtitle := To_Unbounded_String("Year");
+                xlabel_step := 10.0;
+            elsif kind = 1 or kind = 2 then
+                plctime(1961, 7, 1, 0, 0, 1.64757 - 0.20, xmin);
+                plctime(1961, 7, 1, 0, 0, 1.64757 + 0.20, xmax);
+                npts := 1001;
+                ymin := 1.625;
+                ymax := 1.725;
+                time_format := To_Unbounded_String("%S%2%");
+                title_suffix := To_Unbounded_String("near 1961-08-01 (TAI)");
+                xlabel_step := 0.05 / (scale * 86400.0);
+                if kind = 1 then
+                    if_TAI_time_format := True;
+                    xtitle := To_Unbounded_String("Seconds (TAI)");
+                else
+                    if_TAI_time_format := False;
+                    xtitle := To_Unbounded_String("Seconds (TAI) labelled with corresponding UTC");
+                end if;
+            elsif kind = 3 or kind = 4 then
+                plctime(1963, 10, 1, 0, 0, 2.6972788 - 0.20, xmin);
+                plctime(1963, 10, 1, 0, 0, 2.6972788 + 0.20, xmax);
+                npts := 1001;
+                ymin := 2.55;
+                ymax := 2.75;
+                time_format := To_Unbounded_String("%S%2%");
+                title_suffix := To_Unbounded_String("near 1963-11-01 (TAI)");
+                xlabel_step := 0.05 / (scale * 86400.0);
+                if kind = 3 then
+                    if_TAI_time_format := True;
+                    xtitle := To_Unbounded_String("Seconds (TAI)");
+                else
+                    if_TAI_time_format := False;
+                    xtitle := To_Unbounded_String("Seconds (TAI) labelled with corresponding UTC");
+                end if;
+            elsif kind = 5 or kind = 6 then
+                plctime(2009, 0, 1, 0, 0, 34.0 - 5.0, xmin);
+                plctime(2009, 0, 1, 0, 0, 34.0 + 5.0, xmax);
+                npts := 1001;
+                ymin := 32.5;
+                ymax := 34.5;
+                time_format := To_Unbounded_String("%S%2%");
+                title_suffix := To_Unbounded_String("near 2009-01-01 (TAI)");
+                xlabel_step := 1.0 / (scale * 86400.0);
+                if kind = 5 then
+                    if_TAI_time_format := True;
+                    xtitle := To_Unbounded_String("Seconds (TAI)");
+                else
+                    if_TAI_time_format := False;
+                    xtitle := To_Unbounded_String("Seconds (TAI) labelled with corresponding UTC");
+                end if;
+            end if;
+
+            for i in 0 .. npts - 1 loop
+                x(i) := xmin + Long_Float(i) * (xmax - xmin) / (Long_Float(npts - 1));
+                plconfigtime(scale, offset1, offset2, 0, False, 0, 0, 0, 0, 0, 0.0);
+                tai := x(i);
+                plbtime(tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec, tai);
+                plconfigtime(scale, offset1, offset2, 2, False, 0, 0, 0, 0, 0, 0.0);
+                plbtime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec, tai);
+                plconfigtime(scale, offset1, offset2, 0, False, 0, 0, 0, 0, 0, 0.0);
+                plctime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec, utc);
+                y(i) := (tai - utc) * scale * 86400.0;
+            end loop;
+
+            pladv(0);
+            plvsta;
+            plwind(xmin, xmax, ymin, ymax);
+            plcol0(1);
+            if if_TAI_time_format then
+                plconfigtime(scale, offset1, offset2, 0, False, 0, 0, 0, 0, 0, 0.0);
+            else
+                plconfigtime(scale, offset1, offset2, 2, False, 0, 0, 0, 0, 0, 0.0);
+            end if;
+            pltimefmt(To_String(time_format));
+            plbox("bcnstd", xlabel_step, 0, "bcnstv", 0.0, 0);
+            plcol0(3);
+            title := To_Unbounded_String("@frPLplot Example 29 - TAI-UTC ");
+            title := title & title_suffix;
+            pllab(To_String(xtitle), "TAI-UTC (sec)", To_String(title));
+
+            plcol0(4);
+
+            if kind = 0 then -- Shorter x and y
+                plline(x(0 .. 70 * 12), y(0 .. 70 * 12));
+            else -- Longer x and y
+                plline(x, y);
+            end if;
+            
+        end loop; -- kind
+    end plot4;
+
+begin -- main
     -- Parse command line arguments
     plparseopts(PL_PARSE_FULL);
+
+    -- Change the escape character to a '@' instead of the default '#'
+    plsesc('@');
 
     -- Initialize plplot
     plinit;
@@ -219,6 +349,7 @@ begin
     plot1;
     plot2;
     plot3;
+    plot4;
 
     -- Don't forget to call plend to finish off!
     plend;

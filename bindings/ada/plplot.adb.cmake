@@ -1160,6 +1160,17 @@ package body PLplot is
     begin
         plbin(Bin_Values'length, Bin_Values, Bin_Counts, Options);
     end Histogram_Binned;
+
+
+    -- Calculate broken-down time from continuous time for current stream.
+    -- plbtime
+    procedure Broken_Down_From_Continuous_Time
+       (year, month, day, hour, min : out Integer;
+        sec                         : out Long_Float;
+        ctime                       : Long_Float) is
+    begin
+        plbtime(year, month, day, hour, min, sec, ctime);
+    end Broken_Down_From_Continuous_Time;
         
 
     -- Start new page. Should only be used with pleop().
@@ -1246,6 +1257,28 @@ package body PLplot is
     end Set_Color_Map_1;
 
 
+    -- Configure transformation between continuous and broken-down time (and
+    -- vice versa) for current stream.
+    -- plconfigtime
+    procedure Configure_Time_Transformation
+       (skale, offset1, offset2      : Long_Float;
+        ccontrol                     : Integer;
+        ifbtime_offset               : Boolean;
+        year, month, day, hour, min : Integer;
+        sec                          : Long_Float) is
+        
+        ifbtime_offset_As_Integer : Integer;
+    begin
+        if ifbtime_offset then
+            ifbtime_offset_As_Integer := 1;
+        else
+            ifbtime_offset_As_Integer := 0;
+        end if;
+        plconfigtime(skale, offset1, offset2, ccontrol, 
+            ifbtime_offset_As_Integer, year, month, day, hour, min, sec);
+    end Configure_Time_Transformation;
+
+
     -- Draws a contour plot from data in f(nx,ny). Is just a front-end to
     -- plfcont, with a particular choice for f2eval and f2eval_data.
 
@@ -1321,6 +1354,17 @@ package body PLplot is
         end if;
         plcpstrm(Stream_ID, PL_Do_Not_Copy_Device_Coordinates);
     end Copy_State_Parameters;
+
+
+    -- Calculate continuous time from broken-down time for current stream.
+    -- plctime
+    procedure Continuous_From_Broken_Down_Time
+       (year, month, day, hour, min : Integer;
+        sec                         : Long_Float;
+        ctime                       : out Long_Float) is
+    begin
+        plctime(year, month, day, hour, min, sec, ctime);
+    end Continuous_From_Broken_Down_Time;
 
 
     -- fix this

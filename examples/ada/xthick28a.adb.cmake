@@ -2,7 +2,7 @@
 
 -- Write_Text_Viewport3, Write_Text_World3 demo
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2008-2010 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -53,6 +53,18 @@ procedure xthick28a is
     
     zmid   : Long_Float := 0.5*(zmax + zmin);
     zrange : Long_Float := zmax - zmin;
+
+    ysmin   : Long_Float := ymin + 0.1 * yrange;
+    ysmax    : Long_Float := ymax - 0.1 * yrange;
+    ysrange  : Long_Float := ysmax - ysmin;
+    dysrot   : Long_Float := ysrange / Long_Float(nrotation - 1);
+    dysshear : Long_Float := ysrange / Long_Float(nshear - 1);
+    zsmin    : Long_Float := zmin + 0.1 * zrange;
+    zsmax    : Long_Float := zmax - 0.1 * zrange;
+    zsrange  : Long_Float := zsmax - zsmin;
+    dzsrot   : Long_Float := zsrange / Long_Float(nrotation - 1);
+    dzsshear : Long_Float := zsrange / Long_Float(nshear - 1);
+    ys, zs   : Long_Float;
 
     x_inclination, y_inclination, z_inclination : Long_Float;
     x_shear, y_shear, z_shear                   : Long_Float;
@@ -139,6 +151,7 @@ begin
         x_shear := -0.5 * xrange * sin_omega;
         y_shear :=  0.0;
         z_shear :=  0.5 * zrange * cos_omega;
+        zs := zsmax - dzsrot * Long_Float(i);
         Write_Text_World_3D(
             xmid, ymax, zmid,
             x_inclination, y_inclination, z_inclination,
@@ -170,8 +183,9 @@ begin
         cos_omega := cos(omega);
         y_shear := 0.5 * yrange * sin_omega;
         z_shear := 0.5 * zrange * cos_omega;
+        zs := zsmax - dzsrot * Long_Float(i);
         Write_Text_World_3D(
-            xmid, ymax, zmax -(zmax-0.2)*Long_Float(i)/Long_Float(nrotation-1),
+            xmid, ymax, zs,
             x_inclination, y_inclination, z_inclination,
             x_shear, y_shear, z_shear,
             0.5, "rotation for y = y#dmax#u");
@@ -189,8 +203,9 @@ begin
         cos_omega := cos(omega);
         x_shear := 0.5 * xrange * sin_omega;
         z_shear := 0.5 * zrange * cos_omega;
+        zs := zsmax - dzsrot * Long_Float(i);
         Write_Text_World_3D(
-            xmax, ymid, zmax -(zmax-0.2)*Long_Float(i)/Long_Float(nrotation-1),
+            xmax, ymid, zs,
             x_inclination, y_inclination, z_inclination,
             x_shear, y_shear, z_shear,
             0.5, "rotation for x = x#dmax#u");
@@ -208,8 +223,9 @@ begin
         cos_omega := cos(omega);
         y_shear := 0.5 * yrange * cos_omega;
         z_shear := 0.5 * zrange * sin_omega;
+        ys := ysmax - dysrot * Long_Float(i);
         Write_Text_World_3D(
-              xmid, ymax -(ymax-0.2)*Long_Float(i)/Long_Float(nrotation-1), zmin,
+              xmid, ys, zmin,
               x_inclination, y_inclination, z_inclination,
               x_shear, y_shear, z_shear,
               0.5, "rotation for z = z#dmin#u");
@@ -245,8 +261,9 @@ begin
         cos_omega := cos(omega);
         x_shear := 0.5 * xrange * sin_omega;
         z_shear := 0.5 * zrange * cos_omega;
+        zs := zsmax - dzsshear * Long_Float(i);
         Write_Text_World_3D(
-            xmid, ymax, zmax -(zmax-0.2)*Long_Float(i)/Long_Float(nshear-1),
+            xmid, ymax, zs,
             x_inclination, y_inclination, z_inclination,
             x_shear, y_shear, z_shear,
             0.5, "shear for y = y#dmax#u");
@@ -264,8 +281,9 @@ begin
         cos_omega := cos(omega);
         y_shear := -0.5 * yrange * sin_omega;
         z_shear :=  0.5 * zrange * cos_omega;
+        zs := zsmax - dzsshear * Long_Float(i);
         Write_Text_World_3D(
-            xmax, ymid, zmax -(zmax-0.2)*Long_Float(i)/Long_Float(nshear-1),
+            xmax, ymid, zs,
             x_inclination, y_inclination, z_inclination,
             x_shear, y_shear, z_shear,
             0.5, "shear for x = x#dmax#u");
@@ -283,8 +301,9 @@ begin
         cos_omega := cos(omega);
         y_shear := 0.5 * yrange * cos_omega;
         x_shear := 0.5 * xrange * sin_omega;
+        ys := ysmax - dysshear * Long_Float(i);
         Write_Text_World_3D(
-            xmid, ymax -(ymax-0.2)*Long_Float(i)/Long_Float(nshear-1), zmin,
+            xmid, ys, zmin,
             x_inclination, y_inclination, z_inclination,
             x_shear, y_shear, z_shear,
             0.5, "shear for z = z#dmin#u");

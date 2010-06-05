@@ -710,6 +710,14 @@ package PLplot is
         Options        : Integer); -- Options are not defined in plplot.h.
 
 
+    -- Calculate broken-down time from continuous time for current stream.
+    -- plbtime
+    procedure Broken_Down_From_Continuous_Time
+       (year, month, day, hour, min : out Integer;
+        sec                         : out Long_Float;
+        ctime                       : Long_Float);
+
+
     -- Start new page. Should only be used with pleop().
     -- plbop
     procedure Begin_New_Page;
@@ -770,6 +778,17 @@ package PLplot is
     procedure Set_Color_Map_1(Color : Long_Float_0_1_Type);
 
 
+    -- Configure transformation between continuous and broken-down time (and
+    -- vice versa) for current stream.
+    -- plconfigtime
+    procedure Configure_Time_Transformation
+       (skale, offset1, offset2      : Long_Float;
+        ccontrol                     : Integer;
+        ifbtime_offset               : Boolean;
+        year, month, day, hour, min : Integer;
+        sec                          : Long_Float);
+
+
     -- Draws a contour plot from data in f(nx,ny). Is just a front-end to plfcont,
     -- with a particular choice for f2eval and f2eval_data.
 
@@ -811,6 +830,14 @@ package PLplot is
     procedure Copy_State_Parameters
        (Stream_ID                      : Integer;
         Do_Not_Copy_Device_Coordinates : Boolean);
+
+
+    -- Calculate continuous time from broken-down time for current stream.
+    -- plctime
+    procedure Continuous_From_Broken_Down_Time
+       (year, month, day, hour, min : Integer;
+        sec                         : Long_Float;
+        ctime                       : out Long_Float);
 
 
     -- Converts input values from relative device coordinates to relative plot
