@@ -36,6 +36,7 @@
       <li>The gd device driver depends on <a href="http://www.libgd.org/">libgd</a>; an open-source code library for the dynamic creation of images by programmers.</li>
       <li>The pdf device driver depends on <a href="http://www.libharu.org/">libHaru</a>; a free, cross-platform, open-source library for generating PDF files.</li>
       <li>The psttf device driver depends on <a href="http://www.unifont.org/lasi/">LASi</a>; a library that provides a C++ stream output interface (with operator &lt;&lt;) for creating Postscript documents that can contain characters from any of the scripts and symbol blocks supported in Unicode and by Owen Taylor's Pango layout engine.</li>
+      <li>The Qt device driver depends on <a href="http://qt.nokia.com/products/">Qt</a>; a multi-platform toolkit library for creating graphical user interfaces.</li>
       <li>The wxwidgets device driver depends on <a href="http://www.wxwidgets.org/">wxWidgets</a>; a GUI and tools library that lets developers create GUI applications for Win32, Mac OS X, GTK+, X11, Motif, WinCE, and more using one codebase.</li>
       <li>The wxwidgets device driver optionally depends on <a href="http://www.antigrain.com/">Anti-Grain Geometry</a>; an open-source, free-of-charge, high-quality rendering engine written in C++.</li>
       </ul>
