@@ -269,7 +269,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <title>The PLplot Plotting Library</title>
     <titleabbrev role="texinfo-file">plplotdoc</titleabbrev>
     <abstract role="texinfo-node">
-      <para>The PLplot Plotting Library</para>
+      <para>PLplot Plotting Library</para>
     </abstract>
     <subjectset scheme="texinfo-directory">
       <subject><subjectterm>Scientific Visualization</subjectterm></subject>
