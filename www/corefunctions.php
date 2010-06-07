@@ -40,6 +40,7 @@ END;
 		echo '	<div id="menubar">';
 		echo '		<ul>';
 		echo '		  <li><a href="index.php" ' . (($item=='index') ? ('id="selected"') : ('')) .'>Home</a></li>';
+		echo '		  <li><a href="http://sourceforge.net/news/?group_id=2915" ' . (($item=='news') ? ('id="selected"') : ('')) .'>News</a></li>';
 		echo '		  <li><a href="download.php" ' . (($item=='download') ? ('id="selected"') : ('')) .'>Download</a></li>';
 		echo '		  <li><a href="examples.php" ' . (($item=='examples') ? ('id="selected"') : ('')) .'>Examples</a></li>';
 		echo '		  <li><a href="documentation.php" ' . (($item=='documentation') ? ('id="selected"') : ('')) .'>Documentation</a></li>';
@@ -91,18 +92,14 @@ END;
 		<!-- Sidebar -->
 		<div id="rightside">
 END;
-		if($news) {
+//			Permanently disable and do another way (see above)
+//                      because pageNews calls SF php script that returns
+//			bad URL's.
+		if(0) {
 			echo "<h3>News</h3>\n";
 			pageNews(3);
 		}
 		echo <<<END
-			<h3>Source Code</h3>
-			<ul class="arrowlist">
-				<li><a href="http://sourceforge.net/project/showfiles.php?group_id=2915&amp;package_id=2865">Download</a></li>
-				<li><a href="http://sourceforge.net/svn/?group_id=2915">SVN Repository</a></li>
-				<li><a href="http://plplot.svn.sourceforge.net/viewvc/plplot/">Browse SVN</a></li>
-			</ul>
-
 			<h3>Resources</h3>
 			<ul class="arrowlist">
 				<li><a href="documentation.php">Documentation</a></li>
@@ -112,6 +109,13 @@ END;
 				<li><a href="http://sourceforge.net/mail/?group_id=2915">Mailing Lists</a></li>
 				<li><a href="http://sourceforge.net/tracker/?group_id=2915&atid=102915">Bug Tracker</a></li>
 			</ul>
+			<h3>Source Code</h3>
+			<ul class="arrowlist">
+				<li><a href="http://sourceforge.net/project/showfiles.php?group_id=2915&amp;package_id=2865">Download</a></li>
+				<li><a href="http://sourceforge.net/svn/?group_id=2915">SVN Repository</a></li>
+				<li><a href="http://plplot.svn.sourceforge.net/viewvc/plplot/">Browse SVN</a></li>
+			</ul>
+
 		</div>
 END;
 	}
