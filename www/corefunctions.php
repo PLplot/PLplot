@@ -107,7 +107,7 @@ END;
 				<li><a href="http://sourceforge.net/projects/plplot">SourceForge Project Page</a></li>
 				<li><a href="http://sourceforge.net/projects/plplot/support">Project Support Page</a></li>
 				<li><a href="http://sourceforge.net/mail/?group_id=2915">Mailing Lists</a></li>
-				<li><a href="http://sourceforge.net/tracker/?group_id=2915&atid=102915">Bug Tracker</a></li>
+				<li><a href="http://sourceforge.net/tracker/?group_id=2915&amp;tid=102915">Bug Tracker</a></li>
 			</ul>
 			<h3>Source Code</h3>
 			<ul class="arrowlist">
