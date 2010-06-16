@@ -11,10 +11,8 @@ proc x01 {{w loopback}} {
     # first, this call to pladv is absolutely essential to finish the
     # preceding page.
 
+    $w cmd pladv 0
     $w cmd plssub 2 2
-
-    #$w cmd pladv 0
-    #$w cmd plssub 2 2
 
 # First plot
 
