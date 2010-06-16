@@ -441,7 +441,7 @@ plD_init_wingcc( PLStream *pls )
     pls->graphx      = GRAPHICS_MODE; /*  No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination) */
     pls->dev_fill0   = 1;             /* driver can do solid area fills */
     pls->dev_xor     = 1;             /* driver supports xor mode */
-    pls->dev_clear   = 1;             /* driver supports clear */
+    pls->dev_clear   = 0;             /* driver does not support clear - what is the proper API? */
     pls->dev_dash    = 0;             /* driver can not do dashed lines (yet) */
     pls->plbuf_write = 1;             /* driver uses the buffer for redraws */
 
