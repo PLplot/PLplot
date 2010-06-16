@@ -74,6 +74,14 @@ foreach(STRING_INDEX ${tcl_STRING_INDICES})
   set(tcl_SCRIPTS ${tcl_SCRIPTS} x${STRING_INDEX})
 endforeach(STRING_INDEX ${tcl_STRING_INDICES})
 
+# Configure the standard examples file. It is always copied
+get_target_property(pltcl_LOCATION pltcl LOCATION)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/standard_examples.in
+  ${CMAKE_CURRENT_BINARY_DIR}/standard_examples
+  @ONLY
+)
+
 if(CORE_BUILD)
   # Copy file and scripts to the binary directory if different to the
   # source directory. Needed for ctest, but also so the tclIndex file
@@ -110,7 +118,7 @@ if(CORE_BUILD)
   install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
   install(PROGRAMS ${tcl_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
 
-  install(FILES CMakeLists.txt 
+  install(FILES CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples/tcl
     )
 
@@ -127,9 +135,9 @@ if(BUILD_TEST)
   if(CORE_BUILD)
     set_property(GLOBAL PROPERTY TARGETS_examples_tcl
       tcl_examples
-      tclIndex_examples_tcl 
+      tclIndex_examples_tcl
       plplottcltk${LIB_TAG}
-      pltcl 
+      pltcl
       plplot.tcl_target
       tclIndex_tcl
       )
@@ -137,9 +145,9 @@ if(BUILD_TEST)
     get_property(files_tclIndex_tcl GLOBAL PROPERTY FILES_tclIndex_tcl)
     set_property(GLOBAL PROPERTY FILES_examples_tcl
       ${tclIndex_DEPENDS}
-      ${CMAKE_CURRENT_BINARY_DIR}/tclIndex 
+      ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
       plplottcltk${LIB_TAG}
-      pltcl 
+      pltcl
       ${files_plplot.tcl_target}
       ${files_tclIndex_tcl}
       )

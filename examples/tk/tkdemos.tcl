@@ -2,7 +2,7 @@
 # $Id$
 #
 # PLplot TK demos
-# 
+#
 # Maurice LeBrun
 # IFS, University of Texas at Austin
 # 26-Jan-1995
@@ -24,5 +24,12 @@ pack append . .plw {left expand fill}
 for {set i 1} {$i <= 31} {incr i} {
     set demo x[format "%02d" $i]
     source $demo.tcl
-    proc $i {} "$demo .plw.plwin; .plw.plwin cmd plspal0 cmap0_default.pal; .plw.plwin cmd plspal1 cmap1_default.pal 1"
+    proc $i {} "
+        $demo .plw.plwin
+        .plw.plwin cmd plcol0 1
+        .plw.plwin cmd plsori 0
+        .plw.plwin cmd plspal0 cmap0_default.pal
+        .plw.plwin cmd plspal1 cmap1_default.pal 1
+        .plw.plwin cmd plstransform NULL
+    "
 }
