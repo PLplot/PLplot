@@ -845,6 +845,33 @@ if(BUILD_TEST)
     list(APPEND interactive_targets_LIST test_pygcw)
   endif(ENABLE_pygcw)
 
+  if(ENABLE_tcl)
+    if(CORE_BUILD)
+      add_custom_target(test_tcl_standard_examples
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/standard_examples -dev xwin -np
+	DEPENDS ${xwin_target}
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
+	)
+    else(CORE_BUILD)
+      add_custom_target(test_tcl_standard_examples
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/standard_examples -dev xwin -np
+	DEPENDS ${xwin_target}
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
+	)
+    endif(CORE_BUILD)
+    add_dependencies(test_tcl_standard_examples
+      pltcl
+      tcl_examples
+      tclIndex_tcl
+      xwin
+      )
+    if(FILE_DEPENDS_xwin)
+      add_dependencies(test_tcl_standard_examples test_xwin_dyndriver)
+    endif(FILE_DEPENDS_xwin)
+    list(APPEND interactive_targets_LIST ${test_tcl_standard_examples})
+
+  endif(ENABLE_tcl)
+
   if(ENABLE_tk AND PLD_tk)
     set(targets_examples_tk)
 
