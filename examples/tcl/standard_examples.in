@@ -1,10 +1,11 @@
+#!@SH_EXECUTABLE@
 # Examples 14 and 31 left out - see Tk standard_examples.in
 #
 # Problem in x22: crash - but not if run standalone
 # Interference from x21? According to the messages I need to call plinit again
 # Yes, leaving out x21 makes x22 behave correctly
 #
-#
+@pltcl_LOCATION@ $* <<EOF
 source tcldemos.tcl
 plinit
 1
@@ -26,7 +27,6 @@ plinit
 18
 19
 20
-#21
 22
 23
 24
@@ -37,3 +37,4 @@ plinit
 29
 30
 exit
+EOF
