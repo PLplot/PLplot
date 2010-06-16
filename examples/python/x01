@@ -33,8 +33,7 @@ version = plgver()
 print "PLplot library version: " + version
 
 # Initialize plplot
-# Do plots on 4 subwindows of the first page
-plstar(2,2)
+plinit()
 
 import xw01
 
