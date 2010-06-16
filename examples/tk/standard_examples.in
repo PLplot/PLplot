@@ -1,4 +1,4 @@
-#!/bin/sh
+#!@SH_EXECUTABLE@
 # Run plserver example for standard examples.
 # Drop examples 14 and 31 because querying for devices does not
 # seem to work in this context.
