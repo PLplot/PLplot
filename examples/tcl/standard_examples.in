@@ -1,6 +1,9 @@
 #!@SH_EXECUTABLE@
 # Examples 14 and 31 left out - see Tk standard_examples.in
-#
+# Note the backslash at the end - this causes Tcl to ignore
+# the next line. It becomes a valid Tcl script as well as
+# valid shell script
+# \
 @pltcl_LOCATION@ $* <<EOF
 source tcldemos.tcl
 plinit

@@ -2,6 +2,10 @@
 # Run plserver example for standard examples.
 # Drop examples 14 and 31 because querying for devices does not
 # seem to work in this context.
+# Note the backslash at the end - this causes Tcl to ignore
+# the next line. It becomes a valid Tcl script as well as
+# valid shell script
+# \
 @plserver_LOCATION@ <<EOF
 source tkdemos.tcl
 1

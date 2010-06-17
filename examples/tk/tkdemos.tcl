@@ -25,6 +25,7 @@ for {set i 1} {$i <= 31} {incr i} {
     set demo x[format "%02d" $i]
     source $demo.tcl
     proc $i {} "
+        .plw.plwin cmd plspause 0
         $demo .plw.plwin
         .plw.plwin cmd plcol0 1
         .plw.plwin cmd plsori 0
