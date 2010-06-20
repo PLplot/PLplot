@@ -73,16 +73,13 @@
 #define MAX_STRING_LEN       500
 #define MAX_MARKUP_LEN       MAX_STRING_LEN * 10
 
-/* Values to reset the dirty rectangle regions */
-#define DIRTY_MIN            ( 1.0e50 )
-#define DIRTY_MAX            ( -1.0e50 )
-
 static int    text_clipping;
 static int    text_anti_aliasing;
 static int    graphics_anti_aliasing;
 static int    external_drawable;
 static int    rasterize_image;
 static int    set_background;
+static int    image_buffering;
 
 static DrvOpt cairo_options[] = { { "text_clipping",          DRV_INT, &text_clipping,          "Use text clipping (text_clipping=0|1)"                                                                                                                                                                                          },
                                   { "text_anti_aliasing",     DRV_INT, &text_anti_aliasing,     "Set desired text anti-aliasing (text_anti_aliasing=0|1|2|3). The numbers are in the same order as the cairo_antialias_t enumeration documented at http://cairographics.org/manual/cairo-cairo-t.html#cairo-antialias-t)"        },
@@ -90,6 +87,7 @@ static DrvOpt cairo_options[] = { { "text_clipping",          DRV_INT, &text_cli
                                   { "external_drawable",      DRV_INT, &external_drawable,      "Plot to external X drawable"                                                                                                                                                                                                    },
                                   { "rasterize_image",        DRV_INT, &rasterize_image,        "Raster or vector image rendering (rasterize_image=0|1)"                                                                                                                                                                         },
                                   { "set_background",         DRV_INT, &set_background,         "Set the background for the extcairo device (set_background=0|1). If 1 then the plot background will set by PLplot"                                                                                                              },
+                                  { "image_buffering",        DRV_INT, &image_buffering,        "Buffered offscreen rendering for the xcairo device (image_buffering=0|1)."                                                                                                                                                      },
                                   { NULL,                     DRV_INT, NULL,                    NULL                                                                                                                                                                                                                             } };
 
 typedef struct
@@ -103,16 +101,12 @@ typedef struct
     short           graphics_anti_aliasing;
     short           rasterize_image;
     short           set_background;
+    short           image_buffering;
     double          downscale;
     char            *pangoMarkupString;
     short           upDown;
     float           fontSize;
     short           closed;
-    /* Keep track of the bounding box of the modified portion of the surface */
-    double          dirty_x1;
-    double          dirty_y1;
-    double          dirty_x2;
-    double          dirty_y2;
 #if defined ( PLD_xcairo )
     cairo_surface_t *cairoSurface_X;
     cairo_t         *cairoContext_X;
@@ -422,38 +416,9 @@ void set_line_properties( PLCairo *aStream, cairo_line_join_t join, cairo_line_c
     cairo_set_line_cap( aStream->cairoContext, cap );
 }
 
-/* Call this after rendering paths have been defined and before they have
- * been cleared.  It will update the dirty rectangle information for the
- * current stream for the new flush/end of page. */
-
-void update_dirty_rectangle( PLCairo *aStream )
-{
-    double x1, y1, x2, y2;
-    cairo_stroke_extents( aStream->cairoContext, &x1, &y1, &x2, &y2 );
-
-    /* Expand the rectangle slightly to account for thick lines and other
-     * effects which may extend beyond the defined Cairo path. */
-    aStream->dirty_x1 = MAX( 0.0, MIN( x1 * 0.9, aStream->dirty_x1 ) );
-    aStream->dirty_y1 = MAX( 0.0, MIN( y1 * 0.9, aStream->dirty_y1 ) );
-    aStream->dirty_x2 = MAX( x2 * 1.1, aStream->dirty_x2 );
-    aStream->dirty_y2 = MAX( y2 * 1.1, aStream->dirty_y2 );
-}
-
-/* Reset the dirty triangle extents */
-
-void reset_dirty_rectangle( PLCairo *aStream )
-{
-    aStream->dirty_x1 = DIRTY_MIN;
-    aStream->dirty_y1 = DIRTY_MIN;
-    aStream->dirty_x2 = DIRTY_MAX;
-    aStream->dirty_y2 = DIRTY_MAX;
-}
-
 void plD_line_cairo( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
     PLCairo           *aStream;
-    cairo_line_join_t old_join;
-    cairo_line_cap_t  old_cap;
 
     aStream = (PLCairo *) pls->dev;
 
@@ -462,17 +427,16 @@ void plD_line_cairo( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     set_current_context( pls );
 
-    get_line_properties( aStream, &old_join, &old_cap );
-    set_line_properties( aStream, old_join, CAIRO_LINE_CAP_ROUND );
+    cairo_save( aStream->cairoContext );
+
+    set_line_properties( aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_ROUND );
 
     cairo_move_to( aStream->cairoContext, aStream->downscale * (double) x1a, aStream->downscale * (double) y1a );
     cairo_line_to( aStream->cairoContext, aStream->downscale * (double) x2a, aStream->downscale * (double) y2a );
 
-    update_dirty_rectangle( aStream );
-
     cairo_stroke( aStream->cairoContext );
 
-    set_line_properties( aStream, old_join, old_cap );
+    cairo_restore( aStream->cairoContext );
 }
 
 /*---------------------------------------------------------------------
@@ -484,22 +448,21 @@ void plD_line_cairo( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 void plD_polyline_cairo( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
     PLCairo           *aStream;
-    cairo_line_join_t old_join;
-    cairo_line_cap_t  old_cap;
 
     aStream = (PLCairo *) pls->dev;
 
     if ( aStream->closed )
         return;
 
-    get_line_properties( aStream, &old_join, &old_cap );
+    cairo_save( aStream->cairoContext );
+
     set_line_properties( aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_BUTT );
 
     poly_line( pls, xa, ya, npts );
 
     cairo_stroke( aStream->cairoContext );
 
-    set_line_properties( aStream, old_join, old_cap );
+    cairo_restore( aStream->cairoContext );
 }
 
 /*---------------------------------------------------------------------
@@ -625,13 +588,6 @@ void text_begin_cairo( PLStream *pls, EscText *args )
         aStream->pangoMarkupString[i] = 0;
     }
     open_span_tag( aStream->pangoMarkupString, args->n_fci, aStream->fontSize, 0 );
-
-    /* TODO FIXME: Set the entire plot surface as dirty until the logic
-     * is added to properly calculate the actual text extents. */
-    aStream->dirty_x1 = 0.0;
-    aStream->dirty_y1 = 0.0;
-    aStream->dirty_x2 = pls->xlength;
-    aStream->dirty_y2 = pls->ylength;
 }
 
 /*---------------------------------------------------------------------
@@ -1225,8 +1181,6 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     aStream->cairoContext = NULL;
     aStream->downscale    = downscale;
 
-    reset_dirty_rectangle( aStream );
-
     /* Set text clipping on by default since it makes little difference in
      * speed for a modern cairo stack.*/
     aStream->text_clipping = 1;
@@ -1235,6 +1189,7 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     graphics_anti_aliasing = 0; /* use 'default' graphics aliasing by default */
     rasterize_image        = 1; /* Enable rasterization by default */
     set_background         = 0; /* Default for extcairo is that PLplot not change the background */
+    image_buffering        = 1; /* Default to image-based buffered rendering */
 
     /* Check for cairo specific options */
     plParseDrvOpts( cairo_options );
@@ -1250,6 +1205,7 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     aStream->graphics_anti_aliasing = graphics_anti_aliasing;
     aStream->rasterize_image        = rasterize_image;
     aStream->set_background         = set_background;
+    aStream->image_buffering        = image_buffering;
 
     /* set stream as not closed. */
     aStream->closed = 0;
@@ -1307,8 +1263,6 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts )
     {
         cairo_line_to( aStream->cairoContext, aStream->downscale * (double) xa[i], aStream->downscale * (double) ya[i] );
     }
-
-    update_dirty_rectangle( aStream );
 }
 
 /*---------------------------------------------------------------------
@@ -1321,40 +1275,37 @@ void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
     int i;
     PLCairo           *aStream;
-    cairo_line_join_t old_line_join;
-    cairo_line_cap_t  old_line_cap;
-    cairo_antialias_t aa_state;
 
     aStream = (PLCairo *) pls->dev;
 
-    /* Save the previous line drawing style */
-    get_line_properties( aStream, &old_line_join, &old_line_cap );
-
-    /* These line properties make for a nicer looking polygon mesh */
-    set_line_properties( aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_BUTT );
+    cairo_save( aStream->cairoContext );
 
     /* Draw the polygons */
     poly_line( pls, xa, ya, npts );
+
+    cairo_set_operator( aStream->cairoContext, CAIRO_OPERATOR_OVER );
 
     cairo_set_source_rgba( aStream->cairoContext,
         (double) pls->curcolor.r / 255.0,
         (double) pls->curcolor.g / 255.0,
         (double) pls->curcolor.b / 255.0,
         (double) pls->curcolor.a );
-    aa_state = cairo_get_antialias( aStream->cairoContext );
-    /* Add an extra outline stroke to the polygon unless the plotting color is
-     * not opaque or antialiasing is disabled. */
-    if ( ( pls->curcolor.a > 0.99 ) && ( aa_state != CAIRO_ANTIALIAS_NONE ) )
+
+    if ( cairo_get_antialias( aStream->cairoContext ) != CAIRO_ANTIALIAS_NONE )
     {
         cairo_fill_preserve( aStream->cairoContext );
+
+        // These line properties make for a nicer looking polygon mesh
+        set_line_properties( aStream, CAIRO_LINE_JOIN_BEVEL, CAIRO_LINE_CAP_BUTT );
         cairo_set_line_width( aStream->cairoContext, 1.0 );
         cairo_stroke( aStream->cairoContext );
     }
     else
+    {
         cairo_fill( aStream->cairoContext );
+    }
 
-    /* Restore the previous line drawing style */
-    set_line_properties( aStream, old_line_join, old_line_cap );
+    cairo_restore( aStream->cairoContext );
 }
 
 /*---------------------------------------------------------------------
@@ -1481,8 +1432,6 @@ void arc( PLStream *pls, arc_struct *arc_info )
     if ( arc_info->fill )
         cairo_line_to( aStream->cairoContext, 0.0, 0.0 );
     cairo_restore( aStream->cairoContext );
-
-    update_dirty_rectangle( aStream );
 
     cairo_set_source_rgba( aStream->cairoContext,
         (double) pls->curcolor.r / 255.0,
@@ -1639,15 +1588,19 @@ static signed int xcairo_init_cairo( PLStream *pls )
     aStream->cairoSurface_X = cairo_xlib_surface_create( aStream->XDisplay, aStream->XWindow, defaultVisual, pls->xlength, pls->ylength );
     aStream->cairoContext_X = cairo_create( aStream->cairoSurface_X );
     /* This is the Cairo surface PLplot will actually plot to. */
-    aStream->cairoSurface =
-        /*
-         *  cairo_surface_create_similar( aStream->cairoSurface_X,
-         *                                CAIRO_CONTENT_COLOR,
-         *                                pls->xlength, pls->ylength );
-         */
-        cairo_image_surface_create( CAIRO_FORMAT_RGB24,
-            pls->xlength, pls->ylength );
-    aStream->cairoContext = cairo_create( aStream->cairoSurface );
+    if ( aStream->image_buffering == 0 )
+    {
+        aStream->cairoSurface = cairo_surface_create_similar( aStream->cairoSurface_X, CAIRO_CONTENT_COLOR, pls->xlength, pls->ylength );
+        aStream->cairoContext = cairo_create( aStream->cairoSurface );
+    }
+    else
+    {
+        // Plot to an off-screen image
+        aStream->cairoSurface =
+            cairo_image_surface_create( CAIRO_FORMAT_RGB24,
+                pls->xlength, pls->ylength );
+        aStream->cairoContext = cairo_create( aStream->cairoSurface );
+    }
 
     /* Invert the surface so that the graphs are drawn right side up. */
     rotate_cairo_surface( pls, 1.0, 0.0, 0.0, -1.0, 0.0, pls->ylength, TRUE );
@@ -1733,16 +1686,10 @@ void blit_to_x( PLCairo *aStream, double x, double y, double w, double h )
     cairo_save( aStream->cairoContext_X );
     cairo_rectangle( aStream->cairoContext_X, x, y, w, h );
     cairo_set_operator( aStream->cairoContext_X, CAIRO_OPERATOR_SOURCE );
-    cairo_set_source_surface( aStream->cairoContext_X, aStream->cairoSurface,
-        0.0, 0.0 );
+    cairo_set_source_surface( aStream->cairoContext_X,
+        aStream->cairoSurface, 0.0, 0.0 );
     cairo_fill( aStream->cairoContext_X );
     cairo_restore( aStream->cairoContext_X );
-
-    /* Reset the drawn-on region */
-    reset_dirty_rectangle( aStream );
-
-    /* Flush the X display */
-    /* XFlush( aStream->XDisplay ); */
 }
 
 /*----------------------------------------------------------------------
@@ -1890,15 +1837,11 @@ void plD_esc_xcairo( PLStream *pls, PLINT op, void *ptr )
     switch ( op )
     {
     case PLESC_FLUSH:    /* forced update of the window */
-        blit_to_x( aStream, aStream->dirty_x1, aStream->dirty_y1,
-            aStream->dirty_x2 - aStream->dirty_x1,
-            aStream->dirty_y2 - aStream->dirty_y1 );
+        blit_to_x( aStream, 0.0, 0.0, pls->xlength, pls->ylength );
         XFlush( aStream->XDisplay );
         break;
     case PLESC_GETC:     /* get cursor position */
-        blit_to_x( aStream, aStream->dirty_x1, aStream->dirty_y1,
-            aStream->dirty_x2 - aStream->dirty_x1,
-            aStream->dirty_y2 - aStream->dirty_y1 );
+        blit_to_x( aStream, 0.0, 0.0, pls->xlength, pls->ylength );
         XFlush( aStream->XDisplay );
         xcairo_get_cursor( pls, (PLGraphicsIn*) ptr );
         break;
