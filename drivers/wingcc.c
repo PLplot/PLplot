@@ -27,6 +27,10 @@
 
 #include <string.h>
 #include <windows.h>
+#ifdef _WIN64
+#define GWL_USERDATA GWLP_USERDATA
+#define GCL_HCURSOR  GCLP_HCURSOR
+#endif
 
 #include "plplotP.h"
 #include "drivers.h"
