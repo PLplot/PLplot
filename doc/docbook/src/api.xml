@@ -345,6 +345,131 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
+  <sect1 id="plarc" renderas="sect3">
+    <title>
+      <function>plarc</function>: Draw a circular or elliptical arc
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plarc</function>
+	  </funcdef>
+	  <paramdef><parameter>x</parameter></paramdef>
+	  <paramdef><parameter>y</parameter></paramdef>
+	  <paramdef><parameter>a</parameter></paramdef>
+	  <paramdef><parameter>b</parameter></paramdef>
+	  <paramdef><parameter>angle1</parameter></paramdef>
+	  <paramdef><parameter>angle2</parameter></paramdef>
+	  <paramdef><parameter>fill</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Draw a possible filled arc centered at x,y with 
+      semimajor axis a and semiminor axis b, starting 
+      at angle1 and ending at angle2.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    X coordinate of arc center.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Y coordinate of arc center.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>a</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Length of the semimajor axis of the arc.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>b</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Length of the semiminor axis of the arc.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>angle1</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Starting angle of the arc.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>angle2</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Ending angle of the arc.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>fill</parameter>
+	  (<literal>PLBOOL</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Draw a filled arc.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: 
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    General: <function>plarc(x, y, a, b, angle1, angle2, fill)</function>
+	  </para>
+	</listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      This function is used in example 3.
+    </para>
+
+  </sect1>
+
   <sect1 id="plaxes" renderas="sect3">
     <title>
       <function>plaxes</function>: Draw a box with axes, etc. with arbitrary
