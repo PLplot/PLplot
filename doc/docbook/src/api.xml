@@ -368,9 +368,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Draw a possible filled arc centered at x,y with 
-      semimajor axis a and semiminor axis b, starting 
-      at angle1 and ending at angle2.
+      Draw a possible filled arc centered at
+      <literal><parameter>x</parameter></literal>,
+      <literal><parameter>y</parameter></literal> with semimajor axis 
+      <literal><parameter>a</parameter></literal> and semiminor axis 
+      <literal><parameter>b</parameter></literal>, starting at 
+      <literal><parameter>angle1</parameter></literal> and ending at 
+      <literal><parameter>angle2</parameter></literal>.
     </para>
 
     <variablelist>
@@ -13879,6 +13883,218 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Redacted form: <function>plsurf3d(x, y, z, opt, clevel)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plfsurf3d" renderas="sect3">
+    <title>
+      <function>plfsurf3d</function>: Plot shaded 3-d surface plot
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plsurf3d</function>
+	  </funcdef>
+	  <paramdef><parameter>x</parameter></paramdef>
+	  <paramdef><parameter>y</parameter></paramdef>
+	  <paramdef><parameter>zops</parameter></paramdef>
+	  <paramdef><parameter>zp</parameter></paramdef>
+	  <paramdef><parameter>nx</parameter></paramdef>
+	  <paramdef><parameter>ny</parameter></paramdef>
+	  <paramdef><parameter>opt</parameter></paramdef>
+	  <paramdef><parameter>clevel</parameter></paramdef>
+	  <paramdef><parameter>nlevel</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Plots a three dimensional shaded surface plot within the environment set up
+      by &plw3d;. The surface is defined by the data contained in the 2D 
+      <literal>PLFLT **</literal> matrix or the <literal>PLfGrid2</literal> structure
+      <literal><parameter>zp</parameter></literal>. How the data in 
+      <literal><parameter>zp</parameter></literal> is rendered is determined by the 
+      <literal><parameter>zops</parameter></literal> parameter.
+      <literal><parameter>zops</parameter></literal> is a pointer to a function
+      that reads the data out of the grid structure. The following functions in
+      PLplot core will return an appropriate function pointer: 
+      <literal>plf2ops_c()</literal> (use when 
+      <literal><parameter>zp</parameter></literal> is of type 
+      <literal>PLFLT **</literal>),
+      <literal>plf2ops_grid_c()</literal> (use when 
+      <literal><parameter>zp</parameter></literal> 
+      is a pointer to a row-major <literal>PLfGrid2</literal> structure), 
+      <literal>plf2ops_grid_row_major()</literal> 
+      (same as <literal>plf2ops_grid_c()</literal>?) and 
+      <literal>plf2ops_grid_col_major()</literal> 
+      (use when <literal><parameter>zp</parameter></literal> is a pointer to a 
+      column-major <literal>PLfGrid2</literal> structure). 
+      <literal><parameter>nx</parameter></literal>,
+      <literal><parameter>ny</parameter></literal>
+      <literal><parameter>opt</parameter></literal>
+      <literal><parameter>clevel</parameter></literal> and
+      <literal><parameter>nlevel</parameter></literal> are the same as in
+      for example &plsurf3d;.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of x coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of y coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>zops</parameter>
+	  (<literal>void (*) (?)</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a function for processing the data contained in zp.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>zp</parameter>
+	  (<literal>PLFLT ** or PLfGrid2 *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to the data to be plotted, either as a vectored 
+	    two-dimensional array with set of function values, or as
+	    PLfGrid2 structure.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>x</parameter></literal> values at
+	    which function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>y</parameter></literal> values at
+	    which function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>opt</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Determines the way in which the surface is represented. To specify
+	    more than one option just add the options, e.g. FACETED + SURF_CONT
+	    <itemizedlist>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=FACETED</literal>: Network
+		  of lines is drawn connecting points at which function is
+		  defined.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=BASE_CONT</literal>: A contour
+		  plot is drawn at the base XY plane using parameters
+		  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=SURF_CONT</literal>: A contour
+		  plot is drawn at the surface plane using parameters
+		  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_SIDES</literal>: draws a curtain
+		  between the base XY plane and the borders of the plotted function.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=MAG_COLOR</literal>:
+		  the surface is colored according to the value of Z; if
+		  <literal>MAG_COLOR</literal> is not used, then the default
+		  the surface is colored according to the intensity of the
+		  reflected light in the surface from a light source whose
+		  position is set using &pllightsource;.
+		</para>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <parameter>clevel</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to the array that defines the contour level spacing.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nlevel</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of elements in the <literal>clevel</literal> array.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form? <function>plfsurf3d(x, y, zops, zp, opt, clevel)</function>
     </para>
 
     <para>
