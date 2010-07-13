@@ -53,7 +53,7 @@ if(PKG_CONFIG_EXECUTABLE)
 else(PKG_CONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - not found")
   message(STATUS
-  "WARNING: Install-tree build will be disabled.")
+  "WARNING: Makefile+pkg-config version of examples build in the install tree will be disabled.")
   # Turn off pkg-config build.  (This means both build methods will be
   # commented out.)
   set(pkg_config_true "#")
