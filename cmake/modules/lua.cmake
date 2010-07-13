@@ -59,24 +59,16 @@ if(ENABLE_lua)
   # Check for Lua libraries which defines
   #  LUA_LIBRARIES    = path to the Lua library
   #  LUA_INCLUDE_DIR  = path to where lua.h is found
-  option(HAVE_lua51 "Lua version is 5.1" OFF)
-  if(HAVE_lua51)
-    find_package(Lua51)
-    # Variety of return values possible depending on whether 2.6.0 or later.
-    if(DEFINED LUA50_FOUND)
-      set(LUA_FOUND ${LUA50_FOUND})
-    elseif(DEFINED LUA51_FOUND)
-      set(LUA_FOUND ${LUA51_FOUND})
-    endif(DEFINED LUA50_FOUND)
-  else(HAVE_lua51)
+  #  and LUA51_FOUND and LUA50_FOUND consistently.
+  find_package(Lua51)
+  if(NOT LUA51_FOUND)
     find_package(Lua50)
-    set(LUA_FOUND LUA50_FOUND)
-  endif(HAVE_lua51)
-  if(NOT LUA_FOUND)
+  endif(NOT LUA51_FOUND)
+  if(NOT LUA51_FOUND AND NOT LUA51_FOUND)
     message(STATUS "WARNING: "
       "Lua library and/or header not found. Disabling Lua bindings")
     set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
-  endif(NOT LUA_FOUND)
+  endif(NOT LUA51_FOUND AND NOT LUA51_FOUND)
 endif(ENABLE_lua)
 
 if(ENABLE_lua)
@@ -104,11 +96,11 @@ if(ENABLE_lua)
   string(SUBSTRING "${LUA_VERSION}" 0 3 LUA_VERSION)
   message(STATUS "LUA_VERSION = ${LUA_VERSION}")
   set(LUA_VERSION_VALID)
-  if(${LUA_VERSION} STREQUAL "5.0" AND NOT HAVE_lua51)
+  if(${LUA_VERSION} STREQUAL "5.0" AND LUA50_FOUND)
     set(LUA_VERSION_VALID ON)
-  elseif(${LUA_VERSION} STREQUAL "5.1" AND HAVE_lua51)
+  elseif(${LUA_VERSION} STREQUAL "5.1" AND LUA51_FOUND)
     set(LUA_VERSION_VALID ON)
-  endif(${LUA_VERSION} STREQUAL "5.0" AND NOT HAVE_lua51)
+  endif(${LUA_VERSION} STREQUAL "5.0" AND LUA50_FOUND)
 
   if(NOT LUA_VERSION_VALID)
     message(STATUS "WARNING: "
@@ -120,9 +112,9 @@ endif(ENABLE_lua)
 if(ENABLE_lua)
   # Unless some better convention comes along, follow what Debian does for
   # install location of Lua wrapper shared object.
-  if(HAVE_lua51)
+  if(LUA51_FOUND)
     set(LUA_DIR ${LIB_DIR}/lua/5.1/plplot)
-  else(HAVE_lua51)
+  else(LUA51_FOUND)
     set(LUA_DIR ${LIB_DIR}/lua/50/plplot)
-  endif(HAVE_lua51)
+  endif(LUA51_FOUND)
 endif(ENABLE_lua)
