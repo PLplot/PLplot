@@ -127,19 +127,18 @@ function shade(x, y, z, levels, cont )
   __pl.pllsty(strm) = 1;	
   __pl.lab_pos(strm) = 1;
 
-  tr = [(maxx-minx)/(xlen-1); 0; xmm; 0; (maxy-miny)/(ylen-1); ymm];
   plpsty(0);
   if (1) ## plshades() is slower than several calls to plshade() !? and plshades() sometimes fails ?!
     for i = 1:n
-      plshade(z', 0, minx, maxx, miny, maxy, 
+      plshade1(z', 0, minx, maxx, miny, maxy, 
 	      clevel(i), clevel(i+1),
 	      1, (i-1) / (n-1), 1,
-	      cont_color, cont_width, max_color, max_width, 1, tr);
+	      cont_color, cont_width, max_color, max_width, 1, x, y);
     endfor
   else
 
     plshadesx(z, minx, maxx, miny, maxy, 
-	     clevel', 1, cont_color, cont_width, 1, tr);
+	     clevel', 1, cont_color, cont_width, 1, x, y);
   endif
 
   for i = 1:n
