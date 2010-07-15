@@ -277,17 +277,23 @@ Go to the PLplot SourceForge project page.
 
 Upload the Release:
 Select Project Admin / File Manager.
-Right click on the plplot folder & select "New folder" from the pop-up menu.
+Click on the plplot folder & select "New folder" from the pop-up menu (the gear like
+thing to the left of the plplot folder icon).
 Enter the release name as the "New folder name:", e.g. X.Y.Z Source.
-Right click on the release folder & select "Uploads here".
-Click on "Upload File" under File Manager & upload the source tarball and 
-the signature file.
+Click on the release folder pop-up menu & select "Upload here", upload the
+release and the gpg signature file from /tmp/plplot-dist-prep/. This can
+take a few minutes without much feedback.
 Concatenate the README.release and ChangeLog.release files into a single 
 README.release file.
 Click on "Upload File" again to upload the concatenated README.release file.
 Click on this file and mark it as "Release Note".
-Click on the source tarball & the signature file & select README.release in
-the "Release Notes for this file" drop down menu.
+Click on the source tarball & the signature file pop menu icon and select
+Properties. 
+Select README.release in the "Release Notes for this file" drop down menu. 
+Click on "Select All" for the platform set as default download (only do this
+for the source tarball).
+Click on the release folder pop-up menu icon, select properties and set
+the release notes for the folder.
 
 
 Create a news item for the Release:
