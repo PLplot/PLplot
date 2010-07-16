@@ -774,14 +774,15 @@ plslabelfunc(label_func lf, PLPointer data);
 void
 plsmaj(PLFLT def, PLFLT scale);
 
-#if 0
-/* plsmem not implemented because don't know how to make block
-of memory available from python. */
-%feature("autodoc", "Set the memory area to be plotted (with the 'mem'
-driver).") plsmem
+#ifdef PYTHON_HAVE_PYBUFFER
 
+%include <pybuffer.i>
+%pybuffer_mutable_string(void * plotmem)
+
+%feature("autodoc", "Set the memory area to be plotted (with the 'mem' driver).") plsmem;
 void
 plsmem(PLINT maxx, PLINT maxy, void *plotmem);
+
 #endif
 
 %feature("autodoc", "Set up lengths of minor tick marks.") plsmin;

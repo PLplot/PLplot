@@ -1249,6 +1249,9 @@ class PlXframe(Frame):
 ##		 min_col, min_wid, max_col, max_wid, rect,
 ##		 pltr, xg, yg, wrap )
 
+    def plsmem( ny, ny, plotmem ):
+        s.cmd('plsmem', nx, ny plotmem )
+
     def plssub( s, nx, ny ):
 	s.cmd( 'plssub', nx, ny )
 
