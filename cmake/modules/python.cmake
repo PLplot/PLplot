@@ -163,7 +163,7 @@ if(ENABLE_python)
     OUTPUT_VARIABLE PYTHON_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-  message(STATUS "DEBUG: PYTHON_VERSION = ${PYTHON_VERSION}")
+  message(STATUS "PYTHON_VERSION = ${PYTHON_VERSION}")
 
   # Enable plsmem if the Python and Swig versions support it
   transform_version(NUMERICAL_SWIG_MINIMUM_VERSION_FOR_PLSMEM "1.3.38")
