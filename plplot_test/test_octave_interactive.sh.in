@@ -70,8 +70,11 @@ endfor
 # -dev xwin and -dev tk worked for all examples and Octave-3.0.  For
 # Octave-3.2 the animation for p14 does not work correctly with these devices.
 
+# Remove 7, 16, 20 until plshade1 fix is done.
+# Remove 17 until an additional fix is done.
+# Remove combined example 21.
 plsetopt("dev","$device");
-for i=[1:21];
+for i=[1:6 8:15 18:19];
   if (verbose_test)
       printf("p%d\n",i);
   endif
