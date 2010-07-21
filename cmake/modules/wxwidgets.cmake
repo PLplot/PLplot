@@ -93,6 +93,8 @@ if(PLD_wxwidgets OR PLD_wxpng)
 	${wxwidgets_LINK_FLAGS}
 	${AGG_LIBRARIES}
 	)
+    else(HAVE_AGG)
+      message(STATUS "WARNING: wxwidgets driver and bindings components depending on AGG library have been dropped.")
     endif(HAVE_AGG)
     set(
       wxwidgets_COMPILE_FLAGS
