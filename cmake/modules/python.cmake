@@ -159,17 +159,17 @@ if(ENABLE_python)
   # Get the Python version.
   execute_process(
     COMMAND
-    ${PYTHON_EXECUTABLE} -c "import sys; print sys.version.split()[0]"
-    OUTPUT_VARIABLE PYTHON_version_output
+    ${PYTHON_EXECUTABLE} -c "import sys; print('%s.%s.%s' % sys.version_info[0:3])"
+    OUTPUT_VARIABLE PYTHON_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-  SET(PYTHON_VERSION ${PYTHON_version_output} CACHE STRING "Python version")
+  message(STATUS "DEBUG: PYTHON_VERSION = ${PYTHON_VERSION}")
 
   # Enable plsmem if the Python and Swig versions support it
   transform_version(NUMERICAL_SWIG_MINIMUM_VERSION_FOR_PLSMEM "1.3.38")
   transform_version(NUMERICAL_PYTHON_MINIMUM_VERSION_FOR_PLSMEM "2.6.0")
   transform_version(NUMERICAL_SWIG_VERSION "${SWIG_VERSION}")
-  transform_version(NUMERICAL_PYTHON_VERSION "${PYTHON_version_output}")
+  transform_version(NUMERICAL_PYTHON_VERSION "${PYTHON_VERSION}")
 
   SET(PYTHON_HAVE_PYBUFFER OFF)
   IF(NUMERICAL_SWIG_MINIMUM_VERSION_FOR_PLSMEM LESS NUMERICAL_SWIG_VERSION)
