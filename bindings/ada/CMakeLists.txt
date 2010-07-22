@@ -49,12 +49,8 @@ if(ENABLE_ada)
 
   set(plplotada${LIB_TAG}_LIB_SRCS)
   foreach(SOURCE_FILE ${SOURCE_LIST})
-    configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}.cmake
-      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
-      )
     list(APPEND plplotada${LIB_TAG}_LIB_SRCS 
-      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
       )
   endforeach(SOURCE_FILE ${SOURCE_LIST})
 

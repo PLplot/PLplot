@@ -121,7 +121,7 @@ if(BUILD_TEST)
   if(CORE_BUILD)
     include_directories(
       ${CMAKE_BINARY_DIR}/examples/ada
-      ${CMAKE_BINARY_DIR}/bindings/ada
+      ${CMAKE_SOURCE_DIR}/bindings/ada
       )
   else(CORE_BUILD)
     include_directories(${INCLUDE_DIR} ${ADA_INCLUDE_DIR})
@@ -135,7 +135,7 @@ if(BUILD_TEST)
   # CMake.)
   
   if(CORE_BUILD)
-    set(adalinkflags "-aI${CMAKE_BINARY_DIR}/examples/ada -aI${CMAKE_BINARY_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada${LIB_TAG}.dir")
+    set(adalinkflags "-aI${CMAKE_BINARY_DIR}/examples/ada -aI${CMAKE_SOURCE_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada${LIB_TAG}.dir")
   else(CORE_BUILD)
     set(adalinkflags "-aI${CMAKE_SOURCE_DIR}/ada -aI${ADA_INCLUDE_DIR} -aL${ADA_LIB_DIR}")
   endif(CORE_BUILD)
