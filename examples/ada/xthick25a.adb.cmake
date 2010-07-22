@@ -27,7 +27,7 @@ use
     PLplot_Auxiliary,
     PLplot;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 -- Test program for filling polygons and proper clipping
 procedure xthick25a is

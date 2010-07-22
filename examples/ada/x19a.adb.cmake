@@ -42,7 +42,7 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 -- Shows two views of the world map.
 procedure x19a is

@@ -35,7 +35,7 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 procedure x17a is
     autoy, acc : Boolean;

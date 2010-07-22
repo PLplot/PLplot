@@ -31,7 +31,7 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 -- Demonstrates plotting text in 3D.
 procedure x28a is

@@ -41,7 +41,7 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 -- This example mostly outputs text. As part of the PLplot testing regime, we
 -- require that the text output match that of the C version, x31c.c, exactly.

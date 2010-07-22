@@ -38,7 +38,7 @@ use
     PLplot,
     PLplot_Auxiliary;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 procedure xthick20a is
 

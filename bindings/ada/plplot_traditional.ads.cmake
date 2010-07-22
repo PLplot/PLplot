@@ -32,7 +32,7 @@ use
     PLplot_Auxiliary,
     Ada.Strings.Unbounded;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 package PLplot_Traditional is
 

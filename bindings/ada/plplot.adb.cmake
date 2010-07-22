@@ -41,7 +41,7 @@ use
     Ada.Strings.Unbounded,
     Interfaces.C;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 package body PLplot is    
 

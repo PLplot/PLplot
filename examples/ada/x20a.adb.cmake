@@ -38,7 +38,7 @@ use
     PLplot_Traditional,
     PLplot_Auxiliary;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 procedure x20a is
 

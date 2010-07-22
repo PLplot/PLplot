@@ -49,7 +49,7 @@ use
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
     
 package PLplot_Thin is
     subtype PLINT  is Integer;

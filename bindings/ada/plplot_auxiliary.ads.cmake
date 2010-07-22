@@ -29,7 +29,7 @@ use
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 package PLplot_Auxiliary is
 
@@ -47,7 +47,7 @@ package PLplot_Auxiliary is
     -- and plplot_thin.ads.
 --    type Real_Vector is array (Integer range <>) of Long_Float;
 --    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
-@Ada_Is_Not_2007_Vector_Matrix_Declarations@
+    type Real_Vector is array (Integer range <>) of Long_Float;    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
 
 
 --------------------------------------------------------------------------------

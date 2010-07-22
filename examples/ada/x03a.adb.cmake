@@ -36,7 +36,7 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 procedure x03a is
     dtr, theta, dx, dy, r, offset : Long_Float;

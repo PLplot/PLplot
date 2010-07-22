@@ -31,7 +31,7 @@ use
     PLplot_Auxiliary,
     PLplot;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 ------------------------------------------------------------------------------
 -- Does a simple pie chart.

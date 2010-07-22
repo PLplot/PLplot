@@ -33,7 +33,7 @@ use
     PLplot_Auxiliary,
     PLplot;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 procedure xthick30a is
     red   : Integer_Array_1D(0 .. 3) := (  0, 255,   0,   0);

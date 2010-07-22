@@ -33,7 +33,7 @@ use
     PLplot_Auxiliary,
     PLplot;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 procedure xthick01a is
     xs, ys : Real_Vector (0 .. 5);

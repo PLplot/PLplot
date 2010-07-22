@@ -27,7 +27,7 @@ use
     PLplot_Auxiliary,
     PLplot;
 
-@Ada_Is_2007_With_and_Use_Numerics@
+
 
 procedure xthick24a is
     red   : Integer_Array_1D(0 .. 6) := (240, 204, 204, 204,   0,  39, 125);
