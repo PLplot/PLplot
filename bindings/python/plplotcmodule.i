@@ -1241,5 +1241,11 @@ typedef void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer);
   resultobj = t_output_helper(resultobj, o);
 }
 #endif
+
+#ifdef PYTHON_HAVE_PYBUFFER
+%include <pybuffer.i>
+%pybuffer_mutable_string(void * plotmem)
+#endif
+
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i

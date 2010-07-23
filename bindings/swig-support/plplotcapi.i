@@ -774,10 +774,7 @@ plslabelfunc(label_func lf, PLPointer data);
 void
 plsmaj(PLFLT def, PLFLT scale);
 
-#ifdef PYTHON_HAVE_PYBUFFER
-
-%include <pybuffer.i>
-%pybuffer_mutable_string(void * plotmem)
+#if defined ( PYTHON_HAVE_PYBUFFER ) && defined ( SWIG_PYTHON ) 
 
 %feature("autodoc", "Set the memory area to be plotted (with the 'mem' driver).") plsmem;
 void
