@@ -52,13 +52,3 @@ if(ENABLE_ada)
     message(STATUS "FOUND gnat library ${GNAT_LIB}")
   endif(NOT GNAT_LIB)
 endif(ENABLE_ada)
-
-# New stuff by Jerry for source modifications for Ada 2007 or not Ada 2007.
-set(HAVE_ADA_2007 OFF CACHE BOOL "Ada 2007?" FORCE)
-
-if(HAVE_ADA_2007)
-  set(Ada_Is_2007_With_and_Use_Numerics "    with Ada.Numerics.Long_Real_Arrays; use Ada.Numerics.Long_Real_Arrays;")
-else(HAVE_ADA_2007)
-  # Is there some way to put a line ending after the first semicolon in the quoted string? Not essential.
-  set(Ada_Is_Not_2007_Vector_Matrix_Declarations "    type Real_Vector is array (Integer range <>) of Long_Float;    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;")
-endif(HAVE_ADA_2007)
