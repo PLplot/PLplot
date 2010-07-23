@@ -93,11 +93,7 @@ if(CORE_BUILD)
   set(ada_SRCS)
   foreach(STRING_INDEX ${ada_STRING_INDICES})
     set(SOURCE_FILE x${STRING_INDEX}a.adb)
-    configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}.cmake
-      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
-      )
-    list(APPEND ada_SRCS ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE})
+    list(APPEND ada_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE})
   endforeach(STRING_INDEX ${ada_STRING_INDICES})
 
   install(FILES ${ada_SRCS} DESTINATION ${DATA_DIR}/examples/ada)
@@ -135,7 +131,7 @@ if(BUILD_TEST)
   # CMake.)
   
   if(CORE_BUILD)
-    set(adalinkflags "-aI${CMAKE_BINARY_DIR}/examples/ada -aI${CMAKE_SOURCE_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada${LIB_TAG}.dir")
+    set(adalinkflags "-aI${CMAKE_SOURCE_DIR}/examples/ada -aI${CMAKE_SOURCE_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada${LIB_TAG}.dir")
   else(CORE_BUILD)
     set(adalinkflags "-aI${CMAKE_SOURCE_DIR}/ada -aI${ADA_INCLUDE_DIR} -aL${ADA_LIB_DIR}")
   endif(CORE_BUILD)
@@ -143,12 +139,7 @@ if(BUILD_TEST)
   foreach(STRING_INDEX ${ada_STRING_INDICES})
     set(TARGET_NAME x${STRING_INDEX}a)
     set(SOURCE_FILE x${STRING_INDEX}a.adb)
-
-    if(CORE_BUILD)
-      set(adasrcfile ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE})
-    else(CORE_BUILD)
-      set(adasrcfile ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE})
-    endif(CORE_BUILD)
+    set(adasrcfile ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE})
 
     # Note due to limitations of the Ada language support for CMake,
     # the nominal source file for add_executable is compiled (which is
