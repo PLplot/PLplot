@@ -128,11 +128,11 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 \
     rm -rf $EXDIR/demo${exe}
     mkdir -p $EXDIR/demo${exe}
     mv *${exe}.??.png $EXDIR/demo${exe}
-    # Note both Ada and fortran 77 examples grabbed from the installed
+    # Note configured fortran 77 examples must be grabbed from the installed
     # examples.
     for f in \
-	$cexamples_dir/../ada/x${exe}a.adb \
-	$cexamples_dir/../ada/xthick${exe}a.adb \
+	examples/ada/x${exe}a.adb \
+	examples/ada/xthick${exe}a.adb \
         examples/c/x${exe}c.c \
 	examples/c++/x${exe}.cc \
 	$cexamples_dir/../f77/x${exe}f.f \
