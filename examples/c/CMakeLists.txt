@@ -90,6 +90,11 @@ if(CORE_BUILD)
     set(plplotcanvas_DOCS
       README.plplotcanvas
       )
+    set(gcw_true "")
+    set(gcw_false "#")
+  else(ENABLE_gnome2)
+    set(gcw_true "#")
+    set(gcw_false "")
   endif(ENABLE_gnome2)
 
   install(FILES ${c_SRCS} ${plplotcanvas_SRCS} ${plplotcanvas_DOCS} ${extXdrawable_SRC} ${extcairo_SRC} ${cairo_DOCS}
