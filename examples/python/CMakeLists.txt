@@ -86,6 +86,7 @@ set(
   test_gradient.py
   test_type1.py
   test_hebrew_diacritic.py
+  test_mem.py
   )
 
 if(ENABLE_tk)
