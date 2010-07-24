@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # This script generates a tarball of source code and screenshots,
 # 'htdocs_plot_examples.tgz', that will be part of the 'examples' web page,
