@@ -119,13 +119,30 @@ HOSTNAME = raven
 WEBSITE_PREFIX = /home/irwin/public_html/plplot
 
 (raven is my local computer name, and /home/irwin/public_html is a location
-where I can put various websites).  I have both apache and PHP installed on
-my local machine.  Therefore, when I browse
-http://raven/~irwin/plplot/htdocs/ (the website corresponding to the above
-file prefix location), the result looks good.  In particular, the Ada plplot
-documentation is there and all the previous problems with source code
-accessibility for the Ada, f77, and OCaml examples are now fixed.
+where I can put various websites).  You can check for errors (e.g., due
+to missing commands that need to be installed) by running
 
+find /tmp/plplotdoc -name '*.out' |xargs grep -i error
+
+You should install both apache and PHP on your computer.  For Debian Testing
+(a.k.a. squeeze) that is done (as root) by installing libapache2-mod-php5
+and enabling user directories using the command
+
+a2enmod userdir
+
+and editing /etc/apache2/mods-available/php5.conf as indicated in that
+file to allow user directories for php.  I am not sure, but I believe
+from some google results I found that editing of that file is also
+necessary on modern versions of Ubuntu in order to allow php-based websites
+like that of PLplot to work when installed in local user directories.
+
+(When user directories are enabled this way, for the above case
+/home/irwin/public_html/plplot/htdocs, browses as
+http://raven/~irwin/plplot/htdocs/.)
+
+I test http://raven/~irwin/plplot/htdocs/ by clicking on most links, checking
+the documentation looks good, checking the examples look good and the
+source code for each language for examples is accessible, etc.
 
 (4) Upload the local website to SourceForge.
 
@@ -152,11 +169,6 @@ directory which is not what you want to do.
 
 N.B. the --dry-run option for rsync is a god-send and tells you exactly what
 will happen without actually doing it.
-
-N.B. log files for the website build can be found in the /tmp/plplotdoc/build
-directory. This can be useful for finding problems with the build of the
-website.
-
 
 (5) Creating a PLplot Release
 
