@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 echo "Generate and upload all PLplot website components to a computer host that is accessible with ssh."
 echo -n "Valid login name on ssh-accessible host? "
 read USERNAME
