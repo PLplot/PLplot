@@ -74,7 +74,7 @@ endfor
 # Remove 17 until an additional fix is done.
 # Remove combined example 21.
 plsetopt("dev","$device");
-for i=[1:6 8:15 18:19];
+for i=[1:20];
   if (verbose_test)
       printf("p%d\n",i);
   endif

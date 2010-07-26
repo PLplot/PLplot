@@ -21,11 +21,18 @@ function p17(fg)
   title "Click and Drag button 1 to select";
   xlabel "Button 2 to restart and button 3 to finish";
   ylabel "";
-  [img, map]= loadimage (file_in_loadpath ("lena.img"));
+  [img, map]= imread (file_in_loadpath ("lena.img"));
   colormap(map);
   plimage (img);
   if (!nargin)
     [x1, y1, x2, y2] = plrb(1);
+    % Prevent case where range is zero
+    if (x1 == x2) 
+      x2 = x1+1;
+    end
+    if (y1 == y2) 
+      y2 = y1+1;
+    end
     title "Lena";
     xlabel "";
     plimage (img, x1, x2, y1, y2);

@@ -52,6 +52,12 @@ function shade(x, y, z, levels, cont )
     levels = 2;
   endif
 
+  if (rows(x) > 1 & columns(x) > 1 & rows(y) > 1 & columns(y) > 1)
+    xymat = 1;
+  else
+    xymat = 0;
+  endif
+
   ## plot color and pen width of boundary of shade region
 
   max_color = 0; max_width = 0;
@@ -62,8 +68,6 @@ function shade(x, y, z, levels, cont )
     cont_color = 0; cont_width = 0;
   endif
 
-  xlen = length (x); ylen = length (y);
-  
   if (ishold == 0)
     xmm = xm = min(min(x)); xM = max(max(x));
     ymm = ym = min(min(y)); yM = max(max(y));
@@ -71,17 +75,19 @@ function shade(x, y, z, levels, cont )
     
     if (__pl.axis_st(strm))
       xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);
-      ix = find(x >= xm & x <= xM); 
-      x=x(ix); z=z(:,ix);
-      xlen = length (x);
-      xmm = min(x); 
+      if (xymat == 0)
+        ix = find(x >= xm & x <= xM); 
+        x=x(ix); z=z(:,ix);
+        xmm = min(x); 
+      endif
 
       if (length(__pl.axis(strm,:)) >= 4)	
 	ym = __pl.axis(strm,3); yM = __pl.axis(strm,4);
-	iy = find(y >= ym & y <= yM);
-	y=y(iy); z=z(iy,:);
-	ylen = length (y);
-	ymm = min(y);
+        if (xymat == 0)
+	  iy = find(y >= ym & y <= yM);
+	  y=y(iy); z=z(iy,:);
+	  ymm = min(y);
+        endif
       else
 	__pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
       endif
@@ -106,10 +112,22 @@ function shade(x, y, z, levels, cont )
     xmm = xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);
     ymm = ym = __pl.axis(strm,3); yM = __pl.axis(strm,4);
     zm = __pl.axis(strm,5); zM = __pl.axis(strm,6);
-    z = z( find(y >= ym & y <= yM), find(x >= xm & x <= xM));	
+    if (xymat == 0)
+      ix = find(x >= xm & x <= xM);
+      iy = find(y >= ym & y <= yM);
+      z = z( iy, ix );
+      x = x( ix );
+      y = y( iy );
+    endif
   endif
 
-  maxx = max(x); maxy = max(y); minx = min(x); miny = min(y);
+  maxx = max(max(x)); maxy = max(max(y)); minx = min(min(x)); miny = min(min(y));
+  if (columns(x)>1 & rows(x) == 1)
+    x = x';
+  endif
+  if (columns(y)>1 & rows(y) == 1)
+    y = y';
+  endif
     
   if (!isscalar(levels))
     n = length(levels)-1;
@@ -128,7 +146,7 @@ function shade(x, y, z, levels, cont )
   __pl.lab_pos(strm) = 1;
 
   plpsty(0);
-  if (1) ## plshades() is slower than several calls to plshade() !? and plshades() sometimes fails ?!
+  if (0) ## plshades() is slower than several calls to plshade() !? and plshades() sometimes fails ?!
     for i = 1:n
       plshade1(z', 0, minx, maxx, miny, maxy, 
 	      clevel(i), clevel(i+1),
@@ -136,9 +154,13 @@ function shade(x, y, z, levels, cont )
 	      cont_color, cont_width, max_color, max_width, 1, x, y);
     endfor
   else
-
-    plshadesx(z, minx, maxx, miny, maxy, 
+    if (columns(x) == 1 & columns(y) == 1)
+      plshades1(z', minx, maxx, miny, maxy, 
 	     clevel', 1, cont_color, cont_width, 1, x, y);
+    else
+      plshades2(z', minx, maxx, miny, maxy, 
+	     clevel', 1, cont_color, cont_width, 1, x', y');
+    endif
   endif
 
   for i = 1:n
@@ -161,7 +183,7 @@ function shade(x, y, z, levels, cont )
   endif
 
   if (__pl.legend(strm))
-    __pl_draw_legend
+    __pl_draw_legend;
   endif
 
   plcol(15);
