@@ -287,8 +287,13 @@ void plD_init_pdf( PLStream *pls )
 
     if ( setjmp( env ) )
     {
-        HPDF_Free( dev->pdf );
-        plexit( "ERROR: ???\n" );
+        // HPDF_Free segfaults after error so skip this nicety.
+        //HPDF_Free( dev->pdf );
+        // can't call plexit because that appears to be circular via
+        // what happens with plend.  Therefore, print out an error message
+        // and exit.
+        fprintf( stderr, "ERROR in haru library\n" );
+        exit( 1 );
     }
 }
 
