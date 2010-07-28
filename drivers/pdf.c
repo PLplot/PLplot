@@ -41,8 +41,8 @@
 #include "hpdf.h"
 
 /* PLplot header files */
+#define DEBUG
 #define NEED_PLDEBUG
-/* #define DEBUG */
 #include "plplotP.h"
 #include "drivers.h"
 #include "plunicode-type1.h"
@@ -205,14 +205,6 @@ void plD_init_pdf( PLStream *pls )
         pls->color = 0;                 /* monochrome */
     pls->width   = 1;
     pls->bytecnt = 0;
-
-#ifdef DEBUG
-    pls->verbose = 1;
-    pls->debug   = 1;
-#else
-    pls->verbose = 0;
-    pls->debug   = 0;
-#endif
 
     if ( text )
     {
@@ -576,6 +568,7 @@ void PSSetFont( pdfdev* dev, PLUNICODE fci )
 
     if ( !( dev->m_font = HPDF_GetFont( dev->pdf, font, NULL ) ) )
         plexit( "ERROR: Couldn't open font\n" );
+    //pldebug( "PSSetFont", "HPDF requested font size = %f\n", dev->fontSize * dev->fontScale );
     HPDF_Page_SetFontAndSize( dev->page, dev->m_font, dev->fontSize * dev->fontScale );
 }
 
