@@ -1,25 +1,18 @@
-The libharu software project uses autotools for Unix systems and a whole
-lot of different build systems for various Windows platforms in order to
-build libharu.  Because I believe that CMake has the potential to
-make a much better libharu build system, I have developed a proof-of-concept
-CMake-based build system for libharu.  You use it as follows:
-
-(1) copy this directory and all subdirectories on top of a pre-existing
-freshly unpacked version of libharu-2.1.0, e.g.,
-
-cp -a /home/software/plplot_svn/HEAD/plplot_cmake_qt/cmake/external/libharu/* libharu-2.1.0
-
 The manifest of these changes is as follows:
 
 This file:
 
 README.libharu
 
-New build system:
+Improved build system (Werner's build system culled from the
+git version of libharu with additional improvements by me):
 
 CMakeLists.txt
+cmake/modules/haru.cmake
+cmake/modules/summary.cmake
 src/CMakeLists.txt
 include/CMakeLists.txt
+demo/CMakeLists.txt
 include/hpdf_config.h.cmake
 
 Support for larger font sizes (without this, example 24 does not work):
@@ -31,10 +24,14 @@ Support for gcc visibility:
 
 include/hpdf.h
 
+(1) copy this directory and all subdirectories on top of a pre-existing
+freshly unpacked version of libharu-2.1.0, e.g.,
 
-This file and the new build system files are new, but the above cp -a
-command will overwrite/update the above libharu-2.1.0 files associated
-with support for larger fonts sizes and gcc visibility.
+cp -a /home/software/plplot_svn/HEAD/plplot_cmake_qt/cmake/external/libharu/* libharu-2.1.0
+
+N.B. libharu-2.1.0 has no cmake-based build-system at all (unlike the
+git version) so this cp operation installs that as well as changes to
+implement the larger font size support and gcc visibility.
 
 (2) configure, build, and install libharu starting with an empty build tree
 and empty install tree, e.g.,
@@ -42,6 +39,7 @@ and empty install tree, e.g.,
 rm -rf /home/software/libharu/build_dir/* /home/software/libharu/install
 cd /home/software/libharu/build_dir
 cmake -DCMAKE_INSTALL_PREFIX=/home/software/libharu/install \
+-DPOST_2.1.0=OFF -DLIBHARU_EXAMPLES=ON \
 ../libharu-2.1.0 >& cmake.out
 make -j4 install >& make_install.out
 
@@ -50,9 +48,16 @@ The above step works fine on Linux with
 export CFLAGS='-g -fvisibility=hidden'
 
 set before the "cmake" invocation to test the new gcc visibility support
-in hpdf.h
+in hpdf.h.  Note -DPOST_2.1.0=OFF is essential for the 2.1.0
+version, but you should drop this option for anything after 2.1.0.
+Also note that -DLIBHARU_EXAMPLES=ON builds the demos, but does not
+test them.
 
-N.B. This CMake-based build system only tested for Linux for now, but
-I have been careful about symbol visibility issues, and libharu is
-advertised as cross-platform so it _should_ work on Mac OS X and
-Windows systems (including Wine) as well.
+N.B. This improved CMake-based build system only tested for Linux for
+now, but the unimproved version presumably worked for Werner for his
+Windows platforms, and I have tried to be careful to minimize my changes
+to Werner's work so this build system _should_ continue to work on
+Windows systems (including Wine).  As far as I know, this improved
+build system _should_ also work on Mac OS X.  Of course, testing of
+the improved build system on Windows and Mac OS X platforms is
+required to demonstrate all is well on those platforms.
