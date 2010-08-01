@@ -146,7 +146,7 @@ else(PNG_FOUND)
 endif(PNG_FOUND)
 
 # =======================================================================
-# configure header files, add compiler flags
+# Add compiler flags
 # =======================================================================
 # add definitions and directories to include
 #if(CMAKE_COMPILER_IS_GNUCC)
@@ -156,12 +156,6 @@ if(MSVC_VERSION GREATER 1399)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
 endif(MSVC_VERSION GREATER 1399)
 include_directories(${CMAKE_SOURCE_DIR}/include)
-
-# create hpdf_config.h
-configure_file(
-  ${CMAKE_SOURCE_DIR}/include/hpdf_config.h.cmake
-  ${CMAKE_BINARY_DIR}/include/hpdf_config.h
-  )
 include_directories(${CMAKE_BINARY_DIR}/include)
 
 # create DevPackage file
@@ -171,50 +165,17 @@ if(DEVPAK)
     ${CMAKE_BINARY_DIR}/libharu.DevPackage
     )
 endif(DEVPAK)
+
+# =======================================================================
+# Configure and install header files.
+# =======================================================================
+add_subdirectory(include)
+
 # =======================================================================
 # create library and demos
 # =======================================================================
 add_subdirectory(src)
 add_subdirectory(demo)
-
-# =======================================================================
-# installation configuration
-# =======================================================================
-set(
-  haru_HDRS
-  include/hpdf.h
-  include/hpdf_types.h
-  include/hpdf_consts.h 
-  include/hpdf_version.h
-  include/hpdf_annotation.h
-  include/hpdf_catalog.h
-  include/hpdf_conf.h
-  include/hpdf_destination.h
-  include/hpdf_doc.h
-  include/hpdf_encoder.h
-  include/hpdf_encrypt.h
-  include/hpdf_encryptdict.h
-  include/hpdf_error.h
-  include/hpdf_ext_gstate.h
-  include/hpdf_font.h
-  include/hpdf_fontdef.h
-  include/hpdf_gstate.h
-  include/hpdf_image.h
-  include/hpdf_info.h
-  include/hpdf_list.h
-  include/hpdf_mmgr.h
-  include/hpdf_objects.h
-  include/hpdf_outline.h
-  include/hpdf_pages.h
-  include/hpdf_page_label.h
-  include/hpdf_streams.h
-  include/hpdf_u3d.h
-  include/hpdf_utils.h
-  ${CMAKE_BINARY_DIR}/include/hpdf_config.h
-  )
-
-# install header files
-install(FILES ${haru_HDRS} DESTINATION include)
 
 # install various files
 # These commented out to keep install tree as lean as possible.  May want
