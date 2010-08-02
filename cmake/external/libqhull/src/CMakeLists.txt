@@ -73,6 +73,15 @@ add_library(
   ${qhull_src}
   )
 
+# Symbol visibility support.
+if(BUILD_SHARED_LIBS)
+  set_target_properties(
+    qhull
+    PROPERTIES
+    COMPILE_DEFINITIONS "USINGDLL"
+    )
+endif(BUILD_SHARED_LIBS)
+
 target_link_libraries(
   qhull 
   ${MATH_LIB}
