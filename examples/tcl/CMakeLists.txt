@@ -74,7 +74,8 @@ foreach(STRING_INDEX ${tcl_STRING_INDICES})
   set(tcl_SCRIPTS ${tcl_SCRIPTS} x${STRING_INDEX})
 endforeach(STRING_INDEX ${tcl_STRING_INDICES})
 
-# Configure the standard examples file. It is always copied
+# standard_examples is a configured shell script that runs all the standard
+# examples under pltcl.
 get_target_property(pltcl_LOCATION pltcl LOCATION)
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/standard_examples.in
@@ -116,7 +117,9 @@ if(CORE_BUILD)
     )
 
   install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
-  install(PROGRAMS ${tcl_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
+  install(PROGRAMS ${tcl_SCRIPTS} standard_examples.in 
+    DESTINATION ${DATA_DIR}/examples/tcl
+    )
 
   install(FILES CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples/tcl
