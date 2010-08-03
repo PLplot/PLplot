@@ -89,5 +89,8 @@ if(ENABLE_tcl)
       )
   endif(USE_RPATH)
 
-  install(TARGETS pltcl DESTINATION ${BIN_DIR})
+  install(TARGETS pltcl 
+    EXPORT export_plplot
+    DESTINATION ${BIN_DIR}
+    )
 endif(ENABLE_tcl)
