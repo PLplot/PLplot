@@ -16,6 +16,7 @@ include(pkg-config)
 set(LIB_TAG "@LIB_TAG@")
 set(INCLUDE_DIR "@INCLUDE_DIR@")
 set(MATH_LIB @MATH_LIB@)
+set(SH_EXECUTABLE @SH_EXECUTABLE@)
 
 set(language_info_LIST @language_info_LIST@)
 
