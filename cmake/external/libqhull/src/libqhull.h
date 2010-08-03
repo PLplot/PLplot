@@ -1095,6 +1095,9 @@ QHULLDLLIMPEXP qhT    *qh_save_qhull(void);
 
 QHULLDLLIMPEXP void    dfacet( unsigned id);
 QHULLDLLIMPEXP void    dvertex( unsigned id);
+QHULLDLLIMPEXP void    qh_countfacets(facetT *facetlist, setT *facets, boolT printall,
+              int *numfacetsp, int *numsimplicialp, int *totneighborsp,
+              int *numridgesp, int *numcoplanarsp, int *numnumtricoplanarsp);
 QHULLDLLIMPEXP void    qh_printneighborhood(FILE *fp, qh_PRINT format, facetT *facetA, facetT *facetB, boolT printall);
 QHULLDLLIMPEXP void    qh_produce_output(void);
 QHULLDLLIMPEXP coordT *qh_readpoints(int *numpoints, int *dimension, boolT *ismalloc);
@@ -1112,6 +1115,7 @@ QHULLDLLIMPEXP void    qh_check_points(void);
 QHULLDLLIMPEXP setT   *qh_facetvertices(facetT *facetlist, setT *facets, boolT allfacets);
 QHULLDLLIMPEXP facetT *qh_findbestfacet(pointT *point, boolT bestoutside,
            realT *bestdist, boolT *isoutside);
+QHULLDLLIMPEXP void    qh_findgood_all(facetT *facetlist);
 QHULLDLLIMPEXP vertexT *qh_nearvertex(facetT *facet, pointT *point, realT *bestdistp);
 QHULLDLLIMPEXP pointT *qh_point(int id);
 QHULLDLLIMPEXP setT   *qh_pointfacet(void /*qh.facet_list*/);
