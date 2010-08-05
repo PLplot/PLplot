@@ -174,6 +174,7 @@ install-indep-stamp: build-indep-stamp
 	touch install-indep-stamp
 
 install-python: $(PYVERS:%=install-python%)
+	dh_numpy
 	( cd $(BUILD_DIR)/examples/python ; $(MAKE) DESTDIR=$(debtmp) install )
 	mv $(debex)/python $(debdoc)/$(libpkg)/examples
 	touch $@

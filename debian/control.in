@@ -2,7 +2,7 @@ Source: plplot
 Section: math
 Priority: optional
 Maintainer: Andrew Ross <andrewross@users.sourceforge.net>
-Standards-Version: 3.8.4
+Standards-Version: 3.9.1
 Build-Depends: cmake (>= 2.6.3), debhelper (>= 7), 
  tcl8.5-dev, tk8.5-dev, itcl3-dev, libx11-dev, libxext-dev,
  libxi-dev, gfortran, itk3-dev, octave3.2-headers,
@@ -10,7 +10,7 @@ Build-Depends: cmake (>= 2.6.3), debhelper (>= 7),
  libxml-parser-perl, libxml-dom-perl, libltdl3-dev, pkg-config, 
  quilt, slice, python-gtk2-dev, libwxgtk2.8-dev, 
  python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6),
- python-numpy (>= 1.0.4-4), ttf-freefont, default-jdk,
+ python-numpy (>= 1:1.4.1-4~), ttf-freefont, default-jdk,
  fastjar, swig, gnat [!sh4]
 Build-Depends-Indep: docbook-xml, docbook, docbook-dsssl, docbook-xsl,
  docbook2x, opensp, jadetex, ghostscript
@@ -249,7 +249,7 @@ Package: python-plplot
 Architecture: any
 Section: python
 Depends: libplplot9 (= ${binary:Version}), ${shlibs:Depends},
- ${python:Depends}, python-numpy, ${misc:Depends}
+ ${python:Depends}, ${misc:Depends}
 Provides: ${python:Provides}
 XB-Python-Version: ${python:Versions}
 Description: Python support for PLplot, a plotting library
