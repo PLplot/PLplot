@@ -124,25 +124,6 @@ Description: Scientific plotting library (CSIRO libraries)
  The source code for these libraries are part of the plplot source
  package.
 
-Package: plplot-bin
-Architecture: any
-Conflicts: libplplot9 (<= 5.3.0-4), plplot (<< 5)
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Scientific plotting library (utilities)
- PLplot is relatively small, portable, freely distributable, and is rich
- enough to satisfy most users.  It has a wide range of plot types including
- line (linear, log), contour, 3D, fill, and almost 1000 characters
- (including Greek and mathematical) in its extended font set.  The package
- is designed to make it easy to quickly get graphical output; only a
- handful of function calls is typically required.  For more advanced use,
- virtually all aspects of plotting are configurable.
- .
- This package contains the following utilities associated with PLplot.
- .
-  * pltek - review a Tektronix vector file
-  * plm2gif - converts PLplot metafiles to GIF files
-  * plpr - converts PLplot metafile to something the printer will understand
-
 Package: plplot9-driver-xwin
 Architecture: any
 Section: libs
@@ -189,8 +170,7 @@ Description: Tcl/Tk support for PLplot, a plotting library
  .
  This package contains the Tcl/Tk support for PLplot: shared libraries,
  Tcl modules, the Tk driver, and some programs for interactive use of
- PLplot (plserver and pltcl). Also included is the utility program
- plrender to render PLplot metafiles.
+ PLplot (plserver and pltcl). 
 
 Package: plplot-tcl-dev
 Architecture: any

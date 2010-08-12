@@ -21,8 +21,6 @@ plplot for Debian
         using the PLplot API, as well as many examples in C, C++, and
         Fortran77.
 
-      * plplot-bin: Contains various utilities associated with PLplot.
-
       * plplot-doc: HTML, PS and PDF formats of the PLplot manual.
 
       * plplot9-driver-xwin: Provides the xwin driver module.

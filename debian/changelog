@@ -11,12 +11,22 @@ plplot (5.9.6-1) unstable; urgency=low
       patches, but leave patch for now to see if octave example p7 is ok 
       on alpha.
     + Update remaining patches for 5.9.6.
+  * debian/control.in: drop plplot-bin package altogether as all these scripts
+    are now obsolete.
+
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 12 Jul 2010 22:39:08 +0100
+
+plplot (5.9.5-4) unstable; urgency=low
+
   * debian/rules, debian/control.in: update to use dh_numpy in debian/rules 
     to get versioned numpy support. Requires python numpy >= 1:1.1.4.1-4~ 
     (closes: 590770).
   * debian/control.in: Bump standards version to 3.9.1.
+  * debian/control.in, debian/plplot-bin.files: remove references to plrender
+    in package descriptions (no longer included) and also remove plpr / plm2gif
+    scripts which rely on plrender.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 05 Jul 2010 23:14:30 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 12 Jul 2010 20:26:31 +0100
 
 plplot (5.9.5-3) unstable; urgency=low
 

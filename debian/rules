@@ -113,10 +113,9 @@ clean: unpatch
 
 install-arch: install-arch-stamp install-python
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
-		     --no-package=plplot-bin --no-package=python-plplot   \
+		     --no-package=python-plplot   \
 		     --no-package=libplplot9-java --no-package=libplplot-ada
 	dh_movefiles --package=python-plplot
-	dh_movefiles --package=plplot-bin
 	dh_movefiles --package=libplplot9-java
 ifeq ($(BUILD_ADA),yes)
 	dh_movefiles --package=libplplot-ada
@@ -146,8 +145,7 @@ install-arch-stamp: build-arch-stamp
 
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
-		python-plplot plplot-bin libplplot-c++9c2 		\
-		plplot9-driver-wxwidgets                                \
+		python-plplot libplplot-c++9c2 plplot9-driver-wxwidgets \
 		plplot9-driver-cairo libplplot-fortran9	; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
@@ -174,14 +172,13 @@ install-indep-stamp: build-indep-stamp
 	touch install-indep-stamp
 
 install-python: $(PYVERS:%=install-python%)
-	dh_numpy
 	( cd $(BUILD_DIR)/examples/python ; $(MAKE) DESTDIR=$(debtmp) install )
 	mv $(debex)/python $(debdoc)/$(libpkg)/examples
 	touch $@
 
 install-python%: build-arch-stamp
 	( cd $(BUILD_DIR) ; \
-	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
+	  cmake $(SRC_DIR) $(CONFIGURE_OPTIONS) -DENABLE_python=ON -DPYTHON_EXECUTABLE=/usr/bin/python$* -DPYTHON_LIBRARIES=/usr/lib/python$* -DPYTHON_LIBRARY=/usr/lib/python$*/config/libpython$*.so -DPYTHON_INCLUDE_PATH="/usr/include/python$*;/usr/include/numpy;/usr/lib/pyshared/python$*/numpy/core/include/numpy"  -DNUMERIC_INCLUDE_PATH=/usr/include/numpy ; \
 	  for d in python ; do		\
 	    ( cd bindings/$$d;				\
 	      $(MAKE) clean ;				\
@@ -213,6 +210,7 @@ binary-arch: build-arch install-arch
 	dh_installchangelogs --package=$(libpkg) --package=libcsiro0
 
 	dh_pycentral --package=python-plplot
+	dh_numpy
 	dh_strip -a
 	dh_compress -a -Xexamples/
 	dh_fixperms -a
