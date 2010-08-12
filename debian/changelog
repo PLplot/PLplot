@@ -13,8 +13,10 @@ plplot (5.9.6-1) unstable; urgency=low
     + Update remaining patches for 5.9.6.
   * debian/control.in: drop plplot-bin package altogether as all these scripts
     are now obsolete.
+  * debian/control.in, debian/rules, debian/plplot9-driver-qt.files:
+    Add new plplot9-driver-qt package which includes the qt driver and bindings.
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 12 Jul 2010 22:39:08 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 12 Jul 2010 23:25:08 +0100
 
 plplot (5.9.5-4) unstable; urgency=low
 
