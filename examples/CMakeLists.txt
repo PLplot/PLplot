@@ -996,10 +996,9 @@ if(BUILD_TEST)
     add_dependencies(test_interactive ${interactive_targets_LIST})
   endif(interactive_targets_LIST)
 
-  # Custom target to test all of qt devices/special examples.
+  # List of custom targets that test all of qt devices/special examples.
   # Must be maintained.
-  add_custom_target(test_all_qt)
-  add_dependencies(test_all_qt
+  set(qt_test_target_LIST
     test_c_bmpqt
     test_c_epsqt
     test_c_jpgqt
@@ -1014,10 +1013,20 @@ if(BUILD_TEST)
     test_qt_example
     )
 
-  # Custom target to test all of cairo devices/special examples.
+  set(qt_test_target_DEPENDS)
+  foreach(qt_test_target ${qt_test_target_LIST})
+    if(TARGET ${qt_test_target})
+      list(APPEND qt_test_target_DEPENDS ${qt_test_target})
+    endif(TARGET ${qt_test_target})
+  endforeach(qt_test_target ${qt_test_target_LIST})
+  if(qt_test_target_DEPENDS)
+    add_custom_target(test_all_qt)
+    add_dependencies(test_all_qt ${qt_test_target_DEPENDS})
+  endif(qt_test_target_DEPENDS)
+
+  # List of custom targets that test all of cairo devices/special examples.
   # Must be maintained.
-  add_custom_target(test_all_cairo)
-  add_dependencies(test_all_cairo
+  set(cairo_test_target_LIST
     test_c_pdfcairo
     test_c_pngcairo
     test_c_pscairo
@@ -1026,6 +1035,17 @@ if(BUILD_TEST)
     test_c_xcairo
     test_extXdrawable
     )
+
+  set(cairo_test_target_DEPENDS)
+  foreach(cairo_test_target ${cairo_test_target_LIST})
+    if(TARGET ${cairo_test_target})
+      list(APPEND cairo_test_target_DEPENDS ${cairo_test_target})
+    endif(TARGET ${cairo_test_target})
+  endforeach(cairo_test_target ${cairo_test_target_LIST})
+  if(cairo_test_target_DEPENDS)
+    add_custom_target(test_all_cairo)
+    add_dependencies(test_all_cairo ${cairo_test_target_DEPENDS})
+  endif(cairo_test_target_DEPENDS)
 
 endif(BUILD_TEST)
 
