@@ -2,14 +2,14 @@
 
 # Process man pages in this subdirectory.
 
-set(core_manpages plm2gif.1 plpr.1 pltek.1)
+set(core_manpages pltek.1)
 
 if(PLD_pstex)
   set(core_manpages ${core_manpages} pstex2eps.1)
 endif(PLD_pstex)
 
 if(PLD_plmeta)
-  set(core_manpages ${core_manpages} plrender.1)
+  set(core_manpages ${core_manpages} plrender.1 plm2gif.1 plpr.1)
 endif(PLD_plmeta)
 
 set(tcl_manpages plserver.1 pltcl.1)
