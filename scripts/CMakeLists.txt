@@ -20,13 +20,18 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 if(HAVE_BASH)
-  set(scripts_SCRIPTS
-  plm2gif
-  plpr
-  )
+  set(scripts_SCRIPTS "")
+  if(PLD_plmeta)
+    set(scripts_SCRIPTS ${scripts_SCRIPTS}
+    plm2gif
+    plpr
+    )
+  endif(PLD_plmeta)
   if(PLD_pstex)
     set(scripts_SCRIPTS ${scripts_SCRIPTS} pstex2eps)
   endif(PLD_pstex)
-  install(PROGRAMS ${scripts_SCRIPTS} DESTINATION ${BIN_DIR})
+  if (NOT ${scripts_SCRIPTS} STREQUAL "")
+    install(PROGRAMS ${scripts_SCRIPTS} DESTINATION ${BIN_DIR})
+  endif (NOT ${scripts_SCRIPTS} STREQUAL "")
 endif(HAVE_BASH)
 
