@@ -37,16 +37,13 @@ ${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
 # examples are disabled.  
 project(plplot C)
 
-# For use under MSYS version 2.6.3 or above of cmake is required!
-# The variable MSYS is first known at this point in the build process
 message(STATUS "CMake version = ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
-if(MSYS)
-  # Version 2.6.3 or above of cmake is required for MSYS
-  CMAKE_MINIMUM_REQUIRED(VERSION 2.6.3 FATAL_ERROR)
-else(MSYS)
-  # Version 2.6.0 or above of cmake is required for all other platforms
-  CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
-endif(MSYS)
+
+# Note that the variable MSYS is first known at this point in the
+# build process in case have different minimum version for that case.
+
+# Version 2.6.4 or above of cmake is currently required for all platforms.
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4 FATAL_ERROR)
 
 #foreach(policy RANGE 0 9)
 #  cmake_policy(GET CMP000${policy} policy_result)
