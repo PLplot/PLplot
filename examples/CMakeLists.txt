@@ -845,7 +845,7 @@ if(BUILD_TEST)
     list(APPEND interactive_targets_LIST test_pygcw)
   endif(ENABLE_pygcw)
 
-  if(ENABLE_tcl)
+  if(ENABLE_tcl AND PLD_xwin)
     if(CORE_BUILD)
       add_custom_target(test_tcl_standard_examples
 	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/standard_examples -dev xwin -np
@@ -870,7 +870,7 @@ if(BUILD_TEST)
     endif(FILE_DEPENDS_xwin)
     list(APPEND interactive_targets_LIST ${test_tcl_standard_examples})
 
-  endif(ENABLE_tcl)
+  endif(ENABLE_tcl AND PLD_xwin)
 
   if(ENABLE_tk AND PLD_tk)
     set(targets_examples_tk)
