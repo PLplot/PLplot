@@ -47,8 +47,10 @@ if(ENABLE_f77)
     # Set the flags for the C compiler. The C stubs need to have the
     # correction case and calling convention for the Fortran compiler
     IF(TARGET_FORTRAN MATCHES "IVF")
+      SET(DEFFILE "_ifort")
       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DIVF")
     ELSEIF(TARGET_FORTRAN MATCHES "CVF")
+      SET(DEFFILE "")
       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DCVF")
     ENDIF(TARGET_FORTRAN MATCHES "IVF")
   endif(WIN32)
@@ -144,7 +146,7 @@ if(ENABLE_f77)
 
 
   if(WIN32 AND BUILD_SHARED_LIBS AND NOT CYGWIN AND NOT MINGW)
-    SET(plplotf77${LIB_TAG}_LIB_SRCS ${plplotf77${LIB_TAG}_LIB_SRCS} plplotf77.def)
+    SET(plplotf77${LIB_TAG}_LIB_SRCS ${plplotf77${LIB_TAG}_LIB_SRCS} plplotf77${DEFFILE}.def)
   endif(WIN32 AND BUILD_SHARED_LIBS AND NOT CYGWIN AND NOT MINGW)
 
   add_library(plplotf77${LIB_TAG} ${plplotf77${LIB_TAG}_LIB_SRCS})

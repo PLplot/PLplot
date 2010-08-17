@@ -49,8 +49,10 @@ if(ENABLE_f95)
     # Set the flags for the C compiler. The C stubs need to have the
     # correct case and calling convention for the Fortran compiler
     IF(TARGET_FORTRAN MATCHES "IVF")
+      SET(DEFFILE "_ifort")
       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DIVF")
     ELSEIF(TARGET_FORTRAN MATCHES "CVF")
+      SET(DEFFILE "")
       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DCVF")
     ENDIF(TARGET_FORTRAN MATCHES "IVF")
   endif(WIN32)
@@ -95,7 +97,7 @@ if(ENABLE_f95)
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-  # Build fortran part of F95 bindings.  
+  # Build fortran part of F95 bindings.
   # Notes:
 
   # configurable.f90 is actually not currently configurable.
@@ -124,7 +126,7 @@ if(ENABLE_f95)
   endif(STATIC_OPTS)
 
   if(WIN32 AND BUILD_SHARED_LIBS AND NOT MINGW AND NOT CYGWIN)
-    SET(plplotf95${LIB_TAG}_LIB_SRCS ${plplotf95${LIB_TAG}_LIB_SRCS} plplotf95.def)
+    SET(plplotf95${LIB_TAG}_LIB_SRCS ${plplotf95${LIB_TAG}_LIB_SRCS} plplotf95${DEFFILE}.def)
   endif(WIN32 AND BUILD_SHARED_LIBS AND NOT MINGW AND NOT CYGWIN)
 
   add_library(plplotf95${LIB_TAG} ${plplotf95${LIB_TAG}_LIB_SRCS})

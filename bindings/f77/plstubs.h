@@ -54,6 +54,7 @@
 #define STUB_FORTRAN    4
 #define STUB_STDCALL    5
 #define STUB_MINGW      6
+#define STUB_IVF        7
 
 #ifndef STUB_LINKAGE
 
@@ -91,9 +92,9 @@
 #endif
 #endif
 
-#ifdef WIN32                                       /* Windows 32-bit */
-#ifdef IVF                                         /* Intel Visual Fortran */
-#define STUB_LINKAGE    STUB_U
+#if defined( WIN32 )                               /* Windows 32-bit */
+#if defined( IVF )                                 /* Intel Visual Fortran */
+#define STUB_LINKAGE    STUB_IVF
 #elif defined ( CVF )                              /* MSVC/CVF */
 #define STUB_LINKAGE    STUB_U
 #elif defined ( MSDOS )                            /* MS-DOS based */
@@ -142,6 +143,10 @@
 #elif STUB_LINKAGE == STUB_MINGW
 #define FNAME( x, y )     PLDLLIMPEXP_F77C y ## _
 #define FNAME_( x, y )    y
+
+#elif STUB_LINKAGE == STUB_IVF
+#define FNAME( x, y )     PLDLLIMPEXP_F77C x
+#define FNAME_( x, y )    x
 
 #else
 #error "Illegal setting for STUB_LINKAGE"

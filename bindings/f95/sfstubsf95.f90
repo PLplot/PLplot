@@ -1110,37 +1110,37 @@
          call plline3f77( size(x), x, y, z )
       end subroutine plline3
 
-      subroutine plmap1(mapform,mapname,minx,maxx,miny,maxy) 
+      subroutine plmap1(mapform,mapname,minx,maxx,miny,maxy)
         use plplot_flt
         implicit none
         real(kind=plflt) minx, maxx, miny, maxy
         character*(*) mapname
         external mapform
-        
+
         include 'sfstubs.h'
-        
+
         call plstrf2c(mapname, string1, maxlen)
-        
+
         call plsetmapformc(mapform)
         s1 = transfer( string1, s1 )
         call plmap7(s1,minx,maxx,miny,maxy)
-        
+
       end subroutine plmap1
-      
+
       subroutine plmap2(mapname,minx,maxx,miny,maxy)
         use plplot_flt
         implicit none
         real(kind=plflt) minx, maxx, miny, maxy
         character*(*) mapname
-        
+
         include 'sfstubs.h'
-        
+
         call plstrf2c(mapname, string1, maxlen)
-        
+
         call plclearmapformc()
         s1 = transfer( string1, s1 )
         call plmap7(s1,minx,maxx,miny,maxy)
-        
+
       end subroutine plmap2
 
       subroutine plmeridians1(mapform,dlong,dlat,minlong,maxlong, &
@@ -1162,7 +1162,6 @@
 
       implicit none
       real(kind=plflt) dlong, dlat, minlong, maxlong, minlat, maxlat
-      external mapform
 
       include 'sfstubs.h'
 

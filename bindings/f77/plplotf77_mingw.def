@@ -18,7 +18,9 @@ EXPORTS
 	plimagefr_
 	pllab_
 	plmap_
+	plmap_none_
 	plmeridians_
+	plmeridians_none_
 	plmtex3_
 	plmtex_
 	plparseopts_
