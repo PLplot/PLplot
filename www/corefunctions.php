@@ -1,4 +1,29 @@
 <?php
+	// open plplot rss news feed via simplepie
+	include('simplepie.inc');
+
+	// Substring without losing word meaning and
+	// tiny words (length 3 by default) are included on the result.
+	// "..." is added if result do not reach original string length
+	// taken from http://www.php.net/manual/en/function.substr.php#93963
+	function _substr($str, $length, $minword = 3)
+	{
+    $sub = '';
+    $len = 0;
+    
+    foreach(explode(' ', $str) as $word) {
+	    $part = (($sub != '') ? ' ' : '') . $word;
+	    $sub .= $part;
+	    $len += strlen($part);
+	    
+	    if(strlen($word) > $minword && strlen($sub) >= $length) {
+	    	break;
+	    }
+    }
+    
+    return $sub . (($len < strlen($str)) ? '...' : '');
+	}
+
 	//
 	// Print standard page header
 	//
@@ -66,21 +91,29 @@ END;
 	//
 	// Print News from project page
 	//
-	function pageNews($newscount)
+	function pageNews($newscount, $contentlength)
 	{
-		// Open the XML file for reading
-		$fp = fopen("http://sourceforge.net/export/projnews.php?group_id=2915&limit=$newscount&flat=0&show_summaries=0","r")
-		       or die("Error reading RSS data.");
+		// Open the PLplot News RSS feed and parse it
+		$feed = new SimplePie();
+		$url = sprintf("http://sourceforge.net/export/rss2_projnews.php?group_id=2915&rss_limit=%d", $newscount);
+		$feed->set_feed_url($url);
+		$feed->init();
+		$feed->handle_content_type();
 
-		// Read the XML file 4KB at a time
-		while ($data = fread($fp, 4096))
-			// Parse each 4KB chunk with the XML parser created above
-			echo $data;
+		// In case of error show error
+		//if($feed->error())
+		//	echo $feed->error();
 
-					// Close the XML file
-		fclose($fp);
-
-		/* <?php include "http://sourceforge.net/export/projnews.php?group_id=2915&limit=3&flat=0&show_summaries=0" ?> */
+		if($feed->data) {
+			$items = $feed->get_items();
+			$i = 0;
+			foreach($items as $item) {
+				echo '<h4><a href="' . $item->get_permalink() . '">' . $item->get_title() . '</a></h4>'; 
+				echo '<p>' . _substr($item->get_content(), $contentlength) . ' ';
+				echo '<a href="' . $item->get_permalink() . '">Read more</a> (' . $item->get_date('j M Y') . ')</p>';
+			}
+		} else 
+			echo 'Could not open News feed!';
 	}
 
 	//
@@ -95,10 +128,9 @@ END;
 //			Permanently disable and do another way (see above)
 //                      because pageNews calls SF php script that returns
 //			bad URL's.
-		if(0) {
-			echo "<h3>News</h3>\n";
-			pageNews(3);
-		}
+		echo "<h3>News</h3>\n";
+		pageNews(3, 100);
+
 		echo <<<END
 			<h3>Resources</h3>
 			<ul class="arrowlist">
