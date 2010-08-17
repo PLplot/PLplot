@@ -120,6 +120,7 @@ int
 main( int argc, const char **argv )
 {
     PLFLT minx, maxx, miny, maxy;
+    PLFLT x, y;
 
 /* Parse and process command line arguments */
 
@@ -187,8 +188,8 @@ main( int argc, const char **argv )
     /* Show Baltimore, MD on the map */
     plcol0( 2 );
     plssym( 0.0, 2.0 );
-    PLFLT x = -76.6125;
-    PLFLT y = 39.2902778;
+    x = -76.6125;
+    y = 39.2902778;
     plpoin( 1, &x, &y, 18 );
     plssym( 0.0, 1.0 );
     plptex( -76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD" );
