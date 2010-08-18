@@ -90,11 +90,14 @@ END;
 	
 	//
 	// Print News from project page
+	// $newscount - number of news itmes to be shown
+	// $contentlength - defines the length in characters of the news content
 	//
 	function pageNews($newscount, $contentlength)
 	{
 		// Open the PLplot News RSS feed and parse it
 		$feed = new SimplePie();
+		$feed->enable_cache(false);  // disable cache
 		$url = sprintf("http://sourceforge.net/export/rss2_projnews.php?group_id=2915&rss_limit=%d", $newscount);
 		$feed->set_feed_url($url);
 		$feed->init();
@@ -104,16 +107,16 @@ END;
 		//if($feed->error())
 		//	echo $feed->error();
 
+		// show news items
 		if($feed->data) {
 			$items = $feed->get_items();
-			$i = 0;
 			foreach($items as $item) {
 				echo '<h4><a href="' . $item->get_permalink() . '">' . $item->get_title() . '</a></h4>'; 
 				echo '<p>' . _substr($item->get_content(), $contentlength) . ' ';
 				echo '<a href="' . $item->get_permalink() . '">Read more</a> (' . $item->get_date('j M Y') . ')</p>';
 			}
 		} else 
-			echo 'Could not open News feed!';
+			echo '<p>Could not open <a href="' . $url . '">News feed</a>!</p>';
 	}
 
 	//
