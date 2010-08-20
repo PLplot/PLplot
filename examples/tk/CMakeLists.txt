@@ -1,7 +1,7 @@
 # examples/tk/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006, 2007, 2008, 2009 Alan W. Irwin
+# Copyright (C) 2006, 2007, 2008, 2009, 2010 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -128,6 +128,24 @@ if(ENABLE_itk)
   list(APPEND tk_SRC xtk02.c xtk04.c)
 endif(ENABLE_itk)
 
+# The first, second, and fourth tk examples depend on configured bang
+# scripts to work which depends directly on the executables, xtk01,
+# xtk02, and xtk04.
+
+# The third example is run with the configured shell script, tk03, which
+# invokes plserver.
+
+# plgrid is a configured shell script that runs the plgrid.tcl example
+# (N.B., in the tcl directory) using plserver.
+
+# standard_examples is a configured shell script that runs all the standard
+# examples under plserver.
+set(tk_SCRIPTS tk01 tk03 plgrid standard_examples)
+# The second and fourth Tk examples depend on Itk to work.
+if(ENABLE_itk)
+  list(APPEND tk_SCRIPTS tk02 tk04)
+endif(ENABLE_itk)
+
 if(BUILD_TEST)
   if(CORE_BUILD)
     include_directories(
@@ -158,60 +176,62 @@ if(BUILD_TEST)
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk ${TK_EXE})
   endforeach(TK_SRC_FILE ${tk_SRC})
   set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk tclIndex_examples_tk)
+
+  # Provide locations for several tk-related targets that will be used
+  # to configure the tk_SCRIPTS.
+  foreach(tk_related_target xtk01 plserver xtk02 xtk04)
+    if(TARGET ${tk_related_target})
+      get_target_property(${tk_related_target}_LOCATION
+	${tk_related_target} LOCATION
+	)
+    endif(TARGET ${tk_related_target})
+  endforeach(tk_related_target xtk01 plserver xtk02 xtk04)
+
+  # Configure the tk_SCRIPTS
+  foreach(tk_SCRIPT ${tk_SCRIPTS})
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${tk_SCRIPT}.in 
+      ${CMAKE_CURRENT_BINARY_DIR}/${tk_SCRIPT}
+      @ONLY
+      )
+  endforeach(tk_SCRIPT ${tk_SCRIPTS})
 endif(BUILD_TEST)
 
-# The first, second, and fourth tk examples depend on configured bang
-# scripts to work which depends directly on the executables, xtk01,
-# xtk02, and xtk04.
-# The third example is run with the configured shell script, tk03, which
-# invokes plserver.
-# plgrid is a configured shell script that runs the plgrid.tcl example
-# (N.B., in the tcl directory) using plserver.
-# standard_examples is a configured shell script that runs all the standard
-# examples under plserver.
-set(tk_SCRIPTS tk01.in tk03.in plgrid.in standard_examples.in)
-get_target_property(xtk01_LOCATION xtk01 LOCATION)
-get_target_property(plserver_LOCATION plserver LOCATION)
+if(CORE_BUILD)
+  # Provide install locations for several tk-related targets that will
+  # be used to configure the tk_SCRIPTS used in the traditional
+  # Makefile+pkg-config build system for the installed examples.
+  foreach(tk_related_target xtk01 plserver xtk02 xtk04)
+    if(tk_related_target STREQUAL "plserver")
+      set(install_dir ${BIN_DIR})
+    else(tk_related_target STREQUAL "plserver")
+      set(install_dir ${DATA_DIR}/examples/tk)
+    endif(tk_related_target STREQUAL "plserver")
+    set(${tk_related_target}_LOCATION 
+      ${install_dir}/${tk_related_target}${EXEEXT}
+      )
+  endforeach(tk_related_target xtk01 plserver xtk02 xtk04)
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/tk01.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/tk01
-  @ONLY
-)
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/tk03.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/tk03
-  @ONLY
-)
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/plgrid.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/plgrid
-  @ONLY
-)
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/standard_examples.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/standard_examples
-  @ONLY
-)
-# The second and fourth Tk examples depend on Itk to work.
-if(ENABLE_itk)
-  list(APPEND tk_SCRIPTS tk02.in tk04.in)
-  get_target_property(xtk02_LOCATION xtk02 LOCATION)
-  get_target_property(xtk04_LOCATION xtk04 LOCATION)
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/tk02.in 
-    ${CMAKE_CURRENT_BINARY_DIR}/tk02
-    @ONLY
-    )
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/tk04.in 
-    ${CMAKE_CURRENT_BINARY_DIR}/tk04
-    @ONLY
-    )
-endif(ENABLE_itk)
+  foreach(tk_SCRIPT ${tk_SCRIPTS})
+    # Configure and install the tk_SCRIPTS used for the traditional build.
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${tk_SCRIPT}.in 
+      ${CMAKE_CURRENT_BINARY_DIR}/install_${tk_SCRIPT}
+      @ONLY
+      )
+    install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/install_${tk_SCRIPT}
+      DESTINATION ${DATA_DIR}/examples/tk
+      RENAME ${tk_SCRIPT}
+      )
+    # install the template files used to configure tk_SCRIPTS for the
+    # new installed examples build system.
+    install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/${tk_SCRIPT}.in
+      DESTINATION ${DATA_DIR}/examples/tk
+      )
+  endforeach(tk_SCRIPT ${tk_SCRIPTS})
+endif(CORE_BUILD)
 
 if(CORE_BUILD)
-  install(PROGRAMS ${tk_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tk)
   install(FILES ${tk_FILES} DESTINATION ${DATA_DIR}/examples/tk)
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex DESTINATION ${DATA_DIR}/examples/tk)
