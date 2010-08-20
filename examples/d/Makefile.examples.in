@@ -46,13 +46,18 @@ EXECUTABLES_list = \
 		 x17d$(EXEEXT) \
 		 x18d$(EXEEXT) \
 		 x19d$(EXEEXT) \
+		 x20d$(EXEEXT) \
+		 x21d$(EXEEXT) \
+		 x22d$(EXEEXT) \
 		 x23d$(EXEEXT) \
 		 x24d$(EXEEXT) \
 		 x25d$(EXEEXT) \
 		 x26d$(EXEEXT) \
 		 x27d$(EXEEXT) \
+		 x28d$(EXEEXT) \
 		 x29d$(EXEEXT) \
-		 x30d$(EXEEXT)
+		 x30d$(EXEEXT) \
+		 x31d$(EXEEXT)
 
 all: $(EXECUTABLES_list)
 
