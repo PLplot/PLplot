@@ -81,8 +81,10 @@ clean:
 @wxwidgets_true@@pkg_config_true@wxPLplotDemo$(EXEEXT): wxPLplotDemo.cpp
 @wxwidgets_true@@pkg_config_true@	$(CXX) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-wxwidgets`
 
+# Note, must filter out -p options which confuse $(QT_MOC_EXECUTABLE).  Such
+# options (e.g., -pthread) tend to appear in the static driver case.
 @qt_gui_true@@pkg_config_true@moc_qt_PlotWindow.cpp: qt_PlotWindow.h
-@qt_gui_true@@pkg_config_true@	$(QT_MOC_EXECUTABLE) `$(PKG_CONFIG_ENV) pkg-config --cflags plplot$(LIB_TAG)-qt` $< -o $@
+@qt_gui_true@@pkg_config_true@	$(QT_MOC_EXECUTABLE) `$(PKG_CONFIG_ENV) pkg-config --cflags-only-I plplot$(LIB_TAG)-qt` $< -o $@
 
 @qt_gui_true@@pkg_config_true@qt_example$(EXEEXT): qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp
 @qt_gui_true@@pkg_config_true@	$(CXX) qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(qt_RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-qt`
