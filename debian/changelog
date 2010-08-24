@@ -27,8 +27,10 @@ plplot (5.9.5-4) unstable; urgency=low
   * debian/control.in, debian/plplot-bin.files: remove references to plrender
     in package descriptions (no longer included) and also remove plpr / plm2gif
     scripts which rely on plrender.
+  * debian/control.in: Fix spelling mistake in cairo driver package 
+    (closes: 592970)
 
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 12 Jul 2010 20:26:31 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Tue, 24 Aug 2010 10:50:26 +0100
 
 plplot (5.9.5-3) unstable; urgency=low
 
