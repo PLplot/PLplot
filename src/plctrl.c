@@ -1292,7 +1292,10 @@ cmap0_palette_read( const char *filename,
 
         for ( i = 0; i < *number_colors; i++ )
         {
-            fgets( color_info, 30, fp );
+            if (fgets( color_info, 30, fp ) == NULL) {
+                err = 1;
+                break;
+            }
             color_info[strlen( color_info ) - 1] = '\0'; /* remove return character */
             if ( strlen( color_info ) == 7 )
             {
@@ -1469,7 +1472,12 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         }
     }
     /* Check for new file format */
-    fgets( color_info, 160, fp );
+    if (fgets( color_info, 160, fp ) == NULL) {
+        snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n",filename);
+        plwarn( msgbuf );
+        fclose( fp );
+        goto finish;
+    }
     if ( strncmp( color_info, "v2 ", 2 ) == 0 )
     {
         format_version = 1;
@@ -1483,7 +1491,12 @@ c_plspal1( const char *filename, PLBOOL interpolate )
             plwarn( msgbuf );
             rgb = TRUE;
         }
-        fgets( color_info, 160, fp );
+        if (fgets( color_info, 160, fp ) == NULL) {
+            snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n",filename);
+            plwarn( msgbuf );
+            fclose( fp );
+            goto finish;
+        }
     }
 
     if ( sscanf( color_info, "%d\n", &number_colors ) != 1 || number_colors < 2 )
@@ -1510,7 +1523,12 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         /* Old tk file format */
         for ( i = 0; i < number_colors; i++ )
         {
-            fgets( color_info, 160, fp );
+            if (fgets( color_info, 160, fp ) == NULL) {
+                snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n",filename);
+                plwarn( msgbuf );
+                fclose( fp );
+                goto finish;
+            }
             /* Ensure string is null terminated if > 160 characters */
             color_info[159] = '\0';
             return_sscanf   = sscanf( color_info, "#%2x%2x%2x %d %d", &r_i, &g_i, &b_i, &pos_i, &rev_i );
@@ -1551,7 +1569,12 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         /* New floating point file version with support for alpha and rev values */
         for ( i = 0; i < number_colors; i++ )
         {
-            fgets( color_info, 160, fp );
+            if (fgets( color_info, 160, fp ) == NULL) {
+                snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n",filename);
+                plwarn( msgbuf );
+                fclose( fp );
+                goto finish;
+            }
             if ( sscanf( color_info, "%lf %lf %lf %lf %lf %d", &pos_d, &r_d, &g_d, &b_d, &a_d, &rev_i ) != 6 )
             {
                 snprintf( msgbuf, 1024, "Unrecognized cmap1 format (wrong number of items for version 2 of format) %s\n", color_info );
