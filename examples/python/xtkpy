@@ -1,4 +1,4 @@
-#! python
+#!/usr/bin/env python
 # This is a Python/Tk toolbar to run the Python demos.  Perhpas
 # eventually we will be able to have plframe in a Python/Tk context. 
 
