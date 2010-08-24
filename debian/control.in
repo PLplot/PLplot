@@ -239,7 +239,7 @@ Description: Scientific plotting library (Cairo driver)
  virtually all aspects of plotting are configurable.
  .
  This package provides the Cairo driver module for PLplot.  It is based
- on the Cairo 2D graphics library with supportting multiple output devices
+ on the Cairo 2D graphics library with supporting multiple output devices
  (X-Window, PDF, PostScript, and PNG).
 
 Package: python-plplot
