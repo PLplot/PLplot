@@ -4,3 +4,4 @@
 11_minus-sign-manpage.diff
 16_wxwidget-with-cmake-2.8.diff
 17_fix_cmap_support.diff
+18_update_cmake_fortran.diff
