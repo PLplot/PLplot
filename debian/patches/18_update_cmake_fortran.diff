@@ -204,3 +204,16 @@ diff -urN plplot-5.9.5.orig/cmake/modules/language_support.cmake plplot-5.9.5/cm
        Platform/Cygwin-GNU-Fortran.cmake
        Platform/Windows-GNU-Fortran.cmake
        Platform/Windows-df.cmake
+diff -urN plplot-5.9.5.orig/examples/CMakeLists.txt plplot-5.9.5/examples/CMakeLists.txt
+--- plplot-5.9.5.orig/examples/CMakeLists.txt      2010-08-26 11:21:08.000000000 +0100
++++ plplot-5.9.5/examples/CMakeLists.txt  2010-08-26 22:57:12.000000000 +0100
+@@ -355,9 +355,6 @@
+   endif(ENABLE_d)
+ 
+   if(ENABLE_f77 OR ENABLE_f95)
+-    set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
+-      CMakeFortranInformation.cmake
+-      )
+     set(PLATFORM_SUPPORT_FILES ${PLATFORM_SUPPORT_FILES}
+       Platform/Cygwin-GNU-Fortran.cmake
+       Platform/Windows-GNU-Fortran.cmak
