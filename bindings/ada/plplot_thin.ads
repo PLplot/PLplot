@@ -49,8 +49,6 @@ use
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;
 
-
-    
 package PLplot_Thin is
     subtype PLINT  is Integer;
     subtype PLFLT  is Long_Float;

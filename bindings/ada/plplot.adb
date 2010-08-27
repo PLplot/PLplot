@@ -41,8 +41,6 @@ use
     Ada.Strings.Unbounded,
     Interfaces.C;
 
-
-
 package body PLplot is    
 
 --------------------------------------------------------------------------------

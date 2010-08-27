@@ -32,8 +32,6 @@ use
     PLplot_Auxiliary,
     Ada.Strings.Unbounded;
 
-
-
 package PLplot_Traditional is
 
     -- Used with plsdidev.

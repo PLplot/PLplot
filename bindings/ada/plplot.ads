@@ -32,8 +32,6 @@ use
     PLplot_Auxiliary,
     Ada.Strings.Unbounded;
 
-
-
 package PLplot is
 
     -- Used with Set_Device_Window_Parameters.

@@ -3,7 +3,7 @@
 -- Auxiliary types and subprograms to be with-ed and by all the Ada 
 -- bindings to PLplot
 
--- Copyright (C) 2006-2007 Jerry Bauck
+-- Copyright (C) 2006-2010 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -28,8 +28,8 @@ with
 use 
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;
-
-
+    
+--with Ada.Numerics.Long_Real_Arrays;
 
 package PLplot_Auxiliary is
 
@@ -37,17 +37,31 @@ package PLplot_Auxiliary is
 --           Utility type declarations used by the bindings                   --
 --------------------------------------------------------------------------------
 
-    -- UN-COMMENT THE NEXT TWO LINES IF YOUR COMPILER DOES NOT INCLUDE THESE 
-    -- DEFINITIONS, FOR EXAMPLE, IF IT IS NOT ADA 2005 WITH ANNEX G.3 COMPLIANCE.
+    -- Declarations for Ada 95 and Ada 2005 when it is desired to _not_ invoke
+    -- the numerical capability of Annex G.3.
+    type Real_Vector is array (Integer range <>) of Long_Float;
+    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
 
-    -- COMMENT THESE TWO LINES IF YOUR COMPILER DECLARES SIMILAR TYPES (E.G. IT 
-    -- IS ADA 2005 WITH ANNEX G.3)
-    -- ALSO, YOU WILL NEED TO MAKE A SINGLE-LINE EDIT TO THESE BINDING FILES: 
-    -- plplot.ads, plplot.adb, plplot_traditional.ads, plplot_traditional.adb, 
-    -- and plplot_thin.ads.
---    type Real_Vector is array (Integer range <>) of Long_Float;
---    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
-    type Real_Vector is array (Integer range <>) of Long_Float;    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
+
+    -- Declarations when using Ada 2005 and it is desired to invoke the numerics
+    -- Annex G.3 or the user simply prefers to declare real vectors and matrices
+    -- in a manner that is type-compatible with that annex. ALSO IN THIS CASE
+    -- uncomment the line above: with Ada.Numerics.Long_Real_Arrays;.
+    -- Using Annex G.3 requires linking to BLAS and LAPACK libraries or the 
+    -- PLplot build process will fail when attempting to link the Ada examples
+    -- e.g. x01a.adb.
+    --subtype Real_Vector is Ada.Numerics.Long_Real_Arrays.Real_Vector;
+    --subtype Real_Matrix is Ada.Numerics.Long_Real_Arrays.Real_Matrix;
+
+    ----------------------------------------------------------------------------
+    -- Implementation note: The easy ability to switch to Ada 2005 Annex G.3
+    -- capability (with only these simple edits to this file) is the only reason
+    -- for requiring that this package be with-ed in the bindings. Only the 
+    -- examples use the utility procedures below--not the bindings themselves.
+    -- If it were ever to be decided to abandon Ada 95 compatibility and to 
+    -- require all Ada-capable PLplot builds to link to BLAS and LAPACK, then
+    -- the with-s to this package in the bindings could be removed.
+    ----------------------------------------------------------------------------
 
 
 --------------------------------------------------------------------------------

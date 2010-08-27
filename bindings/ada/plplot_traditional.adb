@@ -40,8 +40,6 @@ use
     Ada.Strings.Unbounded,
     Interfaces.C;
 
-
-
 package body PLplot_Traditional is    
 
 --------------------------------------------------------------------------------

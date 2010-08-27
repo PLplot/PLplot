@@ -3,7 +3,7 @@
 -- Auxiliary types and subprograms to be with-ed by all the Ada 
 -- bindings to PLplot
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2008-2010 Jerry Bauck
 
 -- This file is part of PLplot.
 
