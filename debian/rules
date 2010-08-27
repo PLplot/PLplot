@@ -145,6 +145,7 @@ install-arch-stamp: build-arch-stamp
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev 		\
 		plplot9-driver-gd plplot9-driver-xwin octave-plplot	\
 		python-plplot libplplot-c++9c2 plplot9-driver-wxwidgets \
+		plplot9-driver-qt					\
 		plplot9-driver-cairo libplplot-fortran9	; do		\
 	  ln -s $(libpkg) $(debdoc)/$$i ;				\
 	done
