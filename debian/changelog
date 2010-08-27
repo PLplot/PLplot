@@ -16,9 +16,11 @@ plplot (5.9.6-1) unstable; urgency=low
     are now obsolete.
   * debian/control.in, debian/rules, debian/plplot9-driver-qt.files:
     Add new plplot9-driver-qt package which includes the qt driver and bindings.
+  * debian/source/format: Add file to select 3.0 (quilt) format for the package. 
+    Fixes lintian warning.
+  * debian/NEWS: update NEWS file for 5.9.6.
 
-
- -- Andrew Ross <andrewross@users.sourceforge.net>  Thu, 26 Aug 2010 13:46:08 +0100
+ -- Andrew Ross <andrewross@users.sourceforge.net>  Fri, 27 Aug 2010 23:31:10 +0100
 
 plplot (5.9.5-4) unstable; urgency=low
 
