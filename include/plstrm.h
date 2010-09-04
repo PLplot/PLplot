@@ -87,6 +87,8 @@ typedef struct
  * debug	PLINT	Generate debugging output
  * initialized	PLINT	Set if the stream has been initialized
  * dev_initialized PLINT Set if the device driver has been loaded
+ * stream_closed PLBOOL  Set if the stream was closed or if there
+ *                       was some sort of error
  *
  ***************************************************************************
  *
@@ -517,6 +519,7 @@ typedef struct
 /* Misc control information */
 
     PLINT      ipls, level, verbose, debug, initialized, dev_initialized;
+    PLBOOL     stream_closed;
     const char *program;
 
 /* Plot-wide coordinate transform */
