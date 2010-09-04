@@ -1772,7 +1772,7 @@ void plD_eop_xcairo( PLStream *pls )
             break;
         case ClientMessage:
             // plexit("X Window closed");
-            aStream->closed          = 1;
+            pls->stream_closed = TRUE;
             aStream->exit_event_loop = 1;
             break;
         case Expose:
