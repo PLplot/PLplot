@@ -8,9 +8,9 @@
 
 FIND_PATH(
   PLplot_INCLUDE_DIR
-  plplot.h 
-  /usr/local/include 
-  /usr/include
+  NAMES plplot.h 
+  PATHS /usr/local/include /usr/include
+  PATH_SUFFIXES plplot
 )
 
 IF( PLplot_INCLUDE_DIR )
