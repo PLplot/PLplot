@@ -1,0 +1,12 @@
+<version>${VERSION}</version>
+<headers>
+  ${PREFIX}/include/plplot
+</headers>
+<libs>
+  ${PREFIX}/lib
+</libs>
+<include_paths>
+  @TCL_INCLUDE_PATH@
+  @TK_INCLUDE_PATH@
+  @QT_INCLUDES@
+</include_paths>
