@@ -46,6 +46,10 @@ plot1( int type )
     int          i;
     static PLFLT freql[101], ampl[101], phase[101];
     PLFLT        f0, freq;
+    char *names[2];
+    int colors[2];
+    int label_colors[2];
+    int symbols[2];
 
     pladv( 0 );
 
@@ -100,7 +104,24 @@ plot1( int type )
         plbox( "", 0.0, 0, "cmstv", 30.0, 3 );
         plcol0( 3 );
         plline( 101, freql, phase );
+        plpoin( 101, freql, phase, 3 );
         plcol0( 3 );
         plmtex( "r", 5.0, 0.5, 0.5, "Phase shift (degrees)" );
+
+        // Draw a legend
+        names[0] = "Amplitude";
+        names[1] = "Phase shift";
+        colors[0] = 2;
+        colors[1] = 3;
+        label_colors[0] = 1;
+        label_colors[1] = 1;
+        pllegend( 1.0, 0.6, 0.95, 2, label_colors, names, colors, NULL );
+
+        // Draw the points legend
+        names[0] = "";
+        names[1] = "";
+        symbols[0] = -1;
+        symbols[1] = 3;
+        pllegend( 1.0, 0.6, 0.95, 2, label_colors, names, colors, symbols );
     }
 }

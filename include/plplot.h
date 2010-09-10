@@ -686,6 +686,7 @@ typedef plf2ops_t * PLF2OPS;
 #define    plinit                   c_plinit
 #define    pljoin                   c_pljoin
 #define    pllab                    c_pllab
+#define    pllegend                 c_pllegend
 #define    pllightsource            c_pllightsource
 #define    plline                   c_plline
 #define    plpath                   c_plpath
@@ -1203,6 +1204,10 @@ c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
 
 PLDLLIMPEXP void
 c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
+
+/* Routine for drawing simple line or symbol legends */
+PLDLLIMPEXP void
+c_pllegend( PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_colors, char **names, PLINT *colors, PLINT *symbols );
 
 /* Sets position of the light source */
 PLDLLIMPEXP void

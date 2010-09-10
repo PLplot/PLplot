@@ -55,6 +55,7 @@ set(plplot${LIB_TAG}_LIB_SRCS
   plvect.c
   mt19937ar.c
   pltime.c
+  pllegend.c
   )
 if(LTDL_WIN32)
   set(plplot${LIB_TAG}_LIB_SRCS ${plplot${LIB_TAG}_LIB_SRCS} ltdl_win32.c)
