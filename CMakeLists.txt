@@ -26,9 +26,9 @@
 # one file so I use the overall variable CMAKE_USER_MAKE_RULES_OVERRIDE
 # instead.
 set(
-CMAKE_USER_MAKE_RULES_OVERRIDE
-${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
-)
+  CMAKE_USER_MAKE_RULES_OVERRIDE
+  ${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
+  )
 
 # It is a fatal error if no working C compiler is available to build
 # the PLplot core C library and core C examples.  All other compilers
@@ -43,7 +43,7 @@ message(STATUS "CMake version = ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${
 # build process in case have different minimum version for that case.
 
 # Version 2.6.4 or above of cmake is currently required for all platforms.
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.6.4 FATAL_ERROR)
 
 #foreach(policy RANGE 0 9)
 #  cmake_policy(GET CMP000${policy} policy_result)
@@ -58,29 +58,29 @@ if(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
     ${PROJECT_SOURCE_DIR}/cmake/modules
     ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
     ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.6
-  )
+    )
 else(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
   set(CMAKE_MODULE_PATH
     ${PROJECT_SOURCE_DIR}/cmake/modules
     ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
     ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
-  )
+    )
 endif(CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6)
 
 # We need the path to the MinGW/Borland compiler in order to find
 # the import libraries for system libraries.
-IF(MINGW)
-	get_filename_component(MINGWBINPATH ${CMAKE_C_COMPILER} PATH)
-	set(MINGWLIBPATH ${MINGWBINPATH}/../lib
-			CACHE FILEPATH
-			DOCSTRING "Path to MinGW import libraries")
-ENDIF(MINGW)
-IF(BORLAND)
-	get_filename_component(BORLANDBINPATH ${CMAKE_C_COMPILER} PATH)
-	set(BORLANDLIBPATH ${BORLANDBINPATH}/../Lib/PSDK
-			CACHE FILEPATH
-			DOCSTRING "Path to Borland import libraries")
-ENDIF(BORLAND)
+if(MINGW)
+  get_filename_component(MINGWBINPATH ${CMAKE_C_COMPILER} PATH)
+  set(MINGWLIBPATH ${MINGWBINPATH}/../lib
+    CACHE FILEPATH
+    DOCSTRING "Path to MinGW import libraries")
+endif(MINGW)
+if(BORLAND)
+  get_filename_component(BORLANDBINPATH ${CMAKE_C_COMPILER} PATH)
+  set(BORLANDLIBPATH ${BORLANDBINPATH}/../Lib/PSDK
+    CACHE FILEPATH
+    DOCSTRING "Path to Borland import libraries")
+endif(BORLAND)
 
 # Version data that need modification for each release.
 include(plplot_version)
@@ -92,47 +92,55 @@ include(plplot)
 
 # Use configured variables to process configurable top-level files.
 
+# This CMake-configured template file is processed further by sed for
+# abi-compliance-checker.
 configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
-${CMAKE_CURRENT_BINARY_DIR}/config.h
-)
+  ${CMAKE_CURRENT_SOURCE_DIR}/abi-compliance-checker.xml.template.in
+  ${CMAKE_CURRENT_BINARY_DIR}/abi-compliance-checker.xml.template
+  @ONLY
+  )
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/config.h
+  )
 # Allow access to the generated config.h for this build.
-ADD_DEFINITIONS("-DHAVE_CONFIG_H")
+add_definitions("-DHAVE_CONFIG_H")
 # Install top-level files
 
 # Enable testing framework for examples
-if (BUILD_TEST)
+if(BUILD_TEST)
   include(CTest)
-endif (BUILD_TEST)
+endif(BUILD_TEST)
 
 # Disable warnings about deprecated functions (Visual C++ 2005)
 if(MSVC_VERSION GREATER 1399)
-  ADD_DEFINITIONS("/D_CRT_SECURE_NO_DEPRECATE")
+  add_definitions("/D_CRT_SECURE_NO_DEPRECATE")
 endif(MSVC_VERSION GREATER 1399)
 
 # in windows all created dlls are gathered in the dll directory
 # if you add this directory to your PATH all shared libraries are available
 if(BUILD_SHARED_LIBS AND WIN32 AND NOT CYGWIN)
-  SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/dll)
+  set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/dll)
 endif(BUILD_SHARED_LIBS AND WIN32 AND NOT CYGWIN)
 
 # Borland Compiler must compile in ANSII mode
 if(BORLAND)
-  ADD_DEFINITIONS(-A)
+  add_definitions(-A)
 endif(BORLAND)
 
 set(top_level_DOCFILES
-AUTHORS
-COPYING.LIB
-ChangeLog
-Copyright
-FAQ
-NEWS
-PROBLEMS
-README
-README.release
-README.testing
-)
+  AUTHORS
+  COPYING.LIB
+  ChangeLog
+  Copyright
+  FAQ
+  NEWS
+  PROBLEMS
+  README
+  README.release
+  README.testing
+  )
 install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
 
 # Process other directories including using configured variables to
@@ -168,9 +176,9 @@ if(PREBUILD_DIST)
   # N.B. the plhershey-unicode.h_built target has to be pre-built only because
   # of the needs of the old windows build at sys/win32/msdev.
   set(
-  DIST_TARGETS
-  plhershey-unicode.h_built
-  )
+    DIST_TARGETS
+    plhershey-unicode.h_built
+    )
 
   if(ENABLE_octave)
     set(DIST_TARGETS ${DIST_TARGETS} make_documentation)
@@ -197,18 +205,18 @@ if(PREBUILD_DIST)
   else(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
     # copy prebuilds back to source tree.
     add_custom_target(
-    prebuild_dist
-    COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_BINARY_DIR}/include/plhershey-unicode.h
-    ${CMAKE_SOURCE_DIR}/include
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_BINARY_DIR}/bindings/octave/plplot_octave_txt
-    ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
-    COMMAND cp
-    `cat static_built_files ${INFO_MANIFEST} ${MAN_MANIFEST} ${HTML_MANIFEST}`
-    ${CMAKE_SOURCE_DIR}/doc/docbook/src
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/doc/docbook/src
-    )
+      prebuild_dist
+      COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_BINARY_DIR}/include/plhershey-unicode.h
+      ${CMAKE_SOURCE_DIR}/include
+      COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${CMAKE_BINARY_DIR}/bindings/octave/plplot_octave_txt
+      ${CMAKE_SOURCE_DIR}/bindings/octave/plplot_octave_txt
+      COMMAND cp
+      `cat static_built_files ${INFO_MANIFEST} ${MAN_MANIFEST} ${HTML_MANIFEST}`
+      ${CMAKE_SOURCE_DIR}/doc/docbook/src
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/doc/docbook/src
+      )
   endif(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
   add_dependencies(prebuild_dist ${DIST_TARGETS})
 endif(PREBUILD_DIST)
@@ -226,34 +234,33 @@ else(WIN32)
   set(CPACK_GENERATOR TGZ)
 endif(WIN32)
 set(
-CPACK_SOURCE_PACKAGE_FILE_NAME
-"plplot-${VERSION}"
-CACHE INTERNAL "tarball basename"
-)
+  CPACK_SOURCE_PACKAGE_FILE_NAME
+  "plplot-${VERSION}"
+  CACHE INTERNAL "tarball basename"
+  )
 set(CPACK_SOURCE_GENERATOR TGZ)
 # The following components are regex's to match anywhere (unless anchored)
 # in absolute path + filename to find files or directories to be excluded
 # from source tarball.
 set(CPACK_SOURCE_IGNORE_FILES
-"~$"
-"\\\\.cvsignore$"
-"^${PROJECT_SOURCE_DIR}.*/\\\\.svn/"
-"^${PROJECT_SOURCE_DIR}/old/"
-"^${PROJECT_SOURCE_DIR}/sys/mac"
-"^${PROJECT_SOURCE_DIR}/sys/os2"
-"^${PROJECT_SOURCE_DIR}/sys/unix"
-"^${PROJECT_SOURCE_DIR}/sys/dos/msc"
-"^${PROJECT_SOURCE_DIR}/sys/dos/bcc"
-"^${PROJECT_SOURCE_DIR}/sys/dos/emx"
-"^${PROJECT_SOURCE_DIR}/sys/win-tk"
-"^${PROJECT_SOURCE_DIR}/sys/win32"
-)
+  "~$"
+  "\\\\.cvsignore$"
+  "^${PROJECT_SOURCE_DIR}.*/\\\\.svn/"
+  "^${PROJECT_SOURCE_DIR}/old/"
+  "^${PROJECT_SOURCE_DIR}/sys/mac"
+  "^${PROJECT_SOURCE_DIR}/sys/os2"
+  "^${PROJECT_SOURCE_DIR}/sys/unix"
+  "^${PROJECT_SOURCE_DIR}/sys/dos/msc"
+  "^${PROJECT_SOURCE_DIR}/sys/dos/bcc"
+  "^${PROJECT_SOURCE_DIR}/sys/dos/emx"
+  "^${PROJECT_SOURCE_DIR}/sys/win-tk"
+  "^${PROJECT_SOURCE_DIR}/sys/win32"
+  )
 #message("CPACK_SOURCE_IGNORE_FILES = ${CPACK_SOURCE_IGNORE_FILES}")
 include(CPack)
 
 # Path to native build for executables required in the build process.
 # This is only required for cross compiling
-if (CMAKE_CROSSCOMPILING)
+if(CMAKE_CROSSCOMPILING)
   set(CMAKE_NATIVE_BINARY_DIR NATIVEDIR-NOTFOUND CACHE FILEPATH "Point to the native build directory")
-endif (CMAKE_CROSSCOMPILING)
-
+endif(CMAKE_CROSSCOMPILING)
