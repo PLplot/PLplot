@@ -63,15 +63,17 @@ PLFLT get_character_height() {
 #define normalized_to_world_x(nx) ((xmin) + (nx) * ((xmax) - (xmin)))
 #define normalized_to_world_y(ny) ((ymin) + (ny) * ((ymax) - (ymin)))
 
-// pllegend - Draw a legend using lines or points
-// line_length: How long should the lines be/how far apart are the points
+// pllegend - Draw a legend using lines (nsymbols <=1 or symbols == NULL) or 
+// points/symbols.
+// line_length: extent of lines or extent of nsymbols points/symbols
 // x, y: Normalized position of the legend in the plot window
 // n: Number of legend entries
 // text_colors: Color map 0 indices of the colors to use for label text
 // names: Name/label for each legend entry
 // colors: Line/point color for each legend entry
-// symbols: Symbol to draw for each legend entry (NULL for lines)
-void c_pllegend(PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_colors, char **names, PLINT *colors, PLINT *symbols) {
+// nsymbols: number of points/symbols to be drawn for each line_length
+// symbols: Symbol to draw for each legend entry.
+void c_pllegend(PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_colors, char **names, PLINT *colors, PLINT nsymbols, PLINT *symbols) {
     // Active indexed drawing color
     PLINT old_col0;
     // Viewport world-coordinate limits
@@ -85,8 +87,13 @@ void c_pllegend(PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_colors
     // y-position of the current legend entry
     PLFLT ty;
     // Positions of the legend entries
-    PLFLT xs[2], ys[2];
-    PLINT i;
+    PLFLT dxs, *xs, *ys;
+    PLINT i, j;
+    // ifline is true if lines are to be drawn, false if points/symbols are
+    // to be drawn.
+    int ifline = nsymbols <= 1 || symbols == NULL;
+    if(symbols == NULL) nsymbols = 2;
+    nsymbols = MAX(2, nsymbols);
 
     old_col0 = plsc->icol0;
 
@@ -110,22 +117,29 @@ void c_pllegend(PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_colors
     // Starting y position for legend entries
     ty = text_y_world - character_height;
 
-    xs[0] = line_x_world;
-    xs[1] = line_x_end_world;
-    ys[0] = ty;
-    ys[1] = ty;
+    if ( ( ( xs = (PLFLT *) malloc( nsymbols * sizeof ( PLFLT ) ) ) == NULL ) ||
+	 ( ( ys = (PLFLT *) malloc( nsymbols * sizeof ( PLFLT ) ) ) == NULL ) )
+      {
+	plexit( "pllegend: Insufficient memory" );
+      }
+
+    dxs = (line_x_end_world - line_x_world)/(double) (nsymbols-1);
+    for (j=0; j<nsymbols; j++) {
+      xs[j] = line_x_world + dxs*(double) j;
+      ys[j] = ty;
+    }
 
     // Draw each legend entry
     for (i = 0; i < n; i++) {
         // Line for the legend
         plcol0(colors[i]);
-        if (symbols == NULL) {
+        if (ifline) {
             // Draw lines
-            plline(2, xs, ys);
+            plline(nsymbols, xs, ys);
         }
         else {
             // Draw symbols
-            plpoin(2, xs, ys, symbols[i]);
+            plpoin(nsymbols, xs, ys, symbols[i]);
         }
 
         // Label/name for the legend
@@ -133,9 +147,12 @@ void c_pllegend(PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_colors
         plptex(text_x_world, ty, 0.0, 0.0, 0.0, names[i]);
         // Move to the next position
         ty = ty - (1.5 * character_height);
-        ys[0] = ty;
-        ys[1] = ty;
+	for (j=0; j<nsymbols; j++) {
+	  ys[j] = ty;
+	}
     }
+    free( xs );
+    free( ys );
 
     // Restore the previously active drawing color
     plcol0(old_col0);

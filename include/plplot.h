@@ -1207,7 +1207,7 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 
 /* Routine for drawing simple line or symbol legends */
 PLDLLIMPEXP void
-c_pllegend( PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_colors, char **names, PLINT *colors, PLINT *symbols );
+c_pllegend( PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_colors, char **names, PLINT *colors, PLINT nsymbols, PLINT *symbols );
 
 /* Sets position of the light source */
 PLDLLIMPEXP void

@@ -115,13 +115,13 @@ plot1( int type )
         colors[1] = 3;
         label_colors[0] = 1;
         label_colors[1] = 1;
-        pllegend( 1.0, 0.6, 0.95, 2, label_colors, names, colors, NULL );
+        pllegend( 1.0, 0.6, 0.95, 2, label_colors, names, colors, 0, NULL );
 
         // Draw the points legend
         names[0] = "";
         names[1] = "";
         symbols[0] = -1;
         symbols[1] = 3;
-        pllegend( 1.0, 0.6, 0.95, 2, label_colors, names, colors, symbols );
+        pllegend( 1.0, 0.6, 0.95, 2, label_colors, names, colors, 5, symbols );
     }
 }
