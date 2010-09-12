@@ -82,11 +82,12 @@ while test $# -gt 0; do
     shift
 done
 
+allowed_version=0.56
 version=`uncrustify --version`
-if [ "$version" != "uncrustify 0.55" ] ; then
+if [ "$version" != "uncrustify $allowed_version" ] ; then
     echo "
 Detected uncrustify version = '$version'.
-This script only works with uncrustify 0.55."
+This script only works with uncrustify $allowed_version."
     exit 1
 fi
 
