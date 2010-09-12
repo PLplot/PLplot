@@ -1484,11 +1484,10 @@ ClientEH( PLStream *pls, XEvent *event )
 
     if ( event->xclient.data.l[0] == XInternAtom( xwd->display, "WM_DELETE_WINDOW", False ) )
     {
-        pls->nopause = TRUE;
-	pls->stream_closed = TRUE;
-	dev->exit_eventloop = TRUE;
+        pls->nopause        = TRUE;
+        pls->stream_closed  = TRUE;
+        dev->exit_eventloop = TRUE;
         // plexit( "" );
-
     }
 }
 

@@ -3345,8 +3345,8 @@ static void
 Tcl_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
 {
     Tcl_Obj *objx, *objy;
-    int      code;
-    double   dx, dy;
+    int     code;
+    double  dx, dy;
 
 // Set Tcl x to x
     objx = Tcl_NewDoubleObj( x );
@@ -3419,13 +3419,13 @@ plstransformCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else
     {
-        int len;
+        int        len;
         const char *data = argc > 2 ? argv[2] : 0;
 
         tcl_xform_interp   = interp;
         tcl_xform_procname = strdup( argv[1] );
 
-        len = strlen( tcl_xform_template ) + strlen( tcl_xform_procname );
+        len            = strlen( tcl_xform_template ) + strlen( tcl_xform_procname );
         tcl_xform_code = malloc( len );
         sprintf( tcl_xform_code, tcl_xform_template, tcl_xform_procname );
 

@@ -1292,7 +1292,8 @@ cmap0_palette_read( const char *filename,
 
         for ( i = 0; i < *number_colors; i++ )
         {
-            if (fgets( color_info, 30, fp ) == NULL) {
+            if ( fgets( color_info, 30, fp ) == NULL )
+            {
                 err = 1;
                 break;
             }
@@ -1472,8 +1473,9 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         }
     }
     /* Check for new file format */
-    if (fgets( color_info, 160, fp ) == NULL) {
-        snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n",filename);
+    if ( fgets( color_info, 160, fp ) == NULL )
+    {
+        snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n", filename );
         plwarn( msgbuf );
         fclose( fp );
         goto finish;
@@ -1491,8 +1493,9 @@ c_plspal1( const char *filename, PLBOOL interpolate )
             plwarn( msgbuf );
             rgb = TRUE;
         }
-        if (fgets( color_info, 160, fp ) == NULL) {
-            snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n",filename);
+        if ( fgets( color_info, 160, fp ) == NULL )
+        {
+            snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n", filename );
             plwarn( msgbuf );
             fclose( fp );
             goto finish;
@@ -1523,8 +1526,9 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         /* Old tk file format */
         for ( i = 0; i < number_colors; i++ )
         {
-            if (fgets( color_info, 160, fp ) == NULL) {
-                snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n",filename);
+            if ( fgets( color_info, 160, fp ) == NULL )
+            {
+                snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n", filename );
                 plwarn( msgbuf );
                 fclose( fp );
                 goto finish;
@@ -1569,8 +1573,9 @@ c_plspal1( const char *filename, PLBOOL interpolate )
         /* New floating point file version with support for alpha and rev values */
         for ( i = 0; i < number_colors; i++ )
         {
-            if (fgets( color_info, 160, fp ) == NULL) {
-                snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n",filename);
+            if ( fgets( color_info, 160, fp ) == NULL )
+            {
+                snprintf( msgbuf, 1024, "Error reading cmap1 .pal file %s\n", filename );
                 plwarn( msgbuf );
                 fclose( fp );
                 goto finish;

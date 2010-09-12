@@ -46,10 +46,10 @@ plot1( int type )
     int          i;
     static PLFLT freql[101], ampl[101], phase[101];
     PLFLT        f0, freq;
-    char *names[2];
-    int colors[2];
-    int label_colors[2];
-    int symbols[2];
+    char         *names[2];
+    int          colors[2];
+    int          label_colors[2];
+    int          symbols[2];
 
     pladv( 0 );
 
@@ -109,18 +109,18 @@ plot1( int type )
         plmtex( "r", 5.0, 0.5, 0.5, "Phase shift (degrees)" );
 
         // Draw a legend
-        names[0] = "Amplitude";
-        names[1] = "Phase shift";
-        colors[0] = 2;
-        colors[1] = 3;
+        names[0]        = "Amplitude";
+        names[1]        = "Phase shift";
+        colors[0]       = 2;
+        colors[1]       = 3;
         label_colors[0] = 1;
         label_colors[1] = 1;
         pllegend( 0.3, 0.1, 0.95, 2, label_colors, names, colors, 0, NULL );
 
         // Draw the points legend
-	plssym(0., 3.);
-        names[0] = "";
-        names[1] = "";
+        plssym( 0., 3. );
+        names[0]   = "";
+        names[1]   = "";
         symbols[0] = -1;
         symbols[1] = 3;
         pllegend( 0.3, 0.1, 0.95, 2, label_colors, names, colors, 5, symbols );

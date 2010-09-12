@@ -23,7 +23,8 @@
 
 #include "plplotP.h"
 
-PLFLT get_character_or_symbol_height(PLINT ifcharacter) {
+PLFLT get_character_or_symbol_height( PLINT ifcharacter )
+{
     // Character height in mm
     PLFLT default_mm, char_height_mm;
     // Normalized viewport limits
@@ -40,16 +41,19 @@ PLFLT get_character_or_symbol_height(PLINT ifcharacter) {
     PLFLT wxmin, wxmax, wymin, wymax;
     PLFLT world_y;
 
-    if(ifcharacter) {
-      plgchr(&default_mm, &char_height_mm);
-    } else {
-      default_mm = plsc->symdef;
-      char_height_mm = plsc->symht;
+    if ( ifcharacter )
+    {
+        plgchr( &default_mm, &char_height_mm );
     }
-    plgvpd(&vxmin, &vxmax, &vymin, &vymax);
+    else
+    {
+        default_mm     = plsc->symdef;
+        char_height_mm = plsc->symht;
+    }
+    plgvpd( &vxmin, &vxmax, &vymin, &vymax );
     vy = vymax - vymin;
 
-    plgspa(&mxmin, &mxmax, &mymin, &mymax);
+    plgspa( &mxmin, &mxmax, &mymin, &mymax );
     mm_y = mymax - mymin;
 
     world_height_mm = mm_y * vy;
@@ -59,16 +63,16 @@ PLFLT get_character_or_symbol_height(PLINT ifcharacter) {
 
     // Normalized character height * World height (world) =
     // Character height (world)
-    plgvpw(&wxmin, &wxmax, &wymin, &wymax);
+    plgvpw( &wxmin, &wxmax, &wymin, &wymax );
     world_y = wymax - wymin;
 
-    return(char_height_norm * world_y);
+    return ( char_height_norm * world_y );
 }
 
-#define normalized_to_world_x(nx) ((xmin) + (nx) * ((xmax) - (xmin)))
-#define normalized_to_world_y(ny) ((ymin) + (ny) * ((ymax) - (ymin)))
+#define normalized_to_world_x( nx )    ( ( xmin ) + ( nx ) * ( ( xmax ) - ( xmin ) ) )
+#define normalized_to_world_y( ny )    ( ( ymin ) + ( ny ) * ( ( ymax ) - ( ymin ) ) )
 
-// pllegend - Draw a legend using lines (nsymbols <=1 or symbols == NULL) or 
+// pllegend - Draw a legend using lines (nsymbols <=1 or symbols == NULL) or
 // points/symbols.
 // line_length: extent of lines or extent of nsymbols points/symbols
 // x, y: Normalized position of the legend in the plot window
@@ -78,7 +82,8 @@ PLFLT get_character_or_symbol_height(PLINT ifcharacter) {
 // colors: Line/point color for each legend entry
 // nsymbols: number of points/symbols to be drawn for each line_length
 // symbols: Symbol to draw for each legend entry.
-void c_pllegend(PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_colors, char **names, PLINT *colors, PLINT nsymbols, PLINT *symbols) {
+void c_pllegend( PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_colors, char **names, PLINT *colors, PLINT nsymbols, PLINT *symbols )
+{
     // Active indexed drawing color
     PLINT old_col0;
     // Viewport world-coordinate limits
@@ -97,83 +102,91 @@ void c_pllegend(PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_colors
     // ifline is true if lines are to be drawn, false if points/symbols are
     // to be drawn.
     int ifline = nsymbols <= 1 || symbols == NULL;
-    if(symbols == NULL) nsymbols = 2;
-    nsymbols = MAX(2, nsymbols);
+    if ( symbols == NULL ) nsymbols = 2;
+    nsymbols = MAX( 2, nsymbols );
 
     old_col0 = plsc->icol0;
 
-    plgvpw(&xmin, &xmax, &ymin, &ymax);
+    plgvpw( &xmin, &xmax, &ymin, &ymax );
 
     // World coordinates for legend lines
-    line_x = x;
-    line_y = y;
-    line_x_end = line_x + line_length;
-    line_x_world = normalized_to_world_x(line_x);
-    line_y_world = normalized_to_world_y(line_y);
-    line_x_end_world = normalized_to_world_x(line_x_end);
+    line_x           = x;
+    line_y           = y;
+    line_x_end       = line_x + line_length;
+    line_x_world     = normalized_to_world_x( line_x );
+    line_y_world     = normalized_to_world_y( line_y );
+    line_x_end_world = normalized_to_world_x( line_x_end );
 
     // Get character height and width in world coordinates
-    character_height = get_character_or_symbol_height(1);
-    character_width = character_height*fabs((xmax-xmin)/(ymax-ymin));
+    character_height = get_character_or_symbol_height( 1 );
+    character_width  = character_height * fabs( ( xmax - xmin ) / ( ymax - ymin ) );
     // Get symbol width in world coordinates if symbols are plotted to
     // adjust ends of line of symbols.
-    if( ifline) {
-      symbol_width = 0.;
-    } else {
-      // AWI, no idea why must use 0.5 factor to get ends of symbol lines
-      // to line up approximately correctly with plotted legend lines.
-      // Factor should be unity.
-      symbol_width = 0.5*get_character_or_symbol_height(0)*
-      fabs((xmax-xmin)/(ymax-ymin));
+    if ( ifline )
+    {
+        symbol_width = 0.;
+    }
+    else
+    {
+        // AWI, no idea why must use 0.5 factor to get ends of symbol lines
+        // to line up approximately correctly with plotted legend lines.
+        // Factor should be unity.
+        symbol_width = 0.5 * get_character_or_symbol_height( 0 ) *
+                       fabs( ( xmax - xmin ) / ( ymax - ymin ) );
     }
     // Get world-coordinate positions of the start of the legend text
-    text_x = line_x_end;
-    text_y = line_y;
-    text_x_world = normalized_to_world_x(text_x) + character_width;
-    text_y_world = normalized_to_world_y(text_y);
+    text_x       = line_x_end;
+    text_y       = line_y;
+    text_x_world = normalized_to_world_x( text_x ) + character_width;
+    text_y_world = normalized_to_world_y( text_y );
 
     // Starting y position for legend entries
     ty = text_y_world - character_height;
 
     if ( ( ( xs = (PLFLT *) malloc( nsymbols * sizeof ( PLFLT ) ) ) == NULL ) ||
-	 ( ( ys = (PLFLT *) malloc( nsymbols * sizeof ( PLFLT ) ) ) == NULL ) )
-      {
-	plexit( "pllegend: Insufficient memory" );
-      }
+         ( ( ys = (PLFLT *) malloc( nsymbols * sizeof ( PLFLT ) ) ) == NULL ) )
+    {
+        plexit( "pllegend: Insufficient memory" );
+    }
 
-    dxs = (line_x_end_world - line_x_world - symbol_width)/(double) (nsymbols-1);
-    for (j=0; j<nsymbols; j++) {
-      xs[j] = line_x_world + 0.5*symbol_width + dxs*(double) j;
-      ys[j] = ty;
+    dxs = ( line_x_end_world - line_x_world - symbol_width ) / (double) ( nsymbols - 1 );
+    for ( j = 0; j < nsymbols; j++ )
+    {
+        xs[j] = line_x_world + 0.5 * symbol_width + dxs * (double) j;
+        ys[j] = ty;
     }
 
     // Draw each legend entry
-    for (i = 0; i < n; i++) {
+    for ( i = 0; i < n; i++ )
+    {
         // Line for the legend
-        plcol0(colors[i]);
-        if (ifline) {
+        plcol0( colors[i] );
+        if ( ifline )
+        {
             // Draw lines
-            plline(nsymbols, xs, ys);
+            plline( nsymbols, xs, ys );
         }
-        else {
+        else
+        {
             // Draw symbols
-            plpoin(nsymbols, xs, ys, symbols[i]);
+            plpoin( nsymbols, xs, ys, symbols[i] );
         }
 
         // Label/name for the legend
-        plcol0(text_colors[i]);
-        plptex(text_x_world, ty, 0.0, 0.0, 0.0, names[i]);
+        plcol0( text_colors[i] );
+        plptex( text_x_world, ty, 0.0, 0.0, 0.0, names[i] );
         // Move to the next position
-        ty = ty - (1.5 * character_height);
-	for (j=0; j<nsymbols; j++) {
-	  ys[j] = ty;
-	}
+        ty = ty - ( 1.5 * character_height );
+        for ( j = 0; j < nsymbols; j++ )
+        {
+            ys[j] = ty;
+        }
     }
     free( xs );
     free( ys );
 
     // Restore the previously active drawing color
-    plcol0(old_col0);
+    plcol0( old_col0 );
 
     return;
 }

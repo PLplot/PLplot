@@ -92,12 +92,12 @@
 #endif
 #endif
 
-#if defined( WIN32 )                               /* Windows 32-bit */
-#if defined( IVF )                                 /* Intel Visual Fortran */
+#if defined ( WIN32 )                               /* Windows 32-bit */
+#if defined ( IVF )                                 /* Intel Visual Fortran */
 #define STUB_LINKAGE    STUB_IVF
-#elif defined ( CVF )                              /* MSVC/CVF */
+#elif defined ( CVF )                               /* MSVC/CVF */
 #define STUB_LINKAGE    STUB_U
-#elif defined ( MSDOS )                            /* MS-DOS based */
+#elif defined ( MSDOS )                             /* MS-DOS based */
 #define STUB_LINKAGE    STUB_FORTRAN
 #elif defined ( _MSC_VER )
 #define STUB_LINKAGE    STUB_STDCALL

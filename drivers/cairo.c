@@ -418,7 +418,7 @@ void set_line_properties( PLCairo *aStream, cairo_line_join_t join, cairo_line_c
 
 void plD_line_cairo( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
-    PLCairo           *aStream;
+    PLCairo *aStream;
 
     aStream = (PLCairo *) pls->dev;
 
@@ -447,7 +447,7 @@ void plD_line_cairo( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
 void plD_polyline_cairo( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
-    PLCairo           *aStream;
+    PLCairo *aStream;
 
     aStream = (PLCairo *) pls->dev;
 
@@ -1274,7 +1274,7 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts )
 void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
     int i;
-    PLCairo           *aStream;
+    PLCairo *aStream;
 
     aStream = (PLCairo *) pls->dev;
 
@@ -1772,7 +1772,7 @@ void plD_eop_xcairo( PLStream *pls )
             break;
         case ClientMessage:
             // plexit("X Window closed");
-            pls->stream_closed = TRUE;
+            pls->stream_closed       = TRUE;
             aStream->exit_event_loop = 1;
             break;
         case Expose:
