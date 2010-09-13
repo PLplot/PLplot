@@ -9,20 +9,196 @@
 # (III) CMake-based test_noninteractive and test_interactive of
 # installed examples.
 
-# FIXME: the following should be set as a result of user options.
-# These control what kind of build is tested.
-CMAKE_ADDED_OPTIONS='-DPLD_pdf=ON'
+usage () {
+  local prog=`basename $0`
+  echo "Usage: $prog [OPTIONS]
+OPTIONS:
+  The next four control what kind of build is tested.
+  [--cmake_added_options (defaults to none)]
+  [--do_shared (yes/no, defaults to yes)]
+  [--do_nondynamic (yes/no, defaults to yes)]
+  [--do_static (yes/no, defaults to yes)]
+
+  The next six control which of seven kinds of tests are done for 
+  each kind of build.
+  [--do_ctest (yes/no, defaults to yes)]
+  [--do_noninteractive_test (yes/no, defaults to yes)]
+  [--do_interactive_test (yes/no, defaults to yes)]
+  [--do_build_tree_test (yes/no, defaults to yes)]
+  [--do_install_tree_test (yes/no, defaults to yes)]
+  [--do_traditional_tree_test (yes/no, defaults to yes)]
+
+  [--help] Show this message.
+"
+  exit $1
+}
+
+
+cmake_added_options=
 do_shared=yes
 do_nondynamic=yes
 do_static=yes
 
 # These control which of 7 tests that are run.
 do_ctest=yes
+do_noninteractive_test=yes
+do_interactive_test=yes
 do_build_tree_test=yes
 do_install_tree_test=yes
 do_traditional_tree_test=yes
-do_noninteractive_test=yes
-do_interactive_test=yes
+
+while test $# -gt 0; do
+
+    case $1 in
+        --cmake_added_options)
+	    cmake_added_options=$2
+            shift
+            ;;
+	--do_shared)
+	    case $2 in
+		yes|no)
+		    do_shared=$2
+		    shift
+		    ;;
+		
+		*)
+		    usage 1 1>&2
+		    ;;
+	    esac
+	    ;;
+	--do_nondynamic)
+	    case $2 in
+		yes|no)
+		    do_nondynamic=$2
+		    shift
+		    ;;
+		*)
+		    usage 1 1>&2
+		    ;;
+	    esac
+	    ;;
+	--do_static)
+	    case $2 in
+		yes|no)
+		    do_static=$2
+		    shift
+		    ;;
+		*)
+		    usage 1 1>&2
+		    ;;
+	    esac
+	    ;;
+	--do_ctest)
+	    case $2 in
+		yes|no)
+		    do_ctest=$2
+		    shift
+		    ;;
+		*)
+		    usage 1 1>&2
+		    ;;
+	    esac
+	    ;;
+	--do_noninteractive_test)
+	    case $2 in
+		yes|no)
+		    do_noninteractive_test=$2
+		    shift
+		    ;;
+		*)
+		    usage 1 1>&2
+		    ;;
+	    esac
+	    ;;
+	--do_interactive_test)
+	    case $2 in
+		yes|no)
+		    do_interactive_test=$2
+		    shift
+		    ;;
+		*)
+		    usage 1 1>&2
+		    ;;
+	    esac
+	    ;;
+	--do_build_tree_test)
+	    case $2 in
+		yes|no)
+		    do_build_tree_test=$2
+		    shift
+		    ;;
+		*)
+		    usage 1 1>&2
+		    ;;
+	    esac
+	    ;;
+	--do_install_tree_test)
+	    case $2 in
+		yes|no)
+		    do_install_tree_test=$2
+		    shift
+		    ;;
+		*)
+		    usage 1 1>&2
+		    ;;
+	    esac
+	    ;;
+	--do_traditional_tree_test)
+	    case $2 in
+		yes|no)
+		    do_traditional_tree_test=$2
+		    shift
+		    ;;
+		*)
+		    usage 1 1>&2
+		    ;;
+	    esac
+	    ;;
+        --help)
+            usage 0 1>&2
+            ;;
+        *)
+            usage 1 1>&2
+            ;;
+    esac
+    shift
+done
+echo "Summary of options used for these tests
+
+This/these cmake option(s) added for all builds
+cmake_added_options = $cmake_added_options
+
+The next three control whether builds with shared libraries/dynamic
+drivers; shared_libraries/nondynamic drivers; and/or static
+libraries/nondynamic drivers are tested
+do_shared = $do_shared
+do_nondynamic = $do_nondynamic
+do_static = $do_static
+
+Run the ctest test?
+do_ctest = $do_ctest
+
+The next two control whether noninteractive and/or interactive tests are
+performed for the next three kinds of tests
+do_noninteractive_test = $do_noninteractive_test
+do_interactive_test = $do_interactive_test
+
+The next three control whether build tree examples, installed examples
+with CMake-based build system, and/or installed examples with
+traditional (Makefile + pkg-config) build system tests are run.
+do_build_tree_test = $do_build_tree_test
+do_install_tree_test = $do_install_tree_test
+do_traditional_tree_test = $do_traditional_tree_test
+"
+ANSWER=
+while [ "$ANSWER" != "yes" -a "$ANSWER" != "no" ] ; do
+    echo -n "Continue (yes/no)? "
+    read ANSWER
+done
+if [ "$ANSWER" = "no" ] ; then
+    echo "Immediate exit specified!"
+    exit
+fi
 
 # Find absolute PATH of script without using readlink (since readlink is
 # not available on all platforms).  Followed advice at
@@ -53,7 +229,7 @@ function comprehensive_test {
     output="$OUTPUT_TREE"/cmake.out
     rm -f "$output"
     cmake "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
-	$CMAKE_ADDED_OPTIONS $1 "$SOURCE_TREE" >& "$output"
+	"$cmake_added_options" $1 "$SOURCE_TREE" >& "$output"
     cmake_rc=$?
     if [ "$cmake_rc" -eq 0 ] ; then
 	if [ "$do_build_tree_test" = "yes" -a  "$do_noninteractive_test" = "yes" ] ; then
