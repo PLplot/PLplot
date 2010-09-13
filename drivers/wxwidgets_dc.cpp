@@ -126,10 +126,22 @@ void wxPLDevDC::DrawPolyline( short *xa, short *ya, PLINT npts )
 void wxPLDevDC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb,
                                  PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 {
-    if ( x1 < 0 ) x1 = 0;else x1 = (PLINT) ( x1 / scalex );
-    if ( y1 < 0 ) y1 = 0;else y1 = (PLINT) ( height - y1 / scaley );
-    if ( x2 < 0 ) x2 = width;else x2 = (PLINT) ( x2 / scalex );
-    if ( y2 < 0 ) y2 = height;else y2 = (PLINT) ( height - y2 / scaley );
+    if ( x1 < 0 )
+        x1 = 0;
+    else
+        x1 = (PLINT) ( x1 / scalex );
+    if ( y1 < 0 )
+        y1 = 0;
+    else
+        y1 = (PLINT) ( height - y1 / scaley );
+    if ( x2 < 0 )
+        x2 = width;
+    else
+        x2 = (PLINT) ( x2 / scalex );
+    if ( y2 < 0 )
+        y2 = height;
+    else
+        y2 = (PLINT) ( height - y2 / scaley );
 
     const wxPen   oldPen   = m_dc->GetPen();
     const wxBrush oldBrush = m_dc->GetBrush();

@@ -55,25 +55,31 @@ int setFromISOstring( const char* ISOstring, MJDtime *MJD, int forceJulian )
     /* parse off year */
 
     y = strtol( &( ISOstring[startAt] ), NULL, 10 );
-    if ( ISOstring[startAt] == '-' || ISOstring[startAt] == '+' ) startAt++;
+    if ( ISOstring[startAt] == '-' || ISOstring[startAt] == '+' )
+        startAt++;
     startAt += 5;
-    if ( startAt > len ) return 1;
+    if ( startAt > len )
+        return 1;
 
     m        = strtol( &( ISOstring[startAt] ), NULL, 10 );
     startAt += 3;
-    if ( startAt > len ) return 1;
+    if ( startAt > len )
+        return 1;
 
     d        = strtol( &( ISOstring[startAt] ), NULL, 10 );
     startAt += 3;
-    if ( startAt > len ) return 1;
+    if ( startAt > len )
+        return 1;
 
     h        = strtol( &( ISOstring[startAt] ), NULL, 10 );
     startAt += 3;
-    if ( startAt > len ) return 1;
+    if ( startAt > len )
+        return 1;
 
     min      = strtol( &( ISOstring[startAt] ), NULL, 10 );
     startAt += 3;
-    if ( startAt > len ) return 1;
+    if ( startAt > len )
+        return 1;
 
     seconds = strtod( &( ISOstring[startAt] ), NULL );
     setFromUT( y, m - 1, d, h, min, seconds, MJD, forceJulian );
@@ -237,7 +243,8 @@ const char * getISOString( MJDtime* MJD, int delim, int forceJulian )
         ysign = 1;
         y     = -y;
     }
-    else ysign = 0;
+    else
+        ysign = 0;
 
     sec1 = (int) sec / 10;
     sec -= (double) sec1 * 10;
@@ -250,7 +257,8 @@ const char * getISOString( MJDtime* MJD, int delim, int forceJulian )
             sprintf( DateTime, "-%04d-%02d-%02dT%02d:%02d:%01d%-11.10f", y, m + 1, d, hour, min, sec1, sec );
 
         /* remove trailing white space */
-        while ( ( ptr = strrchr( &( DateTime[0] ), ' ' ) ) != NULL ) ptr[0] = '\0';
+        while ( ( ptr = strrchr( &( DateTime[0] ), ' ' ) ) != NULL )
+            ptr[0] = '\0';
         strcat( &( DateTime[0] ), "Z" );
     }
     else

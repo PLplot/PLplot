@@ -43,20 +43,20 @@ int main( char[][] args )
     const int NSHEAR      = 8;
 
     PLFLT
-    xmin     = 0.0, xmax = 1.0, xmid = 0.5 * ( xmax + xmin ), xrange = xmax - xmin,
-    ymin     = 0.0, ymax = 1.0, ymid = 0.5 * ( ymax + ymin ), yrange = ymax - ymin,
-    zmin     = 0.0, zmax = 1.0, zmid = 0.5 * ( zmax + zmin ), zrange = zmax - zmin,
-    ysmin    = ymin + 0.1 * yrange,
-    ysmax    = ymax - 0.1 * yrange,
-    ysrange  = ysmax - ysmin,
-    dysrot   = ysrange / cast(PLFLT) ( NROTATION - 1 ),
-    dysshear = ysrange / cast(PLFLT) ( NSHEAR - 1 ),
-    zsmin    = zmin + 0.1 * zrange,
-    zsmax    = zmax - 0.1 * zrange,
-    zsrange  = zsmax - zsmin,
-    dzsrot   = zsrange / cast(PLFLT) ( NROTATION - 1 ),
-    dzsshear = zsrange / cast(PLFLT) ( NSHEAR - 1 ),
-    ys, zs;
+        xmin     = 0.0, xmax = 1.0, xmid = 0.5 * ( xmax + xmin ), xrange = xmax - xmin,
+        ymin     = 0.0, ymax = 1.0, ymid = 0.5 * ( ymax + ymin ), yrange = ymax - ymin,
+        zmin     = 0.0, zmax = 1.0, zmid = 0.5 * ( zmax + zmin ), zrange = zmax - zmin,
+        ysmin    = ymin + 0.1 * yrange,
+        ysmax    = ymax - 0.1 * yrange,
+        ysrange  = ysmax - ysmin,
+        dysrot   = ysrange / cast(PLFLT) ( NROTATION - 1 ),
+        dysshear = ysrange / cast(PLFLT) ( NSHEAR - 1 ),
+        zsmin    = zmin + 0.1 * zrange,
+        zsmax    = zmax - 0.1 * zrange,
+        zsrange  = zsmax - zsmin,
+        dzsrot   = zsrange / cast(PLFLT) ( NROTATION - 1 ),
+        dzsshear = zsrange / cast(PLFLT) ( NSHEAR - 1 ),
+        ys, zs;
 
     /* p1string must be exactly one character + the null termination
      * character. */

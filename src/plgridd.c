@@ -153,7 +153,8 @@ plfgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
     /* clear array to return */
     for ( i = 0; i < nptsx; i++ )
         for ( j = 0; j < nptsy; j++ )
-            zops->set( zgp, i, j, 0.0 ); /* NaN signals a not processed grid point */
+            zops->set( zgp, i, j, 0.0 );
+    /* NaN signals a not processed grid point */
 
     switch ( type )
     {
@@ -463,7 +464,8 @@ grid_nnli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                         d1 = sqrt( ( xx[1] - xx[0] ) * ( xx[1] - xx[0] ) + ( yy[1] - yy[0] ) * ( yy[1] - yy[0] ) );
                         d2 = sqrt( ( xx[2] - xx[1] ) * ( xx[2] - xx[1] ) + ( yy[2] - yy[1] ) * ( yy[2] - yy[1] ) );
                         d3 = sqrt( ( xx[0] - xx[2] ) * ( xx[0] - xx[2] ) + ( yy[0] - yy[2] ) * ( yy[0] - yy[2] ) );
-                        if ( d1 == 0. || d2 == 0. || d3 == 0. ) /* coincident points */ continue;
+                        if ( d1 == 0. || d2 == 0. || d3 == 0. ) /* coincident points */
+                            continue;
 
                         /* make d1 < d2 */
                         if ( d1 > d2 )
@@ -793,7 +795,8 @@ dist2( PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts )
 
     for ( i = 0; i < 4; i++ )
         if ( items[i].item != -1 )
-            items[i].dist = sqrt( items[i].dist ); /* now calculate the distance */
+            items[i].dist = sqrt( items[i].dist );
+    /* now calculate the distance */
 }
 
 #ifdef NONN /* another DTLI, based only on QHULL, not nn */

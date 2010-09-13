@@ -74,27 +74,27 @@ static int error;
 
 /* Font height for contour labels (normalized) */
 static PLFLT
-contlabel_size = 0.3;
+    contlabel_size = 0.3;
 
 /* Offset of label from contour line (if set to 0.0, labels are printed on the lines). */
 static PLFLT
-contlabel_offset = 0.006;
+    contlabel_offset = 0.006;
 
 /* Spacing parameter for contour labels */
 static PLFLT
-contlabel_space = 0.1;
+    contlabel_space = 0.1;
 
 /* Activate labels, default off */
 static PLINT
-contlabel_active = 0;
+    contlabel_active = 0;
 
 /* If the contour label exceed 10^(limexp) or 10^(-limexp), the exponential format is used */
 static PLINT
-limexp = 4;
+    limexp = 4;
 
 /* Number of significant digits */
 static PLINT
-sigprec = 2;
+    sigprec = 2;
 
 /******** contour lines storage ****************************/
 
@@ -702,12 +702,14 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
     /* Check if no contour has been crossed i.e. iedge[i] = -1 */
     if ( ( iedge[0] == -1 ) && ( iedge[1] == -1 ) && ( iedge[2] == -1 )
-         && ( iedge[3] == -1 ) ) return;
+         && ( iedge[3] == -1 ) )
+        return;
 
     /* Check if this is a completely flat square - in which case
      * ignore it */
     if ( ( f[0] == 0.0 ) && ( f[1] == 0.0 ) && ( f[2] == 0.0 ) &&
-         ( f[3] == 0.0 ) ) return;
+         ( f[3] == 0.0 ) )
+        return;
 
     /* Calculate intersection points */
     num = 0;
@@ -724,20 +726,26 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
     }
     for ( k = 0, i = ( startedge < 0 ? 0 : startedge ); k < 4; k++, i = ( i + 1 ) % 4 )
     {
-        if ( i == startedge ) continue;
+        if ( i == startedge )
+            continue;
 
         /* If the contour is an edge check it hasn't already been done */
         if ( f[i] == 0.0 && f[( i + 1 ) % 4] == 0.0 )
         {
             kcolnext = kcol;
             krownext = krow;
-            if ( i == 0 ) kcolnext--;
-            if ( i == 1 ) krownext--;
-            if ( i == 2 ) kcolnext++;
-            if ( i == 3 ) krownext++;
+            if ( i == 0 )
+                kcolnext--;
+            if ( i == 1 )
+                krownext--;
+            if ( i == 2 )
+                kcolnext++;
+            if ( i == 3 )
+                krownext++;
             if ( ( kcolnext < kx ) || ( kcolnext >= lx ) ||
                  ( krownext < ky ) || ( krownext >= ly ) ||
-                 ( ipts[kcolnext][krownext] == 1 ) ) continue;
+                 ( ipts[kcolnext][krownext] == 1 ) )
+                continue;
         }
         if ( ( iedge[i] == 1 ) || ( f[i] == 0.0 ) )
         {
@@ -774,10 +782,14 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                     kcolnext = kcol;
                     krownext = krow;
                     inext    = ( i + 2 ) % 4;
-                    if ( i == 0 ) kcolnext--;
-                    if ( i == 1 ) krownext--;
-                    if ( i == 2 ) kcolnext++;
-                    if ( i == 3 ) krownext++;
+                    if ( i == 0 )
+                        kcolnext--;
+                    if ( i == 1 )
+                        krownext--;
+                    if ( i == 2 )
+                        kcolnext++;
+                    if ( i == 3 )
+                        krownext++;
                     if ( ( kcolnext >= kx ) && ( kcolnext < lx ) &&
                          ( krownext >= ky ) && ( krownext < ly ) &&
                          ( ipts[kcolnext][krownext] == 0 ) )

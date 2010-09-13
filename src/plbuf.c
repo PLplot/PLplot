@@ -838,7 +838,8 @@ rdbuf_text( PLStream *pls )
         rd_data( pls, unicode, sizeof ( PLUNICODE ) * text.unicode_array_len );
         text.unicode_array = unicode;
     }
-    else text.unicode_array = NULL;
+    else
+        text.unicode_array = NULL;
 
     /* Make the call for unicode devices */
     if ( pls->dev_unicode )
@@ -1095,7 +1096,8 @@ wr_data( PLStream *pls, void *buf, size_t buf_size )
         pls->plbuf_buffer_size += pls->plbuf_buffer_grow *
                                   ( ( pls->plbuf_top + buf_size - pls->plbuf_buffer_size ) /
                                     pls->plbuf_buffer_grow + 1 );
-        while ( pls->plbuf_top + buf_size >= pls->plbuf_buffer_size ) ;
+        while ( pls->plbuf_top + buf_size >= pls->plbuf_buffer_size )
+            ;
 
         if ( ( pls->plbuf_buffer = realloc( pls->plbuf_buffer, pls->plbuf_buffer_size ) ) == NULL )
             plexit( "plbuf wr_data:  Plot buffer grow failed" );
@@ -1363,7 +1365,8 @@ void * plbuf_switch( PLStream *pls, void *state )
     /* No saved state was passed, return a NULL--we hope the caller
      * is smart enough to notice
      */
-    if ( state == NULL ) return NULL;
+    if ( state == NULL )
+        return NULL;
 
     if ( !new_state->valid )
     {

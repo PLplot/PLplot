@@ -68,7 +68,8 @@ static void plplot_canvas_init( PlplotCanvas *self )
         plmkstrm( &Nstream );
         self->Nstream = (gint) Nstream;
     }
-    else self->Nstream = 0;
+    else
+        self->Nstream = 0;
 }
 
 static void plplot_canvas_class_init( PlplotCanvasClass *klass )

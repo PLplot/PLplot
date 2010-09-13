@@ -58,31 +58,31 @@ typedef struct
     GnomeCanvasGroup* group_hidden;     /* Hidden group --> visible at eop */
     GnomeCanvasGroup* group_persistent; /* Persistent group, at from and never erased */
 
-    gboolean        use_persistence; /* Flags the persistent group should be used,
+    gboolean        use_persistence;    /* Flags the persistent group should be used,
                                       * and that it and the background should not be
                                       * erased when the page is advanced.
                                       */
 
-    GtkWidget  * window;        /* A window used in standalone mode */
-    GtkWidget  * notebook;      /* A notebook pager in the window */
-    GtkWidget  * statusbar;     /* A statusbar for the window */
-    GtkWidget  * filew;         /* A file widget chooser when Save is pressed */
+    GtkWidget  * window;                /* A window used in standalone mode */
+    GtkWidget  * notebook;              /* A notebook pager in the window */
+    GtkWidget  * statusbar;             /* A statusbar for the window */
+    GtkWidget  * filew;                 /* A file widget chooser when Save is pressed */
 
-    guint32    color;           /* Current pen color */
-    GdkColor   bgcolor;         /* Background color (shouldn't change) */
-    GdkColormap* colormap;      /* The gdk colormap for the canvas */
+    guint32    color;                   /* Current pen color */
+    GdkColor   bgcolor;                 /* Background color (shouldn't change) */
+    GdkColormap* colormap;              /* The gdk colormap for the canvas */
 
-    PLINT      width;           /* Width of the canvas in device pixels */
-    PLINT      height;          /* Height of the canvas in device pixels */
+    PLINT      width;                   /* Width of the canvas in device pixels */
+    PLINT      height;                  /* Height of the canvas in device pixels */
 
-    PLINT      pen_color;       /* Current pen color */
-    PLINT      pen_width;       /* Current pen width */
+    PLINT      pen_color;               /* Current pen color */
+    PLINT      pen_width;               /* Current pen width */
 
-    gboolean   use_pixmap;      /* Flags pixmap use for lines and fills */
-    gboolean   pixmap_has_data; /* Flags that the pixmap has data */
+    gboolean   use_pixmap;              /* Flags pixmap use for lines and fills */
+    gboolean   pixmap_has_data;         /* Flags that the pixmap has data */
 
-    gboolean   plstate_width;   /* Flags indicating change of state before */
-    gboolean   plstate_color0;  /*  device is fully initialized */
+    gboolean   plstate_width;           /* Flags indicating change of state before */
+    gboolean   plstate_color0;          /*  device is fully initialized */
     gboolean   plstate_color1;
 
     gboolean   allow_resize; /* Flags whether device resizing is allowed */

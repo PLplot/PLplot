@@ -197,8 +197,10 @@ main( int argc, const char *argv[] )
     {
         for (;; )
         {
-            if ( !plGetCursor( &gin ) ) break;
-            if ( gin.keysym == PLK_Escape ) break;
+            if ( !plGetCursor( &gin ) )
+                break;
+            if ( gin.keysym == PLK_Escape )
+                break;
 
             pltext();
             if ( gin.keysym < 0xFF && isprint( gin.keysym ) )

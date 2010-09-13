@@ -102,7 +102,8 @@ void c_pllegend( PLFLT line_length, PLFLT x, PLFLT y, PLINT n, PLINT *text_color
     // ifline is true if lines are to be drawn, false if points/symbols are
     // to be drawn.
     int ifline = nsymbols <= 1 || symbols == NULL;
-    if ( symbols == NULL ) nsymbols = 2;
+    if ( symbols == NULL )
+        nsymbols = 2;
     nsymbols = MAX( 2, nsymbols );
 
     old_col0 = plsc->icol0;

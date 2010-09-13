@@ -903,7 +903,8 @@ grdashline( short *x, short *y )
     nxstep = nxp * plsc->umx;
     nystep = nyp * plsc->umy;
     tstep  = (PLINT) ( sqrt( nxstep * nxstep + nystep * nystep ) / modulo );
-    if ( tstep < 1 ) tstep = 1;
+    if ( tstep < 1 )
+        tstep = 1;
 
     /* tstep is distance per pixel moved */
 

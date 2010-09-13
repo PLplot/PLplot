@@ -41,8 +41,10 @@ c_plsvect( PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill )
 {
     int i;
 
-    if ( plsc->arrow_x ) free_mem( plsc->arrow_x );
-    if ( plsc->arrow_y ) free_mem( plsc->arrow_y );
+    if ( plsc->arrow_x )
+        free_mem( plsc->arrow_x );
+    if ( plsc->arrow_y )
+        free_mem( plsc->arrow_y );
 
     if ( ( ( plsc->arrow_x = (PLFLT *) malloc( npts * sizeof ( PLFLT ) ) ) == NULL ) ||
          ( ( plsc->arrow_y = (PLFLT *) malloc( npts * sizeof ( PLFLT ) ) ) == NULL ) )
@@ -72,7 +74,8 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
     uu = scale * u;
     vv = scale * v;
 
-    if ( uu == 0.0 && vv == 0.0 ) return;
+    if ( uu == 0.0 && vv == 0.0 )
+        return;
 
     if ( ( ( a_x = (PLINT *) malloc( sizeof ( PLINT ) * ( plsc->arrow_npts ) ) ) == NULL ) ||
          ( ( a_y = (PLINT *) malloc( sizeof ( PLINT ) * ( plsc->arrow_npts ) ) ) == NULL ) )

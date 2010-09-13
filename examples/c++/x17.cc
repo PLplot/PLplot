@@ -157,7 +157,9 @@ x17::x17( int argc, const char ** argv )
 # ifdef PL_HAVE_POLL
         poll( 0, 0, 10 );
 # else
-        { int i; for ( i = 0; i < 1000000; i++ ) ;}
+        { int i; for ( i = 0; i < 1000000; i++ )
+              ;
+        }
 # endif
 #endif
         t     = (double) n * dt;

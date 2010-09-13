@@ -647,7 +647,8 @@ NSMutableAttributedString  * create_string( const PLUNICODE *ucs4, int ucs4_len,
 
     /* initialize the attributed string */
 
-    for ( i = 0; i < MAX_STRING_LEN; i++ ) dummy[i] = 'i';
+    for ( i = 0; i < MAX_STRING_LEN; i++ )
+        dummy[i] = 'i';
     dummy[MAX_STRING_LEN] = '\0';
     str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithCString:dummy]];
 

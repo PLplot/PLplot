@@ -100,9 +100,12 @@ plf2ops_c_minmax( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmin, PLFLT *zmax )
     {
         for ( j = 0; j < ny; j++ )
         {
-            if ( !finite( z[i][j] ) ) continue;
-            if ( z[i][j] < min ) min = z[i][j];
-            if ( z[i][j] > max ) max = z[i][j];
+            if ( !finite( z[i][j] ) )
+                continue;
+            if ( z[i][j] < min )
+                min = z[i][j];
+            if ( z[i][j] > max )
+                max = z[i][j];
         }
     }
     *zmin = min;
@@ -204,9 +207,12 @@ plf2ops_grid_c_minmax( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmin, PLFLT *zmax
     {
         for ( j = 0; j < ny; j++ )
         {
-            if ( !finite( z[i][j] ) ) continue;
-            if ( z[i][j] < min ) min = z[i][j];
-            if ( z[i][j] > max ) max = z[i][j];
+            if ( !finite( z[i][j] ) )
+                continue;
+            if ( z[i][j] < min )
+                min = z[i][j];
+            if ( z[i][j] > max )
+                max = z[i][j];
         }
     }
     *zmin = min;
@@ -317,9 +323,12 @@ plf2ops_grid_xxx_major_minmax( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmin, PLF
 
     for ( i = 0; i < nx * ny; i++ )
     {
-        if ( !finite( z[i] ) ) continue;
-        if ( z[i] < min ) min = z[i];
-        if ( z[i] > max ) max = z[i];
+        if ( !finite( z[i] ) )
+            continue;
+        if ( z[i] < min )
+            min = z[i];
+        if ( z[i] > max )
+            max = z[i];
     }
     *zmin = min;
     *zmax = max;

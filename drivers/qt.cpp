@@ -279,7 +279,8 @@ void plD_init_rasterqt( PLStream * pls )
     }
     ( (QtRasterDevice *) pls->dev )->setPLStream( pls );
 
-    if ( isMaster ) handler.setMasterDevice( (QtRasterDevice*) ( pls->dev ) );
+    if ( isMaster )
+        handler.setMasterDevice( (QtRasterDevice*) ( pls->dev ) );
 
     if ( pls->xlength > pls->ylength )
         ( (QtRasterDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
@@ -315,7 +316,8 @@ void plD_line_rasterqt( PLStream * pls, short x1a, short y1a, short x2a, short y
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     widget->QtPLDriver::setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
     widget->drawLine( x1a, y1a, x2a, y2a );
@@ -328,7 +330,8 @@ void plD_polyline_rasterqt( PLStream *pls, short *xa, short *ya, PLINT npts )
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     widget->QtPLDriver::setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
     widget->drawPolyline( xa, ya, npts );
@@ -345,7 +348,8 @@ void plD_esc_rasterqt( PLStream * pls, PLINT op, void* ptr )
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     switch ( op )
     {
@@ -422,7 +426,8 @@ void plD_state_rasterqt( PLStream * pls, PLINT op )
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     switch ( op )
     {
@@ -693,7 +698,8 @@ void plD_init_svgqt( PLStream * pls )
     }
     ( (QtSVGDevice *) pls->dev )->setPLStream( pls );
 
-    if ( isMaster ) handler.setMasterDevice( (QtSVGDevice*) ( pls->dev ) );
+    if ( isMaster )
+        handler.setMasterDevice( (QtSVGDevice*) ( pls->dev ) );
 
     if ( pls->xlength > pls->ylength )
         ( (QtSVGDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
@@ -742,7 +748,8 @@ void plD_eop_svgqt( PLStream *pls )
     ( (QtSVGDevice *) pls->dev )->downscale = downscale;
     ( (QtSVGDevice *) pls->dev )->setPLStream( pls );
 
-    if ( isMaster ) handler.setMasterDevice( (QtSVGDevice *) pls->dev );
+    if ( isMaster )
+        handler.setMasterDevice( (QtSVGDevice *) pls->dev );
     handler.DeviceChangedPage( (QtSVGDevice *) pls->dev );
 }
 
@@ -753,7 +760,8 @@ void plD_line_svgqt( PLStream * pls, short x1a, short y1a, short x2a, short y2a 
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
     widget->drawLine( x1a, y1a, x2a, y2a );
@@ -766,7 +774,8 @@ void plD_polyline_svgqt( PLStream *pls, short *xa, short *ya, PLINT npts )
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
     widget->drawPolyline( xa, ya, npts );
@@ -783,7 +792,8 @@ void plD_esc_svgqt( PLStream * pls, PLINT op, void* ptr )
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     switch ( op )
     {
@@ -854,7 +864,8 @@ void plD_state_svgqt( PLStream * pls, PLINT op )
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     switch ( op )
     {
@@ -972,7 +983,8 @@ void plD_init_epspdfqt( PLStream * pls )
     }
     ( (QtEPSDevice *) pls->dev )->setPLStream( pls );
 
-    if ( isMaster ) handler.setMasterDevice( (QtEPSDevice*) ( pls->dev ) );
+    if ( isMaster )
+        handler.setMasterDevice( (QtEPSDevice*) ( pls->dev ) );
 
     if ( pls->xlength > pls->ylength )
         ( (QtEPSDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
@@ -1024,7 +1036,8 @@ void plD_eop_epspdfqt( PLStream *pls )
     pls->dev = new QtEPSDevice;
     ( (QtEPSDevice *) pls->dev )->downscale = downscale;
 
-    if ( isMaster ) handler.setMasterDevice( (QtEPSDevice *) pls->dev );
+    if ( isMaster )
+        handler.setMasterDevice( (QtEPSDevice *) pls->dev );
     handler.DeviceChangedPage( (QtEPSDevice *) pls->dev );
 }
 
@@ -1035,7 +1048,8 @@ void plD_line_epspdfqt( PLStream * pls, short x1a, short y1a, short x2a, short y
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
     widget->drawLine( x1a, y1a, x2a, y2a );
@@ -1048,7 +1062,8 @@ void plD_polyline_epspdfqt( PLStream *pls, short *xa, short *ya, PLINT npts )
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
     widget->drawPolyline( xa, ya, npts );
@@ -1065,7 +1080,8 @@ void plD_esc_epspdfqt( PLStream * pls, PLINT op, void* ptr )
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     switch ( op )
     {
@@ -1135,7 +1151,8 @@ void plD_state_epspdfqt( PLStream * pls, PLINT op )
     {
         return;
     }
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     switch ( op )
     {
@@ -1228,7 +1245,8 @@ void plD_init_qtwidget( PLStream * pls )
     }
     widget->setPLStream( pls );
 
-    if ( isMaster ) handler.setMasterDevice( widget );
+    if ( isMaster )
+        handler.setMasterDevice( widget );
 
     if ( plsc->xlength > plsc->ylength )
         widget->downscale = (PLFLT) plsc->xlength / (PLFLT) ( PIXELS_X - 1 );
@@ -1290,7 +1308,8 @@ void plD_bop_qtwidget( PLStream *pls )
 void plD_line_qtwidget( PLStream * pls, short x1a, short y1a, short x2a, short y2a )
 {
     QtPLWidget* widget = (QtPLWidget*) pls->dev;
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
     widget->drawLine( x1a, y1a, x2a, y2a );
@@ -1299,7 +1318,8 @@ void plD_line_qtwidget( PLStream * pls, short x1a, short y1a, short x2a, short y
 void plD_polyline_qtwidget( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
     QtPLWidget * widget = (QtPLWidget *) pls->dev;
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     widget->setColor( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a );
     widget->drawPolyline( xa, ya, npts );
@@ -1312,7 +1332,8 @@ void plD_esc_qtwidget( PLStream * pls, PLINT op, void* ptr )
     unsigned char *r, *g, *b;
     PLFLT         *alpha;
     QtPLWidget    * widget = (QtPLWidget *) pls->dev;
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     switch ( op )
     {
@@ -1383,7 +1404,8 @@ void plD_esc_qtwidget( PLStream * pls, PLINT op, void* ptr )
 void plD_state_qtwidget( PLStream * pls, PLINT op )
 {
     QtPLWidget * widget = (QtPLWidget *) pls->dev;
-    if ( widget == NULL ) return;
+    if ( widget == NULL )
+        return;
 
     switch ( op )
     {

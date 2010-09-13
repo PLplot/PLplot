@@ -209,7 +209,8 @@ void plD_init_gcw( PLStream *pls )
     {
         pls->dev_text    = TRUE;
         pls->dev_unicode = TRUE;
-        if ( hrshsym ) pls->dev_hrshsym = 1;
+        if ( hrshsym )
+            pls->dev_hrshsym = 1;
 
         /* Initialize freetype */
         plD_FreeType_init( pls );
@@ -310,7 +311,8 @@ void plD_init_gcw( PLStream *pls )
         dev->allow_resize = FALSE; /* The size is set an should not be changed */
         gcw_install_canvas( NULL );
     }
-    else dev->allow_resize = TRUE; /* Resizing allowed for canvasses
+    else
+        dev->allow_resize = TRUE;  /* Resizing allowed for canvasses
                                     * provided via PLESC_DEVINIT */
 
 
@@ -350,8 +352,10 @@ void plD_polyline_gcw( PLStream *pls, short *x, short *y, PLINT npts )
         plexit( "GCW driver <plD_polyline_gcw>: Canvas not found" );
     canvas = dev->canvas;
 
-    if ( dev->use_persistence ) group = dev->group_persistent;
-    else group = dev->group_hidden;
+    if ( dev->use_persistence )
+        group = dev->group_persistent;
+    else
+        group = dev->group_hidden;
 
     if ( dev->use_pixmap && !dev->use_persistence ) /* Write to bg pixmap */
 
@@ -514,14 +518,17 @@ void plD_eop_gcw( PLStream *pls )
     /* Ignore if there is no hidden group.  This means BOP has not been
      * called yet.
      */
-    if ( !GNOME_IS_CANVAS_GROUP( dev->group_hidden ) ) return;
+    if ( !GNOME_IS_CANVAS_GROUP( dev->group_hidden ) )
+        return;
 
 #ifdef DEBUG_GCW_1
     gcw_debug( "<plD_eop_gcw>\n" );
 #endif
 
-    if ( dev->use_persistence ) group = dev->group_persistent;
-    else group = dev->group_hidden;
+    if ( dev->use_persistence )
+        group = dev->group_persistent;
+    else
+        group = dev->group_hidden;
 
     /* Retrieve the device width and height of the canvas */
     width  = *(PLINT*) g_object_get_data( G_OBJECT( canvas ), "canvas-width" );
@@ -585,7 +592,8 @@ void plD_eop_gcw( PLStream *pls )
     gnome_canvas_item_raise_to_top( GNOME_CANVAS_ITEM( dev->group_persistent ) );
 
     /* Move the background to the back */
-    if ( GNOME_IS_CANVAS_ITEM( item ) ) gnome_canvas_item_lower_to_bottom( item );
+    if ( GNOME_IS_CANVAS_ITEM( item ) )
+        gnome_canvas_item_lower_to_bottom( item );
 
     /* Make the hidden group visible */
     gnome_canvas_item_show( GNOME_CANVAS_ITEM( dev->group_hidden ) );
@@ -598,7 +606,8 @@ void plD_eop_gcw( PLStream *pls )
     }
 
     /* Clear the background pixmap */
-    if ( !dev->use_persistence && dev->pixmap_has_data ) gcw_clear_background();
+    if ( !dev->use_persistence && dev->pixmap_has_data )
+        gcw_clear_background();
 
     /* Name the hidden group as visible */
     dev->group_visible = dev->group_hidden;
@@ -652,8 +661,10 @@ void plD_bop_gcw( PLStream *pls )
 
     if ( !GNOME_IS_CANVAS( dev->canvas ) )
     {
-        if ( pls->hack ) return; /* Wait for a canvas via DEVINIT */
-        else gcw_install_canvas( NULL );
+        if ( pls->hack )
+            return;              /* Wait for a canvas via DEVINIT */
+        else
+            gcw_install_canvas( NULL );
     }
     canvas = dev->canvas;
 
@@ -664,9 +675,12 @@ void plD_bop_gcw( PLStream *pls )
     /* Replay escape calls that come in before PLESC_DEVINIT.  Some of them
      * required a Canvas that didn't exist yet.
      */
-    if ( dev->plstate_width ) plD_state_gcw( pls, PLSTATE_WIDTH );
-    if ( dev->plstate_color0 ) plD_state_gcw( pls, PLSTATE_COLOR0 );
-    if ( dev->plstate_color1 ) plD_state_gcw( pls, PLSTATE_COLOR1 );
+    if ( dev->plstate_width )
+        plD_state_gcw( pls, PLSTATE_WIDTH );
+    if ( dev->plstate_color0 )
+        plD_state_gcw( pls, PLSTATE_COLOR0 );
+    if ( dev->plstate_color1 )
+        plD_state_gcw( pls, PLSTATE_COLOR1 );
     dev->plstate_width  = FALSE;
     dev->plstate_color0 = FALSE;
     dev->plstate_color1 = FALSE;
@@ -748,13 +762,20 @@ void plD_state_gcw( PLStream *pls, PLINT op )
     char    opname[20], msg[100];
 
 #ifdef DEBUG_GCW_1
-    if ( op == PLSTATE_WIDTH ) strcpy( opname, "PLSTATE_WIDTH" );
-    else if ( op == PLSTATE_COLOR0 ) strcpy( opname, "PLSTATE_COLOR0" );
-    else if ( op == PLSTATE_COLOR1 ) strcpy( opname, "PLSTATE_COLOR1" );
-    else if ( op == PLSTATE_FILL ) strcpy( opname, "PLSTATE_FILL" );
-    else if ( op == PLSTATE_CMAP0 ) strcpy( opname, "PLSTATE_CMAP0" );
-    else if ( op == PLSTATE_CMAP1 ) strcpy( opname, "PLSTATE_CMAP1" );
-    else strcpy( opname, "unknown" );
+    if ( op == PLSTATE_WIDTH )
+        strcpy( opname, "PLSTATE_WIDTH" );
+    else if ( op == PLSTATE_COLOR0 )
+        strcpy( opname, "PLSTATE_COLOR0" );
+    else if ( op == PLSTATE_COLOR1 )
+        strcpy( opname, "PLSTATE_COLOR1" );
+    else if ( op == PLSTATE_FILL )
+        strcpy( opname, "PLSTATE_FILL" );
+    else if ( op == PLSTATE_CMAP0 )
+        strcpy( opname, "PLSTATE_CMAP0" );
+    else if ( op == PLSTATE_CMAP1 )
+        strcpy( opname, "PLSTATE_CMAP1" );
+    else
+        strcpy( opname, "unknown" );
     snprintf( msg, 100, "<plD_state_gcw />: %s\n", opname );
     gcw_debug( msg );
 #endif
@@ -772,25 +793,30 @@ void plD_state_gcw( PLStream *pls, PLINT op )
                     GDK_JOIN_MITER );
             }
         }
-        else dev->plstate_width = TRUE;
+        else
+            dev->plstate_width = TRUE;
         break;
 
     case PLSTATE_COLOR0:
         if ( GNOME_IS_CANVAS( dev->canvas ) )
         {
             dev->color = plcolor_to_rgba( pls->cmap0[pls->icol0], 0xFF );
-            if ( dev->use_pixmap ) gcw_set_gdk_color();
+            if ( dev->use_pixmap )
+                gcw_set_gdk_color();
         }
-        else dev->plstate_color0 = TRUE;
+        else
+            dev->plstate_color0 = TRUE;
         break;
 
     case PLSTATE_COLOR1:
         if ( GNOME_IS_CANVAS( dev->canvas ) )
         {
             dev->color = plcolor_to_rgba( pls->cmap1[pls->icol1], 0xFF );
-            if ( dev->use_pixmap ) gcw_set_gdk_color();
+            if ( dev->use_pixmap )
+                gcw_set_gdk_color();
         }
-        else dev->plstate_color1 = TRUE;
+        else
+            dev->plstate_color1 = TRUE;
         break;
 
     case PLSTATE_FILL:
@@ -837,8 +863,10 @@ static void fill_polygon( PLStream* pls )
         plexit( "GCW driver <fill_polygon>: Canvas not found" );
     canvas = dev->canvas;
 
-    if ( dev->use_persistence ) group = dev->group_persistent;
-    else group = dev->group_hidden;
+    if ( dev->use_persistence )
+        group = dev->group_persistent;
+    else
+        group = dev->group_hidden;
 
     if ( dev->use_pixmap && !dev->use_persistence ) /* Write to a pixmap */
 
@@ -981,8 +1009,10 @@ static void proc_str( PLStream *pls, EscText *args )
         plexit( "GCW driver <proc_str>: Canvas not found" );
     canvas = dev->canvas;
 
-    if ( dev->use_persistence ) group = dev->group_persistent;
-    else group = dev->group_hidden;
+    if ( dev->use_persistence )
+        group = dev->group_persistent;
+    else
+        group = dev->group_hidden;
 
     /* Retrieve the escape character */
     plgesc( &esc );
@@ -1063,16 +1093,20 @@ static void proc_str( PLStream *pls, EscText *args )
                 /* Move to lower sub/sup position */
                 case 'd':
                 case 'D':
-                    if ( up > 0. ) scale *= 1.25; /* Subscript scaling parameter */
-                    else scale *= 0.8;            /* Subscript scaling parameter */
+                    if ( up > 0. )
+                        scale *= 1.25;            /* Subscript scaling parameter */
+                    else
+                        scale *= 0.8;             /* Subscript scaling parameter */
                     up -= font_size / 2.;
                     break;
 
                 /* Move to higher sub/sup position */
                 case 'u':
                 case 'U':
-                    if ( up < 0. ) scale *= 1.25; /* Subscript scaling parameter */
-                    else scale *= 0.8;            /* Subscript scaling parameter */
+                    if ( up < 0. )
+                        scale *= 1.25;            /* Subscript scaling parameter */
+                    else
+                        scale *= 0.8;             /* Subscript scaling parameter */
                     up += font_size / 2.;
                     break;
 
@@ -1092,12 +1126,14 @@ static void proc_str( PLStream *pls, EscText *args )
                     break;
                 } /* switch(text[i]) */
 
-                if ( text[i] != '#' ) i++; /* Move ahead to the next character */
+                if ( text[i] != '#' )
+                    i++; /* Move ahead to the next character */
             } /* if(text[i] == esc) */
-        }     /* if(text[i] & PL_FCI_MARK) */
+        }                /* if(text[i] & PL_FCI_MARK) */
 
 
-        if ( i == Ntext ) continue; /* End of string */
+        if ( i == Ntext )
+            continue;               /* End of string */
 
         /* Save the sub/sup position */
         up_list[N] = up;
@@ -1126,7 +1162,8 @@ static void proc_str( PLStream *pls, EscText *args )
             /* Differentiate between ## and escape sequences */
             if ( text[i] == esc )
             {
-                if ( !( i > 0 && text[i - 1] == esc ) ) break;
+                if ( !( i > 0 && text[i - 1] == esc ) )
+                    break;
             }
 
             gnome_glyphlist_glyph( glyphlist,
@@ -1143,7 +1180,8 @@ static void proc_str( PLStream *pls, EscText *args )
 
             /* Keep track of the total string width so that we can justify it */
             total_width += width[N];
-            if ( N != 0 ) total_width += 2; /* Add a little extra space */
+            if ( N != 0 )
+                total_width += 2;           /* Add a little extra space */
 
             /* Create the canvas text item */
             if ( !GNOME_IS_CANVAS_ITEM(
@@ -1206,7 +1244,8 @@ static void proc_str( PLStream *pls, EscText *args )
 
         /* Keep track of the position in the string */
         sum_width += width[i];
-        if ( i != N - 1 ) sum_width += 2; /* Add a little extra space */
+        if ( i != N - 1 )
+            sum_width += 2;               /* Add a little extra space */
     }
 
 #ifdef DEBUG_GCW_2
@@ -1229,12 +1268,18 @@ void plD_esc_gcw( PLStream *pls, PLINT op, void *ptr )
 
 #ifdef DEBUG_GCW_1
     char opname[20], msg[100];
-    if ( op == PLESC_DEVINIT ) strcpy( opname, "PLESC_DEVINIT" );
-    else if ( op == PLESC_CLEAR ) strcpy( opname, "PLESC_CLEAR" );
-    else if ( op == PLESC_FILL ) strcpy( opname, "PLESC_FILL" );
-    else if ( op == PLESC_HAS_TEXT ) strcpy( opname, "PLESC_HAS_TEXT" );
-    else if ( op == PLESC_GRAPH ) strcpy( opname, "PLESC_GRAPH" );
-    else strcpy( opname, "unknown" );
+    if ( op == PLESC_DEVINIT )
+        strcpy( opname, "PLESC_DEVINIT" );
+    else if ( op == PLESC_CLEAR )
+        strcpy( opname, "PLESC_CLEAR" );
+    else if ( op == PLESC_FILL )
+        strcpy( opname, "PLESC_FILL" );
+    else if ( op == PLESC_HAS_TEXT )
+        strcpy( opname, "PLESC_HAS_TEXT" );
+    else if ( op == PLESC_GRAPH )
+        strcpy( opname, "PLESC_GRAPH" );
+    else
+        strcpy( opname, "unknown" );
     snprintf( msg, 100, "<plD_esc_gcw />: %s\n", opname );
     gcw_debug( msg );
 #endif

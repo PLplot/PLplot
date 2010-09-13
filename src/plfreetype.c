@@ -185,7 +185,8 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
     {
         if ( ( text[i] == esc ) && ( text[i - 1] != esc ) )
         {
-            if ( text[i + 1] == esc ) continue;
+            if ( text[i + 1] == esc )
+                continue;
 
             switch ( text[i + 1] )
             {
@@ -325,7 +326,8 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
     {
         if ( ( text[i] == esc ) && ( text[i - 1] != esc ) )
         {
-            if ( text[i + 1] == esc ) continue;
+            if ( text[i + 1] == esc )
+                continue;
 
             switch ( text[i + 1] )
             {
@@ -692,7 +694,8 @@ void plD_FreeType_init( PLStream *pls )
             plwarn( "Could not find font path; I sure hope you have defined fonts manually !" );
     }
 
-    if ( pls->debug ) fprintf( stderr, "%s\n", font_dir );
+    if ( pls->debug )
+        fprintf( stderr, "%s\n", font_dir );
 #else
 
 /*
@@ -1107,7 +1110,8 @@ void plD_FreeType_Destroy( PLStream *pls )
 
     if ( FT )
     {
-        if ( ( FT->smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 ) ) plscmap0n( FT->ncol0_org );
+        if ( ( FT->smooth_text == 1 ) && ( FT->BLENDED_ANTIALIASING == 0 ) )
+            plscmap0n( FT->ncol0_org );
         if ( FT->textbuf )
             free( FT->textbuf );
         FT_Done_Library( FT->library );

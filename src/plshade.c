@@ -796,8 +796,10 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
             if ( fill != NULL )
             {
                 plwid( sh_width );
-                if ( sh_cmap == 0 ) plcol0( (PLINT) sh_color );
-                else if ( sh_cmap == 1 ) plcol1( sh_color );
+                if ( sh_cmap == 0 )
+                    plcol0( (PLINT) sh_color );
+                else if ( sh_cmap == 1 )
+                    plcol1( sh_color );
             }
         }
 
@@ -1273,7 +1275,8 @@ plctest( PLFLT *x, PLFLT level )
         /* one contour line */
         for ( i = 0; i < 4; i++ )
         {
-            if ( t[i] < temp ) return i / 2;
+            if ( t[i] < temp )
+                return i / 2;
         }
     }
 
@@ -1284,7 +1287,8 @@ plctest( PLFLT *x, PLFLT level )
         /* one contour line */
         for ( i = 0; i < 4; i++ )
         {
-            if ( t[i] > temp ) return i / 2;
+            if ( t[i] > temp )
+                return i / 2;
         }
     }
     /* nothing better to do - be consistant */

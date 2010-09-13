@@ -768,8 +768,10 @@ static void CopySCRtoBMP( PLStream *pls )
      *   Clean up the old bitmap and DC
      */
 
-    if ( dev->hdc2 != NULL ) DeleteDC( dev->hdc2 );
-    if ( dev->bitmap != NULL ) DeleteObject( dev->bitmap );
+    if ( dev->hdc2 != NULL )
+        DeleteDC( dev->hdc2 );
+    if ( dev->bitmap != NULL )
+        DeleteObject( dev->bitmap );
 
     dev->hdc2 = CreateCompatibleDC( dev->hdc );
     GetClientRect( dev->hwnd, &dev->rect );
@@ -849,7 +851,8 @@ plD_eop_wingcc( PLStream *pls )
                 DispatchMessage( &dev->msg );
                 break;
             }
-            if ( dev->waiting == 0 ) break;
+            if ( dev->waiting == 0 )
+                break;
         }
     }
 }
@@ -902,9 +905,12 @@ plD_tidy_wingcc( PLStream *pls )
         DeleteMenu( dev->PopupMenu, PopupQuit, 0 );
         DestroyMenu( dev->PopupMenu );
 
-        if ( dev->hdc2 != NULL ) DeleteDC( dev->hdc2 );
-        if ( dev->hdc != NULL ) ReleaseDC( dev->hwnd, dev->hdc );
-        if ( dev->bitmap != NULL ) DeleteObject( dev->bitmap );
+        if ( dev->hdc2 != NULL )
+            DeleteDC( dev->hdc2 );
+        if ( dev->hdc != NULL )
+            ReleaseDC( dev->hwnd, dev->hdc );
+        if ( dev->bitmap != NULL )
+            DeleteObject( dev->bitmap );
 
         free_mem( pls->dev );
     }
@@ -939,7 +945,8 @@ plD_state_wingcc( PLStream *pls, PLINT op )
         break;
     }
 
-    if ( dev->pen != NULL ) DeleteObject( dev->pen );
+    if ( dev->pen != NULL )
+        DeleteObject( dev->pen );
     dev->pen = CreatePen( PS_SOLID, pls->width, dev->colour );
 }
 

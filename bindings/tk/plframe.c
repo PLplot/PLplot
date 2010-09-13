@@ -1253,10 +1253,14 @@ PlFrameKeyEH( ClientData clientData, register XEvent *eventPtr )
         x1 = x0 + dx;
         y1 = y0 + dy;
 
-        if ( x1 < xmin ) dx = xmin - x0;
-        if ( y1 < ymin ) dy = ymin - y0;
-        if ( x1 > xmax ) dx = xmax - x0;
-        if ( y1 > ymax ) dy = ymax - y0;
+        if ( x1 < xmin )
+            dx = xmin - x0;
+        if ( y1 < ymin )
+            dy = ymin - y0;
+        if ( x1 > xmax )
+            dx = xmax - x0;
+        if ( y1 > ymax )
+            dy = ymax - y0;
 
         /* Engage... */
 

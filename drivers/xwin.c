@@ -1045,7 +1045,8 @@ Init( PLStream *pls )
 
 /* Initialize colors */
 
-    if ( noinitcolors == 0 ) InitColors( pls );
+    if ( noinitcolors == 0 )
+        InitColors( pls );
     XSetWindowColormap( xwd->display, dev->window, xwd->map );
 
 /* Set up GC for ordinary draws */
@@ -1141,11 +1142,15 @@ InitMain( PLStream *pls )
     else
         hint.flags |= USSize;
 
-    if ( pls->xlength == 0 ) pls->xlength = width * 0.75;
-    if ( pls->ylength == 0 ) pls->ylength = height * 0.75;
+    if ( pls->xlength == 0 )
+        pls->xlength = width * 0.75;
+    if ( pls->ylength == 0 )
+        pls->ylength = height * 0.75;
 
-    if ( pls->xlength > (short) width ) pls->xlength = width - dev->border * 2;
-    if ( pls->ylength > (short) height ) pls->ylength = height - dev->border * 2;
+    if ( pls->xlength > (short) width )
+        pls->xlength = width - dev->border * 2;
+    if ( pls->ylength > (short) height )
+        pls->ylength = height - dev->border * 2;
 
     hint.width  = (int) pls->xlength;
     hint.height = (int) pls->ylength;
@@ -1222,7 +1227,8 @@ MapMain( PLStream *pls )
         if ( event.type == Expose )
         {
             while ( XCheckWindowEvent( xwd->display, dev->window,
-                        ExposureMask, &event ) ) ;
+                        ExposureMask, &event ) )
+                ;
             break;
         }
     }
@@ -1795,10 +1801,14 @@ LocateKey( PLStream *pls )
         x1 = gin->pX + dx;
         y1 = gin->pY + dy;
 
-        if ( x1 < xmin ) dx = xmin - gin->pX;
-        if ( y1 < ymin ) dy = ymin - gin->pY;
-        if ( x1 > xmax ) dx = xmax - gin->pX;
-        if ( y1 > ymax ) dy = ymax - gin->pY;
+        if ( x1 < xmin )
+            dx = xmin - gin->pX;
+        if ( y1 < ymin )
+            dy = ymin - gin->pY;
+        if ( x1 > xmax )
+            dx = xmax - gin->pX;
+        if ( y1 > ymax )
+            dy = ymax - gin->pY;
 
         /* Engage... */
 
@@ -2001,7 +2011,8 @@ CreateXhairs( PLStream *pls )
 
     XSync( xwd->display, 0 );
     while ( XCheckWindowEvent( xwd->display, dev->window,
-                PointerMotionMask, &event ) ) ;
+                PointerMotionMask, &event ) )
+        ;
 
 /* Catch PointerMotion and crossing events so we can update them properly */
 
@@ -2134,7 +2145,8 @@ ExposeEH( PLStream *pls, XEvent *event )
 
     if ( redrawn )
         while ( XCheckWindowEvent( xwd->display, dev->window,
-                    ExposureMask | StructureNotifyMask, event ) ) ;
+                    ExposureMask | StructureNotifyMask, event ) )
+            ;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2179,7 +2191,8 @@ ResizeEH( PLStream *pls, XEvent *event )
 
     XFlush( xwd->display );
     while ( XCheckWindowEvent( xwd->display, dev->window,
-                ExposureMask | StructureNotifyMask, event ) ) ;
+                ExposureMask | StructureNotifyMask, event ) )
+        ;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2321,7 +2334,8 @@ ResizeCmd( PLStream *pls, PLDisplay *pldis )
     }
 
 /* This allows an external agent to take over the redraw */
-    if ( pls->ext_resize_draw ) return;
+    if ( pls->ext_resize_draw )
+        return;
 
 /* Initialize & redraw (to pixmap, if available). */
 
@@ -3099,13 +3113,15 @@ AllocCmap1( PLStream *pls )
 
         for ( j = i = 0; i < xwd->ncol1; i++ )
         {
-            while ( pixels[j] == 0 ) j++;
+            while ( pixels[j] == 0 )
+                j++;
 
             xwd->cmap1[i].pixel = pixels[j];
             pixels[j]           = 0;
 
             j += 2;
-            if ( j >= xwd->ncol1 ) j = 0;
+            if ( j >= xwd->ncol1 )
+                j = 0;
         }
 
         StoreCmap1( pls );

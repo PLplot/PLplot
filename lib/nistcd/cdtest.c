@@ -573,7 +573,8 @@ int main()
 
 
     outf = fopen( "cdout.cgm", "wb" );
-    if ( !outf ) return 1;
+    if ( !outf )
+        return 1;
     cdImageCgm( myimage, outf );
     fclose( outf );
     outf = 0;

@@ -251,7 +251,8 @@ plD_line_ljiip( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     width = floor( 0.5 + width * ( tmp * tmp * tmp * ( 1.0 - 0.707107 ) + 0.707107 ) );
 
-    if ( width < 1 ) width = 1;
+    if ( width < 1 )
+        width = 1;
     if ( width > 1 )
     {
         for ( i = 0; i < width; i++ )
@@ -392,7 +393,8 @@ plD_eop_ljiip( PLStream *pls )
         /* find last non-zero byte */
 
         last = BPROW - 1;
-        while ( last > 0 && p[last] == 0 ) last--;
+        while ( last > 0 && p[last] == 0 )
+            last--;
         last++;
 
         /* translate to mode 2, save results in t_buf[] */
@@ -406,7 +408,8 @@ plD_eop_ljiip( PLStream *pls )
             if ( i < last - 2 && ( c == p[i + 1] ) && ( c == p[i + 2] ) )
             {
                 j = i + 3;
-                while ( j < jmax && c == p[j] ) j++;
+                while ( j < jmax && c == p[j] )
+                    j++;
                 t_buf[n++] = ( i - j + 1 ) & 0xff;
                 t_buf[n++] = c;
                 i          = j;
@@ -416,7 +419,8 @@ plD_eop_ljiip( PLStream *pls )
                 for ( j = i + 1; j < jmax; j++ )
                 {
                     if ( j < last - 2 && ( p[j] == p[j + 1] ) &&
-                         ( p[j + 1] == p[j + 2] ) ) break;
+                         ( p[j + 1] == p[j + 2] ) )
+                        break;
                 }
                 t_buf[n++] = j - i - 1;
                 while ( i < j )

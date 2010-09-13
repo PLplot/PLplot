@@ -1273,7 +1273,7 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts )
 
 void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
-    int i;
+    int     i;
     PLCairo *aStream;
 
     aStream = (PLCairo *) pls->dev;
@@ -2393,8 +2393,10 @@ void plD_init_memcairo( PLStream *pls )
     aStream = stream_and_font_setup( pls, 0 );
 
     /* Test byte order */
-    if ( endianTest.testByte[0] == 1 ) aStream->bigendian = 0;
-    else aStream->bigendian = 1;
+    if ( endianTest.testByte[0] == 1 )
+        aStream->bigendian = 0;
+    else
+        aStream->bigendian = 1;
 
     /* Check that user supplied us with some memory to draw in */
     if ( pls->dev == NULL )
@@ -3056,7 +3058,8 @@ void plD_tidy_wincairo( PLStream *pls )
 
     if ( aStream != NULL )
     {
-        if ( aStream->hdc != NULL ) ReleaseDC( aStream->hwnd, aStream->hdc );
+        if ( aStream->hdc != NULL )
+            ReleaseDC( aStream->hwnd, aStream->hdc );
         free_mem( pls->dev );
     }
 }

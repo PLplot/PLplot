@@ -130,7 +130,8 @@ void gcw_init_canvas( GnomeCanvas* canvas )
     gcw_debug( "<gcw_init_canvas>\n" );
 #endif
 
-    if ( !GNOME_IS_CANVAS( canvas ) ) plexit( "GCW driver: Canvas not found" );
+    if ( !GNOME_IS_CANVAS( canvas ) )
+        plexit( "GCW driver: Canvas not found" );
 
     /* Add the canvas to the device */
     dev->canvas = canvas;
@@ -219,7 +220,7 @@ void zoom( gpointer data, gint flag )
         gcw_set_canvas_zoom( canvas, ZOOMSTEP );
     else if ( flag == 0 ) /* Zoom out */
 
-    { /* Don't zoom smaller than the original size: this causes GDK pixmap
+    {                     /* Don't zoom smaller than the original size: this causes GDK pixmap
        * errors.
        */
         gnome_canvas_c2w( canvas, 1, 0, &curmag, &dum );
@@ -338,7 +339,8 @@ void file_ok_sel( GtkWidget *w, gpointer data )
 
         result = gtk_dialog_run( dialog );
         gtk_widget_destroy( GTK_WIDGET( dialog ) );
-        if ( result == GTK_RESPONSE_REJECT ) return;
+        if ( result == GTK_RESPONSE_REJECT )
+            return;
     }
 
     /* Hide the file selection widget */
@@ -361,15 +363,24 @@ void file_ok_sel( GtkWidget *w, gpointer data )
      *
      */
     n = strlen( fname );
-    if ( strcasecmp( &fname[n - 3], "png" ) == 0 ) sprintf( devname, "png" );
-    else if ( strcasecmp( &fname[n - 3], "gif" ) == 0 ) sprintf( devname, "gif" );
-    else if ( strcasecmp( &fname[n - 3], "jpg" ) == 0 ) sprintf( devname, "jpg" );
-    else if ( strcasecmp( &fname[n - 4], "jpeg" ) == 0 ) sprintf( devname, "jpeg" );
-    else if ( strcasecmp( &fname[n - 2], "ps" ) == 0 ) sprintf( devname, "ps" );
-    else if ( strcasecmp( &fname[n - 3], "psc" ) == 0 ) sprintf( devname, "psc" );
-    else if ( strcasecmp( &fname[n - 4], "xwin" ) == 0 ) sprintf( devname, "xwin" );
-    else if ( strcasecmp( &fname[n - 3], "gcw" ) == 0 ) sprintf( devname, "gcw" );
-    else if ( strcasecmp( &fname[n - 2], "tk" ) == 0 ) sprintf( devname, "tk" );
+    if ( strcasecmp( &fname[n - 3], "png" ) == 0 )
+        sprintf( devname, "png" );
+    else if ( strcasecmp( &fname[n - 3], "gif" ) == 0 )
+        sprintf( devname, "gif" );
+    else if ( strcasecmp( &fname[n - 3], "jpg" ) == 0 )
+        sprintf( devname, "jpg" );
+    else if ( strcasecmp( &fname[n - 4], "jpeg" ) == 0 )
+        sprintf( devname, "jpeg" );
+    else if ( strcasecmp( &fname[n - 2], "ps" ) == 0 )
+        sprintf( devname, "ps" );
+    else if ( strcasecmp( &fname[n - 3], "psc" ) == 0 )
+        sprintf( devname, "psc" );
+    else if ( strcasecmp( &fname[n - 4], "xwin" ) == 0 )
+        sprintf( devname, "xwin" );
+    else if ( strcasecmp( &fname[n - 3], "gcw" ) == 0 )
+        sprintf( devname, "gcw" );
+    else if ( strcasecmp( &fname[n - 2], "tk" ) == 0 )
+        sprintf( devname, "tk" );
     else
     {
         if ( dev->statusbar != NULL )
@@ -383,7 +394,8 @@ void file_ok_sel( GtkWidget *w, gpointer data )
                 );
             return;
         }
-        else plabort( "GCW driver <file_ok_sel>: File type not recognized" );
+        else
+            plabort( "GCW driver <file_ok_sel>: File type not recognized" );
     }
 
     /* Check that we are set up appropriately for device */
@@ -510,10 +522,14 @@ void filesel( GtkWidget *widget, gpointer data )
 
 void key_release( GtkWidget *widget, GdkEventKey  *event, gpointer data )
 {
-    if ( event->keyval == '+' ) zoom( data, 2 );
-    if ( event->keyval == '=' ) zoom( data, 1 );
-    if ( event->keyval == '-' ) zoom( data, 0 );
-    if ( event->keyval == 'q' ) destroy( widget, data );
+    if ( event->keyval == '+' )
+        zoom( data, 2 );
+    if ( event->keyval == '=' )
+        zoom( data, 1 );
+    if ( event->keyval == '-' )
+        zoom( data, 0 );
+    if ( event->keyval == 'q' )
+        destroy( widget, data );
 }
 
 /**********************
@@ -728,7 +744,8 @@ void gcw_set_canvas_size( GnomeCanvas* canvas, PLINT width, PLINT height )
 #endif
 
     /* Set the device size, if resizing is allowed. */
-    if ( dev->allow_resize ) gcw_set_device_size( width, height );
+    if ( dev->allow_resize )
+        gcw_set_device_size( width, height );
 
     width  = dev->width;
     height = dev->height;
@@ -764,7 +781,8 @@ void gcw_set_canvas_size( GnomeCanvas* canvas, PLINT width, PLINT height )
     /* Set up the background pixmap */
     if ( dev->background == NULL || dev->allow_resize )
     {
-        if ( GDK_IS_PIXMAP( dev->background ) ) g_object_unref( dev->background );
+        if ( GDK_IS_PIXMAP( dev->background ) )
+            g_object_unref( dev->background );
 
         /* Why does this next *useless* command speed up the animation demo?
          * If we unref the allocated pixmaps, the benefit goes away!! */
@@ -792,7 +810,8 @@ void gcw_set_canvas_size( GnomeCanvas* canvas, PLINT width, PLINT height )
                 GDK_GC_LINE_STYLE | GDK_GC_CAP_STYLE |
                 GDK_GC_JOIN_STYLE );
         }
-        else dev->gc = gdk_gc_new( dev->background );
+        else
+            dev->gc = gdk_gc_new( dev->background );
     }
 
     /* Clear the background pixmap */
@@ -801,7 +820,8 @@ void gcw_set_canvas_size( GnomeCanvas* canvas, PLINT width, PLINT height )
     /* Advance the page if we are allowing resizing.  This ensures that
      * the physical coordinate system is set up correctly.
      */
-    if ( dev->allow_resize ) pladv( 0 );
+    if ( dev->allow_resize )
+        pladv( 0 );
 
 #ifdef DEBUG_GCW_1
     gcw_debug( "</gcw_set_canvas_size>\n" );
@@ -868,8 +888,10 @@ void gcw_use_text( PLINT use_text )
 
 #ifdef HAVE_FREETYPE
 
-    if ( use_text ) plsc->dev_text = 1; /* Allow text handling */
-    else plsc->dev_text = 0;            /* Disallow text handling */
+    if ( use_text )
+        plsc->dev_text = 1;             /* Allow text handling */
+    else
+        plsc->dev_text = 0;             /* Disallow text handling */
 
 #endif
 

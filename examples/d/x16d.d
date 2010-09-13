@@ -14,9 +14,9 @@ import plplot;
 
 /* Fundamental settings.  See notes[] for more info. */
 
-int ns      = 20;         /* Default number of shade levels */
-int nx      = 35;         /* Default number of data points in x */
-int ny      = 46;         /* Default number of data points in y */
+int ns      = 20; /* Default number of shade levels */
+int nx      = 35; /* Default number of data points in x */
+int ny      = 46; /* Default number of data points in y */
 int exclude = 0;  /* By default do not plot a page illustrating
                    * exclusion.  API is probably going to change
                    * anyway, and cannot be reproduced by any

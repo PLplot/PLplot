@@ -427,7 +427,8 @@ plD_init_png_Dev( PLStream *pls )
         NCOLOURS = 16777216;
     }
 
-    if ( ( dev->palette == 0 ) && ( dev->optimise == 0 ) && ( smooth_line == 1 ) ) dev->smooth = 1; /* Allow smoothing of lines if we have a truecolour device */
+    if ( ( dev->palette == 0 ) && ( dev->optimise == 0 ) && ( smooth_line == 1 ) )
+        dev->smooth = 1;                                                                            /* Allow smoothing of lines if we have a truecolour device */
 
 #endif
 
@@ -1080,8 +1081,10 @@ void plD_bop_png( PLStream *pls )
 
     pls->page++;
 
-    if ( dev->black15 ) plD_black15_gd( pls );
-    if ( dev->red15 ) plD_red15_gd( pls );
+    if ( dev->black15 )
+        plD_black15_gd( pls );
+    if ( dev->red15 )
+        plD_red15_gd( pls );
 
 #if GD2_VERS >= 2
     if ( ( ( ( ( dev->truecolour > 0 ) && ( dev->palette > 0 ) ) ||     /* In an EXTREMELY convaluted */
@@ -1256,7 +1259,8 @@ void plD_gd_optimise( PLStream *pls )
     char *bbuf;
 
     bbuf = calloc( 256, (size_t) 1 ); /* Allocate a buffer to "check off" colours as they are used */
-    if ( bbuf == NULL ) plexit( "plD_gd_optimise: Out of memory." );
+    if ( bbuf == NULL )
+        plexit( "plD_gd_optimise: Out of memory." );
 
     for ( i = 0; i < ( pls->xlength - 1 ); i++ )        /* Walk through the image pixel by pixel */
     {                                                   /* checking to see what colour it is */
@@ -1268,7 +1272,8 @@ void plD_gd_optimise( PLStream *pls )
 
     for ( i = 0; i < 256; i++ ) /* next walk over the colours and deallocate */
     {                           /* unused ones */
-        if ( bbuf[i] == 0 ) gdImageColorDeallocate( dev->im_out, i );
+        if ( bbuf[i] == 0 )
+            gdImageColorDeallocate( dev->im_out, i );
     }
 
     free( bbuf );

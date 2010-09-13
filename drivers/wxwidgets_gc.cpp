@@ -111,10 +111,22 @@ void wxPLDevGC::ClearBackground( PLINT bgr, PLINT bgg, PLINT bgb, PLINT x1, PLIN
 
     wxDouble x1a, y1a, x2a, y2a;
 
-    if ( x1 < 0 ) x1a = 0;else x1a = x1 / scalex;
-    if ( y1 < 0 ) y1a = 0;else y1a = height - y1 / scaley;
-    if ( x2 < 0 ) x2a = width;else x2a = x2 / scalex;
-    if ( y2 < 0 ) y2a = height;else y2a = height - y2 / scaley;
+    if ( x1 < 0 )
+        x1a = 0;
+    else
+        x1a = x1 / scalex;
+    if ( y1 < 0 )
+        y1a = 0;
+    else
+        y1a = height - y1 / scaley;
+    if ( x2 < 0 )
+        x2a = width;
+    else
+        x2a = x2 / scalex;
+    if ( y2 < 0 )
+        y2a = height;
+    else
+        y2a = height - y2 / scaley;
 
     m_context->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( bgr, bgg, bgb ), 1, wxSOLID ) ) );
     m_context->SetBrush( wxBrush( wxColour( bgr, bgg, bgb ) ) );

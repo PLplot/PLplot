@@ -122,10 +122,14 @@ void spiro( PLFLT[] params )
         xcoord[i] = ( params[0] - params[1] ) * cos( phi ) + params[2] * cos( phiw );
         ycoord[i] = ( params[0] - params[1] ) * sin( phi ) - params[2] * sin( phiw );
 
-        if ( xmin > xcoord[i] ) xmin = xcoord[i];
-        if ( xmax < xcoord[i] ) xmax = xcoord[i];
-        if ( ymin > ycoord[i] ) ymin = ycoord[i];
-        if ( ymax < ycoord[i] ) ymax = ycoord[i];
+        if ( xmin > xcoord[i] )
+            xmin = xcoord[i];
+        if ( xmax < xcoord[i] )
+            xmax = xcoord[i];
+        if ( ymin > ycoord[i] )
+            ymin = ycoord[i];
+        if ( ymax < ycoord[i] )
+            ymax = ycoord[i];
     }
 
     PLFLT scale;

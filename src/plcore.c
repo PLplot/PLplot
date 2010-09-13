@@ -247,7 +247,8 @@ void
 plP_state( PLINT op )
 {
     char * save_locale;
-    if ( plsc->plbuf_write ) plbuf_state( plsc, op );
+    if ( plsc->plbuf_write )
+        plbuf_state( plsc, op );
 
     save_locale = plsave_set_locale();
     if ( !plsc->stream_closed )
@@ -267,7 +268,8 @@ plP_esc( PLINT op, void *ptr )
     EscText* args;
 
     /* The plot buffer must be called first */
-    if ( plsc->plbuf_write ) plbuf_esc( plsc, op, ptr );
+    if ( plsc->plbuf_write )
+        plbuf_esc( plsc, op, ptr );
 
     /* Text coordinates must pass through the driver interface filter */
     if ( ( op == PLESC_HAS_TEXT && plsc->dev_unicode ) ||
@@ -686,7 +688,8 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                              * escape characters that are interpreted by the device
                              * driver.
                              */
-                            if ( unicode_buffer[j - 1] == esc ) unicode_buffer[j++] = esc;
+                            if ( unicode_buffer[j - 1] == esc )
+                                unicode_buffer[j++] = esc;
                             j--;
                             skip = 1;
                             break;
@@ -703,7 +706,8 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                              * escape characters that are interpreted by the device
                              * driver.
                              */
-                            if ( unicode_buffer[j - 1] == esc ) unicode_buffer[j++] = esc;
+                            if ( unicode_buffer[j - 1] == esc )
+                                unicode_buffer[j++] = esc;
                             j--;
                             skip = 1;
                             break;
@@ -856,7 +860,7 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                 }
                 if ( j > 0 )
                 {
-                    args.unicode_array_len = j; /* Much easier to set the length than
+                    args.unicode_array_len = j;                  /* Much easier to set the length than
                                                  * work it out later :-) */
                     args.unicode_array     = &unicode_buffer[0]; /* Get address of the
                                                                   * unicode buffer (even
@@ -2109,7 +2113,8 @@ c_plflush( void )
 void
 pllib_init()
 {
-    if ( lib_initialized ) return;
+    if ( lib_initialized )
+        return;
     lib_initialized = 1;
 
 #ifdef ENABLE_DYNDRIVERS
@@ -2337,7 +2342,8 @@ c_plend( void )
 {
     PLINT i;
 
-    if ( lib_initialized == 0 ) return;
+    if ( lib_initialized == 0 )
+        return;
 
     for ( i = PL_NSTREAMS - 1; i >= 0; i-- )
     {
@@ -2413,18 +2419,28 @@ c_plend1( void )
 #ifndef BUFFERED_FILE
     free_mem( plsc->plbuf_buffer );
 #endif
-    if ( plsc->program ) free_mem( plsc->program );
-    if ( plsc->server_name ) free_mem( plsc->server_name );
-    if ( plsc->server_host ) free_mem( plsc->server_host );
-    if ( plsc->server_port ) free_mem( plsc->server_port );
-    if ( plsc->user ) free_mem( plsc->user );
-    if ( plsc->plserver ) free_mem( plsc->plserver );
-    if ( plsc->auto_path ) free_mem( plsc->auto_path );
+    if ( plsc->program )
+        free_mem( plsc->program );
+    if ( plsc->server_name )
+        free_mem( plsc->server_name );
+    if ( plsc->server_host )
+        free_mem( plsc->server_host );
+    if ( plsc->server_port )
+        free_mem( plsc->server_port );
+    if ( plsc->user )
+        free_mem( plsc->user );
+    if ( plsc->plserver )
+        free_mem( plsc->plserver );
+    if ( plsc->auto_path )
+        free_mem( plsc->auto_path );
 
-    if ( plsc->arrow_x ) free_mem( plsc->arrow_x );
-    if ( plsc->arrow_y ) free_mem( plsc->arrow_y );
+    if ( plsc->arrow_x )
+        free_mem( plsc->arrow_x );
+    if ( plsc->arrow_y )
+        free_mem( plsc->arrow_y );
 
-    if ( plsc->timefmt ) free_mem( plsc->timefmt );
+    if ( plsc->timefmt )
+        free_mem( plsc->timefmt );
 
     /* Close qsastime library for this stream that was opened by
      * plconfigtime call in plinit. */
@@ -2707,7 +2723,8 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
 void
 pllib_devinit()
 {
-    if ( plsc->dev_initialized ) return;
+    if ( plsc->dev_initialized )
+        return;
     plsc->dev_initialized = 1;
 
     plSelectDev();
@@ -4072,7 +4089,7 @@ PLINT plP_checkdriverinit( char *names )
 {
     char  *buff;
     char  *tok = NULL;
-    PLINT ret  = 0; /* set up return code to 0, the value if no devices match*/
+    PLINT ret  = 0;                                     /* set up return code to 0, the value if no devices match*/
 
     buff = (char *) malloc( (size_t) PL_NSTREAMS * 8 ); /* Allocate enough memory for 8
                                                          * characters for each possible stream */

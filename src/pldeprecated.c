@@ -101,7 +101,8 @@ plarrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 
     plwarn( "plarrows: function deprecated. Use plvect instead" );
 
-    if ( n <= 0 ) return;
+    if ( n <= 0 )
+        return;
 
     if ( scale <= 0.0 )
     {
@@ -140,7 +141,8 @@ plarrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
     {
         uu = scale * u[i];
         vv = scale * v[i];
-        if ( uu == 0.0 && uu == 0.0 ) continue;
+        if ( uu == 0.0 && uu == 0.0 )
+            continue;
 
         /* conversion to physical coordinates */
 

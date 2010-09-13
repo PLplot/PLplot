@@ -179,12 +179,16 @@ plD_line_pbm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
         plot( x, y, pls );
         while ( e >= 0 )
         {
-            if ( change == 1 ) x += s1;
-            else y += s2;
+            if ( change == 1 )
+                x += s1;
+            else
+                y += s2;
             e = e - 2 * dx;
         }
-        if ( change == 1 ) y += s2;
-        else x += s1;
+        if ( change == 1 )
+            y += s2;
+        else
+            x += s1;
         e = e + 2 * dy;
     }
 }

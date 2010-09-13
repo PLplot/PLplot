@@ -2333,7 +2333,8 @@ plCloseFile( PLStream *pls )
     if ( pls->OutFile != NULL )
     {
         /* Don't close if the output file was stdout */
-        if ( pls->FileName && strcmp( pls->FileName, "-" ) == 0 ) return;
+        if ( pls->FileName && strcmp( pls->FileName, "-" ) == 0 )
+            return;
 
         fclose( pls->OutFile );
         pls->OutFile = NULL;

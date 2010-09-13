@@ -113,12 +113,15 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
     for (;; )
     {
         /* read in # points in segment */
-        if ( pdf_rdx( n_buff, sizeof ( unsigned char ) * 2, in ) == 0 ) break;
+        if ( pdf_rdx( n_buff, sizeof ( unsigned char ) * 2, in ) == 0 )
+            break;
         n = ( n_buff[0] << 8 ) + n_buff[1];
-        if ( n == 0 ) break;
+        if ( n == 0 )
+            break;
 
         pdf_rdx( buff, sizeof ( unsigned char ) * 4 * n, in );
-        if ( n == 1 ) continue;
+        if ( n == 1 )
+            continue;
 
         for ( j = i = 0; i < n; i++, j += 2 )
         {
@@ -170,7 +173,8 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
  *      if (n <= 1) continue;
  */
 
-        if ( mapform != NULL ) ( *mapform )( n, bufx, bufy ); /* moved transformation to here   */
+        if ( mapform != NULL )
+            ( *mapform )( n, bufx, bufy );                    /* moved transformation to here   */
                                                               /* so bound-checking worked right */
 
         wrap = 0;
@@ -191,7 +195,8 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
              */
 
             test[i] = abs( (int) ( bufx[i] - bufx[i + 1] ) ) > abs( (int) bufy[i] / 3 ); /* Changed this from 30 degrees so it is now "polar sensitive" */
-            if ( test[i] ) wrap = 1;
+            if ( test[i] )
+                wrap = 1;
         }
 
         if ( wrap == 0 )

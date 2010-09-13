@@ -168,8 +168,10 @@ ps_init( PLStream *pls )
         pls->xlength = 540;
         pls->ylength = 720;
     }
-    if ( pls->xdpi <= 0 ) pls->xdpi = 72.;
-    if ( pls->ydpi <= 0 ) pls->ydpi = 72.;
+    if ( pls->xdpi <= 0 )
+        pls->xdpi = 72.;
+    if ( pls->ydpi <= 0 )
+        pls->ydpi = 72.;
 
     pxlx = YPSSIZE / LPAGE_X;
     pxly = XPSSIZE / LPAGE_Y;
@@ -178,7 +180,8 @@ ps_init( PLStream *pls )
     {
         pls->dev_text    = 1;                /* want to draw text */
         pls->dev_unicode = 1;                /* want unicode */
-        if ( hrshsym ) pls->dev_hrshsym = 1; /* want Hershey symbols */
+        if ( hrshsym )
+            pls->dev_hrshsym = 1;            /* want Hershey symbols */
     }
 
     pls->dev_fill0 = 1;         /* Can do solid fills */
@@ -984,19 +987,24 @@ proc_str( PLStream *pls, EscText *args )
                     pldebug( "proc_str", "string-specified fci = 0x%x, font name = %s\n", fci, font );
                     continue;
                 }
-                else switch ( *cur_strp++ )
+                else
+                    switch ( *cur_strp++ )
                     {
                     case 'd':
                     case 'D':
-                        if ( up > 0. ) scale *= 1.25; /* Subscript scaling parameter */
-                        else scale *= 0.8;            /* Subscript scaling parameter */
+                        if ( up > 0. )
+                            scale *= 1.25;            /* Subscript scaling parameter */
+                        else
+                            scale *= 0.8;             /* Subscript scaling parameter */
                         up -= font_factor * ENLARGE * ft_ht / 2.;
                         break;
 
                     case 'u':
                     case 'U':
-                        if ( up < 0. ) scale *= 1.25; /* Subscript scaling parameter */
-                        else scale *= 0.8;            /* Subscript scaling parameter */
+                        if ( up < 0. )
+                            scale *= 1.25;            /* Subscript scaling parameter */
+                        else
+                            scale *= 0.8;             /* Subscript scaling parameter */
                         up += font_factor * ENLARGE * ft_ht / 2.;
                         break;
 
@@ -1022,7 +1030,8 @@ proc_str( PLStream *pls, EscText *args )
             }
             *strp = '\0';
 
-            if ( fabs( up ) < 0.001 ) up = 0.; /* Watch out for small differences */
+            if ( fabs( up ) < 0.001 )
+                up = 0.;                       /* Watch out for small differences */
 
             /* Apply the scaling and the shear */
             fprintf( OF, "/%s [%.3f %.3f %.3f %.3f 0 0] SF\n",
@@ -1034,13 +1043,15 @@ proc_str( PLStream *pls, EscText *args )
 
             /* if up/down escape sequences, save current point and adjust baseline;
              * take the shear into account */
-            if ( up != 0. ) fprintf( OF, "gsave %.3f %.3f rmoveto\n", TRMFLT( up * tt[1] ), TRMFLT( up * tt[3] ) );
+            if ( up != 0. )
+                fprintf( OF, "gsave %.3f %.3f rmoveto\n", TRMFLT( up * tt[1] ), TRMFLT( up * tt[3] ) );
 
             /* print the string */
             fprintf( OF, "(%s) show\n", str );
 
             /* back to baseline */
-            if ( up != 0. ) fprintf( OF, "grestore (%s) stringwidth rmoveto\n", str );
+            if ( up != 0. )
+                fprintf( OF, "grestore (%s) stringwidth rmoveto\n", str );
         } while ( *cur_strp );
 
         fprintf( OF, "grestore\n" );

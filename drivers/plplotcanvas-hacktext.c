@@ -577,7 +577,8 @@ plplot_canvas_hacktext_req_repaint( PlplotCanvasHacktext *hacktext,
         ArtIRect ibox;
         art_drect_to_irect( &ibox, &gbbox );
         gnome_canvas_request_redraw( hacktext->item.canvas, ibox.x0, ibox.y0, ibox.x1, ibox.y1 );
-        if ( bbox ) art_irect_union( bbox, bbox, &ibox );
+        if ( bbox )
+            art_irect_union( bbox, bbox, &ibox );
     }
 }
 

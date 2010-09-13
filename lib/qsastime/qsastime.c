@@ -314,7 +314,8 @@ void breakDownMJD( int *year, int *month, int *day, int *hour, int *min, double 
         while ( doy > MonthStartDOY_L[*month + 1] )
         {
             ( *month )++;
-            if ( *month == 11 ) break;
+            if ( *month == 11 )
+                break;
         }
         *day = doy - MonthStartDOY_L[*month];
     }
@@ -323,7 +324,8 @@ void breakDownMJD( int *year, int *month, int *day, int *hour, int *min, double 
         while ( doy > MonthStartDOY[*month + 1] )
         {
             ( *month )++;
-            if ( *month == 11 ) break;
+            if ( *month == 11 )
+                break;
         }
         *day = doy - MonthStartDOY[*month];
     }
@@ -333,7 +335,8 @@ const char * getDayOfWeek( const MJDtime *MJD )
 {
     static char *dow = { "Wed\0Thu\0Fri\0Sat\0Sun\0Mon\0Tue" };
     int         d    = MJD->base_day % 7;
-    if ( d < 0 ) d += 7;
+    if ( d < 0 )
+        d += 7;
     return &( dow[d * 4] );
 }
 
@@ -341,7 +344,8 @@ const char * getLongDayOfWeek( const MJDtime *MJD )
 {
     static char *dow = { "Wednesday\0Thursday\0\0Friday\0\0\0\0Saturday\0\0Sunday\0\0\0\0Monday\0\0\0\0Tuesday" };
     int         d    = MJD->base_day % 7;
-    if ( d < 0 ) d += 7;
+    if ( d < 0 )
+        d += 7;
     return &( dow[d * 10] );
 }
 
@@ -402,7 +406,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
             if ( isdigit( next ) != 0 )
             {
                 nplaces = strtol( &( format[i] ), NULL, 10 );
-                if ( nplaces > resolution ) resolution = nplaces;
+                if ( nplaces > resolution )
+                    resolution = nplaces;
             }
             else if ( next == '.' )
             {
@@ -432,7 +437,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
         ysign = 1;
         year  = -year;
     }
-    else ysign = 0;
+    else
+        ysign = 0;
 
     /*truncate seconds to resolution to stop formatting rounding up */
     sec    = floor( sec * shiftPlaces ) / shiftPlaces;
@@ -453,7 +459,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                 /* escaped %, pass it on */
                 buf[posn] = next;
                 posn++;
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'a' )
             {
@@ -461,7 +468,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                 dayText = getDayOfWeek( nMJD );
                 strncat( &( buf[posn] ), dayText, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'A' )
             {
@@ -469,7 +477,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                 dayText = getLongDayOfWeek( nMJD );
                 strncat( &( buf[posn] ), dayText, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'b' || next == 'h' )
             {
@@ -477,7 +486,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                 monthText = getMonth( month );
                 strncat( &( buf[posn] ), monthText, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'B' )
             {
@@ -485,7 +495,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                 monthText = getLongMonth( month );
                 strncat( &( buf[posn] ), monthText, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'c' )
             {
@@ -499,7 +510,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'C' )
             {
@@ -512,7 +524,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'd' )
             {
@@ -521,7 +534,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'D' )
             {
@@ -534,7 +548,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'e' )
             {
@@ -546,7 +561,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'F' )
             {
@@ -558,7 +574,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'H' )
             {
@@ -567,18 +584,23 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'I' )
             {
                 /* hour, 12 hour clock (01 - 12) */
-                if ( hour == 0 ) sprintf( DateTime, "%02d", hour + 12 );
-                else if ( hour > 12 ) sprintf( DateTime, "%02d", hour - 12 );
-                else sprintf( DateTime, "%02d", hour );
+                if ( hour == 0 )
+                    sprintf( DateTime, "%02d", hour + 12 );
+                else if ( hour > 12 )
+                    sprintf( DateTime, "%02d", hour - 12 );
+                else
+                    sprintf( DateTime, "%02d", hour );
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'j' )
             {
@@ -588,7 +610,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'k' )
             {
@@ -600,20 +623,27 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'l' )
             {
                 /* hour, 12 hour clock ( 1 - 12) */
-                if ( hour == 0 ) sprintf( DateTime, "%02d", hour + 12 );
-                else if ( hour < 10 ) sprintf( DateTime, " %01d", hour );
-                else if ( hour <= 12 ) sprintf( DateTime, "%02d", hour );
-                else if ( hour < 22 ) sprintf( DateTime, " %01d", hour - 12 );
-                else sprintf( DateTime, "%02d", hour - 12 );
+                if ( hour == 0 )
+                    sprintf( DateTime, "%02d", hour + 12 );
+                else if ( hour < 10 )
+                    sprintf( DateTime, " %01d", hour );
+                else if ( hour <= 12 )
+                    sprintf( DateTime, "%02d", hour );
+                else if ( hour < 22 )
+                    sprintf( DateTime, " %01d", hour - 12 );
+                else
+                    sprintf( DateTime, "%02d", hour - 12 );
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'm' )
             {
@@ -622,7 +652,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'M' )
             {
@@ -631,36 +662,46 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'n' )
             {
                 /*  newline */
                 buf[posn] = '\n';
                 posn++;
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'p' )
             {
                 /* am/pm on12 hour clock  */
-                if ( hour < 0 ) sprintf( DateTime, "AM" );
-                else sprintf( DateTime, "PM" );
+                if ( hour < 0 )
+                    sprintf( DateTime, "AM" );
+                else
+                    sprintf( DateTime, "PM" );
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'r' )
             {
                 /* hour:min:sec AM, 12 hour clock (01 - 12):(00 - 59):(00 - 59) (AM - PM) */
-                if ( hour == 0 ) sprintf( DateTime, "%02d:%02d:%02d AM", hour + 12, min, second );
-                else if ( hour > 12 ) sprintf( DateTime, "%02d:%02d:%02d PM", hour - 12, min, second );
-                else if ( hour == 12 ) sprintf( DateTime, "%02d:%02d:%02d PM", hour, min, second );
-                else sprintf( DateTime, "%02d:%02d:%02d AM", hour, min, second );
+                if ( hour == 0 )
+                    sprintf( DateTime, "%02d:%02d:%02d AM", hour + 12, min, second );
+                else if ( hour > 12 )
+                    sprintf( DateTime, "%02d:%02d:%02d PM", hour - 12, min, second );
+                else if ( hour == 12 )
+                    sprintf( DateTime, "%02d:%02d:%02d PM", hour, min, second );
+                else
+                    sprintf( DateTime, "%02d:%02d:%02d AM", hour, min, second );
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'R' )
             {
@@ -669,7 +710,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'S' )
             {
@@ -710,7 +752,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 's' )
             {
@@ -720,14 +763,16 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 't' )
             {
                 /*  tab */
                 buf[posn] = '\t';
                 posn++;
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'T' )
             {
@@ -736,7 +781,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'U' )
             {
@@ -750,7 +796,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'u' )
             {
@@ -761,7 +808,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'v' )
             {
@@ -786,7 +834,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'V' )
             {
@@ -795,15 +844,19 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                 getYAD( &y1, &ifleapyear, &doy, nMJD, forceJulian );
                 days_in_wk1 = ( nMJD->base_day - doy - 3 ) % 7;
 
-                if ( days_in_wk1 <= 3 ) w = ( doy + 6 - days_in_wk1 ) / 7; /* ensure first week has at least 3 days in this year */
-                else w = 1 + ( doy + 6 - days_in_wk1 ) / 7;
+                if ( days_in_wk1 <= 3 )
+                    w = ( doy + 6 - days_in_wk1 ) / 7;                     /* ensure first week has at least 3 days in this year */
+                else
+                    w = 1 + ( doy + 6 - days_in_wk1 ) / 7;
 
-                if ( w == 0 ) w = 53;
+                if ( w == 0 )
+                    w = 53;
                 sprintf( DateTime, "%02d", w );
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'w' )
             {
@@ -814,7 +867,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'W' )
             {
@@ -828,7 +882,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'x' )
             {
@@ -842,7 +897,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'X' )
             {
@@ -851,7 +907,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'y' )
             {
@@ -865,7 +922,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'Y' )
             {
@@ -877,7 +935,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'Z' )
             {
@@ -888,14 +947,16 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                     strncat( &( buf[posn] ), "UTC Gregorian", last - posn );
 
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == 'z' )
             {
                 /* time zone, always UTC */
                 strncat( &( buf[posn] ), "+0000", last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == '+' )
             {
@@ -909,7 +970,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
 
                 strncat( &( buf[posn] ), DateTime, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
             else if ( next == '.' || isdigit( next ) != 0 )
             {
@@ -925,7 +987,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                 sprintf( dynamic_format, "%%-%d.%df", nplaces + 2, nplaces );
                 /*sprintf(DateTime, "%-11.9f",  sec_fraction);*/
                 sprintf( DateTime, dynamic_format, sec_fraction );
-                while ( ( ptr = strrchr( &( DateTime[0] ), ' ' ) ) != NULL ) ptr[0] = '\0'; /* remove trailing white space */
+                while ( ( ptr = strrchr( &( DateTime[0] ), ' ' ) ) != NULL )
+                    ptr[0] = '\0';                                                          /* remove trailing white space */
 
                 if ( next == '.' )
                 {
@@ -943,7 +1006,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
                 if ( ptr != NULL )
                     strncat( &( buf[posn] ), ptr, last - posn );
                 posn = strlen( buf );
-                if ( posn >= last ) return posn;
+                if ( posn >= last )
+                    return posn;
             }
         }
         else
@@ -951,7 +1015,8 @@ size_t strfMJD( char * buf, size_t len, const char *format, const MJDtime *MJD, 
             /* regular multi-byte character, pass it on */
             buf[posn] = next;
             posn++;
-            if ( posn >= last ) return posn;
+            if ( posn >= last )
+                return posn;
         }
         buf[posn] = '\0';
         i++;

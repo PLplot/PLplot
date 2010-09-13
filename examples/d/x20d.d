@@ -249,7 +249,8 @@ int read_img( string fname, out PLFLT[][] img_f, out int width, out int height, 
 
     for ( int i = 0; i < width; i++ )
         for ( int j = 0; j < height; j++ )
-            img_f[i][j] = img[( height - 1 - j ) * width + i]; /* flip image up-down */
+            img_f[i][j] = img[( height - 1 - j ) * width + i];
+    /* flip image up-down */
 
     return 0;
 }

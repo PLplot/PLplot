@@ -139,7 +139,8 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
         }
         if ( x[0] != x[n - 1] || y[0] != y[n - 1] )
         {
-            if ( n < PL_MAXPOLY ) n++;
+            if ( n < PL_MAXPOLY )
+                n++;
             xpoly[n - 1] = plP_wcpcx( x[0] );
             ypoly[n - 1] = plP_wcpcy( y[0] );
         }

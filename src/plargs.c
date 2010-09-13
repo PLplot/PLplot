@@ -878,7 +878,8 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
             status = ParseOpt( &myargc, &argv, p_argc, &argsave,
                 ploption_info[i].options );
 
-            if ( !status ) break;
+            if ( !status )
+                break;
         }
 
         /* Handle error return as specified by the mode flag */
@@ -901,7 +902,8 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
                 fprintf( stderr, "\nBad command line option \"%s\"\n", argv[0] );
                 plOptUsage();
             }
-            if ( mode_full ) exit( 1 );
+            if ( mode_full )
+                exit( 1 );
 
             break;
         }
@@ -914,7 +916,8 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
                 fprintf( stderr, "\nBad command line option \"%s\"\n", argv[0] );
                 plOptUsage();
             }
-            if ( mode_full ) exit( 1 );
+            if ( mode_full )
+                exit( 1 );
 
             break;
         }
@@ -2374,7 +2377,8 @@ opt_dpi( const char *opt, const char *optarg, void *client_data )
     {
         xdpi = atof( opttmp );
         ydpi = xdpi;
-        if ( xdpi == 0 ) return 1;
+        if ( xdpi == 0 )
+            return 1;
     }
 
     plspage( xdpi, ydpi, xwid, ywid, xoff, yoff );

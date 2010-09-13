@@ -54,11 +54,11 @@ struct delaunay
     int    ntriangles;
     triangle           * triangles;
     circle             * circles;
-    triangle_neighbours* neighbours;    /* for delaunay_xytoi() */
+    triangle_neighbours* neighbours;        /* for delaunay_xytoi() */
 
     int                * n_point_triangles; /* n_point_triangles[i] is number of
                                              * triangles i-th point belongs to */
-    int                ** point_triangles; /* point_triangles[i][j] is index of j-th
+    int                ** point_triangles;  /* point_triangles[i][j] is index of j-th
                                             * triangle i-th point belongs to */
 
     int                nedges;

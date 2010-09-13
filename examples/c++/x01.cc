@@ -198,8 +198,10 @@ x01::x01( int argc, const char ** argv )
     {
         while ( 1 )
         {
-            if ( !pls->GetCursor( &gin ) ) break;
-            if ( gin.keysym == PLK_Escape ) break;
+            if ( !pls->GetCursor( &gin ) )
+                break;
+            if ( gin.keysym == PLK_Escape )
+                break;
 
             pls->text();
             if ( gin.keysym < 0xFF && isprint( gin.keysym ) )

@@ -432,8 +432,10 @@ ProcessFile( int argc, char **argv )
 
 /* Miscellaneous housekeeping */
 
-    if ( addeof_beg ) disp_beg += pages;
-    if ( addeof_end ) disp_end += pages;
+    if ( addeof_beg )
+        disp_beg += pages;
+    if ( addeof_end )
+        disp_end += pages;
 
     plgdev( devname );
     if ( strncmp( devname, "tk", 2 ) == 0 )

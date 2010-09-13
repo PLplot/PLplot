@@ -93,7 +93,8 @@ void init_by_array( unsigned long init_key[], int key_length )
         {
             mt[0] = mt[N - 1]; i = 1;
         }
-        if ( j >= key_length ) j = 0;
+        if ( j >= key_length )
+            j = 0;
     }
     for ( k = N - 1; k; k-- )
     {

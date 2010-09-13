@@ -154,9 +154,11 @@ int main( int argc, char *argv[] )
 
         for ( i = 0; i < number_of_lines; i++ )
         {
-            if ( ( ( i % 4 ) == 0 ) && ( i > 0 ) ) fprintf( fw, "\n" );
+            if ( ( ( i % 4 ) == 0 ) && ( i > 0 ) )
+                fprintf( fw, "\n" );
             fprintf( fw, "{%d,0x%04x,%c}", (int) Hershey[i], (int) Unicode[i], (char) Font[i] );
-            if ( i < ( number_of_lines - 1 ) ) fprintf( fw, ", " );
+            if ( i < ( number_of_lines - 1 ) )
+                fprintf( fw, ", " );
         }
 
         fprintf( fw, "\n};\n" );

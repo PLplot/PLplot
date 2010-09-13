@@ -68,7 +68,8 @@ plD_init_dg( PLStream *pls )
 
     printf( "\n\036\107\051\n" );
     scanf( "%s", (char *) &termattr );
-    while ( getchar() != '\n' ) ;
+    while ( getchar() != '\n' )
+        ;
     if ( !strncmp( (char *) &termattr.ram[0], "0000", 4 ) )
     {
         printf( "Please wait while graphics interpreter is downloaded.\n" );
@@ -129,7 +130,8 @@ plD_eop_dg( PLStream *pls )
 {
     putchar( '\007' );
     fflush( stdout );
-    while ( getchar() != '\n' ) ;
+    while ( getchar() != '\n' )
+        ;
     printf( "ERASE\n" );
 }
 

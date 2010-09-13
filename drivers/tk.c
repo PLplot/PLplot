@@ -1388,9 +1388,11 @@ plwindow_init( PLStream *pls )
     sprintf( tmp, ".%s", pls->plwindow );
     for ( i = 1; i < n; i++ )
     {
-        if ( ( tmp[i] == ' ' ) || ( tmp[i] == '.' ) ) tmp[i] = '_';
+        if ( ( tmp[i] == ' ' ) || ( tmp[i] == '.' ) )
+            tmp[i] = '_';
     }
-    if ( isupper( tmp[1] ) ) tmp[1] = tolower( tmp[1] );
+    if ( isupper( tmp[1] ) )
+        tmp[1] = tolower( tmp[1] );
     Tcl_SetVar( dev->interp, "plwindow", tmp, 0 );
     free( tmp );
 
@@ -1491,9 +1493,12 @@ set_windowname( PLStream *pls )
 
         for ( i = 0; i < (int) strlen( pls->plwindow ); i++ )
         {
-            if ( pls->plwindow[i] == ' ' ) pls->plwindow[i] = '_';
-            if ( i == 0 ) continue;
-            if ( pls->plwindow[i] == '.' ) pls->plwindow[i] = '_';
+            if ( pls->plwindow[i] == ' ' )
+                pls->plwindow[i] = '_';
+            if ( i == 0 )
+                continue;
+            if ( pls->plwindow[i] == '.' )
+                pls->plwindow[i] = '_';
         }
     }
 }

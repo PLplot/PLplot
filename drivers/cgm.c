@@ -227,7 +227,8 @@ void plD_init_cgm( PLStream *pls )
     if ( !pls->colorset )
         pls->color = 1;                       /* Is a color device */
 
-    if ( pls->width < 1 ) pls->width = 1;     /* set a legal line width */
+    if ( pls->width < 1 )
+        pls->width = 1;                       /* set a legal line width */
 
 /* Initialize family file info */
     plFamInit( pls );
@@ -409,7 +410,8 @@ fill_polygon( PLStream *pls )
 
     cdPolygon( dev->im_out, points, pls->dev_npts );
 
-    if ( dev->force_edges == 1 ) cdSetEdgeVis( dev->im_out, 0 ); /* Turn edges off now */
+    if ( dev->force_edges == 1 )
+        cdSetEdgeVis( dev->im_out, 0 );                          /* Turn edges off now */
 
     free( points );
 }
@@ -429,15 +431,15 @@ setcmap( PLStream *pls )
     cgm_Dev *dev = (cgm_Dev *) pls->dev;
     PLFLT   tmp_colour_pos;
 
-    cdImageColorClear( dev->im_out );  /* UNDOCUMENTED FUNCTION TO RESET THE
+    cdImageColorClear( dev->im_out );           /* UNDOCUMENTED FUNCTION TO RESET THE
                                         * INTERNAL COLOUR TABLE OF THE
                                         * CD DRIVER. Seems to work and fix
                                         * the errors                         */
 
-    if ( ncol0 > cdMaxColors / 2 )                     /* Check for ridiculous number of colours */
-    {                                                  /* in ncol0, and appropriately adjust the */
-        plwarn( "Too many colours in cmap0." );        /* number, issuing a  */
-        ncol0      = cdMaxColors / 2;                  /* warning if it does */
+    if ( ncol0 > cdMaxColors / 2 )              /* Check for ridiculous number of colours */
+    {                                           /* in ncol0, and appropriately adjust the */
+        plwarn( "Too many colours in cmap0." ); /* number, issuing a  */
+        ncol0      = cdMaxColors / 2;           /* warning if it does */
         pls->ncol0 = ncol0;
     }
 
@@ -746,7 +748,8 @@ void plD_eop_cgm( PLStream *pls )
     {
         cdImageCgm( dev->im_out, pls->OutFile );
     }
-    for ( i = 0; i < cdMaxColors; ++i ) dev->colour_index[i] = -1;
+    for ( i = 0; i < cdMaxColors; ++i )
+        dev->colour_index[i] = -1;
 
     dev->fill_colour      = dev->colour; /* initially set fill and line colour the same */
     dev->last_fill_colour = -1;          /* set to -1 = unallocated */

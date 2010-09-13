@@ -551,7 +551,8 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         PLFLT    **zstore;
         PLcGrid2 cgrid2;
         PLFLT    *zz = (PLFLT *) malloc( NPTS * sizeof ( PLFLT ) );
-        if ( zz == NULL ) plexit( "plsurf3dl: Insufficient memory" );
+        if ( zz == NULL )
+            plexit( "plsurf3dl: Insufficient memory" );
 
         /* get the contour lines */
 
@@ -1518,7 +1519,8 @@ plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z )
     cosangle = fabs( ( vlx * px + vly * py + vlz * pz ) / sqrt( mag1 * mag2 ) );
 
 /* In case of numerical rounding */
-    if ( cosangle > 1 ) cosangle = 1;
+    if ( cosangle > 1 )
+        cosangle = 1;
     return cosangle;
 }
 

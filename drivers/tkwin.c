@@ -102,12 +102,12 @@ void *  ckcalloc( size_t nmemb, size_t size );
 /* Dummy definition of PlPlotter containing first few fields */
 typedef struct PlPlotter
 {
-    Tk_Window tkwin; /* Window that embodies the frame. NULL
+    Tk_Window tkwin;    /* Window that embodies the frame. NULL
                       * means that the window has been destroyed
                       * but the data structures haven't yet been
                       * cleaned up.
                       */
-    Display *display; /* Display containing widget. Used, among
+    Display *display;   /* Display containing widget. Used, among
                        * other things, so that resources can be
                        * freed even after tkwin has gone away.
                        */
@@ -456,7 +456,8 @@ plD_line_tkwin( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 
     int        x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
-    if ( dev->flags & 1 ) return;
+    if ( dev->flags & 1 )
+        return;
 
     y1 = dev->ylen - y1;
     y2 = dev->ylen - y2;
@@ -488,7 +489,8 @@ plD_polyline_tkwin( PLStream *pls, short *xa, short *ya, PLINT npts )
     PLINT      i;
     XPoint     pts[PL_MAXPOLY];
 
-    if ( dev->flags & 1 ) return;
+    if ( dev->flags & 1 )
+        return;
 
     if ( npts > PL_MAXPOLY )
         plexit( "plD_polyline_tkw: Too many points in polyline\n" );
@@ -521,7 +523,8 @@ plD_eop_tkwin( PLStream *pls )
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
 
     dbug_enter( "plD_eop_tkw" );
-    if ( dev->flags & 1 ) return;
+    if ( dev->flags & 1 )
+        return;
 
     XFlush( tkwd->display );
     if ( pls->db )
@@ -585,7 +588,8 @@ plD_bop_tkwin( PLStream *pls )
     xrect.width = dev->width; xrect.height = dev->height;
 
     dbug_enter( "plD_bop_tkw" );
-    if ( dev->flags & 1 ) return;
+    if ( dev->flags & 1 )
+        return;
 
     if ( dev->write_to_window )
     {
@@ -656,7 +660,8 @@ plD_state_tkwin( PLStream *pls, PLINT op )
     TkwDev     *dev  = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     dbug_enter( "plD_state_tkw" );
-    if ( dev->flags & 1 ) return;
+    if ( dev->flags & 1 )
+        return;
 
     switch ( op )
     {
@@ -740,7 +745,8 @@ plD_esc_tkwin( PLStream *pls, PLINT op, void *ptr )
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
 #endif
     dbug_enter( "plD_esc_tkw" );
-    if ( dev->flags & 1 ) return;
+    if ( dev->flags & 1 )
+        return;
 
     switch ( op )
     {

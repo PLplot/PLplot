@@ -388,7 +388,8 @@ int x20::read_img( const char *fname, PLFLT ***img_f, int *width, int *height, i
 
     for ( i = 0; i < w; i++ )
         for ( j = 0; j < h; j++ )
-            imf[i][j] = img[( h - 1 - j ) * w + i]; /* flip image up-down */
+            imf[i][j] = img[( h - 1 - j ) * w + i];
+    /* flip image up-down */
 
     delete[] img;
 

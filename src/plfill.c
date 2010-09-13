@@ -158,7 +158,8 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
 
     if ( x[0] != x[n - 1] || y[0] != y[n - 1] )
     {
-        if ( n < PL_MAXPOLY ) n++;
+        if ( n < PL_MAXPOLY )
+            n++;
         TRANSFORM( x[0], y[0], &xt, &yt );
         xpoly[n - 1] = plP_wcpcx( xt );
         ypoly[n - 1] = plP_wcpcy( yt );
@@ -212,7 +213,8 @@ c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
     }
     if ( tx[0] != tx[n - 1] || ty[0] != ty[n - 1] || tz[0] != tz[n - 1] )
     {
-        if ( n < PL_MAXPOLY ) n++;
+        if ( n < PL_MAXPOLY )
+            n++;
         tx[n - 1] = tx[0]; ty[n - 1] = ty[0]; tz[n - 1] = tz[0];
     }
     V[0] = tx; V[1] = ty; V[2] = tz;
@@ -286,8 +288,10 @@ plfill_soft( short *x, short *y, PLINT n )
         dinc = (PLINT) ( plsc->delta[k] * SSQR( plsc->ypmm * ABS( ci ),
                              plsc->xpmm * ABS( si ) ) / 1000. );
 
-        if ( dinc < 0 ) dinc = -dinc;
-        if ( dinc == 0 ) dinc = 1;
+        if ( dinc < 0 )
+            dinc = -dinc;
+        if ( dinc == 0 )
+            dinc = 1;
 
         xp1 = x[n - 2];
         yp1 = y[n - 2];
@@ -396,20 +400,25 @@ buildlist( PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
     }
 
     nstep = ( yp3 > yp2 ? 1 : -1 );
-    if ( yp3 == yp2 ) nstep = 0;
+    if ( yp3 == yp2 )
+        nstep = 0;
 
     /* Build coordinate list */
 
     ploty = ( min_y / dinc ) * dinc;
-    if ( ploty < min_y ) ploty += dinc;
+    if ( ploty < min_y )
+        ploty += dinc;
 
     for (; ploty <= max_y; ploty += dinc )
     {
-        if ( ploty == yp1 ) continue;
+        if ( ploty == yp1 )
+            continue;
         if ( ploty == yp2 )
         {
-            if ( cstep == -nstep ) continue;
-            if ( yp2 == yp3 && yp1 > yp2 ) continue;
+            if ( cstep == -nstep )
+                continue;
+            if ( yp2 == yp3 && yp1 > yp2 )
+                continue;
         }
         plotx = xp1 + (PLINT) floor( ( (double) ( ploty - yp1 ) * dx ) / dy + 0.5 );
         addcoord( plotx, ploty );
@@ -481,7 +490,8 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     PLINT n2     = 4;
 
     /* Must have at least 3 points and draw() specified */
-    if ( npts < 3 || !draw ) return;
+    if ( npts < 3 || !draw )
+        return;
 
     if ( ( x10 = (PLINT *) malloc( npts * sizeof ( PLINT ) ) ) == NULL )
     {
@@ -591,7 +601,8 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     int   inside_ru;
 
     /* Must have at least 3 points and draw() specified */
-    if ( npts < 3 || !draw ) return;
+    if ( npts < 3 || !draw )
+        return;
 
     if ( npts < PL_MAXPOLY )
     {
@@ -1068,8 +1079,10 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             yclp[iclp] = ylim[insert];
             iclp++;
             insert += incr;
-            if ( insert > 3 ) insert = 0;
-            if ( insert < 0 ) insert = 3;
+            if ( insert > 3 )
+                insert = 0;
+            if ( insert < 0 )
+                insert = 3;
         }
     }
 
@@ -1128,8 +1141,10 @@ circulation( PLINT *x, PLINT *y, PLINT npts )
         xproduct = xproduct + ( x2 - x1 ) * ( y3 - y2 ) - ( y2 - y1 ) * ( x3 - x2 );
     }
 
-    if ( xproduct > 0.0 ) direction = 1;
-    if ( xproduct < 0.0 ) direction = -1;
+    if ( xproduct > 0.0 )
+        direction = 1;
+    if ( xproduct < 0.0 )
+        direction = -1;
     return direction;
 }
 
@@ -1531,7 +1546,8 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         if ( ncrossed_change > 0 )
         {
             i1intersect[ncrossed] = i1;
-            if ( ncrossed_change == 2 ) ;
+            if ( ncrossed_change == 2 )
+                ;
             i1intersect[1] = i1;
 
             ncrossed += ncrossed_change;

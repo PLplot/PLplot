@@ -168,7 +168,8 @@ int main( int argc, char *argv[] )
              * (equation 2 from same source) to calculate the UTC discontinuity
              * unambiguously. */
             leap_sec[i] = sec - ( offset1[i - 1] + (double) ( MJDstart[i] + sec / 86400. - offset2[i - 1] ) * slope[i - 1] ) / ( 1. + slope[i - 1] / 86400. );
-        if ( fabs( leap_sec[i] ) < 1.e-14 ) leap_sec[i] = 0.;
+        if ( fabs( leap_sec[i] ) < 1.e-14 )
+            leap_sec[i] = 0.;
         fprintf( fw, "{%d, %15.8f, 0., %20.14f, %15.8f, %d, %15.8f},\n", MJDstart[i], sec, leap_sec[i], offset1[i], offset2[i], slope[i] );
     }
     fprintf( fw, "};\n" );

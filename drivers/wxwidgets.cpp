@@ -174,23 +174,31 @@ void wxPLDevBase::AddtoClipRegion( int x1, int y1, int x2, int y2 )
     newclipregion = false;
     if ( x1 < x2 )
     {
-        if ( x1 < clipminx ) clipminx = x1;
-        if ( x2 > clipmaxx ) clipmaxx = x2;
+        if ( x1 < clipminx )
+            clipminx = x1;
+        if ( x2 > clipmaxx )
+            clipmaxx = x2;
     }
     else
     {
-        if ( x2 < clipminx ) clipminx = x2;
-        if ( x1 > clipmaxx ) clipmaxx = x1;
+        if ( x2 < clipminx )
+            clipminx = x2;
+        if ( x1 > clipmaxx )
+            clipmaxx = x1;
     }
     if ( y1 < y2 )
     {
-        if ( y1 < clipminy ) clipminy = y1;
-        if ( y2 > clipmaxy ) clipmaxy = y2;
+        if ( y1 < clipminy )
+            clipminy = y1;
+        if ( y2 > clipmaxy )
+            clipmaxy = y2;
     }
     else
     {
-        if ( y2 < clipminy ) clipminy = y2;
-        if ( y1 > clipmaxy ) clipmaxy = y1;
+        if ( y2 < clipminy )
+            clipminy = y2;
+        if ( y1 > clipmaxy )
+            clipmaxy = y1;
     }
 }
 

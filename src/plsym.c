@@ -863,7 +863,8 @@ plstrl( const char *string )
         }
         else if ( ch == -3 )
             xorg -= width * scale;
-        else if ( ch == -4 || ch == -5 ) ;
+        else if ( ch == -4 || ch == -5 )
+            ;
         else
         {
             if ( plcvec( ch, &vxygrid ) )
@@ -1258,7 +1259,8 @@ int plhershey2unicode( int in )
 
     for ( i = 0; ( i < number_of_entries_in_hershey_to_unicode_table ) && ( ret == -1 ); i++ )
     {
-        if ( hershey_to_unicode_lookup_table[i].Hershey == in ) ret = i;
+        if ( hershey_to_unicode_lookup_table[i].Hershey == in )
+            ret = i;
     }
 
     return ( ret );

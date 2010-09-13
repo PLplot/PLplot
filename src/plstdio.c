@@ -59,7 +59,8 @@ plio_fwrite( void *buf, size_t size, size_t nmemb, FILE *stream )
     dbug_enter( "plio_fwrite" );
 
     /* Exit if there is nothing to write */
-    if ( size == 0 || nmemb == 0 ) return;
+    if ( size == 0 || nmemb == 0 )
+        return;
 
     /* Clear the error flag for this steam */
     clearerr( stream );

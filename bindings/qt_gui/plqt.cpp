@@ -92,7 +92,8 @@ void QtPLDriver::setPLStream( PLStream *p )
 
 void QtPLDriver::drawLine( short x1, short y1, short x2, short y2 )
 {
-    if ( !m_painterP->isActive() ) return;
+    if ( !m_painterP->isActive() )
+        return;
     QLineF line( (PLFLT) x1 * downscale,
                  m_dHeight - (PLFLT) y1 * downscale,
                  (PLFLT) x2 * downscale,
@@ -104,7 +105,8 @@ void QtPLDriver::drawLine( short x1, short y1, short x2, short y2 )
 
 void QtPLDriver::drawPolyline( short * x, short * y, PLINT npts )
 {
-    if ( !m_painterP->isActive() ) return;
+    if ( !m_painterP->isActive() )
+        return;
     QPointF * polyline = new QPointF[npts];
     for ( int i = 0; i < npts; ++i )
     {
@@ -117,7 +119,8 @@ void QtPLDriver::drawPolyline( short * x, short * y, PLINT npts )
 
 void QtPLDriver::drawPolygon( short * x, short * y, PLINT npts )
 {
-    if ( !m_painterP->isActive() ) return;
+    if ( !m_painterP->isActive() )
+        return;
     QPointF * polygon = new QPointF[npts];
     for ( int i = 0; i < npts; ++i )
     {
@@ -156,9 +159,12 @@ QFont QtPLDriver::getFont( PLUNICODE unicode )
     }
     f.setFamily( "" ); // no family name, forcing Qt to find an appropriate font by itself
 
-    if ( fontStyle ) f.setItalic( true );
-    if ( fontWeight ) f.setWeight( QFont::Bold );
-    else f.setWeight( QFont::Normal );
+    if ( fontStyle )
+        f.setItalic( true );
+    if ( fontWeight )
+        f.setWeight( QFont::Bold );
+    else
+        f.setWeight( QFont::Normal );
 
     f.setUnderline( underlined );
     f.setOverline( overlined );
@@ -321,7 +327,8 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
 
 void QtPLDriver::drawText( EscText* txt )
 {
-    if ( !m_painterP->isActive() ) return;
+    if ( !m_painterP->isActive() )
+        return;
 
     /* Check that we got unicode, warning message and return if not */
     if ( txt->unicode_array_len == 0 )
@@ -365,7 +372,8 @@ void QtPLDriver::drawText( EscText* txt )
 
 void QtPLDriver::setColor( int r, int g, int b, double alpha )
 {
-    if ( !m_painterP->isActive() ) return;
+    if ( !m_painterP->isActive() )
+        return;
 
     QPen p = m_painterP->pen();
     p.setColor( QColor( r, g, b, (int) ( alpha * 255 ) ) );
@@ -381,7 +389,8 @@ void QtPLDriver::setGradient( int x1, int x2, int y1, int y2,
                               unsigned char *r, unsigned char *g,
                               unsigned char *b, PLFLT *alpha, PLINT ncol1 )
 {
-    if ( !m_painterP->isActive() || ncol1 < 2 ) return;
+    if ( !m_painterP->isActive() || ncol1 < 2 )
+        return;
 
     int             i;
     qreal           stop_arg;
@@ -404,7 +413,8 @@ void QtPLDriver::setGradient( int x1, int x2, int y1, int y2,
 
 void QtPLDriver::setWidth( PLINT w )
 {
-    if ( !m_painterP->isActive() ) return;
+    if ( !m_painterP->isActive() )
+        return;
 
     QPen p = m_painterP->pen();
     p.setWidth( w );
@@ -428,7 +438,8 @@ void QtPLDriver::setWidth( PLINT w )
 
 void QtPLDriver::setSolid()
 {
-    if ( !m_painterP->isActive() ) return;
+    if ( !m_painterP->isActive() )
+        return;
 
     QPen p = m_painterP->pen();
     p.setStyle( Qt::SolidLine );
@@ -478,7 +489,8 @@ void QtRasterDevice::savePlot()
 
 void QtRasterDevice::setBackgroundColor( int r, int g, int b, double alpha )
 {
-    if ( !m_painterP->isActive() ) return;
+    if ( !m_painterP->isActive() )
+        return;
 
     QBrush brush( QColor( r, g, b, (int) ( alpha * 255 ) ) );
     m_painterP->fillRect( 0, 0, width(), height(), brush );
@@ -516,7 +528,8 @@ void QtSVGDevice::savePlot()
 
 void QtSVGDevice::setBackgroundColor( int r, int g, int b, double alpha )
 {
-    if ( !m_painterP->isActive() ) return;
+    if ( !m_painterP->isActive() )
+        return;
 
     QBrush brush( QColor( r, g, b, (int) ( alpha * 255 ) ) );
     m_painterP->fillRect( 0, 0, width(), height(), brush );
@@ -577,7 +590,8 @@ void QtEPSDevice::savePlot()
 
 void QtEPSDevice::setBackgroundColor( int r, int g, int b, double alpha )
 {
-    if ( !m_painterP->isActive() ) return;
+    if ( !m_painterP->isActive() )
+        return;
 
     QBrush brush( QColor( r, g, b, (int) ( alpha * 255 ) ) );
     m_painterP->fillRect( 0, 0, width(), height(), brush );
@@ -887,7 +901,8 @@ void QtPLWidget::drawText( EscText* txt )
 
 void QtPLWidget::renderText( QPainter* p, struct TextStruct_* s, double x_fact, double x_offset, double y_fact, double y_offset )
 {
-    if ( s->len <= 0 || s->len >= 500 ) return;
+    if ( s->len <= 0 || s->len >= 500 )
+        return;
     QPicture picText = getTextPicture( s->fci, s->text, s->len, s->chrht * y_fact );
 
     double   picDpi = picText.logicalDpiY();
@@ -1079,10 +1094,14 @@ void QtPLWidget::keyPressEvent( QKeyEvent* event )
             x1 = gin.pX + dx;
             y1 = gin.pY + dy;
 
-            if ( x1 < xmin ) dx = xmin - gin.pX;
-            if ( y1 < ymin ) dy = ymin - gin.pY;
-            if ( x1 > xmax ) dx = xmax - gin.pX;
-            if ( y1 > ymax ) dy = ymax - gin.pY;
+            if ( x1 < xmin )
+                dx = xmin - gin.pX;
+            if ( y1 < ymin )
+                dy = ymin - gin.pY;
+            if ( x1 > xmax )
+                dx = xmax - gin.pX;
+            if ( y1 > ymax )
+                dy = ymax - gin.pY;
 
             QCursor::setPos( p.x() + dx, p.y() + dy );
             plGinInit( &gin );
@@ -1390,7 +1409,8 @@ void QtExtWidget::captureMousePlotCoords( PLFLT* x, PLFLT* y )
 
 void QtExtWidget::mouseMoveEvent( QMouseEvent* event )
 {
-    if ( !cursorParameters.isTracking ) return;
+    if ( !cursorParameters.isTracking )
+        return;
 
     double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
 
@@ -1423,7 +1443,8 @@ void QtExtWidget::mousePressEvent( QMouseEvent* event )
 
 void QtExtWidget::mouseReleaseEvent( QMouseEvent* event )
 {
-    if ( !cursorParameters.isTracking ) return;
+    if ( !cursorParameters.isTracking )
+        return;
 
     double x_fact, y_fact, x_offset, y_offset; //Parameters to scale and center the plot on the widget
 
@@ -1461,7 +1482,8 @@ void QtExtWidget::paintEvent( QPaintEvent* event )
 {
     QtPLWidget::paintEvent( event );
 
-    if ( !cursorParameters.isTracking || cursorParameters.cursor_x < 0 ) return;
+    if ( !cursorParameters.isTracking || cursorParameters.cursor_x < 0 )
+        return;
 
     QPainter p( this );
 

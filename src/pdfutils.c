@@ -998,9 +998,12 @@ plMinMax2dGrid( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin )
     {
         for ( j = 0; j < ny; j++ )
         {
-            if ( !finite( f[i][j] ) ) continue;
-            if ( f[i][j] > M ) M = f[i][j];
-            if ( f[i][j] < m ) m = f[i][j];
+            if ( !finite( f[i][j] ) )
+                continue;
+            if ( f[i][j] > M )
+                M = f[i][j];
+            if ( f[i][j] < m )
+                m = f[i][j];
         }
     }
     *fmax = M;

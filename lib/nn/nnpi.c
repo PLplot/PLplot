@@ -130,8 +130,8 @@ static void nnpi_add_weight( nnpi* nn, int vertex, double w )
         if ( nn->vertices[i] == vertex )
             break;
 
-    if ( i == nn->nvertices )     /* not in the list */
-    {   /*
+    if ( i == nn->nvertices ) /* not in the list */
+    {                         /*
          * get more memory if necessary
          */
         if ( nn->nvertices == nn->nallocated )

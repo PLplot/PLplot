@@ -66,7 +66,8 @@ x07::x07( int argc, const char ** argv )
     pls->fontld( 0 );
     for ( l = 0; l < 20; l++ )
     {
-        if ( l == 2 ) pls->fontld( 1 );
+        if ( l == 2 )
+            pls->fontld( 1 );
         pls->adv( 0 );
 
         // Set up viewport and window.

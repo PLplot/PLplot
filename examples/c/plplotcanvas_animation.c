@@ -188,7 +188,8 @@ void start_threads( GtkWidget *widget, gpointer data )
     GError **gerror;
 
     /* Ignore call if threads are currently active */
-    if ( Nthreads ) return;
+    if ( Nthreads )
+        return;
 
     /* Create the two plotting threads */
     data0.canvas = canvas0;
@@ -235,7 +236,8 @@ int main( int argc, char *argv[] )
     g_type_init();
 
     /* Initialize the x array */
-    for ( i = 0; i < NPTS; i++ ) x[i] = (PLFLT) i;
+    for ( i = 0; i < NPTS; i++ )
+        x[i] = (PLFLT) i;
 
     /* Create the first canvas, set its size, draw some axes on it, and
      *  place it in a frame
