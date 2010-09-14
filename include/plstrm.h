@@ -519,7 +519,8 @@ typedef struct
 /* Misc control information */
 
     PLINT      ipls, level, verbose, debug, initialized, dev_initialized;
-    PLBOOL     stream_closed;
+  //CONSTANT SOVERSION FIX
+  //    PLBOOL     stream_closed;
     const char *program;
 
 /* Plot-wide coordinate transform */
@@ -767,6 +768,10 @@ typedef struct
      * in the software fallback for the gradient. */
     PLINT      n_polygon;
     PLFLT      *x_polygon, *y_polygon;
+
+  //CONSTANT SOVERSION FIX
+    PLBOOL     stream_closed;
+
 } PLStream;
 
 /*--------------------------------------------------------------------------*\
