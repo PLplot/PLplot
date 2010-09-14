@@ -23,7 +23,7 @@
 
 #include "plplotP.h"
 
-PLFLT get_character_or_symbol_height( PLINT ifcharacter )
+static PLFLT get_character_or_symbol_height( PLINT ifcharacter )
 {
     // Character height in mm
     PLFLT default_mm, char_height_mm;
