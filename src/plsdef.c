@@ -273,6 +273,7 @@ c_pllsty( PLINT lin )
         return;
     }
 
+    plsc->line_style = lin;
     plstyl( line[lin - 1].nels,
         &line[lin - 1].mark[0], &line[lin - 1].space[0] );
 }
