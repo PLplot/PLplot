@@ -2179,7 +2179,7 @@ c_plinit( void )
     PLFLT def_arrow_x[6] = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
     PLFLT def_arrow_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
     PLFLT lx, ly, xpmm_loc, ypmm_loc, aspect_old, aspect_new;
-    PLINT mk = 0, sp = 0, inc = 0, del = 2000;
+    PLINT inc = 0, del = 2000;
 
     pllib_init();
 
@@ -2299,7 +2299,7 @@ c_plinit( void )
     plgra();
     plcol( 1 );
 
-    plstyl( 0, &mk, &sp );
+    pllsty( 1 );
     plpat( 1, &inc, &del );
 
     plsvect( def_arrow_x, def_arrow_y, 6, 0 );
