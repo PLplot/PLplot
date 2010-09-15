@@ -1217,6 +1217,7 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 PLDLLIMPEXP void
 c_pllegend( PLINT opt, PLFLT plot_width, PLFLT x, PLFLT y, PLINT nlegend,
             PLINT *text_colors, char **text, PLINT *cmap0_colors,
+            PLINT *line_style, PLINT *line_width,
             PLINT nsymbols, PLINT *symbols );
 
 /* Sets position of the light source */

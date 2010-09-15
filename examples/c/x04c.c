@@ -49,7 +49,7 @@ plot1( int type )
     char         *text[2];
     PLINT        text_colors[2];
     PLINT        cmap0_colors[2];
-    PLINT        symbols[2];
+    PLINT        line_style[2], line_width[2], symbols[2];
 
     pladv( 0 );
 
@@ -115,9 +115,15 @@ plot1( int type )
         text_colors[1]  = 1;
         cmap0_colors[0] = 2;
         cmap0_colors[1] = 3;
+        line_style[0] = 1;
+        line_style[1] = 2;
+        line_width[0] = 8;
+        line_width[1] = 2;
         plssym( 0., 3. );
-        symbols[0] = -1;
+        symbols[0] = 9;
         symbols[1] = 3;
-        pllegend( PL_LEGEND_LINE | PL_LEGEND_SYMBOL, 0.3, 0.1, 0.95, 2, text_colors, text, cmap0_colors, 5, symbols );
+        pllegend( PL_LEGEND_LINE | PL_LEGEND_SYMBOL, 0.3, 0.1, 0.95,
+                  2, text_colors, text, cmap0_colors, line_style,
+                  line_width, 5, symbols );
     }
 }

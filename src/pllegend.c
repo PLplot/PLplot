@@ -86,11 +86,10 @@ static PLFLT get_character_or_symbol_height( PLINT ifcharacter )
 void
 c_pllegend( PLINT opt, PLFLT plot_width, PLFLT x, PLFLT y, PLINT nlegend,
             PLINT *text_colors, char **text, PLINT *cmap0_colors,
+            PLINT *line_style, PLINT *line_width,
             PLINT nsymbols, PLINT *symbols )
 
 {
-    // Active indexed drawing color
-    PLINT old_col0;
     // Viewport world-coordinate limits
     PLFLT xmin, xmax, ymin, ymax;
     // Legend position
@@ -107,6 +106,9 @@ c_pllegend( PLINT opt, PLFLT plot_width, PLFLT x, PLFLT y, PLINT nlegend,
     // opt_plot is the kind of plot made for the legend.
     PLINT opt_plot = opt & ( PL_LEGEND_LINE | PL_LEGEND_SYMBOL |
                              PL_LEGEND_CMAP0 | PL_LEGEND_CMAP1 );
+    // Active attributes to be saved and restored afterward.
+    PLINT old_col0 = plsc->icol0, old_line_style = plsc->line_style,
+        old_line_width = plsc->width;
     // Sanity checks.
     // Check opt_plot for a valid combination of kind of plots.
     if ( !( ( opt_plot & ( PL_LEGEND_LINE | PL_LEGEND_SYMBOL ) ) ||
@@ -122,8 +124,6 @@ c_pllegend( PLINT opt, PLFLT plot_width, PLFLT x, PLFLT y, PLINT nlegend,
         return;
     }
     nsymbols = MAX( 2, nsymbols );
-
-    old_col0 = plsc->icol0;
 
     plgvpw( &xmin, &xmax, &ymin, &ymax );
 
@@ -143,6 +143,11 @@ c_pllegend( PLINT opt, PLFLT plot_width, PLFLT x, PLFLT y, PLINT nlegend,
     text_y       = plot_y;
     text_x_world = normalized_to_world_x( text_x ) + character_width;
     text_y_world = normalized_to_world_y( text_y );
+
+    //    if (opt & PL_LEGEND_TEXT_LEFT)
+    {
+      //
+    }
 
     // Starting y position for legend entries
     ty = text_y_world - character_height;
@@ -190,10 +195,14 @@ c_pllegend( PLINT opt, PLFLT plot_width, PLFLT x, PLFLT y, PLINT nlegend,
         plcol0( cmap0_colors[i] );
         if ( opt & PL_LEGEND_LINE )
         {
+            pllsty( line_style[i]) ;
+            plwid( line_width[i] );
             plline( 2, xl, yl );
             // prepare for the next position
             yl[0] = ty;
             yl[1] = ty;
+            pllsty( old_line_style );
+            plwid( old_line_width );
         }
         if ( opt & PL_LEGEND_SYMBOL )
         {
