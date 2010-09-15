@@ -369,6 +369,7 @@ typedef struct
  *
  * currx	Physical x-coordinate of current point
  * curry	Physical y-coordinate of current point
+ * line_style	index of last call to pllsty
  * mark		Array of mark lengths in micrometers for broken lines
  * space	Array of space lengths in micrometers for broken lines
  * nms		Number of elements for current broken line style
@@ -664,6 +665,8 @@ typedef struct
 /* Variables used in line drawing */
 
     PLINT currx, curry;
+    //CONSTANT SOVERSION FIX
+    //PLINT line_style;
     PLINT mark[10], space[10], nms;
     PLINT timecnt, alarm, pendn, curel;
 
@@ -771,6 +774,7 @@ typedef struct
 
     //CONSTANT SOVERSION FIX
     PLBOOL     stream_closed;
+    PLINT      line_style;
 } PLStream;
 
 /*--------------------------------------------------------------------------*\
