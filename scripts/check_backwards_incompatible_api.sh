@@ -65,12 +65,12 @@ echo "REFERENCE_VERSION = $REFERENCE_VERSION"
 cd /tmp
 
 if [ ! -f plplot-$REFERENCE_VERSION.tar.gz ] ; then
-    wget "http://downloads.sourceforge.net/project/plplot/plplot/$REFERENCE_VERSION Source/plplot-$REFERENCE_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fplplot%2Ffiles%2F&ts=1283877998&use_mirror=superb-sea2"
-fi
-if [ ! -f plplot-$REFERENCE_VERSION.tar.gz.asc ] ; then
     echo "Downloading the reference version of PLplot."
     echo "This may take a while...."
-    wget "http://downloads.sourceforge.net/project/plplot/plplot/$REFERENCE_VERSION Source/plplot-$REFERENCE_VERSION.tar.gz.asc?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fplplot%2Ffiles%2F&ts=1283877998&use_mirror=superb-sea2"
+    wget -O plplot-$REFERENCE_VERSION.tar.gz "http://downloads.sourceforge.net/project/plplot/plplot/$REFERENCE_VERSION Source/plplot-$REFERENCE_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fplplot%2Ffiles%2F&ts=1283877998&use_mirror=superb-sea2"
+fi
+if [ ! -f plplot-$REFERENCE_VERSION.tar.gz.asc ] ; then
+    wget -O plplot-$REFERENCE_VERSION.tar.gz.asc "http://downloads.sourceforge.net/project/plplot/plplot/$REFERENCE_VERSION Source/plplot-$REFERENCE_VERSION.tar.gz.asc?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fplplot%2Ffiles%2F&ts=1283877998&use_mirror=superb-sea2"
 fi
 
 gpg --verify plplot-$REFERENCE_VERSION.tar.gz.asc
