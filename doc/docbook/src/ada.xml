@@ -102,8 +102,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <title>Ada 95 versus Ada 2005</title>
       <para>The bindings will work for either Ada 95 or Ada 2005 but there is a slightly subtle point regarding the use and declaration of vectors and matrices. The package  <literal>PLplot_Auxiliary</literal> declares the types</para>
 <programlisting>
-    type Real_Vector is array (Integer range <>) of Long_Float;
-    type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
+    type Real_Vector is array (Integer range &lt;>) of Long_Float;
+    type Real_Matrix is array (Integer range &lt;>, Integer range &lt;>) of Long_Float;
 </programlisting>
 <para>These declarations mimic exactly the declarations described in Annex G.3, Vector and Matrix Manipulation, of the Ada 2005 reference manual when the generic package therein described is specialized for <literal>Long_Float</literal>. The reason for this approach is to avoid requiring the user program to <literal>with</literal> <literal>Ada.Numerics.Long_Real_Arrays</literal> simply to gain access to these types and in the process require linking to the BLAS and LAPACK numerics libraries.</para>
 <para>For users who wish to either attain compatibility with Ada 2005 Annex G.3 or to access its features which actually depend on BLAS and LAPACK, there are two routes. One is to build PLpot normally and then to edit <literal>PLplot_Auxiliary.ads</literal> as is indicated in that file. This is a very simple process requiring commenting two lines and uncommenting three lines. Then recompile only the Ada bindings and use the newly-created compiled files in the user project. The other way is to type-convert the <literal>Real_Vector</literal> and <literal>Real_Matrix</literal> objects in the user program so that they are compatible with the declarations of Annex G.3 when accessing the numerics functionality in that annex. (In GNAT, the relevant file is <literal>a-nlrear.ads</literal>.)</para>
