@@ -12759,6 +12759,98 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   </sect1>
 
+  <sect1 id="plspal0" renderas="sect3">
+    <title>
+      <function>plspal0</function>: Set the colors for color table 0
+      from a cmap0 file
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plspal0</function>
+	  </funcdef>
+	  <paramdef><parameter>filename</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Set the colors for color table 0 from a cmap0 file
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>filename</parameter>
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The name of the cmap0 file, or a empty to string to
+	    specify the default cmap0 file.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plspal0(filename)</function>
+    </para>
+
+    <para>
+      This function is in example 16.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plspal1" renderas="sect3">
+    <title>
+      <function>plspal1</function>: Set the colors for color table 1
+      from a cmap1 file
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plspal1</function>
+	  </funcdef>
+	  <paramdef><parameter>filename</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Set the colors for color table 1 from a cmap1 file
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>filename</parameter>
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The name of the cmap1 file, or a empty to string to
+	    specify the default cmap1 file.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plspal1(filename)</function>
+    </para>
+
+    <para>
+      This function is in example 16.
+    </para>
+
+  </sect1>
+
   <sect1 id="plspause" renderas="sect3">
     <title>
       <function>plspause</function>: Set the pause (on end-of-page) status
