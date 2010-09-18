@@ -21,7 +21,7 @@
 
 #include "plplotP.h"
 
-#define CIRCLE_SEGMENTS    PL_MAXPOLY
+#define CIRCLE_SEGMENTS                    ( PL_MAXPOLY - 1 )
 #define DEG_TO_RAD( x )                    ( ( x ) * M_PI / 180.0 )
 
 #define PLARC_POINT_X( x, a, b, theta )    ( ( x ) + ( ( a ) * cos( theta ) ) )
@@ -39,7 +39,7 @@ plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PL
     PLINT i;
     PLFLT theta0, theta_step, theta, d_angle;
     PLINT segments;
-    PLFLT xs[CIRCLE_SEGMENTS], ys[CIRCLE_SEGMENTS];
+    PLFLT xs[CIRCLE_SEGMENTS + 1], ys[CIRCLE_SEGMENTS + 1];
 
     /* The difference between the start and end angles */
     d_angle = DEG_TO_RAD( angle2 - angle1 );
@@ -47,7 +47,7 @@ plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PL
         d_angle = M_PI * 2.0;
 
     /* The number of line segments used to approximate the arc */
-    segments = d_angle / ( 2.0 * M_PI ) * CIRCLE_SEGMENTS;
+    segments = fabs( d_angle ) / ( 2.0 * M_PI ) * CIRCLE_SEGMENTS;
     /* Always use at least 2 arc points, otherwise fills will break. */
     if ( segments < 2 )
         segments = 2;
@@ -70,8 +70,9 @@ plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PL
         /* Add the center point if we aren't drawing a circle */
         if ( fabs( d_angle ) < M_PI * 2.0 )
         {
-            xs[segments - 1] = x;
-            ys[segments - 1] = y;
+            xs[segments] = x;
+            ys[segments] = y;
+            segments++;
         }
         /* Draw a filled arc */
         plfill( segments, xs, ys );
