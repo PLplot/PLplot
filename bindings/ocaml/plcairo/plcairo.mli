@@ -1,3 +1,22 @@
+(*
+Copyright 2008, 2009, 2010  Hezekiah M. Carty
+
+This file is part of PLplot.
+
+PLplot is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+(at your option) any later version.
+
+PLplot is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
 (** A record to keep track of the Cairo surface and context information *)
 type ('a, 'b) t
 
@@ -57,11 +76,12 @@ val plpdfcairo : (out_channel, [ `Any | `PDF ]) plcairo_sfc_t
 val plimagecairo : (string, [ `Any | `Image ]) plcairo_sfc_t
 val plimagecairo_rgba : (string, [ `Any | `Image ]) plcairo_sfc_t
 
-(** [plinit_cairo ?filename ?clear (width, height) init] creates a Cairo
+(** [plinit_cairo ?filename ?clear ?pre (width, height) init] creates a Cairo
     context and associates it with a new PLplot stream. *)
 val plinit_cairo :
   ?filename:string ->
   ?clear:bool ->
+  ?pre:(unit -> unit) ->
   int * int -> ('a, [> `Any ] as 'b) plcairo_sfc_t -> ('b, 'a) t
 
 (** [plcairo_make_active t] sets PLplot to using the plot stream associated

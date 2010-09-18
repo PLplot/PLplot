@@ -1,5 +1,5 @@
 (*
-Copyright 2008, 2009  Hezekiah M. Carty
+Copyright 2008, 2009, 2010  Hezekiah M. Carty
 
 This file is part of PLplot.
 
@@ -21,6 +21,23 @@ along with PLplot.  If not, see <http://www.gnu.org/licenses/>.
 
 open Plplot
 open Printf
+
+module Option = struct
+  let may f o =
+    match o with
+    | Some x -> f x
+    | None -> ()
+
+  let default x_default o =
+    match o with
+    | Some x -> x
+    | None -> x_default
+
+  let map_default f x_default o =
+    match o with
+    | Some x -> f x
+    | None -> x_default
+end
 
 (** A record to keep track of the Cairo surface and context information *)
 type ('a, 'b) t = {
@@ -183,9 +200,9 @@ let plimagecairo_rgba ~width ~height (filename : string option) =
   filename,
   Cairo.image_surface_create Cairo.FORMAT_ARGB32 ~width ~height
 
-(** [plinit_cairo ?filename ?clear (width, height) init] creates a Cairo
+(** [plinit_cairo ?filename ?clear ?pre (width, height) init] creates a Cairo
     context and associates it with a new PLplot stream. *)
-let plinit_cairo ?filename ?(clear = false)
+let plinit_cairo ?filename ?(clear = false) ?pre
                  (width, height) (init : ('a, 'b) plcairo_sfc_t) =
   let file, sfc = init ~width ~height filename in
   let context = Cairo.create sfc in
@@ -194,6 +211,7 @@ let plinit_cairo ?filename ?(clear = false)
   let new_stream = plmkstrm () in
   plsdev "extcairo";
   plsetopt "geometry" (sprintf "%dx%d" width height);
+  Option.may (fun f -> f ()) pre;
   plinit ();
   (* Associate our new Cairo context with the PLplot stream. *)
   plset_cairo_context context;
