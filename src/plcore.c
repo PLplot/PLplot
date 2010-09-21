@@ -3456,6 +3456,17 @@ void
 c_plsmem( PLINT maxx, PLINT maxy, void *plotmem )
 {
     plsc->dev = plotmem;
+    plsc->dev_mem_alpha = 0;
+    plP_setphy( 0, maxx, 0, maxy );
+}
+
+/* Same as plsmem, but the buffer is (Y, X, RGBA) */
+
+void
+c_plsmema( PLINT maxx, PLINT maxy, void *plotmem )
+{
+    plsc->dev = plotmem;
+    plsc->dev_mem_alpha = 1;
     plP_setphy( 0, maxx, 0, maxy );
 }
 

@@ -2389,6 +2389,7 @@ void plD_init_memcairo( PLStream *pls )
     pls->xlength = pls->phyxma;
     pls->ylength = pls->phyyma;
 
+
     /* Setup the PLStream and the font lookup table */
     aStream = stream_and_font_setup( pls, 0 );
 
@@ -2424,6 +2425,7 @@ void plD_init_memcairo( PLStream *pls )
     /* 32 bit word order
      * cairo mem:  Big endian:  0=A, 1=R, 2=G, 3=B
      *             Little endian:  3=A, 2=R, 1=G, 0=B */
+
     if ( aStream->bigendian )
     {
         for ( i = 0; i < ( pls->xlength * pls->ylength ); i++ )
@@ -2431,8 +2433,14 @@ void plD_init_memcairo( PLStream *pls )
             cairo_mem[1] = input_mem[0]; /* R */
             cairo_mem[2] = input_mem[1]; /* G */
             cairo_mem[3] = input_mem[2]; /* B */
-            input_mem   += 3;
-            cairo_mem   += 4;
+	    if ( pls->dev_mem_alpha ){
+	        cairo_mem[0] = input_mem[3];
+	        input_mem += 4;
+	    } 
+	    else {
+	        input_mem += 3;
+	    }
+            cairo_mem += 4;
         }
     }
     else
@@ -2442,8 +2450,14 @@ void plD_init_memcairo( PLStream *pls )
             cairo_mem[2] = input_mem[0]; /* R */
             cairo_mem[1] = input_mem[1]; /* G */
             cairo_mem[0] = input_mem[2]; /* B */
-            input_mem   += 3;
-            cairo_mem   += 4;
+	    if ( pls->dev_mem_alpha ){
+	        cairo_mem[3] = input_mem[3];
+	        input_mem += 4;
+	    } 
+	    else {
+	        input_mem += 3;
+	    }
+            cairo_mem += 4;
         }
     }
 
@@ -2492,7 +2506,13 @@ void plD_eop_memcairo( PLStream *pls )
             memory[0]           = cairo_surface_data[1]; /* R */
             memory[1]           = cairo_surface_data[2]; /* G */
             memory[2]           = cairo_surface_data[3]; /* B */
-            memory             += 3;
+	    if ( pls->dev_mem_alpha ){
+	        memory[3] = cairo_surface_data[0];
+	        memory += 4;
+	    } 
+	    else {
+	        memory += 3;
+	    }
             cairo_surface_data += 4;
         }
     }
@@ -2503,7 +2523,13 @@ void plD_eop_memcairo( PLStream *pls )
             memory[0]           = cairo_surface_data[2]; /* R */
             memory[1]           = cairo_surface_data[1]; /* G */
             memory[2]           = cairo_surface_data[0]; /* B */
-            memory             += 3;
+	    if ( pls->dev_mem_alpha ){
+	        memory[3] = cairo_surface_data[3];
+	        memory += 4;
+	    } 
+	    else {
+	        memory += 3;
+	    }
             cairo_surface_data += 4;
         }
     }

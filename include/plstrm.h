@@ -187,6 +187,7 @@ typedef struct
  * page		PLINT	Page count for output stream
  * linepos	PLINT	Line count for output stream
  * pdfs		PDFstrm* PDF stream pointer
+ * dev_mem_alpha PLINT  The user supplied memory buffer supports alpha values
  *
  * These are used by the escape function (for area fill, etc).
  *
@@ -775,6 +776,7 @@ typedef struct
     //CONSTANT SOVERSION FIX
     PLBOOL     stream_closed;
     PLINT      line_style;
+    PLINT      dev_mem_alpha;
 } PLStream;
 
 /*--------------------------------------------------------------------------*\

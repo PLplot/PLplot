@@ -751,6 +751,7 @@ typedef plf2ops_t * PLF2OPS;
 #define    plslabelfunc             c_plslabelfunc
 #define    plsmaj                   c_plsmaj
 #define    plsmem                   c_plsmem
+#define    plsmema                  c_plsmema
 #define    plsmin                   c_plsmin
 #define    plsori                   c_plsori
 #define    plspage                  c_plspage
