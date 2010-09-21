@@ -78,6 +78,11 @@ plD_init_mem( PLStream *pls )
         plexit( "Must call plsmem first to set user plotting area!" );
     }
 
+    if ( pls->dev_mem_alpha == 1 )
+    {
+	plexit( "The mem driver does not support alpha values! Use plsmem!");
+    }
+
     plP_setpxl( (PLFLT) 4, (PLFLT) 4 ); /* rough pixels/mm on *my* screen */
 
 
