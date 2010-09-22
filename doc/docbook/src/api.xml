@@ -12463,7 +12463,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="plsmem" renderas="sect3">
     <title>
-      <function>plsmem</function>: Set the memory area to be plotted
+      <function>plsmem</function>: Set the memory area to be plotted (RGB)
     </title>
 
     <para>
@@ -12480,7 +12480,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Set the memory area to be plotted (with the <quote>mem</quote> driver)
+      Set the memory area to be plotted (with the <quote>mem</quote> or
+      <quote>memcairo</quote> driver)
       as the <literal>dev</literal> member of the stream structure.  Also
       set the number of pixels in the memory passed in
       <parameter>plotmem</parameter>, which is a block of memory
@@ -12530,6 +12531,83 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Redacted form: <function>plsmem(maxx, maxy, plotmem)</function>
+    </para>
+
+    <para>
+      This function is not used in any examples.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plsmema" renderas="sect3">
+    <title>
+      <function>plsmema</function>: Set the memory area to be plotted (RGBA)
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>plsmema</function>
+	  </funcdef>
+	  <paramdef><parameter>maxx</parameter></paramdef>
+	  <paramdef><parameter>maxy</parameter></paramdef>
+	  <paramdef><parameter>plotmem</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Set the memory area to be plotted (with the <quote>memcairo</quote> 
+      driver) as the <literal>dev</literal> member of the stream structure.
+      Also set the number of pixels in the memory passed in
+      <parameter>plotmem</parameter>, which is a block of memory
+      <parameter>maxy</parameter> by <parameter>maxx</parameter> by 4 bytes
+      long, say: 480 x 640 x 4 (Y, X, RGBA)
+    </para>
+
+    <para>
+      This memory will have to be freed by the user!
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>maxx</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Size of memory area in the X coordinate.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>maxy</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Size of memory area in the Y coordinate.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>plotmem</parameter>
+	  (<literal>void *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to the beginning of the user-supplied memory area.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plsmema(maxx, maxy, plotmem)</function>
     </para>
 
     <para>
