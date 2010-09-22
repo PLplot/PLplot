@@ -61,8 +61,13 @@ for i in range(len(x)):
 # Start from a blank canvas
 width = 480
 height = 320
-my_buffer = numpy.numarray.zeros((height,width,3), numpy.uint8)
-my_buffer_alpha = numpy.numarray.zeros((height,width,4), numpy.uint8)
+# Darg gray background (necessarily opaque for RGB format).
+background = numpy.numarray.zeros(3, numpy.uint8) + 30
+my_buffer = numpy.numarray.zeros((height,width,3), numpy.uint8) + background
+# Dark gray semi-transparent background.
+background = numpy.numarray.zeros(4, numpy.uint8) + 30
+background[3] = 200
+my_buffer_alpha = numpy.numarray.zeros((height,width,4), numpy.uint8) + background
 
 '''
 # Or open an existing image
