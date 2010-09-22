@@ -780,6 +780,10 @@ plsmaj(PLFLT def, PLFLT scale);
 void
 plsmem(PLINT maxx, PLINT maxy, void *plotmem);
 
+%feature("autodoc", "Similar to plsmem(), but supports alpha values.") plsmema;
+void
+plsmema(PLINT maxx, PLINT maxy, void *plotmem);
+
 #endif
 
 %feature("autodoc", "Set up lengths of minor tick marks.") plsmin;
