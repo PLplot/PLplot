@@ -127,9 +127,7 @@ endif(DEFAULT_ALL_DEVICES)
 
 set(DRIVERS_DEVICE_LIST
   "aqt:aqt:ON:I:OFF"
-  # memcairo does not work so turn it off by default.
-  # The remaining cairo devices work well so turn them on by default.
-  "memcairo:cairo:OFF:M:OFF"
+  "memcairo:cairo:ON:M:OFF"
   "extcairo:cairo:ON:E:OFF"
   "pdfcairo:cairo:ON:F:OFF"
   "pngcairo:cairo:ON:F:ON"
