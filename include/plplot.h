@@ -1648,10 +1648,15 @@ c_plslabelfunc( void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer ),
 PLDLLIMPEXP void
 c_plsmaj( PLFLT def, PLFLT scale );
 
-/* Set the memory area to be plotted (with the 'mem' driver) */
+/* Set the RGB memory area to be plotted (with the 'mem' or 'memcairo' drivers) */
 
 PLDLLIMPEXP void
 c_plsmem( PLINT maxx, PLINT maxy, void *plotmem );
+
+/* Set the RGBA memory area to be plotted (with the 'memcairo' driver) */
+
+PLDLLIMPEXP void
+c_plsmema( PLINT maxx, PLINT maxy, void *plotmem );
 
 /* Set up lengths of minor tick marks. */
 
