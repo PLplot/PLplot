@@ -776,11 +776,11 @@ plsmaj(PLFLT def, PLFLT scale);
 
 #if defined ( PYTHON_HAVE_PYBUFFER ) && defined ( SWIG_PYTHON ) 
 
-%feature("autodoc", "Set the memory area to be plotted (with the 'mem' driver).") plsmem;
+%feature("autodoc", "Set the RGB memory area to be plotted (with the 'mem' or 'memcairo' drivers).") plsmem;
 void
 plsmem(PLINT maxx, PLINT maxy, void *plotmem);
 
-%feature("autodoc", "Similar to plsmem(), but supports alpha values.") plsmema;
+%feature("autodoc", "Set the RGBA memory area to be plotted (with the 'memcairo' driver).") plsmema;
 void
 plsmema(PLINT maxx, PLINT maxy, void *plotmem);
 
