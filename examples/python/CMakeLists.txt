@@ -86,9 +86,6 @@ set(
   test_gradient.py
   test_type1.py
   test_hebrew_diacritic.py
-  test_mem.py
-  test_memcairo.py
-  test_memqt.py
   )
 
 if(ENABLE_tk)
@@ -182,6 +179,11 @@ if(CORE_BUILD)
     endif(ENABLE_pygcw)
   endif(BUILD_TEST)
 
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_plsmem.py.in
+    ${CMAKE_CURRENT_BINARY_DIR}/test_plsmem.py
+    )
+
   set(PERM_SCRIPTS
     OWNER_READ
     OWNER_WRITE
@@ -191,7 +193,7 @@ if(CORE_BUILD)
     WORLD_READ
     WORLD_EXECUTE
     )
-  install(FILES ${python_SCRIPTS} 
+  install(FILES ${python_SCRIPTS} ${CMAKE_CURRENT_BINARY_DIR}/test_plsmem.py
     DESTINATION ${DATA_DIR}/examples/python
     PERMISSIONS ${PERM_SCRIPTS}
     )
@@ -250,7 +252,7 @@ if(CORE_BUILD)
 
 else(CORE_BUILD)
   set_property(GLOBAL PROPERTY FILES_examples_python)
-  foreach(file ${python_SCRIPTS} ${python_DATA} plplot_python_start.py plplot_py_demos.py)
+  foreach(file ${python_SCRIPTS} ${python_DATA} plplot_python_start.py plplot_py_demos.py test_plsmem.py)
     set_property(GLOBAL APPEND PROPERTY FILES_examples_python
       ${CMAKE_CURRENT_SOURCE_DIR}/${file}
       )
