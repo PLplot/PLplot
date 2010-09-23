@@ -8,3 +8,4 @@ qtwidget:Qt Widget:1:qt:72:qtwidget
 epsqt:Qt EPS driver:0:qt:73:epsqt
 pdfqt:Qt PDF driver:0:qt:74:pdfqt
 extqt:External Qt driver:0:qt:75:extqt
+memqt:Memory Qt driver:0:qt:76:memqt
