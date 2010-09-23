@@ -330,6 +330,9 @@ static PLDispatchInit  static_device_initializers[] = {
 #if defined ( PLD_extqt ) && !defined ( ENABLE_DYNDRIVERS )
     plD_dispatch_init_extqt,
 #endif
+#if defined ( PLD_memqt ) && !defined ( ENABLE_DYNDRIVERS )
+    plD_dispatch_init_memqt,
+#endif
     NULL
 };
 

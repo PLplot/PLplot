@@ -150,6 +150,7 @@ set(DRIVERS_DEVICE_LIST
   "ppmqt:qt:ON:F:ON"
   "tiffqt:qt:ON:F:ON"
   "extqt:qt:ON:E:OFF"
+  "memqt:qt:ON:E:OFF"
   # Currently does not validate at http://validator.w3.org/, but that appears
   # to be a result of the validator being unfamiliar with SVG-1.2 (a draft
   # SVG standard that has not been finalized yet) which is produced

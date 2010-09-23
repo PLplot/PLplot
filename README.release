@@ -189,6 +189,7 @@ INDEX
 1. Changes relative to PLplot 5.9.6 (the previous development release)
 
 1.1 Alpha value support for plotting in memory.
+1.2 Add a Qt device for in memory plotting.
 
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -238,6 +239,7 @@ detected
 2.41 Support for arbitrary storage of 2D user data
 2.42 Font improvements
 2.42 Alpha value support for plotting in memory.
+2.43 Add a Qt device for in memory plotting.
 
 
 0. Tests made for release 5.9.7
@@ -256,6 +258,11 @@ plotting with alpha value support. At present only the memcairo device
 is capable of using RGBA formatted memory. The mem device, at least
 for the time being, only supports RGB formatted memory and will exit
 if the user attempts to give it RGBA formatted memory to plot in.
+
+1.2 Add a Qt device for in memory plotting.
+
+A new device called memqt has been added for in memory plotting using
+Qt. This device is the Qt equivalent of the memcairo device.
 
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -925,3 +932,8 @@ plotting with alpha value support. At present only the memcairo device
 is capable of using RGBA formatted memory. The mem device, at least
 for the time being, only supports RGB formatted memory and will exit
 if the user attempts to give it RGBA formatted memory to plot in.
+
+2.43 Add a Qt device for in memory plotting.
+
+A new device called memqt has been added for in memory plotting using
+Qt. This device is the Qt equivalent of the memcairo device.

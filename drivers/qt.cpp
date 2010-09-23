@@ -73,6 +73,9 @@ PLDLLIMPEXP_DRIVER_DATA( const char* ) plD_DEVICE_INFO_qt =
 #if defined ( PLD_extqt )
     "extqt:External Qt driver:0:qt:75:extqt\n"
 #endif
+#if defined ( PLD_memqt )
+    "memqt:Memory Qt driver:0:qt:76:memqt\n"
+#endif
 ;
 }  // extern "C"
 
@@ -139,7 +142,7 @@ static int qt_family_check( PLStream *pls )
 }
 
 // Declaration of the driver-specific interface functions
-#if defined ( PLD_bmpqt ) || defined ( PLD_jpgqt ) || defined ( PLD_pngqt ) || defined ( PLD_ppmqt ) || defined ( PLD_tiffqt )
+#if defined ( PLD_bmpqt ) || defined ( PLD_jpgqt ) || defined ( PLD_pngqt ) || defined ( PLD_ppmqt ) || defined ( PLD_tiffqt ) || defined ( PLD_memqt )
 void plD_init_rasterqt( PLStream * );
 void plD_eop_rasterqt( PLStream * );
 void plD_line_rasterqt( PLStream *, short, short, short, short );
@@ -229,8 +232,15 @@ void plD_esc_extqt( PLStream *, PLINT, void* );
 void plD_bop_extqt( PLStream * );
 #endif
 
+#if defined ( PLD_memqt )
+void plD_dispatch_init_memqt( PLDispatchTable *pdt );
+void plD_init_memqt( PLStream * );
+void plD_bop_memqt( PLStream * );
+void plD_eop_memqt( PLStream * );
+#endif
+
 ////////////////// Raster driver-specific definitions: class and interface functions /////////
-#if defined ( PLD_bmpqt ) || defined ( PLD_jpgqt ) || defined ( PLD_pngqt ) || defined ( PLD_ppmqt ) || defined ( PLD_tiffqt )
+#if defined ( PLD_bmpqt ) || defined ( PLD_jpgqt ) || defined ( PLD_pngqt ) || defined ( PLD_ppmqt ) || defined ( PLD_tiffqt ) || defined ( PLD_memqt )
 void plD_init_rasterqt( PLStream * pls )
 {
     double dpi;
@@ -312,6 +322,7 @@ void plD_eop_rasterqt( PLStream *pls )
 void plD_line_rasterqt( PLStream * pls, short x1a, short y1a, short x2a, short y2a )
 {
     QtRasterDevice* widget = (QtRasterDevice*) pls->dev;
+
     if ( widget != NULL && qt_family_check( pls ) )
     {
         return;
@@ -326,6 +337,7 @@ void plD_line_rasterqt( PLStream * pls, short x1a, short y1a, short x2a, short y
 void plD_polyline_rasterqt( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
     QtRasterDevice * widget = (QtRasterDevice *) pls->dev;
+
     if ( widget != NULL && qt_family_check( pls ) )
     {
         return;
@@ -1646,4 +1658,145 @@ void plD_bop_extqt( PLStream *pls )
     widget = (QtExtWidget*) pls->dev;
     widget->setBackgroundColor( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a );
 }
+#endif
+
+#if defined ( PLD_memqt )
+void plD_dispatch_init_memqt( PLDispatchTable *pdt )
+{
+#ifndef ENABLE_DYNDRIVERS
+    pdt->pl_MenuStr = "Qt Memory Driver";
+    pdt->pl_DevName = "memqt";
+#endif
+    pdt->pl_type     = plDevType_FileOriented;
+    pdt->pl_seq      = 76;
+    pdt->pl_init     = (plD_init_fp) plD_init_memqt;
+    pdt->pl_line     = (plD_line_fp) plD_line_rasterqt;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_rasterqt;
+    pdt->pl_eop      = (plD_eop_fp) plD_eop_memqt;
+    pdt->pl_bop      = (plD_bop_fp) plD_bop_memqt;
+    pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_rasterqt;
+    pdt->pl_state    = (plD_state_fp) plD_state_rasterqt;
+    pdt->pl_esc      = (plD_esc_fp) plD_esc_rasterqt;
+}
+
+void plD_init_memqt( PLStream * pls )
+{
+    int i;
+    double dpi;
+    unsigned char *qt_mem;
+    unsigned char *input_mem;
+
+    vectorize = 0;
+    lines_aa  = 1;
+    plParseDrvOpts( qt_options );
+
+    /* Stream setup */
+    pls->color        = 1;
+    pls->plbuf_write  = 0;
+    pls->dev_fill0    = 1;
+    pls->dev_fill1    = 0;
+    pls->dev_gradient = 1;      /* driver renders gradient */
+    /* Let the PLplot core handle dashed lines since
+     * the driver results for this capability have a number of issues.
+     * pls->dev_dash=1; */
+    pls->dev_dash  = 0;
+    pls->dev_flush = 1;
+    /* Driver does not have a clear capability so use (good) PLplot core
+     * fallback for that instead.  */
+    pls->dev_clear   = 0;
+    pls->termin      = 0;
+    pls->page        = 0;
+    pls->dev_text    = 1;                        // want to draw text
+    pls->dev_unicode = 1;                        // want unicode
+
+    // Needs to be true only because of multi-stream case
+    bool isMaster = initQtApp( true );
+
+    if ( pls->xdpi <= 0. )
+        dpi = DEFAULT_DPI;
+    else
+        dpi = pls->xdpi;
+
+    /* Set the plot size to the memory buffer size, on the off chance
+     * that they are different. */
+    pls->xlength = pls->phyxma;
+    pls->ylength = pls->phyyma;
+
+    /* Save a pointer to the user supplied memory */
+    input_mem = (unsigned char *)pls->dev;
+
+    /* Create a appropriately sized raster device */
+    pls->dev = new QtRasterDevice( pls->xlength, pls->ylength );
+    ( (QtRasterDevice *) pls->dev )->setPLStream( pls );
+    ( (QtRasterDevice *) pls->dev )->memory = input_mem;
+
+    if ( isMaster )
+        handler.setMasterDevice( (QtRasterDevice*) ( pls->dev ) );
+
+    if ( pls->xlength > pls->ylength )
+        ( (QtRasterDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->xlength / (PLFLT) ( PIXELS_X - 1 );
+    else
+        ( (QtRasterDevice*) ( pls->dev ) )->downscale = (PLFLT) pls->ylength / (PLFLT) PIXELS_Y;
+
+    plP_setphy( (PLINT) 0, (PLINT) ( pls->xlength / ( (QtRasterDevice*) ( pls->dev ) )->downscale ), (PLINT) 0, (PLINT) ( pls->ylength / ( (QtRasterDevice*) ( pls->dev ) )->downscale ) );
+
+    plP_setpxl( dpi / 25.4 / ( (QtRasterDevice*) ( pls->dev ) )->downscale, dpi / 25.4 / ( (QtRasterDevice*) ( pls->dev ) )->downscale );
+
+    /* Copy the user supplied memory into the QImage.
+       This device assumes that the format of the QImage
+       is RGB32 (or ARGB). */
+
+    qt_mem = ( (QtRasterDevice *) pls->dev )->scanLine(0);
+
+    for ( i = 0; i < ( pls->xlength * pls->ylength ); i++ )
+    {
+        qt_mem[2] = input_mem[0]; /* R */
+        qt_mem[1] = input_mem[1]; /* G */
+        qt_mem[0] = input_mem[2]; /* B */
+        if ( pls->dev_mem_alpha == 1){
+	    qt_mem[3] = input_mem[3];
+	    input_mem += 4;
+	} 
+	else {
+	    input_mem += 3;
+	}
+	qt_mem += 4;
+    }
+
+    ( (QtRasterDevice*) ( pls->dev ) )->setResolution( dpi );
+
+    /* This is set so the we'll always make it past the qt_family_check(). */
+    pls->family = true;
+}
+
+void plD_bop_memqt( PLStream *pls )
+{
+    /* Do nothing to preserve user data */
+}
+
+void plD_eop_memqt( PLStream *pls )
+{
+    int           i;
+    unsigned char *memory;
+    unsigned char *qt_mem;
+
+    memory = ( (QtRasterDevice *) pls->dev )->memory;
+    qt_mem = ( (QtRasterDevice *) pls->dev )->scanLine(0);
+
+    for ( i = 0; i < ( pls->xlength * pls->ylength ); i++ )
+    {
+        memory[0]           = qt_mem[2]; /* R */
+	memory[1]           = qt_mem[1]; /* G */
+	memory[2]           = qt_mem[0]; /* B */
+	if ( pls->dev_mem_alpha == 1){
+	    memory[3] = qt_mem[3];
+	    memory += 4;
+	} 
+	else {
+	    memory += 3;
+	}
+	qt_mem += 4;
+    }
+}
+
 #endif

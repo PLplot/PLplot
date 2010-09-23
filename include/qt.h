@@ -180,6 +180,8 @@ public:
         setDotsPerMeterX( (int) ( ( dotsPerInch / 25.4 ) * 1000. ) );
         setDotsPerMeterY( (int) ( ( dotsPerInch / 25.4 ) * 1000. ) );
     }
+    /* used by the memqt driver */
+    unsigned char *memory;
 
 protected:
     char    format[5];

@@ -88,6 +88,7 @@ set(
   test_hebrew_diacritic.py
   test_mem.py
   test_memcairo.py
+  test_memqt.py
   )
 
 if(ENABLE_tk)
