@@ -2,7 +2,7 @@
 <!--
     libraries.xml: "The PLplot Libraries" chapter
 
-Copyright (C) 2009  Alan W. Irwin
+Copyright (C) 2009, 2010  Alan W. Irwin
 
 Redistribution and use in source (XML DocBook) and "compiled" forms
 (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -107,14 +107,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </entry>
 	  <entry>
 	    libplplotf95, libplplotf95c
-	  </entry>
-	</row>
-	<row>
-	  <entry>
-	    GNOME2 GUI
-	  </entry>
-	  <entry>
-	    libplplotgnome2
 	  </entry>
 	</row>
 	<row>

@@ -2,6 +2,11 @@
 PLPLOTCANVAS EXAMPLES
 ~~~~~~~~~~~~~~~~~~~~~
 
+N.B. gcw, gnome2, and pygcw have been retired since the 5.9.6 release.
+See README.release in the top-level directory for the reasons for this
+decision.  Therefore, none of what follows (which depends upon gnome2)
+will work any more.
+
 The PlplotCanvas examples are:
 
   plplotcanvas_demo.c

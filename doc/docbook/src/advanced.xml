@@ -175,8 +175,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    <row><entry>Conex vt320/tek emulator</entry><entry>conex</entry><entry>tek.c</entry></row>
 	    <row><entry>DG300 Terminal</entry><entry>dg300</entry><entry>dg300.c</entry></row>
 	    <row><entry>NeXT display (unsupported)</entry><entry>nx</entry><entry>next.c</entry></row>
-	    <row><entry>GNOME display</entry><entry>gnome</entry><entry>gnome.c</entry></row>
-	    <row><entry>GNOME Canvas Widget / Display</entry><entry>gcw</entry><entry>gcw.c</entry></row>
 	  </tbody>
 	</tgroup>
       </table>
@@ -1696,7 +1694,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	western-European languages) and much better display of characters on
 	computer screens using anti-aliasing and hinting.  Unicode fonts are
 	obtained by specifying a command-line option of -drvopt text for
-	the devices (currently ps, psc, png, jpeg, gif, gcw, and wingcc) 
+	the devices (currently ps, psc, png, jpeg, gif, and wingcc) 
 	where it has been implemented.
       </para>
       <para>
