@@ -179,10 +179,21 @@ if(CORE_BUILD)
     endif(ENABLE_pygcw)
   endif(BUILD_TEST)
 
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_plsmem.py.in
-    ${CMAKE_CURRENT_BINARY_DIR}/test_plsmem.py
-    )
+  set(PLSMEM_DEVICE_LIST)
+  foreach(memdriver mem memcairo memqt)
+    if(PLD_${memdriver})
+      list(APPEND PLSMEM_DEVICE_LIST ${memdriver})
+    endif(PLD_${memdriver})
+  endforeach(memdriver mem memcairo memqt)
+
+  if(PLSMEM_DEVICE_LIST)
+    string(REGEX REPLACE ";" "\", \"" PLSMEM_DEVICE_LIST "${PLSMEM_DEVICE_LIST}")
+    set(PLSMEM_DEVICE_LIST "[\"${PLSMEM_DEVICE_LIST}\"]")
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/test_plsmem.py.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_plsmem.py
+      )
+  endif(PLSMEM_DEVICE_LIST)
 
   set(PERM_SCRIPTS
     OWNER_READ
