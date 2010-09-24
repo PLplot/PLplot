@@ -189,11 +189,13 @@ if(CORE_BUILD)
   if(PLSMEM_DEVICE_LIST)
     string(REGEX REPLACE ";" "\", \"" PLSMEM_DEVICE_LIST "${PLSMEM_DEVICE_LIST}")
     set(PLSMEM_DEVICE_LIST "[\"${PLSMEM_DEVICE_LIST}\"]")
-    configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/test_plsmem.py.in
-      ${CMAKE_CURRENT_BINARY_DIR}/test_plsmem.py
-      )
+  else(PLSMEM_DEVICE_LIST)
+    set(PLSMEM_DEVICE_LIST "[]")
   endif(PLSMEM_DEVICE_LIST)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_plsmem.py.in
+    ${CMAKE_CURRENT_BINARY_DIR}/test_plsmem.py
+    )
 
   set(PERM_SCRIPTS
     OWNER_READ
@@ -204,6 +206,7 @@ if(CORE_BUILD)
     WORLD_READ
     WORLD_EXECUTE
     )
+
   install(FILES ${python_SCRIPTS} ${CMAKE_CURRENT_BINARY_DIR}/test_plsmem.py
     DESTINATION ${DATA_DIR}/examples/python
     PERMISSIONS ${PERM_SCRIPTS}
