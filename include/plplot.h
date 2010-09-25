@@ -1223,7 +1223,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
             PLINT text_justification, PLINT text_color, char **text,
             PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
-            PLINT nsymbols, PLINT *symbol_colors,
+            PLINT *nsymbols, PLINT *symbol_colors,
             PLFLT *symbol_scales, PLINT *symbols,
             PLFLT cmap0_height, PLINT *cmap0_colours, PLINT *cmap0_patterns );
 

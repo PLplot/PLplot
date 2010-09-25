@@ -85,7 +85,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
             PLINT text_justification, PLINT text_color, char **text,
             PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
-            PLINT nsymbols, PLINT *symbol_colors,
+            PLINT *nsymbols, PLINT *symbol_colors,
             PLFLT *symbol_scales, PLINT *symbols,
             PLFLT cmap0_height, PLINT *cmap0_colours, PLINT *cmap0_patterns )
 
@@ -110,7 +110,8 @@ c_pllegend( PLINT opt, PLFLT plot_width,
           symbol_scale_save = plsc->symht / plsc->symdef;
     PLFLT x_world_per_mm, y_world_per_mm, text_width = 0.;
     PLFLT total_width, total_height;
-    PLINT some_lines = 0, some_symbols = 0, some_cmap0s;
+    PLINT some_lines   = 0, some_symbols = 0, some_cmap0s;
+    PLINT max_nsymbols = 0;
 
     plschr( 0., text_scale );
 
@@ -119,7 +120,10 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         if ( opt_array[i] & PL_LEGEND_LINE )
             some_lines = 1;
         if ( opt_array[i] & PL_LEGEND_SYMBOL )
+        {
+            max_nsymbols = MAX( max_nsymbols, nsymbols[i] );
             some_symbols = 1;
+        }
         if ( opt_array[i] & PL_LEGEND_CMAP0 )
             some_cmap0s = 1;
     }
@@ -196,9 +200,9 @@ c_pllegend( PLINT opt, PLFLT plot_width,
 
     if ( some_symbols )
     {
-        nsymbols = MAX( 2, nsymbols );
-        if ( ( ( xs = (PLFLT *) malloc( nsymbols * sizeof ( PLFLT ) ) ) == NULL ) ||
-             ( ( ys = (PLFLT *) malloc( nsymbols * sizeof ( PLFLT ) ) ) == NULL ) )
+        max_nsymbols = MAX( 2, max_nsymbols );
+        if ( ( ( xs = (PLFLT *) malloc( max_nsymbols * sizeof ( PLFLT ) ) ) == NULL ) ||
+             ( ( ys = (PLFLT *) malloc( max_nsymbols * sizeof ( PLFLT ) ) ) == NULL ) )
         {
             plexit( "pllegend: Insufficient memory" );
         }
@@ -210,11 +214,6 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         // Factor should be unity.
         symbol_width = 0.5 * get_character_or_symbol_height( 0 ) *
                        fabs( ( xmax - xmin ) / ( ymax - ymin ) );
-        dxs = ( plot_x_end_world - plot_x_world - symbol_width ) / (double) ( nsymbols - 1 );
-        for ( j = 0; j < nsymbols; j++ )
-        {
-            xs[j] = plot_x_world + 0.5 * symbol_width + dxs * (double) j;
-        }
     }
 
     ty = text_y_world + 0.5 * text_spacing * character_height;
@@ -242,11 +241,13 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         {
             plcol0( symbol_colors[i] );
             plssym( 0., symbol_scales[i] );
-            for ( j = 0; j < nsymbols; j++ )
+            dxs = ( plot_x_end_world - plot_x_world - symbol_width ) / (double) ( MAX( nsymbols[i], 2 ) - 1 );
+            for ( j = 0; j < nsymbols[i]; j++ )
             {
+                xs[j] = plot_x_world + 0.5 * symbol_width + dxs * (double) j;
                 ys[j] = ty;
             }
-            plpoin( nsymbols, xs, ys, symbols[i] );
+            plpoin( nsymbols[i], xs, ys, symbols[i] );
         }
     }
     if ( some_symbols )

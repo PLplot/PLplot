@@ -51,7 +51,7 @@ plot1( int type )
     PLINT        line_colors[2];
     PLINT        line_styles[2];
     PLINT        line_widths[2];
-    PLINT        symbol_colors[2], symbols[2];
+    PLINT        nsymbols[2], symbol_colors[2], symbols[2];
     PLFLT        symbol_scales[2];
 
     pladv( 0 );
@@ -119,23 +119,25 @@ plot1( int type )
         line_colors[0]   = 2;
         line_colors[1]   = 3;
         line_styles[0]   = 1;
-        line_styles[1]   = 2;
+        line_styles[1]   = 1;
         line_widths[0]   = 1;
         line_widths[1]   = 1;
         symbol_colors[0] = 3;
         symbol_colors[1] = 3;
-        symbol_scales[0] = 1.;
+        symbol_scales[0] = 1.2;
         symbol_scales[1] = 1.;
-        symbols[0]       = 9;
+        nsymbols[0]      = 3;
+        nsymbols[1]      = 4;
+        symbols[0]       = 3;
         symbols[1]       = 3;
-        plscol0a( 15, 255, 255, 255, 0.2 );
+        plscol0a( 15, 128, 128, 128, 0.2 );
         pllegend( PL_LEGEND_BACKGROUND, 0.1,
             0.6, 0.95, 15,
             opt_array, 2,
             1., 1.0, 2.0,
             0., 1, text,
             line_colors, line_styles, line_widths,
-            5, symbol_colors, symbol_scales, symbols,
+            nsymbols, symbol_colors, symbol_scales, symbols,
             0., NULL, NULL );
     }
 }
