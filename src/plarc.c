@@ -21,7 +21,7 @@
 
 #include "plplotP.h"
 
-#define CIRCLE_SEGMENTS                    ( PL_MAXPOLY - 1 )
+#define CIRCLE_SEGMENTS    ( PL_MAXPOLY - 1 )
 #define DEG_TO_RAD( x )                    ( ( x ) * M_PI / 180.0 )
 
 #define PLARC_POINT_X( x, a, b, theta )    ( ( x ) + ( ( a ) * cos( theta ) ) )

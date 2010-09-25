@@ -1681,8 +1681,8 @@ void plD_dispatch_init_memqt( PLDispatchTable *pdt )
 
 void plD_init_memqt( PLStream * pls )
 {
-    int i;
-    double dpi;
+    int           i;
+    double        dpi;
     unsigned char *qt_mem;
     unsigned char *input_mem;
 
@@ -1723,7 +1723,7 @@ void plD_init_memqt( PLStream * pls )
     pls->ylength = pls->phyyma;
 
     /* Save a pointer to the user supplied memory */
-    input_mem = (unsigned char *)pls->dev;
+    input_mem = (unsigned char *) pls->dev;
 
     /* Create a appropriately sized raster device */
     pls->dev = new QtRasterDevice( pls->xlength, pls->ylength );
@@ -1746,21 +1746,23 @@ void plD_init_memqt( PLStream * pls )
        This device assumes that the format of the QImage
        is RGB32 (or ARGB). */
 
-    qt_mem = ( (QtRasterDevice *) pls->dev )->scanLine(0);
+    qt_mem = ( (QtRasterDevice *) pls->dev )->scanLine( 0 );
 
     for ( i = 0; i < ( pls->xlength * pls->ylength ); i++ )
     {
         qt_mem[2] = input_mem[0]; /* R */
         qt_mem[1] = input_mem[1]; /* G */
         qt_mem[0] = input_mem[2]; /* B */
-        if ( pls->dev_mem_alpha == 1){
-	    qt_mem[3] = input_mem[3];
-	    input_mem += 4;
-	} 
-	else {
-	    input_mem += 3;
-	}
-	qt_mem += 4;
+        if ( pls->dev_mem_alpha == 1 )
+        {
+            qt_mem[3]  = input_mem[3];
+            input_mem += 4;
+        }
+        else
+        {
+            input_mem += 3;
+        }
+        qt_mem += 4;
     }
 
     ( (QtRasterDevice*) ( pls->dev ) )->setResolution( dpi );
@@ -1781,21 +1783,23 @@ void plD_eop_memqt( PLStream *pls )
     unsigned char *qt_mem;
 
     memory = ( (QtRasterDevice *) pls->dev )->memory;
-    qt_mem = ( (QtRasterDevice *) pls->dev )->scanLine(0);
+    qt_mem = ( (QtRasterDevice *) pls->dev )->scanLine( 0 );
 
     for ( i = 0; i < ( pls->xlength * pls->ylength ); i++ )
     {
-        memory[0]           = qt_mem[2]; /* R */
-	memory[1]           = qt_mem[1]; /* G */
-	memory[2]           = qt_mem[0]; /* B */
-	if ( pls->dev_mem_alpha == 1){
-	    memory[3] = qt_mem[3];
-	    memory += 4;
-	} 
-	else {
-	    memory += 3;
-	}
-	qt_mem += 4;
+        memory[0] = qt_mem[2];           /* R */
+        memory[1] = qt_mem[1];           /* G */
+        memory[2] = qt_mem[0];           /* B */
+        if ( pls->dev_mem_alpha == 1 )
+        {
+            memory[3] = qt_mem[3];
+            memory   += 4;
+        }
+        else
+        {
+            memory += 3;
+        }
+        qt_mem += 4;
     }
 }
 
