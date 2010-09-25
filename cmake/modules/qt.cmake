@@ -102,7 +102,7 @@ if(NOT ANY_QT_DEVICE)
     set(PLD_qtwidget OFF CACHE BOOL "Enable Qt interactive device" FORCE)
     set(PLD_svgqt OFF CACHE BOOL "Enable Qt SVG device" FORCE)
     set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
-    set(PLD_memqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
+    set(PLD_memqt OFF CACHE BOOL "Enable Qt mem device" FORCE)
 endif(NOT ANY_QT_DEVICE)
 
 if(DEFAULT_NO_BINDINGS)
