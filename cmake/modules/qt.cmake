@@ -31,6 +31,7 @@
 # PLD_qtwidget		  - ON means the qtwidget device is enabled.
 # PLD_svgqt		  - ON means the svgqt device is enabled.
 # PLD_extqt		  - ON means the extqt device is enabled.
+# PLD_memqt               - ON means the memqt device is enabled.
 # qt_COMPILE_FLAGS	  - individual COMPILE_FLAGS required to compile wxwidgets
 # 			    device.
 # qt_LINK_FLAGS	  	  - list of full path names of libraries and
@@ -50,7 +51,7 @@
 # PYQT_SIP_DIR		  - sip system directory
 # PYQT_SIP_FLAGS	  - sip command flags
 
-if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
+if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt OR PLD_memqt)
   set(ANY_QT_DEVICE ON)
 endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt)
 
@@ -101,6 +102,7 @@ if(NOT ANY_QT_DEVICE)
     set(PLD_qtwidget OFF CACHE BOOL "Enable Qt interactive device" FORCE)
     set(PLD_svgqt OFF CACHE BOOL "Enable Qt SVG device" FORCE)
     set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
+    set(PLD_memqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
 endif(NOT ANY_QT_DEVICE)
 
 if(DEFAULT_NO_BINDINGS)
