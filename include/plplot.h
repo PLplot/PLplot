@@ -1209,17 +1209,23 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 /* Routine for drawing line, symbol, cmap0, or cmap1 legends */
 
 // Flags for pllegend.
-#define PL_LEGEND_LINE         1
-#define PL_LEGEND_SYMBOL       2
-#define PL_LEGEND_CMAP0        4
-#define PL_LEGEND_CMAP1        8
-#define PL_LEGEND_TEXT_LEFT    16
+#define PL_LEGEND_LINE          1
+#define PL_LEGEND_SYMBOL        2
+#define PL_LEGEND_CMAP0         4
+#define PL_LEGEND_CMAP1         8
+#define PL_LEGEND_TEXT_LEFT     16
+#define PL_LEGEND_BACKGROUND    32
 
 PLDLLIMPEXP void
-c_pllegend( PLINT opt, PLFLT plot_width, PLFLT x, PLFLT y, PLINT nlegend,
-            PLINT *text_colors, char **text, PLINT *cmap0_colors,
-            PLINT *line_style, PLINT *line_width,
-            PLINT nsymbols, PLINT *symbols );
+c_pllegend( PLINT opt, PLFLT plot_width,
+            PLFLT x, PLFLT y, PLINT bg_color,
+            PLINT *opt_array, PLINT nlegend,
+            PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
+            PLINT text_justification, PLINT text_color, char **text,
+            PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
+            PLINT nsymbols, PLINT *symbol_colors,
+            PLFLT *symbol_scales, PLINT *symbols,
+            PLFLT cmap0_height, PLINT *cmap0_colours, PLINT *cmap0_patterns );
 
 /* Sets position of the light source */
 PLDLLIMPEXP void

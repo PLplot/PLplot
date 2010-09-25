@@ -47,9 +47,12 @@ plot1( int type )
     static PLFLT freql[101], ampl[101], phase[101];
     PLFLT        f0, freq;
     char         *text[2];
-    PLINT        text_colors[2];
-    PLINT        cmap0_colors[2];
-    PLINT        line_style[2], line_width[2], symbols[2];
+    PLINT        opt_array[2];
+    PLINT        line_colors[2];
+    PLINT        line_styles[2];
+    PLINT        line_widths[2];
+    PLINT        symbol_colors[2], symbols[2];
+    PLFLT        symbol_scales[2];
 
     pladv( 0 );
 
@@ -109,21 +112,30 @@ plot1( int type )
         plmtex( "r", 5.0, 0.5, 0.5, "Phase shift (degrees)" );
 
         // Draw a legend
-        text[0]         = "Amplitude";
-        text[1]         = "Phase shift";
-        text_colors[0]  = 1;
-        text_colors[1]  = 1;
-        cmap0_colors[0] = 2;
-        cmap0_colors[1] = 3;
-        line_style[0] = 1;
-        line_style[1] = 2;
-        line_width[0] = 8;
-        line_width[1] = 2;
-        plssym( 0., 3. );
-        symbols[0] = 9;
-        symbols[1] = 3;
-        pllegend( PL_LEGEND_LINE | PL_LEGEND_SYMBOL, 0.3, 0.1, 0.95,
-                  2, text_colors, text, cmap0_colors, line_style,
-                  line_width, 5, symbols );
+        opt_array[0]     = PL_LEGEND_LINE;
+        opt_array[1]     = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
+        text[0]          = "Amplitude";
+        text[1]          = "Phase shift";
+        line_colors[0]   = 2;
+        line_colors[1]   = 3;
+        line_styles[0]   = 1;
+        line_styles[1]   = 2;
+        line_widths[0]   = 1;
+        line_widths[1]   = 1;
+        symbol_colors[0] = 3;
+        symbol_colors[1] = 3;
+        symbol_scales[0] = 1.;
+        symbol_scales[1] = 1.;
+        symbols[0]       = 9;
+        symbols[1]       = 3;
+        plscol0a( 15, 255, 255, 255, 0.2 );
+        pllegend( PL_LEGEND_BACKGROUND, 0.1,
+            0.6, 0.95, 15,
+            opt_array, 2,
+            1., 1.0, 2.0,
+            0., 1, text,
+            line_colors, line_styles, line_widths,
+            5, symbol_colors, symbol_scales, symbols,
+            0., NULL, NULL );
     }
 }
