@@ -155,10 +155,6 @@ c_pllegend( PLINT opt, PLFLT plot_width,
                    text_offset * character_width;
     text_y_world = normalized_to_world_y( text_y );
 
-    //    if (opt & PL_LEGEND_TEXT_LEFT)
-    {
-        //
-    }
     // Calculate maximum width of text area (first in mm, then converted
     // to x world coordinates) including text_offset area.
     for ( i = 0; i < nlegend; i++ )
@@ -196,7 +192,14 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         plcol0( col0_save );
     }
 
-    // adjust for border after background is drawn.
+    if ( opt & PL_LEGEND_TEXT_LEFT )
+    {
+        // text area on left, plot area on right.
+        text_x_world      = plot_x_world;
+        plot_x_world     += text_width;
+        plot_x_end_world += text_width;
+    }
+    // adjust border after background is drawn.
     plot_x_world     += total_width_border;
     plot_x_end_world += total_width_border;
     text_x_world     += total_width_border;
