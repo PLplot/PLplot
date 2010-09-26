@@ -48,6 +48,7 @@ plot1( int type )
     PLFLT        f0, freq;
     char         *text[2];
     PLINT        opt_array[2];
+    PLINT        text_colors[2];
     PLINT        line_colors[2];
     PLINT        line_styles[2];
     PLINT        line_widths[2];
@@ -114,6 +115,8 @@ plot1( int type )
         // Draw a legend
         opt_array[0]     = PL_LEGEND_LINE;
         opt_array[1]     = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
+        text_colors[0]   = 2;
+        text_colors[1]   = 3;
         text[0]          = "Amplitude";
         text[1]          = "Phase shift";
         line_colors[0]   = 2;
@@ -134,8 +137,8 @@ plot1( int type )
         pllegend( PL_LEGEND_BACKGROUND, 0.1,
             0.6, 0.95, 15,
             opt_array, 2,
-            1., 1.0, 2.0,
-            0., 1, text,
+            1.0, 1.0, 2.0,
+            0., text_colors, text,
             line_colors, line_styles, line_widths,
             nsymbols, symbol_colors, symbol_scales, symbols,
             0., NULL, NULL );

@@ -83,7 +83,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
             PLFLT x, PLFLT y, PLINT bg_color,
             PLINT *opt_array, PLINT nlegend,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
-            PLINT text_justification, PLINT text_color, char **text,
+            PLINT text_justification, PLINT *text_colors, char **text,
             PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
             PLINT *nsymbols, PLINT *symbol_colors,
             PLFLT *symbol_scales, PLINT *symbols,
@@ -109,7 +109,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
     PLFLT text_scale_save   = plsc->chrht / plsc->chrdef,
           symbol_scale_save = plsc->symht / plsc->symdef;
     PLFLT x_world_per_mm, y_world_per_mm, text_width = 0.;
-    PLFLT total_width, total_height;
+    PLFLT total_width_border, total_width, total_height;
     PLINT some_lines   = 0, some_symbols = 0, some_cmap0s;
     PLINT max_nsymbols = 0;
 
@@ -166,9 +166,13 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         text_width = MAX( text_width, plstrl( text[i] ) );
     }
     get_world_per_mm( &x_world_per_mm, &y_world_per_mm );
-    text_width   = x_world_per_mm * text_width + text_offset * character_width;
-    total_width  = text_width + ( xmax - xmin ) * plot_width;
-    total_height = nlegend * text_spacing * character_height;
+    text_width = x_world_per_mm * text_width + text_offset * character_width;
+    // make small border area where only the background is plotted
+    // for left and right of legend.  0.4 seems to be a reasonable factor
+    // that gives a good-looking result.
+    total_width_border = 0.4 * character_width;
+    total_width        = 2. * total_width_border + text_width + ( xmax - xmin ) * plot_width;
+    total_height       = nlegend * text_spacing * character_height;
 
     if ( opt & PL_LEGEND_BACKGROUND )
     {
@@ -191,6 +195,11 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         plpsty( pattern_save );
         plcol0( col0_save );
     }
+
+    // adjust for border after background is drawn.
+    plot_x_world     += total_width_border;
+    plot_x_end_world += total_width_border;
+    text_x_world     += total_width_border;
 
     if ( some_lines )
     {
@@ -223,7 +232,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         // y position of text, lines, symbols, and/or centre of cmap0 box.
         ty = ty - ( text_spacing * character_height );
         // Label/name for the legend
-        plcol0( text_color );
+        plcol0( text_colors[i] );
         plptex( text_x_world, ty, 0.0, 0.0, 0.0, text[i] );
 
         if ( opt_array[i] & PL_LEGEND_LINE )
