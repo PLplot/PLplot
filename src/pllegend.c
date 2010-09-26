@@ -59,8 +59,8 @@ static PLFLT get_character_or_symbol_height( PLINT ifcharacter )
 #define normalized_to_world_x( nx )    ( ( xmin ) + ( nx ) * ( ( xmax ) - ( xmin ) ) )
 #define normalized_to_world_y( ny )    ( ( ymin ) + ( ny ) * ( ( ymax ) - ( ymin ) ) )
 
-// pllegend - Draw a legend using lines, symbols, cmap0 colours, or cmap1
-//   colours.
+// pllegend - Draw a legend using lines, symbols, cmap0 colors, or cmap1
+//   colors.
 // plot_width: width of plotted areas (lines, symbols, or coloured
 //   area) in legend. (Uses normalized viewport units).
 // text_offset: offset of text area from plot area in units of character width.
@@ -87,7 +87,8 @@ c_pllegend( PLINT opt, PLFLT plot_width,
             PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
             PLINT *nsymbols, PLINT *symbol_colors,
             PLFLT *symbol_scales, PLINT *symbols,
-            PLINT *cmap0_colors, PLINT *cmap0_patterns, PLFLT *cmap0_scales )
+            PLINT *cmap0_colors, PLFLT *cmap1_colors,
+            PLINT *cmap_patterns, PLFLT *cmap_scales )
 
 {
     // Viewport world-coordinate limits
@@ -101,7 +102,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
     // y-position of the current legend entry
     PLFLT ty, dty;
     // Positions of the legend entries
-    PLFLT dxs, *xs, *ys, xl[2], yl[2], xcmap0[4], ycmap0[4];
+    PLFLT dxs, *xs, *ys, xl[2], yl[2], xcmap[4], ycmap[4];
     PLINT i, j;
     // Active attributes to be saved and restored afterward.
     PLINT col0_save         = plsc->icol0,
@@ -112,7 +113,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
           symbol_scale_save = plsc->symht / plsc->symdef;
     PLFLT x_world_per_mm, y_world_per_mm, text_width = 0.;
     PLFLT total_width_border, total_width, total_height;
-    PLINT some_lines   = 0, some_symbols = 0, some_cmap0s;
+    PLINT some_lines   = 0, some_symbols = 0, some_cmaps = 0;
     PLINT max_nsymbols = 0;
 
     plschr( 0., text_scale );
@@ -126,15 +127,8 @@ c_pllegend( PLINT opt, PLFLT plot_width,
             max_nsymbols = MAX( max_nsymbols, nsymbols[i] );
             some_symbols = 1;
         }
-        if ( opt_array[i] & PL_LEGEND_CMAP0 )
-            some_cmap0s = 1;
-    }
-
-    //sanity check
-    if ( ( opt & PL_LEGEND_CMAP1 ) && ( some_lines || some_symbols || some_cmap0s ) )
-    {
-        plabort( "pllegend: invalid attempt to combine cmap1 legend with any other style of legend" );
-        return;
+        if ( opt_array[i] & ( PL_LEGEND_CMAP0 | PL_LEGEND_CMAP1 ) )
+            some_cmaps = 1;
     }
 
     plgvpw( &xmin, &xmax, &ymin, &ymax );
@@ -204,12 +198,12 @@ c_pllegend( PLINT opt, PLFLT plot_width,
     plot_x_end_world += total_width_border;
     text_x_world     += total_width_border;
 
-    if ( some_cmap0s )
+    if ( some_cmaps )
     {
-        xcmap0[0] = plot_x_world;
-        xcmap0[1] = plot_x_world;
-        xcmap0[2] = plot_x_end_world;
-        xcmap0[3] = plot_x_end_world;
+        xcmap[0] = plot_x_world;
+        xcmap[1] = plot_x_world;
+        xcmap[2] = plot_x_end_world;
+        xcmap[3] = plot_x_end_world;
     }
 
     if ( some_lines )
@@ -250,12 +244,22 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         if ( opt_array[i] & PL_LEGEND_CMAP0 )
         {
             plcol0( cmap0_colors[i] );
-            plpsty( cmap0_patterns[i] );
-            ycmap0[0] = ty + 0.5 * dty * cmap0_scales[i];
-            ycmap0[1] = ty - 0.5 * dty * cmap0_scales[i];
-            ycmap0[2] = ty - 0.5 * dty * cmap0_scales[i];
-            ycmap0[3] = ty + 0.5 * dty * cmap0_scales[i];
-            plfill( 4, xcmap0, ycmap0 );
+            plpsty( cmap_patterns[i] );
+            ycmap[0] = ty + 0.5 * dty * cmap_scales[i];
+            ycmap[1] = ty - 0.5 * dty * cmap_scales[i];
+            ycmap[2] = ty - 0.5 * dty * cmap_scales[i];
+            ycmap[3] = ty + 0.5 * dty * cmap_scales[i];
+            plfill( 4, xcmap, ycmap );
+        }
+        if ( opt_array[i] & PL_LEGEND_CMAP1 )
+        {
+            plcol1( cmap1_colors[i] );
+            plpsty( cmap_patterns[i] );
+            ycmap[0] = ty + 0.5 * dty * cmap_scales[i];
+            ycmap[1] = ty - 0.5 * dty * cmap_scales[i];
+            ycmap[2] = ty - 0.5 * dty * cmap_scales[i];
+            ycmap[3] = ty + 0.5 * dty * cmap_scales[i];
+            plfill( 4, xcmap, ycmap );
         }
         if ( opt_array[i] & PL_LEGEND_LINE )
         {
