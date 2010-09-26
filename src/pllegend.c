@@ -111,10 +111,23 @@ c_pllegend( PLINT opt, PLFLT plot_width,
           pattern_save      = plsc->patt;
     PLFLT text_scale_save   = plsc->chrht / plsc->chrdef,
           symbol_scale_save = plsc->symht / plsc->symdef;
+    // Saved world coordinates of viewport.
+    PLFLT xwmin_save, xwmax_save, ywmin_save, ywmax_save;
+    // Saved normalized coordinates of viewport.
+    PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
+
     PLFLT x_world_per_mm, y_world_per_mm, text_width = 0.;
     PLFLT total_width_border, total_width, total_height;
+
     PLINT some_lines   = 0, some_symbols = 0, some_cmaps = 0;
     PLINT max_nsymbols = 0;
+
+    plgvpd( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
+    plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
+    // viewport corresponds to sub-page so that all legends will
+    // be clipped at sub-page boundaries.
+    plvpor( 0., 1., 0., 1. );
+    plwind( 0., 1., 0., 1. );
 
     plschr( 0., text_scale );
 
@@ -297,6 +310,8 @@ c_pllegend( PLINT opt, PLFLT plot_width,
     plschr( 0., text_scale_save );
     plssym( 0., symbol_scale_save );
     plpsty( pattern_save );
+    plvpor( xdmin_save, xdmax_save, ydmin_save, ydmax_save );
+    plwind( xwmin_save, xwmax_save, ywmin_save, ywmax_save );
 
     return;
 }

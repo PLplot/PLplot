@@ -146,8 +146,8 @@ plot1( int type )
     cmap_scales[0]   = 0.5;
     cmap_scales[1]   = 0.5;
     plscol0a( 15, 32, 32, 32, 0.90 );
-    pllegend( PL_LEGEND_BACKGROUND, 0.1,
-        0.6, 0.95, 15,
+    pllegend( PL_LEGEND_BACKGROUND, 0.06,
+        0.57, 0.85, 15,
         opt_array, nlegend,
         1.0, 1.0, 2.0,
         0., text_colors, text,
