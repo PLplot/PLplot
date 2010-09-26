@@ -46,6 +46,7 @@ plot1( int type )
     int          i;
     static PLFLT freql[101], ampl[101], phase[101];
     PLFLT        f0, freq;
+    PLINT        nlegend;
     char         *text[2];
     PLINT        opt_array[2];
     PLINT        text_colors[2];
@@ -88,7 +89,7 @@ plot1( int type )
 
     plcol0( 2 );
     plline( 101, freql, ampl );
-    plcol0( 1 );
+    plcol0( 2 );
     plptex( 1.6, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade" );
 
 /* Put labels on */
@@ -98,6 +99,7 @@ plot1( int type )
     plmtex( "t", 2.0, 0.5, 0.5, "Single Pole Low-Pass Filter" );
     plcol0( 2 );
     plmtex( "l", 5.0, 0.5, 0.5, "Amplitude (dB)" );
+    nlegend = 1;
 
 /* For the gridless case, put phase vs freq on same plot */
 
@@ -111,36 +113,36 @@ plot1( int type )
         plpoin( 101, freql, phase, 3 );
         plcol0( 3 );
         plmtex( "r", 5.0, 0.5, 0.5, "Phase shift (degrees)" );
-
-        // Draw a legend
-        opt_array[0]     = PL_LEGEND_LINE;
-        opt_array[1]     = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
-        text_colors[0]   = 2;
-        text_colors[1]   = 3;
-        text[0]          = "Amplitude";
-        text[1]          = "Phase shift";
-        line_colors[0]   = 2;
-        line_colors[1]   = 3;
-        line_styles[0]   = 1;
-        line_styles[1]   = 1;
-        line_widths[0]   = 1;
-        line_widths[1]   = 1;
-        symbol_colors[0] = 3;
-        symbol_colors[1] = 3;
-        symbol_scales[0] = 1.2;
-        symbol_scales[1] = 1.;
-        nsymbols[0]      = 3;
-        nsymbols[1]      = 4;
-        symbols[0]       = 3;
-        symbols[1]       = 3;
-        plscol0a( 15, 128, 128, 128, 0.2 );
-        pllegend( PL_LEGEND_BACKGROUND, 0.1,
-            0.6, 0.95, 15,
-            opt_array, 2,
-            1.0, 1.0, 2.0,
-            0., text_colors, text,
-            line_colors, line_styles, line_widths,
-            nsymbols, symbol_colors, symbol_scales, symbols,
-            0., NULL, NULL );
+        nlegend = 2;
     }
+    // Draw a legend
+    opt_array[0]     = PL_LEGEND_LINE;
+    opt_array[1]     = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
+    text_colors[0]   = 2;
+    text_colors[1]   = 3;
+    text[0]          = "Amplitude";
+    text[1]          = "Phase shift";
+    line_colors[0]   = 2;
+    line_colors[1]   = 3;
+    line_styles[0]   = 1;
+    line_styles[1]   = 1;
+    line_widths[0]   = 1;
+    line_widths[1]   = 1;
+    symbol_colors[0] = 3;
+    symbol_colors[1] = 3;
+    symbol_scales[0] = 1.2;
+    symbol_scales[1] = 1.;
+    nsymbols[0]      = 3;
+    nsymbols[1]      = 4;
+    symbols[0]       = 3;
+    symbols[1]       = 3;
+    plscol0a( 15, 32, 32, 32, 0.90 );
+    pllegend( PL_LEGEND_BACKGROUND, 0.1,
+        0.6, 0.95, 15,
+        opt_array, nlegend,
+        1.0, 1.0, 2.0,
+        0., text_colors, text,
+        line_colors, line_styles, line_widths,
+        nsymbols, symbol_colors, symbol_scales, symbols,
+        0., NULL, NULL );
 }
