@@ -1225,7 +1225,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
             PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
             PLINT *nsymbols, PLINT *symbol_colors,
             PLFLT *symbol_scales, PLINT *symbols,
-            PLFLT cmap0_height, PLINT *cmap0_colours, PLINT *cmap0_patterns );
+            PLINT *cmap0_colors, PLINT *cmap0_patterns, PLFLT *cmap0_scales );
 
 /* Sets position of the light source */
 PLDLLIMPEXP void

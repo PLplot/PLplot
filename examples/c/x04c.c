@@ -54,7 +54,8 @@ plot1( int type )
     PLINT        line_styles[2];
     PLINT        line_widths[2];
     PLINT        nsymbols[2], symbol_colors[2], symbols[2];
-    PLFLT        symbol_scales[2];
+    PLINT        cmap0_colors[2], cmap0_patterns[2];
+    PLFLT        symbol_scales[2], cmap0_scales[2];
 
     pladv( 0 );
 
@@ -116,26 +117,32 @@ plot1( int type )
         nlegend = 2;
     }
     // Draw a legend
-    opt_array[0]     = PL_LEGEND_LINE;
-    opt_array[1]     = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
-    text_colors[0]   = 2;
-    text_colors[1]   = 3;
-    text[0]          = "Amplitude";
-    text[1]          = "Phase shift";
-    line_colors[0]   = 2;
-    line_colors[1]   = 3;
-    line_styles[0]   = 1;
-    line_styles[1]   = 1;
-    line_widths[0]   = 1;
-    line_widths[1]   = 1;
-    symbol_colors[0] = 3;
-    symbol_colors[1] = 3;
-    symbol_scales[0] = 1.2;
-    symbol_scales[1] = 1.;
-    nsymbols[0]      = 3;
-    nsymbols[1]      = 4;
-    symbols[0]       = 3;
-    symbols[1]       = 3;
+    opt_array[0]      = PL_LEGEND_LINE;
+    opt_array[1]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
+    text_colors[0]    = 2;
+    text_colors[1]    = 3;
+    text[0]           = "Amplitude";
+    text[1]           = "Phase shift";
+    line_colors[0]    = 2;
+    line_colors[1]    = 3;
+    line_styles[0]    = 1;
+    line_styles[1]    = 1;
+    line_widths[0]    = 1;
+    line_widths[1]    = 1;
+    symbol_colors[0]  = 2;
+    symbol_colors[1]  = 3;
+    symbol_scales[0]  = 1.2;
+    symbol_scales[1]  = 1.;
+    nsymbols[0]       = 3;
+    nsymbols[1]       = 4;
+    symbols[0]        = 3;
+    symbols[1]        = 3;
+    cmap0_colors[0]   = 2;
+    cmap0_colors[1]   = 3;
+    cmap0_patterns[0] = 0;
+    cmap0_patterns[1] = 3;
+    cmap0_scales[0]   = 0.5;
+    cmap0_scales[1]   = 0.5;
     plscol0a( 15, 32, 32, 32, 0.90 );
     pllegend( PL_LEGEND_BACKGROUND, 0.1,
         0.6, 0.95, 15,
@@ -144,5 +151,5 @@ plot1( int type )
         0., text_colors, text,
         line_colors, line_styles, line_widths,
         nsymbols, symbol_colors, symbol_scales, symbols,
-        0., NULL, NULL );
+        cmap0_colors, cmap0_patterns, cmap0_scales );
 }

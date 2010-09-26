@@ -87,7 +87,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
             PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
             PLINT *nsymbols, PLINT *symbol_colors,
             PLFLT *symbol_scales, PLINT *symbols,
-            PLFLT cmap0_height, PLINT *cmap0_colours, PLINT *cmap0_patterns )
+            PLINT *cmap0_colors, PLINT *cmap0_patterns, PLFLT *cmap0_scales )
 
 {
     // Viewport world-coordinate limits
@@ -99,13 +99,15 @@ c_pllegend( PLINT opt, PLFLT plot_width,
     // Character height (world coordinates)
     PLFLT character_height, character_width, symbol_width;
     // y-position of the current legend entry
-    PLFLT ty;
+    PLFLT ty, dty;
     // Positions of the legend entries
-    PLFLT dxs, *xs, *ys, xl[2], yl[2];
+    PLFLT dxs, *xs, *ys, xl[2], yl[2], xcmap0[4], ycmap0[4];
     PLINT i, j;
     // Active attributes to be saved and restored afterward.
-    PLINT col0_save         = plsc->icol0, line_style_save = plsc->line_style,
-          line_width_save   = plsc->width;
+    PLINT col0_save         = plsc->icol0,
+          line_style_save   = plsc->line_style,
+          line_width_save   = plsc->width,
+          pattern_save      = plsc->patt;
     PLFLT text_scale_save   = plsc->chrht / plsc->chrdef,
           symbol_scale_save = plsc->symht / plsc->symdef;
     PLFLT x_world_per_mm, y_world_per_mm, text_width = 0.;
@@ -172,8 +174,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
 
     if ( opt & PL_LEGEND_BACKGROUND )
     {
-        PLINT pattern_save = plsc->patt;
-        PLFLT xbg[4]       = {
+        PLFLT xbg[4] = {
             plot_x_world,
             plot_x_world,
             plot_x_world + total_width,
@@ -188,7 +189,6 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         plpsty( 0 );
         plcol0( bg_color );
         plfill( 4, xbg, ybg );
-        plpsty( pattern_save );
         plcol0( col0_save );
     }
 
@@ -203,6 +203,14 @@ c_pllegend( PLINT opt, PLFLT plot_width,
     plot_x_world     += total_width_border;
     plot_x_end_world += total_width_border;
     text_x_world     += total_width_border;
+
+    if ( some_cmap0s )
+    {
+        xcmap0[0] = plot_x_world;
+        xcmap0[1] = plot_x_world;
+        xcmap0[2] = plot_x_end_world;
+        xcmap0[3] = plot_x_end_world;
+    }
 
     if ( some_lines )
     {
@@ -228,16 +236,27 @@ c_pllegend( PLINT opt, PLFLT plot_width,
                        fabs( ( xmax - xmin ) / ( ymax - ymin ) );
     }
 
-    ty = text_y_world + 0.5 * text_spacing * character_height;
+    dty = text_spacing * character_height;
+    ty  = text_y_world + 0.5 * dty;
     // Draw each legend entry
     for ( i = 0; i < nlegend; i++ )
     {
         // y position of text, lines, symbols, and/or centre of cmap0 box.
-        ty = ty - ( text_spacing * character_height );
+        ty = ty - dty;
         // Label/name for the legend
         plcol0( text_colors[i] );
         plptex( text_x_world, ty, 0.0, 0.0, 0.0, text[i] );
 
+        if ( opt_array[i] & PL_LEGEND_CMAP0 )
+        {
+            plcol0( cmap0_colors[i] );
+            plpsty( cmap0_patterns[i] );
+            ycmap0[0] = ty + 0.5 * dty * cmap0_scales[i];
+            ycmap0[1] = ty - 0.5 * dty * cmap0_scales[i];
+            ycmap0[2] = ty - 0.5 * dty * cmap0_scales[i];
+            ycmap0[3] = ty + 0.5 * dty * cmap0_scales[i];
+            plfill( 4, xcmap0, ycmap0 );
+        }
         if ( opt_array[i] & PL_LEGEND_LINE )
         {
             plcol0( line_colors[i] );
@@ -249,6 +268,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
             pllsty( line_style_save );
             plwid( line_width_save );
         }
+
         if ( opt_array[i] & PL_LEGEND_SYMBOL )
         {
             plcol0( symbol_colors[i] );
@@ -272,6 +292,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
     plcol0( col0_save );
     plschr( 0., text_scale_save );
     plssym( 0., symbol_scale_save );
+    plpsty( pattern_save );
 
     return;
 }
