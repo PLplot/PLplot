@@ -1,38 +1,38 @@
-/* $Id$
- *
- * Copyright (C) 2004  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+// Copyright (C) 2004  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
-/*! @file
- *
- *  Page/subpage handling routines.
- */
+//! @file
+//
+//  Page/subpage handling routines.
+//
 
 
 #include "plplotP.h"
 
 
-/*--------------------------------------------------------------------------*/
-/*! Advance to subpage "page", or to the next one if "page" = 0.
- *
- *  @param page : subpage identifier or 0
- */
+//--------------------------------------------------------------------------
+//! Advance to subpage "page" or to the next one if "page" = 0.
+//!
+//! @param page : subpage identifier or 0
+//!
 void
 c_pladv( PLINT page )
 {
@@ -66,10 +66,10 @@ c_pladv( PLINT page )
 }
 
 
-/*--------------------------------------------------------------------------*/
-/*! Clear current subpage.  Subpages can be set with pladv before
- *  calling plclear. Not all drivers support this.
- */
+//--------------------------------------------------------------------------
+//! Clear current subpage.  Subpages can be set with pladv before
+//! calling plclear. Not all drivers support this.
+//
 void
 c_plclear( void )
 {
@@ -81,7 +81,7 @@ c_plclear( void )
 
     if ( plsc->dev_clear )
         plP_esc( PLESC_CLEAR, NULL );
-    else   /* driver does not support clear, fill using background color */
+    else   // driver does not support clear, fill using background color
 
     {
         short x[5], y[5];
@@ -98,9 +98,9 @@ c_plclear( void )
 }
 
 
-/*--------------------------------------------------------------------------*/
-/*! End current page.
- */
+//--------------------------------------------------------------------------
+//! End current page.
+//!
 void
 c_pleop( void )
 {
@@ -115,9 +115,9 @@ c_pleop( void )
 }
 
 
-/*--------------------------------------------------------------------------*/
-/*! Start new page. Should only be used with pleop().
- */
+//--------------------------------------------------------------------------
+//! Start new page. Should only be used with pleop().
+//!
 void
 c_plbop( void )
 {
@@ -132,15 +132,15 @@ c_plbop( void )
 }
 
 
-/*--------------------------------------------------------------------------*/
-/*! Set up plot parameters according to the number of subpages.
- */
+//--------------------------------------------------------------------------
+//! Set up plot parameters according to the number of subpages.
+//!
 void
 plP_subpInit( void )
 {
     PLFLT scale, size_chr, size_sym, size_maj, size_min, theta, rat;
 
-/* Subpage checks */
+// Subpage checks
 
     if ( plsc->nsubx <= 0 )
         plsc->nsubx = 1;
@@ -149,20 +149,20 @@ plP_subpInit( void )
 
     plsc->cursub = 0;
 
-/*
- * Set default sizes
- * Global scaling:
- *	Normalize to the page length for more uniform results.
- *      A virtual page length of 200 mm is assumed.
- * Subpage scaling:
- *	Reduce sizes with plot area (non-proportional, so that character
- *	size doesn't get too small).
- */
+//
+// Set default sizes
+// Global scaling:
+//	Normalize to the page length for more uniform results.
+//      A virtual page length of 200 mm is assumed.
+// Subpage scaling:
+//	Reduce sizes with plot area (non-proportional, so that character
+//	size doesn't get too small).
+//
     scale = 0.5 *
             ( ( plsc->phyxma - plsc->phyxmi ) / plsc->xpmm +
               ( plsc->phyyma - plsc->phyymi ) / plsc->ypmm ) / 200.0;
 
-    /* Take account of scaling caused by change of orientation */
+    // Take account of scaling caused by change of orientation
     if ( plsc->difilt && PLDI_ORI )
     {
         theta = 0.5 * M_PI * plsc->diorot;
@@ -177,7 +177,7 @@ plP_subpInit( void )
         scale /= sqrt( (double) plsc->nsuby );
 
     size_chr = 4.0;
-    size_sym = 4.0;             /* All these in virtual plot units */
+    size_sym = 4.0;             // All these in virtual plot units
     size_maj = 3.0;
     size_min = 1.5;
 
@@ -188,9 +188,9 @@ plP_subpInit( void )
 }
 
 
-/*--------------------------------------------------------------------------*/
-/*! Set up the subpage boundaries according to the current subpage selected.
- */
+//--------------------------------------------------------------------------
+//! Set up the subpage boundaries according to the current subpage selected.
+//!
 void
 plP_setsub( void )
 {
@@ -213,15 +213,15 @@ plP_setsub( void )
 }
 
 
-/*--------------------------------------------------------------------------*/
-/*! Get subpage boundaries in absolute coordinates (mm from bottom
- *  left-hand corner of page).
- *
- *  @param xmin : pointer to PLFLT containing minimal x boundary after call
- *  @param xmax : pointer to PLFLT containing maximal x boundary after call
- *  @param ymin : pointer to PLFLT containing minimal y boundary after call
- *  @param ymax : pointer to PLFLT containing maximal y boundary after call
- */
+//--------------------------------------------------------------------------
+//! Get subpage boundaries in absolute coordinates (mm from bottom
+//! left-hand corner of page).
+//!
+//! @param xmin : pointer to PLFLT containing minimal x boundary after call
+//! @param xmax : pointer to PLFLT containing maximal x boundary after call
+//! @param ymin : pointer to PLFLT containing minimal y boundary after call
+//! @param ymax : pointer to PLFLT containing maximal y boundary after call
+//!
 void
 c_plgspa( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax )
 {
@@ -237,14 +237,14 @@ c_plgspa( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax )
 }
 
 
-/*--------------------------------------------------------------------------*/
-/*! Wait for graphics input event and translate to world coordinates.
- *
- *  @author Paul Casteels.
- *  @param plg : pointer to PLGraphicsIn
- *  @return 0 if no translation to world coordinates is possible.
- *  @see PLGraphicsIn
- */
+//--------------------------------------------------------------------------
+//! Wait for graphics input event and translate to world coordinates.
+//!
+//! @author Paul Casteels.
+//! @param plg : pointer to PLGraphicsIn
+//! @return 0 if no translation to world coordinates is possible.
+//! @see PLGraphicsIn
+//!
 int
 plGetCursor( PLGraphicsIn *plg )
 {
@@ -253,14 +253,14 @@ plGetCursor( PLGraphicsIn *plg )
 }
 
 
-/*--------------------------------------------------------------------------*/
-/*! Translates cursor position from relative device coordinates to world
- *  coordinates.
- *
- *  @author Paul Casteels, modified by Alan W. Irwin
- *  @param plg : pointer to PLGraphicsIn
- *  @return 0 if no translation to world coordinates is possible.
- */
+//--------------------------------------------------------------------------
+//! Translates cursor position from relative device coordinates to world
+//! coordinates.
+//!
+//! @author Paul Casteels, modified by Alan W. Irwin
+//! @param plg : pointer to PLGraphicsIn
+//! @return 0 if no translation to world coordinates is possible.
+//!
 int
 plTranslateCursor( PLGraphicsIn *plg )
 {
@@ -277,20 +277,21 @@ plTranslateCursor( PLGraphicsIn *plg )
 }
 
 
-/*--------------------------------------------------------------------------*/
-/*! Calculate world coordinates wx, and wy from relative device coordinates,
- *  rx and ry.  Also, return the window index for which the world coordinates
- *  are valid. window is set to -1 and wx and wy to 0. if rx and ry do not
- *  correspond to valid world coordinates for any currently existing window.
- *
- *  @author Paul Casteels, modified by Alan W. Irwin.
- *  @param rx : relative x device coordinates
- *  @param ry : relative y device coordinates
- *  @param wx : Pointer to x world coordinate (after call)
- *  @param wy : Pointer to y world coordinate (after call)
- *  @param window : Pointer index of window for which the world coordinates
- *                  are valid
- */
+//--------------------------------------------------------------------------
+//! Calculate world coordinates wx, and wy from relative device
+//! coordinates, rx and ry.  Also, return the window index for which
+//! the world coordinates are valid. window is set to -1 and wx and wy
+//! to 0. if rx and ry do not correspond to valid world coordinates
+//! for any currently existing window.
+//!
+//! @author Paul Casteels, modified by Alan W. Irwin.
+//! @param rx : relative x device coordinates
+//! @param ry : relative y device coordinates
+//! @param wx : Pointer to x world coordinate (after call)
+//! @param wy : Pointer to y world coordinate (after call)
+//! @param window : Pointer index of window for which the world coordinates
+//! are valid
+//!
 void
 c_plcalc_world( PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window )
 {
@@ -318,7 +319,7 @@ c_plcalc_world( PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window )
             return;
         }
     }
-    /* No valid window found with these relative coordinates. */
+    // No valid window found with these relative coordinates.
     *wx     = 0.;
     *wy     = 0.;
     *window = -1;
