@@ -1,26 +1,37 @@
-/* pllegend()
- *
- * Copyright (C) 2010  Hezekiah M. Carty
- * Copyright (C) 2010  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// pllegend()
+//
+// Copyright (C) 2010  Hezekiah M. Carty
+// Copyright (C) 2010  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
+//! @file
+//!
+//! Legend routines.
+//!
 #include "plplotP.h"
+
+//--------------------------------------------------------------------------
+//! Obtain ratio of world to mm coordinates in both x and y.
+//!
+//! @param x_world_per_mm : pointer to PLFLT containing x ratio after call
+//! @param y_world_per_mm : pointer to PLFLT containing y ratio after call
+//!
 
 static void get_world_per_mm( PLFLT *x_world_per_mm, PLFLT *y_world_per_mm )
 {
@@ -37,7 +48,15 @@ static void get_world_per_mm( PLFLT *x_world_per_mm, PLFLT *y_world_per_mm )
     *y_world_per_mm = ( wymax - wymin ) / ( ( vymax - vymin ) * ( mymax - mymin ) );
 }
 
-static PLFLT get_character_or_symbol_height( PLINT ifcharacter )
+//--------------------------------------------------------------------------
+//! Obtain character or symbol height in (y) world coordinates.
+//!
+//! @param ifcharacter : TRUE obtain character height, FALSE obtain symbol
+//! height
+//! @return character or symbol height
+//!
+
+static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 {
     // Character height in mm
     PLFLT default_mm, char_height_mm;
@@ -59,11 +78,17 @@ static PLFLT get_character_or_symbol_height( PLINT ifcharacter )
 #define normalized_to_world_x( nx )    ( ( xmin ) + ( nx ) * ( ( xmax ) - ( xmin ) ) )
 #define normalized_to_world_y( ny )    ( ( ymin ) + ( ny ) * ( ( ymax ) - ( ymin ) ) )
 
-// pllegend - Draw a legend using lines, symbols, cmap0 colors, or cmap1
-//   colors.
-// plot_width: width of plotted areas (lines, symbols, or coloured
-//   area) in legend. (Uses normalized viewport units).
-// text_offset: offset of text area from plot area in units of character width.
+//--------------------------------------------------------------------------
+//! Plot discrete legend using lines, symbols, cmap0 colors, or cmap1
+//! colors.
+//!
+//! @param opt : ORed option flags PL_LEGEND_BACKGROUND and
+//! PL_LEGEND_TEXT_LEFT controlling overall legend.
+//! @param plot_width : width in normalized subpage units of plotted area
+//! (lines, symbols, or coloured area) in legend.
+//! @param text_offset : offset of text area from plot area in units
+//! of character width.
+//!
 // N.B. the total width of the legend is made up of plplot_width +
 //   text_offset (converted to normalized viewport coordinates) + width
 //   of the longest string.  The latter quantity is calculated internally
@@ -116,7 +141,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
     // Saved normalized coordinates of viewport.
     PLFLT xdmin_save, xdmax_save, ydmin_save, ydmax_save;
 
-    PLFLT x_world_per_mm, y_world_per_mm, text_width = 0.;
+    PLFLT x_world_per_mm, y_world_per_mm, text_width0 = 0., text_width;
     PLFLT total_width_border, total_width, total_height;
 
     PLINT some_lines   = 0, some_symbols = 0, some_cmaps = 0;
@@ -155,7 +180,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
     plot_x_end_world = normalized_to_world_x( plot_x_end );
 
     // Get character height and width in world coordinates
-    character_height = get_character_or_symbol_height( 1 );
+    character_height = get_character_or_symbol_height( TRUE );
     character_width  = character_height * fabs( ( xmax - xmin ) / ( ymax - ymin ) );
     // Get world-coordinate positions of the start of the legend text
     text_x       = plot_x_end;
@@ -168,10 +193,11 @@ c_pllegend( PLINT opt, PLFLT plot_width,
     // to x world coordinates) including text_offset area.
     for ( i = 0; i < nlegend; i++ )
     {
-        text_width = MAX( text_width, plstrl( text[i] ) );
+        text_width0 = MAX( text_width0, plstrl( text[i] ) );
     }
     get_world_per_mm( &x_world_per_mm, &y_world_per_mm );
-    text_width = x_world_per_mm * text_width + text_offset * character_width;
+    text_width0 = x_world_per_mm * text_width0;
+    text_width  = text_width0 + text_offset * character_width;
     // make small border area where only the background is plotted
     // for left and right of legend.  0.4 seems to be a reasonable factor
     // that gives a good-looking result.
@@ -239,7 +265,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         // AWI, no idea why must use 0.5 factor to get ends of symbol lines
         // to line up approximately correctly with plotted legend lines.
         // Factor should be unity.
-        symbol_width = 0.5 * get_character_or_symbol_height( 0 ) *
+        symbol_width = 0.5 * get_character_or_symbol_height( FALSE ) *
                        fabs( ( xmax - xmin ) / ( ymax - ymin ) );
     }
 
@@ -252,7 +278,7 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         ty = ty - dty;
         // Label/name for the legend
         plcol0( text_colors[i] );
-        plptex( text_x_world, ty, 0.0, 0.0, 0.0, text[i] );
+        plptex( text_x_world + text_justification * text_width0, ty, 0.1, 0.0, text_justification, text[i] );
 
         if ( opt_array[i] & PL_LEGEND_CMAP0 )
         {
