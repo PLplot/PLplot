@@ -75,42 +75,103 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
     return ( char_height_mm * y_world_per_mm );
 }
 
+//--------------------------------------------------------------------------
+//! Convert from normalized sub-page (or internal viewport) X
+//! coordinate to X world coordinate.
+//!
+//! @param nx : normalized X coordinate
+//!
+
 #define normalized_to_world_x( nx )    ( ( xmin ) + ( nx ) * ( ( xmax ) - ( xmin ) ) )
+
+//--------------------------------------------------------------------------
+//! Convert from normalized sub-page (or internal viewport) Y
+//! coordinate to Y world coordinate.
+//!
+//! @param ny : normalized Y coordinate
+//!
+
 #define normalized_to_world_y( ny )    ( ( ymin ) + ( ny ) * ( ( ymax ) - ( ymin ) ) )
 
 //--------------------------------------------------------------------------
-//! Plot discrete legend using lines, symbols, cmap0 colors, or cmap1
-//! colors.
+//! Plot discrete legend using lines, symbols, cmap0 colors, and/or
+//! cmap1 colors.
 //!
-//! @param opt : ORed option flags PL_LEGEND_BACKGROUND and
-//! PL_LEGEND_TEXT_LEFT controlling overall legend.
-//! @param plot_width : width in normalized subpage units of plotted area
-//! (lines, symbols, or coloured area) in legend.
-//! @param text_offset : offset of text area from plot area in units
-//! of character width.
+//! @param opt : options controlling overall legend.  If the
+//! PL_LEGEND_BACKGROUND bit is set, plot a (semi-transparent)
+//! background for the legend.  If the PL_LEGEND_TEXT_LEFT bit is set,
+//! put the text area on the left of the legend and the plotted area
+//! on the right.  Otherwise, put the text area on the right of the
+//! legend and the plotted area on the left
+//! @param x : normalized sub-page X position of the upper-left corner of the
+//! legend
+//! @param y : normalized sub-page Y position of the upper-left corner of the
+//! legend
+//! @param plot_width : width in normalized subpage units of the plot
+//! area (where lines, symbols, and/or colored boxes are drawn in the
+//! legend)
+//! @param bg_color : cmap0 index of the background color for the legend
+//! (PL_LEGEND_BACKGROUND)
+//! @param nlegend : number of legend entries
+//! @param opt_array : array of nlegend values of options to control
+//! each individual plotted area corresponding to a legend entry.  If
+//! the PL_LEGEND_CMAP0, PL_LEGEND_CMAP1, PL_LEGEND_LINE, and/or
+//! PL_LEGEND_SYMBOL bits are set, the plotted area corresponding to a
+//! legend entry is specified with a colored box (with the color of
+//! that box determined by either a cmap0 index or a cmap1 value); a
+//! line; and/or a line of symbols
+//! @param text_offset : offset of the text area from the plot area in
+//! units of character width
+//! @param text_scale : character height scale for text annotations
+//! @param text_spacing : vertical spacing in units of the character
+//! height from one legend entry to the next
+//! @param text_justification : justification parameter used for text
+//! justification.  The most common values of text_justification are
+//! 0., 0.5, or 1. corresponding to a text that is left justified,
+//! centred, or right justified within the text area, but other values
+//! are allowed as well.
+//! @param text_colors : array of nlegend text colors (cmap0 indices).
+//! @param text : array of nlegend text annotations
+//! @param line_colors : array of nlegend line colors (cmap0 indices)
+//! (PL_LEGEND_LINE)
+//! @param line_styles : array of nlegend line styles (plsty indices)
+//! (PL_LEGEND_LINE)
+//! @param line_widths : array of nlegend line widths (PL_LEGEND_LINE)
+//! @param symbol_numbers : array of nlegend numbers of symbols to be
+//! drawn across the width of the plotted area (PL_LEGEND_SYMBOL)
+//! @param symbol_colors : array of nlegend symbol colors (cmap0
+//! indices) (PL_LEGEND_SYMBOL)
+//! @param symbol_scales : array of nlegend scale values for the
+//! symbol height (PL_LEGEND_SYMBOL)
+//! @param symbols : array of nlegend symbols (plpoin indices)
+//! (PL_LEGEND_SYMBOL)
+//! @param cmap0_colors : array of nlegend colors (cmap0 indices) for
+//! the discrete colored boxes (PL_LEGEND_CMAP0)
+//! @param cmap1_colors : array of nlegend colors (cmap1 values) for
+//! the discrete colored boxes (PL_LEGEND_CMAP1)
+//! @param cmap_patterns : array of nlegend patterns (plpsty indices)
+//! for the discrete colored boxes (PL_LEGEND_CMAP0 | PL_LEGEND_CMAP1)
+//! @param cmap_scales : array of nlegend scales (units of fraction of
+//! character height) for the height of the discrete colored boxes
+//! (PL_LEGEND_CMAP0 | PL_LEGEND_CMAP1)
 //!
-// N.B. the total width of the legend is made up of plplot_width +
-//   text_offset (converted to normalized viewport coordinates) + width
-//   of the longest string.  The latter quantity is calculated internally
-//   using plstrl and converted to normalized viewport coordinates.
-//
-// x, y: Normalized position of the upper-left corner of the
-//   legend in the viewport.
-// nlegend: Number of legend entries
-// text_colors: Color map 0 indices of the colors to use for label text
-// text: text string for each legend entry
-// cmap0_colors: cmap0 color index for each legend entry
-// nsymbols: number of points/symbols to be drawn for each plot_width
-// symbols: Symbol to draw for each legend entry.
+//! N.B. the total width of the legend is made up of plplot_width +
+//! text_offset (converted to normalized subpage coordinates) + width
+//! of the longest text string.  The latter quantity is calculated
+//! internally and converted to normalized subpage coordinates.  The
+//! total height of the legend is nlegend * text_spacing * character
+//! height, where the latter quantity is calculated internally and
+//! converted to normalized subpage coordinates.  The legend is clipped
+//! at the edges of the current subpage.
+//!
 
 void
-c_pllegend( PLINT opt, PLFLT plot_width,
-            PLFLT x, PLFLT y, PLINT bg_color,
-            PLINT *opt_array, PLINT nlegend,
+c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
+            PLINT nlegend, PLINT *opt_array,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
             PLINT text_justification, PLINT *text_colors, char **text,
             PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
-            PLINT *nsymbols, PLINT *symbol_colors,
+            PLINT *symbol_numbers, PLINT *symbol_colors,
             PLFLT *symbol_scales, PLINT *symbols,
             PLINT *cmap0_colors, PLFLT *cmap1_colors,
             PLINT *cmap_patterns, PLFLT *cmap_scales )
@@ -144,8 +205,8 @@ c_pllegend( PLINT opt, PLFLT plot_width,
     PLFLT x_world_per_mm, y_world_per_mm, text_width0 = 0., text_width;
     PLFLT total_width_border, total_width, total_height;
 
-    PLINT some_lines   = 0, some_symbols = 0, some_cmaps = 0;
-    PLINT max_nsymbols = 0;
+    PLINT some_lines         = 0, some_symbols = 0, some_cmaps = 0;
+    PLINT max_symbol_numbers = 0;
 
     plgvpd( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
     plgvpw( &xwmin_save, &xwmax_save, &ywmin_save, &ywmax_save );
@@ -162,8 +223,8 @@ c_pllegend( PLINT opt, PLFLT plot_width,
             some_lines = 1;
         if ( opt_array[i] & PL_LEGEND_SYMBOL )
         {
-            max_nsymbols = MAX( max_nsymbols, nsymbols[i] );
-            some_symbols = 1;
+            max_symbol_numbers = MAX( max_symbol_numbers, symbol_numbers[i] );
+            some_symbols       = 1;
         }
         if ( opt_array[i] & ( PL_LEGEND_CMAP0 | PL_LEGEND_CMAP1 ) )
             some_cmaps = 1;
@@ -253,9 +314,9 @@ c_pllegend( PLINT opt, PLFLT plot_width,
 
     if ( some_symbols )
     {
-        max_nsymbols = MAX( 2, max_nsymbols );
-        if ( ( ( xs = (PLFLT *) malloc( max_nsymbols * sizeof ( PLFLT ) ) ) == NULL ) ||
-             ( ( ys = (PLFLT *) malloc( max_nsymbols * sizeof ( PLFLT ) ) ) == NULL ) )
+        max_symbol_numbers = MAX( 2, max_symbol_numbers );
+        if ( ( ( xs = (PLFLT *) malloc( max_symbol_numbers * sizeof ( PLFLT ) ) ) == NULL ) ||
+             ( ( ys = (PLFLT *) malloc( max_symbol_numbers * sizeof ( PLFLT ) ) ) == NULL ) )
         {
             plexit( "pllegend: Insufficient memory" );
         }
@@ -316,13 +377,13 @@ c_pllegend( PLINT opt, PLFLT plot_width,
         {
             plcol0( symbol_colors[i] );
             plssym( 0., symbol_scales[i] );
-            dxs = ( plot_x_end_world - plot_x_world - symbol_width ) / (double) ( MAX( nsymbols[i], 2 ) - 1 );
-            for ( j = 0; j < nsymbols[i]; j++ )
+            dxs = ( plot_x_end_world - plot_x_world - symbol_width ) / (double) ( MAX( symbol_numbers[i], 2 ) - 1 );
+            for ( j = 0; j < symbol_numbers[i]; j++ )
             {
                 xs[j] = plot_x_world + 0.5 * symbol_width + dxs * (double) j;
                 ys[j] = ty;
             }
-            plpoin( nsymbols[i], xs, ys, symbols[i] );
+            plpoin( symbol_numbers[i], xs, ys, symbols[i] );
         }
     }
     if ( some_symbols )

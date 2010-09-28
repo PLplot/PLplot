@@ -1217,13 +1217,12 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
 #define PL_LEGEND_BACKGROUND    32
 
 PLDLLIMPEXP void
-c_pllegend( PLINT opt, PLFLT plot_width,
-            PLFLT x, PLFLT y, PLINT bg_color,
-            PLINT *opt_array, PLINT nlegend,
+c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
+            PLINT nlegend, PLINT *opt_array,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
             PLINT text_justification, PLINT *text_colors, char **text,
             PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
-            PLINT *nsymbols, PLINT *symbol_colors,
+            PLINT *symbol_numbers, PLINT *symbol_colors,
             PLFLT *symbol_scales, PLINT *symbols,
             PLINT *cmap0_colors, PLFLT * cmap1_colors,
             PLINT *cmap_patterns, PLFLT *cmap_scales );
