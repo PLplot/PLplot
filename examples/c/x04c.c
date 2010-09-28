@@ -54,8 +54,8 @@ plot1( int type )
     PLINT        line_styles[2];
     PLINT        line_widths[2];
     PLINT        symbol_numbers[2], symbol_colors[2], symbols[2];
-    PLINT        cmap0_colors[2], cmap_patterns[2];
-    PLFLT        symbol_scales[2], cmap_scales[2], cmap1_colors[2];
+    PLINT        box_colors[2], box_patterns[2];
+    PLFLT        symbol_scales[2], box_scales[2];
 
     pladv( 0 );
 
@@ -137,20 +137,18 @@ plot1( int type )
     symbol_numbers[1] = 4;
     symbols[0]        = 3;
     symbols[1]        = 3;
-    cmap0_colors[0]   = 2;
-    cmap0_colors[1]   = 3;
-    cmap1_colors[0]   = 0.;
-    cmap1_colors[1]   = 1.;
-    cmap_patterns[0]  = 0;
-    cmap_patterns[1]  = 3;
-    cmap_scales[0]    = 0.5;
-    cmap_scales[1]    = 0.5;
+    box_colors[0]     = 2;
+    box_colors[1]     = 3;
+    box_patterns[0]   = 0;
+    box_patterns[1]   = 3;
+    box_scales[0]     = 0.5;
+    box_scales[1]     = 0.5;
     plscol0a( 15, 32, 32, 32, 0.90 );
     pllegend( PL_LEGEND_BACKGROUND, 0.57, 0.85, 0.06, 15,
         nlegend, opt_array,
         1.0, 1.0, 2.0,
         1., text_colors, text,
+        box_colors, box_patterns, box_scales,
         line_colors, line_styles, line_widths,
-        symbol_numbers, symbol_colors, symbol_scales, symbols,
-        cmap0_colors, cmap1_colors, cmap_patterns, cmap_scales );
+        symbol_colors, symbol_scales, symbol_numbers, symbols );
 }

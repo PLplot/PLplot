@@ -115,11 +115,11 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param nlegend : number of legend entries
 //! @param opt_array : array of nlegend values of options to control
 //! each individual plotted area corresponding to a legend entry.  If
-//! the PL_LEGEND_NONE, PL_LEGEND_CMAP0, PL_LEGEND_CMAP1,
-//! PL_LEGEND_LINE, and/or PL_LEGEND_SYMBOL bits are set, the plotted
-//! area corresponding to a legend entry is specified with nothing; a
-//! colored box (with the color of that box determined by either a
-//! cmap0 index or a cmap1 value); a line; and/or a line of symbols
+//! the PL_LEGEND_NONE bit is set, then nothing is plotted in the
+//! plotted area.  If the PL_LEGEND_COLOR_BOX, PL_LEGEND_LINE, and/or
+//! PL_LEGEND_SYMBOL bits are set, the plotted area corresponding to a
+//! legend entry is specified with a colored box; a line; and/or a
+//! line of symbols
 //! @param text_offset : offset of the text area from the plot area in
 //! units of character width
 //! @param text_scale : character height scale for text annotations
@@ -132,6 +132,13 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! are allowed as well.
 //! @param text_colors : array of nlegend text colors (cmap0 indices).
 //! @param text : array of nlegend text annotations
+//! @param box_colors : array of nlegend colors (cmap0 indices) for
+//! the discrete colored boxes (PL_LEGEND_COLOR_BOX)
+//! @param box_patterns : array of nlegend patterns (plpsty indices)
+//! for the discrete colored boxes (PL_LEGEND_COLOR_BOX)
+//! @param box_scales : array of nlegend scales (units of fraction of
+//! character height) for the height of the discrete colored boxes
+//! (PL_LEGEND_COLOR_BOX)
 //! @param line_colors : array of nlegend line colors (cmap0 indices)
 //! (PL_LEGEND_LINE)
 //! @param line_styles : array of nlegend line styles (plsty indices)
@@ -145,15 +152,6 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! symbol height (PL_LEGEND_SYMBOL)
 //! @param symbols : array of nlegend symbols (plpoin indices)
 //! (PL_LEGEND_SYMBOL)
-//! @param cmap0_colors : array of nlegend colors (cmap0 indices) for
-//! the discrete colored boxes (PL_LEGEND_CMAP0)
-//! @param cmap1_colors : array of nlegend colors (cmap1 values) for
-//! the discrete colored boxes (PL_LEGEND_CMAP1)
-//! @param cmap_patterns : array of nlegend patterns (plpsty indices)
-//! for the discrete colored boxes (PL_LEGEND_CMAP0 | PL_LEGEND_CMAP1)
-//! @param cmap_scales : array of nlegend scales (units of fraction of
-//! character height) for the height of the discrete colored boxes
-//! (PL_LEGEND_CMAP0 | PL_LEGEND_CMAP1)
 //!
 //! N.B. the total width of the legend is made up of plplot_width +
 //! text_offset (converted to normalized subpage coordinates) + width
@@ -170,11 +168,10 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
             PLINT nlegend, PLINT *opt_array,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
             PLFLT text_justification, PLINT *text_colors, char **text,
+            PLINT *box_colors, PLINT *box_patterns, PLFLT *box_scales,
             PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
-            PLINT *symbol_numbers, PLINT *symbol_colors,
-            PLFLT *symbol_scales, PLINT *symbols,
-            PLINT *cmap0_colors, PLFLT *cmap1_colors,
-            PLINT *cmap_patterns, PLFLT *cmap_scales )
+            PLINT *symbol_colors, PLFLT *symbol_scales,
+            PLINT *symbol_numbers, PLINT *symbols )
 
 {
     // Viewport world-coordinate limits
@@ -188,7 +185,7 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
     // y-position of the current legend entry
     PLFLT ty, dty;
     // Positions of the legend entries
-    PLFLT dxs, *xs, *ys, xl[2], yl[2], xcmap[4], ycmap[4];
+    PLFLT dxs, *xs, *ys, xl[2], yl[2], xbox[4], ybox[4];
     PLINT i, j;
     // Active attributes to be saved and restored afterward.
     PLINT col0_save         = plsc->icol0,
@@ -205,7 +202,7 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
     PLFLT x_world_per_mm, y_world_per_mm, text_width0 = 0., text_width;
     PLFLT total_width_border, total_width, total_height;
 
-    PLINT some_lines         = 0, some_symbols = 0, some_cmaps = 0;
+    PLINT some_boxes         = 0, some_lines = 0, some_symbols = 0;
     PLINT max_symbol_numbers = 0;
 
     plgvpd( &xdmin_save, &xdmax_save, &ydmin_save, &ydmax_save );
@@ -219,6 +216,8 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
 
     for ( i = 0; i < nlegend; i++ )
     {
+        if ( opt_array[i] & PL_LEGEND_COLOR_BOX )
+            some_boxes = 1;
         if ( opt_array[i] & PL_LEGEND_LINE )
             some_lines = 1;
         if ( opt_array[i] & PL_LEGEND_SYMBOL )
@@ -226,8 +225,6 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
             max_symbol_numbers = MAX( max_symbol_numbers, symbol_numbers[i] );
             some_symbols       = 1;
         }
-        if ( opt_array[i] & ( PL_LEGEND_CMAP0 | PL_LEGEND_CMAP1 ) )
-            some_cmaps = 1;
     }
 
     plgvpw( &xmin, &xmax, &ymin, &ymax );
@@ -298,12 +295,12 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
     plot_x_end_world += total_width_border;
     text_x_world     += total_width_border;
 
-    if ( some_cmaps )
+    if ( some_boxes )
     {
-        xcmap[0] = plot_x_world;
-        xcmap[1] = plot_x_world;
-        xcmap[2] = plot_x_end_world;
-        xcmap[3] = plot_x_end_world;
+        xbox[0] = plot_x_world;
+        xbox[1] = plot_x_world;
+        xbox[2] = plot_x_end_world;
+        xbox[3] = plot_x_end_world;
     }
 
     if ( some_lines )
@@ -341,49 +338,42 @@ c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
         plcol0( text_colors[i] );
         plptex( text_x_world + text_justification * text_width0, ty, 0.1, 0.0, text_justification, text[i] );
 
-        if ( opt_array[i] & PL_LEGEND_CMAP0 )
+        if ( !( opt_array[i] & PL_LEGEND_NONE ) )
         {
-            plcol0( cmap0_colors[i] );
-            plpsty( cmap_patterns[i] );
-            ycmap[0] = ty + 0.5 * dty * cmap_scales[i];
-            ycmap[1] = ty - 0.5 * dty * cmap_scales[i];
-            ycmap[2] = ty - 0.5 * dty * cmap_scales[i];
-            ycmap[3] = ty + 0.5 * dty * cmap_scales[i];
-            plfill( 4, xcmap, ycmap );
-        }
-        if ( opt_array[i] & PL_LEGEND_CMAP1 )
-        {
-            plcol1( cmap1_colors[i] );
-            plpsty( cmap_patterns[i] );
-            ycmap[0] = ty + 0.5 * dty * cmap_scales[i];
-            ycmap[1] = ty - 0.5 * dty * cmap_scales[i];
-            ycmap[2] = ty - 0.5 * dty * cmap_scales[i];
-            ycmap[3] = ty + 0.5 * dty * cmap_scales[i];
-            plfill( 4, xcmap, ycmap );
-        }
-        if ( opt_array[i] & PL_LEGEND_LINE )
-        {
-            plcol0( line_colors[i] );
-            pllsty( line_styles[i] );
-            plwid( line_widths[i] );
-            yl[0] = ty;
-            yl[1] = ty;
-            plline( 2, xl, yl );
-            pllsty( line_style_save );
-            plwid( line_width_save );
-        }
-
-        if ( opt_array[i] & PL_LEGEND_SYMBOL )
-        {
-            plcol0( symbol_colors[i] );
-            plssym( 0., symbol_scales[i] );
-            dxs = ( plot_x_end_world - plot_x_world - symbol_width ) / (double) ( MAX( symbol_numbers[i], 2 ) - 1 );
-            for ( j = 0; j < symbol_numbers[i]; j++ )
+            if ( opt_array[i] & PL_LEGEND_COLOR_BOX )
             {
-                xs[j] = plot_x_world + 0.5 * symbol_width + dxs * (double) j;
-                ys[j] = ty;
+                plcol0( box_colors[i] );
+                plpsty( box_patterns[i] );
+                ybox[0] = ty + 0.5 * dty * box_scales[i];
+                ybox[1] = ty - 0.5 * dty * box_scales[i];
+                ybox[2] = ty - 0.5 * dty * box_scales[i];
+                ybox[3] = ty + 0.5 * dty * box_scales[i];
+                plfill( 4, xbox, ybox );
             }
-            plpoin( symbol_numbers[i], xs, ys, symbols[i] );
+            if ( opt_array[i] & PL_LEGEND_LINE )
+            {
+                plcol0( line_colors[i] );
+                pllsty( line_styles[i] );
+                plwid( line_widths[i] );
+                yl[0] = ty;
+                yl[1] = ty;
+                plline( 2, xl, yl );
+                pllsty( line_style_save );
+                plwid( line_width_save );
+            }
+
+            if ( opt_array[i] & PL_LEGEND_SYMBOL )
+            {
+                plcol0( symbol_colors[i] );
+                plssym( 0., symbol_scales[i] );
+                dxs = ( plot_x_end_world - plot_x_world - symbol_width ) / (double) ( MAX( symbol_numbers[i], 2 ) - 1 );
+                for ( j = 0; j < symbol_numbers[i]; j++ )
+                {
+                    xs[j] = plot_x_world + 0.5 * symbol_width + dxs * (double) j;
+                    ys[j] = ty;
+                }
+                plpoin( symbol_numbers[i], xs, ys, symbols[i] );
+            }
         }
     }
     if ( some_symbols )
