@@ -115,11 +115,11 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param nlegend : number of legend entries
 //! @param opt_array : array of nlegend values of options to control
 //! each individual plotted area corresponding to a legend entry.  If
-//! the PL_LEGEND_CMAP0, PL_LEGEND_CMAP1, PL_LEGEND_LINE, and/or
-//! PL_LEGEND_SYMBOL bits are set, the plotted area corresponding to a
-//! legend entry is specified with a colored box (with the color of
-//! that box determined by either a cmap0 index or a cmap1 value); a
-//! line; and/or a line of symbols
+//! the PL_LEGEND_NONE, PL_LEGEND_CMAP0, PL_LEGEND_CMAP1,
+//! PL_LEGEND_LINE, and/or PL_LEGEND_SYMBOL bits are set, the plotted
+//! area corresponding to a legend entry is specified with nothing; a
+//! colored box (with the color of that box determined by either a
+//! cmap0 index or a cmap1 value); a line; and/or a line of symbols
 //! @param text_offset : offset of the text area from the plot area in
 //! units of character width
 //! @param text_scale : character height scale for text annotations
@@ -169,7 +169,7 @@ void
 c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
             PLINT nlegend, PLINT *opt_array,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
-            PLINT text_justification, PLINT *text_colors, char **text,
+            PLFLT text_justification, PLINT *text_colors, char **text,
             PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
             PLINT *symbol_numbers, PLINT *symbol_colors,
             PLFLT *symbol_scales, PLINT *symbols,
