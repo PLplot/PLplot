@@ -150,7 +150,7 @@ plot1( int type )
         0.57, 0.85, 15,
         opt_array, nlegend,
         1.0, 1.0, 2.0,
-        0., text_colors, text,
+        1., text_colors, text,
         line_colors, line_styles, line_widths,
         nsymbols, symbol_colors, symbol_scales, symbols,
         cmap0_colors, cmap1_colors, cmap_patterns, cmap_scales );
