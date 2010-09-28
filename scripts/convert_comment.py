@@ -21,7 +21,7 @@ for line in sys.stdin.readlines():
             raise RuntimeError, "Trailing */ for a line which is not a comment"
 
         # convert single-line comment.
-        line = re.sub(r'^(.*)(/\*)(.*)(\*/)$', "\\1//\\3", line)
+        line = re.sub(r'^(.*)(/\*)(.*) *\*/$', "\\1//\\3", line)
 
         start_comment = line.find("/*")
 	if start_comment >= 0:
