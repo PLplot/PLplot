@@ -20,16 +20,14 @@
 //
 
 //! @file
-//
-//  Page/subpage handling routines.
-//
-
+//!
+//! Page/subpage handling routines.
+//!
 
 #include "plplotP.h"
 
-
 //--------------------------------------------------------------------------
-//! Advance to subpage "page" or to the next one if "page" = 0.
+//! Advance to subpage "page" or to the next page if "page" = 0.
 //!
 //! @param page : subpage identifier or 0
 //!
@@ -65,7 +63,6 @@ c_pladv( PLINT page )
     plP_setsub();
 }
 
-
 //--------------------------------------------------------------------------
 //! Clear current subpage.  Subpages can be set with pladv before
 //! calling plclear. Not all drivers support this.
@@ -97,7 +94,6 @@ c_plclear( void )
     }
 }
 
-
 //--------------------------------------------------------------------------
 //! End current page.
 //!
@@ -114,7 +110,6 @@ c_pleop( void )
     plP_eop();
 }
 
-
 //--------------------------------------------------------------------------
 //! Start new page. Should only be used with pleop().
 //!
@@ -130,7 +125,6 @@ c_plbop( void )
     plsc->cursub = 1;
     plP_setsub();
 }
-
 
 //--------------------------------------------------------------------------
 //! Set up plot parameters according to the number of subpages.
@@ -187,7 +181,6 @@ plP_subpInit( void )
     plsc->mindef = plsc->minht = size_min * scale;
 }
 
-
 //--------------------------------------------------------------------------
 //! Set up the subpage boundaries according to the current subpage selected.
 //!
@@ -212,15 +205,14 @@ plP_setsub( void )
     plP_sclp( plsc->sppxmi, plsc->sppxma, plsc->sppymi, plsc->sppyma );
 }
 
-
 //--------------------------------------------------------------------------
 //! Get subpage boundaries in absolute coordinates (mm from bottom
 //! left-hand corner of page).
 //!
-//! @param xmin : pointer to PLFLT containing minimal x boundary after call
-//! @param xmax : pointer to PLFLT containing maximal x boundary after call
-//! @param ymin : pointer to PLFLT containing minimal y boundary after call
-//! @param ymax : pointer to PLFLT containing maximal y boundary after call
+//! @param xmin : pointer to PLFLT containing minimum x boundary after call
+//! @param xmax : pointer to PLFLT containing maximum x boundary after call
+//! @param ymin : pointer to PLFLT containing minimum y boundary after call
+//! @param ymax : pointer to PLFLT containing maximum y boundary after call
 //!
 void
 c_plgspa( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax )
@@ -236,7 +228,6 @@ c_plgspa( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax )
     *ymax = plP_dcmmy( plsc->spdyma );
 }
 
-
 //--------------------------------------------------------------------------
 //! Wait for graphics input event and translate to world coordinates.
 //!
@@ -251,7 +242,6 @@ plGetCursor( PLGraphicsIn *plg )
     plP_esc( PLESC_GETC, plg );
     return plTranslateCursor( plg );
 }
-
 
 //--------------------------------------------------------------------------
 //! Translates cursor position from relative device coordinates to world
@@ -275,7 +265,6 @@ plTranslateCursor( PLGraphicsIn *plg )
     else
         return 0;
 }
-
 
 //--------------------------------------------------------------------------
 //! Calculate world coordinates wx, and wy from relative device
