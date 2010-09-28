@@ -45,7 +45,7 @@ if(BUILD_DOX_DOC)
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     )
-  add_custom_target(doxygen_built ALL
+  add_custom_target(build_doxygen ALL
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/doxygen
     )
 endif(BUILD_DOX_DOC)
