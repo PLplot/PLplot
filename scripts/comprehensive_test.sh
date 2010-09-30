@@ -16,7 +16,11 @@ OPTIONS:
   This next option is mandatory.
   [--build_command (e.g.,  'make -j4' or 'nmake')]
   The next four control what kind of build is tested.
-  [--cmake_added_options (defaults to none)]
+  [--cmake_added_options (defaults to no additional cmake options, but this
+                         shell option can be used to supply additional cmake
+                         options to, e.g, specify the cmake generator or
+                         refine what parts of the PLplot software are
+                         built and tested)
   [--do_shared (yes/no, defaults to yes)]
   [--do_nondynamic (yes/no, defaults to yes)]
   [--do_static (yes/no, defaults to yes)]
