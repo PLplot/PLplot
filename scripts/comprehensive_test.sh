@@ -13,6 +13,8 @@ usage () {
   local prog=`basename $0`
   echo "Usage: $prog [OPTIONS]
 OPTIONS:
+  This next option is mandatory.
+  [--build_command (e.g.,  'make -j4' or 'nmake')]
   The next four control what kind of build is tested.
   [--cmake_added_options (defaults to none)]
   [--do_shared (yes/no, defaults to yes)]
@@ -33,7 +35,122 @@ OPTIONS:
   exit $1
 }
 
+comprehensive_test () {
+    echo "
+Running comprehensive_test function with the following variables set:
 
+The variables below are key CMake options which determine the entire
+kind of build that will be tested.
+\$1 = $1
+
+The location below is where all the important *.out files will be found.
+OUTPUT_TREE = $OUTPUT_TREE
+
+The location below is the top-level build-tree directory.
+BUILD_TREE = $BUILD_TREE
+
+The location below is the top-level install-tree directory.
+INSTALL_TREE = $INSTALL_TREE
+
+The location below is the top-level directory of the build tree used
+for the CMake-based build and test of the installed examples.
+INSTALL_BUILD_TREE = $INSTALL_BUILD_TREE
+
+Each of the steps in this comprehensive test may take a while...."
+
+    mkdir -p "$OUTPUT_TREE"
+    rm -rf "$BUILD_TREE"
+    mkdir -p "$BUILD_TREE"
+    cd "$BUILD_TREE"
+    if [ "$do_ctest" = "yes" -o "$do_build_tree_test" = "yes" ] ; then
+	BUILD_TEST_OPTION="-DBUILD_TEST=ON"
+    else
+	BUILD_TEST_OPTION=""
+    fi
+    output="$OUTPUT_TREE"/cmake.out
+    rm -f "$output"
+    echo "cmake in the build tree"
+    cmake "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
+	"$cmake_added_options" $1 "$SOURCE_TREE" >& "$output"
+    cmake_rc=$?
+    if [ "$cmake_rc" -eq 0 ] ; then
+	if [ "$do_build_tree_test" = "yes" -a  "$do_noninteractive_test" = "yes" ] ; then
+	    output="$OUTPUT_TREE"/make_noninteractive.out
+	    rm -f "$output"
+	    echo "$build_command test_noninteractive in the build tree"
+	    $build_command VERBOSE=1 test_noninteractive >& "$output"
+	fi
+	rm -rf "$INSTALL_TREE"
+	output="$OUTPUT_TREE"/make_install.out
+	rm -f "$output"
+	echo "$build_command install in the build tree"
+	$build_command VERBOSE=1 install >& "$output"
+	make_install_rc=$?
+	if [ "$make_install_rc" -eq 0 ] ; then
+	    PATH="$INSTALL_TREE/bin":$PATH
+	    if [ "$do_ctest" = "yes" ] ; then
+		output="$OUTPUT_TREE"/ctest.out
+		rm -f "$output"
+		echo "launch ctest job in the build tree"
+		ctest --extra-verbose >& "$output" &
+	    fi
+	    if [ "$do_install_tree_test" = "yes" ] ; then
+		rm -rf "$INSTALL_BUILD_TREE"
+		mkdir -p "$INSTALL_BUILD_TREE"
+		cd "$INSTALL_BUILD_TREE"
+		output="$OUTPUT_TREE"/installed_cmake.out
+		rm -f "$output"
+		echo "cmake in the installed examples build tree"
+		cmake "$INSTALL_TREE"/share/plplot?.?.?/examples >& "$output"
+		if [ "$do_noninteractive_test" = "yes" ] ; then
+		    output="$OUTPUT_TREE"/installed_make_noninteractive.out
+		    rm -f "$output"
+		    echo "$build_command test_noninteractive in the installed examples build tree"
+		    $build_command VERBOSE=1 test_noninteractive >& "$output"
+		fi
+	    fi
+	    if [ "$do_traditional_tree_test" = "yes" -a "$do_noninteractive_test" = "yes" ] ; then
+		cd "$INSTALL_TREE"/share/plplot?.?.?/examples
+		output="$OUTPUT_TREE"/traditional_make_noninteractive.out
+		rm -f "$output"
+		echo "Traditional $build_command test_noninteractive in the installed examples tree"
+		$build_command test_noninteractive >& "$output"
+	    fi
+	else
+	    echo "ERROR: $build_command install failed"
+	    exit 1
+	fi
+
+	if [ "$do_interactive_test" = "yes" ] ; then
+	    if [ "$do_build_tree_test" = "yes" ] ; then
+		cd "$BUILD_TREE"
+		output="$OUTPUT_TREE"/make_interactive.out
+		rm -f "$output"
+		echo "$build_command test_interactive in the build tree"
+		$build_command VERBOSE=1 test_interactive >& "$output"
+	    fi
+	    if [ "$do_install_tree_test" = "yes" ] ; then
+		cd "$INSTALL_BUILD_TREE"
+		output="$OUTPUT_TREE"/installed_make_interactive.out
+		rm -f "$output"
+		echo "$build_command test_interactive in the installed examples build tree"
+		$build_command VERBOSE=1 test_interactive >& "$output"
+	    fi
+	    if [ "$do_traditional_tree_test" = "yes" ] ; then
+		cd "$INSTALL_TREE"/share/plplot?.?.?/examples
+		output="$OUTPUT_TREE"/traditional_make_interactive.out
+		rm -f "$output"
+		echo "Traditional $build_command test_interactive in the installed examples tree"
+		$build_command test_interactive >& "$output"
+	    fi
+	fi
+    else
+	echo "ERROR: cmake in build tree failed"
+	exit 1
+    fi
+}
+
+build_command=
 cmake_added_options=
 do_shared=yes
 do_nondynamic=yes
@@ -50,6 +167,10 @@ do_traditional_tree_test=yes
 while test $# -gt 0; do
 
     case $1 in
+        --build_command)
+	    build_command=$2
+	    shift
+	    ;;
         --cmake_added_options)
 	    cmake_added_options=$2
             shift
@@ -163,7 +284,16 @@ while test $# -gt 0; do
     esac
     shift
 done
+
+if [ -z "$build_command" ] ; then
+    echo "--build_command option is mandatory!"
+    usage 1 1>&2
+fi
+
 echo "Summary of options used for these tests
+
+This variable set as a result of the one mandatory --build_command option.
+build_command = $build_command
 
 This/these cmake option(s) added for all builds
 cmake_added_options = $cmake_added_options
@@ -215,89 +345,6 @@ SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
 # This is the parent tree for the BUILD_TREE, INSTALL_TREE, 
 # INSTALL_BUILD_TREE, and OUTPUT_TREE.  It is disposable.
 PARENT_TREE="${SOURCE_TREE}/comprehensive_test_disposeable"
-
-function comprehensive_test {
-    mkdir -p "$OUTPUT_TREE"
-    rm -rf "$BUILD_TREE"
-    mkdir -p "$BUILD_TREE"
-    cd "$BUILD_TREE"
-    if [ "$do_ctest" = "yes" -o "$do_build_tree_test" = "yes" ] ; then
-	BUILD_TEST_OPTION="-DBUILD_TEST=ON"
-    else
-	BUILD_TEST_OPTION=""
-    fi
-    output="$OUTPUT_TREE"/cmake.out
-    rm -f "$output"
-    cmake "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
-	"$cmake_added_options" $1 "$SOURCE_TREE" >& "$output"
-    cmake_rc=$?
-    if [ "$cmake_rc" -eq 0 ] ; then
-	if [ "$do_build_tree_test" = "yes" -a  "$do_noninteractive_test" = "yes" ] ; then
-	    output="$OUTPUT_TREE"/make_noninteractive.out
-	    rm -f "$output"
-	    make -j4 VERBOSE=1 test_noninteractive >& "$output"
-	fi
-	rm -rf "$INSTALL_TREE"
-	output="$OUTPUT_TREE"/make_install.out
-	rm -f "$output"
-	make -j4 VERBOSE=1 install >& "$output"
-	make_install_rc=$?
-	if [ "$make_install_rc" -eq 0 ] ; then
-	    PATH="$INSTALL_TREE/bin":$PATH
-	    if [ "$do_ctest" = "yes" ] ; then
-		output="$OUTPUT_TREE"/ctest.out
-		rm -f "$output"
-		ctest --extra-verbose >& "$output" &
-	    fi
-	    if [ "$do_install_tree_test" = "yes" ] ; then
-		rm -rf "$INSTALL_BUILD_TREE"
-		mkdir -p "$INSTALL_BUILD_TREE"
-		cd "$INSTALL_BUILD_TREE"
-		output="$OUTPUT_TREE"/installed_cmake.out
-		rm -f "$output"
-		cmake "$INSTALL_TREE"/share/plplot?.?.?/examples >& "$output"
-		if [ "$do_noninteractive_test" = "yes" ] ; then
-		    output="$OUTPUT_TREE"/installed_make_noninteractive.out
-		    rm -f "$output"
-		    make -j4 VERBOSE=1 test_noninteractive >& "$output"
-		fi
-	    fi
-	    if [ "$do_traditional_tree_test" = "yes" -a "$do_noninteractive_test" = "yes" ] ; then
-		cd "$INSTALL_TREE"/share/plplot?.?.?/examples
-		output="$OUTPUT_TREE"/traditional_make_noninteractive.out
-		rm -f "$output"
-		make -j4 test_noninteractive >& "$output"
-	    fi
-	else
-	    echo "ERROR: make install failed"
-	    exit 1
-	fi
-
-	if [ "$do_interactive_test" = "yes" ] ; then
-	    if [ "$do_build_tree_test" = "yes" ] ; then
-		cd "$BUILD_TREE"
-		output="$OUTPUT_TREE"/make_interactive.out
-		rm -f "$output"
-		make -j4 VERBOSE=1 test_interactive >& "$output"
-	    fi
-	    if [ "$do_install_tree_test" = "yes" ] ; then
-		cd "$INSTALL_BUILD_TREE"
-		output="$OUTPUT_TREE"/installed_make_interactive.out
-		rm -f "$output"
-		make -j4 VERBOSE=1 test_interactive >& "$output"
-	    fi
-	    if [ "$do_traditional_tree_test" = "yes" ] ; then
-		cd "$INSTALL_TREE"/share/plplot?.?.?/examples
-		output="$OUTPUT_TREE"/traditional_make_interactive.out
-		rm -f "$output"
-		make -j4 test_interactive >& "$output"
-	    fi
-	fi
-    else
-	echo "ERROR: cmake in build tree failed"
-	exit 1
-    fi
-}
 
 # Shared + dynamic
 if [ "$do_shared" = "yes" ] ; then
