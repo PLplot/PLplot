@@ -149,7 +149,7 @@ Each of the steps in this comprehensive test may take a while...."
 	    fi
 	fi
     else
-	echo "ERROR: cmake in build tree failed"
+	echo "ERROR: cmake in the build tree failed"
 	exit 1
     fi
 }
