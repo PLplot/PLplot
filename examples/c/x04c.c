@@ -144,7 +144,7 @@ plot1( int type )
     pllegend( PL_LEGEND_BACKGROUND, 0.57, 0.85, 0.06, 15,
         nlegend, opt_array,
         1.0, 1.0, 2.0,
-        1., text_colors, text,
+        1., text_colors, (const char **) text,
         NULL, NULL, NULL,
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, symbols );

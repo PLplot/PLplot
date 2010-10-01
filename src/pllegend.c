@@ -165,13 +165,16 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 
 void
 c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
-            PLINT nlegend, PLINT *opt_array,
+            PLINT nlegend, const PLINT *opt_array,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
-            PLFLT text_justification, PLINT *text_colors, char **text,
-            PLINT *box_colors, PLINT *box_patterns, PLFLT *box_scales,
-            PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
-            PLINT *symbol_colors, PLFLT *symbol_scales,
-            PLINT *symbol_numbers, PLINT *symbols )
+            PLFLT text_justification,
+            const PLINT *text_colors, const char **text,
+            const PLINT *box_colors, const PLINT *box_patterns,
+            const PLFLT *box_scales,
+            const PLINT *line_colors, const PLINT *line_styles,
+            const PLINT *line_widths,
+            const PLINT *symbol_colors, const PLFLT *symbol_scales,
+            const PLINT *symbol_numbers, const PLINT *symbols )
 
 {
     // Viewport world-coordinate limits
