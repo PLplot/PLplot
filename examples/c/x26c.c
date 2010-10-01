@@ -82,6 +82,12 @@ static char *alty_label[] = {
     NULL
 };
 
+// Short rearranged versions of y_label and alty_label.
+static char *legend_text[][2] = {
+    { "Amplitude",          "Phase shift"               },
+    { "Амплитуда", "Фазовый сдвиг" }
+};
+
 static char *title_label[] = {
     "Single Pole Low-Pass Filter",
     "Однополюсный Низко-Частотный Фильтр",
@@ -95,7 +101,7 @@ static char *line_label[] = {
 };
 
 void plot1( int type, char *x_label, char *y_label, char *alty_label,
-            char *title_label, char *line_label );
+            char * legend_text[], char *title_label, char *line_label );
 
 /*--------------------------------------------------------------------------*\
  * main
@@ -121,8 +127,8 @@ main( int argc, const char *argv[] )
     i = 0;
     while ( x_label[i] != NULL )
     {
-        plot1( 0, x_label[i], y_label[i], alty_label[i], title_label[i],
-            line_label[i] );
+        plot1( 0, x_label[i], y_label[i], alty_label[i],
+            legend_text[i], title_label[i], line_label[i] );
         i++;
     }
 
@@ -138,11 +144,20 @@ main( int argc, const char *argv[] )
 
 void
 plot1( int type, char *x_label, char *y_label, char *alty_label,
-       char *title_label, char *line_label )
+       char * legend_text[], char *title_label, char *line_label )
 {
     int          i;
     static PLFLT freql[101], ampl[101], phase[101];
     PLFLT        f0, freq;
+    PLINT        nlegend = 2;
+    PLINT        opt_array[2];
+    PLINT        text_colors[2];
+    PLINT        line_colors[2];
+    PLINT        line_styles[2];
+    PLINT        line_widths[2];
+    PLINT        symbol_numbers[2], symbol_colors[2], symbols[2];
+    PLFLT        symbol_scales[2];
+
 
     pladv( 0 );
 
@@ -177,7 +192,7 @@ plot1( int type, char *x_label, char *y_label, char *alty_label,
 
     plcol0( 2 );
     plline( 101, freql, ampl );
-    plcol0( 1 );
+    plcol0( 2 );
     plptex( 1.6, -30.0, 1.0, -20.0, 0.5, line_label );
 
 /* Put labels on */
@@ -197,7 +212,39 @@ plot1( int type, char *x_label, char *y_label, char *alty_label,
         plbox( "", 0.0, 0, "cmstv", 30.0, 3 );
         plcol0( 3 );
         plline( 101, freql, phase );
+        plpoin( 101, freql, phase, 3 );
         plcol0( 3 );
         plmtex( "r", 5.0, 0.5, 0.5, alty_label );
     }
+    // Draw a legend
+    // First legend entry.
+    opt_array[0]   = PL_LEGEND_LINE;
+    text_colors[0] = 2;
+    line_colors[0] = 2;
+    line_styles[0] = 1;
+    line_widths[0] = 1;
+    // note from the above opt_array the first symbol (and box) indices
+    // do not have to be specified
+
+    // Second legend entry.
+    opt_array[1]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
+    text_colors[1]    = 3;
+    line_colors[1]    = 3;
+    line_styles[1]    = 1;
+    line_widths[1]    = 1;
+    symbol_colors[1]  = 3;
+    symbol_scales[1]  = 1.;
+    symbol_numbers[1] = 4;
+    symbols[1]        = 3;
+    // from the above opt_arrays we can completely ignore everything
+    // to do with boxes.
+
+    plscol0a( 15, 32, 32, 32, 0.90 );
+    pllegend( PL_LEGEND_BACKGROUND, 0.57, 0.85, 0.06, 15,
+        nlegend, opt_array,
+        1.0, 1.0, 2.0,
+        1., text_colors, legend_text,
+        NULL, NULL, NULL,
+        line_colors, line_styles, line_widths,
+        symbol_colors, symbol_scales, symbol_numbers, symbols );
 }
