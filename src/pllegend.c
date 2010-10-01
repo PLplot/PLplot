@@ -144,12 +144,12 @@ static PLFLT get_character_or_symbol_height( PLBOOL ifcharacter )
 //! @param line_styles : array of nlegend line styles (plsty indices)
 //! (PL_LEGEND_LINE)
 //! @param line_widths : array of nlegend line widths (PL_LEGEND_LINE)
-//! @param symbol_numbers : array of nlegend numbers of symbols to be
-//! drawn across the width of the plotted area (PL_LEGEND_SYMBOL)
 //! @param symbol_colors : array of nlegend symbol colors (cmap0
 //! indices) (PL_LEGEND_SYMBOL)
 //! @param symbol_scales : array of nlegend scale values for the
 //! symbol height (PL_LEGEND_SYMBOL)
+//! @param symbol_numbers : array of nlegend numbers of symbols to be
+//! drawn across the width of the plotted area (PL_LEGEND_SYMBOL)
 //! @param symbols : array of nlegend symbols (plpoin indices)
 //! (PL_LEGEND_SYMBOL)
 //!
