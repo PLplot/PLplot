@@ -54,8 +54,7 @@ plot1( int type )
     PLINT        line_styles[2];
     PLINT        line_widths[2];
     PLINT        symbol_numbers[2], symbol_colors[2], symbols[2];
-    PLINT        box_colors[2], box_patterns[2];
-    PLFLT        symbol_scales[2], box_scales[2];
+    PLFLT        symbol_scales[2];
 
     pladv( 0 );
 
@@ -117,38 +116,36 @@ plot1( int type )
         nlegend = 2;
     }
     // Draw a legend
-    opt_array[0]      = PL_LEGEND_LINE;
+    // First legend entry.
+    opt_array[0]   = PL_LEGEND_LINE;
+    text_colors[0] = 2;
+    text[0]        = "Amplitude";
+    line_colors[0] = 2;
+    line_styles[0] = 1;
+    line_widths[0] = 1;
+    // note from the above opt_array the first symbol (and box) indices
+    // do not have to be specified
+
+    // Second legend entry.
     opt_array[1]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL;
-    text_colors[0]    = 2;
     text_colors[1]    = 3;
-    text[0]           = "Amplitude";
     text[1]           = "Phase shift";
-    line_colors[0]    = 2;
     line_colors[1]    = 3;
-    line_styles[0]    = 1;
     line_styles[1]    = 1;
-    line_widths[0]    = 1;
     line_widths[1]    = 1;
-    symbol_colors[0]  = 2;
     symbol_colors[1]  = 3;
-    symbol_scales[0]  = 1.2;
     symbol_scales[1]  = 1.;
-    symbol_numbers[0] = 3;
     symbol_numbers[1] = 4;
-    symbols[0]        = 3;
     symbols[1]        = 3;
-    box_colors[0]     = 2;
-    box_colors[1]     = 3;
-    box_patterns[0]   = 0;
-    box_patterns[1]   = 3;
-    box_scales[0]     = 0.5;
-    box_scales[1]     = 0.5;
+    // from the above opt_arrays we can completely ignore everything
+    // to do with boxes.
+
     plscol0a( 15, 32, 32, 32, 0.90 );
     pllegend( PL_LEGEND_BACKGROUND, 0.57, 0.85, 0.06, 15,
         nlegend, opt_array,
         1.0, 1.0, 2.0,
         1., text_colors, text,
-        box_colors, box_patterns, box_scales,
+        NULL, NULL, NULL,
         line_colors, line_styles, line_widths,
         symbol_colors, symbol_scales, symbol_numbers, symbols );
 }
