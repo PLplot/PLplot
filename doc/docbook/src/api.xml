@@ -3,7 +3,7 @@
     api.xml: "The Common API for PLplot" chapter
 
 Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2008  Alan W. Irwin
+Copyright (C) 1999-2010  Alan W. Irwin
 Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
 Copyright (C) 2003  Joao Cardoso
 Copyright (C) 2004, 2007  Andrew Ross
@@ -6294,6 +6294,380 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       This function is used in examples 1,5,9,12,14-16,20-22,29.
+    </para>
+
+  </sect1>
+
+  <sect1 id="pllegend" renderas="sect3">
+    <title>
+      <function>pllegend</function>: Create a discrete annotated legend using
+      boxes, lines, and/or lines of symbols
+    </title>
+
+    <para>
+      <funcsynopsis>
+	<funcprototype>
+	  <funcdef>
+	    <function>pllegend</function>
+	  </funcdef>
+	  <paramdef><parameter>opt</parameter></paramdef>
+	  <paramdef><parameter>x</parameter></paramdef>
+	  <paramdef><parameter>y</parameter></paramdef>
+	  <paramdef><parameter>plot_width</parameter></paramdef>
+	  <paramdef><parameter>bg_color</parameter></paramdef>
+	  <paramdef><parameter>nlegend</parameter></paramdef>
+	  <paramdef><parameter>opt_array</parameter></paramdef>
+	  <paramdef><parameter>text_offset</parameter></paramdef>
+	  <paramdef><parameter>text_scale</parameter></paramdef>
+	  <paramdef><parameter>text_spacing</parameter></paramdef>
+	  <paramdef><parameter>test_justification</parameter></paramdef>
+	  <paramdef><parameter>text_colors</parameter></paramdef>
+	  <paramdef><parameter>text</parameter></paramdef>
+	  <paramdef><parameter>box_colors</parameter></paramdef>
+	  <paramdef><parameter>box_patterns</parameter></paramdef>
+	  <paramdef><parameter>box_scales</parameter></paramdef>
+	  <paramdef><parameter>line_colors</parameter></paramdef>
+	  <paramdef><parameter>line_styles</parameter></paramdef>
+	  <paramdef><parameter>line_widths</parameter></paramdef>
+	  <paramdef><parameter>symbol_colors</parameter></paramdef>
+	  <paramdef><parameter>symbol_scales</parameter></paramdef>
+	  <paramdef><parameter>symbol_numbers</parameter></paramdef>
+	  <paramdef><parameter>symbols</parameter></paramdef>
+	</funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      (N.B. This is an experimental API that may be subject to further
+      change as we gain more experience with it.)  Routine for creating a
+      discrete plot legend with a plotted box, line, and/or line of symbols
+      for each annotated legend entry.  The arguments of pllegend provide
+      control over the location and size of the legend within the current
+      subpage as well as the location and characteristics of the elements
+      (most of which are optional) within that legend.  The resulting legend
+      is clipped at the boundaries of the current subpage
+    </para>
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>opt</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    <parameter>opt</parameter> contains bits controlling the
+	    overall legend.  If the <parameter>PL_LEGEND_BACKGROUND</parameter>
+	    bit is set, plot a (semi-transparent) background for the legend.  If
+	    the <parameter>PL_LEGEND_TEXT_LEFT</parameter> bit is set, put the
+	    text area on the left of the legend and the plotted area on the right.
+	    Otherwise, put the text area on the right of the legend and the
+	    plotted area on the left.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Normalized sub-page X position of the upper-left corner of
+	    the legend.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Normalized sub-page Y position of the upper-left corner of
+	    the legend.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>plot_width</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Horizontal width in normalized subpage units of the plot
+	    area (where the rectangular boxes, lines, and/or lines of symbols are
+	    drawn) of the legend.  N.B.  The total horizontal width of the legend
+	    in normalized subpage coordinates is calculated internally
+	    from <parameter>plot_width</parameter>,
+	    <parameter>text_offset</parameter> (see below), and length (calculated
+	    internally) of the longest text string.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>bg_color</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    The cmap0 index of the background color for the legend
+	    (<parameter>PL_LEGEND_BACKGROUND</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nlegend</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of legend entries.  N.B.  The total vertical height
+	    of the legend in normalized subpage coordinates is
+	    calculated internally from <parameter>nlegend</parameter>,
+	    <parameter>text_scale</parameter> (see below), and 
+	    <parameter>text_spacing</parameter> (see below).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>opt_array</parameter>
+	  (<literal>const PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend values of options to control each
+	    individual plotted area corresponding to a legend entry.  If the
+	    <parameter>PL_LEGEND_NONE</parameter> bit is set, then nothing is
+	    plotted in the plotted area.  If the
+	    <parameter>PL_LEGEND_COLOR_BOX</parameter>,
+	    <parameter>PL_LEGEND_LINE</parameter>, and/or
+	    <parameter>PL_LEGEND_SYMBOL</parameter> bits are set, the area
+	    corresponding to a legend entry is plotted with a colored box; a line;
+	    and/or a line of symbols.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>text_offset</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Offset of the text area from the plot area in units of
+	    character width.  N.B.  The total horizontal width of the legend in
+	    normalized subpage coordinates is calculated internally from
+	    <parameter>plot_width</parameter> (see above),
+	    <parameter>text_offset</parameter>, and length (calculated internally)
+	    of the longest text string.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>text_scale</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Character height scale for text annotations.  N.B.  The
+	    total vertical height of the legend in normalized subpage coordinates
+	    is calculated internally from <parameter>nlegend</parameter> (see
+	    above), <parameter>text_scale</parameter>, and
+	    <parameter>text_spacing</parameter> (see below).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>text_spacing</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Vertical spacing in units of the character height from one
+	    legend entry to the next.  N.B.  The total vertical height of the
+	    legend in normalized subpage coordinates is calculated internally from
+	    <parameter>nlegend</parameter> (see above),
+	    <parameter>text_scale</parameter> (see above), and
+	    <parameter>text_spacing</parameter>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>text_justification</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Justification parameter used for text justification.  The most common
+	    values of text_justification are 0., 0.5, or 1. corresponding to a
+	    text that is left justified, centred, or right justified within the
+	    text area, but other values are allowed as well.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>text_colors</parameter>
+	  (<literal>const PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend text colors (cmap0 indices).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>text</parameter>
+	  (<literal>const char **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend text string annotations.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>box_colors</parameter>
+	  (<literal>const PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend colors (cmap0 indices) for the discrete colored boxes
+	    (<parameter>PL_LEGEND_COLOR_BOX</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>box_patterns</parameter>
+	  (<literal>const PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend patterns (plpsty indices) for the discrete colored
+	    boxes (<parameter>PL_LEGEND_COLOR_BOX</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>box_scales</parameter>
+	  (<literal>const PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend scales (units of fraction of character height) for
+	    the height of the discrete colored boxes 
+	    (<parameter>PL_LEGEND_COLOR_BOX</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>line_colors</parameter>
+	  (<literal>const PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend line colors (cmap0 indices)
+	    (<parameter>PL_LEGEND_LINE</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>line_styles</parameter>
+	  (<literal>const PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend line styles (plsty indices) 
+	    (<parameter>PL_LEGEND_LINE</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>line_widths</parameter>
+	  (<literal>const PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend line widths
+	    (<parameter>PL_LEGEND_LINE</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>symbol_colors</parameter>
+	  (<literal>const PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend symbol colors (cmap0 indices) 
+	    (<parameter>PL_LEGEND_SYMBOL</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>symbol_scales</parameter>
+	  (<literal>const PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend scale values for the symbol height 
+	    (<parameter>PL_LEGEND_SYMBOL</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>symbol_numbers</parameter>
+	  (<literal>const PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend numbers of symbols to be drawn across the width of
+	    the plotted area (<parameter>PL_LEGEND_SYMBOL</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>symbols</parameter>
+	  (<literal>const PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Array of nlegend symbols (plpoin indices) 
+	    (<parameter>PL_LEGEND_SYMBOL</parameter>).
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>pllegend(opt, x, y, plot_width,
+      bg_color, opt_array, text_offset, text_scale, text_spacing,
+      test_justification, text_colors, text, box_colors, box_patterns,
+      box_scales, line_colors, line_styles, line_widths, symbol_colors,
+      symbol_scales, symbol_numbers, symbols)</function>
+    </para>
+
+    <para>
+      This function is used in examples 4 and 26.
     </para>
 
   </sect1>
