@@ -190,6 +190,7 @@ INDEX
 
 1.1 Alpha value support for plotting in memory.
 1.2 Add a Qt device for in memory plotting.
+1.3 Add discrete legend capability.
 
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
@@ -240,6 +241,7 @@ detected
 2.42 Font improvements
 2.42 Alpha value support for plotting in memory.
 2.43 Add a Qt device for in memory plotting.
+2.44 Add discrete legend capability.
 
 
 0. Tests made for release 5.9.7
@@ -264,6 +266,17 @@ if the user attempts to give it RGBA formatted memory to plot in.
 A new device called memqt has been added for in memory plotting using
 Qt. This device is the Qt equivalent of the memcairo device.
 
+1.3 Add discrete legend capability.
+
+A new routine called pllegend has been added to our core C API.
+(N.B. This is an experimental API that may be subject to further
+change as we gain more experience with it.)  This routine creates a
+discrete plot legend with a plotted box, line, and/or line of symbols
+for each annotated legend entry. The arguments of pllegend provide
+control over the location and size of the legend within the current
+subpage as well as the location and characteristics of the elements
+(most of which are optional) within that legend. The resulting legend
+is clipped at the boundaries of the current subpage
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -937,3 +950,15 @@ if the user attempts to give it RGBA formatted memory to plot in.
 
 A new device called memqt has been added for in memory plotting using
 Qt. This device is the Qt equivalent of the memcairo device.
+
+2.44 Add discrete legend capability.
+
+A new routine called pllegend has been added to our core C API.
+(N.B. This is an experimental API that may be subject to further
+change as we gain more experience with it.)  This routine creates a
+discrete plot legend with a plotted box, line, and/or line of symbols
+for each annotated legend entry. The arguments of pllegend provide
+control over the location and size of the legend within the current
+subpage as well as the location and characteristics of the elements
+(most of which are optional) within that legend. The resulting legend
+is clipped at the boundaries of the current subpage
