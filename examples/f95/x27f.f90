@@ -1,4 +1,4 @@
-! $Id:$
+! $Id$
 !
 !  Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
 !
