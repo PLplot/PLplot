@@ -256,6 +256,9 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
     }
     else
     {
+#ifndef _WIN64
+#define GetWindowLongPtr GetWindowLong
+#endif
         pls = (PLStream *) GetWindowLongPtr( hwnd, GWL_USERDATA ); /* Try to get the address to pls for this window */
         if ( pls )                                                 /* If we got it, then we will initialise this windows plplot private data area */
         {
@@ -561,7 +564,12 @@ plD_init_wingcc( PLStream *pls )
  * process this window
  */
 
+#ifdef _WIN64
     SetWindowLongPtr( dev->hwnd, GWL_USERDATA, (LONG_PTR) pls );
+#else
+    SetWindowLong( dev->hwnd, GWL_USERDATA, (LONG) pls );
+#endif
+
     dev->SCRN_hdc = dev->hdc = GetDC( dev->hwnd );
 
 /*
