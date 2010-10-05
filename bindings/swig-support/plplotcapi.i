@@ -517,6 +517,7 @@ pljoin(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2);
 void
 pllab(const char *xlabel, const char *ylabel, const char *tlabel);
 
+#ifdef SWIG_PYTHON
 %feature("autodoc", "Create a discrete annotated legend using boxes, lines, and/or lines of symbols.") pllegend;
 void
 pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
@@ -531,6 +532,8 @@ pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
           const PLINT *ArrayCk, const PLFLT *ArrayCk, 
           const PLINT *ArrayCk, const PLINT *ArrayCk );
 %feature("autodoc", "Set position of the light source.") pllightsource;
+#endif
+
 void
 pllightsource(PLFLT x, PLFLT y, PLFLT z);
 
