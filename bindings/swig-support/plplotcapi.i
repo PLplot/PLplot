@@ -95,6 +95,14 @@ typedef void* PLPointer;
 #define PL_HIST_NOEXPAND        8
 #define PL_HIST_NOEMPTY        16
 
+// Flags for pllegend.
+#define PL_LEGEND_NONE          1
+#define PL_LEGEND_COLOR_BOX     2
+#define PL_LEGEND_LINE          4
+#define PL_LEGEND_SYMBOL        8
+#define PL_LEGEND_TEXT_LEFT     16
+#define PL_LEGEND_BACKGROUND    32
+
 /* Window parameter tags */
 
 #define PLSWIN_DEVICE		1	/* device coordinates */
@@ -509,6 +517,19 @@ pljoin(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2);
 void
 pllab(const char *xlabel, const char *ylabel, const char *tlabel);
 
+%feature("autodoc", "Create a discrete annotated legend using boxes, lines, and/or lines of symbols.") pllegend;
+void
+pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
+          PLINT n, const PLINT *Array,
+          PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
+          PLFLT text_justification,
+          const PLINT *ArrayCk, const char **ArrayCk,
+          const PLINT *ArrayCk, const PLINT *ArrayCk, 
+          const PLFLT *ArrayCk, 
+          const PLINT *ArrayCk, const PLINT *ArrayCk, 
+          const PLINT *ArrayCk, 
+          const PLINT *ArrayCk, const PLFLT *ArrayCk, 
+          const PLINT *ArrayCk, const PLINT *ArrayCk );
 %feature("autodoc", "Set position of the light source.") pllightsource;
 void
 pllightsource(PLFLT x, PLFLT y, PLFLT z);
@@ -533,7 +554,7 @@ plmesh(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
 %feature("autodoc", "Plot a 3-d contoured mesh representation of the function z[x][y].") plmeshc;
 void
 plmeshc(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
-	 PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n);
+          PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n);
 
 %feature("autodoc", "Create a new stream and makes it the default.") plmkstrm;
 void

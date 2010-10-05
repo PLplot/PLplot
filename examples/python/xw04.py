@@ -1,6 +1,6 @@
 # $Id$
 
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-1010 Alan W. Irwin
 
 #  Log plot demo.
 #
@@ -57,7 +57,7 @@ def plot1(type):
 	print "error: type must be either 0 or 1"
     plcol0(2)
     plline(freql, ampl)
-    plcol0(1)
+    plcol0(2)
     plptex(1.6, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade")
 
     # Put labels on
@@ -74,7 +74,59 @@ def plot1(type):
 	plbox("", 0.0, 0, "cmstv", 30.0, 3)
 	plcol0(3)
 	plline(freql, phase)
+	plpoin(freql, phase, 3)
 	plcol0(3)
 	plmtex("r", 5.0, 0.5, 0.5, "Phase shift (degrees)")
+        nlegend = 2
+    else:
+        nlegend = 1
+
+    # Draw a legend.
+    # Set up legend arrays with the correct size, type.
+    opt_array = zeros(nlegend, "int")
+    text_colors = zeros(nlegend, "int")
+    text = zeros(nlegend, "S20")
+    box_colors = zeros(nlegend, "int")
+    box_patterns = zeros(nlegend, "int")
+    box_scales = zeros(nlegend)
+    line_colors = zeros(nlegend, "int")
+    line_styles = zeros(nlegend, "int")
+    line_widths = zeros(nlegend, "int")
+    symbol_colors = zeros(nlegend, "int")
+    symbol_scales = zeros(nlegend)
+    symbol_numbers = zeros(nlegend, "int")
+    symbols = zeros(nlegend, "int")
+    # Only specify legend data that are required according to the
+    # value of opt_array for that entry.
+
+    # Data for first legend entry. 
+    opt_array[0] = PL_LEGEND_LINE
+    text_colors[0] = 2
+    text[0] = "Amplitude"
+    line_colors[0] = 2
+    line_styles[0] = 1
+    line_widths[0] = 1
+
+    # Data for second legend entry.
+    if nlegend > 1:
+        opt_array[1]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL
+        text_colors[1]    = 3
+        text[1]           = "Phase shift"
+        line_colors[1]    = 3
+        line_styles[1]    = 1
+        line_widths[1]    = 1
+        symbol_colors[1]  = 3
+        symbol_scales[1]  = 1.
+        symbol_numbers[1] = 4
+        symbols[1]        = 3
+
+    plscol0a( 15, 32, 32, 32, 0.90 )
+    pllegend( PL_LEGEND_BACKGROUND, 0.57, 0.85, 0.06, 15,
+              opt_array,
+              1.0, 1.0, 2.0,
+              1., text_colors, text,
+              box_colors, box_patterns, box_scales,
+              line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
 
 main()

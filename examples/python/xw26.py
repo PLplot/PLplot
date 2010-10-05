@@ -1,6 +1,6 @@
 # -*- coding: utf-8; -*-
 # $Id$
-#  Copyright (C) 2006 Alan W. Irwin
+#  Copyright (C) 2006-2010 Alan W. Irwin
 
 #  Multi-lingual version of the first page of example 4.
 
@@ -73,6 +73,12 @@ def main():
     "Phase shift (degrees)",\
     "Фазовый сдвиг (градусы)",\
     ]
+    # Short rearranged versions of y_label and alty_label.
+    legend_text = [\
+    [ "Amplitude", "Phase shift"],\
+    [ "Амплитуда", "Фазовый сдвиг" ],\
+    ]
+
     title_label = [\
     "Single Pole Low-Pass Filter",\
     "Однополюсный Низко-Частотный Фильтр",\
@@ -93,13 +99,13 @@ def main():
     
     for i in range(nlang):
 	plot1(0, x_label[i], y_label[i], alty_label[i], \
-	title_label[i], line_label[i])
+	title_label[i], line_label[i], legend_text[i])
 
     # Restore defaults
     plfont(1)
     #plcol0(1)
     
-def plot1(type, x_label, y_label, alty_label, title_label, line_label):
+def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_text):
 
     pladv(0)
     f0 = 1.0
@@ -119,7 +125,7 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label):
 	print "error: type must be either 0 or 1"
     plcol0(2)
     plline(freql, ampl)
-    plcol0(1)
+    plcol0(2)
     plptex(1.6, -30.0, 1.0, -20.0, 0.5, line_label)
 
     # Put labels on
@@ -136,7 +142,62 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label):
 	plbox("", 0.0, 0, "cmstv", 30.0, 3)
 	plcol0(3)
 	plline(freql, phase)
+	plpoin(freql, phase, 3)
 	plcol0(3)
 	plmtex("r", 5.0, 0.5, 0.5, alty_label)
+        nlegend = 2
+    else:
+        nlegend = 1
+
+    # Draw a legend.
+    # Set up legend arrays with the correct size, type.
+    # legend_text is already supplied by argument.
+    opt_array = zeros(nlegend, "int")
+    # Be generous with size of string since raw UTF-8 is involved.
+    text = zeros(nlegend, "S100")
+    text_colors = zeros(nlegend, "int")
+    box_colors = zeros(nlegend, "int")
+    box_patterns = zeros(nlegend, "int")
+    box_scales = zeros(nlegend)
+    line_colors = zeros(nlegend, "int")
+    line_styles = zeros(nlegend, "int")
+    line_widths = zeros(nlegend, "int")
+    symbol_colors = zeros(nlegend, "int")
+    symbol_scales = zeros(nlegend)
+    symbol_numbers = zeros(nlegend, "int")
+    symbols = zeros(nlegend, "int")
+    # Only specify legend data that are required according to the
+    # value of opt_array for that entry.
+
+    # Data for first legend entry. 
+    opt_array[0] = PL_LEGEND_LINE
+    text_colors[0] = 2
+    text[0] = legend_text[0]
+    line_colors[0] = 2
+    line_styles[0] = 1
+    line_widths[0] = 1
+
+    # Data for second legend entry.
+    if nlegend > 1:
+        opt_array[1]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL
+        text_colors[1]    = 3
+        text[1] = legend_text[1]
+        line_colors[1]    = 3
+        line_styles[1]    = 1
+        line_widths[1]    = 1
+        symbol_colors[1]  = 3
+        symbol_scales[1]  = 1.
+        symbol_numbers[1] = 4
+        symbols[1]        = 3
+
+    plscol0a( 15, 32, 32, 32, 0.90 )
+    pllegend( PL_LEGEND_BACKGROUND, 0.57, 0.85, 0.06, 15,
+              opt_array,
+              1.0, 1.0, 2.0,
+              1., text_colors, text,
+              box_colors, box_patterns, box_scales,
+              line_colors, line_styles, line_widths,
+              symbol_colors, symbol_scales, symbol_numbers, symbols )
+
 
 main()

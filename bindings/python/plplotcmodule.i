@@ -457,6 +457,28 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
   free($1);
 }
 
+/***************************
+	special for pllegend, char ** ArrayCk
+****************************/
+/* no count, but check consistency with previous */
+%typemap(in) char **ArrayCk (PyArrayObject* tmp) {
+  int i;
+  tmp = (PyArrayObject *)PyArray_ContiguousFromObject($input, NPY_STRING, 1, 1);
+  if(tmp == NULL) return NULL;
+  if(tmp->dimensions[0] != Alen) {
+    PyErr_SetString(PyExc_ValueError, "Vectors must be same length.");
+    return NULL;
+  }
+  $1 = (char **) malloc(sizeof(char*)*Alen);
+  for(i=0; i<Alen; i++) {
+    $1[i] = tmp->data + i*tmp->strides[0];
+    if($1[i] == NULL) {
+      free($1);
+      return NULL;
+    }
+  }
+}
+%typemap(freearg) char **ArrayCk { Py_DECREF(tmp$argnum); free($1);}
 
 /***************************
 	String returning functions
