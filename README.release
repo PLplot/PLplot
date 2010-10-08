@@ -174,20 +174,35 @@ disable python by default. If you still require Numeric support in the
 short term then set USE_NUMERIC to ON in cmake. The PLplot support 
 for Numeric will be dropped in a future release.
 
-XVIV. It has come to our attention that the version of gdc supplied with 
-several recent versions of Ubuntu has a very serious bug on 64-bit 
-systems (see https://bugs.launchpad.net/ubuntu/+source/gdc-4.2/+bug/235955)
-which causes several of the plplot D examples to crash. If this
-affects you, you are recommended to disable the d bindings or switch to
-an alternative d compiler (the Digital Mars compiler is reported to
-be good).
+XIX. As of release 5.9.8, and for unicode-aware devices we now follow
+what is done for the Hershey font case for epsilon, theta, and phi.
+This means the #ge, #gh, and #gf escapes now give users the Greek
+lunate epsilon, the ordinary Greek lower case theta, and the Greek
+symbol phi for Unicode fonts just like has occurred since the dawn of
+PLplot history for the Hershey font case.  Previously these legacy escapes
+were assigned to ordinary Greek lower-case epsilon, the Greek symbol theta
+(= script theta), and the ordinary Greek lower case phi for unicode
+fonts inconsistently with what occurred for Hershey fonts.  This change
+gets rid of this inconsistency, that is the #g escapes should give
+the best unicode approximation to the Hershey glyph result that is possible
+for unicode-aware devices.
+
+In general we encourage users of unicode-aware devices who might
+dislike the Greek glyph Hershey-lookalike choices they get with the
+legacy #g escapes to use instead either PLplot unicode escapes (e.g.,
+"#[0x03b5]" for ordinary Greek lower-case epsilon, see page 3 of
+example 23) or better yet, UTF-8 strings (e.g., "ε") to specify
+exactly what unicode glyph they want.
 
 INDEX
+
+-1. Important changes we should have mentioned in previous release announcements.
+
+-1.1 Add full bindings and examples for the D language.
 
 0. Tests made for release 5.9.8
 
 1. Changes relative to PLplot 5.9.7 (the previous development release)
-
 
 2. Changes relative to PLplot 5.8.0 (the previous stable release)
 
@@ -238,6 +253,26 @@ detected
 2.42 Alpha value support for plotting in memory.
 2.43 Add a Qt device for in memory plotting.
 2.44 Add discrete legend capability.
+2.45 Add full bindings and examples for the D language.
+
+
+-1. Important changes we should have mentioned in previous release announcements.
+
+-1.1 Add full bindings and examples for the D language.
+
+As of release 5.9.5 we added full bindings and examples for the D
+language.  The results for the D examples are generally consistent
+with the corresponding C examples which helps to verify the D
+bindings.
+
+Since the release of 5.9.5 it has come to our attention that the
+version of gdc supplied with several recent versions of Ubuntu has a
+very serious bug on 64-bit systems (see
+https://bugs.launchpad.net/ubuntu/+source/gdc-4.2/+bug/235955) which
+causes several of the plplot D examples to crash. If this affects you,
+you are recommended to disable the d bindings or switch to an
+alternative d compiler (the Digital Mars compiler is reported to be
+good).
 
 
 0. Tests made for release 5.9.8
@@ -934,3 +969,21 @@ control over the location and size of the legend within the current
 subpage as well as the location and characteristics of the elements
 (most of which are optional) within that legend. The resulting legend
 is clipped at the boundaries of the current subpage
+
+
+2.45 Add full bindings and examples for the D language.
+
+As of release 5.9.5 we added full bindings and examples for the D
+language.  The results for the D examples are generally consistent
+with the corresponding C examples which helps to verify the D
+bindings.
+
+Since the release of 5.9.5 it has come to our attention that the
+version of gdc supplied with several recent versions of Ubuntu has a
+very serious bug on 64-bit systems (see
+https://bugs.launchpad.net/ubuntu/+source/gdc-4.2/+bug/235955) which
+causes several of the plplot D examples to crash. If this affects you,
+you are recommended to disable the d bindings or switch to an
+alternative d compiler (the Digital Mars compiler is reported to be
+good).
+
