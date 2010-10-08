@@ -6,7 +6,7 @@
  *
  * Copyright (C) 1992  Geoffrey Furnish
  * Copyright (C) 1993, 1994, 1995, 2000, 2001, 2002  Maurice LeBrun
- * Copyright (C) 2000, 2002, 2004, 2005  Alan W. Irwin
+ * Copyright (C) 2000-2010  Alan W. Irwin
  * Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
  * Copyright (C) 2002  Vincent Darley
  * Copyright (C) 2004  Andrew Ross
@@ -1015,6 +1015,14 @@ pldeco( short int **symbol, PLINT *length, const char *text )
             {
                 test = text[j++];
                 ig   = plP_strpos( plP_greek_mnemonic, test ) + 1;
+                // This accesses the Hershey glyphs using the same
+                // "ascii" index as plpoin.  So the order of the Greek
+                // glyphs in this case depends on the subhersh[0-3]
+                // indices in fonts/font11.c which for lower-case eta,
+                // theta, and phi substitutes (684, 685, and 686) for
+                // (631, 634, and 647) in the compact case and (2184,
+                // 2185, and 2186) for (2131, 2134, and 2147) in the
+                // extended case.
                 sym[( *length )++] =
                     *( fntlkup + ( ifont - 1 ) * numberchars + 127 + ig );
             }
