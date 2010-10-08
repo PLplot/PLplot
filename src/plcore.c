@@ -11,7 +11,7 @@
  * Copyright (C) 2004, 2005  Rafael Laboissiere
  * Copyright (C) 2004, 2006  Andrew Ross
  * Copyright (C) 2004  Andrew Roach
- * Copyright (C) 2005, 2006, 2007, 2008, 2009  Alan W. Irwin
+ * Copyright (C) 2005-2010  Alan W. Irwin
  * Copyright (C) 2005  Thomas J. Duck
  *
  * This file is part of PLplot.
@@ -804,7 +804,18 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                             {
                                 if ( ig >= 24 )
                                     ig = ig + 100 - 24;
-                                idx = plhershey2unicode( ig + 527 );
+                                ig = ig + 527;
+                                // Follow pldeco in plsym.c which for
+                                // lower case epsilon, theta, and phi
+                                // substitutes (684, 685, and 686) for
+                                // (631, 634, and 647)
+                                if ( ig == 631 )
+                                    ig = 684;
+                                else if ( ig == 634 )
+                                    ig = 685;
+                                else if ( ig == 647 )
+                                    ig = 686;
+                                idx = plhershey2unicode( ig );
                                 unicode_buffer[j++] = \
                                     (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
                                 i   += 2;
@@ -1004,7 +1015,18 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                                 {
                                     if ( ig >= 24 )
                                         ig = ig + 100 - 24;
-                                    idx  = plhershey2unicode( ig + 527 );
+                                    ig = ig + 527;
+                                    // Follow pldeco in plsym.c which for
+                                    // lower case epsilon, theta, and phi
+                                    // substitutes (684, 685, and 686) for
+                                    // (631, 634, and 647)
+                                    if ( ig == 631 )
+                                        ig = 684;
+                                    else if ( ig == 634 )
+                                        ig = 685;
+                                    else if ( ig == 647 )
+                                        ig = 686;
+                                    idx  = plhershey2unicode( ig );
                                     i   += 2;
                                     skip = 1; /* skip is set if we have copied something
                                                * into the unicode table */
