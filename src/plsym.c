@@ -1018,7 +1018,7 @@ pldeco( short int **symbol, PLINT *length, const char *text )
                 // This accesses the Hershey glyphs using the same
                 // "ascii" index as plpoin.  So the order of the Greek
                 // glyphs in this case depends on the subhersh[0-3]
-                // indices in fonts/font11.c which for lower-case eta,
+                // indices in fonts/font11.c which for lower-case epsilon,
                 // theta, and phi substitutes (684, 685, and 686) for
                 // (631, 634, and 647) in the compact case and (2184,
                 // 2185, and 2186) for (2131, 2134, and 2147) in the
