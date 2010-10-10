@@ -911,7 +911,8 @@ grid_adtli( PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 #if 0
                     facet = qh_findbest( point, qh facet_list, qh_ALL,
-                        !qh_ISnewfacets, /*qh_ALL*/ qh_NOupper,
+                        !qh_ISnewfacets, /*qh_ALL*/
+                        qh_NOupper,
                         &bestdist, &isoutside, &totpart );
 #endif
 
