@@ -45,7 +45,9 @@
  * responsibility to provide the space for all affine matrix arguments,
  * i.e., a PLFLT array with a dimension of 6.
  *
- * /* Returns affine identity matrix */
+ */
+
+ /* Returns affine identity matrix */
 
 void
 plP_affine_identity( PLFLT *affine_vector )
