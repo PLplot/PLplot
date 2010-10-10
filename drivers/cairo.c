@@ -694,6 +694,13 @@ void text_end_cairo( PLStream *pls, EscText *args )
     pango_layout_set_markup( layout, aStream->pangoMarkupString, -1 );
     pango_layout_get_pixel_size( layout, &textXExtent, &textYExtent );
 
+    /* If asked, set the string length and return */
+    if (pls->get_string_length)
+    {
+	pls->string_length = textXExtent;
+	return;
+    }
+
     /* Set font aliasing */
     context          = pango_layout_get_context( layout );
     cairoFontOptions = cairo_font_options_create();
@@ -1139,7 +1146,7 @@ PLCairo *stream_and_font_setup( PLStream *pls, int interactive )
     pls->dev_gradient = 1;           /* driver renders gradient */
     pls->dev_arc      = 1;           /* Supports driver-level arcs */
     pls->plbuf_write  = interactive; /* Activate plot buffer */
-
+    pls->has_string_length = 1;      /* Driver supports string length calculations */
 
     if ( pls->xlength <= 0 || pls->ylength <= 0 )
     {
