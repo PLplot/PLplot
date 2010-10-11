@@ -1,30 +1,30 @@
-/* plget/plset()
- *
- * Copyright (C) 2009  Hazen Babcock
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// plget/plset()
+//
+// Copyright (C) 2009  Hazen Babcock
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #include "plplotP.h"
 #include "plstrm.h"
 
-/*-------------------------------------------------------------------------
- * plget : Get the value of the specified variable in the current plot stream
- *-------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------
+// plget : Get the value of the specified variable in the current plot stream
+//-------------------------------------------------------------------------
 void
 c_plget( enum PLAttributeName attrName, PLAttribute *attrValue )
 {
@@ -33,7 +33,7 @@ c_plget( enum PLAttributeName attrName, PLAttribute *attrValue )
     attrValue->attributeType = -1;
     switch ( attrName )
     {
-    /* get the entire color map 0 */
+    // get the entire color map 0
     case PL_CMAP0:
         attrValue->attributeType = PL_COLORPTR;
         attrValue->colorValues   = (PLColor *) malloc( sizeof ( PLColor ) * plsc->ncol0 );
@@ -46,7 +46,7 @@ c_plget( enum PLAttributeName attrName, PLAttribute *attrValue )
         }
         attrValue->nValues = plsc->ncol0;
         break;
-    /* get the entire color map 1 */
+    // get the entire color map 1
     case PL_CMAP1:
         attrValue->attributeType = PL_COLORPTR;
         attrValue->colorValues   = (PLColor *) malloc( sizeof ( PLColor ) * plsc->ncol1 );
@@ -59,12 +59,12 @@ c_plget( enum PLAttributeName attrName, PLAttribute *attrValue )
         }
         attrValue->nValues = plsc->ncol1;
         break;
-    /* get the current (scaled) character height */
+    // get the current (scaled) character height
     case PL_CURCHARSIZE:
         attrValue->attributeType = PL_FLT;
         attrValue->fltValue      = plsc->chrht;
         break;
-    /* get the current color map 0 color */
+    // get the current color map 0 color
     case PL_CURCOLOR0:
         attrValue->attributeType = PL_COLOR;
         attrValue->colorValue.r  = plsc->curcolor.r;
@@ -72,92 +72,92 @@ c_plget( enum PLAttributeName attrName, PLAttribute *attrValue )
         attrValue->colorValue.b  = plsc->curcolor.b;
         attrValue->colorValue.a  = plsc->curcolor.a;
         break;
-    /* get the current (scaled) major tick size */
+    // get the current (scaled) major tick size
     case PL_CURMAJORTICK:
         attrValue->attributeType = PL_FLT;
         attrValue->fltValue      = plsc->majht;
         break;
-    /* get the current (scaled) minor tick size */
+    // get the current (scaled) minor tick size
     case PL_CURMINORTICK:
         attrValue->attributeType = PL_FLT;
         attrValue->fltValue      = plsc->minht;
         break;
-    /* get the default character height (in mm) */
+    // get the default character height (in mm)
     case PL_DEFCHARSIZE:
         attrValue->attributeType = PL_FLT;
         attrValue->fltValue      = plsc->chrdef;
         break;
-    /* get the default major tick size (in mm) */
+    // get the default major tick size (in mm)
     case PL_DEFMAJORTICK:
         attrValue->attributeType = PL_FLT;
         attrValue->fltValue      = plsc->majdef;
         break;
-    /* get the default minor tick size (in mm) */
+    // get the default minor tick size (in mm)
     case PL_DEFMINORTICK:
         attrValue->attributeType = PL_FLT;
         attrValue->fltValue      = plsc->mindef;
         break;
-    /* get the index of the current color map 0 color */
+    // get the index of the current color map 0 color
     case PL_ICOL0:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->icol0;
         break;
-    /* get the index of the current color map 1 color */
+    // get the index of the current color map 1 color
     case PL_ICOL1:
         attrValue->attributeType = PL_FLT;
         attrValue->intValue      = ( (PLFLT) plsc->icol1 ) / ( (PLFLT) plsc->ncol1 );
         break;
-    /* get the number of colors in color map 0 */
+    // get the number of colors in color map 0
     case PL_NCOL0:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->ncol0;
         break;
-    /* get the number of colors in color map 1 */
+    // get the number of colors in color map 1
     case PL_NCOL1:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->ncol1;
         break;
-    /* get the current pen width */
+    // get the current pen width
     case PL_PENWIDTH:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->width;
         break;
-    /* get the current number of digits of precision */
+    // get the current number of digits of precision
     case PL_PRECISION:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->precis;
         break;
-    /* get whether or not to use user specified number of digits of precision */
+    // get whether or not to use user specified number of digits of precision
     case PL_SETPRECISION:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->setpre;
         break;
-    /* get x fields digit value (?) */
+    // get x fields digit value (?)
     case PL_XDIGITS:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->xdigits;
         break;
-    /* get x maximum digits (0 = no maximum) */
+    // get x maximum digits (0 = no maximum)
     case PL_XDIGMAX:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->xdigmax;
         break;
-    /* get y fields digit value (?) */
+    // get y fields digit value (?)
     case PL_YDIGITS:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->ydigits;
         break;
-    /* get y maximum digits (0 = no maximum) */
+    // get y maximum digits (0 = no maximum)
     case PL_YDIGMAX:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->ydigmax;
         break;
-    /* get z fields digit value (?) */
+    // get z fields digit value (?)
     case PL_ZDIGITS:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->zdigits;
         break;
-    /* get z maximum digits (0 = no maximum) */
+    // get z maximum digits (0 = no maximum)
     case PL_ZDIGMAX:
         attrValue->attributeType = PL_INT;
         attrValue->intValue      = plsc->zdigmax;
@@ -167,14 +167,14 @@ c_plget( enum PLAttributeName attrName, PLAttribute *attrValue )
     }
 }
 
-/*-------------------------------------------------------------------------
- * plset : Set the value of the specified variable in the current plot stream
- *
- * Note: This is a little tricker since we can't just set the value & expect
- * the driver to respond, instead we have to call the appropriate function
- * in PLplot core.
- *
- *-------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------
+// plset : Set the value of the specified variable in the current plot stream
+//
+// Note: This is a little tricker since we can't just set the value & expect
+// the driver to respond, instead we have to call the appropriate function
+// in PLplot core.
+//
+//-------------------------------------------------------------------------
 void
 c_plset( enum PLAttributeName attrName, PLAttribute attrValue )
 {
@@ -184,7 +184,7 @@ c_plset( enum PLAttributeName attrName, PLAttribute attrValue )
 
     switch ( attrName )
     {
-    /* set color map 0 from an array of PL_COLOR values */
+    // set color map 0 from an array of PL_COLOR values
     case PL_CMAP0:
         if ( attrValue.attributeType == PL_COLORPTR )
         {
@@ -206,7 +206,7 @@ c_plset( enum PLAttributeName attrName, PLAttribute attrValue )
             free( a );
         }
         break;
-    /* set color map 1 from an array of PL_COLOR values */
+    // set color map 1 from an array of PL_COLOR values
     case PL_CMAP1:
         if ( attrValue.attributeType == PL_COLORPTR )
         {
@@ -228,14 +228,14 @@ c_plset( enum PLAttributeName attrName, PLAttribute attrValue )
             free( a );
         }
         break;
-    /* set the (scaled) character height */
+    // set the (scaled) character height
     case PL_CURCHARSIZE:
         if ( attrValue.attributeType == PL_FLT )
         {
             plschr( 0.0, attrValue.fltValue );
         }
         break;
-    /* set the current color map 0 color */
+    // set the current color map 0 color
     case PL_CURCOLOR0:
         if ( attrValue.attributeType == PL_COLOR )
         {
@@ -246,126 +246,126 @@ c_plset( enum PLAttributeName attrName, PLAttribute attrValue )
             plcol0( plsc->icol0 );
         }
         break;
-    /* set the (scaled) major tick length */
+    // set the (scaled) major tick length
     case PL_CURMAJORTICK:
         if ( attrValue.attributeType == PL_FLT )
         {
             plsmaj( 0.0, attrValue.fltValue );
         }
         break;
-    /* set the (scaled) minor tick length */
+    // set the (scaled) minor tick length
     case PL_CURMINORTICK:
         if ( attrValue.attributeType == PL_FLT )
         {
             plsmin( 0.0, attrValue.fltValue );
         }
         break;
-    /* set the default character height (mm) */
+    // set the default character height (mm)
     case PL_DEFCHARSIZE:
         if ( attrValue.attributeType == PL_FLT )
         {
             plschr( attrValue.fltValue, plsc->chrht );
         }
         break;
-    /* set the default major tick size (mm) */
+    // set the default major tick size (mm)
     case PL_DEFMAJORTICK:
         if ( attrValue.attributeType == PL_FLT )
         {
             plsmaj( attrValue.fltValue, plsc->majht );
         }
         break;
-    /* set the default minor tick size (mm) */
+    // set the default minor tick size (mm)
     case PL_DEFMINORTICK:
         if ( attrValue.attributeType == PL_FLT )
         {
             plsmin( attrValue.fltValue, plsc->minht );
         }
         break;
-    /* set the index of the current color map 0 color */
+    // set the index of the current color map 0 color
     case PL_ICOL0:
         if ( attrValue.attributeType == PL_INT )
         {
             plcol0( attrValue.intValue );
         }
         break;
-    /* set the index of the current color map 1 color */
+    // set the index of the current color map 1 color
     case PL_ICOL1:
         if ( attrValue.attributeType == PL_FLT )
         {
             plcol1( attrValue.fltValue );
         }
         break;
-    /* set the number of colors in color map 0 */
+    // set the number of colors in color map 0
     case PL_NCOL0:
         if ( attrValue.attributeType == PL_INT )
         {
             plscmap0n( attrValue.intValue );
         }
         break;
-    /* set the number of colors in color map 1 */
+    // set the number of colors in color map 1
     case PL_NCOL1:
         if ( attrValue.attributeType == PL_INT )
         {
             plscmap1n( attrValue.intValue );
         }
         break;
-    /* set the current pen width */
+    // set the current pen width
     case PL_PENWIDTH:
         if ( attrValue.attributeType == PL_INT )
         {
             plwid( attrValue.intValue );
         }
         break;
-    /* set the current number of digits of precision */
+    // set the current number of digits of precision
     case PL_PRECISION:
         if ( attrValue.attributeType == PL_INT )
         {
             plprec( plsc->setpre, attrValue.intValue );
         }
         break;
-    /* set whether or not to use user specified number of digits of precision */
+    // set whether or not to use user specified number of digits of precision
     case PL_SETPRECISION:
         if ( attrValue.attributeType == PL_INT )
         {
             plprec( attrValue.intValue, plsc->precis );
         }
         break;
-    /* set x fields digit value (?) */
+    // set x fields digit value (?)
     case PL_XDIGITS:
         if ( attrValue.attributeType == PL_INT )
         {
             plsxax( plsc->xdigmax, attrValue.intValue );
         }
         break;
-    /* get x maximum digits (0 = no maximum) */
+    // get x maximum digits (0 = no maximum)
     case PL_XDIGMAX:
         if ( attrValue.attributeType == PL_INT )
         {
             plsxax( attrValue.intValue, plsc->xdigits );
         }
         break;
-    /* set y fields digit value (?) */
+    // set y fields digit value (?)
     case PL_YDIGITS:
         if ( attrValue.attributeType == PL_INT )
         {
             plsyax( plsc->ydigmax, attrValue.intValue );
         }
         break;
-    /* set y maximum digits (0 = no maximum) */
+    // set y maximum digits (0 = no maximum)
     case PL_YDIGMAX:
         if ( attrValue.attributeType == PL_INT )
         {
             plsyax( attrValue.intValue, plsc->ydigits );
         }
         break;
-    /* set z fields digit value (?) */
+    // set z fields digit value (?)
     case PL_ZDIGITS:
         if ( attrValue.attributeType == PL_INT )
         {
             plszax( plsc->zdigmax, attrValue.intValue );
         }
         break;
-    /* set z maximum digits (0 = no maximum) */
+    // set z maximum digits (0 = no maximum)
     case PL_ZDIGMAX:
         if ( attrValue.attributeType == PL_INT )
         {

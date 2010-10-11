@@ -1,26 +1,26 @@
-/* $Id$
- *
- *      Routines dealing with line generation.
- *
- * Copyright (C) 2004  Maurice LeBrun
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      Routines dealing with line generation.
+//
+// Copyright (C) 2004  Maurice LeBrun
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Library General Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plplotP.h"
 
@@ -30,35 +30,35 @@ static PLINT xline[PL_MAXPOLY], yline[PL_MAXPOLY];
 
 static PLINT lastx = PL_UNDEFINED, lasty = PL_UNDEFINED;
 
-/* Function prototypes */
+// Function prototypes
 
-/* Draws a polyline within the clip limits. */
+// Draws a polyline within the clip limits.
 
 static void
 pllclp( PLINT *x, PLINT *y, PLINT npts );
 
-/* General line-drawing routine.  Takes line styles into account. */
+// General line-drawing routine.  Takes line styles into account.
 
 static void
 genlin( short *x, short *y, PLINT npts );
 
-/* Draws a dashed line to the specified point from the previous one. */
+// Draws a dashed line to the specified point from the previous one.
 
 static void
 grdashline( short *x, short *y );
 
-/* Determines if a point is inside a polygon or not */
+// Determines if a point is inside a polygon or not
 
-/* Interpolate between two points in n steps */
+// Interpolate between two points in n steps
 
 static PLFLT *
 interpolate_between( int n, PLFLT a, PLFLT b );
 
-/*----------------------------------------------------------------------*\
- * void pljoin()
- *
- * Draws a line segment from (x1, y1) to (x2, y2).
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void pljoin()
+//
+// Draws a line segment from (x1, y1) to (x2, y2).
+//----------------------------------------------------------------------
 
 void
 c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
@@ -67,11 +67,11 @@ c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
     plP_drawor( x2, y2 );
 }
 
-/*----------------------------------------------------------------------*\
- * void plline()
- *
- * Draws line segments connecting a series of points.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plline()
+//
+// Draws line segments connecting a series of points.
+//----------------------------------------------------------------------
 
 void
 c_plline( PLINT n, PLFLT *x, PLFLT *y )
@@ -84,13 +84,13 @@ c_plline( PLINT n, PLFLT *x, PLFLT *y )
     plP_drawor_poly( x, y, n );
 }
 
-/*----------------------------------------------------------------------*\
- * void plpath()
- *
- * Draws a line segment from (x1, y1) to (x2, y2).  If a coordinate
- * transform is defined then break the line up in to n pieces to approximate
- * the path.  Otherwise it simply calls pljoin().
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plpath()
+//
+// Draws a line segment from (x1, y1) to (x2, y2).  If a coordinate
+// transform is defined then break the line up in to n pieces to approximate
+// the path.  Otherwise it simply calls pljoin().
+//----------------------------------------------------------------------
 
 void
 c_plpath( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
@@ -99,13 +99,13 @@ c_plpath( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
 
     if ( plsc->coordinate_transform == NULL )
     {
-        /* No transform, so fall back on pljoin for a normal straight line */
+        // No transform, so fall back on pljoin for a normal straight line
         pljoin( x1, y1, x2, y2 );
     }
     else
     {
-        /* Approximate the path in transformed space with a sequence of line
-         * segments. */
+        // Approximate the path in transformed space with a sequence of line
+        // segments.
         xs = interpolate_between( n, x1, x2 );
         ys = interpolate_between( n, y1, y2 );
         if ( xs == NULL || ys == NULL )
@@ -114,21 +114,21 @@ c_plpath( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
             return;
         }
         plline( n, xs, ys );
-        /* plP_interpolate allocates memory, so we have to free it here. */
+        // plP_interpolate allocates memory, so we have to free it here.
         free( xs );
         free( ys );
     }
 }
 
-/*----------------------------------------------------------------------*\
- * void plline3(n, x, y, z)
- *
- * Draws a line in 3 space.  You must first set up the viewport, the
- * 2d viewing window (in world coordinates), and the 3d normalized
- * coordinate box.  See x18c.c for more info.
- *
- * This version adds clipping against the 3d bounding box specified in plw3d
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plline3(n, x, y, z)
+//
+// Draws a line in 3 space.  You must first set up the viewport, the
+// 2d viewing window (in world coordinates), and the 3d normalized
+// coordinate box.  See x18c.c for more info.
+//
+// This version adds clipping against the 3d bounding box specified in plw3d
+//----------------------------------------------------------------------
 void
 c_plline3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
 {
@@ -141,33 +141,33 @@ c_plline3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
         return;
     }
 
-    /* get the bounding box in 3d */
+    // get the bounding box in 3d
     plP_gdom( &vmin[0], &vmax[0], &vmin[1], &vmax[1] );
     plP_grange( &zscale, &vmin[2], &vmax[2] );
 
-    /* interate over the vertices */
+    // interate over the vertices
     for ( i = 0; i < n - 1; i++ )
     {
         PLFLT p0[3], p1[3];
         int   axis;
 
-        /* copy the end points of the segment to allow clipping */
+        // copy the end points of the segment to allow clipping
         p0[0] = x[i]; p0[1] = y[i]; p0[2] = z[i];
         p1[0] = x[i + 1]; p1[1] = y[i + 1]; p1[2] = z[i + 1];
 
-        /* check against each axis of the bounding box */
+        // check against each axis of the bounding box
         for ( axis = 0; axis < 3; axis++ )
         {
-            if ( p0[axis] < vmin[axis] ) /* first out */
+            if ( p0[axis] < vmin[axis] ) // first out
             {
                 if ( p1[axis] < vmin[axis] )
                 {
-                    break; /* both endpoints out so quit */
+                    break; // both endpoints out so quit
                 }
                 else
                 {
                     int   j;
-                    /* interpolate to find intersection with box */
+                    // interpolate to find intersection with box
                     PLFLT t = ( vmin[axis] - p0[axis] ) / ( p1[axis] - p0[axis] );
                     p0[axis] = vmin[axis];
                     for ( j = 1; j < 3; j++ )
@@ -177,10 +177,10 @@ c_plline3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
                     }
                 }
             }
-            else if ( p1[axis] < vmin[axis] ) /* second out */
+            else if ( p1[axis] < vmin[axis] ) // second out
             {
                 int   j;
-                /* interpolate to find intersection with box */
+                // interpolate to find intersection with box
                 PLFLT t = ( vmin[axis] - p0[axis] ) / ( p1[axis] - p0[axis] );
                 p1[axis] = vmin[axis];
                 for ( j = 1; j < 3; j++ )
@@ -189,16 +189,16 @@ c_plline3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
                     p1[k] = ( 1 - t ) * p0[k] + t * p1[k];
                 }
             }
-            if ( p0[axis] > vmax[axis] ) /* first out */
+            if ( p0[axis] > vmax[axis] ) // first out
             {
                 if ( p1[axis] > vmax[axis] )
                 {
-                    break; /* both out so quit */
+                    break; // both out so quit
                 }
                 else
                 {
                     int   j;
-                    /* interpolate to find intersection with box */
+                    // interpolate to find intersection with box
                     PLFLT t = ( vmax[axis] - p0[axis] ) / ( p1[axis] - p0[axis] );
                     p0[axis] = vmax[axis];
                     for ( j = 1; j < 3; j++ )
@@ -208,10 +208,10 @@ c_plline3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
                     }
                 }
             }
-            else if ( p1[axis] > vmax[axis] ) /* second out */
+            else if ( p1[axis] > vmax[axis] ) // second out
             {
                 int   j;
-                /* interpolate to find intersection with box */
+                // interpolate to find intersection with box
                 PLFLT t = ( vmax[axis] - p0[axis] ) / ( p1[axis] - p0[axis] );
                 p1[axis] = vmax[axis];
                 for ( j = 1; j < 3; j++ )
@@ -221,9 +221,9 @@ c_plline3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
                 }
             }
         }
-        /* if we made it to here without "break"ing out of the loop, the
-         * remaining segment is visible */
-        if ( axis == 3 ) /*  not clipped away */
+        // if we made it to here without "break"ing out of the loop, the
+        // remaining segment is visible
+        if ( axis == 3 ) //  not clipped away
         {
             PLFLT u0, v0, u1, v1;
             u0 = plP_wcpcx( plP_w3wcx( p0[0], p0[1], p0[2] ) );
@@ -236,33 +236,33 @@ c_plline3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
     }
     return;
 }
-/*----------------------------------------------------------------------*\
- * void plpoly3( n, x, y, z, draw, ifcc )
- *
- * Draws a polygon in 3 space.  This differs from plline3() in that
- * this attempts to determine if the polygon is viewable.  If the back
- * of polygon is facing the viewer, then it isn't drawn.  If this
- * isn't what you want, then use plline3 instead.
- *
- * n specifies the number of points.  They are assumed to be in a
- * plane, and the directionality of the plane is determined from the
- * first three points.  Additional points do not /have/ to lie on the
- * plane defined by the first three, but if they do not, then the
- * determiniation of visibility obviously can't be 100% accurate...
- * So if you're 3 space polygons are too far from planar, consider
- * breaking them into smaller polygons.  "3 points define a plane" :-).
- *
- * For ifcc == 1, the directionality of the polygon is determined by assuming
- * the points are laid out in counter-clockwise order.
- *
- * For ifcc == 0, the directionality of the polygon is determined by assuming
- * the points are laid out in clockwise order.
- *
- * BUGS:  If one of the first two segments is of zero length, or if
- * they are colinear, the calculation of visibility has a 50/50 chance
- * of being correct.  Avoid such situations :-).  See x18c for an
- * example of this problem.  (Search for "20.1").
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plpoly3( n, x, y, z, draw, ifcc )
+//
+// Draws a polygon in 3 space.  This differs from plline3() in that
+// this attempts to determine if the polygon is viewable.  If the back
+// of polygon is facing the viewer, then it isn't drawn.  If this
+// isn't what you want, then use plline3 instead.
+//
+// n specifies the number of points.  They are assumed to be in a
+// plane, and the directionality of the plane is determined from the
+// first three points.  Additional points do not /have/ to lie on the
+// plane defined by the first three, but if they do not, then the
+// determiniation of visibility obviously can't be 100% accurate...
+// So if you're 3 space polygons are too far from planar, consider
+// breaking them into smaller polygons.  "3 points define a plane" :-).
+//
+// For ifcc == 1, the directionality of the polygon is determined by assuming
+// the points are laid out in counter-clockwise order.
+//
+// For ifcc == 0, the directionality of the polygon is determined by assuming
+// the points are laid out in clockwise order.
+//
+// BUGS:  If one of the first two segments is of zero length, or if
+// they are colinear, the calculation of visibility has a 50/50 chance
+// of being correct.  Avoid such situations :-).  See x18c for an
+// example of this problem.  (Search for "20.1").
+//----------------------------------------------------------------------
 
 void
 c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc )
@@ -284,7 +284,7 @@ c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc )
         return;
     }
 
-/* Now figure out which side this is. */
+// Now figure out which side this is.
 
     u1 = plP_wcpcx( plP_w3wcx( x[0], y[0], z[0] ) );
     v1 = plP_wcpcy( plP_w3wcy( x[0], y[0], z[0] ) );
@@ -300,33 +300,33 @@ c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc )
     if ( c * ( 1 - 2 * ABS( ifcc ) ) < 0. )
         return;
 
-    /* get the bounding box in 3d */
+    // get the bounding box in 3d
     plP_gdom( &vmin[0], &vmax[0], &vmin[1], &vmax[1] );
     plP_grange( &zscale, &vmin[2], &vmax[2] );
 
-    /* interate over the vertices */
+    // interate over the vertices
     for ( i = 0; i < n - 1; i++ )
     {
         PLFLT p0[3], p1[3];
         int   axis;
 
-        /* copy the end points of the segment to allow clipping */
+        // copy the end points of the segment to allow clipping
         p0[0] = x[i]; p0[1] = y[i]; p0[2] = z[i];
         p1[0] = x[i + 1]; p1[1] = y[i + 1]; p1[2] = z[i + 1];
 
-        /* check against each axis of the bounding box */
+        // check against each axis of the bounding box
         for ( axis = 0; axis < 3; axis++ )
         {
-            if ( p0[axis] < vmin[axis] ) /* first out */
+            if ( p0[axis] < vmin[axis] ) // first out
             {
                 if ( p1[axis] < vmin[axis] )
                 {
-                    break; /* both endpoints out so quit */
+                    break; // both endpoints out so quit
                 }
                 else
                 {
                     int   j;
-                    /* interpolate to find intersection with box */
+                    // interpolate to find intersection with box
                     PLFLT t = ( vmin[axis] - p0[axis] ) / ( p1[axis] - p0[axis] );
                     p0[axis] = vmin[axis];
                     for ( j = 1; j < 3; j++ )
@@ -336,10 +336,10 @@ c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc )
                     }
                 }
             }
-            else if ( p1[axis] < vmin[axis] ) /* second out */
+            else if ( p1[axis] < vmin[axis] ) // second out
             {
                 int   j;
-                /* interpolate to find intersection with box */
+                // interpolate to find intersection with box
                 PLFLT t = ( vmin[axis] - p0[axis] ) / ( p1[axis] - p0[axis] );
                 p1[axis] = vmin[axis];
                 for ( j = 1; j < 3; j++ )
@@ -348,16 +348,16 @@ c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc )
                     p1[k] = ( 1 - t ) * p0[k] + t * p1[k];
                 }
             }
-            if ( p0[axis] > vmax[axis] ) /* first out */
+            if ( p0[axis] > vmax[axis] ) // first out
             {
                 if ( p1[axis] > vmax[axis] )
                 {
-                    break; /* both out so quit */
+                    break; // both out so quit
                 }
                 else
                 {
                     int   j;
-                    /* interpolate to find intersection with box */
+                    // interpolate to find intersection with box
                     PLFLT t = ( vmax[axis] - p0[axis] ) / ( p1[axis] - p0[axis] );
                     p0[axis] = vmax[axis];
                     for ( j = 1; j < 3; j++ )
@@ -367,10 +367,10 @@ c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc )
                     }
                 }
             }
-            else if ( p1[axis] > vmax[axis] ) /* second out */
+            else if ( p1[axis] > vmax[axis] ) // second out
             {
                 int   j;
-                /* interpolate to find intersection with box */
+                // interpolate to find intersection with box
                 PLFLT t = ( vmax[axis] - p0[axis] ) / ( p1[axis] - p0[axis] );
                 p1[axis] = vmax[axis];
                 for ( j = 1; j < 3; j++ )
@@ -380,9 +380,9 @@ c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc )
                 }
             }
         }
-        /* if we made it to here without "break"ing out of the loop, the
-         * remaining segment is visible */
-        if ( axis == 3 && draw[i] ) /*  not clipped away */
+        // if we made it to here without "break"ing out of the loop, the
+        // remaining segment is visible
+        if ( axis == 3 && draw[i] ) //  not clipped away
         {
             PLFLT u0, v0, u1, v1;
             u0 = plP_wcpcx( plP_w3wcx( p0[0], p0[1], p0[2] ) );
@@ -396,12 +396,12 @@ c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc )
     return;
 }
 
-/*----------------------------------------------------------------------*\
- * void plstyl()
- *
- * Set up a new line style of "nms" elements, with mark and space
- * lengths given by arrays "mark" and "space".
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plstyl()
+//
+// Set up a new line style of "nms" elements, with mark and space
+// lengths given by arrays "mark" and "space".
+//----------------------------------------------------------------------
 
 void
 c_plstyl( PLINT nms, PLINT *mark, PLINT *space )
@@ -432,7 +432,7 @@ c_plstyl( PLINT nms, PLINT *mark, PLINT *space )
             flag = 0;
         }
     }
-    /* Check for blank style */
+    // Check for blank style
     if ( ( nms > 0 ) && ( flag == 1 ) )
     {
         plabort( "plstyl: At least one mark or space must be > 0" );
@@ -452,11 +452,11 @@ c_plstyl( PLINT nms, PLINT *mark, PLINT *space )
     plsc->alarm   = nms > 0 ? mark[0] : 0;
 }
 
-/*----------------------------------------------------------------------*\
- * void plP_movphy()
- *
- * Move to physical coordinates (x,y).
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plP_movphy()
+//
+// Move to physical coordinates (x,y).
+//----------------------------------------------------------------------
 
 void
 plP_movphy( PLINT x, PLINT y )
@@ -465,11 +465,11 @@ plP_movphy( PLINT x, PLINT y )
     plsc->curry = y;
 }
 
-/*----------------------------------------------------------------------*\
- * void plP_draphy()
- *
- * Draw to physical coordinates (x,y).
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plP_draphy()
+//
+// Draw to physical coordinates (x,y).
+//----------------------------------------------------------------------
 
 void
 plP_draphy( PLINT x, PLINT y )
@@ -482,11 +482,11 @@ plP_draphy( PLINT x, PLINT y )
     pllclp( xline, yline, 2 );
 }
 
-/*----------------------------------------------------------------------*\
- * void plP_movwor()
- *
- * Move to world coordinates (x,y).
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plP_movwor()
+//
+// Move to world coordinates (x,y).
+//----------------------------------------------------------------------
 
 void
 plP_movwor( PLFLT x, PLFLT y )
@@ -498,11 +498,11 @@ plP_movwor( PLFLT x, PLFLT y )
     plsc->curry = plP_wcpcy( yt );
 }
 
-/*----------------------------------------------------------------------*\
- * void plP_drawor()
- *
- * Draw to world coordinates (x,y).
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plP_drawor()
+//
+// Draw to world coordinates (x,y).
+//----------------------------------------------------------------------
 
 void
 plP_drawor( PLFLT x, PLFLT y )
@@ -518,13 +518,13 @@ plP_drawor( PLFLT x, PLFLT y )
     pllclp( xline, yline, 2 );
 }
 
-/*----------------------------------------------------------------------*\
- * void plP_draphy_poly()
- *
- * Draw polyline in physical coordinates.
- * Need to draw buffers in increments of (PL_MAXPOLY-1) since the
- * last point must be repeated (for solid lines).
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plP_draphy_poly()
+//
+// Draw polyline in physical coordinates.
+// Need to draw buffers in increments of (PL_MAXPOLY-1) since the
+// last point must be repeated (for solid lines).
+//----------------------------------------------------------------------
 
 void
 plP_draphy_poly( PLINT *x, PLINT *y, PLINT n )
@@ -545,13 +545,13 @@ plP_draphy_poly( PLINT *x, PLINT *y, PLINT n )
     }
 }
 
-/*----------------------------------------------------------------------*\
- * void plP_drawor_poly()
- *
- * Draw polyline in world coordinates.
- * Need to draw buffers in increments of (PL_MAXPOLY-1) since the
- * last point must be repeated (for solid lines).
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plP_drawor_poly()
+//
+// Draw polyline in world coordinates.
+// Need to draw buffers in increments of (PL_MAXPOLY-1) since the
+// last point must be repeated (for solid lines).
+//----------------------------------------------------------------------
 
 void
 plP_drawor_poly( PLFLT *x, PLFLT *y, PLINT n )
@@ -574,12 +574,12 @@ plP_drawor_poly( PLFLT *x, PLFLT *y, PLINT n )
     }
 }
 
-/*----------------------------------------------------------------------*\
- * void pllclp()
- *
- * Draws a polyline within the clip limits.
- * Merely a front-end to plP_pllclp().
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void pllclp()
+//
+// Draws a polyline within the clip limits.
+// Merely a front-end to plP_pllclp().
+//----------------------------------------------------------------------
 
 static void
 pllclp( PLINT *x, PLINT *y, PLINT npts )
@@ -588,15 +588,15 @@ pllclp( PLINT *x, PLINT *y, PLINT npts )
         plsc->clpymi, plsc->clpyma, genlin );
 }
 
-/*----------------------------------------------------------------------*\
- * void plP_pllclp()
- *
- * Draws a polyline within the clip limits.
- *
- * (AM)
- * Wanted to change the type of xclp, yclp to avoid overflows!
- * But that changes the type for the drawing routines too!
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plP_pllclp()
+//
+// Draws a polyline within the clip limits.
+//
+// (AM)
+// Wanted to change the type of xclp, yclp to avoid overflows!
+// But that changes the type for the drawing routines too!
+//----------------------------------------------------------------------
 
 void
 plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
@@ -638,7 +638,7 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
 
         if ( drawable )
         {
-/* First point of polyline. */
+// First point of polyline.
 
             if ( iclp == 0 )
             {
@@ -649,8 +649,8 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
                 yclp[iclp] = y2;
             }
 
-/* Not first point.  Check if first point of this segment matches up to
- * previous point, and if so, add it to the current polyline buffer. */
+// Not first point.  Check if first point of this segment matches up to
+// previous point, and if so, add it to the current polyline buffer.
 
             else if ( x1 == xclp[iclp] && y1 == yclp[iclp] )
             {
@@ -659,7 +659,7 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
                 yclp[iclp] = y2;
             }
 
-/* Otherwise it's time to start a new polyline */
+// Otherwise it's time to start a new polyline
 
             else
             {
@@ -675,7 +675,7 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
         }
     }
 
-/* Handle remaining polyline */
+// Handle remaining polyline
 
     if ( iclp + 1 >= 2 )
         ( *draw )( xclp, yclp, iclp + 1 );
@@ -690,11 +690,11 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
     }
 }
 
-/*----------------------------------------------------------------------*\
- * int plP_clipline()
- *
- * Get clipped endpoints
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// int plP_clipline()
+//
+// Get clipped endpoints
+//----------------------------------------------------------------------
 
 int
 plP_clipline( PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
@@ -703,8 +703,8 @@ plP_clipline( PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
     PLINT  t, dx, dy, flipx, flipy;
     double dydx = 0, dxdy = 0;
 
-/* If both points are outside clip region with no hope of intersection,
- * return with an error */
+// If both points are outside clip region with no hope of intersection,
+// return with an error
 
     if ( ( *p_x1 <= xmin && *p_x2 <= xmin ) ||
          ( *p_x1 >= xmax && *p_x2 >= xmax ) ||
@@ -712,7 +712,7 @@ plP_clipline( PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
          ( *p_y1 >= ymax && *p_y2 >= ymax ) )
         return 1;
 
-/* If one of the coordinates is not finite then return with an error */
+// If one of the coordinates is not finite then return with an error
     if ( ( *p_x1 == PLINT_MIN ) || ( *p_y1 == PLINT_MIN ) ||
          ( *p_x2 == PLINT_MIN ) || ( *p_y2 == PLINT_MIN ) )
         return 1;
@@ -797,18 +797,18 @@ plP_clipline( PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
- * void genlin()
- *
- * General line-drawing routine.  Takes line styles into account.
- * If only 2 points are in the polyline, it is more efficient to use
- * plP_line() rather than plP_polyline().
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void genlin()
+//
+// General line-drawing routine.  Takes line styles into account.
+// If only 2 points are in the polyline, it is more efficient to use
+// plP_line() rather than plP_polyline().
+//----------------------------------------------------------------------
 
 static void
 genlin( short *x, short *y, PLINT npts )
 {
-/* Check for solid line */
+// Check for solid line
 
     if ( plsc->nms == 0 )
     {
@@ -818,15 +818,15 @@ genlin( short *x, short *y, PLINT npts )
             plP_polyline( x, y, npts );
     }
 
-/* Right now dashed lines don't use polyline capability -- this
- * should be improved */
+// Right now dashed lines don't use polyline capability -- this
+// should be improved
 
     else
     {
         PLINT i;
 
-        /* Call escape sequence to draw dashed lines, only for drivers
-         * that have this capability */
+        // Call escape sequence to draw dashed lines, only for drivers
+        // that have this capability
         if ( plsc->dev_dash )
         {
             plsc->dev_npts = npts;
@@ -843,11 +843,11 @@ genlin( short *x, short *y, PLINT npts )
     }
 }
 
-/*----------------------------------------------------------------------*\
- * void grdashline()
- *
- * Draws a dashed line to the specified point from the previous one.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void grdashline()
+//
+// Draws a dashed line to the specified point from the previous one.
+//----------------------------------------------------------------------
 
 static void
 grdashline( short *x, short *y )
@@ -859,7 +859,7 @@ grdashline( short *x, short *y )
     short  xl[2], yl[2];
     double nxstep, nystep;
 
-/* Check if pattern needs to be restarted */
+// Check if pattern needs to be restarted
 
     if ( x[0] != lastx || y[0] != lasty )
     {
@@ -898,7 +898,7 @@ grdashline( short *x, short *y )
 
     temp = modulo / 2;
 
-/* Compute the timer step */
+// Compute the timer step
 
     nxstep = nxp * plsc->umx;
     nystep = nyp * plsc->umy;
@@ -906,7 +906,7 @@ grdashline( short *x, short *y )
     if ( tstep < 1 )
         tstep = 1;
 
-    /* tstep is distance per pixel moved */
+    // tstep is distance per pixel moved
 
     i = 0;
     while ( i < modulo )
@@ -940,7 +940,7 @@ grdashline( short *x, short *y )
             plP_line( xl, yl );
         }
 
-/* Update line style variables when alarm goes off */
+// Update line style variables when alarm goes off
 
         while ( plsc->timecnt >= plsc->alarm )
         {
@@ -965,17 +965,17 @@ grdashline( short *x, short *y )
     }
 }
 
-/*----------------------------------------------------------------------*\
- * interpolate_between()
- *
- * Returns a pointer to an array of PLFLT values which interpolate in n steps
- * from a to b.
- * Note:
- * The returned array is allocated by the function and needs to be freed by
- * the function's caller.
- * If the return value is NULL, the allocation failed and it is up to the
- * caller to handle the error.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// interpolate_between()
+//
+// Returns a pointer to an array of PLFLT values which interpolate in n steps
+// from a to b.
+// Note:
+// The returned array is allocated by the function and needs to be freed by
+// the function's caller.
+// If the return value is NULL, the allocation failed and it is up to the
+// caller to handle the error.
+//----------------------------------------------------------------------
 
 PLFLT *interpolate_between( PLINT n, PLFLT a, PLFLT b )
 {

@@ -1,38 +1,38 @@
-/* $Id$
- *
- *      Determines tick spacing and mode (fixed or floating) of
- *      numeric axis labels.
- *
- * Copyright (C) 2004  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+//      Determines tick spacing and mode (fixed or floating) of
+//      numeric axis labels.
+//
+// Copyright (C) 2004  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #include "plplotP.h"
 
-/*----------------------------------------------------------------------*\
- * void pldtik()
- *
- * Determine tick spacing: works out a "nice" interval (if tick == 0) such
- * that there are between 3 and 7.5 major tick intervals in the input
- * range vmin to vmax.  The recommended number of subticks is returned in
- * "nsubt" unless the routine is entered with a non-zero value of "nsubt".
- * n.b. big change: now returns only positive values of tick and nsubt
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void pldtik()
+//
+// Determine tick spacing: works out a "nice" interval (if tick == 0) such
+// that there are between 3 and 7.5 major tick intervals in the input
+// range vmin to vmax.  The recommended number of subticks is returned in
+// "nsubt" unless the routine is entered with a non-zero value of "nsubt".
+// n.b. big change: now returns only positive values of tick and nsubt
+//----------------------------------------------------------------------
 
 void
 pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
@@ -44,7 +44,7 @@ pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
 
     if ( ld )
     {
-        /* Check suitable units for tick spacing */
+        // Check suitable units for tick spacing
         pldtfac( vmin, vmax, &factor, NULL );
 
         *tick = *tick / factor;
@@ -52,13 +52,13 @@ pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
         vmax  = vmax / factor;
     }
 
-/* Magnitude of min/max difference to get tick spacing */
+// Magnitude of min/max difference to get tick spacing
 
     t1 = (PLFLT) log10( ABS( vmax - vmin ) );
     np = (PLINT) floor( t1 );
     t1 = t1 - np;
 
-/* Get tick spacing. */
+// Get tick spacing.
 
     if ( t1 > 0.7781512503 )
     {
@@ -83,7 +83,7 @@ pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
         np = np - 1;
     }
 
-/* Now compute reasonable tick spacing */
+// Now compute reasonable tick spacing
 
     tick_reasonable = t2 * pow( 10.0, (double) np );
     if ( *tick == 0 )
@@ -110,15 +110,15 @@ pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
     }
 }
 
-/*----------------------------------------------------------------------*\
- * PLFLT pldtfac()
- *
- * Calculate factor to convert a date/time interval in seconds
- * into a more natural units (minutes, hours, days, week, years).
- * Also optionally calculate the sensible start time for counting ticks
- * from (e.g. beginning of day, beginning of year).
- * Used to calculate sensible tick and label spacings.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// PLFLT pldtfac()
+//
+// Calculate factor to convert a date/time interval in seconds
+// into a more natural units (minutes, hours, days, week, years).
+// Also optionally calculate the sensible start time for counting ticks
+// from (e.g. beginning of day, beginning of year).
+// Used to calculate sensible tick and label spacings.
+//----------------------------------------------------------------------
 void
 pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
 {
@@ -135,7 +135,7 @@ pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
 
     if ( diff < 3.0 * 60.0 )
     {
-        /* Seconds */
+        // Seconds
         *factor = 1.0;
         if ( start != NULL )
         {
@@ -145,7 +145,7 @@ pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
     }
     else if ( diff < 3.0 * 60.0 * 60.0 )
     {
-        /* Minutes */
+        // Minutes
         *factor = 60.0;
         if ( start != NULL )
         {
@@ -156,7 +156,7 @@ pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
     }
     else if ( diff < 3.0 * 60.0 * 60.0 * 24.0 )
     {
-        /* Hours */
+        // Hours
         *factor = 60.0 * 60.0;
         if ( start != NULL )
         {
@@ -168,7 +168,7 @@ pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
     }
     else if ( diff < 3.0 * 60.0 * 60.0 * 24.0 * 7.0 )
     {
-        /* Days */
+        // Days
         *factor = 60.0 * 60.0 * 24.0;
         if ( start != NULL )
         {
@@ -180,7 +180,7 @@ pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
     }
     else if ( diff < 3.0 * 60.0 * 60.0 * 24.0 * 365 )
     {
-        /* Weeks */
+        // Weeks
         *factor = 60.0 * 60.0 * 24.0 * 7.0;
         if ( start != NULL )
         {
@@ -192,7 +192,7 @@ pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
     }
     else
     {
-        /* Years */
+        // Years
         *factor = 60.0 * 60.0 * 24.0 * 365.25;
         if ( start != NULL )
         {
@@ -206,46 +206,46 @@ pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
     }
 }
 
-/*----------------------------------------------------------------------*\
- * void pldprec()
- *
- * Determine precision: the output variable "mode" is set to 0 if labels
- * are to be written in floating-point format, or to 1 if they are to be
- * written in scientific format.  For mode = 1, the exponent will be
- * placed at:
- *
- *      top left	for vertical axis on left
- *      top right	for vertical axis on right
- *      bottom right	for horizontal axis
- *
- * The digmax flag can be set by the user, and represents the maximum
- * number of digits a label may occupy including sign and decimal point.
- * digmin, calculated internally, is the maximum number of digits
- * labels at vmin and vmax would occupy if floating point.
- * If digmax<0, it is disregarded,
- * and if digmax=0 the default value is used.  For digmax>0, mode=1 is
- * chosen if there is insufficient room for the label within the specified
- * # of digits (digmin > digfix, where digfix is determined from digmax with
- * fuzz factors).
- *
- * In the case of mode=0, the actual # of digits will become too large
- * when the magnitude of the labels become too large.  The mode=1 case
- * offers the greatest precision for the smallest field length.
- *
- * The determination of maximum length for fixed point quantities is
- * complicated by the fact that very long fixed point representations look
- * much worse than the same sized floating point representation.  Further,
- * a fixed point number with a large negative exponent will actually gain
- * in precision when written as floating point.  Thus we use certain fuzz
- * factors to get 'digfix' from 'digmax', however it will always be true
- * that digfix<=digmax.
- *
- * Finally, if 'digmax' is set, 'prec' is reduced in size if necessary so
- * that the labels fit the requested field length, where prec is the number of
- * places after the decimal place.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void pldprec()
+//
+// Determine precision: the output variable "mode" is set to 0 if labels
+// are to be written in floating-point format, or to 1 if they are to be
+// written in scientific format.  For mode = 1, the exponent will be
+// placed at:
+//
+//      top left	for vertical axis on left
+//      top right	for vertical axis on right
+//      bottom right	for horizontal axis
+//
+// The digmax flag can be set by the user, and represents the maximum
+// number of digits a label may occupy including sign and decimal point.
+// digmin, calculated internally, is the maximum number of digits
+// labels at vmin and vmax would occupy if floating point.
+// If digmax<0, it is disregarded,
+// and if digmax=0 the default value is used.  For digmax>0, mode=1 is
+// chosen if there is insufficient room for the label within the specified
+// # of digits (digmin > digfix, where digfix is determined from digmax with
+// fuzz factors).
+//
+// In the case of mode=0, the actual # of digits will become too large
+// when the magnitude of the labels become too large.  The mode=1 case
+// offers the greatest precision for the smallest field length.
+//
+// The determination of maximum length for fixed point quantities is
+// complicated by the fact that very long fixed point representations look
+// much worse than the same sized floating point representation.  Further,
+// a fixed point number with a large negative exponent will actually gain
+// in precision when written as floating point.  Thus we use certain fuzz
+// factors to get 'digfix' from 'digmax', however it will always be true
+// that digfix<=digmax.
+//
+// Finally, if 'digmax' is set, 'prec' is reduced in size if necessary so
+// that the labels fit the requested field length, where prec is the number of
+// places after the decimal place.
+//----------------------------------------------------------------------
 
-#define MIN_FLTDIG    3         /* disregarded if fractional part is 0 */
+#define MIN_FLTDIG    3         // disregarded if fractional part is 0
 #define DIGMAX_DEF    5
 
 void
@@ -258,17 +258,17 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
     *mode  = 0;
     *scale = 0;
 
-    /* Default xdigmax, ydigmax and zdigmax set in c_plinit so this is
-     * only an emergency measure in case of some internal PLplot
-     * logic error. */
+    // Default xdigmax, ydigmax and zdigmax set in c_plinit so this is
+    // only an emergency measure in case of some internal PLplot
+    // logic error.
     if ( digmax == 0 )
         digmax = DIGMAX_DEF;
-    /* No modification of digfix from digmax value. */
+    // No modification of digfix from digmax value.
     digfix = digmax;
-/* Choose vmin or vmax depending on magnitudes of vmin and vmax. */
+// Choose vmin or vmax depending on magnitudes of vmin and vmax.
     chosen    = ( ABS( vmax ) >= ABS( vmin ) ) ? vmax : vmin;
     notchosen = ( ABS( vmax ) >= ABS( vmin ) ) ? vmin : vmax;
-/* Magnitute of chosen to get number of significant digits */
+// Magnitute of chosen to get number of significant digits
 
     if ( ABS( chosen ) > 0. )
     {
@@ -278,7 +278,7 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
     }
     else
     {
-        /* this branch occurs only when 0. --- 0. range put in */
+        // this branch occurs only when 0. --- 0. range put in
         vmod = 1.;
         t0   = (PLFLT) log10( vmod );
         msd  = (PLINT) floor( t0 );
@@ -288,26 +288,26 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
         notmsd = (PLINT) floor( (PLFLT) log10( ABS( notchosen ) ) );
     else
         notmsd = msd;
-    /* Autoselect the mode flag */
-    /* 'digmin' is the minimum number of places taken up by the label */
+    // Autoselect the mode flag
+    // 'digmin' is the minimum number of places taken up by the label
 
     if ( msd >= 0 )
     {
-        /* n.b. no decimal point in the minimal case  */
+        // n.b. no decimal point in the minimal case
         digmin = msd + 1;
     }
     else
     {
-        /* adjust digmin to account for leading 0 and decimal point */
+        // adjust digmin to account for leading 0 and decimal point
         digmin = -msd + 2;
     }
-/* adjust digmin to account for sign on the chosen end of axis or sign on the
- * nonchosen end of axis if notmsd = msd or (msd <= 0 and notmsd < 0)
- * For the latter case the notchosen label starts with "-0."
- * For checking for the latter case, the notmsd < 0 condition is redundant
- * since notmsd <= msd always and the equal part is selected by the first
- * condition.
- */
+// adjust digmin to account for sign on the chosen end of axis or sign on the
+// nonchosen end of axis if notmsd = msd or (msd <= 0 and notmsd < 0)
+// For the latter case the notchosen label starts with "-0."
+// For checking for the latter case, the notmsd < 0 condition is redundant
+// since notmsd <= msd always and the equal part is selected by the first
+// condition.
+//
     if ( chosen < 0. || ( notchosen < 0. && ( notmsd == msd || msd <= 0 ) ) )
         digmin = digmin + 1;
 
@@ -317,8 +317,8 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
         *scale = msd;
     }
 
-/* Establish precision.  */
-/* It must be fine enough to resolve the tick spacing */
+// Establish precision.
+// It must be fine enough to resolve the tick spacing
 
     np = (PLINT) floor( log10( ABS( tick ) ) );
 
@@ -327,10 +327,10 @@ pldprec( PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
     else
         *prec = MAX( -np, 0 );
 
-/* One last hack required: if exponent < 0, i.e. number has leading '0.',
- * it's better to change to floating point form if the number of digits
- * is insufficient to represent the tick spacing.
- */
+// One last hack required: if exponent < 0, i.e. number has leading '0.',
+// it's better to change to floating point form if the number of digits
+// is insufficient to represent the tick spacing.
+//
     if ( *mode == 0 && digmax > 0 && !lf )
     {
         if ( t0 < 0.0 )

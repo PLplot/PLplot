@@ -1,33 +1,33 @@
-/* $Id$
- *
- *      Coordinate transformation routines.
- *
- * Copyright (C) 2004  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+//      Coordinate transformation routines.
+//
+// Copyright (C) 2004  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #include "plplotP.h"
 
-/*--------------------------------------------------------------------------*\
- * Transformations returning physical coordinates.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Transformations returning physical coordinates.
+//--------------------------------------------------------------------------
 
-/* device coords to physical coords (x) */
+// device coords to physical coords (x)
 
 PLINT
 plP_dcpcx( PLFLT x )
@@ -35,7 +35,7 @@ plP_dcpcx( PLFLT x )
     return ( ROUND( plsc->phyxmi + plsc->phyxlen * x ) );
 }
 
-/* device coords to physical coords (y) */
+// device coords to physical coords (y)
 
 PLINT
 plP_dcpcy( PLFLT y )
@@ -43,7 +43,7 @@ plP_dcpcy( PLFLT y )
     return ( ROUND( plsc->phyymi + plsc->phyylen * y ) );
 }
 
-/* millimeters from bottom left-hand corner to physical coords (x) */
+// millimeters from bottom left-hand corner to physical coords (x)
 
 PLINT
 plP_mmpcx( PLFLT x )
@@ -51,7 +51,7 @@ plP_mmpcx( PLFLT x )
     return ( ROUND( plsc->phyxmi + plsc->xpmm * x ) );
 }
 
-/* millimeters from bottom left-hand corner to physical coords (y) */
+// millimeters from bottom left-hand corner to physical coords (y)
 
 PLINT
 plP_mmpcy( PLFLT y )
@@ -59,7 +59,7 @@ plP_mmpcy( PLFLT y )
     return ( ROUND( plsc->phyymi + plsc->ypmm * y ) );
 }
 
-/* world coords to physical coords (x) */
+// world coords to physical coords (x)
 
 PLINT
 plP_wcpcx( PLFLT x )
@@ -69,7 +69,7 @@ plP_wcpcx( PLFLT x )
     return ( ROUND( plsc->wpxoff + plsc->wpxscl * x ) );
 }
 
-/* world coords to physical coords (y) */
+// world coords to physical coords (y)
 
 PLINT
 plP_wcpcy( PLFLT y )
@@ -79,11 +79,11 @@ plP_wcpcy( PLFLT y )
     return ( ROUND( plsc->wpyoff + plsc->wpyscl * y ) );
 }
 
-/*--------------------------------------------------------------------------*\
- * Transformations returning device coordinates.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Transformations returning device coordinates.
+//--------------------------------------------------------------------------
 
-/* physical coords to device coords (x) */
+// physical coords to device coords (x)
 
 PLFLT
 plP_pcdcx( PLINT x )
@@ -91,7 +91,7 @@ plP_pcdcx( PLINT x )
     return (PLFLT) ( ( x - plsc->phyxmi ) / (double) plsc->phyxlen );
 }
 
-/* physical coords to device coords (y) */
+// physical coords to device coords (y)
 
 PLFLT
 plP_pcdcy( PLINT y )
@@ -99,7 +99,7 @@ plP_pcdcy( PLINT y )
     return (PLFLT) ( ( y - plsc->phyymi ) / (double) plsc->phyylen );
 }
 
-/* millimeters from bottom left corner to device coords (x) */
+// millimeters from bottom left corner to device coords (x)
 
 PLFLT
 plP_mmdcx( PLFLT x )
@@ -107,7 +107,7 @@ plP_mmdcx( PLFLT x )
     return ( (PLFLT) ( x * plsc->xpmm / ABS( plsc->phyxma - plsc->phyxmi ) ) );
 }
 
-/* millimeters from bottom left corner to device coords (y) */
+// millimeters from bottom left corner to device coords (y)
 
 PLFLT
 plP_mmdcy( PLFLT y )
@@ -115,7 +115,7 @@ plP_mmdcy( PLFLT y )
     return ( (PLFLT) ( y * plsc->ypmm / ABS( plsc->phyyma - plsc->phyymi ) ) );
 }
 
-/* world coords into device coords (x) */
+// world coords into device coords (x)
 
 PLFLT
 plP_wcdcx( PLFLT x )
@@ -123,7 +123,7 @@ plP_wcdcx( PLFLT x )
     return ( (PLFLT) ( plsc->wdxoff + plsc->wdxscl * x ) );
 }
 
-/* world coords into device coords (y) */
+// world coords into device coords (y)
 
 PLFLT
 plP_wcdcy( PLFLT y )
@@ -131,7 +131,7 @@ plP_wcdcy( PLFLT y )
     return ( (PLFLT) ( plsc->wdyoff + plsc->wdyscl * y ) );
 }
 
-/* subpage coords to device coords (x) */
+// subpage coords to device coords (x)
 
 PLFLT
 plP_scdcx( PLFLT x )
@@ -139,7 +139,7 @@ plP_scdcx( PLFLT x )
     return ( (PLFLT) ( plsc->spdxmi + ( plsc->spdxma - plsc->spdxmi ) * x ) );
 }
 
-/* subpage coords to device coords (y) */
+// subpage coords to device coords (y)
 
 PLFLT
 plP_scdcy( PLFLT y )
@@ -147,11 +147,11 @@ plP_scdcy( PLFLT y )
     return ( (PLFLT) ( plsc->spdymi + ( plsc->spdyma - plsc->spdymi ) * y ) );
 }
 
-/*--------------------------------------------------------------------------*\
- * Transformations returning millimeters.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Transformations returning millimeters.
+//--------------------------------------------------------------------------
 
-/* device coords to millimeters from bottom left-hand corner (x) */
+// device coords to millimeters from bottom left-hand corner (x)
 
 PLFLT
 plP_dcmmx( PLFLT x )
@@ -159,7 +159,7 @@ plP_dcmmx( PLFLT x )
     return ( (PLFLT) ( x * ABS( plsc->phyxma - plsc->phyxmi ) / plsc->xpmm ) );
 }
 
-/* device coords to millimeters from bottom left-hand corner (y) */
+// device coords to millimeters from bottom left-hand corner (y)
 
 PLFLT
 plP_dcmmy( PLFLT y )
@@ -167,7 +167,7 @@ plP_dcmmy( PLFLT y )
     return ( (PLFLT) ( y * ABS( plsc->phyyma - plsc->phyymi ) / plsc->ypmm ) );
 }
 
-/* world coords into millimeters (x) */
+// world coords into millimeters (x)
 
 PLFLT
 plP_wcmmx( PLFLT x )
@@ -175,7 +175,7 @@ plP_wcmmx( PLFLT x )
     return ( (PLFLT) ( plsc->wmxoff + plsc->wmxscl * x ) );
 }
 
-/* world coords into millimeters (y) */
+// world coords into millimeters (y)
 
 PLFLT
 plP_wcmmy( PLFLT y )
@@ -183,11 +183,11 @@ plP_wcmmy( PLFLT y )
     return ( (PLFLT) ( plsc->wmyoff + plsc->wmyscl * y ) );
 }
 
-/*--------------------------------------------------------------------------*\
- * Transformations returning subpage coordinates.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Transformations returning subpage coordinates.
+//--------------------------------------------------------------------------
 
-/* device coords to subpage coords (x) */
+// device coords to subpage coords (x)
 
 PLFLT
 plP_dcscx( PLFLT x )
@@ -195,7 +195,7 @@ plP_dcscx( PLFLT x )
     return ( (PLFLT) ( ( x - plsc->spdxmi ) / ( plsc->spdxma - plsc->spdxmi ) ) );
 }
 
-/* device coords to subpage coords (y) */
+// device coords to subpage coords (y)
 
 PLFLT
 plP_dcscy( PLFLT y )
@@ -203,12 +203,12 @@ plP_dcscy( PLFLT y )
     return ( (PLFLT) ( ( y - plsc->spdymi ) / ( plsc->spdyma - plsc->spdymi ) ) );
 }
 
-/*--------------------------------------------------------------------------*\
- * 3-d plot transformations.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// 3-d plot transformations.
+//--------------------------------------------------------------------------
 
-/* 3-d coords to 2-d projection (x) */
-/* See c_plw3d for a mathematical explanation of the transformation. */
+// 3-d coords to 2-d projection (x)
+// See c_plw3d for a mathematical explanation of the transformation.
 
 PLFLT
 plP_w3wcx( PLFLT x, PLFLT y, PLFLT z )
@@ -217,8 +217,8 @@ plP_w3wcx( PLFLT x, PLFLT y, PLFLT z )
                        ( y - plsc->basecy ) * plsc->cxy ) );
 }
 
-/* 3-d coords to 2-d projection (y) */
-/* See c_plw3d for a mathematical explanation of the transformation. */
+// 3-d coords to 2-d projection (y)
+// See c_plw3d for a mathematical explanation of the transformation.
 
 PLFLT
 plP_w3wcy( PLFLT x, PLFLT y, PLFLT z )
@@ -228,8 +228,8 @@ plP_w3wcy( PLFLT x, PLFLT y, PLFLT z )
                        ( z - plsc->ranmi ) * plsc->cyz ) );
 }
 
-/* 3-d coords to 2-d projection (z), if that makes any sense... */
-/* See c_plw3d for a mathematical explanation of the transformation. */
+// 3-d coords to 2-d projection (z), if that makes any sense...
+// See c_plw3d for a mathematical explanation of the transformation.
 
 PLFLT
 plP_w3wcz( PLFLT x, PLFLT y, PLFLT z )

@@ -1,37 +1,37 @@
-/* $Id$
- *
- *      Predefined 2-D data access functions.
- *
- * Copyright (C) 2010 David H. E. MacMahon
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+//      Predefined 2-D data access functions.
+//
+// Copyright (C) 2010 David H. E. MacMahon
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #include "plplotP.h"
 
-/*
- * 2-D data access functions for data stored in (PLFLT **), such as the C
- * variable z declared as...
- *
- *   PLFLT z[nx][ny];
- *
- * These functions are named plf2OP1, where OP is "get", "set", etc.  The
- * plf2ops_t instance named "plf2ops1" is also defined below.
- */
+//
+// 2-D data access functions for data stored in (PLFLT **), such as the C
+// variable z declared as...
+//
+//   PLFLT z[nx][ny];
+//
+// These functions are named plf2OP1, where OP is "get", "set", etc.  The
+// plf2ops_t instance named "plf2ops1" is also defined below.
+//
 
 static PLFLT
 plf2ops_c_get( PLPointer p, PLINT ix, PLINT iy )
@@ -130,10 +130,10 @@ plf2ops_c()
     return &s_plf2ops_c;
 }
 
-/*
- * 2-D data access functions for data stored in (PLfGrid2 *), with the
- * PLfGrid2's "f" field treated as type (PLFLT **).
- */
+//
+// 2-D data access functions for data stored in (PLfGrid2 *), with the
+// PLfGrid2's "f" field treated as type (PLFLT **).
+//
 
 static PLFLT
 plf2ops_grid_c_get( PLPointer p, PLINT ix, PLINT iy )
@@ -191,7 +191,7 @@ plf2ops_grid_c_minmax( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmin, PLFLT *zmax
     PLfGrid2 *g  = (PLfGrid2 *) p;
     PLFLT    **z = g->f;
 
-    /* Ignore passed in parameters */
+    // Ignore passed in parameters
     nx = g->nx;
     ny = g->ny;
 
@@ -237,13 +237,13 @@ plf2ops_grid_c()
     return &s_plf2ops_grid_c;
 }
 
-/*
- * 2-D data access functions for data stored in (PLfGrid2 *), with the
- * PLfGrid2's "f" field treated as type (PLFLT *) pointing to 2-D data stored
- * in row-major order.  In the context of plotting, it might be easier to think
- * of it as "X-major" order.  In this ordering, values for a single X index are
- * stored in consecutive memory locations.
- */
+//
+// 2-D data access functions for data stored in (PLfGrid2 *), with the
+// PLfGrid2's "f" field treated as type (PLFLT *) pointing to 2-D data stored
+// in row-major order.  In the context of plotting, it might be easier to think
+// of it as "X-major" order.  In this ordering, values for a single X index are
+// stored in consecutive memory locations.
+//
 
 static PLFLT
 plf2ops_grid_row_major_get( PLPointer p, PLINT ix, PLINT iy )
@@ -309,7 +309,7 @@ plf2ops_grid_xxx_major_minmax( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmin, PLF
     PLfGrid2 *g = (PLfGrid2 *) p;
     PLFLT    *z = (PLFLT *) ( (PLFLT *) g->f );
 
-    /* Ignore passed in parameters */
+    // Ignore passed in parameters
     nx = g->nx;
     ny = g->ny;
 
@@ -352,13 +352,13 @@ plf2ops_grid_row_major()
     return &s_plf2ops_grid_row_major;
 }
 
-/*
- * 2-D data access functions for data stored in (PLfGrid2 *), with the
- * PLfGrid2's "f" field treated as type (PLFLT *) pointing to 2-D data stored
- * in column-major order.  In the context of plotting, it might be easier to
- * think of it as "Y-major" order.  In this ordering, values for a single Y
- * index are stored in consecutive memory locations.
- */
+//
+// 2-D data access functions for data stored in (PLfGrid2 *), with the
+// PLfGrid2's "f" field treated as type (PLFLT *) pointing to 2-D data stored
+// in column-major order.  In the context of plotting, it might be easier to
+// think of it as "Y-major" order.  In this ordering, values for a single Y
+// index are stored in consecutive memory locations.
+//
 
 static PLFLT
 plf2ops_grid_col_major_get( PLPointer p, PLINT ix, PLINT iy )

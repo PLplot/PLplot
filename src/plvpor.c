@@ -1,25 +1,25 @@
-/* $Id$
- *
- *      Functions dealing with viewports.
- *
- * Copyright (C) 2004  Joao Cardoso
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+//      Functions dealing with viewports.
+//
+// Copyright (C) 2004  Joao Cardoso
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #include "plplotP.h"
 
@@ -27,65 +27,65 @@ static void
 c_plenvi( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
           PLINT just, PLINT axis, PLINT old );
 
-/*--------------------------------------------------------------------------*\
- * void plenv()
- *
- * Simple interface for defining viewport and window.
- *
- * The "just" parameter control how the axes will be scaled:
- *
- *       just=-1 : The scales will not be set, the user must set up the scale
- *                   before calling plenv() using plsvpa(), plvasp() or other;
- *       just= 0 : The scales will be set up to optimize plot area;
- *       just= 1 : The scales will be the same;
- *       just= 2 : The axes will be equal, the plot box will be square.
- *
- * The "axis" parameter is interpreted as follows:
- *
- *	axis=-2 : draw no box, no tick marks, no numeric tick labels, no axes.
- *	axis=-1 : draw box only.
- *	axis= 0 : Draw box, ticks, and numeric tick labels.
- *	axis= 1 : Also draw coordinate axes at X=0, and Y=0.
- *	axis= 2 : Also draw a grid at major tick positions in both coordinates.
- *	axis= 3 : Same as 2, but the grid will be also at the minor ticks.
- *	axis=10 : Same as 0 except Logarithmic X tick marks. (The X data have
- *      to be converted to logarithms separately.)
- *	axis=11 : Same as 1 except Logarithmic X tick marks. (The X data have
- *      to be converted to logarithms separately.)
- *	axis=12 : Same as 2 except Logarithmic X tick marks. (The X data have
- *      to be converted to logarithms separately.)
- *      axis=13 : Same as 12, but the grid will be also at the minor ticks.
- *	axis=20 : Same as 0 except Logarithmic Y tick marks. (The Y data have
- *      to be converted to logarithms separately.)
- *	axis=21 : Same as 1 except Logarithmic Y tick marks. (The Y data have
- *      to be converted to logarithms separately.)
- *	axis=22 : Same as 2 except Logarithmic Y tick marks. (The Y data have
- *      to be converted to logarithms separately.)
- *      axis=23 : Same as 22, but the grid will be also at the minor ticks.
- *	axis=30 : Same as 0 except Logarithmic X,Y tick marks. (The X,Y data have
- *      to be converted to logarithms separately.)
- *	axis=31 : Same as 1 except Logarithmic X,Y tick marks. (The X,Y data have
- *      to be converted to logarithms separately.)
- *	axis=32 : Same as 2 except Logarithmic X,Y tick marks. (The X,Y data have
- *      to be converted to logarithms separately.)
- *      axis=33 : Same as 32, but the grid will be also at the minor ticks.
- *	axis=40 : Same as 0 except date / time X tick marks.
- *	axis=41 : Same as 1 except date / time X tick marks.
- *	axis=42 : Same as 2 except date / time X tick marks.
- *      axis=43 : Same as 42, but the grid will be also at the minor ticks.
- *	axis=50 : Same as 0 except date / time Y tick marks.
- *	axis=51 : Same as 1 except date / time Y tick marks.
- *	axis=52 : Same as 2 except date / time Y tick marks.
- *      axis=53 : Same as 52, but the grid will be also at the minor ticks.
- *	axis=60 : Same as 0 except date / time X,Y tick marks.
- *	axis=61 : Same as 1 except date / time X,Y tick marks.
- *	axis=62 : Same as 2 except date / time X,Y tick marks.
- *      axis=63 : Same as 62, but the grid will be also at the minor ticks.
- *      axis=70 : Same as 0 except custom X,Y labels.
- *      axis=71 : Same as 1 except custom X,Y labels.
- *      axis=72 : Same as 2 except custom X,Y labels.
- *      axis=73 : Same as 72, but the grid will be also at the minor ticks.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plenv()
+//
+// Simple interface for defining viewport and window.
+//
+// The "just" parameter control how the axes will be scaled:
+//
+//       just=-1 : The scales will not be set, the user must set up the scale
+//                   before calling plenv() using plsvpa(), plvasp() or other;
+//       just= 0 : The scales will be set up to optimize plot area;
+//       just= 1 : The scales will be the same;
+//       just= 2 : The axes will be equal, the plot box will be square.
+//
+// The "axis" parameter is interpreted as follows:
+//
+//	axis=-2 : draw no box, no tick marks, no numeric tick labels, no axes.
+//	axis=-1 : draw box only.
+//	axis= 0 : Draw box, ticks, and numeric tick labels.
+//	axis= 1 : Also draw coordinate axes at X=0, and Y=0.
+//	axis= 2 : Also draw a grid at major tick positions in both coordinates.
+//	axis= 3 : Same as 2, but the grid will be also at the minor ticks.
+//	axis=10 : Same as 0 except Logarithmic X tick marks. (The X data have
+//      to be converted to logarithms separately.)
+//	axis=11 : Same as 1 except Logarithmic X tick marks. (The X data have
+//      to be converted to logarithms separately.)
+//	axis=12 : Same as 2 except Logarithmic X tick marks. (The X data have
+//      to be converted to logarithms separately.)
+//      axis=13 : Same as 12, but the grid will be also at the minor ticks.
+//	axis=20 : Same as 0 except Logarithmic Y tick marks. (The Y data have
+//      to be converted to logarithms separately.)
+//	axis=21 : Same as 1 except Logarithmic Y tick marks. (The Y data have
+//      to be converted to logarithms separately.)
+//	axis=22 : Same as 2 except Logarithmic Y tick marks. (The Y data have
+//      to be converted to logarithms separately.)
+//      axis=23 : Same as 22, but the grid will be also at the minor ticks.
+//	axis=30 : Same as 0 except Logarithmic X,Y tick marks. (The X,Y data have
+//      to be converted to logarithms separately.)
+//	axis=31 : Same as 1 except Logarithmic X,Y tick marks. (The X,Y data have
+//      to be converted to logarithms separately.)
+//	axis=32 : Same as 2 except Logarithmic X,Y tick marks. (The X,Y data have
+//      to be converted to logarithms separately.)
+//      axis=33 : Same as 32, but the grid will be also at the minor ticks.
+//	axis=40 : Same as 0 except date / time X tick marks.
+//	axis=41 : Same as 1 except date / time X tick marks.
+//	axis=42 : Same as 2 except date / time X tick marks.
+//      axis=43 : Same as 42, but the grid will be also at the minor ticks.
+//	axis=50 : Same as 0 except date / time Y tick marks.
+//	axis=51 : Same as 1 except date / time Y tick marks.
+//	axis=52 : Same as 2 except date / time Y tick marks.
+//      axis=53 : Same as 52, but the grid will be also at the minor ticks.
+//	axis=60 : Same as 0 except date / time X,Y tick marks.
+//	axis=61 : Same as 1 except date / time X,Y tick marks.
+//	axis=62 : Same as 2 except date / time X,Y tick marks.
+//      axis=63 : Same as 62, but the grid will be also at the minor ticks.
+//      axis=70 : Same as 0 except custom X,Y labels.
+//      axis=71 : Same as 1 except custom X,Y labels.
+//      axis=72 : Same as 2 except custom X,Y labels.
+//      axis=73 : Same as 72, but the grid will be also at the minor ticks.
+//--------------------------------------------------------------------------
 
 void
 c_plenv( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -94,12 +94,12 @@ c_plenv( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     c_plenvi( xmin, xmax, ymin, ymax, just, axis, 1 );
 }
 
-/*--------------------------------------------------------------------------*\
- * void plenv0()
- *
- * same as plenv() above, but if in multiplot mode does not advance the subpage,
- * instead clears it.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plenv0()
+//
+// same as plenv() above, but if in multiplot mode does not advance the subpage,
+// instead clears it.
+//--------------------------------------------------------------------------
 
 void
 c_plenv0( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -139,7 +139,7 @@ c_plenvi( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
         return;
     }
 
-    if ( plsc->nsubx * plsc->nsuby == 1 ) /* not multiplot mode */
+    if ( plsc->nsubx * plsc->nsuby == 1 ) // not multiplot mode
         old = 1;
 
     if ( old == 1 )
@@ -298,12 +298,12 @@ c_plenvi( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void plvsta()
- *
- * Defines a "standard" viewport with seven character heights for
- * the left margin and four character heights everywhere else.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plvsta()
+//
+// Defines a "standard" viewport with seven character heights for
+// the left margin and four character heights everywhere else.
+//--------------------------------------------------------------------------
 
 void
 c_plvsta( void )
@@ -317,9 +317,9 @@ c_plvsta( void )
         return;
     }
 
-/*  Find out position of subpage boundaries in millimetres, reduce by */
-/*  the desired border, and convert back into normalized subpage */
-/*  coordinates */
+//  Find out position of subpage boundaries in millimetres, reduce by
+//  the desired border, and convert back into normalized subpage
+//  coordinates
 
     lb = 8.0 * plsc->chrht;
     rb = 5.0 * plsc->chrht;
@@ -334,11 +334,11 @@ c_plvsta( void )
     plvpor( xmin, xmax, ymin, ymax );
 }
 
-/*--------------------------------------------------------------------------*\
- * void plvpor()
- *
- * Creates a viewport with the specified normalized subpage coordinates.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plvpor()
+//
+// Creates a viewport with the specified normalized subpage coordinates.
+//--------------------------------------------------------------------------
 
 void
 c_plvpor( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
@@ -377,12 +377,12 @@ c_plvpor( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
     plsc->level = 2;
 }
 
-/*--------------------------------------------------------------------------*\
- * void plvpas()
- *
- * Creates the largest viewport of the specified aspect ratio that fits
- * within the specified normalized subpage coordinates.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plvpas()
+//
+// Creates the largest viewport of the specified aspect ratio that fits
+// within the specified normalized subpage coordinates.
+//--------------------------------------------------------------------------
 
 void
 c_plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect )
@@ -422,7 +422,7 @@ c_plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect )
     spymax = spymin + ysize * ymax;
     spymin = spymin + ysize * ymin;
 
-    /* Adjust size for the requested edging */
+    // Adjust size for the requested edging
     xsize = spxmax - spxmin;
     ysize = spymax - spymin;
 
@@ -437,7 +437,7 @@ c_plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect )
         nysize = xsize * aspect;
     }
 
-/* center plot within page */
+// center plot within page
 
     vpxmin = 0.5 * ( xsize - nxsize ) + xoffset;
     vpxmax = vpxmin + nxsize;
@@ -447,12 +447,12 @@ c_plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect )
     plsvpa( vpxmin, vpxmax, vpymin, vpymax );
 }
 
-/*--------------------------------------------------------------------------*\
- * void plvasp()
- *
- * Sets the edges of the viewport with the given aspect ratio, leaving
- * room for labels.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plvasp()
+//
+// Sets the edges of the viewport with the given aspect ratio, leaving
+// room for labels.
+//--------------------------------------------------------------------------
 
 void
 c_plvasp( PLFLT aspect )
@@ -476,7 +476,7 @@ c_plvasp( PLFLT aspect )
     plgspa( &spxmin, &spxmax, &spymin, &spymax );
     xsize  = spxmax - spxmin;
     ysize  = spymax - spymin;
-    xsize -= lb + rb;           /* adjust for labels */
+    xsize -= lb + rb;           // adjust for labels
     ysize -= bb + tb;
     if ( aspect * xsize > ysize )
     {
@@ -489,7 +489,7 @@ c_plvasp( PLFLT aspect )
         nysize = xsize * aspect;
     }
 
-/* center plot within page */
+// center plot within page
 
     vpxmin = .5 * ( xsize - nxsize ) + lb;
     vpxmax = vpxmin + nxsize;
@@ -499,12 +499,12 @@ c_plvasp( PLFLT aspect )
     plsvpa( vpxmin, vpxmax, vpymin, vpymax );
 }
 
-/*--------------------------------------------------------------------------*\
- * void plsvpa()
- *
- * Sets the edges of the viewport to the specified absolute coordinates
- * (mm), measured with respect to the current subpage boundaries.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plsvpa()
+//
+// Sets the edges of the viewport to the specified absolute coordinates
+// (mm), measured with respect to the current subpage boundaries.
+//--------------------------------------------------------------------------
 
 void
 c_plsvpa( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )

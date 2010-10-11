@@ -1,54 +1,54 @@
-/* $Id$
- *
- *      Implement linear gradients for PLplot.
- *
- * Copyright (C) 2009  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      Implement linear gradients for PLplot.
+//
+// Copyright (C) 2009  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plplotP.h"
 
-/* To keep track of whether a sofware fallback warning has been issued. */
+// To keep track of whether a sofware fallback warning has been issued.
 
 static int foo;
-/* software fallback for gradient. */
+// software fallback for gradient.
 static void
 plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
 
-/* define where plshades plots gradient for software fallback for
- * gradient.  */
+// define where plshades plots gradient for software fallback for
+// gradient.
 
 static PLINT
 gradient_defined( PLFLT x, PLFLT y );
 
-/*----------------------------------------------------------------------*\
- * void plgradient()
- *
- * Draws a linear gradient at an angle relative to the increasing x
- * direction for the polygon bounded by the x and y vertices.  x, and
- * y are expressed in world coordinates, and angle (in the world
- * coordinate system) is expressed in degrees.  The gradient is
- * expressed using colour and transparency information from cmap1.  The
- * geometrical gradient direction is specified by the angle argument.
- * The 0. to 1. range of the independent variable of cmap1 corresponds
- * to the range of the polygon in the direction specified by angle.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plgradient()
+//
+// Draws a linear gradient at an angle relative to the increasing x
+// direction for the polygon bounded by the x and y vertices.  x, and
+// y are expressed in world coordinates, and angle (in the world
+// coordinate system) is expressed in degrees.  The gradient is
+// expressed using colour and transparency information from cmap1.  The
+// geometrical gradient direction is specified by the angle argument.
+// The 0. to 1. range of the independent variable of cmap1 corresponds
+// to the range of the polygon in the direction specified by angle.
+//----------------------------------------------------------------------
 
 void
 c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
@@ -82,8 +82,8 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
         PLINT xgrad[NGRAD], ygrad[NGRAD], clpxmi, clpxma, clpymi, clpyma;
         PLFLT dxgrad[NGRAD], dygrad[NGRAD], xrot, xrot_min, xrot_max;
 
-        /* Find (x1, y1) and (x2, y2) corresponding to beginning and end
-         * of gradient vector. */
+        // Find (x1, y1) and (x2, y2) corresponding to beginning and end
+        // of gradient vector.
         double cosangle = cos( PI * angle / 180. );
         double sinangle = sin( PI * angle / 180. );
         xrot     = x[0] * cosangle + y[0] * sinangle;
@@ -105,12 +105,12 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
                 irot_max = i;
             }
         }
-        /* xrot_min and xrot_max are the minimum and maximum rotated x
-         * coordinate of polygon vertices. Use the vertex corresponding
-         * to the minimum  as the (xgrad[0], ygrad[0]) base of the
-         * gradient vector, and calculate the (xgrad[1], ygrad[1]) tip of
-         * the gradient vector from the range in rotated x coordinate and
-         * the angle of the gradient. */
+        // xrot_min and xrot_max are the minimum and maximum rotated x
+        // coordinate of polygon vertices. Use the vertex corresponding
+        // to the minimum  as the (xgrad[0], ygrad[0]) base of the
+        // gradient vector, and calculate the (xgrad[1], ygrad[1]) tip of
+        // the gradient vector from the range in rotated x coordinate and
+        // the angle of the gradient.
         dxgrad[0] = x[irot_min];
         dxgrad[1] = dxgrad[0] + ( xrot_max - xrot_min ) * cosangle;
         dygrad[0] = y[irot_min];
@@ -146,18 +146,18 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
         }
         plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
             plsc->clpymi, plsc->clpyma, plP_gradient );
-        /* Plot line corresponding to gradient to give visual
-         * debugging cue. */
+        // Plot line corresponding to gradient to give visual
+        // debugging cue.
         plline( NGRAD, dxgrad, dygrad );
     }
 }
 
-/*----------------------------------------------------------------------*\
- * void plgradient_soft()
- *
- * Software fallback for gradient.  See c_plgradient for an explanation
- * of the arguments.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plgradient_soft()
+//
+// Software fallback for gradient.  See c_plgradient for an explanation
+// of the arguments.
+//----------------------------------------------------------------------
 
 void
 plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
@@ -174,18 +174,18 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     }
 
 
-    /* Define polygon boundary so it is accessible from gradient_defined. */
+    // Define polygon boundary so it is accessible from gradient_defined.
     plsc->n_polygon = n;
     plsc->x_polygon = x;
     plsc->y_polygon = y;
 
-    /* Find x and y range of polygon. */
+    // Find x and y range of polygon.
     xmin = x[0];
     xmax = xmin;
     ymin = y[0];
     ymax = ymin;
-    /* Also find x range in rotated coordinate system where
-     * xrot = x*cosangle + y*sinangle. */
+    // Also find x range in rotated coordinate system where
+    // xrot = x*cosangle + y*sinangle.
     cosangle = cos( PI / 180. * angle );
     sinangle = sin( PI / 180. * angle );
     xrot     = x[0] * cosangle + y[0] * sinangle;
@@ -210,9 +210,9 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
             xrot_max = xrot;
     }
 
-    /* 2 x 2 array more than sufficient to define plane. */
-    /* Temporarily use more to overcome irregular edge issue on defined
-     * region. */
+    // 2 x 2 array more than sufficient to define plane.
+    // Temporarily use more to overcome irregular edge issue on defined
+    // region.
     #define NX    20
     #define NY    20
     plAlloc2dGrid( &z, NX, NY );
@@ -226,10 +226,10 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
             z[i][j] = ( xrot - xrot_min ) / ( xrot_max - xrot_min );
         }
     }
-    /* 101 edges gives reasonably smooth results for example 30. */
+    // 101 edges gives reasonably smooth results for example 30.
     #define NEDGE    101
-    /* Define NEDGE shade edges (or NEDGE-1 shade levels)
-     * from 0. to 1. */
+    // Define NEDGE shade edges (or NEDGE-1 shade levels)
+    // from 0. to 1.
     if ( ( edge = (PLFLT *) malloc( NEDGE * sizeof ( PLFLT ) ) ) == NULL )
         plexit( "plgradient_soft: Insufficient memory" );
     for ( i = 0; i < NEDGE; i++ )

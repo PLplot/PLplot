@@ -1,27 +1,27 @@
-/* $Id$
- *
- *      Polygon pattern fill.
- *
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009  Alan W. Irwin
- * Copyright (C) 2005, 2006, 2007, 2008, 2009  Arjen Markus
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      Polygon pattern fill.
+//
+// Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009  Alan W. Irwin
+// Copyright (C) 2005, 2006, 2007, 2008, 2009  Arjen Markus
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #include "plplotP.h"
 
@@ -29,35 +29,35 @@
 
 #define DTOR       ( PI / 180. )
 #define BINC       50
-/* Near-border comparison criterion (NBCC). */
+// Near-border comparison criterion (NBCC).
 #define PL_NBCC    2
-/* Variant of BETW that returns true if between or within PL_NBCC of it. */
+// Variant of BETW that returns true if between or within PL_NBCC of it.
 #define BETW_NBCC( ix, ia, ib )    ( ( ( ix ) <= ( ia + PL_NBCC ) && ( ix ) >= ( ib - PL_NBCC ) ) || ( ( ix ) >= ( ia - PL_NBCC ) && ( ix ) <= ( ib + PL_NBCC ) ) )
 
-/* Status codes ORed together in the return from notcrossed.
- * PL_NOT_CROSSED is set whenever the two line segments definitely
- * (i.e., intersection not near the ends or completely apart)
- * do not cross each other.
- *
- * PL_NEAR_A1 is set if the intersect is near (+/- PL_NBCC) the first
- * end of line segment A.
- *
- * PL_NEAR_A2 is set if the intersect is near (+/- PL_NBCC) the second
- * end of line segment A.
- *
- * PL_NEAR_B1 is set if the intersect is near (+/- PL_NBCC) the first
- * end of line segment B.
- *
- * PL_NEAR_B2 is set if the intersect is near (+/- PL_NBCC) the second
- * end of line segment B.
- *
- * PL_NEAR_PARALLEL is set if the two line segments are nearly parallel
- * with each other, i.e., a change in one of the coordinates of up to
- * (+/- PL_NBCC) would render them exactly parallel.
- *
- * PL_PARALLEL is set if the two line segments are exactly parallel
- * with each other.
- */
+// Status codes ORed together in the return from notcrossed.
+// PL_NOT_CROSSED is set whenever the two line segments definitely
+// (i.e., intersection not near the ends or completely apart)
+// do not cross each other.
+//
+// PL_NEAR_A1 is set if the intersect is near (+/- PL_NBCC) the first
+// end of line segment A.
+//
+// PL_NEAR_A2 is set if the intersect is near (+/- PL_NBCC) the second
+// end of line segment A.
+//
+// PL_NEAR_B1 is set if the intersect is near (+/- PL_NBCC) the first
+// end of line segment B.
+//
+// PL_NEAR_B2 is set if the intersect is near (+/- PL_NBCC) the second
+// end of line segment B.
+//
+// PL_NEAR_PARALLEL is set if the two line segments are nearly parallel
+// with each other, i.e., a change in one of the coordinates of up to
+// (+/- PL_NBCC) would render them exactly parallel.
+//
+// PL_PARALLEL is set if the two line segments are exactly parallel
+// with each other.
+//
 enum PL_CrossedStatus
 {
     PL_NOT_CROSSED   = 0x1,
@@ -75,7 +75,7 @@ struct point
 };
 static PLINT bufferleng, buffersize, *buffer;
 
-/* Static function prototypes */
+// Static function prototypes
 
 static int
 compar( const void *, const void * );
@@ -118,14 +118,14 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
                   PLINT n2, const PLINT *x2, const PLINT *y2 );
 
 
-/*----------------------------------------------------------------------*\
- * void plfill()
- *
- * Pattern fills the polygon bounded by the input points.
- * If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
- * The final point is explicitly added if it doesn't match up to the first,
- * to prevent clipping problems.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plfill()
+//
+// Pattern fills the polygon bounded by the input points.
+// If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
+// The final point is explicitly added if it doesn't match up to the first,
+// to prevent clipping problems.
+//----------------------------------------------------------------------
 
 void
 c_plfill( PLINT n, PLFLT *x, PLFLT *y )
@@ -169,14 +169,14 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
         plsc->clpymi, plsc->clpyma, plP_fill );
 }
 
-/*----------------------------------------------------------------------*\
- * void plfill3()
- *
- * Pattern fills the polygon in 3d bounded by the input points.
- * If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
- * The final point is explicitly added if it doesn't match up to the first,
- * to prevent clipping problems.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plfill3()
+//
+// Pattern fills the polygon in 3d bounded by the input points.
+// If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
+// The final point is explicitly added if it doesn't match up to the first,
+// to prevent clipping problems.
+//----------------------------------------------------------------------
 
 void
 c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
@@ -206,7 +206,7 @@ c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
     plP_gdom( &xmin, &xmax, &ymin, &ymax );
     plP_grange( &zscale, &zmin, &zmax );
 
-    /* copy the vertices so we can clip without corrupting the input */
+    // copy the vertices so we can clip without corrupting the input
     for ( i = 0; i < n; i++ )
     {
         tx[i] = x[i]; ty[i] = y[i]; tz[i] = z[i];
@@ -230,27 +230,27 @@ c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
         ypoly[i] = plP_wcpcy( plP_w3wcy( tx[i], ty[i], tz[i] ) );
     }
 
-/* AWI: in the past we have used
- *  plP_fill(xpoly, ypoly, n);
- * here, but our educated guess is this fill should be done via the clipping
- * interface instead as below.
- * No example tests this code so one of our users will end up inadvertently
- * testing this for us.
- *
- * jc: I have checked, and both versions does give the same result, i.e., clipping
- * to the window boundaries. The reason is that the above plP_clip_poly() does
- * the clipping. To check this, is enough to diminish the x/y/z min/max arguments in
- * plw3d() in x08c. But let's keep it, although 10% slower...
- */
+// AWI: in the past we have used
+//  plP_fill(xpoly, ypoly, n);
+// here, but our educated guess is this fill should be done via the clipping
+// interface instead as below.
+// No example tests this code so one of our users will end up inadvertently
+// testing this for us.
+//
+// jc: I have checked, and both versions does give the same result, i.e., clipping
+// to the window boundaries. The reason is that the above plP_clip_poly() does
+// the clipping. To check this, is enough to diminish the x/y/z min/max arguments in
+// plw3d() in x08c. But let's keep it, although 10% slower...
+//
     plP_plfclp( xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
         plsc->clpymi, plsc->clpyma, plP_fill );
 }
 
-/*----------------------------------------------------------------------*\
- * void plfill_soft()
- *
- * Pattern fills in software the polygon bounded by the input points.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plfill_soft()
+//
+// Pattern fills in software the polygon bounded by the input points.
+//----------------------------------------------------------------------
 
 void
 plfill_soft( short *x, short *y, PLINT n )
@@ -269,7 +269,7 @@ plfill_soft( short *x, short *y, PLINT n )
         return;
     }
 
-/* Loop over sets of lines in pattern */
+// Loop over sets of lines in pattern
 
     for ( k = 0; k < plsc->nps; k++ )
     {
@@ -279,7 +279,7 @@ plfill_soft( short *x, short *y, PLINT n )
         si   = sin( temp ) * plsc->ypmm;
         ci   = cos( temp ) * plsc->xpmm;
 
-        /* normalize: 1 = si*si + ci*ci */
+        // normalize: 1 = si*si + ci*ci
 
         temp = sqrt( (double) ( si * si + ci * ci ) );
         si  /= temp;
@@ -301,7 +301,7 @@ plfill_soft( short *x, short *y, PLINT n )
         yp2 = y[n - 1];
         tran( &xp2, &yp2, (PLFLT) ci, (PLFLT) si );
 
-/* Loop over points in polygon */
+// Loop over points in polygon
 
         for ( i = 0; i < n; i++ )
         {
@@ -315,12 +315,12 @@ plfill_soft( short *x, short *y, PLINT n )
             yp2 = yp3;
         }
 
-/* Sort list by y then x */
+// Sort list by y then x
 
         qsort( (void *) buffer, (size_t) bufferleng / 2,
             (size_t) sizeof ( struct point ), compar );
 
-/* OK, now do the hatching */
+// OK, now do the hatching
 
         i = 0;
 
@@ -344,7 +344,7 @@ plfill_soft( short *x, short *y, PLINT n )
                     fprintf( stderr, "plfill: %d %d\n",
                         (int) buffer[j], (int) buffer[j + 1] );
                 }
-                continue;       /* Uh oh we're lost */
+                continue;       // Uh oh we're lost
             }
             tran( &xp1, &yp1, (PLFLT) ci, (PLFLT) ( -si ) );
             plP_draphy( xp1, yp1 );
@@ -353,9 +353,9 @@ plfill_soft( short *x, short *y, PLINT n )
     free( (void *) buffer );
 }
 
-/*----------------------------------------------------------------------*\
- * Utility functions
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// Utility functions
+//----------------------------------------------------------------------
 
 void
 tran( PLINT *a, PLINT *b, PLFLT c, PLFLT d )
@@ -403,7 +403,7 @@ buildlist( PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
     if ( yp3 == yp2 )
         nstep = 0;
 
-    /* Build coordinate list */
+    // Build coordinate list
 
     ploty = ( min_y / dinc ) * dinc;
     if ( ploty < min_y )
@@ -460,7 +460,7 @@ compar( const void *pnum1, const void *pnum2 )
     else if ( pnt1->y > pnt2->y )
         return 1;
 
-    /* Only reach here if y coords are equal, so sort by x */
+    // Only reach here if y coords are equal, so sort by x
 
     if ( pnt1->x < pnt2->x )
         return -1;
@@ -470,11 +470,11 @@ compar( const void *pnum1, const void *pnum2 )
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
- * void plP_plfclp()
- *
- * Fills a polygon within the clip limits.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plP_plfclp()
+//
+// Fills a polygon within the clip limits.
+//----------------------------------------------------------------------
 
 void
 plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
@@ -489,7 +489,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     PLINT if2[4] = { 0, 0, 0, 0 };
     PLINT n2     = 4;
 
-    /* Must have at least 3 points and draw() specified */
+    // Must have at least 3 points and draw() specified
     if ( npts < 3 || !draw )
         return;
 
@@ -501,9 +501,9 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     {
         plexit( "plP_plfclp: Insufficient memory" );
     }
-    /* Polygon 2 obviously has no dups nor two consective segments that
-     * are parallel, but get rid of those type of segments in polygon 1
-     * if they exist. */
+    // Polygon 2 obviously has no dups nor two consective segments that
+    // are parallel, but get rid of those type of segments in polygon 1
+    // if they exist.
 
     im1 = npts - 1;
     n1  = 0;
@@ -517,7 +517,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         im1 = i;
     }
 
-    /* Must have at least three points that satisfy the above criteria. */
+    // Must have at least three points that satisfy the above criteria.
     if ( n1 < 3 )
     {
         free( x10 );
@@ -525,11 +525,11 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         return;
     }
 
-    /* Polygon 2 obviously has a positive orientation (i.e., as you
-     * ascend in index along the boundary, the points just adjacent to
-     * the boundary and on the left are interior points for the
-     * polygon), but enforce this condition demanded by
-     * fill_intersection_polygon for polygon 1 as well. */
+    // Polygon 2 obviously has a positive orientation (i.e., as you
+    // ascend in index along the boundary, the points just adjacent to
+    // the boundary and on the left are interior points for the
+    // polygon), but enforce this condition demanded by
+    // fill_intersection_polygon for polygon 1 as well.
     if ( positive_orientation( n1, x10, y10 ) )
     {
         x1 = x10;
@@ -555,9 +555,9 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         free( y10 );
     }
 
-    /* Insure that the first vertex of polygon 1 (starting with n1 -
-     * 1) that is not on the border of polygon 2 is definitely outside
-     * polygon 2. */
+    // Insure that the first vertex of polygon 1 (starting with n1 -
+    // 1) that is not on the border of polygon 2 is definitely outside
+    // polygon 2.
     im1 = n1 - 1;
     for ( i = 0; i < n1; i++ )
     {
@@ -582,7 +582,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     free( y1 );
     return;
 }
-#else /* USE_FILL_INTERSECTION_POLYGON */
+#else // USE_FILL_INTERSECTION_POLYGON
 
     PLINT i, x1, x2, y1, y2;
     int   iclp = 0, iout = 2;
@@ -600,7 +600,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     int   inside_rb;
     int   inside_ru;
 
-    /* Must have at least 3 points and draw() specified */
+    // Must have at least 3 points and draw() specified
     if ( npts < 3 || !draw )
         return;
 
@@ -634,7 +634,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
 
         if ( drawable )
         {
-            /* Boundary crossing condition -- coming in. */
+            // Boundary crossing condition -- coming in.
             crossed_xmin2 = ( x1 == xmin ); crossed_xmax2 = ( x1 == xmax );
             crossed_ymin2 = ( y1 == ymin ); crossed_ymax2 = ( y1 == ymax );
 
@@ -643,7 +643,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             crossed_down  = ( crossed_down || crossed_ymin2 );
             crossed_up    = ( crossed_up || crossed_ymax2 );
             iout          = iclp + 2;
-            /* If the first segment, just add it. */
+            // If the first segment, just add it.
 
             if ( iclp == 0 )
             {
@@ -651,29 +651,29 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                 xclp[iclp] = x2; yclp[iclp] = y2; iclp++;
             }
 
-            /* Not first point.  If first point of this segment matches up to the
-             * previous point, just add it.  */
+            // Not first point.  If first point of this segment matches up to the
+            // previous point, just add it.
 
             else if ( x1 == xclp[iclp - 1] && y1 == yclp[iclp - 1] )
             {
                 xclp[iclp] = x2; yclp[iclp] = y2; iclp++;
             }
 
-            /* Otherwise, we need to add both points, to connect the points in the
-             * polygon along the clip boundary.  If we encircled a corner, we have
-             * to add that first.
-             */
+            // Otherwise, we need to add both points, to connect the points in the
+            // polygon along the clip boundary.  If we encircled a corner, we have
+            // to add that first.
+            //
 
             else
             {
-                /* Treat the case where we encircled two corners:
-                 * Construct a polygon out of the subset of vertices
-                 * Note that the direction is important too when adding
-                 * the extra points */
+                // Treat the case where we encircled two corners:
+                // Construct a polygon out of the subset of vertices
+                // Note that the direction is important too when adding
+                // the extra points
                 xclp[iclp + 1] = x2; yclp[iclp + 1] = y2;
                 xclp[iclp + 2] = x1; yclp[iclp + 2] = y1;
                 iout           = iout - iclp + 1;
-                /* Upper two */
+                // Upper two
                 if ( ( ( crossed_xmin1 && crossed_xmax2 ) ||
                        ( crossed_xmin2 && crossed_xmax1 ) ) &&
                      inside_lu )
@@ -689,7 +689,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                         xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
                     }
                 }
-                /* Lower two */
+                // Lower two
                 else if ( ( ( crossed_xmin1 && crossed_xmax2 ) ||
                             ( crossed_xmin2 && crossed_xmax1 ) ) &&
                           inside_lb )
@@ -705,7 +705,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                         xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
                     }
                 }
-                /* Left two */
+                // Left two
                 else if ( ( ( crossed_ymin1 && crossed_ymax2 ) ||
                             ( crossed_ymin2 && crossed_ymax1 ) ) &&
                           inside_lb )
@@ -721,7 +721,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                         xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
                     }
                 }
-                /* Right two */
+                // Right two
                 else if ( ( ( crossed_ymin1 && crossed_ymax2 ) ||
                             ( crossed_ymin2 && crossed_ymax1 ) ) &&
                           inside_rb )
@@ -737,46 +737,46 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
                         xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
                     }
                 }
-                /* Now the case where we encircled one corner */
-                /* Lower left */
+                // Now the case where we encircled one corner
+                // Lower left
                 else if ( ( crossed_xmin1 && crossed_ymin2 ) ||
                           ( crossed_ymin1 && crossed_xmin2 ) )
                 {
                     xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
                 }
-                /* Lower right */
+                // Lower right
                 else if ( ( crossed_xmax1 && crossed_ymin2 ) ||
                           ( crossed_ymin1 && crossed_xmax2 ) )
                 {
                     xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
                 }
-                /* Upper left */
+                // Upper left
                 else if ( ( crossed_xmin1 && crossed_ymax2 ) ||
                           ( crossed_ymax1 && crossed_xmin2 ) )
                 {
                     xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
                 }
-                /* Upper right */
+                // Upper right
                 else if ( ( crossed_xmax1 && crossed_ymax2 ) ||
                           ( crossed_ymax1 && crossed_xmax2 ) )
                 {
                     xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
                 }
 
-                /* Now add current segment. */
+                // Now add current segment.
                 xclp[iclp] = x1; yclp[iclp] = y1; iclp++;
                 xclp[iclp] = x2; yclp[iclp] = y2; iclp++;
             }
 
-            /* Boundary crossing condition -- going out. */
+            // Boundary crossing condition -- going out.
             crossed_xmin1 = ( x2 == xmin ); crossed_xmax1 = ( x2 == xmax );
             crossed_ymin1 = ( y2 == ymin ); crossed_ymax1 = ( y2 == ymax );
         }
     }
 
-    /* Limit case - all vertices are outside of bounding box.  So just fill entire
-     * box, *if* the bounding box is completely encircled.
-     */
+    // Limit case - all vertices are outside of bounding box.  So just fill entire
+    // box, *if* the bounding box is completely encircled.
+    //
     if ( iclp == 0 )
     {
         if ( inside_lb )
@@ -798,7 +798,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         }
     }
 
-    /* Now handle cases where fill polygon intersects two sides of the box */
+    // Now handle cases where fill polygon intersects two sides of the box
 
     if ( iclp >= 2 )
     {
@@ -830,8 +830,8 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             }
         }
 
-        /* The cases where the fill region is divided 2/2 */
-        /* Divided horizontally */
+        // The cases where the fill region is divided 2/2
+        // Divided horizontally
         if ( xclp[0] == xmin && xclp[iclp - 1] == xmax )
         {
             if ( dir > 0 )
@@ -859,7 +859,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             }
         }
 
-        /* Divided vertically */
+        // Divided vertically
         else if ( yclp[0] == ymin && yclp[iclp - 1] == ymax )
         {
             if ( dir > 0 )
@@ -887,91 +887,91 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
             }
         }
 
-        /* The cases where the fill region is divided 3/1 --
-         *    LL           LR           UR           UL
-         +-----+      +-----+      +-----+      +-----+
-         |     |      |     |      |    \|      |/    |
-         |     |      |     |      |     |      |     |
-         |\    |      |    /|      |     |      |     |
-         +-----+      +-----+      +-----+      +-----+
-         *
-         * Note when we go the long way around, if the direction is reversed the
-         * three vertices must be visited in the opposite order.
-         */
-        /* LL, short way around */
+        // The cases where the fill region is divided 3/1 --
+        //    LL           LR           UR           UL
+//         +-----+      +-----+      +-----+      +-----+
+//         |     |      |     |      |    \|      |/    |
+//         |     |      |     |      |     |      |     |
+//         |\    |      |    /|      |     |      |     |
+//         +-----+      +-----+      +-----+      +-----+
+        //
+        // Note when we go the long way around, if the direction is reversed the
+        // three vertices must be visited in the opposite order.
+        //
+        // LL, short way around
         else if ( ( xclp[0] == xmin && yclp[iclp - 1] == ymin && dir < 0 ) ||
                   ( yclp[0] == ymin && xclp[iclp - 1] == xmin && dir > 0 ) )
         {
             xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
         }
-        /* LL, long way around, counterclockwise */
+        // LL, long way around, counterclockwise
         else if ( ( xclp[0] == xmin && yclp[iclp - 1] == ymin && dir > 0 ) )
         {
             xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
             xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
             xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
         }
-        /* LL, long way around, clockwise */
+        // LL, long way around, clockwise
         else if ( ( yclp[0] == ymin && xclp[iclp - 1] == xmin && dir < 0 ) )
         {
             xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
             xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
             xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
         }
-        /* LR, short way around */
+        // LR, short way around
         else if ( ( xclp[0] == xmax && yclp[iclp - 1] == ymin && dir > 0 ) ||
                   ( yclp[0] == ymin && xclp[iclp - 1] == xmax && dir < 0 ) )
         {
             xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
         }
-        /* LR, long way around, counterclockwise */
+        // LR, long way around, counterclockwise
         else if ( yclp[0] == ymin && xclp[iclp - 1] == xmax && dir > 0 )
         {
             xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
             xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
             xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
         }
-        /* LR, long way around, clockwise */
+        // LR, long way around, clockwise
         else if ( xclp[0] == xmax && yclp[iclp - 1] == ymin && dir < 0 )
         {
             xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
             xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
             xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
         }
-        /* UR, short way around */
+        // UR, short way around
         else if ( ( xclp[0] == xmax && yclp[iclp - 1] == ymax && dir < 0 ) ||
                   ( yclp[0] == ymax && xclp[iclp - 1] == xmax && dir > 0 ) )
         {
             xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
         }
-        /* UR, long way around, counterclockwise */
+        // UR, long way around, counterclockwise
         else if ( xclp[0] == xmax && yclp[iclp - 1] == ymax && dir > 0 )
         {
             xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
             xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
             xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
         }
-        /* UR, long way around, clockwise */
+        // UR, long way around, clockwise
         else if ( yclp[0] == ymax && xclp[iclp - 1] == xmax && dir < 0 )
         {
             xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
             xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
             xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
         }
-        /* UL, short way around */
+        // UL, short way around
         else if ( ( xclp[0] == xmin && yclp[iclp - 1] == ymax && dir > 0 ) ||
                   ( yclp[0] == ymax && xclp[iclp - 1] == xmin && dir < 0 ) )
         {
             xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
         }
-        /* UL, long way around, counterclockwise */
+        // UL, long way around, counterclockwise
         else if ( yclp[0] == ymax && xclp[iclp - 1] == xmin && dir > 0 )
         {
             xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
             xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
             xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
         }
-        /* UL, long way around, clockwise */
+        // UL, long way around, clockwise
         else if ( xclp[0] == xmin && yclp[iclp - 1] == ymax && dir < 0 )
         {
             xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
@@ -980,11 +980,11 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         }
     }
 
-    /* Check for the case that only one side has been crossed
-     * (AM) Just checking a single point turns out not to be
-     * enough, apparently the crossed_*1 and crossed_*2 variables
-     * are not quite what I expected.
-     */
+    // Check for the case that only one side has been crossed
+    // (AM) Just checking a single point turns out not to be
+    // enough, apparently the crossed_*1 and crossed_*2 variables
+    // are not quite what I expected.
+    //
     if ( inside_lb + inside_rb + inside_lu + inside_ru == 4 )
     {
         int   dir = circulation( x, y, npts );
@@ -1086,7 +1086,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         }
     }
 
-    /* Draw the sucker */
+    // Draw the sucker
     if ( iclp >= 3 )
         ( *draw )( xclp, yclp, iclp );
 
@@ -1096,30 +1096,30 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
         free( yclp );
     }
 }
-#endif /* USE_FILL_INTERSECTION_POLYGON */
+#endif // USE_FILL_INTERSECTION_POLYGON
 
-/*----------------------------------------------------------------------*\
- * int circulation()
- *
- * Returns the circulation direction for a given polyline: positive is
- * counterclockwise, negative is clockwise (right hand rule).
- *
- * Used to get the circulation of the fill polygon around the bounding box,
- * when the fill polygon is larger than the bounding box.  Counts left
- * (positive) vs right (negative) hand turns using a cross product, instead of
- * performing all the expensive trig calculations needed to get this 100%
- * correct.  For the fill cases encountered in plplot, this treatment should
- * give the correct answer most of the time, by far.  When used with plshades,
- * the typical return value is 3 or -3, since 3 turns are necessary in order
- * to complete the fill region.  Only for really oddly shaped fill regions
- * will it give the wrong answer.
- *
- * AM:
- * Changed the computation: use the outer product to compute the surface
- * area, the sign determines if the polygon is followed clockwise or
- * counterclockwise. This is more reliable. Floating-point numbers
- * are used to avoid overflow.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// int circulation()
+//
+// Returns the circulation direction for a given polyline: positive is
+// counterclockwise, negative is clockwise (right hand rule).
+//
+// Used to get the circulation of the fill polygon around the bounding box,
+// when the fill polygon is larger than the bounding box.  Counts left
+// (positive) vs right (negative) hand turns using a cross product, instead of
+// performing all the expensive trig calculations needed to get this 100%
+// correct.  For the fill cases encountered in plplot, this treatment should
+// give the correct answer most of the time, by far.  When used with plshades,
+// the typical return value is 3 or -3, since 3 turns are necessary in order
+// to complete the fill region.  Only for really oddly shaped fill regions
+// will it give the wrong answer.
+//
+// AM:
+// Changed the computation: use the outer product to compute the surface
+// area, the sign determines if the polygon is followed clockwise or
+// counterclockwise. This is more reliable. Floating-point numbers
+// are used to avoid overflow.
+//----------------------------------------------------------------------
 
 int
 circulation( PLINT *x, PLINT *y, PLINT npts )
@@ -1149,7 +1149,7 @@ circulation( PLINT *x, PLINT *y, PLINT npts )
 }
 
 
-/* PLFLT wrapper for !notpointinpolygon. */
+// PLFLT wrapper for !notpointinpolygon.
 int
 plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp )
 {
@@ -1182,19 +1182,19 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
     free( yint );
     return return_value;
 }
-/*----------------------------------------------------------------------*\
- * int notpointinpolygon()
- *
- * Returns 0, 1, or 2 depending on whether the test point is definitely
- * inside, near the border, or definitely outside the polygon.
- * Notes:
- * This "Ray casting algorithm" has been described in
- * http://en.wikipedia.org/wiki/Point_in_polygon.
- * Logic still needs to be inserted to take care of the "ray passes
- * through vertex" problem in a numerically robust way.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// int notpointinpolygon()
+//
+// Returns 0, 1, or 2 depending on whether the test point is definitely
+// inside, near the border, or definitely outside the polygon.
+// Notes:
+// This "Ray casting algorithm" has been described in
+// http://en.wikipedia.org/wiki/Point_in_polygon.
+// Logic still needs to be inserted to take care of the "ray passes
+// through vertex" problem in a numerically robust way.
+//----------------------------------------------------------------------
 
-/* Temporary until get rid of old code altogether. */
+// Temporary until get rid of old code altogether.
 #define NEW_NOTPOINTINPOLYGON_CODE
 static int
 notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
@@ -1205,7 +1205,7 @@ notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
     PLINT xmin, xout, yout, xintersect, yintersect;
 
 
-    /* Determine a point outside the polygon  */
+    // Determine a point outside the polygon
 
     xmin = x[0];
     xout = x[0];
@@ -1215,11 +1215,11 @@ notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
         xout = MAX( xout, x[i] );
         xmin = MIN( xmin, x[i] );
     }
-    /* + 10 to make sure completely outside. */
+    // + 10 to make sure completely outside.
     xout = xout + ( xout - xmin ) + 10;
 
-    /* Determine whether the line between (xout, yout) and (xp, yp) intersects
-     * one of the polygon segments. */
+    // Determine whether the line between (xout, yout) and (xp, yp) intersects
+    // one of the polygon segments.
 
     im1 = n - 1;
     for ( i = 0; i < n; i++ )
@@ -1238,16 +1238,16 @@ notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
         im1 = i;
     }
 
-    /* return 0 if the test point is definitely inside
-     * (count_crossings odd), return 1 if the test point is near (see
-     * above logic), and return 2 if the test point is definitely
-     * outside the border (count_crossings even). */
+    // return 0 if the test point is definitely inside
+    // (count_crossings odd), return 1 if the test point is near (see
+    // above logic), and return 2 if the test point is definitely
+    // outside the border (count_crossings even).
     if ( ( count_crossings % 2 ) == 1 )
         return 0;
     else
         return 2;
 }
-#else /* NEW_NOTPOINTINPOLYGON_CODE */
+#else // NEW_NOTPOINTINPOLYGON_CODE
     int i;
     int count_crossings;
     PLFLT x1, y1, x2, y2, xpp, ypp, xout, yout, xmax;
@@ -1260,7 +1260,7 @@ notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
     count_crossings = 0;
 
 
-    /* Determine a point outside the polygon  */
+    // Determine a point outside the polygon
 
     xmax = x[0];
     xout = x[0];
@@ -1278,8 +1278,8 @@ notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
     }
     xout = xout - ( xmax - xout );
 
-    /* Determine for each side whether the line segment between
-     * our two points crosses the vertex */
+    // Determine for each side whether the line segment between
+    // our two points crosses the vertex
 
     xpp = (PLFLT) xp;
     ypp = (PLFLT) yp;
@@ -1302,28 +1302,28 @@ notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
             y2 = (PLFLT) y[0];
         }
 
-        /* Skip zero-length segments */
+        // Skip zero-length segments
         if ( x1 == x2 && y1 == y2 )
         {
             continue;
         }
 
-        /* Line through the two fixed points:
-         * Are x1 and x2 on either side? */
+        // Line through the two fixed points:
+        // Are x1 and x2 on either side?
         xv1     = x1 - xout;
         yv1     = y1 - yout;
         xv2     = x2 - xout;
         yv2     = y2 - yout;
-        inprod1 = xv1 * yvp - yv1 * xvp; /* Well, with the normal vector */
+        inprod1 = xv1 * yvp - yv1 * xvp; // Well, with the normal vector
         inprod2 = xv2 * yvp - yv2 * xvp;
         if ( inprod1 * inprod2 >= 0.0 )
         {
-            /* No crossing possible! */
+            // No crossing possible!
             continue;
         }
 
-        /* Line through the two vertices:
-         * Are xout and xpp on either side? */
+        // Line through the two vertices:
+        // Are xout and xpp on either side?
         xvv     = x2 - x1;
         yvv     = y2 - y1;
         xv1     = xpp - x1;
@@ -1334,68 +1334,68 @@ notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
         inprod2 = xv2 * yvv - yv2 * xvv;
         if ( inprod1 * inprod2 >= 0.0 )
         {
-            /* No crossing possible! */
+            // No crossing possible!
             continue;
         }
 
-        /* We do have a crossing */
+        // We do have a crossing
         count_crossings++;
     }
 
-    /* Return the result: an even number of crossings means the
-     * point is outside the polygon */
+    // Return the result: an even number of crossings means the
+    // point is outside the polygon
 
     return !( count_crossings % 2 );
 }
-#endif /* NEW_NOTPOINTINPOLYGON_CODE */
+#endif // NEW_NOTPOINTINPOLYGON_CODE
 
 #define MAX_RECURSION_DEPTH    10
 
-/* Fill intersection of two simple polygons that do no self-intersect,
- * and which have no duplicate vertices or two consecutive edges that
- * are parallel.  A further requirement is that both polygons have a
- * positive orientation (see
- * http://en.wikipedia.org/wiki/Curve_orientation).  That is, as you
- * traverse the boundary in index order, the inside area of the
- * polygon is always on the left.  Finally, the first vertex of
- * polygon 1 (starting with n1 -1) that is not near the border of
- * polygon 2 must be outside polygon 2.  N.B. it is the calling
- * routine's responsibility to insure all those requirements are
- * satisfied.
- *
- * Two polygons that do not self intersect must have an even number of
- * edge crossings between them.  (ignoring vertex intersections which
- * touch, but do not cross).  fill_intersection_polygon eliminates
- * those intersection crossings by recursion (calling the same routine
- * twice again with the second polygon split at a boundary defined by
- * the first intersection point, all polygon 1 vertices between the
- * intersections, and the second intersection point).  Once the
- * recursion has eliminated all crossing edges, fill or not using the
- * appropriate polygon depending on whether the first and second
- * polygons are identical or whether one of them is entirely inside
- * the other of them.  If ifextrapolygon is true, the fill step will
- * consist of another recursive call to the routine with
- * ifextrapolygon false, and the second polygon set to an additional
- * polygon defined by the stream (not yet implemented). */
+// Fill intersection of two simple polygons that do no self-intersect,
+// and which have no duplicate vertices or two consecutive edges that
+// are parallel.  A further requirement is that both polygons have a
+// positive orientation (see
+// http://en.wikipedia.org/wiki/Curve_orientation).  That is, as you
+// traverse the boundary in index order, the inside area of the
+// polygon is always on the left.  Finally, the first vertex of
+// polygon 1 (starting with n1 -1) that is not near the border of
+// polygon 2 must be outside polygon 2.  N.B. it is the calling
+// routine's responsibility to insure all those requirements are
+// satisfied.
+//
+// Two polygons that do not self intersect must have an even number of
+// edge crossings between them.  (ignoring vertex intersections which
+// touch, but do not cross).  fill_intersection_polygon eliminates
+// those intersection crossings by recursion (calling the same routine
+// twice again with the second polygon split at a boundary defined by
+// the first intersection point, all polygon 1 vertices between the
+// intersections, and the second intersection point).  Once the
+// recursion has eliminated all crossing edges, fill or not using the
+// appropriate polygon depending on whether the first and second
+// polygons are identical or whether one of them is entirely inside
+// the other of them.  If ifextrapolygon is true, the fill step will
+// consist of another recursive call to the routine with
+// ifextrapolygon false, and the second polygon set to an additional
+// polygon defined by the stream (not yet implemented).
 
-/* arguments to intersection_polygon:
- * recursion_depth is just what it says.
- * ifextrapolygon used to decide whether to use extra polygon from the stream.
- *fill is the fill routine.
- *x1, *y1, n1 define the polygon 1 vertices.
- * i1start is the first polygon 1 index to look at (because all the previous
- *     ones have been completely processed).
- *x2, *y2, *if2, n2 define the polygon 2 vertices plus a status indicator
- *     for each vertex which is 1 for a previous crossing and 2 for a polygon
- *     1 vertex.
- * fill_status is 1 when polygons 1 and 2 _must_ include some joint
- *     filled area and is -1 when polygons 1 and 2 _must_ include some
- *     unfilled area.  fill_status of +/- 1 is determined from the
- *     orientations of polygon 1 and 2 from the next higher recursion
- *     level and how those two are combined to form the polygon 2
- *     split at this recursion level.  fill_status = 0 occurs (at
- *     recursion level 0) for polygons 1 and 2 that are independent of
- *     each other. */
+// arguments to intersection_polygon:
+// recursion_depth is just what it says.
+// ifextrapolygon used to decide whether to use extra polygon from the stream.
+//fill is the fill routine.
+//x1, *y1, n1 define the polygon 1 vertices.
+// i1start is the first polygon 1 index to look at (because all the previous
+//     ones have been completely processed).
+//x2, *y2, *if2, n2 define the polygon 2 vertices plus a status indicator
+//     for each vertex which is 1 for a previous crossing and 2 for a polygon
+//     1 vertex.
+// fill_status is 1 when polygons 1 and 2 _must_ include some joint
+//     filled area and is -1 when polygons 1 and 2 _must_ include some
+//     unfilled area.  fill_status of +/- 1 is determined from the
+//     orientations of polygon 1 and 2 from the next higher recursion
+//     level and how those two are combined to form the polygon 2
+//     split at this recursion level.  fill_status = 0 occurs (at
+//     recursion level 0) for polygons 1 and 2 that are independent of
+//     each other.
 
 void
 fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
@@ -1446,7 +1446,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         return;
     }
 
-    /* Check that there are no duplicate vertices. */
+    // Check that there are no duplicate vertices.
     i1m1 = i1start - 1;
     if ( i1m1 < 0 )
         i1m1 = n1 - 1;
@@ -1478,61 +1478,61 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         return;
     }
 
-    /*
-     *
-     * Follow polygon 1 (checking intersections with polygon 2 for each
-     * segment of polygon 1) until you have accumulated two
-     * intersections with polygon 2.  Here is an ascii-art illustration
-     * of the situation.
-     *
-     *
-     *                  2???2
-     *
-     *                2       2
-     *
-     * --- 1    1
-     *            1            2         1      1 ...
-     *             X
-     *                               1
-     *                             X
-     *           2
-     *                1         1
-     *                   1
-     *                                 2
-     *            2
-     *                     2???2
-     *
-     *
-     * "1" marks polygon 1 vertices, "2" marks polygon 2 vertices, "X"
-     * marks the intersections, "---" stands for part of polygon 1
-     * that has been previously searched for all possible intersections
-     * from index 0, and "..." means polygon 1 continues
-     * with more potential intersections above and/or below this diagram
-     * before it finally hooks back to connect with the index 0 vertex.
-     * "2???2" stands for parts of polygon 2 that must connect with each other
-     * (since the polygon 1 path between the two intersections is
-     * known to be free of intersections.)
-     *
-     * Polygon 2 is split at the boundary defined by the two
-     * intersections and all (in this case three) polygon 1 vertices
-     * between the two intersections for the next recursion level.  We
-     * absolutely know for that boundary that no more intersections can
-     * occur (both polygon 1 and polygon 2 are guaranteed not to
-     * self-intersect) so we mark the status of those vertices with that
-     * information so those polygon 2 split vertices will not be used to
-     * search for further intersections at deeper recursion levels.
-     * Note, we know nothing about whether the remaining "2???2" parts of the
-     * split polygon 2 intersect with polygon 1 or not so those will
-     * continued to be searched at deeper recursion levels. At the same
-     * time, we absolutely know that the part of polygon 1 to the left of
-     * rightmost x down to and including index 0 cannot yield more
-     * intersections with any split of polygon 2 so we adjust the lower
-     * limit of polygon 1 to be used for intersection searches at deeper
-     * recursion levels.  The result should be that at sufficiently deep
-     * recursion depth we always end up with the case that there are no
-     * intersections to be found between polygon 1 and some polygon 2
-     * split, and in that case we move on to the end phase below.
-     */
+    //
+    //
+    // Follow polygon 1 (checking intersections with polygon 2 for each
+    // segment of polygon 1) until you have accumulated two
+    // intersections with polygon 2.  Here is an ascii-art illustration
+    // of the situation.
+    //
+    //
+    //                  2???2
+    //
+    //                2       2
+    //
+    // --- 1    1
+    //            1            2         1      1 ...
+    //             X
+    //                               1
+    //                             X
+    //           2
+    //                1         1
+    //                   1
+    //                                 2
+    //            2
+    //                     2???2
+    //
+    //
+    // "1" marks polygon 1 vertices, "2" marks polygon 2 vertices, "X"
+    // marks the intersections, "---" stands for part of polygon 1
+    // that has been previously searched for all possible intersections
+    // from index 0, and "..." means polygon 1 continues
+    // with more potential intersections above and/or below this diagram
+    // before it finally hooks back to connect with the index 0 vertex.
+    // "2???2" stands for parts of polygon 2 that must connect with each other
+    // (since the polygon 1 path between the two intersections is
+    // known to be free of intersections.)
+    //
+    // Polygon 2 is split at the boundary defined by the two
+    // intersections and all (in this case three) polygon 1 vertices
+    // between the two intersections for the next recursion level.  We
+    // absolutely know for that boundary that no more intersections can
+    // occur (both polygon 1 and polygon 2 are guaranteed not to
+    // self-intersect) so we mark the status of those vertices with that
+    // information so those polygon 2 split vertices will not be used to
+    // search for further intersections at deeper recursion levels.
+    // Note, we know nothing about whether the remaining "2???2" parts of the
+    // split polygon 2 intersect with polygon 1 or not so those will
+    // continued to be searched at deeper recursion levels. At the same
+    // time, we absolutely know that the part of polygon 1 to the left of
+    // rightmost x down to and including index 0 cannot yield more
+    // intersections with any split of polygon 2 so we adjust the lower
+    // limit of polygon 1 to be used for intersection searches at deeper
+    // recursion levels.  The result should be that at sufficiently deep
+    // recursion depth we always end up with the case that there are no
+    // intersections to be found between polygon 1 and some polygon 2
+    // split, and in that case we move on to the end phase below.
+    //
     ncrossed = 0;
     i1m1     = i1start - 1;
     if ( i1m1 < 0 )
@@ -1553,50 +1553,50 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
             ncrossed += ncrossed_change;
             if ( ncrossed == 2 )
             {
-                /* Have discovered the first two crossings for
-                 * polygon 1 at i1 = i1start or above. */
+                // Have discovered the first two crossings for
+                // polygon 1 at i1 = i1start or above.
 
-                /* New i1start is the same as the current i1 (just
-                 * in case there are more crossings to find between
-                 * i1m1 and i1.) */
+                // New i1start is the same as the current i1 (just
+                // in case there are more crossings to find between
+                // i1m1 and i1.)
                 i1start_new = i1;
 
-                /* Split polygon 2 at the boundary consisting of
-                 * first intersection, intervening (if any) range1
-                 * polygon 1 points and second intersection. */
-                /* range1 must always be non-negative because i1
-                 * range only traversed once. */
+                // Split polygon 2 at the boundary consisting of
+                // first intersection, intervening (if any) range1
+                // polygon 1 points and second intersection.
+                // range1 must always be non-negative because i1
+                // range only traversed once.
                 range1 = i1intersect[1] - i1intersect[0];
-                /* Polygon 2 intersects could be anywhere (since
-                 * i2 range repeated until get an intersect).
-                 * Divide polygon 2 into two polygons with a
-                 * common boundary consisting of the first intersect,
-                 * range1 points from polygon 1 starting at index
-                 * kkstart1 of polygon 1, and the second intersect. */
+                // Polygon 2 intersects could be anywhere (since
+                // i2 range repeated until get an intersect).
+                // Divide polygon 2 into two polygons with a
+                // common boundary consisting of the first intersect,
+                // range1 points from polygon 1 starting at index
+                // kkstart1 of polygon 1, and the second intersect.
                 kkstart1 = i1intersect[0];
 
-                /* Calculate polygon 2 index range in split 1 (the
-                 * split that proceeds beyond the second intersect with
-                 * ascending i2 values). */
+                // Calculate polygon 2 index range in split 1 (the
+                // split that proceeds beyond the second intersect with
+                // ascending i2 values).
                 range21 = i2intersect[0] - i2intersect[1];
                 if ( range21 < 0 )
                     range21 += n2;
-                /* i2 intersect values range between 0 and n2 - 1 so
-                 * the smallest untransformed range21 value is -n2 + 1,
-                 * and the largest untransformed range21 value is n2 - 1.
-                 * This means the smallest transformed range21 value is 0
-                 * (which occurs only ifi2intersect[0] = i2intersect[1],
-                 * see more commentary for that special case below) while
-                 * the largest transformed range21 value is n2 - 1. */
+                // i2 intersect values range between 0 and n2 - 1 so
+                // the smallest untransformed range21 value is -n2 + 1,
+                // and the largest untransformed range21 value is n2 - 1.
+                // This means the smallest transformed range21 value is 0
+                // (which occurs only ifi2intersect[0] = i2intersect[1],
+                // see more commentary for that special case below) while
+                // the largest transformed range21 value is n2 - 1.
 
                 if ( range21 == 0 )
                 {
                     int ifxsort, ifascend;
-                    /* For this case, the two crossings occur within the same
-                     * polygon 2 boundary segment and if those two crossings
-                     * are in ascending/descending order in i2, then split 1
-                     * (the split with the positive fill_status) must include
-                     * all/none of the points in polygon 2. */
+                    // For this case, the two crossings occur within the same
+                    // polygon 2 boundary segment and if those two crossings
+                    // are in ascending/descending order in i2, then split 1
+                    // (the split with the positive fill_status) must include
+                    // all/none of the points in polygon 2.
                     i2   = i2intersect[1];
                     i2m1 = i2 - 1;
                     if ( i2m1 < 0 )
@@ -1617,12 +1617,12 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                 kkstart21 = i2intersect[1];
                 nsplit1   = 2 + range1 + range21;
 
-                /* Split 2 of polygon 2 consists of the
-                 * boundary + range22 (= n2 - range21) points
-                 * between kkstart22 (= i2intersect[1]-1) and i2intersect[0] in
-                 * descending order of polygon 2 indices. */
+                // Split 2 of polygon 2 consists of the
+                // boundary + range22 (= n2 - range21) points
+                // between kkstart22 (= i2intersect[1]-1) and i2intersect[0] in
+                // descending order of polygon 2 indices.
                 range22 = n2 - range21;
-                /* Starting i2 index of split 2. */
+                // Starting i2 index of split 2.
                 kkstart22 = i2intersect[1] - 1;
                 if ( kkstart22 < 0 )
                     kkstart22 += n2;
@@ -1653,14 +1653,14 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                 {
                     plexit( "fill_intersection_polygon: Insufficient memory" );
                 }
-                /* Common boundary between split1 and split2. */
-                /* N.B. Although basic index arithmetic for
-                 * split 2 is done in negative orientation
-                 * order because the index is decrementing
-                 * relative to the index of split 2, actually
-                 * store results in reverse order to preserve
-                 * the positive orientation that by assumption
-                 * both polygon 1 and 2 have. */
+                // Common boundary between split1 and split2.
+                // N.B. Although basic index arithmetic for
+                // split 2 is done in negative orientation
+                // order because the index is decrementing
+                // relative to the index of split 2, actually
+                // store results in reverse order to preserve
+                // the positive orientation that by assumption
+                // both polygon 1 and 2 have.
                 k                       = 0;
                 xsplit1[k]              = xintersect[0];
                 ysplit1[k]              = yintersect[0];
@@ -1671,9 +1671,9 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                 ifsplit2[nsplit2m1 - k] = 1;
                 kstart                  = k + 1;
                 kk                      = kkstart1;
-                /* No wrap checks on kk index below because
-                 * it must always be in valid range (since
-                 * polygon 1 traversed only once). */
+                // No wrap checks on kk index below because
+                // it must always be in valid range (since
+                // polygon 1 traversed only once).
                 for ( k = kstart; k < range1 + 1; k++ )
                 {
                     xsplit1[k]              = x1[kk];
@@ -1690,8 +1690,8 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                 ysplit2[nsplit2m1 - k]  = yintersect[1];
                 ifsplit2[nsplit2m1 - k] = 1;
 
-                /* Finish off collecting split1 using ascending kk
-                 * values. */
+                // Finish off collecting split1 using ascending kk
+                // values.
                 kstart = k + 1;
                 kk     = kkstart21;
                 for ( k = kstart; k < nsplit1; k++ )
@@ -1703,11 +1703,11 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                         kk -= n2;
                 }
 
-                /* N.B. the positive orientation of split1 is
-                 * preserved since the index order is the same
-                 * as that of polygon 2, and by assumption
-                 * that polygon and polygon 1 have identical
-                 * positive orientations. */
+                // N.B. the positive orientation of split1 is
+                // preserved since the index order is the same
+                // as that of polygon 2, and by assumption
+                // that polygon and polygon 1 have identical
+                // positive orientations.
                 fill_intersection_polygon(
                     recursion_depth + 1, ifextrapolygon, 1, fill,
                     x1, y1, i1start_new, n1,
@@ -1716,8 +1716,8 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                 free( ysplit1 );
                 free( ifsplit1 );
 
-                /* Finish off collecting split2 using descending kk
-                 * values. */
+                // Finish off collecting split2 using descending kk
+                // values.
                 kk = kkstart22;
                 for ( k = kstart; k < nsplit2; k++ )
                 {
@@ -1728,11 +1728,11 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                         kk += n2;
                 }
 
-                /* N.B. the positive orientation of split2 is
-                 * preserved since the index order is the same
-                 * as that of polygon 2, and by assumption
-                 * that polygon and polygon 1 have identical
-                 * positive orientations. */
+                // N.B. the positive orientation of split2 is
+                // preserved since the index order is the same
+                // as that of polygon 2, and by assumption
+                // that polygon and polygon 1 have identical
+                // positive orientations.
                 fill_intersection_polygon(
                     recursion_depth + 1, ifextrapolygon, -1, fill,
                     x1, y1, i1start_new, n1,
@@ -1752,11 +1752,11 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         return;
     }
 
-    /* This end phase is reached only if no crossings are found. */
+    // This end phase is reached only if no crossings are found.
 
-    /* If a fill_status of +/- 1 is known, use that to fill or not since
-     +1 corresponds to all of polygon 2 inside polygon 1 and -1
-     * corresponds to none of polygon 2 inside polygon 1. */
+    // If a fill_status of +/- 1 is known, use that to fill or not since
+//     +1 corresponds to all of polygon 2 inside polygon 1 and -1
+    // corresponds to none of polygon 2 inside polygon 1.
     if ( fill_status == -1 )
         return;
     else if ( fill_status == 1 )
@@ -1773,16 +1773,16 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
             plwarn( "fill_intersection_polygon: Internal error; fill_status == 0 for recursion_depth > 0" );
             return;
         }
-        /* For this case (recursion level 0) the two polygons are
-         * completely independent with no crossings between them or
-         * edges constructed from one another.
-         *
-         * The intersection of polygon 2 and 1, must be either of them (in
-         * which case fill with the inner one), or neither of them (in
-         * which case don't fill at all). */
+        // For this case (recursion level 0) the two polygons are
+        // completely independent with no crossings between them or
+        // edges constructed from one another.
+        //
+        // The intersection of polygon 2 and 1, must be either of them (in
+        // which case fill with the inner one), or neither of them (in
+        // which case don't fill at all).
 
-        /* Classify polygon 1 by looking for first vertex in polygon 1
-         * that is definitely inside or outside polygon 2. */
+        // Classify polygon 1 by looking for first vertex in polygon 1
+        // that is definitely inside or outside polygon 2.
         for ( i1 = 0; i1 < n1; i1++ )
         {
             if ( ( ifnotpolygon1inpolygon2 =
@@ -1790,13 +1790,13 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                 break;
         }
 
-        /* Classify polygon 2 by looking for first vertex in polygon 2
-         * that is definitely inside or outside polygon 1. */
+        // Classify polygon 2 by looking for first vertex in polygon 2
+        // that is definitely inside or outside polygon 1.
         ifnotpolygon2inpolygon1 = 1;
         for ( i2 = 0; i2 < n2; i2++ )
         {
-            /* Do not bother checking vertices already known to be on the
-             * boundary with polygon 1. */
+            // Do not bother checking vertices already known to be on the
+            // boundary with polygon 1.
             if ( !if2[i2] && ( ifnotpolygon2inpolygon1 =
                                    notpointinpolygon( n1, x1, y1, x2[i2], y2[i2] ) ) != 1 )
                 break;
@@ -1805,36 +1805,36 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         if ( ifnotpolygon2inpolygon1 == 0 && ifnotpolygon1inpolygon2 == 0 )
             plwarn( "fill_intersection_polygon: Internal error; no intersections found but each polygon definitely inside the other!" );
         else if ( ifnotpolygon2inpolygon1 == 2 && ifnotpolygon1inpolygon2 == 2 )
-            /* The polygons do not intersect each other so do not fill in this
-             * case. */
+            // The polygons do not intersect each other so do not fill in this
+            // case.
             return;
         else if ( ifnotpolygon2inpolygon1 == 0 )
         {
-            /* Polygon 2 definitely inside polygon 1. */
+            // Polygon 2 definitely inside polygon 1.
             nfill   = n2;
             xfiller = x2;
             yfiller = y2;
         }
         else if ( ifnotpolygon1inpolygon2 == 0 )
         {
-            /* Polygon 1 definitely inside polygon 2. */
+            // Polygon 1 definitely inside polygon 2.
             nfill   = n1;
             xfiller = x1;
             yfiller = y1;
         }
         else if ( ifnotpolygon2inpolygon1 == 1 && ifnotpolygon1inpolygon2 == 1 )
         {
-            /* Polygon 2 vertices near polygon 1 border and vice versa which
-             * implies the polygons are identical.  */
+            // Polygon 2 vertices near polygon 1 border and vice versa which
+            // implies the polygons are identical.
             nfill   = n2;
             xfiller = x2;
             yfiller = y2;
         }
         else
         {
-            /* Polygon 1 inscribed in polygon 2 or vice versa.  This is normally
-             * unlikely for two independent polygons so the implementation is
-             * ToDo.  */
+            // Polygon 1 inscribed in polygon 2 or vice versa.  This is normally
+            // unlikely for two independent polygons so the implementation is
+            // ToDo.
             plwarn( "fill_intersection_polygon: inscribed polygons are still ToDo" );
         }
     }
@@ -1862,15 +1862,15 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
     return;
 }
 
-/* Returns a 0 status code if the two line segments A, and B defined
- * by their end points (xA1, yA1, xA2, yA2, xB1, yB1, xB2, and yB2)
- * definitely (i.e., intersection point is not near the ends of either
- * of the line segments) cross each other.  Otherwise, return a status
- * code specifying the type of non-crossing (i.e., completely
- * separate, near one of the ends, parallel).  Return the actual
- * intersection (or average of the x end points and y end points for
- * the parallel, not crossed case) via the argument list pointers to
- * xintersect and yintersect. */
+// Returns a 0 status code if the two line segments A, and B defined
+// by their end points (xA1, yA1, xA2, yA2, xB1, yB1, xB2, and yB2)
+// definitely (i.e., intersection point is not near the ends of either
+// of the line segments) cross each other.  Otherwise, return a status
+// code specifying the type of non-crossing (i.e., completely
+// separate, near one of the ends, parallel).  Return the actual
+// intersection (or average of the x end points and y end points for
+// the parallel, not crossed case) via the argument list pointers to
+// xintersect and yintersect.
 
 int
 notcrossed( PLINT * xintersect, PLINT * yintersect,
@@ -1878,28 +1878,28 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
             PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 )
 {
     PLFLT factor, factor_NBCC, fxintersect, fyintersect;
-    /* These variables are PLFLT not for precision, but to
-     * avoid integer overflows if they were typed as PLINT.  */
+    // These variables are PLFLT not for precision, but to
+    // avoid integer overflows if they were typed as PLINT.
     PLFLT xA2A1, yA2A1, xB2B1, yB2B1;
     PLFLT xB1A1, yB1A1, xB2A1, yB2A1;
     PLINT status = 0;
-    /*
-     * Two linear equations to be solved for x and y.
-     * y = ((x - xA1)*yA2 + (xA2 - x)*yA1)/(xA2 - xA1)
-     * y = ((x - xB1)*yB2 + (xB2 - x)*yB1)/(xB2 - xB1)
-     *
-     * Transform those two equations to coordinate system with origin
-     * at (xA1, yA1).
-     * y' = x'*yA2A1/xA2A1
-     * y' = ((x' - xB1A1)*yB2A1 + (xB2A1 - x')*yB1A1)/xB2B1
-     * ==>
-     * x' = -(
-     * (-xB1A1*yB2A1 + xB2A1*yB1A1)/xB2B1)/
-     * (yB2B1/xB2B1 - yA2A1/xA2A1)
-     * = (xB1A1*yB2A1 - xB2A1*yB1A1)*xA2A1/
-     * (xA2A1*yB2B1 - yA2A1*xB2B1)
-     *
-     */
+    //
+    // Two linear equations to be solved for x and y.
+    // y = ((x - xA1)*yA2 + (xA2 - x)*yA1)/(xA2 - xA1)
+    // y = ((x - xB1)*yB2 + (xB2 - x)*yB1)/(xB2 - xB1)
+    //
+    // Transform those two equations to coordinate system with origin
+    // at (xA1, yA1).
+    // y' = x'*yA2A1/xA2A1
+    // y' = ((x' - xB1A1)*yB2A1 + (xB2A1 - x')*yB1A1)/xB2B1
+    // ==>
+    // x' = -(
+    // (-xB1A1*yB2A1 + xB2A1*yB1A1)/xB2B1)/
+    // (yB2B1/xB2B1 - yA2A1/xA2A1)
+    // = (xB1A1*yB2A1 - xB2A1*yB1A1)*xA2A1/
+    // (xA2A1*yB2B1 - yA2A1*xB2B1)
+    //
+    //
 
     xA2A1 = xA2 - xA1;
     yA2A1 = yA2 - yA1;
@@ -1914,9 +1914,9 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
             status = status | PL_NEAR_PARALLEL;
         else
             status = status | PL_PARALLEL;
-        /* Choice of intersect is arbitrary in this case.  Choose A1, A2,
-         * B1, or B2 (in that order) if any of them lie inside or near
-         * the other line segment.  Otherwise, choose the average point. */
+        // Choice of intersect is arbitrary in this case.  Choose A1, A2,
+        // B1, or B2 (in that order) if any of them lie inside or near
+        // the other line segment.  Otherwise, choose the average point.
         if ( ( BETW_NBCC( xA1, xB1, xB2 ) && BETW_NBCC( yA1, yB1, yB2 ) ) )
         {
             fxintersect = xA1;
@@ -1954,14 +1954,14 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
         fxintersect = factor * xA2A1 + xA1;
         fyintersect = factor * yA2A1 + yA1;
     }
-    /* The "redundant" x and y segment range checks (which include near the
-     * end points) are needed for the vertical and the horizontal cases. */
+    // The "redundant" x and y segment range checks (which include near the
+    // end points) are needed for the vertical and the horizontal cases.
     if ( ( BETW_NBCC( fxintersect, xA1, xA2 ) && BETW_NBCC( fyintersect, yA1, yA2 ) ) &&
          ( BETW_NBCC( fxintersect, xB1, xB2 ) && BETW_NBCC( fyintersect, yB1, yB2 ) ) )
     {
-        /* The intersect is close (within +/- PL_NBCC) to an end point or
-         * corresponds to a definite crossing of the two line segments.
-         * Find out which. */
+        // The intersect is close (within +/- PL_NBCC) to an end point or
+        // corresponds to a definite crossing of the two line segments.
+        // Find out which.
         if ( fabs( fxintersect - xA1 ) <= PL_NBCC && fabs( fyintersect - yA1 ) <= PL_NBCC )
             status = status | PL_NEAR_A1;
         else if ( fabs( fxintersect - xA2 ) <= PL_NBCC && fabs( fyintersect - yA2 ) <= PL_NBCC )
@@ -1970,8 +1970,8 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
             status = status | PL_NEAR_B1;
         else if ( fabs( fxintersect - xB2 ) <= PL_NBCC && fabs( fyintersect - yB2 ) <= PL_NBCC )
             status = status | PL_NEAR_B2;
-        /* N.B. if none of the above conditions hold then status remains at
-         * zero to signal we have a definite crossing. */
+        // N.B. if none of the above conditions hold then status remains at
+        // zero to signal we have a definite crossing.
     }
     else
         status = status | PL_NOT_CROSSED;
@@ -1981,24 +1981,24 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
     return status;
 }
 
-/* Decide if polygon has a positive orientation or not.
- * Note the simple algorithm given in
- * http://en.wikipedia.org/wiki/Curve_orientation is incorrect for
- * non-convex polygons.  Instead, for the general nonintersecting case
- * use the polygon area method given by
- * http://local.wasp.uwa.edu.au/~pbourke/geometry/polyarea/ where
- * you project each edge of the polygon down to the X axis and take the
- * area of the enclosed trapezoid.  The trapezoid areas outside the
- * polygon are completely cancelled if you sum over all edges.  Furthermore,
- * the sum of the trapezoid areas have terms which are zero when calculated
- * with the telescoping rule so the final formula is quite simple. */
+// Decide if polygon has a positive orientation or not.
+// Note the simple algorithm given in
+// http://en.wikipedia.org/wiki/Curve_orientation is incorrect for
+// non-convex polygons.  Instead, for the general nonintersecting case
+// use the polygon area method given by
+// http://local.wasp.uwa.edu.au/~pbourke/geometry/polyarea/ where
+// you project each edge of the polygon down to the X axis and take the
+// area of the enclosed trapezoid.  The trapezoid areas outside the
+// polygon are completely cancelled if you sum over all edges.  Furthermore,
+// the sum of the trapezoid areas have terms which are zero when calculated
+// with the telescoping rule so the final formula is quite simple.
 int
 positive_orientation( PLINT n, const PLINT *x, const PLINT *y )
 {
     PLINT i, im1;
-    /* Use PLFLT for all calculations to avoid integer overflows.  Also,
-     * the normal PLFLT has 64-bits which means you get exact integer
-     * arithmetic well beyond the normal integer overflow limits. */
+    // Use PLFLT for all calculations to avoid integer overflows.  Also,
+    // the normal PLFLT has 64-bits which means you get exact integer
+    // arithmetic well beyond the normal integer overflow limits.
     PLFLT twice_area = 0.;
     if ( n < 3 )
     {
@@ -2020,17 +2020,17 @@ positive_orientation( PLINT n, const PLINT *x, const PLINT *y )
         return twice_area > 0.;
 }
 
-/* For the line with endpoints which are the (i1-1)th, and i1th
- * vertices of polygon 1 with polygon 2 find all definite crossings
- * with polygon 1.  (The full polygon 1 information is needed only to
- * help sort out (NOT IMPLEMENTED YET) ambiguous crossings near a
- * vertex of polygon 1.)  Sort those definite crossings in ascending
- * order along the line between the (i1-1)th and i1th vertices of
- * polygon 1, and return the first ncross (= 1 or = 2) crossings in the
- * xcross, ycross, and i2cross arrays.  Return a zero or positive
- * status code of the actual number of crossings retained up to the
- * maximum allowed value of ncross.  If some error occurred, return a
- * negative status code. */
+// For the line with endpoints which are the (i1-1)th, and i1th
+// vertices of polygon 1 with polygon 2 find all definite crossings
+// with polygon 1.  (The full polygon 1 information is needed only to
+// help sort out (NOT IMPLEMENTED YET) ambiguous crossings near a
+// vertex of polygon 1.)  Sort those definite crossings in ascending
+// order along the line between the (i1-1)th and i1th vertices of
+// polygon 1, and return the first ncross (= 1 or = 2) crossings in the
+// xcross, ycross, and i2cross arrays.  Return a zero or positive
+// status code of the actual number of crossings retained up to the
+// maximum allowed value of ncross.  If some error occurred, return a
+// negative status code.
 
 int
 number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
@@ -2055,11 +2055,11 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
     ifascend = ( ifxsort && x1[i1] > x1[i1m1] ) ||
                ( !ifxsort && y1[i1] > y1[i1m1] );
 
-    /* Determine all crossings between the line between the (i1-1)th
-     * and i1th vertices of polygon 1 and all edges of polygon 2.
-     * Retain the lowest and (if ncross ==2) next lowest crossings in
-     * order of x (or y if ifxsort is false) along the line from i1-1
-     * to i1. */
+    // Determine all crossings between the line between the (i1-1)th
+    // and i1th vertices of polygon 1 and all edges of polygon 2.
+    // Retain the lowest and (if ncross ==2) next lowest crossings in
+    // order of x (or y if ifxsort is false) along the line from i1-1
+    // to i1.
 
     i1m1 = i1 - 1;
     if ( i1m1 < 0 )

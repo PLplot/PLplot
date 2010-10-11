@@ -1,36 +1,36 @@
-/* $Id$
- *
- *  Copyright (C) 2005  Alan W. Irwin
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Library General Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- *  This file contains deprecated routines to provide backwards compatibility
- *  for a while.  For each routine the new routine you should be using instead
- *  is explicitly commented.
- */
+// $Id$
+//
+//  Copyright (C) 2005  Alan W. Irwin
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU Library General Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+//
+//  This file contains deprecated routines to provide backwards compatibility
+//  for a while.  For each routine the new routine you should be using instead
+//  is explicitly commented.
+//
 
 #define NEED_PLDEBUG
 #include "plplotP.h"
 
-/*--------------------------------------------------------------------------*\
- * Use plparseopts instead.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Use plparseopts instead.
+//--------------------------------------------------------------------------
 int
 plParseOpts( int *p_argc, const char **argv, PLINT mode )
 {
@@ -39,9 +39,9 @@ plParseOpts( int *p_argc, const char **argv, PLINT mode )
 }
 
 
-/*--------------------------------------------------------------------------*\
- * Use plhlsrgb instead.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Use plhlsrgb instead.
+//--------------------------------------------------------------------------
 void
 plHLS_RGB( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b )
 {
@@ -49,9 +49,9 @@ plHLS_RGB( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b )
     c_plhlsrgb( h, l, s, p_r, p_g, p_b );
 }
 
-/*--------------------------------------------------------------------------*\
- * Use plrgbhls instead.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Use plrgbhls instead.
+//--------------------------------------------------------------------------
 void
 plRGB_HLS( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s )
 {
@@ -59,31 +59,31 @@ plRGB_HLS( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s )
     c_plrgbhls( r, g, b, p_h, p_l, p_s );
 }
 
-/*--------------------------------------------------------------------------*\
- * Use plvect / plsvect instead.
- * void plarrows()
- *
- * simple arrow plotter
- * copyright 1993 Wesley Ebisuzaki
- *
- * an arrow is defined by its location (x, y) and its direction (u, v)
- *
- * inputs:
- *   u[i], v[i]      arrow's horizontal and vertical projection
- *   x[i], y[i]      arrow's location (world coordinates)
- *   n               number of arrows to draw
- *   scale           > 0  scaling factor for arrows
- *                   0    default scaling factor
- *                   < 0  default scaling factor * (-scale)
- *   dx, dy          distance between arrows
- *                   used when calculating the default arrow scaling
- *                   so that arrows don't overlap
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Use plvect / plsvect instead.
+// void plarrows()
+//
+// simple arrow plotter
+// copyright 1993 Wesley Ebisuzaki
+//
+// an arrow is defined by its location (x, y) and its direction (u, v)
+//
+// inputs:
+//   u[i], v[i]      arrow's horizontal and vertical projection
+//   x[i], y[i]      arrow's location (world coordinates)
+//   n               number of arrows to draw
+//   scale           > 0  scaling factor for arrows
+//                   0    default scaling factor
+//                   < 0  default scaling factor * (-scale)
+//   dx, dy          distance between arrows
+//                   used when calculating the default arrow scaling
+//                   so that arrows don't overlap
+//
+//--------------------------------------------------------------------------
 
 #define SCALE0    2.0
 
-/* definition of original arrow: 2 line segments */
+// definition of original arrow: 2 line segments
 
 static PLFLT arrow_x[4] = { 0.5, -0.5, -0.27, -0.5 };
 static PLFLT arrow_y[4] = { 0.0, 0.0, 0.0, 0.20 };
@@ -106,8 +106,8 @@ plarrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 
     if ( scale <= 0.0 )
     {
-        /* automatic scaling */
-        /* find max / min values of data */
+        // automatic scaling
+        // find max / min values of data
 
         max_u = u[0];
         max_v = v[0];
@@ -119,7 +119,7 @@ plarrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
             max_v = t > max_v ? t : max_v;
         }
 
-        /* measure distance in grid boxs */
+        // measure distance in grid boxs
 
         max_u = max_u / fabs( (double) dx );
         max_v = max_v / fabs( (double) dy );
@@ -144,7 +144,7 @@ plarrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
         if ( uu == 0.0 && uu == 0.0 )
             continue;
 
-        /* conversion to physical coordinates */
+        // conversion to physical coordinates
 
         px0 = plP_wcpcx( x[i] );
         py0 = plP_wcpcy( y[i] );
@@ -154,7 +154,7 @@ plarrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
         dpx = plP_wcpcx( x[i] + 0.5 * uu ) - px0;
         dpy = plP_wcpcy( y[i] + 0.5 * vv ) - py0;
 
-        /* transform arrow -> a */
+        // transform arrow -> a
 
         for ( j = 0; j < npts; j++ )
         {
@@ -164,7 +164,7 @@ plarrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
                                arrow_y[j] * dpx + py0 );
         }
 
-        /* draw the arrow */
+        // draw the arrow
         plP_movphy( a_x[0], a_y[0] );
         plP_draphy( a_x[1], a_y[1] );
         plP_movphy( a_x[2], a_y[2] );

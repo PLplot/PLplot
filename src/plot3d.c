@@ -1,36 +1,36 @@
-/* $Id$
- *
- *      3d plot routines.
- *
- * Copyright (C) 2004  Alan W. Irwin
- * Copyright (C) 2004  Joao Cardoso
- * Copyright (C) 2004  Andrew Ross
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+//      3d plot routines.
+//
+// Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 2004  Joao Cardoso
+// Copyright (C) 2004  Andrew Ross
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Library General Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #include "plplotP.h"
 
-/* Internal constants */
+// Internal constants
 
-#define  BINC    50             /* Block size for memory allocation */
+#define  BINC    50             // Block size for memory allocation
 
-static PLINT pl3mode = 0;       /* 0 3d solid; 1 mesh plot */
-static PLINT pl3upv  = 1;       /* 1 update view; 0 no update */
+static PLINT pl3mode = 0;       // 0 3d solid; 1 mesh plot
+static PLINT pl3upv  = 1;       // 1 update view; 0 no update
 
 static PLINT zbflg = 0, zbcol, zbwidth;
 static PLFLT zbtck;
@@ -46,12 +46,12 @@ static PLFLT *ctmp      = NULL;
 static PLINT mhi, xxhi, newhisize;
 static PLINT mlo, xxlo, newlosize;
 
-/* Light source for shading */
+// Light source for shading
 static PLFLT xlight, ylight, zlight;
 static PLINT falsecolor = 0;
 static PLFLT fc_minz, fc_maxz;
 
-/* Prototypes for static functions */
+// Prototypes for static functions
 
 static void plgrid3( PLFLT );
 static void plnxtv( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
@@ -81,7 +81,7 @@ static void plxyindexlimits( PLINT instart, PLINT inn,
                              PLINT *outarray_min, PLINT *outarray_max );
 
 
-/* #define MJL_HACK 1 */
+// #define MJL_HACK 1
 #if MJL_HACK
 static void plP_fill3( PLINT x0, PLINT y0, PLINT x1, PLINT y1,
                        PLINT x2, PLINT y2, PLINT j );
@@ -89,11 +89,11 @@ static void plP_fill4( PLINT x0, PLINT y0, PLINT x1, PLINT y1,
                        PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT j );
 #endif
 
-/*--------------------------------------------------------------------------*\
- * void plsetlightsource(x, y, z)
- *
- * Sets the position of the light source.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plsetlightsource(x, y, z)
+//
+// Sets the position of the light source.
+//--------------------------------------------------------------------------
 
 void
 c_pllightsource( PLFLT x, PLFLT y, PLFLT z )
@@ -103,14 +103,14 @@ c_pllightsource( PLFLT x, PLFLT y, PLFLT z )
     zlight = z;
 }
 
-/*--------------------------------------------------------------------------*\
- * void plmesh(x, y, z, nx, ny, opt)
- *
- * Plots a mesh representation of the function z[x][y]. The x values
- * are stored as x[0..nx-1], the y values as y[0..ny-1], and the
- * z values are in the 2-d array z[][]. The integer "opt" specifies:
- * see plmeshc() below.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plmesh(x, y, z, nx, ny, opt)
+//
+// Plots a mesh representation of the function z[x][y]. The x values
+// are stored as x[0..nx-1], the y values as y[0..ny-1], and the
+// z values are in the 2-d array z[][]. The integer "opt" specifies:
+// see plmeshc() below.
+//--------------------------------------------------------------------------
 
 void
 c_plmesh( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt )
@@ -125,24 +125,24 @@ plfmesh( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
     plfplot3dc( x, y, zops, zp, nx, ny, opt | MESH, NULL, 0 );
 }
 
-/*--------------------------------------------------------------------------*\
- * void plmeshc(x, y, z, nx, ny, opt, clevel, nlevel)
- *
- * Plots a mesh representation of the function z[x][y]. The x values
- * are stored as x[0..nx-1], the y values as y[0..ny-1], and the
- * z values are in the 2-d array z[][]. The integer "opt" specifies:
- *
- * DRAW_LINEX   draw lines parallel to the X axis
- * DRAW_LINEY   draw lines parallel to the Y axis
- * DRAW_LINEXY  draw lines parallel to both the X and Y axis
- * MAG_COLOR    draw the mesh with a color dependent of the magnitude
- * BASE_CONT    draw contour plot at bottom xy plane
- * TOP_CONT     draw contour plot at top xy plane (not yet)
- * DRAW_SIDES   draw sides
- *
- * or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plmeshc(x, y, z, nx, ny, opt, clevel, nlevel)
+//
+// Plots a mesh representation of the function z[x][y]. The x values
+// are stored as x[0..nx-1], the y values as y[0..ny-1], and the
+// z values are in the 2-d array z[][]. The integer "opt" specifies:
+//
+// DRAW_LINEX   draw lines parallel to the X axis
+// DRAW_LINEY   draw lines parallel to the Y axis
+// DRAW_LINEXY  draw lines parallel to both the X and Y axis
+// MAG_COLOR    draw the mesh with a color dependent of the magnitude
+// BASE_CONT    draw contour plot at bottom xy plane
+// TOP_CONT     draw contour plot at top xy plane (not yet)
+// DRAW_SIDES   draw sides
+//
+// or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
+//
+//--------------------------------------------------------------------------
 
 void
 c_plmeshc( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
@@ -158,7 +158,7 @@ plfmeshc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
     plfplot3dc( x, y, zops, zp, nx, ny, opt | MESH, clevel, nlevel );
 }
 
-/* clipping helper for 3d polygons */
+// clipping helper for 3d polygons
 
 int
 plP_clip_poly( int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset )
@@ -174,18 +174,18 @@ plP_clip_poly( int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset )
         anyout += in[i] < 0;
     }
 
-    /* none out */
+    // none out
     if ( anyout == 0 )
         return Ni;
 
-    /* all out */
+    // all out
     if ( anyout == Ni )
     {
         return 0;
     }
 
-    /* some out */
-    /* copy over to a temp vector */
+    // some out
+    // copy over to a temp vector
     for ( i = 0; i < 3; i++ )
     {
         for ( j = 0; j < Ni; j++ )
@@ -193,7 +193,7 @@ plP_clip_poly( int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset )
             T[i][j] = Vi[i][j];
         }
     }
-    /* copy back selectively */
+    // copy back selectively
     for ( i = 0; i < Ni; i++ )
     {
         j = ( i + 1 ) % Ni;
@@ -225,14 +225,14 @@ plP_clip_poly( int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset )
     return No;
 }
 
-/* helper for plsurf3d, similar to c_plfill3() */
+// helper for plsurf3d, similar to c_plfill3()
 static void
 shade_triangle( PLFLT x0, PLFLT y0, PLFLT z0,
                 PLFLT x1, PLFLT y1, PLFLT z1,
                 PLFLT x2, PLFLT y2, PLFLT z2 )
 {
     int   i;
-    /* arrays for interface to core functions */
+    // arrays for interface to core functions
     short u[6], v[6];
     PLFLT x[6], y[6], z[6];
     int   n;
@@ -271,24 +271,24 @@ shade_triangle( PLFLT x0, PLFLT y0, PLFLT z0,
         u[n] = u[0];
         v[n] = v[0];
 
-#ifdef SHADE_DEBUG /* show triangles */
+#ifdef SHADE_DEBUG // show triangles
         plcol0( 1 );
         x[3] = x[0]; y[3] = y[0]; z[3] = z[0];
         plline3( 4, x, y, z );
-#else   /* fill triangles */
+#else   // fill triangles
         plP_fill( u, v, n + 1 );
 #endif
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void plsurf3d(x, y, z, nx, ny, opt, clevel, nlevel)
- *
- * Plots the 3-d surface representation of the function z[x][y].
- * The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
- *  and the z values are in the 2-d array z[][].  The integer "opt" specifies:
- * see plsurf3dl() below.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plsurf3d(x, y, z, nx, ny, opt, clevel, nlevel)
+//
+// Plots the 3-d surface representation of the function z[x][y].
+// The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
+//  and the z values are in the 2-d array z[][].  The integer "opt" specifies:
+// see plsurf3dl() below.
+//--------------------------------------------------------------------------
 
 void
 c_plsurf3d( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
@@ -319,39 +319,39 @@ plfsurf3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
     free_mem( indexymax );
 }
 
-/*--------------------------------------------------------------------------*\
- * void plsurf3dl(x, y, z, nx, ny, opt, clevel, nlevel,
- * ixstart, ixn, indexymin, indexymax)
- *
- * Plots the 3-d surface representation of the function z[x][y].
- * The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
- *  and the z values are in the 2-d array z[][].
- *
- *
- * BASE_CONT    draw contour plot at bottom xy plane
- * TOP_CONT     draw contour plot at top xy plane (not implemented)
- * SURF_CONT    draw contour at surface
- * FACETED      each square that makes up the surface is faceted
- * DRAW_SIDES   draw sides
- * MAG_COLOR    the surface is colored according to the value of z;
- *               if not defined, the surface is colored according to the
- *               intensity of the reflected light in the surface from a light
- *               source whose position is set using c_pllightsource()
- *
- * or any bitwise combination, e.g. "MAG_COLOR | SURF_CONT | SURF_BASE"
- *
- * indexymin and indexymax are arrays which specify the y index range
- * (following the convention that the upper range limit is one more than
- * actual index limit) for an x index range of ixstart, ixn.
- * This code is a complete departure from the approach taken in the old version
- * of this routine. Formerly to code attempted to use the logic for the hidden
- * line algorithm to draw the hidden surface. This was really hard. This code
- * below uses a simple back to front (painters) algorithm. All the
- * triangles are drawn.
- *
- * There are multitude of ways this code could be optimized. Given the
- * problems with the old code, I tried to focus on clarity here.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plsurf3dl(x, y, z, nx, ny, opt, clevel, nlevel,
+// ixstart, ixn, indexymin, indexymax)
+//
+// Plots the 3-d surface representation of the function z[x][y].
+// The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
+//  and the z values are in the 2-d array z[][].
+//
+//
+// BASE_CONT    draw contour plot at bottom xy plane
+// TOP_CONT     draw contour plot at top xy plane (not implemented)
+// SURF_CONT    draw contour at surface
+// FACETED      each square that makes up the surface is faceted
+// DRAW_SIDES   draw sides
+// MAG_COLOR    the surface is colored according to the value of z;
+//               if not defined, the surface is colored according to the
+//               intensity of the reflected light in the surface from a light
+//               source whose position is set using c_pllightsource()
+//
+// or any bitwise combination, e.g. "MAG_COLOR | SURF_CONT | SURF_BASE"
+//
+// indexymin and indexymax are arrays which specify the y index range
+// (following the convention that the upper range limit is one more than
+// actual index limit) for an x index range of ixstart, ixn.
+// This code is a complete departure from the approach taken in the old version
+// of this routine. Formerly to code attempted to use the logic for the hidden
+// line algorithm to draw the hidden surface. This was really hard. This code
+// below uses a simple back to front (painters) algorithm. All the
+// triangles are drawn.
+//
+// There are multitude of ways this code could be optimized. Given the
+// problems with the old code, I tried to focus on clarity here.
+//--------------------------------------------------------------------------
 
 void
 c_plsurf3dl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
@@ -395,12 +395,12 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         return;
     }
 
-    /*
-     * Don't use the data z value to scale the color, use the z axis
-     * values set by plw3d()
-     *
-     * plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
-     */
+    //
+    // Don't use the data z value to scale the color, use the z axis
+    // values set by plw3d()
+    //
+    // plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+    //
 
     fc_minz = plsc->ranmi;
     fc_maxz = plsc->ranma;
@@ -424,7 +424,7 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         zmax = t;
     }
 
-    /* Check that points in x and in y are strictly increasing  and in range */
+    // Check that points in x and in y are strictly increasing  and in range
 
     for ( i = 0; i < nx - 1; i++ )
     {
@@ -451,29 +451,29 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
             iymax = i + 2;
     }
 
-    /* get the viewing parameters */
+    // get the viewing parameters
     plP_gw3wc( &cxx, &cxy, &cyx, &cyy, &cyz );
 
-    /* we're going to draw from back to front */
+    // we're going to draw from back to front
 
-    /* iFast will index the dominant (fastest changing) dimension
-     * iSlow will index the slower changing dimension
-     *
-     * iX indexes the X dimension
-     * iY indexes the Y dimension */
+    // iFast will index the dominant (fastest changing) dimension
+    // iSlow will index the slower changing dimension
+    //
+    // iX indexes the X dimension
+    // iY indexes the Y dimension
 
-    /* get direction for X */
+    // get direction for X
     if ( cxy >= 0 )
     {
-        ixDir    = 1;     /* direction in X */
-        ixOrigin = ixmin; /* starting point */
+        ixDir    = 1;     // direction in X
+        ixOrigin = ixmin; // starting point
     }
     else
     {
         ixDir    = -1;
         ixOrigin = ixmax - 1;
     }
-    /* get direction for Y */
+    // get direction for Y
     if ( cxx >= 0 )
     {
         iyDir    = -1;
@@ -484,12 +484,12 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         iyDir    = 1;
         iyOrigin = iymin;
     }
-    /* figure out which dimension is dominant */
+    // figure out which dimension is dominant
     if ( fabs( cxx ) > fabs( cxy ) )
     {
-        /* X is dominant */
-        nFast = ixmax - ixmin;  /* samples in the Fast direction */
-        nSlow = iymax - iymin;  /* samples in the Slow direction */
+        // X is dominant
+        nFast = ixmax - ixmin;  // samples in the Fast direction
+        nSlow = iymax - iymin;  // samples in the Slow direction
 
         ixFast = ixDir; ixSlow = 0;
         iyFast = 0;     iySlow = iyDir;
@@ -503,17 +503,17 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         iyFast = iyDir; iySlow = 0;
     }
 
-    /* we've got to draw the background grid first, hidden line code has to draw it last */
+    // we've got to draw the background grid first, hidden line code has to draw it last
     if ( zbflg )
     {
         PLFLT bx[3], by[3], bz[3];
         PLFLT tick = zbtck, tp;
         PLINT nsub = 0;
 
-        /* get the tick spacing */
+        // get the tick spacing
         pldtik( zmin, zmax, &tick, &nsub, FALSE );
 
-        /* determine the vertices for the background grid line */
+        // determine the vertices for the background grid line
         bx[0] = ( ixOrigin != ixmin && ixFast == 0 ) || ixFast > 0 ? xmax : xmin;
         by[0] = ( iyOrigin != iymin && iyFast == 0 ) || iyFast > 0 ? ymax : ymin;
         bx[1] = ixOrigin != ixmin ? xmax : xmin;
@@ -528,7 +528,7 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
             bz[0] = bz[1] = bz[2] = tp;
             plline3( 3, bx, by, bz );
         }
-        /* draw the vertical line at the back corner */
+        // draw the vertical line at the back corner
         bx[0] = bx[1];
         by[0] = by[1];
         bz[0] = zmin;
@@ -537,12 +537,12 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         plcol0( color );
     }
 
-    /* If enabled, draw the contour at the base */
+    // If enabled, draw the contour at the base
 
-    /* The contour plotted at the base will be identical to the one obtained
-     * with c_plcont(). The contour plotted at the surface is simple minded, but
-     * can be improved by using the contour data available.
-     */
+    // The contour plotted at the base will be identical to the one obtained
+    // with c_plcont(). The contour plotted at the surface is simple minded, but
+    // can be improved by using the contour data available.
+    //
 
     if ( clevel != NULL && opt & BASE_CONT )
     {
@@ -554,9 +554,9 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         if ( zz == NULL )
             plexit( "plsurf3dl: Insufficient memory" );
 
-        /* get the contour lines */
+        // get the contour lines
 
-        /* prepare cont_store input */
+        // prepare cont_store input
         cgrid2.nx = nx;
         cgrid2.ny = ny;
         plAlloc2dGrid( &cgrid2.xg, nx, ny );
@@ -584,21 +584,21 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
                 zstore[i][j]    = getz( zp, i, indexymax[i] - 1 );
             }
         }
-        /* Fill cont structure with contours. */
+        // Fill cont structure with contours.
         cont_store( zstore, nx, ny, ixstart + 1, ixn, 1, ny,
             clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
 
-        /* Free the 2D input arrays to cont_store since not needed any more. */
+        // Free the 2D input arrays to cont_store since not needed any more.
         plFree2dGrid( zstore, nx, ny );
         plFree2dGrid( cgrid2.xg, nx, ny );
         plFree2dGrid( cgrid2.yg, nx, ny );
 
-        /* follow the contour levels and lines */
+        // follow the contour levels and lines
         clev = cont;
-        do  /* for each contour level */
+        do  // for each contour level
         {
             cline = clev->line;
-            do  /* there are several lines that make up the contour */
+            do  // there are several lines that make up the contour
             {
                 if ( cline->npts > np )
                 {
@@ -622,21 +622,21 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         }
         while ( clev != NULL );
 
-        cont_clean_store( cont ); /* now release the memory */
+        cont_clean_store( cont ); // now release the memory
         free( zz );
     }
 
-    /* Now we can iterate over the grid drawing the quads */
+    // Now we can iterate over the grid drawing the quads
     for ( iSlow = 0; iSlow < nSlow - 1; iSlow++ )
     {
         for ( iFast = 0; iFast < nFast - 1; iFast++ )
         {
-            /* get the 4 corners of the Quad, which are
-             *
-             *       0--2
-             *       |  |
-             *       1--3
-             */
+            // get the 4 corners of the Quad, which are
+            //
+            //       0--2
+            //       |  |
+            //       1--3
+            //
 
             xm = ym = zm = 0.;
 
@@ -645,8 +645,8 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
             {
                 for ( j = 0; j < 2; j++ )
                 {
-                    /* we're transforming from Fast/Slow coordinates to x/y coordinates */
-                    /* note, these are the indices, not the values */
+                    // we're transforming from Fast/Slow coordinates to x/y coordinates
+                    // note, these are the indices, not the values
                     ix = ixFast * ( iFast + i ) + ixSlow * ( iSlow + j ) + ixOrigin;
                     iy = iyFast * ( iFast + i ) + iySlow * ( iSlow + j ) + iyOrigin;
 
@@ -669,12 +669,12 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 
             if ( iftriangle == 0 )
                 continue;
-            /* the "mean point" of the quad, common to all four triangles
-             * -- perhaps not a good thing to do for the light shading */
+            // the "mean point" of the quad, common to all four triangles
+            // -- perhaps not a good thing to do for the light shading
 
             xm /= 4.; ym /= 4.; zm /= 4.;
 
-            /* now draw the quad as four triangles */
+            // now draw the quad as four triangles
 
             for ( i = 1; i < 3; i++ )
             {
@@ -682,7 +682,7 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
                 {
                     shade_triangle( px[j], py[j], pz[j], xm, ym, zm, px[i], py[i], pz[i] );
 
-                    /* after shading, see if the triangle crosses	one contour plane */
+                    // after shading, see if the triangle crosses	one contour plane
 
 #define min3( a, b, c )    ( MIN( ( MIN( a, b ) ), c ) )
 #define max3( a, b, c )    ( MAX( ( MAX( a, b ) ), c ) )
@@ -694,21 +694,21 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
                             if ( clevel[k] >= min3( pz[i], zm, pz[j] ) && clevel[k] < max3( pz[i], zm, pz[j] ) )
                             {
                                 ct = 0;
-                                if ( clevel[k] >= MIN( pz[i], zm ) && clevel[k] < MAX( pz[i], zm ) ) /* p0-pm */
+                                if ( clevel[k] >= MIN( pz[i], zm ) && clevel[k] < MAX( pz[i], zm ) ) // p0-pm
                                 {
                                     xx[ct] = ( ( clevel[k] - pz[i] ) * ( xm - px[i] ) ) / ( zm - pz[i] ) + px[i];
                                     yy[ct] = ( ( clevel[k] - pz[i] ) * ( ym - py[i] ) ) / ( zm - pz[i] ) + py[i];
                                     ct++;
                                 }
 
-                                if ( clevel[k] >= MIN( pz[i], pz[j] ) && clevel[k] < MAX( pz[i], pz[j] ) ) /* p0-p1 */
+                                if ( clevel[k] >= MIN( pz[i], pz[j] ) && clevel[k] < MAX( pz[i], pz[j] ) ) // p0-p1
                                 {
                                     xx[ct] = ( ( clevel[k] - pz[i] ) * ( px[j] - px[i] ) ) / ( pz[j] - pz[i] ) + px[i];
                                     yy[ct] = ( ( clevel[k] - pz[i] ) * ( py[j] - py[i] ) ) / ( pz[j] - pz[i] ) + py[i];
                                     ct++;
                                 }
 
-                                if ( clevel[k] >= MIN( pz[j], zm ) && clevel[k] < MAX( pz[j], zm ) ) /* p1-pm */
+                                if ( clevel[k] >= MIN( pz[j], zm ) && clevel[k] < MAX( pz[j], zm ) ) // p1-pm
                                 {
                                     xx[ct] = ( ( clevel[k] - pz[j] ) * ( xm - px[j] ) ) / ( zm - pz[j] ) + px[j];
                                     yy[ct] = ( ( clevel[k] - pz[j] ) * ( ym - py[j] ) ) / ( zm - pz[j] ) + py[j];
@@ -717,19 +717,19 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 
                                 if ( ct == 2 )
                                 {
-                                    /* yes, xx and yy are the intersection points of the triangle with
-                                     * the contour line -- draw a straight line betweeen the points
-                                     * -- at the end this will make up the contour line */
+                                    // yes, xx and yy are the intersection points of the triangle with
+                                    // the contour line -- draw a straight line betweeen the points
+                                    // -- at the end this will make up the contour line
 
                                     if ( opt & SURF_CONT )
                                     {
-                                        /* surface contour with color set by user */
+                                        // surface contour with color set by user
                                         plcol0( color );
                                         zz[0] = zz[1] = clevel[k];
                                         plline3( 2, xx, yy, zz );
                                     }
 
-                                    /* don't break; one triangle can span various contour levels */
+                                    // don't break; one triangle can span various contour levels
                                 }
                                 else
                                     plwarn( "plsurf3dl: ***ERROR***\n" );
@@ -748,8 +748,8 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
             ixstart, ixn, indexymin, indexymax );
     }
 
-    if ( opt & DRAW_SIDES ) /* the sides look ugly !!! */
-    {                       /* draw one more row with all the Z's set to zmin */
+    if ( opt & DRAW_SIDES ) // the sides look ugly !!!
+    {                       // draw one more row with all the Z's set to zmin
         PLFLT zscale, zmin, zmax;
 
         plP_grange( &zscale, &zmin, &zmax );
@@ -777,7 +777,7 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
             }
             if ( iftriangle == 0 )
                 break;
-            /* now draw the quad as two triangles (4 might be better) */
+            // now draw the quad as two triangles (4 might be better)
 
             shade_triangle( px[0], py[0], pz[0], px[2], py[2], pz[2], px[0], py[0], zmin );
             shade_triangle( px[2], py[2], pz[2], px[2], py[2], zmin, px[0], py[0], zmin );
@@ -807,21 +807,21 @@ plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
             if ( iftriangle == 0 )
                 break;
 
-            /* now draw the quad as two triangles (4 might be better) */
+            // now draw the quad as two triangles (4 might be better)
             shade_triangle( px[0], py[0], pz[0], px[2], py[2], pz[2], px[0], py[0], zmin );
             shade_triangle( px[2], py[2], pz[2], px[2], py[2], zmin, px[0], py[0], zmin );
         }
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void plot3d(x, y, z, nx, ny, opt, side)
- *
- * Plots a 3-d representation of the function z[x][y]. The x values
- * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
- * values are in the 2-d array z[][]. The integer "opt" specifies:
- * see plot3dcl() below
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plot3d(x, y, z, nx, ny, opt, side)
+//
+// Plots a 3-d representation of the function z[x][y]. The x values
+// are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
+// values are in the 2-d array z[][]. The integer "opt" specifies:
+// see plot3dcl() below
+//--------------------------------------------------------------------------
 
 void
 c_plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
@@ -837,14 +837,14 @@ plfplot3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
     plfplot3dc( x, y, zops, zp, nx, ny, opt | ( side != 0 ? DRAW_SIDES : 0 ), NULL, 0 );
 }
 
-/*--------------------------------------------------------------------------*\
- * void plot3dc(x, y, z, nx, ny, opt, clevel, nlevel)
- *
- * Plots a 3-d representation of the function z[x][y]. The x values
- * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
- * values are in the 2-d array z[][]. The integer "opt" specifies:
- * see plot3dcl() below
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plot3dc(x, y, z, nx, ny, opt, clevel, nlevel)
+//
+// Plots a 3-d representation of the function z[x][y]. The x values
+// are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
+// values are in the 2-d array z[][]. The integer "opt" specifies:
+// see plot3dcl() below
+//--------------------------------------------------------------------------
 
 void
 c_plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
@@ -861,28 +861,28 @@ plfplot3dc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
     plfplot3dcl( x, y, zops, zp, nx, ny, opt, clevel, nlevel, 0, 0, NULL, NULL );
 }
 
-/*--------------------------------------------------------------------------*\
- * void plot3dcl(x, y, z, nx, ny, opt, clevel, nlevel,
- *       ixstart, ixn, indexymin, indexymax)
- *
- * Plots a 3-d representation of the function z[x][y]. The x values
- * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
- * values are in the 2-d array z[][]. The integer "opt" specifies:
- *
- *  DRAW_LINEX :  Draw lines parallel to x-axis
- *  DRAW_LINEY :  Draw lines parallel to y-axis
- *  DRAW_LINEXY:  Draw lines parallel to both axes
- *  MAG_COLOR:    Magnitude coloring of wire frame
- *  BASE_CONT:    Draw contour at bottom xy plane
- *  TOP_CONT:     Draw contour at top xy plane (not yet)
- *  DRAW_SIDES:   Draw sides around the plot
- *  MESH:       Draw the "under" side of the plot
- *
- * or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
- * indexymin and indexymax are arrays which specify the y index limits
- * (following the convention that the upper range limit is one more than
- * actual index limit) for an x index range of ixstart, ixn.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plot3dcl(x, y, z, nx, ny, opt, clevel, nlevel,
+//       ixstart, ixn, indexymin, indexymax)
+//
+// Plots a 3-d representation of the function z[x][y]. The x values
+// are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
+// values are in the 2-d array z[][]. The integer "opt" specifies:
+//
+//  DRAW_LINEX :  Draw lines parallel to x-axis
+//  DRAW_LINEY :  Draw lines parallel to y-axis
+//  DRAW_LINEXY:  Draw lines parallel to both axes
+//  MAG_COLOR:    Magnitude coloring of wire frame
+//  BASE_CONT:    Draw contour at bottom xy plane
+//  TOP_CONT:     Draw contour at top xy plane (not yet)
+//  DRAW_SIDES:   Draw sides around the plot
+//  MESH:       Draw the "under" side of the plot
+//
+// or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
+// indexymin and indexymax are arrays which specify the y index limits
+// (following the convention that the upper range limit is one more than
+// actual index limit) for an x index range of ixstart, ixn.
+//--------------------------------------------------------------------------
 
 void
 c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
@@ -936,7 +936,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
         zmax = t;
     }
 
-/* Check that points in x and in y are strictly increasing */
+// Check that points in x and in y are strictly increasing
 
     for ( i = 0; i < nx - 1; i++ )
     {
@@ -961,7 +961,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
     if ( opt & DRAW_SIDES )
         side = 1;
 
-    /* figure out the part of the data to use */
+    // figure out the part of the data to use
     if ( xmin < x[0] )
         xmin = x[0];
     if ( xmax > x[nx - 1] )
@@ -982,11 +982,11 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
     for ( iymax = ny - 1; iymax > 0 && y[iymax - 1] > ymax; iymax-- )
     {
     }
-    /*fprintf(stderr, "(%d,%d) %d %d %d %d\n", nx, ny, ixmin, ixmax, iymin, iymax);*/
-    /* do we need to clip? */
+    //fprintf(stderr, "(%d,%d) %d %d %d %d\n", nx, ny, ixmin, ixmax, iymin, iymax);
+    // do we need to clip?
     if ( ixmin > 0 || ixmax < nx - 1 || iymin > 0 || iymax < ny - 1 )
     {
-        /* adjust the input so it stays within bounds */
+        // adjust the input so it stays within bounds
         int _nx = ixmax - ixmin + 1;
         int _ny = iymax - iymin + 1;
         PLFLT *_x, *_y, **_z;
@@ -999,7 +999,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
             return;
         }
 
-        /* allocate storage for new versions of the input vectors */
+        // allocate storage for new versions of the input vectors
         if ( ( ( _x = (PLFLT*) malloc( _nx * sizeof ( PLFLT ) ) ) == NULL ) ||
              ( ( _y = (PLFLT*) malloc( _ny * sizeof ( PLFLT ) ) ) == NULL ) ||
              ( ( _z = (PLFLT**) malloc( _nx * sizeof ( PLFLT* ) ) ) == NULL ) )
@@ -1009,7 +1009,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 
         clipped = 1;
 
-        /* copy over the independent variables */
+        // copy over the independent variables
         _x[0]       = xmin;
         _x[_nx - 1] = xmax;
         for ( i = 1; i < _nx - 1; i++ )
@@ -1019,7 +1019,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
         for ( i = 1; i < _ny - 1; i++ )
             _y[i] = y[iymin + i];
 
-        /* copy the data array so we can interpolate around the edges */
+        // copy the data array so we can interpolate around the edges
         for ( i = 0; i < _nx; i++ )
         {
             if ( ( _z[i] = (PLFLT*) malloc( _ny * sizeof ( PLFLT ) ) ) == NULL )
@@ -1028,7 +1028,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
             }
         }
 
-        /* interpolation factors for the 4 edges */
+        // interpolation factors for the 4 edges
         ty0 = ( _y[0] - y[iymin] ) / ( y[iymin + 1] - y[iymin] );
         ty1 = ( _y[_ny - 1] - y[iymax - 1] ) / ( y[iymax] - y[iymax - 1] );
         tx0 = ( _x[0] - x[ixmin] ) / ( x[ixmin + 1] - x[ixmin] );
@@ -1068,7 +1068,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
                     _z[i][j] = zmax;
             }
         }
-        /* replace the input with our clipped versions */
+        // replace the input with our clipped versions
         x    = _x;
         y    = _y;
         zp   = (PLPointer) _z;
@@ -1079,12 +1079,12 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 
     if ( ( opt & BASE_CONT ) || ( opt & TOP_CONT ) || ( opt && MAG_COLOR ) )
     {
-        /*
-         * Don't use the data z value to scale the color, use the z axis
-         * values set by plw3d()
-         *
-         * plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
-         */
+        //
+        // Don't use the data z value to scale the color, use the z axis
+        // values set by plw3d()
+        //
+        // plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+        //
 
         fc_minz = plsc->ranmi;
         fc_maxz = plsc->ranma;
@@ -1096,18 +1096,18 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
         }
     }
 
-    if ( opt & BASE_CONT )    /* If enabled, draw the contour at the base.  */
+    if ( opt & BASE_CONT )    // If enabled, draw the contour at the base.
     {
         if ( clevel != NULL && nlevel != 0 )
         {
             base_cont = 1;
-            /* even if MESH is not set, "set it",
-             * as the base contour can only be done in this case */
+            // even if MESH is not set, "set it",
+            // as the base contour can only be done in this case
             pl3mode = 1;
         }
     }
 
-    if ( opt & MAG_COLOR )    /* If enabled, use magnitude colored wireframe  */
+    if ( opt & MAG_COLOR )    // If enabled, use magnitude colored wireframe
     {
         if ( ( ctmp = (PLFLT *) malloc( (size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLFLT ) ) ) ) == NULL )
         {
@@ -1117,10 +1117,10 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
     else
         ctmp = NULL;
 
-    /* next logic only knows opt = 1 | 2 | 3, make sure that it only gets that */
+    // next logic only knows opt = 1 | 2 | 3, make sure that it only gets that
     opt &= DRAW_LINEXY;
 
-    /* Allocate work arrays */
+    // Allocate work arrays
 
     utmp = (PLINT *) malloc( (size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLINT ) ) );
     vtmp = (PLINT *) malloc( (size_t) ( 2 * MAX( nx, ny ) * sizeof ( PLINT ) ) );
@@ -1130,8 +1130,8 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 
     plP_gw3wc( &cxx, &cxy, &cyx, &cyy, &cyz );
     init = 1;
-/* Call 3d line plotter.  Each viewing quadrant
- * (perpendicular to x-y plane) must be handled separately. */
+// Call 3d line plotter.  Each viewing quadrant
+// (perpendicular to x-y plane) must be handled separately.
     if ( cxx >= 0.0 && cxy <= 0.0 )
     {
         if ( opt == DRAW_LINEY )
@@ -1204,7 +1204,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
         }
     }
 
-    /* draw contour at the base. Not 100%! Why? */
+    // draw contour at the base. Not 100%! Why?
 
     if ( base_cont )
     {
@@ -1214,7 +1214,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 
         PLINT *uu = (PLINT *) malloc( NPTS * sizeof ( PLINT ) );
         PLINT *vv = (PLINT *) malloc( NPTS * sizeof ( PLINT ) );
-        /* prepare cont_store input */
+        // prepare cont_store input
         PLFLT **zstore;
         PLcGrid2 cgrid2;
 
@@ -1241,21 +1241,21 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
 
         pl3upv = 0;
 
-        /* Fill cont structure with contours. */
+        // Fill cont structure with contours.
         cont_store( zstore, nx, ny, 1, nx, 1, ny,
             clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
 
-        /* Free the 2D input arrays to cont_store since not needed any more. */
+        // Free the 2D input arrays to cont_store since not needed any more.
         plFree2dGrid( zstore, nx, ny );
         plFree2dGrid( cgrid2.xg, nx, ny );
         plFree2dGrid( cgrid2.yg, nx, ny );
 
-        /* follow the contour levels and lines */
+        // follow the contour levels and lines
         clev = cont;
-        do  /* for each contour level */
+        do  // for each contour level
         {
             cline = clev->line;
-            do  /* there are several lines that make up each contour */
+            do  // there are several lines that make up each contour
             {
                 int cx, i, k, l, m, start, end;
                 PLFLT tx, ty;
@@ -1269,9 +1269,9 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
                     }
                 }
 
-                /* the hidden line plotter plnxtv() only works OK if the x points are in increasing order.
-                 * As this does not always happens, the situation must be detected and the line segment
-                 * must be reversed before being plotted */
+                // the hidden line plotter plnxtv() only works OK if the x points are in increasing order.
+                // As this does not always happens, the situation must be detected and the line segment
+                // must be reversed before being plotted
                 i = 0;
                 if ( cline->npts > 0 )
                 {
@@ -1279,21 +1279,21 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
                     {
                         plcol1( ( clev->level - fc_minz ) / ( fc_maxz - fc_minz ) );
                         cx = plP_wcpcx( plP_w3wcx( cline->x[i], cline->y[i], plsc->ranmi ) );
-                        for ( j = i; j < cline->npts; j++ ) /* convert to 2D coordinates */
+                        for ( j = i; j < cline->npts; j++ ) // convert to 2D coordinates
                         {
                             uu[j] = plP_wcpcx( plP_w3wcx( cline->x[j], cline->y[j], plsc->ranmi ) );
                             vv[j] = plP_wcpcy( plP_w3wcy( cline->x[j], cline->y[j], plsc->ranmi ) );
-                            if ( uu[j] < cx ) /* find turn back point */
+                            if ( uu[j] < cx ) // find turn back point
                                 break;
                             else
                                 cx = uu[j];
                         }
-                        plnxtv( &uu[i], &vv[i], NULL, j - i, 0 ); /* plot line with increasing x */
+                        plnxtv( &uu[i], &vv[i], NULL, j - i, 0 ); // plot line with increasing x
 
-                        if ( j < cline->npts )                    /* line not yet finished, */
+                        if ( j < cline->npts )                    // line not yet finished,
                         {
                             start = j - 1;
-                            for ( i = start; i < cline->npts; i++ ) /* search turn forward point */
+                            for ( i = start; i < cline->npts; i++ ) // search turn forward point
                             {
                                 uu[i] = plP_wcpcx( plP_w3wcx( cline->x[i], cline->y[i], plsc->ranmi ) );
                                 if ( uu[i] > cx )
@@ -1303,7 +1303,7 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
                             }
                             end = i - 1;
 
-                            for ( k = 0; k < ( end - start + 1 ) / 2; k++ ) /* reverse line segment */
+                            for ( k = 0; k < ( end - start + 1 ) / 2; k++ ) // reverse line segment
                             {
                                 l           = start + k;
                                 m           = end - k;
@@ -1315,17 +1315,17 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
                                 cline->y[m] = ty;
                             }
 
-                            /* convert to 2D coordinates */
+                            // convert to 2D coordinates
                             for ( j = start; j <= end; j++ )
                             {
                                 uu[j] = plP_wcpcx( plP_w3wcx( cline->x[j], cline->y[j], plsc->ranmi ) );
                                 vv[j] = plP_wcpcy( plP_w3wcy( cline->x[j], cline->y[j], plsc->ranmi ) );
                             }
-                            plnxtv( &uu[start], &vv[start], NULL, end - start + 1, 0 ); /* and plot it */
+                            plnxtv( &uu[start], &vv[start], NULL, end - start + 1, 0 ); // and plot it
 
                             cline->x[end] = cline->x[start];
                             cline->y[end] = cline->y[start];
-                            i             = end; /* restart where it was left */
+                            i             = end; // restart where it was left
                         }
                     } while ( j < cline->npts && i < cline->npts );
                 }
@@ -1336,13 +1336,13 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
         }
         while ( clev != NULL );
 
-        cont_clean_store( cont ); /* now release the contour memory */
+        cont_clean_store( cont ); // now release the contour memory
         pl3upv = 1;
         free( uu );
         free( vv );
     }
 
-/* Finish up by drawing sides, background grid (both are optional) */
+// Finish up by drawing sides, background grid (both are optional)
 
     if ( side )
         plside3( x, y, zops, zp, nx, ny, opt );
@@ -1371,24 +1371,24 @@ plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void plxyindexlimits()
- *
- * Transform from y array limits to corresponding x array limits (or vice
- * versa).
- *
- * N.B. we follow the convention here that all upper range limits are one
- * more than the actual last index.
- * instart (>= 0) through inn is the index range where
- * the input inarray_min and inarray_max arrays are defined.
- *
- * outstart (>= 0), through outn (with outn <= outnmax) is the index range
- * where the output outarray_min and outarray_max arrays are defined.
- *
- * In order to assure the transformation from y array limits to x array limits
- * (or vice versa) is single-valued, this programme plaborts if the
- * inarray_min array has a maximum or inarray_max array has a minimum.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plxyindexlimits()
+//
+// Transform from y array limits to corresponding x array limits (or vice
+// versa).
+//
+// N.B. we follow the convention here that all upper range limits are one
+// more than the actual last index.
+// instart (>= 0) through inn is the index range where
+// the input inarray_min and inarray_max arrays are defined.
+//
+// outstart (>= 0), through outn (with outn <= outnmax) is the index range
+// where the output outarray_min and outarray_max arrays are defined.
+//
+// In order to assure the transformation from y array limits to x array limits
+// (or vice versa) is single-valued, this programme plaborts if the
+// inarray_min array has a maximum or inarray_max array has a minimum.
+//--------------------------------------------------------------------------
 
 static void
 plxyindexlimits( PLINT instart, PLINT inn,
@@ -1442,7 +1442,7 @@ plxyindexlimits( PLINT instart, PLINT inn,
     for ( j = *outstart; j < *outn; j++ )
     {
         i = instart;
-        /* Find first valid i for this j. */
+        // Find first valid i for this j.
         while ( i < inn && !( inarray_min[i] <= j && j < inarray_max[i] ) )
             i++;
         if ( i < inn )
@@ -1452,18 +1452,18 @@ plxyindexlimits( PLINT instart, PLINT inn,
             myabort( "plxyindexlimits: bad logic; invalid i should never happen" );
             return;
         }
-        /* Find next invalid i for this j. */
+        // Find next invalid i for this j.
         while ( i < inn && ( inarray_min[i] <= j && j < inarray_max[i] ) )
             i++;
         outarray_max[j] = i;
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void plP_gzback()
- *
- * Get background parameters for 3d plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plP_gzback()
+//
+// Get background parameters for 3d plot.
+//--------------------------------------------------------------------------
 
 void
 plP_gzback( PLINT **zbf, PLINT **zbc, PLFLT **zbt, PLINT **zbw )
@@ -1474,13 +1474,13 @@ plP_gzback( PLINT **zbf, PLINT **zbc, PLFLT **zbt, PLINT **zbw )
     *zbw = &zbwidth;
 }
 
-/*--------------------------------------------------------------------------*\
- * PLFLT plGetAngleToLight()
- *
- * Gets cos of angle between normal to a polygon and a light source.
- * Requires at least 3 elements, forming non-parallel lines
- * in the arrays.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// PLFLT plGetAngleToLight()
+//
+// Gets cos of angle between normal to a polygon and a light source.
+// Requires at least 3 elements, forming non-parallel lines
+// in the arrays.
+//--------------------------------------------------------------------------
 
 static PLFLT
 plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z )
@@ -1498,13 +1498,13 @@ plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z )
     vz1 = z[1] - z[0];
     vz2 = z[2] - z[1];
 
-/* Find vector perpendicular to the face */
+// Find vector perpendicular to the face
     px   = vy1 * vz2 - vz1 * vy2;
     py   = vz1 * vx2 - vx1 * vz2;
     pz   = vx1 * vy2 - vy1 * vx2;
     mag1 = px * px + py * py + pz * pz;
 
-/* Vectors were parallel! */
+// Vectors were parallel!
     if ( mag1 == 0 )
         return 1;
 
@@ -1515,26 +1515,26 @@ plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z )
     if ( mag2 == 0 )
         return 1;
 
-/* Now have 3 vectors going through the first point on the given surface */
+// Now have 3 vectors going through the first point on the given surface
     cosangle = fabs( ( vlx * px + vly * py + vlz * pz ) / sqrt( mag1 * mag2 ) );
 
-/* In case of numerical rounding */
+// In case of numerical rounding
     if ( cosangle > 1 )
         cosangle = 1;
     return cosangle;
 }
 
-/*--------------------------------------------------------------------------*\
- * void plt3zz()
- *
- * Draws the next zig-zag line for a 3-d plot.  The data is stored in array
- * z[][] as a function of x[] and y[], and is plotted out starting at index
- * (x0,y0).
- *
- * Depending on the state of "flag", the sequence of data points sent to
- * plnxtv is altered so as to allow cross-hatch plotting, or plotting
- * parallel to either the x-axis or the y-axis.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plt3zz()
+//
+// Draws the next zig-zag line for a 3-d plot.  The data is stored in array
+// z[][] as a function of x[] and y[], and is plotted out starting at index
+// (x0,y0).
+//
+// Depending on the state of "flag", the sequence of data points sent to
+// plnxtv is altered so as to allow cross-hatch plotting, or plotting
+// parallel to either the x-axis or the y-axis.
+//--------------------------------------------------------------------------
 
 static void
 plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
@@ -1606,18 +1606,18 @@ plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
         }
     }
 
-/* All the setup is done.  Time to do the work. */
+// All the setup is done.  Time to do the work.
 
     plnxtv( u, v, c, n, *init );
     *init = 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * void plside3()
- *
- * This routine draws sides around the front of the 3d plot so that
- * it does not appear to float.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plside3()
+//
+// This routine draws sides around the front of the 3d plot so that
+// it does not appear to float.
+//--------------------------------------------------------------------------
 
 static void
 plside3( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny, PLINT opt )
@@ -1632,7 +1632,7 @@ plside3( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny, PLI
     plP_gdom( &xmin, &xmax, &ymin, &ymax );
     plP_grange( &zscale, &zmin, &zmax );
 
-/* Get x, y coordinates of legs and plot */
+// Get x, y coordinates of legs and plot
 
     if ( cxx >= 0.0 && cxy <= 0.0 )
     {
@@ -1736,12 +1736,12 @@ plside3( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny, PLI
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void plgrid3()
- *
- * This routine draws a grid around the back side of the 3d plot with
- * hidden line removal.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plgrid3()
+//
+// This routine draws a grid around the back side of the 3d plot with
+// hidden line removal.
+//--------------------------------------------------------------------------
 
 static void
 plgrid3( PLFLT tick )
@@ -1845,20 +1845,20 @@ plgrid3( PLFLT tick )
     pl3upv = 1;
 }
 
-/*--------------------------------------------------------------------------*\
- * void plnxtv()
- *
- * Draw the next view of a 3-d plot. The physical coordinates of the
- * points for the next view are placed in the n points of arrays u and
- * v. The silhouette found so far is stored in the heap as a set of m peak
- * points.
- *
- * These routines dynamically allocate memory for hidden line removal.
- * Memory is allocated in blocks of 2*BINC*sizeof(PLINT) bytes.  Large
- * values of BINC give better performance but also allocate more memory
- * than is needed. If your 3D plots are very "spiky" or you are working
- * with very large matrices then you will probably want to increase BINC.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plnxtv()
+//
+// Draw the next view of a 3-d plot. The physical coordinates of the
+// points for the next view are placed in the n points of arrays u and
+// v. The silhouette found so far is stored in the heap as a set of m peak
+// points.
+//
+// These routines dynamically allocate memory for hidden line removal.
+// Memory is allocated in blocks of 2*BINC*sizeof(PLINT) bytes.  Large
+// values of BINC give better performance but also allocate more memory
+// than is needed. If your 3D plots are very "spiky" or you are working
+// with very large matrices then you will probably want to increase BINC.
+//--------------------------------------------------------------------------
 
 static void
 plnxtv( PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init )
@@ -1869,19 +1869,19 @@ plnxtv( PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init )
         plnxtvlo( u, v, c, n, init );
 }
 
-/*--------------------------------------------------------------------------*\
- * void plnxtvhi()
- *
- * Draw the top side of the 3-d plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plnxtvhi()
+//
+// Draw the top side of the 3-d plot.
+//--------------------------------------------------------------------------
 
 static void
 plnxtvhi( PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init )
 {
-    /*
-     * For the initial set of points, just display them and store them as the
-     * peak points.
-     */
+    //
+    // For the initial set of points, just display them and store them as the
+    // peak points.
+    //
     if ( init == 1 )
     {
         int i;
@@ -1902,19 +1902,19 @@ plnxtvhi( PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init )
         return;
     }
 
-    /*
-     * Otherwise, we need to consider hidden-line removal problem. We scan
-     * over the points in both the old (i.e. oldhiview[]) and new (i.e. u[]
-     * and v[]) arrays in order of increasing x coordinate.  At each stage, we
-     * find the line segment in the other array (if one exists) that straddles
-     * the x coordinate of the point. We have to determine if the point lies
-     * above or below the line segment, and to check if the below/above status
-     * has changed since the last point.
-     *
-     * If pl3upv = 0 we do not update the view, this is useful for drawing
-     * lines on the graph after we are done plotting points.  Hidden line
-     * removal is still done, but the view is not updated.
-     */
+    //
+    // Otherwise, we need to consider hidden-line removal problem. We scan
+    // over the points in both the old (i.e. oldhiview[]) and new (i.e. u[]
+    // and v[]) arrays in order of increasing x coordinate.  At each stage, we
+    // find the line segment in the other array (if one exists) that straddles
+    // the x coordinate of the point. We have to determine if the point lies
+    // above or below the line segment, and to check if the below/above status
+    // has changed since the last point.
+    //
+    // If pl3upv = 0 we do not update the view, this is useful for drawing
+    // lines on the graph after we are done plotting points.  Hidden line
+    // removal is still done, but the view is not updated.
+    //
     xxhi = 0;
     if ( pl3upv != 0 )
     {
@@ -1934,20 +1934,20 @@ plnxtvhi( PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init )
             myexit( "plnxtvhi: Out of memory." );
     }
 
-    /* Do the draw or shading with hidden line removal */
+    // Do the draw or shading with hidden line removal
 
     plnxtvhi_draw( u, v, c, n );
 
-    /* Set oldhiview */
+    // Set oldhiview
 
     swaphiview();
 }
 
-/*--------------------------------------------------------------------------*\
- * void plnxtvhi_draw()
- *
- * Draw the top side of the 3-d plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plnxtvhi_draw()
+//
+// Draw the top side of the 3-d plot.
+//--------------------------------------------------------------------------
 
 static void
 plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
@@ -1958,27 +1958,27 @@ plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
     PLINT cx, cy, px, py;
     PLINT seg, ptold, lstold = 0, pthi, pnewhi = 0, newhi, change, ochange = 0;
 
-/*
- * (oldhiview[2*i], oldhiview[2*i]) is the i'th point in the old array
- * (u[j], v[j]) is the j'th point in the new array
- */
+//
+// (oldhiview[2*i], oldhiview[2*i]) is the i'th point in the old array
+// (u[j], v[j]) is the j'th point in the new array
+//
 
-/*
- * First attempt at 3d shading.  It works ok for simple plots, but
- * will just not draw faces, or draw them overlapping for very
- * jagged plots
- */
+//
+// First attempt at 3d shading.  It works ok for simple plots, but
+// will just not draw faces, or draw them overlapping for very
+// jagged plots
+//
 
     while ( i < mhi || j < n )
     {
-        /*
-         * The coordinates of the point under consideration are (px,py).  The
-         * line segment joins (sx1,sy1) to (sx2,sy2).  "ptold" is true if the
-         * point lies in the old array. We set it by comparing the x coordinates
-         * of the i'th old point and the j'th new point, being careful if we
-         * have fallen past the edges. Having found the point, load up the point
-         * and segment coordinates appropriately.
-         */
+        //
+        // The coordinates of the point under consideration are (px,py).  The
+        // line segment joins (sx1,sy1) to (sx2,sy2).  "ptold" is true if the
+        // point lies in the old array. We set it by comparing the x coordinates
+        // of the i'th old point and the j'th new point, being careful if we
+        // have fallen past the edges. Having found the point, load up the point
+        // and segment coordinates appropriately.
+        //
 
         ptold = ( j >= n || ( i < mhi && oldhiview[2 * i] < u[j] ) );
         if ( ptold )
@@ -2008,28 +2008,28 @@ plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
             }
         }
 
-        /*
-         * Now determine if the point is higher than the segment, using the
-         * logical function "above". We also need to know if it is the old view
-         * or the new view that is higher. "newhi" is set true if the new view
-         * is higher than the old.
-         */
+        //
+        // Now determine if the point is higher than the segment, using the
+        // logical function "above". We also need to know if it is the old view
+        // or the new view that is higher. "newhi" is set true if the new view
+        // is higher than the old.
+        //
         if ( seg )
             pthi = plabv( px, py, sx1, sy1, sx2, sy2 );
         else
             pthi = 1;
 
         newhi = ( ptold && !pthi ) || ( !ptold && pthi );
-        /*
-         * The last point and this point lie on different sides of
-         * the current silouette
-         */
+        //
+        // The last point and this point lie on different sides of
+        // the current silouette
+        //
         change = ( newhi && !pnewhi ) || ( !newhi && pnewhi );
 
-        /*
-         * There is a new intersection point to put in the peak array if the
-         * state of "newhi" changes.
-         */
+        //
+        // There is a new intersection point to put in the peak array if the
+        // state of "newhi" changes.
+        //
         if ( first )
         {
             plP_draw3d( px, py, c, j, 1 );
@@ -2041,10 +2041,10 @@ plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
         }
         else if ( change )
         {
-            /*
-             * Take care of special cases at end of arrays.  If pl3upv is 0 the
-             * endpoints are not connected to the old view.
-             */
+            //
+            // Take care of special cases at end of arrays.  If pl3upv is 0 the
+            // endpoints are not connected to the old view.
+            //
             if ( pl3upv == 0 && ( ( !ptold && j == 0 ) || ( ptold && i == 0 ) ) )
             {
                 plP_draw3d( px, py, c, j, 1 );
@@ -2062,11 +2062,11 @@ plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
             }
             else
             {
-                /*
-                 * If pl3upv is not 0 then we do want to connect the current line
-                 * with the previous view at the endpoints.  Also find intersection
-                 * point with old view.
-                 */
+                //
+                // If pl3upv is not 0 then we do want to connect the current line
+                // with the previous view at the endpoints.  Also find intersection
+                // point with old view.
+                //
                 if ( i == 0 )
                 {
                     sx1 = oldhiview[0];
@@ -2111,7 +2111,7 @@ plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
                     sv2 = v[j];
                 }
 
-                /* Determine the intersection */
+                // Determine the intersection
 
                 pl3cut( sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy );
                 if ( cx == px && cy == py )
@@ -2139,7 +2139,7 @@ plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
             }
         }
 
-        /* If point is high then draw plot to point and update view. */
+        // If point is high then draw plot to point and update view.
 
         if ( pthi )
         {
@@ -2161,11 +2161,11 @@ plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void  plP_draw3d()
- *
- * Does a simple move or line draw.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void  plP_draw3d()
+//
+// Does a simple move or line draw.
+//--------------------------------------------------------------------------
 
 static void
 plP_draw3d( PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move )
@@ -2180,11 +2180,11 @@ plP_draw3d( PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void plnxtvlo()
- *
- * Draw the bottom side of the 3-d plot.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plnxtvlo()
+//
+// Draw the bottom side of the 3-d plot.
+//--------------------------------------------------------------------------
 
 static void
 plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
@@ -2198,10 +2198,10 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
     first  = 1;
     pnewlo = 0;
 
-    /*
-     * For the initial set of points, just display them and store them as the
-     * peak points.
-     */
+    //
+    // For the initial set of points, just display them and store them as the
+    // peak points.
+    //
     if ( init == 1 )
     {
         oldloview = (PLINT *) malloc( (size_t) ( 2 * n * sizeof ( PLINT ) ) );
@@ -2221,19 +2221,19 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
         return;
     }
 
-    /*
-     * Otherwise, we need to consider hidden-line removal problem. We scan
-     * over the points in both the old (i.e. oldloview[]) and new (i.e. u[]
-     * and v[]) arrays in order of increasing x coordinate.  At each stage, we
-     * find the line segment in the other array (if one exists) that straddles
-     * the x coordinate of the point. We have to determine if the point lies
-     * above or below the line segment, and to check if the below/above status
-     * has changed since the last point.
-     *
-     * If pl3upv = 0 we do not update the view, this is useful for drawing
-     * lines on the graph after we are done plotting points.  Hidden line
-     * removal is still done, but the view is not updated.
-     */
+    //
+    // Otherwise, we need to consider hidden-line removal problem. We scan
+    // over the points in both the old (i.e. oldloview[]) and new (i.e. u[]
+    // and v[]) arrays in order of increasing x coordinate.  At each stage, we
+    // find the line segment in the other array (if one exists) that straddles
+    // the x coordinate of the point. We have to determine if the point lies
+    // above or below the line segment, and to check if the below/above status
+    // has changed since the last point.
+    //
+    // If pl3upv = 0 we do not update the view, this is useful for drawing
+    // lines on the graph after we are done plotting points.  Hidden line
+    // removal is still done, but the view is not updated.
+    //
     xxlo = 0;
     i    = 0;
     j    = 0;
@@ -2255,20 +2255,20 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
             myexit( "plnxtvlo: Out of memory." );
     }
 
-    /*
-     * (oldloview[2*i], oldloview[2*i]) is the i'th point in the old array
-     * (u[j], v[j]) is the j'th point in the new array.
-     */
+    //
+    // (oldloview[2*i], oldloview[2*i]) is the i'th point in the old array
+    // (u[j], v[j]) is the j'th point in the new array.
+    //
     while ( i < mlo || j < n )
     {
-        /*
-         * The coordinates of the point under consideration are (px,py).  The
-         * line segment joins (sx1,sy1) to (sx2,sy2).  "ptold" is true if the
-         * point lies in the old array. We set it by comparing the x coordinates
-         * of the i'th old point and the j'th new point, being careful if we
-         * have fallen past the edges. Having found the point, load up the point
-         * and segment coordinates appropriately.
-         */
+        //
+        // The coordinates of the point under consideration are (px,py).  The
+        // line segment joins (sx1,sy1) to (sx2,sy2).  "ptold" is true if the
+        // point lies in the old array. We set it by comparing the x coordinates
+        // of the i'th old point and the j'th new point, being careful if we
+        // have fallen past the edges. Having found the point, load up the point
+        // and segment coordinates appropriately.
+        //
         ptold = ( j >= n || ( i < mlo && oldloview[2 * i] < u[j] ) );
         if ( ptold )
         {
@@ -2297,12 +2297,12 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
             }
         }
 
-        /*
-         * Now determine if the point is lower than the segment, using the
-         * logical function "above". We also need to know if it is the old view
-         * or the new view that is lower. "newlo" is set true if the new view is
-         * lower than the old.
-         */
+        //
+        // Now determine if the point is lower than the segment, using the
+        // logical function "above". We also need to know if it is the old view
+        // or the new view that is lower. "newlo" is set true if the new view is
+        // lower than the old.
+        //
         if ( seg )
             ptlo = !plabv( px, py, sx1, sy1, sx2, sy2 );
         else
@@ -2311,10 +2311,10 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
         newlo  = ( ptold && !ptlo ) || ( !ptold && ptlo );
         change = ( newlo && !pnewlo ) || ( !newlo && pnewlo );
 
-        /*
-         * There is a new intersection point to put in the peak array if the
-         * state of "newlo" changes.
-         */
+        //
+        // There is a new intersection point to put in the peak array if the
+        // state of "newlo" changes.
+        //
         if ( first )
         {
             plP_draw3d( px, py, c, j, 1 );
@@ -2326,10 +2326,10 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
         }
         else if ( change )
         {
-            /*
-             * Take care of special cases at end of arrays.  If pl3upv is 0 the
-             * endpoints are not connected to the old view.
-             */
+            //
+            // Take care of special cases at end of arrays.  If pl3upv is 0 the
+            // endpoints are not connected to the old view.
+            //
             if ( pl3upv == 0 && ( ( !ptold && j == 0 ) || ( ptold && i == 0 ) ) )
             {
                 plP_draw3d( px, py, c, j, 1 );
@@ -2346,11 +2346,11 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
                 ochange = 0;
             }
 
-            /*
-             * If pl3upv is not 0 then we do want to connect the current line
-             * with the previous view at the endpoints.  Also find intersection
-             * point with old view.
-             */
+            //
+            // If pl3upv is not 0 then we do want to connect the current line
+            // with the previous view at the endpoints.  Also find intersection
+            // point with old view.
+            //
             else
             {
                 if ( i == 0 )
@@ -2397,7 +2397,7 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
                     sv2 = v[j];
                 }
 
-                /* Determine the intersection */
+                // Determine the intersection
 
                 pl3cut( sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy );
                 if ( cx == px && cy == py )
@@ -2425,7 +2425,7 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
             }
         }
 
-        /* If point is low then draw plot to point and update view. */
+        // If point is low then draw plot to point and update view.
 
         if ( ptlo )
         {
@@ -2447,18 +2447,18 @@ plnxtvlo( PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init )
             j = j + 1;
     }
 
-    /* Set oldloview */
+    // Set oldloview
 
     swaploview();
 }
 
-/*--------------------------------------------------------------------------*\
- * savehipoint
- * savelopoint
- *
- * Add a point to the list of currently visible peaks/valleys, when
- * drawing the top/bottom surface, respectively.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// savehipoint
+// savelopoint
+//
+// Add a point to the list of currently visible peaks/valleys, when
+// drawing the top/bottom surface, respectively.
+//--------------------------------------------------------------------------
 
 static void
 savehipoint( PLINT px, PLINT py )
@@ -2466,7 +2466,7 @@ savehipoint( PLINT px, PLINT py )
     if ( pl3upv == 0 )
         return;
 
-    if ( xxhi >= newhisize )      /* allocate additional space */
+    if ( xxhi >= newhisize )      // allocate additional space
     {
         newhisize += 2 * BINC;
         newhiview  = (PLINT *) realloc( (void *) newhiview,
@@ -2487,7 +2487,7 @@ savelopoint( PLINT px, PLINT py )
     if ( pl3upv == 0 )
         return;
 
-    if ( xxlo >= newlosize )      /* allocate additional space */
+    if ( xxlo >= newlosize )      // allocate additional space
     {
         newlosize += 2 * BINC;
         newloview  = (PLINT *) realloc( (void *) newloview,
@@ -2502,13 +2502,13 @@ savelopoint( PLINT px, PLINT py )
     xxlo++;
 }
 
-/*--------------------------------------------------------------------------*\
- * swaphiview
- * swaploview
- *
- * Swaps the top/bottom views.  Need to do a real swap so that the
- * memory cleanup routine really frees everything (and only once).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// swaphiview
+// swaploview
+//
+// Swaps the top/bottom views.  Need to do a real swap so that the
+// memory cleanup routine really frees everything (and only once).
+//--------------------------------------------------------------------------
 
 static void
 swaphiview( void )
@@ -2538,11 +2538,11 @@ swaploview( void )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * freework
- *
- * Frees memory associated with work arrays
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// freework
+//
+// Frees memory associated with work arrays
+//--------------------------------------------------------------------------
 
 static void
 freework( void )
@@ -2556,11 +2556,11 @@ freework( void )
     free_mem( ctmp );
 }
 
-/*--------------------------------------------------------------------------*\
- * myexit
- *
- * Calls plexit, cleaning up first.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// myexit
+//
+// Calls plexit, cleaning up first.
+//--------------------------------------------------------------------------
 
 static void
 myexit( char *msg )
@@ -2569,12 +2569,12 @@ myexit( char *msg )
     plexit( msg );
 }
 
-/*--------------------------------------------------------------------------*\
- * myabort
- *
- * Calls plabort, cleaning up first.
- * Caller should return to the user program.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// myabort
+//
+// Calls plabort, cleaning up first.
+// Caller should return to the user program.
+//--------------------------------------------------------------------------
 
 static void
 myabort( char *msg )
@@ -2583,12 +2583,12 @@ myabort( char *msg )
     plabort( msg );
 }
 
-/*--------------------------------------------------------------------------*\
- * int plabv()
- *
- * Determines if point (px,py) lies above the line joining (sx1,sy1) to
- * (sx2,sy2). It only works correctly if sx1 <= px <= sx2.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// int plabv()
+//
+// Determines if point (px,py) lies above the line joining (sx1,sy1) to
+// (sx2,sy2). It only works correctly if sx1 <= px <= sx2.
+//--------------------------------------------------------------------------
 
 static int
 plabv( PLINT px, PLINT py, PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2 )
@@ -2608,12 +2608,12 @@ plabv( PLINT px, PLINT py, PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2 )
     return above;
 }
 
-/*--------------------------------------------------------------------------*\
- * void pl3cut()
- *
- * Determines the point of intersection (cx,cy) between the line joining
- * (sx1,sy1) to (sx2,sy2) and the line joining (su1,sv1) to (su2,sv2).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void pl3cut()
+//
+// Determines the point of intersection (cx,cy) between the line joining
+// (sx1,sy1) to (sx2,sy2) and the line joining (su1,sv1) to (su2,sv2).
+//--------------------------------------------------------------------------
 
 static void
 pl3cut( PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
@@ -2654,32 +2654,32 @@ pl3cut( PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * void plRotationShear
- *
- * Calculates the rotation and shear angles from a plplot transformation matrix
- *
- * N.B. the plot transformation matrix
- *
- * [xFormMatrix[0] xFormMatrix[2]]
- * [xFormMatrix[1] xFormMatrix[3]]
- *
- * is calculated as
- *
- * [stride cos(t)    stride sin(t)]
- * [sin(p-t)              cos(p-t)]
- *
- * where t is the rotation angle and p is the shear angle.
- * The purpose of this routine is to determine stride, rotation angle,
- * and shear angle from xFormMatrix.
- *
- * For information only, xFormMatrix is the product of the following
- * rotation, skew(shear), and scale matrices:
- *
- *  [stride    0] [1      0] [cos(t)  sin(t)]
- *  [0    cos(p)] [tan(p) 1] [-sin(t) cos(t)]
- *
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void plRotationShear
+//
+// Calculates the rotation and shear angles from a plplot transformation matrix
+//
+// N.B. the plot transformation matrix
+//
+// [xFormMatrix[0] xFormMatrix[2]]
+// [xFormMatrix[1] xFormMatrix[3]]
+//
+// is calculated as
+//
+// [stride cos(t)    stride sin(t)]
+// [sin(p-t)              cos(p-t)]
+//
+// where t is the rotation angle and p is the shear angle.
+// The purpose of this routine is to determine stride, rotation angle,
+// and shear angle from xFormMatrix.
+//
+// For information only, xFormMatrix is the product of the following
+// rotation, skew(shear), and scale matrices:
+//
+//  [stride    0] [1      0] [cos(t)  sin(t)]
+//  [0    cos(p)] [tan(p) 1] [-sin(t) cos(t)]
+//
+//--------------------------------------------------------------------------
 
 void
 plRotationShear( PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear, PLFLT *stride )
@@ -2687,42 +2687,42 @@ plRotationShear( PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear, PLFLT *strid
     PLFLT smr;
     *stride = sqrt( xFormMatrix[0] * xFormMatrix[0] + xFormMatrix[2] * xFormMatrix[2] );
 
-    /* Calculate rotation in range from -pi to pi. */
+    // Calculate rotation in range from -pi to pi.
     *rotation = atan2( xFormMatrix[2], xFormMatrix[0] );
 
-    /* Calculate shear - rotation in range from -pi to pi. */
+    // Calculate shear - rotation in range from -pi to pi.
     smr = atan2( xFormMatrix[1], xFormMatrix[3] );
 
-    /* Calculate shear in range from -2 pi to 2 pi. */
+    // Calculate shear in range from -2 pi to 2 pi.
     *shear = smr + *rotation;
 
-    /* Calculate shear in range from -pi to pi. */
+    // Calculate shear in range from -pi to pi.
     if ( *shear < -PI )
         *shear += 2. * PI;
     else if ( *shear > PI )
         *shear -= 2. * PI;
 
-    /* Actually must honour some convention to calculate the negative
-     * of the shear angle instead of the shear angle. Why??*/
+    // Actually must honour some convention to calculate the negative
+    // of the shear angle instead of the shear angle. Why??
     *shear = -*shear;
-    /* Comment out the modified old logic which determines the negative
-     * of the shear angle in a more complicated way.  Note, the modification
-     * to divide the asin argument by *stride which solved a long-standing
-     * bug (as does the above logic in a simpler way). */
-    /*
-     *shear = -asin( (xFormMatrix[0] * xFormMatrix[1] +
-     *               xFormMatrix[2] * xFormMatrix[3] )/ *stride);
-     */
+    // Comment out the modified old logic which determines the negative
+    // of the shear angle in a more complicated way.  Note, the modification
+    // to divide the asin argument by *stride which solved a long-standing
+    // bug (as does the above logic in a simpler way).
+    //
+    //shear = -asin( (xFormMatrix[0] * xFormMatrix[1] +
+    //               xFormMatrix[2] * xFormMatrix[3] )/ *stride);
+    //
 
-    /* Compute the cross product of the vectors [1,0] and [0,1] to
-     * determine if we need to make a "quadrant 3,4" adjustment
-     * to the shear angle. */
+    // Compute the cross product of the vectors [1,0] and [0,1] to
+    // determine if we need to make a "quadrant 3,4" adjustment
+    // to the shear angle.
 
-    /*
-     * if ( xFormMatrix[0] * xFormMatrix[3] - xFormMatrix[1] * xFormMatrix[2] < 0.0 )
-     * {
-     *shear = -( M_PI + *shear );
-     * }
-     */
+    //
+    // if ( xFormMatrix[0] * xFormMatrix[3] - xFormMatrix[1] * xFormMatrix[2] < 0.0 )
+    // {
+    //shear = -( M_PI + *shear );
+    // }
+    //
 }
 

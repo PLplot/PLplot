@@ -1,40 +1,40 @@
-/* $Id$
- *
- *      Vector plotting routines.
- *
- * Copyright (C) 2004  Andrew Ross
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+//      Vector plotting routines.
+//
+// Copyright (C) 2004  Andrew Ross
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #define NEED_PLDEBUG
 #include "plplotP.h"
 #include <float.h>
 #include <ctype.h>
 
-/* Static function prototypes */
+// Static function prototypes
 
 static void plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale );
 
-/*--------------------------------------------------------------------------*\
- * void c_plsvect()
- *
- * Set the style of the arrow used by plvect
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// void c_plsvect()
+//
+// Set the style of the arrow used by plvect
+//--------------------------------------------------------------------------
 
 void
 c_plsvect( PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill )
@@ -61,9 +61,9 @@ c_plsvect( PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill )
     }
 }
 
-/*
- * Plot an individual vector
- */
+//
+// Plot an individual vector
+//
 static void
 plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
 {
@@ -91,7 +91,7 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
     dpx = plP_wcpcx( x + 0.5 * uu ) - px0;
     dpy = plP_wcpcy( y + 0.5 * vv ) - py0;
 
-    /* transform arrow -> a */
+    // transform arrow -> a
 
     for ( j = 0; j < plsc->arrow_npts; j++ )
     {
@@ -99,7 +99,7 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
         a_y[j] = (PLINT) ( plsc->arrow_x[j] * dpy + plsc->arrow_y[j] * dpx + py0 );
     }
 
-    /* draw the arrow */
+    // draw the arrow
     plP_draphy_poly( a_x, a_y, plsc->arrow_npts );
     if ( plsc->arrow_fill )
     {
@@ -111,12 +111,12 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
     free( (void *) a_y );
 }
 
-/*
- * void plfvect()
- *
- * Routine to plot a vector array with arbitrary coordinate
- * and vector transformations
- */
+//
+// void plfvect()
+//
+// Routine to plot a vector array with arbitrary coordinate
+// and vector transformations
+//
 void plfvect( PLFLT ( *getuv )( PLINT, PLINT, PLPointer ),
               PLPointer up, PLPointer vp,
               PLINT nx, PLINT ny, PLFLT scale,
@@ -142,7 +142,7 @@ void plfvect( PLFLT ( *getuv )( PLINT, PLINT, PLPointer ),
         }
     }
 
-    /* Calculate apropriate scaling if necessary */
+    // Calculate apropriate scaling if necessary
     if ( scale <= 0.0 )
     {
         if ( nx <= 1 && ny <= 1 )

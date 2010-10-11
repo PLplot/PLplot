@@ -1,39 +1,39 @@
-/* $Id$
- *
- * Plots a simple stripchart.
- *
- * Copyright (C) 2004  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- *
- * ToDo: better way of clearing plot. search for `plvsta'.
- */
+// $Id$
+//
+// Plots a simple stripchart.
+//
+// Copyright (C) 2004  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
+// ToDo: better way of clearing plot. search for `plvsta'.
+//
 
 #include "plplotP.h"
 
-/* Data declarations for stripcharts. */
+// Data declarations for stripcharts.
 
 #define PEN    4
 
 typedef struct
 {
     PLFLT xmin, xmax, ymin, ymax, xjump, xlen;
-    PLFLT wxmin, wxmax, wymin, wymax;   /* FIXME - some redundancy might exist */
+    PLFLT wxmin, wxmax, wymin, wymax;   // FIXME - some redundancy might exist
     char  *xspec, *yspec, *labx, *laby, *labtop;
     PLINT y_ascl, acc, colbox, collab;
     PLFLT xlpos, ylpos;
@@ -43,26 +43,26 @@ typedef struct
     char  *legline[PEN];
 } PLStrip;
 
-static int     sid;                     /* strip id number */
-#define MAX_STRIPC    1000              /* Max allowed */
-static PLStrip *strip[MAX_STRIPC];      /* Array of pointers */
-static PLStrip *stripc;                 /* current strip chart */
+static int     sid;                     // strip id number
+#define MAX_STRIPC    1000              // Max allowed
+static PLStrip *strip[MAX_STRIPC];      // Array of pointers
+static PLStrip *stripc;                 // current strip chart
 
-/* Generates a complete stripchart plot.  */
+// Generates a complete stripchart plot.
 
 static void
 plstrip_gen( PLStrip *strip );
 
-/* draw legend */
+// draw legend
 
 static void
 plstrip_legend( PLStrip *strip, int flag );
 
-/*--------------------------------------------------------------------------*\
- * plstripc
- *
- * Create 1d stripchart.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plstripc
+//
+// Create 1d stripchart.
+//--------------------------------------------------------------------------
 
 void
 c_plstripc( PLINT *id, const char *xspec, const char *yspec,
@@ -75,7 +75,7 @@ c_plstripc( PLINT *id, const char *xspec, const char *yspec,
 {
     int i;
 
-/* Get a free strip id and allocate it */
+// Get a free strip id and allocate it
 
     for ( i = 0; i < MAX_STRIPC; i++ )
         if ( strip[i] == NULL )
@@ -99,7 +99,7 @@ c_plstripc( PLINT *id, const char *xspec, const char *yspec,
         }
     }
 
-/* Fill up the struct with all relevant info */
+// Fill up the struct with all relevant info
 
     stripc = strip[sid];
 
@@ -121,25 +121,25 @@ c_plstripc( PLINT *id, const char *xspec, const char *yspec,
         }
     }
 
-    stripc->xlpos  = xlpos;     /* legend position [0..1] */
+    stripc->xlpos  = xlpos;     // legend position [0..1]
     stripc->ylpos  = ylpos;
-    stripc->xmin   = xmin;      /* initial bounding box */
+    stripc->xmin   = xmin;      // initial bounding box
     stripc->xmax   = xmax;
     stripc->ymin   = ymin;
     stripc->ymax   = ymax;
-    stripc->xjump  = xjump;              /* jump x step(%) when x attains xmax (xmax is then set to xmax+xjump) */
-    stripc->xlen   = xmax - xmin;        /* length of x scale */
-    stripc->y_ascl = y_ascl;             /* autoscale y between x jump scale */
-    stripc->acc    = acc;                /* accumulate plot (not really stripchart) */
-    stripc->xspec  = plstrdup( xspec );  /* x axis specification */
+    stripc->xjump  = xjump;              // jump x step(%) when x attains xmax (xmax is then set to xmax+xjump)
+    stripc->xlen   = xmax - xmin;        // length of x scale
+    stripc->y_ascl = y_ascl;             // autoscale y between x jump scale
+    stripc->acc    = acc;                // accumulate plot (not really stripchart)
+    stripc->xspec  = plstrdup( xspec );  // x axis specification
     stripc->yspec  = plstrdup( yspec );
-    stripc->labx   = plstrdup( labx );   /* x label */
+    stripc->labx   = plstrdup( labx );   // x label
     stripc->laby   = plstrdup( laby );
-    stripc->labtop = plstrdup( labtop ); /* title */
-    stripc->colbox = colbox;             /* box color */
-    stripc->collab = collab;             /* label color */
+    stripc->labtop = plstrdup( labtop ); // title
+    stripc->colbox = colbox;             // box color
+    stripc->collab = collab;             // label color
 
-/* Generate the plot */
+// Generate the plot
 
     plstrip_gen( stripc );
     plstrip_legend( stripc, 1 );
@@ -150,7 +150,7 @@ static void plstrip_legend( PLStrip *stripc, int first )
     int   i;
     PLFLT sc, dy;
 
-/* draw legend */
+// draw legend
 
     plgchr( &sc, &dy );
     sc = dy = dy / 100;
@@ -169,18 +169,18 @@ static void plstrip_legend( PLStrip *stripc, int first )
     plflush();
 }
 
-/*--------------------------------------------------------------------------*\
- * plstrip_gen
- *
- * Generates a complete stripchart plot.  Used either initially or
- * during rescaling.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plstrip_gen
+//
+// Generates a complete stripchart plot.  Used either initially or
+// during rescaling.
+//--------------------------------------------------------------------------
 
 static void plstrip_gen( PLStrip *strip )
 {
     int i;
 
-/* Set up window */
+// Set up window
 
     plvpor( 0, 1, 0, 1 );
     plwind( 0, 1, 0, 1 );
@@ -188,9 +188,9 @@ static void plstrip_gen( PLStrip *strip )
     plclear();
     plvsta();
 
-/* Draw box and same window dimensions */
+// Draw box and same window dimensions
     strip->wxmin = strip->xmin; strip->wxmax = strip->xmax;
-    strip->wymin = strip->ymin; strip->wymax = strip->ymax; /* FIXME - can exist some redundancy here */
+    strip->wymin = strip->ymin; strip->wymax = strip->ymax; // FIXME - can exist some redundancy here
 
     plwind( strip->xmin, strip->xmax, strip->ymin, strip->ymax );
 
@@ -213,12 +213,12 @@ static void plstrip_gen( PLStrip *strip )
     plstrip_legend( strip, 0 );
 }
 
-/*--------------------------------------------------------------------------*\
- * plstripa
- *
- * Add a point to a stripchart.
- * Allocates memory and rescales as necessary.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plstripa
+//
+// Add a point to a stripchart.
+// Allocates memory and rescales as necessary.
+//--------------------------------------------------------------------------
 
 void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
 {
@@ -237,7 +237,7 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
         return;
     }
 
-/* Add new point, allocating memory if necessary */
+// Add new point, allocating memory if necessary
 
     if ( ++stripc->npts[p] > stripc->nptsmax[p] )
     {
@@ -265,15 +265,15 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
     if ( y < stripc->ymin )
         stripc->ymin = stripc->ymax - 1.1 * ( stripc->ymax - y );
 
-/* Now either plot new point or regenerate plot */
+// Now either plot new point or regenerate plot
 
     if ( stripc->xmax - stripc->xmin < stripc->xlen )
     {
         if ( yasc == 0 )
         {
-            /* If user has changed subwindow, make shure we have the correct one */
+            // If user has changed subwindow, make shure we have the correct one
             plvsta();
-            plwind( stripc->wxmin, stripc->wxmax, stripc->wymin, stripc->wymax );   /* FIXME - can exist some redundancy here */
+            plwind( stripc->wxmin, stripc->wxmax, stripc->wymin, stripc->wymax );   // FIXME - can exist some redundancy here
             plcol( stripc->colline[p] ); pllsty( stripc->styline[p] );
             if ( ( stripc->npts[p] - 2 ) < 0 )
                 plP_movwor( stripc->x[p][stripc->npts[p] - 1], stripc->y[p][stripc->npts[p] - 1] );
@@ -290,7 +290,7 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
     }
     else
     {
-/* Regenerating plot */
+// Regenerating plot
         if ( stripc->acc == 0 )
         {
             for ( j = 0; j < PEN; j++ )
@@ -320,11 +320,11 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
     }
 }
 
-/*--------------------------------------------------------------------------*\
- * plstripd
- *
- * Deletes and releases memory used by a stripchart.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// plstripd
+//
+// Deletes and releases memory used by a stripchart.
+//--------------------------------------------------------------------------
 
 void c_plstripd( PLINT id )
 {

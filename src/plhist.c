@@ -1,43 +1,43 @@
-/* $Id$
- *
- *      Histogram plotter.
- *
- * Copyright (C) 2004  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+//      Histogram plotter.
+//
+// Copyright (C) 2004  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #include "plplotP.h"
 
-/*----------------------------------------------------------------------*\
- * void plhist()
- *
- * Draws a histogram of n values of a variable in array data[0..n-1] in
- * the range datmin to datmax using nbin bins. If "flags"'s first bit is 1, the
- * histogram is plotted in the current window. If not, the routine calls
- * "plenv" to set up the graphics environment.
- *
- * If flags's second bit is set, then items which fall outside the bin
- * range are ignored.
- *
- * If flags's third bit is set, the outside bars are the same size
- * as the rest.  The default old behaviour was for the first and last
- * bars to expand visually to fill the entire available space.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plhist()
+//
+// Draws a histogram of n values of a variable in array data[0..n-1] in
+// the range datmin to datmax using nbin bins. If "flags"'s first bit is 1, the
+// histogram is plotted in the current window. If not, the routine calls
+// "plenv" to set up the graphics environment.
+//
+// If flags's second bit is set, then items which fall outside the bin
+// range are ignored.
+//
+// If flags's third bit is set, the outside bars are the same size
+// as the rest.  The default old behaviour was for the first and last
+// bars to expand visually to fill the entire available space.
+//----------------------------------------------------------------------
 
 void
 c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
@@ -106,22 +106,22 @@ c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 
         plenv( datmin, datmax, (PLFLT) 0.0, (PLFLT) ( 1.1 * ymax ), 0, 0 );
     }
-    /* We pass on the highest couple of bits to the 'plbin' routine */
+    // We pass on the highest couple of bits to the 'plbin' routine
     plbin( nbin, x, y, ( flags & ( 4 + 8 + 16 + 32 ) ) >> 2 );
     free( (void *) x );
     free( (void *) y );
 }
 
-/*----------------------------------------------------------------------*\
- * void plbin()
- *
- * Plot a histogram using the arrays x and y to represent data values
- * and frequencies respectively. If flags first bit is false, x values
- * denote the lower edge of the bin, and if it is true, they denote
- * the center of the bin.  If flags second bit is true, then we assume
- * the edge bins are the same size as the rest (i.e. the edge bins
- * needn't go as far as the variables vpwxmi, vpwxma below).
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plbin()
+//
+// Plot a histogram using the arrays x and y to represent data values
+// and frequencies respectively. If flags first bit is false, x values
+// denote the lower edge of the bin, and if it is true, they denote
+// the center of the bin.  If flags second bit is true, then we assume
+// the edge bins are the same size as the rest (i.e. the edge bins
+// needn't go as far as the variables vpwxmi, vpwxma below).
+//----------------------------------------------------------------------
 
 void
 c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags )
@@ -135,7 +135,7 @@ c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags )
         return;
     }
 
-    /* Check x[i] are in ascending order */
+    // Check x[i] are in ascending order
 
     for ( i = 0; i < nbin - 1; i++ )
     {
@@ -193,7 +193,7 @@ c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags )
         {
             xmin = vpwxmi;
         }
-        /* Vince fixed bug May 1998 */
+        // Vince fixed bug May 1998
         xmax = MAX( 0.5 * ( x[0] + x[1] ), vpwxmi );
         if ( xmin < xmax )
         {

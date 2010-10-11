@@ -1,30 +1,30 @@
-/* $Id$
- *
- *      Routines to set various plplot parameters, such as char height,
- *      symbol size, tick length, line and fill patterns, etc.
- *
- * Copyright (C) 2004  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+// $Id$
+//
+//      Routines to set various plplot parameters, such as char height,
+//      symbol size, tick length, line and fill patterns, etc.
+//
+// Copyright (C) 2004  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #include "plplotP.h"
 
-/* Line pattern defaults */
+// Line pattern defaults
 
 static struct line
 {
@@ -33,7 +33,7 @@ static struct line
     PLINT space[4];
 } line[] = {
     {
-        0,                      /* Continuous line */
+        0,                      // Continuous line
         {
             0, 0, 0, 0
         },
@@ -106,13 +106,13 @@ static struct line
     }
 };
 
-/* Fill pattern defaults */
+// Fill pattern defaults
 
 static struct pattern
 {
-    PLINT nlines;               /* Number of lines in pattern (1 or 2) */
-    PLINT inc[2];               /* Inclination 10 ths of degrees */
-    PLINT del[2];               /* Spacing for each line */
+    PLINT nlines;               // Number of lines in pattern (1 or 2)
+    PLINT inc[2];               // Inclination 10 ths of degrees
+    PLINT del[2];               // Spacing for each line
 } pattern[] = {
     {
         1,
@@ -188,16 +188,16 @@ static struct pattern
     }
 };
 
-/* Set defining parameters for pattern fill */
+// Set defining parameters for pattern fill
 
 static void
 spat( PLINT inc[], PLINT del[], PLINT nlin );
 
-/*----------------------------------------------------------------------*\
- * void plschr()
- *
- * Set character height.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plschr()
+//
+// Set character height.
+//----------------------------------------------------------------------
 
 void
 c_plschr( PLFLT def, PLFLT scale )
@@ -208,11 +208,11 @@ c_plschr( PLFLT def, PLFLT scale )
     plsc->chrht = scale * plsc->chrdef;
 }
 
-/*----------------------------------------------------------------------*\
- * void plsmin()
- *
- * Set up lengths of minor tick marks.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plsmin()
+//
+// Set up lengths of minor tick marks.
+//----------------------------------------------------------------------
 
 void
 c_plsmin( PLFLT def, PLFLT scale )
@@ -223,11 +223,11 @@ c_plsmin( PLFLT def, PLFLT scale )
     plsc->minht = scale * plsc->mindef;
 }
 
-/*----------------------------------------------------------------------*\
- * void plsmaj()
- *
- * Set up lengths of major tick marks.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plsmaj()
+//
+// Set up lengths of major tick marks.
+//----------------------------------------------------------------------
 
 void
 c_plsmaj( PLFLT def, PLFLT scale )
@@ -238,11 +238,11 @@ c_plsmaj( PLFLT def, PLFLT scale )
     plsc->majht = scale * plsc->majdef;
 }
 
-/*----------------------------------------------------------------------*\
- * void plssym()
- *
- * Set symbol height.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plssym()
+//
+// Set symbol height.
+//----------------------------------------------------------------------
 
 void
 c_plssym( PLFLT def, PLFLT scale )
@@ -253,11 +253,11 @@ c_plssym( PLFLT def, PLFLT scale )
     plsc->symht = scale * plsc->symdef;
 }
 
-/*----------------------------------------------------------------------*\
- * void pllsty()
- *
- * Set line style.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void pllsty()
+//
+// Set line style.
+//----------------------------------------------------------------------
 
 void
 c_pllsty( PLINT lin )
@@ -278,11 +278,11 @@ c_pllsty( PLINT lin )
         &line[lin - 1].mark[0], &line[lin - 1].space[0] );
 }
 
-/*----------------------------------------------------------------------*\
- * void plpat()
- *
- * Set fill pattern directly.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plpat()
+//
+// Set fill pattern directly.
+//----------------------------------------------------------------------
 
 void
 c_plpat( PLINT nlin, PLINT *inc, PLINT *del )
@@ -310,12 +310,12 @@ c_plpat( PLINT nlin, PLINT *inc, PLINT *del )
     spat( inc, del, nlin );
 }
 
-/*----------------------------------------------------------------------*\
- * void plpsty()
- *
- * Set fill pattern, using one of the predefined patterns.
- * A fill pattern <= 0 indicates hardware fill.
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void plpsty()
+//
+// Set fill pattern, using one of the predefined patterns.
+// A fill pattern <= 0 indicates hardware fill.
+//----------------------------------------------------------------------
 
 void
 c_plpsty( PLINT patt )
@@ -346,11 +346,11 @@ c_plpsty( PLINT patt )
     }
 }
 
-/*----------------------------------------------------------------------*\
- * void spat()
- *
- * Set defining parameters for pattern fill
- \*----------------------------------------------------------------------*/
+//----------------------------------------------------------------------
+// void spat()
+//
+// Set defining parameters for pattern fill
+//----------------------------------------------------------------------
 
 static void
 spat( PLINT inc[], PLINT del[], PLINT nlin )
