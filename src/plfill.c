@@ -889,11 +889,11 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
 
         // The cases where the fill region is divided 3/1 --
         //    LL           LR           UR           UL
-//         +-----+      +-----+      +-----+      +-----+
-//         |     |      |     |      |    \|      |/    |
-//         |     |      |     |      |     |      |     |
-//         |\    |      |    /|      |     |      |     |
-//         +-----+      +-----+      +-----+      +-----+
+        // +-----+      +-----+      +-----+      +-----+
+        // |     |      |     |      |    \|      |/    |
+        // |     |      |     |      |     |      |     |
+        // |\    |      |    /|      |     |      |     |
+        // +-----+      +-----+      +-----+      +-----+
         //
         // Note when we go the long way around, if the direction is reversed the
         // three vertices must be visited in the opposite order.
@@ -1755,7 +1755,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
     // This end phase is reached only if no crossings are found.
 
     // If a fill_status of +/- 1 is known, use that to fill or not since
-//     +1 corresponds to all of polygon 2 inside polygon 1 and -1
+    // +1 corresponds to all of polygon 2 inside polygon 1 and -1
     // corresponds to none of polygon 2 inside polygon 1.
     if ( fill_status == -1 )
         return;
