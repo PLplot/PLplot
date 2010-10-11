@@ -3,12 +3,16 @@
 # $Id$
 
 # This script will run uncrustify on all source files registered in
-# the lists below and summarize which uncrustified files are
-# different.  Also there are options to view the differences in detail
+# the lists below (and scripts/convert_comment.py on all C source
+# files registerd below) and summarize which uncrustified or
+# comment-converted files would be different.  (convert_comment.py
+# converts /* ... */ style comments to the c99-acceptable // form of
+# comments because uncrustify does not (yet) have that configuration
+# choice.)  Also there are options to view the differences in detail
 # and/or apply them.  This script must be run from the top-level
 # directory of the PLplot source tree.
 
-# Copyright (C) 2009 Alan W. Irwin
+# Copyright (C) 2009-2010 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -110,7 +114,6 @@ previous runs of style_source.sh with their uncrustified versions.
 	echo "Immediate exit specified!"
 	exit
     fi
-
 fi
 
 export csource_LIST
@@ -120,6 +123,9 @@ csource_LIST="config.h.cmake"
 # src directory
 csource_LIST="$csource_LIST src/*.[ch]"
 
+# temporary
+exclude_c=ON
+if [ -z "$exclude_c" ] ; then
 # All C source (i.e., exclude qt.h) in include directory.
 csource_LIST="$csource_LIST `ls include/*.h include/*.h.in include/*.h.cmake |grep -v qt.h`" 
 
@@ -182,29 +188,47 @@ for source in $csource_LIST $cppsource_LIST $javasource_LIST $dsource_LIST ; do
     fi
 done
 
-uncrustify_source()
+# temporary
+fi
+transform_source()
 {
-# $1 is a list of source files of a particular language.
-# $2 is the language identification string for those source files in
-# the form needed by uncrustify.  From the uncrustify man page those
-# language id forms are C, CPP, D, CS, JAVA, PAWN, VALA, OC, OC+
+    # $1 is a list of source files of a particular language.
+    # $2 is the language identification string for those source files in
+    # the form needed by uncrustify.  From the uncrustify man page those
+    # language id forms are C, CPP, D, CS, JAVA, PAWN, VALA, OC, OC+
+    u_command="uncrustify -c uncrustify.cfg -q -l $2"
+    # $3 is either "comments" to indicate comments will be transformed
+    # using scripts/convert_comment.py or any other string (or
+    # nothing) to indicate uncrustify will be used.
+    if [ "$3" = "comments" ] ; then
+        c_command="scripts/convert_comment.py"
+    else
+        c_command="cat -"
+    fi
+
+    # Process $c_command after $u_command so that comments will be rendered
+    # in standard form by uncrustify before scripts/convert_comment.py
+    # is run.
 
     for language_source in $1 ; do
-	uncrustify -c uncrustify.cfg -q -l $2 < $language_source | cmp --quiet $language_source -
+	$u_command < $language_source | $c_command | \
+	    cmp --quiet $language_source -
 	if [ "$?" -ne 0 ] ; then
 	    ls $language_source
 	    if [ "$diff" = "ON" ] ; then
-		uncrustify -c uncrustify.cfg -q -l $2 < $language_source | diff $diff_options $language_source -
+		$u_command < $language_source | $c_command | \
+		    diff $diff_options $language_source -
 	    fi
 
 	    if [ "$apply" = "ON" ] ; then
-		uncrustify -c uncrustify.cfg -q -l $2 --no-backup $language_source
+		$u_command < $language_source | $c_command >| /tmp/temporary.file
+		mv -f /tmp/temporary.file $language_source
 	    fi
 	fi
     done
 }
 
-uncrustify_source "$csource_LIST" C
-uncrustify_source "$cppsource_LIST" CPP
-uncrustify_source "$javasource_LIST" JAVA
-uncrustify_source "$dsource_LIST" D
+transform_source "$csource_LIST" C "comments"
+#transform_source "$cppsource_LIST" CPP
+#transform_source "$javasource_LIST" JAVA
+#transform_source "$dsource_LIST" D
