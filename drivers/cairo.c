@@ -694,10 +694,10 @@ void text_end_cairo( PLStream *pls, EscText *args )
     pango_layout_set_markup( layout, aStream->pangoMarkupString, -1 );
     pango_layout_get_pixel_size( layout, &textXExtent, &textYExtent );
 
-    /* If asked, set the string length and return */
+    /* If asked, set the string length (in mm) and return */
     if (pls->get_string_length)
     {
-	pls->string_length = textXExtent;
+        pls->string_length = (PLFLT)textXExtent * 25.4 / DPI;
 	return;
     }
 
