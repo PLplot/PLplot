@@ -232,6 +232,18 @@ c_pljoin(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2);
  void
 c_pllab(const char *xlabel, const char *ylabel, const char *tlabel);
 
+/*
+ void
+c_pllegend( PLINT opt, PLFLT x, PLFLT y, PLFLT plot_width, PLINT bg_color,
+            PLINT nlegend, PLINT *opt_array,
+            PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
+            PLFLT text_justification, PLINT *text_colors, char **text,
+            PLINT *box_colors, PLINT *box_patterns, PLFLT *box_scales,
+            PLINT *line_colors, PLINT *line_styles, PLINT *line_widths,
+            PLINT *symbol_colors, PLFLT *symbol_scales,
+            PLINT *symbol_numbers, PLINT *symbols );
+*/
+
  void
 c_pllightsource(PLFLT x, PLFLT y, PLFLT z);
 

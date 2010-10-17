@@ -46,6 +46,7 @@ typedef void ( *ML_PLOTTER_FUNC )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer );
 typedef PLINT ( *ML_DEFINED_FUNC )( PLFLT, PLFLT );
 typedef void ( *ML_MAPFORM_FUNC )( PLINT, PLFLT*, PLFLT* );
 typedef void ( *ML_LABEL_FUNC )( PLINT, PLFLT, char*, PLINT, PLPointer );
+typedef PLINT ( *ML_VARIANT_FUNC )( PLINT );
 
 /*
  *
@@ -639,31 +640,50 @@ int translate_parse_option( int parse_option )
     return translated_option;
 }
 
+// Copy a string array
+#define INIT_STRING_ARRAY( o ) \
+    int o##_length; \
+    o##_length = Wosize_val( o ); \
+    const char *c_##o[o##_length]; \
+    for ( i = 0; i < o##_length; i++ ) { c_##o[i] = String_val( Field( o, i ) ); }
+
+// Copy an int array, o, of n element to the C array c
+#define INIT_INT_ARRAY( o ) \
+    int o##_length; \
+    o##_length = Wosize_val( o ); \
+    int c_##o[o##_length]; \
+    for ( i = 0; i < (o##_length); i++ ) { (c_##o)[i] = Int_val( Field( (o), i ) ); }
+
+int lor_ml_list( value list, ML_VARIANT_FUNC variant_f )
+{
+    CAMLparam1( list );
+    int result;
+
+    result = 0;
+    while ( list != Val_emptylist )
+    {
+        // Accumulate the elements of the list
+        result = result | variant_f( Int_val( Field( list, 0 ) ) );
+        // Point to the tail of the list for the next loop
+        list = Field( list, 1 );
+    }
+
+    CAMLreturn( result );
+}
+
 value ml_plparseopts( value argv, value parse_method )
 {
     CAMLparam2( argv, parse_method );
     int i;
     int result;
-    int argv_length;
     int combined_parse_method;
-    argv_length = Wosize_val( argv );
     // Make a copy of the command line argument strings
-    const char* argv_copy[argv_length];
-    for ( i = 0; i < argv_length; i++ )
-    {
-        argv_copy[i] = String_val( Field( argv, i ) );
-    }
+    INIT_STRING_ARRAY( argv )
+
     // OR the elements of the parse_method list together
-    combined_parse_method = 0;
-    while ( parse_method != Val_emptylist )
-    {
-        combined_parse_method =
-            combined_parse_method |
-            translate_parse_option( Int_val( Field( parse_method, 0 ) ) );
-        // Point to the tail of the list for the next loop
-        parse_method = Field( parse_method, 1 );
-    }
-    result = plparseopts( &argv_length, argv_copy, combined_parse_method );
+    combined_parse_method = lor_ml_list( parse_method, translate_parse_option );
+
+    result = plparseopts( &argv_length, c_argv, combined_parse_method );
     if ( result != 0 )
     {
         char exception_message[MAX_EXCEPTION_MESSAGE_LENGTH];
@@ -713,6 +733,96 @@ value ml_plstripc_byte( value* argv, int argn )
         argv[5], argv[6], argv[7], argv[8], argv[9],
         argv[10], argv[11], argv[12], argv[13], argv[14],
         argv[15], argv[16], argv[17], argv[18] );
+}
+
+int translate_legend_option( int legend_option )
+{
+    int translated_option;
+    switch ( legend_option )
+    {
+    case 0: translated_option = PL_LEGEND_NONE; break;
+    case 1: translated_option = PL_LEGEND_COLOR_BOX; break;
+    case 2: translated_option = PL_LEGEND_LINE; break;
+    case 3: translated_option = PL_LEGEND_SYMBOL; break;
+    case 4: translated_option = PL_LEGEND_TEXT_LEFT; break;
+    case 5: translated_option = PL_LEGEND_BACKGROUND; break;
+    default: translated_option = -1;
+    }
+    return translated_option;
+}
+
+value ml_pllegend( value opt, value x, value y, value plot_width,
+                   value bg_color, value opt_array,
+                   value text_offset, value text_scale, value text_spacing,
+                   value text_justification, value text_colors, value text,
+                   value box_colors, value box_patterns, value box_scales,
+                   value line_colors, value line_styles, value line_widths,
+                   value symbol_colors, value symbol_scales,
+                   value symbol_numbers, value symbols )
+{
+    CAMLparam5( opt, x, y, plot_width, bg_color );
+    CAMLxparam5( opt_array, text_offset, text_scale, text_spacing,
+                 text_justification );
+    CAMLxparam5( text_colors, text, box_colors, box_patterns, box_scales );
+    CAMLxparam5( line_colors, line_styles, line_widths, symbol_colors,
+                 symbol_scales );
+    CAMLxparam2( symbol_numbers, symbols );
+
+    // Counter
+    int i;
+    // General legend options
+    int c_opt;
+    // Number of legend entries
+    int n_legend;
+    n_legend = Wosize_val( opt_array );
+    // Options for each legend entry
+    int c_opt_array[n_legend];
+
+    // Assume that the dimensions all line up on the OCaml side, so we don't
+    // need to do any further dimension checks.
+
+    // Define and initialize all of the C arrays to pass in to pllegend
+    INIT_STRING_ARRAY( text )
+    INIT_INT_ARRAY( text_colors )
+    INIT_INT_ARRAY( box_colors )
+    INIT_INT_ARRAY( box_patterns )
+    INIT_INT_ARRAY( line_colors )
+    INIT_INT_ARRAY( line_styles )
+    INIT_INT_ARRAY( line_widths )
+    INIT_INT_ARRAY( symbol_colors )
+    INIT_INT_ARRAY( symbol_numbers )
+    INIT_INT_ARRAY( symbols )
+
+    // Translate the legend configuration options
+    c_opt = lor_ml_list( opt, translate_legend_option );
+
+    for ( i = 0; i < n_legend; i++ )
+    {
+        c_opt_array[i] =
+            lor_ml_list( Field( opt_array, i ), translate_legend_option );
+    }
+
+    pllegend( c_opt, Double_val( x ), Double_val( y ),
+              Double_val( plot_width ), Int_val( bg_color ), n_legend,
+              c_opt_array,
+              Double_val( text_offset ), Double_val( text_scale ),
+              Double_val( text_spacing ), Double_val( text_justification ),
+              c_text_colors, c_text,
+              c_box_colors, c_box_patterns, (double *)box_scales,
+              c_line_colors, c_line_styles, c_line_widths,
+              c_symbol_colors, (double *)symbol_scales, c_symbol_numbers,
+              c_symbols );
+
+    CAMLreturn( Val_unit );
+}
+
+value ml_pllegend_byte( value* argv, int argn )
+{
+    return ml_pllegend( argv[0], argv[1], argv[2], argv[3], argv[4],
+                        argv[5], argv[6], argv[7], argv[8], argv[9],
+                        argv[10], argv[11], argv[12], argv[13], argv[14],
+                        argv[15], argv[16], argv[17], argv[18], argv[19],
+                        argv[20], argv[21] );
 }
 
 /* pltr* function implementations */

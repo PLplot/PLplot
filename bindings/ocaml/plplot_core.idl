@@ -212,6 +212,15 @@ quote(mlmli, "type plplot_axis_type = \
                 PL_Y_AXIS | \
                 PL_Z_AXIS");
 
+// Hand-translated PL_LEGEND_* flags for use with pllegend
+quote(mlmli, "type plplot_legend_option_type = \
+                PL_LEGEND_NONE | \
+                PL_LEGEND_COLOR_BOX | \
+                PL_LEGEND_LINE | \
+                PL_LEGEND_SYMBOL | \
+                PL_LEGEND_TEXT_LEFT | \
+                PL_LEGEND_BACKGROUND");
+
 // Custom axis labeling
 quote(ml, "external ml_plslabelfunc : unit -> unit = \"ml_plslabelfunc\"");
 quote(ml,
@@ -253,4 +262,5 @@ quote(mli, "val plunset_exit : unit -> unit");
 
 RAW_ML(external plgriddata : float array -> float array -> float array -> float array -> float array -> plplot_grid_method_type -> float -> float array array = "ml_plgriddata_bytecode" "ml_plgriddata")
 RAW_ML(external plparseopts : string array -> plplot_parse_method_type list -> unit = "ml_plparseopts")
+RAW_ML(external pllegend : plplot_legend_option_type list -> float -> float -> float -> int -> plplot_legend_option_type list array -> float -> float -> float -> float -> int array -> string array -> int array -> int array -> float array -> int array -> int array -> int array -> int array -> float array -> int array -> int array -> unit = "ml_pllegend_byte" "ml_pllegend")
 

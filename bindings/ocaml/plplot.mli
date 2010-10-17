@@ -29,6 +29,14 @@ type plplot_axis_type =
   | PL_Y_AXIS
   | PL_Z_AXIS
 
+type plplot_legend_option_type =
+    PL_LEGEND_NONE
+  | PL_LEGEND_COLOR_BOX
+  | PL_LEGEND_LINE
+  | PL_LEGEND_SYMBOL
+  | PL_LEGEND_TEXT_LEFT
+  | PL_LEGEND_BACKGROUND
+
 (** {3 A higher-level OCaml interface to PLplot} *)
 module Plot :
   sig
@@ -655,6 +663,12 @@ external pljoin : float -> float -> float -> float -> unit
   = "camlidl_plplot_core_c_pljoin"
 external pllab : string -> string -> string -> unit
   = "camlidl_plplot_core_c_pllab"
+external pllegend : plplot_legend_option_type list -> float -> float ->
+  float -> int -> plplot_legend_option_type list array -> float -> float ->
+  float -> float -> int array -> string array -> int array -> int array ->
+  float array -> int array -> int array -> int array -> int array ->
+  float array -> int array -> int array -> unit
+  = "ml_pllegend_byte" "ml_pllegend"
 external pllightsource : float -> float -> float -> unit
   = "camlidl_plplot_core_c_pllightsource"
 external plline : float array -> float array -> unit

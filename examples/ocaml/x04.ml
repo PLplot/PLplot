@@ -14,11 +14,6 @@ let pi = atan 1.0 *. 4.0
 \*--------------------------------------------------------------------------*)
 
 let plot1 plot_type =
-  (*
-    int i;
-    static PLFLT freql[101], ampl[101], phase[101];
-    PLFLT f0, freq;
-  *)
   pladv 0;
 
   (* Set up data for log plot *)
@@ -51,7 +46,7 @@ let plot1 plot_type =
   (* Plot ampl vs freq *)
   plcol0 2;
   plline freql ampl;
-  plcol0 1;
+  plcol0 2;
   plptex 1.6 (-30.0) 1.0 (-20.0) 0.5 "-20 dB/decade";
 
   (* Put labels on *)
@@ -68,12 +63,62 @@ let plot1 plot_type =
     plbox "" 0.0 0 "cmstv" 30.0 3;
     plcol0 3;
     plline freql phase;
+    plpoin freql phase 3;
     plcol0 3;
     plmtex "r" 5.0 0.5 0.5 "Phase shift (degrees)";
+
+    (* Draw a legend *)
+    (* First legend entry. *)
+    let opt_array = [| [PL_LEGEND_LINE]; [PL_LEGEND_LINE; PL_LEGEND_SYMBOL] |] in
+    let text_colors = [| 2; 3 |] in
+    let text = [| "Amplitude"; "Phase shift" |] in
+    let line_colors = [| 2; 3 |] in
+    let line_styles = [| 1; 1 |] in
+    let line_widths = [| 1; 1 |] in
+    (* note from the above opt_array the first symbol (and box) indices
+       do not matter *)
+
+    (* Second legend entry. *)
+    let symbol_colors = [| 0; 3 |] in
+    let symbol_scales = [| 0.0; 1.0 |] in
+    let symbol_numbers = [| 0; 4 |] in
+    let symbols = [| 0; 3 |] in
+    (* from the above opt_arrays we can completely ignore everything
+       to do with boxes *)
+
+    plscol0a 15 32 32 32 0.90;
+    pllegend [PL_LEGEND_BACKGROUND] 0.57 0.85 0.06 15 opt_array
+      1.0 1.0 2.0
+      1.0 text_colors text
+      [||] [||] [||]
+      line_colors line_styles line_widths
+      symbol_colors symbol_scales symbol_numbers symbols;
     ()
   )
-  else
+  else if plot_type = 1 then (
+    (* Draw a legend *)
+    (* First legend entry. *)
+    let opt_array = [| [PL_LEGEND_LINE] |] in
+    let text_colors = [| 2 |] in
+    let text = [| "Amplitude" |] in
+    let line_colors = [| 2 |] in
+    let line_styles = [| 1 |] in
+    let line_widths = [| 1 |] in
+    (* note from the above opt_array the first symbol (and box) indices
+       do not matter *)
+
+    (* from the above opt_arrays we can completely ignore everything
+       to do with boxes and symbols *)
+
+    plscol0a 15 32 32 32 0.90;
+    pllegend [PL_LEGEND_BACKGROUND] 0.57 0.85 0.06 15 opt_array
+      1.0 1.0 2.0
+      1.0 text_colors text
+      [||] [||] [||]
+      line_colors line_styles line_widths
+      [||] [||] [||] [||];
     ()
+  )
 
 (*--------------------------------------------------------------------------*\
  * Illustration of logarithmic axes, and redefinition of window.

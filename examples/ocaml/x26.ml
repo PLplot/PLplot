@@ -89,6 +89,12 @@ let line_label = [|
   "-20 dB/десяток";
 |]
 
+(* Short rearranged versions of y_label and alty_label. *)
+let legend_text = [|
+  [|"Amplitude"; "Phase shift"|];
+  [|"Амплитуда"; "Фазовый сдвиг"|];
+|]
+
 let pi = atan 1.0 *. 4.0
 
 (*--------------------------------------------------------------------------*\
@@ -96,13 +102,7 @@ let pi = atan 1.0 *. 4.0
  *
  * Log-linear plot.
 \*--------------------------------------------------------------------------*)
-let plot1 label_type x_label y_label alty_label title_label line_label =
-  (*
-    int i;
-    static PLFLT freql[101], ampl[101], phase[101];
-    PLFLT f0, freq;
-  *)
-
+let plot1 label_type x_label y_label alty_label legend_text title_label line_label =
   pladv 0;
 
   (* Set up data for log plot *)
@@ -141,7 +141,7 @@ let plot1 label_type x_label y_label alty_label title_label line_label =
 
   plcol0 2;
   plline freql ampl;
-  plcol0 1;
+  plcol0 2;
   plptex 1.6 (-30.0) 1.0 (-20.0) 0.5 line_label;
 
   (* Put labels on *)
@@ -152,18 +152,43 @@ let plot1 label_type x_label y_label alty_label title_label line_label =
   plmtex "l" 5.0 0.5 0.5 y_label;
 
   (* For the gridless case, put phase vs freq on same plot *)
+  if label_type = 0 then (
+    plcol0 1;
+    plwind (-2.0) 3.0 (-100.0) 0.0;
+    plbox "" 0.0 0 "cmstv" 30.0 3;
+    plcol0 3;
+    plline freql phase;
+    plpoin freql phase 3;
+    plcol0 3;
+    plmtex "r" 5.0 0.5 0.5 alty_label;
+  );
 
-    if label_type = 0 then (
-      plcol0 1;
-      plwind (-2.0) 3.0 (-100.0) 0.0;
-      plbox "" 0.0 0 "cmstv" 30.0 3;
-      plcol0 3;
-      plline freql phase;
-      plcol0 3;
-      plmtex "r" 5.0 0.5 0.5 alty_label;
-    )
-    else
-      ()
+  (* Draw a legend *)
+  (* First legend entry. *)
+  let opt_array = [| [PL_LEGEND_LINE]; [PL_LEGEND_LINE; PL_LEGEND_SYMBOL] |] in
+  let text_colors = [| 2; 3 |] in
+  let line_colors = [| 2; 3 |] in
+  let line_styles = [| 1; 1 |] in
+  let line_widths = [| 1; 1 |] in
+  (* note from the above opt_array the first symbol (and box) indices
+     do not matter *)
+
+  (* Second legend entry. *)
+  let symbol_colors = [| 0; 3 |] in
+  let symbol_scales = [| 0.0; 1.0 |] in
+  let symbol_numbers = [| 0; 4 |] in
+  let symbols = [| 0; 3 |] in
+  (* from the above opt_arrays we can completely ignore everything
+     to do with boxes *)
+
+  plscol0a 15 32 32 32 0.90;
+  pllegend [PL_LEGEND_BACKGROUND] 0.57 0.85 0.06 15 opt_array
+    1.0 1.0 2.0
+    1.0 text_colors legend_text
+    [||] [||] [||]
+    line_colors line_styles line_widths
+    symbol_colors symbol_scales symbol_numbers symbols;
+  ()
 
 (*--------------------------------------------------------------------------*\
  * Illustration of logarithmic axes, and redefinition of window.
@@ -179,7 +204,7 @@ let () =
   (* Make log plots using two different styles. *)
   Array.iteri (
     fun i xl ->
-      plot1 0 xl y_label.(i) alty_label.(i) title_label.(i) line_label.(i)
+      plot1 0 xl y_label.(i) alty_label.(i) legend_text.(i) title_label.(i) line_label.(i)
   ) x_label;
 
   plend ();
