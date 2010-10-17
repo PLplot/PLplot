@@ -843,6 +843,24 @@ plstrl( const char *string )
     PLINT       ch, i, length, level = 0;
     PLFLT       width = 0., xorg = 0., dscale, scale, def, ht;
 
+    // If the driver will compute string lengths for us then we ask 
+    // it do so by setting get_string_length flag. When this is set
+    // the driver will set the string_length variable instead of
+    // actually rendering the string.
+    //
+    // TODO:
+    //   Is plmtex the best string diplay routine to use?
+    //   Will this work for buffered plots?
+
+    if (plsc->has_string_length)
+    {
+	plsc->get_string_length = 1;
+	c_plmtex("t", 0.0, 0.0, 0.0, string);
+	plsc->get_string_length = 0;
+	return (PLFLT) plsc->string_length;
+    }
+
+
     plgchr( &def, &ht );
     dscale = 0.05 * ht;
     scale  = dscale;
