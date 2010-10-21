@@ -85,7 +85,8 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_use_persistence( PlplotCanvas* self, gbool
  *
  *  This should be kept up-to-date with plplot.h
  *
- * /*--------------------------------------------------------------------------*/
+ *
+ *--------------------------------------------------------------------------*/
 
 
 /* set the format of the contour labels */
@@ -158,7 +159,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_cont( PlplotCanvas* self, PLFLT **f, PLINT
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_fcont( PlplotCanvas* self, PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ), PLPointer f2eval_data, PLINT nx, PLINT ny, PLINT kx, PLINT lx, PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ), PLPointer pltr_data );
 
-/* /\* Copies state parameters from the reference stream to the current stream. *\/ */
+/* Copies state parameters from the reference stream to the current stream. */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_cpstrm(PlplotCanvas* self, PLINT iplsr, PLINT flags); */
 
@@ -172,20 +173,20 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_did2pc( PlplotCanvas* self, PLFLT *xmin, P
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_dip2dc( PlplotCanvas* self, PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax );
 
-/* /\* End a plotting session for all open streams. *\/ */
+/* End a plotting session for all open streams. */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_plend(PlplotCanvas* self); */
 
-/* /\* End a plotting session for the current stream only. *\/ */
+/* End a plotting session for the current stream only. */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_plend1(PlplotCanvas* self); */
 
-/* /\* Simple interface for defining viewport and window. *\/ */
+/* Simple interface for defining viewport and window. */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_plenv(PlplotCanvas* self, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLINT just, PLINT axis); */
 
-/* /\* similar to plenv() above, but in multiplot mode does not advance the subpage, */
-/*  instead the current subpage is cleared *\/ */
+/* similar to plenv() above, but in multiplot mode does not advance the subpage, */
+/*  instead the current subpage is cleared */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_plenv0(PlplotCanvas* self, PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLINT just, PLINT axis); */
 
@@ -201,7 +202,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_errx( PlplotCanvas* self, PLINT n, PLFLT *
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_erry( PlplotCanvas* self, PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax );
 
-/* /\* Advance to the next family file on the next new page *\/ */
+/* Advance to the next family file on the next new page */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_famadv(PlplotCanvas* self); */
 
@@ -213,7 +214,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_fill( PlplotCanvas* self, PLINT n, PLFLT *
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_fill3( PlplotCanvas* self, PLINT n, PLFLT *x, PLFLT *y, PLFLT *z );
 
-/* /\* Flushes the output stream.  Use sparingly, if at all. *\/ */
+/* Flushes the output stream.  Use sparingly, if at all. */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_flush(PlplotCanvas* self); */
 
@@ -261,7 +262,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_gdiplt( PlplotCanvas* self, PLFLT *p_xmin,
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_gfci( PlplotCanvas* self, PLUNICODE *pfci );
 
-/* /\* Get family file parameters *\/ */
+/* Get family file parameters */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_gfam(PlplotCanvas* self, PLINT *p_fam, PLINT *p_num, PLINT *p_bmax); */
 
@@ -277,7 +278,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_glevel( PlplotCanvas* self, PLINT *p_level
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_gpage( PlplotCanvas* self, PLFLT *p_xp, PLFLT *p_yp, PLINT *p_xleng, PLINT *p_yleng, PLINT *p_xoff, PLINT *p_yoff );
 
-/* /\* Switches to graphics screen. *\/ */
+/* Switches to graphics screen. */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_gra(PlplotCanvas* self); */
 
@@ -289,7 +290,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_griddata( PlplotCanvas* self, PLFLT *x, PL
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_gspa( PlplotCanvas* self, PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
 
-/* /\* Get current stream number. *\/ */
+/* Get current stream number. */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_gstrm(PlplotCanvas* self, PLINT *p_strm); */
 
@@ -325,7 +326,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_hist( PlplotCanvas* self, PLINT n, PLFLT *
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_hls( PlplotCanvas* self, PLFLT h, PLFLT l, PLFLT s );
 
-/* /\* Initializes PLplot, using preset or default options *\/ */
+/* Initializes PLplot, using preset or default options */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_plinit(PlplotCanvas* self); */
 
@@ -369,7 +370,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_mesh( PlplotCanvas* self, PLFLT *x, PLFLT 
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_meshc( PlplotCanvas* self, PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel );
 
-/* /\* Creates a new stream and makes it the default.  *\/ */
+/* Creates a new stream and makes it the default.  */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_mkstrm(PlplotCanvas* self, PLINT *p_strm); */
 
@@ -471,7 +472,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_scolor( PlplotCanvas* self, PLINT color );
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_scompression( PlplotCanvas* self, PLINT compression );
 
-/* /\* Set the device (keyword) name *\/ */
+/* Set the device (keyword) name */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_sdev(PlplotCanvas* self, const char *devname); */
 
@@ -500,7 +501,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_sdiplz( PlplotCanvas* self, PLFLT xmin, PL
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_sesc( PlplotCanvas* self, char esc );
 
-/* /\* Set family file parameters *\/ */
+/* Set family file parameters */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_sfam(PlplotCanvas* self, PLINT fam, PLINT num, PLINT bmax); */
 
@@ -526,7 +527,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_fshade( PlplotCanvas* self, PLFLT ( *f2eva
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_smaj( PlplotCanvas* self, PLFLT def, PLFLT scale );
 
-/* /\* Set the memory area to be plotted (with the 'mem' driver) *\/ */
+/* Set the memory area to be plotted (with the 'mem' driver) */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_smem(PlplotCanvas* self, PLINT maxx, PLINT maxy, void *plotmem); */
 
@@ -534,7 +535,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_smaj( PlplotCanvas* self, PLFLT def, PLFLT
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_smin( PlplotCanvas* self, PLFLT def, PLFLT scale );
 
-/* /\* Set orientation.  Must be done before calling plinit. *\/ */
+/* Set orientation.  Must be done before calling plinit. */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_sori(PlplotCanvas* self, PLINT ori); */
 
@@ -542,11 +543,11 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_smin( PlplotCanvas* self, PLFLT def, PLFLT
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_spage( PlplotCanvas* self, PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff );
 
-/* /\* Set the pause (on end-of-page) status *\/ */
+/* Set the pause (on end-of-page) status */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_spause(PlplotCanvas* self, PLINT pause); */
 
-/* /\* Set stream number.  *\/ */
+/* Set stream number.  */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_sstrm(PlplotCanvas* self, PLINT strm); */
 
@@ -558,23 +559,23 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_ssub( PlplotCanvas* self, PLINT nx, PLINT 
 
 PLDLLIMPEXP_GNOME2 void plplot_canvas_ssym( PlplotCanvas* self, PLFLT def, PLFLT scale );
 
-/* /\* Initialize PLplot, passing in the windows/page settings. *\/ */
+/* Initialize PLplot, passing in the windows/page settings. */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_star(PlplotCanvas* self, PLINT nx, PLINT ny); */
 
-/* /\* Initialize PLplot, passing the device name and windows/page settings. *\/ */
+/* Initialize PLplot, passing the device name and windows/page settings. */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_start(PlplotCanvas* self, const char *devname, PLINT nx, PLINT ny); */
 
-/* /\* Add a point to a stripchart.  *\/ */
+/* Add a point to a stripchart.  */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_stripa(PlplotCanvas* self, PLINT id, PLINT pen, PLFLT x, PLFLT y); */
 
-/* /\* Create 1d stripchart *\/ */
+/* Create 1d stripchart */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_stripc(PlplotCanvas* self, PLINT *id, char *xspec, char *yspec, PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax, PLFLT xlpos, PLFLT ylpos, PLINT y_ascl, PLINT acc, PLINT colbox, PLINT collab, PLINT colline[], PLINT styline[], char *legline[], char *labx, char *laby, char *labtop); */
 
-/* /\* Deletes and releases memory used by a stripchart.  *\/ */
+/* Deletes and releases memory used by a stripchart.  */
 
 /* PLDLLIMPEXP_GNOME2 void plplot_canvas_stripd(PlplotCanvas* self, PLINT id); */
 
