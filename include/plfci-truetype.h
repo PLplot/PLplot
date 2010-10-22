@@ -1,29 +1,29 @@
-/*
- * This header file contains the lookup table used for converting between
- * FCIs (font characterization integers) and font names for TrueType fonts.
- *
- * Copyright (C) 2005  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+//
+// This header file contains the lookup table used for converting between
+// FCIs (font characterization integers) and font names for TrueType fonts.
+//
+// Copyright (C) 2005  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
-/* N.B. When updating this table by hand be sure to keep it in
- * ascending order in fci!
- */
+// N.B. When updating this table by hand be sure to keep it in
+// ascending order in fci!
+//
 #define N_TrueTypeLookup    30
 static const FCI_to_FontName_Table TrueTypeLookup[N_TrueTypeLookup] = {
     { PL_FCI_MARK | 0x000, (unsigned char *) PL_FREETYPE_SANS                },

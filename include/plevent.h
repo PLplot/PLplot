@@ -1,106 +1,106 @@
-/* $Id$
- *
- *  Input event (especially keyboard) definitions for use from plplot
- *  event handlers.
- *
- *  Key definitions are taken from the X11/keysymdef.h include file, with
- *  some changes:
- *      - only the control keys are retained
- *      - the XK prefix has been changed to PLK
- *      - control keys with ASCII equivalents use the ASCII code
- *
- *  By using the ASCII equivalent (if it exists) for all control keys, it
- *  is easier to handle keyboard input from any device which is ASCII based.
- *  Devices which use some other kind of key encoding must translate the raw
- *  keycodes to those used here.
- */
+// $Id$
+//
+//  Input event (especially keyboard) definitions for use from plplot
+//  event handlers.
+//
+//  Key definitions are taken from the X11/keysymdef.h include file, with
+//  some changes:
+//      - only the control keys are retained
+//      - the XK prefix has been changed to PLK
+//      - control keys with ASCII equivalents use the ASCII code
+//
+//  By using the ASCII equivalent (if it exists) for all control keys, it
+//  is easier to handle keyboard input from any device which is ASCII based.
+//  Devices which use some other kind of key encoding must translate the raw
+//  keycodes to those used here.
+//
 
 #ifndef __PLEVENT_H__
 #define __PLEVENT_H__
 
-/* Key definitions */
+// Key definitions
 
-/***********************************************************
- * Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts,
- * and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
- *
- *                      All Rights Reserved
- *
- * Permission to use, copy, modify, and distribute this software and its
- * documentation for any purpose and without fee is hereby granted,
- * provided that the above copyright notice appear in all copies and that
- * both that copyright notice and this permission notice appear in
- * supporting documentation, and that the names of Digital or MIT not be
- * used in advertising or publicity pertaining to distribution of the
- * software without specific, written prior permission.
- *
- * DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
- * ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
- * DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
- * ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
- * WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
- * ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
- * SOFTWARE.
- *
- ******************************************************************/
+//**********************************************************
+// Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts,
+// and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
+//
+//                      All Rights Reserved
+//
+// Permission to use, copy, modify, and distribute this software and its
+// documentation for any purpose and without fee is hereby granted,
+// provided that the above copyright notice appear in all copies and that
+// both that copyright notice and this permission notice appear in
+// supporting documentation, and that the names of Digital or MIT not be
+// used in advertising or publicity pertaining to distribution of the
+// software without specific, written prior permission.
+//
+// DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+// ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
+// DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
+// ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+// WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+// SOFTWARE.
+//
+//****************************************************************
 
-/* Miscellaneous control keys, those with ASCII equivalents */
+// Miscellaneous control keys, those with ASCII equivalents
 
-#define PLK_BackSpace    0x08           /* back space, back char */
+#define PLK_BackSpace    0x08           // back space, back char
 #define PLK_Tab          0x09
-#define PLK_Linefeed     0x0A           /* Linefeed, LF */
-#define PLK_Return       0x0D           /* Return, enter */
+#define PLK_Linefeed     0x0A           // Linefeed, LF
+#define PLK_Return       0x0D           // Return, enter
 #define PLK_Escape       0x1B
-#define PLK_Delete       0xFF           /* Delete, rubout */
+#define PLK_Delete       0xFF           // Delete, rubout
 
-/* Those without ASCII equivalents */
+// Those without ASCII equivalents
 
 #define PLK_Clear          0xFF0B
-#define PLK_Pause          0xFF13       /* Pause, hold */
+#define PLK_Pause          0xFF13       // Pause, hold
 #define PLK_Scroll_Lock    0xFF14
 
-/* Cursor control & motion */
+// Cursor control & motion
 
 #define PLK_Home     0xFF50
-#define PLK_Left     0xFF51             /* Move left, left arrow */
-#define PLK_Up       0xFF52             /* Move up, up arrow */
-#define PLK_Right    0xFF53             /* Move right, right arrow */
-#define PLK_Down     0xFF54             /* Move down, down arrow */
-#define PLK_Prior    0xFF55             /* Prior, previous (Page Up) */
-#define PLK_Next     0xFF56             /* Next (Page Down) */
-#define PLK_End      0xFF57             /* EOL */
-#define PLK_Begin    0xFF58             /* BOL */
+#define PLK_Left     0xFF51             // Move left, left arrow
+#define PLK_Up       0xFF52             // Move up, up arrow
+#define PLK_Right    0xFF53             // Move right, right arrow
+#define PLK_Down     0xFF54             // Move down, down arrow
+#define PLK_Prior    0xFF55             // Prior, previous (Page Up)
+#define PLK_Next     0xFF56             // Next (Page Down)
+#define PLK_End      0xFF57             // EOL
+#define PLK_Begin    0xFF58             // BOL
 
-/* Misc Functions */
+// Misc Functions
 
-#define PLK_Select           0xFF60     /* Select, mark */
+#define PLK_Select           0xFF60     // Select, mark
 #define PLK_Print            0xFF61
-#define PLK_Execute          0xFF62     /* Execute, run, do */
-#define PLK_Insert           0xFF63     /* Insert, insert here */
-#define PLK_Undo             0xFF65     /* Undo, oops */
-#define PLK_Redo             0xFF66     /* redo, again */
+#define PLK_Execute          0xFF62     // Execute, run, do
+#define PLK_Insert           0xFF63     // Insert, insert here
+#define PLK_Undo             0xFF65     // Undo, oops
+#define PLK_Redo             0xFF66     // redo, again
 #define PLK_Menu             0xFF67
-#define PLK_Find             0xFF68     /* Find, search */
-#define PLK_Cancel           0xFF69     /* Cancel, stop, abort, exit */
-#define PLK_Help             0xFF6A     /* Help, ? */
+#define PLK_Find             0xFF68     // Find, search
+#define PLK_Cancel           0xFF69     // Cancel, stop, abort, exit
+#define PLK_Help             0xFF6A     // Help, ?
 #define PLK_Break            0xFF6B
-#define PLK_Mode_switch      0xFF7E     /* Character set switch */
-#define PLK_script_switch    0xFF7E     /* Alias for mode_switch */
+#define PLK_Mode_switch      0xFF7E     // Character set switch
+#define PLK_script_switch    0xFF7E     // Alias for mode_switch
 #define PLK_Num_Lock         0xFF7F
 
-/* Keypad Functions, keypad numbers cleverly chosen to map to ascii */
+// Keypad Functions, keypad numbers cleverly chosen to map to ascii
 
-#define PLK_KP_Space        0xFF80      /* space */
+#define PLK_KP_Space        0xFF80      // space
 #define PLK_KP_Tab          0xFF89
-#define PLK_KP_Enter        0xFF8D      /* enter */
-#define PLK_KP_F1           0xFF91      /* PF1, KP_A, ... */
+#define PLK_KP_Enter        0xFF8D      // enter
+#define PLK_KP_F1           0xFF91      // PF1, KP_A, ...
 #define PLK_KP_F2           0xFF92
 #define PLK_KP_F3           0xFF93
 #define PLK_KP_F4           0xFF94
-#define PLK_KP_Equal        0xFFBD      /* equals */
+#define PLK_KP_Equal        0xFFBD      // equals
 #define PLK_KP_Multiply     0xFFAA
 #define PLK_KP_Add          0xFFAB
-#define PLK_KP_Separator    0xFFAC      /* separator, often comma */
+#define PLK_KP_Separator    0xFFAC      // separator, often comma
 #define PLK_KP_Subtract     0xFFAD
 #define PLK_KP_Decimal      0xFFAE
 #define PLK_KP_Divide       0xFFAF
@@ -116,12 +116,12 @@
 #define PLK_KP_8            0xFFB8
 #define PLK_KP_9            0xFFB9
 
-/*
- * Auxilliary Functions; note the duplicate definitions for left and right
- * function keys;  Sun keyboards and a few other manufactures have such
- * function key groups on the left and/or right sides of the keyboard.
- * We've not found a keyboard with more than 35 function keys total.
- */
+//
+// Auxilliary Functions; note the duplicate definitions for left and right
+// function keys;  Sun keyboards and a few other manufactures have such
+// function key groups on the left and/or right sides of the keyboard.
+// We've not found a keyboard with more than 35 function keys total.
+//
 
 #define PLK_F1     0xFFBE
 #define PLK_F2     0xFFBF
@@ -184,22 +184,22 @@
 #define PLK_F35    0xFFE0
 #define PLK_R15    0xFFE0
 
-/* Modifiers */
+// Modifiers
 
-#define PLK_Shift_L       0xFFE1        /* Left shift */
-#define PLK_Shift_R       0xFFE2        /* Right shift */
-#define PLK_Control_L     0xFFE3        /* Left control */
-#define PLK_Control_R     0xFFE4        /* Right control */
-#define PLK_Caps_Lock     0xFFE5        /* Caps lock */
-#define PLK_Shift_Lock    0xFFE6        /* Shift lock */
+#define PLK_Shift_L       0xFFE1        // Left shift
+#define PLK_Shift_R       0xFFE2        // Right shift
+#define PLK_Control_L     0xFFE3        // Left control
+#define PLK_Control_R     0xFFE4        // Right control
+#define PLK_Caps_Lock     0xFFE5        // Caps lock
+#define PLK_Shift_Lock    0xFFE6        // Shift lock
 
-#define PLK_Meta_L        0xFFE7        /* Left meta */
-#define PLK_Meta_R        0xFFE8        /* Right meta */
-#define PLK_Alt_L         0xFFE9        /* Left alt */
-#define PLK_Alt_R         0xFFEA        /* Right alt */
-#define PLK_Super_L       0xFFEB        /* Left super */
-#define PLK_Super_R       0xFFEC        /* Right super */
-#define PLK_Hyper_L       0xFFED        /* Left hyper */
-#define PLK_Hyper_R       0xFFEE        /* Right hyper */
+#define PLK_Meta_L        0xFFE7        // Left meta
+#define PLK_Meta_R        0xFFE8        // Right meta
+#define PLK_Alt_L         0xFFE9        // Left alt
+#define PLK_Alt_R         0xFFEA        // Right alt
+#define PLK_Super_L       0xFFEB        // Left super
+#define PLK_Super_R       0xFFEC        // Right super
+#define PLK_Hyper_L       0xFFED        // Left hyper
+#define PLK_Hyper_R       0xFFEE        // Right hyper
 
-#endif  /* __PLEVENT_H__ */
+#endif  // __PLEVENT_H__

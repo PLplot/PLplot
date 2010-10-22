@@ -1,42 +1,42 @@
-/*
- * This header file contains the lookup table used for converting between
- * FCIs (font characterization integers) and font names for the standard
- * 35 type 1 fonts.
- *
- * Copyright (C) 2005-2010  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+//
+// This header file contains the lookup table used for converting between
+// FCIs (font characterization integers) and font names for the standard
+// 35 type 1 fonts.
+//
+// Copyright (C) 2005-2010  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
-/* This file only relevant to device drivers (currently just pdf and
- * ps) that use Type1 fonts. */
+// This file only relevant to device drivers (currently just pdf and
+// ps) that use Type1 fonts.
 
-/* There are no good choices for script fonts for Type1 so default to
- * the Helvetica (sans) variants in that case. */
+// There are no good choices for script fonts for Type1 so default to
+// the Helvetica (sans) variants in that case.
 
-/* Default to Helvetica (sans) variants for symbol fonts to follow
- * what is done for all modern unicode-aware TrueType font devices. */
+// Default to Helvetica (sans) variants for symbol fonts to follow
+// what is done for all modern unicode-aware TrueType font devices.
 
-/* N.B. if the glyph lookup comes up blank for any of the fonts below,
- * then an additional search of the Type1 Symbol font glyphs is
- * implemented in the Type1 device drivers as a fallback. */
+// N.B. if the glyph lookup comes up blank for any of the fonts below,
+// then an additional search of the Type1 Symbol font glyphs is
+// implemented in the Type1 device drivers as a fallback.
 
-/* N.B. When updating this table by hand be sure to keep it in
- * ascending order in fci!  */
+// N.B. When updating this table by hand be sure to keep it in
+// ascending order in fci!
 
 #define N_Type1Lookup    30
 static const FCI_to_FontName_Table Type1Lookup[N_Type1Lookup] = {

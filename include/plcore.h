@@ -1,28 +1,28 @@
-/* $Id$
- *
- *      Contains declarations for core plplot data structures.  This file
- *      should be included only by plcore.c.
- *
- *  Copyright (C) 2004  Andrew Roach
- *  Copyright (C) 2005  Thomas J. Duck
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Library General Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      Contains declarations for core plplot data structures.  This file
+//      should be included only by plcore.c.
+//
+//  Copyright (C) 2004  Andrew Roach
+//  Copyright (C) 2005  Thomas J. Duck
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU Library General Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #ifndef __PLCORE_H__
 #define __PLCORE_H__
@@ -48,7 +48,7 @@ typedef void ( *PLDispatchInit )( PLDispatchTable *pdt );
 #endif
 
 
-/* Static function prototypes */
+// Static function prototypes
 
 static char     *utf8_to_ucs4( const char *ptr, PLUNICODE *unichar );
 static void     grline( short *, short *, PLINT );
@@ -67,48 +67,48 @@ static void     plInitDispatchTable( void );
 
 static void     plLoadDriver( void );
 
-/* Static variables */
+// Static variables
 
 static PLINT xscl[PL_MAXPOLY], yscl[PL_MAXPOLY];
 
-static PLINT initfont = 1;      /* initial font: extended by default */
+static PLINT initfont = 1;      // initial font: extended by default
 
 static PLINT lib_initialized = 0;
 
-/*--------------------------------------------------------------------------*\
- * Allocate a PLStream data structure (defined in plstrm.h).
- *
- * This struct contains a copy of every variable that is stream dependent.
- * Only the first [index=0] stream is statically allocated; the rest
- * are dynamically allocated when you switch streams (yes, it is legal
- * to only initialize the first element of the array of pointers).
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Allocate a PLStream data structure (defined in plstrm.h).
+//
+// This struct contains a copy of every variable that is stream dependent.
+// Only the first [index=0] stream is statically allocated; the rest
+// are dynamically allocated when you switch streams (yes, it is legal
+// to only initialize the first element of the array of pointers).
+//--------------------------------------------------------------------------
 
-static PLStream pls0;                             /* preallocated stream */
-static PLINT    ipls;                             /* current stream number */
+static PLStream pls0;                             // preallocated stream
+static PLINT    ipls;                             // current stream number
 
-static PLStream *pls[PL_NSTREAMS] = { &pls0 };    /* Array of stream pointers */
+static PLStream *pls[PL_NSTREAMS] = { &pls0 };    // Array of stream pointers
 
-/* Current stream pointer.  Global, for easier access to state info */
+// Current stream pointer.  Global, for easier access to state info
 
 PLDLLIMPEXP_DATA( PLStream ) * plsc = &pls0;
 
-/* Only now can we include this */
+// Only now can we include this
 
 #include "pldebug.h"
 
-/*--------------------------------------------------------------------------*\
- * Initialize dispatch table.
- *
- * Each device is selected by the appropriate define, passed in from the
- * makefile.  When installing plplot you may wish to exclude devices not
- * present on your system in order to reduce screen clutter.
- *
- * If you hit a <CR> in response to the plinit() prompt, you get the FIRST
- * one active below, so arrange them accordingly for your system (i.e. all
- * the system-specific ones should go first, since they won't appear on
- * most systems.)
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Initialize dispatch table.
+//
+// Each device is selected by the appropriate define, passed in from the
+// makefile.  When installing plplot you may wish to exclude devices not
+// present on your system in order to reduce screen clutter.
+//
+// If you hit a <CR> in response to the plinit() prompt, you get the FIRST
+// one active below, so arrange them accordingly for your system (i.e. all
+// the system-specific ones should go first, since they won't appear on
+// most systems.)
+//--------------------------------------------------------------------------
 
 static PLDispatchTable **dispatch_table = 0;
 static int             npldrivers       = 0;
@@ -145,7 +145,7 @@ static PLDispatchInit  static_device_initializers[] = {
 #ifdef PLD_win3
     plD_dispatch_init_win3,
 #endif
-#if defined ( _MSC_VER ) && defined ( VGA )         /* graphics for msc */
+#if defined ( _MSC_VER ) && defined ( VGA )         // graphics for msc
     plD_dispatch_init_vga,
 #endif
 #ifdef PLD_bgi
@@ -163,7 +163,7 @@ static PLDispatchInit  static_device_initializers[] = {
 #if defined ( PLD_bmp ) && !defined ( ENABLE_DYNDRIVERS )
     plD_dispatch_init_bmp,
 #endif
-#ifdef PLD_emxvga                      /* graphics for emx+gcc */
+#ifdef PLD_emxvga                      // graphics for emx+gcc
     plD_dispatch_init_vga,
 #endif
 #if defined ( PLD_xterm ) && !defined ( ENABLE_DYNDRIVERS )
@@ -340,9 +340,9 @@ static int             nplstaticdevices = ( sizeof ( static_device_initializers 
                                             sizeof ( PLDispatchInit ) ) - 1;
 static int             npldynamicdevices = 0;
 
-/*--------------------------------------------------------------------------*\
- * Stuff to support the loadable device drivers.
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+// Stuff to support the loadable device drivers.
+//--------------------------------------------------------------------------
 
 #ifdef ENABLE_DYNDRIVERS
 typedef struct
@@ -366,4 +366,4 @@ static PLLoadableDriver *loadable_driver_list;
 
 static int nloadabledrivers = 0;
 
-#endif  /* __PLCORE_H__ */
+#endif  // __PLCORE_H__

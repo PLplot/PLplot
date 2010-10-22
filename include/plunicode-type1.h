@@ -1,28 +1,28 @@
-/*
- * This header file contains the lookup tables used for converting between
- * unicode and the 3 standard type 1 font sequences, dingbats, standard, and
- * symbol.  These data therefore allow unicode access to at least the 35
- * standard type 1 fonts in the gsfonts font package, and probably many other
- * type 1 fonts as well.
- *
- * Copyright (C) 2005  Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- */
+//
+// This header file contains the lookup tables used for converting between
+// unicode and the 3 standard type 1 font sequences, dingbats, standard, and
+// symbol.  These data therefore allow unicode access to at least the 35
+// standard type 1 fonts in the gsfonts font package, and probably many other
+// type 1 fonts as well.
+//
+// Copyright (C) 2005  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
 
 #ifndef __PLUNICODE_TYPE1_H__
 #define __PLUNICODE_TYPE1_H__
@@ -602,4 +602,4 @@ static const Unicode_to_Type1_table unicode_to_symbol_lookup_table[194] = {
     { 0xf8fe, 254 },
 };
 
-#endif /* __PLUNICODE_TYPE1_H__ */
+#endif // __PLUNICODE_TYPE1_H__

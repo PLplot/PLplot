@@ -1,14 +1,14 @@
-/*
- * These definitions are for the Postscript (ps.c) and
- * Postscript/LaTeX (pstex.c) drivers
- */
+//
+// These definitions are for the Postscript (ps.c) and
+// Postscript/LaTeX (pstex.c) drivers
+//
 
 #ifndef __PS_H__
 #define __PS_H__
 
 #include "plunicode-type1.h"
 
-/* top level declarations */
+// top level declarations
 
 #define LINELENGTH    78
 #define COPIES        1
@@ -17,23 +17,23 @@
 #define ENLARGE       5
 #define XPSSIZE       ENLARGE * XSIZE
 #define YPSSIZE       ENLARGE * YSIZE
-#define XOFFSET       32                /* Margins --     */
-#define YOFFSET       32                /* .5 inches each */
+#define XOFFSET       32                // Margins --
+#define YOFFSET       32                // .5 inches each
 #define PSX           XPSSIZE - 1
 #define PSY           YPSSIZE - 1
 #define OF            pls->OutFile
-#define MIN_WIDTH     1                 /* Minimum pen width */
-#define MAX_WIDTH     30                /* Maximum pen width */
-#define DEF_WIDTH     3                 /* Default pen width */
+#define MIN_WIDTH     1                 // Minimum pen width
+#define MAX_WIDTH     30                // Maximum pen width
+#define DEF_WIDTH     3                 // Default pen width
 
-/* These are for covering the page with the background color */
+// These are for covering the page with the background color
 
 #define XMIN    -XOFFSET * ENLARGE
 #define XMAX    PSX + XOFFSET * ENLARGE
 #define YMIN    -XOFFSET * ENLARGE
 #define YMAX    PSY + XOFFSET * ENLARGE
 
-/* Struct to hold device-specific info. */
+// Struct to hold device-specific info.
 
 typedef struct
 {
@@ -53,8 +53,8 @@ typedef struct
     int   nlookup, if_symbol_font;
     const Unicode_to_Type1_table *lookup;
 
-    /* These are only used by the pstex driver for the additional
-     * file required in this case */
+    // These are only used by the pstex driver for the additional
+    // file required in this case
     long cur_pos;
     FILE *fp;
 } PSDev;
@@ -88,4 +88,4 @@ void plD_tidy_psttf( PLStream * );
 void plD_state_psttf( PLStream *, PLINT );
 void plD_esc_psttf( PLStream *, PLINT, void * );
 
-#endif /* __PS_H__ */
+#endif // __PS_H__

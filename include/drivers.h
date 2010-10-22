@@ -1,28 +1,28 @@
-/* $Id$
- *
- *      Contains all prototypes for driver functions.
- *
- *  Copyright (C) 2004  Andrew Roach
- *  Copyright (C) 2005  Thomas J. Duck
- *  Copyright (C) 2006  Andrew Ross
- *
- *  This file is part of PLplot.
- *
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Library General Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+// $Id$
+//
+//      Contains all prototypes for driver functions.
+//
+//  Copyright (C) 2004  Andrew Roach
+//  Copyright (C) 2005  Thomas J. Duck
+//  Copyright (C) 2006  Andrew Ross
+//
+//  This file is part of PLplot.
+//
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU Library General Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
 #ifndef __DRIVERS_H__
 #define __DRIVERS_H__
@@ -110,7 +110,7 @@ PLDLLIMPEXP_DRIVER void plD_dispatch_init_qtwidget( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_extqt( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_memqt( PLDispatchTable *pdt );
 
-/* Prototypes for plot buffer calls. */
+// Prototypes for plot buffer calls.
 
 void plbuf_init( PLStream * );
 void plbuf_line( PLStream *, short, short, short, short );
@@ -130,4 +130,4 @@ PLDLLIMPEXP void plRemakePlot( PLStream * );
 }
 #endif
 
-#endif  /* __DRIVERS_H__ */
+#endif  // __DRIVERS_H__
