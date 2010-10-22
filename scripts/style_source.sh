@@ -123,12 +123,12 @@ csource_LIST="config.h.cmake"
 # src directory
 csource_LIST="$csource_LIST src/*.[ch]"
 
-# temporary
-exclude_c=ON
-if [ -z "$exclude_c" ] ; then
 # All C source (i.e., exclude qt.h) in include directory.
 csource_LIST="$csource_LIST `ls include/*.h include/*.h.in include/*.h.cmake |grep -v qt.h`" 
 
+# temporary
+exclude_c=ON
+if [ -z "$exclude_c" ] ; then
 # Every subdirectory of lib.
 csource_LIST="$csource_LIST lib/*/*.[ch] lib/qsastime/qsastimeP.h.in"
 
@@ -190,6 +190,7 @@ done
 
 # temporary
 fi
+
 transform_source()
 {
     # $1 is a list of source files of a particular language.
@@ -202,6 +203,21 @@ transform_source()
     # nothing) to indicate uncrustify will be used.
     if [ "$3" = "comments" ] ; then
         c_command="scripts/convert_comment.py"
+	# Check all files for run-time errors with the python script.
+	# These run-time errors signal that there is some comment
+	# style which the script cannot handle.  The reason we do this
+	# complete independent check here is that run-time errors can
+	# be lost in the noise if a large conversion is being done.
+	# Also, run-time errors will not occur for the usual case
+	# below where cmp finds an early difference.
+	for language_source in $1 ; do
+	    $c_command < $language_source >/dev/null
+	    c_command_rc=$?
+	    if [ $c_command_rc -ne 0 ] ; then
+		echo "ERROR: $c_command failed for file $language_source"
+		exit 1
+	    fi
+	done
     else
         c_command="cat -"
     fi
