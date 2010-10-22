@@ -24,19 +24,25 @@ for line in sys.stdin.readlines():
         start_comment = -1
 
     end_comment = line.find("*/")
-    # Note trailing "\n" has not (yet) been removed from line so that the next
-    # to last character is at position len(line) - 3.
+    # Note trailing "\n" has not (yet) been removed from line so
+    # that the next to last character is at position len(line) - 3.
     if end_comment >=0 and end_comment !=  len(line) - 3:
-        sys.stderr.write(line)
-        raise RuntimeError, "Cannot handle embedded comment with trailing character(s) after */"
+        if ifsingleline and start_comment >=0:
+            # Skip most further processing for a line with embedded
+            # comments outside of multiline blocks of comments.
+            start_comment = -1
+            end_comment = -1
+        else:
+            sys.stderr.write(line)
+            raise RuntimeError, "Cannot interpret trailing character(s) after */ for this line"
 
     if ifsingleline and (start_comment >=0 or end_comment >=0):
         # strip trailing "\n" (Unix line endings, only) since that might
         # cause trouble with stripping trailing white space below.
-        # This trailing "\n" will be added back at the end.
+        # This trailing "\n" will be added back at the end of this block.
         line = re.sub(r'^(.*)\n$', "\\1", line)
         if start_comment <0 and end_comment >=0:
-            sys.stderr.write(line)
+            sys.stderr.write(line + "\n")
             raise RuntimeError, "Trailing */ for a line which is not a comment"
 
         # Convert single-line comment (if it exists).
@@ -67,7 +73,7 @@ for line in sys.stdin.readlines():
 
         # strip trailing "\n" (Unix line endings, only) since that might
         # cause trouble with stripping trailing white space below.
-        # This trailing "\n" will be added back at the end.
+        # This trailing "\n" will be added back at the end of this block.
         line = re.sub(r'^(.*)\n$', "\\1", line)
         if end_comment < 0:
             # Convert multiline comment line that is not start line
@@ -80,6 +86,7 @@ for line in sys.stdin.readlines():
             if start_newcomment < 0:
                 # If all previous conversion attempts failed....
                 line = "//" + line
+
         else:
             # Convert last line of multiline comment.
             # Try converting vacuous form (initial blanks + " */")
@@ -109,13 +116,26 @@ for line in sys.stdin.readlines():
         # Add back (Unix-only) line ending.
         line = line + "\n"
 
-    # Special transforms to get rid of left-over "\*" and "*\" forms which
-    # have historically been used to frame multi-block comments by some
-    # PLplot developers.
-    # Replace leading "// \*" ==> "//"
-    line = re.sub(r'^// \\\*(.*)$', "//\\1", line)
-    # Remove "*\" from end of comment lines
-    line = re.sub(r'^//(.*)\*\\$', "//\\1", line)
+    # End with some special processing for all lines which previously
+    # or now include "//".
+    start_special = line.find("//")
+    if start_special >= 0:
+        # Special transforms to get rid of left-over "\*" and "*\"
+        # forms which have historically been used to frame
+        # multi-block comments by some PLplot developers.
+        # Replace leading "// \*" ==> "//"
+        line = re.sub(r'^// \\\*(.*)$', "//\\1", line)
+        # Remove "*\" from end of comment lines
+        line = re.sub(r'^//(.*)\*\\$', "//\\1", line)
+        # Look for trailing continuation after comment lines and
+        # complain if you find any.
+        start_special = line.rfind("\\")
+        # Note line has trailing "\n" so that the last character
+        # is at position len(line) - 2.
+        if start_special >=0 and start_special == len(line) -2:
+            sys.stderr.write(line)
+            raise RuntimeError, "Continuation not allowed for comments"
 
     sys.stdout.write(line)
+
 sys.exit()
