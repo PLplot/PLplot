@@ -16,7 +16,23 @@ ifsingleline = True
 
 for line in sys.stdin.readlines():
     start_comment = line.find("/*")
+    # FIXME?: the simple rules below to ignore all special strings
+    # in a line where the first instance is quoted obviously
+    # need generalization.  However, second instances
+    # of special strings are unlikely in practice so we will go with
+    # this simple rule until it is proved something more is required.
+    # Ignore all "/*" instances on a line where the first one is
+    # quoted.
+    if start_comment >=0 and re.search(r'^[^"]*("[^"]*"[^"]*)*"[^"]*/\*[^"]*"', line):
+        start_comment = -1
+
     start_special = line.find("//*")
+    # FIXME?
+    # Ignore all "//*" instances on a line where the first one is
+    # quoted.
+    if start_special >= 0 and re.search(r'^[^"]*("[^"]*"[^"]*)*"[^"]*//\*[^"]*"', line):
+        start_special = -1
+
     # if start_special corresponds to start_comment, then ignore start_comment
     # to deal with issue of recursive changes to an original line of the
     # form "/******..."
@@ -24,6 +40,12 @@ for line in sys.stdin.readlines():
         start_comment = -1
 
     end_comment = line.find("*/")
+    # FIXME?
+    # Ignore all "*/" instances on a line where the first one is
+    # quoted.
+    if end_comment >= 0 and re.search(r'^[^"]*("[^"]*"[^"]*)*"[^"]*\*/[^"]*"', line):
+        end_comment = -1
+
     # Note trailing "\n" has not (yet) been removed from line so
     # that the next to last character is at position len(line) - 3.
     if end_comment >=0 and end_comment !=  len(line) - 3:
@@ -55,8 +77,20 @@ for line in sys.stdin.readlines():
         line = line.rstrip()
 
         # Deal with "/**" case which would be changed to "//*" above.
-        start_special = line.find("//*")
         start_comment = line.find("/*")
+        # FIXME?
+        # Ignore all "/*" instances on a line where the first one is
+        # quoted.
+        if start_comment >=0 and re.search(r'^[^"]*("[^"]*"[^"]*)*"[^"]*/\*[^"]*"', line):
+            start_comment = -1
+
+        start_special = line.find("//*")
+        # FIXME?
+        # Ignore all "//*" instances on a line where the first one is
+        # quoted.
+        if start_special >= 0 and re.search(r'^[^"]*("[^"]*"[^"]*)*"[^"]*//\*[^"]*"', line):
+            start_special = -1
+
         if start_special < 0 and start_comment >= 0:
             # Convert first line of multiline comment.
             # N.B. preserves indentation.
