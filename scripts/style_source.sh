@@ -126,12 +126,12 @@ csource_LIST="$csource_LIST src/*.[ch]"
 # All C source (i.e., exclude qt.h) in include directory.
 csource_LIST="$csource_LIST `ls include/*.h include/*.h.in include/*.h.cmake |grep -v qt.h`" 
 
-# temporary
-exclude_c=ON
-if [ -z "$exclude_c" ] ; then
 # Every subdirectory of lib.
 csource_LIST="$csource_LIST lib/*/*.[ch] lib/qsastime/qsastimeP.h.in"
 
+# temporary
+exclude_c=ON
+if [ -z "$exclude_c" ] ; then
 # C part of drivers.
 csource_LIST="$csource_LIST drivers/*.c"
 

@@ -1,34 +1,34 @@
-/*
- * This software originally contributed under the LGPL in January 2009 to
- * PLplot by the
- * Cluster Science Centre
- * QSAS team,
- * Imperial College, London
- * Copyright (C) 2009 Imperial College, London
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+//
+// This software originally contributed under the LGPL in January 2009 to
+// PLplot by the
+// Cluster Science Centre
+// QSAS team,
+// Imperial College, London
+// Copyright (C) 2009 Imperial College, London
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 #include "qsastime_extra.h"
 #include "qsastimeP.h"
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-/* Test program to run MJDtime */
+// Test program to run MJDtime
 
 int main()
 {
@@ -100,43 +100,43 @@ int main()
     setFromISOstring( ISOstring, &MJD1, 0 );
     printf( "for %s, MJD = %d, seconds = %17.11g\n\n", ISOstring, MJD1.base_day, MJD1.time_sec );
 
-    /* try julian/gregorian changeover */
+    // try julian/gregorian changeover
     y    = 1752;
     m    = 8;
     d    = 14;
     hour = 0;
 
     setFromUT( y, m, d, hour, min, sec, &MJD1, 0 );
-    strcpy( &( copy[0] ), getISOString( &MJD1, 0, 0 ) ); /* copy because getISOString() returns a pointer to a static string */
+    strcpy( &( copy[0] ), getISOString( &MJD1, 0, 0 ) ); // copy because getISOString() returns a pointer to a static string
     printf( "Gregorian = '%s'\n", &( copy[0] ) );
-    //setFromUT(y, m, d, hour, min, sec, &MJD1, 1); /* set from Julian date */
+    //setFromUT(y, m, d, hour, min, sec, &MJD1, 1); // set from Julian date
     printf( "%s Julian = '%s' Gregorian, (give us back our 11 days)\n", getISOString( &MJD1, 1, 1 ), &( copy[0] ) );
 
 
-    /* Compare formatting from strftime() */
+    // Compare formatting from strftime()
 
 
     used = strfMJD( &( buf[0] ), 360, "   strfMJD():\n   --------\n '%+' \n %c\n %D %F \n %j \n %r \n %s \n %v\n\n", &MJD2, 0, 0 );
     printf( "chars %d for \n%s\n", (int) used, buf );
 
-    /* seconds since 01 Jan 1970 Gregorian for strftime use */
+    // seconds since 01 Jan 1970 Gregorian for strftime use
     localt = (int) MJD2.time_sec + ( MJD2.base_day - 40587 ) * 86400;
     ptm    = gmtime( &localt );
 #ifndef _MSC_VER
-    /* note %s not implemented in cygwin 1.5 gcc 3.x nothing printed */
+    // note %s not implemented in cygwin 1.5 gcc 3.x nothing printed
     strftime( &( buf[0] ), 360,
         "  strftime(): (invalid before 1970 on some systems and subject to time zones on all systems)\n   ------\n '%a %b %e %H:%M:%S UTC %Y' \n %c\n %D %F \n %j \n %r \n %s \n %e-%b-%Y", ptm );
 #else
-    /* the following format options are not defined in MSVC (2008)
-     * and are replaced as follows
-     * %e -> %d     will print as 01 etc
-     * %D -> %m/%d/%y
-     * %F -> %Y-%m-%d
-     * %r -> %I:%M:%S %p
-     * %s -> %%s - turned into literal as not implemented
-     *
-     * also %c and %p are locale dependent
-     */
+    // the following format options are not defined in MSVC (2008)
+    // and are replaced as follows
+    // %e -> %d     will print as 01 etc
+    // %D -> %m/%d/%y
+    // %F -> %Y-%m-%d
+    // %r -> %I:%M:%S %p
+    // %s -> %%s - turned into literal as not implemented
+    //
+    // also %c and %p are locale dependent
+    //
     strftime( &( buf[0] ), 360,
         "  strftime(): (invalid before 1970)\n   ------\n '%a %b %d %H:%M:%S UTC %Y' \n %c\n %m/%d/%y %Y-%m-%d \n %j \n %I:%M:%S %p \n %%s not implemented \n %d-%b-%Y", ptm );
 #endif

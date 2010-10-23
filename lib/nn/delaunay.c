@@ -1,28 +1,28 @@
-/******************************************************************************
- *
- * File:           delaunay.c
- *
- * Created:        04/08/2000
- *
- * Author:         Pavel Sakov
- *                 CSIRO Marine Research
- *
- * Purpose:        Delaunay triangulation - a wrapper to triangulate()
- *
- * Description:    None
- *
- * Revisions:      10/06/2003 PS: delaunay_build(); delaunay_destroy();
- *                 struct delaunay: from now on, only shallow copy of the
- *                 input data is contained in struct delaunay. This saves
- *                 memory and is consistent with libcsa.
- *
- * Modified:       Joao Cardoso, 4/2/2003
- *                 Adapted for use with Qhull instead of "triangle".
- *                 Andrew Ross 20/10/2008
- *                 Fix bug in delaunay_circles_find() when checking
- *                 whether a circle has been found.
- *
- *****************************************************************************/
+//*****************************************************************************
+//
+// File:           delaunay.c
+//
+// Created:        04/08/2000
+//
+// Author:         Pavel Sakov
+//                 CSIRO Marine Research
+//
+// Purpose:        Delaunay triangulation - a wrapper to triangulate()
+//
+// Description:    None
+//
+// Revisions:      10/06/2003 PS: delaunay_build(); delaunay_destroy();
+//                 struct delaunay: from now on, only shallow copy of the
+//                 input data is contained in struct delaunay. This saves
+//                 memory and is consistent with libcsa.
+//
+// Modified:       Joao Cardoso, 4/2/2003
+//                 Adapted for use with Qhull instead of "triangle".
+//                 Andrew Ross 20/10/2008
+//                 Fix bug in delaunay_circles_find() when checking
+//                 whether a circle has been found.
+//
+//***************************************************************************
 
 #define USE_QHULL
 
@@ -139,12 +139,12 @@ static void tio2delaunay( struct triangulateio* tio_out, delaunay* d )
 {
     int i, j;
 
-    /*
-     * I assume that all input points appear in tio_out in the same order as
-     * they were written to tio_in. I have seen no exceptions so far, even
-     * if duplicate points were presented. Just in case, let us make a couple
-     * of checks.
-     */
+    //
+    // I assume that all input points appear in tio_out in the same order as
+    // they were written to tio_in. I have seen no exceptions so far, even
+    // if duplicate points were presented. Just in case, let us make a couple
+    // of checks.
+    //
     assert( tio_out->numberofpoints == d->npoints );
     assert( tio_out->pointlist[2 * d->npoints - 2] == d->points[d->npoints - 1].x && tio_out->pointlist[2 * d->npoints - 1] == d->points[d->npoints - 1].y );
 
@@ -246,16 +246,16 @@ static void tio2delaunay( struct triangulateio* tio_out, delaunay* d )
 }
 #endif
 
-/* Builds Delaunay triangulation of the given array of points.
- *
- * @param np Number of points
- * @param points Array of points [np] (input)
- * @param ns Number of forced segments
- * @param segments Array of (forced) segment endpoint indices [2*ns]
- * @param nh Number of holes
- * @param holes Array of hole (x,y) coordinates [2*nh]
- * @return Delaunay triangulation structure with triangulation results
- */
+// Builds Delaunay triangulation of the given array of points.
+//
+// @param np Number of points
+// @param points Array of points [np] (input)
+// @param ns Number of forced segments
+// @param segments Array of (forced) segment endpoint indices [2*ns]
+// @param nh Number of holes
+// @param holes Array of hole (x,y) coordinates [2*nh]
+// @return Delaunay triangulation structure with triangulation results
+//
 delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh, double holes[] )
 #ifndef USE_QHULL
 {
@@ -309,9 +309,9 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
     if ( nn_verbose )
         fflush( stderr );
 
-    /*
-     * climax
-     */
+    //
+    // climax
+    //
     triangulate( cmd, &tio_in, &tio_out, NULL );
 
     if ( nn_verbose )
@@ -327,19 +327,19 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
 
     return d;
 }
-#else /* USE_QHULL */
+#else // USE_QHULL
 {
     delaunay* d = malloc( sizeof ( delaunay ) );
 
-    coordT  *qpoints;                       /* array of coordinates for each point */
-    boolT   ismalloc  = False;              /* True if qhull should free points */
-    char    flags[64] = "qhull d Qbb Qt";   /* option flags for qhull */
-    facetT  *facet, *neighbor, **neighborp; /* variables to walk through facets */
-    vertexT *vertex, **vertexp;             /* variables to walk through vertex */
+    coordT  *qpoints;                       // array of coordinates for each point
+    boolT   ismalloc  = False;              // True if qhull should free points
+    char    flags[64] = "qhull d Qbb Qt";   // option flags for qhull
+    facetT  *facet, *neighbor, **neighborp; // variables to walk through facets
+    vertexT *vertex, **vertexp;             // variables to walk through vertex
 
-    int     curlong, totlong;               /* memory remaining after qh_memfreeshort */
+    int     curlong, totlong;               // memory remaining after qh_memfreeshort
     FILE    *outfile = stdout;
-    FILE    *errfile = stderr;              /* error messages from qhull code */
+    FILE    *errfile = stderr;              // error messages from qhull code
 
     int     i, j;
     int     exitcode;
@@ -348,7 +348,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
 
     dim = 2;
 
-    assert( sizeof ( realT ) == sizeof ( double ) ); /* Qhull was compiled with doubles? */
+    assert( sizeof ( realT ) == sizeof ( double ) ); // Qhull was compiled with doubles?
 
     if ( np == 0 || ns > 0 || nh > 0 )
     {
@@ -375,9 +375,9 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
     if ( nn_verbose )
         fflush( stderr );
 
-    /*
-     * climax
-     */
+    //
+    // climax
+    //
 
     exitcode = qh_new_qhull( dim, np, qpoints, ismalloc,
         flags, outfile, errfile );
@@ -459,16 +459,16 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
                 FOREACHneighbor_( facet )
                 n->tids[j++] = neighbor->visitid ? neighbor->visitid - 1 : -1;
 
-                /* Put triangle vertices in counterclockwise order, as
-                 * 'triangle' do.
-                 * The same needs to be done with the neighbors.
-                 *
-                 * The following works, i.e., it seems that Qhull maintains a
-                 * relationship between the vertices and the neighbors
-                 * triangles, but that is not said anywhere, so if this stop
-                 * working in a future Qhull release, you know what you have
-                 * to do, reorder the neighbors.
-                 */
+                // Put triangle vertices in counterclockwise order, as
+                // 'triangle' do.
+                // The same needs to be done with the neighbors.
+                //
+                // The following works, i.e., it seems that Qhull maintains a
+                // relationship between the vertices and the neighbors
+                // triangles, but that is not said anywhere, so if this stop
+                // working in a future Qhull release, you know what you have
+                // to do, reorder the neighbors.
+                //
 
                 if ( cw( d, t ) )
                 {
@@ -539,8 +539,8 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
     }
 
     free( qpoints );
-    qh_freeqhull( !qh_ALL );               /* free long memory */
-    qh_memfreeshort( &curlong, &totlong ); /* free short memory and memory allocator */
+    qh_freeqhull( !qh_ALL );               // free long memory
+    qh_memfreeshort( &curlong, &totlong ); // free short memory and memory allocator
     if ( curlong || totlong )
         fprintf( errfile,
             "qhull: did not free %d bytes of long memory (%d pieces)\n",
@@ -549,7 +549,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
     return d;
 }
 
-/* returns 1 if a,b,c are clockwise ordered */
+// returns 1 if a,b,c are clockwise ordered
 static int cw( delaunay *d, triangle *t )
 {
     point* pa = &d->points[t->vids[0]];
@@ -562,10 +562,10 @@ static int cw( delaunay *d, triangle *t )
 
 #endif
 
-/* Releases memory engaged in the Delaunay triangulation structure.
- *
- * @param d Structure to be destroyed
- */
+// Releases memory engaged in the Delaunay triangulation structure.
+//
+// @param d Structure to be destroyed
+//
 void delaunay_destroy( delaunay* d )
 {
     if ( d == NULL )
@@ -583,8 +583,8 @@ void delaunay_destroy( delaunay* d )
     if ( d->nedges > 0 )
         free( d->edges );
 #ifdef USE_QHULL
-    /* This is a shallow copy if we're not using qhull so we don't
-     * need to free it */
+    // This is a shallow copy if we're not using qhull so we don't
+    // need to free it
     if ( d->points != NULL )
         free( d->points );
 #endif
@@ -605,20 +605,20 @@ void delaunay_destroy( delaunay* d )
     free( d );
 }
 
-/* Returns whether the point p is on the right side of the vector (p0, p1).
- */
+// Returns whether the point p is on the right side of the vector (p0, p1).
+//
 static int on_right_side( point* p, point* p0, point* p1 )
 {
     return ( p1->x - p->x ) * ( p0->y - p->y ) > ( p0->x - p->x ) * ( p1->y - p->y );
 }
 
-/* Finds triangle specified point belongs to (if any).
- *
- * @param d Delaunay triangulation
- * @param p Point to be mapped
- * @param seed Triangle index to start with
- * @return Triangle id if successful, -1 otherwhile
- */
+// Finds triangle specified point belongs to (if any).
+//
+// @param d Delaunay triangulation
+// @param p Point to be mapped
+// @param seed Triangle index to start with
+// @return Triangle id if successful, -1 otherwhile
+//
 int delaunay_xytoi( delaunay* d, point* p, int id )
 {
     triangle* t;
@@ -650,25 +650,25 @@ int delaunay_xytoi( delaunay* d, point* p, int id )
     return id;
 }
 
-/* Finds all tricircles specified point belongs to.
- *
- * @param d Delaunay triangulation
- * @param p Point to be mapped
- * @param n Pointer to the number of tricircles within `d' containing `p'
- *          (output)
- * @param out Pointer to an array of indices of the corresponding triangles
- *            [n] (output)
- *
- * There is a standard search procedure involving search through triangle
- * neighbours (not through vertex neighbours). It must be a bit faster due to
- * the smaller number of triangle neighbours (3 per triangle) but can fail
- * for a point outside convex hall.
- *
- * We may wish to modify this procedure in future: first check if the point
- * is inside the convex hall, and depending on that use one of the two
- * search algorithms. It not 100% clear though whether this will lead to a
- * substantial speed gains because of the check on convex hall involved.
- */
+// Finds all tricircles specified point belongs to.
+//
+// @param d Delaunay triangulation
+// @param p Point to be mapped
+// @param n Pointer to the number of tricircles within `d' containing `p'
+//          (output)
+// @param out Pointer to an array of indices of the corresponding triangles
+//            [n] (output)
+//
+// There is a standard search procedure involving search through triangle
+// neighbours (not through vertex neighbours). It must be a bit faster due to
+// the smaller number of triangle neighbours (3 per triangle) but can fail
+// for a point outside convex hall.
+//
+// We may wish to modify this procedure in future: first check if the point
+// is inside the convex hall, and depending on that use one of the two
+// search algorithms. It not 100% clear though whether this will lead to a
+// substantial speed gains because of the check on convex hall involved.
+//
 void delaunay_circles_find( delaunay* d, point* p, int* n, int** out )
 {
     int i;
@@ -679,41 +679,41 @@ void delaunay_circles_find( delaunay* d, point* p, int* n, int** out )
         d->t_out = istack_create();
     }
 
-    /*
-     * It is important to have a reasonable seed here. If the last search
-     * was successful -- start with the last found tricircle, otherwhile (i)
-     * try to find a triangle containing (x,y); if fails then (ii) check
-     * tricircles from the last search; if fails then (iii) make linear
-     * search through all tricircles
-     */
+    //
+    // It is important to have a reasonable seed here. If the last search
+    // was successful -- start with the last found tricircle, otherwhile (i)
+    // try to find a triangle containing (x,y); if fails then (ii) check
+    // tricircles from the last search; if fails then (iii) make linear
+    // search through all tricircles
+    //
     if ( d->first_id < 0 || !circle_contains( &d->circles[d->first_id], p ) )
     {
-        /*
-         * if any triangle contains (x,y) -- start with this triangle
-         */
+        //
+        // if any triangle contains (x,y) -- start with this triangle
+        //
         d->first_id = delaunay_xytoi( d, p, d->first_id );
 
-        /*
-         * if no triangle contains (x,y), there still is a chance that it is
-         * inside some of circumcircles
-         */
+        //
+        // if no triangle contains (x,y), there still is a chance that it is
+        // inside some of circumcircles
+        //
         if ( d->first_id < 0 )
         {
             int nn  = d->t_out->n;
             int tid = -1;
 
-            /*
-             * first check results of the last search
-             */
+            //
+            // first check results of the last search
+            //
             for ( i = 0; i < nn; ++i )
             {
                 tid = d->t_out->v[i];
                 if ( circle_contains( &d->circles[tid], p ) )
                     break;
             }
-            /*
-             * if unsuccessful, search through all circles
-             */
+            //
+            // if unsuccessful, search through all circles
+            //
             if ( tid < 0 || i == nn )
             {
                 double nt = d->ntriangles;
@@ -728,7 +728,7 @@ void delaunay_circles_find( delaunay* d, point* p, int* n, int** out )
                     istack_reset( d->t_out );
                     *n   = 0;
                     *out = NULL;
-                    return;     /* failed */
+                    return;     // failed
                 }
             }
             d->first_id = tid;
@@ -741,9 +741,9 @@ void delaunay_circles_find( delaunay* d, point* p, int* n, int** out )
     istack_push( d->t_in, d->first_id );
     d->flags[d->first_id] = 1;
 
-    /*
-     * main cycle
-     */
+    //
+    // main cycle
+    //
     while ( d->t_in->n > 0 )
     {
         int     tid = istack_pop( d->t_in );

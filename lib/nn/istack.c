@@ -1,19 +1,19 @@
-/******************************************************************************
- *
- * File:           istack.c
- *
- * Created:        06/06/2001
- *
- * Author:         Pavel Sakov
- *                 CSIRO Marine Research
- *
- * Purpose:        Handling stack of integers
- *
- * Description:    None
- *
- * Revisions:      None
- *
- *****************************************************************************/
+//*****************************************************************************
+//
+// File:           istack.c
+//
+// Created:        06/06/2001
+//
+// Author:         Pavel Sakov
+//                 CSIRO Marine Research
+//
+// Purpose:        Handling stack of integers
+//
+// Description:    None
+//
+// Revisions:      None
+//
+//***************************************************************************
 
 #define STACK_NSTART    50
 #define STACK_NINC      50

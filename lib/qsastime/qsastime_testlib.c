@@ -1,23 +1,23 @@
-/*
- * Copyright (C) 2009 Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+//
+// Copyright (C) 2009 Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 #include "qsastime.h"
 #include "qsastimeP.h"
 #include <time.h>
@@ -42,10 +42,10 @@
 #define TEST14      0x2000
 #define TEST15      0x4000
 #define TEST16      0x8000
-/* MJD for Jan 01, 1970 00:00:00 Gregorian, the Unix epoch.*/
+// MJD for Jan 01, 1970 00:00:00 Gregorian, the Unix epoch.
 #define MJD_1970    40587
 
-/* Recommended (by Linux timegm man page) POSIX equivalent of Linux timegm C library function */
+// Recommended (by Linux timegm man page) POSIX equivalent of Linux timegm C library function
 time_t my_timegm( struct tm *tm )
 {
     time_t ret;
@@ -100,7 +100,7 @@ int testlib_broken_down_time( int year, int month, int day, int hour, int min, d
 
     setFromUT( year, month, day, hour, min, sec, pMJD1, forceJulian );
 
-    /* Inner TEST01: compare setFromUT with my_timegm. */
+    // Inner TEST01: compare setFromUT with my_timegm.
     if ( !forceJulian && ( inner_test_choice & TEST01 ) )
     {
         secs_past_epoch1 = (time_t) ( 86400. * ( (double) pMJD1->base_day - (double) MJD_1970 ) + (int) pMJD1->time_sec );
@@ -116,8 +116,8 @@ int testlib_broken_down_time( int year, int month, int day, int hour, int min, d
         }
     }
 
-    /* Inner TEST02: check minimal fields of strfMJD (Julian) or
-     * strftime and strfMJD (Gregorian) */
+    // Inner TEST02: check minimal fields of strfMJD (Julian) or
+    // strftime and strfMJD (Gregorian)
     if ( inner_test_choice & TEST02 )
     {
         if ( !forceJulian )
@@ -144,7 +144,7 @@ int testlib_broken_down_time( int year, int month, int day, int hour, int min, d
     iffeb29   = month == 1 && day == 29;
     ifleapday = ( ifleapyear && iffeb29 );
 
-    /* Inner TEST03: compare setFromUT with its inverse, breakDownMJD */
+    // Inner TEST03: compare setFromUT with its inverse, breakDownMJD
     if ( inner_test_choice & TEST03 )
     {
         breakDownMJD( &year1, &month1, &day1, &hour1, &min1, &sec1, pMJD1, forceJulian );
@@ -159,7 +159,7 @@ int testlib_broken_down_time( int year, int month, int day, int hour, int min, d
         }
     }
 
-    /* Inner TEST04: compare setFromUT with its inverse, the C library gmtime.*/
+    // Inner TEST04: compare setFromUT with its inverse, the C library gmtime.
     if ( !forceJulian && ( inner_test_choice & TEST04 ) )
     {
         ptm1       = gmtime( &secs_past_epoch );
@@ -219,7 +219,7 @@ int testlib_MJD( const MJDtime *MJD, int forceJulian, int inner_test_choice, int
         printf( "%.4d-%02d-%02dT%02d:%02d:%018.15fZ\n", year, month + 1, day, hour, min, sec );
     }
 
-    /* Inner TEST01: compare breakDownMJD with gmtime. */
+    // Inner TEST01: compare breakDownMJD with gmtime.
     if ( !forceJulian && ( inner_test_choice & TEST01 ) )
     {
         ptm1 = gmtime( &secs_past_epoch );
@@ -232,8 +232,8 @@ int testlib_MJD( const MJDtime *MJD, int forceJulian, int inner_test_choice, int
         }
     }
 
-    /* Inner TEST02: check minimal fields of strfMJD (Julian) or
-     * strftime and strfMJD (Gregorian) */
+    // Inner TEST02: check minimal fields of strfMJD (Julian) or
+    // strftime and strfMJD (Gregorian)
     if ( inner_test_choice & TEST02 )
     {
         if ( !forceJulian )
@@ -260,7 +260,7 @@ int testlib_MJD( const MJDtime *MJD, int forceJulian, int inner_test_choice, int
     iffeb29   = month == 1 && day == 29;
     ifleapday = ( ifleapyear && iffeb29 );
 
-    /* Inner TEST03: compare breakDownMJD with its inverse, setFromUT */
+    // Inner TEST03: compare breakDownMJD with its inverse, setFromUT
     if ( inner_test_choice & TEST03 )
     {
         setFromUT( year, month, day, hour, min, sec, MJD2, forceJulian );
@@ -273,7 +273,7 @@ int testlib_MJD( const MJDtime *MJD, int forceJulian, int inner_test_choice, int
         }
     }
 
-    /* Inner TEST04: compare breakDownMJD with its inverse, my_timegm */
+    // Inner TEST04: compare breakDownMJD with its inverse, my_timegm
     if ( !forceJulian && ( inner_test_choice & TEST04 ) )
     {
         secs_past_epoch1 = my_timegm( ptm );
@@ -289,9 +289,9 @@ int testlib_MJD( const MJDtime *MJD, int forceJulian, int inner_test_choice, int
     return 0;
 }
 
-/* Test program to do extensive comparisons between setFromUT, breakDownMJD,
- * and strfMJD and the closest corresponding _Linux_ C library routines,
- * timegm, gmtime, and strftime.  */
+// Test program to do extensive comparisons between setFromUT, breakDownMJD,
+// and strfMJD and the closest corresponding _Linux_ C library routines,
+// timegm, gmtime, and strftime.
 
 int main()
 {
@@ -311,8 +311,8 @@ int main()
     double    jd;
     int       test_choice, date_choice, ret;
 
-    /* choose test(s) to be run using bit-pattern in test_choice that is
-     * input from stdin. */
+    // choose test(s) to be run using bit-pattern in test_choice that is
+    // input from stdin.
     scanf( "%i", &test_choice );
 
     printf( "sizeof(time_t) = %d\n", (int) sizeof ( time_t ) );
@@ -328,7 +328,7 @@ int main()
         printf( "tests abandoned because int must be 32-bits to test this library properly for how well it will potentially perform on 32-bit platforms\n" );
         return 2;
     }
-    /* strftime affected by locale so force 0 timezone for this complete test. */
+    // strftime affected by locale so force 0 timezone for this complete test.
     setenv( "TZ", "", 1 );
     tzset();
 
@@ -620,7 +620,7 @@ int main()
             return ret;
         }
 
-        /* 430 days or ~ 37 million seconds should cover the complete next year for both Julian and Gregorian . */
+        // 430 days or ~ 37 million seconds should cover the complete next year for both Julian and Gregorian .
         for ( seconds = 0; seconds < 430 * 86400; seconds++ )
         {
             MJD1->time_sec = (double) seconds;

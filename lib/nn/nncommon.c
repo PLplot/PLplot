@@ -1,28 +1,28 @@
-/******************************************************************************
- *
- * File:           nncommon.c
- *
- * Created:        04/08/2000
- *
- * Author:         Pavel Sakov
- *                 CSIRO Marine Research
- *
- * Purpose:        Common stuff for NN interpolation library
- *
- * Description:    None
- *
- * Revisions:      15/11/2002 PS: Changed name from "utils.c"
- *                 28/02/2003 PS: Modified points_read() to do the job without
- *                   rewinding the file. This allows to read from stdin when
- *                   necessary.
- *                 09/04/2003 PS: Modified points_read() to read from a
- *                   file specified by name, not by handle.
- * Modified:       Andrew Ross 20/10/2008
- *                 Change <= comparison in circle_contains() to use EPSILON
- *                 to catch case where the point lies on the circle and there
- *                 is floating point rounding error in the radii.
- *
- *****************************************************************************/
+//*****************************************************************************
+//
+// File:           nncommon.c
+//
+// Created:        04/08/2000
+//
+// Author:         Pavel Sakov
+//                 CSIRO Marine Research
+//
+// Purpose:        Common stuff for NN interpolation library
+//
+// Description:    None
+//
+// Revisions:      15/11/2002 PS: Changed name from "utils.c"
+//                 28/02/2003 PS: Modified points_read() to do the job without
+//                   rewinding the file. This allows to read from stdin when
+//                   necessary.
+//                 09/04/2003 PS: Modified points_read() to read from a
+//                   file specified by name, not by handle.
+// Modified:       Andrew Ross 20/10/2008
+//                 Change <= comparison in circle_contains() to use EPSILON
+//                 to catch case where the point lies on the circle and there
+//                 is floating point rounding error in the radii.
+//
+//***************************************************************************
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -50,8 +50,8 @@ void nn_quit( char* format, ... )
 {
     va_list args;
 
-    fflush( stdout );             /* just in case, to have the exit message
-                                   * last */
+    fflush( stdout );             // just in case, to have the exit message
+                                  // last
 
     fprintf( stderr, "error: nn: " );
     va_start( args, format );
@@ -84,29 +84,29 @@ int circle_build( circle* c, point* p1, point* p2, point* p3 )
     return 1;
 }
 
-/* This procedure has taken it final shape after a number of tries. The problem
- * was to have the calculated and stored radii being the same if (x,y) is
- * exactly on the circle border (i.e. not to use FCPU extended precision in
- * the radius calculation). This may have little effect in practice but was
- * important in some tests when both input and output data were placed
- * in rectangular grid nodes.
- */
+// This procedure has taken it final shape after a number of tries. The problem
+// was to have the calculated and stored radii being the same if (x,y) is
+// exactly on the circle border (i.e. not to use FCPU extended precision in
+// the radius calculation). This may have little effect in practice but was
+// important in some tests when both input and output data were placed
+// in rectangular grid nodes.
+//
 int circle_contains( circle* c, point* p )
 {
     return hypot( c->x - p->x, c->y - p->y ) <= c->r * ( 1.0 + EPSILON );
 }
 
-/* Smoothes the input point array by averaging the input x,y and z values
- * for each cell within virtual rectangular nx by ny grid. The corners of the
- * grid are created from min and max values of the input array. It also frees
- * the original array and returns results and new dimension via original
- * data and size pointers.
- *
- * @param pn Pointer to number of points (input/output)
- * @param ppoints Pointer to array of points (input/output) [*pn]
- * @param nx Number of x nodes in decimation
- * @param ny Number of y nodes in decimation
- */
+// Smoothes the input point array by averaging the input x,y and z values
+// for each cell within virtual rectangular nx by ny grid. The corners of the
+// grid are created from min and max values of the input array. It also frees
+// the original array and returns results and new dimension via original
+// data and size pointers.
+//
+// @param pn Pointer to number of points (input/output)
+// @param ppoints Pointer to array of points (input/output) [*pn]
+// @param nx Number of x nodes in decimation
+// @param ny Number of y nodes in decimation
+//
 void points_thin( int* pn, point** ppoints, int nx, int ny )
 {
     int    n           = *pn;
@@ -165,11 +165,11 @@ void points_thin( int* pn, point** ppoints, int nx, int ny )
         point* p = &points[ii];
         int  index;
 
-        /*
-         * Following is the portion of the code which really depends on the
-         * floating point particulars. Do not be surprised if different
-         * compilers/options give different results here.
-         */
+        //
+        // Following is the portion of the code which really depends on the
+        // floating point particulars. Do not be surprised if different
+        // compilers/options give different results here.
+        //
         i = ( nx == 1 ) ? 0 : ( p->x - xmin ) / stepx;
         j = ( ny == 1 ) ? 0 : ( p->y - ymin ) / stepy;
 
@@ -230,18 +230,18 @@ void points_thin( int* pn, point** ppoints, int nx, int ny )
     *pn      = nnew;
 }
 
-/* Generates rectangular grid nx by ny using min and max x and y values from
- * the input point array. Allocates space for the output point array, be sure
- * to free it when necessary!
- *
- * @param n Number of points
- * @param points Array of points [n]
- * @param nx Number of x nodes
- * @param ny Number of y nodes
- * @param zoom Zoom coefficient
- * @param nout Pointer to number of output points
- * @param pout Pointer to array of output points [*nout]
- */
+// Generates rectangular grid nx by ny using min and max x and y values from
+// the input point array. Allocates space for the output point array, be sure
+// to free it when necessary!
+//
+// @param n Number of points
+// @param points Array of points [n]
+// @param nx Number of x nodes
+// @param ny Number of y nodes
+// @param zoom Zoom coefficient
+// @param nout Pointer to number of output points
+// @param pout Pointer to array of output points [*nout]
+//
 void points_generate1( int nin, point pin[], int nx, int ny, double zoom, int* nout, point** pout )
 {
     double xmin = DBL_MAX;
@@ -314,19 +314,19 @@ void points_generate1( int nin, point pin[], int nx, int ny, double zoom, int* n
     }
 }
 
-/* Generates rectangular grid nx by ny using specified min and max x and y
- * values. Allocates space for the output point array, be sure to free it
- * when necessary!
- *
- * @param xmin Min x value
- * @param xmax Max x value
- * @param ymin Min y value
- * @param ymax Max y value
- * @param nx Number of x nodes
- * @param ny Number of y nodes
- * @param nout Pointer to number of output points
- * @param pout Pointer to array of output points [*nout]
- */
+// Generates rectangular grid nx by ny using specified min and max x and y
+// values. Allocates space for the output point array, be sure to free it
+// when necessary!
+//
+// @param xmin Min x value
+// @param xmax Max x value
+// @param ymin Min y value
+// @param ymax Max y value
+// @param nx Number of x nodes
+// @param ny Number of y nodes
+// @param nout Pointer to number of output points
+// @param pout Pointer to array of output points [*nout]
+//
 void points_generate2( double xmin, double xmax, double ymin, double ymax, int nx, int ny, int* nout, point** pout )
 {
     double stepx, stepy;
@@ -388,13 +388,13 @@ static int str2double( char* token, double* value )
 
 #define NALLOCATED_START    1024
 
-/* Reads array of points from a columnar file.
- *
- * @param fname File name (can be "stdin" for standard input)
- * @param dim Number of dimensions (must be 2 or 3)
- * @param n Pointer to number of points (output)
- * @param points Pointer to array of points [*n] (output) (to be freed)
- */
+// Reads array of points from a columnar file.
+//
+// @param fname File name (can be "stdin" for standard input)
+// @param dim Number of dimensions (must be 2 or 3)
+// @param n Pointer to number of points (output)
+// @param points Pointer to array of points [*n] (output) (to be freed)
+//
 void points_read( char* fname, int dim, int* n, point** points )
 {
     FILE * f        = NULL;
@@ -473,13 +473,13 @@ void points_read( char* fname, int dim, int* n, point** points )
             nn_quit( "%s: %s\n", fname, strerror( errno ) );
 }
 
-/** Scales Y coordinate so that the resulting set fits into square:
-** xmax - xmin = ymax - ymin
-*
-* @param n Number of points
-* @param points The points to scale
-* @return Y axis compression coefficient
-*/
+//* Scales Y coordinate so that the resulting set fits into square:
+//** xmax - xmin = ymax - ymin
+//*
+//* @param n Number of points
+//* @param points The points to scale
+//* @return Y axis compression coefficient
+//
 double points_scaletosquare( int n, point* points )
 {
     double xmin, ymin, xmax, ymax;
@@ -517,12 +517,12 @@ double points_scaletosquare( int n, point* points )
     return k;
 }
 
-/** Compresses Y domain by a given multiple.
- *
- * @param n Number of points
- * @param points The points to scale
- * @param Y axis compression coefficient as returned by points_scaletosquare()
- */
+//* Compresses Y domain by a given multiple.
+//
+// @param n Number of points
+// @param points The points to scale
+// @param Y axis compression coefficient as returned by points_scaletosquare()
+//
 void points_scale( int n, point* points, double k )
 {
     int i;

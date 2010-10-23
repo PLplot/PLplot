@@ -1,15 +1,15 @@
 
-/* defines.h: declarations file for the cgmdraw module.
- *
- *      Written by G. Edward Johnson <mailto:lorax@nist.gov>
- *      Date: April 1996
- *      Copyright: cd software produced by NIST, an agency of the
- *      U.S. government, is by statute not subject to copyright
- *      in the United States. Recipients of this software assume all
- *      responsibilities associated with its operation, modification
- *      and maintenance.
- *
- */
+// defines.h: declarations file for the cgmdraw module.
+//
+//      Written by G. Edward Johnson <mailto:lorax@nist.gov>
+//      Date: April 1996
+//      Copyright: cd software produced by NIST, an agency of the
+//      U.S. government, is by statute not subject to copyright
+//      in the United States. Recipients of this software assume all
+//      responsibilities associated with its operation, modification
+//      and maintenance.
+//
+//
 
 #ifndef CDDEF_H
 #define CDDEF_H    1
@@ -31,10 +31,10 @@
 #define b14        040000
 #define b15        0100000
 
-/* Defines the default values for different attributes.  In general,
- * these track the CGM specificaition, so changing them is not a good idea.
- * however, it is generally ok to set them to -1 (undefined) if you want.
- */
+// Defines the default values for different attributes.  In general,
+// these track the CGM specificaition, so changing them is not a good idea.
+// however, it is generally ok to set them to -1 (undefined) if you want.
+//
 
 #define CDLTYPE         1
 #define CDLWIDTH        0

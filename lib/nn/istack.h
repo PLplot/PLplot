@@ -1,19 +1,19 @@
-/******************************************************************************
- *
- * File:           istack.h
- *
- * Created:        06/06/2001
- *
- * Author:         Pavel Sakov
- *                 CSIRO Marine Research
- *
- * Purpose:        Header for handling stack of integers.
- *
- * Description:    None
- *
- * Revisions:      None
- *
- *****************************************************************************/
+//*****************************************************************************
+//
+// File:           istack.h
+//
+// Created:        06/06/2001
+//
+// Author:         Pavel Sakov
+//                 CSIRO Marine Research
+//
+// Purpose:        Header for handling stack of integers.
+//
+// Description:    None
+//
+// Revisions:      None
+//
+//***************************************************************************
 
 #if !defined ( _ISTACK_H )
 #define _ISTACK_H

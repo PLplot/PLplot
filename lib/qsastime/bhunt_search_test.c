@@ -1,23 +1,23 @@
-/*
- * Copyright (C) 2009 Alan W. Irwin
- *
- * This file is part of PLplot.
- *
- * PLplot is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Library Public License as published
- * by the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * PLplot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with PLplot; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+//
+// Copyright (C) 2009 Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 #include <stdio.h>
 #include <stdlib.h>
 #include "qsastimeP.h"
@@ -36,8 +36,8 @@ int main()
     int    i, j, iswitch, ifrandom, ifhunt, ntable, offset, multiplier, ntest, index;
     double *table, test;
 
-    /* size of ordered table of data and offset and multiplier to determine
-     * number and value of test values used to search the ordered table. */
+    // size of ordered table of data and offset and multiplier to determine
+    // number and value of test values used to search the ordered table.
     scanf( "%i %i %i", &ntable, &offset, &multiplier );
     ntest = abs( multiplier ) * ( ntable - 1 ) + 1;
     printf( "ntable, offset, multiplier, ntest = %i, %i, %i, %i\n", ntable, offset, multiplier, ntest );
@@ -50,7 +50,7 @@ int main()
     }
 
 
-    /* Generate ordered table to be searched. */
+    // Generate ordered table to be searched.
     for ( i = 0; i < ntable; i++ )
     {
         table[i] = (double) i;
@@ -60,8 +60,8 @@ int main()
     {
         ifrandom = ( iswitch & 0x1 ) == 0x1;
         ifhunt   = ( iswitch & 0x2 ) == 0x2;
-        /* Generate series of test values (not necessarily ordered) to be used
-         * as keys for searching the table array). */
+        // Generate series of test values (not necessarily ordered) to be used
+        // as keys for searching the table array).
         index          = -40;
         count_gedouble = 0;
         for ( i = 0; i < ntest; i++ )

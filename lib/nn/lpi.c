@@ -1,25 +1,25 @@
-/******************************************************************************
- *
- * File:           linear.c
- *
- * Created:        04/08/2000
- *
- * Author:         Pavel Sakov
- *                 CSIRO Marine Research
- *
- * Purpose:        2D linear interpolation
- *
- * Description:    `lpi' -- "Linear Point Interpolator" -- is
- *                 a structure for conducting linear interpolation on a given
- *                 data on a "point-to-point" basis. It interpolates linearly
- *                 within each triangle resulted from the Delaunay
- *                 triangluation of input data. `lpi' is much
- *                 faster than all Natural Neighbours interpolators in `nn'
- *                 library.
- *
- * Revisions:      None
- *
- *****************************************************************************/
+//*****************************************************************************
+//
+// File:           linear.c
+//
+// Created:        04/08/2000
+//
+// Author:         Pavel Sakov
+//                 CSIRO Marine Research
+//
+// Purpose:        2D linear interpolation
+//
+// Description:    `lpi' -- "Linear Point Interpolator" -- is
+//                 a structure for conducting linear interpolation on a given
+//                 data on a "point-to-point" basis. It interpolates linearly
+//                 within each triangle resulted from the Delaunay
+//                 triangluation of input data. `lpi' is much
+//                 faster than all Natural Neighbours interpolators in `nn'
+//                 library.
+//
+// Revisions:      None
+//
+//***************************************************************************
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -39,11 +39,11 @@ struct lpi
 
 int delaunay_xytoi( delaunay* d, point* p, int seed );
 
-/* Builds linear interpolator.
- *
- * @param d Delaunay triangulation
- * @return Linear interpolator
- */
+// Builds linear interpolator.
+//
+// @param d Delaunay triangulation
+// @return Linear interpolator
+//
 lpi* lpi_build( delaunay* d )
 {
     int i;
@@ -93,21 +93,21 @@ lpi* lpi_build( delaunay* d )
     return l;
 }
 
-/* Destroys linear interpolator.
- *
- * @param l Structure to be destroyed
- */
+// Destroys linear interpolator.
+//
+// @param l Structure to be destroyed
+//
 void lpi_destroy( lpi* l )
 {
     free( l->weights );
     free( l );
 }
 
-/* Finds linearly interpolated value in a point.
- *
- * @param l Linear interpolation
- * @param p Point to be interpolated (p->x, p->y -- input; p->z -- output)
- */
+// Finds linearly interpolated value in a point.
+//
+// @param l Linear interpolation
+// @param p Point to be interpolated (p->x, p->y -- input; p->z -- output)
+//
 void lpi_interpolate_point( lpi* l, point* p )
 {
     delaunay* d = l->d;
@@ -124,14 +124,14 @@ void lpi_interpolate_point( lpi* l, point* p )
         p->z = NaN;
 }
 
-/* Linearly interpolates data from one array of points for another array of
- * points.
- *
- * @param nin Number of input points
- * @param pin Array of input points [pin]
- * @param nout Number of ouput points
- * @param pout Array of output points [nout]
- */
+// Linearly interpolates data from one array of points for another array of
+// points.
+//
+// @param nin Number of input points
+// @param pin Array of input points [pin]
+// @param nout Number of ouput points
+// @param pout Array of output points [nout]
+//
 void lpi_interpolate_points( int nin, point pin[], int nout, point pout[] )
 {
     delaunay* d  = delaunay_build( nin, pin, 0, NULL, 0, NULL );

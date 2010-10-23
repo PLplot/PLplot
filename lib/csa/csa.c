@@ -1,29 +1,29 @@
-/******************************************************************************
- *
- * File:           csa.c
- *
- * Created:        16/10/2002
- *
- * Author:         Pavel Sakov
- *                 CSIRO Marine Research
- *
- * Purpose:        2D data approximation with bivariate C1 cubic spline.
- *                 A set of library functions + standalone utility.
- *
- * Description:    See J. Haber, F. Zeilfelder, O.Davydov and H.-P. Seidel,
- *                 Smooth approximation and rendering of large scattered data
- *                 sets, in  ``Proceedings of IEEE Visualization 2001''
- *                 (Th.Ertl, K.Joy and A.Varshney, Eds.), pp.341-347, 571,
- *                 IEEE Computer Society, 2001.
- *                 http://www.uni-giessen.de/www-Numerische-Mathematik/
- *                        davydov/VIS2001.ps.gz
- *                 http://www.math.uni-mannheim.de/~lsmath4/paper/
- *                        VIS2001.pdf.gz
- *
- * Revisions:      09/04/2003 PS: Modified points_read() to read from a
- *                   file specified by name, not by handle.
- *
- *****************************************************************************/
+//*****************************************************************************
+//
+// File:           csa.c
+//
+// Created:        16/10/2002
+//
+// Author:         Pavel Sakov
+//                 CSIRO Marine Research
+//
+// Purpose:        2D data approximation with bivariate C1 cubic spline.
+//                 A set of library functions + standalone utility.
+//
+// Description:    See J. Haber, F. Zeilfelder, O.Davydov and H.-P. Seidel,
+//                 Smooth approximation and rendering of large scattered data
+//                 sets, in  ``Proceedings of IEEE Visualization 2001''
+//                 (Th.Ertl, K.Joy and A.Varshney, Eds.), pp.341-347, 571,
+//                 IEEE Computer Society, 2001.
+//                 http://www.uni-giessen.de/www-Numerische-Mathematik/
+//                        davydov/VIS2001.ps.gz
+//                 http://www.math.uni-mannheim.de/~lsmath4/paper/
+//                        VIS2001.pdf.gz
+//
+// Revisions:      09/04/2003 PS: Modified points_read() to read from a
+//                   file specified by name, not by handle.
+//
+//***************************************************************************
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -40,10 +40,10 @@
 
 int csa_verbose = 0;
 
-#define NPASTART     5          /* Number of Points Allocated at Start */
-#define SVD_NMAX     30         /* Maximal number of iterations in svd() */
+#define NPASTART     5          // Number of Points Allocated at Start
+#define SVD_NMAX     30         // Maximal number of iterations in svd()
 
-/* default algorithm parameters */
+// default algorithm parameters
 #define NPMIN_DEF    3
 #define NPMAX_DEF    40
 #define K_DEF        140
@@ -55,41 +55,41 @@ typedef struct square   square;
 typedef struct
 {
     square * parent;
-    int    index;               /* index within parent square; 0 <= index <=
-                                 * 3 */
+    int    index;               // index within parent square; 0 <= index <=
+                                // 3
     point  vertices[3];
-    point  middle;              /* barycenter */
-    double h;                   /* parent square edge length */
-    double r;                   /* data visibility radius */
+    point  middle;              // barycenter
+    double h;                   // parent square edge length
+    double r;                   // data visibility radius
 
-    /*
-     * points used -- in primary triangles only
-     */
+    //
+    // points used -- in primary triangles only
+    //
     int  nallocated;
     int  npoints;
     point** points;
 
-    int  primary;               /* flag -- whether calculate spline
-                                 * coefficients directly (by least squares
-                                 * method) (primary = 1) or indirectly (from
-                                 * C1 smoothness conditions) (primary = 0) */
-    int hascoeffs;              /* flag -- whether there are no NaNs among
-                                 * the spline coefficients */
-    int order;                  /* spline order -- for primary triangles only
-                                 */
+    int  primary;               // flag -- whether calculate spline
+                                // coefficients directly (by least squares
+                                // method) (primary = 1) or indirectly (from
+                                // C1 smoothness conditions) (primary = 0)
+    int hascoeffs;              // flag -- whether there are no NaNs among
+                                // the spline coefficients
+    int order;                  // spline order -- for primary triangles only
+                                //
 } triangle;
 
 struct square
 {
     csa     * parent;
-    int     i, j;               /* indices */
+    int     i, j;               // indices
 
     int     nallocated;
     int     npoints;
     point   ** points;
 
-    int     primary;            /* flag -- whether this square contains a
-                                 * primary triangle */
+    int     primary;            // flag -- whether this square contains a
+                                // primary triangle
     triangle* triangles[4];
 
     double  coeffs[25];
@@ -106,38 +106,38 @@ struct csa
     int    npoints;
     point  ** points;
 
-    /*
-     * squarization
-     */
+    //
+    // squarization
+    //
     int     ni;
     int     nj;
     double  h;
-    square  *** squares;        /* square* [j][i] */
+    square  *** squares;        // square* [j][i]
 
-    int     npt;                /* Number of Primary Triangles */
-    triangle** pt;              /* Primary Triangles -- triangle* [npt] */
+    int     npt;                // Number of Primary Triangles
+    triangle** pt;              // Primary Triangles -- triangle* [npt]
 
-    /*
-     * algorithm parameters
-     */
-    int    npmin;               /* minimal number of points locally involved
-                                 * in * spline calculation (normally = 3) */
-    int    npmax;               /* maximal number of points locally involved
-                                 * in * spline calculation (required > 10, *
-                                 * recommended 20 < npmax < 60) */
-    double k;                   /* relative tolerance multiple in fitting
-                                 * spline coefficients: the higher this
-                                 * value, the higher degree of the locally
-                                 * fitted spline (recommended 80 < k < 200) */
-    int nppc;                   /* average number of points per square */
+    //
+    // algorithm parameters
+    //
+    int    npmin;               // minimal number of points locally involved
+                                // in * spline calculation (normally = 3)
+    int    npmax;               // maximal number of points locally involved
+                                // in * spline calculation (required > 10, *
+                                // recommended 20 < npmax < 60)
+    double k;                   // relative tolerance multiple in fitting
+                                // spline coefficients: the higher this
+                                // value, the higher degree of the locally
+                                // fitted spline (recommended 80 < k < 200)
+    int nppc;                   // average number of points per square
 };
 
 static void csa_quit( char* format, ... )
 {
     va_list args;
 
-    fflush( stdout );             /* just in case -- to have the exit message
-                                   * last */
+    fflush( stdout );             // just in case -- to have the exit message
+                                  // last
 
     fprintf( stderr, "error: csa: " );
     va_start( args, format );
@@ -147,12 +147,12 @@ static void csa_quit( char* format, ... )
     exit( 1 );
 }
 
-/* Allocates n1xn2 matrix of something. Note that it will be accessed as
- * [n2][n1].
- * @param n1 Number of columns
- * @param n2 Number of rows
- * @return Matrix
- */
+// Allocates n1xn2 matrix of something. Note that it will be accessed as
+// [n2][n1].
+// @param n1 Number of columns
+// @param n2 Number of rows
+// @return Matrix
+//
 static void* alloc2d( int n1, int n2, size_t unitsize )
 {
     unsigned int size;
@@ -179,9 +179,9 @@ static void* alloc2d( int n1, int n2, size_t unitsize )
     return pp;
 }
 
-/* Destroys n1xn2 matrix.
- * @param pp Matrix
- */
+// Destroys n1xn2 matrix.
+// @param pp Matrix
+//
 static void free2d( void* pp )
 {
     void* p;
@@ -242,12 +242,12 @@ static void triangle_destroy( triangle* t )
     free( t );
 }
 
-/* Calculates barycentric coordinates of a point.
- * Takes into account that possible triangles are rectangular, with the right
- * angle at t->vertices[0], the vertices[1] vertex being in
- * (-3*PI/4) + (PI/2) * t->index direction from vertices[0], and
- * vertices[2] being at (-5*PI/4) + (PI/2) * t->index.
- */
+// Calculates barycentric coordinates of a point.
+// Takes into account that possible triangles are rectangular, with the right
+// angle at t->vertices[0], the vertices[1] vertex being in
+// (-3*PI/4) + (PI/2) * t->index direction from vertices[0], and
+// vertices[2] being at (-5*PI/4) + (PI/2) * t->index.
+//
 static void triangle_calculatebc( triangle* t, point* p, double bc[] )
 {
     double dx = p->x - t->vertices[0].x;
@@ -293,19 +293,19 @@ static square* square_create( csa* parent, double xmin, double ymin, int i, int 
 
     s->primary = 0;
 
-    /*
-     * create 4 triangles formed by diagonals
-     */
+    //
+    // create 4 triangles formed by diagonals
+    //
     for ( ii = 0; ii < 4; ++ii )
     {
         point vertices[3];
 
         vertices[0].x    = xmin + h / 2.0;
         vertices[0].y    = ymin + h / 2.0;
-        vertices[1].x    = xmin + h * ( ( ( ii + 1 ) % 4 ) / 2 ); /* 0 1 1 0 */
-        vertices[1].y    = ymin + h * ( ( ( ii + 2 ) % 4 ) / 2 ); /* 1 1 0 0 */
-        vertices[2].x    = xmin + h * ( ii / 2 );                 /* 0 0 1 1 */
-        vertices[2].y    = ymin + h * ( ( ( ii + 1 ) % 4 ) / 2 ); /* 0 1 1 0 */
+        vertices[1].x    = xmin + h * ( ( ( ii + 1 ) % 4 ) / 2 ); // 0 1 1 0
+        vertices[1].y    = ymin + h * ( ( ( ii + 2 ) % 4 ) / 2 ); // 1 1 0 0
+        vertices[2].x    = xmin + h * ( ii / 2 );                 // 0 0 1 1
+        vertices[2].y    = ymin + h * ( ( ( ii + 1 ) % 4 ) / 2 ); // 0 1 1 0
         s->triangles[ii] = triangle_create( s, vertices, ii );
     }
 
@@ -399,9 +399,9 @@ void csa_addpoints( csa* a, int n, point points[] )
     int i;
 
     assert( a->squares == NULL );
-    /*
-     * (can be called prior to squarization only)
-     */
+    //
+    // (can be called prior to squarization only)
+    //
 
     while ( na < a->npoints + n )
         na *= 2;
@@ -429,9 +429,9 @@ void csa_addpoints( csa* a, int n, point points[] )
     }
 }
 
-/* Marks the squares containing "primary" triangles by setting "primary" flag
- * to 1.
- */
+// Marks the squares containing "primary" triangles by setting "primary" flag
+// to 1.
+//
 static void csa_setprimaryflag( csa* a )
 {
     square*** squares = a->squares;
@@ -465,12 +465,12 @@ static void csa_setprimaryflag( csa* a )
     }
 }
 
-/* Splits the data domain in a number of squares.
- */
+// Splits the data domain in a number of squares.
+//
 static void csa_squarize( csa* a )
 {
-    int    nps[7]  = { 0, 0, 0, 0, 0, 0 }; /* stats on number of points per
-                                            * square */
+    int    nps[7] = { 0, 0, 0, 0, 0, 0 };  // stats on number of points per
+                                           // square
     double dx      = a->xmax - a->xmin;
     double dy      = a->ymax - a->ymin;
     int    npoints = a->npoints;
@@ -484,11 +484,11 @@ static void csa_squarize( csa* a )
     }
 
     assert( a->squares == NULL );
-    /*
-     * (can be done only once)
-     */
+    //
+    // (can be done only once)
+    //
 
-    h = sqrt( dx * dy * a->nppc / npoints );      /* square edge size */
+    h = sqrt( dx * dy * a->nppc / npoints );      // square edge size
     if ( dx < h )
         h = dy * a->nppc / npoints;
     if ( dy < h )
@@ -504,17 +504,17 @@ static void csa_squarize( csa* a )
         fflush( stderr );
     }
 
-    /*
-     * create squares
-     */
+    //
+    // create squares
+    //
     a->squares = alloc2d( a->ni, a->nj, sizeof ( void* ) );
     for ( j = 0; j < a->nj; ++j )
         for ( i = 0; i < a->ni; ++i )
             a->squares[j][i] = square_create( a, a->xmin + h * ( i - 1 ), a->ymin + h * ( j - 1 ), i, j );
 
-    /*
-     * map points to squares
-     */
+    //
+    // map points to squares
+    //
     for ( ii = 0; ii < npoints; ++ii )
     {
         point* p = a->points[ii];
@@ -524,16 +524,16 @@ static void csa_squarize( csa* a )
         square_addpoint( a->squares[j][i], p );
     }
 
-    /*
-     * mark relevant squares with no points
-     */
+    //
+    // mark relevant squares with no points
+    //
     csa_setprimaryflag( a );
 
-    /*
-     * Create a list of "primary" triangles, for which spline coefficients
-     * will be calculated directy (by least squares method), without using
-     * C1 smoothness conditions.
-     */
+    //
+    // Create a list of "primary" triangles, for which spline coefficients
+    // will be calculated directy (by least squares method), without using
+    // C1 smoothness conditions.
+    //
     a->pt = malloc( ( a->ni / 2 + 1 ) * a->nj * sizeof ( triangle* ) );
     for ( j = 0, ii = 0, nadj = 0; j < a->nj; ++j )
     {
@@ -602,9 +602,9 @@ static void csa_squarize( csa* a )
         fflush( stderr );
 }
 
-/* Returns all squares intersecting with a square with center in t->middle
- * and edges of length 2*t->r parallel to X and Y axes.
- */
+// Returns all squares intersecting with a square with center in t->middle
+// and edges of length 2*t->r parallel to X and Y axes.
+//
 static void getsquares( csa* a, triangle* t, int* n, square*** squares )
 {
     int imin = (int) floor( ( t->middle.x - t->r - a->xmin ) / t->h );
@@ -645,14 +645,14 @@ static double distance( point* p1, point* p2 )
     return hypot( p1->x - p2->x, p1->y - p2->y );
 }
 
-/* Thins data by creating an auxiliary regular grid and for leaving only
- * the most central point within each grid cell.
- * (I follow the paper here. It is possible that taking average -- in terms of
- * both value and position -- of all points within a cell would be a bit more
- * robust. However, because of keeping only shallow copies of input points,
- * this would require quite a bit of structural changes. So, leaving it as is
- * for now.)
- */
+// Thins data by creating an auxiliary regular grid and for leaving only
+// the most central point within each grid cell.
+// (I follow the paper here. It is possible that taking average -- in terms of
+// both value and position -- of all points within a cell would be a bit more
+// robust. However, because of keeping only shallow copies of input points,
+// this would require quite a bit of structural changes. So, leaving it as is
+// for now.)
+//
 static void thindata( triangle* t, int npmax )
 {
     csa    * a         = t->parent->parent;
@@ -677,7 +677,7 @@ static void thindata( triangle* t, int npmax )
 
         if ( s->npoints == 0 )
             square_addpoint( s, p );
-        else                    /* npoints == 1 */
+        else                    // npoints == 1
 
         {
             point pmiddle;
@@ -707,9 +707,9 @@ static void thindata( triangle* t, int npmax )
     imax++;
 }
 
-/* Finds data points to be used in calculating spline coefficients for each
- * primary triangle.
- */
+// Finds data points to be used in calculating spline coefficients for each
+// primary triangle.
+//
 static void csa_attachpoints( csa* a )
 {
     int npmin      = a->npmin;
@@ -779,11 +779,11 @@ static void csa_attachpoints( csa* a )
                     break;
                 else
                 {
-                    /*
-                     * Sometimes you have too much data, you thin it and --
-                     * oops -- you have too little. This is not a frequent
-                     * event, so let us not bother to put a new subdivision.
-                     */
+                    //
+                    // Sometimes you have too much data, you thin it and --
+                    // oops -- you have too little. This is not a frequent
+                    // event, so let us not bother to put a new subdivision.
+                    //
                     t->r      *= 1.25;
                     t->npoints = 0;
                 }
@@ -808,20 +808,20 @@ static int n2q( int n )
         return 3;
     else if ( n >= 6 )
         return 2;
-    else                        /* n == 3 */
+    else                        // n == 3
         return 1;
 }
 
-/** Singular value decomposition.
- * Borrowed from EISPACK (1972-1973).
- * Presents input matrix A as  A = U.W.V'.
- *
- * @param a Input matrix A = U.W[0..m-1][0..n-1]; output matrix U
- * @param n Number of columns
- * @param m Number of rows
- * @param w Ouput vector that presents diagonal matrix W
- * @param V output matrix V
- */
+//* Singular value decomposition.
+// Borrowed from EISPACK (1972-1973).
+// Presents input matrix A as  A = U.W.V'.
+//
+// @param a Input matrix A = U.W[0..m-1][0..n-1]; output matrix U
+// @param n Number of columns
+// @param m Number of rows
+// @param w Ouput vector that presents diagonal matrix W
+// @param V output matrix V
+//
 static void svd( double** a, int n, int m, double* w, double** v )
 {
     double * rv1;
@@ -832,9 +832,9 @@ static void svd( double** a, int n, int m, double* w, double** v )
 
     rv1 = malloc( n * sizeof ( double ) );
 
-    /*
-     * householder reduction to bidiagonal form
-     */
+    //
+    // householder reduction to bidiagonal form
+    //
     g     = 0.0;
     scale = 0.0;
     tst1  = 0.0;
@@ -916,9 +916,9 @@ static void svd( double** a, int n, int m, double* w, double** v )
         }
     }
 
-    /*
-     * accumulation of right-hand transformations
-     */
+    //
+    // accumulation of right-hand transformations
+    //
     for ( i = n - 1; i >= 0; i-- )
     {
         if ( i < n - 1 )
@@ -926,9 +926,9 @@ static void svd( double** a, int n, int m, double* w, double** v )
             if ( g != 0.0 )
             {
                 for ( j = l; j < n; j++ )
-                    /*
-                     * double division avoids possible underflow
-                     */
+                    //
+                    // double division avoids possible underflow
+                    //
                     v[j][i] = ( a[i][j] / a[i][l] ) / g;
                 for ( j = l; j < n; j++ )
                 {
@@ -950,9 +950,9 @@ static void svd( double** a, int n, int m, double* w, double** v )
         l       = i;
     }
 
-    /*
-     * accumulation of left-hand transformations
-     */
+    //
+    // accumulation of left-hand transformations
+    //
     for ( i = ( m < n ) ? m - 1 : n - 1; i >= 0; i-- )
     {
         l = i + 1;
@@ -967,9 +967,9 @@ static void svd( double** a, int n, int m, double* w, double** v )
                 s = 0.0;
                 for ( k = l; k < m; k++ )
                     s += a[k][i] * a[k][j];
-                /*
-                 * double division avoids possible underflow
-                 */
+                //
+                // double division avoids possible underflow
+                //
                 f = ( s / a[i][i] ) / g;
                 for ( k = i; k < m; k++ )
                     a[k][j] += f * a[k][i];
@@ -983,9 +983,9 @@ static void svd( double** a, int n, int m, double* w, double** v )
         a[i][i] += 1.0;
     }
 
-    /*
-     * diagonalization of the bidiagonal form
-     */
+    //
+    // diagonalization of the bidiagonal form
+    //
     for ( k = n - 1; k >= 0; k-- )
     {
         int k1  = k - 1;
@@ -1001,7 +1001,7 @@ static void svd( double** a, int n, int m, double* w, double** v )
             if ( its > SVD_NMAX )
                 csa_quit( "svd(): no convergence in %d iterations", SVD_NMAX );
 
-            for ( l = k; l >= 0; l-- )    /* test for splitting */
+            for ( l = k; l >= 0; l-- )    // test for splitting
             {
                 double tst2 = fabs( rv1[l] ) + tst1;
 
@@ -1011,17 +1011,17 @@ static void svd( double** a, int n, int m, double* w, double** v )
                     break;
                 }
                 l1 = l - 1;
-                /*
-                 * rv1(1) is always zero, so there is no exit through the
-                 * bottom of the loop
-                 */
+                //
+                // rv1(1) is always zero, so there is no exit through the
+                // bottom of the loop
+                //
                 tst2 = fabs( w[l - 1] ) + tst1;
                 if ( tst2 == tst1 )
                     break;
             }
-            /*
-             * cancellation of rv1[l] if l > 1
-             */
+            //
+            // cancellation of rv1[l] if l > 1
+            //
             if ( docancellation )
             {
                 c = 0.0;
@@ -1048,17 +1048,17 @@ static void svd( double** a, int n, int m, double* w, double** v )
                     }
                 }
             }
-            /*
-             * test for convergence
-             */
+            //
+            // test for convergence
+            //
             z = w[k];
             if ( l != k )
             {
                 int i1;
 
-                /*
-                 * shift from bottom 2 by 2 minor
-                 */
+                //
+                // shift from bottom 2 by 2 minor
+                //
                 x = w[l];
                 y = w[k1];
                 g = rv1[k1];
@@ -1066,9 +1066,9 @@ static void svd( double** a, int n, int m, double* w, double** v )
                 f = 0.5 * ( ( ( g + z ) / h ) * ( ( g - z ) / y ) + y / h - h / y );
                 g = hypot( f, 1.0 );
                 f = x - ( z / x ) * z + ( h / x ) * ( y / ( f + copysign( g, f ) ) - h );
-                /*
-                 * next qr transformation
-                 */
+                //
+                // next qr transformation
+                //
                 c = 1.0;
                 s = 1.0;
                 for ( i1 = l; i1 < k; i1++ )
@@ -1095,9 +1095,9 @@ static void svd( double** a, int n, int m, double* w, double** v )
                     }
                     z     = hypot( f, h );
                     w[i1] = z;
-                    /*
-                     * rotation can be arbitrary if z = 0
-                     */
+                    //
+                    // rotation can be arbitrary if z = 0
+                    //
                     if ( z != 0.0 )
                     {
                         c = f / z;
@@ -1119,9 +1119,9 @@ static void svd( double** a, int n, int m, double* w, double** v )
             }
             else
             {
-                /*
-                 * w[k] is made non-negative
-                 */
+                //
+                // w[k] is made non-negative
+                //
                 if ( z < 0.0 )
                 {
                     w[k] = -z;
@@ -1136,8 +1136,8 @@ static void svd( double** a, int n, int m, double* w, double** v )
     free( rv1 );
 }
 
-/* Least squares fitting via singular value decomposition.
- */
+// Least squares fitting via singular value decomposition.
+//
 static void lsq( double** A, int ni, int nj, double* z, double* w, double* sol )
 {
     double** V = alloc2d( ni, ni, sizeof ( double ) );
@@ -1172,23 +1172,23 @@ static void lsq( double** A, int ni, int nj, double* z, double* w, double* sol )
     free2d( V );
 }
 
-/*
- *  square->coeffs[]:
- *
- *   ---------------------
- *  | 3    10    17    24 |
- *  |    6    13    20    |
- *  | 2     9    16    23 |
- *  |    5    12    19    |
- *  | 1     8    15    22 |
- *  |    4    11    18    |
- *  | 0     7    14    21 |
- *   ---------------------
- */
+//
+//  square->coeffs[]:
+//
+//   ---------------------
+//  | 3    10    17    24 |
+//  |    6    13    20    |
+//  | 2     9    16    23 |
+//  |    5    12    19    |
+//  | 1     8    15    22 |
+//  |    4    11    18    |
+//  | 0     7    14    21 |
+//   ---------------------
+//
 
-/* Calculates spline coefficients in each primary triangle by least squares
- * fitting to data attached by csa_attachpoints().
- */
+// Calculates spline coefficients in each primary triangle by least squares
+// fitting to data attached by csa_attachpoints().
+//
 static void csa_findprimarycoeffs( csa* a )
 {
     int n[4] = { 0, 0, 0, 0 };
@@ -1240,10 +1240,10 @@ static void csa_findprimarycoeffs( csa* a )
 
                     triangle_calculatebc( t, points[ii], bc );
 
-                    /*
-                     *  0   1   2   3   4   5   6   7   8   9
-                     * 300 210 201 120 111 102 030 021 012 003
-                     */
+                    //
+                    //  0   1   2   3   4   5   6   7   8   9
+                    // 300 210 201 120 111 102 030 021 012 003
+                    //
                     tmp    = bc[0] * bc[0];
                     aii[0] = tmp * bc[0];
                     tmp   *= 3.0;
@@ -1289,10 +1289,10 @@ static void csa_findprimarycoeffs( csa* a )
 
                     triangle_calculatebc( t, points[ii], bc );
 
-                    /*
-                     *  0   1   2   3   4   5
-                     * 200 110 101 020 011 002
-                     */
+                    //
+                    //  0   1   2   3   4   5
+                    // 200 110 101 020 011 002
+                    //
 
                     aii[0] = bc[0] * bc[0];
                     aii[1] = bc[0] * bc[1] * 2.0;
@@ -1315,7 +1315,7 @@ static void csa_findprimarycoeffs( csa* a )
                 }
                 if ( wmin < wmax / a->k )
                     ok = 0;
-                else            /* degree raising */
+                else            // degree raising
                 {
                     ok   = 1;
                     b[0] = b1[0];
@@ -1361,7 +1361,7 @@ static void csa_findprimarycoeffs( csa* a )
                 }
                 if ( wmin < wmax / a->k )
                     ok = 0;
-                else            /* degree raising */
+                else            // degree raising
                 {
                     ok   = 1;
                     b[0] = b1[0];
@@ -1460,9 +1460,9 @@ static void csa_findprimarycoeffs( csa* a )
     }
 }
 
-/* Finds spline coefficients in (adjacent to primary triangles) secondary
- * triangles from C1 smoothness conditions.
- */
+// Finds spline coefficients in (adjacent to primary triangles) secondary
+// triangles from C1 smoothness conditions.
+//
 static void csa_findsecondarycoeffs( csa* a )
 {
     square*** squares = a->squares;
@@ -1476,9 +1476,9 @@ static void csa_findsecondarycoeffs( csa* a )
         fflush( stderr );
     }
 
-    /*
-     * red
-     */
+    //
+    // red
+    //
     for ( ii = 0; ii < a->npt; ++ii )
     {
         triangle* t   = a->pt[ii];
@@ -1554,9 +1554,9 @@ static void csa_findsecondarycoeffs( csa* a )
         }
     }
 
-    /*
-     * blue
-     */
+    //
+    // blue
+    //
     for ( ii = 0; ii < a->npt; ++ii )
     {
         triangle* t   = a->pt[ii];
@@ -1578,9 +1578,9 @@ static void csa_findsecondarycoeffs( csa* a )
             cr[5] = c[22] + c[23] - c[19];
     }
 
-    /*
-     * green & yellow
-     */
+    //
+    // green & yellow
+    //
     for ( ii = 0; ii < a->npt; ++ii )
     {
         triangle* t  = a->pt[ii];
@@ -1735,7 +1735,7 @@ void csa_approximate_point( csa* a, point* p )
         case 2:
             p->z = c[12] * bc1 * tmp1 + c[21] * bc2 * tmp2 + c[24] * bc3 * tmp3 + 3.0 * ( c[15] * tmp1 * bc2 + c[22] * tmp2 * bc3 + c[20] * tmp3 * bc1 + c[18] * bc1 * tmp2 + c[23] * bc2 * tmp3 + c[16] * tmp1 * bc3 ) + 6.0 * c[19] * bc1 * bc2 * bc3;
             break;
-        default:               /* 3 */
+        default:               // 3
             p->z = c[12] * bc1 * tmp1 + c[0] * bc2 * tmp2 + c[21] * bc3 * tmp3 + 3.0 * ( c[8] * tmp1 * bc2 + c[7] * tmp2 * bc3 + c[18] * tmp3 * bc1 + c[4] * bc1 * tmp2 + c[14] * bc2 * tmp3 + c[15] * tmp1 * bc3 ) + 6.0 * c[11] * bc1 * bc2 * bc3;
         }
     }
@@ -1838,13 +1838,13 @@ static int str2double( char* token, double* value )
 
 #define NALLOCATED_START    1024
 
-/* Reads array of points from a columnar file.
- *
- * @param fname File name (can be "stdin" or "-" for standard input)
- * @param dim Number of dimensions (must be 2 or 3)
- * @param n Pointer to number of points (output)
- * @param points Pointer to array of points [*n] (output) (to be freed)
- */
+// Reads array of points from a columnar file.
+//
+// @param fname File name (can be "stdin" or "-" for standard input)
+// @param dim Number of dimensions (must be 2 or 3)
+// @param n Pointer to number of points (output)
+// @param points Pointer to array of points [*n] (output) (to be freed)
+//
 void points_read( char* fname, int dim, int* n, point** points )
 {
     FILE * f        = NULL;
@@ -2238,4 +2238,4 @@ int main( int argc, char* argv[] )
     return 0;
 }
 
-#endif                          /* STANDALONE */
+#endif                          // STANDALONE

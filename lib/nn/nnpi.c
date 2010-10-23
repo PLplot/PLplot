@@ -1,42 +1,42 @@
-/*****************************************************************************
- *
- * File:           nnpi.c
- *
- * Created:        15/11/2002
- *
- * Author:         Pavel Sakov
- *                 CSIRO Marine Research
- *
- * Purpose:        Code for:
- *                 -- Natural Neighbours Point Interpolator
- *                 -- Natural Neighbours Point Hashing Interpolator
- *
- * Description:    `nnpi' -- "Natural Neighbours Point
- *                 Interpolator" -- is a structure for conducting Natural
- *                 Neighbours interpolation on a given data on a
- *                 "point-to-point" basis. Because it involves weight
- *                 calculation for each next output point, it is not
- *                 particularly suitable for consequitive interpolations on
- *                 the same set of observation points -- use
- *                 `nnhpi' or `nnai'
- *                 in these cases.
- *
- *                 `nnhpi' is a structure for
- *                 conducting consequitive Natural Neighbours interpolations
- *                 on a given spatial data set in a random sequence of points
- *                 from a set of finite size, taking advantage of repeated
- *                 interpolations in the same point. It allows to modify Z
- *                 coordinate of data in between interpolations.
- *
- *
- * Revisions:      01/04/2003 PS: modified nnpi_triangle_process(): for
- *                   Sibson interpolation, if circle_build fails(), now a
- *                   local copy of a point is moved slightly rather than the
- *                   data point itself. The later approach have found leading
- *                   to inconsistencies of the new point position with the
- *                   earlier built triangulation.
- *
- *****************************************************************************/
+//****************************************************************************
+//
+// File:           nnpi.c
+//
+// Created:        15/11/2002
+//
+// Author:         Pavel Sakov
+//                 CSIRO Marine Research
+//
+// Purpose:        Code for:
+//                 -- Natural Neighbours Point Interpolator
+//                 -- Natural Neighbours Point Hashing Interpolator
+//
+// Description:    `nnpi' -- "Natural Neighbours Point
+//                 Interpolator" -- is a structure for conducting Natural
+//                 Neighbours interpolation on a given data on a
+//                 "point-to-point" basis. Because it involves weight
+//                 calculation for each next output point, it is not
+//                 particularly suitable for consequitive interpolations on
+//                 the same set of observation points -- use
+//                 `nnhpi' or `nnai'
+//                 in these cases.
+//
+//                 `nnhpi' is a structure for
+//                 conducting consequitive Natural Neighbours interpolations
+//                 on a given spatial data set in a random sequence of points
+//                 from a set of finite size, taking advantage of repeated
+//                 interpolations in the same point. It allows to modify Z
+//                 coordinate of data in between interpolations.
+//
+//
+// Revisions:      01/04/2003 PS: modified nnpi_triangle_process(): for
+//                   Sibson interpolation, if circle_build fails(), now a
+//                   local copy of a point is moved slightly rather than the
+//                   data point itself. The later approach have found leading
+//                   to inconsistencies of the new point position with the
+//                   earlier built triangulation.
+//
+//***************************************************************************
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -55,14 +55,14 @@ struct nnpi
     delaunay* d;
     point   * p;
     double  wmin;
-    /*
-     * work variables
-     */
+    //
+    // work variables
+    //
     int   nvertices;
     int   nallocated;
-    int   * vertices;           /* vertex indices */
+    int   * vertices;           // vertex indices
     double* weights;
-    int   n;                    /* number of points processed */
+    int   n;                    // number of points processed
 };
 
 int circle_build( circle* c, point* p0, point* p1, point* p2 );
@@ -80,11 +80,11 @@ void nn_quit( char* format, ... );
 #define min( x, y )    ( ( x ) < ( y ) ? ( x ) : ( y ) )
 #define max( x, y )    ( ( x ) > ( y ) ? ( x ) : ( y ) )
 
-/* Creates Natural Neighbours point interpolator.
- *
- * @param d Delaunay triangulation
- * @return Natural Neighbours interpolation
- */
+// Creates Natural Neighbours point interpolator.
+//
+// @param d Delaunay triangulation
+// @return Natural Neighbours interpolation
+//
 nnpi* nnpi_create( delaunay* d )
 {
     nnpi* nn = malloc( sizeof ( nnpi ) );
@@ -101,10 +101,10 @@ nnpi* nnpi_create( delaunay* d )
     return nn;
 }
 
-/* Destroys Natural Neighbours point interpolator.
- *
- * @param nn Structure to be destroyed
- */
+// Destroys Natural Neighbours point interpolator.
+//
+// @param nn Structure to be destroyed
+//
 void nnpi_destroy( nnpi* nn )
 {
     free( nn->weights );
@@ -123,17 +123,17 @@ static void nnpi_add_weight( nnpi* nn, int vertex, double w )
 {
     int i;
 
-    /*
-     * find whether the vertex is already in the list
-     */
+    //
+    // find whether the vertex is already in the list
+    //
     for ( i = 0; i < nn->nvertices; ++i )
         if ( nn->vertices[i] == vertex )
             break;
 
-    if ( i == nn->nvertices ) /* not in the list */
-    {                         /*
-         * get more memory if necessary
-         */
+    if ( i == nn->nvertices ) // not in the list
+    {                         //
+        // get more memory if necessary
+        //
         if ( nn->nvertices == nn->nallocated )
         {
             nn->vertices    = realloc( nn->vertices, ( nn->nallocated + NINC ) * sizeof ( int ) );
@@ -141,14 +141,14 @@ static void nnpi_add_weight( nnpi* nn, int vertex, double w )
             nn->nallocated += NINC;
         }
 
-        /*
-         * add the vertex to the list
-         */
+        //
+        // add the vertex to the list
+        //
         nn->vertices[i] = vertex;
         nn->weights[i]  = w;
         nn->nvertices++;
     }
-    else                        /* in the list */
+    else                        // in the list
 
     {
         if ( nn_rule == SIBSON )
@@ -174,11 +174,11 @@ static double triangle_scale_get( delaunay* d, triangle* t )
     return xmax - xmin + ymax - ymin;
 }
 
-/* This is a central procedure for the Natural Neighbours interpolation. It
- * uses the Watson's algorithm for the required areas calculation and implies
- * that the vertices of the delaunay triangulation are listed in uniform
- * (clockwise or counterclockwise) order.
- */
+// This is a central procedure for the Natural Neighbours interpolation. It
+// uses the Watson's algorithm for the required areas calculation and implies
+// that the vertices of the delaunay triangulation are listed in uniform
+// (clockwise or counterclockwise) order.
+//
 static void nnpi_triangle_process( nnpi* nn, point* p, int i )
 {
     delaunay* d = nn->d;
@@ -195,9 +195,9 @@ static void nnpi_triangle_process( nnpi* nn, point* p, int i )
 
         pp.x = p->x;
         pp.y = p->y;
-        /*
-         * Sibson interpolation by using Watson's algorithm
-         */
+        //
+        // Sibson interpolation by using Watson's algorithm
+        //
         do
         {
             for ( j = 0; j < 3; ++j )
@@ -282,11 +282,11 @@ void nnpi_normalize_weights( nnpi* nn )
         nn->weights[i] /= sum;
 }
 
-/* Finds Natural Neighbours-interpolated value for a point.
- *
- * @param nn NN interpolation
- * @param p Point to be interpolated (p->x, p->y -- input; p->z -- output)
- */
+// Finds Natural Neighbours-interpolated value for a point.
+//
+// @param nn NN interpolation
+// @param p Point to be interpolated (p->x, p->y -- input; p->z -- output)
+//
 void nnpi_interpolate_point( nnpi* nn, point* p )
 {
     delaunay* d = nn->d;
@@ -352,14 +352,14 @@ void nnpi_interpolate_point( nnpi* nn, point* p )
     }
 }
 
-/* Performs Natural Neighbours interpolation for an array of points.
- *
- * @param nin Number of input points
- * @param pin Array of input points [pin]
- * @param wmin Minimal allowed weight
- * @param nout Number of output points
- * @param pout Array of output points [nout]
- */
+// Performs Natural Neighbours interpolation for an array of points.
+//
+// @param nin Number of input points
+// @param pin Array of input points [pin]
+// @param wmin Minimal allowed weight
+// @param nout Number of output points
+// @param pout Array of output points [nout]
+//
 void nnpi_interpolate_points( int nin, point pin[], double wmin, int nout, point pout[] )
 {
     delaunay* d  = delaunay_build( nin, pin, 0, NULL, 0, NULL );
@@ -398,73 +398,73 @@ void nnpi_interpolate_points( int nin, point pin[], double wmin, int nout, point
     delaunay_destroy( d );
 }
 
-/* Sets minimal allowed weight for Natural Neighbours interpolation.
- * @param nn Natural Neighbours point interpolator
- * @param wmin Minimal allowed weight
- */
+// Sets minimal allowed weight for Natural Neighbours interpolation.
+// @param nn Natural Neighbours point interpolator
+// @param wmin Minimal allowed weight
+//
 void nnpi_setwmin( nnpi* nn, double wmin )
 {
     nn->wmin = wmin;
 }
 
-/* Sets point to interpolate in.
- * @param nn Natural Neighbours point interpolator
- * @param p Point to interpolate in
- */
+// Sets point to interpolate in.
+// @param nn Natural Neighbours point interpolator
+// @param p Point to interpolate in
+//
 void nnpi_set_point( nnpi* nn, point* p )
 {
     nn->p = p;
 }
 
-/* Gets number of data points involved in current interpolation.
- * @return Number of data points involved in current interpolation
- */
+// Gets number of data points involved in current interpolation.
+// @return Number of data points involved in current interpolation
+//
 int nnpi_get_nvertices( nnpi* nn )
 {
     return nn->nvertices;
 }
 
-/* Gets indices of data points involved in current interpolation.
- * @return indices of data points involved in current interpolation
- */
+// Gets indices of data points involved in current interpolation.
+// @return indices of data points involved in current interpolation
+//
 int* nnpi_get_vertices( nnpi* nn )
 {
     return nn->vertices;
 }
 
-/* Gets weights of data points involved in current interpolation.
- * @return weights of data points involved in current interpolation
- */
+// Gets weights of data points involved in current interpolation.
+// @return weights of data points involved in current interpolation
+//
 double* nnpi_get_weights( nnpi* nn )
 {
     return nn->weights;
 }
 
-/*
- * nnhpi
- */
+//
+// nnhpi
+//
 
 struct nnhpi
 {
     nnpi     * nnpi;
     hashtable* ht_data;
     hashtable* ht_weights;
-    int      n;                 /* number of points processed */
+    int      n;                 // number of points processed
 };
 
 typedef struct
 {
     int   nvertices;
-    int   * vertices;           /* vertex indices [nvertices] */
-    double* weights;            /* vertex weights [nvertices] */
+    int   * vertices;           // vertex indices [nvertices]
+    double* weights;            // vertex weights [nvertices]
 } nn_weights;
 
-/* Creates Natural Neighbours hashing point interpolator.
- *
- * @param d Delaunay triangulation
- * @param size Hash table size (should be of order of number of output points)
- * @return Natural Neighbours interpolation
- */
+// Creates Natural Neighbours hashing point interpolator.
+//
+// @param d Delaunay triangulation
+// @param size Hash table size (should be of order of number of output points)
+// @return Natural Neighbours interpolation
+//
 nnhpi* nnhpi_create( delaunay* d, int size )
 {
     nnhpi* nn = malloc( sizeof ( nnhpi ) );
@@ -491,10 +491,10 @@ static void free_nn_weights( void* data )
     free( weights );
 }
 
-/* Destroys Natural Neighbours hashing point interpolation.
- *
- * @param nn Structure to be destroyed
- */
+// Destroys Natural Neighbours hashing point interpolation.
+//
+// @param nn Structure to be destroyed
+//
 void nnhpi_destroy( nnhpi* nn )
 {
     ht_destroy( nn->ht_data );
@@ -503,11 +503,11 @@ void nnhpi_destroy( nnhpi* nn )
     nnpi_destroy( nn->nnpi );
 }
 
-/* Finds Natural Neighbours-interpolated value in a point.
- *
- * @param nnhpi NN point hashing interpolator
- * @param p Point to be interpolated (p->x, p->y -- input; p->z -- output)
- */
+// Finds Natural Neighbours-interpolated value in a point.
+//
+// @param nnhpi NN point hashing interpolator
+// @param p Point to be interpolated (p->x, p->y -- input; p->z -- output)
+//
 void nnhpi_interpolate( nnhpi* nnhpi, point* p )
 {
     nnpi      * nnpi       = nnhpi->nnpi;
@@ -602,14 +602,14 @@ void nnhpi_interpolate( nnhpi* nnhpi, point* p )
     }
 }
 
-/* Modifies interpolated data.
- * Finds point* pd in the underlying Delaunay triangulation such that
- * pd->x = p->x and pd->y = p->y, and copies p->z to pd->z. Exits with error
- * if the point is not found.
- *
- * @param nnhpi Natural Neighbours hashing point interpolator
- * @param p New data
- */
+// Modifies interpolated data.
+// Finds point* pd in the underlying Delaunay triangulation such that
+// pd->x = p->x and pd->y = p->y, and copies p->z to pd->z. Exits with error
+// if the point is not found.
+//
+// @param nnhpi Natural Neighbours hashing point interpolator
+// @param p New data
+//
 void nnhpi_modify_data( nnhpi* nnhpi, point* p )
 {
     point* orig = ht_find( nnhpi->ht_data, p );
@@ -618,10 +618,10 @@ void nnhpi_modify_data( nnhpi* nnhpi, point* p )
     orig->z = p->z;
 }
 
-/* Sets minimal allowed weight for Natural Neighbours interpolation.
- * @param nn Natural Neighbours point hashing interpolator
- * @param wmin Minimal allowed weight
- */
+// Sets minimal allowed weight for Natural Neighbours interpolation.
+// @param nn Natural Neighbours point hashing interpolator
+// @param wmin Minimal allowed weight
+//
 void nnhpi_setwmin( nnhpi* nn, double wmin )
 {
     nn->nnpi->wmin = wmin;
@@ -671,7 +671,7 @@ int main( int argc, char* argv[] )
     delaunay        * d    = NULL;
     point           * pout = NULL;
     nnhpi           * nn   = NULL;
-    int             cpi    = -1; /* control point index */
+    int             cpi    = -1; // control point index
     struct timeval  tv0, tv1;
     struct timezone tz;
     int             i;
@@ -719,9 +719,9 @@ int main( int argc, char* argv[] )
     printf( "  %d data points\n", nin );
     printf( "  %d output points\n", nx * nx );
 
-    /*
-     * generate data
-     */
+    //
+    // generate data
+    //
     printf( "  generating data:\n" );
     fflush( stdout );
     pin = malloc( nin * sizeof ( point ) );
@@ -736,24 +736,24 @@ int main( int argc, char* argv[] )
             printf( "    (%f, %f, %f)\n", p->x, p->y, p->z );
     }
 
-    /*
-     * triangulate
-     */
+    //
+    // triangulate
+    //
     printf( "  triangulating:\n" );
     fflush( stdout );
     d = delaunay_build( nin, pin, 0, NULL, 0, NULL );
 
-    /*
-     * generate output points
-     */
+    //
+    // generate output points
+    //
     points_generate2( -0.1, 1.1, -0.1, 1.1, nx, nx, &nout, &pout );
     cpi = ( nx / 2 ) * ( nx + 1 );
 
     gettimeofday( &tv0, &tz );
 
-    /*
-     * create interpolator
-     */
+    //
+    // create interpolator
+    //
     printf( "  creating interpolator:\n" );
     fflush( stdout );
     nn = nnhpi_create( d, nout );
@@ -766,9 +766,9 @@ int main( int argc, char* argv[] )
         printf( "    interpolator creation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout );
     }
 
-    /*
-     * interpolate
-     */
+    //
+    // interpolate
+    //
     printf( "  interpolating:\n" );
     fflush( stdout );
     gettimeofday( &tv1, &tz );

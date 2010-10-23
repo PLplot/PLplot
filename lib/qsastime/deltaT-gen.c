@@ -1,31 +1,31 @@
-/*  $Id$
- *
- *  Copyright (C) 2009 Alan W. Irwin
- *
- *  This file is part of PLplot.
- *  PLplot is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Library Public License as published
- *  by the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  PLplot is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with PLplot; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- */
+//  $Id$
+//
+//  Copyright (C) 2009 Alan W. Irwin
+//
+//  This file is part of PLplot.
+//  PLplot is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Library Public License as published
+//  by the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  PLplot is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Library General Public License for more details.
+//
+//  You should have received a copy of the GNU Library General Public License
+//  along with PLplot; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+//
+//
 
-/* Program for generating spline representation (xspline, yspline,
- * and y2spline arrays) header from deltaT.dat.
- *
- * The program assumes that argv[1] will be the input file, and
- * argv[2] the output file.  This works cross-platform without
- * worrying about shell redirects of stdin and stdout that are
- * not accessible on Windows, apparently.  */
+// Program for generating spline representation (xspline, yspline,
+// and y2spline arrays) header from deltaT.dat.
+//
+// The program assumes that argv[1] will be the input file, and
+// argv[2] the output file.  This works cross-platform without
+// worrying about shell redirects of stdin and stdout that are
+// not accessible on Windows, apparently.
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,9 +35,9 @@ int dspline( double *x, double *y, int n,
              int if1, double cond1, int ifn, double condn, double *y2 );
 
 
-/*--------------------------------------------------------------------------*\
- *   Function-like macro definitions
- \*--------------------------------------------------------------------------*/
+//--------------------------------------------------------------------------
+//   Function-like macro definitions
+//--------------------------------------------------------------------------
 
 #define MemError1( a )    do { fprintf( stderr, "MEMORY ERROR %d\n" a "\n", __LINE__ ); exit( __LINE__ ); } while ( 0 )
 
@@ -90,18 +90,18 @@ int main( int argc, char *argv[] )
         exit( 1 );
     }
 
-    /*
-     *   Work out how many lines we have all up
-     */
+    //
+    //   Work out how many lines we have all up
+    //
 
     while ( ( fgets( readbuffer, 255, fr ) != NULL ) )
     {
         ++number_of_lines;
     }
 
-    /*
-     *   Allocate memory to the arrays which will hold the data
-     */
+    //
+    //   Allocate memory to the arrays which will hold the data
+    //
 
     if ( ( xspline = (double *) calloc( number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
         MemError1( "Allocating memory to the xspline table" );
@@ -112,11 +112,11 @@ int main( int argc, char *argv[] )
     if ( ( y2spline = (double *) calloc( number_of_lines, (size_t) sizeof ( double ) ) ) == NULL )
         MemError1( "Allocating memory to the y2spline table" );
 
-    rewind( fr ); /* Go back to the start of the file */
+    rewind( fr ); // Go back to the start of the file
 
-    /*
-     *    Read in line by line, and copy the numbers into our arrays
-     */
+    //
+    //    Read in line by line, and copy the numbers into our arrays
+    //
 
     while ( ( fgets( readbuffer, 255, fr ) != NULL ) )
     {
@@ -125,15 +125,15 @@ int main( int argc, char *argv[] )
     }
 
     fclose( fr );
-    /* Calculate spline representation using second derivative condition
-     * on end points that is consistent with overall average parabolic shape
-     * of delta T curve (Morrison and Stephenson, 2004) with second
-     * derivative = 6.4e-3 secs/year/year. */
+    // Calculate spline representation using second derivative condition
+    // on end points that is consistent with overall average parabolic shape
+    // of delta T curve (Morrison and Stephenson, 2004) with second
+    // derivative = 6.4e-3 secs/year/year.
     dspline( xspline, yspline, number_of_lines, 2, 6.4e-3, 2, 6.4e-3, y2spline );
 
-/*
- *   Write the data out to file ready to be included in our source
- */
+//
+//   Write the data out to file ready to be included in our source
+//
 
 
     fprintf( fw, "%s\n", header );

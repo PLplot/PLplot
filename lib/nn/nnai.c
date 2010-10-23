@@ -1,25 +1,25 @@
-/******************************************************************************
- *
- * File:           nnai.c
- *
- * Created:        15/11/2002
- *
- * Author:         Pavel Sakov
- *                 CSIRO Marine Research
- *
- * Purpose:        Code for:
- *                 -- Natural Neighbours Array Interpolator
- *
- * Description:    `nnai' is a tructure for conducting
- *                 consequitive Natural Neighbours interpolations on a given
- *                 spatial data set in a given array of points. It allows to
- *                 modify Z coordinate of data in between interpolations.
- *                 `nnai' is the fastest of the three Natural
- *                 Neighbours interpolators in `nn' library.
- *
- * Revisions:      None
- *
- *****************************************************************************/
+//*****************************************************************************
+//
+// File:           nnai.c
+//
+// Created:        15/11/2002
+//
+// Author:         Pavel Sakov
+//                 CSIRO Marine Research
+//
+// Purpose:        Code for:
+//                 -- Natural Neighbours Array Interpolator
+//
+// Description:    `nnai' is a tructure for conducting
+//                 consequitive Natural Neighbours interpolations on a given
+//                 spatial data set in a given array of points. It allows to
+//                 modify Z coordinate of data in between interpolations.
+//                 `nnai' is the fastest of the three Natural
+//                 Neighbours interpolators in `nn' library.
+//
+// Revisions:      None
+//
+//***************************************************************************
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -32,17 +32,17 @@
 typedef struct
 {
     int   nvertices;
-    int   * vertices;           /* vertex indices [nvertices] */
-    double* weights;            /* vertex weights [nvertices] */
+    int   * vertices;           // vertex indices [nvertices]
+    double* weights;            // vertex weights [nvertices]
 } nn_weights;
 
 struct nnai
 {
     delaunay  * d;
     double    wmin;
-    double    n;                /* number of output points */
-    double    * x;              /* [n] */
-    double    * y;              /* [n] */
+    double    n;                // number of output points
+    double    * x;              // [n]
+    double    * y;              // [n]
     nn_weights* weights;
 };
 
@@ -55,12 +55,12 @@ void nnpi_normalize_weights( nnpi* nn );
 void nnpi_reset( nnpi* nn );
 void nnpi_set_point( nnpi* nn, point* p );
 
-/* Builds Natural Neighbours array interpolator. This includes calculation of
- * weights used in nnai_interpolate().
- *
- * @param d Delaunay triangulation
- * @return Natural Neighbours interpolation
- */
+// Builds Natural Neighbours array interpolator. This includes calculation of
+// weights used in nnai_interpolate().
+//
+// @param d Delaunay triangulation
+// @return Natural Neighbours interpolation
+//
 nnai* nnai_build( delaunay* d, int n, double* x, double* y )
 {
     nnai  * nn   = malloc( sizeof ( nnai ) );
@@ -108,10 +108,10 @@ nnai* nnai_build( delaunay* d, int n, double* x, double* y )
     return nn;
 }
 
-/* Destroys Natural Neighbours array interpolator.
- *
- * @param nn Structure to be destroyed
- */
+// Destroys Natural Neighbours array interpolator.
+//
+// @param nn Structure to be destroyed
+//
 void nnai_destroy( nnai* nn )
 {
     int i;
@@ -130,14 +130,14 @@ void nnai_destroy( nnai* nn )
     free( nn );
 }
 
-/* Conducts NN interpolation in a fixed array of output points using
- * data specified for a fixed array of input points. Uses pre-calculated
- * weights.
- *
- * @param nn NN array interpolator
- * @param zin input data [nn->d->npoints]
- * @param zout output data [nn->n]. Must be pre-allocated!
- */
+// Conducts NN interpolation in a fixed array of output points using
+// data specified for a fixed array of input points. Uses pre-calculated
+// weights.
+//
+// @param nn NN array interpolator
+// @param zin input data [nn->d->npoints]
+// @param zout output data [nn->n]. Must be pre-allocated!
+//
 void nnai_interpolate( nnai* nn, double* zin, double* zout )
 {
     int i;
@@ -164,17 +164,17 @@ void nnai_interpolate( nnai* nn, double* zin, double* zout )
     }
 }
 
-/** Sets minimal allowed weight for Natural Neighbours interpolation.
- * @param nn Natural Neighbours array interpolator
- * @param wmin Minimal allowed weight
- */
+//* Sets minimal allowed weight for Natural Neighbours interpolation.
+// @param nn Natural Neighbours array interpolator
+// @param wmin Minimal allowed weight
+//
 void nnai_setwmin( nnai* nn, double wmin )
 {
     nn->wmin = wmin;
 }
 
-/* The rest of this file contains a number of test programs.
- */
+// The rest of this file contains a number of test programs.
+//
 #if defined ( NNAI_TEST )
 
 #include <sys/time.h>
@@ -196,7 +196,7 @@ static double franke( double x, double y )
            - 0.2 * exp( -SQ( x - 4.0 ) - SQ( y - 7.0 ) );
 }
 
-/* *INDENT-OFF* */
+// *INDENT-OFF*
 static void usage()
 {
     printf(
@@ -210,7 +210,7 @@ static void usage()
 "  -V              -- very verbose\n"
 );
 }
-/* *INDENT-ON* */
+// *INDENT-ON*
 
 int main( int argc, char* argv[] )
 {
@@ -225,7 +225,7 @@ int main( int argc, char* argv[] )
     double          * xout = NULL;
     double          * yout = NULL;
     double          * zout = NULL;
-    int             cpi    = -1; /* control point index */
+    int             cpi    = -1; // control point index
     struct timeval  tv0, tv1, tv2;
     struct timezone tz;
     int             i;
@@ -273,9 +273,9 @@ int main( int argc, char* argv[] )
     printf( "  %d data points\n", nin );
     printf( "  %d output points\n", nx * nx );
 
-    /*
-     * generate data
-     */
+    //
+    // generate data
+    //
     printf( "  generating data:\n" );
     fflush( stdout );
     pin = malloc( nin * sizeof ( point ) );
@@ -292,16 +292,16 @@ int main( int argc, char* argv[] )
             printf( "    (%f, %f, %f)\n", p->x, p->y, p->z );
     }
 
-    /*
-     * triangulate
-     */
+    //
+    // triangulate
+    //
     printf( "  triangulating:\n" );
     fflush( stdout );
     d = delaunay_build( nin, pin, 0, NULL, 0, NULL );
 
-    /*
-     * generate output points
-     */
+    //
+    // generate output points
+    //
     points_generate2( -0.1, 1.1, -0.1, 1.1, nx, nx, &nout, &pout );
     xout = malloc( nout * sizeof ( double ) );
     yout = malloc( nout * sizeof ( double ) );
@@ -318,9 +318,9 @@ int main( int argc, char* argv[] )
 
     gettimeofday( &tv0, &tz );
 
-    /*
-     * create interpolator
-     */
+    //
+    // create interpolator
+    //
     printf( "  creating interpolator:\n" );
     fflush( stdout );
     nn = nnai_build( d, nout, xout, yout );
@@ -333,9 +333,9 @@ int main( int argc, char* argv[] )
         printf( "    interpolator creation time = %ld us (%.2f us / point)\n", dt, (double) dt / nout );
     }
 
-    /*
-     * interpolate
-     */
+    //
+    // interpolate
+    //
     printf( "  interpolating:\n" );
     fflush( stdout );
     nnai_interpolate( nn, zin, zout );

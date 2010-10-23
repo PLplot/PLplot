@@ -1,23 +1,23 @@
-/******************************************************************************
- *
- * File:           csa.h
- *
- * Created:        16/10/2002
- *
- * Author:         Pavel Sakov
- *                 CSIRO Marine Research
- *
- * Purpose:        A header for csa library (2D data approximation with
- *                 bivariate C1 cubic spline)
- *
- * Revisions:      None
- *
- *****************************************************************************/
+//*****************************************************************************
+//
+// File:           csa.h
+//
+// Created:        16/10/2002
+//
+// Author:         Pavel Sakov
+//                 CSIRO Marine Research
+//
+// Purpose:        A header for csa library (2D data approximation with
+//                 bivariate C1 cubic spline)
+//
+// Revisions:      None
+//
+//***************************************************************************
 
 #if !defined ( _CSA_H )
 #define _CSA_H
 
-/* include header file for dll definitions */
+// include header file for dll definitions
 #include "csadll.h"
 
 #if _MSC_VER > 1309
