@@ -3451,15 +3451,15 @@ DrawImage( PLStream *pls )
      * lozangue will have coordinates (Ppts), slopes (m...)
      * and y intercepts (b...):
      *
-     *       Ppts[3]
-     *         /\
-     * mlr,blt /  \ mtb,brt
-     *       /    \
-     * Ppts[0]<      > Ppts[2]
-     \    /
-     * mtb,blt \  / mlr,brb
-     \/
-     *       Ppts[1]
+     *        Ppts[3]
+     *          **
+     * mlr,blt *  * mtb,brt
+     *        *    *
+     *Ppts[0]<      > Ppts[2]
+     *        *    *
+     * mtb,blt *  * mlr,brb
+     *          **
+     *        Ppts[1]
      */
 
 /* slope of left/right and top/bottom edges */
