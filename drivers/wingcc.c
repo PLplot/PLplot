@@ -102,7 +102,7 @@ typedef struct
     HBRUSH            fillbrush;                    /* brush used for fills */
     HCURSOR           cursor;                       /* Current windows cursor for this window */
     HBITMAP           bitmap;                       /* Bitmap of current display; used for fast redraws via blitting */
-    HGDIOBJ           oldobject;                    /* Used for tracking objects… probably not really needed but… */
+    HGDIOBJ           oldobject;                    /* Used for tracking objects probably not really needed but */
     HMENU             PopupMenu;
 
     PLINT             draw_mode;
@@ -578,7 +578,7 @@ plD_init_wingcc( PLStream *pls )
 
     dev->PopupMenu = CreatePopupMenu();
     AppendMenu( dev->PopupMenu, MF_STRING, PopupPrint, "Print" );
-    AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, "Next Page…" );
+    AppendMenu( dev->PopupMenu, MF_STRING, PopupNextPage, "Next Page" );
     AppendMenu( dev->PopupMenu, MF_STRING, PopupQuit, "Quit" );
 
 #ifdef HAVE_FREETYPE
