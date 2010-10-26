@@ -1114,11 +1114,11 @@ ResizeCmd( PLStream *pls, PLDisplay *pldis )
          *which is defined in tk-8.3 (and 8.2?) source as
          *void
          * Tk_FreePixmap(display, pixmap)
-         *     Display *display;
-         *     Pixmap pixmap;
+         *     Display *display;
+         *     Pixmap pixmap;
          * {
-         *    XFreePixmap(display, pixmap);
-         *    Tk_FreeXId(display, (XID) pixmap);
+         *    XFreePixmap(display, pixmap);
+         *    Tk_FreeXId(display, (XID) pixmap);
          * }
          * But that bombed under Linux and tcl/tk8.2 so now just call
          * XFreePixmap directly.  (Not recommended as permanent solution
