@@ -157,7 +157,7 @@ is poorly documented currently, but for now see notes in ps.c for more
 details).
 
 (3) New pstex driver.  This is not currently documented, but there is post
-from Jo„o Cardoso on plplot_devel
+from Jo√£o Cardoso on plplot_devel
 (http://www.geocrawler.com/archives/3/10834/2001/4/50/5536095/) that gives
 the recipe (ignore the configuration stuff and start with the ./x01c
 command).  The idea is to emulate the pstex output of the xfig application

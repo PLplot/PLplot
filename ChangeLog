@@ -186,7 +186,7 @@
 	  plplot wrapper library, libplplotjava, java/plplot/core classes,
 	  and installing java source for examples in java/plplot/examples.
 
-2002-12-13  "[iso-8859-1] Jo„o Cardoso" <jcard@users.sourceforge.net>
+2002-12-13  "[iso-8859-1] Jo√£o Cardoso" <jcard@users.sourceforge.net>
 
 	* Fixed p7 and p15 problem.  This finishes the last of the problems
 	  with the octave examples.  (x example segfaults solved earlier
