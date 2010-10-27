@@ -94,3 +94,7 @@ if(ENABLE_tcl)
     DESTINATION ${BIN_DIR}
     )
 endif(ENABLE_tcl)
+
+# Build simple executable to check parity bits of all characters read
+# by stdin.
+add_executable(parity_bit_check parity_bit_check.c)
