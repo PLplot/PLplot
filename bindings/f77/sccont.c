@@ -274,20 +274,19 @@ PLSHADE07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
            PLINT *max_color, PLINT *max_width, PLINT *lx )
 {
     PLINT rect = 1;
-    PLFLT ** a;
-    int   i, j;
 
-/* Create a vectored a array from transpose of the fortran z array. */
-    plAlloc2dGrid( &a, *nx, *ny );
-    for ( i = 0; i < *nx; i++ )
-    {
-        for ( j = 0; j < *ny; j++ )
-        {
-            a[i][j] = z[i + j * *lx];
-        }
-    }
+    PLfGrid data;
 
-    c_plshade( a, *nx, *ny, NULL,
+/* Fill a grid data structure to hold the fortran z array. */
+    data.f = z;
+    data.nx = *lx;
+    data.ny = *ny;
+
+
+/* Call plfshade to do the actual work - plf2evalr is the
+   interface that deals with the fortran data organisation */
+
+    plfshade( plf2evalr, &data, NULL, NULL, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax,
         *shade_min, *shade_max,
         *sh_cmap, *sh_color, *sh_width,
@@ -295,7 +294,9 @@ PLSHADE07( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
         c_plfill, rect, NULL, NULL );
 
 /* Clean up memory allocated for a */
+/*
     plFree2dGrid( a, *nx, *ny );
+*/
 }
 
 
@@ -311,33 +312,30 @@ PLSHADE17( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
            PLFLT *xg1, PLFLT *yg1, PLINT *lx )
 {
     PLINT   rect = 1;
-    PLFLT   ** a;
-    int     i, j;
+    PLfGrid data;
     PLcGrid cgrid;
 
-/* Create a vectored a array from transpose of the fortran z array. */
-    plAlloc2dGrid( &a, *nx, *ny );
-    for ( i = 0; i < *nx; i++ )
-    {
-        for ( j = 0; j < *ny; j++ )
-        {
-            a[i][j] = z[i + j * *lx];
-        }
-    }
+/* Fill a grid data structure to hold the coordinate arrays. */
 
     cgrid.nx = *nx;
     cgrid.ny = *ny;
     cgrid.xg = xg1;
     cgrid.yg = yg1;
-    c_plshade( a, *nx, *ny, NULL,
+
+/* Fill a grid data structure to hold the fortran z array. */
+    data.f = z;
+    data.nx = *lx;
+    data.ny = *ny;
+
+/* Call plfshade to do the actual work - plf2evalr is the
+   interface that deals with the fortran data organisation. */
+
+    plfshade( plf2evalr, &data, NULL, NULL, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax,
         *shade_min, *shade_max,
         *sh_cmap, *sh_color, *sh_width,
         *min_color, *min_width, *max_color, *max_width,
         c_plfill, rect, pltr1, ( PLPointer ) & cgrid );
-
-/* Clean up memory allocated for a */
-    plFree2dGrid( a, *nx, *ny );
 }
 
 /* 2-d transformation */
@@ -352,37 +350,29 @@ PLSHADE27( PLFLT *z, PLINT *nx, PLINT *ny, const char *defined,
            PLFLT *xg2, PLFLT *yg2, PLINT *lx )
 {
     PLINT    rect = 0;
-    PLFLT    **a;
-    int      i, j;
-    PLcGrid2 cgrid2;
+    PLfGrid  data;
+    PLcGrid  cgrid;
 
-/* Create a vectored a array from transpose of the fortran z array. */
-    plAlloc2dGrid( &a, *nx, *ny );
-    plAlloc2dGrid( &cgrid2.xg, *nx, *ny );
-    plAlloc2dGrid( &cgrid2.yg, *nx, *ny );
-    cgrid2.nx = *nx;
-    cgrid2.ny = *ny;
-    for ( i = 0; i < *nx; i++ )
-    {
-        for ( j = 0; j < *ny; j++ )
-        {
-            a[i][j]         = z[i + j * *lx];
-            cgrid2.xg[i][j] = xg2[i + j * *lx];
-            cgrid2.yg[i][j] = yg2[i + j * *lx];
-        }
-    }
+/* Fill a grid data structure to hold the coordinate arrays. */
+    cgrid.nx = *lx;
+    cgrid.ny = *ny;
+    cgrid.xg = xg2;
+    cgrid.yg = yg2;
 
-    c_plshade( a, *nx, *ny, NULL,
+/* Fill a grid data structure to hold the fortran z array. */
+    data.f = z;
+    data.nx = *lx;
+    data.ny = *ny;
+
+/* Call plfshade to do the actual work - plf2evalr is the
+   interface that deals with the fortran data organisation. */
+
+    plfshade( plf2evalr, &data, NULL, NULL, *nx, *ny,
         *xmin, *xmax, *ymin, *ymax,
         *shade_min, *shade_max,
         *sh_cmap, *sh_color, *sh_width,
         *min_color, *min_width, *max_color, *max_width,
-        c_plfill, rect, pltr2, (void *) &cgrid2 );
-
-/* Clean up memory allocated for a */
-    plFree2dGrid( a, *nx, *ny );
-    plFree2dGrid( cgrid2.xg, *nx, *ny );
-    plFree2dGrid( cgrid2.yg, *nx, *ny );
+        c_plfill, rect, pltr2f, ( PLPointer ) & cgrid );
 }
 
 void
