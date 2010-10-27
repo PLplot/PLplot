@@ -1,4 +1,4 @@
-﻿MJDtime Routines
+MJDtime Routines
 
 QSAS Support Team
 Cluster Science Centre, Imperial College
