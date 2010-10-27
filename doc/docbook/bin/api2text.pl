@@ -2,7 +2,7 @@
 # File: api2man.pl
 # Description: Convert the PLplot API chapter (file api.xml of the DocBook
 #              manual) into a series of man pages.
-# Author: Rafael Laboissière <rafael@debian.org>
+# Author: Rafael LaboissiÃ¨re <rafael@debian.org>
 # Created on: Mon Dec  4 16:35:32 CET 2000
 # Last modified on: Thu Mar 20 11:30:25 CET 2003
 # $Id$
