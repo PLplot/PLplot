@@ -3,7 +3,7 @@ Running the Tk Demos.
 PLplot doesn't need to be installed to run these demos.
 However, different commands might be needed to run the demos when PLplot
 is installed or not; in these cases, the first command must be used for
-the installed situation, while the second, separated by a `|´, is for the
+the installed situation, while the second, separated by a '|', is for the
 uninstalled situation.
 
 To run the plot.tcl demo follow the directions in that file to run it
