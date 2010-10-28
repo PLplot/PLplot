@@ -118,14 +118,14 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
                   PLINT n2, const PLINT *x2, const PLINT *y2 );
 
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plfill()
 //
 // Pattern fills the polygon bounded by the input points.
 // If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
 // The final point is explicitly added if it doesn't match up to the first,
 // to prevent clipping problems.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_plfill( PLINT n, PLFLT *x, PLFLT *y )
@@ -169,14 +169,14 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
         plsc->clpymi, plsc->clpyma, plP_fill );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plfill3()
 //
 // Pattern fills the polygon in 3d bounded by the input points.
 // If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
 // The final point is explicitly added if it doesn't match up to the first,
 // to prevent clipping problems.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
@@ -246,11 +246,11 @@ c_plfill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
         plsc->clpymi, plsc->clpyma, plP_fill );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plfill_soft()
 //
 // Pattern fills in software the polygon bounded by the input points.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plfill_soft( short *x, short *y, PLINT n )
@@ -353,9 +353,9 @@ plfill_soft( short *x, short *y, PLINT n )
     free( (void *) buffer );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // Utility functions
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 tran( PLINT *a, PLINT *b, PLFLT c, PLFLT d )
@@ -470,11 +470,11 @@ compar( const void *pnum1, const void *pnum2 )
     return 0;
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plP_plfclp()
 //
 // Fills a polygon within the clip limits.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
@@ -1098,7 +1098,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
 }
 #endif // USE_FILL_INTERSECTION_POLYGON
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // int circulation()
 //
 // Returns the circulation direction for a given polyline: positive is
@@ -1119,7 +1119,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
 // area, the sign determines if the polygon is followed clockwise or
 // counterclockwise. This is more reliable. Floating-point numbers
 // are used to avoid overflow.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 int
 circulation( PLINT *x, PLINT *y, PLINT npts )
@@ -1182,7 +1182,7 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
     free( yint );
     return return_value;
 }
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // int notpointinpolygon()
 //
 // Returns 0, 1, or 2 depending on whether the test point is definitely
@@ -1192,7 +1192,7 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
 // http://en.wikipedia.org/wiki/Point_in_polygon.
 // Logic still needs to be inserted to take care of the "ray passes
 // through vertex" problem in a numerically robust way.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 // Temporary until get rid of old code altogether.
 #define NEW_NOTPOINTINPOLYGON_CODE

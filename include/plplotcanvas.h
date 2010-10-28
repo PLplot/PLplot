@@ -80,7 +80,7 @@ PLDLLIMPEXP_GNOME2 void plplot_canvas_use_pixmap( PlplotCanvas* self, gboolean u
 PLDLLIMPEXP_GNOME2 void plplot_canvas_use_persistence( PlplotCanvas* self, gboolean use_persistence );
 
 
-//--------------------------------------------------------------------------*
+//--------------------------------------------------------------------------
 // Plplot wrappers - last updated 29 January 2005
 //
 //  This should be kept up-to-date with plplot.h

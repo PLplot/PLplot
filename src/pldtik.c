@@ -24,7 +24,7 @@
 
 #include "plplotP.h"
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void pldtik()
 //
 // Determine tick spacing: works out a "nice" interval (if tick == 0) such
@@ -32,7 +32,7 @@
 // range vmin to vmax.  The recommended number of subticks is returned in
 // "nsubt" unless the routine is entered with a non-zero value of "nsubt".
 // n.b. big change: now returns only positive values of tick and nsubt
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
@@ -110,7 +110,7 @@ pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // PLFLT pldtfac()
 //
 // Calculate factor to convert a date/time interval in seconds
@@ -118,7 +118,7 @@ pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld )
 // Also optionally calculate the sensible start time for counting ticks
 // from (e.g. beginning of day, beginning of year).
 // Used to calculate sensible tick and label spacings.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 void
 pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
 {
@@ -206,7 +206,7 @@ pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void pldprec()
 //
 // Determine precision: the output variable "mode" is set to 0 if labels
@@ -243,7 +243,7 @@ pldtfac( PLFLT vmin, PLFLT vmax, PLFLT *factor, PLFLT *start )
 // Finally, if 'digmax' is set, 'prec' is reduced in size if necessary so
 // that the labels fit the requested field length, where prec is the number of
 // places after the decimal place.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 #define MIN_FLTDIG    3         // disregarded if fractional part is 0
 #define DIGMAX_DEF    5

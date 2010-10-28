@@ -654,11 +654,11 @@ plD_init_wingcc( PLStream *pls )
 #endif
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plD_line_wingcc()
 //
 // Draw a line in the current color from (x1,y1) to (x2,y2).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plD_line_wingcc( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
@@ -686,11 +686,11 @@ plD_line_wingcc( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 }
 
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plD_polyline_wingcc()
 //
 // Draw a polyline in the current color.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plD_polyline_wingcc( PLStream *pls, short *xa, short *ya, PLINT npts )
@@ -721,11 +721,11 @@ plD_polyline_wingcc( PLStream *pls, short *xa, short *ya, PLINT npts )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plD_fill_polygon_wingcc()
 //
 // Fill polygon described in points pls->dev_x[] and pls->dev_y[].
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void
 plD_fill_polygon_wingcc( PLStream *pls )
@@ -927,11 +927,11 @@ plD_tidy_wingcc( PLStream *pls )
 
 
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plD_state_png()
 //
 // Handle change in PLStream state (color, pen width, fill attribute, etc).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plD_state_wingcc( PLStream *pls, PLINT op )
@@ -1120,12 +1120,12 @@ static int GetRegValue( char *key_name, char *key_word, char *buffer, int size )
 
 #ifdef HAVE_FREETYPE
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //  void plD_pixel_wingcc (PLStream *pls, short x, short y)
 //
 //  callback function, of type "plD_pixel_fp", which specifies how a single
 //  pixel is set in the current colour.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void plD_pixel_wingcc( PLStream *pls, short x, short y )
 {
@@ -1141,13 +1141,13 @@ static void plD_pixelV_wingcc( PLStream *pls, short x, short y )
     SetPixelV( dev->hdc, x, y, dev->colour );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //  void plD_set_pixelV_wingcc (PLStream *pls, short x, short y,PLINT colour)
 //
 //  callback function, of type "plD_set_pixel_fp", which specifies how a
 //  single pixel is set in the s[ecified colour. This colour
 //  by-passes plplot's internal table, and directly 'hits the hardware'.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void plD_set_pixel_wingcc( PLStream *pls, short x, short y, PLINT colour )
 {
@@ -1178,14 +1178,14 @@ static PLINT plD_read_pixel_wingcc( PLStream *pls, short x, short y )
 }
 
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //  void init_freetype_lv1 (PLStream *pls)
 //
 //  "level 1" initialisation of the freetype library.
 //  "Level 1" initialisation calls plD_FreeType_init(pls) which allocates
 //  memory to the pls->FT structure, then sets up the pixel callback
 //  function.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void init_freetype_lv1( PLStream *pls )
 {
@@ -1228,7 +1228,7 @@ static void init_freetype_lv1( PLStream *pls )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //  void init_freetype_lv2 (PLStream *pls)
 //
 //  "Level 2" initialisation of the freetype library.
@@ -1251,7 +1251,7 @@ static void init_freetype_lv1( PLStream *pls )
 //  FT->ymax specifies the size of the page FT->invert_y=1 tells us to
 //  invert the y-coordinates, FT->invert_y=0 will not invert the
 //  coordinates.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void init_freetype_lv2( PLStream *pls )
 {

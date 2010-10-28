@@ -41,7 +41,7 @@
 
 #include "plplotP.h"
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
 //            PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
 //
@@ -78,7 +78,7 @@
 // outside the plot window will be automatically eliminated.  However, the
 // program will be faster if one can reduce the size of the background
 // plotted.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 #define MAP_FILE    ".map"
 #define OFFSET      ( 180 * 100 )
@@ -235,7 +235,7 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
     pdf_close( in );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *),
 //		    PLFLT dlong, PLFLT dlat, PLFLT minlong, PLFLT maxlong,
 //		    PLFLT minlat, PLFLT maxlat);
@@ -265,7 +265,7 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *type,
 // outside the plot window will be automatically eliminated.  However, the
 // program will be faster if one can reduce the size of the background
 // plotted.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 #define NSEG    100
 

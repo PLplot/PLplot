@@ -39,7 +39,7 @@ G_BEGIN_DECLS
 // The following object arguments are available:
 //
 // name			type			read/write	description
-// ------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // text			char *			RW		The string of the text item.
 // glyphlist            GnomeGlyphList *        W               Glyphlist
 // fill_color		string			W		X color specification for fill color,

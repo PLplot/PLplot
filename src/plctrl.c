@@ -638,7 +638,7 @@ c_plscmap1l( PLINT itype, PLINT npts, PLFLT *pos,
 //
 // This is the same as plscmap1l, but also allows alpha value interpolation.
 //
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_plscmap1la( PLINT itype, PLINT npts, PLFLT *pos,

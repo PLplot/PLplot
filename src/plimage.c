@@ -156,7 +156,7 @@ grimage( short *x, short *y, unsigned short *z, PLINT nx, PLINT ny )
     plP_esc( PLESC_IMAGE, NULL );
 }
 
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plimagefr
 //
 // arguments are
@@ -186,7 +186,7 @@ grimage( short *x, short *y, unsigned short *z, PLINT nx, PLINT ny )
 //       with a consistent value -> color mapping, regardless of the
 //       image content.
 //
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 void
 c_plimagefr( PLFLT **idata, PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
@@ -297,7 +297,7 @@ plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
     free( z );
 }
 
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plimage
 //
 // arguments are
@@ -318,7 +318,7 @@ plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
 //       plots only the window of points whose(x,y)'s fall
 //       inside the [Dxmin->Dxmax]X[Dymin->Dymax] window
 //
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 void
 c_plimage( PLFLT **idata, PLINT nx, PLINT ny,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,

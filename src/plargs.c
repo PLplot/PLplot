@@ -34,7 +34,7 @@
 //
 //  The full permission notice is given in the PLplot documentation.
 //
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+//--------------------------------------------------------------------------
 //
 //  This file contains routines to extract & process command flags.  The
 //  command flags recognized by PLplot are stored in the "ploption_table"

@@ -27,9 +27,9 @@
 // - text clipping
 //
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // Header files, defines and local variables
-//*********************************************************************
+//--------------------------------------------------------------------------
 #include "plDevs.h"
 
 #ifdef PLD_pdf
@@ -98,9 +98,9 @@ typedef struct
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_pdf = "pdf:Portable Document Format PDF:1:pdf:58:pdf\n";
 static jmp_buf env;
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // function declarations
-//*********************************************************************
+//--------------------------------------------------------------------------
 
 // General
 static short desired_offset( short, double );
@@ -120,12 +120,12 @@ void plD_tidy_pdf( PLStream * );
 void plD_state_pdf( PLStream *, PLINT );
 void plD_esc_pdf( PLStream *, PLINT, void * );
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // error_handler( HPDF_STATUS error_no, HPDF_STATUS detail_no,
 //                void *user_data )
 //
 // Error handler for haru library.
-//*********************************************************************
+//--------------------------------------------------------------------------
 #ifdef HPDF_DLL
 void __stdcall
 #else
@@ -139,11 +139,11 @@ error_handler( HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data )
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // plD_dispatch_init_pdf( PLDispatchTable *pdt )
 //
 // Initialize device dispatch table.
-//*********************************************************************
+//--------------------------------------------------------------------------
 void plD_dispatch_init_pdf( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -180,11 +180,11 @@ DrvOpt       pdf_options[] = {
 };
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 //  plD_init_pdf( PLStream *pls )
 //
 // Initialize device.
-//*********************************************************************
+//--------------------------------------------------------------------------
 void plD_init_pdf( PLStream *pls )
 {
     pdfdev* dev;
@@ -289,11 +289,11 @@ void plD_init_pdf( PLStream *pls )
     }
 }
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // plD_bop_pdf( PLStream *pls )
 //
 // Set up for the next page.
-//*********************************************************************
+//--------------------------------------------------------------------------
 void plD_bop_pdf( PLStream *pls )
 {
     pdfdev    * dev = (pdfdev*) pls->dev;
@@ -329,11 +329,11 @@ void plD_bop_pdf( PLStream *pls )
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // pdf_line()
 //
 // Draw a line in the current color from (x1,y1) to (x2,y2).
-//*********************************************************************
+//--------------------------------------------------------------------------
 void plD_line_pdf( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
     short xa[2], ya[2];
@@ -345,33 +345,33 @@ void plD_line_pdf( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // pdf_polyline()
 //
 // Draw a polyline in the current color.
-//*********************************************************************
+//--------------------------------------------------------------------------
 void plD_polyline_pdf( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
     poly_line( pls, xa, ya, npts, 0 );
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // pdf_eop()
 //
 // End of page
-//*********************************************************************
+//--------------------------------------------------------------------------
 void plD_eop_pdf( PLStream *pls )
 {
     // nothing to be done here
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // pdf_tidy()
 //
 // Close graphics file or otherwise clean up.
-//*********************************************************************
+//--------------------------------------------------------------------------
 void plD_tidy_pdf( PLStream *pls )
 {
     pdfdev* dev = (pdfdev*) pls->dev;
@@ -403,25 +403,25 @@ void plD_tidy_pdf( PLStream *pls )
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // plD_state_pdf()
 //
 // Handle change in PLStream state (color, pen width, fill attribute, etc).
 //
 // Nothing is done here because these attributes are aquired from
 // PLStream for each element that is drawn.
-//*********************************************************************
+//--------------------------------------------------------------------------
 void plD_state_pdf( PLStream *pls, PLINT op )
 {
     // Nothing to be done here.
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // pdf_esc()
 //
 // Escape function.
-//*********************************************************************
+//--------------------------------------------------------------------------
 void plD_esc_pdf( PLStream *pls, PLINT op, void *ptr )
 {
     switch ( op )
@@ -436,11 +436,11 @@ void plD_esc_pdf( PLStream *pls, PLINT op, void *ptr )
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // poly_line()
 //
 // Handles drawing filled and unfilled polygons
-//*********************************************************************
+//--------------------------------------------------------------------------
 void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
 {
     pdfdev* dev = (pdfdev*) pls->dev;
@@ -465,7 +465,7 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 //  unsigned char plunicode2type1 (const PLUNICODE index,
 //   const Unicode_to_Type1_table lookup[], const int number_of_entries)
 //
@@ -474,7 +474,7 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
 //  corresponding Type1 code in the lookup table.  If the Unicode index
 //  is not present the returned value is 32 (which is normally a blank
 //  for Type 1 fonts).
-//*********************************************************************
+//--------------------------------------------------------------------------
 static unsigned char plunicode2type1( const PLUNICODE index,
                                       const Unicode_to_Type1_table lookup[],
                                       const int nlookup )
@@ -507,12 +507,12 @@ static unsigned char plunicode2type1( const PLUNICODE index,
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // PSDrawTextToCanvas( pdfdev* dev, unsigned char* type1_string, short drawText )
 //
 // This function determines the extent of the string and does
 // the actual drawing to the page if drawText is true.
-//*********************************************************************
+//--------------------------------------------------------------------------
 void PSDrawTextToCanvas( pdfdev* dev, unsigned char* type1_string, short drawText )
 {
     HPDF_REAL th;
@@ -538,11 +538,11 @@ void PSDrawTextToCanvas( pdfdev* dev, unsigned char* type1_string, short drawTex
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // PSSetFont( pdfdev* dev, PLUNICODE fci )
 //
 // Sets the font.
-//*********************************************************************
+//--------------------------------------------------------------------------
 void PSSetFont( pdfdev* dev, PLUNICODE fci )
 {
     char *font;
@@ -573,13 +573,13 @@ void PSSetFont( pdfdev* dev, PLUNICODE fci )
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
 //
 // This function is called twice, first to determine the extent of the
 // text written to the page and then a second time to actually draw
 // the text.
-//*********************************************************************
+//--------------------------------------------------------------------------
 void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
 {
     int           i, s;
@@ -774,11 +774,11 @@ void PSDrawText( pdfdev* dev, PLUNICODE* ucs4, int ucs4Len, short drawText )
 }
 
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // process_string( PLStream* pls, EscText* args )
 //
 // Handles the output of the text on the page.
-//*********************************************************************
+//--------------------------------------------------------------------------
 void process_string( PLStream* pls, EscText* args )
 {
     pdfdev    * dev = (pdfdev*) pls->dev;
@@ -832,11 +832,11 @@ void process_string( PLStream* pls, EscText* args )
 
 #else
 
-//**********************************************************************
+//--------------------------------------------------------------------------
 // pldummy_pdf()
 //
 // Dummy function if driver should not be available.
-//*********************************************************************
+//--------------------------------------------------------------------------
 int pldummy_pdf()
 {
     return 0;

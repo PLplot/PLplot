@@ -1287,7 +1287,7 @@ pltr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // pltr2f()
 //
 // Does linear interpolation from doubly dimensioned coord arrays
@@ -1298,7 +1298,7 @@ pltr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 // If an out of bounds coordinate is obtained, the boundary value is provided
 // along with a warning.  These checks should stay since no harm is done if
 // if everything works correctly.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 pltr2f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data )

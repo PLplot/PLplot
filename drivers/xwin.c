@@ -76,7 +76,7 @@ static int usepthreads = 1;                   // use "-drvopt usepth=0" to not u
 // We define PHYSICAL here so that PLplot core knows about this rescaling
 // and mm values are converted to virtual pixels at a ratio consistent with
 // a constant ratio of DPMM real pixels per mm.
-#define PHYSICAL     1
+#define PHYSICAL    1
 
 // These need to be distinguished since the handling is slightly different.
 
@@ -1278,7 +1278,7 @@ WaitForPage( PLStream *pls )
 // Python or Octave, the language providing binary itself must be
 // relinked with -lpthread.
 //
-//------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 #ifdef HAVE_PTHREAD
 static void

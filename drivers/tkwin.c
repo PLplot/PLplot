@@ -103,14 +103,14 @@ void *  ckcalloc( size_t nmemb, size_t size );
 typedef struct PlPlotter
 {
     Tk_Window tkwin;    // Window that embodies the frame. NULL
-                     // means that the window has been destroyed
-                     // but the data structures haven't yet been
-                     // cleaned up.
-                     //
+                        // means that the window has been destroyed
+                        // but the data structures haven't yet been
+                        // cleaned up.
+                        //
     Display *display;   // Display containing widget. Used, among
-                      // other things, so that resources can be
-                      // freed even after tkwin has gone away.
-                      //
+                        // other things, so that resources can be
+                        // freed even after tkwin has gone away.
+                        //
     Tcl_Interp *interp; // Interpreter associated with
                         // widget. Used to delete widget
                         // command.

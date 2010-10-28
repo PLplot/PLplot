@@ -18,7 +18,7 @@
 //  along with PLplot; if not, write to the Free Software
 //  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 //
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+//--------------------------------------------------------------------------
 //
 //  This file contains deprecated routines to provide backwards compatibility
 //  for a while.  For each routine the new routine you should be using instead

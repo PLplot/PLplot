@@ -119,11 +119,11 @@ void plD_tidy_svg( PLStream * );
 void plD_state_svg( PLStream *, PLINT );
 void plD_esc_svg( PLStream *, PLINT, void * );
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // dispatch_init_init()
 //
 // Initialize device dispatch table
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_dispatch_init_svg( PLDispatchTable *pdt )
 {
@@ -143,11 +143,11 @@ void plD_dispatch_init_svg( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_svg;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_init()
 //
 // Initialize device
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_init_svg( PLStream *pls )
 {
@@ -228,11 +228,11 @@ void plD_init_svg( PLStream *pls )
     svg_general( aStream, "        \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n" );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_bop()
 //
 // Set up for the next page.
-// ----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_bop_svg( PLStream *pls )
 {
@@ -284,11 +284,11 @@ void plD_bop_svg( PLStream *pls )
     svg_general( aStream, ">\n" );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_line()
 //
 // Draw a line in the current color from (x1,y1) to (x2,y2).
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_line_svg( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
@@ -309,11 +309,11 @@ void plD_line_svg( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     svg_open_end( aStream );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_polyline()
 //
 // Draw a polyline in the current color.
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_polyline_svg( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
@@ -324,11 +324,11 @@ void plD_polyline_svg( PLStream *pls, short *xa, short *ya, PLINT npts )
     poly_line( pls, xa, ya, npts, 0 );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_eop()
 //
 // End of page
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_eop_svg( PLStream *pls )
 {
@@ -346,11 +346,11 @@ void plD_eop_svg( PLStream *pls )
     svg_close( aStream, "svg" );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_tidy()
 //
 // Close graphics file or otherwise clean up.
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_tidy_svg( PLStream *pls )
 {
@@ -364,24 +364,24 @@ void plD_tidy_svg( PLStream *pls )
     plCloseFile( pls );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plD_state_svg()
 //
 // Handle change in PLStream state (color, pen width, fill attribute, etc).
 //
 // Nothing is done here because these attributes are aquired from
 // PLStream for each element that is drawn.
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_state_svg( PLStream *pls, PLINT op )
 {
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_esc()
 //
 // Escape function.
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_esc_svg( PLStream *pls, PLINT op, void *ptr )
 {
@@ -403,11 +403,11 @@ void plD_esc_svg( PLStream *pls, PLINT op, void *ptr )
     }
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // poly_line()
 //
 // Handles drawing filled and unfilled polygons
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
 {
@@ -462,11 +462,11 @@ void poly_line( PLStream *pls, short *xa, short *ya, PLINT npts, short fill )
     aStream->svgIndent -= 2;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // gradient()
 //
 // Draws gradient
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
@@ -528,7 +528,7 @@ void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
     svg_close( aStream, "g" );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // proc_str()
 //
 // Processes strings for display.
@@ -555,7 +555,7 @@ void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
 //
 // (4) See additional notes in specify_font re. to sans / serif
 //
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void proc_str( PLStream *pls, EscText *args )
 {
@@ -853,11 +853,11 @@ void proc_str( PLStream *pls, EscText *args )
     }
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_open ()
 //
 // Used to open a new XML expression, sets the indent level appropriately
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void svg_open( SVG *aStream, char *tag )
 {
@@ -866,12 +866,12 @@ void svg_open( SVG *aStream, char *tag )
     aStream->svgIndent += 2;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_open_end ()
 //
 // Used to end the opening of a new XML expression i.e. add
 // the final ">".
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void svg_open_end( SVG *aStream )
 {
@@ -880,12 +880,12 @@ void svg_open_end( SVG *aStream )
     aStream->svgIndent -= 2;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_attr_value ()
 //
 // Prints two strings to svgFile as a XML attribute value pair
 // i.e. foo="bar"
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void svg_attr_value( SVG *aStream, char *attribute, char *value )
 {
@@ -893,7 +893,7 @@ void svg_attr_value( SVG *aStream, char *attribute, char *value )
     fprintf( aStream->svgFile, "%s=\"%s\"\n", attribute, value );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_attr_values ()
 //
 // Prints a string and a bunch of numbers / strings as a XML attribute
@@ -902,7 +902,7 @@ void svg_attr_value( SVG *aStream, char *attribute, char *value )
 // This function is derived from an example in
 // "The C Programming Language" by Kernighan and Ritchie.
 //
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void svg_attr_values( SVG *aStream, char *attribute, char *format, ... )
 {
@@ -949,11 +949,11 @@ void svg_attr_values( SVG *aStream, char *attribute, char *format, ... )
     va_end( ap );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_close ()
 //
 // Used to close a XML expression, sets the indent level appropriately
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void svg_close( SVG *aStream, char *tag )
 {
@@ -969,11 +969,11 @@ void svg_close( SVG *aStream, char *tag )
     }
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_general ()
 //
 // Used to print any text into the svgFile
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void svg_general( SVG *aStream, char *text )
 {
@@ -981,11 +981,11 @@ void svg_general( SVG *aStream, char *text )
     fprintf( aStream->svgFile, "%s", text );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_indent ()
 //
 // Indents properly based on the current indent level
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void svg_indent( SVG *aStream )
 {
@@ -996,13 +996,13 @@ void svg_indent( SVG *aStream )
     }
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_stroke_width ()
 //
 // sets the stroke width based on the current width
 // N.B. a stroke width of 0 in SVG means no stroke is painted so
 // we make sure the minimum value is 1.
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void svg_stroke_width( PLStream *pls )
 {
@@ -1013,11 +1013,11 @@ void svg_stroke_width( PLStream *pls )
     fprintf( aStream->svgFile, "stroke-width=\"%d\"\n", MAX( 1, pls->width ) );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_stroke_color ()
 //
 // sets the stroke color based on the current color
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void svg_stroke_color( PLStream *pls )
 {
@@ -1034,11 +1034,11 @@ void svg_stroke_color( PLStream *pls )
     fprintf( aStream->svgFile, "stroke-opacity=\"%f\"\n", pls->curcolor.a );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_fill_color ()
 //
 // sets the fill color based on the current color
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void svg_fill_color( PLStream *pls )
 {
@@ -1055,11 +1055,11 @@ void svg_fill_color( PLStream *pls )
     fprintf( aStream->svgFile, "fill-opacity=\"%f\"\n", pls->curcolor.a );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_fill_background_color ()
 //
 // sets the background fill color based on the current background color
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void svg_fill_background_color( PLStream *pls )
 {
@@ -1076,12 +1076,12 @@ void svg_fill_background_color( PLStream *pls )
     fprintf( aStream->svgFile, "fill-opacity=\"%f\"\n", pls->cmap0[0].a );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // svg_family_check ()
 //
 // support function to help supress more than one page if family file
 // output not specified by the user  (e.g., with the -fam command-line option).
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 int svg_family_check( PLStream *pls )
 {
@@ -1100,11 +1100,11 @@ int svg_family_check( PLStream *pls )
     }
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // write_hex ()
 //
 // writes a unsigned char as an appropriately formatted hex value
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void write_hex( FILE *svgFile, unsigned char val )
 {
@@ -1118,12 +1118,12 @@ void write_hex( FILE *svgFile, unsigned char val )
     }
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // write_unicode ()
 //
 // writes a unicode character, appropriately formatted (i.e. &#xNNN)
 // with invalid xml characters replaced by ' '.
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void write_unicode( FILE *svgFile, PLUNICODE ucs4_char )
 {
@@ -1133,7 +1133,7 @@ void write_unicode( FILE *svgFile, PLUNICODE ucs4_char )
         fprintf( svgFile, "&#x%x;", ' ' );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // specify_font ()
 //
 // Note:
@@ -1146,7 +1146,7 @@ void write_unicode( FILE *svgFile, PLUNICODE ucs4_char )
 // (1) On OS-X 10.4 with Firefox and Camino the "serif" font-family
 // looks more like the "italic" font-style.
 //
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void specify_font( FILE *svgFile, PLUNICODE ucs4_char )
 {

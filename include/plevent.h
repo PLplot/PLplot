@@ -20,7 +20,7 @@
 
 // Key definitions
 
-//**********************************************************
+//--------------------------------------------------------------------------
 // Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts,
 // and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 //
@@ -42,7 +42,7 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 // SOFTWARE.
 //
-//****************************************************************
+//--------------------------------------------------------------------------
 
 // Miscellaneous control keys, those with ASCII equivalents
 

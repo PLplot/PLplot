@@ -161,6 +161,8 @@ for line in sys.stdin.readlines():
         line = re.sub(r'^// \\\*(.*)$', "//\\1", line)
         # Remove "*\" from end of comment lines
         line = re.sub(r'^//(.*)\*\\$', "//\\1", line)
+        # Convert long "horizontal line" comment forms to standard form.
+        line = re.sub(r'^// *[-* ]{50,200}$', "//--------------------------------------------------------------------------", line)
         # Look for trailing continuation after comment lines and
         # complain if you find any.
         start_special = line.rfind("\\")

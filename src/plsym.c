@@ -1873,13 +1873,13 @@ c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
     plP_text( 0, just, xform, (PLINT) xpc, (PLINT) ypc, (PLINT) xrefpc, (PLINT) yrefpc, text );
 }
 
-//------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plsfont()
 //
 // Set the family, style and weight of the current font.
 // This is a user-friendly front-end to plsfci.
 // Note: A negative value signifies that this element should not be changed.
-//------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 void
 c_plsfont( PLINT family, PLINT style, PLINT weight )
 {
@@ -1917,13 +1917,13 @@ c_plsfont( PLINT family, PLINT style, PLINT weight )
     plsfci( fci );
 }
 
-//------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plgfont()
 //
 // Get the family, style and weight of the current font.
 // This is a user-friendly front-end to plgfci.
 // Note: A NULL pointer signifies that this value should not be returned.
-//------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 void
 c_plgfont( PLINT *p_family, PLINT *p_style, PLINT *p_weight )
 {

@@ -22,9 +22,9 @@
 #include "plplotP.h"
 #include "plstrm.h"
 
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plget : Get the value of the specified variable in the current plot stream
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 void
 c_plget( enum PLAttributeName attrName, PLAttribute *attrValue )
 {
@@ -167,14 +167,14 @@ c_plget( enum PLAttributeName attrName, PLAttribute *attrValue )
     }
 }
 
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plset : Set the value of the specified variable in the current plot stream
 //
 // Note: This is a little tricker since we can't just set the value & expect
 // the driver to respond, instead we have to call the appropriate function
 // in PLplot core.
 //
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 void
 c_plset( enum PLAttributeName attrName, PLAttribute attrValue )
 {

@@ -27,12 +27,12 @@
 #define PLARC_POINT_X( x, a, b, theta )    ( ( x ) + ( ( a ) * cos( theta ) ) )
 #define PLARC_POINT_Y( y, a, b, theta )    ( ( y ) + ( ( b ) * sin( theta ) ) )
 
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plarc_approx : Plot an approximated arc with a series of lines
 //
 // Takes the same arguments, with the same units, as c_plarc below.
 //
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 void
 plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLBOOL fill )
 {
@@ -84,7 +84,7 @@ plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PL
     }
 }
 
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plarc : Plot an arc
 //
 // Takes the following arguments:
@@ -104,7 +104,7 @@ plarc_approx( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PL
 //   fill:
 //      Should the arc be filled?
 //
-//-------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 void
 c_plarc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2, PLBOOL fill )
 {

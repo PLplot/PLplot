@@ -23,7 +23,7 @@
 
 #include "plplotP.h"
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plhist()
 //
 // Draws a histogram of n values of a variable in array data[0..n-1] in
@@ -37,7 +37,7 @@
 // If flags's third bit is set, the outside bars are the same size
 // as the rest.  The default old behaviour was for the first and last
 // bars to expand visually to fill the entire available space.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
@@ -112,7 +112,7 @@ c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
     free( (void *) y );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plbin()
 //
 // Plot a histogram using the arrays x and y to represent data values
@@ -121,7 +121,7 @@ c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 // the center of the bin.  If flags second bit is true, then we assume
 // the edge bins are the same size as the rest (i.e. the edge bins
 // needn't go as far as the variables vpwxmi, vpwxma below).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags )

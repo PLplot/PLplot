@@ -199,11 +199,11 @@ void plD_tidy_aqt( PLStream * );
 void plD_state_aqt( PLStream *, PLINT );
 void plD_esc_aqt( PLStream *, PLINT, void * );
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // dispatch_init_init()
 //
 // Initialize device dispatch table
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_dispatch_init_aqt( PLDispatchTable *pdt )
 {
@@ -223,11 +223,11 @@ void plD_dispatch_init_aqt( PLDispatchTable *pdt )
     pdt->pl_esc      = (plD_esc_fp) plD_esc_aqt;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // aqt_init()
 //
 // Initialize device
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_init_aqt( PLStream *pls )
 {
@@ -290,11 +290,11 @@ void plD_init_aqt( PLStream *pls )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // aqt_bop()
 //
 // Set up for the next page.
-// ----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_bop_aqt( PLStream *pls )
 {
@@ -319,11 +319,11 @@ void plD_bop_aqt( PLStream *pls )
     pls->page++;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // aqt_line()
 //
 // Draw a line in the current color from (x1,y1) to (x2,y2).
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_line_aqt( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
@@ -331,11 +331,11 @@ void plD_line_aqt( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     [adapter addLineToPoint : NSMakePoint( (float) x2a * SCALE, (float) y2a * SCALE )];
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // aqt_polyline()
 //
 // Draw a polyline in the current color.
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_polyline_aqt( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
@@ -345,11 +345,11 @@ void plD_polyline_aqt( PLStream *pls, short *xa, short *ya, PLINT npts )
         plD_line_aqt( pls, xa[i], ya[i], xa[i + 1], ya[i + 1] );
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // aqt_eop()
 //
 // End of page
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_eop_aqt( PLStream *pls )
 {
@@ -359,22 +359,22 @@ void plD_eop_aqt( PLStream *pls )
     [adapter renderPlot];
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // aqt_tidy()
 //
 // Close graphics file or otherwise clean up.
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_tidy_aqt( PLStream *pls )
 {
     [adapter closePlot];
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plD_state_aqt()
 //
 // Handle change in PLStream state (color, pen width, fill attribute, etc).
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_state_aqt( PLStream *pls, PLINT op )
 {
@@ -426,7 +426,7 @@ void plD_state_aqt( PLStream *pls, PLINT op )
     }
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // aqt_esc()
 //
 // Escape function.
@@ -440,7 +440,7 @@ void plD_state_aqt( PLStream *pls, PLINT op )
 // PLESC_GETC      Get coordinates upon mouse click
 // PLESC_REDRAW    Force a redraw
 // PLESC_RESIZE    Force a resize
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_esc_aqt( PLStream *pls, PLINT op, void *ptr )
 {
@@ -484,11 +484,11 @@ void plD_esc_aqt( PLStream *pls, PLINT op, void *ptr )
     }
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // get_cursor()
 //
 // returns the location of the next mouse click
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void get_cursor( PLStream *pls, PLGraphicsIn *gin )
 {
@@ -519,12 +519,12 @@ void get_cursor( PLStream *pls, PLGraphicsIn *gin )
     }
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // proc_str()
 //
 // Processes strings for display. The actual parsing of the unicode
 // string is handled by the sub-routine create_string.
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void proc_str( PLStream *pls, EscText *args )
 {
@@ -617,7 +617,7 @@ void proc_str( PLStream *pls, EscText *args )
     [str release];
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // create_string()
 //
 // create a NSMutableAttributedString from the plplot ucs4 string
@@ -628,7 +628,7 @@ void proc_str( PLStream *pls, EscText *args )
 // 3. <esc><esc> means we desired <esc> as a character & not actually as <esc>
 // 4. there are no two character <esc> sequences... i.e. <esc>fn is now covered by fci
 //
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 NSMutableAttributedString  * create_string( const PLUNICODE *ucs4, int ucs4_len, PLFLT font_height )
 {
@@ -726,11 +726,11 @@ NSMutableAttributedString  * create_string( const PLUNICODE *ucs4, int ucs4_len,
     return str;
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // set_font_and_size
 //
 // set the font & size of a attributable string object
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void set_font_and_size( NSMutableAttributedString * str, PLUNICODE fci, PLFLT font_height, int cur_loc )
 {
@@ -756,14 +756,14 @@ void set_font_and_size( NSMutableAttributedString * str, PLUNICODE fci, PLFLT fo
      range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ) )];
 }
 
-//---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // check_font_environment_variables
 //
 // Checks to see if any font environment variables are defined.
 // If a font environment variable is defined, then the appropriate
 // element of the default font table is replaced with the font name
 // string specified by the environment variable.
-// ---------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 
 void check_font_environment_variables( void )

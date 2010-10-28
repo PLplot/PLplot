@@ -24,7 +24,7 @@
 //
 //
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // Call syntax for plshade():
 //
 // void plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined,
@@ -119,7 +119,7 @@
 //      }
 // }
 //
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 #include "plplotP.h"
 #include <float.h>
@@ -194,7 +194,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
              PLPointer pltr_data );
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plshades()
 //
 // Shade regions via a series of calls to plshade.
@@ -205,7 +205,7 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 // fill_width is the pattern fill width, and cont_color and cont_width
 // are the color and width of the contour drawn at each shade edge.
 // (if cont_color <= 0 or cont_width <=0, no such contours are drawn).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -223,7 +223,7 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT
         pltr, pltr_data );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plfshades()
 //
 // Shade regions via a series of calls to plfshade1.
@@ -234,7 +234,7 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT
 // fill_width is the pattern fill width, and cont_color and cont_width
 // are the color and width of the contour drawn at each shade edge.
 // (if cont_color <= 0 or cont_width <=0, no such contours are drawn).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
@@ -309,13 +309,13 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plshade()
 //
 // Shade region.
 // This interface to plfshade() assumes the 2d function array is passed
 // via a (PLFLT **), and is column-dominant (normal C ordering).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void c_plshade( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
                 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -337,13 +337,13 @@ void c_plshade( PLFLT **a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT 
         fill, rectangular, pltr, pltr_data );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plshade1()
 //
 // Shade region.
 // This interface to plfshade() assumes the 2d function array is passed
 // via a (PLFLT *), and is column-dominant (normal C ordering).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void c_plshade1( PLFLT *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -371,12 +371,12 @@ void c_plshade1( PLFLT *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT 
         fill, rectangular, pltr, pltr_data );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plfshade()
 //
 // Shade region.
 // Array values are determined by the input function and the passed data.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plfshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
@@ -401,7 +401,7 @@ plfshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
         fill, rectangular, pltr, pltr_data );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plfshade1()
 //
 // Shade region.
@@ -410,7 +410,7 @@ plfshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 // differs from plfshade in that it supports a "defined" callback (like
 // c_plshade and c_plfshade1) rather than a "defined mask" (like plfshade
 // even though it is not yet implemented).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
@@ -434,7 +434,7 @@ plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         fill, rectangular, pltr, pltr_data );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plshade_int()
 //
 // Shade region -- this routine does all the work
@@ -471,7 +471,7 @@ plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 // pltr: function to map from grid to plot coordinates
 //
 //
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void
 plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
@@ -814,11 +814,11 @@ plshade_int( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
     plwid( init_width );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // set_cond()
 //
 // Fills out condition code array.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void
 set_cond( register int *cond, register PLFLT *a, register PLINT n )
@@ -835,7 +835,7 @@ set_cond( register int *cond, register PLFLT *a, register PLINT n )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // find_interval()
 //
 // Two points x(0) = a0, (condition code c0) x(1) = a1, (condition code c1)
@@ -844,7 +844,7 @@ set_cond( register int *cond, register PLFLT *a, register PLINT n )
 // returns 0 : no points to be shaded 1 : x[0] <= x < 1 is the interval 2 :
 // x[0] <= x <= x[1] < 1 interval to be shaded n_point, max_points,
 // min_points are incremented location of min/max_points are stored
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static int
 find_interval( PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x )
@@ -889,12 +889,12 @@ find_interval( PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x )
     return n;
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // selected_polygon()
 //
 // Draws a polygon from points in x[] and y[].
 // Point selected by v1..v4
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void
 selected_polygon( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
@@ -929,13 +929,13 @@ selected_polygon( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
     exfill( fill, defined, n, xx, yy );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // bisect()
 //
 // Find boundary recursively by bisection.
 // (x1, y1) is in the defined region, while (x2, y2) in the undefined one.
 // The result is returned in
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void
 bisect( PLINT ( *defined )( PLFLT, PLFLT ), PLINT niter,
@@ -960,7 +960,7 @@ bisect( PLINT ( *defined )( PLFLT, PLFLT ), PLINT niter,
         bisect( defined, niter - 1, x1, y1, xm, ym, xb, yb );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // exfill()
 //
 // Fills a polygon from points in x[] and y[] with all points in
@@ -972,7 +972,7 @@ bisect( PLINT ( *defined )( PLFLT, PLFLT ), PLINT niter,
 // points.  So this routine can produce problematic plotted results
 // if the polygon is not a lot smaller than the typical resolution of
 // the defined region.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void
 exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
@@ -1052,7 +1052,7 @@ exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // big_recl()
 //
 // find a big rectangle for shading
@@ -1073,7 +1073,7 @@ exfill( void ( *fill )( PLINT, PLFLT *, PLFLT * ),
 // iy < dy - 1
 //
 // If iy == 1 -> ix = 1 (so that cond code can be set to skip)
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 #define RATIO    3
 #define COND( x, y )    cond_code[x * ny + y]
@@ -1157,11 +1157,11 @@ big_recl( int *cond_code, register int ny, int dx, int dy,
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // draw_boundary()
 //
 // Draw boundaries of contour regions based on min_pts[], and max_pts[].
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void
 draw_boundary( PLINT slope, PLFLT *x, PLFLT *y )
@@ -1206,7 +1206,7 @@ draw_boundary( PLINT slope, PLFLT *x, PLFLT *y )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //
 // plctest( &(x[0][0]), PLFLT level)
 // where x was defined as PLFLT x[4][4];
@@ -1237,7 +1237,7 @@ draw_boundary( PLINT slope, PLFLT *x, PLFLT *y )
 //		return negatiave slope.
 //      (this test tries to keep the slope for different contour levels
 //	the same)
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 #define X( a, b )    ( x[a * 4 + b] )
 #define POSITIVE_SLOPE    (PLINT) 1
@@ -1295,14 +1295,14 @@ plctest( PLFLT *x, PLFLT level )
     return POSITIVE_SLOPE;
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plctestez
 //
 // second routine - easier to use
 // fills in x[4][4] and calls plctest
 //
 // test location a[ix][iy] (lower left corner)
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static PLINT
 plctestez( PLFLT *a, PLINT nx, PLINT ny, PLINT ix,

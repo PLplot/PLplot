@@ -54,11 +54,11 @@ grdashline( short *x, short *y );
 static PLFLT *
 interpolate_between( int n, PLFLT a, PLFLT b );
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void pljoin()
 //
 // Draws a line segment from (x1, y1) to (x2, y2).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
@@ -67,11 +67,11 @@ c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
     plP_drawor( x2, y2 );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plline()
 //
 // Draws line segments connecting a series of points.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_plline( PLINT n, PLFLT *x, PLFLT *y )
@@ -84,13 +84,13 @@ c_plline( PLINT n, PLFLT *x, PLFLT *y )
     plP_drawor_poly( x, y, n );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plpath()
 //
 // Draws a line segment from (x1, y1) to (x2, y2).  If a coordinate
 // transform is defined then break the line up in to n pieces to approximate
 // the path.  Otherwise it simply calls pljoin().
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_plpath( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
@@ -120,7 +120,7 @@ c_plpath( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plline3(n, x, y, z)
 //
 // Draws a line in 3 space.  You must first set up the viewport, the
@@ -128,7 +128,7 @@ c_plpath( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
 // coordinate box.  See x18c.c for more info.
 //
 // This version adds clipping against the 3d bounding box specified in plw3d
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 void
 c_plline3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
 {
@@ -236,7 +236,7 @@ c_plline3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
     }
     return;
 }
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plpoly3( n, x, y, z, draw, ifcc )
 //
 // Draws a polygon in 3 space.  This differs from plline3() in that
@@ -262,7 +262,7 @@ c_plline3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
 // they are colinear, the calculation of visibility has a 50/50 chance
 // of being correct.  Avoid such situations :-).  See x18c for an
 // example of this problem.  (Search for "20.1").
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc )
@@ -396,12 +396,12 @@ c_plpoly3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc )
     return;
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plstyl()
 //
 // Set up a new line style of "nms" elements, with mark and space
 // lengths given by arrays "mark" and "space".
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_plstyl( PLINT nms, PLINT *mark, PLINT *space )
@@ -452,11 +452,11 @@ c_plstyl( PLINT nms, PLINT *mark, PLINT *space )
     plsc->alarm   = nms > 0 ? mark[0] : 0;
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plP_movphy()
 //
 // Move to physical coordinates (x,y).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plP_movphy( PLINT x, PLINT y )
@@ -465,11 +465,11 @@ plP_movphy( PLINT x, PLINT y )
     plsc->curry = y;
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plP_draphy()
 //
 // Draw to physical coordinates (x,y).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plP_draphy( PLINT x, PLINT y )
@@ -482,11 +482,11 @@ plP_draphy( PLINT x, PLINT y )
     pllclp( xline, yline, 2 );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plP_movwor()
 //
 // Move to world coordinates (x,y).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plP_movwor( PLFLT x, PLFLT y )
@@ -498,11 +498,11 @@ plP_movwor( PLFLT x, PLFLT y )
     plsc->curry = plP_wcpcy( yt );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plP_drawor()
 //
 // Draw to world coordinates (x,y).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plP_drawor( PLFLT x, PLFLT y )
@@ -518,13 +518,13 @@ plP_drawor( PLFLT x, PLFLT y )
     pllclp( xline, yline, 2 );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plP_draphy_poly()
 //
 // Draw polyline in physical coordinates.
 // Need to draw buffers in increments of (PL_MAXPOLY-1) since the
 // last point must be repeated (for solid lines).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plP_draphy_poly( PLINT *x, PLINT *y, PLINT n )
@@ -545,13 +545,13 @@ plP_draphy_poly( PLINT *x, PLINT *y, PLINT n )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plP_drawor_poly()
 //
 // Draw polyline in world coordinates.
 // Need to draw buffers in increments of (PL_MAXPOLY-1) since the
 // last point must be repeated (for solid lines).
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plP_drawor_poly( PLFLT *x, PLFLT *y, PLINT n )
@@ -574,12 +574,12 @@ plP_drawor_poly( PLFLT *x, PLFLT *y, PLINT n )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void pllclp()
 //
 // Draws a polyline within the clip limits.
 // Merely a front-end to plP_pllclp().
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void
 pllclp( PLINT *x, PLINT *y, PLINT npts )
@@ -588,7 +588,7 @@ pllclp( PLINT *x, PLINT *y, PLINT npts )
         plsc->clpymi, plsc->clpyma, genlin );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plP_pllclp()
 //
 // Draws a polyline within the clip limits.
@@ -596,7 +596,7 @@ pllclp( PLINT *x, PLINT *y, PLINT npts )
 // (AM)
 // Wanted to change the type of xclp, yclp to avoid overflows!
 // But that changes the type for the drawing routines too!
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
@@ -690,11 +690,11 @@ plP_pllclp( PLINT *x, PLINT *y, PLINT npts,
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // int plP_clipline()
 //
 // Get clipped endpoints
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 int
 plP_clipline( PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
@@ -797,13 +797,13 @@ plP_clipline( PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
     return 0;
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void genlin()
 //
 // General line-drawing routine.  Takes line styles into account.
 // If only 2 points are in the polyline, it is more efficient to use
 // plP_line() rather than plP_polyline().
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void
 genlin( short *x, short *y, PLINT npts )
@@ -843,11 +843,11 @@ genlin( short *x, short *y, PLINT npts )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void grdashline()
 //
 // Draws a dashed line to the specified point from the previous one.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static void
 grdashline( short *x, short *y )
@@ -965,7 +965,7 @@ grdashline( short *x, short *y )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // interpolate_between()
 //
 // Returns a pointer to an array of PLFLT values which interpolate in n steps
@@ -975,7 +975,7 @@ grdashline( short *x, short *y )
 // the function's caller.
 // If the return value is NULL, the allocation failed and it is up to the
 // caller to handle the error.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 PLFLT *interpolate_between( PLINT n, PLFLT a, PLFLT b )
 {

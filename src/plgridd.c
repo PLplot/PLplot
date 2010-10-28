@@ -85,7 +85,7 @@ typedef struct pt
 
 static PT items[KNN_MAX_ORDER];
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 //
 // plgriddata(): grids data from irregularly sampled data.
 //
@@ -108,7 +108,7 @@ static PT items[KNN_MAX_ORDER];
 // (1): Copyright 2000-2002 CSIRO Marine Research, Pavel Sakov's csa library
 // (2): Copyright 2002 CSIRO Marine Research, Pavel Sakov's nn library
 //
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,

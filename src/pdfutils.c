@@ -26,7 +26,7 @@
 //  along with PLplot; if not, write to the Free Software
 //  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 //
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+//--------------------------------------------------------------------------
 //
 //  These functions do the low-level reading/writing of portable data files.
 //  Data can be written to/read from either a file handle or memory buffer.

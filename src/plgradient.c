@@ -37,7 +37,7 @@ plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
 static PLINT
 gradient_defined( PLFLT x, PLFLT y );
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plgradient()
 //
 // Draws a linear gradient at an angle relative to the increasing x
@@ -48,7 +48,7 @@ gradient_defined( PLFLT x, PLFLT y );
 // geometrical gradient direction is specified by the angle argument.
 // The 0. to 1. range of the independent variable of cmap1 corresponds
 // to the range of the polygon in the direction specified by angle.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
@@ -152,12 +152,12 @@ c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void plgradient_soft()
 //
 // Software fallback for gradient.  See c_plgradient for an explanation
 // of the arguments.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 plgradient_soft( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle )

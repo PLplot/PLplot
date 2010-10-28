@@ -150,7 +150,7 @@ static PLFLT CalculateIncrement( int bg, int fg, int levels );
 static void FT_WriteStrW( PLStream *pls, const PLUNICODE  *text, short len, int x, int y );
 static void FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy );
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // FT_StrX_YW()
 //
 // Returns the dimensions of the text box. It does this by fully parsing
@@ -158,7 +158,7 @@ static void FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx
 // but draw the text. This seems, to me, the easiest and most accurate
 // way of determining the text's dimensions. If/when caching is added,
 // the CPU hit for this "double processing" will be minimal.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
@@ -254,13 +254,13 @@ FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy )
     *xx = x;
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // FT_WriteStrW()
 //
 // Writes a string of FT text at the current cursor location.
 // most of the code here is identical to "FT_StrX_Y" and I will probably
 // collapse the two into some more efficient code eventually.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
@@ -394,12 +394,12 @@ FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
     } // end for
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // FT_PlotChar()
 //
 // Plots an individual character. I know some of this stuff, like colour
 // could be parsed from plstream, but it was just quicker this way.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void
 FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
@@ -575,13 +575,13 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plD_FreeType_init()
 //
 // Allocates memory to Freetype structure
 // Initialises the freetype library.
 // Initialises freetype structure
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_FreeType_init( PLStream *pls )
 {
@@ -778,11 +778,11 @@ void plD_FreeType_init( PLStream *pls )
 }
 
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // FT_SetFace( PLStream *pls, PLUNICODE fci )
 //
 // Sets up the font face and size
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void FT_SetFace( PLStream *pls, PLUNICODE fci )
 {
@@ -826,13 +826,13 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci )
         pls->ydpi );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plD_render_freetype_text()
 //
 // Transforms the font
 // calculates real-world bitmap coordinates from plplot ones
 // renders text using freetype
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_render_freetype_text( PLStream *pls, EscText *args )
 {
@@ -1095,13 +1095,13 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plD_FreeType_Destroy()
 //
 // Restores cmap0 if it had been modifed for anti-aliasing
 // closes the freetype library.
 // Deallocates memory to the Freetype structure
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void plD_FreeType_Destroy( PLStream *pls )
 {
@@ -1120,14 +1120,14 @@ void plD_FreeType_Destroy( PLStream *pls )
     }
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // PLFLT CalculateIncrement( int bg, int fg, int levels)
 //
 // Takes the value of the foreground, and the background, and when
 // given the number of desired steps, calculates how much to incriment
 // a value to transition from fg to bg.
 // This function only does it for one colour channel at a time.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 static PLFLT CalculateIncrement( int bg, int fg, int levels )
 {
@@ -1143,7 +1143,7 @@ static PLFLT CalculateIncrement( int bg, int fg, int levels )
     return ( ret );
 }
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org)
 //
 //  ncol0_width - how many greyscale levels to accolate to each CMAP0 entry
@@ -1156,7 +1156,7 @@ static PLFLT CalculateIncrement( int bg, int fg, int levels )
 //  NOTES
 //  We don't bother calculating an entry for CMAP[0], the background.
 //  It is assumed the caller has already expanded the size of CMAP[0]
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 void pl_set_extended_cmap0( PLStream *pls, int ncol0_width, int ncol0_org )
 {
@@ -1188,7 +1188,7 @@ void pl_set_extended_cmap0( PLStream *pls, int ncol0_width, int ncol0_org )
 }
 
 
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 // plD_render_freetype_sym( PLStream *pls, EscText *args )
 //   PLStream *pls - pointer to plot stream
 //   EscText *args - pointer to standard "string" object.
@@ -1197,7 +1197,7 @@ void pl_set_extended_cmap0( PLStream *pls, int ncol0_width, int ncol0_org )
 //  character at a time. The function is an alternative to the text
 //  functions which are considerably, and needlessly, more complicated
 //  than what we need here.
-//----------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 
 void plD_render_freetype_sym( PLStream *pls, EscText *args )

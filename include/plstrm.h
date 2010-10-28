@@ -76,7 +76,7 @@ typedef struct
 //
 // The quantities in each stream are as follows:
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Misc control variables
 //
@@ -90,7 +90,7 @@ typedef struct
 // stream_closed PLBOOL  Set if the stream was closed or if there
 //                       was some sort of error
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Palettes (two of them)
 //
@@ -126,7 +126,7 @@ typedef struct
 // cmap0        RGB[]	Color map 0: maximum of ncol0 RGB 8-bit values
 // cmap1        RGB[]	Color map 1: maximum of ncol1 RGB 8-bit values
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables governing pen width
 //
@@ -134,7 +134,7 @@ typedef struct
 // widthset	Set if pen width was specified
 // widthlock	Set if pen width is locked
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables governing arrow type
 //
@@ -143,7 +143,7 @@ typedef struct
 // arrow_npts   number of points in arrow_x, arrow_y
 // arrow_fill   whether the arrow should be filled or not
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables used to pass information between the core and the driver
 //
@@ -238,7 +238,7 @@ typedef struct
 // pageset	PLINT	Set if page dimensions were specified
 // hack		PLINT	Enables driver-specific hack(s) if set
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // User customization tidy routine.  This is called before closing a stream
 // to do any program specific cleanup.
@@ -246,7 +246,7 @@ typedef struct
 // tidy		void*   pointer to cleanup routine
 // tidy_data	void*   pointer to client data to pass
 //
-//***************************************************************************
+//--------------------------------------------------------------------------
 //
 // User error control variables.  Pass in a pointer for either to be set
 // in exceptional conditions.  The caller is responsible for clearing the
@@ -255,7 +255,7 @@ typedef struct
 // errcode	PLINT*	pointer to variable to assign error code
 // errmsg	char*	pointer to error message buffer (must be >= 160 bytes)
 //
-//***************************************************************************
+//--------------------------------------------------------------------------
 //
 // Stuff used by Xlib driver
 //
@@ -267,7 +267,7 @@ typedef struct
 //			to output window on EOP or an Expose)
 // ext_resize_draw int  Set if you want to control the redraw caused by a
 //                      window resize by an external agent.
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // These are for support of the TK driver.
 //
@@ -283,7 +283,7 @@ typedef struct
 // dp		int	Use Tcl-DP for communication, if set
 // server_nokill int	Don't kill plserver on a ^C if set
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables for use by the plot buffer
 //
@@ -299,7 +299,7 @@ typedef struct
 //
 // plbufOwner	int	Typically set; only zero if current stream is cloned.
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Driver interface (DI)
 //
@@ -356,7 +356,7 @@ typedef struct
 //
 // page_status	PLINT	Flag to indicate current action
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Fill pattern state information.
 // patt < 0: Hardware fill, if available (not implemented yet)
@@ -368,7 +368,7 @@ typedef struct
 // delta	Array of spacings in micrometers between fill lines
 // nps		Number of distinct line styles for fills
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables used in line drawing
 //
@@ -383,13 +383,13 @@ typedef struct
 // pendn	Flag indicating if pen is up or down
 // curel	Current element within broken line
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables governing character strings
 //
 // esc		Text string escape character
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Scale factors for characters, symbols, and tick marks.
 //
@@ -399,7 +399,7 @@ typedef struct
 // maj...	Major tick default height and current (scaled) height
 // min...	Minor tick default height and current (scaled) height
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables governing numeric axis label appearance
 //
@@ -409,7 +409,7 @@ typedef struct
 // xdigits..	Actual field widths (returned)
 // timefmt      Format string (for strftime)
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables governing physical coordinate system
 //
@@ -420,7 +420,7 @@ typedef struct
 // um.		Number of micrometers in a pixel
 // pmm		Number of pixels to a millimeter
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // State variables for 3d plots
 //
@@ -431,14 +431,14 @@ typedef struct
 // ran..	Minimum and maximum z values for 3-d plot
 // c..		Coordinate transformation from 3-d to 2-d
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables for keeping track of world coordinate windows on a page.
 //
 // nCWindows	Number of coordinate windows on current page
 // windows	Array of plCWindow's for current page
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables governing subpages and viewports.
 //
@@ -448,20 +448,20 @@ typedef struct
 // vpd...	Viewport boundaries in normalized device coordinates
 // vpw...	Viewport boundaries in world coordinates
 //
-//**************************************************************************
+//--------------------------------------------------------------------------
 //
 // Transformation variables
 //
 // wp....	Transformation variables for world  to physical conversion
 // wm....	Transformation variables for world coordinates to mm
 //
-//***************************************************************************
+//--------------------------------------------------------------------------
 //
 // Other variables
 //
 // dev_compression Compression level for supporting devices
 //
-//***************************************************************************
+//--------------------------------------------------------------------------
 //
 // Font related variables
 //
@@ -490,7 +490,7 @@ typedef struct
 // font attributes if required.  (hexpower = 7 is reserved for the 0x8 marker
 // of the FCI.)
 //
-//***************************************************************************
+//--------------------------------------------------------------------------
 //
 // Time related variable
 //
@@ -498,7 +498,7 @@ typedef struct
 // of the transformation between broken-down and continuous time used
 // in the qsastime library.
 //
-//***************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables used in plgradient software fallback to communicate the polygon
 // to the gradient_define callback used by plshades.
@@ -509,7 +509,7 @@ typedef struct
 //                 defining the boundary of the gradient.
 // y_polygon       Pointer to array of y vertex points in the polygon
 //                 defining the boundary of the gradient.
-//***************************************************************************
+//--------------------------------------------------------------------------
 //
 // Variables used to store gradient information for device drivers.
 //
